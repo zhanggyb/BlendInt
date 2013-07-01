@@ -25,19 +25,19 @@ public:
 		return _id;
 	}
 
-	static BasicObject* find (uint64_t id);
+	static BasicObject* find(uint64_t id);
 
 private:
 
-	inline bool registerObj (void);
+	inline bool registerObj(void);
 
-	inline bool unregisterObj (void);
+	inline bool unregisterObj(void);
 
-	BasicObject (const BasicObject& orig);
+	BasicObject(const BasicObject& orig);
 
-	BasicObject& operator = (const BasicObject& orig);
+	BasicObject& operator =(const BasicObject& orig);
 
-	uint64_t _id;	/** A unique ID for object */
+	uint64_t _id; /** A unique ID for object */
 
 	static uint64_t id_last;
 	static std::map<uint64_t, BasicObject*> map;

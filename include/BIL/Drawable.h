@@ -8,35 +8,37 @@
 #ifndef _BIL_DRAWABLE_H_
 #define _BIL_DRAWABLE_H_
 
-#include <list>
+#include <set>
 #include <stddef.h>
 
 #include "BasicObject.h"
 
 namespace BIL {
 
-class Drawable: public BIL::BasicObject {
+class Drawable: public BIL::BasicObject
+{
 public:
-	Drawable(Drawable* parent = NULL);
-	virtual ~Drawable();
+	Drawable (Drawable* parent = NULL);
+	virtual ~Drawable ();
 
-	const Drawable* getParent(void) const {
+	const Drawable* getParent (void) const
+	{
 		return _parent;
 	}
 
-	void setParent(Drawable*& parent);
+	void setParent (Drawable* parent);
 
 	bool addChild (Drawable* child);
 
-	bool removeChild (Drawable* child);
-
 protected:
+
+	bool removeChild (Drawable* child);
 
 	bool deleteChild (Drawable* child);
 
 	Drawable * _parent;
 
-	std::list<Drawable*> _children;
+	std::set<Drawable*> _children;
 
 private:
 

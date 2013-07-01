@@ -15,7 +15,8 @@ uint64_t BasicObject::id_last = 1;
 
 std::map<uint64_t, BasicObject*> BasicObject::map;
 
-BasicObject::BasicObject() {
+BasicObject::BasicObject ()
+{
 	// TODO Auto-generated constructor stub
 	uint64_t temp = id_last;
 
@@ -31,24 +32,29 @@ BasicObject::BasicObject() {
 	id_last++;
 }
 
-BasicObject::~BasicObject() {
+BasicObject::~BasicObject ()
+{
 	// TODO Auto-generated destructor stub
 	unregisterObj();
 }
 
-inline bool BasicObject::registerObj(void) {
+inline bool BasicObject::registerObj (void)
+{
 	BasicObject::map[_id] = this;
 	return true;
 }
 
-BasicObject* BasicObject::find(uint64_t id) {
+BasicObject* BasicObject::find (uint64_t id)
+{
 	BasicObject *ret = NULL;
-	if(BasicObject::map.count(id) == 1) ret = BasicObject::map[id];
+	if (BasicObject::map.count(id) == 1)
+		ret = BasicObject::map[id];
 
 	return ret;
 }
 
-inline bool BasicObject::unregisterObj(void) {
+inline bool BasicObject::unregisterObj (void)
+{
 	BasicObject::map.erase(_id);
 	return true;
 }

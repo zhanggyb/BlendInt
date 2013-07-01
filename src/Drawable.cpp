@@ -14,41 +14,87 @@ namespace BIL {
 
 using namespace std;
 
-Drawable::Drawable(Drawable* parent) :
-		_parent(parent) {
-	// TODO Auto-generated constructor stub
+Drawable::Drawable (Drawable* parent)
+		: _parent(parent)
+{
+	if (_parent != NULL) {
+		(_parent->_children).insert(this);
+	}
+}
+
+Drawable::~Drawable ()
+{
+	// delete all child object in list
+
+	set<Drawable*>::iterator it;
+	Drawable * item = NULL;
+
+	for (it = _children.begin(); it != _children.end(); it++) {
+		item = dynamic_cast<Drawable*>(*it);
+		if (item != NULL) {
+			delete item;
+			item = NULL;
+		}
+	}
+
+	_children.clear();
+
+	if (_parent != NULL) {
+		_parent->removeChild(this);
+	}
+
+#ifdef DEBUG
+	std::cout << "Now object " << getId() << " will be deleted" << std::endl;
+#endif
+}
+
+void Drawable::setParent (Drawable* parent)
+{
+	_parent = parent;
+
 	if (_parent != NULL)
 		_parent->addChild(this);
+
+	return;
 }
 
-Drawable::~Drawable() {
-	// TODO Auto-generated destructor stub
-}
-
-void Drawable::setParent(Drawable*& parent) {
-
-}
-
-bool Drawable::addChild(Drawable* child) {
-	if (child == NULL) return false;
-	list<Drawable*>::iterator it = std::find(_children.begin(), _children.end(), child);
-
-	if(it != _children.end()) {
+bool Drawable::addChild (Drawable* child)
+{
+	if (child == NULL)
 		return false;
-	} else {
-		_children.push_back(child);
+
+	if(child->_parent != NULL) {
+		(child->_parent)->removeChild(child);
 	}
+
+	_children.insert(child);
 
 	child->_parent = this;
 
 	return true;
 }
 
-bool Drawable::removeChild(Drawable* child) {
+bool Drawable::removeChild (Drawable* child)
+{
+	if (child == NULL)
+		return false;
+
+	_children.erase(child);
+	child->setParent(NULL);
+
 	return true;
 }
 
-bool Drawable::deleteChild(Drawable* child) {
+bool Drawable::deleteChild (Drawable* child)
+{
+	if (child == NULL)
+		return false;
+
+	removeChild(child);
+
+	// TODO: confirm if should delete
+	delete child;
+
 	return true;
 }
 
