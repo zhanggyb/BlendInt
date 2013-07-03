@@ -11,41 +11,22 @@
 #include <set>
 #include <stddef.h>
 
-#include "BasicObject.h"
+#include <BIL/BasicObject.h>
 
 namespace BIL {
 
-class Drawable: public BIL::BasicObject
-{
-public:
-	Drawable (Drawable* parent = NULL);
-	virtual ~Drawable ();
-
-	const Drawable* getParent (void) const
+	class Drawable: public BIL::BasicObject
 	{
-		return _parent;
-	}
+	public:
+		Drawable (Drawable* parent = NULL);
+		virtual ~Drawable ();
 
-	void setParent (Drawable* parent);
+	private:
 
-	bool addChild (Drawable* child);
+		Drawable (const Drawable& orig);
+		Drawable& operator = (const Drawable& orig);
 
-protected:
-
-	bool removeChild (Drawable* child);
-
-	bool deleteChild (Drawable* child);
-
-	Drawable * _parent;
-
-	std::set<Drawable*> _children;
-
-private:
-
-	Drawable (const Drawable& orig);
-	Drawable& operator = (const Drawable& orig);
-
-};
+	};
 
 } /* namespace BIL */
 #endif /* _BIL_DRAWABLE_H_ */

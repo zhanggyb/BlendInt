@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "BasicObject.h"
+#include <BIL/BasicObject.h>
 
 namespace BIL {
 

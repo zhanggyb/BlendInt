@@ -15,63 +15,71 @@
 
 namespace BIL {
 
-/**
- * The basic class which has a unique ID, one parent and some children
- */
-class BasicObject
-{
-
-public:
-
-	BasicObject (BasicObject* parent = NULL);
-
-	virtual ~BasicObject ();
-
-	uint64_t getId () const
+	/**
+	 * The basic class which has a unique ID, one parent and some children
+	 */
+	class BasicObject
 	{
-		return _id;
-	}
 
-	static BasicObject* find (uint64_t id);
+	public:
 
-	void setParent (BasicObject* parent);
+		BasicObject (BasicObject* parent = NULL);
 
-	bool addChild (BasicObject *child);
+		virtual ~BasicObject ();
 
-	static unsigned int mapSize (void) {return map.size();}
+		uint64_t getId () const
+		{
+			return _id;
+		}
+
+		static BasicObject* find (uint64_t id);
+
+		const BasicObject* getParent (void) const
+		{
+			return _parent;
+		}
+
+		void setParent (BasicObject* parent);
+
+		bool addChild (BasicObject *child);
+
+		static unsigned int mapSize (void)
+		{
+			return map.size();
+		}
 
 #ifdef DEBUG
-	static void reset(void)
-	{
-		id_last = 1;
-		map.clear();
-	}
+		static void reset (void)
+		{
+			id_last = 1;
+			map.clear();
+		}
 #endif
 
-protected:
+	protected:
 
-	bool removeChild (BasicObject* child);
+		bool removeChild (BasicObject* child);
 
-	ChildrenList<BasicObject*> _children;
+		ChildrenList<BasicObject*> _children;
 
-private:
+	private:
 
-	inline bool registerObj (void);
+		inline bool registerObj (void);
 
-	inline bool unregisterObj (void);
+		inline bool unregisterObj (void);
 
-	BasicObject (const BasicObject& orig);
+		BasicObject (const BasicObject& orig);
 
-	BasicObject& operator = (const BasicObject& orig);
+		BasicObject& operator = (const BasicObject& orig);
 
-	uint64_t _id; /** A unique ID for object */
+		uint64_t _id; /** A unique ID for object */
 
-	BasicObject* _parent;
+		BasicObject* _parent;
 
-	static uint64_t id_last;
-	static std::map<uint64_t, BasicObject*> map;
+		static uint64_t id_last;
+		static std::map<uint64_t, BasicObject*> map;
 
-};
+	};
 
 } /* namespace BIL */
 #endif /* _BIL_BASICOBJECT_H_ */
