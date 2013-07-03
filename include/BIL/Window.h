@@ -36,13 +36,13 @@ namespace BIL {
 			return _window;
 		}
 
-		Size getSize (void);
+		Size2i getSize (void);
 
-		bool resize (const Size& size);
+		bool resize (const Size2i& size);
 
 		bool resize (int w, int h)
 		{
-			return (resize(Size(w, h)));
+			return (resize(Size2i(w, h)));
 		}
 
 		void setTitle (const std::string& title);
@@ -67,28 +67,28 @@ namespace BIL {
 		Window (const Window& orig);
 		Window& operator = (const Window& orig);
 
-		bool registerCallbacks (void * pointer);
+		bool registerCallbacks (void);
 
-		bool unregisterCallbacks (void * pointer);
+		bool unregisterCallbacks (void);
 
 		GLFWwindow *_window;
 
 		std::string _title;
 
-		static void CbKey (GLFWwindow* window, int key, int scancode,
+		static void cbKey (GLFWwindow* window, int key, int scancode,
 		        int action, int mods);
 
-		static void CbWindowSize (GLFWwindow* window, int w, int h);
+		static void cbWindowSize (GLFWwindow* window, int w, int h);
 
-		static void CbWindowPosition (GLFWwindow* window, int xpos, int ypos);
+		static void cbWindowPosition (GLFWwindow* window, int xpos, int ypos);
 
-		static void CbMouseButton (GLFWwindow* window, int button, int action,
+		static void cbMouseButton (GLFWwindow* window, int button, int action,
 		        int mods);
 
-		static void CbCursorPosition (GLFWwindow* window, double xpos,
+		static void cbCursorPosition (GLFWwindow* window, double xpos,
 		        double ypos);
 
-		static void CbCursorEnter (GLFWwindow* window, int entered);
+		static void cbCursorEnter (GLFWwindow* window, int entered);
 
 		/**
 		 * A std::map container to record GLFWwindow and Window

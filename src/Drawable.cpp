@@ -26,4 +26,12 @@ namespace BIL {
 
 	}
 
+	void Drawable::resize (const Size2i& size)
+	{
+		_size = size;
+		render ();
+		return;
+	}
+
 } /* namespace BIL */
+

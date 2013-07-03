@@ -15,71 +15,6 @@
 
 namespace BIL {
 
-/*
-template<typename T>
-struct _List_node
-{
-	_List_node* _prev;
-	_List_node* _next;
-	T _data;
-};
-
-template<typename T>
-struct _List_iterator
-{
-	_List_node<T> *_node;
-
-	_List_iterator ()
-			: _node()
-	{
-	}
-
-	T& operator* () const
-	{
-		return _node->_data;
-	}
-
-	T* operator-> () const
-	{
-		return &(_node->_data);
-	}
-
-	_List_iterator<T>& operator++ ()
-	{
-		_node = _node->_next;
-		return *this;
-	}
-
-	_List_iterator<T>& operator++ (int)
-	{
-		_node = _node->_next;
-		return *this;
-	}
-
-	_List_iterator<T>& operator-- ()
-	{
-		_node = _node->_prev;
-		return *this;
-	}
-
-	_List_iterator<T>& operator-- (int)
-	{
-		_node = _node->_prev;
-		return *this;
-	}
-
-	bool operator == (const _List_iterator<T>& x) const
-	{
-		return _node == x._node;
-	}
-
-	bool operator != (const _List_iterator<T>& x) const
-	{
-		return _node != x._node;
-	}
-};
-*/
-
 /**
  * class to store children in BasicObject
  */
@@ -180,7 +115,6 @@ ChildrenList<T>::ChildrenList ()
 template<typename T>
 ChildrenList<T>::~ChildrenList ()
 {
-	// TODO Auto-generated destructor stub
 	_list.clear();
 	_set.clear();
 }

@@ -5,36 +5,36 @@
  *      Author: zhanggyb
  */
 
-#ifndef SIZE_H_
-#define SIZE_H_
+#ifndef _BIL_SIZE_H_
+#define _BIL_SIZE_H_
 
 namespace BIL {
 
-	class Size
+	class Size2i
 	{
 	public:
 
-		Size ()
+		Size2i ()
 				: _width(0), _height(0)
 		{
 		}
 
-		Size (int w, int h)
+		Size2i (unsigned int w, unsigned int h)
 				: _width(w), _height(h)
 		{
 		}
 
-		Size (const Size& orig)
+		Size2i (const Size2i& orig)
 		{
 			_width = orig.getWidth();
 			_height = orig.getHeight();
 		}
 
-		Size & operator = (const Size& orig);
+		Size2i & operator = (const Size2i& orig);
 
-		virtual ~Size ();
+		virtual ~Size2i ();
 
-		void setHeight (int height)
+		void setHeight (unsigned int height)
 		{
 			this->_height = height;
 		}
@@ -44,7 +44,7 @@ namespace BIL {
 			return _height;
 		}
 
-		void setWidth (int width)
+		void setWidth (unsigned int width)
 		{
 			this->_width = width;
 		}
@@ -55,9 +55,9 @@ namespace BIL {
 		}
 	private:
 
-		int _width;
-		int _height;
+		unsigned int _width;
+		unsigned int _height;
 	};
 
 } /* namespace BIL */
-#endif /* SIZE_H_ */
+#endif /* _BIL_SIZE_H_ */

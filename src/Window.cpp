@@ -21,7 +21,7 @@ namespace BIL {
 		if (_window == NULL)
 			throw;
 
-		registerCallbacks(NULL);
+		registerCallbacks();
 
 		// createDefaultLayout ();
 	}
@@ -36,7 +36,7 @@ namespace BIL {
 		if (_window == NULL)
 			throw;
 
-		registerCallbacks(NULL);
+		registerCallbacks();
 
 		// createDefaultLayout();
 	}
@@ -48,20 +48,20 @@ namespace BIL {
 
 	Window::~Window ()
 	{
-		unregisterCallbacks((void*) (&BIL::Window::CbKey));
+		unregisterCallbacks();
 		glfwDestroyWindow(_window);
 	}
 
-	Size Window::getSize (void)
+	Size2i Window::getSize (void)
 	{
 		int w, h;
 
 		glfwGetWindowSize(_window, &w, &h);
 
-		return Size(w, h);
+		return Size2i(w, h);
 	}
 
-	bool Window::resize (const Size& size)
+	bool Window::resize (const Size2i& size)
 	{
 		return true;
 	}
@@ -82,20 +82,20 @@ namespace BIL {
 		return;
 	}
 
-	bool Window::registerCallbacks (void* pointer)
+	bool Window::registerCallbacks (void)
 	{
 		windowMap[_window] = this;
 
-		glfwSetKeyCallback(_window, &BIL::Window::CbKey);
-		glfwSetWindowPosCallback(_window, &BIL::Window::CbWindowPosition);
-		glfwSetWindowSizeCallback(_window, &BIL::Window::CbWindowSize);
+		glfwSetKeyCallback(_window, &BIL::Window::cbKey);
+		glfwSetWindowPosCallback(_window, &BIL::Window::cbWindowPosition);
+		glfwSetWindowSizeCallback(_window, &BIL::Window::cbWindowSize);
 
 		// _scope.connect(this->keyEvent(), this, &Window::message);
 
 		return true;
 	}
 
-	bool Window::unregisterCallbacks (void* pointer)
+	bool Window::unregisterCallbacks (void)
 	{
 		windowMap.erase(_window);
 
@@ -122,29 +122,29 @@ namespace BIL {
 		 //}
 	}
 
-	void Window::CbKey (GLFWwindow* window, int key, int scancode, int action,
+	void Window::cbKey (GLFWwindow* window, int key, int scancode, int action,
 	        int mods)
 	{
 	}
 
-	void Window::CbWindowSize (GLFWwindow* window, int w, int h)
+	void Window::cbWindowSize (GLFWwindow* window, int w, int h)
 	{
 	}
 
-	void Window::CbWindowPosition (GLFWwindow* window, int xpos, int ypos)
+	void Window::cbWindowPosition (GLFWwindow* window, int xpos, int ypos)
 	{
 	}
 
-	void Window::CbMouseButton (GLFWwindow* window, int button, int action,
+	void Window::cbMouseButton (GLFWwindow* window, int button, int action,
 	        int mods)
 	{
 	}
 
-	void Window::CbCursorPosition (GLFWwindow* window, double xpos, double ypos)
+	void Window::cbCursorPosition (GLFWwindow* window, double xpos, double ypos)
 	{
 	}
 
-	void Window::CbCursorEnter (GLFWwindow* window, int entered)
+	void Window::cbCursorEnter (GLFWwindow* window, int entered)
 	{
 	}
 
