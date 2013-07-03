@@ -11,33 +11,62 @@
 #include <stdint.h>
 #include <map>
 
+#include <BIL/ChildrenList.h>
+
 namespace BIL {
 
-class BasicObject {
+/**
+ * The basic class which has a unique ID, one parent and some children
+ */
+class BasicObject
+{
 
 public:
 
-	BasicObject();
+	BasicObject (BasicObject* parent = NULL);
 
-	virtual ~BasicObject();
+	virtual ~BasicObject ();
 
-	uint64_t getId() const {
+	uint64_t getId () const
+	{
 		return _id;
 	}
 
-	static BasicObject* find(uint64_t id);
+	static BasicObject* find (uint64_t id);
+
+	void setParent (BasicObject* parent);
+
+	bool addChild (BasicObject *child);
+
+	static unsigned int mapSize (void) {return map.size();}
+
+#ifdef DEBUG
+	static void reset(void)
+	{
+		id_last = 1;
+		map.clear();
+	}
+#endif
+
+protected:
+
+	bool removeChild (BasicObject* child);
+
+	ChildrenList<BasicObject*> _children;
 
 private:
 
-	inline bool registerObj(void);
+	inline bool registerObj (void);
 
-	inline bool unregisterObj(void);
+	inline bool unregisterObj (void);
 
-	BasicObject(const BasicObject& orig);
+	BasicObject (const BasicObject& orig);
 
-	BasicObject& operator =(const BasicObject& orig);
+	BasicObject& operator = (const BasicObject& orig);
 
 	uint64_t _id; /** A unique ID for object */
+
+	BasicObject* _parent;
 
 	static uint64_t id_last;
 	static std::map<uint64_t, BasicObject*> map;

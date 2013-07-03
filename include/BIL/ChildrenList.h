@@ -15,6 +15,7 @@
 
 namespace BIL {
 
+/*
 template<typename T>
 struct _List_node
 {
@@ -49,7 +50,19 @@ struct _List_iterator
 		return *this;
 	}
 
+	_List_iterator<T>& operator++ (int)
+	{
+		_node = _node->_next;
+		return *this;
+	}
+
 	_List_iterator<T>& operator-- ()
+	{
+		_node = _node->_prev;
+		return *this;
+	}
+
+	_List_iterator<T>& operator-- (int)
 	{
 		_node = _node->_prev;
 		return *this;
@@ -65,6 +78,7 @@ struct _List_iterator
 		return _node != x._node;
 	}
 };
+*/
 
 /**
  * class to store children in BasicObject
@@ -74,11 +88,48 @@ class ChildrenList
 {
 public:
 
+	typedef typename std::list<T>::iterator iterator;
+	// typedef typename std::list<T>::const_iterator const_iteator;
+
 	ChildrenList ();
 
 	virtual ~ChildrenList ();
 
+	iterator begin (void)
+	{
+		return _list.begin();
+	}
+
+	/*
+	const_iterator begin (void) const
+	{
+		return _list.begin();
+	}
+	*/
+
+	iterator end (void)
+	{
+		return _list.end();
+	}
+
+	/*
+	const_iterator end (void) const
+	{
+		return _list.end();
+	}
+	*/
+
 	T operator [] (int n);
+
+	T& front (void)
+	{
+		return _list.front();
+	}
+
+	T& back (void)
+	{
+		return _list.back();
+	}
 
 	bool push_front (const T& val);
 
@@ -93,6 +144,10 @@ public:
 	void pop_back (void);
 
 	bool find (const T& val);
+
+	void erase (const T& val);
+
+	void clear (void);
 
 	int size (void) const;
 
@@ -136,6 +191,7 @@ inline T BIL::ChildrenList<T>::operator [] (int n)
 	return _list[n];
 }
 
+
 template<typename T>
 inline bool BIL::ChildrenList<T>::push_front (const T& val)
 {
@@ -147,6 +203,7 @@ inline bool BIL::ChildrenList<T>::push_front (const T& val)
 		return false;
 	}
 }
+
 
 template<typename T>
 inline bool BIL::ChildrenList<T>::push_front (T& val)
@@ -172,6 +229,7 @@ inline bool BIL::ChildrenList<T>::push_back (const T& val)
 	}
 }
 
+
 template<typename T>
 inline bool BIL::ChildrenList<T>::push_back (T& val)
 {
@@ -189,7 +247,7 @@ inline void BIL::ChildrenList<T>::pop_front (void)
 {
 	if (size() > 0) {
 		T front = _list.front();
-		_set.remove(front);
+		_set.erase(front);
 		_list.pop_front();
 	}
 }
@@ -207,15 +265,21 @@ inline void BIL::ChildrenList<T>::pop_back (void)
 template<typename T>
 inline bool BIL::ChildrenList<T>::find (const T& val)
 {
-	typename std::set<T>::iterator it;
+	return _set.count(val) > 0? true : false;
+}
 
-	it = _set.find(val);
+template<typename T>
+inline void ChildrenList<T>::erase (const T& val)
+{
+	_set.erase(val);
+	_list.remove(val);
+}
 
-	if (it == _set.end()) {
-		return false;
-	} else {
-		return true;
-	}
+template<typename T>
+inline void ChildrenList<T>::clear (void)
+{
+	_set.clear ();
+	_list.clear();
 }
 
 template<typename T>
