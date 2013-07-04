@@ -71,7 +71,7 @@ namespace BIL {
 	void Window::setTitle (const std::string& title)
 	{
 		_title = title;
-		glfwSetWindowTitle (_window, title.data());
+		glfwSetWindowTitle(_window, title.data());
 
 		return;
 	}
@@ -79,7 +79,7 @@ namespace BIL {
 	void Window::setTitle (const char* title)
 	{
 		_title = title;
-		glfwSetWindowTitle (_window, title);
+		glfwSetWindowTitle(_window, title);
 
 		return;
 	}
@@ -106,31 +106,30 @@ namespace BIL {
 
 	void Window::render (void)
 	{
-		 int width = getSize().getWidth();
-		 int height = getSize().getHeight();
+		int width = getSize().getWidth();
+		int height = getSize().getHeight();
 
-		 // float ratio = width / (float) height;
+		// float ratio = width / (float) height;
 
-		 glViewport(0, 0, width, height);
-		 glMatrixMode(GL_PROJECTION);
-		 glLoadIdentity();
-		 glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
 
-		 glMatrixMode(GL_MODELVIEW);
-		 glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 
-		 ChildrenList<BasicObject*>::iterator it;
-		 Drawable *item = NULL;
-		 for (it = _children.begin(); it != _children.end(); it++)
-		 {
-			 item = dynamic_cast<Drawable*>(*it);
-			 if (item != NULL) {
-				 item->refresh();
-			 }
-		 }
-		 // if (_mainLayout != NULL) {
-		 //_mainLayout->Refresh();
-		 //}
+		ChildrenList<BasicObject*>::iterator it;
+		Drawable *item = NULL;
+		for (it = _children.begin(); it != _children.end(); it++) {
+			item = dynamic_cast<Drawable*>(*it);
+			if (item != NULL) {
+				item->refresh();
+			}
+		}
+		// if (_mainLayout != NULL) {
+		//_mainLayout->Refresh();
+		//}
 	}
 
 	void Window::cbKey (GLFWwindow* window, int key, int scancode, int action,

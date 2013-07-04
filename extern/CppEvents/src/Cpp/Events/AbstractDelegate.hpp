@@ -26,81 +26,83 @@
 #include <FastDelegate/FastDelegate.h>
 
 namespace Cpp {
-    //------------------------------------------------------------------------------
-    //! Value type that represents arbitrary delegate in a common form.
+	//------------------------------------------------------------------------------
+	//! Value type that represents arbitrary delegate in a common form.
 
-    class AbstractDelegate
-    {
-    public:
-
-	AbstractDelegate () : d_ ()
+	class AbstractDelegate
 	{
-	}
+	public:
 
-	AbstractDelegate (fastdelegate::DelegateMemento const & d) : d_ (d)
-	{
-	}
+		AbstractDelegate ()
+				: d_()
+		{
+		}
 
-	template<class D> AbstractDelegate (D const & deleg)
-	: d_ (deleg.GetMemento ())
-	{
-	}
+		AbstractDelegate (fastdelegate::DelegateMemento const & d)
+				: d_(d)
+		{
+		}
 
-	template<class T, class Y> AbstractDelegate (T obj, Y pmf)
-	: d_ (fastdelegate::MakeDelegate (obj, pmf).GetMemento ())
-	{
-	}
+		template<class D> AbstractDelegate (D const & deleg)
+				: d_(deleg.GetMemento())
+		{
+		}
 
-	bool isNull () const
-	{
-	    return d_.empty();
-	}
+		template<class T, class Y> AbstractDelegate (T obj, Y pmf)
+				: d_(fastdelegate::MakeDelegate(obj, pmf).GetMemento())
+		{
+		}
 
-	void clear ()
-	{
-	    d_.clear();
-	}
+		bool isNull () const
+		{
+			return d_.empty();
+		}
 
-	bool operator< (AbstractDelegate const & r) const
-	{
-	    return d_.IsLess(r.d_);
-	}
+		void clear ()
+		{
+			d_.clear();
+		}
 
-	bool operator> (AbstractDelegate const & r) const
-	{
-	    return r.d_.IsLess(d_);
-	}
+		bool operator< (AbstractDelegate const & r) const
+		{
+			return d_.IsLess(r.d_);
+		}
 
-	bool operator== (AbstractDelegate const & r) const
-	{
-	    return d_.IsEqual(r.d_);
-	}
+		bool operator> (AbstractDelegate const & r) const
+		{
+			return r.d_.IsLess(d_);
+		}
 
-	bool operator!= (AbstractDelegate const & r) const
-	{
-	    return !d_.IsEqual(r.d_);
-	}
+		bool operator== (AbstractDelegate const & r) const
+		{
+			return d_.IsEqual(r.d_);
+		}
 
-	bool operator>= (AbstractDelegate const & r) const
-	{
-	    return !d_.IsLess(r.d_);
-	}
+		bool operator!= (AbstractDelegate const & r) const
+		{
+			return !d_.IsEqual(r.d_);
+		}
 
-	bool operator<= (AbstractDelegate const & r) const
-	{
-	    return !r.d_.IsLess(d_);
-	}
+		bool operator>= (AbstractDelegate const & r) const
+		{
+			return !d_.IsLess(r.d_);
+		}
 
-	template<class D> D castToDelegate () const
-	{
-	    D retVal;
-	    retVal.SetMemento(d_);
-	    return retVal;
-	}
-    private:
-	fastdelegate::DelegateMemento d_;
-    };
-    //------------------------------------------------------------------------------
-} //namespace Cpp
+		bool operator<= (AbstractDelegate const & r) const
+		{
+			return !r.d_.IsLess(d_);
+		}
+
+		template<class D> D castToDelegate () const
+		{
+			D retVal;
+			retVal.SetMemento(d_);
+			return retVal;
+		}
+	private:
+		fastdelegate::DelegateMemento d_;
+	};
+//------------------------------------------------------------------------------
+}//namespace Cpp
 
 #endif //__CPP__EVENTS__ABSTRACT_DELEGATE__HPP

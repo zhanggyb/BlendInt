@@ -24,31 +24,30 @@
 #define __CPP__UTILS__RANDOM__HPP
 
 namespace Cpp {
-    //------------------------------------------------------------------------------
-    // Random number generator taken from Wikipedia 
-    // (http://en.wikipedia.org/wiki/Random_number_generation)
+	//------------------------------------------------------------------------------
+	// Random number generator taken from Wikipedia 
+	// (http://en.wikipedia.org/wiki/Random_number_generation)
 
-    class WikiRandom
-    {
-    public:
-
-	WikiRandom (unsigned long z, unsigned long w)
-	: m_z (z)
-	, m_w (w)
+	class WikiRandom
 	{
-	}
+	public:
 
-	unsigned long generate ()
-	{
-	    m_z = 36969 * (m_z & 65535) + (m_z >> 16);
-	    m_w = 18000 * (m_w & 65535) + (m_w >> 16);
-	    return (m_z << 16) +m_w; /* 32-bit result */
-	}
-    private:
-	unsigned long m_z;
-	unsigned long m_w;
-    };
-    //------------------------------------------------------------------------------
-} //namespace Cpp
+		WikiRandom (unsigned long z, unsigned long w)
+				: m_z(z), m_w(w)
+		{
+		}
+
+		unsigned long generate ()
+		{
+			m_z = 36969 * (m_z & 65535) + (m_z >> 16);
+			m_w = 18000 * (m_w & 65535) + (m_w >> 16);
+			return (m_z << 16) + m_w; /* 32-bit result */
+		}
+	private:
+		unsigned long m_z;
+		unsigned long m_w;
+	};
+//------------------------------------------------------------------------------
+}//namespace Cpp
 
 #endif //__CPP__UTILS__RANDOM__HPP

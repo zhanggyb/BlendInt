@@ -22,7 +22,7 @@ namespace BIL {
 		virtual bool addController (Controller *obj) = 0;
 
 	private:
-		Layout(const Layout& orig);
+		Layout (const Layout& orig);
 		Layout& operator = (const Layout& orig);
 	};
 

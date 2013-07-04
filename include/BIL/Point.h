@@ -22,7 +22,7 @@ namespace BIL {
 		}
 
 		Point2D (T x, T y)
-		: _x(x), _y(y)
+				: _x(x), _y(y)
 		{
 		}
 
@@ -33,7 +33,9 @@ namespace BIL {
 			_y = orig._y;
 		}
 
-		virtual ~Point2D() {}
+		virtual ~Point2D ()
+		{
+		}
 
 		Point2D<T>& operator = (const Point2D<T>& orig)
 		{

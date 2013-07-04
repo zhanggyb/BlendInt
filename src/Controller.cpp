@@ -13,13 +13,13 @@
 namespace BIL {
 
 	Controller::Controller (BasicObject *parent)
-	: Drawable(parent)
+			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub
 
 		// Set the default padding and margin
-		setPadding (Rect2Di (1, 1, 1, 1));
-		setMargin (Rect2Di (1, 1, 1, 1));
+		setPadding(Rect2Di(1, 1, 1, 1));
+		setMargin(Rect2Di(1, 1, 1, 1));
 	}
 
 	Controller::~Controller ()
@@ -27,7 +27,7 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	void Controller::render(void)
+	void Controller::render (void)
 	{
 
 	}

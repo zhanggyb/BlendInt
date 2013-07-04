@@ -18,15 +18,16 @@ namespace BIL {
 	public:
 		Rect2D ()
 				: _left(T()), _right(T()), _top(T()), _bottom(T())
-		{	}
+		{
+		}
 
 		Rect2D (T l, T r, T t, T b)
 				: _left(l), _right(r), _top(t), _bottom(b)
-		{	}
-
+		{
+		}
 
 		Rect2D<T> (const Rect2D<T>& orig)
-		: _left(T()), _right(T()), _top(T()), _bottom(T())
+				: _left(T()), _right(T()), _top(T()), _bottom(T())
 		{
 			_left = orig._left;
 			_right = orig._right;
@@ -43,7 +44,9 @@ namespace BIL {
 			return *this;
 		}
 
-		virtual ~Rect2D() {}
+		virtual ~Rect2D ()
+		{
+		}
 
 		T getBottom (void) const
 		{

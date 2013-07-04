@@ -26,43 +26,43 @@
 #include <Cpp/Utils/DisableCopy.hpp>
 
 namespace Cpp {
-    //------------------------------------------------------------------------------
-    template<class T> class ThreadStorage;
-    //------------------------------------------------------------------------------
-} //namespace Cpp
+	//------------------------------------------------------------------------------
+	template<class T> class ThreadStorage;
+//------------------------------------------------------------------------------
+}//namespace Cpp
 
 #include <Cpp/Threading/Config.hpp>
 #include CPP_THREADING_PLATFORM_PATH(ThreadStorage.hpp.inl)
 
 namespace Cpp {
-    //------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
 
-    template<class T> class ThreadStorage
-    {
-	CPP_DISABLE_COPY (ThreadStorage);
-    public:
-
-	ThreadStorage ()
+	template<class T> class ThreadStorage
 	{
-	}
+		CPP_DISABLE_COPY (ThreadStorage);
+	public:
 
-	~ThreadStorage ()
-	{
-	}
+		ThreadStorage ()
+		{
+		}
 
-	T data () const
-	{
-	    return reinterpret_cast<T> (p_.data());
-	}
+		~ThreadStorage ()
+		{
+		}
 
-	void setData (T x)
-	{
-	    p_.setData(reinterpret_cast<void*> (x));
-	}
-    private:
-	ThreadStorage<void*> p_;
-    };
-    //------------------------------------------------------------------------------
+		T data () const
+		{
+			return reinterpret_cast<T> (p_.data());
+		}
+
+		void setData (T x)
+		{
+			p_.setData(reinterpret_cast<void*> (x));
+		}
+	private:
+		ThreadStorage<void*> p_;
+	};
+	//------------------------------------------------------------------------------
 } //namespace Cpp
 
 #endif //__CPP__THREADING__THREAD_STORAGE__HPP

@@ -10,7 +10,7 @@
 namespace BIL {
 
 	Layout::Layout (BasicObject *parent)
-	: Drawable(parent)
+			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub
 

@@ -29,7 +29,7 @@ namespace BIL {
 	void Drawable::resize (const Size2Dui& size)
 	{
 		_size = size;
-		render ();
+		render();
 		return;
 	}
 

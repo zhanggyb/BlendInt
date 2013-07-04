@@ -29,120 +29,120 @@
 #include <Std/New.hpp>
 
 namespace Cpp {
-    //------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
 
-    class ThreadDataImpl
-    {
-    public:
-
-	ThreadDataImpl ()
+	class ThreadDataImpl
 	{
-	}
+	public:
 
-	~ThreadDataImpl ()
+		ThreadDataImpl ()
+		{
+		}
+
+		~ThreadDataImpl ()
+		{
+			assert(ref_.isNull());
+		}
+
+		void lock ()
+		{
+			mutex_.lock();
+		}
+
+		void unlock ()
+		{
+			mutex_.unlock();
+		}
+
+		void retain ()
+		{
+			ref_.retain();
+		}
+
+		void release ()
+		{
+			if (ref_.release()) {
+				delete this;
+			}
+		}
+
+	private:
+		AtomicInt ref_;
+		RecursiveMutex mutex_;
+	};
+	//------------------------------------------------------------------------------
+	typedef ThreadStorage<ThreadDataImpl*> ThreadDataStorage;
+	static char storageBytes[sizeof(ThreadDataStorage)];
+	static ThreadDataStorage * storage = 0;
+	//------------------------------------------------------------------------------
+
+	void Threading::constructProcessData ()
 	{
-	    assert(ref_.isNull());
+		assert(!storage);
+		storage = new (storageBytes) ThreadDataStorage();
+		constructThreadData();
 	}
+	//------------------------------------------------------------------------------
 
-	void lock ()
+	void Threading::destructProcessData ()
 	{
-	    mutex_.lock();
+		destructThreadData();
+		assert(storage);
+		storage->~ThreadDataStorage();
+		storage = 0;
 	}
+	//------------------------------------------------------------------------------
 
-	void unlock ()
+	void Threading::constructThreadData ()
 	{
-	    mutex_.unlock();
+		assert(storage);
+		assert(!storage->data());
+		ThreadDataImpl * data = new ThreadDataImpl();
+		data->retain();
+		storage->setData(data);
 	}
+	//------------------------------------------------------------------------------
 
-	void retain ()
+	void Threading::destructThreadData ()
 	{
-	    ref_.retain();
+		assert(storage);
+		ThreadDataImpl * data = storage->data();
+		assert(data);
+		data->release();
+		storage->setData(0);
 	}
+	//------------------------------------------------------------------------------
 
-	void release ()
+	Threading::ThreadData * Threading::currentThreadData ()
 	{
-	    if (ref_.release()) {
-		delete this;
-	    }
+		assert(storage);
+		ThreadDataImpl * data = storage->data();
+		assert(data);
+		return reinterpret_cast<Threading::ThreadData*>(data);
 	}
+	//------------------------------------------------------------------------------
 
-    private:
-	AtomicInt ref_;
-	RecursiveMutex mutex_;
-    };
-    //------------------------------------------------------------------------------
-    typedef ThreadStorage<ThreadDataImpl*> ThreadDataStorage;
-    static char storageBytes[sizeof (ThreadDataStorage)];
-    static ThreadDataStorage * storage = 0;
-    //------------------------------------------------------------------------------
+	void Threading::ThreadData::lock ()
+	{
+		reinterpret_cast<ThreadDataImpl*>(this)->lock();
+	}
+	//------------------------------------------------------------------------------
 
-    void Threading::constructProcessData ()
-    {
-	assert(!storage);
-	storage = new(storageBytes) ThreadDataStorage();
-	constructThreadData();
-    }
-    //------------------------------------------------------------------------------
+	void Threading::ThreadData::unlock ()
+	{
+		reinterpret_cast<ThreadDataImpl*>(this)->unlock();
+	}
+	//------------------------------------------------------------------------------
 
-    void Threading::destructProcessData ()
-    {
-	destructThreadData();
-	assert(storage);
-	storage->~ThreadDataStorage();
-	storage = 0;
-    }
-    //------------------------------------------------------------------------------
+	void Threading::ThreadData::retain ()
+	{
+		reinterpret_cast<ThreadDataImpl*>(this)->retain();
+	}
+	//------------------------------------------------------------------------------
 
-    void Threading::constructThreadData ()
-    {
-	assert(storage);
-	assert(!storage->data());
-	ThreadDataImpl * data = new ThreadDataImpl();
-	data->retain();
-	storage->setData(data);
-    }
-    //------------------------------------------------------------------------------
-
-    void Threading::destructThreadData ()
-    {
-	assert(storage);
-	ThreadDataImpl * data = storage->data();
-	assert(data);
-	data->release();
-	storage->setData(0);
-    }
-    //------------------------------------------------------------------------------
-
-    Threading::ThreadData * Threading::currentThreadData ()
-    {
-	assert(storage);
-	ThreadDataImpl * data = storage->data();
-	assert(data);
-	return reinterpret_cast<Threading::ThreadData*> (data);
-    }
-    //------------------------------------------------------------------------------
-
-    void Threading::ThreadData::lock ()
-    {
-	reinterpret_cast<ThreadDataImpl*> (this)->lock();
-    }
-    //------------------------------------------------------------------------------
-
-    void Threading::ThreadData::unlock ()
-    {
-	reinterpret_cast<ThreadDataImpl*> (this)->unlock();
-    }
-    //------------------------------------------------------------------------------
-
-    void Threading::ThreadData::retain ()
-    {
-	reinterpret_cast<ThreadDataImpl*> (this)->retain();
-    }
-    //------------------------------------------------------------------------------
-
-    void Threading::ThreadData::release ()
-    {
-	reinterpret_cast<ThreadDataImpl*> (this)->release();
-    }
-    //------------------------------------------------------------------------------
-} //namespace Cpp
+	void Threading::ThreadData::release ()
+	{
+		reinterpret_cast<ThreadDataImpl*>(this)->release();
+	}
+//------------------------------------------------------------------------------
+}//namespace Cpp

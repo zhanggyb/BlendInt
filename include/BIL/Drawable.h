@@ -32,7 +32,7 @@ namespace BIL {
 
 		void resize (unsigned int w, unsigned int h)
 		{
-			resize (Size2Dui(w,h));
+			resize(Size2Dui(w, h));
 		}
 
 		void resize (const Size2Dui& size);
@@ -81,8 +81,8 @@ namespace BIL {
 
 		Point2Di _pos;
 
-		Rect2Di _padding;	/** used when in Layout */
-		Rect2Di _margin;	/** used when in Layout */
+		Rect2Di _padding; /** used when in Layout */
+		Rect2Di _margin; /** used when in Layout */
 
 	private:
 

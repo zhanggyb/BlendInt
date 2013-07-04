@@ -24,21 +24,21 @@
 #define __CPP__EVENTS__THREADING__HPP
 
 namespace Cpp {
-    //------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------
 
-    class Threading
-    {
-    public:
-	class ThreadData;
+	class Threading
+	{
+	public:
+		class ThreadData;
 
-	static ThreadData * currentThreadData ();
+		static ThreadData * currentThreadData ();
 
-	static void constructProcessData ();
-	static void destructProcessData ();
-	static void constructThreadData ();
-	static void destructThreadData ();
-    };
-    //------------------------------------------------------------------------------
-} //namespace Cpp
+		static void constructProcessData ();
+		static void destructProcessData ();
+		static void constructThreadData ();
+		static void destructThreadData ();
+	};
+//------------------------------------------------------------------------------
+}//namespace Cpp
 
 #endif //__CPP__EVENTS__THREADING__HPP
