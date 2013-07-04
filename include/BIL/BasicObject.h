@@ -39,7 +39,7 @@ namespace BIL {
 			return _parent;
 		}
 
-		void setParent (BasicObject* parent);
+		bool setParent (BasicObject* parent);
 
 		bool addChild (BasicObject *child);
 

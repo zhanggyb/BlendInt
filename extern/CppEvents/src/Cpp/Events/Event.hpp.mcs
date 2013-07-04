@@ -1,0 +1,139 @@
+// Copyright (c) 2010 Nickolas Pohilets
+//
+// This file is a part of the CppEvents library.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+@@int N=8;
+#ifndef __CPP__EVENTS__EVENT__HPP
+#define __CPP__EVENTS__EVENT__HPP
+
+#include <Cpp/Events/AbstractEvent.hpp>
+#include <Cpp/Events/ConnectionEx.hpp>
+#include <Cpp/Utils/TypeTraits.hpp>
+
+namespace Cpp {
+//------------------------------------------------------------------------------
+template<
+@@for(int i=0; i<=N; i+=1)
+	class Param@i@ = Meta::NullType@if(i < N) "," end@
+@@next
+> class Event;
+//------------------------------------------------------------------------------
+template<
+@@for(int i=0; i<=N; i+=1)
+	class Param@i@ = Meta::NullType@if(i < N) "," end@
+@@next
+> class EventRef;
+//------------------------------------------------------------------------------
+@@for(int i=0; i<=N; i+=1)
+@@str SelArgs = selArgs(i, ", ") $ list("Meta::NullType", (N - i) + 1)
+template<@classArgs(i)@>
+	class Event<@SelArgs@> : public AbstractEvent
+{
+public:
+	typedef Private::Events::Connection@i;selArgs("<", i, ">")@ ConnectionType;
+
+	Event() {}
+	~Event() {}
+
+	void addConnection(Private::Events::ConnectionList * tracker, ConnectionType * conn)
+	{
+		AbstractEvent::addConnection(tracker, conn);
+	}
+	
+	void fire(@funcArgs(i)@) const
+	{
+		FireLock lock(this);
+		typedef Private::Events::ConnectionsVector CV;
+		CV const & conns = lock.connections();
+		for(CV::const_iterator it = conns.begin(); it != conns.end(); ++it)
+		{
+			static_cast<ConnectionType const *>(*it)->invoke(@callArgs(i)@);
+		}
+	}
+};
+//------------------------------------------------------------------------------
+template<@classArgs(i)@>
+	class EventRef<@SelArgs@> : public AbstractEventRef
+{
+public:
+	typedef Event<@SelArgs@> EventType;
+	typedef @if(i > 0) "typename " end@EventType::ConnectionType ConnectionType;
+
+	EventRef(EventType & ev) : AbstractEventRef(&ev) {}
+
+	template<class T, class Y> void connect(Private::Events::ConnectionList * tracker, T * obj, void (Y::*pmf)(@funcArgs(i)@))
+	{
+		ConnectionType * conn = new ConnectionType(
+			fastdelegate::MakeDelegate(obj, pmf)
+		);
+		addConnection(tracker, conn);
+	}
+
+	template<class T, class Y> void connect(Private::Events::ConnectionList * tracker, T const * obj, void (Y::*pmf)(@funcArgs(i)@) const)
+	{
+		ConnectionType * conn = new ConnectionType(
+			fastdelegate::MakeDelegate(obj, pmf)
+		);
+		addConnection(tracker, conn);
+	}
+
+	template<class T, class Y> void connect(Private::Events::ConnectionList * tracker, T * obj, Y pmf)
+	{
+		Private::Events::ArgList0 stored;
+		connectEx(tracker, fastdelegate::MakeDelegate(obj, pmf), stored);
+	}
+
+@@for(int j=1; j<N; j+=1)
+	template<class T, class Y, @list("class T%", 1, j)@> void connect(Private::Events::ConnectionList * tracker, T * obj, Y pmf, @list("T% x%", 1, j)@)
+	{
+@@for(int k=1; k<=j; k+=1)
+		typedef typename TypeTraits::StorageType<T@k@>::Type S@k@;
+@@next
+		Private::Events::ArgList@j@<@list("S%", 1, j)@> stored(@list("x%", 1, j)@);
+		connectEx(tracker, fastdelegate::MakeDelegate(obj, pmf), stored);
+	}
+
+@@next
+@@for(int j=i; j<N; j+=1)
+	@listx("template<%> ", "class T%", j)@void connectEvent(Private::Events::ConnectionList * tracker, Event<@list("T%", j)@> * ev@iter(", T% x%", j-i)@)
+	{
+		connect(tracker, ev, &Event<@list("T%", j)@>::fire@iter(", x%", 0, j-i)@);
+	}
+@@next
+private:
+	void addConnection(Private::Events::ConnectionList * tracker, ConnectionType * conn)
+	{
+		static_cast<EventType*>(senderEvent())->addConnection(tracker, conn);
+	}
+
+	template<class DelegateClass, class StoredListClass> void connectEx(Private::Events::ConnectionList * tracker, DelegateClass const & deleg, StoredListClass const & stored)
+	{
+		ConnectionType * conn = new Private::Events::ConnectionEx@i@<@selArgs(i, ", ")@DelegateClass, StoredListClass>(
+			deleg, stored
+		);
+		addConnection(tracker, conn);
+	}
+};
+//------------------------------------------------------------------------------
+@@next
+} //namespace Cpp
+
+#endif //__CPP__EVENTS__EVENT__HPP

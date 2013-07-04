@@ -90,14 +90,15 @@ inline bool BasicObject::unregisterObj (void)
 	return true;
 }
 
-void BasicObject::setParent (BasicObject* parent)
+bool BasicObject::setParent (BasicObject* parent)
 {
 	_parent = parent;
 
-	if (_parent != NULL)
-		_parent->addChild(this);
+	if (_parent != NULL) {
+		return (_parent->addChild(this));
+	}
 
-	return;
+	return true;
 }
 
 bool BasicObject::addChild (BasicObject* child)

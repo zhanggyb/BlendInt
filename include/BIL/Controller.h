@@ -20,7 +20,6 @@ namespace BIL {
 
 	protected:
 		virtual void render (void);
-
 	};
 
 } /* namespace BIL */

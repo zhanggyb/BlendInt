@@ -8,6 +8,7 @@
 #include <GL/gl.h>
 
 #include <BIL/Controller.h>
+#include <BIL/Rect.h>
 
 namespace BIL {
 
@@ -16,6 +17,9 @@ namespace BIL {
 	{
 		// TODO Auto-generated constructor stub
 
+		// Set the default padding and margin
+		setPadding (Rect2Di (1, 1, 1, 1));
+		setMargin (Rect2Di (1, 1, 1, 1));
 	}
 
 	Controller::~Controller ()

@@ -53,6 +53,26 @@ namespace BIL {
 			render();
 		}
 
+		const Rect2Di& getMargin (void) const
+		{
+			return _margin;
+		}
+
+		void setMargin (const Rect2Di& margin)
+		{
+			_margin = margin;
+		}
+
+		const Rect2Di& getPadding (void) const
+		{
+			return _padding;
+		}
+
+		void setPadding (const Rect2Di& padding)
+		{
+			_padding = padding;
+		}
+
 	protected:
 
 		virtual void render (void) = 0;
@@ -61,8 +81,8 @@ namespace BIL {
 
 		Point2Di _pos;
 
-		Rect2Di _padding;
-		Rect2Di _margin;
+		Rect2Di _padding;	/** used when in Layout */
+		Rect2Di _margin;	/** used when in Layout */
 
 	private:
 
