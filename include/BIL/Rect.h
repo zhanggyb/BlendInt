@@ -8,17 +8,24 @@
 #ifndef _BIL_RECT_H_
 #define _BIL_RECT_H_
 
+#include <GL/gl.h>
+
 namespace BIL {
 
 	template<typename T>
-	class Rect
+	class Rect2D
 	{
 	public:
-		Rect ()
+		Rect2D ()
 				: _left(T()), _right(T()), _top(T()), _bottom(T())
 		{	}
 
-		Rect<T> (const Rect<T>& orig)
+		Rect2D (T l, T r, T t, T b)
+				: _left(l), _right(r), _top(t), _bottom(b)
+		{	}
+
+
+		Rect2D<T> (const Rect2D<T>& orig)
 		: _left(T()), _right(T()), _top(T()), _bottom(T())
 		{
 			_left = orig._left;
@@ -27,7 +34,7 @@ namespace BIL {
 			_bottom = orig._bottom;
 		}
 
-		Rect<T>& operator = (const Rect<T>& orig)
+		Rect2D<T>& operator = (const Rect2D<T>& orig)
 		{
 			_left = orig._left;
 			_right = orig._right;
@@ -36,7 +43,7 @@ namespace BIL {
 			return *this;
 		}
 
-		virtual ~Rect() {}
+		virtual ~Rect2D() {}
 
 		T getBottom (void) const
 		{
@@ -84,6 +91,11 @@ namespace BIL {
 		T _top;
 		T _bottom;
 	};
+
+	typedef Rect2D<GLint> Rect2Di;
+	typedef Rect2D<GLfloat> Rect2Df;
+	typedef Rect2D<GLdouble> Rect2Dd;
+	typedef Rect2D<GLuint> Rect2Dui;
 
 } /* namespace BIL */
 #endif /* _BIL_RECT_H_ */

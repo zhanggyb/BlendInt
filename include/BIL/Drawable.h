@@ -25,24 +25,24 @@ namespace BIL {
 
 		virtual ~Drawable ();
 
-		const Size2i& getSize (void) const
+		const Size2Dui& getSize (void) const
 		{
 			return _size;
 		}
 
 		void resize (unsigned int w, unsigned int h)
 		{
-			resize (Size2i(w,h));
+			resize (Size2Dui(w,h));
 		}
 
-		void resize (const Size2i& size);
+		void resize (const Size2Dui& size);
 
-		const Point2D<unsigned int>& getPos (void) const
+		const Point2Di& getPos (void) const
 		{
 			return _pos;
 		}
 
-		void setPos (const Point2D<unsigned int>& pos)
+		void setPos (const Point2Di& pos)
 		{
 			_pos = pos;
 			render();
@@ -52,12 +52,12 @@ namespace BIL {
 
 		virtual void render (void) = 0;
 
-		Size2i _size;
+		Size2Dui _size;
 
-		Point2D<unsigned int> _pos;
+		Point2Di _pos;
 
-		Rect<int> _padding;
-		Rect<int> _margin;
+		Rect2Di _padding;
+		Rect2Di _margin;
 
 	private:
 

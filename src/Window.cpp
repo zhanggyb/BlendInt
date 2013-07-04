@@ -52,16 +52,16 @@ namespace BIL {
 		glfwDestroyWindow(_window);
 	}
 
-	Size2i Window::getSize (void)
+	Size2Di Window::getSize (void)
 	{
 		int w, h;
 
 		glfwGetWindowSize(_window, &w, &h);
 
-		return Size2i(w, h);
+		return Size2Di(w, h);
 	}
 
-	bool Window::resize (const Size2i& size)
+	bool Window::resize (const Size2Di& size)
 	{
 		return true;
 	}

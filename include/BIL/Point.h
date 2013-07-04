@@ -8,6 +8,8 @@
 #ifndef _BIL_POSITION_H_
 #define _BIL_POSITION_H_
 
+#include <GL/gl.h>
+
 namespace BIL {
 
 	template<typename T>
@@ -16,6 +18,11 @@ namespace BIL {
 	public:
 		Point2D ()
 				: _x(T()), _y(T())
+		{
+		}
+
+		Point2D (T x, T y)
+		: _x(x), _y(y)
 		{
 		}
 
@@ -59,6 +66,11 @@ namespace BIL {
 		T _x;
 		T _y;
 	};
+
+	typedef Point2D<GLint> Point2Di;
+	typedef Point2D<GLfloat> Point2Df;
+	typedef Point2D<GLdouble> Point2Dd;
+	typedef Point2D<GLuint> Point2Dui;
 
 } /* namespace BIL */
 #endif /* _BIL_POSITION_H_ */

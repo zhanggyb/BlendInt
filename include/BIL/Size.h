@@ -8,56 +8,70 @@
 #ifndef _BIL_SIZE_H_
 #define _BIL_SIZE_H_
 
+#include <GL/gl.h>
+
 namespace BIL {
 
-	class Size2i
+	template<typename T>
+	class Size2D
 	{
 	public:
 
-		Size2i ()
-				: _width(0), _height(0)
+		Size2D ()
+				: _width(T()), _height(T())
 		{
 		}
 
-		Size2i (unsigned int w, unsigned int h)
+		Size2D<T> (T w, T h)
 				: _width(w), _height(h)
 		{
 		}
 
-		Size2i (const Size2i& orig)
+		Size2D<T> (const Size2D<T>& orig)
+				: _width(T()), _height(T())
 		{
-			_width = orig.getWidth();
-			_height = orig.getHeight();
 		}
 
-		Size2i & operator = (const Size2i& orig);
-
-		virtual ~Size2i ();
-
-		void setHeight (unsigned int height)
+		Size2D<T>& operator = (const Size2D<T>& orig)
 		{
-			this->_height = height;
+			_width = orig._width;
+			_height = orig._height;
+			return *this;
 		}
 
-		int getHeight (void) const
+		virtual ~Size2D ()
+		{
+		}
+
+		T getHeight (void) const
 		{
 			return _height;
 		}
 
-		void setWidth (unsigned int width)
+		void setHeight (T height)
 		{
-			this->_width = width;
+			_height = height;
 		}
 
-		int getWidth (void) const
+		T getWidth (void) const
 		{
 			return _width;
 		}
-	private:
 
-		unsigned int _width;
-		unsigned int _height;
+		void setWidth (T width)
+		{
+			_width = width;
+		}
+
+	private:
+		T _width;
+		T _height;
 	};
+
+	typedef Size2D<GLint> Size2Di;
+	typedef Size2D<GLfloat> Size2Df;
+	typedef Size2D<GLdouble> Size2Dd;
+	typedef Size2D<GLuint> Size2Dui;
 
 } /* namespace BIL */
 #endif /* _BIL_SIZE_H_ */

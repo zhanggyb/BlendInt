@@ -36,13 +36,13 @@ namespace BIL {
 			return _window;
 		}
 
-		Size2i getSize (void);
+		Size2Di getSize (void);
 
-		bool resize (const Size2i& size);
+		bool resize (const Size2Di& size);
 
 		bool resize (int w, int h)
 		{
-			return (resize(Size2i(w, h)));
+			return (resize(Size2Di(w, h)));
 		}
 
 		void setTitle (const std::string& title);
