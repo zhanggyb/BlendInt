@@ -53,7 +53,7 @@ namespace BIL {
 			return _title;
 		}
 
-		inline void refresh (void)
+		virtual void refresh (void)
 		{
 			render();
 		}

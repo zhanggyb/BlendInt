@@ -14,7 +14,7 @@ namespace BIL {
 
 	using namespace std;
 
-	Drawable::Drawable (Drawable* parent)
+	Drawable::Drawable (BasicObject* parent)
 			: BasicObject(parent)
 	{
 

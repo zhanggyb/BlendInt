@@ -7,6 +7,8 @@
 
 #include <BIL/Window.h>
 
+#include <BIL/Drawable.h>
+
 namespace BIL {
 
 	std::map<GLFWwindow*, Window*> Window::windowMap;
@@ -117,6 +119,15 @@ namespace BIL {
 		 glMatrixMode(GL_MODELVIEW);
 		 glLoadIdentity();
 
+		 ChildrenList<BasicObject*>::iterator it;
+		 Drawable *item = NULL;
+		 for (it = _children.begin(); it != _children.end(); it++)
+		 {
+			 item = dynamic_cast<Drawable*>(*it);
+			 if (item != NULL) {
+				 item->refresh();
+			 }
+		 }
 		 // if (_mainLayout != NULL) {
 		 //_mainLayout->Refresh();
 		 //}

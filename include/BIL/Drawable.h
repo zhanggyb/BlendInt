@@ -21,7 +21,7 @@ namespace BIL {
 	class Drawable: public BIL::BasicObject
 	{
 	public:
-		Drawable (Drawable* parent = NULL);
+		Drawable (BasicObject* parent = NULL);
 
 		virtual ~Drawable ();
 
@@ -45,6 +45,11 @@ namespace BIL {
 		void setPos (const Point2Di& pos)
 		{
 			_pos = pos;
+			render();
+		}
+
+		virtual void refresh (void)
+		{
 			render();
 		}
 
