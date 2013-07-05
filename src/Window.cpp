@@ -51,6 +51,9 @@ namespace BIL {
 	Window::~Window ()
 	{
 		unregisterCallbacks();
+
+		deleteChildren();
+
 		glfwDestroyWindow(_window);
 	}
 

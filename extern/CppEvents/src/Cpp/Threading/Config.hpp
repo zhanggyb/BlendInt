@@ -23,10 +23,10 @@
 #ifndef __CPP__THREADING__CONFIG__HPP
 #define __CPP__THREADING__CONFIG__HPP
 
-#ifdef LINUX
+#ifdef __LINUX__
 #define CPP_THREADING_PLATFORM_DIR POSIX
 #else
-#ifdef WIN
+#ifdef __WIN__
 // Directory for platform-specific files (set by CMake)
 #define CPP_THREADING_PLATFORM_DIR WinApi
 #endif

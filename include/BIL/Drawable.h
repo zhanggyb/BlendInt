@@ -37,12 +37,18 @@ namespace BIL {
 
 		void resize (const Size2Dui& size);
 
-		const Point2Di& getPos (void) const
+		const Point3Di& getPos (void) const
 		{
 			return _pos;
 		}
 
 		void setPos (const Point2Di& pos)
+		{
+			_pos = Point3Di(pos.getX(), pos.getY(), 0);
+			render ();
+		}
+
+		void setPos (const Point3Di& pos)
 		{
 			_pos = pos;
 			render();
@@ -79,7 +85,7 @@ namespace BIL {
 
 		Size2Dui _size;
 
-		Point2Di _pos;
+		Point3Di _pos;
 
 		Rect2Di _padding; /** used when in Layout */
 		Rect2Di _margin; /** used when in Layout */

@@ -39,26 +39,11 @@ namespace BIL {
 
 	BasicObject::~BasicObject ()
 	{
-#ifdef DEBUG
-		std::cout << "Now object " << getId() << " will be deleted"
-		        << std::endl;
-#endif
-
+		BasicObject* item = NULL;
 		while (_children.size() > 0) {
-			BasicObject* item = NULL;
-
-			std::cout << "Size of children " << _children.size() << std::endl;
-
-			item = _children.front();
-			_children.pop_front();
-			if (item != NULL) {
-				std::cout << getId() << " will delete child: " << item->getId()
-				        << std::endl;
-
-				delete item;
-
-				std::cout << "See me? " << __LINE__ << std::endl;
-			}
+			item = _children.back();
+			_children.pop_back();
+			if (item != NULL) delete item;
 		}
 
 		_children.clear();
@@ -128,5 +113,18 @@ namespace BIL {
 		return true;
 	}
 
-} /* namespace BIL */
 
+	void BasicObject::deleteChildren (void)
+	{
+		BasicObject* item = NULL;
+
+		while (_children.size() > 0) {
+			item = _children.back();
+			_children.pop_back();
+			if (item != NULL) delete item;
+		}
+
+		_children.clear();
+	}
+
+} /* namespace BIL */

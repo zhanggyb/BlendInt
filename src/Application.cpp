@@ -83,6 +83,15 @@ namespace BIL {
 	Application::~Application ()
 	{
 		// TODO Auto-generated destructor stub
+
+		// TODO: the following lines will cause crash
+		/*
+		if (_mainWindow != NULL) {
+			delete _mainWindow;
+			_mainWindow = NULL;
+		}
+		*/
+
 		glfwTerminate();
 	}
 

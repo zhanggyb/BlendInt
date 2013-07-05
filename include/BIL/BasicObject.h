@@ -16,17 +16,31 @@
 namespace BIL {
 
 	/**
-	 * The basic class which has a unique ID, one parent and some children
+	 * @brief The basic class which has a unique ID, one parent and some children
+	 *
+	 * BasicObject is the base class of most objects in this library, it provides:
+	 *	- unique id: each instance has its unique id
+	 *	- parent pointer: each instance has its one parent (or NULL)
+	 *	- children: each instance has its children, when it's deleted, all children
+	 *	will be deleted too. It's a common behavior in GUI
 	 */
 	class BasicObject
 	{
 
 	public:
 
+		/**
+		 * @brief default constructor
+		 * @param parent the parent pointer
+		 */
 		BasicObject (BasicObject* parent = NULL);
 
 		virtual ~BasicObject ();
 
+		/**
+		 * @brief get the object id
+		 * @return
+		 */
 		uint64_t getId () const
 		{
 			return _id;
@@ -34,11 +48,22 @@ namespace BIL {
 
 		static BasicObject* find (uint64_t id);
 
+		/**
+		 * @brief get the parent pointer
+		 * @return
+		 */
 		const BasicObject* getParent (void) const
 		{
 			return _parent;
 		}
 
+		/**
+		 * @brief set parent object
+		 * @param parent parent pointer
+		 * @return true or false
+		 *
+		 * Set the parent object and add self into the children list of parent
+		 */
 		bool setParent (BasicObject* parent);
 
 		bool addChild (BasicObject *child);
@@ -62,19 +87,27 @@ namespace BIL {
 
 		ChildrenList<BasicObject*> _children;
 
+		void deleteChildren (void);
+
 	private:
 
 		inline bool registerObj (void);
 
 		inline bool unregisterObj (void);
 
+		/**
+		 * @brief Declare copy constructor in private to disable it
+		 */
 		BasicObject (const BasicObject& orig);
 
+		/**
+		 * @brief Declare assignment constructor in private to disable it
+		 */
 		BasicObject& operator = (const BasicObject& orig);
 
 		uint64_t _id; /** A unique ID for object */
 
-		BasicObject* _parent;
+		BasicObject* _parent; /** parent object */
 
 		static uint64_t id_last;
 		static std::map<uint64_t, BasicObject*> map;
