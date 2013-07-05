@@ -13,9 +13,14 @@
 #include <FTGL/ftgl.h>
 #include <FTGL/FTGLTextureFont.h>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+#include <BIL/Font.h>
+
 using namespace std;
 
-typedef map<string, FTFont*> FontList;
+typedef map<string, BIL::Font> FontList;
 typedef FontList::const_iterator FontIter;
 
 namespace BIL {
@@ -35,15 +40,30 @@ namespace BIL {
 			return tm;
 		}
 
+		/**
+		 * @brief load truetype font
+		 * @param path font path
+		 * @return
+		 */
+		bool loadFont (const string& name);
+
+		bool loadFontFile (const string& path);
+
 	private:
+
+		/**
+		 * @brief Default constructor
+		 *
+		 * Move the default constructor to private
+		 */
 		FontManager ()
 		{
 		}
 
+		inline bool fileExist (const string& file);
+
 		FontManager (const FontManager &orig);
 		FontManager& operator = (const FontManager &orig);
-
-		bool loadFont (const string &path);
 
 		// container for fonts
 		FontList _fonts;

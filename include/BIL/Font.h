@@ -10,8 +10,12 @@
 
 #include <FTGL/ftgl.h>
 #include <string>
+#include <vector>
+#include <GL/gl.h>
 
 #include <BIL/Color.h>
+#include <BIL/Point.h>
+#include <BIL/Rect.h>
 
 namespace BIL {
 
@@ -44,16 +48,6 @@ namespace BIL {
 			_size = size;
 		}
 
-		const Color& getColor (void) const
-		{
-			return _color;
-		}
-
-		void setColor (const Color& color)
-		{
-			_color = color;
-		}
-
 		const std::string& getName (void) const
 		{
 			return _name;
@@ -72,8 +66,42 @@ namespace BIL {
 	private:
 
 		std::string _name; /** Font anme, e.g. "Arial" */
-		float _size; /** Font size */
-		Color _color; /** Font color */
+		std::string _filename; /** filename or empty */
+
+		std::vector<GLfloat> _aspect; /** aspect ratio or scale, n = 3 */
+
+		Point3Df _pos; /** initial position for draw the text */
+
+		GLfloat _angle; /** angle in radians */
+
+		GLint _blue; /** blue: 3 or 5 large kernel */
+
+		GLint _shadow; /** shadow level */
+
+		GLint _shadow_x; /** shadow offset */
+		GLint _shadow_y; /** shadow offset */
+
+		Color _shadow_col; /** shadow color */
+
+		Color _orig_col; /** store color here when drawing shadow or blue */
+
+		GLdouble _m[16]; /** Multiplied this matrix with the current one before draw the text! see blf_draw_start */
+
+		Rect2Df _clip_rec;	/** clipping rectangle */
+
+		GLuint _dpi;	/** font dpi (Default 72). */
+
+		GLuint _size;	/** font size */
+
+		GLint _max_tex_size;	/** max texture size */
+
+		GLuint _tex_bind_state;	/** cache current OpenGL texture to save calls into the API */
+
+		GLint flags;	/** font options */
+
+		FT_Library _ft_lib;	/** freetype2 lib handle */
+
+		FT_Face _face;	/** freetype2 face */
 
 		static const std::string DEFAULT_FONT;
 	};
