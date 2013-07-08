@@ -57,6 +57,7 @@
 								<option defaultValue="true" id="gnu.cpp.link.so.debug.option.shared.1334779150" name="Shared (-shared)" superClass="gnu.cpp.link.so.debug.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.libs.1478901316" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="GLEW"/>
+									<listOptionValue builtIn="false" value="boost_filesystem"/>
 									<listOptionValue builtIn="false" value="ftgl"/>
 									<listOptionValue builtIn="false" value="glfw"/>
 								</option>

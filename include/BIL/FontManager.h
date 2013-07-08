@@ -47,7 +47,9 @@ namespace BIL {
 		 */
 		bool loadFont (const string& name);
 
-		bool loadFontFile (const string& path);
+		bool loadFontFile (const string& file);
+
+		void loadFontDir (const string& path);
 
 	private:
 
@@ -62,7 +64,6 @@ namespace BIL {
 
 		inline bool fileExist (const string& file);
 
-		FontManager (const FontManager &orig);
 		FontManager& operator = (const FontManager &orig);
 
 		// container for fonts
