@@ -8,7 +8,8 @@
 #ifndef _BIL_DRAWABLE_H_
 #define _BIL_DRAWABLE_H_
 
-#include <set>
+// if use C++ 11, include <array>
+#include <boost/array.hpp>
 #include <stddef.h>
 
 #include <BIL/BasicObject.h>
@@ -17,6 +18,8 @@
 #include <BIL/Rect.h>
 
 namespace BIL {
+
+	typedef boost::array<GLint, 4> Array4i;
 
 	class Drawable: public BIL::BasicObject
 	{
@@ -59,22 +62,38 @@ namespace BIL {
 			render();
 		}
 
-		const Rect2Di& getMargin (void) const
+		const Array4i& getMargin (void) const
 		{
 			return _margin;
 		}
 
-		void setMargin (const Rect2Di& margin)
+		void setMargin (GLint l, GLint r, GLint t, GLint b)
+		{
+			_margin[0] = l;
+			_margin[1] = r;
+			_margin[2] = t;
+			_margin[3] = b;
+		}
+
+		void setMargin (const Array4i& margin)
 		{
 			_margin = margin;
 		}
 
-		const Rect2Di& getPadding (void) const
+		const Array4i& getPadding (void) const
 		{
 			return _padding;
 		}
 
-		void setPadding (const Rect2Di& padding)
+		void setPadding (GLint l, GLint r, GLint t, GLint b)
+		{
+			_padding[0] = l;
+			_padding[1] = r;
+			_padding[2] = t;
+			_padding[b] = b;
+		}
+
+		void setPadding (const Array4i& padding)
 		{
 			_padding = padding;
 		}
@@ -87,8 +106,8 @@ namespace BIL {
 
 		Point3Di _pos;
 
-		Rect2Di _padding; /** used when in Layout */
-		Rect2Di _margin; /** used when in Layout */
+		Array4i _padding; /** used when in Layout */
+		Array4i _margin; /** used when in Layout */
 
 	private:
 

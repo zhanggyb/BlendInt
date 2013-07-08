@@ -18,8 +18,8 @@ namespace BIL {
 		// TODO Auto-generated constructor stub
 
 		// Set the default padding and margin
-		setPadding(Rect2Di(1, 1, 1, 1));
-		setMargin(Rect2Di(1, 1, 1, 1));
+		setPadding(1, 1, 1, 1);
+		setMargin(1, 1, 1, 1);
 	}
 
 	Controller::~Controller ()
