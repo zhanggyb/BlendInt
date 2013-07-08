@@ -9,13 +9,15 @@
 #include <GL/glew.h>
 
 #include <iostream>
+#include <string>
 
 #include <BIL/Application.h>
 
-// Include GLM
-#include <glm/glm.hpp>
 
 namespace BIL {
+
+	std::string Application::glStrVersion;
+	GLfloat Application::glVersion = 1.0;
 
 	Application::Application ()
 			: _mainWindow(NULL)
@@ -31,12 +33,12 @@ namespace BIL {
 		if (ret == GL_TRUE)
 			glfwSetErrorCallback(&Application::cbError);
 
-		return ret;
+			return ret;
 	}
 
-	Version Application::getVersion (void)
+	GLFWVersion Application::getVersion (void)
 	{
-		Version version;
+		GLFWVersion version;
 
 		glfwGetVersion(&version.major, &version.minor, &version.rev);
 
@@ -52,6 +54,7 @@ namespace BIL {
 		return version;
 	}
 
+	// FIXME: run in bummblebee cause crash if the window is closed
 	void Application::run (void)
 	{
 		if (_mainWindow == NULL) {
@@ -60,6 +63,11 @@ namespace BIL {
 		}
 
 		_mainWindow->MakeContextCurrent();
+
+		// check OpenGL version
+		glStrVersion = (const char*)glGetString(GL_VERSION);
+		glVersion = std::atof(glStrVersion.c_str());	// C++ 98
+		// glVersion = std::stof (glStrVersion);	// C++ 11
 
 		// Initialize GLEW
 		glewExperimental = true; // Needed in core profile

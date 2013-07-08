@@ -53,6 +53,12 @@ namespace BIL {
 		return true;
 	}
 
+	bool FontManager::loadFont (const string& name)
+	{
+		// TODO: load from font name
+		return true;
+	}
+
 	inline bool FontManager::fileExist (const string& file)
 	{
 		ifstream f(file.data());

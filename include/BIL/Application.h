@@ -9,13 +9,14 @@
 #define _BIL_APPLICATION_H_
 
 #include <GLFW/glfw3.h>
+#include <GL/gl.h>
 #include <string>
 
 #include <BIL/Window.h>
 
 namespace BIL {
 
-	struct Version
+	struct GLFWVersion
 	{
 		int major;
 		int minor;
@@ -34,8 +35,16 @@ namespace BIL {
 			glfwTerminate();
 		}
 
-		Version getVersion (void);
+		/**
+		 * @brief Get GLFW version
+		 * @return
+		 */
+		GLFWVersion getVersion (void);
 
+		/**
+		 *  @brief Get GLFW version
+		 * @return
+		 */
 		std::string getVersionString (void);
 
 		void setMainWindow (Window *window)
@@ -46,6 +55,10 @@ namespace BIL {
 		void run (void);
 
 		virtual ~Application ();
+
+		static std::string glStrVersion;
+
+		static GLfloat glVersion;
 
 	private:
 
