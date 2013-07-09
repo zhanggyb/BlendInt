@@ -20,7 +20,7 @@
 
 using namespace std;
 
-typedef map<string, BIL::Font> FontList;
+typedef map<string, BIL::FontData*> FontList;
 typedef FontList::const_iterator FontIter;
 
 namespace BIL {
@@ -47,10 +47,6 @@ namespace BIL {
 		 */
 		bool loadFont (const string& name);
 
-		bool loadFontFile (const string& file);
-
-		void loadFontDir (const string& path);
-
 	private:
 
 		/**
@@ -59,15 +55,28 @@ namespace BIL {
 		 * Move the default constructor to private
 		 */
 		FontManager ()
+				: _fontLib(NULL)
 		{
 		}
 
-		inline bool fileExist (const string& file);
+		bool loadFontFile (const string& file);
+
+		/**
+		 * @brief load all Truetype fonts in the directory
+		 * @param path the target directory
+		 *
+		 * load all Truetype fonts (.ttf or .TTF) in the target directory
+		 */
+		void loadFontDir (const string& path);
+
+		FT_Library _fontLib;
 
 		FontManager& operator = (const FontManager &orig);
 
 		// container for fonts
 		FontList _fonts;
+
+		static bool initialized;
 	};
 
 } /* namespace BIL */

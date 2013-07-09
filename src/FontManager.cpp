@@ -19,23 +19,38 @@ using namespace boost::filesystem;
 
 namespace BIL {
 
+	bool FontManager::initialized = false;
+
 	FontManager::~FontManager ()
 	{
-		// TODO Auto-generated destructor stub
-		/*
-		 FontIter it;
-		 for (it = _fonts.begin(); it != _fonts.end(); it++) {
-		 delete (*it).second;
-		 }
-		 */
+		FontIter it;
+		for (it = _fonts.begin(); it != _fonts.end(); it++) {
+			delete (*it).second;
+		}
 		_fonts.clear();
+
+		// unload font library
+		if (_fontLib != NULL) {
+			FT_Done_FreeType(_fontLib);
+		}
 	}
 
 	bool FontManager::initialize (void)
 	{
-		// TODO: load more fonts
+		if (initialized == true)
+			return false;
 
-		return (loadFont(string("/usr/share/fonts/TTF/DroidSans.ttf")));
+		FT_Error error = FT_Init_FreeType(&_fontLib);
+		if (error) {
+			cerr << "Cannot initialize FreeType library" << endl;
+			return false;
+		}
+
+		// load system files
+		loadFontDir("/usr/share/fonts");
+
+		initialized = true;
+		return true;
 	}
 
 	bool FontManager::loadFont (const string& name)
@@ -46,10 +61,6 @@ namespace BIL {
 
 	bool FontManager::loadFontFile (const string& file)
 	{
-		cout << "Load font file: " << file << endl;
-
-		using namespace std;
-
 		if (file.empty())
 			return false;
 
@@ -59,11 +70,15 @@ namespace BIL {
 			return false;
 
 		// check if the path is valid
-		if (!fileExist(file))
+		if (!exists(path(file)))
 			return false;
 
-		// TODO: store the font name instead of the full path of the font file
-		// _fonts[path] = font;
+		FontData *font = new FontData(_fontLib, file);
+		if (font->isValid()) {
+			_fonts[file] = font;
+		} else {
+			delete font; font = NULL;
+		}
 
 		return true;
 	}
@@ -71,6 +86,7 @@ namespace BIL {
 	void FontManager::loadFontDir (const string& path)
 	{
 		filesystem::path p(path);
+		string ext;
 
 		if (!exists(p))
 			return;
@@ -80,19 +96,15 @@ namespace BIL {
 		filesystem::directory_iterator end_it;
 		filesystem::directory_iterator it(p);	// begin
 		while (it != end_it) {
-			string ext = extension(*it);
+			if (is_directory(it->path())) {
+				loadFontDir(it->path().string());
+			}
+			ext = extension(*it);
 			if ((ext == ".ttf") || (ext == ".TTF")) {
 				loadFontFile(it->path().string());
 			}
 			it++;
 		}
-	}
-
-	inline bool FontManager::fileExist (const string& file)
-	{
-		ifstream f(file.data());
-
-		return (f.is_open());
 	}
 
 } /* namespace BIL */

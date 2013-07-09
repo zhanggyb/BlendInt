@@ -5,35 +5,39 @@
  *      Author: zhanggyb
  */
 
+#include <iostream>
+
 #include <BIL/Font.h>
+
+using namespace std;
 
 namespace BIL {
 
-	const std::string Font::DEFAULT_FONT("Arial");
+	const std::string FontData::DEFAULT_FONT("Arial");
 
-	Font::Font (const std::string& name, FONT_TYPE type)
-			: _name(name)
+	FontData::FontData (FT_Library& lib, const string& fontfile)
+			: _file(fontfile), _face(NULL), _valid(false)
 	{
 		// TODO Auto-generated constructor stub
 
+		FT_Error error = FT_New_Face(lib, fontfile.c_str(), 0, &_face);
+		if (error == FT_Err_Unknown_File_Format) {
+			cerr << "Unknown font file format: " << fontfile << endl;
+		}
+
+		if (!error) _valid = true;
+
+		cout << "Font: " << fontfile << " loaded" << endl;
 	}
 
-	Font::Font (const Font& orig)
-	{
-		_name = orig.getName();
-		_size = orig.getSize();
-	}
-
-	Font& Font::operator = (const Font& orig)
-	{
-		_name = orig.getName();
-		_size = orig.getSize();
-		return *this;
-	}
-
-	Font::~Font ()
+	FontData::~FontData ()
 	{
 		// TODO Auto-generated destructor stub
+		if (_face != NULL) {
+			FT_Done_Face(_face);
+		}
+
+		cout << "Font: " << _file << " unloaded" << endl;
 	}
 
 } /* namespace BIL */
