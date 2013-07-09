@@ -9,11 +9,13 @@
 
 #include <BIL/BasicObject.h>
 
+using namespace std;
+
 namespace BIL {
 
 	uint64_t BasicObject::id_last = 1;
 
-	std::map<uint64_t, BasicObject*> BasicObject::map;
+	map<uint64_t, BasicObject*> BasicObject::map;
 
 	BasicObject::BasicObject (BasicObject* parent)
 			: _parent(parent)

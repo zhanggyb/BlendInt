@@ -10,17 +10,15 @@
 
 #include <map>
 #include <string>
-#include <FTGL/ftgl.h>
-#include <FTGL/FTGLTextureFont.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <BIL/Font.h>
+#include <BIL/FontFace.h>
 
 using namespace std;
 
-typedef map<string, BIL::FontData*> FontList;
+typedef map<string, BIL::FontFace*> FontList;
 typedef FontList::const_iterator FontIter;
 
 namespace BIL {
@@ -28,17 +26,22 @@ namespace BIL {
 	class FontManager
 	{
 	public:
-		virtual ~FontManager ();
-
-		bool initialize (void);
-
-		FTFont* getFont (const string &fontname);
 
 		static FontManager& instance (void)
 		{
 			static FontManager tm;
 			return tm;
 		}
+
+		virtual ~FontManager ();
+
+		bool initialize (void);
+
+#ifdef DEBUG
+		void printfonts (void);
+#endif
+
+		// FTFont* getFont (const string &fontname);
 
 		/**
 		 * @brief load truetype font
@@ -75,6 +78,8 @@ namespace BIL {
 
 		// container for fonts
 		FontList _fonts;
+
+		map<string, FontFace*> _namedb;
 
 		static bool initialized;
 	};
