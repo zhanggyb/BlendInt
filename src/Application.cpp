@@ -13,10 +13,11 @@
 
 #include <BIL/Application.h>
 
+using namespace std;
 
 namespace BIL {
 
-	std::string Application::glStrVersion;
+	string Application::glStrVersion;
 	GLfloat Application::glVersion = 1.0;
 
 	Application::Application ()
@@ -45,9 +46,9 @@ namespace BIL {
 		return version;
 	}
 
-	std::string Application::getVersionString (void)
+	string Application::getVersionString (void)
 	{
-		std::string version;
+		string version;
 
 		version = glfwGetVersionString();
 
@@ -58,7 +59,7 @@ namespace BIL {
 	void Application::run (void)
 	{
 		if (_mainWindow == NULL) {
-			std::cerr << "No Main Window" << std::endl;
+			cerr << "No Main Window" << endl;
 			return;
 		}
 
@@ -72,10 +73,13 @@ namespace BIL {
 		// Initialize GLEW
 		glewExperimental = true; // Needed in core profile
 		if (glewInit() != GLEW_OK) {
-			std::cerr << "Failed to initilize GLEW" << std::endl;
+			cerr << "Failed to initilize GLEW" << endl;
 			glfwTerminate();
 			exit(EXIT_FAILURE);
 		}
+#ifdef DEBUG
+		cerr << "Using GLEW " << glewGetString(GLEW_VERSION) << endl;
+#endif
 
 		while (!glfwWindowShouldClose(_mainWindow->getWindow())) {
 

@@ -19,7 +19,7 @@ namespace BIL {
 	public:
 		Font ();
 
-		Font (const string& family);
+		Font (const string& family, float size = 10, bool bold = false, bool italic = false);
 
 		virtual ~Font ();
 
@@ -28,7 +28,9 @@ namespace BIL {
 		bool _bold;
 		bool _italic;
 
-		string _family;
+		float _size;	/** Font Size */
+
+		string _family;	/** the font family, e.g. "Droid Sans" */
 
 	};
 

@@ -32,7 +32,7 @@ namespace BIL {
 		}
 
 		// load system files	TODO: load more fonts
-		loadFontDir("/usr/share/fonts");
+		// loadFontDir("/usr/share/fonts");
 
 		initialized = true;
 		return true;
@@ -67,10 +67,55 @@ namespace BIL {
 	}
 #endif
 
-bool FontManager::loadFont (const string& name)
+bool FontManager::loadFont (const string& family)
 {
-	// TODO: load from font name
+	string ret = getFontPath (family);
+
+	cout << "get font: " << ret << endl;
+
+	if (ret.empty()) {
+		return false;
+	}
+
+	// TODO: do sth
+
 	return true;
+}
+
+string FontManager::getFontPath (const string& family, float size, bool bold, bool italic)
+{
+	string file;
+
+	int weight = bold ? FC_WEIGHT_BOLD : FC_WEIGHT_REGULAR;
+	int slant = italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
+
+	FcInit ();
+	FcPattern *pattern = FcPatternCreate ();
+	FcPatternAddDouble (pattern, FC_SIZE, size);
+	FcPatternAddInteger (pattern, FC_WEIGHT, weight);
+	FcPatternAddInteger (pattern, FC_SLANT, slant);
+	FcPatternAddString (pattern, FC_FAMILY, (FcChar8*) family.c_str());
+	FcConfigSubstitute (0, pattern, FcMatchPattern);
+	FcDefaultSubstitute (pattern);
+	FcResult result;
+	FcPattern *match = FcFontMatch (0, pattern, &result);
+	FcPatternDestroy (pattern);
+
+	if (!match) {
+		// TODO: return default font
+	} else {
+		FcValue value;
+		FcResult result = FcPatternGet (match, FC_FILE, 0, &value);
+		if (result) {
+			// print error
+		} else {
+			file = (char*)(value.u.s);
+		}
+	}
+
+	FcPatternDestroy (match);
+
+	return file;
 }
 
 bool FontManager::loadFontFile (const string& file)
@@ -131,3 +176,4 @@ void FontManager::loadFontDir (const string& path)
 }
 
 } /* namespace BIL */
+

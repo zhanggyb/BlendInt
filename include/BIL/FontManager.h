@@ -14,7 +14,10 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include <fontconfig/fontconfig.h>
+
 #include <BIL/FontFace.h>
+#include <BIL/Font.h>
 
 using namespace std;
 
@@ -41,14 +44,14 @@ namespace BIL {
 		void printfonts (void);
 #endif
 
-		// FTFont* getFont (const string &fontname);
-
 		/**
 		 * @brief load truetype font
-		 * @param path font path
+		 * @param family font family
 		 * @return
 		 */
-		bool loadFont (const string& name);
+		bool loadFont (const string& family);
+
+		bool loadFont (const Font& font);
 
 	private:
 
@@ -61,6 +64,15 @@ namespace BIL {
 				: _fontLib(NULL)
 		{
 		}
+
+		/**
+		 * @brief get font path
+		 * @param family
+		 * @return
+		 *
+		 * get font path with fontconfig
+		 */
+		string getFontPath (const string& family, float size = 10, bool bold = false, bool italic = false);
 
 		bool loadFontFile (const string& file);
 
