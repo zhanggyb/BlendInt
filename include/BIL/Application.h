@@ -28,7 +28,7 @@ namespace BIL {
 	public:
 		Application ();
 
-		int init (void);
+		int initialize (void);
 
 		void terminate (void)
 		{

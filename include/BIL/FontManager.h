@@ -30,15 +30,24 @@ namespace BIL {
 	{
 	public:
 
-		static FontManager& instance (void)
+		static FontManager* gFontManager;
+
+		static FontManager* instance (void)
 		{
-			static FontManager tm;
+			if (gFontManager != NULL) {
+				cerr << "Error: FontManager should generate only one instance" << endl;
+				return NULL;
+			}
+
+			FontManager* tm = new FontManager;
 			return tm;
 		}
 
 		virtual ~FontManager ();
 
 		bool initialize (void);
+
+		FT_Library& getFontLibrary (void) {return _fontLib;}
 
 #ifdef DEBUG
 		void printfonts (void);
@@ -53,6 +62,17 @@ namespace BIL {
 
 		bool loadFont (const Font& font);
 
+		/**
+		 * @brief get font path
+		 * @param family
+		 * @return
+		 *
+		 * get font path with fontconfig
+		 */
+		string getFontPath (const string& family, float size = 10, bool bold = false, bool italic = false);
+
+		string getFontPath (const Font& font);
+
 	private:
 
 		/**
@@ -64,15 +84,6 @@ namespace BIL {
 				: _fontLib(NULL)
 		{
 		}
-
-		/**
-		 * @brief get font path
-		 * @param family
-		 * @return
-		 *
-		 * get font path with fontconfig
-		 */
-		string getFontPath (const string& family, float size = 10, bool bold = false, bool italic = false);
 
 		bool loadFontFile (const string& file);
 

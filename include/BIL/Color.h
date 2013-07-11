@@ -15,6 +15,31 @@ namespace BIL {
 	class Color
 	{
 	public:
+
+		enum RGBA
+		{
+			None, White, Black
+		};
+
+		Color (RGBA val)
+				: _red(1.0), _green(1.0), _blue(1.0), _alpha(1.0)
+		{
+			switch (val) {
+				case None:
+					_alpha = 0.0;
+					break;
+				case White:
+					break;
+				case Black:
+					_red = 0.0;
+					_green = 0.0;
+					_blue = 0.0;
+					break;
+				default:
+					break;
+			}
+		}
+
 		Color ()
 				: _red(1.0), _green(1.0), _blue(1.0), _alpha(1.0)
 		{

@@ -12,6 +12,7 @@
 #include <string>
 
 #include <BIL/Application.h>
+#include <BIL/FontManager.h>
 
 using namespace std;
 
@@ -27,14 +28,15 @@ namespace BIL {
 
 	}
 
-	int Application::init (void)
+	int Application::initialize (void)
 	{
 		int ret = glfwInit();
 
-		if (ret == GL_TRUE)
-			glfwSetErrorCallback(&Application::cbError);
+		if (ret == GL_TRUE)	glfwSetErrorCallback(&Application::cbError);
 
-			return ret;
+		FontManager::gFontManager = FontManager::instance();
+
+		return ret;
 	}
 
 	GLFWVersion Application::getVersion (void)
@@ -66,7 +68,7 @@ namespace BIL {
 		_mainWindow->MakeContextCurrent();
 
 		// check OpenGL version
-		glStrVersion = (const char*)glGetString(GL_VERSION);
+		glStrVersion = (const char*) glGetString(GL_VERSION);
 		glVersion = std::atof(glStrVersion.c_str());	// C++ 98
 		// glVersion = std::stof (glStrVersion);	// C++ 11
 
@@ -98,11 +100,14 @@ namespace BIL {
 
 		// TODO: the following lines will cause crash
 		/*
-		if (_mainWindow != NULL) {
-			delete _mainWindow;
-			_mainWindow = NULL;
-		}
-		*/
+		 if (_mainWindow != NULL) {
+		 delete _mainWindow;
+		 _mainWindow = NULL;
+		 }
+		 */
+
+		delete FontManager::gFontManager;
+		FontManager::gFontManager = NULL;
 
 		glfwTerminate();
 	}

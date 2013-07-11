@@ -15,7 +15,7 @@
 #include <BIL/BasicObject.h>
 #include <BIL/Size.h>
 #include <BIL/Point.h>
-#include <BIL/Rect.h>
+#include <BIL/Font.h>
 
 namespace BIL {
 
@@ -98,9 +98,13 @@ namespace BIL {
 			_padding = padding;
 		}
 
+		const Font& getFont (void) const {return _font;}
+
 	protected:
 
 		virtual void render (void) = 0;
+
+		Font _font;
 
 		Size2Dui _size;
 

@@ -20,6 +20,8 @@ namespace BIL {
 
 	bool FontManager::initialized = false;
 
+	FontManager* FontManager::gFontManager = NULL;
+
 	bool FontManager::initialize (void)
 	{
 		if (initialized == true)
@@ -33,6 +35,8 @@ namespace BIL {
 
 		// load system files	TODO: load more fonts
 		// loadFontDir("/usr/share/fonts");
+
+		if (! FcInit ()) return false;
 
 		initialized = true;
 		return true;
@@ -53,6 +57,9 @@ namespace BIL {
 
 		// clear the namedb but no need to delete the objects again
 		_namedb.clear();
+
+		// finish fontconfig
+		if (initialized) FcFini();
 	}
 
 #ifdef DEBUG
@@ -89,12 +96,47 @@ string FontManager::getFontPath (const string& family, float size, bool bold, bo
 	int weight = bold ? FC_WEIGHT_BOLD : FC_WEIGHT_REGULAR;
 	int slant = italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
 
-	FcInit ();
 	FcPattern *pattern = FcPatternCreate ();
 	FcPatternAddDouble (pattern, FC_SIZE, size);
 	FcPatternAddInteger (pattern, FC_WEIGHT, weight);
 	FcPatternAddInteger (pattern, FC_SLANT, slant);
 	FcPatternAddString (pattern, FC_FAMILY, (FcChar8*) family.c_str());
+	FcConfigSubstitute (0, pattern, FcMatchPattern);
+	FcDefaultSubstitute (pattern);
+	FcResult result;
+	FcPattern *match = FcFontMatch (0, pattern, &result);
+	FcPatternDestroy (pattern);
+
+	if (!match) {
+		// TODO: return default font
+		return getFontPath (Font("Sans"));
+	} else {
+		FcValue value;
+		FcResult result = FcPatternGet (match, FC_FILE, 0, &value);
+		if (result) {
+			// print error
+		} else {
+			file = (char*)(value.u.s);
+		}
+	}
+
+	FcPatternDestroy (match);
+
+	return file;
+}
+
+string FontManager::getFontPath (const Font& font)
+{
+	string file;
+
+	int weight = font.bold() ? FC_WEIGHT_BOLD : FC_WEIGHT_REGULAR;
+	int slant = font.italic() ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
+
+	FcPattern *pattern = FcPatternCreate ();
+	FcPatternAddDouble (pattern, FC_SIZE, font.size());
+	FcPatternAddInteger (pattern, FC_WEIGHT, weight);
+	FcPatternAddInteger (pattern, FC_SLANT, slant);
+	FcPatternAddString (pattern, FC_FAMILY, (FcChar8*) font.family().c_str());
 	FcConfigSubstitute (0, pattern, FcMatchPattern);
 	FcDefaultSubstitute (pattern);
 	FcResult result;
@@ -117,6 +159,7 @@ string FontManager::getFontPath (const string& family, float size, bool bold, bo
 
 	return file;
 }
+
 
 bool FontManager::loadFontFile (const string& file)
 {

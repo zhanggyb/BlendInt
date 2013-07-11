@@ -33,10 +33,14 @@ namespace BIL {
 			return _valid;
 		}
 
+		const FT_Face& getFontFace (void) const {return _face;}
+
 		const string& getPostscriptName (void) const
 		{
 			return _psName;
 		}
+
+		bool loadGlyph (char ch);
 
 		void setFontSize (GLuint size, GLuint dpi);
 
@@ -51,8 +55,6 @@ namespace BIL {
 		bool _valid; /** if the font face is valid */
 
 		bool _unicode;	/** if has unicode charmap */
-
-		static const std::string DEFAULT_FONT;
 
 		static map<string, FT_Face> fontdb;
 	};

@@ -13,9 +13,6 @@ using namespace std;
 
 namespace BIL {
 
-	// TODO: choose a default font
-	const string FontFace::DEFAULT_FONT("Arial");
-
 	FontFace::FontFace (FT_Library& lib, const string& fontfile)
 			: _file(fontfile), _face(NULL), _valid(false), _unicode(false)
 	{
@@ -46,6 +43,16 @@ namespace BIL {
 		if (_face != NULL) {
 			FT_Done_Face(_face);
 		}
+	}
+
+	bool FontFace::loadGlyph (char ch)
+	{
+		bool ret = true;
+
+		if (FT_Load_Glyph(_face, FT_Get_Char_Index(_face, ch), FT_LOAD_DEFAULT))
+			ret = false;
+
+		return ret;
 	}
 
 	void FontFace::setFontSize (GLuint size, GLuint dpi)
