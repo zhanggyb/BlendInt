@@ -111,8 +111,20 @@ namespace BIL {
 	{
 		int width = getSize().getWidth();
 		int height = getSize().getHeight();
-
 		// float ratio = width / (float) height;
+
+		glClearColor(0.40,0.40,0.45,1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glColor4f(1.00,1.00,1.00,1.00);
+
+		// enable anti-alias
+		/*
+		glEnable(GL_BLEND);
+		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable (GL_POINT_SMOOTH);
+		glEnable (GL_LINE_SMOOTH);
+		glEnable (GL_POLYGON_SMOOTH);
+		*/
 
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);

@@ -36,7 +36,10 @@ namespace BIL {
 		draw.setColor(Color(0.5, 0.75, 0.65));
 		draw.rect(_pos.getX(), _pos.getY(), getSize().getWidth(), getSize().getHeight());
 
-		draw.init(16);
+    glEnable( GL_BLEND );
+    glEnable( GL_TEXTURE_2D );
+
+		draw.init(24);
 		draw.text ("Hello World!", Point3Df(50.0, 80.0, 0.0));
 		draw.clean();
 	}
