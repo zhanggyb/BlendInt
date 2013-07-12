@@ -104,6 +104,70 @@ namespace BIL {
 
 	void GLDraw::text (const std::string& text, Point3Df position)
 	{
+		GLuint font = list_base;
+		float height = h / .63f;
+
+		const char *start_line = text.c_str();
+		vector<string> lines;
+
+		const char * c = text.c_str();
+
+		//for(const char *c=text;*c;c++) {
+		for (; *c; c++) {
+			if (*c == '\n') {
+				string line;
+				for (const char *n = start_line; n < c; n++)
+					line.append(1, *n);
+				lines.push_back(line);
+				start_line = c + 1;
+			}
+		}
+		if (start_line) {
+			string line;
+			for (const char *n = start_line; n < c; n++)
+				line.append(1, *n);
+			lines.push_back(line);
+		}
+
+		glPushAttrib(
+		        GL_LIST_BIT | GL_CURRENT_BIT | GL_ENABLE_BIT | GL_TRANSFORM_BIT);
+		glMatrixMode(GL_MODELVIEW);
+		glDisable(GL_LIGHTING);
+		glEnable(GL_TEXTURE_2D);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glListBase(font);
+
+		float modelview_matrix[16];
+		glGetFloatv(GL_MODELVIEW_MATRIX, modelview_matrix);
+
+		//This is where the text display actually happens.
+		//For each line of text we reset the modelview matrix
+		//so that the line's text will start in the correct position.
+		//Notice that we need to reset the matrix, rather than just translating
+		//down by h. This is because when each character is
+		//draw it modifies the current matrix so that the next character
+		//will be drawn immediatly after it.
+		for (unsigned int i = 0; i < lines.size(); i++) {
+			glPushMatrix();
+			glLoadIdentity();
+			glTranslatef(position.getX(), position.getY() - height * i, 0);
+			glMultMatrixf(modelview_matrix);
+
+			//  The commented out raster position stuff can be useful if you need to
+			//  know the length of the text that you are creating.
+			//  If you decide to use it make sure to also uncomment the glBitmap command
+			//  in make_dlist().
+			//	glRasterPos2f(0,0);
+			glCallLists(lines[i].length(), GL_UNSIGNED_BYTE, lines[i].c_str());
+			//	float rpos[4];
+			//	glGetFloatv(GL_CURRENT_RASTER_POSITION ,rpos);
+			//	float len=x-rpos[0];
+
+			glPopMatrix();
+		}
 	}
 
 	// copy some code from Nehe's opengl tutorial lesson 43
@@ -117,8 +181,12 @@ namespace BIL {
 
 		FontFace face(FontManager::gFontManager->getFontLibrary(), fontfile);
 
-		if (!face.isValid())
+		if (!face.isValid()) {
+			cerr << __func__ << __LINE__ << " Cannot get FT_Face" << endl;
 			return;
+		}
+
+		face.setCharSize(this->h, 96);
 
 		// load Glyph for our character.
 		face.loadGlyph(ch);
@@ -171,7 +239,7 @@ namespace BIL {
 		//that we are using GL_LUMINANCE_ALPHA to indicate that
 		//we are using 2 channel data.
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
-		        GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data);
+		GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data);
 
 		//With the texture created, we don't need to expanded data anymore
 		delete[] expanded_data;
@@ -226,6 +294,27 @@ namespace BIL {
 
 		//Finnish the display list
 		glEndList();
+	}
+
+	void GLDraw::init (GLuint h)
+	{
+		// Allocate some memory to store the texture ids.
+		textures = new GLuint[128];
+
+		this->h = h;
+
+		list_base = glGenLists(128);
+		glGenTextures(128, textures);
+
+		for (unsigned char i = 0; i < 128; i++)
+			makeDisplayList(i, list_base, textures);
+	}
+
+	void GLDraw::clean (void)
+	{
+		glDeleteLists(list_base, 128);
+		glDeleteTextures(128, textures);
+		delete[] textures;
 	}
 
 } /* namespace BIL */

@@ -44,6 +44,8 @@ namespace BIL {
 
 		void setFontSize (GLuint size, GLuint dpi);
 
+		void setCharSize (GLuint size, GLuint dpi);
+
 	private:
 
 		string _file; /** font file */

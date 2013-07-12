@@ -35,6 +35,10 @@ namespace BIL {
 		GLDraw draw(this);
 		draw.setColor(Color(0.5, 0.75, 0.65));
 		draw.rect(_pos.getX(), _pos.getY(), getSize().getWidth(), getSize().getHeight());
+
+		draw.init(16);
+		draw.text ("Hello World!", Point3Df(50.0, 80.0, 0.0));
+		draw.clean();
 	}
 
 } /* namespace BIL */

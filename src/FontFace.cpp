@@ -21,7 +21,7 @@ namespace BIL {
 			cerr << "Unknown font file format: " << fontfile << endl;
 		}
 
-		if (!error) {
+		if (0 == error) {
 			_valid = true;
 
 			const char *name = FT_Get_Postscript_Name(_face);
@@ -64,7 +64,22 @@ namespace BIL {
 		err = FT_Set_Char_Size (_face, 0, (FT_F26Dot6)(size * 64), dpi, dpi);
 		if (err) {
 			cerr << "The current font don't support the size, " << size << " and dpi " << dpi << endl;
-			return;
+		}
+	}
+
+	void FontFace::setCharSize (GLuint size, GLuint dpi)
+	{
+		FT_Error err;
+
+		if (! _valid) return;
+
+		//For some twisted reason, Freetype measures font size
+		//in terms of 1/64ths of pixels.  Thus, to make a font
+		//h pixels high, we need to request a size of h*64.
+		//(h << 6 is just a prettier way of writting h*64)
+		err = FT_Set_Char_Size( _face, size << 6, size << 6, 96, 96);
+		if (err) {
+			cerr << "The current font don't support the size, " << size << " and dpi " << dpi << endl;
 		}
 	}
 

@@ -35,6 +35,7 @@ namespace BIL {
 		if (ret == GL_TRUE)	glfwSetErrorCallback(&Application::cbError);
 
 		FontManager::gFontManager = FontManager::instance();
+		FontManager::gFontManager->initialize();
 
 		return ret;
 	}
