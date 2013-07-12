@@ -1,4 +1,4 @@
 # CMake file for BIL project
 #
 
-#add_library (BIL ConnectionList.cpp Threading.cpp)
+add_library (CppEvents ConnectionList.cpp Threading.cpp)

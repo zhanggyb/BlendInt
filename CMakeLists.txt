@@ -1,9 +1,11 @@
 # CMake file for BIL project
 #
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
 project (BIL)
+
+set(CMAKE_BUILD_TYPE_INIT "Debug")
 
 #find_package(glfw REQUIRED)
 #set(LIBS ${LIBS} ${glfw_LIBRAIES})
@@ -18,8 +20,11 @@ include_directories(${BIL_SOURCE_DIR}/include/BIL)
 include_directories(${BIL_SOURCE_DIR}/extern/CppEvents/src)
 include_directories(/usr/include/freetype2)
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
-set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+add_definitions(-DDEBUG)
+add_definitions(-D__LINUX__)
+
+#set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+#set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 add_subdirectory(extern)
 add_subdirectory(src)
