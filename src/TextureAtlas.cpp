@@ -164,17 +164,17 @@ namespace BIL {
 		if (_depth == 4) {
 #ifdef GL_UNSIGNED_INT_8_8_8_8_REV
 			glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0,
-			        GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, _data);
+			GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, _data);
 #else
 			glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height,
 					0, GL_RGBA, GL_UNSIGNED_BYTE, _data );
 #endif
 		} else if (_depth == 3) {
 			glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB,
-			        GL_UNSIGNED_BYTE, _data);
+			GL_UNSIGNED_BYTE, _data);
 		} else {
 			glTexImage2D( GL_TEXTURE_2D, 0, GL_ALPHA, _width, _height, 0,
-			        GL_ALPHA, GL_UNSIGNED_BYTE, _data);
+			GL_ALPHA, GL_UNSIGNED_BYTE, _data);
 		}
 	}
 
@@ -211,19 +211,6 @@ namespace BIL {
 		Tuple3i node, next;
 		size_t i;
 		vector<Tuple3i>::iterator it;
-
-		/*
-		 for (i = 0; i < _nodes.size() - 1; ++i)
-		 {
-		 node = _nodes[i];
-		 next = _nodes[i + 1];
-		 if (node.y == next.y) {
-		 node.z += next.z;
-		 it = find (_nodes, next);
-		 _nodes.erase(it);
-		 --i;
-		 }
-		 }*/
 
 		for (it = _nodes.begin(), i = 0; i < _nodes.size() - 1; ++i) {
 			// TODO: check the following lines are correct

@@ -23,8 +23,19 @@ namespace BIL {
 	{
 	public:
 
+		/**
+		 * @brief Constructor
+		 * @param w width of the atlas
+		 * @param h height of the atlas
+		 * @param d bit depth of the atlas
+		 *
+		 * Create a new empty texture atlas.
+		 */
 		TextureAtlas (const size_t w, const size_t h, const size_t d);
 
+		/**
+		 * @brief destructor
+		 */
 		virtual ~TextureAtlas ();
 
 		/**
