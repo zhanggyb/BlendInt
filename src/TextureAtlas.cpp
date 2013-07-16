@@ -104,7 +104,6 @@ namespace BIL {
 		node.y = region.y + h;
 		node.z = w;
 
-		// TODO: insert node at best_index;
 		vector<Tuple3i>::iterator it = _nodes.begin();
 		advance(it, best_index);
 		it = _nodes.insert(it, node);

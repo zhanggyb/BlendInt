@@ -24,7 +24,7 @@ namespace BIL {
 	{
 	public:
 
-		FontFace (FT_Library& lib, const string& fontfile);
+		FontFace (FT_Library& lib, const string& filename, const float size = 10.0);
 
 		virtual ~FontFace ();
 
@@ -44,7 +44,7 @@ namespace BIL {
 
 		void setFontSize (GLuint size, GLuint dpi);
 
-		void setCharSize (GLuint size, GLuint dpi);
+		bool setCharSize (float size, int dpi = 72);
 
 	private:
 
@@ -57,8 +57,6 @@ namespace BIL {
 		bool _valid; /** if the font face is valid */
 
 		bool _unicode;	/** if has unicode charmap */
-
-		static map<string, FT_Face> fontdb;
 	};
 
 } /* namespace BIL */
