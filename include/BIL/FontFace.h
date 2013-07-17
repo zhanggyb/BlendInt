@@ -20,44 +20,55 @@ using namespace std;
 
 namespace BIL {
 
-	class FontFace
-	{
-	public:
+    class FontFace
+    {
+    public:
 
-		FontFace (FT_Library& lib, const string& filename, const float size = 10.0);
+        /**
+         * @brief Default constructor
+         */
+        FontFace (FT_Library& lib,
+                  const string& filename,
+                  const float size = 10.0);
 
-		virtual ~FontFace ();
+        /**
+         * @brief destructor
+         *
+         * @warning Do not delete gFontService before any FontFace
+         * object destructed
+         */
+        virtual ~FontFace ();
 
-		bool isValid (void) const
-		{
-			return _valid;
-		}
+        bool isValid (void) const
+        {
+            return _valid;
+        }
 
-		const FT_Face& getFontFace (void) const {return _face;}
+        const FT_Face& getFontFace (void) const {return _face;}
 
-		const string& getPostscriptName (void) const
-		{
-			return _psName;
-		}
+        const string& getPostscriptName (void) const
+        {
+            return _psName;
+        }
 
-		bool loadGlyph (char ch);
+        bool loadGlyph (char ch);
 
-		void setFontSize (GLuint size, GLuint dpi);
+        void setFontSize (GLuint size, GLuint dpi);
 
-		bool setCharSize (float size, int dpi = 72);
+        bool setCharSize (float size, int dpi = 72);
 
-	private:
+    private:
 
-		string _file; /** font file */
+        string _file;           /**< font file */
 
-		FT_Face _face; /** freetype2 face */
+        FT_Face _face;          /**< freetype2 face */
 
-		string _psName; /** Postscript Name */
+        string _psName;         /**< Postscript Name */
 
-		bool _valid; /** if the font face is valid */
+        bool _valid;            /**< if the font face is valid */
 
-		bool _unicode;	/** if has unicode charmap */
-	};
+        bool _unicode;          /**< if has unicode charmap */
+    };
 
 } /* namespace BIL */
 #endif /* _BIL_FONTFACE_H_ */

@@ -34,8 +34,8 @@ namespace BIL {
 
 		if (ret == GL_TRUE)	glfwSetErrorCallback(&Application::cbError);
 
-		FontManager::gFontManager = FontManager::instance();
-		FontManager::gFontManager->initialize();
+		FontManager::gFontService = FontManager::instance();
+		FontManager::gFontService->initialize();
 
 		return ret;
 	}
@@ -107,8 +107,8 @@ namespace BIL {
 		 }
 		 */
 
-		delete FontManager::gFontManager;
-		FontManager::gFontManager = NULL;
+		delete FontManager::gFontService;
+		FontManager::gFontService = NULL;
 
 		glfwTerminate();
 	}

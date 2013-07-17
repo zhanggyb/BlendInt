@@ -10,6 +10,7 @@
 
 #include <map>
 #include <string>
+#include <iostream>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -30,11 +31,11 @@ namespace BIL {
 	{
 	public:
 
-		static FontManager* gFontManager;
+		static FontManager* gFontService;
 
 		static FontManager* instance (void)
 		{
-			if (gFontManager != NULL) {
+			if (gFontService != NULL) {
 				cerr << "Error: FontManager should generate only one instance" << endl;
 				return NULL;
 			}

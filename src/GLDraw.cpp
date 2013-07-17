@@ -176,10 +176,10 @@ namespace BIL {
 		// The first thing we do is get FreeType to render out character
 		// into a bitmap. This actually requires a couple of FreeType commands:
 
-		string fontfile = FontManager::gFontManager->getFontPath(
+		string fontfile = FontManager::gFontService->getFontPath(
 		        _drawArea->getFont());
 
-		FontFace face(FontManager::gFontManager->getFontLibrary(), fontfile);
+		FontFace face(FontManager::gFontService->getFontLibrary(), fontfile);
 
 		if (!face.isValid()) {
 			cerr << __func__ << __LINE__ << " Cannot get FT_Face" << endl;
