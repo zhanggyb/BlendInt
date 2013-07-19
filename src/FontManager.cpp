@@ -10,7 +10,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include "FontManager.h"
+#include <BIL/FontManager.h>
 
 using namespace std;
 using namespace boost;
@@ -26,12 +26,6 @@ namespace BIL {
     {
         if (initialized == true)
             return false;
-
-        FT_Error error = FT_Init_FreeType(&_fontLib);
-        if (error) {
-            cerr << "Cannot initialize FreeType library" << endl;
-            return false;
-        }
 
         // load system files    TODO: load more fonts
         // loadFontDir("/usr/share/fonts");
@@ -50,24 +44,19 @@ namespace BIL {
         }
         _fonts.clear();
 
-        // unload font library
-        if (_fontLib != NULL) {
-            FT_Done_FreeType(_fontLib);
-        }
-
         // clear the namedb but no need to delete the objects again
         _namedb.clear();
 
         // finish fontconfig
         if (initialized) FcFini();
 
-	initialized = false;
+        initialized = false;
     }
 
 #ifdef DEBUG
     void FontManager::printfonts (void)
     {
-        map<string, FontFace*>::const_iterator it;
+        map<string, FontType*>::const_iterator it;
 
         for (it = _namedb.begin(); it != _namedb.end(); it++)
         {
@@ -177,7 +166,8 @@ namespace BIL {
         if (!exists(path(file)))
             return false;
 
-        FontFace *font = new FontFace(_fontLib, file);
+	/*
+        FontType *font = new FontType(_fontLib, file);
         if (font->isValid()) {
             _fonts[file] = font;
             string psname = font->getPostscriptName();
@@ -188,6 +178,7 @@ namespace BIL {
             delete font;
             font = NULL;
         }
+	*/
 
         return true;
     }

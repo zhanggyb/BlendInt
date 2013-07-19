@@ -12,101 +12,96 @@
 #include <string>
 #include <iostream>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 #include <fontconfig/fontconfig.h>
 
-#include <BIL/FontFace.h>
+#include <BIL/FontType.h>
 #include <BIL/Font.h>
 
 using namespace std;
 
-typedef map<string, BIL::FontFace*> FontList;
+typedef map<string, BIL::FontType*> FontList;
 typedef FontList::const_iterator FontIter;
 
 namespace BIL {
 
-	class FontManager
-	{
-	public:
+    class FontManager
+    {
+    public:
 
-		static FontManager* gFontService;
+        static FontManager* gFontService;
 
-		static FontManager* instance (void)
-		{
-			if (gFontService != NULL) {
-				cerr << "Error: FontManager should generate only one instance" << endl;
-				return NULL;
-			}
+        static FontManager* instance (void)
+        {
+            if (gFontService != NULL) {
+                cerr << "Error: FontManager should generate only one instance" << endl;
+                return NULL;
+            }
 
-			FontManager* tm = new FontManager;
-			return tm;
-		}
+            FontManager* tm = new FontManager;
+            return tm;
+        }
 
-		virtual ~FontManager ();
+        virtual ~FontManager ();
 
-		bool initialize (void);
-
-		FT_Library& getFontLibrary (void) {return _fontLib;}
+        bool initialize (void);
 
 #ifdef DEBUG
-		void printfonts (void);
+        void printfonts (void);
 #endif
 
-		/**
-		 * @brief load truetype font
-		 * @param family font family
-		 * @return
-		 */
-		bool loadFont (const string& family);
+        /**
+         * @brief load truetype font
+         * @param family font family
+         * @return
+         */
+        bool loadFont (const string& family);
 
-		bool loadFont (const Font& font);
+        bool loadFont (const Font& font);
 
-		/**
-		 * @brief get font path
-		 * @param family
-		 * @return
-		 *
-		 * get font path with fontconfig
-		 */
-		string getFontPath (const string& family, float size = 10, bool bold = false, bool italic = false);
+        /**
+         * @brief get font path
+         * @param family
+         * @return
+         *
+         * get font path with fontconfig
+         */
+        string getFontPath (const string& family,
+                            float size = 10,
+                            bool bold = false,
+                            bool italic = false);
 
-		string getFontPath (const Font& font);
+        string getFontPath (const Font& font);
 
-	private:
+    private:
 
-		/**
-		 * @brief Default constructor
-		 *
-		 * Move the default constructor to private
-		 */
-		FontManager ()
-				: _fontLib(NULL)
-		{
-		}
+        /**
+         * @brief Default constructor
+         *
+         * Move the default constructor to private
+         */
+        FontManager ()
+        {
+        }
 
-		bool loadFontFile (const string& file);
+        bool loadFontFile (const string& file);
 
-		/**
-		 * @brief load all Truetype fonts in the directory
-		 * @param path the target directory
-		 *
-		 * load all Truetype fonts (.ttf or .TTF) in the target directory
-		 */
-		void loadFontDir (const string& path);
+        /**
+         * @brief load all Truetype fonts in the directory
+         * @param path the target directory
+         *
+         * load all Truetype fonts (.ttf or .TTF) in the target directory
+         */
+        void loadFontDir (const string& path);
 
-		FT_Library _fontLib;
+        FontManager& operator = (const FontManager &orig);
 
-		FontManager& operator = (const FontManager &orig);
+        // container for fonts
+        FontList _fonts;
 
-		// container for fonts
-		FontList _fonts;
+        map<string, FontType*> _namedb;
 
-		map<string, FontFace*> _namedb;
-
-		static bool initialized;
-	};
+        static bool initialized;
+    };
 
 } /* namespace BIL */
 #endif /* FONTMANAGER_H_ */

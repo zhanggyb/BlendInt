@@ -1,6 +1,6 @@
 // cpp
 
-#include <BIL/FontFace.h>
+#include <BIL/FontType.h>
 #include <BIL/FontManager.h>
 #include <iostream>
 #include <string>
@@ -44,7 +44,7 @@ void FontFaceTest::create1 ()
 
     string fontpath = FontManager::gFontService->getFontPath("Sans");
 
-    FontFace *font = new FontFace(FontManager::gFontService->getFontLibrary(), fontpath);
+    FontType *font = new FontType(fontpath);
 
     result = font->isValid ();
 

@@ -19,78 +19,84 @@ using namespace std;
 
 namespace BIL {
 
-	class TextureAtlas
-	{
-	public:
+    class TextureAtlas
+    {
+    public:
 
-		/**
-		 * @brief Constructor
-		 * @param w width of the atlas
-		 * @param h height of the atlas
-		 * @param d bit depth of the atlas
-		 *
-		 * Create a new empty texture atlas.
-		 */
-		TextureAtlas (const size_t w, const size_t h, const size_t d);
+        /**
+         * @brief Constructor
+         * @param w width of the atlas
+         * @param h height of the atlas
+         * @param d bit depth of the atlas
+         *
+         * Create a new empty texture atlas.
+         */
+        TextureAtlas (const size_t w, const size_t h, const size_t d);
 
-		/**
-		 * @brief destructor
-		 */
-		virtual ~TextureAtlas ();
+        /**
+         * @brief destructor
+         */
+        virtual ~TextureAtlas ();
 
-		/**
-		 * @brief Upload atlas to video memory
-		 */
-		void upload (void);
+        /**
+         * @brief Upload atlas to video memory
+         */
+        void upload (void);
 
-		/**
-		 * @brief Allocate a new region in the atlas
-		 * @param w width of the region to allocate
-		 * @param h height of the region to allocate
-		 * @return Coordinates of the allocated region
-		 */
-		Tuple4i getRegion (const size_t w, const size_t h);
+        /**
+         * @brief Allocate a new region in the atlas
+         * @param w width of the region to allocate
+         * @param h height of the region to allocate
+         * @return Coordinates of the allocated region
+         */
+        Tuple4i getRegion (const size_t w, const size_t h);
 
-		// void setRegion
-		/**
-		 * @brief Upload data to the specified atlas region
-		 * @param x
-		 */
-		void setRegion (const size_t x, const size_t y, const size_t w,
-		        const size_t h, const unsigned char* data, const size_t stride);
+        // void setRegion
+        /**
+         * @brief Upload data to the specified atlas region
+         * @param x
+         */
+        void setRegion (const size_t x, const size_t y, const size_t w,
+                        const size_t h, const unsigned char* data, const size_t stride);
 
-		/**
-		 * @brief Remove all allocated regions from the atlas.
-		 */
-		void clear (void);
+        size_t getWidth(void) {return _width;}
 
-	private:
+        size_t getHeight(void) {return _height;}
 
-		int fit (const size_t index, const size_t w, const size_t h);
+	size_t getDepth(void) {return _depth;}
 
-		void merge (void);
+        /**
+         * @brief Remove all allocated regions from the atlas.
+         */
+        void clear (void);
 
-		/** Allocated nodes */
-		vector<Tuple3i> _nodes;
+    private:
 
-		/** Width (in pixels) of the underlying texture */
-		size_t _width;
+        int fit (const size_t index, const size_t w, const size_t h);
 
-		/** Height (in pixels) of the underlying texture */
-		size_t _height;
+        void merge (void);
 
-		/** Depth (in bytes) of the underlying texture */
-		size_t _depth;
+        /** Allocated nodes */
+        vector<Tuple3i> _nodes;
 
-		/** Allocated surface size */
-		size_t _used;
+        /** Width (in pixels) of the underlying texture */
+        size_t _width;
 
-		/** Texture identity (OpenGL) */
-		unsigned int _id;
+        /** Height (in pixels) of the underlying texture */
+        size_t _height;
 
-		/** Atlas data */
-		unsigned char* _data;
-	};
+        /** Depth (in bytes) of the underlying texture */
+        size_t _depth;
+
+        /** Allocated surface size */
+        size_t _used;
+
+        /** Texture identity (OpenGL) */
+        unsigned int _id;
+
+        /** Atlas data */
+        unsigned char* _data;
+    };
 
 } /* namespace BIL */
 #endif /* TEXTUREATLAS_H_ */
