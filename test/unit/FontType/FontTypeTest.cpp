@@ -32,6 +32,38 @@ void FontTypeTest::tearDown ()
 
 }
 
+void FontTypeTest::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
+{
+    FT_Int i, j, p, q;
+    FT_Int x_max = x + bitmap->width;
+    FT_Int y_max = y + bitmap->rows;
+
+    for(i = x, p = 0; i < x_max; i++, p++)
+    {
+        for(j = y, q = 0; j < y_max; j++, q++)
+        {
+            if (i < 0 || j < 0 || i >= WIDTH || j >= HEIGHT) continue;
+
+            image[j][i] |= bitmap->buffer[q * bitmap->width + p];
+        }
+    }
+}
+
+void FontTypeTest::show_image (void)
+{
+    int  i, j;
+
+
+    for ( i = 0; i < HEIGHT; i++ )
+    {
+        for ( j = 0; j < WIDTH; j++ )
+            putchar( image[i][j] == 0 ? ' '
+                     : image[i][j] < 128 ? '+'
+                     : '*' );
+        putchar( '\n' );
+    }
+}
+
 void FontTypeTest::create1 ()
 {
     bool result;
@@ -46,7 +78,7 @@ void FontTypeTest::create1 ()
 
     FontType *font = new FontType(fontpath);
 
-        result = font->isValid ();
+    result = font->isValid ();
 
     delete font; font = NULL;
 

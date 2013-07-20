@@ -19,19 +19,8 @@ namespace BIL {
             {
                 T x;
                 T y;
-            };
+            } dimension;
 
-            struct
-            {
-                T s;
-                T t;
-            };
-
-            struct
-            {
-                T start;
-                T end;
-            };
         };
 
     template<typename T>
@@ -44,21 +33,21 @@ namespace BIL {
                 T x; /**< Alias for first component */
                 T y; /**< Alias for second component */
                 T z; /**< Alias for third component */
-            };
+            } dimension;
 
             struct
             {
                 T r;
                 T g;
                 T b;
-            };
+            } rgb;
 
             struct
             {
                 T red;
                 T green;
                 T blue;
-            };
+            } color;
         };
 
     template<typename T>
@@ -72,7 +61,7 @@ namespace BIL {
                 T y; /**< Alias for second component */
                 T z; /**< Alias for third component */
                 T w; /**< Alias for fourth component */
-            };
+            } dimension;
 
             struct
             {
@@ -80,7 +69,7 @@ namespace BIL {
                 T sy;
                 T width;
                 T height;
-            };
+            } rect;
 
             struct
             {
@@ -88,7 +77,7 @@ namespace BIL {
                 T g;
                 T b;
                 T a;
-            };
+            } rgba;
 
             struct
             {
@@ -96,15 +85,8 @@ namespace BIL {
                 T green;
                 T blue;
                 T alpha;
-            };
+            } color;
 
-            struct
-            {
-                T vstart;
-                T vcount;
-                T istart;
-                T icount;
-            };
         };
 
     typedef Tuple2<int> Tuple2i;

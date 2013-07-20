@@ -14,10 +14,10 @@ using namespace std;
 namespace BIL {
 
     FontType::FontType (const string& filename,
-                        const float size)
-        : _library(NULL), _file(filename),
-          _face(NULL), _stroker(NULL),
-          _valid(false), _unicode(false)
+                        float size)
+        : _library(NULL), _face(NULL),
+          _stroker(NULL), _valid(false),
+          _unicode(false), _file(filename)
     {
         size_t hres = 64;
         FT_Error error;
@@ -69,6 +69,58 @@ namespace BIL {
 
     }
 
+    FontType::FontType (const FT_Byte* buffer,
+                        FT_Long bufsize,
+                        FT_Long index,
+                        float size)
+        : _library(NULL), _face(NULL),
+          _stroker(NULL), _valid(false),
+          _unicode(false), _file()
+    {
+        size_t hres = 64;
+        FT_Error error;
+        FT_Matrix matrix = { (int)((1.0/hres) * 0x10000L),
+                             (int)((0.0)      * 0x10000L),
+                             (int)((0.0)      * 0x10000L),
+                             (int)((1.0)      * 0x10000L) };
+
+        error = FT_Init_FreeType(&_library);
+        if(error) {
+            cerr << "Cannot initialize FreeType library" << endl;
+            return;
+        }
+
+        error = FT_New_Memory_Face(_library, buffer, bufsize, index, &_face);
+        if (error) {
+            cerr << "Fail to generate a new Font Face from memory" << endl;
+            return;
+        }
+
+        error = FT_Stroker_New (_library, &_stroker);
+
+        if (error) {
+            cerr << "Fail to load Stroker" << endl;
+            return;
+        }
+
+        _valid = true;          // now treat it success
+
+        error = FT_Select_Charmap (_face, FT_ENCODING_UNICODE);
+        if (error) {
+            cerr << "Cannot set the unicode character map" << endl;
+        } else {
+            _unicode = true;
+        }
+
+        /* Set char size */
+        error = FT_Set_Char_Size (_face, (int)(size * 64), 0, 72*hres, 72);
+        if(error) {
+            cerr << "Cannot set character size" << endl;
+        } else {
+            FT_Set_Transform (_face, &matrix, NULL);
+        }
+    }
+
     FontType::~FontType ()
     {
         if(_stroker != NULL) {
@@ -87,11 +139,13 @@ namespace BIL {
         }
     }
 
-    bool FontType::loadGlyph (char ch)
+    bool FontType::loadGlyph (char charcode)
     {
         bool ret = true;
 
-        if (FT_Load_Glyph(_face, FT_Get_Char_Index(_face, ch), FT_LOAD_DEFAULT))
+        if (FT_Load_Glyph(_face,
+                          FT_Get_Char_Index(_face, charcode),
+                          FT_LOAD_DEFAULT))
             ret = false;
 
         return ret;
@@ -99,6 +153,8 @@ namespace BIL {
 
     bool FontType::loadGlyph (FT_UInt glyph_index, FT_Int32 load_flags)
     {
+        if(! _valid) return false;
+
         FT_Error error;
 
         error = FT_Load_Glyph(_face, glyph_index, load_flags);
@@ -147,11 +203,30 @@ namespace BIL {
         return true;
     }
 
-    FT_UInt FontType::getCharIndex (const FT_ULong ch)
+    bool FontType::setCharSize (FT_F26Dot6 width,
+                                FT_F26Dot6 height,
+                                FT_UInt horz_res,
+                                FT_UInt vert_res)
     {
-        if((!_valid) || (_face == NULL)) return 0;
+        if(! _valid) return false;
 
-        return (FT_Get_Char_Index (_face, ch));
+        FT_Error error;
+
+        error = FT_Set_Char_Size(_face, width, height, horz_res, vert_res);
+
+        if(error) {
+            cerr << "Fail to set character size" << endl;
+            return false;
+        }
+
+        return true;
+    }
+
+    FT_UInt FontType::getCharIndex (const FT_ULong charcode)
+    {
+        if(!_valid) return 0;
+
+        return (FT_Get_Char_Index (_face, charcode));
     }
 
     bool FontType::setLcdFilter(FT_LcdFilter filter)
@@ -185,6 +260,35 @@ namespace BIL {
         return true;
     }
 
+    bool FontType::loadChar (FT_ULong charcode, FT_Int32 load_flags)
+    {
+        if (!_valid) return false;
+
+        FT_Error error;
+
+        error = FT_Load_Char (_face, charcode, load_flags);
+        if(error) {
+            cerr << "Fail to load Character" << endl;
+            return false;
+        }
+
+        return true;
+    }
+
+    bool FontType::renderGlyph (FT_Render_Mode render_mode)
+    {
+        if(!_valid) return false;
+        FT_Error error;
+
+        error = FT_Render_Glyph(_face->glyph, // glyph slot
+                                render_mode);
+        if(error) {
+            cerr << "Fail to render glyph" << endl;
+            return false;
+        }
+
+        return true;
+    }
 
     bool FontType::getKerning (FT_UInt left_glyph,
                                FT_UInt right_glyph,

@@ -7,6 +7,9 @@
 #include <iostream>
 #include <string>
 
+#define WIDTH 640
+#define HEIGHT 480
+
 using namespace std;
 
 class FontTypeTest: public CppUnit::TestFixture
@@ -32,9 +35,16 @@ class FontTypeTest: public CppUnit::TestFixture
 
  private:
 
+    /* Test case */
     void create1 ();
     void create2 ();
 
+    /* draw bitmap */
+    void draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y);
+
+    void show_image(void);
+
+    unsigned char image[HEIGHT][WIDTH];
 };
 
 #endif  /* _FONTTYPE_TEST_H */

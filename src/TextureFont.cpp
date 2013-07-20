@@ -274,6 +274,8 @@ namespace BIL {
             }
 
         }
+
+        return 0;
     }
 
     TextureFont::Glyph* TextureFont::getGlyph (wchar_t ch)
@@ -311,17 +313,17 @@ namespace BIL {
                  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
                  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
                  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-            if(region.x < 0) {
+            if(region.rect.sx < 0) {
                 cerr << "Texture atlas is full" << endl;
                 return NULL;
             }
 
-            _atlas->setRegion(region.x, region.y, 4, 4, data, 0);
+            _atlas->setRegion(region.rect.sx, region.rect.sy, 4, 4, data, 0);
             glyph.charcode = (wchar_t)(-1);
-            glyph.s0 = (region.x + 2)/(float)width;
-            glyph.t0 = (region.y + 2)/(float)height;
-            glyph.s1 = (region.x + 3)/(float)width;
-            glyph.t1 = (region.y + 3)/(float)height;
+            glyph.s0 = (region.rect.sx + 2)/(float)width;
+            glyph.t0 = (region.rect.sy + 2)/(float)height;
+            glyph.s1 = (region.rect.sx + 3)/(float)width;
+            glyph.t1 = (region.rect.sy + 3)/(float)height;
             _glyphs.push_back(glyph);
             return &(_glyphs.back());
         }
