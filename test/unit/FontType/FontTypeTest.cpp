@@ -143,7 +143,7 @@ void FontTypeTest::get_glyph1 ()
         return;
     }
 
-    wchar_t ch = '1';
+    wchar_t ch = L'A';
 
     result = font->setFontSize (16, 72);
 
@@ -171,12 +171,22 @@ void FontTypeTest::get_glyph1 ()
             int i, j; unsigned char charcode;
             for(i = 0; i < rows; i++) {
                 for(j = 0; j < width; j++) {
-                    charcode = *(face->glyph->bitmap.buffer + i + j);
+                    charcode = *(face->glyph->bitmap.buffer + i * width + j);
                     printf ("0x%2x ", charcode);
                 }
                 cout << endl;
             }
             cout << endl;
+
+            for(i = 0; i < rows; i++) {
+                for(j = 0; j < width; j++) {
+                    charcode = *(face->glyph->bitmap.buffer + i * width + j);
+                    putchar (charcode < 128? ' ' : '*');
+                }
+                cout << endl;
+            }
+            cout << endl;
+
         }
 
     }

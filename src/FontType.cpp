@@ -206,7 +206,7 @@ namespace BIL {
         //in terms of 1/64ths of pixels.  Thus, to make a font
         //h pixels high, we need to request a size of h*64.
         //(h << 6 is just a prettier way of writting h*64)
-        err = FT_Set_Char_Size( _face, ((int)size) << 6, 0, dpi, dpi);
+        err = FT_Set_Char_Size( _face, ((int)size) << 6, 0, dpi, 0);
         if (err) {
             cerr << "The current font don't support the size, " << size << " and dpi " << dpi << endl;
             return false;
