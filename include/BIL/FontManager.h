@@ -49,12 +49,16 @@ namespace BIL {
         void printfonts (void);
 #endif
 
+	const unsigned char* getBuffer (void) const {
+            return _buf;
+        }
+
         /**
-         * @brief load truetype font
+         * @brief load truetype font into memory
          * @param family font family
-         * @return
+         * @return true for success, false for error
          */
-        bool loadFont (const string& family);
+        bool loadFont (const string& family = string("Sans"));
 
         bool loadFont (const Font& font);
 
@@ -80,6 +84,7 @@ namespace BIL {
          * Move the default constructor to private
          */
         FontManager ()
+            : _buf(NULL)
         {
         }
 
@@ -101,6 +106,9 @@ namespace BIL {
         map<string, FontType*> _namedb;
 
         static bool initialized;
+
+        unsigned char* _buf;    /* a buffer in memory for the default
+                                   font file */
     };
 
 } /* namespace BIL */

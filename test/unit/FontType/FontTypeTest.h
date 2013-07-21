@@ -18,6 +18,7 @@ class FontTypeTest: public CppUnit::TestFixture
 
     CPPUNIT_TEST(create1);
     CPPUNIT_TEST(create2);
+    CPPUNIT_TEST(get_glyph1);
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -38,6 +39,7 @@ class FontTypeTest: public CppUnit::TestFixture
     /* Test case */
     void create1 ();
     void create2 ();
+    void get_glyph1 ();
 
     /* draw bitmap */
     void draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y);

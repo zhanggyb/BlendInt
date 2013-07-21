@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 
 #include <boost/filesystem.hpp>
@@ -50,6 +51,11 @@ namespace BIL {
         // finish fontconfig
         if (initialized) FcFini();
 
+        if(_buf != NULL) {
+            delete [] _buf;
+	    _buf = NULL;
+        }
+
         initialized = false;
     }
 
@@ -67,17 +73,30 @@ namespace BIL {
 
     bool FontManager::loadFont (const string& family)
     {
-        string ret = getFontPath (family);
+        string filepath = getFontPath (family);
 
-        cout << "get font: " << ret << endl;
-
-        if (ret.empty()) {
+        if (filepath.empty()) {
             return false;
         }
 
-        // TODO: do sth
+        ifstream file(filepath.c_str(), ios::binary);
+        if(file) {
+            file.seekg(0, ios::end);
+            fstream::pos_type filesize = file.tellg();
+            file.seekg(0);
 
-        return true;
+            if (_buf != NULL) {
+                delete [] _buf;
+                _buf = NULL;
+            }
+
+            _buf = new unsigned char[filesize];
+            file.read((char*)_buf, filesize);
+
+            return true;
+        }
+
+        return false;
     }
 
     string FontManager::getFontPath (const string& family, float size, bool bold, bool italic)
@@ -166,19 +185,19 @@ namespace BIL {
         if (!exists(path(file)))
             return false;
 
-	/*
-        FontType *font = new FontType(_fontLib, file);
-        if (font->isValid()) {
-            _fonts[file] = font;
-            string psname = font->getPostscriptName();
-            if (!psname.empty()) {
-                _namedb[psname] = font;
-            }
-        } else {
-            delete font;
-            font = NULL;
-        }
-	*/
+        /*
+          FontType *font = new FontType(_fontLib, file);
+          if (font->isValid()) {
+          _fonts[file] = font;
+          string psname = font->getPostscriptName();
+          if (!psname.empty()) {
+          _namedb[psname] = font;
+          }
+          } else {
+          delete font;
+          font = NULL;
+          }
+        */
 
         return true;
     }

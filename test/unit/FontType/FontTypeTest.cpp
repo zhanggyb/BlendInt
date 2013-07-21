@@ -4,6 +4,9 @@
 #include <BIL/FontManager.h>
 #include <iostream>
 #include <string>
+#include <stdio.h>
+#include <cppunit/TestAssert.h>
+#include <wchar.h>
 
 #include "FontTypeTest.h"
 
@@ -113,4 +116,76 @@ void FontTypeTest::create2 ()
     FontManager::gFontService = NULL;
 
     CPPUNIT_ASSERT(result1 && result2);
+}
+
+void FontTypeTest::get_glyph1 ()
+{
+    bool result;
+
+    if(FontManager::gFontService == NULL) {
+        FontManager::gFontService = FontManager::instance();
+    }
+
+    FontManager::gFontService->initialize();
+
+    string fontpath = FontManager::gFontService->getFontPath("Sans");
+
+    FontType *font = new FontType(fontpath);
+
+    result = font->isValid();
+
+    if(!font->isValid()) {
+        delete font; font = NULL;
+        delete FontManager::gFontService;
+        FontManager::gFontService = NULL;
+
+        CPPUNIT_FAIL ("Cannot create font\n");
+        return;
+    }
+
+    wchar_t ch = '1';
+
+    result = font->setFontSize (16, 72);
+
+    if (result) {
+
+        result = font->loadChar (ch, FT_LOAD_RENDER);
+
+        if (result) {
+            FT_Face face = font->getFontFace();
+            cout << endl
+                 << "num_faces: " << face->num_faces << endl
+                 << "face_index: " << face->face_index << endl
+                 << "num_glyphs: " << face->num_glyphs << endl
+                 << "slot: " << endl
+                 << "       " << "format: " << face->glyph->format << endl
+                 << "       " << "bitmap: " << endl
+                 << "               " << "rows: " << face->glyph->bitmap.rows << endl
+                 << "               " << "width: " << face->glyph->bitmap.width << endl
+                 << "               " << "pitch: " << face->glyph->bitmap.pitch << endl
+                 << "               " << "num_grays: " << face->glyph->bitmap.num_grays << endl;
+
+            int rows = face->glyph->bitmap.rows;
+            int width = face->glyph->bitmap.width;
+
+            int i, j; unsigned char charcode;
+            for(i = 0; i < rows; i++) {
+                for(j = 0; j < width; j++) {
+                    charcode = *(face->glyph->bitmap.buffer + i + j);
+                    printf ("0x%2x ", charcode);
+                }
+                cout << endl;
+            }
+            cout << endl;
+        }
+
+    }
+
+    delete font; font = NULL;
+
+    // Disable font service now
+    delete FontManager::gFontService;
+    FontManager::gFontService = NULL;
+
+    CPPUNIT_ASSERT(result);
 }

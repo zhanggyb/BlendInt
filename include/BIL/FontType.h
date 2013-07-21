@@ -79,7 +79,7 @@ namespace BIL {
         bool loadGlyph (FT_UInt glyph_index,
                         FT_Int32 load_flags = FT_LOAD_DEFAULT);
 
-        void setFontSize (GLuint size, GLuint dpi);
+        bool setFontSize (GLuint size, GLuint dpi);
 
         bool setCharSize (float size, int dpi = 72);
 
@@ -112,7 +112,7 @@ namespace BIL {
          *
          * Set load_flags to FT_LOAD_RENDER to convert the glyph image to an
          * anti-aliased bitmap immediately. This can avoid calling
-	 * renderGlyph()
+         * renderGlyph()
          */
         bool loadChar (FT_ULong charcode, FT_Int32 load_flags);
 

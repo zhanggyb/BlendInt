@@ -19,12 +19,15 @@ namespace BIL {
           _stroker(NULL), _valid(false),
           _unicode(false), _file(filename)
     {
-        size_t hres = 64;
+        // size_t hres = 64;
         FT_Error error;
-        FT_Matrix matrix = { (int)((1.0/hres) * 0x10000L),
-                             (int)((0.0)      * 0x10000L),
-                             (int)((0.0)      * 0x10000L),
-                             (int)((1.0)      * 0x10000L) };
+
+        /*
+          FT_Matrix matrix = { (int)((1.0/hres) * 0x10000L),
+          (int)((0.0)      * 0x10000L),
+          (int)((0.0)      * 0x10000L),
+          (int)((1.0)      * 0x10000L) };
+        */
 
         error = FT_Init_FreeType(&_library);
         if(error) {
@@ -60,12 +63,14 @@ namespace BIL {
         }
 
         /* Set char size */
-        error = FT_Set_Char_Size (_face, (int)(size * 64), 0, 72*hres, 72);
-        if(error) {
-            cerr << "Cannot set character size" << endl;
-        } else {
-            FT_Set_Transform (_face, &matrix, NULL);
-        }
+        /*
+          error = FT_Set_Char_Size (_face, (int)(size * 64), 0, 72*hres, 72);
+          if(error) {
+          cerr << "Cannot set character size" << endl;
+          } else {
+          FT_Set_Transform (_face, &matrix, NULL);
+          }
+        */
 
     }
 
@@ -77,12 +82,14 @@ namespace BIL {
           _stroker(NULL), _valid(false),
           _unicode(false), _file()
     {
-        size_t hres = 64;
+        // size_t hres = 64;
         FT_Error error;
-        FT_Matrix matrix = { (int)((1.0/hres) * 0x10000L),
-                             (int)((0.0)      * 0x10000L),
-                             (int)((0.0)      * 0x10000L),
-                             (int)((1.0)      * 0x10000L) };
+        /*
+          FT_Matrix matrix = { (int)((1.0/hres) * 0x10000L),
+          (int)((0.0)      * 0x10000L),
+          (int)((0.0)      * 0x10000L),
+          (int)((1.0)      * 0x10000L) };
+        */
 
         error = FT_Init_FreeType(&_library);
         if(error) {
@@ -113,12 +120,14 @@ namespace BIL {
         }
 
         /* Set char size */
-        error = FT_Set_Char_Size (_face, (int)(size * 64), 0, 72*hres, 72);
-        if(error) {
-            cerr << "Cannot set character size" << endl;
-        } else {
-            FT_Set_Transform (_face, &matrix, NULL);
-        }
+        /*
+          error = FT_Set_Char_Size (_face, (int)(size * 64), 0, 72*hres, 72);
+          if(error) {
+          cerr << "Cannot set character size" << endl;
+          } else {
+          FT_Set_Transform (_face, &matrix, NULL);
+          }
+        */
     }
 
     FontType::~FontType ()
@@ -167,16 +176,19 @@ namespace BIL {
         return true;
     }
 
-    void FontType::setFontSize (GLuint size, GLuint dpi)
+    bool FontType::setFontSize (GLuint size, GLuint dpi)
     {
-        FT_Error err;
+        if(! _valid) return false;
 
-        if(! _valid) return;
+        FT_Error error;
 
-        err = FT_Set_Char_Size (_face, 0, (FT_F26Dot6)(size * 64), dpi, dpi);
-        if (err) {
+        error = FT_Set_Char_Size (_face, 0, (FT_F26Dot6)(size * 64), dpi, dpi);
+        if (error) {
             cerr << "The current font don't support the size, " << size << " and dpi " << dpi << endl;
+            return false;
         }
+
+        return true;
     }
 
     bool FontType::setCharSize (float size, int dpi)
