@@ -189,7 +189,7 @@ namespace BIL {
         face.setCharSize(this->h, 96);
 
         // load Glyph for our character.
-        face.loadGlyph(ch);
+        face.loadCharacter((wchar_t)ch, FT_LOAD_DEFAULT);
 
         // Move the face's glyph into a Glyph object.
         FT_Glyph glyph;

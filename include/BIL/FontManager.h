@@ -45,6 +45,10 @@ namespace BIL {
 
         bool initialize (void);
 
+        bool isInitialized (void) const {
+            return initialized;
+        }
+
 #ifdef DEBUG
         void printfonts (void);
 #endif

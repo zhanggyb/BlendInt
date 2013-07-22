@@ -101,10 +101,6 @@ namespace BIL {
         bool loadGlyph (FT_UInt glyph_index,
                         FT_Int32 load_flags = FT_LOAD_DEFAULT);
 
-        bool loadGlyph (char charcode);
-
-        bool renderGlyph (FT_Render_Mode render_mode = FT_RENDER_MODE_NORMAL);
-
         /**
          * @brief Load a single glyph into the glyph slot of a face object
          * @param charcode Character code
@@ -116,7 +112,12 @@ namespace BIL {
          * anti-aliased bitmap immediately. This can avoid calling
          * renderGlyph()
          */
-        bool loadChar (FT_ULong charcode, FT_Int32 load_flags);
+        bool loadCharacter (FT_ULong charcode, FT_Int32 load_flags);
+
+        /**
+         * Call this member function after loadGlyph()
+         */
+        bool renderGlyph (FT_Render_Mode render_mode = FT_RENDER_MODE_NORMAL);
 
         bool setLcdFilter (FT_LcdFilter filter);
 

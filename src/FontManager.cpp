@@ -74,6 +74,8 @@ namespace BIL {
 
     bool FontManager::loadFont (const string& family)
     {
+        if(!initialized) return false;
+
         string filepath = getFontPath (family);
 
         if (filepath.empty()) {

@@ -148,7 +148,7 @@ void FontTypeTest::get_glyph1 ()
 
     if (result) {
 
-        result = font->loadChar (ch, FT_LOAD_RENDER);
+        result = font->loadCharacter (ch, FT_LOAD_RENDER);
 
         if (result) {
             FT_Face face = font->getFontFace();
@@ -217,7 +217,7 @@ void FontTypeTest::get_glyph2 ()
 
     if (result) {
 
-        result = font->loadChar (ch, FT_LOAD_RENDER);
+        result = font->loadCharacter (ch, FT_LOAD_RENDER);
 
         if (result) {
             FT_Face face = font->getFontFace();
@@ -286,7 +286,7 @@ void FontTypeTest::get_glyph3 ()
 
     if (result) {
 
-        result = font->loadChar (ch, FT_LOAD_RENDER);
+        result = font->loadCharacter (ch, FT_LOAD_RENDER);
 
         if (result) {
             FT_Face face = font->getFontFace();

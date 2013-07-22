@@ -8,95 +8,129 @@
 #ifndef _BIL_TEXTBUFFER_H_
 #define _BIL_TEXTBUFFER_H_
 
-#include <GL/glew.h>
- #include <GL/gl.h>
-
 #include <stddef.h>
 #include <boost/array.hpp>
+#include <string.h>
 
 #include <BIL/VertexBuffer.h>
 #include <BIL/Color.h>
 #include <BIL/Point.h>
+//#include <BIL/BasicObject.h>
 
 using namespace boost;
+using namespace std;
 
 namespace BIL {
 
-	/**
-	* Glyph vertex structure
-	*/
-	struct GlyphVertex {
+    /**
+     * Glyph vertex structure
+     */
+    struct GlyphVertex {
 
-		/** Vertex x coordinates */
-		float x;
+        /** Vertex x coordinates */
+        float x;
 
-		/** Vertex y coordinates */
-		float y;
+        /** Vertex y coordinates */
+        float y;
 
-		/** Vertex z coordinates */
-		float z;
+        /** Vertex z coordinates */
+        float z;
 
-		/** Texture first coordinate */
-		float u;
+        /** Texture first coordinate */
+        float u;
 
-		/** Texture second coordinate */
-		float v;
+        /** Texture second coordinate */
+        float v;
 
-		/** Color red component */
-		float r;
+        /** Color red component */
+        float r;
 
-		/** Color green component */
-		float g;
+        /** Color green component */
+        float g;
 
-		/** Color blue component */
-		float b;
+        /** Color blue component */
+        float b;
 
-		/** Color alpha component */
-		float a;
+        /** Color alpha component */
+        float a;
 
-		/** Shift along x */
-		float shift;
+        /** Shift along x */
+        float shift;
 
-		/** Color gamma correction */
+        /** Color gamma correction */
 
-		float gamma;
-	} ;
+        float gamma;
+    } ;
 
-	class TextBuffer
-	{
-	public:
+    class TextBuffer
+    {
+    public:
 
-		TextBuffer ();
-		
-		virtual ~TextBuffer ();
+        /**
+         * @brief Default Constructor
+         *
+         * create a new empty text buffer
+         */
+        TextBuffer ();
 
-	private:
+        /**/
+        TextBuffer (const wstring& text);
 
-		VertexBuffer _buffer;
+        void append (const wstring& text);
 
-		// Font
+        void append (wchar_t charcode);
 
-		/** Base color for text */
-		Color _baseColor;
+        void render (void);     /* render the text */
 
-		/** Pen origin */
-		Point3Df _origin;
+        void clear (void);      /* clear the text */
 
-		/** Index (in the vertex buffer) of the line start */
-		size_t _lineStart;
+        virtual ~TextBuffer ();
 
-		/** Current line ascender */
-		GLfloat _lineAscender;
+    private:
 
-		/** Current line decender */
-		GLfloat _lineDescender;
+        TextBuffer (const TextBuffer& orig);
 
-		/** Shader handler */
+        TextBuffer& operator = (const TextBuffer& orig);
 
-		/** Texture location */
+        /**
+         * @brief create display list for each character in the text
+         */
+        bool makeDisplayList (wchar_t charcode,
+                              GLuint list_base,
+                              GLuint* tex_base);
 
-		/** Pixel location */
-	};
+        /** Texture ids */
+        GLuint *_textures;
+
+        /** the first display list id */
+        GLuint _displist;
+
+        /** Base color for text */
+        Color _baseColor;
+
+        /** Pen origin */
+        Point3Df _origin;
+
+        /** Index (in the vertex buffer) of the line start */
+        size_t _lineStart;
+
+        /** Current line ascender */
+        GLfloat _lineAscender;
+
+        /** Current line decender */
+        GLfloat _lineDescender;
+
+        /** Shader handler */
+
+        /** Texture location */
+
+        /** Pixel location */
+
+        /** string */
+        wstring _text;
+
+        VertexBuffer _buffer;
+    };
 
 } /* namespace BIL */
 #endif /* TEXTBUFFER_H_ */

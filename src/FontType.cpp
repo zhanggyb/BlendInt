@@ -148,18 +148,6 @@ namespace BIL {
         }
     }
 
-    bool FontType::loadGlyph (char charcode)
-    {
-        bool ret = true;
-
-        if (FT_Load_Glyph(_face,
-                          FT_Get_Char_Index(_face, charcode),
-                          FT_LOAD_DEFAULT))
-            ret = false;
-
-        return ret;
-    }
-
     bool FontType::loadGlyph (FT_UInt glyph_index, FT_Int32 load_flags)
     {
         if(! _valid) return false;
@@ -241,38 +229,7 @@ namespace BIL {
         return (FT_Get_Char_Index (_face, charcode));
     }
 
-    bool FontType::setLcdFilter(FT_LcdFilter filter)
-    {
-        if(!_valid) return false;
-
-        FT_Error error;
-
-        error = FT_Library_SetLcdFilter (_library, filter);
-
-        if (error) {
-            cerr << "Fail to set lcd filter" << endl;
-            return false;
-        }
-
-        return true;
-    }
-
-    bool FontType::setLcdFilterWeights(unsigned char* weights)
-    {
-        if(!_valid) return false;
-
-        FT_Error error;
-
-        error = FT_Library_SetLcdFilterWeights(_library, weights);
-        if (error) {
-            cerr << "Fail to set lcd filter weights" << endl;
-            return false;
-        }
-
-        return true;
-    }
-
-    bool FontType::loadChar (FT_ULong charcode, FT_Int32 load_flags)
+    bool FontType::loadCharacter (FT_ULong charcode, FT_Int32 load_flags)
     {
         if (!_valid) return false;
 
@@ -322,5 +279,37 @@ namespace BIL {
 
         return true;
     }
+
+    bool FontType::setLcdFilter(FT_LcdFilter filter)
+    {
+        if(!_valid) return false;
+
+        FT_Error error;
+
+        error = FT_Library_SetLcdFilter (_library, filter);
+
+        if (error) {
+            cerr << "Fail to set lcd filter" << endl;
+            return false;
+        }
+
+        return true;
+    }
+
+    bool FontType::setLcdFilterWeights(unsigned char* weights)
+    {
+        if(!_valid) return false;
+
+        FT_Error error;
+
+        error = FT_Library_SetLcdFilterWeights(_library, weights);
+        if (error) {
+            cerr << "Fail to set lcd filter weights" << endl;
+            return false;
+        }
+
+        return true;
+    }
+
 
 } /* namespace BIL */
