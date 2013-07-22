@@ -27,12 +27,17 @@ FontTypeTest::~FontTypeTest ()
 
 void FontTypeTest::setUp ()
 {
+    if(FontManager::gFontService == NULL) {
+        FontManager::gFontService = FontManager::instance();
+    }
 
+    FontManager::gFontService->initialize();
 }
 
 void FontTypeTest::tearDown ()
 {
-
+    delete FontManager::gFontService;
+    FontManager::gFontService = NULL;
 }
 
 void FontTypeTest::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
@@ -71,12 +76,6 @@ void FontTypeTest::create1 ()
 {
     bool result;
 
-    if(FontManager::gFontService == NULL) {
-        FontManager::gFontService = FontManager::instance();
-    }
-
-    FontManager::gFontService->initialize();
-
     string fontpath = FontManager::gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
@@ -85,21 +84,12 @@ void FontTypeTest::create1 ()
 
     delete font; font = NULL;
 
-    delete FontManager::gFontService;
-    FontManager::gFontService = NULL;
-
     CPPUNIT_ASSERT(result);
 }
 
 void FontTypeTest::create2 ()
 {
     bool result1, result2;
-
-    if(FontManager::gFontService == NULL) {
-        FontManager::gFontService = FontManager::instance();
-    }
-
-    FontManager::gFontService->initialize();
 
     string fontpath = FontManager::gFontService->getFontPath("Sans");
 
@@ -112,21 +102,12 @@ void FontTypeTest::create2 ()
     delete font1; font1 = NULL;
     delete font2; font2 = NULL;
 
-    delete FontManager::gFontService;
-    FontManager::gFontService = NULL;
-
     CPPUNIT_ASSERT(result1 && result2);
 }
 
 void FontTypeTest::get_glyph1 ()
 {
     bool result;
-
-    if(FontManager::gFontService == NULL) {
-        FontManager::gFontService = FontManager::instance();
-    }
-
-    FontManager::gFontService->initialize();
 
     string fontpath = FontManager::gFontService->getFontPath("Sans");
 
@@ -136,9 +117,6 @@ void FontTypeTest::get_glyph1 ()
 
     if(!font->isValid()) {
         delete font; font = NULL;
-        delete FontManager::gFontService;
-        FontManager::gFontService = NULL;
-
         CPPUNIT_FAIL ("Cannot create font\n");
         return;
     }
@@ -193,9 +171,221 @@ void FontTypeTest::get_glyph1 ()
 
     delete font; font = NULL;
 
-    // Disable font service now
-    delete FontManager::gFontService;
-    FontManager::gFontService = NULL;
+    CPPUNIT_ASSERT(result);
+}
+
+void FontTypeTest::get_glyph2 ()
+{
+    bool result;
+
+    string fontpath = FontManager::gFontService->getFontPath("Sans");
+
+    FontType *font = new FontType(fontpath);
+
+    result = font->isValid();
+
+    if(!font->isValid()) {
+        delete font; font = NULL;
+        CPPUNIT_FAIL ("Cannot create font\n");
+        return;
+    }
+
+    wchar_t ch = L'仁';
+
+    result = font->setCharSize (24, 96);
+
+    if (result) {
+
+        result = font->loadChar (ch, FT_LOAD_RENDER);
+
+        if (result) {
+            FT_Face face = font->getFontFace();
+            cout << endl
+                 << "num_faces: " << face->num_faces << endl
+                 << "face_index: " << face->face_index << endl
+                 << "num_glyphs: " << face->num_glyphs << endl
+                 << "slot: " << endl
+                 << "       " << "format: " << face->glyph->format << endl
+                 << "       " << "bitmap: " << endl
+                 << "               " << "rows: " << face->glyph->bitmap.rows << endl
+                 << "               " << "width: " << face->glyph->bitmap.width << endl
+                 << "               " << "pitch: " << face->glyph->bitmap.pitch << endl
+                 << "               " << "num_grays: " << face->glyph->bitmap.num_grays << endl;
+
+            int rows = face->glyph->bitmap.rows;
+            int width = face->glyph->bitmap.width;
+
+            int i, j; unsigned char charcode;
+            for(i = 0; i < rows; i++) {
+                for(j = 0; j < width; j++) {
+                    charcode = *(face->glyph->bitmap.buffer + i * width + j);
+                    printf ("0x%2x ", charcode);
+                }
+                cout << endl;
+            }
+            cout << endl;
+
+            for(i = 0; i < rows; i++) {
+                for(j = 0; j < width; j++) {
+                    charcode = *(face->glyph->bitmap.buffer + i * width + j);
+                    putchar (charcode < 128? ' ' : '*');
+                }
+                cout << endl;
+            }
+            cout << endl;
+
+        }
+
+    }
+
+    delete font; font = NULL;
+
+    CPPUNIT_ASSERT(result);
+}
+
+void FontTypeTest::get_glyph3 ()
+{
+    bool result;
+
+    string fontpath = FontManager::gFontService->getFontPath("Sans");
+
+    FontType *font = new FontType(fontpath);
+
+    result = font->isValid();
+
+    if(!font->isValid()) {
+        delete font; font = NULL;
+        CPPUNIT_FAIL ("Cannot create font\n");
+        return;
+    }
+
+    wchar_t ch = L'义';
+
+    result = font->setCharSize (24 * 64, 0, 96, 0);
+
+    if (result) {
+
+        result = font->loadChar (ch, FT_LOAD_RENDER);
+
+        if (result) {
+            FT_Face face = font->getFontFace();
+            cout << endl
+                 << "num_faces: " << face->num_faces << endl
+                 << "face_index: " << face->face_index << endl
+                 << "num_glyphs: " << face->num_glyphs << endl
+                 << "slot: " << endl
+                 << "       " << "format: " << face->glyph->format << endl
+                 << "       " << "bitmap: " << endl
+                 << "               " << "rows: " << face->glyph->bitmap.rows << endl
+                 << "               " << "width: " << face->glyph->bitmap.width << endl
+                 << "               " << "pitch: " << face->glyph->bitmap.pitch << endl
+                 << "               " << "num_grays: " << face->glyph->bitmap.num_grays << endl;
+
+            int rows = face->glyph->bitmap.rows;
+            int width = face->glyph->bitmap.width;
+
+            int i, j; unsigned char charcode;
+            for(i = 0; i < rows; i++) {
+                for(j = 0; j < width; j++) {
+                    charcode = *(face->glyph->bitmap.buffer + i * width + j);
+                    printf ("0x%2x ", charcode);
+                }
+                cout << endl;
+            }
+            cout << endl;
+
+            for(i = 0; i < rows; i++) {
+                for(j = 0; j < width; j++) {
+                    charcode = *(face->glyph->bitmap.buffer + i * width + j);
+                    putchar (charcode < 128? ' ' : '*');
+                }
+                cout << endl;
+            }
+            cout << endl;
+
+        }
+
+    }
+
+    delete font; font = NULL;
+
+    CPPUNIT_ASSERT(result);
+}
+
+void FontTypeTest::get_glyph4 ()
+{
+    bool result;
+
+    string fontpath = FontManager::gFontService->getFontPath("Sans");
+
+    FontType *font = new FontType(fontpath);
+
+    result = font->isValid();
+
+    if(!font->isValid()) {
+        delete font; font = NULL;
+        CPPUNIT_FAIL ("Cannot create font\n");
+        return;
+    }
+
+    wchar_t ch = L'智';
+
+    result = font->setCharSize (24 * 64, 0, 96, 0);
+
+    if (result) {
+
+        FT_UInt glyph_index = font->getCharIndex (ch);
+
+        result = font->loadGlyph (glyph_index);
+
+        CPPUNIT_ASSERT (result != 0);
+
+        if (result) {
+
+            result = font->renderGlyph (FT_RENDER_MODE_NORMAL);
+
+            if (result) {
+                FT_Face face = font->getFontFace();
+                cout << endl
+                     << "num_faces: " << face->num_faces << endl
+                     << "face_index: " << face->face_index << endl
+                     << "num_glyphs: " << face->num_glyphs << endl
+                     << "slot: " << endl
+                     << "       " << "format: " << face->glyph->format << endl
+                     << "       " << "bitmap: " << endl
+                     << "               " << "rows: " << face->glyph->bitmap.rows << endl
+                     << "               " << "width: " << face->glyph->bitmap.width << endl
+                     << "               " << "pitch: " << face->glyph->bitmap.pitch << endl
+                     << "               " << "num_grays: " << face->glyph->bitmap.num_grays << endl;
+
+                int rows = face->glyph->bitmap.rows;
+                int width = face->glyph->bitmap.width;
+
+                int i, j; unsigned char charcode;
+                for(i = 0; i < rows; i++) {
+                    for(j = 0; j < width; j++) {
+                        charcode = *(face->glyph->bitmap.buffer + i * width + j);
+                        printf ("0x%2x ", charcode);
+                    }
+                    cout << endl;
+                }
+                cout << endl;
+
+                for(i = 0; i < rows; i++) {
+                    for(j = 0; j < width; j++) {
+                        charcode = *(face->glyph->bitmap.buffer + i * width + j);
+                        putchar (charcode < 128? ' ' : '*');
+                    }
+                    cout << endl;
+                }
+                cout << endl;
+
+            }
+        }
+
+    }
+
+    delete font; font = NULL;
 
     CPPUNIT_ASSERT(result);
 }

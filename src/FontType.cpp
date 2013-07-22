@@ -176,7 +176,7 @@ namespace BIL {
         return true;
     }
 
-    bool FontType::setFontSize (GLuint size, GLuint dpi)
+    bool FontType::setFontSize (float size, int dpi)
     {
         if(! _valid) return false;
 

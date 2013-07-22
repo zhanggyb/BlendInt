@@ -68,18 +68,7 @@ namespace BIL {
 
         const FT_Stroker& getStroker (void) const {return _stroker;}
 
-        bool loadGlyph (char charcode);
-
-        /**
-         * @brief Load a single glyph into the glyph slot of a face object
-         * @param glyph_index The index of the glyph in the font file
-         * @param load_flags A flag indicating what to load for this glyph
-         * @return true for success, false for error
-         */
-        bool loadGlyph (FT_UInt glyph_index,
-                        FT_Int32 load_flags = FT_LOAD_DEFAULT);
-
-        bool setFontSize (GLuint size, GLuint dpi);
+        bool setFontSize (float size, int dpi = 72);
 
         bool setCharSize (float size, int dpi = 72);
 
@@ -105,6 +94,19 @@ namespace BIL {
 
         /**
          * @brief Load a single glyph into the glyph slot of a face object
+         * @param glyph_index The index of the glyph in the font file
+         * @param load_flags A flag indicating what to load for this glyph
+         * @return true for success, false for error
+         */
+        bool loadGlyph (FT_UInt glyph_index,
+                        FT_Int32 load_flags = FT_LOAD_DEFAULT);
+
+        bool loadGlyph (char charcode);
+
+        bool renderGlyph (FT_Render_Mode render_mode = FT_RENDER_MODE_NORMAL);
+
+        /**
+         * @brief Load a single glyph into the glyph slot of a face object
          * @param charcode Character code
          * @param A flag indicating what to load for this glyph
          *
@@ -115,8 +117,6 @@ namespace BIL {
          * renderGlyph()
          */
         bool loadChar (FT_ULong charcode, FT_Int32 load_flags);
-
-        bool renderGlyph (FT_Render_Mode render_mode);
 
         bool setLcdFilter (FT_LcdFilter filter);
 
