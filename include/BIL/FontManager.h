@@ -49,8 +49,12 @@ namespace BIL {
         void printfonts (void);
 #endif
 
-	const unsigned char* getBuffer (void) const {
+        const unsigned char* getBuffer (void) const {
             return _buf;
+        }
+
+        long getBufferSize (void) const {
+            return _bufsize;
         }
 
         /**
@@ -84,7 +88,7 @@ namespace BIL {
          * Move the default constructor to private
          */
         FontManager ()
-            : _buf(NULL)
+            : _buf(NULL), _bufsize(0)
         {
         }
 
@@ -109,6 +113,8 @@ namespace BIL {
 
         unsigned char* _buf;    /* a buffer in memory for the default
                                    font file */
+
+        long _bufsize;          /* size of the buffer */
     };
 
 } /* namespace BIL */

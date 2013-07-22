@@ -53,7 +53,8 @@ namespace BIL {
 
         if(_buf != NULL) {
             delete [] _buf;
-	    _buf = NULL;
+            _buf = NULL;
+            _bufsize = 0;
         }
 
         initialized = false;
@@ -90,8 +91,9 @@ namespace BIL {
                 _buf = NULL;
             }
 
-            _buf = new unsigned char[filesize];
-            file.read((char*)_buf, filesize);
+            _bufsize = filesize;
+            _buf = new unsigned char[_bufsize];
+            file.read((char*)_buf, _bufsize);
 
             return true;
         }

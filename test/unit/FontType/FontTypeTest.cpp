@@ -27,11 +27,18 @@ FontTypeTest::~FontTypeTest ()
 
 void FontTypeTest::setUp ()
 {
+    bool ret = false;
+
     if(FontManager::gFontService == NULL) {
         FontManager::gFontService = FontManager::instance();
     }
 
     FontManager::gFontService->initialize();
+
+    ret = FontManager::gFontService->loadFont(); // load default font to memory
+    if(!ret) {
+        // TODO: stop and show failure of this TestFixture
+    }
 }
 
 void FontTypeTest::tearDown ()
@@ -103,6 +110,20 @@ void FontTypeTest::create2 ()
     delete font2; font2 = NULL;
 
     CPPUNIT_ASSERT(result1 && result2);
+}
+
+void FontTypeTest::create3 ()
+{
+    bool result1 = false;
+
+    FontType *font1 = new FontType(FontManager::gFontService->getBuffer(),
+                                   FontManager::gFontService->getBufferSize());
+
+    result1 = font1->isValid();
+
+    delete font1; font1 = NULL;
+
+    CPPUNIT_ASSERT(result1);
 }
 
 void FontTypeTest::get_glyph1 ()
@@ -328,7 +349,7 @@ void FontTypeTest::get_glyph4 ()
         return;
     }
 
-    wchar_t ch = L'智';
+    wchar_t ch = L'礼';
 
     result = font->setCharSize (24 * 64, 0, 96, 0);
 
@@ -380,6 +401,128 @@ void FontTypeTest::get_glyph4 ()
                 }
                 cout << endl;
 
+            }
+        }
+
+    }
+
+    delete font; font = NULL;
+
+    CPPUNIT_ASSERT(result);
+}
+
+void FontTypeTest::get_glyph5 ()
+{
+    bool result;
+
+    FontType *font = new FontType(FontManager::gFontService->getBuffer(),
+                                  FontManager::gFontService->getBufferSize());
+
+    result = font->isValid();
+
+    if(!font->isValid()) {
+        delete font; font = NULL;
+        CPPUNIT_FAIL ("Cannot create font\n");
+        return;
+    }
+
+    wchar_t ch = L'智';
+
+    result = font->setCharSize (24 * 64, 0, 96, 0);
+
+    if (result) {
+
+        FT_UInt glyph_index = font->getCharIndex (ch);
+
+        result = font->loadGlyph (glyph_index);
+
+        CPPUNIT_ASSERT (result != 0);
+
+        if (result) {
+
+            result = font->renderGlyph (FT_RENDER_MODE_NORMAL);
+
+            if (result) {
+                FT_Face face = font->getFontFace();
+
+                int rows = face->glyph->bitmap.rows;
+                int width = face->glyph->bitmap.width;
+
+                int i, j; unsigned char charcode;
+                cout << endl;
+                for(i = 0; i < rows; i++) {
+                    for(j = 0; j < width; j++) {
+                        charcode = *(face->glyph->bitmap.buffer + i * width + j);
+                        putchar (charcode < 128? ' ' : '*');
+                    }
+                    cout << endl;
+                }
+                cout << endl;
+
+            }
+        }
+
+    }
+
+    delete font; font = NULL;
+
+    CPPUNIT_ASSERT(result);
+}
+
+
+void FontTypeTest::glyph_metrics1 ()
+{
+    bool result;
+
+    string fontpath = FontManager::gFontService->getFontPath("Sans");
+
+    FontType *font = new FontType(fontpath);
+
+    result = font->isValid();
+
+    if(!font->isValid()) {
+        delete font; font = NULL;
+        CPPUNIT_FAIL ("Cannot create font\n");
+        return;
+    }
+
+    wchar_t ch = L'信';
+
+    result = font->setCharSize (24 * 64, 0, 96, 0);
+
+    if (result) {
+
+        FT_UInt glyph_index = font->getCharIndex (ch);
+
+        result = font->loadGlyph (glyph_index);
+
+        CPPUNIT_ASSERT (result != 0);
+
+        if (result) {
+
+            result = font->renderGlyph (FT_RENDER_MODE_NORMAL);
+
+            if (result) {
+                FT_Face face = font->getFontFace();
+
+                int rows = face->glyph->bitmap.rows;
+                int width = face->glyph->bitmap.width;
+
+                int i, j; unsigned char charcode;
+                cout << endl;
+                for(i = 0; i < rows; i++) {
+                    for(j = 0; j < width; j++) {
+                        charcode = *(face->glyph->bitmap.buffer + i * width + j);
+                        putchar (charcode < 128? ' ' : '*');
+                    }
+                    cout << endl;
+                }
+                cout << endl;
+
+                // show glyph metrics
+                cout << "Glyph metrics: " << endl;
+                cout << "       " << "width: "<< face->glyph->metrics.width << endl;
+                cout << "       " << "height: " << face->glyph->metrics.height << endl;
             }
         }
 
