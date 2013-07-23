@@ -43,11 +43,6 @@ namespace BIL {
         // createDefaultLayout();
     }
 
-    void Window::MakeContextCurrent (void)
-    {
-        glfwMakeContextCurrent(_window);
-    }
-
     Window::~Window ()
     {
         unregisterCallbacks();

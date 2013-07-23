@@ -19,13 +19,13 @@ using namespace boost::filesystem;
 
 namespace BIL {
 
-    bool FontManager::initialized = false;
-
     FontManager* FontManager::gFontService = NULL;
+
+    bool FontManager::initialized = false;
 
     bool FontManager::initialize (void)
     {
-        if (initialized == true)
+        if (initialized)
             return false;
 
         // load system files    TODO: load more fonts
@@ -59,18 +59,6 @@ namespace BIL {
 
         initialized = false;
     }
-
-#ifdef DEBUG
-    void FontManager::printfonts (void)
-    {
-        map<string, FontType*>::const_iterator it;
-
-        for (it = _namedb.begin(); it != _namedb.end(); it++)
-        {
-            cout << (*it).first << endl;
-        }
-    }
-#endif
 
     bool FontManager::loadFont (const string& family)
     {

@@ -56,7 +56,7 @@ namespace BIL {
         setlocale(LC_ALL, "");
 
         if (_mainWindow != NULL) {
-            _mainWindow->MakeContextCurrent();
+            _mainWindow->makeContextCurrent();
         }
 
         return true;
@@ -83,7 +83,7 @@ namespace BIL {
     void Application::setMainWindow (Window* window)
     {
         _mainWindow = window;
-        _mainWindow->MakeContextCurrent();
+        _mainWindow->makeContextCurrent();
     }
 
 

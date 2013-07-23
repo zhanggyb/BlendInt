@@ -22,12 +22,22 @@ namespace BIL {
     {
     public:
 
+        /**
+         * @brief Default Constructor
+         * @param parent parent object
+         *
+         * @warning: any OpenGL code to initialize something  will fail before
+         * makeContextCurrent in constructor
+         */
         Window (BasicObject * parent = NULL);
 
         Window (int width, int height, const char *title, GLFWmonitor *monitor,
                 GLFWwindow *share, BasicObject* parent = NULL);
 
-        void MakeContextCurrent (void);
+        void makeContextCurrent (void)
+	{
+	    glfwMakeContextCurrent(_window);
+	}
 
         virtual ~Window ();
 

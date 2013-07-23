@@ -24,6 +24,8 @@ typedef FontList::const_iterator FontIter;
 
 namespace BIL {
 
+
+
     class FontManager
     {
     public:
@@ -33,7 +35,8 @@ namespace BIL {
         static FontManager* instance (void)
         {
             if (gFontService != NULL) {
-                cerr << "Error: FontManager should generate only one instance" << endl;
+                cerr << "Error: FontManager should generate only one instance"
+                     << endl;
                 return NULL;
             }
 
@@ -48,10 +51,6 @@ namespace BIL {
         bool isInitialized (void) const {
             return initialized;
         }
-
-#ifdef DEBUG
-        void printfonts (void);
-#endif
 
         const unsigned char* getBuffer (void) const {
             return _buf;

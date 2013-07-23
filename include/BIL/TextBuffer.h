@@ -11,6 +11,8 @@
 #include <stddef.h>
 #include <boost/array.hpp>
 #include <string.h>
+#include <vector>
+#include <map>
 
 #include <BIL/VertexBuffer.h>
 #include <BIL/Color.h>
@@ -88,6 +90,12 @@ namespace BIL {
 
     private:
 
+        struct CharData
+        {
+            GLuint texture;
+            GLuint displist;
+        };
+
         TextBuffer (const TextBuffer& orig);
 
         TextBuffer& operator = (const TextBuffer& orig);
@@ -97,13 +105,21 @@ namespace BIL {
          */
         bool makeDisplayList (wchar_t charcode,
                               GLuint list_base,
-                              GLuint* tex_base);
+                              GLuint* tex_base,
+                              unsigned int index);
+
+        bool makeDisplayList (wchar_t charcode);
 
         /** Texture ids */
-        GLuint *_textures;
+        // GLuint *_textures;
+        map<GLuint*, size_t> _textures;
 
         /** the first display list id */
-        GLuint _displist;
+        // GLuint _displist;
+        map<GLuint, size_t> _displists;
+
+        /** Character DB  */
+        map<wchar_t, CharData> _chardb;
 
         /** Base color for text */
         Color _baseColor;

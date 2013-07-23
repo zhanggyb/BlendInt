@@ -5,37 +5,54 @@
  *      Author: zhanggyb
  */
 
+#include <iostream>
 #include <assert.h>
 
 #include <BIL/FontCache.h>
 
+using namespace std;
+
 namespace BIL {
 
-	FontCache::FontCache (size_t w, size_t h, size_t d)
-		: _atlas(w, h, d)
-	{
-		// TODO Auto-generated constructor stub
+    FontCache* FontCache::gFontCache = NULL;
 
-		// _fonts 
+    bool FontCache::initialized = false;
+    unsigned int FontCache::cacheSize = 512;
 
-		_cache = wcsdup(L" ");
-	}
+    FontCache* FontCache::instance (void)
+    {
+        if (gFontCache != NULL) {
+            cerr << "Error: FontCache should generate only on instance"
+                 << endl;
+            return NULL;
+        }
 
-	FontCache::~FontCache ()
-	{
-		// TODO Auto-generated destructor stub
-		if(_cache) {
-			free (_cache);
-		}
-	}
+        FontCache* fc = new FontCache;
+        return fc;
+    }
 
-	wchar_t* FontCache::wcsdup (const wchar_t *str)
-	{
-		wchar_t * result;
-		assert (str);
-		result =(wchar_t *) malloc ((wcslen (str) + 1) * sizeof (wchar_t));
-		wcscpy (result, str);
-		return result;
-	}
+    bool FontCache::initialize (void)
+    {
+        if (initialized) return false;
+
+        initialized = true;
+        return true;
+    }
+
+    FontCache::FontCache ()
+    {
+
+    }
+
+    FontCache::~FontCache ()
+    {
+        // TODO Auto-generated destructor stub
+        /*
+          if(_cache) {
+          free (_cache);
+          }
+        */
+        initialized = false;
+    }
 
 } /* namespace BIL */
