@@ -18,83 +18,83 @@
 
 namespace BIL {
 
-	class Window: public BIL::BasicObject
-	{
-	public:
+    class Window: public BIL::BasicObject
+    {
+    public:
 
-		Window (BasicObject * parent = NULL);
+        Window (BasicObject * parent = NULL);
 
-		Window (int width, int height, const char *title, GLFWmonitor *monitor,
-		        GLFWwindow *share, BasicObject* parent = NULL);
+        Window (int width, int height, const char *title, GLFWmonitor *monitor,
+                GLFWwindow *share, BasicObject* parent = NULL);
 
-		void MakeContextCurrent (void);
+        void MakeContextCurrent (void);
 
-		virtual ~Window ();
+        virtual ~Window ();
 
-		GLFWwindow* getWindow (void) const
-		{
-			return _window;
-		}
+        GLFWwindow* getWindow (void) const
+        {
+            return _window;
+        }
 
-		Size2Di getSize (void);
+        Size2Di getSize (void);
 
-		bool resize (const Size2Di& size);
+        bool resize (const Size2Di& size);
 
-		bool resize (int w, int h)
-		{
-			return (resize(Size2Di(w, h)));
-		}
+        bool resize (int w, int h)
+        {
+            return (resize(Size2Di(w, h)));
+        }
 
-		void setTitle (const std::string& title);
-		void setTitle (const char *title);
+        void setTitle (const std::string& title);
+        void setTitle (const char *title);
 
-		std::string getTitle (void)
-		{
-			return _title;
-		}
+        std::string getTitle (void)
+        {
+            return _title;
+        }
 
-		virtual void refresh (void)
-		{
-			render();
-		}
+        virtual void refresh (void)
+        {
+            render();
+        }
 
-	protected:
+    protected:
 
-		virtual void render (void);
+        virtual void render (void);
 
-	private:
+    private:
 
-		Window (const Window& orig);
-		Window& operator = (const Window& orig);
+        Window (const Window& orig);
+        Window& operator = (const Window& orig);
 
-		bool registerCallbacks (void);
+        bool registerCallbacks (void);
 
-		bool unregisterCallbacks (void);
+        bool unregisterCallbacks (void);
 
-		GLFWwindow *_window;
+        GLFWwindow *_window;
 
-		std::string _title;
+        std::string _title;
 
-		static void cbKey (GLFWwindow* window, int key, int scancode,
-		        int action, int mods);
+        static void cbKey (GLFWwindow* window, int key, int scancode,
+                           int action, int mods);
 
-		static void cbWindowSize (GLFWwindow* window, int w, int h);
+        static void cbWindowSize (GLFWwindow* window, int w, int h);
 
-		static void cbWindowPosition (GLFWwindow* window, int xpos, int ypos);
+        static void cbWindowPosition (GLFWwindow* window, int xpos, int ypos);
 
-		static void cbMouseButton (GLFWwindow* window, int button, int action,
-		        int mods);
+        static void cbMouseButton (GLFWwindow* window, int button, int action,
+                                   int mods);
 
-		static void cbCursorPosition (GLFWwindow* window, double xpos,
-		        double ypos);
+        static void cbCursorPosition (GLFWwindow* window, double xpos,
+                                      double ypos);
 
-		static void cbCursorEnter (GLFWwindow* window, int entered);
+        static void cbCursorEnter (GLFWwindow* window, int entered);
 
-		/**
-		 * A std::map container to record GLFWwindow and Window
-		 */
-		static std::map<GLFWwindow*, BIL::Window*> windowMap;
-	};
+        /**
+         * A std::map container to record GLFWwindow and Window
+         */
+        static std::map<GLFWwindow*, BIL::Window*> windowMap;
+    };
 
 } /* namespace BIL */
 #endif /* _BIL_WINDOW_H_ */

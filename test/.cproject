@@ -48,11 +48,12 @@
 								<option id="gnu.cpp.link.option.libs.268117545" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="BIL"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="cppunit"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="GL"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.742827240" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BIL/Debug}&quot;"/>
 								</option>
-								<option id="gnu.cpp.link.option.other.1264618154" superClass="gnu.cpp.link.option.other" valueType="stringList">
+								<option id="gnu.cpp.link.option.other.1264618154" name="Other options (-Xlinker [option])" superClass="gnu.cpp.link.option.other" valueType="stringList">
 									<listOptionValue builtIn="false" value="-rpath=&quot;${workspace_loc:/BIL/Debug}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1612611117" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -126,6 +127,7 @@
 								<option id="gnu.cpp.link.option.libs.73223625" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="BIL"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="cppunit"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="GL"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1997387196" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BIL/Release}&quot;"/>

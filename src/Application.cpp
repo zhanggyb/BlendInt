@@ -27,31 +27,39 @@ namespace BIL {
         : _mainWindow(NULL)
     {
         // TODO Auto-generated constructor stub
-
-    }
-
-    int Application::initialize (bool nls)
-    {
         int ret = glfwInit();
 
-        if (ret == GL_TRUE) glfwSetErrorCallback(&Application::cbError);
+        if (ret == GL_TRUE) {
+            glfwSetErrorCallback(&Application::cbError);
+        }
+        else {
+            cerr << "Cannot initialize GLFW" << endl;
+            exit(EXIT_FAILURE);
+        }
+    }
 
+    bool Application::initialize (bool nls)
+    {
         FontManager::gFontService = FontManager::instance();
         bool fontinit = FontManager::gFontService->initialize();
         if(!fontinit) {
             cerr << "Cannot initialize font service" << endl;
-            exit(1);
+            return false;
         }
         fontinit = FontManager::gFontService->loadFont();
         if(!fontinit) {
             cerr << "Cannot load default font into memory" << endl;
-            exit(1);
+            return false;
         }
 
         // set locale
         setlocale(LC_ALL, "");
 
-        return ret;
+        if (_mainWindow != NULL) {
+            _mainWindow->MakeContextCurrent();
+        }
+
+        return true;
     }
 
     GLFWVersion Application::getVersion (void)
@@ -72,21 +80,16 @@ namespace BIL {
         return version;
     }
 
+    void Application::setMainWindow (Window* window)
+    {
+        _mainWindow = window;
+        _mainWindow->MakeContextCurrent();
+    }
+
+
     // FIXME: run in bummblebee cause crash if the window is closed
     void Application::run (void)
     {
-        if (_mainWindow == NULL) {
-            cerr << "No Main Window" << endl;
-            return;
-        }
-
-        _mainWindow->MakeContextCurrent();
-
-        // check OpenGL version
-        glStrVersion = (const char*) glGetString(GL_VERSION);
-        glVersion = std::atof(glStrVersion.c_str());    // C++ 98
-        // glVersion = std::stof (glStrVersion);        // C++ 11
-
         // Initialize GLEW
         glewExperimental = true; // Needed in core profile
         if (glewInit() != GLEW_OK) {
@@ -94,9 +97,11 @@ namespace BIL {
             glfwTerminate();
             exit(EXIT_FAILURE);
         }
-#ifdef DEBUG
-        cerr << "Using GLEW " << glewGetString(GLEW_VERSION) << endl;
-#endif
+
+        // check OpenGL version
+        glStrVersion = (const char*) glGetString(GL_VERSION);
+        glVersion = std::atof(glStrVersion.c_str());    // C++ 98
+        // glVersion = std::stof (glStrVersion);        // C++ 11
 
         while (!glfwWindowShouldClose(_mainWindow->getWindow())) {
 
@@ -111,8 +116,6 @@ namespace BIL {
 
     Application::~Application ()
     {
-        // TODO Auto-generated destructor stub
-
         // TODO: the following lines will cause crash
         /*
           if (_mainWindow != NULL) {

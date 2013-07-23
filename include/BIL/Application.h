@@ -28,7 +28,7 @@ namespace BIL {
     public:
         Application ();
 
-        int initialize (bool nls = true);
+        bool initialize (bool nls = true);
 
         void terminate (void)
         {
@@ -47,10 +47,7 @@ namespace BIL {
          */
         std::string getVersionString (void);
 
-        void setMainWindow (Window *window)
-        {
-            _mainWindow = window;
-        }
+        void setMainWindow (Window *window);
 
         void run (void);
 
