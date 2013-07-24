@@ -36,21 +36,21 @@ void FontFaceTest::create1 ()
 {
     bool result;
 
-    if(FontManager::gFontService == NULL) {
-        FontManager::gFontService = FontManager::instance();
+    if(gFontService == NULL) {
+        gFontService = FontManager::instance();
     }
 
-    FontManager::gFontService->initialize();
+    gFontService->initialize();
 
-    string fontpath = FontManager::gFontService->getFontPath("Sans");
+    string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
 
     result = font->isValid ();
 
     delete font; font = NULL;
-    delete FontManager::gFontService;
-    FontManager::gFontService = NULL;
+    delete gFontService;
+    gFontService = NULL;
 
     CPPUNIT_ASSERT(result);
 }

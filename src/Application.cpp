@@ -40,13 +40,13 @@ namespace BIL {
 
     bool Application::initialize (bool nls)
     {
-        FontManager::gFontService = FontManager::instance();
-        bool fontinit = FontManager::gFontService->initialize();
+        gFontService = FontManager::instance();
+        bool fontinit = gFontService->initialize();
         if(!fontinit) {
             cerr << "Cannot initialize font service" << endl;
             return false;
         }
-        fontinit = FontManager::gFontService->loadFont();
+        fontinit = gFontService->loadFont();
         if(!fontinit) {
             cerr << "Cannot load default font into memory" << endl;
             return false;
@@ -124,8 +124,8 @@ namespace BIL {
           }
         */
 
-        delete FontManager::gFontService;
-        FontManager::gFontService = NULL;
+        delete gFontService;
+        gFontService = NULL;
 
         glfwTerminate();
     }

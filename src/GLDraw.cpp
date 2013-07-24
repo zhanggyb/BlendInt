@@ -177,7 +177,7 @@ namespace BIL {
         // into a bitmap. This actually requires a couple of FreeType commands:
 
         string fontfile =
-            FontManager::gFontService->getFontPath(_drawArea->getFont());
+            gFontService->getFontPath(_drawArea->getFont());
 
         FontType face(fontfile);
 

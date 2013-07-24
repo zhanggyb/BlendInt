@@ -49,7 +49,7 @@ class FontTypeTest: public CppUnit::TestFixture
     void get_glyph2 ();
     void get_glyph3 ();
     void get_glyph4 ();
-    void get_glyph5 ();		/* test new Face from memory */
+    void get_glyph5 ();         /* test new Face from memory */
     void glyph_metrics1 ();
 
     /* draw bitmap */

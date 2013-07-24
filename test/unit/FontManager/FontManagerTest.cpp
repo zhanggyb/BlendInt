@@ -35,14 +35,14 @@ void FontManagerTest::initialize1 ()
 {
     bool result;
 
-    if(FontManager::gFontService == NULL) {
-        FontManager::gFontService = FontManager::instance();
+    if(gFontService == NULL) {
+	gFontService = FontManager::instance();
     }
 
-    result = FontManager::gFontService->initialize();
+    result = gFontService->initialize();
 
-    delete FontManager::gFontService;
-    FontManager::gFontService = NULL;
+    delete gFontService;
+    gFontService = NULL;
 
     CPPUNIT_ASSERT(result);
 }
@@ -51,22 +51,22 @@ void FontManagerTest::loadfont1 ()
 {
     bool result;
 
-    if(FontManager::gFontService == NULL) {
-        FontManager::gFontService = FontManager::instance();
+    if(gFontService == NULL) {
+        gFontService = FontManager::instance();
     }
 
-    result = FontManager::gFontService->initialize();
+    result = gFontService->initialize();
 
     if(result) {
-        result = FontManager::gFontService->loadFont();
+        result = gFontService->loadFont();
 
         if(result) {
-            result = FontManager::gFontService->getBuffer() != NULL;
+            result = gFontService->getBuffer() != NULL;
         }
     }
 
-    delete FontManager::gFontService;
-    FontManager::gFontService = NULL;
+    delete gFontService;
+    gFontService = NULL;
 
     CPPUNIT_ASSERT(result);
 }

@@ -13,7 +13,7 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION (FontTypeTest);
+// CPPUNIT_TEST_SUITE_REGISTRATION (FontTypeTest);
 
 FontTypeTest::FontTypeTest ()
 {
@@ -29,13 +29,13 @@ void FontTypeTest::setUp ()
 {
     bool ret = false;
 
-    if(FontManager::gFontService == NULL) {
-        FontManager::gFontService = FontManager::instance();
+    if(gFontService == NULL) {
+        gFontService = FontManager::instance();
     }
 
-    FontManager::gFontService->initialize();
+    gFontService->initialize();
 
-    ret = FontManager::gFontService->loadFont(); // load default font to memory
+    ret = gFontService->loadFont(); // load default font to memory
     if(!ret) {
         // TODO: stop and show failure of this TestFixture
     }
@@ -43,8 +43,8 @@ void FontTypeTest::setUp ()
 
 void FontTypeTest::tearDown ()
 {
-    delete FontManager::gFontService;
-    FontManager::gFontService = NULL;
+    delete gFontService;
+    gFontService = NULL;
 }
 
 void FontTypeTest::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
@@ -83,7 +83,7 @@ void FontTypeTest::create1 ()
 {
     bool result;
 
-    string fontpath = FontManager::gFontService->getFontPath("Sans");
+    string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
 
@@ -98,7 +98,7 @@ void FontTypeTest::create2 ()
 {
     bool result1, result2;
 
-    string fontpath = FontManager::gFontService->getFontPath("Sans");
+    string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font1 = new FontType(fontpath);
     FontType *font2 = new FontType(fontpath);
@@ -116,8 +116,8 @@ void FontTypeTest::create3 ()
 {
     bool result1 = false;
 
-    FontType *font1 = new FontType(FontManager::gFontService->getBuffer(),
-                                   FontManager::gFontService->getBufferSize());
+    FontType *font1 = new FontType(gFontService->getBuffer(),
+                                   gFontService->getBufferSize());
 
     result1 = font1->isValid();
 
@@ -130,7 +130,7 @@ void FontTypeTest::get_glyph1 ()
 {
     bool result;
 
-    string fontpath = FontManager::gFontService->getFontPath("Sans");
+    string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
 
@@ -199,7 +199,7 @@ void FontTypeTest::get_glyph2 ()
 {
     bool result;
 
-    string fontpath = FontManager::gFontService->getFontPath("Sans");
+    string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
 
@@ -268,7 +268,7 @@ void FontTypeTest::get_glyph3 ()
 {
     bool result;
 
-    string fontpath = FontManager::gFontService->getFontPath("Sans");
+    string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
 
@@ -337,7 +337,7 @@ void FontTypeTest::get_glyph4 ()
 {
     bool result;
 
-    string fontpath = FontManager::gFontService->getFontPath("Sans");
+    string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
 
@@ -415,8 +415,8 @@ void FontTypeTest::get_glyph5 ()
 {
     bool result;
 
-    FontType *font = new FontType(FontManager::gFontService->getBuffer(),
-                                  FontManager::gFontService->getBufferSize());
+    FontType *font = new FontType(gFontService->getBuffer(),
+                                  gFontService->getBufferSize());
 
     result = font->isValid();
 
@@ -474,7 +474,7 @@ void FontTypeTest::glyph_metrics1 ()
 {
     bool result;
 
-    string fontpath = FontManager::gFontService->getFontPath("Sans");
+    string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
 

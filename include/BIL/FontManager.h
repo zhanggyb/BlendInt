@@ -24,13 +24,15 @@ typedef FontList::const_iterator FontIter;
 
 namespace BIL {
 
+    class FontManager;
 
+    extern FontManager* gFontService;
 
     class FontManager
     {
     public:
 
-        static FontManager* gFontService;
+        // static FontManager* gFontService;
 
         static FontManager* instance (void)
         {

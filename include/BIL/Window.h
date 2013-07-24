@@ -35,9 +35,9 @@ namespace BIL {
                 GLFWwindow *share, BasicObject* parent = NULL);
 
         void makeContextCurrent (void)
-	{
-	    glfwMakeContextCurrent(_window);
-	}
+        {
+            glfwMakeContextCurrent(_window);
+        }
 
         virtual ~Window ();
 

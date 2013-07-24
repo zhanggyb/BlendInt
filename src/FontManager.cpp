@@ -19,7 +19,7 @@ using namespace boost::filesystem;
 
 namespace BIL {
 
-    FontManager* FontManager::gFontService = NULL;
+    FontManager* gFontService = NULL;
 
     bool FontManager::initialized = false;
 

@@ -110,9 +110,19 @@ namespace BIL {
 
         bool makeDisplayList (wchar_t charcode);
 
+        ///This function gets the first power of 2 >= the
+        ///int that we pass it.
+        inline int next_p2 (int a)
+        {
+            int rval = 1;
+            while (rval < a)
+                rval <<= 1;
+            return rval;
+        }
+
         /** Texture ids */
-        // GLuint *_textures;
-        map<GLuint*, size_t> _textures;
+        // GLuint _textures;
+        map<GLuint, size_t> _textures;
 
         /** the first display list id */
         // GLuint _displist;
