@@ -12,7 +12,7 @@
 using namespace BIL;
 using namespace std;
 
-// CPPUNIT_TEST_SUITE_REGISTRATION (DrawableTest);
+CPPUNIT_TEST_SUITE_REGISTRATION (DrawableTest);
 
 myDrawable::myDrawable (BasicObject *parent)
     : Drawable(parent)

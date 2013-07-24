@@ -14,7 +14,7 @@ using namespace std;
 
 namespace BIL {
 
-    FontCache* FontCache::gFontCache = NULL;
+    FontCache* gFontCache = NULL;
 
     bool FontCache::initialized = false;
     unsigned int FontCache::cacheSize = 512;

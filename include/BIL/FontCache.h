@@ -19,14 +19,16 @@ using namespace std;
 
 namespace BIL {
 
+    class FontCache;
+
+    extern FontCache* gFontCache;
+
     /**
      * @brief Class in charge of caching fonts
      */
     class FontCache
     {
     public:
-
-        static FontCache* gFontCache;
 
         static FontCache* instance (void);
 

@@ -13,10 +13,12 @@
 namespace BIL {
 
     TextBuffer::TextBuffer ()
+        : _rowspacing(1.0)
     {
     }
 
     TextBuffer::TextBuffer (const wstring& text)
+        : _rowspacing(1.0)
     {
         append(text);
         glShadeModel (GL_FLAT);
@@ -63,14 +65,6 @@ namespace BIL {
             GLuint texture = _chardb[*it].texture;
             GLuint displist = _chardb[*it].displist;
 
-#ifdef DEBUG
-            if(!glIsTexture(texture)) {
-                cerr << texture << " is not a texture" << endl;
-            }
-            if(!glIsList(displist)) {
-                cerr << displist << " is not a display list" << endl;
-            }
-#endif
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glEnable(GL_TEXTURE_2D);
 
@@ -81,56 +75,50 @@ namespace BIL {
         }
     }
 
+    void TextBuffer::renderAt (const Point3Df& pos)
+    {
+        glPushAttrib(GL_LIST_BIT |
+                     GL_CURRENT_BIT |
+                     GL_ENABLE_BIT |
+                     GL_TRANSFORM_BIT);
+        glMatrixMode(GL_MODELVIEW);
+        glDisable(GL_LIGHTING);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        float modelview_matrix[16];
+        glGetFloatv(GL_MODELVIEW_MATRIX, modelview_matrix);
+
+        wstring::const_iterator it;
+        GLuint displist;
+        int i = 0; int j = 0;
+        float x = pos.getX();
+        float y = pos.getY();
+        for(it = _text.begin(); it != _text.end(); it++)
+        {
+            if(*it == '\n') {
+                i = 0;
+                j++;
+                continue;
+            }
+
+            displist = _chardb[*it].displist;
+            glPushMatrix();
+            glLoadIdentity();
+            glTranslatef(x + 24 * i, y + 48 * j + 12 * _rowspacing, 0.0);
+            glMultMatrixf(modelview_matrix);
+            glCallLists(1, GL_UNSIGNED_BYTE, &displist);
+            glPopMatrix();
+
+            i++;
+        }
+    }
+
     void TextBuffer::clear (void)
     {
 
-    }
-
-    bool TextBuffer::makeDisplayList (wchar_t charcode,
-                                      GLuint list_base,
-                                      GLuint* tex_base,
-                                      unsigned int index)
-    {
-        if(gFontService == NULL) {
-            return false;
-        }
-        if(!gFontService->isInitialized()) {
-            return false;
-        }
-
-        FontType font (gFontService->getBuffer(),
-                       gFontService->getBufferSize());
-
-        if (!font.isValid()) {
-            cerr << "Cannot get Font" << endl;
-            return false;
-        }
-
-        font.setCharSize(12, 72); // demo code
-
-        bool result = font.loadCharacter (charcode, FT_LOAD_RENDER);
-
-        if (!result) return false;
-
-        int width = font.getFontFace()->glyph->bitmap.width;
-        int height = font.getFontFace()->glyph->bitmap.rows;
-
-        cout << width << endl;
-        cout << height << endl;
-
-        unsigned char *fontimage = new unsigned char [width * height];
-        int i, j;
-
-        for(i = 0; i < height; i++) {
-            for(j = 0; j < width; j++) {
-                fontimage[i*width + j] =
-                    *(font.getFontFace()->glyph->bitmap.buffer + i * width + j);
-            }
-        }
-
-        delete [] fontimage;
-
-        return true;
     }
 
     bool TextBuffer::makeDisplayList (wchar_t charcode)
@@ -157,7 +145,7 @@ namespace BIL {
             return false;
         }
 
-        font.setCharSize(24, 96); // demo code
+        font.setCharSize(10, 96); // demo code
 
         bool result = font.loadCharacter (charcode, FT_LOAD_RENDER);
 
@@ -177,6 +165,16 @@ namespace BIL {
         // Allocate memory for the texture data.
         GLubyte* fontimage = new GLubyte[2 * width * rows];
 
+        // Move the face's glyph into a Glyph object.
+        FT_Glyph glyph;
+
+        if (FT_Get_Glyph(face->glyph, &glyph))
+            throw;
+
+        // Convert the glyph to a bitmap;
+        FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, 0, 1);
+        FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph) glyph;
+
         //Here we fill in the data for the expanded bitmap.
         //Notice that we are using two channel bitmap (one for
         //luminocity and one for alpha), but we assign
@@ -190,17 +188,19 @@ namespace BIL {
             for (int j = 0; j < width; j++) {
                 fontimage[2 * (i * width + j)] = 255;
                 fontimage[2 * (i * width + j) + 1] =
-                    ((rows - 1 -i) >= bitmap.rows ||
+                    (i >= bitmap.rows ||
                      j >= bitmap.width)
                     ? 0 :
-                    bitmap.buffer[bitmap.width * (rows - 1 -i)
-                                               + j];
+                    bitmap.buffer[bitmap.width * i
+                                  + j];
             }
         }
 
         //Now we just setup some texture paramaters.
         glGenTextures(1, &texture);
         glBindTexture( GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -219,14 +219,62 @@ namespace BIL {
 
         glBindTexture(GL_TEXTURE_2D, texture);
 
-        glBegin(GL_QUADS);
-        glTexCoord2f(0.0, 0.0); glVertex3f (100.0, 100.0, 0.0);
-        glTexCoord2f(1.0, 0.0); glVertex3f (100.0 + 24.0, 100.0, 0.0);
-        glTexCoord2f(1.0, 1.0); glVertex3f (100.0 + 24.0, 100.0 + 24.0, 0.0);
-        glTexCoord2f(0.0, 1.0); glVertex3f (100.0, 24.0 + 100.0, 0.0);
-        glEnd();
+        //first we need to move over a little so that
+        //the character has the right amount of space
+        //between it and the one before it.
+        glTranslatef(bitmap_glyph->left, 0, 0);
 
+        //Now we move down a little in the case that the
+        //bitmap extends past the bottom of the line
+        //(this is only true for characters like 'g' or 'y'.
+        glPushMatrix();
+        glTranslatef(0, bitmap_glyph->top - bitmap.rows, 0);
+
+        //Now we need to account for the fact that many of
+        //our textures are filled with empty padding space.
+        //We figure what portion of the texture is used by
+        //the actual character and store that information in
+        //the x and y variables, then when we draw the
+        //quad, we will only reference the parts of the texture
+        //that we contain the character itself.
+        float x = (float) bitmap.width / (float) width, y = (float) bitmap.rows
+            / (float) rows;
+
+        //Here we draw the texturemaped quads.
+        //The bitmap that we got from FreeType was not
+        //oriented quite like we would like it to be,
+        //so we need to link the texture to the quad
+        //so that the result will be properly aligned.
+        glBegin(GL_QUADS);
+        glTexCoord2d(0, 0);
+        glVertex2f(0, bitmap.rows);
+        glTexCoord2d(0, y);
+        glVertex2f(0, 0);
+        glTexCoord2d(x, y);
+        glVertex2f(bitmap.width, 0);
+        glTexCoord2d(x, 0);
+        glVertex2f(bitmap.width, bitmap.rows);
+        glEnd();
+        glPopMatrix();
+        glTranslatef(face->glyph->advance.x >> 6, 0, 0);
+
+        //increment the raster position as if we were a bitmap font.
+        //(only needed if you want to calculate text length)
+        //glBitmap(0,0,0,0,face->glyph->advance.x >> 6,0,NULL);
+
+        //Finnish the display list
         glEndList();
+
+        /*
+          glBegin(GL_QUADS);
+          glTexCoord2f(0.0, 0.0); glVertex3f (100.0, 100.0, 0.0);
+          glTexCoord2f(1.0, 0.0); glVertex3f (100.0 + 24.0, 100.0, 0.0);
+          glTexCoord2f(1.0, 1.0); glVertex3f (100.0 + 24.0, 100.0 + 24.0, 0.0);
+          glTexCoord2f(0.0, 1.0); glVertex3f (100.0, 24.0 + 100.0, 0.0);
+          glEnd();
+
+          glEndList();
+        */
 
         CharData data = {texture, displist};
         _chardb[charcode] = data;

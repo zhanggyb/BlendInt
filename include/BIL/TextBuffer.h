@@ -14,7 +14,6 @@
 #include <vector>
 #include <map>
 
-#include <BIL/VertexBuffer.h>
 #include <BIL/Color.h>
 #include <BIL/Point.h>
 //#include <BIL/BasicObject.h>
@@ -23,46 +22,6 @@ using namespace boost;
 using namespace std;
 
 namespace BIL {
-
-    /**
-     * Glyph vertex structure
-     */
-    struct GlyphVertex {
-
-        /** Vertex x coordinates */
-        float x;
-
-        /** Vertex y coordinates */
-        float y;
-
-        /** Vertex z coordinates */
-        float z;
-
-        /** Texture first coordinate */
-        float u;
-
-        /** Texture second coordinate */
-        float v;
-
-        /** Color red component */
-        float r;
-
-        /** Color green component */
-        float g;
-
-        /** Color blue component */
-        float b;
-
-        /** Color alpha component */
-        float a;
-
-        /** Shift along x */
-        float shift;
-
-        /** Color gamma correction */
-
-        float gamma;
-    } ;
 
     class TextBuffer
     {
@@ -82,7 +41,11 @@ namespace BIL {
 
         void append (wchar_t charcode);
 
+        void setRowSpacing (int space);
+
         void render (void);     /* render the text */
+
+        void renderAt (const Point3Df& pos);
 
         void clear (void);      /* clear the text */
 
@@ -103,11 +66,6 @@ namespace BIL {
         /**
          * @brief create display list for each character in the text
          */
-        bool makeDisplayList (wchar_t charcode,
-                              GLuint list_base,
-                              GLuint* tex_base,
-                              unsigned int index);
-
         bool makeDisplayList (wchar_t charcode);
 
         ///This function gets the first power of 2 >= the
@@ -120,16 +78,11 @@ namespace BIL {
             return rval;
         }
 
-        /** Texture ids */
-        // GLuint _textures;
-        map<GLuint, size_t> _textures;
-
-        /** the first display list id */
-        // GLuint _displist;
-        map<GLuint, size_t> _displists;
-
         /** Character DB  */
         map<wchar_t, CharData> _chardb;
+
+        /** Row spacing */
+        float _rowspacing;
 
         /** Base color for text */
         Color _baseColor;
@@ -154,8 +107,6 @@ namespace BIL {
 
         /** string */
         wstring _text;
-
-        VertexBuffer _buffer;
     };
 
 } /* namespace BIL */
