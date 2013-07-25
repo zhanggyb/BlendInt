@@ -19,7 +19,7 @@ namespace BIL {
     TextureAtlas::TextureAtlas (const size_t w, const size_t h, const size_t d)
         : _width(w), _height(h), _depth(d), _used(0), _id(0)
     {
-        Tuple3<int> node = { { 1, 1, w - 2 } };
+        Tuple3<int> node(1, 1, w-2);
 
         assert((d == 1) || (d == 3) || (d == 4));
 
@@ -68,7 +68,7 @@ namespace BIL {
 
     Tuple4i TextureAtlas::getRegion (const size_t w, const size_t h)
     {
-        Tuple4i region = { { 0, 0, w, h } };
+        Tuple4i region(0, 0, w, h);
         int y, best_height, best_width, best_index;
         Tuple3i node, prev;
         size_t i;
@@ -82,27 +82,27 @@ namespace BIL {
             if (y >= 0) {
                 node = _nodes[i];
                 if (((y + h) < best_height)
-                    || (((y + h) == best_height) && (node.dimension.z < best_width))) {
+                    || (((y + h) == best_height) && (node.coord.z < best_width))) {
                     best_height = y + h;
                     best_index = i;
-                    best_width = node.dimension.z;
-                    region.rect.sx = node.dimension.x;
-                    region.rect.sy = y;
+                    best_width = node.coord.z;
+                    region.rect.x = node.coord.x;
+                    region.rect.y = y;
                 }
             }
         }
 
         if (best_index == -1) {
-            region.rect.sx = -1;
-            region.rect.sy = -1;
-            region.rect.width = 0;
-            region.rect.height = 0;
+            region.rect.x = -1;
+            region.rect.y = -1;
+            region.rect.w = 0;
+            region.rect.h = 0;
             return region;
         }
 
-        node.dimension.x = region.rect.sx;
-        node.dimension.y = region.rect.sy + h;
-        node.dimension.z = w;
+        node.coord.x = region.rect.x;
+        node.coord.y = region.rect.y + h;
+        node.coord.z = w;
 
         vector<Tuple3i>::iterator it = _nodes.begin();
         advance(it, best_index);
@@ -112,12 +112,12 @@ namespace BIL {
             node = *it;
             prev = *(it - 1);
 
-            if (node.dimension.x < (prev.dimension.x + prev.dimension.z)) {
-                int shrink = prev.dimension.x +
-                    prev.dimension.z - node.dimension.x;
-                node.dimension.x += shrink;
-                node.dimension.z -= shrink;
-                if (node.dimension.z <= 0) {
+            if (node.coord.x < (prev.coord.x + prev.coord.z)) {
+                int shrink = prev.coord.x +
+                    prev.coord.z - node.coord.x;
+                node.coord.x += shrink;
+                node.coord.z -= shrink;
+                if (node.coord.z <= 0) {
                     it = _nodes.erase(it);
                     --i;
                 } else {
@@ -136,13 +136,13 @@ namespace BIL {
 
     void TextureAtlas::clear (void)
     {
-        Tuple3i node = { { 1, 1, 1 } };
+        Tuple3i node(1, 1, 1);
 
         assert(_data);
 
         _nodes.clear();
         _used = 0;
-        node.dimension.z = _width - 2;
+        node.coord.z = _width - 2;
 
         _nodes.push_back(node);
         memset(_data, 0, _width * _height * _depth);
@@ -185,8 +185,8 @@ namespace BIL {
         size_t i;
 
         node = _nodes[index];
-        x = node.dimension.x;
-        y = node.dimension.y;
+        x = node.coord.x;
+        y = node.coord.y;
         width_left = w;
         i = index;
 
@@ -195,12 +195,12 @@ namespace BIL {
 
         while (width_left > 0) {
             node = _nodes[i];
-            if (node.dimension.y > y) {
-                y = node.dimension.y;
+            if (node.coord.y > y) {
+                y = node.coord.y;
             }
             if ((y + h) > (_height - 1))
                 return -1;
-            width_left -= node.dimension.z;
+            width_left -= node.coord.z;
             ++i;
         }
         return y;
@@ -216,8 +216,8 @@ namespace BIL {
             // TODO: check the following lines are correct
             node = *it;
             next = *(it + 1);
-            if (node.dimension.y == next.dimension.y) {
-                node.dimension.z += next.dimension.z;
+            if (node.coord.y == next.coord.y) {
+                node.coord.z += next.coord.z;
                 it = _nodes.erase(it + 1);
                 --i;
             } else {

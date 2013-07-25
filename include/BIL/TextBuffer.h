@@ -14,8 +14,7 @@
 #include <vector>
 #include <map>
 
-#include <BIL/Color.h>
-#include <BIL/Point.h>
+#include <BIL/Tuple.h>
 //#include <BIL/BasicObject.h>
 
 using namespace boost;
@@ -45,7 +44,7 @@ namespace BIL {
 
         void render (void);     /* render the text */
 
-        void renderAt (const Point3Df& pos);
+        void renderAt (const Coord3f& pos);
 
         void clear (void);      /* clear the text */
 
@@ -81,6 +80,8 @@ namespace BIL {
         /** Character DB  */
         map<wchar_t, CharData> _chardb;
 
+        map<wchar_t, unsigned int> _advancemap; /* each character's advance.x */
+
         /** Row spacing */
         float _rowspacing;
 
@@ -88,7 +89,7 @@ namespace BIL {
         Color _baseColor;
 
         /** Pen origin */
-        Point3Df _origin;
+        Coord3f _origin;
 
         /** Index (in the vertex buffer) of the line start */
         size_t _lineStart;

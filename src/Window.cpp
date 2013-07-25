@@ -61,7 +61,7 @@ namespace BIL {
         return Size2Di(w, h);
     }
 
-    bool Window::resize (const Size2Di& size)
+    bool Window::resize (const Coord2i& size)
     {
         return true;
     }

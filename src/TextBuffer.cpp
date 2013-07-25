@@ -9,6 +9,7 @@
 #include <BIL/FontManager.h>
 #include <BIL/TextBuffer.h>
 
+#include <BIL/Tuple.h>
 
 namespace BIL {
 
@@ -75,7 +76,7 @@ namespace BIL {
         }
     }
 
-    void TextBuffer::renderAt (const Point3Df& pos)
+    void TextBuffer::renderAt (const Coord3f& pos)
     {
         glPushAttrib(GL_LIST_BIT |
                      GL_CURRENT_BIT |
@@ -94,20 +95,24 @@ namespace BIL {
         wstring::const_iterator it;
         GLuint displist;
         int i = 0; int j = 0;
-        float x = pos.getX();
-        float y = pos.getY();
+        float x = pos.coord.x;
+        float y = pos.coord.y;
+        unsigned int advance = 0;
         for(it = _text.begin(); it != _text.end(); it++)
         {
             if(*it == '\n') {
                 i = 0;
+                advance = 0;
                 j++;
                 continue;
             }
 
             displist = _chardb[*it].displist;
+            advance = advance + _advancemap[*it];
+            cout << "advance: " << advance << endl;
             glPushMatrix();
             glLoadIdentity();
-            glTranslatef(x + 24 * i, y + 48 * j + 12 * _rowspacing, 0.0);
+            glTranslatef(x + advance, y + 48 * j + 12 * _rowspacing, 0.0);
             glMultMatrixf(modelview_matrix);
             glCallLists(1, GL_UNSIGNED_BYTE, &displist);
             glPopMatrix();
@@ -127,6 +132,8 @@ namespace BIL {
         // new texture and display list for it
         map<wchar_t, CharData>::iterator it;
 
+	FontManager* gFontService = FontManager::service;
+
         it = _chardb.find(charcode);
         if(it != _chardb.end()) return false;
 
@@ -145,7 +152,7 @@ namespace BIL {
             return false;
         }
 
-        font.setCharSize(10, 96); // demo code
+        font.setCharSize(24, 96); // demo code
 
         bool result = font.loadCharacter (charcode, FT_LOAD_RENDER);
 
@@ -155,6 +162,7 @@ namespace BIL {
 
         int rows = face->glyph->bitmap.rows;
         int width = face->glyph->bitmap.width;
+        _advancemap[charcode] = (face->glyph->advance.x) / 64;
 
         GLuint texture;
         GLuint displist;
@@ -175,14 +183,6 @@ namespace BIL {
         FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, 0, 1);
         FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph) glyph;
 
-        //Here we fill in the data for the expanded bitmap.
-        //Notice that we are using two channel bitmap (one for
-        //luminocity and one for alpha), but we assign
-        //both luminocity and alpha to the value that we
-        //find in the FreeType bitmap.
-        //We use the ?: operator so that value which we use
-        //will be 0 if we are in the padding zone, and whatever
-        //is the the Freetype bitmap otherwise.
         FT_Bitmap& bitmap = face->glyph->bitmap;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < width; j++) {
@@ -196,7 +196,6 @@ namespace BIL {
             }
         }
 
-        //Now we just setup some texture paramaters.
         glGenTextures(1, &texture);
         glBindTexture( GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -204,13 +203,10 @@ namespace BIL {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        //Here we actually create the texture itself, notice
-        //that we are using GL_LUMINANCE_ALPHA to indicate that
-        //we are using 2 channel data.
+        // GL_LUMINANCE_ALPHA to use 2 channel data.
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, rows, 0,
                       GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, fontimage);
 
-        //With the texture created, we don't need the fontimage data anymore
         delete[] fontimage;
 
         displist = glGenLists(1);
@@ -219,32 +215,14 @@ namespace BIL {
 
         glBindTexture(GL_TEXTURE_2D, texture);
 
-        //first we need to move over a little so that
-        //the character has the right amount of space
-        //between it and the one before it.
         glTranslatef(bitmap_glyph->left, 0, 0);
 
-        //Now we move down a little in the case that the
-        //bitmap extends past the bottom of the line
-        //(this is only true for characters like 'g' or 'y'.
         glPushMatrix();
         glTranslatef(0, bitmap_glyph->top - bitmap.rows, 0);
 
-        //Now we need to account for the fact that many of
-        //our textures are filled with empty padding space.
-        //We figure what portion of the texture is used by
-        //the actual character and store that information in
-        //the x and y variables, then when we draw the
-        //quad, we will only reference the parts of the texture
-        //that we contain the character itself.
-        float x = (float) bitmap.width / (float) width, y = (float) bitmap.rows
-            / (float) rows;
+        float x = (float) bitmap.width / (float) width,
+            y = (float) bitmap.rows / (float) rows;
 
-        //Here we draw the texturemaped quads.
-        //The bitmap that we got from FreeType was not
-        //oriented quite like we would like it to be,
-        //so we need to link the texture to the quad
-        //so that the result will be properly aligned.
         glBegin(GL_QUADS);
         glTexCoord2d(0, 0);
         glVertex2f(0, bitmap.rows);
@@ -256,30 +234,15 @@ namespace BIL {
         glVertex2f(bitmap.width, bitmap.rows);
         glEnd();
         glPopMatrix();
-        glTranslatef(face->glyph->advance.x >> 6, 0, 0);
+        // glTranslatef(face->glyph->advance.x >> 6, 0, 0);
 
-        //increment the raster position as if we were a bitmap font.
-        //(only needed if you want to calculate text length)
-        //glBitmap(0,0,0,0,face->glyph->advance.x >> 6,0,NULL);
-
-        //Finnish the display list
         glEndList();
-
-        /*
-          glBegin(GL_QUADS);
-          glTexCoord2f(0.0, 0.0); glVertex3f (100.0, 100.0, 0.0);
-          glTexCoord2f(1.0, 0.0); glVertex3f (100.0 + 24.0, 100.0, 0.0);
-          glTexCoord2f(1.0, 1.0); glVertex3f (100.0 + 24.0, 100.0 + 24.0, 0.0);
-          glTexCoord2f(0.0, 1.0); glVertex3f (100.0, 24.0 + 100.0, 0.0);
-          glEnd();
-
-          glEndList();
-        */
 
         CharData data = {texture, displist};
         _chardb[charcode] = data;
 
         return true;
+
     }
 
 } /* namespace BIL */

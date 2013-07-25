@@ -36,12 +36,12 @@ void TextBufferTest::setUp ()
         CPPUNIT_FAIL("Cannot initialize glfw\n");
     }
 
-    gFontService = FontManager::instance();
-    bool fontinit = gFontService->initialize();
+    FontManager::service = FontManager::instance();
+    bool fontinit = FontManager::service->initialize();
     if(!fontinit) {
         CPPUNIT_FAIL("Cannot initialize FontManager\n");
     }
-    fontinit = gFontService->loadFont();
+    fontinit = FontManager::service->loadFont();
     if(!fontinit) {
         CPPUNIT_FAIL("Cannot load default font\n");
     }
@@ -49,8 +49,8 @@ void TextBufferTest::setUp ()
 
 void TextBufferTest::tearDown ()
 {
-    delete gFontService;
-    gFontService = NULL;
+    delete FontManager::service;
+    FontManager::service = NULL;
 
     glfwTerminate();
 }
@@ -158,7 +158,7 @@ void TextBufferTest::showtextline1 ()
         glLoadIdentity();
 
         // Test buffer render
-        buf.renderAt(Point3Df(100, 100, 0.0));
+        buf.renderAt(Coord3f(100.0, 100.0, 0.0));
 
         glfwSwapBuffers(win);
         glfwPollEvents();

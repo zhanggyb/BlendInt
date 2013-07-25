@@ -29,13 +29,13 @@ void FontTypeTest::setUp ()
 {
     bool ret = false;
 
-    if(gFontService == NULL) {
-        gFontService = FontManager::instance();
+    if(FontManager::service == NULL) {
+	FontManager::service = FontManager::instance();
     }
 
-    gFontService->initialize();
+    FontManager::service->initialize();
 
-    ret = gFontService->loadFont(); // load default font to memory
+    ret = FontManager::service->loadFont(); // load default font to memory
     if(!ret) {
         // TODO: stop and show failure of this TestFixture
     }
@@ -43,8 +43,8 @@ void FontTypeTest::setUp ()
 
 void FontTypeTest::tearDown ()
 {
-    delete gFontService;
-    gFontService = NULL;
+    delete FontManager::service;
+    FontManager::service = NULL;
 }
 
 void FontTypeTest::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
@@ -83,6 +83,8 @@ void FontTypeTest::create1 ()
 {
     bool result;
 
+    FontManager* gFontService = FontManager::service;
+
     string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
@@ -97,6 +99,8 @@ void FontTypeTest::create1 ()
 void FontTypeTest::create2 ()
 {
     bool result1, result2;
+
+    FontManager* gFontService = FontManager::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -116,6 +120,8 @@ void FontTypeTest::create3 ()
 {
     bool result1 = false;
 
+    FontManager* gFontService = FontManager::service;
+
     FontType *font1 = new FontType(gFontService->getBuffer(),
                                    gFontService->getBufferSize());
 
@@ -129,6 +135,8 @@ void FontTypeTest::create3 ()
 void FontTypeTest::get_glyph1 ()
 {
     bool result;
+
+    FontManager* gFontService = FontManager::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -199,6 +207,8 @@ void FontTypeTest::get_glyph2 ()
 {
     bool result;
 
+    FontManager* gFontService = FontManager::service;
+
     string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
@@ -268,6 +278,8 @@ void FontTypeTest::get_glyph3 ()
 {
     bool result;
 
+    FontManager* gFontService = FontManager::service;
+
     string fontpath = gFontService->getFontPath("Sans");
 
     FontType *font = new FontType(fontpath);
@@ -336,6 +348,8 @@ void FontTypeTest::get_glyph3 ()
 void FontTypeTest::get_glyph4 ()
 {
     bool result;
+
+    FontManager* gFontService = FontManager::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -415,6 +429,8 @@ void FontTypeTest::get_glyph5 ()
 {
     bool result;
 
+    FontManager* gFontService = FontManager::service;
+
     FontType *font = new FontType(gFontService->getBuffer(),
                                   gFontService->getBufferSize());
 
@@ -473,6 +489,7 @@ void FontTypeTest::get_glyph5 ()
 void FontTypeTest::glyph_metrics1 ()
 {
     bool result;
+    FontManager* gFontService = FontManager::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -517,12 +534,31 @@ void FontTypeTest::glyph_metrics1 ()
                     }
                     cout << endl;
                 }
-                cout << endl;
+
+                cout
+                     << "num_faces: " << face->num_faces << endl
+                     << "face_index: " << face->face_index << endl
+                     << "num_glyphs: " << face->num_glyphs << endl
+                     << "slot: " << endl
+                     << "       " << "format: " << face->glyph->format << endl
+                     << "       " << "bitmap: " << endl
+                     << "               " << "rows: " << face->glyph->bitmap.rows << endl
+                     << "               " << "width: " << face->glyph->bitmap.width << endl
+                     << "               " << "pitch: " << face->glyph->bitmap.pitch << endl
+                     << "               " << "num_grays: " << face->glyph->bitmap.num_grays << endl
+                     << "       " << "advance.x: " << face->glyph->advance.x << endl
+                     << "       " << "advance.y: " << face->glyph->advance.y << endl;
 
                 // show glyph metrics
                 cout << "Glyph metrics: " << endl;
                 cout << "       " << "width: "<< face->glyph->metrics.width << endl;
                 cout << "       " << "height: " << face->glyph->metrics.height << endl;
+                cout << "       " << "horiBearingX: " << face->glyph->metrics.horiBearingX << endl;
+                cout << "       " << "horiBearingY: " << face->glyph->metrics.horiBearingY << endl;
+                cout << "       " << "horiAdvance: " << face->glyph->metrics.horiAdvance << endl;
+                cout << "       " << "vertiBearingX: " << face->glyph->metrics.vertBearingX << endl;
+                cout << "       " << "vertiBearingY: " << face->glyph->metrics.vertBearingY << endl;
+                cout << "       " << "vertiAdvance: " << face->glyph->metrics.vertAdvance << endl;
             }
         }
 

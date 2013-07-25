@@ -24,19 +24,16 @@ typedef FontList::const_iterator FontIter;
 
 namespace BIL {
 
-    class FontManager;
-
-    extern FontManager* gFontService;
-
     class FontManager
     {
     public:
 
         // static FontManager* gFontService;
+        static FontManager* service;
 
         static FontManager* instance (void)
         {
-            if (gFontService != NULL) {
+            if (service != NULL) {
                 cerr << "Error: FontManager should generate only one instance"
                      << endl;
                 return NULL;

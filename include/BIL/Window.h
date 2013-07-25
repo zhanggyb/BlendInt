@@ -15,6 +15,7 @@
 
 #include <BIL/BasicObject.h>
 #include <BIL/Size.h>
+#include <BIL/Tuple.h>
 
 namespace BIL {
 
@@ -48,11 +49,11 @@ namespace BIL {
 
         Size2Di getSize (void);
 
-        bool resize (const Size2Di& size);
+        bool resize (const Coord2i& size);
 
         bool resize (int w, int h)
         {
-            return (resize(Size2Di(w, h)));
+            return (resize(Coord2i(w, h)));
         }
 
         void setTitle (const std::string& title);
