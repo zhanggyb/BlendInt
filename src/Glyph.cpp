@@ -10,7 +10,7 @@
 namespace BIL {
 
 	Glyph::Glyph (wchar_t charcode)
-			: _charcode(0), _texture(0), _displist(0),
+			: _charcode(0), _glyphIndex(0), _texture(0), _displist(0),
 			  _fontsize(12), _dpi(96)
 	{
 		memset(&_metrics, 0, sizeof(Metrics));
@@ -18,7 +18,7 @@ namespace BIL {
 
 	Glyph::Glyph (wchar_t charcode, const string& fontname,
 	        unsigned int fontsize, unsigned int dpi)
-			: _charcode(charcode), _texture(0), _displist(0),
+			: _charcode(charcode), _glyphIndex(0), _texture(0), _displist(0),
 			  _fontsize(fontsize), _dpi(dpi)
 	{
 		memset(&_metrics, 0, sizeof(Metrics));
@@ -27,7 +27,7 @@ namespace BIL {
 	}
 
 	Glyph::Glyph (const Glyph& orig)
-	: _charcode(0), _texture(0), _displist(0),
+	: _charcode(0), _glyphIndex(0), _texture(0), _displist(0),
 	  _fontsize(12), _dpi(96)
 	{
 		// TODO: copy constructor
@@ -67,6 +67,13 @@ namespace BIL {
 		}
 
 		makeDisplayList();
+	}
+
+	Vec2l Glyph::getKerning(const Glyph& left, const Glyph& right)
+	{
+		Vec2l ret;
+
+		return ret;
 	}
 
 	void Glyph::render(void)
@@ -110,8 +117,11 @@ namespace BIL {
 		}
 
 		font.setCharSize(_fontsize, _dpi);
+		_glyphIndex = font.getCharIndex(_charcode);
+		if(_glyphIndex == 0) return false;
 
-		bool result = font.loadCharacter(_charcode, FT_LOAD_RENDER);
+		//bool result = font.loadCharacter(_charcode, FT_LOAD_RENDER);
+		bool result = font.loadGlyph(_glyphIndex);
 		if (!result)
 			return false;
 
@@ -125,6 +135,10 @@ namespace BIL {
 		_metrics.vertBearingX = face->glyph->metrics.vertBearingX / 64;
 		_metrics.vertBearingY = face->glyph->metrics.vertBearingY / 64;
 		_metrics.vertAdvance = face->glyph->metrics.vertAdvance / 64;
+
+		result = font.renderGlyph();
+		if(!result)
+			return false;
 
 #ifdef DEBUG
 		cout << endl;

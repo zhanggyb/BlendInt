@@ -14,6 +14,8 @@
 #include <string>
 #include <wchar.h>
 
+#include <BIL/Tuple.h>
+
 using namespace std;
 
 namespace BIL {
@@ -66,10 +68,17 @@ namespace BIL {
 
 		void setCharacter (wchar_t charcode);
 
+		unsigned int getGlyphIndex (void)
+		{
+			return _glyphIndex;
+		}
+
 		const Metrics& getMetrics (void) const
 		{
 			return _metrics;
 		}
+
+		Vec2l getKerning (const Glyph& left, const Glyph& right);
 
 		void render (void);
 
@@ -92,6 +101,8 @@ namespace BIL {
 		/* member variables */
 
 		wchar_t _charcode;
+
+		unsigned int _glyphIndex;	// 0 means 'undefined character code'
 
 		GLuint _texture;
 
