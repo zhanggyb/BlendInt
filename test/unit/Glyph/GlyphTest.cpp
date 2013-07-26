@@ -4,31 +4,29 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
 
+#include <BIL/FontManager.h>
+#include <BIL/Glyph.h>
 #include <iostream>
 #include <string>
-#include <stdio.h>
 
-#include "TextBufferTest.h"
-
-#include <BIL/TextBuffer.h>
-#include <BIL/FontManager.h>
+#include "GlyphTest.h"
 
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(TextBufferTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(GlyphTest);
 
-TextBufferTest::TextBufferTest ()
+GlyphTest::GlyphTest ()
 {
 
 }
 
-TextBufferTest::~TextBufferTest ()
+GlyphTest::~GlyphTest ()
 {
 
 }
 
-void TextBufferTest::setUp ()
+void GlyphTest::setUp ()
 {
 	int ret = glfwInit();
 
@@ -47,7 +45,7 @@ void TextBufferTest::setUp ()
 	}
 }
 
-void TextBufferTest::tearDown ()
+void GlyphTest::tearDown ()
 {
 	delete FontManager::service;
 	FontManager::service = NULL;
@@ -55,10 +53,10 @@ void TextBufferTest::tearDown ()
 	glfwTerminate();
 }
 
-void TextBufferTest::showcharacter1 ()
+void GlyphTest::create1 ()
 {
 	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-	        NULL);
+	NULL);
 
 	if (win == NULL) {
 		CPPUNIT_FAIL("Cannot create glfw window\n");
@@ -74,8 +72,7 @@ void TextBufferTest::showcharacter1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	TextBuffer buf;
-	buf.append(L'A');
+	Glyph glyph (L'A', "Sans", 24, 96);
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -102,20 +99,25 @@ void TextBufferTest::showcharacter1 ()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
+		glTranslatef (20, 20, 0);
 		// Test buffer render
-		buf.render();
+		glyph.render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
 	}
-
 	CPPUNIT_ASSERT(true);
 }
 
-void TextBufferTest::showtextline1 ()
+void GlyphTest::create2 ()
+{
+	CPPUNIT_ASSERT(true);
+}
+
+void GlyphTest::printtext1 ()
 {
 	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-	        NULL);
+	NULL);
 
 	if (win == NULL) {
 		CPPUNIT_FAIL("Cannot create glfw window\n");
@@ -131,8 +133,12 @@ void TextBufferTest::showtextline1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	TextBuffer buf;
-	buf.append(L"abcde\nfghij\n床前明月光");
+	Glyph a(L'a', "Sans", 24, 96);
+	Glyph b(L'b', "Sans", 24, 96);
+	Glyph c(L'c', "Sans", 24, 96);
+	Glyph d(L'D', "Sans", 24, 96);
+	Glyph e(L'e', "Sans", 24, 96);
+	Glyph f(L'F', "Sans", 24, 96);
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -159,12 +165,41 @@ void TextBufferTest::showtextline1 ()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-		// Test buffer render
-		buf.renderAt(Coord3f(100.0, 100.0, 0.0));
+		glTranslatef(20, 20, 0);	// where begin draw text
+
+		a.render();
+		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
+		b.render();
+		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
+		c.render();
+		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
+		d.render();
+		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
+		e.render();
+		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
+		f.render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
 	}
-
 	CPPUNIT_ASSERT(true);
+}
+
+void GlyphTest::create4 ()
+{
+	Coord3f test(2.0, 2.0, 2.0);
+	Coord3f dist;
+	dist = test;
+
+	CPPUNIT_ASSERT(
+	        (dist.coord.x == 2.0) && (dist.coord.y == 2.0)
+	                && (dist.coord.z == 2.0));
+}
+
+void GlyphTest::create5 ()
+{
+	Coord3f test(1.0, 1.0, 1.0);
+	Coord3f dist(1.0, 1.0, 1.0);
+
+	CPPUNIT_ASSERT(test == dist);
 }
