@@ -69,13 +69,6 @@ namespace BIL {
 		makeDisplayList();
 	}
 
-	Vec2l Glyph::getKerning(const Glyph& left, const Glyph& right)
-	{
-		Vec2l ret;
-
-		return ret;
-	}
-
 	void Glyph::render(void)
 	{
 		if(!glIsTexture(_texture)) return;
@@ -99,7 +92,7 @@ namespace BIL {
 
 	bool Glyph::makeDisplayList (void)
 	{
-		FontManager* fontserv = FontManager::service;
+		FontConfig* fontserv = FontConfig::service;
 
 		if (fontserv == NULL) {
 			return false;
@@ -169,7 +162,7 @@ namespace BIL {
 
 		// Convert the glyph to a bitmap;
 		FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, 0, 1);
-		FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph) glyph;
+		// FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph) glyph;
 
 		FT_Bitmap& bitmap = face->glyph->bitmap;
 		for (int i = 0; i < rows; i++) {

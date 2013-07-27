@@ -19,6 +19,7 @@
 #include FT_STROKER_H
 
 #include <BIL/Tuple.h>
+#include <BIL/Glyph.h>
 
 using namespace std;
 
@@ -35,7 +36,7 @@ namespace BIL {
 		 * @param filename File path name
 		 * @param size Font size
 		 */
-		FontType (const string& filename, float size = 10.0);
+		FontType (const string& filename, unsigned int size = 10);
 
 		/**
 		 * @brief Constructor to create object from memory
@@ -45,7 +46,7 @@ namespace BIL {
 		 * @param size Font size
 		 */
 		FontType (const FT_Byte* buffer, FT_Long bufsize, FT_Long index = 0,
-		        float size = 10.0);
+		        unsigned int size = 10);
 
 		/**
 		 * @brief destructor
@@ -70,20 +71,9 @@ namespace BIL {
 			return _stroker;
 		}
 
-		bool setFontSize (float size, int dpi = 72);
+		bool setFontSize (unsigned int size, unsigned int dpi = 96);
 
-		bool setCharSize (float size, int dpi = 72);
-
-		/**
-		 * @brief Set character size
-		 * @param width The normal width, in 26.6 fractional points
-		 * @param height The normal height, in 26.6 fractional points
-		 * @param horz_res The horizontal resolution in dpi
-		 * @param vert_res The vertical resolution in dpi
-		 * @return true for success, false for error
-		 */
-		bool setCharSize (FT_F26Dot6 width, FT_F26Dot6 height, FT_UInt horz_res,
-		        FT_UInt vert_res);
+		bool setCharSize (unsigned int size, unsigned int dpi = 96);
 
 		/**
 		 * @brief Get the glyph index of a given character code
@@ -123,6 +113,10 @@ namespace BIL {
 
 		bool setLcdFilterWeights (unsigned char* weights);
 
+		Vec2l getKerning (const Glyph& left, const Glyph& right, FT_UInt kern_mode = FT_KERNING_DEFAULT);
+
+	private:
+
 		bool getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
 		        FT_UInt kern_mode, FT_Vector *akerning);
 
@@ -137,6 +131,10 @@ namespace BIL {
 		bool _valid; /**< if the font face is valid */
 
 		bool _unicode; /**< if has unicode charmap */
+
+		unsigned int _fontsize;
+
+		unsigned int _dpi;
 
 		string _file; /**< path name of the font file */
 	};

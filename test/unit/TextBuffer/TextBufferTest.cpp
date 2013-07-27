@@ -36,12 +36,12 @@ void TextBufferTest::setUp ()
 		CPPUNIT_FAIL("Cannot initialize glfw\n");
 	}
 
-	FontManager::service = FontManager::instance();
-	bool fontinit = FontManager::service->initialize();
+	FontConfig::service = FontConfig::instance();
+	bool fontinit = FontConfig::service->initialize();
 	if (!fontinit) {
 		CPPUNIT_FAIL("Cannot initialize FontManager\n");
 	}
-	fontinit = FontManager::service->loadFont();
+	fontinit = FontConfig::service->loadDefaultFontToMem();
 	if (!fontinit) {
 		CPPUNIT_FAIL("Cannot load default font\n");
 	}
@@ -49,8 +49,8 @@ void TextBufferTest::setUp ()
 
 void TextBufferTest::tearDown ()
 {
-	delete FontManager::service;
-	FontManager::service = NULL;
+	delete FontConfig::service;
+	FontConfig::service = NULL;
 
 	glfwTerminate();
 }

@@ -29,13 +29,13 @@ void FontTypeTest::setUp ()
 {
     bool ret = false;
 
-    if(FontManager::service == NULL) {
-	FontManager::service = FontManager::instance();
+    if(FontConfig::service == NULL) {
+	FontConfig::service = FontConfig::instance();
     }
 
-    FontManager::service->initialize();
+    FontConfig::service->initialize();
 
-    ret = FontManager::service->loadFont(); // load default font to memory
+    ret = FontConfig::service->loadDefaultFontToMem(); // load default font to memory
     if(!ret) {
         // TODO: stop and show failure of this TestFixture
     }
@@ -43,8 +43,8 @@ void FontTypeTest::setUp ()
 
 void FontTypeTest::tearDown ()
 {
-    delete FontManager::service;
-    FontManager::service = NULL;
+    delete FontConfig::service;
+    FontConfig::service = NULL;
 }
 
 void FontTypeTest::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
@@ -83,7 +83,7 @@ void FontTypeTest::create1 ()
 {
     bool result;
 
-    FontManager* gFontService = FontManager::service;
+    FontConfig* gFontService = FontConfig::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -100,7 +100,7 @@ void FontTypeTest::create2 ()
 {
     bool result1, result2;
 
-    FontManager* gFontService = FontManager::service;
+    FontConfig* gFontService = FontConfig::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -120,7 +120,7 @@ void FontTypeTest::create3 ()
 {
     bool result1 = false;
 
-    FontManager* gFontService = FontManager::service;
+    FontConfig* gFontService = FontConfig::service;
 
     FontType *font1 = new FontType(gFontService->getBuffer(),
                                    gFontService->getBufferSize());
@@ -136,7 +136,7 @@ void FontTypeTest::get_glyph1 ()
 {
     bool result;
 
-    FontManager* gFontService = FontManager::service;
+    FontConfig* gFontService = FontConfig::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -207,7 +207,7 @@ void FontTypeTest::get_glyph2 ()
 {
     bool result;
 
-    FontManager* gFontService = FontManager::service;
+    FontConfig* gFontService = FontConfig::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -278,7 +278,7 @@ void FontTypeTest::get_glyph3 ()
 {
     bool result;
 
-    FontManager* gFontService = FontManager::service;
+    FontConfig* gFontService = FontConfig::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -294,7 +294,7 @@ void FontTypeTest::get_glyph3 ()
 
     wchar_t ch = L'义';
 
-    result = font->setCharSize (24 * 64, 0, 96, 0);
+    result = font->setCharSize (24, 96);
 
     if (result) {
 
@@ -349,7 +349,7 @@ void FontTypeTest::get_glyph4 ()
 {
     bool result;
 
-    FontManager* gFontService = FontManager::service;
+    FontConfig* gFontService = FontConfig::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -365,7 +365,7 @@ void FontTypeTest::get_glyph4 ()
 
     wchar_t ch = L'礼';
 
-    result = font->setCharSize (24 * 64, 0, 96, 0);
+    result = font->setCharSize (24, 96);
 
     if (result) {
 
@@ -429,7 +429,7 @@ void FontTypeTest::get_glyph5 ()
 {
     bool result;
 
-    FontManager* gFontService = FontManager::service;
+    FontConfig* gFontService = FontConfig::service;
 
     FontType *font = new FontType(gFontService->getBuffer(),
                                   gFontService->getBufferSize());
@@ -444,7 +444,7 @@ void FontTypeTest::get_glyph5 ()
 
     wchar_t ch = L'智';
 
-    result = font->setCharSize (24 * 64, 0, 96, 0);
+    result = font->setCharSize (24, 96);
 
     if (result) {
 
@@ -489,7 +489,7 @@ void FontTypeTest::get_glyph5 ()
 void FontTypeTest::glyph_metrics1 ()
 {
     bool result;
-    FontManager* gFontService = FontManager::service;
+    FontConfig* gFontService = FontConfig::service;
 
     string fontpath = gFontService->getFontPath("Sans");
 
@@ -505,7 +505,7 @@ void FontTypeTest::glyph_metrics1 ()
 
     wchar_t ch = L'信';
 
-    result = font->setCharSize (24 * 64, 0, 96, 0);
+    result = font->setCharSize (24, 96);
 
     if (result) {
 

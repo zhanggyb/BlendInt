@@ -176,7 +176,7 @@ namespace BIL {
         // The first thing we do is get FreeType to render out character
         // into a bitmap. This actually requires a couple of FreeType commands:
 
-	FontManager* gFontService = FontManager::service;
+	FontConfig* gFontService = FontConfig::service;
 
         string fontfile =
             gFontService->getFontPath(_drawArea->getFont());

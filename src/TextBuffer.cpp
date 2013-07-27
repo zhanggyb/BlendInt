@@ -132,7 +132,7 @@ namespace BIL {
         // new texture and display list for it
         map<wchar_t, CharData>::iterator it;
 
-	FontManager* gFontService = FontManager::service;
+	FontConfig* gFontService = FontConfig::service;
 
         it = _chardb.find(charcode);
         if(it != _chardb.end()) return false;

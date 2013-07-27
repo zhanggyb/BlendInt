@@ -5,7 +5,6 @@
 #ifndef _BIL_GLYPH_H_
 #define _BIL_GLYPH_H_
 
-#include <GL/glew.h>
 #include <GL/gl.h>
 
 #include <ft2build.h>
@@ -68,7 +67,22 @@ namespace BIL {
 
 		void setCharacter (wchar_t charcode);
 
-		unsigned int getGlyphIndex (void)
+		unsigned int getDpi (void) const
+		{
+			return _dpi;
+		}
+
+		const string& getFile (void) const
+		{
+			return _file;
+		}
+
+		unsigned int getFontSize (void) const
+		{
+			return _fontsize;
+		}
+
+		unsigned int getGlyphIndex (void) const
 		{
 			return _glyphIndex;
 		}
@@ -77,8 +91,6 @@ namespace BIL {
 		{
 			return _metrics;
 		}
-
-		Vec2l getKerning (const Glyph& left, const Glyph& right);
 
 		void render (void);
 
@@ -112,7 +124,7 @@ namespace BIL {
 
 		unsigned int _dpi;
 
-		string _filename; /* font file name */
+		string _file; /* font file name */
 
 		Metrics _metrics;
 

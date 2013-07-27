@@ -34,12 +34,12 @@ void GlyphTest::setUp ()
 		CPPUNIT_FAIL("Cannot initialize glfw\n");
 	}
 
-	FontManager::service = FontManager::instance();
-	bool fontinit = FontManager::service->initialize();
+	FontConfig::service = FontConfig::instance();
+	bool fontinit = FontConfig::service->initialize();
 	if (!fontinit) {
 		CPPUNIT_FAIL("Cannot initialize FontManager\n");
 	}
-	fontinit = FontManager::service->loadFont();
+	fontinit = FontConfig::service->loadDefaultFontToMem();
 	if (!fontinit) {
 		CPPUNIT_FAIL("Cannot load default font\n");
 	}
@@ -47,8 +47,8 @@ void GlyphTest::setUp ()
 
 void GlyphTest::tearDown ()
 {
-	delete FontManager::service;
-	FontManager::service = NULL;
+	delete FontConfig::service;
+	FontConfig::service = NULL;
 
 	glfwTerminate();
 }
@@ -256,15 +256,92 @@ void GlyphTest::printtext2 ()
 	CPPUNIT_ASSERT(true);
 }
 
-void GlyphTest::create4 ()
+void GlyphTest::checkkerning1 ()
 {
-	Coord3f test(2.0, 2.0, 2.0);
-	Coord3f dist;
-	dist = test;
+	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
+	NULL);
 
-	CPPUNIT_ASSERT(
-	        (dist.coord.x == 2.0) && (dist.coord.y == 2.0)
-	                && (dist.coord.z == 2.0));
+	if (win == NULL) {
+		CPPUNIT_FAIL("Cannot create glfw window\n");
+	}
+
+	glfwMakeContextCurrent(win);
+
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
+		cerr << "Failed to initilize GLEW" << endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	Glyph a(L'A', "Sans", 12, 96);
+	Glyph b(L'b', "Sans", 12, 96);
+	Glyph c(L'仁', "Sans", 12, 96);
+	Glyph d(L'D', "Sans", 12, 96);
+	Glyph e(L'义', "Sans", 12, 96);
+	Glyph f(L'f', "Sans", 12, 96);
+
+	FontConfig* fontserv = FontConfig::service;
+	FontType font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
+
+	Vec2l kerning;
+
+	cout << endl;
+	kerning = font.getKerning(a,b);
+	cout << "Kerning between A, b: " << kerning.vec.x << ", " << kerning.vec.y << endl;
+	kerning = font.getKerning(b,c);
+	cout << "Kerning between b, c: " << kerning.vec.x << ", " << kerning.vec.y << endl;
+	kerning = font.getKerning(c,d);
+	cout << "Kerning between c, D: " << kerning.vec.x << ", " << kerning.vec.y << endl;
+	kerning = font.getKerning(d,e);
+	cout << "Kerning between D, E: " << kerning.vec.x << ", " << kerning.vec.y << endl;
+	kerning = font.getKerning(e,f);
+	cout << "Kerning between E, f: " << kerning.vec.x << ", " << kerning.vec.y << endl;
+
+	while (!glfwWindowShouldClose(win)) {
+
+		int width, height;
+
+		glfwGetWindowSize(win, &width, &height);
+
+		glClearColor(0.40, 0.40, 0.45, 1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glColor4f(1.00, 1.00, 1.00, 1.00);
+
+		// enable anti-alias
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_POINT_SMOOTH);
+		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_POLYGON_SMOOTH);
+
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		glTranslatef(20, 20, 0);	// where begin draw text
+
+		a.render();
+		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
+		b.render();
+		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
+		c.render();
+		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
+		d.render();
+		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
+		e.render();
+		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
+		f.render();
+
+		glfwSwapBuffers(win);
+		glfwPollEvents();
+	}
+	CPPUNIT_ASSERT(true);
 }
 
 void GlyphTest::create5 ()

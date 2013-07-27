@@ -24,100 +24,100 @@ typedef FontList::const_iterator FontIter;
 
 namespace BIL {
 
-    class FontManager
-    {
-    public:
+	class FontConfig
+	{
+	public:
 
-        // static FontManager* gFontService;
-        static FontManager* service;
+		static FontConfig* service;
 
-        static FontManager* instance (void)
-        {
-            if (service != NULL) {
-                cerr << "Error: FontManager should generate only one instance"
-                     << endl;
-                return NULL;
-            }
+		static FontConfig* instance (void)
+		{
+			if (service != NULL) {
+				cerr << "Error: FontManager should generate only one instance"
+				        << endl;
+				return NULL;
+			}
 
-            FontManager* tm = new FontManager;
-            return tm;
-        }
+			FontConfig* tm = new FontConfig;
+			return tm;
+		}
 
-        virtual ~FontManager ();
+		virtual ~FontConfig ();
 
-        bool initialize (void);
+		bool initialize (void);
 
-        bool isInitialized (void) const {
-            return initialized;
-        }
+		bool isInitialized (void) const
+		{
+			return initialized;
+		}
 
-        const unsigned char* getBuffer (void) const {
-            return _buf;
-        }
+		const unsigned char* getBuffer (void) const
+		{
+			return _defaultFontBuf;
+		}
 
-        long getBufferSize (void) const {
-            return _bufsize;
-        }
+		long getBufferSize (void) const
+		{
+			return _defaultFontBufSize;
+		}
 
-        /**
-         * @brief load truetype font into memory
-         * @param family font family
-         * @return true for success, false for error
-         */
-        bool loadFont (const string& family = string("Sans"));
+		/**
+		 * @brief load truetype font into memory
+		 * @param family font family
+		 * @return true for success, false for error
+		 */
+		bool loadDefaultFontToMem (const string& family = string("Sans"));
 
-        bool loadFont (const Font& font);
+		bool loadFont (const Font& font);
 
-        /**
-         * @brief get font path
-         * @param family
-         * @return
-         *
-         * get font path with fontconfig
-         */
-        string getFontPath (const string& family,
-                            float size = 10,
-                            bool bold = false,
-                            bool italic = false);
+		/**
+		 * @brief get font path
+		 * @param family
+		 * @return
+		 *
+		 * get font path with fontconfig
+		 */
+		string getFontPath (const string& family, float size = 10, bool bold =
+		        false, bool italic = false);
 
-        string getFontPath (const Font& font);
+		string getFontPath (const Font& font);
 
-    private:
+	private:
 
-        /**
-         * @brief Default constructor
-         *
-         * Move the default constructor to private
-         */
-        FontManager ()
-            : _buf(NULL), _bufsize(0)
-        {
-        }
+		/**
+		 * @brief Default constructor
+		 *
+		 * Move the default constructor to private
+		 */
+		FontConfig ()
+				: _defaultFontBuf(NULL), _defaultFontBufSize(0)
+		{
+		}
 
-        bool loadFontFile (const string& file);
+		bool loadFontFile (const string& file);
 
-        /**
-         * @brief load all Truetype fonts in the directory
-         * @param path the target directory
-         *
-         * load all Truetype fonts (.ttf or .TTF) in the target directory
-         */
-        void loadFontDir (const string& path);
+		/**
+		 * @brief load all Truetype fonts in the directory
+		 * @param path the target directory
+		 *
+		 * load all Truetype fonts (.ttf or .TTF) in the target directory
+		 */
+		void loadFontDir (const string& path);
 
-        FontManager& operator = (const FontManager &orig);
+		FontConfig& operator = (const FontConfig &orig);
 
-        // container for fonts
-        FontList _fonts;
+		// container for fonts
+		FontList _fonts;
 
-        map<string, FontType*> _namedb;
+		map<string, FontType*> _namedb;
 
-        static bool initialized;
+		static bool initialized;
 
-        unsigned char* _buf;    /* a buffer in memory for the default
-                                   font file */
+		/** a buffer in memory for the default font file */
+		unsigned char* _defaultFontBuf;
 
-        long _bufsize;          /* size of the buffer */
-    };
+		long _defaultFontBufSize; /* size of the buffer */
+	};
 
 } /* namespace BIL */
 #endif /* FONTMANAGER_H_ */
