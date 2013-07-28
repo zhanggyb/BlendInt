@@ -256,6 +256,89 @@ void GlyphTest::printtext2 ()
 	CPPUNIT_ASSERT(true);
 }
 
+void GlyphTest::printtext3 ()
+{
+	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
+	NULL);
+
+	if (win == NULL) {
+		CPPUNIT_FAIL("Cannot create glfw window\n");
+	}
+
+	glfwMakeContextCurrent(win);
+
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
+		cerr << "Failed to initilize GLEW" << endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	Glyph a(L'a', "Sans", 12, 96);
+	Glyph b(L'b', "Sans", 12, 96);
+	Glyph c(L'c', "Sans", 12, 96);
+	Glyph d(L'd', "Sans", 12, 96);
+	Glyph e(L'e', "Sans", 12, 96);
+	Glyph f(L'f', "Sans", 12, 96);
+	Glyph g(L'g', "Sans", 12, 96);
+	Glyph h(L'h', "Sans", 12, 96);
+	Glyph i(L'i', "Sans", 12, 96);
+	Glyph j(L'j', "Sans", 12, 96);
+
+	while (!glfwWindowShouldClose(win)) {
+
+		int width, height;
+
+		glfwGetWindowSize(win, &width, &height);
+
+		glClearColor(0.40, 0.40, 0.45, 1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glColor4f(1.00, 1.00, 1.00, 1.00);
+
+		// enable anti-alias
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_POINT_SMOOTH);
+		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_POLYGON_SMOOTH);
+
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		glTranslatef(20, 20, 0);	// where begin draw text
+
+		a.render();
+		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
+		b.render();
+		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
+		c.render();
+		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
+		d.render();
+		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
+		e.render();
+		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
+		f.render();
+		glTranslatef(f.getMetrics().horiAdvance, 0, 0);
+		g.render();
+		glTranslatef(g.getMetrics().horiAdvance, 0, 0);
+		h.render();
+		glTranslatef(h.getMetrics().horiAdvance, 0, 0);
+		i.render();
+		glTranslatef(i.getMetrics().horiAdvance, 0, 0);
+		j.render();
+
+		glfwSwapBuffers(win);
+		glfwPollEvents();
+	}
+	CPPUNIT_ASSERT(true);
+}
+
 void GlyphTest::checkkerning1 ()
 {
 	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,

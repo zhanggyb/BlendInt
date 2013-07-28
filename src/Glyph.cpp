@@ -6,6 +6,7 @@
 #include <BIL/Glyph.h>
 #include <BIL/FontManager.h>
 #include <BIL/FontType.h>
+#include <string>
 
 namespace BIL {
 
@@ -78,9 +79,9 @@ namespace BIL {
 
 		glPushMatrix();
 
-		glTranslatef(_metrics.horiBearingX, 0, 0);
+		glMatrixMode(GL_MODELVIEW);
 
-		glTranslatef(0, _metrics.height - _metrics.horiBearingY, 0);
+		glTranslatef((float)_metrics.horiBearingX, (float)_metrics.horiBearingY - (float)_metrics.height, 0);
 
 		glBindTexture(GL_TEXTURE_2D, _texture);
 		glCallLists(1, GL_UNSIGNED_BYTE, &_displist);
@@ -135,6 +136,7 @@ namespace BIL {
 
 #ifdef DEBUG
 		cout << endl;
+		wcout << "character: " << _charcode; cout << endl;
 		cout << "width: " << _metrics.width << endl;
 		cout << "height: " << _metrics.height << endl;
 		cout << "horiBearingX: " << _metrics.horiBearingX << endl;
