@@ -11,7 +11,7 @@
 #include "TextBufferTest.h"
 
 #include <BIL/TextBuffer.h>
-#include <BIL/FontManager.h>
+#include <BIL/FontConfig.h>
 
 using namespace BIL;
 using namespace std;

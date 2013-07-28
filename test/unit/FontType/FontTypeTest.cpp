@@ -1,7 +1,7 @@
 // cpp
 
 #include <BIL/FontType.h>
-#include <BIL/FontManager.h>
+#include <BIL/FontConfig.h>
 #include <iostream>
 #include <string>
 #include <stdio.h>

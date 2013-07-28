@@ -13,58 +13,79 @@
 
 #include <map>
 #include <vector>
-#include <wchar.h>
+
+#include <BIL/Glyph.h>
 
 using namespace std;
 
 namespace BIL {
 
-    class FontCache;
+	/**
+	 * @brief Class in charge of caching fonts
+	 */
+	class FontCache
+	{
+	public:
 
-    extern FontCache* gFontCache;
+		enum CacheType
+		{
+			Default, Menu
+		};
 
-    /**
-     * @brief Class in charge of caching fonts
-     */
-    class FontCache
-    {
-    public:
+		static bool instance (CacheType cache = Default);
 
-        static FontCache* instance (void);
+		static FontCache* getDefault (void)
+		{
+			return fontDefault;
+		}
 
-        bool initialize (void);
+		bool initialize (void);
 
-        bool isInitialized (void) const {
-            return initialized;
-        }
+		bool isInitialized (void) const
+		{
+			return initialized;
+		}
 
-        void setCacheSize (unsigned int size)
-        {
-            cacheSize = size;
-        }
+		void setCacheSize (unsigned int size)
+		{
+			cacheSize = size;
+		}
 
-        virtual ~FontCache ();
+	private:
 
-    private:
+		/**
+		 * @brief private destructor
+		 *
+		 * Move destructor to private area to avoid this object be deleted
+		 * in anywhere.
+		 */
+		virtual ~FontCache ();
 
-        struct FontData {
-            GLuint texture;
-            GLuint displist;
-        };
+		FontCache ();
 
-        FontCache ();
+		FontCache (const FontCache& orige);
 
-        FontCache (const FontCache& orige);
+		FontCache& operator = (const FontCache& orig);
 
-        FontCache& operator = (const FontCache& orig);
+	private:
 
-        map<wchar_t, FontData> _fontdb;
+		struct FontData
+		{
+			GLuint texture;
+			GLuint displist;
+		};
 
-        static bool initialized;
+		static FontCache* fontDefault;
 
-        static unsigned int cacheSize;
+		static FontCache* fontMenu;	// TODO: more font configuration
 
-    };
+		map<wchar_t, FontData> _fontdb;
+
+		static bool initialized;
+
+		static unsigned int cacheSize;
+
+	};
 
 } /* namespace BIL */
 #endif /* FONTCACHE_H_ */

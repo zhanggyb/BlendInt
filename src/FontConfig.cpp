@@ -11,7 +11,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include <BIL/FontManager.h>
+#include <BIL/FontConfig.h>
 
 using namespace std;
 using namespace boost;

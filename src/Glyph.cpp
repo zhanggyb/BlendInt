@@ -4,7 +4,7 @@
 
 #include <string.h>
 #include <BIL/Glyph.h>
-#include <BIL/FontManager.h>
+#include <BIL/FontConfig.h>
 #include <BIL/FontType.h>
 #include <string>
 

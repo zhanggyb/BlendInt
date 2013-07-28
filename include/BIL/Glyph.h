@@ -19,6 +19,14 @@ using namespace std;
 
 namespace BIL {
 
+	/**
+	 * @brief Store data, texture, display list for a glyph of an
+	 * character
+	 *
+	 * Though there's no problem to create and destroy destroy each
+	 * glyph for text, the fast way is to load glyph from class
+	 * FontCache.
+	 */
 	class Glyph
 	{
 	public:

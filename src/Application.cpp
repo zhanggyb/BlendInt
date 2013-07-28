@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 #include <BIL/Application.h>
-#include <BIL/FontManager.h>
+#include <BIL/FontConfig.h>
 
 using namespace std;
 

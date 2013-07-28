@@ -4,7 +4,7 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
 
-#include <BIL/FontManager.h>
+#include <BIL/FontConfig.h>
 #include <BIL/Glyph.h>
 #include <iostream>
 #include <string>

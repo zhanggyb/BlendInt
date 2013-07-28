@@ -6,7 +6,7 @@
  */
 
 #include <BIL/FontType.h>
-#include <BIL/FontManager.h>
+#include <BIL/FontConfig.h>
 #include <BIL/TextBuffer.h>
 
 #include <BIL/Tuple.h>

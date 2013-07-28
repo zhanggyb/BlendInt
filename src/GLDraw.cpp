@@ -11,7 +11,7 @@
 
 #include <BIL/GLDraw.h>
 
-#include <BIL/FontManager.h>
+#include <BIL/FontConfig.h>
 #include <BIL/FontType.h>
 
 #include <freetype/ftglyph.h>

@@ -14,45 +14,54 @@ using namespace std;
 
 namespace BIL {
 
-    FontCache* gFontCache = NULL;
+	FontCache* FontCache::fontDefault = NULL;
 
-    bool FontCache::initialized = false;
-    unsigned int FontCache::cacheSize = 512;
+	bool FontCache::initialized = false;
 
-    FontCache* FontCache::instance (void)
-    {
-        if (gFontCache != NULL) {
-            cerr << "Error: FontCache should generate only on instance"
-                 << endl;
-            return NULL;
-        }
+	unsigned int FontCache::cacheSize = 128;
 
-        FontCache* fc = new FontCache;
-        return fc;
-    }
+	bool FontCache::instance (CacheType cache)
+	{
+		switch(cache)
+		{
+			case Default:
+				if(fontDefault != NULL) {
+					cerr << "Error: Cache for default font should be generated only once" << endl;
+					return false;
+				} else {
+					fontDefault = new FontCache;
+				}
+				break;
+			default:
+				break;
+		}
 
-    bool FontCache::initialize (void)
-    {
-        if (initialized) return false;
+		return true;
+	}
 
-        initialized = true;
-        return true;
-    }
+	bool FontCache::initialize (void)
+	{
+		if (initialized)
+			return false;
 
-    FontCache::FontCache ()
-    {
+		initialized = true;
+		return true;
+	}
 
-    }
+	FontCache::FontCache ()
+	{
 
-    FontCache::~FontCache ()
-    {
-        // TODO Auto-generated destructor stub
-        /*
-          if(_cache) {
-          free (_cache);
-          }
-        */
-        initialized = false;
-    }
+	}
+
+	FontCache::~FontCache ()
+	{
+		// TODO Auto-generated destructor stub
+		/*
+		 if(_cache) {
+		 free (_cache);
+		 }
+		 */
+		initialized = false;
+	}
 
 } /* namespace BIL */
