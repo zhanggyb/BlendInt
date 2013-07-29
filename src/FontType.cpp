@@ -281,10 +281,6 @@ namespace BIL {
 				right.getDpi() != _dpi)
 			return ret;
 
-		if(left.getFile() != _file ||
-				right.getFile() != _file)
-			return ret;
-
 		FT_Vector kerning;
 
 		bool result = getKerning(left.getGlyphIndex(),

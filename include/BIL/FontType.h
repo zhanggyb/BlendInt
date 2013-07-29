@@ -9,9 +9,6 @@
 #define _BIL_FONTTYPE_H_
 
 #include <string>
-#include <vector>
-#include <map>
-#include <GL/gl.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -24,8 +21,6 @@
 using namespace std;
 
 namespace BIL {
-
-	typedef Tuple2<FT_Pos> Tuple2long;
 
 	class FontType
 	{

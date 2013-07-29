@@ -6,18 +6,19 @@
 #define _BIL_GLYPH_H_
 
 #include <GL/gl.h>
+#include <string>
+#include <wchar.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <string>
-#include <wchar.h>
-
-#include <BIL/Tuple.h>
+#include <BIL/Font.h>
 
 using namespace std;
 
 namespace BIL {
+
+	class FontType;
 
 	/**
 	 * @brief Store data, texture, display list for a glyph of an
@@ -62,10 +63,9 @@ namespace BIL {
 		 * @brief Constructor for generate a glyph data with default
 		 * font setting
 		 */
-		Glyph (wchar_t charcode);
+		Glyph (wchar_t charcode, FontType* fontlib = NULL);
 
-		Glyph (wchar_t charcode, const string& fontname, unsigned int fontsize =
-		        12, unsigned int dpi = 96);
+		Glyph (wchar_t charcode, const Font& font, unsigned int dpi = 96, FontType* fontlib = NULL);
 
 		Glyph (const Glyph& orig);
 
@@ -75,19 +75,16 @@ namespace BIL {
 
 		void setCharacter (wchar_t charcode);
 
+		void setFontType (FontType* fontlib);
+
 		unsigned int getDpi (void) const
 		{
 			return _dpi;
 		}
 
-		const string& getFile (void) const
-		{
-			return _file;
-		}
-
 		unsigned int getFontSize (void) const
 		{
-			return _fontsize;
+			return _font.size;
 		}
 
 		unsigned int getGlyphIndex (void) const
@@ -117,8 +114,17 @@ namespace BIL {
 
 		bool makeDisplayList (void);
 
+		void fillMetrics (const FT_Face& face);
+
+		/**
+		 * @brief delete texture and display list
+		 */
+		void resetGL (void);
+
 	private:
 		/* member variables */
+
+		FontType* _lib;
 
 		wchar_t _charcode;
 
@@ -128,11 +134,9 @@ namespace BIL {
 
 		GLuint _displist;
 
-		unsigned int _fontsize;
+		Font _font;
 
 		unsigned int _dpi;
-
-		string _file; /* font file name */
 
 		Metrics _metrics;
 
