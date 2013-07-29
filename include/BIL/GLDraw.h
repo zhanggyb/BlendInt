@@ -67,35 +67,9 @@ namespace BIL {
 
 		void setFont (const std::string& fontname);
 
-		/** create a font of the height h */
-		void init (GLuint h);
-
-		void clean (void);
-
 	private:
 
 		Drawable* _drawArea;
-
-		/* the following members are just for test */
-
-		///This function gets the first power of 2 >= the
-		///int that we pass it.
-		inline int next_p2 (int a)
-		{
-			int rval = 1;
-			while (rval < a)
-				rval <<= 1;
-			return rval;
-		}
-
-		void makeDisplayList (char ch, GLuint list_base, GLuint *tex_base);
-
-		float h; 	/** the height of font */
-
-		GLuint *textures;	/** texture ids */
-
-		GLuint list_base;	/** the first display list id */
-
 	};
 
 } /* namespace BIL */

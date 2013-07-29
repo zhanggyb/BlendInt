@@ -9,7 +9,7 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION (FontManagerTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(FontManagerTest);
 
 FontManagerTest::FontManagerTest ()
 {
@@ -33,40 +33,36 @@ void FontManagerTest::tearDown ()
 
 void FontManagerTest::initialize1 ()
 {
-    bool result;
+	bool result;
 
-    if(FontConfig::service == NULL) {
-	FontConfig::service = FontConfig::instance();
-    }
+	FontConfig::instance();
 
-    result = FontConfig::service->initialize();
+	result = FontConfig::getService()->initialize();
 
-    delete FontConfig::service;
-    FontConfig::service = NULL;
+	if(result) {
+		result = FontConfig::release();
+	}
 
-    CPPUNIT_ASSERT(result);
+	CPPUNIT_ASSERT(result);
 }
 
 void FontManagerTest::loadfont1 ()
 {
-    bool result;
+	bool result;
 
-    if(FontConfig::service == NULL) {
-        FontConfig::service = FontConfig::instance();
-    }
+	FontConfig::instance();
 
-    result = FontConfig::service->initialize();
+	result = FontConfig::getService()->initialize();
 
-    if(result) {
-        result = FontConfig::service->loadDefaultFontToMem();
+	if (result) {
+		result = FontConfig::getService()->loadDefaultFontToMem();
 
-        if(result) {
-            result = FontConfig::service->getBuffer() != NULL;
-        }
-    }
+		if (result) {
+			result = FontConfig::getService()->getBuffer() != NULL;
+		}
+	}
 
-    delete FontConfig::service;
-    FontConfig::service = NULL;
+	FontConfig::release();
 
-    CPPUNIT_ASSERT(result);
+	CPPUNIT_ASSERT(result);
 }

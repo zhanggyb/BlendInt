@@ -38,10 +38,6 @@ namespace BIL {
 
     glEnable( GL_BLEND );
     glEnable( GL_TEXTURE_2D );
-
-		draw.init(24);
-		draw.text ("Hello World!", Point3Df(50.0, 80.0, 0.0));
-		draw.clean();
 	}
 
 } /* namespace BIL */

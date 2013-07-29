@@ -93,7 +93,7 @@ namespace BIL {
 
 	bool Glyph::makeDisplayList (void)
 	{
-		FontConfig* fontserv = FontConfig::service;
+		FontConfig* fontserv = FontConfig::getService();
 
 		if (fontserv == NULL) {
 			return false;

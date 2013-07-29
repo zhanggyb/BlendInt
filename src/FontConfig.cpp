@@ -23,6 +23,29 @@ namespace BIL {
 
 	bool FontConfig::initialized = false;
 
+	bool FontConfig::instance (void)
+	{
+		if (service != NULL) {
+			cerr << "Error: FontManager should be generated only once"
+			        << endl;
+			return false;
+		}
+
+		service = new FontConfig;
+
+		return true;
+	}
+
+	bool FontConfig::release(void)
+	{
+		if(service == NULL) return false;
+
+		delete service;
+		service = NULL;
+
+		return true;
+	}
+
 	bool FontConfig::initialize (void)
 	{
 		if (initialized)
@@ -31,11 +54,10 @@ namespace BIL {
 		// load system files    TODO: load more fonts
 		// loadFontDir("/usr/share/fonts");
 
-		if (!FcInit())
-			return false;
+		if (!FcInit()) initialized = false;
+		else initialized = true;
 
-		initialized = true;
-		return true;
+		return initialized;
 	}
 
 	FontConfig::~FontConfig ()

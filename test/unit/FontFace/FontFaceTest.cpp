@@ -10,7 +10,7 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION (FontFaceTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(FontFaceTest);
 
 FontFaceTest::FontFaceTest ()
 {
@@ -34,23 +34,22 @@ void FontFaceTest::tearDown ()
 
 void FontFaceTest::create1 ()
 {
-    bool result;
+	bool result;
 
-    if(FontConfig::service == NULL) {
-        FontConfig::service = FontConfig::instance();
-    }
+	FontConfig::instance();
 
-    FontConfig::service->initialize();
+	FontConfig::getService()->initialize();
 
-    string fontpath = FontConfig::service->getFontPath("Sans");
+	string fontpath = FontConfig::getService()->getFontPath("Sans");
 
-    FontType *font = new FontType(fontpath);
+	FontType *font = new FontType(fontpath);
 
-    result = font->isValid ();
+	result = font->isValid();
 
-    delete font; font = NULL;
-    delete FontConfig::service;
-    FontConfig::service = NULL;
+	delete font;
+	font = NULL;
 
-    CPPUNIT_ASSERT(result);
+	FontConfig::release();
+
+	CPPUNIT_ASSERT(result);
 }

@@ -28,21 +28,22 @@ namespace BIL {
 	{
 	public:
 
-		static FontConfig* service;
+		/**
+		 * @brief generate a FontConfig instance and assign to FontConfig::service
+		 * @return true: success, false: already has instance
+		 */
+		static bool instance (void);
 
-		static FontConfig* instance (void)
+		/**
+		 * @brief Release the object created in instance()
+		 * @return true: success, false: already released
+		 */
+		static bool release (void);
+
+		static FontConfig* getService (void)
 		{
-			if (service != NULL) {
-				cerr << "Error: FontManager should generate only one instance"
-				        << endl;
-				return NULL;
-			}
-
-			FontConfig* tm = new FontConfig;
-			return tm;
+			return service;
 		}
-
-		virtual ~FontConfig ();
 
 		bool initialize (void);
 
@@ -94,6 +95,14 @@ namespace BIL {
 		{
 		}
 
+		/**
+		 * @brief Private destructor
+		 *
+		 * Move destructor to private area to disallow simply delete,
+		 * use release() instead
+		 */
+		virtual ~FontConfig ();
+
 		bool loadFontFile (const string& file);
 
 		/**
@@ -105,6 +114,13 @@ namespace BIL {
 		void loadFontDir (const string& path);
 
 		FontConfig& operator = (const FontConfig &orig);
+
+	private:
+
+		/**
+		 * @brief The real object to provide font config service
+		 */
+		static FontConfig* service;
 
 		// container for fonts
 		FontList _fonts;
