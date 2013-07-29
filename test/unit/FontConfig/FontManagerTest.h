@@ -15,6 +15,7 @@ class FontManagerTest: public CppUnit::TestFixture
 
     CPPUNIT_TEST(initialize1);
     CPPUNIT_TEST(loadfont1);
+    CPPUNIT_TEST(loadfont2);
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -34,6 +35,7 @@ class FontManagerTest: public CppUnit::TestFixture
 
     void initialize1 ();
     void loadfont1 ();
+    void loadfont2 ();
 
 };
 

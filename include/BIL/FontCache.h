@@ -8,12 +8,11 @@
 #ifndef _BIL_FONTCACHE_H_
 #define _BIL_FONTCACHE_H_
 
-#include <GL/glew.h>
-#include <GL/gl.h>
-
 #include <map>
-#include <vector>
+#include <wchar.h>
 
+#include <BIL/FontType.h>
+#include <BIL/Font.h>
 #include <BIL/Glyph.h>
 
 using namespace std;
@@ -25,33 +24,39 @@ namespace BIL {
 	 */
 	class FontCache
 	{
-	public:
+	public:	// static member functions
 
-		enum CacheType
-		{
-			Default, Menu
-		};
+		/**
+		 * @brief create and get the FontCache object
+		 * @param font Font, default is regular "Sans"
+		 * @return cache object created, NULL for failure
+		 */
+		static FontCache* create (const Font& font = Font("Sans"));
 
-		static bool instance (CacheType cache = Default);
+		static FontCache* getCache (const Font& font = Font("Sans"));
 
-		static FontCache* getDefault (void)
-		{
-			return fontDefault;
-		}
+		static bool release (const Font& font = Font("Sans"));
 
-		bool initialize (void);
-
-		bool isInitialized (void) const
-		{
-			return initialized;
-		}
-
-		void setCacheSize (unsigned int size)
+		static void setCacheSize (unsigned int size)
 		{
 			cacheSize = size;
 		}
 
+	public:
+
+		/**
+		 * @brief Initialize glyph database
+		 * @return true for success, false for failure
+		 */
+		bool initialize (void);
+
+		Glyph* query (wchar_t charcode);
+
+		bool addCharacter (wchar_t charcode);
+
 	private:
+
+		FontCache (const Font& font);
 
 		/**
 		 * @brief private destructor
@@ -61,29 +66,27 @@ namespace BIL {
 		 */
 		virtual ~FontCache ();
 
+	private:	// member functions disabled
+
 		FontCache ();
 
-		FontCache (const FontCache& orige);
+		FontCache (const FontCache& orig);
 
 		FontCache& operator = (const FontCache& orig);
 
-	private:
+	private:	// member variables
 
-		struct FontData
-		{
-			GLuint texture;
-			GLuint displist;
-		};
+		FontType* _fonttype;
 
-		static FontCache* fontDefault;
+		map<wchar_t, Glyph*> _glyphdb;
 
-		static FontCache* fontMenu;	// TODO: more font configuration
-
-		map<wchar_t, FontData> _fontdb;
-
-		static bool initialized;
+	private:	// static members
 
 		static unsigned int cacheSize;
+
+		static unsigned int maxCaches;
+
+		static map<Font, FontCache*> cacheDB;
 
 	};
 

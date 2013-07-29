@@ -14,54 +14,65 @@ using namespace std;
 
 namespace BIL {
 
-	FontCache* FontCache::fontDefault = NULL;
-
-	bool FontCache::initialized = false;
-
 	unsigned int FontCache::cacheSize = 128;
 
-	bool FontCache::instance (CacheType cache)
+	unsigned int FontCache::maxCaches = 32;
+
+	map<Font, FontCache*> FontCache::cacheDB;
+
+	FontCache* FontCache::create (const Font& font)
 	{
-		switch(cache)
-		{
-			case Default:
-				if(fontDefault != NULL) {
-					cerr << "Error: Cache for default font should be generated only once" << endl;
-					return false;
-				} else {
-					fontDefault = new FontCache;
-				}
-				break;
-			default:
-				break;
+		if(cacheDB.size() >= maxCaches) {
+			// TODO: remove mostly unused cache
 		}
 
-		return true;
+		FontCache * cache = new FontCache(font);
+
+		cacheDB[font] = cache;
+
+		return cache;
 	}
 
-	bool FontCache::initialize (void)
+	FontCache* FontCache::getCache (const Font& font)
 	{
-		if (initialized)
-			return false;
+		map<Font, FontCache*>::const_iterator it;
+		it = cacheDB.find(font);
 
-		initialized = true;
+		if(it == cacheDB.end()) return NULL;
+
+		return cacheDB[font];
+	}
+
+	bool FontCache::release (const Font& font)
+	{
+		map<Font, FontCache*>::iterator it;
+		it = cacheDB.find(font);
+
+		if(it == cacheDB.end()) return false;
+
+		FontCache* cache = cacheDB[font];
+		if(cache != NULL) {
+			delete cache;
+		}
+
+		// now erase the key-value
+		cacheDB.erase(it);
+
 		return true;
 	}
 
-	FontCache::FontCache ()
+	FontCache::FontCache (const Font& font)
+		: _fonttype(NULL)
 	{
 
 	}
 
 	FontCache::~FontCache ()
 	{
-		// TODO Auto-generated destructor stub
-		/*
-		 if(_cache) {
-		 free (_cache);
-		 }
-		 */
-		initialized = false;
+		if(_fonttype != NULL) {
+			delete _fonttype;
+			_fonttype = NULL;
+		}
 	}
 
 } /* namespace BIL */

@@ -66,3 +66,23 @@ void FontManagerTest::loadfont1 ()
 
 	CPPUNIT_ASSERT(result);
 }
+
+void FontManagerTest::loadfont2 ()
+{
+	bool result;
+
+	FontConfig::instance();
+
+	result = FontConfig::getService()->initialize();
+
+	if (result) {
+		string file = FontConfig::getService()->getFontPath(Font("Source Code Pro", 10, true));
+
+		cout << "Font file path" << file << endl;
+		result = !file.empty();
+	}
+
+	FontConfig::release();
+
+	CPPUNIT_ASSERT(result);
+}

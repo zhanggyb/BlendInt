@@ -157,15 +157,15 @@ namespace BIL {
 	{
 		string file;
 
-		int weight = font.bold() ? FC_WEIGHT_BOLD : FC_WEIGHT_REGULAR;
-		int slant = font.italic() ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
+		int weight = font.bold ? FC_WEIGHT_BOLD : FC_WEIGHT_REGULAR;
+		int slant = font.italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
 
 		FcPattern *pattern = FcPatternCreate();
-		FcPatternAddDouble(pattern, FC_SIZE, font.size());
+		FcPatternAddDouble(pattern, FC_SIZE, font.size);
 		FcPatternAddInteger(pattern, FC_WEIGHT, weight);
 		FcPatternAddInteger(pattern, FC_SLANT, slant);
 		FcPatternAddString(pattern, FC_FAMILY,
-		        (FcChar8*) font.family().c_str());
+		        (FcChar8*) font.family.c_str());
 		FcConfigSubstitute(0, pattern, FcMatchPattern);
 		FcDefaultSubstitute(pattern);
 		FcResult result;

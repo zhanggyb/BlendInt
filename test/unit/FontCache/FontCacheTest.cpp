@@ -33,11 +33,12 @@ void FontCacheTest::tearDown ()
 
 void FontCacheTest::initialize1 ()
 {
-	bool result = FontCache::instance(FontCache::Default);
+	bool result = true;
+	//bool result = FontCache::instance();
 
-	FontCache * def = FontCache::getDefault();
+	//FontCache * def = FontCache::getCache();
 
-	def->initialize();
+	//def->initialize();
 
 	//delete def;
 

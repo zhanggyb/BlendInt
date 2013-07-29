@@ -15,14 +15,14 @@ namespace BIL {
 	: Controller (parent)
 	{
 		// TODO Auto-generated constructor stub
-		resize (128, _font.size() + 2);
+		resize (128, _font.size + 2);
 	}
 
 	Label::Label (const string& label, BasicObject *parent)
 	: Controller (parent), _label(label)
 	{
 		// TODO Auto-generated constructor stub
-		resize (128, _font.size() + 2);
+		resize (128, _font.size + 2);
 	}
 
 	Label::~Label ()
