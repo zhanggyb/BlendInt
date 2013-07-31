@@ -18,8 +18,7 @@ using namespace std;
 
 namespace BIL {
 
-	unsigned int FontCache::cacheSize = 128;
-
+	unsigned int FontCache::cacheSize = 1024;
 	unsigned int FontCache::maxCaches = 32;
 
 	map<Font, FontCache*> FontCache::cacheDB;
@@ -40,7 +39,8 @@ namespace BIL {
 
 		if (cacheDB.size() >= maxCaches) {
 
-			if(!force) return NULL;
+			if (!force)
+				return NULL;
 
 			// Remove mostly unused cache
 			typedef std::pair<Font, unsigned long> data_t;
@@ -52,7 +52,8 @@ namespace BIL {
 			cout << "Remove " << q.top().first.family << " from cache DB."
 			        << std::endl;
 
-			delete cacheDB[font_of_cache]; cacheDB.erase(font_of_cache);
+			delete cacheDB[font_of_cache];
+			cacheDB.erase(font_of_cache);
 			cacheCountDB.erase(font_of_cache);
 		}
 
@@ -98,34 +99,82 @@ namespace BIL {
 		return true;
 	}
 
+	void FontCache::releaseAll (void)
+	{
+		map<Font, FontCache*>::iterator it;
+
+		for (it = cacheDB.begin(); it != cacheDB.end(); it++) {
+			delete it->second;
+		}
+		cacheDB.clear();
+		cacheCountDB.clear();
+	}
+
 	FontCache::FontCache (const Font& font, unsigned int dpi)
 			: _font(font), _dpi(dpi), _fontengine(NULL)
 	{
-
+		for(unsigned char i = 0; i < 128; i++)
+		{
+			_asciiDB[i] = NULL;
+		}
+		_fontengine = new FontEngine(_font, _dpi);
 	}
 
 	FontCache::~FontCache ()
 	{
+		if (_fontengine->isValid()) {
+
+			map<wchar_t, Glyph*>::iterator it;
+			for (it = _glyphDB.begin(); it != _glyphDB.end(); it++) {
+				delete it->second;
+				it->second = NULL;
+			}
+			_glyphDB.clear();
+			_countDB.clear();
+
+			for(unsigned char i = 0; i < 128; i++)
+			{
+				delete _asciiDB[i];
+			}
+		}
 		if (_fontengine != NULL) {
 			delete _fontengine;
 			_fontengine = NULL;
 		}
-		map<wchar_t, Glyph*>::iterator it;
-		for(it = _glyphDB.begin(); it != _glyphDB.end(); it++)
-		{
-			delete it->second;
-			it->second = NULL;
+	}
+
+	bool FontCache::initialize (void)
+	{
+		if (!_fontengine->isValid()) {
+			return false;
 		}
-		_glyphDB.clear();
-		_countDB.clear();
+
+		for (unsigned char i = 0; i < 128; i++) {
+			query(i, true);
+		}
+
+		return true;
 	}
 
 	const Glyph* FontCache::query (wchar_t charcode, bool create)
 	{
-		map<wchar_t, Glyph*>::iterator it;
-		it = _glyphDB.find(charcode);
+		if (!_fontengine->isValid()) {
+			return NULL;
+		}
 
 		Glyph* glyph = NULL;
+
+		if(charcode < 128) {
+			glyph = _asciiDB[charcode];
+			if(glyph == NULL && create) {
+				_asciiDB[charcode] = new Glyph (charcode, _font, _dpi, _fontengine);
+			}
+
+			return glyph;
+		}
+
+		map<wchar_t, Glyph*>::iterator it;
+		it = _glyphDB.find(charcode);
 
 		// if the glyph is not found and need to be created
 		if ((it == _glyphDB.end()) && create) {
@@ -142,7 +191,8 @@ namespace BIL {
 				cout << "Remove " << q.top().first << " from cache."
 				        << std::endl;
 
-				delete _glyphDB[char_to_del]; _glyphDB.erase(char_to_del);
+				delete _glyphDB[char_to_del];
+				_glyphDB.erase(char_to_del);
 				_countDB.erase(char_to_del);
 			}
 
@@ -159,3 +209,4 @@ namespace BIL {
 	}
 
 } /* namespace BIL */
+

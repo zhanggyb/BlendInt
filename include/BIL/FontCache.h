@@ -12,11 +12,14 @@
 #include <functional>
 #include <wchar.h>
 
+#include <boost/array.hpp>
+
 #include <BIL/FontEngine.h>
 #include <BIL/Font.h>
 #include <BIL/Glyph.h>
 
 using namespace std;
+using namespace boost;
 
 namespace BIL {
 
@@ -101,7 +104,10 @@ namespace BIL {
 
 		FontEngine* _fontengine;
 
+		array<Glyph*, 128> _asciiDB;	// use arrary to store ascii for speed
+
 		map<wchar_t, Glyph*> _glyphDB;
+
 		map<wchar_t, unsigned long> _countDB;
 
 	private:	// static members
