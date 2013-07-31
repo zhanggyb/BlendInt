@@ -157,6 +157,12 @@ namespace BIL {
 			return false;
 		}
 
+		FT_BBox acbox;
+		FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_UNSCALED, &acbox);
+
+		_cbox.vec.x = acbox.xMax - acbox.xMin;
+		_cbox.vec.y = acbox.yMax - acbox.yMin;
+
 		// Convert the glyph to a bitmap;
 		FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, 0, 1);
 		// FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph) glyph;

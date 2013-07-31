@@ -198,6 +198,7 @@ namespace BIL {
 
 	typedef Tuple2<long> Tuple2l, Coord2l, Vec2l;
 	typedef Tuple3<long> Tuple3l, Coord3l, Vec3l;
+	typedef Tuple4<long> Tuple4l, Coord4l, Vec4l;
 
 }       // namespace of BIL
 

@@ -52,35 +52,9 @@ namespace BIL {
 
 	private:
 
-		struct CharData
-		{
-			GLuint texture;
-			GLuint displist;
-		};
-
 		TextBuffer (const TextBuffer& orig);
 
 		TextBuffer& operator = (const TextBuffer& orig);
-
-		/**
-		 * @brief create display list for each character in the text
-		 */
-		bool makeDisplayList (wchar_t charcode);
-
-		///This function gets the first power of 2 >= the
-		///int that we pass it.
-		inline int next_p2 (int a)
-		{
-			int rval = 1;
-			while (rval < a)
-				rval <<= 1;
-			return rval;
-		}
-
-		/** Character DB  */
-		map<wchar_t, CharData> _chardb;
-
-		map<wchar_t, unsigned int> _advancemap; /* each character's advance.x */
 
 		/** Row spacing */
 		float _rowspacing;

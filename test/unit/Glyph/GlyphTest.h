@@ -19,6 +19,7 @@ CPPUNIT_TEST_SUITE(GlyphTest);
 	CPPUNIT_TEST(printtext2);
 	CPPUNIT_TEST(printtext3);
 	CPPUNIT_TEST(printtext4);
+	CPPUNIT_TEST(checkbox1);
 	CPPUNIT_TEST(checkkerning1);
 	//CPPUNIT_TEST(create5);
 
@@ -45,6 +46,7 @@ private:
 	void printtext2 ();
 	void printtext3 ();
 	void printtext4 ();
+	void checkbox1 ();
 	void checkkerning1 ();
 	void create5 ();
 };

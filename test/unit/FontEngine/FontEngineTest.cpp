@@ -150,17 +150,31 @@ void FontEngineTest::create5 ()
 	result = font->isValid();
 
 	if(result) {
+
+		FT_Face face = font->getFontFace();
+
 		cout << endl << font->getFont().family << endl;
 		if(font->getFont().bold) {
 			cout << "Bold" << endl;
 		} else {
 			cout << "Regular" << endl;
 		}
+
 		if(font->getFont().italic) {
 			cout << "Italic" << endl;
 		} else {
 			cout << "Normal" << endl;
 		}
+
+		cout << "unit per em: " << face->units_per_EM << endl;
+		cout << "height: " << face->height << endl;
+		cout << "bbox: " << face->bbox.xMin << " " << face->bbox.yMin << " "
+				<< face->bbox.xMax << " " << face->bbox.yMax << endl;
+
+		cout << "Range: " << (face->bbox.xMax - face->bbox.xMin) << " "
+				<< (face->bbox.yMax - face->bbox.yMin) << endl;
+		cout << "ascender: " << face->ascender << endl;
+		cout << "descender: " << face->descender << endl;
 	}
 
 	delete font;

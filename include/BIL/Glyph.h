@@ -97,6 +97,11 @@ namespace BIL {
 			return _metrics;
 		}
 
+		const Vec2l& getBox (void) const
+		{
+			return _cbox;
+		}
+
 		void render (void);
 
 	private:
@@ -139,6 +144,8 @@ namespace BIL {
 		unsigned int _dpi;
 
 		Metrics _metrics;
+
+		Vec2l _cbox;
 
 	};
 
