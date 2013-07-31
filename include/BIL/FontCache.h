@@ -11,7 +11,7 @@
 #include <map>
 #include <wchar.h>
 
-#include <BIL/FontType.h>
+#include <BIL/FontEngine.h>
 #include <BIL/Font.h>
 #include <BIL/Glyph.h>
 
@@ -76,7 +76,7 @@ namespace BIL {
 
 	private:	// member variables
 
-		FontType* _fonttype;
+		FontEngine* _fonttype;
 
 		map<wchar_t, Glyph*> _glyphdb;
 

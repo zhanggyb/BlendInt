@@ -274,16 +274,16 @@ void GlyphTest::printtext3 ()
 		exit(EXIT_FAILURE);
 	}
 
-	Glyph a(L'a', Font("Sans", 12), 96);
-	Glyph b(L'b', Font("Sans", 12), 96);
-	Glyph c(L'c', Font("Sans", 12), 96);
-	Glyph d(L'd', Font("Sans", 12), 96);
-	Glyph e(L'e', Font("Sans", 12), 96);
-	Glyph f(L'f', Font("Sans", 12), 96);
-	Glyph g(L'g', Font("Sans", 12), 96);
-	Glyph h(L'h', Font("Sans", 12), 96);
-	Glyph i(L'i', Font("Sans", 12), 96);
-	Glyph j(L'j', Font("Sans", 12), 96);
+	Glyph a(L'a', Font("Sans", 16), 96);
+	Glyph b(L'b', Font("Sans", 16), 96);
+	Glyph c(L'c', Font("Sans", 16), 96);
+	Glyph d(L'd', Font("Sans", 16), 96);
+	Glyph e(L'e', Font("Sans", 16), 96);
+	Glyph f(L'f', Font("Sans", 16), 96);
+	Glyph g(L'g', Font("Sans", 16), 96);
+	Glyph h(L'h', Font("Sans", 16), 96);
+	Glyph i(L'i', Font("Sans", 16), 96);
+	Glyph j(L'j', Font("Sans", 16), 96);
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -357,7 +357,7 @@ void GlyphTest::printtext4 ()
 		exit(EXIT_FAILURE);
 	}
 
-	FontType font (FontConfig::getService()->getBuffer(),
+	FontEngine font (FontConfig::getService()->getBuffer(),
 			FontConfig::getService()->getBufferSize());
 
 	Glyph a(L'p', Font("Sans", 12), 96, &font);
@@ -452,7 +452,7 @@ void GlyphTest::checkkerning1 ()
 	Glyph f(L'f', Font("Sans", 12), 96);
 
 	FontConfig* fontserv = FontConfig::getService();
-	FontType font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
+	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	Vec2l kerning;
 

@@ -5,12 +5,12 @@
 #include <string.h>
 #include <BIL/Glyph.h>
 #include <BIL/FontConfig.h>
-#include <BIL/FontType.h>
+#include <BIL/FontEngine.h>
 #include <string>
 
 namespace BIL {
 
-	Glyph::Glyph (wchar_t charcode, FontType* fontlib)
+	Glyph::Glyph (wchar_t charcode, FontEngine* fontlib)
 			: _lib(fontlib), _charcode(0), _glyphIndex(0), _texture(0), _displist(
 			        0), _dpi(96)
 	{
@@ -18,9 +18,9 @@ namespace BIL {
 	}
 
 	Glyph::Glyph (wchar_t charcode, const Font& font, unsigned int dpi,
-	        FontType* fontlib)
+	        FontEngine* fontlib)
 			: _lib(fontlib), _charcode(charcode), _glyphIndex(0), _texture(0), _displist(
-			        0), _dpi(dpi)
+			        0), _font(font), _dpi(dpi)
 	{
 		memset(&_metrics, 0, sizeof(Metrics));
 
@@ -58,7 +58,7 @@ namespace BIL {
 		makeDisplayList();
 	}
 
-	void Glyph::setFontType (FontType* fontlib)
+	void Glyph::setFontType (FontEngine* fontlib)
 	{
 		if (_lib == fontlib) {
 			return;
@@ -96,7 +96,7 @@ namespace BIL {
 
 	bool Glyph::makeDisplayList (void)
 	{
-		FontType* fontlib = NULL;
+		FontEngine* fontlib = NULL;
 
 		// if _fonttype is not set, use default font
 		if (_lib == NULL) {
@@ -109,7 +109,7 @@ namespace BIL {
 			if (!fontserv->isInitialized()) {
 				return false;
 			}
-			fontlib = new FontType(fontserv->getBuffer(),
+			fontlib = new FontEngine(fontserv->getBuffer(),
 			        fontserv->getBufferSize());
 		} else {
 			fontlib = _lib;

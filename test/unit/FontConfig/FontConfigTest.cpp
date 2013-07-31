@@ -4,34 +4,34 @@
 #include <iostream>
 #include <string>
 
-#include "FontManagerTest.h"
+#include "FontConfigTest.h"
 
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(FontManagerTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(FontConfigTest);
 
-FontManagerTest::FontManagerTest ()
+FontConfigTest::FontConfigTest ()
 {
 
 }
 
-FontManagerTest::~FontManagerTest ()
+FontConfigTest::~FontConfigTest ()
 {
 
 }
 
-void FontManagerTest::setUp ()
+void FontConfigTest::setUp ()
 {
 
 }
 
-void FontManagerTest::tearDown ()
+void FontConfigTest::tearDown ()
 {
 
 }
 
-void FontManagerTest::initialize1 ()
+void FontConfigTest::initialize1 ()
 {
 	bool result;
 
@@ -46,7 +46,7 @@ void FontManagerTest::initialize1 ()
 	CPPUNIT_ASSERT(result);
 }
 
-void FontManagerTest::loadfont1 ()
+void FontConfigTest::loadfont1 ()
 {
 	bool result;
 
@@ -67,7 +67,7 @@ void FontManagerTest::loadfont1 ()
 	CPPUNIT_ASSERT(result);
 }
 
-void FontManagerTest::loadfont2 ()
+void FontConfigTest::loadfont2 ()
 {
 	bool result;
 

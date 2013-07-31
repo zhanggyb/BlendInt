@@ -1,7 +1,7 @@
 /* Test case for FontFace */
 
-#ifndef _FONTTYPE_TEST_H
-#define _FONTTYPE_TEST_H
+#ifndef _FONTENGINE_TEST_H
+#define _FONTENGINE_TEST_H
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
@@ -12,13 +12,15 @@
 
 using namespace std;
 
-class FontTypeTest: public CppUnit::TestFixture
+class FontEngineTest: public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(FontTypeTest);
+    CPPUNIT_TEST_SUITE(FontEngineTest);
 
     CPPUNIT_TEST(create1);
     CPPUNIT_TEST(create2);
     CPPUNIT_TEST(create3);
+    CPPUNIT_TEST(create4);
+    CPPUNIT_TEST(create5);
     CPPUNIT_TEST(get_glyph1);
     CPPUNIT_TEST(get_glyph2);
     CPPUNIT_TEST(get_glyph3);
@@ -29,9 +31,9 @@ class FontTypeTest: public CppUnit::TestFixture
 
  public:
 
-    FontTypeTest();
+    FontEngineTest();
 
-    virtual ~FontTypeTest();
+    virtual ~FontEngineTest();
 
     void setUp();
 
@@ -45,6 +47,8 @@ class FontTypeTest: public CppUnit::TestFixture
     void create1 ();
     void create2 ();
     void create3 ();
+    void create4 ();
+    void create5 ();
     void get_glyph1 ();
     void get_glyph2 ();
     void get_glyph3 ();
@@ -60,4 +64,4 @@ class FontTypeTest: public CppUnit::TestFixture
     unsigned char image[HEIGHT][WIDTH];
 };
 
-#endif  /* _FONTTYPE_TEST_H */
+#endif  /* _FONTENGINE_TEST_H */

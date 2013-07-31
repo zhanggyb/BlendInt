@@ -1,7 +1,7 @@
 /* Test case for FontFace */
 
-#ifndef _FONTMANAGER_TEST_H
-#define _FONTMANAGER_TEST_H
+#ifndef _FONTCONFIG_TEST_H
+#define _FONTCONFIG_TEST_H
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
@@ -9,9 +9,9 @@
 
 using namespace std;
 
-class FontManagerTest: public CppUnit::TestFixture
+class FontConfigTest: public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(FontManagerTest);
+    CPPUNIT_TEST_SUITE(FontConfigTest);
 
     CPPUNIT_TEST(initialize1);
     CPPUNIT_TEST(loadfont1);
@@ -21,9 +21,9 @@ class FontManagerTest: public CppUnit::TestFixture
 
  public:
 
-    FontManagerTest();
+    FontConfigTest();
 
-    virtual ~FontManagerTest();
+    virtual ~FontConfigTest();
 
     void setUp();
 
@@ -39,4 +39,4 @@ class FontManagerTest: public CppUnit::TestFixture
 
 };
 
-#endif  /* _FONTMANAGER_TEST_H */
+#endif  /* _FONTCONFIG_TEST_H */

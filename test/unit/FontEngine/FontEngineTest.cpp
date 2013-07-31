@@ -1,6 +1,6 @@
 // cpp
 
-#include <BIL/FontType.h>
+#include <BIL/FontEngine.h>
 #include <BIL/FontConfig.h>
 #include <iostream>
 #include <string>
@@ -8,24 +8,24 @@
 #include <cppunit/TestAssert.h>
 #include <wchar.h>
 
-#include "FontTypeTest.h"
+#include "FontEngineTest.h"
 
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(FontTypeTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(FontEngineTest);
 
-FontTypeTest::FontTypeTest ()
+FontEngineTest::FontEngineTest ()
 {
 
 }
 
-FontTypeTest::~FontTypeTest ()
+FontEngineTest::~FontEngineTest ()
 {
 
 }
 
-void FontTypeTest::setUp ()
+void FontEngineTest::setUp ()
 {
 	bool ret = false;
 
@@ -39,12 +39,12 @@ void FontTypeTest::setUp ()
 	}
 }
 
-void FontTypeTest::tearDown ()
+void FontEngineTest::tearDown ()
 {
 	FontConfig::release();
 }
 
-void FontTypeTest::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
+void FontEngineTest::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
 {
 	FT_Int i, j, p, q;
 	FT_Int x_max = x + bitmap->width;
@@ -60,7 +60,7 @@ void FontTypeTest::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
 	}
 }
 
-void FontTypeTest::show_image (void)
+void FontEngineTest::show_image (void)
 {
 	int i, j;
 
@@ -71,7 +71,7 @@ void FontTypeTest::show_image (void)
 	}
 }
 
-void FontTypeTest::create1 ()
+void FontEngineTest::create1 ()
 {
 	bool result;
 
@@ -79,7 +79,7 @@ void FontTypeTest::create1 ()
 
 	string fontpath = gFontService->getFontPath("Sans");
 
-	FontType *font = new FontType(fontpath);
+	FontEngine *font = new FontEngine(fontpath);
 
 	result = font->isValid();
 
@@ -89,7 +89,7 @@ void FontTypeTest::create1 ()
 	CPPUNIT_ASSERT(result);
 }
 
-void FontTypeTest::create2 ()
+void FontEngineTest::create2 ()
 {
 	bool result1, result2;
 
@@ -97,8 +97,8 @@ void FontTypeTest::create2 ()
 
 	string fontpath = gFontService->getFontPath("Sans");
 
-	FontType *font1 = new FontType(fontpath);
-	FontType *font2 = new FontType(fontpath);
+	FontEngine *font1 = new FontEngine(fontpath);
+	FontEngine *font2 = new FontEngine(fontpath);
 
 	result1 = font1->isValid();
 	result2 = font2->isValid();
@@ -111,13 +111,13 @@ void FontTypeTest::create2 ()
 	CPPUNIT_ASSERT(result1 && result2);
 }
 
-void FontTypeTest::create3 ()
+void FontEngineTest::create3 ()
 {
 	bool result1 = false;
 
 	FontConfig* gFontService = FontConfig::getService();
 
-	FontType *font1 = new FontType(gFontService->getBuffer(),
+	FontEngine *font1 = new FontEngine(gFontService->getBuffer(),
 	        gFontService->getBufferSize());
 
 	result1 = font1->isValid();
@@ -128,7 +128,49 @@ void FontTypeTest::create3 ()
 	CPPUNIT_ASSERT(result1);
 }
 
-void FontTypeTest::get_glyph1 ()
+void FontEngineTest::create4 ()
+{
+	bool result1 = false;
+
+	FontEngine font(Font("Sans"), 96);
+
+	result1 = font.isValid();
+
+	CPPUNIT_ASSERT(result1);
+}
+
+void FontEngineTest::create5 ()
+{
+	bool result;
+
+	string fontpath = "/usr/share/fonts/TTF/DejaVuSerif-Bold.ttf";
+
+	FontEngine *font = new FontEngine(fontpath);
+
+	result = font->isValid();
+
+	if(result) {
+		cout << endl << font->getFont().family << endl;
+		if(font->getFont().bold) {
+			cout << "Bold" << endl;
+		} else {
+			cout << "Regular" << endl;
+		}
+		if(font->getFont().italic) {
+			cout << "Italic" << endl;
+		} else {
+			cout << "Normal" << endl;
+		}
+	}
+
+	delete font;
+	font = NULL;
+
+	CPPUNIT_ASSERT(result);
+}
+
+
+void FontEngineTest::get_glyph1 ()
 {
 	bool result;
 
@@ -136,7 +178,7 @@ void FontTypeTest::get_glyph1 ()
 
 	string fontpath = gFontService->getFontPath("Sans");
 
-	FontType *font = new FontType(fontpath);
+	FontEngine *font = new FontEngine(fontpath);
 
 	result = font->isValid();
 
@@ -169,9 +211,10 @@ void FontTypeTest::get_glyph1 ()
 			        << "               " << "num_grays: "
 			        << face->glyph->bitmap.num_grays << endl;
 
-			int rows = face->glyph->bitmap.rows;
-			int width = face->glyph->bitmap.width;
+			// int rows = face->glyph->bitmap.rows;
+			// int width = face->glyph->bitmap.width;
 
+			/*
 			int i, j;
 			unsigned char charcode;
 			for (i = 0; i < rows; i++) {
@@ -183,6 +226,7 @@ void FontTypeTest::get_glyph1 ()
 			}
 			cout << endl;
 
+
 			for (i = 0; i < rows; i++) {
 				for (j = 0; j < width; j++) {
 					charcode = *(face->glyph->bitmap.buffer + i * width + j);
@@ -191,7 +235,7 @@ void FontTypeTest::get_glyph1 ()
 				cout << endl;
 			}
 			cout << endl;
-
+			*/
 		}
 
 	}
@@ -202,7 +246,7 @@ void FontTypeTest::get_glyph1 ()
 	CPPUNIT_ASSERT(result);
 }
 
-void FontTypeTest::get_glyph2 ()
+void FontEngineTest::get_glyph2 ()
 {
 	bool result;
 
@@ -210,7 +254,7 @@ void FontTypeTest::get_glyph2 ()
 
 	string fontpath = gFontService->getFontPath("Sans");
 
-	FontType *font = new FontType(fontpath);
+	FontEngine *font = new FontEngine(fontpath);
 
 	result = font->isValid();
 
@@ -243,9 +287,10 @@ void FontTypeTest::get_glyph2 ()
 			        << "               " << "num_grays: "
 			        << face->glyph->bitmap.num_grays << endl;
 
-			int rows = face->glyph->bitmap.rows;
-			int width = face->glyph->bitmap.width;
+			// int rows = face->glyph->bitmap.rows;
+			// int width = face->glyph->bitmap.width;
 
+			/*
 			int i, j;
 			unsigned char charcode;
 			for (i = 0; i < rows; i++) {
@@ -265,7 +310,7 @@ void FontTypeTest::get_glyph2 ()
 				cout << endl;
 			}
 			cout << endl;
-
+			 */
 		}
 
 	}
@@ -276,7 +321,7 @@ void FontTypeTest::get_glyph2 ()
 	CPPUNIT_ASSERT(result);
 }
 
-void FontTypeTest::get_glyph3 ()
+void FontEngineTest::get_glyph3 ()
 {
 	bool result;
 
@@ -284,7 +329,7 @@ void FontTypeTest::get_glyph3 ()
 
 	string fontpath = gFontService->getFontPath("Sans");
 
-	FontType *font = new FontType(fontpath);
+	FontEngine *font = new FontEngine(fontpath);
 
 	result = font->isValid();
 
@@ -317,9 +362,10 @@ void FontTypeTest::get_glyph3 ()
 			        << "               " << "num_grays: "
 			        << face->glyph->bitmap.num_grays << endl;
 
-			int rows = face->glyph->bitmap.rows;
-			int width = face->glyph->bitmap.width;
+			// int rows = face->glyph->bitmap.rows;
+			// int width = face->glyph->bitmap.width;
 
+			/*
 			int i, j;
 			unsigned char charcode;
 			for (i = 0; i < rows; i++) {
@@ -339,7 +385,7 @@ void FontTypeTest::get_glyph3 ()
 				cout << endl;
 			}
 			cout << endl;
-
+			 */
 		}
 
 	}
@@ -350,7 +396,7 @@ void FontTypeTest::get_glyph3 ()
 	CPPUNIT_ASSERT(result);
 }
 
-void FontTypeTest::get_glyph4 ()
+void FontEngineTest::get_glyph4 ()
 {
 	bool result;
 
@@ -358,7 +404,7 @@ void FontTypeTest::get_glyph4 ()
 
 	string fontpath = gFontService->getFontPath("Sans");
 
-	FontType *font = new FontType(fontpath);
+	FontEngine *font = new FontEngine(fontpath);
 
 	result = font->isValid();
 
@@ -400,9 +446,10 @@ void FontTypeTest::get_glyph4 ()
 				        << "               " << "num_grays: "
 				        << face->glyph->bitmap.num_grays << endl;
 
-				int rows = face->glyph->bitmap.rows;
-				int width = face->glyph->bitmap.width;
+				// int rows = face->glyph->bitmap.rows;
+				// int width = face->glyph->bitmap.width;
 
+				/*
 				int i, j;
 				unsigned char charcode;
 				for (i = 0; i < rows; i++) {
@@ -424,7 +471,7 @@ void FontTypeTest::get_glyph4 ()
 					cout << endl;
 				}
 				cout << endl;
-
+				*/
 			}
 		}
 
@@ -436,13 +483,13 @@ void FontTypeTest::get_glyph4 ()
 	CPPUNIT_ASSERT(result);
 }
 
-void FontTypeTest::get_glyph5 ()
+void FontEngineTest::get_glyph5 ()
 {
 	bool result;
 
 	FontConfig* gFontService = FontConfig::getService();
 
-	FontType *font = new FontType(gFontService->getBuffer(),
+	FontEngine *font = new FontEngine(gFontService->getBuffer(),
 	        gFontService->getBufferSize());
 
 	result = font->isValid();
@@ -471,11 +518,12 @@ void FontTypeTest::get_glyph5 ()
 			result = font->renderGlyph(FT_RENDER_MODE_NORMAL);
 
 			if (result) {
-				FT_Face face = font->getFontFace();
+				//FT_Face face = font->getFontFace();
 
-				int rows = face->glyph->bitmap.rows;
-				int width = face->glyph->bitmap.width;
+				//int rows = face->glyph->bitmap.rows;
+				//int width = face->glyph->bitmap.width;
 
+				/*
 				int i, j;
 				unsigned char charcode;
 				cout << endl;
@@ -488,7 +536,7 @@ void FontTypeTest::get_glyph5 ()
 					cout << endl;
 				}
 				cout << endl;
-
+				 */
 			}
 		}
 
@@ -500,14 +548,14 @@ void FontTypeTest::get_glyph5 ()
 	CPPUNIT_ASSERT(result);
 }
 
-void FontTypeTest::glyph_metrics1 ()
+void FontEngineTest::glyph_metrics1 ()
 {
 	bool result;
 	FontConfig* gFontService = FontConfig::getService();
 
 	string fontpath = gFontService->getFontPath("Sans");
 
-	FontType *font = new FontType(fontpath);
+	FontEngine *font = new FontEngine(fontpath);
 
 	result = font->isValid();
 
@@ -537,9 +585,10 @@ void FontTypeTest::glyph_metrics1 ()
 			if (result) {
 				FT_Face face = font->getFontFace();
 
-				int rows = face->glyph->bitmap.rows;
-				int width = face->glyph->bitmap.width;
+				//int rows = face->glyph->bitmap.rows;
+				// int width = face->glyph->bitmap.width;
 
+				/*
 				int i, j;
 				unsigned char charcode;
 				cout << endl;
@@ -551,6 +600,7 @@ void FontTypeTest::glyph_metrics1 ()
 					}
 					cout << endl;
 				}
+				*/
 
 				cout << "num_faces: " << face->num_faces << endl
 				        << "face_index: " << face->face_index << endl

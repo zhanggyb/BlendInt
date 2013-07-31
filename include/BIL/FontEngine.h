@@ -17,21 +17,27 @@
 
 #include <BIL/Tuple.h>
 #include <BIL/Glyph.h>
+#include <BIL/Font.h>
 
 using namespace std;
 
 namespace BIL {
 
-	class FontType
+	/**
+	 * @brief Wrapper of Freetype API
+	 */
+	class FontEngine
 	{
 	public:
+
+		FontEngine (const Font& font = Font("Sans"), unsigned int dpi = 96);
 
 		/**
 		 * @brief Constructor to create object from a font file
 		 * @param filename File path name
 		 * @param size Font size
 		 */
-		FontType (const string& filename, unsigned int size = 10);
+		FontEngine (const string& filename, unsigned int size = 10, unsigned int dpi = 96);
 
 		/**
 		 * @brief Constructor to create object from memory
@@ -40,8 +46,8 @@ namespace BIL {
 		 * @param index The index of the face withing the font. Default is 0
 		 * @param size Font size
 		 */
-		FontType (const FT_Byte* buffer, FT_Long bufsize, FT_Long index = 0,
-		        unsigned int size = 10);
+		FontEngine (const FT_Byte* buffer, FT_Long bufsize, FT_Long index = 0,
+		        unsigned int size = 10, unsigned int dpi = 96);
 
 		/**
 		 * @brief destructor
@@ -49,7 +55,7 @@ namespace BIL {
 		 * @warning Do not delete gFontService before any FontType
 		 * object destructed
 		 */
-		virtual ~FontType ();
+		virtual ~FontEngine ();
 
 		bool isValid (void) const
 		{
@@ -110,6 +116,11 @@ namespace BIL {
 
 		Vec2l getKerning (const Glyph& left, const Glyph& right, FT_UInt kern_mode = FT_KERNING_DEFAULT);
 
+		const Font& getFont (void) const
+		{
+			return _font;
+		}
+
 	private:
 
 		bool getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
@@ -127,11 +138,9 @@ namespace BIL {
 
 		bool _unicode; /**< if has unicode charmap */
 
-		unsigned int _fontsize;
+		Font _font;
 
 		unsigned int _dpi;
-
-		string _file; /**< path name of the font file */
 	};
 
 } /* namespace BIL */

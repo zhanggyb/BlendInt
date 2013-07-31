@@ -18,7 +18,7 @@ using namespace std;
 
 namespace BIL {
 
-	class FontType;
+	class FontEngine;
 
 	/**
 	 * @brief Store data, texture, display list for a glyph of an
@@ -63,9 +63,9 @@ namespace BIL {
 		 * @brief Constructor for generate a glyph data with default
 		 * font setting
 		 */
-		Glyph (wchar_t charcode, FontType* fontlib = NULL);
+		Glyph (wchar_t charcode, FontEngine* fontlib = NULL);
 
-		Glyph (wchar_t charcode, const Font& font, unsigned int dpi = 96, FontType* fontlib = NULL);
+		Glyph (wchar_t charcode, const Font& font, unsigned int dpi = 96, FontEngine* fontlib = NULL);
 
 		Glyph (const Glyph& orig);
 
@@ -75,7 +75,7 @@ namespace BIL {
 
 		void setCharacter (wchar_t charcode);
 
-		void setFontType (FontType* fontlib);
+		void setFontType (FontEngine* fontlib);
 
 		unsigned int getDpi (void) const
 		{
@@ -124,7 +124,7 @@ namespace BIL {
 	private:
 		/* member variables */
 
-		FontType* _lib;
+		FontEngine* _lib;
 
 		wchar_t _charcode;
 

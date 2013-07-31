@@ -14,12 +14,12 @@
 
 #include <fontconfig/fontconfig.h>
 
-#include <BIL/FontType.h>
+#include <BIL/FontEngine.h>
 #include <BIL/Font.h>
 
 using namespace std;
 
-typedef map<string, BIL::FontType*> FontList;
+typedef map<string, BIL::FontEngine*> FontList;
 typedef FontList::const_iterator FontIter;
 
 namespace BIL {
@@ -125,7 +125,7 @@ namespace BIL {
 		// container for fonts
 		FontList _fonts;
 
-		map<string, FontType*> _namedb;
+		map<string, FontEngine*> _namedb;
 
 		static bool initialized;
 

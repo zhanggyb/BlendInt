@@ -7,26 +7,31 @@
 
 #include <iostream>
 
-#include <BIL/FontType.h>
+#include <BIL/FontEngine.h>
 #include <BIL/FontConfig.h>
 
 using namespace std;
 
 namespace BIL {
 
-	FontType::FontType (const string& filename, unsigned int size)
-			: _library(NULL), _face(NULL), _stroker(NULL), _valid(false), _unicode(
-			        false), _fontsize(size), _dpi(96), _file(filename)
+	FontEngine::FontEngine(const Font& font, unsigned int dpi)
+	: _library(NULL), _face(NULL), _stroker(NULL), _valid(false), _unicode(
+	        false), _dpi(dpi)
 	{
-		// size_t hres = 64;
 		FT_Error error;
 
-		/*
-		 FT_Matrix matrix = { (int)((1.0/hres) * 0x10000L),
-		 (int)((0.0)      * 0x10000L),
-		 (int)((0.0)      * 0x10000L),
-		 (int)((1.0)      * 0x10000L) };
-		 */
+		if(FontConfig::getService() == NULL) {
+			if(! FontConfig::instance()) {
+				_valid = false;
+				return;
+			}
+		}
+		FontConfig* fontconfig = FontConfig::getService();
+		if(! fontconfig->isInitialized()) {
+			fontconfig->initialize();
+		}
+
+		string filename = fontconfig->getFontPath(font);
 
 		error = FT_Init_FreeType(&_library);
 		if (error) {
@@ -60,32 +65,60 @@ namespace BIL {
 		} else {
 			_unicode = true;
 		}
+	}
 
-		/* Set char size */
-		/*
-		 error = FT_Set_Char_Size (_face, (int)(size * 64), 0, 72*hres, 72);
-		 if(error) {
-		 cerr << "Cannot set character size" << endl;
-		 } else {
-		 FT_Set_Transform (_face, &matrix, NULL);
-		 }
-		 */
+	FontEngine::FontEngine (const string& filename, unsigned int size, unsigned int dpi)
+			: _library(NULL), _face(NULL), _stroker(NULL), _valid(false), _unicode(
+			        false), _dpi(dpi)
+	{
+		FT_Error error;
+
+		error = FT_Init_FreeType(&_library);
+		if (error) {
+			cerr << "Cannot initialize FreeType library" << endl;
+			return;
+		}
+
+		error = FT_New_Face(_library, filename.c_str(), 0, &_face);
+		if (error == FT_Err_Unknown_File_Format) {
+			cerr << "Unknown font file format: " << filename << endl;
+			return;
+		}
+		if (error) {
+			cerr << "Fail to generate a new Font Face" << endl;
+			return;
+		}
+
+		_font.family = _face->family_name;
+		_font.size = size;
+		_font.italic = (_face->style_flags & FT_STYLE_FLAG_ITALIC) ? true : false;
+		_font.bold = (_face->style_flags & FT_STYLE_FLAG_BOLD) ? true : false;
+
+		error = FT_Stroker_New(_library, &_stroker);
+
+		if (error) {
+			cerr << "Fail to load Stroker" << endl;
+			return;
+		}
+
+		_valid = true;          // now treat it success
+
+		error = FT_Select_Charmap(_face, FT_ENCODING_UNICODE);
+		if (error) {
+			cerr << "Cannot set the unicode character map: " << filename
+			        << endl;
+		} else {
+			_unicode = true;
+		}
 
 	}
 
-	FontType::FontType (const FT_Byte* buffer, FT_Long bufsize, FT_Long index,
-	        unsigned int size)
+	FontEngine::FontEngine (const FT_Byte* buffer, FT_Long bufsize, FT_Long index,
+	        unsigned int size, unsigned int dpi)
 			: _library(NULL), _face(NULL), _stroker(NULL), _valid(false), _unicode(
-			        false), _fontsize(size), _dpi(96), _file()
+			        false), _dpi(dpi)
 	{
-		// size_t hres = 64;
 		FT_Error error;
-		/*
-		 FT_Matrix matrix = { (int)((1.0/hres) * 0x10000L),
-		 (int)((0.0)      * 0x10000L),
-		 (int)((0.0)      * 0x10000L),
-		 (int)((1.0)      * 0x10000L) };
-		 */
 
 		error = FT_Init_FreeType(&_library);
 		if (error) {
@@ -98,6 +131,11 @@ namespace BIL {
 			cerr << "Fail to generate a new Font Face from memory" << endl;
 			return;
 		}
+
+		_font.family = _face->family_name;
+		_font.size = size;
+		_font.italic = (_face->style_flags & FT_STYLE_FLAG_ITALIC) ? true : false;
+		_font.bold = (_face->style_flags & FT_STYLE_FLAG_BOLD) ? true : false;
 
 		error = FT_Stroker_New(_library, &_stroker);
 
@@ -114,19 +152,9 @@ namespace BIL {
 		} else {
 			_unicode = true;
 		}
-
-		/* Set char size */
-		/*
-		 error = FT_Set_Char_Size (_face, (int)(size * 64), 0, 72*hres, 72);
-		 if(error) {
-		 cerr << "Cannot set character size" << endl;
-		 } else {
-		 FT_Set_Transform (_face, &matrix, NULL);
-		 }
-		 */
 	}
 
-	FontType::~FontType ()
+	FontEngine::~FontEngine ()
 	{
 		if (_stroker != NULL) {
 			FT_Stroker_Done(_stroker);
@@ -144,7 +172,7 @@ namespace BIL {
 		}
 	}
 
-	bool FontType::loadGlyph (FT_UInt glyph_index, FT_Int32 load_flags)
+	bool FontEngine::loadGlyph (FT_UInt glyph_index, FT_Int32 load_flags)
 	{
 		if (!_valid)
 			return false;
@@ -161,16 +189,16 @@ namespace BIL {
 		return true;
 	}
 
-	bool FontType::setFontSize (unsigned int size, unsigned int dpi)
+	bool FontEngine::setFontSize (unsigned int size, unsigned int dpi)
 	{
 		if (!_valid)
 			return false;
 
 		FT_Error error;
 
-		_fontsize = size; _dpi = dpi;
+		_font.size = size; _dpi = dpi;
 
-		error = FT_Set_Char_Size(_face, 0, (FT_F26Dot6) (_fontsize * 64), _dpi, _dpi);
+		error = FT_Set_Char_Size(_face, 0, (FT_F26Dot6) (_font.size * 64), _dpi, _dpi);
 		if (error) {
 			cerr << "The current font don't support the size, " << size
 			        << " and dpi " << _dpi << endl;
@@ -180,14 +208,14 @@ namespace BIL {
 		return true;
 	}
 
-	bool FontType::setCharSize (unsigned int size, unsigned int dpi)
+	bool FontEngine::setCharSize (unsigned int size, unsigned int dpi)
 	{
 		FT_Error err;
 
 		if (!_valid)
 			return false;
 
-		_fontsize = size; _dpi = dpi;
+		_font.size = size; _dpi = dpi;
 
 		// size_t hres = 64;
 
@@ -197,7 +225,7 @@ namespace BIL {
 		//in terms of 1/64ths of pixels.  Thus, to make a font
 		//h pixels high, we need to request a size of h*64.
 		//(h << 6 is just a prettier way of writting h*64)
-		err = FT_Set_Char_Size(_face, (long) (_fontsize << 6), 0, _dpi, 0);
+		err = FT_Set_Char_Size(_face, (long) (_font.size << 6), 0, _dpi, 0);
 		if (err) {
 			cerr << "The current font don't support the size, " << size
 			        << " and dpi " << _dpi << endl;
@@ -207,7 +235,7 @@ namespace BIL {
 		return true;
 	}
 
-	FT_UInt FontType::getCharIndex (const FT_ULong charcode)
+	FT_UInt FontEngine::getCharIndex (const FT_ULong charcode)
 	{
 		if (!_valid)
 			return 0;
@@ -215,7 +243,7 @@ namespace BIL {
 		return (FT_Get_Char_Index(_face, charcode));
 	}
 
-	bool FontType::loadCharacter (FT_ULong charcode, FT_Int32 load_flags)
+	bool FontEngine::loadCharacter (FT_ULong charcode, FT_Int32 load_flags)
 	{
 		if (!_valid)
 			return false;
@@ -231,7 +259,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool FontType::renderGlyph (FT_Render_Mode render_mode)
+	bool FontEngine::renderGlyph (FT_Render_Mode render_mode)
 	{
 		if (!_valid)
 			return false;
@@ -247,7 +275,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool FontType::getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
+	bool FontEngine::getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
 	        FT_UInt kern_mode, FT_Vector* akerning)
 	{
 		if ((!_valid) || (_face == NULL))
@@ -264,7 +292,7 @@ namespace BIL {
 		return true;
 	}
 
-	Vec2l FontType::getKerning (const Glyph& left, const Glyph& right,
+	Vec2l FontEngine::getKerning (const Glyph& left, const Glyph& right,
 	        FT_UInt kerning_mode)
 	{
 		Vec2l ret;	// {0, 0}
@@ -273,8 +301,8 @@ namespace BIL {
 			return ret;
 
 		// TODO: this is not an effective way
-		if(left.getFontSize() != _fontsize ||
-				right.getFontSize() != _fontsize)
+		if(left.getFontSize() != _font.size ||
+				right.getFontSize() != _font.size)
 			return ret;
 
 		if(left.getDpi() != _dpi ||
@@ -295,7 +323,7 @@ namespace BIL {
 		return ret;
 	}
 
-	bool FontType::setLcdFilter (FT_LcdFilter filter)
+	bool FontEngine::setLcdFilter (FT_LcdFilter filter)
 	{
 		if (!_valid)
 			return false;
@@ -312,7 +340,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool FontType::setLcdFilterWeights (unsigned char* weights)
+	bool FontEngine::setLcdFilterWeights (unsigned char* weights)
 	{
 		if (!_valid)
 			return false;

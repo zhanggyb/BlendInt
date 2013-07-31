@@ -8,7 +8,7 @@
 #include <math.h>
 #include <assert.h>
 
-#include <BIL/FontType.h>
+#include <BIL/FontEngine.h>
 #include <BIL/FontConfig.h>
 #include <BIL/TextureFont.h>
 

@@ -5,7 +5,7 @@
  *      Author: zhanggyb
  */
 
-#include <BIL/FontType.h>
+#include <BIL/FontEngine.h>
 #include <BIL/FontConfig.h>
 #include <BIL/TextBuffer.h>
 
@@ -107,7 +107,7 @@ namespace BIL {
 
 			displist = _chardb[*it].displist;
 			advance = advance + _advancemap[*it];
-			cout << "advance: " << advance << endl;
+			// cout << "advance: " << advance << endl;
 			glPushMatrix();
 			glLoadIdentity();
 			glTranslatef(x + advance, y + 48 * j + 12 * _rowspacing, 0.0);
@@ -143,7 +143,7 @@ namespace BIL {
 			return false;
 		}
 
-		FontType font(gFontService->getBuffer(), gFontService->getBufferSize());
+		FontEngine font(gFontService->getBuffer(), gFontService->getBufferSize());
 
 		if (!font.isValid()) {
 			cerr << "Cannot get Font" << endl;
