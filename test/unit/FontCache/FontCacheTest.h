@@ -13,7 +13,9 @@ class FontCacheTest: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(FontCacheTest);
 
-    CPPUNIT_TEST(initialize1);
+    CPPUNIT_TEST(create1);
+    CPPUNIT_TEST(create2);
+    CPPUNIT_TEST(create3);
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -31,7 +33,9 @@ class FontCacheTest: public CppUnit::TestFixture
 
  private:
 
-    void initialize1 ();
+    void create1 ();
+    void create2 ();
+    void create3 ();
 
 };
 

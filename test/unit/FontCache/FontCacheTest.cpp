@@ -1,8 +1,10 @@
 // cpp
 
-#include <BIL/FontCache.h>
 #include <iostream>
 #include <string>
+
+#include <BIL/FontCache.h>
+#include <BIL/FontConfig.h>
 
 #include "FontCacheTest.h"
 
@@ -23,25 +25,50 @@ FontCacheTest::~FontCacheTest ()
 
 void FontCacheTest::setUp ()
 {
+	bool ret = false;
 
+	FontConfig::instance();
+
+	FontConfig::getService()->initialize();
+
+	ret = FontConfig::getService()->loadDefaultFontToMem(); // load default font to memory
+	if (!ret) {
+		// TODO: stop and show failure of this TestFixture
+		CPPUNIT_FAIL("Fail to load default font to memory");
+	}
 }
 
 void FontCacheTest::tearDown ()
 {
-
+	FontConfig::release();
 }
 
-void FontCacheTest::initialize1 ()
+void FontCacheTest::create1 ()
 {
-	bool result = true;
-	//bool result = FontCache::instance();
+	FontCache* cache = FontCache::create();
 
-	//FontCache * def = FontCache::getCache();
+	FontCache::release();
 
-	//def->initialize();
+	CPPUNIT_ASSERT(cache != NULL);
+}
 
-	//delete def;
+void FontCacheTest::create2 ()
+{
+	FontCache* cache = FontCache::create(Font("Droid Sans"));
 
-	CPPUNIT_ASSERT(result);
+	FontCache::release(Font("Droid Sans"));
+
+	CPPUNIT_ASSERT(cache != NULL);
+}
+
+void FontCacheTest::create3 ()
+{
+	FontCache* cache = FontCache::create(Font("Droid Sans"));
+
+	bool result = FontCache::release(Font("Sans"));
+
+	FontCache::release(Font("Droid Sans"));
+
+	CPPUNIT_ASSERT(!result);
 }
 
