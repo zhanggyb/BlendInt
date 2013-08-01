@@ -9,12 +9,10 @@
 #define _BIL_TEXTBUFFER_H_
 
 #include <stddef.h>
-#include <boost/array.hpp>
-#include <string.h>
-#include <vector>
-#include <map>
+#include <string>
 
 #include <BIL/Tuple.h>
+#include <BIL/FontCache.h>
 //#include <BIL/BasicObject.h>
 
 using namespace boost;
@@ -50,35 +48,27 @@ namespace BIL {
 
 		virtual ~TextBuffer ();
 
-	private:
+	private:	// member functions disabled
 
 		TextBuffer (const TextBuffer& orig);
 
 		TextBuffer& operator = (const TextBuffer& orig);
 
+	private:	// member variables
+
+		FontCache* _fontcache;
+
 		/** Row spacing */
 		float _rowspacing;
 
 		/** Base color for text */
-		Vec4f _baseColor;
+		RGBAf _color;
+
+		/** Background Color */
+		RGBAf _background;
 
 		/** Pen origin */
 		Coord3f _origin;
-
-		/** Index (in the vertex buffer) of the line start */
-		size_t _lineStart;
-
-		/** Current line ascender */
-		GLfloat _lineAscender;
-
-		/** Current line decender */
-		GLfloat _lineDescender;
-
-		/** Shader handler */
-
-		/** Texture location */
-
-		/** Pixel location */
 
 		/** string */
 		wstring _text;

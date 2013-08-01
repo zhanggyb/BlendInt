@@ -1,5 +1,9 @@
 // cpp
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <string>
 
@@ -25,6 +29,12 @@ FontCacheTest::~FontCacheTest ()
 
 void FontCacheTest::setUp ()
 {
+	int result = glfwInit();
+
+	if (result != GL_TRUE) {
+		CPPUNIT_FAIL("Cannot initialize glfw\n");
+	}
+
 	bool ret = false;
 
 	FontConfig::instance();
@@ -41,6 +51,7 @@ void FontCacheTest::setUp ()
 void FontCacheTest::tearDown ()
 {
 	FontConfig::release();
+	glfwTerminate();
 }
 
 void FontCacheTest::create1 ()
@@ -231,13 +242,6 @@ void FontCacheTest::check6 ()
 	bool result = cache->initialize();
 
 	if(result) {
-
-		for(unsigned char i = 0; i < 128; i++)
-		{
-			glyph = cache->query(i);
-			cout << (int)glyph->getGlyphIndex() << endl;
-		}
-
 		for(int i = 0; i < 10; i++)
 		{
 			glyph = cache->query(L'仁');
@@ -260,4 +264,73 @@ void FontCacheTest::check6 ()
 	FontCache::releaseAll ();
 
 	CPPUNIT_ASSERT (true);
+}
+
+void FontCacheTest::show1()
+{
+	GLFWwindow * win = glfwCreateWindow(640, 480, "FontCache Test", NULL,
+	        NULL);
+
+	if (win == NULL) {
+		CPPUNIT_FAIL("Cannot create glfw window\n");
+	}
+
+	glfwMakeContextCurrent(win);
+
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
+		cerr << "Failed to initilize GLEW" << endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	FontCache* cache = FontCache::create(Font("Droid Sans Fallback", 24));
+	Glyph* glyph = NULL;
+
+	if(cache == NULL)
+		CPPUNIT_FAIL ("Cannot create cache for default font\n");
+
+	bool result = cache->initialize();
+	if(!result) {
+		CPPUNIT_FAIL("Cannot initialize font cache\n");
+	}
+
+	glyph = cache->query(L'信');
+
+	while (!glfwWindowShouldClose(win)) {
+
+		int width, height;
+
+		glfwGetWindowSize(win, &width, &height);
+
+		glClearColor(0.40, 0.40, 0.45, 1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glColor4f(1.00, 1.00, 1.00, 1.00);
+
+		// enable anti-alias
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_POINT_SMOOTH);
+		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_POLYGON_SMOOTH);
+
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		// Test buffer render
+		glyph->render();
+
+		glfwSwapBuffers(win);
+		glfwPollEvents();
+	}
+
+	FontCache::releaseAll();
+
+	CPPUNIT_ASSERT(true);
 }

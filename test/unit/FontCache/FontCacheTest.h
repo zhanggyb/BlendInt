@@ -11,47 +11,50 @@ using namespace std;
 
 class FontCacheTest: public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(FontCacheTest);
+CPPUNIT_TEST_SUITE(FontCacheTest);
 
-    CPPUNIT_TEST(create1);
-    CPPUNIT_TEST(create2);
-    CPPUNIT_TEST(create3);
-    CPPUNIT_TEST(create4);
+	CPPUNIT_TEST(create1);
+	CPPUNIT_TEST(create2);
+	CPPUNIT_TEST(create3);
+	CPPUNIT_TEST(create4);
 
-    CPPUNIT_TEST(check1);
+	CPPUNIT_TEST(check1);
 	CPPUNIT_TEST(check2);
 	CPPUNIT_TEST(check3);
 	CPPUNIT_TEST(check4);
 	CPPUNIT_TEST(check5);
 	CPPUNIT_TEST(check6);
+	CPPUNIT_TEST(show1);
 
-    CPPUNIT_TEST_SUITE_END();
+	CPPUNIT_TEST_SUITE_END()
+	;
 
- public:
+public:
 
-    FontCacheTest();
+	FontCacheTest ();
 
-    virtual ~FontCacheTest();
+	virtual ~FontCacheTest ();
 
-    void setUp();
+	void setUp ();
 
-    void tearDown();
+	void tearDown ();
 
-    void runTest ();
+	void runTest ();
 
- private:
+private:
 
-    void create1 ();
-    void create2 ();
-    void create3 ();
-    void create4 ();
+	void create1 ();
+	void create2 ();
+	void create3 ();
+	void create4 ();
 
-    void check1 ();
-    void check2 ();
-    void check3 ();
-    void check4 ();
-    void check5 ();
-    void check6 ();
+	void check1 ();
+	void check2 ();
+	void check3 ();
+	void check4 ();
+	void check5 ();
+	void check6 ();
+	void show1 ();
 
 };
 
