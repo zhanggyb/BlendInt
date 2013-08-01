@@ -194,7 +194,7 @@ namespace BIL {
 
 	typedef Tuple2<float> Tuple2f, Coord2f, Vec2f;
 	typedef Tuple3<float> Tuple3f, Coord3f, Vec3f;
-	typedef Tuple4<float> Tuple4f, Vec4f, RGBAf;
+	typedef Tuple4<float> Tuple4f, Vec4f, Rectf, RGBAf;
 
 	typedef Tuple2<long> Tuple2l, Coord2l, Vec2l;
 	typedef Tuple3<long> Tuple3l, Coord3l, Vec3l;

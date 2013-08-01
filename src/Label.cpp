@@ -7,7 +7,7 @@
 
 #include <BIL/Label.h>
 
-#include <BIL/GLDraw.h>
+#include <BIL/Pen.h>
 
 namespace BIL {
 
@@ -32,12 +32,7 @@ namespace BIL {
 
 	void Label::render(void)
 	{
-		GLDraw draw(this);
-		draw.setColor(Color(0.5, 0.75, 0.65));
-		draw.rect(_pos.getX(), _pos.getY(), getSize().getWidth(), getSize().getHeight());
 
-    glEnable( GL_BLEND );
-    glEnable( GL_TEXTURE_2D );
 	}
 
 } /* namespace BIL */

@@ -452,8 +452,12 @@ void GlyphTest::checkbox1 ()
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	cout << endl;
-	cout << "Box: " << a.getBox().vec.x / 64 << ", " << a.getBox().vec.y / 64 << endl;
-	cout << "Box: " << b.getBox().vec.x / 64 << ", " << b.getBox().vec.y / 64 << endl;
+	cout << "Metrics of A: width: " << a.getMetrics().width << " height: "
+		 << a.getMetrics().height << endl;
+	cout << "Box of A: " << a.getBox().vec.x / 64 << ", " << a.getBox().vec.y / 64 << endl;
+	cout << "Metrics of a: width: " << b.getMetrics().width << " height: "
+		 << b.getMetrics().height << endl;
+	cout << "Box of a: " << b.getBox().vec.x / 64 << ", " << b.getBox().vec.y / 64 << endl;
 
 	while (!glfwWindowShouldClose(win)) {
 
