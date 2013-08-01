@@ -27,7 +27,6 @@ namespace BIL {
 	FontCache* FontCache::create (const Font& font, bool force)
 	{
 		// Don't repeatedly create, cause memory leak
-
 		map<Font, FontCache*>::const_iterator it;
 		it = cacheDB.find(font);
 
@@ -60,18 +59,19 @@ namespace BIL {
 		FontCache * cache = new FontCache(font);
 
 		cacheDB[font] = cache;
+		unsigned long count = cacheCountDB[font];
+		cacheCountDB[font] = count + 1;
 
 		return cache;
 	}
 
-	FontCache* FontCache::getCache (const Font& font, bool create)
+	FontCache* FontCache::getCache (const Font& font)
 	{
-		map<Font, FontCache*>::const_iterator it;
-		it = cacheDB.find(font);
+		map<Font, unsigned long>::const_iterator it;
+		it = cacheCountDB.find(font);
 
-		if ((it == cacheDB.end()) && create) {
-			FontCache* cache = FontCache::create();
-			return cache;
+		if (it == cacheCountDB.end()) {
+			return NULL;
 		} else {
 			unsigned long count = cacheCountDB[font];
 			cacheCountDB[font] = count + 1;
@@ -110,11 +110,21 @@ namespace BIL {
 		cacheCountDB.clear();
 	}
 
+#ifdef DEBUG
+	void FontCache::list (void)
+	{
+		map<Font, unsigned long>::const_iterator it;
+		for(it = cacheCountDB.begin(); it != cacheCountDB.end(); it++)
+		{
+			cout << it->first.family << " is used: " << it->second << endl;
+		}
+	}
+#endif
+
 	FontCache::FontCache (const Font& font, unsigned int dpi)
 			: _font(font), _dpi(dpi), _fontengine(NULL)
 	{
-		for(unsigned char i = 0; i < 128; i++)
-		{
+		for (unsigned char i = 0; i < 128; i++) {
 			_asciiDB[i] = NULL;
 		}
 		_fontengine = new FontEngine(_font, _dpi);
@@ -132,9 +142,10 @@ namespace BIL {
 			_glyphDB.clear();
 			_countDB.clear();
 
-			for(unsigned char i = 0; i < 128; i++)
-			{
-				delete _asciiDB[i];
+			for (unsigned char i = 0; i < 128; i++) {
+				if (_asciiDB[i] != NULL) {
+					delete _asciiDB[i];
+				}
 			}
 		}
 		if (_fontengine != NULL) {
@@ -156,7 +167,7 @@ namespace BIL {
 		return true;
 	}
 
-	const Glyph* FontCache::query (wchar_t charcode, bool create)
+	Glyph* FontCache::query (wchar_t charcode, bool create)
 	{
 		if (!_fontengine->isValid()) {
 			return NULL;
@@ -164,10 +175,11 @@ namespace BIL {
 
 		Glyph* glyph = NULL;
 
-		if(charcode < 128) {
+		if (charcode < 128) {
 			glyph = _asciiDB[charcode];
-			if(glyph == NULL && create) {
-				_asciiDB[charcode] = new Glyph (charcode, _font, _dpi, _fontengine);
+			if (glyph == NULL && create) {
+				_asciiDB[charcode] = new Glyph(charcode, _font, _dpi,
+				        _fontengine);
 			}
 
 			return glyph;
@@ -208,5 +220,18 @@ namespace BIL {
 		return glyph;
 	}
 
-} /* namespace BIL */
+#ifdef DEBUG
+	void FontCache::printcount (void)
+	{
+		cout << endl;
+		map<wchar_t, unsigned long>::iterator it;
+		for (it = _countDB.begin(); it != _countDB.end(); it++) {
+			wchar_t ch = it->first;
+			cout << "Character: ";
+			cout << (unsigned long) ch << " ";
+			cout << "Count: " << it->second << endl;
+		}
+	}
+#endif
 
+} /* namespace BIL */

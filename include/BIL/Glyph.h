@@ -65,7 +65,8 @@ namespace BIL {
 		 */
 		Glyph (wchar_t charcode, FontEngine* fontlib = NULL);
 
-		Glyph (wchar_t charcode, const Font& font, unsigned int dpi = 96, FontEngine* fontlib = NULL);
+		Glyph (wchar_t charcode, const Font& font, unsigned int dpi = 96,
+		        FontEngine* fontlib = NULL);
 
 		Glyph (const Glyph& orig);
 
@@ -133,7 +134,7 @@ namespace BIL {
 
 		wchar_t _charcode;
 
-		unsigned int _glyphIndex;	// 0 means 'undefined character code'
+		unsigned int _glyphIndex;   // 0 means 'undefined character code'
 
 		GLuint _texture;
 

@@ -24,7 +24,7 @@ using namespace boost;
 namespace BIL {
 
 	template<class T>
-	struct greater_second : std::binary_function<T, T, bool>
+	struct greater_second: std::binary_function<T, T, bool>
 	{
 		inline bool operator() (const T& lhs, const T& rhs)
 		{
@@ -37,17 +37,19 @@ namespace BIL {
 	 */
 	class FontCache
 	{
-	public:	// static member functions
+	public:
+		// static member functions
 
 		/**
-		 * @brief create and get the FontCache object
+		 * @brief create or get the FontCache object
 		 * @param font Font, default is regular "Sans"
 		 * @param force if true, remove unused cache and create one
 		 * @return cache object created, NULL for failure
 		 */
-		static FontCache* create (const Font& font = Font("Sans"), bool force = true);
+		static FontCache* create (const Font& font = Font("Sans"), bool force =
+		        true);
 
-		static FontCache* getCache (const Font& font = Font("Sans"), bool create = true);
+		static FontCache* getCache (const Font& font = Font("Sans"));
 
 		static bool release (const Font& font = Font("Sans"));
 
@@ -57,6 +59,16 @@ namespace BIL {
 		{
 			cacheSize = size;
 		}
+
+		static void setMaxCaches (unsigned int size)
+		{
+			maxCaches = size;
+		}
+
+
+#ifdef DEBUG
+		static void list (void);
+#endif
 
 	public:
 
@@ -70,14 +82,23 @@ namespace BIL {
 		 * @brief query the Glyph of a wchar
 		 * @param charcode wchar character
 		 * @param create create a glyph if not found
-		 * @return
+		 * @return pointer to a Glyph object
+		 *
+		 * @warning Do not delete the pointer get from this funciton
 		 */
-		const Glyph* query (wchar_t charcode, bool create = true);
+		Glyph* query (wchar_t charcode, bool create = true);
 
-		bool addCharacter (wchar_t charcode);
+#ifdef DEBUG
+		void printcount (void);
+#endif
 
 	private:
 
+		/**
+		 * @brief Default constructor
+		 * @param font Font type
+		 * @param dpi the DPI to be used
+		 */
 		FontCache (const Font& font, unsigned int dpi = 96);
 
 		/**
@@ -88,7 +109,8 @@ namespace BIL {
 		 */
 		virtual ~FontCache ();
 
-	private:	// member functions disabled
+	private:
+		// member functions disabled
 
 		FontCache ();
 
@@ -96,7 +118,8 @@ namespace BIL {
 
 		FontCache& operator = (const FontCache& orig);
 
-	private:	// member variables
+	private:
+		// member variables
 
 		Font _font;
 
@@ -104,13 +127,14 @@ namespace BIL {
 
 		FontEngine* _fontengine;
 
-		array<Glyph*, 128> _asciiDB;	// use arrary to store ascii for speed
+		array<Glyph*, 128> _asciiDB;    // use arrary to store ascii for speed
 
 		map<wchar_t, Glyph*> _glyphDB;
 
 		map<wchar_t, unsigned long> _countDB;
 
-	private:	// static members
+	private:
+		// static members
 
 		static unsigned int cacheSize;
 

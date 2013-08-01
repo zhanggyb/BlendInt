@@ -9,8 +9,12 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestRunner.h>
 
+#include <locale.h>
+
 int main(int argc, char* argv[])
 {
+	setlocale(LC_ALL, "");
+
    // Create the event manager and test controller
     CPPUNIT_NS::TestResult controller;
 
