@@ -73,7 +73,9 @@ void TextBufferTest::showcharacter1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	TextBuffer buf (Font("Droid Sans", 24));
+	TextBuffer buf (Font("Droid Sans", 12));
+	//TextBuffer buf;
+
 	buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
 	buf.append(L'A');
 

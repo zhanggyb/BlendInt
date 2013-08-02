@@ -14,7 +14,7 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(GlyphTest);
+// CPPUNIT_TEST_SUITE_REGISTRATION(GlyphTest);
 
 GlyphTest::GlyphTest ()
 {

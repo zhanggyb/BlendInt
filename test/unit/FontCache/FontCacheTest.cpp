@@ -39,7 +39,10 @@ void FontCacheTest::setUp ()
 
 	FontConfig::instance();
 
-	FontConfig::getService()->initialize();
+	ret = FontConfig::getService()->initialize();
+	if(!ret) {
+		CPPUNIT_FAIL("Cannot initialize FontConfig service\n");
+	}
 
 	ret = FontConfig::getService()->loadDefaultFontToMem(); // load default font to memory
 	if (!ret) {
@@ -65,9 +68,13 @@ void FontCacheTest::create1 ()
 
 void FontCacheTest::create2 ()
 {
+	cout << endl << "reach here!" << endl;
 	FontCache* cache = FontCache::create(Font("Droid Sans"));
 
+	cout << "and reach here!" << endl;
+
 	FontCache::release(Font("Droid Sans"));
+	cout << "and finally reach here!" << endl;
 
 	CPPUNIT_ASSERT(cache != NULL);
 }
@@ -268,6 +275,52 @@ void FontCacheTest::check6 ()
 	FontCache::releaseAll ();
 
 	CPPUNIT_ASSERT (true);
+}
+
+void FontCacheTest::check7 ()
+{
+
+	FontCache::setMaxCaches(6);
+	FontCache* cache1 = FontCache::create(Font("Droid Sans"));
+	FontCache* cache2 = FontCache::create(Font("Droid Sans"));
+
+#ifdef DEBUG
+		FontCache::list();
+#endif
+
+	FontCache::releaseAll ();
+
+#ifdef DEBUG
+		FontCache::list();
+#endif
+
+		FontCache::setMaxCaches(32);
+
+	CPPUNIT_ASSERT (cache1 == cache2);
+}
+
+void FontCacheTest::check8 ()
+{
+
+	FontCache::setMaxCaches(6);
+	FontCache* cache1 = FontCache::create(Font("Droid Sans"));
+	bool result1 = cache1->initialize();
+	FontCache* cache2 = FontCache::create(Font("Droid Sans", 12));
+	bool result2 = cache2->initialize();
+
+#ifdef DEBUG
+		FontCache::list();
+#endif
+
+	FontCache::releaseAll ();
+
+#ifdef DEBUG
+		FontCache::list();
+#endif
+
+		FontCache::setMaxCaches(32);
+
+	CPPUNIT_ASSERT ((cache1 != cache2) && result1 && result2);
 }
 
 void FontCacheTest::show1()

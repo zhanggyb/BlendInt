@@ -24,6 +24,8 @@ CPPUNIT_TEST_SUITE(FontCacheTest);
 	CPPUNIT_TEST(check4);
 	CPPUNIT_TEST(check5);
 	CPPUNIT_TEST(check6);
+	CPPUNIT_TEST(check7);
+	CPPUNIT_TEST(check8);
 	CPPUNIT_TEST(show1);
 
 	CPPUNIT_TEST_SUITE_END()
@@ -54,6 +56,8 @@ private:
 	void check4 ();
 	void check5 ();
 	void check6 ();
+	void check7 ();
+	void check8 ();
 	void show1 ();
 
 };

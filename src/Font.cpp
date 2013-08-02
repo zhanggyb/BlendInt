@@ -35,14 +35,10 @@ namespace BIL {
 
 	bool operator < (const Font& src, const Font& dist)
 	{
-		if (strcmp(src.family.c_str(), dist.family.c_str()) < 0) {
-			return true;
-		}
-
-		return (src.size < dist.size ?
-		        true :
-		        (src.bold < dist.bold ?
-		                true : (src.italic < dist.italic ? true : false)));
+		return (src.family < dist.family ?
+				true : (src.size < dist.size ?
+		        true : (src.bold < dist.bold ?
+		                true : (src.italic < dist.italic ? true : false))));
 	}
 
 	bool operator == (const Font& src, const Font& dist)
@@ -51,8 +47,10 @@ namespace BIL {
 			return true;
 		}
 
-		return (src.size == dist.size && src.bold == dist.bold
-		        && src.italic == dist.italic);
+		return (src.family == dist.family &&
+				src.size == dist.size &&
+				src.bold == dist.bold &&
+				src.italic == dist.italic);
 	}
 
 }

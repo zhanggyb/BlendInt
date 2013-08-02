@@ -13,7 +13,7 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(FontEngineTest);
+// CPPUNIT_TEST_SUITE_REGISTRATION(FontEngineTest);
 
 FontEngineTest::FontEngineTest ()
 {
@@ -150,8 +150,6 @@ void FontEngineTest::create5 ()
 	result = font->isValid();
 
 	if(result) {
-
-		FT_Face face = font->getFontFace();
 
 		cout << endl << font->getFont().family << endl;
 		if(font->getFont().bold) {

@@ -114,9 +114,9 @@ namespace BIL {
 	void FontCache::list (void)
 	{
 		map<Font, unsigned long>::const_iterator it;
-		for(it = cacheCountDB.begin(); it != cacheCountDB.end(); it++)
-		{
-			cout << it->first.family << " is used: " << it->second << endl;
+		cout << endl;
+		for (it = cacheCountDB.begin(); it != cacheCountDB.end(); it++) {
+			cout << it->first.family << " of " << it->first.size << " is used: " << it->second << endl;
 		}
 	}
 #endif
@@ -189,42 +189,46 @@ namespace BIL {
 		it = _glyphDB.find(charcode);
 
 		// if the glyph is not found and need to be created
-		if ((it == _glyphDB.end()) && create) {
+		if (it == _glyphDB.end()) {
 
-			glyph = new Glyph(charcode, _font, _dpi, _fontengine);
+			if (create) {
 
-			if (_glyphDB.size() >= cacheSize) {
-				typedef std::pair<wchar_t, unsigned long> data_t;
-				typedef std::priority_queue<data_t, std::deque<data_t>,
-				        greater_second<data_t> > queue_t;
-				queue_t q(_countDB.begin(), _countDB.end());
+				glyph = new Glyph(charcode, _font, _dpi, _fontengine);
 
-				wchar_t char_to_del = q.top().first;
-				cout << "Remove " << q.top().first << " from cache."
-				        << std::endl;
+				if (_glyphDB.size() >= cacheSize) {
+					typedef std::pair<wchar_t, unsigned long> data_t;
+					typedef std::priority_queue<data_t, std::deque<data_t>,
+					        greater_second<data_t> > queue_t;
+					queue_t q(_countDB.begin(), _countDB.end());
 
-				delete _glyphDB[char_to_del];
-				_glyphDB.erase(char_to_del);
-				_countDB.erase(char_to_del);
+					wchar_t char_to_del = q.top().first;
+					cout << "Remove " << q.top().first << " from cache."
+					        << std::endl;
+
+					delete _glyphDB[char_to_del];
+					_glyphDB.erase(char_to_del);
+					_countDB.erase(char_to_del);
+				}
+
+				_glyphDB[charcode] = glyph;
+
 			}
-
-			_glyphDB[charcode] = glyph;
-
 		} else {
 			glyph = _glyphDB[charcode];
 		}
 
-		unsigned long count = _countDB[charcode];
-		_countDB[charcode] = count + 1;
-
+		if(glyph != NULL) {
+			unsigned long count = _countDB[charcode];
+			_countDB[charcode] = count + 1;
+		}
 		return glyph;
 	}
 
 #ifdef DEBUG
 	void FontCache::printcount (void)
 	{
-		cout << endl;
 		map<wchar_t, unsigned long>::iterator it;
+		cout << endl;
 		for (it = _countDB.begin(); it != _countDB.end(); it++) {
 			wchar_t ch = it->first;
 			cout << "Character: ";
