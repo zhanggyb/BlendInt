@@ -88,6 +88,31 @@ namespace BIL {
 		 */
 		Glyph* query (wchar_t charcode, bool create = true);
 
+		int getHeight (void)
+		{
+			if(_fontengine == NULL) return 0;
+			
+			return _fontengine->getHeight();
+		}
+
+		int getAscender (void)
+		{
+			if(_fontengine == NULL) return 0;
+			return _fontengine->getAscender();
+		}
+
+		int getDescender (void)
+		{
+			if(_fontengine == NULL) return 0;
+			return _fontengine->getDescender();
+		}
+
+		int getMaxAdvance (void)
+		{
+			if(_fontengine == NULL) return 0;
+			return _fontengine->getMaxAdvance();
+		}
+
 #ifdef DEBUG
 		void printcount (void);
 #endif

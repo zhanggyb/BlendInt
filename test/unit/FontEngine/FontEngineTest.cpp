@@ -118,7 +118,7 @@ void FontEngineTest::create3 ()
 	FontConfig* gFontService = FontConfig::getService();
 
 	FontEngine *font1 = new FontEngine(gFontService->getBuffer(),
-	        gFontService->getBufferSize());
+									   gFontService->getBufferSize());
 
 	result1 = font1->isValid();
 
@@ -166,15 +166,11 @@ void FontEngineTest::create5 ()
 			cout << "Normal" << endl;
 		}
 
-		cout << "unit per em: " << face->units_per_EM << endl;
-		cout << "height: " << face->height << endl;
-		cout << "bbox: " << face->bbox.xMin << " " << face->bbox.yMin << " "
-				<< face->bbox.xMax << " " << face->bbox.yMax << endl;
+		cout << "Global height: " << font->getHeight() << endl;
+		cout << "Global ascender: " << font->getAscender() << endl;
+		cout << "Global descender: " << font->getDescender() << endl;
+		cout << "Global max Advance: " << font->getMaxAdvance() << endl;
 
-		cout << "Range: " << (face->bbox.xMax - face->bbox.xMin) << " "
-				<< (face->bbox.yMax - face->bbox.yMin) << endl;
-		cout << "ascender: " << face->ascender << endl;
-		cout << "descender: " << face->descender << endl;
 	}
 
 	delete font;
@@ -205,7 +201,7 @@ void FontEngineTest::get_glyph1 ()
 
 	wchar_t ch = L'A';
 
-	result = font->setFontSize(16, 72);
+	result = font->setCharSize(16, 72);
 
 	if (result) {
 
@@ -214,41 +210,41 @@ void FontEngineTest::get_glyph1 ()
 		if (result) {
 			FT_Face face = font->getFontFace();
 			cout << endl << "num_faces: " << face->num_faces << endl
-			        << "face_index: " << face->face_index << endl
-			        << "num_glyphs: " << face->num_glyphs << endl << "slot: "
-			        << endl << "       " << "format: " << face->glyph->format
-			        << endl << "       " << "bitmap: " << endl
-			        << "               " << "rows: " << face->glyph->bitmap.rows
-			        << endl << "               " << "width: "
-			        << face->glyph->bitmap.width << endl << "               "
-			        << "pitch: " << face->glyph->bitmap.pitch << endl
-			        << "               " << "num_grays: "
-			        << face->glyph->bitmap.num_grays << endl;
+				 << "face_index: " << face->face_index << endl
+				 << "num_glyphs: " << face->num_glyphs << endl << "slot: "
+				 << endl << "       " << "format: " << face->glyph->format
+				 << endl << "       " << "bitmap: " << endl
+				 << "               " << "rows: " << face->glyph->bitmap.rows
+				 << endl << "               " << "width: "
+				 << face->glyph->bitmap.width << endl << "               "
+				 << "pitch: " << face->glyph->bitmap.pitch << endl
+				 << "               " << "num_grays: "
+				 << face->glyph->bitmap.num_grays << endl;
 
 			// int rows = face->glyph->bitmap.rows;
 			// int width = face->glyph->bitmap.width;
 
 			/*
-			int i, j;
-			unsigned char charcode;
-			for (i = 0; i < rows; i++) {
-				for (j = 0; j < width; j++) {
-					charcode = *(face->glyph->bitmap.buffer + i * width + j);
-					printf("0x%2x ", charcode);
-				}
-				cout << endl;
-			}
-			cout << endl;
+			  int i, j;
+			  unsigned char charcode;
+			  for (i = 0; i < rows; i++) {
+			  for (j = 0; j < width; j++) {
+			  charcode = *(face->glyph->bitmap.buffer + i * width + j);
+			  printf("0x%2x ", charcode);
+			  }
+			  cout << endl;
+			  }
+			  cout << endl;
 
 
-			for (i = 0; i < rows; i++) {
-				for (j = 0; j < width; j++) {
-					charcode = *(face->glyph->bitmap.buffer + i * width + j);
-					putchar(charcode < 128 ? ' ' : '*');
-				}
-				cout << endl;
-			}
-			cout << endl;
+			  for (i = 0; i < rows; i++) {
+			  for (j = 0; j < width; j++) {
+			  charcode = *(face->glyph->bitmap.buffer + i * width + j);
+			  putchar(charcode < 128 ? ' ' : '*');
+			  }
+			  cout << endl;
+			  }
+			  cout << endl;
 			*/
 		}
 
@@ -290,41 +286,41 @@ void FontEngineTest::get_glyph2 ()
 		if (result) {
 			FT_Face face = font->getFontFace();
 			cout << endl << "num_faces: " << face->num_faces << endl
-			        << "face_index: " << face->face_index << endl
-			        << "num_glyphs: " << face->num_glyphs << endl << "slot: "
-			        << endl << "       " << "format: " << face->glyph->format
-			        << endl << "       " << "bitmap: " << endl
-			        << "               " << "rows: " << face->glyph->bitmap.rows
-			        << endl << "               " << "width: "
-			        << face->glyph->bitmap.width << endl << "               "
-			        << "pitch: " << face->glyph->bitmap.pitch << endl
-			        << "               " << "num_grays: "
-			        << face->glyph->bitmap.num_grays << endl;
+				 << "face_index: " << face->face_index << endl
+				 << "num_glyphs: " << face->num_glyphs << endl << "slot: "
+				 << endl << "       " << "format: " << face->glyph->format
+				 << endl << "       " << "bitmap: " << endl
+				 << "               " << "rows: " << face->glyph->bitmap.rows
+				 << endl << "               " << "width: "
+				 << face->glyph->bitmap.width << endl << "               "
+				 << "pitch: " << face->glyph->bitmap.pitch << endl
+				 << "               " << "num_grays: "
+				 << face->glyph->bitmap.num_grays << endl;
 
 			// int rows = face->glyph->bitmap.rows;
 			// int width = face->glyph->bitmap.width;
 
 			/*
-			int i, j;
-			unsigned char charcode;
-			for (i = 0; i < rows; i++) {
-				for (j = 0; j < width; j++) {
-					charcode = *(face->glyph->bitmap.buffer + i * width + j);
-					printf("0x%2x ", charcode);
-				}
-				cout << endl;
-			}
-			cout << endl;
+			  int i, j;
+			  unsigned char charcode;
+			  for (i = 0; i < rows; i++) {
+			  for (j = 0; j < width; j++) {
+			  charcode = *(face->glyph->bitmap.buffer + i * width + j);
+			  printf("0x%2x ", charcode);
+			  }
+			  cout << endl;
+			  }
+			  cout << endl;
 
-			for (i = 0; i < rows; i++) {
-				for (j = 0; j < width; j++) {
-					charcode = *(face->glyph->bitmap.buffer + i * width + j);
-					putchar(charcode < 128 ? ' ' : '*');
-				}
-				cout << endl;
-			}
-			cout << endl;
-			 */
+			  for (i = 0; i < rows; i++) {
+			  for (j = 0; j < width; j++) {
+			  charcode = *(face->glyph->bitmap.buffer + i * width + j);
+			  putchar(charcode < 128 ? ' ' : '*');
+			  }
+			  cout << endl;
+			  }
+			  cout << endl;
+			*/
 		}
 
 	}
@@ -365,41 +361,41 @@ void FontEngineTest::get_glyph3 ()
 		if (result) {
 			FT_Face face = font->getFontFace();
 			cout << endl << "num_faces: " << face->num_faces << endl
-			        << "face_index: " << face->face_index << endl
-			        << "num_glyphs: " << face->num_glyphs << endl << "slot: "
-			        << endl << "       " << "format: " << face->glyph->format
-			        << endl << "       " << "bitmap: " << endl
-			        << "               " << "rows: " << face->glyph->bitmap.rows
-			        << endl << "               " << "width: "
-			        << face->glyph->bitmap.width << endl << "               "
-			        << "pitch: " << face->glyph->bitmap.pitch << endl
-			        << "               " << "num_grays: "
-			        << face->glyph->bitmap.num_grays << endl;
+				 << "face_index: " << face->face_index << endl
+				 << "num_glyphs: " << face->num_glyphs << endl << "slot: "
+				 << endl << "       " << "format: " << face->glyph->format
+				 << endl << "       " << "bitmap: " << endl
+				 << "               " << "rows: " << face->glyph->bitmap.rows
+				 << endl << "               " << "width: "
+				 << face->glyph->bitmap.width << endl << "               "
+				 << "pitch: " << face->glyph->bitmap.pitch << endl
+				 << "               " << "num_grays: "
+				 << face->glyph->bitmap.num_grays << endl;
 
 			// int rows = face->glyph->bitmap.rows;
 			// int width = face->glyph->bitmap.width;
 
 			/*
-			int i, j;
-			unsigned char charcode;
-			for (i = 0; i < rows; i++) {
-				for (j = 0; j < width; j++) {
-					charcode = *(face->glyph->bitmap.buffer + i * width + j);
-					printf("0x%2x ", charcode);
-				}
-				cout << endl;
-			}
-			cout << endl;
+			  int i, j;
+			  unsigned char charcode;
+			  for (i = 0; i < rows; i++) {
+			  for (j = 0; j < width; j++) {
+			  charcode = *(face->glyph->bitmap.buffer + i * width + j);
+			  printf("0x%2x ", charcode);
+			  }
+			  cout << endl;
+			  }
+			  cout << endl;
 
-			for (i = 0; i < rows; i++) {
-				for (j = 0; j < width; j++) {
-					charcode = *(face->glyph->bitmap.buffer + i * width + j);
-					putchar(charcode < 128 ? ' ' : '*');
-				}
-				cout << endl;
-			}
-			cout << endl;
-			 */
+			  for (i = 0; i < rows; i++) {
+			  for (j = 0; j < width; j++) {
+			  charcode = *(face->glyph->bitmap.buffer + i * width + j);
+			  putchar(charcode < 128 ? ' ' : '*');
+			  }
+			  cout << endl;
+			  }
+			  cout << endl;
+			*/
 		}
 
 	}
@@ -448,43 +444,43 @@ void FontEngineTest::get_glyph4 ()
 			if (result) {
 				FT_Face face = font->getFontFace();
 				cout << endl << "num_faces: " << face->num_faces << endl
-				        << "face_index: " << face->face_index << endl
-				        << "num_glyphs: " << face->num_glyphs << endl
-				        << "slot: " << endl << "       " << "format: "
-				        << face->glyph->format << endl << "       "
-				        << "bitmap: " << endl << "               " << "rows: "
-				        << face->glyph->bitmap.rows << endl << "               "
-				        << "width: " << face->glyph->bitmap.width << endl
-				        << "               " << "pitch: "
-				        << face->glyph->bitmap.pitch << endl
-				        << "               " << "num_grays: "
-				        << face->glyph->bitmap.num_grays << endl;
+					 << "face_index: " << face->face_index << endl
+					 << "num_glyphs: " << face->num_glyphs << endl
+					 << "slot: " << endl << "       " << "format: "
+					 << face->glyph->format << endl << "       "
+					 << "bitmap: " << endl << "               " << "rows: "
+					 << face->glyph->bitmap.rows << endl << "               "
+					 << "width: " << face->glyph->bitmap.width << endl
+					 << "               " << "pitch: "
+					 << face->glyph->bitmap.pitch << endl
+					 << "               " << "num_grays: "
+					 << face->glyph->bitmap.num_grays << endl;
 
 				// int rows = face->glyph->bitmap.rows;
 				// int width = face->glyph->bitmap.width;
 
 				/*
-				int i, j;
-				unsigned char charcode;
-				for (i = 0; i < rows; i++) {
-					for (j = 0; j < width; j++) {
-						charcode =
-						        *(face->glyph->bitmap.buffer + i * width + j);
-						printf("0x%2x ", charcode);
-					}
-					cout << endl;
-				}
-				cout << endl;
+				  int i, j;
+				  unsigned char charcode;
+				  for (i = 0; i < rows; i++) {
+				  for (j = 0; j < width; j++) {
+				  charcode =
+				  *(face->glyph->bitmap.buffer + i * width + j);
+				  printf("0x%2x ", charcode);
+				  }
+				  cout << endl;
+				  }
+				  cout << endl;
 
-				for (i = 0; i < rows; i++) {
-					for (j = 0; j < width; j++) {
-						charcode =
-						        *(face->glyph->bitmap.buffer + i * width + j);
-						putchar(charcode < 128 ? ' ' : '*');
-					}
-					cout << endl;
-				}
-				cout << endl;
+				  for (i = 0; i < rows; i++) {
+				  for (j = 0; j < width; j++) {
+				  charcode =
+				  *(face->glyph->bitmap.buffer + i * width + j);
+				  putchar(charcode < 128 ? ' ' : '*');
+				  }
+				  cout << endl;
+				  }
+				  cout << endl;
 				*/
 			}
 		}
@@ -504,7 +500,7 @@ void FontEngineTest::get_glyph5 ()
 	FontConfig* gFontService = FontConfig::getService();
 
 	FontEngine *font = new FontEngine(gFontService->getBuffer(),
-	        gFontService->getBufferSize());
+									  gFontService->getBufferSize());
 
 	result = font->isValid();
 
@@ -538,19 +534,19 @@ void FontEngineTest::get_glyph5 ()
 				//int width = face->glyph->bitmap.width;
 
 				/*
-				int i, j;
-				unsigned char charcode;
-				cout << endl;
-				for (i = 0; i < rows; i++) {
-					for (j = 0; j < width; j++) {
-						charcode =
-						        *(face->glyph->bitmap.buffer + i * width + j);
-						putchar(charcode < 128 ? ' ' : '*');
-					}
-					cout << endl;
-				}
-				cout << endl;
-				 */
+				  int i, j;
+				  unsigned char charcode;
+				  cout << endl;
+				  for (i = 0; i < rows; i++) {
+				  for (j = 0; j < width; j++) {
+				  charcode =
+				  *(face->glyph->bitmap.buffer + i * width + j);
+				  putchar(charcode < 128 ? ' ' : '*');
+				  }
+				  cout << endl;
+				  }
+				  cout << endl;
+				*/
 			}
 		}
 
@@ -603,53 +599,53 @@ void FontEngineTest::glyph_metrics1 ()
 				// int width = face->glyph->bitmap.width;
 
 				/*
-				int i, j;
-				unsigned char charcode;
-				cout << endl;
-				for (i = 0; i < rows; i++) {
-					for (j = 0; j < width; j++) {
-						charcode =
-						        *(face->glyph->bitmap.buffer + i * width + j);
-						putchar(charcode < 128 ? ' ' : '*');
-					}
-					cout << endl;
-				}
+				  int i, j;
+				  unsigned char charcode;
+				  cout << endl;
+				  for (i = 0; i < rows; i++) {
+				  for (j = 0; j < width; j++) {
+				  charcode =
+				  *(face->glyph->bitmap.buffer + i * width + j);
+				  putchar(charcode < 128 ? ' ' : '*');
+				  }
+				  cout << endl;
+				  }
 				*/
 
 				cout << "num_faces: " << face->num_faces << endl
-				        << "face_index: " << face->face_index << endl
-				        << "num_glyphs: " << face->num_glyphs << endl
-				        << "slot: " << endl << "       " << "format: "
-				        << face->glyph->format << endl << "       "
-				        << "bitmap: " << endl << "               " << "rows: "
-				        << face->glyph->bitmap.rows << endl << "               "
-				        << "width: " << face->glyph->bitmap.width << endl
-				        << "               " << "pitch: "
-				        << face->glyph->bitmap.pitch << endl
-				        << "               " << "num_grays: "
-				        << face->glyph->bitmap.num_grays << endl << "       "
-				        << "advance.x: " << face->glyph->advance.x << endl
-				        << "       " << "advance.y: " << face->glyph->advance.y
-				        << endl;
+					 << "face_index: " << face->face_index << endl
+					 << "num_glyphs: " << face->num_glyphs << endl
+					 << "slot: " << endl << "       " << "format: "
+					 << face->glyph->format << endl << "       "
+					 << "bitmap: " << endl << "               " << "rows: "
+					 << face->glyph->bitmap.rows << endl << "               "
+					 << "width: " << face->glyph->bitmap.width << endl
+					 << "               " << "pitch: "
+					 << face->glyph->bitmap.pitch << endl
+					 << "               " << "num_grays: "
+					 << face->glyph->bitmap.num_grays << endl << "       "
+					 << "advance.x: " << face->glyph->advance.x << endl
+					 << "       " << "advance.y: " << face->glyph->advance.y
+					 << endl;
 
 				// show glyph metrics
 				cout << "Glyph metrics: " << endl;
 				cout << "       " << "width: " << face->glyph->metrics.width
-				        << endl;
+					 << endl;
 				cout << "       " << "height: " << face->glyph->metrics.height
-				        << endl;
+					 << endl;
 				cout << "       " << "horiBearingX: "
-				        << face->glyph->metrics.horiBearingX << endl;
+					 << face->glyph->metrics.horiBearingX << endl;
 				cout << "       " << "horiBearingY: "
-				        << face->glyph->metrics.horiBearingY << endl;
+					 << face->glyph->metrics.horiBearingY << endl;
 				cout << "       " << "horiAdvance: "
-				        << face->glyph->metrics.horiAdvance << endl;
+					 << face->glyph->metrics.horiAdvance << endl;
 				cout << "       " << "vertiBearingX: "
-				        << face->glyph->metrics.vertBearingX << endl;
+					 << face->glyph->metrics.vertBearingX << endl;
 				cout << "       " << "vertiBearingY: "
-				        << face->glyph->metrics.vertBearingY << endl;
+					 << face->glyph->metrics.vertBearingY << endl;
 				cout << "       " << "vertiAdvance: "
-				        << face->glyph->metrics.vertAdvance << endl;
+					 << face->glyph->metrics.vertAdvance << endl;
 			}
 		}
 

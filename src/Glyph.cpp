@@ -160,8 +160,8 @@ namespace BIL {
 		FT_BBox acbox;
 		FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_UNSCALED, &acbox);
 
-		_cbox.vec.x = acbox.xMax - acbox.xMin;
-		_cbox.vec.y = acbox.yMax - acbox.yMin;
+		_cbox.vec.x = (acbox.xMax - acbox.xMin) >> 6;
+		_cbox.vec.y = (acbox.yMax - acbox.yMin) >> 6;
 
 		// Convert the glyph to a bitmap;
 		FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, 0, 1);
@@ -196,8 +196,8 @@ namespace BIL {
 
 		glBindTexture(GL_TEXTURE_2D, _texture);
 
-		float x = (float) bitmap.width / (float) width, y = (float) bitmap.rows
-		        / (float) rows;
+		float x = (float) bitmap.width / (float) width;
+		float y = (float) bitmap.rows  / (float) rows;
 
 		glBegin(GL_QUADS);
 		glTexCoord2d(0, 0);

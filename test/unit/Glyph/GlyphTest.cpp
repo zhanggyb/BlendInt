@@ -447,17 +447,16 @@ void GlyphTest::checkbox1 ()
 	Glyph a(L'A', Font("Sans", 12), 96);
 	Glyph b(L'a', Font("Sans", 12), 96);
 
-
 	FontConfig* fontserv = FontConfig::getService();
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	cout << endl;
 	cout << "Metrics of A: width: " << a.getMetrics().width << " height: "
 		 << a.getMetrics().height << endl;
-	cout << "Box of A: " << a.getBox().vec.x / 64 << ", " << a.getBox().vec.y / 64 << endl;
+	cout << "Box of A: " << a.getBox().vec.x << ", " << a.getBox().vec.y << endl;
 	cout << "Metrics of a: width: " << b.getMetrics().width << " height: "
 		 << b.getMetrics().height << endl;
-	cout << "Box of a: " << b.getBox().vec.x / 64 << ", " << b.getBox().vec.y / 64 << endl;
+	cout << "Box of a: " << b.getBox().vec.x << ", " << b.getBox().vec.y << endl;
 
 	while (!glfwWindowShouldClose(win)) {
 

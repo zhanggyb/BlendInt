@@ -59,10 +59,6 @@ namespace BIL {
 	{
 		Glyph* glyph = NULL;
 
-		glClearColor(_background.rgba.r,
-				_background.rgba.g,
-				_background.rgba.b,
-				_background.rgba.a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glColor4f (_color.rgba.r,
 				_color.rgba.g,
@@ -85,10 +81,6 @@ namespace BIL {
 	{
 		Glyph* glyph = NULL;
 
-		glClearColor(_background.rgba.r,
-				_background.rgba.g,
-				_background.rgba.b,
-				_background.rgba.a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glColor4f (_color.rgba.r,
 				_color.rgba.g,
@@ -112,9 +104,12 @@ namespace BIL {
 			if (*it == '\n') {
 				line++;
 				glLoadIdentity();
-				glTranslatef(pos.coord.x, pos.coord.y - _rowspacing * 20 * line, pos.coord.z);
+				glTranslatef(pos.coord.x, pos.coord.y -
+							 _rowspacing * _fontcache->getHeight() * line,
+							 pos.coord.z);
 				continue;
 			}
+
 			glyph = _fontcache->query(*it);
 			if(glyph != NULL) {
 				glyph->render();

@@ -1,8 +1,8 @@
 /*
  * FontType.h
  *
- *  Created on: 2013年7月9日
- *      Author: zhanggyb
+ *	Created on: 2013年7月9日
+ *		Author: zhanggyb
  */
 
 #ifndef _BIL_FONTTYPE_H_
@@ -30,14 +30,17 @@ namespace BIL {
 	{
 	public:
 
-		FontEngine (const Font& font = Font("Sans"), unsigned int dpi = 96);
+		FontEngine (const Font& font = Font("Sans"),
+					unsigned int dpi = 96);
 
 		/**
 		 * @brief Constructor to create object from a font file
 		 * @param filename File path name
 		 * @param size Font size
 		 */
-		FontEngine (const string& filename, unsigned int size = 10, unsigned int dpi = 96);
+		FontEngine (const string& filename,
+					unsigned int size = 10,
+					unsigned int dpi = 96);
 
 		/**
 		 * @brief Constructor to create object from memory
@@ -47,7 +50,7 @@ namespace BIL {
 		 * @param size Font size
 		 */
 		FontEngine (const FT_Byte* buffer, FT_Long bufsize, FT_Long index = 0,
-		        unsigned int size = 10, unsigned int dpi = 96);
+				unsigned int size = 10, unsigned int dpi = 96);
 
 		/**
 		 * @brief destructor
@@ -62,6 +65,31 @@ namespace BIL {
 			return _valid;
 		}
 
+		int getHeight (void) const
+		{
+			if(!_valid) return 0.0;
+
+			return _height;
+		}
+
+		int getAscender (void) const
+		{
+			if(!_valid) return 0.0;
+			return _ascender;
+		}
+
+		int getDescender (void) const
+		{
+			if(!_valid) return 0.0;
+			return _descender;
+		}
+
+		int getMaxAdvance (void) const
+		{
+			if(!_valid) return 0.0;
+			return _maxAdvance;
+		}
+
 		const FT_Face& getFontFace (void) const
 		{
 			return _face;
@@ -72,7 +100,7 @@ namespace BIL {
 			return _stroker;
 		}
 
-		bool setFontSize (unsigned int size, unsigned int dpi = 96);
+		//bool setFontSize (unsigned int size, unsigned int dpi = 96);
 
 		bool setCharSize (unsigned int size, unsigned int dpi = 96);
 
@@ -90,7 +118,7 @@ namespace BIL {
 		 * @return true for success, false for error
 		 */
 		bool loadGlyph (FT_UInt glyph_index, FT_Int32 load_flags =
-		        FT_LOAD_DEFAULT);
+				FT_LOAD_DEFAULT);
 
 		/**
 		 * Call this member function after loadGlyph()
@@ -114,7 +142,9 @@ namespace BIL {
 
 		bool setLcdFilterWeights (unsigned char* weights);
 
-		Vec2l getKerning (const Glyph& left, const Glyph& right, FT_UInt kern_mode = FT_KERNING_DEFAULT);
+		Vec2l getKerning (const Glyph& left,
+						  const Glyph& right,
+						  FT_UInt kern_mode = FT_KERNING_DEFAULT);
 
 		const Font& getFont (void) const
 		{
@@ -124,7 +154,7 @@ namespace BIL {
 	private:
 
 		bool getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
-		        FT_UInt kern_mode, FT_Vector *akerning);
+				FT_UInt kern_mode, FT_Vector *akerning);
 
 	private:
 
@@ -137,6 +167,18 @@ namespace BIL {
 		bool _valid; /**< if the font face is valid */
 
 		bool _unicode; /**< if has unicode charmap */
+
+		/** used to compute a default line spacing */
+		int _height;
+
+		/**/
+		int _ascender;
+
+		/**/
+		int _descender;
+
+		/** Max horizontal advance */
+		int _maxAdvance;
 
 		Font _font;
 

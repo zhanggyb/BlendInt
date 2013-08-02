@@ -14,9 +14,12 @@ using namespace std;
 
 namespace BIL {
 
-	FontEngine::FontEngine(const Font& font, unsigned int dpi)
-	: _library(NULL), _face(NULL), _stroker(NULL), _valid(false), _unicode(
-	        false), _dpi(dpi)
+	FontEngine::FontEngine(const Font& font,
+						   unsigned int dpi)
+		: _library(NULL), _face(NULL), _stroker(NULL),
+		  _valid(false), _unicode(false), _height(0),
+		  _ascender(0), _descender(0), _maxAdvance(0),
+		  _font(font), _dpi(dpi)
 	{
 		FT_Error error;
 
@@ -65,11 +68,17 @@ namespace BIL {
 		} else {
 			_unicode = true;
 		}
+
+		setCharSize(font.size, dpi);
 	}
 
-	FontEngine::FontEngine (const string& filename, unsigned int size, unsigned int dpi)
-			: _library(NULL), _face(NULL), _stroker(NULL), _valid(false), _unicode(
-			        false), _dpi(dpi)
+	FontEngine::FontEngine (const string& filename,
+							unsigned int size,
+							unsigned int dpi)
+		: _library(NULL), _face(NULL), _stroker(NULL),
+		  _valid(false), _unicode(false), _height(0),
+		  _ascender(0), _descender(0), _maxAdvance(0),
+		  _dpi(dpi)
 	{
 		FT_Error error;
 
@@ -111,12 +120,18 @@ namespace BIL {
 			_unicode = true;
 		}
 
+		setCharSize(size, dpi);
 	}
 
-	FontEngine::FontEngine (const FT_Byte* buffer, FT_Long bufsize, FT_Long index,
-	        unsigned int size, unsigned int dpi)
-			: _library(NULL), _face(NULL), _stroker(NULL), _valid(false), _unicode(
-			        false), _dpi(dpi)
+	FontEngine::FontEngine (const FT_Byte* buffer,
+							FT_Long bufsize,
+							FT_Long index,
+							unsigned int size,
+							unsigned int dpi)
+		: _library(NULL), _face(NULL), _stroker(NULL),
+		  _valid(false), _unicode(false), _height(0),
+		  _ascender(0), _descender(0), _maxAdvance(0),
+		  _dpi(dpi)
 	{
 		FT_Error error;
 
@@ -152,6 +167,8 @@ namespace BIL {
 		} else {
 			_unicode = true;
 		}
+		
+		setCharSize(size, dpi);
 	}
 
 	FontEngine::~FontEngine ()
@@ -189,6 +206,7 @@ namespace BIL {
 		return true;
 	}
 
+	/*
 	bool FontEngine::setFontSize (unsigned int size, unsigned int dpi)
 	{
 		if (!_valid)
@@ -207,10 +225,11 @@ namespace BIL {
 
 		return true;
 	}
+	*/
 
 	bool FontEngine::setCharSize (unsigned int size, unsigned int dpi)
 	{
-		FT_Error err;
+		FT_Error error;
 
 		if (!_valid)
 			return false;
@@ -225,12 +244,17 @@ namespace BIL {
 		//in terms of 1/64ths of pixels.  Thus, to make a font
 		//h pixels high, we need to request a size of h*64.
 		//(h << 6 is just a prettier way of writting h*64)
-		err = FT_Set_Char_Size(_face, (long) (_font.size << 6), 0, _dpi, 0);
-		if (err) {
+		error = FT_Set_Char_Size(_face, (long) (_font.size << 6), 0, _dpi, 0);
+		if (error) {
 			cerr << "The current font don't support the size, " << size
 			        << " and dpi " << _dpi << endl;
 			return false;
 		}
+
+		_height = _face->size->metrics.height >> 6;
+		_ascender = _face->size->metrics.ascender >> 6;
+		_descender = _face->size->metrics.descender >> 6;
+		_maxAdvance = _face->size->metrics.max_advance >> 6;
 
 		return true;
 	}
