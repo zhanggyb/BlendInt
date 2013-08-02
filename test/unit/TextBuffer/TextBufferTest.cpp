@@ -73,7 +73,8 @@ void TextBufferTest::showcharacter1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	TextBuffer buf;
+	TextBuffer buf (Font("Droid Sans", 24));
+	buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
 	buf.append(L'A');
 
 	while (!glfwWindowShouldClose(win)) {
@@ -131,6 +132,7 @@ void TextBufferTest::showtextline1 ()
 	}
 
 	TextBuffer buf;
+	buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
 	buf.append(L"abcde\nfghij\n床前明月光");
 
 	while (!glfwWindowShouldClose(win)) {
@@ -159,7 +161,7 @@ void TextBufferTest::showtextline1 ()
 		glLoadIdentity();
 
 		// Test buffer render
-		buf.renderAt(Coord3f(100.0, 100.0, 0.0));
+		buf.render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();

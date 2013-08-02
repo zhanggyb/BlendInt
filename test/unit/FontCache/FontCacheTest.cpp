@@ -137,6 +137,10 @@ void FontCacheTest::check1 ()
 
 	FontCache::release (Font("Droid Sans Mono"));
 
+#ifdef DEBUG
+	FontCache::list();
+#endif
+
 	CPPUNIT_ASSERT (result);
 }
 

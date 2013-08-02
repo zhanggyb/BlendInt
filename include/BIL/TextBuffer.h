@@ -29,20 +29,22 @@ namespace BIL {
 		 *
 		 * create a new empty text buffer
 		 */
-		TextBuffer ();
+		TextBuffer (const Font& font = Font("Sans"));
 
 		/**/
-		TextBuffer (const wstring& text);
+		TextBuffer (const wstring& text, const Font& font = Font("Sans"));
 
 		void append (const wstring& text);
 
 		void append (wchar_t charcode);
 
-		void setRowSpacing (int space);
+		void setRowSpacing (float space);
+
+		void setOrigin (const Coord3f& origin);
+
+		void setFont (const Font& font);
 
 		void render (void); /* render the text */
-
-		void renderAt (const Coord3f& pos);
 
 		void clear (void); /* clear the text */
 
@@ -56,6 +58,7 @@ namespace BIL {
 
 	private:	// member variables
 
+		// DO not delete this member
 		FontCache* _fontcache;
 
 		/** Row spacing */

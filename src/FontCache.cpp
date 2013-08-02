@@ -33,7 +33,7 @@ namespace BIL {
 		if (it != cacheDB.end()) {
 			unsigned long count = cacheCountDB[font];
 			cacheCountDB[font] = count + 1;
-			return cacheDB[font];
+			return it->second;
 		}
 
 		if (cacheDB.size() >= maxCaches) {
@@ -87,7 +87,7 @@ namespace BIL {
 		if (it == cacheDB.end())
 			return false;
 
-		FontCache* cache = cacheDB[font];
+		FontCache* cache = it->second;
 		if (cache != NULL) {
 			delete cache;
 		}

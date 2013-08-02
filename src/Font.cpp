@@ -5,6 +5,7 @@
  *      Author: zhanggyb
  */
 
+#include <string.h>
 #include <BIL/Font.h>
 
 namespace BIL {
@@ -34,22 +35,25 @@ namespace BIL {
 
 	bool operator < (const Font& src, const Font& dist)
 	{
-		return (src.family < dist.family ?
+		if (strcmp(src.family.c_str(), dist.family.c_str()) < 0) {
+			return true;
+		}
+
+		return (src.size < dist.size ?
 		        true :
-		        (src.size < dist.size ?
-		                true :
-		                (src.bold < dist.bold ?
-		                        true : (src.italic < dist.italic ? true : false))));
+		        (src.bold < dist.bold ?
+		                true : (src.italic < dist.italic ? true : false)));
 	}
 
 	bool operator == (const Font& src, const Font& dist)
 	{
-		return (src.family == dist.family &&
-		        src.size == dist.size &&
-		                src.bold == dist.bold &&
-		                src.italic == dist.italic);
-	}
+		if (strcmp(src.family.c_str(), dist.family.c_str()) == 0) {
+			return true;
+		}
 
+		return (src.size == dist.size && src.bold == dist.bold
+		        && src.italic == dist.italic);
+	}
 
 }
 
