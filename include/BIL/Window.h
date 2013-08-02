@@ -14,7 +14,6 @@
 #include <map>
 
 #include <BIL/BasicObject.h>
-#include <BIL/Size.h>
 #include <BIL/Tuple.h>
 
 namespace BIL {
@@ -47,7 +46,7 @@ namespace BIL {
             return _window;
         }
 
-        Size2Di getSize (void);
+        Vec2i getSize (void);
 
         bool resize (const Coord2i& size);
 

@@ -15,7 +15,7 @@ namespace BIL {
 			: Controller(parent)
 	{
 		// TODO Auto-generated constructor stub
-		_size = Size2Dui(128, 32);
+		_size = Vec2ui(128, 32);
 	}
 
 	AbstractButton::~AbstractButton ()
@@ -27,10 +27,10 @@ namespace BIL {
 	{
 		// Demo code, copy from GLFW webpage
 
-		GLint x = _pos.getX();
-		GLint y = _pos.getY();
-		GLint w = _size.getWidth();
-		GLint h = _size.getHeight();
+		GLint x = _pos.coord.x;
+		GLint y = _pos.coord.y;
+		GLint w = _size.vec.x;
+		GLint h = _size.vec.y;
 
 		glClear(GL_COLOR_BUFFER_BIT);
 

@@ -18,7 +18,7 @@ myDrawable::myDrawable (BasicObject *parent)
     : Drawable(parent)
 {
     resize (400, 400);
-    setPos (Point2Di(20, 20));
+    setPos (Coord2i(20, 20));
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
 

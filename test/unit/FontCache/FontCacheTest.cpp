@@ -74,7 +74,7 @@ void FontCacheTest::create2 ()
 
 void FontCacheTest::create3 ()
 {
-	FontCache* cache = FontCache::create(Font("Droid Sans"));
+	FontCache::create(Font("Droid Sans"));
 
 	bool result = FontCache::release(Font("Sans"));
 

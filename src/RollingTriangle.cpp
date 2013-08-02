@@ -30,9 +30,9 @@ namespace BIL {
 	{
 		float ratio;
 
-		ratio = getSize().getWidth() / (float) getSize().getHeight();
+		ratio = getSize().vec.x / (float) getSize().vec.y;
 
-		glViewport(0, 0, getSize().getWidth(), getSize().getHeight());
+		glViewport(0, 0, getSize().vec.x, getSize().vec.y);
 
 		glClear(GL_COLOR_BUFFER_BIT);
 		glMatrixMode(GL_PROJECTION);

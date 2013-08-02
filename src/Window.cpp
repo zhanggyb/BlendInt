@@ -52,13 +52,13 @@ namespace BIL {
         glfwDestroyWindow(_window);
     }
 
-    Size2Di Window::getSize (void)
+    Vec2i Window::getSize (void)
     {
         int w, h;
 
         glfwGetWindowSize(_window, &w, &h);
 
-        return Size2Di(w, h);
+        return Vec2i(w, h);
     }
 
     bool Window::resize (const Coord2i& size)
@@ -104,8 +104,8 @@ namespace BIL {
 
     void Window::render (void)
     {
-        int width = getSize().getWidth();
-        int height = getSize().getHeight();
+        int width = getSize().vec.x;
+        int height = getSize().vec.y;
         // float ratio = width / (float) height;
 
         glClearColor(0.40,0.40,0.45,1.00);

@@ -26,7 +26,7 @@ namespace BIL {
 
 	}
 
-	void Drawable::resize (const Size2Dui& size)
+	void Drawable::resize (const Vec2ui& size)
 	{
 		_size = size;
 		render();

@@ -8,6 +8,7 @@
 #ifndef _BIL_PEN_H_
 #define _BIL_PEN_H_
 
+#include <GL/gl.h>
 #include <BIL/Font.h>
 #include <BIL/Tuple.h>
 

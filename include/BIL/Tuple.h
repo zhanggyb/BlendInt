@@ -192,6 +192,8 @@ namespace BIL {
 	typedef Tuple3<int> Tuple3i, Coord3i, Vec3i;
 	typedef Tuple4<int> Tuple4i, Vec4i;
 
+	typedef Tuple2<unsigned int> Tuple2ui, Coord2ui, Vec2ui;
+
 	typedef Tuple2<float> Tuple2f, Coord2f, Vec2f;
 	typedef Tuple3<float> Tuple3f, Coord3f, Vec3f;
 	typedef Tuple4<float> Tuple4f, Vec4f, Rectf, RGBAf;

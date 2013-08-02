@@ -15,8 +15,8 @@ namespace BIL {
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub
-		_size = Size2Dui(250, 200);
-		setMargin (1, 1, 1, 1);
+		_size = Vec2ui(250, 200);
+		setMargin(Vec4i(1, 1, 1, 1));
 	}
 
 	Container::~Container ()

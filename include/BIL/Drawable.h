@@ -9,17 +9,13 @@
 #define _BIL_DRAWABLE_H_
 
 // if use C++ 11, include <array>
-#include <boost/array.hpp>
 #include <stddef.h>
 
 #include <BIL/BasicObject.h>
-#include <BIL/Size.h>
-#include <BIL/Point.h>
 #include <BIL/Font.h>
+#include <BIL/Tuple.h>
 
 namespace BIL {
-
-	typedef boost::array<GLint, 4> Array4i;
 
 	class Drawable: public BIL::BasicObject
 	{
@@ -28,30 +24,30 @@ namespace BIL {
 
 		virtual ~Drawable ();
 
-		const Size2Dui& getSize (void) const
+		const Vec2ui& getSize (void) const
 		{
 			return _size;
 		}
 
 		void resize (unsigned int w, unsigned int h)
 		{
-			resize(Size2Dui(w, h));
+			resize(Vec2ui(w, h));
 		}
 
-		void resize (const Size2Dui& size);
+		void resize (const Vec2ui& size);
 
-		const Point3Di& getPos (void) const
+		const Coord3i& getPos (void) const
 		{
 			return _pos;
 		}
 
-		void setPos (const Point2Di& pos)
+		void setPos (const Coord2i& pos)
 		{
-			_pos = Point3Di(pos.getX(), pos.getY(), 0);
+			_pos = Coord3i(pos.coord.x, pos.coord.y, 0);
 			render ();
 		}
 
-		void setPos (const Point3Di& pos)
+		void setPos (const Coord3i& pos)
 		{
 			_pos = pos;
 			render();
@@ -62,38 +58,22 @@ namespace BIL {
 			render();
 		}
 
-		const Array4i& getMargin (void) const
+		const Vec4i& getMargin (void) const
 		{
 			return _margin;
 		}
 
-		void setMargin (GLint l, GLint r, GLint t, GLint b)
-		{
-			_margin[0] = l;
-			_margin[1] = r;
-			_margin[2] = t;
-			_margin[3] = b;
-		}
-
-		void setMargin (const Array4i& margin)
+		void setMargin (const Vec4i& margin)
 		{
 			_margin = margin;
 		}
 
-		const Array4i& getPadding (void) const
+		const Vec4i& getPadding (void) const
 		{
 			return _padding;
 		}
 
-		void setPadding (GLint l, GLint r, GLint t, GLint b)
-		{
-			_padding[0] = l;
-			_padding[1] = r;
-			_padding[2] = t;
-			_padding[b] = b;
-		}
-
-		void setPadding (const Array4i& padding)
+		void setPadding (const Vec4i& padding)
 		{
 			_padding = padding;
 		}
@@ -106,12 +86,12 @@ namespace BIL {
 
 		Font _font;
 
-		Size2Dui _size;
+		Vec2ui _size;
 
-		Point3Di _pos;
+		Coord3i _pos;
 
-		Array4i _padding; /** used when in Layout */
-		Array4i _margin; /** used when in Layout */
+		Vec4i _padding; /** used when in Layout */
+		Vec4i _margin; /** used when in Layout */
 
 	private:
 

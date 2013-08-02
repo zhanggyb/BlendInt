@@ -11,7 +11,6 @@
 #include <string>
 
 #include <BIL/Controller.h>
-#include <BIL/Color.h>
 #include <BIL/Font.h>
 
 using namespace std;
@@ -28,7 +27,7 @@ namespace BIL {
 
 		virtual ~Label ();
 
-		void setColor (const Color& color);
+		void setColor (const RGBAf& color);
 
 		void setFont (const Font& font);
 
@@ -42,9 +41,9 @@ namespace BIL {
 
 		Font _font;
 
-		Color _color;	/** Text color */
+		RGBAf _color;	/** Text color */
 
-		Color _background;	/** background color */
+		RGBAf _background;	/** background color */
 
 	};
 
