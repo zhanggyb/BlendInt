@@ -18,7 +18,7 @@ class TextBufferTest: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(TextBufferTest);
 
-    CPPUNIT_TEST(showcharacter1);
+    //CPPUNIT_TEST(showcharacter1);
     CPPUNIT_TEST(showtextline1);
 
     CPPUNIT_TEST_SUITE_END();

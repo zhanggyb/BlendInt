@@ -9,7 +9,7 @@
 using namespace BIL;
 using namespace std;
 
-// CPPUNIT_TEST_SUITE_REGISTRATION (BasicObjectTest);
+CPPUNIT_TEST_SUITE_REGISTRATION (BasicObjectTest);
 
 BasicObjectTest::BasicObjectTest ()
 {
