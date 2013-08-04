@@ -21,6 +21,7 @@ class FontEngineTest: public CppUnit::TestFixture
     CPPUNIT_TEST(create3);
     CPPUNIT_TEST(create4);
     CPPUNIT_TEST(create5);
+    CPPUNIT_TEST(create6);
     CPPUNIT_TEST(get_glyph1);
     CPPUNIT_TEST(get_glyph2);
     CPPUNIT_TEST(get_glyph3);
@@ -49,6 +50,7 @@ class FontEngineTest: public CppUnit::TestFixture
     void create3 ();
     void create4 ();
     void create5 ();
+    void create6 ();
     void get_glyph1 ();
     void get_glyph2 ();
     void get_glyph3 ();

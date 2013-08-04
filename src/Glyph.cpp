@@ -122,8 +122,10 @@ namespace BIL {
 
 		fontlib->setCharSize(_font.size, _dpi);
 		_glyphIndex = fontlib->getCharIndex(_charcode);
-		if (_glyphIndex == 0)
+		if (_glyphIndex == 0) {
+			cerr << "Error: Cannot get glyph index from: " << fontlib->getFont().family << endl;
 			return false;
+		}
 
 		//bool result = font.loadCharacter(_charcode, FT_LOAD_RENDER);
 		bool result = fontlib->loadGlyph(_glyphIndex);

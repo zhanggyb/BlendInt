@@ -177,6 +177,44 @@ void FontEngineTest::create5 ()
 	CPPUNIT_ASSERT(result);
 }
 
+void FontEngineTest::create6 ()
+{
+	bool result = false;
+	int index = 0;
+
+	Font font("Sans", 16);
+
+	FontEngine *fe = new FontEngine(font, 96);
+
+	result = fe->isValid();
+
+	if(result) {
+
+		cout << endl << fe->getFont().family << endl;
+		if(fe->getFont().bold) {
+			cout << "Bold" << endl;
+		} else {
+			cout << "Regular" << endl;
+		}
+
+		if(fe->getFont().italic) {
+			cout << "Italic" << endl;
+		} else {
+			cout << "Normal" << endl;
+		}
+
+		cout << "Font Size: " << fe->getFont().size << endl;
+
+		index = fe->getCharIndex('A');
+		cout << "CharIndex: " << index << endl;
+
+	}
+
+	delete fe;
+	fe = NULL;
+
+	CPPUNIT_ASSERT(result && (index != 0));
+}
 
 void FontEngineTest::get_glyph1 ()
 {

@@ -73,7 +73,7 @@ void TextBufferTest::showcharacter1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	TextBuffer buf (Font("Droid Sans", 16));
+	TextBuffer buf (Font("Sans", 12));
 	//TextBuffer buf;
 
 	buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
@@ -133,7 +133,7 @@ void TextBufferTest::showtextline1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	TextBuffer buf(Font("Droid Sans", 16));
+	TextBuffer buf(Font("Sans", 12));
 	buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
 	buf.append(L"abcde\nfghij\n床前明月光");
 
