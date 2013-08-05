@@ -34,6 +34,8 @@ namespace BIL {
 		/**/
 		TextBuffer (const wstring& text, const Font& font = Font("Sans"));
 
+		virtual ~TextBuffer ();
+
 		void append (const wstring& text);
 
 		void append (wchar_t charcode);
@@ -58,17 +60,17 @@ namespace BIL {
 
 		void clear (void); /* clear the text */
 
-		virtual ~TextBuffer ();
-
 		const wstring& getText (void) const
 		{
 			return _text;
 		}
 
-		const FontCache* getFontcache (void) const
+		const FontCache* getFontCache (void) const
 		{
 			return _fontcache;
 		}
+
+		Vec2ui calculateBox (void);
 
 	private:	// member functions disabled
 

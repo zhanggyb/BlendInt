@@ -66,6 +66,33 @@ namespace BIL {
 		_fontcache->initialize();
 	}
 
+	Vec2ui TextBuffer::calculateBox (void)
+	{
+		wstring::const_iterator it;
+		Vec2ui box;
+		
+		unsigned int line_width = 0;
+		unsigned int line = 1;
+		Glyph* glyph = NULL;
+
+		for(it = _text.begin(); it != _text.end(); it++)
+		{
+			if(*it == '\n') {
+				line++;
+				box.vec.x = box.vec.x > line_width? box.vec.x : line_width;
+			}
+
+			glyph = _fontcache->query(*it);
+			if (glyph != NULL) {
+				line_width = glyph->getBox().vec.x + line_width;
+			}
+		}
+
+		box.vec.x = box.vec.x > line_width ? box.vec.x : line_width;
+		box.vec.y = _fontcache->getHeight() * line + (line - 1) * _rowspacing;
+		return box;
+	}
+
 	void TextBuffer::render (void)
 	{
 		Glyph* glyph = NULL;

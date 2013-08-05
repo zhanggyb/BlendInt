@@ -113,6 +113,11 @@ namespace BIL {
 			return _fontengine->getMaxAdvance();
 		}
 
+		const FontEngine* getFontEngine (void) const
+		{
+			return _fontengine;
+		}
+
 #ifdef DEBUG
 		void printcount (void);
 #endif

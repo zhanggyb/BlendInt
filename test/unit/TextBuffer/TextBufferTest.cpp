@@ -357,3 +357,15 @@ void TextBufferTest::showtextline4 ()
 
     CPPUNIT_ASSERT(true);
 }
+
+void TextBufferTest::calculatebox1 ()
+{
+    TextBuffer buf(Font("Sans", 16));
+    buf.append(L"ArchLinux");
+
+	Vec2ui box = buf.calculateBox ();
+
+	cout << "Text Box: " << box.vec.x << " " << box.vec.y << endl;
+
+	CPPUNIT_ASSERT(true);
+}
