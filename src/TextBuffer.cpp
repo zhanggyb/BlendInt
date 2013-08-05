@@ -63,10 +63,7 @@ namespace BIL {
 	void TextBuffer::setFont (const Font& font)
 	{
 		_fontcache = FontCache::create(font);
-		bool result = _fontcache->initialize();
-		if(!result) {
-			cerr << "Cannot initialize fontcache" << endl;
-		}
+		_fontcache->initialize();
 	}
 
 	void TextBuffer::render (void)

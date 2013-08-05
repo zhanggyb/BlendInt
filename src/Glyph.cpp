@@ -15,6 +15,8 @@ namespace BIL {
 			        0), _dpi(96)
 	{
 		memset(&_metrics, 0, sizeof(Metrics));
+
+		makeDisplayList();
 	}
 
 	Glyph::Glyph (wchar_t charcode, const Font& font, unsigned int dpi,
@@ -123,7 +125,8 @@ namespace BIL {
 		fontlib->setCharSize(_font.size, _dpi);
 		_glyphIndex = fontlib->getCharIndex(_charcode);
 		if (_glyphIndex == 0) {
-			cerr << "Error: Cannot get glyph index from: " << fontlib->getFont().family << endl;
+			// TODO: if the character code is not supported in the font
+			// file, print a special symbol
 			return false;
 		}
 

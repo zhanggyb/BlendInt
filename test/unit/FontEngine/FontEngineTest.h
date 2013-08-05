@@ -14,56 +14,64 @@ using namespace std;
 
 class FontEngineTest: public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(FontEngineTest);
+CPPUNIT_TEST_SUITE(FontEngineTest);
 
-    CPPUNIT_TEST(create1);
-    CPPUNIT_TEST(create2);
-    CPPUNIT_TEST(create3);
-    CPPUNIT_TEST(create4);
-    CPPUNIT_TEST(create5);
-    CPPUNIT_TEST(create6);
-    CPPUNIT_TEST(get_glyph1);
-    CPPUNIT_TEST(get_glyph2);
-    CPPUNIT_TEST(get_glyph3);
-    CPPUNIT_TEST(get_glyph4);
-    CPPUNIT_TEST(get_glyph5);
-    CPPUNIT_TEST(glyph_metrics1);
-    CPPUNIT_TEST_SUITE_END();
+	CPPUNIT_TEST(create1);
+	CPPUNIT_TEST(create2);
+	CPPUNIT_TEST(create3);
+	CPPUNIT_TEST(create4);
+	CPPUNIT_TEST(create5);
+	CPPUNIT_TEST(create6);
+	CPPUNIT_TEST(checkindex1);
+	CPPUNIT_TEST(checkindex2);
+	CPPUNIT_TEST(checkindex3);
+	CPPUNIT_TEST(checkindex4);
+	CPPUNIT_TEST(get_glyph1);
+	CPPUNIT_TEST(get_glyph2);
+	CPPUNIT_TEST(get_glyph3);
+	CPPUNIT_TEST(get_glyph4);
+	CPPUNIT_TEST(get_glyph5);
+	CPPUNIT_TEST(glyph_metrics1);CPPUNIT_TEST_SUITE_END()
+	;
 
- public:
+public:
 
-    FontEngineTest();
+	FontEngineTest ();
 
-    virtual ~FontEngineTest();
+	virtual ~FontEngineTest ();
 
-    void setUp();
+	void setUp ();
 
-    void tearDown();
+	void tearDown ();
 
-    void runTest ();
+	void runTest ();
 
- private:
+private:
 
-    /* Test case */
-    void create1 ();
-    void create2 ();
-    void create3 ();
-    void create4 ();
-    void create5 ();
-    void create6 ();
-    void get_glyph1 ();
-    void get_glyph2 ();
-    void get_glyph3 ();
-    void get_glyph4 ();
-    void get_glyph5 ();         /* test new Face from memory */
-    void glyph_metrics1 ();
+	/* Test case */
+	void create1 ();
+	void create2 ();
+	void create3 ();
+	void create4 ();
+	void create5 ();
+	void create6 ();
+	void checkindex1 ();
+	void checkindex2 ();
+	void checkindex3 ();
+	void checkindex4 ();
+	void get_glyph1 ();
+	void get_glyph2 ();
+	void get_glyph3 ();
+	void get_glyph4 ();
+	void get_glyph5 (); /* test new Face from memory */
+	void glyph_metrics1 ();
 
-    /* draw bitmap */
-    void draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y);
+	/* draw bitmap */
+	void draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y);
 
-    void show_image(void);
+	void show_image (void);
 
-    unsigned char image[HEIGHT][WIDTH];
+	unsigned char image[HEIGHT][WIDTH];
 };
 
 #endif  /* _FONTENGINE_TEST_H */

@@ -216,6 +216,171 @@ void FontEngineTest::create6 ()
 	CPPUNIT_ASSERT(result && (index != 0));
 }
 
+void FontEngineTest::checkindex1 ()
+{
+	bool result = false;
+	int indexEn = 0; int indexCh = 0;
+
+	FontEngine *fe = new FontEngine(
+			"/usr/share/fonts/TTF/DejaVuSans.ttf", 16);
+
+	result = fe->isValid();
+
+	if(result) {
+
+		cout << endl << fe->getFont().family << endl;
+		if(fe->getFont().bold) {
+			cout << "Bold" << endl;
+		} else {
+			cout << "Regular" << endl;
+		}
+
+		if(fe->getFont().italic) {
+			cout << "Italic" << endl;
+		} else {
+			cout << "Normal" << endl;
+		}
+
+		cout << "Font Size: " << fe->getFont().size << endl;
+
+		indexEn = fe->getCharIndex('A');
+		cout << "CharIndex of English character: " << indexEn << endl;
+
+		indexCh = fe->getCharIndex(L'仁');
+		cout << "CharIndex of CJK character: " << indexCh << endl;
+
+	}
+
+	delete fe;
+	fe = NULL;
+
+	CPPUNIT_ASSERT(result && (indexEn != 0) && (indexCh == 0));
+}
+
+void FontEngineTest::checkindex2 ()
+{
+	bool result = false;
+	int indexEn = 0; int indexCh = 0;
+
+	FontEngine *fe = new FontEngine(
+			"/usr/share/fonts/TTF/DroidSansFallback.ttf", 16);
+
+	result = fe->isValid();
+
+	if(result) {
+
+		cout << endl << fe->getFont().family << endl;
+		if(fe->getFont().bold) {
+			cout << "Bold" << endl;
+		} else {
+			cout << "Regular" << endl;
+		}
+
+		if(fe->getFont().italic) {
+			cout << "Italic" << endl;
+		} else {
+			cout << "Normal" << endl;
+		}
+
+		cout << "Font Size: " << fe->getFont().size << endl;
+
+		indexEn = fe->getCharIndex('A');
+		cout << "CharIndex of English character: " << indexEn << endl;
+
+		indexCh = fe->getCharIndex(L'仁');
+		cout << "CharIndex of CJK character: " << indexCh << endl;
+
+	}
+
+	delete fe;
+	fe = NULL;
+
+	CPPUNIT_ASSERT(result && (indexEn != 0) && (indexCh != 0));
+}
+
+void FontEngineTest::checkindex3 ()
+{
+	bool result = false;
+	int indexEn = 0; int indexCh = 0;
+
+	FontEngine *fe = new FontEngine(
+			Font("Sans", 16));
+
+	result = fe->isValid();
+
+	if(result) {
+
+		cout << endl << fe->getFont().family << endl;
+		if(fe->getFont().bold) {
+			cout << "Bold" << endl;
+		} else {
+			cout << "Regular" << endl;
+		}
+
+		if(fe->getFont().italic) {
+			cout << "Italic" << endl;
+		} else {
+			cout << "Normal" << endl;
+		}
+
+		cout << "Font Size: " << fe->getFont().size << endl;
+
+		indexEn = fe->getCharIndex('A');
+		cout << "CharIndex of English character: " << indexEn << endl;
+
+		indexCh = fe->getCharIndex(L'仁');
+		cout << "CharIndex of CJK character: " << indexCh << endl;
+
+	}
+
+	delete fe;
+	fe = NULL;
+
+	CPPUNIT_ASSERT(result && (indexEn != 0) && (indexCh != 0));
+}
+
+void FontEngineTest::checkindex4 ()
+{
+	bool result = false;
+	int indexEn = 0; int indexCh = 0;
+
+	FontEngine *fe = new FontEngine(
+			Font("Droid Sans", 16));
+
+	result = fe->isValid();
+
+	if(result) {
+
+		cout << endl << fe->getFont().family << endl;
+		if(fe->getFont().bold) {
+			cout << "Bold" << endl;
+		} else {
+			cout << "Regular" << endl;
+		}
+
+		if(fe->getFont().italic) {
+			cout << "Italic" << endl;
+		} else {
+			cout << "Normal" << endl;
+		}
+
+		cout << "Font Size: " << fe->getFont().size << endl;
+
+		indexEn = fe->getCharIndex('A');
+		cout << "CharIndex of English character: " << indexEn << endl;
+
+		indexCh = fe->getCharIndex(L'仁');
+		cout << "CharIndex of CJK character: " << indexCh << endl;
+
+	}
+
+	delete fe;
+	fe = NULL;
+
+	CPPUNIT_ASSERT(result && (indexEn != 0) && (indexCh == 0));
+}
+
+
 void FontEngineTest::get_glyph1 ()
 {
 	bool result;

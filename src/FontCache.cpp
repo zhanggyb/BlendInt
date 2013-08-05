@@ -122,7 +122,7 @@ namespace BIL {
 #endif
 
 	FontCache::FontCache (const Font& font, unsigned int dpi)
-			: _font(font), _dpi(dpi), _fontengine(NULL)
+			: _font(font), _dpi(dpi), _fontengine(NULL), _initialized(false)
 	{
 		for (unsigned char i = 0; i < 128; i++) {
 			_asciiDB[i] = NULL;
@@ -145,8 +145,10 @@ namespace BIL {
 			for (unsigned char i = 0; i < 128; i++) {
 				if (_asciiDB[i] != NULL) {
 					delete _asciiDB[i];
+					_asciiDB[i] = NULL;
 				}
 			}
+			_initialized = false;
 		}
 		if (_fontengine != NULL) {
 			delete _fontengine;
@@ -160,10 +162,15 @@ namespace BIL {
 			return false;
 		}
 
+		if(_initialized) {
+			return false;
+		}
+
 		for (unsigned char i = 0; i < 128; i++) {
 			query(i, true);
 		}
 
+		_initialized = true;
 		return true;
 	}
 
@@ -177,9 +184,9 @@ namespace BIL {
 
 		if (charcode < 128) {
 			glyph = _asciiDB[charcode];
-			if (glyph == NULL && create) {
-				_asciiDB[charcode] = new Glyph(charcode, _font, _dpi,
-				        _fontengine);
+			if ((glyph == NULL) && create) {
+				glyph = new Glyph(charcode, _font, _dpi, _fontengine);
+				_asciiDB[charcode] = glyph;
 			}
 
 			return glyph;

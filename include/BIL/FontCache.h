@@ -152,6 +152,8 @@ namespace BIL {
 
 		FontEngine* _fontengine;
 
+		bool _initialized;
+
 		array<Glyph*, 128> _asciiDB;    // use arrary to store ascii for speed
 
 		map<wchar_t, Glyph*> _glyphDB;
