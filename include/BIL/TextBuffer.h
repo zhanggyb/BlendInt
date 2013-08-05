@@ -40,6 +40,16 @@ namespace BIL {
 
 		void setRowSpacing (float space);
 
+		void setForeground (const RGBAf& color)
+		{
+			_fg = color;
+		}
+
+		void setBackground (const RGBAf& color)
+		{
+			_bg = color;
+		}
+
 		void setOrigin (const Coord3f& origin);
 
 		void setFont (const Font& font);
@@ -49,6 +59,16 @@ namespace BIL {
 		void clear (void); /* clear the text */
 
 		virtual ~TextBuffer ();
+
+		const wstring& getText (void) const
+		{
+			return _text;
+		}
+
+		const FontCache* getFontcache (void) const
+		{
+			return _fontcache;
+		}
 
 	private:	// member functions disabled
 
@@ -64,11 +84,11 @@ namespace BIL {
 		/** Row spacing */
 		float _rowspacing;
 
-		/** Base color for text */
-		RGBAf _color;
+		/** Foreground, text color */
+		RGBAf _fg;
 
 		/** Background Color */
-		RGBAf _background;
+		RGBAf _bg;
 
 		/** Pen origin */
 		Coord3f _origin;

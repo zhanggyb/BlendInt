@@ -172,6 +172,14 @@ namespace BIL {
 
 		struct
 		{
+			T l;				/* left */
+			T r;				/* right */
+			T t;				/* top */
+			T b;				/* bottom */
+		} border;
+
+		struct
+		{
 			T r;
 			T g;
 			T b;

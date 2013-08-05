@@ -44,13 +44,11 @@ namespace BIL {
 		void setPos (const Coord2i& pos)
 		{
 			_pos = Coord3i(pos.coord.x, pos.coord.y, 0);
-			render ();
 		}
 
 		void setPos (const Coord3i& pos)
 		{
 			_pos = pos;
-			render();
 		}
 
 		virtual void refresh (void)
@@ -91,6 +89,7 @@ namespace BIL {
 		Coord3i _pos;
 
 		Vec4i _padding; /** used when in Layout */
+
 		Vec4i _margin; /** used when in Layout */
 
 	private:

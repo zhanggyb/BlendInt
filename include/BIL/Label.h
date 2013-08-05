@@ -11,6 +11,7 @@
 #include <string>
 
 #include <BIL/Controller.h>
+#include <BIL/TextBuffer.h>
 #include <BIL/Font.h>
 
 using namespace std;
@@ -21,15 +22,21 @@ namespace BIL {
 	{
 	public:
 
-		Label (BasicObject *parent = NULL);
-
-		Label (const string& label, BasicObject * parent = NULL);
+		Label (const wstring& label, Drawable * parent = NULL);
 
 		virtual ~Label ();
 
-		void setColor (const RGBAf& color);
+		void setLabel (const wstring& label);
 
-		void setFont (const Font& font);
+		void setTextColor (const RGBAf& fg, const RGBAf& bg)
+		{
+
+		}
+
+		void setFont (const Font& font)
+		{
+
+		}
 
 	protected:
 
@@ -37,13 +44,9 @@ namespace BIL {
 
 	private:
 
-		string _label;
+		TextBuffer _label;
 
-		Font _font;
-
-		RGBAf _color;	/** Text color */
-
-		RGBAf _background;	/** background color */
+		Coord2f _origin;		/* where start to draw text */
 
 	};
 

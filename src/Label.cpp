@@ -11,23 +11,28 @@
 
 namespace BIL {
 
-	Label::Label (BasicObject *parent)
-	: Controller (parent)
+	Label::Label (const wstring& label, Drawable *parent)
+		: Controller (parent), _label(label)
 	{
 		// TODO Auto-generated constructor stub
-		resize (128, _font.size + 2);
-	}
-
-	Label::Label (const string& label, BasicObject *parent)
-	: Controller (parent), _label(label)
-	{
-		// TODO Auto-generated constructor stub
-		resize (128, _font.size + 2);
+		setLabel (label);
 	}
 
 	Label::~Label ()
 	{
 		// TODO Auto-generated destructor stub
+	}
+
+	void Label::setLabel (const wstring& label)
+	{
+		if(label.empty()) {
+			// TODO: draw blank label
+			return;
+		}
+
+		_label.append(label);
+
+		
 	}
 
 	void Label::render(void)

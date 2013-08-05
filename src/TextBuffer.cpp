@@ -14,8 +14,8 @@
 namespace BIL {
 
 	TextBuffer::TextBuffer (const Font& font)
-			: _rowspacing(1.0), _color(1.0, 1.0, 1.0, 1.0),
-			  _background(0.0, 0.0, 0.0, 0.0)
+			: _rowspacing(1.0), _fg(1.0, 1.0, 1.0, 1.0),
+			  _bg(0.0, 0.0, 0.0, 0.0)
 	{
 		setFont (font);
 		glShadeModel(GL_FLAT);
@@ -23,8 +23,8 @@ namespace BIL {
 	}
 
 	TextBuffer::TextBuffer (const wstring& text, const Font& font)
-			: _rowspacing(1.0), _color(1.0, 1.0, 1.0, 1.0),
-			  _background(0.0, 0.0, 0.0, 0.0)
+			: _rowspacing(1.0), _fg(1.0, 1.0, 1.0, 1.0),
+			  _bg(0.0, 0.0, 0.0, 0.0)
 	{
 		setFont(font);
 		append(text);
@@ -71,10 +71,10 @@ namespace BIL {
 		Glyph* glyph = NULL;
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glColor4f (_color.rgba.r,
-				_color.rgba.g,
-				_color.rgba.b,
-				_color.rgba.a);
+		glColor4f (_fg.rgba.r,
+				_fg.rgba.g,
+				_fg.rgba.b,
+				_fg.rgba.a);
 
 		//glDisable(GL_LIGHTING);
 		//glDisable(GL_DEPTH_TEST);
