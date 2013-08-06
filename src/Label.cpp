@@ -11,11 +11,11 @@
 
 namespace BIL {
 
-	Label::Label (const wstring& label, Drawable *parent)
-		: Controller (parent), _label(label)
+	Label::Label (const wstring& text, Drawable *parent)
+		: Controller (parent)
 	{
 		// TODO Auto-generated constructor stub
-		setLabel (label);
+		setLabel (text);
 	}
 
 	Label::~Label ()
@@ -43,24 +43,21 @@ namespace BIL {
 
 	void Label::render(void)
 	{
+		glMatrixMode(GL_MODELVIEW);
+		//glLoadIdentity();
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		glPushMatrix();
 
 		glTranslatef(_pos.coord.x, _pos.coord.y, _pos.coord.z);
 
-		glColor3f (1.0, 1.0, 1.0);
-		glBegin(GL_LINES);
-			glVertex3f(0.0, 0.0, 0.0);
-			glVertex3f(_size.vec.x, 0.0, 0.0);
-			glVertex3f(_size.vec.x, _size.vec.y, 0.0);
-			glVertex3f(0.0, _size.vec.y, 0.0);
-			glVertex3f(0.0, 0.0, 0.0);
-		glEnd();
+		glColor4f(0.2f, 0.2f, 1.0f, 0.25f);
+		glRectf(0.0, 0.0, _size.vec.x, _size.vec.y);
 
 		_label.render();
 
+		glPopMatrix();
 	}
 
 } /* namespace BIL */

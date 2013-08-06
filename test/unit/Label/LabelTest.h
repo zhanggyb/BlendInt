@@ -16,27 +16,30 @@ using namespace std;
 
 class LabelTest: public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(LabelTest);
+CPPUNIT_TEST_SUITE(LabelTest);
 
-    CPPUNIT_TEST(show1);
-	
-    CPPUNIT_TEST_SUITE_END();
+	CPPUNIT_TEST(show1);
+	CPPUNIT_TEST(show2);
 
- public:
+	CPPUNIT_TEST_SUITE_END()
+	;
 
-    LabelTest();
+public:
 
-    virtual ~LabelTest();
+	LabelTest ();
 
-    void setUp();
+	virtual ~LabelTest ();
 
-    void tearDown();
+	void setUp ();
 
-    void runTest ();
+	void tearDown ();
 
- private:
+	void runTest ();
 
-    void show1 ();
+private:
+
+	void show1 ();
+	void show2 ();
 
 	void calculatebox1 ();
 };

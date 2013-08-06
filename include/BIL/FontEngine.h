@@ -60,10 +60,12 @@ namespace BIL {
 		 */
 		virtual ~FontEngine ();
 
-		bool isValid (void) const
+		bool isValid (void)
 		{
 			return _valid;
 		}
+
+		bool isUseKerning (void);
 
 		int getHeight (void) const
 		{

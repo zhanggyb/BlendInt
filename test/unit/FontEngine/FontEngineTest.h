@@ -31,8 +31,11 @@ CPPUNIT_TEST_SUITE(FontEngineTest);
 	CPPUNIT_TEST(get_glyph3);
 	CPPUNIT_TEST(get_glyph4);
 	CPPUNIT_TEST(get_glyph5);
-	CPPUNIT_TEST(glyph_metrics1);CPPUNIT_TEST_SUITE_END()
-	;
+	CPPUNIT_TEST(glyph_metrics1);
+
+	CPPUNIT_TEST (checkkerning1);
+
+	CPPUNIT_TEST_SUITE_END();
 
 public:
 
@@ -65,6 +68,8 @@ private:
 	void get_glyph4 ();
 	void get_glyph5 (); /* test new Face from memory */
 	void glyph_metrics1 ();
+
+	void checkkerning1 ();
 
 	/* draw bitmap */
 	void draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y);

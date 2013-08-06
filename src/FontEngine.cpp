@@ -189,6 +189,15 @@ namespace BIL {
 		}
 	}
 
+
+	bool FontEngine::isUseKerning (void)
+	{
+		if(!_valid)
+			return false;
+
+		return FT_HAS_KERNING(_face);
+	}
+
 	bool FontEngine::loadGlyph (FT_UInt glyph_index, FT_Int32 load_flags)
 	{
 		if (!_valid)
@@ -381,3 +390,4 @@ namespace BIL {
 	}
 
 } /* namespace BIL */
+

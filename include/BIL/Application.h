@@ -8,10 +8,7 @@
 #ifndef _BIL_APPLICATION_H_
 #define _BIL_APPLICATION_H_
 
-#include <GLFW/glfw3.h>
-#include <GL/gl.h>
 #include <string>
-
 #include <BIL/Window.h>
 
 namespace BIL {

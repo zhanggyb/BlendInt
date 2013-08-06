@@ -9,6 +9,7 @@
 #define _BIL_WINDOW_H_
 
 #include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <string>
 #include <map>

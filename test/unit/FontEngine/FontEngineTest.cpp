@@ -857,3 +857,37 @@ void FontEngineTest::glyph_metrics1 ()
 
 	CPPUNIT_ASSERT(result);
 }
+
+void FontEngineTest::checkkerning1()
+{
+	bool result;
+	FontConfig* gFontService = FontConfig::getService();
+	string fontpath = gFontService->getFontPath("Sans");
+
+	FontEngine *font = new FontEngine(fontpath);
+
+	result = font->isValid();
+
+	if (!font->isValid()) {
+		delete font;
+		font = NULL;
+		CPPUNIT_FAIL("Cannot create font\n");
+		return;
+	}
+
+	result = font->setCharSize(24, 96);
+
+	if (result) {
+		bool kerning = font->isUseKerning();
+		if(kerning) {
+			cout << "Sans uses kerning" << endl;
+		} else {
+			cout << "San does not use kerning" << endl;
+		}
+	}
+
+	delete font;
+	font = NULL;
+
+	CPPUNIT_ASSERT(result);
+}

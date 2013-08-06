@@ -5,6 +5,7 @@
  *      Author: zhanggyb
  */
 
+#include <GL/glew.h>
 #include <GL/gl.h>
 
 #include <BIL/Container.h>

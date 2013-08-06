@@ -5,8 +5,9 @@
  *      Author: zhanggyb
  */
 
-// Include GLEW. Always include it before gl.h and glfw.h, since it's a bit magic.
 #include <GL/glew.h>
+
+#include <GL/gl.h>
 
 #include <iostream>
 #include <string>
@@ -15,6 +16,7 @@
 
 #include <BIL/Application.h>
 #include <BIL/FontConfig.h>
+#include <BIL/Window.h>
 
 using namespace std;
 
