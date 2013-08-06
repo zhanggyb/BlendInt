@@ -1,8 +1,8 @@
 /*
  * TextBuffer.cpp
  *
- *  Created on: 2013年7月12日
- *      Author: zhanggyb
+ *	Created on: 2013年7月12日
+ *		Author: zhanggyb
  */
 
 #include <GL/glew.h>
@@ -17,7 +17,7 @@
 namespace BIL {
 
 	TextBuffer::TextBuffer (const Font& font)
-			: _rowspacing(1.0), _fg(1.0, 1.0, 1.0, 1.0), _bg(0.0, 0.0, 0.0, 0.0)
+		: _rowspacing(1.0), _fg(1.0, 1.0, 1.0, 1.0), _bg(0.0, 0.0, 0.0, 0.0)
 	{
 		setFont(font);
 		glShadeModel(GL_FLAT);
@@ -25,7 +25,7 @@ namespace BIL {
 	}
 
 	TextBuffer::TextBuffer (const wstring& text, const Font& font)
-			: _rowspacing(1.0), _fg(1.0, 1.0, 1.0, 1.0), _bg(0.0, 0.0, 0.0, 0.0)
+		: _rowspacing(1.0), _fg(1.0, 1.0, 1.0, 1.0), _bg(0.0, 0.0, 0.0, 0.0)
 	{
 		setFont(font);
 		append(text);
@@ -67,21 +67,6 @@ namespace BIL {
 		_fontcache->initialize();
 	}
 
-	/*
-	 * See section 4b, namely the function void compute_string_bbox( FT_BBox *abbox )
-	 *
-	 * It basically adds up the bounding boxes of each character.
-	 *
-	 * Effectively, the algorithm looks like:
-	 * 0) M <- invalid bounding box
-	 * 1) For each glyph G
-	 * 1.1)     Get kerning, advance pen
-	 * 1.2)     Get the bounding box as B
-	 * 1.3)     Add the pen position to B
-	 * 1.4)     Check if B is larger than the current bounding box M, if so, update it
-	 * 1.5)     Advance pen by G.advance
-	 * 2) Check if box is valid, correct if necessary
-	 */
 	Vec2ui TextBuffer::calculateBox (void)
 	{
 		wstring::const_iterator it;
@@ -99,7 +84,8 @@ namespace BIL {
 
 			glyph = _fontcache->query(*it);
 			if (glyph != NULL) {
-				line_width = glyph->getBox().vec.x + line_width;
+				// TODO: add kerning support
+				line_width = glyph->getMetrics().horiAdvance + line_width;
 			}
 		}
 
@@ -127,7 +113,9 @@ namespace BIL {
 		//glLoadIdentity();
 		glPushMatrix();
 
-		glTranslatef(_origin.coord.x, _origin.coord.y, _origin.coord.z);
+		glTranslatef(_origin.coord.x,
+					 _origin.coord.y - _fontcache->getDescender(),
+					 _origin.coord.z);
 
 		int line = 0;
 		wstring::const_iterator it;
@@ -136,9 +124,9 @@ namespace BIL {
 				line++;
 				glLoadIdentity();
 				glTranslatef(_origin.coord.x,
-				        _origin.coord.y
-				                - _rowspacing * _fontcache->getHeight() * line,
-				        _origin.coord.z);
+							 _origin.coord.y
+							 - _rowspacing * _fontcache->getHeight() * line,
+							 _origin.coord.z);
 				continue;
 			}
 

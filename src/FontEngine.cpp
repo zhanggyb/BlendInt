@@ -333,19 +333,10 @@ namespace BIL {
 		if ((!_valid) || (_face == NULL))
 			return ret;
 
-		// TODO: this is not an effective way
-		if(left.getFontSize() != _font.size ||
-				right.getFontSize() != _font.size)
-			return ret;
-
-		if(left.getDpi() != _dpi ||
-				right.getDpi() != _dpi)
-			return ret;
-
 		FT_Vector kerning;
 
 		bool result = getKerning(left.getGlyphIndex(),
-		        right.getGlyphIndex(), FT_KERNING_DEFAULT, &kerning);
+		        right.getGlyphIndex(), kerning_mode, &kerning);
 
 		if (!result)
 			return ret;

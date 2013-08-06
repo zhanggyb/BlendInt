@@ -78,6 +78,11 @@ namespace BIL {
 
 		void setFontType (FontEngine* fontlib);
 
+		const FontEngine* getFontEngine (void) const
+		{
+			return _lib;
+		}
+
 		unsigned int getDpi (void) const
 		{
 			return _dpi;

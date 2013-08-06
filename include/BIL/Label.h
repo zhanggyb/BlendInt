@@ -1,8 +1,8 @@
 /*
  * Label.h
  *
- *  Created on: 2013年7月11日
- *      Author: zhanggyb
+ *	Created on: 2013年7月11日
+ *		Author: zhanggyb
  */
 
 #ifndef _BIL_LABEL_H_
@@ -28,23 +28,36 @@ namespace BIL {
 
 		void setLabel (const wstring& label);
 
-		void setTextColor (const RGBAf& fg, const RGBAf& bg)
-		{
-
-		}
-
 		void setFont (const Font& font)
 		{
+			_label.setFont(font);
+			calculateBox();
+		}
 
+		void setTextColor (const RGBAf& fg,
+				const RGBAf& bg = RGBAf(0.0, 0.0, 0.0, 0.0))
+		{
+			_label.setForeground(fg);
+			_label.setBackground(bg);
+		}
+
+		void setBackground (const RGBAf& color)
+		{
+			_bg = color;
 		}
 
 		virtual void render (void);
 
 	private:
 
+		void calculateBox (void);
+
+	private:
+
 		TextBuffer _label;
 
-		Coord2f _origin;		/* where start to draw text */
+		/** Background color, default: transparent */
+		RGBAf _bg;
 
 	};
 

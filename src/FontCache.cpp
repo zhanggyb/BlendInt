@@ -1,8 +1,8 @@
 /*
  * FontCache.cpp
  *
- *  Created on: 2013年7月16日
- *      Author: zhanggyb
+ *	Created on: 2013年7月16日
+ *		Author: zhanggyb
  */
 
 #include <iostream>
@@ -44,12 +44,12 @@ namespace BIL {
 			// Remove mostly unused cache
 			typedef std::pair<Font, unsigned long> data_t;
 			typedef std::priority_queue<data_t, std::deque<data_t>,
-			        greater_second<data_t> > queue_t;
+										greater_second<data_t> > queue_t;
 			queue_t q(cacheCountDB.begin(), cacheCountDB.end());
 
 			Font font_of_cache = q.top().first;
 			cout << "Remove " << q.top().first.family << " from cache DB."
-			        << std::endl;
+				 << std::endl;
 
 			delete cacheDB[font_of_cache];
 			cacheDB.erase(font_of_cache);
@@ -116,13 +116,14 @@ namespace BIL {
 		map<Font, unsigned long>::const_iterator it;
 		cout << endl;
 		for (it = cacheCountDB.begin(); it != cacheCountDB.end(); it++) {
-			cout << it->first.family << " of " << it->first.size << " is used: " << it->second << endl;
+			cout << it->first.family << " of " << it->first.size
+				 << " is used: " << it->second << endl;
 		}
 	}
 #endif
 
 	FontCache::FontCache (const Font& font, unsigned int dpi)
-			: _font(font), _dpi(dpi), _fontengine(NULL), _initialized(false)
+		: _font(font), _dpi(dpi), _fontengine(NULL), _initialized(false)
 	{
 		for (unsigned char i = 0; i < 128; i++) {
 			_asciiDB[i] = NULL;
@@ -205,12 +206,12 @@ namespace BIL {
 				if (_glyphDB.size() >= cacheSize) {
 					typedef std::pair<wchar_t, unsigned long> data_t;
 					typedef std::priority_queue<data_t, std::deque<data_t>,
-					        greater_second<data_t> > queue_t;
+												greater_second<data_t> > queue_t;
 					queue_t q(_countDB.begin(), _countDB.end());
 
 					wchar_t char_to_del = q.top().first;
 					cout << "Remove " << q.top().first << " from cache."
-					        << std::endl;
+						 << std::endl;
 
 					delete _glyphDB[char_to_del];
 					_glyphDB.erase(char_to_del);

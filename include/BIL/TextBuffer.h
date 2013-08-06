@@ -70,6 +70,10 @@ namespace BIL {
 			return _fontcache;
 		}
 
+		/**
+		 * @brief Calculate and return the box contains the text
+		 * @return (width,height)
+		 */
 		Vec2ui calculateBox (void);
 
 	private:	// member functions disabled
