@@ -26,19 +26,19 @@ namespace BIL {
 
 		virtual ~Label ();
 
-		void setLabel (const wstring& label);
+		void setText (const wstring& label);
 
 		void setFont (const Font& font)
 		{
-			_label.setFont(font);
+			_text.setFont(font);
 			calculateBox();
 		}
 
 		void setTextColor (const RGBAf& fg,
 				const RGBAf& bg = RGBAf(0.0, 0.0, 0.0, 0.0))
 		{
-			_label.setForeground(fg);
-			_label.setBackground(bg);
+			_text.setForeground(fg);
+			_text.setBackground(bg);
 		}
 
 		void setBackground (const RGBAf& color)
@@ -48,13 +48,13 @@ namespace BIL {
 
 		virtual void render (void);
 
-	private:
+	private:	// member functions
 
 		void calculateBox (void);
 
 	private:
 
-		TextBuffer _label;
+		TextBuffer _text;
 
 		/** Background color, default: transparent */
 		RGBAf _bg;

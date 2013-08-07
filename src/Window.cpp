@@ -5,167 +5,170 @@
  *      Author: zhanggyb
  */
 
-#include <BIL/Window.h>
+#include <GL/glew.h>
+#include <GL/gl.h>
 
+#include <BIL/Window.h>
 #include <BIL/Drawable.h>
 
 namespace BIL {
 
-    std::map<GLFWwindow*, Window*> Window::windowMap;
+	std::map<GLFWwindow*, Window*> Window::windowMap;
 
-    Window::Window (BasicObject *parent)
-        : BasicObject(parent), _window(NULL)
-    {
-        _title = "Default";
+	Window::Window (BasicObject *parent)
+			: BasicObject(parent), _window(NULL)
+	{
+		_title = "Default";
 
-        _window = glfwCreateWindow(640, 480, _title.data(), NULL, NULL);
+		_window = glfwCreateWindow(640, 480, _title.data(), NULL, NULL);
 
-        if (_window == NULL)
-            throw;
+		if (_window == NULL)
+			throw;
 
-        registerCallbacks();
+		registerCallbacks();
 
-        // createDefaultLayout ();
-    }
+		// createDefaultLayout ();
+	}
 
-    Window::Window (int width, int height, const char* title,
-                    GLFWmonitor* monitor, GLFWwindow* share, BasicObject* parent)
-        : BasicObject(parent), _window(NULL)
-    {
-        _title = title;
-        _window = glfwCreateWindow(width, height, title, monitor, share);
+	Window::Window (int width, int height, const char* title,
+	        GLFWmonitor* monitor, GLFWwindow* share, BasicObject* parent)
+			: BasicObject(parent), _window(NULL)
+	{
+		_title = title;
+		_window = glfwCreateWindow(width, height, title, monitor, share);
 
-        if (_window == NULL)
-            throw;
+		if (_window == NULL)
+			throw;
 
-        registerCallbacks();
+		registerCallbacks();
 
-        // createDefaultLayout();
-    }
+		// createDefaultLayout();
+	}
 
-    Window::~Window ()
-    {
-        unregisterCallbacks();
+	Window::~Window ()
+	{
+		unregisterCallbacks();
 
-        deleteChildren();
+		deleteChildren();
 
-        glfwDestroyWindow(_window);
-    }
+		glfwDestroyWindow(_window);
+	}
 
-    Vec2i Window::getSize (void)
-    {
-        int w, h;
+	Vec2i Window::getSize (void)
+	{
+		int w, h;
 
-        glfwGetWindowSize(_window, &w, &h);
+		glfwGetWindowSize(_window, &w, &h);
 
-        return Vec2i(w, h);
-    }
+		return Vec2i(w, h);
+	}
 
-    bool Window::resize (const Coord2i& size)
-    {
-        return true;
-    }
+	bool Window::resize (const Coord2i& size)
+	{
+		return true;
+	}
 
-    void Window::setTitle (const std::string& title)
-    {
-        _title = title;
-        glfwSetWindowTitle(_window, title.data());
+	void Window::setTitle (const std::string& title)
+	{
+		_title = title;
+		glfwSetWindowTitle(_window, title.data());
 
-        return;
-    }
+		return;
+	}
 
-    void Window::setTitle (const char* title)
-    {
-        _title = title;
-        glfwSetWindowTitle(_window, title);
+	void Window::setTitle (const char* title)
+	{
+		_title = title;
+		glfwSetWindowTitle(_window, title);
 
-        return;
-    }
+		return;
+	}
 
-    bool Window::registerCallbacks (void)
-    {
-        windowMap[_window] = this;
+	bool Window::registerCallbacks (void)
+	{
+		windowMap[_window] = this;
 
-        glfwSetKeyCallback(_window, &BIL::Window::cbKey);
-        glfwSetWindowPosCallback(_window, &BIL::Window::cbWindowPosition);
-        glfwSetWindowSizeCallback(_window, &BIL::Window::cbWindowSize);
+		glfwSetKeyCallback(_window, &BIL::Window::cbKey);
+		glfwSetWindowPosCallback(_window, &BIL::Window::cbWindowPosition);
+		glfwSetWindowSizeCallback(_window, &BIL::Window::cbWindowSize);
 
-        // _scope.connect(this->keyEvent(), this, &Window::message);
+		// _scope.connect(this->keyEvent(), this, &Window::message);
 
-        return true;
-    }
+		return true;
+	}
 
-    bool Window::unregisterCallbacks (void)
-    {
-        windowMap.erase(_window);
+	bool Window::unregisterCallbacks (void)
+	{
+		windowMap.erase(_window);
 
-        return true;
-    }
+		return true;
+	}
 
-    void Window::render (void)
-    {
-        int width = getSize().vec.x;
-        int height = getSize().vec.y;
-        // float ratio = width / (float) height;
+	void Window::render (void)
+	{
+		int width = getSize().vec.x;
+		int height = getSize().vec.y;
+		// float ratio = width / (float) height;
 
-        glClearColor(0.40,0.40,0.45,1.00);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glColor4f(1.00,1.00,1.00,1.00);
+		float bg = 114.0 / 255;	// the default blender background color
+		glClearColor(bg, bg, bg, 1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glColor4f(1.00, 1.00, 1.00, 1.00);
 
-        // enable anti-alias
-        /*
-          glEnable(GL_BLEND);
-          glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-          glEnable (GL_POINT_SMOOTH);
-          glEnable (GL_LINE_SMOOTH);
-          glEnable (GL_POLYGON_SMOOTH);
-        */
+		// enable anti-alias
+		/*
+		 glEnable(GL_BLEND);
+		 glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		 glEnable (GL_POINT_SMOOTH);
+		 glEnable (GL_LINE_SMOOTH);
+		 glEnable (GL_POLYGON_SMOOTH);
+		 */
 
-        glViewport(0, 0, width, height);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+		glViewport(0, 0, width, height);
+		glMatrixMode (GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
 
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+		glMatrixMode (GL_MODELVIEW);
+		glLoadIdentity();
 
-        ChildrenList<BasicObject*>::iterator it;
-        Drawable *item = NULL;
-        for (it = _children.begin(); it != _children.end(); it++) {
-            item = dynamic_cast<Drawable*>(*it);
-            if (item != NULL) {
-                item->refresh();
-            }
-        }
-        // if (_mainLayout != NULL) {
-        //_mainLayout->Refresh();
-        //}
-    }
+		ChildrenList<BasicObject*>::iterator it;
+		Drawable *item = NULL;
+		for (it = _children.begin(); it != _children.end(); it++) {
+			item = dynamic_cast<Drawable*>(*it);
+			if (item != NULL) {
+				item->refresh();
+			}
+		}
+		// if (_mainLayout != NULL) {
+		//_mainLayout->Refresh();
+		//}
+	}
 
-    void Window::cbKey (GLFWwindow* window, int key, int scancode, int action,
-                        int mods)
-    {
-    }
+	void Window::cbKey (GLFWwindow* window, int key, int scancode, int action,
+	        int mods)
+	{
+	}
 
-    void Window::cbWindowSize (GLFWwindow* window, int w, int h)
-    {
-    }
+	void Window::cbWindowSize (GLFWwindow* window, int w, int h)
+	{
+	}
 
-    void Window::cbWindowPosition (GLFWwindow* window, int xpos, int ypos)
-    {
-    }
+	void Window::cbWindowPosition (GLFWwindow* window, int xpos, int ypos)
+	{
+	}
 
-    void Window::cbMouseButton (GLFWwindow* window, int button, int action,
-                                int mods)
-    {
-    }
+	void Window::cbMouseButton (GLFWwindow* window, int button, int action,
+	        int mods)
+	{
+	}
 
-    void Window::cbCursorPosition (GLFWwindow* window, double xpos, double ypos)
-    {
-    }
+	void Window::cbCursorPosition (GLFWwindow* window, double xpos, double ypos)
+	{
+	}
 
-    void Window::cbCursorEnter (GLFWwindow* window, int entered)
-    {
-    }
+	void Window::cbCursorEnter (GLFWwindow* window, int entered)
+	{
+	}
 
 } /* namespace BIL */

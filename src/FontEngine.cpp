@@ -333,6 +333,8 @@ namespace BIL {
 		if ((!_valid) || (_face == NULL))
 			return ret;
 
+		if (! FT_HAS_KERNING(_face))  return ret;
+
 		FT_Vector kerning;
 
 		bool result = getKerning(left.getGlyphIndex(),

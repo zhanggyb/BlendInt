@@ -19,6 +19,28 @@ namespace BIL {
 
 	class Drawable: public BIL::BasicObject
 	{
+		// enums
+	public:
+
+		/**
+		 * flags to set which corners will become rounded:
+		 *
+		 * 1------2
+		 * |      		|
+		 * 8------4
+		 */
+		enum CornerPosition
+		{
+			CORNER_TOP_LEFT = (1 << 0),
+			CORNER_TOP_RIGHT = (1 << 1),
+			CORNER_BOTTOM_RIGHT = (1 << 2),
+			CORNER_BOTTOM_LEFT = (1 << 3),
+			/* just for convenience */
+			CORNER_NONE = 0,
+			CORNER_ALL = (CORNER_TOP_LEFT | CORNER_TOP_RIGHT
+			        | CORNER_BOTTOM_RIGHT | CORNER_BOTTOM_LEFT)
+		};
+
 	public:
 		Drawable (BasicObject* parent = NULL);
 
@@ -76,11 +98,32 @@ namespace BIL {
 			_padding = padding;
 		}
 
-		const Font& getFont (void) const {return _font;}
+		const Font& getFont (void) const
+		{
+			return _font;
+		}
+
+		virtual void render (void) = 0;
 
 	protected:
 
-		virtual void render (void) = 0;
+		/**
+		 * @brief Draw a box shape
+		 * @param mode GLenum in glBegin
+		 * @param minx
+		 * @param miny
+		 * @param maxx
+		 * @param maxy
+		 * @param rad Corner radius, this will multiple the pre-defined vecter inside this function
+		 */
+		void drawBox (int mode, float minx, float miny, float maxx, float maxy,
+		        float rad);
+
+		void drawBoxShade (int mode, float minx, float miny, float maxx,
+		        float maxy, float rad, float shadetop, float shadedown);
+
+	protected:
+		// member variables
 
 		Font _font;
 
@@ -91,6 +134,8 @@ namespace BIL {
 		Vec4i _padding; /** used when in Layout */
 
 		Vec4i _margin; /** used when in Layout */
+
+		CornerPosition _corner;
 
 	private:
 

@@ -70,7 +70,9 @@ namespace BIL {
 	Vec2ui TextBuffer::calculateBox (void)
 	{
 		wstring::const_iterator it;
+		wstring::const_iterator next;
 		Vec2ui box;
+		Vec2l kerning;
 		Glyph* glyph = NULL;
 
 		unsigned int line_width = 0;
@@ -84,8 +86,12 @@ namespace BIL {
 
 			glyph = _fontcache->query(*it);
 			if (glyph != NULL) {
-				// TODO: add kerning support
-				line_width = glyph->getMetrics().horiAdvance + line_width;
+				// add kerning support
+				next = it + 1;
+				if(next != _text.end()) {
+					kerning = _fontcache->getKerning(*it, *next);
+				}
+				line_width = glyph->getMetrics().horiAdvance + kerning.vec.x + line_width;
 			}
 		}
 
@@ -99,14 +105,12 @@ namespace BIL {
 	{
 		Glyph* glyph = NULL;
 
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glColor4f(_fg.rgba.r, _fg.rgba.g, _fg.rgba.b, _fg.rgba.a);
-
 		//glDisable(GL_LIGHTING);
 		//glDisable(GL_DEPTH_TEST);
 
-		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		glColor4f(_fg.rgba.r, _fg.rgba.g, _fg.rgba.b, _fg.rgba.a);
 
 		glMatrixMode(GL_MODELVIEW);
 
@@ -138,6 +142,8 @@ namespace BIL {
 		}
 
 		glPopMatrix();
+		glDisable(GL_BLEND);
+
 	}
 
 	void TextBuffer::clear (void)

@@ -16,9 +16,8 @@ namespace BIL {
 	Label::Label (const wstring& text, Drawable *parent)
 		: Controller (parent), _bg(RGBAf(0.0, 0.0, 0.0, 0.0))
 	{
-		// TODO Auto-generated constructor stub
 		setPadding(Vec4i(2, 2, 2, 2));
-		setLabel (text);
+		setText(text);
 	}
 
 	Label::~Label ()
@@ -26,18 +25,18 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	void Label::setLabel (const wstring& label)
+	void Label::setText (const wstring& label)
 	{
 		if(label.empty()) {
 			// TODO: draw blank label
 			return;
 		}
 
-		_label.append(label);
+		_text.append(label);
 
 		calculateBox();
 
-		_label.setOrigin(Coord3f(
+		_text.setOrigin(Coord3f(
 								 _pos.coord.x + _padding.border.l,
 								 _pos.coord.y + _padding.border.b,
 								 0.0)
@@ -46,7 +45,7 @@ namespace BIL {
 
 	void Label::calculateBox(void)
 	{
-		Vec2ui box = _label.calculateBox();
+		Vec2ui box = _text.calculateBox();
 		
 		box.vec.x = box.vec.x + _padding.border.l + _padding.border.r;
 		box.vec.y = box.vec.y + _padding.border.t + _padding.border.b;
@@ -67,7 +66,7 @@ namespace BIL {
 		glColor4f(_bg.rgba.r, _bg.rgba.g, _bg.rgba.b, _bg.rgba.a);
 		glRectf(0.0, 0.0, _size.vec.x, _size.vec.y);
 
-		_label.render();
+		_text.render();
 
 		glPopMatrix();
 	}

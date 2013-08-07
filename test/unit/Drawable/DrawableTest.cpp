@@ -6,7 +6,6 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
-
 #include "DrawableTest.h"
 
 using namespace BIL;
@@ -14,7 +13,7 @@ using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION (DrawableTest);
 
-myDrawable::myDrawable (BasicObject *parent)
+myTexture::myTexture (BasicObject *parent)
     : Drawable(parent)
 {
     resize (400, 400);
@@ -40,12 +39,12 @@ myDrawable::myDrawable (BasicObject *parent)
 
 }
 
-myDrawable::~myDrawable()
+myTexture::~myTexture()
 {
 
 }
 
-void myDrawable::render (void)
+void myTexture::render (void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -65,7 +64,7 @@ void myDrawable::render (void)
     glDisable(GL_TEXTURE_2D);
 }
 
-void myDrawable::makeCheckImage (void)
+void myTexture::makeCheckImage (void)
 {
     int i, j, c;
     for(i = 0; i < checkImageHeight; i++) {
@@ -78,6 +77,63 @@ void myDrawable::makeCheckImage (void)
         }
     }
 }
+
+myDrawable1::myDrawable1(BasicObject* parent)
+	: Drawable (parent)
+{
+
+}
+
+myDrawable1::~myDrawable1()
+{
+
+}
+
+void myDrawable1::render(void)
+{
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
+
+		drawBox(GL_POLYGON,
+				_pos.coord.x,
+				_pos.coord.y,
+				_pos.coord.x + _size.vec.x,
+				_pos.coord.y + _size.vec.y,
+				5.0);
+
+	glDisable(GL_BLEND);
+}
+
+myDrawable2::myDrawable2(BasicObject* parent)
+	: Drawable (parent)
+{
+
+}
+
+myDrawable2::~myDrawable2()
+{
+
+}
+
+void myDrawable2::render(void)
+{
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+		glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
+
+		drawBoxShade(GL_POLYGON,
+				_pos.coord.x,
+				_pos.coord.y,
+				_pos.coord.x + _size.vec.x,
+				_pos.coord.y + _size.vec.y,
+				5.0,
+				0.5, 0.1);
+
+	glDisable(GL_BLEND);
+}
+
 
 DrawableTest::DrawableTest ()
 {
@@ -106,11 +162,48 @@ void DrawableTest::texture1 ()
     Window win(640, 480, "640 x 480 Window", NULL, NULL);
 
     app.setMainWindow(&win);
-    //widget.initialize();
     app.initialize();
 
-    myDrawable widget;
+    myTexture widget;
     widget.setParent (&win);
+
+    app.run();
+
+    CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::mydrawable1()
+{
+    Application app;
+
+    Window win(640, 480, "640 x 480 Window", NULL, NULL);
+
+    app.setMainWindow(&win);
+    app.initialize();
+
+    myDrawable1 widget;
+    widget.setParent (&win);
+    widget.setPos(Coord2i(50, 50));
+    widget.resize(80, 40);
+
+    app.run();
+
+    CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::mydrawable2()
+{
+    Application app;
+
+    Window win(640, 480, "640 x 480 Window", NULL, NULL);
+
+    app.setMainWindow(&win);
+    app.initialize();
+
+    myDrawable2 widget;
+    widget.setParent (&win);
+    widget.setPos(Coord2i(50, 50));
+    widget.resize(80, 40);
 
     app.run();
 

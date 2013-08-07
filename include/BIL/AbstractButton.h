@@ -11,6 +11,11 @@
 #include <string>
 
 #include <BIL/Controller.h>
+#include <BIL/Font.h>
+#include <BIL/Tuple.h>
+#include <BIL/TextBuffer.h>
+
+using namespace std;
 
 namespace BIL {
 
@@ -18,19 +23,43 @@ namespace BIL {
 	{
 	public:
 
-		AbstractButton (BasicObject * parent = NULL);
-		virtual ~AbstractButton ();
+		AbstractButton (const wstring& text, Drawable* parent = NULL);
 
-	protected:
+		virtual ~AbstractButton ();
 
 		void render (void);
 
-	private:
+		void setText (const wstring& text);
 
-		std::string _title;
+		void setFont (const Font& font);
+
+		void setBackground (const RGBAf& color)
+		{
+			_bg = color;
+		}
+
+		void setCornerRadius (float rad)
+		{
+			_cornerRadius = rad;
+		}
+
+	private:	// member functions
+
+		void calculateBox (void);
+
+	private:	// member functions (disabled)
 
 		AbstractButton (const AbstractButton& orig);
 		AbstractButton& operator = (const AbstractButton& orig);
+
+	private:
+
+		TextBuffer _text;
+
+		RGBAf _bg;
+
+		float _cornerRadius;
+
 	};
 
 } /* namespace BIL */

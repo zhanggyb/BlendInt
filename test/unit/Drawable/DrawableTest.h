@@ -14,52 +14,76 @@
 using namespace BIL;
 using namespace std;
 
-class myDrawable: public Drawable
+class myTexture: public Drawable
 {
- public:
+public:
 
-    myDrawable (BasicObject *parent = NULL);
+	myTexture (BasicObject *parent = NULL);
 
-    virtual ~myDrawable ();
+	virtual ~myTexture ();
 
- protected:
+	void render (void);
 
-    void render (void);
+private:
+	void makeCheckImage (void);
 
- private:
-    void makeCheckImage(void);
+	static const int checkImageWidth = 64;
+	static const int checkImageHeight = 64;
 
-    static const int checkImageWidth = 64;
-    static const int checkImageHeight = 64;
-
-    GLuint _texName;
-    GLubyte _checkImage[checkImageHeight][checkImageWidth][4];
+	GLuint _texName;
+	GLubyte _checkImage[checkImageHeight][checkImageWidth][4];
 };
 
+class myDrawable1: public Drawable
+{
+public:
+
+	myDrawable1 (BasicObject* parent = NULL);
+
+	virtual ~myDrawable1 ();
+
+	void render (void);
+};
+
+class myDrawable2: public Drawable
+{
+public:
+
+	myDrawable2 (BasicObject* parent = NULL);
+
+	virtual ~myDrawable2 ();
+
+	void render (void);
+};
 
 class DrawableTest: public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(DrawableTest);
+CPPUNIT_TEST_SUITE(DrawableTest);
 
-    CPPUNIT_TEST(texture1);
+	CPPUNIT_TEST(texture1);
+	CPPUNIT_TEST(mydrawable1);
+	CPPUNIT_TEST(mydrawable2);
 
-    CPPUNIT_TEST_SUITE_END();
+	CPPUNIT_TEST_SUITE_END()
+	;
 
- public:
+public:
 
-    DrawableTest();
+	DrawableTest ();
 
-    virtual ~DrawableTest();
+	virtual ~DrawableTest ();
 
-    void setUp();
+	void setUp ();
 
-    void tearDown();
+	void tearDown ();
 
-    void runTest ();
+	void runTest ();
 
- private:
+private:
 
-    void texture1 ();
+	void texture1 ();
+	void mydrawable1 ();
+	void mydrawable2 ();
 };
 
 #endif  /* _DRAWABLE_TEST_H */

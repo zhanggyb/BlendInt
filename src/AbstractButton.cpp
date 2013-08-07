@@ -11,11 +11,12 @@
 
 namespace BIL {
 
-	AbstractButton::AbstractButton (BasicObject *parent)
-			: Controller(parent)
+	AbstractButton::AbstractButton (const wstring& text, Drawable *parent)
+			: Controller(parent), _bg(RGBAf(0.75f, 0.75f, 0.75f, 1.0)),
+			  _cornerRadius (1.0)
 	{
-		// TODO Auto-generated constructor stub
-		_size = Vec2ui(128, 32);
+		setPadding(Vec4i(2, 2, 2, 2));
+		setText(text);
 	}
 
 	AbstractButton::~AbstractButton ()
@@ -23,26 +24,61 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
+	void AbstractButton::setText (const wstring& text)
+	{
+		if(text.empty()) {
+			// TODO: draw blank label
+			return;
+		}
+
+		_text.append(text);
+
+		calculateBox();
+
+		_text.setOrigin(Coord3f(
+								 _pos.coord.x + _padding.border.l,
+								 _pos.coord.y + _padding.border.b,
+								 0.0)
+						 );
+	}
+
+	void AbstractButton::calculateBox(void)
+	{
+		Vec2ui box = _text.calculateBox();
+
+		box.vec.x = box.vec.x + _padding.border.l + _padding.border.r;
+		box.vec.y = box.vec.y + _padding.border.t + _padding.border.b;
+
+		resize (box);
+	}
+
 	void AbstractButton::render (void)
 	{
-		// Demo code, copy from GLFW webpage
-
-		GLint x = _pos.coord.x;
-		GLint y = _pos.coord.y;
-		GLint w = _size.vec.x;
-		GLint h = _size.vec.y;
-
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glColor3f(0.45f, 0.45f, 0.45f);
+		glPushMatrix();
 
-		glBegin(GL_QUADS);
-		glRecti(x, y, x + w, y + h);
-		glEnd();
+		glTranslatef(_pos.coord.x,
+					 _pos.coord.y,
+					 _pos.coord.z);
 
-		return;
+		glColor4f(_bg.rgba.r, _bg.rgba.g, _bg.rgba.b, _bg.rgba.a);
+		drawBox(GL_POLYGON,
+					0.0f,
+					0.0f,
+					_size.vec.x,
+					_size.vec.y,
+					_cornerRadius);
+
+		_text.render();
+
+		glPopMatrix();
+		glDisable(GL_BLEND);
+
+
 	}
 
 } /* namespace BIL */
