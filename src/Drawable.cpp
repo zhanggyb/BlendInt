@@ -23,16 +23,6 @@ namespace BIL {
 		r[1] *= f;
 	}
 
-	static inline float min_ff(float a, float b)
-	{
-		return (a < b) ? a : b;
-	}
-
-	static inline float max_ff(float a, float b)
-	{
-		return (a > b) ? a : b;
-	}
-
 	static void round_box_shade_col(const float col1[3], float const col2[3], const float fac)
 	{
 		float col[3];
@@ -145,12 +135,12 @@ namespace BIL {
 		glGetFloatv(GL_CURRENT_COLOR, color);
 
 		/* 'shade' defines strength of shading */
-		coltop[0]  = min_ff(1.0f, color[0] + shadetop);
-		coltop[1]  = min_ff(1.0f, color[1] + shadetop);
-		coltop[2]  = min_ff(1.0f, color[2] + shadetop);
-		coldown[0] = max_ff(0.0f, color[0] + shadedown);
-		coldown[1] = max_ff(0.0f, color[1] + shadedown);
-		coldown[2] = max_ff(0.0f, color[2] + shadedown);
+		coltop[0]  = std::min(1.0f, color[0] + shadetop);
+		coltop[1]  = std::min(1.0f, color[1] + shadetop);
+		coltop[2]  = std::min(1.0f, color[2] + shadetop);
+		coldown[0] = std::max(0.0f, color[0] + shadedown);
+		coldown[1] = std::max(0.0f, color[1] + shadedown);
+		coldown[2] = std::max(0.0f, color[2] + shadedown);
 
 		glShadeModel(GL_SMOOTH);
 		glBegin(mode);

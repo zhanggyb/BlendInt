@@ -79,3 +79,10 @@ void TupleTest::create5 ()
 
     CPPUNIT_ASSERT(test == dist);
 }
+
+void TupleTest::checkdefault1 ()
+{
+    RGBAf test (1.0, 1.0, 1.0);
+
+    CPPUNIT_ASSERT(test.rgba.a == 1.0);
+}

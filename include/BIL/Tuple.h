@@ -128,7 +128,7 @@ namespace BIL {
 			memset(this, 0, sizeof(*this));
 		}
 
-		Tuple4 (T x, T y, T z, T w)
+		Tuple4 (T x, T y, T z, T w = T(1.0))
 		{
 			data[0] = x;
 			data[1] = y;
