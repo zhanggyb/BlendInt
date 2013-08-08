@@ -81,7 +81,7 @@ void myTexture::makeCheckImage (void)
 myDrawable1::myDrawable1(BasicObject* parent)
 	: Drawable (parent)
 {
-
+	_corner = CORNER_ALL;
 }
 
 myDrawable1::~myDrawable1()
@@ -109,7 +109,7 @@ void myDrawable1::render(void)
 myDrawable2::myDrawable2(BasicObject* parent)
 	: Drawable (parent)
 {
-
+	_corner = CORNER_ALL;
 }
 
 myDrawable2::~myDrawable2()

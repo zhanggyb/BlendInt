@@ -23,7 +23,9 @@ namespace BIL {
 		r[1] *= f;
 	}
 
-	static void round_box_shade_col(const float col1[3], float const col2[3], const float fac)
+	static void round_box_shade_col(const float col1[3],
+									float const col2[3],
+									const float fac)
 	{
 		float col[3];
 
@@ -51,10 +53,20 @@ namespace BIL {
 		return;
 	}
 
-	void Drawable::drawBox(int mode, float minx, float miny, float maxx, float maxy, float rad)
+	void Drawable::drawBox(int mode,
+						   float minx,
+						   float miny,
+						   float maxx,
+						   float maxy,
+						   float rad)
 	{
-		float vec[7][2] = {{0.195, 0.02}, {0.383, 0.067}, {0.55, 0.169}, {0.707, 0.293},
-		                   {0.831, 0.45}, {0.924, 0.617}, {0.98, 0.805}};
+		float vec[7][2] = {	{0.195, 0.02},
+							{0.383, 0.067},
+							{0.55, 0.169},
+							{0.707, 0.293},
+							{0.831, 0.45},
+							{0.924, 0.617},
+							{0.98, 0.805} };
 		int a;
 
 		/* mult */
@@ -116,11 +128,22 @@ namespace BIL {
 	}
 
 
-	void BIL::Drawable::drawBoxShade (int mode, float minx, float miny, float maxx,
-	        float maxy, float rad, float shadetop, float shadedown)
+	void BIL::Drawable::drawBoxShade (int mode,
+									  float minx,
+									  float miny,
+									  float maxx,
+									  float maxy,
+									  float rad,
+									  float shadetop,
+									  float shadedown)
 	{
-		float vec[7][2] = {{0.195, 0.02}, {0.383, 0.067}, {0.55, 0.169}, {0.707, 0.293},
-		                   {0.831, 0.45}, {0.924, 0.617}, {0.98, 0.805}};
+		float vec[7][2] = { {0.195, 0.02},
+							{0.383, 0.067},
+							{0.55, 0.169},
+							{0.707, 0.293},
+							{0.831, 0.45},
+							{0.924, 0.617},
+							{0.98, 0.805} };
 		const float div = maxy - miny;
 		const float idiv = 1.0f / div;
 		float coltop[3], coldown[3], color[4];
@@ -171,7 +194,8 @@ namespace BIL {
 			glVertex2f(maxx, maxy - rad);
 
 			for (a = 0; a < 7; a++) {
-				round_box_shade_col(coltop, coldown, (div - rad + vec[a][1]) * idiv);
+				round_box_shade_col(coltop, coldown,
+									(div - rad + vec[a][1]) * idiv);
 				glVertex2f(maxx - vec[a][1], maxy - rad + vec[a][0]);
 			}
 			round_box_shade_col(coltop, coldown, 1.0);
