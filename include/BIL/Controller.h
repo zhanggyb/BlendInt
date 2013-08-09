@@ -12,6 +12,8 @@
 
 namespace BIL {
 
+	// TODO: rename to Widget, confused to controller in MVC
+
 	class Controller: public BIL::Drawable
 	{
 	public:

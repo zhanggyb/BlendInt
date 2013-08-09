@@ -134,6 +134,38 @@ void myDrawable2::render(void)
 	glDisable(GL_BLEND);
 }
 
+myDrawable3::myDrawable3(BasicObject* parent)
+	: Drawable (parent)
+{
+	_corner = CORNER_ALL;
+}
+
+myDrawable3::~myDrawable3()
+{
+
+}
+
+void myDrawable3::render(void)
+{
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+		glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
+
+		drawRoundBox(_pos.coord.x,
+				_pos.coord.y,
+				_pos.coord.x + _size.vec.x,
+				_pos.coord.y + _size.vec.y,
+				5.0);
+		drawShadowBox(_pos.coord.x,
+				_pos.coord.y,
+				_pos.coord.x + _size.vec.x,
+				_pos.coord.y + _size.vec.y,
+				5.0,
+				64);
+
+	glDisable(GL_BLEND);
+}
+
 
 DrawableTest::DrawableTest ()
 {
@@ -201,6 +233,25 @@ void DrawableTest::mydrawable2()
     app.initialize();
 
     myDrawable2 widget;
+    widget.setParent (&win);
+    widget.setPos(Coord2i(50, 50));
+    widget.resize(80, 40);
+
+    app.run();
+
+    CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::mydrawable3()
+{
+    Application app;
+
+    Window win(640, 480, "640 x 480 Window", NULL, NULL);
+
+    app.setMainWindow(&win);
+    app.initialize();
+
+    myDrawable3 widget;
     widget.setParent (&win);
     widget.setPos(Coord2i(50, 50));
     widget.resize(80, 40);

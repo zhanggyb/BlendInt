@@ -56,6 +56,17 @@ public:
 	void render (void);
 };
 
+class myDrawable3: public Drawable
+{
+public:
+
+	myDrawable3 (BasicObject* parent = NULL);
+
+	virtual ~myDrawable3 ();
+
+	void render (void);
+};
+
 class DrawableTest: public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(DrawableTest);
@@ -63,6 +74,7 @@ CPPUNIT_TEST_SUITE(DrawableTest);
 	CPPUNIT_TEST(texture1);
 	CPPUNIT_TEST(mydrawable1);
 	CPPUNIT_TEST(mydrawable2);
+	CPPUNIT_TEST(mydrawable3);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -84,6 +96,8 @@ private:
 	void texture1 ();
 	void mydrawable1 ();
 	void mydrawable2 ();
+	void mydrawable3 ();
+
 };
 
 #endif  /* _DRAWABLE_TEST_H */

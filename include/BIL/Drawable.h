@@ -38,7 +38,8 @@ namespace BIL {
 			/* just for convenience */
 			CORNER_NONE = 0,
 			CORNER_ALL = (CORNER_TOP_LEFT | CORNER_TOP_RIGHT
-			        | CORNER_BOTTOM_RIGHT | CORNER_BOTTOM_LEFT)
+			        | CORNER_BOTTOM_RIGHT | CORNER_BOTTOM_LEFT),
+			UI_RB_ALPHA = CORNER_ALL + 1
 		};
 
 	public:
@@ -103,9 +104,25 @@ namespace BIL {
 			return _font;
 		}
 
+		void setRoundBox (CornerPosition type)
+		{
+			_corner = type;
+		}
+
+		CornerPosition getRoundBox (void)
+		{
+			return _corner;
+		}
+
 		virtual void render (void) = 0;
 
-	protected:
+	protected:	// member functions
+
+		void drawRoundBox (float minx,
+						   float miny,
+						   float maxx,
+						   float maxy,
+						   float rad);
 
 		/**
 		 * @brief Draw a box shape
@@ -114,13 +131,64 @@ namespace BIL {
 		 * @param miny
 		 * @param maxx
 		 * @param maxy
-		 * @param rad Corner radius, this will multiple the pre-defined vecter inside this function
+		 * @param rad Corner radius, this will multiple the pre-defined vecter
+		 * inside this function
 		 */
-		void drawBox (int mode, float minx, float miny, float maxx, float maxy,
-		        float rad);
+		void drawBox (int mode,
+					  float minx,
+					  float miny,
+					  float maxx,
+					  float maxy,
+					  float rad);
 
-		void drawBoxShade (int mode, float minx, float miny, float maxx,
-		        float maxy, float rad, float shadetop, float shadedown);
+		void drawBoxShade (int mode,
+						   float minx,
+						   float miny,
+						   float maxx,
+						   float maxy,
+						   float rad,
+						   float shadetop,
+						   float shadedown);
+
+		void drawRoundRect(float minx,
+						   float miny,
+						   float maxx,
+						   float maxy,
+						   float rad);
+
+		void drawBoxShadow(unsigned char alpha,
+						   float minx,
+						   float miny,
+						   float maxx,
+						   float maxy);
+
+		void drawShadowBox(float minx,
+						   float miny,
+						   float maxx,
+						   float maxy,
+						   float shadsize,
+						   unsigned char alpha);
+
+		/* linear vertical shade within button or in outline */
+		/* view2d scrollers use it */
+		void drawBoxVerticalShade(int mode,
+								  float minx,
+								  float miny,
+								  float maxx,
+								  float maxy,
+								  float rad,
+								  float shadeLeft,
+								  float shadeRight);
+
+		// (old, used in outliner) plain antialiased filled box
+		void drawAntiRoundbox(int mode,
+							  float minx,
+							  float miny,
+							  float maxx,
+							  float maxy,
+							  float rad,
+							  bool use_alpha);
+
 
 	protected:
 		// member variables
