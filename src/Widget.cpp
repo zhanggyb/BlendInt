@@ -41,6 +41,26 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
+	void Widget::keyEvent (int key, int scancode, int action, int mods)
+	{
+	}
+
+	void Widget::charEvent (unsigned int character)
+	{
+	}
+
+	void Widget::mouseButtonEvent (int button, int action, int modes)
+	{
+	}
+
+	void Widget::cursorPosEvent (double xpos, double ypos)
+	{
+	}
+
+	void Widget::cursorEnterEvent (int entered)
+	{
+	}
+
 	void Widget::render (void)
 	{
 

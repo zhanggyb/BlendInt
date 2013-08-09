@@ -95,11 +95,6 @@ namespace BIL {
 			_pos = pos;
 		}
 
-		virtual void refresh (void)
-		{
-			render();
-		}
-
 		const Vec4i& getMargin (void) const
 		{
 			return _margin;
@@ -135,8 +130,6 @@ namespace BIL {
 			return _corner;
 		}
 
-		virtual void render (void) = 0;
-
 		void show (void)
 		{
 			_isVisible = true;
@@ -146,6 +139,20 @@ namespace BIL {
 		{
 			_isVisible = false;
 		}
+
+	public:	// virtual functions
+
+		virtual void render (void) = 0;
+
+		virtual void keyEvent (int key, int scancode, int action, int mods) = 0;
+
+		virtual void charEvent (unsigned int character) = 0;
+
+		virtual void mouseButtonEvent (int button, int action, int modes) = 0;
+
+		virtual void cursorPosEvent (double xpos, double ypos) = 0;
+
+		virtual void cursorEnterEvent (int entered) = 0;
 
 	protected:	// member functions
 

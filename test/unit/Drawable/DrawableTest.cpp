@@ -64,6 +64,26 @@ void myTexture::render (void)
     glDisable(GL_TEXTURE_2D);
 }
 
+void myTexture::keyEvent (int key, int scancode, int action, int mods)
+{
+}
+
+void myTexture::charEvent (unsigned int character)
+{
+}
+
+void myTexture::mouseButtonEvent (int button, int action, int modes)
+{
+}
+
+void myTexture::cursorPosEvent (double xpos, double ypos)
+{
+}
+
+void myTexture::cursorEnterEvent (int entered)
+{
+}
+
 void myTexture::makeCheckImage (void)
 {
     int i, j, c;
@@ -106,6 +126,26 @@ void myDrawable1::render(void)
 	glDisable(GL_BLEND);
 }
 
+void myDrawable1::keyEvent (int key, int scancode, int action, int mods)
+{
+}
+
+void myDrawable1::charEvent (unsigned int character)
+{
+}
+
+void myDrawable1::mouseButtonEvent (int button, int action, int modes)
+{
+}
+
+void myDrawable1::cursorPosEvent (double xpos, double ypos)
+{
+}
+
+void myDrawable1::cursorEnterEvent (int entered)
+{
+}
+
 myDrawable2::myDrawable2(BasicObject* parent)
 	: Drawable (parent)
 {
@@ -132,6 +172,26 @@ void myDrawable2::render(void)
 				0.5, 0.1);
 
 	glDisable(GL_BLEND);
+}
+
+void myDrawable2::keyEvent (int key, int scancode, int action, int mods)
+{
+}
+
+void myDrawable2::charEvent (unsigned int character)
+{
+}
+
+void myDrawable2::mouseButtonEvent (int button, int action, int modes)
+{
+}
+
+void myDrawable2::cursorPosEvent (double xpos, double ypos)
+{
+}
+
+void myDrawable2::cursorEnterEvent (int entered)
+{
 }
 
 myDrawable3::myDrawable3(BasicObject* parent)
@@ -166,6 +226,26 @@ void myDrawable3::render(void)
 	glDisable(GL_BLEND);
 }
 
+
+void myDrawable3::keyEvent (int key, int scancode, int action, int mods)
+{
+}
+
+void myDrawable3::charEvent (unsigned int character)
+{
+}
+
+void myDrawable3::mouseButtonEvent (int button, int action, int modes)
+{
+}
+
+void myDrawable3::cursorPosEvent (double xpos, double ypos)
+{
+}
+
+void myDrawable3::cursorEnterEvent (int entered)
+{
+}
 
 DrawableTest::DrawableTest ()
 {
@@ -260,3 +340,5 @@ void DrawableTest::mydrawable3()
 
     CPPUNIT_ASSERT(true);
 }
+
+

@@ -45,7 +45,9 @@ namespace BIL {
 	public:
 
 		typedef typename std::list<T>::iterator iterator;
-		// typedef typename std::list<T>::const_iterator const_iteator;
+		typedef typename std::list<T>::const_iterator const_iterator;
+		typedef typename std::list<T>::reverse_iterator reverse_iterator;
+		typedef typename std::list<T>::const_reverse_iterator const_reverse_iterator;
 
 		ChildrenList ();
 
@@ -56,24 +58,47 @@ namespace BIL {
 			return _list.begin();
 		}
 
-		/*
 		 const_iterator begin (void) const
 		 {
 		 return _list.begin();
 		 }
-		 */
 
 		iterator end (void)
 		{
 			return _list.end();
 		}
 
-		/*
 		 const_iterator end (void) const
 		 {
 		 return _list.end();
 		 }
-		 */
+
+		 reverse_iterator rbegin(void)
+		 {
+			 return _list.rbegin();
+		 }
+
+		 const_reverse_iterator rbegin(void) const
+		 {
+			 return _list.rbegin();
+		 }
+
+		 /**
+		  * @brief Return reverse iterator to reverse end
+		  * @return
+		  *
+		  * Returns a reverse iterator pointing to the theoretical element
+		  * preceding the first element in the list container
+		  */
+		 reverse_iterator rend (void)
+		 {
+			 return _list.rend();
+		 }
+
+		 const_reverse_iterator rend (void) const
+		 {
+			 return _list.rend();
+		 }
 
 		T operator [] (int n);
 

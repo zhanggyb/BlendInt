@@ -24,6 +24,16 @@ public:
 
 	void render (void);
 
+	void keyEvent (int key, int scancode, int action, int mods);
+
+	void charEvent (unsigned int character);
+
+	void mouseButtonEvent (int button, int action, int modes);
+
+	void cursorPosEvent (double xpos, double ypos);
+
+	void cursorEnterEvent (int entered);
+
 private:
 	void makeCheckImage (void);
 
@@ -43,6 +53,16 @@ public:
 	virtual ~myDrawable1 ();
 
 	void render (void);
+
+	void keyEvent (int key, int scancode, int action, int mods);
+
+	void charEvent (unsigned int character);
+
+	void mouseButtonEvent (int button, int action, int modes);
+
+	void cursorPosEvent (double xpos, double ypos);
+
+	void cursorEnterEvent (int entered);
 };
 
 class myDrawable2: public Drawable
@@ -54,6 +74,16 @@ public:
 	virtual ~myDrawable2 ();
 
 	void render (void);
+
+	void keyEvent (int key, int scancode, int action, int mods);
+
+	void charEvent (unsigned int character);
+
+	void mouseButtonEvent (int button, int action, int modes);
+
+	void cursorPosEvent (double xpos, double ypos);
+
+	void cursorEnterEvent (int entered);
 };
 
 class myDrawable3: public Drawable
@@ -65,6 +95,16 @@ public:
 	virtual ~myDrawable3 ();
 
 	void render (void);
+
+	void keyEvent (int key, int scancode, int action, int mods);
+
+	void charEvent (unsigned int character);
+
+	void mouseButtonEvent (int button, int action, int modes);
+
+	void cursorPosEvent (double xpos, double ypos);
+
+	void cursorEnterEvent (int entered);
 };
 
 class DrawableTest: public CppUnit::TestFixture

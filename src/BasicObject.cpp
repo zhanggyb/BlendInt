@@ -29,7 +29,7 @@ namespace BIL {
 
 	uint64_t BasicObject::id_last = 1;
 
-	map<uint64_t, BasicObject*> BasicObject::map;
+	map<uint64_t, BasicObject*> BasicObject::objMap;
 
 	BasicObject::BasicObject (BasicObject* parent)
 			: _parent(parent)
@@ -37,7 +37,7 @@ namespace BIL {
 		// generate a unique id
 		uint64_t temp = id_last;
 
-		while (BasicObject::map.count(id_last) == 1) {
+		while (BasicObject::objMap.count(id_last) == 1) {
 			id_last++;
 			if (temp == id_last)
 				throw;	// TODO: define exception
@@ -73,22 +73,22 @@ namespace BIL {
 
 	inline bool BasicObject::registerObj (void)
 	{
-		BasicObject::map[_id] = this;
+		BasicObject::objMap[_id] = this;
 		return true;
 	}
 
 	BasicObject* BasicObject::find (uint64_t id)
 	{
 		BasicObject *ret = NULL;
-		if (BasicObject::map.count(id) == 1)
-			ret = BasicObject::map[id];
+		if (BasicObject::objMap.count(id) == 1)
+			ret = BasicObject::objMap[id];
 
 		return ret;
 	}
 
 	inline bool BasicObject::unregisterObj (void)
 	{
-		BasicObject::map.erase(_id);
+		BasicObject::objMap.erase(_id);
 		return true;
 	}
 

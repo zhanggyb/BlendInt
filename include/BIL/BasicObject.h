@@ -91,14 +91,14 @@ namespace BIL {
 
 		static unsigned int mapSize (void)
 		{
-			return map.size();
+			return objMap.size();
 		}
 
 #ifdef DEBUG
 		static void reset (void)
 		{
 			id_last = 1;
-			map.clear();
+			objMap.clear();
 		}
 #endif
 
@@ -131,7 +131,7 @@ namespace BIL {
 		BasicObject* _parent; /** parent object */
 
 		static uint64_t id_last;
-		static std::map<uint64_t, BasicObject*> map;
+		static std::map<uint64_t, BasicObject*> objMap;
 
 	};
 

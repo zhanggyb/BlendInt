@@ -25,6 +25,8 @@
 #include <BIL/Window.h>
 #include <BIL/Drawable.h>
 
+using namespace std;
+
 namespace BIL {
 
 	std::map<GLFWwindow*, Window*> Window::windowMap;
@@ -102,9 +104,14 @@ namespace BIL {
 	{
 		windowMap[_window] = this;
 
-		glfwSetKeyCallback(_window, &BIL::Window::cbKey);
 		glfwSetWindowPosCallback(_window, &BIL::Window::cbWindowPosition);
 		glfwSetWindowSizeCallback(_window, &BIL::Window::cbWindowSize);
+
+		glfwSetKeyCallback(_window, &BIL::Window::cbKey);
+		glfwSetCharCallback(_window, &BIL::Window::cbChar);
+		glfwSetMouseButtonCallback(_window, &BIL::Window::cbMouseButton);
+		glfwSetCursorPosCallback (_window, &BIL::Window::cbCursorPos);
+		glfwSetCursorEnterCallback(_window, &BIL::Window::cbCursorEnter);
 
 		// _scope.connect(this->keyEvent(), this, &Window::message);
 
@@ -146,12 +153,12 @@ namespace BIL {
 		glMatrixMode (GL_MODELVIEW);
 		glLoadIdentity();
 
-		ChildrenList<BasicObject*>::iterator it;
+		ChildrenList<BasicObject*>::const_iterator it;
 		Drawable *item = NULL;
 		for (it = _children.begin(); it != _children.end(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
-				item->refresh();
+				item->render();
 			}
 		}
 		// if (_mainLayout != NULL) {
@@ -159,13 +166,87 @@ namespace BIL {
 		//}
 	}
 
+	void Window::keyEvent (int key, int scancode, int action, int mods)
+	{
+		ChildrenList<BasicObject*>::const_reverse_iterator it;
+		Drawable *item = NULL;
+		for (it = _children.rbegin(); it != _children.rend(); it++) {
+			item = dynamic_cast<Drawable*>(*it);
+			if (item != NULL) {
+				item->keyEvent(key, scancode, action, mods);
+			}
+		}
+	}
+
+	void Window::charEvent (unsigned int character)
+	{
+		ChildrenList<BasicObject*>::const_reverse_iterator it;
+		Drawable *item = NULL;
+		for (it = _children.rbegin(); it != _children.rend(); it++) {
+			item = dynamic_cast<Drawable*>(*it);
+			if (item != NULL) {
+				item->charEvent(character);
+			}
+		}
+	}
+
+	void Window::mouseButtonEvent (int button, int action, int mods)
+	{
+		ChildrenList<BasicObject*>::const_reverse_iterator it;
+		Drawable *item = NULL;
+		for (it = _children.rbegin(); it != _children.rend(); it++) {
+			item = dynamic_cast<Drawable*>(*it);
+			if (item != NULL) {
+				item->mouseButtonEvent(button, action, mods);
+			}
+		}
+	}
+
+	void Window::cursorPosEvent (double xpos, double ypos)
+	{
+		ChildrenList<BasicObject*>::const_reverse_iterator it;
+		Drawable *item = NULL;
+		for (it = _children.rbegin(); it != _children.rend(); it++) {
+			item = dynamic_cast<Drawable*>(*it);
+			if (item != NULL) {
+				item->cursorPosEvent(xpos, ypos);
+			}
+		}
+	}
+
+	void Window::cursorEnterEvent (int entered)
+	{
+		if (entered == GL_TRUE) {
+			cout << "Cursor entered." << endl;
+		}
+	}
+
 	void Window::cbKey (GLFWwindow* window, int key, int scancode, int action,
 	        int mods)
 	{
+		map<GLFWwindow*, BIL::Window*>::iterator it;
+		it = windowMap.find(window);
+
+		if(it != windowMap.end()) {
+			BIL::Window* winObj = windowMap[window];
+			winObj->keyEvent(key, scancode, action, mods);
+		}
+	}
+
+	void Window::cbChar (GLFWwindow* window, unsigned int character)
+	{
+		map<GLFWwindow*, BIL::Window*>::iterator it;
+		it = windowMap.find(window);
+
+		if(it != windowMap.end()) {
+			BIL::Window* winObj = windowMap[window];
+			winObj->charEvent(character);
+		}
 	}
 
 	void Window::cbWindowSize (GLFWwindow* window, int w, int h)
 	{
+
 	}
 
 	void Window::cbWindowPosition (GLFWwindow* window, int xpos, int ypos)
@@ -175,14 +256,35 @@ namespace BIL {
 	void Window::cbMouseButton (GLFWwindow* window, int button, int action,
 	        int mods)
 	{
+		map<GLFWwindow*, BIL::Window*>::iterator it;
+		it = windowMap.find(window);
+
+		if(it != windowMap.end()) {
+			BIL::Window* winObj = windowMap[window];
+			winObj->mouseButtonEvent(button, action, mods);
+		}
 	}
 
-	void Window::cbCursorPosition (GLFWwindow* window, double xpos, double ypos)
+	void Window::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 	{
+		map<GLFWwindow*, BIL::Window*>::iterator it;
+		it = windowMap.find(window);
+
+		if(it != windowMap.end()) {
+			BIL::Window* winObj = windowMap[window];
+			winObj->cursorPosEvent(xpos, ypos);
+		}
 	}
 
 	void Window::cbCursorEnter (GLFWwindow* window, int entered)
 	{
+		map<GLFWwindow*, BIL::Window*>::iterator it;
+		it = windowMap.find(window);
+
+		if(it != windowMap.end()) {
+			BIL::Window* winObj = windowMap[window];
+			winObj->cursorEnterEvent(entered);
+		}
 	}
 
 } /* namespace BIL */

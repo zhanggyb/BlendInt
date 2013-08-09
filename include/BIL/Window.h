@@ -134,6 +134,16 @@ namespace BIL {
 			render();
 		}
 
+		void keyEvent (int key, int scancode, int action, int mods);
+
+		void charEvent (unsigned int character);
+
+		void mouseButtonEvent (int button, int action, int mods);
+
+		void cursorPosEvent (double xpos, double ypos);
+
+		void cursorEnterEvent (int entered);
+
 	protected:
 
 		virtual void render (void);
@@ -157,6 +167,8 @@ namespace BIL {
 		static void cbKey (GLFWwindow* window, int key, int scancode,
 		        int action, int mods);
 
+		static void cbChar (GLFWwindow* window, unsigned int character);
+
 		static void cbWindowSize (GLFWwindow* window, int w, int h);
 
 		static void cbWindowPosition (GLFWwindow* window, int xpos, int ypos);
@@ -164,7 +176,7 @@ namespace BIL {
 		static void cbMouseButton (GLFWwindow* window, int button, int action,
 		        int mods);
 
-		static void cbCursorPosition (GLFWwindow* window, double xpos,
+		static void cbCursorPos (GLFWwindow* window, double xpos,
 		        double ypos);
 
 		static void cbCursorEnter (GLFWwindow* window, int entered);

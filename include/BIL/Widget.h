@@ -32,10 +32,23 @@ namespace BIL {
 	{
 	public:
 		Widget (BasicObject * parent = NULL);
+
 		virtual ~Widget ();
 
-	protected:
+		void keyEvent (int key, int scancode, int action, int mods);
+
+		void charEvent (unsigned int character);
+
+		void mouseButtonEvent (int button, int action, int modes);
+
+		void cursorPosEvent (double xpos, double ypos);
+
+		void cursorEnterEvent (int entered);
+
 		virtual void render (void);
+
+	protected:
+
 	};
 
 } /* namespace BIL */
