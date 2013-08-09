@@ -24,7 +24,7 @@
 
 #include <string>
 
-#include <BIL/Controller.h>
+#include <BIL/Widget.h>
 #include <BIL/TextBuffer.h>
 #include <BIL/Font.h>
 
@@ -32,7 +32,7 @@ using namespace std;
 
 namespace BIL {
 
-	class Label: public BIL::Controller
+	class Label: public BIL::Widget
 	{
 	public:
 

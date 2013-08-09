@@ -31,95 +31,149 @@
 #include <BIL/BasicObject.h>
 #include <BIL/Tuple.h>
 
+using namespace std;
+
 namespace BIL {
 
-    class Window: public BIL::BasicObject
-    {
-    public:
+	class Window: public BIL::BasicObject
+	{
+	public:
 
-        /**
-         * @brief Default Constructor
-         * @param parent parent object
-         *
-         * @warning: any OpenGL code to initialize something  will fail before
-         * makeContextCurrent in constructor
-         */
-        Window (BasicObject * parent = NULL);
+		enum InputMode {
+			CURSOR = GLFW_CURSOR,
+			STICKY_KEYS = GLFW_STICKY_KEYS,
+			STICKY_MOUSE_BUTTONS = GLFW_STICKY_MOUSE_BUTTONS
+		};
 
-        Window (int width, int height, const char *title, GLFWmonitor *monitor,
-                GLFWwindow *share, BasicObject* parent = NULL);
+		/**
+		 * @brief Default Constructor
+		 * @param parent parent object
+		 *
+		 * @warning: any OpenGL code to initialize something  will fail before
+		 * makeContextCurrent in constructor
+		 */
+		Window (BasicObject * parent = NULL);
 
-        void makeContextCurrent (void)
-        {
-            glfwMakeContextCurrent(_window);
-        }
+		Window (int width, int height, const char *title, GLFWmonitor *monitor,
+		        GLFWwindow *share, BasicObject* parent = NULL);
 
-        virtual ~Window ();
+		void makeContextCurrent (void)
+		{
+			glfwMakeContextCurrent(_window);
+		}
 
-        GLFWwindow* getWindow (void) const
-        {
-            return _window;
-        }
+		virtual ~Window ();
 
-        Vec2i getSize (void);
+		GLFWwindow* getWindow (void) const
+		{
+			return _window;
+		}
 
-        bool resize (const Coord2i& size);
+		Vec2i getSize (void);
 
-        bool resize (int w, int h)
-        {
-            return (resize(Coord2i(w, h)));
-        }
+		bool resize (const Coord2i& size);
 
-        void setTitle (const std::string& title);
-        void setTitle (const char *title);
+		bool resize (int w, int h)
+		{
+			return (resize(Coord2i(w, h)));
+		}
 
-        std::string getTitle (void)
-        {
-            return _title;
-        }
+		void setTitle (const std::string& title);
+		void setTitle (const char *title);
 
-        virtual void refresh (void)
-        {
-            render();
-        }
+		std::string getTitle (void)
+		{
+			return _title;
+		}
 
-    protected:
+		/**
+		 * @brief Returns the value of an input option for the window
+		 * @param[in] mode
+		 * @return
+		 */
+		int getInputMode (InputMode mode)
+		{
+			return glfwGetInputMode (_window, mode);
+		}
 
-        virtual void render (void);
+		/**
+		 * @brief Sets an input option for the window
+		 * @param mode
+		 * @param value
+		 */
+		void setInputMode (InputMode mode, int value)
+		{
+			glfwSetInputMode (_window, mode, value);
+		}
 
-    private:
+		int getKey (int key)
+		{
+			return glfwGetKey(_window, key);
+		}
 
-        Window (const Window& orig);
-        Window& operator = (const Window& orig);
+		int getMouseButton (int button)
+		{
+			return glfwGetMouseButton(_window, button);
+		}
 
-        bool registerCallbacks (void);
+		Coord2d getCursorPos (void)
+		{
+			Coord2d ret;
+			glfwGetCursorPos (_window, &(ret.coord.x), &(ret.coord.y));
 
-        bool unregisterCallbacks (void);
+			return ret;
+		}
 
-        GLFWwindow *_window;
+		void setCursorPos (double xpos, double ypos)
+		{
+			glfwSetCursorPos(_window, xpos, ypos);
+		}
 
-        std::string _title;
+		virtual void refresh (void)
+		{
+			render();
+		}
 
-        static void cbKey (GLFWwindow* window, int key, int scancode,
-                           int action, int mods);
+	protected:
 
-        static void cbWindowSize (GLFWwindow* window, int w, int h);
+		virtual void render (void);
 
-        static void cbWindowPosition (GLFWwindow* window, int xpos, int ypos);
+	private:
 
-        static void cbMouseButton (GLFWwindow* window, int button, int action,
-                                   int mods);
+		Window (const Window& orig);
+		Window& operator = (const Window& orig);
 
-        static void cbCursorPosition (GLFWwindow* window, double xpos,
-                                      double ypos);
+		bool registerCallbacks (void);
 
-        static void cbCursorEnter (GLFWwindow* window, int entered);
+		bool unregisterCallbacks (void);
 
-        /**
-         * A std::map container to record GLFWwindow and Window
-         */
-        static std::map<GLFWwindow*, BIL::Window*> windowMap;
-    };
+		GLFWwindow *_window;
+
+		std::string _title;
+
+	private:
+		// static member functions
+
+		static void cbKey (GLFWwindow* window, int key, int scancode,
+		        int action, int mods);
+
+		static void cbWindowSize (GLFWwindow* window, int w, int h);
+
+		static void cbWindowPosition (GLFWwindow* window, int xpos, int ypos);
+
+		static void cbMouseButton (GLFWwindow* window, int button, int action,
+		        int mods);
+
+		static void cbCursorPosition (GLFWwindow* window, double xpos,
+		        double ypos);
+
+		static void cbCursorEnter (GLFWwindow* window, int entered);
+
+		/**
+		 * A std::map container to record GLFWwindow and Window
+		 */
+		static std::map<GLFWwindow*, BIL::Window*> windowMap;
+	};
 
 } /* namespace BIL */
 #endif /* _BIL_WINDOW_H_ */

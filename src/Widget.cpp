@@ -22,11 +22,11 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include <BIL/Controller.h>
+#include <BIL/Widget.h>
 
 namespace BIL {
 
-	Controller::Controller (BasicObject *parent)
+	Widget::Widget (BasicObject *parent)
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub
@@ -36,12 +36,12 @@ namespace BIL {
 		setMargin(Vec4i(1, 1, 1, 1));
 	}
 
-	Controller::~Controller ()
+	Widget::~Widget ()
 	{
 		// TODO Auto-generated destructor stub
 	}
 
-	void Controller::render (void)
+	void Widget::render (void)
 	{
 
 	}

@@ -144,7 +144,7 @@ namespace BIL {
 	}
 
 	Drawable::Drawable (BasicObject* parent)
-		: BasicObject(parent), _corner (CORNER_NONE)
+		: BasicObject(parent), _corner (CORNER_NONE), _isVisible(true)
 	{
 
 	}

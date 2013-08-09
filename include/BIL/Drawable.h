@@ -137,6 +137,16 @@ namespace BIL {
 
 		virtual void render (void) = 0;
 
+		void show (void)
+		{
+			_isVisible = true;
+		}
+
+		void hide (void)
+		{
+			_isVisible = false;
+		}
+
 	protected:	// member functions
 
 		void drawRoundBox (float minx,
@@ -225,6 +235,8 @@ namespace BIL {
 		Vec4i _margin; /** used when in Layout */
 
 		CornerPosition _corner;
+
+		bool _isVisible;
 
 	private:
 

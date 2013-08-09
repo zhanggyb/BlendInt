@@ -23,7 +23,7 @@
 #define LAYOUT_H_
 
 #include <BIL/Drawable.h>
-#include <BIL/Controller.h>
+#include <BIL/Widget.h>
 
 namespace BIL {
 
@@ -33,7 +33,7 @@ namespace BIL {
 		Layout (BasicObject *parent = NULL);
 		virtual ~Layout ();
 
-		virtual bool addController (Controller *obj) = 0;
+		virtual bool addController (Widget *obj) = 0;
 
 	private:
 		Layout (const Layout& orig);

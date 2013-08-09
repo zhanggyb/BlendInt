@@ -26,7 +26,7 @@
 namespace BIL {
 
 	AbstractButton::AbstractButton (const wstring& text, Drawable *parent)
-			: Controller(parent), _bg(RGBAf(0.75f, 0.75f, 0.75f, 1.0)),
+			: Widget(parent), _bg(RGBAf(0.75f, 0.75f, 0.75f, 1.0)),
 			  _cornerRadius (1.0)
 	{
 		setPadding(Vec4i(2, 2, 2, 2));

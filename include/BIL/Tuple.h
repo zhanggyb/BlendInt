@@ -224,6 +224,8 @@ namespace BIL {
 	typedef Tuple3<long> Tuple3l, Coord3l, Vec3l;
 	typedef Tuple4<long> Tuple4l, Coord4l, Vec4l;
 
+	typedef Tuple2<double> Tuple2d, Coord2d, Vec2d;
+
 }       // namespace of BIL
 
 #endif /* TUPLE_ */

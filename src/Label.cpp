@@ -28,7 +28,7 @@
 namespace BIL {
 
 	Label::Label (const wstring& text, Drawable *parent)
-		: Controller (parent), _bg(RGBAf(0.0, 0.0, 0.0, 0.0))
+		: Widget (parent), _bg(RGBAf(0.0, 0.0, 0.0, 0.0))
 	{
 		setPadding(Vec4i(2, 2, 2, 2));
 		setText(text);

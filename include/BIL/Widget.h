@@ -19,15 +19,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-/*
- * Controller.h
- *
- *  Created on: 2013年7月4日
- *      Author: zhanggyb
- */
-
-#ifndef CONTROLLER_H_
-#define CONTROLLER_H_
+#ifndef _BIL_WIDGET_H_
+#define _BIL_WIDGET_H_
 
 #include <BIL/Drawable.h>
 
@@ -35,15 +28,15 @@ namespace BIL {
 
 	// TODO: rename to Widget, confused to controller in MVC
 
-	class Controller: public BIL::Drawable
+	class Widget: public BIL::Drawable
 	{
 	public:
-		Controller (BasicObject * parent = NULL);
-		virtual ~Controller ();
+		Widget (BasicObject * parent = NULL);
+		virtual ~Widget ();
 
 	protected:
 		virtual void render (void);
 	};
 
 } /* namespace BIL */
-#endif /* CONTROLLER_H_ */
+#endif /* _BIL_WIDGET_H_ */

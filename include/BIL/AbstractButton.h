@@ -31,7 +31,7 @@
 
 #include <string>
 
-#include <BIL/Controller.h>
+#include <BIL/Widget.h>
 #include <BIL/Font.h>
 #include <BIL/Tuple.h>
 #include <BIL/TextBuffer.h>
@@ -40,7 +40,7 @@ using namespace std;
 
 namespace BIL {
 
-	class AbstractButton: public BIL::Controller
+	class AbstractButton: public BIL::Widget
 	{
 	public:
 
