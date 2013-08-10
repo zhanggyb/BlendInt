@@ -241,6 +241,7 @@ void myDrawable3::mouseButtonEvent (int button, int action, int modes)
 
 void myDrawable3::cursorPosEvent (double xpos, double ypos)
 {
+	cout << "Cursor Position: " << xpos << " " << ypos << endl;
 }
 
 void myDrawable3::cursorEnterEvent (int entered)
@@ -326,7 +327,7 @@ void DrawableTest::mydrawable3()
 {
     Application app;
 
-    Window win(640, 480, "640 x 480 Window", NULL, NULL);
+    Window win(640, 480, "640 x 480 Window, test drawable3", NULL, NULL);
 
     app.setMainWindow(&win);
     app.initialize();

@@ -19,26 +19,20 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_CONTAINER_H_
-#define _BIL_CONTAINER_H_
 
-#include <BIL/Drawable.h>
+#include <BIL/EventHandler.h>
 
 namespace BIL {
 
-	class Container: public BIL::Drawable
+	EventHandler::EventHandler ()
 	{
-	public:
-		Container (BasicObject *parent = NULL);
-		virtual ~Container ();
+		// TODO Auto-generated constructor stub
 
-	protected:
-		void render (void);
+	}
 
-	private:
-		Container (const Container& orig);
-		Container& operator = (const Container& orig);
-	};
+	EventHandler::~EventHandler ()
+	{
+		// TODO Auto-generated destructor stub
+	}
 
 } /* namespace BIL */
-#endif /* CONTAINER_H_ */

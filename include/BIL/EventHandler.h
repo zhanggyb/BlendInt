@@ -19,63 +19,38 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_LABEL_H_
-#define _BIL_LABEL_H_
-
-#include <string>
-
-#include <BIL/Widget.h>
-#include <BIL/TextBuffer.h>
-#include <BIL/Font.h>
-
-using namespace std;
+#ifndef _BIL_EVENTHANDLER_H_
+#define _BIL_EVENTHANDLER_H_
 
 namespace BIL {
 
-	class Label: public BIL::Widget
+	class Window;
+
+	class EventHandler
 	{
 	public:
 
-		Label (const wstring& label, Drawable * parent = NULL);
+		friend class Window;
 
-		virtual ~Label ();
+		EventHandler ();
+		virtual ~EventHandler ();
 
-		void setText (const wstring& label);
+	protected:
 
-		void setFont (const Font& font)
-		{
-			_text.setFont(font);
-			calculateBox();
-		}
+		virtual void keyEvent (int key, int scancode, int action, int mods) = 0;
 
-		void setTextColor (const RGBAf& fg,
-				const RGBAf& bg = RGBAf(0.0, 0.0, 0.0, 0.0))
-		{
-			_text.setForeground(fg);
-			_text.setBackground(bg);
-		}
+		virtual void charEvent (unsigned int character) = 0;
 
-		void setBackground (const RGBAf& color)
-		{
-			_bg = color;
-		}
+		virtual void mouseButtonEvent (int button, int action, int modes) = 0;
 
-		virtual void render (void);
+		virtual void cursorPosEvent (double xpos, double ypos) = 0;
 
-	private:	// member functions
-
-		void cursorPosEvent (double xpos, double ypos);
-
-		void calculateBox (void);
+		virtual void cursorEnterEvent (int entered) = 0;
 
 	private:
-
-		TextBuffer _text;
-
-		/** Background color, default: transparent */
-		RGBAf _bg;
-
+		EventHandler(const EventHandler& orig);
+		EventHandler& operator = (const EventHandler& orig);
 	};
 
 } /* namespace BIL */
-#endif /* LABEL_H_ */
+#endif /* _BIL_EVENTHANDLER_H_ */

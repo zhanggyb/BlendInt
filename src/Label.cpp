@@ -85,4 +85,8 @@ namespace BIL {
 		glPopMatrix();
 	}
 
+	void Label::cursorPosEvent (double xpos, double ypos)
+	{
+		//cout << "Cursor Position: " << xpos << " " << ypos << endl;
+	}
 } /* namespace BIL */

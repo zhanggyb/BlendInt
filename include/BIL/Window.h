@@ -134,17 +134,17 @@ namespace BIL {
 			render();
 		}
 
-		void keyEvent (int key, int scancode, int action, int mods);
-
-		void charEvent (unsigned int character);
-
-		void mouseButtonEvent (int button, int action, int mods);
-
-		void cursorPosEvent (double xpos, double ypos);
-
-		void cursorEnterEvent (int entered);
-
 	protected:
+
+		virtual void keyEvent (int key, int scancode, int action, int mods);
+
+		virtual void charEvent (unsigned int character);
+
+		virtual void mouseButtonEvent (int button, int action, int mods);
+
+		virtual void cursorPosEvent (double xpos, double ypos);
+
+		virtual void cursorEnterEvent (int entered);
 
 		virtual void render (void);
 

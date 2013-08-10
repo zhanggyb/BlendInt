@@ -35,10 +35,11 @@
 #include <BIL/BasicObject.h>
 #include <BIL/Font.h>
 #include <BIL/Tuple.h>
+#include <BIL/EventHandler.h>
 
 namespace BIL {
 
-	class Drawable: public BIL::BasicObject
+	class Drawable: public BasicObject, public EventHandler
 	{
 		// enums
 	public:
@@ -144,6 +145,7 @@ namespace BIL {
 
 		virtual void render (void) = 0;
 
+		/*
 		virtual void keyEvent (int key, int scancode, int action, int mods) = 0;
 
 		virtual void charEvent (unsigned int character) = 0;
@@ -153,6 +155,7 @@ namespace BIL {
 		virtual void cursorPosEvent (double xpos, double ypos) = 0;
 
 		virtual void cursorEnterEvent (int entered) = 0;
+		*/
 
 	protected:	// member functions
 
