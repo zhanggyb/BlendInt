@@ -63,7 +63,7 @@ void WindowTest::event1 ()
     app.initialize();
 
     Label label(L"Test Event1");
-    label.setPos (Coord2i(300, 200));
+    label.setPos (Coord2f(300.0, 200.0));
     label.setParent (&win);
 
     app.run();
@@ -81,7 +81,7 @@ void WindowTest::event2 ()
     app.initialize();
 
     Label label(L"Test Event2");
-    label.setPos (Coord2i(300, 200));
+    label.setPos (Coord2f(300.0, 200.0));
     label.setParent (&win);
 
     app.run();

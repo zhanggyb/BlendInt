@@ -26,51 +26,51 @@
 
 namespace BIL {
 
+	struct WidgetColors
+	{
+		WidgetColors ();
+
+		RGBAf outline;		// Outline
+		RGBAf inner;			// Inner
+		RGBAf inner_sel;	// Inner Selected
+		RGBAf item;				// Item
+		RGBAf text;				// Text
+		RGBAf text_sel;		// Text Selected
+		bool shaded;			// Is Shaded
+		short shadetop;		// Shade Top
+		short shadedown;	// Shade Down
+		bool alpha_check;
+	};
+
+	struct WidgetStateColors
+	{
+		WidgetStateColors();
+
+		RGBAf inner_anim;	// Animated
+		RGBAf inner_anim_sel;	// Animated Selected
+		RGBAf inner_key;	// Keyframe
+		RGBAf inner_key_sel;	// Keyframe Selected
+		RGBAf inner_driven;	// Driven
+		RGBAf inner_driven_sel;	// Driven Selected
+		float blend;
+		float pad;
+	};
+
+	struct PanelColors
+	{
+		PanelColors ();
+
+		RGBAf header;
+		RGBAf back;
+		bool show_header;
+		bool show_back;
+		int pad;
+	};
+
 	class Theme
 	{
 	public:
 		// public structures
-
-		struct WidgetColors
-		{
-			WidgetColors ();
-
-			RGBAf outline;		// Outline
-			RGBAf inner;			// Inner
-			RGBAf inner_sel;	// Inner Selected
-			RGBAf item;				// Item
-			RGBAf text;				// Text
-			RGBAf text_sel;		// Text Selected
-			bool shaded;			// Is Shaded
-			short shadetop;		// Shade Top
-			short shadedown;	// Shade Down
-			bool alpha_check;
-		};
-
-		struct WidgetStateColors
-		{
-			WidgetStateColors();
-
-			RGBAf inner_anim;	// Animated
-			RGBAf inner_anim_sel;	// Animated Selected
-			RGBAf inner_key;	// Keyframe
-			RGBAf inner_key_sel;	// Keyframe Selected
-			RGBAf inner_driven;	// Driven
-			RGBAf inner_driven_sel;	// Driven Selected
-			float blend;
-			float pad;
-		};
-
-		struct PanelColors
-		{
-			PanelColors ();
-
-			RGBAf header;
-			RGBAf back;
-			bool show_header;
-			bool show_back;
-			int pad;
-		};
 
 		struct ThemeUI
 		{

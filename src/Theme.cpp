@@ -48,7 +48,7 @@ namespace BIL {
 		return true;
 	}
 
-	Theme::WidgetColors::WidgetColors()
+	WidgetColors::WidgetColors()
 		: outline(0.098, 0.098, 0.098),
 		  inner (0.6, 0.6, 0.6),
 		  inner_sel(0.392, 0.392, 0.392),
@@ -62,7 +62,7 @@ namespace BIL {
 	{
 	}
 
-	Theme::WidgetStateColors::WidgetStateColors()
+	WidgetStateColors::WidgetStateColors()
 		: inner_anim (0.451, 0.745, 0.298),
 		  inner_anim_sel (0.353, 0.651, 0.2),
 		  inner_key (0.941, 0.922, 0.392),
@@ -75,7 +75,7 @@ namespace BIL {
 
 	}
 
-	Theme::PanelColors::PanelColors()
+	PanelColors::PanelColors()
 		: header(0.0, 0.0, 0.0, 0.1),
 		  back(0.45, 0.45, 0.45, 0.5),
 		  show_header(false),

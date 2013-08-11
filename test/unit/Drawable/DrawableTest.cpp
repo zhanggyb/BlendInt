@@ -17,7 +17,7 @@ myTexture::myTexture (BasicObject *parent)
     : Drawable(parent)
 {
     resize (400, 400);
-    setPos (Coord2i(20, 20));
+    setPos (Coord2f(20.0, 20.0));
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -296,7 +296,7 @@ void DrawableTest::mydrawable1()
 
     myDrawable1 widget;
     widget.setParent (&win);
-    widget.setPos(Coord2i(50, 50));
+    widget.setPos(Coord2f(50.0, 50.0));
     widget.resize(80, 40);
 
     app.run();
@@ -315,7 +315,7 @@ void DrawableTest::mydrawable2()
 
     myDrawable2 widget;
     widget.setParent (&win);
-    widget.setPos(Coord2i(50, 50));
+    widget.setPos(Coord2f(50.0, 50.0));
     widget.resize(80, 40);
 
     app.run();
@@ -334,7 +334,7 @@ void DrawableTest::mydrawable3()
 
     myDrawable3 widget;
     widget.setParent (&win);
-    widget.setPos(Coord2i(50, 50));
+    widget.setPos(Coord2f(50.0, 50.0));
     widget.resize(80, 40);
 
     app.run();

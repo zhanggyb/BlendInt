@@ -74,7 +74,7 @@ void AbstractButtonTest::show1 ()
 	}
 
 	AbstractButton button(L"The Default Value");
-	button.setPos(Coord2i(50, 50));
+	button.setPos(Coord2f(50.0, 50.0));
 	button.setBackground(RGBAf(1.0, 0.9, 1.0, 0.9));
 	button.setCornerRadius (10.0);
 

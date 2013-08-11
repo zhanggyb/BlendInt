@@ -79,11 +79,6 @@ namespace BIL {
 		return Vec2i(w, h);
 	}
 
-	bool Window::resize (const Coord2i& size)
-	{
-		return true;
-	}
-
 	void Window::setTitle (const std::string& title)
 	{
 		_title = title;
@@ -246,7 +241,12 @@ namespace BIL {
 
 	void Window::cbWindowSize (GLFWwindow* window, int w, int h)
 	{
+		map<GLFWwindow*, BIL::Window*>::iterator it;
+		it = windowMap.find(window);
 
+		if(it != windowMap.end()) {
+			// TODO: resize all widgets/layouts in children
+		}
 	}
 
 	void Window::cbWindowPosition (GLFWwindow* window, int xpos, int ypos)

@@ -180,6 +180,14 @@ namespace BIL {
 		{
 			T x;
 			T y;
+			T z;
+			T w;
+		} vec;
+
+		struct
+		{
+			T x;
+			T y;
 			T w;
 			T h;
 		} rect;
@@ -212,7 +220,7 @@ namespace BIL {
 
 	typedef Tuple2<int> Tuple2i, Coord2i, Vec2i;
 	typedef Tuple3<int> Tuple3i, Coord3i, Vec3i;
-	typedef Tuple4<int> Tuple4i, Vec4i;
+	typedef Tuple4<int> Tuple4i, Vec4i, Recti;
 
 	typedef Tuple2<unsigned int> Tuple2ui, Coord2ui, Vec2ui;
 

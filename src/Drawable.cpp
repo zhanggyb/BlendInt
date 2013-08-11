@@ -574,4 +574,9 @@ namespace BIL {
 		glShadeModel(GL_FLAT);
 	}
 
+	void Drawable::drawScroll(const WidgetColors& wcol, const Recti& rect, const Recti& slider, ScrollState state)
+	{
+
+	}
+
 } /* namespace BIL */

@@ -71,11 +71,14 @@ namespace BIL {
 
 		Vec2i getSize (void);
 
-		bool resize (const Coord2i& size);
-
-		bool resize (int w, int h)
+		void resize (const Coord2i& size)
 		{
-			return (resize(Coord2i(w, h)));
+			resize (size.vec.x, size.vec.y);
+		}
+
+		void resize (int w, int h)
+		{
+			glfwSetWindowSize (_window, w, h);
 		}
 
 		void setTitle (const std::string& title);

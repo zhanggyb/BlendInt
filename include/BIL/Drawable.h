@@ -36,6 +36,7 @@
 #include <BIL/Font.h>
 #include <BIL/Tuple.h>
 #include <BIL/EventHandler.h>
+#include <BIL/Theme.h>
 
 namespace BIL {
 
@@ -64,6 +65,13 @@ namespace BIL {
 			UI_RB_ALPHA = CORNER_ALL + 1
 		};
 
+		enum ScrollState
+		{
+			SCROLL_PRESSED = (1 << 0),
+			SCROLL_ARROW = (1 << 1),
+			SCROLL_NO_OUTLINE = (1 << 2)
+		};
+
 	public:
 		Drawable (BasicObject* parent = NULL);
 
@@ -81,17 +89,22 @@ namespace BIL {
 
 		void resize (const Vec2ui& size);
 
-		const Coord3i& getPos (void) const
+		const Coord3f& getPos (void) const
 		{
 			return _pos;
 		}
 
-		void setPos (const Coord2i& pos)
+		void setPos (float x, float y, float z)
 		{
-			_pos = Coord3i(pos.coord.x, pos.coord.y, 0);
+			_pos = Coord3f(x, y, z);
 		}
 
-		void setPos (const Coord3i& pos)
+		void setPos (const Coord2f& pos)
+		{
+			_pos = Coord3f(pos.coord.x, pos.coord.y, 0);
+		}
+
+		void setPos (const Coord3f& pos)
 		{
 			_pos = pos;
 		}
@@ -144,18 +157,6 @@ namespace BIL {
 	public:	// virtual functions
 
 		virtual void render (void) = 0;
-
-		/*
-		virtual void keyEvent (int key, int scancode, int action, int mods) = 0;
-
-		virtual void charEvent (unsigned int character) = 0;
-
-		virtual void mouseButtonEvent (int button, int action, int modes) = 0;
-
-		virtual void cursorPosEvent (double xpos, double ypos) = 0;
-
-		virtual void cursorEnterEvent (int entered) = 0;
-		*/
 
 	protected:	// member functions
 
@@ -230,6 +231,10 @@ namespace BIL {
 							  float rad,
 							  bool use_alpha);
 
+		void drawScroll (const WidgetColors& wcol,
+				const Recti& rect,
+				const Recti& slider,
+				ScrollState state);
 
 	protected:
 		// member variables
@@ -238,7 +243,7 @@ namespace BIL {
 
 		Vec2ui _size;
 
-		Coord3i _pos;
+		Coord3f _pos;
 
 		Vec4i _padding; /** used when in Layout */
 

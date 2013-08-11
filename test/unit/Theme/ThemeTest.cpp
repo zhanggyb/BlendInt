@@ -102,7 +102,7 @@ void ThemeTest::initialize2 ()
 	RGBAf textcolor = theme->getThemeUI()->wcol_menu_item.text;
 
 	Label label(L"Text in Label");
-	label.setPos(Coord2i(50, 50));
+	label.setPos(Coord2f(50.0, 50.0));
 	label.setBackground(color);
 	label.setFont(Font("Droid Sans", 12));
 	label.setTextColor(textcolor);
