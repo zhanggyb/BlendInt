@@ -64,13 +64,17 @@ namespace BIL {
 		while (_children.size() > 0) {
 			item = _children.back();
 			_children.pop_back();
-			if (item != NULL) delete item;
+			if (item != NULL) {
+				removeChild(item);
+				delete item;
+			}
 		}
 
 		_children.clear();
 
 		if (_parent != NULL) {
-			_parent->removeChild(this);	// Be careful of this line
+			// _parent->removeChild(this);	// Be careful of this line
+			_parent->_children.erase(this);
 		} else {
 			list<Traceable*>::iterator it;
 			it = std::find(solo.begin(), solo.end(), this);
@@ -118,18 +122,18 @@ namespace BIL {
 				solo.remove(this);
 			}
 		} else {
-
 			_parent->removeChild(this, false);
-
-			if (parent != NULL) {
-				_parent = parent;
-				return (_parent->addChild(this));
-			} else {
-				_parent = NULL;
-				solo.push_back(this);
-			}
-
 		}
+
+		if (parent != NULL) {
+			_parent = parent;
+			// return (_parent->addChild(this));
+			_parent->_children.push_back(this);
+		} else {
+			_parent = NULL;
+			solo.push_back(this);
+		}
+
 		return true;
 	}
 
@@ -140,6 +144,12 @@ namespace BIL {
 
 		if (child->_parent != NULL) {
 			(child->_parent)->removeChild(child, false);
+		} else {
+			list<Traceable*>::iterator it;
+			it = std::find(solo.begin(), solo.end(), this);
+			if(it != solo.end()) {
+				solo.remove(child);
+			}
 		}
 
 		_children.push_back(child);
