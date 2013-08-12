@@ -31,6 +31,8 @@ CPPUNIT_TEST_SUITE(WindowTest);
 	CPPUNIT_TEST(event1);
 	CPPUNIT_TEST(event2);
 
+	CPPUNIT_TEST(solorender1);
+
 	CPPUNIT_TEST_SUITE_END()
 	;
 
@@ -50,6 +52,8 @@ private:
 
 	void event1 ();
 	void event2 ();
+
+	void solorender1 ();
 
 };
 

@@ -31,7 +31,8 @@ void TraceableTest::setUp ()
 
 void TraceableTest::tearDown ()
 {
-
+	int mapsize = Traceable::mapSize();
+	CPPUNIT_ASSERT(mapsize == 0);
 }
 
 void TraceableTest::checksolo1 ()
@@ -42,13 +43,13 @@ void TraceableTest::checksolo1 ()
 
 	Traceable obj;	// id == 1
 
-	int solosize = Traceable::getList().size();
+	int solosize = Traceable::getList()->size();
 
 	uint64_t id = obj.getId();
 
 	cout << "id: " << id << endl;
 
-  CPPUNIT_ASSERT(Traceable::getList().size() == 1);
+	CPPUNIT_ASSERT(solosize == 1);
 }
 
 void TraceableTest::checksolo2 ()
@@ -66,7 +67,7 @@ void TraceableTest::checksolo2 ()
 	delete obj;
 	obj = NULL;
 
-    CPPUNIT_ASSERT(Traceable::getList().size() == 0);
+    CPPUNIT_ASSERT(Traceable::getList()->size() == 0);
 }
 
 void TraceableTest::checkparent1 ()
@@ -78,17 +79,17 @@ void TraceableTest::checkparent1 ()
 	Traceable* parent = new Traceable;	// id == 1
 	Traceable* child = new Traceable(parent);	// id == 2
 
-	int sizebefore = Traceable::getList().size(); // 1
+	int sizebefore = Traceable::getList()->size(); // 1
 
 	child->setParent(NULL);
 
-	int sizeafter = Traceable::getList().size();	// 2
+	int sizeafter = Traceable::getList()->size();	// 2
 
 	delete child; delete parent;
 
 	cout << endl << "map size: "<< Traceable::mapSize() << endl;
 
-	cout << "solo list size: " << Traceable::getList().size() << endl;
+	cout << "solo list size: " << Traceable::getList()->size() << endl;
 
   CPPUNIT_ASSERT(sizebefore == 1 && sizeafter == 2);
 }
@@ -102,19 +103,19 @@ void TraceableTest::checkparent2 ()
 	Traceable* parent = new Traceable;	// id == 1
 	Traceable* child = new Traceable(parent);	// id == 2
 
-	int sizebefore = Traceable::getList().size(); // 1
+	int sizebefore = Traceable::getList()->size(); // 1
 
 	int mapsize = Traceable::mapSize();	// 2
 
 	child->setParent(NULL);
 
-	int sizeafter = Traceable::getList().size();	// 2
+	int sizeafter = Traceable::getList()->size();	// 2
 
 	delete child; delete parent;
 
 	cout << endl << "map size: "<< Traceable::mapSize() << endl;
 
-	cout << "solo list size: " << Traceable::getList().size() << endl;
+	cout << "solo list size: " << Traceable::getList()->size() << endl;
 
   CPPUNIT_ASSERT(sizebefore == 1 && sizeafter == 2 && mapsize == 2);
 }
@@ -129,7 +130,7 @@ void TraceableTest::checkparent3 ()
 	Traceable* child1 = new Traceable(parent);	// id == 2
 	Traceable* child2 = new Traceable(parent);	// id == 3
 
-	int sizebefore = Traceable::getList().size(); // 1
+	int sizebefore = Traceable::getList()->size(); // 1
 
 	int mapsize = Traceable::mapSize();	// 3
 
@@ -137,13 +138,13 @@ void TraceableTest::checkparent3 ()
 	child2->setParent(NULL);
 	child1->setParent(parent);
 
-	int sizeafter = Traceable::getList().size();	// 2
+	int sizeafter = Traceable::getList()->size();	// 2
 
 	delete child1; delete parent; delete child2;
 
 	cout << endl << "map size: "<< Traceable::mapSize() << endl;
 
-	cout << "solo list size: " << Traceable::getList().size() << endl;
+	cout << "solo list size: " << Traceable::getList()->size() << endl;
 
   CPPUNIT_ASSERT(sizebefore == 1 && sizeafter == 2 && mapsize == 3);
 }
@@ -171,7 +172,7 @@ void TraceableTest::checkparent4 (void)
 	int mapsize = Traceable::mapSize();
 	cout << endl << "map size: "<< mapsize << endl;
 
-	int solosize = Traceable::getList().size();
+	int solosize = Traceable::getList()->size();
 	cout << "solo list size: " << solosize << endl;
 
 	CPPUNIT_ASSERT (mapsize == 0 && solosize == 0);
@@ -193,7 +194,7 @@ void TraceableTest::checkparent5 (void)
 	delete obj1;
 
 	int mapsize = Traceable::mapSize();
-	int solosize = Traceable::getList().size();
+	int solosize = Traceable::getList()->size();
 
 	cout << endl << "map size: "<< mapsize << endl;
 	cout << "solo list size: " << solosize << endl;
@@ -217,7 +218,7 @@ void TraceableTest::checkparent6 (void)
 	delete obj1;
 
 	int mapsize = Traceable::mapSize();
-	int solosize = Traceable::getList().size();
+	int solosize = Traceable::getList()->size();
 
 	cout << endl << "map size: "<< mapsize << endl;
 	cout << "solo list size: " << solosize << endl;
@@ -249,7 +250,7 @@ void TraceableTest::checkparent7 (void)
 	delete obj1;
 
 	int mapsize = Traceable::mapSize();
-	int solosize = Traceable::getList().size();
+	int solosize = Traceable::getList()->size();
 
 	cout << endl << "map size: "<< mapsize << endl;
 	cout << "solo list size: " << solosize << endl;
@@ -282,20 +283,20 @@ void TraceableTest::checkparent8 (void)
 	delete obj1;	// now only 4 objects
 
 	int mapsize = Traceable::mapSize();
-	int solosize = Traceable::getList().size();
+	int solosize = Traceable::getList()->size();
 
 	cout << endl << "map size: "<< mapsize << endl;
 	cout << "solo list size: " << solosize << endl;
 
-	list<Traceable*>& tlist = Traceable::getList();
+	list<Traceable*>* tlist = Traceable::getList();
 	list<Traceable*>::iterator it;
-	for (it = tlist.begin(); it != tlist.end(); it++) {
+	for (it = tlist->begin(); it != tlist->end(); it++) {
 		cout << (*it)->getId() << endl;
 	}
 
-	map<uint64_t, Traceable*>& tmap = Traceable::getMap();
+	map<uint64_t, Traceable*>* tmap = Traceable::getMap();
 	map<uint64_t, Traceable*>::iterator j;
-	for (j = tmap.begin(); j != tmap.end(); j++) {
+	for (j = tmap->begin(); j != tmap->end(); j++) {
 		cout << j->second->getId() << endl;
 	}
 
@@ -304,10 +305,99 @@ void TraceableTest::checkparent8 (void)
 	delete obj4;
 
 	mapsize = Traceable::mapSize();
-	solosize = Traceable::getList().size();
+	solosize = Traceable::getList()->size();
 
 		cout << endl << "map size: "<< mapsize << endl;
 		cout << "solo list size: " << solosize << endl;
 
 	CPPUNIT_ASSERT(mapsize == 0 && solosize == 0);
+}
+
+void TraceableTest::checkparent9 (void)
+{
+	using namespace BIL;
+
+#ifdef DEBUG
+	Traceable::reset();	// reset the map
+#endif
+
+	Traceable *obj1 = new Traceable;	// id = 1
+	Traceable *obj2 = new Traceable;	// id = 2
+	Traceable *obj3 = new Traceable;	// id = 3
+	Traceable *obj4 = new Traceable;	// id = 4
+	Traceable *obj5 = new Traceable;	// id = 5
+	Traceable *obj6 = new Traceable;	// id = 6
+	Traceable obj7;
+	Traceable obj8;
+
+	obj2->setParent(obj1);
+	obj3->setParent(obj2);
+
+	obj4->addChild(obj5);
+	obj4->addChild(obj6);
+	obj4->addChild(obj3);
+
+	obj7.addChild(obj4);
+	obj7.addChild(&obj8);
+	obj8.setParent(&obj7);
+
+	int mapsize = Traceable::mapSize();
+	int solosize = Traceable::getList()->size();
+
+	cout << endl << "map size: "<< mapsize << endl; // 8
+	cout << "solo list size: " << solosize << endl; // 2
+
+	list<Traceable*>* tlist = Traceable::getList();
+	list<Traceable*>::iterator it;
+	for (it = tlist->begin(); it != tlist->end(); it++) {
+		cout << (*it)->getId() << endl;
+	}
+
+	map<uint64_t, Traceable*>* tmap = Traceable::getMap();
+	map<uint64_t, Traceable*>::iterator j;
+	for (j = tmap->begin(); j != tmap->end(); j++) {
+		cout << j->second->getId() << endl;
+	}
+
+	//CPPUNIT_ASSERT(mapsize == 4 && solosize == 1);
+
+	delete obj4; delete obj1;
+
+	mapsize = Traceable::mapSize();
+	solosize = Traceable::getList()->size();
+
+	cout << endl << "map size: "<< mapsize << endl; // 2
+	cout << "solo list size: " << solosize << endl; // 1
+
+	CPPUNIT_ASSERT(mapsize == 2 && solosize == 1);
+}
+
+void TraceableTest::checkparent10 (void)
+{
+	using namespace BIL;
+
+#ifdef DEBUG
+	Traceable::reset();	// reset the map
+#endif
+
+	Traceable* obj[100] = {0};
+	for(int i; i < 100; i++)
+	{
+		obj[i] = new Traceable;
+
+		if (i < 1) continue;
+		
+		obj[i]->setParent(obj[i-1]);
+	}
+
+	Traceable root;
+	root.addChild(obj[0]);
+
+	int mapsize = Traceable::mapSize();
+	int solosize = Traceable::getList()->size();
+
+	cout << endl << "map size: "<< mapsize << endl; // 8
+	cout << "solo list size: " << solosize << endl; // 2
+
+	CPPUNIT_ASSERT(mapsize == 101 && solosize == 1); // check tearDown()
 }

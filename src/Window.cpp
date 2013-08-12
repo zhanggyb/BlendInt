@@ -126,19 +126,17 @@ namespace BIL {
 		int height = getSize().vec.y;
 		// float ratio = width / (float) height;
 
-		float bg = 114.0 / 255;	// the default blender background color
-		glClearColor(bg, bg, bg, 1.00);
+		// float bg = 114.0 / 255;	// the default blender background color
+		glClearColor(0.447, 0.447, 0.447, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glColor4f(1.00, 1.00, 1.00, 1.00);
+		//glColor4f(1.00, 1.00, 1.00, 1.00);
 
 		// enable anti-alias
-		/*
-		 glEnable(GL_BLEND);
-		 glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		 glEnable (GL_POINT_SMOOTH);
-		 glEnable (GL_LINE_SMOOTH);
-		 glEnable (GL_POLYGON_SMOOTH);
-		 */
+		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		//glEnable (GL_POINT_SMOOTH);
+		//glEnable (GL_LINE_SMOOTH);
+		//glEnable (GL_POLYGON_SMOOTH);
 
 		glViewport(0, 0, width, height);
 		glMatrixMode (GL_PROJECTION);
@@ -156,6 +154,17 @@ namespace BIL {
 				item->render();
 			}
 		}
+
+		list<Traceable*>::const_iterator j;
+		for (j = Traceable::getList()->begin(); j != Traceable::getList()->end(); j++)
+		{
+			item = dynamic_cast<Drawable*>(*j);
+			if (item != NULL) {
+				item->render();
+			}
+		}
+
+		glDisable(GL_BLEND);
 		// if (_mainLayout != NULL) {
 		//_mainLayout->Refresh();
 		//}

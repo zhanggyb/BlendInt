@@ -19,6 +19,9 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+
 #include <string.h>
 #include <BIL/Glyph.h>
 #include <BIL/FontConfig.h>

@@ -23,6 +23,8 @@ class TraceableTest: public CppUnit::TestFixture
     CPPUNIT_TEST(checkparent6);
     CPPUNIT_TEST(checkparent7);
     CPPUNIT_TEST(checkparent8);
+	CPPUNIT_TEST(checkparent9);
+	CPPUNIT_TEST(checkparent10);
 
     CPPUNIT_TEST_SUITE_END();
 

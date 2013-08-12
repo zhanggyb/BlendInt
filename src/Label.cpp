@@ -72,11 +72,9 @@ namespace BIL {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glTranslatef(_pos.coord.x,
 					 _pos.coord.y,
 					 _pos.coord.z);
-
 		glColor4f(_bg.rgba.r, _bg.rgba.g, _bg.rgba.b, _bg.rgba.a);
 		glRectf(0.0, 0.0, _size.vec.x, _size.vec.y);
 

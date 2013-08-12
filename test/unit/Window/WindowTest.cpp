@@ -88,3 +88,24 @@ void WindowTest::event2 ()
 
     CPPUNIT_ASSERT(true);
 }
+
+void WindowTest::solorender1 ()
+{
+    Application app;
+
+    myWindow win(640, 480, "640 x 480 WindowTest Event2", NULL, NULL);
+
+    app.setMainWindow(&win);
+    app.initialize();
+
+    Label label(L"Test Event2");
+    label.setPos (Coord2f(100.0, 100.0));
+    label.setParent (&win);
+
+		Label solo (L"This label should also been rendered");
+		solo.setPos(400.0, 300.0, 0.0);
+
+    app.run();
+
+    CPPUNIT_ASSERT(true);
+}

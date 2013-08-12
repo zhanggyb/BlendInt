@@ -40,13 +40,15 @@ using namespace std;
 namespace BIL {
 
 	/**
-	 * @brief The basic class which has a unique ID, one parent and some children
+	 * @brief The basic class which has a unique ID, one parent and some
+	 * children
 	 *
-	 * BasicObject is the base class of most objects in this library, it provides:
+	 * BasicObject is the base class of most objects in this library, it
+	 * provides:
 	 *	- unique id: each instance has its unique id
 	 *	- parent pointer: each instance has its one parent (or NULL)
-	 *	- children: each instance has its children, when it's deleted, all children
-	 *	will be deleted too. It's a common behavior in GUI
+	 *	- children: each instance has its children, when it's deleted, all
+	 * children	will be deleted too. It's a common behavior in GUI
 	 */
 	class Traceable
 	{
@@ -60,21 +62,21 @@ namespace BIL {
 			return objMap.size();
 		}
 
+		static map<uint64_t, Traceable*>* getMap (void)
+		{
+			return &objMap;
+		}
+
+		static list<Traceable*>* getList (void)
+		{
+			return &solo;
+		}
+
 #ifdef DEBUG
 		static void reset (void)
 		{
 			id_last = 1;
 			objMap.clear();
-		}
-
-		static map<uint64_t, Traceable*>& getMap (void)
-		{
-			return objMap;
-		}
-
-		static list<Traceable*>& getList (void)
-		{
-			return solo;
 		}
 #endif
 

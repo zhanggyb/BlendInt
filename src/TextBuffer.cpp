@@ -34,8 +34,8 @@ namespace BIL {
 		: _rowspacing(1.0), _fg(1.0, 1.0, 1.0, 1.0), _bg(0.0, 0.0, 0.0, 0.0)
 	{
 		setFont(font);
-		glShadeModel(GL_FLAT);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		//glShadeModel(GL_FLAT);
+		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	}
 
 	TextBuffer::TextBuffer (const wstring& text, const Font& font)
@@ -44,8 +44,8 @@ namespace BIL {
 		setFont(font);
 		append(text);
 
-		glShadeModel(GL_FLAT);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		//glShadeModel(GL_FLAT);
+		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	}
 
 	TextBuffer::~TextBuffer ()
@@ -122,13 +122,12 @@ namespace BIL {
 		//glDisable(GL_LIGHTING);
 		//glDisable(GL_DEPTH_TEST);
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glColor4f(_fg.rgba.r, _fg.rgba.g, _fg.rgba.b, _fg.rgba.a);
 
 		glMatrixMode(GL_MODELVIEW);
-
-		//glLoadIdentity();
 		glPushMatrix();
 
 		glTranslatef(_origin.coord.x,
