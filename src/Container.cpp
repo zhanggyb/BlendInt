@@ -26,7 +26,7 @@
 
 namespace BIL {
 
-	Container::Container (BasicObject *parent)
+	Container::Container (Traceable *parent)
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub

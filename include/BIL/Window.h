@@ -28,14 +28,14 @@
 #include <string>
 #include <map>
 
-#include <BIL/BasicObject.h>
+#include <BIL/Traceable.h>
 #include <BIL/Tuple.h>
 
 using namespace std;
 
 namespace BIL {
 
-	class Window: public BIL::BasicObject
+	class Window: public BIL::Traceable
 	{
 	public:
 
@@ -52,10 +52,10 @@ namespace BIL {
 		 * @warning: any OpenGL code to initialize something  will fail before
 		 * makeContextCurrent in constructor
 		 */
-		Window (BasicObject * parent = NULL);
+		Window (Traceable * parent = NULL);
 
 		Window (int width, int height, const char *title, GLFWmonitor *monitor,
-		        GLFWwindow *share, BasicObject* parent = NULL);
+		        GLFWwindow *share, Traceable* parent = NULL);
 
 		void makeContextCurrent (void)
 		{

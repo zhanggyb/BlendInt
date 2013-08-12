@@ -26,7 +26,7 @@
 
 namespace BIL {
 
-	Widget::Widget (BasicObject *parent)
+	Widget::Widget (Traceable *parent)
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub

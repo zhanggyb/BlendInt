@@ -18,7 +18,7 @@ class myTexture: public Drawable
 {
 public:
 
-	myTexture (BasicObject *parent = NULL);
+	myTexture (Traceable *parent = NULL);
 
 	virtual ~myTexture ();
 
@@ -48,7 +48,7 @@ class myDrawable1: public Drawable
 {
 public:
 
-	myDrawable1 (BasicObject* parent = NULL);
+	myDrawable1 (Traceable* parent = NULL);
 
 	virtual ~myDrawable1 ();
 
@@ -69,7 +69,7 @@ class myDrawable2: public Drawable
 {
 public:
 
-	myDrawable2 (BasicObject* parent = NULL);
+	myDrawable2 (Traceable* parent = NULL);
 
 	virtual ~myDrawable2 ();
 
@@ -90,7 +90,7 @@ class myDrawable3: public Drawable
 {
 public:
 
-	myDrawable3 (BasicObject* parent = NULL);
+	myDrawable3 (Traceable* parent = NULL);
 
 	virtual ~myDrawable3 ();
 

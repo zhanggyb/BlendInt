@@ -20,7 +20,7 @@ using namespace std;
 CPPUNIT_TEST_SUITE_REGISTRATION (WindowTest);
 
 myWindow::myWindow(int width, int height, const char *title, GLFWmonitor *monitor,
-        GLFWwindow *share, BasicObject* parent)
+        GLFWwindow *share, Traceable* parent)
 : BIL::Window( width, height, title, monitor, share, parent)
 {
 

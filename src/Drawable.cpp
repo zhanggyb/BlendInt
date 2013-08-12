@@ -143,8 +143,8 @@ namespace BIL {
 		glColor3fv(col);
 	}
 
-	Drawable::Drawable (BasicObject* parent)
-		: BasicObject(parent), _corner (CORNER_NONE), _isVisible(true)
+	Drawable::Drawable (Traceable* parent)
+		: Traceable(parent), _corner (CORNER_NONE), _isVisible(true)
 	{
 
 	}

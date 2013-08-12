@@ -23,7 +23,7 @@
 
 namespace BIL {
 
-	Layout::Layout (BasicObject *parent)
+	Layout::Layout (Traceable *parent)
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub

@@ -17,7 +17,7 @@ class myWindow: public BIL::Window
 {
 public:
 	myWindow(int width, int height, const char *title, GLFWmonitor *monitor,
-	        GLFWwindow *share, BasicObject* parent = NULL);
+	        GLFWwindow *share, Traceable* parent = NULL);
 
 protected:
 

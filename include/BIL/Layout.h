@@ -30,7 +30,7 @@ namespace BIL {
 	class Layout: public BIL::Drawable
 	{
 	public:
-		Layout (BasicObject *parent = NULL);
+		Layout (Traceable *parent = NULL);
 		virtual ~Layout ();
 
 		virtual bool addController (Widget *obj) = 0;

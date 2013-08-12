@@ -13,7 +13,7 @@ using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION (DrawableTest);
 
-myTexture::myTexture (BasicObject *parent)
+myTexture::myTexture (Traceable *parent)
     : Drawable(parent)
 {
     resize (400, 400);
@@ -98,7 +98,7 @@ void myTexture::makeCheckImage (void)
     }
 }
 
-myDrawable1::myDrawable1(BasicObject* parent)
+myDrawable1::myDrawable1(Traceable* parent)
 	: Drawable (parent)
 {
 	_corner = CORNER_ALL;
@@ -146,7 +146,7 @@ void myDrawable1::cursorEnterEvent (int entered)
 {
 }
 
-myDrawable2::myDrawable2(BasicObject* parent)
+myDrawable2::myDrawable2(Traceable* parent)
 	: Drawable (parent)
 {
 	_corner = CORNER_ALL;
@@ -194,7 +194,7 @@ void myDrawable2::cursorEnterEvent (int entered)
 {
 }
 
-myDrawable3::myDrawable3(BasicObject* parent)
+myDrawable3::myDrawable3(Traceable* parent)
 	: Drawable (parent)
 {
 	_corner = CORNER_ALL;

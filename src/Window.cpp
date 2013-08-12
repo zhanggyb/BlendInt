@@ -31,8 +31,8 @@ namespace BIL {
 
 	std::map<GLFWwindow*, Window*> Window::windowMap;
 
-	Window::Window (BasicObject *parent)
-			: BasicObject(parent), _window(NULL)
+	Window::Window (Traceable *parent)
+			: Traceable(parent), _window(NULL)
 	{
 		_title = "Default";
 
@@ -47,8 +47,8 @@ namespace BIL {
 	}
 
 	Window::Window (int width, int height, const char* title,
-	        GLFWmonitor* monitor, GLFWwindow* share, BasicObject* parent)
-			: BasicObject(parent), _window(NULL)
+	        GLFWmonitor* monitor, GLFWwindow* share, Traceable* parent)
+			: Traceable(parent), _window(NULL)
 	{
 		_title = title;
 		_window = glfwCreateWindow(width, height, title, monitor, share);
@@ -148,7 +148,7 @@ namespace BIL {
 		glMatrixMode (GL_MODELVIEW);
 		glLoadIdentity();
 
-		ChildrenList<BasicObject*>::const_iterator it;
+		ChildrenList<Traceable*>::const_iterator it;
 		Drawable *item = NULL;
 		for (it = _children.begin(); it != _children.end(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
@@ -163,7 +163,7 @@ namespace BIL {
 
 	void Window::keyEvent (int key, int scancode, int action, int mods)
 	{
-		ChildrenList<BasicObject*>::const_reverse_iterator it;
+		ChildrenList<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		for (it = _children.rbegin(); it != _children.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
@@ -175,7 +175,7 @@ namespace BIL {
 
 	void Window::charEvent (unsigned int character)
 	{
-		ChildrenList<BasicObject*>::const_reverse_iterator it;
+		ChildrenList<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		for (it = _children.rbegin(); it != _children.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
@@ -187,7 +187,7 @@ namespace BIL {
 
 	void Window::mouseButtonEvent (int button, int action, int mods)
 	{
-		ChildrenList<BasicObject*>::const_reverse_iterator it;
+		ChildrenList<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		for (it = _children.rbegin(); it != _children.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
@@ -199,7 +199,7 @@ namespace BIL {
 
 	void Window::cursorPosEvent (double xpos, double ypos)
 	{
-		ChildrenList<BasicObject*>::const_reverse_iterator it;
+		ChildrenList<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		for (it = _children.rbegin(); it != _children.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);

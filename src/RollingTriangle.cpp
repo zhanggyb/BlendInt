@@ -28,7 +28,7 @@
 
 namespace BIL {
 
-	RollingTriangle::RollingTriangle (BasicObject *parent)
+	RollingTriangle::RollingTriangle (Traceable *parent)
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub

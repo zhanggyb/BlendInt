@@ -31,7 +31,7 @@ namespace BIL {
 	class Widget: public BIL::Drawable
 	{
 	public:
-		Widget (BasicObject * parent = NULL);
+		Widget (Traceable * parent = NULL);
 
 		virtual ~Widget ();
 

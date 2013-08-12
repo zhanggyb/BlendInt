@@ -29,7 +29,7 @@ namespace BIL {
 	class Container: public BIL::Drawable
 	{
 	public:
-		Container (BasicObject *parent = NULL);
+		Container (Traceable *parent = NULL);
 		virtual ~Container ();
 
 	protected:

@@ -26,13 +26,16 @@
  *      Author: zhanggyb
  */
 
-#ifndef _BIL_BASICOBJECT_H_
-#define _BIL_BASICOBJECT_H_
+#ifndef _BIL_TRACEABLE_H_
+#define _BIL_TRACEABLE_H_
 
 #include <stdint.h>
+#include <list>
 #include <map>
 
 #include <BIL/ChildrenList.h>
+
+using namespace std;
 
 namespace BIL {
 
@@ -45,49 +48,12 @@ namespace BIL {
 	 *	- children: each instance has its children, when it's deleted, all children
 	 *	will be deleted too. It's a common behavior in GUI
 	 */
-	class BasicObject
+	class Traceable
 	{
 
-	public:
+	public:	// static
 
-		/**
-		 * @brief default constructor
-		 * @param parent the parent pointer
-		 */
-		BasicObject (BasicObject* parent = NULL);
-
-		virtual ~BasicObject ();
-
-		/**
-		 * @brief get the object id
-		 * @return
-		 */
-		uint64_t getId () const
-		{
-			return _id;
-		}
-
-		static BasicObject* find (uint64_t id);
-
-		/**
-		 * @brief get the parent pointer
-		 * @return
-		 */
-		const BasicObject* getParent (void) const
-		{
-			return _parent;
-		}
-
-		/**
-		 * @brief set parent object
-		 * @param parent parent pointer
-		 * @return true or false
-		 *
-		 * Set the parent object and add self into the children list of parent
-		 */
-		bool setParent (BasicObject* parent);
-
-		bool addChild (BasicObject *child);
+		static Traceable* find (uint64_t id);
 
 		static unsigned int mapSize (void)
 		{
@@ -100,13 +66,61 @@ namespace BIL {
 			id_last = 1;
 			objMap.clear();
 		}
+
+		static map<uint64_t, Traceable*>& getMap (void)
+		{
+			return objMap;
+		}
+
+		static list<Traceable*>& getList (void)
+		{
+			return solo;
+		}
 #endif
+
+	public:
+
+		/**
+		 * @brief default constructor
+		 * @param parent the parent pointer
+		 */
+		Traceable (Traceable* parent = NULL);
+
+		virtual ~Traceable ();
+
+		/**
+		 * @brief get the object id
+		 * @return
+		 */
+		uint64_t getId () const
+		{
+			return _id;
+		}
+		/**
+		 * @brief get the parent pointer
+		 * @return
+		 */
+		const Traceable* getParent (void) const
+		{
+			return _parent;
+		}
+
+		/**
+		 * @brief set parent object
+		 * @param parent parent pointer
+		 * @return true or false
+		 *
+		 * Set the parent object and add self into the children list of parent
+		 */
+		bool setParent (Traceable* parent);
+
+		bool addChild (Traceable *child);
 
 	protected:
 
-		bool removeChild (BasicObject* child);
+		bool removeChild (Traceable* child, bool registersolo = true);
 
-		ChildrenList<BasicObject*> _children;
+		ChildrenList<Traceable*> _children;
 
 		void deleteChildren (void);
 
@@ -119,21 +133,26 @@ namespace BIL {
 		/**
 		 * @brief Declare copy constructor in private to disable it
 		 */
-		BasicObject (const BasicObject& orig);
+		Traceable (const Traceable& orig);
 
 		/**
 		 * @brief Declare assignment constructor in private to disable it
 		 */
-		BasicObject& operator = (const BasicObject& orig);
+		Traceable& operator = (const Traceable& orig);
 
 		uint64_t _id; /** A unique ID for object */
 
-		BasicObject* _parent; /** parent object */
+		Traceable* _parent; /** parent object */
+
+	private:	// static member variables
 
 		static uint64_t id_last;
-		static std::map<uint64_t, BasicObject*> objMap;
+
+		static map<uint64_t, Traceable*> objMap;
+
+		static list<Traceable*> solo;
 
 	};
 
 } /* namespace BIL */
-#endif /* _BIL_BASICOBJECT_H_ */
+#endif /* _BIL_TRACEABLE_H_ */

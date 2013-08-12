@@ -29,10 +29,9 @@
 #ifndef _BIL_DRAWABLE_H_
 #define _BIL_DRAWABLE_H_
 
-// if use C++ 11, include <array>
-#include <stddef.h>
+#include <list>
 
-#include <BIL/BasicObject.h>
+#include <BIL/Traceable.h>
 #include <BIL/Font.h>
 #include <BIL/Tuple.h>
 #include <BIL/EventHandler.h>
@@ -40,7 +39,7 @@
 
 namespace BIL {
 
-	class Drawable: public BasicObject, public EventHandler
+	class Drawable: public Traceable, public EventHandler
 	{
 		// enums
 	public:
@@ -73,7 +72,15 @@ namespace BIL {
 		};
 
 	public:
-		Drawable (BasicObject* parent = NULL);
+
+		/**
+		 * @brief Default constructor
+		 * @param parent
+		 *
+		 * A drawable instance without a parent will be registered in TBD
+		 * it's usually a pop-up widget such as context menu, message box
+		 */
+		Drawable (Traceable* parent = NULL);
 
 		virtual ~Drawable ();
 
@@ -253,11 +260,10 @@ namespace BIL {
 
 		bool _isVisible;
 
-	private:
+	private:	// member function disabled
 
 		Drawable (const Drawable& orig);
 		Drawable& operator = (const Drawable& orig);
-
 	};
 
 } /* namespace BIL */
