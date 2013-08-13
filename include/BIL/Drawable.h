@@ -77,8 +77,9 @@ namespace BIL {
 		 * @brief Default constructor
 		 * @param parent
 		 *
-		 * A drawable instance without a parent will be registered in TBD
-		 * it's usually a pop-up widget such as context menu, message box
+		 * A drawable instance without a parent will be registered in
+		 * a static list -- solo, it's usually a pop-up widget such as
+		 * context menu, message box
 		 */
 		Drawable (Traceable* parent = NULL);
 

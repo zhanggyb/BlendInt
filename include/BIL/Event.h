@@ -19,41 +19,49 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_EVENTHANDLER_H_
-#define _BIL_EVENTHANDLER_H_
-
-#include <BIL/MouseEvent.h>
-#include <BIL/KeyEvent.h>
+#ifndef _BIL_EVENT_H_
+#define _BIL_EVENT_H_
 
 namespace BIL {
 
-	class Window;
-
-	class EventHandler
+	class Event
 	{
 	public:
 
-		friend class Window;
+		enum Type {
+			None,				/* 0 */
+			MousePress,
+			MouseRelease,
+			MouseMove
+		};
 
-		EventHandler ();
-		virtual ~EventHandler ();
+		Event()
+		{
+		}
+
+		virtual ~Event()
+		{
+		}
+
+		void accept (void)
+		{
+			_accept = true;
+		}
+
+		void ignore (void)
+		{
+		}
+
+		bool isAccepted (void) const
+		{
+			return _accept;
+		}
 
 	protected:
 
-		virtual void keyEvent (int key, int scancode, int action, int mods) = 0;
-
-		virtual void charEvent (unsigned int character) = 0;
-
-		virtual void mouseButtonEvent (int button, int action, int modes) = 0;
-
-		virtual void cursorPosEvent (double xpos, double ypos) = 0;
-
-		virtual void cursorEnterEvent (int entered) = 0;
-
-	private:
-		EventHandler(const EventHandler& orig);
-		EventHandler& operator = (const EventHandler& orig);
+		bool _accept;
 	};
 
 } /* namespace BIL */
-#endif /* _BIL_EVENTHANDLER_H_ */
+
+#endif	/* _BIL_EVENT_H_ */

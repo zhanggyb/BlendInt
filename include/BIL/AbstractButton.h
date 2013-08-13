@@ -48,11 +48,11 @@ namespace BIL {
 
 		virtual ~AbstractButton ();
 
-		void render (void);
-
 		void setText (const wstring& text);
 
 		void setFont (const Font& font);
+
+		// void setCheckable (bool checkable);
 
 		void setBackground (const RGBAf& color)
 		{
@@ -63,6 +63,8 @@ namespace BIL {
 		{
 			_cornerRadius = rad;
 		}
+
+		void render (void);
 
 	private:	// member functions
 

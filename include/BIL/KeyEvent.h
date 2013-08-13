@@ -19,41 +19,29 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_EVENTHANDLER_H_
-#define _BIL_EVENTHANDLER_H_
+#ifndef _BIL_KEYEVENT_H_
+#define _BIL_KEYEVENT_H_
 
-#include <BIL/MouseEvent.h>
-#include <BIL/KeyEvent.h>
+#include <BIL/Types.h>
+#include <BIL/Event.h>
 
 namespace BIL {
 
-	class Window;
-
-	class EventHandler
+	class KeyEvent: public Event
 	{
 	public:
 
-		friend class Window;
+		KeyEvent()
+		{
+		
+		}
 
-		EventHandler ();
-		virtual ~EventHandler ();
+		virtual ~KeyEvent()
+		{
 
-	protected:
-
-		virtual void keyEvent (int key, int scancode, int action, int mods) = 0;
-
-		virtual void charEvent (unsigned int character) = 0;
-
-		virtual void mouseButtonEvent (int button, int action, int modes) = 0;
-
-		virtual void cursorPosEvent (double xpos, double ypos) = 0;
-
-		virtual void cursorEnterEvent (int entered) = 0;
-
-	private:
-		EventHandler(const EventHandler& orig);
-		EventHandler& operator = (const EventHandler& orig);
+		}
 	};
 
-} /* namespace BIL */
-#endif /* _BIL_EVENTHANDLER_H_ */
+}
+
+#endif	/* _BIL_KEYEVENT_H_ */

@@ -19,41 +19,56 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_EVENTHANDLER_H_
-#define _BIL_EVENTHANDLER_H_
+#ifndef _BIL_MOUSEEVENT_H_
+#define _BIL_MOUSEEVENT_H_
 
-#include <BIL/MouseEvent.h>
-#include <BIL/KeyEvent.h>
+#include <BIL/Types.h>
+#include <BIL/Tuple.h>
+#include <BIL/Event.h>
 
 namespace BIL {
 
-	class Window;
-
-	class EventHandler
+	class MouseEvent: public Event
 	{
 	public:
+		
+		MouseEvent (Type type, MouseButton button,
+					const Coord2f& localPos,
+					const Coord2f& windowPos)
+			: _type (type), _button (button),
+			_pos (localPos), _windowPos (windowPos)
+		{}
 
-		friend class Window;
+		virtual ~MouseEvent ()
+		{}
 
-		EventHandler ();
-		virtual ~EventHandler ();
+		MouseButton button (void) const
+		{
+			return _button;
+		}
 
-	protected:
+		void setLocalPos (float x, float y)
+		{
+			_pos.coord.x = x;
+			_pos.coord.y = y;
+		}
 
-		virtual void keyEvent (int key, int scancode, int action, int mods) = 0;
+		const Coord2f& windowPos (void) const
+		{
+			return _windowPos;
+		}
 
-		virtual void charEvent (unsigned int character) = 0;
-
-		virtual void mouseButtonEvent (int button, int action, int modes) = 0;
-
-		virtual void cursorPosEvent (double xpos, double ypos) = 0;
-
-		virtual void cursorEnterEvent (int entered) = 0;
+		Coord2f pos (void) const;
 
 	private:
-		EventHandler(const EventHandler& orig);
-		EventHandler& operator = (const EventHandler& orig);
+
+		Type _type;
+
+		MouseButton _button;
+		Coord2f _pos;
+		Coord2f _windowPos;
 	};
 
-} /* namespace BIL */
-#endif /* _BIL_EVENTHANDLER_H_ */
+}
+
+#endif	/* _BIL_MOUSEEVENT_H_ */
