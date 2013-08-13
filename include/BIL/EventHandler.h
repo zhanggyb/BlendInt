@@ -40,12 +40,16 @@ namespace BIL {
 
 	protected:
 
-		virtual void keyEvent (int key, int scancode, int action, int mods) = 0;
+		virtual void keyEvent (KeyEvent* event) = 0;
+
+		virtual void mouseEvent (MouseEvent* event) = 0;
+
+		// virtual void keyEvent (int key, int scancode, int action, int mods) = 0;
 
 		virtual void charEvent (unsigned int character) = 0;
 
 		virtual void mouseButtonEvent (int button, int action, int modes) = 0;
-
+		
 		virtual void cursorPosEvent (double xpos, double ypos) = 0;
 
 		virtual void cursorEnterEvent (int entered) = 0;

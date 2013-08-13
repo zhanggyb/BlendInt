@@ -35,19 +35,23 @@ namespace BIL {
 
 		virtual ~Widget ();
 
-		void keyEvent (int key, int scancode, int action, int mods);
-
-		void charEvent (unsigned int character);
-
-		void mouseButtonEvent (int button, int action, int modes);
-
-		void cursorPosEvent (double xpos, double ypos);
-
-		void cursorEnterEvent (int entered);
-
 		virtual void render (void);
 
 	protected:
+
+	private:
+
+		virtual void keyEvent (KeyEvent* event);
+
+		virtual void mouseEvent (MouseEvent* event);
+
+		virtual void charEvent (unsigned int character);
+
+		virtual void mouseButtonEvent (int button, int action, int modes);
+
+		virtual void cursorPosEvent (double xpos, double ypos);
+
+		virtual void cursorEnterEvent (int entered);
 
 	};
 

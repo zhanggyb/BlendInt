@@ -24,6 +24,7 @@
 
 #include <BIL/Window.h>
 #include <BIL/Drawable.h>
+#include <BIL/KeyEvent.h>
 
 using namespace std;
 
@@ -172,12 +173,21 @@ namespace BIL {
 
 	void Window::keyEvent (int key, int scancode, int action, int mods)
 	{
+		KeyEvent event((Key)key,
+					   scancode,
+					   (KeyButtonAction)action,
+					   (KeyModifier)mods);
+
 		ChildrenList<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		for (it = _children.rbegin(); it != _children.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
-				item->keyEvent(key, scancode, action, mods);
+				// TODO: only the focused widget can dispose key event
+				item->keyEvent(&event);
+				if(event.isAccepted()) {
+					break;
+				}
 			}
 		}
 	}

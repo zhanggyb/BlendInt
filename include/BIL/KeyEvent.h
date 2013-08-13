@@ -31,15 +31,33 @@ namespace BIL {
 	{
 	public:
 
-		KeyEvent()
-		{
-		
-		}
+		/**
+		 * @brief Default Constructor of KeyEvent
+		 *
+		 * @param[in] key The keyboard key that was pressed or released
+		 * @param[in] scancode The system-specific scancode of the key
+		 * @param[in] action KeyButtonAction
+		 * @param[in] mods Bit field describing which modifier keys were held down
+		 *
+		 * This signature a key event
+		 */
+		KeyEvent(Key key, int scancode,
+				 KeyButtonAction action, KeyModifier mods)
+			: _key(key), _scancode(scancode), _action(action), _mods(mods)
+		{ }
 
 		virtual ~KeyEvent()
 		{
 
 		}
+
+	private:
+
+		Key _key;
+		int _scancode;
+		KeyButtonAction _action;
+		KeyModifier _mods;
+		
 	};
 
 }

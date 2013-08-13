@@ -64,7 +64,11 @@ void myTexture::render (void)
     glDisable(GL_TEXTURE_2D);
 }
 
-void myTexture::keyEvent (int key, int scancode, int action, int mods)
+void myTexture::keyEvent (KeyEvent* event)
+{
+}
+
+void myTexture::mouseEvent (MouseEvent* event)
 {
 }
 
@@ -126,7 +130,11 @@ void myDrawable1::render(void)
 	glDisable(GL_BLEND);
 }
 
-void myDrawable1::keyEvent (int key, int scancode, int action, int mods)
+void myDrawable1::keyEvent (KeyEvent* event)
+{
+}
+
+void myDrawable1::mouseEvent (MouseEvent* event)
 {
 }
 
@@ -174,7 +182,11 @@ void myDrawable2::render(void)
 	glDisable(GL_BLEND);
 }
 
-void myDrawable2::keyEvent (int key, int scancode, int action, int mods)
+void myDrawable2::keyEvent (KeyEvent* event)
+{
+}
+
+void myDrawable2::mouseEvent (MouseEvent* event)
 {
 }
 
@@ -227,7 +239,11 @@ void myDrawable3::render(void)
 }
 
 
-void myDrawable3::keyEvent (int key, int scancode, int action, int mods)
+void myDrawable3::keyEvent (KeyEvent* event)
+{
+}
+
+void myDrawable3::mouseEvent (MouseEvent* event)
 {
 }
 

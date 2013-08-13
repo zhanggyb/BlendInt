@@ -64,7 +64,7 @@ namespace BIL {
 
 	private:	// member functions
 
-		void cursorPosEvent (double xpos, double ypos);
+		virtual void cursorPosEvent (double xpos, double ypos);
 
 		void calculateBox (void);
 

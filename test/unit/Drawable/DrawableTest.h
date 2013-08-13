@@ -24,7 +24,9 @@ public:
 
 	void render (void);
 
-	void keyEvent (int key, int scancode, int action, int mods);
+	void keyEvent (KeyEvent* event);
+
+	void mouseEvent (MouseEvent* event);
 
 	void charEvent (unsigned int character);
 
@@ -54,7 +56,9 @@ public:
 
 	void render (void);
 
-	void keyEvent (int key, int scancode, int action, int mods);
+	void keyEvent (KeyEvent* event);
+
+	void mouseEvent (MouseEvent* event);
 
 	void charEvent (unsigned int character);
 
@@ -75,7 +79,9 @@ public:
 
 	void render (void);
 
-	void keyEvent (int key, int scancode, int action, int mods);
+	void keyEvent (KeyEvent* event);
+
+	void mouseEvent (MouseEvent* event);
 
 	void charEvent (unsigned int character);
 
@@ -96,7 +102,9 @@ public:
 
 	void render (void);
 
-	void keyEvent (int key, int scancode, int action, int mods);
+	void keyEvent (KeyEvent* event);
+
+	void mouseEvent (MouseEvent* event);
 
 	void charEvent (unsigned int character);
 
