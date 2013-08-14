@@ -30,8 +30,12 @@ namespace BIL {
 	class InputEvent: public Event
 	{
 	public:
-
-		InputEvent(KeyModifier modifiers = ModifierNone)
+		
+		/**
+		 * @brief Default Constructor
+		 * @param modifiers Bitwise conbination of KeyModifier
+		 */
+		InputEvent(int modifiers = ModifierNone)
 			: modifiers_(modifiers)
 		{
 		}
@@ -42,7 +46,7 @@ namespace BIL {
 
 	protected:
 
-		KeyModifier modifiers_;
+		int modifiers_;
 
 	};
 

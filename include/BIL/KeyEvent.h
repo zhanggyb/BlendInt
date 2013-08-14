@@ -41,9 +41,10 @@ namespace BIL {
 		 *
 		 * This signature a key event
 		 */
-		KeyEvent(Key key, int scancode,
-				 KeyButtonAction action, KeyModifier mods)
-			: _key(key), _scancode(scancode), _action(action), _mods(mods)
+		KeyEvent(int key, int scancode,
+				 int action, int mods)
+			: InputEvent (mods), _key(key),
+			_scancode(scancode), _action(action)
 		{ }
 
 		virtual ~KeyEvent()
@@ -53,11 +54,9 @@ namespace BIL {
 
 	private:
 
-		Key _key;
+		int _key;
 		int _scancode;
-		KeyButtonAction _action;
-		KeyModifier _mods;
-		
+		int _action;
 	};
 
 }

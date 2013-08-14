@@ -37,19 +37,17 @@ namespace BIL {
 		};
 
 		ContextMenuEvent (Source source,
-						  KeyModifier mods)
-			: source_(source),
-			//modifiers_(mods),
+						  int mods)
+			: InputEvent(mods), source_(source),
 			pos_(Coord2f(0.0, 0.0)), window_pos_(Coord2d(0.0, 0.0))
 		{}
 
 
 		ContextMenuEvent (Source source,
-						  KeyModifier mods,
+						  int mods,
 						  const Coord2f& local_pos,
 						  const Coord2d& window_pos)
-			: source_(source),
-			// modifiers_(mods),
+			: InputEvent(mods), source_(source),
 			pos_(local_pos), window_pos_(window_pos)
 		{}
 

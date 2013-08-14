@@ -35,16 +35,20 @@ namespace BIL {
 	{
 	public:
 
-		MouseEvent (Type type, MouseButton button)
-			: type_(type), button_(button),
+		/**
+		 * @brief Constructor
+		 * @param[in] type one of Event::Type
+		 */
+		MouseEvent (MouseAction action, MouseButton button)
+			: action_(action), button_(button),
 			pos_(Coord2f(0.0, 0.0)),
 			window_pos_(Coord2d(0.0, 0.0))
 			{}
 		
-		MouseEvent (Type type, MouseButton button,
+		MouseEvent (MouseAction action, MouseButton button,
 					const Coord2f& local_pos,
 					const Coord2d& window_pos)
-			: type_ (type), button_ (button),
+			: action_(action), button_(button),
 			pos_(local_pos), window_pos_(window_pos)
 		{}
 
@@ -80,8 +84,7 @@ namespace BIL {
 
 	private:
 
-		Type type_;
-
+		MouseAction action_;
 		MouseButton button_;
 		Coord2f pos_;
 		Coord2d window_pos_;

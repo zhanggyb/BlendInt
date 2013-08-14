@@ -28,13 +28,6 @@ namespace BIL {
 	{
 	public:
 
-		enum Type {
-			None,				/* 0 */
-			MousePress,
-			MouseRelease,
-			MouseMove
-		};
-
 		Event()
 		{
 		}

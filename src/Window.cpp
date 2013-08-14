@@ -172,12 +172,12 @@ namespace BIL {
 
 		if (key == Key_Menu) {
 			event = new ContextMenuEvent(ContextMenuEvent::Keyboard,
-										 static_cast<KeyModifier>(mods));
+										 mods);
 		} else {
-			event = new BIL::KeyEvent(static_cast<Key>(key),
+			event = new BIL::KeyEvent(key,
 									  scancode,
-									  static_cast<KeyButtonAction>(action),
-									  static_cast<KeyModifier>(mods));
+									  action,
+									  mods);
 		}
 
 		ChildrenList<Traceable*>::const_reverse_iterator it;
@@ -188,17 +188,20 @@ namespace BIL {
 
 			// TODO: only the focused widget can dispose key event
 			switch (action) {
-			case Press:
-				//item->KeyPressEvent(event);
+			case KeyPress:
+				if (key == Key_Menu) {
+					// item->ContextMenuEvent(dynamic_cast<ContextMenuEvent*>(event));
+				} else {
+					item->KeyPressEvent(dynamic_cast<BIL::KeyEvent*>(event));
+				}
 				break;
-			case Release:
-				// item->KeyReleaseEvent(&event);
+			case KeyRelease:
+				// item->KeyReleaseEvent(dynamic_cast<BIL::KeyEvent*>(event));
 				break;
-			case Repeat:
+			case KeyRepeat:
 				// item->KeyRepeatEvent(&event);
 				break;
 			default:
-				//item->KeyPressEvent(event);
 				break;
 			}
 			if(event->IsAccepted()) break;
@@ -221,40 +224,40 @@ namespace BIL {
 
 	void Window::MouseButtonEvent (int button, int action, int mods)
 	{
-		MouseButton mouseclick = ButtonNone;
+		MouseButton mouseclick = MouseButtonNone;
 		switch (button) {
 		case GLFW_MOUSE_BUTTON_1:
-			mouseclick = ButtonLeft;
+			mouseclick = MouseButtonLeft;
 			break;
 		case GLFW_MOUSE_BUTTON_2:
-			mouseclick = ButtonRight;
+			mouseclick = MouseButtonRight;
 			break;
 		case GLFW_MOUSE_BUTTON_3:
-			mouseclick = ButtonMiddle;
+			mouseclick = MouseButtonMiddle;
 			break;
 		case GLFW_MOUSE_BUTTON_4:
-			mouseclick = ButtonScrollUp;
+			mouseclick = MouseButtonScrollUp;
 			break;
 		case GLFW_MOUSE_BUTTON_5:
-			mouseclick = ButtonScrollDown;
+			mouseclick = MouseButtonScrollDown;
 			break;
 		default:
 			break;
 		}
 
-		Event::Type type = Event::None;
+	    MouseAction mouse_action = MouseNone;
 		switch (action) {
 		case GLFW_PRESS:
-			type = Event::MousePress;
+			mouse_action = MousePress;
 			break;
 		case GLFW_RELEASE:
-			type = Event::MouseRelease;
+			mouse_action = MouseRelease;
 			break;
 		default:
 			break;
 		}
 
-		MouseEvent event (type, mouseclick);
+		MouseEvent event (mouse_action, mouseclick);
 		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
 
 		ChildrenList<Traceable*>::const_reverse_iterator it;
@@ -292,10 +295,7 @@ namespace BIL {
 		cursor_pos_x_ = xpos;
 		cursor_pos_y_ = size_.vec.y - ypos;
 
-		MouseButton mouseclick = ButtonNone;
-		Event::Type type = Event::None;
-
-		MouseEvent event (type, mouseclick);
+		MouseEvent event (MouseNone, MouseButtonNone);
 		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
 
 		ChildrenList<Traceable*>::const_reverse_iterator it;

@@ -26,19 +26,27 @@
 
 namespace BIL {
 
-	enum MouseButton {
-		ButtonNone = -1,
-		ButtonLeft = GLFW_MOUSE_BUTTON_1, /* 0 */
-		ButtonRight = GLFW_MOUSE_BUTTON_2, /* 1 */
-		ButtonMiddle = GLFW_MOUSE_BUTTON_3, /* 2 */
-		ButtonScrollUp = GLFW_MOUSE_BUTTON_4, /* 3 */
-		ButtonScrollDown = GLFW_MOUSE_BUTTON_5 /* 4 */
+	enum MouseAction {
+		MouseNone = -1,
+		MousePress = 0,				/* GLFW_RELEASE */
+		MouseRelease,			/* GLFW_PRESS */
+		MouseMove				/* GLFW_REPEAT */
 	};
 
-	enum KeyButtonAction {
-		Press = GLFW_PRESS,
-		Release = GLFW_RELEASE,
-		Repeat = GLFW_REPEAT
+	enum MouseButton {
+		MouseButtonNone = -1,
+		MouseButtonLeft = GLFW_MOUSE_BUTTON_1, /* 0 */
+		MouseButtonRight = GLFW_MOUSE_BUTTON_2, /* 1 */
+		MouseButtonMiddle = GLFW_MOUSE_BUTTON_3, /* 2 */
+		MouseButtonScrollUp = GLFW_MOUSE_BUTTON_4, /* 3 */
+		MouseButtonScrollDown = GLFW_MOUSE_BUTTON_5 /* 4 */
+	};
+
+	enum KeyAction {
+		KeyNone = -1,
+		KeyPress = 0,			/* GLFW_RELEASE */
+		KeyRelease,				/* GLFW_PRESS */
+		KeyRepeat				/* GLFW_REPEAT */
 	};
 
 	enum KeyModifier {
