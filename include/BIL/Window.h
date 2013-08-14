@@ -151,16 +151,22 @@ namespace BIL {
 
 		virtual void render (void);
 
-	private:
+	private:					/* member functions disabled */
 
 		Window (const Window& orig);
 		Window& operator = (const Window& orig);
 
-		bool registerCallbacks (void);
+	private:					/* member functions */
 
+		bool registerCallbacks (void);
 		bool unregisterCallbacks (void);
 
+	private:					/* member variables */
+		
 		GLFWwindow *_window;
+
+		double _cursorPosX;				/* cursor x position */
+		double _cursorPosY;				/* cursor y position */
 
 		std::string _title;
 

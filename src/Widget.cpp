@@ -45,6 +45,16 @@ namespace BIL {
 	{
 	}
 
+	void Widget::mousePressEvent (MouseEvent* event)
+	{
+
+	}
+
+	void Widget::mouseReleaseEvent (MouseEvent* event)
+	{
+
+	}
+
 	void Widget::mouseEvent (MouseEvent* event)
 	{
 	}

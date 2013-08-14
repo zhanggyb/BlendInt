@@ -109,7 +109,7 @@ namespace BIL {
 
 		void setPos (const Coord2f& pos)
 		{
-			_pos = Coord3f(pos.coord.x, pos.coord.y, 0);
+			_pos = Coord3f(pos.coord.x, pos.coord.y, 0.0);
 		}
 
 		void setPos (const Coord3f& pos)

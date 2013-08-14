@@ -31,10 +31,16 @@ namespace BIL {
 	class MouseEvent: public Event
 	{
 	public:
+
+		MouseEvent (Type type, MouseButton button)
+			: _type(type), _button(button),
+			_pos(Coord2f(0.0, 0.0)),
+			_windowPos(Coord2d(0.0, 0.0))
+			{}
 		
 		MouseEvent (Type type, MouseButton button,
 					const Coord2f& localPos,
-					const Coord2f& windowPos)
+					const Coord2d& windowPos)
 			: _type (type), _button (button),
 			_pos (localPos), _windowPos (windowPos)
 		{}
@@ -47,18 +53,27 @@ namespace BIL {
 			return _button;
 		}
 
+		const Coord2f& pos (void) const
+		{
+			return _pos;
+		}
+
 		void setLocalPos (float x, float y)
 		{
 			_pos.coord.x = x;
 			_pos.coord.y = y;
 		}
 
-		const Coord2f& windowPos (void) const
+		const Coord2d& windowPos (void) const
 		{
 			return _windowPos;
 		}
 
-		Coord2f pos (void) const;
+		void setWindowPos (double x, double y)
+		{
+			_windowPos.coord.x = x;
+			_windowPos.coord.y = y;
+		}
 
 	private:
 
@@ -66,7 +81,7 @@ namespace BIL {
 
 		MouseButton _button;
 		Coord2f _pos;
-		Coord2f _windowPos;
+		Coord2d _windowPos;
 	};
 
 }

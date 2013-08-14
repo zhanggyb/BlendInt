@@ -26,6 +26,10 @@ public:
 
 	void keyEvent (KeyEvent* event);
 
+	void mousePressEvent (MouseEvent* event);
+	
+	void mouseReleaseEvent (MouseEvent* event);
+
 	void mouseEvent (MouseEvent* event);
 
 	void charEvent (unsigned int character);
@@ -58,6 +62,10 @@ public:
 
 	void keyEvent (KeyEvent* event);
 
+	void mousePressEvent (MouseEvent* event);
+	
+	void mouseReleaseEvent (MouseEvent* event);
+
 	void mouseEvent (MouseEvent* event);
 
 	void charEvent (unsigned int character);
@@ -81,6 +89,10 @@ public:
 
 	void keyEvent (KeyEvent* event);
 
+	void mousePressEvent (MouseEvent* event);
+	
+	void mouseReleaseEvent (MouseEvent* event);
+
 	void mouseEvent (MouseEvent* event);
 
 	void charEvent (unsigned int character);
@@ -103,6 +115,10 @@ public:
 	void render (void);
 
 	void keyEvent (KeyEvent* event);
+
+	void mousePressEvent (MouseEvent* event);
+	
+	void mouseReleaseEvent (MouseEvent* event);
 
 	void mouseEvent (MouseEvent* event);
 

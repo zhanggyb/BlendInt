@@ -25,6 +25,7 @@
 #include <BIL/Window.h>
 #include <BIL/Drawable.h>
 #include <BIL/KeyEvent.h>
+#include <BIL/MouseEvent.h>
 
 using namespace std;
 
@@ -33,7 +34,7 @@ namespace BIL {
 	std::map<GLFWwindow*, Window*> Window::windowMap;
 
 	Window::Window (Traceable *parent)
-			: Traceable(parent), _window(NULL)
+		: Traceable(parent), _window(NULL), _cursorPosX(0.0), _cursorPosY(0.0)
 	{
 		_title = "Default";
 
@@ -49,7 +50,7 @@ namespace BIL {
 
 	Window::Window (int width, int height, const char* title,
 	        GLFWmonitor* monitor, GLFWwindow* share, Traceable* parent)
-			: Traceable(parent), _window(NULL)
+		: Traceable(parent), _window(NULL), _cursorPosX(0.0), _cursorPosY(0.0)
 	{
 		_title = title;
 		_window = glfwCreateWindow(width, height, title, monitor, share);
@@ -185,9 +186,7 @@ namespace BIL {
 			if (item != NULL) {
 				// TODO: only the focused widget can dispose key event
 				item->keyEvent(&event);
-				if(event.isAccepted()) {
-					break;
-				}
+				if(event.isAccepted()) break;
 			}
 		}
 	}
@@ -206,18 +205,65 @@ namespace BIL {
 
 	void Window::mouseButtonEvent (int button, int action, int mods)
 	{
+		MouseButton mouseclick = ButtonLeft;
+		switch (button) {
+		case GLFW_MOUSE_BUTTON_1:
+			mouseclick = ButtonLeft;
+			break;
+		case GLFW_MOUSE_BUTTON_2:
+			mouseclick = ButtonRight;
+			break;
+		case GLFW_MOUSE_BUTTON_3:
+			mouseclick = ButtonMiddle;
+			break;
+		case GLFW_MOUSE_BUTTON_4:
+			mouseclick = ButtonScrollUp;
+			break;
+		case GLFW_MOUSE_BUTTON_5:
+			mouseclick = ButtonScrollDown;
+			break;
+		default:
+			break;
+		}
+
+		Event::Type type = Event::None;
+		switch (action) {
+		case GLFW_PRESS:
+			type = Event::MousePress;
+			break;
+		case GLFW_RELEASE:
+			type = Event::MouseRelease;
+			break;
+		default:
+			break;
+		}
+
+		MouseEvent event (type, mouseclick);
+		event.setWindowPos(_cursorPosX, _cursorPosY);
+
 		ChildrenList<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		for (it = _children.rbegin(); it != _children.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
-				item->mouseButtonEvent(button, action, mods);
+				float x = _cursorPosX - (item->getPos().coord.x);
+				float y = _cursorPosY - (item->getPos().coord.y);
+				if (x < item->getSize().vec.x &&
+					y < item->getSize().vec.y)
+				{
+					event.setLocalPos (x, y);
+					item->mouseButtonEvent(button, action, mods);
+				}
+				if(event.isAccepted()) break;
 			}
 		}
 	}
 
 	void Window::cursorPosEvent (double xpos, double ypos)
 	{
+		_cursorPosX = xpos;
+		_cursorPosY = ypos;
+
 		ChildrenList<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		for (it = _children.rbegin(); it != _children.rend(); it++) {

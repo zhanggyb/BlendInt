@@ -68,6 +68,17 @@ void myTexture::keyEvent (KeyEvent* event)
 {
 }
 
+void myTexture::mousePressEvent (MouseEvent* event)
+{
+
+}
+	
+void myTexture::mouseReleaseEvent (MouseEvent* event)
+{
+
+}
+
+
 void myTexture::mouseEvent (MouseEvent* event)
 {
 }
@@ -134,6 +145,15 @@ void myDrawable1::keyEvent (KeyEvent* event)
 {
 }
 
+void myDrawable1::mousePressEvent (MouseEvent* event)
+{
+}
+	
+void myDrawable1::mouseReleaseEvent (MouseEvent* event)
+{
+
+}
+
 void myDrawable1::mouseEvent (MouseEvent* event)
 {
 }
@@ -185,6 +205,15 @@ void myDrawable2::render(void)
 void myDrawable2::keyEvent (KeyEvent* event)
 {
 }
+
+void myDrawable2::mousePressEvent (MouseEvent* event)
+{
+}
+	
+void myDrawable2::mouseReleaseEvent (MouseEvent* event)
+{
+}
+
 
 void myDrawable2::mouseEvent (MouseEvent* event)
 {
@@ -241,6 +270,16 @@ void myDrawable3::render(void)
 
 void myDrawable3::keyEvent (KeyEvent* event)
 {
+}
+
+void myDrawable3::mousePressEvent (MouseEvent* event)
+{
+
+}
+	
+void myDrawable3::mouseReleaseEvent (MouseEvent* event)
+{
+
 }
 
 void myDrawable3::mouseEvent (MouseEvent* event)

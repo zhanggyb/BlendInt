@@ -43,6 +43,10 @@ namespace BIL {
 
 		virtual void keyEvent (KeyEvent* event);
 
+		virtual void mousePressEvent (MouseEvent* event);
+
+		virtual void mouseReleaseEvent (MouseEvent* event);
+
 		virtual void mouseEvent (MouseEvent* event);
 
 		virtual void charEvent (unsigned int character);

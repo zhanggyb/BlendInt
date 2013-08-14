@@ -27,10 +27,11 @@
 namespace BIL {
 
 	enum MouseButton {
-		ButtonNoUsed = GLFW_MOUSE_BUTTON_1, /* 0 */
-		ButtonLeft = GLFW_MOUSE_BUTTON_2, /* 1 */
-		ButtonRight = GLFW_MOUSE_BUTTON_3, /* 2 */
-		ButtonMiddle = GLFW_MOUSE_BUTTON_4 /* 3 */
+		ButtonLeft = GLFW_MOUSE_BUTTON_1, /* 0 */
+		ButtonRight = GLFW_MOUSE_BUTTON_2, /* 1 */
+		ButtonMiddle = GLFW_MOUSE_BUTTON_3, /* 2 */
+		ButtonScrollUp = GLFW_MOUSE_BUTTON_4, /* 3 */
+		ButtonScrollDown = GLFW_MOUSE_BUTTON_5 /* 4 */
 	};
 
 	enum KeyButtonAction {
