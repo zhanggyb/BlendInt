@@ -30,11 +30,9 @@ public:
 	
 	void MouseReleaseEvent (MouseEvent* event);
 
-	void CharEvent (unsigned int character);
+	void MouseMoveEvent (MouseEvent* event);
 
-	void MouseButtonEvent (int button, int action, int modes);
-
-	void CursorPosEvent (double xpos, double ypos);
+	void InputMethodEvent (unsigned int character);
 
 	void CursorEnterEvent (int entered);
 
@@ -63,12 +61,10 @@ public:
 	void MousePressEvent (MouseEvent* event);
 	
 	void MouseReleaseEvent (MouseEvent* event);
+	
+	void MouseMoveEvent (MouseEvent* event);
 
-	void CharEvent (unsigned int character);
-
-	void MouseButtonEvent (int button, int action, int modes);
-
-	void CursorPosEvent (double xpos, double ypos);
+	void InputMethodEvent (unsigned int character);
 
 	void CursorEnterEvent (int entered);
 };
@@ -89,11 +85,9 @@ public:
 	
 	void MouseReleaseEvent (MouseEvent* event);
 
-	void CharEvent (unsigned int character);
+	void MouseMoveEvent (MouseEvent* event);
 
-	void MouseButtonEvent (int button, int action, int modes);
-
-	void CursorPosEvent (double xpos, double ypos);
+	void InputMethodEvent (unsigned int character);
 
 	void CursorEnterEvent (int entered);
 };
@@ -114,11 +108,9 @@ public:
 	
 	void MouseReleaseEvent (MouseEvent* event);
 
-	void CharEvent (unsigned int character);
+	void MouseMoveEvent (MouseEvent* event);
 
-	void MouseButtonEvent (int button, int action, int modes);
-
-	void CursorPosEvent (double xpos, double ypos);
+	void InputMethodEvent (unsigned int character);
 
 	void CursorEnterEvent (int entered);
 };

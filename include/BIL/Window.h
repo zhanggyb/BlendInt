@@ -64,12 +64,31 @@ namespace BIL {
 
 		virtual ~Window ();
 
-		GLFWwindow* getWindow (void) const
+		GLFWwindow* window (void) const
 		{
 			return window_;
 		}
 
-		Vec2i getSize (void);
+		const Vec2i& size (void) const
+		{
+			return size_;
+		}
+
+		void set_title (const std::string& title)
+		{
+			title_ = title;
+			glfwSetWindowTitle(window_, title.data());
+
+			return;
+		}
+
+		void set_title (const char* title)
+		{
+			title_ = title;
+			glfwSetWindowTitle(window_, title);
+
+			return;
+		}
 
 		void resize (const Coord2i& size)
 		{
@@ -79,6 +98,8 @@ namespace BIL {
 		void resize (int w, int h)
 		{
 			glfwSetWindowSize (window_, w, h);
+
+			glfwGetWindowSize(window_, &size_.vec.x, &size_.vec.y);
 		}
 
 		void setTitle (const std::string& title);
@@ -136,9 +157,11 @@ namespace BIL {
 
 	protected:
 
-		virtual void KeyPressEvent (int key, int scancode, int action, int mods);
+		virtual void ResizeEvent (int width, int height);
 
-		virtual void CharEvent (unsigned int character);
+		virtual void KeyEvent (int key, int scancode, int action, int mods);
+
+		virtual void InputMethodEvent (unsigned int character);
 
 		virtual void MouseButtonEvent (int button, int action, int mods);
 
@@ -162,6 +185,8 @@ namespace BIL {
 
 		double cursor_pos_x_;				/* cursor x position */
 		double cursor_pos_y_;				/* cursor y position */
+
+		Vec2i size_;			/* window size */
 
 		std::string title_;
 

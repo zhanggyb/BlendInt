@@ -251,8 +251,9 @@ namespace BIL {
 	{
 		map<wchar_t, unsigned long>::iterator it;
 		cout << endl;
+		wchar_t ch;
 		for (it = count_db_.begin(); it != count_db_.end(); it++) {
-			wchar_t ch = it->first;
+			ch = it->first;
 			cout << "Character: ";
 			cout << (unsigned long) ch << " ";
 			cout << "Count: " << it->second << endl;

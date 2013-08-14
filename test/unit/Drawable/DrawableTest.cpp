@@ -78,15 +78,12 @@ void myTexture::MouseReleaseEvent (MouseEvent* event)
 
 }
 
-void myTexture::CharEvent (unsigned int character)
+void myTexture::MouseMoveEvent (MouseEvent* event)
 {
+
 }
 
-void myTexture::MouseButtonEvent (int button, int action, int modes)
-{
-}
-
-void myTexture::CursorPosEvent (double xpos, double ypos)
+void myTexture::InputMethodEvent (unsigned int character)
 {
 }
 
@@ -149,15 +146,12 @@ void myDrawable1::MouseReleaseEvent (MouseEvent* event)
 
 }
 
-void myDrawable1::CharEvent (unsigned int character)
+void myDrawable1::MouseMoveEvent (MouseEvent* event)
 {
+
 }
 
-void myDrawable1::MouseButtonEvent (int button, int action, int modes)
-{
-}
-
-void myDrawable1::CursorPosEvent (double xpos, double ypos)
+void myDrawable1::InputMethodEvent (unsigned int character)
 {
 }
 
@@ -205,15 +199,12 @@ void myDrawable2::MouseReleaseEvent (MouseEvent* event)
 {
 }
 
-void myDrawable2::CharEvent (unsigned int character)
+void myDrawable2::MouseMoveEvent (MouseEvent* event)
 {
+
 }
 
-void myDrawable2::MouseButtonEvent (int button, int action, int modes)
-{
-}
-
-void myDrawable2::CursorPosEvent (double xpos, double ypos)
+void myDrawable2::InputMethodEvent (unsigned int character)
 {
 }
 
@@ -268,17 +259,13 @@ void myDrawable3::MouseReleaseEvent (MouseEvent* event)
 
 }
 
-void myDrawable3::CharEvent (unsigned int character)
+void myDrawable3::MouseMoveEvent (MouseEvent* event)
 {
+
 }
 
-void myDrawable3::MouseButtonEvent (int button, int action, int modes)
+void myDrawable3::InputMethodEvent (unsigned int character)
 {
-}
-
-void myDrawable3::CursorPosEvent (double xpos, double ypos)
-{
-	cout << "Cursor Position: " << xpos << " " << ypos << endl;
 }
 
 void myDrawable3::CursorEnterEvent (int entered)

@@ -47,13 +47,9 @@ namespace BIL {
 
 		virtual void MouseReleaseEvent (MouseEvent* event);
 
-		// virtual void mouseEvent (MouseEvent* event);
+		virtual void MouseMoveEvent (MouseEvent* event);
 
-		virtual void CharEvent (unsigned int character);
-
-		virtual void MouseButtonEvent (int button, int action, int modes);
-
-		virtual void CursorPosEvent (double xpos, double ypos);
+		virtual void InputMethodEvent (unsigned int character);
 
 		virtual void CursorEnterEvent (int entered);
 

@@ -43,31 +43,25 @@ namespace BIL {
 
 	void Widget::KeyPressEvent (KeyEvent* event)
 	{
+		event->Accept();
 	}
 
 	void Widget::MousePressEvent (MouseEvent* event)
 	{
-
+		event->Accept();
 	}
 
 	void Widget::MouseReleaseEvent (MouseEvent* event)
 	{
-
-	}
-/*
-	void Widget::mouseEvent (MouseEvent* event)
-	{
-	}
-*/
-	void Widget::CharEvent (unsigned int character)
-	{
+		event->Accept();
 	}
 
-	void Widget::MouseButtonEvent (int button, int action, int modes)
+	void Widget::MouseMoveEvent (MouseEvent* event)
 	{
+		event->Accept();
 	}
 
-	void Widget::CursorPosEvent (double xpos, double ypos)
+	void Widget::InputMethodEvent (unsigned int character)
 	{
 	}
 

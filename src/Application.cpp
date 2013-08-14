@@ -123,11 +123,12 @@ namespace BIL {
 		glVersion = std::atof(glStrVersion.c_str());	// C++ 98
 		// glVersion = std::stof (glStrVersion);		// C++ 11
 
-		while (!glfwWindowShouldClose(_mainWindow->getWindow())) {
+		GLFWwindow* window = _mainWindow->window();
+		while (!glfwWindowShouldClose(window)) {
 
 			_mainWindow->render();
 
-			glfwSwapBuffers(_mainWindow->getWindow());
+			glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
 

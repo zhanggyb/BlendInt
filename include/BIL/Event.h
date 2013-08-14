@@ -43,23 +43,23 @@ namespace BIL {
 		{
 		}
 
-		void accept (void)
+		void Accept (void)
 		{
-			_accept = true;
+			accept_ = true;
 		}
 
-		void ignore (void)
+		void Ignore (void)
 		{
 		}
 
-		bool isAccepted (void) const
+		bool IsAccepted (void) const
 		{
-			return _accept;
+			return accept_;
 		}
 
 	protected:
 
-		bool _accept;
+		bool accept_;
 	};
 
 } /* namespace BIL */

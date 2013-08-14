@@ -24,6 +24,24 @@ protected:
 	virtual void cursorEnterEvent (int entered);
 };
 
+class BIL::Widget;
+
+class myWidget: public BIL::Widget
+{
+ public:
+
+	myWidget();
+
+	virtual ~myWidget();
+
+	virtual void render (void);
+
+ private:
+
+	virtual void MousePressEvent (MouseEvent* event);
+
+};
+
 class WindowTest: public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(WindowTest);
@@ -32,6 +50,8 @@ CPPUNIT_TEST_SUITE(WindowTest);
 	CPPUNIT_TEST(event2);
 
 	CPPUNIT_TEST(solorender1);
+
+	CPPUNIT_TEST(check_mouse_press1);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -52,6 +72,8 @@ private:
 
 	void event1 ();
 	void event2 ();
+
+	void check_mouse_press1 ();
 
 	void solorender1 ();
 

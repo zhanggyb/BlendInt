@@ -27,6 +27,7 @@
 namespace BIL {
 
 	enum MouseButton {
+		ButtonNone = -1,
 		ButtonLeft = GLFW_MOUSE_BUTTON_1, /* 0 */
 		ButtonRight = GLFW_MOUSE_BUTTON_2, /* 1 */
 		ButtonMiddle = GLFW_MOUSE_BUTTON_3, /* 2 */
