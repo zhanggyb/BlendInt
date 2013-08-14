@@ -59,14 +59,14 @@ namespace BIL {
 
 		void makeContextCurrent (void)
 		{
-			glfwMakeContextCurrent(_window);
+			glfwMakeContextCurrent(window_);
 		}
 
 		virtual ~Window ();
 
 		GLFWwindow* getWindow (void) const
 		{
-			return _window;
+			return window_;
 		}
 
 		Vec2i getSize (void);
@@ -78,7 +78,7 @@ namespace BIL {
 
 		void resize (int w, int h)
 		{
-			glfwSetWindowSize (_window, w, h);
+			glfwSetWindowSize (window_, w, h);
 		}
 
 		void setTitle (const std::string& title);
@@ -86,7 +86,7 @@ namespace BIL {
 
 		std::string getTitle (void)
 		{
-			return _title;
+			return title_;
 		}
 
 		/**
@@ -96,7 +96,7 @@ namespace BIL {
 		 */
 		int getInputMode (InputMode mode)
 		{
-			return glfwGetInputMode (_window, mode);
+			return glfwGetInputMode (window_, mode);
 		}
 
 		/**
@@ -106,50 +106,45 @@ namespace BIL {
 		 */
 		void setInputMode (InputMode mode, int value)
 		{
-			glfwSetInputMode (_window, mode, value);
+			glfwSetInputMode (window_, mode, value);
 		}
 
 		int getKey (int key)
 		{
-			return glfwGetKey(_window, key);
+			return glfwGetKey(window_, key);
 		}
 
 		int getMouseButton (int button)
 		{
-			return glfwGetMouseButton(_window, button);
+			return glfwGetMouseButton(window_, button);
 		}
 
 		Coord2d getCursorPos (void)
 		{
 			Coord2d ret;
-			glfwGetCursorPos (_window, &(ret.coord.x), &(ret.coord.y));
+			glfwGetCursorPos (window_, &(ret.coord.x), &(ret.coord.y));
 
 			return ret;
 		}
 
 		void setCursorPos (double xpos, double ypos)
 		{
-			glfwSetCursorPos(_window, xpos, ypos);
+			glfwSetCursorPos(window_, xpos, ypos);
 		}
 
-		virtual void refresh (void)
-		{
-			render();
-		}
+		virtual void render (void);
 
 	protected:
 
-		virtual void keyEvent (int key, int scancode, int action, int mods);
+		virtual void KeyPressEvent (int key, int scancode, int action, int mods);
 
-		virtual void charEvent (unsigned int character);
+		virtual void CharEvent (unsigned int character);
 
-		virtual void mouseButtonEvent (int button, int action, int mods);
+		virtual void MouseButtonEvent (int button, int action, int mods);
 
-		virtual void cursorPosEvent (double xpos, double ypos);
+		virtual void CursorPosEvent (double xpos, double ypos);
 
-		virtual void cursorEnterEvent (int entered);
-
-		virtual void render (void);
+		virtual void CursorEnterEvent (int entered);
 
 	private:					/* member functions disabled */
 
@@ -163,12 +158,12 @@ namespace BIL {
 
 	private:					/* member variables */
 		
-		GLFWwindow *_window;
+		GLFWwindow *window_;
 
-		double _cursorPosX;				/* cursor x position */
-		double _cursorPosY;				/* cursor y position */
+		double cursor_pos_x_;				/* cursor x position */
+		double cursor_pos_y_;				/* cursor y position */
 
-		std::string _title;
+		std::string title_;
 
 	private:
 		// static member functions

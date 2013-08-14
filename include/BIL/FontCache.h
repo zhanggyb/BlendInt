@@ -104,38 +104,38 @@ namespace BIL {
 
 		int getHeight (void)
 		{
-			if(_fontengine == NULL) return 0;
+			if(fontengine_ == NULL) return 0;
 			
-			return _fontengine->getHeight();
+			return fontengine_->getHeight();
 		}
 
 		int getAscender (void)
 		{
-			if(_fontengine == NULL) return 0;
-			return _fontengine->getAscender();
+			if(fontengine_ == NULL) return 0;
+			return fontengine_->getAscender();
 		}
 
 		int getDescender (void)
 		{
-			if(_fontengine == NULL) return 0;
-			return _fontengine->getDescender();
+			if(fontengine_ == NULL) return 0;
+			return fontengine_->getDescender();
 		}
 
 		int getMaxAdvance (void)
 		{
-			if(_fontengine == NULL) return 0;
-			return _fontengine->getMaxAdvance();
+			if(fontengine_ == NULL) return 0;
+			return fontengine_->getMaxAdvance();
 		}
 
 		Vec2l getKerning (const Glyph& left, const Glyph& right,
 				FT_UInt kern_mode = FT_KERNING_DEFAULT)
 		{
-			return _fontengine->getKerning(left, right, kern_mode);
+			return fontengine_->getKerning(left, right, kern_mode);
 		}
 
-		const FontEngine* getFontEngine (void) const
+		const FontEngine* fontengine (void) const
 		{
-			return _fontengine;
+			return fontengine_;
 		}
 
 #ifdef DEBUG
@@ -160,30 +160,21 @@ namespace BIL {
 		virtual ~FontCache ();
 
 	private:
-		// member functions disabled
-
-		FontCache ();
-
-		FontCache (const FontCache& orig);
-
-		FontCache& operator = (const FontCache& orig);
-
-	private:
 		// member variables
 
-		Font _font;
+		Font font_;
 
-		unsigned int _dpi;
+		unsigned int dpi_;
 
-		FontEngine* _fontengine;
+		FontEngine* fontengine_;
 
-		bool _initialized;
+		bool initialized_;
 
-		array<Glyph*, 128> _asciiDB;    // use arrary to store ascii for speed
+		array<Glyph*, 128> ascii_db_;    // use arrary to store ascii for speed
 
-		map<wchar_t, Glyph*> _glyphDB;
+		map<wchar_t, Glyph*> glyph_db_;
 
-		map<wchar_t, unsigned long> _countDB;
+		map<wchar_t, unsigned long> count_db_;
 
 	private:
 		// static members
@@ -195,6 +186,14 @@ namespace BIL {
 		static map<Font, FontCache*> cacheDB;
 		static map<Font, unsigned long> cacheCountDB;
 
+	private:
+		// member functions disabled
+
+		FontCache ();
+
+		FontCache (const FontCache& orig);
+
+		FontCache& operator = (const FontCache& orig);
 	};
 
 } /* namespace BIL */

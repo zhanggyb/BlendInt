@@ -55,32 +55,32 @@ namespace BIL {
 
 		iterator begin (void)
 		{
-			return _list.begin();
+			return list_.begin();
 		}
 
 		 const_iterator begin (void) const
 		 {
-		 return _list.begin();
+		 return list_.begin();
 		 }
 
 		iterator end (void)
 		{
-			return _list.end();
+			return list_.end();
 		}
 
 		 const_iterator end (void) const
 		 {
-		 return _list.end();
+		 return list_.end();
 		 }
 
 		 reverse_iterator rbegin(void)
 		 {
-			 return _list.rbegin();
+			 return list_.rbegin();
 		 }
 
 		 const_reverse_iterator rbegin(void) const
 		 {
-			 return _list.rbegin();
+			 return list_.rbegin();
 		 }
 
 		 /**
@@ -92,24 +92,24 @@ namespace BIL {
 		  */
 		 reverse_iterator rend (void)
 		 {
-			 return _list.rend();
+			 return list_.rend();
 		 }
 
 		 const_reverse_iterator rend (void) const
 		 {
-			 return _list.rend();
+			 return list_.rend();
 		 }
 
 		T operator [] (int n);
 
 		T& front (void)
 		{
-			return _list.front();
+			return list_.front();
 		}
 
 		T& back (void)
 		{
-			return _list.back();
+			return list_.back();
 		}
 
 		bool push_front (const T& val);
@@ -147,8 +147,8 @@ namespace BIL {
 		 */
 		ChildrenList<T>& operator = (const ChildrenList<T>& orig);
 
-		std::list<T> _list; /** ordered list */
-		std::set<T> _set; /** for fast search */
+		std::list<T> list_; /** ordered list */
+		std::set<T> set_; /** for fast search */
 	};
 
 	template<typename T>
@@ -161,22 +161,22 @@ namespace BIL {
 	template<typename T>
 	ChildrenList<T>::~ChildrenList ()
 	{
-		_list.clear();
-		_set.clear();
+		list_.clear();
+		set_.clear();
 	}
 
 	template<typename T>
 	inline T BIL::ChildrenList<T>::operator [] (int n)
 	{
-		return _list[n];
+		return list_[n];
 	}
 
 	template<typename T>
 	inline bool BIL::ChildrenList<T>::push_front (const T& val)
 	{
 		if (!find(val)) {
-			_list.push_front(val);
-			_set.insert(val);
+			list_.push_front(val);
+			set_.insert(val);
 			return true;
 		} else {
 			return false;
@@ -187,8 +187,8 @@ namespace BIL {
 	inline bool BIL::ChildrenList<T>::push_front (T& val)
 	{
 		if (!find(val)) {
-			_list.push_front(val);
-			_set.insert(val);
+			list_.push_front(val);
+			set_.insert(val);
 			return true;
 		} else {
 			return false;
@@ -199,8 +199,8 @@ namespace BIL {
 	inline bool BIL::ChildrenList<T>::push_back (const T& val)
 	{
 		if (!find(val)) {
-			_list.push_back(val);
-			_set.insert(val);
+			list_.push_back(val);
+			set_.insert(val);
 			return true;
 		} else {
 			return false;
@@ -211,8 +211,8 @@ namespace BIL {
 	inline bool BIL::ChildrenList<T>::push_back (T& val)
 	{
 		if (!find(val)) {
-			_list.push_back(val);
-			_set.insert(val);
+			list_.push_back(val);
+			set_.insert(val);
 			return true;
 		} else {
 			return false;
@@ -223,9 +223,9 @@ namespace BIL {
 	inline void BIL::ChildrenList<T>::pop_front (void)
 	{
 		if (size() > 0) {
-			T front = _list.front();
-			_set.erase(front);
-			_list.pop_front();
+			T front = list_.front();
+			set_.erase(front);
+			list_.pop_front();
 		}
 	}
 
@@ -233,30 +233,30 @@ namespace BIL {
 	inline void BIL::ChildrenList<T>::pop_back (void)
 	{
 		if (size() > 0) {
-			T back = _list.back();
-			_set.erase(back);
-			_list.pop_back();
+			T back = list_.back();
+			set_.erase(back);
+			list_.pop_back();
 		}
 	}
 
 	template<typename T>
 	inline bool BIL::ChildrenList<T>::find (const T& val)
 	{
-		return _set.count(val) > 0 ? true : false;
+		return set_.count(val) > 0 ? true : false;
 	}
 
 	template<typename T>
 	inline void ChildrenList<T>::erase (const T& val)
 	{
-		_set.erase(val);
-		_list.remove(val);
+		set_.erase(val);
+		list_.remove(val);
 	}
 
 	template<typename T>
 	inline void ChildrenList<T>::clear (void)
 	{
-		_set.clear();
-		_list.clear();
+		set_.clear();
+		list_.clear();
 	}
 
 	template<typename T>
@@ -264,8 +264,8 @@ namespace BIL {
 	{
 		int listsize, setsize;
 
-		listsize = _list.size();
-		setsize = _set.size();
+		listsize = list_.size();
+		setsize = set_.size();
 
 		if (listsize != setsize)
 			return -1;

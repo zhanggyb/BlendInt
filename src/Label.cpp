@@ -28,10 +28,10 @@
 namespace BIL {
 
 	Label::Label (const wstring& text, Drawable *parent)
-		: Widget (parent), _bg(RGBAf(0.0, 0.0, 0.0, 0.0))
+		: Widget (parent), background_(RGBAf(0.0, 0.0, 0.0, 0.0))
 	{
 		setPadding(Vec4i(2, 2, 2, 2));
-		setText(text);
+		set_text(text);
 	}
 
 	Label::~Label ()
@@ -39,30 +39,30 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	void Label::setText (const wstring& label)
+	void Label::set_text (const wstring& label)
 	{
 		if(label.empty()) {
 			// TODO: draw blank label
 			return;
 		}
 
-		_text.append(label);
+		text_.append(label);
 
 		calculateBox();
 
-		_text.setOrigin(Coord3f(
-								 _pos.coord.x + _padding.border.l,
-								 _pos.coord.y + _padding.border.b,
+		text_.setOrigin(Coord3f(
+								 pos_.coord.x + padding_.border.l,
+								 pos_.coord.y + padding_.border.b,
 								 0.0)
 						 );
 	}
 
 	void Label::calculateBox(void)
 	{
-		Vec2ui box = _text.calculateBox();
+		Vec2ui box = text_.calculateBox();
 		
-		box.vec.x = box.vec.x + _padding.border.l + _padding.border.r;
-		box.vec.y = box.vec.y + _padding.border.t + _padding.border.b;
+		box.vec.x = box.vec.x + padding_.border.l + padding_.border.r;
+		box.vec.y = box.vec.y + padding_.border.t + padding_.border.b;
 
 		resize (box);
 	}
@@ -72,13 +72,13 @@ namespace BIL {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(_pos.coord.x,
-					 _pos.coord.y,
-					 _pos.coord.z);
-		glColor4f(_bg.rgba.r, _bg.rgba.g, _bg.rgba.b, _bg.rgba.a);
-		glRectf(0.0, 0.0, _size.vec.x, _size.vec.y);
+		glTranslatef(pos_.coord.x,
+					 pos_.coord.y,
+					 pos_.coord.z);
+		glColor4f(background_.rgba.r, background_.rgba.g, background_.rgba.b, background_.rgba.a);
+		glRectf(0.0, 0.0, size_.vec.x, size_.vec.y);
 
-		_text.render();
+		text_.render();
 
 		glPopMatrix();
 	}

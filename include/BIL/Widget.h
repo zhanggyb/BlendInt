@@ -41,21 +41,21 @@ namespace BIL {
 
 	private:
 
-		virtual void keyEvent (KeyEvent* event);
+		virtual void KeyPressEvent (KeyEvent* event);
 
-		virtual void mousePressEvent (MouseEvent* event);
+		virtual void MousePressEvent (MouseEvent* event);
 
-		virtual void mouseReleaseEvent (MouseEvent* event);
+		virtual void MouseReleaseEvent (MouseEvent* event);
 
-		virtual void mouseEvent (MouseEvent* event);
+		// virtual void mouseEvent (MouseEvent* event);
 
-		virtual void charEvent (unsigned int character);
+		virtual void CharEvent (unsigned int character);
 
-		virtual void mouseButtonEvent (int button, int action, int modes);
+		virtual void MouseButtonEvent (int button, int action, int modes);
 
-		virtual void cursorPosEvent (double xpos, double ypos);
+		virtual void CursorPosEvent (double xpos, double ypos);
 
-		virtual void cursorEnterEvent (int entered);
+		virtual void CursorEnterEvent (int entered);
 
 	};
 

@@ -64,38 +64,33 @@ void myTexture::render (void)
     glDisable(GL_TEXTURE_2D);
 }
 
-void myTexture::keyEvent (KeyEvent* event)
+void myTexture::KeyPressEvent (KeyEvent* event)
 {
 }
 
-void myTexture::mousePressEvent (MouseEvent* event)
+void myTexture::MousePressEvent (MouseEvent* event)
 {
 
 }
 	
-void myTexture::mouseReleaseEvent (MouseEvent* event)
+void myTexture::MouseReleaseEvent (MouseEvent* event)
 {
 
 }
 
-
-void myTexture::mouseEvent (MouseEvent* event)
+void myTexture::CharEvent (unsigned int character)
 {
 }
 
-void myTexture::charEvent (unsigned int character)
+void myTexture::MouseButtonEvent (int button, int action, int modes)
 {
 }
 
-void myTexture::mouseButtonEvent (int button, int action, int modes)
+void myTexture::CursorPosEvent (double xpos, double ypos)
 {
 }
 
-void myTexture::cursorPosEvent (double xpos, double ypos)
-{
-}
-
-void myTexture::cursorEnterEvent (int entered)
+void myTexture::CursorEnterEvent (int entered)
 {
 }
 
@@ -116,7 +111,7 @@ void myTexture::makeCheckImage (void)
 myDrawable1::myDrawable1(Traceable* parent)
 	: Drawable (parent)
 {
-	_corner = CORNER_ALL;
+	corner_ = CORNER_ALL;
 }
 
 myDrawable1::~myDrawable1()
@@ -132,52 +127,48 @@ void myDrawable1::render(void)
 		glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
 
 		drawBox(GL_POLYGON,
-				_pos.coord.x,
-				_pos.coord.y,
-				_pos.coord.x + _size.vec.x,
-				_pos.coord.y + _size.vec.y,
+				pos_.coord.x,
+				pos_.coord.y,
+				pos_.coord.x + size_.vec.x,
+				pos_.coord.y + size_.vec.y,
 				5.0);
 
 	glDisable(GL_BLEND);
 }
 
-void myDrawable1::keyEvent (KeyEvent* event)
+void myDrawable1::KeyPressEvent (KeyEvent* event)
 {
 }
 
-void myDrawable1::mousePressEvent (MouseEvent* event)
+void myDrawable1::MousePressEvent (MouseEvent* event)
 {
 }
 	
-void myDrawable1::mouseReleaseEvent (MouseEvent* event)
+void myDrawable1::MouseReleaseEvent (MouseEvent* event)
 {
 
 }
 
-void myDrawable1::mouseEvent (MouseEvent* event)
+void myDrawable1::CharEvent (unsigned int character)
 {
 }
 
-void myDrawable1::charEvent (unsigned int character)
+void myDrawable1::MouseButtonEvent (int button, int action, int modes)
 {
 }
 
-void myDrawable1::mouseButtonEvent (int button, int action, int modes)
+void myDrawable1::CursorPosEvent (double xpos, double ypos)
 {
 }
 
-void myDrawable1::cursorPosEvent (double xpos, double ypos)
-{
-}
-
-void myDrawable1::cursorEnterEvent (int entered)
+void myDrawable1::CursorEnterEvent (int entered)
 {
 }
 
 myDrawable2::myDrawable2(Traceable* parent)
 	: Drawable (parent)
 {
-	_corner = CORNER_ALL;
+	corner_ = CORNER_ALL;
 }
 
 myDrawable2::~myDrawable2()
@@ -192,53 +183,48 @@ void myDrawable2::render(void)
 		glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
 
 		drawBoxShade(GL_POLYGON,
-				_pos.coord.x,
-				_pos.coord.y,
-				_pos.coord.x + _size.vec.x,
-				_pos.coord.y + _size.vec.y,
+				pos_.coord.x,
+				pos_.coord.y,
+				pos_.coord.x + size_.vec.x,
+				pos_.coord.y + size_.vec.y,
 				5.0,
 				0.5, 0.1);
 
 	glDisable(GL_BLEND);
 }
 
-void myDrawable2::keyEvent (KeyEvent* event)
+void myDrawable2::KeyPressEvent (KeyEvent* event)
 {
 }
 
-void myDrawable2::mousePressEvent (MouseEvent* event)
+void myDrawable2::MousePressEvent (MouseEvent* event)
 {
 }
 	
-void myDrawable2::mouseReleaseEvent (MouseEvent* event)
+void myDrawable2::MouseReleaseEvent (MouseEvent* event)
 {
 }
 
-
-void myDrawable2::mouseEvent (MouseEvent* event)
+void myDrawable2::CharEvent (unsigned int character)
 {
 }
 
-void myDrawable2::charEvent (unsigned int character)
+void myDrawable2::MouseButtonEvent (int button, int action, int modes)
 {
 }
 
-void myDrawable2::mouseButtonEvent (int button, int action, int modes)
+void myDrawable2::CursorPosEvent (double xpos, double ypos)
 {
 }
 
-void myDrawable2::cursorPosEvent (double xpos, double ypos)
-{
-}
-
-void myDrawable2::cursorEnterEvent (int entered)
+void myDrawable2::CursorEnterEvent (int entered)
 {
 }
 
 myDrawable3::myDrawable3(Traceable* parent)
 	: Drawable (parent)
 {
-	_corner = CORNER_ALL;
+	corner_ = CORNER_ALL;
 }
 
 myDrawable3::~myDrawable3()
@@ -252,15 +238,15 @@ void myDrawable3::render(void)
 	glEnable(GL_BLEND);
 		glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
 
-		drawRoundBox(_pos.coord.x,
-				_pos.coord.y,
-				_pos.coord.x + _size.vec.x,
-				_pos.coord.y + _size.vec.y,
+		drawRoundBox(pos_.coord.x,
+				pos_.coord.y,
+				pos_.coord.x + size_.vec.x,
+				pos_.coord.y + size_.vec.y,
 				5.0);
-		drawShadowBox(_pos.coord.x,
-				_pos.coord.y,
-				_pos.coord.x + _size.vec.x,
-				_pos.coord.y + _size.vec.y,
+		drawShadowBox(pos_.coord.x,
+				pos_.coord.y,
+				pos_.coord.x + size_.vec.x,
+				pos_.coord.y + size_.vec.y,
 				5.0,
 				64);
 
@@ -268,38 +254,34 @@ void myDrawable3::render(void)
 }
 
 
-void myDrawable3::keyEvent (KeyEvent* event)
+void myDrawable3::KeyPressEvent (KeyEvent* event)
 {
 }
 
-void myDrawable3::mousePressEvent (MouseEvent* event)
+void myDrawable3::MousePressEvent (MouseEvent* event)
 {
 
 }
 	
-void myDrawable3::mouseReleaseEvent (MouseEvent* event)
+void myDrawable3::MouseReleaseEvent (MouseEvent* event)
 {
 
 }
 
-void myDrawable3::mouseEvent (MouseEvent* event)
+void myDrawable3::CharEvent (unsigned int character)
 {
 }
 
-void myDrawable3::charEvent (unsigned int character)
+void myDrawable3::MouseButtonEvent (int button, int action, int modes)
 {
 }
 
-void myDrawable3::mouseButtonEvent (int button, int action, int modes)
-{
-}
-
-void myDrawable3::cursorPosEvent (double xpos, double ypos)
+void myDrawable3::CursorPosEvent (double xpos, double ypos)
 {
 	cout << "Cursor Position: " << xpos << " " << ypos << endl;
 }
 
-void myDrawable3::cursorEnterEvent (int entered)
+void myDrawable3::CursorEnterEvent (int entered)
 {
 }
 

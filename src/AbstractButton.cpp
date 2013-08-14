@@ -50,8 +50,8 @@ namespace BIL {
 		calculateBox();
 
 		_text.setOrigin(Coord3f(
-								 _pos.coord.x + _padding.border.l,
-								 _pos.coord.y + _padding.border.b,
+								 pos_.coord.x + padding_.border.l,
+								 pos_.coord.y + padding_.border.b,
 								 0.0)
 						 );
 	}
@@ -60,8 +60,8 @@ namespace BIL {
 	{
 		Vec2ui box = _text.calculateBox();
 
-		box.vec.x = box.vec.x + _padding.border.l + _padding.border.r;
-		box.vec.y = box.vec.y + _padding.border.t + _padding.border.b;
+		box.vec.x = box.vec.x + padding_.border.l + padding_.border.r;
+		box.vec.y = box.vec.y + padding_.border.t + padding_.border.b;
 
 		resize (box);
 	}
@@ -75,16 +75,16 @@ namespace BIL {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(_pos.coord.x,
-					 _pos.coord.y,
-					 _pos.coord.z);
+		glTranslatef(pos_.coord.x,
+					 pos_.coord.y,
+					 pos_.coord.z);
 
 		glColor4f(_bg.rgba.r, _bg.rgba.g, _bg.rgba.b, _bg.rgba.a);
 		drawBox(GL_POLYGON,
 					0.0f,
 					0.0f,
-					_size.vec.x,
-					_size.vec.y,
+					size_.vec.x,
+					size_.vec.y,
 					_cornerRadius);
 
 		_text.render();

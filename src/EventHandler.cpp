@@ -24,6 +24,7 @@
 
 namespace BIL {
 
+	/*
 	EventHandler::EventHandler ()
 	{
 		// TODO Auto-generated constructor stub
@@ -34,5 +35,6 @@ namespace BIL {
 	{
 		// TODO Auto-generated destructor stub
 	}
+	*/
 
 } /* namespace BIL */

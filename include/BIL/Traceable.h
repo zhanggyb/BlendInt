@@ -96,7 +96,7 @@ namespace BIL {
 		 */
 		uint64_t getId () const
 		{
-			return _id;
+			return id_;
 		}
 		/**
 		 * @brief get the parent pointer
@@ -104,7 +104,7 @@ namespace BIL {
 		 */
 		const Traceable* getParent (void) const
 		{
-			return _parent;
+			return parent_;
 		}
 
 		/**
@@ -132,6 +132,8 @@ namespace BIL {
 
 		inline bool unregisterObj (void);
 
+	private:	// member functions disabled
+
 		/**
 		 * @brief Declare copy constructor in private to disable it
 		 */
@@ -142,9 +144,11 @@ namespace BIL {
 		 */
 		Traceable& operator = (const Traceable& orig);
 
-		uint64_t _id; /** A unique ID for object */
+	private:	// member variables
 
-		Traceable* _parent; /** parent object */
+		uint64_t id_; /** A unique ID for object */
+
+		Traceable* parent_; /** parent object */
 
 	private:	// static member variables
 

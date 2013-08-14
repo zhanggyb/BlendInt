@@ -137,47 +137,47 @@ namespace BIL {
 #endif
 
 	FontCache::FontCache (const Font& font, unsigned int dpi)
-		: _font(font), _dpi(dpi), _fontengine(NULL), _initialized(false)
+		: font_(font), dpi_(dpi), fontengine_(NULL), initialized_(false)
 	{
 		for (unsigned char i = 0; i < 128; i++) {
-			_asciiDB[i] = NULL;
+			ascii_db_[i] = NULL;
 		}
-		_fontengine = new FontEngine(_font, _dpi);
+		fontengine_ = new FontEngine(font_, dpi_);
 	}
 
 	FontCache::~FontCache ()
 	{
-		if (_fontengine->isValid()) {
+		if (fontengine_->isValid()) {
 
 			map<wchar_t, Glyph*>::iterator it;
-			for (it = _glyphDB.begin(); it != _glyphDB.end(); it++) {
+			for (it = glyph_db_.begin(); it != glyph_db_.end(); it++) {
 				delete it->second;
 				it->second = NULL;
 			}
-			_glyphDB.clear();
-			_countDB.clear();
+			glyph_db_.clear();
+			count_db_.clear();
 
 			for (unsigned char i = 0; i < 128; i++) {
-				if (_asciiDB[i] != NULL) {
-					delete _asciiDB[i];
-					_asciiDB[i] = NULL;
+				if (ascii_db_[i] != NULL) {
+					delete ascii_db_[i];
+					ascii_db_[i] = NULL;
 				}
 			}
-			_initialized = false;
+			initialized_ = false;
 		}
-		if (_fontengine != NULL) {
-			delete _fontengine;
-			_fontengine = NULL;
+		if (fontengine_ != NULL) {
+			delete fontengine_;
+			fontengine_ = NULL;
 		}
 	}
 
 	bool FontCache::initialize (void)
 	{
-		if (!_fontengine->isValid()) {
+		if (!fontengine_->isValid()) {
 			return false;
 		}
 
-		if(_initialized) {
+		if(initialized_) {
 			return false;
 		}
 
@@ -185,63 +185,63 @@ namespace BIL {
 			query(i, true);
 		}
 
-		_initialized = true;
+		initialized_ = true;
 		return true;
 	}
 
 	Glyph* FontCache::query (wchar_t charcode, bool create)
 	{
-		if (!_fontengine->isValid()) {
+		if (!fontengine_->isValid()) {
 			return NULL;
 		}
 
 		Glyph* glyph = NULL;
 
 		if (charcode < 128) {
-			glyph = _asciiDB[charcode];
+			glyph = ascii_db_[charcode];
 			if ((glyph == NULL) && create) {
-				glyph = new Glyph(charcode, _font, _dpi, _fontengine);
-				_asciiDB[charcode] = glyph;
+				glyph = new Glyph(charcode, font_, dpi_, fontengine_);
+				ascii_db_[charcode] = glyph;
 			}
 
 			return glyph;
 		}
 
 		map<wchar_t, Glyph*>::iterator it;
-		it = _glyphDB.find(charcode);
+		it = glyph_db_.find(charcode);
 
 		// if the glyph is not found and need to be created
-		if (it == _glyphDB.end()) {
+		if (it == glyph_db_.end()) {
 
 			if (create) {
 
-				glyph = new Glyph(charcode, _font, _dpi, _fontengine);
+				glyph = new Glyph(charcode, font_, dpi_, fontengine_);
 
-				if (_glyphDB.size() >= cacheSize) {
+				if (glyph_db_.size() >= cacheSize) {
 					typedef std::pair<wchar_t, unsigned long> data_t;
 					typedef std::priority_queue<data_t, std::deque<data_t>,
 												greater_second<data_t> > queue_t;
-					queue_t q(_countDB.begin(), _countDB.end());
+					queue_t q(count_db_.begin(), count_db_.end());
 
 					wchar_t char_to_del = q.top().first;
 					cout << "Remove " << q.top().first << " from cache."
 						 << std::endl;
 
-					delete _glyphDB[char_to_del];
-					_glyphDB.erase(char_to_del);
-					_countDB.erase(char_to_del);
+					delete glyph_db_[char_to_del];
+					glyph_db_.erase(char_to_del);
+					count_db_.erase(char_to_del);
 				}
 
-				_glyphDB[charcode] = glyph;
+				glyph_db_[charcode] = glyph;
 
 			}
 		} else {
-			glyph = _glyphDB[charcode];
+			glyph = glyph_db_[charcode];
 		}
 
 		if(glyph != NULL) {
-			unsigned long count = _countDB[charcode];
-			_countDB[charcode] = count + 1;
+			unsigned long count = count_db_[charcode];
+			count_db_[charcode] = count + 1;
 		}
 		return glyph;
 	}
@@ -251,7 +251,7 @@ namespace BIL {
 	{
 		map<wchar_t, unsigned long>::iterator it;
 		cout << endl;
-		for (it = _countDB.begin(); it != _countDB.end(); it++) {
+		for (it = count_db_.begin(); it != count_db_.end(); it++) {
 			wchar_t ch = it->first;
 			cout << "Character: ";
 			cout << (unsigned long) ch << " ";

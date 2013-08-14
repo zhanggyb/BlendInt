@@ -24,21 +24,19 @@ public:
 
 	void render (void);
 
-	void keyEvent (KeyEvent* event);
+	void KeyPressEvent (KeyEvent* event);
 
-	void mousePressEvent (MouseEvent* event);
+	void MousePressEvent (MouseEvent* event);
 	
-	void mouseReleaseEvent (MouseEvent* event);
+	void MouseReleaseEvent (MouseEvent* event);
 
-	void mouseEvent (MouseEvent* event);
+	void CharEvent (unsigned int character);
 
-	void charEvent (unsigned int character);
+	void MouseButtonEvent (int button, int action, int modes);
 
-	void mouseButtonEvent (int button, int action, int modes);
+	void CursorPosEvent (double xpos, double ypos);
 
-	void cursorPosEvent (double xpos, double ypos);
-
-	void cursorEnterEvent (int entered);
+	void CursorEnterEvent (int entered);
 
 private:
 	void makeCheckImage (void);
@@ -60,21 +58,19 @@ public:
 
 	void render (void);
 
-	void keyEvent (KeyEvent* event);
+	void KeyPressEvent (KeyEvent* event);
 
-	void mousePressEvent (MouseEvent* event);
+	void MousePressEvent (MouseEvent* event);
 	
-	void mouseReleaseEvent (MouseEvent* event);
+	void MouseReleaseEvent (MouseEvent* event);
 
-	void mouseEvent (MouseEvent* event);
+	void CharEvent (unsigned int character);
 
-	void charEvent (unsigned int character);
+	void MouseButtonEvent (int button, int action, int modes);
 
-	void mouseButtonEvent (int button, int action, int modes);
+	void CursorPosEvent (double xpos, double ypos);
 
-	void cursorPosEvent (double xpos, double ypos);
-
-	void cursorEnterEvent (int entered);
+	void CursorEnterEvent (int entered);
 };
 
 class myDrawable2: public Drawable
@@ -87,21 +83,19 @@ public:
 
 	void render (void);
 
-	void keyEvent (KeyEvent* event);
+	void KeyPressEvent (KeyEvent* event);
 
-	void mousePressEvent (MouseEvent* event);
+	void MousePressEvent (MouseEvent* event);
 	
-	void mouseReleaseEvent (MouseEvent* event);
+	void MouseReleaseEvent (MouseEvent* event);
 
-	void mouseEvent (MouseEvent* event);
+	void CharEvent (unsigned int character);
 
-	void charEvent (unsigned int character);
+	void MouseButtonEvent (int button, int action, int modes);
 
-	void mouseButtonEvent (int button, int action, int modes);
+	void CursorPosEvent (double xpos, double ypos);
 
-	void cursorPosEvent (double xpos, double ypos);
-
-	void cursorEnterEvent (int entered);
+	void CursorEnterEvent (int entered);
 };
 
 class myDrawable3: public Drawable
@@ -114,21 +108,19 @@ public:
 
 	void render (void);
 
-	void keyEvent (KeyEvent* event);
+	void KeyPressEvent (KeyEvent* event);
 
-	void mousePressEvent (MouseEvent* event);
+	void MousePressEvent (MouseEvent* event);
 	
-	void mouseReleaseEvent (MouseEvent* event);
+	void MouseReleaseEvent (MouseEvent* event);
 
-	void mouseEvent (MouseEvent* event);
+	void CharEvent (unsigned int character);
 
-	void charEvent (unsigned int character);
+	void MouseButtonEvent (int button, int action, int modes);
 
-	void mouseButtonEvent (int button, int action, int modes);
+	void CursorPosEvent (double xpos, double ypos);
 
-	void cursorPosEvent (double xpos, double ypos);
-
-	void cursorEnterEvent (int entered);
+	void CursorEnterEvent (int entered);
 };
 
 class DrawableTest: public CppUnit::TestFixture

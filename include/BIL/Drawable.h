@@ -87,7 +87,7 @@ namespace BIL {
 
 		const Vec2ui& getSize (void) const
 		{
-			return _size;
+			return size_;
 		}
 
 		void resize (unsigned int w, unsigned int h)
@@ -99,67 +99,67 @@ namespace BIL {
 
 		const Coord3f& getPos (void) const
 		{
-			return _pos;
+			return pos_;
 		}
 
 		void setPos (float x, float y, float z)
 		{
-			_pos = Coord3f(x, y, z);
+			pos_ = Coord3f(x, y, z);
 		}
 
 		void setPos (const Coord2f& pos)
 		{
-			_pos = Coord3f(pos.coord.x, pos.coord.y, 0.0);
+			pos_ = Coord3f(pos.coord.x, pos.coord.y, 0.0);
 		}
 
 		void setPos (const Coord3f& pos)
 		{
-			_pos = pos;
+			pos_ = pos;
 		}
 
 		const Vec4i& getMargin (void) const
 		{
-			return _margin;
+			return margin_;
 		}
 
 		void setMargin (const Vec4i& margin)
 		{
-			_margin = margin;
+			margin_ = margin;
 		}
 
 		const Vec4i& getPadding (void) const
 		{
-			return _padding;
+			return padding_;
 		}
 
 		void setPadding (const Vec4i& padding)
 		{
-			_padding = padding;
+			padding_ = padding;
 		}
 
 		const Font& getFont (void) const
 		{
-			return _font;
+			return font_;
 		}
 
 		void setRoundBox (CornerPosition type)
 		{
-			_corner = type;
+			corner_ = type;
 		}
 
 		CornerPosition getRoundBox (void)
 		{
-			return _corner;
+			return corner_;
 		}
 
 		void show (void)
 		{
-			_isVisible = true;
+			is_visible_ = true;
 		}
 
 		void hide (void)
 		{
-			_isVisible = false;
+			is_visible_ = false;
 		}
 
 	public:	// virtual functions
@@ -247,19 +247,19 @@ namespace BIL {
 	protected:
 		// member variables
 
-		Font _font;
+		Font font_;
 
-		Vec2ui _size;
+		Vec2ui size_;
 
-		Coord3f _pos;
+		Coord3f pos_;
 
-		Vec4i _padding; /** used when in Layout */
+		Vec4i padding_; /** used when in Layout */
 
-		Vec4i _margin; /** used when in Layout */
+		Vec4i margin_; /** used when in Layout */
 
-		CornerPosition _corner;
+		CornerPosition corner_;
 
-		bool _isVisible;
+		bool is_visible_;
 
 	private:	// member function disabled
 

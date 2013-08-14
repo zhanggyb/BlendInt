@@ -75,7 +75,7 @@ void LabelTest::show1 ()
 
 	Label label(L"仁义礼智信");
 	label.setPos(Coord2f(50.0, 50.0));
-	label.setBackground(RGBAf(0.25f, 0.25f, 1.0f, 0.5f));
+	label.set_background(RGBAf(0.25f, 0.25f, 1.0f, 0.5f));
 	//label.setFont(Font("Droid Sans", 24));
 	label.setTextColor (RGBAf(0.5, 0.9, 0.75, 1.0));
 
@@ -208,7 +208,7 @@ void LabelTest::checkfont1 ()
 
 	Label label(L"Hello World!");
 	label.setPos(Coord2f(50.0, 50.0));
-	label.setBackground(RGBAf(0.25f, 0.25f, 1.0f, 0.5f));
+	label.set_background(RGBAf(0.25f, 0.25f, 1.0f, 0.5f));
 	label.setFont(Font("Droid Sans", 24));
 
 	while (!glfwWindowShouldClose(win)) {

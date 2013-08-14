@@ -30,7 +30,7 @@ namespace BIL {
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub
-		_size = Vec2ui(250, 200);
+		size_ = Vec2ui(250, 200);
 		setMargin(Vec4i(1, 1, 1, 1));
 	}
 
