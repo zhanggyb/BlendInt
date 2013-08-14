@@ -36,9 +36,11 @@ class myWidget: public BIL::Widget
 
 	virtual void render (void);
 
- private:
+ protected:
 
 	virtual void MousePressEvent (MouseEvent* event);
+	
+	virtual void MouseMoveEvent (MouseEvent* event);
 
 };
 

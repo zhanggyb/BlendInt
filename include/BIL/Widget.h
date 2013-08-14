@@ -39,8 +39,6 @@ namespace BIL {
 
 	protected:
 
-	private:
-
 		virtual void KeyPressEvent (KeyEvent* event);
 
 		virtual void MousePressEvent (MouseEvent* event);

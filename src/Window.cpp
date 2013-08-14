@@ -26,6 +26,7 @@
 #include <BIL/Drawable.h>
 #include <BIL/KeyEvent.h>
 #include <BIL/MouseEvent.h>
+#include <BIL/ContextMenuEvent.h>
 
 using namespace std;
 
@@ -167,34 +168,43 @@ namespace BIL {
 
 	void Window::KeyEvent (int key, int scancode, int action, int mods)
 	{
-		BIL::KeyEvent event(static_cast<Key>(key),
-							scancode,
-							static_cast<KeyButtonAction>(action),
-							static_cast<KeyModifier>(mods));
+		Event* event = NULL;
+
+		if (key == Key_Menu) {
+			event = new ContextMenuEvent(ContextMenuEvent::Keyboard,
+										 static_cast<KeyModifier>(mods));
+		} else {
+			event = new BIL::KeyEvent(static_cast<Key>(key),
+									  scancode,
+									  static_cast<KeyButtonAction>(action),
+									  static_cast<KeyModifier>(mods));
+		}
 
 		ChildrenList<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		for (it = _children.rbegin(); it != _children.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
-			if (item != NULL) {
-				// TODO: only the focused widget can dispose key event
-				switch (action) {
-				case Press:
-					item->KeyPressEvent(&event);
-					break;
-				case Release:
-					// item->KeyReleaseEvent(&event);
-					break;
-				case Repeat:
-					// item->KeyRepeatEvent(&event);
-					break;
-				default:
-					item->KeyPressEvent(&event);
-					break;
-				}
-				if(event.IsAccepted()) break;
+			if (item == NULL) continue;
+
+			// TODO: only the focused widget can dispose key event
+			switch (action) {
+			case Press:
+				//item->KeyPressEvent(event);
+				break;
+			case Release:
+				// item->KeyReleaseEvent(&event);
+				break;
+			case Repeat:
+				// item->KeyRepeatEvent(&event);
+				break;
+			default:
+				//item->KeyPressEvent(event);
+				break;
 			}
+			if(event->IsAccepted()) break;
 		}
+
+		delete event;
 	}
 
 	void Window::InputMethodEvent (unsigned int character)
@@ -245,7 +255,7 @@ namespace BIL {
 		}
 
 		MouseEvent event (type, mouseclick);
-		event.setWindowPos(cursor_pos_x_, cursor_pos_y_);
+		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
 
 		ChildrenList<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
@@ -253,27 +263,27 @@ namespace BIL {
 		float local_y;
 		for (it = _children.rbegin(); it != _children.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
-			if (item != NULL) {
-				local_x = cursor_pos_x_ - (item->getPos().coord.x);
-				local_y = cursor_pos_y_ - (item->getPos().coord.y);
-				if ((local_x - 0.000001 > 0.0) &&
-					(local_y - 0.000001 > 0.0) &&
-					(local_x - item->getSize().vec.x) < 0.0 &&
-					(local_y - item->getSize().vec.y) < 0.0)
-				{
-					event.setLocalPos (local_x, local_y);
-					switch (action) {
-					case GLFW_PRESS:
-						item->MousePressEvent(&event);
-						break;
-					case GLFW_RELEASE:
-						item->MouseReleaseEvent(&event);
-					default:
-						break;
-					}
+			if (item == NULL) continue;
+
+			local_x = cursor_pos_x_ - (item->getPos().coord.x);
+			local_y = cursor_pos_y_ - (item->getPos().coord.y);
+			if ((local_x - 0.000001 > 0.0) &&
+				(local_y - 0.000001 > 0.0) &&
+				(local_x - item->getSize().vec.x) < 0.0 &&
+				(local_y - item->getSize().vec.y) < 0.0)
+			{
+				event.set_pos (local_x, local_y);
+				switch (action) {
+				case GLFW_PRESS:
+					item->MousePressEvent(&event);
+					break;
+				case GLFW_RELEASE:
+					item->MouseReleaseEvent(&event);
+				default:
+					break;
 				}
-				if(event.IsAccepted()) break;
 			}
+			if(event.IsAccepted()) break;
 		}
 	}
 
@@ -286,7 +296,7 @@ namespace BIL {
 		Event::Type type = Event::None;
 
 		MouseEvent event (type, mouseclick);
-		event.setWindowPos(cursor_pos_x_, cursor_pos_y_);
+		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
 
 		ChildrenList<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
@@ -303,7 +313,7 @@ namespace BIL {
 					(local_x - item->getSize().vec.x) < 0.0 &&
 					(local_y - item->getSize().vec.y) < 0.0)
 				{
-					event.setLocalPos (local_x, local_y);
+					event.set_pos (local_x, local_y);
 					item->MouseMoveEvent(&event);
 				}
 				if(event.IsAccepted()) break;

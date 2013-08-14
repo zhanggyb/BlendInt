@@ -71,10 +71,17 @@ void myWidget::MousePressEvent (MouseEvent* event)
 	cout << "Click at" << event->pos().coord.x << " "
 		 << event->pos().coord.y << endl;
 
-	cout << "and window position: " << event->windowPos().coord.x << " "
-		 << event->windowPos().coord.y << endl;
+	cout << "and window position: " << event->window_pos().coord.x << " "
+		 << event->window_pos().coord.y << endl;
 
 	event->Accept();
+}
+
+void myWidget::MouseMoveEvent (MouseEvent* event)
+{
+	cout << "Hover on this widget" << endl;
+
+	Widget::MouseMoveEvent(event);
 }
 
 WindowTest::WindowTest ()

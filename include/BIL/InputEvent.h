@@ -19,47 +19,33 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_KEYEVENT_H_
-#define _BIL_KEYEVENT_H_
+#ifndef _BIL_INPUTEVENT_H_
+#define _BIL_INPUTEVENT_H_
 
 #include <BIL/Types.h>
-#include <BIL/InputEvent.h>
+#include <BIL/Event.h>
 
 namespace BIL {
 
-	class KeyEvent: public InputEvent
+	class InputEvent: public Event
 	{
 	public:
 
-		/**
-		 * @brief Default Constructor of KeyEvent
-		 *
-		 * @param[in] key The keyboard key that was pressed or released
-		 * @param[in] scancode The system-specific scancode of the key
-		 * @param[in] action KeyButtonAction
-		 * @param[in] mods Bit field describing which modifier keys were held down
-		 *
-		 * This signature a key event
-		 */
-		KeyEvent(Key key, int scancode,
-				 KeyButtonAction action, KeyModifier mods)
-			: _key(key), _scancode(scancode), _action(action), _mods(mods)
-		{ }
-
-		virtual ~KeyEvent()
+		InputEvent(KeyModifier modifiers = ModifierNone)
+			: modifiers_(modifiers)
 		{
-
 		}
 
-	private:
+		virtual ~InputEvent()
+		{
+		}
 
-		Key _key;
-		int _scancode;
-		KeyButtonAction _action;
-		KeyModifier _mods;
-		
+	protected:
+
+		KeyModifier modifiers_;
+
 	};
 
-}
+} /* namespace BIL */
 
-#endif	/* _BIL_KEYEVENT_H_ */
+#endif	/* _BIL_INPUTEVENT_H_ */

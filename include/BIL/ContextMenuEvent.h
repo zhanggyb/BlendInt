@@ -19,41 +19,46 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_MOUSEEVENT_H_
-#define _BIL_MOUSEEVENT_H_
+#ifndef _BIL_CONTEXTMENUEVENT_H_
+#define _BIL_CONTEXTMENUEVENT_H_
 
-#include <BIL/Types.h>
-#include <BIL/Tuple.h>
-#include <BIL/Event.h>
 #include <BIL/InputEvent.h>
 
 namespace BIL {
 
-	class InputEvent;
-
-	class MouseEvent: public InputEvent
+	class ContextMenuEvent: public InputEvent
 	{
 	public:
 
-		MouseEvent (Type type, MouseButton button)
-			: type_(type), button_(button),
-			pos_(Coord2f(0.0, 0.0)),
-			window_pos_(Coord2d(0.0, 0.0))
-			{}
-		
-		MouseEvent (Type type, MouseButton button,
-					const Coord2f& local_pos,
-					const Coord2d& window_pos)
-			: type_ (type), button_ (button),
+		enum Source {
+			Unknown,
+			Keyboard,
+			Mouse
+		};
+
+		ContextMenuEvent (Source source,
+						  KeyModifier mods)
+			: source_(source),
+			//modifiers_(mods),
+			pos_(Coord2f(0.0, 0.0)), window_pos_(Coord2d(0.0, 0.0))
+		{}
+
+
+		ContextMenuEvent (Source source,
+						  KeyModifier mods,
+						  const Coord2f& local_pos,
+						  const Coord2d& window_pos)
+			: source_(source),
+			// modifiers_(mods),
 			pos_(local_pos), window_pos_(window_pos)
 		{}
 
-		virtual ~MouseEvent ()
+		virtual ~ContextMenuEvent()
 		{}
 
-		MouseButton button (void) const
+		Source source (void)
 		{
-			return button_;
+			return source_;
 		}
 
 		const Coord2f& pos (void) const
@@ -80,13 +85,13 @@ namespace BIL {
 
 	private:
 
-		Type type_;
+		Source source_;
 
-		MouseButton button_;
 		Coord2f pos_;
+
 		Coord2d window_pos_;
 	};
 
 }
 
-#endif	/* _BIL_MOUSEEVENT_H_ */
+#endif	/* _BIL_CONTEXTMENUEVENT_H_ */
