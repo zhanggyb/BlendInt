@@ -41,6 +41,10 @@ namespace BIL {
 
 		virtual void KeyPressEvent (KeyEvent* event);
 
+		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
+		
+		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
+
 		virtual void MousePressEvent (MouseEvent* event);
 
 		virtual void MouseReleaseEvent (MouseEvent* event);

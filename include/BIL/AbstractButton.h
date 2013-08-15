@@ -54,35 +54,38 @@ namespace BIL {
 
 		// void setCheckable (bool checkable);
 
-		void setBackground (const RGBAf& color)
+		void set_background (const RGBAf& color)
 		{
-			_bg = color;
+			background_ = color;
 		}
 
-		void setCornerRadius (float rad)
+		void set_corner_radius (float rad)
 		{
-			_cornerRadius = rad;
+			corner_radius_ = rad;
 		}
 
 		void render (void);
+
+	protected:
+
+		
 
 	private:	// member functions
 
 		void calculateBox (void);
 
+	private:
+
+		TextBuffer text_;
+
+		RGBAf background_;
+
+		float corner_radius_;
+
 	private:	// member functions (disabled)
 
 		AbstractButton (const AbstractButton& orig);
 		AbstractButton& operator = (const AbstractButton& orig);
-
-	private:
-
-		TextBuffer _text;
-
-		RGBAf _bg;
-
-		float _cornerRadius;
-
 	};
 
 } /* namespace BIL */

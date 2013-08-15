@@ -75,8 +75,8 @@ void AbstractButtonTest::show1 ()
 
 	AbstractButton button(L"The Default Value");
 	button.setPos(Coord2f(50.0, 50.0));
-	button.setBackground(RGBAf(1.0, 0.9, 1.0, 0.9));
-	button.setCornerRadius (10.0);
+	button.set_background(RGBAf(1.0, 0.9, 1.0, 0.9));
+	button.set_corner_radius (10.0);
 
 	while (!glfwWindowShouldClose(win)) {
 

@@ -46,11 +46,11 @@ namespace BIL {
 			return;
 		}
 
-		text_.append(label);
+		text_.Append(label);
 
 		calculateBox();
 
-		text_.setOrigin(Coord3f(
+		text_.set_origin(Coord3f(
 								 pos_.coord.x + padding_.border.l,
 								 pos_.coord.y + padding_.border.b,
 								 0.0)

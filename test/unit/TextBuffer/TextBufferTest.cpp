@@ -78,8 +78,8 @@ void TextBufferTest::showcharacter1 ()
     TextBuffer buf (font);
     //TextBuffer buf;
 
-    buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
-    buf.append(L"A");
+    buf.set_origin(Coord3f(100.0, 100.0, 0.0));
+    buf.Append(L"A");
 
     while (!glfwWindowShouldClose(win)) {
 
@@ -138,8 +138,8 @@ void TextBufferTest::showtextline1 ()
     }
 
     TextBuffer buf(Font("Sans", 16));
-    buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
-    buf.append(L"we have official packages");
+    buf.set_origin(Coord3f(100.0, 100.0, 0.0));
+    buf.Append(L"we have official packages");
 
     while (!glfwWindowShouldClose(win)) {
 
@@ -198,8 +198,8 @@ void TextBufferTest::showtextline2 ()
     }
 
     TextBuffer buf(Font("Sans", 16));
-    buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
-    buf.append(L"Our strong community is diverse and helpful");
+    buf.set_origin(Coord3f(100.0, 100.0, 0.0));
+    buf.Append(L"Our strong community is diverse and helpful");
 
     while (!glfwWindowShouldClose(win)) {
 
@@ -258,8 +258,8 @@ void TextBufferTest::showtextline3 ()
     }
 
     TextBuffer buf(Font("Sans", 16));
-    buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
-    buf.append(L"Arch Linux\n??????\n床前明月光");
+    buf.set_origin(Coord3f(100.0, 100.0, 0.0));
+    buf.Append(L"Arch Linux\n??????\n床前明月光");
 
     while (!glfwWindowShouldClose(win)) {
 
@@ -318,8 +318,8 @@ void TextBufferTest::showtextline4 ()
     }
 
     TextBuffer buf(Font("Sans", 16));
-    buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
-    buf.append(L"A simple, lightweight distribution\n??????\n疑是地上霜");
+    buf.set_origin(Coord3f(100.0, 100.0, 0.0));
+    buf.Append(L"A simple, lightweight distribution\n??????\n疑是地上霜");
 
     while (!glfwWindowShouldClose(win)) {
 
@@ -361,7 +361,7 @@ void TextBufferTest::showtextline4 ()
 void TextBufferTest::calculatebox1 ()
 {
     TextBuffer buf(Font("Sans", 16));
-    buf.append(L"ArchLinux");
+    buf.Append(L"ArchLinux");
 
 	Vec2ui box = buf.calculateBox ();
 

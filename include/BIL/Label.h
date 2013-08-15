@@ -44,15 +44,15 @@ namespace BIL {
 
 		void setFont (const Font& font)
 		{
-			text_.setFont(font);
+			text_.set_font(font);
 			calculateBox();
 		}
 
 		void setTextColor (const RGBAf& fg,
 				const RGBAf& bg = RGBAf(0.0, 0.0, 0.0, 0.0))
 		{
-			text_.setForeground(fg);
-			text_.setBackground(bg);
+			text_.set_foreground(fg);
+			text_.set_background(bg);
 		}
 
 		void set_background (const RGBAf& color)

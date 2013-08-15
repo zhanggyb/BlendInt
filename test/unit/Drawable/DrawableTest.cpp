@@ -68,6 +68,16 @@ void myTexture::KeyPressEvent (KeyEvent* event)
 {
 }
 
+void myTexture::ContextMenuPressEvent (ContextMenuEvent* event)
+{
+
+}
+
+void myTexture::ContextMenuReleaseEvent (ContextMenuEvent* event)
+{
+
+}
+
 void myTexture::MousePressEvent (MouseEvent* event)
 {
 
@@ -137,6 +147,16 @@ void myDrawable1::KeyPressEvent (KeyEvent* event)
 {
 }
 
+void myDrawable1::ContextMenuPressEvent (ContextMenuEvent* event)
+{
+
+}
+
+void myDrawable1::ContextMenuReleaseEvent (ContextMenuEvent* event)
+{
+
+}
+
 void myDrawable1::MousePressEvent (MouseEvent* event)
 {
 }
@@ -189,6 +209,16 @@ void myDrawable2::render(void)
 
 void myDrawable2::KeyPressEvent (KeyEvent* event)
 {
+}
+
+void myDrawable2::ContextMenuPressEvent (ContextMenuEvent* event)
+{
+
+}
+
+void myDrawable2::ContextMenuReleaseEvent (ContextMenuEvent* event)
+{
+
 }
 
 void myDrawable2::MousePressEvent (MouseEvent* event)
@@ -247,6 +277,16 @@ void myDrawable3::render(void)
 
 void myDrawable3::KeyPressEvent (KeyEvent* event)
 {
+}
+
+void myDrawable3::ContextMenuPressEvent (ContextMenuEvent* event)
+{
+
+}
+
+void myDrawable3::ContextMenuReleaseEvent (ContextMenuEvent* event)
+{
+
 }
 
 void myDrawable3::MousePressEvent (MouseEvent* event)

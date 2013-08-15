@@ -46,6 +46,16 @@ namespace BIL {
 		event->Accept();
 	}
 
+	void Widget::ContextMenuPressEvent (ContextMenuEvent* event)
+	{
+		event->Accept();
+	}
+
+	void Widget::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	{
+		event->Accept();
+	}
+
 	void Widget::MousePressEvent (MouseEvent* event)
 	{
 		event->Accept();

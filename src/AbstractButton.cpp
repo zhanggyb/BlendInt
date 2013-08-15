@@ -26,8 +26,8 @@
 namespace BIL {
 
 	AbstractButton::AbstractButton (const wstring& text, Drawable *parent)
-			: Widget(parent), _bg(RGBAf(0.75f, 0.75f, 0.75f, 1.0)),
-			  _cornerRadius (1.0)
+			: Widget(parent), background_(RGBAf(0.75f, 0.75f, 0.75f, 1.0)),
+			  corner_radius_ (1.0)
 	{
 		setPadding(Vec4i(2, 2, 2, 2));
 		setText(text);
@@ -45,11 +45,11 @@ namespace BIL {
 			return;
 		}
 
-		_text.append(text);
+		text_.Append(text);
 
 		calculateBox();
 
-		_text.setOrigin(Coord3f(
+		text_.set_origin(Coord3f(
 								 pos_.coord.x + padding_.border.l,
 								 pos_.coord.y + padding_.border.b,
 								 0.0)
@@ -58,7 +58,7 @@ namespace BIL {
 
 	void AbstractButton::calculateBox(void)
 	{
-		Vec2ui box = _text.calculateBox();
+		Vec2ui box = text_.calculateBox();
 
 		box.vec.x = box.vec.x + padding_.border.l + padding_.border.r;
 		box.vec.y = box.vec.y + padding_.border.t + padding_.border.b;
@@ -79,15 +79,19 @@ namespace BIL {
 					 pos_.coord.y,
 					 pos_.coord.z);
 
-		glColor4f(_bg.rgba.r, _bg.rgba.g, _bg.rgba.b, _bg.rgba.a);
+		glColor4f(background_.rgba.r,
+				  background_.rgba.g,
+				  background_.rgba.b,
+				  background_.rgba.a);
+
 		drawBox(GL_POLYGON,
 					0.0f,
 					0.0f,
 					size_.vec.x,
 					size_.vec.y,
-					_cornerRadius);
+					corner_radius_);
 
-		_text.render();
+		text_.render();
 
 		glPopMatrix();
 		glDisable(GL_BLEND);

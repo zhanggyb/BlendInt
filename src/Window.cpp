@@ -168,46 +168,58 @@ namespace BIL {
 
 	void Window::KeyEvent (int key, int scancode, int action, int mods)
 	{
-		Event* event = NULL;
-
 		if (key == Key_Menu) {
-			event = new ContextMenuEvent(ContextMenuEvent::Keyboard,
-										 mods);
-		} else {
-			event = new BIL::KeyEvent(key,
-									  scancode,
-									  action,
-									  mods);
-		}
+			ContextMenuEvent event(ContextMenuEvent::Keyboard,
+								   mods);
 
-		ChildrenList<Traceable*>::const_reverse_iterator it;
-		Drawable *item = NULL;
-		for (it = _children.rbegin(); it != _children.rend(); it++) {
-			item = dynamic_cast<Drawable*>(*it);
-			if (item == NULL) continue;
+			ChildrenList<Traceable*>::const_reverse_iterator it;
+			Drawable *item = NULL;
+			for (it = _children.rbegin(); it != _children.rend(); it++) {
+				item = dynamic_cast<Drawable*>(*it);
+				if (item == NULL) continue;
 
-			// TODO: only the focused widget can dispose key event
-			switch (action) {
-			case KeyPress:
-				if (key == Key_Menu) {
-					// item->ContextMenuEvent(dynamic_cast<ContextMenuEvent*>(event));
-				} else {
-					item->KeyPressEvent(dynamic_cast<BIL::KeyEvent*>(event));
+				// TODO: only the focused widget can dispose key event
+				switch (action) {
+				case KeyPress:
+					item->ContextMenuPressEvent (&event);
+					break;
+				case KeyRelease:
+					item->ContextMenuReleaseEvent (&event);
+					break;
+				default:
+					break;
 				}
-				break;
-			case KeyRelease:
-				// item->KeyReleaseEvent(dynamic_cast<BIL::KeyEvent*>(event));
-				break;
-			case KeyRepeat:
-				// item->KeyRepeatEvent(&event);
-				break;
-			default:
-				break;
+				if(event.IsAccepted()) break;
 			}
-			if(event->IsAccepted()) break;
-		}
 
-		delete event;
+		} else {
+
+			BIL::KeyEvent event(key, scancode, action, mods);
+
+			ChildrenList<Traceable*>::const_reverse_iterator it;
+			Drawable *item = NULL;
+			for (it = _children.rbegin(); it != _children.rend(); it++) {
+				item = dynamic_cast<Drawable*>(*it);
+				if (item == NULL) continue;
+
+				// TODO: only the focused widget can dispose key event
+				switch (action) {
+				case KeyPress:
+					item->KeyPressEvent(&event);
+					break;
+				case KeyRelease:
+					// item->KeyReleaseEvent(dynamic_cast<BIL::KeyEvent*>(event));
+					break;
+				case KeyRepeat:
+					// item->KeyRepeatEvent(&event);
+					break;
+				default:
+					break;
+				}
+				if(event.IsAccepted()) break;
+			}
+
+		}
 	}
 
 	void Window::InputMethodEvent (unsigned int character)

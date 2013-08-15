@@ -31,18 +31,18 @@
 namespace BIL {
 
 	TextBuffer::TextBuffer (const Font& font)
-		: _rowspacing(1.0), _fg(1.0, 1.0, 1.0, 1.0), _bg(0.0, 0.0, 0.0, 0.0)
+		: rowspacing_(1.0), foreground_(1.0, 1.0, 1.0, 1.0), background_(0.0, 0.0, 0.0, 0.0)
 	{
-		setFont(font);
+		set_font(font);
 		//glShadeModel(GL_FLAT);
 		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	}
 
 	TextBuffer::TextBuffer (const wstring& text, const Font& font)
-		: _rowspacing(1.0), _fg(1.0, 1.0, 1.0, 1.0), _bg(0.0, 0.0, 0.0, 0.0)
+		: rowspacing_(1.0), foreground_(1.0, 1.0, 1.0, 1.0), background_(0.0, 0.0, 0.0, 0.0)
 	{
-		setFont(font);
-		append(text);
+		set_font(font);
+		Append(text);
 
 		//glShadeModel(GL_FLAT);
 		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -52,33 +52,17 @@ namespace BIL {
 	{
 	}
 
-	void TextBuffer::append (const wstring& text)
+	void TextBuffer::Append (const wstring& text)
 	{
 		if (text.empty())
 			return;
 
-		_text.append(text);
+		text_.append(text);
 	}
 
-	void TextBuffer::append (wchar_t charcode)
+	void TextBuffer::Append (wchar_t charcode)
 	{
-		_text.push_back(charcode);
-	}
-
-	void TextBuffer::setRowSpacing (float space)
-	{
-		_rowspacing = space;
-	}
-
-	void TextBuffer::setOrigin (const Coord3f& origin)
-	{
-		_origin = origin;
-	}
-
-	void TextBuffer::setFont (const Font& font)
-	{
-		_fontcache = FontCache::create(font);
-		_fontcache->initialize();
+		text_.push_back(charcode);
 	}
 
 	Vec2ui TextBuffer::calculateBox (void)
@@ -92,25 +76,25 @@ namespace BIL {
 		unsigned int line_width = 0;
 		unsigned int line = 1;
 
-		for (it = _text.begin(); it != _text.end(); it++) {
+		for (it = text_.begin(); it != text_.end(); it++) {
 			if (*it == '\n') {
 				line++;
 				box.vec.x = box.vec.x > line_width ? box.vec.x : line_width;
 			}
 
-			glyph = _fontcache->query(*it);
+			glyph = fontcache_->query(*it);
 			if (glyph != NULL) {
 				// add kerning support
 				next = it + 1;
-				if(next != _text.end()) {
-					kerning = _fontcache->getKerning(*it, *next);
+				if(next != text_.end()) {
+					kerning = fontcache_->getKerning(*it, *next);
 				}
 				line_width = glyph->getMetrics().horiAdvance + kerning.vec.x + line_width;
 			}
 		}
 
 		box.vec.x = box.vec.x > line_width ? box.vec.x : line_width;
-		box.vec.y = _fontcache->getHeight() * line + (line - 1) * _rowspacing;
+		box.vec.y = fontcache_->getHeight() * line + (line - 1) * rowspacing_;
 
 		return box;
 	}
@@ -125,29 +109,29 @@ namespace BIL {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glColor4f(_fg.rgba.r, _fg.rgba.g, _fg.rgba.b, _fg.rgba.a);
+		glColor4f(foreground_.rgba.r, foreground_.rgba.g, foreground_.rgba.b, foreground_.rgba.a);
 
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(_origin.coord.x,
-					 _origin.coord.y - _fontcache->getDescender(),
-					 _origin.coord.z);
+		glTranslatef(origin_.coord.x,
+					 origin_.coord.y - fontcache_->getDescender(),
+					 origin_.coord.z);
 
 		int line = 0;
 		wstring::const_iterator it;
-		for (it = _text.begin(); it != _text.end(); it++) {
+		for (it = text_.begin(); it != text_.end(); it++) {
 			if (*it == '\n') {
 				line++;
 				glLoadIdentity();
-				glTranslatef(_origin.coord.x,
-							 _origin.coord.y
-							 - _rowspacing * _fontcache->getHeight() * line,
-							 _origin.coord.z);
+				glTranslatef(origin_.coord.x,
+							 origin_.coord.y
+							 - rowspacing_ * fontcache_->getHeight() * line,
+							 origin_.coord.z);
 				continue;
 			}
 
-			glyph = _fontcache->query(*it);
+			glyph = fontcache_->query(*it);
 			if (glyph != NULL) {
 				glyph->render();
 				glTranslatef(glyph->getMetrics().horiAdvance, 0, 0);
@@ -159,9 +143,9 @@ namespace BIL {
 
 	}
 
-	void TextBuffer::clear (void)
+	void TextBuffer::Clear (void)
 	{
-		_text.clear();
+		text_.clear();
 	}
 
 } /* namespace BIL */

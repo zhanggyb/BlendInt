@@ -26,6 +26,10 @@ public:
 
 	void KeyPressEvent (KeyEvent* event);
 
+	void ContextMenuPressEvent (ContextMenuEvent* event);
+
+	void ContextMenuReleaseEvent (ContextMenuEvent* event);
+
 	void MousePressEvent (MouseEvent* event);
 	
 	void MouseReleaseEvent (MouseEvent* event);
@@ -58,6 +62,10 @@ public:
 
 	void KeyPressEvent (KeyEvent* event);
 
+	void ContextMenuPressEvent (ContextMenuEvent* event);
+
+	void ContextMenuReleaseEvent (ContextMenuEvent* event);
+
 	void MousePressEvent (MouseEvent* event);
 	
 	void MouseReleaseEvent (MouseEvent* event);
@@ -81,6 +89,10 @@ public:
 
 	void KeyPressEvent (KeyEvent* event);
 
+	void ContextMenuPressEvent (ContextMenuEvent* event);
+
+	void ContextMenuReleaseEvent (ContextMenuEvent* event);
+
 	void MousePressEvent (MouseEvent* event);
 	
 	void MouseReleaseEvent (MouseEvent* event);
@@ -103,6 +115,10 @@ public:
 	void render (void);
 
 	void KeyPressEvent (KeyEvent* event);
+
+	void ContextMenuPressEvent (ContextMenuEvent* event);
+
+	void ContextMenuReleaseEvent (ContextMenuEvent* event);
 
 	void MousePressEvent (MouseEvent* event);
 	

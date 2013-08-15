@@ -50,38 +50,48 @@ namespace BIL {
 
 		virtual ~TextBuffer ();
 
-		void append (const wstring& text);
+		void Append (const wstring& text);
 
-		void append (wchar_t charcode);
+		void Append (wchar_t charcode);
 
-		void setRowSpacing (float space);
-
-		void setForeground (const RGBAf& color)
+		void set_rowspacing (float space)
 		{
-			_fg = color;
+			rowspacing_ = space;
 		}
 
-		void setBackground (const RGBAf& color)
+		void set_foreground (const RGBAf& color)
 		{
-			_bg = color;
+			foreground_ = color;
 		}
 
-		void setOrigin (const Coord3f& origin);
+		void set_background (const RGBAf& color)
+		{
+			background_ = color;
+		}
 
-		void setFont (const Font& font);
+		void set_origin (const Coord3f& origin)
+		{
+			origin_ = origin;
+		}
+
+		void set_font (const Font& font)
+		{
+			fontcache_ = FontCache::create(font);
+			fontcache_->initialize();
+		}
 
 		void render (void); /* render the text */
 
-		void clear (void); /* clear the text */
+		void Clear (void); /* clear the text */
 
-		const wstring& getText (void) const
+		const wstring& text (void) const
 		{
-			return _text;
+			return text_;
 		}
 
-		const FontCache* getFontCache (void) const
+		const FontCache* fontcache (void) const
 		{
-			return _fontcache;
+			return fontcache_;
 		}
 
 		/**
@@ -90,31 +100,31 @@ namespace BIL {
 		 */
 		Vec2ui calculateBox (void);
 
+	private:	// member variables
+
+		// DO not delete this member
+		FontCache* fontcache_;
+
+		/** Row spacing */
+		float rowspacing_;
+
+		/** Foreground, text color */
+		RGBAf foreground_;
+
+		/** Background Color */
+		RGBAf background_;
+
+		/** Pen origin */
+		Coord3f origin_;
+
+		/** string */
+		wstring text_;
+
 	private:	// member functions disabled
 
 		TextBuffer (const TextBuffer& orig);
 
 		TextBuffer& operator = (const TextBuffer& orig);
-
-	private:	// member variables
-
-		// DO not delete this member
-		FontCache* _fontcache;
-
-		/** Row spacing */
-		float _rowspacing;
-
-		/** Foreground, text color */
-		RGBAf _fg;
-
-		/** Background Color */
-		RGBAf _bg;
-
-		/** Pen origin */
-		Coord3f _origin;
-
-		/** string */
-		wstring _text;
 	};
 
 } /* namespace BIL */

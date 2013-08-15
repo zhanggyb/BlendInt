@@ -24,6 +24,7 @@
 
 #include <BIL/MouseEvent.h>
 #include <BIL/KeyEvent.h>
+#include <BIL/ContextMenuEvent.h>
 
 namespace BIL {
 
@@ -41,6 +42,10 @@ namespace BIL {
 	protected:
 
 		virtual void KeyPressEvent (KeyEvent* event) = 0;
+
+		virtual void ContextMenuPressEvent (ContextMenuEvent* event) = 0;
+
+		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event) = 0;
 
 		virtual void MousePressEvent (MouseEvent* event) = 0;
 
