@@ -3,15 +3,10 @@
 #ifndef _ABSTRACTBUTTON_TEST_H
 #define _ABSTRACTBUTTON_TEST_H
 
-#include <BIL/Application.hpp>
-#include <BIL/Window.hpp>
-#include <BIL/AbstractButton.hpp>
-
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <string>
 
-using namespace BIL;
 using namespace std;
 
 class AbstractButtonTest: public CppUnit::TestFixture

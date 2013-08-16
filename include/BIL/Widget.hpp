@@ -31,11 +31,12 @@ namespace BIL {
 	class Widget: public BIL::Drawable
 	{
 	public:
+
 		Widget (Traceable * parent = NULL);
 
 		virtual ~Widget ();
 
-		virtual void render (void);
+		virtual void Render (void);
 
 	protected:
 

@@ -22,23 +22,23 @@ public:
 
 	virtual ~myTexture ();
 
-	void render (void);
+	virtual void Render (void);
 
-	void KeyPressEvent (KeyEvent* event);
+	virtual void KeyPressEvent (KeyEvent* event);
 
-	void ContextMenuPressEvent (ContextMenuEvent* event);
+	virtual void ContextMenuPressEvent (ContextMenuEvent* event);
 
-	void ContextMenuReleaseEvent (ContextMenuEvent* event);
+	virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
 
-	void MousePressEvent (MouseEvent* event);
+	virtual void MousePressEvent (MouseEvent* event);
 	
-	void MouseReleaseEvent (MouseEvent* event);
+	virtual void MouseReleaseEvent (MouseEvent* event);
 
-	void MouseMoveEvent (MouseEvent* event);
+	virtual void MouseMoveEvent (MouseEvent* event);
 
-	void InputMethodEvent (unsigned int character);
+	virtual void InputMethodEvent (unsigned int character);
 
-	void CursorEnterEvent (int entered);
+	virtual void CursorEnterEvent (int entered);
 
 private:
 	void makeCheckImage (void);
@@ -58,23 +58,23 @@ public:
 
 	virtual ~myDrawable1 ();
 
-	void render (void);
+	virtual void Render (void);
 
-	void KeyPressEvent (KeyEvent* event);
+	virtual void KeyPressEvent (KeyEvent* event);
 
-	void ContextMenuPressEvent (ContextMenuEvent* event);
+	virtual void ContextMenuPressEvent (ContextMenuEvent* event);
 
-	void ContextMenuReleaseEvent (ContextMenuEvent* event);
+	virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
 
-	void MousePressEvent (MouseEvent* event);
+	virtual void MousePressEvent (MouseEvent* event);
 	
-	void MouseReleaseEvent (MouseEvent* event);
+	virtual void MouseReleaseEvent (MouseEvent* event);
 	
-	void MouseMoveEvent (MouseEvent* event);
+	virtual void MouseMoveEvent (MouseEvent* event);
 
-	void InputMethodEvent (unsigned int character);
+	virtual void InputMethodEvent (unsigned int character);
 
-	void CursorEnterEvent (int entered);
+	virtual void CursorEnterEvent (int entered);
 };
 
 class myDrawable2: public Drawable
@@ -85,23 +85,23 @@ public:
 
 	virtual ~myDrawable2 ();
 
-	void render (void);
+	virtual void Render (void);
 
-	void KeyPressEvent (KeyEvent* event);
+	virtual void KeyPressEvent (KeyEvent* event);
 
-	void ContextMenuPressEvent (ContextMenuEvent* event);
+	virtual void ContextMenuPressEvent (ContextMenuEvent* event);
 
-	void ContextMenuReleaseEvent (ContextMenuEvent* event);
+	virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
 
-	void MousePressEvent (MouseEvent* event);
+	virtual void MousePressEvent (MouseEvent* event);
 	
-	void MouseReleaseEvent (MouseEvent* event);
+	virtual void MouseReleaseEvent (MouseEvent* event);
 
-	void MouseMoveEvent (MouseEvent* event);
+	virtual void MouseMoveEvent (MouseEvent* event);
 
-	void InputMethodEvent (unsigned int character);
+	virtual void InputMethodEvent (unsigned int character);
 
-	void CursorEnterEvent (int entered);
+	virtual void CursorEnterEvent (int entered);
 };
 
 class myDrawable3: public Drawable
@@ -112,23 +112,23 @@ public:
 
 	virtual ~myDrawable3 ();
 
-	void render (void);
+	virtual void Render (void);
 
-	void KeyPressEvent (KeyEvent* event);
+	virtual void KeyPressEvent (KeyEvent* event);
 
-	void ContextMenuPressEvent (ContextMenuEvent* event);
+	virtual void ContextMenuPressEvent (ContextMenuEvent* event);
 
-	void ContextMenuReleaseEvent (ContextMenuEvent* event);
+	virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
 
-	void MousePressEvent (MouseEvent* event);
+	virtual void MousePressEvent (MouseEvent* event);
 	
-	void MouseReleaseEvent (MouseEvent* event);
+	virtual void MouseReleaseEvent (MouseEvent* event);
 
-	void MouseMoveEvent (MouseEvent* event);
+	virtual void MouseMoveEvent (MouseEvent* event);
 
-	void InputMethodEvent (unsigned int character);
+	virtual void InputMethodEvent (unsigned int character);
 
-	void CursorEnterEvent (int entered);
+	virtual void CursorEnterEvent (int entered);
 };
 
 class DrawableTest: public CppUnit::TestFixture

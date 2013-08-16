@@ -144,7 +144,7 @@ namespace BIL {
 	}
 
 	Drawable::Drawable (Traceable* parent)
-		: Traceable(parent), round_box_type_ (RoundBoxNone), is_visible_(true)
+		: Traceable(parent), round_box_type_ (RoundBoxNone), visible_(false)
 	{
 
 	}

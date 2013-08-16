@@ -107,7 +107,7 @@ void TextBufferTest::showcharacter1 ()
 		glLoadIdentity();
 
 		// Test buffer render
-		buf.render();
+		buf.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -167,7 +167,7 @@ void TextBufferTest::showtextline1 ()
 		glLoadIdentity();
 
 		// Test buffer render
-		buf.render();
+		buf.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -227,7 +227,7 @@ void TextBufferTest::showtextline2 ()
 		glLoadIdentity();
 
 		// Test buffer render
-		buf.render();
+		buf.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -287,7 +287,7 @@ void TextBufferTest::showtextline3 ()
 		glLoadIdentity();
 
 		// Test buffer render
-		buf.render();
+		buf.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -347,7 +347,7 @@ void TextBufferTest::showtextline4 ()
 		glLoadIdentity();
 
 		// Test buffer render
-		buf.render();
+		buf.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();

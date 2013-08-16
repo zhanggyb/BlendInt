@@ -80,7 +80,7 @@ namespace BIL {
 			fontcache_->initialize();
 		}
 
-		void render (void); /* render the text */
+		void Render (void); /* render the text */
 
 		void Clear (void); /* clear the text */
 

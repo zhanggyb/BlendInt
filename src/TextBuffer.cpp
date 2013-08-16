@@ -31,7 +31,9 @@
 namespace BIL {
 
 	TextBuffer::TextBuffer (const Font& font)
-		: rowspacing_(1.0), foreground_(1.0, 1.0, 1.0, 1.0), background_(0.0, 0.0, 0.0, 0.0)
+		: rowspacing_(1.0),
+		  foreground_(1.0, 1.0, 1.0, 1.0),
+		  background_(0.0, 0.0, 0.0, 0.0)
 	{
 		set_font(font);
 		//glShadeModel(GL_FLAT);
@@ -99,7 +101,7 @@ namespace BIL {
 		return box;
 	}
 
-	void TextBuffer::render (void)
+	void TextBuffer::Render (void)
 	{
 		Glyph* glyph = NULL;
 
@@ -133,7 +135,7 @@ namespace BIL {
 
 			glyph = fontcache_->query(*it);
 			if (glyph != NULL) {
-				glyph->render();
+				glyph->Render();
 				glTranslatef(glyph->getMetrics().horiAdvance, 0, 0);
 			}
 		}

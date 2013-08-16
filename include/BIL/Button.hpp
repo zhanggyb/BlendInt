@@ -19,43 +19,32 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_EVENT_H_
-#define _BIL_EVENT_H_
+#ifndef _BIL_BUTTON_H_
+#define _BIL_BUTTON_H_
+
+#include <BIL/AbstractButton.hpp>
 
 namespace BIL {
 
-	class Event
+	class Button: public AbstractButton
 	{
 	public:
 
-		Event()
-		: accept_(false)
-		{
-		}
+		explicit Button (Widget* parent = NULL);
 
-		virtual ~Event()
-		{
-		}
+		Button (const wstring& text, Widget* parent = NULL);
 
-		void Accept (void)
-		{
-			accept_ = true;
-		}
+		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
 
-		void Ignore (void)
-		{
-		}
+		virtual ~Button ();
 
-		bool IsAccepted (void) const
-		{
-			return accept_;
-		}
+		virtual void Render (void);
 
-	protected:
-
-		bool accept_;
+	private:
+		Button (const Button& orig);
+		Button& operator = (const Button& orig);
 	};
 
-} /* namespace BIL */
+}
 
-#endif	/* _BIL_EVENT_H_ */
+#endif	// _BIL_BUTTON_H_

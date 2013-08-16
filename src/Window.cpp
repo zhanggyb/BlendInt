@@ -110,7 +110,7 @@ namespace BIL {
 		return true;
 	}
 
-	void Window::render (void)
+	void Window::Render (void)
 	{
 		int width = size().vec.x;
 		int height = size().vec.y;
@@ -141,7 +141,7 @@ namespace BIL {
 		for (it = children_.begin(); it != children_.end(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
-				item->render();
+				item->Render();
 			}
 		}
 
@@ -150,7 +150,7 @@ namespace BIL {
 		{
 			item = dynamic_cast<Drawable*>(*j);
 			if (item != NULL) {
-				item->render();
+				item->Render();
 			}
 		}
 
@@ -280,12 +280,12 @@ namespace BIL {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item == NULL) continue;
 
-			local_x = cursor_pos_x_ - (item->getPos().coord.x);
-			local_y = cursor_pos_y_ - (item->getPos().coord.y);
+			local_x = cursor_pos_x_ - (item->pos().coord.x);
+			local_y = cursor_pos_y_ - (item->pos().coord.y);
 			if ((local_x - 0.000001 > 0.0) &&
 				(local_y - 0.000001 > 0.0) &&
-				(local_x - item->getSize().vec.x) < 0.0 &&
-				(local_y - item->getSize().vec.y) < 0.0)
+				(local_x - item->size().vec.x) < 0.0 &&
+				(local_y - item->size().vec.y) < 0.0)
 			{
 				event.set_pos (local_x, local_y);
 				switch (action) {
@@ -318,12 +318,12 @@ namespace BIL {
 		for (it = children_.rbegin(); it != children_.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
-				local_x = cursor_pos_x_ - (item->getPos().coord.x);
-				local_y = cursor_pos_y_ - (item->getPos().coord.y);
+				local_x = cursor_pos_x_ - (item->pos().coord.x);
+				local_y = cursor_pos_y_ - (item->pos().coord.y);
 				if ((local_x - 0.000001 > 0.0) &&
 					(local_y - 0.000001 > 0.0) &&
-					(local_x - item->getSize().vec.x) < 0.0 &&
-					(local_y - item->getSize().vec.y) < 0.0)
+					(local_x - item->size().vec.x) < 0.0 &&
+					(local_y - item->size().vec.y) < 0.0)
 				{
 					event.set_pos (local_x, local_y);
 					item->MouseMoveEvent(&event);

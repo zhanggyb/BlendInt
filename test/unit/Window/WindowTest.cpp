@@ -45,7 +45,7 @@ myWidget::~myWidget()
 
 }
 
-void myWidget::render (void)
+void myWidget::Render (void)
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -114,7 +114,7 @@ void WindowTest::event1 ()
     app.initialize();
 
     Label label(L"Test Event1");
-    label.setPos (Coord2f(200.0, 200.0));
+    label.set_pos (Coord2f(200.0, 200.0));
     label.set_parent (&win);
 
     app.run();
@@ -132,7 +132,7 @@ void WindowTest::event2 ()
     app.initialize();
 
     Label label(L"Test Event2");
-    label.setPos (Coord2f(300.0, 200.0));
+    label.set_pos (Coord2f(300.0, 200.0));
     label.set_parent (&win);
 
     app.run();
@@ -150,11 +150,11 @@ void WindowTest::solorender1 ()
     app.initialize();
 
     Label label(L"Test Event2");
-    label.setPos (Coord2f(100.0, 100.0));
+    label.set_pos (Coord2f(100.0, 100.0));
     label.set_parent (&win);
 
-		Label solo (L"This label should also been rendered");
-		solo.setPos(400.0, 300.0, 0.0);
+	Label solo (L"This label should also been rendered");
+	solo.set_pos(400.0, 300.0, 0.0);
 
     app.run();
 
@@ -172,7 +172,7 @@ void WindowTest::check_mouse_press1 ()
 	
 	myWidget widget;
 	widget.set_parent (&win);
-	widget.setPos(300.0, 300.0, 0.0);
+	widget.set_pos(300.0, 300.0, 0.0);
 
     app.run();
 

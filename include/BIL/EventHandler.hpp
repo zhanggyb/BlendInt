@@ -36,8 +36,8 @@ namespace BIL {
 
 		friend class Window;
 
-		// EventHandler ();
-		// virtual ~EventHandler ();
+		EventHandler () {}
+		virtual ~EventHandler () {}
 
 	protected:
 

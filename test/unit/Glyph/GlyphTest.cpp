@@ -100,7 +100,7 @@ void GlyphTest::create1 ()
 
 		glTranslatef (20, 20, 0);
 		// Test buffer render
-		glyph.render();
+		glyph.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -166,17 +166,17 @@ void GlyphTest::printtext1 ()
 
 		glTranslatef(20, 20, 0);	// where begin draw text
 
-		a.render();
+		a.Render();
 		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
-		b.render();
+		b.Render();
 		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
-		c.render();
+		c.Render();
 		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
-		d.render();
+		d.Render();
 		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
-		e.render();
+		e.Render();
 		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
-		f.render();
+		f.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -237,17 +237,17 @@ void GlyphTest::printtext2 ()
 
 		glTranslatef(20, 20, 0);	// where begin draw text
 
-		a.render();
+		a.Render();
 		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
-		b.render();
+		b.Render();
 		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
-		c.render();
+		c.Render();
 		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
-		d.render();
+		d.Render();
 		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
-		e.render();
+		e.Render();
 		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
-		f.render();
+		f.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -312,25 +312,25 @@ void GlyphTest::printtext3 ()
 
 		glTranslatef(20, 20, 0);	// where begin draw text
 
-		a.render();
+		a.Render();
 		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
-		b.render();
+		b.Render();
 		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
-		c.render();
+		c.Render();
 		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
-		d.render();
+		d.Render();
 		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
-		e.render();
+		e.Render();
 		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
-		f.render();
+		f.Render();
 		glTranslatef(f.getMetrics().horiAdvance, 0, 0);
-		g.render();
+		g.Render();
 		glTranslatef(g.getMetrics().horiAdvance, 0, 0);
-		h.render();
+		h.Render();
 		glTranslatef(h.getMetrics().horiAdvance, 0, 0);
-		i.render();
+		i.Render();
 		glTranslatef(i.getMetrics().horiAdvance, 0, 0);
-		j.render();
+		j.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -398,25 +398,25 @@ void GlyphTest::printtext4 ()
 
 		glTranslatef(20, 20, 0);	// where begin draw text
 
-		a.render();
+		a.Render();
 		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
-		b.render();
+		b.Render();
 		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
-		c.render();
+		c.Render();
 		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
-		d.render();
+		d.Render();
 		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
-		e.render();
+		e.Render();
 		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
-		f.render();
+		f.Render();
 		glTranslatef(f.getMetrics().horiAdvance, 0, 0);
-		g.render();
+		g.Render();
 		glTranslatef(g.getMetrics().horiAdvance, 0, 0);
-		h.render();
+		h.Render();
 		glTranslatef(h.getMetrics().horiAdvance, 0, 0);
-		i.render();
+		i.Render();
 		glTranslatef(i.getMetrics().horiAdvance, 0, 0);
-		j.render();
+		j.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -485,9 +485,9 @@ void GlyphTest::checkbox1 ()
 
 		glTranslatef(120, 120, 0);	// where begin draw text
 
-		a.render();
+		a.Render();
 		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
-		b.render();
+		b.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();
@@ -566,17 +566,17 @@ void GlyphTest::checkkerning1 ()
 
 		glTranslatef(20, 20, 0);	// where begin draw text
 
-		a.render();
+		a.Render();
 		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
-		b.render();
+		b.Render();
 		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
-		c.render();
+		c.Render();
 		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
-		d.render();
+		d.Render();
 		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
-		e.render();
+		e.Render();
 		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
-		f.render();
+		f.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();

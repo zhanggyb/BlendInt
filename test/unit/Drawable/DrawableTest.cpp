@@ -19,7 +19,7 @@ myTexture::myTexture (Traceable *parent)
     : Drawable(parent)
 {
     resize (400, 400);
-    setPos (Coord2f(20.0, 20.0));
+    set_pos (Coord2f(20.0, 20.0));
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -46,7 +46,7 @@ myTexture::~myTexture()
 
 }
 
-void myTexture::render (void)
+void myTexture::Render (void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -128,7 +128,7 @@ myDrawable1::~myDrawable1()
 
 }
 
-void myDrawable1::render(void)
+void myDrawable1::Render(void)
 {
 
 	glEnable(GL_BLEND);
@@ -192,7 +192,7 @@ myDrawable2::~myDrawable2()
 
 }
 
-void myDrawable2::render(void)
+void myDrawable2::Render(void)
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -255,7 +255,7 @@ myDrawable3::~myDrawable3()
 
 }
 
-void myDrawable3::render(void)
+void myDrawable3::Render(void)
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -362,7 +362,7 @@ void DrawableTest::mydrawable1()
 
     myDrawable1 widget;
     widget.set_parent (&win);
-    widget.setPos(Coord2f(50.0, 50.0));
+    widget.set_pos(Coord2f(50.0, 50.0));
     widget.resize(80, 40);
 
     app.run();
@@ -381,7 +381,7 @@ void DrawableTest::mydrawable2()
 
     myDrawable2 widget;
     widget.set_parent (&win);
-    widget.setPos(Coord2f(50.0, 50.0));
+    widget.set_pos(Coord2f(50.0, 50.0));
     widget.resize(80, 40);
 
     app.run();
@@ -400,7 +400,7 @@ void DrawableTest::mydrawable3()
 
     myDrawable3 widget;
     widget.set_parent (&win);
-    widget.setPos(Coord2f(50.0, 50.0));
+    widget.set_pos(Coord2f(50.0, 50.0));
     widget.resize(80, 40);
 
     app.run();

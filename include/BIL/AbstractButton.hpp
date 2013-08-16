@@ -37,11 +37,11 @@ namespace BIL {
 	{
 	public:
 
-		AbstractButton (const wstring& text, Drawable* parent = NULL);
+		explicit AbstractButton (Widget* parent = NULL);
 
 		virtual ~AbstractButton ();
 
-		void setText (const wstring& text);
+		void SetText (const wstring& text);
 
 		void setFont (const Font& font);
 
@@ -67,7 +67,7 @@ namespace BIL {
 
 		void set_checkable (bool checkable) {checkable_ = checkable;}
 
-		void render (void);
+		virtual void Render (void) = 0;
 
 	protected:
 

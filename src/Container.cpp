@@ -31,7 +31,7 @@ namespace BIL {
 	{
 		// TODO Auto-generated constructor stub
 		size_ = Vec2ui(250, 200);
-		setMargin(Vec4i(1, 1, 1, 1));
+		set_margin(Vec4i(1, 1, 1, 1));
 	}
 
 	Container::~Container ()
@@ -39,7 +39,7 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	void Container::render (void)
+	void Container::Render (void)
 	{
 
 	}

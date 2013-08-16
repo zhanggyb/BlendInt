@@ -32,8 +32,8 @@ namespace BIL {
 		// TODO Auto-generated constructor stub
 
 		// Set the default padding and margin
-		setPadding(Vec4i(1, 1, 1, 1));
-		setMargin(Vec4i(1, 1, 1, 1));
+		set_padding(Vec4i(1, 1, 1, 1));
+		set_margin(Vec4i(1, 1, 1, 1));
 	}
 
 	Widget::~Widget ()
@@ -79,7 +79,7 @@ namespace BIL {
 	{
 	}
 
-	void Widget::render (void)
+	void Widget::Render (void)
 	{
 
 	}

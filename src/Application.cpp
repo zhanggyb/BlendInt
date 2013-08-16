@@ -127,7 +127,7 @@ namespace BIL {
 		GLFWwindow* window = _mainWindow->window();
 		while (!glfwWindowShouldClose(window)) {
 
-			_mainWindow->render();
+			_mainWindow->Render();
 
 			glfwSwapBuffers(window);
 			glfwPollEvents();

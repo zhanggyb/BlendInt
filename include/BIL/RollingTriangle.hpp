@@ -36,7 +36,7 @@ namespace BIL {
 		virtual ~RollingTriangle ();
 
 	protected:
-		void render (void);
+		virtual void Render (void);
 
 	private:
 		RollingTriangle (const RollingTriangle& orig);

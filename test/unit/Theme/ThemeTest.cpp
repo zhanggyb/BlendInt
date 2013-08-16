@@ -63,7 +63,7 @@ void ThemeTest::initialize1 ()
 		theme->initialize();
 
 	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	r = theme->getThemeUI()->wcol_tool.outline.rgba.r;
+	r = theme->themeUI()->wcol_tool.outline.rgba.r;
 
 	if (theme != NULL) {
 		Theme::release();
@@ -98,11 +98,11 @@ void ThemeTest::initialize2 ()
 		theme->initialize();
 
 	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	RGBAf color = theme->getThemeUI()->wcol_menu_item.item;
-	RGBAf textcolor = theme->getThemeUI()->wcol_menu_item.text;
+	RGBAf color = theme->themeUI()->wcol_menu_item.item;
+	RGBAf textcolor = theme->themeUI()->wcol_menu_item.text;
 
 	Label label(L"Text in Label");
-	label.setPos(Coord2f(50.0, 50.0));
+	label.set_pos(Coord2f(50.0, 50.0));
 	label.set_background(color);
 	label.setFont(Font("Droid Sans", 12));
 	label.setTextColor(textcolor);
@@ -133,7 +133,7 @@ void ThemeTest::initialize2 ()
 		glLoadIdentity();
 
 		// Test buffer render
-		label.render();
+		label.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();

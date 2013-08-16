@@ -30,7 +30,7 @@ namespace BIL {
 	Label::Label (const wstring& text, Drawable *parent)
 		: Widget (parent), background_(RGBAf(0.0, 0.0, 0.0, 0.0))
 	{
-		setPadding(Vec4i(2, 2, 2, 2));
+		set_padding(Vec4i(2, 2, 2, 2));
 		set_text(text);
 	}
 
@@ -67,7 +67,7 @@ namespace BIL {
 		resize (box);
 	}
 
-	void Label::render(void)
+	void Label::Render(void)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -78,7 +78,7 @@ namespace BIL {
 		glColor4f(background_.rgba.r, background_.rgba.g, background_.rgba.b, background_.rgba.a);
 		glRectf(0.0, 0.0, size_.vec.x, size_.vec.y);
 
-		text_.render();
+		text_.Render();
 
 		glPopMatrix();
 	}

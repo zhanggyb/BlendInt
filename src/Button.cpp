@@ -19,43 +19,55 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_EVENT_H_
-#define _BIL_EVENT_H_
+#include <BIL/Button.hpp>
 
 namespace BIL {
 
-	class Event
+	Button::Button (Widget* parent)
+		: AbstractButton(parent)
 	{
-	public:
 
-		Event()
-		: accept_(false)
-		{
-		}
+	}
 
-		virtual ~Event()
-		{
-		}
+	Button::Button (const wstring& text, Widget* parent)
+		: AbstractButton(parent)
+	{
+		SetText (text);
+	}
 
-		void Accept (void)
-		{
-			accept_ = true;
-		}
+	Button::~Button ()
+	{
 
-		void Ignore (void)
-		{
-		}
+	}
 
-		bool IsAccepted (void) const
-		{
-			return accept_;
-		}
+	void Button::Render (void)
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 
-	protected:
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
 
-		bool accept_;
-	};
+		glTranslatef(pos_.coord.x,
+					 pos_.coord.y,
+					 pos_.coord.z);
 
-} /* namespace BIL */
+		glColor4f(background_.rgba.r,
+				  background_.rgba.g,
+				  background_.rgba.b,
+				  background_.rgba.a);
 
-#endif	/* _BIL_EVENT_H_ */
+		drawBox(GL_POLYGON,
+				0.0f,
+				0.0f,
+				size_.vec.x,
+				size_.vec.y,
+				corner_radius_);
+
+		text_.Render();
+
+		glPopMatrix();
+		glDisable(GL_BLEND);
+	}
+}

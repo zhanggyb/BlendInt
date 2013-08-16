@@ -40,13 +40,13 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	void RollingTriangle::render (void)
+	void RollingTriangle::Render (void)
 	{
 		float ratio;
 
-		ratio = getSize().vec.x / (float) getSize().vec.y;
+		ratio = size().vec.x / (float) size().vec.y;
 
-		glViewport(0, 0, getSize().vec.x, getSize().vec.y);
+		glViewport(0, 0, size().vec.x, size().vec.y);
 
 		glClear(GL_COLOR_BUFFER_BIT);
 		glMatrixMode(GL_PROJECTION);

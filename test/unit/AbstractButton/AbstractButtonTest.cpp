@@ -12,6 +12,7 @@
 
 #include <BIL/Label.hpp>
 #include <BIL/FontConfig.hpp>
+#include <BIL/Button.hpp>
 
 using namespace BIL;
 using namespace std;
@@ -73,8 +74,8 @@ void AbstractButtonTest::show1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	AbstractButton button(L"The Default Value");
-	button.setPos(Coord2f(50.0, 50.0));
+	Button button(L"The Default Value");
+	button.set_pos(Coord2f(50.0, 50.0));
 	button.set_background(RGBAf(1.0, 0.9, 1.0, 0.9));
 	button.set_corner_radius (10.0);
 
@@ -105,7 +106,7 @@ void AbstractButtonTest::show1 ()
 		glLoadIdentity();
 
 		// Test buffer render
-		button.render();
+		button.Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();

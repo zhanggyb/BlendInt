@@ -381,7 +381,7 @@ void FontCacheTest::show1()
 		glLoadIdentity();
 
 		// Test buffer render
-		glyph->render();
+		glyph->Render();
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();

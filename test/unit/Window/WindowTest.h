@@ -24,8 +24,6 @@ protected:
 	virtual void cursorEnterEvent (int entered);
 };
 
-class BIL::Widget;
-
 class myWidget: public BIL::Widget
 {
  public:
@@ -34,7 +32,7 @@ class myWidget: public BIL::Widget
 
 	virtual ~myWidget();
 
-	virtual void render (void);
+	virtual void Render (void);
 
  protected:
 

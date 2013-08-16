@@ -26,12 +26,11 @@
 
 namespace BIL {
 
-	AbstractButton::AbstractButton (const wstring& text, Drawable *parent)
+	AbstractButton::AbstractButton (Widget *parent)
 		: Widget(parent), down_(false), checkable_(false), checked_(false),
 		  background_(RGBAf(0.75f, 0.75f, 0.75f, 1.0)), corner_radius_ (1.0)
 	{
-		setPadding(Vec4i(2, 2, 2, 2));
-		setText(text);
+		set_padding(Vec4i(2, 2, 2, 2));
 	}
 
 	AbstractButton::~AbstractButton ()
@@ -39,7 +38,7 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	void AbstractButton::setText (const wstring& text)
+	void AbstractButton::SetText (const wstring& text)
 	{
 		if(text.empty()) {
 			// TODO: draw blank label
@@ -65,39 +64,6 @@ namespace BIL {
 		box.vec.y = box.vec.y + padding_.border.t + padding_.border.b;
 
 		resize (box);
-	}
-
-	void AbstractButton::render (void)
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(pos_.coord.x,
-					 pos_.coord.y,
-					 pos_.coord.z);
-
-		glColor4f(background_.rgba.r,
-				  background_.rgba.g,
-				  background_.rgba.b,
-				  background_.rgba.a);
-
-		drawBox(GL_POLYGON,
-					0.0f,
-					0.0f,
-					size_.vec.x,
-					size_.vec.y,
-					corner_radius_);
-
-		text_.render();
-
-		glPopMatrix();
-		glDisable(GL_BLEND);
-
-
 	}
 
 } /* namespace BIL */

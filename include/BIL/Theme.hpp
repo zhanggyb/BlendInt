@@ -107,9 +107,9 @@ namespace BIL {
 
 		void initialize (void);
 
-		const ThemeUI* getThemeUI (void) const
+		const ThemeUI* themeUI (void) const
 		{
-			return &_themeUI;
+			return &themeUI_;
 		}
 
 	private:
@@ -135,13 +135,13 @@ namespace BIL {
 		Theme& operator = (const Theme& orig);
 
 	private:
+
+		ThemeUI themeUI_;
+
+	private:
 		// static member variables
 
 		static Theme* theme;
-
-	private:
-
-		ThemeUI _themeUI;
 	};
 
 } /* namespace BIL */

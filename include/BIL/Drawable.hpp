@@ -32,7 +32,6 @@
 #include <list>
 
 #include <BIL/Traceable.hpp>
-#include <BIL/Font.hpp>
 #include <BIL/Tuple.hpp>
 #include <BIL/EventHandler.hpp>
 #include <BIL/Theme.hpp>
@@ -85,7 +84,7 @@ namespace BIL {
 
 		virtual ~Drawable ();
 
-		const Vec2ui& getSize (void) const
+		const Vec2ui& size (void) const
 		{
 			return size_;
 		}
@@ -97,74 +96,73 @@ namespace BIL {
 
 		void resize (const Vec2ui& size);
 
-		const Coord3f& getPos (void) const
+		const Coord3f& pos (void) const
 		{
 			return pos_;
 		}
 
-		void setPos (float x, float y, float z)
+		void set_pos (float x, float y, float z)
 		{
 			pos_ = Coord3f(x, y, z);
 		}
 
-		void setPos (const Coord2f& pos)
+		void set_pos (const Coord2f& pos)
 		{
 			pos_ = Coord3f(pos.coord.x, pos.coord.y, 0.0);
 		}
 
-		void setPos (const Coord3f& pos)
+		void set_pos (const Coord3f& pos)
 		{
 			pos_ = pos;
 		}
 
-		const Vec4i& getMargin (void) const
+		const Vec4i& margin (void) const
 		{
 			return margin_;
 		}
 
-		void setMargin (const Vec4i& margin)
+		void set_margin (const Vec4i& margin)
 		{
 			margin_ = margin;
 		}
 
-		const Vec4i& getPadding (void) const
+		const Vec4i& padding (void) const
 		{
 			return padding_;
 		}
 
-		void setPadding (const Vec4i& padding)
+		void set_padding (const Vec4i& padding)
 		{
 			padding_ = padding;
 		}
 
-		const Font& getFont (void) const
-		{
-			return font_;
-		}
-
-		void setRoundBox (RoundBoxType type)
+		void set_round_box_type (RoundBoxType type)
 		{
 			round_box_type_ = type;
 		}
 
-		RoundBoxType getRoundBox (void)
+		RoundBoxType round_box_type (void)
 		{
 			return round_box_type_;
 		}
 
-		void show (void)
+		bool visible (void) const {return visible_;}
+
+		void set_visible (bool visible) {visible_ = visible;}
+
+		void Show (void)
 		{
-			is_visible_ = true;
+			visible_ = true;
 		}
 
-		void hide (void)
+		void Hide (void)
 		{
-			is_visible_ = false;
+			visible_ = false;
 		}
 
 	public:	// virtual functions
 
-		virtual void render (void) = 0;
+		virtual void Render (void) = 0;
 
 	protected:	// member functions
 
@@ -247,8 +245,6 @@ namespace BIL {
 	protected:
 		// member variables
 
-		Font font_;
-
 		Vec2ui size_;
 
 		Coord3f pos_;
@@ -259,7 +255,7 @@ namespace BIL {
 
 		RoundBoxType round_box_type_;
 
-		bool is_visible_;
+		bool visible_;
 
 	private:	// member function disabled
 
