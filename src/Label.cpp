@@ -28,7 +28,7 @@
 namespace BIL {
 
 	Label::Label (const wstring& text, Drawable *parent)
-		: Widget (parent), background_(RGBAf(0.0, 0.0, 0.0, 0.0))
+		: Widget (parent), background_(RGBA(0x00000000))
 	{
 		set_padding(Vec4i(2, 2, 2, 2));
 		set_text(text);
@@ -75,7 +75,7 @@ namespace BIL {
 		glTranslatef(pos_.coord.x,
 					 pos_.coord.y,
 					 pos_.coord.z);
-		glColor4f(background_.rgba.r, background_.rgba.g, background_.rgba.b, background_.rgba.a);
+		glColor4ub(background_.rgba.r, background_.rgba.g, background_.rgba.b, background_.rgba.a);
 		glRectf(0.0, 0.0, size_.vec.x, size_.vec.y);
 
 		text_.Render();

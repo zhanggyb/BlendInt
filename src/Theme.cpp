@@ -49,12 +49,12 @@ namespace BIL {
 	}
 
 	WidgetColors::WidgetColors()
-		: outline(0.098, 0.098, 0.098),
-		  inner (0.6, 0.6, 0.6),
-		  inner_sel(0.392, 0.392, 0.392),
-		  item (0.098, 0.098, 0.098),
-		  text (0.0, 0.0, 0.0),
-		  text_sel (1.0, 1.0, 1.0),
+		: outline(0x191919),
+		  item (0x191919),
+		  inner (0x999999),
+		  inner_sel(0x646464),
+		  text (0x000000),
+		  text_sel (0xFFFFFF),
 		  shaded (false),
 		  shadetop (0),
 		  shadedown (0),
@@ -63,12 +63,12 @@ namespace BIL {
 	}
 
 	WidgetStateColors::WidgetStateColors()
-		: inner_anim (0.451, 0.745, 0.298),
-		  inner_anim_sel (0.353, 0.651, 0.2),
-		  inner_key (0.941, 0.922, 0.392),
-		  inner_key_sel (0.843, 0.827, 0.294),
-		  inner_driven (0.706, 0.0, 1.0),
-		  inner_driven_sel(0.6, 0.0, 0.902),
+		: inner_anim (0x73BE4C),
+		  inner_anim_sel (0x5AA633),
+		  inner_key (0xF0EB64),
+		  inner_key_sel (0xD7D34B),
+		  inner_driven (0xB400FF),
+		  inner_driven_sel(0x9900E6),
 		  blend (0.5),
 		  pad (0.5)
 	{
@@ -76,8 +76,8 @@ namespace BIL {
 	}
 
 	PanelColors::PanelColors()
-		: header(0.0, 0.0, 0.0, 0.1),
-		  back(0.45, 0.45, 0.45, 0.5),
+		: header(0x00000019),
+		  back(0x72727280),
 		  show_header(false),
 		  show_back(false),
 		  pad(0)
@@ -102,147 +102,148 @@ namespace BIL {
 		// _theme.wcol_regular	// use the default setting in struct constructor
 
 		// Tool
-		themeUI_.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-		themeUI_.wcol_tool.inner = RGBAf(0.6, 0.6, 0.6);
-		themeUI_.wcol_tool.inner_sel = RGBAf(0.392, 0.392, 0.392);
-		themeUI_.wcol_tool.item = RGBAf(0.098, 0.098, 0.098);
-		themeUI_.wcol_tool.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_tool.text_sel = RGBAf(1.0, 1.0, 1.0);
-
-		// Text
-		themeUI_.wcol_text.outline = RGBAf(0.098, 0.098, 0.098);
-		themeUI_.wcol_text.inner = RGBAf(0.6, 0.6, 0.6);
-		themeUI_.wcol_text.inner_sel = RGBAf(0.6, 0.6, 0.6);
-		themeUI_.wcol_text.item = RGBAf(0.353, 0.353, 0.353);
-		themeUI_.wcol_text.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_text.text_sel = RGBAf(1.0, 1.0, 1.0);
+		themeUI_.wcol_tool.outline = 0x191919;
+		themeUI_.wcol_tool.item = 0x191919;
+		themeUI_.wcol_tool.inner = 0x999999FF;
+		themeUI_.wcol_tool.inner_sel = 0x646464FF;
+		themeUI_.wcol_tool.text = 0x000000;
+		themeUI_.wcol_tool.text_sel = 0xFFFFFF;
 
 		// Radio Buttons
-		themeUI_.wcol_radio.outline = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_radio.inner = RGBAf(0.275, 0.275, 0.275);
-		themeUI_.wcol_radio.inner_sel = RGBAf(0.337, 0.502, 0.761);
-		themeUI_.wcol_radio.item = RGBAf(1.0, 1.0, 1.0);
-		themeUI_.wcol_radio.text = RGBAf(1.0, 1.0, 1.0);
-		themeUI_.wcol_radio.text_sel = RGBAf(0.0, 0.0, 0.0);
+		themeUI_.wcol_radio.outline = 0x000000;
+		themeUI_.wcol_radio.item = 0xFFFFFFFF;
+		themeUI_.wcol_radio.inner = 0x464646FF;
+		themeUI_.wcol_radio.inner_sel = 0x5680C2FF;
+		themeUI_.wcol_radio.text = 0xFFFFFF;
+		themeUI_.wcol_radio.text_sel = 0x000000;
+
+		// Text
+		themeUI_.wcol_text.outline = 0x191919;
+		themeUI_.wcol_text.item = 0x5A5A5AFF;
+		themeUI_.wcol_text.inner = 0x999999FF;
+		themeUI_.wcol_text.inner_sel = 0x999999FF;
+		themeUI_.wcol_text.text = 0x000000;
+		themeUI_.wcol_text.text_sel = 0xFFFFFF;
 
 		// Option
-		themeUI_.wcol_option.outline = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_option.inner = RGBAf(0.275, 0.275, 0.275);
-		themeUI_.wcol_option.inner_sel = RGBAf(0.275, 0.275, 0.275);
-		themeUI_.wcol_option.item = RGBAf(1.0, 1.0, 1.0);
-		themeUI_.wcol_option.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_option.text_sel = RGBAf(1.0, 1.0, 1.0);
+		themeUI_.wcol_option.outline = 0x000000;
+		themeUI_.wcol_option.item = 0xFFFFFFFF;
+		themeUI_.wcol_option.inner = 0x464646FF;
+		themeUI_.wcol_option.inner_sel = 0x464646FF;
+		themeUI_.wcol_option.text = 0x000000;
+		themeUI_.wcol_option.text_sel = 0xFFFFFF;
 
 		// Toggle
-		themeUI_.wcol_toggle.outline = RGBAf(0.098, 0.098, 0.098);
-		themeUI_.wcol_toggle.inner = RGBAf(0.6, 0.6, 0.6);
-		themeUI_.wcol_toggle.inner_sel = RGBAf(0.392, 0.392, 0.392);
-		themeUI_.wcol_toggle.item = RGBAf(0.098, 0.098, 0.098);
-		themeUI_.wcol_toggle.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_toggle.text_sel = RGBAf(1.0, 1.0, 1.0);
+		themeUI_.wcol_toggle.outline = 0x191919;
+		themeUI_.wcol_toggle.item = 0x191919FF;
+		themeUI_.wcol_toggle.inner = 0x999999FF;
+		themeUI_.wcol_toggle.inner_sel = 0x646464FF;
+		themeUI_.wcol_toggle.text = 0x000000;
+		themeUI_.wcol_toggle.text_sel = 0xFFFFFF;
 
 		// Number Fields
-		themeUI_.wcol_num.outline = RGBAf(0.098, 0.098, 0.098);
-		themeUI_.wcol_num.inner = RGBAf(0.706, 0.706, 0.706);
-		themeUI_.wcol_num.inner_sel = RGBAf(0.6, 0.6, 0.6);
-		themeUI_.wcol_num.item = RGBAf(0.353, 0.353, 0.353);
-		themeUI_.wcol_num.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_num.text_sel = RGBAf(1.0, 1.0, 1.0);
+		themeUI_.wcol_num.outline = 0x191919;
+		themeUI_.wcol_num.item = 0xFAFAFAFF;
+		themeUI_.wcol_num.inner = 0xB4B4B4FF;
+		themeUI_.wcol_num.inner_sel = 0x999999FF;
+		themeUI_.wcol_num.text = 0x000000;
+		themeUI_.wcol_num.text_sel = 0xFFFFFF;
 
 		// Value Slider
-		themeUI_.wcol_numslider.outline = RGBAf(0.098, 0.098, 0.098);
-		themeUI_.wcol_numslider.inner = RGBAf(0.706, 0.706, 0.706);
-		themeUI_.wcol_numslider.inner_sel = RGBAf(0.6, 0.6, 0.6);
-		themeUI_.wcol_numslider.item = RGBAf(0.502, 0.502, 0.502);
-		themeUI_.wcol_numslider.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_numslider.text_sel = RGBAf(1.0, 1.0, 1.0);
-
-		// Menu
-		themeUI_.wcol_menu.outline = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_menu.inner = RGBAf(0.275, 0.275, 0.275);
-		themeUI_.wcol_menu.inner_sel = RGBAf(0.275, 0.275, 0.275);
-		themeUI_.wcol_menu.item = RGBAf(1.0, 1.0, 1.0);
-		themeUI_.wcol_menu.text = RGBAf(1.0, 1.0, 1.0);
-		themeUI_.wcol_menu.text_sel = RGBAf(0.8, 0.8, 0.8);
-
-		// Pulldown
-		themeUI_.wcol_pulldown.outline = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_pulldown.inner = RGBAf(0.247, 0.247, 0.247);
-		themeUI_.wcol_pulldown.inner_sel = RGBAf(0.337, 0.502, 0.761);
-		themeUI_.wcol_pulldown.item = RGBAf(1.0, 1.0, 1.0);
-		themeUI_.wcol_pulldown.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_pulldown.text_sel = RGBAf(0.0, 0.0, 0.0);
-
-		// Menu Back
-		themeUI_.wcol_menu_back.outline = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_menu_back.inner = RGBAf(0.098, 0.098, 0.098, 0.902);
-		themeUI_.wcol_menu_back.inner_sel = RGBAf(0.176, 0.176, 0.176, 0.902);
-		themeUI_.wcol_menu_back.item = RGBAf(0.392, 0.392, 0.392);
-		themeUI_.wcol_menu_back.text = RGBAf(0.627, 0.627, 0.627);
-		themeUI_.wcol_menu_back.text_sel = RGBAf(1.0, 1.0, 1.0);
-
-		// Menu Item
-		themeUI_.wcol_menu_item.outline = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_menu_item.inner = RGBAf(0.0, 0.0, 0.0, 0.0);
-		themeUI_.wcol_menu_item.inner_sel = RGBAf(0.337, 0.502, 0.761);
-		themeUI_.wcol_menu_item.item = RGBAf(0.675, 0.675, 0.675, 0.502);
-		themeUI_.wcol_menu_item.text = RGBAf(1.0, 1.0, 1.0);
-		themeUI_.wcol_menu_item.text_sel = RGBAf(0.0, 0.0, 0.0);
-
-		// Tooltip
-		themeUI_.wcol_tooltip.outline = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_tooltip.inner = RGBAf(0.098, 0.098, 0.098, 0.902);
-		themeUI_.wcol_tooltip.inner_sel = RGBAf(0.176, 0.176, 0.176, 0.902);
-		themeUI_.wcol_tooltip.item = RGBAf(0.392, 0.392, 0.392);
-		themeUI_.wcol_tooltip.text = RGBAf(0.627, 0.627, 0.627);
-		themeUI_.wcol_tooltip.text_sel = RGBAf(1.0, 1.0, 1.0);
+		themeUI_.wcol_numslider.outline = 0x191919;
+		themeUI_.wcol_numslider.item = 0x808080FF;
+		themeUI_.wcol_numslider.inner = 0xB4B4B4FF;
+		themeUI_.wcol_numslider.inner_sel = 0x999999FF;
+		themeUI_.wcol_numslider.text = 0x000000;
+		themeUI_.wcol_numslider.text_sel = 0xFFFFFF;
 
 		// Box
-		themeUI_.wcol_box.outline = RGBAf(0.098, 0.098, 0.098);
-		themeUI_.wcol_box.inner = RGBAf(0.502, 0.502, 0.502);
-		themeUI_.wcol_box.inner_sel = RGBAf(0.392, 0.392, 0.392);
-		themeUI_.wcol_box.item = RGBAf(0.098, 0.098, 0.098);
-		themeUI_.wcol_box.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_box.text_sel = RGBAf(1.0, 1.0, 1.0);
+		themeUI_.wcol_box.outline = 0x191919;
+		themeUI_.wcol_box.item = 0x191919FF;
+		themeUI_.wcol_box.inner = 0x808080FF;
+		themeUI_.wcol_box.inner_sel = 0x646464FF;
+		themeUI_.wcol_box.text = 0x000000;
+		themeUI_.wcol_box.text_sel = 0xFFFFFF;
+
+		// Menu
+		themeUI_.wcol_menu.outline = 0x000000;
+		themeUI_.wcol_menu.item = 0xFFFFFFFF;
+		themeUI_.wcol_menu.inner = 0x464646FF;
+		themeUI_.wcol_menu.inner_sel = 0x464646FF;
+		themeUI_.wcol_menu.text = 0xFFFFFF;
+		themeUI_.wcol_menu.text_sel = 0xCCCCCC;
+
+		// Pulldown
+		themeUI_.wcol_pulldown.outline = 0x000000;
+		themeUI_.wcol_pulldown.item = 0xFFFFFFFF;
+		themeUI_.wcol_pulldown.inner = 0x3F3F3FFF;
+		themeUI_.wcol_pulldown.inner_sel = 0x5680C2;
+		themeUI_.wcol_pulldown.text = 0x000000;
+		themeUI_.wcol_pulldown.text_sel = 0x000000;
+
+		// Menu Back
+		themeUI_.wcol_menu_back.outline = 0x000000;
+		themeUI_.wcol_menu_back.item = 0x646464FF;
+		themeUI_.wcol_menu_back.inner = 0x191919E6;
+		themeUI_.wcol_menu_back.inner_sel = 0x2D2D2DE6;
+		themeUI_.wcol_menu_back.text = 0xA0A0A0;
+		themeUI_.wcol_menu_back.text_sel = 0xFFFFFF;
+
+		// Tooltip
+		themeUI_.wcol_tooltip.outline = 0x000000;
+		themeUI_.wcol_tooltip.item = 0x646464FF;
+		themeUI_.wcol_tooltip.inner = 0x191919E6;
+		themeUI_.wcol_tooltip.inner_sel = 0x2D2D2DE6;
+		themeUI_.wcol_tooltip.text = 0xA0A0A0;
+		themeUI_.wcol_tooltip.text_sel = 0xFFFFFF;
+
+		// Menu Item
+		themeUI_.wcol_menu_item.outline = 0x000000;
+		themeUI_.wcol_menu_item.item = 0xACACAC80;
+		themeUI_.wcol_menu_item.inner = 0x00000000;
+		themeUI_.wcol_menu_item.inner_sel = 0x5680C2FF;
+		themeUI_.wcol_menu_item.text = 0xFFFFFF;
+		themeUI_.wcol_menu_item.text_sel = 0x000000;
+
 
 		// Scroll Bar
-		themeUI_.wcol_scroll.outline = RGBAf(0.196, 0.196, 0.196);
-		themeUI_.wcol_scroll.inner = RGBAf(0.314, 0.314, 0.314, 0.706);
-		themeUI_.wcol_scroll.inner_sel = RGBAf(0.392, 0.392, 0.392, 0.706);
-		themeUI_.wcol_scroll.item = RGBAf(0.052, 0.052, 0.052);
-		themeUI_.wcol_scroll.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_scroll.text_sel = RGBAf(1.0, 1.0, 1.0);
+		themeUI_.wcol_scroll.outline = 0x323232;
+		themeUI_.wcol_scroll.item = 0x808080FF;
+		themeUI_.wcol_scroll.inner = 0x505050B4;
+		themeUI_.wcol_scroll.inner_sel = 0x646464B4;
+		themeUI_.wcol_scroll.text = 0x000000;
+		themeUI_.wcol_scroll.text_sel = 0xFFFFFF;
 
 		// Progress Bar
-		themeUI_.wcol_progress.outline = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_progress.inner = RGBAf(0.745, 0.745, 0.745);
-		themeUI_.wcol_progress.inner_sel = RGBAf(0.392, 0.392, 0.392, 0.706);
-		themeUI_.wcol_progress.item = RGBAf(0.267, 0.267, 0.267);
-		themeUI_.wcol_progress.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_progress.text_sel = RGBAf(1.0, 1.0, 1.0);
+		themeUI_.wcol_progress.outline = 0x000000;
+		themeUI_.wcol_progress.item = 0x444444FF;
+		themeUI_.wcol_progress.inner = 0xBEBEBEFF;
+		themeUI_.wcol_progress.inner_sel = 0x646464B4;
+		themeUI_.wcol_progress.text = 0x000000;
+		themeUI_.wcol_progress.text_sel = 0xFFFFFF;
 
 		// List Item
-		themeUI_.wcol_list_item.outline = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_list_item.inner = RGBAf(0.0, 0.0, 0.0, 0.0);
-		themeUI_.wcol_list_item.inner_sel = RGBAf(0.337, 0.502, 0.761);
-		themeUI_.wcol_list_item.item = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_list_item.text = RGBAf(0.0, 0.0, 0.0);
-		themeUI_.wcol_list_item.text_sel = RGBAf(0.0, 0.0, 0.0);
+		themeUI_.wcol_list_item.outline = 0x000000;
+		themeUI_.wcol_list_item.item = 0x000000FF;
+		themeUI_.wcol_list_item.inner = 0x00000000;
+		themeUI_.wcol_list_item.inner_sel = 0x5680C2FF;
+		themeUI_.wcol_list_item.text = 0x000000;
+		themeUI_.wcol_list_item.text_sel = 0x000000;
 
 		// State
-		themeUI_.wcol_state.inner_anim = RGBAf(0.451, 0.745, 0.298);
-		themeUI_.wcol_state.inner_anim_sel = RGBAf(0.353, 0.651, 0.2);
-		themeUI_.wcol_state.inner_key = RGBAf(0.941, 0.922, 0.392);
-		themeUI_.wcol_state.inner_key_sel = RGBAf(0.843, 0.827, 0.294);
-		themeUI_.wcol_state.inner_driven = RGBAf(0.706, 0.0, 1.0);
-		themeUI_.wcol_state.inner_driven_sel = RGBAf(0.6, 0.0, 0.902);
+		themeUI_.wcol_state.inner_anim = 0x73BE4C;
+		themeUI_.wcol_state.inner_anim_sel = 0x5AA633;
+		themeUI_.wcol_state.inner_key = 0xF0EB64;
+		themeUI_.wcol_state.inner_key_sel = 0xD7D34B;
+		themeUI_.wcol_state.inner_driven = 0xB400FF;
+		themeUI_.wcol_state.inner_driven_sel = 0x9900E6;
 
 		//_theme.panel.header = RGBAf();
 		//_theme.panel.back = RGBAf();
 
-		themeUI_.xaxis = RGBAf(1.0, 0.0, 0.0);
-		themeUI_.yaxis = RGBAf(0.0, 1.0, 0.0);
-		themeUI_.zaxis = RGBAf(0.0, 0.0, 1.0);
+		themeUI_.xaxis = 0xFF0000;
+		themeUI_.yaxis = 0x00FF00;
+		themeUI_.zaxis = 0x0000FF;
 	}
 
 } /* namespace BIL */

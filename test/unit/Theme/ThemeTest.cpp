@@ -70,7 +70,7 @@ void ThemeTest::initialize1 ()
 	}
 
 	cout << "Red: " << r << endl;
-	CPPUNIT_ASSERT((r - 0.098) < 0.000001);
+	CPPUNIT_ASSERT(r == 0x19);
 }
 
 void ThemeTest::initialize2 ()
@@ -98,12 +98,12 @@ void ThemeTest::initialize2 ()
 		theme->initialize();
 
 	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	RGBAf color = theme->themeUI()->wcol_menu_item.item;
-	RGBAf textcolor = theme->themeUI()->wcol_menu_item.text;
+	RGBA bg_color = theme->themeUI()->wcol_menu_item.item;
+	RGBA textcolor = theme->themeUI()->wcol_menu_item.text;
 
 	Label label(L"Text in Label");
 	label.set_pos(Coord2f(50.0, 50.0));
-	label.set_background(color);
+	label.set_background(bg_color);
 	label.setFont(Font("Droid Sans", 12));
 	label.setTextColor(textcolor);
 

@@ -87,3 +87,35 @@ void TupleTest::checkdefault1 ()
 
     CPPUNIT_ASSERT(test.rgba.a == 1.0);
 }
+
+void TupleTest::testRGBA1()
+{
+	RGBA color(0xFF00FF);
+
+	unsigned char r = color.rgba.r;
+	unsigned char g = color.rgba.g;
+	unsigned char b = color.rgba.b;
+	unsigned char a = color.rgba.a;
+
+	CPPUNIT_ASSERT((r == 0xFF) &&
+				   (g == 0x00) &&
+				   (b == 0xFF) &&
+				   (a == 0xFF));
+}
+
+void TupleTest::testRGBA2()
+{
+	RGBA color;
+
+	color = 0x1A2B3C4D;
+
+	unsigned char r = color.rgba.r;
+	unsigned char g = color.rgba.g;
+	unsigned char b = color.rgba.b;
+	unsigned char a = color.rgba.a;
+
+	CPPUNIT_ASSERT((r == 0x1A) &&
+				   (g == 0x2B) &&
+				   (b == 0x3C) &&
+				   (a == 0x4D));
+}

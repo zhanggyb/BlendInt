@@ -32,8 +32,8 @@ namespace BIL {
 
 	TextBuffer::TextBuffer (const Font& font)
 		: rowspacing_(1.0),
-		  foreground_(1.0, 1.0, 1.0, 1.0),
-		  background_(0.0, 0.0, 0.0, 0.0)
+		  foreground_(0xFFFFFFFF),
+		  background_(0x00000000)
 	{
 		set_font(font);
 		//glShadeModel(GL_FLAT);
@@ -41,7 +41,7 @@ namespace BIL {
 	}
 
 	TextBuffer::TextBuffer (const wstring& text, const Font& font)
-		: rowspacing_(1.0), foreground_(1.0, 1.0, 1.0, 1.0), background_(0.0, 0.0, 0.0, 0.0)
+		: rowspacing_(1.0), foreground_(0xFFFFFFFF), background_(0x00000000)
 	{
 		set_font(font);
 		Append(text);
@@ -111,7 +111,7 @@ namespace BIL {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glColor4f(foreground_.rgba.r, foreground_.rgba.g, foreground_.rgba.b, foreground_.rgba.a);
+		glColor4ub(foreground_.rgba.r, foreground_.rgba.g, foreground_.rgba.b, foreground_.rgba.a);
 
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

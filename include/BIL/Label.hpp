@@ -48,14 +48,14 @@ namespace BIL {
 			calculateBox();
 		}
 
-		void setTextColor (const RGBAf& fg,
-				const RGBAf& bg = RGBAf(0.0, 0.0, 0.0, 0.0))
+		void setTextColor (const RGBA& fg,
+						   const RGBA& bg = RGBA(0x00000000))
 		{
 			text_.set_foreground(fg);
 			text_.set_background(bg);
 		}
 
-		void set_background (const RGBAf& color)
+		void set_background (const RGBA& color)
 		{
 			background_ = color;
 		}
@@ -73,7 +73,7 @@ namespace BIL {
 		TextBuffer text_;
 
 		/** Background color, default: transparent */
-		RGBAf background_;
+		RGBA background_;
 
 	};
 

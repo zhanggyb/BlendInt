@@ -22,6 +22,7 @@
 #ifndef _BIL_TUPLE_
 #define _BIL_TUPLE_
 
+#include <stdint.h>
 #include <string.h>
 
 namespace BIL {
@@ -142,7 +143,25 @@ namespace BIL {
 			memset(this, 0, sizeof(*this));
 		}
 
-		Tuple4 (T x, T y, T z, T w = T(1.0))
+		/**
+		 * @brief use this constructor only in RGBA
+		 */
+		Tuple4 (uint32_t value)
+		{
+			if (value > 0xFFFFFF) {
+				data[3] = value & 0xFF;
+				data[2] = (value >> 8) & 0xFF;
+				data[1] = (value >> 16) & 0xFF;
+				data[0] = (value >> 24) & 0xFF;
+			} else {
+				data[3] = 0xFF;
+				data[2] = value & 0xFF;
+				data[1] = (value >> 8) & 0xFF;
+				data[0] = (value >> 16) & 0xFF;
+			}
+		}
+
+		Tuple4 (T x, T y, T z, T w = T(1))
 		{
 			data[0] = x;
 			data[1] = y;
@@ -159,6 +178,24 @@ namespace BIL {
 		{
 			memcpy(this, &orig, sizeof(*this));
 			return *this;
+		}
+
+		/**
+		 * @brief use this assignement only in RGBA
+		 */
+		Tuple4& operator = (uint32_t value)
+		{
+			if (value > 0xFFFFFF) {
+				data[3] = value & 0xFF;
+				data[2] = (value >> 8) & 0xFF;
+				data[1] = (value >> 16) & 0xFF;
+				data[0] = (value >> 24) & 0xFF;
+			} else {
+				data[3] = 0xFF;
+				data[2] = value & 0xFF;
+				data[1] = (value >> 8) & 0xFF;
+				data[0] = (value >> 16) & 0xFF;
+			}
 		}
 
 		bool operator == (const Tuple4& orig)
@@ -217,6 +254,8 @@ namespace BIL {
 		} color;
 
 	};
+
+	typedef Tuple4<unsigned char> RGBA;
 
 	typedef Tuple2<int> Tuple2i, Coord2i, Vec2i;
 	typedef Tuple3<int> Tuple3i, Coord3i, Vec3i;

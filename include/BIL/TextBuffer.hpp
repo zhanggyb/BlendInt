@@ -59,12 +59,12 @@ namespace BIL {
 			rowspacing_ = space;
 		}
 
-		void set_foreground (const RGBAf& color)
+		void set_foreground (const RGBA& color)
 		{
 			foreground_ = color;
 		}
 
-		void set_background (const RGBAf& color)
+		void set_background (const RGBA& color)
 		{
 			background_ = color;
 		}
@@ -109,10 +109,10 @@ namespace BIL {
 		float rowspacing_;
 
 		/** Foreground, text color */
-		RGBAf foreground_;
+		RGBA foreground_;
 
 		/** Background Color */
-		RGBAf background_;
+		RGBA background_;
 
 		/** Pen origin */
 		Coord3f origin_;

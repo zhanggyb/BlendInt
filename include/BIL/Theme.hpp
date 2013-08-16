@@ -30,14 +30,14 @@ namespace BIL {
 	{
 		WidgetColors ();
 
-		RGBAf outline;		// Outline
-		RGBAf inner;			// Inner
-		RGBAf inner_sel;	// Inner Selected
-		RGBAf item;				// Item
-		RGBAf text;				// Text
-		RGBAf text_sel;		// Text Selected
+		RGBA outline;		// Outline
+		RGBA item;				// Item
+		RGBA inner;			// Inner
+		RGBA inner_sel;	// Inner Selected
+		RGBA text;				// Text
+		RGBA text_sel;		// Text Selected
 		bool shaded;			// Is Shaded
-		short shadetop;		// Shade Top
+		short shadetop;			// Shade Top, -100 - 100
 		short shadedown;	// Shade Down
 		bool alpha_check;
 	};
@@ -46,12 +46,12 @@ namespace BIL {
 	{
 		WidgetStateColors();
 
-		RGBAf inner_anim;	// Animated
-		RGBAf inner_anim_sel;	// Animated Selected
-		RGBAf inner_key;	// Keyframe
-		RGBAf inner_key_sel;	// Keyframe Selected
-		RGBAf inner_driven;	// Driven
-		RGBAf inner_driven_sel;	// Driven Selected
+		RGBA inner_anim;	// Animated
+		RGBA inner_anim_sel;	// Animated Selected
+		RGBA inner_key;	// Keyframe
+		RGBA inner_key_sel;	// Keyframe Selected
+		RGBA inner_driven;	// Driven
+		RGBA inner_driven_sel;	// Driven Selected
 		float blend;
 		float pad;
 	};
@@ -60,8 +60,8 @@ namespace BIL {
 	{
 		PanelColors ();
 
-		RGBAf header;
-		RGBAf back;
+		RGBA header;
+		RGBA back;
 		bool show_header;
 		bool show_back;
 		int pad;
@@ -96,7 +96,7 @@ namespace BIL {
 			float icon_alpha;
 
 			/* Axis Colors */
-			RGBAf xaxis, yaxis, zaxis;
+			RGBA xaxis, yaxis, zaxis;
 		};
 
 	public:

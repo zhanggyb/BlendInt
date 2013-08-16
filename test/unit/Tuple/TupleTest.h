@@ -20,6 +20,9 @@ class TupleTest: public CppUnit::TestFixture
     CPPUNIT_TEST(create5);
     CPPUNIT_TEST(checkdefault1);
 
+	CPPUNIT_TEST(testRGBA1);
+	CPPUNIT_TEST(testRGBA2);
+
     CPPUNIT_TEST_SUITE_END();
 
  public:
@@ -41,7 +44,11 @@ class TupleTest: public CppUnit::TestFixture
     void create3 ();
     void create4 ();
     void create5 ();
-    	void checkdefault1 ();
+	void checkdefault1 ();
+
+	void testRGBA1 ();
+
+	void testRGBA2 ();
 };
 
 #endif  /* _TUPLE_TEST_H */
