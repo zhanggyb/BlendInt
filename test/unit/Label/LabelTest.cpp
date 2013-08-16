@@ -10,8 +10,8 @@
 
 #include "LabelTest.h"
 
-#include <BIL/Label.h>
-#include <BIL/FontConfig.h>
+#include <BIL/Label.hpp>
+#include <BIL/FontConfig.hpp>
 
 using namespace BIL;
 using namespace std;

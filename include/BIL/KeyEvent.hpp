@@ -19,44 +19,46 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_FONT_H_
-#define _BIL_FONT_H_
+#ifndef _BIL_KEYEVENT_H_
+#define _BIL_KEYEVENT_H_
 
-#include <string>
-
-#include <BIL/Tuple.h>
-
-using namespace std;
+#include <BIL/Types.hpp>
+#include <BIL/InputEvent.hpp>
 
 namespace BIL {
 
-	struct Font;
-
-	// friend function
-	extern bool operator < (const Font& src, const Font& dist);
-	extern bool operator == (const Font& src, const Font& dist);
-
-	struct Font
+	class KeyEvent: public InputEvent
 	{
-		Font (const string& family = string("Sans"), unsigned int size = 10,
-		        bool bold = false, bool italic = false);
+	public:
 
-		Font (const Font& orig);
+		/**
+		 * @brief Default Constructor of KeyEvent
+		 *
+		 * @param[in] key The keyboard key that was pressed or released
+		 * @param[in] scancode The system-specific scancode of the key
+		 * @param[in] action KeyButtonAction
+		 * @param[in] mods Bit field describing which modifier keys were held down
+		 *
+		 * This signature a key event
+		 */
+		KeyEvent(int key, int scancode,
+				 int action, int mods)
+			: InputEvent (mods), _key(key),
+			_scancode(scancode), _action(action)
+		{ }
 
-		Font& operator = (const Font& orig);
+		virtual ~KeyEvent()
+		{
 
-		/** the font family, e.g. "Droid Sans" */
-		string family;
+		}
 
-		/** font size */
-		unsigned int size;
+	private:
 
-		/** whether text is bold */
-		bool bold;
-
-		/** whether text is italic */
-		bool italic;
+		int _key;
+		int _scancode;
+		int _action;
 	};
 
-} /* namespace BIL */
-#endif /* FONT_H_ */
+}
+
+#endif	/* _BIL_KEYEVENT_H_ */

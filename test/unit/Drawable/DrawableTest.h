@@ -3,9 +3,9 @@
 #ifndef _DRAWABLE_TEST_H
 #define _DRAWABLE_TEST_H
 
-#include <BIL/Application.h>
-#include <BIL/Window.h>
-#include <BIL/Drawable.h>
+#include <BIL/Application.hpp>
+#include <BIL/Window.hpp>
+#include <BIL/Drawable.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>

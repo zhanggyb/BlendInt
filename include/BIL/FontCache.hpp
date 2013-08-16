@@ -28,9 +28,9 @@
 
 #include <boost/array.hpp>
 
-#include <BIL/FontEngine.h>
-#include <BIL/Font.h>
-#include <BIL/Glyph.h>
+#include <BIL/FontEngine.hpp>
+#include <BIL/Font.hpp>
+#include <BIL/Glyph.hpp>
 
 using namespace std;
 using namespace boost;

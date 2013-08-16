@@ -3,13 +3,14 @@
 #ifndef _LABEL_TEST_H
 #define _LABEL_TEST_H
 
-#include <BIL/Application.h>
-#include <BIL/Window.h>
-#include <BIL/Label.h>
-
-#include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <string>
+
+#include <BIL/Application.hpp>
+#include <BIL/Window.hpp>
+#include <BIL/Label.hpp>
+
+#include <cppunit/extensions/HelperMacros.h>
 
 using namespace BIL;
 using namespace std;

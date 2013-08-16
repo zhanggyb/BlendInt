@@ -22,8 +22,8 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include <BIL/Label.h>
-#include <BIL/Pen.h>
+#include <BIL/Label.hpp>
+#include <BIL/Pen.hpp>
 
 namespace BIL {
 

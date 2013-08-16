@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/ChildrenList.h>
+#include <BIL/ChildrenList.hpp>
 
 #include "ChildrenListTest.h"
 

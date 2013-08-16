@@ -7,8 +7,8 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/FontCache.h>
-#include <BIL/FontConfig.h>
+#include <BIL/FontCache.hpp>
+#include <BIL/FontConfig.hpp>
 
 #include "FontCacheTest.h"
 

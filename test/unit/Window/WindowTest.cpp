@@ -7,11 +7,11 @@
 #include <string>
 #include <stdio.h>
 
-#include <BIL/Application.h>
+#include <BIL/Application.hpp>
 
-#include <BIL/Window.h>
-#include <BIL/Label.h>
-#include <BIL/Widget.h>
+#include <BIL/Window.hpp>
+#include <BIL/Label.hpp>
+#include <BIL/Widget.hpp>
 
 #include "WindowTest.h"
 
@@ -115,7 +115,7 @@ void WindowTest::event1 ()
 
     Label label(L"Test Event1");
     label.setPos (Coord2f(200.0, 200.0));
-    label.setParent (&win);
+    label.set_parent (&win);
 
     app.run();
 
@@ -133,7 +133,7 @@ void WindowTest::event2 ()
 
     Label label(L"Test Event2");
     label.setPos (Coord2f(300.0, 200.0));
-    label.setParent (&win);
+    label.set_parent (&win);
 
     app.run();
 
@@ -151,7 +151,7 @@ void WindowTest::solorender1 ()
 
     Label label(L"Test Event2");
     label.setPos (Coord2f(100.0, 100.0));
-    label.setParent (&win);
+    label.set_parent (&win);
 
 		Label solo (L"This label should also been rendered");
 		solo.setPos(400.0, 300.0, 0.0);
@@ -171,7 +171,7 @@ void WindowTest::check_mouse_press1 ()
     app.initialize();
 	
 	myWidget widget;
-	widget.setParent (&win);
+	widget.set_parent (&win);
 	widget.setPos(300.0, 300.0, 0.0);
 
     app.run();

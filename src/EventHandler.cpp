@@ -20,7 +20,7 @@
  */
 
 
-#include <BIL/EventHandler.h>
+#include <BIL/EventHandler.hpp>
 
 namespace BIL {
 

@@ -22,11 +22,11 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include <BIL/FontEngine.h>
-#include <BIL/FontConfig.h>
-#include <BIL/TextBuffer.h>
+#include <BIL/FontEngine.hpp>
+#include <BIL/FontConfig.hpp>
+#include <BIL/TextBuffer.hpp>
 
-#include <BIL/Tuple.h>
+#include <BIL/Tuple.hpp>
 
 namespace BIL {
 

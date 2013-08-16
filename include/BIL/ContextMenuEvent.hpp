@@ -22,7 +22,7 @@
 #ifndef _BIL_CONTEXTMENUEVENT_H_
 #define _BIL_CONTEXTMENUEVENT_H_
 
-#include <BIL/InputEvent.h>
+#include <BIL/InputEvent.hpp>
 
 namespace BIL {
 

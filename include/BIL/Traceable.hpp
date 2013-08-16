@@ -30,10 +30,9 @@
 #define _BIL_TRACEABLE_H_
 
 #include <stdint.h>
+#include <cstdlib>
 #include <list>
 #include <map>
-
-#include <BIL/ChildrenList.h>
 
 using namespace std;
 
@@ -94,7 +93,7 @@ namespace BIL {
 		 * @brief get the object id
 		 * @return
 		 */
-		uint64_t getId () const
+		uint64_t id (void) const
 		{
 			return id_;
 		}
@@ -102,7 +101,7 @@ namespace BIL {
 		 * @brief get the parent pointer
 		 * @return
 		 */
-		const Traceable* getParent (void) const
+		const Traceable* parent (void) const
 		{
 			return parent_;
 		}
@@ -114,35 +113,26 @@ namespace BIL {
 		 *
 		 * Set the parent object and add self into the children list of parent
 		 */
-		bool setParent (Traceable* parent);
+		bool set_parent (Traceable* parent);
 
-		bool addChild (Traceable *child);
+		bool AddChild (Traceable *child);
+
+	protected:	// member functions
+
+		bool RemoveChild (Traceable* child, bool registersolo = true);
+
+		void DeleteChildren (void);
 
 	protected:
 
-		bool removeChild (Traceable* child, bool registersolo = true);
-
-		ChildrenList<Traceable*> _children;
-
-		void deleteChildren (void);
+		//ChildrenList<Traceable*> _children;
+		std::list<Traceable*> children_;
 
 	private:
 
-		inline bool registerObj (void);
+		inline bool RegisterObj (void);
 
-		inline bool unregisterObj (void);
-
-	private:	// member functions disabled
-
-		/**
-		 * @brief Declare copy constructor in private to disable it
-		 */
-		Traceable (const Traceable& orig);
-
-		/**
-		 * @brief Declare assignment constructor in private to disable it
-		 */
-		Traceable& operator = (const Traceable& orig);
+		inline bool UnregisterObj (void);
 
 	private:	// member variables
 
@@ -158,6 +148,17 @@ namespace BIL {
 
 		static list<Traceable*> solo;
 
+	private:	// member functions disabled
+
+		/**
+		 * @brief Declare copy constructor in private to disable it
+		 */
+		Traceable (const Traceable& orig);
+
+		/**
+		 * @brief Declare assignment constructor in private to disable it
+		 */
+		Traceable& operator = (const Traceable& orig);
 	};
 
 } /* namespace BIL */

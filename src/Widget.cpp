@@ -22,7 +22,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include <BIL/Widget.h>
+#include <BIL/Widget.hpp>
 
 namespace BIL {
 

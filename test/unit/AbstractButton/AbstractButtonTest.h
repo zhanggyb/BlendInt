@@ -3,9 +3,9 @@
 #ifndef _ABSTRACTBUTTON_TEST_H
 #define _ABSTRACTBUTTON_TEST_H
 
-#include <BIL/Application.h>
-#include <BIL/Window.h>
-#include <BIL/AbstractButton.h>
+#include <BIL/Application.hpp>
+#include <BIL/Window.hpp>
+#include <BIL/AbstractButton.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>

@@ -19,63 +19,37 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_LABEL_H_
-#define _BIL_LABEL_H_
+#ifndef _BIL_INPUTEVENT_H_
+#define _BIL_INPUTEVENT_H_
 
-#include <string>
-
-#include <BIL/Widget.h>
-#include <BIL/TextBuffer.h>
-#include <BIL/Font.h>
-
-using namespace std;
+#include <BIL/Types.hpp>
+#include <BIL/Event.hpp>
 
 namespace BIL {
 
-	class Label: public BIL::Widget
+	class InputEvent: public Event
 	{
 	public:
-
-		Label (const wstring& label, Drawable * parent = NULL);
-
-		virtual ~Label ();
-
-		void set_text (const wstring& label);
-
-		void setFont (const Font& font)
+		
+		/**
+		 * @brief Default Constructor
+		 * @param modifiers Bitwise conbination of KeyModifier
+		 */
+		InputEvent(int modifiers = ModifierNone)
+			: modifiers_(modifiers)
 		{
-			text_.set_font(font);
-			calculateBox();
 		}
 
-		void setTextColor (const RGBAf& fg,
-				const RGBAf& bg = RGBAf(0.0, 0.0, 0.0, 0.0))
+		virtual ~InputEvent()
 		{
-			text_.set_foreground(fg);
-			text_.set_background(bg);
 		}
 
-		void set_background (const RGBAf& color)
-		{
-			background_ = color;
-		}
+	protected:
 
-		virtual void render (void);
-
-	private:	// member functions
-
-		virtual void cursorPosEvent (double xpos, double ypos);
-
-		void calculateBox (void);
-
-	private:
-
-		TextBuffer text_;
-
-		/** Background color, default: transparent */
-		RGBAf background_;
+		int modifiers_;
 
 	};
 
 } /* namespace BIL */
-#endif /* LABEL_H_ */
+
+#endif	/* _BIL_INPUTEVENT_H_ */

@@ -19,37 +19,57 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_INPUTEVENT_H_
-#define _BIL_INPUTEVENT_H_
+#ifndef _BIL_PEN_H_
+#define _BIL_PEN_H_
 
-#include <BIL/Types.h>
-#include <BIL/Event.h>
+#include <GL/gl.h>
+#include <BIL/Font.hpp>
+#include <BIL/Tuple.hpp>
+
+#include <string>
 
 namespace BIL {
 
-	class InputEvent: public Event
+	/**
+	 * C++ wrapper of some OpenGL functions
+	 */
+	class Pen
 	{
 	public:
-		
+
+		Pen (float size = 1.0, float width = 1.0);
+
+		virtual ~Pen ();
+
+		void setPointSize (GLfloat size);
+
+		void setLineWidth (GLfloat width);
+
+		void setLineStyle (GLfloat style);
+
 		/**
-		 * @brief Default Constructor
-		 * @param modifiers Bitwise conbination of KeyModifier
+		 * @brief Draw line from s to t
 		 */
-		InputEvent(int modifiers = ModifierNone)
-			: modifiers_(modifiers)
-		{
-		}
+		void draw (const Coord2f& s, const Coord2f& t);
 
-		virtual ~InputEvent()
-		{
-		}
+		/**
+		 * @brief Draw rectangle
+		 */
+		void draw (const Rectf& rect);
 
-	protected:
+		/**
+		 * @brief Draw round rectangle
+		 */
+		void draw (const Rectf& rect, const Vec4f round);
 
-		int modifiers_;
+	private:
 
+		/** point size */
+		float _size;
+
+		/** line width */
+		float _width;
 	};
 
 } /* namespace BIL */
-
-#endif	/* _BIL_INPUTEVENT_H_ */
+#endif /* PEN_H_ */

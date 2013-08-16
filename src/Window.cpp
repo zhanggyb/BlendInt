@@ -22,11 +22,11 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include <BIL/Window.h>
-#include <BIL/Drawable.h>
-#include <BIL/KeyEvent.h>
-#include <BIL/MouseEvent.h>
-#include <BIL/ContextMenuEvent.h>
+#include <BIL/Window.hpp>
+#include <BIL/Drawable.hpp>
+#include <BIL/KeyEvent.hpp>
+#include <BIL/MouseEvent.hpp>
+#include <BIL/ContextMenuEvent.hpp>
 
 using namespace std;
 
@@ -80,7 +80,7 @@ namespace BIL {
 	{
 		unregisterCallbacks();
 
-		deleteChildren();
+		DeleteChildren();
 
 		glfwDestroyWindow(window_);
 	}
@@ -136,9 +136,9 @@ namespace BIL {
 		glMatrixMode (GL_MODELVIEW);
 		glLoadIdentity();
 
-		ChildrenList<Traceable*>::const_iterator it;
+		list<Traceable*>::const_iterator it;
 		Drawable *item = NULL;
-		for (it = _children.begin(); it != _children.end(); it++) {
+		for (it = children_.begin(); it != children_.end(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
 				item->render();
@@ -172,9 +172,9 @@ namespace BIL {
 			ContextMenuEvent event(ContextMenuEvent::Keyboard,
 								   mods);
 
-			ChildrenList<Traceable*>::const_reverse_iterator it;
+			list<Traceable*>::const_reverse_iterator it;
 			Drawable *item = NULL;
-			for (it = _children.rbegin(); it != _children.rend(); it++) {
+			for (it = children_.rbegin(); it != children_.rend(); it++) {
 				item = dynamic_cast<Drawable*>(*it);
 				if (item == NULL) continue;
 
@@ -196,9 +196,9 @@ namespace BIL {
 
 			BIL::KeyEvent event(key, scancode, action, mods);
 
-			ChildrenList<Traceable*>::const_reverse_iterator it;
+			list<Traceable*>::const_reverse_iterator it;
 			Drawable *item = NULL;
-			for (it = _children.rbegin(); it != _children.rend(); it++) {
+			for (it = children_.rbegin(); it != children_.rend(); it++) {
 				item = dynamic_cast<Drawable*>(*it);
 				if (item == NULL) continue;
 
@@ -224,9 +224,9 @@ namespace BIL {
 
 	void Window::InputMethodEvent (unsigned int character)
 	{
-		ChildrenList<Traceable*>::const_reverse_iterator it;
+		list<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
-		for (it = _children.rbegin(); it != _children.rend(); it++) {
+		for (it = children_.rbegin(); it != children_.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
 				item->InputMethodEvent(character);
@@ -272,11 +272,11 @@ namespace BIL {
 		MouseEvent event (mouse_action, mouseclick);
 		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
 
-		ChildrenList<Traceable*>::const_reverse_iterator it;
+		list<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		float local_x;
 		float local_y;
-		for (it = _children.rbegin(); it != _children.rend(); it++) {
+		for (it = children_.rbegin(); it != children_.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item == NULL) continue;
 
@@ -310,12 +310,12 @@ namespace BIL {
 		MouseEvent event (MouseNone, MouseButtonNone);
 		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
 
-		ChildrenList<Traceable*>::const_reverse_iterator it;
+		list<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		float local_x;
 		float local_y;
 
-		for (it = _children.rbegin(); it != _children.rend(); it++) {
+		for (it = children_.rbegin(); it != children_.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
 				local_x = cursor_pos_x_ - (item->getPos().coord.x);

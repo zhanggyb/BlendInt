@@ -25,8 +25,8 @@
 #include <stddef.h>
 #include <string>
 
-#include <BIL/Tuple.h>
-#include <BIL/FontCache.h>
+#include <BIL/Tuple.hpp>
+#include <BIL/FontCache.hpp>
 //#include <BIL/BasicObject.h>
 
 using namespace boost;

@@ -28,8 +28,8 @@
 
 #include <fontconfig/fontconfig.h>
 
-#include <BIL/FontEngine.h>
-#include <BIL/Font.h>
+#include <BIL/FontEngine.hpp>
+#include <BIL/Font.hpp>
 
 using namespace std;
 

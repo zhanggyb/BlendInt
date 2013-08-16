@@ -29,9 +29,9 @@
 #include FT_LCD_FILTER_H
 #include FT_STROKER_H
 
-#include <BIL/Tuple.h>
-#include <BIL/Glyph.h>
-#include <BIL/Font.h>
+#include <BIL/Tuple.hpp>
+#include <BIL/Glyph.hpp>
+#include <BIL/Font.hpp>
 
 using namespace std;
 

@@ -25,12 +25,13 @@
 
 #include <iostream>
 #include <string>
-#include <locale.h>
-#include <stdlib.h>
+#include <cstdlib>
 
-#include <BIL/Application.h>
-#include <BIL/FontConfig.h>
-#include <BIL/Window.h>
+#include <locale.h>
+
+#include <BIL/Application.hpp>
+#include <BIL/FontConfig.hpp>
+#include <BIL/Window.hpp>
 
 using namespace std;
 

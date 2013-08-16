@@ -21,8 +21,8 @@
 
 #include <iostream>
 
-#include <BIL/FontEngine.h>
-#include <BIL/FontConfig.h>
+#include <BIL/FontEngine.hpp>
+#include <BIL/FontConfig.hpp>
 
 using namespace std;
 

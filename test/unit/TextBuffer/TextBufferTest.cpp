@@ -10,8 +10,8 @@
 
 #include "TextBufferTest.h"
 
-#include <BIL/TextBuffer.h>
-#include <BIL/FontConfig.h>
+#include <BIL/TextBuffer.hpp>
+#include <BIL/FontConfig.hpp>
 
 using namespace BIL;
 using namespace std;

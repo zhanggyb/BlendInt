@@ -33,7 +33,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <BIL/Font.h>
+#include <BIL/Font.hpp>
 
 using namespace std;
 

@@ -19,26 +19,29 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_CONTAINER_H_
-#define _BIL_CONTAINER_H_
+#ifndef ROLLINGTRIANGLE_H_
+#define ROLLINGTRIANGLE_H_
 
-#include <BIL/Drawable.h>
+#include <BIL/Drawable.hpp>
 
 namespace BIL {
 
-	class Container: public BIL::Drawable
+	/**
+	 * This object is for test only
+	 */
+	class RollingTriangle: public BIL::Drawable
 	{
 	public:
-		Container (Traceable *parent = NULL);
-		virtual ~Container ();
+		RollingTriangle (Traceable *parent = NULL);
+		virtual ~RollingTriangle ();
 
 	protected:
 		void render (void);
 
 	private:
-		Container (const Container& orig);
-		Container& operator = (const Container& orig);
+		RollingTriangle (const RollingTriangle& orig);
+		RollingTriangle& operator = (const RollingTriangle& orig);
 	};
 
 } /* namespace BIL */
-#endif /* CONTAINER_H_ */
+#endif /* ROLLINGTRIANGLE_H_ */

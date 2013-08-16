@@ -20,7 +20,8 @@
  */
 
 #include <string.h>
-#include <BIL/Font.h>
+
+#include <BIL/Font.hpp>
 
 namespace BIL {
 

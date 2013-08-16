@@ -22,7 +22,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include <BIL/Traceable.h>
+#include <BIL/Traceable.hpp>
 
 using namespace std;
 
@@ -48,11 +48,11 @@ namespace BIL {
 
 		id_ = id_last;
 
-		registerObj();
+		RegisterObj();
 		id_last++;
 
 		if (parent_ != NULL) {
-			(parent_->_children).push_back(this);
+			(parent_->children_).push_back(this);
 		} else {
 			solo.push_back(this);
 		}
@@ -61,20 +61,21 @@ namespace BIL {
 	Traceable::~Traceable ()
 	{
 		Traceable* item = NULL;
-		while (_children.size() > 0) {
-			item = _children.back();
-			_children.pop_back();
+		while (children_.size() > 0) {
+			item = children_.back();
+			children_.pop_back();
 			if (item != NULL) {
-				removeChild(item);
+				RemoveChild(item);
 				delete item;
 			}
 		}
 
-		_children.clear();
+		children_.clear();
 
 		if (parent_ != NULL) {
 			// _parent->removeChild(this);	// Be careful of this line
-			parent_->_children.erase(this);
+			// parent_->children_.erase(this);
+			parent_->children_.remove (this);
 		} else {
 			list<Traceable*>::iterator it;
 			it = std::find(solo.begin(), solo.end(), this);
@@ -83,10 +84,10 @@ namespace BIL {
 			}
 		}
 
-		unregisterObj();
+		UnregisterObj();
 	}
 
-	inline bool Traceable::registerObj (void)
+	inline bool Traceable::RegisterObj (void)
 	{
 		Traceable::objMap[id_] = this;
 		return true;
@@ -101,13 +102,13 @@ namespace BIL {
 		return ret;
 	}
 
-	inline bool Traceable::unregisterObj (void)
+	inline bool Traceable::UnregisterObj (void)
 	{
 		Traceable::objMap.erase(id_);
 		return true;
 	}
 
-	bool Traceable::setParent (Traceable* parent)
+	bool Traceable::set_parent (Traceable* parent)
 	{
 		if (parent_ == parent) return true;
 
@@ -122,13 +123,13 @@ namespace BIL {
 				solo.remove(this);
 			}
 		} else {
-			parent_->removeChild(this, false);
+			parent_->RemoveChild(this, false);
 		}
 
 		if (parent != NULL) {
 			parent_ = parent;
 			// return (_parent->addChild(this));
-			parent_->_children.push_back(this);
+			parent_->children_.push_back(this);
 		} else {
 			parent_ = NULL;
 			solo.push_back(this);
@@ -137,13 +138,13 @@ namespace BIL {
 		return true;
 	}
 
-	bool Traceable::addChild (Traceable* child)
+	bool Traceable::AddChild (Traceable* child)
 	{
 		if (child == NULL)
 			return false;
 
 		if (child->parent_ != NULL) {
-			(child->parent_)->removeChild(child, false);
+			(child->parent_)->RemoveChild(child, false);
 		} else {
 			list<Traceable*>::iterator it;
 			it = std::find(solo.begin(), solo.end(), this);
@@ -152,21 +153,22 @@ namespace BIL {
 			}
 		}
 
-		_children.push_back(child);
+		children_.push_back(child);
 		child->parent_ = this;
 
 		return true;
 	}
 
-	bool Traceable::removeChild (Traceable* child, bool registersolo)
+	bool Traceable::RemoveChild (Traceable* child, bool registersolo)
 	{
 		if(child->parent_ != this) return false;
 
 		if (child == NULL)
 			return false;
 
-		_children.erase(child);
+		//children_.erase(child);
 		//child->setParent(NULL);
+		children_.remove(child);
 		child->parent_ = NULL;
 		if(registersolo) {
 			solo.push_back(child);
@@ -176,17 +178,17 @@ namespace BIL {
 	}
 
 
-	void Traceable::deleteChildren (void)
+	void Traceable::DeleteChildren (void)
 	{
 		Traceable* item = NULL;
 
-		while (_children.size() > 0) {
-			item = _children.back();
-			_children.pop_back();
+		while (children_.size() > 0) {
+			item = children_.back();
+			children_.pop_back();
 			if (item != NULL) delete item;
 		}
 
-		_children.clear();
+		children_.clear();
 	}
 
 } /* namespace BIL */

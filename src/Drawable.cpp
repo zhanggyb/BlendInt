@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include <BIL/Drawable.h>
+#include <BIL/Drawable.hpp>
 
 namespace BIL {
 
@@ -144,7 +144,7 @@ namespace BIL {
 	}
 
 	Drawable::Drawable (Traceable* parent)
-		: Traceable(parent), corner_ (CORNER_NONE), is_visible_(true)
+		: Traceable(parent), round_box_type_ (RoundBoxNone), is_visible_(true)
 	{
 
 	}
@@ -168,7 +168,7 @@ namespace BIL {
 								 float rad)
 	{
 		drawAntiRoundbox(GL_POLYGON,
-						 minx, miny,	maxx, maxy, rad, corner_ & UI_RB_ALPHA);
+						 minx, miny,	maxx, maxy, rad, round_box_type_ & UI_RB_ALPHA);
 	}
 
 	void Drawable::drawBox(int mode,
@@ -195,7 +195,7 @@ namespace BIL {
 		glBegin(mode);
 
 		/* start with corner right-bottom */
-		if (corner_ & CORNER_BOTTOM_RIGHT) {
+		if (round_box_type_ & RoundBoxBottomRight) {
 			glVertex2f(maxx - rad, miny);
 			for (a = 0; a < 7; a++) {
 				glVertex2f(maxx - rad + vec[a][0], miny + vec[a][1]);
@@ -207,7 +207,7 @@ namespace BIL {
 		}
 
 		/* corner right-top */
-		if (corner_ & CORNER_TOP_RIGHT) {
+		if (round_box_type_ & RoundBoxTopRight) {
 			glVertex2f(maxx, maxy - rad);
 			for (a = 0; a < 7; a++) {
 				glVertex2f(maxx - vec[a][1], maxy - rad + vec[a][0]);
@@ -219,7 +219,7 @@ namespace BIL {
 		}
 
 		/* corner left-top */
-		if (corner_ & CORNER_TOP_LEFT) {
+		if (round_box_type_ & RoundBoxTopLeft) {
 			glVertex2f(minx + rad, maxy);
 			for (a = 0; a < 7; a++) {
 				glVertex2f(minx + rad - vec[a][0], maxy - vec[a][1]);
@@ -231,7 +231,7 @@ namespace BIL {
 		}
 
 		/* corner left-bottom */
-		if (corner_ & CORNER_BOTTOM_LEFT) {
+		if (round_box_type_ & RoundBoxBottomLeft) {
 			glVertex2f(minx, miny + rad);
 			for (a = 0; a < 7; a++) {
 				glVertex2f(minx + vec[a][1], miny + rad - vec[a][0]);
@@ -287,7 +287,7 @@ namespace BIL {
 		glBegin(mode);
 
 		/* start with corner right-bottom */
-		if (corner_ & CORNER_BOTTOM_RIGHT) {
+		if (round_box_type_ & RoundBoxBottomRight) {
 
 			round_box_shade_col(coltop, coldown, 0.0);
 			glVertex2f(maxx - rad, miny);
@@ -306,7 +306,7 @@ namespace BIL {
 		}
 
 		/* corner right-top */
-		if (corner_ & CORNER_TOP_RIGHT) {
+		if (round_box_type_ & RoundBoxTopRight) {
 
 			round_box_shade_col(coltop, coldown, (div - rad) * idiv);
 			glVertex2f(maxx, maxy - rad);
@@ -325,7 +325,7 @@ namespace BIL {
 		}
 
 		/* corner left-top */
-		if (corner_ & CORNER_TOP_LEFT) {
+		if (round_box_type_ & RoundBoxTopLeft) {
 
 			round_box_shade_col(coltop, coldown, 1.0);
 			glVertex2f(minx + rad, maxy);
@@ -344,7 +344,7 @@ namespace BIL {
 		}
 
 		/* corner left-bottom */
-		if (corner_ & CORNER_BOTTOM_LEFT) {
+		if (round_box_type_ & RoundBoxBottomLeft) {
 
 			round_box_shade_col(coltop, coldown, rad * idiv);
 			glVertex2f(minx, miny + rad);
@@ -372,7 +372,7 @@ namespace BIL {
 	{
 		float color[4];
 
-		if (corner_ & UI_RB_ALPHA) {
+		if (round_box_type_ & UI_RB_ALPHA) {
 			glGetFloatv(GL_CURRENT_COLOR, color);
 			color[3] = 0.5;
 			glColor4fv(color);
@@ -497,7 +497,7 @@ namespace BIL {
 		glBegin(mode);
 
 		/* start with corner right-bottom */
-		if (corner_ & CORNER_BOTTOM_RIGHT) {
+		if (round_box_type_ & RoundBoxBottomRight) {
 			round_box_shade_col(colLeft, colRight, 0.0);
 			glVertex2f(maxx - rad, miny);
 
@@ -515,7 +515,7 @@ namespace BIL {
 		}
 
 		/* corner right-top */
-		if (corner_ & CORNER_TOP_RIGHT) {
+		if (round_box_type_ & RoundBoxTopRight) {
 			round_box_shade_col(colLeft, colRight, 0.0);
 			glVertex2f(maxx, maxy - rad);
 
@@ -534,7 +534,7 @@ namespace BIL {
 		}
 
 		/* corner left-top */
-		if (corner_ & CORNER_TOP_LEFT) {
+		if (round_box_type_ & RoundBoxTopLeft) {
 			round_box_shade_col(colLeft, colRight, (div - rad) * idiv);
 			glVertex2f(minx + rad, maxy);
 
@@ -553,7 +553,7 @@ namespace BIL {
 		}
 
 		/* corner left-bottom */
-		if (corner_ & CORNER_BOTTOM_LEFT) {
+		if (round_box_type_ & RoundBoxBottomLeft) {
 			round_box_shade_col(colLeft, colRight, 1.0);
 			glVertex2f(minx, miny + rad);
 

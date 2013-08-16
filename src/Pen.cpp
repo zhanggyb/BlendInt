@@ -23,7 +23,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-#include <BIL/Pen.h>
+#include <BIL/Pen.hpp>
 
 namespace BIL {
 

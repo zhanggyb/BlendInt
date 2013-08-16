@@ -22,7 +22,7 @@
 #ifndef _BIL_THEME_H_
 #define _BIL_THEME_H_
 
-#include <BIL/Tuple.h>
+#include <BIL/Tuple.hpp>
 
 namespace BIL {
 

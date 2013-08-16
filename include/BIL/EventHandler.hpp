@@ -19,43 +19,48 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_WIDGET_H_
-#define _BIL_WIDGET_H_
+#ifndef _BIL_EVENTHANDLER_H_
+#define _BIL_EVENTHANDLER_H_
 
-#include <BIL/Drawable.h>
+#include <BIL/MouseEvent.hpp>
+#include <BIL/KeyEvent.hpp>
+#include <BIL/ContextMenuEvent.hpp>
 
 namespace BIL {
 
-	// TODO: rename to Widget, confused to controller in MVC
+	class Window;
 
-	class Widget: public BIL::Drawable
+	class EventHandler
 	{
 	public:
-		Widget (Traceable * parent = NULL);
 
-		virtual ~Widget ();
+		friend class Window;
 
-		virtual void render (void);
+		// EventHandler ();
+		// virtual ~EventHandler ();
 
 	protected:
 
-		virtual void KeyPressEvent (KeyEvent* event);
+		virtual void KeyPressEvent (KeyEvent* event) = 0;
 
-		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
-		
-		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
+		virtual void ContextMenuPressEvent (ContextMenuEvent* event) = 0;
 
-		virtual void MousePressEvent (MouseEvent* event);
+		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event) = 0;
 
-		virtual void MouseReleaseEvent (MouseEvent* event);
+		virtual void MousePressEvent (MouseEvent* event) = 0;
 
-		virtual void MouseMoveEvent (MouseEvent* event);
+		virtual void MouseReleaseEvent (MouseEvent* event) = 0;
 
-		virtual void InputMethodEvent (unsigned int character);
+		virtual void MouseMoveEvent (MouseEvent* event) = 0;
 
-		virtual void CursorEnterEvent (int entered);
+		virtual void InputMethodEvent (unsigned int character) = 0;
 
+		virtual void CursorEnterEvent (int entered) = 0;
+
+	//private:
+		//EventHandler(const EventHandler& orig);
+		//EventHandler& operator = (const EventHandler& orig);
 	};
 
 } /* namespace BIL */
-#endif /* _BIL_WIDGET_H_ */
+#endif /* _BIL_EVENTHANDLER_H_ */

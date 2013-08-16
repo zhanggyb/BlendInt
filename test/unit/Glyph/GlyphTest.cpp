@@ -4,8 +4,8 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
 
-#include <BIL/FontConfig.h>
-#include <BIL/Glyph.h>
+#include <BIL/FontConfig.hpp>
+#include <BIL/Glyph.hpp>
 #include <iostream>
 #include <string>
 

@@ -31,11 +31,11 @@
 
 #include <list>
 
-#include <BIL/Traceable.h>
-#include <BIL/Font.h>
-#include <BIL/Tuple.h>
-#include <BIL/EventHandler.h>
-#include <BIL/Theme.h>
+#include <BIL/Traceable.hpp>
+#include <BIL/Font.hpp>
+#include <BIL/Tuple.hpp>
+#include <BIL/EventHandler.hpp>
+#include <BIL/Theme.hpp>
 
 namespace BIL {
 
@@ -51,17 +51,17 @@ namespace BIL {
 		 * |      		|
 		 * 8------4
 		 */
-		enum CornerPosition
+		enum RoundBoxType
 		{
-			CORNER_TOP_LEFT = (1 << 0),
-			CORNER_TOP_RIGHT = (1 << 1),
-			CORNER_BOTTOM_RIGHT = (1 << 2),
-			CORNER_BOTTOM_LEFT = (1 << 3),
+			RoundBoxTopLeft = (1 << 0),
+			RoundBoxTopRight = (1 << 1),
+			RoundBoxBottomRight = (1 << 2),
+			RoundBoxBottomLeft = (1 << 3),
 			/* just for convenience */
-			CORNER_NONE = 0,
-			CORNER_ALL = (CORNER_TOP_LEFT | CORNER_TOP_RIGHT
-			        | CORNER_BOTTOM_RIGHT | CORNER_BOTTOM_LEFT),
-			UI_RB_ALPHA = CORNER_ALL + 1
+			RoundBoxNone = 0,
+			RoundBoxAll = (RoundBoxTopLeft | RoundBoxTopRight
+			        | RoundBoxBottomRight | RoundBoxBottomLeft),
+			UI_RB_ALPHA = RoundBoxAll + 1
 		};
 
 		enum ScrollState
@@ -142,14 +142,14 @@ namespace BIL {
 			return font_;
 		}
 
-		void setRoundBox (CornerPosition type)
+		void setRoundBox (RoundBoxType type)
 		{
-			corner_ = type;
+			round_box_type_ = type;
 		}
 
-		CornerPosition getRoundBox (void)
+		RoundBoxType getRoundBox (void)
 		{
-			return corner_;
+			return round_box_type_;
 		}
 
 		void show (void)
@@ -257,7 +257,7 @@ namespace BIL {
 
 		Vec4i margin_; /** used when in Layout */
 
-		CornerPosition corner_;
+		RoundBoxType round_box_type_;
 
 		bool is_visible_;
 

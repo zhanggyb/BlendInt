@@ -22,10 +22,10 @@
 #ifndef _BIL_MOUSEEVENT_H_
 #define _BIL_MOUSEEVENT_H_
 
-#include <BIL/Types.h>
-#include <BIL/Tuple.h>
-#include <BIL/Event.h>
-#include <BIL/InputEvent.h>
+#include <BIL/Types.hpp>
+#include <BIL/Tuple.hpp>
+#include <BIL/Event.hpp>
+#include <BIL/InputEvent.hpp>
 
 namespace BIL {
 

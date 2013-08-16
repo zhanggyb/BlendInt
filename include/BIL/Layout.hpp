@@ -22,8 +22,8 @@
 #ifndef LAYOUT_H_
 #define LAYOUT_H_
 
-#include <BIL/Drawable.h>
-#include <BIL/Widget.h>
+#include <BIL/Drawable.hpp>
+#include <BIL/Widget.hpp>
 
 namespace BIL {
 

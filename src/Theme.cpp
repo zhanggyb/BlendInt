@@ -22,7 +22,7 @@
 #include <iostream>
 #include <string.h>
 
-#include <BIL/Theme.h>
+#include <BIL/Theme.hpp>
 
 namespace BIL {
 

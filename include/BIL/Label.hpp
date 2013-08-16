@@ -19,58 +19,52 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-/*
- * AbstractButton.h
- *
- *  Created on: 2013年7月4日
- *      Author: zhanggyb
- */
-
-#ifndef _BIL_ABSTRACTBUTTON_H_
-#define _BIL_ABSTRACTBUTTON_H_
+#ifndef _BIL_LABEL_H_
+#define _BIL_LABEL_H_
 
 #include <string>
 
-#include <BIL/Widget.h>
-#include <BIL/Font.h>
-#include <BIL/Tuple.h>
-#include <BIL/TextBuffer.h>
+#include <BIL/Widget.hpp>
+#include <BIL/TextBuffer.hpp>
+#include <BIL/Font.hpp>
 
 using namespace std;
 
 namespace BIL {
 
-	class AbstractButton: public BIL::Widget
+	class Label: public BIL::Widget
 	{
 	public:
 
-		AbstractButton (const wstring& text, Drawable* parent = NULL);
+		Label (const wstring& label, Drawable * parent = NULL);
 
-		virtual ~AbstractButton ();
+		virtual ~Label ();
 
-		void setText (const wstring& text);
+		void set_text (const wstring& label);
 
-		void setFont (const Font& font);
+		void setFont (const Font& font)
+		{
+			text_.set_font(font);
+			calculateBox();
+		}
 
-		// void setCheckable (bool checkable);
+		void setTextColor (const RGBAf& fg,
+				const RGBAf& bg = RGBAf(0.0, 0.0, 0.0, 0.0))
+		{
+			text_.set_foreground(fg);
+			text_.set_background(bg);
+		}
 
 		void set_background (const RGBAf& color)
 		{
 			background_ = color;
 		}
 
-		void set_corner_radius (float rad)
-		{
-			corner_radius_ = rad;
-		}
-
-		void render (void);
-
-	protected:
-
-		
+		virtual void render (void);
 
 	private:	// member functions
+
+		virtual void cursorPosEvent (double xpos, double ypos);
 
 		void calculateBox (void);
 
@@ -78,15 +72,10 @@ namespace BIL {
 
 		TextBuffer text_;
 
+		/** Background color, default: transparent */
 		RGBAf background_;
 
-		float corner_radius_;
-
-	private:	// member functions (disabled)
-
-		AbstractButton (const AbstractButton& orig);
-		AbstractButton& operator = (const AbstractButton& orig);
 	};
 
 } /* namespace BIL */
-#endif /* ABSTRACTBUTTON_H_ */
+#endif /* LABEL_H_ */

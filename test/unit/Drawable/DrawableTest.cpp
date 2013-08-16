@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
+
+#include <BIL/Drawable.hpp>
 #include "DrawableTest.h"
 
 using namespace BIL;
@@ -118,7 +120,7 @@ void myTexture::makeCheckImage (void)
 myDrawable1::myDrawable1(Traceable* parent)
 	: Drawable (parent)
 {
-	corner_ = CORNER_ALL;
+	round_box_type_ = RoundBoxAll;
 }
 
 myDrawable1::~myDrawable1()
@@ -182,7 +184,7 @@ void myDrawable1::CursorEnterEvent (int entered)
 myDrawable2::myDrawable2(Traceable* parent)
 	: Drawable (parent)
 {
-	corner_ = CORNER_ALL;
+	round_box_type_ = RoundBoxAll;
 }
 
 myDrawable2::~myDrawable2()
@@ -245,7 +247,7 @@ void myDrawable2::CursorEnterEvent (int entered)
 myDrawable3::myDrawable3(Traceable* parent)
 	: Drawable (parent)
 {
-	corner_ = CORNER_ALL;
+	round_box_type_ = RoundBoxAll;
 }
 
 myDrawable3::~myDrawable3()
@@ -342,7 +344,7 @@ void DrawableTest::texture1 ()
     app.initialize();
 
     myTexture widget;
-    widget.setParent (&win);
+    widget.set_parent (&win);
 
     app.run();
 
@@ -359,7 +361,7 @@ void DrawableTest::mydrawable1()
     app.initialize();
 
     myDrawable1 widget;
-    widget.setParent (&win);
+    widget.set_parent (&win);
     widget.setPos(Coord2f(50.0, 50.0));
     widget.resize(80, 40);
 
@@ -378,7 +380,7 @@ void DrawableTest::mydrawable2()
     app.initialize();
 
     myDrawable2 widget;
-    widget.setParent (&win);
+    widget.set_parent (&win);
     widget.setPos(Coord2f(50.0, 50.0));
     widget.resize(80, 40);
 
@@ -397,7 +399,7 @@ void DrawableTest::mydrawable3()
     app.initialize();
 
     myDrawable3 widget;
-    widget.setParent (&win);
+    widget.set_parent (&win);
     widget.setPos(Coord2f(50.0, 50.0));
     widget.resize(80, 40);
 

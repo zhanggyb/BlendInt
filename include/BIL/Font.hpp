@@ -19,29 +19,44 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef ROLLINGTRIANGLE_H_
-#define ROLLINGTRIANGLE_H_
+#ifndef _BIL_FONT_H_
+#define _BIL_FONT_H_
 
-#include <BIL/Drawable.h>
+#include <string>
+
+#include <BIL/Tuple.hpp>
+
+using namespace std;
 
 namespace BIL {
 
-	/**
-	 * This object is for test only
-	 */
-	class RollingTriangle: public BIL::Drawable
+	struct Font;
+
+	// friend function
+	extern bool operator < (const Font& src, const Font& dist);
+	extern bool operator == (const Font& src, const Font& dist);
+
+	struct Font
 	{
-	public:
-		RollingTriangle (Traceable *parent = NULL);
-		virtual ~RollingTriangle ();
+		Font (const string& family = string("Sans"), unsigned int size = 10,
+		        bool bold = false, bool italic = false);
 
-	protected:
-		void render (void);
+		Font (const Font& orig);
 
-	private:
-		RollingTriangle (const RollingTriangle& orig);
-		RollingTriangle& operator = (const RollingTriangle& orig);
+		Font& operator = (const Font& orig);
+
+		/** the font family, e.g. "Droid Sans" */
+		string family;
+
+		/** font size */
+		unsigned int size;
+
+		/** whether text is bold */
+		bool bold;
+
+		/** whether text is italic */
+		bool italic;
 	};
 
 } /* namespace BIL */
-#endif /* ROLLINGTRIANGLE_H_ */
+#endif /* FONT_H_ */

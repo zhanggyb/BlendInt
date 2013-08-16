@@ -30,7 +30,7 @@
 #define _BIL_APPLICATION_H_
 
 #include <string>
-#include <BIL/Window.h>
+#include <BIL/Window.hpp>
 
 namespace BIL {
 

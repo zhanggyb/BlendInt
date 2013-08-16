@@ -6,9 +6,9 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/Theme.h>
-#include <BIL/FontConfig.h>
-#include <BIL/Label.h>
+#include <BIL/Theme.hpp>
+#include <BIL/FontConfig.hpp>
+#include <BIL/Label.hpp>
 
 #include "ThemeTest.h"
 

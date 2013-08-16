@@ -19,7 +19,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include "Layout.h"
+#include <BIL/Layout.hpp>
 
 namespace BIL {
 

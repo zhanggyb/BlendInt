@@ -1,12 +1,14 @@
 // cpp
 
-#include <BIL/FontEngine.h>
-#include <BIL/FontConfig.h>
 #include <iostream>
 #include <string>
 #include <stdio.h>
-#include <cppunit/TestAssert.h>
 #include <wchar.h>
+
+#include <BIL/FontEngine.hpp>
+#include <BIL/FontConfig.hpp>
+
+#include <cppunit/TestAssert.h>
 
 #include "FontEngineTest.h"
 

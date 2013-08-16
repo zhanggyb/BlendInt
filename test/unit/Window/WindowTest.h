@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/Window.h>
+#include <BIL/Window.hpp>
 
 using namespace BIL;
 using namespace std;

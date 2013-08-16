@@ -21,13 +21,14 @@
 
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include <BIL/AbstractButton.h>
+
+#include <BIL/AbstractButton.hpp>
 
 namespace BIL {
 
 	AbstractButton::AbstractButton (const wstring& text, Drawable *parent)
-			: Widget(parent), background_(RGBAf(0.75f, 0.75f, 0.75f, 1.0)),
-			  corner_radius_ (1.0)
+		: Widget(parent), down_(false), checkable_(false), checked_(false),
+		  background_(RGBAf(0.75f, 0.75f, 0.75f, 1.0)), corner_radius_ (1.0)
 	{
 		setPadding(Vec4i(2, 2, 2, 2));
 		setText(text);

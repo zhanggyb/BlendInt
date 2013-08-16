@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-#include "RollingTriangle.h"
+#include "RollingTriangle.hpp"
 
 namespace BIL {
 

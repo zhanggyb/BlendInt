@@ -28,8 +28,8 @@
 #include <string>
 #include <map>
 
-#include <BIL/Traceable.h>
-#include <BIL/Tuple.h>
+#include <BIL/Traceable.hpp>
+#include <BIL/Tuple.hpp>
 
 using namespace std;
 

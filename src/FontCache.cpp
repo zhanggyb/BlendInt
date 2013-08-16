@@ -26,7 +26,7 @@
 #include <queue>
 #include <utility>
 
-#include <BIL/FontCache.h>
+#include <BIL/FontCache.hpp>
 
 using namespace std;
 

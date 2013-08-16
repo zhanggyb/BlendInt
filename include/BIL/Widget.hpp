@@ -19,57 +19,43 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_PEN_H_
-#define _BIL_PEN_H_
+#ifndef _BIL_WIDGET_H_
+#define _BIL_WIDGET_H_
 
-#include <GL/gl.h>
-#include <BIL/Font.h>
-#include <BIL/Tuple.h>
-
-#include <string>
+#include <BIL/Drawable.hpp>
 
 namespace BIL {
 
-	/**
-	 * C++ wrapper of some OpenGL functions
-	 */
-	class Pen
+	// TODO: rename to Widget, confused to controller in MVC
+
+	class Widget: public BIL::Drawable
 	{
 	public:
+		Widget (Traceable * parent = NULL);
 
-		Pen (float size = 1.0, float width = 1.0);
+		virtual ~Widget ();
 
-		virtual ~Pen ();
+		virtual void render (void);
 
-		void setPointSize (GLfloat size);
+	protected:
 
-		void setLineWidth (GLfloat width);
+		virtual void KeyPressEvent (KeyEvent* event);
 
-		void setLineStyle (GLfloat style);
+		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
+		
+		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
 
-		/**
-		 * @brief Draw line from s to t
-		 */
-		void draw (const Coord2f& s, const Coord2f& t);
+		virtual void MousePressEvent (MouseEvent* event);
 
-		/**
-		 * @brief Draw rectangle
-		 */
-		void draw (const Rectf& rect);
+		virtual void MouseReleaseEvent (MouseEvent* event);
 
-		/**
-		 * @brief Draw round rectangle
-		 */
-		void draw (const Rectf& rect, const Vec4f round);
+		virtual void MouseMoveEvent (MouseEvent* event);
 
-	private:
+		virtual void InputMethodEvent (unsigned int character);
 
-		/** point size */
-		float _size;
+		virtual void CursorEnterEvent (int entered);
 
-		/** line width */
-		float _width;
 	};
 
 } /* namespace BIL */
-#endif /* PEN_H_ */
+#endif /* _BIL_WIDGET_H_ */
