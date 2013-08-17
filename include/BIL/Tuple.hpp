@@ -13,7 +13,7 @@
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BIL.  If not, see
+ * License along with BIL.	If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -196,6 +196,8 @@ namespace BIL {
 				data[1] = (value >> 8) & 0xFF;
 				data[0] = (value >> 16) & 0xFF;
 			}
+			
+			return *this;
 		}
 
 		bool operator == (const Tuple4& orig)
@@ -273,6 +275,6 @@ namespace BIL {
 
 	typedef Tuple2<double> Tuple2d, Coord2d, Vec2d;
 
-}       // namespace of BIL
+}	// namespace of BIL
 
 #endif /* TUPLE_ */

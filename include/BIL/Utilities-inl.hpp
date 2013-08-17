@@ -40,6 +40,13 @@ namespace BIL {
 						 (max) : (value)));
 	}
 
+	inline unsigned char convert_color_from_float (float val)
+	{
+		return (val <= 0.0f) ?
+			0 : ((val > (1.0f - 0.5f / 255.0f)) ?
+				 255 : static_cast<unsigned char>(255.0f * val + 0.5f));
+	}
+
 	/**
 	 * @brief Copy elements in arrary from src to dist
 	 */
