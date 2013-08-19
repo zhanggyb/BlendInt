@@ -32,6 +32,13 @@ namespace BIL {
 	{
 	public:
 
+		enum ColorDepth {
+			ColorDepth8BIT,
+			ColorDepth16BIT,
+			ColorDepthFloat16BIT,
+			ColorDepthFloat32BIT
+		};
+
 		/**
 		 * @brief Convert shade colors
 		 * @param[in] color the initial color
@@ -75,6 +82,7 @@ namespace BIL {
 			blue_ = orig.blue_;
 			alpha_ = orig.alpha_;
 
+			depth_ = orig.depth_;
 			return *this;
 		}
 
@@ -100,6 +108,7 @@ namespace BIL {
 				green_ = (color >> 8) & 0xFF;
 				red_ = (color >> 16) & 0xFF;
 			}
+			depth_ = ColorDepth8BIT;
 		}
 
 		void set_color (unsigned char r,
@@ -119,6 +128,7 @@ namespace BIL {
 			alpha_ = correct_in_scope(a,
 									  static_cast<unsigned char>(0),
 									  static_cast<unsigned char>(255));
+			depth_ = ColorDepth8BIT;
 		}
 
 		uint32_t rgba (void) const
@@ -195,12 +205,17 @@ namespace BIL {
 									  static_cast<unsigned char>(255));
 		}
 
+		ColorDepth depth (void) const {return depth_;}
+
 	private:
 
 		unsigned char red_;
 		unsigned char green_;
 		unsigned char blue_;
 		unsigned char alpha_;
+
+		ColorDepth depth_;
+
 	};
 
 }
