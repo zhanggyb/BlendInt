@@ -29,6 +29,8 @@
 #include <BIL/Coord.hpp>
 #include <BIL/Rect.hpp>
 
+#include <BIL/Vector.hpp>
+
 /* max as used by round_box__edges */
 #define WIDGET_CURVE_RESOLU 9
 #define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
@@ -184,7 +186,7 @@ namespace BIL {
 		float tri_arr[3][2] = {{x1, y1}, {x2, y2}, {x3, y3}};
 		float color[4];
 		int j;
-	
+
 		glEnable(GL_BLEND);
 		glGetFloatv(GL_CURRENT_COLOR, color);
 		color[3] *= 0.125f;
