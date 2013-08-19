@@ -27,7 +27,7 @@
 
 #include <BIL/Tuple.hpp>
 #include <BIL/FontCache.hpp>
-//#include <BIL/BasicObject.h>
+#include <BIL/Color.hpp>
 
 using namespace boost;
 using namespace std;
@@ -59,12 +59,12 @@ namespace BIL {
 			rowspacing_ = space;
 		}
 
-		void set_foreground (const RGBA& color)
+		void set_foreground (const Color& color)
 		{
 			foreground_ = color;
 		}
 
-		void set_background (const RGBA& color)
+		void set_background (const Color& color)
 		{
 			background_ = color;
 		}
@@ -109,10 +109,10 @@ namespace BIL {
 		float rowspacing_;
 
 		/** Foreground, text color */
-		RGBA foreground_;
+		Color foreground_;
 
 		/** Background Color */
-		RGBA background_;
+		Color background_;
 
 		/** Pen origin */
 		Coord3f origin_;

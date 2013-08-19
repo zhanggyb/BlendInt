@@ -58,7 +58,7 @@ namespace BIL {
 				  background_.rgba.b,
 				  background_.rgba.a);
 
-		drawBox(GL_POLYGON,
+		DrawBox(GL_POLYGON,
 				0.0f,
 				0.0f,
 				size_.vec.x,

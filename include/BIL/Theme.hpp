@@ -23,6 +23,7 @@
 #define _BIL_THEME_H_
 
 #include <BIL/Tuple.hpp>
+#include <BIL/Color.hpp>
 
 namespace BIL {
 
@@ -30,12 +31,12 @@ namespace BIL {
 	{
 		WidgetColors ();
 
-		RGBA outline;		// Outline
-		RGBA item;				// Item
-		RGBA inner;			// Inner
-		RGBA inner_sel;	// Inner Selected
-		RGBA text;				// Text
-		RGBA text_sel;		// Text Selected
+		Color outline;		// Outline
+		Color item;				// Item
+		Color inner;			// Inner
+		Color inner_sel;	// Inner Selected
+		Color text;				// Text
+		Color text_sel;		// Text Selected
 		bool shaded;			// Is Shaded
 		short shadetop;			// Shade Top, -100 - 100
 		short shadedown;	// Shade Down
@@ -46,12 +47,12 @@ namespace BIL {
 	{
 		WidgetStateColors();
 
-		RGBA inner_anim;	// Animated
-		RGBA inner_anim_sel;	// Animated Selected
-		RGBA inner_key;	// Keyframe
-		RGBA inner_key_sel;	// Keyframe Selected
-		RGBA inner_driven;	// Driven
-		RGBA inner_driven_sel;	// Driven Selected
+		Color inner_anim;	// Animated
+		Color inner_anim_sel;	// Animated Selected
+		Color inner_key;	// Keyframe
+		Color inner_key_sel;	// Keyframe Selected
+		Color inner_driven;	// Driven
+		Color inner_driven_sel;	// Driven Selected
 		float blend;
 		float pad;
 	};
@@ -60,8 +61,8 @@ namespace BIL {
 	{
 		PanelColors ();
 
-		RGBA header;
-		RGBA back;
+		Color header;
+		Color back;
 		bool show_header;
 		bool show_back;
 		int pad;
@@ -96,7 +97,7 @@ namespace BIL {
 			float icon_alpha;
 
 			/* Axis Colors */
-			RGBA xaxis, yaxis, zaxis;
+			Color xaxis, yaxis, zaxis;
 		};
 
 	public:

@@ -182,14 +182,14 @@ namespace BIL {
 		 * @param rad Corner radius, this will multiple the pre-defined vecter
 		 * inside this function
 		 */
-		void drawBox (int mode,
+		void DrawBox (int mode,
 					  float minx,
 					  float miny,
 					  float maxx,
 					  float maxy,
 					  float rad);
 
-		void drawBoxShade (int mode,
+		void DrawBoxShade (int mode,
 						   float minx,
 						   float miny,
 						   float maxx,
@@ -198,19 +198,19 @@ namespace BIL {
 						   float shadetop,
 						   float shadedown);
 
-		void drawRoundRect(float minx,
+		void DrawRoundRect(float minx,
 						   float miny,
 						   float maxx,
 						   float maxy,
 						   float rad);
 
-		void drawBoxShadow(unsigned char alpha,
+		void DrawBoxShadow(unsigned char alpha,
 						   float minx,
 						   float miny,
 						   float maxx,
 						   float maxy);
 
-		void drawShadowBox(float minx,
+		void DrawShadowBox(float minx,
 						   float miny,
 						   float maxx,
 						   float maxy,
@@ -219,7 +219,7 @@ namespace BIL {
 
 		/* linear vertical shade within button or in outline */
 		/* view2d scrollers use it */
-		void drawBoxVerticalShade(int mode,
+		void DrawBoxVerticalShade(int mode,
 								  float minx,
 								  float miny,
 								  float maxx,
@@ -229,7 +229,7 @@ namespace BIL {
 								  float shadeRight);
 
 		// (old, used in outliner) plain antialiased filled box
-		void drawAntiRoundbox(int mode,
+		void DrawAntiRoundbox(int mode,
 							  float minx,
 							  float miny,
 							  float maxx,
@@ -237,7 +237,7 @@ namespace BIL {
 							  float rad,
 							  bool use_alpha);
 
-		void drawScroll (const WidgetColors& wcol,
+		void DrawScroll (const WidgetColors& wcol,
 				const Recti& rect,
 				const Recti& slider,
 				ScrollState state);

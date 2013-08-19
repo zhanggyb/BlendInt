@@ -40,6 +40,8 @@ namespace BIL {
 			0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
 		};
 
+	const int WIDGET_AA_JITTER = 8;
+
 	static const float jit[WIDGET_AA_JITTER][2] = {
 		{ 0.468813, -0.481430}, {-0.155755, -0.352820},
 		{ 0.219306, -0.238501}, {-0.393286, -0.110949},
@@ -60,6 +62,58 @@ namespace BIL {
 	Widget::~Widget ()
 	{
 		// TODO Auto-generated destructor stub
+	}
+
+	void Widget::DrawAntiTriangle (float x1,
+							   float y1,
+							   float x2,
+							   float y2,
+							   float x3,
+							   float y3)
+	{
+		float tri_arr[3][2] = {{x1, y1}, {x2, y2}, {x3, y3}};
+		float color[4];
+		int j;
+	
+		glEnable(GL_BLEND);
+		glGetFloatv(GL_CURRENT_COLOR, color);
+		color[3] *= 0.125f;
+		glColor4fv(color);
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, tri_arr);
+
+		/* for each AA step */
+		for (j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(1.0f * jit[j][0], 1.0f * jit[j][1], 0.0f);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+			glTranslatef(-1.0f * jit[j][0], -1.0f * jit[j][1], 0.0f);
+		}
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisable(GL_BLEND);
+	}
+
+	void Widget::DrawAntiRoundbox(int mode, float minx, float miny, float maxx, float maxy, float rad, bool use_alpha)
+	{
+		float color[4];
+		int j;
+
+		glEnable(GL_BLEND);
+		glGetFloatv(GL_CURRENT_COLOR, color);
+		if (use_alpha) {
+			color[3] = 0.5f;
+		}
+		color[3] *= 0.125f;
+		glColor4fv(color);
+
+		for (j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(1.0f * jit[j][0], 1.0f * jit[j][1], 0.0f);
+			DrawBox(mode, minx, miny, maxx, maxy, rad);
+			glTranslatef(-1.0f * jit[j][0], -1.0f * jit[j][1], 0.0f);
+		}
+
+		glDisable(GL_BLEND);
 	}
 
 	void Widget::DrawTrias (const Trias *tria)
@@ -240,6 +294,20 @@ namespace BIL {
 
 		glDisable(GL_BLEND);
 #endif	// LALALALA
+	}
+
+	void Widget::DrawWidgetBaseOutline (const Base* wtb)
+	{
+		/* + 2 because the last pair is wrapped */
+		/*
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; 
+		widget_verts_to_quad_strip(wtb, wtb->totvert, quad_strip);
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, quad_strip);
+		glDrawArrays(GL_QUAD_STRIP, 0, wtb->totvert * 2 + 2);
+		glDisableClientState(GL_VERTEX_ARRAY);
+		*/
 	}
 
 	void Widget::KeyPressEvent (KeyEvent* event)

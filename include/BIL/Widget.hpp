@@ -25,14 +25,13 @@
 #include <BIL/Drawable.hpp>
 #include <BIL/Theme.hpp>
 #include <BIL/Color.hpp>
+#include <BIL/Theme.hpp>
 
 /* used for transp checkers */
 #define UI_TRANSP_DARK 100
 #define UI_TRANSP_LIGHT 160
 
 #define UI_TEXT_MARGIN_X 0.4f
-
-#define WIDGET_AA_JITTER 8
 
 namespace BIL {
 
@@ -75,9 +74,26 @@ namespace BIL {
 
 	protected:
 
+		void DrawAntiTriangle (float x1,
+						   float y1,
+						   float x2,
+						   float y2,
+						   float x3,
+						   float y3);
+
+		void DrawAntiRoundbox (int mode,
+							   float minx,
+							   float miny,
+							   float maxx,
+							   float maxy,
+							   float rad,
+							   bool use_alpha);
+
 		void DrawTrias (const Trias* tria);
 
 		void DrawWidgetBase (const Base* wtb, const WidgetColors* wcol);
+		
+		void DrawWidgetBaseOutline (const Base* wtb);
 
 	protected:
 		// Events
@@ -100,13 +116,8 @@ namespace BIL {
 
 	private:
 
-		/*
-		  inline void copy_v2_v2(float r[2], const float a[2])
-		  {
-		  r[0] = a[0];
-		  r[1] = a[1];
-		  }
-		*/
+		// converted colors for state
+		WidgetColors colors_;
 
 		/*
 		  inline void widget_verts_to_quad_strip(Base *wtb, const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])

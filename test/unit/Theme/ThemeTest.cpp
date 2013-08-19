@@ -55,7 +55,7 @@ void ThemeTest::tearDown ()
 
 void ThemeTest::initialize1 ()
 {
-	float r = 0.0;
+	unsigned char r = 0x00;
 
 	Theme* theme = Theme::instance();
 
@@ -63,7 +63,7 @@ void ThemeTest::initialize1 ()
 		theme->initialize();
 
 	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	r = theme->themeUI()->wcol_tool.outline.rgba.r;
+	r = theme->themeUI()->wcol_tool.outline.r();
 
 	if (theme != NULL) {
 		Theme::release();
@@ -98,8 +98,8 @@ void ThemeTest::initialize2 ()
 		theme->initialize();
 
 	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	RGBA bg_color = theme->themeUI()->wcol_menu_item.item;
-	RGBA textcolor = theme->themeUI()->wcol_menu_item.text;
+	Color bg_color = theme->themeUI()->wcol_menu_item.item;
+	Color textcolor = theme->themeUI()->wcol_menu_item.text;
 
 	Label label(L"Text in Label");
 	label.set_pos(Coord2f(50.0, 50.0));

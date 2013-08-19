@@ -57,7 +57,7 @@ namespace BIL {
 
 	public:
 
-		Color (uint32_t color)
+		explicit Color (uint32_t color = 0xFFFFFFFF)
 		{
 			set_color (color);
 		}
@@ -67,6 +67,25 @@ namespace BIL {
 		{
 			set_color (r, g, b, a);
 		}
+
+		Color& operator = (const Color& orig)
+		{
+			red_ = orig.red_;
+			green_ = orig.green_;
+			blue_ = orig.blue_;
+			alpha_ = orig.alpha_;
+
+			return *this;
+		}
+
+		Color& operator = (uint32_t color)
+		{
+			set_color (color);
+			return *this;
+		}
+		
+		virtual ~Color ()
+		{}
 
 		void set_color (uint32_t color)
 		{

@@ -56,7 +56,7 @@ void myWidget::Render (void)
 				 pos_.coord.x + size_.vec.x,
 				 pos_.coord.y + size_.vec.y,
 				 5.0);
-	drawShadowBox(pos_.coord.x,
+	DrawShadowBox(pos_.coord.x,
 				  pos_.coord.y,
 				  pos_.coord.x + size_.vec.x,
 				  pos_.coord.y + size_.vec.y,

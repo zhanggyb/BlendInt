@@ -167,11 +167,11 @@ namespace BIL {
 								 float maxy,
 								 float rad)
 	{
-		drawAntiRoundbox(GL_POLYGON,
+		DrawAntiRoundbox(GL_POLYGON,
 						 minx, miny,	maxx, maxy, rad, round_box_type_ & UI_RB_ALPHA);
 	}
 
-	void Drawable::drawBox(int mode,
+	void Drawable::DrawBox(int mode,
 						   float minx,
 						   float miny,
 						   float maxx,
@@ -246,7 +246,7 @@ namespace BIL {
 	}
 
 
-	void BIL::Drawable::drawBoxShade (int mode,
+	void BIL::Drawable::DrawBoxShade (int mode,
 									  float minx,
 									  float miny,
 									  float maxx,
@@ -367,7 +367,7 @@ namespace BIL {
 	}
 
 	/* plain antialiased unfilled rectangle */
-	void Drawable::drawRoundRect(float minx,
+	void Drawable::DrawRoundRect(float minx,
 								 float miny, float maxx, float maxy, float rad)
 	{
 		float color[4];
@@ -383,23 +383,23 @@ namespace BIL {
 		glEnable(GL_LINE_SMOOTH);
 		glEnable(GL_BLEND);
 
-		drawBox(GL_LINE_LOOP, minx, miny, maxx, maxy, rad);
+		DrawBox(GL_LINE_LOOP, minx, miny, maxx, maxy, rad);
 
 		glDisable(GL_BLEND);
 		glDisable(GL_LINE_SMOOTH);
 	}
 
-	void Drawable::drawBoxShadow(unsigned char alpha,
+	void Drawable::DrawBoxShadow(unsigned char alpha,
 								 float minx, float miny, float maxx, float maxy)
 	{
 		/* accumulated outline boxes to make shade not linear, is more
 		   pleasant */
-		drawShadowBox(minx, miny, maxx, maxy, 11.0, (20 * alpha) >> 8);
-		drawShadowBox(minx, miny, maxx, maxy, 7.0, (40 * alpha) >> 8);
-		drawShadowBox(minx, miny, maxx, maxy, 5.0, (80 * alpha) >> 8);
+		DrawShadowBox(minx, miny, maxx, maxy, 11.0, (20 * alpha) >> 8);
+		DrawShadowBox(minx, miny, maxx, maxy, 7.0, (40 * alpha) >> 8);
+		DrawShadowBox(minx, miny, maxx, maxy, 5.0, (80 * alpha) >> 8);
 	}
 
-	void Drawable::drawShadowBox(float minx, float miny,
+	void Drawable::DrawShadowBox(float minx, float miny,
 								 float maxx, float maxy,
 								 float shadsize, unsigned char alpha)
 	{
@@ -440,7 +440,7 @@ namespace BIL {
 		glShadeModel(GL_FLAT);
 	}
 
-	void Drawable::drawAntiRoundbox(int mode,
+	void Drawable::DrawAntiRoundbox(int mode,
 									float minx, float miny, float maxx,
 									float maxy, float rad, bool use_alpha)
 	{
@@ -457,14 +457,14 @@ namespace BIL {
 
 		for (j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			drawBox(mode, minx, miny, maxx, maxy, rad);
+			DrawBox(mode, minx, miny, maxx, maxy, rad);
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 
 		glDisable(GL_BLEND);
 	}
 
-	void Drawable::drawBoxVerticalShade(int mode,
+	void Drawable::DrawBoxVerticalShade(int mode,
 										float minx, float miny,
 										float maxx, float maxy,
 										float rad, float shadeLeft,
@@ -574,7 +574,7 @@ namespace BIL {
 		glShadeModel(GL_FLAT);
 	}
 
-	void Drawable::drawScroll(const WidgetColors& wcol, const Recti& rect, const Recti& slider, ScrollState state)
+	void Drawable::DrawScroll(const WidgetColors& wcol, const Recti& rect, const Recti& slider, ScrollState state)
 	{
 
 	}

@@ -27,6 +27,7 @@
 #include <BIL/Widget.hpp>
 #include <BIL/TextBuffer.hpp>
 #include <BIL/Font.hpp>
+#include <BIL/Color.hpp>
 
 using namespace std;
 
@@ -48,14 +49,14 @@ namespace BIL {
 			calculateBox();
 		}
 
-		void setTextColor (const RGBA& fg,
-						   const RGBA& bg = RGBA(0x00000000))
+		void setTextColor (const Color& fg,
+						   const Color& bg = Color(0x00000000))
 		{
 			text_.set_foreground(fg);
 			text_.set_background(bg);
 		}
 
-		void set_background (const RGBA& color)
+		void set_background (const Color& color)
 		{
 			background_ = color;
 		}
@@ -73,7 +74,7 @@ namespace BIL {
 		TextBuffer text_;
 
 		/** Background color, default: transparent */
-		RGBA background_;
+		Color background_;
 
 	};
 

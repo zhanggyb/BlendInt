@@ -111,7 +111,7 @@ namespace BIL {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glColor4ub(foreground_.rgba.r, foreground_.rgba.g, foreground_.rgba.b, foreground_.rgba.a);
+		glColor4ub(foreground_.r(), foreground_.g(), foreground_.b(), foreground_.a());
 
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

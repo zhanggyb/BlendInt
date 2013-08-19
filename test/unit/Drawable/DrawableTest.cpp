@@ -135,7 +135,7 @@ void myDrawable1::Render(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
 
-		drawBox(GL_POLYGON,
+		DrawBox(GL_POLYGON,
 				pos_.coord.x,
 				pos_.coord.y,
 				pos_.coord.x + size_.vec.x,
@@ -198,7 +198,7 @@ void myDrawable2::Render(void)
 	glEnable(GL_BLEND);
 		glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
 
-		drawBoxShade(GL_POLYGON,
+		DrawBoxShade(GL_POLYGON,
 				pos_.coord.x,
 				pos_.coord.y,
 				pos_.coord.x + size_.vec.x,
@@ -266,7 +266,7 @@ void myDrawable3::Render(void)
 				pos_.coord.x + size_.vec.x,
 				pos_.coord.y + size_.vec.y,
 				5.0);
-		drawShadowBox(pos_.coord.x,
+		DrawShadowBox(pos_.coord.x,
 				pos_.coord.y,
 				pos_.coord.x + size_.vec.x,
 				pos_.coord.y + size_.vec.y,
