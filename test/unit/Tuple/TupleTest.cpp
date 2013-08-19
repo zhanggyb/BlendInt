@@ -43,7 +43,7 @@ void TupleTest::create1 ()
 
 void TupleTest::create2 ()
 {
-    Coord3f test;
+    Tuple3f test;
 
     CPPUNIT_ASSERT((test.coord.x == 0.0) &&
                    (test.coord.y == 0.0) &&
@@ -52,8 +52,8 @@ void TupleTest::create2 ()
 
 void TupleTest::create3 ()
 {
-    Coord3f test(1.0, 1.0, 1.0);
-    Coord3f dist (test);
+    Tuple3f test(1.0, 1.0, 1.0);
+    Tuple3f dist (test);
 
     CPPUNIT_ASSERT((dist.coord.x == 1.0) &&
                    (dist.coord.y == 1.0) &&
@@ -63,8 +63,8 @@ void TupleTest::create3 ()
 
 void TupleTest::create4 ()
 {
-    Coord3f test(2.0, 2.0, 2.0);
-    Coord3f dist;
+    Tuple3f test(2.0, 2.0, 2.0);
+    Tuple3f dist;
     dist = test;
 
     CPPUNIT_ASSERT((dist.coord.x == 2.0) &&
@@ -75,8 +75,8 @@ void TupleTest::create4 ()
 
 void TupleTest::create5 ()
 {
-    Coord3f test (1.0, 1.0, 1.0);
-    Coord3f dist (1.0, 1.0, 1.0);
+    Tuple3f test (1.0, 1.0, 1.0);
+    Tuple3f dist (1.0, 1.0, 1.0);
 
     CPPUNIT_ASSERT(test == dist);
 }

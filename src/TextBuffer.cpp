@@ -116,9 +116,9 @@ namespace BIL {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(origin_.coord.x,
-					 origin_.coord.y - fontcache_->getDescender(),
-					 origin_.coord.z);
+		glTranslatef(origin_.x(),
+					 origin_.y() - fontcache_->getDescender(),
+					 origin_.z());
 
 		int line = 0;
 		wstring::const_iterator it;
@@ -126,10 +126,10 @@ namespace BIL {
 			if (*it == '\n') {
 				line++;
 				glLoadIdentity();
-				glTranslatef(origin_.coord.x,
-							 origin_.coord.y
+				glTranslatef(origin_.x(),
+							 origin_.y()
 							 - rowspacing_ * fontcache_->getHeight() * line,
-							 origin_.coord.z);
+							 origin_.z());
 				continue;
 			}
 

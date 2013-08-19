@@ -280,8 +280,8 @@ namespace BIL {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item == NULL) continue;
 
-			local_x = cursor_pos_x_ - (item->pos().coord.x);
-			local_y = cursor_pos_y_ - (item->pos().coord.y);
+			local_x = cursor_pos_x_ - (item->pos().x());
+			local_y = cursor_pos_y_ - (item->pos().y());
 			if ((local_x - 0.000001 > 0.0) &&
 				(local_y - 0.000001 > 0.0) &&
 				(local_x - item->size().vec.x) < 0.0 &&
@@ -318,8 +318,8 @@ namespace BIL {
 		for (it = children_.rbegin(); it != children_.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
-				local_x = cursor_pos_x_ - (item->pos().coord.x);
-				local_y = cursor_pos_y_ - (item->pos().coord.y);
+				local_x = cursor_pos_x_ - (item->pos().x());
+				local_y = cursor_pos_y_ - (item->pos().y());
 				if ((local_x - 0.000001 > 0.0) &&
 					(local_y - 0.000001 > 0.0) &&
 					(local_x - item->size().vec.x) < 0.0 &&

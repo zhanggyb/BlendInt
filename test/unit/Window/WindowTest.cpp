@@ -51,15 +51,15 @@ void myWidget::Render (void)
 	glEnable(GL_BLEND);
 	glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
 
-	drawRoundBox(pos_.coord.x,
-				 pos_.coord.y,
-				 pos_.coord.x + size_.vec.x,
-				 pos_.coord.y + size_.vec.y,
+	drawRoundBox(pos_.x(),
+				 pos_.y(),
+				 pos_.x() + size_.vec.x,
+				 pos_.y() + size_.vec.y,
 				 5.0);
-	DrawShadowBox(pos_.coord.x,
-				  pos_.coord.y,
-				  pos_.coord.x + size_.vec.x,
-				  pos_.coord.y + size_.vec.y,
+	DrawShadowBox(pos_.x(),
+				  pos_.y(),
+				  pos_.x() + size_.vec.x,
+				  pos_.y() + size_.vec.y,
 				  5.0,
 				  64);
 
@@ -68,8 +68,8 @@ void myWidget::Render (void)
 
 void myWidget::MousePressEvent (MouseEvent* event)
 {
-	cout << "Click at" << event->pos().coord.x << " "
-		 << event->pos().coord.y << endl;
+	cout << "Click at" << event->pos().x() << " "
+		 << event->pos().y() << endl;
 
 	cout << "and window position: " << event->window_pos().coord.x << " "
 		 << event->window_pos().coord.y << endl;

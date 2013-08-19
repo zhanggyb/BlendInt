@@ -23,6 +23,7 @@
 #define _BIL_TYPES_H_
 
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 namespace BIL {
 
@@ -181,6 +182,7 @@ namespace BIL {
 		Key_Menu = GLFW_KEY_MENU,   /* 348 */
 		Key_Last = GLFW_KEY_MENU
 	}; 
+
 }
 
 #endif	/* _BIL_TYPES_H_ */

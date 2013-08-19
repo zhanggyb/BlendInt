@@ -28,6 +28,7 @@
 #include <BIL/Tuple.hpp>
 #include <BIL/FontCache.hpp>
 #include <BIL/Color.hpp>
+#include <BIL/Coord.hpp>
 
 using namespace boost;
 using namespace std;

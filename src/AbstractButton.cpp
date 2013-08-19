@@ -50,8 +50,8 @@ namespace BIL {
 		calculateBox();
 
 		text_.set_origin(Coord3f(
-								 pos_.coord.x + padding_.border.l,
-								 pos_.coord.y + padding_.border.b,
+								 pos_.x() + padding_.border.l,
+								 pos_.y() + padding_.border.b,
 								 0.0)
 						 );
 	}

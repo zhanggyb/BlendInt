@@ -35,6 +35,7 @@
 #include <BIL/Tuple.hpp>
 #include <BIL/EventHandler.hpp>
 #include <BIL/Theme.hpp>
+#include <BIL/Rect.hpp>
 
 namespace BIL {
 
@@ -108,7 +109,7 @@ namespace BIL {
 
 		void set_pos (const Coord2f& pos)
 		{
-			pos_ = Coord3f(pos.coord.x, pos.coord.y, 0.0);
+			pos_ = Coord3f(pos.x(), pos.y(), 0.0);
 		}
 
 		void set_pos (const Coord3f& pos)

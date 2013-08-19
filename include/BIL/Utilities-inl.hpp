@@ -22,6 +22,8 @@
 #ifndef _BIL_UTILITIES_H_
 #define _BIL_UTILITIES_H_
 
+#include <glm/glm.hpp>
+
 namespace BIL {
 
 	/**

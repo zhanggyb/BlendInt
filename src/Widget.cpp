@@ -25,8 +25,32 @@
 #include <algorithm>
 
 #include <BIL/Widget.hpp>
+#include <BIL/Types.hpp>
+#include <BIL/Coord.hpp>
+#include <BIL/Rect.hpp>
+
+/* max as used by round_box__edges */
+#define WIDGET_CURVE_RESOLU 9
+#define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
 
 namespace BIL {
+
+	/* *********************** draw data ************************** */
+
+	static const float cornervec[WIDGET_CURVE_RESOLU][2] = {
+		{0.0, 0.0}, {0.195, 0.02}, {0.383, 0.067},
+		{0.55, 0.169}, {0.707, 0.293}, {0.831, 0.45},
+		{0.924, 0.617}, {0.98, 0.805}, {1.0, 1.0}
+	};
+
+	const int WIDGET_AA_JITTER = 8;
+
+	static const float jit[WIDGET_AA_JITTER][2] = {
+		{ 0.468813, -0.481430}, {-0.155755, -0.352820},
+		{ 0.219306, -0.238501}, {-0.393286, -0.110949},
+		{-0.024699,  0.013908}, { 0.343805,  0.147431},
+		{-0.272855,  0.269918}, { 0.095909,  0.388710}
+	};
 
 	GLubyte const checker_stipple_sml[32 * 32 / 8] =
 		{
@@ -40,14 +64,100 @@ namespace BIL {
 			0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
 		};
 
-	const int WIDGET_AA_JITTER = 8;
+	/* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */
+	/* return tot */
+	static int round_box_shadow_edges(float (*vert)[2],
+			const Recti& rect, float rad, int roundboxalign, float step)
+	{
+		if(!rect.valid()) return 0;
 
-	static const float jit[WIDGET_AA_JITTER][2] = {
-		{ 0.468813, -0.481430}, {-0.155755, -0.352820},
-		{ 0.219306, -0.238501}, {-0.393286, -0.110949},
-		{-0.024699,  0.013908}, { 0.343805,  0.147431},
-		{-0.272855,  0.269918}, { 0.095909,  0.388710}
-	};
+		float vec[WIDGET_CURVE_RESOLU][2];
+		float minx, miny, maxx, maxy;
+		int a, tot = 0;
+
+		rad += step;
+
+		if (2.0f * rad > rect.height())
+			rad = 0.5f * rect.height();
+
+		minx = rect.x() - step;
+		miny = rect.y() - step;
+		maxx = rect.x() + rect.width() + step;
+		maxy = rect.y() + rect.height() + step;
+
+		/* mult */
+		for (a = 0; a < WIDGET_CURVE_RESOLU; a++) {
+			vec[a][0] = rad * cornervec[a][0];
+			vec[a][1] = rad * cornervec[a][1];
+		}
+
+		/* start with left-top, anti clockwise */
+		if (roundboxalign & Drawable::RoundBoxTopLeft) {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = minx + rad - vec[a][0];
+				vert[tot][1] = maxy - vec[a][1];
+			}
+		}
+		else {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = minx;
+				vert[tot][1] = maxy;
+			}
+		}
+
+		if (roundboxalign & Drawable::RoundBoxBottomLeft) {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = minx + vec[a][1];
+				vert[tot][1] = miny + rad - vec[a][0];
+			}
+		}
+		else {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = minx;
+				vert[tot][1] = miny;
+			}
+		}
+
+		if (roundboxalign & Drawable::RoundBoxBottomRight) {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = maxx - rad + vec[a][0];
+				vert[tot][1] = miny + vec[a][1];
+			}
+		}
+		else {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = maxx;
+				vert[tot][1] = miny;
+			}
+		}
+
+		if (roundboxalign & Drawable::RoundBoxTopRight) {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = maxx - vec[a][1];
+				vert[tot][1] = maxy - rad + vec[a][0];
+			}
+		}
+		else {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = maxx;
+				vert[tot][1] = maxy;
+			}
+		}
+		return tot;
+	}
+
+
+	Widget::Trias::Trias ()
+	: tot(0)
+	{
+
+	}
+
+	Widget::Base::Base()
+	: totvert(0), halfwayvert(0), inner(true),
+	outline(true), emboss(true), shadedir(true)
+	{
+	}
 
 	Widget::Widget (Traceable *parent)
 			: Drawable(parent)

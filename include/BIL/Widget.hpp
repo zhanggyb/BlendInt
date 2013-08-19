@@ -47,6 +47,8 @@ namespace BIL {
 
 		struct Trias
 		{
+			Trias();
+
 			unsigned int tot;
 			float vec[16][2];
 			const unsigned int (*index)[3];
@@ -54,13 +56,14 @@ namespace BIL {
 
 		struct Base
 		{
+			Base();
+
 			int totvert, halfwayvert;
 			float outer_v[WIDGET_SIZE_MAX][2];
 			float inner_v[WIDGET_SIZE_MAX][2];
 			float inner_uv[WIDGET_SIZE_MAX][2];
 
-			short inner, outline, emboss; /* set on/off */
-			short shadedir;
+			bool inner, outline, emboss, shadedir; /* set on/off */
 
 			Trias tria1;
 			Trias tria2;
@@ -115,6 +118,8 @@ namespace BIL {
 		virtual void CursorEnterEvent (int entered);
 
 	private:
+
+		Base base_;
 
 		// converted colors for state
 		WidgetColors colors_;

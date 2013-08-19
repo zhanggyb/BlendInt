@@ -25,6 +25,8 @@
 #include <GL/gl.h>
 #include <BIL/Font.hpp>
 #include <BIL/Tuple.hpp>
+#include <BIL/Coord.hpp>
+#include <BIL/Rect.hpp>
 
 #include <string>
 

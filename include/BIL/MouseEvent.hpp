@@ -27,6 +27,8 @@
 #include <BIL/Event.hpp>
 #include <BIL/InputEvent.hpp>
 
+#include <BIL/Coord.hpp>
+
 namespace BIL {
 
 	class InputEvent;
@@ -67,8 +69,8 @@ namespace BIL {
 
 		void set_pos (float x, float y)
 		{
-			pos_.coord.x = x;
-			pos_.coord.y = y;
+			pos_.set_x (x);
+			pos_.set_y (y);
 		}
 
 		const Coord2d& window_pos (void) const

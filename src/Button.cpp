@@ -49,9 +49,9 @@ namespace BIL {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.coord.x,
-					 pos_.coord.y,
-					 pos_.coord.z);
+		glTranslatef(pos_.x(),
+					 pos_.y(),
+					 pos_.z());
 
 		glColor4f(background_.rgba.r,
 				  background_.rgba.g,

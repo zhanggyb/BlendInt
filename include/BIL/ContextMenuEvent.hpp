@@ -66,8 +66,8 @@ namespace BIL {
 
 		void set_pos (float x, float y)
 		{
-			pos_.coord.x = x;
-			pos_.coord.y = y;
+			pos_.set_x (x);
+			pos_.set_y (y);
 		}
 
 		const Coord2d& window_pos (void) const

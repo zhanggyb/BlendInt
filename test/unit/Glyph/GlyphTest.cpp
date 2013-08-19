@@ -9,6 +9,8 @@
 #include <iostream>
 #include <string>
 
+#include <BIL/Coord.hpp>
+
 #include "GlyphTest.h"
 
 using namespace BIL;

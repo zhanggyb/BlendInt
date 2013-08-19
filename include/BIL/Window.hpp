@@ -30,6 +30,7 @@
 
 #include <BIL/Traceable.hpp>
 #include <BIL/Tuple.hpp>
+#include <BIL/Coord.hpp>
 
 using namespace std;
 
@@ -92,7 +93,7 @@ namespace BIL {
 
 		void resize (const Coord2i& size)
 		{
-			resize (size.vec.x, size.vec.y);
+			resize (size.x(), size.y());
 		}
 
 		void resize (int w, int h)
