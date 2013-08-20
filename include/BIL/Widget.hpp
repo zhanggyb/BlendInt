@@ -99,7 +99,7 @@ namespace BIL {
 
 		void DrawWidgetBase (WidgetBase* wtb, WidgetColors* wcol);
 		
-		void DrawWidgetBaseOutline (const WidgetBase* wtb);
+		void DrawWidgetBaseOutline (WidgetBase* wtb);
 
 	protected:
 		// Events

@@ -357,18 +357,16 @@ namespace BIL {
 		glDisable(GL_BLEND);
 	}
 
-	void Widget::DrawWidgetBaseOutline (const WidgetBase* wtb)
+	void Widget::DrawWidgetBaseOutline (WidgetBase* wtb)
 	{
 		/* + 2 because the last pair is wrapped */
-		/*
 		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; 
-		widget_verts_to_quad_strip(wtb, wtb->totvert, quad_strip);
+		verts_to_quad_strip(wtb->totvert, quad_strip, wtb);
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, quad_strip);
 		glDrawArrays(GL_QUAD_STRIP, 0, wtb->totvert * 2 + 2);
 		glDisableClientState(GL_VERTEX_ARRAY);
-		*/
 	}
 
 	void Widget::KeyPressEvent (KeyEvent* event)
