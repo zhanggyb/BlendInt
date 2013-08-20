@@ -59,6 +59,11 @@ namespace BIL {
 		dist[1] = src[1];
 	}
 
+	inline void copy_v2_v2(float r[2], const float a[2])
+	{
+		r[0] = a[0];
+		r[1] = a[1];
+	}
 }
 
 #endif	// _BIL_UTILITIES_H_

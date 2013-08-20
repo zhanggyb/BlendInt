@@ -44,15 +44,15 @@ namespace BIL {
 	void Color::ConvertRoundBoxShadeColor (const Color& color1,
 										   const Color& color2,
 										   float factor,
-										   Color* color_output)
+										   unsigned char color_output[4])
 	{
 		unsigned char faci = convert_color_from_float (factor);
 		unsigned char facm = 255 - faci;
 
-		color_output->set_red ((faci * color1.r() + facm * color2.r()) >> 8);
-		color_output->set_green ((faci * color1.g() + facm * color2.g()) >> 8);
-		color_output->set_blue ((faci * color1.b() + facm * color2.b()) >> 8);
-		color_output->set_alpha ((faci * color1.a() + facm * color2.a()) >> 8);
+		color_output[0] = (faci * color1.r() + facm * color2.r()) >> 8;
+		color_output[1] = (faci * color1.g() + facm * color2.g()) >> 8;
+		color_output[2] = (faci * color1.b() + facm * color2.b()) >> 8;
+		color_output[3] = (faci * color1.a() + facm * color2.a()) >> 8;
 	}
 
 }

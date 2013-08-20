@@ -31,6 +31,8 @@
 
 #include <BIL/Vector.hpp>
 
+#include <BIL/Utilities-inl.hpp>
+
 /* max as used by round_box__edges */
 #define WIDGET_CURVE_RESOLU 9
 #define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
@@ -102,13 +104,13 @@ namespace BIL {
 			0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
 		};
 
-	Widget::Triangle::Triangle ()
+	Widget::WidgetTriangle::WidgetTriangle ()
 	: tot(0)
 	{
 
 	}
 
-	Widget::Base::Base()
+	Widget::WidgetBase::WidgetBase()
 	: totvert(0), halfwayvert(0), inner(true),
 	outline(true), emboss(true), shadedir(true)
 	{
@@ -181,7 +183,7 @@ namespace BIL {
 		glDisable(GL_BLEND);
 	}
 
-	void Widget::DrawTrias (const Triangle *tria)
+	void Widget::DrawTrias (const WidgetTriangle *tria)
 	{
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, tria->vec);
@@ -192,9 +194,8 @@ namespace BIL {
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
-	void Widget::DrawWidgetBase (const Base* wtb, const WidgetColors* wcol)
+	void Widget::DrawWidgetBase (WidgetBase* wtb, WidgetColors* wcol)
 	{
-#ifdef LALALALA
 		int j, a;
 	
 		glEnable(GL_BLEND);
@@ -228,7 +229,7 @@ namespace BIL {
 					/* alpha fill */
 					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-					glColor4ubv((unsigned char *)wcol->inner.data);
+					glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
 					glEnableClientState(GL_VERTEX_ARRAY);
 
 					for (a = 0; a < wtb->totvert; a++) {
@@ -241,8 +242,8 @@ namespace BIL {
 					glDisableClientState(GL_VERTEX_ARRAY);
 
 					/* 1/2 solid color */
-					glColor4ub(wcol->inner.data[0], wcol->inner.data[1],
-											wcol->inner.data[2], 255);
+					glColor4ub(wcol->inner.r(), wcol->inner.g(),
+											wcol->inner.b(), 255);
 
 					for (a = 0; a < wtb->totvert; a++) {
 						inner_v_half[a][0] = std::min(wtb->inner_v[a][0], x_mid);
@@ -256,7 +257,7 @@ namespace BIL {
 				}
 				else {
 					/* simple fill */
-					glColor4ubv((unsigned char *)wcol->inner.data);
+					glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
 
 					glEnableClientState(GL_VERTEX_ARRAY);
 					glVertexPointer(2, GL_FLOAT, 0, wtb->inner_v);
@@ -265,20 +266,16 @@ namespace BIL {
 				}
 			}
 			else {
-				char col1[4], col2[4];
+				//char col1[4], col2[4];
+				Color col1, col2;
 				unsigned char col_array[WIDGET_SIZE_MAX * 4];
 				unsigned char *col_pt = col_array;
 			
-				prepare_shade_colors(col1,
-									 col2,
-									 wcol->inner.data,
-									 wcol->shadetop,
-									 wcol->shadedown);
-			
+				Color::ConvertShadeColor(wcol->inner, wcol->shadetop, wcol->shadedown, &col1, &col2);
+
 				glShadeModel(GL_SMOOTH);
 				for (a = 0; a < wtb->totvert; a++, col_pt += 4) {
-					prepare_round_box_shade_colors
-						(col_pt, col1, col2, wtb->inner_uv[a][wtb->shadedir]);
+					Color::ConvertRoundBoxShadeColor(col1, col2, wtb->inner_uv[a][wtb->shadedir], col_pt);
 				}
 
 				glEnableClientState(GL_VERTEX_ARRAY);
@@ -298,15 +295,15 @@ namespace BIL {
 			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
 			float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 
-			const unsigned char tcol[4] = {wcol->outline.data[0],
-										   wcol->outline.data[1],
-										   wcol->outline.data[2],
-										   wcol->outline.data[3] / WIDGET_AA_JITTER};
+			const unsigned char tcol[4] = {wcol->outline[0],
+										   wcol->outline[1],
+										   wcol->outline[2],
+										   wcol->outline[3] / WIDGET_AA_JITTER};
 
-			widget_verts_to_quad_strip(wtb, wtb->totvert, quad_strip);
+			verts_to_quad_strip(wtb->totvert, quad_strip, wtb);
 
 			if (wtb->emboss) {
-				widget_verts_to_quad_strip_open(wtb, wtb->halfwayvert, quad_strip_emboss);
+				verts_to_quad_strip_open(wtb->halfwayvert, quad_strip_emboss, wtb);
 			}
 
 			glEnableClientState(GL_VERTEX_ARRAY);
@@ -358,10 +355,9 @@ namespace BIL {
 		}
 
 		glDisable(GL_BLEND);
-#endif	// LALALALA
 	}
 
-	void Widget::DrawWidgetBaseOutline (const Base* wtb)
+	void Widget::DrawWidgetBaseOutline (const WidgetBase* wtb)
 	{
 		/* + 2 because the last pair is wrapped */
 		/*
@@ -501,7 +497,7 @@ namespace BIL {
 	}
 
 	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Recti& rect,
-	        float rad, float radi, Base* wt)
+	        float rad, float radi, WidgetBase* wt)
 	{
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 		float minx = rect.x(),
@@ -661,14 +657,14 @@ namespace BIL {
 		wt->totvert = tot;
 	}
 
-	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, Base *wt)
+	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, WidgetBase *wt)
 	{
 		// TODO: pixelsize should be defined by user
 		float pixelsize = 1.0;
 		CalculateRoundBoxEdges(roundboxalign, rect, rad, rad - pixelsize, wt);
 	}
 
-	void Widget::CalculateTriangleNumbers (const Recti& rect, float triasize, char where, Triangle *tria)
+	void Widget::CalculateTriangleNumbers (const Recti& rect, float triasize, char where, WidgetTriangle *tria)
 	{
 		float centx, centy, sizex, sizey, minsize;
 		int a, i1 = 0, i2 = 1;
@@ -703,7 +699,7 @@ namespace BIL {
 		tria->index = num_tria_face;
 	}
 
-	void Widget::CalculateScrollCircle (const Recti& rect, float triasize, char where, Triangle *tria)
+	void Widget::CalculateScrollCircle (const Recti& rect, float triasize, char where, WidgetTriangle *tria)
 	{
 		float centx, centy, sizex, sizey, minsize;
 		int a, i1 = 0, i2 = 1;
@@ -738,7 +734,7 @@ namespace BIL {
 		tria->index = scroll_circle_face;
 	}
 
-	void Widget::CalculateMenuTriangle (const Recti& rect, Triangle *tria)
+	void Widget::CalculateMenuTriangle (const Recti& rect, WidgetTriangle *tria)
 	{
 		float centx, centy, size;
 		int a;
@@ -757,7 +753,7 @@ namespace BIL {
 		tria->index = menu_tria_face;
 	}
 
-	void Widget::CalculateCheckTriangle (const Recti& rect, Triangle *tria)
+	void Widget::CalculateCheckTriangle (const Recti& rect, WidgetTriangle *tria)
 	{
 		float centx, centy, size;
 		int a;
@@ -775,6 +771,29 @@ namespace BIL {
 		tria->tot = 4;
 		tria->index = check_tria_face;
 	}
+
+	void Widget::verts_to_quad_strip(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], WidgetBase *wtb)
+	{
+		int a;
+		for (a = 0; a < totvert; a++) {
+			copy_v2_v2(quad_strip[a * 2], wtb->outer_v[a]);
+			copy_v2_v2(quad_strip[a * 2 + 1], wtb->inner_v[a]);
+		}
+		copy_v2_v2(quad_strip[a * 2], wtb->outer_v[0]);
+		copy_v2_v2(quad_strip[a * 2 + 1], wtb->inner_v[0]);
+	}
+
+	void Widget::verts_to_quad_strip_open(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2][2], WidgetBase *wtb)
+	{
+		int a;
+		for (a = 0; a < totvert; a++) {
+			quad_strip[a * 2][0] = wtb->outer_v[a][0];
+			quad_strip[a * 2][1] = wtb->outer_v[a][1];
+			quad_strip[a * 2 + 1][0] = wtb->outer_v[a][0];
+			quad_strip[a * 2 + 1][1] = wtb->outer_v[a][1] - 1.0f;
+		}
+	}
+
 
 } /* namespace BIL */
 

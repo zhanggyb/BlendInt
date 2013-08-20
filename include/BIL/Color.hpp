@@ -52,7 +52,7 @@ namespace BIL {
 		static void ConvertRoundBoxShadeColor (const Color& color1,
 											   const Color& color2,
 											   float factor,
-											   Color* color_output);
+											   unsigned char color_output[4]);
 
 
 	public:
@@ -119,6 +119,16 @@ namespace BIL {
 			alpha_ = correct_in_scope(a,
 									  static_cast<unsigned char>(0),
 									  static_cast<unsigned char>(255));
+		}
+
+		unsigned char operator [] (int index) const
+		{
+			if (index == 0) return red_;
+			if (index == 1) return green_;
+			if (index == 2) return blue_;
+			if (index == 3) return alpha_;
+
+			return 0;
 		}
 
 		uint32_t rgba (void) const

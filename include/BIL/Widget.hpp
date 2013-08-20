@@ -46,18 +46,18 @@ namespace BIL {
 		static const int WIDGET_CURVE_RESOLU = 9;
 		static const int WIDGET_SIZE_MAX = WIDGET_CURVE_RESOLU * 4;
 
-		struct Triangle
+		struct WidgetTriangle
 		{
-			Triangle();
+			WidgetTriangle();
 
 			unsigned int tot;
 			float vec[16][2];
 			const unsigned int (*index)[3];
 		};
 
-		struct Base
+		struct WidgetBase
 		{
-			Base();
+			WidgetBase();
 
 			int totvert, halfwayvert;
 			float outer_v[WIDGET_SIZE_MAX][2];
@@ -66,8 +66,8 @@ namespace BIL {
 
 			bool inner, outline, emboss, shadedir; /* set on/off */
 
-			Triangle tria1;
-			Triangle tria2;
+			WidgetTriangle tria1;
+			WidgetTriangle tria2;
 		};
 
 	public:
@@ -95,11 +95,11 @@ namespace BIL {
 							   float rad,
 							   bool use_alpha);
 
-		void DrawTrias (const Triangle* tria);
+		void DrawTrias (const WidgetTriangle* tria);
 
-		void DrawWidgetBase (const Base* wtb, const WidgetColors* wcol);
+		void DrawWidgetBase (WidgetBase* wtb, WidgetColors* wcol);
 		
-		void DrawWidgetBaseOutline (const Base* wtb);
+		void DrawWidgetBaseOutline (const WidgetBase* wtb);
 
 	protected:
 		// Events
@@ -134,22 +134,26 @@ namespace BIL {
 		int CalculateRoundBoxShadowEdges(float (*vert)[2],
 					const Recti& rect, float rad, int roundboxalign, float step);
 
-		void CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, float radi, Base *wt);
+		void CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, float radi, WidgetBase *wt);
 
-		void CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, Base *wt);
+		void CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, WidgetBase *wt);
 
 		/* based on button rect, return scaled array of triangles */
-		void CalculateTriangleNumbers (const Recti& rect, float triasize, char where, Triangle *tria);
+		void CalculateTriangleNumbers (const Recti& rect, float triasize, char where, WidgetTriangle *tria);
 
-		void CalculateScrollCircle(const Recti& rect, float triasize, char where, Triangle *tria);
+		void CalculateScrollCircle(const Recti& rect, float triasize, char where, WidgetTriangle *tria);
 
-		void CalculateMenuTriangle (const Recti& rect, Triangle *tria);
+		void CalculateMenuTriangle (const Recti& rect, WidgetTriangle *tria);
 
-		void CalculateCheckTriangle (const Recti& rect, Triangle *tria);
+		void CalculateCheckTriangle (const Recti& rect, WidgetTriangle *tria);
+
+		void verts_to_quad_strip(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], WidgetBase *wtb);
+
+		void verts_to_quad_strip_open(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2][2], WidgetBase *wtb);
 
 	private:
 
-		Base base_;
+		WidgetBase base_;
 
 		// converted colors for state
 		WidgetColors colors_;
