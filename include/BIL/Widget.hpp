@@ -26,6 +26,7 @@
 #include <BIL/Theme.hpp>
 #include <BIL/Color.hpp>
 #include <BIL/Theme.hpp>
+#include <BIL/Rect.hpp>
 
 /* used for transp checkers */
 #define UI_TRANSP_DARK 100
@@ -45,9 +46,9 @@ namespace BIL {
 		static const int WIDGET_CURVE_RESOLU = 9;
 		static const int WIDGET_SIZE_MAX = WIDGET_CURVE_RESOLU * 4;
 
-		struct Trias
+		struct Triangle
 		{
-			Trias();
+			Triangle();
 
 			unsigned int tot;
 			float vec[16][2];
@@ -65,9 +66,11 @@ namespace BIL {
 
 			bool inner, outline, emboss, shadedir; /* set on/off */
 
-			Trias tria1;
-			Trias tria2;
+			Triangle tria1;
+			Triangle tria2;
 		};
+
+	public:
 
 		Widget (Traceable * parent = NULL);
 
@@ -92,7 +95,7 @@ namespace BIL {
 							   float rad,
 							   bool use_alpha);
 
-		void DrawTrias (const Trias* tria);
+		void DrawTrias (const Triangle* tria);
 
 		void DrawWidgetBase (const Base* wtb, const WidgetColors* wcol);
 		
@@ -116,6 +119,33 @@ namespace BIL {
 		virtual void InputMethodEvent (unsigned int character);
 
 		virtual void CursorEnterEvent (int entered);
+
+	private:	// member functions
+
+		/**
+		 * @brief Calculate round box shadow edges
+		 * @param vert
+		 * @param rect
+		 * @param rad
+		 * @param roundboxalign
+		 * @param step
+		 * @return vertex number used in Base::totvert
+		 */
+		int CalculateRoundBoxShadowEdges(float (*vert)[2],
+					const Recti& rect, float rad, int roundboxalign, float step);
+
+		void CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, float radi, Base *wt);
+
+		void CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, Base *wt);
+
+		/* based on button rect, return scaled array of triangles */
+		void CalculateTriangleNumbers (const Recti& rect, float triasize, char where, Triangle *tria);
+
+		void CalculateScrollCircle(const Recti& rect, float triasize, char where, Triangle *tria);
+
+		void CalculateMenuTriangle (const Recti& rect, Triangle *tria);
+
+		void CalculateCheckTriangle (const Recti& rect, Triangle *tria);
 
 	private:
 

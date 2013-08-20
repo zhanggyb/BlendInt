@@ -37,40 +37,14 @@
 #include <BIL/Theme.hpp>
 #include <BIL/Rect.hpp>
 
+#include <BIL/Types.hpp>
+
 namespace BIL {
 
 	class Drawable: public Traceable, public EventHandler
 	{
 		// enums
 	public:
-
-		/**
-		 * flags to set which corners will become rounded:
-		 *
-		 * 1------2
-		 * |      		|
-		 * 8------4
-		 */
-		enum RoundBoxType
-		{
-			RoundBoxTopLeft = (1 << 0),
-			RoundBoxTopRight = (1 << 1),
-			RoundBoxBottomRight = (1 << 2),
-			RoundBoxBottomLeft = (1 << 3),
-			/* just for convenience */
-			RoundBoxNone = 0,
-			RoundBoxAll = (RoundBoxTopLeft | RoundBoxTopRight
-			        | RoundBoxBottomRight | RoundBoxBottomLeft),
-			UI_RB_ALPHA = RoundBoxAll + 1
-		};
-
-		enum ScrollState
-		{
-			SCROLL_PRESSED = (1 << 0),
-			SCROLL_ARROW = (1 << 1),
-			SCROLL_NO_OUTLINE = (1 << 2)
-		};
-
 	public:
 
 		/**

@@ -22,12 +22,12 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include <assert.h>
 #include <algorithm>
 
 #include <BIL/Widget.hpp>
 #include <BIL/Types.hpp>
 #include <BIL/Coord.hpp>
-#include <BIL/Rect.hpp>
 
 #include <BIL/Vector.hpp>
 
@@ -54,6 +54,42 @@ namespace BIL {
 		{-0.272855,  0.269918}, { 0.095909,  0.388710}
 	};
 
+	static const float num_tria_vert[3][2] = {
+		{-0.352077, 0.532607}, {-0.352077, -0.549313}, {0.330000, -0.008353}
+	};
+
+	static const unsigned int num_tria_face[1][3] = {
+		{0, 1, 2}
+	};
+
+	static const float scroll_circle_vert[16][2] = {
+		{0.382684, 0.923879}, {0.000001, 1.000000}, {-0.382683, 0.923880}, {-0.707107, 0.707107},
+		{-0.923879, 0.382684}, {-1.000000, 0.000000}, {-0.923880, -0.382684}, {-0.707107, -0.707107},
+		{-0.382683, -0.923880}, {0.000000, -1.000000}, {0.382684, -0.923880}, {0.707107, -0.707107},
+		{0.923880, -0.382684}, {1.000000, -0.000000}, {0.923880, 0.382683}, {0.707107, 0.707107}
+	};
+
+	static const unsigned int scroll_circle_face[14][3] = {
+		{0, 1, 2}, {2, 0, 3}, {3, 0, 15}, {3, 15, 4}, {4, 15, 14}, {4, 14, 5}, {5, 14, 13}, {5, 13, 6},
+		{6, 13, 12}, {6, 12, 7}, {7, 12, 11}, {7, 11, 8}, {8, 11, 10}, {8, 10, 9}
+	};
+
+	static const float menu_tria_vert[6][2] = {
+		{-0.33, 0.16}, {0.33, 0.16}, {0, 0.82},
+		{0, -0.82}, {-0.33, -0.16}, {0.33, -0.16}
+	};
+
+	static const unsigned int menu_tria_face[2][3] = {{2, 0, 1}, {3, 5, 4}};
+
+	static const float check_tria_vert[6][2] = {
+		{-0.578579, 0.253369},  {-0.392773, 0.412794},  {-0.004241, -0.328551},
+		{-0.003001, 0.034320},  {1.055313, 0.864744},   {0.866408, 1.026895}
+	};
+
+	static const unsigned int check_tria_face[4][3] = {
+		{3, 2, 4}, {3, 4, 5}, {1, 0, 3}, {0, 2, 3}
+	};
+
 	GLubyte const checker_stipple_sml[32 * 32 / 8] =
 		{
 			255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0,
@@ -66,90 +102,7 @@ namespace BIL {
 			0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
 		};
 
-	/* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */
-	/* return tot */
-	static int round_box_shadow_edges(float (*vert)[2],
-			const Recti& rect, float rad, int roundboxalign, float step)
-	{
-		if(!rect.valid()) return 0;
-
-		float vec[WIDGET_CURVE_RESOLU][2];
-		float minx, miny, maxx, maxy;
-		int a, tot = 0;
-
-		rad += step;
-
-		if (2.0f * rad > rect.height())
-			rad = 0.5f * rect.height();
-
-		minx = rect.x() - step;
-		miny = rect.y() - step;
-		maxx = rect.x() + rect.width() + step;
-		maxy = rect.y() + rect.height() + step;
-
-		/* mult */
-		for (a = 0; a < WIDGET_CURVE_RESOLU; a++) {
-			vec[a][0] = rad * cornervec[a][0];
-			vec[a][1] = rad * cornervec[a][1];
-		}
-
-		/* start with left-top, anti clockwise */
-		if (roundboxalign & Drawable::RoundBoxTopLeft) {
-			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
-				vert[tot][0] = minx + rad - vec[a][0];
-				vert[tot][1] = maxy - vec[a][1];
-			}
-		}
-		else {
-			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
-				vert[tot][0] = minx;
-				vert[tot][1] = maxy;
-			}
-		}
-
-		if (roundboxalign & Drawable::RoundBoxBottomLeft) {
-			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
-				vert[tot][0] = minx + vec[a][1];
-				vert[tot][1] = miny + rad - vec[a][0];
-			}
-		}
-		else {
-			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
-				vert[tot][0] = minx;
-				vert[tot][1] = miny;
-			}
-		}
-
-		if (roundboxalign & Drawable::RoundBoxBottomRight) {
-			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
-				vert[tot][0] = maxx - rad + vec[a][0];
-				vert[tot][1] = miny + vec[a][1];
-			}
-		}
-		else {
-			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
-				vert[tot][0] = maxx;
-				vert[tot][1] = miny;
-			}
-		}
-
-		if (roundboxalign & Drawable::RoundBoxTopRight) {
-			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
-				vert[tot][0] = maxx - vec[a][1];
-				vert[tot][1] = maxy - rad + vec[a][0];
-			}
-		}
-		else {
-			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
-				vert[tot][0] = maxx;
-				vert[tot][1] = maxy;
-			}
-		}
-		return tot;
-	}
-
-
-	Widget::Trias::Trias ()
+	Widget::Triangle::Triangle ()
 	: tot(0)
 	{
 
@@ -228,7 +181,7 @@ namespace BIL {
 		glDisable(GL_BLEND);
 	}
 
-	void Widget::DrawTrias (const Trias *tria)
+	void Widget::DrawTrias (const Triangle *tria)
 	{
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, tria->vec);
@@ -465,4 +418,363 @@ namespace BIL {
 
 	}
 
+	/* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */
+	/* return tot */
+	int Widget::CalculateRoundBoxShadowEdges(float (*vert)[2],
+			const Recti& rect, float rad, int roundboxalign, float step)
+	{
+		if(!rect.valid()) return 0;
+
+		float vec[WIDGET_CURVE_RESOLU][2];
+		float minx, miny, maxx, maxy;
+		int a, tot = 0;
+
+		rad += step;
+
+		if (2.0f * rad > rect.height())
+			rad = 0.5f * rect.height();
+
+		minx = rect.x() - step;
+		miny = rect.y() - step;
+		maxx = rect.x() + rect.width() + step;
+		maxy = rect.y() + rect.height() + step;
+
+		/* mult */
+		for (a = 0; a < WIDGET_CURVE_RESOLU; a++) {
+			vec[a][0] = rad * cornervec[a][0];
+			vec[a][1] = rad * cornervec[a][1];
+		}
+
+		/* start with left-top, anti clockwise */
+		if (roundboxalign & RoundBoxTopLeft) {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = minx + rad - vec[a][0];
+				vert[tot][1] = maxy - vec[a][1];
+			}
+		}
+		else {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = minx;
+				vert[tot][1] = maxy;
+			}
+		}
+
+		if (roundboxalign & RoundBoxBottomLeft) {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = minx + vec[a][1];
+				vert[tot][1] = miny + rad - vec[a][0];
+			}
+		}
+		else {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = minx;
+				vert[tot][1] = miny;
+			}
+		}
+
+		if (roundboxalign & RoundBoxBottomRight) {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = maxx - rad + vec[a][0];
+				vert[tot][1] = miny + vec[a][1];
+			}
+		}
+		else {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = maxx;
+				vert[tot][1] = miny;
+			}
+		}
+
+		if (roundboxalign & RoundBoxTopRight) {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = maxx - vec[a][1];
+				vert[tot][1] = maxy - rad + vec[a][0];
+			}
+		}
+		else {
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				vert[tot][0] = maxx;
+				vert[tot][1] = maxy;
+			}
+		}
+		return tot;
+	}
+
+	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Recti& rect,
+	        float rad, float radi, Base* wt)
+	{
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+		float minx = rect.x(),
+			miny = rect.y(),
+			maxx = rect.x() + rect.width(),
+			maxy = rect.y() + rect.height();
+
+		// TODO pixelsize should be defined by user
+		float pixelsize = 1.0;
+
+		float minxi = minx + pixelsize; /* boundbox inner */
+		float maxxi = maxx - pixelsize;
+		float minyi = miny + pixelsize;
+		float maxyi = maxy - pixelsize;
+		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f; /* for uv, can divide by zero */
+		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
+		int a, tot = 0, minsize;
+		const int hnum = ((roundboxalign & (RoundBoxTopLeft | RoundBoxTopRight))
+						  == (RoundBoxTopLeft | RoundBoxTopRight) ||
+						  (roundboxalign & (RoundBoxBottomRight | RoundBoxBottomLeft)) ==
+						  (RoundBoxBottomRight | RoundBoxBottomLeft)) ? 1 : 2;
+		const int vnum = ((roundboxalign & (RoundBoxTopLeft | RoundBoxBottomLeft))
+						  == (RoundBoxTopLeft | RoundBoxBottomLeft) ||
+		                  (roundboxalign & (RoundBoxTopRight | RoundBoxBottomRight)) ==
+						  (RoundBoxTopRight | RoundBoxBottomRight)) ? 1 : 2;
+
+		minsize = std::min (rect.width() * hnum, rect.height() * vnum);
+
+		if (2.0f * rad > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + 1.0f) > minsize)
+			radi = 0.5f * minsize - pixelsize;
+
+		/* mult */
+		for (a = 0; a < WIDGET_CURVE_RESOLU; a++) {
+			veci[a][0] = radi * cornervec[a][0];
+			veci[a][1] = radi * cornervec[a][1];
+			vec[a][0] = rad * cornervec[a][0];
+			vec[a][1] = rad * cornervec[a][1];
+		}
+
+		/* corner left-bottom */
+		if (roundboxalign & RoundBoxBottomLeft) {
+
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				wt->inner_v[tot][0] = minxi + veci[a][1];
+				wt->inner_v[tot][1] = minyi + radi - veci[a][0];
+
+				wt->outer_v[tot][0] = minx + vec[a][1];
+				wt->outer_v[tot][1] = miny + rad - vec[a][0];
+
+				wt->inner_uv[tot][0] = facxi * (wt->inner_v[tot][0] - minxi);
+				wt->inner_uv[tot][1] = facyi * (wt->inner_v[tot][1] - minyi);
+			}
+		}
+		else {
+			wt->inner_v[tot][0] = minxi;
+			wt->inner_v[tot][1] = minyi;
+
+			wt->outer_v[tot][0] = minx;
+			wt->outer_v[tot][1] = miny;
+
+			wt->inner_uv[tot][0] = 0.0f;
+			wt->inner_uv[tot][1] = 0.0f;
+
+			tot++;
+		}
+
+		/* corner right-bottom */
+		if (roundboxalign & RoundBoxBottomRight) {
+
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				wt->inner_v[tot][0] = maxxi - radi + veci[a][0];
+				wt->inner_v[tot][1] = minyi + veci[a][1];
+
+				wt->outer_v[tot][0] = maxx - rad + vec[a][0];
+				wt->outer_v[tot][1] = miny + vec[a][1];
+
+				wt->inner_uv[tot][0] = facxi * (wt->inner_v[tot][0] - minxi);
+				wt->inner_uv[tot][1] = facyi * (wt->inner_v[tot][1] - minyi);
+			}
+		}
+		else {
+			wt->inner_v[tot][0] = maxxi;
+			wt->inner_v[tot][1] = minyi;
+
+			wt->outer_v[tot][0] = maxx;
+			wt->outer_v[tot][1] = miny;
+
+			wt->inner_uv[tot][0] = 1.0f;
+			wt->inner_uv[tot][1] = 0.0f;
+
+			tot++;
+		}
+
+		wt->halfwayvert = tot;
+
+		/* corner right-top */
+		if (roundboxalign & RoundBoxTopRight) {
+
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				wt->inner_v[tot][0] = maxxi - veci[a][1];
+				wt->inner_v[tot][1] = maxyi - radi + veci[a][0];
+
+				wt->outer_v[tot][0] = maxx - vec[a][1];
+				wt->outer_v[tot][1] = maxy - rad + vec[a][0];
+
+				wt->inner_uv[tot][0] = facxi * (wt->inner_v[tot][0] - minxi);
+				wt->inner_uv[tot][1] = facyi * (wt->inner_v[tot][1] - minyi);
+			}
+		}
+		else {
+			wt->inner_v[tot][0] = maxxi;
+			wt->inner_v[tot][1] = maxyi;
+
+			wt->outer_v[tot][0] = maxx;
+			wt->outer_v[tot][1] = maxy;
+
+			wt->inner_uv[tot][0] = 1.0f;
+			wt->inner_uv[tot][1] = 1.0f;
+
+			tot++;
+		}
+
+		/* corner left-top */
+		if (roundboxalign & RoundBoxTopLeft) {
+
+			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
+				wt->inner_v[tot][0] = minxi + radi - veci[a][0];
+				wt->inner_v[tot][1] = maxyi - veci[a][1];
+
+				wt->outer_v[tot][0] = minx + rad - vec[a][0];
+				wt->outer_v[tot][1] = maxy - vec[a][1];
+
+				wt->inner_uv[tot][0] = facxi * (wt->inner_v[tot][0] - minxi);
+				wt->inner_uv[tot][1] = facyi * (wt->inner_v[tot][1] - minyi);
+			}
+
+		}
+		else {
+
+			wt->inner_v[tot][0] = minxi;
+			wt->inner_v[tot][1] = maxyi;
+
+			wt->outer_v[tot][0] = minx;
+			wt->outer_v[tot][1] = maxy;
+
+			wt->inner_uv[tot][0] = 0.0f;
+			wt->inner_uv[tot][1] = 1.0f;
+
+			tot++;
+		}
+
+		assert(tot <= WIDGET_SIZE_MAX);
+
+		wt->totvert = tot;
+	}
+
+	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, Base *wt)
+	{
+		// TODO: pixelsize should be defined by user
+		float pixelsize = 1.0;
+		CalculateRoundBoxEdges(roundboxalign, rect, rad, rad - pixelsize, wt);
+	}
+
+	void Widget::CalculateTriangleNumbers (const Recti& rect, float triasize, char where, Triangle *tria)
+	{
+		float centx, centy, sizex, sizey, minsize;
+		int a, i1 = 0, i2 = 1;
+
+		minsize = std::min (rect.width(), rect.height());
+
+		/* center position and size */
+		centx = (float)rect.x() + 0.5f * minsize;
+		centy = (float)rect.y() + 0.5f * minsize;
+		sizex = sizey = -0.5f * triasize * minsize;
+
+		if (where == 'r') {
+			centx = (float)(rect.x() + rect.width()) - 0.5f * minsize;
+			sizex = -sizex;
+		}
+		else if (where == 't') {
+			centy = (float)(rect.y() + rect.height()) - 0.5f * minsize;
+			sizey = -sizey;
+			i2 = 0; i1 = 1;
+		}
+		else if (where == 'b') {
+			sizex = -sizex;
+			i2 = 0; i1 = 1;
+		}
+
+		for (a = 0; a < 3; a++) {
+			tria->vec[a][0] = sizex * num_tria_vert[a][i1] + centx;
+			tria->vec[a][1] = sizey * num_tria_vert[a][i2] + centy;
+		}
+
+		tria->tot = 1;
+		tria->index = num_tria_face;
+	}
+
+	void Widget::CalculateScrollCircle (const Recti& rect, float triasize, char where, Triangle *tria)
+	{
+		float centx, centy, sizex, sizey, minsize;
+		int a, i1 = 0, i2 = 1;
+
+		minsize = std::min (rect.width(), rect.height());
+
+		/* center position and size */
+		centx = (float)rect.x() + 0.5f * minsize;
+		centy = (float)rect.y() + 0.5f * minsize;
+		sizex = sizey = -0.5f * triasize * minsize;
+
+		if (where == 'r') {
+			centx = (float)(rect.x() + rect.width()) - 0.5f * minsize;
+			sizex = -sizex;
+		}
+		else if (where == 't') {
+			centy = (float)(rect.y() + rect.height()) - 0.5f * minsize;
+			sizey = -sizey;
+			i2 = 0; i1 = 1;
+		}
+		else if (where == 'b') {
+			sizex = -sizex;
+			i2 = 0; i1 = 1;
+		}
+
+		for (a = 0; a < 16; a++) {
+			tria->vec[a][0] = sizex * scroll_circle_vert[a][i1] + centx;
+			tria->vec[a][1] = sizey * scroll_circle_vert[a][i2] + centy;
+		}
+
+		tria->tot = 14;
+		tria->index = scroll_circle_face;
+	}
+
+	void Widget::CalculateMenuTriangle (const Recti& rect, Triangle *tria)
+	{
+		float centx, centy, size;
+		int a;
+
+		/* center position and size */
+		centx = rect.x() + rect.width() - 0.32f * rect.height();
+		centy = rect.y() + rect.height() + 0.50f * rect.height();
+		size = 0.4f * (float)rect.height();
+
+		for (a = 0; a < 6; a++) {
+			tria->vec[a][0] = size * menu_tria_vert[a][0] + centx;
+			tria->vec[a][1] = size * menu_tria_vert[a][1] + centy;
+		}
+
+		tria->tot = 2;
+		tria->index = menu_tria_face;
+	}
+
+	void Widget::CalculateCheckTriangle (const Recti& rect, Triangle *tria)
+	{
+		float centx, centy, size;
+		int a;
+
+		/* center position and size */
+		centx = rect.x() + rect.width() + 0.5f * rect.height();
+		centy = rect.y() + 0.5f * rect.height();
+		size = 0.5f * rect.height();
+
+		for (a = 0; a < 6; a++) {
+			tria->vec[a][0] = size * check_tria_vert[a][0] + centx;
+			tria->vec[a][1] = size * check_tria_vert[a][1] + centy;
+		}
+
+		tria->tot = 4;
+		tria->index = check_tria_face;
+	}
+
 } /* namespace BIL */
+
