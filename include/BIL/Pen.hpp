@@ -59,11 +59,6 @@ namespace BIL {
 		 */
 		void draw (const Rectf& rect);
 
-		/**
-		 * @brief Draw round rectangle
-		 */
-		void draw (const Rectf& rect, const Vec4f round);
-
 	private:
 
 		/** point size */

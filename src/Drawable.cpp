@@ -155,7 +155,7 @@ namespace BIL {
 
 	}
 
-	void Drawable::resize (const Vec2ui& size)
+	void Drawable::resize (const Vec2i& size)
 	{
 		size_ = size;
 		return;

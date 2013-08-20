@@ -23,6 +23,7 @@
 #include <GL/gl.h>
 
 #include <BIL/Container.hpp>
+#include <BIL/Vector.hpp>
 
 namespace BIL {
 
@@ -30,8 +31,8 @@ namespace BIL {
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub
-		size_ = Vec2ui(250, 200);
-		set_margin(Vec4i(1, 1, 1, 1));
+		size_ = Vec2i(250, 200);
+		set_margin(Tuple4i(1, 1, 1, 1));
 	}
 
 	Container::~Container ()

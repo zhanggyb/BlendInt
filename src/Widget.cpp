@@ -167,8 +167,8 @@ namespace BIL {
 		// TODO Auto-generated constructor stub
 
 		// Set the default padding and margin
-		set_padding(Vec4i(1, 1, 1, 1));
-		set_margin(Vec4i(1, 1, 1, 1));
+		set_padding(Tuple4i(1, 1, 1, 1));
+		set_margin(Tuple4i(1, 1, 1, 1));
 	}
 
 	Widget::~Widget ()

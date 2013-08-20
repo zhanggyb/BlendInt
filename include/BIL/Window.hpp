@@ -70,7 +70,7 @@ namespace BIL {
 			return window_;
 		}
 
-		const Vec2i& size (void) const
+		const Tuple2i& size (void) const
 		{
 			return size_;
 		}
@@ -187,7 +187,7 @@ namespace BIL {
 		double cursor_pos_x_;				/* cursor x position */
 		double cursor_pos_y_;				/* cursor y position */
 
-		Vec2i size_;			/* window size */
+		Tuple2i size_;			/* window size */
 
 		std::string title_;
 

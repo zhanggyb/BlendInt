@@ -127,7 +127,7 @@ namespace BIL {
 			return fontengine_->getMaxAdvance();
 		}
 
-		Vec2l getKerning (const Glyph& left, const Glyph& right,
+		Tuple2l getKerning (const Glyph& left, const Glyph& right,
 				FT_UInt kern_mode = FT_KERNING_DEFAULT)
 		{
 			return fontengine_->getKerning(left, right, kern_mode);

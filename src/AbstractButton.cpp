@@ -30,7 +30,7 @@ namespace BIL {
 		: Widget(parent), down_(false), checkable_(false), checked_(false),
 		  background_(RGBAf(0.75f, 0.75f, 0.75f, 1.0)), corner_radius_ (1.0)
 	{
-		set_padding(Vec4i(2, 2, 2, 2));
+		set_padding(Tuple4i(2, 2, 2, 2));
 	}
 
 	AbstractButton::~AbstractButton ()
@@ -58,12 +58,12 @@ namespace BIL {
 
 	void AbstractButton::calculateBox(void)
 	{
-		Vec2ui box = text_.calculateBox();
+		Tuple2ui box = text_.calculateBox();
 
 		box.vec.x = box.vec.x + padding_.border.l + padding_.border.r;
 		box.vec.y = box.vec.y + padding_.border.t + padding_.border.b;
 
-		resize (box);
+		resize (box.vec.x, box.vec.y);
 	}
 
 } /* namespace BIL */

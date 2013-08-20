@@ -339,10 +339,10 @@ namespace BIL {
 		return true;
 	}
 
-	Vec2l FontEngine::getKerning (const Glyph& left, const Glyph& right,
+	Tuple2l FontEngine::getKerning (const Glyph& left, const Glyph& right,
 	        FT_UInt kerning_mode)
 	{
-		Vec2l ret;	// {0, 0}
+		Tuple2l ret;	// {0, 0}
 
 		if ((!_valid) || (_face == NULL))
 			return ret;

@@ -32,7 +32,7 @@
 #include <list>
 
 #include <BIL/Traceable.hpp>
-#include <BIL/Tuple.hpp>
+#include <BIL/Vector.hpp>
 #include <BIL/EventHandler.hpp>
 #include <BIL/Theme.hpp>
 #include <BIL/Rect.hpp>
@@ -85,17 +85,17 @@ namespace BIL {
 
 		virtual ~Drawable ();
 
-		const Vec2ui& size (void) const
+		const Vec2i& size (void) const
 		{
 			return size_;
 		}
 
 		void resize (unsigned int w, unsigned int h)
 		{
-			resize(Vec2ui(w, h));
+			resize(Vec2i(w, h));
 		}
 
-		void resize (const Vec2ui& size);
+		void resize (const Vec2i& size);
 
 		const Coord3f& pos (void) const
 		{
@@ -117,22 +117,22 @@ namespace BIL {
 			pos_ = pos;
 		}
 
-		const Vec4i& margin (void) const
+		const Tuple4i& margin (void) const
 		{
 			return margin_;
 		}
 
-		void set_margin (const Vec4i& margin)
+		void set_margin (const Tuple4i& margin)
 		{
 			margin_ = margin;
 		}
 
-		const Vec4i& padding (void) const
+		const Tuple4i& padding (void) const
 		{
 			return padding_;
 		}
 
-		void set_padding (const Vec4i& padding)
+		void set_padding (const Tuple4i& padding)
 		{
 			padding_ = padding;
 		}
@@ -246,13 +246,13 @@ namespace BIL {
 	protected:
 		// member variables
 
-		Vec2ui size_;
+		Vec2i size_;
 
 		Coord3f pos_;
 
-		Vec4i padding_; /** used when in Layout */
+		Tuple4i padding_; /** used when in Layout */
 
-		Vec4i margin_; /** used when in Layout */
+		Tuple4i margin_; /** used when in Layout */
 
 		RoundBoxType round_box_type_;
 

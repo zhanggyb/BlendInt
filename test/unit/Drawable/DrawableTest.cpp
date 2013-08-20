@@ -138,8 +138,8 @@ void myDrawable1::Render(void)
 		DrawBox(GL_POLYGON,
 				pos_.x(),
 				pos_.y(),
-				pos_.x() + size_.vec.x,
-				pos_.y() + size_.vec.y,
+				pos_.x() + size_.x(),
+				pos_.y() + size_.y(),
 				5.0);
 
 	glDisable(GL_BLEND);
@@ -201,8 +201,8 @@ void myDrawable2::Render(void)
 		DrawBoxShade(GL_POLYGON,
 				pos_.x(),
 				pos_.y(),
-				pos_.x() + size_.vec.x,
-				pos_.y() + size_.vec.y,
+				pos_.x() + size_.x(),
+				pos_.y() + size_.y(),
 				5.0,
 				0.5, 0.1);
 
@@ -263,13 +263,13 @@ void myDrawable3::Render(void)
 
 		drawRoundBox(pos_.x(),
 				pos_.y(),
-				pos_.x() + size_.vec.x,
-				pos_.y() + size_.vec.y,
+				pos_.x() + size_.x(),
+				pos_.y() + size_.y(),
 				5.0);
 		DrawShadowBox(pos_.x(),
 				pos_.y(),
-				pos_.x() + size_.vec.x,
-				pos_.y() + size_.vec.y,
+				pos_.x() + size_.x(),
+				pos_.y() + size_.y(),
 				5.0,
 				64);
 

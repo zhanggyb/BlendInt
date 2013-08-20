@@ -527,7 +527,7 @@ void GlyphTest::checkkerning1 ()
 	FontConfig* fontserv = FontConfig::getService();
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
-	Vec2l kerning;
+	Tuple2l kerning;
 
 	cout << endl;
 	kerning = font.getKerning(a,b);

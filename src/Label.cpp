@@ -30,7 +30,7 @@ namespace BIL {
 	Label::Label (const wstring& text, Drawable *parent)
 		: Widget (parent), background_(0x00000000)
 	{
-		set_padding(Vec4i(2, 2, 2, 2));
+		set_padding(Tuple4i(2, 2, 2, 2));
 		set_text(text);
 	}
 
@@ -59,12 +59,12 @@ namespace BIL {
 
 	void Label::calculateBox(void)
 	{
-		Vec2ui box = text_.calculateBox();
+		Tuple2ui box = text_.calculateBox();
 		
 		box.vec.x = box.vec.x + padding_.border.l + padding_.border.r;
 		box.vec.y = box.vec.y + padding_.border.t + padding_.border.b;
 
-		resize (box);
+		resize (box.vec.x, box.vec.y);
 	}
 
 	void Label::Render(void)
@@ -77,7 +77,7 @@ namespace BIL {
 					 pos_.z());
 		glColor4ub(background_.r(), background_.g(),
 				   background_.b(), background_.a());
-		glRectf(0.0, 0.0, size_.vec.x, size_.vec.y);
+		glRectf(0.0, 0.0, size_.x(), size_.y());
 
 		text_.Render();
 

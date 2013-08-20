@@ -363,7 +363,7 @@ void TextBufferTest::calculatebox1 ()
     TextBuffer buf(Font("Sans", 16));
     buf.Append(L"ArchLinux");
 
-	Vec2ui box = buf.calculateBox ();
+    Tuple2ui box = buf.calculateBox ();
 
 	cout << "Text Box: " << box.vec.x << " " << box.vec.y << endl;
 

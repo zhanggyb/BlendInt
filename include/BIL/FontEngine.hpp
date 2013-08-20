@@ -158,7 +158,7 @@ namespace BIL {
 
 		bool setLcdFilterWeights (unsigned char* weights);
 
-		Vec2l getKerning (const Glyph& left,
+		Tuple2l getKerning (const Glyph& left,
 						  const Glyph& right,
 						  FT_UInt kern_mode = FT_KERNING_DEFAULT);
 

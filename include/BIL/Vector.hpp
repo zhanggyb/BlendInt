@@ -22,62 +22,253 @@
 #ifndef _BIL_VECTOR_HPP_
 #define _BIL_VECTOR_HPP_
 
-#include <string.h>
-#include <assert.h>
-
 namespace BIL {
 
-	template <typename T, int N>
-	class Vector
+	template <typename T>
+	class Vector2
 	{
 	public:
 		
-		Vector ()
+		Vector2 ()
+			: x_(T(0)), y_(T(0))
+		{}
+
+		Vector2 (const T& x, const T& y)
+		: x_(x), y_(y)
+		{}
+
+		Vector2 (const T val[2])
+			: x_(val[0]), y_(val[1])
 		{
-			memset (data_, 0, sizeof(T) * N);
 		}
 
-		Vector (const T val[N])
+		Vector2 (const Vector2& orig)
+			: x_(orig.x_), y_(orig.y_)
 		{
-			for (int i = 0; i < N; i++)
-			{
-				data_[i] = val[i];
-			}
 		}
 
 		const T& operator [] (int index) const
 		{
-			if (index >= N) return 0;
+			if (index == 0) return x_;
+			if (index == 1) return y_;
 
-			return data_[index];
+			return T(0);
 		}
 
 		T& operator [] (int index)
 		{
-			assert (index < N);
-			
-			return data_[index];
+			if (index <= 0) return x_;
+
+			return y_;
 		}
 
-		Vector& operator = (const T val[N])
+		Vector2& operator = (const T val[2])
 		{
-			for (int i = 0; i < N; i++)
-			{
-				data_[i] = val[i];
-			}
+			x_ = val[0];
+			y_ = val[1];
 			return *this;
 		}
 
-		Vector& operator = (const Vector& orig)
+		Vector2& operator = (const Vector2& orig)
 		{
-			memcpy (data_, orig.data_, N * sizeof(T));
+			x_ = orig.x_;
+			y_ = orig.y_;
 			return *this;
+		}
+
+		bool operator == (const Vector2& dist)
+		{
+			return x_ == dist.x_ && y_ == dist.y_;
+		}
+
+		const T& x (void) const {
+			return x_;
+		}
+
+		const T& y (void) const {
+			return y_;
 		}
 
 	private:
 		
-		T data_[N];
+		T x_;
+		T y_;
 	};
+
+	template <typename T>
+	class Vector3
+	{
+	public:
+
+		Vector3 ()
+		: x_(T(0)), y_(T(0)), z_(T(0))
+		{}
+
+		Vector3 (const T& x, const T& y, const T& z)
+		: x_(x), y_(y), z_(z)
+		{}
+
+		Vector3 (const T val[3])
+		: x_(val[0]), y_(val[1]), z_(val[2])
+		{}
+
+		Vector3 (const Vector3& orig)
+		: x_(orig.x_), y_(orig.y_), z_(orig.z_)
+		{}
+
+		const T& operator [] (int index) const
+		{
+			if (index == 0) return x_;
+			if (index == 1) return y_;
+			if (index == 2) return z_;
+
+			return T(0);
+		}
+
+		T& operator [] (int index)
+		{
+			if (index <= 0) return x_;
+			if (index == 1) return y_;
+
+			return z_;
+		}
+
+		Vector3& operator = (const T val[3])
+		{
+			x_ = val[0];
+			y_ = val[1];
+			z_ = val[2];
+			return *this;
+		}
+
+		Vector3& operator = (const Vector3& orig)
+		{
+			x_ = orig.x_;
+			y_ = orig.y_;
+			z_ = orig.z_;
+			return *this;
+		}
+
+		bool operator == (const Vector3& dist)
+		{
+			return x_ == dist.x_ && y_ == dist.y_ && z_ == dist.z_;
+		}
+
+		const T& x (void) const {
+			return x_;
+		}
+
+		const T& y (void) const {
+			return y_;
+		}
+
+		const T& z (void) const {
+			return z_;
+		}
+
+	private:
+
+		T x_;
+		T y_;
+		T z_;
+	};
+
+	template <typename T>
+	class Vector4
+	{
+	public:
+
+		Vector4 ()
+		: x_(T(0)), y_(T(0)), z_(T(0)), w_(T(0))
+		{}
+
+		Vector4 (const T& x, const T& y, const T& z, const T& w)
+		: x_(x), y_(y), z_(z), w_(w)
+		{}
+
+		Vector4 (const T val[4])
+		: x_(val[0]), y_(val[1]), z_(val[2]), w_(val[3])
+		{}
+
+		Vector4 (const Vector4& orig)
+		: x_(orig.x_), y_(orig.y_), z_(orig.z_), w_(orig.w_)
+		{}
+
+		const T& operator [] (int index) const
+		{
+			if (index == 0) return x_;
+			if (index == 1) return y_;
+			if (index == 2) return z_;
+			if (index == 3) return w_;
+
+			return T(0);
+		}
+
+		T& operator [] (int index)
+		{
+			if (index <= 0) return x_;
+			if (index == 1) return y_;
+			if (index == 2) return z_;
+
+			return w_;
+		}
+
+		Vector4& operator = (const T val[4])
+		{
+			x_ = val[0];
+			y_ = val[1];
+			z_ = val[2];
+			w_ = val[3];
+
+			return *this;
+		}
+
+		Vector4& operator = (const Vector4& orig)
+		{
+			x_ = orig.x_;
+			y_ = orig.y_;
+			z_ = orig.z_;
+			w_ = orig.w_;
+			return *this;
+		}
+
+		bool operator == (const Vector4& dist)
+		{
+			return x_ == dist.x_ && y_ == dist.y_
+					&& z_ == dist.z_ && w_ == dist.w_;
+		}
+
+		const T& x (void) const {
+			return x_;
+		}
+
+		const T& y (void) const {
+			return y_;
+		}
+
+		const T& z (void) const {
+			return z_;
+		}
+
+		const T& w (void) const {
+			return w_;
+		}
+
+	private:
+
+		T x_;
+		T y_;
+		T z_;
+		T w_;
+	};
+
+	typedef Vector2<int> Vec2i;
+	typedef Vector3<int> Vec3i;
+	typedef Vector4<int> Vec4i;
+
+	typedef Vector2<float> Vec2f;
+	typedef Vector3<float> Vec3f;
+	typedef Vector4<float> Vec4f;
 
 }
 

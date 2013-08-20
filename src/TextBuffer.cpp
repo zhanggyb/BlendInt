@@ -67,12 +67,12 @@ namespace BIL {
 		text_.push_back(charcode);
 	}
 
-	Vec2ui TextBuffer::calculateBox (void)
+	Tuple2ui TextBuffer::calculateBox (void)
 	{
 		wstring::const_iterator it;
 		wstring::const_iterator next;
-		Vec2ui box;
-		Vec2l kerning;
+		Tuple2ui box;
+		Tuple2l kerning;
 		Glyph* glyph = NULL;
 
 		unsigned int line_width = 0;

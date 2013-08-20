@@ -44,9 +44,9 @@ namespace BIL {
 	{
 		float ratio;
 
-		ratio = size().vec.x / (float) size().vec.y;
+		ratio = size().x() / (float) size().y();
 
-		glViewport(0, 0, size().vec.x, size().vec.y);
+		glViewport(0, 0, size().x(), size().y());
 
 		glClear(GL_COLOR_BUFFER_BIT);
 		glMatrixMode(GL_PROJECTION);

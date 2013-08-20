@@ -61,8 +61,8 @@ namespace BIL {
 		DrawBox(GL_POLYGON,
 				0.0f,
 				0.0f,
-				size_.vec.x,
-				size_.vec.y,
+				size_.x(),
+				size_.y(),
 				corner_radius_);
 
 		text_.Render();

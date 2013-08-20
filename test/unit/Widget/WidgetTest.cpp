@@ -36,8 +36,8 @@ void myWidget1::Render(void)
 		DrawAntiRoundbox(GL_POLYGON,
 				pos_.x(),
 				pos_.y(),
-				pos_.x() + size_.vec.x,
-				pos_.y() + size_.vec.y,
+				pos_.x() + size_.x(),
+				pos_.y() + size_.y(),
 				5.0, false);
 
 		glColor4f (0.1f, 0.1f, 0.1f, 1.0f);

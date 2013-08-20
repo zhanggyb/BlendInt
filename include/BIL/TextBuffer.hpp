@@ -99,7 +99,7 @@ namespace BIL {
 		 * @brief Calculate and return the box contains the text
 		 * @return (width,height)
 		 */
-		Vec2ui calculateBox (void);
+		Tuple2ui calculateBox (void);
 
 	private:	// member variables
 

@@ -34,7 +34,7 @@ void TupleTest::tearDown ()
 
 void TupleTest::create1 ()
 {
-    Vec3i test;
+    Tuple3i test;
 
     CPPUNIT_ASSERT((test.data[0] == 0) &&
                    (test.coord.y == 0) &&

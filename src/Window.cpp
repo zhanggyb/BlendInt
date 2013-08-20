@@ -37,7 +37,7 @@ namespace BIL {
 	Window::Window (Traceable *parent)
 		: Traceable(parent), window_(NULL),
 		  cursor_pos_x_(0.0), cursor_pos_y_(0.0),
-		  size_(Vec2i(640, 480))
+		  size_(640, 480)
 	{
 		title_ = "Default";
 
@@ -59,7 +59,7 @@ namespace BIL {
 	        GLFWmonitor* monitor, GLFWwindow* share, Traceable* parent)
 		: Traceable(parent), window_(NULL),
 		  cursor_pos_x_(0.0), cursor_pos_y_(0.0),
-		  size_(Vec2i(width, height))
+		  size_(width, height)
 	{
 		title_ = title;
 		window_ = glfwCreateWindow(size_.vec.x,
@@ -284,8 +284,8 @@ namespace BIL {
 			local_y = cursor_pos_y_ - (item->pos().y());
 			if ((local_x - 0.000001 > 0.0) &&
 				(local_y - 0.000001 > 0.0) &&
-				(local_x - item->size().vec.x) < 0.0 &&
-				(local_y - item->size().vec.y) < 0.0)
+				(local_x - item->size().x()) < 0.0 &&
+				(local_y - item->size().y()) < 0.0)
 			{
 				event.set_pos (local_x, local_y);
 				switch (action) {
@@ -294,6 +294,7 @@ namespace BIL {
 					break;
 				case GLFW_RELEASE:
 					item->MouseReleaseEvent(&event);
+					break;
 				default:
 					break;
 				}
@@ -322,8 +323,8 @@ namespace BIL {
 				local_y = cursor_pos_y_ - (item->pos().y());
 				if ((local_x - 0.000001 > 0.0) &&
 					(local_y - 0.000001 > 0.0) &&
-					(local_x - item->size().vec.x) < 0.0 &&
-					(local_y - item->size().vec.y) < 0.0)
+					(local_x - item->size().x()) < 0.0 &&
+					(local_y - item->size().y()) < 0.0)
 				{
 					event.set_pos (local_x, local_y);
 					item->MouseMoveEvent(&event);

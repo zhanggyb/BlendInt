@@ -124,7 +124,7 @@ namespace BIL {
 			return _metrics;
 		}
 
-		const Vec2i& getBox (void) const
+		const Tuple2i& getBox (void) const
 		{
 			return _cbox;
 		}
@@ -172,7 +172,7 @@ namespace BIL {
 
 		Metrics _metrics;
 
-		Vec2i _cbox;
+		Tuple2i _cbox;
 
 	};
 
