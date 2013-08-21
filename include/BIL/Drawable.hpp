@@ -135,10 +135,6 @@ namespace BIL {
 			visible_ = false;
 		}
 
-	public:	// virtual functions
-
-		virtual void Render (void) = 0;
-
 	protected:	// member functions
 
 		void drawRoundBox (float minx,

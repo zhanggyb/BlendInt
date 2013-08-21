@@ -61,6 +61,8 @@ namespace BIL {
 			background_ = color;
 		}
 
+	protected:
+
 		virtual void Render (void);
 
 	private:	// member functions

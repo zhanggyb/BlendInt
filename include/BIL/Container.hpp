@@ -33,6 +33,7 @@ namespace BIL {
 		virtual ~Container ();
 
 	protected:
+
 		virtual void Render (void);
 
 	private:

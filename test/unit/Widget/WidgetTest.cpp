@@ -46,6 +46,27 @@ void myWidget1::Render(void)
 	glDisable(GL_BLEND);
 }
 
+myWidget2::myWidget2(Traceable* parent)
+	: Widget (parent)
+{
+	round_box_type_ = RoundBoxAll;
+	set_pos (Coord2f(100, 100));
+	resize (200, 200);
+	CalculateRoundBoxEdges (round_box_type_, Recti(100, 100, 200, 200), 1.0, &base_);
+
+}
+
+myWidget2::~myWidget2()
+{
+
+}
+
+void myWidget2::Render(void)
+{
+	DrawWidgetBase(&base_, &colors_);
+}
+
+
 WidgetTest::WidgetTest ()
 {
 
@@ -79,6 +100,23 @@ void WidgetTest::mywidget1_show1()
     widget.set_parent (&win);
     widget.set_pos(Coord2f(50.0, 50.0));
     widget.resize(80, 40);
+
+    app.run();
+
+    CPPUNIT_ASSERT(true);
+}
+
+void WidgetTest::mywidget2_show1()
+{
+    Application app;
+
+    Window win(640, 480, "640 x 480 Window", NULL, NULL);
+
+    app.setMainWindow(&win);
+    app.initialize();
+
+    myWidget2 widget;
+    widget.set_parent (&win);
 
     app.run();
 

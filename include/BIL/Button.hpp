@@ -38,6 +38,8 @@ namespace BIL {
 
 		virtual ~Button ();
 
+	protected:
+
 		virtual void Render (void);
 
 	private:

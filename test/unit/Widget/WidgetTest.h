@@ -22,6 +22,21 @@ public:
 
 	virtual ~myWidget1 ();
 
+protected:
+
+	virtual void Render (void);
+};
+
+class myWidget2: public Widget
+{
+public:
+
+	myWidget2 (Traceable* parent = NULL);
+
+	virtual ~myWidget2 ();
+
+protected:
+
 	virtual void Render (void);
 };
 
@@ -30,6 +45,7 @@ class WidgetTest: public CppUnit::TestFixture
 CPPUNIT_TEST_SUITE(WidgetTest);
 
 	CPPUNIT_TEST(mywidget1_show1);
+	CPPUNIT_TEST(mywidget2_show1);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -49,6 +65,8 @@ public:
 private:
 
 	void mywidget1_show1 ();
+
+	void mywidget2_show1 ();
 
 };
 

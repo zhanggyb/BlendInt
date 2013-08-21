@@ -22,6 +22,8 @@ public:
 
 	virtual ~myTexture ();
 
+protected:
+
 	virtual void Render (void);
 
 	virtual void KeyPressEvent (KeyEvent* event);
@@ -58,6 +60,8 @@ public:
 
 	virtual ~myDrawable1 ();
 
+protected:
+
 	virtual void Render (void);
 
 	virtual void KeyPressEvent (KeyEvent* event);
@@ -85,6 +89,8 @@ public:
 
 	virtual ~myDrawable2 ();
 
+protected:
+
 	virtual void Render (void);
 
 	virtual void KeyPressEvent (KeyEvent* event);
@@ -111,6 +117,8 @@ public:
 	myDrawable3 (Traceable* parent = NULL);
 
 	virtual ~myDrawable3 ();
+
+protected:
 
 	virtual void Render (void);
 

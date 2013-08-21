@@ -31,6 +31,8 @@
 
 #include <BIL/Application.hpp>
 #include <BIL/FontConfig.hpp>
+#include <BIL/FontCache.hpp>
+#include <BIL/Theme.hpp>
 #include <BIL/Window.hpp>
 
 using namespace std;
@@ -71,6 +73,10 @@ namespace BIL {
 			cerr << "Cannot load default font into memory" << endl;
 			return false;
 		}
+
+		Theme* theme = Theme::instance();
+		if (theme != NULL)
+			theme->initialize();
 
 		if (nls) {
 			// set locale
@@ -147,6 +153,8 @@ namespace BIL {
 		*/
 
 		FontConfig::release();
+		FontCache::releaseAll();
+		Theme::release();
 
 		glfwTerminate();
 	}

@@ -76,9 +76,9 @@ namespace BIL {
 
 		virtual ~Widget ();
 
-		virtual void Render (void);
-
 	protected:
+
+		virtual void Render (void);
 
 		void DrawAntiTriangle (float x1,
 						   float y1,
@@ -120,7 +120,7 @@ namespace BIL {
 
 		virtual void CursorEnterEvent (int entered);
 
-	private:	// member functions
+	protected:	// member functions
 
 		/**
 		 * @brief Calculate round box shadow edges
@@ -151,7 +151,7 @@ namespace BIL {
 
 		void verts_to_quad_strip_open(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2][2], WidgetBase *wtb);
 
-	private:
+	protected:
 
 		WidgetBase base_;
 

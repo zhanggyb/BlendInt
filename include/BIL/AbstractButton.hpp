@@ -67,6 +67,8 @@ namespace BIL {
 
 		void set_checkable (bool checkable) {checkable_ = checkable;}
 
+	protected:
+
 		virtual void Render (void) = 0;
 
 	protected:
