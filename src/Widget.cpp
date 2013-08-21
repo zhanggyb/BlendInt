@@ -33,10 +33,6 @@
 
 #include <BIL/Utilities-inl.hpp>
 
-/* max as used by round_box__edges */
-#define WIDGET_CURVE_RESOLU 9
-#define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
-
 namespace BIL {
 
 	/* *********************** draw data ************************** */
@@ -65,15 +61,21 @@ namespace BIL {
 	};
 
 	static const float scroll_circle_vert[16][2] = {
-		{0.382684, 0.923879}, {0.000001, 1.000000}, {-0.382683, 0.923880}, {-0.707107, 0.707107},
-		{-0.923879, 0.382684}, {-1.000000, 0.000000}, {-0.923880, -0.382684}, {-0.707107, -0.707107},
-		{-0.382683, -0.923880}, {0.000000, -1.000000}, {0.382684, -0.923880}, {0.707107, -0.707107},
-		{0.923880, -0.382684}, {1.000000, -0.000000}, {0.923880, 0.382683}, {0.707107, 0.707107}
+		{0.382684, 0.923879}, {0.000001, 1.000000},
+		{-0.382683, 0.923880}, {-0.707107, 0.707107},
+		{-0.923879, 0.382684}, {-1.000000, 0.000000},
+		{-0.923880, -0.382684}, {-0.707107, -0.707107},
+		{-0.382683, -0.923880}, {0.000000, -1.000000},
+		{0.382684, -0.923880}, {0.707107, -0.707107},
+		{0.923880, -0.382684}, {1.000000, -0.000000},
+		{0.923880, 0.382683}, {0.707107, 0.707107}
 	};
 
 	static const unsigned int scroll_circle_face[14][3] = {
-		{0, 1, 2}, {2, 0, 3}, {3, 0, 15}, {3, 15, 4}, {4, 15, 14}, {4, 14, 5}, {5, 14, 13}, {5, 13, 6},
-		{6, 13, 12}, {6, 12, 7}, {7, 12, 11}, {7, 11, 8}, {8, 11, 10}, {8, 10, 9}
+		{0, 1, 2}, {2, 0, 3}, {3, 0, 15}, {3, 15, 4},
+		{4, 15, 14}, {4, 14, 5}, {5, 14, 13}, {5, 13, 6},
+		{6, 13, 12}, {6, 12, 7}, {7, 12, 11}, {7, 11, 8},
+		{8, 11, 10}, {8, 10, 9}
 	};
 
 	static const float menu_tria_vert[6][2] = {
@@ -84,8 +86,8 @@ namespace BIL {
 	static const unsigned int menu_tria_face[2][3] = {{2, 0, 1}, {3, 5, 4}};
 
 	static const float check_tria_vert[6][2] = {
-		{-0.578579, 0.253369},  {-0.392773, 0.412794},  {-0.004241, -0.328551},
-		{-0.003001, 0.034320},  {1.055313, 0.864744},   {0.866408, 1.026895}
+		{-0.578579, 0.253369}, {-0.392773, 0.412794}, {-0.004241, -0.328551},
+		{-0.003001, 0.034320}, {1.055313, 0.864744}, {0.866408, 1.026895}
 	};
 
 	static const unsigned int check_tria_face[4][3] = {
@@ -105,19 +107,19 @@ namespace BIL {
 		};
 
 	Widget::WidgetTriangle::WidgetTriangle ()
-	: tot(0)
+		: tot(0)
 	{
 
 	}
 
 	Widget::WidgetBase::WidgetBase()
-	: totvert(0), halfwayvert(0), inner(true),
-	outline(true), emboss(true), shadedir(true)
+		: totvert(0), halfwayvert(0), inner(true),
+		  outline(true), emboss(true), shadedir(true)
 	{
 	}
 
 	Widget::Widget (Traceable *parent)
-			: Drawable(parent)
+		: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub
 
@@ -132,11 +134,11 @@ namespace BIL {
 	}
 
 	void Widget::DrawAntiTriangle (float x1,
-							   float y1,
-							   float x2,
-							   float y2,
-							   float x3,
-							   float y3)
+								   float y1,
+								   float x2,
+								   float y2,
+								   float x3,
+								   float y3)
 	{
 		float tri_arr[3][2] = {{x1, y1}, {x2, y2}, {x3, y3}};
 		float color[4];
@@ -161,7 +163,13 @@ namespace BIL {
 		glDisable(GL_BLEND);
 	}
 
-	void Widget::DrawAntiRoundbox(int mode, float minx, float miny, float maxx, float maxy, float rad, bool use_alpha)
+	void Widget::DrawAntiRoundbox(int mode,
+								  float minx,
+								  float miny,
+								  float maxx,
+								  float maxy,
+								  float rad,
+								  bool use_alpha)
 	{
 		float color[4];
 		int j;
@@ -407,7 +415,7 @@ namespace BIL {
 	{
 	}
 
-	void Widget::Render (void)
+	void Widget::Render ()
 	{
 
 	}
@@ -415,7 +423,10 @@ namespace BIL {
 	/* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */
 	/* return tot */
 	int Widget::CalculateRoundBoxShadowEdges(float (*vert)[2],
-			const Rect& rect, float rad, int roundboxalign, float step)
+											 const Rect& rect,
+											 float rad,
+											 int roundboxalign,
+											 float step)
 	{
 		if(!rect.valid()) return 0;
 
@@ -494,8 +505,11 @@ namespace BIL {
 		return tot;
 	}
 
-	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Rect& rect,
-	        float rad, float radi, WidgetBase* wt)
+	void Widget::CalculateRoundBoxEdges (int roundboxalign,
+										 const Rect& rect,
+										 float rad,
+										 float radi,
+										 WidgetBase* wt)
 	{
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 		float minx = rect.x(),

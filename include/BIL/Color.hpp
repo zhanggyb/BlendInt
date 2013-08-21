@@ -131,18 +131,18 @@ namespace BIL {
 			return 0;
 		}
 
-		uint32_t rgba (void) const
+		uint32_t rgba () const
 		{
 			return (red_ << 24) & (green_ << 16) &
 				(blue_ << 8) & alpha_;
 		}
 
-		unsigned char red (void) const
+		unsigned char red () const
 		{
 			return red_;
 		}
 
-		unsigned char r (void) const
+		unsigned char r () const
 		{
 			return red_;
 		}
@@ -154,12 +154,12 @@ namespace BIL {
 									static_cast<unsigned char>(255));
 		}
 
-		unsigned char green (void) const
+		unsigned char green () const
 		{
 			return green_;
 		}
 
-		unsigned char g (void) const
+		unsigned char g () const
 		{
 			return green_;
 		}
@@ -171,12 +171,12 @@ namespace BIL {
 									  static_cast<unsigned char>(255));
 		}
 
-		unsigned char blue (void) const
+		unsigned char blue () const
 		{
 			return blue_;
 		}
 
-		unsigned char b (void) const
+		unsigned char b () const
 		{
 			return blue_;
 		}
@@ -188,12 +188,12 @@ namespace BIL {
 									 static_cast<unsigned char>(255));
 		}
 
-		unsigned char alpha (void) const
+		unsigned char alpha () const
 		{
 			return alpha_;
 		}
 
-		unsigned char a (void) const
+		unsigned char a () const
 		{
 			return alpha_;
 		}

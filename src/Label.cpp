@@ -57,7 +57,7 @@ namespace BIL {
 						 );
 	}
 
-	void Label::calculateBox(void)
+	void Label::calculateBox ()
 	{
 		Tuple2ui box = text_.calculateBox();
 		
@@ -67,7 +67,7 @@ namespace BIL {
 		resize (box.vec.x, box.vec.y);
 	}
 
-	void Label::Render(void)
+	void Label::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

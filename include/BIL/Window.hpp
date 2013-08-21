@@ -155,7 +155,7 @@ namespace BIL {
 			glfwSetCursorPos(window_, xpos, ypos);
 		}
 
-		virtual void Render (void);
+		virtual void Render ();
 
 	protected:
 

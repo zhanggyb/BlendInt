@@ -37,16 +37,16 @@ namespace BIL {
 		{
 		}
 
-		void Accept (void)
+		void Accept ()
 		{
 			accept_ = true;
 		}
 
-		void Ignore (void)
+		void Ignore ()
 		{
 		}
 
-		bool IsAccepted (void) const
+		bool IsAccepted () const
 		{
 			return accept_;
 		}

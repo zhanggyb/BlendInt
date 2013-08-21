@@ -40,7 +40,7 @@ namespace BIL {
 
 	protected:
 
-		virtual void Render (void);
+		virtual void Render ();
 
 	private:
 		Button (const Button& orig);

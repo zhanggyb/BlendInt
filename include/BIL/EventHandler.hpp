@@ -57,7 +57,7 @@ namespace BIL {
 
 		virtual void CursorEnterEvent (int entered) = 0;
 
-		virtual void Render (void) = 0;
+		virtual void Render () = 0;
 
 	//private:
 		//EventHandler(const EventHandler& orig);

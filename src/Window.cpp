@@ -110,7 +110,7 @@ namespace BIL {
 		return true;
 	}
 
-	void Window::Render (void)
+	void Window::Render ()
 	{
 		int width = size_.width();
 		int height = size_.height();

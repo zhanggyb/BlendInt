@@ -81,16 +81,16 @@ namespace BIL {
 			fontcache_->initialize();
 		}
 
-		void Render (void); /* render the text */
+		void Render (); /* render the text */
 
-		void Clear (void); /* clear the text */
+		void Clear (); /* clear the text */
 
-		const wstring& text (void) const
+		const wstring& text () const
 		{
 			return text_;
 		}
 
-		const FontCache* fontcache (void) const
+		const FontCache* fontcache () const
 		{
 			return fontcache_;
 		}
@@ -99,7 +99,7 @@ namespace BIL {
 		 * @brief Calculate and return the box contains the text
 		 * @return (width,height)
 		 */
-		Tuple2ui calculateBox (void);
+		Tuple2ui calculateBox ();
 
 	private:	// member variables
 

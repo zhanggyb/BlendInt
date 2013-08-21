@@ -28,6 +28,10 @@
 #include <BIL/Theme.hpp>
 #include <BIL/Rect.hpp>
 
+/* max as used by round_box__edges */
+#define WIDGET_CURVE_RESOLU 9
+#define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
+
 /* used for transp checkers */
 #define UI_TRANSP_DARK 100
 #define UI_TRANSP_LIGHT 160
@@ -41,10 +45,6 @@ namespace BIL {
 	class Widget: public BIL::Drawable
 	{
 	public:
-
-		// max as used by round_box__edges
-		static const int WIDGET_CURVE_RESOLU = 9;
-		static const int WIDGET_SIZE_MAX = WIDGET_CURVE_RESOLU * 4;
 
 		struct WidgetTriangle
 		{
@@ -78,7 +78,7 @@ namespace BIL {
 
 	protected:
 
-		virtual void Render (void);
+		virtual void Render ();
 
 		void DrawAntiTriangle (float x1,
 						   float y1,

@@ -48,7 +48,7 @@ namespace BIL {
 
         bool initialize (bool nls = true);
 
-        void terminate (void)
+        void terminate ()
         {
             glfwTerminate();
         }
@@ -57,17 +57,17 @@ namespace BIL {
          * @brief Get GLFW version
          * @return
          */
-        GLFWVersion getVersion (void);
+        GLFWVersion getVersion ();
 
         /**
          *  @brief Get GLFW version
          * @return
          */
-        std::string getVersionString (void);
+        std::string getVersionString ();
 
         void setMainWindow (Window *window);
 
-        void run (void);
+        void run ();
 
         virtual ~Application ();
 

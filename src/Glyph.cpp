@@ -94,7 +94,7 @@ namespace BIL {
 		makeDisplayList();
 	}
 
-	void Glyph::Render (void)
+	void Glyph::Render ()
 	{
 		if (!glIsTexture(_texture))
 			return;

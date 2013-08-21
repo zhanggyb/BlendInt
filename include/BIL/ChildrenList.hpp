@@ -53,32 +53,32 @@ namespace BIL {
 
 		virtual ~ChildrenList ();
 
-		iterator begin (void)
+		iterator begin ()
 		{
 			return list_.begin();
 		}
 
-		 const_iterator begin (void) const
+		 const_iterator begin () const
 		 {
 		 return list_.begin();
 		 }
 
-		iterator end (void)
+		iterator end ()
 		{
 			return list_.end();
 		}
 
-		 const_iterator end (void) const
+		 const_iterator end () const
 		 {
 		 return list_.end();
 		 }
 
-		 reverse_iterator rbegin(void)
+		 reverse_iterator rbegin ()
 		 {
 			 return list_.rbegin();
 		 }
 
-		 const_reverse_iterator rbegin(void) const
+		 const_reverse_iterator rbegin () const
 		 {
 			 return list_.rbegin();
 		 }
@@ -90,24 +90,24 @@ namespace BIL {
 		  * Returns a reverse iterator pointing to the theoretical element
 		  * preceding the first element in the list container
 		  */
-		 reverse_iterator rend (void)
+		 reverse_iterator rend ()
 		 {
 			 return list_.rend();
 		 }
 
-		 const_reverse_iterator rend (void) const
+		 const_reverse_iterator rend () const
 		 {
 			 return list_.rend();
 		 }
 
 		T operator [] (int n);
 
-		T& front (void)
+		T& front ()
 		{
 			return list_.front();
 		}
 
-		T& back (void)
+		T& back ()
 		{
 			return list_.back();
 		}
@@ -120,17 +120,17 @@ namespace BIL {
 
 		bool push_back (T& val);
 
-		void pop_front (void);
+		void pop_front ();
 
-		void pop_back (void);
+		void pop_back ();
 
 		bool find (const T& val);
 
 		void erase (const T& val);
 
-		void clear (void);
+		void clear ();
 
-		int size (void) const;
+		int size () const;
 
 	private:
 
@@ -220,7 +220,7 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline void BIL::ChildrenList<T>::pop_front (void)
+	inline void BIL::ChildrenList<T>::pop_front ()
 	{
 		if (size() > 0) {
 			T front = list_.front();
@@ -230,7 +230,7 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline void BIL::ChildrenList<T>::pop_back (void)
+	inline void BIL::ChildrenList<T>::pop_back ()
 	{
 		if (size() > 0) {
 			T back = list_.back();
@@ -253,14 +253,14 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline void ChildrenList<T>::clear (void)
+	inline void ChildrenList<T>::clear ()
 	{
 		set_.clear();
 		list_.clear();
 	}
 
 	template<typename T>
-	inline int BIL::ChildrenList<T>::size (void) const
+	inline int BIL::ChildrenList<T>::size () const
 	{
 		int listsize, setsize;
 

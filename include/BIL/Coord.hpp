@@ -38,11 +38,11 @@ namespace BIL {
 		{
 		}
 
-		T x (void) const {return x_;}
+		T x () const {return x_;}
 
 		void set_x (T x) {x_ = x;}
 
-		T y (void) const {return y_;}
+		T y () const {return y_;}
 
 		void set_y (T y) {y_ = y;}
 
@@ -65,15 +65,15 @@ namespace BIL {
 		{
 		}
 
-		T x (void) const {return x_;}
+		T x () const {return x_;}
 
 		void set_x (T x) {x_ = x;}
 
-		T y (void) const {return y_;}
+		T y () const {return y_;}
 
 		void set_y (T y) {y_ = y;}
 
-		T z (void) const {return z_;}
+		T z () const {return z_;}
 
 		void set_z (T z) {z_ = z;}
 

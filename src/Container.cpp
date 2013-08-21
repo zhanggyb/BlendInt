@@ -40,7 +40,7 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	void Container::Render (void)
+	void Container::Render ()
 	{
 
 	}

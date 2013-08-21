@@ -40,7 +40,7 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	void RollingTriangle::Render (void)
+	void RollingTriangle::Render ()
 	{
 		float ratio;
 

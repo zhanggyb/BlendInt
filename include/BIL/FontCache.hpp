@@ -67,7 +67,7 @@ namespace BIL {
 
 		static bool release (const Font& font = Font("Sans"));
 
-		static void releaseAll (void);
+		static void releaseAll ();
 
 		static void setCacheSize (unsigned int size)
 		{
@@ -81,7 +81,7 @@ namespace BIL {
 
 
 #ifdef DEBUG
-		static void list (void);
+		static void list ();
 #endif
 
 	public:
@@ -90,7 +90,7 @@ namespace BIL {
 		 * @brief Initialize glyph database
 		 * @return true for success, false for failure
 		 */
-		bool initialize (void);
+		bool initialize ();
 
 		/**
 		 * @brief query the Glyph of a wchar
@@ -102,26 +102,26 @@ namespace BIL {
 		 */
 		Glyph* query (wchar_t charcode, bool create = true);
 
-		int getHeight (void)
+		int getHeight ()
 		{
 			if(fontengine_ == NULL) return 0;
 			
 			return fontengine_->getHeight();
 		}
 
-		int getAscender (void)
+		int getAscender ()
 		{
 			if(fontengine_ == NULL) return 0;
 			return fontengine_->getAscender();
 		}
 
-		int getDescender (void)
+		int getDescender ()
 		{
 			if(fontengine_ == NULL) return 0;
 			return fontengine_->getDescender();
 		}
 
-		int getMaxAdvance (void)
+		int getMaxAdvance ()
 		{
 			if(fontengine_ == NULL) return 0;
 			return fontengine_->getMaxAdvance();
@@ -139,7 +139,7 @@ namespace BIL {
 		}
 
 #ifdef DEBUG
-		void printcount (void);
+		void printcount ();
 #endif
 
 	private:

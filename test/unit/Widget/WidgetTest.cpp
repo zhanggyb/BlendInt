@@ -53,6 +53,8 @@ myWidget2::myWidget2(Traceable* parent)
 	set_pos (Point(100, 100));
 	resize (200, 200);
 	CalculateRoundBoxEdges (round_box_type_, Rect(100, 100, 200, 200), 1.0, &base_);
+	CalculateCheckTriangle (Rect(100, 100, 200, 200), &(base_.tria1));
+	CalculateCheckTriangle (Rect(100, 100, 200, 200), &(base_.tria2));
 
 }
 

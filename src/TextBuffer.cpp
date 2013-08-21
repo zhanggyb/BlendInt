@@ -101,7 +101,7 @@ namespace BIL {
 		return box;
 	}
 
-	void TextBuffer::Render (void)
+	void TextBuffer::Render ()
 	{
 		Glyph* glyph = NULL;
 

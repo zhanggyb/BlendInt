@@ -129,7 +129,7 @@ namespace BIL {
 			return _cbox;
 		}
 
-		void Render (void);
+		void Render ();
 
 	private:
 		/* member functions */

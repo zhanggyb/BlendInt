@@ -57,19 +57,19 @@ namespace BIL {
 			corner_radius_ = rad;
 		}
 
-		bool down (void) const {return down_;}
+		bool down () const {return down_;}
 
 		void set_down (bool down) {down_ = down;}
 
-		bool checked (void) const {return checked_;}
+		bool checked () const {return checked_;}
 
-		bool checkable (void) const {return checkable_;}
+		bool checkable () const {return checkable_;}
 
 		void set_checkable (bool checkable) {checkable_ = checkable;}
 
 	protected:
 
-		virtual void Render (void) = 0;
+		virtual void Render () = 0;
 
 	protected:
 
@@ -87,7 +87,7 @@ namespace BIL {
 
 	private:	// member functions
 
-		void calculateBox (void);
+		void calculateBox ();
 
 	private:	// member functions (disabled)
 

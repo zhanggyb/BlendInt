@@ -63,7 +63,7 @@ namespace BIL {
 
 	protected:
 
-		virtual void Render (void);
+		virtual void Render ();
 
 	private:	// member functions
 
