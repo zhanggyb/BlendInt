@@ -32,10 +32,11 @@
 #include <list>
 
 #include <BIL/Traceable.hpp>
-#include <BIL/Vector.hpp>
 #include <BIL/EventHandler.hpp>
 #include <BIL/Theme.hpp>
 #include <BIL/Rect.hpp>
+#include <BIL/Size.hpp>
+#include <BIL/Point.hpp>
 
 #include <BIL/Types.hpp>
 
@@ -59,39 +60,47 @@ namespace BIL {
 
 		virtual ~Drawable ();
 
-		const Vec2i& size (void) const
+		const Size& size () const
 		{
 			return size_;
 		}
 
-		void resize (unsigned int w, unsigned int h)
+		void resize (int w, int h)
 		{
-			resize(Vec2i(w, h));
+			size_ = Size(w,h);
 		}
 
-		void resize (const Vec2i& size);
+		void resize (const Size& size)
+		{
+			size_ = size;
+		}
 
-		const Coord3f& pos (void) const
+		const Point& pos () const
 		{
 			return pos_;
 		}
 
-		void set_pos (float x, float y, float z)
+		void set_pos (int x, int y)
 		{
-			pos_ = Coord3f(x, y, z);
+			pos_ = Point(x, y);
 		}
 
-		void set_pos (const Coord2f& pos)
-		{
-			pos_ = Coord3f(pos.x(), pos.y(), 0.0);
-		}
-
-		void set_pos (const Coord3f& pos)
+		void set_pos (const Point& pos)
 		{
 			pos_ = pos;
 		}
 
-		const Tuple4i& margin (void) const
+		float z () const
+		{
+			return z_;
+		}
+
+		void set_z (float depth)
+		{
+			z_ = depth;
+		}
+
+		const Tuple4i& margin () const
 		{
 			return margin_;
 		}
@@ -101,7 +110,7 @@ namespace BIL {
 			margin_ = margin;
 		}
 
-		const Tuple4i& padding (void) const
+		const Tuple4i& padding () const
 		{
 			return padding_;
 		}
@@ -116,21 +125,21 @@ namespace BIL {
 			round_box_type_ = type;
 		}
 
-		RoundBoxType round_box_type (void)
+		RoundBoxType round_box_type () const
 		{
 			return round_box_type_;
 		}
 
-		bool visible (void) const {return visible_;}
+		bool visible () const {return visible_;}
 
 		void set_visible (bool visible) {visible_ = visible;}
 
-		void Show (void)
+		void Show ()
 		{
 			visible_ = true;
 		}
 
-		void Hide (void)
+		void Hide ()
 		{
 			visible_ = false;
 		}
@@ -209,16 +218,18 @@ namespace BIL {
 							  bool use_alpha);
 
 		void DrawScroll (const WidgetColors& wcol,
-				const Recti& rect,
-				const Recti& slider,
+				const Rect& rect,
+				const Rect& slider,
 				ScrollState state);
 
 	protected:
 		// member variables
 
-		Vec2i size_;
+		Size size_;
 
-		Coord3f pos_;
+		Point pos_;
+
+		float z_;	// the depth of the widget, currently it's not used
 
 		Tuple4i padding_; /** used when in Layout */
 

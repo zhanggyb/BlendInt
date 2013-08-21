@@ -132,20 +132,20 @@ namespace BIL {
 		 * @return vertex number used in Base::totvert
 		 */
 		int CalculateRoundBoxShadowEdges(float (*vert)[2],
-					const Recti& rect, float rad, int roundboxalign, float step);
+					const Rect& rect, float rad, int roundboxalign, float step);
 
-		void CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, float radi, WidgetBase *wt);
+		void CalculateRoundBoxEdges (int roundboxalign, const Rect& rect, float rad, float radi, WidgetBase *wt);
 
-		void CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, WidgetBase *wt);
+		void CalculateRoundBoxEdges (int roundboxalign, const Rect& rect, float rad, WidgetBase *wt);
 
 		/* based on button rect, return scaled array of triangles */
-		void CalculateTriangleNumbers (const Recti& rect, float triasize, char where, WidgetTriangle *tria);
+		void CalculateTriangleNumbers (const Rect& rect, float triasize, char where, WidgetTriangle *tria);
 
-		void CalculateScrollCircle(const Recti& rect, float triasize, char where, WidgetTriangle *tria);
+		void CalculateScrollCircle(const Rect& rect, float triasize, char where, WidgetTriangle *tria);
 
-		void CalculateMenuTriangle (const Recti& rect, WidgetTriangle *tria);
+		void CalculateMenuTriangle (const Rect& rect, WidgetTriangle *tria);
 
-		void CalculateCheckTriangle (const Recti& rect, WidgetTriangle *tria);
+		void CalculateCheckTriangle (const Rect& rect, WidgetTriangle *tria);
 
 		void verts_to_quad_strip(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], WidgetBase *wtb);
 

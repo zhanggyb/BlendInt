@@ -19,54 +19,70 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_PEN_H_
-#define _BIL_PEN_H_
-
-#include <GL/gl.h>
-#include <BIL/Font.hpp>
-#include <BIL/Tuple.hpp>
-#include <BIL/Coord.hpp>
-#include <BIL/Rect.hpp>
-
-#include <string>
+#ifndef _BIL_SIZE_HPP_
+#define _BIL_SIZE_HPP_
 
 namespace BIL {
 
 	/**
-	 * C++ wrapper of some OpenGL functions
+	 * @brief Size
+	 *
+	 * only used in widgets/windows to define its size
 	 */
-	class Pen
+	class Size
 	{
 	public:
 
-		Pen (float size = 1.0, float width = 1.0);
+		Size ()
+				: width_(0), height_(0)
+		{
 
-		virtual ~Pen ();
+		}
 
-		void setPointSize (GLfloat size);
+		Size (int width, int height)
+				: width_(width), height_(height)
+		{
 
-		void setLineWidth (GLfloat width);
+		}
 
-		void setLineStyle (GLfloat style);
+		Size (const Size& orig)
+				: width_(orig.width_), height_(orig.height_)
+		{
 
-		/**
-		 * @brief Draw line from s to t
-		 */
-		void draw (const Coord2f& s, const Coord2f& t);
+		}
 
-		/**
-		 * @brief Draw rectangle
-		 */
-		void draw (const Rect& rect);
+		Size& operator = (const Size& orig)
+		{
+			width_ = orig.width_;
+			height_ = orig.height_;
+			return *this;
+		}
+
+		bool IsValid () const
+		{
+			return width_ <= 0 || height_ <= 0;
+		}
+
+		int width () const {return width_;}
+
+		void set_width (int width) {width_ = width;}
+
+		int height () const {return height_;}
+
+		void set_height (int height) {height_ = height;}
+
+		int& operator [] (int index)
+		{
+			if(index <= 0) return width_;
+
+			return height_;
+		}
 
 	private:
-
-		/** point size */
-		float _size;
-
-		/** line width */
-		float _width;
+		int width_;
+		int height_;
 	};
 
-} /* namespace BIL */
-#endif /* PEN_H_ */
+}
+
+#endif /* SIZE_HPP_ */

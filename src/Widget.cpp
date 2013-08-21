@@ -415,7 +415,7 @@ namespace BIL {
 	/* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */
 	/* return tot */
 	int Widget::CalculateRoundBoxShadowEdges(float (*vert)[2],
-			const Recti& rect, float rad, int roundboxalign, float step)
+			const Rect& rect, float rad, int roundboxalign, float step)
 	{
 		if(!rect.valid()) return 0;
 
@@ -494,7 +494,7 @@ namespace BIL {
 		return tot;
 	}
 
-	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Recti& rect,
+	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Rect& rect,
 	        float rad, float radi, WidgetBase* wt)
 	{
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
@@ -655,14 +655,14 @@ namespace BIL {
 		wt->totvert = tot;
 	}
 
-	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Recti& rect, float rad, WidgetBase *wt)
+	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Rect& rect, float rad, WidgetBase *wt)
 	{
 		// TODO: pixelsize should be defined by user
 		float pixelsize = 1.0;
 		CalculateRoundBoxEdges(roundboxalign, rect, rad, rad - pixelsize, wt);
 	}
 
-	void Widget::CalculateTriangleNumbers (const Recti& rect, float triasize, char where, WidgetTriangle *tria)
+	void Widget::CalculateTriangleNumbers (const Rect& rect, float triasize, char where, WidgetTriangle *tria)
 	{
 		float centx, centy, sizex, sizey, minsize;
 		int a, i1 = 0, i2 = 1;
@@ -697,7 +697,7 @@ namespace BIL {
 		tria->index = num_tria_face;
 	}
 
-	void Widget::CalculateScrollCircle (const Recti& rect, float triasize, char where, WidgetTriangle *tria)
+	void Widget::CalculateScrollCircle (const Rect& rect, float triasize, char where, WidgetTriangle *tria)
 	{
 		float centx, centy, sizex, sizey, minsize;
 		int a, i1 = 0, i2 = 1;
@@ -732,7 +732,7 @@ namespace BIL {
 		tria->index = scroll_circle_face;
 	}
 
-	void Widget::CalculateMenuTriangle (const Recti& rect, WidgetTriangle *tria)
+	void Widget::CalculateMenuTriangle (const Rect& rect, WidgetTriangle *tria)
 	{
 		float centx, centy, size;
 		int a;
@@ -751,7 +751,7 @@ namespace BIL {
 		tria->index = menu_tria_face;
 	}
 
-	void Widget::CalculateCheckTriangle (const Recti& rect, WidgetTriangle *tria)
+	void Widget::CalculateCheckTriangle (const Rect& rect, WidgetTriangle *tria)
 	{
 		float centx, centy, size;
 		int a;

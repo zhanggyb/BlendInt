@@ -36,8 +36,8 @@ void myWidget1::Render(void)
 		DrawAntiRoundbox(GL_POLYGON,
 				pos_.x(),
 				pos_.y(),
-				pos_.x() + size_.x(),
-				pos_.y() + size_.y(),
+				pos_.x() + size_.width(),
+				pos_.y() + size_.height(),
 				5.0, false);
 
 		glColor4f (0.1f, 0.1f, 0.1f, 1.0f);
@@ -50,9 +50,9 @@ myWidget2::myWidget2(Traceable* parent)
 	: Widget (parent)
 {
 	round_box_type_ = RoundBoxAll;
-	set_pos (Coord2f(100, 100));
+	set_pos (Point(100, 100));
 	resize (200, 200);
-	CalculateRoundBoxEdges (round_box_type_, Recti(100, 100, 200, 200), 1.0, &base_);
+	CalculateRoundBoxEdges (round_box_type_, Rect(100, 100, 200, 200), 1.0, &base_);
 
 }
 
@@ -98,7 +98,7 @@ void WidgetTest::mywidget1_show1()
 
     myWidget1 widget;
     widget.set_parent (&win);
-    widget.set_pos(Coord2f(50.0, 50.0));
+    widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 
     app.run();

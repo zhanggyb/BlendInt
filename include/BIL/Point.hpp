@@ -19,54 +19,69 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_PEN_H_
-#define _BIL_PEN_H_
-
-#include <GL/gl.h>
-#include <BIL/Font.hpp>
-#include <BIL/Tuple.hpp>
-#include <BIL/Coord.hpp>
-#include <BIL/Rect.hpp>
-
-#include <string>
+#ifndef _BIL_POINT_HPP_
+#define _BIL_POINT_HPP_
 
 namespace BIL {
 
 	/**
-	 * C++ wrapper of some OpenGL functions
+	 * @brief Point position
+	 *
+	 * only used in widgets/window to define the position
 	 */
-	class Pen
+	class Point
 	{
 	public:
 
-		Pen (float size = 1.0, float width = 1.0);
+		Point ()
+				: x_(0), y_(0)
+		{
+		}
 
-		virtual ~Pen ();
+		Point (int x, int y)
+				: x_(x), y_(y)
+		{
 
-		void setPointSize (GLfloat size);
+		}
 
-		void setLineWidth (GLfloat width);
+		Point (const Point& orig)
+		: x_(orig.x_), y_(orig.y_)
+		{
 
-		void setLineStyle (GLfloat style);
+		}
 
-		/**
-		 * @brief Draw line from s to t
-		 */
-		void draw (const Coord2f& s, const Coord2f& t);
+		Point& operator = (const Point& orig)
+		{
+			x_ = orig.x_;
+			y_ = orig.y_;
 
-		/**
-		 * @brief Draw rectangle
-		 */
-		void draw (const Rect& rect);
+			return *this;
+		}
+
+		int x (void) const
+		{
+			return x_;
+		}
+
+		void set_x (int x)
+		{
+			x_ = x;
+		}
+
+		int y (void) const
+		{
+			return y_;
+		}
+
+		void set_y (int y)
+		{
+			y_ = y;
+		}
 
 	private:
-
-		/** point size */
-		float _size;
-
-		/** line width */
-		float _width;
+		int x_;
+		int y_;
 	};
+}
 
-} /* namespace BIL */
-#endif /* PEN_H_ */
+#endif /* _BIL_POINT_HPP_ */

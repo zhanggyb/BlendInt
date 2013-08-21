@@ -51,7 +51,7 @@ namespace BIL {
 
 		glTranslatef(pos_.x(),
 					 pos_.y(),
-					 pos_.z());
+					 z());
 
 		glColor4f(background_.rgba.r,
 				  background_.rgba.g,
@@ -61,8 +61,8 @@ namespace BIL {
 		DrawBox(GL_POLYGON,
 				0.0f,
 				0.0f,
-				size_.x(),
-				size_.y(),
+				size_.width(),
+				size_.height(),
 				corner_radius_);
 
 		text_.Render();

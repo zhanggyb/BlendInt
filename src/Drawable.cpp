@@ -144,7 +144,8 @@ namespace BIL {
 	}
 
 	Drawable::Drawable (Traceable* parent)
-		: Traceable(parent), round_box_type_ (RoundBoxNone), visible_(false)
+		: Traceable(parent), z_(0.0), round_box_type_ (RoundBoxNone),
+		  visible_(false)
 	{
 
 	}
@@ -153,12 +154,6 @@ namespace BIL {
 	{
 		// delete all child object in list
 
-	}
-
-	void Drawable::resize (const Vec2i& size)
-	{
-		size_ = size;
-		return;
 	}
 
 	void Drawable::drawRoundBox (float minx,
@@ -574,7 +569,7 @@ namespace BIL {
 		glShadeModel(GL_FLAT);
 	}
 
-	void Drawable::DrawScroll(const WidgetColors& wcol, const Recti& rect, const Recti& slider, ScrollState state)
+	void Drawable::DrawScroll(const WidgetColors& wcol, const Rect& rect, const Rect& slider, ScrollState state)
 	{
 
 	}

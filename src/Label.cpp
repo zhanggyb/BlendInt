@@ -74,10 +74,10 @@ namespace BIL {
 
 		glTranslatef(pos_.x(),
 					 pos_.y(),
-					 pos_.z());
+					 z());
 		glColor4ub(background_.r(), background_.g(),
 				   background_.b(), background_.a());
-		glRectf(0.0, 0.0, size_.x(), size_.y());
+		glRectf(0.0, 0.0, size_.width(), size_.height());
 
 		text_.Render();
 

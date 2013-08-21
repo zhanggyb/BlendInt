@@ -22,27 +22,27 @@
 #ifndef _BIL_RECT_HPP_
 #define _BIL_RECT_HPP_
 
-#include <BIL/Coord.hpp>
+#include <BIL/Point.hpp>
+#include <BIL/Size.hpp>
 
 namespace BIL {
 
-	template <typename T>
 	class Rect
 	{
 	public:
 		Rect ()
-			: x_(T(0)), y_(T(0)), width_(T(0)), height_(T(0)), valid_(false)
+			: x_(0), y_(0), width_(0), height_(0), valid_(false)
 		{}
 		
-		Rect (T x, T y, T width, T height)
+		Rect (int x, int y, int width, int height)
 			: x_(x), y_(y), width_(width), height_(height), valid_(false)
 		{
-			if (width_ > T(0.0) && height_ > T(0.0)) {
+			if (width_ > 0 && height_ > 0) {
 				valid_ = true;
 			}
 		}
 
-		Rect (Coord2<T> bottom_left, Coord2<T> top_right)
+		Rect (const Point& bottom_left, const Point& top_right)
 		: valid_(false)
 		{
 			x_ = bottom_left.x();
@@ -50,41 +50,51 @@ namespace BIL {
 			width_ = top_right.x() - x_;
 			height_ = top_right.y() - y_;
 
-			if (width_ > T(0.0) && height_ > T(0.0)) {
+			if (width_ > 0 && height_ > 0) {
 				valid_ = true;
 			}
 		}
 
-		T x (void) const {return x_;}
+		Rect (const Point& pos, const Size& size)
+		: valid_(false)
+		{
+			x_ = pos.x();
+			y_ = pos.y();
+			width_ = size.width();
+			height_ = size.height();
 
-		void set_x (T x) {x_ = x;}
+			if (width_ > 0 && height_ > 0) {
+				valid_ = true;
+			}
+		}
 
-		T y (void) const {return y_;}
+		int x (void) const {return x_;}
 
-		void set_y (T y) {y_ = y;}
+		void set_x (int x) {x_ = x;}
 
-		T width (void) const {return width_;}
+		int y (void) const {return y_;}
 
-		void set_width (T width) {width_ = width;}
+		void set_y (int y) {y_ = y;}
 
-		T height (void) const {return height_;}
+		int width (void) const {return width_;}
 
-		void set_height (T height) {height_ = height;}
+		void set_width (int width) {width_ = width;}
+
+		int height (void) const {return height_;}
+
+		void set_height (int height) {height_ = height;}
 
 		bool valid (void) const {return valid_;}
 
 	private:
 
-		T x_;
-		T y_;
-		T width_;
-		T height_;
+		int x_;
+		int y_;
+		int width_;
+		int height_;
 
 		bool valid_;
 	};
-
-	typedef Rect<int> Recti;
-	typedef Rect<float> Rectf;
 
 }
 

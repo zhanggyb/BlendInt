@@ -19,7 +19,7 @@ myTexture::myTexture (Traceable *parent)
     : Drawable(parent)
 {
     resize (400, 400);
-    set_pos (Coord2f(20.0, 20.0));
+    set_pos (Point(20, 20));
 
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -138,8 +138,8 @@ void myDrawable1::Render(void)
 		DrawBox(GL_POLYGON,
 				pos_.x(),
 				pos_.y(),
-				pos_.x() + size_.x(),
-				pos_.y() + size_.y(),
+				pos_.x() + size_.width(),
+				pos_.y() + size_.height(),
 				5.0);
 
 	glDisable(GL_BLEND);
@@ -201,8 +201,8 @@ void myDrawable2::Render(void)
 		DrawBoxShade(GL_POLYGON,
 				pos_.x(),
 				pos_.y(),
-				pos_.x() + size_.x(),
-				pos_.y() + size_.y(),
+				pos_.x() + size_.width(),
+				pos_.y() + size_.height(),
 				5.0,
 				0.5, 0.1);
 
@@ -263,13 +263,13 @@ void myDrawable3::Render(void)
 
 		drawRoundBox(pos_.x(),
 				pos_.y(),
-				pos_.x() + size_.x(),
-				pos_.y() + size_.y(),
+				pos_.x() + size_.width(),
+				pos_.y() + size_.height(),
 				5.0);
 		DrawShadowBox(pos_.x(),
 				pos_.y(),
-				pos_.x() + size_.x(),
-				pos_.y() + size_.y(),
+				pos_.x() + size_.width(),
+				pos_.y() + size_.height(),
 				5.0,
 				64);
 
@@ -362,7 +362,7 @@ void DrawableTest::mydrawable1()
 
     myDrawable1 widget;
     widget.set_parent (&win);
-    widget.set_pos(Coord2f(50.0, 50.0));
+    widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 
     app.run();
@@ -381,7 +381,7 @@ void DrawableTest::mydrawable2()
 
     myDrawable2 widget;
     widget.set_parent (&win);
-    widget.set_pos(Coord2f(50.0, 50.0));
+    widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 
     app.run();
@@ -400,7 +400,7 @@ void DrawableTest::mydrawable3()
 
     myDrawable3 widget;
     widget.set_parent (&win);
-    widget.set_pos(Coord2f(50.0, 50.0));
+    widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 
     app.run();

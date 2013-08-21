@@ -72,7 +72,7 @@ void ThemeTest::initialize2 ()
 
 	Label label(L"Text in Label");
 	label.set_parent(&win);
-	label.set_pos(Coord2f(50.0, 50.0));
+	label.set_pos(Point(50, 50));
 	label.set_background(bg_color);
 	label.setFont(Font("Droid Sans", 12));
 	label.setTextColor(textcolor);

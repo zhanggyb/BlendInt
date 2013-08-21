@@ -49,7 +49,7 @@ void AbstractButtonTest::show1 ()
 
 	Button button(L"The Default Value");
 	button.set_parent(&win);
-	button.set_pos(Coord2f(50.0, 50.0));
+	button.set_pos(Point(50, 50));
 	button.set_background(RGBAf(1.0, 0.9, 1.0, 0.9));
 	button.set_corner_radius(10.0);
 

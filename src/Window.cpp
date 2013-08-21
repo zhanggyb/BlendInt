@@ -41,8 +41,8 @@ namespace BIL {
 	{
 		title_ = "Default";
 
-		window_ = glfwCreateWindow(size_.vec.x,
-								   size_.vec.y,
+		window_ = glfwCreateWindow(size_.width(),
+								   size_.height(),
 								   title_.data(),
 								   NULL,
 								   NULL);
@@ -62,8 +62,8 @@ namespace BIL {
 		  size_(width, height)
 	{
 		title_ = title;
-		window_ = glfwCreateWindow(size_.vec.x,
-								   size_.vec.y,
+		window_ = glfwCreateWindow(size_.width(),
+								   size_.height(),
 								   title,
 								   monitor,
 								   share);
@@ -112,8 +112,8 @@ namespace BIL {
 
 	void Window::Render (void)
 	{
-		int width = size().vec.x;
-		int height = size().vec.y;
+		int width = size_.width();
+		int height = size_.height();
 		// float ratio = width / (float) height;
 
 		// float bg = 114.0 / 255;	// the default blender background color
@@ -163,7 +163,7 @@ namespace BIL {
 	void Window::ResizeEvent (int width, int height)
 	{
 		// TODO: resize all widgets/layouts in children
-		glfwGetWindowSize(window_, &size_.vec.x, &size_.vec.y);
+		glfwGetWindowSize(window_, &size_[0], &size_[1]);
 	}
 
 	void Window::KeyEvent (int key, int scancode, int action, int mods)
@@ -284,8 +284,8 @@ namespace BIL {
 			local_y = cursor_pos_y_ - (item->pos().y());
 			if ((local_x - 0.000001 > 0.0) &&
 				(local_y - 0.000001 > 0.0) &&
-				(local_x - item->size().x()) < 0.0 &&
-				(local_y - item->size().y()) < 0.0)
+				(local_x - item->size().width()) < 0.0 &&
+				(local_y - item->size().height()) < 0.0)
 			{
 				event.set_pos (local_x, local_y);
 				switch (action) {
@@ -306,7 +306,7 @@ namespace BIL {
 	void Window::CursorPosEvent (double xpos, double ypos)
 	{
 		cursor_pos_x_ = xpos;
-		cursor_pos_y_ = size_.vec.y - ypos;
+		cursor_pos_y_ = size_.height() - ypos;
 
 		MouseEvent event (MouseNone, MouseButtonNone);
 		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
@@ -323,8 +323,8 @@ namespace BIL {
 				local_y = cursor_pos_y_ - (item->pos().y());
 				if ((local_x - 0.000001 > 0.0) &&
 					(local_y - 0.000001 > 0.0) &&
-					(local_x - item->size().x()) < 0.0 &&
-					(local_y - item->size().y()) < 0.0)
+					(local_x - item->size().width()) < 0.0 &&
+					(local_y - item->size().height()) < 0.0)
 				{
 					event.set_pos (local_x, local_y);
 					item->MouseMoveEvent(&event);

@@ -23,7 +23,7 @@
 #include <GL/gl.h>
 
 #include <BIL/Container.hpp>
-#include <BIL/Vector.hpp>
+#include <BIL/Size.hpp>
 
 namespace BIL {
 
@@ -31,7 +31,7 @@ namespace BIL {
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub
-		size_ = Vec2i(250, 200);
+		size_ = Size(250, 200);
 		set_margin(Tuple4i(1, 1, 1, 1));
 	}
 

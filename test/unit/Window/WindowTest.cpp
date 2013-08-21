@@ -53,13 +53,13 @@ void myWidget::Render (void)
 
 	drawRoundBox(pos_.x(),
 				 pos_.y(),
-				 pos_.x() + size_.x(),
-				 pos_.y() + size_.y(),
+				 pos_.x() + size_.width(),
+				 pos_.y() + size_.height(),
 				 5.0);
 	DrawShadowBox(pos_.x(),
 				  pos_.y(),
-				  pos_.x() + size_.x(),
-				  pos_.y() + size_.y(),
+				  pos_.x() + size_.width(),
+				  pos_.y() + size_.height(),
 				  5.0,
 				  64);
 
@@ -114,7 +114,7 @@ void WindowTest::event1 ()
     app.initialize();
 
     Label label(L"Test Event1");
-    label.set_pos (Coord2f(200.0, 200.0));
+    label.set_pos (Point(200, 200));
     label.set_parent (&win);
 
     app.run();
@@ -132,7 +132,7 @@ void WindowTest::event2 ()
     app.initialize();
 
     Label label(L"Test Event2");
-    label.set_pos (Coord2f(300.0, 200.0));
+    label.set_pos (Point(300, 200));
     label.set_parent (&win);
 
     app.run();
@@ -150,11 +150,11 @@ void WindowTest::solorender1 ()
     app.initialize();
 
     Label label(L"Test Event2");
-    label.set_pos (Coord2f(100.0, 100.0));
+    label.set_pos (Point(100, 100));
     label.set_parent (&win);
 
 	Label solo (L"This label should also been rendered");
-	solo.set_pos(400.0, 300.0, 0.0);
+	solo.set_pos(400, 300);
 
     app.run();
 
@@ -172,7 +172,7 @@ void WindowTest::check_mouse_press1 ()
 	
 	myWidget widget;
 	widget.set_parent (&win);
-	widget.set_pos(300.0, 300.0, 0.0);
+	widget.set_pos(300, 300);
 
     app.run();
 

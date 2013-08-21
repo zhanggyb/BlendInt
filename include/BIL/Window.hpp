@@ -31,6 +31,7 @@
 #include <BIL/Traceable.hpp>
 #include <BIL/Tuple.hpp>
 #include <BIL/Coord.hpp>
+#include <BIL/Size.hpp>
 
 using namespace std;
 
@@ -58,19 +59,19 @@ namespace BIL {
 		Window (int width, int height, const char *title, GLFWmonitor *monitor,
 		        GLFWwindow *share, Traceable* parent = NULL);
 
-		void makeContextCurrent (void)
+		void makeContextCurrent ()
 		{
 			glfwMakeContextCurrent(window_);
 		}
 
 		virtual ~Window ();
 
-		GLFWwindow* window (void) const
+		GLFWwindow* window () const
 		{
 			return window_;
 		}
 
-		const Tuple2i& size (void) const
+		const Size& size () const
 		{
 			return size_;
 		}
@@ -91,16 +92,16 @@ namespace BIL {
 			return;
 		}
 
-		void resize (const Coord2i& size)
+		void resize (const Size& size)
 		{
-			resize (size.x(), size.y());
+			resize (size.width(), size.height());
 		}
 
 		void resize (int w, int h)
 		{
 			glfwSetWindowSize (window_, w, h);
 
-			glfwGetWindowSize(window_, &size_.vec.x, &size_.vec.y);
+			glfwGetWindowSize(window_, &size_[0], &size_[1]);
 		}
 
 		void setTitle (const std::string& title);
@@ -141,7 +142,7 @@ namespace BIL {
 			return glfwGetMouseButton(window_, button);
 		}
 
-		Coord2d getCursorPos (void)
+		Coord2d getCursorPos ()
 		{
 			Coord2d ret;
 			glfwGetCursorPos (window_, &(ret.coord.x), &(ret.coord.y));
@@ -187,7 +188,7 @@ namespace BIL {
 		double cursor_pos_x_;				/* cursor x position */
 		double cursor_pos_y_;				/* cursor y position */
 
-		Tuple2i size_;			/* window size */
+		Size size_;			/* window size */
 
 		std::string title_;
 

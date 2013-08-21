@@ -47,7 +47,7 @@ void LabelTest::show1 ()
 
     Label label(L"仁义礼智信");
     label.set_parent(&win);
-    label.set_pos(Coord2f(50.0, 50.0));
+    label.set_pos(Point(50, 50));
     label.set_background(Color(0x4A898B80));
     //label.setFont(Font("Droid Sans", 24));
     label.setTextColor (Color(0x80F0B0FF));
@@ -72,7 +72,7 @@ void LabelTest::checkfont1 ()
 
     Label label(L"Hello World!");
     label.set_parent(&win);
-    label.set_pos(Coord2f(50.0, 50.0));
+    label.set_pos(Point(50, 50));
     label.set_background(Color(0x40, 0x40, 0xFF, 0x80));
     label.setFont(Font("Droid Sans", 24));
 
