@@ -108,7 +108,7 @@ namespace BIL {
 			0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
 		};
 
-	TriaMeshVertexes::TriaMeshVertexes ()
+	DecorationVertexes::DecorationVertexes ()
 		: tot(0)
 	{
 
@@ -193,7 +193,7 @@ namespace BIL {
 		glDisable(GL_BLEND);
 	}
 
-	void Widget::DrawTrias (const TriaMeshVertexes *tria)
+	void Widget::DrawTrias (const DecorationVertexes *tria)
 	{
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, tria->vec);
@@ -699,7 +699,7 @@ namespace BIL {
 		CalculateRoundBoxEdges(roundboxalign, rect, rad, rad - pixelsize, wt);
 	}
 
-	void Widget::CalculateTriangleNumbers (const Rect& rect, float triasize, char where, TriaMeshVertexes *tria)
+	void Widget::CalculateTriangleNumbers (const Rect& rect, float triasize, char where, DecorationVertexes *tria)
 	{
 		float centx, centy, sizex, sizey, minsize;
 		int a, i1 = 0, i2 = 1;
@@ -734,7 +734,7 @@ namespace BIL {
 		tria->index = num_tria_face;
 	}
 
-	void Widget::CalculateScrollCircle (const Rect& rect, float triasize, char where, TriaMeshVertexes *tria)
+	void Widget::CalculateScrollCircle (const Rect& rect, float triasize, char where, DecorationVertexes *tria)
 	{
 		float centx, centy, sizex, sizey, minsize;
 		int a, i1 = 0, i2 = 1;
@@ -769,7 +769,7 @@ namespace BIL {
 		tria->index = scroll_circle_face;
 	}
 
-	void Widget::CalculateMenuTriangle (const Rect& rect, TriaMeshVertexes *tria)
+	void Widget::CalculateMenuTriangle (const Rect& rect, DecorationVertexes *tria)
 	{
 		float centx, centy, size;
 		int a;
@@ -788,7 +788,7 @@ namespace BIL {
 		tria->index = menu_tria_face;
 	}
 
-	void Widget::CalculateCheckTriangle (const Rect& rect, TriaMeshVertexes *tria)
+	void Widget::CalculateCheckTriangle (const Rect& rect, DecorationVertexes *tria)
 	{
 		float centx, centy, size;
 		int a;

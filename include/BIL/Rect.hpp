@@ -68,6 +68,15 @@ namespace BIL {
 			}
 		}
 
+		bool Contains (const Point& point)
+		{
+			int diff_x = point.x() - x_;
+			int diff_y = point.y() - y_;
+
+			return diff_x >= 0 && diff_x <= width_ &&
+					diff_y >= 0 && diff_y <= height_;
+		}
+
 		int x (void) const {return x_;}
 
 		void set_x (int x) {x_ = x;}

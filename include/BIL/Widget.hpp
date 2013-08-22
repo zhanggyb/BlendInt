@@ -40,9 +40,9 @@
 
 namespace BIL {
 
-	struct TriaMeshVertexes
+	struct DecorationVertexes
 	{
-		TriaMeshVertexes();
+		DecorationVertexes();
 
 		unsigned int tot;
 		float vec[16][2];
@@ -60,8 +60,8 @@ namespace BIL {
 
 		bool inner, outline, emboss, shadedir; /* set on/off */
 
-		TriaMeshVertexes tria1;
-		TriaMeshVertexes tria2;
+		DecorationVertexes tria1;
+		DecorationVertexes tria2;
 	};
 
 	class Widget: public BIL::Drawable
@@ -93,7 +93,7 @@ namespace BIL {
 							   float rad,
 							   bool use_alpha);
 
-		void DrawTrias (const TriaMeshVertexes* tria);
+		void DrawTrias (const DecorationVertexes* tria);
 
 		void DrawWidgetBase (WidgetVertexes* wtb);
 		
@@ -137,13 +137,13 @@ namespace BIL {
 		void CalculateRoundBoxEdges (int roundboxalign, const Rect& rect, float rad, WidgetVertexes *wt);
 
 		/* based on button rect, return scaled array of triangles */
-		void CalculateTriangleNumbers (const Rect& rect, float triasize, char where, TriaMeshVertexes *tria);
+		void CalculateTriangleNumbers (const Rect& rect, float triasize, char where, DecorationVertexes *tria);
 
-		void CalculateScrollCircle(const Rect& rect, float triasize, char where, TriaMeshVertexes *tria);
+		void CalculateScrollCircle(const Rect& rect, float triasize, char where, DecorationVertexes *tria);
 
-		void CalculateMenuTriangle (const Rect& rect, TriaMeshVertexes *tria);
+		void CalculateMenuTriangle (const Rect& rect, DecorationVertexes *tria);
 
-		void CalculateCheckTriangle (const Rect& rect, TriaMeshVertexes *tria);
+		void CalculateCheckTriangle (const Rect& rect, DecorationVertexes *tria);
 
 		void verts_to_quad_strip(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], WidgetVertexes *wtb);
 
@@ -154,7 +154,7 @@ namespace BIL {
 		WidgetVertexes base_;
 
 		// converted colors for state
-		WidgetColors colors_;
+		WidgetColors colors_state_;
 
 		/*
 		  inline void widget_verts_to_quad_strip(Base *wtb, const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])

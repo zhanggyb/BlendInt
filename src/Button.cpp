@@ -20,6 +20,7 @@
  */
 
 #include <BIL/Button.hpp>
+#include <iostream>
 
 namespace BIL {
 
@@ -103,6 +104,14 @@ namespace BIL {
 		if (theme == NULL) return;
 
 		const WidgetColors* wcol = &(theme->themeUI()->wcol_tool);
+
+		// TODO: won't change other colors if theme changed, use a static one for render speed
+		if (hover_) {
+			colors_state_.inner.set_red (wcol->inner[0] >= 240 ? 255 : wcol->inner[0] + 15);
+			colors_state_.inner.set_green (wcol->inner[1] >= 240 ? 255 : wcol->inner[1] + 15);
+			colors_state_.inner.set_blue (wcol->inner[2] >= 240 ? 255 : wcol->inner[2] + 15);
+			wcol = &colors_state_;
+		}
 
 		int j, a;	
 
@@ -264,4 +273,17 @@ namespace BIL {
 
 		glDisable(GL_BLEND);
 	}
+
+	void Button::MouseMoveEvent (MouseEvent* event)
+	{
+		if (event->pos().x() >= 0 && event->pos().y() >= 0 &&
+				event->pos().x() <= size_.width() && event->pos().y() <= size_.height())
+		{
+			hover_ = true;
+            event->Accept();
+		} else {
+			hover_ = false;
+		}
+	}
+
 }

@@ -57,12 +57,12 @@ namespace BIL {
 		virtual ~MouseEvent ()
 		{}
 
-		MouseButton button (void) const
+		MouseButton button () const
 		{
 			return button_;
 		}
 
-		const Coord2f& pos (void) const
+		const Coord2f& pos () const
 		{
 			return pos_;
 		}
@@ -73,7 +73,7 @@ namespace BIL {
 			pos_.set_y (y);
 		}
 
-		const Coord2d& window_pos (void) const
+		const Coord2d& window_pos () const
 		{
 			return window_pos_;
 		}

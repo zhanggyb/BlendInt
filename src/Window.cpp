@@ -321,14 +321,8 @@ namespace BIL {
 			if (item != NULL) {
 				local_x = cursor_pos_x_ - (item->pos().x());
 				local_y = cursor_pos_y_ - (item->pos().y());
-				if ((local_x - 0.000001 > 0.0) &&
-					(local_y - 0.000001 > 0.0) &&
-					(local_x - item->size().width()) < 0.0 &&
-					(local_y - item->size().height()) < 0.0)
-				{
-					event.set_pos (local_x, local_y);
-					item->MouseMoveEvent(&event);
-				}
+				event.set_pos (local_x, local_y);
+				item->MouseMoveEvent(&event);
 				if(event.IsAccepted()) break;
 			}
 		}
@@ -337,7 +331,7 @@ namespace BIL {
 	void Window::CursorEnterEvent (int entered)
 	{
 		if (entered == GL_TRUE) {
-			cout << "Cursor entered." << endl;
+			//cout << "Cursor entered." << endl;
 		}
 	}
 

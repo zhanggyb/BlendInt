@@ -44,6 +44,8 @@ namespace BIL {
 
 		virtual void Render ();
 
+		virtual void MouseMoveEvent (MouseEvent* event);
+
 	private:
 
 		void DrawButton (WidgetVertexes* wtb);
