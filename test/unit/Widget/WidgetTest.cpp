@@ -79,7 +79,9 @@ void WidgetTest::widget_default_show ()
 
     Widget widget;
     widget.set_parent (&win);
-    widget.set_pos(Point(50, 50));
+
+    widget.set_round_box_type(RoundBoxAll);
+    widget.set_pos(50, 50);
     widget.resize(200, 100);
 
     app.run();

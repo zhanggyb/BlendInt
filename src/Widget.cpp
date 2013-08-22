@@ -33,6 +33,8 @@
 
 #include <BIL/Utilities-inl.hpp>
 
+#include <iostream>
+
 namespace BIL {
 
 	/* *********************** draw data ************************** */
@@ -124,8 +126,8 @@ namespace BIL {
 		// TODO Auto-generated constructor stub
 
 		// Set the default padding and margin
-		set_padding(Tuple4i(1, 1, 1, 1));
-		set_margin(1, 1, 1, 1);
+		//set_padding(Tuple4i(1, 1, 1, 1));
+		//set_margin(1, 1, 1, 1);
 	}
 
 	Widget::~Widget ()
@@ -415,19 +417,11 @@ namespace BIL {
 	{
 	}
 
-	void Widget::Render ()
+	void Widget::Update()
 	{
-		WidgetBase wtb;
-		float rad;
-
-		wtb.totvert = 0; wtb.halfwayvert = 0;
-		wtb.tria1.tot = 0;
-		wtb.tria2.tot = 0;
-
-		wtb.inner = true;
-		wtb.outline = true;
-		wtb.emboss = true;
-		wtb.shadedir = true;
+        if (!size_.IsValid()) return;
+		
+        float rad;
 
 		/* half rounded */
 		// TODO: define widget_unit by user
@@ -435,10 +429,13 @@ namespace BIL {
 		rad = 0.2f * 20;
 
 		//round_box_edges(&wtb, roundboxalign, rect, rad);
-		CalculateRoundBoxEdges (RoundBoxAll, Rect(pos_, size_), rad, &wtb);
+		CalculateRoundBoxEdges (round_box_type_, Rect(pos_, size_), rad, &base_);
+	}
 
+	void Widget::Render ()
+	{
 		// widgetbase_draw(&wtb, wcol);
-		DrawWidgetBase (&wtb, &colors_);
+		DrawWidgetBase (&base_, &colors_);
 	}
 
 	/* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */

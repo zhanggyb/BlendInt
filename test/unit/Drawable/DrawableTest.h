@@ -24,7 +24,9 @@ public:
 
 protected:
 
-	virtual void Render (void);
+	virtual void Update () {}
+
+	virtual void Render ();
 
 	virtual void KeyPressEvent (KeyEvent* event);
 
@@ -62,7 +64,9 @@ public:
 
 protected:
 
-	virtual void Render (void);
+	virtual void Update () {}
+
+	virtual void Render ();
 
 	virtual void KeyPressEvent (KeyEvent* event);
 
@@ -91,7 +95,9 @@ public:
 
 protected:
 
-	virtual void Render (void);
+	virtual void Update () {}
+
+	virtual void Render ();
 
 	virtual void KeyPressEvent (KeyEvent* event);
 
@@ -120,7 +126,9 @@ public:
 
 protected:
 
-	virtual void Render (void);
+	virtual void Update () {}
+
+	virtual void Render ();
 
 	virtual void KeyPressEvent (KeyEvent* event);
 

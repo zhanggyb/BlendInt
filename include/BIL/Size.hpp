@@ -60,7 +60,7 @@ namespace BIL {
 
 		bool IsValid () const
 		{
-			return width_ <= 0 || height_ <= 0;
+			return width_ > 0 && height_ > 0;
 		}
 
 		int width () const {return width_;}
