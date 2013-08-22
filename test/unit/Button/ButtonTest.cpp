@@ -48,6 +48,7 @@ void ButtonTest::show1 ()
 	app.initialize();
 
 	Button button(L"Button Test");
+	button.set_font(Font("Droid Sans"));
 	button.set_parent(&win);
 	button.set_round_box_type(RoundBoxAll);
 	button.set_pos(Point(50, 50));

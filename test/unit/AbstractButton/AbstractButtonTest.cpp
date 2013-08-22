@@ -48,6 +48,7 @@ void AbstractButtonTest::show1 ()
 	app.initialize();
 
 	Button button(L"The Default Value");
+	button.set_font(Font("Droid Sans"));
 	button.set_parent(&win);
 	button.set_pos(Point(50, 50));
 

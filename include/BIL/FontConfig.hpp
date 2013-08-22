@@ -92,7 +92,7 @@ namespace BIL {
 		 *
 		 * get font path with fontconfig
 		 */
-		string getFontPath (const string& family, float size = 10, bool bold =
+		string getFontPath (const string& family, float size = 9, bool bold =
 		        false, bool italic = false);
 
 		string getFontPath (const Font& font);

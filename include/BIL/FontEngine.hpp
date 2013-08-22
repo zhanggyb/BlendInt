@@ -53,7 +53,7 @@ namespace BIL {
 		 * @param size Font size
 		 */
 		FontEngine (const string& filename,
-					unsigned int size = 10,
+					unsigned int size = 9,
 					unsigned int dpi = 96);
 
 		/**
@@ -64,7 +64,7 @@ namespace BIL {
 		 * @param size Font size
 		 */
 		FontEngine (const FT_Byte* buffer, FT_Long bufsize, FT_Long index = 0,
-				unsigned int size = 10, unsigned int dpi = 96);
+				unsigned int size = 9, unsigned int dpi = 96);
 
 		/**
 		 * @brief destructor

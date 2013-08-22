@@ -46,11 +46,11 @@ namespace BIL {
 
 	private:
 
-		void DrawButton (WidgetBase* wtb);
+		void DrawButton (WidgetVertexes* wtb);
 
 	private:
 
-		Widget::WidgetBase base_;
+		WidgetVertexes base_;
 
 	private:
 		Button (const Button& orig);

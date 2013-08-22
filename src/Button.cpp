@@ -97,7 +97,7 @@ namespace BIL {
 		//glDisable(GL_BLEND);
 	}
 
-	void Button::DrawButton (Widget::WidgetBase* wtb)
+	void Button::DrawButton (WidgetVertexes* wtb)
 	{
 		Theme *theme = Theme::instance();
 		if (theme == NULL) return;

@@ -43,7 +43,12 @@ namespace BIL {
 
 		void set_text (const wstring& text);
 
-		void set_font (const Font& font);
+		void set_font (const Font& font)
+		{
+			text_.set_font(font);
+			calculateBox();
+			Update();
+		}
 
 		bool down () const {return down_;}
 

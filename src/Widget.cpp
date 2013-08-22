@@ -108,13 +108,13 @@ namespace BIL {
 			0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
 		};
 
-	Widget::WidgetTriangle::WidgetTriangle ()
+	TriaMeshVertexes::TriaMeshVertexes ()
 		: tot(0)
 	{
 
 	}
 
-	Widget::WidgetBase::WidgetBase()
+	WidgetVertexes::WidgetVertexes()
 		: totvert(0), halfwayvert(0), inner(true),
 		  outline(true), emboss(true), shadedir(true)
 	{
@@ -193,7 +193,7 @@ namespace BIL {
 		glDisable(GL_BLEND);
 	}
 
-	void Widget::DrawTrias (const WidgetTriangle *tria)
+	void Widget::DrawTrias (const TriaMeshVertexes *tria)
 	{
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, tria->vec);
@@ -204,7 +204,7 @@ namespace BIL {
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
-	void Widget::DrawWidgetBase (WidgetBase* wtb)
+	void Widget::DrawWidgetBase (WidgetVertexes* wtb)
 	{
 		Theme *theme = Theme::instance();
 		if (theme == NULL) return;
@@ -372,7 +372,7 @@ namespace BIL {
 		glDisable(GL_BLEND);
 	}
 
-	void Widget::DrawWidgetBaseOutline (WidgetBase* wtb)
+	void Widget::DrawWidgetBaseOutline (WidgetVertexes* wtb)
 	{
 		/* + 2 because the last pair is wrapped */
 		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; 
@@ -532,7 +532,7 @@ namespace BIL {
 										 const Rect& rect,
 										 float rad,
 										 float radi,
-										 WidgetBase* wt)
+										 WidgetVertexes* wt)
 	{
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 		float minx = rect.x(),
@@ -692,14 +692,14 @@ namespace BIL {
 		wt->totvert = tot;
 	}
 
-	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Rect& rect, float rad, WidgetBase *wt)
+	void Widget::CalculateRoundBoxEdges (int roundboxalign, const Rect& rect, float rad, WidgetVertexes *wt)
 	{
 		// TODO: pixelsize should be defined by user
 		float pixelsize = 1.0;
 		CalculateRoundBoxEdges(roundboxalign, rect, rad, rad - pixelsize, wt);
 	}
 
-	void Widget::CalculateTriangleNumbers (const Rect& rect, float triasize, char where, WidgetTriangle *tria)
+	void Widget::CalculateTriangleNumbers (const Rect& rect, float triasize, char where, TriaMeshVertexes *tria)
 	{
 		float centx, centy, sizex, sizey, minsize;
 		int a, i1 = 0, i2 = 1;
@@ -734,7 +734,7 @@ namespace BIL {
 		tria->index = num_tria_face;
 	}
 
-	void Widget::CalculateScrollCircle (const Rect& rect, float triasize, char where, WidgetTriangle *tria)
+	void Widget::CalculateScrollCircle (const Rect& rect, float triasize, char where, TriaMeshVertexes *tria)
 	{
 		float centx, centy, sizex, sizey, minsize;
 		int a, i1 = 0, i2 = 1;
@@ -769,7 +769,7 @@ namespace BIL {
 		tria->index = scroll_circle_face;
 	}
 
-	void Widget::CalculateMenuTriangle (const Rect& rect, WidgetTriangle *tria)
+	void Widget::CalculateMenuTriangle (const Rect& rect, TriaMeshVertexes *tria)
 	{
 		float centx, centy, size;
 		int a;
@@ -788,7 +788,7 @@ namespace BIL {
 		tria->index = menu_tria_face;
 	}
 
-	void Widget::CalculateCheckTriangle (const Rect& rect, WidgetTriangle *tria)
+	void Widget::CalculateCheckTriangle (const Rect& rect, TriaMeshVertexes *tria)
 	{
 		float centx, centy, size;
 		int a;
@@ -807,7 +807,7 @@ namespace BIL {
 		tria->index = check_tria_face;
 	}
 
-	void Widget::verts_to_quad_strip(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], WidgetBase *wtb)
+	void Widget::verts_to_quad_strip(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], WidgetVertexes *wtb)
 	{
 		int a;
 		for (a = 0; a < totvert; a++) {
@@ -818,7 +818,7 @@ namespace BIL {
 		copy_v2_v2(quad_strip[a * 2 + 1], wtb->inner_v[0]);
 	}
 
-	void Widget::verts_to_quad_strip_open(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2][2], WidgetBase *wtb)
+	void Widget::verts_to_quad_strip_open(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2][2], WidgetVertexes *wtb)
 	{
 		int a;
 		for (a = 0; a < totvert; a++) {
