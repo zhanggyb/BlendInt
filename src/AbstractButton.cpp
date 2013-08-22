@@ -27,8 +27,8 @@
 namespace BIL {
 
 	AbstractButton::AbstractButton (Widget *parent)
-		: Widget(parent), down_(false), checkable_(false), checked_(false),
-		  background_(RGBAf(0.75f, 0.75f, 0.75f, 1.0)), corner_radius_ (1.0)
+		: Widget(parent), down_(false), checkable_(false),
+		  checked_(false), hover_(false)
 	{
 		set_padding(Tuple4i(2, 2, 2, 2));
 	}
@@ -38,7 +38,7 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	void AbstractButton::SetText (const wstring& text)
+	void AbstractButton::set_text (const wstring& text)
 	{
 		if(text.empty()) {
 			// TODO: draw blank label

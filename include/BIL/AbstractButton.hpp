@@ -41,21 +41,9 @@ namespace BIL {
 
 		virtual ~AbstractButton ();
 
-		void SetText (const wstring& text);
+		void set_text (const wstring& text);
 
-		void setFont (const Font& font);
-
-		// void setCheckable (bool checkable);
-
-		void set_background (const RGBAf& color)
-		{
-			background_ = color;
-		}
-
-		void set_corner_radius (float rad)
-		{
-			corner_radius_ = rad;
-		}
+		void set_font (const Font& font);
 
 		bool down () const {return down_;}
 
@@ -69,6 +57,8 @@ namespace BIL {
 
 	protected:
 
+		virtual void Update () = 0;
+
 		virtual void Render () = 0;
 
 	protected:
@@ -79,11 +69,10 @@ namespace BIL {
 		
 		bool checked_;
 
+		// if the mouse is hover on the button
+		bool hover_;
+
 		TextBuffer text_;
-
-		RGBAf background_;
-
-		float corner_radius_;
 
 	private:	// member functions
 

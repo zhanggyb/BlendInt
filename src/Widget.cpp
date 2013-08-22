@@ -204,10 +204,15 @@ namespace BIL {
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
-	void Widget::DrawWidgetBase (WidgetBase* wtb, WidgetColors* wcol)
+	void Widget::DrawWidgetBase (WidgetBase* wtb)
 	{
-		int j, a;
-	
+		Theme *theme = Theme::instance();
+		if (theme == NULL) return;
+
+		const WidgetColors* wcol = &(theme->themeUI()->wcol_regular);
+
+		int j, a;	
+
 		glEnable(GL_BLEND);
 
 		/* backdrop non AA */
@@ -435,7 +440,7 @@ namespace BIL {
 	void Widget::Render ()
 	{
 		// widgetbase_draw(&wtb, wcol);
-		DrawWidgetBase (&base_, &colors_);
+		DrawWidgetBase (&base_);
 	}
 
 	/* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */

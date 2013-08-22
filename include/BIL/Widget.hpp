@@ -99,7 +99,7 @@ namespace BIL {
 
 		void DrawTrias (const WidgetTriangle* tria);
 
-		void DrawWidgetBase (WidgetBase* wtb, WidgetColors* wcol);
+		void DrawWidgetBase (WidgetBase* wtb);
 		
 		void DrawWidgetBaseOutline (WidgetBase* wtb);
 

@@ -8,7 +8,7 @@
 #include <string>
 #include <stdio.h>
 
-#include "AbstractButtonTest.h"
+#include "ButtonTest.h"
 
 #include <BIL/Application.hpp>
 #include <BIL/Window.hpp>
@@ -18,27 +18,27 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(AbstractButtonTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(ButtonTest);
 
-AbstractButtonTest::AbstractButtonTest ()
+ButtonTest::ButtonTest ()
 {
 
 }
 
-AbstractButtonTest::~AbstractButtonTest ()
+ButtonTest::~ButtonTest ()
 {
 
 }
 
-void AbstractButtonTest::setUp ()
+void ButtonTest::setUp ()
 {
 }
 
-void AbstractButtonTest::tearDown ()
+void ButtonTest::tearDown ()
 {
 }
 
-void AbstractButtonTest::show1 ()
+void ButtonTest::show1 ()
 {
 	Application app;
 
@@ -47,8 +47,9 @@ void AbstractButtonTest::show1 ()
 	app.setMainWindow(&win);
 	app.initialize();
 
-	Button button(L"The Default Value");
+	Button button(L"Button Test");
 	button.set_parent(&win);
+	button.set_round_box_type(RoundBoxAll);
 	button.set_pos(Point(50, 50));
 
 	app.run();

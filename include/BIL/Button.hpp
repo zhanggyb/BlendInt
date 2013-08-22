@@ -40,7 +40,17 @@ namespace BIL {
 
 	protected:
 
+		virtual void Update ();
+
 		virtual void Render ();
+
+	private:
+
+		void DrawButton (WidgetBase* wtb);
+
+	private:
+
+		Widget::WidgetBase base_;
 
 	private:
 		Button (const Button& orig);
