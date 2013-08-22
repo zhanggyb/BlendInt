@@ -14,38 +14,31 @@
 using namespace BIL;
 using namespace std;
 
-class myWidget1: public Widget
+class testWidget: public Widget
 {
 public:
 
-	myWidget1 (Traceable* parent = NULL);
+	testWidget (int type = 0, Traceable* parent = NULL);
 
-	virtual ~myWidget1 ();
-
-protected:
-
-	virtual void Render (void);
-};
-
-class myWidget2: public Widget
-{
-public:
-
-	myWidget2 (Traceable* parent = NULL);
-
-	virtual ~myWidget2 ();
+	virtual ~testWidget ()
+	{
+	}
 
 protected:
 
-	virtual void Render (void);
+	virtual void Render ();
 };
 
 class WidgetTest: public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(WidgetTest);
 
-	CPPUNIT_TEST(mywidget1_show1);
-	CPPUNIT_TEST(mywidget2_show1);
+	CPPUNIT_TEST(widget_default_show);
+	CPPUNIT_TEST(testwidget_show0);
+
+	CPPUNIT_TEST(testwidget_show1);
+	CPPUNIT_TEST(testwidget_show2);
+	CPPUNIT_TEST(testwidget_show3);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -64,9 +57,15 @@ public:
 
 private:
 
-	void mywidget1_show1 ();
+	void widget_default_show ();
 
-	void mywidget2_show1 ();
+	void testwidget_show0 ();
+
+	void testwidget_show1 ();
+
+	void testwidget_show2 ();
+
+	void testwidget_show3 ();
 
 };
 

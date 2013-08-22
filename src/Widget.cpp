@@ -125,7 +125,7 @@ namespace BIL {
 
 		// Set the default padding and margin
 		set_padding(Tuple4i(1, 1, 1, 1));
-		set_margin(Tuple4i(1, 1, 1, 1));
+		set_margin(1, 1, 1, 1);
 	}
 
 	Widget::~Widget ()
@@ -417,7 +417,28 @@ namespace BIL {
 
 	void Widget::Render ()
 	{
+		WidgetBase wtb;
+		float rad;
 
+		wtb.totvert = 0; wtb.halfwayvert = 0;
+		wtb.tria1.tot = 0;
+		wtb.tria2.tot = 0;
+
+		wtb.inner = true;
+		wtb.outline = true;
+		wtb.emboss = true;
+		wtb.shadedir = true;
+
+		/* half rounded */
+		// TODO: define widget_unit by user
+		//rad = 0.2f * U.widget_unit;
+		rad = 0.2f * 20;
+
+		//round_box_edges(&wtb, roundboxalign, rect, rad);
+		CalculateRoundBoxEdges (RoundBoxAll, Rect(pos_, size_), rad, &wtb);
+
+		// widgetbase_draw(&wtb, wcol);
+		DrawWidgetBase (&wtb, &colors_);
 	}
 
 	/* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */

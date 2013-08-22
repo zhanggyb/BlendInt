@@ -37,6 +37,7 @@
 #include <BIL/Rect.hpp>
 #include <BIL/Size.hpp>
 #include <BIL/Point.hpp>
+#include <BIL/Margin.hpp>
 
 #include <BIL/Types.hpp>
 
@@ -100,12 +101,20 @@ namespace BIL {
 			z_ = depth;
 		}
 
-		const Tuple4i& margin () const
+		const Margin& margin () const
 		{
 			return margin_;
 		}
 
-		void set_margin (const Tuple4i& margin)
+		void set_margin (int left, int right, int top, int bottom)
+		{
+			margin_.set_left(left);
+			margin_.set_right(right);
+			margin_.set_top(top);
+			margin_.set_bottom(bottom);
+		}
+
+		void set_margin (const Margin& margin)
 		{
 			margin_ = margin;
 		}
@@ -233,7 +242,7 @@ namespace BIL {
 
 		Tuple4i padding_; /** used when in Layout */
 
-		Tuple4i margin_; /** used when in Layout */
+		Margin margin_; /** used when in Layout */
 
 		RoundBoxType round_box_type_;
 

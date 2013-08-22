@@ -32,7 +32,7 @@ namespace BIL {
 	{
 		// TODO Auto-generated constructor stub
 		size_ = Size(250, 200);
-		set_margin(Tuple4i(1, 1, 1, 1));
+		set_margin(1, 1, 1, 1);
 	}
 
 	Container::~Container ()
