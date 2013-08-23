@@ -95,38 +95,43 @@ namespace BIL {
 
 		virtual ~Glyph ();
 
-		void setCharacter (wchar_t charcode);
+		void set_charcode (wchar_t charcode);
 
 		void setFontType (FontEngine* fontlib);
 
-		const FontEngine* getFontEngine (void) const
+		const FontEngine* lib () const
 		{
-			return _lib;
+			return lib_;
 		}
 
-		unsigned int getDpi (void) const
+		unsigned int dpi () const
 		{
-			return _dpi;
+			return dpi_;
 		}
 
-		unsigned int getFontSize (void) const
+		unsigned int getFontSize () const
 		{
-			return _font.size;
+			return font_.size;
 		}
 
-		unsigned int getGlyphIndex (void) const
+		unsigned int glyph_index () const
 		{
-			return _glyphIndex;
+			return glyph_index_;
 		}
 
-		const Metrics& getMetrics (void) const
+		const Metrics& metrics () const
 		{
-			return _metrics;
+			return metrics_;
 		}
 
-		const Tuple2i& getBox (void) const
+		const Tuple2i& getBox () const
 		{
-			return _cbox;
+			return cbox_;
+		}
+
+		const FT_BBox& outline_box () const
+		{
+			return outline_box_;
 		}
 
 		void Render ();
@@ -156,23 +161,25 @@ namespace BIL {
 	private:
 		/* member variables */
 
-		FontEngine* _lib;
+		FontEngine* lib_;
 
-		wchar_t _charcode;
+		wchar_t charcode_;
 
-		unsigned int _glyphIndex;   // 0 means 'undefined character code'
+		unsigned int glyph_index_;   // 0 means 'undefined character code'
 
-		GLuint _texture;
+		GLuint texture_;
 
-		GLuint _displist;
+		GLuint displist_;
 
-		Font _font;
+		Font font_;
 
-		unsigned int _dpi;
+		unsigned int dpi_;
 
-		Metrics _metrics;
+		Metrics metrics_;
 
-		Tuple2i _cbox;
+		Tuple2i cbox_;
+
+		FT_BBox outline_box_;
 
 	};
 

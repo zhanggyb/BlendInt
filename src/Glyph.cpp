@@ -33,27 +33,27 @@
 namespace BIL {
 
 	Glyph::Glyph (wchar_t charcode, FontEngine* fontlib)
-			: _lib(fontlib), _charcode(0), _glyphIndex(0), _texture(0), _displist(
-			        0), _dpi(96)
+			: lib_(fontlib), charcode_(0), glyph_index_(0), texture_(0), displist_(
+			        0), dpi_(96)
 	{
-		memset(&_metrics, 0, sizeof(Metrics));
+		memset(&metrics_, 0, sizeof(Metrics));
 
 		makeDisplayList();
 	}
 
 	Glyph::Glyph (wchar_t charcode, const Font& font, unsigned int dpi,
 	        FontEngine* fontlib)
-			: _lib(fontlib), _charcode(charcode), _glyphIndex(0), _texture(0), _displist(
-			        0), _font(font), _dpi(dpi)
+			: lib_(fontlib), charcode_(charcode), glyph_index_(0), texture_(0), displist_(
+			        0), font_(font), dpi_(dpi)
 	{
-		memset(&_metrics, 0, sizeof(Metrics));
+		memset(&metrics_, 0, sizeof(Metrics));
 
 		makeDisplayList();
 	}
 
 	Glyph::Glyph (const Glyph& orig)
-			: _lib(NULL), _charcode(0), _glyphIndex(0), _texture(0), _displist(
-			        0), _dpi(96)
+			: lib_(NULL), charcode_(0), glyph_index_(0), texture_(0), displist_(
+			        0), dpi_(96)
 	{
 		// TODO: copy constructor
 	}
@@ -69,36 +69,36 @@ namespace BIL {
 		resetGL();
 	}
 
-	void Glyph::setCharacter (wchar_t charcode)
+	void Glyph::set_charcode (wchar_t charcode)
 	{
 		// if we already create texture and display list for charcode
-		if (_charcode == charcode) {
+		if (charcode_ == charcode) {
 			return;
 		}
 
 		resetGL();
-		_charcode = charcode;
+		charcode_ = charcode;
 
 		makeDisplayList();
 	}
 
 	void Glyph::setFontType (FontEngine* fontlib)
 	{
-		if (_lib == fontlib) {
+		if (lib_ == fontlib) {
 			return;
 		}
 
 		resetGL ();
-		_lib = fontlib;
+		lib_ = fontlib;
 
 		makeDisplayList();
 	}
 
 	void Glyph::Render ()
 	{
-		if (!glIsTexture(_texture))
+		if (!glIsTexture(texture_))
 			return;
-		if (!glIsList(_displist))
+		if (!glIsList(displist_))
 			return;
 
 		glEnable(GL_TEXTURE_2D);
@@ -107,11 +107,11 @@ namespace BIL {
 
 		glMatrixMode(GL_MODELVIEW);
 
-		glTranslatef((float) _metrics.horiBearingX,
-		        (float) _metrics.horiBearingY - (float) _metrics.height, 0);
+		glTranslatef((float) metrics_.horiBearingX,
+		        (float) metrics_.horiBearingY - (float) metrics_.height, 0);
 
-		glBindTexture(GL_TEXTURE_2D, _texture);
-		glCallLists(1, GL_UNSIGNED_BYTE, &_displist);
+		glBindTexture(GL_TEXTURE_2D, texture_);
+		glCallLists(1, GL_UNSIGNED_BYTE, &displist_);
 
 		glPopMatrix();
 
@@ -123,7 +123,7 @@ namespace BIL {
 		FontEngine* fontlib = NULL;
 
 		// if _fonttype is not set, use default font
-		if (_lib == NULL) {
+		if (lib_ == NULL) {
 			FontConfig* fontserv = FontConfig::getService();
 
 			if (fontserv == NULL) {
@@ -136,7 +136,7 @@ namespace BIL {
 			fontlib = new FontEngine(fontserv->getBuffer(),
 			        fontserv->getBufferSize());
 		} else {
-			fontlib = _lib;
+			fontlib = lib_;
 		}
 
 		if (!fontlib->isValid()) {
@@ -144,16 +144,16 @@ namespace BIL {
 			return false;
 		}
 
-		fontlib->setCharSize(_font.size, _dpi);
-		_glyphIndex = fontlib->getCharIndex(_charcode);
-		if (_glyphIndex == 0) {
+		fontlib->setCharSize(font_.size, dpi_);
+		glyph_index_ = fontlib->getCharIndex(charcode_);
+		if (glyph_index_ == 0) {
 			// TODO: if the character code is not supported in the font
 			// file, print a special symbol
 			return false;
 		}
 
 		//bool result = font.loadCharacter(_charcode, FT_LOAD_RENDER);
-		bool result = fontlib->loadGlyph(_glyphIndex);
+		bool result = fontlib->loadGlyph(glyph_index_);
 		if (!result)
 			return false;
 
@@ -179,7 +179,7 @@ namespace BIL {
 
 		if (FT_Get_Glyph(face->glyph, &glyph)) {
 			delete[] fontimage;
-			if (_lib == NULL)
+			if (lib_ == NULL)
 				delete fontlib;
 			return false;
 		}
@@ -187,8 +187,14 @@ namespace BIL {
 		FT_BBox acbox;
 		FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_UNSCALED, &acbox);
 
-		_cbox.vec.x = (acbox.xMax - acbox.xMin) >> 6;
-		_cbox.vec.y = (acbox.yMax - acbox.yMin) >> 6;
+		cbox_.vec.x = (acbox.xMax - acbox.xMin) >> 6;
+		cbox_.vec.y = (acbox.yMax - acbox.yMin) >> 6;
+
+		FT_Outline_Get_CBox (&(face->glyph->outline), &outline_box_);
+		outline_box_.xMin = outline_box_.xMin / 64;
+		outline_box_.xMax = outline_box_.xMax / 64;
+		outline_box_.yMin = outline_box_.yMin / 64;
+		outline_box_.yMax = outline_box_.yMax / 64;
 
 		// Convert the glyph to a bitmap;
 		FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, 0, 1);
@@ -204,8 +210,8 @@ namespace BIL {
 			}
 		}
 
-		glGenTextures(1, &_texture);
-		glBindTexture( GL_TEXTURE_2D, _texture);
+		glGenTextures(1, &texture_);
+		glBindTexture( GL_TEXTURE_2D, texture_);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -217,11 +223,11 @@ namespace BIL {
 
 		delete[] fontimage;
 
-		_displist = glGenLists(1);
+		displist_ = glGenLists(1);
 
-		glNewList(_displist, GL_COMPILE);
+		glNewList(displist_, GL_COMPILE);
 
-		glBindTexture(GL_TEXTURE_2D, _texture);
+		glBindTexture(GL_TEXTURE_2D, texture_);
 
 		float x = (float) bitmap.width / (float) width;
 		float y = (float) bitmap.rows  / (float) rows;
@@ -239,7 +245,7 @@ namespace BIL {
 
 		glEndList();
 
-		if (_lib == NULL) {
+		if (lib_ == NULL) {
 			delete fontlib;
 		}
 
@@ -248,26 +254,26 @@ namespace BIL {
 
 	void Glyph::resetGL (void)
 	{
-		if (glIsList(_displist)) {
-			glDeleteLists(_displist, 1);
+		if (glIsList(displist_)) {
+			glDeleteLists(displist_, 1);
 		}
-		if (glIsTexture(_texture)) {
-			glDeleteTextures(1, &_texture);
+		if (glIsTexture(texture_)) {
+			glDeleteTextures(1, &texture_);
 		}
-		_displist = 0;
-		_texture = 0;
+		displist_ = 0;
+		texture_ = 0;
 	}
 
 	void Glyph::fillMetrics (const FT_Face& face)
 	{
-		_metrics.width = face->glyph->metrics.width / 64;
-		_metrics.height = face->glyph->metrics.height / 64;
-		_metrics.horiBearingX = face->glyph->metrics.horiBearingX / 64;
-		_metrics.horiBearingY = face->glyph->metrics.horiBearingY / 64;
-		_metrics.horiAdvance = face->glyph->metrics.horiAdvance / 64;
-		_metrics.vertBearingX = face->glyph->metrics.vertBearingX / 64;
-		_metrics.vertBearingY = face->glyph->metrics.vertBearingY / 64;
-		_metrics.vertAdvance = face->glyph->metrics.vertAdvance / 64;
+		metrics_.width = face->glyph->metrics.width / 64;
+		metrics_.height = face->glyph->metrics.height / 64;
+		metrics_.horiBearingX = face->glyph->metrics.horiBearingX / 64;
+		metrics_.horiBearingY = face->glyph->metrics.horiBearingY / 64;
+		metrics_.horiAdvance = face->glyph->metrics.horiAdvance / 64;
+		metrics_.vertBearingX = face->glyph->metrics.vertBearingX / 64;
+		metrics_.vertBearingY = face->glyph->metrics.vertBearingY / 64;
+		metrics_.vertAdvance = face->glyph->metrics.vertAdvance / 64;
 	}
 
 } // namespace BIL

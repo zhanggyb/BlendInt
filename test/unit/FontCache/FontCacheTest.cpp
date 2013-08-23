@@ -105,7 +105,7 @@ void FontCacheTest::create4 ()
 		if(glyph == NULL) {
 			result = false;
 		} else {
-			cout << "Glyph Index: " << glyph->getGlyphIndex() << endl;
+			cout << "Glyph Index: " << glyph->glyph_index() << endl;
 		}
 	}
 

@@ -138,12 +138,18 @@ namespace BIL {
 					/* alpha fill */
 					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+					glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+
 					if (hover_) {
 						glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
 								   wcol->inner_highlight.b(), wcol->inner_highlight.a());
-					} else {
-						glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
 					}
+
+					if (down_) {
+						glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
+								   wcol->inner_sel.b(), wcol->inner_sel.a());
+					}
+
 					glEnableClientState(GL_VERTEX_ARRAY);
 
 					for (a = 0; a < vertexes->totvert; a++) {
@@ -156,12 +162,18 @@ namespace BIL {
 					glDisableClientState(GL_VERTEX_ARRAY);
 
 					/* 1/2 solid color */
+				
+					glColor4ub(wcol->inner.r(), wcol->inner.g(),
+							   wcol->inner.b(), 255);
+
 					if (hover_) {
 						glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
 								   wcol->inner_highlight.b(), 255);
-					} else {
-						glColor4ub(wcol->inner.r(), wcol->inner.g(),
-								   wcol->inner.b(), 255);
+					}
+					
+					if (down_) {
+						glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
+								   wcol->inner_sel.b(), 255);
 					}
 
 					for (a = 0; a < vertexes->totvert; a++) {
@@ -176,11 +188,16 @@ namespace BIL {
 				}
 				else {
 					/* simple fill */
+					glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+
 					if (hover_) {
 						glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
 								   wcol->inner_highlight.b(), wcol->inner_highlight.a());
-					} else {
-						glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+					}
+					
+					if (down_) {
+						glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
+								   wcol->inner_sel.b(), wcol->inner_sel.a());
 					}
 
 					glEnableClientState(GL_VERTEX_ARRAY);

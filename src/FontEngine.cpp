@@ -351,8 +351,8 @@ namespace BIL {
 
 		FT_Vector kerning;
 
-		bool result = getKerning(left.getGlyphIndex(),
-		        right.getGlyphIndex(), kerning_mode, &kerning);
+		bool result = getKerning(left.glyph_index(),
+		        right.glyph_index(), kerning_mode, &kerning);
 
 		if (!result)
 			return ret;

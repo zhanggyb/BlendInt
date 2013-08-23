@@ -169,15 +169,15 @@ void GlyphTest::printtext1 ()
 		glTranslatef(20, 20, 0);	// where begin draw text
 
 		a.Render();
-		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(a.metrics().horiAdvance, 0, 0);
 		b.Render();
-		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(b.metrics().horiAdvance, 0, 0);
 		c.Render();
-		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(c.metrics().horiAdvance, 0, 0);
 		d.Render();
-		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(d.metrics().horiAdvance, 0, 0);
 		e.Render();
-		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(e.metrics().horiAdvance, 0, 0);
 		f.Render();
 
 		glfwSwapBuffers(win);
@@ -240,15 +240,15 @@ void GlyphTest::printtext2 ()
 		glTranslatef(20, 20, 0);	// where begin draw text
 
 		a.Render();
-		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(a.metrics().horiAdvance, 0, 0);
 		b.Render();
-		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(b.metrics().horiAdvance, 0, 0);
 		c.Render();
-		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(c.metrics().horiAdvance, 0, 0);
 		d.Render();
-		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(d.metrics().horiAdvance, 0, 0);
 		e.Render();
-		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(e.metrics().horiAdvance, 0, 0);
 		f.Render();
 
 		glfwSwapBuffers(win);
@@ -315,23 +315,23 @@ void GlyphTest::printtext3 ()
 		glTranslatef(20, 20, 0);	// where begin draw text
 
 		a.Render();
-		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(a.metrics().horiAdvance, 0, 0);
 		b.Render();
-		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(b.metrics().horiAdvance, 0, 0);
 		c.Render();
-		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(c.metrics().horiAdvance, 0, 0);
 		d.Render();
-		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(d.metrics().horiAdvance, 0, 0);
 		e.Render();
-		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(e.metrics().horiAdvance, 0, 0);
 		f.Render();
-		glTranslatef(f.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(f.metrics().horiAdvance, 0, 0);
 		g.Render();
-		glTranslatef(g.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(g.metrics().horiAdvance, 0, 0);
 		h.Render();
-		glTranslatef(h.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(h.metrics().horiAdvance, 0, 0);
 		i.Render();
-		glTranslatef(i.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(i.metrics().horiAdvance, 0, 0);
 		j.Render();
 
 		glfwSwapBuffers(win);
@@ -401,23 +401,23 @@ void GlyphTest::printtext4 ()
 		glTranslatef(20, 20, 0);	// where begin draw text
 
 		a.Render();
-		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(a.metrics().horiAdvance, 0, 0);
 		b.Render();
-		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(b.metrics().horiAdvance, 0, 0);
 		c.Render();
-		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(c.metrics().horiAdvance, 0, 0);
 		d.Render();
-		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(d.metrics().horiAdvance, 0, 0);
 		e.Render();
-		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(e.metrics().horiAdvance, 0, 0);
 		f.Render();
-		glTranslatef(f.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(f.metrics().horiAdvance, 0, 0);
 		g.Render();
-		glTranslatef(g.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(g.metrics().horiAdvance, 0, 0);
 		h.Render();
-		glTranslatef(h.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(h.metrics().horiAdvance, 0, 0);
 		i.Render();
-		glTranslatef(i.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(i.metrics().horiAdvance, 0, 0);
 		j.Render();
 
 		glfwSwapBuffers(win);
@@ -453,11 +453,11 @@ void GlyphTest::checkbox1 ()
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	cout << endl;
-	cout << "Metrics of A: width: " << a.getMetrics().width << " height: "
-		 << a.getMetrics().height << endl;
+	cout << "Metrics of A: width: " << a.metrics().width << " height: "
+		 << a.metrics().height << endl;
 	cout << "Box of A: " << a.getBox().vec.x << ", " << a.getBox().vec.y << endl;
-	cout << "Metrics of a: width: " << b.getMetrics().width << " height: "
-		 << b.getMetrics().height << endl;
+	cout << "Metrics of a: width: " << b.metrics().width << " height: "
+		 << b.metrics().height << endl;
 	cout << "Box of a: " << b.getBox().vec.x << ", " << b.getBox().vec.y << endl;
 
 	while (!glfwWindowShouldClose(win)) {
@@ -488,7 +488,7 @@ void GlyphTest::checkbox1 ()
 		glTranslatef(120, 120, 0);	// where begin draw text
 
 		a.Render();
-		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(a.metrics().horiAdvance, 0, 0);
 		b.Render();
 
 		glfwSwapBuffers(win);
@@ -569,15 +569,15 @@ void GlyphTest::checkkerning1 ()
 		glTranslatef(20, 20, 0);	// where begin draw text
 
 		a.Render();
-		glTranslatef(a.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(a.metrics().horiAdvance, 0, 0);
 		b.Render();
-		glTranslatef(b.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(b.metrics().horiAdvance, 0, 0);
 		c.Render();
-		glTranslatef(c.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(c.metrics().horiAdvance, 0, 0);
 		d.Render();
-		glTranslatef(d.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(d.metrics().horiAdvance, 0, 0);
 		e.Render();
-		glTranslatef(e.getMetrics().horiAdvance, 0, 0);
+		glTranslatef(e.metrics().horiAdvance, 0, 0);
 		f.Render();
 
 		glfwSwapBuffers(win);
@@ -586,10 +586,91 @@ void GlyphTest::checkkerning1 ()
 	CPPUNIT_ASSERT(true);
 }
 
-void GlyphTest::create5 ()
+void GlyphTest::checkoutline1 ()
 {
-	Coord3f test(1.0, 1.0, 1.0);
-	Coord3f dist(1.0, 1.0, 1.0);
+	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
+	NULL);
 
-	CPPUNIT_ASSERT(test == dist);
+	if (win == NULL) {
+		CPPUNIT_FAIL("Cannot create glfw window\n");
+	}
+
+	glfwMakeContextCurrent(win);
+
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
+		cerr << "Failed to initilize GLEW" << endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	Glyph a(L'A', Font("Sans", 12), 96);
+	Glyph b(L'b', Font("Sans", 12), 96);
+	Glyph c(L'仁', Font("Sans", 12), 96);
+	Glyph d(L'D', Font("Sans", 12), 96);
+	Glyph e(L'义', Font("Sans", 12), 96);
+	Glyph f(L'f', Font("Sans", 12), 96);
+
+	FontConfig* fontserv = FontConfig::getService();
+	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
+
+	cout << endl;
+	cout << "Outline of a: " << a.outline_box().xMin << " " << a.outline_box().yMin
+			<< " " << a.outline_box().xMax << " " << a.outline_box().yMax << endl;
+	cout << "Outline of b: " << b.outline_box().xMin << " " << b.outline_box().yMin
+			<< " " << b.outline_box().xMax << " " << b.outline_box().yMax << endl;
+	cout << "Outline of c: " << c.outline_box().xMin << " " << c.outline_box().yMin
+			<< " " << c.outline_box().xMax << " " << c.outline_box().yMax << endl;
+	cout << "Outline of d: " << d.outline_box().xMin << " " << d.outline_box().yMin
+			<< " " << d.outline_box().xMax << " " << d.outline_box().yMax << endl;
+	cout << "Outline of e: " << e.outline_box().xMin << " " << e.outline_box().yMin
+			<< " " << e.outline_box().xMax << " " << e.outline_box().yMax << endl;
+	cout << "Outline of f: " << f.outline_box().xMin << " " << f.outline_box().yMin
+			<< " " << f.outline_box().xMax << " " << f.outline_box().yMax << endl;
+
+
+	while (!glfwWindowShouldClose(win)) {
+
+		int width, height;
+
+		glfwGetWindowSize(win, &width, &height);
+
+		glClearColor(0.40, 0.40, 0.45, 1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glColor4f(1.00, 1.00, 1.00, 1.00);
+
+		// enable anti-alias
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_POINT_SMOOTH);
+		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_POLYGON_SMOOTH);
+
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		glTranslatef(20, 20, 0);	// where begin draw text
+
+		a.Render();
+		glTranslatef(a.metrics().horiAdvance, 0, 0);
+		b.Render();
+		glTranslatef(b.metrics().horiAdvance, 0, 0);
+		c.Render();
+		glTranslatef(c.metrics().horiAdvance, 0, 0);
+		d.Render();
+		glTranslatef(d.metrics().horiAdvance, 0, 0);
+		e.Render();
+		glTranslatef(e.metrics().horiAdvance, 0, 0);
+		f.Render();
+
+		glfwSwapBuffers(win);
+		glfwPollEvents();
+	}
+	CPPUNIT_ASSERT(true);
 }

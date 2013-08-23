@@ -66,15 +66,48 @@ namespace BIL {
 		resize (box.vec.x, box.vec.y);
 	}
 
+	void AbstractButton::MousePressEvent (MouseEvent* event)
+	{
+		if (!size_.Contains(event->pos()))
+		{
+			event->Ignore();
+			return;
+		}
+
+		if (checkable_) {
+			checked_ = !checked_;
+			// TODO: emit check event
+		} else {
+			down_ = true;
+			// TODO: emit click event
+		}
+	}
+
+	void AbstractButton::MouseReleaseEvent(MouseEvent* event)
+	{
+		down_ = false;
+		
+		if (! size_.Contains(event->pos()))
+		{
+			event->Ignore();
+			return;
+		}
+
+		if (checkable_) {
+			// TODO: add code for checkable
+		} else {
+
+		}
+	}
+
 	void AbstractButton::MouseMoveEvent (MouseEvent* event)
 	{
-		if (event->pos().x() >= 0 && event->pos().y() >= 0 &&
-			event->pos().x() <= size_.width() && event->pos().y() <= size_.height())
-		{
+		if (size_.Contains(event->pos())) {
 			hover_ = true;
             event->Accept();
 		} else {
 			hover_ = false;
+			down_ = false;
 		}
 	}
 

@@ -91,7 +91,7 @@ namespace BIL {
 				if(next != text_.end()) {
 					kerning = fontcache_->getKerning(*it, *next);
 				}
-				line_width = glyph->getMetrics().horiAdvance + kerning.vec.x + line_width;
+				line_width = glyph->metrics().horiAdvance + kerning.vec.x + line_width;
 			}
 		}
 
@@ -136,7 +136,7 @@ namespace BIL {
 			glyph = fontcache_->query(*it);
 			if (glyph != NULL) {
 				glyph->Render();
-				glTranslatef(glyph->getMetrics().horiAdvance, 0, 0);
+				glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 			}
 		}
 

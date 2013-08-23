@@ -22,6 +22,9 @@
 #ifndef _BIL_SIZE_HPP_
 #define _BIL_SIZE_HPP_
 
+#include <BIL/Point.hpp>
+#include <BIL/Coord.hpp>
+
 namespace BIL {
 
 	/**
@@ -61,6 +64,28 @@ namespace BIL {
 		bool IsValid () const
 		{
 			return width_ > 0 && height_ > 0;
+		}
+
+		bool Contains (const Point& pos)
+		{
+			if (pos.x() < 0 || pos.y() < 0 ||
+				pos.x() > width_ || pos.y() > height_)
+			{
+				return false;
+			}
+			
+			return true;
+		}
+
+		bool Contains (const Coord2f& pos)
+		{
+			if (pos.x() < 0 || pos.y() < 0 ||
+				pos.x() > width_ || pos.y() > height_)
+			{
+				return false;
+			}
+			
+			return true;
 		}
 
 		int width () const {return width_;}
