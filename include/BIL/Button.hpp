@@ -44,15 +44,9 @@ namespace BIL {
 
 		virtual void Render ();
 
-		virtual void MouseMoveEvent (MouseEvent* event);
-
 	private:
 
-		void DrawButton (WidgetVertexes* wtb);
-
-	private:
-
-		WidgetVertexes base_;
+		void DrawButton (WidgetVertexes* vertexes);
 
 	private:
 		Button (const Button& orig);

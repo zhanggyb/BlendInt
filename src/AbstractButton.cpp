@@ -66,4 +66,16 @@ namespace BIL {
 		resize (box.vec.x, box.vec.y);
 	}
 
+	void AbstractButton::MouseMoveEvent (MouseEvent* event)
+	{
+		if (event->pos().x() >= 0 && event->pos().y() >= 0 &&
+			event->pos().x() <= size_.width() && event->pos().y() <= size_.height())
+		{
+			hover_ = true;
+            event->Accept();
+		} else {
+			hover_ = false;
+		}
+	}
+
 } /* namespace BIL */

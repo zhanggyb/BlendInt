@@ -87,6 +87,32 @@ namespace BIL {
 		virtual ~Color ()
 		{}
 
+		void HighlightFrom (const Color& orig)
+		{
+			red_ = orig.r() >= 240 ? 255 : (orig.r() + 15);
+			green_ = orig.g() >= 240 ? 255 : (orig.g() + 15);
+			blue_ = orig.b() >= 240 ? 255 : (orig.b() + 15);
+			alpha_ = orig.a();
+		}
+
+		void HighlightFrom (uint32_t color)
+		{
+			if (color > 0xFFFFFF) {
+				alpha_ = color & 0xFF;
+				blue_ = (color >> 8) & 0xFF;
+				green_ = (color >> 16) & 0xFF;
+				red_ = (color >> 24) & 0xFF;
+			} else {
+				alpha_ = 0xFF;
+				blue_ = color & 0xFF;
+				green_ = (color >> 8) & 0xFF;
+				red_ = (color >> 16) & 0xFF;
+			}
+			red_ = red_ >= 240 ? 255 : (red_ + 15);
+			green_ = green_ >= 240 ? 255 : (green_ + 15);
+			blue_ = blue_ >= 240 ? 255 : (blue_ + 15);
+		}
+
 		void set_color (uint32_t color)
 		{
 			if (color > 0xFFFFFF) {
@@ -214,6 +240,19 @@ namespace BIL {
 
 	};
 
+	/*
+	Color operator + (const Color& color1, const Color& color2)
+	{
+		Color color;
+
+		color.set_red (correct_in_scope(color1.r() + color2.r(), 0, 255));
+		color.set_green (correct_in_scope(color1.g() + color2.g(), 0, 255));
+		color.set_blue (correct_in_scope(color1.b() + color2.b(), 0, 255));
+		color.set_alpha (correct_in_scope(color1.a() + color2.a(), 0, 255));
+
+		return color;
+	}
+	*/
 }
 
 #endif	// _BIL_COLOR_H_

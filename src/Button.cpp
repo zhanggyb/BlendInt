@@ -74,12 +74,12 @@ namespace BIL {
 		rad = 0.2f * 20;
 
 		//round_box_edges(&wtb, roundboxalign, rect, rad);
-		CalculateRoundBoxEdges (round_box_type_, Rect(pos_, size_), rad, &base_);
+		CalculateRoundBoxEdges (round_box_type_, Rect(pos_, size_), rad, &appearance_);
 	}
 
 	void Button::Render ()
 	{
-		DrawButton (&base_);
+		DrawButton (&appearance_);
 
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -98,27 +98,19 @@ namespace BIL {
 		//glDisable(GL_BLEND);
 	}
 
-	void Button::DrawButton (WidgetVertexes* wtb)
+	void Button::DrawButton (WidgetVertexes* vertexes)
 	{
 		Theme *theme = Theme::instance();
 		if (theme == NULL) return;
 
 		const WidgetColors* wcol = &(theme->themeUI()->wcol_tool);
 
-		// TODO: won't change other colors if theme changed, use a static one for render speed
-		if (hover_) {
-			colors_state_.inner.set_red (wcol->inner[0] >= 240 ? 255 : wcol->inner[0] + 15);
-			colors_state_.inner.set_green (wcol->inner[1] >= 240 ? 255 : wcol->inner[1] + 15);
-			colors_state_.inner.set_blue (wcol->inner[2] >= 240 ? 255 : wcol->inner[2] + 15);
-			wcol = &colors_state_;
-		}
-
 		int j, a;	
 
 		glEnable(GL_BLEND);
 
 		/* backdrop non AA */
-		if (wtb->inner) {
+		if (vertexes->inner) {
 			if (wcol->shaded == 0) {
 				if (wcol->alpha_check) {
 					float inner_v_half[WIDGET_SIZE_MAX][2];
@@ -127,8 +119,8 @@ namespace BIL {
 					/* dark checkers */
 					glColor4ub(UI_TRANSP_DARK, UI_TRANSP_DARK, UI_TRANSP_DARK, 255);
 					glEnableClientState(GL_VERTEX_ARRAY);
-					glVertexPointer(2, GL_FLOAT, 0, wtb->inner_v);
-					glDrawArrays(GL_POLYGON, 0, wtb->totvert);
+					glVertexPointer(2, GL_FLOAT, 0, vertexes->inner_v);
+					glDrawArrays(GL_POLYGON, 0, vertexes->totvert);
 					glDisableClientState(GL_VERTEX_ARRAY);
 
 					/* light checkers */
@@ -137,8 +129,8 @@ namespace BIL {
 					glPolygonStipple(checker_stipple_sml);
 
 					glEnableClientState(GL_VERTEX_ARRAY);
-					glVertexPointer(2, GL_FLOAT, 0, wtb->inner_v);
-					glDrawArrays(GL_POLYGON, 0, wtb->totvert);
+					glVertexPointer(2, GL_FLOAT, 0, vertexes->inner_v);
+					glDrawArrays(GL_POLYGON, 0, vertexes->totvert);
 					glDisableClientState(GL_VERTEX_ARRAY);
 
 					glDisable(GL_POLYGON_STIPPLE);
@@ -146,39 +138,54 @@ namespace BIL {
 					/* alpha fill */
 					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-					glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+					if (hover_) {
+						glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
+								   wcol->inner_highlight.b(), wcol->inner_highlight.a());
+					} else {
+						glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+					}
 					glEnableClientState(GL_VERTEX_ARRAY);
 
-					for (a = 0; a < wtb->totvert; a++) {
-						x_mid += wtb->inner_v[a][0];
+					for (a = 0; a < vertexes->totvert; a++) {
+						x_mid += vertexes->inner_v[a][0];
 					}
-					x_mid /= wtb->totvert;
+					x_mid /= vertexes->totvert;
 
-					glVertexPointer(2, GL_FLOAT, 0, wtb->inner_v);
-					glDrawArrays(GL_POLYGON, 0, wtb->totvert);
+					glVertexPointer(2, GL_FLOAT, 0, vertexes->inner_v);
+					glDrawArrays(GL_POLYGON, 0, vertexes->totvert);
 					glDisableClientState(GL_VERTEX_ARRAY);
 
 					/* 1/2 solid color */
-					glColor4ub(wcol->inner.r(), wcol->inner.g(),
-											wcol->inner.b(), 255);
+					if (hover_) {
+						glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
+								   wcol->inner_highlight.b(), 255);
+					} else {
+						glColor4ub(wcol->inner.r(), wcol->inner.g(),
+								   wcol->inner.b(), 255);
+					}
 
-					for (a = 0; a < wtb->totvert; a++) {
-						inner_v_half[a][0] = std::min(wtb->inner_v[a][0], x_mid);
-						inner_v_half[a][1] = wtb->inner_v[a][1];
+					for (a = 0; a < vertexes->totvert; a++) {
+						inner_v_half[a][0] = std::min(vertexes->inner_v[a][0], x_mid);
+						inner_v_half[a][1] = vertexes->inner_v[a][1];
 					}
 
 					glEnableClientState(GL_VERTEX_ARRAY);
 					glVertexPointer(2, GL_FLOAT, 0, inner_v_half);
-					glDrawArrays(GL_POLYGON, 0, wtb->totvert);
+					glDrawArrays(GL_POLYGON, 0, vertexes->totvert);
 					glDisableClientState(GL_VERTEX_ARRAY);
 				}
 				else {
 					/* simple fill */
-					glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+					if (hover_) {
+						glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
+								   wcol->inner_highlight.b(), wcol->inner_highlight.a());
+					} else {
+						glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+					}
 
 					glEnableClientState(GL_VERTEX_ARRAY);
-					glVertexPointer(2, GL_FLOAT, 0, wtb->inner_v);
-					glDrawArrays(GL_POLYGON, 0, wtb->totvert);
+					glVertexPointer(2, GL_FLOAT, 0, vertexes->inner_v);
+					glDrawArrays(GL_POLYGON, 0, vertexes->totvert);
 					glDisableClientState(GL_VERTEX_ARRAY);
 				}
 			}
@@ -191,15 +198,15 @@ namespace BIL {
 				Color::ConvertShadeColor(wcol->inner, wcol->shadetop, wcol->shadedown, &col1, &col2);
 
 				glShadeModel(GL_SMOOTH);
-				for (a = 0; a < wtb->totvert; a++, col_pt += 4) {
-					Color::ConvertRoundBoxShadeColor(col1, col2, wtb->inner_uv[a][wtb->shadedir], col_pt);
+				for (a = 0; a < vertexes->totvert; a++, col_pt += 4) {
+					Color::ConvertRoundBoxShadeColor(col1, col2, vertexes->inner_uv[a][vertexes->shadedir], col_pt);
 				}
 
 				glEnableClientState(GL_VERTEX_ARRAY);
 				glEnableClientState(GL_COLOR_ARRAY);
-				glVertexPointer(2, GL_FLOAT, 0, wtb->inner_v);
+				glVertexPointer(2, GL_FLOAT, 0, vertexes->inner_v);
 				glColorPointer(4, GL_UNSIGNED_BYTE, 0, col_array);
-				glDrawArrays(GL_POLYGON, 0, wtb->totvert);
+				glDrawArrays(GL_POLYGON, 0, vertexes->totvert);
 				glDisableClientState(GL_VERTEX_ARRAY);
 				glDisableClientState(GL_COLOR_ARRAY);
 
@@ -208,7 +215,7 @@ namespace BIL {
 		}
 	
 		/* for each AA step */
-		if (wtb->outline) {
+		if (vertexes->outline) {
 			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
 			float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 
@@ -217,10 +224,10 @@ namespace BIL {
 										   wcol->outline[2],
 										   wcol->outline[3] / WIDGET_AA_JITTER};
 
-			verts_to_quad_strip(wtb->totvert, quad_strip, wtb);
+			verts_to_quad_strip(vertexes->totvert, quad_strip, vertexes);
 
-			if (wtb->emboss) {
-				verts_to_quad_strip_open(wtb->halfwayvert, quad_strip_emboss, wtb);
+			if (vertexes->emboss) {
+				verts_to_quad_strip_open(vertexes->halfwayvert, quad_strip_emboss, vertexes);
 			}
 
 			glEnableClientState(GL_VERTEX_ARRAY);
@@ -232,14 +239,14 @@ namespace BIL {
 				glColor4ubv(tcol);
 
 				glVertexPointer(2, GL_FLOAT, 0, quad_strip);
-				glDrawArrays(GL_QUAD_STRIP, 0, wtb->totvert * 2 + 2);
+				glDrawArrays(GL_QUAD_STRIP, 0, vertexes->totvert * 2 + 2);
 		
 				/* emboss bottom shadow */
-				if (wtb->emboss) {
+				if (vertexes->emboss) {
 					glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 
 					glVertexPointer(2, GL_FLOAT, 0, quad_strip_emboss);
-					glDrawArrays(GL_QUAD_STRIP, 0, wtb->halfwayvert * 2);
+					glDrawArrays(GL_QUAD_STRIP, 0, vertexes->halfwayvert * 2);
 				}
 			
 				glTranslatef(-1.0f * jit[j][0], -1.0f * jit[j][1], 0.0f);
@@ -249,7 +256,7 @@ namespace BIL {
 		}
 	
 		/* decoration */
-		if (wtb->tria1.tot || wtb->tria2.tot) {
+		if (vertexes->tria1.tot || vertexes->tria2.tot) {
 			const unsigned char tcol[4] = {wcol->item[0],
 										   wcol->item[1],
 										   wcol->item[2],
@@ -258,13 +265,13 @@ namespace BIL {
 			for (j = 0; j < WIDGET_AA_JITTER; j++) {
 				glTranslatef(1.0f * jit[j][0], 1.0f * jit[j][1], 0.0f);
 
-				if (wtb->tria1.tot) {
+				if (vertexes->tria1.tot) {
 					glColor4ubv(tcol);
-					DrawTrias(&wtb->tria1);
+					DrawTrias(&vertexes->tria1);
 				}
-				if (wtb->tria2.tot) {
+				if (vertexes->tria2.tot) {
 					glColor4ubv(tcol);
-					DrawTrias(&wtb->tria2);
+					DrawTrias(&vertexes->tria2);
 				}
 		
 				glTranslatef(-1.0f * jit[j][0], -1.0f * jit[j][1], 0.0f);
@@ -272,18 +279,6 @@ namespace BIL {
 		}
 
 		glDisable(GL_BLEND);
-	}
-
-	void Button::MouseMoveEvent (MouseEvent* event)
-	{
-		if (event->pos().x() >= 0 && event->pos().y() >= 0 &&
-				event->pos().x() <= size_.width() && event->pos().y() <= size_.height())
-		{
-			hover_ = true;
-            event->Accept();
-		} else {
-			hover_ = false;
-		}
 	}
 
 }

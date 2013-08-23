@@ -66,6 +66,8 @@ namespace BIL {
 
 		virtual void Render () = 0;
 
+		virtual void MouseMoveEvent (MouseEvent* event);
+
 	protected:
 
 		bool down_;

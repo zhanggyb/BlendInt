@@ -35,6 +35,7 @@ namespace BIL {
 		Color item;				// Item
 		Color inner;			// Inner
 		Color inner_sel;	// Inner Selected
+		Color inner_highlight;	// Color when highlight or mouse hover
 		Color text;				// Text
 		Color text_sel;		// Text Selected
 		bool shaded;			// Is Shaded
@@ -76,12 +77,23 @@ namespace BIL {
 		struct ThemeUI
 		{
 			/* Interface Elements (buttons, menus, icons) */
-			WidgetColors wcol_regular, wcol_tool, wcol_text;
-			WidgetColors wcol_radio, wcol_option, wcol_toggle;
-			WidgetColors wcol_num, wcol_numslider;
-			WidgetColors wcol_menu, wcol_pulldown, wcol_menu_back,
-			        wcol_menu_item, wcol_tooltip;
-			WidgetColors wcol_box, wcol_scroll, wcol_progress, wcol_list_item;
+			WidgetColors wcol_regular;
+			WidgetColors wcol_tool;
+			WidgetColors wcol_text;
+			WidgetColors wcol_radio;
+			WidgetColors wcol_option;
+			WidgetColors wcol_toggle;
+			WidgetColors wcol_num;
+			WidgetColors wcol_numslider;
+			WidgetColors wcol_menu;
+			WidgetColors wcol_pulldown;
+			WidgetColors wcol_menu_back;
+			WidgetColors wcol_menu_item;
+			WidgetColors wcol_tooltip;
+			WidgetColors wcol_box;
+			WidgetColors wcol_scroll;
+			WidgetColors wcol_progress;
+			WidgetColors wcol_list_item;
 
 			WidgetStateColors wcol_state;
 

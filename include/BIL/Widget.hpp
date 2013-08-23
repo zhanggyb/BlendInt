@@ -95,8 +95,9 @@ namespace BIL {
 
 		void DrawTrias (const DecorationVertexes* tria);
 
-		void DrawWidgetBase (WidgetVertexes* wtb);
 		
+		void DrawAppearance (WidgetVertexes* vertexes);
+
 		void DrawWidgetBaseOutline (WidgetVertexes* wtb);
 
 	protected:
@@ -151,10 +152,10 @@ namespace BIL {
 
 	protected:
 
-		WidgetVertexes base_;
+		WidgetVertexes appearance_;
 
 		// converted colors for state
-		WidgetColors colors_state_;
+		//WidgetColors colors_state_;
 
 		/*
 		  inline void widget_verts_to_quad_strip(Base *wtb, const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
