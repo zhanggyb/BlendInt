@@ -33,26 +33,26 @@
 namespace BIL {
 
 	Glyph::Glyph (wchar_t charcode, FontEngine* fontlib)
-			: lib_(fontlib), charcode_(0), glyph_index_(0), texture_(0), displist_(
+			: font_engine_(fontlib), charcode_(0), glyph_index_(0), texture_(0), displist_(
 			        0), dpi_(96)
 	{
 		memset(&metrics_, 0, sizeof(Metrics));
 
-		makeDisplayList();
+		MakeDisplayList();
 	}
 
 	Glyph::Glyph (wchar_t charcode, const Font& font, unsigned int dpi,
 	        FontEngine* fontlib)
-			: lib_(fontlib), charcode_(charcode), glyph_index_(0), texture_(0), displist_(
+			: font_engine_(fontlib), charcode_(charcode), glyph_index_(0), texture_(0), displist_(
 			        0), font_(font), dpi_(dpi)
 	{
 		memset(&metrics_, 0, sizeof(Metrics));
 
-		makeDisplayList();
+		MakeDisplayList();
 	}
 
 	Glyph::Glyph (const Glyph& orig)
-			: lib_(NULL), charcode_(0), glyph_index_(0), texture_(0), displist_(
+			: font_engine_(NULL), charcode_(0), glyph_index_(0), texture_(0), displist_(
 			        0), dpi_(96)
 	{
 		// TODO: copy constructor
@@ -66,7 +66,7 @@ namespace BIL {
 
 	Glyph::~Glyph ()
 	{
-		resetGL();
+		ResetGL();
 	}
 
 	void Glyph::set_charcode (wchar_t charcode)
@@ -76,22 +76,22 @@ namespace BIL {
 			return;
 		}
 
-		resetGL();
+		ResetGL();
 		charcode_ = charcode;
 
-		makeDisplayList();
+		MakeDisplayList();
 	}
 
-	void Glyph::setFontType (FontEngine* fontlib)
+	void Glyph::set_font_engine (FontEngine* fontlib)
 	{
-		if (lib_ == fontlib) {
+		if (font_engine_ == fontlib) {
 			return;
 		}
 
-		resetGL ();
-		lib_ = fontlib;
+		ResetGL ();
+		font_engine_ = fontlib;
 
-		makeDisplayList();
+		MakeDisplayList();
 	}
 
 	void Glyph::Render ()
@@ -118,12 +118,29 @@ namespace BIL {
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	bool Glyph::makeDisplayList (void)
+	Rect Glyph::OutlineBox ()
+	{
+		if (!font_engine_) return Rect();
+
+		FT_Face face = font_engine_->getFontFace();
+
+		FT_BBox outline_box;
+		FT_Outline_Get_CBox (&(face->glyph->outline), &outline_box);
+		outline_box.xMin = outline_box.xMin / 64;
+		outline_box.xMax = outline_box.xMax / 64;
+		outline_box.yMin = outline_box.yMin / 64;
+		outline_box.yMax = outline_box.yMax / 64;
+
+		return Rect (Point(outline_box.xMin, outline_box.yMin),
+				Point(outline_box.xMax, outline_box.yMax));
+	}
+
+	bool Glyph::MakeDisplayList (void)
 	{
 		FontEngine* fontlib = NULL;
 
 		// if _fonttype is not set, use default font
-		if (lib_ == NULL) {
+		if (font_engine_ == NULL) {
 			FontConfig* fontserv = FontConfig::getService();
 
 			if (fontserv == NULL) {
@@ -133,11 +150,11 @@ namespace BIL {
 			if (!fontserv->isInitialized()) {
 				return false;
 			}
-			fontlib = new FontEngine(fontserv->getBuffer(),
+			font_engine_ = new FontEngine(fontserv->getBuffer(),
 			        fontserv->getBufferSize());
-		} else {
-			fontlib = lib_;
 		}
+
+		fontlib = font_engine_;
 
 		if (!fontlib->isValid()) {
 			cerr << "Cannot get Font" << endl;
@@ -159,7 +176,7 @@ namespace BIL {
 
 		FT_Face face = fontlib->getFontFace();
 
-		fillMetrics(face);
+		FillMetrics(face);
 
 		result = fontlib->renderGlyph();
 		if (!result)
@@ -179,7 +196,7 @@ namespace BIL {
 
 		if (FT_Get_Glyph(face->glyph, &glyph)) {
 			delete[] fontimage;
-			if (lib_ == NULL)
+			if (font_engine_ == NULL)
 				delete fontlib;
 			return false;
 		}
@@ -189,12 +206,6 @@ namespace BIL {
 
 		cbox_.vec.x = (acbox.xMax - acbox.xMin) >> 6;
 		cbox_.vec.y = (acbox.yMax - acbox.yMin) >> 6;
-
-		FT_Outline_Get_CBox (&(face->glyph->outline), &outline_box_);
-		outline_box_.xMin = outline_box_.xMin / 64;
-		outline_box_.xMax = outline_box_.xMax / 64;
-		outline_box_.yMin = outline_box_.yMin / 64;
-		outline_box_.yMax = outline_box_.yMax / 64;
 
 		// Convert the glyph to a bitmap;
 		FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, 0, 1);
@@ -245,14 +256,14 @@ namespace BIL {
 
 		glEndList();
 
-		if (lib_ == NULL) {
+		if (font_engine_ == NULL) {
 			delete fontlib;
 		}
 
 		return true;
 	}
 
-	void Glyph::resetGL (void)
+	void Glyph::ResetGL (void)
 	{
 		if (glIsList(displist_)) {
 			glDeleteLists(displist_, 1);
@@ -264,7 +275,7 @@ namespace BIL {
 		texture_ = 0;
 	}
 
-	void Glyph::fillMetrics (const FT_Face& face)
+	void Glyph::FillMetrics (const FT_Face& face)
 	{
 		metrics_.width = face->glyph->metrics.width / 64;
 		metrics_.height = face->glyph->metrics.height / 64;

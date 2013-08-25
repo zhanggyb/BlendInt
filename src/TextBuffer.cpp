@@ -67,11 +67,11 @@ namespace BIL {
 		text_.push_back(charcode);
 	}
 
-	Tuple2ui TextBuffer::calculateBox (void)
+	Size TextBuffer::CalculateOutlineBoxSize ()
 	{
 		wstring::const_iterator it;
 		wstring::const_iterator next;
-		Tuple2ui box;
+		Size box;
 		Tuple2l kerning;
 		Glyph* glyph = NULL;
 
@@ -81,7 +81,7 @@ namespace BIL {
 		for (it = text_.begin(); it != text_.end(); it++) {
 			if (*it == '\n') {
 				line++;
-				box.vec.x = box.vec.x > line_width ? box.vec.x : line_width;
+				box.set_width (box.width() > line_width ? box.width() : line_width);
 			}
 
 			glyph = fontcache_->query(*it);
@@ -95,8 +95,8 @@ namespace BIL {
 			}
 		}
 
-		box.vec.x = box.vec.x > line_width ? box.vec.x : line_width;
-		box.vec.y = fontcache_->getHeight() * line + (line - 1) * rowspacing_;
+		box.set_width (box.width() > line_width ? box.width() : line_width);
+		box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * rowspacing_));
 
 		return box;
 	}

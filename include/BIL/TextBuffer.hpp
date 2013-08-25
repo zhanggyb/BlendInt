@@ -29,6 +29,7 @@
 #include <BIL/FontCache.hpp>
 #include <BIL/Color.hpp>
 #include <BIL/Coord.hpp>
+#include <BIL/Size.hpp>
 
 using namespace boost;
 using namespace std;
@@ -99,7 +100,7 @@ namespace BIL {
 		 * @brief Calculate and return the box contains the text
 		 * @return (width,height)
 		 */
-		Tuple2ui calculateBox ();
+		Size CalculateOutlineBoxSize ();
 
 	private:	// member variables
 

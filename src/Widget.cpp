@@ -456,7 +456,7 @@ namespace BIL {
 											 int roundboxalign,
 											 float step)
 	{
-		if(!rect.valid()) return 0;
+		if(!rect.IsValid()) return 0;
 
 		float vec[WIDGET_CURVE_RESOLU][2];
 		float minx, miny, maxx, maxy;

@@ -42,7 +42,7 @@ namespace BIL {
 
 		}
 
-		Size (int width, int height)
+		Size (unsigned int width, unsigned int height)
 				: width_(width), height_(height)
 		{
 
@@ -69,7 +69,7 @@ namespace BIL {
 		bool Contains (const Point& pos)
 		{
 			if (pos.x() < 0 || pos.y() < 0 ||
-				pos.x() > width_ || pos.y() > height_)
+				pos.x() > static_cast<int>(width_) || pos.y() > static_cast<int>(height_))
 			{
 				return false;
 			}
@@ -88,15 +88,19 @@ namespace BIL {
 			return true;
 		}
 
-		int width () const {return width_;}
+		unsigned int width () const {return width_;}
 
-		void set_width (int width) {width_ = width;}
+		void set_width (unsigned int width) {width_ = width;}
 
-		int height () const {return height_;}
+		void set_width (int width) {width_ = static_cast<unsigned int>(width);}
 
-		void set_height (int height) {height_ = height;}
+		unsigned int height () const {return height_;}
 
-		int& operator [] (int index)
+		void set_height (unsigned int height) {height_ = height;}
+
+		void set_height (int height) {height_ = static_cast<unsigned int>(height);}
+
+		unsigned int& operator [] (int index)
 		{
 			if(index <= 0) return width_;
 
@@ -104,8 +108,8 @@ namespace BIL {
 		}
 
 	private:
-		int width_;
-		int height_;
+		unsigned int width_;
+		unsigned int height_;
 	};
 
 }

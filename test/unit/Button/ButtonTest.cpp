@@ -14,6 +14,7 @@
 #include <BIL/Window.hpp>
 #include <BIL/Label.hpp>
 #include <BIL/Button.hpp>
+#include <BIL/ToggleButton.hpp>
 
 using namespace BIL;
 using namespace std;
@@ -52,6 +53,26 @@ void ButtonTest::show1 ()
 	button.set_parent(&win);
 	button.set_round_box_type(RoundBoxAll);
 	button.set_pos(Point(50, 50));
+
+	app.run();
+
+	CPPUNIT_ASSERT(true);
+}
+
+void ButtonTest::toggle_button_show1()
+{
+	Application app;
+
+	Window win(640, 480, "640 x 480 Window", NULL, NULL);
+
+	app.setMainWindow(&win);
+	app.initialize();
+
+	ToggleButton button(L"Button Test");
+	button.set_font(Font("Droid Sans"));
+	button.set_parent(&win);
+	button.set_round_box_type(RoundBoxAll);
+	button.set_pos(Point(100, 100));
 
 	app.run();
 

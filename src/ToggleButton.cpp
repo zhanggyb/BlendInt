@@ -21,8 +21,7 @@
 
 #include <GL/glew.h>
 
-#include <BIL/Button.hpp>
-#include <iostream>
+#include <BIL/ToggleButton.hpp>
 
 namespace BIL {
 
@@ -47,27 +46,28 @@ namespace BIL {
 			0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
 		};
 
-	Button::Button (Widget* parent)
-		: AbstractButton(parent)
+	ToggleButton::ToggleButton(Widget* parent)
+	: AbstractButton(parent)
 	{
-
+		set_checkable(true);
 	}
 
-	Button::Button (const wstring& text, Widget* parent)
-		: AbstractButton(parent)
+	ToggleButton::ToggleButton(const String& text, Widget* parent)
+	: AbstractButton(parent)
 	{
+		set_checkable(true);
 		set_text (text);
 	}
 
-	Button::~Button ()
+	ToggleButton::~ToggleButton()
 	{
 
 	}
 
-	void Button::Update ()
+	void ToggleButton::Update ()
 	{
 		if (!size_.IsValid()) return;
-		
+
 		float rad;
 
 		/* half rounded */
@@ -79,7 +79,7 @@ namespace BIL {
 		CalculateRoundBoxEdges (round_box_type_, Rect(pos_, size_), rad, &appearance_);
 	}
 
-	void Button::Render ()
+	void ToggleButton::Render ()
 	{
 		DrawButton (&appearance_);
 
@@ -100,14 +100,14 @@ namespace BIL {
 		//glDisable(GL_BLEND);
 	}
 
-	void Button::DrawButton (WidgetVertexes* vertexes)
+	void ToggleButton::DrawButton(WidgetVertexes* vertexes)
 	{
 		Theme *theme = Theme::instance();
 		if (theme == NULL) return;
 
-		const WidgetColors* wcol = &(theme->themeUI()->wcol_tool);
+		const WidgetColors* wcol = &(theme->themeUI()->wcol_toggle);
 
-		int j, a;	
+		int j, a;
 
 		glEnable(GL_BLEND);
 
@@ -140,16 +140,24 @@ namespace BIL {
 					/* alpha fill */
 					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-					glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
-
-					if (hover_) {
-						glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
-								   wcol->inner_highlight.b(), wcol->inner_highlight.a());
-					}
-
-					if (down_) {
-						glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
-								   wcol->inner_sel.b(), wcol->inner_sel.a());
+					if (checkable_) {
+						if (checked_) {
+							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
+									   wcol->inner_sel.b(), wcol->inner_sel.a());
+						} else {
+							glColor4ub(wcol->inner.r(), wcol->inner.g(),
+									   wcol->inner.b(), wcol->inner.a());
+						}
+					} else {
+						if (hover_) {
+							glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
+									   wcol->inner_highlight.b(), wcol->inner_highlight.a());
+						} else if (down_) {
+							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
+									   wcol->inner_sel.b(), wcol->inner_sel.a());
+						} else {
+							glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+						}
 					}
 
 					glEnableClientState(GL_VERTEX_ARRAY);
@@ -164,18 +172,26 @@ namespace BIL {
 					glDisableClientState(GL_VERTEX_ARRAY);
 
 					/* 1/2 solid color */
-				
-					glColor4ub(wcol->inner.r(), wcol->inner.g(),
-							   wcol->inner.b(), 255);
 
-					if (hover_) {
-						glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
-								   wcol->inner_highlight.b(), 255);
-					}
-					
-					if (down_) {
-						glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
-								   wcol->inner_sel.b(), 255);
+					if (checkable_) {
+						if (checked_) {
+							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
+									   wcol->inner_sel.b(), 255);
+						} else {
+							glColor4ub(wcol->inner.r(), wcol->inner.g(),
+									   wcol->inner.b(), 255);
+						}
+					} else {
+						if (hover_) {
+							glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
+									   wcol->inner_highlight.b(), 255);
+						}	else if (down_) {
+							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
+									   wcol->inner_sel.b(), 255);
+						} else {
+							glColor4ub(wcol->inner.r(), wcol->inner.g(),
+									   wcol->inner.b(), 255);
+						}
 					}
 
 					for (a = 0; a < vertexes->totvert; a++) {
@@ -189,17 +205,25 @@ namespace BIL {
 					glDisableClientState(GL_VERTEX_ARRAY);
 				}
 				else {
-					/* simple fill */
-					glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
-
-					if (hover_) {
-						glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
-								   wcol->inner_highlight.b(), wcol->inner_highlight.a());
-					}
-					
-					if (down_) {
-						glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
-								   wcol->inner_sel.b(), wcol->inner_sel.a());
+					if (checkable_) {
+						if (checked_) {
+							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
+									   wcol->inner_sel.b(), 255);
+						} else {
+							/* simple fill */
+							glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+						}
+					} else {
+						if (hover_) {
+							glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
+									   wcol->inner_highlight.b(), wcol->inner_highlight.a());
+						} else if (down_) {
+							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
+									   wcol->inner_sel.b(), wcol->inner_sel.a());
+						} else {
+							/* simple fill */
+							glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+						}
 					}
 
 					glEnableClientState(GL_VERTEX_ARRAY);
@@ -213,7 +237,7 @@ namespace BIL {
 				Color col1, col2;
 				unsigned char col_array[WIDGET_SIZE_MAX * 4];
 				unsigned char *col_pt = col_array;
-			
+
 				Color::ConvertShadeColor(wcol->inner, wcol->shadetop, wcol->shadedown, &col1, &col2);
 
 				glShadeModel(GL_SMOOTH);
@@ -232,7 +256,7 @@ namespace BIL {
 				glShadeModel(GL_FLAT);
 			}
 		}
-	
+
 		/* for each AA step */
 		if (vertexes->outline) {
 			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
@@ -253,13 +277,13 @@ namespace BIL {
 
 			for (j = 0; j < WIDGET_AA_JITTER; j++) {
 				glTranslatef(1.0f * jit[j][0], 1.0f * jit[j][1], 0.0f);
-			
+
 				/* outline */
 				glColor4ubv(tcol);
 
 				glVertexPointer(2, GL_FLOAT, 0, quad_strip);
 				glDrawArrays(GL_QUAD_STRIP, 0, vertexes->totvert * 2 + 2);
-		
+
 				/* emboss bottom shadow */
 				if (vertexes->emboss) {
 					glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
@@ -267,13 +291,13 @@ namespace BIL {
 					glVertexPointer(2, GL_FLOAT, 0, quad_strip_emboss);
 					glDrawArrays(GL_QUAD_STRIP, 0, vertexes->halfwayvert * 2);
 				}
-			
+
 				glTranslatef(-1.0f * jit[j][0], -1.0f * jit[j][1], 0.0f);
 			}
 
 			glDisableClientState(GL_VERTEX_ARRAY);
 		}
-	
+
 		/* decoration */
 		if (vertexes->tria1.tot || vertexes->tria2.tot) {
 			const unsigned char tcol[4] = {wcol->item[0],
@@ -292,12 +316,11 @@ namespace BIL {
 					glColor4ubv(tcol);
 					DrawTrias(&vertexes->tria2);
 				}
-		
+
 				glTranslatef(-1.0f * jit[j][0], -1.0f * jit[j][1], 0.0f);
 			}
 		}
 
 		glDisable(GL_BLEND);
 	}
-
 }

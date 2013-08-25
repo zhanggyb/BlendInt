@@ -59,12 +59,12 @@ namespace BIL {
 
 	void Label::calculateBox ()
 	{
-		Tuple2ui box = text_.calculateBox();
+		Size box = text_.CalculateOutlineBoxSize();
 		
-		box.vec.x = box.vec.x + padding_.border.l + padding_.border.r;
-		box.vec.y = box.vec.y + padding_.border.t + padding_.border.b;
+		box.set_width(box.width() + padding_.border.l + padding_.border.r);
+		box.set_height(box.height() + padding_.border.t + padding_.border.b);
 
-		resize (box.vec.x, box.vec.y);
+		resize (box.width(), box.height());
 	}
 
 	void Label::Render ()

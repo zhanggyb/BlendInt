@@ -23,7 +23,8 @@
 #define _BIL_TYPES_H_
 
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+
+#include <string>	// typedef String
 
 namespace BIL {
 
@@ -211,7 +212,11 @@ namespace BIL {
 			SCROLL_NO_OUTLINE = (1 << 2)
 		};
 
-
+#ifdef CPLUSPLUS_STD11
+	typedef std::u32string String;
+#else
+	typedef std::wstring String;
+#endif
 
 }
 

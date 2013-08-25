@@ -22,6 +22,9 @@
 #ifndef _BIL_RECT_HPP_
 #define _BIL_RECT_HPP_
 
+#include <cstdlib>
+#include <algorithm>
+
 #include <BIL/Point.hpp>
 #include <BIL/Size.hpp>
 
@@ -31,41 +34,28 @@ namespace BIL {
 	{
 	public:
 		Rect ()
-			: x_(0), y_(0), width_(0), height_(0), valid_(false)
+			: x_(0), y_(0), width_(0), height_(0)
 		{}
 		
-		Rect (int x, int y, int width, int height)
-			: x_(x), y_(y), width_(width), height_(height), valid_(false)
+		Rect (int x, int y, unsigned int width, unsigned int height)
+			: x_(x), y_(y), width_(width), height_(height)
 		{
-			if (width_ > 0 && height_ > 0) {
-				valid_ = true;
-			}
 		}
 
-		Rect (const Point& bottom_left, const Point& top_right)
-		: valid_(false)
+		Rect (const Point& p1, const Point& p2)
 		{
-			x_ = bottom_left.x();
-			y_ = bottom_left.y();
-			width_ = top_right.x() - x_;
-			height_ = top_right.y() - y_;
-
-			if (width_ > 0 && height_ > 0) {
-				valid_ = true;
-			}
+			x_ = std::min (p1.x(), p2.x());
+			y_ = std::min (p1.y(), p2.y());
+			width_ = std::abs (p2.x() - p1.x());
+			height_ = std::abs (p2.y() - p1.y());
 		}
 
 		Rect (const Point& pos, const Size& size)
-		: valid_(false)
 		{
 			x_ = pos.x();
 			y_ = pos.y();
 			width_ = size.width();
 			height_ = size.height();
-
-			if (width_ > 0 && height_ > 0) {
-				valid_ = true;
-			}
 		}
 
 		bool Contains (const Point& point)
@@ -73,8 +63,10 @@ namespace BIL {
 			int diff_x = point.x() - x_;
 			int diff_y = point.y() - y_;
 
-			return diff_x >= 0 && diff_x <= width_ &&
-					diff_y >= 0 && diff_y <= height_;
+			return diff_x >= 0 &&
+					diff_x <= static_cast<int>(width_) 	&&
+					diff_y >= 0 &&
+					diff_y <= static_cast<int>(height_);
 		}
 
 		int x (void) const {return x_;}
@@ -87,22 +79,43 @@ namespace BIL {
 
 		int width (void) const {return width_;}
 
-		void set_width (int width) {width_ = width;}
+		void set_width (unsigned int width) {width_ = width;}
+
+		void set_width (int width) {width_ = static_cast<unsigned int>(width);}
 
 		int height (void) const {return height_;}
 
-		void set_height (int height) {height_ = height;}
+		void set_height (unsigned int height) {height_ = height;}
 
-		bool valid (void) const {return valid_;}
+		void set_height (int height) {height_ = static_cast<unsigned int>(height);}
+
+		int left () const {
+			return x_;
+		}
+
+		int right () const {
+			return x_ + width_;
+		}
+
+		int top () const {
+			return y_ + height_;
+		}
+
+		int bottom () const {
+			return y_;
+		}
+
+		bool IsValid (void) const
+		{
+			return width_ > 0 && height_ > 0;
+		}
 
 	private:
 
 		int x_;
 		int y_;
-		int width_;
-		int height_;
-
-		bool valid_;
+		unsigned int width_;
+		unsigned int height_;
 	};
 
 }

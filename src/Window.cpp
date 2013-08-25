@@ -163,7 +163,8 @@ namespace BIL {
 	void Window::ResizeEvent (int width, int height)
 	{
 		// TODO: resize all widgets/layouts in children
-		glfwGetWindowSize(window_, &size_[0], &size_[1]);
+		size_.set_width(width);
+		size_.set_height(height);
 	}
 
 	void Window::KeyEvent (int key, int scancode, int action, int mods)

@@ -28,12 +28,13 @@
 
 #include <GL/gl.h>
 #include <string>
-#include <wchar.h>
+#include <cwchar>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 #include <BIL/Font.hpp>
+#include <BIL/Rect.hpp>
 
 using namespace std;
 
@@ -97,11 +98,11 @@ namespace BIL {
 
 		void set_charcode (wchar_t charcode);
 
-		void setFontType (FontEngine* fontlib);
+		void set_font_engine (FontEngine* fontlib);
 
-		const FontEngine* lib () const
+		const FontEngine* font_engine () const
 		{
-			return lib_;
+			return font_engine_;
 		}
 
 		unsigned int dpi () const
@@ -129,10 +130,7 @@ namespace BIL {
 			return cbox_;
 		}
 
-		const FT_BBox& outline_box () const
-		{
-			return outline_box_;
-		}
+		Rect OutlineBox ();
 
 		void Render ();
 
@@ -149,19 +147,19 @@ namespace BIL {
 			return rval;
 		}
 
-		bool makeDisplayList (void);
+		bool MakeDisplayList (void);
 
-		void fillMetrics (const FT_Face& face);
+		void FillMetrics (const FT_Face& face);
 
 		/**
 		 * @brief delete texture and display list
 		 */
-		void resetGL (void);
+		void ResetGL (void);
 
 	private:
 		/* member variables */
 
-		FontEngine* lib_;
+		FontEngine* font_engine_;
 
 		wchar_t charcode_;
 
@@ -178,9 +176,6 @@ namespace BIL {
 		Metrics metrics_;
 
 		Tuple2i cbox_;
-
-		FT_BBox outline_box_;
-
 	};
 
 } /* namespace BIL */

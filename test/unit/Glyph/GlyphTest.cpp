@@ -616,19 +616,29 @@ void GlyphTest::checkoutline1 ()
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	cout << endl;
-	cout << "Outline of a: " << a.outline_box().xMin << " " << a.outline_box().yMin
-			<< " " << a.outline_box().xMax << " " << a.outline_box().yMax << endl;
-	cout << "Outline of b: " << b.outline_box().xMin << " " << b.outline_box().yMin
-			<< " " << b.outline_box().xMax << " " << b.outline_box().yMax << endl;
-	cout << "Outline of c: " << c.outline_box().xMin << " " << c.outline_box().yMin
-			<< " " << c.outline_box().xMax << " " << c.outline_box().yMax << endl;
-	cout << "Outline of d: " << d.outline_box().xMin << " " << d.outline_box().yMin
-			<< " " << d.outline_box().xMax << " " << d.outline_box().yMax << endl;
-	cout << "Outline of e: " << e.outline_box().xMin << " " << e.outline_box().yMin
-			<< " " << e.outline_box().xMax << " " << e.outline_box().yMax << endl;
-	cout << "Outline of f: " << f.outline_box().xMin << " " << f.outline_box().yMin
-			<< " " << f.outline_box().xMax << " " << f.outline_box().yMax << endl;
+	Rect rect = a.OutlineBox();
+	cout << "Outline of a: " << rect.left() << " " << rect.bottom()
+			<< " " << rect.right() << " " << rect.top() << endl;
 
+	rect = b.OutlineBox();
+	cout << "Outline of b: " << rect.left() << " " << rect.bottom()
+			<< " " << rect.right() << " " << rect.top() << endl;
+
+	rect = c.OutlineBox();
+	cout << "Outline of c: " << rect.left() << " " << rect.bottom()
+			<< " " << rect.right() << " " << rect.top() << endl;
+
+	rect = d.OutlineBox();
+	cout << "Outline of d: " << rect.left() << " " << rect.bottom()
+			<< " " << rect.right() << " " << rect.top() << endl;
+
+	rect = e.OutlineBox();
+	cout << "Outline of e: " << rect.left() << " " << rect.bottom()
+			<< " " << rect.right() << " " << rect.top() << endl;
+
+	rect = f.OutlineBox();
+	cout << "Outline of f: " << rect.left() << " " << rect.bottom()
+			<< " " << rect.right() << " " << rect.top() << endl;
 
 	while (!glfwWindowShouldClose(win)) {
 

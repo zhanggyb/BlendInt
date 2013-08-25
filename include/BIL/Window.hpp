@@ -101,7 +101,10 @@ namespace BIL {
 		{
 			glfwSetWindowSize (window_, w, h);
 
-			glfwGetWindowSize(window_, &size_[0], &size_[1]);
+			int width, height;
+			glfwGetWindowSize(window_, &width, &height);
+			size_.set_width(static_cast<unsigned int>(width));
+			size_.set_height(static_cast<unsigned int>(height));
 		}
 
 		void setTitle (const std::string& title);
