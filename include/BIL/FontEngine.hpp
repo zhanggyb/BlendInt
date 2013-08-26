@@ -162,7 +162,7 @@ namespace BIL {
 						  const Glyph& right,
 						  FT_UInt kern_mode = FT_KERNING_DEFAULT);
 
-		const Font& getFont (void) const
+		const Font& font () const
 		{
 			return font_;
 		}

@@ -104,7 +104,7 @@ namespace BIL {
 
 		error = FT_New_Face(library_, filename.c_str(), 0, &face_);
 		if (error == FT_Err_Unknown_File_Format) {
-			cerr << "Unknown font file format: " << filename << endl;
+			cerr << "Unknown font file format: " << " " << filename << endl;
 			return;
 		}
 		if (error) {

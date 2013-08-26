@@ -22,9 +22,7 @@
 #ifndef _BIL_FONT_H_
 #define _BIL_FONT_H_
 
-#include <string>
-
-#include <BIL/Tuple.hpp>
+#include <BIL/String.hpp>
 
 using namespace std;
 
@@ -38,17 +36,26 @@ namespace BIL {
 
 	struct Font
 	{
-		Font (const string& family = string("Sans"),
+		Font (const String& family = String("Sans"),
 				unsigned int size = 9,
         bool bold = false,
         bool italic = false);
+
+		Font (const std::string& family,
+				unsigned int size = 9,
+        bool bold = false,
+        bool italic = false);
+
+		Font (const wchar_t* family, unsigned int size = 9, bool bold = false, bool italic = false);
+
+		Font (const char* family, unsigned int size = 9, bool bold = false, bool italic = false);
 
 		Font (const Font& orig);
 
 		Font& operator = (const Font& orig);
 
 		/** the font family, e.g. "Droid Sans" */
-		string family;
+		String family;
 
 		/** font size */
 		unsigned int size;

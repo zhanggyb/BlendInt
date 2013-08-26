@@ -20,14 +20,32 @@
  */
 
 #include <string.h>
+#include <cwchar>
+
 #include <iostream>
 
 #include <BIL/Font.hpp>
 
 namespace BIL {
 
-	Font::Font (const string& family, unsigned int size, bool bold, bool italic)
+	Font::Font (const String& family, unsigned int size, bool bold, bool italic)
 			: family(family), size(size), bold(bold), italic(italic)
+	{
+	}
+
+	Font::Font (const std::string& family, unsigned int size, bool bold, bool italic)
+			: family(family), size(size), bold(bold), italic(italic)
+	{
+	}
+
+	Font::Font (const wchar_t* family, unsigned int size, bool bold,
+	        bool italic)
+		: family(family), size(size), bold(bold), italic(italic)
+	{
+	}
+
+	Font::Font (const char* family, unsigned int size, bool bold, bool italic)
+		: family(family), size(size), bold(bold), italic(italic)
 	{
 	}
 
@@ -86,7 +104,7 @@ namespace BIL {
 
 	bool operator == (const Font& src, const Font& dist)
 	{
-		if (strcmp(src.family.c_str(), dist.family.c_str()) == 0) {
+		if (wcscmp(src.family.c_str(), dist.family.c_str()) == 0) {
 			return true;
 		}
 

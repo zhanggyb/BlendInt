@@ -62,7 +62,7 @@ namespace BIL {
 			queue_t q(cacheCountDB.begin(), cacheCountDB.end());
 
 			Font font_of_cache = q.top().first;
-			cout << "Remove " << q.top().first.family << " from cache DB."
+			wcout << "Remove " << q.top().first.family << " from cache DB."
 				 << std::endl;
 
 			delete cacheDB[font_of_cache];
@@ -130,7 +130,7 @@ namespace BIL {
 		map<Font, unsigned long>::const_iterator it;
 		cout << endl;
 		for (it = cacheCountDB.begin(); it != cacheCountDB.end(); it++) {
-			cout << it->first.family << " of " << it->first.size
+			wcout << it->first.family << " of " << it->first.size
 				 << " is used: " << it->second << endl;
 		}
 	}

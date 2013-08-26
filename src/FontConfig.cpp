@@ -182,8 +182,10 @@ namespace BIL {
 		        (FcChar8*) font.family.c_str());
 		FcConfigSubstitute(0, pattern, FcMatchPattern);
 		FcDefaultSubstitute(pattern);
+
 		FcResult result;
 		FcPattern *match = FcFontMatch(0, pattern, &result);
+
 		FcPatternDestroy(pattern);
 
 		if (!match) {

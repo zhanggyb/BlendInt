@@ -35,6 +35,7 @@
 
 #include <BIL/Font.hpp>
 #include <BIL/Rect.hpp>
+#include <BIL/Tuple.hpp>
 
 using namespace std;
 

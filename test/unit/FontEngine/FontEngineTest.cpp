@@ -79,7 +79,7 @@ void FontEngineTest::create1 ()
 
 	FontConfig* gFontService = FontConfig::getService();
 
-	string fontpath = gFontService->getFontPath("Sans");
+	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
 	FontEngine *font = new FontEngine(fontpath);
 
@@ -97,7 +97,7 @@ void FontEngineTest::create2 ()
 
 	FontConfig* gFontService = FontConfig::getService();
 
-	string fontpath = gFontService->getFontPath("Sans");
+	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
 	FontEngine *font1 = new FontEngine(fontpath);
 	FontEngine *font2 = new FontEngine(fontpath);
@@ -153,14 +153,14 @@ void FontEngineTest::create5 ()
 
 	if(result) {
 
-		cout << endl << font->getFont().family << endl;
-		if(font->getFont().bold) {
+		wcout << endl << font->font().family << endl;
+		if(font->font().bold) {
 			cout << "Bold" << endl;
 		} else {
 			cout << "Regular" << endl;
 		}
 
-		if(font->getFont().italic) {
+		if(font->font().italic) {
 			cout << "Italic" << endl;
 		} else {
 			cout << "Normal" << endl;
@@ -192,20 +192,20 @@ void FontEngineTest::create6 ()
 
 	if(result) {
 
-		cout << endl << fe->getFont().family << endl;
-		if(fe->getFont().bold) {
+		wcout << endl << fe->font().family << endl;
+		if(fe->font().bold) {
 			cout << "Bold" << endl;
 		} else {
 			cout << "Regular" << endl;
 		}
 
-		if(fe->getFont().italic) {
+		if(fe->font().italic) {
 			cout << "Italic" << endl;
 		} else {
 			cout << "Normal" << endl;
 		}
 
-		cout << "Font Size: " << fe->getFont().size << endl;
+		cout << "Font Size: " << fe->font().size << endl;
 
 		index = fe->getCharIndex('A');
 		cout << "CharIndex: " << index << endl;
@@ -224,26 +224,26 @@ void FontEngineTest::checkindex1 ()
 	int indexEn = 0; int indexCh = 0;
 
 	FontEngine *fe = new FontEngine(
-			"/usr/share/fonts/TTF/DejaVuSans.ttf", 16);
+			std::string("/usr/share/fonts/TTF/DejaVuSans.ttf"), 16);
 
 	result = fe->valid();
 
 	if(result) {
 
-		cout << endl << fe->getFont().family << endl;
-		if(fe->getFont().bold) {
+		wcout << endl << fe->font().family << endl;
+		if(fe->font().bold) {
 			cout << "Bold" << endl;
 		} else {
 			cout << "Regular" << endl;
 		}
 
-		if(fe->getFont().italic) {
+		if(fe->font().italic) {
 			cout << "Italic" << endl;
 		} else {
 			cout << "Normal" << endl;
 		}
 
-		cout << "Font Size: " << fe->getFont().size << endl;
+		cout << "Font Size: " << fe->font().size << endl;
 
 		indexEn = fe->getCharIndex('A');
 		cout << "CharIndex of English character: " << indexEn << endl;
@@ -265,26 +265,26 @@ void FontEngineTest::checkindex2 ()
 	int indexEn = 0; int indexCh = 0;
 
 	FontEngine *fe = new FontEngine(
-			"/usr/share/fonts/TTF/DroidSansFallback.ttf", 16);
+			std::string("/usr/share/fonts/TTF/DroidSansFallback.ttf"), 16);
 
 	result = fe->valid();
 
 	if(result) {
 
-		cout << endl << fe->getFont().family << endl;
-		if(fe->getFont().bold) {
+		wcout << endl << fe->font().family << endl;
+		if(fe->font().bold) {
 			cout << "Bold" << endl;
 		} else {
 			cout << "Regular" << endl;
 		}
 
-		if(fe->getFont().italic) {
+		if(fe->font().italic) {
 			cout << "Italic" << endl;
 		} else {
 			cout << "Normal" << endl;
 		}
 
-		cout << "Font Size: " << fe->getFont().size << endl;
+		cout << "Font Size: " << fe->font().size << endl;
 
 		indexEn = fe->getCharIndex('A');
 		cout << "CharIndex of English character: " << indexEn << endl;
@@ -312,20 +312,20 @@ void FontEngineTest::checkindex3 ()
 
 	if(result) {
 
-		cout << endl << fe->getFont().family << endl;
-		if(fe->getFont().bold) {
+		wcout << endl << fe->font().family << endl;
+		if(fe->font().bold) {
 			cout << "Bold" << endl;
 		} else {
 			cout << "Regular" << endl;
 		}
 
-		if(fe->getFont().italic) {
+		if(fe->font().italic) {
 			cout << "Italic" << endl;
 		} else {
 			cout << "Normal" << endl;
 		}
 
-		cout << "Font Size: " << fe->getFont().size << endl;
+		cout << "Font Size: " << fe->font().size << endl;
 
 		indexEn = fe->getCharIndex('A');
 		cout << "CharIndex of English character: " << indexEn << endl;
@@ -353,20 +353,20 @@ void FontEngineTest::checkindex4 ()
 
 	if(result) {
 
-		cout << endl << fe->getFont().family << endl;
-		if(fe->getFont().bold) {
+		wcout << endl << fe->font().family << endl;
+		if(fe->font().bold) {
 			cout << "Bold" << endl;
 		} else {
 			cout << "Regular" << endl;
 		}
 
-		if(fe->getFont().italic) {
+		if(fe->font().italic) {
 			cout << "Italic" << endl;
 		} else {
 			cout << "Normal" << endl;
 		}
 
-		cout << "Font Size: " << fe->getFont().size << endl;
+		cout << "Font Size: " << fe->font().size << endl;
 
 		indexEn = fe->getCharIndex('A');
 		cout << "CharIndex of English character: " << indexEn << endl;
@@ -379,7 +379,7 @@ void FontEngineTest::checkindex4 ()
 	delete fe;
 	fe = NULL;
 
-	CPPUNIT_ASSERT(result && (indexEn != 0) && (indexCh == 0));
+	CPPUNIT_ASSERT(result && (indexEn != 0) && (indexCh != 0));
 }
 
 
@@ -389,7 +389,7 @@ void FontEngineTest::get_glyph1 ()
 
 	FontConfig* gFontService = FontConfig::getService();
 
-	string fontpath = gFontService->getFontPath("Sans");
+	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
 	FontEngine *font = new FontEngine(fontpath);
 
@@ -465,7 +465,7 @@ void FontEngineTest::get_glyph2 ()
 
 	FontConfig* gFontService = FontConfig::getService();
 
-	string fontpath = gFontService->getFontPath("Sans");
+	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
 	FontEngine *font = new FontEngine(fontpath);
 
@@ -540,7 +540,7 @@ void FontEngineTest::get_glyph3 ()
 
 	FontConfig* gFontService = FontConfig::getService();
 
-	string fontpath = gFontService->getFontPath("Sans");
+	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
 	FontEngine *font = new FontEngine(fontpath);
 
@@ -615,7 +615,7 @@ void FontEngineTest::get_glyph4 ()
 
 	FontConfig* gFontService = FontConfig::getService();
 
-	string fontpath = gFontService->getFontPath("Sans");
+	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
 	FontEngine *font = new FontEngine(fontpath);
 
@@ -766,7 +766,7 @@ void FontEngineTest::glyph_metrics1 ()
 	bool result;
 	FontConfig* gFontService = FontConfig::getService();
 
-	string fontpath = gFontService->getFontPath("Sans");
+	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
 	FontEngine *font = new FontEngine(fontpath);
 
@@ -864,7 +864,7 @@ void FontEngineTest::checkkerning1()
 {
 	bool result;
 	FontConfig* gFontService = FontConfig::getService();
-	string fontpath = gFontService->getFontPath("Sans");
+	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
 	FontEngine *font = new FontEngine(fontpath);
 
