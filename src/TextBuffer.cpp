@@ -30,6 +30,7 @@
 
 namespace BIL {
 
+	/*
 	TextBuffer::TextBuffer (const Font& font)
 		: rowspacing_(1.0),
 		  foreground_(0xFFFFFFFF),
@@ -39,8 +40,9 @@ namespace BIL {
 		//glShadeModel(GL_FLAT);
 		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	}
+	*/
 
-	TextBuffer::TextBuffer (const wstring& text, const Font& font)
+	TextBuffer::TextBuffer (const String& text, const Font& font)
 		: rowspacing_(1.0), foreground_(0xFFFFFFFF), background_(0x00000000)
 	{
 		set_font(font);

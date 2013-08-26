@@ -30,58 +30,111 @@ TextBufferTest::~TextBufferTest ()
 
 void TextBufferTest::setUp ()
 {
-    int ret = glfwInit();
+	int ret = glfwInit();
 
-    if (ret != GL_TRUE) {
-	CPPUNIT_FAIL("Cannot initialize glfw\n");
-    }
+	if (ret != GL_TRUE) {
+		CPPUNIT_FAIL("Cannot initialize glfw\n");
+	}
 
-    FontConfig::instance();
-    bool fontinit = FontConfig::getService()->initialize();
-    if (!fontinit) {
-	CPPUNIT_FAIL("Cannot initialize FontManager\n");
-    }
-    fontinit = FontConfig::getService()->loadDefaultFontToMem();
-    if (!fontinit) {
-	CPPUNIT_FAIL("Cannot load default font\n");
-    }
+	FontConfig::instance();
+	bool fontinit = FontConfig::getService()->initialize();
+	if (!fontinit) {
+		CPPUNIT_FAIL("Cannot initialize FontManager\n");
+	}
+	fontinit = FontConfig::getService()->loadDefaultFontToMem();
+	if (!fontinit) {
+		CPPUNIT_FAIL("Cannot load default font\n");
+	}
 }
 
 void TextBufferTest::tearDown ()
 {
-    FontConfig::release();
+	FontConfig::release();
 
-    glfwTerminate();
+	glfwTerminate();
+}
+
+void TextBufferTest::draw_grid(int width, int height)
+{
+	// Draw grid for debug
+	const int small_step = 20;
+	const int big_step = 100;
+
+	glLineWidth(1);
+	glEnable(GL_LINE_STIPPLE);
+
+	glColor4f (1.0f, 1.0f, 1.0f, 0.1f);
+	glLineStipple (1, 0xAAAA);
+	for (int num = 1; num < width; num++)
+	{
+		int step = num * small_step;
+		glBegin (GL_LINES);
+			glVertex2i(0, step);
+			glVertex2i(width, step);
+		glEnd();
+
+	}
+	for (int num = 1; num < height; num++)
+	{
+		int step = num * small_step;
+		glBegin (GL_LINES);
+			glVertex2i(step, 0);
+			glVertex2i(step, height);
+		glEnd();
+	}
+
+	glColor4f (1.0f, 1.0f, 1.0f, 0.25f);
+	glLineStipple (1, 0xAAAA);
+	for (int num = 1; num < width; num++)
+	{
+		int step = num * big_step;
+		glBegin (GL_LINES);
+		glVertex2i(0, step);
+		glVertex2i(width, step);
+		glEnd();
+	}
+
+	for (int num = 1; num < height; num++)
+	{
+		int step = num * big_step;
+		glBegin (GL_LINES);
+			glVertex2i(step, 0);
+			glVertex2i(step, height);
+		glEnd();
+	}
+
+	glDisable(GL_LINE_STIPPLE);
 }
 
 void TextBufferTest::showcharacter1 ()
 {
-    GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-					NULL);
+	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
+	NULL);
 
-    if (win == NULL) {
-	CPPUNIT_FAIL("Cannot create glfw window\n");
-    }
+	if (win == NULL) {
+		CPPUNIT_FAIL("Cannot create glfw window\n");
+	}
 
-    glfwMakeContextCurrent(win);
+	glfwMakeContextCurrent(win);
 
-    // Initialize GLEW
-    glewExperimental = true; // Needed in core profile
-    if (glewInit() != GLEW_OK) {
-	cerr << "Failed to initilize GLEW" << endl;
-	glfwTerminate();
-	exit(EXIT_FAILURE);
-    }
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
+		cerr << "Failed to initilize GLEW" << endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
 
 	Font font("Sans", 16);
 
-    TextBuffer buf (font);
-    //TextBuffer buf;
+	TextBuffer buf;
+	//TextBuffer buf;
 
-    buf.set_origin(Coord3f(100.0, 100.0, 0.0));
-    buf.Append(L"A");
+	buf.set_font(font);
+	buf.set_origin(Coord3f(100.0, 100.0, 0.0));
+	buf.Append(L"A");
 
-    while (!glfwWindowShouldClose(win)) {
+	while (!glfwWindowShouldClose(win)) {
 
 		int width, height;
 
@@ -91,12 +144,9 @@ void TextBufferTest::showcharacter1 ()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glColor4f(1.00, 1.00, 1.00, 1.00);
 
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		// enable anti-alias
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_POINT_SMOOTH);
-		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_POLYGON_SMOOTH);
 
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
@@ -106,42 +156,45 @@ void TextBufferTest::showcharacter1 ()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
+		draw_grid (width, height);
 		// Test buffer render
 		buf.Render();
 
+		glDisable(GL_BLEND);
 		glfwSwapBuffers(win);
 		glfwPollEvents();
-    }
+	}
 
 	FontCache::releaseAll();
 
-    CPPUNIT_ASSERT(true);
+	CPPUNIT_ASSERT(true);
 }
 
 void TextBufferTest::showtextline1 ()
 {
-    GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-					NULL);
+	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
+	NULL);
 
-    if (win == NULL) {
-	CPPUNIT_FAIL("Cannot create glfw window\n");
-    }
+	if (win == NULL) {
+		CPPUNIT_FAIL("Cannot create glfw window\n");
+	}
 
-    glfwMakeContextCurrent(win);
+	glfwMakeContextCurrent(win);
 
-    // Initialize GLEW
-    glewExperimental = true; // Needed in core profile
-    if (glewInit() != GLEW_OK) {
-	cerr << "Failed to initilize GLEW" << endl;
-	glfwTerminate();
-	exit(EXIT_FAILURE);
-    }
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
+		cerr << "Failed to initilize GLEW" << endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
 
-    TextBuffer buf(Font("Sans", 16));
-    buf.set_origin(Coord3f(100.0, 100.0, 0.0));
-    buf.Append(L"we have official packages");
+	TextBuffer buf;
+	buf.set_font(Font("Sans",16));
+	buf.set_origin(Coord3f(100.0, 100.0, 0.0));
+	buf.Append(L"we have official packages");
 
-    while (!glfwWindowShouldClose(win)) {
+	while (!glfwWindowShouldClose(win)) {
 
 		int width, height;
 
@@ -152,11 +205,8 @@ void TextBufferTest::showtextline1 ()
 		glColor4f(1.00, 1.00, 1.00, 1.00);
 
 		// enable anti-alias
-		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_POINT_SMOOTH);
-		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_POLYGON_SMOOTH);
+		glEnable(GL_BLEND);
 
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
@@ -166,42 +216,47 @@ void TextBufferTest::showtextline1 ()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
+		draw_grid (width, height);
+
 		// Test buffer render
 		buf.Render();
 
+		glDisable(GL_BLEND);
+
 		glfwSwapBuffers(win);
 		glfwPollEvents();
-    }
+	}
 
 	FontCache::releaseAll();
 
-    CPPUNIT_ASSERT(true);
+	CPPUNIT_ASSERT(true);
 }
 
 void TextBufferTest::showtextline2 ()
 {
-    GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-										NULL);
+	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
+	NULL);
 
-    if (win == NULL) {
+	if (win == NULL) {
 		CPPUNIT_FAIL("Cannot create glfw window\n");
-    }
+	}
 
-    glfwMakeContextCurrent(win);
+	glfwMakeContextCurrent(win);
 
-    // Initialize GLEW
-    glewExperimental = true; // Needed in core profile
-    if (glewInit() != GLEW_OK) {
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
 		cerr << "Failed to initilize GLEW" << endl;
 		glfwTerminate();
 		exit(EXIT_FAILURE);
-    }
+	}
 
-    TextBuffer buf(Font("Sans", 16));
-    buf.set_origin(Coord3f(100.0, 100.0, 0.0));
-    buf.Append(L"Our strong community is diverse and helpful");
+	TextBuffer buf;
+	buf.set_font(Font("Sans", 16));
+	buf.set_origin(Coord3f(100.0, 100.0, 0.0));
+	buf.Append(L"Our strong community is diverse and helpful");
 
-    while (!glfwWindowShouldClose(win)) {
+	while (!glfwWindowShouldClose(win)) {
 
 		int width, height;
 
@@ -212,11 +267,8 @@ void TextBufferTest::showtextline2 ()
 		glColor4f(1.00, 1.00, 1.00, 1.00);
 
 		// enable anti-alias
-		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_POINT_SMOOTH);
-		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_POLYGON_SMOOTH);
+		glEnable(GL_BLEND);
 
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
@@ -226,42 +278,46 @@ void TextBufferTest::showtextline2 ()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
+		draw_grid (width, height);
+
 		// Test buffer render
 		buf.Render();
 
+		glDisable(GL_BLEND);
 		glfwSwapBuffers(win);
 		glfwPollEvents();
-    }
+	}
 
 	FontCache::releaseAll();
 
-    CPPUNIT_ASSERT(true);
+	CPPUNIT_ASSERT(true);
 }
 
 void TextBufferTest::showtextline3 ()
 {
-    GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-										NULL);
+	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
+	NULL);
 
-    if (win == NULL) {
+	if (win == NULL) {
 		CPPUNIT_FAIL("Cannot create glfw window\n");
-    }
+	}
 
-    glfwMakeContextCurrent(win);
+	glfwMakeContextCurrent(win);
 
-    // Initialize GLEW
-    glewExperimental = true; // Needed in core profile
-    if (glewInit() != GLEW_OK) {
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
 		cerr << "Failed to initilize GLEW" << endl;
 		glfwTerminate();
 		exit(EXIT_FAILURE);
-    }
+	}
 
-    TextBuffer buf(Font("Sans", 16));
-    buf.set_origin(Coord3f(100.0, 100.0, 0.0));
-    buf.Append(L"Arch Linux\n??????\n床前明月光");
+	TextBuffer buf;
+	buf.set_font(Font("Sans", 16));
+	buf.set_origin(Coord3f(100.0, 100.0, 0.0));
+	buf.Append(L"Arch Linux\n??????\n床前明月光");
 
-    while (!glfwWindowShouldClose(win)) {
+	while (!glfwWindowShouldClose(win)) {
 
 		int width, height;
 
@@ -272,11 +328,8 @@ void TextBufferTest::showtextline3 ()
 		glColor4f(1.00, 1.00, 1.00, 1.00);
 
 		// enable anti-alias
-		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_POINT_SMOOTH);
-		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_POLYGON_SMOOTH);
+		glEnable(GL_BLEND);
 
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
@@ -286,42 +339,46 @@ void TextBufferTest::showtextline3 ()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
+		draw_grid (width, height);
+
 		// Test buffer render
 		buf.Render();
 
+		glDisable(GL_BLEND);
 		glfwSwapBuffers(win);
 		glfwPollEvents();
-    }
+	}
 
 	FontCache::releaseAll();
 
-    CPPUNIT_ASSERT(true);
+	CPPUNIT_ASSERT(true);
 }
 
 void TextBufferTest::showtextline4 ()
 {
-    GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-										NULL);
+	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
+	NULL);
 
-    if (win == NULL) {
+	if (win == NULL) {
 		CPPUNIT_FAIL("Cannot create glfw window\n");
-    }
+	}
 
-    glfwMakeContextCurrent(win);
+	glfwMakeContextCurrent(win);
 
-    // Initialize GLEW
-    glewExperimental = true; // Needed in core profile
-    if (glewInit() != GLEW_OK) {
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
 		cerr << "Failed to initilize GLEW" << endl;
 		glfwTerminate();
 		exit(EXIT_FAILURE);
-    }
+	}
 
-    TextBuffer buf(Font("Sans", 16));
-    buf.set_origin(Coord3f(100.0, 100.0, 0.0));
-    buf.Append(L"A simple, lightweight distribution\n??????\n疑是地上霜");
+	TextBuffer buf;
+	buf.set_font(Font("Sans", 16));
+	buf.set_origin(Coord3f(100.0, 100.0, 0.0));
+	buf.Append(L"A simple, lightweight distribution\n??????\n疑是地上霜");
 
-    while (!glfwWindowShouldClose(win)) {
+	while (!glfwWindowShouldClose(win)) {
 
 		int width, height;
 
@@ -332,11 +389,8 @@ void TextBufferTest::showtextline4 ()
 		glColor4f(1.00, 1.00, 1.00, 1.00);
 
 		// enable anti-alias
-		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_POINT_SMOOTH);
-		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_POLYGON_SMOOTH);
+		glEnable(GL_BLEND);
 
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
@@ -346,24 +400,94 @@ void TextBufferTest::showtextline4 ()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
+		draw_grid (width, height);
+
 		// Test buffer render
 		buf.Render();
 
+		glDisable(GL_BLEND);
 		glfwSwapBuffers(win);
 		glfwPollEvents();
-    }
+	}
 
 	FontCache::releaseAll();
 
-    CPPUNIT_ASSERT(true);
+	CPPUNIT_ASSERT(true);
+}
+
+void TextBufferTest::multiple_buf_show1 ()
+{
+	GLFWwindow * win = glfwCreateWindow(640, 480,
+			"TextBuffer Test -- Multiple buffer", NULL, NULL);
+
+	if (!win) {
+		CPPUNIT_FAIL("Cannot create glfw window\n");
+	}
+
+	glfwMakeContextCurrent(win);
+
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
+		cerr << "Failed to initilize GLEW" << endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	TextBuffer buf1(L"box size");
+	buf1.set_origin(Coord3f(100.0, 100.0, 0.0));
+	buf1.set_font(Font("Droid Sans"));
+
+	TextBuffer buf2(L"Hello World!");
+	buf2.set_origin(Coord3f(100.0, 200.0, 0.0));
+	buf2.set_font(Font("Droid Sans", 50));
+
+	while (!glfwWindowShouldClose(win)) {
+
+		int width, height;
+
+		glfwGetWindowSize(win, &width, &height);
+
+		glClearColor(0.40, 0.40, 0.45, 1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glColor4f(1.00, 1.00, 1.00, 1.00);
+
+		// enable anti-alias
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		draw_grid (width, height);
+
+		// Test buffer render
+		buf1.Render();
+
+		buf2.Render();
+
+		glDisable(GL_BLEND);
+		glfwSwapBuffers(win);
+		glfwPollEvents();
+	}
+
+	FontCache::releaseAll();
+
+	CPPUNIT_ASSERT(true);
 }
 
 void TextBufferTest::calculatebox1 ()
 {
-    TextBuffer buf(Font("Sans", 16));
-    buf.Append(L"ArchLinux");
+	TextBuffer buf;
+	buf.set_font(Font("Sans", 16));
+	buf.Append(L"ArchLinux");
 
-    Size box = buf.CalculateOutlineBoxSize ();
+	Size box = buf.CalculateOutlineBoxSize();
 
 	cout << "Text Box: " << box.width() << " " << box.height() << endl;
 

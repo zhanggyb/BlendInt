@@ -30,6 +30,7 @@
 #include <BIL/Color.hpp>
 #include <BIL/Coord.hpp>
 #include <BIL/Size.hpp>
+#include <BIL/String.hpp>
 
 using namespace boost;
 using namespace std;
@@ -45,10 +46,10 @@ namespace BIL {
 		 *
 		 * create a new empty text buffer
 		 */
-		TextBuffer (const Font& font = Font("Sans"));
+		// TextBuffer (const Font& font = Font("Sans"));
 
 		/**/
-		TextBuffer (const wstring& text, const Font& font = Font("Sans"));
+		TextBuffer (const String& text = String(), const Font& font = Font("Sans"));
 
 		virtual ~TextBuffer ();
 

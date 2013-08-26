@@ -16,39 +16,43 @@ using namespace std;
 
 class TextBufferTest: public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE(TextBufferTest);
+CPPUNIT_TEST_SUITE(TextBufferTest);
 
-    //CPPUNIT_TEST(showcharacter1);
-    CPPUNIT_TEST(showtextline1);
-    CPPUNIT_TEST(showtextline2);
-    CPPUNIT_TEST(showtextline3);
-    CPPUNIT_TEST(showtextline4);
-	
+	//CPPUNIT_TEST(showcharacter1);
+	CPPUNIT_TEST(showtextline1);
+	CPPUNIT_TEST(showtextline2);
+	CPPUNIT_TEST(showtextline3);
+	CPPUNIT_TEST(showtextline4);
+	CPPUNIT_TEST(multiple_buf_show1);
+
 	CPPUNIT_TEST(calculatebox1);
 
-    CPPUNIT_TEST_SUITE_END();
+	CPPUNIT_TEST_SUITE_END()
+	;
 
- public:
+public:
 
-    TextBufferTest();
+	TextBufferTest ();
 
-    virtual ~TextBufferTest();
+	virtual ~TextBufferTest ();
 
-    void setUp();
+	void setUp ();
 
-    void tearDown();
+	void tearDown ();
 
-    void runTest ();
+	void runTest ();
 
- private:
+private:
 
-    void showcharacter1 ();
-    void showtextline1 ();
-    void showtextline2 ();
-    void showtextline3 ();
-    void showtextline4 ();
-
+	void showcharacter1 ();
+	void showtextline1 ();
+	void showtextline2 ();
+	void showtextline3 ();
+	void showtextline4 ();
+	void multiple_buf_show1 ();
 	void calculatebox1 ();
+
+	void draw_grid (int width, int height);
 };
 
 #endif  /* _TEXTBUFFER_TEST_H */
