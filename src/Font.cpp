@@ -20,6 +20,7 @@
  */
 
 #include <string.h>
+#include <iostream>
 
 #include <BIL/Font.hpp>
 
@@ -74,13 +75,13 @@ namespace BIL {
 			return false;
 		}
 
-		return false;
 		/*
-		return (src.family < dist.family ?
-				true : (src.size < dist.size ?
-		        true : (src.bold < dist.bold ?
-		                true : (src.italic < dist.italic ? true : false))));
-		 */
+		std::cout << src.family << " " << src.size << " " << (src.bold ? "bold":"normal") << " " << (src.italic? "italic":"normal")
+				<< " < "
+				<< dist.family << " " << dist.size << " " << (dist.bold ? "bold":"normal") << " " << (dist.italic? "italic":"normal")
+				<< std::endl;
+		*/
+		return false;
 	}
 
 	bool operator == (const Font& src, const Font& dist)

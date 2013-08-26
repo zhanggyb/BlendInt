@@ -23,7 +23,7 @@
 #define _BIL_CHECKBUTTON_HPP_
 
 #include <BIL/AbstractButton.hpp>
-#include <BIL/Types.hpp>
+#include <BIL/String.hpp>
 
 namespace BIL {
 

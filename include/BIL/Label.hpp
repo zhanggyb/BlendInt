@@ -29,6 +29,8 @@
 #include <BIL/Font.hpp>
 #include <BIL/Color.hpp>
 
+#include <BIL/String.hpp>
+
 using namespace std;
 
 namespace BIL {
@@ -49,8 +51,7 @@ namespace BIL {
 			calculateBox();
 		}
 
-		void setTextColor (const Color& fg,
-						   const Color& bg = Color(0x00000000))
+		void setTextColor (const Color& fg, const Color& bg = Color(0x00000000))
 		{
 			text_.set_foreground(fg);
 			text_.set_background(bg);
@@ -65,7 +66,8 @@ namespace BIL {
 
 		virtual void Render ();
 
-	private:	// member functions
+	private:
+		// member functions
 
 		virtual void cursorPosEvent (double xpos, double ypos);
 

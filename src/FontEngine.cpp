@@ -344,7 +344,7 @@ namespace BIL {
 	{
 		Tuple2l ret;	// {0, 0}
 
-		if ((!valid_) || (face_ == NULL))
+		if ((!valid_) || (!face_))
 			return ret;
 
 		if (! FT_HAS_KERNING(face_))  return ret;

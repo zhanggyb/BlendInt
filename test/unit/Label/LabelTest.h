@@ -22,6 +22,7 @@ CPPUNIT_TEST_SUITE(LabelTest);
 	CPPUNIT_TEST(show1);
 	CPPUNIT_TEST(show2);
 	CPPUNIT_TEST(checkfont1);
+	CPPUNIT_TEST(checkfont2);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -44,6 +45,7 @@ private:
 	void show2 ();
 
 	void checkfont1 ();
+	void checkfont2 ();
 
 	void calculatebox1 ();
 };

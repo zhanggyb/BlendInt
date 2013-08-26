@@ -38,8 +38,10 @@ namespace BIL {
 
 	struct Font
 	{
-		Font (const string& family = string("Sans"), unsigned int size = 9,
-		        bool bold = false, bool italic = false);
+		Font (const string& family = string("Sans"),
+				unsigned int size = 9,
+        bool bold = false,
+        bool italic = false);
 
 		Font (const Font& orig);
 

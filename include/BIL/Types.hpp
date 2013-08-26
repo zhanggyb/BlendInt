@@ -212,12 +212,6 @@ namespace BIL {
 			SCROLL_NO_OUTLINE = (1 << 2)
 		};
 
-#ifdef CPLUSPLUS_STD11
-	typedef std::u32string String;
-#else
-	typedef std::wstring String;
-#endif
-
 }
 
 #endif	/* _BIL_TYPES_H_ */

@@ -23,7 +23,6 @@
 #include <GL/gl.h>
 
 #include <BIL/Label.hpp>
-#include <BIL/Pen.hpp>
 
 namespace BIL {
 
