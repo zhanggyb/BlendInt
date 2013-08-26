@@ -30,16 +30,16 @@ namespace BIL {
 
 	FontEngine::FontEngine(const Font& font,
 						   unsigned int dpi)
-		: _library(NULL), _face(NULL), _stroker(NULL),
-		  _valid(false), _unicode(false), _height(0),
-		  _ascender(0), _descender(0), _maxAdvance(0),
-		  _font(font), _dpi(dpi)
+		: library_(NULL), face_(NULL), stroker_(NULL),
+		  valid_(false), unicode_(false), height_(0),
+		  ascender_(0), descender_(0), max_advance_(0),
+		  font_(font), dpi_(dpi)
 	{
 		FT_Error error;
 
 		if(FontConfig::getService() == NULL) {
 			if(! FontConfig::instance()) {
-				_valid = false;
+				valid_ = false;
 				return;
 			}
 		}
@@ -50,13 +50,13 @@ namespace BIL {
 
 		string filename = fontconfig->getFontPath(font);
 
-		error = FT_Init_FreeType(&_library);
+		error = FT_Init_FreeType(&library_);
 		if (error) {
 			cerr << "Cannot initialize FreeType library" << endl;
 			return;
 		}
 
-		error = FT_New_Face(_library, filename.c_str(), 0, &_face);
+		error = FT_New_Face(library_, filename.c_str(), 0, &face_);
 		if (error == FT_Err_Unknown_File_Format) {
 			cerr << "Unknown font file format: " << filename << endl;
 			return;
@@ -66,21 +66,21 @@ namespace BIL {
 			return;
 		}
 
-		error = FT_Stroker_New(_library, &_stroker);
+		error = FT_Stroker_New(library_, &stroker_);
 
 		if (error) {
 			cerr << "Fail to load Stroker" << endl;
 			return;
 		}
 
-		_valid = true;          // now treat it success
+		valid_ = true;          // now treat it success
 
-		error = FT_Select_Charmap(_face, FT_ENCODING_UNICODE);
+		error = FT_Select_Charmap(face_, FT_ENCODING_UNICODE);
 		if (error) {
 			cerr << "Cannot set the unicode character map: " << filename
 			        << endl;
 		} else {
-			_unicode = true;
+			unicode_ = true;
 		}
 
 		setCharSize(font.size, dpi);
@@ -89,20 +89,20 @@ namespace BIL {
 	FontEngine::FontEngine (const string& filename,
 							unsigned int size,
 							unsigned int dpi)
-		: _library(NULL), _face(NULL), _stroker(NULL),
-		  _valid(false), _unicode(false), _height(0),
-		  _ascender(0), _descender(0), _maxAdvance(0),
-		  _dpi(dpi)
+		: library_(NULL), face_(NULL), stroker_(NULL),
+		  valid_(false), unicode_(false), height_(0),
+		  ascender_(0), descender_(0), max_advance_(0),
+		  dpi_(dpi)
 	{
 		FT_Error error;
 
-		error = FT_Init_FreeType(&_library);
+		error = FT_Init_FreeType(&library_);
 		if (error) {
 			cerr << "Cannot initialize FreeType library" << endl;
 			return;
 		}
 
-		error = FT_New_Face(_library, filename.c_str(), 0, &_face);
+		error = FT_New_Face(library_, filename.c_str(), 0, &face_);
 		if (error == FT_Err_Unknown_File_Format) {
 			cerr << "Unknown font file format: " << filename << endl;
 			return;
@@ -112,26 +112,26 @@ namespace BIL {
 			return;
 		}
 
-		_font.family = _face->family_name;
-		_font.size = size;
-		_font.italic = (_face->style_flags & FT_STYLE_FLAG_ITALIC) ? true : false;
-		_font.bold = (_face->style_flags & FT_STYLE_FLAG_BOLD) ? true : false;
+		font_.family = face_->family_name;
+		font_.size = size;
+		font_.italic = (face_->style_flags & FT_STYLE_FLAG_ITALIC) ? true : false;
+		font_.bold = (face_->style_flags & FT_STYLE_FLAG_BOLD) ? true : false;
 
-		error = FT_Stroker_New(_library, &_stroker);
+		error = FT_Stroker_New(library_, &stroker_);
 
 		if (error) {
 			cerr << "Fail to load Stroker" << endl;
 			return;
 		}
 
-		_valid = true;          // now treat it success
+		valid_ = true;          // now treat it success
 
-		error = FT_Select_Charmap(_face, FT_ENCODING_UNICODE);
+		error = FT_Select_Charmap(face_, FT_ENCODING_UNICODE);
 		if (error) {
 			cerr << "Cannot set the unicode character map: " << filename
 			        << endl;
 		} else {
-			_unicode = true;
+			unicode_ = true;
 		}
 
 		setCharSize(size, dpi);
@@ -142,44 +142,44 @@ namespace BIL {
 							FT_Long index,
 							unsigned int size,
 							unsigned int dpi)
-		: _library(NULL), _face(NULL), _stroker(NULL),
-		  _valid(false), _unicode(false), _height(0),
-		  _ascender(0), _descender(0), _maxAdvance(0),
-		  _dpi(dpi)
+		: library_(NULL), face_(NULL), stroker_(NULL),
+		  valid_(false), unicode_(false), height_(0),
+		  ascender_(0), descender_(0), max_advance_(0),
+		  dpi_(dpi)
 	{
 		FT_Error error;
 
-		error = FT_Init_FreeType(&_library);
+		error = FT_Init_FreeType(&library_);
 		if (error) {
 			cerr << "Cannot initialize FreeType library" << endl;
 			return;
 		}
 
-		error = FT_New_Memory_Face(_library, buffer, bufsize, index, &_face);
+		error = FT_New_Memory_Face(library_, buffer, bufsize, index, &face_);
 		if (error) {
 			cerr << "Fail to generate a new Font Face from memory" << endl;
 			return;
 		}
 
-		_font.family = _face->family_name;
-		_font.size = size;
-		_font.italic = (_face->style_flags & FT_STYLE_FLAG_ITALIC) ? true : false;
-		_font.bold = (_face->style_flags & FT_STYLE_FLAG_BOLD) ? true : false;
+		font_.family = face_->family_name;
+		font_.size = size;
+		font_.italic = (face_->style_flags & FT_STYLE_FLAG_ITALIC) ? true : false;
+		font_.bold = (face_->style_flags & FT_STYLE_FLAG_BOLD) ? true : false;
 
-		error = FT_Stroker_New(_library, &_stroker);
+		error = FT_Stroker_New(library_, &stroker_);
 
 		if (error) {
 			cerr << "Fail to load Stroker" << endl;
 			return;
 		}
 
-		_valid = true;          // now treat it success
+		valid_ = true;          // now treat it success
 
-		error = FT_Select_Charmap(_face, FT_ENCODING_UNICODE);
+		error = FT_Select_Charmap(face_, FT_ENCODING_UNICODE);
 		if (error) {
 			cerr << "Cannot set the unicode character map" << endl;
 		} else {
-			_unicode = true;
+			unicode_ = true;
 		}
 		
 		setCharSize(size, dpi);
@@ -187,39 +187,39 @@ namespace BIL {
 
 	FontEngine::~FontEngine ()
 	{
-		if (_stroker != NULL) {
-			FT_Stroker_Done(_stroker);
-			_stroker = NULL;
+		if (stroker_ != NULL) {
+			FT_Stroker_Done(stroker_);
+			stroker_ = NULL;
 		}
 
-		if (_face != NULL) {
-			FT_Done_Face(_face);
-			_face = NULL;
+		if (face_ != NULL) {
+			FT_Done_Face(face_);
+			face_ = NULL;
 		}
 
-		if (_library != NULL) {
-			FT_Done_FreeType(_library);
-			_library = NULL;
+		if (library_ != NULL) {
+			FT_Done_FreeType(library_);
+			library_ = NULL;
 		}
 	}
 
 
 	bool FontEngine::isUseKerning (void)
 	{
-		if(!_valid)
+		if(!valid_)
 			return false;
 
-		return FT_HAS_KERNING(_face);
+		return FT_HAS_KERNING(face_);
 	}
 
 	bool FontEngine::loadGlyph (FT_UInt glyph_index, FT_Int32 load_flags)
 	{
-		if (!_valid)
+		if (!valid_)
 			return false;
 
 		FT_Error error;
 
-		error = FT_Load_Glyph(_face, glyph_index, load_flags);
+		error = FT_Load_Glyph(face_, glyph_index, load_flags);
 
 		if (error) {
 			cerr << "Fail to load glyph" << endl;
@@ -254,10 +254,10 @@ namespace BIL {
 	{
 		FT_Error error;
 
-		if (!_valid)
+		if (!valid_)
 			return false;
 
-		_font.size = size; _dpi = dpi;
+		font_.size = size; dpi_ = dpi;
 
 		// size_t hres = 64;
 
@@ -267,37 +267,37 @@ namespace BIL {
 		//in terms of 1/64ths of pixels.  Thus, to make a font
 		//h pixels high, we need to request a size of h*64.
 		//(h << 6 is just a prettier way of writting h*64)
-		error = FT_Set_Char_Size(_face, (long) (_font.size << 6), 0, _dpi, 0);
+		error = FT_Set_Char_Size(face_, (long) (font_.size << 6), 0, dpi_, 0);
 		if (error) {
 			cerr << "The current font don't support the size, " << size
-			        << " and dpi " << _dpi << endl;
+			        << " and dpi " << dpi_ << endl;
 			return false;
 		}
 
-		_height = _face->size->metrics.height >> 6;
-		_ascender = _face->size->metrics.ascender >> 6;
-		_descender = _face->size->metrics.descender >> 6;
-		_maxAdvance = _face->size->metrics.max_advance >> 6;
+		height_ = face_->size->metrics.height >> 6;
+		ascender_ = face_->size->metrics.ascender >> 6;
+		descender_ = face_->size->metrics.descender >> 6;
+		max_advance_ = face_->size->metrics.max_advance >> 6;
 
 		return true;
 	}
 
 	FT_UInt FontEngine::getCharIndex (const FT_ULong charcode)
 	{
-		if (!_valid)
+		if (!valid_)
 			return 0;
 
-		return (FT_Get_Char_Index(_face, charcode));
+		return (FT_Get_Char_Index(face_, charcode));
 	}
 
 	bool FontEngine::loadCharacter (FT_ULong charcode, FT_Int32 load_flags)
 	{
-		if (!_valid)
+		if (!valid_)
 			return false;
 
 		FT_Error error;
 
-		error = FT_Load_Char(_face, charcode, load_flags);
+		error = FT_Load_Char(face_, charcode, load_flags);
 		if (error) {
 			cerr << "Fail to load Character" << endl;
 			return false;
@@ -308,11 +308,11 @@ namespace BIL {
 
 	bool FontEngine::renderGlyph (FT_Render_Mode render_mode)
 	{
-		if (!_valid)
+		if (!valid_)
 			return false;
 		FT_Error error;
 
-		error = FT_Render_Glyph(_face->glyph, // glyph slot
+		error = FT_Render_Glyph(face_->glyph, // glyph slot
 		        render_mode);
 		if (error) {
 			cerr << "Fail to render glyph" << endl;
@@ -325,11 +325,11 @@ namespace BIL {
 	bool FontEngine::getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
 	        FT_UInt kern_mode, FT_Vector* akerning)
 	{
-		if ((!_valid) || (_face == NULL))
+		if ((!valid_) || (face_ == NULL))
 			return false;
 
 		FT_Error error;
-		error = FT_Get_Kerning(_face, left_glyph, right_glyph, kern_mode,
+		error = FT_Get_Kerning(face_, left_glyph, right_glyph, kern_mode,
 		        akerning);
 		if (error) {
 			cerr << "Fail to get kerning" << endl;
@@ -344,10 +344,10 @@ namespace BIL {
 	{
 		Tuple2l ret;	// {0, 0}
 
-		if ((!_valid) || (_face == NULL))
+		if ((!valid_) || (face_ == NULL))
 			return ret;
 
-		if (! FT_HAS_KERNING(_face))  return ret;
+		if (! FT_HAS_KERNING(face_))  return ret;
 
 		FT_Vector kerning;
 
@@ -365,12 +365,12 @@ namespace BIL {
 
 	bool FontEngine::setLcdFilter (FT_LcdFilter filter)
 	{
-		if (!_valid)
+		if (!valid_)
 			return false;
 
 		FT_Error error;
 
-		error = FT_Library_SetLcdFilter(_library, filter);
+		error = FT_Library_SetLcdFilter(library_, filter);
 
 		if (error) {
 			cerr << "Fail to set lcd filter" << endl;
@@ -382,12 +382,12 @@ namespace BIL {
 
 	bool FontEngine::setLcdFilterWeights (unsigned char* weights)
 	{
-		if (!_valid)
+		if (!valid_)
 			return false;
 
 		FT_Error error;
 
-		error = FT_Library_SetLcdFilterWeights(_library, weights);
+		error = FT_Library_SetLcdFilterWeights(library_, weights);
 		if (error) {
 			cerr << "Fail to set lcd filter weights" << endl;
 			return false;

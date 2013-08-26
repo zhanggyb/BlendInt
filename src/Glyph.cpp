@@ -156,7 +156,7 @@ namespace BIL {
 
 		fontlib = font_engine_;
 
-		if (!fontlib->isValid()) {
+		if (!fontlib->valid()) {
 			cerr << "Cannot get Font" << endl;
 			return false;
 		}

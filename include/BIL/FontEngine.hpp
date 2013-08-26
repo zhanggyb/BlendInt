@@ -74,46 +74,46 @@ namespace BIL {
 		 */
 		virtual ~FontEngine ();
 
-		bool isValid (void)
+		bool valid ()
 		{
-			return _valid;
+			return valid_;
 		}
 
 		bool isUseKerning (void);
 
-		int getHeight (void) const
+		int height () const
 		{
-			if(!_valid) return 0.0;
+			if(!valid_) return 0;
 
-			return _height;
+			return height_;
 		}
 
-		int getAscender (void) const
+		int ascender () const
 		{
-			if(!_valid) return 0.0;
-			return _ascender;
+			if(!valid_) return 0.0;
+			return ascender_;
 		}
 
-		int getDescender (void) const
+		int descender () const
 		{
-			if(!_valid) return 0.0;
-			return _descender;
+			if(!valid_) return 0.0;
+			return descender_;
 		}
 
-		int getMaxAdvance (void) const
+		int max_advance () const
 		{
-			if(!_valid) return 0.0;
-			return _maxAdvance;
+			if(!valid_) return 0.0;
+			return max_advance_;
 		}
 
 		const FT_Face& getFontFace (void) const
 		{
-			return _face;
+			return face_;
 		}
 
 		const FT_Stroker& getStroker (void) const
 		{
-			return _stroker;
+			return stroker_;
 		}
 
 		//bool setFontSize (unsigned int size, unsigned int dpi = 96);
@@ -164,7 +164,7 @@ namespace BIL {
 
 		const Font& getFont (void) const
 		{
-			return _font;
+			return font_;
 		}
 
 	private:
@@ -174,31 +174,31 @@ namespace BIL {
 
 	private:
 
-		FT_Library _library; /**< Freetype Library */
+		FT_Library library_; /**< Freetype Library */
 
-		FT_Face _face; /**< freetype2 face */
+		FT_Face face_; /**< freetype2 face */
 
-		FT_Stroker _stroker; /**< Font stroker */
+		FT_Stroker stroker_; /**< Font stroker */
 
-		bool _valid; /**< if the font face is valid */
+		bool valid_; /**< if the font face is valid */
 
-		bool _unicode; /**< if has unicode charmap */
+		bool unicode_; /**< if has unicode charmap */
 
 		/** used to compute a default line spacing */
-		int _height;
+		int height_;
 
 		/**/
-		int _ascender;
+		int ascender_;
 
 		/**/
-		int _descender;
+		int descender_;
 
 		/** Max horizontal advance */
-		int _maxAdvance;
+		int max_advance_;
 
-		Font _font;
+		Font font_;
 
-		unsigned int _dpi;
+		unsigned int dpi_;
 	};
 
 } /* namespace BIL */

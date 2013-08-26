@@ -85,7 +85,7 @@ namespace BIL {
 			}
 
 			glyph = fontcache_->query(*it);
-			if (glyph != NULL) {
+			if (glyph) {
 				// add kerning support
 				next = it + 1;
 				if(next != text_.end()) {

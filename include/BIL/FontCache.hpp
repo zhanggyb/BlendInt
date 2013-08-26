@@ -104,27 +104,27 @@ namespace BIL {
 
 		int getHeight ()
 		{
-			if(fontengine_ == NULL) return 0;
+			if(!fontengine_) return 0;
 			
-			return fontengine_->getHeight();
+			return fontengine_->height();
 		}
 
 		int getAscender ()
 		{
 			if(fontengine_ == NULL) return 0;
-			return fontengine_->getAscender();
+			return fontengine_->ascender();
 		}
 
 		int getDescender ()
 		{
 			if(fontengine_ == NULL) return 0;
-			return fontengine_->getDescender();
+			return fontengine_->descender();
 		}
 
 		int getMaxAdvance ()
 		{
 			if(fontengine_ == NULL) return 0;
-			return fontengine_->getMaxAdvance();
+			return fontengine_->max_advance();
 		}
 
 		Tuple2l getKerning (const Glyph& left, const Glyph& right,

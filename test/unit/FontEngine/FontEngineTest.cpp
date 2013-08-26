@@ -83,7 +83,7 @@ void FontEngineTest::create1 ()
 
 	FontEngine *font = new FontEngine(fontpath);
 
-	result = font->isValid();
+	result = font->valid();
 
 	delete font;
 	font = NULL;
@@ -102,8 +102,8 @@ void FontEngineTest::create2 ()
 	FontEngine *font1 = new FontEngine(fontpath);
 	FontEngine *font2 = new FontEngine(fontpath);
 
-	result1 = font1->isValid();
-	result2 = font2->isValid();
+	result1 = font1->valid();
+	result2 = font2->valid();
 
 	delete font1;
 	font1 = NULL;
@@ -122,7 +122,7 @@ void FontEngineTest::create3 ()
 	FontEngine *font1 = new FontEngine(gFontService->getBuffer(),
 									   gFontService->getBufferSize());
 
-	result1 = font1->isValid();
+	result1 = font1->valid();
 
 	delete font1;
 	font1 = NULL;
@@ -136,7 +136,7 @@ void FontEngineTest::create4 ()
 
 	FontEngine font(Font("Sans"), 96);
 
-	result1 = font.isValid();
+	result1 = font.valid();
 
 	CPPUNIT_ASSERT(result1);
 }
@@ -149,7 +149,7 @@ void FontEngineTest::create5 ()
 
 	FontEngine *font = new FontEngine(fontpath);
 
-	result = font->isValid();
+	result = font->valid();
 
 	if(result) {
 
@@ -166,10 +166,10 @@ void FontEngineTest::create5 ()
 			cout << "Normal" << endl;
 		}
 
-		cout << "Global height: " << font->getHeight() << endl;
-		cout << "Global ascender: " << font->getAscender() << endl;
-		cout << "Global descender: " << font->getDescender() << endl;
-		cout << "Global max Advance: " << font->getMaxAdvance() << endl;
+		cout << "Global height: " << font->height() << endl;
+		cout << "Global ascender: " << font->ascender() << endl;
+		cout << "Global descender: " << font->descender() << endl;
+		cout << "Global max Advance: " << font->max_advance() << endl;
 
 	}
 
@@ -188,7 +188,7 @@ void FontEngineTest::create6 ()
 
 	FontEngine *fe = new FontEngine(font, 96);
 
-	result = fe->isValid();
+	result = fe->valid();
 
 	if(result) {
 
@@ -226,7 +226,7 @@ void FontEngineTest::checkindex1 ()
 	FontEngine *fe = new FontEngine(
 			"/usr/share/fonts/TTF/DejaVuSans.ttf", 16);
 
-	result = fe->isValid();
+	result = fe->valid();
 
 	if(result) {
 
@@ -267,7 +267,7 @@ void FontEngineTest::checkindex2 ()
 	FontEngine *fe = new FontEngine(
 			"/usr/share/fonts/TTF/DroidSansFallback.ttf", 16);
 
-	result = fe->isValid();
+	result = fe->valid();
 
 	if(result) {
 
@@ -308,7 +308,7 @@ void FontEngineTest::checkindex3 ()
 	FontEngine *fe = new FontEngine(
 			Font("Sans", 16));
 
-	result = fe->isValid();
+	result = fe->valid();
 
 	if(result) {
 
@@ -349,7 +349,7 @@ void FontEngineTest::checkindex4 ()
 	FontEngine *fe = new FontEngine(
 			Font("Droid Sans", 16));
 
-	result = fe->isValid();
+	result = fe->valid();
 
 	if(result) {
 
@@ -393,9 +393,9 @@ void FontEngineTest::get_glyph1 ()
 
 	FontEngine *font = new FontEngine(fontpath);
 
-	result = font->isValid();
+	result = font->valid();
 
-	if (!font->isValid()) {
+	if (!font->valid()) {
 		delete font;
 		font = NULL;
 		CPPUNIT_FAIL("Cannot create font\n");
@@ -469,9 +469,9 @@ void FontEngineTest::get_glyph2 ()
 
 	FontEngine *font = new FontEngine(fontpath);
 
-	result = font->isValid();
+	result = font->valid();
 
-	if (!font->isValid()) {
+	if (!font->valid()) {
 		delete font;
 		font = NULL;
 		CPPUNIT_FAIL("Cannot create font\n");
@@ -544,9 +544,9 @@ void FontEngineTest::get_glyph3 ()
 
 	FontEngine *font = new FontEngine(fontpath);
 
-	result = font->isValid();
+	result = font->valid();
 
-	if (!font->isValid()) {
+	if (!font->valid()) {
 		delete font;
 		font = NULL;
 		CPPUNIT_FAIL("Cannot create font\n");
@@ -619,9 +619,9 @@ void FontEngineTest::get_glyph4 ()
 
 	FontEngine *font = new FontEngine(fontpath);
 
-	result = font->isValid();
+	result = font->valid();
 
-	if (!font->isValid()) {
+	if (!font->valid()) {
 		delete font;
 		font = NULL;
 		CPPUNIT_FAIL("Cannot create font\n");
@@ -705,9 +705,9 @@ void FontEngineTest::get_glyph5 ()
 	FontEngine *font = new FontEngine(gFontService->getBuffer(),
 									  gFontService->getBufferSize());
 
-	result = font->isValid();
+	result = font->valid();
 
-	if (!font->isValid()) {
+	if (!font->valid()) {
 		delete font;
 		font = NULL;
 		CPPUNIT_FAIL("Cannot create font\n");
@@ -770,9 +770,9 @@ void FontEngineTest::glyph_metrics1 ()
 
 	FontEngine *font = new FontEngine(fontpath);
 
-	result = font->isValid();
+	result = font->valid();
 
-	if (!font->isValid()) {
+	if (!font->valid()) {
 		delete font;
 		font = NULL;
 		CPPUNIT_FAIL("Cannot create font\n");
@@ -868,9 +868,9 @@ void FontEngineTest::checkkerning1()
 
 	FontEngine *font = new FontEngine(fontpath);
 
-	result = font->isValid();
+	result = font->valid();
 
-	if (!font->isValid()) {
+	if (!font->valid()) {
 		delete font;
 		font = NULL;
 		CPPUNIT_FAIL("Cannot create font\n");

@@ -147,7 +147,7 @@ namespace BIL {
 
 	FontCache::~FontCache ()
 	{
-		if (fontengine_->isValid()) {
+		if (fontengine_->valid()) {
 
 			map<wchar_t, Glyph*>::iterator it;
 			for (it = glyph_db_.begin(); it != glyph_db_.end(); it++) {
@@ -173,7 +173,7 @@ namespace BIL {
 
 	bool FontCache::initialize (void)
 	{
-		if (!fontengine_->isValid()) {
+		if (!fontengine_->valid()) {
 			return false;
 		}
 
@@ -191,7 +191,7 @@ namespace BIL {
 
 	Glyph* FontCache::query (wchar_t charcode, bool create)
 	{
-		if (!fontengine_->isValid()) {
+		if (!fontengine_->valid()) {
 			return NULL;
 		}
 

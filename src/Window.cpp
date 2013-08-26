@@ -136,6 +136,57 @@ namespace BIL {
 		glMatrixMode (GL_MODELVIEW);
 		glLoadIdentity();
 
+#ifdef DEBUG
+		// Draw grid for debug
+		const int small_step = 20;
+		const int big_step = 100;
+
+		glLineWidth(1);
+		glEnable(GL_LINE_STIPPLE);
+
+		glColor4f (1.0f, 1.0f, 1.0f, 0.1f);
+		glLineStipple (1, 0xAAAA);
+		for (int num = 1; num < width; num++)
+		{
+			int step = num * small_step;
+			glBegin (GL_LINES);
+				glVertex2i(0, step);
+				glVertex2i(width, step);
+			glEnd();
+
+		}
+		for (int num = 1; num < height; num++)
+		{
+			int step = num * small_step;
+			glBegin (GL_LINES);
+				glVertex2i(step, 0);
+				glVertex2i(step, height);
+			glEnd();
+		}
+
+		glColor4f (1.0f, 1.0f, 1.0f, 0.25f);
+		glLineStipple (1, 0xAAAA);
+		for (int num = 1; num < width; num++)
+		{
+			int step = num * big_step;
+			glBegin (GL_LINES);
+			glVertex2i(0, step);
+			glVertex2i(width, step);
+			glEnd();
+		}
+
+		for (int num = 1; num < height; num++)
+		{
+			int step = num * big_step;
+			glBegin (GL_LINES);
+				glVertex2i(step, 0);
+				glVertex2i(step, height);
+			glEnd();
+		}
+
+		glDisable(GL_LINE_STIPPLE);
+#endif
+
 		list<Traceable*>::const_iterator it;
 		Drawable *item = NULL;
 		for (it = children_.begin(); it != children_.end(); it++) {

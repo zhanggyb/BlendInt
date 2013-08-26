@@ -74,6 +74,16 @@ void GlyphTest::create1 ()
 	}
 
 	Glyph glyph (L'A', Font("Sans", 24), 96);
+	cout << endl;
+	Rect rect = glyph.OutlineBox();
+	cout << "Outline of a: " << rect.left() << " " << rect.bottom()
+			<< " " << rect.right() << " " << rect.top() << endl;
+	cout << "Metrics of a: width: " << glyph.metrics().width << " "
+			<< " height: " << glyph.metrics().height << " "
+			<< "bearingX: " << glyph.metrics().horiBearingX << " "
+		 << "bearingY: " << glyph.metrics().horiBearingY << " "
+		 << endl;
+
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -619,26 +629,56 @@ void GlyphTest::checkoutline1 ()
 	Rect rect = a.OutlineBox();
 	cout << "Outline of a: " << rect.left() << " " << rect.bottom()
 			<< " " << rect.right() << " " << rect.top() << endl;
-
+	cout << "Metrics of a: width: " << a.metrics().width << " "
+			<< " height: " << a.metrics().height << " "
+			<< "bearingX: " << a.metrics().horiBearingX << " "
+		 << "bearingY: " << a.metrics().horiBearingY << " "
+		 << endl;
+	
 	rect = b.OutlineBox();
 	cout << "Outline of b: " << rect.left() << " " << rect.bottom()
 			<< " " << rect.right() << " " << rect.top() << endl;
+	cout << "Metrics of b: width: " << b.metrics().width << " "
+			<< " height: " << b.metrics().height << " "
+			<< "bearingX: " << b.metrics().horiBearingX << " "
+		 << "bearingY: " << b.metrics().horiBearingY << " "
+		 << endl;
 
 	rect = c.OutlineBox();
 	cout << "Outline of c: " << rect.left() << " " << rect.bottom()
 			<< " " << rect.right() << " " << rect.top() << endl;
+	cout << "Metrics of c: width: " << c.metrics().width << " "
+			<< " height: " << c.metrics().height << " "
+			<< "bearingX: " << c.metrics().horiBearingX << " "
+		 << "bearingY: " << c.metrics().horiBearingY << " "
+		 << endl;
 
 	rect = d.OutlineBox();
 	cout << "Outline of d: " << rect.left() << " " << rect.bottom()
 			<< " " << rect.right() << " " << rect.top() << endl;
+	cout << "Metrics of d: width: " << d.metrics().width << " "
+			<< " height: " << d.metrics().height << " "
+			<< "bearingX: " << d.metrics().horiBearingX << " "
+		 << "bearingY: " << d.metrics().horiBearingY << " "
+		 << endl;
 
 	rect = e.OutlineBox();
 	cout << "Outline of e: " << rect.left() << " " << rect.bottom()
 			<< " " << rect.right() << " " << rect.top() << endl;
+	cout << "Metrics of e: width: " << e.metrics().width << " "
+			<< " height: " << e.metrics().height << " "
+			<< "bearingX: " << e.metrics().horiBearingX << " "
+		 << "bearingY: " << e.metrics().horiBearingY << " "
+		 << endl;
 
 	rect = f.OutlineBox();
 	cout << "Outline of f: " << rect.left() << " " << rect.bottom()
 			<< " " << rect.right() << " " << rect.top() << endl;
+	cout << "Metrics of f: width: " << f.metrics().width << " "
+			<< " height: " << f.metrics().height << " "
+			<< "bearingX: " << f.metrics().horiBearingX << " "
+		 << "bearingY: " << f.metrics().horiBearingY << " "
+		 << endl;
 
 	while (!glfwWindowShouldClose(win)) {
 
