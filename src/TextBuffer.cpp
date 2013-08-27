@@ -22,11 +22,16 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
+#include <iostream>
+#include <algorithm>
+
 #include <BIL/FontEngine.hpp>
 #include <BIL/FontConfig.hpp>
 #include <BIL/TextBuffer.hpp>
 
 #include <BIL/Tuple.hpp>
+
+using namespace std;
 
 namespace BIL {
 
@@ -73,34 +78,45 @@ namespace BIL {
 	{
 		String::const_iterator it;
 		String::const_iterator next;
-		Size box;
+		Size outline_box;
 		Tuple2l kerning;
 		Glyph* glyph = NULL;
 
 		unsigned int line_width = 0;
 		unsigned int line = 1;
 
+		int line_height = 0;
+		int total_height = 0;
 		for (it = text_.begin(); it != text_.end(); it++) {
+
 			if (*it == '\n') {
 				line++;
-				box.set_width (box.width() > line_width ? box.width() : line_width);
+				outline_box.set_width (outline_box.width() > line_width ? outline_box.width() : line_width);
+				total_height = total_height + line_height +
+						static_cast<int>(fontcache_->getHeight() * (line -1) * (rowspacing_ - 1.0));
+				continue;
 			}
 
 			glyph = fontcache_->query(*it);
 			if (glyph) {
+
 				// add kerning support
 				next = it + 1;
 				if(next != text_.end()) {
 					kerning = fontcache_->getKerning(*it, *next);
 				}
 				line_width = glyph->metrics().horiAdvance + kerning.vec.x + line_width;
+
+				Rect rect = glyph->OutlineBox();
+				line_height = std::max (rect.height(), line_height);
 			}
 		}
 
-		box.set_width (box.width() > line_width ? box.width() : line_width);
-		box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * rowspacing_));
+		outline_box.set_width (outline_box.width() > line_width ? outline_box.width() : line_width);
+		//outline_box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * rowspacing_));
+		outline_box.set_height (total_height + line_height);
 
-		return box;
+		return outline_box;
 	}
 
 	void TextBuffer::Render ()
@@ -119,8 +135,9 @@ namespace BIL {
 		glPushMatrix();
 
 		glTranslatef(origin_.x(),
-					 origin_.y() - fontcache_->getDescender(),
+					 origin_.y(), // - fontcache_->getDescender(),
 					 origin_.z());
+
 
 		int line = 0;
 		String::const_iterator it;

@@ -29,7 +29,7 @@ namespace BIL {
 	Label::Label (const wstring& text, Drawable *parent)
 		: Widget (parent), background_(0x00000000)
 	{
-		set_padding(Tuple4i(2, 2, 2, 2));
+		set_padding(Tuple4i(4, 4, 4, 4));
 		set_text(text);
 	}
 

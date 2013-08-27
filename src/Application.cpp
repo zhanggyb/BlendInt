@@ -79,8 +79,7 @@ namespace BIL {
 			theme->initialize();
 
 		if (nls) {
-			// set locale
-			//setlocale(LC_ALL, "");
+			setlocale(LC_ALL, "");
 		}
 
 		if (_mainWindow != NULL) {

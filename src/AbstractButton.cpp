@@ -30,7 +30,7 @@ namespace BIL {
 		: Widget(parent), down_(false), checkable_(false),
 		  checked_(false), hover_(false)
 	{
-		set_padding(Tuple4i(2, 2, 2, 2));
+		set_padding(Tuple4i(4, 4, 4, 4));
 	}
 
 	AbstractButton::~AbstractButton ()
