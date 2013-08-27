@@ -33,10 +33,12 @@ namespace BIL {
 	{
 	}
 
+	/*
 	Font::Font (const std::string& family, unsigned int size, bool bold, bool italic)
 			: family(family), size(size), bold(bold), italic(italic)
 	{
 	}
+	*/
 
 	Font::Font (const wchar_t* family, unsigned int size, bool bold,
 	        bool italic)

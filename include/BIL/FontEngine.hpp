@@ -52,7 +52,7 @@ namespace BIL {
 		 * @param filename File path name
 		 * @param size Font size
 		 */
-		FontEngine (const string& filename,
+		FontEngine (const std::string& filename,
 					unsigned int size = 9,
 					unsigned int dpi = 96);
 

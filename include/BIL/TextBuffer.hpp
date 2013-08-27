@@ -53,7 +53,7 @@ namespace BIL {
 
 		virtual ~TextBuffer ();
 
-		void Append (const wstring& text);
+		void Append (const String& text);
 
 		void Append (wchar_t charcode);
 
@@ -87,7 +87,7 @@ namespace BIL {
 
 		void Clear (); /* clear the text */
 
-		const wstring& text () const
+		const String& text () const
 		{
 			return text_;
 		}
@@ -121,7 +121,7 @@ namespace BIL {
 		Coord3f origin_;
 
 		/** string */
-		wstring text_;
+		String text_;
 
 	private:	// member functions disabled
 

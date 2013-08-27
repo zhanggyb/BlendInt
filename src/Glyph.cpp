@@ -51,6 +51,7 @@ namespace BIL {
 		MakeDisplayList();
 	}
 
+	/*
 	Glyph::Glyph (const Glyph& orig)
 			: font_engine_(NULL), charcode_(0), glyph_index_(0), texture_(0), displist_(
 			        0), dpi_(96)
@@ -63,6 +64,7 @@ namespace BIL {
 		// TODO: assignment
 		return *this;
 	}
+	 */
 
 	Glyph::~Glyph ()
 	{
@@ -120,9 +122,26 @@ namespace BIL {
 
 	Rect Glyph::OutlineBox ()
 	{
-		if (!font_engine_) return Rect();
+		FontEngine* fontlib = NULL;
 
-		FT_Face face = font_engine_->getFontFace();
+		// if _fonttype is not set, use default font
+		if (!font_engine_) {
+			FontConfig* fontserv = FontConfig::getService();
+
+			if (fontserv == NULL) {
+				return Rect();
+			}
+
+			if (!fontserv->isInitialized()) {
+				return Rect();
+			}
+			fontlib = new FontEngine(fontserv->getBuffer(),
+			        fontserv->getBufferSize());
+		} else {
+			fontlib = font_engine_;
+		}
+
+		FT_Face face = fontlib->getFontFace();
 
 		FT_BBox outline_box;
 		FT_Outline_Get_CBox (&(face->glyph->outline), &outline_box);
@@ -130,6 +149,11 @@ namespace BIL {
 		outline_box.xMax = outline_box.xMax / 64;
 		outline_box.yMin = outline_box.yMin / 64;
 		outline_box.yMax = outline_box.yMax / 64;
+
+		if(!font_engine_) {
+			delete fontlib;
+			fontlib = NULL;
+		}
 
 		return Rect (Point(outline_box.xMin, outline_box.yMin),
 				Point(outline_box.xMax, outline_box.yMax));
@@ -140,7 +164,7 @@ namespace BIL {
 		FontEngine* fontlib = NULL;
 
 		// if _fonttype is not set, use default font
-		if (font_engine_ == NULL) {
+		if (!font_engine_) {
 			FontConfig* fontserv = FontConfig::getService();
 
 			if (fontserv == NULL) {
@@ -150,11 +174,11 @@ namespace BIL {
 			if (!fontserv->isInitialized()) {
 				return false;
 			}
-			font_engine_ = new FontEngine(fontserv->getBuffer(),
+			fontlib = new FontEngine(fontserv->getBuffer(),
 			        fontserv->getBufferSize());
+		} else {
+			fontlib = font_engine_;
 		}
-
-		fontlib = font_engine_;
 
 		if (!fontlib->valid()) {
 			cerr << "Cannot get Font" << endl;
@@ -196,7 +220,7 @@ namespace BIL {
 
 		if (FT_Get_Glyph(face->glyph, &glyph)) {
 			delete[] fontimage;
-			if (font_engine_ == NULL)
+			if (!font_engine_)
 				delete fontlib;
 			return false;
 		}
@@ -256,7 +280,7 @@ namespace BIL {
 
 		glEndList();
 
-		if (font_engine_ == NULL) {
+		if (!font_engine_) {
 			delete fontlib;
 		}
 

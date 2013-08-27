@@ -199,7 +199,7 @@ namespace BIL {
 
 		if (charcode < 128) {
 			glyph = ascii_db_[charcode];
-			if ((glyph == NULL) && create) {
+			if ((!glyph) && create) {
 				glyph = new Glyph(charcode, font_, dpi_, fontengine_);
 				ascii_db_[charcode] = glyph;
 			}
@@ -239,7 +239,7 @@ namespace BIL {
 			glyph = glyph_db_[charcode];
 		}
 
-		if(glyph != NULL) {
+		if(glyph) {
 			unsigned long count = count_db_[charcode];
 			count_db_[charcode] = count + 1;
 		}

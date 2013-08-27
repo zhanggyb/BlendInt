@@ -41,10 +41,12 @@ namespace BIL {
         bool bold = false,
         bool italic = false);
 
+		/*
 		Font (const std::string& family,
 				unsigned int size = 9,
         bool bold = false,
         bool italic = false);
+		*/
 
 		Font (const wchar_t* family, unsigned int size = 9, bool bold = false, bool italic = false);
 

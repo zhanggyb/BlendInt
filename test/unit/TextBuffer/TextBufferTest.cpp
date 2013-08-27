@@ -442,6 +442,10 @@ void TextBufferTest::multiple_buf_show1 ()
 	buf2.set_origin(Coord3f(100.0, 200.0, 0.0));
 	buf2.set_font(Font("Droid Sans", 50));
 
+	TextBuffer buf3(L"我爱北京天安门");
+	buf3.set_origin(Coord3f(100.0, 300.0, 0.0));
+	buf3.set_font(Font("Sans", 48));
+
 	while (!glfwWindowShouldClose(win)) {
 
 		int width, height;
@@ -471,10 +475,14 @@ void TextBufferTest::multiple_buf_show1 ()
 
 		buf2.Render();
 
+		buf3.Render();
+
 		glDisable(GL_BLEND);
 		glfwSwapBuffers(win);
 		glfwPollEvents();
 	}
+
+	FontCache::list();
 
 	FontCache::releaseAll();
 

@@ -56,7 +56,7 @@ namespace BIL {
 	{
 	}
 
-	void TextBuffer::Append (const wstring& text)
+	void TextBuffer::Append (const String& text)
 	{
 		if (text.empty())
 			return;
@@ -71,8 +71,8 @@ namespace BIL {
 
 	Size TextBuffer::CalculateOutlineBoxSize ()
 	{
-		wstring::const_iterator it;
-		wstring::const_iterator next;
+		String::const_iterator it;
+		String::const_iterator next;
 		Size box;
 		Tuple2l kerning;
 		Glyph* glyph = NULL;
@@ -123,7 +123,7 @@ namespace BIL {
 					 origin_.z());
 
 		int line = 0;
-		wstring::const_iterator it;
+		String::const_iterator it;
 		for (it = text_.begin(); it != text_.end(); it++) {
 			if (*it == '\n') {
 				line++;
@@ -136,7 +136,7 @@ namespace BIL {
 			}
 
 			glyph = fontcache_->query(*it);
-			if (glyph != NULL) {
+			if (glyph) {
 				glyph->Render();
 				glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 			}

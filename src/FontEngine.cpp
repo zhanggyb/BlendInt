@@ -86,7 +86,7 @@ namespace BIL {
 		setCharSize(font.size, dpi);
 	}
 
-	FontEngine::FontEngine (const string& filename,
+	FontEngine::FontEngine (const std::string& filename,
 							unsigned int size,
 							unsigned int dpi)
 		: library_(NULL), face_(NULL), stroker_(NULL),
