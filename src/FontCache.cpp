@@ -38,7 +38,8 @@ namespace BIL {
 	map<Font, FontCache*> FontCache::cacheDB;
 	map<Font, unsigned long> FontCache::cacheCountDB;
 
-	FontCache* FontCache::create (const Font& font, bool force)
+	FontCache* FontCache::create (const Font& font, unsigned int dpi,
+	        bool force)
 	{
 		// Don't repeatedly create, cause memory leak
 		map<Font, FontCache*>::const_iterator it;
@@ -47,6 +48,8 @@ namespace BIL {
 		if (it != cacheDB.end()) {
 			unsigned long count = cacheCountDB[font];
 			cacheCountDB[font] = count + 1;
+
+			it->second->set_dpi(dpi);
 			return it->second;
 		}
 
@@ -58,19 +61,19 @@ namespace BIL {
 			// Remove mostly unused cache
 			typedef std::pair<Font, unsigned long> data_t;
 			typedef std::priority_queue<data_t, std::deque<data_t>,
-										greater_second<data_t> > queue_t;
+			        greater_second<data_t> > queue_t;
 			queue_t q(cacheCountDB.begin(), cacheCountDB.end());
 
 			Font font_of_cache = q.top().first;
 			wcout << "Remove " << q.top().first.family << " from cache DB."
-				 << std::endl;
+			        << std::endl;
 
 			delete cacheDB[font_of_cache];
 			cacheDB.erase(font_of_cache);
 			cacheCountDB.erase(font_of_cache);
 		}
 
-		FontCache * cache = new FontCache(font);
+		FontCache * cache = new FontCache(font, dpi);
 
 		cacheDB[font] = cache;
 		unsigned long count = cacheCountDB[font];
@@ -79,7 +82,7 @@ namespace BIL {
 		return cache;
 	}
 
-	FontCache* FontCache::getCache (const Font& font)
+	FontCache* FontCache::getCache (const Font& font, unsigned int dpi)
 	{
 		map<Font, unsigned long>::const_iterator it;
 		it = cacheCountDB.find(font);
@@ -89,6 +92,7 @@ namespace BIL {
 		} else {
 			unsigned long count = cacheCountDB[font];
 			cacheCountDB[font] = count + 1;
+			cacheDB[font]->set_dpi(dpi);
 			return cacheDB[font];
 		}
 	}
@@ -131,57 +135,57 @@ namespace BIL {
 		cout << endl;
 		for (it = cacheCountDB.begin(); it != cacheCountDB.end(); it++) {
 			wcout << it->first.family << " of " << it->first.size
-				 << " is used: " << it->second << endl;
+			        << " is used: " << it->second << endl;
 		}
 	}
 #endif
 
 	FontCache::FontCache (const Font& font, unsigned int dpi)
-		: font_(font), dpi_(dpi), fontengine_(NULL), initialized_(false)
+			: fontengine_(NULL), initialized_(false)
 	{
-		for (unsigned char i = 0; i < 128; i++) {
+		for (int i = 0; i < 128; i++) {
 			ascii_db_[i] = NULL;
 		}
-		fontengine_ = new FontEngine(font_, dpi_);
+		fontengine_ = new FontEngine(font, dpi);
 	}
 
 	FontCache::~FontCache ()
 	{
-		if (fontengine_->valid()) {
+		if (fontengine_) {
 
 			map<wchar_t, Glyph*>::iterator it;
 			for (it = glyph_db_.begin(); it != glyph_db_.end(); it++) {
-				delete it->second;
-				it->second = NULL;
+				if (it->second) {
+					delete it->second;
+					it->second = NULL;
+				}
 			}
 			glyph_db_.clear();
 			count_db_.clear();
 
-			for (unsigned char i = 0; i < 128; i++) {
-				if (ascii_db_[i] != NULL) {
+			for (int i = 0; i < 128; i++) {
+				if (ascii_db_[i]) {
 					delete ascii_db_[i];
 					ascii_db_[i] = NULL;
 				}
 			}
 			initialized_ = false;
-		}
-		if (fontengine_ != NULL) {
+
 			delete fontengine_;
-			fontengine_ = NULL;
 		}
 	}
 
-	bool FontCache::initialize (void)
+	bool FontCache::Initialize (void)
 	{
 		if (!fontengine_->valid()) {
 			return false;
 		}
 
-		if(initialized_) {
+		if (initialized_) {
 			return false;
 		}
 
-		for (unsigned char i = 0; i < 128; i++) {
+		for (int i = 0; i < 128; i++) {
 			query(i, true);
 		}
 
@@ -199,12 +203,17 @@ namespace BIL {
 
 		if (charcode < 128) {
 			glyph = ascii_db_[charcode];
-			if ((!glyph) && create) {
-				glyph = new Glyph(charcode, font_, dpi_, fontengine_);
-				ascii_db_[charcode] = glyph;
-			}
 
-			return glyph;
+			if (glyph) return glyph;
+
+			if (create) {
+				glyph = new Glyph(charcode, fontengine_);
+				ascii_db_[charcode] = glyph;
+
+				return glyph;
+			} else {
+				return NULL;
+			}
 		}
 
 		map<wchar_t, Glyph*>::iterator it;
@@ -215,17 +224,17 @@ namespace BIL {
 
 			if (create) {
 
-				glyph = new Glyph(charcode, font_, dpi_, fontengine_);
+				glyph = new Glyph(charcode, fontengine_);
 
 				if (glyph_db_.size() >= cacheSize) {
 					typedef std::pair<wchar_t, unsigned long> data_t;
 					typedef std::priority_queue<data_t, std::deque<data_t>,
-												greater_second<data_t> > queue_t;
+					        greater_second<data_t> > queue_t;
 					queue_t q(count_db_.begin(), count_db_.end());
 
 					wchar_t char_to_del = q.top().first;
 					cout << "Remove " << q.top().first << " from cache."
-						 << std::endl;
+					        << std::endl;
 
 					delete glyph_db_[char_to_del];
 					glyph_db_.erase(char_to_del);
@@ -239,7 +248,7 @@ namespace BIL {
 			glyph = glyph_db_[charcode];
 		}
 
-		if(glyph) {
+		if (glyph) {
 			unsigned long count = count_db_[charcode];
 			count_db_[charcode] = count + 1;
 		}

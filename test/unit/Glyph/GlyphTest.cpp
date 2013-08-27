@@ -73,11 +73,9 @@ void GlyphTest::create1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	Glyph glyph (L'A', Font("Sans", 24), 96);
+	FontEngine fe(Font("Sans", 24), 96);
+	Glyph glyph (L'A', &fe);
 	cout << endl;
-	Rect rect = glyph.OutlineBox();
-	cout << "Outline of a: " << rect.left() << " " << rect.bottom()
-			<< " " << rect.right() << " " << rect.top() << endl;
 	cout << "Metrics of a: width: " << glyph.metrics().width << " "
 			<< " height: " << glyph.metrics().height << " "
 			<< "bearingX: " << glyph.metrics().horiBearingX << " "
@@ -144,12 +142,13 @@ void GlyphTest::printtext1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	Glyph a(L'A', Font("Sans", 12), 96);
-	Glyph b(L'B', Font("Sans", 12), 96);
-	Glyph c(L'C', Font("Sans", 12), 96);
-	Glyph d(L'd', Font("Sans", 12), 96);
-	Glyph e(L'e', Font("Sans", 12), 96);
-	Glyph f(L'F', Font("Sans", 12), 96);
+	FontEngine fe(Font("Sans", 12), 96);
+	Glyph a(L'A', &fe);
+	Glyph b(L'B', &fe);
+	Glyph c(L'C', &fe);
+	Glyph d(L'd', &fe);
+	Glyph e(L'e', &fe);
+	Glyph f(L'F', &fe);
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -215,12 +214,13 @@ void GlyphTest::printtext2 ()
 		exit(EXIT_FAILURE);
 	}
 
-	Glyph a(L'A', Font("Sans", 12), 96);
-	Glyph b(L'b', Font("Sans", 12), 96);
-	Glyph c(L'仁', Font("Sans", 12), 96);
-	Glyph d(L'D', Font("Sans", 12), 96);
-	Glyph e(L'义', Font("Sans", 12), 96);
-	Glyph f(L'f', Font("Sans", 12), 96);
+	FontEngine fe (Font("Sans", 12), 96);
+	Glyph a(L'A', &fe);
+	Glyph b(L'b', &fe);
+	Glyph c(L'仁', &fe);
+	Glyph d(L'D', &fe);
+	Glyph e(L'义', &fe);
+	Glyph f(L'f', &fe);
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -286,16 +286,17 @@ void GlyphTest::printtext3 ()
 		exit(EXIT_FAILURE);
 	}
 
-	Glyph a(L'a', Font("Sans", 16), 96);
-	Glyph b(L'b', Font("Sans", 16), 96);
-	Glyph c(L'c', Font("Sans", 16), 96);
-	Glyph d(L'd', Font("Sans", 16), 96);
-	Glyph e(L'e', Font("Sans", 16), 96);
-	Glyph f(L'f', Font("Sans", 16), 96);
-	Glyph g(L'g', Font("Sans", 16), 96);
-	Glyph h(L'h', Font("Sans", 16), 96);
-	Glyph i(L'i', Font("Sans", 16), 96);
-	Glyph j(L'j', Font("Sans", 16), 96);
+	FontEngine fe(Font("Sans", 16), 96);
+	Glyph a(L'a', &fe);
+	Glyph b(L'b', &fe);
+	Glyph c(L'c', &fe);
+	Glyph d(L'd', &fe);
+	Glyph e(L'e', &fe);
+	Glyph f(L'f', &fe);
+	Glyph g(L'g', &fe);
+	Glyph h(L'h', &fe);
+	Glyph i(L'i', &fe);
+	Glyph j(L'j', &fe);
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -372,16 +373,16 @@ void GlyphTest::printtext4 ()
 	FontEngine font (FontConfig::getService()->getBuffer(),
 			FontConfig::getService()->getBufferSize());
 
-	Glyph a(L'p', Font("Sans", 12), 96, &font);
-	Glyph b(L'r', Font("Sans", 12), 96, &font);
-	Glyph c(L'i', Font("Sans", 12), 96, &font);
-	Glyph d(L'n', Font("Sans", 12), 96, &font);
-	Glyph e(L't', Font("Sans", 12), 96, &font);
-	Glyph f(L't', Font("Sans", 12), 96, &font);
-	Glyph g(L'e', Font("Sans", 12), 96, &font);
-	Glyph h(L'x', Font("Sans", 12), 96, &font);
-	Glyph i(L't', Font("Sans", 12), 96, &font);
-	Glyph j(L'4', Font("Sans", 12), 96, &font);
+	Glyph a(L'p', &font);
+	Glyph b(L'r', &font);
+	Glyph c(L'i', &font);
+	Glyph d(L'n', &font);
+	Glyph e(L't', &font);
+	Glyph f(L't', &font);
+	Glyph g(L'e', &font);
+	Glyph h(L'x', &font);
+	Glyph i(L't', &font);
+	Glyph j(L'4', &font);
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -456,19 +457,22 @@ void GlyphTest::checkbox1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	Glyph a(L'A', Font("Sans", 12), 96);
-	Glyph b(L'a', Font("Sans", 12), 96);
+	FontEngine fe (Font("Sans", 12), 96);
+	Glyph a(L'A', &fe);
+	Glyph b(L'a', &fe);
 
 	FontConfig* fontserv = FontConfig::getService();
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
+	Rect cbox = a.OutlineBox();
 	cout << endl;
+	cout << "Outline Box: " << cbox.x() << " " << cbox.y() << " " << cbox.width() << " " << cbox.height() << endl;
 	cout << "Metrics of A: width: " << a.metrics().width << " height: "
 		 << a.metrics().height << endl;
-	cout << "Box of A: " << a.getBox().vec.x << ", " << a.getBox().vec.y << endl;
+	cbox = b.OutlineBox();
+	cout << "Outline Box: " << cbox.x() << " " << cbox.y() << " " << cbox.width() << " " << cbox.height() << endl;
 	cout << "Metrics of a: width: " << b.metrics().width << " height: "
 		 << b.metrics().height << endl;
-	cout << "Box of a: " << b.getBox().vec.x << ", " << b.getBox().vec.y << endl;
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -527,12 +531,13 @@ void GlyphTest::checkkerning1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	Glyph a(L'A', Font("Sans", 12), 96);
-	Glyph b(L'b', Font("Sans", 12), 96);
-	Glyph c(L'仁', Font("Sans", 12), 96);
-	Glyph d(L'D', Font("Sans", 12), 96);
-	Glyph e(L'义', Font("Sans", 12), 96);
-	Glyph f(L'f', Font("Sans", 12), 96);
+	FontEngine fe(Font("Sans", 12), 96);
+	Glyph a(L'A', &fe);
+	Glyph b(L'b', &fe);
+	Glyph c(L'仁',  &fe);
+	Glyph d(L'D', &fe);
+	Glyph e(L'义',  &fe);
+	Glyph f(L'f', &fe);
 
 	FontConfig* fontserv = FontConfig::getService();
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
@@ -615,65 +620,60 @@ void GlyphTest::checkoutline1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	Glyph a(L'A', Font("Sans", 12), 96);
-	Glyph b(L'b', Font("Sans", 12), 96);
-	Glyph c(L'仁', Font("Sans", 12), 96);
-	Glyph d(L'D', Font("Sans", 12), 96);
-	Glyph e(L'义', Font("Sans", 12), 96);
-	Glyph f(L'f', Font("Sans", 12), 96);
+	FontEngine fe(Font("Sans", 12), 96);
+	Glyph a(L'A', &fe);
+	Glyph b(L'b', &fe);
+	Glyph c(L'仁',  &fe);
+	Glyph d(L'D', &fe);
+	Glyph e(L'义',  &fe);
+	Glyph f(L'f', &fe);
 
 	FontConfig* fontserv = FontConfig::getService();
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	cout << endl;
-	Rect rect = a.OutlineBox();
-	cout << "Outline of a: " << rect.left() << " " << rect.bottom()
-			<< " " << rect.right() << " " << rect.top() << endl;
+	Rect cbox = a.OutlineBox();
+	cout << "Outline Box: " << cbox.x() << " " << cbox.y() << " " << cbox.width() << " " << cbox.height() << endl;
 	cout << "Metrics of a: width: " << a.metrics().width << " "
 			<< " height: " << a.metrics().height << " "
 			<< "bearingX: " << a.metrics().horiBearingX << " "
 		 << "bearingY: " << a.metrics().horiBearingY << " "
 		 << endl;
-	
-	rect = b.OutlineBox();
-	cout << "Outline of b: " << rect.left() << " " << rect.bottom()
-			<< " " << rect.right() << " " << rect.top() << endl;
+
+	cbox = b.OutlineBox();
+	cout << "Outline Box: " << cbox.x() << " " << cbox.y() << " " << cbox.width() << " " << cbox.height() << endl;
 	cout << "Metrics of b: width: " << b.metrics().width << " "
 			<< " height: " << b.metrics().height << " "
 			<< "bearingX: " << b.metrics().horiBearingX << " "
 		 << "bearingY: " << b.metrics().horiBearingY << " "
 		 << endl;
 
-	rect = c.OutlineBox();
-	cout << "Outline of c: " << rect.left() << " " << rect.bottom()
-			<< " " << rect.right() << " " << rect.top() << endl;
+	cbox = c.OutlineBox();
+	cout << "Outline Box: " << cbox.x() << " " << cbox.y() << " " << cbox.width() << " " << cbox.height() << endl;
 	cout << "Metrics of c: width: " << c.metrics().width << " "
 			<< " height: " << c.metrics().height << " "
 			<< "bearingX: " << c.metrics().horiBearingX << " "
 		 << "bearingY: " << c.metrics().horiBearingY << " "
 		 << endl;
 
-	rect = d.OutlineBox();
-	cout << "Outline of d: " << rect.left() << " " << rect.bottom()
-			<< " " << rect.right() << " " << rect.top() << endl;
+	cbox = d.OutlineBox();
+	cout << "Outline Box: " << cbox.x() << " " << cbox.y() << " " << cbox.width() << " " << cbox.height() << endl;
 	cout << "Metrics of d: width: " << d.metrics().width << " "
 			<< " height: " << d.metrics().height << " "
 			<< "bearingX: " << d.metrics().horiBearingX << " "
 		 << "bearingY: " << d.metrics().horiBearingY << " "
 		 << endl;
 
-	rect = e.OutlineBox();
-	cout << "Outline of e: " << rect.left() << " " << rect.bottom()
-			<< " " << rect.right() << " " << rect.top() << endl;
+	cbox = e.OutlineBox();
+	cout << "Outline Box: " << cbox.x() << " " << cbox.y() << " " << cbox.width() << " " << cbox.height() << endl;
 	cout << "Metrics of e: width: " << e.metrics().width << " "
 			<< " height: " << e.metrics().height << " "
 			<< "bearingX: " << e.metrics().horiBearingX << " "
 		 << "bearingY: " << e.metrics().horiBearingY << " "
 		 << endl;
 
-	rect = f.OutlineBox();
-	cout << "Outline of f: " << rect.left() << " " << rect.bottom()
-			<< " " << rect.right() << " " << rect.top() << endl;
+	cbox = f.OutlineBox();
+	cout << "Outline Box: " << cbox.x() << " " << cbox.y() << " " << cbox.width() << " " << cbox.height() << endl;
 	cout << "Metrics of f: width: " << f.metrics().width << " "
 			<< " height: " << f.metrics().height << " "
 			<< "bearingX: " << f.metrics().horiBearingX << " "

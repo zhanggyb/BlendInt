@@ -109,3 +109,15 @@ void FontTest::check6 ()
 
 	CPPUNIT_ASSERT (result);
 }
+
+void FontTest::check7 ()
+{
+    bool result = false;
+
+    Font a("Droid Sans");
+    Font b("Droid Sans", 50);
+
+    result = a < b;
+
+	CPPUNIT_ASSERT (result);
+}

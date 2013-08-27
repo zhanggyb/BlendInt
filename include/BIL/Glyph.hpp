@@ -88,8 +88,9 @@ namespace BIL {
 		 */
 		Glyph (wchar_t charcode, FontEngine* fontlib = NULL);
 
+		/*
 		Glyph (wchar_t charcode, const Font& font, unsigned int dpi = 96,
-		        FontEngine* fontlib = NULL);
+		        FontEngine* fontlib = NULL);*/
 
 		Glyph (const Glyph& orig);
 
@@ -106,16 +107,6 @@ namespace BIL {
 			return font_engine_;
 		}
 
-		unsigned int dpi () const
-		{
-			return dpi_;
-		}
-
-		unsigned int getFontSize () const
-		{
-			return font_.size;
-		}
-
 		unsigned int glyph_index () const
 		{
 			return glyph_index_;
@@ -124,11 +115,6 @@ namespace BIL {
 		const Metrics& metrics () const
 		{
 			return metrics_;
-		}
-
-		const Tuple2i& getBox () const
-		{
-			return cbox_;
 		}
 
 		Rect OutlineBox ();
@@ -160,9 +146,9 @@ namespace BIL {
 	private:
 		/* member variables */
 
-		FontEngine* font_engine_;
-
 		wchar_t charcode_;
+
+		FontEngine* font_engine_;
 
 		unsigned int glyph_index_;   // 0 means 'undefined character code'
 
@@ -170,13 +156,7 @@ namespace BIL {
 
 		GLuint displist_;
 
-		Font font_;
-
-		unsigned int dpi_;
-
 		Metrics metrics_;
-
-		Tuple2i cbox_;
 	};
 
 } /* namespace BIL */

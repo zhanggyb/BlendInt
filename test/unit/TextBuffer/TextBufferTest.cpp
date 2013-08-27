@@ -434,15 +434,18 @@ void TextBufferTest::multiple_buf_show1 ()
 		exit(EXIT_FAILURE);
 	}
 
-	TextBuffer buf1(L"box size");
+	String str1 = L"Hello World!";
+	TextBuffer buf1(str1);
 	buf1.set_origin(Coord3f(100.0, 100.0, 0.0));
-	buf1.set_font(Font("Droid Sans"));
+	buf1.set_font(Font("Droid Sans Mono", 48));
 
-	TextBuffer buf2(L"Hello World!");
+	String str2 = L"Hello World!";
+	TextBuffer buf2(str2);
 	buf2.set_origin(Coord3f(100.0, 200.0, 0.0));
-	buf2.set_font(Font("Droid Sans", 50));
+	buf2.set_font(Font("Source Code Pro", 48));
 
-	TextBuffer buf3(L"我爱北京天安门");
+	String str3 = L"我爱北京天安门";
+	TextBuffer buf3(str3);
 	buf3.set_origin(Coord3f(100.0, 300.0, 0.0));
 	buf3.set_font(Font("Sans", 48));
 

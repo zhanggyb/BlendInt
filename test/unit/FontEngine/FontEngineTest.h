@@ -22,6 +22,7 @@ CPPUNIT_TEST_SUITE(FontEngineTest);
 	CPPUNIT_TEST(create4);
 	CPPUNIT_TEST(create5);
 	CPPUNIT_TEST(create6);
+
 	CPPUNIT_TEST(checkindex1);
 	CPPUNIT_TEST(checkindex2);
 	CPPUNIT_TEST(checkindex3);
@@ -58,6 +59,7 @@ private:
 	void create4 ();
 	void create5 ();
 	void create6 ();
+	void check_outline_box1();
 	void checkindex1 ();
 	void checkindex2 ();
 	void checkindex3 ();

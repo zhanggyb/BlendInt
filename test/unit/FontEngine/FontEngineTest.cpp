@@ -132,13 +132,19 @@ void FontEngineTest::create3 ()
 
 void FontEngineTest::create4 ()
 {
-	bool result1 = false;
+	bool result = false;
+	FT_UInt index = 0;
 
 	FontEngine font(Font("Sans"), 96);
 
-	result1 = font.valid();
+	result = font.valid();
 
-	CPPUNIT_ASSERT(result1);
+	if(result) {
+		index = font.getCharIndex(L'A');
+		cout << "glyph index: " << index << endl;
+	}
+
+	CPPUNIT_ASSERT(result && index > 0);
 }
 
 void FontEngineTest::create5 ()
@@ -379,7 +385,7 @@ void FontEngineTest::checkindex4 ()
 	delete fe;
 	fe = NULL;
 
-	CPPUNIT_ASSERT(result && (indexEn != 0) && (indexCh != 0));
+	CPPUNIT_ASSERT(result && (indexEn != 0) && (indexCh == 0));
 }
 
 

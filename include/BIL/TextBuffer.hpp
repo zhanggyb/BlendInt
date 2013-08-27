@@ -80,7 +80,7 @@ namespace BIL {
 		void set_font (const Font& font)
 		{
 			fontcache_ = FontCache::create(font);
-			fontcache_->initialize();
+			// fontcache_->Initialize();
 		}
 
 		void Render (); /* render the text */

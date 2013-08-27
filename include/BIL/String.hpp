@@ -27,6 +27,10 @@
 
 namespace BIL {
 
+	class String;
+
+	extern std::string ConvertFromString (const String& src);
+
 	class String: public std::wstring
 	{
 	public:
@@ -36,37 +40,21 @@ namespace BIL {
 		{
 		}
 
-		String (const char* str)
-		{
-			for (const char* c = str; *c != '\0'; c++) {
-				push_back(static_cast<wchar_t>(*c));
-			}
-		}
+		String (const char* str);
 
 		String (const wchar_t* str)
 				: std::wstring(str)
 		{
 		}
 
-		String (const char* str, size_t n)
-		{
-			for (size_t i = 0; str[i] != '\0' && i < n; i++) {
-				push_back(static_cast<wchar_t>(str[i]));
-			}
-		}
+		String (const char* str, size_t n);
 
 		String (const wchar_t* str, size_t n)
 				: std::wstring(str, n)
 		{
 		}
 
-		String (const std::string& str)
-		{
-			for (std::string::const_iterator it = str.begin(); it != str.end();
-			        it++) {
-				push_back(static_cast<wchar_t>(*it));
-			}
-		}
+		String (const std::string& str);
 
 		String (const std::wstring& str)
 				: std::wstring(str)
@@ -78,28 +66,9 @@ namespace BIL {
 			assign(orig);
 		}
 
-		String& operator = (const char* str)
-		{
-			clear();
+		String& operator = (const char* str);
 
-			for (const char* c = str; *c != '\0'; c++) {
-				push_back(static_cast<wchar_t>(*c));
-			}
-
-			return *this;
-		}
-
-		String& operator = (const std::string& str)
-		{
-			clear();
-
-			for (std::string::const_iterator it = str.begin(); it != str.end();
-			        it++) {
-				push_back(static_cast<wchar_t>(*it));
-			}
-
-			return *this;
-		}
+		String& operator = (const std::string& str);
 
 	};
 }

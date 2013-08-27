@@ -33,38 +33,13 @@
 namespace BIL {
 
 	Glyph::Glyph (wchar_t charcode, FontEngine* fontlib)
-			: font_engine_(fontlib), charcode_(0), glyph_index_(0), texture_(0), displist_(
-			        0), dpi_(96)
+			: charcode_(charcode), font_engine_(fontlib), glyph_index_(0),
+			  texture_(0), displist_(0)
 	{
 		memset(&metrics_, 0, sizeof(Metrics));
 
 		MakeDisplayList();
 	}
-
-	Glyph::Glyph (wchar_t charcode, const Font& font, unsigned int dpi,
-	        FontEngine* fontlib)
-			: font_engine_(fontlib), charcode_(charcode), glyph_index_(0), texture_(0), displist_(
-			        0), font_(font), dpi_(dpi)
-	{
-		memset(&metrics_, 0, sizeof(Metrics));
-
-		MakeDisplayList();
-	}
-
-	/*
-	Glyph::Glyph (const Glyph& orig)
-			: font_engine_(NULL), charcode_(0), glyph_index_(0), texture_(0), displist_(
-			        0), dpi_(96)
-	{
-		// TODO: copy constructor
-	}
-
-	Glyph& Glyph::operator = (const Glyph& orig)
-	{
-		// TODO: assignment
-		return *this;
-	}
-	 */
 
 	Glyph::~Glyph ()
 	{
@@ -96,6 +71,52 @@ namespace BIL {
 		MakeDisplayList();
 	}
 
+	Rect Glyph::OutlineBox()
+	{
+		Rect ret;
+		FontEngine* fontlib = NULL;
+
+		if (font_engine_) {
+			fontlib = font_engine_;
+		} else {
+			FontConfig* fontserv = FontConfig::getService();
+
+			if (fontserv == NULL) {
+				return ret;
+			}
+
+			if (!fontserv->isInitialized()) {
+				return ret;
+			}
+			fontlib = new FontEngine(fontserv->getBuffer(),
+					fontserv->getBufferSize());
+		}
+
+		if (fontlib->valid()) {
+			bool result = fontlib->loadGlyph(glyph_index_);
+			if (!result)
+				return ret;
+
+			FT_Face face = fontlib->getFontFace();
+
+			FT_BBox outline_box;
+			FT_Outline_Get_CBox (&(face->glyph->outline), &outline_box);
+			outline_box.xMin = outline_box.xMin / 64;
+			outline_box.xMax = outline_box.xMax / 64;
+			outline_box.yMin = outline_box.yMin / 64;
+			outline_box.yMax = outline_box.yMax / 64;
+
+			ret = Rect (Point(outline_box.xMin, outline_box.yMin),
+					Point(outline_box.xMax, outline_box.yMax));
+		}
+
+		if (!font_engine_) {
+			delete fontlib;
+		}
+
+		return ret;
+	}
+
 	void Glyph::Render ()
 	{
 		if (!glIsTexture(texture_))
@@ -118,45 +139,6 @@ namespace BIL {
 		glPopMatrix();
 
 		glDisable(GL_TEXTURE_2D);
-	}
-
-	Rect Glyph::OutlineBox ()
-	{
-		FontEngine* fontlib = NULL;
-
-		// if _fonttype is not set, use default font
-		if (!font_engine_) {
-			FontConfig* fontserv = FontConfig::getService();
-
-			if (fontserv == NULL) {
-				return Rect();
-			}
-
-			if (!fontserv->isInitialized()) {
-				return Rect();
-			}
-			fontlib = new FontEngine(fontserv->getBuffer(),
-			        fontserv->getBufferSize());
-		} else {
-			fontlib = font_engine_;
-		}
-
-		FT_Face face = fontlib->getFontFace();
-
-		FT_BBox outline_box;
-		FT_Outline_Get_CBox (&(face->glyph->outline), &outline_box);
-		outline_box.xMin = outline_box.xMin / 64;
-		outline_box.xMax = outline_box.xMax / 64;
-		outline_box.yMin = outline_box.yMin / 64;
-		outline_box.yMax = outline_box.yMax / 64;
-
-		if(!font_engine_) {
-			delete fontlib;
-			fontlib = NULL;
-		}
-
-		return Rect (Point(outline_box.xMin, outline_box.yMin),
-				Point(outline_box.xMax, outline_box.yMax));
 	}
 
 	bool Glyph::MakeDisplayList (void)
@@ -185,7 +167,6 @@ namespace BIL {
 			return false;
 		}
 
-		fontlib->setCharSize(font_.size, dpi_);
 		glyph_index_ = fontlib->getCharIndex(charcode_);
 		if (glyph_index_ == 0) {
 			// TODO: if the character code is not supported in the font
@@ -224,12 +205,6 @@ namespace BIL {
 				delete fontlib;
 			return false;
 		}
-
-		FT_BBox acbox;
-		FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_UNSCALED, &acbox);
-
-		cbox_.vec.x = (acbox.xMax - acbox.xMin) >> 6;
-		cbox_.vec.y = (acbox.yMax - acbox.yMin) >> 6;
 
 		// Convert the glyph to a bitmap;
 		FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, 0, 1);

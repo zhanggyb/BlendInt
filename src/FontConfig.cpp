@@ -171,6 +171,8 @@ namespace BIL {
 	{
 		string file;
 
+		string family = ConvertFromString(font.family);
+
 		int weight = font.bold ? FC_WEIGHT_BOLD : FC_WEIGHT_REGULAR;
 		int slant = font.italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
 
@@ -179,7 +181,7 @@ namespace BIL {
 		FcPatternAddInteger(pattern, FC_WEIGHT, weight);
 		FcPatternAddInteger(pattern, FC_SLANT, slant);
 		FcPatternAddString(pattern, FC_FAMILY,
-		        (FcChar8*) font.family.c_str());
+		        (FcChar8*) family.c_str());
 		FcConfigSubstitute(0, pattern, FcMatchPattern);
 		FcDefaultSubstitute(pattern);
 

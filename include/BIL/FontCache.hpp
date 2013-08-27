@@ -60,10 +60,10 @@ namespace BIL {
 		 * @param force if true, remove unused cache and create one
 		 * @return cache object created, NULL for failure
 		 */
-		static FontCache* create (const Font& font = Font("Sans"), bool force =
-		        true);
+		static FontCache* create (const Font& font = Font("Sans"),
+				unsigned int dpi = 96, bool force = true);
 
-		static FontCache* getCache (const Font& font = Font("Sans"));
+		static FontCache* getCache (const Font& font = Font("Sans"), unsigned int dpi = 96);
 
 		static bool release (const Font& font = Font("Sans"));
 
@@ -90,7 +90,7 @@ namespace BIL {
 		 * @brief Initialize glyph database
 		 * @return true for success, false for failure
 		 */
-		bool initialize ();
+		bool Initialize ();
 
 		/**
 		 * @brief query the Glyph of a wchar
@@ -138,6 +138,13 @@ namespace BIL {
 			return fontengine_;
 		}
 
+		void set_dpi (unsigned int dpi)
+		{
+			if(fontengine_) {
+				fontengine_->set_dpi (dpi);
+			}
+		}
+
 #ifdef DEBUG
 		void printcount ();
 #endif
@@ -161,10 +168,6 @@ namespace BIL {
 
 	private:
 		// member variables
-
-		Font font_;
-
-		unsigned int dpi_;
 
 		FontEngine* fontengine_;
 

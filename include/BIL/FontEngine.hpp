@@ -32,6 +32,7 @@
 #include <BIL/Tuple.hpp>
 #include <BIL/Glyph.hpp>
 #include <BIL/Font.hpp>
+#include <BIL/Rect.hpp>
 
 using namespace std;
 
@@ -165,6 +166,16 @@ namespace BIL {
 		const Font& font () const
 		{
 			return font_;
+		}
+
+		unsigned int dpi () const
+		{
+			return dpi_;
+		}
+
+		void set_dpi (unsigned int dpi)
+		{
+			dpi_ = dpi;
 		}
 
 	private:

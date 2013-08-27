@@ -56,7 +56,11 @@ namespace BIL {
 
 		Font& operator = (const Font& orig);
 
-		/** the font family, e.g. "Droid Sans" */
+		/**
+		 * @brief the font family, e.g. "Droid Sans"
+		 *
+		 * @note Currently cannot support non-English family
+		 */
 		String family;
 
 		/** font size */

@@ -19,6 +19,7 @@ class FontTest: public CppUnit::TestFixture
 	CPPUNIT_TEST(check4);
 	CPPUNIT_TEST(check5);
 	CPPUNIT_TEST(check6);
+	CPPUNIT_TEST(check7);
 
 	CPPUNIT_TEST_SUITE_END();
 
@@ -42,7 +43,7 @@ private:
 	void check4 ();
 	void check5 ();
 	void check6 ();
-
+	void check7 ();
 };
 
 #endif  /* _FONT_TEST_H */
