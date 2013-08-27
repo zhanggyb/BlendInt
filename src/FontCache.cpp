@@ -185,8 +185,10 @@ namespace BIL {
 			return false;
 		}
 
-		for (int i = 0; i < 128; i++) {
-			query(i, true);
+		for (char i = 'A'; i < 'Z'; i++)
+		{
+			query (i, true);
+			query (i+40, true);	// a-z
 		}
 
 		initialized_ = true;

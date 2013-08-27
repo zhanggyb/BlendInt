@@ -415,23 +415,145 @@ void FontCacheTest::show_multiple_cache1()
 	FontCache* cache1 = FontCache::create(Font("Lucida Grande", 48));
 	cache1->Initialize();
 
-	//FontCache* cache2 = FontCache::create(Font("Sans", 48));
-	FontCache* cache2 = FontCache::create(Font("Droid Sans Mono", 48));
+	FontCache* cache2 = FontCache::create(Font("Sans", 48));
+	//FontCache* cache2 = FontCache::create(Font("Droid Sans Mono", 48));
 	cache2->Initialize();
 
 	FontCache* cache3 = FontCache::create(Font("DejaVu Serif", 48));
 	cache3->Initialize();
 
-	//FontCache* cache4 = FontCache::create(Font("STXingkai", 48));
-	FontCache* cache4 = FontCache::create(Font("Bitstream Vera Sans", 48));
-	//cache4->Initialize();
+	FontCache* cache4 = FontCache::create(Font("STXingkai", 48));
+	//FontCache* cache4 = FontCache::create(Font("Bitstream Vera Sans", 48));
+	cache4->Initialize();
 
 	String str1("Hello World! (cache1)");
-	//String str2(L"花间一壶酒，独酌无相亲。");
-	String str2("Hello World! (cache2)");
+	String str2(L"花间一壶酒，独酌无相亲。");
+	//String str2("Hello World! (cache2)");
 	String str3("Hello World! (cache3)");
-	//String str4(L"举杯邀明月，对影成三人。");
-	String str4("Hello World! (cache4)");
+	String str4(L"举杯邀明月，对影成三人。");
+	//String str4("Hello World! (cache4)");
+	String::const_iterator it;
+
+#ifdef DEBUG
+	FontCache::list();
+#endif
+
+	Glyph* glyph = NULL;
+
+	while (!glfwWindowShouldClose(win)) {
+
+		int width, height;
+
+		glfwGetWindowSize(win, &width, &height);
+
+		glClearColor(0.40, 0.40, 0.45, 1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glColor4f(1.00, 1.00, 1.00, 1.00);
+
+		// enable anti-alias
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_POINT_SMOOTH);
+		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_POLYGON_SMOOTH);
+
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		// Test buffer render
+		glPushMatrix();
+		glTranslatef(100.0f, 100.0f, 0.0f);
+		for (it = str1.begin(); it != str1.end(); it++)
+		{
+			glyph = cache1->query(*it);
+			glyph->Render();
+			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+		}
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(100.0f, 200.0f, 0.0f);
+		for (it = str2.begin(); it != str2.end(); it++)
+		{
+			glyph = cache2->query(*it);
+			glyph->Render();
+			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+		}
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(100.0f, 300.0f, 0.0f);
+		for (it = str3.begin(); it != str3.end(); it++)
+		{
+			glyph = cache3->query(*it);
+			glyph->Render();
+			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+		}
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(100.0f, 400.0f, 0.0f);
+		for (it = str4.begin(); it != str4.end(); it++)
+		{
+			glyph = cache4->query(*it);
+			glyph->Render();
+			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+		}
+		glPopMatrix();
+
+		glfwSwapBuffers(win);
+		glfwPollEvents();
+	}
+
+	FontCache::releaseAll();
+
+	CPPUNIT_ASSERT(true);
+}
+
+void FontCacheTest::test_font_not_exist1()
+{
+	GLFWwindow * win = glfwCreateWindow(1024, 640, "FontCache Test", NULL,
+	        NULL);
+
+	if (win == NULL) {
+		CPPUNIT_FAIL("Cannot create glfw window\n");
+	}
+
+	glfwMakeContextCurrent(win);
+
+	// Initialize GLEW
+	glewExperimental = true; // Needed in core profile
+	if (glewInit() != GLEW_OK) {
+		cerr << "Failed to initilize GLEW" << endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	FontCache* cache1 = FontCache::create(Font("Lucida Grande", 48));
+	cache1->Initialize();
+
+	FontCache* cache2 = FontCache::create(Font("Sans", 48));
+	//FontCache* cache2 = FontCache::create(Font("Droid Sans Mono", 48));
+	cache2->Initialize();
+
+	FontCache* cache3 = FontCache::create(Font("DejaVu Serif", 48));
+	cache3->Initialize();
+
+	FontCache* cache4 = FontCache::create(Font("Droid Sans", 48));
+	//FontCache* cache4 = FontCache::create(Font("Bitstream Vera Sans", 48));
+	cache4->Initialize();
+
+	String str1("Hello World! (cache1)");
+	String str2(L"花间一壶酒，独酌无相亲。");
+	//String str2("Hello World! (cache2)");
+	String str3("Hello World! (cache3)");
+	String str4(L"举杯邀明月，对影成三人。");
+	//String str4("Hello World! (cache4)");
 	String::const_iterator it;
 
 #ifdef DEBUG

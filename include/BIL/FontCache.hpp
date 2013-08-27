@@ -89,6 +89,9 @@ namespace BIL {
 		/**
 		 * @brief Initialize glyph database
 		 * @return true for success, false for failure
+         *
+         * @warning Do not simply initialize all characer in ascii
+         * cause render error. I dont't know why this happens
 		 */
 		bool Initialize ();
 
