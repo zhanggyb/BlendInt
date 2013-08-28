@@ -64,7 +64,7 @@ namespace BIL {
 		DecorationVertexes tria2;
 	};
 
-	class Widget: public BIL::Drawable
+	class Widget: public Drawable
 	{
 	public:
 
@@ -170,6 +170,11 @@ namespace BIL {
 		  }
 		*/
 
+	private:
+
+		Widget (const Widget& orig);
+
+		Widget& operator = (const Widget& orig);
 	};
 
 } /* namespace BIL */

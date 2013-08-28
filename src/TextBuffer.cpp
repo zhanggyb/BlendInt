@@ -85,10 +85,13 @@ namespace BIL {
 		unsigned int line_width = 0;
 		unsigned int line = 1;
 
+		cout << endl;
 		for (it = text_.begin(); it != text_.end(); it++) {
+			wcout << *it;
 			if (*it == '\n') {
 				line++;
-				box.set_width (box.width() > line_width ? box.width() : line_width);
+				box.set_width (std::max(line_width, box.width()));
+				continue;
 			}
 
 			glyph = fontcache_->query(*it);
@@ -101,8 +104,11 @@ namespace BIL {
 				line_width = glyph->metrics().horiAdvance + kerning.vec.x + line_width;
 			}
 		}
+		cout << endl;
 
-		box.set_width (box.width() > line_width ? box.width() : line_width);
+		if (line == 1) {
+			box.set_width (line_width);
+		}
 		box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * rowspacing_));
 
 		return box;

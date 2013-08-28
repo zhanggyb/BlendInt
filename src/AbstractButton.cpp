@@ -78,7 +78,7 @@ namespace BIL {
 			// TODO: emit check event
 		} else {
 			down_ = true;
-			// TODO: emit click event
+			clicked_.fire();
 		}
 	}
 

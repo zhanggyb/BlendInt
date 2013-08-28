@@ -237,7 +237,7 @@ namespace Cpp {
 				isLess = (T0::value < T1::value),
 				isNotLess = (T0::value >= T1::value),
 				isGreater = (T0::value < T1::value),
-				isNotGreater = (T0::value >= T1::value),
+				isNotGreater = (T0::value >= T1::value)
 			};
 
 			typedef TypeForBool<isEqual> Equal;

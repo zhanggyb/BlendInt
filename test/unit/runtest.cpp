@@ -9,10 +9,14 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestRunner.h>
 
+#include <Cpp/Events.hpp>
+
 #include <locale.h>
 
 int main (int argc, char* argv[])
 {
+	Cpp::Events::ProcessInit processInit;
+
 	setlocale(LC_ALL, "");
 
 	// Create the event manager and test controller

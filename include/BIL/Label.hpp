@@ -35,15 +35,15 @@ using namespace std;
 
 namespace BIL {
 
-	class Label: public BIL::Widget
+	class Label: public Widget
 	{
 	public:
 
-		Label (const wstring& label, Drawable * parent = NULL);
+		Label (const String& label, Drawable * parent = NULL);
 
 		virtual ~Label ();
 
-		void set_text (const wstring& label);
+		void set_text (const String& label);
 
 		void setFont (const Font& font)
 		{
@@ -60,6 +60,13 @@ namespace BIL {
 		void set_background (const Color& color)
 		{
 			background_ = color;
+		}
+
+	public:
+
+		void accept ()
+		{
+			set_text (L"Accepted");
 		}
 
 	protected:
@@ -80,6 +87,11 @@ namespace BIL {
 		/** Background color, default: transparent */
 		Color background_;
 
+	private:
+
+		Label (const Label& orig);
+
+		Label& operator = (const Label& orig);
 	};
 
 } /* namespace BIL */

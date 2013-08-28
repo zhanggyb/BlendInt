@@ -34,53 +34,59 @@
 
 namespace BIL {
 
-    struct GLFWVersion
-    {
-        int major;
-        int minor;
-        int rev;
-    };
+	struct GLFWVersion
+	{
+		int major;
+		int minor;
+		int rev;
+	};
 
-    class Application
-    {
-    public:
-        Application ();
+	class Application
+	{
+	public:
 
-        bool initialize (bool nls = true);
+		/**
+		 * @brief Construct an application
+		 *
+		 * @example
+		 */
+		Application ();
 
-        void terminate ()
-        {
-            glfwTerminate();
-        }
+		bool initialize (bool nls = true);
 
-        /**
-         * @brief Get GLFW version
-         * @return
-         */
-        GLFWVersion getVersion ();
+		void terminate ()
+		{
+			glfwTerminate();
+		}
 
-        /**
-         *  @brief Get GLFW version
-         * @return
-         */
-        std::string getVersionString ();
+		/**
+		 * @brief Get GLFW version
+		 * @return
+		 */
+		GLFWVersion getVersion ();
 
-        void setMainWindow (Window *window);
+		/**
+		 *  @brief Get GLFW version
+		 * @return
+		 */
+		std::string getVersionString ();
 
-        void run ();
+		void setMainWindow (Window *window);
 
-        virtual ~Application ();
+		void run ();
 
-        static std::string glStrVersion;
+		virtual ~Application ();
 
-        static GLfloat glVersion;
+		static std::string glStrVersion;
 
-    private:
+		static GLfloat glVersion;
 
-        static void cbError (int error, const char* description);
+	private:
 
-        Window *_mainWindow;
-    };
+		static void cbError (int error, const char* description);
+
+		Window *_mainWindow;
+	};
 
 } /* namespace BIL */
 #endif /* APPLICATION_H_ */

@@ -24,6 +24,8 @@
 
 #include <string>
 
+#include <Cpp/Events.hpp>
+
 #include <BIL/Widget.hpp>
 #include <BIL/Font.hpp>
 #include <BIL/Tuple.hpp>
@@ -60,6 +62,10 @@ namespace BIL {
 
 		void set_checkable (bool checkable) {checkable_ = checkable;}
 
+	public:	// event connection interface
+
+		Cpp::EventRef<> clicked() {return clicked_;}
+
 	protected:
 
 		virtual void Update () = 0;
@@ -84,6 +90,10 @@ namespace BIL {
 		bool hover_;
 
 		TextBuffer text_;
+
+	protected:	// Events
+
+		Cpp::Event<> clicked_;
 
 	private:	// member functions
 

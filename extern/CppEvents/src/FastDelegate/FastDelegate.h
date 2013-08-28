@@ -180,10 +180,12 @@ namespace fastdelegate {
 			// Cause a compile-time error if in, out and u are not the same size.
 			// If the compile fails here, it means the compiler has peculiar
 			// unions which would prevent the cast from working.
+			/*
 			typedef int ERROR_CantUseHorrible_cast[
 			        sizeof(InputClass) == sizeof(u)
 			                && sizeof(InputClass) == sizeof(OutputClass) ?
 			                1 : -1];
+			                */
 			u.in = input;
 			return u.out;
 		}
@@ -318,7 +320,7 @@ template<		int N>
 			{
 				// Unsupported member function type -- force a compile failure.
 				// (it's illegal to have a array with negative size).
-				typedef char ERROR_Unsupported_member_function_pointer_on_this_compiler[N - 100];
+				// typedef char ERROR_Unsupported_member_function_pointer_on_this_compiler[N - 100];
 				return 0;
 			}
 		};

@@ -26,7 +26,7 @@
 
 namespace BIL {
 
-	Label::Label (const wstring& text, Drawable *parent)
+	Label::Label (const String& text, Drawable *parent)
 		: Widget (parent), background_(0x00000000)
 	{
 		set_text(text);
@@ -37,14 +37,14 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	void Label::set_text (const wstring& label)
+	void Label::set_text (const String& label)
 	{
 		if(label.empty()) {
 			// TODO: draw blank label
 			return;
 		}
 
-		text_.Append(label);
+		text_.setText (label);
 
 		calculateBox();
 
@@ -69,6 +69,9 @@ namespace BIL {
 
 	void Label::Render ()
 	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
@@ -82,6 +85,7 @@ namespace BIL {
 		text_.Render();
 
 		glPopMatrix();
+		glDisable(GL_BLEND);
 	}
 
 	void Label::cursorPosEvent (double xpos, double ypos)

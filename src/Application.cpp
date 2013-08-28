@@ -29,6 +29,8 @@
 
 #include <locale.h>
 
+#include <Cpp/Events.hpp>
+
 #include <BIL/Application.hpp>
 #include <BIL/FontConfig.hpp>
 #include <BIL/FontCache.hpp>

@@ -92,6 +92,11 @@ namespace BIL {
 			return text_;
 		}
 
+		void setText (const String& text)
+		{
+			text_ = text;
+		}
+
 		const FontCache* fontcache () const
 		{
 			return fontcache_;
