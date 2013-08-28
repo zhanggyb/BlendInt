@@ -22,6 +22,8 @@
 #ifndef _BIL_COORD_HPP_
 #define _BIL_COORD_HPP_
 
+#include <algorithm>
+
 namespace BIL {
 
 	template<typename T>
@@ -36,6 +38,38 @@ namespace BIL {
 		Coord2 (T x, T y)
 			: x_(x), y_(y)
 		{
+		}
+
+		Coord2 (const Coord2& orig)
+		{
+			x_ = orig.x_;
+			y_ = orig.y_;
+		}
+
+		Coord2& operator = (const Coord2& orig)
+		{
+			x_ = orig.x_;
+			y_ = orig.y_;
+			return *this;
+		}
+
+		Coord2& operator + (const Coord2& other)
+		{
+			x_ += other.x_;
+			y_ += other.y_;
+			return *this;
+		}
+
+		void Add (const Coord2& other)
+		{
+			x_ += other.x_;
+			y_ += other.y_;
+		}
+
+		void Add (const T& x, const T& y)
+		{
+			x_ += x;
+			y_ += y;
 		}
 
 		T x () const {return x_;}
@@ -65,6 +99,43 @@ namespace BIL {
 		{
 		}
 
+		Coord3 (const Coord3& orig)
+		{
+			x_ = orig.x_;
+			y_ = orig.y_;
+			z_ = orig.z_;
+		}
+
+		Coord3& operator = (const Coord3& orig)
+		{
+			x_ = orig.x_;
+			y_ = orig.y_;
+			z_ = orig.z_;
+			return *this;
+		}
+
+		Coord3& operator + (const Coord3& other)
+		{
+			x_ += other.x_;
+			y_ += other.y_;
+			z_ += other.z_;
+			return *this;
+		}
+
+		void Add (const Coord3& other)
+		{
+			x_ += other.x_;
+			y_ += other.y_;
+			z_ += other.z_;
+		}
+
+		void Add (const T& x, const T& y, const T& z)
+		{
+			x_ += x;
+			y_ += y;
+			z_ += z;
+		}
+
 		T x () const {return x_;}
 
 		void set_x (T x) {x_ = x;}
@@ -86,16 +157,16 @@ namespace BIL {
 	template <typename T>
 	bool operator == (const Coord2<T>& pos1, const Coord2<T>& pos2)
 	{
-		return (pos1.x() - pos2.x() < 0.0000001) &&
-				(pos1.y() - pos2.y() < 0.0000001);
+		return (std::abs(pos1.x() - pos2.x()) < 0.0000001) &&
+				std::abs((pos1.y() - pos2.y()) < 0.0000001);
 	}
 
 	template <typename T>
 	bool operator == (const Coord3<T>& pos1, const Coord3<T>& pos2)
 	{
-		return (pos1.x() - pos2.x() < 0.0000001) &&
-				(pos1.y() - pos2.y() < 0.0000001) &&
-				(pos1.z() - pos2.z() < 0.0000001);
+		return (std::abs(pos1.x() - pos2.x()) < 0.0000001) &&
+				std::abs((pos1.y() - pos2.y()) < 0.0000001) &&
+				std::abs((pos1.z() - pos2.z()) < 0.0000001);
 	}
 
 	typedef Coord2<int> Coord2i;

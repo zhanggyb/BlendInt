@@ -109,3 +109,30 @@ void LabelTest::checkfont2 ()
 	app.run();
 	CPPUNIT_ASSERT(true);
 }
+
+void LabelTest::multiline1 ()
+{
+	Application app;
+
+	Window win(640, 480, "640 x 480 Window", NULL, NULL);
+
+	app.setMainWindow(&win);
+	app.initialize();
+
+	wstring string(L"Hello World!\nAnd Another Line");
+
+	Label instr1(wstring(L"box size"));
+	instr1.set_parent(&win);
+	instr1.setFont(Font("Droid Sans"));
+	instr1.set_background(Color(0x40, 0x40, 0xFF, 0x00));
+	instr1.set_pos(100, 200);
+
+	Label label(string);
+	label.set_parent(&win);
+	label.set_pos(Point(100, 100));
+	label.set_background(Color(0x40, 0x40, 0xFF, 0x80));
+	label.setFont(Font("Droid Sans", 50));
+
+	app.run();
+	CPPUNIT_ASSERT(true);
+}

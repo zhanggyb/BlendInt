@@ -19,13 +19,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-/*
- * Drawable.h
- *
- *  Created on: 2013年7月1日
- *      Author: zhanggyb
- */
-
 #ifndef _BIL_DRAWABLE_H_
 #define _BIL_DRAWABLE_H_
 
@@ -38,6 +31,7 @@
 #include <BIL/Size.hpp>
 #include <BIL/Point.hpp>
 #include <BIL/Margin.hpp>
+#include <BIL/Padding.hpp>
 
 #include <BIL/Types.hpp>
 
@@ -125,12 +119,12 @@ namespace BIL {
 			margin_ = margin;
 		}
 
-		const Tuple4i& padding () const
+		const Padding& padding () const
 		{
 			return padding_;
 		}
 
-		void set_padding (const Tuple4i& padding)
+		void set_padding (const Padding& padding)
 		{
 			padding_ = padding;
 		}
@@ -254,7 +248,7 @@ namespace BIL {
 
 		float z_;	// the depth of the widget, currently it's not used
 
-		Tuple4i padding_; /** used when in Layout */
+		Padding padding_; /** used when in Layout */
 
 		Margin margin_; /** used when in Layout */
 

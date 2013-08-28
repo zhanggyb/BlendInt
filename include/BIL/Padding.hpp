@@ -19,8 +19,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_MARGIN_HPP_
-#define _BIL_MARGIN_HPP_
+#ifndef _BIL_PADDING_HPP_
+#define _BIL_PADDING_HPP_
 
 /**
  * @brief Margin
@@ -29,21 +29,39 @@
  */
 namespace BIL {
 
-	class Margin
+	class Padding
 	{
 	public:
 
-		Margin ()
+		Padding ()
 		: left_(0), right_(0), top_(0), bottom_(0)
 		{}
 
-		Margin (int all)
+		Padding (int all)
 		: left_(all), right_(all), top_(all), bottom_(all)
 		{}
 
-		Margin (int left, int right, int top, int bottom)
+		Padding (int left, int right, int top, int bottom)
 		: left_(left), right_(right), top_(top), bottom_(bottom)
 		{}
+
+		Padding (const Padding& orig)
+		{
+			left_ = orig.left_;
+			right_ = orig.right_;
+			top_ = orig.top_;
+			bottom_ = orig.bottom_;
+		}
+
+		Padding& operator = (const Padding& orig)
+		{
+			left_ = orig.left_;
+			right_ = orig.right_;
+			top_ = orig.top_;
+			bottom_ = orig.bottom_;
+
+			return *this;
+		}
 
 		int left () const {return left_;}
 
@@ -68,6 +86,8 @@ namespace BIL {
 		int top_;
 		int bottom_;
 	};
+
 }
 
-#endif /* _BIL_MARGIN_HPP_ */
+
+#endif /* PADDING_HPP_ */

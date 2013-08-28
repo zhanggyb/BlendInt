@@ -97,17 +97,7 @@ namespace BIL {
 
 		void HighlightFrom (uint32_t color)
 		{
-			if (color > 0xFFFFFF) {
-				alpha_ = color & 0xFF;
-				blue_ = (color >> 8) & 0xFF;
-				green_ = (color >> 16) & 0xFF;
-				red_ = (color >> 24) & 0xFF;
-			} else {
-				alpha_ = 0xFF;
-				blue_ = color & 0xFF;
-				green_ = (color >> 8) & 0xFF;
-				red_ = (color >> 16) & 0xFF;
-			}
+			set_color (color);
 			red_ = red_ >= 240 ? 255 : (red_ + 15);
 			green_ = green_ >= 240 ? 255 : (green_ + 15);
 			blue_ = blue_ >= 240 ? 255 : (blue_ + 15);
@@ -120,13 +110,23 @@ namespace BIL {
 				blue_ = (color >> 8) & 0xFF;
 				green_ = (color >> 16) & 0xFF;
 				red_ = (color >> 24) & 0xFF;
+			} else if (color > 0xFFFF){
+				alpha_ = color & 0xFF;
+				blue_ = (color >> 8) & 0xFF;
+				green_ = (color >> 16) & 0xFF;
+				red_ = 0x00;
+			} else if (color > 0xFF) {
+				alpha_ = color & 0xFF;
+				blue_ = (color >> 8) & 0xFF;
+				green_ = 0x00;
+				red_ = 0x00;
 			} else {
-				alpha_ = 0xFF;
-				blue_ = color & 0xFF;
-				green_ = (color >> 8) & 0xFF;
-				red_ = (color >> 16) & 0xFF;
+				alpha_ = color & 0xFF;
+				blue_ = 0x00;
+				green_ = 0x00;
+				red_ = 0x00;
 			}
-		}
+	 	}
 
 		void set_color (unsigned char r,
 						unsigned char g,
@@ -149,10 +149,10 @@ namespace BIL {
 
 		unsigned char operator [] (int index) const
 		{
-			if (index == 0) return red_;
+			if (index <= 0) return red_;
 			if (index == 1) return green_;
 			if (index == 2) return blue_;
-			if (index == 3) return alpha_;
+			if (index >= 3) return alpha_;
 
 			return 0;
 		}

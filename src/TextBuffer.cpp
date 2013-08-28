@@ -48,7 +48,7 @@ namespace BIL {
 	*/
 
 	TextBuffer::TextBuffer (const String& text, const Font& font)
-		: rowspacing_(1.0), foreground_(0xFFFFFFFF), background_(0x00000000)
+		: rowspacing_(1.0), foreground_(0x000000FF), background_(0x00000000)
 	{
 		set_font(font);
 		Append(text);
@@ -78,45 +78,34 @@ namespace BIL {
 	{
 		String::const_iterator it;
 		String::const_iterator next;
-		Size outline_box;
+		Size box;
 		Tuple2l kerning;
 		Glyph* glyph = NULL;
 
 		unsigned int line_width = 0;
 		unsigned int line = 1;
 
-		int line_height = 0;
-		int total_height = 0;
 		for (it = text_.begin(); it != text_.end(); it++) {
-
 			if (*it == '\n') {
 				line++;
-				outline_box.set_width (outline_box.width() > line_width ? outline_box.width() : line_width);
-				total_height = total_height + line_height +
-						static_cast<int>(fontcache_->getHeight() * (line -1) * (rowspacing_ - 1.0));
-				continue;
+				box.set_width (box.width() > line_width ? box.width() : line_width);
 			}
 
 			glyph = fontcache_->query(*it);
 			if (glyph) {
-
 				// add kerning support
 				next = it + 1;
 				if(next != text_.end()) {
 					kerning = fontcache_->getKerning(*it, *next);
 				}
 				line_width = glyph->metrics().horiAdvance + kerning.vec.x + line_width;
-
-				Rect rect = glyph->OutlineBox();
-				line_height = std::max (rect.height(), line_height);
 			}
 		}
 
-		outline_box.set_width (outline_box.width() > line_width ? outline_box.width() : line_width);
-		//outline_box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * rowspacing_));
-		outline_box.set_height (total_height + line_height);
+		box.set_width (box.width() > line_width ? box.width() : line_width);
+		box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * rowspacing_));
 
-		return outline_box;
+		return box;
 	}
 
 	void TextBuffer::Render ()
@@ -126,8 +115,8 @@ namespace BIL {
 		//glDisable(GL_LIGHTING);
 		//glDisable(GL_DEPTH_TEST);
 
-		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 
 		glColor4ub(foreground_.r(), foreground_.g(), foreground_.b(), foreground_.a());
 
@@ -135,7 +124,7 @@ namespace BIL {
 		glPushMatrix();
 
 		glTranslatef(origin_.x(),
-					 origin_.y(), // - fontcache_->getDescender(),
+					 origin_.y() - fontcache_->getDescender(),
 					 origin_.z());
 
 

@@ -29,7 +29,6 @@ namespace BIL {
 	Label::Label (const wstring& text, Drawable *parent)
 		: Widget (parent), background_(0x00000000)
 	{
-		set_padding(Tuple4i(4, 4, 4, 4));
 		set_text(text);
 	}
 
@@ -49,19 +48,21 @@ namespace BIL {
 
 		calculateBox();
 
+		/*
 		text_.set_origin(Coord3f(
 								 pos_.x() + padding_.border.l,
 								 pos_.y() + padding_.border.b,
 								 0.0)
 						 );
+		 */
 	}
 
 	void Label::calculateBox ()
 	{
 		Size box = text_.CalculateOutlineBoxSize();
 		
-		box.set_width(box.width() + padding_.border.l + padding_.border.r);
-		box.set_height(box.height() + padding_.border.t + padding_.border.b);
+		box.set_width(box.width() + padding_.left() + padding_.right());
+		box.set_height(box.height() + padding_.top() + padding_.bottom());
 
 		resize (box.width(), box.height());
 	}

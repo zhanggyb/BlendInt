@@ -30,7 +30,6 @@ namespace BIL {
 		: Widget(parent), down_(false), checkable_(false),
 		  checked_(false), hover_(false)
 	{
-		set_padding(Tuple4i(4, 4, 4, 4));
 	}
 
 	AbstractButton::~AbstractButton ()
@@ -50,8 +49,8 @@ namespace BIL {
 		calculateBox();
 
 		text_.set_origin(Coord3f(
-								 pos_.x() + padding_.border.l,
-								 pos_.y() + padding_.border.b,
+								 pos_.x() + padding_.left(),
+								 pos_.y() + padding_.bottom(),
 								 0.0)
 						 );
 	}
@@ -60,8 +59,8 @@ namespace BIL {
 	{
 		Size box = text_.CalculateOutlineBoxSize();
 
-		box.set_width(box.width() + padding_.border.l + padding_.border.r);
-		box.set_height(box.height() + padding_.border.t + padding_.border.b);
+		box.set_width(box.width() + padding_.left() + padding_.right());
+		box.set_height(box.height() + padding_.top() + padding_.bottom());
 
 		resize (box.width(), box.height());
 	}
