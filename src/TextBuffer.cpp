@@ -48,10 +48,10 @@ namespace BIL {
 	*/
 
 	TextBuffer::TextBuffer (const String& text, const Font& font)
-		: rowspacing_(1.0), foreground_(0x000000FF), background_(0x00000000)
+		: lineSpacing_(1.0), foreground_(0x000000FF), background_(0x00000000)
 	{
-		set_font(font);
-		Append(text);
+		setFont(font);
+		append(text);
 
 		//glShadeModel(GL_FLAT);
 		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -61,7 +61,7 @@ namespace BIL {
 	{
 	}
 
-	void TextBuffer::Append (const String& text)
+	void TextBuffer::append (const String& text)
 	{
 		if (text.empty())
 			return;
@@ -69,12 +69,12 @@ namespace BIL {
 		text_.append(text);
 	}
 
-	void TextBuffer::Append (wchar_t charcode)
+	void TextBuffer::append (wchar_t charcode)
 	{
 		text_.push_back(charcode);
 	}
 
-	Size TextBuffer::CalculateOutlineBoxSize ()
+	Size TextBuffer::calculateOutlineBoxSize ()
 	{
 		String::const_iterator it;
 		String::const_iterator next;
@@ -109,12 +109,12 @@ namespace BIL {
 		if (line == 1) {
 			box.set_width (line_width);
 		}
-		box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * rowspacing_));
+		box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * lineSpacing_));
 
 		return box;
 	}
 
-	void TextBuffer::Render ()
+	void TextBuffer::render ()
 	{
 		Glyph* glyph = NULL;
 
@@ -142,7 +142,7 @@ namespace BIL {
 				glLoadIdentity();
 				glTranslatef(origin_.x(),
 							 origin_.y()
-							 - rowspacing_ * fontcache_->getHeight() * line,
+							 - lineSpacing_ * fontcache_->getHeight() * line,
 							 origin_.z());
 				continue;
 			}
@@ -159,7 +159,7 @@ namespace BIL {
 
 	}
 
-	void TextBuffer::Clear (void)
+	void TextBuffer::clear (void)
 	{
 		text_.clear();
 	}

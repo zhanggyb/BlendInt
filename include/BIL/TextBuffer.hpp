@@ -53,39 +53,39 @@ namespace BIL {
 
 		virtual ~TextBuffer ();
 
-		void Append (const String& text);
+		void append (const String& text);
 
-		void Append (wchar_t charcode);
+		void append (wchar_t charcode);
 
-		void set_rowspacing (float space)
+		void setLineSpacing (float space)
 		{
-			rowspacing_ = space;
+			lineSpacing_ = space;
 		}
 
-		void set_foreground (const Color& color)
+		void setForeground (const Color& color)
 		{
 			foreground_ = color;
 		}
 
-		void set_background (const Color& color)
+		void setBackground (const Color& color)
 		{
 			background_ = color;
 		}
 
-		void set_origin (const Coord3f& origin)
+		void setOrigin (const Coord3f& origin)
 		{
 			origin_ = origin;
 		}
 
-		void set_font (const Font& font)
+		void setFont (const Font& font)
 		{
 			fontcache_ = FontCache::create(font);
 			fontcache_->Initialize();
 		}
 
-		void Render (); /* render the text */
+		void render (); /* render the text */
 
-		void Clear (); /* clear the text */
+		void clear (); /* clear the text */
 
 		const String& text () const
 		{
@@ -106,7 +106,7 @@ namespace BIL {
 		 * @brief Calculate and return the box contains the text
 		 * @return (width,height)
 		 */
-		Size CalculateOutlineBoxSize ();
+		Size calculateOutlineBoxSize ();
 
 	private:	// member variables
 
@@ -114,7 +114,7 @@ namespace BIL {
 		FontCache* fontcache_;
 
 		/** Row spacing */
-		float rowspacing_;
+		float lineSpacing_;
 
 		/** Foreground, text color */
 		Color foreground_;

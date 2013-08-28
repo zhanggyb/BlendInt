@@ -130,9 +130,9 @@ void TextBufferTest::showcharacter1 ()
 	TextBuffer buf;
 	//TextBuffer buf;
 
-	buf.set_font(font);
-	buf.set_origin(Coord3f(100.0, 100.0, 0.0));
-	buf.Append(L"A");
+	buf.setFont(font);
+	buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
+	buf.append(L"A");
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -158,7 +158,7 @@ void TextBufferTest::showcharacter1 ()
 
 		draw_grid (width, height);
 		// Test buffer render
-		buf.Render();
+		buf.render();
 
 		glDisable(GL_BLEND);
 		glfwSwapBuffers(win);
@@ -190,9 +190,9 @@ void TextBufferTest::showtextline1 ()
 	}
 
 	TextBuffer buf;
-	buf.set_font(Font("Sans",16));
-	buf.set_origin(Coord3f(100.0, 100.0, 0.0));
-	buf.Append(L"we have official packages");
+	buf.setFont(Font("Sans",16));
+	buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
+	buf.append(L"we have official packages");
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -219,7 +219,7 @@ void TextBufferTest::showtextline1 ()
 		draw_grid (width, height);
 
 		// Test buffer render
-		buf.Render();
+		buf.render();
 
 		glDisable(GL_BLEND);
 
@@ -252,9 +252,9 @@ void TextBufferTest::showtextline2 ()
 	}
 
 	TextBuffer buf;
-	buf.set_font(Font("Sans", 16));
-	buf.set_origin(Coord3f(100.0, 100.0, 0.0));
-	buf.Append(L"Our strong community is diverse and helpful");
+	buf.setFont(Font("Sans", 16));
+	buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
+	buf.append(L"Our strong community is diverse and helpful");
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -281,7 +281,7 @@ void TextBufferTest::showtextline2 ()
 		draw_grid (width, height);
 
 		// Test buffer render
-		buf.Render();
+		buf.render();
 
 		glDisable(GL_BLEND);
 		glfwSwapBuffers(win);
@@ -313,9 +313,9 @@ void TextBufferTest::showtextline3 ()
 	}
 
 	TextBuffer buf;
-	buf.set_font(Font("Sans", 16));
-	buf.set_origin(Coord3f(100.0, 100.0, 0.0));
-	buf.Append(L"Arch Linux\n??????\n床前明月光");
+	buf.setFont(Font("Sans", 16));
+	buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
+	buf.append(L"Arch Linux\n??????\n床前明月光");
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -342,7 +342,7 @@ void TextBufferTest::showtextline3 ()
 		draw_grid (width, height);
 
 		// Test buffer render
-		buf.Render();
+		buf.render();
 
 		glDisable(GL_BLEND);
 		glfwSwapBuffers(win);
@@ -374,9 +374,9 @@ void TextBufferTest::showtextline4 ()
 	}
 
 	TextBuffer buf;
-	buf.set_font(Font("Sans", 16));
-	buf.set_origin(Coord3f(100.0, 100.0, 0.0));
-	buf.Append(L"A simple, lightweight distribution\n??????\n疑是地上霜");
+	buf.setFont(Font("Sans", 16));
+	buf.setOrigin(Coord3f(100.0, 100.0, 0.0));
+	buf.append(L"A simple, lightweight distribution\n??????\n疑是地上霜");
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -403,7 +403,7 @@ void TextBufferTest::showtextline4 ()
 		draw_grid (width, height);
 
 		// Test buffer render
-		buf.Render();
+		buf.render();
 
 		glDisable(GL_BLEND);
 		glfwSwapBuffers(win);
@@ -436,18 +436,18 @@ void TextBufferTest::multiple_buf_show1 ()
 
 	String str1 = L"Hello World!";
 	TextBuffer buf1(str1);
-	buf1.set_origin(Coord3f(100.0, 100.0, 0.0));
-	buf1.set_font(Font("Droid Sans Mono", 48));
+	buf1.setOrigin(Coord3f(100.0, 100.0, 0.0));
+	buf1.setFont(Font("Droid Sans Mono", 48));
 
 	String str2 = L"Hello World!";
 	TextBuffer buf2(str2);
-	buf2.set_origin(Coord3f(100.0, 200.0, 0.0));
-	buf2.set_font(Font("Source Code Pro", 48));
+	buf2.setOrigin(Coord3f(100.0, 200.0, 0.0));
+	buf2.setFont(Font("Source Code Pro", 48));
 
 	String str3 = L"我爱北京天安门";
 	TextBuffer buf3(str3);
-	buf3.set_origin(Coord3f(100.0, 300.0, 0.0));
-	buf3.set_font(Font("Sans", 48));
+	buf3.setOrigin(Coord3f(100.0, 300.0, 0.0));
+	buf3.setFont(Font("Sans", 48));
 
 	while (!glfwWindowShouldClose(win)) {
 
@@ -474,11 +474,11 @@ void TextBufferTest::multiple_buf_show1 ()
 		draw_grid (width, height);
 
 		// Test buffer render
-		buf1.Render();
+		buf1.render();
 
-		buf2.Render();
+		buf2.render();
 
-		buf3.Render();
+		buf3.render();
 
 		glDisable(GL_BLEND);
 		glfwSwapBuffers(win);
@@ -495,10 +495,10 @@ void TextBufferTest::multiple_buf_show1 ()
 void TextBufferTest::calculatebox1 ()
 {
 	TextBuffer buf;
-	buf.set_font(Font("Sans", 16));
-	buf.Append(L"ArchLinux");
+	buf.setFont(Font("Sans", 16));
+	buf.append(L"ArchLinux");
 
-	Size box = buf.CalculateOutlineBoxSize();
+	Size box = buf.calculateOutlineBoxSize();
 
 	cout << "Text Box: " << box.width() << " " << box.height() << endl;
 

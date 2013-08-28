@@ -47,14 +47,14 @@ namespace BIL {
 
 		void setFont (const Font& font)
 		{
-			text_.set_font(font);
+			text_.setFont(font);
 			calculateBox();
 		}
 
 		void setTextColor (const Color& fg, const Color& bg = Color(0x00000000))
 		{
-			text_.set_foreground(fg);
-			text_.set_background(bg);
+			text_.setForeground(fg);
+			text_.setBackground(bg);
 		}
 
 		void set_background (const Color& color)

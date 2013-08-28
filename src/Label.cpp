@@ -59,7 +59,7 @@ namespace BIL {
 
 	void Label::calculateBox ()
 	{
-		Size box = text_.CalculateOutlineBoxSize();
+		Size box = text_.calculateOutlineBoxSize();
 		
 		box.set_width(box.width() + padding_.left() + padding_.right());
 		box.set_height(box.height() + padding_.top() + padding_.bottom());
@@ -82,7 +82,7 @@ namespace BIL {
 				   background_.b(), background_.a());
 		glRectf(0.0, 0.0, size_.width(), size_.height());
 
-		text_.Render();
+		text_.render();
 
 		glPopMatrix();
 		glDisable(GL_BLEND);

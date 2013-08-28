@@ -86,6 +86,12 @@ namespace BIL {
 
 	}
 
+	Theme::FontStyle::FontStyle()
+	{
+		// TODO: init fonts in fontconfig
+		regular = Font("Droid Sans", 9);
+	}
+
 	Theme::Theme ()
 	{
 		// TODO Auto-generated constructor stub

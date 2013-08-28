@@ -94,7 +94,7 @@ namespace BIL {
 					 pos_.y(),
 					 z());
 
-		text_.Render();
+		text_.render();
 
 		glPopMatrix();
 		//glDisable(GL_BLEND);

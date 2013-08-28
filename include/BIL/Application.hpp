@@ -52,6 +52,8 @@ namespace BIL {
 		 */
 		Application ();
 
+		virtual ~Application ();
+
 		bool initialize (bool nls = true);
 
 		void terminate ()
@@ -74,8 +76,6 @@ namespace BIL {
 		void setMainWindow (Window *window);
 
 		void run ();
-
-		virtual ~Application ();
 
 		static std::string glStrVersion;
 

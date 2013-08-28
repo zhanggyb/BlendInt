@@ -47,24 +47,26 @@ namespace BIL {
 
 		void set_font (const Font& font)
 		{
-			text_.set_font(font);
+			text_.setFont(font);
 			calculateBox();
 			Update();
 		}
 
 		bool down () const {return down_;}
 
-		void set_down (bool down) {down_ = down;}
+		void setDown (bool down) {down_ = down;}
 
 		bool checked () const {return checked_;}
 
 		bool checkable () const {return checkable_;}
 
-		void set_checkable (bool checkable) {checkable_ = checkable;}
+		void setCheckable (bool checkable) {checkable_ = checkable;}
 
 	public:	// event connection interface
 
 		Cpp::EventRef<> clicked() {return clicked_;}
+
+		Cpp::EventRef<bool> toggled() {return toggled_;}
 
 	protected:
 
@@ -94,6 +96,8 @@ namespace BIL {
 	protected:	// Events
 
 		Cpp::Event<> clicked_;
+
+		Cpp::Event<bool> toggled_;
 
 	private:	// member functions
 

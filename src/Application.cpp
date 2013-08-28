@@ -77,14 +77,14 @@ namespace BIL {
 		}
 
 		Theme* theme = Theme::instance();
-		if (theme != NULL)
+		if (theme)
 			theme->initialize();
 
 		if (nls) {
 			setlocale(LC_ALL, "");
 		}
 
-		if (_mainWindow != NULL) {
+		if (_mainWindow) {
 			_mainWindow->makeContextCurrent();
 		}
 

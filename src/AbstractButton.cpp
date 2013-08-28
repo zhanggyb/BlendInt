@@ -44,11 +44,11 @@ namespace BIL {
 			return;
 		}
 
-		text_.Append(text);
+		text_.append(text);
 
 		calculateBox();
 
-		text_.set_origin(Coord3f(
+		text_.setOrigin(Coord3f(
 								 pos_.x() + padding_.left(),
 								 pos_.y() + padding_.bottom(),
 								 0.0)
@@ -57,7 +57,7 @@ namespace BIL {
 
 	void AbstractButton::calculateBox(void)
 	{
-		Size box = text_.CalculateOutlineBoxSize();
+		Size box = text_.calculateOutlineBoxSize();
 
 		box.set_width(box.width() + padding_.left() + padding_.right());
 		box.set_height(box.height() + padding_.top() + padding_.bottom());
@@ -93,9 +93,9 @@ namespace BIL {
 		}
 
 		if (checkable_) {
-			// TODO: add code for checkable
+			checked_ = !checked_;
+			toggled_.fire(checked_);
 		} else {
-
 		}
 	}
 

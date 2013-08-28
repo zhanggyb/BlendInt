@@ -22,8 +22,9 @@
 #ifndef _BIL_THEME_H_
 #define _BIL_THEME_H_
 
-#include <BIL/Tuple.hpp>
+//#include <BIL/Tuple.hpp>
 #include <BIL/Color.hpp>
+#include <BIL/Font.hpp>
 
 namespace BIL {
 
@@ -112,17 +113,27 @@ namespace BIL {
 			Color xaxis, yaxis, zaxis;
 		};
 
+		struct FontStyle {
+			FontStyle();
+			Font regular;
+		};
+
 	public:
 
-		static Theme* instance (void);
+		static Theme* instance ();
 
-		static bool release (void);
+		static bool release ();
 
 		void initialize (void);
 
-		const ThemeUI* themeUI (void) const
+		const ThemeUI* themeUI () const
 		{
 			return &themeUI_;
+		}
+
+		const FontStyle* fontStyle () const
+		{
+			return &fonts_;
 		}
 
 	private:
@@ -150,6 +161,8 @@ namespace BIL {
 	private:
 
 		ThemeUI themeUI_;
+
+		FontStyle fonts_;
 
 	private:
 		// static member variables

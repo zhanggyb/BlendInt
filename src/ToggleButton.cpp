@@ -49,13 +49,13 @@ namespace BIL {
 	ToggleButton::ToggleButton(Widget* parent)
 	: AbstractButton(parent)
 	{
-		set_checkable(true);
+		setCheckable(true);
 	}
 
 	ToggleButton::ToggleButton(const String& text, Widget* parent)
 	: AbstractButton(parent)
 	{
-		set_checkable(true);
+		setCheckable(true);
 		set_text (text);
 	}
 
@@ -94,7 +94,7 @@ namespace BIL {
 					 pos_.y(),
 					 z());
 
-		text_.Render();
+		text_.render();
 
 		glPopMatrix();
 		//glDisable(GL_BLEND);
