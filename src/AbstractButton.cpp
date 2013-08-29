@@ -130,8 +130,13 @@ namespace BIL {
 							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
 									   wcol->inner_sel.b(), wcol->inner_sel.a());
 						} else {
-							glColor4ub(wcol->inner.r(), wcol->inner.g(),
+							if (hover_) {
+								glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
+										   wcol->inner_highlight.b(), wcol->inner_highlight.a());
+							} else {
+								glColor4ub(wcol->inner.r(), wcol->inner.g(),
 									   wcol->inner.b(), wcol->inner.a());
+							}
 						}
 					} else {
 						if (hover_) {
@@ -163,8 +168,13 @@ namespace BIL {
 							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
 									   wcol->inner_sel.b(), 255);
 						} else {
+							if (hover_) {
+								glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
+										   wcol->inner_highlight.b(), 255);
+							} else {
 							glColor4ub(wcol->inner.r(), wcol->inner.g(),
 									   wcol->inner.b(), 255);
+							}
 						}
 					} else {
 						if (hover_) {
@@ -196,7 +206,12 @@ namespace BIL {
 									   wcol->inner_sel.b(), 255);
 						} else {
 							/* simple fill */
-							glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+							if (hover_) {
+								glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
+										   wcol->inner_highlight.b(), wcol->inner_highlight.a());
+							} else {
+								glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
+							}
 						}
 					} else {
 						if (hover_) {
