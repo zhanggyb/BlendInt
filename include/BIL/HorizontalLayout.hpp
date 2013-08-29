@@ -19,40 +19,32 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_BUTTON_H_
-#define _BIL_BUTTON_H_
+#ifndef _BIL_HORIZONTALLAYOUT_H_
+#define _BIL_HORIZONTALLAYOUT_H_
 
-#include <BIL/AbstractButton.hpp>
+#include <BIL/Layout.hpp>
 
 namespace BIL {
 
-	class Button: public AbstractButton
+	class HorizontalLayout: public AbstractLayout
 	{
 	public:
 
-		explicit Button (Widget* parent = NULL);
+		HorizontalLayout(Drawable* parent = NULL);
 
-		Button (const wstring& text, Widget* parent = NULL);
-
-		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
-
-		virtual ~Button ();
+		virtual ~HorizontalLayout ();
 
 	protected:
 
-		virtual void update ();
+		void update ();
 
-		virtual void render ();
-
-	private:
-
-		void DrawButton (WidgetVertexes* vertexes);
+		void render ();
 
 	private:
-		Button (const Button& orig);
-		Button& operator = (const Button& orig);
+
+		DISALLOW_COPY_AND_ASSIGN(HorizontalLayout);
 	};
 
 }
 
-#endif	// _BIL_BUTTON_H_
+#endif	// _BIL_HORIZONTALLAYOUT_H_

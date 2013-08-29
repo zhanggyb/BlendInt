@@ -42,7 +42,7 @@ testWidget::testWidget(int type, Traceable* parent)
 
 }
 
-void testWidget::Render(void)
+void testWidget::render(void)
 {
 	DrawAppearance(&appearance_);
 }
@@ -78,7 +78,7 @@ void WidgetTest::widget_default_show ()
     app.initialize();
 
     Widget widget;
-    widget.set_parent (&win);
+    widget.setParent (&win);
 
     // widget.set_round_box_type(RoundBoxAll);
     widget.set_pos(50, 50);
@@ -99,7 +99,7 @@ void WidgetTest::testwidget_show0()
     app.initialize();
 
     testWidget widget(0);
-    widget.set_parent (&win);
+    widget.setParent (&win);
     widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 
@@ -118,7 +118,7 @@ void WidgetTest::testwidget_show1()
     app.initialize();
 
     testWidget widget(1);
-    widget.set_parent (&win);
+    widget.setParent (&win);
 
     app.run();
 
@@ -135,7 +135,7 @@ void WidgetTest::testwidget_show2()
     app.initialize();
 
     testWidget widget(2);
-    widget.set_parent (&win);
+    widget.setParent (&win);
 
     app.run();
 
@@ -152,7 +152,7 @@ void WidgetTest::testwidget_show3()
     app.initialize();
 
     testWidget widget(3);
-    widget.set_parent (&win);
+    widget.setParent (&win);
 
     app.run();
 

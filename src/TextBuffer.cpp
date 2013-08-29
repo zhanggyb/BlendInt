@@ -48,7 +48,7 @@ namespace BIL {
 	*/
 
 	TextBuffer::TextBuffer (const String& text, const Font& font)
-		: lineSpacing_(1.0), foreground_(0x000000FF), background_(0x00000000)
+		: line_spacing_(1.0), foreground_(0x000000FF), background_(0x00000000)
 	{
 		setFont(font);
 		append(text);
@@ -109,7 +109,7 @@ namespace BIL {
 		if (line == 1) {
 			box.set_width (line_width);
 		}
-		box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * lineSpacing_));
+		box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * line_spacing_));
 
 		return box;
 	}
@@ -142,7 +142,7 @@ namespace BIL {
 				glLoadIdentity();
 				glTranslatef(origin_.x(),
 							 origin_.y()
-							 - lineSpacing_ * fontcache_->getHeight() * line,
+							 - line_spacing_ * fontcache_->getHeight() * line,
 							 origin_.z());
 				continue;
 			}

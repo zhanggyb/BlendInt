@@ -20,7 +20,6 @@
  */
 
 #include <GL/glew.h>
-#include <GL/gl.h>
 
 #include <assert.h>
 #include <algorithm>
@@ -390,37 +389,37 @@ namespace BIL {
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
-	void Widget::KeyPressEvent (KeyEvent* event)
+	void Widget::keyPressEvent (KeyEvent* event)
 	{
 		event->Accept();
 	}
 
-	void Widget::ContextMenuPressEvent (ContextMenuEvent* event)
+	void Widget::contextMenuPressEvent (ContextMenuEvent* event)
 	{
 		event->Accept();
 	}
 
-	void Widget::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	void Widget::contextMenuReleaseEvent (ContextMenuEvent* event)
 	{
 		event->Accept();
 	}
 
-	void Widget::MousePressEvent (MouseEvent* event)
+	void Widget::mousePressEvent (MouseEvent* event)
 	{
 		event->Accept();
 	}
 
-	void Widget::MouseReleaseEvent (MouseEvent* event)
+	void Widget::mouseReleaseEvent (MouseEvent* event)
 	{
 		event->Accept();
 	}
 
-	void Widget::MouseMoveEvent (MouseEvent* event)
+	void Widget::mouseMoveEvent (MouseEvent* event)
 	{
 		event->Accept();
 	}
 
-	void Widget::InputMethodEvent (unsigned int character)
+	void Widget::inputMethodEvent (unsigned int character)
 	{
 	}
 
@@ -428,7 +427,7 @@ namespace BIL {
 	{
 	}
 
-	void Widget::Update()
+	void Widget::update()
 	{
         if (!size_.IsValid()) return;
 		
@@ -443,7 +442,7 @@ namespace BIL {
 		CalculateRoundBoxEdges (round_box_type_, Rect(pos_, size_), rad, &appearance_);
 	}
 
-	void Widget::Render ()
+	void Widget::render ()
 	{
 		DrawAppearance (&appearance_);
 	}

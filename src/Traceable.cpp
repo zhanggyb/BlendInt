@@ -108,7 +108,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool Traceable::set_parent (Traceable* parent)
+	bool Traceable::setParent (Traceable* parent)
 	{
 		if (parent_ == parent) return true;
 
@@ -138,7 +138,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool Traceable::AddChild (Traceable* child)
+	bool Traceable::addChild (Traceable* child)
 	{
 		if (child == NULL)
 			return false;

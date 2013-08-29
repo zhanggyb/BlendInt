@@ -29,6 +29,7 @@
 namespace BIL {
 
 	class Window;
+	class AbstractLayout;
 
 	class EventHandler
 	{
@@ -41,27 +42,23 @@ namespace BIL {
 
 	protected:
 
-		virtual void KeyPressEvent (KeyEvent* event) = 0;
+		virtual void keyPressEvent (KeyEvent* event) = 0;
 
-		virtual void ContextMenuPressEvent (ContextMenuEvent* event) = 0;
+		virtual void contextMenuPressEvent (ContextMenuEvent* event) = 0;
 
-		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event) = 0;
+		virtual void contextMenuReleaseEvent (ContextMenuEvent* event) = 0;
 
-		virtual void MousePressEvent (MouseEvent* event) = 0;
+		virtual void mousePressEvent (MouseEvent* event) = 0;
 
-		virtual void MouseReleaseEvent (MouseEvent* event) = 0;
+		virtual void mouseReleaseEvent (MouseEvent* event) = 0;
 
-		virtual void MouseMoveEvent (MouseEvent* event) = 0;
+		virtual void mouseMoveEvent (MouseEvent* event) = 0;
 
-		virtual void InputMethodEvent (unsigned int character) = 0;
+		virtual void inputMethodEvent (unsigned int character) = 0;
 
 		virtual void CursorEnterEvent (int entered) = 0;
 
-		virtual void Render () = 0;
-
-	//private:
-		//EventHandler(const EventHandler& orig);
-		//EventHandler& operator = (const EventHandler& orig);
+		virtual void render () = 0;
 	};
 
 } /* namespace BIL */

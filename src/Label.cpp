@@ -67,7 +67,7 @@ namespace BIL {
 		resize (box.width(), box.height());
 	}
 
-	void Label::Render ()
+	void Label::render ()
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);

@@ -64,7 +64,7 @@ namespace BIL {
 
 	}
 
-	void ToggleButton::Update ()
+	void ToggleButton::update ()
 	{
 		if (!size_.IsValid()) return;
 
@@ -79,7 +79,7 @@ namespace BIL {
 		CalculateRoundBoxEdges (round_box_type_, Rect(pos_, size_), rad, &appearance_);
 	}
 
-	void ToggleButton::Render ()
+	void ToggleButton::render ()
 	{
 		DrawButton (&appearance_);
 

@@ -59,7 +59,7 @@ namespace BIL {
 
 		void setLineSpacing (float space)
 		{
-			lineSpacing_ = space;
+			line_spacing_ = space;
 		}
 
 		void setForeground (const Color& color)
@@ -114,7 +114,7 @@ namespace BIL {
 		FontCache* fontcache_;
 
 		/** Row spacing */
-		float lineSpacing_;
+		float line_spacing_;
 
 		/** Foreground, text color */
 		Color foreground_;

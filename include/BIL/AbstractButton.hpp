@@ -35,7 +35,7 @@ using namespace std;
 
 namespace BIL {
 
-	class AbstractButton: public BIL::Widget
+	class AbstractButton: public Widget
 	{
 	public:
 
@@ -49,7 +49,7 @@ namespace BIL {
 		{
 			text_.setFont(font);
 			calculateBox();
-			Update();
+			update();
 		}
 
 		bool down () const {return down_;}
@@ -70,15 +70,15 @@ namespace BIL {
 
 	protected:
 
-		virtual void Update () = 0;
+		virtual void update () = 0;
 
-		virtual void Render () = 0;
+		virtual void render () = 0;
 
-		virtual void MousePressEvent (MouseEvent* event);
+		virtual void mousePressEvent (MouseEvent* event);
 
-		virtual void MouseReleaseEvent (MouseEvent* event);
+		virtual void mouseReleaseEvent (MouseEvent* event);
 
-		virtual void MouseMoveEvent (MouseEvent* event);
+		virtual void mouseMoveEvent (MouseEvent* event);
 
 	protected:
 
@@ -105,8 +105,7 @@ namespace BIL {
 
 	private:	// member functions (disabled)
 
-		AbstractButton (const AbstractButton& orig);
-		AbstractButton& operator = (const AbstractButton& orig);
+		DISALLOW_COPY_AND_ASSIGN(AbstractButton);
 	};
 
 } /* namespace BIL */

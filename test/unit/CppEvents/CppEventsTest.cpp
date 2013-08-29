@@ -50,12 +50,12 @@ void CppEventsTest::connect1 ()
 
 	Button button(L"Button Test");
 	button.set_font(Font("Droid Sans"));
-	button.set_parent(&win);
+	button.setParent(&win);
 	button.set_round_box_type(RoundBoxAll);
 	button.set_pos(Point(50, 50));
 
 	Label label(L"text will be changed");
-	label.set_parent(&win);
+	label.setParent(&win);
 	label.setFont(Font("Droid Sans"));
 	label.set_pos(Point(100, 100));
 

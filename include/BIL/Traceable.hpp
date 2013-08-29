@@ -19,13 +19,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-/*
- * BasicObject.h
- *
- *  Created on: 2013年7月1日
- *      Author: zhanggyb
- */
-
 #ifndef _BIL_TRACEABLE_H_
 #define _BIL_TRACEABLE_H_
 
@@ -33,6 +26,14 @@
 #include <cstdlib>
 #include <list>
 #include <map>
+
+/**
+ * A macro to disallow the copy constructor and operator= functions
+ * This should be used in the private: declarations for a class
+ */
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+  TypeName(const TypeName&);               \
+  void operator=(const TypeName&)
 
 using namespace std;
 
@@ -113,9 +114,9 @@ namespace BIL {
 		 *
 		 * Set the parent object and add self into the children list of parent
 		 */
-		bool set_parent (Traceable* parent);
+		bool setParent (Traceable* parent);
 
-		bool AddChild (Traceable *child);
+		bool addChild (Traceable *child);
 
 	protected:	// member functions
 
@@ -150,15 +151,7 @@ namespace BIL {
 
 	private:	// member functions disabled
 
-		/**
-		 * @brief Declare copy constructor in private to disable it
-		 */
-		Traceable (const Traceable& orig);
-
-		/**
-		 * @brief Declare assignment constructor in private to disable it
-		 */
-		Traceable& operator = (const Traceable& orig);
+		DISALLOW_COPY_AND_ASSIGN(Traceable);
 	};
 
 } /* namespace BIL */

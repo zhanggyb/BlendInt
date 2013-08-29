@@ -110,33 +110,9 @@ namespace BIL {
 		return true;
 	}
 
-	void Window::Render ()
-	{
-		int width = size_.width();
-		int height = size_.height();
-		// float ratio = width / (float) height;
-
-		// float bg = 114.0 / 255;	// the default blender background color
-		glClearColor(0.447, 0.447, 0.447, 1.00);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glColor4f(1.00, 1.00, 1.00, 1.00);
-
-		// enable anti-alias
-		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-		//glEnable (GL_POINT_SMOOTH);
-		//glEnable (GL_LINE_SMOOTH);
-		//glEnable (GL_POLYGON_SMOOTH);
-
-		glViewport(0, 0, width, height);
-		glMatrixMode (GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
-
-		glMatrixMode (GL_MODELVIEW);
-		glLoadIdentity();
-
 #ifdef DEBUG
+	void Window::drawGrid (int width, int height)
+	{
 		// Draw grid for debug
 		const int small_step = 20;
 		const int big_step = 100;
@@ -185,6 +161,38 @@ namespace BIL {
 		}
 
 		glDisable(GL_LINE_STIPPLE);
+
+	}
+#endif
+
+	void Window::render ()
+	{
+		int width = size_.width();
+		int height = size_.height();
+		// float ratio = width / (float) height;
+
+		// float bg = 114.0 / 255;	// the default blender background color
+		glClearColor(0.447, 0.447, 0.447, 1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glColor4f(1.00, 1.00, 1.00, 1.00);
+
+		// enable anti-alias
+		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+		//glEnable (GL_POINT_SMOOTH);
+		//glEnable (GL_LINE_SMOOTH);
+		//glEnable (GL_POLYGON_SMOOTH);
+
+		glViewport(0, 0, width, height);
+		glMatrixMode (GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+		glMatrixMode (GL_MODELVIEW);
+		glLoadIdentity();
+
+#ifdef DEBUG
+		drawGrid (width, height);
 #endif
 
 		list<Traceable*>::const_iterator it;
@@ -192,7 +200,7 @@ namespace BIL {
 		for (it = children_.begin(); it != children_.end(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
-				item->Render();
+				item->render();
 			}
 		}
 
@@ -201,7 +209,7 @@ namespace BIL {
 		{
 			item = dynamic_cast<Drawable*>(*j);
 			if (item != NULL) {
-				item->Render();
+				item->render();
 			}
 		}
 
@@ -211,14 +219,14 @@ namespace BIL {
 		//}
 	}
 
-	void Window::ResizeEvent (int width, int height)
+	void Window::resizeEvent (int width, int height)
 	{
 		// TODO: resize all widgets/layouts in children
 		size_.set_width(width);
 		size_.set_height(height);
 	}
 
-	void Window::KeyEvent (int key, int scancode, int action, int mods)
+	void Window::keyEvent (int key, int scancode, int action, int mods)
 	{
 		if (key == Key_Menu) {
 			ContextMenuEvent event(ContextMenuEvent::Keyboard,
@@ -233,10 +241,10 @@ namespace BIL {
 				// TODO: only the focused widget can dispose key event
 				switch (action) {
 				case KeyPress:
-					item->ContextMenuPressEvent (&event);
+					item->contextMenuPressEvent (&event);
 					break;
 				case KeyRelease:
-					item->ContextMenuReleaseEvent (&event);
+					item->contextMenuReleaseEvent (&event);
 					break;
 				default:
 					break;
@@ -257,7 +265,7 @@ namespace BIL {
 				// TODO: only the focused widget can dispose key event
 				switch (action) {
 				case KeyPress:
-					item->KeyPressEvent(&event);
+					item->keyPressEvent(&event);
 					break;
 				case KeyRelease:
 					// item->KeyReleaseEvent(dynamic_cast<BIL::KeyEvent*>(event));
@@ -274,19 +282,19 @@ namespace BIL {
 		}
 	}
 
-	void Window::InputMethodEvent (unsigned int character)
+	void Window::inputMethodEvent (unsigned int character)
 	{
 		list<Traceable*>::const_reverse_iterator it;
 		Drawable *item = NULL;
 		for (it = children_.rbegin(); it != children_.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
-				item->InputMethodEvent(character);
+				item->inputMethodEvent(character);
 			}
 		}
 	}
 
-	void Window::MouseButtonEvent (int button, int action, int mods)
+	void Window::mouseButtonEvent (int button, int action, int mods)
 	{
 		MouseButton mouseclick = MouseButtonNone;
 		switch (button) {
@@ -342,10 +350,10 @@ namespace BIL {
 				event.set_pos (local_x, local_y);
 				switch (action) {
 				case GLFW_PRESS:
-					item->MousePressEvent(&event);
+					item->mousePressEvent(&event);
 					break;
 				case GLFW_RELEASE:
-					item->MouseReleaseEvent(&event);
+					item->mouseReleaseEvent(&event);
 					break;
 				default:
 					break;
@@ -355,7 +363,7 @@ namespace BIL {
 		}
 	}
 
-	void Window::CursorPosEvent (double xpos, double ypos)
+	void Window::cursorPosEvent (double xpos, double ypos)
 	{
 		cursor_pos_x_ = xpos;
 		cursor_pos_y_ = size_.height() - ypos;
@@ -374,13 +382,13 @@ namespace BIL {
 				local_x = cursor_pos_x_ - (item->pos().x());
 				local_y = cursor_pos_y_ - (item->pos().y());
 				event.set_pos (local_x, local_y);
-				item->MouseMoveEvent(&event);
+				item->mouseMoveEvent(&event);
 				if(event.IsAccepted()) break;
 			}
 		}
 	}
 
-	void Window::CursorEnterEvent (int entered)
+	void Window::cursorEnterEvent (int entered)
 	{
 		if (entered == GL_TRUE) {
 			//cout << "Cursor entered." << endl;
@@ -395,7 +403,7 @@ namespace BIL {
 
 		if(it != windowMap.end()) {
 			BIL::Window* winObj = windowMap[window];
-			winObj->KeyEvent(key, scancode, action, mods);
+			winObj->keyEvent(key, scancode, action, mods);
 		}
 	}
 
@@ -406,7 +414,7 @@ namespace BIL {
 
 		if(it != windowMap.end()) {
 			BIL::Window* winObj = windowMap[window];
-			winObj->InputMethodEvent(character);
+			winObj->inputMethodEvent(character);
 		}
 	}
 
@@ -417,7 +425,7 @@ namespace BIL {
 
 		if(it != windowMap.end()) {
 			BIL::Window* winObj = windowMap[window];
-			winObj->ResizeEvent(w, h);
+			winObj->resizeEvent(w, h);
 		}
 	}
 
@@ -433,7 +441,7 @@ namespace BIL {
 
 		if(it != windowMap.end()) {
 			BIL::Window* winObj = windowMap[window];
-			winObj->MouseButtonEvent(button, action, mods);
+			winObj->mouseButtonEvent(button, action, mods);
 		}
 	}
 
@@ -444,7 +452,7 @@ namespace BIL {
 
 		if(it != windowMap.end()) {
 			BIL::Window* winObj = windowMap[window];
-			winObj->CursorPosEvent(xpos, ypos);
+			winObj->cursorPosEvent(xpos, ypos);
 		}
 	}
 
@@ -455,7 +463,7 @@ namespace BIL {
 
 		if(it != windowMap.end()) {
 			BIL::Window* winObj = windowMap[window];
-			winObj->CursorEnterEvent(entered);
+			winObj->cursorEnterEvent(entered);
 		}
 	}
 

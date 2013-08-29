@@ -46,7 +46,7 @@ myTexture::~myTexture()
 
 }
 
-void myTexture::Render (void)
+void myTexture::render (void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -66,36 +66,36 @@ void myTexture::Render (void)
     glDisable(GL_TEXTURE_2D);
 }
 
-void myTexture::KeyPressEvent (KeyEvent* event)
+void myTexture::keyPressEvent (KeyEvent* event)
 {
 }
 
-void myTexture::ContextMenuPressEvent (ContextMenuEvent* event)
-{
-
-}
-
-void myTexture::ContextMenuReleaseEvent (ContextMenuEvent* event)
+void myTexture::contextMenuPressEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myTexture::MousePressEvent (MouseEvent* event)
+void myTexture::contextMenuReleaseEvent (ContextMenuEvent* event)
+{
+
+}
+
+void myTexture::mousePressEvent (MouseEvent* event)
 {
 
 }
 	
-void myTexture::MouseReleaseEvent (MouseEvent* event)
+void myTexture::mouseReleaseEvent (MouseEvent* event)
 {
 
 }
 
-void myTexture::MouseMoveEvent (MouseEvent* event)
+void myTexture::mouseMoveEvent (MouseEvent* event)
 {
 
 }
 
-void myTexture::InputMethodEvent (unsigned int character)
+void myTexture::inputMethodEvent (unsigned int character)
 {
 }
 
@@ -128,7 +128,7 @@ myDrawable1::~myDrawable1()
 
 }
 
-void myDrawable1::Render(void)
+void myDrawable1::render(void)
 {
 
 	glEnable(GL_BLEND);
@@ -145,35 +145,35 @@ void myDrawable1::Render(void)
 	glDisable(GL_BLEND);
 }
 
-void myDrawable1::KeyPressEvent (KeyEvent* event)
+void myDrawable1::keyPressEvent (KeyEvent* event)
 {
 }
 
-void myDrawable1::ContextMenuPressEvent (ContextMenuEvent* event)
-{
-
-}
-
-void myDrawable1::ContextMenuReleaseEvent (ContextMenuEvent* event)
+void myDrawable1::contextMenuPressEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myDrawable1::MousePressEvent (MouseEvent* event)
+void myDrawable1::contextMenuReleaseEvent (ContextMenuEvent* event)
+{
+
+}
+
+void myDrawable1::mousePressEvent (MouseEvent* event)
 {
 }
 	
-void myDrawable1::MouseReleaseEvent (MouseEvent* event)
+void myDrawable1::mouseReleaseEvent (MouseEvent* event)
 {
 
 }
 
-void myDrawable1::MouseMoveEvent (MouseEvent* event)
+void myDrawable1::mouseMoveEvent (MouseEvent* event)
 {
 
 }
 
-void myDrawable1::InputMethodEvent (unsigned int character)
+void myDrawable1::inputMethodEvent (unsigned int character)
 {
 }
 
@@ -192,7 +192,7 @@ myDrawable2::~myDrawable2()
 
 }
 
-void myDrawable2::Render(void)
+void myDrawable2::render(void)
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -209,34 +209,34 @@ void myDrawable2::Render(void)
 	glDisable(GL_BLEND);
 }
 
-void myDrawable2::KeyPressEvent (KeyEvent* event)
+void myDrawable2::keyPressEvent (KeyEvent* event)
 {
 }
 
-void myDrawable2::ContextMenuPressEvent (ContextMenuEvent* event)
-{
-
-}
-
-void myDrawable2::ContextMenuReleaseEvent (ContextMenuEvent* event)
+void myDrawable2::contextMenuPressEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myDrawable2::MousePressEvent (MouseEvent* event)
+void myDrawable2::contextMenuReleaseEvent (ContextMenuEvent* event)
+{
+
+}
+
+void myDrawable2::mousePressEvent (MouseEvent* event)
 {
 }
 	
-void myDrawable2::MouseReleaseEvent (MouseEvent* event)
+void myDrawable2::mouseReleaseEvent (MouseEvent* event)
 {
 }
 
-void myDrawable2::MouseMoveEvent (MouseEvent* event)
+void myDrawable2::mouseMoveEvent (MouseEvent* event)
 {
 
 }
 
-void myDrawable2::InputMethodEvent (unsigned int character)
+void myDrawable2::inputMethodEvent (unsigned int character)
 {
 }
 
@@ -255,7 +255,7 @@ myDrawable3::~myDrawable3()
 
 }
 
-void myDrawable3::Render(void)
+void myDrawable3::render(void)
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -277,36 +277,36 @@ void myDrawable3::Render(void)
 }
 
 
-void myDrawable3::KeyPressEvent (KeyEvent* event)
+void myDrawable3::keyPressEvent (KeyEvent* event)
 {
 }
 
-void myDrawable3::ContextMenuPressEvent (ContextMenuEvent* event)
-{
-
-}
-
-void myDrawable3::ContextMenuReleaseEvent (ContextMenuEvent* event)
+void myDrawable3::contextMenuPressEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myDrawable3::MousePressEvent (MouseEvent* event)
+void myDrawable3::contextMenuReleaseEvent (ContextMenuEvent* event)
+{
+
+}
+
+void myDrawable3::mousePressEvent (MouseEvent* event)
 {
 
 }
 	
-void myDrawable3::MouseReleaseEvent (MouseEvent* event)
+void myDrawable3::mouseReleaseEvent (MouseEvent* event)
 {
 
 }
 
-void myDrawable3::MouseMoveEvent (MouseEvent* event)
+void myDrawable3::mouseMoveEvent (MouseEvent* event)
 {
 
 }
 
-void myDrawable3::InputMethodEvent (unsigned int character)
+void myDrawable3::inputMethodEvent (unsigned int character)
 {
 }
 
@@ -344,7 +344,7 @@ void DrawableTest::texture1 ()
     app.initialize();
 
     myTexture widget;
-    widget.set_parent (&win);
+    widget.setParent (&win);
 
     app.run();
 
@@ -361,7 +361,7 @@ void DrawableTest::mydrawable1()
     app.initialize();
 
     myDrawable1 widget;
-    widget.set_parent (&win);
+    widget.setParent (&win);
     widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 
@@ -380,7 +380,7 @@ void DrawableTest::mydrawable2()
     app.initialize();
 
     myDrawable2 widget;
-    widget.set_parent (&win);
+    widget.setParent (&win);
     widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 
@@ -399,7 +399,7 @@ void DrawableTest::mydrawable3()
     app.initialize();
 
     myDrawable3 widget;
-    widget.set_parent (&win);
+    widget.setParent (&win);
     widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 

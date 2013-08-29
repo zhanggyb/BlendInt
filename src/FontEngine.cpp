@@ -52,7 +52,7 @@ namespace BIL {
 
 		error = FT_Init_FreeType(&library_);
 		if (error) {
-			cerr << "Cannot initialize FreeType library" << endl;
+			cerr << "Could not initialize FreeType library" << endl;
 			return;
 		}
 
@@ -62,7 +62,7 @@ namespace BIL {
 			return;
 		}
 		if (error) {
-			cerr << "Fail to generate a new Font Face" << endl;
+			cerr << "Fail to generate a new Font Face from: " << filename << endl;
 			return;
 		}
 

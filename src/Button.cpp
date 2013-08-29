@@ -64,7 +64,7 @@ namespace BIL {
 
 	}
 
-	void Button::Update ()
+	void Button::update ()
 	{
 		if (!size_.IsValid()) return;
 		
@@ -79,7 +79,7 @@ namespace BIL {
 		CalculateRoundBoxEdges (round_box_type_, Rect(pos_, size_), rad, &appearance_);
 	}
 
-	void Button::Render ()
+	void Button::render ()
 	{
 		DrawButton (&appearance_);
 

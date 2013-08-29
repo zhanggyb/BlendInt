@@ -64,13 +64,13 @@ namespace BIL {
 		{
 			size_.set_width(w);
 			size_.set_height(h);
-			this->Update();
+			this->update();
 		}
 
 		void resize (const Size& size)
 		{
 			size_ = size;
-			this->Update();
+			this->update();
 		}
 
 		const Point& pos () const
@@ -82,13 +82,13 @@ namespace BIL {
 		{
 			pos_.set_x(x);
 			pos_.set_y(y);
-			this->Update();
+			this->update();
 		}
 
 		void set_pos (const Point& pos)
 		{
 			pos_ = pos;
-			this->Update();
+			this->update();
 		}
 
 		float z () const
@@ -132,7 +132,7 @@ namespace BIL {
 		void set_round_box_type (RoundBoxType type)
 		{
 			round_box_type_ = type;
-			Update();
+			update();
 		}
 
 		RoundBoxType round_box_type () const
@@ -161,7 +161,7 @@ namespace BIL {
 		/**
 		 * @brief Update data for render, used in size, position change
 		 */
-		virtual void Update () = 0;
+		virtual void update () = 0;
 
 		void drawRoundBox (float minx,
 						   float miny,
@@ -258,8 +258,7 @@ namespace BIL {
 
 	private:	// member function disabled
 
-		Drawable (const Drawable& orig);
-		Drawable& operator = (const Drawable& orig);
+		DISALLOW_COPY_AND_ASSIGN(Drawable);
 	};
 
 } /* namespace BIL */

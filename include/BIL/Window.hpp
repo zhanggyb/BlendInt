@@ -158,31 +158,30 @@ namespace BIL {
 			glfwSetCursorPos(window_, xpos, ypos);
 		}
 
-		virtual void Render ();
+		virtual void render ();
 
 	protected:
 
-		virtual void ResizeEvent (int width, int height);
+		virtual void resizeEvent (int width, int height);
 
-		virtual void KeyEvent (int key, int scancode, int action, int mods);
+		virtual void keyEvent (int key, int scancode, int action, int mods);
 
-		virtual void InputMethodEvent (unsigned int character);
+		virtual void inputMethodEvent (unsigned int character);
 
-		virtual void MouseButtonEvent (int button, int action, int mods);
+		virtual void mouseButtonEvent (int button, int action, int mods);
 
-		virtual void CursorPosEvent (double xpos, double ypos);
+		virtual void cursorPosEvent (double xpos, double ypos);
 
-		virtual void CursorEnterEvent (int entered);
-
-	private:					/* member functions disabled */
-
-		Window (const Window& orig);
-		Window& operator = (const Window& orig);
+		virtual void cursorEnterEvent (int entered);
 
 	private:					/* member functions */
 
 		bool registerCallbacks (void);
 		bool unregisterCallbacks (void);
+
+#ifdef DEBUG
+		void drawGrid (int width, int height);
+#endif
 
 	private:					/* member variables */
 		
@@ -219,6 +218,10 @@ namespace BIL {
 		 * A std::map container to record GLFWwindow and Window
 		 */
 		static std::map<GLFWwindow*, BIL::Window*> windowMap;
+
+	private:					/* member functions disabled */
+
+		DISALLOW_COPY_AND_ASSIGN(Window);
 	};
 
 } /* namespace BIL */

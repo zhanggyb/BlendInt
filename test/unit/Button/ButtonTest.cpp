@@ -50,7 +50,7 @@ void ButtonTest::show1 ()
 
 	Button button(L"Button Test");
 	button.set_font(Font("Droid Sans"));
-	button.set_parent(&win);
+	button.setParent(&win);
 	button.set_round_box_type(RoundBoxAll);
 	button.set_pos(Point(50, 50));
 
@@ -70,7 +70,7 @@ void ButtonTest::toggle_button_show1()
 
 	ToggleButton button(L"Button Test");
 	button.set_font(Font("Droid Sans"));
-	button.set_parent(&win);
+	button.setParent(&win);
 	button.set_round_box_type(RoundBoxAll);
 	button.set_pos(Point(100, 100));
 

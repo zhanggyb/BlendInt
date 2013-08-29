@@ -81,7 +81,7 @@ void TraceableTest::checkparent1 ()
 
 	int sizebefore = Traceable::getList()->size(); // 1
 
-	child->set_parent(NULL);
+	child->setParent(NULL);
 
 	int sizeafter = Traceable::getList()->size();	// 2
 
@@ -107,7 +107,7 @@ void TraceableTest::checkparent2 ()
 
 	int mapsize = Traceable::mapSize();	// 2
 
-	child->set_parent(NULL);
+	child->setParent(NULL);
 
 	int sizeafter = Traceable::getList()->size();	// 2
 
@@ -134,9 +134,9 @@ void TraceableTest::checkparent3 ()
 
 	int mapsize = Traceable::mapSize();	// 3
 
-	child1->set_parent(NULL);
-	child2->set_parent(NULL);
-	child1->set_parent(parent);
+	child1->setParent(NULL);
+	child2->setParent(NULL);
+	child1->setParent(parent);
 
 	int sizeafter = Traceable::getList()->size();	// 2
 
@@ -189,7 +189,7 @@ void TraceableTest::checkparent5 (void)
 	Traceable *obj1 = new Traceable;
 	Traceable *obj2 = new Traceable;
 
-	obj2->set_parent(obj1);
+	obj2->setParent(obj1);
 
 	delete obj1;
 
@@ -213,7 +213,7 @@ void TraceableTest::checkparent6 (void)
 	Traceable *obj1 = new Traceable;
 	Traceable *obj2 = new Traceable;
 
-	obj1->AddChild(obj2);
+	obj1->addChild(obj2);
 
 	delete obj1;
 
@@ -241,11 +241,11 @@ void TraceableTest::checkparent7 (void)
 	Traceable *obj5 = new Traceable;
 	Traceable *obj6 = new Traceable;
 
-	obj2->set_parent(obj1);
-	obj3->set_parent(obj2);
-	obj4->set_parent(obj3);
-	obj5->set_parent(obj2);
-	obj6->set_parent(obj1);
+	obj2->setParent(obj1);
+	obj3->setParent(obj2);
+	obj4->setParent(obj3);
+	obj5->setParent(obj2);
+	obj6->setParent(obj1);
 
 	delete obj1;
 
@@ -273,12 +273,12 @@ void TraceableTest::checkparent8 (void)
 	Traceable *obj5 = new Traceable;	// id = 5
 	Traceable *obj6 = new Traceable;	// id = 6
 
-	obj2->set_parent(obj1);
-	obj3->set_parent(obj2);
+	obj2->setParent(obj1);
+	obj3->setParent(obj2);
 
-	obj4->AddChild(obj5);
-	obj4->AddChild(obj6);
-	obj4->AddChild(obj3);
+	obj4->addChild(obj5);
+	obj4->addChild(obj6);
+	obj4->addChild(obj3);
 
 	delete obj1;	// now only 4 objects
 
@@ -330,16 +330,16 @@ void TraceableTest::checkparent9 (void)
 	Traceable obj7;
 	Traceable obj8;
 
-	obj2->set_parent(obj1);
-	obj3->set_parent(obj2);
+	obj2->setParent(obj1);
+	obj3->setParent(obj2);
 
-	obj4->AddChild(obj5);
-	obj4->AddChild(obj6);
-	obj4->AddChild(obj3);
+	obj4->addChild(obj5);
+	obj4->addChild(obj6);
+	obj4->addChild(obj3);
 
-	obj7.AddChild(obj4);
-	obj7.AddChild(&obj8);
-	obj8.set_parent(&obj7);
+	obj7.addChild(obj4);
+	obj7.addChild(&obj8);
+	obj8.setParent(&obj7);
 
 	int mapsize = Traceable::mapSize();
 	int solosize = Traceable::getList()->size();
@@ -387,11 +387,11 @@ void TraceableTest::checkparent10 (void)
 
 		if (i < 1) continue;
 		
-		obj[i]->set_parent(obj[i-1]);
+		obj[i]->setParent(obj[i-1]);
 	}
 
 	Traceable root;
-	root.AddChild(obj[0]);
+	root.addChild(obj[0]);
 
 	int mapsize = Traceable::mapSize();
 	int solosize = Traceable::getList()->size();

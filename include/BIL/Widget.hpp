@@ -74,9 +74,9 @@ namespace BIL {
 
 	protected:
 
-		virtual void Update ();
+		virtual void update ();
 
-		virtual void Render ();
+		virtual void render ();
 
 		void DrawAntiTriangle (float x1,
 						   float y1,
@@ -103,19 +103,19 @@ namespace BIL {
 	protected:
 		// Events
 
-		virtual void KeyPressEvent (KeyEvent* event);
+		virtual void keyPressEvent (KeyEvent* event);
 
-		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
+		virtual void contextMenuPressEvent (ContextMenuEvent* event);
 
-		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
+		virtual void contextMenuReleaseEvent (ContextMenuEvent* event);
 
-		virtual void MousePressEvent (MouseEvent* event);
+		virtual void mousePressEvent (MouseEvent* event);
 
-		virtual void MouseReleaseEvent (MouseEvent* event);
+		virtual void mouseReleaseEvent (MouseEvent* event);
 
-		virtual void MouseMoveEvent (MouseEvent* event);
+		virtual void mouseMoveEvent (MouseEvent* event);
 
-		virtual void InputMethodEvent (unsigned int character);
+		virtual void inputMethodEvent (unsigned int character);
 
 		virtual void CursorEnterEvent (int entered);
 

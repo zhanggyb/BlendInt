@@ -27,17 +27,27 @@
 
 namespace BIL {
 
-	class Layout: public BIL::Drawable
+	class AbstractLayout: public Drawable
 	{
 	public:
-		Layout (Traceable *parent = NULL);
-		virtual ~Layout ();
 
-		virtual bool addController (Widget *obj) = 0;
+		AbstractLayout (Drawable *parent = NULL);
+
+		virtual ~AbstractLayout ();
+
+		bool addWidget (Widget* widget);
+
+		bool addLayout (AbstractLayout* layout);
+
+	protected:
+
+		void update () = 0;
+
+		void render () = 0;
 
 	private:
-		Layout (const Layout& orig);
-		Layout& operator = (const Layout& orig);
+
+		DISALLOW_COPY_AND_ASSIGN(AbstractLayout);
 	};
 
 } /* namespace BIL */

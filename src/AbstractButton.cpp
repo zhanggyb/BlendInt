@@ -65,7 +65,7 @@ namespace BIL {
 		resize (box.width(), box.height());
 	}
 
-	void AbstractButton::MousePressEvent (MouseEvent* event)
+	void AbstractButton::mousePressEvent (MouseEvent* event)
 	{
 		if (!size_.Contains(event->pos()))
 		{
@@ -75,14 +75,15 @@ namespace BIL {
 
 		if (checkable_) {
 			checked_ = !checked_;
-			// TODO: emit check event
+			toggled_.fire(checked_);
+
 		} else {
 			down_ = true;
 			clicked_.fire();
 		}
 	}
 
-	void AbstractButton::MouseReleaseEvent(MouseEvent* event)
+	void AbstractButton::mouseReleaseEvent(MouseEvent* event)
 	{
 		down_ = false;
 		
@@ -93,13 +94,13 @@ namespace BIL {
 		}
 
 		if (checkable_) {
-			checked_ = !checked_;
-			toggled_.fire(checked_);
+
 		} else {
+
 		}
 	}
 
-	void AbstractButton::MouseMoveEvent (MouseEvent* event)
+	void AbstractButton::mouseMoveEvent (MouseEvent* event)
 	{
 		if (size_.Contains(event->pos())) {
 			hover_ = true;

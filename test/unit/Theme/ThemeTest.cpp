@@ -71,7 +71,7 @@ void ThemeTest::initialize2 ()
 	Color textcolor = theme->themeUI()->wcol_menu_item.text;
 
 	Label label(L"Text in Label");
-	label.set_parent(&win);
+	label.setParent(&win);
 	label.set_pos(Point(50, 50));
 	label.set_background(bg_color);
 	label.setFont(Font("Droid Sans", 12));

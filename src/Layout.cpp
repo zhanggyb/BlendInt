@@ -23,16 +23,34 @@
 
 namespace BIL {
 
-	Layout::Layout (Traceable *parent)
-			: Drawable(parent)
+	AbstractLayout::AbstractLayout (Drawable *parent)
+			: Drawable (parent)
 	{
 		// TODO Auto-generated constructor stub
 
 	}
 
-	Layout::~Layout ()
+	AbstractLayout::~AbstractLayout ()
 	{
 		// TODO Auto-generated destructor stub
+	}
+
+	bool AbstractLayout::addWidget (Widget* widget)
+	{
+		bool ret = addChild (widget);
+
+		update();
+
+		return ret;
+	}
+
+	bool AbstractLayout::addLayout(AbstractLayout* layout)
+	{
+		bool ret = addChild (layout);
+
+		update();
+
+		return ret;
 	}
 
 } /* namespace BIL */

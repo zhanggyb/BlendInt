@@ -45,7 +45,7 @@ myWidget::~myWidget()
 
 }
 
-void myWidget::Render (void)
+void myWidget::render (void)
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -66,7 +66,7 @@ void myWidget::Render (void)
 	glDisable(GL_BLEND);
 }
 
-void myWidget::MousePressEvent (MouseEvent* event)
+void myWidget::mousePressEvent (MouseEvent* event)
 {
 	cout << "Click at" << event->pos().x() << " "
 		 << event->pos().y() << endl;
@@ -77,11 +77,13 @@ void myWidget::MousePressEvent (MouseEvent* event)
 	event->Accept();
 }
 
-void myWidget::MouseMoveEvent (MouseEvent* event)
+void myWidget::mouseMoveEvent (MouseEvent* event)
 {
-	cout << "Hover on this widget" << endl;
+	if(size_.Contains(event->pos())) {
+		cout << "Hover on this widget" << endl;
+	}
 
-	Widget::MouseMoveEvent(event);
+	Widget::mouseMoveEvent(event);
 }
 
 WindowTest::WindowTest ()
@@ -115,7 +117,7 @@ void WindowTest::event1 ()
 
     Label label(L"Test Event1");
     label.set_pos (Point(200, 200));
-    label.set_parent (&win);
+    label.setParent (&win);
 
     app.run();
 
@@ -133,7 +135,7 @@ void WindowTest::event2 ()
 
     Label label(L"Test Event2");
     label.set_pos (Point(300, 200));
-    label.set_parent (&win);
+    label.setParent (&win);
 
     app.run();
 
@@ -151,7 +153,7 @@ void WindowTest::solorender1 ()
 
     Label label(L"Test Event2");
     label.set_pos (Point(100, 100));
-    label.set_parent (&win);
+    label.setParent (&win);
 
 	Label solo (L"This label should also been rendered");
 	solo.set_pos(400, 300);
@@ -165,14 +167,14 @@ void WindowTest::check_mouse_press1 ()
 {
     Application app;
 
-    myWindow win(640, 480, "640 x 480 WindowTest Event2", NULL, NULL);
+    myWindow win(640, 480, "640 x 480 check mouse press", NULL, NULL);
 
     app.setMainWindow(&win);
     app.initialize();
 	
-	myWidget widget;
-	widget.set_parent (&win);
-	widget.set_pos(300, 300);
+		myWidget widget;
+		widget.setParent (&win);
+		widget.set_pos(300, 300);
 
     app.run();
 
