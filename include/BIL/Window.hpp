@@ -29,6 +29,7 @@
 #include <map>
 
 #include <BIL/Traceable.hpp>
+#include <BIL/Drawable.hpp>
 #include <BIL/Tuple.hpp>
 #include <BIL/Coord.hpp>
 #include <BIL/Size.hpp>
@@ -162,6 +163,7 @@ namespace BIL {
 
 	protected:
 
+		// TODO: remove virtual
 		virtual void resizeEvent (int width, int height);
 
 		virtual void keyEvent (int key, int scancode, int action, int mods);
@@ -177,7 +179,18 @@ namespace BIL {
 	private:					/* member functions */
 
 		bool registerCallbacks (void);
+
 		bool unregisterCallbacks (void);
+
+		void render (Drawable* obj);
+
+		void disposeKeyPressEvent (Drawable* obj, KeyEvent* event);
+
+		void disposeMousePressEvent (Drawable* obj, MouseEvent* event);
+
+		void disposeMouseReleaseEvent (Drawable* obj, MouseEvent* event);
+
+		void disposeMouseMoveEvent (Drawable* obj, MouseEvent* event);
 
 #ifdef DEBUG
 		void drawGrid (int width, int height);

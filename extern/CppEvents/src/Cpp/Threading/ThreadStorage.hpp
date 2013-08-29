@@ -39,7 +39,7 @@ namespace Cpp {
 
 	template<class T> class ThreadStorage
 	{
-		CPP_DISABLE_COPY (ThreadStorage);
+		CPP_DISABLE_COPY (ThreadStorage)
 	public:
 
 		ThreadStorage ()

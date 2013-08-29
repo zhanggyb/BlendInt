@@ -80,7 +80,7 @@ namespace BIL {
 	{
 		unregisterCallbacks();
 
-		DeleteChildren();
+		deleteChildren();
 
 		glfwDestroyWindow(window_);
 	}
@@ -199,24 +199,34 @@ namespace BIL {
 		Drawable *item = NULL;
 		for (it = children_.begin(); it != children_.end(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
-			if (item != NULL) {
-				item->render();
-			}
+			if (item) render(item);
 		}
 
 		list<Traceable*>::const_iterator j;
 		for (j = Traceable::getList()->begin(); j != Traceable::getList()->end(); j++)
 		{
 			item = dynamic_cast<Drawable*>(*j);
-			if (item != NULL) {
-				item->render();
-			}
+			if (item)	render(item);
 		}
 
 		glDisable(GL_BLEND);
 		// if (_mainLayout != NULL) {
 		//_mainLayout->Refresh();
 		//}
+	}
+
+	void Window::render (Drawable* obj)
+	{
+		list<Traceable*>::const_iterator it;
+		Drawable *item = NULL;
+		for (it = obj->children().begin(); it != obj->children().end(); it++) {
+			item = dynamic_cast<Drawable*>(*it);
+			if (item) {
+				render (item);
+			}
+		}
+
+		obj->render();
 	}
 
 	void Window::resizeEvent (int width, int height)
@@ -254,7 +264,7 @@ namespace BIL {
 
 		} else {
 
-			BIL::KeyEvent event(key, scancode, action, mods);
+			KeyEvent event(key, scancode, action, mods);
 
 			list<Traceable*>::const_reverse_iterator it;
 			Drawable *item = NULL;
@@ -265,7 +275,7 @@ namespace BIL {
 				// TODO: only the focused widget can dispose key event
 				switch (action) {
 				case KeyPress:
-					item->keyPressEvent(&event);
+					disposeKeyPressEvent(item, &event);
 					break;
 				case KeyRelease:
 					// item->KeyReleaseEvent(dynamic_cast<BIL::KeyEvent*>(event));
@@ -289,7 +299,7 @@ namespace BIL {
 		for (it = children_.rbegin(); it != children_.rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
-				item->inputMethodEvent(character);
+				// item->inputMethodEvent(character);
 			}
 		}
 	}
@@ -350,7 +360,7 @@ namespace BIL {
 				event.set_pos (local_x, local_y);
 				switch (action) {
 				case GLFW_PRESS:
-					item->mousePressEvent(&event);
+					disposeMousePressEvent(item, &event);
 					break;
 				case GLFW_RELEASE:
 					item->mouseReleaseEvent(&event);
@@ -382,7 +392,7 @@ namespace BIL {
 				local_x = cursor_pos_x_ - (item->pos().x());
 				local_y = cursor_pos_y_ - (item->pos().y());
 				event.set_pos (local_x, local_y);
-				item->mouseMoveEvent(&event);
+				disposeMouseMoveEvent(item, &event);
 				if(event.IsAccepted()) break;
 			}
 		}
@@ -392,6 +402,57 @@ namespace BIL {
 	{
 		if (entered == GL_TRUE) {
 			//cout << "Cursor entered." << endl;
+		}
+	}
+
+	void Window::disposeKeyPressEvent(Drawable* obj, KeyEvent* event)
+	{
+		obj->keyPressEvent(event);
+
+		if (event->IsAccepted()) {
+			return;
+		} else {
+			list<Traceable*>::const_reverse_iterator it;
+			Drawable *item = NULL;
+			for (it = obj->children().rbegin(); it != obj->children().rend(); it++) {
+				item = dynamic_cast<Drawable*>(*it);
+				if(item) disposeKeyPressEvent(item, event);
+				if(event->IsAccepted()) return;
+			}
+		}
+	}
+
+	void Window::disposeMousePressEvent(Drawable* obj, MouseEvent* event)
+	{
+		obj->mousePressEvent(event);
+
+		if (event->IsAccepted()) {
+			return;
+		} else {
+			list<Traceable*>::const_reverse_iterator it;
+			Drawable *item = NULL;
+			for (it = obj->children().rbegin(); it != obj->children().rend(); it++) {
+				item = dynamic_cast<Drawable*>(*it);
+				if(item) disposeMousePressEvent(item, event);
+				if(event->IsAccepted()) return;
+			}
+		}
+	}
+
+	void Window::disposeMouseMoveEvent(Drawable* obj, MouseEvent* event)
+	{
+		obj->mouseMoveEvent(event);
+
+		if (event->IsAccepted()) {
+			return;
+		} else {
+			list<Traceable*>::const_reverse_iterator it;
+			Drawable *item = NULL;
+			for (it = obj->children().rbegin(); it != obj->children().rend(); it++) {
+				item = dynamic_cast<Drawable*>(*it);
+				if(item) disposeMouseMoveEvent(item, event);
+				if(event->IsAccepted()) return;
+			}
 		}
 	}
 

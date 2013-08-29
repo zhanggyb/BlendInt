@@ -65,7 +65,7 @@ namespace BIL {
 			item = children_.back();
 			children_.pop_back();
 			if (item != NULL) {
-				RemoveChild(item);
+				removeChild(item);
 				delete item;
 			}
 		}
@@ -123,7 +123,7 @@ namespace BIL {
 				solo.remove(this);
 			}
 		} else {
-			parent_->RemoveChild(this, false);
+			parent_->removeChild(this, false);
 		}
 
 		if (parent != NULL) {
@@ -144,7 +144,7 @@ namespace BIL {
 			return false;
 
 		if (child->parent_ != NULL) {
-			(child->parent_)->RemoveChild(child, false);
+			(child->parent_)->removeChild(child, false);
 		} else {
 			list<Traceable*>::iterator it;
 			it = std::find(solo.begin(), solo.end(), this);
@@ -159,7 +159,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool Traceable::RemoveChild (Traceable* child, bool registersolo)
+	bool Traceable::removeChild (Traceable* child, bool registersolo)
 	{
 		if(child->parent_ != this) return false;
 
@@ -178,7 +178,7 @@ namespace BIL {
 	}
 
 
-	void Traceable::DeleteChildren (void)
+	void Traceable::deleteChildren (void)
 	{
 		Traceable* item = NULL;
 

@@ -115,10 +115,6 @@ namespace BIL {
 
 		virtual void mouseMoveEvent (MouseEvent* event);
 
-		virtual void inputMethodEvent (unsigned int character);
-
-		virtual void CursorEnterEvent (int entered);
-
 	protected:	// member functions
 
 		/**

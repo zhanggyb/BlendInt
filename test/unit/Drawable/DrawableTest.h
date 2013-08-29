@@ -40,10 +40,6 @@ protected:
 
 	virtual void mouseMoveEvent (MouseEvent* event);
 
-	virtual void inputMethodEvent (unsigned int character);
-
-	virtual void CursorEnterEvent (int entered);
-
 private:
 	void makeCheckImage (void);
 
@@ -79,10 +75,6 @@ protected:
 	virtual void mouseReleaseEvent (MouseEvent* event);
 	
 	virtual void mouseMoveEvent (MouseEvent* event);
-
-	virtual void inputMethodEvent (unsigned int character);
-
-	virtual void CursorEnterEvent (int entered);
 };
 
 class myDrawable2: public Drawable
@@ -110,10 +102,6 @@ protected:
 	virtual void mouseReleaseEvent (MouseEvent* event);
 
 	virtual void mouseMoveEvent (MouseEvent* event);
-
-	virtual void inputMethodEvent (unsigned int character);
-
-	virtual void CursorEnterEvent (int entered);
 };
 
 class myDrawable3: public Drawable
@@ -141,10 +129,6 @@ protected:
 	virtual void mouseReleaseEvent (MouseEvent* event);
 
 	virtual void mouseMoveEvent (MouseEvent* event);
-
-	virtual void inputMethodEvent (unsigned int character);
-
-	virtual void CursorEnterEvent (int entered);
 };
 
 class DrawableTest: public CppUnit::TestFixture

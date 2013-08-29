@@ -95,14 +95,6 @@ void myTexture::mouseMoveEvent (MouseEvent* event)
 
 }
 
-void myTexture::inputMethodEvent (unsigned int character)
-{
-}
-
-void myTexture::CursorEnterEvent (int entered)
-{
-}
-
 void myTexture::makeCheckImage (void)
 {
     int i, j, c;
@@ -173,14 +165,6 @@ void myDrawable1::mouseMoveEvent (MouseEvent* event)
 
 }
 
-void myDrawable1::inputMethodEvent (unsigned int character)
-{
-}
-
-void myDrawable1::CursorEnterEvent (int entered)
-{
-}
-
 myDrawable2::myDrawable2(Traceable* parent)
 	: Drawable (parent)
 {
@@ -234,14 +218,6 @@ void myDrawable2::mouseReleaseEvent (MouseEvent* event)
 void myDrawable2::mouseMoveEvent (MouseEvent* event)
 {
 
-}
-
-void myDrawable2::inputMethodEvent (unsigned int character)
-{
-}
-
-void myDrawable2::CursorEnterEvent (int entered)
-{
 }
 
 myDrawable3::myDrawable3(Traceable* parent)
@@ -304,14 +280,6 @@ void myDrawable3::mouseReleaseEvent (MouseEvent* event)
 void myDrawable3::mouseMoveEvent (MouseEvent* event)
 {
 
-}
-
-void myDrawable3::inputMethodEvent (unsigned int character)
-{
-}
-
-void myDrawable3::CursorEnterEvent (int entered)
-{
 }
 
 DrawableTest::DrawableTest ()

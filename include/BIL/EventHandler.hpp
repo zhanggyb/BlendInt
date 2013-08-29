@@ -54,10 +54,6 @@ namespace BIL {
 
 		virtual void mouseMoveEvent (MouseEvent* event) = 0;
 
-		virtual void inputMethodEvent (unsigned int character) = 0;
-
-		virtual void CursorEnterEvent (int entered) = 0;
-
 		virtual void render () = 0;
 	};
 

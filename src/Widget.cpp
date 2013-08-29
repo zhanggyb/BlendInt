@@ -419,14 +419,6 @@ namespace BIL {
 		event->Accept();
 	}
 
-	void Widget::inputMethodEvent (unsigned int character)
-	{
-	}
-
-	void Widget::CursorEnterEvent (int entered)
-	{
-	}
-
 	void Widget::update()
 	{
         if (!size_.IsValid()) return;

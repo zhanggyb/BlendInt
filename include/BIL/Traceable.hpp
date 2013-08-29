@@ -118,11 +118,16 @@ namespace BIL {
 
 		bool addChild (Traceable *child);
 
+		const std::list<Traceable*>& children () const
+		{
+			return children_;
+		}
+
 	protected:	// member functions
 
-		bool RemoveChild (Traceable* child, bool registersolo = true);
+		bool removeChild (Traceable* child, bool registersolo = true);
 
-		void DeleteChildren (void);
+		void deleteChildren (void);
 
 	protected:
 
