@@ -46,10 +46,6 @@ namespace BIL {
 		virtual void render ();
 
 	private:
-
-		void DrawButton (WidgetVertexes* vertexes);
-
-	private:
 		ToggleButton (const ToggleButton& orig);
 		ToggleButton& operator = (const ToggleButton& orig);
 	};

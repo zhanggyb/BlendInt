@@ -23,6 +23,7 @@
 #define _BIL_BUTTON_H_
 
 #include <BIL/AbstractButton.hpp>
+#include <BIL/String.hpp>
 
 namespace BIL {
 
@@ -30,9 +31,9 @@ namespace BIL {
 	{
 	public:
 
-		explicit Button (Widget* parent = NULL);
+		Button (Widget* parent = NULL);
 
-		Button (const wstring& text, Widget* parent = NULL);
+		Button (const String& text, Widget* parent = NULL);
 
 		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
 

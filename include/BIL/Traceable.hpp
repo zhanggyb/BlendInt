@@ -61,17 +61,17 @@ namespace BIL {
 
 		static unsigned int mapSize ()
 		{
-			return objMap.size();
+			return obj_map.size();
 		}
 
 		static const map<uint64_t, Traceable*>& getMap ()
 		{
-			return objMap;
+			return obj_map;
 		}
 
 		static const list<Traceable*>& getList ()
 		{
-			return solo;
+			return solos;
 		}
 
 		static void clearSoloList ();
@@ -80,7 +80,7 @@ namespace BIL {
 		static void reset ()
 		{
 			id_last = 1;
-			objMap.clear();
+			obj_map.clear();
 		}
 #endif
 
@@ -140,9 +140,9 @@ namespace BIL {
 
 	private:
 
-		inline bool RegisterObj ();
+		inline bool registerObject ();
 
-		inline bool UnregisterObj ();
+		inline bool unregisterObject ();
 
 	private:	// member variables
 
@@ -154,9 +154,9 @@ namespace BIL {
 
 		static uint64_t id_last;
 
-		static map<uint64_t, Traceable*> objMap;
+		static map<uint64_t, Traceable*> obj_map;
 
-		static list<Traceable*> solo;
+		static list<Traceable*> solos;
 	};
 
 } /* namespace BIL */

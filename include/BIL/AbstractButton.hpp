@@ -39,11 +39,11 @@ namespace BIL {
 	{
 	public:
 
-		explicit AbstractButton (Widget* parent = NULL);
+		AbstractButton (Widget* parent = NULL);
 
 		virtual ~AbstractButton ();
 
-		void set_text (const wstring& text);
+		void set_text (const String& text);
 
 		void set_font (const Font& font)
 		{
@@ -69,6 +69,8 @@ namespace BIL {
 		Cpp::EventRef<bool> toggled() {return toggled_;}
 
 	protected:
+
+		void drawButton (WidgetVertexes* vertexes);
 
 		virtual void update () = 0;
 
