@@ -32,6 +32,8 @@
 #include <string>
 #include <BIL/Window.hpp>
 
+#include <Cpp/Events.hpp>
+
 namespace BIL {
 
 	struct GLFWVersion
