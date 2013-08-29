@@ -184,13 +184,13 @@ namespace BIL {
 
 		void render (Drawable* obj);
 
-		void disposeKeyPressEvent (Drawable* obj, KeyEvent* event);
+		void dispatchKeyPressEvent (Drawable* obj, KeyEvent* event);
 
-		void disposeMousePressEvent (Drawable* obj, MouseEvent* event);
+		void dispatchMousePressEvent (Drawable* obj, MouseEvent* event);
 
-		void disposeMouseReleaseEvent (Drawable* obj, MouseEvent* event);
+		void dispatchMouseReleaseEvent (Drawable* obj, MouseEvent* event);
 
-		void disposeMouseMoveEvent (Drawable* obj, MouseEvent* event);
+		void dispatchMouseMoveEvent (Drawable* obj, MouseEvent* event);
 
 #ifdef DEBUG
 		void drawGrid (int width, int height);

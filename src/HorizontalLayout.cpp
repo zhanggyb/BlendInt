@@ -46,7 +46,7 @@ namespace BIL {
 			Drawable* child = dynamic_cast<Drawable*>(*it);
 			if(child) {
 				// TODO: define alignment
-				child->set_pos(pos_.x() + child->margin().left(), pos_.y() + child->margin().right());
+				child->set_pos(pos_.x() + child->margin().left() + total_width, pos_.y() + child->margin().bottom());
 				total_width = total_width + child->margin().left() + child->size().width() + child->margin().right();
 				total_height = std::max (total_height, child->margin().top() + child->size().height() + child->margin().bottom());
 			}
@@ -58,14 +58,6 @@ namespace BIL {
 
 	void HorizontalLayout::render ()
 	{
-		std::list<Traceable*>::const_iterator it;
-		for (it = children_.begin(); it != children_.end(); it++)
-		{
-			Drawable* child = dynamic_cast<Drawable*>(*it);
-			if(child) {
-				//child->render();
-			}
-		}
 	}
 
 }

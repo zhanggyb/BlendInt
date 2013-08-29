@@ -57,6 +57,11 @@ namespace BIL {
 		virtual ~MouseEvent ()
 		{}
 
+		MouseAction action () const
+		{
+			return action_;
+		}
+
 		MouseButton button () const
 		{
 			return button_;

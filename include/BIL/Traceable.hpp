@@ -32,6 +32,7 @@
  * This should be used in the private: declarations for a class
  */
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+	private: \
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
@@ -52,28 +53,31 @@ namespace BIL {
 	 */
 	class Traceable
 	{
+		DISALLOW_COPY_AND_ASSIGN(Traceable);
 
 	public:	// static
 
 		static Traceable* find (uint64_t id);
 
-		static unsigned int mapSize (void)
+		static unsigned int mapSize ()
 		{
 			return objMap.size();
 		}
 
-		static map<uint64_t, Traceable*>* getMap (void)
+		static const map<uint64_t, Traceable*>& getMap ()
 		{
-			return &objMap;
+			return objMap;
 		}
 
-		static list<Traceable*>* getList (void)
+		static const list<Traceable*>& getList ()
 		{
-			return &solo;
+			return solo;
 		}
+
+		static void clearSoloList ();
 
 #ifdef DEBUG
-		static void reset (void)
+		static void reset ()
 		{
 			id_last = 1;
 			objMap.clear();
@@ -94,7 +98,7 @@ namespace BIL {
 		 * @brief get the object id
 		 * @return
 		 */
-		uint64_t id (void) const
+		uint64_t id () const
 		{
 			return id_;
 		}
@@ -102,7 +106,7 @@ namespace BIL {
 		 * @brief get the parent pointer
 		 * @return
 		 */
-		const Traceable* parent (void) const
+		const Traceable* parent () const
 		{
 			return parent_;
 		}
@@ -127,7 +131,7 @@ namespace BIL {
 
 		bool removeChild (Traceable* child, bool registersolo = true);
 
-		void deleteChildren (void);
+		void deleteChildren ();
 
 	protected:
 
@@ -136,9 +140,9 @@ namespace BIL {
 
 	private:
 
-		inline bool RegisterObj (void);
+		inline bool RegisterObj ();
 
-		inline bool UnregisterObj (void);
+		inline bool UnregisterObj ();
 
 	private:	// member variables
 
@@ -153,10 +157,6 @@ namespace BIL {
 		static map<uint64_t, Traceable*> objMap;
 
 		static list<Traceable*> solo;
-
-	private:	// member functions disabled
-
-		DISALLOW_COPY_AND_ASSIGN(Traceable);
 	};
 
 } /* namespace BIL */

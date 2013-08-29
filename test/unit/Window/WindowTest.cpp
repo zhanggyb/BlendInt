@@ -74,7 +74,7 @@ void myWidget::mousePressEvent (MouseEvent* event)
 	cout << "and window position: " << event->window_pos().coord.x << " "
 		 << event->window_pos().coord.y << endl;
 
-	event->Accept();
+	event->accept();
 }
 
 void myWidget::mouseMoveEvent (MouseEvent* event)

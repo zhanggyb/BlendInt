@@ -19,38 +19,48 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BIL/Layout.hpp>
+#ifndef _BIL_ABSTRACTLAYOUT_H_
+#define _BIL_ABSTRACTLAYOUT_H_
+
+#include <BIL/Drawable.hpp>
+#include <BIL/Widget.hpp>
 
 namespace BIL {
 
-	AbstractLayout::AbstractLayout (Drawable *parent)
-			: Drawable (parent)
+	class AbstractLayout: public Drawable
 	{
-		// TODO Auto-generated constructor stub
+	public:
 
-	}
+		AbstractLayout (Drawable *parent = NULL);
 
-	AbstractLayout::~AbstractLayout ()
-	{
-		// TODO Auto-generated destructor stub
-	}
+		virtual ~AbstractLayout ();
 
-	bool AbstractLayout::addWidget (Widget* widget)
-	{
-		bool ret = addChild (widget);
+		bool addWidget (Widget* widget);
 
-		update();
+		bool addLayout (AbstractLayout* layout);
 
-		return ret;
-	}
+	protected:
 
-	bool AbstractLayout::addLayout(AbstractLayout* layout)
-	{
-		bool ret = addChild (layout);
+		virtual void keyPressEvent (KeyEvent* event);
 
-		update();
+		virtual void contextMenuPressEvent (ContextMenuEvent* event);
 
-		return ret;
-	}
+		virtual void contextMenuReleaseEvent (ContextMenuEvent* event);
+
+		virtual void mousePressEvent (MouseEvent* event);
+
+		virtual void mouseReleaseEvent (MouseEvent* event);
+
+		virtual void mouseMoveEvent (MouseEvent* event);
+
+		virtual void render () = 0;
+
+		void update () = 0;
+
+	private:
+
+		DISALLOW_COPY_AND_ASSIGN(AbstractLayout);
+	};
 
 } /* namespace BIL */
+#endif /* _BIL_ABSTRACTLAYOUT_H_ */

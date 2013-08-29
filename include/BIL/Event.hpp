@@ -29,31 +29,27 @@ namespace BIL {
 	public:
 
 		Event()
-		: accept_(false)
+		: accepted_(false)
 		{
 		}
 
-		virtual ~Event()
+		void accept ()
+		{
+			accepted_ = true;
+		}
+
+		void ignore ()
 		{
 		}
 
-		void Accept ()
+		bool accepted () const
 		{
-			accept_ = true;
-		}
-
-		void Ignore ()
-		{
-		}
-
-		bool IsAccepted () const
-		{
-			return accept_;
+			return accepted_;
 		}
 
 	protected:
 
-		bool accept_;
+		bool accepted_;
 	};
 
 } /* namespace BIL */

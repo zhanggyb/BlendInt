@@ -19,32 +19,64 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_HORIZONTALLAYOUT_H_
-#define _BIL_HORIZONTALLAYOUT_H_
-
 #include <BIL/AbstractLayout.hpp>
 
 namespace BIL {
 
-	class HorizontalLayout: public AbstractLayout
+	AbstractLayout::AbstractLayout (Drawable *parent)
+			: Drawable (parent)
 	{
-	public:
+		// TODO Auto-generated constructor stub
 
-		HorizontalLayout(Drawable* parent = NULL);
+	}
 
-		virtual ~HorizontalLayout ();
+	AbstractLayout::~AbstractLayout ()
+	{
+		// TODO Auto-generated destructor stub
+	}
 
-	protected:
+	bool AbstractLayout::addWidget (Widget* widget)
+	{
+		bool ret = addChild (widget);
 
-		void update ();
+		update();
 
-		void render ();
+		return ret;
+	}
 
-	private:
+	bool AbstractLayout::addLayout(AbstractLayout* layout)
+	{
+		bool ret = addChild (layout);
 
-		DISALLOW_COPY_AND_ASSIGN(HorizontalLayout);
-	};
+		update();
 
-}
+		return ret;
+	}
 
-#endif	// _BIL_HORIZONTALLAYOUT_H_
+
+	void AbstractLayout::keyPressEvent (KeyEvent* event)
+	{
+	}
+
+	void AbstractLayout::contextMenuPressEvent (ContextMenuEvent* event)
+	{
+	}
+
+	void AbstractLayout::contextMenuReleaseEvent (ContextMenuEvent* event)
+	{
+	}
+
+	void AbstractLayout::mousePressEvent (MouseEvent* event)
+	{
+	}
+
+	void AbstractLayout::mouseReleaseEvent (MouseEvent* event)
+	{
+	}
+
+	void AbstractLayout::mouseMoveEvent (MouseEvent* event)
+	{
+	}
+
+
+} /* namespace BIL */

@@ -153,6 +153,8 @@ namespace BIL {
 		  }
 		*/
 
+		Traceable::clearSoloList();
+
 		FontConfig::release();
 		FontCache::releaseAll();
 		Theme::release();

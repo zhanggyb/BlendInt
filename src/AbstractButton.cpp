@@ -69,7 +69,7 @@ namespace BIL {
 	{
 		if (!size_.Contains(event->pos()))
 		{
-			event->Ignore();
+			event->ignore();
 			return;
 		}
 
@@ -81,6 +81,7 @@ namespace BIL {
 			down_ = true;
 			clicked_.fire();
 		}
+		event->accept();
 	}
 
 	void AbstractButton::mouseReleaseEvent(MouseEvent* event)
@@ -89,7 +90,7 @@ namespace BIL {
 		
 		if (! size_.Contains(event->pos()))
 		{
-			event->Ignore();
+			event->ignore();
 			return;
 		}
 
@@ -104,7 +105,7 @@ namespace BIL {
 	{
 		if (size_.Contains(event->pos())) {
 			hover_ = true;
-            event->Accept();
+            event->accept();
 		} else {
 			hover_ = false;
 			down_ = false;

@@ -391,32 +391,32 @@ namespace BIL {
 
 	void Widget::keyPressEvent (KeyEvent* event)
 	{
-		event->Accept();
+		event->accept();
 	}
 
 	void Widget::contextMenuPressEvent (ContextMenuEvent* event)
 	{
-		event->Accept();
+		event->accept();
 	}
 
 	void Widget::contextMenuReleaseEvent (ContextMenuEvent* event)
 	{
-		event->Accept();
+		event->accept();
 	}
 
 	void Widget::mousePressEvent (MouseEvent* event)
 	{
-		event->Accept();
+		event->accept();
 	}
 
 	void Widget::mouseReleaseEvent (MouseEvent* event)
 	{
-		event->Accept();
+		event->accept();
 	}
 
 	void Widget::mouseMoveEvent (MouseEvent* event)
 	{
-		event->Accept();
+		event->accept();
 	}
 
 	void Widget::update()

@@ -203,7 +203,7 @@ namespace BIL {
 		}
 
 		list<Traceable*>::const_iterator j;
-		for (j = Traceable::getList()->begin(); j != Traceable::getList()->end(); j++)
+		for (j = Traceable::getList().begin(); j != Traceable::getList().end(); j++)
 		{
 			item = dynamic_cast<Drawable*>(*j);
 			if (item)	render(item);
@@ -259,7 +259,7 @@ namespace BIL {
 				default:
 					break;
 				}
-				if(event.IsAccepted()) break;
+				if(event.accepted()) break;
 			}
 
 		} else {
@@ -275,7 +275,7 @@ namespace BIL {
 				// TODO: only the focused widget can dispose key event
 				switch (action) {
 				case KeyPress:
-					disposeKeyPressEvent(item, &event);
+					dispatchKeyPressEvent(item, &event);
 					break;
 				case KeyRelease:
 					// item->KeyReleaseEvent(dynamic_cast<BIL::KeyEvent*>(event));
@@ -286,7 +286,7 @@ namespace BIL {
 				default:
 					break;
 				}
-				if(event.IsAccepted()) break;
+				if(event.accepted()) break;
 			}
 
 		}
@@ -360,7 +360,7 @@ namespace BIL {
 				event.set_pos (local_x, local_y);
 				switch (action) {
 				case GLFW_PRESS:
-					disposeMousePressEvent(item, &event);
+					dispatchMousePressEvent(item, &event);
 					break;
 				case GLFW_RELEASE:
 					item->mouseReleaseEvent(&event);
@@ -369,7 +369,7 @@ namespace BIL {
 					break;
 				}
 			}
-			if(event.IsAccepted()) break;
+			if(event.accepted()) break;
 		}
 	}
 
@@ -392,8 +392,8 @@ namespace BIL {
 				local_x = cursor_pos_x_ - (item->pos().x());
 				local_y = cursor_pos_y_ - (item->pos().y());
 				event.set_pos (local_x, local_y);
-				disposeMouseMoveEvent(item, &event);
-				if(event.IsAccepted()) break;
+				dispatchMouseMoveEvent(item, &event);
+				if(event.accepted()) break;
 			}
 		}
 	}
@@ -405,53 +405,82 @@ namespace BIL {
 		}
 	}
 
-	void Window::disposeKeyPressEvent(Drawable* obj, KeyEvent* event)
+	void Window::dispatchKeyPressEvent(Drawable* obj, KeyEvent* event)
 	{
 		obj->keyPressEvent(event);
 
-		if (event->IsAccepted()) {
+		if (event->accepted()) {
 			return;
 		} else {
 			list<Traceable*>::const_reverse_iterator it;
 			Drawable *item = NULL;
 			for (it = obj->children().rbegin(); it != obj->children().rend(); it++) {
 				item = dynamic_cast<Drawable*>(*it);
-				if(item) disposeKeyPressEvent(item, event);
-				if(event->IsAccepted()) return;
+				if(item) dispatchKeyPressEvent(item, event);
+				if(event->accepted()) return;
 			}
 		}
 	}
 
-	void Window::disposeMousePressEvent(Drawable* obj, MouseEvent* event)
+	void Window::dispatchMousePressEvent(Drawable* obj, MouseEvent* event)
 	{
 		obj->mousePressEvent(event);
 
-		if (event->IsAccepted()) {
+		if (event->accepted()) {
 			return;
 		} else {
 			list<Traceable*>::const_reverse_iterator it;
 			Drawable *item = NULL;
 			for (it = obj->children().rbegin(); it != obj->children().rend(); it++) {
 				item = dynamic_cast<Drawable*>(*it);
-				if(item) disposeMousePressEvent(item, event);
-				if(event->IsAccepted()) return;
+				if(item) {
+					event->set_pos (cursor_pos_x_ - (item->pos().x()),
+							cursor_pos_y_ - (item->pos().y()));
+					dispatchMousePressEvent(item, event);
+				}
+				if(event->accepted()) return;
 			}
 		}
 	}
 
-	void Window::disposeMouseMoveEvent(Drawable* obj, MouseEvent* event)
+	void Window::dispatchMouseReleaseEvent (Drawable* obj, MouseEvent* event)
 	{
-		obj->mouseMoveEvent(event);
+		obj->mouseReleaseEvent(event);
 
-		if (event->IsAccepted()) {
+		if (event->accepted()) {
 			return;
 		} else {
 			list<Traceable*>::const_reverse_iterator it;
 			Drawable *item = NULL;
 			for (it = obj->children().rbegin(); it != obj->children().rend(); it++) {
 				item = dynamic_cast<Drawable*>(*it);
-				if(item) disposeMouseMoveEvent(item, event);
-				if(event->IsAccepted()) return;
+				if(item) {
+					event->set_pos (cursor_pos_x_ - (item->pos().x()),
+							cursor_pos_y_ - (item->pos().y()));
+					dispatchMouseReleaseEvent(item, event);
+				}
+				if(event->accepted()) return;
+			}
+		}
+	}
+
+	void Window::dispatchMouseMoveEvent(Drawable* obj, MouseEvent* event)
+	{
+		obj->mouseMoveEvent(event);
+
+		if (event->accepted()) {
+			return;
+		} else {
+			list<Traceable*>::const_reverse_iterator it;
+			Drawable *item = NULL;
+			for (it = obj->children().rbegin(); it != obj->children().rend(); it++) {
+				item = dynamic_cast<Drawable*>(*it);
+				if(item) {
+					event->set_pos (cursor_pos_x_ - (item->pos().x()),
+							cursor_pos_y_ - (item->pos().y()));
+					dispatchMouseMoveEvent(item, event);
+				}
+				if(event->accepted()) return;
 			}
 		}
 	}

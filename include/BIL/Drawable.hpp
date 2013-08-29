@@ -39,8 +39,8 @@ namespace BIL {
 
 	class Drawable: public Traceable, public EventHandler
 	{
-		// enums
-	public:
+		DISALLOW_COPY_AND_ASSIGN(Drawable);
+
 	public:
 
 		/**
@@ -255,10 +255,6 @@ namespace BIL {
 		RoundBoxType round_box_type_;
 
 		bool visible_;
-
-	private:	// member function disabled
-
-		DISALLOW_COPY_AND_ASSIGN(Drawable);
 	};
 
 } /* namespace BIL */

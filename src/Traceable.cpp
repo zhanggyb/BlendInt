@@ -64,7 +64,7 @@ namespace BIL {
 		while (children_.size() > 0) {
 			item = children_.back();
 			children_.pop_back();
-			if (item != NULL) {
+			if (item) {
 				removeChild(item);
 				delete item;
 			}
@@ -72,7 +72,7 @@ namespace BIL {
 
 		children_.clear();
 
-		if (parent_ != NULL) {
+		if (parent_) {
 			// _parent->removeChild(this);	// Be careful of this line
 			// parent_->children_.erase(this);
 			parent_->children_.remove (this);
@@ -87,7 +87,7 @@ namespace BIL {
 		UnregisterObj();
 	}
 
-	inline bool Traceable::RegisterObj (void)
+	inline bool Traceable::RegisterObj ()
 	{
 		Traceable::objMap[id_] = this;
 		return true;
@@ -102,7 +102,7 @@ namespace BIL {
 		return ret;
 	}
 
-	inline bool Traceable::UnregisterObj (void)
+	inline bool Traceable::UnregisterObj ()
 	{
 		Traceable::objMap.erase(id_);
 		return true;
@@ -143,11 +143,14 @@ namespace BIL {
 		if (child == NULL)
 			return false;
 
-		if (child->parent_ != NULL) {
+		if (child->parent_ == this)
+			return false;
+
+		if (child->parent_) {
 			(child->parent_)->removeChild(child, false);
 		} else {
 			list<Traceable*>::iterator it;
-			it = std::find(solo.begin(), solo.end(), this);
+			it = std::find(solo.begin(), solo.end(), child);
 			if(it != solo.end()) {
 				solo.remove(child);
 			}
@@ -178,7 +181,7 @@ namespace BIL {
 	}
 
 
-	void Traceable::deleteChildren (void)
+	void Traceable::deleteChildren ()
 	{
 		Traceable* item = NULL;
 
@@ -189,6 +192,16 @@ namespace BIL {
 		}
 
 		children_.clear();
+	}
+
+	void Traceable::clearSoloList ()
+	{
+		list<Traceable*>::reverse_iterator it;
+		for (it = solo.rbegin(); it != solo.rend(); it++)
+		{
+			delete *it;
+		}
+		solo.clear();
 	}
 
 } /* namespace BIL */
