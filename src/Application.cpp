@@ -21,8 +21,6 @@
 
 #include <GL/glew.h>
 
-#include <GL/gl.h>
-
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -84,6 +82,14 @@ namespace BIL {
 			setlocale(LC_ALL, "");
 		}
 
+		// Initialize GLEW
+		glewExperimental = true; // Needed in core profile
+		if (glewInit() != GLEW_OK) {
+			cerr << "Failed to initilize GLEW" << endl;
+			glfwTerminate();
+			exit(EXIT_FAILURE);
+		}
+
 		if (_mainWindow) {
 			_mainWindow->makeContextCurrent();
 		}
@@ -118,14 +124,6 @@ namespace BIL {
 	// FIXME: run in bummblebee cause crash if the window is closed
 	void Application::run (void)
 	{
-		// Initialize GLEW
-		glewExperimental = true; // Needed in core profile
-		if (glewInit() != GLEW_OK) {
-			cerr << "Failed to initilize GLEW" << endl;
-			glfwTerminate();
-			exit(EXIT_FAILURE);
-		}
-
 		// check OpenGL version
 		glStrVersion = (const char*) glGetString(GL_VERSION);
 		glVersion = std::atof(glStrVersion.c_str());	// C++ 98

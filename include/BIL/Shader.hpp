@@ -23,67 +23,77 @@
 #define _BIL_SHADER_HPP_
 
 #include <GL/glew.h>
+
 #include <string>
 
 namespace BIL {
 
-	class Shader
-	{
-	public:
+	namespace GL {
 
-		/**
-		 * @brief Default Constructor
-		 */
-		Shader ();
+		class Shader
+		{
+		public:
 
-		/**
-		 * @brief constructor
-		 * @param filename shader file name
-		 * @param type Shader Type defined in OpenGL
-		 *
-		 * Must be one of: Must be one of GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
-    *       GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER
-		 */
-		Shader (const std::string& filename, GLenum type);
+			/**
+			 * @brief Default Constructor
+			 */
+			Shader ();
 
-		Shader (const char* buf, GLenum type);
+			/**
+			 * @brief constructor
+			 * @param filename shader file name
+			 * @param type Shader Type defined in OpenGL
+			 *
+			 * Must be one of: Must be one of GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
+			 *       GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER
+			 */
+			Shader (const std::string& filename, GLenum type);
 
-		~Shader ();
+			Shader (const char* buf, GLenum type);
 
-		/**
-		 * @brief Load a vertex or fragment shader sources and compile
-		 * @param filename filename to be loaded
-		 * @return
-		 */
-		void load (const std::string& filename, GLenum type);
+			~Shader ();
 
-		void load (const char* buf, GLenum type);
+			/**
+			 * @brief Load a vertex or fragment shader sources and compile
+			 * @param filename filename to be loaded
+			 * @return
+			 */
+			void load (const std::string& filename, GLenum type);
 
-		GLuint shader () const {return shader_;}
+			void load (const char* buf, GLenum type);
 
-		GLenum type () const;
+			GLuint id () const
+			{
+				return id_;
+			}
 
-		bool isDeleted () const;
+			GLenum type () const;
 
-	private:
-		/**
-		 * @brief Read a fragment or vertex shader from a file
-		 * @param filename file to read shader from
-		 * @return a newly-allocated text buffer containing code.
-		 * This buffer must be freed after usage
-		 */
-		char* read (const char *filename);
+			bool isValid () const;
 
-		/**
-		 * @brief Compile a shader from a text buffer
-		 * @param source code of the shader
-		 * @param type type of shader
-		 * @return the shader object on the compiled program
-		 */
-		GLuint compile (const char* source, const GLenum type);
+			bool isDeleted () const;
 
-		GLuint shader_;
-	};
+		private:
+			/**
+			 * @brief Read a fragment or vertex shader from a file
+			 * @param filename file to read shader from
+			 * @return a newly-allocated text buffer containing code.
+			 * This buffer must be freed after usage
+			 */
+			char* read (const char *filename);
+
+			/**
+			 * @brief Compile a shader from a text buffer
+			 * @param source code of the shader
+			 * @param type type of shader
+			 * @return the shader object on the compiled program
+			 */
+			GLuint compile (const char* source, const GLenum type);
+
+			GLuint id_;
+		};
+
+	}
 
 }
 

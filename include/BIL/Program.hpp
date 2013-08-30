@@ -19,54 +19,48 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_PEN_H_
-#define _BIL_PEN_H_
+#ifndef _BIL_PROGRAM_HPP_
+#define _BIL_PROGRAM_HPP_
 
-#include <GL/gl.h>
-#include <BIL/Font.hpp>
-#include <BIL/Tuple.hpp>
-#include <BIL/Coord.hpp>
-#include <BIL/Rect.hpp>
+#include <GL/glew.h>
 
-#include <string>
+#include <vector>
+
+#include <BIL/Shader.hpp>
 
 namespace BIL {
 
-	/**
-	 * C++ wrapper of some OpenGL functions
-	 */
-	class Pen
-	{
-	public:
+	namespace GL {
 
-		Pen (float size = 1.0, float width = 1.0);
+		class Program
+		{
+		public:
 
-		virtual ~Pen ();
+			Program ();
 
-		void setPointSize (GLfloat size);
+			~Program ();
 
-		void setLineWidth (GLfloat width);
+			void addShader (const char* buf, GLenum type);
 
-		void setLineStyle (GLfloat style);
+			void addShader (const std::string& filename, GLenum type);
 
-		/**
-		 * @brief Draw line from s to t
-		 */
-		void draw (const Coord2f& s, const Coord2f& t);
+			bool link ();
 
-		/**
-		 * @brief Draw rectangle
-		 */
-		void draw (const Rect& rect);
+			bool isValid () const;
 
-	private:
+			GLuint id () const
+			{
+				return id_;
+			}
 
-		/** point size */
-		float _size;
+		private:
 
-		/** line width */
-		float _width;
-	};
+			GLuint id_;
 
-} /* namespace BIL */
-#endif /* PEN_H_ */
+			std::vector<Shader*> shaders_;
+		};
+
+	}
+}
+
+#endif /* _BIL_PROGRAM_HPP_ */

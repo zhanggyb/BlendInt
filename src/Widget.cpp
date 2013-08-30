@@ -19,8 +19,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <GL/glew.h>
-
 #include <assert.h>
 #include <algorithm>
 

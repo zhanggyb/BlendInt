@@ -26,7 +26,8 @@
 #ifndef _BIL_GLYPH_H_
 #define _BIL_GLYPH_H_
 
-#include <GL/gl.h>
+#include <GL/glew.h>
+
 #include <string>
 #include <cwchar>
 

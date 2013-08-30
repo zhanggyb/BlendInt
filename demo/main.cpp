@@ -2,10 +2,14 @@
  * BIL demo
  */
 
+#include <GL/glew.h>
+
 #include <BIL/Application.hpp>
 #include <BIL/Window.hpp>
 #include <BIL/Button.hpp>
 #include <BIL/ToggleButton.hpp>
+
+#include "ShaderWidget.hpp"
 
 int main (int argc, char* argv[])
 {
@@ -22,14 +26,10 @@ int main (int argc, char* argv[])
 	app.setMainWindow(&win);
 	app.initialize();
 
-	Button normal_btn(L"Normal Button");
-	ToggleButton toggle_btn(L"Toggle Button");
-
-	normal_btn.set_pos(100, 100);
-	toggle_btn.set_pos(100, 200);
-
-	normal_btn.setParent(&win);
-	toggle_btn.setParent(&win);
+  ShaderWidget widget;
+  widget.setParent(&win);
+  widget.set_pos(100, 100);
+  widget.resize(200, 200);
 
 	app.run();
 

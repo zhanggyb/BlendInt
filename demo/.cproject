@@ -51,8 +51,10 @@
 								</option>
 								<option id="gnu.cpp.link.option.libs.1072458445" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="BIL"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="GLEW"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="GL"/>
 								</option>
-								<option id="gnu.cpp.link.option.other.1881433569" superClass="gnu.cpp.link.option.other" valueType="stringList">
+								<option id="gnu.cpp.link.option.other.1881433569" name="Other options (-Xlinker [option])" superClass="gnu.cpp.link.option.other" valueType="stringList">
 									<listOptionValue builtIn="false" value="-rpath=&quot;${workspace_loc:/BIL/Debug}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.323443748" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -120,6 +122,10 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.1640535004" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.365383468" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release">
+								<option id="gnu.cpp.link.option.libs.525436797" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="GLEW"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="GL"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.465331798" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

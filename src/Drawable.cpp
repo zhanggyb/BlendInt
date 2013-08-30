@@ -20,7 +20,6 @@
  */
 
 #include <GL/glew.h>
-#include <GL/gl.h>
 
 #include <algorithm>
 #include <iostream>

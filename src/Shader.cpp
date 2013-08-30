@@ -28,117 +28,129 @@
 
 namespace BIL {
 
-	Shader::Shader ()
-	: shader_(0)
-	{
-	}
+	namespace GL {
 
-	Shader::Shader (const std::string& filename, GLenum type)
-	: shader_(0)
-	{
-		char* buf = read (filename.c_str());
-
-		if(buf) {
-			shader_ = compile (buf, type);
-			free(buf);
-		}
-	}
-
-	Shader::Shader(const char* buf, GLenum type)
-	: shader_(0)
-	{
-		if(buf) {
-			shader_ = compile (buf, type);
-		}
-	}
-
-	Shader::~Shader ()
-	{
-		if(glIsShader(shader_)) {
-			glDeleteShader (shader_);
-			shader_ = 0;
-		}
-	}
-
-	GLenum Shader::type () const
-	{
-		GLint type;
-		glGetShaderiv (shader_, GL_SHADER_TYPE, &type);
-
-		return type;
-	}
-
-	bool Shader::isDeleted() const
-	{
-		GLint status;
-		glGetShaderiv (shader_, GL_DELETE_STATUS, &status);
-
-		return status == GL_TRUE? true : false;
-	}
-
-	void Shader::load (const std::string& filename, GLenum type)
-	{
-		if(glIsShader(shader_)) {
-			glDeleteShader (shader_);
-			shader_ = 0;
+		Shader::Shader ()
+				: id_(0)
+		{
 		}
 
-		char* buf = read (filename.c_str());
+		Shader::Shader (const std::string& filename, GLenum type)
+				: id_(0)
+		{
+			if (!filename.empty()) {
 
-		if(buf) {
-			shader_ = compile (buf, type);
-			free (buf);
+				char* buf = read(filename.c_str());
+
+				if (buf) {
+					id_ = compile(buf, type);
+					free(buf);
+				}
+			}
 		}
-	}
 
-	void Shader::load (const char* buf, GLenum type)
-	{
-		if(glIsShader(shader_)) {
-			glDeleteShader (shader_);
-			shader_ = 0;
+		Shader::Shader (const char* buf, GLenum type)
+				: id_(0)
+		{
+			if (buf) {
+				id_ = compile(buf, type);
+			}
 		}
 
-		if(buf) {
-			shader_ = compile (buf, type);
+		Shader::~Shader ()
+		{
+			if (glIsShader(id_)) {
+				glDeleteShader(id_);
+				id_ = 0;
+			}
 		}
-	}
 
-	char* Shader::read (const char* filename)
-	{
-		FILE * file;
-		char * buffer;
-		size_t size;
+		GLenum Shader::type () const
+		{
+			GLint type;
+			glGetShaderiv(id_, GL_SHADER_TYPE, &type);
 
-		file = fopen(filename, "rb");
-		if (!file) {
-			fprintf( stderr, "Unable to open file \"%s\".\n", filename);
-			return NULL;
+			return type;
 		}
-		fseek(file, 0, SEEK_END);
-		size = ftell(file);
-		fseek(file, 0, SEEK_SET);
-		buffer = (char *) malloc((size + 1) * sizeof(char *));
-		fread(buffer, sizeof(char), size, file);
-		buffer[size] = '\0';
-		fclose(file);
-		return buffer;
-	}
 
-	GLuint Shader::compile (const char* source, const GLenum type)
-	{
-		GLint compile_status;
-		GLuint handle = glCreateShader(type);
-		glShaderSource(handle, 1, &source, 0);
-		glCompileShader(handle);
-
-		glGetShaderiv(handle, GL_COMPILE_STATUS, &compile_status);
-		if (compile_status == GL_FALSE) {
-			GLchar messages[256];
-			glGetShaderInfoLog(handle, sizeof(messages), 0, &messages[0]);
-			fprintf( stderr, "%s\n", messages);
-			exit( EXIT_FAILURE);
+		bool Shader::isValid () const
+		{
+			return glIsShader(id_);
 		}
-		return handle;
+
+		bool Shader::isDeleted () const
+		{
+			GLint status;
+			glGetShaderiv(id_, GL_DELETE_STATUS, &status);
+
+			return status == GL_TRUE ? true : false;
+		}
+
+		void Shader::load (const std::string& filename, GLenum type)
+		{
+			if (glIsShader(id_)) {
+				glDeleteShader(id_);
+				id_ = 0;
+			}
+
+			char* buf = read(filename.c_str());
+
+			if (buf) {
+				id_ = compile(buf, type);
+				free(buf);
+			}
+		}
+
+		void Shader::load (const char* buf, GLenum type)
+		{
+			if (glIsShader(id_)) {
+				glDeleteShader(id_);
+				id_ = 0;
+			}
+
+			if (buf) {
+				id_ = compile(buf, type);
+			}
+		}
+
+		char* Shader::read (const char* filename)
+		{
+			FILE * file;
+			char * buffer;
+			size_t size;
+
+			file = fopen(filename, "rb");
+			if (!file) {
+				fprintf( stderr, "Unable to open file \"%s\".\n", filename);
+				return NULL;
+			}
+			fseek(file, 0, SEEK_END);
+			size = ftell(file);
+			fseek(file, 0, SEEK_SET);
+			buffer = (char *) malloc((size + 1) * sizeof(char *));
+			fread(buffer, sizeof(char), size, file);
+			buffer[size] = '\0';
+			fclose(file);
+			return buffer;
+		}
+
+		GLuint Shader::compile (const char* source, const GLenum type)
+		{
+			GLint compile_status;
+			GLuint shader = glCreateShader(type);
+			glShaderSource(shader, 1, &source, 0);
+			glCompileShader(shader);
+
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
+			if (compile_status == GL_FALSE) {
+				GLchar messages[256];
+				glGetShaderInfoLog(shader, sizeof(messages), 0, &messages[0]);
+				fprintf( stderr, "%s\n", messages);
+				exit( EXIT_FAILURE);
+			}
+			return shader;
+		}
+
 	}
 
 }
