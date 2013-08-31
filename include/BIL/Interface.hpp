@@ -19,45 +19,57 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_EVENTHANDLER_H_
-#define _BIL_EVENTHANDLER_H_
+#ifndef _BIL_INTERFACE_HPP_
+#define _BIL_INTERFACE_HPP_
 
-#include <BIL/MouseEvent.hpp>
-#include <BIL/KeyEvent.hpp>
-#include <BIL/ContextMenuEvent.hpp>
+#include <BIL/Drawable.hpp>
 
 namespace BIL {
 
-	class Window;
-	class AbstractLayout;
-	class Interface;
-
-	class EventHandler
+	/**
+	 * @brief The main entry for this library
+	 */
+	class Interface
 	{
 	public:
 
-		friend class Window;
-		friend class Interface;
+		static Interface* create ();
 
-		EventHandler () {}
-		virtual ~EventHandler () {}
+		bool initialize ();
 
-	protected:
+		void terminate ();
 
-		virtual void keyPressEvent (KeyEvent* event) = 0;
+		void render ();
 
-		virtual void contextMenuPressEvent (ContextMenuEvent* event) = 0;
+		void resizeEvent (int width, int height);
 
-		virtual void contextMenuReleaseEvent (ContextMenuEvent* event) = 0;
+		void keyEvent (int key, int scancode, int action, int mods);
 
-		virtual void mousePressEvent (MouseEvent* event) = 0;
+		void mouseButtonEvent (int button, int action, int mods);
 
-		virtual void mouseReleaseEvent (MouseEvent* event) = 0;
+		void cursorPosEvent (double xpos, double ypos);
 
-		virtual void mouseMoveEvent (MouseEvent* event) = 0;
+	private:
 
-		virtual void render () = 0;
+		Interface ();
+
+		~Interface ();
+
+		void render (Drawable* obj);
+
+#ifdef DEBUG
+		void drawGrid (int width, int height);
+#endif
+
+		double cursor_pos_x_;	/** cursor x position */
+		double cursor_pos_y_;	/** cursor y position */
+
+		Size size_;
+
+		static Interface* interface;
+
 	};
+}
 
-} /* namespace BIL */
-#endif /* _BIL_EVENTHANDLER_H_ */
+
+#endif /* _BIL_INTERFACE_HPP_ */

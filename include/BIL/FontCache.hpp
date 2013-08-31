@@ -167,7 +167,7 @@ namespace BIL {
 		 * Move destructor to private area to avoid this object be deleted
 		 * in anywhere.
 		 */
-		virtual ~FontCache ();
+		~FontCache ();
 
 	private:
 		// member variables
