@@ -42,10 +42,61 @@ namespace BIL {
 	string Application::glStrVersion;
 	GLfloat Application::glVersion = 1.0;
 
+	static void error_callback (int error, const char* description)
+	{
+		cerr << "Error: " << description << " (error code: " << error << ")" << endl;
+	}
+
+	void initialize (bool nls)
+	{
+		int ret = glfwInit();
+
+		if (ret == GL_TRUE) {
+			glfwSetErrorCallback(&error_callback);
+		} else {
+			cerr << "Cannot initialize GLFW" << endl;
+			exit(EXIT_FAILURE);
+		}
+
+		if (nls) {
+			setlocale(LC_ALL, "");
+		}
+	}
+
+	void run (Window* window)
+	{
+		GLFWwindow* glfw_window = window->window();
+		while (!glfwWindowShouldClose(glfw_window)) {
+
+			window->render();
+
+			glfwSwapBuffers(glfw_window);
+			glfwPollEvents();
+		}
+	}
+
+	void terminate ()
+	{
+		std::map<GLFWwindow*, BIL::Window*>::iterator it;
+		for (it = Window::getWindowMap().begin(); it != Window::getWindowMap().end(); it++)
+		{
+			glfwDestroyWindow (it->first);
+		}
+
+		Window::getWindowMap().clear ();
+
+		glfwTerminate();
+
+		//FontConfig::release();
+		//FontCache::releaseAll();
+		//Theme::release();
+
+		// Traceable::clearSoloList();
+	}
+
 	Application::Application ()
 		: _mainWindow(NULL)
 	{
-		// TODO Auto-generated constructor stub
 		int ret = glfwInit();
 
 		if (ret == GL_TRUE) {

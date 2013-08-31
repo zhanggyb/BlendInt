@@ -27,6 +27,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <list>
 
 #include <BIL/Traceable.hpp>
 #include <BIL/Drawable.hpp>
@@ -47,6 +48,14 @@ namespace BIL {
 			STICKY_KEYS = GLFW_STICKY_KEYS,
 			STICKY_MOUSE_BUTTONS = GLFW_STICKY_MOUSE_BUTTONS
 		};
+
+		static std::map<GLFWwindow*, Window*>& getWindowMap () {return windowMap;}
+
+		static const BIL::Window* getActiveWindow () {return active_window;}
+
+		static void registerSoloDrawable (const Drawable* drawable);
+
+		static void unregisterSoloDrawable (const Drawable* drawable);
 
 		/**
 		 * @brief Default Constructor
@@ -178,6 +187,8 @@ namespace BIL {
 
 	private:					/* member functions */
 
+		void initialize ();
+
 		bool registerCallbacks (void);
 
 		bool unregisterCallbacks (void);
@@ -207,8 +218,12 @@ namespace BIL {
 
 		std::string title_;
 
+		std::list<Drawable*> solos_;
+
 	private:
 		// static member functions
+
+		static Window* active_window;
 
 		static void cbKey (GLFWwindow* window, int key, int scancode,
 		        int action, int mods);
@@ -226,6 +241,8 @@ namespace BIL {
 		        double ypos);
 
 		static void cbCursorEnter (GLFWwindow* window, int entered);
+
+		static void cbClose (GLFWwindow* window);
 
 		/**
 		 * A std::map container to record GLFWwindow and Window

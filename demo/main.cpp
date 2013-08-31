@@ -17,21 +17,19 @@ int main (int argc, char* argv[])
 
 	Cpp::Events::ProcessInit processInit;
 
-	setlocale(LC_ALL, "");
-
-	Application app;
+	BIL::initialize(true);
 
 	Window win (1024, 800, "Demo Window for BIL", NULL, NULL);
 
-	app.setMainWindow(&win);
-	app.initialize();
-
-  ShaderWidget widget;
+  //ShaderWidget widget;
+	Widget widget;
   widget.setParent(&win);
   widget.set_pos(100, 100);
   widget.resize(200, 200);
 
-	app.run();
+	BIL::run(&win);
+
+	BIL::terminate();
 
 	return 0;
 }

@@ -133,6 +133,11 @@ namespace BIL {
 
 		void deleteChildren ();
 
+		list<Traceable*>& getSoloList ()
+		{
+			return solos;
+		}
+
 	protected:
 
 		//ChildrenList<Traceable*> _children;

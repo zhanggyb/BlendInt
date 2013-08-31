@@ -19,13 +19,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-/*
- * Application.h
- *
- *  Created on: 2013年7月3日
- *      Author: zhanggyb
- */
-
 #ifndef _BIL_APPLICATION_H_
 #define _BIL_APPLICATION_H_
 
@@ -42,6 +35,12 @@ namespace BIL {
 		int minor;
 		int rev;
 	};
+
+	extern void initialize (bool nls = true);
+
+	extern void run (Window* window);
+
+	extern void terminate ();
 
 	class Application
 	{

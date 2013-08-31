@@ -26,12 +26,17 @@
 #include <BIL/KeyEvent.hpp>
 #include <BIL/MouseEvent.hpp>
 #include <BIL/ContextMenuEvent.hpp>
+#include <BIL/FontConfig.hpp>
+#include <BIL/FontCache.hpp>
+#include <BIL/Theme.hpp>
 
 using namespace std;
 
 namespace BIL {
 
 	std::map<GLFWwindow*, Window*> Window::windowMap;
+
+	Window* Window::active_window = NULL;
 
 	Window::Window (Traceable *parent)
 		: Traceable(parent), window_(NULL),
@@ -49,9 +54,16 @@ namespace BIL {
 		if (window_ == NULL)
 			throw;
 
+		glfwMakeContextCurrent(window_);
+
+		glewExperimental = true; // Needed in core profile
+		if (glewInit() != GLEW_OK) {
+			cerr << "Failed to initilize GLEW" << endl;
+		}
+
 		registerCallbacks();
 
-		// createDefaultLayout ();
+		initialize();
 	}
 
 	Window::Window (int width, int height, const char* title,
@@ -70,18 +82,70 @@ namespace BIL {
 		if (window_ == NULL)
 			throw;
 
+		glfwMakeContextCurrent(window_);
+
+		glewExperimental = true; // Needed in core profile
+		if (glewInit() != GLEW_OK) {
+			cerr << "Failed to initilize GLEW" << endl;
+		}
+
 		registerCallbacks();
 
 		// createDefaultLayout();
+		initialize();
 	}
 
 	Window::~Window ()
 	{
-		unregisterCallbacks();
+		// unregisterCallbacks();
 
 		deleteChildren();
 
-		glfwDestroyWindow(window_);
+				// TODO: do not delete other window
+
+		list<Traceable*>::reverse_iterator it;
+		for (it = Traceable::getSoloList().rbegin(); it != Traceable::getSoloList().rend(); it++)
+		{
+			if (*it != this)
+				delete *it;
+		}
+
+		if (windowMap.size() == 1) {
+			FontConfig::release();
+			FontCache::releaseAll();
+			Theme::release();
+		}
+
+		//glfwSetWindowShouldClose (window_, true);
+	}
+
+	void Window::initialize()
+	{
+		if (!FontConfig::instance()) {
+			cerr << "Cannot initialize FontConfig" << endl;
+			exit(EXIT_FAILURE);
+		}
+
+		FontConfig* ftconfig = FontConfig::getService();
+		bool fontinit = ftconfig->initialize();
+		if (!fontinit) {
+			cerr << "Cannot initialize font service" << endl;
+			exit(EXIT_FAILURE);
+		}
+
+		fontinit = ftconfig->loadDefaultFontToMem();
+		if (!fontinit) {
+			cerr << "Cannot load default font into memory" << endl;
+			exit(EXIT_FAILURE);
+		}
+
+		Theme* theme = Theme::instance();
+		if (theme) {
+			theme->initialize();
+		} else {
+			cerr << "Cannot initialize themes" << endl;
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	bool Window::registerCallbacks (void)
@@ -96,6 +160,7 @@ namespace BIL {
 		glfwSetMouseButtonCallback(window_, &BIL::Window::cbMouseButton);
 		glfwSetCursorPosCallback (window_, &BIL::Window::cbCursorPos);
 		glfwSetCursorEnterCallback(window_, &BIL::Window::cbCursorEnter);
+		glfwSetWindowCloseCallback(window_, &BIL::Window::cbClose);
 
 		// _scope.connect(this->keyEvent(), this, &Window::message);
 
@@ -553,6 +618,16 @@ namespace BIL {
 		if(it != windowMap.end()) {
 			BIL::Window* winObj = windowMap[window];
 			winObj->cursorEnterEvent(entered);
+		}
+	}
+
+	void Window::cbClose (GLFWwindow* window)
+	{
+		map<GLFWwindow*, BIL::Window*>::iterator it;
+		it = windowMap.find(window);
+
+		if(it != windowMap.end()) {
+			// TODO: do something when closing window, but cannot call destroy window
 		}
 	}
 
