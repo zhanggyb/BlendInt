@@ -34,6 +34,7 @@
 #include <BIL/Tuple.hpp>
 #include <BIL/Coord.hpp>
 #include <BIL/Size.hpp>
+#include <BIL/Types.hpp>
 
 using namespace std;
 
@@ -43,11 +44,6 @@ namespace BIL {
 	{
 	public:
 
-		enum InputMode {
-			CURSOR = GLFW_CURSOR,
-			STICKY_KEYS = GLFW_STICKY_KEYS,
-			STICKY_MOUSE_BUTTONS = GLFW_STICKY_MOUSE_BUTTONS
-		};
 
 		static std::map<GLFWwindow*, Window*>& getWindowMap () {return windowMap;}
 
@@ -116,9 +112,6 @@ namespace BIL {
 			size_.set_width(static_cast<unsigned int>(width));
 			size_.set_height(static_cast<unsigned int>(height));
 		}
-
-		void setTitle (const std::string& title);
-		void setTitle (const char *title);
 
 		std::string getTitle (void)
 		{

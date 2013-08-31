@@ -212,6 +212,12 @@ namespace BIL {
 			SCROLL_NO_OUTLINE = (1 << 2)
 		};
 
+	enum InputMode {
+		CURSOR = GLFW_CURSOR,
+		STICKY_KEYS = GLFW_STICKY_KEYS,
+		STICKY_MOUSE_BUTTONS = GLFW_STICKY_MOUSE_BUTTONS
+	};
+
 }
 
 #endif	/* _BIL_TYPES_H_ */
