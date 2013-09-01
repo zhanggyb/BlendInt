@@ -46,25 +46,14 @@ namespace BIL {
 		 * @brief generate a FontConfig instance and assign to FontConfig::service
 		 * @return true: success, false: already has instance
 		 */
-		static bool instance (void);
+		static FontConfig* instance ();
+
+		static bool initialize ();
 
 		/**
 		 * @brief Release the object created in instance()
-		 * @return true: success, false: already released
 		 */
-		static bool release (void);
-
-		static FontConfig* getService (void)
-		{
-			return service;
-		}
-
-		bool initialize (void);
-
-		bool isInitialized (void) const
-		{
-			return initialized;
-		}
+		static void release (void);
 
 		const unsigned char* getBuffer (void) const
 		{
@@ -115,7 +104,7 @@ namespace BIL {
 		 * Move destructor to private area to disallow simply delete,
 		 * use release() instead
 		 */
-		virtual ~FontConfig ();
+		~FontConfig ();
 
 		bool loadFontFile (const string& file);
 
@@ -140,8 +129,6 @@ namespace BIL {
 		FontList _fonts;
 
 		map<string, FontEngine*> _namedb;
-
-		static bool initialized;
 
 		/** a buffer in memory for the default font file */
 		unsigned char* _defaultFontBuf;

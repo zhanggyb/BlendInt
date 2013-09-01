@@ -33,45 +33,46 @@ using namespace boost::filesystem;
 
 namespace BIL {
 
-	FontConfig* FontConfig::service = NULL;
+	FontConfig* FontConfig::service = 0;
 
-	bool FontConfig::initialized = false;
-
-	bool FontConfig::instance (void)
+	FontConfig* FontConfig::instance (void)
 	{
-		if (service != NULL) {
-			cerr << "Error: FontManager should be generated only once"
+		if (!service) {
+			cerr << "The fontconfig service is not initialized successfully! Exit"
 			        << endl;
-			return false;
+			exit(EXIT_FAILURE);
 		}
 
-		service = new FontConfig;
-
-		return true;
-	}
-
-	bool FontConfig::release(void)
-	{
-		if(service == NULL) return false;
-
-		delete service;
-		service = NULL;
-
-		return true;
+		return service;
 	}
 
 	bool FontConfig::initialize (void)
 	{
-		if (initialized)
-			return false;
-
 		// load system files    TODO: load more fonts
 		// loadFontDir("/usr/share/fonts");
+		bool result = true;
+		if (!FcInit()) {
+			std::cerr << "Fail to initialize fontconfig" << std::endl;
+			result = false;
+		}
 
-		if (!FcInit()) initialized = false;
-		else initialized = true;
+		if(!service) {
+			service = new FontConfig;
+		}
 
-		return initialized;
+		if(!service) result = false;
+
+		return result;
+	}
+
+	void FontConfig::release(void)
+	{
+		if(service) {
+			delete service;
+			service = 0;
+		}
+
+		FcFini();
 	}
 
 	FontConfig::~FontConfig ()
@@ -85,24 +86,15 @@ namespace BIL {
 		// clear the namedb but no need to delete the objects again
 		_namedb.clear();
 
-		// finish fontconfig
-		if (initialized)
-			FcFini();
-
 		if (_defaultFontBuf != NULL) {
 			delete[] _defaultFontBuf;
 			_defaultFontBuf = NULL;
 			_defaultFontBufSize = 0;
 		}
-
-		initialized = false;
 	}
 
 	bool FontConfig::loadDefaultFontToMem (const string& family)
 	{
-		if (!initialized)
-			return false;
-
 		string filepath = getFontPath(family);
 
 		if (filepath.empty()) {

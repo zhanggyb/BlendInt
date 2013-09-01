@@ -38,7 +38,8 @@ namespace BIL {
 	Interface* Interface::instance()
 	{
 		if (!interface) {
-			interface = new Interface();
+			std::cerr << "The Interface Library is not initialized successfully! Exit" << std::endl;
+			exit(EXIT_FAILURE);
 		}
 
 		return interface;
@@ -64,31 +65,27 @@ namespace BIL {
 		}
 
 		bool result = true;
-		if (!FontConfig::instance()) {
+		if (!FontConfig::initialize()) {
 			std::cerr << "Cannot initialize FontConfig" << std::endl;
 			result = false;
-		}
-
-		FontConfig* ftconfig = FontConfig::getService();
-		bool fontinit = ftconfig->initialize();
-		if (!fontinit) {
-			cerr << "Cannot initialize font service" << endl;
-			result = false;
-		}
-
-		fontinit = ftconfig->loadDefaultFontToMem();
-		if (!fontinit) {
-			cerr << "Cannot load default font into memory" << endl;
-			result = false;
-		}
-
-		Theme* theme = Theme::instance();
-		if (theme) {
-			theme->initialize();
 		} else {
-			cerr << "Cannot initialize themes" << endl;
+			FontConfig* ftconfig = FontConfig::instance();
+			if (!ftconfig->loadDefaultFontToMem()) {
+				cerr << "Cannot load default font into memory" << endl;
+				result = false;
+			}
+		}
+
+		if (!Theme::initialize()) {
+			std::cerr << "Cannot initialize Themes" << std::endl;
 			result = false;
 		}
+
+		if(!interface) {
+			interface = new Interface();
+		}
+
+		if (!interface) result = false;
 
 		return result;
 	}

@@ -23,8 +23,6 @@ int main (int argc, char* argv[])
 
     GLFWwindow* window;
 
-    Interface* app = Interface::instance();
-
     /* Initialize the library */
     if(!glfwInit())
         return -1;
@@ -46,6 +44,7 @@ int main (int argc, char* argv[])
         glfwTerminate();
     }
 
+    Interface* app = Interface::instance();
     app->resize (1200, 800);
 
 	ToggleButton button ("Hello World!");

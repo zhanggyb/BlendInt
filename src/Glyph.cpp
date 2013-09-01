@@ -78,15 +78,8 @@ namespace BIL {
 		if (font_engine_) {
 			fontlib = font_engine_;
 		} else {
-			FontConfig* fontserv = FontConfig::getService();
+			FontConfig* fontserv = FontConfig::instance();
 
-			if (fontserv == NULL) {
-				return ret;
-			}
-
-			if (!fontserv->isInitialized()) {
-				return ret;
-			}
 			fontlib = new FontEngine(fontserv->getBuffer(),
 					fontserv->getBufferSize());
 		}
@@ -146,15 +139,8 @@ namespace BIL {
 
 		// if _fonttype is not set, use default font
 		if (!font_engine_) {
-			FontConfig* fontserv = FontConfig::getService();
+			FontConfig* fontserv = FontConfig::instance();
 
-			if (fontserv == NULL) {
-				return false;
-			}
-
-			if (!fontserv->isInitialized()) {
-				return false;
-			}
 			fontlib = new FontEngine(fontserv->getBuffer(),
 			        fontserv->getBufferSize());
 		} else {

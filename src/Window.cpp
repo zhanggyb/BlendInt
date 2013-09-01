@@ -126,26 +126,17 @@ namespace BIL {
 			exit(EXIT_FAILURE);
 		}
 
-		FontConfig* ftconfig = FontConfig::getService();
-		bool fontinit = ftconfig->initialize();
-		if (!fontinit) {
-			cerr << "Cannot initialize font service" << endl;
-			exit(EXIT_FAILURE);
-		}
-
-		fontinit = ftconfig->loadDefaultFontToMem();
-		if (!fontinit) {
+		FontConfig* ftconfig = FontConfig::instance();
+		if (!ftconfig->loadDefaultFontToMem()) {
 			cerr << "Cannot load default font into memory" << endl;
 			exit(EXIT_FAILURE);
 		}
 
-		Theme* theme = Theme::instance();
-		if (theme) {
-			theme->initialize();
-		} else {
-			cerr << "Cannot initialize themes" << endl;
+		if (!Theme::initialize()) {
+			std::cerr << "Cannot initialize Themes" << std::endl;
 			exit(EXIT_FAILURE);
 		}
+
 	}
 
 	bool Window::registerCallbacks (void)

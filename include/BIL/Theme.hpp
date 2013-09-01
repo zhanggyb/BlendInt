@@ -122,9 +122,9 @@ namespace BIL {
 
 		static Theme* instance ();
 
-		static bool release ();
+		static bool initialize ();
 
-		void initialize (void);
+		static void release ();
 
 		const ThemeUI* themeUI () const
 		{
@@ -149,7 +149,7 @@ namespace BIL {
 		 * Move destructor to private to disallow simply delete
 		 * use release() instead
 		 */
-		virtual ~Theme ();
+		~Theme ();
 
 	private:
 		// member functions disabled

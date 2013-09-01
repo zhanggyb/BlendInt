@@ -37,16 +37,7 @@ namespace BIL {
 	{
 		FT_Error error;
 
-		if(FontConfig::getService() == NULL) {
-			if(! FontConfig::instance()) {
-				valid_ = false;
-				return;
-			}
-		}
-		FontConfig* fontconfig = FontConfig::getService();
-		if(! fontconfig->isInitialized()) {
-			fontconfig->initialize();
-		}
+		FontConfig* fontconfig = FontConfig::instance();
 
 		string filename = fontconfig->getFontPath(font);
 
