@@ -8,6 +8,13 @@
 #include <Cpp/Events.hpp>
 #include <BIL/Interface.hpp>
 
+#include <BIL/ToggleButton.hpp>
+
+static void cbWindowSize (GLFWwindow* window, int w, int h)
+{
+	BIL::Interface::instance()->resizeEvent (w, h);
+}
+
 int main (int argc, char* argv[])
 {
 	using namespace BIL;
@@ -16,12 +23,11 @@ int main (int argc, char* argv[])
 
     GLFWwindow* window;
 
-    Interface* app = Interface::create();
+    Interface* app = Interface::instance();
 
     /* Initialize the library */
     if(!glfwInit())
         return -1;
-
 
     window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
     if (!window)
@@ -29,14 +35,23 @@ int main (int argc, char* argv[])
         glfwTerminate();
         return -1;
     }
-    
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
     /* initialize BIL after OpenGL content is created */
-    app->initialize();
+    if(!Interface::initialize()) {
+        glfwTerminate();
+    }
 
-    app->resizeEvent (1200, 800);
+    app->resize (1200, 800);
+
+	ToggleButton button ("Hello World!");
+	button.set_pos(100, 100);
+	button.set_font(Font("Droid Sans"));
+	button.set_round_box_type (RoundBoxAll);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -51,8 +66,8 @@ int main (int argc, char* argv[])
         glfwPollEvents();
     }
 
-    /* terminate BIL */
-    app->terminate();
+    /* release BIL */
+    Interface::release();
 
     glfwTerminate();
 	return 0;

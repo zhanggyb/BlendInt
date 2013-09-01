@@ -33,11 +33,11 @@ namespace BIL {
 	{
 	public:
 
-		static Interface* create ();
+		static Interface* instance ();
 
-		bool initialize ();
+		static bool initialize ();
 
-		void terminate ();
+		static void release ();
 
 		void render ();
 
@@ -48,6 +48,19 @@ namespace BIL {
 		void mouseButtonEvent (int button, int action, int mods);
 
 		void cursorPosEvent (double xpos, double ypos);
+
+		const Size& size () const {return size_;}
+
+		void resize (int width, int height)
+		{
+			size_.set_width(width);
+			size_.set_height(height);
+		}
+
+		void resize (const Size& size)
+		{
+			size_ = size;
+		}
 
 	private:
 

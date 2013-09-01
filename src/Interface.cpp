@@ -33,9 +33,9 @@
 
 namespace BIL {
 
-	Interface* Interface::interface = NULL;
+	Interface* Interface::interface = 0;
 
-	Interface* Interface::create()
+	Interface* Interface::instance()
 	{
 		if (!interface) {
 			interface = new Interface();
@@ -93,14 +93,16 @@ namespace BIL {
 		return result;
 	}
 
-	void Interface::terminate ()
+	void Interface::release ()
 	{
 		FontConfig::release();
 		FontCache::releaseAll();
 		Theme::release();
 
-		delete interface;
-		interface = NULL;
+		if (interface) {
+			delete interface;
+			interface = 0;
+		}
 	}
 
 	void Interface::render()
