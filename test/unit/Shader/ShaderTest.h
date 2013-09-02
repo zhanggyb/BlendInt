@@ -3,8 +3,6 @@
 #ifndef _SHADER_TEST_H
 #define _SHADER_TEST_H
 
-#include <BIL/Application.hpp>
-#include <BIL/Window.hpp>
 #include <BIL/Widget.hpp>
 #include <BIL/Program.hpp>
 
@@ -13,7 +11,6 @@
 #include <string>
 
 using namespace BIL;
-using namespace BIL::GL;
 using namespace std;
 
 class ShaderWidget: public Widget
@@ -32,7 +29,7 @@ protected:
 
 private:
 
-	Program program_;
+	BIL::GL::Program program_;
 };
 
 class ShaderTest: public CppUnit::TestFixture
@@ -59,6 +56,16 @@ public:
 private:
 
 	void shader_load1 ();
+
+	static void cbError (int error, const char* description);
+
+	static void cbWindowSize (GLFWwindow* window, int w, int h);
+
+	static void cbKey (GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	static void cbMouseButton (GLFWwindow* window, int button, int action, int mods);
+
+	static void cbCursorPos (GLFWwindow* window, double xpos, double ypos);
 
 };
 

@@ -3,8 +3,6 @@
 #ifndef _WIDGET_TEST_H
 #define _WIDGET_TEST_H
 
-#include <BIL/Application.hpp>
-#include <BIL/Window.hpp>
 #include <BIL/Widget.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -66,6 +64,16 @@ private:
 	void testwidget_show2 ();
 
 	void testwidget_show3 ();
+
+	static void cbError (int error, const char* description);
+
+	static void cbWindowSize (GLFWwindow* window, int w, int h);
+
+	static void cbKey (GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	static void cbMouseButton (GLFWwindow* window, int button, int action, int mods);
+
+	static void cbCursorPos (GLFWwindow* window, double xpos, double ypos);
 
 };
 

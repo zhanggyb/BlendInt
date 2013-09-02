@@ -41,15 +41,13 @@ int main(int argc, char* argv[]) {
 
 	Cpp::Events::ProcessInit processInit;
 
-	GLFWwindow* window;
-
 	/* Initialize the library */
 	if (!glfwInit())
 		return -1;
 
 	glfwSetErrorCallback(&cbError);
 
-	window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		return -1;

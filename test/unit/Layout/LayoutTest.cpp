@@ -10,6 +10,7 @@
 
 #include "LayoutTest.h"
 
+#include <BIL/Interface.hpp>
 #include <BIL/Label.hpp>
 #include <BIL/Button.hpp>
 #include <BIL/FontConfig.hpp>
@@ -75,16 +76,39 @@ void LayoutTest::tearDown ()
 
 void LayoutTest::horizontal_layout1()
 {
-	Application app;
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	Window win(640, 480, "640 x 480 Window", NULL, NULL);
+	glfwSetErrorCallback(&cbError);
 
-	app.setMainWindow(&win);
-	app.initialize();
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	HorizontalLayout layout;
 	layout.set_pos(100, 100);
-	layout.setParent(&win);
 
 	Label label(L"Hello World!");
 	label.set_pos(100, 100);
@@ -95,8 +119,51 @@ void LayoutTest::horizontal_layout1()
 	layout.addWidget(&label);
 	layout.addWidget(&button);
 
-	app.run();
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
 
+void LayoutTest::cbError (int error, const char* description)
+{
+	std::cerr << "Error: " << description
+			<< " (error code: " << error << ")"
+			<< std::endl;
+}
+
+void LayoutTest::cbWindowSize (GLFWwindow* window, int w, int h)
+{
+	BIL::Interface::instance()->resizeEvent(w, h);
+}
+
+void LayoutTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
+        int mods)
+{
+	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+}
+
+void LayoutTest::cbMouseButton (GLFWwindow* window, int button, int action,
+        int mods)
+{
+	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+}
+
+void LayoutTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
+{
+	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
+}
 

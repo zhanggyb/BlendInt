@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 
+#include <BIL/Interface.hpp>
 #include <BIL/FontCache.hpp>
 #include <BIL/FontConfig.hpp>
 #include <BIL/String.hpp>
@@ -30,32 +31,14 @@ FontCacheTest::~FontCacheTest ()
 
 void FontCacheTest::setUp ()
 {
-	int result = glfwInit();
-
-	if (result != GL_TRUE) {
-		CPPUNIT_FAIL("Cannot initialize glfw\n");
-	}
-
-	bool ret = false;
-
-	FontConfig::instance();
-
-	ret = FontConfig::getService()->initialize();
-	if(!ret) {
+	if(!FontConfig::initialize()) {
 		CPPUNIT_FAIL("Cannot initialize FontConfig service\n");
-	}
-
-	ret = FontConfig::getService()->loadDefaultFontToMem(); // load default font to memory
-	if (!ret) {
-		// TODO: stop and show failure of this TestFixture
-		CPPUNIT_FAIL("Fail to load default font to memory");
 	}
 }
 
 void FontCacheTest::tearDown ()
 {
 	FontConfig::release();
-	glfwTerminate();
 }
 
 void FontCacheTest::create1 ()
@@ -326,22 +309,36 @@ void FontCacheTest::check8 ()
 
 void FontCacheTest::show1()
 {
-	GLFWwindow * win = glfwCreateWindow(640, 480, "FontCache Test", NULL,
-	        NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	FontCache* cache = FontCache::create(Font("Droid Sans Fallback", 24));
 	Glyph* glyph = NULL;
@@ -356,11 +353,12 @@ void FontCacheTest::show1()
 
 	glyph = cache->query(L'信');
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -384,33 +382,52 @@ void FontCacheTest::show1()
 		// Test buffer render
 		glyph->Render();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
 
-	FontCache::releaseAll();
+	/* release BIL */
+	Interface::release();
 
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
 
 void FontCacheTest::show_multiple_cache1()
 {
-	GLFWwindow * win = glfwCreateWindow(1024, 640, "FontCache Test", NULL,
-	        NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	FontCache* cache1 = FontCache::create(Font("Lucida Grande", 48));
 	cache1->Initialize();
@@ -440,11 +457,12 @@ void FontCacheTest::show_multiple_cache1()
 
 	Glyph* glyph = NULL;
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -506,33 +524,52 @@ void FontCacheTest::show_multiple_cache1()
 		}
 		glPopMatrix();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
 
-	FontCache::releaseAll();
+	/* release BIL */
+	Interface::release();
 
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
 
 void FontCacheTest::test_font_not_exist1()
 {
-	GLFWwindow * win = glfwCreateWindow(1024, 640, "FontCache Test", NULL,
-	        NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	FontCache* cache1 = FontCache::create(Font("Lucida Grande", 48));
 	cache1->Initialize();
@@ -562,11 +599,12 @@ void FontCacheTest::test_font_not_exist1()
 
 	Glyph* glyph = NULL;
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -628,11 +666,45 @@ void FontCacheTest::test_font_not_exist1()
 		}
 		glPopMatrix();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
 
-	FontCache::releaseAll();
+	/* release BIL */
+	Interface::release();
 
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
+}
+
+void FontCacheTest::cbError (int error, const char* description)
+{
+	std::cerr << "Error: " << description
+			<< " (error code: " << error << ")"
+			<< std::endl;
+}
+
+void FontCacheTest::cbWindowSize (GLFWwindow* window, int w, int h)
+{
+	BIL::Interface::instance()->resizeEvent(w, h);
+}
+
+void FontCacheTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
+        int mods)
+{
+	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+}
+
+void FontCacheTest::cbMouseButton (GLFWwindow* window, int button, int action,
+        int mods)
+{
+	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+}
+
+void FontCacheTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
+{
+	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

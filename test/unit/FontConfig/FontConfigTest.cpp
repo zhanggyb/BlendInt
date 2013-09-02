@@ -35,12 +35,10 @@ void FontConfigTest::initialize1 ()
 {
 	bool result;
 
-	FontConfig::instance();
-
-	result = FontConfig::getService()->initialize();
+	result = FontConfig::initialize();
 
 	if(result) {
-		result = FontConfig::release();
+		FontConfig::release();
 	}
 
 	CPPUNIT_ASSERT(result);
@@ -50,15 +48,13 @@ void FontConfigTest::loadfont1 ()
 {
 	bool result;
 
-	FontConfig::instance();
-
-	result = FontConfig::getService()->initialize();
+	result = FontConfig::initialize();
 
 	if (result) {
-		result = FontConfig::getService()->loadDefaultFontToMem();
+		result = FontConfig::instance()->loadDefaultFontToMem();
 
 		if (result) {
-			result = FontConfig::getService()->getBuffer() != NULL;
+			result = FontConfig::instance()->getBuffer() != NULL;
 		}
 	}
 
@@ -71,12 +67,10 @@ void FontConfigTest::loadfont2 ()
 {
 	bool result;
 
-	FontConfig::instance();
-
-	result = FontConfig::getService()->initialize();
+	result = FontConfig::initialize();
 
 	if (result) {
-		string file = FontConfig::getService()->getFontPath(Font("Source Code Pro", 10, true));
+		string file = FontConfig::instance()->getFontPath(Font("Source Code Pro", 10, true));
 
 		cout << "Font file path" << file << endl;
 		result = !file.empty();

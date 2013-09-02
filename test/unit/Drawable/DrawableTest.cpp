@@ -7,6 +7,7 @@
 #include <string>
 #include <stdio.h>
 
+#include <BIL/Interface.hpp>
 #include <BIL/Drawable.hpp>
 #include "DrawableTest.h"
 
@@ -304,76 +305,252 @@ void DrawableTest::tearDown ()
 
 void DrawableTest::texture1 ()
 {
-    Application app;
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-    Window win(640, 480, "640 x 480 Window", NULL, NULL);
+	glfwSetErrorCallback(&cbError);
 
-    app.setMainWindow(&win);
-    app.initialize();
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
     myTexture widget;
-    widget.setParent (&win);
 
-    app.run();
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
 
-    CPPUNIT_ASSERT(true);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
 }
 
 void DrawableTest::mydrawable1()
 {
-    Application app;
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-    Window win(640, 480, "640 x 480 Window", NULL, NULL);
+	glfwSetErrorCallback(&cbError);
 
-    app.setMainWindow(&win);
-    app.initialize();
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
     myDrawable1 widget;
-    widget.setParent (&win);
     widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 
-    app.run();
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
 
-    CPPUNIT_ASSERT(true);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
 }
 
 void DrawableTest::mydrawable2()
 {
-    Application app;
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-    Window win(640, 480, "640 x 480 Window", NULL, NULL);
+	glfwSetErrorCallback(&cbError);
 
-    app.setMainWindow(&win);
-    app.initialize();
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
     myDrawable2 widget;
-    widget.setParent (&win);
     widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 
-    app.run();
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
 
-    CPPUNIT_ASSERT(true);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
 }
 
 void DrawableTest::mydrawable3()
 {
-    Application app;
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-    Window win(640, 480, "640 x 480 Window, test drawable3", NULL, NULL);
+	glfwSetErrorCallback(&cbError);
 
-    app.setMainWindow(&win);
-    app.initialize();
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
     myDrawable3 widget;
-    widget.setParent (&win);
     widget.set_pos(Point(50, 50));
     widget.resize(80, 40);
 
-    app.run();
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
 
-    CPPUNIT_ASSERT(true);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
 }
 
+void DrawableTest::cbError (int error, const char* description)
+{
+	std::cerr << "Error: " << description
+			<< " (error code: " << error << ")"
+			<< std::endl;
+}
+
+void DrawableTest::cbWindowSize (GLFWwindow* window, int w, int h)
+{
+	BIL::Interface::instance()->resizeEvent(w, h);
+}
+
+void DrawableTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
+        int mods)
+{
+	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+}
+
+void DrawableTest::cbMouseButton (GLFWwindow* window, int button, int action,
+        int mods)
+{
+	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+}
+
+void DrawableTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
+{
+	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
+}
 

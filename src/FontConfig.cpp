@@ -60,7 +60,14 @@ namespace BIL {
 			service = new FontConfig;
 		}
 
-		if(!service) result = false;
+		if(!service) {
+			result = false;
+		} else {
+			if(!service->loadDefaultFontToMem()) {
+				std::cerr << "Fail to load default font file to memory" << std::endl;
+				result = false;
+			}
+		}
 
 		return result;
 	}
@@ -86,7 +93,7 @@ namespace BIL {
 		// clear the namedb but no need to delete the objects again
 		_namedb.clear();
 
-		if (_defaultFontBuf != NULL) {
+		if (_defaultFontBuf) {
 			delete[] _defaultFontBuf;
 			_defaultFontBuf = NULL;
 			_defaultFontBufSize = 0;
@@ -107,7 +114,7 @@ namespace BIL {
 			fstream::pos_type filesize = file.tellg();
 			file.seekg(0);
 
-			if (_defaultFontBuf != NULL) {
+			if (_defaultFontBuf) {
 				delete[] _defaultFontBuf;
 				_defaultFontBuf = NULL;
 			}

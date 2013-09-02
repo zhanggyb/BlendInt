@@ -29,15 +29,8 @@ FontEngineTest::~FontEngineTest ()
 
 void FontEngineTest::setUp ()
 {
-	bool ret = false;
-
-	FontConfig::instance();
-
-	FontConfig::getService()->initialize();
-
-	ret = FontConfig::getService()->loadDefaultFontToMem(); // load default font to memory
-	if (!ret) {
-		// TODO: stop and show failure of this TestFixture
+	if(!FontConfig::initialize()) {
+		CPPUNIT_FAIL("Cannot initialize FontConfig service\n");
 	}
 }
 
@@ -77,7 +70,7 @@ void FontEngineTest::create1 ()
 {
 	bool result;
 
-	FontConfig* gFontService = FontConfig::getService();
+	FontConfig* gFontService = FontConfig::instance();
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
@@ -95,7 +88,7 @@ void FontEngineTest::create2 ()
 {
 	bool result1, result2;
 
-	FontConfig* gFontService = FontConfig::getService();
+	FontConfig* gFontService = FontConfig::instance();
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
@@ -117,7 +110,7 @@ void FontEngineTest::create3 ()
 {
 	bool result1 = false;
 
-	FontConfig* gFontService = FontConfig::getService();
+	FontConfig* gFontService = FontConfig::instance();
 
 	FontEngine *font1 = new FontEngine(gFontService->getBuffer(),
 									   gFontService->getBufferSize());
@@ -393,7 +386,7 @@ void FontEngineTest::get_glyph1 ()
 {
 	bool result;
 
-	FontConfig* gFontService = FontConfig::getService();
+	FontConfig* gFontService = FontConfig::instance();
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
@@ -469,7 +462,7 @@ void FontEngineTest::get_glyph2 ()
 {
 	bool result;
 
-	FontConfig* gFontService = FontConfig::getService();
+	FontConfig* gFontService = FontConfig::instance();
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
@@ -544,7 +537,7 @@ void FontEngineTest::get_glyph3 ()
 {
 	bool result;
 
-	FontConfig* gFontService = FontConfig::getService();
+	FontConfig* gFontService = FontConfig::instance();
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
@@ -619,7 +612,7 @@ void FontEngineTest::get_glyph4 ()
 {
 	bool result;
 
-	FontConfig* gFontService = FontConfig::getService();
+	FontConfig* gFontService = FontConfig::instance();
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
@@ -706,7 +699,7 @@ void FontEngineTest::get_glyph5 ()
 {
 	bool result;
 
-	FontConfig* gFontService = FontConfig::getService();
+	FontConfig* gFontService = FontConfig::instance();
 
 	FontEngine *font = new FontEngine(gFontService->getBuffer(),
 									  gFontService->getBufferSize());
@@ -770,7 +763,7 @@ void FontEngineTest::get_glyph5 ()
 void FontEngineTest::glyph_metrics1 ()
 {
 	bool result;
-	FontConfig* gFontService = FontConfig::getService();
+	FontConfig* gFontService = FontConfig::instance();
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
@@ -869,7 +862,7 @@ void FontEngineTest::glyph_metrics1 ()
 void FontEngineTest::checkkerning1()
 {
 	bool result;
-	FontConfig* gFontService = FontConfig::getService();
+	FontConfig* gFontService = FontConfig::instance();
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
 	FontEngine *font = new FontEngine(fontpath);

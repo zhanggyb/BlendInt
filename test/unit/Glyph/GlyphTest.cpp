@@ -4,6 +4,7 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
 
+#include <BIL/Interface.hpp>
 #include <BIL/FontConfig.hpp>
 #include <BIL/Glyph.hpp>
 #include <iostream>
@@ -30,48 +31,45 @@ GlyphTest::~GlyphTest ()
 
 void GlyphTest::setUp ()
 {
-	int ret = glfwInit();
 
-	if (ret != GL_TRUE) {
-		CPPUNIT_FAIL("Cannot initialize glfw\n");
-	}
-
-	FontConfig::instance();
-	bool fontinit = FontConfig::getService()->initialize();
-	if (!fontinit) {
-		CPPUNIT_FAIL("Cannot initialize FontManager\n");
-	}
-	fontinit = FontConfig::getService()->loadDefaultFontToMem();
-	if (!fontinit) {
-		CPPUNIT_FAIL("Cannot load default font\n");
-	}
 }
 
 void GlyphTest::tearDown ()
 {
-	FontConfig::release();
-
-	glfwTerminate();
 }
 
 void GlyphTest::create1 ()
 {
-	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-	NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	FontEngine fe(Font("Sans", 24), 96);
 	Glyph glyph (L'A', &fe);
@@ -83,11 +81,12 @@ void GlyphTest::create1 ()
 		 << endl;
 
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -112,9 +111,17 @@ void GlyphTest::create1 ()
 		// Test buffer render
 		glyph.Render();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
 
@@ -125,22 +132,36 @@ void GlyphTest::create2 ()
 
 void GlyphTest::printtext1 ()
 {
-	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-	NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	FontEngine fe(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
@@ -150,11 +171,12 @@ void GlyphTest::printtext1 ()
 	Glyph e(L'e', &fe);
 	Glyph f(L'F', &fe);
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -189,30 +211,52 @@ void GlyphTest::printtext1 ()
 		glTranslatef(e.metrics().horiAdvance, 0, 0);
 		f.Render();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
 
 void GlyphTest::printtext2 ()
 {
-	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-	NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	FontEngine fe (Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
@@ -222,11 +266,12 @@ void GlyphTest::printtext2 ()
 	Glyph e(L'义', &fe);
 	Glyph f(L'f', &fe);
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -261,30 +306,52 @@ void GlyphTest::printtext2 ()
 		glTranslatef(e.metrics().horiAdvance, 0, 0);
 		f.Render();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
 
 void GlyphTest::printtext3 ()
 {
-	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-	NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	FontEngine fe(Font("Sans", 16), 96);
 	Glyph a(L'a', &fe);
@@ -298,11 +365,12 @@ void GlyphTest::printtext3 ()
 	Glyph i(L'i', &fe);
 	Glyph j(L'j', &fe);
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -345,33 +413,55 @@ void GlyphTest::printtext3 ()
 		glTranslatef(i.metrics().horiAdvance, 0, 0);
 		j.Render();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
 
 void GlyphTest::printtext4 ()
 {
-	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-	NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
 
-	FontEngine font (FontConfig::getService()->getBuffer(),
-			FontConfig::getService()->getBufferSize());
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	FontEngine font (FontConfig::instance()->getBuffer(),
+			FontConfig::instance()->getBufferSize());
 
 	Glyph a(L'p', &font);
 	Glyph b(L'r', &font);
@@ -384,11 +474,12 @@ void GlyphTest::printtext4 ()
 	Glyph i(L't', &font);
 	Glyph j(L'4', &font);
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -431,37 +522,58 @@ void GlyphTest::printtext4 ()
 		glTranslatef(i.metrics().horiAdvance, 0, 0);
 		j.Render();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
 
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
 
 void GlyphTest::checkbox1 ()
 {
-	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-	NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	FontEngine fe (Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'a', &fe);
 
-	FontConfig* fontserv = FontConfig::getService();
+	FontConfig* fontserv = FontConfig::instance();
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	Rect cbox = a.OutlineBox();
@@ -474,11 +586,12 @@ void GlyphTest::checkbox1 ()
 	cout << "Metrics of a: width: " << b.metrics().width << " height: "
 		 << b.metrics().height << endl;
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -505,31 +618,53 @@ void GlyphTest::checkbox1 ()
 		glTranslatef(a.metrics().horiAdvance, 0, 0);
 		b.Render();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
 
 
 void GlyphTest::checkkerning1 ()
 {
-	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-	NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	FontEngine fe(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
@@ -539,7 +674,7 @@ void GlyphTest::checkkerning1 ()
 	Glyph e(L'义',  &fe);
 	Glyph f(L'f', &fe);
 
-	FontConfig* fontserv = FontConfig::getService();
+	FontConfig* fontserv = FontConfig::instance();
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	Tuple2l kerning;
@@ -556,11 +691,12 @@ void GlyphTest::checkkerning1 ()
 	kerning = font.getKerning(e,f);
 	cout << "Kerning between E, f: " << kerning.vec.x << ", " << kerning.vec.y << endl;
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -595,30 +731,52 @@ void GlyphTest::checkkerning1 ()
 		glTranslatef(e.metrics().horiAdvance, 0, 0);
 		f.Render();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
 
 void GlyphTest::checkoutline1 ()
 {
-	GLFWwindow * win = glfwCreateWindow(640, 480, "TextBuffer Test", NULL,
-	NULL);
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
 
-	if (win == NULL) {
-		CPPUNIT_FAIL("Cannot create glfw window\n");
-	}
+	glfwSetErrorCallback(&cbError);
 
-	glfwMakeContextCurrent(win);
-
-	// Initialize GLEW
-	glewExperimental = true; // Needed in core profile
-	if (glewInit() != GLEW_OK) {
-		cerr << "Failed to initilize GLEW" << endl;
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
 		glfwTerminate();
-		exit(EXIT_FAILURE);
+		CPPUNIT_ASSERT(false);
+		return;
 	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
 
 	FontEngine fe(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
@@ -628,7 +786,7 @@ void GlyphTest::checkoutline1 ()
 	Glyph e(L'义',  &fe);
 	Glyph f(L'f', &fe);
 
-	FontConfig* fontserv = FontConfig::getService();
+	FontConfig* fontserv = FontConfig::instance();
 	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	cout << endl;
@@ -680,11 +838,12 @@ void GlyphTest::checkoutline1 ()
 		 << "bearingY: " << f.metrics().horiBearingY << " "
 		 << endl;
 
-	while (!glfwWindowShouldClose(win)) {
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
 
 		int width, height;
 
-		glfwGetWindowSize(win, &width, &height);
+		glfwGetWindowSize(window, &width, &height);
 
 		glClearColor(0.40, 0.40, 0.45, 1.00);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -719,8 +878,45 @@ void GlyphTest::checkoutline1 ()
 		glTranslatef(e.metrics().horiAdvance, 0, 0);
 		f.Render();
 
-		glfwSwapBuffers(win);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
 	CPPUNIT_ASSERT(true);
+}
+
+void GlyphTest::cbError (int error, const char* description)
+{
+	std::cerr << "Error: " << description
+			<< " (error code: " << error << ")"
+			<< std::endl;
+}
+
+void GlyphTest::cbWindowSize (GLFWwindow* window, int w, int h)
+{
+	BIL::Interface::instance()->resizeEvent(w, h);
+}
+
+void GlyphTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
+        int mods)
+{
+	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+}
+
+void GlyphTest::cbMouseButton (GLFWwindow* window, int button, int action,
+        int mods)
+{
+	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+}
+
+void GlyphTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
+{
+	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

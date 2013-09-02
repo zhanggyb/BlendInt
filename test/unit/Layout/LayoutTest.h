@@ -3,16 +3,7 @@
 #ifndef _LAYOUT_TEST_H
 #define _LAYOUT_TEST_H
 
-#include <iostream>
-#include <string>
-
-#include <BIL/Application.hpp>
-#include <BIL/Window.hpp>
-
 #include <cppunit/extensions/HelperMacros.h>
-
-using namespace BIL;
-using namespace std;
 
 class LayoutTest: public CppUnit::TestFixture
 {
@@ -38,6 +29,16 @@ public:
 private:
 
 	void horizontal_layout1 ();
+
+	static void cbError (int error, const char* description);
+
+	static void cbWindowSize (GLFWwindow* window, int w, int h);
+
+	static void cbKey (GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	static void cbMouseButton (GLFWwindow* window, int button, int action, int mods);
+
+	static void cbCursorPos (GLFWwindow* window, double xpos, double ypos);
 
 };
 

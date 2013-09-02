@@ -6,8 +6,6 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/Application.hpp>
-#include <BIL/Window.hpp>
 #include <BIL/Label.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -50,6 +48,16 @@ private:
 
 	void calculatebox1 ();
 	void multiline1 ();
+
+	static void cbError (int error, const char* description);
+
+	static void cbWindowSize (GLFWwindow* window, int w, int h);
+
+	static void cbKey (GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	static void cbMouseButton (GLFWwindow* window, int button, int action, int mods);
+
+	static void cbCursorPos (GLFWwindow* window, double xpos, double ypos);
 
 };
 

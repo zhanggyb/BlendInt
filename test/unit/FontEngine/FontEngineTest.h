@@ -4,8 +4,6 @@
 #define _FONTENGINE_TEST_H
 
 #include <cppunit/extensions/HelperMacros.h>
-#include <iostream>
-#include <string>
 
 #define WIDTH 640
 #define HEIGHT 480
