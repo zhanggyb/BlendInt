@@ -22,6 +22,7 @@
 #ifndef _BIL_INTERFACE_HPP_
 #define _BIL_INTERFACE_HPP_
 
+#include <BIL/Types.hpp>
 #include <BIL/Drawable.hpp>
 
 namespace BIL {
@@ -73,6 +74,14 @@ namespace BIL {
 #ifdef DEBUG
 		void drawGrid (int width, int height);
 #endif
+
+		void dispatchKeyPressEvent (Drawable* obj, KeyEvent* event);
+
+		void dispatchMousePressEvent (Drawable* obj, MouseEvent* event);
+
+		void dispatchMouseReleaseEvent (Drawable* obj, MouseEvent* event);
+
+		void dispatchMouseMoveEvent (Drawable* obj, MouseEvent* event);
 
 		double cursor_pos_x_;	/** cursor x position */
 		double cursor_pos_y_;	/** cursor y position */
