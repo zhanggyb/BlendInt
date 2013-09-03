@@ -58,6 +58,11 @@ namespace BIL {
 			return false;
 		}
 
+		if(!GLEW_VERSION_2_0) {
+			std::cerr << "No support for OpenGL 2.0 found" << std::endl;
+			return false;
+		}
+
 		bool result = true;
 		if (!FontConfig::initialize()) {
 			std::cerr << "Cannot initialize FontConfig" << std::endl;

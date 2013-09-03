@@ -35,34 +35,9 @@ namespace BIL {
 		{
 		}
 
-		Shader::Shader (const std::string& filename, GLenum type)
-				: id_(0)
-		{
-			if (!filename.empty()) {
-
-				char* buf = read(filename.c_str());
-
-				if (buf) {
-					id_ = compile(buf, type);
-					free(buf);
-				}
-			}
-		}
-
-		Shader::Shader (const char* buf, GLenum type)
-				: id_(0)
-		{
-			if (buf) {
-				id_ = compile(buf, type);
-			}
-		}
-
 		Shader::~Shader ()
 		{
-			if (glIsShader(id_)) {
-				glDeleteShader(id_);
-				id_ = 0;
-			}
+			clear();
 		}
 
 		GLenum Shader::type () const
@@ -88,10 +63,7 @@ namespace BIL {
 
 		void Shader::load (const std::string& filename, GLenum type)
 		{
-			if (glIsShader(id_)) {
-				glDeleteShader(id_);
-				id_ = 0;
-			}
+			clear();
 
 			char* buf = read(filename.c_str());
 
@@ -103,14 +75,39 @@ namespace BIL {
 
 		void Shader::load (const char* buf, GLenum type)
 		{
-			if (glIsShader(id_)) {
-				glDeleteShader(id_);
-				id_ = 0;
-			}
+			clear();
 
 			if (buf) {
 				id_ = compile(buf, type);
 			}
+		}
+
+		void Shader::clear ()
+		{
+			if(id_) {
+				if (glIsShader(id_)) {
+					glDeleteShader(id_);
+				}
+				id_ = 0;
+			}
+		}
+
+		void Shader::print_log ()
+		{
+			  GLint log_length = 0;
+			  if (glIsShader(id_))
+			    glGetShaderiv(id_, GL_INFO_LOG_LENGTH, &log_length);
+			  else {
+			    fprintf(stderr, "printlog: Not a shader\n");
+			    return;
+			  }
+
+			  char* log = (char*)malloc(log_length);
+
+			  glGetShaderInfoLog(id_, log_length, NULL, log);
+
+			  fprintf(stderr, "%s", log);
+			  free(log);
 		}
 
 		char* Shader::read (const char* filename)

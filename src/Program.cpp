@@ -20,9 +20,11 @@
  */
 
 #include <GL/glew.h>
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <BIL/Program.hpp>
-#include <iostream>
 
 namespace BIL {
 
@@ -36,22 +38,14 @@ namespace BIL {
 
 		Program::~Program ()
 		{
-			if (glIsProgram(id_)) {
-				glDeleteProgram(id_);
-			}
-
-			std::vector<Shader*>::iterator it;
-			for (it = shaders_.begin(); it != shaders_.end(); it++) {
-				delete *it;
-				*it = NULL;
-			}
-			shaders_.clear();
+			clear();
 		}
 
 		void Program::addShader (const std::string& filename, GLenum type)
 		{
 			if (glIsProgram(id_)) {
-				Shader* shader = new Shader(filename, type);
+				Shader* shader = new Shader;
+				shader->load(filename, type);
 				shaders_.push_back(shader);
 				glAttachShader(id_, shader->id());
 			}
@@ -60,7 +54,8 @@ namespace BIL {
 		void Program::addShader (const char* buf, GLenum type)
 		{
 			if (glIsProgram(id_)) {
-				Shader* shader = new Shader(buf, type);
+				Shader* shader = new Shader;
+				shader->load(buf, type);
 				shaders_.push_back(shader);
 				glAttachShader(id_, shader->id());
 			}
@@ -84,6 +79,42 @@ namespace BIL {
 			}
 
 			return link_ok == GL_TRUE ? true : false;
+		}
+
+		void Program::clear ()
+		{
+			if(id_) {
+				if (glIsProgram(id_))
+					glDeleteProgram(id_);
+				id_ = 0;
+			}
+
+			std::vector<Shader*>::iterator it;
+			for (it = shaders_.begin(); it != shaders_.end(); it++) {
+				delete *it;
+				*it = NULL;
+			}
+			shaders_.clear();
+		}
+
+		void Program::print_log ()
+		{
+			  GLint log_length = 0;
+
+			  if (glIsProgram(id_))
+			    glGetProgramiv(id_, GL_INFO_LOG_LENGTH, &log_length);
+			  else {
+			    fprintf(stderr, "printlog: Not a program\n");
+			    return;
+			  }
+
+			  char* log = (char*)malloc(log_length);
+
+			  if (glIsProgram(id_))
+			    glGetProgramInfoLog(id_, log_length, NULL, log);
+
+			  fprintf(stderr, "%s", log);
+			  free(log);
 		}
 
 	}

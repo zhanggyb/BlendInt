@@ -48,6 +48,10 @@ namespace BIL {
 
 			bool isValid () const;
 
+			void clear ();
+
+			void print_log ();
+
 			GLuint id () const
 			{
 				return id_;

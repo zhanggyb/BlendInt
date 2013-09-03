@@ -39,24 +39,15 @@ namespace BIL {
 			 */
 			Shader ();
 
-			/**
-			 * @brief constructor
-			 * @param filename shader file name
-			 * @param type Shader Type defined in OpenGL
-			 *
-			 * Must be one of: Must be one of GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
-			 *       GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER
-			 */
-			Shader (const std::string& filename, GLenum type);
-
-			Shader (const char* buf, GLenum type);
-
 			~Shader ();
 
 			/**
 			 * @brief Load a vertex or fragment shader sources and compile
 			 * @param filename filename to be loaded
-			 * @return
+			 * @param type Shader Type defined in OpenGL
+			 *
+			 * Must be one of: Must be one of GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
+			 *       GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER
 			 */
 			void load (const std::string& filename, GLenum type);
 
@@ -72,6 +63,13 @@ namespace BIL {
 			bool isValid () const;
 
 			bool isDeleted () const;
+
+			/**
+			 * Display compilation errors from the OpenGL shader compiler
+			 */
+			void print_log ();
+
+			void clear ();
 
 		private:
 			/**
