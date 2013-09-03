@@ -11,6 +11,7 @@
 #include <string>
 
 using namespace BIL;
+using namespace BIL::GL;
 using namespace std;
 
 class ShaderWidget: public Widget
@@ -19,9 +20,7 @@ public:
 
 	ShaderWidget ();
 
-	virtual ~ShaderWidget ()
-	{
-	}
+	virtual ~ShaderWidget ();
 
 protected:
 
@@ -29,7 +28,21 @@ protected:
 
 private:
 
-	BIL::GL::Program program_;
+	struct attributes {
+		GLfloat coord2d[2];
+		GLfloat v_color[3];
+	};
+
+	bool init_resources ();
+
+	Program program_;
+	
+	GLuint vbo_triangle;
+	GLuint vbo_triangle_colors;
+	GLint attribute_coord2d;
+	GLint attribute_v_color;
+	GLint uniform_fade;
+	
 };
 
 class ShaderTest: public CppUnit::TestFixture

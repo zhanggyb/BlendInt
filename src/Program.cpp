@@ -41,7 +41,7 @@ namespace BIL {
 			clear();
 		}
 
-		void Program::addShader (const std::string& filename, GLenum type)
+		void Program::attachShader (const std::string& filename, GLenum type)
 		{
 			if (glIsProgram(id_)) {
 				Shader* shader = new Shader;
@@ -51,7 +51,7 @@ namespace BIL {
 			}
 		}
 
-		void Program::addShader (const char* buf, GLenum type)
+		void Program::attachShader (const char* buf, GLenum type)
 		{
 			if (glIsProgram(id_)) {
 				Shader* shader = new Shader;

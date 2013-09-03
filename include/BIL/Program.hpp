@@ -40,9 +40,9 @@ namespace BIL {
 
 			~Program ();
 
-			void addShader (const char* buf, GLenum type);
+			void attachShader (const char* buf, GLenum type);
 
-			void addShader (const std::string& filename, GLenum type);
+			void attachShader (const std::string& filename, GLenum type);
 
 			bool link ();
 

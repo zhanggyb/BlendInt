@@ -17,67 +17,118 @@ using namespace std;
 CPPUNIT_TEST_SUITE_REGISTRATION(ShaderTest);
 
 static const char* vs_source =
-#ifdef GL_ES_VERSION_2_0
-        "#version 100\n"  // OpenGL ES 2.0
-#else
-        "#version 120\n"  // OpenGL 2.1
-#endif
-		        "attribute vec2 coord2d;                  "
-		        "void main(void) {                        "
-		        "  gl_Position = vec4(coord2d, 0.0, 1.0); "
-		        "}";
+	"attribute vec2 coord2d;"
+	"attribute vec3 v_color;"
+	"varying vec3 f_color;"
+	""
+	"void main(void) {"
+	"	gl_Position = vec4(coord2d, 0.0, 1.0);"
+	"	f_color = v_color;"
+	"}";
 
 static const char* fs_source =
-#ifdef GL_ES_VERSION_2_0
-        "#version 100\n"  // OpenGL ES 2.0
-#else
-        "#version 120\n"  // OpenGL 2.1
-#endif
-		        "void main(void) {        "
-		        "  gl_FragColor[0] = 0.0; "
-		        "  gl_FragColor[1] = 0.0; "
-		        "  gl_FragColor[2] = 1.0; "
-		        "}";
-
-GLint attribute_coord2d;
+	"uniform float fade;"
+	"varying vec3 f_color;"
+	""
+	"void main(void) {"
+	"	gl_FragColor = vec4(f_color.x, f_color.y, f_color.z, fade);"
+	"}";
 
 ShaderWidget::ShaderWidget ()
 		: Widget(NULL)
 {
-	program_.addShader(vs_source, GL_VERTEX_SHADER);
-	program_.addShader(fs_source, GL_FRAGMENT_SHADER);
-	program_.link();
-
-	const char* attribute_name = "coord2d";
-	  attribute_coord2d = glGetAttribLocation(program_.id(), attribute_name);
-	  if (attribute_coord2d == -1) {
-	    fprintf(stderr, "Could not bind attribute %s\n", attribute_name);
-	  }
+	init_resources();
 }
 
+ShaderWidget::~ShaderWidget()
+{
+	glDeleteBuffers(1, &vbo_triangle);
+}
 
 void ShaderWidget::render ()
 {
-	//glClearColor(1.0, 1.0, 1.0, 1.0);
-	//glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glClear (GL_COLOR_BUFFER_BIT);
 
 	glUseProgram(program_.id());
 
+	glUniform1f(uniform_fade, 1.0);
+
 	glEnableVertexAttribArray(attribute_coord2d);
-	GLfloat triangle_vertices[] = { 0.0, 0.8, -0.8, -0.8, 0.8, -0.8, };
-	/* Describe our vertices array to OpenGL (it can't guess its format automatically) */
-	glVertexAttribPointer(attribute_coord2d, // attribute
-	        2,                 // number of elements per vertex, here (x,y)
-	        GL_FLOAT,          // the type of each element
-	        GL_FALSE,          // take our values as-is
-	        0,                 // no extra data between each position
-	        triangle_vertices  // pointer to the C array
-	        );
+	glEnableVertexAttribArray(attribute_v_color);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_triangle);
+	glVertexAttribPointer(
+						  attribute_coord2d,   // attribute
+						  2,                   // number of elements per vertex, here (x,y)
+						  GL_FLOAT,            // the type of each element
+						  GL_FALSE,            // take our values as-is
+						  sizeof(struct attributes),  // next coord2d appears every 5 floats
+						  0                    // offset of first element
+  );
+	glVertexAttribPointer(
+						  attribute_v_color,      // attribute
+						  3,                      // number of elements per vertex, here (r,g,b)
+						  GL_FLOAT,               // the type of each element
+						  GL_FALSE,               // take our values as-is
+						  sizeof(struct attributes),  // stride
+						  //(GLvoid*) (2 * sizeof(GLfloat))     // offset of first element
+						  (GLvoid*) offsetof(struct attributes, v_color)  // offset
+  );
 
 	/* Push each element in buffer_vertices to the vertex shader */
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	glDisableVertexAttribArray(attribute_coord2d);
+	glDisableVertexAttribArray(attribute_v_color);
+
+}
+
+bool ShaderWidget::init_resources()
+{
+	if(!program_.isValid()) {
+		return false;
+	}
+
+	struct attributes triangle_attributes[] = {
+		{{ 0.0,  0.8}, {1.0, 1.0, 0.0}},
+		{{-0.8, -0.8}, {0.0, 0.0, 1.0}},
+		{{ 0.8, -0.8}, {1.0, 0.0, 0.0}}
+	};
+	glGenBuffers(1, &vbo_triangle);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_triangle);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_attributes), triangle_attributes, GL_STATIC_DRAW);
+
+	program_.attachShader(vs_source, GL_VERTEX_SHADER);
+	program_.attachShader(fs_source, GL_FRAGMENT_SHADER);
+	
+	if(!program_.link()) {
+		return false;
+	}
+
+	const char* attribute_name;
+	attribute_name = "coord2d";
+	attribute_coord2d = glGetAttribLocation(program_.id(), attribute_name);
+	if (attribute_coord2d == -1) {
+		fprintf(stderr, "Could not bind attribute %s\n", attribute_name);
+		return false;
+	}
+	attribute_name = "v_color";
+	attribute_v_color = glGetAttribLocation(program_.id(), attribute_name);
+	if (attribute_v_color == -1) {
+		fprintf(stderr, "Could not bind attribute %s\n", attribute_name);
+		return false;
+	}
+
+	const char* uniform_name;
+	uniform_name = "fade";
+	uniform_fade = glGetUniformLocation(program_.id(), uniform_name);
+	if (uniform_fade == -1) {
+		fprintf(stderr, "Could not bind uniform_fade %s\n", uniform_name);
+		return false;
+	}
+
+
+	return true;
 }
 
 ShaderTest::ShaderTest ()
@@ -136,8 +187,8 @@ void ShaderTest::shader_load1 ()
 	ShaderWidget widget;
 
 	// widget.set_round_box_type(RoundBoxAll);
-	widget.set_pos(100, 100);
-	widget.resize(200, 200);
+	// widget.set_pos(100, 100);
+	// widget.resize(200, 200);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
