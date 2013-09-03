@@ -24,7 +24,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include <BIL/FontEngine.hpp>
+#include <BIL/Freetype.hpp>
 #include <BIL/FontConfig.hpp>
 #include <BIL/TextBuffer.hpp>
 

@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <wchar.h>
 
-#include <BIL/FontEngine.hpp>
+#include <BIL/Freetype.hpp>
 #include <BIL/FontConfig.hpp>
 
 #include <cppunit/TestAssert.h>
@@ -74,7 +74,7 @@ void FontEngineTest::create1 ()
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
-	FontEngine *font = new FontEngine;
+	Freetype *font = new Freetype;
 	font->open(fontpath);
 
 	result = font->valid();
@@ -93,9 +93,9 @@ void FontEngineTest::create2 ()
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
-	FontEngine *font1 = new FontEngine;
+	Freetype *font1 = new Freetype;
 	font1->open(fontpath);
-	FontEngine *font2 = new FontEngine;
+	Freetype *font2 = new Freetype;
 	font2->open(fontpath);
 
 	result1 = font1->valid();
@@ -115,7 +115,7 @@ void FontEngineTest::create3 ()
 
 	FontConfig* gFontService = FontConfig::instance();
 
-	FontEngine *font1 = new FontEngine;
+	Freetype *font1 = new Freetype;
 	font1->open(gFontService->getBuffer(),
 									   gFontService->getBufferSize());
 
@@ -132,7 +132,7 @@ void FontEngineTest::create4 ()
 	bool result = false;
 	FT_UInt index = 0;
 
-	FontEngine font;
+	Freetype font;
 	font.open(Font("Sans"), 96);
 
 	result = font.valid();
@@ -151,7 +151,7 @@ void FontEngineTest::create5 ()
 
 	string fontpath = "/usr/share/fonts/TTF/DejaVuSerif-Bold.ttf";
 
-	FontEngine *font = new FontEngine;
+	Freetype *font = new Freetype;
 	font->open(fontpath);
 
 	result = font->valid();
@@ -191,7 +191,7 @@ void FontEngineTest::create6 ()
 
 	Font font("Sans", 16);
 
-	FontEngine *fe = new FontEngine;
+	Freetype *fe = new Freetype;
 	fe->open(font, 96);
 
 	result = fe->valid();
@@ -229,7 +229,7 @@ void FontEngineTest::checkindex1 ()
 	bool result = false;
 	int indexEn = 0; int indexCh = 0;
 
-	FontEngine *fe = new FontEngine;
+	Freetype *fe = new Freetype;
 	fe->open(
 			std::string("/usr/share/fonts/TTF/DejaVuSans.ttf"), 16);
 
@@ -271,7 +271,7 @@ void FontEngineTest::checkindex2 ()
 	bool result = false;
 	int indexEn = 0; int indexCh = 0;
 
-	FontEngine *fe = new FontEngine;
+	Freetype *fe = new Freetype;
 	fe->open(
 			std::string("/usr/share/fonts/TTF/DroidSansFallback.ttf"), 16);
 
@@ -313,7 +313,7 @@ void FontEngineTest::checkindex3 ()
 	bool result = false;
 	int indexEn = 0; int indexCh = 0;
 
-	FontEngine *fe = new FontEngine;
+	Freetype *fe = new Freetype;
 	fe->open(
 			Font("Sans", 16));
 
@@ -355,7 +355,7 @@ void FontEngineTest::checkindex4 ()
 	bool result = false;
 	int indexEn = 0; int indexCh = 0;
 
-	FontEngine *fe = new FontEngine;
+	Freetype *fe = new Freetype;
 	fe->open(
 			Font("Droid Sans", 16));
 
@@ -401,7 +401,7 @@ void FontEngineTest::get_glyph1 ()
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
-	FontEngine *font = new FontEngine;
+	Freetype *font = new Freetype;
 	font->open(fontpath);
 
 	result = font->valid();
@@ -478,7 +478,7 @@ void FontEngineTest::get_glyph2 ()
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
-	FontEngine *font = new FontEngine;
+	Freetype *font = new Freetype;
 	font->open(fontpath);
 
 	result = font->valid();
@@ -554,7 +554,7 @@ void FontEngineTest::get_glyph3 ()
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
-	FontEngine *font = new FontEngine;
+	Freetype *font = new Freetype;
 	font->open(fontpath);
 
 	result = font->valid();
@@ -630,7 +630,7 @@ void FontEngineTest::get_glyph4 ()
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
-	FontEngine *font = new FontEngine;
+	Freetype *font = new Freetype;
 	font->open(fontpath);
 
 	result = font->valid();
@@ -716,7 +716,7 @@ void FontEngineTest::get_glyph5 ()
 
 	FontConfig* gFontService = FontConfig::instance();
 
-	FontEngine *font = new FontEngine;
+	Freetype *font = new Freetype;
 	font->open(gFontService->getBuffer(),
 									  gFontService->getBufferSize());
 
@@ -783,7 +783,7 @@ void FontEngineTest::glyph_metrics1 ()
 
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
-	FontEngine *font = new FontEngine;
+	Freetype *font = new Freetype;
 	font->open(fontpath);
 
 	result = font->valid();
@@ -882,7 +882,7 @@ void FontEngineTest::checkkerning1()
 	FontConfig* gFontService = FontConfig::instance();
 	string fontpath = gFontService->getFontPath(std::string("Sans"));
 
-	FontEngine *font = new FontEngine;
+	Freetype *font = new Freetype;
 	font->open(fontpath);
 
 	result = font->valid();

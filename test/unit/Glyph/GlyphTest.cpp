@@ -71,7 +71,7 @@ void GlyphTest::create1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe;
+	Freetype fe;
 	fe.open(Font("Sans", 24), 96);
 	Glyph glyph (L'A', &fe);
 	cout << endl;
@@ -165,7 +165,7 @@ void GlyphTest::printtext1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe;
+	Freetype fe;
 	fe.open(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'B', &fe);
@@ -262,7 +262,7 @@ void GlyphTest::printtext2 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe;
+	Freetype fe;
 	fe.open(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'b', &fe);
@@ -360,7 +360,7 @@ void GlyphTest::printtext3 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe;
+	Freetype fe;
 	fe.open(Font("Sans", 16), 96);
 	Glyph a(L'a', &fe);
 	Glyph b(L'b', &fe);
@@ -469,7 +469,7 @@ void GlyphTest::printtext4 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine font;
+	Freetype font;
 	font.open(FontConfig::instance()->getBuffer(),
 			FontConfig::instance()->getBufferSize());
 
@@ -580,13 +580,13 @@ void GlyphTest::checkbox1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe;
+	Freetype fe;
 	fe.open(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'a', &fe);
 
 	FontConfig* fontserv = FontConfig::instance();
-	FontEngine font;
+	Freetype font;
 	font.open(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	Rect cbox = a.OutlineBox();
@@ -680,7 +680,7 @@ void GlyphTest::checkkerning1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe;
+	Freetype fe;
 	fe.open(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'b', &fe);
@@ -690,7 +690,7 @@ void GlyphTest::checkkerning1 ()
 	Glyph f(L'f', &fe);
 
 	FontConfig* fontserv = FontConfig::instance();
-	FontEngine font;
+	Freetype font;
 	font.open(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	Tuple2l kerning;
@@ -796,7 +796,7 @@ void GlyphTest::checkoutline1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe;
+	Freetype fe;
 	fe.open(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'b', &fe);
@@ -806,7 +806,7 @@ void GlyphTest::checkoutline1 ()
 	Glyph f(L'f', &fe);
 
 	FontConfig* fontserv = FontConfig::instance();
-	FontEngine font;
+	Freetype font;
 	font.open(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	cout << endl;

@@ -26,12 +26,12 @@
 
 #include <BIL/Glyph.hpp>
 #include <BIL/FontConfig.hpp>
-#include <BIL/FontEngine.hpp>
+#include <BIL/Freetype.hpp>
 
 
 namespace BIL {
 
-	Glyph::Glyph (wchar_t charcode, FontEngine* fontlib)
+	Glyph::Glyph (wchar_t charcode, Freetype* fontlib)
 			: charcode_(charcode), font_engine_(fontlib), glyph_index_(0),
 			  texture_(0), displist_(0)
 	{
@@ -58,7 +58,7 @@ namespace BIL {
 		MakeDisplayList();
 	}
 
-	void Glyph::set_font_engine (FontEngine* fontlib)
+	void Glyph::set_font_engine (Freetype* fontlib)
 	{
 		if (font_engine_ == fontlib) {
 			return;
@@ -73,14 +73,14 @@ namespace BIL {
 	Rect Glyph::OutlineBox()
 	{
 		Rect ret;
-		FontEngine* fontlib = NULL;
+		Freetype* fontlib = NULL;
 
 		if (font_engine_) {
 			fontlib = font_engine_;
 		} else {
 			FontConfig* fontserv = FontConfig::instance();
 
-			fontlib = new FontEngine;
+			fontlib = new Freetype;
 			fontlib->open (fontserv->getBuffer(),
 					fontserv->getBufferSize());
 		}
@@ -136,13 +136,13 @@ namespace BIL {
 
 	bool Glyph::MakeDisplayList (void)
 	{
-		FontEngine* fontlib = NULL;
+		Freetype* fontlib = NULL;
 
 		// if _fonttype is not set, use default font
 		if (!font_engine_) {
 			FontConfig* fontserv = FontConfig::instance();
 
-			fontlib = new FontEngine;
+			fontlib = new Freetype;
 			fontlib->open(fontserv->getBuffer(),
 			        fontserv->getBufferSize());
 		} else {

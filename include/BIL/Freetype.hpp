@@ -19,8 +19,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_FONTTYPE_H_
-#define _BIL_FONTTYPE_H_
+#ifndef _BIL_FREETYPE_H_
+#define _BIL_FREETYPE_H_
 
 #include <string>
 
@@ -41,11 +41,11 @@ namespace BIL {
 	/**
 	 * @brief Wrapper of Freetype API
 	 */
-	class FontEngine
+	class Freetype
 	{
 	public:
 
-		FontEngine ();
+		Freetype ();
 
 		/**
 		 * @brief open a font family
@@ -83,7 +83,7 @@ namespace BIL {
 		 * @warning Do not delete gFontService before any FontType
 		 * object destructed
 		 */
-		virtual ~FontEngine ();
+		virtual ~Freetype ();
 
 		bool valid ()
 		{
@@ -224,4 +224,4 @@ namespace BIL {
 
 } /* namespace BIL */
 
-#endif /* _BIL_FONTTYPE_H_ */
+#endif /* _BIL_FREETYPE_H_ */

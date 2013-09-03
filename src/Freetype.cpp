@@ -21,14 +21,14 @@
 
 #include <iostream>
 
-#include <BIL/FontEngine.hpp>
+#include <BIL/Freetype.hpp>
 #include <BIL/FontConfig.hpp>
 
 using namespace std;
 
 namespace BIL {
 
-	FontEngine::FontEngine()
+	Freetype::Freetype()
 	: library_(0), face_(0), stroker_(NULL),
 	  valid_(false), unicode_(false), height_(0),
 	  ascender_(0), descender_(0), max_advance_(0),
@@ -37,7 +37,7 @@ namespace BIL {
 
 	}
 
-	bool FontEngine::open (const Font& font,
+	bool Freetype::open (const Font& font,
 						   unsigned int dpi)
 	{
 		// make sure close opened resources
@@ -82,7 +82,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool FontEngine::open (const std::string& filename,
+	bool Freetype::open (const std::string& filename,
 							unsigned int size,
 							unsigned int dpi)
 	{
@@ -129,7 +129,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool FontEngine::open (const FT_Byte* buffer,
+	bool Freetype::open (const FT_Byte* buffer,
 							FT_Long bufsize,
 							FT_Long index,
 							unsigned int size,
@@ -172,7 +172,7 @@ namespace BIL {
 		return true;
 	}
 
-	void FontEngine::close ()
+	void Freetype::close ()
 	{
 		if (stroker_) {
 			FT_Stroker_Done(stroker_);
@@ -193,13 +193,13 @@ namespace BIL {
 		unicode_ = false;
 	}
 
-	FontEngine::~FontEngine ()
+	Freetype::~Freetype ()
 	{
 		close();
 	}
 
 
-	bool FontEngine::isUseKerning (void)
+	bool Freetype::isUseKerning (void)
 	{
 		if(!valid_)
 			return false;
@@ -207,7 +207,7 @@ namespace BIL {
 		return FT_HAS_KERNING(face_);
 	}
 
-	bool FontEngine::loadGlyph (FT_UInt glyph_index, FT_Int32 load_flags)
+	bool Freetype::loadGlyph (FT_UInt glyph_index, FT_Int32 load_flags)
 	{
 		if (!valid_)
 			return false;
@@ -245,7 +245,7 @@ namespace BIL {
 	}
 	*/
 
-	bool FontEngine::setCharSize (unsigned int size, unsigned int dpi)
+	bool Freetype::setCharSize (unsigned int size, unsigned int dpi)
 	{
 		FT_Error error;
 
@@ -277,7 +277,7 @@ namespace BIL {
 		return true;
 	}
 
-	FT_UInt FontEngine::getCharIndex (const FT_ULong charcode)
+	FT_UInt Freetype::getCharIndex (const FT_ULong charcode)
 	{
 		if (!valid_)
 			return 0;
@@ -285,7 +285,7 @@ namespace BIL {
 		return (FT_Get_Char_Index(face_, charcode));
 	}
 
-	bool FontEngine::loadCharacter (FT_ULong charcode, FT_Int32 load_flags)
+	bool Freetype::loadCharacter (FT_ULong charcode, FT_Int32 load_flags)
 	{
 		if (!valid_)
 			return false;
@@ -301,7 +301,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool FontEngine::renderGlyph (FT_Render_Mode render_mode)
+	bool Freetype::renderGlyph (FT_Render_Mode render_mode)
 	{
 		if (!valid_)
 			return false;
@@ -317,7 +317,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool FontEngine::getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
+	bool Freetype::getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
 	        FT_UInt kern_mode, FT_Vector* akerning)
 	{
 		if ((!valid_) || (face_ == NULL))
@@ -334,7 +334,7 @@ namespace BIL {
 		return true;
 	}
 
-	Tuple2l FontEngine::getKerning (const Glyph& left, const Glyph& right,
+	Tuple2l Freetype::getKerning (const Glyph& left, const Glyph& right,
 	        FT_UInt kerning_mode)
 	{
 		Tuple2l ret;	// {0, 0}
@@ -358,7 +358,7 @@ namespace BIL {
 		return ret;
 	}
 
-	bool FontEngine::setLcdFilter (FT_LcdFilter filter)
+	bool Freetype::setLcdFilter (FT_LcdFilter filter)
 	{
 		if (!valid_)
 			return false;
@@ -375,7 +375,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool FontEngine::setLcdFilterWeights (unsigned char* weights)
+	bool Freetype::setLcdFilterWeights (unsigned char* weights)
 	{
 		if (!valid_)
 			return false;

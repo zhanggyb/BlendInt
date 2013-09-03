@@ -28,7 +28,7 @@
 
 #include <boost/array.hpp>
 
-#include <BIL/FontEngine.hpp>
+#include <BIL/Freetype.hpp>
 #include <BIL/Font.hpp>
 #include <BIL/Glyph.hpp>
 
@@ -136,7 +136,7 @@ namespace BIL {
 			return fontengine_->getKerning(left, right, kern_mode);
 		}
 
-		const FontEngine* fontengine (void) const
+		const Freetype* fontengine (void) const
 		{
 			return fontengine_;
 		}
@@ -172,7 +172,7 @@ namespace BIL {
 	private:
 		// member variables
 
-		FontEngine* fontengine_;
+		Freetype* fontengine_;
 
 		bool initialized_;
 

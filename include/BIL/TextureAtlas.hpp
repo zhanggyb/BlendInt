@@ -24,7 +24,7 @@
 
 #include <vector>
 #include <BIL/Vector.hpp>
-#include <BIL/FontEngine.hpp>
+#include <BIL/Freetype.hpp>
 
 namespace BIL {
 

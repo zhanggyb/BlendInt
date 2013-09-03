@@ -72,7 +72,7 @@ void TextureAtlasTest::show1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe;
+	Freetype fe;
 	fe.open(Font("Droid Sans"), 96);
 	//TextureAtlas atlas;
 	//atlas.load(fe.getFontFace(), 48);

@@ -42,7 +42,7 @@ using namespace std;
 
 namespace BIL {
 
-	class FontEngine;
+	class Freetype;
 
 	/**
 	 * @brief Store data, texture, display list for a glyph of an
@@ -87,7 +87,7 @@ namespace BIL {
 		 * @brief Constructor for generate a glyph data with default
 		 * font setting
 		 */
-		Glyph (wchar_t charcode, FontEngine* fontlib = NULL);
+		Glyph (wchar_t charcode, Freetype* fontlib = NULL);
 
 		/*
 		Glyph (wchar_t charcode, const Font& font, unsigned int dpi = 96,
@@ -101,9 +101,9 @@ namespace BIL {
 
 		void set_charcode (wchar_t charcode);
 
-		void set_font_engine (FontEngine* fontlib);
+		void set_font_engine (Freetype* fontlib);
 
-		const FontEngine* font_engine () const
+		const Freetype* font_engine () const
 		{
 			return font_engine_;
 		}
@@ -149,7 +149,7 @@ namespace BIL {
 
 		wchar_t charcode_;
 
-		FontEngine* font_engine_;
+		Freetype* font_engine_;
 
 		unsigned int glyph_index_;   // 0 means 'undefined character code'
 

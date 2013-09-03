@@ -146,7 +146,7 @@ namespace BIL {
 		for (int i = 0; i < 128; i++) {
 			ascii_db_[i] = NULL;
 		}
-		fontengine_ = new FontEngine;
+		fontengine_ = new Freetype;
 		fontengine_->open(font, dpi);
 	}
 

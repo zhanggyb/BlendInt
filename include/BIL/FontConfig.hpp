@@ -28,12 +28,12 @@
 
 #include <fontconfig/fontconfig.h>
 
-#include <BIL/FontEngine.hpp>
+#include <BIL/Freetype.hpp>
 #include <BIL/Font.hpp>
 
 using namespace std;
 
-typedef map<string, BIL::FontEngine*> FontList;
+typedef map<string, BIL::Freetype*> FontList;
 typedef FontList::const_iterator FontIter;
 
 namespace BIL {
@@ -128,7 +128,7 @@ namespace BIL {
 		// container for fonts
 		FontList _fonts;
 
-		map<string, FontEngine*> _namedb;
+		map<string, Freetype*> _namedb;
 
 		/** a buffer in memory for the default font file */
 		unsigned char* _defaultFontBuf;
