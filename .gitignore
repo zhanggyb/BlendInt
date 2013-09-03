@@ -20,6 +20,4 @@ test/Debug
 test/Release
 demo/glfw/Debug
 demo/glfw/Release
-demo/qt5/build-qt5_demo-Desktop-Debug
-demo/qt5/build-qt5_demo-Desktop-Release
-demo/qt5/qt5_demo/qt5_demo.pro.user
+demo/qt5/qt5_demo.pro.user
