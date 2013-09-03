@@ -45,27 +45,37 @@ namespace BIL {
 	{
 	public:
 
-		FontEngine (const Font& font = Font("Sans"),
+		FontEngine ();
+
+		/**
+		 * @brief open a font family
+		 * @param font
+		 * @param dpi
+		 * @return
+		 */
+		bool open (const Font& font = Font("Sans"),
 					unsigned int dpi = 96);
 
 		/**
-		 * @brief Constructor to create object from a font file
+		 * @brief open font file
 		 * @param filename File path name
 		 * @param size Font size
 		 */
-		FontEngine (const std::string& filename,
+		bool open (const std::string& filename,
 					unsigned int size = 9,
 					unsigned int dpi = 96);
 
 		/**
-		 * @brief Constructor to create object from memory
+		 * @brief open font from memory
 		 * @param buffer A pointer to the beginning of the font data in memory
 		 * @param bufsize The size of the memory chunk used by the font data
 		 * @param index The index of the face withing the font. Default is 0
 		 * @param size Font size
 		 */
-		FontEngine (const FT_Byte* buffer, FT_Long bufsize, FT_Long index = 0,
+		bool open (const FT_Byte* buffer, FT_Long bufsize, FT_Long index = 0,
 				unsigned int size = 9, unsigned int dpi = 96);
+
+		void close ();
 
 		/**
 		 * @brief destructor

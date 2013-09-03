@@ -22,6 +22,8 @@
 #ifndef _BIL_TEXTUREATLAS_HPP_
 #define _BIL_TEXTUREATLAS_HPP_
 
+#include <vector>
+#include <BIL/Vector.hpp>
 #include <BIL/FontEngine.hpp>
 
 namespace BIL {
@@ -34,40 +36,49 @@ namespace BIL {
 	{
 	public:
 
-		struct CharacterInfo
-		{
-			float advance_x;			// advance.x
-			float advance_y;			// advance.y
-			
-			float bitmap_width;
-			float bitmap_height;
-
-			float bitmap_left;
-			float bitmap_top;
-
-			float offset_x;		// x offset of glyph in texture coordinates
-			float offset_y;		// y offset of glyph in texture coordinates
-		};
-
-		TextureAtlas ();
+		TextureAtlas (const size_t width, const size_t height,
+		        const size_t depth);
 
 		~TextureAtlas ();
 
-		void load (FT_Face face, int height);
+		void setRegion (const size_t x, const size_t y, const size_t width,
+		        const size_t height, const unsigned char * data,
+		        const size_t stride);
+
+		Rect getRegion (const size_t width, const size_t height);
+
+		/**
+		 * Upload to video memory
+		 */
+		void upload ();
 
 	private:
-		
+
+		int fit (const size_t index, const size_t width, const size_t height);
+
+		void merge ();
+
+		/**
+		 * Texture ID
+		 */
 		GLuint texture_;		// texture object
 
-		int width_;				// width of texture in pixels
-		int height_;			// height of texture in pixels
+		size_t width_;				// width of texture in pixels
+		size_t height_;			// height of texture in pixels
 
-		CharacterInfo charcode_[128]; // character information
+		/**
+		 * Depth (in bytes) of the underlying texture
+		 */
+		size_t depth_;
 
-		GLint texture_uniform_;
+		/**
+		 * Atlas data
+		 */
+		unsigned char * data_;
+
+		std::vector<Vector3i> nodes_;
 	};
 
 }
-
 
 #endif /* _BIL_TEXTUREATLAS_HPP_ */

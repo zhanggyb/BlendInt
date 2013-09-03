@@ -28,13 +28,21 @@ using namespace std;
 
 namespace BIL {
 
-	FontEngine::FontEngine(const Font& font,
-						   unsigned int dpi)
-		: library_(NULL), face_(NULL), stroker_(NULL),
-		  valid_(false), unicode_(false), height_(0),
-		  ascender_(0), descender_(0), max_advance_(0),
-		  font_(font), dpi_(dpi)
+	FontEngine::FontEngine()
+	: library_(0), face_(0), stroker_(NULL),
+	  valid_(false), unicode_(false), height_(0),
+	  ascender_(0), descender_(0), max_advance_(0),
+	  dpi_(96)
 	{
+
+	}
+
+	bool FontEngine::open (const Font& font,
+						   unsigned int dpi)
+	{
+		// make sure close opened resources
+		close();
+
 		FT_Error error;
 
 		FontConfig* fontconfig = FontConfig::instance();
@@ -44,24 +52,19 @@ namespace BIL {
 		error = FT_Init_FreeType(&library_);
 		if (error) {
 			cerr << "Could not initialize FreeType library" << endl;
-			return;
+			return false;
 		}
 
 		error = FT_New_Face(library_, filename.c_str(), 0, &face_);
 		if (error == FT_Err_Unknown_File_Format) {
 			cerr << "Unknown font file format: " << filename << endl;
-			return;
+			close();
+			return false;
 		}
 		if (error) {
 			cerr << "Fail to generate a new Font Face from: " << filename << endl;
-			return;
-		}
-
-		error = FT_Stroker_New(library_, &stroker_);
-
-		if (error) {
-			cerr << "Fail to load Stroker" << endl;
-			return;
+			close ();
+			return false;
 		}
 
 		valid_ = true;          // now treat it success
@@ -75,45 +78,42 @@ namespace BIL {
 		}
 
 		setCharSize(font.size, dpi);
+
+		return true;
 	}
 
-	FontEngine::FontEngine (const std::string& filename,
+	bool FontEngine::open (const std::string& filename,
 							unsigned int size,
 							unsigned int dpi)
-		: library_(NULL), face_(NULL), stroker_(NULL),
-		  valid_(false), unicode_(false), height_(0),
-		  ascender_(0), descender_(0), max_advance_(0),
-		  dpi_(dpi)
 	{
+		// make sure close opened resources
+		close();
+
 		FT_Error error;
 
 		error = FT_Init_FreeType(&library_);
 		if (error) {
 			cerr << "Cannot initialize FreeType library" << endl;
-			return;
+			close ();
+			return false;
 		}
 
 		error = FT_New_Face(library_, filename.c_str(), 0, &face_);
 		if (error == FT_Err_Unknown_File_Format) {
 			cerr << "Unknown font file format: " << " " << filename << endl;
-			return;
+			close ();
+			return false;
 		}
 		if (error) {
 			cerr << "Fail to generate a new Font Face" << endl;
-			return;
+			close ();
+			return false;
 		}
 
 		font_.family = face_->family_name;
 		font_.size = size;
 		font_.italic = (face_->style_flags & FT_STYLE_FLAG_ITALIC) ? true : false;
 		font_.bold = (face_->style_flags & FT_STYLE_FLAG_BOLD) ? true : false;
-
-		error = FT_Stroker_New(library_, &stroker_);
-
-		if (error) {
-			cerr << "Fail to load Stroker" << endl;
-			return;
-		}
 
 		valid_ = true;          // now treat it success
 
@@ -126,43 +126,38 @@ namespace BIL {
 		}
 
 		setCharSize(size, dpi);
+		return true;
 	}
 
-	FontEngine::FontEngine (const FT_Byte* buffer,
+	bool FontEngine::open (const FT_Byte* buffer,
 							FT_Long bufsize,
 							FT_Long index,
 							unsigned int size,
 							unsigned int dpi)
-		: library_(NULL), face_(NULL), stroker_(NULL),
-		  valid_(false), unicode_(false), height_(0),
-		  ascender_(0), descender_(0), max_advance_(0),
-		  dpi_(dpi)
 	{
+		// make sure close opened resources
+		close();
+
 		FT_Error error;
 
 		error = FT_Init_FreeType(&library_);
 		if (error) {
 			cerr << "Cannot initialize FreeType library" << endl;
-			return;
+			close ();
+			return false;
 		}
 
 		error = FT_New_Memory_Face(library_, buffer, bufsize, index, &face_);
 		if (error) {
 			cerr << "Fail to generate a new Font Face from memory" << endl;
-			return;
+			close ();
+			return false;
 		}
 
 		font_.family = face_->family_name;
 		font_.size = size;
 		font_.italic = (face_->style_flags & FT_STYLE_FLAG_ITALIC) ? true : false;
 		font_.bold = (face_->style_flags & FT_STYLE_FLAG_BOLD) ? true : false;
-
-		error = FT_Stroker_New(library_, &stroker_);
-
-		if (error) {
-			cerr << "Fail to load Stroker" << endl;
-			return;
-		}
 
 		valid_ = true;          // now treat it success
 
@@ -174,24 +169,33 @@ namespace BIL {
 		}
 		
 		setCharSize(size, dpi);
+		return true;
+	}
+
+	void FontEngine::close ()
+	{
+		if (stroker_) {
+			FT_Stroker_Done(stroker_);
+			stroker_ = 0;
+		}
+
+		if (face_) {
+			FT_Done_Face(face_);
+			face_ = 0;
+		}
+
+		if (library_) {
+			FT_Done_FreeType(library_);
+			library_ = 0;
+		}
+
+		valid_ = false;
+		unicode_ = false;
 	}
 
 	FontEngine::~FontEngine ()
 	{
-		if (stroker_ != NULL) {
-			FT_Stroker_Done(stroker_);
-			stroker_ = NULL;
-		}
-
-		if (face_ != NULL) {
-			FT_Done_Face(face_);
-			face_ = NULL;
-		}
-
-		if (library_ != NULL) {
-			FT_Done_FreeType(library_);
-			library_ = NULL;
-		}
+		close();
 	}
 
 

@@ -71,7 +71,8 @@ void GlyphTest::create1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe(Font("Sans", 24), 96);
+	FontEngine fe;
+	fe.open(Font("Sans", 24), 96);
 	Glyph glyph (L'A', &fe);
 	cout << endl;
 	cout << "Metrics of a: width: " << glyph.metrics().width << " "
@@ -118,6 +119,7 @@ void GlyphTest::create1 ()
 		glfwPollEvents();
 	}
 
+	fe.close();
 	/* release BIL */
 	Interface::release();
 
@@ -163,7 +165,8 @@ void GlyphTest::printtext1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe(Font("Sans", 12), 96);
+	FontEngine fe;
+	fe.open(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'B', &fe);
 	Glyph c(L'C', &fe);
@@ -218,6 +221,7 @@ void GlyphTest::printtext1 ()
 		glfwPollEvents();
 	}
 
+	fe.close();
 	/* release BIL */
 	Interface::release();
 
@@ -258,7 +262,8 @@ void GlyphTest::printtext2 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe (Font("Sans", 12), 96);
+	FontEngine fe;
+	fe.open(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'b', &fe);
 	Glyph c(L'仁', &fe);
@@ -313,6 +318,8 @@ void GlyphTest::printtext2 ()
 		glfwPollEvents();
 	}
 
+	fe.open();
+
 	/* release BIL */
 	Interface::release();
 
@@ -353,7 +360,8 @@ void GlyphTest::printtext3 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe(Font("Sans", 16), 96);
+	FontEngine fe;
+	fe.open(Font("Sans", 16), 96);
 	Glyph a(L'a', &fe);
 	Glyph b(L'b', &fe);
 	Glyph c(L'c', &fe);
@@ -420,6 +428,7 @@ void GlyphTest::printtext3 ()
 		glfwPollEvents();
 	}
 
+	fe.close();
 	/* release BIL */
 	Interface::release();
 
@@ -460,7 +469,8 @@ void GlyphTest::printtext4 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine font (FontConfig::instance()->getBuffer(),
+	FontEngine font;
+	font.open(FontConfig::instance()->getBuffer(),
 			FontConfig::instance()->getBufferSize());
 
 	Glyph a(L'p', &font);
@@ -529,6 +539,7 @@ void GlyphTest::printtext4 ()
 		glfwPollEvents();
 	}
 
+	font.close();
 	/* release BIL */
 	Interface::release();
 
@@ -569,12 +580,14 @@ void GlyphTest::checkbox1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe (Font("Sans", 12), 96);
+	FontEngine fe;
+	fe.open(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'a', &fe);
 
 	FontConfig* fontserv = FontConfig::instance();
-	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
+	FontEngine font;
+	font.open(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	Rect cbox = a.OutlineBox();
 	cout << endl;
@@ -625,6 +638,7 @@ void GlyphTest::checkbox1 ()
 		glfwPollEvents();
 	}
 
+	font.close();
 	/* release BIL */
 	Interface::release();
 
@@ -666,7 +680,8 @@ void GlyphTest::checkkerning1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe(Font("Sans", 12), 96);
+	FontEngine fe;
+	fe.open(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'b', &fe);
 	Glyph c(L'仁',  &fe);
@@ -675,7 +690,8 @@ void GlyphTest::checkkerning1 ()
 	Glyph f(L'f', &fe);
 
 	FontConfig* fontserv = FontConfig::instance();
-	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
+	FontEngine font;
+	font.open(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	Tuple2l kerning;
 
@@ -738,6 +754,8 @@ void GlyphTest::checkkerning1 ()
 		glfwPollEvents();
 	}
 
+	fe.close();
+	font.close();
 	/* release BIL */
 	Interface::release();
 
@@ -778,7 +796,8 @@ void GlyphTest::checkoutline1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontEngine fe(Font("Sans", 12), 96);
+	FontEngine fe;
+	fe.open(Font("Sans", 12), 96);
 	Glyph a(L'A', &fe);
 	Glyph b(L'b', &fe);
 	Glyph c(L'仁',  &fe);
@@ -787,7 +806,8 @@ void GlyphTest::checkoutline1 ()
 	Glyph f(L'f', &fe);
 
 	FontConfig* fontserv = FontConfig::instance();
-	FontEngine font(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
+	FontEngine font;
+	font.open(fontserv->getBuffer(), fontserv->getBufferSize(), 0, 12);
 
 	cout << endl;
 	Rect cbox = a.OutlineBox();
@@ -885,6 +905,8 @@ void GlyphTest::checkoutline1 ()
 		glfwPollEvents();
 	}
 
+	fe.close();
+	font.close();
 	/* release BIL */
 	Interface::release();
 

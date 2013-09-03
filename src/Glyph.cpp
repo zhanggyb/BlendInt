@@ -80,7 +80,8 @@ namespace BIL {
 		} else {
 			FontConfig* fontserv = FontConfig::instance();
 
-			fontlib = new FontEngine(fontserv->getBuffer(),
+			fontlib = new FontEngine;
+			fontlib->open (fontserv->getBuffer(),
 					fontserv->getBufferSize());
 		}
 
@@ -141,7 +142,8 @@ namespace BIL {
 		if (!font_engine_) {
 			FontConfig* fontserv = FontConfig::instance();
 
-			fontlib = new FontEngine(fontserv->getBuffer(),
+			fontlib = new FontEngine;
+			fontlib->open(fontserv->getBuffer(),
 			        fontserv->getBufferSize());
 		} else {
 			fontlib = font_engine_;
