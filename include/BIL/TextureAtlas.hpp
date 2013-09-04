@@ -45,7 +45,7 @@ namespace BIL {
 			float bitmap_height;
 
 			float bitmap_left;
-			float bitmap_right;
+			float bitmap_top;
 
 			float texture_coord_offset_x;
 			float texture_coord_offset_y;

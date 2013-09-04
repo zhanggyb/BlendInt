@@ -64,7 +64,7 @@ namespace BIL {
 
 		/* Find minimum size for a texture holding all visible ASCII characters */
 		for (int i = 32; i < 128; i++) {
-			if (freetype.loadCharacter(i, FT_LOAD_RENDER)) {
+			if (!freetype.loadCharacter(i, FT_LOAD_RENDER)) {
 				fprintf(stderr, "Loading character %c failed!\n", i);
 				continue;
 			}
@@ -107,7 +107,7 @@ namespace BIL {
 		rowh = 0;
 
 		for (int i = 32; i < 128; i++) {
-			if (freetype.loadCharacter(i, FT_LOAD_RENDER)) {
+			if (!freetype.loadCharacter(i, FT_LOAD_RENDER)) {
 				fprintf(stderr, "Loading character %c failed!\n", i);
 				continue;
 			}
@@ -126,7 +126,7 @@ namespace BIL {
 			c_[i].bitmap_height = g->bitmap.rows;
 
 			c_[i].bitmap_left = g->bitmap_left;
-			c_[i].bitmap_right = g->bitmap_top;
+			c_[i].bitmap_top = g->bitmap_top;
 
 			c_[i].texture_coord_offset_x = ox / (float)width_;
 			c_[i].texture_coord_offset_y = oy / (float)height_;
