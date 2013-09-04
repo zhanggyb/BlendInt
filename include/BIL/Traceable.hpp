@@ -53,9 +53,10 @@ namespace BIL {
 	 */
 	class Traceable
 	{
-		DISALLOW_COPY_AND_ASSIGN(Traceable);
+	DISALLOW_COPY_AND_ASSIGN(Traceable);
 
-	public:	// static
+	public:
+		// static
 
 		static Traceable* find (uint64_t id);
 
@@ -69,12 +70,12 @@ namespace BIL {
 			return obj_map;
 		}
 
-		static const list<Traceable*>& getList ()
+		static const list<Traceable*>& getSolos ()
 		{
 			return solos;
 		}
 
-		static void clearSoloList ();
+		static void clearSolos ();
 
 #ifdef DEBUG
 		static void reset ()
@@ -127,7 +128,8 @@ namespace BIL {
 			return children_;
 		}
 
-	protected:	// member functions
+	protected:
+		// member functions
 
 		bool removeChild (Traceable* child, bool registersolo = true);
 
@@ -149,13 +151,15 @@ namespace BIL {
 
 		inline bool unregisterObject ();
 
-	private:	// member variables
+	private:
+		// member variables
 
 		uint64_t id_; /** A unique ID for object */
 
 		Traceable* parent_; /** parent object */
 
-	private:	// static member variables
+	private:
+		// static member variables
 
 		static uint64_t id_last;
 

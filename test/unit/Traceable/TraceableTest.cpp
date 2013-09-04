@@ -25,11 +25,11 @@ TraceableTest::~TraceableTest ()
 void TraceableTest::setUp ()
 {
 	int mapsize = Traceable::mapSize();
-	int listsize = Traceable::getList().size();
+    int listsize = Traceable::getSolos().size();
 
 	if(listsize > 0) {
 		list<Traceable*>::const_iterator it;
-		for (it = Traceable::getList().begin(); it != Traceable::getList().end(); it++)
+        for (it = Traceable::getSolos().begin(); it != Traceable::getSolos().end(); it++)
 		{
 			cout << "id: " << (*it)->id() << " was not deleted!" << endl;
 		}
@@ -41,7 +41,7 @@ void TraceableTest::setUp ()
 void TraceableTest::tearDown ()
 {
 	int mapsize = Traceable::mapSize();
-	int listsize = Traceable::getList().size();
+    int listsize = Traceable::getSolos().size();
 
 	if(mapsize > 0) {
 		map<uint64_t, Traceable*>::const_iterator it;
@@ -53,7 +53,7 @@ void TraceableTest::tearDown ()
 
 	if(listsize > 0) {
 		list<Traceable*>::const_iterator it;
-		for (it = Traceable::getList().begin(); it != Traceable::getList().end(); it++)
+        for (it = Traceable::getSolos().begin(); it != Traceable::getSolos().end(); it++)
 		{
 			cout << "id: " << (*it)->id() << " was not deleted!" << endl;
 		}
@@ -70,7 +70,7 @@ void TraceableTest::checksolo1 ()
 
 	Traceable obj;	// id == 1
 
-	int solosize = Traceable::getList().size();
+    int solosize = Traceable::getSolos().size();
 
 	uint64_t id = obj.id();
 
@@ -94,7 +94,7 @@ void TraceableTest::checksolo2 ()
 	delete obj;
 	obj = NULL;
 
-	CPPUNIT_ASSERT(Traceable::getList().size() == 0);
+    CPPUNIT_ASSERT(Traceable::getSolos().size() == 0);
 }
 
 void TraceableTest::checkparent1 ()
@@ -106,17 +106,17 @@ void TraceableTest::checkparent1 ()
 	Traceable* parent = new Traceable;	// id == 1
 	Traceable* child = new Traceable(parent);	// id == 2
 
-	int sizebefore = Traceable::getList().size(); // 1
+    int sizebefore = Traceable::getSolos().size(); // 1
 
 	child->setParent(NULL);
 
-	int sizeafter = Traceable::getList().size();	// 2
+    int sizeafter = Traceable::getSolos().size();	// 2
 
 	delete child; delete parent;
 
 	cout << endl << "map size: "<< Traceable::mapSize() << endl;
 
-	cout << "solo list size: " << Traceable::getList().size() << endl;
+    cout << "solo list size: " << Traceable::getSolos().size() << endl;
 
   CPPUNIT_ASSERT(sizebefore == 1 && sizeafter == 2);
 }
@@ -130,19 +130,19 @@ void TraceableTest::checkparent2 ()
 	Traceable* parent = new Traceable;	// id == 1
 	Traceable* child = new Traceable(parent);	// id == 2
 
-	int sizebefore = Traceable::getList().size(); // 1
+    int sizebefore = Traceable::getSolos().size(); // 1
 
 	int mapsize = Traceable::mapSize();	// 2
 
 	child->setParent(NULL);
 
-	int sizeafter = Traceable::getList().size();	// 2
+    int sizeafter = Traceable::getSolos().size();	// 2
 
 	delete child; delete parent;
 
 	cout << endl << "map size: "<< Traceable::mapSize() << endl;
 
-	cout << "solo list size: " << Traceable::getList().size() << endl;
+    cout << "solo list size: " << Traceable::getSolos().size() << endl;
 
   CPPUNIT_ASSERT(sizebefore == 1 && sizeafter == 2 && mapsize == 2);
 }
@@ -157,7 +157,7 @@ void TraceableTest::checkparent3 ()
 	Traceable* child1 = new Traceable(parent);	// id == 2
 	Traceable* child2 = new Traceable(parent);	// id == 3
 
-	int sizebefore = Traceable::getList().size(); // 1
+    int sizebefore = Traceable::getSolos().size(); // 1
 
 	int mapsize = Traceable::mapSize();	// 3
 
@@ -165,13 +165,13 @@ void TraceableTest::checkparent3 ()
 	child2->setParent(NULL);
 	child1->setParent(parent);
 
-	int sizeafter = Traceable::getList().size();	// 2
+    int sizeafter = Traceable::getSolos().size();	// 2
 
 	delete child1; delete parent; delete child2;
 
 	cout << endl << "map size: "<< Traceable::mapSize() << endl;
 
-	cout << "solo list size: " << Traceable::getList().size() << endl;
+    cout << "solo list size: " << Traceable::getSolos().size() << endl;
 
   CPPUNIT_ASSERT(sizebefore == 1 && sizeafter == 2 && mapsize == 3);
 }
@@ -194,7 +194,7 @@ void TraceableTest::checkparent4 (void)
 	int mapsize = Traceable::mapSize();
 	cout << endl << "map size: "<< mapsize << endl;
 
-	int solosize = Traceable::getList().size();
+    int solosize = Traceable::getSolos().size();
 	cout << "solo list size: " << solosize << endl;
 
 	CPPUNIT_ASSERT (mapsize == 0 && solosize == 0);
@@ -216,7 +216,7 @@ void TraceableTest::checkparent5 (void)
 	delete obj1;
 
 	int mapsize = Traceable::mapSize();
-	int solosize = Traceable::getList().size();
+    int solosize = Traceable::getSolos().size();
 
 	cout << endl << "map size: "<< mapsize << endl;
 	cout << "solo list size: " << solosize << endl;
@@ -240,7 +240,7 @@ void TraceableTest::checkparent6 (void)
 	delete obj1;
 
 	int mapsize = Traceable::mapSize();
-	int solosize = Traceable::getList().size();
+    int solosize = Traceable::getSolos().size();
 
 	cout << endl << "map size: "<< mapsize << endl;
 	cout << "solo list size: " << solosize << endl;
@@ -272,7 +272,7 @@ void TraceableTest::checkparent7 (void)
 	delete obj1;
 
 	int mapsize = Traceable::mapSize();
-	int solosize = Traceable::getList().size();
+    int solosize = Traceable::getSolos().size();
 
 	cout << endl << "map size: "<< mapsize << endl;
 	cout << "solo list size: " << solosize << endl;
@@ -305,13 +305,13 @@ void TraceableTest::checkparent8 (void)
 	delete obj1;	// now only 4 objects
 
 	int mapsize = Traceable::mapSize();
-	int solosize = Traceable::getList().size();
+    int solosize = Traceable::getSolos().size();
 
 	cout << endl << "map size: "<< mapsize << endl;
 	cout << "solo list size: " << solosize << endl;
 
 	list<Traceable*>::const_iterator it;
-	for (it = Traceable::getList().begin(); it != Traceable::getList().end(); it++) {
+    for (it = Traceable::getSolos().begin(); it != Traceable::getSolos().end(); it++) {
 		cout << (*it)->id() << endl;
 	}
 
@@ -326,7 +326,7 @@ void TraceableTest::checkparent8 (void)
 	delete obj4;
 
 	mapsize = Traceable::mapSize();
-	solosize = Traceable::getList().size();
+    solosize = Traceable::getSolos().size();
 
 		cout << endl << "map size: "<< mapsize << endl;
 		cout << "solo list size: " << solosize << endl;
@@ -363,12 +363,12 @@ void TraceableTest::checkparent9 (void)
 	obj8.setParent(&obj7);
 
 	int mapsize = Traceable::mapSize();
-	int solosize = Traceable::getList().size();
+    int solosize = Traceable::getSolos().size();
 
 	cout << endl << "map size: "<< mapsize << endl; // 8
 	cout << "solo list size: " << solosize << endl; // 2
 
-	const list<Traceable*>& tlist = Traceable::getList();
+    const list<Traceable*>& tlist = Traceable::getSolos();
 	list<Traceable*>::const_iterator it;
 	for (it = tlist.begin(); it != tlist.end(); it++) {
 		cout << (*it)->id() << endl;
@@ -385,7 +385,7 @@ void TraceableTest::checkparent9 (void)
 	delete obj4; delete obj1;
 
 	mapsize = Traceable::mapSize();
-	solosize = Traceable::getList().size();
+    solosize = Traceable::getSolos().size();
 
 	cout << endl << "map size: "<< mapsize << endl; // 2
 	cout << "solo list size: " << solosize << endl; // 1
@@ -415,7 +415,7 @@ void TraceableTest::checkparent10 ()
 	root.addChild(obj[0]);
 
 	int mapsize = Traceable::mapSize();
-	int solosize = Traceable::getList().size();
+    int solosize = Traceable::getSolos().size();
 
 	cout << endl << "map size: "<< mapsize << endl; // 8
 	cout << "solo list size: " << solosize << endl; // 2
@@ -433,11 +433,11 @@ void TraceableTest::solotest1 ()
 
 	cout << endl;
 	list<Traceable*>::const_iterator it;
-	for(it = Traceable::getList().begin(); it!= Traceable::getList().end(); it++)
+    for(it = Traceable::getSolos().begin(); it!= Traceable::getSolos().end(); it++)
 	{
 		std::cout << (*it)->id() << std::endl;
 	}
-	count = Traceable::getList().size();
+    count = Traceable::getSolos().size();
 
 	CPPUNIT_ASSERT(count == 4);
 }
@@ -453,19 +453,19 @@ void TraceableTest::solotest2 ()
 
 	cout << endl;
 	list<Traceable*>::const_iterator it;
-	for(it = Traceable::getList().begin(); it!= Traceable::getList().end(); it++)
+    for(it = Traceable::getSolos().begin(); it!= Traceable::getSolos().end(); it++)
 	{
 		std::cout << (*it)->id() << std::endl;
 	}
-	count = Traceable::getList().size();
+    count = Traceable::getSolos().size();
 	cout << "count: " << count << endl;
 
 	delete c; delete d;
 
-	countb = Traceable::getList().size();
+    countb = Traceable::getSolos().size();
 	cout << "countb: " << countb << endl;
 
-	for(it = Traceable::getList().begin(); it!= Traceable::getList().end(); it++)
+    for(it = Traceable::getSolos().begin(); it!= Traceable::getSolos().end(); it++)
 	{
 		std::cout << (*it)->id() << std::endl;
 	}

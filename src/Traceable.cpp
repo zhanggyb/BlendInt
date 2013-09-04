@@ -51,7 +51,7 @@ namespace BIL {
 		registerObject();
 		id_last++;
 
-		if (parent_ != NULL) {
+		if (parent_) {
 			(parent_->children_).push_back(this);
 		} else {
 			solos.push_back(this);
@@ -75,11 +75,11 @@ namespace BIL {
 		if (parent_) {
 			// _parent->removeChild(this);	// Be careful of this line
 			// parent_->children_.erase(this);
-			parent_->children_.remove (this);
+			parent_->children_.remove(this);
 		} else {
 			list<Traceable*>::iterator it;
 			it = std::find(solos.begin(), solos.end(), this);
-			if(it != solos.end()) {
+			if (it != solos.end()) {
 				solos.remove(this);
 			}
 		}
@@ -110,28 +110,26 @@ namespace BIL {
 
 	bool Traceable::setParent (Traceable* parent)
 	{
-		if (parent_ == parent) return true;
-
-		if (parent_ == NULL) {
-			if (parent == NULL) {
+		if (!parent_) {
+			if (!parent) {
 				return true;
 			}
 
 			list<Traceable*>::iterator it;
 			it = std::find(solos.begin(), solos.end(), this);
-			if(it != solos.end()) {
+			if (it != solos.end()) {
 				solos.remove(this);
 			}
 		} else {
 			parent_->removeChild(this, false);
 		}
 
-		if (parent != NULL) {
+		if (parent) {
 			parent_ = parent;
 			// return (_parent->addChild(this));
 			parent_->children_.push_back(this);
 		} else {
-			parent_ = NULL;
+			parent_ = 0;
 			solos.push_back(this);
 		}
 
@@ -140,7 +138,7 @@ namespace BIL {
 
 	bool Traceable::addChild (Traceable* child)
 	{
-		if (child == NULL)
+		if (!child)
 			return false;
 
 		if (child->parent_ == this)
@@ -151,7 +149,7 @@ namespace BIL {
 		} else {
 			list<Traceable*>::iterator it;
 			it = std::find(solos.begin(), solos.end(), child);
-			if(it != solos.end()) {
+			if (it != solos.end()) {
 				solos.remove(child);
 			}
 		}
@@ -164,41 +162,41 @@ namespace BIL {
 
 	bool Traceable::removeChild (Traceable* child, bool registersolo)
 	{
-		if(child->parent_ != this) return false;
+		if (child->parent_ != this)
+			return false;
 
-		if (child == NULL)
+		if (!child)
 			return false;
 
 		//children_.erase(child);
 		//child->setParent(NULL);
 		children_.remove(child);
-		child->parent_ = NULL;
-		if(registersolo) {
+		child->parent_ = 0;
+		if (registersolo) {
 			solos.push_back(child);
 		}
 
 		return true;
 	}
 
-
 	void Traceable::deleteChildren ()
 	{
-		Traceable* item = NULL;
+		Traceable* item = 0;
 
 		while (children_.size() > 0) {
 			item = children_.back();
 			children_.pop_back();
-			if (item != NULL) delete item;
+			if (item)
+				delete item;
 		}
 
 		children_.clear();
 	}
 
-	void Traceable::clearSoloList ()
+	void Traceable::clearSolos ()
 	{
 		list<Traceable*>::reverse_iterator it;
-		for (it = solos.rbegin(); it != solos.rend(); it++)
-		{
+		for (it = solos.rbegin(); it != solos.rend(); it++) {
 			delete *it;
 		}
 		solos.clear();

@@ -22,7 +22,7 @@
 #ifndef _BIL_PROGRAM_HPP_
 #define _BIL_PROGRAM_HPP_
 
-#include <GL/glew.h>
+#include <GL/gl.h>
 
 #include <vector>
 

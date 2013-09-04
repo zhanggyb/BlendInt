@@ -58,7 +58,7 @@ namespace BIL {
 			return false;
 		}
 
-		if(!GLEW_VERSION_2_0) {
+		if (!GLEW_VERSION_2_0) {
 			std::cerr << "No support for OpenGL 2.0 found" << std::endl;
 			return false;
 		}
@@ -92,9 +92,9 @@ namespace BIL {
 
 	void Interface::release ()
 	{
-		FontConfig::release();
-		FontCache::releaseAll();
 		Theme::release();
+		FontCache::releaseAll();
+		FontConfig::release();
 
 		if (interface) {
 			delete interface;
@@ -145,11 +145,12 @@ namespace BIL {
 
 		Drawable *item = NULL;
 		list<Traceable*>::const_iterator j;
-		for (j = Traceable::getList().begin(); j != Traceable::getList().end();
-		        j++) {
+		for (j = Traceable::getSolos().begin();
+		        j != Traceable::getSolos().end(); j++) {
 			item = dynamic_cast<Drawable*>(*j);
-			if (item)
+			if (item) {
 				render(item);
+			}
 		}
 
 		glDisable(GL_BLEND);
@@ -235,7 +236,8 @@ namespace BIL {
 
 			list<Traceable*>::const_reverse_iterator it;
 			Drawable *item = NULL;
-			for (it = Traceable::getList().rbegin(); it != Traceable::getList().rend(); it++) {
+			for (it = Traceable::getSolos().rbegin();
+			        it != Traceable::getSolos().rend(); it++) {
 				item = dynamic_cast<Drawable*>(*it);
 				if (item == NULL)
 					continue;
@@ -261,7 +263,8 @@ namespace BIL {
 
 			list<Traceable*>::const_reverse_iterator it;
 			Drawable *item = NULL;
-			for (it = Traceable::getList().rbegin(); it != Traceable::getList().rend(); it++) {
+			for (it = Traceable::getSolos().rbegin();
+			        it != Traceable::getSolos().rend(); it++) {
 				item = dynamic_cast<Drawable*>(*it);
 				if (item == NULL)
 					continue;
@@ -329,7 +332,8 @@ namespace BIL {
 		Drawable *item = NULL;
 		float local_x;
 		float local_y;
-		for (it = Traceable::getList().rbegin(); it != Traceable::getList().rend(); it++) {
+		for (it = Traceable::getSolos().rbegin();
+		        it != Traceable::getSolos().rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item == NULL)
 				continue;
@@ -369,7 +373,8 @@ namespace BIL {
 		float local_x;
 		float local_y;
 
-		for (it = Traceable::getList().rbegin(); it != Traceable::getList().rend(); it++) {
+		for (it = Traceable::getSolos().rbegin();
+		        it != Traceable::getSolos().rend(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item != NULL) {
 				local_x = cursor_pos_x_ - (item->pos().x());

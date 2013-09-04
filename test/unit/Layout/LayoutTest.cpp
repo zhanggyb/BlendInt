@@ -37,11 +37,11 @@ LayoutTest::~LayoutTest ()
 void LayoutTest::setUp ()
 {
 	int mapsize = Traceable::mapSize();
-	int listsize = Traceable::getList().size();
+    int listsize = Traceable::getSolos().size();
 
 	if(listsize > 0) {
 		list<Traceable*>::const_iterator it;
-		for (it = Traceable::getList().begin(); it != Traceable::getList().end(); it++)
+        for (it = Traceable::getSolos().begin(); it != Traceable::getSolos().end(); it++)
 		{
 			cout << "id: " << (*it)->id() << " was not deleted!" << endl;
 		}
@@ -53,7 +53,7 @@ void LayoutTest::setUp ()
 void LayoutTest::tearDown ()
 {
 	int mapsize = Traceable::mapSize();
-	int listsize = Traceable::getList().size();
+    int listsize = Traceable::getSolos().size();
 
 	if(mapsize > 0) {
 		map<uint64_t, Traceable*>::const_iterator it;
@@ -65,7 +65,7 @@ void LayoutTest::tearDown ()
 
 	if(listsize > 0) {
 		list<Traceable*>::const_iterator it;
-		for (it = Traceable::getList().begin(); it != Traceable::getList().end(); it++)
+        for (it = Traceable::getSolos().begin(); it != Traceable::getSolos().end(); it++)
 		{
 			cout << "id: " << (*it)->id() << " was not deleted!" << endl;
 		}
