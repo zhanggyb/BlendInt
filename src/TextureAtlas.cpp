@@ -26,209 +26,115 @@
 #include <assert.h>
 
 #include <BIL/TextureAtlas.hpp>
+#include <BIL/Freetype.hpp>
 
 // Maximum texture width
 #define MAXWIDTH 1024
 
 namespace BIL {
 
-	TextureAtlas::TextureAtlas (const size_t width, const size_t height,
-	        const size_t depth)
-			: texture_(0), width_(width), height_(height), depth_(depth), data_(
-			        0)
+	TextureAtlas::TextureAtlas (const std::string& filename)
+			: texture_(0), width_(0), height_(0), filename_(filename)
 	{
-		data_ = (unsigned char *) calloc(width_ * height_ * depth_,
-		        sizeof(unsigned char));
-
-		nodes_.push_back(Vector3i(1, 1, width - 2));
-
-		if (!data_) {
-			fprintf(stderr, "line %d: No more memory for allocating data\n",
-			__LINE__);
-			exit(EXIT_FAILURE);
-		}
+		 memset(c_, 0, sizeof c_);
 	}
 
 	TextureAtlas::~TextureAtlas ()
 	{
-		if (data_) {
-			free(data_);
-		}
-		if (glIsTexture(texture_)) {
+		if(glIsTexture(texture_)) {
 			glDeleteTextures(1, &texture_);
 		}
-
-		nodes_.clear();
 	}
 
-	void TextureAtlas::setRegion (const size_t x, const size_t y,
-	        const size_t width, const size_t height, const unsigned char * data,
-	        const size_t stride)
+	void TextureAtlas::generate ()
 	{
-		size_t i;
-		size_t depth;
-		size_t charsize;
+		Freetype freetype;
+		freetype.open(filename_, 9, 96);
+		if(!freetype.valid()) return;
 
-		assert(x > 0);
-		assert(y > 0);
-		assert(x < (width_ - 1));
-		assert((x + width) <= (width_ - 1));
-		assert(y < (height_ - 1));
-		assert((y + height) <= (height_ - 1));
+		freetype.setPixelSize(0, 12);
 
-		depth = depth_;
-		charsize = sizeof(char);
-		for (i = 0; i < height; ++i) {
-			memcpy(data_ + ((y + i) * width_ + x) * charsize * depth,
-			        data + (i * stride) * charsize, width * charsize * depth);
-		}
-	}
+		FT_GlyphSlot g = freetype.getFontFace()->glyph;
 
-	Rect TextureAtlas::getRegion (const size_t width, const size_t height)
-	{
+		int roww = 0;
+		int rowh = 0;
+		 width_ = 0;
+		 height_ = 0;
 
-		int y, best_height, best_width, best_index;
-		Rect region(0, 0, width, height);
 
-		Vector3i node; // prev
-		size_t i;
-
-		best_height = INT_MAX;
-		best_index = -1;
-		best_width = INT_MAX;
-		for (i = 0; i < nodes_.size(); ++i) {
-			y = fit(i, width, height);
-			if (y >= 0) {
-				node = nodes_[i];
-				if (((y + height) < best_height)
-				        || (((y + height) == best_height)
-				                && (node.z() < best_width))) {
-					best_height = y + height;
-					best_index = i;
-					best_width = node.z();
-					region.set_x(node.x());
-					region.set_y(y);
-				}
+		/* Find minimum size for a texture holding all visible ASCII characters */
+		for (int i = 32; i < 128; i++) {
+			if (freetype.loadCharacter(i, FT_LOAD_RENDER)) {
+				fprintf(stderr, "Loading character %c failed!\n", i);
+				continue;
 			}
-		}
-
-		if (best_index == -1) {
-			region.set_x (-1);
-			region.set_y (-1);
-			region.set_width (0);
-			region.set_height (0);
-			return region;
-		}
-
-		node.set_x (region.x());
-		node.set_y (region.y() + height);
-		node.set_z (width);
-		/*
-		vector_insert(self->nodes, best_index, node);
-		free(node);
-
-		for (i = best_index + 1; i < self->nodes->size; ++i) {
-			node = (ivec3 *) vector_get(self->nodes, i);
-			prev = (ivec3 *) vector_get(self->nodes, i - 1);
-
-			if (node->x < (prev->x + prev->z)) {
-				int shrink = prev->x + prev->z - node->x;
-				node->x += shrink;
-				node->z -= shrink;
-				if (node->z <= 0) {
-					vector_erase(self->nodes, i);
-					--i;
-				} else {
-					break;
-				}
-			} else {
-				break;
+			if (roww + g->bitmap.width + 1 >= MAXWIDTH) {
+				width_ = std::max(width_, static_cast<unsigned int>(roww));
+				height_ += rowh;
+				roww = 0;
+				rowh = 0;
 			}
-		}
-		texture_atlas_merge (self);
-		self->used += width * height;
-		 */
-
-		return region;
-	}
-
-	void TextureAtlas::upload ()
-	{
-		if (!texture_) {
-			glGenTextures(1, &texture_);
+			roww += g->bitmap.width + 1;
+			rowh = std::max(rowh, g->bitmap.rows);
 		}
 
-		glBindTexture( GL_TEXTURE_2D, texture_);
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		width_ = std::max(width_, static_cast<unsigned int>(roww));
+		height_ += rowh;
 
-		if (depth_ == 4) {
-#ifdef GL_UNSIGNED_INT_8_8_8_8_REV
-			glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width_, height_, 0,
-			GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, data_);
-#else
-			glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width_, height_,
-					0, GL_RGBA, GL_UNSIGNED_BYTE, data_ );
-#endif
-		} else if (depth_ == 3) {
-			glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width_, height_, 0, GL_RGB,
-			GL_UNSIGNED_BYTE, data_);
-		} else {
-			glTexImage2D( GL_TEXTURE_2D, 0, GL_ALPHA, width_, height_, 0,
-			GL_ALPHA, GL_UNSIGNED_BYTE, data_);
-		}
-	}
+		/* Create a texture that will be used to hold all ASCII glyphs */
+		glActiveTexture(GL_TEXTURE0);
+		glGenTextures(1, &texture_);
+		glBindTexture(GL_TEXTURE_2D, texture_);
+		//glUniform1i(uniform_tex, 0);
 
-	int TextureAtlas::fit (const size_t index, const size_t width,
-	        const size_t height)
-	{
-		if (index > (nodes_.size() - 1)) {
-			return -1;
-		}
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width_, height_, 0, GL_ALPHA, GL_UNSIGNED_BYTE, 0);
 
-		int x, y, width_left;
-		size_t i;
-		Vector3i node;
+		/* We require 1 byte alignment when uploading texture data */
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		node = nodes_[index];
-		x = node.x();
-		y = node.y();
-		width_left = width;
-		i = index;
+		/* Clamping to edges is important to prevent artifacts when scaling */
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		if ((x + width) > (width_ - 1)) {
-			return -1;
-		}
-		y = node.y();
-		while (width_left > 0) {
-			node = nodes_[i];
-			if (node.y() > y) {
-				y = node.y();
+		/* Linear filtering usually looks best for text */
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		/* Paste all glyph bitmaps into the texture, remembering the offset */
+		int ox = 0;
+		int oy = 0;
+
+		rowh = 0;
+
+		for (int i = 32; i < 128; i++) {
+			if (freetype.loadCharacter(i, FT_LOAD_RENDER)) {
+				fprintf(stderr, "Loading character %c failed!\n", i);
+				continue;
 			}
-			if ((y + height) > (height_ - 1)) {
-				return -1;
+
+			if (ox + g->bitmap.width + 1 >= MAXWIDTH) {
+				oy += rowh;
+				rowh = 0;
+				ox = 0;
 			}
-			width_left -= node.z();
-			++i;
+
+			glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, g->bitmap.width, g->bitmap.rows, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+			c_[i].advance_x = g->advance.x >> 6;
+			c_[i].advance_y = g->advance.y >> 6;
+
+			c_[i].bitmap_width = g->bitmap.width;
+			c_[i].bitmap_height = g->bitmap.rows;
+
+			c_[i].bitmap_left = g->bitmap_left;
+			c_[i].bitmap_right = g->bitmap_top;
+
+			c_[i].texture_coord_offset_x = ox / (float)width_;
+			c_[i].texture_coord_offset_y = oy / (float)height_;
+
+			rowh = std::max(rowh, g->bitmap.rows);
+			ox += g->bitmap.width + 1;
 		}
-		return y;
+
+		fprintf(stderr, "Generated a %u x %u (%u kb) texture atlas\n", width_, height_, width_ * height_ / 1024);
 	}
-
-	void TextureAtlas::merge ()
-	{
-		std::vector<Vector3i>::iterator it;
-
-		for (it = nodes_.begin(); it != nodes_.end();) {
-
-			if (it->y() == (it + 1)->y()) {
-				it->set_z(it->z() + (it + 1)->z());
-				it = nodes_.erase(it + 1);
-			} else {
-				it++;
-			}
-		}
-	}
-
 }

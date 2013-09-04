@@ -277,6 +277,20 @@ namespace BIL {
 		return true;
 	}
 
+	bool Freetype::setPixelSize(unsigned int width, unsigned int height)
+	{
+		FT_Error error;
+		if(!valid_) return false;
+
+		error = FT_Set_Pixel_Sizes (face_, width, height);
+		if (error) {
+			cerr << "Fail to set pixel sizes" << endl;
+			return false;
+		}
+
+		return true;
+	}
+
 	FT_UInt Freetype::getCharIndex (const FT_ULong charcode)
 	{
 		if (!valid_)

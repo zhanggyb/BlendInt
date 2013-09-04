@@ -24,7 +24,7 @@
 
 #include <vector>
 #include <BIL/Vector.hpp>
-#include <BIL/Freetype.hpp>
+#include <string>
 
 namespace BIL {
 
@@ -36,47 +36,40 @@ namespace BIL {
 	{
 	public:
 
-		TextureAtlas (const size_t width, const size_t height,
-		        const size_t depth);
+		struct CharacterInfo
+		{
+			float advance_x;
+			float advance_y;
+
+			float bitmap_width;
+			float bitmap_height;
+
+			float bitmap_left;
+			float bitmap_right;
+
+			float texture_coord_offset_x;
+			float texture_coord_offset_y;
+		};
+
+		TextureAtlas (const std::string& filename);
 
 		~TextureAtlas ();
 
-		void setRegion (const size_t x, const size_t y, const size_t width,
-		        const size_t height, const unsigned char * data,
-		        const size_t stride);
-
-		Rect getRegion (const size_t width, const size_t height);
-
-		/**
-		 * Upload to video memory
-		 */
-		void upload ();
+		void generate ();
 
 	private:
-
-		int fit (const size_t index, const size_t width, const size_t height);
-
-		void merge ();
 
 		/**
 		 * Texture ID
 		 */
 		GLuint texture_;		// texture object
 
-		size_t width_;				// width of texture in pixels
-		size_t height_;			// height of texture in pixels
+		unsigned int width_;				// width of texture in pixels
+		unsigned int height_;			// height of texture in pixels
 
-		/**
-		 * Depth (in bytes) of the underlying texture
-		 */
-		size_t depth_;
+		CharacterInfo c_[128];
 
-		/**
-		 * Atlas data
-		 */
-		unsigned char * data_;
-
-		std::vector<Vector3i> nodes_;
+		std::string filename_;
 	};
 
 }

@@ -131,6 +131,8 @@ namespace BIL {
 
 		bool setCharSize (unsigned int size, unsigned int dpi = 96);
 
+		bool setPixelSize (unsigned int width, unsigned int height);
+
 		/**
 		 * @brief Get the glyph index of a given character code
 		 * @param charcode The character code
