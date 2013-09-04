@@ -41,8 +41,18 @@ include_directories(${BIL_SOURCE_DIR}/include)
 include_directories(${BIL_SOURCE_DIR}/include/BIL)
 include_directories(${BIL_SOURCE_DIR}/extern/CppEvents/src)
 
-add_definitions(-DDEBUG)
-add_definitions(-D__LINUX__)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR
+        CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    add_definitions(-DDEBUG)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_definitions(-D__LINUX__)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    add_definitions(-D__WIN__)
+endif()
 
 if(MSVC)
     # Force to always compile with W4

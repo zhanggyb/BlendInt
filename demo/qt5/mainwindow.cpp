@@ -8,6 +8,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     ui->mainToolBar->hide();
+    ui->statusBar->hide();
+    
+    glwindow_ = new GLWindow (this);
+    setCentralWidget(glwindow_);
+    
+    resize (1200, 800);
 }
 
 MainWindow::~MainWindow()
