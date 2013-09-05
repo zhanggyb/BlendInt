@@ -17,6 +17,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+ protected:
+
+	void mouseMoveEvent (QMouseEvent* event);
+
+	void mousePressEvent (QMouseEvent* event);
+
+	void mouseReleaseEvent (QMouseEvent* event);
+
 private slots:
     void about();
 

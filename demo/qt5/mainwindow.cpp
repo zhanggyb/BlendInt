@@ -3,6 +3,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QMouseEvent>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -32,3 +34,17 @@ void MainWindow::about ()
             tr("This is a demo of running Blender Interface Library in Qt5"));
 }
 
+void MainWindow::mouseMoveEvent (QMouseEvent* event)
+{
+	
+}
+
+void MainWindow::mousePressEvent(QMouseEvent* event)
+{
+
+}
+
+void MainWindow::mouseReleaseEvent (QMouseEvent* event)
+{
+
+}

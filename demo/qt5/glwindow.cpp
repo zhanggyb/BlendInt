@@ -4,6 +4,7 @@
 
 #include "glwindow.h"
 #include <BIL/Interface.hpp>
+#include <QMouseEvent>
 
 GLWindow::GLWindow(QWidget *parent) :
     QGLWidget(parent), button_(0)
@@ -46,4 +47,20 @@ void GLWindow::paintGL()
     BIL::Interface* app = BIL::Interface::instance();
 
     app->render();
+}
+
+void GLWindow::mouseMoveEvent (QMouseEvent* event)
+{
+    BIL::Interface::instance()->cursorPosEvent(event->windowPos().toPoint().x(),
+            event->windowPos().toPoint().y());
+}
+
+void GLWindow::mousePressEvent (QMouseEvent* event)
+{
+	
+}
+
+void GLWindow::mouseReleaseEvent (QMouseEvent* event)
+{
+
 }

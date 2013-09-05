@@ -19,6 +19,9 @@ protected:
     void initializeGL();
     void resizeGL (int w, int h);
     void paintGL ();
+    void mouseMoveEvent (QMouseEvent* event);
+    void mousePressEvent (QMouseEvent* event);
+    void mouseReleaseEvent (QMouseEvent* event);
 
 private:
     BIL::ToggleButton* button_;

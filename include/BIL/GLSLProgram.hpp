@@ -26,45 +26,42 @@
 
 #include <vector>
 
-#include <BIL/Shader.hpp>
+#include <BIL/GLSLShader.hpp>
 
 namespace BIL {
 
-	namespace GL {
+	class GLSLProgram
+	{
+	public:
 
-		class Program
+		GLSLProgram ();
+
+		~GLSLProgram ();
+
+		void attachShader (const char* buf, GLenum type);
+
+		void attachShader (const std::string& filename, GLenum type);
+
+		bool link ();
+
+		bool isValid () const;
+
+		void clear ();
+
+		void print_log ();
+
+		GLuint id () const
 		{
-		public:
+			return id_;
+		}
 
-			Program ();
+	private:
 
-			~Program ();
+		GLuint id_;
 
-			void attachShader (const char* buf, GLenum type);
+		std::vector<GLSLShader*> shaders_;
+	};
 
-			void attachShader (const std::string& filename, GLenum type);
-
-			bool link ();
-
-			bool isValid () const;
-
-			void clear ();
-
-			void print_log ();
-
-			GLuint id () const
-			{
-				return id_;
-			}
-
-		private:
-
-			GLuint id_;
-
-			std::vector<Shader*> shaders_;
-		};
-
-	}
 }
 
 #endif /* _BIL_PROGRAM_HPP_ */

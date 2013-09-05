@@ -4,23 +4,22 @@
 #define _SHADER_TEST_H
 
 #include <BIL/Widget.hpp>
-#include <BIL/Program.hpp>
+#include <BIL/GLSLProgram.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <string>
 
 using namespace BIL;
-using namespace BIL::GL;
 using namespace std;
 
-class ShaderWidget: public Widget
+class ShaderWidget1: public Widget
 {
 public:
 
-	ShaderWidget ();
+	ShaderWidget1 ();
 
-	virtual ~ShaderWidget ();
+	virtual ~ShaderWidget1 ();
 
 protected:
 
@@ -35,7 +34,7 @@ private:
 
 	bool init_resources ();
 
-	Program program_;
+	GLSLProgram program_;
 	
 	GLuint vbo_triangle;
 	GLuint vbo_triangle_colors;
@@ -43,13 +42,51 @@ private:
 	GLint attribute_v_color;
 	GLint uniform_fade;
 	
+	static const char* vs_source;
+
+	static const char* fs_source;
 };
+
+class ShaderWidget2: public Widget
+{
+public:
+
+	ShaderWidget2 ();
+
+	virtual ~ShaderWidget2 ();
+
+protected:
+
+	virtual void render ();
+
+private:
+
+	struct attributes {
+		GLfloat coord2d[2];
+		GLfloat v_color[3];
+	};
+
+	bool init_resources ();
+
+	GLSLProgram program_;
+
+	GLuint vao_triangle;
+	GLuint vbo_triangle[2];
+	GLint attribute_VertexPosition;
+	GLint attribute_VertexColor;
+
+	static const char* vs_source;
+
+	static const char* fs_source;
+};
+
 
 class ShaderTest: public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(ShaderTest);
 
 	CPPUNIT_TEST(shader_load1);
+	CPPUNIT_TEST(shader_load2);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -69,6 +106,8 @@ public:
 private:
 
 	void shader_load1 ();
+
+	void shader_load2 ();
 
 	static void cbError (int error, const char* description);
 
