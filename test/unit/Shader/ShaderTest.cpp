@@ -99,8 +99,7 @@ bool ShaderWidget1::init_resources()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_triangle);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_attributes), triangle_attributes, GL_STATIC_DRAW);
 
-	program_.attachShader(vs_source, GL_VERTEX_SHADER);
-	program_.attachShader(fs_source, GL_FRAGMENT_SHADER);
+	program_.attachShaderPair(vs_source, fs_source);
 	
 	if(!program_.link()) {
 		return false;
@@ -224,6 +223,62 @@ bool ShaderWidget2::init_resources()
 	return true;
 }
 
+ShaderWidget3::ShaderWidget3 ()
+		: Widget(NULL)
+{
+	init_resources();
+}
+
+ShaderWidget3::~ShaderWidget3()
+{
+	//glDeleteBuffers(1, &vertex_buffer_);
+	//glDeleteVertexArrays(1, &vertex_array_id_);
+}
+
+const char* ShaderWidget3::vs_source =
+		"void main(void) {"
+		"	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;"
+		"}";
+
+const char* ShaderWidget3::fs_source =
+	"void main(void) {"
+		"	vec3 color = vec3(1.0, 1.0, 0.0);"
+	"	gl_FragColor = vec4(color, 0.2);"
+	"}";
+
+void ShaderWidget3::render ()
+{
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+	glBegin(GL_TRIANGLES);
+	glVertex3i(200, 200, 0);
+	glVertex3i(800, 200, 0);
+	glVertex3i(500, 600,0);
+	glEnd();
+
+	glPopMatrix();
+
+	glUseProgram(program_.id());
+
+}
+
+bool ShaderWidget3::init_resources()
+{
+	if(!program_.isValid()) {
+		return false;
+	}
+
+	program_.attachShader(vs_source, GL_VERTEX_SHADER);
+	program_.attachShader(fs_source, GL_FRAGMENT_SHADER);
+
+	if(!program_.link()) {
+		return false;
+	}
+
+	return true;
+}
+
 
 ShaderTest::ShaderTest ()
 {
@@ -337,6 +392,64 @@ void ShaderTest::shader_load2 ()
 	app->resize(1200, 800);
 
 	ShaderWidget2 widget;
+
+	// widget.set_round_box_type(RoundBoxAll);
+	// widget.set_pos(100, 100);
+	// widget.resize(200, 200);
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void ShaderTest::shader_load3 ()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	ShaderWidget3 widget;
 
 	// widget.set_round_box_type(RoundBoxAll);
 	// widget.set_pos(100, 100);

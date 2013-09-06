@@ -39,6 +39,36 @@ namespace BIL {
 		clear();
 	}
 
+	void GLSLProgram::attachShaderPair(const char* vertex_shader, const char* fragment_shader)
+	{
+		if(shaders_.size() > 0) {
+			std::vector<GLSLShader*>::iterator it;
+			for (it = shaders_.begin(); it != shaders_.end(); it++) {
+				delete *it;
+				*it = NULL;
+			}
+			shaders_.clear();
+		}
+
+		attachShader(vertex_shader, GL_VERTEX_SHADER);
+		attachShader(fragment_shader, GL_FRAGMENT_SHADER);
+	}
+
+	void GLSLProgram::attachShaderPair(const std::string& vertex_shader, const std::string& fragment_shader)
+	{
+		if(shaders_.size() > 0) {
+			std::vector<GLSLShader*>::iterator it;
+			for (it = shaders_.begin(); it != shaders_.end(); it++) {
+				delete *it;
+				*it = NULL;
+			}
+			shaders_.clear();
+		}
+
+		attachShader(vertex_shader, GL_VERTEX_SHADER);
+		attachShader(fragment_shader, GL_FRAGMENT_SHADER);
+	}
+
 	void GLSLProgram::attachShader (const std::string& filename, GLenum type)
 	{
 		if (glIsProgram(id_)) {

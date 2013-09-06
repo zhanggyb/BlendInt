@@ -38,6 +38,10 @@ namespace BIL {
 
 		~GLSLProgram ();
 
+		void attachShaderPair (const char* vertex_shader, const char* fragment_shader);
+
+		void attachShaderPair (const std::string& vertex_shader, const std::string& fragment_shader);
+
 		void attachShader (const char* buf, GLenum type);
 
 		void attachShader (const std::string& filename, GLenum type);

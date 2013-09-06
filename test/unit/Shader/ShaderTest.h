@@ -80,6 +80,38 @@ private:
 	static const char* fs_source;
 };
 
+class ShaderWidget3: public Widget
+{
+public:
+
+	ShaderWidget3 ();
+
+	virtual ~ShaderWidget3 ();
+
+protected:
+
+	virtual void render ();
+
+private:
+
+	struct attributes {
+		GLfloat coord2d[2];
+		GLfloat v_color[3];
+	};
+
+	bool init_resources ();
+
+	GLSLProgram program_;
+
+	GLuint vertex_array_id_;
+
+	GLuint vertex_buffer_;
+
+	static const char* vs_source;
+
+	static const char* fs_source;
+};
+
 
 class ShaderTest: public CppUnit::TestFixture
 {
@@ -87,6 +119,7 @@ CPPUNIT_TEST_SUITE(ShaderTest);
 
 	CPPUNIT_TEST(shader_load1);
 	CPPUNIT_TEST(shader_load2);
+	CPPUNIT_TEST(shader_load3);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -108,6 +141,8 @@ private:
 	void shader_load1 ();
 
 	void shader_load2 ();
+
+	void shader_load3 ();
 
 	static void cbError (int error, const char* description);
 
