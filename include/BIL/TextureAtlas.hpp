@@ -57,12 +57,27 @@ namespace BIL {
 
 		void generate ();
 
+		void render_text(const char *text, float x, float y, float sx, float sy);
+
 	private:
 
+		struct point {
+			GLfloat x;
+			GLfloat y;
+			GLfloat s;
+			GLfloat t;
+		};
 		/**
 		 * Texture ID
 		 */
 		GLuint texture_;		// texture object
+
+		GLint uniform_tex_;
+
+		GLint attribute_coord_;
+		GLint uniform_color_;
+
+		GLuint vbo_;
 
 		unsigned int width_;				// width of texture in pixels
 		unsigned int height_;			// height of texture in pixels

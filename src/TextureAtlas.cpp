@@ -9,7 +9,7 @@
  *
  * BIL (Blender Interface Library) is distributed in the hope that it
  * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * warrantexture_coord_offset_y of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -20,6 +20,7 @@
  */
 
 #include <GL/glew.h>
+#include <GL/gl.h>
 
 #include <string.h>
 #include <algorithm>
@@ -34,7 +35,8 @@
 namespace BIL {
 
 	TextureAtlas::TextureAtlas (const std::string& filename)
-			: texture_(0), width_(0), height_(0), filename_(filename)
+			: texture_(0), uniform_tex_(0),
+			  width_(0), height_(0), filename_(filename)
 	{
 		 memset(c_, 0, sizeof c_);
 	}
@@ -63,8 +65,8 @@ namespace BIL {
 
 
 		/* Find minimum size for a texture holding all visible ASCII characters */
-		for (int i = 32; i < 128; i++) {
-			if (!freetype.loadCharacter(i, FT_LOAD_RENDER)) {
+		for (unsigned int i = 32; i < 128; i++) {
+			if (!freetype.loadCharacter(static_cast<unsigned long>(i), FT_LOAD_RENDER)) {
 				fprintf(stderr, "Loading character %c failed!\n", i);
 				continue;
 			}
@@ -85,7 +87,7 @@ namespace BIL {
 		glActiveTexture(GL_TEXTURE0);
 		glGenTextures(1, &texture_);
 		glBindTexture(GL_TEXTURE_2D, texture_);
-		//glUniform1i(uniform_tex, 0);
+		glUniform1i(uniform_tex_, 0);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width_, height_, 0, GL_ALPHA, GL_UNSIGNED_BYTE, 0);
 
@@ -136,5 +138,64 @@ namespace BIL {
 		}
 
 		fprintf(stderr, "Generated a %u x %u (%u kb) texture atlas\n", width_, height_, width_ * height_ / 1024);
+		freetype.close();
+	}
+
+	/**
+	 * Render text using the currently loaded font and currently set font size.
+	 * Rendering starts at coordinates (x, y), z is always 0.
+	 * The pixel coordinates that the FreeType2 library uses are scaled by (sx, sy).
+	 */
+	void TextureAtlas::render_text(const char *text, float x, float y, float sx, float sy)
+	{
+		const uint8_t *p;
+
+		/* Use the texture containing the atlas */
+		glBindTexture(GL_TEXTURE_2D, texture_);
+		glUniform1i(uniform_tex_, 0);
+
+		/* Set up the VBO for our vertex data */
+		glEnableVertexAttribArray(attribute_coord_);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+		glVertexAttribPointer(attribute_coord_, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		point coords[6 * strlen(text)];
+		int c = 0;
+
+		/* Loop through all characters */
+		for (p = (const uint8_t *)text; *p; p++) {
+			/* Calculate the vertex and texture coordinates */
+			float x2 = x + c_[*p].bitmap_left * sx;
+			float y2 = -y - c_[*p].bitmap_top * sy;
+			float w = c_[*p].bitmap_width * sx;
+			float h = c_[*p].bitmap_height * sy;
+
+			/* Advance the cursor to the start of the next character */
+			x += c_[*p].advance_x * sx;
+			y += c_[*p].advance_y * sy;
+
+			/* Skip glyphs that have no pixels */
+			if (!w || !h)
+				continue;
+
+			coords[c++] = (point) {
+			x2, -y2, c_[*p].texture_coord_offset_x, c_[*p].texture_coord_offset_y};
+			coords[c++] = (point) {
+			x2 + w, -y2, c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_, c_[*p].texture_coord_offset_y};
+			coords[c++] = (point) {
+			x2, -y2 - h, c_[*p].texture_coord_offset_x, c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_};
+			coords[c++] = (point) {
+			x2 + w, -y2, c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_, c_[*p].texture_coord_offset_y};
+			coords[c++] = (point) {
+			x2, -y2 - h, c_[*p].texture_coord_offset_x, c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_};
+			coords[c++] = (point) {
+			x2 + w, -y2 - h, c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_, c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_};
+		}
+
+		/* Draw all the character on the screen in one go */
+		glBufferData(GL_ARRAY_BUFFER, sizeof coords, coords, GL_DYNAMIC_DRAW);
+		glDrawArrays(GL_TRIANGLES, 0, c);
+
+		glDisableVertexAttribArray(attribute_coord_);
 	}
 }
