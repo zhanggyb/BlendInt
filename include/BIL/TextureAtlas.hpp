@@ -26,6 +26,8 @@
 #include <BIL/Vector.hpp>
 #include <string>
 
+#include <BIL/GLSLProgram.hpp>
+
 namespace BIL {
 
 	/**
@@ -55,6 +57,8 @@ namespace BIL {
 
 		~TextureAtlas ();
 
+		void initialize ();
+
 		void generate ();
 
 		void render_text(const char *text, float x, float y, float sx, float sy);
@@ -72,6 +76,8 @@ namespace BIL {
 		 */
 		GLuint texture_;		// texture object
 
+		GLSLProgram program_;
+
 		GLint uniform_tex_;
 
 		GLint attribute_coord_;
@@ -85,6 +91,9 @@ namespace BIL {
 		CharacterInfo c_[128];
 
 		std::string filename_;
+
+		static const char* vs_shader;
+		static const char* fs_shader;
 	};
 
 }

@@ -23,6 +23,7 @@
 #include <GL/gl.h>
 
 #include <string.h>
+#include <iostream>
 #include <algorithm>
 #include <assert.h>
 
@@ -34,8 +35,28 @@
 
 namespace BIL {
 
+	const char* TextureAtlas::vs_shader =
+			"attribute vec4 coord;"
+			"varying vec2 texpos;"
+			""
+			"void main(void) {"
+			"  gl_Position = gl_ModelViewProjectionMatrix * vec4(coord.xy, 0, 1);"
+			"  texpos = coord.zw;"
+			"}";
+
+	const char* TextureAtlas::fs_shader =
+			"varying vec2 texpos;"
+			"uniform sampler2D tex;"
+			"uniform vec4 color;"
+			""
+			"void main(void) {"
+			"  gl_FragColor = vec4(1, 1, 1, texture2D(tex, texpos).a) * color;"
+			"}";
+
+
 	TextureAtlas::TextureAtlas (const std::string& filename)
-			: texture_(0), uniform_tex_(0),
+			: texture_(0), uniform_tex_(-1), attribute_coord_(-1),
+			  uniform_color_(-1), vbo_(0),
 			  width_(0), height_(0), filename_(filename)
 	{
 		 memset(c_, 0, sizeof c_);
@@ -48,13 +69,35 @@ namespace BIL {
 		}
 	}
 
+	void TextureAtlas::initialize()
+	{
+		program_.attachShaderPair(vs_shader, fs_shader);
+		program_.link();
+		if(!program_.isValid()) {
+			std::cerr << "Cannot compile shaders" << std::endl;
+			return;
+		}
+
+		attribute_coord_ = program_.getAttributeLocation("coord");
+		uniform_tex_ = program_.getUniformLocation("tex");
+		uniform_color_ = program_.getUniformLocation("color");
+
+		if(attribute_coord_ == -1 || uniform_tex_ == -1 || uniform_color_ == -1) {
+			std::cerr << "Fatal Error: cannot get attributes and uniforms" << std::endl;
+			exit(-1);
+		}
+
+		// Create the vertex buffer object
+		glGenBuffers(1, &vbo_);
+	}
+
 	void TextureAtlas::generate ()
 	{
 		Freetype freetype;
-		freetype.open(filename_, 9, 96);
+		freetype.open(filename_, 16, 96);
 		if(!freetype.valid()) return;
 
-		freetype.setPixelSize(0, 12);
+		freetype.setPixelSize(0, 16);
 
 		FT_GlyphSlot g = freetype.getFontFace()->glyph;
 
@@ -150,6 +193,23 @@ namespace BIL {
 	{
 		const uint8_t *p;
 
+		glUseProgram(program_.id());
+
+		/* White background */
+		//glClearColor(1, 1, 1, 1);
+		//glClear(GL_COLOR_BUFFER_BIT);
+
+		/* Enable blending, necessary for our alpha texture */
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		GLfloat black[4] = { 0, 0, 0, 1 };
+		//GLfloat red[4] = { 1, 0, 0, 1 };
+		//GLfloat transparent_green[4] = { 0, 1, 0, 0.5 };
+
+		/* Set color to black */
+		glUniform4fv(uniform_color_, 1, black);
+
 		/* Use the texture containing the atlas */
 		glBindTexture(GL_TEXTURE_2D, texture_);
 		glUniform1i(uniform_tex_, 0);
@@ -166,13 +226,22 @@ namespace BIL {
 		for (p = (const uint8_t *)text; *p; p++) {
 			/* Calculate the vertex and texture coordinates */
 			float x2 = x + c_[*p].bitmap_left * sx;
+			//float x2 = x + c_[*p].bitmap_left;
+
 			float y2 = -y - c_[*p].bitmap_top * sy;
+			//float y2 = -y - c_[*p].bitmap_top;
+
 			float w = c_[*p].bitmap_width * sx;
+			//float w = c_[*p].bitmap_width;
+
 			float h = c_[*p].bitmap_height * sy;
+			//float h = c_[*p].bitmap_height;
 
 			/* Advance the cursor to the start of the next character */
 			x += c_[*p].advance_x * sx;
+			//x += c_[*p].advance_x;
 			y += c_[*p].advance_y * sy;
+			//y += c_[*p].advance_y;
 
 			/* Skip glyphs that have no pixels */
 			if (!w || !h)
@@ -197,5 +266,8 @@ namespace BIL {
 		glDrawArrays(GL_TRIANGLES, 0, c);
 
 		glDisableVertexAttribArray(attribute_coord_);
+
+		glDisable(GL_BLEND);
 	}
+
 }

@@ -125,6 +125,33 @@ namespace BIL {
 		}
 	}
 
+	GLint GLSLProgram::getAttributeLocation (const char *name)
+	{
+		GLint attribute = -1;
+		if(glIsProgram(id_)) {
+			attribute = glGetAttribLocation(id_, name);
+		}
+
+		if(attribute == -1)
+			fprintf(stderr, "Could not bind attribute %s\n", name);
+
+		return attribute;
+	}
+
+	GLint GLSLProgram::getUniformLocation (const char *name)
+	{
+		GLint uniform = -1;
+
+		if(glIsProgram(id_)) {
+			uniform = glGetUniformLocation(id_, name);
+		}
+
+		if(uniform == -1)
+			fprintf(stderr, "Could not bind uniform %s\n", name);
+
+		return uniform;
+	}
+
 	void GLSLProgram::print_log ()
 	{
 		GLint log_length = 0;

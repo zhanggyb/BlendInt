@@ -59,6 +59,10 @@ namespace BIL {
 			return id_;
 		}
 
+		GLint getAttributeLocation (const char *name);
+
+		GLint getUniformLocation (const char *name);
+
 	private:
 
 		GLuint id_;
