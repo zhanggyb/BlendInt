@@ -92,6 +92,8 @@ namespace BIL {
 
 		std::string filename_;
 
+		unsigned int font_size_;
+
 		static const char* vs_shader;
 		static const char* fs_shader;
 	};

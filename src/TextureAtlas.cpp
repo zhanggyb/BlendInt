@@ -57,7 +57,7 @@ namespace BIL {
 	TextureAtlas::TextureAtlas (const std::string& filename)
 			: texture_(0), uniform_tex_(-1), attribute_coord_(-1),
 			  uniform_color_(-1), vbo_(0),
-			  width_(0), height_(0), filename_(filename)
+			  width_(0), height_(0), filename_(filename), font_size_(12)
 	{
 		 memset(c_, 0, sizeof c_);
 	}
@@ -94,10 +94,10 @@ namespace BIL {
 	void TextureAtlas::generate ()
 	{
 		Freetype freetype;
-		freetype.open(filename_, 16, 96);
+		freetype.open(filename_, font_size_, 96);
 		if(!freetype.valid()) return;
 
-		freetype.setPixelSize(0, 16);
+		freetype.setPixelSize(0, font_size_);
 
 		FT_GlyphSlot g = freetype.getFontFace()->glyph;
 
@@ -219,7 +219,7 @@ namespace BIL {
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 		glVertexAttribPointer(attribute_coord_, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-		point coords[6 * strlen(text)];
+		point* coords = new point[6 * strlen(text)];
 		int c = 0;
 
 		/* Loop through all characters */
@@ -247,25 +247,51 @@ namespace BIL {
 			if (!w || !h)
 				continue;
 
-			coords[c++] = (point) {
-			x2, -y2, c_[*p].texture_coord_offset_x, c_[*p].texture_coord_offset_y};
-			coords[c++] = (point) {
-			x2 + w, -y2, c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_, c_[*p].texture_coord_offset_y};
-			coords[c++] = (point) {
-			x2, -y2 - h, c_[*p].texture_coord_offset_x, c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_};
-			coords[c++] = (point) {
-			x2 + w, -y2, c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_, c_[*p].texture_coord_offset_y};
-			coords[c++] = (point) {
-			x2, -y2 - h, c_[*p].texture_coord_offset_x, c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_};
-			coords[c++] = (point) {
-			x2 + w, -y2 - h, c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_, c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_};
+			(coords + c)->x = x2;
+			(coords + c)->y = -y2;
+			(coords + c)->s = c_[*p].texture_coord_offset_x;
+			(coords + c)->t = c_[*p].texture_coord_offset_y;
+			c++;
+
+			(coords + c)->x = x2 + w;
+			(coords + c)->y = -y2;
+			(coords + c)->s = c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_;
+			(coords + c)->t = c_[*p].texture_coord_offset_y;
+			c++;
+
+			(coords + c)->x = x2;
+			(coords + c)->y = -y2 - h;
+			(coords + c)->s = c_[*p].texture_coord_offset_x;
+			(coords + c)->t = c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_;
+			c++;
+
+			(coords + c)->x = x2 + w;
+			(coords + c)->y = -y2;
+			(coords + c)->s = c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_;
+			(coords + c)->t = c_[*p].texture_coord_offset_y;
+			c++;
+
+			(coords + c)->x = x2;
+			(coords + c)->y = -y2 - h;
+			(coords + c)->s = c_[*p].texture_coord_offset_x;
+			(coords + c)->t = c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_;
+			c++;
+
+			(coords + c)->x = x2 + w;
+			(coords + c)->y = -y2 - h;
+			(coords + c)->s = c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_;
+			(coords + c)->t = c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_;
+			c++;
 		}
 
 		/* Draw all the character on the screen in one go */
-		glBufferData(GL_ARRAY_BUFFER, sizeof coords, coords, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(point) * 6 * strlen(text), coords, GL_DYNAMIC_DRAW);
 		glDrawArrays(GL_TRIANGLES, 0, c);
 
 		glDisableVertexAttribArray(attribute_coord_);
+		delete [] coords;
+
+		glUseProgram(0);
 
 		glDisable(GL_BLEND);
 	}
