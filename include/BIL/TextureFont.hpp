@@ -9,7 +9,7 @@
  *
  * BIL (Blender Interface Library) is distributed in the hope that it
  * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * warrantexture_coord_offset_y of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -19,23 +19,21 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_TEXTUREATLAS_HPP_
-#define _BIL_TEXTUREATLAS_HPP_
-
-#include <vector>
-#include <BIL/Vector.hpp>
-#include <string>
+#ifndef _BIL_TEXTUREFONT_HPP_
+#define _BIL_TEXTUREFONT_HPP_
 
 #include <BIL/GLSLProgram.hpp>
+
+#include <BIL/Freetype.hpp>
 
 namespace BIL {
 
 	/**
-	 * A texture atlas is basically a big texture which contains many
-	 * small images that are packed together.
+	 * @brief A class to generate texture for single character with Freetype
 	 */
-	class TextureAtlas
+	class TextureFont
 	{
+
 	public:
 
 		struct Metrics
@@ -48,20 +46,27 @@ namespace BIL {
 
 			float bitmap_left;
 			float bitmap_top;
-
-			float texture_coord_offset_x;
-			float texture_coord_offset_y;
 		};
 
-		TextureAtlas (const std::string& filename);
+		static const char* getVertexShader () {return vs_shader;}
 
-		~TextureAtlas ();
+		static const char* getFragmentShader () {return fs_shader;}
+
+		TextureFont (wchar_t charcode);
+
+		~TextureFont ();
 
 		void initialize ();
 
-		void generate ();
+		void generate (Freetype* freetype);
 
-		void render_text(const char *text, float x, float y, float sx, float sy);
+		const Metrics& getMetrics () const {
+			return metrics_;
+		}
+
+		const GLuint& texture () const {
+			return texture_;
+		}
 
 	private:
 
@@ -71,33 +76,17 @@ namespace BIL {
 			GLfloat s;
 			GLfloat t;
 		};
-		/**
-		 * Texture ID
-		 */
-		GLuint texture_;		// texture object
 
-		GLSLProgram program_;
+		wchar_t charcode_;
 
-		GLint uniform_tex_;
+		GLuint texture_;
 
-		GLint attribute_coord_;
-		GLint uniform_color_;
-
-		GLuint vbo_;
-
-		unsigned int width_;				// width of texture in pixels
-		unsigned int height_;			// height of texture in pixels
-
-		Metrics c_[128];
-
-		std::string filename_;
-
-		unsigned int font_size_;
+		Metrics metrics_;
 
 		static const char* vs_shader;
 		static const char* fs_shader;
 	};
-
 }
 
-#endif /* _BIL_TEXTUREATLAS_HPP_ */
+
+#endif /* _BIL_TEXTUREFONT_H_ */

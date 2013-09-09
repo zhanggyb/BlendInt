@@ -67,6 +67,10 @@ namespace BIL {
 		if(glIsTexture(texture_)) {
 			glDeleteTextures(1, &texture_);
 		}
+
+		if(glIsBuffer(vbo_)) {
+			glDeleteBuffers(1, &vbo_);
+		}
 	}
 
 	void TextureAtlas::initialize()

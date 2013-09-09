@@ -222,6 +222,10 @@ namespace BIL {
 		Font font_;
 
 		unsigned int dpi_;
+
+		Freetype (const Freetype& orig);
+
+		Freetype& operator = (const Freetype& orig);
 	};
 
 } /* namespace BIL */

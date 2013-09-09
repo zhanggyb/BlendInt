@@ -34,6 +34,7 @@ void MainWindow::about ()
             tr("This is a demo of running Blender Interface Library in Qt5"));
 }
 
+/*
 void MainWindow::mouseMoveEvent (QMouseEvent* event)
 {
 	
@@ -41,10 +42,11 @@ void MainWindow::mouseMoveEvent (QMouseEvent* event)
 
 void MainWindow::mousePressEvent(QMouseEvent* event)
 {
-
+    qDebug() << "Mouse Click\n";
 }
 
 void MainWindow::mouseReleaseEvent (QMouseEvent* event)
 {
 
 }
+*/

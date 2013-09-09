@@ -9,6 +9,7 @@
 GLWindow::GLWindow(QWidget *parent) :
     QGLWidget(parent), button_(0)
 {
+    setMouseTracking(true);
 }
 
 GLWindow::~GLWindow()
@@ -51,16 +52,68 @@ void GLWindow::paintGL()
 
 void GLWindow::mouseMoveEvent (QMouseEvent* event)
 {
-    BIL::Interface::instance()->cursorPosEvent(event->windowPos().toPoint().x(),
-            event->windowPos().toPoint().y());
+    BIL::Interface::instance()->cursorPosEvent(event->pos().x(),
+            event->pos().y());
 }
 
 void GLWindow::mousePressEvent (QMouseEvent* event)
 {
-	
+    int button = BIL::MouseButtonNone;
+    int action = BIL::MousePress;
+    int mods = BIL::ModifierNone;
+
+    switch(event->button()) {
+        case Qt::LeftButton:
+            button = BIL::MouseButtonLeft;
+            break;
+        case Qt::RightButton:
+            button = BIL::MouseButtonRight;
+        default:
+            break;
+
+    };
+
+    int qt_mods = event->modifiers();
+    if(qt_mods & Qt::ShiftModifier) {
+        mods = mods | BIL::ModifierShift;
+    }
+    if(qt_mods & Qt::ControlModifier) {
+        mods = mods | BIL::ModifierControl;
+    }
+    if(qt_mods & Qt::AltModifier) {
+        mods = mods | BIL::ModifierAlt;
+    }
+
+    BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void GLWindow::mouseReleaseEvent (QMouseEvent* event)
 {
+    int button = BIL::MouseButtonNone;
+    int action = BIL::MouseRelease;
+    int mods = BIL::ModifierNone;
 
+    switch(event->button()) {
+        case Qt::LeftButton:
+            button = BIL::MouseButtonLeft;
+            break;
+        case Qt::RightButton:
+            button = BIL::MouseButtonRight;
+        default:
+            break;
+
+    };
+
+    int qt_mods = event->modifiers();
+    if(qt_mods & Qt::ShiftModifier) {
+        mods = mods | BIL::ModifierShift;
+    }
+    if(qt_mods & Qt::ControlModifier) {
+        mods = mods | BIL::ModifierControl;
+    }
+    if(qt_mods & Qt::AltModifier) {
+        mods = mods | BIL::ModifierAlt;
+    }
+
+    BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
