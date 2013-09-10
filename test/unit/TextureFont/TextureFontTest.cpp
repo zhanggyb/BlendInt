@@ -76,8 +76,8 @@ void TextureFontTest::show1 ()
 
 	Freetype fe;
 	fe.open(Font("Sans"), 96);
-	fe.setCharSize(24);
-	TextureFont tex_font (L'我');
+	fe.setCharSize(100);
+	TextureFont tex_font (L'g');
 	tex_font.generate(&fe);
 
 	GLint attribute_coord;
@@ -126,10 +126,10 @@ void TextureFontTest::show1 ()
 
 		// render character from atlas here
 		/* Calculate the vertex and texture coordinates */
-		float x2 = 100 + tex_font.getMetrics().bitmap_left;
-		float y2 = 100 - tex_font.getMetrics().bitmap_top;
-		float w = tex_font.getMetrics().bitmap_width;
-		float h = tex_font.getMetrics().bitmap_height;
+		float x2 = 100 + tex_font.glyph_metrics().bitmap_left;
+		float y2 = 100 + tex_font.glyph_metrics().bitmap_top;
+		float w = tex_font.glyph_metrics().bitmap_width;
+		float h = tex_font.glyph_metrics().bitmap_height;
 
 		point box[4] = {
 			{x2, y2, 0, 0},

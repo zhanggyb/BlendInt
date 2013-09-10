@@ -27,6 +27,7 @@
 #include <string>
 
 #include <BIL/GLSLProgram.hpp>
+#include <BIL/Freetype.hpp>
 
 namespace BIL {
 
@@ -38,7 +39,7 @@ namespace BIL {
 	{
 	public:
 
-		struct Metrics
+		struct GlyphMetrics
 		{
 			float advance_x;
 			float advance_y;
@@ -53,24 +54,25 @@ namespace BIL {
 			float texture_coord_offset_y;
 		};
 
-		TextureAtlas (const std::string& filename);
+		TextureAtlas ();
 
 		~TextureAtlas ();
 
 		void initialize ();
 
-		void generate ();
+		void generate (Freetype* freetype, wchar_t start, int size);
 
 		void render_text(const char *text, float x, float y, float sx, float sy);
 
 	private:
 
-		struct point {
+		struct Vertex {
 			GLfloat x;
 			GLfloat y;
 			GLfloat s;
 			GLfloat t;
 		};
+
 		/**
 		 * Texture ID
 		 */
@@ -88,11 +90,18 @@ namespace BIL {
 		unsigned int width_;				// width of texture in pixels
 		unsigned int height_;			// height of texture in pixels
 
-		Metrics c_[128];
+		/**
+		 * The character from which to generate the texture atlas
+		 */
+		wchar_t starting_charcode_;
 
-		std::string filename_;
+		/**
+		 * the size of how many sequent characters are in this atlas
+		 * from starting_charcode_
+		 */
+		int stride_;
 
-		unsigned int font_size_;
+		GlyphMetrics *glyph_metrics_array_;
 
 		static const char* vs_shader;
 		static const char* fs_shader;

@@ -36,16 +36,16 @@ namespace BIL {
 
 	public:
 
-		struct Metrics
+		struct GlyphMetrics
 		{
-			float advance_x;
-			float advance_y;
-
 			float bitmap_width;
 			float bitmap_height;
 
 			float bitmap_left;
 			float bitmap_top;
+
+			float advance_x;
+			float advance_y;
 		};
 
 		static const char* getVertexShader () {return vs_shader;}
@@ -56,12 +56,14 @@ namespace BIL {
 
 		~TextureFont ();
 
-		void initialize ();
-
 		void generate (Freetype* freetype);
 
-		const Metrics& getMetrics () const {
-			return metrics_;
+		const GlyphMetrics& glyph_metrics () const {
+			return glyph_metrics_;
+		}
+
+		const wchar_t& charcode () const {
+			return charcode_;
 		}
 
 		const GLuint& texture () const {
@@ -70,7 +72,7 @@ namespace BIL {
 
 	private:
 
-		struct point {
+		struct Vertex {
 			GLfloat x;
 			GLfloat y;
 			GLfloat s;
@@ -81,7 +83,7 @@ namespace BIL {
 
 		GLuint texture_;
 
-		Metrics metrics_;
+		GlyphMetrics glyph_metrics_;
 
 		static const char* vs_shader;
 		static const char* fs_shader;

@@ -72,19 +72,20 @@ void TextureAtlasTest::show1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	//Freetype fe;
-	//fe.open(Font("Droid Sans"), 96);
-	TextureAtlas atlas ("/usr/share/fonts/TTF/DroidSans.ttf");
+	Freetype fe;
+	fe.open(Font("Sans"), 96);
+	fe.setCharSize(12);
+	TextureAtlas atlas;
 	//atlas.load(fe.getFontFace(), 48);
 	atlas.initialize();
-	atlas.generate();
+	atlas.generate(&fe, 32, 1000);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 
 		/* Render here */
 		app->render();
-		atlas.render_text("Hello World", 100.0, 100.0, 1.0, 1.0);
+		atlas.render_text("greetings, let's say yes!", 100.0, 100.0, 1.0, 1.0);
 
 		// render character from atlas here
 
@@ -94,6 +95,8 @@ void TextureAtlasTest::show1 ()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	fe.close();
 
 	/* release BIL */
 	Interface::release();

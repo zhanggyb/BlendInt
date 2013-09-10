@@ -31,7 +31,7 @@
 #include <BIL/Freetype.hpp>
 
 // Maximum texture width
-#define MAXWIDTH 1024
+#define MAXWIDTH 2048
 
 namespace BIL {
 
@@ -54,12 +54,12 @@ namespace BIL {
 			"}";
 
 
-	TextureAtlas::TextureAtlas (const std::string& filename)
+	TextureAtlas::TextureAtlas ()
 			: texture_(0), uniform_tex_(-1), attribute_coord_(-1),
 			  uniform_color_(-1), vbo_(0),
-			  width_(0), height_(0), filename_(filename), font_size_(12)
+			  width_(0), height_(0), starting_charcode_(0), stride_(0),
+			  glyph_metrics_array_(0)
 	{
-		 memset(c_, 0, sizeof c_);
 	}
 
 	TextureAtlas::~TextureAtlas ()
@@ -70,6 +70,10 @@ namespace BIL {
 
 		if(glIsBuffer(vbo_)) {
 			glDeleteBuffers(1, &vbo_);
+		}
+
+		if(glyph_metrics_array_) {
+			delete [] glyph_metrics_array_;
 		}
 	}
 
@@ -95,25 +99,28 @@ namespace BIL {
 		glGenBuffers(1, &vbo_);
 	}
 
-	void TextureAtlas::generate ()
+	void TextureAtlas::generate (Freetype* freetype, wchar_t start, int size)
 	{
-		Freetype freetype;
-		freetype.open(filename_, font_size_, 96);
-		if(!freetype.valid()) return;
+		if(!freetype->valid()) return;
 
-		freetype.setPixelSize(0, font_size_);
+		if(size <= 0) return;
 
-		FT_GlyphSlot g = freetype.getFontFace()->glyph;
+		stride_ = size;
+
+		starting_charcode_ = start;
+
+		glyph_metrics_array_ = new GlyphMetrics[stride_];
+
+		FT_GlyphSlot g = freetype->getFontFace()->glyph;
 
 		int roww = 0;
 		int rowh = 0;
 		 width_ = 0;
 		 height_ = 0;
 
-
 		/* Find minimum size for a texture holding all visible ASCII characters */
-		for (unsigned int i = 32; i < 128; i++) {
-			if (!freetype.loadCharacter(static_cast<unsigned long>(i), FT_LOAD_RENDER)) {
+		for (wchar_t i = starting_charcode_; i < (starting_charcode_ + stride_ - 1); i++) {
+			if (!freetype->loadCharacter(i, FT_LOAD_RENDER)) {
 				fprintf(stderr, "Loading character %c failed!\n", i);
 				continue;
 			}
@@ -155,8 +162,8 @@ namespace BIL {
 
 		rowh = 0;
 
-		for (int i = 32; i < 128; i++) {
-			if (!freetype.loadCharacter(i, FT_LOAD_RENDER)) {
+		for (wchar_t i = starting_charcode_; i < (starting_charcode_ + stride_ - 1); i++) {
+			if (!freetype->loadCharacter(i, FT_LOAD_RENDER)) {
 				fprintf(stderr, "Loading character %c failed!\n", i);
 				continue;
 			}
@@ -168,24 +175,27 @@ namespace BIL {
 			}
 
 			glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, g->bitmap.width, g->bitmap.rows, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
-			c_[i].advance_x = g->advance.x >> 6;
-			c_[i].advance_y = g->advance.y >> 6;
 
-			c_[i].bitmap_width = g->bitmap.width;
-			c_[i].bitmap_height = g->bitmap.rows;
+			int offset = i - starting_charcode_;
+			(glyph_metrics_array_ + offset )->advance_x = g->advance.x >> 6;
+			(glyph_metrics_array_ + offset)->advance_y = g->advance.y >> 6;
 
-			c_[i].bitmap_left = g->bitmap_left;
-			c_[i].bitmap_top = g->bitmap_top;
+			(glyph_metrics_array_ + offset)->bitmap_width = g->bitmap.width;
+			(glyph_metrics_array_ + offset)->bitmap_height = g->bitmap.rows;
 
-			c_[i].texture_coord_offset_x = ox / (float)width_;
-			c_[i].texture_coord_offset_y = oy / (float)height_;
+			(glyph_metrics_array_ + offset)->bitmap_left = g->bitmap_left;
+			(glyph_metrics_array_ + offset)->bitmap_top = g->bitmap_top;
+
+			(glyph_metrics_array_ + offset)->texture_coord_offset_x = ox / (float)width_;
+			(glyph_metrics_array_ + offset)->texture_coord_offset_y = oy / (float)height_;
 
 			rowh = std::max(rowh, g->bitmap.rows);
 			ox += g->bitmap.width + 1;
 		}
 
-		fprintf(stderr, "Generated a %u x %u (%u kb) texture atlas\n", width_, height_, width_ * height_ / 1024);
-		freetype.close();
+#ifdef DEBUG
+		fprintf(stdout, "Generated %u characters with a %u x %u (%u kb) texture atlas\n", stride_, width_, height_, width_ * height_ / 1024);
+#endif
 	}
 
 	/**
@@ -223,77 +233,75 @@ namespace BIL {
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 		glVertexAttribPointer(attribute_coord_, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-		point* coords = new point[6 * strlen(text)];
+		Vertex* coords = new Vertex[6 * strlen(text)];
 		int c = 0;
 
 		/* Loop through all characters */
-		for (p = (const uint8_t *)text; *p; p++) {
+		for (p = (const uint8_t *)text; *p; p++)
+		{
+			if((*p) < starting_charcode_) continue;
+			if((*p) > (starting_charcode_ + stride_ - 1)) continue;
+
+			int offset = *p - starting_charcode_;
+
 			/* Calculate the vertex and texture coordinates */
-			float x2 = x + c_[*p].bitmap_left * sx;
-			//float x2 = x + c_[*p].bitmap_left;
-
-			float y2 = -y - c_[*p].bitmap_top * sy;
-			//float y2 = -y - c_[*p].bitmap_top;
-
-			float w = c_[*p].bitmap_width * sx;
-			//float w = c_[*p].bitmap_width;
-
-			float h = c_[*p].bitmap_height * sy;
-			//float h = c_[*p].bitmap_height;
+			float x2 = x + (glyph_metrics_array_ + offset)->bitmap_left * sx;
+			float y2 = y + (glyph_metrics_array_ + offset)->bitmap_top * sy;
+			float w = (glyph_metrics_array_ + offset)->bitmap_width * sx;
+			float h = (glyph_metrics_array_ + offset)->bitmap_height * sy;
 
 			/* Advance the cursor to the start of the next character */
-			x += c_[*p].advance_x * sx;
-			//x += c_[*p].advance_x;
-			y += c_[*p].advance_y * sy;
-			//y += c_[*p].advance_y;
+			x += (glyph_metrics_array_ + offset)->advance_x * sx;
+			y += (glyph_metrics_array_ + offset)->advance_y * sy;
 
 			/* Skip glyphs that have no pixels */
 			if (!w || !h)
 				continue;
 
 			(coords + c)->x = x2;
-			(coords + c)->y = -y2;
-			(coords + c)->s = c_[*p].texture_coord_offset_x;
-			(coords + c)->t = c_[*p].texture_coord_offset_y;
+			(coords + c)->y = y2;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y;
 			c++;
 
 			(coords + c)->x = x2 + w;
-			(coords + c)->y = -y2;
-			(coords + c)->s = c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_;
-			(coords + c)->t = c_[*p].texture_coord_offset_y;
+			(coords + c)->y = y2;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y;
 			c++;
 
 			(coords + c)->x = x2;
-			(coords + c)->y = -y2 - h;
-			(coords + c)->s = c_[*p].texture_coord_offset_x;
-			(coords + c)->t = c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_;
+			(coords + c)->y = y2 - h;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
 			c++;
 
 			(coords + c)->x = x2 + w;
-			(coords + c)->y = -y2;
-			(coords + c)->s = c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_;
-			(coords + c)->t = c_[*p].texture_coord_offset_y;
+			(coords + c)->y = y2;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y;
 			c++;
 
 			(coords + c)->x = x2;
-			(coords + c)->y = -y2 - h;
-			(coords + c)->s = c_[*p].texture_coord_offset_x;
-			(coords + c)->t = c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_;
+			(coords + c)->y = y2 - h;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
 			c++;
 
 			(coords + c)->x = x2 + w;
-			(coords + c)->y = -y2 - h;
-			(coords + c)->s = c_[*p].texture_coord_offset_x + c_[*p].bitmap_width / width_;
-			(coords + c)->t = c_[*p].texture_coord_offset_y + c_[*p].bitmap_height / height_;
+			(coords + c)->y = y2 - h;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
 			c++;
 		}
 
 		/* Draw all the character on the screen in one go */
-		glBufferData(GL_ARRAY_BUFFER, sizeof(point) * 6 * strlen(text), coords, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 6 * strlen(text), coords, GL_DYNAMIC_DRAW);
 		glDrawArrays(GL_TRIANGLES, 0, c);
 
 		glDisableVertexAttribArray(attribute_coord_);
 		delete [] coords;
+		coords = 0;
 
 		glUseProgram(0);
 
