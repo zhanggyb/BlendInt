@@ -80,12 +80,80 @@ void TextureAtlasTest::show1 ()
 	atlas.initialize();
 	atlas.generate(&fe, 32, 1000);
 
+	std::cout << atlas.glyph_metrics('a').bitmap_left << std::endl;
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 
 		/* Render here */
 		app->render();
-		atlas.render_text("greetings, let's say yes!", 100.0, 100.0, 1.0, 1.0);
+		atlas.render_text(L"greetings, let's say yes!", 100.0, 100.0, 1.0, 1.0);
+
+		// render character from atlas here
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	fe.close();
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void TextureAtlasTest::show2 ()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Freetype fe;
+	fe.open(Font("Sans"), 96);
+	fe.setCharSize(12);
+	TextureAtlas atlas;
+	//atlas.load(fe.getFontFace(), 48);
+	atlas.initialize();
+	atlas.generate(&fe, L'一', 4000);	// '一' is 0x4e00 in unicode, a chinese character
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+
+		/* Render here */
+		app->render();
+		atlas.render_text(L"一丁丂七丄丅丆万丈三上下丌不与丏丐丑丒专且丕世", 100.0, 100.0, 1.0, 1.0);
 
 		// render character from atlas here
 

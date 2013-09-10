@@ -18,6 +18,7 @@ class TextureAtlasTest: public CppUnit::TestFixture
 CPPUNIT_TEST_SUITE(TextureAtlasTest);
 
 	CPPUNIT_TEST(show1);
+	CPPUNIT_TEST(show2);
 
 	CPPUNIT_TEST_SUITE_END();
 
@@ -36,6 +37,8 @@ public:
 private:
 
 	void show1 ();
+
+	void show2 ();
 
 	static void cbError (int error, const char* description);
 

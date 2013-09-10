@@ -62,7 +62,9 @@ namespace BIL {
 
 		void generate (Freetype* freetype, wchar_t start, int size);
 
-		void render_text(const char *text, float x, float y, float sx, float sy);
+		void render_text(const wchar_t* text, float x, float y, float sx, float sy);
+
+		const GlyphMetrics& glyph_metrics (wchar_t charcode) const;
 
 	private:
 

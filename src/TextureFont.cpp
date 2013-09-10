@@ -95,7 +95,7 @@ namespace BIL {
 			glyph_metrics_.advance_x = g->advance.x >> 6;
 			glyph_metrics_.advance_y = g->advance.y >> 6;
 
-
+#ifdef DEBUG
 			std::cout << "Metrics: " << std::endl
 								<< "		left: " << glyph_metrics_.bitmap_left << std::endl
 								<< "		top: " << glyph_metrics_.bitmap_top << std::endl
@@ -108,6 +108,7 @@ namespace BIL {
 								<< "		horiBearingY: " << (g->metrics.horiBearingY >> 6) << std::endl
 								<< "		horiAdvance: " << (g->metrics.horiAdvance >> 6) << std::endl
 								<< std::endl;
+#endif
 		}
 	}
 

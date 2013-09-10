@@ -25,7 +25,7 @@
 #include <string.h>
 #include <iostream>
 #include <algorithm>
-#include <assert.h>
+#include <stdexcept>
 
 #include <BIL/TextureAtlas.hpp>
 #include <BIL/Freetype.hpp>
@@ -198,14 +198,27 @@ namespace BIL {
 #endif
 	}
 
+	const TextureAtlas::GlyphMetrics& TextureAtlas::glyph_metrics (wchar_t charcode) const
+	{
+		int offset = charcode - starting_charcode_;
+		if(offset < 0 || offset >= stride_) {
+			throw std::out_of_range("Charcode not in atlas\n");
+		}
+		if(!glyph_metrics_array_) {
+			throw std::runtime_error("No glyph allocated in this atlas\n");
+		}
+
+		return *(glyph_metrics_array_ + offset);
+	}
+
 	/**
 	 * Render text using the currently loaded font and currently set font size.
 	 * Rendering starts at coordinates (x, y), z is always 0.
 	 * The pixel coordinates that the FreeType2 library uses are scaled by (sx, sy).
 	 */
-	void TextureAtlas::render_text(const char *text, float x, float y, float sx, float sy)
+	void TextureAtlas::render_text(const wchar_t* text, float x, float y, float sx, float sy)
 	{
-		const uint8_t *p;
+		const wchar_t* p;
 
 		glUseProgram(program_.id());
 
@@ -233,11 +246,11 @@ namespace BIL {
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 		glVertexAttribPointer(attribute_coord_, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-		Vertex* coords = new Vertex[6 * strlen(text)];
+		Vertex* coords = new Vertex[6 * wcslen(text)];
 		int c = 0;
 
 		/* Loop through all characters */
-		for (p = (const uint8_t *)text; *p; p++)
+		for (p = text; *p; p++)
 		{
 			if((*p) < starting_charcode_) continue;
 			if((*p) > (starting_charcode_ + stride_ - 1)) continue;
@@ -296,7 +309,7 @@ namespace BIL {
 		}
 
 		/* Draw all the character on the screen in one go */
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 6 * strlen(text), coords, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 6 * wcslen(text), coords, GL_DYNAMIC_DRAW);
 		glDrawArrays(GL_TRIANGLES, 0, c);
 
 		glDisableVertexAttribArray(attribute_coord_);
