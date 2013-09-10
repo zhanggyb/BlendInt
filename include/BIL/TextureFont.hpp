@@ -52,18 +52,14 @@ namespace BIL {
 
 		static const char* getFragmentShader () {return fs_shader;}
 
-		TextureFont (wchar_t charcode);
+		TextureFont ();
 
 		~TextureFont ();
 
-		void generate (Freetype* freetype);
+		void generate (Freetype* freetype, wchar_t charcode);
 
 		const GlyphMetrics& glyph_metrics () const {
 			return glyph_metrics_;
-		}
-
-		const wchar_t& charcode () const {
-			return charcode_;
 		}
 
 		const GLuint& texture () const {
@@ -78,8 +74,6 @@ namespace BIL {
 			GLfloat s;
 			GLfloat t;
 		};
-
-		wchar_t charcode_;
 
 		GLuint texture_;
 

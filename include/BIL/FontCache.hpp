@@ -32,6 +32,9 @@
 #include <BIL/Font.hpp>
 #include <BIL/Glyph.hpp>
 
+#include <BIL/TextureFont.hpp>
+#include <BIL/TextureAtlas.hpp>
+
 using namespace std;
 using namespace boost;
 
@@ -177,6 +180,10 @@ namespace BIL {
 		bool initialized_;
 
 		array<Glyph*, 128> ascii_db_;    // use arrary to store ascii for speed
+
+		TextureAtlas atlas_;
+
+		map<wchar_t, TextureFont*> texture_fonts_;
 
 		map<wchar_t, Glyph*> glyph_db_;
 

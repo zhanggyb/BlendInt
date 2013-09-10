@@ -164,6 +164,15 @@ namespace BIL {
 			glyph_db_.clear();
 			count_db_.clear();
 
+			map<wchar_t, TextureFont*>::iterator tex_fonts_it;
+			for (tex_fonts_it = texture_fonts_.begin(); tex_fonts_it != texture_fonts_.end(); tex_fonts_it++) {
+				if (tex_fonts_it->second) {
+					delete tex_fonts_it->second;
+					tex_fonts_it->second = 0;
+				}
+			}
+			texture_fonts_.clear();
+
 			for (int i = 0; i < 128; i++) {
 				if (ascii_db_[i]) {
 					delete ascii_db_[i];
@@ -185,6 +194,8 @@ namespace BIL {
 		if (initialized_) {
 			return false;
 		}
+
+		atlas_.generate(fontengine_, 32, 96);
 
 		for (char i = 'A'; i < 'Z'; i++)
 		{

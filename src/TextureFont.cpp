@@ -44,8 +44,8 @@ namespace BIL {
 			"  gl_FragColor = vec4(1, 1, 1, texture2D(tex, texpos).a) * color;"
 			"}";
 
-	TextureFont::TextureFont(wchar_t charcode)
-	: charcode_(charcode), texture_(0)
+	TextureFont::TextureFont()
+	: texture_(0)
 	{
 
 	}
@@ -57,7 +57,7 @@ namespace BIL {
 		}
 	}
 
-	void TextureFont::generate(Freetype* freetype)
+	void TextureFont::generate(Freetype* freetype, wchar_t charcode)
 	{
 		if(!freetype || !freetype->valid()) return;
 
@@ -80,7 +80,7 @@ namespace BIL {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		if (freetype->loadCharacter(charcode_, FT_LOAD_RENDER)) {
+		if (freetype->loadCharacter(charcode, FT_LOAD_RENDER)) {
 
 			FT_GlyphSlot g = freetype->getFontFace()->glyph;
 

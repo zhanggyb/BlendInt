@@ -142,20 +142,20 @@ void TextureAtlasTest::show2 ()
 
 	Freetype fe;
 	fe.open(Font("Sans"), 96);
-	fe.setCharSize(12);
+	fe.setCharSize(9);
 	TextureAtlas atlas;
 	//atlas.load(fe.getFontFace(), 48);
 	atlas.initialize();
-	atlas.generate(&fe, L'一', 4000);	// '一' is 0x4e00 in unicode, a chinese character
+	atlas.generate(&fe, L'一', 100);	// '一' is 0x4e00 in unicode, a chinese character
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 
 		/* Render here */
 		app->render();
-		atlas.render_text(L"一丁丂七丄丅丆万丈三上下丌不与丏丐丑丒专且丕世", 100.0, 100.0, 1.0, 1.0);
 
 		// render character from atlas here
+		atlas.render_text(L"一丁丂七丄丅丆万丈三上下丌不与丏丐丑丒专且丕世", 100.0, 100.0, 1.0, 1.0);
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

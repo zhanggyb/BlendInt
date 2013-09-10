@@ -106,10 +106,17 @@ namespace BIL {
 		if(size <= 0) return;
 
 		stride_ = size;
-
 		starting_charcode_ = start;
 
+		if(glyph_metrics_array_) {
+			delete [] glyph_metrics_array_;
+			glyph_metrics_array_ = 0;
+		}
 		glyph_metrics_array_ = new GlyphMetrics[stride_];
+
+		if(glIsTexture(texture_)) {
+				glDeleteTextures(1, &texture_);
+		}
 
 		FT_GlyphSlot g = freetype->getFontFace()->glyph;
 

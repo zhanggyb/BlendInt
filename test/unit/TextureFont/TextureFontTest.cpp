@@ -77,8 +77,8 @@ void TextureFontTest::show1 ()
 	Freetype fe;
 	fe.open(Font("Sans"), 96);
 	fe.setCharSize(100);
-	TextureFont tex_font (L'g');
-	tex_font.generate(&fe);
+	TextureFont tex_font;
+	tex_font.generate(&fe, L'A');
 
 	GLint attribute_coord;
 	GLint uniform_tex;
