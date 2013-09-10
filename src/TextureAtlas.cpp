@@ -193,8 +193,8 @@ namespace BIL {
 			(glyph_metrics_array_ + offset)->bitmap_left = g->bitmap_left;
 			(glyph_metrics_array_ + offset)->bitmap_top = g->bitmap_top;
 
-			(glyph_metrics_array_ + offset)->texture_coord_offset_x = ox / (float)width_;
-			(glyph_metrics_array_ + offset)->texture_coord_offset_y = oy / (float)height_;
+			(glyph_metrics_array_ + offset)->texture_offset_x = ox / (float)width_;
+			(glyph_metrics_array_ + offset)->texture_offset_y = oy / (float)height_;
 
 			rowh = std::max(rowh, g->bitmap.rows);
 			ox += g->bitmap.width + 1;
@@ -280,38 +280,38 @@ namespace BIL {
 
 			(coords + c)->x = x2;
 			(coords + c)->y = y2;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y;
 			c++;
 
 			(coords + c)->x = x2 + w;
 			(coords + c)->y = y2;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y;
 			c++;
 
 			(coords + c)->x = x2;
 			(coords + c)->y = y2 - h;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
 			c++;
 
 			(coords + c)->x = x2 + w;
 			(coords + c)->y = y2;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y;
 			c++;
 
 			(coords + c)->x = x2;
 			(coords + c)->y = y2 - h;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
 			c++;
 
 			(coords + c)->x = x2 + w;
 			(coords + c)->y = y2 - h;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_coord_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_coord_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
+			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
+			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
 			c++;
 		}
 

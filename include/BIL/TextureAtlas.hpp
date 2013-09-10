@@ -50,8 +50,8 @@ namespace BIL {
 			float bitmap_left;
 			float bitmap_top;
 
-			float texture_coord_offset_x;
-			float texture_coord_offset_y;
+			float texture_offset_x;
+			float texture_offset_y;
 		};
 
 		TextureAtlas ();

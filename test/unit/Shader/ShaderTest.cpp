@@ -82,6 +82,8 @@ void ShaderWidget1::render ()
 	glDisableVertexAttribArray(attribute_coord2d);
 	glDisableVertexAttribArray(attribute_v_color);
 
+    glUseProgram(0);
+
 }
 
 bool ShaderWidget1::init_resources()
@@ -172,6 +174,7 @@ void ShaderWidget2::render ()
 	/* Push each element in buffer_vertices to the vertex shader */
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 
+	glUseProgram(0);
 }
 
 bool ShaderWidget2::init_resources()
@@ -251,6 +254,8 @@ void ShaderWidget3::render ()
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
+	glUseProgram(program_.id());
+
 	glBegin(GL_TRIANGLES);
 	glVertex3i(200, 200, 0);
 	glVertex3i(800, 200, 0);
@@ -259,8 +264,7 @@ void ShaderWidget3::render ()
 
 	glPopMatrix();
 
-	glUseProgram(program_.id());
-
+	glUseProgram(0);
 }
 
 bool ShaderWidget3::init_resources()
