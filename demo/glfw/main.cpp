@@ -64,6 +64,7 @@ int main(int argc, char* argv[]) {
 	/* initialize BIL after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
+		return -1;
 	}
 
 	Interface* app = Interface::instance();

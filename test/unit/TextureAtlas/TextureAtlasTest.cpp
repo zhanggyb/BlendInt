@@ -80,7 +80,7 @@ void TextureAtlasTest::show1 ()
 	atlas.initialize();
 	atlas.generate(&fe, 32, 1000);
 
-	std::cout << atlas.glyph_metrics('a').bitmap_left << std::endl;
+	std::cout << atlas.glyph('a').bitmap_left << std::endl;
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

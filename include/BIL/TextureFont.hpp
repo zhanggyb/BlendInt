@@ -23,8 +23,8 @@
 #define _BIL_TEXTUREFONT_HPP_
 
 #include <BIL/GLSLProgram.hpp>
-
 #include <BIL/Freetype.hpp>
+#include <BIL/Glyph.hpp>
 
 namespace BIL {
 
@@ -36,18 +36,6 @@ namespace BIL {
 
 	public:
 
-		struct GlyphMetrics
-		{
-			float bitmap_width;
-			float bitmap_height;
-
-			float bitmap_left;
-			float bitmap_top;
-
-			float advance_x;
-			float advance_y;
-		};
-
 		static const char* getVertexShader () {return vs_shader;}
 
 		static const char* getFragmentShader () {return fs_shader;}
@@ -58,8 +46,8 @@ namespace BIL {
 
 		void generate (Freetype* freetype, wchar_t charcode);
 
-		const GlyphMetrics& glyph_metrics () const {
-			return glyph_metrics_;
+		const Glyph& glyph () const {
+			return glyph_;
 		}
 
 		const GLuint& texture () const {
@@ -77,7 +65,7 @@ namespace BIL {
 
 		GLuint texture_;
 
-		GlyphMetrics glyph_metrics_;
+		Glyph glyph_;
 
 		static const char* vs_shader;
 		static const char* fs_shader;

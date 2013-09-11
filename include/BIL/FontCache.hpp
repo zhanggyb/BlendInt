@@ -26,8 +26,6 @@
 #include <functional>
 #include <wchar.h>
 
-#include <boost/array.hpp>
-
 #include <BIL/Freetype.hpp>
 #include <BIL/Font.hpp>
 #include <BIL/Glyph.hpp>
@@ -36,7 +34,6 @@
 #include <BIL/TextureAtlas.hpp>
 
 using namespace std;
-using namespace boost;
 
 namespace BIL {
 
@@ -72,11 +69,6 @@ namespace BIL {
 
 		static void releaseAll ();
 
-		static void setCacheSize (unsigned int size)
-		{
-			cacheSize = size;
-		}
-
 		static void setMaxCaches (unsigned int size)
 		{
 			maxCaches = size;
@@ -96,7 +88,7 @@ namespace BIL {
          * @warning Do not simply initialize all characer in ascii
          * cause render error. I dont't know why this happens
 		 */
-		bool Initialize ();
+		bool setup ();
 
 		/**
 		 * @brief query the Glyph of a wchar
@@ -106,7 +98,11 @@ namespace BIL {
 		 *
 		 * @warning Do not delete the pointer get from this funciton
 		 */
-		Glyph* query (wchar_t charcode, bool create = true);
+		//Glyph* query (wchar_t charcode, bool create = true);
+
+		const Glyph& queryGlyph (wchar_t charcode, bool create = true);
+
+		const GLuint queryTexture (wchar_t charcode, bool create = true);
 
 		int getHeight ()
 		{
@@ -133,7 +129,7 @@ namespace BIL {
 			return fontengine_->max_advance();
 		}
 
-		Tuple2l getKerning (const Glyph& left, const Glyph& right,
+		Tuple2l getKerning (const wchar_t& left, const wchar_t& right,
 				FT_UInt kern_mode = FT_KERNING_DEFAULT)
 		{
 			return fontengine_->getKerning(left, right, kern_mode);
@@ -179,20 +175,12 @@ namespace BIL {
 
 		bool initialized_;
 
-		array<Glyph*, 128> ascii_db_;    // use arrary to store ascii for speed
-
 		TextureAtlas atlas_;
 
 		map<wchar_t, TextureFont*> texture_fonts_;
 
-		map<wchar_t, Glyph*> glyph_db_;
-
-		map<wchar_t, unsigned long> count_db_;
-
 	private:
 		// static members
-
-		static unsigned int cacheSize;
 
 		static unsigned int maxCaches;
 

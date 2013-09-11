@@ -88,19 +88,19 @@ namespace BIL {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
 
 			/* Calculate the vertex and texture coordinates */
-			glyph_metrics_.bitmap_left = g->bitmap_left;
-			glyph_metrics_.bitmap_top = g->bitmap_top;
-			glyph_metrics_.bitmap_width = g->bitmap.width;
-			glyph_metrics_.bitmap_height = g->bitmap.rows;
-			glyph_metrics_.advance_x = g->advance.x >> 6;
-			glyph_metrics_.advance_y = g->advance.y >> 6;
+			glyph_.bitmap_left = g->bitmap_left;
+			glyph_.bitmap_top = g->bitmap_top;
+			glyph_.bitmap_width = g->bitmap.width;
+			glyph_.bitmap_height = g->bitmap.rows;
+			glyph_.advance_x = g->advance.x >> 6;
+			glyph_.advance_y = g->advance.y >> 6;
 
 #ifdef DEBUG
 			std::cout << "Metrics: " << std::endl
-								<< "		left: " << glyph_metrics_.bitmap_left << std::endl
-								<< "		top: " << glyph_metrics_.bitmap_top << std::endl
-								<< "		width: " << glyph_metrics_.bitmap_width << std::endl
-								<< "		height: " << glyph_metrics_.bitmap_height << std::endl
+								<< "		left: " << glyph_.bitmap_left << std::endl
+								<< "		top: " << glyph_.bitmap_top << std::endl
+								<< "		width: " << glyph_.bitmap_width << std::endl
+								<< "		height: " << glyph_.bitmap_height << std::endl
 								<< "and Glyph Metrics: " << std::endl
 								<< "		width: " << (g->metrics.width >> 6) << std::endl
 								<< "		height: " << (g->metrics.height >> 6) << std::endl

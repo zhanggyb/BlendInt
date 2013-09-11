@@ -27,6 +27,7 @@
 #include <BIL/FontConfig.hpp>
 #include <BIL/FontCache.hpp>
 #include <BIL/Theme.hpp>
+#include <BIL/ShaderManager.hpp>
 #include <BIL/Size.hpp>
 #include <BIL/Traceable.hpp>
 #include <BIL/Drawable.hpp>
@@ -80,6 +81,11 @@ namespace BIL {
 			result = false;
 		}
 
+		if (!ShaderManager::initialize()) {
+			std::cerr << "Cannot initialize Shader Manager" << std::endl;
+			result = false;
+		}
+
 		if (!interface) {
 			interface = new Interface();
 		}
@@ -92,6 +98,7 @@ namespace BIL {
 
 	void Interface::release ()
 	{
+		ShaderManager::release();
 		Theme::release();
 		FontCache::releaseAll();
 		FontConfig::release();

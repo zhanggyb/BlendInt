@@ -79,12 +79,10 @@ namespace BIL {
 		String::const_iterator next;
 		Size box;
 		Tuple2l kerning;
-		Glyph* glyph = NULL;
 
 		unsigned int line_width = 0;
 		unsigned int line = 1;
 
-		cout << endl;
 		for (it = text_.begin(); it != text_.end(); it++) {
 			wcout << *it;
 			if (*it == '\n') {
@@ -93,17 +91,13 @@ namespace BIL {
 				continue;
 			}
 
-			glyph = fontcache_->query(*it);
-			if (glyph) {
-				// add kerning support
-				next = it + 1;
-				if(next != text_.end()) {
-					kerning = fontcache_->getKerning(*it, *next);
-				}
-				line_width = glyph->metrics().horiAdvance + kerning.vec.x + line_width;
+			// add kerning support
+			next = it + 1;
+			if(next != text_.end()) {
+				kerning = fontcache_->getKerning(*it, *next);
 			}
+			line_width = fontcache_->queryGlyph(*it).advance_x + kerning.vec.x + line_width;
 		}
-		cout << endl;
 
 		if (line == 1) {
 			box.set_width (line_width);
@@ -115,8 +109,6 @@ namespace BIL {
 
 	void TextBuffer::render ()
 	{
-		Glyph* glyph = NULL;
-
 		//glDisable(GL_LIGHTING);
 		//glDisable(GL_DEPTH_TEST);
 
@@ -146,11 +138,13 @@ namespace BIL {
 				continue;
 			}
 
+			/*
 			glyph = fontcache_->query(*it);
 			if (glyph) {
 				glyph->Render();
 				glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 			}
+			*/
 		}
 
 		glPopMatrix();

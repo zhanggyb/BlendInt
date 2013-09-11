@@ -82,15 +82,10 @@ void FontCacheTest::create4 ()
 		CPPUNIT_FAIL ("Cannot create cache for Droid Sans Mono\n");
 	}
 
-	bool result = cache->Initialize();
+	bool result = cache->setup();
 
 	if (result) {
-		Glyph* glyph = cache->query('A');
-		if(glyph == NULL) {
-			result = false;
-		} else {
-			cout << "Glyph Index: " << glyph->glyph_index() << endl;
-		}
+		cout << "Glyph width: " << cache->queryGlyph('A').bitmap_width << endl;
 	}
 
 	FontCache::release (Font("Droid Sans Mono"));
@@ -105,18 +100,18 @@ void FontCacheTest::check1 ()
 	if(cache == NULL)
 		CPPUNIT_FAIL ("Cannot create cache for Droid Sans Mono\n");
 
-	bool result = cache->Initialize();
+	bool result = cache->setup();
 
 	if(result) {
-		cache->query(L'仁', true);
-		cache->query(L'义', true);
-		cache->query(L'礼', true);
-		cache->query(L'智', true);
-		cache->query(L'信', true);
+		cache->queryGlyph(L'仁', true);
+		cache->queryGlyph(L'义', true);
+		cache->queryGlyph(L'礼', true);
+		cache->queryGlyph(L'智', true);
+		cache->queryGlyph(L'信', true);
 
 
-		cache->query(L'仁');
-		cache->query(L'仁');
+		cache->queryGlyph(L'仁');
+		cache->queryGlyph(L'仁');
 
 #ifdef DEBUG
 		cache->printcount();
@@ -138,24 +133,23 @@ void FontCacheTest::check1 ()
 void FontCacheTest::check2 ()
 {
 	FontCache* cache = FontCache::create(Font("Droid Sans Mono"));
-	Glyph* glyph = NULL;
 
 	if(cache == NULL)
 		CPPUNIT_FAIL ("Cannot create cache for Droid Sans Mono\n");
 
-	bool result = cache->Initialize();
+	bool result = cache->setup();
 
 	if(result) {
 #ifdef DEBUG
 		cache->printcount();
 		FontCache::list();
 #endif
-		glyph = cache->query('A');
+		cache->queryGlyph('A');
 	}
 
 	FontCache::release (Font("Droid Sans Mono"));
 
-	CPPUNIT_ASSERT (glyph != NULL && result);
+	CPPUNIT_ASSERT (result);
 }
 
 void FontCacheTest::check3 ()
@@ -166,7 +160,7 @@ void FontCacheTest::check3 ()
 	if(cache == NULL)
 		CPPUNIT_FAIL ("Cannot create cache for Droid Sans Mono\n");
 
-	bool result = cache->Initialize();
+	bool result = cache->setup();
 
 	if(result) {
 #ifdef DEBUG
@@ -229,25 +223,24 @@ void FontCacheTest::check5 ()
 void FontCacheTest::check6 ()
 {
 	FontCache* cache = FontCache::create();
-	Glyph* glyph = NULL;
 
 	if(cache == NULL)
 		CPPUNIT_FAIL ("Cannot create cache for default font\n");
 
-	bool result = cache->Initialize();
+	bool result = cache->setup();
 
 	if(result) {
 		for(int i = 0; i < 10; i++)
 		{
-			glyph = cache->query(L'仁');
+			cache->queryGlyph(L'仁');
 		}
 		for(int i = 0; i < 5; i++)
 		{
-			glyph = cache->query(L'义');
+			cache->queryGlyph(L'义');
 		}
 		for(int i = 0; i < 20; i++)
 		{
-			glyph = cache->query(L'智');
+			cache->queryGlyph(L'智');
 		}
 
 #ifdef DEBUG
@@ -288,9 +281,9 @@ void FontCacheTest::check8 ()
 
 	FontCache::setMaxCaches(6);
 	FontCache* cache1 = FontCache::create(Font("Droid Sans"));
-	bool result1 = cache1->Initialize();
+	bool result1 = cache1->setup();
 	FontCache* cache2 = FontCache::create(Font("Droid Sans", 12));
-	bool result2 = cache2->Initialize();
+	bool result2 = cache2->setup();
 
 #ifdef DEBUG
 		FontCache::list();
@@ -341,17 +334,16 @@ void FontCacheTest::show1()
 	app->resize(1200, 800);
 
 	FontCache* cache = FontCache::create(Font("Droid Sans Fallback", 24));
-	Glyph* glyph = NULL;
 
 	if(cache == NULL)
 		CPPUNIT_FAIL ("Cannot create cache for default font\n");
 
-	bool result = cache->Initialize();
+	bool result = cache->setup();
 	if(!result) {
 		CPPUNIT_FAIL("Cannot initialize font cache\n");
 	}
 
-	glyph = cache->query(L'信');
+	cache->queryGlyph(L'信');
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -380,7 +372,7 @@ void FontCacheTest::show1()
 		glLoadIdentity();
 
 		// Test buffer render
-		glyph->Render();
+		//glyph->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -430,18 +422,18 @@ void FontCacheTest::show_multiple_cache1()
 	app->resize(1200, 800);
 
 	FontCache* cache1 = FontCache::create(Font("Lucida Grande", 48));
-	cache1->Initialize();
+	cache1->setup();
 
 	FontCache* cache2 = FontCache::create(Font("Sans", 48));
 	//FontCache* cache2 = FontCache::create(Font("Droid Sans Mono", 48));
-	cache2->Initialize();
+	cache2->setup();
 
 	FontCache* cache3 = FontCache::create(Font("DejaVu Serif", 48));
-	cache3->Initialize();
+	cache3->setup();
 
 	FontCache* cache4 = FontCache::create(Font("STXingkai", 48));
 	//FontCache* cache4 = FontCache::create(Font("Bitstream Vera Sans", 48));
-	cache4->Initialize();
+	cache4->setup();
 
 	String str1("Hello World! (cache1)");
 	String str2(L"花间一壶酒，独酌无相亲。");
@@ -454,8 +446,6 @@ void FontCacheTest::show_multiple_cache1()
 #ifdef DEBUG
 	FontCache::list();
 #endif
-
-	Glyph* glyph = NULL;
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -488,9 +478,9 @@ void FontCacheTest::show_multiple_cache1()
 		glTranslatef(100.0f, 100.0f, 0.0f);
 		for (it = str1.begin(); it != str1.end(); it++)
 		{
-			glyph = cache1->query(*it);
-			glyph->Render();
-			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+			cache1->queryGlyph(*it);
+			//glyph->Render();
+			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
 		glPopMatrix();
 
@@ -498,9 +488,9 @@ void FontCacheTest::show_multiple_cache1()
 		glTranslatef(100.0f, 200.0f, 0.0f);
 		for (it = str2.begin(); it != str2.end(); it++)
 		{
-			glyph = cache2->query(*it);
-			glyph->Render();
-			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+			cache2->queryGlyph(*it);
+			//glyph->Render();
+			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
 		glPopMatrix();
 
@@ -508,9 +498,9 @@ void FontCacheTest::show_multiple_cache1()
 		glTranslatef(100.0f, 300.0f, 0.0f);
 		for (it = str3.begin(); it != str3.end(); it++)
 		{
-			glyph = cache3->query(*it);
-			glyph->Render();
-			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+			cache3->queryGlyph(*it);
+			//glyph->Render();
+			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
 		glPopMatrix();
 
@@ -518,9 +508,9 @@ void FontCacheTest::show_multiple_cache1()
 		glTranslatef(100.0f, 400.0f, 0.0f);
 		for (it = str4.begin(); it != str4.end(); it++)
 		{
-			glyph = cache4->query(*it);
-			glyph->Render();
-			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+			cache4->queryGlyph(*it);
+			//glyph->Render();
+			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
 		glPopMatrix();
 
@@ -572,18 +562,18 @@ void FontCacheTest::test_font_not_exist1()
 	app->resize(1200, 800);
 
 	FontCache* cache1 = FontCache::create(Font("Lucida Grande", 48));
-	cache1->Initialize();
+	cache1->setup();
 
 	FontCache* cache2 = FontCache::create(Font("Sans", 48));
 	//FontCache* cache2 = FontCache::create(Font("Droid Sans Mono", 48));
-	cache2->Initialize();
+	cache2->setup();
 
 	FontCache* cache3 = FontCache::create(Font("DejaVu Serif", 48));
-	cache3->Initialize();
+	cache3->setup();
 
 	FontCache* cache4 = FontCache::create(Font("Droid Sans", 48));
 	//FontCache* cache4 = FontCache::create(Font("Bitstream Vera Sans", 48));
-	cache4->Initialize();
+	cache4->setup();
 
 	String str1("Hello World! (cache1)");
 	String str2(L"花间一壶酒，独酌无相亲。");
@@ -596,8 +586,6 @@ void FontCacheTest::test_font_not_exist1()
 #ifdef DEBUG
 	FontCache::list();
 #endif
-
-	Glyph* glyph = NULL;
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -630,9 +618,9 @@ void FontCacheTest::test_font_not_exist1()
 		glTranslatef(100.0f, 100.0f, 0.0f);
 		for (it = str1.begin(); it != str1.end(); it++)
 		{
-			glyph = cache1->query(*it);
-			glyph->Render();
-			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+			cache1->queryGlyph(*it);
+			//glyph->Render();
+			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
 		glPopMatrix();
 
@@ -640,9 +628,9 @@ void FontCacheTest::test_font_not_exist1()
 		glTranslatef(100.0f, 200.0f, 0.0f);
 		for (it = str2.begin(); it != str2.end(); it++)
 		{
-			glyph = cache2->query(*it);
-			glyph->Render();
-			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+			cache2->queryGlyph(*it);
+			//glyph->Render();
+			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
 		glPopMatrix();
 
@@ -650,9 +638,9 @@ void FontCacheTest::test_font_not_exist1()
 		glTranslatef(100.0f, 300.0f, 0.0f);
 		for (it = str3.begin(); it != str3.end(); it++)
 		{
-			glyph = cache3->query(*it);
-			glyph->Render();
-			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+			cache3->queryGlyph(*it);
+			//glyph->Render();
+			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
 		glPopMatrix();
 
@@ -660,9 +648,9 @@ void FontCacheTest::test_font_not_exist1()
 		glTranslatef(100.0f, 400.0f, 0.0f);
 		for (it = str4.begin(); it != str4.end(); it++)
 		{
-			glyph = cache4->query(*it);
-			glyph->Render();
-			glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+			cache4->queryGlyph(*it);
+			//glyph->Render();
+			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
 		glPopMatrix();
 

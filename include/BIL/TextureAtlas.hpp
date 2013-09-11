@@ -28,6 +28,7 @@
 
 #include <BIL/GLSLProgram.hpp>
 #include <BIL/Freetype.hpp>
+#include <BIL/Glyph.hpp>
 
 namespace BIL {
 
@@ -39,21 +40,6 @@ namespace BIL {
 	{
 	public:
 
-		struct GlyphMetrics
-		{
-			float advance_x;
-			float advance_y;
-
-			float bitmap_width;
-			float bitmap_height;
-
-			float bitmap_left;
-			float bitmap_top;
-
-			float texture_offset_x;
-			float texture_offset_y;
-		};
-
 		TextureAtlas ();
 
 		~TextureAtlas ();
@@ -62,9 +48,13 @@ namespace BIL {
 
 		void generate (Freetype* freetype, wchar_t start, int size);
 
+		bool contains (wchar_t charcode);
+
 		void render_text(const wchar_t* text, float x, float y, float sx, float sy);
 
-		const GlyphMetrics& glyph_metrics (wchar_t charcode) const;
+		const Glyph& glyph (wchar_t charcode) const;
+
+		const GLuint& texture () const {return texture_;}
 
 	private:
 
@@ -103,7 +93,7 @@ namespace BIL {
 		 */
 		int stride_;
 
-		GlyphMetrics *glyph_metrics_array_;
+		Glyph *glyph_array_;
 
 		static const char* vs_shader;
 		static const char* fs_shader;

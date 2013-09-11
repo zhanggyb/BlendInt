@@ -348,7 +348,7 @@ namespace BIL {
 		return true;
 	}
 
-	Tuple2l Freetype::getKerning (const Glyph& left, const Glyph& right,
+	Tuple2l Freetype::getKerning (const wchar_t& left, const wchar_t& right,
 	        FT_UInt kerning_mode)
 	{
 		Tuple2l ret;	// {0, 0}
@@ -360,8 +360,8 @@ namespace BIL {
 
 		FT_Vector kerning;
 
-		bool result = getKerning(left.glyph_index(),
-		        right.glyph_index(), kerning_mode, &kerning);
+		bool result = getKerning(getCharIndex(left),
+		        getCharIndex(right), kerning_mode, &kerning);
 
 		if (!result)
 			return ret;

@@ -19,6 +19,7 @@ class TextureFontTest: public CppUnit::TestFixture
 CPPUNIT_TEST_SUITE(TextureFontTest);
 
 	CPPUNIT_TEST(show1);
+	CPPUNIT_TEST(show2);
 
 	CPPUNIT_TEST_SUITE_END();
 
@@ -44,6 +45,7 @@ private:
 	};
 
 	void show1 ();
+	void show2 ();
 
 	void render_text (const char* text, float x, float y);
 

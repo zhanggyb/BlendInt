@@ -32,7 +32,6 @@
 #include <BIL/Size.hpp>
 #include <BIL/String.hpp>
 
-using namespace boost;
 using namespace std;
 
 namespace BIL {
@@ -80,7 +79,7 @@ namespace BIL {
 		void setFont (const Font& font)
 		{
 			fontcache_ = FontCache::create(font);
-			fontcache_->Initialize();
+			fontcache_->setup();
 		}
 
 		void render (); /* render the text */

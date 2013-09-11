@@ -58,7 +58,7 @@ namespace BIL {
 			: texture_(0), uniform_tex_(-1), attribute_coord_(-1),
 			  uniform_color_(-1), vbo_(0),
 			  width_(0), height_(0), starting_charcode_(0), stride_(0),
-			  glyph_metrics_array_(0)
+			  glyph_array_(0)
 	{
 	}
 
@@ -72,17 +72,20 @@ namespace BIL {
 			glDeleteBuffers(1, &vbo_);
 		}
 
-		if(glyph_metrics_array_) {
-			delete [] glyph_metrics_array_;
+		if(glyph_array_) {
+			delete [] glyph_array_;
 		}
 	}
 
 	void TextureAtlas::initialize()
 	{
 		program_.attachShaderPair(vs_shader, fs_shader);
-		program_.link();
 		if(!program_.isValid()) {
 			std::cerr << "Cannot compile shaders" << std::endl;
+			return;
+		}
+		if(!program_.link()) {
+			std::cerr << "Cannot link program" << std::endl;
 			return;
 		}
 
@@ -108,11 +111,11 @@ namespace BIL {
 		stride_ = size;
 		starting_charcode_ = start;
 
-		if(glyph_metrics_array_) {
-			delete [] glyph_metrics_array_;
-			glyph_metrics_array_ = 0;
+		if(glyph_array_) {
+			delete [] glyph_array_;
+			glyph_array_ = 0;
 		}
-		glyph_metrics_array_ = new GlyphMetrics[stride_];
+		glyph_array_ = new Glyph[stride_];
 
 		if(glIsTexture(texture_)) {
 				glDeleteTextures(1, &texture_);
@@ -184,17 +187,17 @@ namespace BIL {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, g->bitmap.width, g->bitmap.rows, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
 
 			int offset = i - starting_charcode_;
-			(glyph_metrics_array_ + offset )->advance_x = g->advance.x >> 6;
-			(glyph_metrics_array_ + offset)->advance_y = g->advance.y >> 6;
+			(glyph_array_ + offset )->advance_x = g->advance.x >> 6;
+			(glyph_array_ + offset)->advance_y = g->advance.y >> 6;
 
-			(glyph_metrics_array_ + offset)->bitmap_width = g->bitmap.width;
-			(glyph_metrics_array_ + offset)->bitmap_height = g->bitmap.rows;
+			(glyph_array_ + offset)->bitmap_width = g->bitmap.width;
+			(glyph_array_ + offset)->bitmap_height = g->bitmap.rows;
 
-			(glyph_metrics_array_ + offset)->bitmap_left = g->bitmap_left;
-			(glyph_metrics_array_ + offset)->bitmap_top = g->bitmap_top;
+			(glyph_array_ + offset)->bitmap_left = g->bitmap_left;
+			(glyph_array_ + offset)->bitmap_top = g->bitmap_top;
 
-			(glyph_metrics_array_ + offset)->texture_offset_x = ox / (float)width_;
-			(glyph_metrics_array_ + offset)->texture_offset_y = oy / (float)height_;
+			(glyph_array_ + offset)->texture_offset_x = ox / (float)width_;
+			(glyph_array_ + offset)->texture_offset_y = oy / (float)height_;
 
 			rowh = std::max(rowh, g->bitmap.rows);
 			ox += g->bitmap.width + 1;
@@ -205,17 +208,26 @@ namespace BIL {
 #endif
 	}
 
-	const TextureAtlas::GlyphMetrics& TextureAtlas::glyph_metrics (wchar_t charcode) const
+	bool TextureAtlas::contains(wchar_t charcode)
+	{
+		int offset = charcode - starting_charcode_;
+
+		if (offset < 0 || offset > (stride_ - 1))  return false;
+
+		return true;
+	}
+
+	const Glyph& TextureAtlas::glyph (wchar_t charcode) const
 	{
 		int offset = charcode - starting_charcode_;
 		if(offset < 0 || offset >= stride_) {
 			throw std::out_of_range("Charcode not in atlas\n");
 		}
-		if(!glyph_metrics_array_) {
+		if(!glyph_array_) {
 			throw std::runtime_error("No glyph allocated in this atlas\n");
 		}
 
-		return *(glyph_metrics_array_ + offset);
+		return *(glyph_array_ + offset);
 	}
 
 	/**
@@ -265,14 +277,14 @@ namespace BIL {
 			int offset = *p - starting_charcode_;
 
 			/* Calculate the vertex and texture coordinates */
-			float x2 = x + (glyph_metrics_array_ + offset)->bitmap_left * sx;
-			float y2 = y + (glyph_metrics_array_ + offset)->bitmap_top * sy;
-			float w = (glyph_metrics_array_ + offset)->bitmap_width * sx;
-			float h = (glyph_metrics_array_ + offset)->bitmap_height * sy;
+			float x2 = x + (glyph_array_ + offset)->bitmap_left * sx;
+			float y2 = y + (glyph_array_ + offset)->bitmap_top * sy;
+			float w = (glyph_array_ + offset)->bitmap_width * sx;
+			float h = (glyph_array_ + offset)->bitmap_height * sy;
 
 			/* Advance the cursor to the start of the next character */
-			x += (glyph_metrics_array_ + offset)->advance_x * sx;
-			y += (glyph_metrics_array_ + offset)->advance_y * sy;
+			x += (glyph_array_ + offset)->advance_x * sx;
+			y += (glyph_array_ + offset)->advance_y * sy;
 
 			/* Skip glyphs that have no pixels */
 			if (!w || !h)
@@ -280,38 +292,38 @@ namespace BIL {
 
 			(coords + c)->x = x2;
 			(coords + c)->y = y2;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y;
+			(coords + c)->s = (glyph_array_ + offset)->texture_offset_x;
+			(coords + c)->t = (glyph_array_ + offset)->texture_offset_y;
 			c++;
 
 			(coords + c)->x = x2 + w;
 			(coords + c)->y = y2;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y;
+			(coords + c)->s = (glyph_array_ + offset)->texture_offset_x + (glyph_array_ + offset)->bitmap_width / width_;
+			(coords + c)->t = (glyph_array_ + offset)->texture_offset_y;
 			c++;
 
 			(coords + c)->x = x2;
 			(coords + c)->y = y2 - h;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
+			(coords + c)->s = (glyph_array_ + offset)->texture_offset_x;
+			(coords + c)->t = (glyph_array_ + offset)->texture_offset_y + (glyph_array_ + offset)->bitmap_height / height_;
 			c++;
 
 			(coords + c)->x = x2 + w;
 			(coords + c)->y = y2;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y;
+			(coords + c)->s = (glyph_array_ + offset)->texture_offset_x + (glyph_array_ + offset)->bitmap_width / width_;
+			(coords + c)->t = (glyph_array_ + offset)->texture_offset_y;
 			c++;
 
 			(coords + c)->x = x2;
 			(coords + c)->y = y2 - h;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
+			(coords + c)->s = (glyph_array_ + offset)->texture_offset_x;
+			(coords + c)->t = (glyph_array_ + offset)->texture_offset_y + (glyph_array_ + offset)->bitmap_height / height_;
 			c++;
 
 			(coords + c)->x = x2 + w;
 			(coords + c)->y = y2 - h;
-			(coords + c)->s = (glyph_metrics_array_ + offset)->texture_offset_x + (glyph_metrics_array_ + offset)->bitmap_width / width_;
-			(coords + c)->t = (glyph_metrics_array_ + offset)->texture_offset_y + (glyph_metrics_array_ + offset)->bitmap_height / height_;
+			(coords + c)->s = (glyph_array_ + offset)->texture_offset_x + (glyph_array_ + offset)->bitmap_width / width_;
+			(coords + c)->t = (glyph_array_ + offset)->texture_offset_y + (glyph_array_ + offset)->bitmap_height / height_;
 			c++;
 		}
 

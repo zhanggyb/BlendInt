@@ -151,23 +151,16 @@ namespace BIL {
 		 */
 		~Theme ();
 
-	private:
-		// member functions disabled
+		ThemeUI themeUI_;
+
+		FontStyle fonts_;
+
+		static Theme* theme;
 
 		Theme (const Theme& orig);
 
 		Theme& operator = (const Theme& orig);
 
-	private:
-
-		ThemeUI themeUI_;
-
-		FontStyle fonts_;
-
-	private:
-		// static member variables
-
-		static Theme* theme;
 	};
 
 } /* namespace BIL */

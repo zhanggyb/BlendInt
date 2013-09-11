@@ -25,6 +25,7 @@
 #include <deque>
 #include <queue>
 #include <utility>
+#include <stdexcept>
 
 #include <BIL/FontCache.hpp>
 
@@ -32,7 +33,6 @@ using namespace std;
 
 namespace BIL {
 
-	unsigned int FontCache::cacheSize = 1024;
 	unsigned int FontCache::maxCaches = 32;
 
 	map<Font, FontCache*> FontCache::cacheDB;
@@ -143,9 +143,6 @@ namespace BIL {
 	FontCache::FontCache (const Font& font, unsigned int dpi)
 			: fontengine_(NULL), initialized_(false)
 	{
-		for (int i = 0; i < 128; i++) {
-			ascii_db_[i] = NULL;
-		}
 		fontengine_ = new Freetype;
 		fontengine_->open(font, dpi);
 	}
@@ -154,38 +151,22 @@ namespace BIL {
 	{
 		if (fontengine_) {
 
-			map<wchar_t, Glyph*>::iterator it;
-			for (it = glyph_db_.begin(); it != glyph_db_.end(); it++) {
+			map<wchar_t, TextureFont*>::iterator it;
+			for (it = texture_fonts_.begin(); it != texture_fonts_.end(); it++) {
 				if (it->second) {
 					delete it->second;
-					it->second = NULL;
-				}
-			}
-			glyph_db_.clear();
-			count_db_.clear();
-
-			map<wchar_t, TextureFont*>::iterator tex_fonts_it;
-			for (tex_fonts_it = texture_fonts_.begin(); tex_fonts_it != texture_fonts_.end(); tex_fonts_it++) {
-				if (tex_fonts_it->second) {
-					delete tex_fonts_it->second;
-					tex_fonts_it->second = 0;
+					it->second = 0;
 				}
 			}
 			texture_fonts_.clear();
 
-			for (int i = 0; i < 128; i++) {
-				if (ascii_db_[i]) {
-					delete ascii_db_[i];
-					ascii_db_[i] = NULL;
-				}
-			}
 			initialized_ = false;
 
 			delete fontengine_;
 		}
 	}
 
-	bool FontCache::Initialize (void)
+	bool FontCache::setup (void)
 	{
 		if (!fontengine_->valid()) {
 			return false;
@@ -197,90 +178,66 @@ namespace BIL {
 
 		atlas_.generate(fontengine_, 32, 96);
 
-		for (char i = 'A'; i < 'Z'; i++)
-		{
-			query (i, true);
-			query (i+40, true);	// a-z
-		}
-
 		initialized_ = true;
 		return true;
 	}
 
-	Glyph* FontCache::query (wchar_t charcode, bool create)
+	const Glyph& FontCache::queryGlyph (wchar_t charcode, bool create)
 	{
-		if (!fontengine_->valid()) {
-			return NULL;
+		if (atlas_.contains(charcode)) {
+			return atlas_.glyph(charcode);
 		}
 
-		Glyph* glyph = NULL;
-
-		if (charcode < 128) {
-			glyph = ascii_db_[charcode];
-
-			if (glyph) return glyph;
-
-			if (create) {
-				glyph = new Glyph(charcode, fontengine_);
-				ascii_db_[charcode] = glyph;
-
-				return glyph;
-			} else {
-				return NULL;
-			}
-		}
-
-		map<wchar_t, Glyph*>::iterator it;
-		it = glyph_db_.find(charcode);
+		map<wchar_t, TextureFont*>::iterator it;
+		it = texture_fonts_.find(charcode);
 
 		// if the glyph is not found and need to be created
-		if (it == glyph_db_.end()) {
+		if (it == texture_fonts_.end()) {
 
 			if (create) {
 
-				glyph = new Glyph(charcode, fontengine_);
+				TextureFont* new_font = new TextureFont;
+				new_font->generate(fontengine_, charcode);
+				texture_fonts_[charcode] = new_font;
 
-				if (glyph_db_.size() >= cacheSize) {
-					typedef std::pair<wchar_t, unsigned long> data_t;
-					typedef std::priority_queue<data_t, std::deque<data_t>,
-					        greater_second<data_t> > queue_t;
-					queue_t q(count_db_.begin(), count_db_.end());
-
-					wchar_t char_to_del = q.top().first;
-					cout << "Remove " << q.top().first << " from cache."
-					        << std::endl;
-
-					delete glyph_db_[char_to_del];
-					glyph_db_.erase(char_to_del);
-					count_db_.erase(char_to_del);
-				}
-
-				glyph_db_[charcode] = glyph;
-
+			} else {
+				// TODO: return an default font glyph to show unknown character
 			}
-		} else {
-			glyph = glyph_db_[charcode];
 		}
 
-		if (glyph) {
-			unsigned long count = count_db_[charcode];
-			count_db_[charcode] = count + 1;
+		return texture_fonts_[charcode]->glyph();
+	}
+
+	const GLuint FontCache::queryTexture (wchar_t charcode, bool create)
+	{
+		if (atlas_.contains(charcode)) {
+			return atlas_.texture();
 		}
-		return glyph;
+
+		map<wchar_t, TextureFont*>::iterator it;
+		it = texture_fonts_.find(charcode);
+
+		// if the glyph is not found and need to be created
+		if (it == texture_fonts_.end()) {
+
+			if (create) {
+
+				TextureFont* new_font = new TextureFont;
+				new_font->generate(fontengine_, charcode);
+				texture_fonts_[charcode] = new_font;
+
+			} else {
+				// TODO: return an default font glyph to show unknown character
+			}
+		}
+
+		return texture_fonts_[charcode]->texture();
 	}
 
 #ifdef DEBUG
 	void FontCache::printcount (void)
 	{
-		map<wchar_t, unsigned long>::iterator it;
-		cout << endl;
-		wchar_t ch;
-		for (it = count_db_.begin(); it != count_db_.end(); it++) {
-			ch = it->first;
-			cout << "Character: ";
-			cout << (unsigned long) ch << " ";
-			cout << "Count: " << it->second << endl;
-		}
+		std::cout << "fonts in texture_fonts_: " << texture_fonts_.size() << std::endl;
 	}
 #endif
 
