@@ -48,6 +48,8 @@ void GLWindow::paintGL()
     BIL::Interface* app = BIL::Interface::instance();
 
     app->render();
+
+    glFlush ();
 }
 
 void GLWindow::mouseMoveEvent (QMouseEvent* event)

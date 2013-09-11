@@ -28,6 +28,7 @@
 #include <stdexcept>
 
 #include <BIL/FontCache.hpp>
+#include <BIL/ShaderManager.hpp>
 
 using namespace std;
 
@@ -234,6 +235,30 @@ namespace BIL {
 		return texture_fonts_[charcode]->texture();
 	}
 
+	Rect FontCache::calculateOutline (const String& string)
+	{
+		if(!fontengine_->valid()) {
+			return Rect();
+		}
+		String::const_iterator it;
+		// String::const_iterator next;
+		// Tuple2l kerning;
+		int xmin = 0;
+		int ymin = 0;
+		int xmax = 0;
+		int ymax = 0;
+
+		for (it = string.begin(); it != string.end(); it++)
+		{
+			xmax = queryGlyph(*it).advance_x + xmax;
+			ymin = std::min(static_cast<int>(queryGlyph(*it).bitmap_top - queryGlyph(*it).bitmap_height), ymin);
+			ymax = std::max(static_cast<int>(queryGlyph(*it).bitmap_top), ymax);
+		}
+
+		return Rect(Point(xmin, ymin), Point(xmax, ymax));
+	}
+
+
 #ifdef DEBUG
 	void FontCache::printcount (void)
 	{
@@ -242,3 +267,4 @@ namespace BIL {
 #endif
 
 } /* namespace BIL */
+

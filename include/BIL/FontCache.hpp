@@ -148,7 +148,7 @@ namespace BIL {
 			}
 		}
 
-		Rect calculateOutline (const String& string) const;
+		Rect calculateOutline (const String& string);
 
 #ifdef DEBUG
 		void printcount ();

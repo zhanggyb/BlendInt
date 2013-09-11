@@ -44,11 +44,7 @@ namespace BIL {
 
 		void set_text (const String& label);
 
-		void set_font (const Font& font)
-		{
-			font_ = font;
-			calculateBox();
-		}
+		void set_font (const Font& font);
 
 		void setTextColor (const Color& fg)
 		{
@@ -61,8 +57,6 @@ namespace BIL {
 		}
 
 	protected:
-
-		virtual void update ();
 
 		virtual void render ();
 

@@ -204,7 +204,10 @@ namespace BIL {
 		}
 
 #ifdef DEBUG
-		fprintf(stdout, "Generated %u characters with a %u x %u (%u kb) texture atlas\n", stride_, width_, height_, width_ * height_ / 1024);
+		fwprintf(stdout, L"Generated %u characters with a %u x %u (%u kb) texture atlas: ",
+				stride_, width_, height_, width_ * height_ / 1024);
+
+		std::wcerr << freetype->font().family << " with size: "<< freetype->font().size << " and dpi: " << freetype->dpi() << std::endl;
 #endif
 	}
 

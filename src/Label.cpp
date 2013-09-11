@@ -61,14 +61,19 @@ namespace BIL {
 		 */
 	}
 
-	void Label::update ()
+	void Label::set_font (const Font& font)
 	{
+		font_ = font;
+		FontCache* fc = FontCache::create(font_);
+		fc->setup();
 
+		calculateBox();
 	}
+
 
 	void Label::calculateBox ()
 	{
-		Size box;// = text_.calculateOutlineBoxSize();
+		Rect box = FontCache::create(font_)->calculateOutline(text_);
 		
 		box.set_width(box.width() + padding_.left() + padding_.right());
 		box.set_height(box.height() + padding_.top() + padding_.bottom());
