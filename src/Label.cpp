@@ -23,11 +23,16 @@
 
 #include <BIL/Label.hpp>
 
+#include <BIL/FontCache.hpp>
+
 namespace BIL {
 
 	Label::Label (const String& text, Drawable *parent)
 		: Widget (parent), background_(0x00000000)
 	{
+		FontCache* fc = FontCache::create(font_);
+		fc->setup();
+
 		set_text(text);
 	}
 
@@ -43,7 +48,7 @@ namespace BIL {
 			return;
 		}
 
-		text_.setText (label);
+		text_ = label;
 
 		calculateBox();
 
@@ -56,9 +61,14 @@ namespace BIL {
 		 */
 	}
 
+	void Label::update ()
+	{
+
+	}
+
 	void Label::calculateBox ()
 	{
-		Size box = text_.calculateOutlineBoxSize();
+		Size box;// = text_.calculateOutlineBoxSize();
 		
 		box.set_width(box.width() + padding_.left() + padding_.right());
 		box.set_height(box.height() + padding_.top() + padding_.bottom());
@@ -81,7 +91,7 @@ namespace BIL {
 				   background_.b(), background_.a());
 		glRectf(0.0, 0.0, size_.width(), size_.height());
 
-		text_.render();
+		//text_.render();
 
 		glPopMatrix();
 		glDisable(GL_BLEND);

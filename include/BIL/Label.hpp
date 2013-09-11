@@ -25,7 +25,6 @@
 #include <string>
 
 #include <BIL/Widget.hpp>
-#include <BIL/TextBuffer.hpp>
 #include <BIL/Font.hpp>
 #include <BIL/Color.hpp>
 
@@ -45,31 +44,25 @@ namespace BIL {
 
 		void set_text (const String& label);
 
-		void setFont (const Font& font)
+		void set_font (const Font& font)
 		{
-			text_.setFont(font);
+			font_ = font;
 			calculateBox();
 		}
 
-		void setTextColor (const Color& fg, const Color& bg = Color(0x00000000))
+		void setTextColor (const Color& fg)
 		{
-			text_.setForeground(fg);
-			text_.setBackground(bg);
+			foreground_ = fg;
 		}
 
-		void set_background (const Color& color)
+		void set_background (const Color& color = Color(0x00000000))
 		{
 			background_ = color;
 		}
 
-	public:
-
-		void accept ()
-		{
-			set_text (L"Accepted");
-		}
-
 	protected:
+
+		virtual void update ();
 
 		virtual void render ();
 
@@ -82,7 +75,16 @@ namespace BIL {
 
 	private:
 
-		TextBuffer text_;
+		/**
+		 * @brief the text of the label
+		 *
+		 * new line character is not allowed
+		 */
+		String text_;
+
+		Font font_;
+
+		Color foreground_;
 
 		/** Background color, default: transparent */
 		Color background_;

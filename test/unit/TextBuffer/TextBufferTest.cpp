@@ -619,6 +619,25 @@ void TextBufferTest::calculatebox1 ()
 	CPPUNIT_ASSERT(true);
 }
 
+void TextBufferTest::calculatebox2 ()
+{
+	if (!FontConfig::initialize()) {
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	TextBuffer buf;
+	buf.setFont(Font("Sans", 16));
+	buf.append(L"greetings, yes");
+
+	Rect box = buf.calculateOutline();
+
+	cout << "Text Box: " << box.left() << " " << box.bottom() << " " << box.right() << " " << box.top() << endl;
+
+	FontConfig::release();
+	CPPUNIT_ASSERT(true);
+}
+
 void TextBufferTest::cbError (int error, const char* description)
 {
 	std::cerr << "Error: " << description

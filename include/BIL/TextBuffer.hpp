@@ -22,8 +22,7 @@
 #ifndef _BIL_TEXTBUFFER_H_
 #define _BIL_TEXTBUFFER_H_
 
-#include <stddef.h>
-#include <string>
+#include <list>
 
 #include <BIL/Tuple.hpp>
 #include <BIL/FontCache.hpp>
@@ -31,6 +30,7 @@
 #include <BIL/Coord.hpp>
 #include <BIL/Size.hpp>
 #include <BIL/String.hpp>
+#include <BIL/Rect.hpp>
 
 using namespace std;
 
@@ -52,9 +52,19 @@ namespace BIL {
 
 		virtual ~TextBuffer ();
 
+		/**
+		 * @brief append text to the current line
+		 * @param text
+		 */
 		void append (const String& text);
 
+		/**
+		 * @brief append character to the current line
+		 * @param charcode
+		 */
 		void append (wchar_t charcode);
+
+		void appendParagraph (const String& text);
 
 		void setLineSpacing (float space)
 		{
@@ -76,11 +86,7 @@ namespace BIL {
 			origin_ = origin;
 		}
 
-		void setFont (const Font& font)
-		{
-			fontcache_ = FontCache::create(font);
-			fontcache_->setup();
-		}
+		void setFont (const Font& font);
 
 		void render (); /* render the text */
 
@@ -107,6 +113,8 @@ namespace BIL {
 		 */
 		Size calculateOutlineBoxSize ();
 
+		Rect calculateOutline ();
+
 	private:	// member variables
 
 		// DO not delete this member
@@ -126,6 +134,8 @@ namespace BIL {
 
 		/** string */
 		String text_;
+
+		std::list<String> paragraphs_;
 
 	private:	// member functions disabled
 

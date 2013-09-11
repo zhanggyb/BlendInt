@@ -32,6 +32,7 @@
 
 #include <BIL/TextureFont.hpp>
 #include <BIL/TextureAtlas.hpp>
+#include <BIL/String.hpp>
 
 using namespace std;
 
@@ -146,6 +147,8 @@ namespace BIL {
 				fontengine_->set_dpi (dpi);
 			}
 		}
+
+		Rect calculateOutline (const String& string) const;
 
 #ifdef DEBUG
 		void printcount ();

@@ -35,29 +35,33 @@ using namespace std;
 namespace BIL {
 
 	/*
-	TextBuffer::TextBuffer (const Font& font)
-		: rowspacing_(1.0),
-		  foreground_(0xFFFFFFFF),
-		  background_(0x00000000)
-	{
-		set_font(font);
-		//glShadeModel(GL_FLAT);
-		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	}
-	*/
+	 TextBuffer::TextBuffer (const Font& font)
+	 : rowspacing_(1.0),
+	 foreground_(0xFFFFFFFF),
+	 background_(0x00000000)
+	 {
+	 set_font(font);
+	 //glShadeModel(GL_FLAT);
+	 //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	 }
+	 */
 
 	TextBuffer::TextBuffer (const String& text, const Font& font)
-		: line_spacing_(1.0), foreground_(0x000000FF), background_(0x00000000)
+			: line_spacing_(1.0), foreground_(0x000000FF), background_(
+			        0x00000000)
 	{
 		setFont(font);
 		append(text);
-
-		//glShadeModel(GL_FLAT);
-		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	}
 
 	TextBuffer::~TextBuffer ()
 	{
+	}
+
+	void TextBuffer::setFont (const Font& font)
+	{
+		fontcache_ = FontCache::create(font);
+		fontcache_->setup();
 	}
 
 	void TextBuffer::append (const String& text)
@@ -73,6 +77,26 @@ namespace BIL {
 		text_.push_back(charcode);
 	}
 
+	Rect TextBuffer::calculateOutline ()
+	{
+		String::const_iterator it;
+		String::const_iterator next;
+		Tuple2l kerning;
+		int xmin = 0;
+		int ymin = 0;
+		int xmax = 0;
+		int ymax = 0;
+
+		for (it = text_.begin(); it != text_.end(); it++)
+		{
+			xmax = fontcache_->queryGlyph(*it).advance_x + xmax;
+			ymin = std::min(static_cast<int>(fontcache_->queryGlyph(*it).bitmap_top - fontcache_->queryGlyph(*it).bitmap_height), ymin);
+			ymax = std::max(static_cast<int>(fontcache_->queryGlyph(*it).bitmap_top), ymax);
+		}
+
+		return Rect(Point(xmin, ymin), Point(xmax, ymax));
+	}
+
 	Size TextBuffer::calculateOutlineBoxSize ()
 	{
 		String::const_iterator it;
@@ -82,27 +106,31 @@ namespace BIL {
 
 		unsigned int line_width = 0;
 		unsigned int line = 1;
+		int left_edge = 0;
+		int right_edge = 0;
 
 		for (it = text_.begin(); it != text_.end(); it++) {
-			wcout << *it;
 			if (*it == '\n') {
 				line++;
-				box.set_width (std::max(line_width, box.width()));
+				box.set_width(std::max(line_width, box.width()));
+				line_width = 0;
 				continue;
 			}
 
-			// add kerning support
 			next = it + 1;
-			if(next != text_.end()) {
+			if (next != text_.end()) {
 				kerning = fontcache_->getKerning(*it, *next);
 			}
-			line_width = fontcache_->queryGlyph(*it).advance_x + kerning.vec.x + line_width;
+			line_width = fontcache_->queryGlyph(*it).advance_x + kerning.vec.x
+			        + line_width;
 		}
 
 		if (line == 1) {
-			box.set_width (line_width);
+			box.set_width(line_width);
 		}
-		box.set_height (static_cast<unsigned int>(fontcache_->getHeight() * line + (line - 1) * line_spacing_));
+		box.set_height(
+		        static_cast<unsigned int>(fontcache_->getHeight() * line
+		                + (line - 1) * line_spacing_));
 
 		return box;
 	}
@@ -115,15 +143,14 @@ namespace BIL {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
-		glColor4ub(foreground_.r(), foreground_.g(), foreground_.b(), foreground_.a());
+		glColor4ub(foreground_.r(), foreground_.g(), foreground_.b(),
+		        foreground_.a());
 
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(origin_.x(),
-					 origin_.y() - fontcache_->getDescender(),
-					 origin_.z());
-
+		glTranslatef(origin_.x(), origin_.y() - fontcache_->getDescender(),
+		        origin_.z());
 
 		int line = 0;
 		String::const_iterator it;
@@ -132,19 +159,19 @@ namespace BIL {
 				line++;
 				glLoadIdentity();
 				glTranslatef(origin_.x(),
-							 origin_.y()
-							 - line_spacing_ * fontcache_->getHeight() * line,
-							 origin_.z());
+				        origin_.y()
+				                - line_spacing_ * fontcache_->getHeight()
+				                        * line, origin_.z());
 				continue;
 			}
 
 			/*
-			glyph = fontcache_->query(*it);
-			if (glyph) {
-				glyph->Render();
-				glTranslatef(glyph->metrics().horiAdvance, 0, 0);
-			}
-			*/
+			 glyph = fontcache_->query(*it);
+			 if (glyph) {
+			 glyph->Render();
+			 glTranslatef(glyph->metrics().horiAdvance, 0, 0);
+			 }
+			 */
 		}
 
 		glPopMatrix();

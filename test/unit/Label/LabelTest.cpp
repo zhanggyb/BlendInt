@@ -139,7 +139,7 @@ void LabelTest::checkfont1 ()
 	Label label(string);
 	label.set_pos(Point(100, 100));
 	label.set_background(Color(0x40, 0x40, 0xFF, 0x80));
-	label.setFont(Font("Droid Sans", 100));
+	label.set_font(Font("Droid Sans", 100));
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -196,14 +196,14 @@ void LabelTest::checkfont2 ()
 	wstring string(L"Hello World!");
 
 	Label instr1(wstring(L"box size"));
-	instr1.setFont(Font("Droid Sans"));
+	instr1.set_font(Font("Droid Sans"));
 	instr1.set_background(Color(0x40, 0x40, 0xFF, 0x00));
 	instr1.set_pos(100, 200);
 
 	Label label(string);
 	label.set_pos(Point(100, 100));
 	label.set_background(Color(0x40, 0x40, 0xFF, 0x80));
-	label.setFont(Font("Droid Sans", 50));
+	label.set_font(Font("Droid Sans", 50));
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -263,7 +263,7 @@ void LabelTest::multiline1 ()
 	Label label(string);
 	label.set_pos(Point(100, 200));
 	label.set_background(Color(0x40, 0x40, 0xFF, 0x80));
-	label.setFont(Font("Droid Sans", 50));
+	label.set_font(Font("Droid Sans", 50));
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

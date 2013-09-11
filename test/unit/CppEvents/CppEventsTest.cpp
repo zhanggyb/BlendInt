@@ -77,10 +77,8 @@ void CppEventsTest::connect1 ()
 	button.set_pos(Point(50, 50));
 
 	Label label(L"text will be changed");
-	label.setFont(Font("Droid Sans"));
+	label.set_font(Font("Droid Sans"));
 	label.set_pos(Point(100, 100));
-
-	scope_.connect(button.clicked(), &label, &Label::accept);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

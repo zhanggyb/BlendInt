@@ -22,6 +22,7 @@ CPPUNIT_TEST_SUITE(TextBufferTest);
 	CPPUNIT_TEST(multiple_buf_show1);
 
 	CPPUNIT_TEST(calculatebox1);
+	CPPUNIT_TEST(calculatebox2);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -47,6 +48,7 @@ private:
 	void showtextline4 ();
 	void multiple_buf_show1 ();
 	void calculatebox1 ();
+	void calculatebox2 ();
 
 	void draw_grid (int width, int height);
 

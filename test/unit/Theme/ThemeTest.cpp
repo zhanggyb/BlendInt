@@ -102,7 +102,7 @@ void ThemeTest::initialize2 ()
 	Label label(L"Text in Label");
 	label.set_pos(Point(50, 50));
 	label.set_background(bg_color);
-	label.setFont(Font("Droid Sans", 12));
+	label.set_font(Font("Droid Sans", 12));
 	label.setTextColor(textcolor);
 
 	/* Loop until the user closes the window */
