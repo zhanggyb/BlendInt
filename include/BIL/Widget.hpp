@@ -74,8 +74,6 @@ namespace BIL {
 
 	protected:
 
-		virtual void update ();
-
 		virtual void render ();
 
 		void DrawAntiTriangle (float x1,
@@ -116,6 +114,8 @@ namespace BIL {
 		virtual void mouseMoveEvent (MouseEvent* event);
 
 	protected:	// member functions
+
+		void update ();
 
 		/**
 		 * @brief Calculate round box shadow edges
@@ -167,6 +167,7 @@ namespace BIL {
 		*/
 
 	private:
+
 
 		Widget (const Widget& orig);
 

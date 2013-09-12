@@ -22,6 +22,7 @@
 #include <GL/glew.h>
 
 #include <BIL/ToggleButton.hpp>
+#include <BIL/ShaderManager.hpp>
 
 namespace BIL {
 
@@ -43,28 +44,12 @@ namespace BIL {
 
 	}
 
-	void ToggleButton::update ()
-	{
-		if (!size_.IsValid()) return;
-
-		float rad;
-
-		/* half rounded */
-		// TODO: define widget_unit by user
-		//rad = 0.2f * U.widget_unit;
-		rad = 0.2f * 20;
-
-		//round_box_edges(&wtb, roundboxalign, rect, rad);
-		CalculateRoundBoxEdges (round_box_type_, Rect(pos_, size_), rad, &appearance_);
-	}
-
 	void ToggleButton::render ()
 	{
 		drawButton (&appearance_);
 
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -73,10 +58,36 @@ namespace BIL {
 					 pos_.y(),
 					 z());
 
-		text_.render();
+		//text_.render();
+		glUseProgram(ShaderManager::instance()->text_program().id());
+
+		GLfloat black[4] = { 0, 0, 0, 1 };
+		//GLfloat red[4] = { 1, 0, 0, 1 };
+		//GLfloat transparent_green[4] = { 0, 1, 0, 0.5 };
+
+		/* Set color to black */
+		glUniform4fv(ShaderManager::instance()->text_uniform_color(), 1, black);
+
+		/* Use the texture containing the atlas */
+		glBindTexture(GL_TEXTURE_2D, FontCache::create(font_)->queryTexture(text_[0]));
+		glUniform1i(ShaderManager::instance()->text_uniform_tex(), 0);
+
+		/* Set up the VBO for our vertex data */
+		glEnableVertexAttribArray(ShaderManager::instance()->text_attribute_coord());
+		glBindBuffer(GL_ARRAY_BUFFER, ShaderManager::instance()->text_vbo());
+		glVertexAttribPointer(ShaderManager::instance()->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		/* Draw all the character on the screen in one go */
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6 * text_.length(), vertex_array_, GL_DYNAMIC_DRAW);
+		glDrawArrays(GL_TRIANGLES, 0, valid_text_length_);
+
+		glDisableVertexAttribArray(ShaderManager::instance()->text_attribute_coord());
+
+		glUseProgram(0);
 
 		glPopMatrix();
-		//glDisable(GL_BLEND);
+
+		glDisable(GL_BLEND);
 	}
 
 }

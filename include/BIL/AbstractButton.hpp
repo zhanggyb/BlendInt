@@ -45,12 +45,7 @@ namespace BIL {
 
 		void set_text (const String& text);
 
-		void set_font (const Font& font)
-		{
-			text_.setFont(font);
-			calculateBox();
-			update();
-		}
+		void set_font (const Font& font);
 
 		bool down () const {return down_;}
 
@@ -70,9 +65,9 @@ namespace BIL {
 
 	protected:
 
-		void drawButton (WidgetVertexes* vertexes);
+		void updateVertexArray (float x, float y, float sx, float sy);
 
-		virtual void update () = 0;
+		void drawButton (WidgetVertexes* vertexes);
 
 		virtual void render () = 0;
 
@@ -93,17 +88,20 @@ namespace BIL {
 		// if the mouse is hover on the button
 		bool hover_;
 
-		TextBuffer text_;
+		// TextBuffer text_;
+		String text_;
+
+		Font font_;
+
+		Vertex2D* vertex_array_;
+
+		int valid_text_length_;
 
 	protected:	// Events
 
 		Cpp::Event<> clicked_;
 
 		Cpp::Event<bool> toggled_;
-
-	private:	// member functions
-
-		void calculateBox ();
 
 	private:	// member functions (disabled)
 

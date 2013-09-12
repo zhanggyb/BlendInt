@@ -218,6 +218,13 @@ namespace BIL {
 		STICKY_MOUSE_BUTTONS = GLFW_STICKY_MOUSE_BUTTONS
 	};
 
+	struct Vertex2D {
+		GLfloat x;
+		GLfloat y;
+		GLfloat s;
+		GLfloat t;
+	};
+
 }
 
 #endif	/* _BIL_TYPES_H_ */

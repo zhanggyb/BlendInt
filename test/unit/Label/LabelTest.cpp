@@ -71,7 +71,7 @@ void LabelTest::show1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	Label label(L"仁义礼智信");
+	Label label(L"Say Hello");
 	label.set_pos(Point(50, 50));
 	label.set_background(Color(0x4A898B80));
 	//label.setFont(Font("Droid Sans", 24));
@@ -193,7 +193,7 @@ void LabelTest::checkfont2 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	wstring string(L"Hello World!");
+	wstring string(L"Hello World!!!!");
 
 	Label instr1(wstring(L"box size"));
 	instr1.set_font(Font("Droid Sans"));

@@ -21,7 +21,7 @@ CPPUNIT_TEST_SUITE(LabelTest);
 	CPPUNIT_TEST(show2);
 	CPPUNIT_TEST(checkfont1);
 	CPPUNIT_TEST(checkfont2);
-	CPPUNIT_TEST(multiline1);
+	//CPPUNIT_TEST(multiline1);	// multiline not supported
 
 	CPPUNIT_TEST_SUITE_END()
 	;

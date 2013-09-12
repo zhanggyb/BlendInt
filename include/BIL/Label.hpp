@@ -29,6 +29,7 @@
 #include <BIL/Color.hpp>
 
 #include <BIL/String.hpp>
+#include <BIL/Types.hpp>
 
 using namespace std;
 
@@ -63,9 +64,9 @@ namespace BIL {
 	private:
 		// member functions
 
-		virtual void cursorPosEvent (double xpos, double ypos);
+		void updateVertexArray (float x, float y, float sx, float sy);
 
-		void calculateBox (void);
+		virtual void cursorPosEvent (double xpos, double ypos);
 
 	private:
 
@@ -82,6 +83,10 @@ namespace BIL {
 
 		/** Background color, default: transparent */
 		Color background_;
+
+		Vertex2D* vertex_array_;
+
+		int valid_text_length_;
 
 	private:
 

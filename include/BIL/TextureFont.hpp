@@ -54,6 +54,10 @@ namespace BIL {
 			return texture_;
 		}
 
+		unsigned int width () const {return static_cast<unsigned int>(glyph_.bitmap_width);}
+
+		unsigned int height () const {return static_cast<unsigned int>(glyph_.bitmap_height);}
+
 	private:
 
 		struct Vertex {

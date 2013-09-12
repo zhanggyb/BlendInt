@@ -142,10 +142,14 @@ namespace BIL {
 #endif
 
 	FontCache::FontCache (const Font& font, unsigned int dpi)
-			: fontengine_(NULL), initialized_(false)
+			: fontengine_(NULL)
 	{
 		fontengine_ = new Freetype;
 		fontengine_->open(font, dpi);
+
+		if(!setup()) {
+			throw std::runtime_error("Fail to setup FontCache");
+		}
 	}
 
 	FontCache::~FontCache ()
@@ -161,8 +165,6 @@ namespace BIL {
 			}
 			texture_fonts_.clear();
 
-			initialized_ = false;
-
 			delete fontengine_;
 		}
 	}
@@ -173,13 +175,8 @@ namespace BIL {
 			return false;
 		}
 
-		if (initialized_) {
-			return false;
-		}
-
 		atlas_.generate(fontengine_, 32, 96);
 
-		initialized_ = true;
 		return true;
 	}
 
@@ -233,6 +230,58 @@ namespace BIL {
 		}
 
 		return texture_fonts_[charcode]->texture();
+	}
+
+	unsigned int FontCache::queryWidth (wchar_t charcode, bool create)
+	{
+		if (atlas_.contains(charcode)) {
+			return atlas_.width();
+		}
+
+		map<wchar_t, TextureFont*>::iterator it;
+		it = texture_fonts_.find(charcode);
+
+		// if the glyph is not found and need to be created
+		if (it == texture_fonts_.end()) {
+
+			if (create) {
+
+				TextureFont* new_font = new TextureFont;
+				new_font->generate(fontengine_, charcode);
+				texture_fonts_[charcode] = new_font;
+
+			} else {
+				// TODO: return an default font glyph to show unknown character
+			}
+		}
+
+		return texture_fonts_[charcode]->width();
+	}
+
+	unsigned int FontCache::queryHeight (wchar_t charcode, bool create)
+	{
+		if (atlas_.contains(charcode)) {
+			return atlas_.height();
+		}
+
+		map<wchar_t, TextureFont*>::iterator it;
+		it = texture_fonts_.find(charcode);
+
+		// if the glyph is not found and need to be created
+		if (it == texture_fonts_.end()) {
+
+			if (create) {
+
+				TextureFont* new_font = new TextureFont;
+				new_font->generate(fontengine_, charcode);
+				texture_fonts_[charcode] = new_font;
+
+			} else {
+				// TODO: return an default font glyph to show unknown character
+			}
+		}
+
+		return texture_fonts_[charcode]->height();
 	}
 
 	Rect FontCache::calculateOutline (const String& string)

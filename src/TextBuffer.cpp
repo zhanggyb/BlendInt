@@ -60,8 +60,7 @@ namespace BIL {
 
 	void TextBuffer::setFont (const Font& font)
 	{
-		fontcache_ = FontCache::create(font);
-		fontcache_->setup();
+		FontCache::create(font);
 	}
 
 	void TextBuffer::append (const String& text)
@@ -106,8 +105,8 @@ namespace BIL {
 
 		unsigned int line_width = 0;
 		unsigned int line = 1;
-		int left_edge = 0;
-		int right_edge = 0;
+		//int left_edge = 0;
+		//int right_edge = 0;
 
 		for (it = text_.begin(); it != text_.end(); it++) {
 			if (*it == '\n') {

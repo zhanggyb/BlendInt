@@ -82,14 +82,7 @@ namespace BIL {
 
 	public:
 
-		/**
-		 * @brief Initialize glyph database
-		 * @return true for success, false for failure
-         *
-         * @warning Do not simply initialize all characer in ascii
-         * cause render error. I dont't know why this happens
-		 */
-		bool setup ();
+
 
 		/**
 		 * @brief query the Glyph of a wchar
@@ -104,6 +97,10 @@ namespace BIL {
 		const Glyph& queryGlyph (wchar_t charcode, bool create = true);
 
 		const GLuint queryTexture (wchar_t charcode, bool create = true);
+
+		unsigned int queryWidth (wchar_t charcode, bool create = true);
+
+		unsigned int queryHeight (wchar_t charcode, bool create = true);
 
 		int getHeight ()
 		{
@@ -157,6 +154,15 @@ namespace BIL {
 	private:
 
 		/**
+		 * @brief Initialize glyph database
+		 * @return true for success, false for failure
+         *
+         * @warning Do not simply initialize all characer in ascii
+         * cause render error. I dont't know why this happens
+		 */
+		bool setup ();
+
+		/**
 		 * @brief Default constructor
 		 * @param font Font type
 		 * @param dpi the DPI to be used
@@ -175,8 +181,6 @@ namespace BIL {
 		// member variables
 
 		Freetype* fontengine_;
-
-		bool initialized_;
 
 		TextureAtlas atlas_;
 

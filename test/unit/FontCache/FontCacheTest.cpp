@@ -82,15 +82,11 @@ void FontCacheTest::create4 ()
 		CPPUNIT_FAIL ("Cannot create cache for Droid Sans Mono\n");
 	}
 
-	bool result = cache->setup();
-
-	if (result) {
-		cout << "Glyph width: " << cache->queryGlyph('A').bitmap_width << endl;
-	}
+	cout << "Glyph width: " << cache->queryGlyph('A').bitmap_width << endl;
 
 	FontCache::release (Font("Droid Sans Mono"));
 
-	CPPUNIT_ASSERT(result);
+	CPPUNIT_ASSERT(true);
 }
 
 void FontCacheTest::check1 ()
@@ -100,7 +96,7 @@ void FontCacheTest::check1 ()
 	if(cache == NULL)
 		CPPUNIT_FAIL ("Cannot create cache for Droid Sans Mono\n");
 
-	bool result = cache->setup();
+	bool result = true;
 
 	if(result) {
 		cache->queryGlyph(L'仁', true);
@@ -137,7 +133,7 @@ void FontCacheTest::check2 ()
 	if(cache == NULL)
 		CPPUNIT_FAIL ("Cannot create cache for Droid Sans Mono\n");
 
-	bool result = cache->setup();
+	bool result = true;
 
 	if(result) {
 #ifdef DEBUG
@@ -160,7 +156,7 @@ void FontCacheTest::check3 ()
 	if(cache == NULL)
 		CPPUNIT_FAIL ("Cannot create cache for Droid Sans Mono\n");
 
-	bool result = cache->setup();
+	bool result = true;
 
 	if(result) {
 #ifdef DEBUG
@@ -227,7 +223,7 @@ void FontCacheTest::check6 ()
 	if(cache == NULL)
 		CPPUNIT_FAIL ("Cannot create cache for default font\n");
 
-	bool result = cache->setup();
+	bool result = true;
 
 	if(result) {
 		for(int i = 0; i < 10; i++)
@@ -281,9 +277,9 @@ void FontCacheTest::check8 ()
 
 	FontCache::setMaxCaches(6);
 	FontCache* cache1 = FontCache::create(Font("Droid Sans"));
-	bool result1 = cache1->setup();
+	bool result1 = true;
 	FontCache* cache2 = FontCache::create(Font("Droid Sans", 12));
-	bool result2 = cache2->setup();
+	bool result2 = true;
 
 #ifdef DEBUG
 		FontCache::list();
@@ -338,7 +334,7 @@ void FontCacheTest::show1()
 	if(cache == NULL)
 		CPPUNIT_FAIL ("Cannot create cache for default font\n");
 
-	bool result = cache->setup();
+	bool result = true;
 	if(!result) {
 		CPPUNIT_FAIL("Cannot initialize font cache\n");
 	}
@@ -422,18 +418,14 @@ void FontCacheTest::show_multiple_cache1()
 	app->resize(1200, 800);
 
 	FontCache* cache1 = FontCache::create(Font("Lucida Grande", 48));
-	cache1->setup();
 
 	FontCache* cache2 = FontCache::create(Font("Sans", 48));
 	//FontCache* cache2 = FontCache::create(Font("Droid Sans Mono", 48));
-	cache2->setup();
 
 	FontCache* cache3 = FontCache::create(Font("DejaVu Serif", 48));
-	cache3->setup();
 
 	FontCache* cache4 = FontCache::create(Font("STXingkai", 48));
 	//FontCache* cache4 = FontCache::create(Font("Bitstream Vera Sans", 48));
-	cache4->setup();
 
 	String str1("Hello World! (cache1)");
 	String str2(L"花间一壶酒，独酌无相亲。");
@@ -562,18 +554,14 @@ void FontCacheTest::test_font_not_exist1()
 	app->resize(1200, 800);
 
 	FontCache* cache1 = FontCache::create(Font("Lucida Grande", 48));
-	cache1->setup();
 
 	FontCache* cache2 = FontCache::create(Font("Sans", 48));
 	//FontCache* cache2 = FontCache::create(Font("Droid Sans Mono", 48));
-	cache2->setup();
 
 	FontCache* cache3 = FontCache::create(Font("DejaVu Serif", 48));
-	cache3->setup();
 
 	FontCache* cache4 = FontCache::create(Font("Droid Sans", 48));
 	//FontCache* cache4 = FontCache::create(Font("Bitstream Vera Sans", 48));
-	cache4->setup();
 
 	String str1("Hello World! (cache1)");
 	String str2(L"花间一壶酒，独酌无相亲。");

@@ -56,6 +56,10 @@ namespace BIL {
 
 		const GLuint& texture () const {return texture_;}
 
+		unsigned int width() const {return width_;}
+
+		unsigned int height() const {return height_;}
+
 	private:
 
 		struct Vertex {

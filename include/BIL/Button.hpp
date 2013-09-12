@@ -41,8 +41,6 @@ namespace BIL {
 
 	protected:
 
-		virtual void update ();
-
 		virtual void render ();
 
 	private:
