@@ -23,6 +23,7 @@
 #define _BIL_VERTICALLAYOUT_H_
 
 #include <BIL/AbstractLayout.hpp>
+#include <BIL/Types.hpp>
 
 namespace BIL {
 
@@ -30,7 +31,7 @@ namespace BIL {
 	{
 	public:
 
-		VerticalLayout(Drawable* parent = NULL);
+		VerticalLayout(Drawable* parent = 0, int align = AlignVerticalCenter);
 
 		virtual ~VerticalLayout ();
 

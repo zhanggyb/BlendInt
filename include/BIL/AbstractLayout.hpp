@@ -39,6 +39,10 @@ namespace BIL {
 
 		bool addLayout (AbstractLayout* layout);
 
+		int alignment () const {return alignment_;}
+
+		void set_alignment (int align) {alignment_ = align;}
+
 	protected:
 
 		virtual void keyPressEvent (KeyEvent* event);
@@ -56,6 +60,8 @@ namespace BIL {
 		virtual void render () = 0;
 
 		void update () = 0;
+
+		int alignment_;
 
 	private:
 

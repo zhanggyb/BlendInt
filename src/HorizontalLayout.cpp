@@ -25,10 +25,10 @@
 
 namespace BIL {
 
-	HorizontalLayout::HorizontalLayout(Drawable* parent)
+	HorizontalLayout::HorizontalLayout(Drawable* parent, int align)
 		: AbstractLayout(parent)
 	{
-
+		set_alignment(align);
 	}
 
 	HorizontalLayout::~HorizontalLayout()
@@ -46,7 +46,6 @@ namespace BIL {
 		{
 			Drawable* child = dynamic_cast<Drawable*>(*it);
 			if(child) {
-				// TODO: define alignment
 				child->set_pos(pos_.x() + child->margin().left() + total_width, pos_.y() + child->margin().bottom());
 				total_width = total_width + child->margin().left() + child->size().width() + child->margin().right();
 				total_height = std::max (total_height, child->margin().top() + child->size().height() + child->margin().bottom());
@@ -58,7 +57,13 @@ namespace BIL {
 		{
 			Drawable* child = dynamic_cast<Drawable*>(*it);
 			if(child) {
-				child->set_pos(child->pos().x(), child->pos().y() + (aligh_height -  (child->margin().top() + child->size().height() + child->margin().bottom()) / 2));
+				if(alignment_ & AlignTop) {
+					child->set_pos(child->pos().x(), pos_.y() + (total_height -  (child->margin().top() + child->size().height() + child->margin().bottom())));
+				} else if (alignment_ & AlignBottom) {
+					child->set_pos(child->pos().x(), pos_.y() + child->margin().bottom());
+				} else if (alignment_ & AlignHorizontalCenter) {
+					child->set_pos(child->pos().x(), child->pos().y() + (aligh_height -  (child->margin().top() + child->size().height() + child->margin().bottom()) / 2));
+				}
 			}
 		}
 

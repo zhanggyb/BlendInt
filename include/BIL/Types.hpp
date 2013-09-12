@@ -184,6 +184,22 @@ namespace BIL {
 		Key_Last = GLFW_KEY_MENU
 	}; 
 
+	enum HorizontalAlignment {
+		AlignTop = 0x0001,
+		AlignBottom = 0x0002,
+	  AlignHorizontalCenter = 0x0004
+	};
+
+	enum VerticalAlignment {
+		AlignLeft = 0x0010,
+		AlignRight = 0x0020,
+	  AlignVerticalCenter = 0x0040
+	};
+
+	enum Alignment {
+		AlignNone = 0x0000,
+		AlignCenter = AlignHorizontalCenter | AlignVerticalCenter
+	};
 
 	/**
 	 * flags to set which corners will become rounded:

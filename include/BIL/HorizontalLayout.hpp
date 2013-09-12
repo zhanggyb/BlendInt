@@ -30,7 +30,7 @@ namespace BIL {
 	{
 	public:
 
-		HorizontalLayout(Drawable* parent = NULL);
+		HorizontalLayout(Drawable* parent = 0, int align = AlignHorizontalCenter);
 
 		virtual ~HorizontalLayout ();
 

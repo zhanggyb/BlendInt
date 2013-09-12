@@ -24,7 +24,7 @@
 namespace BIL {
 
 	AbstractLayout::AbstractLayout (Drawable *parent)
-			: Drawable (parent)
+			: Drawable (parent), alignment_(0)
 	{
 		// TODO Auto-generated constructor stub
 
@@ -52,7 +52,6 @@ namespace BIL {
 
 		return ret;
 	}
-
 
 	void AbstractLayout::keyPressEvent (KeyEvent* event)
 	{

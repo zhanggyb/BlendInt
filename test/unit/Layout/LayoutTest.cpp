@@ -17,6 +17,7 @@
 #include <BIL/Rect.hpp>
 #include <BIL/HorizontalLayout.hpp>
 #include <BIL/VerticalLayout.hpp>
+#include <BIL/Types.hpp>
 
 using namespace BIL;
 using namespace std;
@@ -106,17 +107,45 @@ void LayoutTest::horizontal_layout1()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	HorizontalLayout layout;
-	layout.set_pos(100, 100);
+	HorizontalLayout layout1;
+	layout1.set_pos(100, 100);
+	layout1.set_alignment(BIL::AlignHorizontalCenter);
 
-	Label label(L"Hello World!");
-	label.set_pos(100, 100);
+	Label label1(L"Hello");
+	label1.set_pos(100, 100);
 
-	Button button(L"Sample Button");
-	button.set_pos(100, 200);
+	Button button1(L"Sample Button");
+	button1.set_pos(200, 200);
 
-	layout.addWidget(&label);
-	layout.addWidget(&button);
+	layout1.addWidget(&label1);
+	layout1.addWidget(&button1);
+
+	HorizontalLayout layout2;
+	layout2.set_pos(300, 200);
+	layout2.set_alignment(BIL::AlignTop);
+
+	Label label2(L"Hello");
+	label2.set_pos(100, 100);
+
+	Button button2(L"Sample Button");
+	button2.set_pos(200, 200);
+
+	layout2.addWidget(&label2);
+	layout2.addWidget(&button2);
+
+	HorizontalLayout layout3;
+	layout3.set_pos(500, 300);
+	layout3.set_alignment(BIL::AlignBottom);
+
+	Label label3(L"Hello");
+	label3.set_pos(100, 100);
+
+	Button button3(L"Sample Button");
+	button3.set_pos(200, 200);
+
+	layout3.addWidget(&label3);
+	layout3.addWidget(&button3);
+
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -170,17 +199,44 @@ void LayoutTest::vertical_layout1()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	VerticalLayout layout;
-	layout.set_pos(100, 100);
+	VerticalLayout layout1;
+	layout1.set_pos(100, 100);
+	layout1.set_alignment(BIL::AlignVerticalCenter);
 
-	Label label(L"Hello World!");
-	label.set_pos(100, 100);
+	Label label1(L"Hello");
+	label1.set_pos(100, 100);
 
-	Button button(L"Sample Button");
-	button.set_pos(200, 200);
+	Button button1(L"Sample Button");
+	button1.set_pos(200, 200);
 
-	layout.addWidget(&label);
-	layout.addWidget(&button);
+	layout1.addWidget(&label1);
+	layout1.addWidget(&button1);
+
+	VerticalLayout layout2;
+	layout2.set_pos(250, 100);
+	layout2.set_alignment(BIL::AlignLeft);
+
+	Label label2(L"Hello");
+	label2.set_pos(100, 100);
+
+	Button button2(L"Sample Button");
+	button2.set_pos(200, 200);
+
+	layout2.addWidget(&label2);
+	layout2.addWidget(&button2);
+
+	VerticalLayout layout3;
+	layout3.set_pos(500, 100);
+	layout3.set_alignment(BIL::AlignRight);
+
+	Label label3(L"Hello");
+	label3.set_pos(100, 100);
+
+	Button button3(L"Sample Button");
+	button3.set_pos(200, 200);
+
+	layout3.addWidget(&label3);
+	layout3.addWidget(&button3);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
