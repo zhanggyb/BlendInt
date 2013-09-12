@@ -26,8 +26,8 @@ namespace BIL {
 	AbstractLayout::AbstractLayout (Drawable *parent)
 			: Drawable (parent), alignment_(0)
 	{
-		// TODO Auto-generated constructor stub
-
+		set_padding(Padding(5, 5, 5, 5));
+		set_margin(1, 1, 1, 1);
 	}
 
 	AbstractLayout::~AbstractLayout ()

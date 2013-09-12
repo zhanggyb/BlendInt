@@ -40,29 +40,36 @@ namespace BIL {
 	{
 		unsigned int total_width = 0;
 		unsigned int total_height = 0;
+		unsigned int max_widget_width = 0;
+
+		std::list<Traceable*>::const_reverse_iterator rit;
+		total_height = padding_.bottom();
+		for (rit = children_.rbegin(); rit != children_.rend(); rit++)
+		{
+			Drawable* child = dynamic_cast<Drawable*>(*rit);
+			if(child) {
+				child->set_pos(pos_.x() + child->margin().left() + padding_.left(), pos_.y() + child->margin().bottom() + total_height);
+				total_width = std::max (total_width, padding_.left() + child->margin().left() + child->size().width() + child->margin().right() + padding_.right());
+				max_widget_width = std::max (max_widget_width, child->size().width());
+				total_height = total_height + child->margin().top() + child->size().height() + child->margin().bottom();
+			}
+		}
+		total_height += padding_.top();
 
 		std::list<Traceable*>::const_iterator it;
 		for (it = children_.begin(); it != children_.end(); it++)
 		{
 			Drawable* child = dynamic_cast<Drawable*>(*it);
 			if(child) {
-				child->set_pos(pos_.x() + child->margin().left(), pos_.y() + child->margin().bottom() + total_height);
-				total_width = std::max (total_width, child->margin().left() + child->size().width() + child->margin().right());
-				total_height = total_height + child->margin().top() + child->size().height() + child->margin().bottom();
-			}
-		}
-
-		int aligh_width = total_width / 2;
-		for (it = children_.begin(); it != children_.end(); it++)
-		{
-			Drawable* child = dynamic_cast<Drawable*>(*it);
-			if(child) {
 				if (alignment_ & AlignLeft) {
-					child->set_pos(pos_.x() + child->margin().left(), child->pos().y());
+					child->set_pos(pos_.x() + padding_.left() + child->margin().left(), child->pos().y());
 				} else if (alignment_ & AlignRight) {
-					child->set_pos(pos_.x() + (total_width - (child->margin().left() + child->size().width() + child->margin().right())), child->pos().y());
+					child->set_pos(pos_.x() +
+								   (total_width -
+									(padding_.right() + child->size().width() + child->margin().right())),
+								   child->pos().y());
 				} else if (alignment_ & AlignVerticalCenter) {
-					child->set_pos(child->pos().x() + (aligh_width - (child->margin().left() + child->size().width() + child->margin().right()) / 2), child->pos().y());
+					child->set_pos(pos_.x() + padding_.left() + child->margin().left() + (max_widget_width - child->size().width()) / 2, child->pos().y());
 				}
 			}
 		}
