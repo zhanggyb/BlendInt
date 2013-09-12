@@ -64,13 +64,13 @@ namespace BIL {
 		{
 			size_.set_width(w);
 			size_.set_height(h);
-			this->update();
+			update();
 		}
 
 		void resize (const Size& size)
 		{
 			size_ = size;
-			this->update();
+			update();
 		}
 
 		const Point& pos () const
@@ -82,13 +82,13 @@ namespace BIL {
 		{
 			pos_.set_x(x);
 			pos_.set_y(y);
-			this->update();
+			update();
 		}
 
 		void set_pos (const Point& pos)
 		{
 			pos_ = pos;
-			this->update();
+			update();
 		}
 
 		float z () const

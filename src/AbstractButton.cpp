@@ -70,9 +70,7 @@ namespace BIL {
 		text_ = text;
 
 		Rect box = FontCache::create(font_)->calculateOutline(text_);
-
 		updateVertexArray(box.left() + padding_.left(), padding_.bottom() + std::abs(box.bottom()), 1.0, 1.0);
-
 		resize (box.width() + padding_.left() + padding_.right(), box.height() + padding_.top() + padding_.bottom());
 	}
 
@@ -417,13 +415,13 @@ namespace BIL {
 
 	void AbstractButton::mouseReleaseEvent(MouseEvent* event)
 	{
-		down_ = false;
-		
 		if (! size_.Contains(event->pos()))
 		{
 			event->ignore();
 			return;
 		}
+
+		down_ = false;
 
 		if (checkable_) {
 

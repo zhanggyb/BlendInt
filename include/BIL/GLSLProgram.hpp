@@ -52,6 +52,10 @@ namespace BIL {
 
 		void clear ();
 
+		void activate ();
+
+		void deactivate ();
+
 		void print_log ();
 
 		GLuint id () const

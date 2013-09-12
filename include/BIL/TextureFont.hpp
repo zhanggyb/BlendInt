@@ -36,10 +36,6 @@ namespace BIL {
 
 	public:
 
-		static const char* getVertexShader () {return vs_shader;}
-
-		static const char* getFragmentShader () {return fs_shader;}
-
 		TextureFont ();
 
 		~TextureFont ();
@@ -70,9 +66,6 @@ namespace BIL {
 		GLuint texture_;
 
 		Glyph glyph_;
-
-		static const char* vs_shader;
-		static const char* fs_shader;
 	};
 }
 

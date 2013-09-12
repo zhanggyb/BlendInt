@@ -115,7 +115,7 @@ namespace BIL {
 
 	protected:	// member functions
 
-		void update ();
+		virtual void update ();
 
 		/**
 		 * @brief Calculate round box shadow edges

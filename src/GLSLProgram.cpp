@@ -152,6 +152,17 @@ namespace BIL {
 		return uniform;
 	}
 
+	void GLSLProgram::activate()
+	{
+		if (glIsProgram(id_))
+			glUseProgram (id_);
+	}
+
+	void GLSLProgram::deactivate()
+	{
+		glUseProgram(0);
+	}
+
 	void GLSLProgram::print_log ()
 	{
 		GLint log_length = 0;

@@ -58,31 +58,24 @@ namespace BIL {
 					 pos_.y(),
 					 z());
 
-		//text_.render();
 		glUseProgram(ShaderManager::instance()->text_program().id());
 
 		GLfloat black[4] = { 0, 0, 0, 1 };
-		//GLfloat red[4] = { 1, 0, 0, 1 };
-		//GLfloat transparent_green[4] = { 0, 1, 0, 0.5 };
-
-		/* Set color to black */
 		glUniform4fv(ShaderManager::instance()->text_uniform_color(), 1, black);
 
-		/* Use the texture containing the atlas */
 		glBindTexture(GL_TEXTURE_2D, FontCache::create(font_)->queryTexture(text_[0]));
 		glUniform1i(ShaderManager::instance()->text_uniform_tex(), 0);
 
-		/* Set up the VBO for our vertex data */
 		glEnableVertexAttribArray(ShaderManager::instance()->text_attribute_coord());
 		glBindBuffer(GL_ARRAY_BUFFER, ShaderManager::instance()->text_vbo());
 		glVertexAttribPointer(ShaderManager::instance()->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-		/* Draw all the character on the screen in one go */
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6 * text_.length(), vertex_array_, GL_DYNAMIC_DRAW);
 		glDrawArrays(GL_TRIANGLES, 0, valid_text_length_);
 
 		glDisableVertexAttribArray(ShaderManager::instance()->text_attribute_coord());
 
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glUseProgram(0);
 
 		glPopMatrix();
