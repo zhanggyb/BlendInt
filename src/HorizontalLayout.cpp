@@ -19,6 +19,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <GL/glew.h>
 #include <algorithm>
 #include <BIL/HorizontalLayout.hpp>
 
@@ -58,6 +59,29 @@ namespace BIL {
 
 	void HorizontalLayout::render ()
 	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(pos_.x(),
+					 pos_.y(),
+					 z());
+#ifdef DEBUG
+		glLineWidth(1);
+		glEnable(GL_LINE_STIPPLE);
+
+		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+		glLineStipple(1, 0xAAAA);
+		glBegin(GL_LINE_LOOP);
+			glVertex2i(0, 0);
+			glVertex2i(size_.width(), 0);
+			glVertex2i(size_.width(), size_.height());
+			glVertex2i(0, size_.height());
+		glEnd();
+
+		glDisable(GL_LINE_STIPPLE);
+#endif
+
+		glPopMatrix();
 	}
 
 }

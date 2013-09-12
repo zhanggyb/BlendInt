@@ -46,17 +46,17 @@ namespace BIL {
 
 	void ToggleButton::render ()
 	{
-		drawButton (&appearance_);
-
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(pos_.x(),
 					 pos_.y(),
 					 z());
+
+		drawButton (&appearance_);
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 
 		glUseProgram(ShaderManager::instance()->text_program().id());
 
@@ -78,9 +78,9 @@ namespace BIL {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glUseProgram(0);
 
-		glPopMatrix();
-
 		glDisable(GL_BLEND);
+
+		glPopMatrix();
 	}
 
 }

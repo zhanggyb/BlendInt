@@ -156,6 +156,7 @@ namespace BIL {
 	{
 		if (fontengine_) {
 
+			/*
 			map<wchar_t, TextureFont*>::iterator it;
 			for (it = texture_fonts_.begin(); it != texture_fonts_.end(); it++) {
 				if (it->second) {
@@ -164,6 +165,7 @@ namespace BIL {
 				}
 			}
 			texture_fonts_.clear();
+			*/
 
 			delete fontengine_;
 		}
@@ -182,10 +184,11 @@ namespace BIL {
 
 	const Glyph& FontCache::queryGlyph (wchar_t charcode, bool create)
 	{
-		if (atlas_.contains(charcode)) {
+		//if (atlas_.contains(charcode)) {
 			return atlas_.glyph(charcode);
-		}
+		//}
 
+		/*
 		map<wchar_t, TextureFont*>::iterator it;
 		it = texture_fonts_.find(charcode);
 
@@ -204,14 +207,16 @@ namespace BIL {
 		}
 
 		return texture_fonts_[charcode]->glyph();
+		*/
 	}
 
 	const GLuint FontCache::queryTexture (wchar_t charcode, bool create)
 	{
-		if (atlas_.contains(charcode)) {
+		//if (atlas_.contains(charcode)) {
 			return atlas_.texture();
-		}
+		//}
 
+		/*
 		map<wchar_t, TextureFont*>::iterator it;
 		it = texture_fonts_.find(charcode);
 
@@ -230,14 +235,16 @@ namespace BIL {
 		}
 
 		return texture_fonts_[charcode]->texture();
+		*/
 	}
 
 	unsigned int FontCache::queryWidth (wchar_t charcode, bool create)
 	{
-		if (atlas_.contains(charcode)) {
+		//if (atlas_.contains(charcode)) {
 			return atlas_.width();
-		}
+		//}
 
+		/*
 		map<wchar_t, TextureFont*>::iterator it;
 		it = texture_fonts_.find(charcode);
 
@@ -256,14 +263,16 @@ namespace BIL {
 		}
 
 		return texture_fonts_[charcode]->width();
+		*/
 	}
 
 	unsigned int FontCache::queryHeight (wchar_t charcode, bool create)
 	{
-		if (atlas_.contains(charcode)) {
+//		if (atlas_.contains(charcode)) {
 			return atlas_.height();
-		}
+//		}
 
+		/*
 		map<wchar_t, TextureFont*>::iterator it;
 		it = texture_fonts_.find(charcode);
 
@@ -282,6 +291,7 @@ namespace BIL {
 		}
 
 		return texture_fonts_[charcode]->height();
+		*/
 	}
 
 	Rect FontCache::calculateOutline (const String& string)
@@ -311,7 +321,7 @@ namespace BIL {
 #ifdef DEBUG
 	void FontCache::printcount (void)
 	{
-		std::cout << "fonts in texture_fonts_: " << texture_fonts_.size() << std::endl;
+		//std::cout << "fonts in texture_fonts_: " << texture_fonts_.size() << std::endl;
 	}
 #endif
 

@@ -142,15 +142,16 @@ namespace BIL {
 
 	void Label::render ()
 	{
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(pos_.x(),
 					 pos_.y(),
 					 z());
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glColor4ub(background_.r(), background_.g(),
 				   background_.b(), background_.a());
 		glRectf(0.0, 0.0, size_.width(), size_.height());
@@ -180,10 +181,28 @@ namespace BIL {
 
 		glDisableVertexAttribArray(ShaderManager::instance()->text_attribute_coord());
 
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glUseProgram(0);
 
-		glPopMatrix();
+#ifdef DEBUG
+		glLineWidth(1);
+		glEnable(GL_LINE_STIPPLE);
+
+		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+		glLineStipple(1, 0xAAAA);
+		glBegin(GL_LINE_LOOP);
+			glVertex2i(0, 0);
+			glVertex2i(size_.width(), 0);
+			glVertex2i(size_.width(), size_.height());
+			glVertex2i(0, size_.height());
+		glEnd();
+
+		glDisable(GL_LINE_STIPPLE);
+#endif
 		glDisable(GL_BLEND);
+
+		glPopMatrix();
+
 	}
 
 	void Label::cursorPosEvent (double xpos, double ypos)

@@ -25,8 +25,8 @@ CPPUNIT_TEST_SUITE(FontCacheTest);
 	CPPUNIT_TEST(check7);
 	CPPUNIT_TEST(check8);
 	CPPUNIT_TEST(show1);
-	CPPUNIT_TEST(show_multiple_cache1);
-	CPPUNIT_TEST(test_font_not_exist1);
+	//CPPUNIT_TEST(show_multiple_cache1);
+	//CPPUNIT_TEST(test_font_not_exist1);
 
 	CPPUNIT_TEST_SUITE_END()
 	;

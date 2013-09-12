@@ -184,7 +184,7 @@ namespace BIL {
 
 		TextureAtlas atlas_;
 
-		map<wchar_t, TextureFont*> texture_fonts_;
+		//map<wchar_t, TextureFont*> texture_fonts_;
 
 	private:
 		// static members

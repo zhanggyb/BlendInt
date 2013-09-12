@@ -72,7 +72,7 @@ void CppEventsTest::connect1 ()
 	app->resize(1200, 800);
 
 	Button button(L"Button Test");
-	button.set_font(Font("Droid Sans"));
+	//button.set_font(Font("Droid Sans"));
 	button.set_round_box_type(RoundBoxAll);
 	button.set_pos(Point(50, 50));
 

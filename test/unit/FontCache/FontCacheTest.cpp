@@ -99,6 +99,7 @@ void FontCacheTest::check1 ()
 	bool result = true;
 
 	if(result) {
+		/*
 		cache->queryGlyph(L'仁', true);
 		cache->queryGlyph(L'义', true);
 		cache->queryGlyph(L'礼', true);
@@ -108,6 +109,8 @@ void FontCacheTest::check1 ()
 
 		cache->queryGlyph(L'仁');
 		cache->queryGlyph(L'仁');
+		*/
+		cache->queryGlyph('A');
 
 #ifdef DEBUG
 		cache->printcount();
@@ -228,15 +231,18 @@ void FontCacheTest::check6 ()
 	if(result) {
 		for(int i = 0; i < 10; i++)
 		{
-			cache->queryGlyph(L'仁');
+			//cache->queryGlyph(L'仁');
+			cache->queryGlyph('A');
 		}
 		for(int i = 0; i < 5; i++)
 		{
-			cache->queryGlyph(L'义');
+			//cache->queryGlyph(L'义');
+			cache->queryGlyph('B');
 		}
 		for(int i = 0; i < 20; i++)
 		{
-			cache->queryGlyph(L'智');
+			//cache->queryGlyph(L'智');
+			cache->queryGlyph('C');
 		}
 
 #ifdef DEBUG
@@ -339,7 +345,8 @@ void FontCacheTest::show1()
 		CPPUNIT_FAIL("Cannot initialize font cache\n");
 	}
 
-	cache->queryGlyph(L'信');
+	//cache->queryGlyph(L'信');
+	cache->queryGlyph('D');
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

@@ -82,13 +82,11 @@ namespace BIL {
 		{
 			pos_.set_x(x);
 			pos_.set_y(y);
-			update();
 		}
 
 		void set_pos (const Point& pos)
 		{
 			pos_ = pos;
-			update();
 		}
 
 		float z () const
@@ -159,7 +157,10 @@ namespace BIL {
 	protected:	// member functions
 
 		/**
-		 * @brief Update data for render, used in size, position change
+		 * @brief Update data for render, used in size, shape change only
+		 *
+		 * @warning DO NOT call functions to change own properties again,
+		 * e.g, resize()
 		 */
 		virtual void update () = 0;
 

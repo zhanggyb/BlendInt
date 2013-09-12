@@ -45,18 +45,17 @@ namespace BIL {
 
 	void Button::render ()
 	{
-		drawButton (&appearance_);
-
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(pos_.x(),
 					 pos_.y(),
 					 z());
+
+		drawButton (&appearance_);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		//text_.render();
 		glUseProgram(ShaderManager::instance()->text_program().id());
@@ -79,9 +78,11 @@ namespace BIL {
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glUseProgram(0);
+		glDisable(GL_BLEND);
 
 		glPopMatrix();
-		glDisable(GL_BLEND);
+
+
 	}
 
 }
