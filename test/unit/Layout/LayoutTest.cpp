@@ -16,8 +16,7 @@
 #include <BIL/FontConfig.hpp>
 #include <BIL/Rect.hpp>
 #include <BIL/HorizontalLayout.hpp>
-#include <BIL/Traceable.hpp>
-
+#include <BIL/VerticalLayout.hpp>
 
 using namespace BIL;
 using namespace std;
@@ -115,6 +114,70 @@ void LayoutTest::horizontal_layout1()
 
 	Button button(L"Sample Button");
 	button.set_pos(100, 200);
+
+	layout.addWidget(&label);
+	layout.addWidget(&button);
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void LayoutTest::vertical_layout1()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	VerticalLayout layout;
+	layout.set_pos(100, 100);
+
+	Label label(L"Hello World!");
+	label.set_pos(100, 100);
+
+	Button button(L"Sample Button");
+	button.set_pos(200, 200);
 
 	layout.addWidget(&label);
 	layout.addWidget(&button);

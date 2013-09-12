@@ -409,7 +409,7 @@ namespace BIL {
 		rad = 0.2f * 20;
 
 		//round_box_edges(&wtb, roundboxalign, rect, rad);
-		CalculateRoundBoxEdges(round_box_type_, Rect(pos_, size_), rad,
+		CalculateRoundBoxEdges(round_box_type_, Rect(0, 0, size_.width(), size_.height()), rad,
 		        &appearance_);
 	}
 

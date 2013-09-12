@@ -87,7 +87,6 @@ namespace BIL {
 	void AbstractButton::drawButton (WidgetVertexes* vertexes)
 	{
 		Theme *theme = Theme::instance();
-		if (theme == NULL) return;
 
 		const WidgetColors* wcol = &(theme->themeUI()->wcol_toggle);
 

@@ -21,22 +21,22 @@
 
 #include <GL/glew.h>
 #include <algorithm>
-#include <BIL/HorizontalLayout.hpp>
+#include <BIL/VerticalLayout.hpp>
 
 namespace BIL {
 
-	HorizontalLayout::HorizontalLayout(Drawable* parent)
+	VerticalLayout::VerticalLayout(Drawable* parent)
 		: AbstractLayout(parent)
 	{
 
 	}
 
-	HorizontalLayout::~HorizontalLayout()
+	VerticalLayout::~VerticalLayout()
 	{
 
 	}
 
-	void HorizontalLayout::update ()
+	void VerticalLayout::update ()
 	{
 		unsigned int total_width = 0;
 		unsigned int total_height = 0;
@@ -47,18 +47,20 @@ namespace BIL {
 			Drawable* child = dynamic_cast<Drawable*>(*it);
 			if(child) {
 				// TODO: define alignment
-				child->set_pos(pos_.x() + child->margin().left() + total_width, pos_.y() + child->margin().bottom());
-				total_width = total_width + child->margin().left() + child->size().width() + child->margin().right();
-				total_height = std::max (total_height, child->margin().top() + child->size().height() + child->margin().bottom());
+				child->set_pos(pos_.x() + child->margin().left(), pos_.y() + child->margin().bottom() + total_height);
+				//total_width = total_width + child->margin().left() + child->size().width() + child->margin().right();
+				total_width = std::max (total_width, child->margin().left() + child->size().width() + child->margin().right());
+				//total_height = std::max (total_height, child->margin().top() + child->size().height() + child->margin().bottom());
+				total_height = total_height + child->margin().top() + child->size().height() + child->margin().bottom();
 			}
 		}
 
-		int aligh_height = total_height / 2;
+		int aligh_width = total_width / 2;
 		for (it = children_.begin(); it != children_.end(); it++)
 		{
 			Drawable* child = dynamic_cast<Drawable*>(*it);
 			if(child) {
-				child->set_pos(child->pos().x(), child->pos().y() + (aligh_height -  (child->margin().top() + child->size().height() + child->margin().bottom()) / 2));
+				child->set_pos(child->pos().x() + (aligh_width - (child->margin().left() + child->size().width() + child->margin().right()) / 2), child->pos().y());
 			}
 		}
 
@@ -66,7 +68,7 @@ namespace BIL {
 		size_.set_height(total_height);
 	}
 
-	void HorizontalLayout::render ()
+	void VerticalLayout::render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

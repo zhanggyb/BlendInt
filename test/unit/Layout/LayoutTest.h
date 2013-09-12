@@ -11,6 +11,8 @@ class LayoutTest: public CppUnit::TestFixture
 
 	CPPUNIT_TEST(horizontal_layout1);
 
+	CPPUNIT_TEST(vertical_layout1);
+
 	CPPUNIT_TEST_SUITE_END()
 	;
 
@@ -29,6 +31,8 @@ public:
 private:
 
 	void horizontal_layout1 ();
+
+	void vertical_layout1 ();
 
 	static void cbError (int error, const char* description);
 
