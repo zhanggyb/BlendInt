@@ -44,7 +44,7 @@ namespace BIL {
 
 		std::list<Traceable*>::const_iterator it;
 		total_width = padding_.left();
-		for (it = children_.begin(); it != children_.end(); it++)
+		for (it = m_children.begin(); it != m_children.end(); it++)
 		{
 			Drawable* child = dynamic_cast<Drawable*>(*it);
 			if(child) {
@@ -56,7 +56,7 @@ namespace BIL {
 		}
 		total_width += padding_.right();
 
-		for (it = children_.begin(); it != children_.end(); it++)
+		for (it = m_children.begin(); it != m_children.end(); it++)
 		{
 			Drawable* child = dynamic_cast<Drawable*>(*it);
 			if(child) {

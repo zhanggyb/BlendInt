@@ -36,7 +36,7 @@ namespace BIL {
 	list<Traceable*> Traceable::solos;
 
 	Traceable::Traceable (Traceable* parent)
-			: parent_(parent)
+			: m_parent(parent)
 	{
 		// generate a unique id
 		uint64_t temp = id_last;
@@ -47,13 +47,13 @@ namespace BIL {
 				throw std::out_of_range("Cannot assign unique id for object");
 		}
 
-		id_ = id_last;
+		m_id = id_last;
 
-		registerObject();
+		register_in_map();
 		id_last++;
 
-		if (parent_) {
-			(parent_->children_).push_back(this);
+		if (m_parent) {
+			(m_parent->m_children).push_back(this);
 		} else {
 			solos.push_back(this);
 		}
@@ -62,21 +62,21 @@ namespace BIL {
 	Traceable::~Traceable ()
 	{
 		Traceable* item = 0;
-		while (children_.size() > 0) {
-			item = children_.back();
-			children_.pop_back();
+		while (m_children.size() > 0) {
+			item = m_children.back();
+			m_children.pop_back();
 			if (item) {
-				removeChild(item);
+				remove_child(item);
 				delete item;
 			}
 		}
 
-		children_.clear();
+		m_children.clear();
 
-		if (parent_) {
+		if (m_parent) {
 			// _parent->removeChild(this);	// Be careful of this line
 			// parent_->children_.erase(this);
-			parent_->children_.remove(this);
+			m_parent->m_children.remove(this);
 		} else {
 			list<Traceable*>::iterator it;
 			it = std::find(solos.begin(), solos.end(), this);
@@ -85,12 +85,12 @@ namespace BIL {
 			}
 		}
 
-		unregisterObject();
+		unregister_from_map();
 	}
 
-	inline bool Traceable::registerObject ()
+	inline bool Traceable::register_in_map ()
 	{
-		Traceable::obj_map[id_] = this;
+		Traceable::obj_map[m_id] = this;
 		return true;
 	}
 
@@ -103,15 +103,15 @@ namespace BIL {
 		return ret;
 	}
 
-	inline bool Traceable::unregisterObject ()
+	inline bool Traceable::unregister_from_map ()
 	{
-		Traceable::obj_map.erase(id_);
+		Traceable::obj_map.erase(m_id);
 		return true;
 	}
 
-	void Traceable::setParent (Traceable* parent)
+	void Traceable::set_parent (Traceable* parent)
 	{
-		if (!parent_) {
+		if (!m_parent) {
 
 			// if already in solo list, just return
 			if (!parent) {
@@ -124,20 +124,20 @@ namespace BIL {
 				solos.remove(this);
 			}
 		} else {
-			parent_->removeChild(this, false);
+			m_parent->remove_child(this, false);
 		}
 
 		if (parent) {
-			parent_ = parent;
+			m_parent = parent;
 			// return (_parent->addChild(this));
-			parent_->children_.push_back(this);
+			m_parent->m_children.push_back(this);
 		} else {
-			parent_ = 0;
+			m_parent = 0;
 			solos.push_back(this);
 		}
 	}
 
-	bool Traceable::addChild (Traceable* child)
+	bool Traceable::add_child (Traceable* child)
 	{
 		if (!child)
 			return false;
@@ -145,8 +145,8 @@ namespace BIL {
 //		if (child->parent_ == this)
 //			return false;
 
-		if (child->parent_) {
-			(child->parent_)->removeChild(child, false);
+		if (child->m_parent) {
+			(child->m_parent)->remove_child(child, false);
 		} else {
 			list<Traceable*>::iterator it;
 			it = std::find(solos.begin(), solos.end(), child);
@@ -155,15 +155,15 @@ namespace BIL {
 			}
 		}
 
-		children_.push_back(child);
-		child->parent_ = this;
+		m_children.push_back(child);
+		child->m_parent = this;
 
 		return true;
 	}
 
-	bool Traceable::removeChild (Traceable* child, bool registersolo)
+	bool Traceable::remove_child (Traceable* child, bool registersolo)
 	{
-		if (child->parent_ != this)
+		if (child->m_parent != this)
 			return false;
 
 		if (!child)
@@ -171,8 +171,8 @@ namespace BIL {
 
 		//children_.erase(child);
 		//child->setParent(NULL);
-		children_.remove(child);
-		child->parent_ = 0;
+		m_children.remove(child);
+		child->m_parent = 0;
 		if (registersolo) {
 			solos.push_back(child);
 		}
@@ -180,18 +180,18 @@ namespace BIL {
 		return true;
 	}
 
-	void Traceable::deleteChildren ()
+	void Traceable::delete_children ()
 	{
 		Traceable* item = 0;
 
-		while (children_.size() > 0) {
-			item = children_.back();
-			children_.pop_back();
+		while (m_children.size() > 0) {
+			item = m_children.back();
+			m_children.pop_back();
 			if (item)
 				delete item;
 		}
 
-		children_.clear();
+		m_children.clear();
 	}
 
 	void Traceable::clearSolos ()

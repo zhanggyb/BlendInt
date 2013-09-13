@@ -236,7 +236,7 @@ namespace BIL {
 				unsigned char col_array[WIDGET_SIZE_MAX * 4];
 				unsigned char *col_pt = col_array;
 
-				Color::ConvertShadeColor(wcol->inner, wcol->shadetop, wcol->shadedown, &col1, &col2);
+				Color::convert_shade_color(wcol->inner, wcol->shadetop, wcol->shadedown, &col1, &col2);
 
 				glShadeModel(GL_SMOOTH);
 				for (a = 0; a < vertexes->totvert; a++, col_pt += 4) {
@@ -395,7 +395,7 @@ namespace BIL {
 
 	void AbstractButton::mousePressEvent (MouseEvent* event)
 	{
-		if (!size_.Contains(event->pos()))
+		if (!size_.contains(event->pos()))
 		{
 			event->ignore();
 			return;
@@ -414,7 +414,7 @@ namespace BIL {
 
 	void AbstractButton::mouseReleaseEvent(MouseEvent* event)
 	{
-		if (! size_.Contains(event->pos()))
+		if (! size_.contains(event->pos()))
 		{
 			event->ignore();
 			return;
@@ -431,7 +431,7 @@ namespace BIL {
 
 	void AbstractButton::mouseMoveEvent (MouseEvent* event)
 	{
-		if (size_.Contains(event->pos())) {
+		if (size_.contains(event->pos())) {
 			hover_ = true;
             event->accept();
 		} else {

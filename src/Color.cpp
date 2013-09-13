@@ -23,7 +23,7 @@
 
 namespace BIL {
 
-	void Color::ConvertShadeColor (const Color& color,
+	void Color::convert_shade_color (const Color& color,
 								   short shadetop,
 								   short shadedown,
 								   Color* top_color,

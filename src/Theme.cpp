@@ -58,7 +58,7 @@ namespace BIL {
 			theme->themeUI_.wcol_tool.outline = 0x191919FF;
 			theme->themeUI_.wcol_tool.item = 0x191919FF;
 			theme->themeUI_.wcol_tool.inner = 0x999999FF;
-			theme->themeUI_.wcol_tool.inner_highlight.HighlightFrom(0x999999FF);
+			theme->themeUI_.wcol_tool.inner_highlight.highlight(0x999999FF);
 			theme->themeUI_.wcol_tool.inner_sel = 0x646464FF;
 			theme->themeUI_.wcol_tool.text = 0x000000FF;
 			theme->themeUI_.wcol_tool.text_sel = 0xFFFFFFFF;
@@ -67,7 +67,7 @@ namespace BIL {
 			theme->themeUI_.wcol_radio.outline = 0x000000FF;
 			theme->themeUI_.wcol_radio.item = 0xFFFFFFFF;
 			theme->themeUI_.wcol_radio.inner = 0x464646FF;
-			theme->themeUI_.wcol_radio.inner_highlight.HighlightFrom(0x464646FF);
+			theme->themeUI_.wcol_radio.inner_highlight.highlight(0x464646FF);
 			theme->themeUI_.wcol_radio.inner_sel = 0x5680C2FF;
 			theme->themeUI_.wcol_radio.text = 0xFFFFFFFF;
 			theme->themeUI_.wcol_radio.text_sel = 0x000000FF;
@@ -84,7 +84,7 @@ namespace BIL {
 			theme->themeUI_.wcol_option.outline = 0x000000FF;
 			theme->themeUI_.wcol_option.item = 0xFFFFFFFF;
 			theme->themeUI_.wcol_option.inner = 0x464646FF;
-			theme->themeUI_.wcol_option.inner_highlight.HighlightFrom(0x464646FF);
+			theme->themeUI_.wcol_option.inner_highlight.highlight(0x464646FF);
 			theme->themeUI_.wcol_option.inner_sel = 0x464646FF;
 			theme->themeUI_.wcol_option.text = 0x000000FF;
 			theme->themeUI_.wcol_option.text_sel = 0xFFFFFFFF;
@@ -93,7 +93,7 @@ namespace BIL {
 			theme->themeUI_.wcol_toggle.outline = 0x191919FF;
 			theme->themeUI_.wcol_toggle.item = 0x191919FF;
 			theme->themeUI_.wcol_toggle.inner = 0x999999FF;
-			theme->themeUI_.wcol_toggle.inner_highlight.HighlightFrom(0x999999FF);
+			theme->themeUI_.wcol_toggle.inner_highlight.highlight(0x999999FF);
 			theme->themeUI_.wcol_toggle.inner_sel = 0x646464FF;
 			theme->themeUI_.wcol_toggle.text = 0x000000FF;
 			theme->themeUI_.wcol_toggle.text_sel = 0xFFFFFFFF;
@@ -102,7 +102,7 @@ namespace BIL {
 			theme->themeUI_.wcol_num.outline = 0x191919FF;
 			theme->themeUI_.wcol_num.item = 0xFAFAFAFF;
 			theme->themeUI_.wcol_num.inner = 0xB4B4B4FF;
-			theme->themeUI_.wcol_num.inner_highlight.HighlightFrom(0xB4B4B4FF);
+			theme->themeUI_.wcol_num.inner_highlight.highlight(0xB4B4B4FF);
 			theme->themeUI_.wcol_num.inner_sel = 0x999999FF;
 			theme->themeUI_.wcol_num.text = 0x000000FF;
 			theme->themeUI_.wcol_num.text_sel = 0xFFFFFFFF;
@@ -111,7 +111,7 @@ namespace BIL {
 			theme->themeUI_.wcol_numslider.outline = 0x191919FF;
 			theme->themeUI_.wcol_numslider.item = 0x808080FF;
 			theme->themeUI_.wcol_numslider.inner = 0xB4B4B4FF;
-			theme->themeUI_.wcol_numslider.inner_highlight.HighlightFrom(0xB4B4B4FF);
+			theme->themeUI_.wcol_numslider.inner_highlight.highlight(0xB4B4B4FF);
 			theme->themeUI_.wcol_numslider.inner_sel = 0x999999FF;
 			theme->themeUI_.wcol_numslider.text = 0x000000FF;
 			theme->themeUI_.wcol_numslider.text_sel = 0xFFFFFFFF;
@@ -120,7 +120,7 @@ namespace BIL {
 			theme->themeUI_.wcol_box.outline = 0x191919FF;
 			theme->themeUI_.wcol_box.item = 0x191919FF;
 			theme->themeUI_.wcol_box.inner = 0x808080FF;
-			theme->themeUI_.wcol_box.inner_highlight.HighlightFrom(0x808080FF);
+			theme->themeUI_.wcol_box.inner_highlight.highlight(0x808080FF);
 			theme->themeUI_.wcol_box.inner_sel = 0x646464FF;
 			theme->themeUI_.wcol_box.text = 0x000000FF;
 			theme->themeUI_.wcol_box.text_sel = 0xFFFFFFFF;
@@ -129,7 +129,7 @@ namespace BIL {
 			theme->themeUI_.wcol_menu.outline = 0x000000FF;
 			theme->themeUI_.wcol_menu.item = 0xFFFFFFFF;
 			theme->themeUI_.wcol_menu.inner = 0x464646FF;
-			theme->themeUI_.wcol_menu.inner_highlight.HighlightFrom(0x464646FF);
+			theme->themeUI_.wcol_menu.inner_highlight.highlight(0x464646FF);
 			theme->themeUI_.wcol_menu.inner_sel = 0x464646FF;
 			theme->themeUI_.wcol_menu.text = 0xFFFFFFFF;
 			theme->themeUI_.wcol_menu.text_sel = 0xCCCCCCFF;
@@ -138,7 +138,7 @@ namespace BIL {
 			theme->themeUI_.wcol_pulldown.outline = 0x000000FF;
 			theme->themeUI_.wcol_pulldown.item = 0xFFFFFFFF;
 			theme->themeUI_.wcol_pulldown.inner = 0x3F3F3FFF;
-			theme->themeUI_.wcol_pulldown.inner_highlight.HighlightFrom(0x3F3F3FFF);
+			theme->themeUI_.wcol_pulldown.inner_highlight.highlight(0x3F3F3FFF);
 			theme->themeUI_.wcol_pulldown.inner_sel = 0x5680C2FF;
 			theme->themeUI_.wcol_pulldown.text = 0x000000FF;
 			theme->themeUI_.wcol_pulldown.text_sel = 0x000000FF;
@@ -147,7 +147,7 @@ namespace BIL {
 			theme->themeUI_.wcol_menu_back.outline = 0x000000FF;
 			theme->themeUI_.wcol_menu_back.item = 0x646464FF;
 			theme->themeUI_.wcol_menu_back.inner = 0x191919E6;
-			theme->themeUI_.wcol_menu_back.inner_highlight.HighlightFrom(0x191919E6);
+			theme->themeUI_.wcol_menu_back.inner_highlight.highlight(0x191919E6);
 			theme->themeUI_.wcol_menu_back.inner_sel = 0x2D2D2DE6;
 			theme->themeUI_.wcol_menu_back.text = 0xA0A0A0FF;
 			theme->themeUI_.wcol_menu_back.text_sel = 0xFFFFFFFF;
@@ -156,7 +156,7 @@ namespace BIL {
 			theme->themeUI_.wcol_tooltip.outline = 0x000000FF;
 			theme->themeUI_.wcol_tooltip.item = 0x646464FF;
 			theme->themeUI_.wcol_tooltip.inner = 0x191919E6;
-			theme->themeUI_.wcol_tooltip.inner_highlight.HighlightFrom(0x191919E6);
+			theme->themeUI_.wcol_tooltip.inner_highlight.highlight(0x191919E6);
 			theme->themeUI_.wcol_tooltip.inner_sel = 0x2D2D2DE6;
 			theme->themeUI_.wcol_tooltip.text = 0xA0A0A0FF;
 			theme->themeUI_.wcol_tooltip.text_sel = 0xFFFFFFFF;
@@ -165,7 +165,7 @@ namespace BIL {
 			theme->themeUI_.wcol_menu_item.outline = 0x000000FF;
 			theme->themeUI_.wcol_menu_item.item = 0xACACAC80;
 			theme->themeUI_.wcol_menu_item.inner = 0x00000000;
-			theme->themeUI_.wcol_menu_item.inner_highlight.HighlightFrom(0x00000000); // nothing
+			theme->themeUI_.wcol_menu_item.inner_highlight.highlight(0x00000000); // nothing
 			theme->themeUI_.wcol_menu_item.inner_sel = 0x5680C2FF;
 			theme->themeUI_.wcol_menu_item.text = 0xFFFFFFFF;
 			theme->themeUI_.wcol_menu_item.text_sel = 0x000000FF;
@@ -174,7 +174,7 @@ namespace BIL {
 			theme->themeUI_.wcol_scroll.outline = 0x323232FF;
 			theme->themeUI_.wcol_scroll.item = 0x808080FF;
 			theme->themeUI_.wcol_scroll.inner = 0x505050B4;
-			theme->themeUI_.wcol_scroll.inner_highlight.HighlightFrom(0x505050B4);
+			theme->themeUI_.wcol_scroll.inner_highlight.highlight(0x505050B4);
 			theme->themeUI_.wcol_scroll.inner_sel = 0x646464B4;
 			theme->themeUI_.wcol_scroll.text = 0x000000FF;
 			theme->themeUI_.wcol_scroll.text_sel = 0xFFFFFFFF;
@@ -183,7 +183,7 @@ namespace BIL {
 			theme->themeUI_.wcol_progress.outline = 0x000000FF;
 			theme->themeUI_.wcol_progress.item = 0x444444FF;
 			theme->themeUI_.wcol_progress.inner = 0xBEBEBEFF;
-			theme->themeUI_.wcol_progress.inner_highlight.HighlightFrom(0xBEBEBEFF);
+			theme->themeUI_.wcol_progress.inner_highlight.highlight(0xBEBEBEFF);
 			theme->themeUI_.wcol_progress.inner_sel = 0x646464B4;
 			theme->themeUI_.wcol_progress.text = 0x000000FF;
 			theme->themeUI_.wcol_progress.text_sel = 0xFFFFFFFF;
@@ -192,7 +192,7 @@ namespace BIL {
 			theme->themeUI_.wcol_list_item.outline = 0x000000FF;
 			theme->themeUI_.wcol_list_item.item = 0x000000FF;
 			theme->themeUI_.wcol_list_item.inner = 0x00000000;
-			theme->themeUI_.wcol_list_item.inner_highlight.HighlightFrom(0x00000000);
+			theme->themeUI_.wcol_list_item.inner_highlight.highlight(0x00000000);
 			theme->themeUI_.wcol_list_item.inner_sel = 0x5680C2FF;
 			theme->themeUI_.wcol_list_item.text = 0x000000FF;
 			theme->themeUI_.wcol_list_item.text_sel = 0x000000FF;
@@ -230,7 +230,7 @@ namespace BIL {
 			        0x646464FF), text(0x000000FF), text_sel(0xFFFFFFFF), shaded(
 			        false), shadetop(0), shadedown(0), alpha_check(0)
 	{
-		inner_highlight.HighlightFrom(inner);
+		inner_highlight.highlight(inner);
 	}
 
 	WidgetStateColors::WidgetStateColors ()

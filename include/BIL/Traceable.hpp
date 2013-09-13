@@ -101,7 +101,7 @@ namespace BIL {
 		 */
 		uint64_t id () const
 		{
-			return id_;
+			return m_id;
 		}
 		/**
 		 * @brief get the parent pointer
@@ -109,7 +109,7 @@ namespace BIL {
 		 */
 		const Traceable* parent () const
 		{
-			return parent_;
+			return m_parent;
 		}
 
 		/**
@@ -119,48 +119,38 @@ namespace BIL {
 		 *
 		 * Set the parent object and add self into the children list of parent
 		 */
-		void setParent (Traceable* parent);
+		void set_parent (Traceable* parent);
 
-		bool addChild (Traceable *child);
+		bool add_child (Traceable *child);
 
 		const std::list<Traceable*>& children () const
 		{
-			return children_;
+			return m_children;
 		}
+
+		//ChildrenList<Traceable*> _children;
+		std::list<Traceable*> m_children;
 
 	protected:
 		// member functions
 
-		bool removeChild (Traceable* child, bool registersolo = true);
+		bool remove_child (Traceable* child, bool registersolo = true);
 
-		void deleteChildren ();
-
-		list<Traceable*>& getSoloList ()
-		{
-			return solos;
-		}
-
-	protected:
-
-		//ChildrenList<Traceable*> _children;
-		std::list<Traceable*> children_;
+		void delete_children ();
 
 	private:
 
-		inline bool registerObject ();
+		inline bool register_in_map ();
 
-		inline bool unregisterObject ();
+		inline bool unregister_from_map ();
 
-	private:
 		// member variables
 
-		uint64_t id_; /** A unique ID for object */
+		uint64_t m_id; /** A unique ID for object */
 
-		Traceable* parent_; /** parent object */
+		Traceable* m_parent; /** parent object */
 
-	private:
 		// static member variables
-
 		static uint64_t id_last;
 
 		static map<uint64_t, Traceable*> obj_map;

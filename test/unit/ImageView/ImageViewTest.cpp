@@ -3,65 +3,40 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <string>
+#include <stdio.h>
+
+#include "ImageViewTest.h"
 
 #include <BIL/Interface.hpp>
-#include <BIL/Label.hpp>
-#include <BIL/Theme.hpp>
-
-#include "ThemeTest.h"
+#include <BIL/ImageView.hpp>
 
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(ThemeTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(ImageViewTest);
 
-ThemeTest::ThemeTest ()
+ImageViewTest::ImageViewTest ()
 {
 
 }
 
-ThemeTest::~ThemeTest ()
+ImageViewTest::~ImageViewTest ()
 {
 
 }
 
-void ThemeTest::setUp ()
+void ImageViewTest::setUp ()
 {
 }
 
-void ThemeTest::tearDown ()
+void ImageViewTest::tearDown ()
 {
 }
 
-void ThemeTest::initialize1 ()
-{
-	if(!Theme::initialize()) {
-		CPPUNIT_ASSERT(false);
-		return;
-	}
-
-	unsigned char r = 0x00;
-
-	Theme* theme = Theme::instance();
-
-	if (theme != NULL)
-		theme->initialize();
-
-	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	r = theme->themeUI()->wcol_tool.outline.r();
-
-	if (theme != NULL) {
-		Theme::release();
-	}
-
-	cout << "Red: " << r << endl;
-	Theme::release();
-	CPPUNIT_ASSERT(r == 0x19);
-}
-
-void ThemeTest::initialize2 ()
+void ImageViewTest::show1 ()
 {
 	/* Initialize the library */
 	if (!glfwInit())
@@ -94,16 +69,8 @@ void ThemeTest::initialize2 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-    Theme* theme = Theme::instance();
-	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	Color bg_color = theme->themeUI()->wcol_menu_item.item;
-	Color textcolor = theme->themeUI()->wcol_menu_item.text;
-
-	Label label(L"Text in Label");
-	label.set_pos(Point(50, 50));
-	label.set_background(bg_color);
-	label.set_font(Font("Droid Sans", 12));
-	label.set_foreground(textcolor);
+	ImageView imageview;
+	imageview.set_pos(400, 300);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -124,31 +91,31 @@ void ThemeTest::initialize2 ()
 	CPPUNIT_ASSERT(true);
 }
 
-void ThemeTest::cbError (int error, const char* description)
+void ImageViewTest::cbError (int error, const char* description)
 {
 	std::cerr << "Error: " << description
 			<< " (error code: " << error << ")"
 			<< std::endl;
 }
 
-void ThemeTest::cbWindowSize (GLFWwindow* window, int w, int h)
+void ImageViewTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
 	BIL::Interface::instance()->resizeEvent(w, h);
 }
 
-void ThemeTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
+void ImageViewTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
 	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
-void ThemeTest::cbMouseButton (GLFWwindow* window, int button, int action,
+void ImageViewTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
 	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
-void ThemeTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
+void ImageViewTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
 	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

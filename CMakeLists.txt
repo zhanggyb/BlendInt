@@ -37,6 +37,9 @@ if(Boost_FOUND)
     set(LIBS ${LIBS} ${Boost_LIBRARIES} boost_system boost_filesystem)
 endif()
 
+#add OpenImageIO link
+set(LIBS ${LIBS} OpenImageIO)
+
 include_directories(${BIL_SOURCE_DIR}/include)
 include_directories(${BIL_SOURCE_DIR}/include/BIL)
 include_directories(${BIL_SOURCE_DIR}/extern/CppEvents/src)

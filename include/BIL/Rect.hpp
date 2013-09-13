@@ -34,88 +34,88 @@ namespace BIL {
 	{
 	public:
 		Rect ()
-			: x_(0), y_(0), width_(0), height_(0)
+			: m_x(0), m_y(0), m_width(0), m_height(0)
 		{}
 		
 		Rect (int x, int y, unsigned int width, unsigned int height)
-			: x_(x), y_(y), width_(width), height_(height)
+			: m_x(x), m_y(y), m_width(width), m_height(height)
 		{
 		}
 
 		Rect (const Point& p1, const Point& p2)
 		{
-			x_ = std::min (p1.x(), p2.x());
-			y_ = std::min (p1.y(), p2.y());
-			width_ = std::abs (p2.x() - p1.x());
-			height_ = std::abs (p2.y() - p1.y());
+			m_x = std::min (p1.x(), p2.x());
+			m_y = std::min (p1.y(), p2.y());
+			m_width = std::abs (p2.x() - p1.x());
+			m_height = std::abs (p2.y() - p1.y());
 		}
 
 		Rect (const Point& pos, const Size& size)
 		{
-			x_ = pos.x();
-			y_ = pos.y();
-			width_ = size.width();
-			height_ = size.height();
+			m_x = pos.x();
+			m_y = pos.y();
+			m_width = size.width();
+			m_height = size.height();
 		}
 
-		bool Contains (const Point& point)
+		bool contains (const Point& point)
 		{
-			int diff_x = point.x() - x_;
-			int diff_y = point.y() - y_;
+			int diff_x = point.x() - m_x;
+			int diff_y = point.y() - m_y;
 
 			return diff_x >= 0 &&
-					diff_x <= static_cast<int>(width_) 	&&
+					diff_x <= static_cast<int>(m_width) 	&&
 					diff_y >= 0 &&
-					diff_y <= static_cast<int>(height_);
+					diff_y <= static_cast<int>(m_height);
 		}
 
-		int x (void) const {return x_;}
+		int x (void) const {return m_x;}
 
-		void set_x (int x) {x_ = x;}
+		void set_x (int x) {m_x = x;}
 
-		int y (void) const {return y_;}
+		int y (void) const {return m_y;}
 
-		void set_y (int y) {y_ = y;}
+		void set_y (int y) {m_y = y;}
 
-		int width (void) const {return width_;}
+		int width (void) const {return m_width;}
 
-		void set_width (unsigned int width) {width_ = width;}
+		void set_width (unsigned int width) {m_width = width;}
 
-		void set_width (int width) {width_ = static_cast<unsigned int>(width);}
+		void set_width (int width) {m_width = static_cast<unsigned int>(width);}
 
-		int height (void) const {return height_;}
+		int height (void) const {return m_height;}
 
-		void set_height (unsigned int height) {height_ = height;}
+		void set_height (unsigned int height) {m_height = height;}
 
-		void set_height (int height) {height_ = static_cast<unsigned int>(height);}
+		void set_height (int height) {m_height = static_cast<unsigned int>(height);}
 
 		int left () const {
-			return x_;
+			return m_x;
 		}
 
 		int right () const {
-			return x_ + width_;
+			return m_x + m_width;
 		}
 
 		int top () const {
-			return y_ + height_;
+			return m_y + m_height;
 		}
 
 		int bottom () const {
-			return y_;
+			return m_y;
 		}
 
 		bool IsValid (void) const
 		{
-			return width_ > 0 && height_ > 0;
+			return m_width > 0 && m_height > 0;
 		}
 
 	private:
 
-		int x_;
-		int y_;
-		unsigned int width_;
-		unsigned int height_;
+		int m_x;
+		int m_y;
+		unsigned int m_width;
+		unsigned int m_height;
 	};
 
 }

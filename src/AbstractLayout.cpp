@@ -37,7 +37,7 @@ namespace BIL {
 
 	bool AbstractLayout::addWidget (Widget* widget)
 	{
-		bool ret = addChild (widget);
+		bool ret = add_child (widget);
 
 		update();
 
@@ -46,7 +46,7 @@ namespace BIL {
 
 	bool AbstractLayout::addLayout(AbstractLayout* layout)
 	{
-		bool ret = addChild (layout);
+		bool ret = add_child (layout);
 
 		update();
 

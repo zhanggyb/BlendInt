@@ -147,7 +147,7 @@ namespace BIL {
 		glLoadIdentity();
 
 #ifdef DEBUG
-		drawGrid(width, height);
+		draw_grid(width, height);
 #endif
 
 		Drawable *item = NULL;
@@ -179,7 +179,7 @@ namespace BIL {
 
 #ifdef DEBUG
 
-	void Interface::drawGrid (int width, int height)
+	void Interface::draw_grid (int width, int height)
 	{
 		// Draw grid for debug
 		const int small_step = 20;

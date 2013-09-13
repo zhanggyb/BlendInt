@@ -37,39 +37,39 @@ namespace BIL {
 	public:
 
 		Size ()
-				: width_(0), height_(0)
+				: m_width(0), m_height(0)
 		{
 
 		}
 
 		Size (unsigned int width, unsigned int height)
-				: width_(width), height_(height)
+				: m_width(width), m_height(height)
 		{
 
 		}
 
 		Size (const Size& orig)
-				: width_(orig.width_), height_(orig.height_)
+				: m_width(orig.m_width), m_height(orig.m_height)
 		{
 
 		}
 
 		Size& operator = (const Size& orig)
 		{
-			width_ = orig.width_;
-			height_ = orig.height_;
+			m_width = orig.m_width;
+			m_height = orig.m_height;
 			return *this;
 		}
 
-		bool IsValid () const
+		bool is_valid () const
 		{
-			return width_ > 0 && height_ > 0;
+			return m_width > 0 && m_height > 0;
 		}
 
-		bool Contains (const Point& pos)
+		bool contains (const Point& pos)
 		{
 			if (pos.x() < 0 || pos.y() < 0 ||
-				pos.x() > static_cast<int>(width_) || pos.y() > static_cast<int>(height_))
+				pos.x() > static_cast<int>(m_width) || pos.y() > static_cast<int>(m_height))
 			{
 				return false;
 			}
@@ -77,10 +77,10 @@ namespace BIL {
 			return true;
 		}
 
-		bool Contains (const Coord2f& pos)
+		bool contains (const Coord2f& pos)
 		{
 			if (pos.x() < 0 || pos.y() < 0 ||
-				pos.x() > width_ || pos.y() > height_)
+				pos.x() > m_width || pos.y() > m_height)
 			{
 				return false;
 			}
@@ -88,28 +88,28 @@ namespace BIL {
 			return true;
 		}
 
-		unsigned int width () const {return width_;}
+		unsigned int width () const {return m_width;}
 
-		void set_width (unsigned int width) {width_ = width;}
+		void set_width (unsigned int width) {m_width = width;}
 
-		void set_width (int width) {width_ = static_cast<unsigned int>(width);}
+		void set_width (int width) {m_width = static_cast<unsigned int>(width);}
 
-		unsigned int height () const {return height_;}
+		unsigned int height () const {return m_height;}
 
-		void set_height (unsigned int height) {height_ = height;}
+		void set_height (unsigned int height) {m_height = height;}
 
-		void set_height (int height) {height_ = static_cast<unsigned int>(height);}
+		void set_height (int height) {m_height = static_cast<unsigned int>(height);}
 
 		unsigned int& operator [] (int index)
 		{
-			if(index <= 0) return width_;
+			if(index <= 0) return m_width;
 
-			return height_;
+			return m_height;
 		}
 
 	private:
-		unsigned int width_;
-		unsigned int height_;
+		unsigned int m_width;
+		unsigned int m_height;
 	};
 
 }

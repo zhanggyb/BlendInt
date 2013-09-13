@@ -75,7 +75,7 @@ void LabelTest::show1 ()
 	label.set_pos(Point(50, 50));
 	label.set_background(Color(0x4A898B80));
 	//label.setFont(Font("Droid Sans", 24));
-	label.setTextColor(Color(0x80F0B0FF));
+	label.set_foreground(Color(0x80F0B0FF));
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

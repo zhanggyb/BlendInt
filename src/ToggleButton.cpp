@@ -53,7 +53,7 @@ namespace BIL {
 					 pos_.y(),
 					 z());
 
-		drawButton (&appearance_);
+		drawButton (&m_appearance);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);

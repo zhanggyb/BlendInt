@@ -19,55 +19,38 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_MARGIN_HPP_
-#define _BIL_MARGIN_HPP_
+#ifndef _BIL_IMAGE_HPP_
+#define _BIL_IMAGE_HPP_
 
-/**
- * @brief Margin
- *
- * used for box model of a widget
- */
+#include <BIL/String.hpp>
+#include <vector>
+
 namespace BIL {
 
-	class Margin
+	/**
+	 * @brief Image class focused on I/O and direct pixel access and manipulation
+	 */
+	class Image
 	{
 	public:
 
-		Margin ()
-		: m_left(0), m_right(0), m_top(0), m_bottom(0)
-		{}
+		Image ();
+		~Image ();
 
-		Margin (int all)
-		: m_left(all), m_right(all), m_top(all), m_bottom(all)
-		{}
+		bool read (const String& filename);
 
-		Margin (int left, int right, int top, int bottom)
-		: m_left(left), m_right(right), m_top(top), m_bottom(bottom)
-		{}
+		bool save ();
 
-		int left () const {return m_left;}
-
-		void set_left (int left) {m_left = left;}
-
-		int right () const {return m_right;}
-
-		void set_right (int right) {m_right = right;}
-
-		int top () const {return m_top;}
-
-		void set_top (int top) {m_top = top;}
-
-		int bottom () const {return m_bottom;}
-
-		void set_bottom (int bottom) {m_bottom = bottom;}
+		void close ();
 
 	private:
 
-		int m_left;
-		int m_right;
-		int m_top;
-		int m_bottom;
+		std::vector<unsigned char> pixels_;
+
+		int width_;
+		int height_;
+		int channels_;
 	};
 }
 
-#endif /* _BIL_MARGIN_HPP_ */
+#endif /* IMAGE_HPP_ */

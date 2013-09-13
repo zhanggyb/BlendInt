@@ -142,10 +142,10 @@ namespace BIL {
 #endif
 
 	FontCache::FontCache (const Font& font, unsigned int dpi)
-			: fontengine_(NULL)
+			: m_freetype(NULL)
 	{
-		fontengine_ = new Freetype;
-		fontengine_->open(font, dpi);
+		m_freetype = new Freetype;
+		m_freetype->open(font, dpi);
 
 		if(!setup()) {
 			throw std::runtime_error("Fail to setup FontCache");
@@ -154,7 +154,7 @@ namespace BIL {
 
 	FontCache::~FontCache ()
 	{
-		if (fontengine_) {
+		if (m_freetype) {
 
 			/*
 			map<wchar_t, TextureFont*>::iterator it;
@@ -167,17 +167,17 @@ namespace BIL {
 			texture_fonts_.clear();
 			*/
 
-			delete fontengine_;
+			delete m_freetype;
 		}
 	}
 
 	bool FontCache::setup (void)
 	{
-		if (!fontengine_->valid()) {
+		if (!m_freetype->valid()) {
 			return false;
 		}
 
-		atlas_.generate(fontengine_, 32, 96);
+		atlas_.generate(m_freetype, 32, 96);
 
 		return true;
 	}
@@ -296,7 +296,7 @@ namespace BIL {
 
 	Rect FontCache::calculateOutline (const String& string)
 	{
-		if(!fontengine_->valid()) {
+		if(!m_freetype->valid()) {
 			return Rect();
 		}
 		String::const_iterator it;

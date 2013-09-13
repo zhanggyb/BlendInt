@@ -431,9 +431,9 @@ void LayoutTest::layout_mix2()
 		glfwPollEvents();
 	}
 
-	layout3.setParent(0);
-	layout2.setParent(0);
-	layout1.setParent(0);
+	layout3.set_parent(0);
+	layout2.set_parent(0);
+	layout1.set_parent(0);
 
 	/* release BIL */
 	Interface::release();

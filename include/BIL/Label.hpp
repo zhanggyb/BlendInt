@@ -47,7 +47,7 @@ namespace BIL {
 
 		void set_font (const Font& font);
 
-		void setTextColor (const Color& fg)
+		void set_foreground (const Color& fg)
 		{
 			foreground_ = fg;
 		}

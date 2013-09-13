@@ -148,7 +148,7 @@ namespace BIL {
 
 	protected:
 
-		WidgetVertexes appearance_;
+		WidgetVertexes m_appearance;
 
 		// converted colors for state
 		//WidgetColors colors_state_;

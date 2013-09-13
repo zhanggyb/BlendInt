@@ -19,55 +19,36 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_MARGIN_HPP_
-#define _BIL_MARGIN_HPP_
+#ifndef _BIL_IMAGEVIEW_HPP_
+#define _BIL_IMAGEVIEW_HPP_
 
-/**
- * @brief Margin
- *
- * used for box model of a widget
- */
+#include <BIL/Widget.hpp>
+
 namespace BIL {
 
-	class Margin
+	class ImageView: public Widget
 	{
 	public:
 
-		Margin ()
-		: m_left(0), m_right(0), m_top(0), m_bottom(0)
-		{}
+		ImageView (Drawable* parent = 0);
 
-		Margin (int all)
-		: m_left(all), m_right(all), m_top(all), m_bottom(all)
-		{}
+		virtual ~ImageView ();
 
-		Margin (int left, int right, int top, int bottom)
-		: m_left(left), m_right(right), m_top(top), m_bottom(bottom)
-		{}
+	protected:
 
-		int left () const {return m_left;}
-
-		void set_left (int left) {m_left = left;}
-
-		int right () const {return m_right;}
-
-		void set_right (int right) {m_right = right;}
-
-		int top () const {return m_top;}
-
-		void set_top (int top) {m_top = top;}
-
-		int bottom () const {return m_bottom;}
-
-		void set_bottom (int bottom) {m_bottom = bottom;}
+		virtual void render ();
 
 	private:
 
-		int m_left;
-		int m_right;
-		int m_top;
-		int m_bottom;
+		void makeCheckImage ();
+
+		static const int checkImageWidth = 64;
+		static const int checkImageHeight = 64;
+
+		GLubyte _checkImage[checkImageHeight][checkImageWidth][4];
+
 	};
 }
 
-#endif /* _BIL_MARGIN_HPP_ */
+
+#endif /* _BIL_IMAGEVIEW_HPP_ */

@@ -44,7 +44,7 @@ namespace BIL {
 
 		std::list<Traceable*>::const_reverse_iterator rit;
 		total_height = padding_.bottom();
-		for (rit = children_.rbegin(); rit != children_.rend(); rit++)
+		for (rit = m_children.rbegin(); rit != m_children.rend(); rit++)
 		{
 			Drawable* child = dynamic_cast<Drawable*>(*rit);
 			if(child) {
@@ -57,7 +57,7 @@ namespace BIL {
 		total_height += padding_.top();
 
 		std::list<Traceable*>::const_iterator it;
-		for (it = children_.begin(); it != children_.end(); it++)
+		for (it = m_children.begin(); it != m_children.end(); it++)
 		{
 			Drawable* child = dynamic_cast<Drawable*>(*it);
 			if(child) {

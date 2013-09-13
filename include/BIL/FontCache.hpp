@@ -104,44 +104,44 @@ namespace BIL {
 
 		int getHeight ()
 		{
-			if(!fontengine_) return 0;
+			if(!m_freetype) return 0;
 			
-			return fontengine_->height();
+			return m_freetype->height();
 		}
 
 		int getAscender ()
 		{
-			if(fontengine_ == NULL) return 0;
-			return fontengine_->ascender();
+			if(m_freetype == NULL) return 0;
+			return m_freetype->ascender();
 		}
 
 		int getDescender ()
 		{
-			if(fontengine_ == NULL) return 0;
-			return fontengine_->descender();
+			if(m_freetype == NULL) return 0;
+			return m_freetype->descender();
 		}
 
 		int getMaxAdvance ()
 		{
-			if(fontengine_ == NULL) return 0;
-			return fontengine_->max_advance();
+			if(m_freetype == NULL) return 0;
+			return m_freetype->max_advance();
 		}
 
 		Tuple2l getKerning (const wchar_t& left, const wchar_t& right,
 				FT_UInt kern_mode = FT_KERNING_DEFAULT)
 		{
-			return fontengine_->getKerning(left, right, kern_mode);
+			return m_freetype->getKerning(left, right, kern_mode);
 		}
 
 		const Freetype* fontengine (void) const
 		{
-			return fontengine_;
+			return m_freetype;
 		}
 
 		void set_dpi (unsigned int dpi)
 		{
-			if(fontengine_) {
-				fontengine_->set_dpi (dpi);
+			if(m_freetype) {
+				m_freetype->set_dpi (dpi);
 			}
 		}
 
@@ -180,7 +180,7 @@ namespace BIL {
 	private:
 		// member variables
 
-		Freetype* fontengine_;
+		Freetype* m_freetype;
 
 		TextureAtlas atlas_;
 

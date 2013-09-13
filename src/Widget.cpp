@@ -268,7 +268,7 @@ namespace BIL {
 				unsigned char col_array[WIDGET_SIZE_MAX * 4];
 				unsigned char *col_pt = col_array;
 
-				Color::ConvertShadeColor(wcol->inner, wcol->shadetop,
+				Color::convert_shade_color(wcol->inner, wcol->shadetop,
 				        wcol->shadedown, &col1, &col2);
 
 				glShadeModel(GL_SMOOTH);
@@ -398,7 +398,7 @@ namespace BIL {
 
 	void Widget::update ()
 	{
-		if (!size_.IsValid())
+		if (!size_.is_valid())
 			return;
 
 		float rad;
@@ -410,12 +410,12 @@ namespace BIL {
 
 		//round_box_edges(&wtb, roundboxalign, rect, rad);
 		CalculateRoundBoxEdges(round_box_type_, Rect(0, 0, size_.width(), size_.height()), rad,
-		        &appearance_);
+		        &m_appearance);
 	}
 
 	void Widget::render ()
 	{
-		DrawAppearance(&appearance_);
+		DrawAppearance(&m_appearance);
 	}
 
 	/* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */

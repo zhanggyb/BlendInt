@@ -72,7 +72,7 @@ namespace BIL {
 		void render (Drawable* obj);
 
 #ifdef DEBUG
-		void drawGrid (int width, int height);
+		void draw_grid (int width, int height);
 #endif
 
 		void dispatchKeyPressEvent (Drawable* obj, KeyEvent* event);

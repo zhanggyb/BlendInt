@@ -40,7 +40,7 @@ namespace BIL {
 		 * @param[out] coltop Color at the top
 		 * @param[out] coldown Color at the bottom
 		 */
-		static void ConvertShadeColor (const Color& color,
+		static void convert_shade_color (const Color& color,
 									   short shadetop,
 									   short shadedown,
 									   Color* top_color,
@@ -70,10 +70,10 @@ namespace BIL {
 
 		Color& operator = (const Color& orig)
 		{
-			red_ = orig.red_;
-			green_ = orig.green_;
-			blue_ = orig.blue_;
-			alpha_ = orig.alpha_;
+			m_red = orig.m_red;
+			m_green = orig.m_green;
+			m_blue = orig.m_blue;
+			m_alpha = orig.m_alpha;
 
 			return *this;
 		}
@@ -87,44 +87,44 @@ namespace BIL {
 		~Color ()
 		{}
 
-		void HighlightFrom (const Color& orig)
+		void highlight (const Color& orig)
 		{
-			red_ = orig.r() >= 240 ? 255 : (orig.r() + 15);
-			green_ = orig.g() >= 240 ? 255 : (orig.g() + 15);
-			blue_ = orig.b() >= 240 ? 255 : (orig.b() + 15);
-			alpha_ = orig.a();
+			m_red = orig.r() >= 240 ? 255 : (orig.r() + 15);
+			m_green = orig.g() >= 240 ? 255 : (orig.g() + 15);
+			m_blue = orig.b() >= 240 ? 255 : (orig.b() + 15);
+			m_alpha = orig.a();
 		}
 
-		void HighlightFrom (uint32_t color)
+		void highlight (uint32_t color)
 		{
 			set_color (color);
-			red_ = red_ >= 240 ? 255 : (red_ + 15);
-			green_ = green_ >= 240 ? 255 : (green_ + 15);
-			blue_ = blue_ >= 240 ? 255 : (blue_ + 15);
+			m_red = m_red >= 240 ? 255 : (m_red + 15);
+			m_green = m_green >= 240 ? 255 : (m_green + 15);
+			m_blue = m_blue >= 240 ? 255 : (m_blue + 15);
 		}
 
 		void set_color (uint32_t color)
 		{
 			if (color > 0xFFFFFF) {
-				alpha_ = color & 0xFF;
-				blue_ = (color >> 8) & 0xFF;
-				green_ = (color >> 16) & 0xFF;
-				red_ = (color >> 24) & 0xFF;
+				m_alpha = color & 0xFF;
+				m_blue = (color >> 8) & 0xFF;
+				m_green = (color >> 16) & 0xFF;
+				m_red = (color >> 24) & 0xFF;
 			} else if (color > 0xFFFF){
-				alpha_ = color & 0xFF;
-				blue_ = (color >> 8) & 0xFF;
-				green_ = (color >> 16) & 0xFF;
-				red_ = 0x00;
+				m_alpha = color & 0xFF;
+				m_blue = (color >> 8) & 0xFF;
+				m_green = (color >> 16) & 0xFF;
+				m_red = 0x00;
 			} else if (color > 0xFF) {
-				alpha_ = color & 0xFF;
-				blue_ = (color >> 8) & 0xFF;
-				green_ = 0x00;
-				red_ = 0x00;
+				m_alpha = color & 0xFF;
+				m_blue = (color >> 8) & 0xFF;
+				m_green = 0x00;
+				m_red = 0x00;
 			} else {
-				alpha_ = color & 0xFF;
-				blue_ = 0x00;
-				green_ = 0x00;
-				red_ = 0x00;
+				m_alpha = color & 0xFF;
+				m_blue = 0x00;
+				m_green = 0x00;
+				m_red = 0x00;
 			}
 	 	}
 
@@ -133,110 +133,110 @@ namespace BIL {
 						unsigned char b,
 						unsigned char a = 0xFF)
 		{
-			red_ = correct_in_scope(r,
+			m_red = correct_in_scope(r,
 									static_cast<unsigned char>(0),
 									static_cast<unsigned char>(255));
-			green_ = correct_in_scope(g,
+			m_green = correct_in_scope(g,
 									  static_cast<unsigned char>(0),
 									  static_cast<unsigned char>(255));
-			blue_ = correct_in_scope(b,
+			m_blue = correct_in_scope(b,
 									 static_cast<unsigned char>(0),
 									 static_cast<unsigned char>(255));
-			alpha_ = correct_in_scope(a,
+			m_alpha = correct_in_scope(a,
 									  static_cast<unsigned char>(0),
 									  static_cast<unsigned char>(255));
 		}
 
 		unsigned char operator [] (int index) const
 		{
-			if (index <= 0) return red_;
-			if (index == 1) return green_;
-			if (index == 2) return blue_;
-			if (index >= 3) return alpha_;
+			if (index <= 0) return m_red;
+			if (index == 1) return m_green;
+			if (index == 2) return m_blue;
+			if (index >= 3) return m_alpha;
 
 			return 0;
 		}
 
 		uint32_t rgba () const
 		{
-			return (red_ << 24) & (green_ << 16) &
-				(blue_ << 8) & alpha_;
+			return (m_red << 24) & (m_green << 16) &
+				(m_blue << 8) & m_alpha;
 		}
 
 		unsigned char red () const
 		{
-			return red_;
+			return m_red;
 		}
 
 		unsigned char r () const
 		{
-			return red_;
+			return m_red;
 		}
 
 		void set_red (unsigned char r)
 		{
-			red_ = correct_in_scope(r,
+			m_red = correct_in_scope(r,
 									static_cast<unsigned char>(0),
 									static_cast<unsigned char>(255));
 		}
 
 		unsigned char green () const
 		{
-			return green_;
+			return m_green;
 		}
 
 		unsigned char g () const
 		{
-			return green_;
+			return m_green;
 		}
 
 		void set_green (unsigned char g)
 		{
-			green_ = correct_in_scope(g,
+			m_green = correct_in_scope(g,
 									  static_cast<unsigned char>(0),
 									  static_cast<unsigned char>(255));
 		}
 
 		unsigned char blue () const
 		{
-			return blue_;
+			return m_blue;
 		}
 
 		unsigned char b () const
 		{
-			return blue_;
+			return m_blue;
 		}
 
 		void set_blue (unsigned char b)
 		{
-			blue_ = correct_in_scope(b,
+			m_blue = correct_in_scope(b,
 									 static_cast<unsigned char>(0),
 									 static_cast<unsigned char>(255));
 		}
 
 		unsigned char alpha () const
 		{
-			return alpha_;
+			return m_alpha;
 		}
 
 		unsigned char a () const
 		{
-			return alpha_;
+			return m_alpha;
 		}
 
 		void set_alpha (unsigned char a)
 		{
-			alpha_ = correct_in_scope(a,
+			m_alpha = correct_in_scope(a,
 									  static_cast<unsigned char>(0),
 									  static_cast<unsigned char>(255));
 		}
 
 	private:
 
-		unsigned char red_;
-		unsigned char green_;
-		unsigned char blue_;
-		unsigned char alpha_;
+		unsigned char m_red;
+		unsigned char m_green;
+		unsigned char m_blue;
+		unsigned char m_alpha;
 
 	};
 

@@ -26,16 +26,16 @@ testWidget::testWidget(int type, Traceable* parent)
 	switch (type)
 	{
 		case 0:
-			CalculateRoundBoxEdges (round_box_type_, Rect(100, 100, 200, 200), 1.0, &appearance_);
+			CalculateRoundBoxEdges (round_box_type_, Rect(100, 100, 200, 200), 1.0, &m_appearance);
 			break;
 		case 1:
-			CalculateCheckTriangle (Rect(100, 100, 200, 200), &(appearance_.tria1));
+			CalculateCheckTriangle (Rect(100, 100, 200, 200), &(m_appearance.tria1));
 			break;
 		case 2:
-			CalculateCheckTriangle (Rect(100, 100, 200, 200), &(appearance_.tria2));
+			CalculateCheckTriangle (Rect(100, 100, 200, 200), &(m_appearance.tria2));
 			break;
 		case 3:
-			CalculateMenuTriangle (Rect(100, 100, 200, 200), &(appearance_.tria1));
+			CalculateMenuTriangle (Rect(100, 100, 200, 200), &(m_appearance.tria1));
 			break;
 		default:
 			break;
@@ -45,7 +45,7 @@ testWidget::testWidget(int type, Traceable* parent)
 
 void testWidget::render(void)
 {
-	DrawAppearance(&appearance_);
+	DrawAppearance(&m_appearance);
 }
 
 
