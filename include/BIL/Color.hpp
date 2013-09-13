@@ -84,7 +84,7 @@ namespace BIL {
 			return *this;
 		}
 		
-		virtual ~Color ()
+		~Color ()
 		{}
 
 		void HighlightFrom (const Color& orig)

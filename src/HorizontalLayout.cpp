@@ -56,7 +56,6 @@ namespace BIL {
 		}
 		total_width += padding_.right();
 
-		//int aligh_height = total_height / 2;
 		for (it = children_.begin(); it != children_.end(); it++)
 		{
 			Drawable* child = dynamic_cast<Drawable*>(*it);

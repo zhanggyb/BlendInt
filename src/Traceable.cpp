@@ -23,6 +23,7 @@
 #include <algorithm>
 
 #include <BIL/Traceable.hpp>
+#include <stdexcept>
 
 using namespace std;
 
@@ -43,7 +44,7 @@ namespace BIL {
 		while (Traceable::obj_map.count(id_last) == 1) {
 			id_last++;
 			if (temp == id_last)
-				throw;	// TODO: define exception
+				throw std::out_of_range("Cannot assign unique id for object");
 		}
 
 		id_ = id_last;
@@ -60,7 +61,7 @@ namespace BIL {
 
 	Traceable::~Traceable ()
 	{
-		Traceable* item = NULL;
+		Traceable* item = 0;
 		while (children_.size() > 0) {
 			item = children_.back();
 			children_.pop_back();
@@ -108,11 +109,13 @@ namespace BIL {
 		return true;
 	}
 
-	bool Traceable::setParent (Traceable* parent)
+	void Traceable::setParent (Traceable* parent)
 	{
 		if (!parent_) {
+
+			// if already in solo list, just return
 			if (!parent) {
-				return true;
+				return;
 			}
 
 			list<Traceable*>::iterator it;
@@ -132,8 +135,6 @@ namespace BIL {
 			parent_ = 0;
 			solos.push_back(this);
 		}
-
-		return true;
 	}
 
 	bool Traceable::addChild (Traceable* child)
@@ -141,8 +142,8 @@ namespace BIL {
 		if (!child)
 			return false;
 
-		if (child->parent_ == this)
-			return false;
+//		if (child->parent_ == this)
+//			return false;
 
 		if (child->parent_) {
 			(child->parent_)->removeChild(child, false);

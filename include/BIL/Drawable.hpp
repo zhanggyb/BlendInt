@@ -82,11 +82,13 @@ namespace BIL {
 		{
 			pos_.set_x(x);
 			pos_.set_y(y);
+			update();
 		}
 
 		void set_pos (const Point& pos)
 		{
 			pos_ = pos;
+			update();
 		}
 
 		float z () const

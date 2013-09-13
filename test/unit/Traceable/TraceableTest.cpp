@@ -92,7 +92,7 @@ void TraceableTest::checksolo2 ()
 	cout << "id: " << id << endl;
 
 	delete obj;
-	obj = NULL;
+	obj = 0;
 
     CPPUNIT_ASSERT(Traceable::getSolos().size() == 0);
 }
@@ -108,7 +108,7 @@ void TraceableTest::checkparent1 ()
 
     int sizebefore = Traceable::getSolos().size(); // 1
 
-	child->setParent(NULL);
+	child->setParent(0);
 
     int sizeafter = Traceable::getSolos().size();	// 2
 
@@ -134,7 +134,7 @@ void TraceableTest::checkparent2 ()
 
 	int mapsize = Traceable::mapSize();	// 2
 
-	child->setParent(NULL);
+	child->setParent(0);
 
     int sizeafter = Traceable::getSolos().size();	// 2
 
@@ -161,11 +161,11 @@ void TraceableTest::checkparent3 ()
 
 	int mapsize = Traceable::mapSize();	// 3
 
-	child1->setParent(NULL);
-	child2->setParent(NULL);
-	child1->setParent(parent);
+	child1->setParent(0);
+	child2->setParent(0);
+	child1->setParent(0);
 
-    int sizeafter = Traceable::getSolos().size();	// 2
+    int sizeafter = Traceable::getSolos().size();	// 3
 
 	delete child1; delete parent; delete child2;
 
@@ -173,7 +173,7 @@ void TraceableTest::checkparent3 ()
 
     cout << "solo list size: " << Traceable::getSolos().size() << endl;
 
-  CPPUNIT_ASSERT(sizebefore == 1 && sizeafter == 2 && mapsize == 3);
+  CPPUNIT_ASSERT(sizebefore == 1 && sizeafter == 3 && mapsize == 3);
 }
 
 void TraceableTest::checkparent4 (void)

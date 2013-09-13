@@ -10,6 +10,14 @@
 #include <BIL/Interface.hpp>
 
 #include <BIL/ToggleButton.hpp>
+#include <BIL/VerticalLayout.hpp>
+#include <BIL/HorizontalLayout.hpp>
+
+#include <BIL/Types.hpp>
+#include <BIL/Button.hpp>
+#include <BIL/Label.hpp>
+
+using namespace BIL;
 
 static void cbError (int error, const char* description)
 {
@@ -70,10 +78,24 @@ int main(int argc, char* argv[]) {
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	ToggleButton button("Hello World!");
-	button.set_pos(100, 100);
-	button.set_font(Font("Droid Sans"));
-	button.set_round_box_type(RoundBoxAll);
+	VerticalLayout* layout1 = new VerticalLayout;
+	layout1->set_pos(100, 100);
+	layout1->set_alignment(BIL::AlignVerticalCenter);
+
+	Label* label1 = new Label(L"la1");
+	label1->set_pos(100, 100);
+
+	layout1->addWidget(label1);
+
+	HorizontalLayout layout2;
+
+	Label* label2 = new Label(L"Hello Blender");
+	label2->set_pos(500, 500);
+
+	layout2.addWidget(label2);
+	layout2.addLayout(layout1);
+
+	layout2.set_pos (400, 500);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

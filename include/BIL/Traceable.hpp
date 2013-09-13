@@ -119,7 +119,7 @@ namespace BIL {
 		 *
 		 * Set the parent object and add self into the children list of parent
 		 */
-		bool setParent (Traceable* parent);
+		void setParent (Traceable* parent);
 
 		bool addChild (Traceable *child);
 
