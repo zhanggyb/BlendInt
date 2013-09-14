@@ -91,14 +91,14 @@ namespace BIL {
 			update();
 		}
 
-		float z () const
+		int z () const
 		{
-			return z_;
+			return m_z;
 		}
 
-		void set_z (float depth)
+		void set_z (int depth)
 		{
-			z_ = depth;
+			m_z = depth;
 		}
 
 		const Margin& margin () const
@@ -249,7 +249,10 @@ namespace BIL {
 
 		Point pos_;
 
-		float z_;	// the depth of the widget, currently it's not used
+		/**
+		 * @brief the depth(layer) of the widget
+		 */
+		int m_z;
 
 		Padding padding_; /** used when in Layout */
 

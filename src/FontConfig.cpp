@@ -35,7 +35,7 @@ namespace BIL {
 
 	FontConfig* FontConfig::service = 0;
 
-	FontConfig* FontConfig::instance (void)
+	FontConfig* FontConfig::instance ()
 	{
 		if (!service) {
 			cerr << "The fontconfig service is not initialized successfully! Exit"
@@ -46,7 +46,7 @@ namespace BIL {
 		return service;
 	}
 
-	bool FontConfig::initialize (void)
+	bool FontConfig::initialize ()
 	{
 		// load system files    TODO: load more fonts
 		// loadFontDir("/usr/share/fonts");
@@ -72,7 +72,7 @@ namespace BIL {
 		return result;
 	}
 
-	void FontConfig::release(void)
+	void FontConfig::release()
 	{
 		if(service) {
 			delete service;

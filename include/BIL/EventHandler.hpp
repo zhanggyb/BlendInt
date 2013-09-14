@@ -28,15 +28,12 @@
 
 namespace BIL {
 
-	class Window;
-	class AbstractLayout;
 	class Interface;
 
 	class EventHandler
 	{
 	public:
 
-		friend class Window;
 		friend class Interface;
 
 		EventHandler () {}

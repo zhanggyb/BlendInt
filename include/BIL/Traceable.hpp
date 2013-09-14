@@ -19,8 +19,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_TRACEABLE_H_
-#define _BIL_TRACEABLE_H_
+#ifndef _BIL_TRACEABLE_HPP_
+#define _BIL_TRACEABLE_HPP_
 
 #include <stdint.h>
 #include <cstdlib>
@@ -159,4 +159,4 @@ namespace BIL {
 	};
 
 } /* namespace BIL */
-#endif /* _BIL_TRACEABLE_H_ */
+#endif /* _BIL_TRACEABLE_HPP_ */

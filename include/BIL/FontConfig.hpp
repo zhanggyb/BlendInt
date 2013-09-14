@@ -53,14 +53,14 @@ namespace BIL {
 		/**
 		 * @brief Release the object created in instance()
 		 */
-		static void release (void);
+		static void release ();
 
-		const unsigned char* getBuffer (void) const
+		const unsigned char* getBuffer () const
 		{
 			return _defaultFontBuf;
 		}
 
-		long getBufferSize (void) const
+		long getBufferSize () const
 		{
 			return _defaultFontBufSize;
 		}
@@ -117,8 +117,6 @@ namespace BIL {
 		void loadFontDir (const string& path);
 
 		FontConfig& operator = (const FontConfig &orig);
-
-	private:
 
 		/**
 		 * @brief The real object to provide font config service
