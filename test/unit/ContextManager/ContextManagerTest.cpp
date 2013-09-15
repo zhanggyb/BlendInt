@@ -102,6 +102,10 @@ void ContextManagerTest::check_layer_0_0 ()
 
 	cm->print();
 
+	widget3.add_child(&widget4);
+
+	cm->print();
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -125,6 +129,99 @@ void ContextManagerTest::check_layer_0_0 ()
 	glfwTerminate();
 	CPPUNIT_ASSERT(true);
 }
+
+void ContextManagerTest::check_layer_0_1 ()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BIL after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	ContextManager* cm = ContextManager::instance();
+
+	Widget* widget1 = new Widget;
+	widget1->set_pos(50, 50);
+	widget1->resize (50, 50);
+	widget1->set_name("widget1");
+
+	Widget* widget2 = new Widget;
+	widget2->set_pos(100, 100);
+	widget2->resize (50, 50);
+	widget2->set_name("widget2");
+
+	Widget* widget3 = new Widget;
+	widget3->set_pos(150, 150);
+	widget3->resize (50, 50);
+	widget3->set_name("widget3");
+	widget3->set_z(1);
+
+	Widget* widget4 = new Widget;
+	widget4->set_pos(150, 150);
+	widget4->resize (50, 50);
+	widget4->set_name("widget4");
+	widget4->set_z(1);
+
+	widget1->add_child(widget2);
+	widget1->add_child(widget4);
+
+	cm->print();
+
+	widget3->add_child(widget4);
+
+	cm->print();
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	delete widget1;
+	delete widget3;
+
+	cm->print();
+
+	//delete widget5;
+
+	/* release BIL */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
 
 void ContextManagerTest::cbError (int error, const char* description)
 {

@@ -161,7 +161,7 @@ namespace BIL {
 
 	void Drawable::set_parent (Drawable* parent)
 	{
-		if(parent->m_z == m_z || m_parent == 0) {
+		if(parent->m_z == m_z) {
 			ContextManager::instance()->remove_drawable(this);
 		}
 		Traceable::set_parent(parent);
@@ -169,7 +169,7 @@ namespace BIL {
 
 	bool Drawable::add_child (Drawable* child)
 	{
-		if(child->m_z == m_z || child->m_parent == 0) {
+		if(child->m_z == m_z) {
 			ContextManager::instance()->remove_drawable(child);
 		}
 		return Traceable::add_child(child);

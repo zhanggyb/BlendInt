@@ -18,7 +18,7 @@ class ContextManagerTest: public CppUnit::TestFixture
 CPPUNIT_TEST_SUITE(ContextManagerTest);
 
 	CPPUNIT_TEST(check_layer_0_0);
-	//CPPUNIT_TEST(check_layer_0_1);
+	CPPUNIT_TEST(check_layer_0_1);
 	//CPPUNIT_TEST(check_layer_0_2);
 
 	CPPUNIT_TEST_SUITE_END()
