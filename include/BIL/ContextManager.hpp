@@ -26,7 +26,12 @@
 #include <map>
 #include <list>
 
+using std::map;
+using std::list;
+
 namespace BIL {
+
+	class Interface;
 
 	/**
 	 * @brief class to hold and manage drawable objects for render
@@ -34,6 +39,8 @@ namespace BIL {
 	class ContextManager
 	{
 	public:
+
+		friend class Interface;
 
 		static ContextManager* instance ();
 		
@@ -57,27 +64,25 @@ namespace BIL {
 		 */
 		bool remove_drawable (Drawable* obj);
 
+#ifdef DEBUG
+
+		void print ();
+
+#endif
+
 	private:
 
-		struct ContextLayer {
-			int layer;
-			std::list<Drawable*> list;
-		};
-
-		struct ContextIndex {
-			int layer_index;
-			int list_index;
-		};
+		typedef map<int, list<Drawable*>* > LayerType;
+		typedef list<Drawable*> ListType;
+		typedef map<Drawable*, int> IndexType;
 
 		ContextManager ();
 
 		~ContextManager ();
 
-		void update_map (int layer_index1, int layer_index2, int list_index);
+		map<int, list<Drawable*>* > m_layers;
 
-		std::list<ContextLayer> m_layers;
-		
-		std::map<Drawable*, ContextIndex> m_index;
+		map<Drawable*, int> m_map;
 
 		static ContextManager* context_manager;
 		

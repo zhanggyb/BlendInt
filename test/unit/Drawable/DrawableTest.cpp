@@ -14,9 +14,9 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(DrawableTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION(DrawableTest);
 
-myTexture::myTexture (Traceable *parent)
+myTexture::myTexture (Drawable *parent)
 		: Drawable(parent)
 {
 	resize(400, 400);
@@ -114,7 +114,7 @@ void myTexture::makeCheckImage (void)
 	}
 }
 
-myDrawable1::myDrawable1 (Traceable* parent)
+myDrawable1::myDrawable1 (Drawable* parent)
 		: Drawable(parent)
 {
 	round_box_type_ = RoundBoxAll;
@@ -166,7 +166,7 @@ void myDrawable1::mouseMoveEvent (MouseEvent* event)
 
 }
 
-myDrawable2::myDrawable2 (Traceable* parent)
+myDrawable2::myDrawable2 (Drawable* parent)
 		: Drawable(parent)
 {
 	round_box_type_ = RoundBoxAll;
@@ -216,7 +216,7 @@ void myDrawable2::mouseMoveEvent (MouseEvent* event)
 
 }
 
-myDrawable3::myDrawable3 (Traceable* parent)
+myDrawable3::myDrawable3 (Drawable* parent)
 		: Drawable(parent)
 {
 	round_box_type_ = RoundBoxAll;

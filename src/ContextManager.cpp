@@ -74,164 +74,104 @@ namespace BIL {
 
 	bool ContextManager::add_drawable (Drawable* obj)
 	{
-		std::map<Drawable*, ContextIndex>::iterator map_it;
-		std::list<ContextLayer>::iterator list_it;
-		std::list<ContextLayer>::iterator list_it_next;
-		std::list<Drawable*>::iterator obj_list_it;
+		map<Drawable*, int>::iterator map_it;
+		
+		map_it = m_map.find(obj);
 
-		int layer_removed_index = 0;
-		int list_removed_index = 0;
-
-		bool remove_action = false;
-
-		map_it = m_index.find(obj);
-
-		list_it = m_layers.begin();
-		if (map_it != m_index.end()) {
-			std::advance(list_it, map_it->second.layer_index);
-			if (list_it->layer == obj->z()) {
+		if(map_it != m_map.end()) {
+			if (map_it->second == obj->z()) {
 				return false;
+			}
+
+			list<Drawable*>* p = m_layers[map_it->second];
+			list<Drawable*>::iterator it = find(p->begin(), p->end(), obj);
+			if (it != p->end()) {
+				p->erase (it);
 			} else {
-				layer_removed_index = std::distance (m_layers.begin(), list_it);
-				obj_list_it = list_it->list.begin();
-				std::advance(obj_list_it, map_it->second.list_index);
-				std::list<Drawable*>::iterator new_it = list_it->list.erase(obj_list_it);
-				list_removed_index = std::distance (list_it->list.begin(), new_it);
-
-				// update the map after
-				//update_map (map_it->second.layer_index, std::distance(list_it->list.begin(), new_it));
-
-				remove_action = true;
-			}
-		}
-
-		bool insert_action = false;
-		int layer_index_update = 0;
-		int list_index_update = 0;
-		ContextIndex context_index;
-
-		// look for the place where we insert the new Drawable object into the m_layers
-		for (list_it = m_layers.begin(); list_it != m_layers.end();
-				list_it++)
-		{
-			list_it_next = list_it;
-			std::advance(list_it_next, 1);
-
-			// if we have already record the layer of the new object, add to the list there
-			if (list_it->layer == obj->z())
-			{
-				list_it->list.push_back(obj);
-				context_index.layer_index = std::distance(m_layers.begin(), list_it);
-				context_index.list_index = list_it->list.size() - 1;
-				m_index[obj] = context_index;
-				break;
+				std::cerr << "Error: object is not recorded" << std::endl;
 			}
 
-			// if we need to insert a new layer
-			if ((list_it_next != m_layers.end())
-					&& (list_it_next->layer > obj->z()))
-			{
-				ContextLayer insert_item;
-				insert_item.layer = obj->z();
-				insert_item.list.push_back(obj);
-				list_it = m_layers.insert(list_it_next, insert_item);
-				layer_index_update = std::distance(m_layers.begin(), list_it);
-				list_index_update = list_it->list.size () - 1;
-				context_index.layer_index = layer_index_update;
-				context_index.list_index = list_index_update;
-				m_index[obj] = context_index;
-				layer_index_update++;
-				list_index_update = 0;
-				insert_action = true;
+			map<int, list<Drawable*>* >::iterator layer_it;
+			layer_it = m_layers.find(obj->z());
+			if(layer_it != m_layers.end()) {
+				layer_it->second->push_back(obj);
+			} else {
+				list<Drawable*>* new_list = new list<Drawable*>;
+				new_list->push_back(obj);
+				m_layers[obj->z()] = new_list;
 			}
+			
+		} else {
+
+			map<int, list<Drawable*>* >::iterator layer_it;
+			layer_it = m_layers.find(obj->z());
+			if(layer_it != m_layers.end()) {
+				layer_it->second->push_back(obj);
+			} else {
+				list<Drawable*>* new_list = new list<Drawable*>;
+				new_list->push_back(obj);
+				m_layers[obj->z()] = new_list;
+			}
+			
 		}
 
-		// if not found, push back a new layer
-		if (list_it == m_layers.end())
-		{
-			ContextLayer append_item;
-			append_item.layer = obj->z();
-			append_item.list.push_back(obj);
-			m_layers.push_back(append_item);
-			context_index.layer_index = m_layers.size() - 1;
-			context_index.list_index = append_item.list.size() - 1;
-			m_index[obj] = context_index;
-		}
-
-		// TODO: update the maps after
-		if(remove_action) {
-			layer_index_update = std::min (layer_removed_index, layer_index_update);
-			list_index_update = std::min (list_removed_index, list_index_update);
-		}
-		if(insert_action) {
-			update_map(layer_index_update, m_layers.size() - 1, list_index_update);
-		}
-
+		m_map[obj] = obj->z();
 		return true;
 	}
 
 	bool ContextManager::remove_drawable (Drawable* obj)
 	{
-		std::map<Drawable*, ContextIndex>::iterator map_it;
-		std::list<ContextLayer>::iterator list_it;
-		std::list<Drawable*>::iterator obj_list_it;
+		map<Drawable*, int>::iterator map_it;
+		
+		map_it = m_map.find(obj);
 
-		map_it = m_index.find(obj);
+		if(map_it != m_map.end()) {
 
-		list_it = m_layers.begin();
+			list<Drawable*>* p = m_layers[map_it->second];
+			list<Drawable*>::iterator it = find(p->begin(), p->end(), obj);
+			if (it != p->end()) {
+				p->erase (it);
+			} else {
+				std::cerr << "Error: object is not recorded" << std::endl;
+			}
 
-		if(map_it == m_index.end()) {
+			if (p->empty()) {
+				m_layers.erase(map_it->second);
+				delete p;
+			}
+
+			m_map.erase(obj);
+
+		} else {
+			std::cerr << "Error: object is not recorded" << std::endl;
 			return false;
 		}
-
-		int layer_index = map_it->second.layer_index;
-		int list_index = map_it->second.list_index;
-		std::advance (list_it, layer_index);
-		obj_list_it = list_it->list.begin();
-		std::advance (obj_list_it, list_index);
-		list_it->list.erase(obj_list_it);
-
-		m_index.erase(obj);
-
-		// TODO: update map
-		update_map (layer_index, layer_index, list_index);
 
 		return true;
 	}
 
-	void ContextManager::update_map (int layer_index1, int layer_index2, int list_index)
+#ifdef DEBUG
+
+	void ContextManager::print ()
 	{
-		std::map<Drawable*, ContextIndex>::iterator a_map_it;
-		std::list<ContextLayer>::iterator a_list_it;
-		std::list<ContextLayer>::iterator a_list_it_end;
-		std::list<Drawable*>::iterator a_obj_list_it;
-		bool first = true;
-		int layer_index_start = std::min(layer_index1, layer_index2);
-		int layer_index_stop = std::max(layer_index1, layer_index2);
+		LayerType::iterator map_it;
+		ListType::iterator list_it;
 
-		a_list_it = m_layers.begin();
-		std::advance(a_list_it, layer_index_start);
+		ListType* plist;
+		std::cout << std::endl;
 
-		int i = layer_index_start;
-		for (; i <= layer_index_stop; a_list_it++, i++)
+		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
 		{
-			if (first) {
-				a_obj_list_it = a_list_it->list.begin();
-				std::advance(a_obj_list_it, list_index);
-				for(; a_obj_list_it != a_list_it->list.end(); a_obj_list_it++)
-				{
-					m_index[*a_obj_list_it].layer_index = std::distance(m_layers.begin(), a_list_it);
-					m_index[*a_obj_list_it].list_index = std::distance(a_list_it->list.begin(), a_obj_list_it);
-				}
-				first = false;
-			} else {
-				for(a_obj_list_it = a_list_it->list.begin(); a_obj_list_it != a_list_it->list.end(); a_obj_list_it++)
-				{
-					m_index[*a_obj_list_it].layer_index = std::distance(m_layers.begin(), a_list_it);
-					m_index[*a_obj_list_it].list_index = std::distance(a_list_it->list.begin(), a_obj_list_it);
-				}
+			std::cout << "Layer: " << map_it->first << std::endl;
+			plist = map_it->second;
+			for(list_it = plist->begin(); list_it != plist->end(); list_it++)
+			{
+				std::cout << ConvertFromString((*list_it)->name()) << " ";
 			}
+			std::cout << std::endl;
 		}
 	}
+
+#endif
 
 }

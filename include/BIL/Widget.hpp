@@ -68,7 +68,7 @@ namespace BIL {
 	{
 	public:
 
-		Widget (Traceable * parent = NULL);
+		Widget (Drawable* parent = 0);
 
 		virtual ~Widget ();
 

@@ -14,7 +14,7 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(ShaderTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION(ShaderTest);
 
 const char* ShaderWidget1::vs_source =
 		"attribute vec2 coord2d;"

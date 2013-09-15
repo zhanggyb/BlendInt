@@ -33,8 +33,6 @@ namespace BIL {
 
 	map<uint64_t, Traceable*> Traceable::obj_map;
 
-	list<Traceable*> Traceable::solos;
-
 	Traceable::Traceable (Traceable* parent)
 			: m_parent(parent)
 	{
@@ -54,8 +52,6 @@ namespace BIL {
 
 		if (m_parent) {
 			(m_parent->m_children).push_back(this);
-		} else {
-			solos.push_back(this);
 		}
 	}
 
@@ -77,12 +73,6 @@ namespace BIL {
 			// _parent->removeChild(this);	// Be careful of this line
 			// parent_->children_.erase(this);
 			m_parent->m_children.remove(this);
-		} else {
-			list<Traceable*>::iterator it;
-			it = std::find(solos.begin(), solos.end(), this);
-			if (it != solos.end()) {
-				solos.remove(this);
-			}
 		}
 
 		unregister_from_map();
@@ -112,19 +102,11 @@ namespace BIL {
 	void Traceable::set_parent (Traceable* parent)
 	{
 		if (!m_parent) {
-
-			// if already in solo list, just return
 			if (!parent) {
 				return;
 			}
-
-			list<Traceable*>::iterator it;
-			it = std::find(solos.begin(), solos.end(), this);
-			if (it != solos.end()) {
-				solos.remove(this);
-			}
 		} else {
-			m_parent->remove_child(this, false);
+			m_parent->remove_child(this);
 		}
 
 		if (parent) {
@@ -133,7 +115,6 @@ namespace BIL {
 			m_parent->m_children.push_back(this);
 		} else {
 			m_parent = 0;
-			solos.push_back(this);
 		}
 	}
 
@@ -146,13 +127,7 @@ namespace BIL {
 //			return false;
 
 		if (child->m_parent) {
-			(child->m_parent)->remove_child(child, false);
-		} else {
-			list<Traceable*>::iterator it;
-			it = std::find(solos.begin(), solos.end(), child);
-			if (it != solos.end()) {
-				solos.remove(child);
-			}
+			(child->m_parent)->remove_child(child);
 		}
 
 		m_children.push_back(child);
@@ -161,7 +136,7 @@ namespace BIL {
 		return true;
 	}
 
-	bool Traceable::remove_child (Traceable* child, bool registersolo)
+	bool Traceable::remove_child (Traceable* child)
 	{
 		if (child->m_parent != this)
 			return false;
@@ -173,9 +148,6 @@ namespace BIL {
 		//child->setParent(NULL);
 		m_children.remove(child);
 		child->m_parent = 0;
-		if (registersolo) {
-			solos.push_back(child);
-		}
 
 		return true;
 	}
@@ -192,15 +164,6 @@ namespace BIL {
 		}
 
 		m_children.clear();
-	}
-
-	void Traceable::clearSolos ()
-	{
-		list<Traceable*>::reverse_iterator it;
-		for (it = solos.rbegin(); it != solos.rend(); it++) {
-			delete *it;
-		}
-		solos.clear();
 	}
 
 } /* namespace BIL */

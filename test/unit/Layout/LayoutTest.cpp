@@ -22,7 +22,7 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(LayoutTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION(LayoutTest);
 
 LayoutTest::LayoutTest ()
 {
@@ -37,23 +37,21 @@ LayoutTest::~LayoutTest ()
 void LayoutTest::setUp ()
 {
 	int mapsize = Traceable::mapSize();
-    int listsize = Traceable::getSolos().size();
 
-	if(listsize > 0) {
-		list<Traceable*>::const_iterator it;
-        for (it = Traceable::getSolos().begin(); it != Traceable::getSolos().end(); it++)
+	if(mapsize > 0) {
+		map<uint64_t, Traceable*>::const_iterator it;
+    for (it = Traceable::getMap().begin(); it != Traceable::getMap().end(); it++)
 		{
-			cout << "id: " << (*it)->id() << " was not deleted!" << endl;
+			cout << "id: " << it->first << " was not deleted!" << endl;
 		}
 	}
 
-	CPPUNIT_ASSERT(mapsize == 0 && listsize == 0);
+	CPPUNIT_ASSERT(mapsize == 0);
 }
 
 void LayoutTest::tearDown ()
 {
 	int mapsize = Traceable::mapSize();
-    int listsize = Traceable::getSolos().size();
 
 	if(mapsize > 0) {
 		map<uint64_t, Traceable*>::const_iterator it;
@@ -63,15 +61,7 @@ void LayoutTest::tearDown ()
 		}
 	}
 
-	if(listsize > 0) {
-		list<Traceable*>::const_iterator it;
-        for (it = Traceable::getSolos().begin(); it != Traceable::getSolos().end(); it++)
-		{
-			cout << "id: " << (*it)->id() << " was not deleted!" << endl;
-		}
-	}
-
-	CPPUNIT_ASSERT(mapsize == 0 && listsize == 0);
+	CPPUNIT_ASSERT(mapsize == 0);
 }
 
 void LayoutTest::horizontal_layout1()

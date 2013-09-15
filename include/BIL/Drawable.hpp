@@ -51,9 +51,15 @@ namespace BIL {
 		 * a static list -- solo, it's usually a pop-up widget such as
 		 * context menu, message box
 		 */
-		Drawable (Traceable* parent = NULL);
+		Drawable (Drawable* parent = NULL);
 
 		virtual ~Drawable ();
+
+		virtual void set_parent (Drawable* parent);
+
+		bool add_child (Drawable* child);
+
+		bool remove_child (Drawable* child);
 
 		const Size& size () const
 		{
@@ -96,10 +102,7 @@ namespace BIL {
 			return m_z;
 		}
 
-		void set_z (int depth)
-		{
-			m_z = depth;
-		}
+		void set_z (int z);
 
 		const Margin& margin () const
 		{
@@ -146,15 +149,19 @@ namespace BIL {
 			visible_ = visible;
 		}
 
-		void Show ()
+		void show ()
 		{
 			visible_ = true;
 		}
 
-		void Hide ()
+		void hide ()
 		{
 			visible_ = false;
 		}
+
+		const String& name () const {return m_name;}
+
+		void set_name (const String& name) {m_name = name;}
 
 	protected:	// member functions
 
@@ -261,6 +268,8 @@ namespace BIL {
 		RoundBoxType round_box_type_;
 
 		bool visible_;
+
+		String m_name;
 	};
 
 } /* namespace BIL */

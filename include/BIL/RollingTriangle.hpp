@@ -32,7 +32,7 @@ namespace BIL {
 	class RollingTriangle: public BIL::Drawable
 	{
 	public:
-		RollingTriangle (Traceable *parent = NULL);
+		RollingTriangle (Drawable *parent = 0);
 		virtual ~RollingTriangle ();
 
 	protected:

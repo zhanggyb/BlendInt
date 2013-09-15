@@ -8,35 +8,39 @@
 #include <string>
 #include <stdio.h>
 
-#include "ImageViewTest.h"
+#include "ContextManagerTest.h"
 
 #include <BIL/Interface.hpp>
-#include <BIL/ImageView.hpp>
+#include <BIL/Label.hpp>
+#include <BIL/FontConfig.hpp>
+#include <BIL/Rect.hpp>
+
+#include <BIL/ContextManager.hpp>
 
 using namespace BIL;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(ImageViewTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(ContextManagerTest);
 
-ImageViewTest::ImageViewTest ()
+ContextManagerTest::ContextManagerTest ()
 {
 
 }
 
-ImageViewTest::~ImageViewTest ()
+ContextManagerTest::~ContextManagerTest ()
 {
 
 }
 
-void ImageViewTest::setUp ()
+void ContextManagerTest::setUp ()
 {
 }
 
-void ImageViewTest::tearDown ()
+void ContextManagerTest::tearDown ()
 {
 }
 
-void ImageViewTest::show1 ()
+void ContextManagerTest::check_layer_0_0 ()
 {
 	/* Initialize the library */
 	if (!glfwInit())
@@ -69,8 +73,34 @@ void ImageViewTest::show1 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	ImageView imageview;
-	imageview.set_pos(400, 300);
+	ContextManager* cm = ContextManager::instance();
+
+	Widget widget1;
+	widget1.set_pos(50, 50);
+	widget1.resize (50, 50);
+	widget1.set_name("widget1");
+
+	Widget widget2;
+	widget2.set_pos(100, 100);
+	widget2.resize (50, 50);
+	widget2.set_name("widget2");
+
+	Widget widget3;
+	widget3.set_pos(150, 150);
+	widget3.resize (50, 50);
+	widget3.set_name("widget3");
+	widget3.set_z(1);
+
+	Widget widget4;
+	widget4.set_pos(150, 150);
+	widget4.resize (50, 50);
+	widget4.set_name("widget4");
+	widget4.set_z(1);
+
+	widget1.add_child(&widget2);
+	widget1.add_child(&widget4);
+
+	cm->print();
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -84,6 +114,11 @@ void ImageViewTest::show1 ()
 		glfwPollEvents();
 	}
 
+	widget1.remove_child(&widget2);
+	widget1.remove_child(&widget4);
+
+	cm->print();
+
 	/* release BIL */
 	Interface::release();
 
@@ -91,31 +126,31 @@ void ImageViewTest::show1 ()
 	CPPUNIT_ASSERT(true);
 }
 
-void ImageViewTest::cbError (int error, const char* description)
+void ContextManagerTest::cbError (int error, const char* description)
 {
 	std::cerr << "Error: " << description
 			<< " (error code: " << error << ")"
 			<< std::endl;
 }
 
-void ImageViewTest::cbWindowSize (GLFWwindow* window, int w, int h)
+void ContextManagerTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
 	BIL::Interface::instance()->resizeEvent(w, h);
 }
 
-void ImageViewTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
+void ContextManagerTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
 	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
-void ImageViewTest::cbMouseButton (GLFWwindow* window, int button, int action,
+void ContextManagerTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
 	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
-void ImageViewTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
+void ContextManagerTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
 	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

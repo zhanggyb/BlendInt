@@ -34,6 +34,7 @@
 #include <BIL/KeyEvent.hpp>
 #include <BIL/MouseEvent.hpp>
 #include <BIL/ContextMenuEvent.hpp>
+#include <BIL/ContextManager.hpp>
 
 namespace BIL {
 
@@ -86,6 +87,11 @@ namespace BIL {
 			result = false;
 		}
 
+		if (!ContextManager::initialize()) {
+			std::cerr << "Cannot initialize Context Manager" << std::endl;
+			result = false;
+		}
+
 		if (!interface) {
 			interface = new Interface();
 		}
@@ -98,6 +104,7 @@ namespace BIL {
 
 	void Interface::release ()
 	{
+		ContextManager::release();
 		ShaderManager::release();
 		Theme::release();
 		FontCache::releaseAll();
@@ -150,13 +157,17 @@ namespace BIL {
 		draw_grid(width, height);
 #endif
 
-		Drawable *item = NULL;
-		list<Traceable*>::const_iterator j;
-		for (j = Traceable::getSolos().begin();
-		        j != Traceable::getSolos().end(); j++) {
-			item = dynamic_cast<Drawable*>(*j);
-			if (item) {
-				render(item);
+		map<int, list<Drawable*>* >::iterator map_it;
+		list<Drawable*>::iterator list_it;
+		ContextManager* cm = ContextManager::instance();
+
+		for(map_it = cm->m_layers.begin(); map_it != cm->m_layers.end(); map_it++)
+		{
+			list<Drawable*>* plist = map_it->second;
+			for (list_it = plist->begin(); list_it != plist->end(); list_it++)
+			{
+				//(*list_it)->render();
+				render (*list_it);
 			}
 		}
 
@@ -241,54 +252,58 @@ namespace BIL {
 		if (key == Key_Menu) {
 			ContextMenuEvent event(ContextMenuEvent::Keyboard, mods);
 
-			list<Traceable*>::const_reverse_iterator it;
-			Drawable *item = NULL;
-			for (it = Traceable::getSolos().rbegin();
-			        it != Traceable::getSolos().rend(); it++) {
-				item = dynamic_cast<Drawable*>(*it);
-				if (item == NULL)
-					continue;
+			map<int, list<Drawable*>* >::reverse_iterator map_it;
+			list<Drawable*>::reverse_iterator list_it;
+			ContextManager* cm = ContextManager::instance();
 
-				// TODO: only the focused widget can dispose key event
-				switch (action) {
-					case KeyPress:
-						item->contextMenuPressEvent(&event);
-						break;
-					case KeyRelease:
-						item->contextMenuReleaseEvent(&event);
-						break;
-					default:
+			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
+			{
+				list<Drawable*>* plist = map_it->second;
+				for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
+				{
+					// TODO: only the focused widget can dispose key event
+					switch (action) {
+						case KeyPress:
+							(*list_it)->contextMenuPressEvent(&event);
+							break;
+						case KeyRelease:
+							(*list_it)->contextMenuReleaseEvent(&event);
+							break;
+						default:
+							break;
+					}
+					if (event.accepted())
 						break;
 				}
-				if (event.accepted())
-					break;
 			}
 
 		} else {
 
 			KeyEvent event(key, scancode, action, mods);
 
-			list<Traceable*>::const_reverse_iterator it;
-			Drawable *item = NULL;
-			for (it = Traceable::getSolos().rbegin();
-			        it != Traceable::getSolos().rend(); it++) {
-				item = dynamic_cast<Drawable*>(*it);
-				if (item == NULL)
-					continue;
+			map<int, list<Drawable*>* >::reverse_iterator map_it;
+			list<Drawable*>::reverse_iterator list_it;
+			ContextManager* cm = ContextManager::instance();
 
-				// TODO: only the focused widget can dispose key event
-				switch (action) {
-					case KeyPress:
-						dispatchKeyPressEvent(item, &event);
-						break;
-					case KeyRelease:
-						// item->KeyReleaseEvent(dynamic_cast<BIL::KeyEvent*>(event));
-						break;
-					case KeyRepeat:
-						// item->KeyRepeatEvent(&event);
-						break;
-					default:
-						break;
+			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
+			{
+				list<Drawable*>* plist = map_it->second;
+				for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
+				{
+					// TODO: only the focused widget can dispose key event
+					switch (action) {
+						case KeyPress:
+							dispatchKeyPressEvent((*list_it), &event);
+							break;
+						case KeyRelease:
+							// item->KeyReleaseEvent(dynamic_cast<BIL::KeyEvent*>(event));
+							break;
+						case KeyRepeat:
+							// item->KeyRepeatEvent(&event);
+							break;
+						default:
+							break;
+					}
 				}
 				if (event.accepted())
 					break;
@@ -335,31 +350,33 @@ namespace BIL {
 		MouseEvent event(mouse_action, mouseclick);
 		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
 
-		list<Traceable*>::const_reverse_iterator it;
-		Drawable *item = NULL;
 		float local_x;
 		float local_y;
-		for (it = Traceable::getSolos().rbegin();
-		        it != Traceable::getSolos().rend(); it++) {
-			item = dynamic_cast<Drawable*>(*it);
-			if (item == NULL)
-				continue;
+		map<int, list<Drawable*>* >::reverse_iterator map_it;
+		list<Drawable*>::reverse_iterator list_it;
+		ContextManager* cm = ContextManager::instance();
 
-			local_x = cursor_pos_x_ - (item->pos().x());
-			local_y = cursor_pos_y_ - (item->pos().y());
-			if ((local_x - 0.000001 > 0.0) && (local_y - 0.000001 > 0.0)
-			        && (local_x - item->size().width()) < 0.0
-			        && (local_y - item->size().height()) < 0.0) {
-				event.set_pos(local_x, local_y);
-				switch (action) {
-					case GLFW_PRESS:
-						dispatchMousePressEvent(item, &event);
-						break;
-					case GLFW_RELEASE:
-						item->mouseReleaseEvent(&event);
-						break;
-					default:
-						break;
+		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
+		{
+			list<Drawable*>* plist = map_it->second;
+			for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
+			{
+				local_x = cursor_pos_x_ - ((*list_it)->pos().x());
+				local_y = cursor_pos_y_ - ((*list_it)->pos().y());
+				if ((local_x - 0.000001 > 0.0) && (local_y - 0.000001 > 0.0)
+						&& (local_x - (*list_it)->size().width()) < 0.0
+						&& (local_y - (*list_it)->size().height()) < 0.0) {
+					event.set_pos(local_x, local_y);
+					switch (action) {
+						case GLFW_PRESS:
+							dispatchMousePressEvent((*list_it), &event);
+							break;
+						case GLFW_RELEASE:
+							(*list_it)->mouseReleaseEvent(&event);
+							break;
+						default:
+							break;
+					}
 				}
 			}
 			if (event.accepted())
@@ -375,19 +392,22 @@ namespace BIL {
 		MouseEvent event(MouseNone, MouseButtonNone);
 		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
 
-		list<Traceable*>::const_reverse_iterator it;
-		Drawable *item = NULL;
 		float local_x;
 		float local_y;
 
-		for (it = Traceable::getSolos().rbegin();
-		        it != Traceable::getSolos().rend(); it++) {
-			item = dynamic_cast<Drawable*>(*it);
-			if (item != NULL) {
-				local_x = cursor_pos_x_ - (item->pos().x());
-				local_y = cursor_pos_y_ - (item->pos().y());
+		map<int, list<Drawable*>* >::reverse_iterator map_it;
+		list<Drawable*>::reverse_iterator list_it;
+		ContextManager* cm = ContextManager::instance();
+
+		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
+		{
+			list<Drawable*>* plist = map_it->second;
+			for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
+			{
+				local_x = cursor_pos_x_ - ((*list_it)->pos().x());
+				local_y = cursor_pos_y_ - ((*list_it)->pos().y());
 				event.set_pos(local_x, local_y);
-				dispatchMouseMoveEvent(item, &event);
+				dispatchMouseMoveEvent((*list_it), &event);
 				if (event.accepted())
 					break;
 			}

@@ -17,7 +17,7 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(TextBufferTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION(TextBufferTest);
 
 TextBufferTest::TextBufferTest ()
 {

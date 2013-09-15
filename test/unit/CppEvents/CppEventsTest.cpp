@@ -18,7 +18,7 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(CppEventsTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION(CppEventsTest);
 
 CppEventsTest::CppEventsTest ()
 {

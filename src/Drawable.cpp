@@ -23,8 +23,10 @@
 
 #include <algorithm>
 #include <iostream>
+#include <list>
 
 #include <BIL/Drawable.hpp>
+#include <BIL/ContextManager.hpp>
 
 namespace BIL {
 
@@ -142,16 +144,59 @@ namespace BIL {
 		glColor3fv(col);
 	}
 
-	Drawable::Drawable (Traceable* parent)
+	Drawable::Drawable (Drawable* parent)
 		: Traceable(parent), m_z(0), round_box_type_ (RoundBoxNone),
 		  visible_(false)
 	{
+		if(!parent) {
+			ContextManager::instance()->add_drawable(this);
+		}
 	}
 
 	Drawable::~Drawable ()
 	{
 		// delete all child object in list
+		ContextManager::instance()->remove_drawable(this);
+	}
 
+	void Drawable::set_parent (Drawable* parent)
+	{
+		if(parent->m_z == m_z || m_parent == 0) {
+			ContextManager::instance()->remove_drawable(this);
+		}
+		Traceable::set_parent(parent);
+	}
+
+	bool Drawable::add_child (Drawable* child)
+	{
+		if(child->m_z == m_z || child->m_parent == 0) {
+			ContextManager::instance()->remove_drawable(child);
+		}
+		return Traceable::add_child(child);
+	}
+
+	bool Drawable::remove_child (Drawable* child)
+	{
+		ContextManager::instance()->add_drawable(child);
+		return Traceable::remove_child (child);
+	}
+
+	void Drawable::set_z (int z)
+	{
+		if (m_z == z) return;
+
+		std::list<Traceable*>::iterator it;
+		Drawable* item = 0;
+		for (it = m_children.begin(); it != m_children.end(); it++)
+		{
+			item = dynamic_cast<Drawable*>(*it);
+			if(item) {
+				item->m_z = z;
+			}
+		}
+
+		m_z = z;
+		ContextManager::instance()->add_drawable(this);
 	}
 
 	void Drawable::drawRoundBox (float minx,

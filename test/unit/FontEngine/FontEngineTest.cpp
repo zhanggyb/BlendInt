@@ -15,7 +15,7 @@
 using namespace BIL;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(FontEngineTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION(FontEngineTest);
 
 FontEngineTest::FontEngineTest ()
 {

@@ -103,7 +103,7 @@ namespace BIL {
 	{
 	}
 
-	Widget::Widget (Traceable *parent)
+	Widget::Widget (Drawable* parent)
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub
@@ -415,7 +415,21 @@ namespace BIL {
 
 	void Widget::render ()
 	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(pos_.x(),
+					 pos_.y(),
+					 z());
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		DrawAppearance(&m_appearance);
+
+		glDisable(GL_BLEND);
+
+		glPopMatrix();
 	}
 
 	/* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */

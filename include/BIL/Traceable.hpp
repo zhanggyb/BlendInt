@@ -70,13 +70,6 @@ namespace BIL {
 			return obj_map;
 		}
 
-		static const list<Traceable*>& getSolos ()
-		{
-			return solos;
-		}
-
-		static void clearSolos ();
-
 #ifdef DEBUG
 		static void reset ()
 		{
@@ -111,6 +104,17 @@ namespace BIL {
 		{
 			return m_parent;
 		}
+		const std::list<Traceable*>& children () const
+		{
+			return m_children;
+		}
+
+#ifdef DEBUG
+	public:
+#else
+	protected:
+#endif
+		// member functions
 
 		/**
 		 * @brief set parent object
@@ -123,20 +127,16 @@ namespace BIL {
 
 		bool add_child (Traceable *child);
 
-		const std::list<Traceable*>& children () const
-		{
-			return m_children;
-		}
+		bool remove_child (Traceable* child);
+
+		void delete_children ();
+
+	protected:
 
 		//ChildrenList<Traceable*> _children;
 		std::list<Traceable*> m_children;
 
-	protected:
-		// member functions
-
-		bool remove_child (Traceable* child, bool registersolo = true);
-
-		void delete_children ();
+		Traceable* m_parent; /** parent object */
 
 	private:
 
@@ -148,14 +148,10 @@ namespace BIL {
 
 		uint64_t m_id; /** A unique ID for object */
 
-		Traceable* m_parent; /** parent object */
-
 		// static member variables
 		static uint64_t id_last;
 
 		static map<uint64_t, Traceable*> obj_map;
-
-		static list<Traceable*> solos;
 	};
 
 } /* namespace BIL */

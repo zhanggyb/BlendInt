@@ -13,8 +13,6 @@ class TraceableTest: public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(TraceableTest);
 
-	CPPUNIT_TEST(checksolo1);
-	CPPUNIT_TEST(checksolo2);
 	CPPUNIT_TEST(checkparent1);
 	CPPUNIT_TEST(checkparent2);
 	CPPUNIT_TEST(checkparent3);
@@ -26,8 +24,8 @@ CPPUNIT_TEST_SUITE(TraceableTest);
 	CPPUNIT_TEST(checkparent9);
 	CPPUNIT_TEST(checkparent10);
 
-	CPPUNIT_TEST(solotest1);
-	CPPUNIT_TEST(solotest2);
+	//CPPUNIT_TEST(solotest1);
+	//CPPUNIT_TEST(solotest2);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -46,8 +44,6 @@ public:
 
 private:
 
-	void checksolo1 ();
-	void checksolo2 ();
 	void checkparent1 ();
 	void checkparent2 ();
 	void checkparent3 ();
