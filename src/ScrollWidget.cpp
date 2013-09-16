@@ -37,7 +37,7 @@ namespace BIL {
 	};
 
 	ScrollBar::ScrollBar(Direction direction, Drawable* parent)
-	: Widget(parent), m_direction (Horizontal & Vertical)
+	: Widget(parent), m_direction (Horizontal)
 	{
 
 	}

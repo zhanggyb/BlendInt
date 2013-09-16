@@ -78,6 +78,16 @@ namespace BIL {
 			y_ = y;
 		}
 
+		inline bool equal (const Point& point)
+		{
+			return (x_ == point.x() && y_ == point.y());
+		}
+
+		inline bool equal (int x, int y)
+		{
+			return (x_ == x && y_ == y);
+		}
+
 	private:
 		int x_;
 		int y_;

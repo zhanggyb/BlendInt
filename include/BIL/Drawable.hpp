@@ -19,8 +19,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_DRAWABLE_H_
-#define _BIL_DRAWABLE_H_
+#ifndef _BIL_DRAWABLE_HPP_
+#define _BIL_DRAWABLE_HPP_
 
 #include <list>
 
@@ -51,7 +51,7 @@ namespace BIL {
 		 * a static list -- solo, it's usually a pop-up widget such as
 		 * context menu, message box
 		 */
-		Drawable (Drawable* parent = NULL);
+		Drawable (Drawable* parent = 0);
 
 		virtual ~Drawable ();
 
@@ -68,6 +68,7 @@ namespace BIL {
 
 		void resize (int w, int h)
 		{
+			if (size_.equal(w, h)) return;
 			size_.set_width(w);
 			size_.set_height(h);
 			update();
@@ -75,6 +76,8 @@ namespace BIL {
 
 		void resize (const Size& size)
 		{
+			if (size_.equal(size)) return;
+
 			size_ = size;
 			update();
 		}
@@ -86,6 +89,8 @@ namespace BIL {
 
 		void set_pos (int x, int y)
 		{
+			if (pos_.equal(x, y)) return;
+
 			pos_.set_x(x);
 			pos_.set_y(y);
 			update();
@@ -93,6 +98,8 @@ namespace BIL {
 
 		void set_pos (const Point& pos)
 		{
+			if (pos_.equal(pos)) return;
+
 			pos_ = pos;
 			update();
 		}
@@ -130,10 +137,14 @@ namespace BIL {
 		void set_padding (const Padding& padding)
 		{
 			padding_ = padding;
+
+			// TODO: update after padding change
 		}
 
 		void set_round_box_type (RoundBoxType type)
 		{
+			if (round_box_type_ == type) return;
+
 			round_box_type_ = type;
 			update();
 		}

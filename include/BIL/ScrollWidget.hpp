@@ -34,9 +34,9 @@ namespace BIL {
 
 		virtual ~ScrollBar ();
 
-		void set_direction (int direction);
+		void set_direction (Direction direction);
 
-		int direction () const {return m_direction;}
+		Direction direction () const {return m_direction;}
 
 	protected:
 
@@ -48,7 +48,7 @@ namespace BIL {
 
 		void draw_scroll_cicle (const Rect& rect, float rad);
 
-		int m_direction;
+		Direction m_direction;
 
 	};
 

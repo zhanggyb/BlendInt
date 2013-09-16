@@ -37,19 +37,19 @@ namespace BIL {
 	public:
 
 		Size ()
-				: m_width(0), m_height(0)
+			: m_width(0), m_height(0)
 		{
 
 		}
 
 		Size (unsigned int width, unsigned int height)
-				: m_width(width), m_height(height)
+			: m_width(width), m_height(height)
 		{
 
 		}
 
 		Size (const Size& orig)
-				: m_width(orig.m_width), m_height(orig.m_height)
+			: m_width(orig.m_width), m_height(orig.m_height)
 		{
 
 		}
@@ -64,6 +64,16 @@ namespace BIL {
 		bool is_valid () const
 		{
 			return m_width > 0 && m_height > 0;
+		}
+
+		inline bool equal (const Size& size)
+		{
+			return (m_width == size.width() && m_height == size.height());
+		}
+
+		inline bool equal (unsigned int width, unsigned int height)
+		{
+			return (m_width == width && m_height == height);
 		}
 
 		bool contains (const Point& pos)
