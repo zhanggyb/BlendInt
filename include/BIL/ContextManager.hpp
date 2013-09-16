@@ -64,6 +64,10 @@ namespace BIL {
 		 */
 		bool remove_drawable (Drawable* obj);
 
+		int index_size () const {return m_map.size();}
+
+		int layer_size () const {return m_layers.size();}
+
 #ifdef DEBUG
 
 		void print ();

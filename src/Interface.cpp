@@ -160,28 +160,35 @@ namespace BIL {
 		map<int, list<Drawable*>* >::iterator map_it;
 		list<Drawable*>::iterator list_it;
 		ContextManager* cm = ContextManager::instance();
-
+		int layer = 0;
 		for(map_it = cm->m_layers.begin(); map_it != cm->m_layers.end(); map_it++)
 		{
+			layer = map_it->first;
 			list<Drawable*>* plist = map_it->second;
 			for (list_it = plist->begin(); list_it != plist->end(); list_it++)
 			{
 				//(*list_it)->render();
-				render (*list_it);
+				render_at_layer (*list_it, layer);
 			}
 		}
 
 		glDisable(GL_BLEND);
 	}
 
-	void Interface::render (Drawable* obj)
+	void Interface::render_at_layer (Drawable* obj, int layer)
 	{
 		list<Traceable*>::const_iterator it;
 		Drawable *item = NULL;
 		for (it = obj->children().begin(); it != obj->children().end(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item) {
-				render(item);
+
+				// only drawable object at the layer will be called for render
+				// object in differenct layer will be called in another loop
+				if (item->z() == layer) {
+					render_at_layer(item, layer);
+				}
+
 			}
 		}
 
@@ -275,6 +282,9 @@ namespace BIL {
 					if (event.accepted())
 						break;
 				}
+				if(event.accepted()) {
+					break;
+				}
 			}
 
 		} else {
@@ -284,16 +294,18 @@ namespace BIL {
 			map<int, list<Drawable*>* >::reverse_iterator map_it;
 			list<Drawable*>::reverse_iterator list_it;
 			ContextManager* cm = ContextManager::instance();
+			int layer = 0;
 
 			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 			{
+				layer = map_it->first;
 				list<Drawable*>* plist = map_it->second;
 				for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
 				{
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
 						case KeyPress:
-							dispatchKeyPressEvent((*list_it), &event);
+							dispatch_key_press_event_at_layer((*list_it), &event, layer);
 							break;
 						case KeyRelease:
 							// item->KeyReleaseEvent(dynamic_cast<BIL::KeyEvent*>(event));
@@ -303,6 +315,9 @@ namespace BIL {
 							break;
 						default:
 							break;
+					}
+					if(event.accepted()) {
+						break;
 					}
 				}
 				if (event.accepted())
@@ -355,9 +370,11 @@ namespace BIL {
 		map<int, list<Drawable*>* >::reverse_iterator map_it;
 		list<Drawable*>::reverse_iterator list_it;
 		ContextManager* cm = ContextManager::instance();
+		int layer = 0;
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
+			layer = map_it->first;
 			list<Drawable*>* plist = map_it->second;
 			for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
 			{
@@ -369,7 +386,7 @@ namespace BIL {
 					event.set_pos(local_x, local_y);
 					switch (action) {
 						case GLFW_PRESS:
-							dispatchMousePressEvent((*list_it), &event);
+							dispatch_mouse_press_event_at_layer((*list_it), &event, layer);
 							break;
 						case GLFW_RELEASE:
 							(*list_it)->mouseReleaseEvent(&event);
@@ -378,6 +395,8 @@ namespace BIL {
 							break;
 					}
 				}
+				if(event.accepted())
+					break;
 			}
 			if (event.accepted())
 				break;
@@ -398,107 +417,127 @@ namespace BIL {
 		map<int, list<Drawable*>* >::reverse_iterator map_it;
 		list<Drawable*>::reverse_iterator list_it;
 		ContextManager* cm = ContextManager::instance();
+		int layer = 0;
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
+			layer = map_it->first;
 			list<Drawable*>* plist = map_it->second;
 			for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
 			{
 				local_x = cursor_pos_x_ - ((*list_it)->pos().x());
 				local_y = cursor_pos_y_ - ((*list_it)->pos().y());
 				event.set_pos(local_x, local_y);
-				dispatchMouseMoveEvent((*list_it), &event);
+				dispatch_mouse_move_event_at_layer((*list_it), &event, layer);
 				if (event.accepted())
 					break;
 			}
+			if(event.accepted()) break;
 		}
 	}
 
-	void Interface::dispatchKeyPressEvent (Drawable* obj, KeyEvent* event)
+	void Interface::dispatch_key_press_event_at_layer (Drawable* obj, KeyEvent* event, int layer)
 	{
-		obj->keyPressEvent(event);
+		// only object int the same layer will do this function
+		// objects in different layer will be called in other loop
+		if (obj->z() == layer) {
 
-		if (event->accepted()) {
-			return;
-		} else {
-			list<Traceable*>::const_reverse_iterator it;
-			Drawable *item = NULL;
-			for (it = obj->children().rbegin(); it != obj->children().rend();
-			        it++) {
-				item = dynamic_cast<Drawable*>(*it);
-				if (item)
-					dispatchKeyPressEvent(item, event);
-				if (event->accepted())
-					return;
+			obj->keyPressEvent(event);
+
+			if (event->accepted()) {
+				return;
+			} else {
+				list<Traceable*>::const_reverse_iterator it;
+				Drawable *item = NULL;
+				for (it = obj->children().rbegin(); it != obj->children().rend();
+			        it++)
+				{
+					item = dynamic_cast<Drawable*>(*it);
+					if (item)
+						dispatch_key_press_event_at_layer(item, event, layer);
+					if (event->accepted())
+						return;
+				}
 			}
 		}
 	}
 
-	void Interface::dispatchMousePressEvent (Drawable* obj, MouseEvent* event)
+	void Interface::dispatch_mouse_press_event_at_layer (Drawable* obj, MouseEvent* event, int layer)
 	{
-		obj->mousePressEvent(event);
+		if (obj->z() == layer) {
 
-		if (event->accepted()) {
-			return;
-		} else {
-			list<Traceable*>::const_reverse_iterator it;
-			Drawable *item = NULL;
-			for (it = obj->children().rbegin(); it != obj->children().rend();
-			        it++) {
-				item = dynamic_cast<Drawable*>(*it);
-				if (item) {
-					event->set_pos(cursor_pos_x_ - (item->pos().x()),
+			obj->mousePressEvent(event);
+
+			if (event->accepted()) {
+				return;
+			} else {
+				list<Traceable*>::const_reverse_iterator it;
+				Drawable *item = NULL;
+				for (it = obj->children().rbegin(); it != obj->children().rend();
+			        it++)
+				{
+					item = dynamic_cast<Drawable*>(*it);
+					if (item) {
+						event->set_pos(cursor_pos_x_ - (item->pos().x()),
 					        cursor_pos_y_ - (item->pos().y()));
-					dispatchMousePressEvent(item, event);
+						dispatch_mouse_press_event_at_layer(item, event, layer);
+					}
+					if (event->accepted())
+						return;
 				}
-				if (event->accepted())
-					return;
 			}
 		}
 	}
 
-	void Interface::dispatchMouseReleaseEvent (Drawable* obj, MouseEvent* event)
+	void Interface::dispatch_mouse_release_event_at_layer (Drawable* obj, MouseEvent* event, int layer)
 	{
-		obj->mouseReleaseEvent(event);
+		if (obj->z() == layer) {
 
-		if (event->accepted()) {
-			return;
-		} else {
-			list<Traceable*>::const_reverse_iterator it;
-			Drawable *item = NULL;
-			for (it = obj->children().rbegin(); it != obj->children().rend();
-			        it++) {
-				item = dynamic_cast<Drawable*>(*it);
-				if (item) {
-					event->set_pos(cursor_pos_x_ - (item->pos().x()),
+			obj->mouseReleaseEvent(event);
+
+			if (event->accepted()) {
+				return;
+			} else {
+				list<Traceable*>::const_reverse_iterator it;
+				Drawable *item = NULL;
+				for (it = obj->children().rbegin(); it != obj->children().rend();
+			        it++)
+				{
+					item = dynamic_cast<Drawable*>(*it);
+					if (item) {
+						event->set_pos(cursor_pos_x_ - (item->pos().x()),
 					        cursor_pos_y_ - (item->pos().y()));
-					dispatchMouseReleaseEvent(item, event);
+						dispatch_mouse_release_event_at_layer(item, event, layer);
+					}
+					if (event->accepted())
+						return;
 				}
-				if (event->accepted())
-					return;
 			}
 		}
 	}
 
-	void Interface::dispatchMouseMoveEvent (Drawable* obj, MouseEvent* event)
+	void Interface::dispatch_mouse_move_event_at_layer (Drawable* obj, MouseEvent* event, int layer)
 	{
-		obj->mouseMoveEvent(event);
+		if(obj->z() == layer) {
+			obj->mouseMoveEvent(event);
 
-		if (event->accepted()) {
-			return;
-		} else {
-			list<Traceable*>::const_reverse_iterator it;
-			Drawable *item = NULL;
-			for (it = obj->children().rbegin(); it != obj->children().rend();
-			        it++) {
-				item = dynamic_cast<Drawable*>(*it);
-				if (item) {
-					event->set_pos(cursor_pos_x_ - (item->pos().x()),
-					        cursor_pos_y_ - (item->pos().y()));
-					dispatchMouseMoveEvent(item, event);
+			if (event->accepted()) {
+				return;
+			} else {
+				list<Traceable*>::const_reverse_iterator it;
+				Drawable *item = NULL;
+				for (it = obj->children().rbegin(); it != obj->children().rend();
+						it++)
+				{
+					item = dynamic_cast<Drawable*>(*it);
+					if (item) {
+						event->set_pos(cursor_pos_x_ - (item->pos().x()),
+								cursor_pos_y_ - (item->pos().y()));
+						dispatch_mouse_move_event_at_layer(item, event, layer);
+					}
+					if (event->accepted())
+						return;
 				}
-				if (event->accepted())
-					return;
 			}
 		}
 	}

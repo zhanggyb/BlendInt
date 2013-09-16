@@ -69,19 +69,19 @@ namespace BIL {
 
 		~Interface ();
 
-		void render (Drawable* obj);
+		void render_at_layer (Drawable* obj, int layer);
 
 #ifdef DEBUG
 		void draw_grid (int width, int height);
 #endif
 
-		void dispatchKeyPressEvent (Drawable* obj, KeyEvent* event);
+		void dispatch_key_press_event_at_layer (Drawable* obj, KeyEvent* event, int layer);
 
-		void dispatchMousePressEvent (Drawable* obj, MouseEvent* event);
+		void dispatch_mouse_press_event_at_layer (Drawable* obj, MouseEvent* event, int layer);
 
-		void dispatchMouseReleaseEvent (Drawable* obj, MouseEvent* event);
+		void dispatch_mouse_release_event_at_layer (Drawable* obj, MouseEvent* event, int layer);
 
-		void dispatchMouseMoveEvent (Drawable* obj, MouseEvent* event);
+		void dispatch_mouse_move_event_at_layer (Drawable* obj, MouseEvent* event, int layer);
 
 		double cursor_pos_x_;	/** cursor x position */
 		double cursor_pos_y_;	/** cursor y position */

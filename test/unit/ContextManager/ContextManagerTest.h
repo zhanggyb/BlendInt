@@ -19,7 +19,9 @@ CPPUNIT_TEST_SUITE(ContextManagerTest);
 
 	CPPUNIT_TEST(check_layer_0_0);
 	CPPUNIT_TEST(check_layer_0_1);
-	//CPPUNIT_TEST(check_layer_0_2);
+	CPPUNIT_TEST(check_layer_0_2);
+	CPPUNIT_TEST(check_layer_0_3);
+	CPPUNIT_TEST(check_layer_0_4);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -42,7 +44,7 @@ private:
 	void check_layer_0_1 ();
 	void check_layer_0_2 ();
 	void check_layer_0_3 ();
-	void check_layer_0_4 ();
+	void check_layer_0_4 ();	// check set_z()
 
 	static void cbError (int error, const char* description);
 

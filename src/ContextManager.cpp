@@ -74,6 +74,8 @@ namespace BIL {
 
 	bool ContextManager::add_drawable (Drawable* obj)
 	{
+		if (!obj) return false;
+
 		map<Drawable*, int>::iterator map_it;
 		
 		map_it = m_map.find(obj);
@@ -88,7 +90,14 @@ namespace BIL {
 			if (it != p->end()) {
 				p->erase (it);
 			} else {
+#ifdef DEBUG
 				std::cerr << "Error: object is not recorded" << std::endl;
+#endif
+			}
+
+			if (p->empty()) {
+				m_layers.erase(map_it->second);
+				delete p;
 			}
 
 			map<int, list<Drawable*>* >::iterator layer_it;
@@ -121,6 +130,8 @@ namespace BIL {
 
 	bool ContextManager::remove_drawable (Drawable* obj)
 	{
+		if (!obj) return false;
+
 		map<Drawable*, int>::iterator map_it;
 		
 		map_it = m_map.find(obj);
@@ -132,7 +143,9 @@ namespace BIL {
 			if (it != p->end()) {
 				p->erase (it);
 			} else {
-				std::cerr << "Error: object is not recorded" << std::endl;
+#ifdef DEBUG
+				std::wcerr << "Error: object " << obj->name() << " is not recorded" << std::endl;
+#endif
 			}
 
 			if (p->empty()) {
@@ -143,7 +156,9 @@ namespace BIL {
 			m_map.erase(obj);
 
 		} else {
-			std::cerr << "Error: object is not recorded" << std::endl;
+#ifdef DEBUG
+			std::wcerr << "Error: object " << obj->name() << " is not recorded" << std::endl;
+#endif
 			return false;
 		}
 
@@ -160,13 +175,17 @@ namespace BIL {
 		ListType* plist;
 		std::cout << std::endl;
 
+		std::cout << "size of index map:" << m_map.size() << std::endl;
+
+		std::cout << "size of layer map:" << m_layers.size() << std::endl;
+
 		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
 		{
 			std::cout << "Layer: " << map_it->first << std::endl;
 			plist = map_it->second;
 			for(list_it = plist->begin(); list_it != plist->end(); list_it++)
 			{
-				std::cout << ConvertFromString((*list_it)->name()) << " ";
+				std::wcout << (*list_it)->name() << " ";
 			}
 			std::cout << std::endl;
 		}

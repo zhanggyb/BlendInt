@@ -151,6 +151,12 @@ namespace BIL {
 		if(!parent) {
 			ContextManager::instance()->add_drawable(this);
 		}
+
+		if(parent) {
+			if(parent->z() != m_z) {
+				ContextManager::instance()->add_drawable(this);
+			}
+		}
 	}
 
 	Drawable::~Drawable ()
@@ -161,29 +167,56 @@ namespace BIL {
 
 	void Drawable::set_parent (Drawable* parent)
 	{
-		if(parent->m_z == m_z) {
-			ContextManager::instance()->remove_drawable(this);
+		if (parent) {
+			if(parent->m_z == m_z) {
+				ContextManager::instance()->remove_drawable(this);
+			} else {
+				ContextManager::instance()->add_drawable(this);
+			}
+		} else {
+			ContextManager::instance()->add_drawable(this);
 		}
 		Traceable::set_parent(parent);
 	}
 
 	bool Drawable::add_child (Drawable* child)
 	{
-		if(child->m_z == m_z) {
-			ContextManager::instance()->remove_drawable(child);
+		if(child) {
+			if(child->m_z == m_z) {
+				ContextManager::instance()->remove_drawable(child);
+			} else {
+				ContextManager::instance()->add_drawable(child);
+			}
 		}
+
 		return Traceable::add_child(child);
 	}
 
 	bool Drawable::remove_child (Drawable* child)
 	{
-		ContextManager::instance()->add_drawable(child);
-		return Traceable::remove_child (child);
+		if(Traceable::remove_child(child)) {
+			ContextManager::instance()->add_drawable(child);
+			return true;
+		}
+		return false;
 	}
 
 	void Drawable::set_z (int z)
 	{
-		if (m_z == z) return;
+		m_z = z;
+
+		if(m_parent) {
+			Drawable* parent = dynamic_cast<Drawable*>(m_parent);
+			if(parent) {
+				if(parent->z() != m_z) {
+					ContextManager::instance()->add_drawable(this);
+				} else {
+					ContextManager::instance()->remove_drawable(this);
+				}
+			}
+		} else {
+			ContextManager::instance()->add_drawable(this);
+		}
 
 		std::list<Traceable*>::iterator it;
 		Drawable* item = 0;
@@ -191,12 +224,9 @@ namespace BIL {
 		{
 			item = dynamic_cast<Drawable*>(*it);
 			if(item) {
-				item->m_z = z;
+				item->set_z (z);
 			}
 		}
-
-		m_z = z;
-		ContextManager::instance()->add_drawable(this);
 	}
 
 	void Drawable::drawRoundBox (float minx,
