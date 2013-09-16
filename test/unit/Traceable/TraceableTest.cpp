@@ -10,7 +10,7 @@
 using namespace BIL;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION (TraceableTest);
+CPPUNIT_TEST_SUITE_REGISTRATION (TraceableTest);
 
 TraceableTest::TraceableTest ()
 {
@@ -24,6 +24,7 @@ TraceableTest::~TraceableTest ()
 
 void TraceableTest::setUp ()
 {
+#ifdef DEBUG
 	int mapsize = Traceable::mapSize();
 
 	if(mapsize > 0) {
@@ -35,10 +36,12 @@ void TraceableTest::setUp ()
 	}
 
 	CPPUNIT_ASSERT(mapsize == 0);
+#endif
 }
 
 void TraceableTest::tearDown ()
 {
+#ifdef DEBUG
 	int mapsize = Traceable::mapSize();
 
 	if(mapsize > 0) {
@@ -50,13 +53,13 @@ void TraceableTest::tearDown ()
 	}
 
 	CPPUNIT_ASSERT(mapsize == 0);
+#endif
 }
 
+#ifdef DEBUG
 void TraceableTest::checkparent1 ()
 {
-#ifdef DEBUG
 	Traceable::reset();
-#endif
 
 	Traceable* parent = new Traceable;	// id == 1
 	Traceable* child = new Traceable(parent);	// id == 2
@@ -76,9 +79,7 @@ void TraceableTest::checkparent1 ()
 
 void TraceableTest::checkparent2 ()
 {
-#ifdef DEBUG
 	Traceable::reset();
-#endif
 
 	Traceable* parent = new Traceable;	// id == 1
 	Traceable* child = new Traceable(parent);	// id == 2
@@ -96,9 +97,7 @@ void TraceableTest::checkparent2 ()
 
 void TraceableTest::checkparent3 ()
 {
-#ifdef DEBUG
 	Traceable::reset();
-#endif
 
 	Traceable* parent = new Traceable;	// id == 1
 	Traceable* child1 = new Traceable(parent);	// id == 2
@@ -121,9 +120,7 @@ void TraceableTest::checkparent4 (void)
 {
 	using namespace BIL;
 
-#ifdef DEBUG
 	// Traceable::reset();	// reset the map
-#endif
 
 	Traceable* obj1 = new Traceable;
 	Traceable* obj2 = new Traceable(obj1);
@@ -142,9 +139,7 @@ void TraceableTest::checkparent5 (void)
 {
 	using namespace BIL;
 
-#ifdef DEBUG
 	// Traceable::reset();	// reset the map
-#endif
 
 	Traceable *obj1 = new Traceable;
 	Traceable *obj2 = new Traceable;
@@ -164,9 +159,7 @@ void TraceableTest::checkparent6 (void)
 {
 	using namespace BIL;
 
-#ifdef DEBUG
 //	Traceable::reset();	// reset the map
-#endif
 
 	Traceable *obj1 = new Traceable;
 	Traceable *obj2 = new Traceable;
@@ -186,9 +179,7 @@ void TraceableTest::checkparent7 (void)
 {
 	using namespace BIL;
 
-#ifdef DEBUG
 //	Traceable::reset();	// reset the map
-#endif
 
 	Traceable *obj1 = new Traceable;
 	Traceable *obj2 = new Traceable;
@@ -216,9 +207,7 @@ void TraceableTest::checkparent8 (void)
 {
 	using namespace BIL;
 
-#ifdef DEBUG
 	Traceable::reset();	// reset the map
-#endif
 
 	Traceable *obj1 = new Traceable;	// id = 1
 	Traceable *obj2 = new Traceable;	// id = 2
@@ -261,9 +250,7 @@ void TraceableTest::checkparent9 (void)
 {
 	using namespace BIL;
 
-#ifdef DEBUG
 	Traceable::reset();	// reset the map
-#endif
 
 	Traceable *obj1 = new Traceable;	// id = 1
 	Traceable *obj2 = new Traceable;	// id = 2
@@ -310,9 +297,7 @@ void TraceableTest::checkparent10 ()
 {
 	using namespace BIL;
 
-#ifdef DEBUG
 	Traceable::reset();	// reset the map
-#endif
 
 	Traceable* obj[100] = {0};
 	for(int i; i < 100; i++)
@@ -371,3 +356,5 @@ void TraceableTest::solotest2 ()
 	delete a; delete b;
 	CPPUNIT_ASSERT((count == 4) && (countb == 2));
 }
+
+#endif

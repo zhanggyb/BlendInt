@@ -14,7 +14,7 @@
 using namespace BIL;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(DrawableTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(DrawableTest);
 
 myTexture::myTexture (Drawable *parent)
 		: Drawable(parent)

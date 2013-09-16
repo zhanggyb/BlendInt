@@ -20,7 +20,7 @@
 using namespace BIL;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(TextureFontTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(TextureFontTest);
 
 TextureFontTest::TextureFontTest ()
 {

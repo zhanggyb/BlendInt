@@ -10,7 +10,7 @@
 using namespace BIL;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION (TupleTest);
+CPPUNIT_TEST_SUITE_REGISTRATION (TupleTest);
 
 TupleTest::TupleTest ()
 {

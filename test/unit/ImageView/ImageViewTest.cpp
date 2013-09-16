@@ -16,7 +16,7 @@
 using namespace BIL;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(ImageViewTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(ImageViewTest);
 
 ImageViewTest::ImageViewTest ()
 {

@@ -22,7 +22,7 @@
 using namespace BIL;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(LayoutTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(LayoutTest);
 
 LayoutTest::LayoutTest ()
 {

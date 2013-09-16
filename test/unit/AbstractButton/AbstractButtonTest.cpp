@@ -17,7 +17,7 @@
 using namespace BIL;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(AbstractButtonTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(AbstractButtonTest);
 
 AbstractButtonTest::AbstractButtonTest ()
 {
