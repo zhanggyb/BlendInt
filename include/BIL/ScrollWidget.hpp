@@ -19,58 +19,44 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_ICON_HPP_
-#define _BIL_ICON_HPP_
-
-#include <vector>
+#ifndef _BIL_SCROLLWIDGET_HPP_
+#define _BIL_SCROLLWIDGET_HPP_
 
 #include <BIL/Widget.hpp>
-#include <BIL/String.hpp>
-#include <BIL/Rect.hpp>
-
-#include <BIL/Image.hpp>
 
 namespace BIL {
 
-	class Icon: public Widget
+	class ScrollBar: public Widget
 	{
 	public:
 
-		Icon (Drawable* parent = 0);
+		ScrollBar (Drawable* parent = 0);
 
-		Icon (const unsigned char* icon, unsigned int width, unsigned int height, Drawable* parent = 0);
-
-		virtual ~Icon ();
-
-		/**
-		 * @brief read icon from allocated memory
-		 * @param icon
-		 * @return
-		 */
-		bool read (const unsigned char* icon, unsigned int width, unsigned int height);
-
-		/**
-		 * @brief create icon from a icon file
-		 * @param filename
-		 * @return
-		 */
-		bool read (const String& filename);
-
-		void scale (float ratio);
-
-		void scale (unsigned int width, unsigned height);
+		virtual ~ScrollBar ();
 
 	protected:
 
 		virtual void render ();
 
-	private:
+	};
 
-		std::vector<unsigned char> m_pixels;
+	class ScrollWidget: public Widget
+	{
 
-		static const int default_icon_size = 16;	// 16 x 16
+	public:
+
+		ScrollWidget (Drawable* parent = 0);
+
+		virtual ~ScrollWidget ();
+
+		void add_widget (Widget* widget);
+
+	protected:
+
+		virtual void render ();
 
 	};
+
 }
 
-#endif /* _BIL_ICON_HPP_ */
+#endif /* _BIL_SCROLLWIDGET_HPP_ */

@@ -39,7 +39,7 @@ namespace BIL {
 	{
 	public:
 
-		Label (const String& label, Drawable * parent = NULL);
+		Label (const String& label, Drawable * parent = 0);
 
 		virtual ~Label ();
 

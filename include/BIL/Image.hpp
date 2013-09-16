@@ -43,9 +43,11 @@ namespace BIL {
 
 		void close ();
 
+		const unsigned char* pixels () const {return &m_pixels[0];}
+
 	private:
 
-		std::vector<unsigned char> pixels_;
+		std::vector<unsigned char> m_pixels;
 
 		int width_;
 		int height_;

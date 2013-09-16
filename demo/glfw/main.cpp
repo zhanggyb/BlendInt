@@ -102,6 +102,24 @@ int main(int argc, char* argv[]) {
 		/* Render here */
 		app->render();
 
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glScissor (100, 100, 200, 200);
+		glEnable (GL_SCISSOR_TEST);
+
+		glColor3f(0.6f, 1.0f, 0.2f);
+		glBegin(GL_POLYGON);
+			glVertex2d(50,50);
+			glVertex2d(600,50);
+			glVertex2d(600,500);
+			glVertex2d(50,500);
+		glEnd();
+
+		glDisable(GL_SCISSOR_TEST);
+
+		glPopMatrix();
+
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
 

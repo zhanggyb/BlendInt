@@ -49,8 +49,8 @@ namespace BIL {
 		width_ = spec.width;
 		height_ = spec.height;
 		channels_ = spec.nchannels;
-		pixels_.resize (width_ * height_ * channels_);
-		in->read_image (TypeDesc::UINT8, &pixels_[0]);
+		m_pixels.resize (width_ * height_ * channels_);
+		in->read_image (TypeDesc::UINT8, &m_pixels[0]);
 		in->close ();
 
 		delete in;
