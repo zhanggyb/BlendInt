@@ -30,13 +30,25 @@ namespace BIL {
 	{
 	public:
 
-		ScrollBar (Drawable* parent = 0);
+		ScrollBar (Direction direction, Drawable* parent = 0);
 
 		virtual ~ScrollBar ();
 
+		void set_direction (int direction);
+
+		int direction () const {return m_direction;}
+
 	protected:
 
+		virtual void update ();
+
 		virtual void render ();
+
+	private:
+
+		void draw_scroll_cicle (const Rect& rect, float rad);
+
+		int m_direction;
 
 	};
 
@@ -49,11 +61,17 @@ namespace BIL {
 
 		virtual ~ScrollWidget ();
 
-		void add_widget (Widget* widget);
+		void set_viewport (Widget* widget);
+
+		Widget* viewport () const {return m_viewport;}
 
 	protected:
 
 		virtual void render ();
+
+	private:
+
+		Widget* m_viewport;
 
 	};
 

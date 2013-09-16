@@ -234,6 +234,20 @@ namespace BIL {
 		STICKY_MOUSE_BUTTONS = GLFW_STICKY_MOUSE_BUTTONS
 	};
 
+	enum SizePolicy {
+		SizePolicyNone = 0,
+		SizePolicyMinimum,
+		SizePolicyMaximum,
+		SizePolicyFixed,
+		SizePolicyPerfect,
+		SizePolicyExpand
+	};
+
+	enum Direction {
+		Horizontal = 1,
+		Vertical = 2
+	};
+
 	struct Vertex2D {
 		GLfloat x;
 		GLfloat y;
