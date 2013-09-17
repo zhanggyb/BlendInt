@@ -58,12 +58,12 @@ namespace BIL {
 	};
 	*/
 
-	ScrollBar::ScrollBar(Direction direction, Drawable* parent)
-	: Widget(parent), m_direction (direction)//, m_buffer(0)
+	ScrollBar::ScrollBar(Orientation orientation, Drawable* parent)
+	: Widget(parent), m_orientation(orientation)//, m_buffer(0)
 	{
-		if(m_direction == Horizontal) {
+		if(m_orientation == Horizontal) {
 			resize (400, 25);
-		} else if (m_direction == Vertical) {
+		} else if (m_orientation == Vertical) {
 			resize (25, 400);
 		}
 
@@ -88,7 +88,7 @@ namespace BIL {
 
 	void ScrollBar::update ()
 	{
-		if (m_direction == Horizontal) {
+		if (m_orientation == Horizontal) {
 
 			int radius = (size_.height() - padding_.top() - padding_.bottom()) / 2;
 
@@ -107,7 +107,7 @@ namespace BIL {
 				m_vertex[21][1] = padding_.bottom() + radius + radius * scroll_circle_vert[0][0];
 			}
 
-		} else if (m_direction == Vertical) {
+		} else if (m_orientation == Vertical) {
 
 			int radius = (size_.width() - padding_.left() - padding_.right()) / 2;
 

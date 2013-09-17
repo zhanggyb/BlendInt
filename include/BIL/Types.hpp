@@ -243,7 +243,7 @@ namespace BIL {
 		SizePolicyExpand
 	};
 
-	enum Direction {
+	enum Orientation {
 		Horizontal = 1,
 		Vertical = 2
 	};

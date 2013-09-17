@@ -22,9 +22,10 @@
 #ifndef _BIL_SCROLLWIDGET_HPP_
 #define _BIL_SCROLLWIDGET_HPP_
 
-#include <BIL/Widget.hpp>
-
 #include <BIL/GLBuffer.hpp>
+
+#include <BIL/AbstractSlider.hpp>
+#include <BIL/Widget.hpp>
 
 namespace BIL {
 
@@ -32,13 +33,13 @@ namespace BIL {
 	{
 	public:
 
-		ScrollBar (Direction direction, Drawable* parent = 0);
+		ScrollBar (Orientation orientation, Drawable* parent = 0);
 
 		virtual ~ScrollBar ();
 
-		void set_direction (Direction direction);
+		void set_direction (Orientation orientation);
 
-		Direction direction () const {return m_direction;}
+		Orientation orientation () const {return m_orientation;}
 
 	protected:
 
@@ -50,7 +51,7 @@ namespace BIL {
 
 		void draw_scroll_cicle (const Rect& rect, float rad);
 
-		Direction m_direction;
+		Orientation m_orientation;
 
 		static const float scroll_circle_vert[20][2];
 
