@@ -235,15 +235,15 @@ namespace BIL {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glScissor (100, 100, 200, 200);
 		glEnable (GL_SCISSOR_TEST);
+		glScissor (100, 100, 1000, 1000);
 
-		glColor3f(0.6f, 1.0f, 0.2f);
+		glColor4f(0.2f, 0.05f, 0.2f, 0.2f);
 		glBegin(GL_POLYGON);
 			glVertex2d(50,50);
-			glVertex2d(600,50);
-			glVertex2d(600,500);
-			glVertex2d(50,500);
+			glVertex2d(1200,50);
+			glVertex2d(1200,1200);
+			glVertex2d(50,1200);
 		glEnd();
 
 		glDisable(GL_SCISSOR_TEST);
