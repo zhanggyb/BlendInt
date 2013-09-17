@@ -98,8 +98,11 @@ int main(int argc, char* argv[]) {
 
 	layout2.set_pos (400, 500);
 
-	ScrollBar bar(Horizontal);
-	bar.set_pos (500, 200);
+	ScrollBar hbar(Horizontal);
+	hbar.set_pos (500, 100);
+
+	ScrollBar vbar(Vertical);
+	vbar.set_pos (600, 200);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

@@ -23,25 +23,32 @@
 #include <BIL/ScrollWidget.hpp>
 #include <BIL/Theme.hpp>
 
+#include <stdio.h>
+#include <iostream>
+
 namespace BIL {
 
-	const float ScrollBar::scroll_circle_vert[16][2] = {
-			{1.000000, 0.000000},
-			{0.923880, 0.382683},
-			{0.707107, 0.707107},
-			{0.382684, 0.923879},
-			{0.000000, 1.000000},
-			{-0.382684, 0.923879},
-			{-0.707107, 0.707107},
-			{-0.923880, 0.382683},
+	const float ScrollBar::scroll_circle_vert [20][2] = {
+			{1.000000, 0.000000},	// cos(0), sin(0)
+			{0.951057, 0.309017},	// cos(18), sin(18)
+			{0.809017, 0.587785},	// cos(36), sin(36)
+			{0.587785, 0.809017},	// cos(54), sin(54)
+			{0.309017, 0.951057},	// cos(72), sin(72)
+			{0.000000, 1.000000},	// cos(90), sin(90)
+			{-0.309017, 0.951057},
+			{-0.587785, 0.809017},
+			{-0.809017, 0.587785},
+			{-0.951057, 0.309017},
 			{-1.000000, 0.000000},
-			{-0.923880, -0.382683},
-			{-0.707107, -0.707107},
-			{-0.382684, -0.923879},
+			{-0.951057, -0.309017},
+			{-0.809017, -0.587785},
+			{-0.587785, -0.809017},
+			{-0.309017, -0.951057},
 			{0.000000, -1.000000},
-			{0.382684, -0.923879},
-			{0.707107, -0.707107},
-			{0.923880, -0.382683},
+			{0.309017, -0.951057},
+			{0.587785, -0.809017},
+			{0.809017, -0.587785},
+			{0.951057, -0.309017}
 	};
 
 	/*
@@ -52,16 +59,31 @@ namespace BIL {
 	*/
 
 	ScrollBar::ScrollBar(Direction direction, Drawable* parent)
-	: Widget(parent), m_direction (Horizontal), m_buffer(0)
+	: Widget(parent), m_direction (direction)//, m_buffer(0)
 	{
-		resize (200, 25);
+		if(m_direction == Horizontal) {
+			resize (400, 25);
+		} else if (m_direction == Vertical) {
+			resize (25, 400);
+		}
+
+		//glGenBuffers (1, &m_buffer);
 
 		update ();
+
+
+		std::wcout << L"hello" << std::endl;
+		for (int i = 0; i < 22; i++)
+		{
+			std::wcout << "vertex: " << m_vertex[i][0] << " " << m_vertex[i][1] << std::endl;
+			//fprintf (stderr, "vertex: %f, %f\n", m_vertex[i][0], m_vertex[i][1]);
+		}
+
 	}
 
 	ScrollBar::~ScrollBar()
 	{
-		glDeleteBuffers (1, &m_buffer);
+		//glDeleteBuffers (1, &m_buffer);
 	}
 
 	void ScrollBar::update ()
@@ -71,30 +93,50 @@ namespace BIL {
 			int radius = (size_.height() - padding_.top() - padding_.bottom()) / 2;
 
 			if (radius > 0) {
-				for (int i = 0; i < 9; i++)
+				for (int i = 0; i < 11; i++)
 				{
 					m_vertex[i][0] = padding_.left() + radius - radius * scroll_circle_vert[i][1];
 					m_vertex[i][1] = padding_.bottom() + radius + radius * scroll_circle_vert[i][0];
 				}
-				for (int i = 8; i < 16; i++)
+				for (int i = 10; i < 20; i++)
 				{
 					m_vertex[i + 1][0] = size_.width() - padding_.right() - radius - radius * scroll_circle_vert[i][1];
 					m_vertex[i + 1][1] = padding_.bottom() + radius + radius * scroll_circle_vert[i][0];
 				}
-				m_vertex[17][0] = size_.width() - padding_.right() - radius - radius * scroll_circle_vert[0][1];
-				m_vertex[17][1] = padding_.bottom() + radius + radius * scroll_circle_vert[0][0];
+				m_vertex[21][0] = size_.width() - padding_.right() - radius - radius * scroll_circle_vert[0][1];
+				m_vertex[21][1] = padding_.bottom() + radius + radius * scroll_circle_vert[0][0];
 			}
-
-			glGenBuffers (1, &m_buffer);
-			glBindBuffer (GL_ARRAY_BUFFER, m_buffer);
-
-			glBufferData (GL_ARRAY_BUFFER, sizeof(m_vertex), m_vertex, GL_STATIC_DRAW);
-
-			glBindBuffer (GL_ARRAY_BUFFER, 0);
 
 		} else if (m_direction == Vertical) {
 
+			int radius = (size_.width() - padding_.left() - padding_.right()) / 2;
+
+			if (radius > 0) {
+				for (int i = 0; i < 11; i++)
+				{
+					m_vertex[i][0] = padding_.left() + radius - radius * scroll_circle_vert[i][0];
+					m_vertex[i][1] = padding_.bottom() + radius - radius * scroll_circle_vert[i][1];
+				}
+				for (int i = 10; i < 20; i++)
+				{
+					m_vertex[i + 1][0] = padding_.left() + radius - radius * scroll_circle_vert[i][0];
+					m_vertex[i + 1][1] = size_.height() - padding_.top() - radius - radius * scroll_circle_vert[i][1];
+				}
+				m_vertex[21][0] = padding_.left() + radius - radius * scroll_circle_vert[0][0];
+				m_vertex[21][1] = size_.height() - padding_.top() - radius - radius * scroll_circle_vert[0][1];
+			}
+
 		}
+
+		//glBindBuffer (GL_ARRAY_BUFFER, m_buffer);
+		m_buffer.bind (GL_ARRAY_BUFFER);
+
+		//glBufferData (GL_ARRAY_BUFFER, sizeof(m_vertex), m_vertex, GL_STATIC_DRAW);
+		m_buffer.upload (GL_ARRAY_BUFFER, sizeof(m_vertex), m_vertex, GL_STATIC_DRAW);
+
+		//glBindBuffer (GL_ARRAY_BUFFER, 0);
+		m_buffer.unbind(GL_ARRAY_BUFFER);
+
 	}
 
 	void ScrollBar::render ()
@@ -109,6 +151,9 @@ namespace BIL {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		//glEnable(GL_POLYGON_SMOOTH);
+		//glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+
 		Theme* tm = Theme::instance();
 
 		glColor4ub(tm->themeUI()->wcol_scroll.item.r(),
@@ -116,22 +161,29 @@ namespace BIL {
 				tm->themeUI()->wcol_scroll.item.b(),
 				tm->themeUI()->wcol_scroll.item.a());
 		//glColor3f (1.0f, 0.2f, 0.9f);
-		glBindBuffer (GL_ARRAY_BUFFER, m_buffer);
+		//glBindBuffer (GL_ARRAY_BUFFER, m_buffer);
+		m_buffer.bind(GL_ARRAY_BUFFER);
 		glVertexPointer (2, GL_FLOAT, 0, 0);
 		glEnableClientState (GL_VERTEX_ARRAY);
 
 		//glDrawArrays(GL_POLYGON, 0, sizeof(m_vertex));
-		glDrawArrays(GL_POLYGON, 0, 18);
+		glDrawArrays(GL_POLYGON, 0, 22);
+		//glDisable(GL_POLYGON_SMOOTH);
 
 		glColor4ub(tm->themeUI()->wcol_scroll.outline.r(),
 				tm->themeUI()->wcol_scroll.outline.g(),
 				tm->themeUI()->wcol_scroll.outline.b(),
 				tm->themeUI()->wcol_scroll.outline.a());
-		glDrawArrays(GL_LINE_LOOP, 0, 18);
+
+		//glEnable(GL_LINE_SMOOTH);
+		//glLineWidth(1.25);
+		glDrawArrays(GL_LINE_LOOP, 0, 22);
+		//glDisable(GL_LINE_SMOOTH);
 
 		glDisableClientState (GL_VERTEX_ARRAY);
 
-		glBindBuffer (GL_ARRAY_BUFFER, 0);
+		//glBindBuffer (GL_ARRAY_BUFFER, 0);
+		m_buffer.unbind(GL_ARRAY_BUFFER);
 
 #ifdef DEBUG
 		glLineWidth(1);

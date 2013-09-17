@@ -24,6 +24,8 @@
 
 #include <BIL/Widget.hpp>
 
+#include <BIL/GLBuffer.hpp>
+
 namespace BIL {
 
 	class ScrollBar: public Widget
@@ -50,11 +52,12 @@ namespace BIL {
 
 		Direction m_direction;
 
-		static const float scroll_circle_vert[16][2];
+		static const float scroll_circle_vert[20][2];
 
-		float m_vertex[18][2];
+		float m_vertex[22][2];
 
-		GLuint m_buffer;
+		// GLuint m_buffer;
+		GLBuffer m_buffer;
 	};
 
 	class ScrollWidget: public Widget
