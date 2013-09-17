@@ -50,6 +50,11 @@ namespace BIL {
 
 		Direction m_direction;
 
+		static const float scroll_circle_vert[16][2];
+
+		float m_vertex[18][2];
+
+		GLuint m_buffer;
 	};
 
 	class ScrollWidget: public Widget
@@ -72,7 +77,6 @@ namespace BIL {
 	private:
 
 		Widget* m_viewport;
-
 	};
 
 }
