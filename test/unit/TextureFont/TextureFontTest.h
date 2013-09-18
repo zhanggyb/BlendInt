@@ -6,10 +6,10 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/Label.hpp>
+#include <BILO/Label.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
-#include <BIL/GLSLProgram.hpp>
+#include <BILO/GLSLProgram.hpp>
 
 using namespace BILO;
 using namespace std;

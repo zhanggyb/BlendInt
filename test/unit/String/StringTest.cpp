@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/String.hpp>
+#include <BILO/String.hpp>
 
 #include "StringTest.h"
 

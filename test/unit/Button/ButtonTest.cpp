@@ -10,10 +10,10 @@
 
 #include "ButtonTest.h"
 
-#include <BIL/Interface.hpp>
-#include <BIL/Label.hpp>
-#include <BIL/Button.hpp>
-#include <BIL/ToggleButton.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/Label.hpp>
+#include <BILO/Button.hpp>
+#include <BILO/ToggleButton.hpp>
 
 using namespace BILO;
 using namespace std;

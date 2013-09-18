@@ -1,5 +1,5 @@
 /**
- * BIL demo
+ * BILO demo
  */
 
 #include <GL/glew.h>
@@ -7,17 +7,17 @@
 #include <iostream>
 
 #include <Cpp/Events.hpp>
-#include <BIL/Interface.hpp>
+#include <BILO/Interface.hpp>
 
-#include <BIL/ToggleButton.hpp>
-#include <BIL/VerticalLayout.hpp>
-#include <BIL/HorizontalLayout.hpp>
+#include <BILO/ToggleButton.hpp>
+#include <BILO/VerticalLayout.hpp>
+#include <BILO/HorizontalLayout.hpp>
 
-#include <BIL/Types.hpp>
-#include <BIL/Button.hpp>
-#include <BIL/Label.hpp>
-#include <BIL/ScrollWidget.hpp>
-#include <BIL/Slider.hpp>
+#include <BILO/Types.hpp>
+#include <BILO/Button.hpp>
+#include <BILO/Label.hpp>
+#include <BILO/ScrollWidget.hpp>
+#include <BILO/Slider.hpp>
 
 using namespace BILO;
 

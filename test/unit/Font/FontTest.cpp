@@ -7,7 +7,7 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/Font.hpp>
+#include <BILO/Font.hpp>
 
 #include "FontTest.h"
 

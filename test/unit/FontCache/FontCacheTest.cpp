@@ -7,10 +7,10 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/Interface.hpp>
-#include <BIL/FontCache.hpp>
-#include <BIL/FontConfig.hpp>
-#include <BIL/String.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/FontCache.hpp>
+#include <BILO/FontConfig.hpp>
+#include <BILO/String.hpp>
 
 #include "FontCacheTest.h"
 
@@ -310,7 +310,7 @@ void FontCacheTest::show1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -325,7 +325,7 @@ void FontCacheTest::show1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -384,7 +384,7 @@ void FontCacheTest::show1()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -399,7 +399,7 @@ void FontCacheTest::show_multiple_cache1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -414,7 +414,7 @@ void FontCacheTest::show_multiple_cache1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -520,7 +520,7 @@ void FontCacheTest::show_multiple_cache1()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -535,7 +535,7 @@ void FontCacheTest::test_font_not_exist1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -550,7 +550,7 @@ void FontCacheTest::test_font_not_exist1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -656,7 +656,7 @@ void FontCacheTest::test_font_not_exist1()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();

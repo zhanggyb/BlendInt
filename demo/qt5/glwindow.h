@@ -2,7 +2,7 @@
 #define GLWINDOW_H
 
 #include <QGLWidget>
-#include <BIL/ToggleButton.hpp>
+#include <BILO/ToggleButton.hpp>
 
 class GLWindow : public QGLWidget
 {

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/Traceable.hpp>
+#include <BILO/Traceable.hpp>
 
 #include "TraceableTest.h"
 

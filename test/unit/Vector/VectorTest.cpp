@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/Vector.hpp>
+#include <BILO/Vector.hpp>
 
 #include "VectorTest.h"
 

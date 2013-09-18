@@ -1,6 +1,6 @@
 // cpp
 
-#include <BIL/FontConfig.hpp>
+#include <BILO/FontConfig.hpp>
 #include <iostream>
 #include <string>
 

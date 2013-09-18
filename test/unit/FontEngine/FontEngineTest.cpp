@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <wchar.h>
 
-#include <BIL/Freetype.hpp>
-#include <BIL/FontConfig.hpp>
+#include <BILO/Freetype.hpp>
+#include <BILO/FontConfig.hpp>
 
 #include <cppunit/TestAssert.h>
 

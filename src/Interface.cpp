@@ -1,19 +1,19 @@
 /*
- * This file is part of BIL (Blender Interface Library).
+ * This file is part of BILO (Blender Interface Library).
  *
- * BIL (Blender Interface Library) is free software: you can
+ * BILO (Blender Interface Library) is free software: you can
  * redistribute it and/or modify it under the terms of the GNU Lesser
  * General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * BIL (Blender Interface Library) is distributed in the hope that it
+ * BILO (Blender Interface Library) is distributed in the hope that it
  * will be useful, but WITHOUT ANY WARRANTY; without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BIL.  If not, see
+ * License along with BILO.  If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -22,19 +22,19 @@
 #include <GL/glew.h>
 #include <iostream>
 
-#include <BIL/Interface.hpp>
+#include <BILO/Interface.hpp>
 
-#include <BIL/FontConfig.hpp>
-#include <BIL/FontCache.hpp>
-#include <BIL/Theme.hpp>
-#include <BIL/ShaderManager.hpp>
-#include <BIL/Size.hpp>
-#include <BIL/Traceable.hpp>
-#include <BIL/Drawable.hpp>
-#include <BIL/KeyEvent.hpp>
-#include <BIL/MouseEvent.hpp>
-#include <BIL/ContextMenuEvent.hpp>
-#include <BIL/ContextManager.hpp>
+#include <BILO/FontConfig.hpp>
+#include <BILO/FontCache.hpp>
+#include <BILO/Theme.hpp>
+#include <BILO/ShaderManager.hpp>
+#include <BILO/Size.hpp>
+#include <BILO/Traceable.hpp>
+#include <BILO/Drawable.hpp>
+#include <BILO/KeyEvent.hpp>
+#include <BILO/MouseEvent.hpp>
+#include <BILO/ContextMenuEvent.hpp>
+#include <BILO/ContextManager.hpp>
 
 namespace BILO {
 
@@ -305,7 +305,7 @@ namespace BILO {
 							dispatch_key_press_event((*list_it), &event);
 							break;
 						case KeyRelease:
-							// item->KeyReleaseEvent(dynamic_cast<BIL::KeyEvent*>(event));
+							// item->KeyReleaseEvent(dynamic_cast<BILO::KeyEvent*>(event));
 							break;
 						case KeyRepeat:
 							// item->KeyRepeatEvent(&event);

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/Label.hpp>
+#include <BILO/Label.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 

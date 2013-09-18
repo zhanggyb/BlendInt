@@ -10,8 +10,8 @@
 
 #include "ScrollWidgetTest.h"
 
-#include <BIL/Interface.hpp>
-#include <BIL/ScrollWidget.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/ScrollWidget.hpp>
 
 using namespace BILO;
 using namespace std;
@@ -44,7 +44,7 @@ void ScrollWidgetTest::scrollbar_test01()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -59,7 +59,7 @@ void ScrollWidgetTest::scrollbar_test01()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -84,7 +84,7 @@ void ScrollWidgetTest::scrollbar_test01()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();

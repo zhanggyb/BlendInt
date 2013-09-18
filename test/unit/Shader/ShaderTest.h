@@ -3,8 +3,8 @@
 #ifndef _SHADER_TEST_H
 #define _SHADER_TEST_H
 
-#include <BIL/Widget.hpp>
-#include <BIL/GLSLProgram.hpp>
+#include <BILO/Widget.hpp>
+#include <BILO/GLSLProgram.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>

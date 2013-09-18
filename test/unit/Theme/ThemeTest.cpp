@@ -6,9 +6,9 @@
 #include <iostream>
 #include <string>
 
-#include <BIL/Interface.hpp>
-#include <BIL/Label.hpp>
-#include <BIL/Theme.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/Label.hpp>
+#include <BILO/Theme.hpp>
 
 #include "ThemeTest.h"
 
@@ -69,7 +69,7 @@ void ThemeTest::initialize2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -84,7 +84,7 @@ void ThemeTest::initialize2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -117,7 +117,7 @@ void ThemeTest::initialize2 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();

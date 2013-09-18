@@ -10,11 +10,11 @@
 
 #include "TextureAtlasTest.h"
 
-#include <BIL/Interface.hpp>
-#include <BIL/Label.hpp>
-#include <BIL/FontConfig.hpp>
-#include <BIL/Rect.hpp>
-#include <BIL/TextureAtlas.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/Label.hpp>
+#include <BILO/FontConfig.hpp>
+#include <BILO/Rect.hpp>
+#include <BILO/TextureAtlas.hpp>
 
 using namespace BILO;
 using namespace std;

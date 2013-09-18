@@ -10,9 +10,9 @@
 
 #include "TextBufferTest.h"
 
-#include <BIL/Interface.hpp>
-#include <BIL/TextBuffer.hpp>
-#include <BIL/FontConfig.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/TextBuffer.hpp>
+#include <BILO/FontConfig.hpp>
 
 using namespace BILO;
 using namespace std;
@@ -99,7 +99,7 @@ void TextBufferTest::showcharacter1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -114,7 +114,7 @@ void TextBufferTest::showcharacter1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -169,7 +169,7 @@ void TextBufferTest::showcharacter1 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -184,7 +184,7 @@ void TextBufferTest::showtextline1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -199,7 +199,7 @@ void TextBufferTest::showtextline1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -251,7 +251,7 @@ void TextBufferTest::showtextline1 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -266,7 +266,7 @@ void TextBufferTest::showtextline2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -281,7 +281,7 @@ void TextBufferTest::showtextline2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -333,7 +333,7 @@ void TextBufferTest::showtextline2 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -348,7 +348,7 @@ void TextBufferTest::showtextline3 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -363,7 +363,7 @@ void TextBufferTest::showtextline3 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -415,7 +415,7 @@ void TextBufferTest::showtextline3 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -430,7 +430,7 @@ void TextBufferTest::showtextline4 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -445,7 +445,7 @@ void TextBufferTest::showtextline4 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -497,7 +497,7 @@ void TextBufferTest::showtextline4 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -512,7 +512,7 @@ void TextBufferTest::multiple_buf_show1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -527,7 +527,7 @@ void TextBufferTest::multiple_buf_show1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -593,7 +593,7 @@ void TextBufferTest::multiple_buf_show1 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();

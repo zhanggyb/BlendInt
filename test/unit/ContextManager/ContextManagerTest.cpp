@@ -10,12 +10,12 @@
 
 #include "ContextManagerTest.h"
 
-#include <BIL/Interface.hpp>
-#include <BIL/Label.hpp>
-#include <BIL/FontConfig.hpp>
-#include <BIL/Rect.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/Label.hpp>
+#include <BILO/FontConfig.hpp>
+#include <BILO/Rect.hpp>
 
-#include <BIL/ContextManager.hpp>
+#include <BILO/ContextManager.hpp>
 
 using namespace BILO;
 using namespace std;
@@ -48,7 +48,7 @@ void ContextManagerTest::check_layer_0_0 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -63,7 +63,7 @@ void ContextManagerTest::check_layer_0_0 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -128,7 +128,7 @@ void ContextManagerTest::check_layer_0_0 ()
 
 	cm->print();
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -143,7 +143,7 @@ void ContextManagerTest::check_layer_0_1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -158,7 +158,7 @@ void ContextManagerTest::check_layer_0_1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -224,7 +224,7 @@ void ContextManagerTest::check_layer_0_1 ()
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 0 && cm->layer_size() == 0);
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -239,7 +239,7 @@ void ContextManagerTest::check_layer_0_2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -254,7 +254,7 @@ void ContextManagerTest::check_layer_0_2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -331,7 +331,7 @@ void ContextManagerTest::check_layer_0_2 ()
 	delete widget2; delete widget4;
 	//delete widget5;
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -346,7 +346,7 @@ void ContextManagerTest::check_layer_0_3 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -361,7 +361,7 @@ void ContextManagerTest::check_layer_0_3 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -434,7 +434,7 @@ void ContextManagerTest::check_layer_0_3 ()
 	delete widget2; delete widget4;
 	//delete widget5;
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -449,7 +449,7 @@ void ContextManagerTest::check_layer_0_4 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -464,7 +464,7 @@ void ContextManagerTest::check_layer_0_4 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -564,7 +564,7 @@ void ContextManagerTest::check_layer_0_4 ()
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 0 && cm->layer_size() == 0);
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();

@@ -3,7 +3,7 @@
 	<name>CppUnitTest</name>
 	<comment></comment>
 	<projects>
-		<project>BIL</project>
+		<project>BILO</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

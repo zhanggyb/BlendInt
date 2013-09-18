@@ -10,9 +10,9 @@
 
 #include "AbstractButtonTest.h"
 
-#include <BIL/Interface.hpp>
-#include <BIL/Label.hpp>
-#include <BIL/Button.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/Label.hpp>
+#include <BILO/Button.hpp>
 
 using namespace BILO;
 using namespace std;
@@ -45,7 +45,7 @@ void AbstractButtonTest::show1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -60,7 +60,7 @@ void AbstractButtonTest::show1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -86,7 +86,7 @@ void AbstractButtonTest::show1 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();

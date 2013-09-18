@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "glwindow.h"
-#include <BIL/Interface.hpp>
+#include <BILO/Interface.hpp>
 #include <QMouseEvent>
 
 GLWindow::GLWindow(QWidget *parent) :

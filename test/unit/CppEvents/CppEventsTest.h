@@ -5,8 +5,8 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <BIL/Button.hpp>
-#include <BIL/Label.hpp>
+#include <BILO/Button.hpp>
+#include <BILO/Label.hpp>
 
 using namespace std;
 

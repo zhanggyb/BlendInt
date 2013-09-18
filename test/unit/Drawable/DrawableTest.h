@@ -3,7 +3,7 @@
 #ifndef _DRAWABLE_TEST_H
 #define _DRAWABLE_TEST_H
 
-#include <BIL/Drawable.hpp>
+#include <BILO/Drawable.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>

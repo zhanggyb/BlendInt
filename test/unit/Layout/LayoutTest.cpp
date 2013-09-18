@@ -10,14 +10,14 @@
 
 #include "LayoutTest.h"
 
-#include <BIL/Interface.hpp>
-#include <BIL/Label.hpp>
-#include <BIL/Button.hpp>
-#include <BIL/FontConfig.hpp>
-#include <BIL/Rect.hpp>
-#include <BIL/HorizontalLayout.hpp>
-#include <BIL/VerticalLayout.hpp>
-#include <BIL/Types.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/Label.hpp>
+#include <BILO/Button.hpp>
+#include <BILO/FontConfig.hpp>
+#include <BILO/Rect.hpp>
+#include <BILO/HorizontalLayout.hpp>
+#include <BILO/VerticalLayout.hpp>
+#include <BILO/Types.hpp>
 
 using namespace BILO;
 using namespace std;

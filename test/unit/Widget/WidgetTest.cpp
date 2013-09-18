@@ -7,8 +7,8 @@
 #include <string>
 #include <stdio.h>
 
-#include <BIL/Interface.hpp>
-#include <BIL/Widget.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/Widget.hpp>
 #include "WidgetTest.h"
 
 using namespace BILO;

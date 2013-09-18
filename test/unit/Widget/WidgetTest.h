@@ -3,7 +3,7 @@
 #ifndef _WIDGET_TEST_H
 #define _WIDGET_TEST_H
 
-#include <BIL/Widget.hpp>
+#include <BILO/Widget.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>

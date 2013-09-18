@@ -10,8 +10,8 @@
 
 #include "ImageViewTest.h"
 
-#include <BIL/Interface.hpp>
-#include <BIL/ImageView.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/ImageView.hpp>
 
 using namespace BILO;
 using namespace std;

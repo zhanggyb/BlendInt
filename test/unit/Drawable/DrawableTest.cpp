@@ -7,8 +7,8 @@
 #include <string>
 #include <stdio.h>
 
-#include <BIL/Interface.hpp>
-#include <BIL/Drawable.hpp>
+#include <BILO/Interface.hpp>
+#include <BILO/Drawable.hpp>
 #include "DrawableTest.h"
 
 using namespace BILO;
@@ -298,7 +298,7 @@ void DrawableTest::texture1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -314,7 +314,7 @@ void DrawableTest::texture1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -338,7 +338,7 @@ void DrawableTest::texture1 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -353,7 +353,7 @@ void DrawableTest::mydrawable1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -369,7 +369,7 @@ void DrawableTest::mydrawable1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -395,7 +395,7 @@ void DrawableTest::mydrawable1 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -410,7 +410,7 @@ void DrawableTest::mydrawable2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -426,7 +426,7 @@ void DrawableTest::mydrawable2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -452,7 +452,7 @@ void DrawableTest::mydrawable2 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -467,7 +467,7 @@ void DrawableTest::mydrawable3 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -483,7 +483,7 @@ void DrawableTest::mydrawable3 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -509,7 +509,7 @@ void DrawableTest::mydrawable3 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();

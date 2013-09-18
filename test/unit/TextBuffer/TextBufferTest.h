@@ -3,7 +3,7 @@
 #ifndef _TEXTBUFFER_TEST_H
 #define _TEXTBUFFER_TEST_H
 
-#include <BIL/Drawable.hpp>
+#include <BILO/Drawable.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 
