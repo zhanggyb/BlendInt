@@ -63,6 +63,8 @@ namespace BIL {
 			size_ = size;
 		}
 
+		void render_drawable (Drawable* obj);
+
 	private:
 
 		Interface ();

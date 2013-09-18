@@ -35,20 +35,20 @@ namespace BIL {
 		// TODO Auto-generated destructor stub
 	}
 
-	bool AbstractLayout::addWidget (Widget* widget)
+	bool AbstractLayout::add_widget (Widget* widget)
 	{
 		bool ret = add_child (widget);
 
-		update();
+		update(WidgetPropertySize);
 
 		return ret;
 	}
 
-	bool AbstractLayout::addLayout(AbstractLayout* layout)
+	bool AbstractLayout::add_layout(AbstractLayout* layout)
 	{
 		bool ret = add_child (layout);
 
-		update();
+		update(WidgetPropertySize);
 
 		return ret;
 	}

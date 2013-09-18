@@ -113,9 +113,7 @@ namespace BIL {
 
 		virtual void mouseMoveEvent (MouseEvent* event);
 
-	protected:	// member functions
-
-		virtual void update ();
+		virtual void update (int property);
 
 		/**
 		 * @brief Calculate round box shadow edges

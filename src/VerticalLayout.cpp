@@ -25,57 +25,77 @@
 
 namespace BIL {
 
-	VerticalLayout::VerticalLayout(Drawable* parent, int align)
-		: AbstractLayout(parent)
+	VerticalLayout::VerticalLayout (Drawable* parent, int align)
+			: AbstractLayout(parent)
 	{
 		set_alignment(align);
 	}
 
-	VerticalLayout::~VerticalLayout()
+	VerticalLayout::~VerticalLayout ()
 	{
 
 	}
 
-	void VerticalLayout::update ()
+	void VerticalLayout::update (int property)
 	{
-		unsigned int total_width = 0;
-		unsigned int total_height = 0;
-		unsigned int max_widget_width = 0;
+		//if (property == WidgetPropertySize) {
 
-		std::list<Traceable*>::const_reverse_iterator rit;
-		total_height = padding_.bottom();
-		for (rit = m_children.rbegin(); rit != m_children.rend(); rit++)
-		{
-			Drawable* child = dynamic_cast<Drawable*>(*rit);
-			if(child) {
-				child->set_pos(pos_.x() + child->margin().left() + padding_.left(), pos_.y() + child->margin().bottom() + total_height);
-				total_width = std::max (total_width, padding_.left() + child->margin().left() + child->size().width() + child->margin().right() + padding_.right());
-				max_widget_width = std::max (max_widget_width, child->size().width());
-				total_height = total_height + child->margin().top() + child->size().height() + child->margin().bottom();
-			}
-		}
-		total_height += padding_.top();
+			unsigned int total_width = 0;
+			unsigned int total_height = 0;
+			unsigned int max_widget_width = 0;
 
-		std::list<Traceable*>::const_iterator it;
-		for (it = m_children.begin(); it != m_children.end(); it++)
-		{
-			Drawable* child = dynamic_cast<Drawable*>(*it);
-			if(child) {
-				if (alignment_ & AlignLeft) {
-					child->set_pos(pos_.x() + padding_.left() + child->margin().left(), child->pos().y());
-				} else if (alignment_ & AlignRight) {
-					child->set_pos(pos_.x() +
-								   (total_width -
-									(padding_.right() + child->size().width() + child->margin().right())),
-								   child->pos().y());
-				} else if (alignment_ & AlignVerticalCenter) {
-					child->set_pos(pos_.x() + padding_.left() + child->margin().left() + (max_widget_width - child->size().width()) / 2, child->pos().y());
+			std::list<Traceable*>::const_reverse_iterator rit;
+			total_height = padding_.bottom();
+			for (rit = m_children.rbegin(); rit != m_children.rend(); rit++) {
+				Drawable* child = dynamic_cast<Drawable*>(*rit);
+				if (child) {
+					child->set_pos(
+					        pos_.x() + child->margin().left() + padding_.left(),
+					        pos_.y() + child->margin().bottom() + total_height);
+					total_width = std::max(total_width,
+					        padding_.left() + child->margin().left()
+					                + child->size().width()
+					                + child->margin().right()
+					                + padding_.right());
+					max_widget_width = std::max(max_widget_width,
+					        child->size().width());
+					total_height = total_height + child->margin().top()
+					        + child->size().height() + child->margin().bottom();
 				}
 			}
-		}
+			total_height += padding_.top();
 
-		size_.set_width(total_width);
-		size_.set_height(total_height);
+			std::list<Traceable*>::const_iterator it;
+			for (it = m_children.begin(); it != m_children.end(); it++) {
+				Drawable* child = dynamic_cast<Drawable*>(*it);
+				if (child) {
+					if (alignment_ & AlignLeft) {
+						child->set_pos(
+						        pos_.x() + padding_.left()
+						                + child->margin().left(),
+						        child->pos().y());
+					} else if (alignment_ & AlignRight) {
+						child->set_pos(
+						        pos_.x()
+						                + (total_width
+						                        - (padding_.right()
+						                                + child->size().width()
+						                                + child->margin().right())),
+						        child->pos().y());
+					} else if (alignment_ & AlignVerticalCenter) {
+						child->set_pos(
+						        pos_.x() + padding_.left()
+						                + child->margin().left()
+						                + (max_widget_width
+						                        - child->size().width()) / 2,
+						        child->pos().y());
+					}
+				}
+			}
+
+			size_.set_width(total_width);
+			size_.set_height(total_height);
+		//}
 	}
 
 	void VerticalLayout::render ()
@@ -83,9 +103,7 @@ namespace BIL {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(),
-					 pos_.y(),
-					 z());
+		glTranslatef(pos_.x(), pos_.y(), z());
 #ifdef DEBUG
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
@@ -93,10 +111,10 @@ namespace BIL {
 		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
-			glVertex2i(0, 0);
-			glVertex2i(size_.width(), 0);
-			glVertex2i(size_.width(), size_.height());
-			glVertex2i(0, size_.height());
+		glVertex2i(0, 0);
+		glVertex2i(size_.width(), 0);
+		glVertex2i(size_.width(), size_.height());
+		glVertex2i(0, size_.height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);

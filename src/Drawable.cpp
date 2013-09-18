@@ -145,7 +145,7 @@ namespace BIL {
 	}
 
 	Drawable::Drawable (Drawable* parent)
-		: Traceable(parent), m_z(0), round_box_type_ (RoundBoxNone),
+		: Traceable(parent), m_z(0), round_box_type_ (RoundCornerNone),
 		  visible_(false)
 	{
 		if(!parent) {
@@ -201,6 +201,54 @@ namespace BIL {
 		return false;
 	}
 
+	const Size& Drawable::size () const
+	{
+		return size_;
+	}
+
+	void Drawable::resize (int w, int h)
+	{
+		if (size_.equal(w, h)) return;
+		size_.set_width(w);
+		size_.set_height(h);
+		update(WidgetPropertySize);
+	}
+
+	void Drawable::resize (const Size& size)
+	{
+		if (size_.equal(size)) return;
+
+		size_ = size;
+		update(WidgetPropertySize);
+	}
+
+	const Point& Drawable::pos () const
+	{
+		return pos_;
+	}
+
+	void Drawable::set_pos (int x, int y)
+	{
+		if (pos_.equal(x, y)) return;
+
+		pos_.set_x(x);
+		pos_.set_y(y);
+		update(WidgetPropertyPosition);
+	}
+
+	void Drawable::set_pos (const Point& pos)
+	{
+		if (pos_.equal(pos)) return;
+
+		pos_ = pos;
+		update(WidgetPropertyPosition);
+	}
+
+	inline int Drawable::z () const
+	{
+		return m_z;
+	}
+
 	void Drawable::set_z (int z)
 	{
 		m_z = z;
@@ -227,6 +275,90 @@ namespace BIL {
 				item->set_z (z);
 			}
 		}
+
+		update (WidgetPropertyLayer);
+	}
+
+	const Margin& Drawable::margin () const
+	{
+		return margin_;
+	}
+
+	void Drawable::set_margin (int left, int right, int top, int bottom)
+	{
+		margin_.set_left(left);
+		margin_.set_right(right);
+		margin_.set_top(top);
+		margin_.set_bottom(bottom);
+
+		update (WidgetPropertyMargin);
+	}
+
+	void Drawable::set_margin (const Margin& margin)
+	{
+		margin_ = margin;
+		update (WidgetPropertyMargin);
+	}
+
+	const Padding& Drawable::padding () const
+	{
+		return padding_;
+	}
+
+	void Drawable::set_padding (const Padding& padding)
+	{
+		padding_ = padding;
+
+		update(WidgetPropertyPadding);
+	}
+
+	void Drawable::set_round_box_type (RoundCornerType type)
+	{
+		if (round_box_type_ == type) return;
+
+		round_box_type_ = type;
+		update(WidgetPropertyRoundCorner);
+	}
+
+	inline RoundCornerType Drawable::round_box_type () const
+	{
+		return round_box_type_;
+	}
+
+	inline bool Drawable::visible () const
+	{
+		return visible_;
+	}
+
+	void Drawable::set_visible (bool visible)
+	{
+		visible_ = visible;
+
+		update (WidgetPropertyVisibility);
+	}
+
+	inline void Drawable::show ()
+	{
+		visible_ = true;
+
+		update (WidgetPropertyVisibility);
+	}
+
+	inline void Drawable::hide ()
+	{
+		visible_ = false;
+
+		update (WidgetPropertyVisibility);
+	}
+
+	const String& Drawable::name () const
+	{
+		return m_name;
+	}
+
+	void Drawable::set_name (const String& name)
+	{
+		m_name = name;
 	}
 
 	void Drawable::drawRoundBox (float minx,
@@ -263,7 +395,7 @@ namespace BIL {
 		glBegin(mode);
 
 		/* start with corner right-bottom */
-		if (round_box_type_ & RoundBoxBottomRight) {
+		if (round_box_type_ & RoundCornerBottomRight) {
 			glVertex2f(maxx - rad, miny);
 			for (a = 0; a < 7; a++) {
 				glVertex2f(maxx - rad + vec[a][0], miny + vec[a][1]);
@@ -275,7 +407,7 @@ namespace BIL {
 		}
 
 		/* corner right-top */
-		if (round_box_type_ & RoundBoxTopRight) {
+		if (round_box_type_ & RoundCornerTopRight) {
 			glVertex2f(maxx, maxy - rad);
 			for (a = 0; a < 7; a++) {
 				glVertex2f(maxx - vec[a][1], maxy - rad + vec[a][0]);
@@ -287,7 +419,7 @@ namespace BIL {
 		}
 
 		/* corner left-top */
-		if (round_box_type_ & RoundBoxTopLeft) {
+		if (round_box_type_ & RoundCornerTopLeft) {
 			glVertex2f(minx + rad, maxy);
 			for (a = 0; a < 7; a++) {
 				glVertex2f(minx + rad - vec[a][0], maxy - vec[a][1]);
@@ -299,7 +431,7 @@ namespace BIL {
 		}
 
 		/* corner left-bottom */
-		if (round_box_type_ & RoundBoxBottomLeft) {
+		if (round_box_type_ & RoundCornerBottomLeft) {
 			glVertex2f(minx, miny + rad);
 			for (a = 0; a < 7; a++) {
 				glVertex2f(minx + vec[a][1], miny + rad - vec[a][0]);
@@ -355,7 +487,7 @@ namespace BIL {
 		glBegin(mode);
 
 		/* start with corner right-bottom */
-		if (round_box_type_ & RoundBoxBottomRight) {
+		if (round_box_type_ & RoundCornerBottomRight) {
 
 			round_box_shade_col(coltop, coldown, 0.0);
 			glVertex2f(maxx - rad, miny);
@@ -374,7 +506,7 @@ namespace BIL {
 		}
 
 		/* corner right-top */
-		if (round_box_type_ & RoundBoxTopRight) {
+		if (round_box_type_ & RoundCornerTopRight) {
 
 			round_box_shade_col(coltop, coldown, (div - rad) * idiv);
 			glVertex2f(maxx, maxy - rad);
@@ -393,7 +525,7 @@ namespace BIL {
 		}
 
 		/* corner left-top */
-		if (round_box_type_ & RoundBoxTopLeft) {
+		if (round_box_type_ & RoundCornerTopLeft) {
 
 			round_box_shade_col(coltop, coldown, 1.0);
 			glVertex2f(minx + rad, maxy);
@@ -412,7 +544,7 @@ namespace BIL {
 		}
 
 		/* corner left-bottom */
-		if (round_box_type_ & RoundBoxBottomLeft) {
+		if (round_box_type_ & RoundCornerBottomLeft) {
 
 			round_box_shade_col(coltop, coldown, rad * idiv);
 			glVertex2f(minx, miny + rad);
@@ -565,7 +697,7 @@ namespace BIL {
 		glBegin(mode);
 
 		/* start with corner right-bottom */
-		if (round_box_type_ & RoundBoxBottomRight) {
+		if (round_box_type_ & RoundCornerBottomRight) {
 			round_box_shade_col(colLeft, colRight, 0.0);
 			glVertex2f(maxx - rad, miny);
 
@@ -583,7 +715,7 @@ namespace BIL {
 		}
 
 		/* corner right-top */
-		if (round_box_type_ & RoundBoxTopRight) {
+		if (round_box_type_ & RoundCornerTopRight) {
 			round_box_shade_col(colLeft, colRight, 0.0);
 			glVertex2f(maxx, maxy - rad);
 
@@ -602,7 +734,7 @@ namespace BIL {
 		}
 
 		/* corner left-top */
-		if (round_box_type_ & RoundBoxTopLeft) {
+		if (round_box_type_ & RoundCornerTopLeft) {
 			round_box_shade_col(colLeft, colRight, (div - rad) * idiv);
 			glVertex2f(minx + rad, maxy);
 
@@ -621,7 +753,7 @@ namespace BIL {
 		}
 
 		/* corner left-bottom */
-		if (round_box_type_ & RoundBoxBottomLeft) {
+		if (round_box_type_ & RoundCornerBottomLeft) {
 			round_box_shade_col(colLeft, colRight, 1.0);
 			glVertex2f(minx, miny + rad);
 

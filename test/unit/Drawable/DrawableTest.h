@@ -22,7 +22,7 @@ public:
 
 protected:
 
-	virtual void update () {}
+	virtual void update (int property) {}
 
 	virtual void render ();
 
@@ -58,7 +58,7 @@ public:
 
 protected:
 
-	virtual void update () {}
+	virtual void update (int property) {}
 
 	virtual void render ();
 
@@ -85,7 +85,7 @@ public:
 
 protected:
 
-	virtual void update () {}
+	virtual void update (int property) {}
 
 	virtual void render ();
 
@@ -112,7 +112,7 @@ public:
 
 protected:
 
-	virtual void update () {}
+	virtual void update (int property) {}
 
 	virtual void render ();
 

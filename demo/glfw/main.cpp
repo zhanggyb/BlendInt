@@ -86,15 +86,15 @@ int main(int argc, char* argv[]) {
 	Label* label1 = new Label(L"la1");
 	label1->set_pos(100, 100);
 
-	layout1->addWidget(label1);
+	layout1->add_widget(label1);
 
 	HorizontalLayout layout2;
 
 	Label* label2 = new Label(L"Hello Blender");
 	label2->set_pos(500, 500);
 
-	layout2.addWidget(label2);
-	layout2.addLayout(layout1);
+	layout2.add_widget(label2);
+	layout2.add_layout(layout1);
 
 	layout2.set_pos (400, 500);
 	layout2.set_z(2);

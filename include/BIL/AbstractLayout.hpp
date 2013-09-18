@@ -35,9 +35,9 @@ namespace BIL {
 
 		virtual ~AbstractLayout ();
 
-		bool addWidget (Widget* widget);
+		bool add_widget (Widget* widget);
 
-		bool addLayout (AbstractLayout* layout);
+		bool add_layout (AbstractLayout* layout);
 
 		int alignment () const {return alignment_;}
 
@@ -59,7 +59,7 @@ namespace BIL {
 
 		virtual void render () = 0;
 
-		void update () = 0;
+		void update (int property) {}
 
 		int alignment_;
 

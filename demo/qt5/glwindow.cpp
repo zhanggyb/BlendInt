@@ -34,7 +34,7 @@ void GLWindow::initializeGL()
     button_ = new ToggleButton("Hello World!");
     button_->set_pos(200, 200);
     button_->set_font(Font("Droid Sans"));
-    button_->set_round_box_type(RoundBoxAll);
+    button_->set_round_box_type(RoundCornerAll);
 }
 
 void GLWindow::resizeGL(int w, int h)

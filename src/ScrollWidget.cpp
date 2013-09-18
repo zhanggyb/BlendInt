@@ -23,6 +23,8 @@
 #include <BIL/ScrollWidget.hpp>
 #include <BIL/Theme.hpp>
 
+#include <BIL/Interface.hpp>
+
 #include <stdio.h>
 #include <iostream>
 
@@ -69,7 +71,7 @@ namespace BIL {
 
 		//glGenBuffers (1, &m_buffer);
 
-		update ();
+		update (0);
 
 
 		std::wcout << L"hello" << std::endl;
@@ -86,7 +88,7 @@ namespace BIL {
 		//glDeleteBuffers (1, &m_buffer);
 	}
 
-	void ScrollBar::update ()
+	void ScrollBar::update (int property)
 	{
 		if (m_orientation == Horizontal) {
 
@@ -225,6 +227,8 @@ namespace BIL {
 
 	void ScrollWidget::render ()
 	{
+		//Interface::instance()->render_drawable(m_viewport);
+
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 

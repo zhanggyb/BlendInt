@@ -175,6 +175,11 @@ namespace BIL {
 		glDisable(GL_BLEND);
 	}
 
+	inline void Interface::render_drawable (Drawable* obj)
+	{
+		obj->render ();
+	}
+
 	void Interface::render_at_layer (Drawable* obj, int layer)
 	{
 		list<Traceable*>::const_iterator it;

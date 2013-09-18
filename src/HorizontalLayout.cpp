@@ -36,8 +36,9 @@ namespace BIL {
 
 	}
 
-	void HorizontalLayout::update ()
+	void HorizontalLayout::update (int property)
 	{
+		//if (property == WidgetPropertySize) {
 		unsigned int total_width = 0;
 		unsigned int total_height = 0;
 		unsigned int max_widget_height = 0;
@@ -77,6 +78,7 @@ namespace BIL {
 
 		size_.set_width(total_width);
 		size_.set_height(total_height);
+		//}
 	}
 
 	void HorizontalLayout::render ()

@@ -61,118 +61,47 @@ namespace BIL {
 
 		bool remove_child (Drawable* child);
 
-		const Size& size () const
-		{
-			return size_;
-		}
+		const Size& size () const;
 
-		void resize (int w, int h)
-		{
-			if (size_.equal(w, h)) return;
-			size_.set_width(w);
-			size_.set_height(h);
-			update();
-		}
+		void resize (int w, int h);
 
-		void resize (const Size& size)
-		{
-			if (size_.equal(size)) return;
+		void resize (const Size& size);
 
-			size_ = size;
-			update();
-		}
+		const Point& pos () const;
 
-		const Point& pos () const
-		{
-			return pos_;
-		}
+		void set_pos (int x, int y);
 
-		void set_pos (int x, int y)
-		{
-			if (pos_.equal(x, y)) return;
+		void set_pos (const Point& pos);
 
-			pos_.set_x(x);
-			pos_.set_y(y);
-			update();
-		}
-
-		void set_pos (const Point& pos)
-		{
-			if (pos_.equal(pos)) return;
-
-			pos_ = pos;
-			update();
-		}
-
-		int z () const
-		{
-			return m_z;
-		}
+		int z () const;
 
 		void set_z (int z);
 
-		const Margin& margin () const
-		{
-			return margin_;
-		}
+		const Margin& margin () const;
 
-		void set_margin (int left, int right, int top, int bottom)
-		{
-			margin_.set_left(left);
-			margin_.set_right(right);
-			margin_.set_top(top);
-			margin_.set_bottom(bottom);
-		}
+		void set_margin (int left, int right, int top, int bottom);
 
-		void set_margin (const Margin& margin)
-		{
-			margin_ = margin;
-		}
+		void set_margin (const Margin& margin);
 
-		const Padding& padding () const
-		{
-			return padding_;
-		}
+		const Padding& padding () const;
 
-		void set_padding (const Padding& padding)
-		{
-			padding_ = padding;
+		void set_padding (const Padding& padding);
 
-			// TODO: update after padding change
-		}
+		void set_round_box_type (RoundCornerType type);
 
-		void set_round_box_type (RoundBoxType type)
-		{
-			if (round_box_type_ == type) return;
+		RoundCornerType round_box_type () const;
 
-			round_box_type_ = type;
-			update();
-		}
+		bool visible () const;
 
-		RoundBoxType round_box_type () const
-		{
-			return round_box_type_;
-		}
+		void set_visible (bool visible);
 
-		bool visible () const {return visible_;}
+		void show ();
 
-		void set_visible (bool visible) {
-			visible_ = visible;
-		}
+		void hide ();
 
-		void show ()
-		{
-			visible_ = true;
-		}
+		const String& name () const;
 
-		void hide ()
-		{
-			visible_ = false;
-		}
-
-		const String& name () const {return m_name;}
-
-		void set_name (const String& name) {m_name = name;}
+		void set_name (const String& name);
 
 	protected:	// member functions
 
@@ -182,7 +111,7 @@ namespace BIL {
 		 * @warning DO NOT call functions to change own properties again,
 		 * e.g, resize()
 		 */
-		virtual void update () = 0;
+		virtual void update (int property) = 0;
 
 		void drawRoundBox (float minx,
 						   float miny,
@@ -276,7 +205,7 @@ namespace BIL {
 
 		Margin margin_; /** used when in Layout */
 
-		RoundBoxType round_box_type_;
+		RoundCornerType round_box_type_;
 
 		bool visible_;
 

@@ -19,7 +19,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION (WidgetTest);
 testWidget::testWidget(int type, Drawable* parent)
 	: Widget (parent)
 {
-	round_box_type_ = RoundBoxAll;
+	round_box_type_ = RoundCornerAll;
 	set_pos (Point(100, 100));
 	resize (200, 200);
 

@@ -396,21 +396,20 @@ namespace BIL {
 		event->accept();
 	}
 
-	void Widget::update ()
+	void Widget::update (int property)
 	{
-		if (!size_.is_valid())
-			return;
+		//if (property == WidgetPropertyRoundCorner) {
+			if (!size_.is_valid())
+				return;
 
-		float rad;
+			float rad;
 
-		/* half rounded */
-		// TODO: define widget_unit by user
-		//rad = 0.2f * U.widget_unit;
-		rad = 0.2f * 20;
+			rad = 0.2f * 20;
 
-		//round_box_edges(&wtb, roundboxalign, rect, rad);
-		CalculateRoundBoxEdges(round_box_type_, Rect(0, 0, size_.width(), size_.height()), rad,
+			//round_box_edges(&wtb, roundboxalign, rect, rad);
+			CalculateRoundBoxEdges(round_box_type_, Rect(0, 0, size_.width(), size_.height()), rad,
 		        &m_appearance);
+		//}
 	}
 
 	void Widget::render ()
@@ -461,7 +460,7 @@ namespace BIL {
 		}
 
 		/* start with left-top, anti clockwise */
-		if (roundboxalign & RoundBoxTopLeft) {
+		if (roundboxalign & RoundCornerTopLeft) {
 			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
 				vert[tot][0] = minx + rad - vec[a][0];
 				vert[tot][1] = maxy - vec[a][1];
@@ -473,7 +472,7 @@ namespace BIL {
 			}
 		}
 
-		if (roundboxalign & RoundBoxBottomLeft) {
+		if (roundboxalign & RoundCornerBottomLeft) {
 			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
 				vert[tot][0] = minx + vec[a][1];
 				vert[tot][1] = miny + rad - vec[a][0];
@@ -485,7 +484,7 @@ namespace BIL {
 			}
 		}
 
-		if (roundboxalign & RoundBoxBottomRight) {
+		if (roundboxalign & RoundCornerBottomRight) {
 			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
 				vert[tot][0] = maxx - rad + vec[a][0];
 				vert[tot][1] = miny + vec[a][1];
@@ -497,7 +496,7 @@ namespace BIL {
 			}
 		}
 
-		if (roundboxalign & RoundBoxTopRight) {
+		if (roundboxalign & RoundCornerTopRight) {
 			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
 				vert[tot][0] = maxx - vec[a][1];
 				vert[tot][1] = maxy - rad + vec[a][0];
@@ -529,18 +528,18 @@ namespace BIL {
 		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
 		int a, tot = 0, minsize;
 		const int hnum =
-		        ((roundboxalign & (RoundBoxTopLeft | RoundBoxTopRight))
-		                == (RoundBoxTopLeft | RoundBoxTopRight)
+		        ((roundboxalign & (RoundCornerTopLeft | RoundCornerTopRight))
+		                == (RoundCornerTopLeft | RoundCornerTopRight)
 		                || (roundboxalign
-		                        & (RoundBoxBottomRight | RoundBoxBottomLeft))
-		                        == (RoundBoxBottomRight | RoundBoxBottomLeft)) ?
+		                        & (RoundCornerBottomRight | RoundCornerBottomLeft))
+		                        == (RoundCornerBottomRight | RoundCornerBottomLeft)) ?
 		                1 : 2;
 		const int vnum =
-		        ((roundboxalign & (RoundBoxTopLeft | RoundBoxBottomLeft))
-		                == (RoundBoxTopLeft | RoundBoxBottomLeft)
+		        ((roundboxalign & (RoundCornerTopLeft | RoundCornerBottomLeft))
+		                == (RoundCornerTopLeft | RoundCornerBottomLeft)
 		                || (roundboxalign
-		                        & (RoundBoxTopRight | RoundBoxBottomRight))
-		                        == (RoundBoxTopRight | RoundBoxBottomRight)) ?
+		                        & (RoundCornerTopRight | RoundCornerBottomRight))
+		                        == (RoundCornerTopRight | RoundCornerBottomRight)) ?
 		                1 : 2;
 
 		minsize = std::min(rect.width() * hnum, rect.height() * vnum);
@@ -560,7 +559,7 @@ namespace BIL {
 		}
 
 		/* corner left-bottom */
-		if (roundboxalign & RoundBoxBottomLeft) {
+		if (roundboxalign & RoundCornerBottomLeft) {
 
 			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
 				wt->inner_v[tot][0] = minxi + veci[a][1];
@@ -586,7 +585,7 @@ namespace BIL {
 		}
 
 		/* corner right-bottom */
-		if (roundboxalign & RoundBoxBottomRight) {
+		if (roundboxalign & RoundCornerBottomRight) {
 
 			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
 				wt->inner_v[tot][0] = maxxi - radi + veci[a][0];
@@ -614,7 +613,7 @@ namespace BIL {
 		wt->halfwayvert = tot;
 
 		/* corner right-top */
-		if (roundboxalign & RoundBoxTopRight) {
+		if (roundboxalign & RoundCornerTopRight) {
 
 			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
 				wt->inner_v[tot][0] = maxxi - veci[a][1];
@@ -640,7 +639,7 @@ namespace BIL {
 		}
 
 		/* corner left-top */
-		if (roundboxalign & RoundBoxTopLeft) {
+		if (roundboxalign & RoundCornerTopLeft) {
 
 			for (a = 0; a < WIDGET_CURVE_RESOLU; a++, tot++) {
 				wt->inner_v[tot][0] = minxi + radi - veci[a][0];

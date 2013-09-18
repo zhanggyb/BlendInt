@@ -208,17 +208,17 @@ namespace BIL {
 	 * |      		|
 	 * 8------4
 	 */
-	enum RoundBoxType
+	enum RoundCornerType
 		{
-			RoundBoxTopLeft = (1 << 0),
-			RoundBoxTopRight = (1 << 1),
-			RoundBoxBottomRight = (1 << 2),
-			RoundBoxBottomLeft = (1 << 3),
+			RoundCornerNone = 0,
+			RoundCornerTopLeft = (1 << 0),
+			RoundCornerTopRight = (1 << 1),
+			RoundCornerBottomRight = (1 << 2),
+			RoundCornerBottomLeft = (1 << 3),
 			/* just for convenience */
-			RoundBoxNone = 0,
-			RoundBoxAll = (RoundBoxTopLeft | RoundBoxTopRight
-						   | RoundBoxBottomRight | RoundBoxBottomLeft),
-			UI_RB_ALPHA = RoundBoxAll + 1
+			RoundCornerAll = (RoundCornerTopLeft | RoundCornerTopRight
+						   | RoundCornerBottomRight | RoundCornerBottomLeft),
+			UI_RB_ALPHA = RoundCornerAll + 1
 		};
 
 	enum ScrollState
@@ -246,6 +246,18 @@ namespace BIL {
 	enum Orientation {
 		Horizontal = 1,
 		Vertical = 2
+	};
+
+	enum WidgetPropertyType {
+		WidgetPropertyUnknown = 0,
+		WidgetPropertyPosition,
+		WidgetPropertySize,
+		WidgetPropertyLayer,
+		WidgetPropertyPadding,
+		WidgetPropertyMargin,
+		WidgetPropertyRoundCorner,
+		WidgetPropertyVisibility,
+		WidgetPropertyLast
 	};
 
 	struct Vertex2D {

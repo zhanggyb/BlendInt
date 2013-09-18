@@ -117,7 +117,7 @@ void myTexture::makeCheckImage (void)
 myDrawable1::myDrawable1 (Drawable* parent)
 		: Drawable(parent)
 {
-	round_box_type_ = RoundBoxAll;
+	round_box_type_ = RoundCornerAll;
 }
 
 myDrawable1::~myDrawable1 ()
@@ -169,7 +169,7 @@ void myDrawable1::mouseMoveEvent (MouseEvent* event)
 myDrawable2::myDrawable2 (Drawable* parent)
 		: Drawable(parent)
 {
-	round_box_type_ = RoundBoxAll;
+	round_box_type_ = RoundCornerAll;
 }
 
 myDrawable2::~myDrawable2 ()
@@ -219,7 +219,7 @@ void myDrawable2::mouseMoveEvent (MouseEvent* event)
 myDrawable3::myDrawable3 (Drawable* parent)
 		: Drawable(parent)
 {
-	round_box_type_ = RoundBoxAll;
+	round_box_type_ = RoundCornerAll;
 }
 
 myDrawable3::~myDrawable3 ()
