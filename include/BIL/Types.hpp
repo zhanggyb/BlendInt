@@ -26,7 +26,7 @@
 
 #include <string>	// typedef String
 
-namespace BIL {
+namespace BILO {
 
 	enum MouseAction {
 		MouseNone = -1,

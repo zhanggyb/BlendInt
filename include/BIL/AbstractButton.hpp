@@ -33,7 +33,7 @@
 
 using namespace std;
 
-namespace BIL {
+namespace BILO {
 
 	class AbstractButton: public Widget
 	{

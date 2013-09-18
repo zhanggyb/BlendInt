@@ -15,7 +15,7 @@
 #include <BIL/FontConfig.hpp>
 #include <BIL/Rect.hpp>
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(LabelTest);
@@ -46,7 +46,7 @@ void LabelTest::show1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -61,7 +61,7 @@ void LabelTest::show1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -89,7 +89,7 @@ void LabelTest::show1 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -109,7 +109,7 @@ void LabelTest::checkfont1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -124,7 +124,7 @@ void LabelTest::checkfont1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -153,7 +153,7 @@ void LabelTest::checkfont1 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -168,7 +168,7 @@ void LabelTest::checkfont2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -183,7 +183,7 @@ void LabelTest::checkfont2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -217,7 +217,7 @@ void LabelTest::checkfont2 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -232,7 +232,7 @@ void LabelTest::multiline1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -247,7 +247,7 @@ void LabelTest::multiline1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -277,7 +277,7 @@ void LabelTest::multiline1 ()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -293,22 +293,22 @@ void LabelTest::cbError (int error, const char* description)
 
 void LabelTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BIL::Interface::instance()->resizeEvent(w, h);
+	BILO::Interface::instance()->resizeEvent(w, h);
 }
 
 void LabelTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void LabelTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void LabelTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

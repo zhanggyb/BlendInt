@@ -27,7 +27,7 @@
  *
  * used for box model of a widget
  */
-namespace BIL {
+namespace BILO {
 
 	class Padding
 	{

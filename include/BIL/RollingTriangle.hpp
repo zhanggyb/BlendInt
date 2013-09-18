@@ -24,12 +24,12 @@
 
 #include <BIL/Drawable.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * This object is for test only
 	 */
-	class RollingTriangle: public BIL::Drawable
+	class RollingTriangle: public BILO::Drawable
 	{
 	public:
 		RollingTriangle (Drawable *parent = 0);

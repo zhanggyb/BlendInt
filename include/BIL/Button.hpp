@@ -25,7 +25,7 @@
 #include <BIL/AbstractButton.hpp>
 #include <BIL/String.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class Button: public AbstractButton
 	{

@@ -26,7 +26,7 @@
 #include <BIL/KeyEvent.hpp>
 #include <BIL/ContextMenuEvent.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class Interface;
 

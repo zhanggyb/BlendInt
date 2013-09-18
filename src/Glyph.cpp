@@ -21,7 +21,7 @@
 
 #include <BIL/Glyph.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	Glyph::Glyph ()
 	: bitmap_width(0), bitmap_height(0), bitmap_left(0), bitmap_top(0),

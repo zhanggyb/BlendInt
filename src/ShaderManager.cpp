@@ -24,7 +24,7 @@
 
 #include <BIL/ShaderManager.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	const char* ShaderManager::text_vs_shader_ =
 			"attribute vec4 coord;"

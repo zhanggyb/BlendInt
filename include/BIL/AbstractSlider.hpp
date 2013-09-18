@@ -27,7 +27,7 @@
 
 #include <Cpp/Events.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @brief The abstract class for slider widgets

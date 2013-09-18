@@ -26,7 +26,7 @@
 #include <BIL/Freetype.hpp>
 #include <BIL/Glyph.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @brief A class to generate texture for single character with Freetype

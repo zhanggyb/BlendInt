@@ -26,7 +26,7 @@
 
 #include <BIL/Utilities-inl.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class Color
 	{

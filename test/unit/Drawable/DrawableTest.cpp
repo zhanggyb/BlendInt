@@ -11,7 +11,7 @@
 #include <BIL/Drawable.hpp>
 #include "DrawableTest.h"
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(DrawableTest);
@@ -524,23 +524,23 @@ void DrawableTest::cbError (int error, const char* description)
 
 void DrawableTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BIL::Interface::instance()->resizeEvent(w, h);
+	BILO::Interface::instance()->resizeEvent(w, h);
 }
 
 void DrawableTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void DrawableTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void DrawableTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
 }
 

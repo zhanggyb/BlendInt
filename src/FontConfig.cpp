@@ -31,7 +31,7 @@ using namespace std;
 using namespace boost;
 using namespace boost::filesystem;
 
-namespace BIL {
+namespace BILO {
 
 	FontConfig* FontConfig::service = 0;
 

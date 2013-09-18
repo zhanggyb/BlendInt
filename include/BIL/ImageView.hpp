@@ -24,7 +24,7 @@
 
 #include <BIL/Widget.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class ImageView: public Widget
 	{

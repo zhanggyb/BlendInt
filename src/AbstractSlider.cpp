@@ -23,7 +23,7 @@
 
 #include <BIL/AbstractSlider.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	AbstractSlider::AbstractSlider(Orientation orientation,
 								   Drawable* parent)

@@ -11,7 +11,7 @@
 #include <BIL/Widget.hpp>
 #include "WidgetTest.h"
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION (WidgetTest);
@@ -77,7 +77,7 @@ void WidgetTest::widget_default_show ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -92,7 +92,7 @@ void WidgetTest::widget_default_show ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -121,7 +121,7 @@ void WidgetTest::widget_default_show ()
     		glfwPollEvents();
     	}
 
-    	/* release BIL */
+    	/* release BILO */
     	Interface::release();
 
     	glfwTerminate();
@@ -136,7 +136,7 @@ void WidgetTest::testwidget_show0()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -151,7 +151,7 @@ void WidgetTest::testwidget_show0()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -178,7 +178,7 @@ void WidgetTest::testwidget_show0()
     		glfwPollEvents();
     	}
 
-    	/* release BIL */
+    	/* release BILO */
     	Interface::release();
 
     	glfwTerminate();
@@ -193,7 +193,7 @@ void WidgetTest::testwidget_show1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -208,7 +208,7 @@ void WidgetTest::testwidget_show1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -233,7 +233,7 @@ void WidgetTest::testwidget_show1()
     		glfwPollEvents();
     	}
 
-    	/* release BIL */
+    	/* release BILO */
     	Interface::release();
 
     	glfwTerminate();
@@ -248,7 +248,7 @@ void WidgetTest::testwidget_show2()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -263,7 +263,7 @@ void WidgetTest::testwidget_show2()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -288,7 +288,7 @@ void WidgetTest::testwidget_show2()
     		glfwPollEvents();
     	}
 
-    	/* release BIL */
+    	/* release BILO */
     	Interface::release();
 
     	glfwTerminate();
@@ -303,7 +303,7 @@ void WidgetTest::testwidget_show3()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -318,7 +318,7 @@ void WidgetTest::testwidget_show3()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -343,7 +343,7 @@ void WidgetTest::testwidget_show3()
     		glfwPollEvents();
     	}
 
-    	/* release BIL */
+    	/* release BILO */
     	Interface::release();
 
     	glfwTerminate();
@@ -359,22 +359,22 @@ void WidgetTest::cbError (int error, const char* description)
 
 void WidgetTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BIL::Interface::instance()->resizeEvent(w, h);
+	BILO::Interface::instance()->resizeEvent(w, h);
 }
 
 void WidgetTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void WidgetTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void WidgetTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

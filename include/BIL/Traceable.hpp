@@ -38,7 +38,7 @@
 
 using namespace std;
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @brief The basic class which has a unique ID, one parent and some

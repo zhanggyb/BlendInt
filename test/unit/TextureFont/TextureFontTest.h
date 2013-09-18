@@ -11,7 +11,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <BIL/GLSLProgram.hpp>
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 class TextureFontTest: public CppUnit::TestFixture

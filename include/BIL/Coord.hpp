@@ -24,7 +24,7 @@
 
 #include <algorithm>
 
-namespace BIL {
+namespace BILO {
 
 	template<typename T>
 	class Coord2

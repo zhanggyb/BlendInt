@@ -6,7 +6,7 @@
 
 #include "FontConfigTest.h"
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FontConfigTest);

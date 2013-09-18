@@ -21,7 +21,7 @@
 
 #include <BIL/Color.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	void Color::convert_shade_color (const Color& color,
 								   short shadetop,

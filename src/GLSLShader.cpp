@@ -26,7 +26,7 @@
 
 #include <BIL/GLSLShader.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	GLSLShader::GLSLShader ()
 			: id_(0)

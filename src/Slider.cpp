@@ -22,7 +22,7 @@
 
 #include <BIL/Slider.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	const float Slider::circle_vertexes[20][2] =
 	{

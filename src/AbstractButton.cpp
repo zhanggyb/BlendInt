@@ -23,7 +23,7 @@
 
 #include <BIL/AbstractButton.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	const int WIDGET_AA_JITTER = 8;
 

@@ -14,7 +14,7 @@
 #include <BIL/TextBuffer.hpp>
 #include <BIL/FontConfig.hpp>
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 //CPPUNIT_TEST_SUITE_REGISTRATION(TextBufferTest);
@@ -647,22 +647,22 @@ void TextBufferTest::cbError (int error, const char* description)
 
 void TextBufferTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BIL::Interface::instance()->resizeEvent(w, h);
+	BILO::Interface::instance()->resizeEvent(w, h);
 }
 
 void TextBufferTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void TextBufferTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void TextBufferTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

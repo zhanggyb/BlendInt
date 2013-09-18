@@ -32,7 +32,7 @@
 
 using namespace std;
 
-namespace BIL {
+namespace BILO {
 
 	/*
 	 TextBuffer::TextBuffer (const Font& font)

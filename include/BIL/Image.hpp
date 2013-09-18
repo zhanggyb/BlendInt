@@ -25,7 +25,7 @@
 #include <BIL/String.hpp>
 #include <vector>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @brief Image class focused on I/O and direct pixel access and manipulation

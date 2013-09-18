@@ -35,7 +35,7 @@
 
 #include <BIL/Types.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class Drawable: public Traceable, public EventHandler
 	{

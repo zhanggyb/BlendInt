@@ -32,7 +32,7 @@
 
 using namespace std;
 
-namespace BIL {
+namespace BILO {
 
 	unsigned int FontCache::maxCaches = 32;
 

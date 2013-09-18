@@ -26,7 +26,7 @@
 
 #include <BIL/GLSLProgram.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	GLSLProgram::GLSLProgram ()
 			: id_(0)

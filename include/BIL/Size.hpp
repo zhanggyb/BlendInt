@@ -25,7 +25,7 @@
 #include <BIL/Point.hpp>
 #include <BIL/Coord.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @brief Size

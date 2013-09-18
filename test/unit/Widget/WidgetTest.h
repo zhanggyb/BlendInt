@@ -9,7 +9,7 @@
 #include <iostream>
 #include <string>
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 class testWidget: public Widget

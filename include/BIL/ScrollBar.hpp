@@ -26,7 +26,7 @@
 
 #include <BIL/GLBuffer.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class ScrollBar: public AbstractSlider
 	{

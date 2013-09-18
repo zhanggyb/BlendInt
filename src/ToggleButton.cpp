@@ -24,7 +24,7 @@
 #include <BIL/ToggleButton.hpp>
 #include <BIL/ShaderManager.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	ToggleButton::ToggleButton(Widget* parent)
 	: AbstractButton(parent)

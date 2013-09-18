@@ -1,7 +1,7 @@
-BIL
+BILO
 ===
 
-BIL (Blender Interface Library), is a C++ library for generating
+BILO (Blender Interface Library in OpenGL), is a C++ library for generating
 applications with Blender-like interface style, licensed with LGPL
 v3+.
 
@@ -19,5 +19,5 @@ v3+.
 
 ## License
 
-BIL (Blender Interface Library) is released under the LGPL v3
+BILO (Blender Interface Library in OpenGL) is released under the LGPL v3
 License. See the bundled LICENSE file for details.

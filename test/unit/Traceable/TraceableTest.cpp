@@ -7,7 +7,7 @@
 
 #include "TraceableTest.h"
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION (TraceableTest);
@@ -118,7 +118,7 @@ void TraceableTest::checkparent3 ()
 
 void TraceableTest::checkparent4 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	// Traceable::reset();	// reset the map
 
@@ -137,7 +137,7 @@ void TraceableTest::checkparent4 (void)
 
 void TraceableTest::checkparent5 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	// Traceable::reset();	// reset the map
 
@@ -157,7 +157,7 @@ void TraceableTest::checkparent5 (void)
 
 void TraceableTest::checkparent6 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 //	Traceable::reset();	// reset the map
 
@@ -177,7 +177,7 @@ void TraceableTest::checkparent6 (void)
 
 void TraceableTest::checkparent7 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 //	Traceable::reset();	// reset the map
 
@@ -205,7 +205,7 @@ void TraceableTest::checkparent7 (void)
 
 void TraceableTest::checkparent8 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	Traceable::reset();	// reset the map
 
@@ -248,7 +248,7 @@ void TraceableTest::checkparent8 (void)
 
 void TraceableTest::checkparent9 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	Traceable::reset();	// reset the map
 
@@ -295,7 +295,7 @@ void TraceableTest::checkparent9 (void)
 
 void TraceableTest::checkparent10 ()
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	Traceable::reset();	// reset the map
 

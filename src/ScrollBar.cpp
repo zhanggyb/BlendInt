@@ -23,7 +23,7 @@
 
 #include <BIL/ScrollBar.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	const float ScrollBar::scroll_circle_vert [20][2] = {
 			{1.000000, 0.000000},	// cos(0), sin(0)

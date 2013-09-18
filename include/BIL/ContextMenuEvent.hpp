@@ -24,7 +24,7 @@
 
 #include <BIL/InputEvent.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class ContextMenuEvent: public InputEvent
 	{

@@ -30,7 +30,7 @@
 #include <BIL/Freetype.hpp>
 #include <BIL/Glyph.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * A texture atlas is basically a big texture which contains many

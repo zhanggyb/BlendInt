@@ -24,7 +24,7 @@
 
 #include <BIL/TextureFont.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	TextureFont::TextureFont()
 	: texture_(0)

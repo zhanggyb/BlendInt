@@ -24,7 +24,7 @@
 
 OIIO_NAMESPACE_USING
 
-namespace BIL {
+namespace BILO {
 
 	Image::Image ()
 	: width_(0), height_(0), channels_(0)

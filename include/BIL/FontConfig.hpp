@@ -33,10 +33,10 @@
 
 using namespace std;
 
-typedef map<string, BIL::Freetype*> FontList;
+typedef map<string, BILO::Freetype*> FontList;
 typedef FontList::const_iterator FontIter;
 
-namespace BIL {
+namespace BILO {
 
 	class FontConfig
 	{

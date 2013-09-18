@@ -29,7 +29,7 @@
 
 #include <BIL/Coord.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class InputEvent;
 

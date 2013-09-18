@@ -21,7 +21,7 @@
 
 #include <BIL/String.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	String::String (const char* str)
 	{

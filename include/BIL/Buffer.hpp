@@ -22,7 +22,7 @@
 #ifndef _BIL_BUFFER_HPP_
 #define _BIL_BUFFER_HPP_
 
-namespace BIL {
+namespace BILO {
 
 	namespace GL {
 

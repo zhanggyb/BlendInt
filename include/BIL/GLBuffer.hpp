@@ -24,7 +24,7 @@
 
 #include <vector>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @brief C++ warpper of OpenGL buffer

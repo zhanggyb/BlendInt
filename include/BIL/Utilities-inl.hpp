@@ -24,7 +24,7 @@
 
 #include <glm/glm.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @brief Correct a numeric value in a scope

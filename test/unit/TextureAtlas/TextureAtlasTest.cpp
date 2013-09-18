@@ -16,7 +16,7 @@
 #include <BIL/Rect.hpp>
 #include <BIL/TextureAtlas.hpp>
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TextureAtlasTest);
@@ -47,7 +47,7 @@ void TextureAtlasTest::show1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -62,7 +62,7 @@ void TextureAtlasTest::show1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -100,7 +100,7 @@ void TextureAtlasTest::show1 ()
 
 	fe.close();
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -115,7 +115,7 @@ void TextureAtlasTest::show2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -130,7 +130,7 @@ void TextureAtlasTest::show2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -166,7 +166,7 @@ void TextureAtlasTest::show2 ()
 
 	fe.close();
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -182,22 +182,22 @@ void TextureAtlasTest::cbError (int error, const char* description)
 
 void TextureAtlasTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BIL::Interface::instance()->resizeEvent(w, h);
+	BILO::Interface::instance()->resizeEvent(w, h);
 }
 
 void TextureAtlasTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void TextureAtlasTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void TextureAtlasTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

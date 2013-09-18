@@ -25,7 +25,7 @@
 #include <BIL/AbstractLayout.hpp>
 #include <BIL/Types.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class VerticalLayout: public AbstractLayout
 	{

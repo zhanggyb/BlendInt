@@ -25,7 +25,7 @@
 #include <BIL/Types.hpp>
 #include <BIL/Drawable.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @brief The main entry for this library

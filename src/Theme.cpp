@@ -24,7 +24,7 @@
 
 #include <BIL/Theme.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	Theme* Theme::theme = 0;
 

@@ -22,7 +22,7 @@
 
 #include <BIL/EventHandler.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	/*
 	EventHandler::EventHandler ()

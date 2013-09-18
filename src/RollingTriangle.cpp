@@ -25,7 +25,7 @@
 
 #include "RollingTriangle.hpp"
 
-namespace BIL {
+namespace BILO {
 
 	RollingTriangle::RollingTriangle (Drawable *parent)
 			: Drawable(parent)

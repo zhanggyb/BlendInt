@@ -28,7 +28,7 @@
 
 #include <BIL/GLSLShader.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class GLSLProgram
 	{

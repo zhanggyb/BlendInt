@@ -21,7 +21,7 @@
 #include <GL/glew.h>
 #include <BIL/ImageView.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	ImageView::ImageView (Drawable* parent)
 	{

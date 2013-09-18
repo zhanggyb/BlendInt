@@ -33,7 +33,7 @@
 // Maximum texture width
 #define MAXWIDTH 2048
 
-namespace BIL {
+namespace BILO {
 
 	const char* TextureAtlas::vs_shader =
 			"attribute vec4 coord;"

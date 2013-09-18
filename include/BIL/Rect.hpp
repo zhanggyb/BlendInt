@@ -28,7 +28,7 @@
 #include <BIL/Point.hpp>
 #include <BIL/Size.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class Rect
 	{

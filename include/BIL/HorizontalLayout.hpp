@@ -24,7 +24,7 @@
 
 #include <BIL/AbstractLayout.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class HorizontalLayout: public AbstractLayout
 	{

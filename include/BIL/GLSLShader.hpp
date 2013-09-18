@@ -26,7 +26,7 @@
 
 #include <string>
 
-namespace BIL {
+namespace BILO {
 
 	class GLSLShader
 	{

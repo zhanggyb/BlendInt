@@ -35,7 +35,7 @@
 
 #include <BIL/Interface.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	/* *********************** draw data ************************** */
 

@@ -28,7 +28,7 @@
 #include <BIL/Drawable.hpp>
 #include <BIL/ContextManager.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	using namespace std;
 
@@ -456,7 +456,7 @@ namespace BIL {
 	}
 
 
-	void BIL::Drawable::DrawBoxShade (int mode,
+	void BILO::Drawable::DrawBoxShade (int mode,
 									  float minx,
 									  float miny,
 									  float maxx,

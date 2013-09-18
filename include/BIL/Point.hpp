@@ -22,7 +22,7 @@
 #ifndef _BIL_POINT_HPP_
 #define _BIL_POINT_HPP_
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @brief Point position

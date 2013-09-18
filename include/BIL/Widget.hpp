@@ -40,7 +40,7 @@
 
 #define UI_TEXT_MARGIN_X 0.4f
 
-namespace BIL {
+namespace BILO {
 
 	struct DecorationVertexes
 	{

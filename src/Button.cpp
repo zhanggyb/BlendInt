@@ -25,7 +25,7 @@
 #include <BIL/Button.hpp>
 #include <BIL/ShaderManager.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	Button::Button (Widget* parent)
 		: AbstractButton(parent)

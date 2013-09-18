@@ -26,7 +26,7 @@
 
 #include <BIL/Font.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	Font::Font (const String& family, unsigned int size, bool bold, bool italic)
 			: family(family), size(size), bold(bold), italic(italic)

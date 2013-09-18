@@ -22,7 +22,7 @@
 #ifndef _BIL_EVENT_H_
 #define _BIL_EVENT_H_
 
-namespace BIL {
+namespace BILO {
 
 	class Event
 	{

@@ -36,7 +36,7 @@
 #include <BIL/ContextMenuEvent.hpp>
 #include <BIL/ContextManager.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	Interface* Interface::interface = 0;
 

@@ -19,7 +19,7 @@
 #include <BIL/ScrollWidget.hpp>
 #include <BIL/Slider.hpp>
 
-using namespace BIL;
+using namespace BILO;
 
 static void cbError (int error, const char* description)
 {
@@ -29,25 +29,25 @@ static void cbError (int error, const char* description)
 }
 
 static void cbWindowSize(GLFWwindow* window, int w, int h) {
-	BIL::Interface::instance()->resizeEvent(w, h);
+	BILO::Interface::instance()->resizeEvent(w, h);
 }
 
 static void cbKey(GLFWwindow* window, int key, int scancode, int action,
 		int mods) {
-	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 static void cbMouseButton(GLFWwindow* window, int button, int action,
 		int mods) {
-	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 static void cbCursorPos(GLFWwindow* window, double xpos, double ypos) {
-	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
 }
 
 int main(int argc, char* argv[]) {
-	using namespace BIL;
+	using namespace BILO;
 
 	Cpp::Events::ProcessInit processInit;
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		return -1;
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		return -1;
@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
 
 	VerticalLayout* layout1 = new VerticalLayout;
 	layout1->set_pos(100, 100);
-	layout1->set_alignment(BIL::AlignVerticalCenter);
+	layout1->set_alignment(BILO::AlignVerticalCenter);
 
 	Label* label1 = new Label(L"la1");
 	label1->set_pos(100, 100);
@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();

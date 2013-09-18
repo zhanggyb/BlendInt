@@ -22,7 +22,7 @@
 #include <GL/glew.h>
 #include <BIL/Buffer.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	namespace GL {
 

@@ -24,7 +24,7 @@
 
 #include <GLSLProgram.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @pre-defined shaders

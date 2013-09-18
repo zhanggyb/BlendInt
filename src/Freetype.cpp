@@ -26,7 +26,7 @@
 
 using namespace std;
 
-namespace BIL {
+namespace BILO {
 
 	Freetype::Freetype()
 	: library_(0), face_(0), stroker_(NULL),

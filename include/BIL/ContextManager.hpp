@@ -29,7 +29,7 @@
 using std::map;
 using std::list;
 
-namespace BIL {
+namespace BILO {
 
 	class Interface;
 

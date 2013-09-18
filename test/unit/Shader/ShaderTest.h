@@ -10,7 +10,7 @@
 #include <iostream>
 #include <string>
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 class ShaderWidget1: public Widget

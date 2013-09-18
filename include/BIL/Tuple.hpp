@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <string.h>
 
-namespace BIL {
+namespace BILO {
 
 	template<typename T>
 	union Tuple2

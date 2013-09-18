@@ -5,7 +5,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 class ChildrenListTest: public CppUnit::TestFixture

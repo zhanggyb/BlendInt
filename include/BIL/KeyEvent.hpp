@@ -25,7 +25,7 @@
 #include <BIL/Types.hpp>
 #include <BIL/InputEvent.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class KeyEvent: public InputEvent
 	{

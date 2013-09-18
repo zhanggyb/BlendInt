@@ -25,7 +25,7 @@
 
 #include <BIL/Interface.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	HorizontalLayout::HorizontalLayout(Drawable* parent, int align)
 		: AbstractLayout(parent)

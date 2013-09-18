@@ -30,7 +30,7 @@
 
 #include <BIL/Image.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class Icon: public Widget
 	{

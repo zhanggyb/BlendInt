@@ -36,7 +36,7 @@
 
 using namespace std;
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * @brief Wrapper of Freetype API

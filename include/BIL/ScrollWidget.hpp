@@ -27,7 +27,7 @@
 #include <BIL/ScrollBar.hpp>
 #include <BIL/Widget.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class ScrollWidget: public Widget
 	{

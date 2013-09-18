@@ -27,7 +27,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-namespace BIL {
+namespace BILO {
 
 	ContextManager* ContextManager::context_manager = 0;
 

@@ -22,7 +22,7 @@
 #ifndef _BIL_VECTOR_HPP_
 #define _BIL_VECTOR_HPP_
 
-namespace BIL {
+namespace BILO {
 
 	template <typename T>
 	class Vector2

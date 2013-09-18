@@ -22,7 +22,7 @@
 
 #include <BIL/GLBuffer.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	GLBuffer::GLBuffer (unsigned int size)
 	: m_index(0), m_buffers(size)

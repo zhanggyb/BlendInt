@@ -10,7 +10,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 class ContextManagerTest: public CppUnit::TestFixture

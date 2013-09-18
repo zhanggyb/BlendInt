@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <iostream>
 
-namespace BIL {
+namespace BILO {
 
 	ScrollWidget::ScrollWidget(Drawable* parent)
 	: Widget(parent), m_viewport(0)

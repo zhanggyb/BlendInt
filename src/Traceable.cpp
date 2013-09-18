@@ -27,7 +27,7 @@
 
 using namespace std;
 
-namespace BIL {
+namespace BILO {
 
 	uint64_t Traceable::id_last = 1;
 

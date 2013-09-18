@@ -19,7 +19,7 @@
 #include <BIL/VerticalLayout.hpp>
 #include <BIL/Types.hpp>
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(LayoutTest);
@@ -72,7 +72,7 @@ void LayoutTest::horizontal_layout1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -87,7 +87,7 @@ void LayoutTest::horizontal_layout1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -99,7 +99,7 @@ void LayoutTest::horizontal_layout1()
 
 	HorizontalLayout layout1;
 	layout1.set_pos(100, 100);
-	layout1.set_alignment(BIL::AlignHorizontalCenter);
+	layout1.set_alignment(BILO::AlignHorizontalCenter);
 
 	Label label1(L"Hello");
 	label1.set_pos(100, 100);
@@ -112,7 +112,7 @@ void LayoutTest::horizontal_layout1()
 
 	HorizontalLayout layout2;
 	layout2.set_pos(300, 200);
-	layout2.set_alignment(BIL::AlignTop);
+	layout2.set_alignment(BILO::AlignTop);
 
 	Label label2(L"Hello");
 	label2.set_pos(100, 100);
@@ -125,7 +125,7 @@ void LayoutTest::horizontal_layout1()
 
 	HorizontalLayout layout3;
 	layout3.set_pos(500, 300);
-	layout3.set_alignment(BIL::AlignBottom);
+	layout3.set_alignment(BILO::AlignBottom);
 
 	Label label3(L"Hello");
 	label3.set_pos(100, 100);
@@ -149,7 +149,7 @@ void LayoutTest::horizontal_layout1()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -164,7 +164,7 @@ void LayoutTest::vertical_layout1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -179,7 +179,7 @@ void LayoutTest::vertical_layout1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -191,7 +191,7 @@ void LayoutTest::vertical_layout1()
 
 	VerticalLayout layout1;
 	layout1.set_pos(100, 100);
-	layout1.set_alignment(BIL::AlignVerticalCenter);
+	layout1.set_alignment(BILO::AlignVerticalCenter);
 
 	Label label1(L"Hello");
 	label1.set_pos(100, 100);
@@ -204,7 +204,7 @@ void LayoutTest::vertical_layout1()
 
 	VerticalLayout layout2;
 	layout2.set_pos(250, 100);
-	layout2.set_alignment(BIL::AlignLeft);
+	layout2.set_alignment(BILO::AlignLeft);
 
 	Label label2(L"Hello");
 	label2.set_pos(100, 100);
@@ -217,7 +217,7 @@ void LayoutTest::vertical_layout1()
 
 	VerticalLayout layout3;
 	layout3.set_pos(500, 100);
-	layout3.set_alignment(BIL::AlignRight);
+	layout3.set_alignment(BILO::AlignRight);
 
 	Label label3(L"Hello");
 	label3.set_pos(100, 100);
@@ -240,7 +240,7 @@ void LayoutTest::vertical_layout1()
 		glfwPollEvents();
 	}
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -255,7 +255,7 @@ void LayoutTest::layout_mix1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -270,7 +270,7 @@ void LayoutTest::layout_mix1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -282,7 +282,7 @@ void LayoutTest::layout_mix1()
 
 	VerticalLayout* layout1 = new VerticalLayout;
 	layout1->set_pos(100, 100);
-	layout1->set_alignment(BIL::AlignVerticalCenter);
+	layout1->set_alignment(BILO::AlignVerticalCenter);
 
 	Label* label1 = new Label(L"la1");
 	label1->set_pos(100, 100);
@@ -320,7 +320,7 @@ void LayoutTest::layout_mix1()
 	}
 
 	delete layout2;
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -336,7 +336,7 @@ void LayoutTest::layout_mix2()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BIL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -351,7 +351,7 @@ void LayoutTest::layout_mix2()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BIL after OpenGL content is created */
+	/* initialize BILO after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -363,7 +363,7 @@ void LayoutTest::layout_mix2()
 
 	VerticalLayout layout1;
 	layout1.set_pos(100, 100);
-	layout1.set_alignment(BIL::AlignVerticalCenter);
+	layout1.set_alignment(BILO::AlignVerticalCenter);
 
 	Label label1(L"Hello");
 	label1.set_pos(100, 100);
@@ -376,7 +376,7 @@ void LayoutTest::layout_mix2()
 
 	VerticalLayout layout2;
 	layout2.set_pos(250, 100);
-	layout2.set_alignment(BIL::AlignLeft);
+	layout2.set_alignment(BILO::AlignLeft);
 
 	Label label2(L"Hello");
 	label2.set_pos(100, 100);
@@ -389,7 +389,7 @@ void LayoutTest::layout_mix2()
 
 	VerticalLayout layout3;
 	layout3.set_pos(500, 100);
-	layout3.set_alignment(BIL::AlignRight);
+	layout3.set_alignment(BILO::AlignRight);
 
 	Label label3(L"Hello");
 	label3.set_pos(100, 100);
@@ -425,7 +425,7 @@ void LayoutTest::layout_mix2()
 	layout2.set_parent(0);
 	layout1.set_parent(0);
 
-	/* release BIL */
+	/* release BILO */
 	Interface::release();
 
 	glfwTerminate();
@@ -441,23 +441,23 @@ void LayoutTest::cbError (int error, const char* description)
 
 void LayoutTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BIL::Interface::instance()->resizeEvent(w, h);
+	BILO::Interface::instance()->resizeEvent(w, h);
 }
 
 void LayoutTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BIL::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void LayoutTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void LayoutTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BIL::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
 }
 

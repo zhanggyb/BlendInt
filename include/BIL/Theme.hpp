@@ -26,7 +26,7 @@
 #include <BIL/Color.hpp>
 #include <BIL/Font.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	struct WidgetColors
 	{

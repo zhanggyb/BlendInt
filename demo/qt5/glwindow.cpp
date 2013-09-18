@@ -17,13 +17,13 @@ GLWindow::~GLWindow()
     if(button_)
         delete button_;
 
-  std::cout << "release BIL resources" << std::endl;
-    BIL::Interface::release ();
+  std::cout << "release BILO resources" << std::endl;
+    BILO::Interface::release ();
 }
 
 void GLWindow::initializeGL()
 {
-    using namespace BIL;
+    using namespace BILO;
 
     if(!Interface::initialize()) {
       exit(1);
@@ -39,13 +39,13 @@ void GLWindow::initializeGL()
 
 void GLWindow::resizeGL(int w, int h)
 {
-    BIL::Interface::instance()->resizeEvent(w, h);
+    BILO::Interface::instance()->resizeEvent(w, h);
 }
 
 void GLWindow::paintGL()
 {
-    using namespace BIL;
-    BIL::Interface* app = BIL::Interface::instance();
+    using namespace BILO;
+    BILO::Interface* app = BILO::Interface::instance();
 
     app->render();
 
@@ -54,22 +54,22 @@ void GLWindow::paintGL()
 
 void GLWindow::mouseMoveEvent (QMouseEvent* event)
 {
-    BIL::Interface::instance()->cursorPosEvent(event->pos().x(),
+    BILO::Interface::instance()->cursorPosEvent(event->pos().x(),
             event->pos().y());
 }
 
 void GLWindow::mousePressEvent (QMouseEvent* event)
 {
-    int button = BIL::MouseButtonNone;
-    int action = BIL::MousePress;
-    int mods = BIL::ModifierNone;
+    int button = BILO::MouseButtonNone;
+    int action = BILO::MousePress;
+    int mods = BILO::ModifierNone;
 
     switch(event->button()) {
         case Qt::LeftButton:
-            button = BIL::MouseButtonLeft;
+            button = BILO::MouseButtonLeft;
             break;
         case Qt::RightButton:
-            button = BIL::MouseButtonRight;
+            button = BILO::MouseButtonRight;
         default:
             break;
 
@@ -77,30 +77,30 @@ void GLWindow::mousePressEvent (QMouseEvent* event)
 
     int qt_mods = event->modifiers();
     if(qt_mods & Qt::ShiftModifier) {
-        mods = mods | BIL::ModifierShift;
+        mods = mods | BILO::ModifierShift;
     }
     if(qt_mods & Qt::ControlModifier) {
-        mods = mods | BIL::ModifierControl;
+        mods = mods | BILO::ModifierControl;
     }
     if(qt_mods & Qt::AltModifier) {
-        mods = mods | BIL::ModifierAlt;
+        mods = mods | BILO::ModifierAlt;
     }
 
-    BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+    BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void GLWindow::mouseReleaseEvent (QMouseEvent* event)
 {
-    int button = BIL::MouseButtonNone;
-    int action = BIL::MouseRelease;
-    int mods = BIL::ModifierNone;
+    int button = BILO::MouseButtonNone;
+    int action = BILO::MouseRelease;
+    int mods = BILO::ModifierNone;
 
     switch(event->button()) {
         case Qt::LeftButton:
-            button = BIL::MouseButtonLeft;
+            button = BILO::MouseButtonLeft;
             break;
         case Qt::RightButton:
-            button = BIL::MouseButtonRight;
+            button = BILO::MouseButtonRight;
         default:
             break;
 
@@ -108,14 +108,14 @@ void GLWindow::mouseReleaseEvent (QMouseEvent* event)
 
     int qt_mods = event->modifiers();
     if(qt_mods & Qt::ShiftModifier) {
-        mods = mods | BIL::ModifierShift;
+        mods = mods | BILO::ModifierShift;
     }
     if(qt_mods & Qt::ControlModifier) {
-        mods = mods | BIL::ModifierControl;
+        mods = mods | BILO::ModifierControl;
     }
     if(qt_mods & Qt::AltModifier) {
-        mods = mods | BIL::ModifierAlt;
+        mods = mods | BILO::ModifierAlt;
     }
 
-    BIL::Interface::instance()->mouseButtonEvent(button, action, mods);
+    BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
 }

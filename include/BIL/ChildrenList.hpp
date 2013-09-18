@@ -34,7 +34,7 @@
 #include <list>
 #include <algorithm>
 
-namespace BIL {
+namespace BILO {
 
 	/**
 	 * class to store children in BasicObject
@@ -166,13 +166,13 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline T BIL::ChildrenList<T>::operator [] (int n)
+	inline T BILO::ChildrenList<T>::operator [] (int n)
 	{
 		return list_[n];
 	}
 
 	template<typename T>
-	inline bool BIL::ChildrenList<T>::push_front (const T& val)
+	inline bool BILO::ChildrenList<T>::push_front (const T& val)
 	{
 		if (!find(val)) {
 			list_.push_front(val);
@@ -184,7 +184,7 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline bool BIL::ChildrenList<T>::push_front (T& val)
+	inline bool BILO::ChildrenList<T>::push_front (T& val)
 	{
 		if (!find(val)) {
 			list_.push_front(val);
@@ -196,7 +196,7 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline bool BIL::ChildrenList<T>::push_back (const T& val)
+	inline bool BILO::ChildrenList<T>::push_back (const T& val)
 	{
 		if (!find(val)) {
 			list_.push_back(val);
@@ -208,7 +208,7 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline bool BIL::ChildrenList<T>::push_back (T& val)
+	inline bool BILO::ChildrenList<T>::push_back (T& val)
 	{
 		if (!find(val)) {
 			list_.push_back(val);
@@ -220,7 +220,7 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline void BIL::ChildrenList<T>::pop_front ()
+	inline void BILO::ChildrenList<T>::pop_front ()
 	{
 		if (size() > 0) {
 			T front = list_.front();
@@ -230,7 +230,7 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline void BIL::ChildrenList<T>::pop_back ()
+	inline void BILO::ChildrenList<T>::pop_back ()
 	{
 		if (size() > 0) {
 			T back = list_.back();
@@ -240,7 +240,7 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline bool BIL::ChildrenList<T>::find (const T& val)
+	inline bool BILO::ChildrenList<T>::find (const T& val)
 	{
 		return set_.count(val) > 0 ? true : false;
 	}
@@ -260,7 +260,7 @@ namespace BIL {
 	}
 
 	template<typename T>
-	inline int BIL::ChildrenList<T>::size () const
+	inline int BILO::ChildrenList<T>::size () const
 	{
 		int listsize, setsize;
 

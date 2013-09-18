@@ -34,7 +34,7 @@
 
 using namespace std;
 
-namespace BIL {
+namespace BILO {
 
 	class TextBuffer
 	{

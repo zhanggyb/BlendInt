@@ -26,7 +26,7 @@
 #include <BIL/FontCache.hpp>
 #include <BIL/ShaderManager.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	Label::Label (const String& text, Drawable *parent)
 		: Widget (parent), background_(0x00000000), vertex_array_(0), valid_text_length_(0)

@@ -36,7 +36,7 @@
 
 using namespace std;
 
-namespace BIL {
+namespace BILO {
 
 	template<class T>
 	struct greater_second: std::binary_function<T, T, bool>

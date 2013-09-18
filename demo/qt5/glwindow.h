@@ -24,7 +24,7 @@ protected:
     void mouseReleaseEvent (QMouseEvent* event);
 
 private:
-    BIL::ToggleButton* button_;
+    BILO::ToggleButton* button_;
 };
 
 #endif // GLWINDOW_H

@@ -7,7 +7,7 @@
 
 #include "ChildrenListTest.h"
 
-using namespace BIL;
+using namespace BILO;
 using namespace std;
 
 //CPPUNIT_TEST_SUITE_REGISTRATION (ChildrenListTest);
@@ -34,7 +34,7 @@ void ChildrenListTest::tearDown ()
 
 void ChildrenListTest::check1 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	ChildrenList<int> list;
 
@@ -48,7 +48,7 @@ void ChildrenListTest::check1 (void)
 
 void ChildrenListTest::check2 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	ChildrenList<int> list;
 
@@ -62,7 +62,7 @@ void ChildrenListTest::check2 (void)
 
 void ChildrenListTest::check3 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	ChildrenList<int> list;
 
@@ -79,7 +79,7 @@ void ChildrenListTest::check3 (void)
 
 void ChildrenListTest::check4 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	ChildrenList<int> list;
 
@@ -94,7 +94,7 @@ void ChildrenListTest::check4 (void)
 
 void ChildrenListTest::check5 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	ChildrenList<int> list;
 
@@ -111,7 +111,7 @@ void ChildrenListTest::check5 (void)
 
 void ChildrenListTest::check6 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	ChildrenList<int> list;
 
@@ -127,7 +127,7 @@ void ChildrenListTest::check6 (void)
 
 void ChildrenListTest::check7 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	ChildrenList<int> list;
 
@@ -149,7 +149,7 @@ void ChildrenListTest::check7 (void)
 
 void ChildrenListTest::check8 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	ChildrenList<int> list;
 
@@ -166,7 +166,7 @@ void ChildrenListTest::check8 (void)
 
 void ChildrenListTest::check9 (void)
 {
-	using namespace BIL;
+	using namespace BILO;
 
 	ChildrenList<int> list1;
 	ChildrenList<int> list2;

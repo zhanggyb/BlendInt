@@ -21,7 +21,7 @@
 
 #include <BIL/AbstractLayout.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	AbstractLayout::AbstractLayout (Drawable *parent)
 			: Drawable (parent), alignment_(0)

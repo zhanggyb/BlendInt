@@ -25,7 +25,7 @@
 #include <string>
 #include <cwchar>
 
-namespace BIL {
+namespace BILO {
 
 	class String;
 

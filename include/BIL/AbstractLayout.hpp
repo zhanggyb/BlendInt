@@ -25,7 +25,7 @@
 #include <BIL/Drawable.hpp>
 #include <BIL/Widget.hpp>
 
-namespace BIL {
+namespace BILO {
 
 	class AbstractLayout: public Drawable
 	{
