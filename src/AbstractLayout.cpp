@@ -53,27 +53,27 @@ namespace BIL {
 		return ret;
 	}
 
-	void AbstractLayout::keyPressEvent (KeyEvent* event)
+	void AbstractLayout::press_key (KeyEvent* event)
 	{
 	}
 
-	void AbstractLayout::contextMenuPressEvent (ContextMenuEvent* event)
+	void AbstractLayout::press_context_menu (ContextMenuEvent* event)
 	{
 	}
 
-	void AbstractLayout::contextMenuReleaseEvent (ContextMenuEvent* event)
+	void AbstractLayout::release_context_menu (ContextMenuEvent* event)
 	{
 	}
 
-	void AbstractLayout::mousePressEvent (MouseEvent* event)
+	void AbstractLayout::press_mouse (MouseEvent* event)
 	{
 	}
 
-	void AbstractLayout::mouseReleaseEvent (MouseEvent* event)
+	void AbstractLayout::release_mouse (MouseEvent* event)
 	{
 	}
 
-	void AbstractLayout::mouseMoveEvent (MouseEvent* event)
+	void AbstractLayout::move_mouse (MouseEvent* event)
 	{
 	}
 

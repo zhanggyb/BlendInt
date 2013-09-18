@@ -24,42 +24,10 @@
 
 #include <BIL/GLBuffer.hpp>
 
-#include <BIL/AbstractSlider.hpp>
+#include <BIL/ScrollBar.hpp>
 #include <BIL/Widget.hpp>
 
 namespace BIL {
-
-	class ScrollBar: public Widget
-	{
-	public:
-
-		ScrollBar (Orientation orientation, Drawable* parent = 0);
-
-		virtual ~ScrollBar ();
-
-		void set_direction (Orientation orientation);
-
-		Orientation orientation () const {return m_orientation;}
-
-	protected:
-
-		virtual void update (int property);
-
-		virtual void render ();
-
-	private:
-
-		void draw_scroll_cicle (const Rect& rect, float rad);
-
-		Orientation m_orientation;
-
-		static const float scroll_circle_vert[20][2];
-
-		float m_vertex[22][2];
-
-		// GLuint m_buffer;
-		GLBuffer m_buffer;
-	};
 
 	class ScrollWidget: public Widget
 	{

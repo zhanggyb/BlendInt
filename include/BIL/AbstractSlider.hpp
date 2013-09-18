@@ -25,6 +25,8 @@
 #include <BIL/Widget.hpp>
 #include <BIL/Types.hpp>
 
+#include <Cpp/Events.hpp>
+
 namespace BIL {
 
 	/**
@@ -61,9 +63,25 @@ namespace BIL {
 
 		Orientation orientation () const {return m_orientation;}
 
+		Cpp::EventRef<int> slider_moved () {return m_slider_moved;}
+
+		Cpp::EventRef<> slider_pressed () {return m_slider_pressed;}
+
+		Cpp::EventRef<> slider_released () {return m_slider_released;}
+
+		Cpp::EventRef<int> value_changed () {return m_value_changed;}
+
 	protected:
 
 		virtual void render () = 0;
+
+		Cpp::Event<int> m_slider_moved;
+
+		Cpp::Event<> m_slider_pressed;
+
+		Cpp::Event<> m_slider_released;
+
+		Cpp::Event<int> m_value_changed;
 
 	private:
 

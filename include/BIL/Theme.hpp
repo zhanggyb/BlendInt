@@ -36,7 +36,6 @@ namespace BIL {
 		Color item;				// Item
 		Color inner;			// Inner
 		Color inner_sel;	// Inner Selected
-		Color inner_highlight;	// Color when highlight or mouse hover
 		Color text;				// Text
 		Color text_sel;		// Text Selected
 		bool shaded;			// Is Shaded

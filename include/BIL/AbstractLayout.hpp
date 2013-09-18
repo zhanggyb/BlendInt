@@ -45,17 +45,17 @@ namespace BIL {
 
 	protected:
 
-		virtual void keyPressEvent (KeyEvent* event);
+		virtual void press_key (KeyEvent* event);
 
-		virtual void contextMenuPressEvent (ContextMenuEvent* event);
+		virtual void press_context_menu (ContextMenuEvent* event);
 
-		virtual void contextMenuReleaseEvent (ContextMenuEvent* event);
+		virtual void release_context_menu (ContextMenuEvent* event);
 
-		virtual void mousePressEvent (MouseEvent* event);
+		virtual void press_mouse (MouseEvent* event);
 
-		virtual void mouseReleaseEvent (MouseEvent* event);
+		virtual void release_mouse (MouseEvent* event);
 
-		virtual void mouseMoveEvent (MouseEvent* event);
+		virtual void move_mouse (MouseEvent* event);
 
 		virtual void render () = 0;
 

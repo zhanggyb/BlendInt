@@ -45,6 +45,12 @@ namespace BIL {
 
 		virtual void render ();
 
+		virtual void move_mouse (MouseEvent* event);
+
+		virtual void press_mouse (MouseEvent* event);
+
+		virtual void release_mouse (MouseEvent* event);
+
 	private:
 
 		void update_shape ();
@@ -55,6 +61,16 @@ namespace BIL {
 		float m_vertexes[20][2];
 
 		GLBuffer m_buffer;
+
+		/**
+		 * If the mouse cursor is on slider circle
+		 */
+		bool m_hover;
+
+		/**
+		 * If left mouse button is pressed
+		 */
+		bool m_pressed;
 
 		static const float circle_vertexes[20][2];
 

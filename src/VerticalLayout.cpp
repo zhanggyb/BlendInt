@@ -23,6 +23,8 @@
 #include <algorithm>
 #include <BIL/VerticalLayout.hpp>
 
+#include <BIL/Interface.hpp>
+
 namespace BIL {
 
 	VerticalLayout::VerticalLayout (Drawable* parent, int align)
@@ -100,11 +102,26 @@ namespace BIL {
 
 	void VerticalLayout::render ()
 	{
+
+		list<Traceable*>::const_iterator it;
+		Drawable *item = 0;
+		for (it = children().begin(); it != children().end(); it++) {
+			item = dynamic_cast<Drawable*>(*it);
+			if (item) {
+
+				// only drawable object at the layer will be called for render
+				// object in differenct layer will be called in another loop
+				if (item->z() == z()) {
+					Interface::instance()->render_drawable(item);
+				}
+			}
+		}
+
+#ifdef DEBUG
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(pos_.x(), pos_.y(), z());
-#ifdef DEBUG
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
 
@@ -118,9 +135,9 @@ namespace BIL {
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);
-#endif
 
 		glPopMatrix();
+#endif
 	}
 
 }

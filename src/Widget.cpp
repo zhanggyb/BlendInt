@@ -23,6 +23,8 @@
 #include <assert.h>
 #include <algorithm>
 
+#include <iostream>
+
 #include <BIL/Widget.hpp>
 #include <BIL/Types.hpp>
 #include <BIL/Coord.hpp>
@@ -31,7 +33,7 @@
 
 #include <BIL/Utilities-inl.hpp>
 
-#include <iostream>
+#include <BIL/Interface.hpp>
 
 namespace BIL {
 
@@ -362,32 +364,32 @@ namespace BIL {
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
-	void Widget::keyPressEvent (KeyEvent* event)
+	void Widget::press_key (KeyEvent* event)
 	{
 		event->accept();
 	}
 
-	void Widget::contextMenuPressEvent (ContextMenuEvent* event)
+	void Widget::press_context_menu (ContextMenuEvent* event)
 	{
 		event->accept();
 	}
 
-	void Widget::contextMenuReleaseEvent (ContextMenuEvent* event)
+	void Widget::release_context_menu (ContextMenuEvent* event)
 	{
 		event->accept();
 	}
 
-	void Widget::mousePressEvent (MouseEvent* event)
+	void Widget::press_mouse (MouseEvent* event)
 	{
 		event->accept();
 	}
 
-	void Widget::mouseReleaseEvent (MouseEvent* event)
+	void Widget::release_mouse (MouseEvent* event)
 	{
 		event->accept();
 	}
 
-	void Widget::mouseMoveEvent (MouseEvent* event)
+	void Widget::move_mouse (MouseEvent* event)
 	{
 		event->accept();
 	}
@@ -410,6 +412,20 @@ namespace BIL {
 
 	void Widget::render ()
 	{
+		list<Traceable*>::const_iterator it;
+		Drawable *item = 0;
+		for (it = children().begin(); it != children().end(); it++) {
+			item = dynamic_cast<Drawable*>(*it);
+			if (item) {
+
+				// only drawable object at the layer will be called for render
+				// object in differenct layer will be called in another loop
+				if (item->z() == z()) {
+					Interface::instance()->render_drawable(item);
+				}
+			}
+		}
+
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 

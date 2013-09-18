@@ -103,6 +103,21 @@ namespace BIL {
 			m_blue = m_blue >= 240 ? 255 : (m_blue + 15);
 		}
 
+		unsigned char highlight_red () const
+		{
+			return m_red >= 240 ? 255 : (m_red + 15);
+		}
+
+		unsigned char highlight_green () const
+		{
+			return m_green >= 240 ? 255 : (m_green + 15);
+		}
+
+		unsigned char highlight_blue () const
+		{
+			return m_blue >= 240 ? 255 : (m_blue + 15);
+		}
+
 		void set_color (uint32_t color)
 		{
 			if (color > 0xFFFFFF) {

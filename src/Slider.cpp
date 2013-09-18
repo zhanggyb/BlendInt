@@ -49,7 +49,7 @@ namespace BIL {
 	};
 
 	Slider::Slider(Orientation orientation, Drawable* parent)
-	: AbstractSlider(orientation, parent)
+	: AbstractSlider(orientation, parent), m_hover(false), m_pressed(false)
 	{
 		// set default size
 		if (this->orientation() == Horizontal) {
@@ -117,10 +117,17 @@ namespace BIL {
 			glTranslatef(0, value() * line_width / ((float)maximum() - (float)minimum()), 0);
 		}
 
-		glColor4ub(tm->themeUI()->wcol_scroll.item.r(),
-				tm->themeUI()->wcol_scroll.item.g(),
-				tm->themeUI()->wcol_scroll.item.b(),
-				tm->themeUI()->wcol_scroll.item.a());
+		if (m_hover) {
+			glColor4ub(tm->themeUI()->wcol_scroll.item.highlight_red(),
+					tm->themeUI()->wcol_scroll.item.highlight_green(),
+					tm->themeUI()->wcol_scroll.item.highlight_blue(),
+					tm->themeUI()->wcol_scroll.item.a());
+		} else {
+			glColor4ub(tm->themeUI()->wcol_scroll.item.r(),
+					tm->themeUI()->wcol_scroll.item.g(),
+					tm->themeUI()->wcol_scroll.item.b(),
+					tm->themeUI()->wcol_scroll.item.a());
+		}
 		m_buffer.bind(GL_ARRAY_BUFFER);
 		glVertexPointer (2, GL_FLOAT, 0, 0);
 		glEnableClientState (GL_VERTEX_ARRAY);
@@ -185,4 +192,33 @@ namespace BIL {
 		m_buffer.unbind (GL_ARRAY_BUFFER);
 	}
 
+	void Slider::move_mouse (MouseEvent* event)
+	{
+		if(size_.contains(event->pos())) {
+			m_hover = true;
+			event->accept();
+		} else {
+			m_hover = false;
+		}
+	}
+
+	void Slider::press_mouse (MouseEvent* event)
+	{
+		if(size_.contains(event->pos())) {
+			if (event->button() == MouseButtonLeft) {
+				m_pressed = true;
+				event->accept();
+			}
+		}
+	}
+
+	void Slider::release_mouse (MouseEvent* event)
+	{
+		if (event->button() == MouseButtonLeft) {
+				m_pressed = false;
+			}
+
+	}
+
 }
+

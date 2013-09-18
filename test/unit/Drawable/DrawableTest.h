@@ -26,17 +26,17 @@ protected:
 
 	virtual void render ();
 
-	virtual void keyPressEvent (KeyEvent* event);
+	virtual void press_key (KeyEvent* event);
 
-	virtual void contextMenuPressEvent (ContextMenuEvent* event);
+	virtual void press_context_menu (ContextMenuEvent* event);
 
-	virtual void contextMenuReleaseEvent (ContextMenuEvent* event);
+	virtual void release_context_menu (ContextMenuEvent* event);
 
-	virtual void mousePressEvent (MouseEvent* event);
+	virtual void press_mouse (MouseEvent* event);
 	
-	virtual void mouseReleaseEvent (MouseEvent* event);
+	virtual void release_mouse (MouseEvent* event);
 
-	virtual void mouseMoveEvent (MouseEvent* event);
+	virtual void move_mouse (MouseEvent* event);
 
 private:
 	void makeCheckImage (void);
@@ -62,17 +62,17 @@ protected:
 
 	virtual void render ();
 
-	virtual void keyPressEvent (KeyEvent* event);
+	virtual void press_key (KeyEvent* event);
 
-	virtual void contextMenuPressEvent (ContextMenuEvent* event);
+	virtual void press_context_menu (ContextMenuEvent* event);
 
-	virtual void contextMenuReleaseEvent (ContextMenuEvent* event);
+	virtual void release_context_menu (ContextMenuEvent* event);
 
-	virtual void mousePressEvent (MouseEvent* event);
+	virtual void press_mouse (MouseEvent* event);
 	
-	virtual void mouseReleaseEvent (MouseEvent* event);
+	virtual void release_mouse (MouseEvent* event);
 	
-	virtual void mouseMoveEvent (MouseEvent* event);
+	virtual void move_mouse (MouseEvent* event);
 };
 
 class myDrawable2: public Drawable
@@ -89,17 +89,17 @@ protected:
 
 	virtual void render ();
 
-	virtual void keyPressEvent (KeyEvent* event);
+	virtual void press_key (KeyEvent* event);
 
-	virtual void contextMenuPressEvent (ContextMenuEvent* event);
+	virtual void press_context_menu (ContextMenuEvent* event);
 
-	virtual void contextMenuReleaseEvent (ContextMenuEvent* event);
+	virtual void release_context_menu (ContextMenuEvent* event);
 
-	virtual void mousePressEvent (MouseEvent* event);
+	virtual void press_mouse (MouseEvent* event);
 	
-	virtual void mouseReleaseEvent (MouseEvent* event);
+	virtual void release_mouse (MouseEvent* event);
 
-	virtual void mouseMoveEvent (MouseEvent* event);
+	virtual void move_mouse (MouseEvent* event);
 };
 
 class myDrawable3: public Drawable
@@ -116,17 +116,17 @@ protected:
 
 	virtual void render ();
 
-	virtual void keyPressEvent (KeyEvent* event);
+	virtual void press_key (KeyEvent* event);
 
-	virtual void contextMenuPressEvent (ContextMenuEvent* event);
+	virtual void press_context_menu (ContextMenuEvent* event);
 
-	virtual void contextMenuReleaseEvent (ContextMenuEvent* event);
+	virtual void release_context_menu (ContextMenuEvent* event);
 
-	virtual void mousePressEvent (MouseEvent* event);
+	virtual void press_mouse (MouseEvent* event);
 	
-	virtual void mouseReleaseEvent (MouseEvent* event);
+	virtual void release_mouse (MouseEvent* event);
 
-	virtual void mouseMoveEvent (MouseEvent* event);
+	virtual void move_mouse (MouseEvent* event);
 };
 
 class DrawableTest: public CppUnit::TestFixture

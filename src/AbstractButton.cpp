@@ -129,8 +129,8 @@ namespace BIL {
 									   wcol->inner_sel.b(), wcol->inner_sel.a());
 						} else {
 							if (hover_) {
-								glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
-										   wcol->inner_highlight.b(), wcol->inner_highlight.a());
+								glColor4ub(wcol->inner.highlight_red(), wcol->inner.highlight_green(),
+										   wcol->inner.highlight_blue(), wcol->inner.a());
 							} else {
 								glColor4ub(wcol->inner.r(), wcol->inner.g(),
 									   wcol->inner.b(), wcol->inner.a());
@@ -138,8 +138,8 @@ namespace BIL {
 						}
 					} else {
 						if (hover_) {
-							glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
-									   wcol->inner_highlight.b(), wcol->inner_highlight.a());
+							glColor4ub(wcol->inner.highlight_red(), wcol->inner.highlight_green(),
+									   wcol->inner.highlight_blue(), wcol->inner.a());
 						} else if (down_) {
 							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
 									   wcol->inner_sel.b(), wcol->inner_sel.a());
@@ -167,8 +167,8 @@ namespace BIL {
 									   wcol->inner_sel.b(), 255);
 						} else {
 							if (hover_) {
-								glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
-										   wcol->inner_highlight.b(), 255);
+								glColor4ub(wcol->inner.highlight_red(), wcol->inner.highlight_green(),
+										   wcol->inner.highlight_blue(), 255);
 							} else {
 							glColor4ub(wcol->inner.r(), wcol->inner.g(),
 									   wcol->inner.b(), 255);
@@ -176,8 +176,8 @@ namespace BIL {
 						}
 					} else {
 						if (hover_) {
-							glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
-									   wcol->inner_highlight.b(), 255);
+							glColor4ub(wcol->inner.highlight_red(), wcol->inner.highlight_green(),
+									   wcol->inner.highlight_blue(), 255);
 						}	else if (down_) {
 							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
 									   wcol->inner_sel.b(), 255);
@@ -205,16 +205,16 @@ namespace BIL {
 						} else {
 							/* simple fill */
 							if (hover_) {
-								glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
-										   wcol->inner_highlight.b(), wcol->inner_highlight.a());
+								glColor4ub(wcol->inner.highlight_red(), wcol->inner.highlight_green(),
+										   wcol->inner.highlight_blue(), wcol->inner.a());
 							} else {
 								glColor4ub(wcol->inner.r(), wcol->inner.g(), wcol->inner.b(), wcol->inner.a());
 							}
 						}
 					} else {
 						if (hover_) {
-							glColor4ub(wcol->inner_highlight.r(), wcol->inner_highlight.g(),
-									   wcol->inner_highlight.b(), wcol->inner_highlight.a());
+							glColor4ub(wcol->inner.highlight_red(), wcol->inner.highlight_green(),
+									   wcol->inner.highlight_blue(), wcol->inner.a());
 						} else if (down_) {
 							glColor4ub(wcol->inner_sel.r(), wcol->inner_sel.g(),
 									   wcol->inner_sel.b(), wcol->inner_sel.a());
@@ -393,7 +393,7 @@ namespace BIL {
 
 	}
 
-	void AbstractButton::mousePressEvent (MouseEvent* event)
+	void AbstractButton::press_mouse (MouseEvent* event)
 	{
 		if (!size_.contains(event->pos()))
 		{
@@ -412,7 +412,7 @@ namespace BIL {
 		event->accept();
 	}
 
-	void AbstractButton::mouseReleaseEvent(MouseEvent* event)
+	void AbstractButton::release_mouse(MouseEvent* event)
 	{
 		if (! size_.contains(event->pos()))
 		{
@@ -429,7 +429,7 @@ namespace BIL {
 		}
 	}
 
-	void AbstractButton::mouseMoveEvent (MouseEvent* event)
+	void AbstractButton::move_mouse (MouseEvent* event)
 	{
 		if (size_.contains(event->pos())) {
 			hover_ = true;

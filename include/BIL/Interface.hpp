@@ -50,20 +50,21 @@ namespace BIL {
 
 		void cursorPosEvent (double xpos, double ypos);
 
-		const Size& size () const {return size_;}
+		const Size& size () const;
 
-		void resize (int width, int height)
-		{
-			size_.set_width(width);
-			size_.set_height(height);
-		}
+		void resize (int width, int height);
 
-		void resize (const Size& size)
-		{
-			size_ = size;
-		}
+		void resize (const Size& size);
 
 		void render_drawable (Drawable* obj);
+
+		void dispatch_key_press_event (Drawable* obj, KeyEvent* event);
+
+		void dispatch_mouse_press_event (Drawable* obj, MouseEvent* event);
+
+		void dispatch_mouse_release_event (Drawable* obj, MouseEvent* event);
+
+		void dispatch_mouse_move_event (Drawable* obj, MouseEvent* event);
 
 	private:
 
@@ -71,26 +72,16 @@ namespace BIL {
 
 		~Interface ();
 
-		void render_at_layer (Drawable* obj, int layer);
-
-#ifdef DEBUG
-		void draw_grid (int width, int height);
-#endif
-
-		void dispatch_key_press_event_at_layer (Drawable* obj, KeyEvent* event, int layer);
-
-		void dispatch_mouse_press_event_at_layer (Drawable* obj, MouseEvent* event, int layer);
-
-		void dispatch_mouse_release_event_at_layer (Drawable* obj, MouseEvent* event, int layer);
-
-		void dispatch_mouse_move_event_at_layer (Drawable* obj, MouseEvent* event, int layer);
-
 		double cursor_pos_x_;	/** cursor x position */
 		double cursor_pos_y_;	/** cursor y position */
 
 		Size size_;
 
 		static Interface* interface;
+
+#ifdef DEBUG
+		void draw_grid (int width, int height);
+#endif
 
 	};
 }

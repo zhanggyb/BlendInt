@@ -19,42 +19,41 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_EVENTHANDLER_H_
-#define _BIL_EVENTHANDLER_H_
+#ifndef _BIL_SCROLLBAR_HPP_
+#define _BIL_SCROLLBAR_HPP_
 
-#include <BIL/MouseEvent.hpp>
-#include <BIL/KeyEvent.hpp>
-#include <BIL/ContextMenuEvent.hpp>
+#include <BIL/AbstractSlider.hpp>
+
+#include <BIL/GLBuffer.hpp>
 
 namespace BIL {
 
-	class Interface;
-
-	class EventHandler
+	class ScrollBar: public AbstractSlider
 	{
 	public:
 
-		friend class Interface;
+		ScrollBar (Orientation orientation, Drawable* parent = 0);
 
-		EventHandler () {}
-		virtual ~EventHandler () {}
+		virtual ~ScrollBar ();
 
 	protected:
 
-		virtual void press_key (KeyEvent* event) = 0;
+		virtual void update (int property);
 
-		virtual void press_context_menu (ContextMenuEvent* event) = 0;
+		virtual void render ();
 
-		virtual void release_context_menu (ContextMenuEvent* event) = 0;
+	private:
 
-		virtual void press_mouse (MouseEvent* event) = 0;
+		void draw_scroll_cicle (const Rect& rect, float rad);
 
-		virtual void release_mouse (MouseEvent* event) = 0;
+		static const float scroll_circle_vert[20][2];
 
-		virtual void move_mouse (MouseEvent* event) = 0;
+		float m_vertex[22][2];
 
-		virtual void render () = 0;
+		// GLuint m_buffer;
+		GLBuffer m_buffer;
 	};
 
-} /* namespace BIL */
-#endif /* _BIL_EVENTHANDLER_H_ */
+}
+
+#endif /* _BIL_SCROLLBAR_HPP_ */

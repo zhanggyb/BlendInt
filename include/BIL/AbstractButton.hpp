@@ -71,11 +71,11 @@ namespace BIL {
 
 		virtual void render () = 0;
 
-		virtual void mousePressEvent (MouseEvent* event);
+		virtual void press_mouse (MouseEvent* event);
 
-		virtual void mouseReleaseEvent (MouseEvent* event);
+		virtual void release_mouse (MouseEvent* event);
 
-		virtual void mouseMoveEvent (MouseEvent* event);
+		virtual void move_mouse (MouseEvent* event);
 
 	protected:
 
