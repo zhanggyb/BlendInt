@@ -19,13 +19,16 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <algorithm>
+
 #include <BIL/AbstractSlider.hpp>
 
 namespace BIL {
 
 	AbstractSlider::AbstractSlider(Orientation orientation,
 								   Drawable* parent)
-		: Widget (parent), m_orientation(orientation)
+		: Widget (parent), m_orientation(orientation), m_step(1),
+		  m_value(50), m_minimum(0), m_maximum(100)
 	{
 	}
 
@@ -36,32 +39,33 @@ namespace BIL {
 
 	void AbstractSlider::set_range (int value1, int value2)
 	{
-		
+		m_minimum = std::min(value1, value2);
+		m_maximum = std::max(value1, value2);
 	}
 
-	void AbstractSlider::set_minimum (int minimum)
+	inline void AbstractSlider::set_minimum (int minimum)
 	{
-
+		m_minimum = minimum;
 	}
 
-	void AbstractSlider::set_maximum (int maximum)
+	inline void AbstractSlider::set_maximum (int maximum)
 	{
-
+		m_maximum = maximum;
 	}
 
 	void AbstractSlider::set_value (int value)
 	{
-
+		m_value = value;
 	}
 
-	void AbstractSlider::set_step (int step)
+	inline void AbstractSlider::set_step (int step)
 	{
-
+		m_step = step;
 	}
 
-	void AbstractSlider::set_orientation (Orientation orientation)
+	inline void AbstractSlider::set_orientation (Orientation orientation)
 	{
-
+		m_orientation = orientation;
 	}
 
 }

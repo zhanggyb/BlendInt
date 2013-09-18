@@ -34,7 +34,7 @@ namespace BIL {
 	public:
 
 		Padding ()
-		: left_(0), right_(0), top_(0), bottom_(0)
+		: left_(5), right_(5), top_(5), bottom_(5)
 		{}
 
 		Padding (int all)

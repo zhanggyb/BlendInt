@@ -107,10 +107,6 @@ namespace BIL {
 			: Drawable(parent)
 	{
 		// TODO Auto-generated constructor stub
-
-		// Set the default padding and margin
-		set_padding(Padding(5, 5, 5, 5));
-		set_margin(1, 1, 1, 1);
 	}
 
 	Widget::~Widget ()

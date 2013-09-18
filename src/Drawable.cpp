@@ -312,6 +312,16 @@ namespace BIL {
 		update(WidgetPropertyPadding);
 	}
 
+	void Drawable::set_padding (int l, int r, int t, int b)
+	{
+		padding_.set_left(l);
+		padding_.set_right(r);
+		padding_.set_top(t);
+		padding_.set_bottom(b);
+
+		update(WidgetPropertyPadding);
+	}
+
 	void Drawable::set_round_box_type (RoundCornerType type)
 	{
 		if (round_box_type_ == type) return;

@@ -87,6 +87,8 @@ namespace BIL {
 
 		void set_padding (const Padding& padding);
 
+		void set_padding (int l, int r, int t, int b);
+
 		void set_round_box_type (RoundCornerType type);
 
 		RoundCornerType round_box_type () const;

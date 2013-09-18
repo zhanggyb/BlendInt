@@ -17,6 +17,7 @@
 #include <BIL/Button.hpp>
 #include <BIL/Label.hpp>
 #include <BIL/ScrollWidget.hpp>
+#include <BIL/Slider.hpp>
 
 using namespace BIL;
 
@@ -99,7 +100,7 @@ int main(int argc, char* argv[]) {
 	layout2.set_pos (400, 500);
 	layout2.set_z(2);
 
-	ScrollWidget scroll_widget;
+	//ScrollWidget scroll_widget;
 	//scroll_widget.set_pos(500, 200);
 
 	ScrollBar hbar(Horizontal);
@@ -107,6 +108,14 @@ int main(int argc, char* argv[]) {
 
 	ScrollBar vbar(Vertical);
 	vbar.set_pos (600, 200);
+
+	Slider hslider (Horizontal);
+	hslider.set_pos (200, 200);
+	hslider.set_value(80);
+
+	Slider vslider (Vertical);
+	vslider.set_pos (200, 300);
+	vslider.set_value(20);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

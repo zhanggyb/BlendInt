@@ -68,19 +68,7 @@ namespace BIL {
 		} else if (m_orientation == Vertical) {
 			resize (25, 400);
 		}
-
-		//glGenBuffers (1, &m_buffer);
-
 		update (0);
-
-
-		std::wcout << L"hello" << std::endl;
-		for (int i = 0; i < 22; i++)
-		{
-			std::wcout << "vertex: " << m_vertex[i][0] << " " << m_vertex[i][1] << std::endl;
-			//fprintf (stderr, "vertex: %f, %f\n", m_vertex[i][0], m_vertex[i][1]);
-		}
-
 	}
 
 	ScrollBar::~ScrollBar()
@@ -227,8 +215,6 @@ namespace BIL {
 
 	void ScrollWidget::render ()
 	{
-		//Interface::instance()->render_drawable(m_viewport);
-
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
