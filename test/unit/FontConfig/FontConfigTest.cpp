@@ -1,6 +1,7 @@
 // cpp
 
 #include <BILO/FontConfig.hpp>
+#include <BILO/Traceable.hpp>
 #include <iostream>
 #include <string>
 
@@ -28,7 +29,17 @@ void FontConfigTest::setUp ()
 
 void FontConfigTest::tearDown ()
 {
+	int mapsize = Traceable::mapSize();
 
+	if(mapsize > 0) {
+		map<uint64_t, Traceable*>::const_iterator it;
+		for (it = Traceable::getMap().begin(); it != Traceable::getMap().end(); it++)
+		{
+			cout << "id: " << it->first << " was not deleted!" << endl;
+		}
+	}
+
+	CPPUNIT_ASSERT(mapsize == 0);
 }
 
 void FontConfigTest::initialize1 ()

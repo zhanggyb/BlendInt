@@ -36,7 +36,9 @@ namespace BILO {
 
 		friend class Interface;
 
-		EventHandler () {}
+		EventHandler ()
+		: m_ticktack(0)
+		{}
 		virtual ~EventHandler () {}
 
 	protected:
@@ -54,6 +56,13 @@ namespace BILO {
 		virtual void move_mouse (MouseEvent* event) = 0;
 
 		virtual void render () = 0;
+
+	private:
+
+		/**
+		 * A ticktack for one render loop
+		 */
+		unsigned char m_ticktack;
 	};
 
 } /* namespace BILO */

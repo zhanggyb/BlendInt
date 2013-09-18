@@ -56,7 +56,7 @@ namespace BILO {
 
 		void resize (const Size& size);
 
-		void render_drawable (Drawable* obj);
+		void dispatch_render_event (int layer, Drawable* obj);
 
 		void dispatch_key_press_event (Drawable* obj, KeyEvent* event);
 
@@ -76,6 +76,8 @@ namespace BILO {
 		double cursor_pos_y_;	/** cursor y position */
 
 		Size size_;
+
+		unsigned char m_ticktack;
 
 		static Interface* interface;
 

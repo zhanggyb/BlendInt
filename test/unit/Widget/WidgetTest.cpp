@@ -66,7 +66,19 @@ void WidgetTest::setUp ()
 
 void WidgetTest::tearDown ()
 {
+#ifdef DEBUG
+	int mapsize = Traceable::mapSize();
 
+	if(mapsize > 0) {
+		map<uint64_t, Traceable*>::const_iterator it;
+		for (it = Traceable::getMap().begin(); it != Traceable::getMap().end(); it++)
+		{
+			cout << "id: " << it->first << " was not deleted!" << endl;
+		}
+	}
+
+	CPPUNIT_ASSERT(mapsize == 0);
+#endif
 }
 
 void WidgetTest::widget_default_show ()

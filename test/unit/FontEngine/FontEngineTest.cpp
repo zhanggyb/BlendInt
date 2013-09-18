@@ -7,6 +7,7 @@
 
 #include <BILO/Freetype.hpp>
 #include <BILO/FontConfig.hpp>
+#include <BILO/Traceable.hpp>
 
 #include <cppunit/TestAssert.h>
 
@@ -37,6 +38,18 @@ void FontEngineTest::setUp ()
 void FontEngineTest::tearDown ()
 {
 	FontConfig::release();
+
+	int mapsize = Traceable::mapSize();
+
+	if(mapsize > 0) {
+		map<uint64_t, Traceable*>::const_iterator it;
+		for (it = Traceable::getMap().begin(); it != Traceable::getMap().end(); it++)
+		{
+			cout << "id: " << it->first << " was not deleted!" << endl;
+		}
+	}
+
+	CPPUNIT_ASSERT(mapsize == 0);
 }
 
 void FontEngineTest::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)

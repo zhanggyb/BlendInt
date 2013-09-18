@@ -417,12 +417,7 @@ namespace BILO {
 		for (it = children().begin(); it != children().end(); it++) {
 			item = dynamic_cast<Drawable*>(*it);
 			if (item) {
-
-				// only drawable object at the layer will be called for render
-				// object in differenct layer will be called in another loop
-				if (item->z() == z()) {
-					Interface::instance()->render_drawable(item);
-				}
+				Interface::instance()->dispatch_render_event(m_z, item);
 			}
 		}
 

@@ -117,7 +117,7 @@ namespace BILO {
 	}
 
 	Interface::Interface ()
-			: cursor_pos_x_(0.0), cursor_pos_y_(0.0)
+			: cursor_pos_x_(0.0), cursor_pos_y_(0.0), m_ticktack(0)
 	{
 
 	}
@@ -182,16 +182,29 @@ namespace BILO {
 			list<Drawable*>* plist = map_it->second;
 			for (list_it = plist->begin(); list_it != plist->end(); list_it++)
 			{
-				(*list_it)->render();
+				if((*list_it)->m_ticktack == m_ticktack) {
+					(*list_it)->render();
+					(*list_it)->m_ticktack = (*list_it)->m_ticktack ? 0 : 1;
+				}
 			}
 		}
+		m_ticktack = m_ticktack ? 0 : 1;
 
 		glDisable(GL_BLEND);
 	}
 
-	void Interface::render_drawable (Drawable* obj)
+	void Interface::dispatch_render_event (int layer, Drawable* obj)
 	{
-		obj->render ();
+		// if they are not in the same layer, the child should be rendered in other loop
+		if (layer != obj->z()) {
+			return;
+		}
+
+		// ticktack makes sure only render once, the ticktack of Interface reversed in Interface::render()
+		if(obj->m_ticktack == m_ticktack) {
+			obj->render();
+			obj->m_ticktack = obj->m_ticktack ? 0 : 1;
+		}
 	}
 
 #ifdef DEBUG
