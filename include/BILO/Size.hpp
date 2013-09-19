@@ -23,7 +23,6 @@
 #define _BIL_SIZE_HPP_
 
 #include <BILO/Point.hpp>
-#include <BILO/Coord.hpp>
 
 namespace BILO {
 
@@ -76,7 +75,7 @@ namespace BILO {
 			return (m_width == width && m_height == height);
 		}
 
-		bool contains (const Point& pos)
+		bool contain (const Point& pos)
 		{
 			if (pos.x() < 0 || pos.y() < 0 ||
 				pos.x() > static_cast<int>(m_width) || pos.y() > static_cast<int>(m_height))
@@ -87,10 +86,10 @@ namespace BILO {
 			return true;
 		}
 
-		bool contains (const Coord2f& pos)
+		bool contain (int x, int y)
 		{
-			if (pos.x() < 0 || pos.y() < 0 ||
-				pos.x() > m_width || pos.y() > m_height)
+			if (x < 0 || y < 0 ||
+				x > static_cast<int>(m_width) || y > static_cast<int>(m_height))
 			{
 				return false;
 			}

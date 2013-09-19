@@ -167,7 +167,7 @@ namespace BILO {
 
 	void SliderControl::move_mouse(MouseEvent* event)
 	{
-		if(size_.contains(event->pos())) {
+		if(contain(event->position())) {
 			if (m_pressed) {
 				m_hover = false;
 			} else {
@@ -181,7 +181,7 @@ namespace BILO {
 
 	void SliderControl::press_mouse(MouseEvent* event)
 	{
-		if(size_.contains(event->pos())) {
+		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
 				m_pressed = true;
 				event->accept();
@@ -302,14 +302,15 @@ namespace BILO {
 	{
 		//std::wcout << event->pos().x() << " " << event->pos().y() << std::endl;
 
-		if(size_.contains(event->pos())) {
+		if(contain(event->position())) {
 			if (m_pressed) {
 
 			} else {
 
 			}
+			/*
 			event->set_pos(event->window_pos().x() - m_slider_control->pos().x(),
-					event->window_pos().y() - m_slider_control->pos().y());
+					event->window_pos().y() - m_slider_control->pos().y());*/
 			Interface::instance()->dispatch_mouse_move_event(m_slider_control, event);
 		} else {
 
@@ -318,10 +319,10 @@ namespace BILO {
 
 	void Slider::press_mouse (MouseEvent* event)
 	{
-		if(size_.contains(event->pos())) {
+		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
 				m_pressed = true;
-				m_press_pos = event->pos();
+				m_press_pos = event->position();
 				Interface::instance()->dispatch_mouse_press_event(m_slider_control, event);
 			}
 		}
@@ -329,10 +330,10 @@ namespace BILO {
 
 	void Slider::release_mouse (MouseEvent* event)
 	{
-		if(size_.contains(event->pos())) {
+		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
 				m_pressed = false;
-				m_press_pos = event->pos();
+				m_press_pos = event->position();
 				Interface::instance()->dispatch_mouse_release_event(m_slider_control, event);
 			}
 		}

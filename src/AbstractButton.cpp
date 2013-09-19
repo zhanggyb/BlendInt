@@ -395,7 +395,7 @@ namespace BILO {
 
 	void AbstractButton::press_mouse (MouseEvent* event)
 	{
-		if (!size_.contains(event->pos()))
+		if (!contain(event->position()))
 		{
 			event->ignore();
 			return;
@@ -414,7 +414,7 @@ namespace BILO {
 
 	void AbstractButton::release_mouse(MouseEvent* event)
 	{
-		if (! size_.contains(event->pos()))
+		if (! contain(event->position()))
 		{
 			event->ignore();
 			return;
@@ -431,7 +431,7 @@ namespace BILO {
 
 	void AbstractButton::move_mouse (MouseEvent* event)
 	{
-		if (size_.contains(event->pos())) {
+		if (contain(event->position())) {
 			hover_ = true;
             event->accept();
 		} else {

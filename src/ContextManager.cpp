@@ -78,14 +78,14 @@ namespace BILO {
 
 		map<Drawable*, int>::iterator map_it;
 		
-		map_it = m_map.find(obj);
+		map_it = m_event_index.find(obj);
 
-		if(map_it != m_map.end()) {
+		if(map_it != m_event_index.end()) {
 			if (map_it->second == obj->z()) {
 				return false;
 			}
 
-			list<Drawable*>* p = m_layers[map_it->second];
+			list<Drawable*>* p = m_event_layers[map_it->second];
 			list<Drawable*>::iterator it = find(p->begin(), p->end(), obj);
 			if (it != p->end()) {
 				p->erase (it);
@@ -96,35 +96,35 @@ namespace BILO {
 			}
 
 			if (p->empty()) {
-				m_layers.erase(map_it->second);
+				m_event_layers.erase(map_it->second);
 				delete p;
 			}
 
 			map<int, list<Drawable*>* >::iterator layer_it;
-			layer_it = m_layers.find(obj->z());
-			if(layer_it != m_layers.end()) {
+			layer_it = m_event_layers.find(obj->z());
+			if(layer_it != m_event_layers.end()) {
 				layer_it->second->push_back(obj);
 			} else {
 				list<Drawable*>* new_list = new list<Drawable*>;
 				new_list->push_back(obj);
-				m_layers[obj->z()] = new_list;
+				m_event_layers[obj->z()] = new_list;
 			}
 			
 		} else {
 
 			map<int, list<Drawable*>* >::iterator layer_it;
-			layer_it = m_layers.find(obj->z());
-			if(layer_it != m_layers.end()) {
+			layer_it = m_event_layers.find(obj->z());
+			if(layer_it != m_event_layers.end()) {
 				layer_it->second->push_back(obj);
 			} else {
 				list<Drawable*>* new_list = new list<Drawable*>;
 				new_list->push_back(obj);
-				m_layers[obj->z()] = new_list;
+				m_event_layers[obj->z()] = new_list;
 			}
 			
 		}
 
-		m_map[obj] = obj->z();
+		m_event_index[obj] = obj->z();
 		return true;
 	}
 
@@ -134,11 +134,11 @@ namespace BILO {
 
 		map<Drawable*, int>::iterator map_it;
 		
-		map_it = m_map.find(obj);
+		map_it = m_event_index.find(obj);
 
-		if(map_it != m_map.end()) {
+		if(map_it != m_event_index.end()) {
 
-			list<Drawable*>* p = m_layers[map_it->second];
+			list<Drawable*>* p = m_event_layers[map_it->second];
 			list<Drawable*>::iterator it = find(p->begin(), p->end(), obj);
 			if (it != p->end()) {
 				p->erase (it);
@@ -149,11 +149,11 @@ namespace BILO {
 			}
 
 			if (p->empty()) {
-				m_layers.erase(map_it->second);
+				m_event_layers.erase(map_it->second);
 				delete p;
 			}
 
-			m_map.erase(obj);
+			m_event_index.erase(obj);
 
 		} else {
 #ifdef DEBUG
@@ -175,11 +175,11 @@ namespace BILO {
 		ListType* plist;
 		std::cout << std::endl;
 
-		std::cout << "size of index map:" << m_map.size() << std::endl;
+		std::cout << "size of index map:" << m_event_index.size() << std::endl;
 
-		std::cout << "size of layer map:" << m_layers.size() << std::endl;
+		std::cout << "size of layer map:" << m_event_layers.size() << std::endl;
 
-		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
+		for(map_it = m_event_layers.begin(); map_it != m_event_layers.end(); map_it++)
 		{
 			std::cout << "Layer: " << map_it->first << std::endl;
 			plist = map_it->second;

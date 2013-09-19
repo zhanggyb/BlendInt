@@ -41,16 +41,14 @@ namespace BILO {
 		 * @param[in] type one of Event::Type
 		 */
 		MouseEvent (MouseAction action, MouseButton button)
-			: action_(action), button_(button),
-			pos_(Coord2f(0.0, 0.0)),
-			window_pos_(Coord2f(0.0, 0.0))
+			: m_action(action), m_button(button),
+			m_position(Coord2d(0.0, 0.0))
 			{}
 		
 		MouseEvent (MouseAction action, MouseButton button,
-					const Coord2f& local_pos,
-					const Coord2f& window_pos)
-			: action_(action), button_(button),
-			pos_(local_pos), window_pos_(window_pos)
+					const Coord2d& position)
+			: m_action(action), m_button(button),
+			m_position(position)
 		{}
 
 		virtual ~MouseEvent ()
@@ -58,42 +56,30 @@ namespace BILO {
 
 		MouseAction action () const
 		{
-			return action_;
+			return m_action;
 		}
 
 		MouseButton button () const
 		{
-			return button_;
+			return m_button;
 		}
 
-		const Coord2f& pos () const
+		const Coord2d& position () const
 		{
-			return pos_;
+			return m_position;
 		}
 
-		void set_pos (float x, float y)
+		void set_position (float x, float y)
 		{
-			pos_.set_x (x);
-			pos_.set_y (y);
-		}
-
-		const Coord2f& window_pos () const
-		{
-			return window_pos_;
-		}
-
-		void set_window_pos (float x, float y)
-		{
-			window_pos_.set_x(x);
-			window_pos_.set_y(y);
+			m_position.set_x (x);
+			m_position.set_y (y);
 		}
 
 	private:
 
-		MouseAction action_;
-		MouseButton button_;
-		Coord2f pos_;
-		Coord2f window_pos_;
+		MouseAction m_action;
+		MouseButton m_button;
+		Coord2d m_position;
 	};
 
 }

@@ -263,17 +263,17 @@ namespace BILO {
 	typedef Tuple3<int> Tuple3i;
 	typedef Tuple4<int> Tuple4i;
 
-	typedef Tuple2<unsigned int> Coord2ui;
+	typedef Tuple2<unsigned int> Tuple2ui;
 
 	typedef Tuple2<float> Tuple2f;
 	typedef Tuple3<float> Tuple3f;
-	typedef Tuple4<float> Tuple4f, RGBAf;
+	typedef Tuple4<float> Tuple4f;
 
-	typedef Tuple2<long> Tuple2l, Coord2l;
-	typedef Tuple3<long> Tuple3l, Coord3l;
-	typedef Tuple4<long> Tuple4l, Coord4l;
+	typedef Tuple2<long> Tuple2l;
+	typedef Tuple3<long> Tuple3l;
+	typedef Tuple4<long> Tuple4l;
 
-	typedef Tuple2<double> Tuple2d, Coord2d;
+	typedef Tuple2<double> Tuple2d;
 
 }	// namespace of BILO
 

@@ -177,7 +177,7 @@ namespace BILO {
 		list<Drawable*>::iterator list_it;
 		ContextManager* cm = ContextManager::instance();
 
-		for(map_it = cm->m_layers.begin(); map_it != cm->m_layers.end(); map_it++)
+		for(map_it = cm->m_event_layers.begin(); map_it != cm->m_event_layers.end(); map_it++)
 		{
 			list<Drawable*>* plist = map_it->second;
 			for (list_it = plist->begin(); list_it != plist->end(); list_it++)
@@ -275,7 +275,7 @@ namespace BILO {
 			list<Drawable*>::reverse_iterator list_it;
 			ContextManager* cm = ContextManager::instance();
 
-			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
+			for(map_it = cm->m_event_layers.rbegin(); map_it != cm->m_event_layers.rend(); map_it++)
 			{
 				list<Drawable*>* plist = map_it->second;
 				for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
@@ -307,7 +307,7 @@ namespace BILO {
 			list<Drawable*>::reverse_iterator list_it;
 			ContextManager* cm = ContextManager::instance();
 
-			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
+			for(map_it = cm->m_event_layers.rbegin(); map_it != cm->m_event_layers.rend(); map_it++)
 			{
 				list<Drawable*>* plist = map_it->second;
 				for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
@@ -373,35 +373,26 @@ namespace BILO {
 		}
 
 		MouseEvent event(mouse_action, mouseclick);
-		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
 
-		float local_x;
-		float local_y;
 		map<int, list<Drawable*>* >::reverse_iterator map_it;
 		list<Drawable*>::reverse_iterator list_it;
 		ContextManager* cm = ContextManager::instance();
 
-		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
+		for(map_it = cm->m_event_layers.rbegin(); map_it != cm->m_event_layers.rend(); map_it++)
 		{
 			list<Drawable*>* plist = map_it->second;
 			for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
 			{
-				local_x = cursor_pos_x_ - ((*list_it)->pos().x());
-				local_y = cursor_pos_y_ - ((*list_it)->pos().y());
-				if ((local_x - 0.000001 > 0.0) && (local_y - 0.000001 > 0.0)
-						&& (local_x - (*list_it)->size().width()) < 0.0
-						&& (local_y - (*list_it)->size().height()) < 0.0) {
-					event.set_pos(local_x, local_y);
-					switch (action) {
-						case GLFW_PRESS:
-							dispatch_mouse_press_event((*list_it), &event);
-							break;
-						case GLFW_RELEASE:
-							(*list_it)->release_mouse(&event);
-							break;
-						default:
-							break;
-					}
+				event.set_position(cursor_pos_x_, cursor_pos_y_);
+				switch (action) {
+					case GLFW_PRESS:
+						dispatch_mouse_press_event((*list_it), &event);
+						break;
+					case GLFW_RELEASE:
+						(*list_it)->release_mouse(&event);
+						break;
+					default:
+						break;
 				}
 				if(event.accepted())
 					break;
@@ -417,23 +408,17 @@ namespace BILO {
 		cursor_pos_y_ = size_.height() - ypos;
 
 		MouseEvent event(MouseNone, MouseButtonNone);
-		event.set_window_pos(cursor_pos_x_, cursor_pos_y_);
-
-		float local_x;
-		float local_y;
 
 		map<int, list<Drawable*>* >::reverse_iterator map_it;
 		list<Drawable*>::reverse_iterator list_it;
 		ContextManager* cm = ContextManager::instance();
 
-		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
+		for(map_it = cm->m_event_layers.rbegin(); map_it != cm->m_event_layers.rend(); map_it++)
 		{
 			list<Drawable*>* plist = map_it->second;
 			for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
 			{
-				local_x = cursor_pos_x_ - ((*list_it)->pos().x());
-				local_y = cursor_pos_y_ - ((*list_it)->pos().y());
-				event.set_pos(local_x, local_y);
+				event.set_position(cursor_pos_x_, cursor_pos_y_);
 				dispatch_mouse_move_event((*list_it), &event);
 				if (event.accepted())
 					break;

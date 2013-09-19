@@ -109,18 +109,18 @@ void ContextManagerTest::check_layer_0_0 ()
 	widget4.set_z(1);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 4 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 4 && cm->event_layer_size() == 2);
 
 	widget1.add_child(&widget2);
 	widget1.add_child(&widget4);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 3 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 3 && cm->event_layer_size() == 2);
 
 	widget3.add_child(&widget4);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 2 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 2 && cm->event_layer_size() == 2);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -204,18 +204,18 @@ void ContextManagerTest::check_layer_0_1 ()
 	widget4->set_z(1);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 4 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 4 && cm->event_layer_size() == 2);
 
 	widget1->add_child(widget2);
 	widget1->add_child(widget4);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 3 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 3 && cm->event_layer_size() == 2);
 
 	widget3->add_child(widget4);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 2 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 2 && cm->event_layer_size() == 2);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -233,7 +233,7 @@ void ContextManagerTest::check_layer_0_1 ()
 	delete widget3;
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 0 && cm->layer_size() == 0);
+	CPPUNIT_ASSERT(cm->event_index_size() == 0 && cm->event_layer_size() == 0);
 
 	/* release BILO */
 	Interface::release();
@@ -300,25 +300,25 @@ void ContextManagerTest::check_layer_0_2 ()
 	widget4->set_z(1);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 2 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 2 && cm->event_layer_size() == 2);
 
 	widget1->add_child(widget2);
 	widget1->add_child(widget4);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 3 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 3 && cm->event_layer_size() == 2);
 
 
 	widget3->add_child(widget4);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 2 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 2 && cm->event_layer_size() == 2);
 
 	widget2->set_parent(0);
 	widget4->set_parent(0);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 4 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 4 && cm->event_layer_size() == 2);
 
 
 	/* Loop until the user closes the window */
@@ -337,7 +337,7 @@ void ContextManagerTest::check_layer_0_2 ()
 	delete widget3;
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 2 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 2 && cm->event_layer_size() == 2);
 
 	delete widget2; delete widget4;
 	//delete widget5;
@@ -407,14 +407,14 @@ void ContextManagerTest::check_layer_0_3 ()
 	widget4->set_z(1);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 2 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 2 && cm->event_layer_size() == 2);
 
 	widget1->add_child(widget2);
 	widget1->add_child(widget3);
 	widget1->add_child(widget4);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 3 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 3 && cm->event_layer_size() == 2);
 
 	widget1->remove_child(widget2);
 	widget1->remove_child(widget3);
@@ -422,7 +422,7 @@ void ContextManagerTest::check_layer_0_3 ()
 	widget1->remove_child(widget2);	// try again
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 4 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 4 && cm->event_layer_size() == 2);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -440,7 +440,7 @@ void ContextManagerTest::check_layer_0_3 ()
 	delete widget3;
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 2 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 2 && cm->event_layer_size() == 2);
 
 	delete widget2; delete widget4;
 	//delete widget5;
@@ -508,14 +508,14 @@ void ContextManagerTest::check_layer_0_4 ()
 	widget4->set_name("widget4");
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 1 && cm->layer_size() == 1);
+	CPPUNIT_ASSERT(cm->event_index_size() == 1 && cm->event_layer_size() == 1);
 
 	widget1->add_child(widget2);
 	widget1->add_child(widget3);
 	widget1->add_child(widget4);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 1 && cm->layer_size() == 1);
+	CPPUNIT_ASSERT(cm->event_index_size() == 1 && cm->event_layer_size() == 1);
 
 	widget1->remove_child(widget2);
 	widget1->remove_child(widget3);
@@ -523,7 +523,7 @@ void ContextManagerTest::check_layer_0_4 ()
 	widget1->remove_child(widget2);	// try again
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 4 && cm->layer_size() == 1);
+	CPPUNIT_ASSERT(cm->event_index_size() == 4 && cm->event_layer_size() == 1);
 
 	widget1->add_child(widget2);
 	widget1->add_child(widget3);
@@ -532,31 +532,31 @@ void ContextManagerTest::check_layer_0_4 ()
 	widget2->set_z (1);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 2 && cm->layer_size() == 2);
+	CPPUNIT_ASSERT(cm->event_index_size() == 2 && cm->event_layer_size() == 2);
 
 	widget3->set_z (2);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 3 && cm->layer_size() == 3);
+	CPPUNIT_ASSERT(cm->event_index_size() == 3 && cm->event_layer_size() == 3);
 
 	widget4->set_z (3);
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 4 && cm->layer_size() == 4);
+	CPPUNIT_ASSERT(cm->event_index_size() == 4 && cm->event_layer_size() == 4);
 
 	widget3->set_z (1);
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 4 && cm->layer_size() == 3);
+	CPPUNIT_ASSERT(cm->event_index_size() == 4 && cm->event_layer_size() == 3);
 
 	widget1->add_child(widget2);
 	widget3->set_parent(widget2);
 	widget3->add_child(widget4);
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 3 && cm->layer_size() == 3);
+	CPPUNIT_ASSERT(cm->event_index_size() == 3 && cm->event_layer_size() == 3);
 
 	widget2->set_z(0);
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 1 && cm->layer_size() == 1);
+	CPPUNIT_ASSERT(cm->event_index_size() == 1 && cm->event_layer_size() == 1);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -573,7 +573,7 @@ void ContextManagerTest::check_layer_0_4 ()
 	delete widget1;
 
 	cm->print();
-	CPPUNIT_ASSERT(cm->index_size() == 0 && cm->layer_size() == 0);
+	CPPUNIT_ASSERT(cm->event_index_size() == 0 && cm->event_layer_size() == 0);
 
 	/* release BILO */
 	Interface::release();

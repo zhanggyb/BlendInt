@@ -108,7 +108,7 @@ namespace BILO {
 		 */
 		bool m_pressed;
 
-		Point m_press_pos;
+		Coord2d m_press_pos;
 	};
 }
 

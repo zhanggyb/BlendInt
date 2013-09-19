@@ -171,9 +171,11 @@ namespace BILO {
 
 	typedef Coord2<int> Coord2i;
 	typedef Coord2<float> Coord2f;
+	typedef Coord2<double> Coord2d;
 
 	typedef Coord3<int> Coord3i;
 	typedef Coord3<float> Coord3f;
+	typedef Coord3<float> Coord3d;
 
 }
 

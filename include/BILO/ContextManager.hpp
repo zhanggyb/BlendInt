@@ -64,9 +64,9 @@ namespace BILO {
 		 */
 		bool remove_drawable (Drawable* obj);
 
-		int index_size () const {return m_map.size();}
+		int event_index_size () const {return m_event_index.size();}
 
-		int layer_size () const {return m_layers.size();}
+		int event_layer_size () const {return m_event_layers.size();}
 
 #ifdef DEBUG
 
@@ -84,9 +84,11 @@ namespace BILO {
 
 		~ContextManager ();
 
-		map<int, list<Drawable*>* > m_layers;
+		map<int, list<Drawable*>* > m_event_layers;
 
-		map<Drawable*, int> m_map;
+		map<Drawable*, int> m_event_index;
+
+		list<Drawable*> m_render_list;
 
 		static ContextManager* context_manager;
 		

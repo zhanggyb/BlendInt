@@ -371,6 +371,18 @@ namespace BILO {
 		m_name = name;
 	}
 
+	bool Drawable::contain(const Coord2d& cursor)
+	{
+		if (cursor.x() < pos_.x() ||
+				cursor.y() < pos_.y() ||
+				cursor.x() > (pos_.x() + size_.width()) ||
+				cursor.y() > (pos_.y() + size_.height())) {
+			return false;
+		}
+
+		return true;
+	}
+
 	void Drawable::drawRoundBox (float minx,
 								 float miny,
 								 float maxx,

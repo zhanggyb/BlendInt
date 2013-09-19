@@ -32,6 +32,7 @@
 #include <BILO/Point.hpp>
 #include <BILO/Margin.hpp>
 #include <BILO/Padding.hpp>
+#include <BILO/Coord.hpp>
 
 #include <BILO/Types.hpp>
 
@@ -106,6 +107,8 @@ namespace BILO {
 		void set_name (const String& name);
 
 	protected:	// member functions
+
+		bool contain (const Coord2d& cursor);
 
 		/**
 		 * @brief Update data for render, used in size, shape change only
