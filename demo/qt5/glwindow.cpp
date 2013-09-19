@@ -7,15 +7,15 @@
 #include <QMouseEvent>
 
 GLWindow::GLWindow(QWidget *parent) :
-    QGLWidget(parent), button_(0)
+    QGLWidget(parent), m_slider(0)
 {
     setMouseTracking(true);
 }
 
 GLWindow::~GLWindow()
 {
-    if(button_)
-        delete button_;
+    if(m_slider)
+        delete m_slider;
 
   std::cout << "release BILO resources" << std::endl;
     BILO::Interface::release ();
@@ -31,10 +31,8 @@ void GLWindow::initializeGL()
     
     Interface::instance()->resize(size().width(), size().height());
 
-    button_ = new ToggleButton("Hello World!");
-    button_->set_pos(200, 200);
-    button_->set_font(Font("Droid Sans"));
-    button_->set_round_box_type(RoundCornerAll);
+    m_slider = new Slider(BILO::Horizontal);
+    m_slider->set_pos(200, 200);
 }
 
 void GLWindow::resizeGL(int w, int h)
@@ -48,14 +46,17 @@ void GLWindow::paintGL()
     BILO::Interface* app = BILO::Interface::instance();
 
     app->render();
-
-    glFlush ();
+    
+    swapBuffers();
 }
 
 void GLWindow::mouseMoveEvent (QMouseEvent* event)
 {
-    BILO::Interface::instance()->cursorPosEvent(event->pos().x(),
-            event->pos().y());
+   //std::cout << event->x() << " " << event->y() << std::endl;
+   // std::cout << event->pos().x() << " " << event->pos().y() << std::endl;
+
+    BILO::Interface::instance()->cursorPosEvent((double)event->x(),
+           (double) event->y());
 }
 
 void GLWindow::mousePressEvent (QMouseEvent* event)

@@ -1,16 +1,18 @@
 /*
- * This file is part of BILO (Blender Interface Library).
+ * This file is part of BILO (Blender-like Interface Library in
+ * OpenGL).
  *
- * BILO (Blender Interface Library) is free software: you can
- * redistribute it and/or modify it under the terms of the GNU Lesser
- * General Public License as published by the Free Software
+ * BILO (Blender-like Interface Library in OpenGL) is free software:
+ * you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * BILO (Blender Interface Library) is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * BILO (Blender-like Interface Library in OpenGL) is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BILO.  If not, see
@@ -19,8 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_POINT_HPP_
-#define _BIL_POINT_HPP_
+#ifndef _BILO_POINT_HPP_
+#define _BILO_POINT_HPP_
+
+#include <BILO/Coord.hpp>
 
 namespace BILO {
 
@@ -55,6 +59,13 @@ namespace BILO {
 			x_ = orig.x_;
 			y_ = orig.y_;
 
+			return *this;
+		}
+
+		Point& operator = (const Coord2f& orig)
+		{
+			x_ = static_cast<int>(orig.x());
+			y_ = static_cast<int>(orig.y());
 			return *this;
 		}
 
@@ -94,4 +105,4 @@ namespace BILO {
 	};
 }
 
-#endif /* _BIL_POINT_HPP_ */
+#endif /* _BILO_POINT_HPP_ */

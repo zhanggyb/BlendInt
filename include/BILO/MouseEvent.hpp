@@ -23,7 +23,6 @@
 #define _BIL_MOUSEEVENT_H_
 
 #include <BILO/Types.hpp>
-#include <BILO/Tuple.hpp>
 #include <BILO/Event.hpp>
 #include <BILO/InputEvent.hpp>
 
@@ -44,12 +43,12 @@ namespace BILO {
 		MouseEvent (MouseAction action, MouseButton button)
 			: action_(action), button_(button),
 			pos_(Coord2f(0.0, 0.0)),
-			window_pos_(Coord2d(0.0, 0.0))
+			window_pos_(Coord2f(0.0, 0.0))
 			{}
 		
 		MouseEvent (MouseAction action, MouseButton button,
 					const Coord2f& local_pos,
-					const Coord2d& window_pos)
+					const Coord2f& window_pos)
 			: action_(action), button_(button),
 			pos_(local_pos), window_pos_(window_pos)
 		{}
@@ -78,15 +77,15 @@ namespace BILO {
 			pos_.set_y (y);
 		}
 
-		const Coord2d& window_pos () const
+		const Coord2f& window_pos () const
 		{
 			return window_pos_;
 		}
 
-		void set_window_pos (double x, double y)
+		void set_window_pos (float x, float y)
 		{
-			window_pos_.coord.x = x;
-			window_pos_.coord.y = y;
+			window_pos_.set_x(x);
+			window_pos_.set_y(y);
 		}
 
 	private:
@@ -94,7 +93,7 @@ namespace BILO {
 		MouseAction action_;
 		MouseButton button_;
 		Coord2f pos_;
-		Coord2d window_pos_;
+		Coord2f window_pos_;
 	};
 
 }

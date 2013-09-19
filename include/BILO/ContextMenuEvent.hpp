@@ -39,14 +39,14 @@ namespace BILO {
 		ContextMenuEvent (Source source,
 						  int mods)
 			: InputEvent(mods), source_(source),
-			pos_(Coord2f(0.0, 0.0)), window_pos_(Coord2d(0.0, 0.0))
+			pos_(Coord2f(0.0, 0.0)), window_pos_(Coord2f(0.0, 0.0))
 		{}
 
 
 		ContextMenuEvent (Source source,
 						  int mods,
 						  const Coord2f& local_pos,
-						  const Coord2d& window_pos)
+						  const Coord2f& window_pos)
 			: InputEvent(mods), source_(source),
 			pos_(local_pos), window_pos_(window_pos)
 		{}
@@ -70,15 +70,15 @@ namespace BILO {
 			pos_.set_y (y);
 		}
 
-		const Coord2d& window_pos (void) const
+		const Coord2f& window_pos (void) const
 		{
 			return window_pos_;
 		}
 
-		void set_window_pos (double x, double y)
+		void set_window_pos (float x, float y)
 		{
-			window_pos_.coord.x = x;
-			window_pos_.coord.y = y;
+			window_pos_.set_x(x);
+			window_pos_.set_y(y);
 		}
 
 	private:
@@ -87,7 +87,7 @@ namespace BILO {
 
 		Coord2f pos_;
 
-		Coord2d window_pos_;
+		Coord2f window_pos_;
 	};
 
 }
