@@ -20,8 +20,11 @@
  */
 
 #include <iostream>
+#include <stdlib.h>
 
 #include <BILO/ContextManager.hpp>
+
+#include <BILO/Drawable.hpp>
 
 using std::cout;
 using std::cerr;
@@ -78,54 +81,103 @@ namespace BILO {
 
 		map<Drawable*, int>::iterator map_it;
 		
-		map_it = m_event_index.find(obj);
+		map_it = m_index.find(obj);
 
-		if(map_it != m_event_index.end()) {
+		if(map_it != m_index.end()) {
 			if (map_it->second == obj->z()) {
 				return false;
 			}
 
-			list<Drawable*>* p = m_event_layers[map_it->second];
+			list<Drawable*>* p = m_layers[map_it->second];
 			list<Drawable*>::iterator it = find(p->begin(), p->end(), obj);
 			if (it != p->end()) {
 				p->erase (it);
 			} else {
 #ifdef DEBUG
-				std::cerr << "Error: object is not recorded" << std::endl;
+				std::cerr << "Note: object is not recorded" << std::endl;
 #endif
 			}
 
 			if (p->empty()) {
-				m_event_layers.erase(map_it->second);
+				m_layers.erase(map_it->second);
 				delete p;
 			}
 
 			map<int, list<Drawable*>* >::iterator layer_it;
-			layer_it = m_event_layers.find(obj->z());
-			if(layer_it != m_event_layers.end()) {
+			layer_it = m_layers.find(obj->z());
+			if(layer_it != m_layers.end()) {
 				layer_it->second->push_back(obj);
 			} else {
 				list<Drawable*>* new_list = new list<Drawable*>;
 				new_list->push_back(obj);
-				m_event_layers[obj->z()] = new_list;
+				m_layers[obj->z()] = new_list;
 			}
 			
 		} else {
 
 			map<int, list<Drawable*>* >::iterator layer_it;
-			layer_it = m_event_layers.find(obj->z());
-			if(layer_it != m_event_layers.end()) {
+			layer_it = m_layers.find(obj->z());
+			if(layer_it != m_layers.end()) {
 				layer_it->second->push_back(obj);
 			} else {
 				list<Drawable*>* new_list = new list<Drawable*>;
 				new_list->push_back(obj);
-				m_event_layers[obj->z()] = new_list;
+				m_layers[obj->z()] = new_list;
 			}
 			
 		}
 
-		m_event_index[obj] = obj->z();
+		m_index[obj] = obj->z();
 		return true;
+	}
+
+	void ContextManager::bind (Drawable* obj)
+	{
+		if (!obj) return;
+
+		if (obj->m_parent_new.object.nameless) {
+			if (obj->m_parent_new.type == ParentContextManager) {
+				// TODO: change to use a new function
+//				ContextManager::instance()->remove_drawable(obj);
+			}
+			if (obj->m_parent_new.type == ParentDrawable) {
+				obj->m_parent_new.object.drawable->m_children_new.erase(obj);
+			}
+		}
+
+		if(add_drawable(obj)) {
+			std::cerr << "add object" << std::endl;
+		} else {
+			std::cerr << "obj already in contextmanager with the same layer" << std::endl;
+		}
+
+		obj->m_parent_new.type = ParentContextManager;
+		obj->m_parent_new.object.context = this;
+
+		return;
+	}
+
+	void ContextManager::unbind (Drawable* obj)
+	{
+		if (!obj) return;
+
+		if (!obj->m_parent_new.object.nameless) return;
+
+		if (obj->m_parent_new.type == ParentDrawable) {
+			std::cerr << "obj not in context manager, won't unbind it" << std::endl;
+			return;
+		}
+
+		if(remove_drawable(obj)) {
+			std::cerr << "remove object" << std::endl;
+		} else {
+			std::cerr << "obj not in in contextmanager with the same layer" << std::endl;
+		}
+
+		obj->m_parent_new.type = ParentUnknown;
+		obj->m_parent_new.object.nameless = 0;
+
+		return;
 	}
 
 	bool ContextManager::remove_drawable (Drawable* obj)
@@ -134,11 +186,11 @@ namespace BILO {
 
 		map<Drawable*, int>::iterator map_it;
 		
-		map_it = m_event_index.find(obj);
+		map_it = m_index.find(obj);
 
-		if(map_it != m_event_index.end()) {
+		if(map_it != m_index.end()) {
 
-			list<Drawable*>* p = m_event_layers[map_it->second];
+			list<Drawable*>* p = m_layers[map_it->second];
 			list<Drawable*>::iterator it = find(p->begin(), p->end(), obj);
 			if (it != p->end()) {
 				p->erase (it);
@@ -149,11 +201,11 @@ namespace BILO {
 			}
 
 			if (p->empty()) {
-				m_event_layers.erase(map_it->second);
+				m_layers.erase(map_it->second);
 				delete p;
 			}
 
-			m_event_index.erase(obj);
+			m_index.erase(obj);
 
 		} else {
 #ifdef DEBUG
@@ -175,11 +227,11 @@ namespace BILO {
 		ListType* plist;
 		std::cout << std::endl;
 
-		std::cout << "size of index map:" << m_event_index.size() << std::endl;
+		std::cout << "size of index map:" << m_index.size() << std::endl;
 
-		std::cout << "size of layer map:" << m_event_layers.size() << std::endl;
+		std::cout << "size of layer map:" << m_layers.size() << std::endl;
 
-		for(map_it = m_event_layers.begin(); map_it != m_event_layers.end(); map_it++)
+		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
 		{
 			std::cout << "Layer: " << map_it->first << std::endl;
 			plist = map_it->second;

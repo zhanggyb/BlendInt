@@ -22,7 +22,6 @@
 #ifndef _BIL_CONTEXTMANAGER_HPP_
 #define _BIL_CONTEXTMANAGER_HPP_
 
-#include <BILO/Drawable.hpp>
 #include <map>
 #include <list>
 
@@ -32,6 +31,7 @@ using std::list;
 namespace BILO {
 
 	class Interface;
+	class Drawable;
 
 	/**
 	 * @brief class to hold and manage drawable objects for render
@@ -47,6 +47,10 @@ namespace BILO {
 		static bool initialize ();
 
 		static void release ();
+
+		void bind (Drawable* obj);
+
+		void unbind (Drawable* obj);
 
 		/**
 		 * @brief add the drawable in the context list
@@ -64,9 +68,9 @@ namespace BILO {
 		 */
 		bool remove_drawable (Drawable* obj);
 
-		int event_index_size () const {return m_event_index.size();}
+		int index_size () const {return m_index.size();}
 
-		int event_layer_size () const {return m_event_layers.size();}
+		int layer_size () const {return m_layers.size();}
 
 #ifdef DEBUG
 
@@ -84,11 +88,9 @@ namespace BILO {
 
 		~ContextManager ();
 
-		map<int, list<Drawable*>* > m_event_layers;
+		map<int, list<Drawable*>* > m_layers;
 
-		map<Drawable*, int> m_event_index;
-
-		list<Drawable*> m_render_list;
+		map<Drawable*, int> m_index;
 
 		static ContextManager* context_manager;
 		

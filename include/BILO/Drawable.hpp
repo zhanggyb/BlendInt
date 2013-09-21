@@ -24,25 +24,63 @@
 
 #include <list>
 
+#include <set>
+
 #include <BILO/Traceable.hpp>
 #include <BILO/EventHandler.hpp>
-#include <BILO/Theme.hpp>
-#include <BILO/Rect.hpp>
-#include <BILO/Size.hpp>
+
 #include <BILO/Point.hpp>
-#include <BILO/Margin.hpp>
+#include <BILO/Size.hpp>
 #include <BILO/Padding.hpp>
-#include <BILO/Coord.hpp>
+#include <BILO/Margin.hpp>
+#include <BILO/String.hpp>
 
 #include <BILO/Types.hpp>
 
 namespace BILO {
+
+	class ContextManager;
+	class Drawable;
+	class Rect;
+
+	struct WidgetColors;
+
+	enum ParentType {
+		ParentUnknown,
+		ParentContextManager,
+		ParentDrawable
+	};
+
+	union ParentPointer {
+		ParentPointer ()
+		: nameless(0)
+		{
+
+		}
+		ContextManager* context;
+		Drawable* drawable;
+		void* nameless;
+	};
+
+	struct Parent {
+		Parent ()
+		: type(ParentUnknown)
+		{
+
+		}
+		ParentType type;
+		ParentPointer object;
+
+		DISALLOW_COPY_AND_ASSIGN(Parent);
+	};
 
 	class Drawable: public Traceable, public EventHandler
 	{
 		DISALLOW_COPY_AND_ASSIGN(Drawable);
 
 	public:
+
+		friend class ContextManager;
 
 		/**
 		 * @brief Default constructor
@@ -55,6 +93,19 @@ namespace BILO {
 		Drawable (Drawable* parent = 0);
 
 		virtual ~Drawable ();
+
+		void bind (Drawable* child);
+
+		void unbind (Drawable* child);
+
+		/**
+		 * @brief unbind this and set parent to 0
+		 */
+		void unbind ();
+
+		void bind_to (ContextManager* parent);
+
+		void bind_to (Drawable* parent);
 
 		virtual void set_parent (Drawable* parent);
 
@@ -215,6 +266,11 @@ namespace BILO {
 		bool visible_;
 
 		String m_name;
+
+		Parent m_parent_new;
+
+		std::set<Drawable*> m_children_new;
+
 	};
 
 } /* namespace BILO */

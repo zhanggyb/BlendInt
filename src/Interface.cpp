@@ -177,7 +177,7 @@ namespace BILO {
 		list<Drawable*>::iterator list_it;
 		ContextManager* cm = ContextManager::instance();
 
-		for(map_it = cm->m_event_layers.begin(); map_it != cm->m_event_layers.end(); map_it++)
+		for(map_it = cm->m_layers.begin(); map_it != cm->m_layers.end(); map_it++)
 		{
 			list<Drawable*>* plist = map_it->second;
 			for (list_it = plist->begin(); list_it != plist->end(); list_it++)
@@ -275,7 +275,7 @@ namespace BILO {
 			list<Drawable*>::reverse_iterator list_it;
 			ContextManager* cm = ContextManager::instance();
 
-			for(map_it = cm->m_event_layers.rbegin(); map_it != cm->m_event_layers.rend(); map_it++)
+			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 			{
 				list<Drawable*>* plist = map_it->second;
 				for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
@@ -307,7 +307,7 @@ namespace BILO {
 			list<Drawable*>::reverse_iterator list_it;
 			ContextManager* cm = ContextManager::instance();
 
-			for(map_it = cm->m_event_layers.rbegin(); map_it != cm->m_event_layers.rend(); map_it++)
+			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 			{
 				list<Drawable*>* plist = map_it->second;
 				for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
@@ -378,7 +378,7 @@ namespace BILO {
 		list<Drawable*>::reverse_iterator list_it;
 		ContextManager* cm = ContextManager::instance();
 
-		for(map_it = cm->m_event_layers.rbegin(); map_it != cm->m_event_layers.rend(); map_it++)
+		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
 			list<Drawable*>* plist = map_it->second;
 			for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
@@ -413,7 +413,7 @@ namespace BILO {
 		list<Drawable*>::reverse_iterator list_it;
 		ContextManager* cm = ContextManager::instance();
 
-		for(map_it = cm->m_event_layers.rbegin(); map_it != cm->m_event_layers.rend(); map_it++)
+		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
 			list<Drawable*>* plist = map_it->second;
 			for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
