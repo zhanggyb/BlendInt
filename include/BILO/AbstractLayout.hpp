@@ -22,6 +22,8 @@
 #ifndef _BILO_ABSTRACTLAYOUT_H_
 #define _BILO_ABSTRACTLAYOUT_H_
 
+#include <list>
+
 #include <BILO/Drawable.hpp>
 #include <BILO/Widget.hpp>
 
@@ -35,9 +37,9 @@ namespace BILO {
 
 		virtual ~AbstractLayout ();
 
-		bool add_widget (Widget* widget);
+		void add_widget (Widget* widget);
 
-		bool add_layout (AbstractLayout* layout);
+		void add_layout (AbstractLayout* layout);
 
 		int alignment () const {return alignment_;}
 
@@ -63,7 +65,7 @@ namespace BILO {
 
 		int alignment_;
 
-	private:
+		std::list<Drawable*> m_list;
 
 		DISALLOW_COPY_AND_ASSIGN(AbstractLayout);
 	};

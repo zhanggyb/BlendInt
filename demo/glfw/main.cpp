@@ -8,6 +8,7 @@
 
 #include <Cpp/Events.hpp>
 #include <BILO/Interface.hpp>
+#include <BILO/ContextManager.hpp>
 
 #include <BILO/ToggleButton.hpp>
 #include <BILO/VerticalLayout.hpp>
@@ -80,42 +81,41 @@ int main(int argc, char* argv[]) {
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	VerticalLayout* layout1 = new VerticalLayout;
-	layout1->set_pos(100, 100);
-	layout1->set_alignment(BILO::AlignVerticalCenter);
+	ContextManager* cm = ContextManager::instance();
 
-	Label* label1 = new Label(L"la1");
-	label1->set_pos(100, 100);
+	Widget widget1;
+	widget1.set_pos(50, 50);
+	widget1.resize (50, 50);
+	widget1.set_name("widget1");
 
-	layout1->add_widget(label1);
+	Widget widget2;
+	widget2.set_pos(100, 100);
+	widget2.resize (50, 50);
+	widget2.set_name("widget2");
 
-	HorizontalLayout layout2;
+	Widget widget3;
+	widget3.set_pos(150, 150);
+	widget3.resize (50, 50);
+	widget3.set_name("widget3");
+	widget3.set_z(1);
 
-	Label* label2 = new Label(L"Hello Blender");
-	label2->set_pos(500, 500);
+	Widget widget4;
+	widget4.set_pos(200, 200);
+	widget4.resize (50, 50);
+	widget4.set_name("widget4");
+	widget4.set_z(1);
 
-	layout2.add_widget(label2);
-	layout2.add_layout(layout1);
+	cm->print();
+	cm->bind(&widget1);
 
-	layout2.set_pos (400, 500);
-	layout2.set_z(2);
+	widget1.bind(&widget2);
+	//widget1.bind(&widget4);
 
-	//ScrollWidget scroll_widget;
-	//scroll_widget.set_pos(500, 200);
+	cm->print();
 
-	ScrollBar hbar(Horizontal);
-	hbar.set_pos (500, 100);
+	widget3.bind(&widget4);
 
-	ScrollBar vbar(Vertical);
-	vbar.set_pos (600, 200);
-
-	Slider hslider (Horizontal);
-	hslider.set_pos (200, 200);
-	hslider.set_value(80);
-
-	Slider vslider (Vertical);
-	vslider.set_pos (200, 300);
-	vslider.set_value(20);
+	cm->print();
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -128,6 +128,13 @@ int main(int argc, char* argv[]) {
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	widget1.unbind();
+	widget2.unbind();
+	widget3.unbind();
+	widget4.unbind();
+
+	cm->print();
 
 	/* release BILO */
 	Interface::release();

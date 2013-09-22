@@ -9,6 +9,7 @@
 
 #include <BILO/Interface.hpp>
 #include <BILO/Widget.hpp>
+#include <BILO/Drawable.hpp>
 #include "WidgetTest.h"
 
 using namespace BILO;
@@ -67,11 +68,11 @@ void WidgetTest::setUp ()
 void WidgetTest::tearDown ()
 {
 #ifdef DEBUG
-	int mapsize = Traceable::mapSize();
+	int mapsize = Drawable::map_size();
 
 	if(mapsize > 0) {
-		map<uint64_t, Traceable*>::const_iterator it;
-		for (it = Traceable::getMap().begin(); it != Traceable::getMap().end(); it++)
+		map<uint64_t, Drawable*>::const_iterator it;
+		for (it = Drawable::get_map().begin(); it != Drawable::get_map().end(); it++)
 		{
 			cout << "id: " << it->first << " was not deleted!" << endl;
 		}

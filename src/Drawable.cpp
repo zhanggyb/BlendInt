@@ -1,16 +1,18 @@
 /*
- * This file is part of BILO (Blender Interface Library).
+ * This file is part of BILO (Blender-like Interface Library in
+ * OpenGL).
  *
- * BILO (Blender Interface Library) is free software: you can
- * redistribute it and/or modify it under the terms of the GNU Lesser
- * General Public License as published by the Free Software
+ * BILO (Blender-like Interface Library in OpenGL) is free software:
+ * you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * BILO (Blender Interface Library) is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * BILO (Blender-like Interface Library in OpenGL) is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BILO.  If not, see
@@ -23,7 +25,8 @@
 
 #include <algorithm>
 #include <iostream>
-#include <list>
+#include <set>
+#include <stdexcept>
 
 #include <BILO/Drawable.hpp>
 #include <BILO/ContextManager.hpp>
@@ -78,158 +81,195 @@ namespace BILO {
 		glColor3fv(col);
 	}
 
-	Drawable::Drawable (Drawable* parent)
-		: Traceable(parent), m_z(0), round_box_type_ (RoundCornerNone),
-		  visible_(false)
+	Drawable::Drawable ()
+		: m_z(0),
+		  round_box_type_ (RoundCornerNone),
+#ifdef DEBUG
+		  m_id(0),
+#endif
+		  visible_(true)
 	{
-		if(!parent) {
-			ContextManager::instance()->add_drawable(this);
+#ifdef DEBUG
+		// generate a unique id
+		uint64_t temp = id_last;
+
+		while (Drawable::obj_map.count(id_last) == 1) {
+			id_last++;
+			if (temp == id_last)
+				throw std::out_of_range("Cannot assign unique id for object");
 		}
 
-		if(parent) {
-			if(parent->z() != m_z) {
-				ContextManager::instance()->add_drawable(this);
-			}
+		m_id = id_last;
+
+		register_in_map();
+		id_last++;
+#endif
+	}
+
+
+	Drawable::Drawable (Drawable* parent)
+		: m_z(0),
+		  round_box_type_ (RoundCornerNone),
+#ifdef DEBUG
+		  m_id(0),
+#endif
+		  visible_(true)
+	{
+		if(!parent) {
+			bind_to(parent);
 		}
+
+#ifdef DEBUG
+		// generate a unique id
+		uint64_t temp = id_last;
+
+		while (Drawable::obj_map.count(id_last) == 1) {
+			id_last++;
+			if (temp == id_last)
+				throw std::out_of_range("Cannot assign unique id for object");
+		}
+
+		m_id = id_last;
+
+		register_in_map();
+		id_last++;
+#endif
+
 	}
 
 	Drawable::~Drawable ()
 	{
 		// delete all child object in list
-		ContextManager::instance()->remove_drawable(this);
 
-		if(m_parent_new.object.nameless) {
-			if(m_parent_new.type == ParentContextManager) {
-				ContextManager::instance()->remove_drawable(this);
+		if(m_parent.object.nameless) {
+			if(m_parent.type == ParentContextManager) {
+				ContextManager::instance()->unbind(this);
 			}
-			if(m_parent_new.type == ParentDrawable) {
-				m_parent_new.object.drawable->m_children_new.erase(this);
+			if(m_parent.type == ParentDrawable) {
+				m_parent.object.drawable->m_children.erase(this);
 			}
 		}
 
 		std::set<Drawable*>::iterator it;
-
-		for(it = m_children_new.begin(); it != m_children_new.end(); it++)
+		for(it = m_children.begin(); it != m_children.end(); it++)
 		{
 			delete *it;
-			//(*it) = 0;
 		}
+		m_children.clear();
 
-		m_children_new.clear();
+#ifdef DEBUG
+		unregister_from_map();
+#endif
 	}
 
-	void Drawable::bind (Drawable* child)
+	bool Drawable::bind (Drawable* child)
 	{
-		if (!child) return;
+		if (!child) return false;
 
-		if (child->m_parent_new.object.nameless) {
-			if (child->m_parent_new.type == ParentContextManager) {
+		if (child->m_z != m_z) {
+			std::cerr << "Cannot bind a child in different layer" << std::endl;
+			return false;
+		}
+
+		if (child->m_parent.object.nameless) {
+			if (child->m_parent.type == ParentContextManager) {
 				ContextManager::instance()->unbind(child);
 			}
-			if (child->m_parent_new.type == ParentDrawable) {
-				child->m_parent_new.object.drawable->m_children_new.erase(child);
+			if (child->m_parent.type == ParentDrawable) {
+				child->m_parent.object.drawable->m_children.erase(child);
 			}
 		}
-		child->m_parent_new.type = ParentDrawable;
-		child->m_parent_new.object.drawable = this;
+		child->m_parent.type = ParentDrawable;
+		child->m_parent.object.drawable = this;
 
-		m_children_new.insert(child);
+		m_children.insert(child);
+
+		return true;
 	}
 
 	void Drawable::unbind (Drawable* child)
 	{
 		if(!child) return;
 
-		if(!m_children_new.count(child))
+		if(!m_children.count(child))
 			return;
 
-		child->m_parent_new.type = ParentUnknown;
-		child->m_parent_new.object.nameless = 0;
+		child->m_parent.type = ParentUnknown;
+		child->m_parent.object.nameless = 0;
 
-		m_children_new.erase(child);
+		m_children.erase(child);
 	}
 
 	void Drawable::unbind ()
 	{
-		if (m_parent_new.object.nameless) {
-			if (m_parent_new.type == ParentContextManager) {
+		if (m_parent.object.nameless) {
+			if (m_parent.type == ParentContextManager) {
 				ContextManager::instance()->unbind(this);
 			}
-			if (m_parent_new.type == ParentDrawable) {
-				m_parent_new.object.drawable->m_children_new.erase(this);
+			if (m_parent.type == ParentDrawable) {
+				m_parent.object.drawable->m_children.erase(this);
 			}
 		}
 
-		m_parent_new.type = ParentUnknown;
-		m_parent_new.object.nameless = 0;
+		m_parent.type = ParentUnknown;
+		m_parent.object.nameless = 0;
 	}
 
-	void Drawable::bind_to (ContextManager *parent)
+	bool Drawable::bind_to (ContextManager *parent)
 	{
-		if(!parent) return;
+		if(!parent) return false;
 
-		if (m_parent_new.object.nameless) {
-			if (m_parent_new.type == ParentDrawable) {
-				m_parent_new.object.drawable->m_children_new.erase(this);
+		if (m_parent.object.nameless) {
+			if (m_parent.type == ParentDrawable) {
+				m_parent.object.drawable->m_children.erase(this);
+				m_parent.type = ParentUnknown;
+				m_parent.object.nameless = 0;
 			}
 		}
 
 		parent->bind(this);
+
+		return true;
 	}
 
-	void Drawable::bind_to (Drawable* parent)
+	bool Drawable::bind_to (Drawable* parent)
 	{
-		if(!parent) return;
+		if(!parent) return false;
 
-		if (m_parent_new.object.nameless) {
-			if (m_parent_new.type == ParentContextManager) {
-				m_parent_new.object.context->unbind(this);
-			}
-			if (m_parent_new.type == ParentDrawable) {
-				if (m_parent_new.object.drawable == parent) return;
-				m_parent_new.object.drawable->m_children_new.erase(this);
-			}
+		if(parent->m_z != m_z) {
+			std::cerr << "Cannot bind to a parent in different layer" << std::endl;
+			return false;
 		}
 
-		parent->m_children_new.insert (this);
-		m_parent_new.type = ParentDrawable;
-		m_parent_new.object.drawable = parent;
-	}
-
-	void Drawable::set_parent (Drawable* parent)
-	{
-		if (parent) {
-			if(parent->m_z == m_z) {
-				ContextManager::instance()->remove_drawable(this);
-			} else {
-				ContextManager::instance()->add_drawable(this);
+		if (m_parent.object.nameless) {
+			if (m_parent.type == ParentContextManager) {
+				m_parent.object.context->unbind(this);
 			}
-		} else {
-			ContextManager::instance()->add_drawable(this);
-		}
-		Traceable::set_parent(parent);
-	}
+			if (m_parent.type == ParentDrawable) {
+				if (m_parent.object.drawable == parent) return true;
 
-	bool Drawable::add_child (Drawable* child)
-	{
-		if(child) {
-			if(child->m_z == m_z) {
-				ContextManager::instance()->remove_drawable(child);
-			} else {
-				ContextManager::instance()->add_drawable(child);
+				m_parent.object.drawable->m_children.erase(this);
 			}
 		}
 
-		return Traceable::add_child(child);
+		parent->m_children.insert (this);
+		m_parent.type = ParentDrawable;
+		m_parent.object.drawable = parent;
+
+		return true;
 	}
 
-	bool Drawable::remove_child (Drawable* child)
+	bool Drawable::bounded ()
 	{
-		if(Traceable::remove_child(child)) {
-			ContextManager::instance()->add_drawable(child);
-			return true;
+		Parent* parent = &m_parent;
+		while (parent->type == ParentDrawable) {
+			parent = &(parent->object.drawable->m_parent);
 		}
-		return false;
+
+		if (parent->type == ParentUnknown) return false;
+
+		// return true if parent type is Context Manager
+		return true;
 	}
 
 	const Size& Drawable::size () const
@@ -275,36 +315,27 @@ namespace BILO {
 		update(WidgetPropertyPosition);
 	}
 
-	inline int Drawable::z () const
-	{
-		return m_z;
-	}
-
 	void Drawable::set_z (int z)
 	{
-		m_z = z;
+		if (m_z == z) return;
 
-		if(m_parent) {
-			Drawable* parent = dynamic_cast<Drawable*>(m_parent);
-			if(parent) {
-				if(parent->z() != m_z) {
-					ContextManager::instance()->add_drawable(this);
-				} else {
-					ContextManager::instance()->remove_drawable(this);
-				}
-			}
-		} else {
-			ContextManager::instance()->add_drawable(this);
+		Drawable* root = 0;
+		Parent* parent = &m_parent;
+		while (parent->type == ParentDrawable) {
+			root = parent->object.drawable;
+			parent = &(parent->object.drawable->m_parent);
 		}
 
-		std::list<Traceable*>::iterator it;
-		Drawable* item = 0;
-		for (it = m_children.begin(); it != m_children.end(); it++)
-		{
-			item = dynamic_cast<Drawable*>(*it);
-			if(item) {
-				item->set_z (z);
-			}
+		if (!root)
+			set_z_simple(z);
+		else
+			root->set_z_simple(z);
+
+		if (parent->type == ParentContextManager) {
+			if(root)
+				ContextManager::instance()->bind(root);
+			else
+				ContextManager::instance()->bind(this);
 		}
 
 		update (WidgetPropertyLayer);
@@ -827,9 +858,44 @@ namespace BILO {
 		glShadeModel(GL_FLAT);
 	}
 
-	void Drawable::DrawScroll(const WidgetColors& wcol, const Rect& rect, const Rect& slider, ScrollState state)
+	void Drawable::set_z_simple (int z)
 	{
+		m_z = z;
 
+		std::set<Drawable*>::iterator it;
+		for (it = m_children.begin(); it != m_children.end(); it++)
+		{
+			(*it)->set_z_simple (z);
+		}
 	}
+
+#ifdef DEBUG
+
+	uint64_t Drawable::id_last = 1;
+
+	map<uint64_t, Drawable*> Drawable::obj_map;
+
+	inline bool Drawable::register_in_map ()
+	{
+		Drawable::obj_map[m_id] = this;
+		return true;
+	}
+
+	inline bool Drawable::unregister_from_map ()
+	{
+		Drawable::obj_map.erase(m_id);
+		return true;
+	}
+
+	Drawable* Drawable::find (uint64_t id)
+	{
+		Drawable *ret = NULL;
+		if (Drawable::obj_map.count(id) == 1)
+			ret = Drawable::obj_map[id];
+
+		return ret;
+	}
+
+#endif
 
 } /* namespace BILO */

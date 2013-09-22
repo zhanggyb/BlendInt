@@ -35,22 +35,22 @@ namespace BILO {
 		// TODO Auto-generated destructor stub
 	}
 
-	bool AbstractLayout::add_widget (Widget* widget)
+	void AbstractLayout::add_widget (Widget* widget)
 	{
-		bool ret = add_child (widget);
+		m_list.push_back(widget);
+
+		bind (widget);
 
 		update(WidgetPropertySize);
-
-		return ret;
 	}
 
-	bool AbstractLayout::add_layout(AbstractLayout* layout)
+	void AbstractLayout::add_layout(AbstractLayout* layout)
 	{
-		bool ret = add_child (layout);
+		m_list.push_back(layout);
+		bind (layout);
 
 		update(WidgetPropertySize);
 
-		return ret;
 	}
 
 	void AbstractLayout::press_key (KeyEvent* event)

@@ -29,7 +29,6 @@
 #include <BILO/Theme.hpp>
 #include <BILO/ShaderManager.hpp>
 #include <BILO/Size.hpp>
-#include <BILO/Traceable.hpp>
 #include <BILO/Drawable.hpp>
 #include <BILO/KeyEvent.hpp>
 #include <BILO/MouseEvent.hpp>
@@ -173,18 +172,18 @@ namespace BILO {
 		draw_grid(width, height);
 #endif
 
-		map<int, list<Drawable*>* >::iterator map_it;
-		list<Drawable*>::iterator list_it;
+		map<int, set<Drawable*>* >::iterator map_it;
+		set<Drawable*>::iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
 		for(map_it = cm->m_layers.begin(); map_it != cm->m_layers.end(); map_it++)
 		{
-			list<Drawable*>* plist = map_it->second;
-			for (list_it = plist->begin(); list_it != plist->end(); list_it++)
+			set<Drawable*>* pset = map_it->second;
+			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				if((*list_it)->m_ticktack == m_ticktack) {
-					(*list_it)->render();
-					(*list_it)->m_ticktack = (*list_it)->m_ticktack ? 0 : 1;
+				if((*set_it)->m_ticktack == m_ticktack) {
+					(*set_it)->render();
+					(*set_it)->m_ticktack = (*set_it)->m_ticktack ? 0 : 1;
 				}
 			}
 		}
@@ -271,22 +270,22 @@ namespace BILO {
 		if (key == Key_Menu) {
 			ContextMenuEvent event(ContextMenuEvent::Keyboard, mods);
 
-			map<int, list<Drawable*>* >::reverse_iterator map_it;
-			list<Drawable*>::reverse_iterator list_it;
+			map<int, set<Drawable*>* >::reverse_iterator map_it;
+			set<Drawable*>::reverse_iterator set_it;
 			ContextManager* cm = ContextManager::instance();
 
 			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 			{
-				list<Drawable*>* plist = map_it->second;
-				for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
+				set<Drawable*>* pset = map_it->second;
+				for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 				{
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
 						case KeyPress:
-							(*list_it)->press_context_menu(&event);
+							(*set_it)->press_context_menu(&event);
 							break;
 						case KeyRelease:
-							(*list_it)->release_context_menu(&event);
+							(*set_it)->release_context_menu(&event);
 							break;
 						default:
 							break;
@@ -303,19 +302,19 @@ namespace BILO {
 
 			KeyEvent event(key, scancode, action, mods);
 
-			map<int, list<Drawable*>* >::reverse_iterator map_it;
-			list<Drawable*>::reverse_iterator list_it;
+			map<int, set<Drawable*>* >::reverse_iterator map_it;
+			set<Drawable*>::reverse_iterator set_it;
 			ContextManager* cm = ContextManager::instance();
 
 			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 			{
-				list<Drawable*>* plist = map_it->second;
-				for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
+				set<Drawable*>* pset = map_it->second;
+				for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 				{
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
 						case KeyPress:
-							dispatch_key_press_event((*list_it), &event);
+							dispatch_key_press_event((*set_it), &event);
 							break;
 						case KeyRelease:
 							// item->KeyReleaseEvent(dynamic_cast<BILO::KeyEvent*>(event));
@@ -374,22 +373,22 @@ namespace BILO {
 
 		MouseEvent event(mouse_action, mouseclick);
 
-		map<int, list<Drawable*>* >::reverse_iterator map_it;
-		list<Drawable*>::reverse_iterator list_it;
+		map<int, set<Drawable*>* >::reverse_iterator map_it;
+		set<Drawable*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
-			list<Drawable*>* plist = map_it->second;
-			for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
+			set<Drawable*>* pset = map_it->second;
+			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 			{
 				event.set_position(cursor_pos_x_, cursor_pos_y_);
 				switch (action) {
 					case GLFW_PRESS:
-						dispatch_mouse_press_event((*list_it), &event);
+						dispatch_mouse_press_event((*set_it), &event);
 						break;
 					case GLFW_RELEASE:
-						(*list_it)->release_mouse(&event);
+						(*set_it)->release_mouse(&event);
 						break;
 					default:
 						break;
@@ -409,17 +408,17 @@ namespace BILO {
 
 		MouseEvent event(MouseNone, MouseButtonNone);
 
-		map<int, list<Drawable*>* >::reverse_iterator map_it;
-		list<Drawable*>::reverse_iterator list_it;
+		map<int, set<Drawable*>* >::reverse_iterator map_it;
+		set<Drawable*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
-			list<Drawable*>* plist = map_it->second;
-			for (list_it = plist->rbegin(); list_it != plist->rend(); list_it++)
+			set<Drawable*>* pset = map_it->second;
+			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 			{
 				event.set_position(cursor_pos_x_, cursor_pos_y_);
-				dispatch_mouse_move_event((*list_it), &event);
+				dispatch_mouse_move_event((*set_it), &event);
 				if (event.accepted())
 					break;
 			}

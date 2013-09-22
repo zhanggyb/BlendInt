@@ -63,6 +63,9 @@ namespace BILO {
 	void ContextManager::release ()
 	{
 		// TODO: remove all drawable objects
+		if(context_manager) delete context_manager;
+
+		context_manager = 0;
 	}
 
 	ContextManager::ContextManager ()
@@ -72,7 +75,19 @@ namespace BILO {
 
 	ContextManager::~ContextManager ()
 	{
+		map<int, set<Drawable*>* >::iterator map_it;
+		set<Drawable*>::iterator set_it;
+		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
+		{
+			set<Drawable*>* pset = map_it->second;
+			for(set_it = pset->begin(); set_it != pset->end(); set_it++)
+			{
+				delete *set_it;
+			}
+		}
 
+		m_layers.clear();
+		m_index.clear();
 	}
 
 	bool ContextManager::add_drawable (Drawable* obj)
@@ -88,8 +103,8 @@ namespace BILO {
 				return false;
 			}
 
-			list<Drawable*>* p = m_layers[map_it->second];
-			list<Drawable*>::iterator it = find(p->begin(), p->end(), obj);
+			set<Drawable*>* p = m_layers[map_it->second];
+			set<Drawable*>::iterator it = p->find(obj);
 			if (it != p->end()) {
 				p->erase (it);
 			} else {
@@ -103,26 +118,26 @@ namespace BILO {
 				delete p;
 			}
 
-			map<int, list<Drawable*>* >::iterator layer_it;
+			map<int, set<Drawable*>* >::iterator layer_it;
 			layer_it = m_layers.find(obj->z());
 			if(layer_it != m_layers.end()) {
-				layer_it->second->push_back(obj);
+				layer_it->second->insert(obj);
 			} else {
-				list<Drawable*>* new_list = new list<Drawable*>;
-				new_list->push_back(obj);
-				m_layers[obj->z()] = new_list;
+				set<Drawable*>* new_set = new set<Drawable*>;
+				new_set->insert(obj);
+				m_layers[obj->z()] = new_set;
 			}
 			
 		} else {
 
-			map<int, list<Drawable*>* >::iterator layer_it;
+			map<int, set<Drawable*>* >::iterator layer_it;
 			layer_it = m_layers.find(obj->z());
 			if(layer_it != m_layers.end()) {
-				layer_it->second->push_back(obj);
+				layer_it->second->insert(obj);
 			} else {
-				list<Drawable*>* new_list = new list<Drawable*>;
-				new_list->push_back(obj);
-				m_layers[obj->z()] = new_list;
+				set<Drawable*>* new_set = new set<Drawable*>;
+				new_set->insert(obj);
+				m_layers[obj->z()] = new_set;
 			}
 			
 		}
@@ -135,24 +150,20 @@ namespace BILO {
 	{
 		if (!obj) return;
 
-		if (obj->m_parent_new.object.nameless) {
-			if (obj->m_parent_new.type == ParentContextManager) {
-				// TODO: change to use a new function
-//				ContextManager::instance()->remove_drawable(obj);
-			}
-			if (obj->m_parent_new.type == ParentDrawable) {
-				obj->m_parent_new.object.drawable->m_children_new.erase(obj);
+		if (obj->m_parent.object.nameless) {
+			if (obj->m_parent.type == ParentDrawable) {
+				obj->m_parent.object.drawable->m_children.erase(obj);
 			}
 		}
 
 		if(add_drawable(obj)) {
-			std::cerr << "add object" << std::endl;
+			std::wcerr << "add object" << std::endl;
 		} else {
-			std::cerr << "obj already in contextmanager with the same layer" << std::endl;
+			std::wcerr << "obj already in contextmanager with the same layer" << std::endl;
 		}
 
-		obj->m_parent_new.type = ParentContextManager;
-		obj->m_parent_new.object.context = this;
+		obj->m_parent.type = ParentContextManager;
+		obj->m_parent.object.context = this;
 
 		return;
 	}
@@ -161,21 +172,21 @@ namespace BILO {
 	{
 		if (!obj) return;
 
-		if (!obj->m_parent_new.object.nameless) return;
+		if (!obj->m_parent.object.nameless) return;
 
-		if (obj->m_parent_new.type == ParentDrawable) {
-			std::cerr << "obj not in context manager, won't unbind it" << std::endl;
+		if (obj->m_parent.type == ParentDrawable) {
+			std::wcerr << "obj not in context manager, won't unbind it" << std::endl;
 			return;
 		}
 
 		if(remove_drawable(obj)) {
-			std::cerr << "remove object" << std::endl;
+			std::wcerr << "remove object" << std::endl;
 		} else {
-			std::cerr << "obj not in in contextmanager with the same layer" << std::endl;
+			std::wcerr << "obj not in in contextmanager with the same layer" << std::endl;
 		}
 
-		obj->m_parent_new.type = ParentUnknown;
-		obj->m_parent_new.object.nameless = 0;
+		obj->m_parent.type = ParentUnknown;
+		obj->m_parent.object.nameless = 0;
 
 		return;
 	}
@@ -190,8 +201,8 @@ namespace BILO {
 
 		if(map_it != m_index.end()) {
 
-			list<Drawable*>* p = m_layers[map_it->second];
-			list<Drawable*>::iterator it = find(p->begin(), p->end(), obj);
+			set<Drawable*>* p = m_layers[map_it->second];
+			set<Drawable*>::iterator it = p->find(obj);
 			if (it != p->end()) {
 				p->erase (it);
 			} else {
@@ -222,9 +233,9 @@ namespace BILO {
 	void ContextManager::print ()
 	{
 		LayerType::iterator map_it;
-		ListType::iterator list_it;
+		SetType::iterator set_it;
 
-		ListType* plist;
+		SetType* pset;
 		std::cout << std::endl;
 
 		std::cout << "size of index map:" << m_index.size() << std::endl;
@@ -234,10 +245,10 @@ namespace BILO {
 		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
 		{
 			std::cout << "Layer: " << map_it->first << std::endl;
-			plist = map_it->second;
-			for(list_it = plist->begin(); list_it != plist->end(); list_it++)
+			pset = map_it->second;
+			for(set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				std::wcout << (*list_it)->name() << " ";
+				std::wcout << (*set_it)->name() << " ";
 			}
 			std::cout << std::endl;
 		}

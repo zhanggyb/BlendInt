@@ -23,10 +23,10 @@
 #define _BIL_CONTEXTMANAGER_HPP_
 
 #include <map>
-#include <list>
+#include <set>
 
 using std::map;
-using std::list;
+using std::set;
 
 namespace BILO {
 
@@ -52,6 +52,18 @@ namespace BILO {
 
 		void unbind (Drawable* obj);
 
+		int index_size () const {return m_index.size();}
+
+		int layer_size () const {return m_layers.size();}
+
+#ifdef DEBUG
+
+		void print ();
+
+#endif
+
+	private:
+
 		/**
 		 * @brief add the drawable in the context list
 		 * @param obj
@@ -68,27 +80,15 @@ namespace BILO {
 		 */
 		bool remove_drawable (Drawable* obj);
 
-		int index_size () const {return m_index.size();}
-
-		int layer_size () const {return m_layers.size();}
-
-#ifdef DEBUG
-
-		void print ();
-
-#endif
-
-	private:
-
-		typedef map<int, list<Drawable*>* > LayerType;
-		typedef list<Drawable*> ListType;
+		typedef map<int, set<Drawable*>* > LayerType;
+		typedef set<Drawable*> SetType;
 		typedef map<Drawable*, int> IndexType;
 
 		ContextManager ();
 
 		~ContextManager ();
 
-		map<int, list<Drawable*>* > m_layers;
+		map<int, set<Drawable*>* > m_layers;
 
 		map<Drawable*, int> m_index;
 

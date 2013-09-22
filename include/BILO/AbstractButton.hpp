@@ -41,7 +41,9 @@ namespace BILO {
 	{
 	public:
 
-		AbstractButton (Widget* parent = NULL);
+		AbstractButton ();
+
+		AbstractButton (Drawable* parent);
 
 		virtual ~AbstractButton ();
 

@@ -86,13 +86,13 @@ namespace BILO {
 	private:
 
 		int m_step;
+		Orientation m_orientation;
 
 		int m_value;
 
 		int m_minimum;
 		int m_maximum;
 
-		Orientation m_orientation;
 
 	};
 

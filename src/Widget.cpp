@@ -1,16 +1,18 @@
 /*
- * This file is part of BILO (Blender Interface Library).
+ * This file is part of BILO (Blender-like Interface Library in
+ * OpenGL).
  *
- * BILO (Blender Interface Library) is free software: you can
- * redistribute it and/or modify it under the terms of the GNU Lesser
- * General Public License as published by the Free Software
+ * BILO (Blender-like Interface Library in OpenGL) is free software:
+ * you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * BILO (Blender Interface Library) is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * BILO (Blender-like Interface Library in OpenGL) is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BILO.  If not, see
@@ -103,6 +105,12 @@ namespace BILO {
 			: totvert(0), halfwayvert(0), inner(true), outline(true), emboss(
 			        true), shadedir(true)
 	{
+	}
+
+	Widget::Widget ()
+	: Drawable()
+	{
+
 	}
 
 	Widget::Widget (Drawable* parent)
@@ -412,13 +420,11 @@ namespace BILO {
 
 	void Widget::render ()
 	{
-		list<Traceable*>::const_iterator it;
+		std::set<Drawable*>::const_iterator it;
 		Drawable *item = 0;
-		for (it = children().begin(); it != children().end(); it++) {
-			item = dynamic_cast<Drawable*>(*it);
-			if (item) {
-				Interface::instance()->dispatch_render_event(m_z, item);
-			}
+		for (it = m_children.begin(); it != m_children.end(); it++) {
+			item = *it;
+			Interface::instance()->dispatch_render_event(m_z, item);
 		}
 
 		glMatrixMode(GL_MODELVIEW);

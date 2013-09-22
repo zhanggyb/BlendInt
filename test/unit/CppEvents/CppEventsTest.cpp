@@ -36,17 +36,19 @@ void CppEventsTest::setUp ()
 
 void CppEventsTest::tearDown ()
 {
-	int mapsize = Traceable::mapSize();
+#ifdef DEBUG
+	int mapsize = Drawable::map_size();
 
 	if(mapsize > 0) {
-		map<uint64_t, Traceable*>::const_iterator it;
-		for (it = Traceable::getMap().begin(); it != Traceable::getMap().end(); it++)
+		map<uint64_t, Drawable*>::const_iterator it;
+		for (it = Drawable::get_map().begin(); it != Drawable::get_map().end(); it++)
 		{
 			cout << "id: " << it->first << " was not deleted!" << endl;
 		}
 	}
 
 	CPPUNIT_ASSERT(mapsize == 0);
+#endif
 }
 
 void CppEventsTest::connect1 ()

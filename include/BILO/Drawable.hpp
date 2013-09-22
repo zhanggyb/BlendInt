@@ -1,16 +1,18 @@
 /*
- * This file is part of BILO (Blender Interface Library).
+ * This file is part of BILO (Blender-like Interface Library in
+ * OpenGL).
  *
- * BILO (Blender Interface Library) is free software: you can
- * redistribute it and/or modify it under the terms of the GNU Lesser
- * General Public License as published by the Free Software
+ * BILO (Blender-like Interface Library in OpenGL) is free software:
+ * you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * BILO (Blender Interface Library) is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * BILO (Blender-like Interface Library in OpenGL) is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BILO.  If not, see
@@ -26,7 +28,10 @@
 
 #include <set>
 
-#include <BILO/Traceable.hpp>
+#ifdef DEBUG
+#include <map>
+#endif
+
 #include <BILO/EventHandler.hpp>
 
 #include <BILO/Point.hpp>
@@ -36,6 +41,10 @@
 #include <BILO/String.hpp>
 
 #include <BILO/Types.hpp>
+
+#ifdef DEBUG
+using std::map;
+#endif
 
 namespace BILO {
 
@@ -74,13 +83,15 @@ namespace BILO {
 		DISALLOW_COPY_AND_ASSIGN(Parent);
 	};
 
-	class Drawable: public Traceable, public EventHandler
+	class Drawable: public EventHandler
 	{
 		DISALLOW_COPY_AND_ASSIGN(Drawable);
 
 	public:
 
 		friend class ContextManager;
+
+		Drawable ();
 
 		/**
 		 * @brief Default constructor
@@ -90,11 +101,11 @@ namespace BILO {
 		 * a static list -- solo, it's usually a pop-up widget such as
 		 * context menu, message box
 		 */
-		Drawable (Drawable* parent = 0);
+		Drawable (Drawable* parent);
 
 		virtual ~Drawable ();
 
-		void bind (Drawable* child);
+		bool bind (Drawable* child);
 
 		void unbind (Drawable* child);
 
@@ -103,15 +114,15 @@ namespace BILO {
 		 */
 		void unbind ();
 
-		void bind_to (ContextManager* parent);
+		bool bind_to (ContextManager* parent);
 
-		void bind_to (Drawable* parent);
+		bool bind_to (Drawable* parent);
 
-		virtual void set_parent (Drawable* parent);
-
-		bool add_child (Drawable* child);
-
-		bool remove_child (Drawable* child);
+		/**
+		 * @brief if the root of this Drawable object is bounded to ContextManager
+		 * @return
+		 */
+		bool bounded ();
 
 		const Size& size () const;
 
@@ -125,7 +136,10 @@ namespace BILO {
 
 		void set_pos (const Point& pos);
 
-		int z () const;
+		int z () const
+		{
+			return m_z;
+		}
 
 		void set_z (int z);
 
@@ -240,22 +254,25 @@ namespace BILO {
 							  float rad,
 							  bool use_alpha);
 
-		void DrawScroll (const WidgetColors& wcol,
-				const Rect& rect,
-				const Rect& slider,
-				ScrollState state);
+		/**
+		 * @brief just change m_z simply
+		 * @param z
+		 */
+		void set_z_simple (int z);
 
 	protected:
 		// member variables
 
-		Size size_;
-
-		Point pos_;
+		bool visible_;
 
 		/**
 		 * @brief the depth(layer) of the widget
 		 */
 		int m_z;
+
+		Size size_;
+
+		Point pos_;
 
 		Padding padding_; /** used when in Layout */
 
@@ -263,13 +280,50 @@ namespace BILO {
 
 		RoundCornerType round_box_type_;
 
-		bool visible_;
-
 		String m_name;
 
-		Parent m_parent_new;
+		Parent m_parent;
 
-		std::set<Drawable*> m_children_new;
+		std::set<Drawable*> m_children;
+
+#ifdef DEBUG
+
+	public:
+
+		static Drawable* find (uint64_t id);
+
+		static unsigned int map_size ()
+		{
+			return obj_map.size();
+		}
+
+		static const map<uint64_t, Drawable*>& get_map ()
+		{
+			return obj_map;
+		}
+
+		static void reset ()
+		{
+			id_last = 1;
+			obj_map.clear();
+		}
+
+	private:
+
+		inline bool register_in_map ();
+
+		inline bool unregister_from_map ();
+
+		// member variables
+
+		uint64_t m_id; /** A unique ID for object */
+
+		// static member variables
+		static uint64_t id_last;
+
+		static map<uint64_t, Drawable*> obj_map;
+
+#endif
 
 	};
 

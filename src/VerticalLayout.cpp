@@ -46,10 +46,11 @@ namespace BILO {
 			unsigned int total_height = 0;
 			unsigned int max_widget_width = 0;
 
-			std::list<Traceable*>::const_reverse_iterator rit;
+			std::list<Drawable*>::const_reverse_iterator rit;
+			Drawable* child = 0;
 			total_height = padding_.bottom();
-			for (rit = m_children.rbegin(); rit != m_children.rend(); rit++) {
-				Drawable* child = dynamic_cast<Drawable*>(*rit);
+			for (rit = m_list.rbegin(); rit != m_list.rend(); rit++) {
+				child = *rit;
 				if (child) {
 					child->set_pos(
 					        pos_.x() + child->margin().left() + padding_.left(),
@@ -67,9 +68,9 @@ namespace BILO {
 			}
 			total_height += padding_.top();
 
-			std::list<Traceable*>::const_iterator it;
-			for (it = m_children.begin(); it != m_children.end(); it++) {
-				Drawable* child = dynamic_cast<Drawable*>(*it);
+			std::list<Drawable*>::const_iterator it;
+			for (it = m_list.begin(); it != m_list.end(); it++) {
+				child = *it;
 				if (child) {
 					if (alignment_ & AlignLeft) {
 						child->set_pos(
@@ -103,10 +104,10 @@ namespace BILO {
 	void VerticalLayout::render ()
 	{
 
-		list<Traceable*>::const_iterator it;
+		list<Drawable*>::const_iterator it;
 		Drawable *item = 0;
-		for (it = children().begin(); it != children().end(); it++) {
-			item = dynamic_cast<Drawable*>(*it);
+		for (it = m_list.begin(); it != m_list.end(); it++) {
+			item = *it;
 			if (item) {
 				Interface::instance()->dispatch_render_event(m_z, item);
 			}

@@ -45,11 +45,12 @@ namespace BILO {
 		unsigned int total_height = 0;
 		unsigned int max_widget_height = 0;
 
-		std::list<Traceable*>::const_iterator it;
+		std::list<Drawable*>::const_iterator it;
+		Drawable* child = 0;
 		total_width = padding_.left();
-		for (it = m_children.begin(); it != m_children.end(); it++)
+		for (it = m_list.begin(); it != m_list.end(); it++)
 		{
-			Drawable* child = dynamic_cast<Drawable*>(*it);
+			child = *it;
 			if(child) {
 				child->set_pos(pos_.x() + child->margin().left() + total_width, pos_.y() + child->margin().bottom() + padding_.bottom());
 				total_width = total_width + child->margin().left() + child->size().width() + child->margin().right();
@@ -59,9 +60,9 @@ namespace BILO {
 		}
 		total_width += padding_.right();
 
-		for (it = m_children.begin(); it != m_children.end(); it++)
+		for (it = m_list.begin(); it != m_list.end(); it++)
 		{
-			Drawable* child = dynamic_cast<Drawable*>(*it);
+			child = *it;
 			if(child) {
 				if(alignment_ & AlignTop) {
 					child->set_pos(child->pos().x(),
@@ -85,13 +86,9 @@ namespace BILO {
 
 	void HorizontalLayout::render ()
 	{
-		list<Traceable*>::const_iterator it;
-		Drawable *item = 0;
-		for (it = children().begin(); it != children().end(); it++) {
-			item = dynamic_cast<Drawable*>(*it);
-			if (item) {
-				Interface::instance()->dispatch_render_event(m_z, item);
-			}
+		list<Drawable*>::const_iterator it;
+		for (it = m_list.begin(); it != m_list.end(); it++) {
+				Interface::instance()->dispatch_render_event(m_z, *it);
 		}
 
 #ifdef DEBUG

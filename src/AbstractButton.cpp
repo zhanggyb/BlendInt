@@ -46,7 +46,14 @@ namespace BILO {
 			0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
 		};
 
-	AbstractButton::AbstractButton (Widget *parent)
+	AbstractButton::AbstractButton ()
+	: down_(false), checkable_(false),
+	  checked_(false), hover_(false), vertex_array_(0), valid_text_length_(0)
+	{
+
+	}
+
+	AbstractButton::AbstractButton (Drawable *parent)
 		: Widget(parent), down_(false), checkable_(false),
 		  checked_(false), hover_(false), vertex_array_(0), valid_text_length_(0)
 	{
