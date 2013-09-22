@@ -420,12 +420,14 @@ namespace BILO {
 
 	void Widget::render ()
 	{
+#ifdef DEBUG
 		std::set<Drawable*>::const_iterator it;
 		Drawable *item = 0;
 		for (it = m_children.begin(); it != m_children.end(); it++) {
 			item = *it;
 			Interface::instance()->dispatch_render_event(m_z, item);
 		}
+#endif
 
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

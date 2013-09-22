@@ -34,6 +34,7 @@
 #include <BILO/MouseEvent.hpp>
 #include <BILO/ContextMenuEvent.hpp>
 #include <BILO/ContextManager.hpp>
+#include <BILO/Drawable.hpp>
 
 namespace BILO {
 

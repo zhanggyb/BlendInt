@@ -10,7 +10,7 @@
 using namespace BILO;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(FontConfigTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION(FontConfigTest);
 
 FontConfigTest::FontConfigTest ()
 {

@@ -23,9 +23,13 @@
 #define _BIL_INTERFACE_HPP_
 
 #include <BILO/Types.hpp>
-#include <BILO/Drawable.hpp>
+#include <BILO/Size.hpp>
 
 namespace BILO {
+
+	class Drawable;
+	class KeyEvent;
+	class MouseEvent;
 
 	/**
 	 * @brief The main entry for this library

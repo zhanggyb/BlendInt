@@ -10,7 +10,7 @@
 using namespace BILO;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION (VectorTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION (VectorTest);
 
 VectorTest::VectorTest ()
 {

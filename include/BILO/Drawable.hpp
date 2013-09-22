@@ -25,8 +25,8 @@
 #define _BIL_DRAWABLE_HPP_
 
 #include <list>
-
 #include <set>
+#include <string>
 
 #ifdef DEBUG
 #include <map>
@@ -38,7 +38,6 @@
 #include <BILO/Size.hpp>
 #include <BILO/Padding.hpp>
 #include <BILO/Margin.hpp>
-#include <BILO/String.hpp>
 
 #include <BILO/Types.hpp>
 
@@ -107,7 +106,7 @@ namespace BILO {
 
 		bool bind (Drawable* child);
 
-		void unbind (Drawable* child);
+		bool unbind (Drawable* child);
 
 		/**
 		 * @brief unbind this and set parent to 0
@@ -167,9 +166,9 @@ namespace BILO {
 
 		void hide ();
 
-		const String& name () const;
+		const std::string& name () const;
 
-		void set_name (const String& name);
+		void set_name (const std::string& name);
 
 	protected:	// member functions
 
@@ -280,7 +279,7 @@ namespace BILO {
 
 		RoundCornerType round_box_type_;
 
-		String m_name;
+		std::string m_name;
 
 		Parent m_parent;
 
@@ -322,6 +321,10 @@ namespace BILO {
 		static uint64_t id_last;
 
 		static map<uint64_t, Drawable*> obj_map;
+
+	public:
+
+		static void print ();
 
 #endif
 

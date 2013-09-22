@@ -157,9 +157,9 @@ namespace BILO {
 		}
 
 		if(add_drawable(obj)) {
-			std::wcerr << "add object" << std::endl;
+			std::cerr << "add object" << std::endl;
 		} else {
-			std::wcerr << "obj already in contextmanager with the same layer" << std::endl;
+			std::cerr << "obj already in contextmanager with the same layer" << std::endl;
 		}
 
 		obj->m_parent.type = ParentContextManager;
@@ -175,14 +175,14 @@ namespace BILO {
 		if (!obj->m_parent.object.nameless) return;
 
 		if (obj->m_parent.type == ParentDrawable) {
-			std::wcerr << "obj not in context manager, won't unbind it" << std::endl;
+			std::cerr << "obj not in context manager, won't unbind it" << std::endl;
 			return;
 		}
 
 		if(remove_drawable(obj)) {
-			std::wcerr << "remove object" << std::endl;
+			std::cerr << "remove object" << std::endl;
 		} else {
-			std::wcerr << "obj not in in contextmanager with the same layer" << std::endl;
+			std::cerr << "obj not in in contextmanager with the same layer" << std::endl;
 		}
 
 		obj->m_parent.type = ParentUnknown;
@@ -207,7 +207,7 @@ namespace BILO {
 				p->erase (it);
 			} else {
 #ifdef DEBUG
-				std::wcerr << "Error: object " << obj->name() << " is not recorded" << std::endl;
+				std::cerr << "Error: object " << obj->name() << " is not recorded" << std::endl;
 #endif
 			}
 
@@ -220,7 +220,7 @@ namespace BILO {
 
 		} else {
 #ifdef DEBUG
-			std::wcerr << "Error: object " << obj->name() << " is not recorded" << std::endl;
+			std::cerr << "Error: object " << obj->name() << " is not recorded" << std::endl;
 #endif
 			return false;
 		}
@@ -238,19 +238,18 @@ namespace BILO {
 		SetType* pset;
 		std::cout << std::endl;
 
-		std::cout << "size of index map:" << m_index.size() << std::endl;
-
-		std::cout << "size of layer map:" << m_layers.size() << std::endl;
+		std::cerr << "size of index map:" << m_index.size() << std::endl;
+		std::cerr << "size of layer map:" << m_layers.size() << std::endl;
 
 		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
 		{
-			std::cout << "Layer: " << map_it->first << std::endl;
+			std::cerr << "Layer: " << map_it->first << std::endl;
 			pset = map_it->second;
 			for(set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				std::wcout << (*set_it)->name() << " ";
+				std::cerr << (*set_it)->name() << " ";
 			}
-			std::cout << std::endl;
+			std::cerr << std::endl;
 		}
 	}
 

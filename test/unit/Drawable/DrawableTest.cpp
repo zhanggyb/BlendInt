@@ -9,6 +9,8 @@
 
 #include <BILO/Interface.hpp>
 #include <BILO/Drawable.hpp>
+#include <BILO/Widget.hpp>
+#include <BILO/ContextManager.hpp>
 #include "DrawableTest.h"
 
 using namespace BILO;
@@ -520,6 +522,794 @@ void DrawableTest::mydrawable3 ()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	/* release BILO */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::bind_test1()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Drawable bind test 01",
+	        NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Widget widget1;
+	widget1.set_pos(0, 0);
+	widget1.resize (50, 50);
+	widget1.bind_to (ContextManager::instance());
+
+	Widget widget2;
+	widget2.set_pos(50, 50);
+	widget2.resize (50, 50);
+	widget2.bind_to(&widget1);
+
+	Widget widget3;
+	widget3.set_pos(100, 100);
+	widget3.resize(50, 50);
+	widget2.bind(&widget3);
+
+	Widget widget4;
+	widget4.set_pos(150, 150);
+	widget4.resize(50, 50);
+	ContextManager::instance()->bind(&widget4);
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	widget1.unbind();
+	widget2.unbind();
+	widget3.unbind();
+	widget4.unbind();
+
+	/* release BILO */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::bind_test2()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Drawable bind test 02",
+	        NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Widget* widget1 = new Widget;
+	widget1->set_pos(0, 0);
+	widget1->resize (50, 50);
+	widget1->set_name("widget1");
+	widget1->bind_to (ContextManager::instance());
+
+	Widget* widget2 = new Widget;
+	widget2->set_pos(50, 50);
+	widget2->resize (50, 50);
+	widget2->set_name("widget2");
+	widget2->bind_to(widget1);
+
+	Widget* widget3 = new Widget;
+	widget3->set_pos(100, 100);
+	widget3->resize(50, 50);
+	widget3->set_name("widget3");
+	widget2->bind(widget3);
+
+	Widget* widget4 = new Widget;
+	widget4->set_pos(150, 150);
+	widget4->resize(50, 50);
+	widget4->set_name("widget4");
+	ContextManager::instance()->bind(widget4);
+
+	Drawable::print();
+	ContextManager::instance()->print();
+
+	CPPUNIT_ASSERT(Drawable::map_size() == 4);
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	delete widget1;
+
+	Drawable::print();
+	ContextManager::instance()->print();
+
+	CPPUNIT_ASSERT(Drawable::map_size() == 1);
+
+	/* release BILO */
+	Interface::release();
+
+	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::bind_test3()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Drawable bind test 03",
+	        NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Widget* widget1 = new Widget;
+	widget1->set_pos(0, 0);
+	widget1->resize (50, 50);
+	widget1->set_name("widget1");
+	widget1->bind_to (ContextManager::instance());
+
+	Widget* widget2 = new Widget;
+	widget2->set_pos(50, 50);
+	widget2->resize (50, 50);
+	widget2->set_name("widget2");
+	widget2->bind_to(ContextManager::instance());
+
+	Widget* widget3 = new Widget;
+	widget3->set_pos(100, 100);
+	widget3->resize(50, 50);
+	widget3->set_name("widget3");
+	widget2->bind(widget3);
+
+	Widget* widget4 = new Widget;
+	widget4->set_pos(150, 150);
+	widget4->resize(50, 50);
+	widget4->set_name("widget4");
+	ContextManager::instance()->bind(widget4);
+
+	delete widget4; widget4 = 0;
+
+	CPPUNIT_ASSERT(Drawable::map_size() == 3);
+
+	widget2->bind_to(widget1);
+
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
+
+	widget1->unbind();
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 0);
+
+	widget1->unbind(widget2);
+	widget1->bind_to(ContextManager::instance());
+
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
+
+	widget1->bind(widget2);
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BILO */
+	Interface::release();
+	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::bind_test4()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Drawable bind test 04",
+	        NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Widget* widget1 = new Widget;
+	widget1->set_pos(0, 0);
+	widget1->resize (50, 50);
+	widget1->set_name("widget1");
+
+	Widget* widget2 = new Widget;
+	widget2->set_pos(50, 50);
+	widget2->resize (50, 50);
+	widget2->set_name("widget2");
+
+	Widget* widget3 = new Widget;
+	widget3->set_pos(100, 100);
+	widget3->resize(50, 50);
+	widget3->set_name("widget3");
+
+	Widget* widget4 = new Widget;
+	widget4->set_pos(150, 150);
+	widget4->resize(50, 50);
+	widget4->set_name("widget4");
+
+	CPPUNIT_ASSERT(Drawable::map_size() == 4);
+
+	CPPUNIT_ASSERT(!widget1->bounded());
+
+	widget1->bind(widget2);
+	widget2->bind(widget3);
+	widget3->bind(widget4);
+
+	CPPUNIT_ASSERT(!widget1->bounded());
+
+	widget1->bind_to(ContextManager::instance());
+
+	CPPUNIT_ASSERT(widget4->bounded());
+
+	widget3->bind_to(ContextManager::instance());
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BILO */
+	Interface::release();
+	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::bind_test5()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Drawable bind test 05",
+	        NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Widget* widget1 = new Widget;
+	widget1->set_pos(0, 0);
+	widget1->resize (50, 50);
+	widget1->set_name("widget1");
+
+	Widget* widget2 = new Widget;
+	widget2->set_pos(50, 50);
+	widget2->resize (50, 50);
+	widget2->set_name("widget2");
+
+	Widget* widget3 = new Widget;
+	widget3->set_pos(100, 100);
+	widget3->resize(50, 50);
+	widget3->set_name("widget3");
+
+	Widget* widget4 = new Widget;
+	widget4->set_pos(150, 150);
+	widget4->resize(50, 50);
+	widget4->set_name("widget4");
+
+	CPPUNIT_ASSERT(Drawable::map_size() == 4);
+
+	CPPUNIT_ASSERT(!widget1->bounded());
+
+	widget1->bind(widget2);
+	widget2->bind(widget3);
+	widget3->bind(widget4);
+	widget1->bind_to(ContextManager::instance());
+
+	//widget1->set_z(1);
+
+//	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
+
+//	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 1);
+
+	widget3->bind_to(ContextManager::instance());
+
+	//widget3->set_z(0);
+
+//	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 2);
+//	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 2);
+
+	ContextManager::instance()->print();
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	delete widget1; widget1 = 0;
+	delete widget3; widget3 = 0;
+
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 0);
+	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 0);
+
+	/* release BILO */
+	Interface::release();
+	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+}
+
+void DrawableTest::bind_test6()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Drawable bind test 06",
+	        NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Widget* widget1 = new Widget;
+	widget1->set_pos(0, 0);
+	widget1->resize (50, 50);
+	widget1->set_name("widget1");
+	widget1->bind_to (ContextManager::instance());
+
+	Widget* widget2 = new Widget;
+	widget2->set_pos(50, 50);
+	widget2->resize (50, 50);
+	widget2->set_name("widget2");
+	widget2->bind_to(ContextManager::instance());
+
+	Widget* widget3 = new Widget;
+	widget3->set_pos(100, 100);
+	widget3->resize(50, 50);
+	widget3->set_name("widget3");
+	widget2->bind(widget3);
+
+	Widget* widget4 = new Widget;
+	widget4->set_pos(150, 150);
+	widget4->resize(50, 50);
+	widget4->set_name("widget4");
+	ContextManager::instance()->bind(widget4);
+
+	delete widget4; widget4 = 0;
+
+	CPPUNIT_ASSERT(Drawable::map_size() == 3);
+
+	widget2->bind_to(widget1);
+
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
+
+	widget1->unbind();
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 0);
+
+	widget1->unbind(widget2);
+	widget1->bind_to(ContextManager::instance());
+
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
+
+	widget1->bind(widget2);
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BILO */
+	Interface::release();
+	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::bind_test7()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	        NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Widget widget1;
+	widget1.set_pos(200, 200);
+	widget1.bind_to (ContextManager::instance());
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	widget1.unbind();
+
+	/* release BILO */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::bind_test8()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	        NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Widget widget1;
+	widget1.set_pos(200, 200);
+	widget1.bind_to (ContextManager::instance());
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	widget1.unbind();
+
+	/* release BILO */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::bind_test9()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	        NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Widget widget1;
+	widget1.set_pos(200, 200);
+	widget1.bind_to (ContextManager::instance());
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	widget1.unbind();
+
+	/* release BILO */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+void DrawableTest::bind_test10()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	        NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	Widget widget1;
+	widget1.set_pos(200, 200);
+	widget1.bind_to (ContextManager::instance());
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	widget1.unbind();
 
 	/* release BILO */
 	Interface::release();

@@ -165,6 +165,7 @@ namespace BILO {
 	bool Drawable::bind (Drawable* child)
 	{
 		if (!child) return false;
+		if (child == this) return false;	// cannot bind self
 
 		if (child->m_z != m_z) {
 			std::cerr << "Cannot bind a child in different layer" << std::endl;
@@ -176,6 +177,7 @@ namespace BILO {
 				ContextManager::instance()->unbind(child);
 			}
 			if (child->m_parent.type == ParentDrawable) {
+				if(child->m_parent.object.drawable == this) return true;
 				child->m_parent.object.drawable->m_children.erase(child);
 			}
 		}
@@ -187,17 +189,20 @@ namespace BILO {
 		return true;
 	}
 
-	void Drawable::unbind (Drawable* child)
+	bool Drawable::unbind (Drawable* child)
 	{
-		if(!child) return;
+		if(!child) return false;
+		if(child == this) return false;
 
 		if(!m_children.count(child))
-			return;
+			return false;
 
 		child->m_parent.type = ParentUnknown;
 		child->m_parent.object.nameless = 0;
 
 		m_children.erase(child);
+
+		return true;
 	}
 
 	void Drawable::unbind ()
@@ -235,6 +240,7 @@ namespace BILO {
 	bool Drawable::bind_to (Drawable* parent)
 	{
 		if(!parent) return false;
+		if(parent == this) return false;	// cannot bind_to self
 
 		if(parent->m_z != m_z) {
 			std::cerr << "Cannot bind to a parent in different layer" << std::endl;
@@ -326,16 +332,19 @@ namespace BILO {
 			parent = &(parent->object.drawable->m_parent);
 		}
 
-		if (!root)
-			set_z_simple(z);
-		else
+		if (root)
 			root->set_z_simple(z);
+		else
+			set_z_simple(z);
 
-		if (parent->type == ParentContextManager) {
-			if(root)
-				ContextManager::instance()->bind(root);
-			else
-				ContextManager::instance()->bind(this);
+		if(root) {
+			if (root->m_parent.type == ParentContextManager) {
+					ContextManager::instance()->bind(root);
+			}
+		} else {
+			if (m_parent.type == ParentContextManager) {
+					ContextManager::instance()->bind(this);
+			}
 		}
 
 		update (WidgetPropertyLayer);
@@ -423,12 +432,12 @@ namespace BILO {
 		update (WidgetPropertyVisibility);
 	}
 
-	const String& Drawable::name () const
+	const std::string& Drawable::name () const
 	{
 		return m_name;
 	}
 
-	void Drawable::set_name (const String& name)
+	void Drawable::set_name (const std::string& name)
 	{
 		m_name = name;
 	}
@@ -867,6 +876,8 @@ namespace BILO {
 		{
 			(*it)->set_z_simple (z);
 		}
+
+		// TODO: call update()
 	}
 
 #ifdef DEBUG
@@ -894,6 +905,18 @@ namespace BILO {
 			ret = Drawable::obj_map[id];
 
 		return ret;
+	}
+
+	void Drawable::print()
+	{
+		map<uint64_t, Drawable*>::iterator it;
+		std::cerr << "Print objects: "<< std::endl;
+		for(it = obj_map.begin(); it != obj_map.end(); it++)
+		{
+			std::cerr << it->second->m_name << " ";
+		}
+		std::cerr << std::endl;
+
 	}
 
 #endif

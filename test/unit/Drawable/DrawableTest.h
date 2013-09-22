@@ -133,10 +133,21 @@ class DrawableTest: public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(DrawableTest);
 
-	CPPUNIT_TEST(texture1);
-	CPPUNIT_TEST(mydrawable1);
-	CPPUNIT_TEST(mydrawable2);
-	CPPUNIT_TEST(mydrawable3);
+	//CPPUNIT_TEST(texture1);
+	//CPPUNIT_TEST(mydrawable1);
+	//CPPUNIT_TEST(mydrawable2);
+	//CPPUNIT_TEST(mydrawable3);
+
+	CPPUNIT_TEST(bind_test1);
+	CPPUNIT_TEST(bind_test2);
+	CPPUNIT_TEST(bind_test3);
+	CPPUNIT_TEST(bind_test4);
+	CPPUNIT_TEST(bind_test5);
+	CPPUNIT_TEST(bind_test6);
+	//CPPUNIT_TEST(bind_test7);
+	//CPPUNIT_TEST(bind_test8);
+	//CPPUNIT_TEST(bind_test9);
+	//CPPUNIT_TEST(bind_test10);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
@@ -159,6 +170,27 @@ private:
 	void mydrawable1 ();
 	void mydrawable2 ();
 	void mydrawable3 ();
+
+	// the following functions use Widget to test bind/unbind
+	void bind_test1 ();
+	void bind_test2 ();
+	void bind_test3 ();
+	void bind_test4 ();
+	void bind_test5 ();
+	void bind_test6 ();
+	void bind_test7 ();
+	void bind_test8 ();
+	void bind_test9 ();
+	void bind_test10 ();
+	void bind_test11 ();
+	void bind_test12 ();
+	void bind_test13 ();
+	void bind_test14 ();
+	void bind_test15 ();
+	void bind_test16 ();
+	void bind_test17 ();
+	void bind_test18 ();
+	void bind_test19 ();
 
 	static void cbError (int error, const char* description);
 

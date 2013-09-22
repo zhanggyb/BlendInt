@@ -15,7 +15,7 @@
 using namespace BILO;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION (WidgetTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION (WidgetTest);
 
 testWidget::testWidget(int type, Drawable* parent)
 	: Widget (parent)

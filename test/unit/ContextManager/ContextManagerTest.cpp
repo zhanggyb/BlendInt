@@ -20,7 +20,7 @@
 using namespace BILO;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(ContextManagerTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION(ContextManagerTest);
 
 ContextManagerTest::ContextManagerTest ()
 {

@@ -17,7 +17,7 @@ int main (int argc, char* argv[])
 {
 	Cpp::Events::ProcessInit processInit;
 
-	setlocale(LC_ALL, "");
+	//setlocale(LC_ALL, "");
 
 	// Create the event manager and test controller
 	CPPUNIT_NS::TestResult controller;

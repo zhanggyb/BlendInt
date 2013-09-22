@@ -16,7 +16,7 @@
 using namespace BILO;
 using namespace std;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(ScrollWidgetTest);
+//CPPUNIT_TEST_SUITE_REGISTRATION(ScrollWidgetTest);
 
 ScrollWidgetTest::ScrollWidgetTest ()
 {
