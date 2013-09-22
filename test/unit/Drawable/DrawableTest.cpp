@@ -296,7 +296,7 @@ void DrawableTest::tearDown ()
 		map<uint64_t, Drawable*>::const_iterator it;
 		for (it = Drawable::get_map().begin(); it != Drawable::get_map().end(); it++)
 		{
-			cout << "id: " << it->first << " was not deleted!" << endl;
+			cout << "id: " << it->first << " " << it->second->name() << " " << " was not deleted!" << endl;
 		}
 	}
 
@@ -524,6 +524,7 @@ void DrawableTest::mydrawable3 ()
 	}
 
 	/* release BILO */
+
 	Interface::release();
 
 	glfwTerminate();
@@ -602,6 +603,9 @@ void DrawableTest::bind_test1()
 	widget4.unbind();
 
 	/* release BILO */
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 0);
+	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 0);
+
 	Interface::release();
 
 	glfwTerminate();
@@ -691,6 +695,9 @@ void DrawableTest::bind_test2()
 	CPPUNIT_ASSERT(Drawable::map_size() == 1);
 
 	/* release BILO */
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
+	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 1);
+
 	Interface::release();
 
 	CPPUNIT_ASSERT(Drawable::map_size() == 0);
@@ -788,7 +795,11 @@ void DrawableTest::bind_test3()
 	}
 
 	/* release BILO */
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
+	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 1);
+
 	Interface::release();
+
 	CPPUNIT_ASSERT(Drawable::map_size() == 0);
 
 	glfwTerminate();
@@ -878,7 +889,12 @@ void DrawableTest::bind_test4()
 	}
 
 	/* release BILO */
+
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 2);
+	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 1);
+
 	Interface::release();
+
 	CPPUNIT_ASSERT(Drawable::map_size() == 0);
 
 	glfwTerminate();
@@ -917,7 +933,7 @@ void DrawableTest::bind_test5()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->resize(800, 600);
 
 	Widget* widget1 = new Widget;
 	widget1->set_pos(0, 0);
@@ -948,18 +964,19 @@ void DrawableTest::bind_test5()
 	widget3->bind(widget4);
 	widget1->bind_to(ContextManager::instance());
 
-	//widget1->set_z(1);
+	widget1->set_z(1);
 
-//	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
+	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 1);
 
-//	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 1);
+	ContextManager::instance()->print();
 
 	widget3->bind_to(ContextManager::instance());
 
-	//widget3->set_z(0);
+	widget3->set_z(0);
 
-//	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 2);
-//	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 2);
+	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 2);
+	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 2);
 
 	ContextManager::instance()->print();
 
@@ -984,6 +1001,9 @@ void DrawableTest::bind_test5()
 	/* release BILO */
 	Interface::release();
 	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
 }
 
 void DrawableTest::bind_test6()

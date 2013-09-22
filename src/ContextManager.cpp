@@ -77,13 +77,15 @@ namespace BILO {
 	{
 		map<int, set<Drawable*>* >::iterator map_it;
 		set<Drawable*>::iterator set_it;
+		set<Drawable*>* pset = 0;
 		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
 		{
-			set<Drawable*>* pset = map_it->second;
+			pset = map_it->second;
 			for(set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
 				delete *set_it;
 			}
+			pset->clear();
 		}
 
 		m_layers.clear();
