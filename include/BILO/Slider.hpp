@@ -33,12 +33,18 @@ namespace BILO {
 	class SliderControl: public Widget
 	{
 	public:
-		SliderControl (Drawable* parent = 0);
+
+		SliderControl ();
+
+		SliderControl (Drawable* parent);
+
 		virtual ~SliderControl ();
 
 		void set_radius (unsigned int radius);
 
 		unsigned int radius () const {return m_radius;}
+
+		bool pressed () const {return m_pressed;}
 
 	protected:
 
@@ -59,10 +65,16 @@ namespace BILO {
 		 * vertexes for drawing circle shape
 		 */
 		float m_vertexes[20][2];
-		GLBuffer m_buffer;
+
 		bool m_hover;
 
 		bool m_pressed;
+
+		GLBuffer m_buffer;
+
+		Point m_move_start;
+
+		Point m_position_origin;
 
 		static const float circle_vertexes[20][2];
 	};
@@ -74,7 +86,9 @@ namespace BILO {
 	{
 	public:
 
-		Slider (Orientation orientation, Drawable* parent = 0);
+		Slider (Orientation orientation = Horizontal);
+
+		Slider (Orientation orientation, Drawable* parent);
 
 		virtual ~Slider ();
 

@@ -81,41 +81,15 @@ int main(int argc, char* argv[]) {
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	ContextManager* cm = ContextManager::instance();
+	Slider* hslider = new Slider;
+	hslider->set_pos(200, 200);
 
-	Widget widget1;
-	widget1.set_pos(50, 50);
-	widget1.resize (50, 50);
-	widget1.set_name("widget1");
+	Slider* vslider = new Slider(Vertical);
+	vslider->set_pos(200, 250);
 
-	Widget widget2;
-	widget2.set_pos(100, 100);
-	widget2.resize (50, 50);
-	widget2.set_name("widget2");
+	app->bind(hslider);
 
-	Widget widget3;
-	widget3.set_pos(150, 150);
-	widget3.resize (50, 50);
-	widget3.set_name("widget3");
-	widget3.set_z(1);
-
-	Widget widget4;
-	widget4.set_pos(200, 200);
-	widget4.resize (50, 50);
-	widget4.set_name("widget4");
-	widget4.set_z(1);
-
-	cm->print();
-	cm->bind(&widget1);
-
-	widget1.bind(&widget2);
-	//widget1.bind(&widget4);
-
-	cm->print();
-
-	widget3.bind(&widget4);
-
-	cm->print();
+	app->bind(vslider);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -128,13 +102,6 @@ int main(int argc, char* argv[]) {
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
-
-	widget1.unbind();
-	widget2.unbind();
-	widget3.unbind();
-	widget4.unbind();
-
-	cm->print();
 
 	/* release BILO */
 	Interface::release();

@@ -55,6 +55,14 @@ namespace BILO {
 			{0.951057, -0.309017}
 	};
 
+	SliderControl::SliderControl()
+	:  Widget(), m_hover(false), m_pressed(false)
+	{
+		set_padding (0, 0, 0, 0);
+		set_radius(7);
+		resize (m_radius * 2, m_radius * 2);
+	}
+
 	SliderControl::SliderControl(Drawable* parent)
 	:  Widget(parent), m_hover(false), m_pressed(false)
 	{
@@ -167,15 +175,53 @@ namespace BILO {
 
 	void SliderControl::move_mouse(MouseEvent* event)
 	{
-		if(contain(event->position())) {
-			if (m_pressed) {
-				m_hover = false;
-			} else {
-				m_hover = true;
+		// if no parent slider, don't react to mouse move
+		if(m_parent.type != ParentDrawable) return;
+
+		Slider* parent = dynamic_cast<Slider*>(m_parent.object.drawable);
+		if(!parent) return;
+
+		if(m_pressed) {
+			m_hover = false;
+
+			if(parent->orientation() == Horizontal) {
+
+				pos_.set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
+				if(pos_.x() < (parent->pos().x() + parent->padding().left())) {
+					pos_.set_x(parent->pos().x() + parent->padding().left());
+				}
+				if(pos_.x() >
+						(parent->pos().x() + parent->size().width() - parent->padding().right() - m_radius * 2)) {
+					pos_.set_x(parent->pos().x() + parent->size().width() - parent->padding().right() - m_radius * 2);
+				}
+
+			}
+			if(parent->orientation() == Vertical) {
+
+				pos_.set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
+				if(pos_.y() < (parent->pos().y() + parent->padding().bottom())) {
+					pos_.set_y(parent->pos().y() + parent->padding().bottom());
+				}
+				if(pos_.y() > (parent->pos().y() + parent->size().height() - parent->padding().top() - m_radius * 2)) {
+					pos_.set_y(parent->pos().y() + parent->size().height() - parent->padding().top() - m_radius * 2);
+				}
+
 			}
 			event->accept();
+			return;
+
 		} else {
-			m_hover = false;
+
+			if(contain(event->position())) {
+				if (m_pressed) {
+					m_hover = false;
+				} else {
+					m_hover = true;
+				}
+				event->accept();
+			} else {
+				m_hover = false;
+			}
 		}
 	}
 
@@ -184,6 +230,9 @@ namespace BILO {
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
 				m_pressed = true;
+				m_move_start.set_x(event->position().x());
+				m_move_start.set_y(event->position().y());
+				m_position_origin = pos_;
 				event->accept();
 			}
 		}
@@ -196,6 +245,21 @@ namespace BILO {
 		}
 		m_pressed = false;
 
+	}
+
+	Slider::Slider(Orientation orientation)
+	: AbstractSlider(orientation), m_slider_control(0), m_pressed(false)
+	{
+		m_slider_control = new SliderControl(this);
+
+		// set default size
+		if (this->orientation() == Horizontal) {
+			resize (200, 25);
+		} else if (this->orientation() == Vertical) {
+			resize (25, 200);
+		}
+
+		m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
 	}
 
 	Slider::Slider(Orientation orientation, Drawable* parent)
@@ -257,16 +321,16 @@ namespace BILO {
 		int space = 0;
 		if(orientation() == Horizontal) {
 			// move radius
-			space = size_.width() - padding_.left() - padding_.right();
-			glTranslatef(0, m_slider_control->radius(), 0);
+			space = size_.width() - padding_.left() - padding_.right() - m_slider_control->radius() * 2;
+			glTranslatef(m_slider_control->radius(), m_slider_control->radius(), 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(space, 0);
 			glEnd();
 			glTranslatef(value() * space / ((float)maximum() - (float)minimum()), 0, 0);
 		} else {
-			space = size_.height() - padding_.top() - padding_.bottom();
-			glTranslatef(m_slider_control->radius(), 0, 0);
+			space = size_.height() - padding_.top() - padding_.bottom() - m_slider_control->radius() * 2;
+			glTranslatef(m_slider_control->radius(), m_slider_control->radius(), 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(0, space);
@@ -295,12 +359,16 @@ namespace BILO {
 		glDisable(GL_BLEND);
 
 		glPopMatrix();
+
 		Interface::instance()->dispatch_render_event(m_z, m_slider_control);
 	}
 
 	void Slider::move_mouse (MouseEvent* event)
 	{
 		//std::wcout << event->pos().x() << " " << event->pos().y() << std::endl;
+		if(m_slider_control->pressed()) {
+			Interface::instance()->dispatch_mouse_move_event(m_slider_control, event);
+		}
 
 		if(contain(event->position())) {
 			if (m_pressed) {
@@ -319,23 +387,30 @@ namespace BILO {
 
 	void Slider::press_mouse (MouseEvent* event)
 	{
+		if(m_slider_control->pressed()) {
+			Interface::instance()->dispatch_mouse_press_event(m_slider_control, event);
+		}
+
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
 				m_pressed = true;
 				m_press_pos = event->position();
-				Interface::instance()->dispatch_mouse_press_event(m_slider_control, event);
 			}
+			Interface::instance()->dispatch_mouse_press_event(m_slider_control, event);
 		}
 	}
 
 	void Slider::release_mouse (MouseEvent* event)
 	{
+		if(m_slider_control->pressed()) {
+			Interface::instance()->dispatch_mouse_release_event(m_slider_control, event);
+		}
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
 				m_pressed = false;
 				m_press_pos = event->position();
-				Interface::instance()->dispatch_mouse_release_event(m_slider_control, event);
 			}
+			Interface::instance()->dispatch_mouse_release_event(m_slider_control, event);
 		}
 	}
 
@@ -343,9 +418,9 @@ namespace BILO {
 	{
 		int space = 0;
 		if(orientation() == Horizontal)
-			space = size_.width() - padding_.left() - padding_.right();
+			space = size_.width() - padding_.left() - padding_.right() - m_slider_control->radius() * 2;
 		else
-			space = size_.height() - padding_.top() - padding_.bottom();
+			space = size_.height() - padding_.top() - padding_.bottom() - m_slider_control->radius() * 2;
 
 		return space;
 	}
