@@ -425,7 +425,7 @@ namespace BILO {
 		Drawable *item = 0;
 		for (it = m_children.begin(); it != m_children.end(); it++) {
 			item = *it;
-			Interface::instance()->dispatch_render_event(m_z, item);
+			Interface::instance()->dispatch_render_event(item);
 		}
 #endif
 

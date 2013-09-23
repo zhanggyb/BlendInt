@@ -360,14 +360,22 @@ namespace BILO {
 
 		glPopMatrix();
 
-		Interface::instance()->dispatch_render_event(m_z, m_slider_control);
+		Interface::instance()->dispatch_render_event(m_slider_control);
 	}
 
 	void Slider::move_mouse (MouseEvent* event)
 	{
-		//std::wcout << event->pos().x() << " " << event->pos().y() << std::endl;
 		if(m_slider_control->pressed()) {
 			Interface::instance()->dispatch_mouse_move_event(m_slider_control, event);
+			int value = 0;
+			if(orientation() == Horizontal) {
+				//m_slider_control;
+				value = (m_slider_control->pos().x() - pos_.x() - padding_.left()) / (float)get_space() * (maximum() - minimum());
+			} else if (orientation() == Vertical) {
+				value = (m_slider_control->pos().y() - pos_.y() - padding_.bottom()) / (float)get_space() * (maximum() - minimum());
+			}
+			set_value (value);
+			m_slider_moved.fire(value);
 		}
 
 		if(contain(event->position())) {

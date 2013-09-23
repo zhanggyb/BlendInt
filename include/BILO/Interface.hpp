@@ -64,7 +64,7 @@ namespace BILO {
 
 		void resize (const Size& size);
 
-		void dispatch_render_event (int layer, Drawable* obj);
+		void dispatch_render_event (Drawable* obj);
 
 		void dispatch_key_press_event (Drawable* obj, KeyEvent* event);
 

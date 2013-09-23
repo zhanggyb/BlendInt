@@ -115,7 +115,7 @@ namespace BILO {
 		for (it = m_list.begin(); it != m_list.end(); it++) {
 			item = *it;
 			if (item) {
-				Interface::instance()->dispatch_render_event(m_z, item);
+				Interface::instance()->dispatch_render_event(item);
 			}
 		}
 

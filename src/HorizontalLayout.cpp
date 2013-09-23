@@ -94,7 +94,7 @@ namespace BILO {
 	{
 		list<Drawable*>::const_iterator it;
 		for (it = m_list.begin(); it != m_list.end(); it++) {
-				Interface::instance()->dispatch_render_event(m_z, *it);
+				Interface::instance()->dispatch_render_event(*it);
 		}
 
 #ifdef DEBUG

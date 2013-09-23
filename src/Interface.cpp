@@ -203,13 +203,8 @@ namespace BILO {
 		glDisable(GL_BLEND);
 	}
 
-	void Interface::dispatch_render_event (int layer, Drawable* obj)
+	void Interface::dispatch_render_event (Drawable* obj)
 	{
-		// if they are not in the same layer, the child should be rendered in other loop
-		if (layer != obj->z()) {
-			return;
-		}
-
 		// ticktack makes sure only render once, the ticktack of Interface reversed in Interface::render()
 		if(obj->m_ticktack == m_ticktack) {
 			obj->render();
