@@ -1,16 +1,18 @@
 /*
- * This file is part of BILO (Blender Interface Library).
+ * This file is part of BILO (Blender-like Interface Library in
+ * OpenGL).
  *
- * BILO (Blender Interface Library) is free software: you can
- * redistribute it and/or modify it under the terms of the GNU Lesser
- * General Public License as published by the Free Software
+ * BILO (Blender-like Interface Library in OpenGL) is free software:
+ * you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * BILO (Blender Interface Library) is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * BILO (Blender-like Interface Library in OpenGL) is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BILO.  If not, see
@@ -19,24 +21,25 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_FONTCACHE_H_
-#define _BIL_FONTCACHE_H_
+#ifndef _BILO_FONTCACHE_HPP_
+#define _BILO_FONTCACHE_HPP_
 
 #include <map>
 #include <functional>
 #include <wchar.h>
 
 #include <BILO/Freetype.hpp>
-#include <BILO/Font.hpp>
 #include <BILO/Glyph.hpp>
 
 #include <BILO/TextureFont.hpp>
 #include <BILO/TextureAtlas.hpp>
-#include <BILO/String.hpp>
 
 using namespace std;
 
 namespace BILO {
+
+	class Font;
+	class String;
 
 	template<class T>
 	struct greater_second: std::binary_function<T, T, bool>
@@ -101,6 +104,14 @@ namespace BILO {
 		unsigned int queryWidth (wchar_t charcode, bool create = true);
 
 		unsigned int queryHeight (wchar_t charcode, bool create = true);
+
+		void print (const String& string);
+
+		void print (const String& string, size_t length);
+
+		void print (float x, float y, const String& string);
+
+		void print (float x, float y, const String& string, size_t length);
 
 		int getHeight ()
 		{

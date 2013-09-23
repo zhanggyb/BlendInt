@@ -191,7 +191,7 @@ namespace BILO {
 					pos_.set_x(parent->pos().x() + parent->padding().left());
 				}
 				if(pos_.x() >
-						(parent->pos().x() + parent->size().width() - parent->padding().right() - m_radius * 2)) {
+						(int)(parent->pos().x() + parent->size().width() - parent->padding().right() - m_radius * 2)) {
 					pos_.set_x(parent->pos().x() + parent->size().width() - parent->padding().right() - m_radius * 2);
 				}
 
@@ -202,7 +202,7 @@ namespace BILO {
 				if(pos_.y() < (parent->pos().y() + parent->padding().bottom())) {
 					pos_.set_y(parent->pos().y() + parent->padding().bottom());
 				}
-				if(pos_.y() > (parent->pos().y() + parent->size().height() - parent->padding().top() - m_radius * 2)) {
+				if(pos_.y() > (int)(parent->pos().y() + parent->size().height() - parent->padding().top() - m_radius * 2)) {
 					pos_.set_y(parent->pos().y() + parent->size().height() - parent->padding().top() - m_radius * 2);
 				}
 
@@ -260,6 +260,7 @@ namespace BILO {
 		}
 
 		m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		update(SliderPropertyValue);
 	}
 
 	Slider::Slider(Orientation orientation, Drawable* parent)
@@ -275,6 +276,7 @@ namespace BILO {
 		}
 
 		m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		update(SliderPropertyValue);
 	}
 
 	Slider::~Slider()
@@ -286,6 +288,14 @@ namespace BILO {
 	{
 		if(property == WidgetPropertyPosition) {
 			m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		} else if (property == SliderPropertyValue) {
+			if(orientation() == Horizontal) {
+				m_slider_control->set_pos (pos_.x() + padding_.left() + value() * get_space() / (float)(maximum() - minimum()),
+						m_slider_control->pos().y());
+			} else if(orientation() == Vertical) {
+				m_slider_control->set_pos (m_slider_control->pos().x(),
+						pos_.y() + padding_.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+			}
 		}
 //		if (property == WidgetPropertySize)
 			//update_shape();

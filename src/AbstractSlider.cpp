@@ -26,15 +26,15 @@
 namespace BILO {
 
 	AbstractSlider::AbstractSlider(Orientation orientation)
-		: Widget (), m_step(1), m_orientation(orientation),
-		  m_value(50), m_minimum(0), m_maximum(100)
+		: Widget (), m_orientation(orientation),
+		  m_value(0), m_minimum(0), m_maximum(100), m_step(1)
 	{
 	}
 
 	AbstractSlider::AbstractSlider(Orientation orientation,
 								   Drawable* parent)
-		: Widget (parent), m_step(1), m_orientation(orientation),
-		  m_value(50), m_minimum(0), m_maximum(100)
+		: Widget (parent), m_orientation(orientation),
+		  m_value(0), m_minimum(0), m_maximum(100), m_step(1)
 	{
 	}
 
@@ -45,33 +45,62 @@ namespace BILO {
 
 	void AbstractSlider::set_range (int value1, int value2)
 	{
-		m_minimum = std::min(value1, value2);
-		m_maximum = std::max(value1, value2);
+		int minimum = std::min(value1, value2);
+		int maximum = std::max(value1, value2);
+
+		if(m_minimum != minimum) {
+			m_minimum = minimum;
+			update(SliderPropertyMinimum);
+		}
+		if(m_maximum != maximum) {
+			m_maximum = maximum;
+			update(SliderPropertyMaximum);
+		}
 	}
 
-	inline void AbstractSlider::set_minimum (int minimum)
+	void AbstractSlider::set_minimum (int minimum)
 	{
+		if(m_minimum == minimum) return;
+
 		m_minimum = minimum;
+		update (SliderPropertyMinimum);
 	}
 
-	inline void AbstractSlider::set_maximum (int maximum)
+	void AbstractSlider::set_maximum (int maximum)
 	{
+		if(m_maximum == maximum) return;
+
 		m_maximum = maximum;
+		update(SliderPropertyMaximum);
 	}
 
 	void AbstractSlider::set_value (int value)
 	{
+		if(m_value == value) return;
+
+		if(value < m_minimum || value > m_maximum) return;
+
 		m_value = value;
+
+		update(SliderPropertyValue);
 	}
 
-	inline void AbstractSlider::set_step (int step)
+	void AbstractSlider::set_step (int step)
 	{
+		if(m_step == step) return;
+
 		m_step = step;
+
+		update(SliderPropertyStep);
 	}
 
-	inline void AbstractSlider::set_orientation (Orientation orientation)
+	void AbstractSlider::set_orientation (Orientation orientation)
 	{
+		if(m_orientation == orientation) return;
+
 		m_orientation = orientation;
+
+		update(SliderPropertyOrientation);
 	}
 
 }

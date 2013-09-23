@@ -37,6 +37,14 @@ namespace BILO {
 
 	public:
 
+		enum SliderPropertyTypeExt {
+			SliderPropertyOrientation = WidgetPropertyLast + 1,
+			SliderPropertyValue,
+			SliderPropertyMinimum,
+			SliderPropertyMaximum,
+			SliderPropertyStep
+		};
+
 		AbstractSlider(Orientation orientation = Horizontal);
 
 		AbstractSlider(Orientation orientation, Drawable* parent);
@@ -87,13 +95,13 @@ namespace BILO {
 
 	private:
 
-		int m_step;
 		Orientation m_orientation;
 
 		int m_value;
 
 		int m_minimum;
 		int m_maximum;
+		int m_step;
 
 
 	};
