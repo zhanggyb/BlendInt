@@ -1,29 +1,38 @@
 /* Test case for FontFace */
 
-#ifndef _LAYOUT_TEST_H
-#define _LAYOUT_TEST_H
+#ifndef _SLIDER_TEST_H
+#define _SLIDER_TEST_H
 
 #include <cppunit/extensions/HelperMacros.h>
 
-class LayoutTest: public CppUnit::TestFixture
+#include <BILO/Label.hpp>
+
+#include <BILO/String.hpp>
+
+class myLabel: public BILO::Label
 {
-	CPPUNIT_TEST_SUITE(LayoutTest);
+public:
+	myLabel (const BILO::String& label = "0");
 
-	CPPUNIT_TEST(horizontal_layout1);
+	virtual ~myLabel();
 
-	CPPUNIT_TEST(vertical_layout1);
+	void print_value (int value);
+};
 
-	//CPPUNIT_TEST(layout_mix1);
-	//CPPUNIT_TEST(layout_mix2);
+class SliderTest: public CppUnit::TestFixture
+{
+CPPUNIT_TEST_SUITE(SliderTest);
+
+	CPPUNIT_TEST(slider_move_test01);
 
 	CPPUNIT_TEST_SUITE_END()
 	;
 
 public:
 
-	LayoutTest ();
+	SliderTest ();
 
-	virtual ~LayoutTest ();
+	virtual ~SliderTest ();
 
 	void setUp ();
 
@@ -33,12 +42,7 @@ public:
 
 private:
 
-	void horizontal_layout1 ();
-
-	void vertical_layout1 ();
-
-	void layout_mix1 ();
-	void layout_mix2 ();
+	void slider_move_test01 ();
 
 	static void cbError (int error, const char* description);
 
@@ -52,4 +56,4 @@ private:
 
 };
 
-#endif  /* _LAYOUT_TEST_H */
+#endif  /* _SCROLLWIDGET_TEST_H */
