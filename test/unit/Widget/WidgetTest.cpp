@@ -10,33 +10,37 @@
 #include <BILO/Interface.hpp>
 #include <BILO/Widget.hpp>
 #include <BILO/Drawable.hpp>
+#include <BILO/ContextManager.hpp>
 #include "WidgetTest.h"
 
 using namespace BILO;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION (WidgetTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(WidgetTest);
 
-testWidget::testWidget(int type, Drawable* parent)
-	: Widget (parent)
+testWidget::testWidget (int type, Drawable* parent)
+		: Widget(parent)
 {
 	round_box_type_ = RoundCornerAll;
-	set_pos (Point(100, 100));
-	resize (200, 200);
+	set_pos(Point(100, 100));
+	resize(200, 200);
 
-	switch (type)
-	{
+	switch (type) {
 		case 0:
-			CalculateRoundBoxEdges (round_box_type_, Rect(100, 100, 200, 200), 1.0, &m_appearance);
+			CalculateRoundBoxEdges(round_box_type_, Rect(100, 100, 200, 200),
+			        1.0, &m_appearance);
 			break;
 		case 1:
-			CalculateCheckTriangle (Rect(100, 100, 200, 200), &(m_appearance.tria1));
+			CalculateCheckTriangle(Rect(100, 100, 200, 200),
+			        &(m_appearance.tria1));
 			break;
 		case 2:
-			CalculateCheckTriangle (Rect(100, 100, 200, 200), &(m_appearance.tria2));
+			CalculateCheckTriangle(Rect(100, 100, 200, 200),
+			        &(m_appearance.tria2));
 			break;
 		case 3:
-			CalculateMenuTriangle (Rect(100, 100, 200, 200), &(m_appearance.tria1));
+			CalculateMenuTriangle(Rect(100, 100, 200, 200),
+			        &(m_appearance.tria1));
 			break;
 		default:
 			break;
@@ -44,11 +48,10 @@ testWidget::testWidget(int type, Drawable* parent)
 
 }
 
-void testWidget::render(void)
+void testWidget::render (void)
 {
 	DrawAppearance(&m_appearance);
 }
-
 
 WidgetTest::WidgetTest ()
 {
@@ -70,10 +73,10 @@ void WidgetTest::tearDown ()
 #ifdef DEBUG
 	int mapsize = Drawable::map_size();
 
-	if(mapsize > 0) {
+	if (mapsize > 0) {
 		map<uint64_t, Drawable*>::const_iterator it;
-		for (it = Drawable::get_map().begin(); it != Drawable::get_map().end(); it++)
-		{
+		for (it = Drawable::get_map().begin(); it != Drawable::get_map().end();
+		        it++) {
 			cout << "id: " << it->first << " was not deleted!" << endl;
 		}
 	}
@@ -90,7 +93,8 @@ void WidgetTest::widget_default_show ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -115,33 +119,36 @@ void WidgetTest::widget_default_show ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
+	Widget widget;
 
-    Widget widget;
+	// widget.set_round_box_type(RoundBoxAll);
+	widget.set_pos(50, 50);
+	widget.resize(200, 100);
 
-    // widget.set_round_box_type(RoundBoxAll);
-    widget.set_pos(50, 50);
-    widget.resize(200, 100);
+	ContextManager::instance()->bind(&widget);
 
-    /* Loop until the user closes the window */
-    	while (!glfwWindowShouldClose(window)) {
-    		/* Render here */
-    		app->render();
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
 
-    		/* Swap front and back buffers */
-    		glfwSwapBuffers(window);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
 
-    		/* Poll for and process events */
-    		glfwPollEvents();
-    	}
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
 
-    	/* release BILO */
-    	Interface::release();
+	widget.unbind();
 
-    	glfwTerminate();
-    	CPPUNIT_ASSERT(true);
+	/* release BILO */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
 }
 
-void WidgetTest::testwidget_show0()
+void WidgetTest::testwidget_show0 ()
 {
 	/* Initialize the library */
 	if (!glfwInit())
@@ -149,7 +156,8 @@ void WidgetTest::testwidget_show0()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -174,31 +182,33 @@ void WidgetTest::testwidget_show0()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
+	testWidget widget(0);
+	widget.set_pos(Point(50, 50));
+	widget.resize(80, 40);
 
-    testWidget widget(0);
-    widget.set_pos(Point(50, 50));
-    widget.resize(80, 40);
+	ContextManager::instance()->bind(&widget);
 
-    /* Loop until the user closes the window */
-    	while (!glfwWindowShouldClose(window)) {
-    		/* Render here */
-    		app->render();
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
 
-    		/* Swap front and back buffers */
-    		glfwSwapBuffers(window);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
 
-    		/* Poll for and process events */
-    		glfwPollEvents();
-    	}
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
 
-    	/* release BILO */
-    	Interface::release();
+	widget.unbind();
+	/* release BILO */
+	Interface::release();
 
-    	glfwTerminate();
-    	CPPUNIT_ASSERT(true);
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
 }
 
-void WidgetTest::testwidget_show1()
+void WidgetTest::testwidget_show1 ()
 {
 	/* Initialize the library */
 	if (!glfwInit())
@@ -206,7 +216,8 @@ void WidgetTest::testwidget_show1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -231,29 +242,32 @@ void WidgetTest::testwidget_show1()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
+	testWidget widget(1);
 
-    testWidget widget(1);
+	ContextManager::instance()->bind(&widget);
 
-    /* Loop until the user closes the window */
-    	while (!glfwWindowShouldClose(window)) {
-    		/* Render here */
-    		app->render();
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
 
-    		/* Swap front and back buffers */
-    		glfwSwapBuffers(window);
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
 
-    		/* Poll for and process events */
-    		glfwPollEvents();
-    	}
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
 
-    	/* release BILO */
-    	Interface::release();
+	widget.unbind();
 
-    	glfwTerminate();
-    	CPPUNIT_ASSERT(true);
+	/* release BILO */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
 }
 
-void WidgetTest::testwidget_show2()
+void WidgetTest::testwidget_show2 ()
 {
 	/* Initialize the library */
 	if (!glfwInit())
@@ -261,7 +275,8 @@ void WidgetTest::testwidget_show2()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -286,29 +301,30 @@ void WidgetTest::testwidget_show2()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
+	testWidget widget(2);
+	ContextManager::instance()->bind(&widget);
 
-    testWidget widget(2);
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
 
-    /* Loop until the user closes the window */
-    	while (!glfwWindowShouldClose(window)) {
-    		/* Render here */
-    		app->render();
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
 
-    		/* Swap front and back buffers */
-    		glfwSwapBuffers(window);
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
 
-    		/* Poll for and process events */
-    		glfwPollEvents();
-    	}
+	widget.unbind();
+	/* release BILO */
+	Interface::release();
 
-    	/* release BILO */
-    	Interface::release();
-
-    	glfwTerminate();
-    	CPPUNIT_ASSERT(true);
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
 }
 
-void WidgetTest::testwidget_show3()
+void WidgetTest::testwidget_show3 ()
 {
 	/* Initialize the library */
 	if (!glfwInit())
@@ -316,7 +332,8 @@ void WidgetTest::testwidget_show3()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -341,33 +358,33 @@ void WidgetTest::testwidget_show3()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
+	testWidget widget(3);
+	ContextManager::instance()->bind(&widget);
 
-    testWidget widget(3);
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		app->render();
 
-    /* Loop until the user closes the window */
-    	while (!glfwWindowShouldClose(window)) {
-    		/* Render here */
-    		app->render();
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
 
-    		/* Swap front and back buffers */
-    		glfwSwapBuffers(window);
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
 
-    		/* Poll for and process events */
-    		glfwPollEvents();
-    	}
+	widget.unbind();
+	/* release BILO */
+	Interface::release();
 
-    	/* release BILO */
-    	Interface::release();
-
-    	glfwTerminate();
-    	CPPUNIT_ASSERT(true);
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
 }
 
 void WidgetTest::cbError (int error, const char* description)
 {
-	std::cerr << "Error: " << description
-			<< " (error code: " << error << ")"
-			<< std::endl;
+	std::cerr << "Error: " << description << " (error code: " << error << ")"
+	        << std::endl;
 }
 
 void WidgetTest::cbWindowSize (GLFWwindow* window, int w, int h)

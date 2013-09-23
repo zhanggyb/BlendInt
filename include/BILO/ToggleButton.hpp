@@ -19,8 +19,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_CHECKBUTTON_HPP_
-#define _BIL_CHECKBUTTON_HPP_
+#ifndef _BILO_CHECKBUTTON_HPP_
+#define _BILO_CHECKBUTTON_HPP_
 
 #include <BILO/AbstractButton.hpp>
 #include <BILO/String.hpp>
@@ -31,9 +31,11 @@ namespace BILO {
 	{
 	public:
 
-		explicit ToggleButton (Widget* parent = NULL);
+		ToggleButton (const String& text);
 
-		ToggleButton (const String& text, Widget* parent = NULL);
+		ToggleButton (Drawable* parent);
+
+		ToggleButton (const String& text, Drawable* parent);
 
 		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
 

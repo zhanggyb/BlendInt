@@ -26,13 +26,20 @@
 
 namespace BILO {
 
-	ToggleButton::ToggleButton(Widget* parent)
+	ToggleButton::ToggleButton(const String& text)
+	: AbstractButton()
+	{
+		setCheckable(true);
+		set_text (text);
+	}
+
+	ToggleButton::ToggleButton(Drawable* parent)
 	: AbstractButton(parent)
 	{
 		setCheckable(true);
 	}
 
-	ToggleButton::ToggleButton(const String& text, Widget* parent)
+	ToggleButton::ToggleButton(const String& text, Drawable* parent)
 	: AbstractButton(parent)
 	{
 		setCheckable(true);

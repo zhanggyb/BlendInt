@@ -31,7 +31,9 @@ namespace BILO {
 	{
 	public:
 
-		VerticalLayout(Drawable* parent = 0, int align = AlignVerticalCenter);
+		VerticalLayout(int align = AlignVerticalCenter);
+
+		VerticalLayout(int align, Drawable* parent);
 
 		virtual ~VerticalLayout ();
 

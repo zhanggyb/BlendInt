@@ -121,7 +121,7 @@ namespace BILO {
 		 * @brief if the root of this Drawable object is bounded to ContextManager
 		 * @return
 		 */
-		bool bounded ();
+		bool is_bound ();
 
 		const Size& size () const;
 
@@ -262,12 +262,14 @@ namespace BILO {
 	protected:
 		// member variables
 
-		bool visible_;
-
 		/**
 		 * @brief the depth(layer) of the widget
 		 */
 		int m_z;
+
+		RoundCornerType round_box_type_;
+
+		bool visible_;
 
 		Size size_;
 
@@ -276,8 +278,6 @@ namespace BILO {
 		Padding padding_; /** used when in Layout */
 
 		Margin margin_; /** used when in Layout */
-
-		RoundCornerType round_box_type_;
 
 		std::string m_name;
 

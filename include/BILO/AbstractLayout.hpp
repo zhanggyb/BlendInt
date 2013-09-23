@@ -33,7 +33,9 @@ namespace BILO {
 	{
 	public:
 
-		AbstractLayout (Drawable *parent = NULL);
+		AbstractLayout ();
+
+		AbstractLayout (Drawable *parent);
 
 		virtual ~AbstractLayout ();
 

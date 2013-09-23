@@ -144,8 +144,8 @@ CPPUNIT_TEST_SUITE(DrawableTest);
 	CPPUNIT_TEST(bind_test4);
 	CPPUNIT_TEST(bind_test5);
 	CPPUNIT_TEST(bind_test6);
+	CPPUNIT_TEST(bind_test7);
 
-	//CPPUNIT_TEST(bind_test7);
 	//CPPUNIT_TEST(bind_test8);
 	//CPPUNIT_TEST(bind_test9);
 	//CPPUNIT_TEST(bind_test10);

@@ -37,7 +37,9 @@ namespace BILO {
 
 	public:
 
-		AbstractSlider(Orientation orientation, Drawable* parent = 0);
+		AbstractSlider(Orientation orientation = Horizontal);
+
+		AbstractSlider(Orientation orientation, Drawable* parent);
 
 		virtual ~AbstractSlider ();
 

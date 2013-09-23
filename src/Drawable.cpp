@@ -83,11 +83,11 @@ namespace BILO {
 
 	Drawable::Drawable ()
 		: m_z(0),
-		  round_box_type_ (RoundCornerNone),
+		  round_box_type_ (RoundCornerNone), visible_(true)
 #ifdef DEBUG
-		  m_id(0),
+		  ,m_id(0)
 #endif
-		  visible_(true)
+
 	{
 #ifdef DEBUG
 		// generate a unique id
@@ -109,15 +109,13 @@ namespace BILO {
 
 	Drawable::Drawable (Drawable* parent)
 		: m_z(0),
-		  round_box_type_ (RoundCornerNone),
+		  round_box_type_ (RoundCornerNone), visible_(true)
 #ifdef DEBUG
-		  m_id(0),
+		  , m_id(0)
 #endif
-		  visible_(true)
+
 	{
-		if(!parent) {
-			bind_to(parent);
-		}
+		bind_to(parent);
 
 #ifdef DEBUG
 		// generate a unique id
@@ -265,7 +263,7 @@ namespace BILO {
 		return true;
 	}
 
-	bool Drawable::bounded ()
+	bool Drawable::is_bound ()
 	{
 		Parent* parent = &m_parent;
 		while (parent->type == ParentDrawable) {

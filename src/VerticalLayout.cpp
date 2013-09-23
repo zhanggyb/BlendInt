@@ -27,7 +27,13 @@
 
 namespace BILO {
 
-	VerticalLayout::VerticalLayout (Drawable* parent, int align)
+	VerticalLayout::VerticalLayout (int align)
+			: AbstractLayout()
+	{
+		set_alignment(align);
+	}
+
+	VerticalLayout::VerticalLayout (int align, Drawable* parent)
 			: AbstractLayout(parent)
 	{
 		set_alignment(align);

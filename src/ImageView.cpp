@@ -23,7 +23,18 @@
 
 namespace BILO {
 
+	ImageView::ImageView ()
+	: Widget()
+	{
+		glShadeModel(GL_FLAT);
+		makeCheckImage();
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		resize(64 + padding_.left() + padding_.right(), 64 + padding_.top() + padding_.bottom());
+	}
+
 	ImageView::ImageView (Drawable* parent)
+	: Widget(parent)
 	{
 		glShadeModel(GL_FLAT);
 		makeCheckImage();

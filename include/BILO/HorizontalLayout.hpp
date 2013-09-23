@@ -30,7 +30,9 @@ namespace BILO {
 	{
 	public:
 
-		HorizontalLayout(Drawable* parent = 0, int align = AlignHorizontalCenter);
+		HorizontalLayout(int align = AlignHorizontalCenter);
+
+		HorizontalLayout(int align, Drawable* parent);
 
 		virtual ~HorizontalLayout ();
 

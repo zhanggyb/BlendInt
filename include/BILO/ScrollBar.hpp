@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_SCROLLBAR_HPP_
-#define _BIL_SCROLLBAR_HPP_
+#ifndef _BILO_SCROLLBAR_HPP_
+#define _BILO_SCROLLBAR_HPP_
 
 #include <BILO/AbstractSlider.hpp>
 
@@ -34,7 +34,9 @@ namespace BILO {
 	{
 	public:
 
-		ScrollBar (Orientation orientation, Drawable* parent = 0);
+		ScrollBar (Orientation orientation = Horizontal);
+
+		ScrollBar (Orientation orientation, Drawable* parent);
 
 		virtual ~ScrollBar ();
 

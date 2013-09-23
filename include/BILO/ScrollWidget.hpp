@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_SCROLLWIDGET_HPP_
-#define _BIL_SCROLLWIDGET_HPP_
+#ifndef _BILO_SCROLLWIDGET_HPP_
+#define _BILO_SCROLLWIDGET_HPP_
 
 #include <BILO/GLBuffer.hpp>
 
@@ -36,7 +36,9 @@ namespace BILO {
 
 	public:
 
-		ScrollWidget (Drawable* parent = 0);
+		ScrollWidget ();
+
+		ScrollWidget (Drawable* parent);
 
 		virtual ~ScrollWidget ();
 

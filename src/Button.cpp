@@ -27,12 +27,23 @@
 
 namespace BILO {
 
-	Button::Button (Widget* parent)
+	Button::Button ()
+		: AbstractButton()
+	{
+	}
+
+	Button::Button (const String& text)
+		: AbstractButton()
+	{
+		set_text (text);
+	}
+
+	Button::Button (Drawable* parent)
 		: AbstractButton(parent)
 	{
 	}
 
-	Button::Button (const String& text, Widget* parent)
+	Button::Button (const String& text, Drawable* parent)
 		: AbstractButton(parent)
 	{
 		set_text (text);

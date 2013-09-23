@@ -25,6 +25,12 @@
 
 namespace BILO {
 
+	AbstractSlider::AbstractSlider(Orientation orientation)
+		: Widget (), m_step(1), m_orientation(orientation),
+		  m_value(50), m_minimum(0), m_maximum(100)
+	{
+	}
+
 	AbstractSlider::AbstractSlider(Orientation orientation,
 								   Drawable* parent)
 		: Widget (parent), m_step(1), m_orientation(orientation),

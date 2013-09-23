@@ -57,6 +57,16 @@ namespace BILO {
 	};
 	*/
 
+	ScrollBar::ScrollBar(Orientation orientation)
+	: AbstractSlider(orientation)
+	{
+		if(orientation == Horizontal) {
+			resize (400, 25);
+		} else if (orientation == Vertical) {
+			resize (25, 400);
+		}
+		update (0);
+	}
 
 	ScrollBar::ScrollBar(Orientation orientation, Drawable* parent)
 	: AbstractSlider(orientation, parent)

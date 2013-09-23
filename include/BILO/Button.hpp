@@ -31,9 +31,13 @@ namespace BILO {
 	{
 	public:
 
-		Button (Widget* parent = NULL);
+		Button ();
 
-		Button (const String& text, Widget* parent = NULL);
+		Button (const String& text);
+
+		Button (Drawable* parent);
+
+		Button (const String& text, Drawable* parent);
 
 		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
 

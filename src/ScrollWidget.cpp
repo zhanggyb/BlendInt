@@ -33,6 +33,12 @@
 
 namespace BILO {
 
+	ScrollWidget::ScrollWidget()
+	: Widget(), m_viewport(0)
+	{
+
+	}
+
 	ScrollWidget::ScrollWidget(Drawable* parent)
 	: Widget(parent), m_viewport(0)
 	{

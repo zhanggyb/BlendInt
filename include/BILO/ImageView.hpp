@@ -30,7 +30,9 @@ namespace BILO {
 	{
 	public:
 
-		ImageView (Drawable* parent = 0);
+		ImageView ();
+
+		ImageView (Drawable* parent);
 
 		virtual ~ImageView ();
 

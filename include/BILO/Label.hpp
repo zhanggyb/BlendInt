@@ -19,8 +19,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_LABEL_H_
-#define _BIL_LABEL_H_
+#ifndef _BILO_LABEL_HPP_
+#define _BILO_LABEL_HPP_
 
 #include <string>
 
@@ -39,7 +39,9 @@ namespace BILO {
 	{
 	public:
 
-		Label (const String& label, Drawable * parent = 0);
+		Label (const String& label);
+
+		Label (const String& label, Drawable * parent);
 
 		virtual ~Label ();
 
@@ -96,4 +98,4 @@ namespace BILO {
 	};
 
 } /* namespace BILO */
-#endif /* LABEL_H_ */
+#endif /* _BILOLABEL_HPP_ */
