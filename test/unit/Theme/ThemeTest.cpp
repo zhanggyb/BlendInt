@@ -16,7 +16,7 @@
 using namespace BILO;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(ThemeTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(ThemeTest);
 
 ThemeTest::ThemeTest ()
 {
@@ -119,6 +119,8 @@ void ThemeTest::initialize2 ()
 	label.set_font(Font("Droid Sans", 12));
 	label.set_foreground(textcolor);
 
+	app->bind(&label);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -130,6 +132,8 @@ void ThemeTest::initialize2 ()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	app->unbind(&label);
 
 	/* release BILO */
 	Interface::release();

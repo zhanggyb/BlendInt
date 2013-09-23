@@ -44,6 +44,10 @@ namespace BILO {
 
 		static void release ();
 
+		bool bind (Drawable* object);
+
+		bool unbind (Drawable* object);
+
 		void render ();
 
 		void resizeEvent (int width, int height);

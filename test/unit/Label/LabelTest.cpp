@@ -18,7 +18,7 @@
 using namespace BILO;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(LabelTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(LabelTest);
 
 LabelTest::LabelTest ()
 {
@@ -90,6 +90,8 @@ void LabelTest::show1 ()
 	//label.setFont(Font("Droid Sans", 24));
 	label.set_foreground(Color(0x80F0B0FF));
 
+	app->bind(&label);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -101,6 +103,8 @@ void LabelTest::show1 ()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	label.unbind();
 
 	/* release BILO */
 	Interface::release();
@@ -154,6 +158,8 @@ void LabelTest::checkfont1 ()
 	label.set_background(Color(0x40, 0x40, 0xFF, 0x80));
 	label.set_font(Font("Droid Sans", 100));
 
+	app->bind(&label);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -165,6 +171,9 @@ void LabelTest::checkfont1 ()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	label.unbind();
+
 
 	/* release BILO */
 	Interface::release();
@@ -218,6 +227,9 @@ void LabelTest::checkfont2 ()
 	label.set_background(Color(0x40, 0x40, 0xFF, 0x80));
 	label.set_font(Font("Droid Sans", 50));
 
+	app->bind(&instr1);
+	app->bind(&label);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -229,6 +241,9 @@ void LabelTest::checkfont2 ()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	instr1.unbind();
+	label.unbind();
 
 	/* release BILO */
 	Interface::release();
@@ -269,7 +284,6 @@ void LabelTest::multiline1 ()
 
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
-
 
 	wstring string(L"Hello World!!!!!\nAnother Line");
 

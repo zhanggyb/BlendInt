@@ -18,7 +18,7 @@
 using namespace BILO;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(ButtonTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(ButtonTest);
 
 ButtonTest::ButtonTest ()
 {
@@ -89,6 +89,8 @@ void ButtonTest::show1 ()
 	button.set_round_box_type(RoundCornerAll);
 	button.set_pos(Point(50, 50));
 
+	app->bind(&button);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -100,6 +102,8 @@ void ButtonTest::show1 ()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	app->unbind(&button);
 
 	/* release BILO */
 	Interface::release();
@@ -146,6 +150,8 @@ void ButtonTest::toggle_button_show1()
 	button.set_round_box_type(RoundCornerAll);
 	button.set_pos(Point(100, 100));
 
+	app->bind(&button);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 
@@ -159,6 +165,7 @@ void ButtonTest::toggle_button_show1()
 		glfwPollEvents();
 	}
 
+	app->unbind(&button);
 	/* release BILO */
 	Interface::release();
 

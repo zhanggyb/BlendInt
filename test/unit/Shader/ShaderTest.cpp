@@ -355,6 +355,7 @@ void ShaderTest::shader_load1 ()
 	// widget.set_pos(100, 100);
 	// widget.resize(200, 200);
 
+	app->bind(&widget);
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -367,6 +368,7 @@ void ShaderTest::shader_load1 ()
 		glfwPollEvents();
 	}
 
+	widget.unbind();
 	/* release BILO */
 	Interface::release();
 
@@ -413,6 +415,7 @@ void ShaderTest::shader_load2 ()
 	// widget.set_pos(100, 100);
 	// widget.resize(200, 200);
 
+	app->bind(&widget);
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -425,6 +428,7 @@ void ShaderTest::shader_load2 ()
 		glfwPollEvents();
 	}
 
+	widget.unbind();
 	/* release BILO */
 	Interface::release();
 
@@ -471,6 +475,8 @@ void ShaderTest::shader_load3 ()
 	// widget.set_pos(100, 100);
 	// widget.resize(200, 200);
 
+	app->bind(&widget);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -482,6 +488,8 @@ void ShaderTest::shader_load3 ()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	widget.unbind();
 
 	/* release BILO */
 	Interface::release();

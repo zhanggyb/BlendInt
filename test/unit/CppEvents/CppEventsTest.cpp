@@ -18,7 +18,7 @@
 using namespace BILO;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(CppEventsTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(CppEventsTest);
 
 CppEventsTest::CppEventsTest ()
 {
@@ -93,6 +93,9 @@ void CppEventsTest::connect1 ()
 	label.set_font(Font("Droid Sans"));
 	label.set_pos(Point(100, 100));
 
+	app->bind(&button);
+	app->bind(&label);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -104,6 +107,9 @@ void CppEventsTest::connect1 ()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	button.unbind();
+	label.unbind();
 
 	/* release BILO */
 	Interface::release();

@@ -22,7 +22,7 @@
 using namespace BILO;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(LayoutTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(LayoutTest);
 
 LayoutTest::LayoutTest ()
 {
@@ -140,6 +140,9 @@ void LayoutTest::horizontal_layout1()
 	layout3.add_widget(&label3);
 	layout3.add_widget(&button3);
 
+	app->bind(&layout1);
+	app->bind(&layout2);
+	app->bind(&layout3);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -152,6 +155,10 @@ void LayoutTest::horizontal_layout1()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	layout1.unbind();
+	layout2.unbind();
+	layout3.unbind();
 
 	/* release BILO */
 	Interface::release();
@@ -232,6 +239,10 @@ void LayoutTest::vertical_layout1()
 	layout3.add_widget(&label3);
 	layout3.add_widget(&button3);
 
+	app->bind(&layout1);
+	app->bind(&layout2);
+	app->bind(&layout3);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -243,6 +254,10 @@ void LayoutTest::vertical_layout1()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	layout1.unbind();
+	layout2.unbind();
+	layout3.unbind();
 
 	/* release BILO */
 	Interface::release();
@@ -311,6 +326,8 @@ void LayoutTest::layout_mix1()
 
 	layout2->set_pos (400, 500);
 
+	app->bind(layout2);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -323,7 +340,7 @@ void LayoutTest::layout_mix1()
 		glfwPollEvents();
 	}
 
-	delete layout2;
+	//delete layout2;
 	/* release BILO */
 	Interface::release();
 
@@ -413,6 +430,8 @@ void LayoutTest::layout_mix2()
 	layout4.add_layout(&layout3);
 	layout4.set_pos(400, 200);
 
+	app->bind(&layout4);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -425,6 +444,7 @@ void LayoutTest::layout_mix2()
 		glfwPollEvents();
 	}
 
+	layout4.unbind();
 	layout3.unbind();
 	layout2.unbind();
 	layout1.unbind();

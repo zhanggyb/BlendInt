@@ -17,7 +17,7 @@
 using namespace BILO;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(AbstractButtonTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(AbstractButtonTest);
 
 AbstractButtonTest::AbstractButtonTest ()
 {
@@ -87,6 +87,8 @@ void AbstractButtonTest::show1 ()
 	button.set_font(Font("Droid Sans"));
 	button.set_pos(Point(50, 50));
 
+	app->bind(&button);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -99,6 +101,7 @@ void AbstractButtonTest::show1 ()
 		glfwPollEvents();
 	}
 
+	button.unbind();
 	/* release BILO */
 	Interface::release();
 

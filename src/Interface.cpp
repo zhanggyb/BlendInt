@@ -127,6 +127,16 @@ namespace BILO {
 
 	}
 
+	bool Interface::bind (Drawable* object)
+	{
+		return ContextManager::instance()->bind(object);
+	}
+
+	bool Interface::unbind (Drawable* object)
+	{
+		return ContextManager::instance()->unbind(object);
+	}
+
 	const Size& Interface::size () const
 	{
 		return size_;

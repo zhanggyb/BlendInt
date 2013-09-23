@@ -148,9 +148,9 @@ namespace BILO {
 		return true;
 	}
 
-	void ContextManager::bind (Drawable* obj)
+	bool ContextManager::bind (Drawable* obj)
 	{
-		if (!obj) return;
+		if (!obj) return false;
 
 		if (obj->m_parent.object.nameless) {
 			if (obj->m_parent.type == ParentDrawable) {
@@ -167,18 +167,21 @@ namespace BILO {
 		obj->m_parent.type = ParentContextManager;
 		obj->m_parent.object.context = this;
 
-		return;
+		return true;
 	}
 
-	void ContextManager::unbind (Drawable* obj)
+	bool ContextManager::unbind (Drawable* obj)
 	{
-		if (!obj) return;
+		if (!obj) return false;
 
-		if (!obj->m_parent.object.nameless) return;
+		if (!obj->m_parent.object.nameless) {
+			std::cerr << "obj not in context manager, won't unbind it" << std::endl;
+			return false;
+		}
 
 		if (obj->m_parent.type == ParentDrawable) {
 			std::cerr << "obj not in context manager, won't unbind it" << std::endl;
-			return;
+			return false;
 		}
 
 		if(remove_drawable(obj)) {
@@ -190,7 +193,7 @@ namespace BILO {
 		obj->m_parent.type = ParentUnknown;
 		obj->m_parent.object.nameless = 0;
 
-		return;
+		return true;
 	}
 
 	bool ContextManager::remove_drawable (Drawable* obj)

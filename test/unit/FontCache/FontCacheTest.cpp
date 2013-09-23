@@ -19,7 +19,7 @@
 using namespace BILO;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(FontCacheTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(FontCacheTest);
 
 FontCacheTest::FontCacheTest ()
 {

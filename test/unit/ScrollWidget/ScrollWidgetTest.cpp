@@ -16,7 +16,7 @@
 using namespace BILO;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(ScrollWidgetTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(ScrollWidgetTest);
 
 ScrollWidgetTest::ScrollWidgetTest ()
 {
@@ -85,6 +85,8 @@ void ScrollWidgetTest::scrollbar_test01()
 	ScrollBar bar(Horizontal);
 	bar.set_pos (200, 200);
 
+	app->bind(&bar);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -96,6 +98,8 @@ void ScrollWidgetTest::scrollbar_test01()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	bar.unbind();
 
 	/* release BILO */
 	Interface::release();

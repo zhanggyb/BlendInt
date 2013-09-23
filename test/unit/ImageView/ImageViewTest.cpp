@@ -16,7 +16,7 @@
 using namespace BILO;
 using namespace std;
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(ImageViewTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(ImageViewTest);
 
 ImageViewTest::ImageViewTest ()
 {
@@ -85,6 +85,8 @@ void ImageViewTest::show1 ()
 	ImageView imageview;
 	imageview.set_pos(400, 300);
 
+	app->bind(&imageview);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
@@ -96,6 +98,9 @@ void ImageViewTest::show1 ()
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+
+	imageview.unbind();
 
 	/* release BILO */
 	Interface::release();

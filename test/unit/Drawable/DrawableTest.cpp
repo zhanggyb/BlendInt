@@ -583,7 +583,7 @@ void DrawableTest::bind_test1()
 	Widget widget4;
 	widget4.set_pos(150, 150);
 	widget4.resize(50, 50);
-	ContextManager::instance()->bind(&widget4);
+	app->bind(&widget4);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -668,7 +668,7 @@ void DrawableTest::bind_test2()
 	widget4->set_pos(150, 150);
 	widget4->resize(50, 50);
 	widget4->set_name("widget4");
-	ContextManager::instance()->bind(widget4);
+	app->bind(widget4);
 
 	Drawable::print();
 	ContextManager::instance()->print();

@@ -48,9 +48,9 @@ namespace BILO {
 
 		static void release ();
 
-		void bind (Drawable* obj);
+		bool bind (Drawable* obj);
 
-		void unbind (Drawable* obj);
+		bool unbind (Drawable* obj);
 
 		int index_size () const {return m_index.size();}
 
