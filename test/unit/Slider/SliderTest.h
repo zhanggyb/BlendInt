@@ -9,16 +9,6 @@
 
 #include <BILO/String.hpp>
 
-class myLabel: public BILO::Label
-{
-public:
-	myLabel (const BILO::String& label = "0");
-
-	virtual ~myLabel();
-
-	void print_value (int value);
-};
-
 class SliderTest: public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(SliderTest);

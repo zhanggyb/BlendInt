@@ -90,8 +90,9 @@ int main(int argc, char* argv[]) {
 	vslider->set_value(50);
 
 	app->bind(hslider);
-
 	app->bind(vslider);
+
+	app->events().connect(hslider->slider_moved(), vslider, &AbstractSlider::set_value);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

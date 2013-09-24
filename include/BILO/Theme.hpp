@@ -28,6 +28,8 @@
 
 namespace BILO {
 
+	class Interface;
+
 	struct WidgetColors
 	{
 		WidgetColors ();
@@ -119,11 +121,9 @@ namespace BILO {
 
 	public:
 
+		friend class Interface;
+
 		static Theme* instance ();
-
-		static bool initialize ();
-
-		static void release ();
 
 		const ThemeUI* themeUI () const
 		{
@@ -134,6 +134,16 @@ namespace BILO {
 		{
 			return &fonts_;
 		}
+
+#ifdef DEBUG
+	public:
+#else
+	private:
+#endif
+
+		static bool initialize ();
+
+		static void release ();
 
 	private:
 

@@ -13,9 +13,11 @@ class FontConfigTest: public CppUnit::TestFixture
 {
     CPPUNIT_TEST_SUITE(FontConfigTest);
 
+#ifdef DEBUG
     CPPUNIT_TEST(initialize1);
     CPPUNIT_TEST(loadfont1);
     CPPUNIT_TEST(loadfont2);
+#endif
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -33,9 +35,11 @@ class FontConfigTest: public CppUnit::TestFixture
 
  private:
 
+#ifdef DEBUG
     void initialize1 ();
     void loadfont1 ();
     void loadfont2 ();
+#endif
 
 };
 

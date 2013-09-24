@@ -13,8 +13,8 @@ class LayoutTest: public CppUnit::TestFixture
 
 	CPPUNIT_TEST(vertical_layout1);
 
-	//CPPUNIT_TEST(layout_mix1);
-	//CPPUNIT_TEST(layout_mix2);
+	CPPUNIT_TEST(layout_mix1);
+	CPPUNIT_TEST(layout_mix2);
 
 	CPPUNIT_TEST_SUITE_END()
 	;

@@ -44,10 +44,6 @@ namespace BILO {
 
 		static ContextManager* instance ();
 		
-		static bool initialize ();
-
-		static void release ();
-
 		bool bind (Drawable* obj);
 
 		bool unbind (Drawable* obj);
@@ -63,6 +59,10 @@ namespace BILO {
 #endif
 
 	private:
+
+		static bool initialize ();
+
+		static void release ();
 
 		/**
 		 * @brief add the drawable in the context list

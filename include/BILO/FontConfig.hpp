@@ -38,22 +38,19 @@ typedef FontList::const_iterator FontIter;
 
 namespace BILO {
 
+	class Interface;
+
 	class FontConfig
 	{
 	public:
+
+		friend class Interface;
 
 		/**
 		 * @brief generate a FontConfig instance and assign to FontConfig::service
 		 * @return true: success, false: already has instance
 		 */
 		static FontConfig* instance ();
-
-		static bool initialize ();
-
-		/**
-		 * @brief Release the object created in instance()
-		 */
-		static void release ();
 
 		const unsigned char* getBuffer () const
 		{
@@ -85,6 +82,19 @@ namespace BILO {
 		        false, bool italic = false);
 
 		string getFontPath (const Font& font);
+
+#ifdef DEBUG
+	public:
+#else
+	private:
+#endif
+
+		static bool initialize ();
+
+		/**
+		 * @brief Release the object created in instance()
+		 */
+		static void release ();
 
 	private:
 

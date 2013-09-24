@@ -44,6 +44,8 @@ void FontConfigTest::tearDown ()
 #endif
 }
 
+#ifdef DEBUG
+
 void FontConfigTest::initialize1 ()
 {
 	bool result;
@@ -93,3 +95,5 @@ void FontConfigTest::loadfont2 ()
 
 	CPPUNIT_ASSERT(result);
 }
+
+#endif

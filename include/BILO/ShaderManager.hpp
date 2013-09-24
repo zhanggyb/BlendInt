@@ -26,6 +26,8 @@
 
 namespace BILO {
 
+	class Interface;
+
 	/**
 	 * @pre-defined shaders
 	 */
@@ -33,9 +35,7 @@ namespace BILO {
 	{
 	public:
 
-		static bool initialize ();
-
-		static void release ();
+		friend class Interface;
 
 		static ShaderManager* instance ();
 
@@ -65,6 +65,10 @@ namespace BILO {
 		}
 
 	private:
+
+		static bool initialize ();
+
+		static void release ();
 
 		ShaderManager ();
 

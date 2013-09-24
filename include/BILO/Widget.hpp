@@ -170,7 +170,7 @@ namespace BILO {
 		  }
 		*/
 
-		Cpp::ConnectionScope m_event_scope;
+		Cpp::ConnectionScope m_events;
 
 	private:
 

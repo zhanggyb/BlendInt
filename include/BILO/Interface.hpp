@@ -25,6 +25,8 @@
 #include <BILO/Types.hpp>
 #include <BILO/Size.hpp>
 
+#include <Cpp/Events.hpp>
+
 namespace BILO {
 
 	class Drawable;
@@ -74,6 +76,8 @@ namespace BILO {
 
 		void dispatch_mouse_move_event (Drawable* obj, MouseEvent* event);
 
+		Cpp::ConnectionScope& events () {return m_events;}
+
 	private:
 
 		Interface ();
@@ -86,6 +90,8 @@ namespace BILO {
 		Size size_;
 
 		unsigned char m_ticktack;
+
+		Cpp::ConnectionScope m_events;
 
 		static Interface* interface;
 

@@ -20,26 +20,6 @@ using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SliderTest);
 
-myLabel::myLabel(const String& label)
-: BILO::Label(label)
-{
-
-}
-
-myLabel::~myLabel()
-{
-
-}
-
-void myLabel::print_value(int value)
-{
-	char c[10];
-	sprintf(c, "%d", value);
-	String str = c;
-
-	set_text (str);
-}
-
 SliderTest::SliderTest ()
 {
 
@@ -101,21 +81,21 @@ void SliderTest::slider_move_test01()
 		return;
 	}
 
-	Cpp::ConnectionScope scope_;
-
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	Slider * hslider = new Slider;
-	hslider->set_pos (200, 200);
+	Slider* hslider = new Slider;
+	hslider->set_pos(200, 200);
+	hslider->set_value(50);
 
-	myLabel* label = new myLabel;
-	label->set_pos (200, 250);
-
-	scope_.connect(hslider->slider_moved(), label, &myLabel::print_value);
+	Slider* vslider = new Slider(Vertical);
+	vslider->set_pos(200, 250);
+	vslider->set_value(50);
 
 	app->bind(hslider);
-	app->bind(label);
+	app->bind(vslider);
+
+	app->events().connect(hslider->slider_moved(), vslider, &AbstractSlider::set_value);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
