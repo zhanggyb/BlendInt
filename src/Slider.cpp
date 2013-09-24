@@ -31,33 +31,11 @@
 
 namespace BILO {
 
-	const float SliderControl::circle_vertexes[20][2] =
-	{
-			{1.000000, 0.000000},	// cos(0), sin(0)
-			{0.951057, 0.309017},	// cos(18), sin(18)
-			{0.809017, 0.587785},	// cos(36), sin(36)
-			{0.587785, 0.809017},	// cos(54), sin(54)
-			{0.309017, 0.951057},	// cos(72), sin(72)
-			{0.000000, 1.000000},	// cos(90), sin(90)
-			{-0.309017, 0.951057},
-			{-0.587785, 0.809017},
-			{-0.809017, 0.587785},
-			{-0.951057, 0.309017},
-			{-1.000000, 0.000000},
-			{-0.951057, -0.309017},
-			{-0.809017, -0.587785},
-			{-0.587785, -0.809017},
-			{-0.309017, -0.951057},
-			{0.000000, -1.000000},
-			{0.309017, -0.951057},
-			{0.587785, -0.809017},
-			{0.809017, -0.587785},
-			{0.951057, -0.309017}
-	};
-
 	SliderControl::SliderControl()
 	:  Widget(), m_hover(false), m_pressed(false)
 	{
+		buffer().generate(1);
+
 		set_padding (0, 0, 0, 0);
 		set_radius(7);
 		resize (m_radius * 2, m_radius * 2);
@@ -66,6 +44,8 @@ namespace BILO {
 	SliderControl::SliderControl(Drawable* parent)
 	:  Widget(parent), m_hover(false), m_pressed(false)
 	{
+		buffer().generate(1);
+
 		set_padding (0, 0, 0, 0);
 		set_radius(7);
 		resize (m_radius * 2, m_radius * 2);

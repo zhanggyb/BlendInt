@@ -29,6 +29,8 @@ namespace BILO {
 
 	class Button: public AbstractButton
 	{
+		DISALLOW_COPY_AND_ASSIGN(Button);
+
 	public:
 
 		Button ();
@@ -47,13 +49,6 @@ namespace BILO {
 
 		virtual void render ();
 
-	private:
-
-		void DrawButton (WidgetVertexes* vertexes);
-
-	private:
-		Button (const Button& orig);
-		Button& operator = (const Button& orig);
 	};
 
 }

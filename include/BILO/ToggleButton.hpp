@@ -29,6 +29,8 @@ namespace BILO {
 
 	class ToggleButton: public AbstractButton
 	{
+		DISALLOW_COPY_AND_ASSIGN(ToggleButton);
+
 	public:
 
 		ToggleButton (const String& text);
@@ -37,17 +39,12 @@ namespace BILO {
 
 		ToggleButton (const String& text, Drawable* parent);
 
-		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
-
 		virtual ~ToggleButton ();
 
 	protected:
 
 		virtual void render ();
 
-	private:
-		ToggleButton (const ToggleButton& orig);
-		ToggleButton& operator = (const ToggleButton& orig);
 	};
 
 }

@@ -27,6 +27,8 @@
 
 #include <Cpp/Events.hpp>
 
+#define BILO_EVENTS_INIT_ONCE_IN_MAIN Cpp::Events::ProcessInit processInit
+
 namespace BILO {
 
 	class Drawable;

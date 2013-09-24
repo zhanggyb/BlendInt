@@ -70,13 +70,9 @@ namespace BILO {
 
 		bool m_pressed;
 
-		GLBuffer m_buffer;
-
 		Point m_move_start;
 
 		Point m_position_origin;
-
-		static const float circle_vertexes[20][2];
 	};
 
 	/**

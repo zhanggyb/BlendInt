@@ -27,29 +27,6 @@
 
 namespace BILO {
 
-	const float ScrollBar::scroll_circle_vert [20][2] = {
-			{1.000000, 0.000000},	// cos(0), sin(0)
-			{0.951057, 0.309017},	// cos(18), sin(18)
-			{0.809017, 0.587785},	// cos(36), sin(36)
-			{0.587785, 0.809017},	// cos(54), sin(54)
-			{0.309017, 0.951057},	// cos(72), sin(72)
-			{0.000000, 1.000000},	// cos(90), sin(90)
-			{-0.309017, 0.951057},
-			{-0.587785, 0.809017},
-			{-0.809017, 0.587785},
-			{-0.951057, 0.309017},
-			{-1.000000, 0.000000},
-			{-0.951057, -0.309017},
-			{-0.809017, -0.587785},
-			{-0.587785, -0.809017},
-			{-0.309017, -0.951057},
-			{0.000000, -1.000000},
-			{0.309017, -0.951057},
-			{0.587785, -0.809017},
-			{0.809017, -0.587785},
-			{0.951057, -0.309017}
-	};
-
 	/*
 	static const unsigned int scroll_circle_face[14][3] = {
 		{0, 1, 2}, {2, 0, 3}, {3, 0, 15}, {3, 15, 4}, {4, 15, 14}, {4, 14, 5}, {5, 14, 13}, {5, 13, 6},
@@ -60,22 +37,28 @@ namespace BILO {
 	ScrollBar::ScrollBar(Orientation orientation)
 	: AbstractSlider(orientation)
 	{
+		buffer().generate(1);
+
 		if(orientation == Horizontal) {
 			resize (400, 25);
 		} else if (orientation == Vertical) {
 			resize (25, 400);
 		}
+
 		update (0);
 	}
 
 	ScrollBar::ScrollBar(Orientation orientation, Drawable* parent)
 	: AbstractSlider(orientation, parent)
 	{
+		buffer().generate(1);
+
 		if(orientation == Horizontal) {
 			resize (400, 25);
 		} else if (orientation == Vertical) {
 			resize (25, 400);
 		}
+
 		update (0);
 	}
 
@@ -92,16 +75,16 @@ namespace BILO {
 			if (radius > 0) {
 				for (int i = 0; i < 11; i++)
 				{
-					m_vertex[i][0] = padding_.left() + radius - radius * scroll_circle_vert[i][1];
-					m_vertex[i][1] = padding_.bottom() + radius + radius * scroll_circle_vert[i][0];
+					m_vertex[i][0] = padding_.left() + radius - radius * circle_vertexes[i][1];
+					m_vertex[i][1] = padding_.bottom() + radius + radius * circle_vertexes[i][0];
 				}
 				for (int i = 10; i < 20; i++)
 				{
-					m_vertex[i + 1][0] = size_.width() - padding_.right() - radius - radius * scroll_circle_vert[i][1];
-					m_vertex[i + 1][1] = padding_.bottom() + radius + radius * scroll_circle_vert[i][0];
+					m_vertex[i + 1][0] = size_.width() - padding_.right() - radius - radius * circle_vertexes[i][1];
+					m_vertex[i + 1][1] = padding_.bottom() + radius + radius * circle_vertexes[i][0];
 				}
-				m_vertex[21][0] = size_.width() - padding_.right() - radius - radius * scroll_circle_vert[0][1];
-				m_vertex[21][1] = padding_.bottom() + radius + radius * scroll_circle_vert[0][0];
+				m_vertex[21][0] = size_.width() - padding_.right() - radius - radius * circle_vertexes[0][1];
+				m_vertex[21][1] = padding_.bottom() + radius + radius * circle_vertexes[0][0];
 			}
 
 		} else if (orientation() == Vertical) {
@@ -111,19 +94,20 @@ namespace BILO {
 			if (radius > 0) {
 				for (int i = 0; i < 11; i++)
 				{
-					m_vertex[i][0] = padding_.left() + radius - radius * scroll_circle_vert[i][0];
-					m_vertex[i][1] = padding_.bottom() + radius - radius * scroll_circle_vert[i][1];
+					m_vertex[i][0] = padding_.left() + radius - radius * circle_vertexes[i][0];
+					m_vertex[i][1] = padding_.bottom() + radius - radius * circle_vertexes[i][1];
 				}
 				for (int i = 10; i < 20; i++)
 				{
-					m_vertex[i + 1][0] = padding_.left() + radius - radius * scroll_circle_vert[i][0];
-					m_vertex[i + 1][1] = size_.height() - padding_.top() - radius - radius * scroll_circle_vert[i][1];
+					m_vertex[i + 1][0] = padding_.left() + radius - radius * circle_vertexes[i][0];
+					m_vertex[i + 1][1] = size_.height() - padding_.top() - radius - radius * circle_vertexes[i][1];
 				}
-				m_vertex[21][0] = padding_.left() + radius - radius * scroll_circle_vert[0][0];
-				m_vertex[21][1] = size_.height() - padding_.top() - radius - radius * scroll_circle_vert[0][1];
+				m_vertex[21][0] = padding_.left() + radius - radius * circle_vertexes[0][0];
+				m_vertex[21][1] = size_.height() - padding_.top() - radius - radius * circle_vertexes[0][1];
 			}
 
 		}
+
 
 		//glBindBuffer (GL_ARRAY_BUFFER, m_buffer);
 		m_buffer.bind (GL_ARRAY_BUFFER);

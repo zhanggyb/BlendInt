@@ -33,11 +33,11 @@ namespace BILO {
 	{
 	public:
 
-		explicit GLBuffer (unsigned int size = 1);
+		GLBuffer ();
 
 		~GLBuffer ();
 
-		bool generate (unsigned int size = 1);
+		void generate (size_t size = 1);
 
 		bool reset (size_t index);
 
@@ -83,7 +83,12 @@ namespace BILO {
 
 	private:
 
-		size_t m_index;
+		/**
+		 * @buffer index
+		 *
+		 * -1 : initial status
+		 */
+		int m_index;
 
 		std::vector<GLuint> m_buffers;
 	};

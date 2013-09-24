@@ -39,6 +39,8 @@ namespace BILO {
 
 	class AbstractButton: public Widget
 	{
+		DISALLOW_COPY_AND_ASSIGN(AbstractButton);
+
 	public:
 
 		AbstractButton ();
@@ -70,8 +72,6 @@ namespace BILO {
 	protected:
 
 		void updateVertexArray (float x, float y, float sx, float sy);
-
-		void drawButton (WidgetVertexes* vertexes);
 
 		virtual void render () = 0;
 
@@ -106,10 +106,6 @@ namespace BILO {
 		Cpp::Event<> clicked_;
 
 		Cpp::Event<bool> toggled_;
-
-	private:	// member functions (disabled)
-
-		DISALLOW_COPY_AND_ASSIGN(AbstractButton);
 	};
 
 } /* namespace BIL */

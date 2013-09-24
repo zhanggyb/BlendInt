@@ -119,7 +119,7 @@ void myTexture::makeCheckImage (void)
 myDrawable1::myDrawable1 (Drawable* parent)
 		: Drawable(parent)
 {
-	round_box_type_ = RoundCornerAll;
+	m_roundcorner = RoundCornerAll;
 }
 
 myDrawable1::~myDrawable1 ()
@@ -134,8 +134,6 @@ void myDrawable1::render (void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
 
-	DrawBox(GL_POLYGON, pos_.x(), pos_.y(), pos_.x() + size_.width(),
-	        pos_.y() + size_.height(), 5.0);
 
 	glDisable(GL_BLEND);
 }
@@ -171,7 +169,7 @@ void myDrawable1::move_mouse (MouseEvent* event)
 myDrawable2::myDrawable2 (Drawable* parent)
 		: Drawable(parent)
 {
-	round_box_type_ = RoundCornerAll;
+	m_roundcorner = RoundCornerAll;
 }
 
 myDrawable2::~myDrawable2 ()
@@ -185,8 +183,6 @@ void myDrawable2::render (void)
 	glEnable(GL_BLEND);
 	glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
 
-	DrawBoxShade(GL_POLYGON, pos_.x(), pos_.y(), pos_.x() + size_.width(),
-	        pos_.y() + size_.height(), 5.0, 0.5, 0.1);
 
 	glDisable(GL_BLEND);
 }
@@ -221,7 +217,7 @@ void myDrawable2::move_mouse (MouseEvent* event)
 myDrawable3::myDrawable3 (Drawable* parent)
 		: Drawable(parent)
 {
-	round_box_type_ = RoundCornerAll;
+	m_roundcorner = RoundCornerAll;
 }
 
 myDrawable3::~myDrawable3 ()
@@ -235,10 +231,6 @@ void myDrawable3::render (void)
 	glEnable(GL_BLEND);
 	glColor4f(1.0f, 0.9f, 1.0f, 0.95f);
 
-	drawRoundBox(pos_.x(), pos_.y(), pos_.x() + size_.width(),
-	        pos_.y() + size_.height(), 5.0);
-	DrawShadowBox(pos_.x(), pos_.y(), pos_.x() + size_.width(),
-	        pos_.y() + size_.height(), 5.0, 64);
 
 	glDisable(GL_BLEND);
 }

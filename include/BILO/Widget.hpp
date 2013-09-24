@@ -29,6 +29,7 @@
 #include <BILO/Color.hpp>
 #include <BILO/Theme.hpp>
 #include <BILO/Rect.hpp>
+#include <BILO/GLBuffer.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -44,32 +45,10 @@
 
 namespace BILO {
 
-	struct DecorationVertexes
-	{
-		DecorationVertexes();
-
-		unsigned int tot;
-		float vec[16][2];
-		const unsigned int (*index)[3];
-	};
-
-	struct WidgetVertexes
-	{
-		WidgetVertexes();
-
-		int totvert, halfwayvert;
-		float outer_v[WIDGET_SIZE_MAX][2];
-		float inner_v[WIDGET_SIZE_MAX][2];
-		float inner_uv[WIDGET_SIZE_MAX][2];
-
-		bool inner, outline, emboss, shadedir; /* set on/off */
-
-		DecorationVertexes tria1;
-		DecorationVertexes tria2;
-	};
-
 	class Widget: public Drawable
 	{
+		DISALLOW_COPY_AND_ASSIGN(Widget);
+
 	public:
 
 		Widget ();
@@ -80,32 +59,9 @@ namespace BILO {
 
 	protected:
 
+		virtual void update (int property);
+
 		virtual void render ();
-
-		void DrawAntiTriangle (float x1,
-						   float y1,
-						   float x2,
-						   float y2,
-						   float x3,
-						   float y3);
-
-		void DrawAntiRoundbox (int mode,
-							   float minx,
-							   float miny,
-							   float maxx,
-							   float maxy,
-							   float rad,
-							   bool use_alpha);
-
-		void DrawTrias (const DecorationVertexes* tria);
-
-		
-		void DrawAppearance (WidgetVertexes* vertexes);
-
-		void DrawWidgetBaseOutline (WidgetVertexes* wtb);
-
-	protected:
-		// Events
 
 		virtual void press_key (KeyEvent* event);
 
@@ -119,65 +75,29 @@ namespace BILO {
 
 		virtual void move_mouse (MouseEvent* event);
 
-		virtual void update (int property);
-
 		/**
-		 * @brief Calculate round box shadow edges
-		 * @param vert
-		 * @param rect
-		 * @param rad
-		 * @param roundboxalign
-		 * @param step
-		 * @return vertex number used in Base::totvert
+		 * @brief get the GLBuffer
+		 * @return
 		 */
-		int CalculateRoundBoxShadowEdges(float (*vert)[2],
-					const Rect& rect, float rad, int roundboxalign, float step);
-
-		void CalculateRoundBoxEdges (int roundboxalign, const Rect& rect, float rad, float radi, WidgetVertexes *wt);
-
-		void CalculateRoundBoxEdges (int roundboxalign, const Rect& rect, float rad, WidgetVertexes *wt);
-
-		/* based on button rect, return scaled array of triangles */
-		void CalculateTriangleNumbers (const Rect& rect, float triasize, char where, DecorationVertexes *tria);
-
-		void CalculateScrollCircle(const Rect& rect, float triasize, char where, DecorationVertexes *tria);
-
-		void CalculateMenuTriangle (const Rect& rect, DecorationVertexes *tria);
-
-		void CalculateCheckTriangle (const Rect& rect, DecorationVertexes *tria);
-
-		void verts_to_quad_strip(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], WidgetVertexes *wtb);
-
-		void verts_to_quad_strip_open(const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2][2], WidgetVertexes *wtb);
-
-	protected:
-
-		WidgetVertexes m_appearance;
-
-		// converted colors for state
-		//WidgetColors colors_state_;
-
-		/*
-		  inline void widget_verts_to_quad_strip(Base *wtb, const int totvert, float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
-		  {
-		  int a;
-		  for (a = 0; a < totvert; a++) {
-		  copy_v2_v2(quad_strip[a * 2], wtb->outer_v[a]);
-		  copy_v2_v2(quad_strip[a * 2 + 1], wtb->inner_v[a]);
-		  }
-		  copy_v2_v2(quad_strip[a * 2], wtb->outer_v[0]);
-		  copy_v2_v2(quad_strip[a * 2 + 1], wtb->inner_v[0]);
-		  }
-		*/
+		GLBuffer& buffer () {return m_buffer;}
 
 		Cpp::ConnectionScope m_events;
 
+		static const float quarter_corner_vertexes[9][2];
+
+		static const float circle_vertexes[20][2];
+
+		GLBuffer m_buffer;
+
 	private:
 
+		void update_shape ();
 
-		Widget (const Widget& orig);
+		/**
+		 * vertexes for drawing shape
+		 */
+		float m_vertexes[36][2];
 
-		Widget& operator = (const Widget& orig);
 	};
 
 } /* namespace BILO */

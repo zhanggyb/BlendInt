@@ -154,9 +154,13 @@ namespace BILO {
 
 		void set_padding (int l, int r, int t, int b);
 
-		void set_round_box_type (RoundCornerType type);
+		void set_roundcorner (RoundCornerType type);
 
-		RoundCornerType round_box_type () const;
+		RoundCornerType roundcorner () const;
+
+		void set_corner_radius (float radius);
+
+		float corner_radius () const {return m_corner_radius;}
 
 		bool visible () const;
 
@@ -182,77 +186,6 @@ namespace BILO {
 		 */
 		virtual void update (int property) = 0;
 
-		void drawRoundBox (float minx,
-						   float miny,
-						   float maxx,
-						   float maxy,
-						   float rad);
-
-		/**
-		 * @brief Draw a box shape
-		 * @param mode GLenum in glBegin
-		 * @param minx
-		 * @param miny
-		 * @param maxx
-		 * @param maxy
-		 * @param rad Corner radius, this will multiple the pre-defined vecter
-		 * inside this function
-		 */
-		void DrawBox (int mode,
-					  float minx,
-					  float miny,
-					  float maxx,
-					  float maxy,
-					  float rad);
-
-		void DrawBoxShade (int mode,
-						   float minx,
-						   float miny,
-						   float maxx,
-						   float maxy,
-						   float rad,
-						   float shadetop,
-						   float shadedown);
-
-		void DrawRoundRect(float minx,
-						   float miny,
-						   float maxx,
-						   float maxy,
-						   float rad);
-
-		void DrawBoxShadow(unsigned char alpha,
-						   float minx,
-						   float miny,
-						   float maxx,
-						   float maxy);
-
-		void DrawShadowBox(float minx,
-						   float miny,
-						   float maxx,
-						   float maxy,
-						   float shadsize,
-						   unsigned char alpha);
-
-		/* linear vertical shade within button or in outline */
-		/* view2d scrollers use it */
-		void DrawBoxVerticalShade(int mode,
-								  float minx,
-								  float miny,
-								  float maxx,
-								  float maxy,
-								  float rad,
-								  float shadeLeft,
-								  float shadeRight);
-
-		// (old, used in outliner) plain antialiased filled box
-		void DrawAntiRoundbox(int mode,
-							  float minx,
-							  float miny,
-							  float maxx,
-							  float maxy,
-							  float rad,
-							  bool use_alpha);
-
 		/**
 		 * @brief just change m_z simply
 		 * @param z
@@ -267,9 +200,16 @@ namespace BILO {
 		 */
 		int m_z;
 
-		RoundCornerType round_box_type_;
+		RoundCornerType m_roundcorner;
 
-		bool visible_;
+		/**
+		 * @brief the round corner radius
+		 *
+		 * should be 0.0, 1.0, 2.0 etc
+		 */
+		float m_corner_radius;
+
+		bool m_visible;
 
 		Size size_;
 

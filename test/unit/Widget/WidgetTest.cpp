@@ -21,26 +21,20 @@ CPPUNIT_TEST_SUITE_REGISTRATION(WidgetTest);
 testWidget::testWidget (int type, Drawable* parent)
 		: Widget(parent)
 {
-	round_box_type_ = RoundCornerAll;
+	m_roundcorner = RoundCornerAll;
 	set_pos(Point(100, 100));
 	resize(200, 200);
 
 	switch (type) {
 		case 0:
-			CalculateRoundBoxEdges(round_box_type_, Rect(100, 100, 200, 200),
-			        1.0, &m_appearance);
 			break;
 		case 1:
-			CalculateCheckTriangle(Rect(100, 100, 200, 200),
-			        &(m_appearance.tria1));
+
 			break;
 		case 2:
-			CalculateCheckTriangle(Rect(100, 100, 200, 200),
-			        &(m_appearance.tria2));
+
 			break;
 		case 3:
-			CalculateMenuTriangle(Rect(100, 100, 200, 200),
-			        &(m_appearance.tria1));
 			break;
 		default:
 			break;
@@ -50,7 +44,6 @@ testWidget::testWidget (int type, Drawable* parent)
 
 void testWidget::render (void)
 {
-	DrawAppearance(&m_appearance);
 }
 
 WidgetTest::WidgetTest ()

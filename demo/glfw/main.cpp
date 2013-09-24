@@ -47,10 +47,11 @@ static void cbCursorPos(GLFWwindow* window, double xpos, double ypos) {
 	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
 	using namespace BILO;
 
-	Cpp::Events::ProcessInit processInit;
+	BILO_EVENTS_INIT_ONCE_IN_MAIN;
 
 	/* Initialize the library */
 	if (!glfwInit())
@@ -81,6 +82,13 @@ int main(int argc, char* argv[]) {
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
+	Widget* widget = new Widget;
+
+	widget->set_pos(300, 300);
+	widget->set_corner_radius(50.0);
+	widget->set_roundcorner(RoundCornerAll);
+	widget->resize(400, 400);
+
 	Slider* hslider = new Slider;
 	hslider->set_pos(200, 200);
 	hslider->set_value(50);
@@ -89,6 +97,7 @@ int main(int argc, char* argv[]) {
 	vslider->set_pos(200, 250);
 	vslider->set_value(50);
 
+	app->bind(widget);
 	app->bind(hslider);
 	app->bind(vslider);
 

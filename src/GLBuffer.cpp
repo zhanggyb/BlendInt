@@ -24,12 +24,9 @@
 
 namespace BILO {
 
-	GLBuffer::GLBuffer (unsigned int size)
-	: m_index(0), m_buffers(size)
+	GLBuffer::GLBuffer ()
+	: m_index(-1)
 	{
-		if(size > 0) {
-			glGenBuffers (size, &m_buffers[0]);
-		}
 	}
 
 	GLBuffer::~GLBuffer ()
@@ -37,17 +34,14 @@ namespace BILO {
 		clear ();
 	}
 
-	bool GLBuffer::generate (unsigned int size)
+	void GLBuffer::generate (size_t size)
 	{
-		if(size> 0) {
-			clear ();
-			m_buffers.resize(size);
-			glGenBuffers (size, &m_buffers[0]);
-			m_index = 0;
-			return true;
-		} else {
-			return false;
-		}
+		clear ();
+
+		m_buffers.resize(size);
+		glGenBuffers (size, &m_buffers[0]);
+		m_index = 0;
+		return;
 	}
 
 	bool GLBuffer::reset (size_t index)

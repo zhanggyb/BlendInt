@@ -50,12 +50,8 @@ namespace BILO {
 
 		void draw_scroll_cicle (const Rect& rect, float rad);
 
-		static const float scroll_circle_vert[20][2];
-
 		float m_vertex[22][2];
 
-		// GLuint m_buffer;
-		GLBuffer m_buffer;
 	};
 
 }
