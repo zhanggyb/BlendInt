@@ -190,7 +190,11 @@ namespace BILO {
 		FcPatternDestroy(pattern);
 
 		if (!match) {
+
 			// TODO: return default font
+			std::cerr << "Error: no default font found" << std::endl;
+			exit(EXIT_FAILURE);
+
 		} else {
 			FcValue value;
 			FcResult result = FcPatternGet(match, FC_FILE, 0, &value);

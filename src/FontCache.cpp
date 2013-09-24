@@ -28,9 +28,11 @@
 #include <queue>
 #include <utility>
 #include <stdexcept>
+#include <algorithm>
 
 #include <BILO/FontCache.hpp>
 #include <BILO/ShaderManager.hpp>
+#include <BILO/Types.hpp>
 
 using namespace std;
 
@@ -303,16 +305,80 @@ namespace BILO {
 
 	void FontCache::print (const String& string, size_t length)
 	{
+		//size_t str_length = std::min(string.length(), length);
+
 
 	}
 
-	void FontCache::print (float x, float y, const String& string)
+	void FontCache::print (float x, float y, const String& string, float sx, float sy)
 	{
 
 	}
 
-	void FontCache::print (float x, float y, const String& string, size_t length)
+	void FontCache::print (float x, float y, const String& string, size_t length, float sx, float sy)
 	{
+		size_t str_length = std::min(string.length(), length);
+
+		Vertex2D vertexes[6 * str_length];	// TODO: use pointer instead
+		int count = 0;
+
+		String::const_iterator it;
+
+		/* Loop through all characters */
+		for (it = string.begin(); it != string.end(); it++)
+		{
+			/* Calculate the vertex and texture coordinates */
+			float x2 = x + atlas_.glyph(*it).bitmap_left * sx;
+
+			float y2 = y + atlas_.glyph(*it).bitmap_top * sy;
+
+			float w = atlas_.glyph(*it).bitmap_width * sx;
+			float h = atlas_.glyph(*it).bitmap_height * sy;
+
+			/* Advance the cursor to the start of the next character */
+			x += atlas_.glyph(*it).advance_x * sx;
+			y += atlas_.glyph(*it).advance_y * sy;
+
+			/* Skip glyphs that have no pixels */
+			if (!w || !h)
+				continue;
+
+			vertexes[count].x = x2;
+			vertexes[count].y = y2;
+			vertexes[count].s = atlas_.glyph(*it).texture_offset_x;
+			vertexes[count].t = atlas_.glyph(*it).texture_offset_y;
+			count++;
+
+			vertexes[count].x = x2 + w;
+			vertexes[count].y = y2;
+			vertexes[count].s = atlas_.glyph(*it).texture_offset_x + atlas_.glyph(*it).bitmap_width / atlas_.width();
+			vertexes[count].t = atlas_.glyph(*it).texture_offset_y;
+			count++;
+
+			vertexes[count].x = x2;
+			vertexes[count].y = y2 - h;
+			vertexes[count].s = atlas_.glyph(*it).texture_offset_x;
+			vertexes[count].t = atlas_.glyph(*it).texture_offset_y + atlas_.glyph(*it).bitmap_height / atlas_.height();
+			count++;
+
+			vertexes[count].x = x2 + w;
+			vertexes[count].y = y2;
+			vertexes[count].s = atlas_.glyph(*it).texture_offset_x + atlas_.glyph(*it).bitmap_width / atlas_.width();
+			vertexes[count].t = atlas_.glyph(*it).texture_offset_y;
+			count++;
+
+			vertexes[count].x = x2;
+			vertexes[count].y = y2 - h;
+			vertexes[count].s = atlas_.glyph(*it).texture_offset_x;
+			vertexes[count].t = atlas_.glyph(*it).texture_offset_y + atlas_.glyph(*it).bitmap_height / atlas_.height();
+			count++;
+
+			vertexes[count].x = x2 + w;
+			vertexes[count].y = y2 - h;
+			vertexes[count].s = atlas_.glyph(*it).texture_offset_x + atlas_.glyph(*it).bitmap_width / atlas_.width();
+			vertexes[count].t = atlas_.glyph(*it).texture_offset_y + atlas_.glyph(*it).bitmap_height / atlas_.height();
+			count++;
+		}
 
 	}
 
