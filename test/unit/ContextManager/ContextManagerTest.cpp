@@ -61,7 +61,7 @@ void ContextManagerTest::check_layer_0_0 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -102,13 +102,13 @@ void ContextManagerTest::check_layer_0_0 ()
 	widget3.set_pos(150, 150);
 	widget3.resize (50, 50);
 	widget3.set_name("widget3");
-	widget3.set_z(1);
+	widget3.reset_z(1);
 
 	Widget widget4;
 	widget4.set_pos(200, 200);
 	widget4.resize (50, 50);
 	widget4.set_name("widget4");
-	widget4.set_z(1);
+	widget4.reset_z(1);
 
 	cm->bind(&widget1);
 	cm->bind(&widget3);
@@ -162,7 +162,7 @@ void ContextManagerTest::check_layer_0_1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -203,13 +203,13 @@ void ContextManagerTest::check_layer_0_1 ()
 	widget3->set_pos(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
-	widget3->set_z(1);
+	widget3->reset_z(1);
 
 	Widget* widget4 = new Widget;
 	widget4->set_pos(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");
-	widget4->set_z(1);
+	widget4->reset_z(1);
 
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 0 && cm->layer_size() == 0);
@@ -260,7 +260,7 @@ void ContextManagerTest::check_layer_0_2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -301,13 +301,13 @@ void ContextManagerTest::check_layer_0_2 ()
 	widget3->set_pos(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
-	widget3->set_z(1);
+	widget3->reset_z(1);
 
 	Widget* widget4 = new Widget(widget3);
 	widget4->set_pos(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");
-	widget4->set_z(1);
+	widget4->reset_z(1);
 
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 0 && cm->layer_size() == 0);
@@ -369,7 +369,7 @@ void ContextManagerTest::check_layer_0_3 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -410,13 +410,13 @@ void ContextManagerTest::check_layer_0_3 ()
 	widget3->set_pos(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
-	widget3->set_z(1);
+	widget3->reset_z(1);
 
 	Widget* widget4 = new Widget(widget3);
 	widget4->set_pos(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");
-	widget4->set_z(1);
+	widget4->reset_z(1);
 
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 0 && cm->layer_size() == 0);
@@ -429,7 +429,7 @@ void ContextManagerTest::check_layer_0_3 ()
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 2 && cm->layer_size() == 2);
 
-	widget4->set_z(0);
+	widget4->reset_z(0);
 
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 2 && cm->layer_size() == 1);
@@ -467,7 +467,7 @@ void ContextManagerTest::check_layer_0_4 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -537,22 +537,22 @@ void ContextManagerTest::check_layer_0_4 ()
 	widget1->bind(widget3);
 	widget1->bind(widget4);
 
-	widget2->set_z (1);
+	widget2->reset_z (1);
 
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 1 && cm->layer_size() == 1);
 
-	widget3->set_z (2);
+	widget3->reset_z (2);
 
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 1 && cm->layer_size() == 1);
 
-	widget4->set_z (3);
+	widget4->reset_z (3);
 
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 1 && cm->layer_size() == 1);
 
-	widget3->set_z (1);
+	widget3->reset_z (1);
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 1 && cm->layer_size() == 1);
 

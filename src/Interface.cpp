@@ -279,10 +279,11 @@ namespace BILO {
 			map<int, set<Drawable*>* >::reverse_iterator map_it;
 			set<Drawable*>::reverse_iterator set_it;
 			ContextManager* cm = ContextManager::instance();
+			set<Drawable*>* pset = 0;
 
 			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 			{
-				set<Drawable*>* pset = map_it->second;
+				pset = map_it->second;
 				for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 				{
 					// TODO: only the focused widget can dispose key event
@@ -298,10 +299,13 @@ namespace BILO {
 					}
 					if (event.accepted())
 						break;
+					if (event.ignored())
+						break;
 				}
-				if(event.accepted()) {
+				if(event.accepted())
 					break;
-				}
+				if(event.ignored())
+					break;
 			}
 
 		} else {
@@ -311,10 +315,10 @@ namespace BILO {
 			map<int, set<Drawable*>* >::reverse_iterator map_it;
 			set<Drawable*>::reverse_iterator set_it;
 			ContextManager* cm = ContextManager::instance();
-
+			set<Drawable*>* pset = 0;
 			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 			{
-				set<Drawable*>* pset = map_it->second;
+				pset = map_it->second;
 				for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 				{
 					// TODO: only the focused widget can dispose key event
@@ -331,11 +335,16 @@ namespace BILO {
 						default:
 							break;
 					}
-					if(event.accepted()) {
+					if(event.accepted())
 						break;
-					}
+
+					if(event.ignored())
+						break;
 				}
 				if (event.accepted())
+					break;
+
+				if(event.ignored())
 					break;
 			}
 		}
@@ -401,8 +410,15 @@ namespace BILO {
 				}
 				if(event.accepted())
 					break;
+
+				if(event.ignored())
+					break;
 			}
+
 			if (event.accepted())
+				break;
+
+			if (event.ignored())
 				break;
 		}
 	}
@@ -425,10 +441,15 @@ namespace BILO {
 			{
 				event.set_position(cursor_pos_x_, cursor_pos_y_);
 				dispatch_mouse_move_event((*set_it), &event);
+
 				if (event.accepted())
+					break;
+
+				if(event.ignored())
 					break;
 			}
 			if(event.accepted()) break;
+			if(event.ignored()) break;
 		}
 	}
 

@@ -1,16 +1,18 @@
 /*
- * This file is part of BILO (Blender Interface Library).
+ * This file is part of BILO (Blender-like Interface Library in
+ * OpenGL).
  *
- * BILO (Blender Interface Library) is free software: you can
- * redistribute it and/or modify it under the terms of the GNU Lesser
- * General Public License as published by the Free Software
+ * BILO (Blender-like Interface Library in OpenGL) is free software:
+ * you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * BILO (Blender Interface Library) is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * BILO (Blender-like Interface Library in OpenGL) is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BILO.  If not, see
@@ -39,13 +41,12 @@ namespace BILO {
 
 	AbstractLayout::~AbstractLayout ()
 	{
-		// TODO Auto-generated destructor stub
+		m_list.clear();
 	}
 
 	void AbstractLayout::add_widget (Widget* widget)
 	{
 		m_list.push_back(widget);
-
 		bind (widget);
 
 		update(WidgetPropertySize);
@@ -57,7 +58,6 @@ namespace BILO {
 		bind (layout);
 
 		update(WidgetPropertySize);
-
 	}
 
 	void AbstractLayout::press_key (KeyEvent* event)

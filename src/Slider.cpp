@@ -62,15 +62,17 @@ namespace BILO {
 
 		m_radius = radius;
 
+		float vertexes[20][2];
+
 		for (int i = 0; i < 20; i++)
 		{
-			m_vertexes[i][0] = circle_vertexes[i][0] * m_radius;
-			m_vertexes[i][1] = circle_vertexes[i][1] * m_radius;
+			vertexes[i][0] = circle_vertexes[i][0] * m_radius;
+			vertexes[i][1] = circle_vertexes[i][1] * m_radius;
 		}
 
 		m_buffer.bind (GL_ARRAY_BUFFER);
 
-		m_buffer.upload (GL_ARRAY_BUFFER, sizeof(m_vertexes), m_vertexes, GL_STATIC_DRAW);
+		m_buffer.upload (GL_ARRAY_BUFFER, sizeof(vertexes), vertexes, GL_STATIC_DRAW);
 
 		m_buffer.unbind (GL_ARRAY_BUFFER);
 
@@ -187,7 +189,7 @@ namespace BILO {
 				}
 
 			}
-			event->accept();
+			event->accept(this);
 			return;
 
 		} else {
@@ -198,7 +200,7 @@ namespace BILO {
 				} else {
 					m_hover = true;
 				}
-				event->accept();
+				event->accept(this);
 			} else {
 				m_hover = false;
 			}
@@ -213,7 +215,7 @@ namespace BILO {
 				m_move_start.set_x(event->position().x());
 				m_move_start.set_y(event->position().y());
 				m_position_origin = pos_;
-				event->accept();
+				event->accept(this);
 			}
 		}
 	}

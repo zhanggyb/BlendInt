@@ -326,7 +326,7 @@ void FontCacheTest::show1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -415,7 +415,7 @@ void FontCacheTest::show_multiple_cache1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -551,7 +551,7 @@ void FontCacheTest::test_font_not_exist1()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);

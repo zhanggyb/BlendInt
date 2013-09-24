@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		return -1;

@@ -26,9 +26,10 @@
 
 #include <BILO/AbstractSlider.hpp>
 
-#include <BILO/GLBuffer.hpp>
-
 namespace BILO {
+
+	class AbstractSlider;
+	class GLBuffer;
 
 	class SliderControl: public Widget
 	{
@@ -60,11 +61,6 @@ namespace BILO {
 	private:
 
 		unsigned int m_radius;
-
-		/**
-		 * vertexes for drawing circle shape
-		 */
-		float m_vertexes[20][2];
 
 		bool m_hover;
 

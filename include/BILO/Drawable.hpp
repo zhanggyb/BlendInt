@@ -21,16 +21,12 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_DRAWABLE_HPP_
-#define _BIL_DRAWABLE_HPP_
+#ifndef _BILO_DRAWABLE_HPP_
+#define _BILO_DRAWABLE_HPP_
 
 #include <list>
 #include <set>
 #include <string>
-
-#ifdef DEBUG
-#include <map>
-#endif
 
 #include <BILO/EventHandler.hpp>
 
@@ -42,6 +38,7 @@
 #include <BILO/Types.hpp>
 
 #ifdef DEBUG
+#include <map>
 using std::map;
 #endif
 
@@ -140,7 +137,7 @@ namespace BILO {
 			return m_z;
 		}
 
-		void set_z (int z);
+		void reset_z (int z);
 
 		const Margin& margin () const;
 
@@ -226,7 +223,6 @@ namespace BILO {
 		std::set<Drawable*> m_children;
 
 #ifdef DEBUG
-
 	public:
 
 		static Drawable* find (uint64_t id);

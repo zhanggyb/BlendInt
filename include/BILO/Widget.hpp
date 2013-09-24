@@ -83,11 +83,11 @@ namespace BILO {
 
 		Cpp::ConnectionScope m_events;
 
+		GLBuffer m_buffer;
+
 		static const float quarter_corner_vertexes[9][2];
 
 		static const float circle_vertexes[20][2];
-
-		GLBuffer m_buffer;
 
 	private:
 
@@ -96,7 +96,7 @@ namespace BILO {
 		/**
 		 * vertexes for drawing shape
 		 */
-		float m_vertexes[36][2];
+		//float m_vertexes[36][2];
 
 	};
 

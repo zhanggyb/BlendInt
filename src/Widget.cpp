@@ -89,32 +89,26 @@ namespace BILO {
 
 	void Widget::press_key (KeyEvent* event)
 	{
-		event->accept();
 	}
 
 	void Widget::press_context_menu (ContextMenuEvent* event)
 	{
-		event->accept();
 	}
 
 	void Widget::release_context_menu (ContextMenuEvent* event)
 	{
-		event->accept();
 	}
 
 	void Widget::press_mouse (MouseEvent* event)
 	{
-		event->accept();
 	}
 
 	void Widget::release_mouse (MouseEvent* event)
 	{
-		event->accept();
 	}
 
 	void Widget::move_mouse (MouseEvent* event)
 	{
-		event->accept();
 	}
 
 	void Widget::update (int property)
@@ -191,7 +185,8 @@ namespace BILO {
 	{
 		m_buffer.generate (1);
 
-		if(m_corner_radius > 1.0) {
+		/*
+		if(m_corner_radius > 1.0) {	// Do not use radius, bad AA effect
 
 			for (int i = 0; i < 9; i++)
 			{
@@ -234,6 +229,21 @@ namespace BILO {
 			m_buffer.upload (GL_ARRAY_BUFFER, sizeof(m_vertexes[0]) * 4, m_vertexes, GL_STATIC_DRAW);
 			m_buffer.unbind (GL_ARRAY_BUFFER);
 		}
+		*/
+
+		float vertexes[4][2];
+		vertexes[0][0] = 0.0;
+		vertexes[0][1] = 0.0;
+		vertexes[1][0] = size_.width();
+		vertexes[1][1] = 0.0;
+		vertexes[2][0] = size_.width();
+		vertexes[2][1] = size_.height();
+		vertexes[3][0] = 0.0;
+		vertexes[3][1] = size_.height();
+
+		m_buffer.bind (GL_ARRAY_BUFFER);
+		m_buffer.upload (GL_ARRAY_BUFFER, sizeof(vertexes[0]) * 4, vertexes, GL_STATIC_DRAW);
+		m_buffer.unbind (GL_ARRAY_BUFFER);
 
 	}
 

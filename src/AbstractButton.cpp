@@ -143,11 +143,7 @@ namespace BILO {
 
 	void AbstractButton::press_mouse (MouseEvent* event)
 	{
-		if (!contain(event->position()))
-		{
-			event->ignore();
-			return;
-		}
+		if (!contain(event->position())) return;
 
 		if (checkable_) {
 			checked_ = !checked_;
@@ -157,16 +153,12 @@ namespace BILO {
 			down_ = true;
 			clicked_.fire();
 		}
-		event->accept();
+		event->accept(this);
 	}
 
 	void AbstractButton::release_mouse(MouseEvent* event)
 	{
-		if (! contain(event->position()))
-		{
-			event->ignore();
-			return;
-		}
+		if (! contain(event->position()))	return;
 
 		down_ = false;
 
@@ -181,7 +173,7 @@ namespace BILO {
 	{
 		if (contain(event->position())) {
 			hover_ = true;
-            event->accept();
+            event->accept(this);
 		} else {
 			hover_ = false;
 			down_ = false;

@@ -273,7 +273,7 @@ namespace BILO {
 		update(WidgetPropertyPosition);
 	}
 
-	void Drawable::set_z (int z)
+	void Drawable::reset_z (int z)
 	{
 		if (m_z == z) return;
 

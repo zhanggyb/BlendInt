@@ -304,7 +304,7 @@ void DrawableTest::texture1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__,
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -359,7 +359,7 @@ void DrawableTest::mydrawable1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__,
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -416,7 +416,7 @@ void DrawableTest::mydrawable2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__,
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -473,7 +473,7 @@ void DrawableTest::mydrawable3 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__,
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -956,7 +956,7 @@ void DrawableTest::bind_test5()
 	widget3->bind(widget4);
 	widget1->bind_to(ContextManager::instance());
 
-	widget1->set_z(1);
+	widget1->reset_z(1);
 
 	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
 	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 1);
@@ -965,7 +965,7 @@ void DrawableTest::bind_test5()
 
 	widget3->bind_to(ContextManager::instance());
 
-	widget3->set_z(0);
+	widget3->reset_z(0);
 
 	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 2);
 	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 2);
@@ -1181,7 +1181,7 @@ void DrawableTest::bind_test8()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__,
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -1240,7 +1240,7 @@ void DrawableTest::bind_test9()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__,
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -1299,7 +1299,7 @@ void DrawableTest::bind_test10()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__,
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();

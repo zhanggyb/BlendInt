@@ -57,7 +57,7 @@ void ImageViewTest::show1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
