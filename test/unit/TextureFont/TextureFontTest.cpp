@@ -64,7 +64,7 @@ void TextureFontTest::show1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -162,7 +162,7 @@ void TextureFontTest::show2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -220,6 +220,7 @@ void TextureFontTest::show2 ()
 
 		// render character from atlas here
 		/* Calculate the vertex and texture coordinates */
+
 		float x2 = 100 + tex_font.glyph().bitmap_left;
 		float y2 = 100 + tex_font.glyph().bitmap_top;
 		float w = tex_font.glyph().bitmap_width;
@@ -233,7 +234,10 @@ void TextureFontTest::show2 ()
 		};
 
 		/* Draw the character on the screen */
-		glBufferData(GL_ARRAY_BUFFER, sizeof box, box, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(tex_font.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(box), box, GL_DYNAMIC_DRAW);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		glDisableVertexAttribArray(sm->text_attribute_coord());

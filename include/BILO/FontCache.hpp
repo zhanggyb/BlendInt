@@ -188,25 +188,18 @@ namespace BILO {
 		 */
 		~FontCache ();
 
-	private:
-		// member variables
-
 		Freetype* m_freetype;
 
 		TextureAtlas atlas_;
 
 		//map<wchar_t, TextureFont*> texture_fonts_;
 
-	private:
-		// static members
-
 		static unsigned int maxCaches;
 
 		static map<Font, FontCache*> cacheDB;
 		static map<Font, unsigned long> cacheCountDB;
 
-	private:
-		// member functions disabled
+		// the following are disabled
 
 		FontCache ();
 

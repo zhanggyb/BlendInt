@@ -77,6 +77,36 @@ namespace BILO {
 			glyph_.advance_x = g->advance.x >> 6;
 			glyph_.advance_y = g->advance.y >> 6;
 
+			glyph_.vertexes[0].x = glyph_.bitmap_left;
+			glyph_.vertexes[0].y = glyph_.bitmap_top;
+			glyph_.vertexes[0].s = 0;
+			glyph_.vertexes[0].t = 0;
+
+			glyph_.vertexes[1].x = glyph_.bitmap_left + glyph_.bitmap_width;
+			glyph_.vertexes[1].y = glyph_.bitmap_top;
+			glyph_.vertexes[1].s = 1;
+			glyph_.vertexes[1].t = 0;
+
+			glyph_.vertexes[2].x = glyph_.bitmap_left;
+			glyph_.vertexes[2].y = glyph_.bitmap_top - glyph_.bitmap_height;
+			glyph_.vertexes[2].s = 0;
+			glyph_.vertexes[2].t = 1;
+
+			glyph_.vertexes[3].x = glyph_.bitmap_left + glyph_.bitmap_width;
+			glyph_.vertexes[3].y = glyph_.bitmap_top;
+			glyph_.vertexes[3].s = 1;
+			glyph_.vertexes[3].t = 0;
+
+			glyph_.vertexes[4].x = glyph_.bitmap_left;
+			glyph_.vertexes[4].y = glyph_.bitmap_top - glyph_.bitmap_height;
+			glyph_.vertexes[4].s = 0;
+			glyph_.vertexes[4].t = 1;
+
+			glyph_.vertexes[5].x = glyph_.bitmap_left + glyph_.bitmap_width;
+			glyph_.vertexes[5].y = glyph_.bitmap_top - glyph_.bitmap_height;
+			glyph_.vertexes[5].s = 1;
+			glyph_.vertexes[5].t = 1;
+
 #ifdef DEBUG
 			std::cout << "Metrics: " << std::endl
 								<< "		left: " << glyph_.bitmap_left << std::endl
@@ -89,6 +119,31 @@ namespace BILO {
 								<< "		horiBearingX: " << (g->metrics.horiBearingX >> 6) << std::endl
 								<< "		horiBearingY: " << (g->metrics.horiBearingY >> 6) << std::endl
 								<< "		horiAdvance: " << (g->metrics.horiAdvance >> 6) << std::endl
+								<< "Vertexes: " << std::endl
+								<< "		vertex[0].x: " << glyph_.vertexes[0].x << std::endl
+								<< "		vertex[0].y: " << glyph_.vertexes[0].y << std::endl
+								<< "		vertex[0].s: " << glyph_.vertexes[0].s << std::endl
+								<< "		vertex[0].t: " << glyph_.vertexes[0].t << std::endl
+								<< "		vertex[1].x: " << glyph_.vertexes[1].x << std::endl
+								<< "		vertex[1].y: " << glyph_.vertexes[1].y << std::endl
+								<< "		vertex[1].s: " << glyph_.vertexes[1].s << std::endl
+								<< "		vertex[1].t: " << glyph_.vertexes[1].t << std::endl
+								<< "		vertex[2].x: " << glyph_.vertexes[2].x << std::endl
+								<< "		vertex[2].y: " << glyph_.vertexes[2].y << std::endl
+								<< "		vertex[2].s: " << glyph_.vertexes[2].s << std::endl
+								<< "		vertex[2].t: " << glyph_.vertexes[2].t << std::endl
+								<< "		vertex[3].x: " << glyph_.vertexes[3].x << std::endl
+								<< "		vertex[3].y: " << glyph_.vertexes[3].y << std::endl
+								<< "		vertex[3].s: " << glyph_.vertexes[3].s << std::endl
+								<< "		vertex[3].t: " << glyph_.vertexes[3].t << std::endl
+								<< "		vertex[4].x: " << glyph_.vertexes[4].x << std::endl
+								<< "		vertex[4].y: " << glyph_.vertexes[4].y << std::endl
+								<< "		vertex[4].s: " << glyph_.vertexes[4].s << std::endl
+								<< "		vertex[4].t: " << glyph_.vertexes[4].t << std::endl
+								<< "		vertex[5].x: " << glyph_.vertexes[5].x << std::endl
+								<< "		vertex[5].y: " << glyph_.vertexes[5].y << std::endl
+								<< "		vertex[5].s: " << glyph_.vertexes[5].s << std::endl
+								<< "		vertex[5].t: " << glyph_.vertexes[5].t << std::endl
 								<< std::endl;
 #endif
 		}

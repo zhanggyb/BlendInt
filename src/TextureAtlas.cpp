@@ -1,16 +1,18 @@
 /*
- * This file is part of BILO (Blender Interface Library).
+ * This file is part of BILO (Blender-like Interface Library in
+ * OpenGL).
  *
- * BILO (Blender Interface Library) is free software: you can
- * redistribute it and/or modify it under the terms of the GNU Lesser
- * General Public License as published by the Free Software
+ * BILO (Blender-like Interface Library in OpenGL) is free software:
+ * you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * BILO (Blender Interface Library) is distributed in the hope that it
- * will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warrantexture_coord_offset_y of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * BILO (Blender-like Interface Library in OpenGL) is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BILO.  If not, see
@@ -198,6 +200,36 @@ namespace BILO {
 
 			(glyph_array_ + offset)->texture_offset_x = ox / (float)width_;
 			(glyph_array_ + offset)->texture_offset_y = oy / (float)height_;
+
+			(glyph_array_ + offset)->vertexes[0].x = (glyph_array_ + offset)->bitmap_left;
+			(glyph_array_ + offset)->vertexes[0].y = (glyph_array_ + offset)->bitmap_top;
+			(glyph_array_ + offset)->vertexes[0].s = (glyph_array_ + offset)->texture_offset_x;
+			(glyph_array_ + offset)->vertexes[0].t = (glyph_array_ + offset)->texture_offset_y;
+
+			(glyph_array_ + offset)->vertexes[1].x = (glyph_array_ + offset)->bitmap_left + (glyph_array_ + offset)->bitmap_width;
+			(glyph_array_ + offset)->vertexes[1].y = (glyph_array_ + offset)->bitmap_top;
+			(glyph_array_ + offset)->vertexes[1].s = (glyph_array_ + offset)->texture_offset_x + (glyph_array_ + offset)->bitmap_width / width_;
+			(glyph_array_ + offset)->vertexes[1].t = (glyph_array_ + offset)->texture_offset_y;
+
+			(glyph_array_ + offset)->vertexes[2].x = (glyph_array_ + offset)->bitmap_left;
+			(glyph_array_ + offset)->vertexes[2].y = (glyph_array_ + offset)->bitmap_top - (glyph_array_ + offset)->bitmap_height;
+			(glyph_array_ + offset)->vertexes[2].s = (glyph_array_ + offset)->texture_offset_x;
+			(glyph_array_ + offset)->vertexes[2].t = (glyph_array_ + offset)->texture_offset_y + (glyph_array_ + offset)->bitmap_height / height_;
+
+			(glyph_array_ + offset)->vertexes[3].x = (glyph_array_ + offset)->bitmap_left + (glyph_array_ + offset)->bitmap_width;
+			(glyph_array_ + offset)->vertexes[3].y = (glyph_array_ + offset)->bitmap_top;
+			(glyph_array_ + offset)->vertexes[3].s = (glyph_array_ + offset)->texture_offset_x + (glyph_array_ + offset)->bitmap_width / width_;
+			(glyph_array_ + offset)->vertexes[3].t = (glyph_array_ + offset)->texture_offset_y;
+
+			(glyph_array_ + offset)->vertexes[4].x = (glyph_array_ + offset)->bitmap_left;
+			(glyph_array_ + offset)->vertexes[4].y = (glyph_array_ + offset)->bitmap_top - (glyph_array_ + offset)->bitmap_height;
+			(glyph_array_ + offset)->vertexes[4].s = (glyph_array_ + offset)->texture_offset_x;
+			(glyph_array_ + offset)->vertexes[4].t = (glyph_array_ + offset)->texture_offset_y + (glyph_array_ + offset)->bitmap_height / height_;
+
+			(glyph_array_ + offset)->vertexes[5].x = (glyph_array_ + offset)->bitmap_left + (glyph_array_ + offset)->bitmap_width;
+			(glyph_array_ + offset)->vertexes[5].y = (glyph_array_ + offset)->bitmap_top - (glyph_array_ + offset)->bitmap_height;
+			(glyph_array_ + offset)->vertexes[5].s = (glyph_array_ + offset)->texture_offset_x + (glyph_array_ + offset)->bitmap_width / width_;
+			(glyph_array_ + offset)->vertexes[5].t = (glyph_array_ + offset)->texture_offset_y + (glyph_array_ + offset)->bitmap_height / height_;
 
 			rowh = std::max(rowh, g->bitmap.rows);
 			ox += g->bitmap.width + 1;
