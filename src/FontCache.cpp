@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <GL/glew.h>
+
 #include <iostream>
 #include <assert.h>
 
@@ -300,86 +302,189 @@ namespace BILO {
 
 	void FontCache::print (const String& string)
 	{
-
-	}
-
-	void FontCache::print (const String& string, size_t length)
-	{
-		//size_t str_length = std::min(string.length(), length);
-
-
-	}
-
-	void FontCache::print (float x, float y, const String& string, float sx, float sy)
-	{
-
-	}
-
-	void FontCache::print (float x, float y, const String& string, size_t length, float sx, float sy)
-	{
-		size_t str_length = std::min(string.length(), length);
-
-		Vertex2D vertexes[6 * str_length];	// TODO: use pointer instead
-		int count = 0;
-
 		String::const_iterator it;
+		ShaderManager* sm = ShaderManager::instance();
+		GLfloat black[4] = { 0, 0, 0, 1 };
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glUseProgram(sm->text_program().id());
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, atlas_.texture());
+		glUniform1i(sm->text_uniform_tex(), 0);
+
+		glUniform4fv(sm->text_uniform_color(), 1, black);
+
+		/* Set up the VBO for our vertex data */
+		glEnableVertexAttribArray(sm->text_attribute_coord());
+		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
+		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		//Vertex2D vertex[6];
 
 		/* Loop through all characters */
 		for (it = string.begin(); it != string.end(); it++)
 		{
-			/* Calculate the vertex and texture coordinates */
-			float x2 = x + atlas_.glyph(*it).bitmap_left * sx;
+			/* Draw the character on the screen */
+			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(atlas_.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
 
-			float y2 = y + atlas_.glyph(*it).bitmap_top * sy;
-
-			float w = atlas_.glyph(*it).bitmap_width * sx;
-			float h = atlas_.glyph(*it).bitmap_height * sy;
-
-			/* Advance the cursor to the start of the next character */
-			x += atlas_.glyph(*it).advance_x * sx;
-			y += atlas_.glyph(*it).advance_y * sy;
-
-			/* Skip glyphs that have no pixels */
-			if (!w || !h)
-				continue;
-
-			vertexes[count].x = x2;
-			vertexes[count].y = y2;
-			vertexes[count].s = atlas_.glyph(*it).texture_offset_x;
-			vertexes[count].t = atlas_.glyph(*it).texture_offset_y;
-			count++;
-
-			vertexes[count].x = x2 + w;
-			vertexes[count].y = y2;
-			vertexes[count].s = atlas_.glyph(*it).texture_offset_x + atlas_.glyph(*it).bitmap_width / atlas_.width();
-			vertexes[count].t = atlas_.glyph(*it).texture_offset_y;
-			count++;
-
-			vertexes[count].x = x2;
-			vertexes[count].y = y2 - h;
-			vertexes[count].s = atlas_.glyph(*it).texture_offset_x;
-			vertexes[count].t = atlas_.glyph(*it).texture_offset_y + atlas_.glyph(*it).bitmap_height / atlas_.height();
-			count++;
-
-			vertexes[count].x = x2 + w;
-			vertexes[count].y = y2;
-			vertexes[count].s = atlas_.glyph(*it).texture_offset_x + atlas_.glyph(*it).bitmap_width / atlas_.width();
-			vertexes[count].t = atlas_.glyph(*it).texture_offset_y;
-			count++;
-
-			vertexes[count].x = x2;
-			vertexes[count].y = y2 - h;
-			vertexes[count].s = atlas_.glyph(*it).texture_offset_x;
-			vertexes[count].t = atlas_.glyph(*it).texture_offset_y + atlas_.glyph(*it).bitmap_height / atlas_.height();
-			count++;
-
-			vertexes[count].x = x2 + w;
-			vertexes[count].y = y2 - h;
-			vertexes[count].s = atlas_.glyph(*it).texture_offset_x + atlas_.glyph(*it).bitmap_width / atlas_.width();
-			vertexes[count].t = atlas_.glyph(*it).texture_offset_y + atlas_.glyph(*it).bitmap_height / atlas_.height();
-			count++;
+			glTranslatef(atlas_.glyph(*it).advance_x, 0, 0);
 		}
 
+		glDisableVertexAttribArray(sm->text_attribute_coord());
+
+		glUseProgram(0);
+		glDisable(GL_BLEND);
+	}
+
+	void FontCache::print (const String& string, size_t length)
+	{
+		size_t str_length = std::min(string.length(), length);
+		String::const_iterator it;
+		ShaderManager* sm = ShaderManager::instance();
+		GLfloat black[4] = { 0, 0, 0, 1 };
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glUseProgram(sm->text_program().id());
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, atlas_.texture());
+		glUniform1i(sm->text_uniform_tex(), 0);
+
+		glUniform4fv(sm->text_uniform_color(), 1, black);
+
+		/* Set up the VBO for our vertex data */
+		glEnableVertexAttribArray(sm->text_attribute_coord());
+		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
+		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		//Vertex2D vertex[6];
+
+		/* Loop through all characters */
+		size_t i = 0;
+		for (it = string.begin(); it != string.end(); it++, i++)
+		{
+			if (i >= str_length) break;
+
+			/* Draw the character on the screen */
+			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(atlas_.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			glTranslatef(atlas_.glyph(*it).advance_x, 0, 0);
+		}
+
+		glDisableVertexAttribArray(sm->text_attribute_coord());
+
+		glUseProgram(0);
+		glDisable(GL_BLEND);
+	}
+
+	void FontCache::print (float x, float y, const String& string)
+	{
+		String::const_iterator it;
+		ShaderManager* sm = ShaderManager::instance();
+		GLfloat black[4] = { 0, 0, 0, 1 };
+
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(x, y, 0);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glUseProgram(sm->text_program().id());
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, atlas_.texture());
+		glUniform1i(sm->text_uniform_tex(), 0);
+
+		glUniform4fv(sm->text_uniform_color(), 1, black);
+
+		/* Set up the VBO for our vertex data */
+		glEnableVertexAttribArray(sm->text_attribute_coord());
+		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
+		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		//Vertex2D vertex[6];
+
+		/* Loop through all characters */
+		for (it = string.begin(); it != string.end(); it++)
+		{
+			/* Draw the character on the screen */
+			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(atlas_.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			glTranslatef(atlas_.glyph(*it).advance_x, 0, 0);
+		}
+
+		glDisableVertexAttribArray(sm->text_attribute_coord());
+
+		glUseProgram(0);
+		glDisable(GL_BLEND);
+
+		glPopMatrix();
+
+	}
+
+	void FontCache::print (float x, float y, const String& string, size_t length)
+	{
+		size_t str_length = std::min(string.length(), length);
+		String::const_iterator it;
+		ShaderManager* sm = ShaderManager::instance();
+		GLfloat black[4] = { 0, 0, 0, 1 };
+
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(x, y, 0);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glUseProgram(sm->text_program().id());
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, atlas_.texture());
+		glUniform1i(sm->text_uniform_tex(), 0);
+
+		glUniform4fv(sm->text_uniform_color(), 1, black);
+
+		/* Set up the VBO for our vertex data */
+		glEnableVertexAttribArray(sm->text_attribute_coord());
+		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
+		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		//Vertex2D vertex[6];
+
+		/* Loop through all characters */
+		size_t i = 0;
+		for (it = string.begin(); it != string.end(); it++, i++)
+		{
+			if (i >= str_length) break;
+
+			/* Draw the character on the screen */
+			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(atlas_.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			glTranslatef(atlas_.glyph(*it).advance_x, 0, 0);
+		}
+
+		glDisableVertexAttribArray(sm->text_attribute_coord());
+
+		glUseProgram(0);
+		glDisable(GL_BLEND);
+
+		glPopMatrix();
 	}
 
 	Rect FontCache::calculateOutline (const String& string)

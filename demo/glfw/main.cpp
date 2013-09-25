@@ -82,6 +82,10 @@ int main(int argc, char* argv[])
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
+	FontCache* cache1 = FontCache::create(Font("Droid Sans", 24));
+
+	FontCache* cache2 = FontCache::create(Font("Sans", 24));
+
 	Widget* widget = new Widget;
 
 	widget->set_pos(300, 300);
@@ -108,12 +112,22 @@ int main(int argc, char* argv[])
 		/* Render here */
 		app->render();
 
+		cache1->print(100, 150, "Hello World! (Droid Sans)");
+
+		cache2->print(100, 100, "Hello World! (Sans)");
+
+		cache2->print(600, 100, "Hello World! (Sans)", 5);
+
+		cache2->print("Hello World! (Sans)", 5);
+
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
 
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	FontCache::list();
 
 	/* release BILO */
 	Interface::release();

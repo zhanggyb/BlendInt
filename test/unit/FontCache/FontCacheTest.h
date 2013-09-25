@@ -25,6 +25,8 @@ CPPUNIT_TEST_SUITE(FontCacheTest);
 	CPPUNIT_TEST(check7);
 	CPPUNIT_TEST(check8);
 	CPPUNIT_TEST(show1);
+	CPPUNIT_TEST(print_test1);
+
 	//CPPUNIT_TEST(show_multiple_cache1);
 	//CPPUNIT_TEST(test_font_not_exist1);
 
@@ -58,7 +60,11 @@ private:
 	void check6 ();
 	void check7 ();
 	void check8 ();
+
 	void show1 ();
+
+	void print_test1 ();
+
 	void show_multiple_cache1 ();
 	void test_font_not_exist1 ();
 

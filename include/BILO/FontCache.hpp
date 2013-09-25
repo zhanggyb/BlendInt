@@ -109,9 +109,9 @@ namespace BILO {
 
 		void print (const String& string, size_t length);
 
-		void print (float x, float y, const String& string, float sx = 1.0, float sy = 1.0);
+		void print (float x, float y, const String& string);
 
-		void print (float x, float y, const String& string, size_t length, float sx = 1.0, float sy = 1.0);
+		void print (float x, float y, const String& string, size_t length);
 
 		int getHeight ()
 		{

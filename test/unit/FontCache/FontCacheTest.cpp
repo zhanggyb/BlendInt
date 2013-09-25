@@ -407,6 +407,84 @@ void FontCacheTest::show1()
 	CPPUNIT_ASSERT(true);
 }
 
+void FontCacheTest::print_test1()
+{
+	/* Initialize the library */
+	if (!glfwInit())
+		return;
+
+	glfwSetErrorCallback(&cbError);
+
+	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	glfwSetWindowSizeCallback(window, &cbWindowSize);
+	glfwSetKeyCallback(window, &cbKey);
+	glfwSetMouseButtonCallback(window, &cbMouseButton);
+	glfwSetCursorPosCallback(window, &cbCursorPos);
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
+
+	/* initialize BILO after OpenGL content is created */
+	if (!Interface::initialize()) {
+		glfwTerminate();
+		CPPUNIT_ASSERT(false);
+		return;
+	}
+
+	Interface* app = Interface::instance();
+	app->resize(1200, 800);
+
+	FontCache* cache = FontCache::create(Font("Droid Sans Fallback", 24));
+
+	if(cache == NULL)
+		CPPUNIT_FAIL ("Cannot create cache for default font\n");
+
+	bool result = true;
+	if(!result) {
+		CPPUNIT_FAIL("Cannot initialize font cache\n");
+	}
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+
+		int width, height;
+
+		glfwGetWindowSize(window, &width, &height);
+
+		glClearColor(0.40, 0.40, 0.45, 1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		cache->print(200, 200, "Hello World!");
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+
+	/* release BILO */
+	Interface::release();
+
+	glfwTerminate();
+	CPPUNIT_ASSERT(true);
+}
+
+
 void FontCacheTest::show_multiple_cache1()
 {
 	/* Initialize the library */
