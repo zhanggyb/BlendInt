@@ -26,6 +26,8 @@
 
 #include <BILO/Drawable.hpp>
 
+#include <BILO/Types.hpp>
+
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -62,9 +64,8 @@ namespace BILO {
 
 	void ContextManager::release ()
 	{
-		// TODO: remove all drawable objects
-		if(context_manager) delete context_manager;
-
+		if(context_manager)
+			delete context_manager;
 		context_manager = 0;
 	}
 
@@ -78,13 +79,18 @@ namespace BILO {
 		map<int, set<Drawable*>* >::iterator map_it;
 		set<Drawable*>::iterator set_it;
 		set<Drawable*>* pset = 0;
+
 		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
 		{
 			pset = map_it->second;
 			for(set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
+				// MUST set the m_parent to avoid double set::erase in child's destruction
+				(*set_it)->m_parent.type = ParentUnknown;
+				(*set_it)->m_parent.object.nameless = 0;
 				delete *set_it;
 			}
+
 			pset->clear();
 		}
 

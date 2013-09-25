@@ -82,30 +82,36 @@ int main(int argc, char* argv[])
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontCache* cache1 = FontCache::create(Font("Droid Sans", 24));
-
+	FontCache* cache1 = FontCache::create(Font("Source Sans Pro", 24));
 	FontCache* cache2 = FontCache::create(Font("Sans", 24));
 
+	/*
 	Widget* widget = new Widget;
 
 	widget->set_pos(300, 300);
 	widget->set_corner_radius(50.0);
 	widget->set_roundcorner(RoundCornerAll);
 	widget->resize(400, 400);
+	widget->set_name("widget");
+	*/
 
+	/*
 	Slider* hslider = new Slider;
 	hslider->set_pos(200, 200);
 	hslider->set_value(50);
+	hslider->set_name("hslider");
 
 	Slider* vslider = new Slider(Vertical);
 	vslider->set_pos(200, 250);
 	vslider->set_value(50);
+	vslider->set_name("vslider");
+	*/
 
-	app->bind(widget);
-	app->bind(hslider);
-	app->bind(vslider);
+	//app->bind(widget);
+	//app->bind(hslider);
+	//app->bind(vslider);
 
-	app->events().connect(hslider->slider_moved(), vslider, &AbstractSlider::set_value);
+	//app->events().connect(hslider->slider_moved(), vslider, &AbstractSlider::set_value);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -126,8 +132,6 @@ int main(int argc, char* argv[])
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
-
-	FontCache::list();
 
 	/* release BILO */
 	Interface::release();

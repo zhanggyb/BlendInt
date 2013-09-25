@@ -39,6 +39,8 @@ namespace BILO {
 
 	class Label: public Widget
 	{
+		DISALLOW_COPY_AND_ASSIGN(Label);
+
 	public:
 
 		Label (const String& label);
@@ -68,8 +70,6 @@ namespace BILO {
 	private:
 		// member functions
 
-		void updateVertexArray (float x, float y, float sx, float sy);
-
 		virtual void cursorPosEvent (double xpos, double ypos);
 
 	private:
@@ -87,16 +87,6 @@ namespace BILO {
 
 		/** Background color, default: transparent */
 		Color background_;
-
-		Vertex2D* vertex_array_;
-
-		int valid_text_length_;
-
-	private:
-
-		Label (const Label& orig);
-
-		Label& operator = (const Label& orig);
 	};
 
 } /* namespace BILO */

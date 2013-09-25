@@ -35,6 +35,12 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
+#ifdef DEBUG
+#include <stdio.h>
+#define PRINT_DEBUG_MSG(msg) \
+	fprintf(stderr, "%s: %d, %s -- %s\n", __FILE__, __LINE__, __func__, msg)
+#endif
+
 namespace BILO {
 
 	enum MouseAction {

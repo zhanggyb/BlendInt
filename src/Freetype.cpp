@@ -47,7 +47,8 @@ namespace BILO {
 
 		FontConfig* fontconfig = FontConfig::instance();
 
-		string filename = fontconfig->getFontPath(font);
+		font_ = font;
+		string filename = fontconfig->getFontPath(font_);
 
 		error = FT_Init_FreeType(&library_);
 		if (error) {

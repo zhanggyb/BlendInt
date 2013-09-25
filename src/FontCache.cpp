@@ -72,8 +72,8 @@ namespace BILO {
 			queue_t q(cacheCountDB.begin(), cacheCountDB.end());
 
 			Font font_of_cache = q.top().first;
-			wcout << "Remove " << q.top().first.family << " from cache DB."
-			        << std::endl;
+			//wcout << "Remove " << q.top().first.family << " from cache DB."
+			//        << std::endl;
 
 			delete cacheDB[font_of_cache];
 			cacheDB.erase(font_of_cache);
@@ -141,7 +141,7 @@ namespace BILO {
 		map<Font, unsigned long>::const_iterator it;
 		cout << endl;
 		for (it = cacheCountDB.begin(); it != cacheCountDB.end(); it++) {
-			wcout << it->first.family << " of " << it->first.size
+			cout << ConvertFromString(it->first.family) << " of " << it->first.size
 			        << " is used: " << it->second << endl;
 		}
 	}

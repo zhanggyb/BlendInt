@@ -91,8 +91,6 @@ namespace BILO {
 
 	Drawable::~Drawable ()
 	{
-		// delete all child object in list
-
 		if(m_parent.object.nameless) {
 			if(m_parent.type == ParentContextManager) {
 				ContextManager::instance()->unbind(this);
@@ -102,11 +100,16 @@ namespace BILO {
 			}
 		}
 
+		// delete all child objects in list
 		std::set<Drawable*>::iterator it;
 		for(it = m_children.begin(); it != m_children.end(); it++)
 		{
+			// MUST set the m_parent to avoid double set::erase in child's destruction
+			(*it)->m_parent.type = ParentUnknown;
+			(*it)->m_parent.object.nameless = 0;
 			delete *it;
 		}
+
 		m_children.clear();
 
 #ifdef DEBUG
