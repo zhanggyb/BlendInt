@@ -162,16 +162,15 @@ namespace BILO {
 	{
 		if (m_freetype) {
 
-			/*
 			map<wchar_t, TextureFont*>::iterator it;
-			for (it = texture_fonts_.begin(); it != texture_fonts_.end(); it++) {
+			for (it = m_texture_fonts.begin(); it != m_texture_fonts.end();
+			        it++) {
 				if (it->second) {
 					delete it->second;
 					it->second = 0;
 				}
 			}
-			texture_fonts_.clear();
-			*/
+			m_texture_fonts.clear();
 
 			delete m_freetype;
 		}
@@ -183,43 +182,42 @@ namespace BILO {
 			return false;
 		}
 
-		atlas_.generate(m_freetype, 32, 96);
+		m_atlas.generate(m_freetype, 32, 96);
 
 		return true;
 	}
 
-	const Glyph& FontCache::queryGlyph (wchar_t charcode, bool create)
+	const Glyph& FontCache::query (wchar_t charcode, bool create)
 	{
-		//if (atlas_.contains(charcode)) {
-			return atlas_.glyph(charcode);
-		//}
+		if (m_atlas.contains(charcode)) {
+			return m_atlas.glyph(charcode);
+		}
 
-		/*
 		map<wchar_t, TextureFont*>::iterator it;
-		it = texture_fonts_.find(charcode);
+		it = m_texture_fonts.find(charcode);
 
 		// if the glyph is not found and need to be created
-		if (it == texture_fonts_.end()) {
+		if (it == m_texture_fonts.end()) {
 
 			if (create) {
 
 				TextureFont* new_font = new TextureFont;
-				new_font->generate(fontengine_, charcode);
-				texture_fonts_[charcode] = new_font;
+				new_font->generate(m_freetype, charcode);
+				m_texture_fonts[charcode] = new_font;
 
 			} else {
 				// TODO: return an default font glyph to show unknown character
 			}
 		}
 
-		return texture_fonts_[charcode]->glyph();
-		*/
+		return m_texture_fonts[charcode]->glyph();
+
 	}
 
-	const GLuint FontCache::queryTexture (wchar_t charcode, bool create)
-	{
+//	const GLuint FontCache::queryTexture (wchar_t charcode, bool create)
+//	{
 		//if (atlas_.contains(charcode)) {
-			return atlas_.texture();
+//			return atlas_.texture();
 		//}
 
 		/*
@@ -242,12 +240,12 @@ namespace BILO {
 
 		return texture_fonts_[charcode]->texture();
 		*/
-	}
+//	}
 
-	unsigned int FontCache::queryWidth (wchar_t charcode, bool create)
-	{
+//	unsigned int FontCache::queryWidth (wchar_t charcode, bool create)
+//	{
 		//if (atlas_.contains(charcode)) {
-			return atlas_.width();
+//			return atlas_.width();
 		//}
 
 		/*
@@ -270,12 +268,12 @@ namespace BILO {
 
 		return texture_fonts_[charcode]->width();
 		*/
-	}
+//	}
 
-	unsigned int FontCache::queryHeight (wchar_t charcode, bool create)
-	{
+//	unsigned int FontCache::queryHeight (wchar_t charcode, bool create)
+//	{
 //		if (atlas_.contains(charcode)) {
-			return atlas_.height();
+//			return atlas_.height();
 //		}
 
 		/*
@@ -298,47 +296,11 @@ namespace BILO {
 
 		return texture_fonts_[charcode]->height();
 		*/
-	}
+//	}
 
 	void FontCache::print (const String& string)
 	{
-		String::const_iterator it;
-		ShaderManager* sm = ShaderManager::instance();
-		GLfloat black[4] = { 0, 0, 0, 1 };
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glUseProgram(sm->text_program().id());
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, atlas_.texture());
-		glUniform1i(sm->text_uniform_tex(), 0);
-
-		glUniform4fv(sm->text_uniform_color(), 1, black);
-
-		/* Set up the VBO for our vertex data */
-		glEnableVertexAttribArray(sm->text_attribute_coord());
-		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
-		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-		//Vertex2D vertex[6];
-
-		/* Loop through all characters */
-		for (it = string.begin(); it != string.end(); it++)
-		{
-			/* Draw the character on the screen */
-			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(atlas_.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-
-			glTranslatef(atlas_.glyph(*it).advance_x, 0, 0);
-		}
-
-		glDisableVertexAttribArray(sm->text_attribute_coord());
-
-		glUseProgram(0);
-		glDisable(GL_BLEND);
+		print (string, string.length());
 	}
 
 	void FontCache::print (const String& string, size_t length)
@@ -354,7 +316,7 @@ namespace BILO {
 		glUseProgram(sm->text_program().id());
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, atlas_.texture());
+		glBindTexture(GL_TEXTURE_2D, m_atlas.texture());
 		glUniform1i(sm->text_uniform_tex(), 0);
 
 		glUniform4fv(sm->text_uniform_color(), 1, black);
@@ -367,6 +329,7 @@ namespace BILO {
 		//Vertex2D vertex[6];
 
 		/* Loop through all characters */
+		// TODO: read text in TextureFont map
 		size_t i = 0;
 		for (it = string.begin(); it != string.end(); it++, i++)
 		{
@@ -374,10 +337,10 @@ namespace BILO {
 
 			/* Draw the character on the screen */
 			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(atlas_.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
-			glTranslatef(atlas_.glyph(*it).advance_x, 0, 0);
+			glTranslatef(m_atlas.glyph(*it).advance_x, 0, 0);
 		}
 
 		glDisableVertexAttribArray(sm->text_attribute_coord());
@@ -388,48 +351,12 @@ namespace BILO {
 
 	void FontCache::print (float x, float y, const String& string)
 	{
-		String::const_iterator it;
-		ShaderManager* sm = ShaderManager::instance();
-		GLfloat black[4] = { 0, 0, 0, 1 };
-
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(x, y, 0);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glUseProgram(sm->text_program().id());
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, atlas_.texture());
-		glUniform1i(sm->text_uniform_tex(), 0);
-
-		glUniform4fv(sm->text_uniform_color(), 1, black);
-
-		/* Set up the VBO for our vertex data */
-		glEnableVertexAttribArray(sm->text_attribute_coord());
-		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
-		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-		//Vertex2D vertex[6];
-
-		/* Loop through all characters */
-		for (it = string.begin(); it != string.end(); it++)
-		{
-			/* Draw the character on the screen */
-			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(atlas_.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-
-			glTranslatef(atlas_.glyph(*it).advance_x, 0, 0);
-		}
-
-		glDisableVertexAttribArray(sm->text_attribute_coord());
-
-		glUseProgram(0);
-		glDisable(GL_BLEND);
+		print (string, string.length());
 
 		glPopMatrix();
 
@@ -437,57 +364,17 @@ namespace BILO {
 
 	void FontCache::print (float x, float y, const String& string, size_t length)
 	{
-		size_t str_length = std::min(string.length(), length);
-		String::const_iterator it;
-		ShaderManager* sm = ShaderManager::instance();
-		GLfloat black[4] = { 0, 0, 0, 1 };
-
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(x, y, 0);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glUseProgram(sm->text_program().id());
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, atlas_.texture());
-		glUniform1i(sm->text_uniform_tex(), 0);
-
-		glUniform4fv(sm->text_uniform_color(), 1, black);
-
-		/* Set up the VBO for our vertex data */
-		glEnableVertexAttribArray(sm->text_attribute_coord());
-		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
-		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-		//Vertex2D vertex[6];
-
-		/* Loop through all characters */
-		size_t i = 0;
-		for (it = string.begin(); it != string.end(); it++, i++)
-		{
-			if (i >= str_length) break;
-
-			/* Draw the character on the screen */
-			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(atlas_.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-
-			glTranslatef(atlas_.glyph(*it).advance_x, 0, 0);
-		}
-
-		glDisableVertexAttribArray(sm->text_attribute_coord());
-
-		glUseProgram(0);
-		glDisable(GL_BLEND);
+		print (string, length);
 
 		glPopMatrix();
 	}
 
-	Rect FontCache::calculateOutline (const String& string)
+	Rect FontCache::get_text_outline (const String& string)
 	{
 		if(!m_freetype->valid()) {
 			return Rect();
@@ -502,9 +389,9 @@ namespace BILO {
 
 		for (it = string.begin(); it != string.end(); it++)
 		{
-			xmax = queryGlyph(*it).advance_x + xmax;
-			ymin = std::min(static_cast<int>(queryGlyph(*it).bitmap_top - queryGlyph(*it).bitmap_height), ymin);
-			ymax = std::max(static_cast<int>(queryGlyph(*it).bitmap_top), ymax);
+			xmax = query(*it).advance_x + xmax;
+			ymin = std::min(static_cast<int>(query(*it).bitmap_top - query(*it).bitmap_height), ymin);
+			ymax = std::max(static_cast<int>(query(*it).bitmap_top), ymax);
 		}
 
 		return Rect(Point(xmin, ymin), Point(xmax, ymax));

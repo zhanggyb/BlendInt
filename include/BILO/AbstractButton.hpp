@@ -53,25 +53,23 @@ namespace BILO {
 
 		void set_font (const Font& font);
 
-		bool down () const {return down_;}
+		bool down () const {return m_status_down;}
 
-		void setDown (bool down) {down_ = down;}
+		void setDown (bool down) {m_status_down = down;}
 
-		bool checked () const {return checked_;}
+		bool checked () const {return m_status_checked;}
 
-		bool checkable () const {return checkable_;}
+		bool checkable () const {return m_checkable;}
 
-		void setCheckable (bool checkable) {checkable_ = checkable;}
+		void setCheckable (bool checkable) {m_checkable = checkable;}
 
 	public:	// event connection interface
 
-		Cpp::EventRef<> clicked() {return clicked_;}
+		Cpp::EventRef<> clicked() {return m_clicked;}
 
-		Cpp::EventRef<bool> toggled() {return toggled_;}
+		Cpp::EventRef<bool> toggled() {return m_toggled;}
 
 	protected:
-
-		void updateVertexArray (float x, float y, float sx, float sy);
 
 		virtual void render () = 0;
 
@@ -83,29 +81,30 @@ namespace BILO {
 
 	protected:
 
-		bool down_;
+		bool m_status_down;
 
-		bool checkable_;
+		bool m_checkable;
 		
-		bool checked_;
+		bool m_status_checked;
 
 		// if the mouse is hover on the button
-		bool hover_;
+		bool m_status_hover;
 
 		// TextBuffer text_;
-		String text_;
+		String m_text;
 
-		Font font_;
+		Font m_font;
 
-		Vertex2D* vertex_array_;
-
-		int valid_text_length_;
+		/**
+		 * @brief Box in which hold the text
+		 */
+		Rect m_text_outline;
 
 	protected:	// Events
 
-		Cpp::Event<> clicked_;
+		Cpp::Event<> m_clicked;
 
-		Cpp::Event<bool> toggled_;
+		Cpp::Event<bool> m_toggled;
 	};
 
 } /* namespace BIL */

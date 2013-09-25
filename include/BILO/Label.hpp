@@ -55,12 +55,12 @@ namespace BILO {
 
 		void set_foreground (const Color& fg)
 		{
-			foreground_ = fg;
+			m_foreground = fg;
 		}
 
 		void set_background (const Color& color = Color(0x00000000))
 		{
-			background_ = color;
+			m_background = color;
 		}
 
 	protected:
@@ -79,14 +79,19 @@ namespace BILO {
 		 *
 		 * new line character is not allowed
 		 */
-		String text_;
+		String m_text;
 
-		Font font_;
+		Font m_font;
 
-		Color foreground_;
+		Color m_foreground;
 
 		/** Background color, default: transparent */
-		Color background_;
+		Color m_background;
+
+		/**
+		 * @brief Box in which hold the text
+		 */
+		Rect m_text_outline;
 	};
 
 } /* namespace BILO */

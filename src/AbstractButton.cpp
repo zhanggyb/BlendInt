@@ -26,24 +26,22 @@
 namespace BILO {
 
 	AbstractButton::AbstractButton ()
-	: down_(false), checkable_(false),
-	  checked_(false), hover_(false), vertex_array_(0), valid_text_length_(0)
+	: m_status_down(false), m_checkable(false),
+	  m_status_checked(false), m_status_hover(false)
 	{
 
 	}
 
 	AbstractButton::AbstractButton (Drawable *parent)
-		: Widget(parent), down_(false), checkable_(false),
-		  checked_(false), hover_(false), vertex_array_(0), valid_text_length_(0)
+		: Widget(parent), m_status_down(false), m_checkable(false),
+		  m_status_checked(false), m_status_hover(false)
 	{
-		FontCache::create(font_);
+		FontCache::create(m_font);
 	}
 
 	AbstractButton::~AbstractButton ()
 	{
-		if(vertex_array_) {
-			delete [] vertex_array_;
-		}
+
 	}
 
 	void AbstractButton::set_text (const String& text)
@@ -53,105 +51,32 @@ namespace BILO {
 			return;
 		}
 
-		text_ = text;
+		m_text = text;
 
-		Rect box = FontCache::create(font_)->calculateOutline(text_);
-		updateVertexArray(box.left() + padding_.left(), padding_.bottom() + std::abs(box.bottom()), 1.0, 1.0);
-		resize (box.width() + padding_.left() + padding_.right(), box.height() + padding_.top() + padding_.bottom());
+		m_text_outline = FontCache::create(m_font)->get_text_outline(m_text);
+		resize (m_text_outline.width() + padding_.left() + padding_.right(), m_text_outline.height() + padding_.top() + padding_.bottom());
 	}
 
 	void AbstractButton::set_font (const Font& font)
 	{
-		font_ = font;
-		FontCache::create(font_);
+		m_font = font;
+		FontCache::create(m_font);
 
-		Rect box = FontCache::create(font_)->calculateOutline(text_);
-		updateVertexArray(box.left() + padding_.left(), padding_.bottom() + std::abs(box.bottom()), 1.0, 1.0);
+		Rect box = FontCache::create(m_font)->get_text_outline(m_text);
 		resize (box.width() + padding_.left() + padding_.right(), box.height() + padding_.top() + padding_.bottom());
-	}
-
-	void AbstractButton::updateVertexArray(float x, float y, float sx, float sy)
-	{
-		if(vertex_array_) {
-			delete [] vertex_array_;
-		}
-
-		vertex_array_ = new Vertex2D[6 * text_.length()];
-
-		valid_text_length_ = 0;
-
-		String::const_iterator it;
-		FontCache* fc = FontCache::create(font_);
-
-		/* Loop through all characters */
-		for (it = text_.begin(); it != text_.end(); it++)
-		{
-			/* Calculate the vertex and texture coordinates */
-			float x2 = x + fc->queryGlyph(*it).bitmap_left * sx;
-
-			float y2 = y + fc->queryGlyph(*it).bitmap_top * sy;
-
-			float w = fc->queryGlyph(*it).bitmap_width * sx;
-			float h = fc->queryGlyph(*it).bitmap_height * sy;
-
-			/* Advance the cursor to the start of the next character */
-			x += fc->queryGlyph(*it).advance_x * sx;
-			y += fc->queryGlyph(*it).advance_y * sy;
-
-			/* Skip glyphs that have no pixels */
-			if (!w || !h)
-				continue;
-
-			(vertex_array_ + valid_text_length_)->x = x2;
-			(vertex_array_ + valid_text_length_)->y = y2;
-			(vertex_array_ + valid_text_length_)->s = fc->queryGlyph(*it).texture_offset_x;
-			(vertex_array_ + valid_text_length_)->t = fc->queryGlyph(*it).texture_offset_y;
-			valid_text_length_++;
-
-			(vertex_array_ + valid_text_length_)->x = x2 + w;
-			(vertex_array_ + valid_text_length_)->y = y2;
-			(vertex_array_ + valid_text_length_)->s = fc->queryGlyph(*it).texture_offset_x + fc->queryGlyph(*it).bitmap_width / fc->queryWidth(*it);
-			(vertex_array_ + valid_text_length_)->t = fc->queryGlyph(*it).texture_offset_y;
-			valid_text_length_++;
-
-			(vertex_array_ + valid_text_length_)->x = x2;
-			(vertex_array_ + valid_text_length_)->y = y2 - h;
-			(vertex_array_ + valid_text_length_)->s = fc->queryGlyph(*it).texture_offset_x;
-			(vertex_array_ + valid_text_length_)->t = fc->queryGlyph(*it).texture_offset_y + fc->queryGlyph(*it).bitmap_height / fc->queryHeight(*it);
-			valid_text_length_++;
-
-			(vertex_array_ + valid_text_length_)->x = x2 + w;
-			(vertex_array_ + valid_text_length_)->y = y2;
-			(vertex_array_ + valid_text_length_)->s = fc->queryGlyph(*it).texture_offset_x + fc->queryGlyph(*it).bitmap_width / fc->queryWidth(*it);
-			(vertex_array_ + valid_text_length_)->t = fc->queryGlyph(*it).texture_offset_y;
-			valid_text_length_++;
-
-			(vertex_array_ + valid_text_length_)->x = x2;
-			(vertex_array_ + valid_text_length_)->y = y2 - h;
-			(vertex_array_ + valid_text_length_)->s = fc->queryGlyph(*it).texture_offset_x;
-			(vertex_array_ + valid_text_length_)->t = fc->queryGlyph(*it).texture_offset_y + fc->queryGlyph(*it).bitmap_height / fc->queryHeight(*it);
-			valid_text_length_++;
-
-			(vertex_array_ + valid_text_length_)->x = x2 + w;
-			(vertex_array_ + valid_text_length_)->y = y2 - h;
-			(vertex_array_ + valid_text_length_)->s = fc->queryGlyph(*it).texture_offset_x + fc->queryGlyph(*it).bitmap_width / fc->queryWidth(*it);
-			(vertex_array_ + valid_text_length_)->t = fc->queryGlyph(*it).texture_offset_y + fc->queryGlyph(*it).bitmap_height / fc->queryHeight(*it);
-			valid_text_length_++;
-		}
-
 	}
 
 	void AbstractButton::press_mouse (MouseEvent* event)
 	{
 		if (!contain(event->position())) return;
 
-		if (checkable_) {
-			checked_ = !checked_;
-			toggled_.fire(checked_);
+		if (m_checkable) {
+			m_status_checked = !m_status_checked;
+			m_toggled.fire(m_status_checked);
 
 		} else {
-			down_ = true;
-			clicked_.fire();
+			m_status_down = true;
+			m_clicked.fire();
 		}
 		event->accept(this);
 	}
@@ -160,9 +85,9 @@ namespace BILO {
 	{
 		if (! contain(event->position()))	return;
 
-		down_ = false;
+		m_status_down = false;
 
-		if (checkable_) {
+		if (m_checkable) {
 
 		} else {
 
@@ -172,11 +97,11 @@ namespace BILO {
 	void AbstractButton::move_mouse (MouseEvent* event)
 	{
 		if (contain(event->position())) {
-			hover_ = true;
+			m_status_hover = true;
             event->accept(this);
 		} else {
-			hover_ = false;
-			down_ = false;
+			m_status_hover = false;
+			m_status_down = false;
 		}
 	}
 

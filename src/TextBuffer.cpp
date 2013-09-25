@@ -76,63 +76,63 @@ namespace BILO {
 		text_.push_back(charcode);
 	}
 
-	Rect TextBuffer::calculateOutline ()
-	{
-		String::const_iterator it;
-		String::const_iterator next;
-		Tuple2l kerning;
-		int xmin = 0;
-		int ymin = 0;
-		int xmax = 0;
-		int ymax = 0;
+//	Rect TextBuffer::calculateOutline ()
+//	{
+//		String::const_iterator it;
+//		String::const_iterator next;
+//		Tuple2l kerning;
+//		int xmin = 0;
+//		int ymin = 0;
+//		int xmax = 0;
+//		int ymax = 0;
+//
+//		for (it = text_.begin(); it != text_.end(); it++)
+//		{
+//			xmax = fontcache_->queryGlyph(*it).advance_x + xmax;
+//			ymin = std::min(static_cast<int>(fontcache_->queryGlyph(*it).bitmap_top - fontcache_->queryGlyph(*it).bitmap_height), ymin);
+//			ymax = std::max(static_cast<int>(fontcache_->queryGlyph(*it).bitmap_top), ymax);
+//		}
+//
+//		return Rect(Point(xmin, ymin), Point(xmax, ymax));
+//	}
 
-		for (it = text_.begin(); it != text_.end(); it++)
-		{
-			xmax = fontcache_->queryGlyph(*it).advance_x + xmax;
-			ymin = std::min(static_cast<int>(fontcache_->queryGlyph(*it).bitmap_top - fontcache_->queryGlyph(*it).bitmap_height), ymin);
-			ymax = std::max(static_cast<int>(fontcache_->queryGlyph(*it).bitmap_top), ymax);
-		}
-
-		return Rect(Point(xmin, ymin), Point(xmax, ymax));
-	}
-
-	Size TextBuffer::calculateOutlineBoxSize ()
-	{
-		String::const_iterator it;
-		String::const_iterator next;
-		Size box;
-		Tuple2l kerning;
-
-		unsigned int line_width = 0;
-		unsigned int line = 1;
-		//int left_edge = 0;
-		//int right_edge = 0;
-
-		for (it = text_.begin(); it != text_.end(); it++) {
-			if (*it == '\n') {
-				line++;
-				box.set_width(std::max(line_width, box.width()));
-				line_width = 0;
-				continue;
-			}
-
-			next = it + 1;
-			if (next != text_.end()) {
-				kerning = fontcache_->getKerning(*it, *next);
-			}
-			line_width = fontcache_->queryGlyph(*it).advance_x + kerning.vec.x
-			        + line_width;
-		}
-
-		if (line == 1) {
-			box.set_width(line_width);
-		}
-		box.set_height(
-		        static_cast<unsigned int>(fontcache_->getHeight() * line
-		                + (line - 1) * line_spacing_));
-
-		return box;
-	}
+//	Size TextBuffer::calculateOutlineBoxSize ()
+//	{
+//		String::const_iterator it;
+//		String::const_iterator next;
+//		Size box;
+//		Tuple2l kerning;
+//
+//		unsigned int line_width = 0;
+//		unsigned int line = 1;
+//		//int left_edge = 0;
+//		//int right_edge = 0;
+//
+//		for (it = text_.begin(); it != text_.end(); it++) {
+//			if (*it == '\n') {
+//				line++;
+//				box.set_width(std::max(line_width, box.width()));
+//				line_width = 0;
+//				continue;
+//			}
+//
+//			next = it + 1;
+//			if (next != text_.end()) {
+//				kerning = fontcache_->getKerning(*it, *next);
+//			}
+//			line_width = fontcache_->queryGlyph(*it).advance_x + kerning.vec.x
+//			        + line_width;
+//		}
+//
+//		if (line == 1) {
+//			box.set_width(line_width);
+//		}
+//		box.set_height(
+//		        static_cast<unsigned int>(fontcache_->getHeight() * line
+//		                + (line - 1) * line_spacing_));
+//
+//		return box;
+//	}
 
 	void TextBuffer::render ()
 	{

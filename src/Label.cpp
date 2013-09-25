@@ -30,17 +30,17 @@
 namespace BILO {
 
 	Label::Label (const String& text)
-		: Widget(), background_(0x00000000)
+		: Widget(), m_background(0x00000000)
 	{
-		FontCache::create(font_);
+		FontCache::create(m_font);
 
 		set_text(text);
 	}
 
 	Label::Label (const String& text, Drawable *parent)
-		: Widget (parent), background_(0x00000000)
+		: Widget (parent), m_background(0x00000000)
 	{
-		FontCache::create(font_);
+		FontCache::create(m_font);
 
 		set_text(text);
 	}
@@ -57,19 +57,19 @@ namespace BILO {
 			return;
 		}
 
-		text_ = label;
+		m_text = label;
 
-		Rect box = FontCache::create(font_)->calculateOutline(text_);
+		m_text_outline = FontCache::create(m_font)->get_text_outline(m_text);
 
-		resize (box.width() + padding_.left() + padding_.right(), box.height() + padding_.top() + padding_.bottom());
+		resize (m_text_outline.width() + padding_.left() + padding_.right(), m_text_outline.height() + padding_.top() + padding_.bottom());
 	}
 
 	void Label::set_font (const Font& font)
 	{
-		font_ = font;
-		FontCache::create(font_);
+		m_font = font;
+		FontCache::create(m_font);
 
-		Rect box = FontCache::create(font_)->calculateOutline(text_);
+		Rect box = FontCache::create(m_font)->get_text_outline(m_text);
 		resize (box.width() + padding_.left() + padding_.right(), box.height() + padding_.top() + padding_.bottom());
 	}
 
@@ -85,9 +85,11 @@ namespace BILO {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glColor4ub(background_.r(), background_.g(),
-				   background_.b(), background_.a());
+		glColor4ub(m_background.r(), m_background.g(),
+				   m_background.b(), m_background.a());
 		glRectf(0.0, 0.0, size_.width(), size_.height());
+
+		FontCache::create(m_font)->print(m_text_outline.left() + padding_.left(), padding_.bottom() + std::abs(m_text_outline.bottom()), m_text);
 
 #ifdef DEBUG
 		glLineWidth(1);

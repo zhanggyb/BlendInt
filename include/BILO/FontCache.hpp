@@ -78,14 +78,11 @@ namespace BILO {
 			maxCaches = size;
 		}
 
-
 #ifdef DEBUG
 		static void list ();
 #endif
 
 	public:
-
-
 
 		/**
 		 * @brief query the Glyph of a wchar
@@ -97,13 +94,12 @@ namespace BILO {
 		 */
 		//Glyph* query (wchar_t charcode, bool create = true);
 
-		const Glyph& queryGlyph (wchar_t charcode, bool create = true);
 
-		const GLuint queryTexture (wchar_t charcode, bool create = true);
+		//const GLuint queryTexture (wchar_t charcode, bool create = true);
 
-		unsigned int queryWidth (wchar_t charcode, bool create = true);
+		//unsigned int queryWidth (wchar_t charcode, bool create = true);
 
-		unsigned int queryHeight (wchar_t charcode, bool create = true);
+		//unsigned int queryHeight (wchar_t charcode, bool create = true);
 
 		void print (const String& string);
 
@@ -156,7 +152,7 @@ namespace BILO {
 			}
 		}
 
-		Rect calculateOutline (const String& string);
+		Rect get_text_outline (const String& string);
 
 #ifdef DEBUG
 		void printcount ();
@@ -188,11 +184,13 @@ namespace BILO {
 		 */
 		~FontCache ();
 
+		const Glyph& query (wchar_t charcode, bool create = true);
+
 		Freetype* m_freetype;
 
-		TextureAtlas atlas_;
+		TextureAtlas m_atlas;
 
-		//map<wchar_t, TextureFont*> texture_fonts_;
+		map<wchar_t, TextureFont*> m_texture_fonts;
 
 		static unsigned int maxCaches;
 

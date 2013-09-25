@@ -98,7 +98,7 @@ void FontCacheTest::create4 ()
 		CPPUNIT_FAIL ("Cannot create cache for Droid Sans Mono\n");
 	}
 
-	cout << "Glyph width: " << cache->queryGlyph('A').bitmap_width << endl;
+	//cout << "Glyph width: " << cache->query('A').bitmap_width << endl;
 
 	FontCache::release (Font("Droid Sans Mono"));
 
@@ -126,7 +126,7 @@ void FontCacheTest::check1 ()
 		cache->queryGlyph(L'仁');
 		cache->queryGlyph(L'仁');
 		*/
-		cache->queryGlyph('A');
+		//cache->query('A');
 
 #ifdef DEBUG
 		cache->printcount();
@@ -159,7 +159,7 @@ void FontCacheTest::check2 ()
 		cache->printcount();
 		FontCache::list();
 #endif
-		cache->queryGlyph('A');
+		//cache->query('A');
 	}
 
 	FontCache::release (Font("Droid Sans Mono"));
@@ -248,17 +248,17 @@ void FontCacheTest::check6 ()
 		for(int i = 0; i < 10; i++)
 		{
 			//cache->queryGlyph(L'仁');
-			cache->queryGlyph('A');
+			//cache->query('A');
 		}
 		for(int i = 0; i < 5; i++)
 		{
 			//cache->queryGlyph(L'义');
-			cache->queryGlyph('B');
+			//cache->query('B');
 		}
 		for(int i = 0; i < 20; i++)
 		{
 			//cache->queryGlyph(L'智');
-			cache->queryGlyph('C');
+			//cache->query('C');
 		}
 
 #ifdef DEBUG
@@ -362,7 +362,7 @@ void FontCacheTest::show1()
 	}
 
 	//cache->queryGlyph(L'信');
-	cache->queryGlyph('D');
+	//cache->query('D');
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -571,7 +571,7 @@ void FontCacheTest::show_multiple_cache1()
 		glTranslatef(100.0f, 100.0f, 0.0f);
 		for (it = str1.begin(); it != str1.end(); it++)
 		{
-			cache1->queryGlyph(*it);
+			//cache1->query(*it);
 			//glyph->Render();
 			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
@@ -581,7 +581,7 @@ void FontCacheTest::show_multiple_cache1()
 		glTranslatef(100.0f, 200.0f, 0.0f);
 		for (it = str2.begin(); it != str2.end(); it++)
 		{
-			cache2->queryGlyph(*it);
+			//cache2->query(*it);
 			//glyph->Render();
 			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
@@ -591,7 +591,7 @@ void FontCacheTest::show_multiple_cache1()
 		glTranslatef(100.0f, 300.0f, 0.0f);
 		for (it = str3.begin(); it != str3.end(); it++)
 		{
-			cache3->queryGlyph(*it);
+			//cache3->query(*it);
 			//glyph->Render();
 			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
@@ -601,7 +601,7 @@ void FontCacheTest::show_multiple_cache1()
 		glTranslatef(100.0f, 400.0f, 0.0f);
 		for (it = str4.begin(); it != str4.end(); it++)
 		{
-			cache4->queryGlyph(*it);
+			//cache4->query(*it);
 			//glyph->Render();
 			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
@@ -707,7 +707,7 @@ void FontCacheTest::test_font_not_exist1()
 		glTranslatef(100.0f, 100.0f, 0.0f);
 		for (it = str1.begin(); it != str1.end(); it++)
 		{
-			cache1->queryGlyph(*it);
+			//cache1->query(*it);
 			//glyph->Render();
 			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
@@ -717,7 +717,7 @@ void FontCacheTest::test_font_not_exist1()
 		glTranslatef(100.0f, 200.0f, 0.0f);
 		for (it = str2.begin(); it != str2.end(); it++)
 		{
-			cache2->queryGlyph(*it);
+			//cache2->query(*it);
 			//glyph->Render();
 			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
@@ -727,7 +727,7 @@ void FontCacheTest::test_font_not_exist1()
 		glTranslatef(100.0f, 300.0f, 0.0f);
 		for (it = str3.begin(); it != str3.end(); it++)
 		{
-			cache3->queryGlyph(*it);
+			//cache3->query(*it);
 			//glyph->Render();
 			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}
@@ -737,7 +737,7 @@ void FontCacheTest::test_font_not_exist1()
 		glTranslatef(100.0f, 400.0f, 0.0f);
 		for (it = str4.begin(); it != str4.end(); it++)
 		{
-			cache4->queryGlyph(*it);
+			//cache4->query(*it);
 			//glyph->Render();
 			//glTranslatef(glyph->metrics().horiAdvance, 0, 0);
 		}

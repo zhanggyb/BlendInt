@@ -623,9 +623,9 @@ void TextBufferTest::calculatebox1 ()
 	buf.setFont(Font("Sans", 16));
 	buf.append(L"ArchLinux");
 
-	Size box = buf.calculateOutlineBoxSize();
+	//Size box = buf.calculateOutlineBoxSize();
 
-	cout << "Text Box: " << box.width() << " " << box.height() << endl;
+	//cout << "Text Box: " << box.width() << " " << box.height() << endl;
 
 	FontConfig::release();
 	CPPUNIT_ASSERT(true);
@@ -642,9 +642,9 @@ void TextBufferTest::calculatebox2 ()
 	buf.setFont(Font("Sans", 16));
 	buf.append(L"greetings, yes");
 
-	Rect box = buf.calculateOutline();
+	//Rect box = buf.calculateOutline();
 
-	cout << "Text Box: " << box.left() << " " << box.bottom() << " " << box.right() << " " << box.top() << endl;
+	//cout << "Text Box: " << box.left() << " " << box.bottom() << " " << box.right() << " " << box.top() << endl;
 
 	FontConfig::release();
 	CPPUNIT_ASSERT(true);

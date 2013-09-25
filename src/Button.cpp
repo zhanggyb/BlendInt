@@ -66,27 +66,8 @@ namespace BILO {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		//text_.render();
-		glUseProgram(ShaderManager::instance()->text_program().id());
+		FontCache::create(m_font)->print(m_text_outline.left() + padding_.left(), padding_.bottom() + std::abs(m_text_outline.bottom()), m_text);
 
-		GLfloat black[4] = { 0, 0, 0, 1 };
-
-		glUniform4fv(ShaderManager::instance()->text_uniform_color(), 1, black);
-
-		glBindTexture(GL_TEXTURE_2D, FontCache::create(font_)->queryTexture(text_[0]));
-		glUniform1i(ShaderManager::instance()->text_uniform_tex(), 0);
-
-		glEnableVertexAttribArray(ShaderManager::instance()->text_attribute_coord());
-		glBindBuffer(GL_ARRAY_BUFFER, ShaderManager::instance()->text_vbo());
-		glVertexAttribPointer(ShaderManager::instance()->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6 * text_.length(), vertex_array_, GL_DYNAMIC_DRAW);
-		glDrawArrays(GL_TRIANGLES, 0, valid_text_length_);
-
-		glDisableVertexAttribArray(ShaderManager::instance()->text_attribute_coord());
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glUseProgram(0);
 		glDisable(GL_BLEND);
 
 		glPopMatrix();
