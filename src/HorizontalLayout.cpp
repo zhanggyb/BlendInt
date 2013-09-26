@@ -44,6 +44,54 @@ namespace BILO {
 
 	}
 
+	void HorizontalLayout::add_widget (Widget* widget)
+	{
+		if (m_children.count(widget)) return;
+
+		m_list.push_back(widget);
+		bind (widget);
+
+		update(WidgetPropertySize);
+	}
+
+	void HorizontalLayout::add_layout(AbstractLayout* layout)
+	{
+		if (m_children.count(layout)) return;
+
+		m_list.push_back(layout);
+		bind (layout);
+
+		update(WidgetPropertySize);
+	}
+
+	bool HorizontalLayout::remove (Drawable* object)
+	{
+		if (!m_children.count(object)) return false;
+
+		m_children.erase(object);
+
+		unbind(object);
+
+		update(WidgetPropertySize);
+
+		return true;
+	}
+
+	bool HorizontalLayout::erase (Drawable* object)
+	{
+		if (!m_children.count(object)) return false;
+
+		m_children.erase(object);
+
+		unbind(object);
+
+		delete object;
+
+		update(WidgetPropertySize);
+
+		return true;
+	}
+
 	void HorizontalLayout::update (int property)
 	{
 		//if (property == WidgetPropertySize) {
@@ -122,4 +170,49 @@ namespace BILO {
 #endif
 	}
 
+	void HorizontalLayout::press_key (KeyEvent* event)
+	{
+		list<Drawable*>::iterator it;
+		for(it = m_list.begin(); it != m_list.end(); it++)
+		{
+			Interface::instance()->dispatch_key_press_event(*it, event);
+		}
+	}
+
+	void HorizontalLayout::press_context_menu (ContextMenuEvent* event)
+	{
+	}
+
+	void HorizontalLayout::release_context_menu (ContextMenuEvent* event)
+	{
+	}
+
+	void HorizontalLayout::press_mouse (MouseEvent* event)
+	{
+		list<Drawable*>::iterator it;
+		for(it = m_list.begin(); it != m_list.end(); it++)
+		{
+			Interface::instance()->dispatch_mouse_press_event(*it, event);
+		}
+	}
+
+	void HorizontalLayout::release_mouse (MouseEvent* event)
+	{
+		list<Drawable*>::iterator it;
+		for(it = m_list.begin(); it != m_list.end(); it++)
+		{
+			Interface::instance()->dispatch_mouse_release_event(*it, event);
+		}
+	}
+
+	void HorizontalLayout::move_mouse (MouseEvent* event)
+	{
+		list<Drawable*>::iterator it;
+		for(it = m_list.begin(); it != m_list.end(); it++)
+		{
+			Interface::instance()->dispatch_mouse_move_event(*it, event);
+		}
+	}
+
 }
+

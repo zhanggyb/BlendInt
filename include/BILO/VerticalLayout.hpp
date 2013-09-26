@@ -41,11 +41,35 @@ namespace BILO {
 
 		virtual ~VerticalLayout ();
 
+		virtual void add_widget (Widget* widget);
+
+		virtual void add_layout (AbstractLayout* layout);
+
+		virtual bool remove (Drawable* object);
+
+		virtual bool erase (Drawable* object);
+
 	protected:
 
 		virtual void update (int property);
 
 		virtual void render ();
+
+		virtual void press_key (KeyEvent* event);
+
+		virtual void press_context_menu (ContextMenuEvent* event);
+
+		virtual void release_context_menu (ContextMenuEvent* event);
+
+		virtual void press_mouse (MouseEvent* event);
+
+		virtual void release_mouse (MouseEvent* event);
+
+		virtual void move_mouse (MouseEvent* event);
+
+	private:
+
+		std::list<Drawable*> m_list;
 	};
 
 }

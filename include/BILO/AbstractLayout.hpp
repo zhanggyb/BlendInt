@@ -43,9 +43,27 @@ namespace BILO {
 
 		virtual ~AbstractLayout ();
 
-		void add_widget (Widget* widget);
+		virtual void add_widget (Widget* widget) = 0;
 
-		void add_layout (AbstractLayout* layout);
+		virtual void add_layout (AbstractLayout* layout) = 0;
+
+		/**
+		 * @brief remove the object from layout
+		 * @param widget
+		 * @return
+		 *
+		 * @warning: after removing from layout, the drawable object will bind to nothing, it must be deleted manually
+		 */
+		virtual bool remove (Drawable* object) = 0;
+
+		/**
+		 * @brief erase the object from layout
+		 * @param widget
+		 * @return
+		 *
+		 * Same as remove but will delete the child object
+		 */
+		virtual bool erase (Drawable* object) = 0;
 
 		int alignment () const {return alignment_;}
 
@@ -53,25 +71,12 @@ namespace BILO {
 
 	protected:
 
-		virtual void press_key (KeyEvent* event);
-
-		virtual void press_context_menu (ContextMenuEvent* event);
-
-		virtual void release_context_menu (ContextMenuEvent* event);
-
-		virtual void press_mouse (MouseEvent* event);
-
-		virtual void release_mouse (MouseEvent* event);
-
-		virtual void move_mouse (MouseEvent* event);
 
 		virtual void render () = 0;
 
 		void update (int property) {}
 
 		int alignment_;
-
-		std::list<Drawable*> m_list;
 	};
 
 } /* namespace BIL */

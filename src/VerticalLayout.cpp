@@ -44,6 +44,50 @@ namespace BILO {
 
 	}
 
+	void VerticalLayout::add_widget (Widget* widget)
+	{
+		m_list.push_back(widget);
+		bind (widget);
+
+		update(WidgetPropertySize);
+	}
+
+	void VerticalLayout::add_layout(AbstractLayout* layout)
+	{
+		m_list.push_back(layout);
+		bind (layout);
+
+		update(WidgetPropertySize);
+	}
+
+	bool VerticalLayout::remove (Drawable* object)
+	{
+		if (!m_children.count(object)) return false;
+
+		m_children.erase(object);
+
+		unbind(object);
+
+		update(WidgetPropertySize);
+
+		return true;
+	}
+
+	bool VerticalLayout::erase (Drawable* object)
+	{
+		if (!m_children.count(object)) return false;
+
+		m_children.erase(object);
+
+		unbind(object);
+
+		delete object;
+
+		update(WidgetPropertySize);
+
+		return true;
+	}
+
 	void VerticalLayout::update (int property)
 	{
 		//if (property == WidgetPropertySize) {
@@ -140,6 +184,46 @@ namespace BILO {
 
 		glPopMatrix();
 #endif
+	}
+
+	void VerticalLayout::press_key (KeyEvent* event)
+	{
+
+	}
+
+	void VerticalLayout::press_context_menu (ContextMenuEvent* event)
+	{
+	}
+
+	void VerticalLayout::release_context_menu (ContextMenuEvent* event)
+	{
+	}
+
+	void VerticalLayout::press_mouse (MouseEvent* event)
+	{
+		list<Drawable*>::iterator it;
+		for(it = m_list.begin(); it != m_list.end(); it++)
+		{
+			Interface::instance()->dispatch_mouse_press_event(*it, event);
+		}
+	}
+
+	void VerticalLayout::release_mouse (MouseEvent* event)
+	{
+		list<Drawable*>::iterator it;
+		for(it = m_list.begin(); it != m_list.end(); it++)
+		{
+			Interface::instance()->dispatch_mouse_release_event(*it, event);
+		}
+	}
+
+	void VerticalLayout::move_mouse (MouseEvent* event)
+	{
+		list<Drawable*>::iterator it;
+		for(it = m_list.begin(); it != m_list.end(); it++)
+		{
+			Interface::instance()->dispatch_mouse_move_event(*it, event);
+		}
 	}
 
 }

@@ -41,48 +41,6 @@ namespace BILO {
 
 	AbstractLayout::~AbstractLayout ()
 	{
-		m_list.clear();
 	}
-
-	void AbstractLayout::add_widget (Widget* widget)
-	{
-		m_list.push_back(widget);
-		bind (widget);
-
-		update(WidgetPropertySize);
-	}
-
-	void AbstractLayout::add_layout(AbstractLayout* layout)
-	{
-		m_list.push_back(layout);
-		bind (layout);
-
-		update(WidgetPropertySize);
-	}
-
-	void AbstractLayout::press_key (KeyEvent* event)
-	{
-	}
-
-	void AbstractLayout::press_context_menu (ContextMenuEvent* event)
-	{
-	}
-
-	void AbstractLayout::release_context_menu (ContextMenuEvent* event)
-	{
-	}
-
-	void AbstractLayout::press_mouse (MouseEvent* event)
-	{
-	}
-
-	void AbstractLayout::release_mouse (MouseEvent* event)
-	{
-	}
-
-	void AbstractLayout::move_mouse (MouseEvent* event)
-	{
-	}
-
 
 } /* namespace BILO */
