@@ -37,37 +37,22 @@
 
 #include <BILO/Interface.hpp>
 
+#define WIDGET_AA_JITTER 8
+
 namespace BILO {
+
+	static const float jit[WIDGET_AA_JITTER][2] = {
+			{ 0.468813, -0.481430}, {-0.155755, -0.352820},
+			{ 0.219306, -0.238501}, {-0.393286, -0.110949},
+			{-0.024699,  0.013908}, { 0.343805,  0.147431},
+			{-0.272855,  0.269918}, { 0.095909,  0.388710}
+	};
 
 	const float Widget::quarter_corner_vertexes[9][2] =
 	{
 			{0.0, 0.0}, {0.195, 0.02}, {0.383, 0.067},
 			{0.55, 0.169}, {0.707, 0.293}, {0.831, 0.45},
 			{0.924, 0.617}, {0.98, 0.805}, {1.0, 1.0}
-	};
-
-	const float Widget::circle_vertexes[20][2] =
-	{
-			{1.000000, 0.000000},	// cos(0), sin(0)
-			{0.951057, 0.309017},	// cos(18), sin(18)
-			{0.809017, 0.587785},	// cos(36), sin(36)
-			{0.587785, 0.809017},	// cos(54), sin(54)
-			{0.309017, 0.951057},	// cos(72), sin(72)
-			{0.000000, 1.000000},	// cos(90), sin(90)
-			{-0.309017, 0.951057},
-			{-0.587785, 0.809017},
-			{-0.809017, 0.587785},
-			{-0.951057, 0.309017},
-			{-1.000000, 0.000000},
-			{-0.951057, -0.309017},
-			{-0.809017, -0.587785},
-			{-0.587785, -0.809017},
-			{-0.309017, -0.951057},
-			{0.000000, -1.000000},
-			{0.309017, -0.951057},
-			{0.587785, -0.809017},
-			{0.809017, -0.587785},
-			{0.951057, -0.309017}
 	};
 
 	Widget::Widget ()
@@ -147,33 +132,36 @@ namespace BILO {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		Theme* tm = Theme::instance();
+		if (m_buffer.is_buffer(0)) {
+			Theme* tm = Theme::instance();
 
-		glColor4ub(tm->themeUI()->wcol_regular.inner.r(),
-				tm->themeUI()->wcol_regular.inner.g(),
-				tm->themeUI()->wcol_regular.inner.b(),
-				tm->themeUI()->wcol_regular.inner.a());
+			glColor4ub(tm->themeUI()->wcol_regular.inner.r(),
+			        tm->themeUI()->wcol_regular.inner.g(),
+			        tm->themeUI()->wcol_regular.inner.b(),
+			        tm->themeUI()->wcol_regular.inner.a() * 0.5f);
 
-		m_buffer.bind(GL_ARRAY_BUFFER);
-		glVertexPointer (2, GL_FLOAT, 0, 0);
-		glEnableClientState (GL_VERTEX_ARRAY);
+			/* set antialias line */
+//		glEnable(GL_LINE_SMOOTH);
+//		draw_roundbox(GL_LINE_LOOP);
+//		glDisable(GL_LINE_SMOOTH);
 
-		//glEnable(GL_LINE_SMOOTH);
-		//glEnable(GL_POLYGON_SMOOTH);
-		glDrawArrays(GL_POLYGON, 0, m_corner_radius > 1.0 ? 36:4);
+			m_buffer.bind(GL_ARRAY_BUFFER);
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glEnableClientState(GL_VERTEX_ARRAY);
 
-		glColor4ub(tm->themeUI()->wcol_regular.outline.r(),
-				tm->themeUI()->wcol_regular.outline.g(),
-				tm->themeUI()->wcol_regular.outline.b(),
-				tm->themeUI()->wcol_regular.outline.a());
+			glDrawArrays(GL_POLYGON, 0, 4);
 
-		glDrawArrays(GL_LINE_LOOP, 0, m_corner_radius > 1.0? 36: 4);
-		//glDisable(GL_LINE_SMOOTH);
-		//glDisable(GL_POLYGON_SMOOTH);
+			glColor4ub(tm->themeUI()->wcol_regular.outline.r(),
+			        tm->themeUI()->wcol_regular.outline.g(),
+			        tm->themeUI()->wcol_regular.outline.b(),
+			        tm->themeUI()->wcol_regular.outline.a());
 
-		glDisableClientState (GL_VERTEX_ARRAY);
+			glDrawArrays(GL_LINE_LOOP, 0, 4);
 
-		m_buffer.unbind(GL_ARRAY_BUFFER);
+			glDisableClientState(GL_VERTEX_ARRAY);
+
+			m_buffer.unbind(GL_ARRAY_BUFFER);
+		}
 
 		glDisable(GL_BLEND);
 
@@ -232,18 +220,105 @@ namespace BILO {
 		*/
 
 		float vertexes[4][2];
-		vertexes[0][0] = 0.0;
-		vertexes[0][1] = 0.0;
+		vertexes[0][0] = 0;
+		vertexes[0][1] = 0;
 		vertexes[1][0] = size_.width();
-		vertexes[1][1] = 0.0;
+		vertexes[1][1] = 0;
 		vertexes[2][0] = size_.width();
 		vertexes[2][1] = size_.height();
-		vertexes[3][0] = 0.0;
+		vertexes[3][0] = 0;
 		vertexes[3][1] = size_.height();
 
 		m_buffer.bind (GL_ARRAY_BUFFER);
 		m_buffer.upload (GL_ARRAY_BUFFER, sizeof(vertexes[0]) * 4, vertexes, GL_STATIC_DRAW);
 		m_buffer.unbind (GL_ARRAY_BUFFER);
+
+	}
+
+	void Widget::draw_roundbox(int mode)
+	{
+		int j;
+
+		glEnable(GL_BLEND);
+		//glGetFloatv(GL_CURRENT_COLOR, color);
+		//color[3] *= 0.125f;
+		//glColor4fv(color);
+
+		for (j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			draw_box (mode, padding_.left(),
+					padding_.bottom(),
+					size_.width() - padding_.left() - padding_.right(),
+					size_.height() - padding_.top() - padding_.bottom());
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+
+		glDisable(GL_BLEND);
+	}
+
+	void Widget::draw_box(int mode, float minx, float miny, float maxx, float maxy)
+	{
+		float vec[7][2] = {{0.195, 0.02}, {0.383, 0.067}, {0.55, 0.169}, {0.707, 0.293},
+		                   {0.831, 0.45}, {0.924, 0.617}, {0.98, 0.805}};
+		int a;
+
+		/* mult */
+		for (a = 0; a < 7; a++) {
+			vec[a][0] = vec[a][0] * m_corner_radius;
+			vec[a][1] = vec[a][1] * m_corner_radius;
+		}
+
+		glBegin(mode);
+
+		/* start with corner right-bottom */
+		if (m_roundcorner & RoundCornerBottomRight) {
+			glVertex2f(maxx - m_corner_radius, miny);
+			for (a = 0; a < 7; a++) {
+				glVertex2f(maxx - m_corner_radius + vec[a][0], miny + vec[a][1]);
+			}
+			glVertex2f(maxx, miny + m_corner_radius);
+		}
+		else {
+			glVertex2f(maxx, miny);
+		}
+
+		/* corner right-top */
+		if (m_roundcorner & RoundCornerTopRight) {
+			glVertex2f(maxx, maxy - m_corner_radius);
+			for (a = 0; a < 7; a++) {
+				glVertex2f(maxx - vec[a][1], maxy - m_corner_radius + vec[a][0]);
+			}
+			glVertex2f(maxx - m_corner_radius, maxy);
+		}
+		else {
+			glVertex2f(maxx, maxy);
+		}
+
+		/* corner left-top */
+		if (m_roundcorner & RoundCornerTopLeft) {
+			glVertex2f(minx + m_corner_radius, maxy);
+			for (a = 0; a < 7; a++) {
+				glVertex2f(minx + m_corner_radius - vec[a][0], maxy - vec[a][1]);
+			}
+			glVertex2f(minx, maxy - m_corner_radius);
+		}
+		else {
+			glVertex2f(minx, maxy);
+		}
+
+		/* corner left-bottom */
+		if (m_roundcorner & RoundCornerBottomLeft) {
+			glVertex2f(minx, miny + m_corner_radius);
+			for (a = 0; a < 7; a++) {
+				glVertex2f(minx + vec[a][1], miny + m_corner_radius - vec[a][0]);
+			}
+			glVertex2f(minx + m_corner_radius, miny);
+		}
+		else {
+			glVertex2f(minx, miny);
+		}
+
+		glEnd();
 
 	}
 

@@ -82,49 +82,49 @@ int main(int argc, char* argv[])
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	FontCache* cache1 = FontCache::create(Font("Source Sans Pro", 24));
-	FontCache* cache2 = FontCache::create(Font("Sans", 24));
-
-	/*
 	Widget* widget = new Widget;
 
-	widget->set_pos(300, 300);
-	widget->set_corner_radius(50.0);
+	widget->set_pos(200, 500);
+	widget->set_corner_radius(7.0);
 	widget->set_roundcorner(RoundCornerAll);
-	widget->resize(400, 400);
+	widget->resize(200, 100);
 	widget->set_name("widget");
-	*/
 
-	/*
+	Button * button = new Button;
+
+	button->set_pos (400, 300);
+	//button->resize (100, 30);
+	button->set_text("This is a normal button");
+	button->set_name("button");
+
+	ToggleButton* toggle = new ToggleButton;
+	toggle->set_pos (400, 350);
+	toggle->set_text("This is a toggle button");
+	//toggle->resize (100, 30);
+	toggle->set_name("toggle button");
+
 	Slider* hslider = new Slider;
 	hslider->set_pos(200, 200);
-	hslider->set_value(50);
 	hslider->set_name("hslider");
 
 	Slider* vslider = new Slider(Vertical);
 	vslider->set_pos(200, 250);
-	vslider->set_value(50);
 	vslider->set_name("vslider");
-	*/
 
-	//app->bind(widget);
-	//app->bind(hslider);
-	//app->bind(vslider);
+	app->bind(widget);
+	app->bind(button);
+	app->bind(toggle);
 
-	//app->events().connect(hslider->slider_moved(), vslider, &AbstractSlider::set_value);
+	app->bind(hslider);
+	app->bind(vslider);
+
+	app->events().connect(hslider->slider_moved(), vslider, &AbstractSlider::set_value);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
 		app->render();
 
-		cache1->print(100, 150, "Hello World! (Droid Sans)");
-
-		cache2->print(100, 100, "Hello World! (Sans)");
-
-		cache2->print(600, 100, "Hello World! (Sans)", 5);
-
-		cache2->print("Hello World! (Sans)", 5);
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

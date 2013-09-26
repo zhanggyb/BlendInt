@@ -23,6 +23,8 @@
 
 #include <BILO/AbstractButton.hpp>
 
+#include <iostream>
+
 namespace BILO {
 
 	AbstractButton::AbstractButton ()
@@ -47,12 +49,13 @@ namespace BILO {
 	void AbstractButton::set_text (const String& text)
 	{
 		if(text.empty()) {
-			// TODO: draw blank label
+			resize (80, 25);
 			return;
 		}
 
 		m_text = text;
 
+		std::cout << padding().left() << " " << padding().right() << std::endl;
 		m_text_outline = FontCache::create(m_font)->get_text_outline(m_text);
 		resize (m_text_outline.width() + padding_.left() + padding_.right(), m_text_outline.height() + padding_.top() + padding_.bottom());
 	}
@@ -62,8 +65,8 @@ namespace BILO {
 		m_font = font;
 		FontCache::create(m_font);
 
-		Rect box = FontCache::create(m_font)->get_text_outline(m_text);
-		resize (box.width() + padding_.left() + padding_.right(), box.height() + padding_.top() + padding_.bottom());
+		m_text_outline = FontCache::create(m_font)->get_text_outline(m_text);
+		resize (m_text_outline.width() + padding_.left() + padding_.right(), m_text_outline.height() + padding_.top() + padding_.bottom());
 	}
 
 	void AbstractButton::press_mouse (MouseEvent* event)
@@ -83,9 +86,9 @@ namespace BILO {
 
 	void AbstractButton::release_mouse(MouseEvent* event)
 	{
-		if (! contain(event->position()))	return;
-
 		m_status_down = false;
+
+		if (! contain(event->position()))	return;
 
 		if (m_checkable) {
 
@@ -96,6 +99,11 @@ namespace BILO {
 
 	void AbstractButton::move_mouse (MouseEvent* event)
 	{
+		if (m_status_down) {
+			event->accept(this);
+			return;
+		}
+
 		if (contain(event->position())) {
 			m_status_hover = true;
             event->accept(this);

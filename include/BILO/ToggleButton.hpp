@@ -23,15 +23,18 @@
 #define _BILO_CHECKBUTTON_HPP_
 
 #include <BILO/AbstractButton.hpp>
-#include <BILO/String.hpp>
 
 namespace BILO {
+
+	class String;
 
 	class ToggleButton: public AbstractButton
 	{
 		DISALLOW_COPY_AND_ASSIGN(ToggleButton);
 
 	public:
+
+		ToggleButton ();
 
 		ToggleButton (const String& text);
 

@@ -31,6 +31,32 @@
 
 namespace BILO {
 
+
+	const float SliderControl::circle_vertexes[20][2] =
+	{
+			{1.000000, 0.000000},	// cos(0), sin(0)
+			{0.951057, 0.309017},	// cos(18), sin(18)
+			{0.809017, 0.587785},	// cos(36), sin(36)
+			{0.587785, 0.809017},	// cos(54), sin(54)
+			{0.309017, 0.951057},	// cos(72), sin(72)
+			{0.000000, 1.000000},	// cos(90), sin(90)
+			{-0.309017, 0.951057},
+			{-0.587785, 0.809017},
+			{-0.809017, 0.587785},
+			{-0.951057, 0.309017},
+			{-1.000000, 0.000000},
+			{-0.951057, -0.309017},
+			{-0.809017, -0.587785},
+			{-0.587785, -0.809017},
+			{-0.309017, -0.951057},
+			{0.000000, -1.000000},
+			{0.309017, -0.951057},
+			{0.587785, -0.809017},
+			{0.809017, -0.587785},
+			{0.951057, -0.309017}
+	};
+
+
 	SliderControl::SliderControl()
 	:  Widget(), m_hover(false), m_pressed(false)
 	{
@@ -230,7 +256,7 @@ namespace BILO {
 	}
 
 	Slider::Slider(Orientation orientation)
-	: AbstractSlider(orientation), m_slider_control(0), m_pressed(false)
+	: AbstractSlider(orientation), m_slider_control(0)
 	{
 		m_slider_control = new SliderControl(this);
 
@@ -246,7 +272,7 @@ namespace BILO {
 	}
 
 	Slider::Slider(Orientation orientation, Drawable* parent)
-	: AbstractSlider(orientation, parent), m_slider_control(0), m_pressed(false)
+	: AbstractSlider(orientation, parent), m_slider_control(0)
 	{
 		m_slider_control = new SliderControl(this);
 
@@ -368,20 +394,11 @@ namespace BILO {
 			}
 			set_value (value);
 			m_slider_moved.fire(value);
+			return;
 		}
 
 		if(contain(event->position())) {
-			if (m_pressed) {
-
-			} else {
-
-			}
-			/*
-			event->set_pos(event->window_pos().x() - m_slider_control->pos().x(),
-					event->window_pos().y() - m_slider_control->pos().y());*/
 			Interface::instance()->dispatch_mouse_move_event(m_slider_control, event);
-		} else {
-
 		}
 	}
 
@@ -389,14 +406,32 @@ namespace BILO {
 	{
 		if(m_slider_control->pressed()) {
 			Interface::instance()->dispatch_mouse_press_event(m_slider_control, event);
+			return;
 		}
 
 		if(contain(event->position())) {
-			if (event->button() == MouseButtonLeft) {
-				m_pressed = true;
-				m_press_pos = event->position();
-			}
 			Interface::instance()->dispatch_mouse_press_event(m_slider_control, event);
+			if(event->accepted()) return;
+
+			Coord2d inner_pos;
+			inner_pos.set_x(static_cast<double>(event->position().x() - pos_.x() - padding_.left() - m_slider_control->radius()));
+			inner_pos.set_y(static_cast<double>(event->position().y() - pos_.y() - padding_.bottom() - m_slider_control->radius()));
+			int space = get_space();
+			int value;
+
+			if (orientation() == Horizontal) {
+				if(inner_pos.x() < space) {
+					value = (maximum() - minimum()) * inner_pos.x() / (double) space;
+					set_value(value);
+					m_slider_moved.fire(value);
+				}
+			} else if (orientation() == Vertical) {
+				if(inner_pos.y() < space) {
+					value = (maximum() - minimum()) * inner_pos.y() / (double) space;
+					set_value(value);
+					m_slider_moved.fire(value);
+				}
+			}
 		}
 	}
 
@@ -404,11 +439,11 @@ namespace BILO {
 	{
 		if(m_slider_control->pressed()) {
 			Interface::instance()->dispatch_mouse_release_event(m_slider_control, event);
+			return;
 		}
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
-				m_pressed = false;
-				m_press_pos = event->position();
+
 			}
 			Interface::instance()->dispatch_mouse_release_event(m_slider_control, event);
 		}

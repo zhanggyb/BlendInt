@@ -69,6 +69,8 @@ namespace BILO {
 		Point m_move_start;
 
 		Point m_position_origin;
+
+		static const float circle_vertexes[20][2];
 	};
 
 	/**
@@ -109,12 +111,6 @@ namespace BILO {
 
 		SliderControl* m_slider_control;
 
-		/**
-		 * If left mouse button is pressed
-		 */
-		bool m_pressed;
-
-		Coord2d m_press_pos;
 	};
 }
 

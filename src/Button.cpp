@@ -28,25 +28,27 @@
 namespace BILO {
 
 	Button::Button ()
-		: AbstractButton()
+			: AbstractButton()
 	{
+		resize(90, 25);
 	}
 
 	Button::Button (const String& text)
-		: AbstractButton()
+			: AbstractButton()
 	{
-		set_text (text);
+		set_text(text);
 	}
 
 	Button::Button (Drawable* parent)
-		: AbstractButton(parent)
+			: AbstractButton(parent)
 	{
+		resize (90, 25);
 	}
 
 	Button::Button (const String& text, Drawable* parent)
-		: AbstractButton(parent)
+			: AbstractButton(parent)
 	{
-		set_text (text);
+		set_text(text);
 	}
 
 	Button::~Button ()
@@ -59,14 +61,56 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(),
-					 pos_.y(),
-					 z());
+		glTranslatef(pos_.x(), pos_.y(), z());
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		FontCache::create(m_font)->print(m_text_outline.left() + padding_.left(), padding_.bottom() + std::abs(m_text_outline.bottom()), m_text);
+		if (m_buffer.is_buffer(0)) {
+
+			Theme* tm = Theme::instance();
+
+			if (m_status_down) {
+				glColor4ub(tm->themeUI()->wcol_regular.inner_sel.r(),
+				        tm->themeUI()->wcol_regular.inner_sel.g(),
+				        tm->themeUI()->wcol_regular.inner_sel.b(),
+				        tm->themeUI()->wcol_regular.inner_sel.a() * 0.5f);
+			} else {
+				if (m_status_hover) {
+					glColor4ub(
+					        tm->themeUI()->wcol_regular.inner.highlight_red(),
+					        tm->themeUI()->wcol_regular.inner.highlight_green(),
+					        tm->themeUI()->wcol_regular.inner.highlight_blue(),
+					        tm->themeUI()->wcol_regular.inner.a() * 0.5f);
+				} else {
+					glColor4ub(tm->themeUI()->wcol_regular.inner.r(),
+					        tm->themeUI()->wcol_regular.inner.g(),
+					        tm->themeUI()->wcol_regular.inner.b(),
+					        tm->themeUI()->wcol_regular.inner.a() * 0.5f);
+				}
+			}
+
+			m_buffer.bind(GL_ARRAY_BUFFER);
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glEnableClientState(GL_VERTEX_ARRAY);
+
+			glDrawArrays(GL_POLYGON, 0, 4);
+
+			glColor4ub(tm->themeUI()->wcol_regular.outline.r(),
+			        tm->themeUI()->wcol_regular.outline.g(),
+			        tm->themeUI()->wcol_regular.outline.b(),
+			        tm->themeUI()->wcol_regular.outline.a());
+
+			glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+			glDisableClientState(GL_VERTEX_ARRAY);
+
+			m_buffer.unbind(GL_ARRAY_BUFFER);
+		}
+
+		FontCache::create(m_font)->print(
+		        m_text_outline.left() + padding_.left(),
+		        padding_.bottom() + std::abs(m_text_outline.bottom()), m_text);
 
 		glDisable(GL_BLEND);
 

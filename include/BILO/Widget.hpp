@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_WIDGET_H_
-#define _BIL_WIDGET_H_
+#ifndef _BILO_WIDGET_HPP_
+#define _BILO_WIDGET_HPP_
 
 #include <BILO/Drawable.hpp>
 #include <BILO/Theme.hpp>
@@ -32,16 +32,6 @@
 #include <BILO/GLBuffer.hpp>
 
 #include <Cpp/Events.hpp>
-
-/* max as used by round_box__edges */
-#define WIDGET_CURVE_RESOLU 9
-#define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
-
-/* used for transp checkers */
-#define UI_TRANSP_DARK 100
-#define UI_TRANSP_LIGHT 160
-
-#define UI_TEXT_MARGIN_X 0.4f
 
 namespace BILO {
 
@@ -87,11 +77,16 @@ namespace BILO {
 
 		static const float quarter_corner_vertexes[9][2];
 
-		static const float circle_vertexes[20][2];
-
 	private:
 
 		void update_shape ();
+
+		/**
+		 * @brief draw a round box when render
+		 */
+		void draw_roundbox (int mode);
+
+		void draw_box (int mode, float minx, float miny, float maxx, float maxy);
 
 		/**
 		 * vertexes for drawing shape
