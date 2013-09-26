@@ -304,11 +304,13 @@ namespace BILO {
 					if (event.ignored()) break;
 					if (event.accepted()) {
 						// TODO: do sth needed
+						break;
 					}
 				}
 				if(event.ignored()) break;
 				if(event.accepted()) {
 					// TODO: do sth needed
+					break;
 				}
 			}
 
@@ -343,12 +345,14 @@ namespace BILO {
 					if(event.ignored()) break;
 					if(event.accepted()) {
 						// TODO: do sth needed
+						break;
 					}
 
 				}
 				if(event.ignored())	break;
 				if (event.accepted()) {
 					// TODO: do sth needed
+					break;
 				}
 			}
 		}
@@ -418,11 +422,13 @@ namespace BILO {
 
 				if(event.accepted()) {
 					// TODO: do sth needed
+					break;
 				}
 			}
 			if (event.ignored()) break;
 			if (event.accepted()) {
 				// TODO: do sth needed
+				break;
 			}
 
 		}
@@ -453,11 +459,13 @@ namespace BILO {
 
 				if (event.accepted()) {
 					// TODO: do sth needed
+					break;
 				}
 			}
 			if(event.ignored()) break;
 			if(event.accepted()) {
 				// TODO: do sth needed
+				break;
 			}
 		}
 	}
