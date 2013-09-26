@@ -21,30 +21,32 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BILO_SCROLLWIDGET_HPP_
-#define _BILO_SCROLLWIDGET_HPP_
+#ifndef _BILO_FRAME_HPP_
+#define _BILO_FRAME_HPP_
 
-//#include <BILO/ScrollBar.hpp>
 #include <BILO/Widget.hpp>
 
 namespace BILO {
 
-	class Slider;
+	class Widget;
+	class AbstractLayout;
 
-	class ScrollWidget: public Widget
+	/**
+	 * @brief a widget hold a layout and have frame
+	 */
+	class Frame: public Widget
 	{
+		DISALLOW_COPY_AND_ASSIGN(Frame);
 
 	public:
 
-		ScrollWidget ();
+		Frame ();
 
-		ScrollWidget (Drawable* parent);
+		Frame (Drawable* parent);
 
-		virtual ~ScrollWidget ();
+		virtual ~Frame ();
 
-		void set_viewport (Widget* widget);
-
-		Widget* viewport () const {return m_viewport;}
+		void set_layout (AbstractLayout* layout);
 
 	protected:
 
@@ -52,14 +54,10 @@ namespace BILO {
 
 	private:
 
-		Widget* m_viewport;
+		AbstractLayout* m_layout;
 
-		// demo code
-
-		Slider* m_hslider;
-		Slider* m_vslider;
 	};
-
 }
 
-#endif /* _BIL_SCROLLWIDGET_HPP_ */
+
+#endif /* _BILO_FRAME_HPP_ */

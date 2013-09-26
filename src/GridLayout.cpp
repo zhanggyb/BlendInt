@@ -21,45 +21,46 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BILO_SCROLLWIDGET_HPP_
-#define _BILO_SCROLLWIDGET_HPP_
-
-//#include <BILO/ScrollBar.hpp>
-#include <BILO/Widget.hpp>
+#include <BILO/GridLayout.hpp>
 
 namespace BILO {
 
-	class Slider;
-
-	class ScrollWidget: public Widget
+	GridLayout::GridLayout ()
 	{
+	}
 
-	public:
+	GridLayout::GridLayout (Drawable* parent)
+	{
+	}
 
-		ScrollWidget ();
+	GridLayout::~GridLayout ()
+	{
+	}
 
-		ScrollWidget (Drawable* parent);
+	void GridLayout::add_widget (Widget* object)
+	{
+	}
 
-		virtual ~ScrollWidget ();
+	void GridLayout::add_layout (AbstractLayout* layout)
+	{
+	}
 
-		void set_viewport (Widget* widget);
+	bool GridLayout::remove (Drawable* object)
+	{
+		if (!m_children.count(object)) return false;
 
-		Widget* viewport () const {return m_viewport;}
+		return true;
+	}
 
-	protected:
+	bool GridLayout::erase (Drawable* object)
+	{
+		if (!m_children.count(object)) return false;
 
-		virtual void render ();
+		return true;
+	}
 
-	private:
-
-		Widget* m_viewport;
-
-		// demo code
-
-		Slider* m_hslider;
-		Slider* m_vslider;
-	};
+	void GridLayout::render ()
+	{
+	}
 
 }
-
-#endif /* _BIL_SCROLLWIDGET_HPP_ */

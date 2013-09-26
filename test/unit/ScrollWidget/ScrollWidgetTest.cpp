@@ -12,6 +12,7 @@
 
 #include <BILO/Interface.hpp>
 #include <BILO/ScrollWidget.hpp>
+#include <BILO/ScrollBar.hpp>
 
 using namespace BILO;
 using namespace std;

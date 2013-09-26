@@ -21,31 +21,35 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BILO_ABSTRACTLAYOUT_HPP_
-#define _BILO_ABSTRACTLAYOUT_HPP_
+#ifndef _BILO_TABLELAYOUT_HPP_
+#define _BILO_TABLELAYOUT_HPP_
 
-#include <list>
-
-#include <BILO/Drawable.hpp>
-#include <BILO/Widget.hpp>
+#include <BILO/AbstractLayout.hpp>
 
 namespace BILO {
 
-	class AbstractLayout: public Drawable
+	/**
+	 * The table layout
+	 */
+	class TableLayout: public AbstractLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(AbstractLayout);
+		DISALLOW_COPY_AND_ASSIGN(TableLayout);
 
 	public:
 
-		AbstractLayout ();
+		TableLayout (int rows, int columns);
 
-		AbstractLayout (Drawable *parent);
+		TableLayout (int rows, int columns, Drawable* parent);
 
-		virtual ~AbstractLayout ();
+		virtual ~TableLayout ();
 
-		virtual void add_widget (Widget* widget) = 0;
+		virtual void add_widget (Widget* widget);
 
-		virtual void add_layout (AbstractLayout* layout) = 0;
+		void add_widget (Widget* widget, int row, int column, int width, int height);
+
+		virtual void add_layout (AbstractLayout* layout);
+
+		void add_layout (AbstractLayout* layout, int row, int column, int width, int height);
 
 		/**
 		 * @brief remove the object from layout
@@ -54,7 +58,7 @@ namespace BILO {
 		 *
 		 * @warning: after removing from layout, the drawable object will bind to nothing, it must be deleted manually
 		 */
-		virtual bool remove (Drawable* object) = 0;
+		virtual bool remove (Drawable* object);
 
 		/**
 		 * @brief erase the object from layout
@@ -63,20 +67,24 @@ namespace BILO {
 		 *
 		 * Same as remove but will delete the child object
 		 */
-		virtual bool erase (Drawable* object) = 0;
-
-		int alignment () const {return alignment_;}
-
-		void set_alignment (int align) {alignment_ = align;}
+		virtual bool erase (Drawable* object);
 
 	protected:
 
-		virtual void render () = 0;
+		virtual void render ();
 
-		virtual void update (int property) {}
+	private:
 
-		int alignment_;
+		int m_rows;
+
+		int m_columns;
+
+		/**
+		 * a 2 dimension array to store the object pointer
+		 */
+		Drawable* m_array;
+
 	};
+}
 
-} /* namespace BIL */
-#endif /* _BIL_ABSTRACTLAYOUT_H_ */
+#endif /* TABLELAYOUT_HPP_ */
