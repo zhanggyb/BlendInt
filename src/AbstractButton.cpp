@@ -31,7 +31,7 @@ namespace BILO {
 	: m_status_down(false), m_checkable(false),
 	  m_status_checked(false), m_status_hover(false)
 	{
-
+		FontCache::create(m_font);
 	}
 
 	AbstractButton::AbstractButton (Drawable *parent)
@@ -49,13 +49,12 @@ namespace BILO {
 	void AbstractButton::set_text (const String& text)
 	{
 		if(text.empty()) {
-			resize (80, 25);
+			resize (90, 25);
 			return;
 		}
 
 		m_text = text;
 
-		std::cout << padding().left() << " " << padding().right() << std::endl;
 		m_text_outline = FontCache::create(m_font)->get_text_outline(m_text);
 		resize (m_text_outline.width() + padding_.left() + padding_.right(), m_text_outline.height() + padding_.top() + padding_.bottom());
 	}

@@ -2,7 +2,6 @@
 #define GLWINDOW_H
 
 #include <QGLWidget>
-#include <BILO/Slider.hpp>
 
 class GLWindow : public QGLWidget
 {
@@ -24,7 +23,6 @@ protected:
     void mouseReleaseEvent (QMouseEvent* event);
 
 private:
-    BILO::Slider* m_slider;
 };
 
 #endif // GLWINDOW_H

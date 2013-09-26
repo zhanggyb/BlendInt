@@ -194,7 +194,7 @@ namespace BILO {
 			set<Drawable*>* pset = map_it->second;
 			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				if((*set_it)->m_ticktack == m_ticktack) {
+				if((*set_it)->m_ticktack == m_ticktack && (*set_it)->visible()) {
 					(*set_it)->render();
 					(*set_it)->m_ticktack = (*set_it)->m_ticktack ? 0 : 1;
 				}
@@ -208,7 +208,7 @@ namespace BILO {
 	void Interface::dispatch_render_event (Drawable* obj)
 	{
 		// ticktack makes sure only render once, the ticktack of Interface reversed in Interface::render()
-		if(obj->m_ticktack == m_ticktack) {
+		if(obj->m_ticktack == m_ticktack && obj->visible()) {
 			obj->render();
 			obj->m_ticktack = obj->m_ticktack ? 0 : 1;
 		}
@@ -288,6 +288,8 @@ namespace BILO {
 				pset = map_it->second;
 				for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 				{
+					if (!(*set_it)->visible()) break;
+
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
 						case KeyPress:
@@ -299,15 +301,15 @@ namespace BILO {
 						default:
 							break;
 					}
-					if (event.accepted())
-						break;
-					if (event.ignored())
-						break;
+					if (event.ignored()) break;
+					if (event.accepted()) {
+						// TODO: do sth needed
+					}
 				}
-				if(event.accepted())
-					break;
-				if(event.ignored())
-					break;
+				if(event.ignored()) break;
+				if(event.accepted()) {
+					// TODO: do sth needed
+				}
 			}
 
 		} else {
@@ -323,6 +325,7 @@ namespace BILO {
 				pset = map_it->second;
 				for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 				{
+					if(!(*set_it)->visible()) break;
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
 						case KeyPress:
@@ -337,17 +340,16 @@ namespace BILO {
 						default:
 							break;
 					}
-					if(event.accepted())
-						break;
+					if(event.ignored()) break;
+					if(event.accepted()) {
+						// TODO: do sth needed
+					}
 
-					if(event.ignored())
-						break;
 				}
-				if (event.accepted())
-					break;
-
-				if(event.ignored())
-					break;
+				if(event.ignored())	break;
+				if (event.accepted()) {
+					// TODO: do sth needed
+				}
 			}
 		}
 
@@ -399,6 +401,8 @@ namespace BILO {
 			set<Drawable*>* pset = map_it->second;
 			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 			{
+				if(!(*set_it)->visible()) break;
+
 				event.set_position(cursor_pos_x_, cursor_pos_y_);
 				switch (action) {
 					case GLFW_PRESS:
@@ -410,18 +414,17 @@ namespace BILO {
 					default:
 						break;
 				}
-				if(event.accepted())
-					break;
+				if(event.ignored())	break;
 
-				if(event.ignored())
-					break;
+				if(event.accepted()) {
+					// TODO: do sth needed
+				}
+			}
+			if (event.ignored()) break;
+			if (event.accepted()) {
+				// TODO: do sth needed
 			}
 
-			if (event.accepted())
-				break;
-
-			if (event.ignored())
-				break;
 		}
 	}
 
@@ -441,17 +444,21 @@ namespace BILO {
 			set<Drawable*>* pset = map_it->second;
 			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 			{
+				if(!(*set_it)->visible()) break;
+
 				event.set_position(cursor_pos_x_, cursor_pos_y_);
 				dispatch_mouse_move_event((*set_it), &event);
 
-				if (event.accepted())
-					break;
+				if(event.ignored()) break;
 
-				if(event.ignored())
-					break;
+				if (event.accepted()) {
+					// TODO: do sth needed
+				}
 			}
-			if(event.accepted()) break;
 			if(event.ignored()) break;
+			if(event.accepted()) {
+				// TODO: do sth needed
+			}
 		}
 	}
 

@@ -364,12 +364,12 @@ namespace BILO {
 		update(WidgetPropertyRoundCorner);
 	}
 
-	inline RoundCornerType Drawable::roundcorner () const
+	RoundCornerType Drawable::roundcorner () const
 	{
 		return m_roundcorner;
 	}
 
-	inline bool Drawable::visible () const
+	bool Drawable::visible () const
 	{
 		return m_visible;
 	}
@@ -381,14 +381,14 @@ namespace BILO {
 		update (WidgetPropertyVisibility);
 	}
 
-	inline void Drawable::show ()
+	void Drawable::show ()
 	{
 		m_visible = true;
 
 		update (WidgetPropertyVisibility);
 	}
 
-	inline void Drawable::hide ()
+	void Drawable::hide ()
 	{
 		m_visible = false;
 
