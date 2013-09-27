@@ -27,7 +27,7 @@ OIIO_NAMESPACE_USING
 namespace BILO {
 
 	Image::Image ()
-	: width_(0), height_(0), channels_(0)
+	: m_width(0), m_height(0), m_channels(0)
 	{
 
 	}
@@ -46,10 +46,10 @@ namespace BILO {
 
 		const ImageSpec &spec = in->spec();
 
-		width_ = spec.width;
-		height_ = spec.height;
-		channels_ = spec.nchannels;
-		m_pixels.resize (width_ * height_ * channels_);
+		m_width = spec.width;
+		m_height = spec.height;
+		m_channels = spec.nchannels;
+		m_pixels.resize (m_width * m_height * m_channels);
 		in->read_image (TypeDesc::UINT8, &m_pixels[0]);
 		in->close ();
 

@@ -103,51 +103,50 @@ namespace BILO {
 		total_height = m_padding.bottom();
 		for (rit = m_list.rbegin(); rit != m_list.rend(); rit++) {
 			child = *rit;
-			if (child) {
-				child->set_pos(
-						new_pos->x() + child->margin().left() + m_padding.left(),
-						new_pos->y() + child->margin().bottom() + total_height);
-				total_width = std::max(total_width,
-				        m_padding.left() + child->margin().left()
-				                + child->size().width()
-				                + child->margin().right() + m_padding.right());
-				max_widget_width = std::max(max_widget_width,
-				        child->size().width());
-				total_height = total_height + child->margin().top()
-				        + child->size().height() + child->margin().bottom();
-			}
+
+			child->set_pos(
+			        new_pos->x() + child->margin().left() + m_padding.left(),
+			        new_pos->y() + child->margin().bottom() + total_height);
+			total_width = std::max(total_width,
+			        m_padding.left() + child->margin().left()
+			                + child->size().width() + child->margin().right()
+			                + m_padding.right());
+			max_widget_width = std::max(max_widget_width,
+			        child->size().width());
+			total_height = total_height + child->margin().top()
+			        + child->size().height() + child->margin().bottom();
+
 		}
 		total_height += m_padding.top();
 
 		std::list<Drawable*>::const_iterator it;
 		for (it = m_list.begin(); it != m_list.end(); it++) {
 			child = *it;
-			if (child) {
-				if (m_alignment & AlignLeft) {
-					child->set_pos(
-							new_pos->x() + m_padding.left()
-					                + child->margin().left(), child->pos().y());
-				} else if (m_alignment & AlignRight) {
-					child->set_pos(
-							new_pos->x()
-					                + (total_width
-					                        - (m_padding.right()
-					                                + child->size().width()
-					                                + child->margin().right())),
-					        child->pos().y());
-				} else if (m_alignment & AlignVerticalCenter) {
-					child->set_pos(
-							new_pos->x() + m_padding.left()
-					                + child->margin().left()
-					                + (max_widget_width - child->size().width())
-					                        / 2, child->pos().y());
-				}
+
+			if (m_alignment & AlignLeft) {
+				child->set_pos(
+				        new_pos->x() + m_padding.left()
+				                + child->margin().left(), child->pos().y());
+			} else if (m_alignment & AlignRight) {
+				child->set_pos(
+				        new_pos->x()
+				                + (total_width
+				                        - (m_padding.right()
+				                                + child->size().width()
+				                                + child->margin().right())),
+				        child->pos().y());
+			} else if (m_alignment & AlignVerticalCenter) {
+				child->set_pos(
+				        new_pos->x() + m_padding.left() + child->margin().left()
+				                + (max_widget_width - child->size().width())
+				                        / 2, child->pos().y());
 			}
+
 		}
 
 		m_size.set_width(total_width);
 		m_size.set_height(total_height);
-		//}
+
 		return true;
 	}
 

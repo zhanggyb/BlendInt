@@ -21,40 +21,47 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BILO_IMAGE_HPP_
-#define _BILO_IMAGE_HPP_
-
-#include <BILO/String.hpp>
-#include <vector>
+#include <BILO/PixelIcon.hpp>
 
 namespace BILO {
 
-	/**
-	 * @brief Image class focused on I/O and direct pixel access and manipulation
-	 */
-	class Image
+	PixelIcon::PixelIcon ()
+	: m_width(0), m_height(0)
 	{
-	public:
+	}
 
-		Image ();
-		~Image ();
+	PixelIcon::PixelIcon (const unsigned char* pixels, int width, int height)
+	: m_width(0), m_height(0)
+	{
+	}
 
-		bool read (const String& filename);
+	PixelIcon::PixelIcon (const PixelIcon& orig)
+	: m_width(0), m_height(0)
+	{
+	}
 
-		bool save ();
+	PixelIcon::~PixelIcon ()
+	{
+	}
 
-		void close ();
+	void PixelIcon::set_pixels (const unsigned char* pixels)
+	{
+	}
 
-		const unsigned char* pixels () const {return &m_pixels[0];}
+	void PixelIcon::scale (float ratio)
+	{
+	}
 
-	private:
+	void PixelIcon::scale (int width, int height)
+	{
+	}
 
-		std::vector<unsigned char> m_pixels;
+	void PixelIcon::display ()
+	{
+	}
 
-		int m_width;
-		int m_height;
-		int m_channels;
-	};
+	void PixelIcon::display (float x, float y)
+	{
+	}
+
 }
-
-#endif /* IMAGE_HPP_ */

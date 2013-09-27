@@ -106,35 +106,44 @@ namespace BILO {
 		std::list<Drawable*>::const_iterator it;
 		Drawable* child = 0;
 		total_width = m_padding.left();
-		for (it = m_list.begin(); it != m_list.end(); it++)
-		{
+		for (it = m_list.begin(); it != m_list.end(); it++) {
 			child = *it;
-			if(child) {
-				child->set_pos(new_pos->x() + child->margin().left() + total_width, new_pos->y() + child->margin().bottom() + m_padding.bottom());
-				total_width = total_width + child->margin().left() + child->size().width() + child->margin().right();
-				total_height = std::max (total_height, m_padding.top() + child->margin().top() + child->size().height() + child->margin().bottom() + m_padding.bottom());
-				max_widget_height = std::max (max_widget_height, child->size().height());
-			}
+			child->set_pos(new_pos->x() + child->margin().left() + total_width,
+			        new_pos->y() + child->margin().bottom()
+			                + m_padding.bottom());
+			total_width = total_width + child->margin().left()
+			        + child->size().width() + child->margin().right();
+			total_height = std::max(total_height,
+			        m_padding.top() + child->margin().top()
+			                + child->size().height() + child->margin().bottom()
+			                + m_padding.bottom());
+			max_widget_height = std::max(max_widget_height,
+			        child->size().height());
+
 		}
 		total_width += m_padding.right();
 
-		for (it = m_list.begin(); it != m_list.end(); it++)
-		{
+		for (it = m_list.begin(); it != m_list.end(); it++) {
 			child = *it;
-			if(child) {
-				if(m_alignment & AlignTop) {
-					child->set_pos(child->pos().x(),
-								   new_pos->y() +
-								   (total_height -
-									(m_padding.top() + child->margin().top() + child->size().height())));
-				} else if (m_alignment & AlignBottom) {
-					child->set_pos(child->pos().x(), new_pos->y() + child->margin().bottom() + m_padding.bottom());
-				} else if (m_alignment & AlignHorizontalCenter) {
-					child->set_pos(child->pos().x(),
-								   new_pos->y() + m_padding.bottom() +
-								   (max_widget_height - child->size().height()) / 2 + child->margin().bottom());
-				}
+
+			if (m_alignment & AlignTop) {
+				child->set_pos(child->pos().x(),
+				        new_pos->y()
+				                + (total_height
+				                        - (m_padding.top()
+				                                + child->margin().top()
+				                                + child->size().height())));
+			} else if (m_alignment & AlignBottom) {
+				child->set_pos(child->pos().x(),
+				        new_pos->y() + child->margin().bottom()
+				                + m_padding.bottom());
+			} else if (m_alignment & AlignHorizontalCenter) {
+				child->set_pos(child->pos().x(),
+				        new_pos->y() + m_padding.bottom()
+				                + (max_widget_height - child->size().height())
+				                        / 2 + child->margin().bottom());
 			}
+
 		}
 
 		m_size.set_width(total_width);

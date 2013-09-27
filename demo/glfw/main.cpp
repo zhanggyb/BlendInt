@@ -20,6 +20,7 @@
 #include <BILO/ScrollWidget.hpp>
 #include <BILO/Slider.hpp>
 #include <BILO/Frame.hpp>
+#include <BILO/VertexIcon.hpp>
 
 using namespace BILO;
 
@@ -221,6 +222,8 @@ int main(int argc, char* argv[])
 	frame->resize(400, 400);
 	frame->set_pos(400, 200);
 
+	VertexIcon icon;
+
 	app->bind(frame);
 
 	/* Loop until the user closes the window */
@@ -228,6 +231,29 @@ int main(int argc, char* argv[])
 		/* Render here */
 		app->render();
 
+
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(500,
+					 200,
+					 0);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glColor3ub(255, 200, 133);
+
+		icon.display();
+		glBegin(GL_TRIANGLES);
+		glVertex2f (200, 200);
+		glVertex2f (400, 200);
+		glVertex2f (300, 300);
+		glEnd();
+
+		glDisable(GL_BLEND);
+
+		glPopMatrix();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
