@@ -178,10 +178,9 @@ namespace BILO {
 		/**
 		 * @brief Update data for render, used in size, shape change only
 		 *
-		 * @warning DO NOT call functions to change own properties again,
-		 * e.g, resize()
+		 * @return true - accept this update, false - discard this update
 		 */
-		virtual void update (int property) = 0;
+		virtual bool update (int type, const void* property) = 0;
 
 		/**
 		 * @brief just change m_z simply
@@ -208,13 +207,13 @@ namespace BILO {
 
 		bool m_visible;
 
-		Size size_;
+		Size m_size;
 
-		Point pos_;
+		Point m_pos;
 
-		Padding padding_; /** used when in Layout */
+		Padding m_padding; /** used when in Layout */
 
-		Margin margin_; /** used when in Layout */
+		Margin m_margin; /** used when in Layout */
 
 		std::string m_name;
 

@@ -56,7 +56,7 @@ namespace BILO {
 		m_text = text;
 
 		m_text_outline = FontCache::create(m_font)->get_text_outline(m_text);
-		resize (m_text_outline.width() + padding_.left() + padding_.right(), m_text_outline.height() + padding_.top() + padding_.bottom());
+		resize (m_text_outline.width() + m_padding.left() + m_padding.right(), m_text_outline.height() + m_padding.top() + m_padding.bottom());
 	}
 
 	void AbstractButton::set_font (const Font& font)
@@ -65,7 +65,7 @@ namespace BILO {
 		FontCache::create(m_font);
 
 		m_text_outline = FontCache::create(m_font)->get_text_outline(m_text);
-		resize (m_text_outline.width() + padding_.left() + padding_.right(), m_text_outline.height() + padding_.top() + padding_.bottom());
+		resize (m_text_outline.width() + m_padding.left() + m_padding.right(), m_text_outline.height() + m_padding.top() + m_padding.bottom());
 	}
 
 	void AbstractButton::press_mouse (MouseEvent* event)

@@ -63,8 +63,6 @@ namespace BILO {
 
 		void setCheckable (bool checkable) {m_checkable = checkable;}
 
-	public:	// event connection interface
-
 		Cpp::EventRef<> clicked() {return m_clicked;}
 
 		Cpp::EventRef<bool> toggled() {return m_toggled;}

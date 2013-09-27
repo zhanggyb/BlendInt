@@ -97,27 +97,29 @@ namespace BILO {
 		}
 
 		m_buffer.bind (GL_ARRAY_BUFFER);
-
 		m_buffer.upload (GL_ARRAY_BUFFER, sizeof(vertexes), vertexes, GL_STATIC_DRAW);
-
 		m_buffer.unbind (GL_ARRAY_BUFFER);
-
 	}
-	void SliderControl::update (int type)
+
+	bool SliderControl::update (int type, const void* property)
 	{
 		// not allow changing size
 		if (type == WidgetPropertySize) {
-			size_.set_width(m_radius * 2);
-			size_.set_height(m_radius * 2);
+			m_size.set_width(m_radius * 2);
+			m_size.set_height(m_radius * 2);
+			return false;
 		}
 
 		// not allow changing padding
 		if (type == WidgetPropertyPadding) {
-			padding_.set_left(0);
-			padding_.set_right(0);
-			padding_.set_top(0);
-			padding_.set_bottom(0);
+			m_padding.set_left(0);
+			m_padding.set_right(0);
+			m_padding.set_top(0);
+			m_padding.set_bottom(0);
+			return false;
 		}
+
+		return Widget::update(type, property);
 	}
 
 	void SliderControl::render ()
@@ -125,8 +127,8 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(),
-					 pos_.y(),
+		glTranslatef(m_pos.x(),
+					 m_pos.y(),
 					 z());
 
 		glEnable(GL_BLEND);
@@ -194,24 +196,24 @@ namespace BILO {
 
 			if(parent->orientation() == Horizontal) {
 
-				pos_.set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
-				if(pos_.x() < (parent->pos().x() + parent->padding().left())) {
-					pos_.set_x(parent->pos().x() + parent->padding().left());
+				m_pos.set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
+				if(m_pos.x() < (parent->pos().x() + parent->padding().left())) {
+					m_pos.set_x(parent->pos().x() + parent->padding().left());
 				}
-				if(pos_.x() >
+				if(m_pos.x() >
 						(int)(parent->pos().x() + parent->size().width() - parent->padding().right() - m_radius * 2)) {
-					pos_.set_x(parent->pos().x() + parent->size().width() - parent->padding().right() - m_radius * 2);
+					m_pos.set_x(parent->pos().x() + parent->size().width() - parent->padding().right() - m_radius * 2);
 				}
 
 			}
 			if(parent->orientation() == Vertical) {
 
-				pos_.set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
-				if(pos_.y() < (parent->pos().y() + parent->padding().bottom())) {
-					pos_.set_y(parent->pos().y() + parent->padding().bottom());
+				m_pos.set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
+				if(m_pos.y() < (parent->pos().y() + parent->padding().bottom())) {
+					m_pos.set_y(parent->pos().y() + parent->padding().bottom());
 				}
-				if(pos_.y() > (int)(parent->pos().y() + parent->size().height() - parent->padding().top() - m_radius * 2)) {
-					pos_.set_y(parent->pos().y() + parent->size().height() - parent->padding().top() - m_radius * 2);
+				if(m_pos.y() > (int)(parent->pos().y() + parent->size().height() - parent->padding().top() - m_radius * 2)) {
+					m_pos.set_y(parent->pos().y() + parent->size().height() - parent->padding().top() - m_radius * 2);
 				}
 
 			}
@@ -240,7 +242,7 @@ namespace BILO {
 				m_pressed = true;
 				m_move_start.set_x(event->position().x());
 				m_move_start.set_y(event->position().y());
-				m_position_origin = pos_;
+				m_position_origin = m_pos;
 				event->accept(this);
 			}
 		}
@@ -268,7 +270,7 @@ namespace BILO {
 		}
 
 		m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
-		update(SliderPropertyValue);
+		update(SliderPropertyValue, 0);
 	}
 
 	Slider::Slider(Orientation orientation, Drawable* parent)
@@ -284,7 +286,7 @@ namespace BILO {
 		}
 
 		m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
-		update(SliderPropertyValue);
+		update(SliderPropertyValue, 0);
 	}
 
 	Slider::~Slider()
@@ -292,24 +294,29 @@ namespace BILO {
 
 	}
 
-	void Slider::update (int property)
+	bool Slider::update (int type, const void* property)
 	{
-		if(property == WidgetPropertyPosition) {
-			m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
-		} else if (property == SliderPropertyValue) {
+		if(type == WidgetPropertyPosition) {
+			const Point* new_pos = static_cast<const Point*>(property);
+			m_slider_control->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
+			return true;
+		}
+
+		if (type == SliderPropertyValue) {
 			if(orientation() == Horizontal) {
-				m_slider_control->set_pos (pos_.x() + padding_.left() + value() * get_space() / (float)(maximum() - minimum()),
+				m_slider_control->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
 						m_slider_control->pos().y());
+				return true;
 			} else if(orientation() == Vertical) {
 				m_slider_control->set_pos (m_slider_control->pos().x(),
-						pos_.y() + padding_.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+						m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+				return true;
+			} else {
+				return false;
 			}
 		}
-//		if (property == WidgetPropertySize)
-			//update_shape();
 
-//		if (property == WidgetPropertyPadding)
-			//update_shape();
+		return Widget::update(type, property);
 	}
 
 	void Slider::render ()
@@ -317,8 +324,8 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(),
-					 pos_.y(),
+		glTranslatef(m_pos.x(),
+					 m_pos.y(),
 					 z());
 
 		glEnable(GL_BLEND);
@@ -328,8 +335,8 @@ namespace BILO {
 
 		Theme* tm = Theme::instance();
 
-		glTranslatef(padding_.left(),
-					 padding_.bottom(), 0);
+		glTranslatef(m_padding.left(),
+					 m_padding.bottom(), 0);
 
 		glColor4ub(tm->themeUI()->wcol_scroll.outline.r(),
 				tm->themeUI()->wcol_scroll.outline.g(),
@@ -339,7 +346,7 @@ namespace BILO {
 		int space = 0;
 		if(orientation() == Horizontal) {
 			// move radius
-			space = size_.width() - padding_.left() - padding_.right() - m_slider_control->radius() * 2;
+			space = m_size.width() - m_padding.left() - m_padding.right() - m_slider_control->radius() * 2;
 			glTranslatef(m_slider_control->radius(), m_slider_control->radius(), 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
@@ -347,7 +354,7 @@ namespace BILO {
 			glEnd();
 			glTranslatef(value() * space / ((float)maximum() - (float)minimum()), 0, 0);
 		} else {
-			space = size_.height() - padding_.top() - padding_.bottom() - m_slider_control->radius() * 2;
+			space = m_size.height() - m_padding.top() - m_padding.bottom() - m_slider_control->radius() * 2;
 			glTranslatef(m_slider_control->radius(), m_slider_control->radius(), 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
@@ -366,9 +373,9 @@ namespace BILO {
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 			glVertex2i(0, 0);
-			glVertex2i(size_.width(), 0);
-			glVertex2i(size_.width(), size_.height());
-			glVertex2i(0, size_.height());
+			glVertex2i(m_size.width(), 0);
+			glVertex2i(m_size.width(), m_size.height());
+			glVertex2i(0, m_size.height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);
@@ -388,9 +395,9 @@ namespace BILO {
 			int value = 0;
 			if(orientation() == Horizontal) {
 				//m_slider_control;
-				value = (m_slider_control->pos().x() - pos_.x() - padding_.left()) / (float)get_space() * (maximum() - minimum());
+				value = (m_slider_control->pos().x() - m_pos.x() - m_padding.left()) / (float)get_space() * (maximum() - minimum());
 			} else if (orientation() == Vertical) {
-				value = (m_slider_control->pos().y() - pos_.y() - padding_.bottom()) / (float)get_space() * (maximum() - minimum());
+				value = (m_slider_control->pos().y() - m_pos.y() - m_padding.bottom()) / (float)get_space() * (maximum() - minimum());
 			}
 			set_value (value);
 			m_slider_moved.fire(value);
@@ -414,8 +421,8 @@ namespace BILO {
 			if(event->accepted()) return;
 
 			Coord2d inner_pos;
-			inner_pos.set_x(static_cast<double>(event->position().x() - pos_.x() - padding_.left() - m_slider_control->radius()));
-			inner_pos.set_y(static_cast<double>(event->position().y() - pos_.y() - padding_.bottom() - m_slider_control->radius()));
+			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - m_padding.left() - m_slider_control->radius()));
+			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - m_padding.bottom() - m_slider_control->radius()));
 			int space = get_space();
 			int value;
 
@@ -453,9 +460,9 @@ namespace BILO {
 	{
 		int space = 0;
 		if(orientation() == Horizontal)
-			space = size_.width() - padding_.left() - padding_.right() - m_slider_control->radius() * 2;
+			space = m_size.width() - m_padding.left() - m_padding.right() - m_slider_control->radius() * 2;
 		else
-			space = size_.height() - padding_.top() - padding_.bottom() - m_slider_control->radius() * 2;
+			space = m_size.height() - m_padding.top() - m_padding.bottom() - m_slider_control->radius() * 2;
 
 		return space;
 	}

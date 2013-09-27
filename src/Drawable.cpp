@@ -235,45 +235,47 @@ namespace BILO {
 
 	const Size& Drawable::size () const
 	{
-		return size_;
+		return m_size;
 	}
 
 	void Drawable::resize (int w, int h)
 	{
-		if (size_.equal(w, h)) return;
-		size_.set_width(w);
-		size_.set_height(h);
-		update(WidgetPropertySize);
+		if (m_size.equal(w, h)) return;
+		m_size.set_width(w);
+		m_size.set_height(h);
+
+		Size new_size (w, h);
+		if (update(WidgetPropertySize, &new_size))
+			m_size = new_size;
 	}
 
 	void Drawable::resize (const Size& size)
 	{
-		if (size_.equal(size)) return;
+		if (m_size.equal(size)) return;
 
-		size_ = size;
-		update(WidgetPropertySize);
+		Size new_size(size);
+		if (update(WidgetPropertySize, &new_size)) m_size = new_size;
 	}
 
 	const Point& Drawable::pos () const
 	{
-		return pos_;
+		return m_pos;
 	}
 
 	void Drawable::set_pos (int x, int y)
 	{
-		if (pos_.equal(x, y)) return;
+		if (m_pos.equal(x, y)) return;
 
-		pos_.set_x(x);
-		pos_.set_y(y);
-		update(WidgetPropertyPosition);
+		Point new_pos(x, y);
+		if (update(WidgetPropertyPosition, &new_pos)) m_pos = new_pos;
 	}
 
 	void Drawable::set_pos (const Point& pos)
 	{
-		if (pos_.equal(pos)) return;
+		if (m_pos.equal(pos)) return;
 
-		pos_ = pos;
-		update(WidgetPropertyPosition);
+		Point new_pos(pos);
+		if (update(WidgetPropertyPosition, &new_pos)) m_pos = new_pos;
 	}
 
 	void Drawable::reset_z (int z)
@@ -301,67 +303,57 @@ namespace BILO {
 					ContextManager::instance()->bind(this);
 			}
 		}
-
-		update (WidgetPropertyLayer);
 	}
 
 	const Margin& Drawable::margin () const
 	{
-		return margin_;
+		return m_margin;
 	}
 
 	void Drawable::set_margin (int left, int right, int top, int bottom)
 	{
-		margin_.set_left(left);
-		margin_.set_right(right);
-		margin_.set_top(top);
-		margin_.set_bottom(bottom);
+		Margin new_margin (left, right, top, bottom);
 
-		update (WidgetPropertyMargin);
+		if(update (WidgetPropertyMargin, &new_margin)) m_margin = new_margin;
 	}
 
 	void Drawable::set_margin (const Margin& margin)
 	{
-		margin_ = margin;
-		update (WidgetPropertyMargin);
+		Margin new_margin = margin;
+		if(update (WidgetPropertyMargin, &new_margin)) m_margin = new_margin;
 	}
 
 	const Padding& Drawable::padding () const
 	{
-		return padding_;
+		return m_padding;
 	}
 
 	void Drawable::set_padding (const Padding& padding)
 	{
-		padding_ = padding;
+		Padding new_padding = padding;
 
-		update(WidgetPropertyPadding);
+		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
 	}
 
 	void Drawable::set_padding (int l, int r, int t, int b)
 	{
-		padding_.set_left(l);
-		padding_.set_right(r);
-		padding_.set_top(t);
-		padding_.set_bottom(b);
-
-		update(WidgetPropertyPadding);
+		Padding new_padding (l, r, t, b);
+		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
 	}
 
 	void Drawable::set_roundcorner (RoundCornerType type)
 	{
 		if (m_roundcorner == type) return;
+		RoundCornerType new_type = type;
 
-		m_roundcorner = type;
-		update(WidgetPropertyRoundCorner);
+		if(update(WidgetPropertyRoundCorner, &new_type)) m_roundcorner = new_type;
 	}
 
 	void Drawable::set_corner_radius (float radius)
 	{
 		if (m_corner_radius == radius) return;
 
-		m_corner_radius = radius;
-		update(WidgetPropertyRoundCorner);
+		if(update(WidgetPropertyRoundCorner, &radius)) m_corner_radius = radius;
 	}
 
 	RoundCornerType Drawable::roundcorner () const
@@ -376,23 +368,20 @@ namespace BILO {
 
 	void Drawable::set_visible (bool visible)
 	{
-		m_visible = visible;
-
-		update (WidgetPropertyVisibility);
+		if (update (WidgetPropertyVisibility, &visible)) m_visible = visible;
 	}
 
 	void Drawable::show ()
 	{
-		m_visible = true;
-
-		update (WidgetPropertyVisibility);
+		bool visiable = true;
+		if (update (WidgetPropertyVisibility, &visiable)) m_visible = true;
 	}
 
 	void Drawable::hide ()
 	{
-		m_visible = false;
+		bool visible = false;
 
-		update (WidgetPropertyVisibility);
+		if (update (WidgetPropertyVisibility, &visible)) m_visible = false;
 	}
 
 	const std::string& Drawable::name () const
@@ -407,10 +396,10 @@ namespace BILO {
 
 	bool Drawable::contain(const Coord2d& cursor)
 	{
-		if (cursor.x() < pos_.x() ||
-				cursor.y() < pos_.y() ||
-				cursor.x() > (pos_.x() + size_.width()) ||
-				cursor.y() > (pos_.y() + size_.height())) {
+		if (cursor.x() < m_pos.x() ||
+				cursor.y() < m_pos.y() ||
+				cursor.x() > (m_pos.x() + m_size.width()) ||
+				cursor.y() > (m_pos.y() + m_size.height())) {
 			return false;
 		}
 

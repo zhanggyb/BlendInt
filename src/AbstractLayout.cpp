@@ -26,14 +26,14 @@
 namespace BILO {
 
 	AbstractLayout::AbstractLayout ()
-			: Drawable(), alignment_(0)
+			: Drawable(), m_alignment(0)
 	{
 		set_padding(Padding(5, 5, 5, 5));
 		set_margin(1, 1, 1, 1);
 	}
 
 	AbstractLayout::AbstractLayout (Drawable *parent)
-			: Drawable (parent), alignment_(0)
+			: Drawable (parent), m_alignment(0)
 	{
 		set_padding(Padding(5, 5, 5, 5));
 		set_margin(1, 1, 1, 1);

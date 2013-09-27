@@ -55,8 +55,8 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(),
-					 pos_.y(),
+		glTranslatef(m_pos.x(),
+					 m_pos.y(),
 					 z());
 
 		glEnable(GL_BLEND);
@@ -89,7 +89,7 @@ namespace BILO {
 		}
 
 		if(!m_layout) {
-			FontCache::create()->print (10, size_.height()/2, "No layout is set");
+			FontCache::create()->print (10, m_size.height()/2, "No layout is set");
 		}
 
 		glDisable(GL_BLEND);

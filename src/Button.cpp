@@ -61,7 +61,7 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(), pos_.y(), z());
+		glTranslatef(m_pos.x(), m_pos.y(), z());
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -109,8 +109,8 @@ namespace BILO {
 		}
 
 		FontCache::create(m_font)->print(
-		        m_text_outline.left() + padding_.left(),
-		        padding_.bottom() + std::abs(m_text_outline.bottom()), m_text);
+		        m_text_outline.left() + m_padding.left(),
+		        m_padding.bottom() + std::abs(m_text_outline.bottom()), m_text);
 
 		glDisable(GL_BLEND);
 

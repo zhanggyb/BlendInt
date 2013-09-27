@@ -61,8 +61,8 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(),
-					 pos_.y(),
+		glTranslatef(m_pos.x(),
+					 m_pos.y(),
 					 z());
 
 		glEnable(GL_BLEND);

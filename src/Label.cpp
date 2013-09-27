@@ -61,7 +61,7 @@ namespace BILO {
 
 		m_text_outline = FontCache::create(m_font)->get_text_outline(m_text);
 
-		resize (m_text_outline.width() + padding_.left() + padding_.right(), m_text_outline.height() + padding_.top() + padding_.bottom());
+		resize (m_text_outline.width() + m_padding.left() + m_padding.right(), m_text_outline.height() + m_padding.top() + m_padding.bottom());
 	}
 
 	void Label::set_font (const Font& font)
@@ -70,7 +70,7 @@ namespace BILO {
 		FontCache::create(m_font);
 
 		Rect box = FontCache::create(m_font)->get_text_outline(m_text);
-		resize (box.width() + padding_.left() + padding_.right(), box.height() + padding_.top() + padding_.bottom());
+		resize (box.width() + m_padding.left() + m_padding.right(), box.height() + m_padding.top() + m_padding.bottom());
 	}
 
 	void Label::render ()
@@ -78,8 +78,8 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(),
-					 pos_.y(),
+		glTranslatef(m_pos.x(),
+					 m_pos.y(),
 					 z());
 
 		glEnable(GL_BLEND);
@@ -87,9 +87,9 @@ namespace BILO {
 
 		glColor4ub(m_background.r(), m_background.g(),
 				   m_background.b(), m_background.a());
-		glRectf(0.0, 0.0, size_.width(), size_.height());
+		glRectf(0.0, 0.0, m_size.width(), m_size.height());
 
-		FontCache::create(m_font)->print(m_text_outline.left() + padding_.left(), padding_.bottom() + std::abs(m_text_outline.bottom()), m_text);
+		FontCache::create(m_font)->print(m_text_outline.left() + m_padding.left(), m_padding.bottom() + std::abs(m_text_outline.bottom()), m_text);
 
 #ifdef DEBUG
 		glLineWidth(1);
@@ -99,9 +99,9 @@ namespace BILO {
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 			glVertex2i(0, 0);
-			glVertex2i(size_.width(), 0);
-			glVertex2i(size_.width(), size_.height());
-			glVertex2i(0, size_.height());
+			glVertex2i(m_size.width(), 0);
+			glVertex2i(m_size.width(), m_size.height());
+			glVertex2i(0, m_size.height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);

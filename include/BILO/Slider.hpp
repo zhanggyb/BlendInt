@@ -49,7 +49,8 @@ namespace BILO {
 
 	protected:
 
-		virtual void update (int type);
+		virtual bool update (int type, const void* property);
+
 		virtual void render ();
 
 		virtual void move_mouse (MouseEvent* event);
@@ -88,7 +89,7 @@ namespace BILO {
 
 	protected:
 
-		virtual void update (int property);
+		virtual bool update (int type, const void* property);
 
 		virtual void render ();
 

@@ -29,6 +29,8 @@
 #include <BILO/Drawable.hpp>
 #include <BILO/Widget.hpp>
 
+#include <Cpp/Events.hpp>
+
 namespace BILO {
 
 	class AbstractLayout: public Drawable
@@ -65,17 +67,20 @@ namespace BILO {
 		 */
 		virtual bool erase (Drawable* object) = 0;
 
-		int alignment () const {return alignment_;}
+		int alignment () const {return m_alignment;}
 
-		void set_alignment (int align) {alignment_ = align;}
+		void set_alignment (int align) {m_alignment = align;}
 
 	protected:
 
 		virtual void render () = 0;
 
-		virtual void update (int property) {}
+		virtual bool update (int type, const void* property) {return true;}
 
-		int alignment_;
+		int m_alignment;
+
+		Cpp::ConnectionScope m_events;
+
 	};
 
 } /* namespace BIL */

@@ -96,9 +96,9 @@ namespace BILO {
 	{
 	}
 
-	void Widget::update (int property)
+	bool Widget::update (int type, const void* property)
 	{
-		switch(property)
+		switch(type)
 		{
 			case WidgetPropertySize:
 				update_shape();
@@ -109,6 +109,8 @@ namespace BILO {
 			default:
 				break;
 		}
+
+		return true;
 	}
 
 	void Widget::render ()
@@ -125,8 +127,8 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(),
-					 pos_.y(),
+		glTranslatef(m_pos.x(),
+					 m_pos.y(),
 					 z());
 
 		glEnable(GL_BLEND);
@@ -222,12 +224,12 @@ namespace BILO {
 		float vertexes[4][2];
 		vertexes[0][0] = 0;
 		vertexes[0][1] = 0;
-		vertexes[1][0] = size_.width();
+		vertexes[1][0] = m_size.width();
 		vertexes[1][1] = 0;
-		vertexes[2][0] = size_.width();
-		vertexes[2][1] = size_.height();
+		vertexes[2][0] = m_size.width();
+		vertexes[2][1] = m_size.height();
 		vertexes[3][0] = 0;
-		vertexes[3][1] = size_.height();
+		vertexes[3][1] = m_size.height();
 
 		m_buffer.bind (GL_ARRAY_BUFFER);
 		m_buffer.upload (GL_ARRAY_BUFFER, sizeof(vertexes[0]) * 4, vertexes, GL_STATIC_DRAW);
@@ -246,10 +248,10 @@ namespace BILO {
 
 		for (j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			draw_box (mode, padding_.left(),
-					padding_.bottom(),
-					size_.width() - padding_.left() - padding_.right(),
-					size_.height() - padding_.top() - padding_.bottom());
+			draw_box (mode, m_padding.left(),
+					m_padding.bottom(),
+					m_size.width() - m_padding.left() - m_padding.right(),
+					m_size.height() - m_padding.top() - m_padding.bottom());
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 

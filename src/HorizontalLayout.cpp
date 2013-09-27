@@ -51,7 +51,7 @@ namespace BILO {
 		m_list.push_back(widget);
 		bind (widget);
 
-		update(WidgetPropertySize);
+		update(WidgetPropertySize, 0);
 	}
 
 	void HorizontalLayout::add_layout(AbstractLayout* layout)
@@ -61,7 +61,7 @@ namespace BILO {
 		m_list.push_back(layout);
 		bind (layout);
 
-		update(WidgetPropertySize);
+		update(WidgetPropertySize, 0);
 	}
 
 	bool HorizontalLayout::remove (Drawable* object)
@@ -72,7 +72,7 @@ namespace BILO {
 
 		unbind(object);
 
-		update(WidgetPropertySize);
+		update(WidgetPropertySize, 0);
 
 		return true;
 	}
@@ -87,13 +87,17 @@ namespace BILO {
 
 		delete object;
 
-		update(WidgetPropertySize);
+		update(WidgetPropertySize, 0);
 
 		return true;
 	}
 
-	void HorizontalLayout::update (int property)
+	bool HorizontalLayout::update (int type, const void* property)
 	{
+		const Point* new_pos = &m_pos;
+		if (type == WidgetPropertyPosition)
+			new_pos = static_cast<const Point*>(property);
+
 		//if (property == WidgetPropertySize) {
 		unsigned int total_width = 0;
 		unsigned int total_height = 0;
@@ -101,41 +105,43 @@ namespace BILO {
 
 		std::list<Drawable*>::const_iterator it;
 		Drawable* child = 0;
-		total_width = padding_.left();
+		total_width = m_padding.left();
 		for (it = m_list.begin(); it != m_list.end(); it++)
 		{
 			child = *it;
 			if(child) {
-				child->set_pos(pos_.x() + child->margin().left() + total_width, pos_.y() + child->margin().bottom() + padding_.bottom());
+				child->set_pos(new_pos->x() + child->margin().left() + total_width, new_pos->y() + child->margin().bottom() + m_padding.bottom());
 				total_width = total_width + child->margin().left() + child->size().width() + child->margin().right();
-				total_height = std::max (total_height, padding_.top() + child->margin().top() + child->size().height() + child->margin().bottom() + padding_.bottom());
+				total_height = std::max (total_height, m_padding.top() + child->margin().top() + child->size().height() + child->margin().bottom() + m_padding.bottom());
 				max_widget_height = std::max (max_widget_height, child->size().height());
 			}
 		}
-		total_width += padding_.right();
+		total_width += m_padding.right();
 
 		for (it = m_list.begin(); it != m_list.end(); it++)
 		{
 			child = *it;
 			if(child) {
-				if(alignment_ & AlignTop) {
+				if(m_alignment & AlignTop) {
 					child->set_pos(child->pos().x(),
-								   pos_.y() +
+								   new_pos->y() +
 								   (total_height -
-									(padding_.top() + child->margin().top() + child->size().height())));
-				} else if (alignment_ & AlignBottom) {
-					child->set_pos(child->pos().x(), pos_.y() + child->margin().bottom() + padding_.bottom());
-				} else if (alignment_ & AlignHorizontalCenter) {
+									(m_padding.top() + child->margin().top() + child->size().height())));
+				} else if (m_alignment & AlignBottom) {
+					child->set_pos(child->pos().x(), new_pos->y() + child->margin().bottom() + m_padding.bottom());
+				} else if (m_alignment & AlignHorizontalCenter) {
 					child->set_pos(child->pos().x(),
-								   pos_.y() + padding_.bottom() +
+								   new_pos->y() + m_padding.bottom() +
 								   (max_widget_height - child->size().height()) / 2 + child->margin().bottom());
 				}
 			}
 		}
 
-		size_.set_width(total_width);
-		size_.set_height(total_height);
+		m_size.set_width(total_width);
+		m_size.set_height(total_height);
 		//}
+
+		return true;
 	}
 
 	void HorizontalLayout::render ()
@@ -149,8 +155,8 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(),
-					 pos_.y(),
+		glTranslatef(m_pos.x(),
+					 m_pos.y(),
 					 z());
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
@@ -159,9 +165,9 @@ namespace BILO {
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 			glVertex2i(0, 0);
-			glVertex2i(size_.width(), 0);
-			glVertex2i(size_.width(), size_.height());
-			glVertex2i(0, size_.height());
+			glVertex2i(m_size.width(), 0);
+			glVertex2i(m_size.width(), m_size.height());
+			glVertex2i(0, m_size.height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);

@@ -30,7 +30,7 @@ namespace BILO {
 		makeCheckImage();
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		resize(64 + padding_.left() + padding_.right(), 64 + padding_.top() + padding_.bottom());
+		resize(64 + m_padding.left() + m_padding.right(), 64 + m_padding.top() + m_padding.bottom());
 	}
 
 	ImageView::ImageView (Drawable* parent)
@@ -40,7 +40,7 @@ namespace BILO {
 		makeCheckImage();
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		resize(64 + padding_.left() + padding_.right(), 64 + padding_.top() + padding_.bottom());
+		resize(64 + m_padding.left() + m_padding.right(), 64 + m_padding.top() + m_padding.bottom());
 	}
 
 	ImageView::~ImageView ()
@@ -52,14 +52,14 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(),
-					 pos_.y(),
+		glTranslatef(m_pos.x(),
+					 m_pos.y(),
 					 z());
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glRasterPos2i(padding_.left(), padding_.bottom());
+		glRasterPos2i(m_padding.left(), m_padding.bottom());
 		glDrawPixels (checkImageWidth, checkImageHeight, GL_RGB, GL_UNSIGNED_BYTE, _checkImage);
 
 #ifdef DEBUG
@@ -70,9 +70,9 @@ namespace BILO {
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 			glVertex2i(0, 0);
-			glVertex2i(size_.width(), 0);
-			glVertex2i(size_.width(), size_.height());
-			glVertex2i(0, size_.height());
+			glVertex2i(m_size.width(), 0);
+			glVertex2i(m_size.width(), m_size.height());
+			glVertex2i(0, m_size.height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);

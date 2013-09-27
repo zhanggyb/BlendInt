@@ -50,11 +50,11 @@ namespace BILO {
 
 		if(m_minimum != minimum) {
 			m_minimum = minimum;
-			update(SliderPropertyMinimum);
+			update(SliderPropertyMinimum, 0);
 		}
 		if(m_maximum != maximum) {
 			m_maximum = maximum;
-			update(SliderPropertyMaximum);
+			update(SliderPropertyMaximum, 0);
 		}
 	}
 
@@ -63,7 +63,7 @@ namespace BILO {
 		if(m_minimum == minimum) return;
 
 		m_minimum = minimum;
-		update (SliderPropertyMinimum);
+		update (SliderPropertyMinimum, 0);
 	}
 
 	void AbstractSlider::set_maximum (int maximum)
@@ -71,7 +71,7 @@ namespace BILO {
 		if(m_maximum == maximum) return;
 
 		m_maximum = maximum;
-		update(SliderPropertyMaximum);
+		update(SliderPropertyMaximum, 0);
 	}
 
 	void AbstractSlider::set_value (int value)
@@ -82,7 +82,7 @@ namespace BILO {
 
 		m_value = value;
 
-		update(SliderPropertyValue);
+		update(SliderPropertyValue, 0);
 	}
 
 	void AbstractSlider::set_step (int step)
@@ -91,7 +91,7 @@ namespace BILO {
 
 		m_step = step;
 
-		update(SliderPropertyStep);
+		update(SliderPropertyStep, 0);
 	}
 
 	void AbstractSlider::set_orientation (Orientation orientation)
@@ -100,7 +100,7 @@ namespace BILO {
 
 		m_orientation = orientation;
 
-		update(SliderPropertyOrientation);
+		update(SliderPropertyOrientation, 0);
 	}
 
 }

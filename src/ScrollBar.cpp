@@ -37,8 +37,6 @@ namespace BILO {
 		} else if (orientation == Vertical) {
 			resize(25, 400);
 		}
-
-		update(0);
 	}
 
 	ScrollBar::ScrollBar (Orientation orientation, Drawable* parent)
@@ -51,15 +49,13 @@ namespace BILO {
 		} else if (orientation == Vertical) {
 			resize(25, 400);
 		}
-
-		update(0);
 	}
 
 	ScrollBar::~ScrollBar ()
 	{
 	}
 
-	void ScrollBar::update (int property)
+	bool ScrollBar::update (int type, const void* property)
 	{
 		/*
 		 if (orientation() == Horizontal) {
@@ -112,6 +108,7 @@ namespace BILO {
 		 //glBindBuffer (GL_ARRAY_BUFFER, 0);
 		 m_buffer.unbind(GL_ARRAY_BUFFER);
 		 */
+		return true;
 	}
 
 	void ScrollBar::render ()
@@ -119,7 +116,7 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(), pos_.y(), z());
+		glTranslatef(m_pos.x(), m_pos.y(), z());
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -167,9 +164,9 @@ namespace BILO {
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 		glVertex2i(0, 0);
-		glVertex2i(size_.width(), 0);
-		glVertex2i(size_.width(), size_.height());
-		glVertex2i(0, size_.height());
+		glVertex2i(m_size.width(), 0);
+		glVertex2i(m_size.width(), m_size.height());
+		glVertex2i(0, m_size.height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);

@@ -49,7 +49,7 @@ namespace BILO {
 		m_list.push_back(widget);
 		bind (widget);
 
-		update(WidgetPropertySize);
+		update(WidgetPropertySize, 0);
 	}
 
 	void VerticalLayout::add_layout(AbstractLayout* layout)
@@ -57,7 +57,7 @@ namespace BILO {
 		m_list.push_back(layout);
 		bind (layout);
 
-		update(WidgetPropertySize);
+		update(WidgetPropertySize, 0);
 	}
 
 	bool VerticalLayout::remove (Drawable* object)
@@ -68,7 +68,7 @@ namespace BILO {
 
 		unbind(object);
 
-		update(WidgetPropertySize);
+		update(WidgetPropertySize, 0);
 
 		return true;
 	}
@@ -83,72 +83,72 @@ namespace BILO {
 
 		delete object;
 
-		update(WidgetPropertySize);
+		update(WidgetPropertySize, 0);
 
 		return true;
 	}
 
-	void VerticalLayout::update (int property)
+	bool VerticalLayout::update (int type, const void* property)
 	{
-		//if (property == WidgetPropertySize) {
+		const Point* new_pos = &m_pos;
+		if (type == WidgetPropertyPosition)
+			new_pos = static_cast<const Point*>(property);
 
-			unsigned int total_width = 0;
-			unsigned int total_height = 0;
-			unsigned int max_widget_width = 0;
+		unsigned int total_width = 0;
+		unsigned int total_height = 0;
+		unsigned int max_widget_width = 0;
 
-			std::list<Drawable*>::const_reverse_iterator rit;
-			Drawable* child = 0;
-			total_height = padding_.bottom();
-			for (rit = m_list.rbegin(); rit != m_list.rend(); rit++) {
-				child = *rit;
-				if (child) {
+		std::list<Drawable*>::const_reverse_iterator rit;
+		Drawable* child = 0;
+		total_height = m_padding.bottom();
+		for (rit = m_list.rbegin(); rit != m_list.rend(); rit++) {
+			child = *rit;
+			if (child) {
+				child->set_pos(
+						new_pos->x() + child->margin().left() + m_padding.left(),
+						new_pos->y() + child->margin().bottom() + total_height);
+				total_width = std::max(total_width,
+				        m_padding.left() + child->margin().left()
+				                + child->size().width()
+				                + child->margin().right() + m_padding.right());
+				max_widget_width = std::max(max_widget_width,
+				        child->size().width());
+				total_height = total_height + child->margin().top()
+				        + child->size().height() + child->margin().bottom();
+			}
+		}
+		total_height += m_padding.top();
+
+		std::list<Drawable*>::const_iterator it;
+		for (it = m_list.begin(); it != m_list.end(); it++) {
+			child = *it;
+			if (child) {
+				if (m_alignment & AlignLeft) {
 					child->set_pos(
-					        pos_.x() + child->margin().left() + padding_.left(),
-					        pos_.y() + child->margin().bottom() + total_height);
-					total_width = std::max(total_width,
-					        padding_.left() + child->margin().left()
-					                + child->size().width()
-					                + child->margin().right()
-					                + padding_.right());
-					max_widget_width = std::max(max_widget_width,
-					        child->size().width());
-					total_height = total_height + child->margin().top()
-					        + child->size().height() + child->margin().bottom();
+							new_pos->x() + m_padding.left()
+					                + child->margin().left(), child->pos().y());
+				} else if (m_alignment & AlignRight) {
+					child->set_pos(
+							new_pos->x()
+					                + (total_width
+					                        - (m_padding.right()
+					                                + child->size().width()
+					                                + child->margin().right())),
+					        child->pos().y());
+				} else if (m_alignment & AlignVerticalCenter) {
+					child->set_pos(
+							new_pos->x() + m_padding.left()
+					                + child->margin().left()
+					                + (max_widget_width - child->size().width())
+					                        / 2, child->pos().y());
 				}
 			}
-			total_height += padding_.top();
+		}
 
-			std::list<Drawable*>::const_iterator it;
-			for (it = m_list.begin(); it != m_list.end(); it++) {
-				child = *it;
-				if (child) {
-					if (alignment_ & AlignLeft) {
-						child->set_pos(
-						        pos_.x() + padding_.left()
-						                + child->margin().left(),
-						        child->pos().y());
-					} else if (alignment_ & AlignRight) {
-						child->set_pos(
-						        pos_.x()
-						                + (total_width
-						                        - (padding_.right()
-						                                + child->size().width()
-						                                + child->margin().right())),
-						        child->pos().y());
-					} else if (alignment_ & AlignVerticalCenter) {
-						child->set_pos(
-						        pos_.x() + padding_.left()
-						                + child->margin().left()
-						                + (max_widget_width
-						                        - child->size().width()) / 2,
-						        child->pos().y());
-					}
-				}
-			}
-
-			size_.set_width(total_width);
-			size_.set_height(total_height);
+		m_size.set_width(total_width);
+		m_size.set_height(total_height);
 		//}
+		return true;
 	}
 
 	void VerticalLayout::render ()
@@ -167,7 +167,7 @@ namespace BILO {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(pos_.x(), pos_.y(), z());
+		glTranslatef(m_pos.x(), m_pos.y(), z());
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
 
@@ -175,9 +175,9 @@ namespace BILO {
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 		glVertex2i(0, 0);
-		glVertex2i(size_.width(), 0);
-		glVertex2i(size_.width(), size_.height());
-		glVertex2i(0, size_.height());
+		glVertex2i(m_size.width(), 0);
+		glVertex2i(m_size.width(), m_size.height());
+		glVertex2i(0, m_size.height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);
