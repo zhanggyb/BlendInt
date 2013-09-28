@@ -104,17 +104,16 @@ namespace BILO {
 		for (rit = m_list.rbegin(); rit != m_list.rend(); rit++) {
 			child = *rit;
 
-			child->set_pos(
-			        new_pos->x() + child->margin().left() + m_padding.left(),
-			        new_pos->y() + child->margin().bottom() + total_height);
+			set_pos_priv(child, new_pos->x() + m_padding.left(),
+			        new_pos->y() + total_height);
 			total_width = std::max(total_width,
-			        m_padding.left() + child->margin().left()
-			                + child->size().width() + child->margin().right()
+			        m_padding.left()
+			                + child->size().width()
 			                + m_padding.right());
 			max_widget_width = std::max(max_widget_width,
 			        child->size().width());
-			total_height = total_height + child->margin().top()
-			        + child->size().height() + child->margin().bottom();
+			total_height = total_height
+			        + child->size().height();
 
 		}
 		total_height += m_padding.top();
@@ -124,20 +123,20 @@ namespace BILO {
 			child = *it;
 
 			if (m_alignment & AlignLeft) {
-				child->set_pos(
+				set_pos_priv(child,
 				        new_pos->x() + m_padding.left()
-				                + child->margin().left(), child->pos().y());
+				                , child->pos().y());
 			} else if (m_alignment & AlignRight) {
-				child->set_pos(
+				set_pos_priv(child,
 				        new_pos->x()
 				                + (total_width
 				                        - (m_padding.right()
 				                                + child->size().width()
-				                                + child->margin().right())),
+				                              )),
 				        child->pos().y());
 			} else if (m_alignment & AlignVerticalCenter) {
-				child->set_pos(
-				        new_pos->x() + m_padding.left() + child->margin().left()
+				set_pos_priv(child,
+				        new_pos->x() + m_padding.left()
 				                + (max_widget_width - child->size().width())
 				                        / 2, child->pos().y());
 			}

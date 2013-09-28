@@ -139,17 +139,17 @@ namespace BILO {
 
 		void reset_z (int z);
 
-		const Margin& margin () const;
-
-		void set_margin (int left, int right, int top, int bottom);
-
-		void set_margin (const Margin& margin);
-
 		const Padding& padding () const;
 
 		void set_padding (const Padding& padding);
 
-		void set_padding (int l, int r, int t, int b);
+		void set_padding (int left, int right, int top, int bottom);
+
+		const Margin& margin() const {return m_margin;}
+
+		void set_margin (const Margin& margin);
+
+		void set_margin (int left, int right, int top, int bottom);
 
 		void set_roundcorner (RoundCornerType type);
 
@@ -188,6 +188,29 @@ namespace BILO {
 		 */
 		void set_z_simple (int z);
 
+		/**
+		 * @brief set Drawable object position without checking layout
+		 * @param obj
+		 * @param x
+		 * @param y
+		 *
+		 * This function should be called in Layout only
+		 */
+		void set_pos_priv (Drawable* obj, int x, int y);
+
+		/**
+		 * @brief set Drawable object position without checking layout
+		 * @param obj
+		 * @param pos
+		 *
+		 * This function should be called in layout only
+		 */
+		void set_pos_priv (Drawable* obj, const Point& pos);
+
+		void resize_priv (Drawable* obj, int width, int height);
+
+		void resize_priv (Drawable* obj, const Size& size);
+
 	protected:
 		// member variables
 
@@ -211,9 +234,9 @@ namespace BILO {
 
 		Point m_pos;
 
-		Padding m_padding; /** used when in Layout */
+		Padding m_padding;
 
-		Margin m_margin; /** used when in Layout */
+		Margin m_margin;
 
 		std::string m_name;
 

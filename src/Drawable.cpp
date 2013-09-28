@@ -30,6 +30,7 @@
 
 #include <BILO/Drawable.hpp>
 #include <BILO/ContextManager.hpp>
+#include <BILO/AbstractLayout.hpp>
 
 namespace BILO {
 
@@ -240,9 +241,13 @@ namespace BILO {
 
 	void Drawable::resize (int w, int h)
 	{
+		// If the object is managed by a layout, disallow position setting
+		if(m_parent.type == ParentDrawable) {
+			if(dynamic_cast<AbstractLayout*>(m_parent.object.drawable))
+				return;
+		}
+
 		if (m_size.equal(w, h)) return;
-		m_size.set_width(w);
-		m_size.set_height(h);
 
 		Size new_size (w, h);
 		if (update(WidgetPropertySize, &new_size))
@@ -251,6 +256,12 @@ namespace BILO {
 
 	void Drawable::resize (const Size& size)
 	{
+		// If the object is managed by a layout, disallow position setting
+		if(m_parent.type == ParentDrawable) {
+			if(dynamic_cast<AbstractLayout*>(m_parent.object.drawable))
+				return;
+		}
+
 		if (m_size.equal(size)) return;
 
 		Size new_size(size);
@@ -264,6 +275,12 @@ namespace BILO {
 
 	void Drawable::set_pos (int x, int y)
 	{
+		// If the object is managed by a layout, disallow position setting
+		if(m_parent.type == ParentDrawable) {
+			if(dynamic_cast<AbstractLayout*>(m_parent.object.drawable))
+				return;
+		}
+
 		if (m_pos.equal(x, y)) return;
 
 		Point new_pos(x, y);
@@ -272,6 +289,12 @@ namespace BILO {
 
 	void Drawable::set_pos (const Point& pos)
 	{
+		// If the object is managed by a layout, disallow position setting
+		if(m_parent.type == ParentDrawable) {
+			if(dynamic_cast<AbstractLayout*>(m_parent.object.drawable))
+				return;
+		}
+
 		if (m_pos.equal(pos)) return;
 
 		Point new_pos(pos);
@@ -305,24 +328,6 @@ namespace BILO {
 		}
 	}
 
-	const Margin& Drawable::margin () const
-	{
-		return m_margin;
-	}
-
-	void Drawable::set_margin (int left, int right, int top, int bottom)
-	{
-		Margin new_margin (left, right, top, bottom);
-
-		if(update (WidgetPropertyMargin, &new_margin)) m_margin = new_margin;
-	}
-
-	void Drawable::set_margin (const Margin& margin)
-	{
-		Margin new_margin = margin;
-		if(update (WidgetPropertyMargin, &new_margin)) m_margin = new_margin;
-	}
-
 	const Padding& Drawable::padding () const
 	{
 		return m_padding;
@@ -340,6 +345,21 @@ namespace BILO {
 		Padding new_padding (l, r, t, b);
 		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
 	}
+
+	void Drawable::set_margin (const Margin& padding)
+	{
+		Margin new_value = padding;
+
+		if(update(WidgetPropertyMargin, &new_value)) m_margin = new_value;
+	}
+
+	void Drawable::set_margin (int left, int right, int top, int bottom)
+	{
+		Margin new_value (left, right, top, bottom);
+
+		if(update(WidgetPropertyMargin, &new_value)) m_margin = new_value;
+	}
+
 
 	void Drawable::set_roundcorner (RoundCornerType type)
 	{
@@ -396,10 +416,10 @@ namespace BILO {
 
 	bool Drawable::contain(const Coord2d& cursor)
 	{
-		if (cursor.x() < m_pos.x() ||
-				cursor.y() < m_pos.y() ||
-				cursor.x() > (m_pos.x() + m_size.width()) ||
-				cursor.y() > (m_pos.y() + m_size.height())) {
+		if (cursor.x() < (m_pos.x() + m_margin.left())||
+				cursor.y() < (m_pos.y() + m_margin.bottom()) ||
+				cursor.x() > (m_pos.x() + m_size.width() - m_margin.right()) ||
+				cursor.y() > (m_pos.y() + m_size.height() - m_margin.top())) {
 			return false;
 		}
 
@@ -417,6 +437,41 @@ namespace BILO {
 		}
 
 		// TODO: call update()
+	}
+
+	void Drawable::set_pos_priv (Drawable* obj, int x, int y)
+	{
+		if (obj->m_pos.equal(x, y)) return;
+
+		Point new_pos(x, y);
+		if (obj->update(WidgetPropertyPosition, &new_pos)) obj->m_pos = new_pos;
+	}
+
+	void Drawable::set_pos_priv (Drawable* obj, const Point& pos)
+	{
+		if (obj->m_pos.equal(pos)) return;
+
+		Point new_pos(pos);
+		if (obj->update(WidgetPropertyPosition, &new_pos)) obj->m_pos = new_pos;
+	}
+
+	void Drawable::resize_priv (Drawable* obj, int w, int h)
+	{
+		if (obj->m_size.equal(w, h)) return;
+
+		Size new_size (w, h);
+
+		if (obj->update(WidgetPropertySize, &new_size))
+			obj->m_size = new_size;
+	}
+
+	void Drawable::resize_priv (Drawable* obj, const Size& size)
+	{
+		if (obj->m_size.equal(size)) return;
+
+		Size new_size(size);
+		if (obj->update(WidgetPropertySize, &new_size))
+			obj->m_size = new_size;
 	}
 
 #ifdef DEBUG

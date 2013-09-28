@@ -222,14 +222,14 @@ namespace BILO {
 		*/
 
 		float vertexes[4][2];
-		vertexes[0][0] = 0;
-		vertexes[0][1] = 0;
-		vertexes[1][0] = m_size.width();
-		vertexes[1][1] = 0;
-		vertexes[2][0] = m_size.width();
-		vertexes[2][1] = m_size.height();
-		vertexes[3][0] = 0;
-		vertexes[3][1] = m_size.height();
+		vertexes[0][0] = m_margin.left();
+		vertexes[0][1] = m_margin.bottom();
+		vertexes[1][0] = m_size.width() - m_margin.right();
+		vertexes[1][1] = m_margin.bottom();
+		vertexes[2][0] = m_size.width() - m_margin.right();
+		vertexes[2][1] = m_size.height() - m_margin.top();
+		vertexes[3][0] = m_margin.left();
+		vertexes[3][1] = m_size.height() - m_margin.top();
 
 		m_buffer.bind (GL_ARRAY_BUFFER);
 		m_buffer.upload (GL_ARRAY_BUFFER, sizeof(vertexes[0]) * 4, vertexes, GL_STATIC_DRAW);

@@ -79,6 +79,8 @@ namespace BILO {
 
 		int m_alignment;
 
+		int m_space;
+
 		Cpp::ConnectionScope m_events;
 
 	};
