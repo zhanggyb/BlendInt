@@ -44,50 +44,6 @@ namespace BILO {
 
 	}
 
-	void VerticalLayout::add_widget (Widget* widget)
-	{
-		m_list.push_back(widget);
-		bind (widget);
-
-		update(WidgetPropertySize, 0);
-	}
-
-	void VerticalLayout::add_layout(AbstractLayout* layout)
-	{
-		m_list.push_back(layout);
-		bind (layout);
-
-		update(WidgetPropertySize, 0);
-	}
-
-	bool VerticalLayout::remove (Drawable* object)
-	{
-		if (!m_children.count(object)) return false;
-
-		m_children.erase(object);
-
-		unbind(object);
-
-		update(WidgetPropertySize, 0);
-
-		return true;
-	}
-
-	bool VerticalLayout::erase (Drawable* object)
-	{
-		if (!m_children.count(object)) return false;
-
-		m_children.erase(object);
-
-		unbind(object);
-
-		delete object;
-
-		update(WidgetPropertySize, 0);
-
-		return true;
-	}
-
 	bool VerticalLayout::update (int type, const void* property)
 	{
 		const Point* new_pos = &m_pos;
@@ -98,10 +54,10 @@ namespace BILO {
 		unsigned int total_height = 0;
 		unsigned int max_widget_width = 0;
 
-		std::list<Drawable*>::const_reverse_iterator rit;
+		std::vector<Drawable*>::const_reverse_iterator rit;
 		Drawable* child = 0;
 		total_height = m_margin.bottom();
-		for (rit = m_list.rbegin(); rit != m_list.rend(); rit++) {
+		for (rit = m_vector.rbegin(); rit != m_vector.rend(); rit++) {
 			child = *rit;
 
 			set_pos_priv(child, new_pos->x() + m_margin.left(),
@@ -118,8 +74,8 @@ namespace BILO {
 		}
 		total_height += m_margin.top();
 
-		std::list<Drawable*>::const_iterator it;
-		for (it = m_list.begin(); it != m_list.end(); it++) {
+		std::vector<Drawable*>::const_iterator it;
+		for (it = m_vector.begin(); it != m_vector.end(); it++) {
 			child = *it;
 
 			if (m_alignment & AlignLeft) {
@@ -152,9 +108,9 @@ namespace BILO {
 	void VerticalLayout::render ()
 	{
 
-		list<Drawable*>::const_iterator it;
+		std::vector<Drawable*>::const_iterator it;
 		Drawable *item = 0;
-		for (it = m_list.begin(); it != m_list.end(); it++) {
+		for (it = m_vector.begin(); it != m_vector.end(); it++) {
 			item = *it;
 			if (item) {
 				Interface::instance()->dispatch_render_event(item);
@@ -199,8 +155,8 @@ namespace BILO {
 
 	void VerticalLayout::press_mouse (MouseEvent* event)
 	{
-		list<Drawable*>::iterator it;
-		for(it = m_list.begin(); it != m_list.end(); it++)
+		std::vector<Drawable*>::iterator it;
+		for(it = m_vector.begin(); it != m_vector.end(); it++)
 		{
 			Interface::instance()->dispatch_mouse_press_event(*it, event);
 		}
@@ -208,8 +164,8 @@ namespace BILO {
 
 	void VerticalLayout::release_mouse (MouseEvent* event)
 	{
-		list<Drawable*>::iterator it;
-		for(it = m_list.begin(); it != m_list.end(); it++)
+		std::vector<Drawable*>::iterator it;
+		for(it = m_vector.begin(); it != m_vector.end(); it++)
 		{
 			Interface::instance()->dispatch_mouse_release_event(*it, event);
 		}
@@ -217,8 +173,8 @@ namespace BILO {
 
 	void VerticalLayout::move_mouse (MouseEvent* event)
 	{
-		list<Drawable*>::iterator it;
-		for(it = m_list.begin(); it != m_list.end(); it++)
+		std::vector<Drawable*>::iterator it;
+		for(it = m_vector.begin(); it != m_vector.end(); it++)
 		{
 			Interface::instance()->dispatch_mouse_move_event(*it, event);
 		}

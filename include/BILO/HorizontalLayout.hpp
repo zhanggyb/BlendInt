@@ -38,14 +38,6 @@ namespace BILO {
 
 		virtual ~HorizontalLayout ();
 
-		virtual void add_widget (Widget* widget);
-
-		virtual void add_layout (AbstractLayout* layout);
-
-		virtual bool remove (Drawable* object);
-
-		virtual bool erase (Drawable* object);
-
 	protected:
 
 		virtual bool update (int type, const void* property);
@@ -66,7 +58,10 @@ namespace BILO {
 
 	private:
 
-		std::list<Drawable*> m_list;
+		void generate_layout (const Size* size);
+
+		void reset_size_default ();
+
 	};
 
 }

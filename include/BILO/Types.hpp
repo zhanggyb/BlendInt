@@ -268,10 +268,10 @@ namespace BILO {
 		WidgetPropertyPosition,
 		WidgetPropertySize,
 		WidgetPropertyLayer,
-		WidgetPropertyPadding,
-		WidgetPropertyMargin,
 		WidgetPropertyRoundCorner,
 		WidgetPropertyVisibility,
+		WidgetPropertyPadding,
+		WidgetPropertyMargin,
 		WidgetPropertyLast
 	};
 

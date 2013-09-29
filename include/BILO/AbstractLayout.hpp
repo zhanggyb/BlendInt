@@ -24,7 +24,7 @@
 #ifndef _BILO_ABSTRACTLAYOUT_HPP_
 #define _BILO_ABSTRACTLAYOUT_HPP_
 
-#include <list>
+#include <vector>
 
 #include <BILO/Drawable.hpp>
 #include <BILO/Widget.hpp>
@@ -45,9 +45,9 @@ namespace BILO {
 
 		virtual ~AbstractLayout ();
 
-		virtual void add_widget (Widget* widget) = 0;
+		void add_widget (Widget* widget);
 
-		virtual void add_layout (AbstractLayout* layout) = 0;
+		void add_layout (AbstractLayout* layout);
 
 		/**
 		 * @brief remove the object from layout
@@ -56,7 +56,7 @@ namespace BILO {
 		 *
 		 * @warning: after removing from layout, the drawable object will bind to nothing, it must be deleted manually
 		 */
-		virtual bool remove (Drawable* object) = 0;
+		bool remove (Drawable* object);
 
 		/**
 		 * @brief erase the object from layout
@@ -65,7 +65,7 @@ namespace BILO {
 		 *
 		 * Same as remove but will delete the child object
 		 */
-		virtual bool erase (Drawable* object) = 0;
+		bool erase (Drawable* object);
 
 		int alignment () const {return m_alignment;}
 
@@ -76,6 +76,10 @@ namespace BILO {
 		void set_margin (const Margin& margin);
 
 		void set_margin (int left, int right, int top, int bottom);
+
+		void set_space (int space) {m_space = space;}
+
+		int space () const {return m_space;}
 
 	protected:
 
@@ -88,6 +92,8 @@ namespace BILO {
 		int m_space;
 
 		Margin m_margin;
+
+		std::vector<Drawable*> m_vector;
 
 		Cpp::ConnectionScope m_events;
 

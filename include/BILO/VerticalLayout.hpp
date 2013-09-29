@@ -41,14 +41,6 @@ namespace BILO {
 
 		virtual ~VerticalLayout ();
 
-		virtual void add_widget (Widget* widget);
-
-		virtual void add_layout (AbstractLayout* layout);
-
-		virtual bool remove (Drawable* object);
-
-		virtual bool erase (Drawable* object);
-
 	protected:
 
 		virtual bool update (int type, const void* property);
@@ -67,9 +59,6 @@ namespace BILO {
 
 		virtual void move_mouse (MouseEvent* event);
 
-	private:
-
-		std::list<Drawable*> m_list;
 	};
 
 }

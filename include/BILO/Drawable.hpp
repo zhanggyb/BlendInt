@@ -147,6 +147,16 @@ namespace BILO {
 
 		float corner_radius () const {return m_corner_radius;}
 
+		void set_hexpand (bool expand) {m_hexpand = expand;}
+
+		bool hexpand () const {return m_hexpand;}
+
+		void set_vexpand (bool expand) {m_vexpand = expand;}
+
+		bool vexpand () const {return m_vexpand;}
+
+		void set_expand (bool expand) {m_hexpand = expand; m_vexpand = expand;}
+
 		bool visible () const;
 
 		void set_visible (bool visible);
@@ -199,6 +209,12 @@ namespace BILO {
 
 		void resize_priv (Drawable* obj, const Size& size);
 
+		const Size& minimal_size () const {return m_minimal_size;}
+
+		void set_minimal_size (const Size& size);
+
+		void set_minimal_size (int width, int height);
+
 	protected:
 		// member variables
 
@@ -218,7 +234,13 @@ namespace BILO {
 
 		bool m_visible;
 
+		bool m_hexpand;
+
+		bool m_vexpand;
+
 		Size m_size;
+
+		Size m_minimal_size;
 
 		Point m_pos;
 

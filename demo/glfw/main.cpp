@@ -217,20 +217,35 @@ int main(int argc, char* argv[])
 	app->events().connect(hslider15->slider_moved(), vslider, &AbstractSlider::set_value);
 	app->events().connect(hslider16->slider_moved(), vslider, &AbstractSlider::set_value);
 
-	Widget* widget = new Widget;
+	HorizontalLayout* layout1 = new HorizontalLayout;
+	layout1->set_pos(500, 200);
+	layout1->set_alignment(BILO::AlignHorizontalCenter);
+	layout1->set_margin(5, 5, 5, 5);
+	layout1->set_space(5);
 
-	widget->resize(400, 400);
-	widget->set_pos(400, 200);
+	Label* label1 = new Label(L"Hello");
+	label1->set_font(Font("Droid Sans"));
+	label1->set_pos(100, 100);
+	//label1->set_expand(true);
+	label1->set_hexpand(true);
+
+	Button* button1 = new Button(L"Sample Button");
+	button1->set_font(Font("Droid Sans"));
+	button1->set_pos(200, 200);
+	button1->resize(90, 40);
+	//button1->set_expand(true);
+
+	layout1->add_widget(label1);
+	layout1->add_widget(button1);
+	layout1->resize(300, 200);
+
+	ToggleButton* button2 = new ToggleButton(L"Toggle");
+	button2->set_font(Font("Droid Sans"));
+	layout1->add_widget(button2);
 
 	//VertexIcon icon;
 
-	app->bind(widget);
-
-	Button* button = new Button(L"Button Test");
-	button->set_font(Font("Droid Sans"));
-	button->set_pos(Point(500, 50));
-
-	app->bind(button);
+	app->bind(layout1);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
