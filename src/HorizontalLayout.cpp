@@ -112,9 +112,10 @@ namespace BILO {
 				if (property) {
 					generate_layout(static_cast<const Size*>(property));
 				} else {
-					reset_size_default();
+					generate_default_layout();
 				}
 
+				return true;
 			}
 		}
 
@@ -274,7 +275,7 @@ namespace BILO {
 		return;
 	}
 
-	void HorizontalLayout::reset_size_default ()
+	void HorizontalLayout::generate_default_layout ()
 	{
 		unsigned int total_width = 0;
 		unsigned int total_height = m_size.height();

@@ -60,7 +60,7 @@ namespace BILO {
 
 		void generate_layout (const Size* size);
 
-		void reset_size_default ();
+		void generate_default_layout ();
 
 	};
 

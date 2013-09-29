@@ -43,46 +43,29 @@ namespace BILO {
 
 		virtual ~TableLayout ();
 
-		virtual void add_widget (Widget* widget);
+		void add_widget (Widget* widget, int row, int column, int width = 1, int height = 1);
 
-		void add_widget (Widget* widget, int row, int column, int width, int height);
+		void add_layout (AbstractLayout* layout, int row, int column, int width = 1, int height = 1);
 
-		virtual void add_layout (AbstractLayout* layout);
+		int rows () const {return m_rows;}
 
-		void add_layout (AbstractLayout* layout, int row, int column, int width, int height);
-
-		/**
-		 * @brief remove the object from layout
-		 * @param widget
-		 * @return
-		 *
-		 * @warning: after removing from layout, the drawable object will bind to nothing, it must be deleted manually
-		 */
-		virtual bool remove (Drawable* object);
-
-		/**
-		 * @brief erase the object from layout
-		 * @param widget
-		 * @return
-		 *
-		 * Same as remove but will delete the child object
-		 */
-		virtual bool erase (Drawable* object);
+		int columns () const {return m_columns;}
 
 	protected:
+
+		virtual bool update (int type, const void* property);
 
 		virtual void render ();
 
 	private:
 
+		void generate_layout (const Size* size);
+
+		void generate_default_layout ();
+
 		int m_rows;
 
 		int m_columns;
-
-		/**
-		 * a 2 dimension array to store the object pointer
-		 */
-		Drawable* m_array;
 
 	};
 }

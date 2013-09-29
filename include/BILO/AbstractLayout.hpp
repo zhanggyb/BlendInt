@@ -85,7 +85,7 @@ namespace BILO {
 
 		virtual void render () = 0;
 
-		virtual bool update (int type, const void* property) {return true;}
+		virtual bool update (int type, const void* property) {return false;}
 
 		int m_alignment;
 
