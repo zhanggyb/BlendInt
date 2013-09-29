@@ -217,20 +217,27 @@ int main(int argc, char* argv[])
 	app->events().connect(hslider15->slider_moved(), vslider, &AbstractSlider::set_value);
 	app->events().connect(hslider16->slider_moved(), vslider, &AbstractSlider::set_value);
 
-	Frame* frame = new Frame;
+	Widget* widget = new Widget;
 
-	frame->resize(400, 400);
-	frame->set_pos(400, 200);
+	widget->resize(400, 400);
+	widget->set_pos(400, 200);
 
-	VertexIcon icon;
+	//VertexIcon icon;
 
-	app->bind(frame);
+	app->bind(widget);
+
+	Button* button = new Button(L"Button Test");
+	button->set_font(Font("Droid Sans"));
+	button->set_pos(Point(500, 50));
+
+	app->bind(button);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
 		app->render();
 
+		/*
 
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -254,6 +261,7 @@ int main(int argc, char* argv[])
 		glDisable(GL_BLEND);
 
 		glPopMatrix();
+		*/
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

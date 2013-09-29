@@ -47,6 +47,12 @@ namespace BILO {
 
 		virtual ~Widget ();
 
+		const Padding& padding () const;
+
+		void set_padding (const Padding& padding);
+
+		void set_padding (int left, int right, int top, int bottom);
+
 	protected:
 
 		virtual bool update (int type, const void* property);
@@ -65,6 +71,8 @@ namespace BILO {
 
 		virtual void move_mouse (MouseEvent* event);
 
+		Padding m_padding;
+
 		/**
 		 * @brief get the GLBuffer
 		 * @return
@@ -79,7 +87,7 @@ namespace BILO {
 
 	private:
 
-		void update_shape ();
+		void update_shape (const Size* size);
 
 		/**
 		 * @brief draw a round box when render

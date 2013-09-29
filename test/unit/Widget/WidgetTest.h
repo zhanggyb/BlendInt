@@ -31,12 +31,12 @@ class WidgetTest: public CppUnit::TestFixture
 {
 CPPUNIT_TEST_SUITE(WidgetTest);
 
-	CPPUNIT_TEST(widget_default_show);
-	CPPUNIT_TEST(testwidget_show0);
+	//CPPUNIT_TEST(widget_default_show);
+	//CPPUNIT_TEST(testwidget_show0);
 
-	CPPUNIT_TEST(testwidget_show1);
-	CPPUNIT_TEST(testwidget_show2);
-	CPPUNIT_TEST(testwidget_show3);
+	//CPPUNIT_TEST(testwidget_show1);
+	//CPPUNIT_TEST(testwidget_show2);
+	//CPPUNIT_TEST(testwidget_show3);
 
 	CPPUNIT_TEST_SUITE_END()
 	;

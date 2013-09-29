@@ -139,18 +139,6 @@ namespace BILO {
 
 		void reset_z (int z);
 
-		const Padding& padding () const;
-
-		void set_padding (const Padding& padding);
-
-		void set_padding (int left, int right, int top, int bottom);
-
-		const Margin& margin() const {return m_margin;}
-
-		void set_margin (const Margin& margin);
-
-		void set_margin (int left, int right, int top, int bottom);
-
 		void set_roundcorner (RoundCornerType type);
 
 		RoundCornerType roundcorner () const;
@@ -233,10 +221,6 @@ namespace BILO {
 		Size m_size;
 
 		Point m_pos;
-
-		Padding m_padding;
-
-		Margin m_margin;
 
 		std::string m_name;
 

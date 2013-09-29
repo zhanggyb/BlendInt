@@ -72,6 +72,25 @@ namespace BILO {
 		// TODO Auto-generated destructor stub
 	}
 
+	const Padding& Widget::padding () const
+	{
+		return m_padding;
+	}
+
+	void Widget::set_padding (const Padding& padding)
+	{
+		Padding new_padding = padding;
+
+		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
+	}
+
+	void Widget::set_padding (int l, int r, int t, int b)
+	{
+		Padding new_padding (l, r, t, b);
+		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
+	}
+
+
 	void Widget::press_key (KeyEvent* event)
 	{
 	}
@@ -101,10 +120,9 @@ namespace BILO {
 		switch(type)
 		{
 			case WidgetPropertySize:
-				update_shape();
+				update_shape(static_cast<const Size*>(property));
 				break;
 			case WidgetPropertyRoundCorner:
-				update_shape();
 				break;
 			default:
 				break;
@@ -171,7 +189,7 @@ namespace BILO {
 	}
 
 
-	void Widget::update_shape()
+	void Widget::update_shape(const Size* size)
 	{
 		m_buffer.generate (1);
 
@@ -222,14 +240,14 @@ namespace BILO {
 		*/
 
 		float vertexes[4][2];
-		vertexes[0][0] = m_margin.left();
-		vertexes[0][1] = m_margin.bottom();
-		vertexes[1][0] = m_size.width() - m_margin.right();
-		vertexes[1][1] = m_margin.bottom();
-		vertexes[2][0] = m_size.width() - m_margin.right();
-		vertexes[2][1] = m_size.height() - m_margin.top();
-		vertexes[3][0] = m_margin.left();
-		vertexes[3][1] = m_size.height() - m_margin.top();
+		vertexes[0][0] = 0;
+		vertexes[0][1] = 0;
+		vertexes[1][0] = size->width();
+		vertexes[1][1] = 0;
+		vertexes[2][0] = size->width();
+		vertexes[2][1] = size->height();
+		vertexes[3][0] = 0;
+		vertexes[3][1] = size->height();
 
 		m_buffer.bind (GL_ARRAY_BUFFER);
 		m_buffer.upload (GL_ARRAY_BUFFER, sizeof(vertexes[0]) * 4, vertexes, GL_STATIC_DRAW);

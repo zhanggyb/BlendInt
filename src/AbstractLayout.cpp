@@ -28,17 +28,31 @@ namespace BILO {
 	AbstractLayout::AbstractLayout ()
 			: Drawable(), m_alignment(0), m_space(1)
 	{
-		set_padding(Padding(5, 5, 5, 5));
 	}
 
 	AbstractLayout::AbstractLayout (Drawable *parent)
 			: Drawable (parent), m_alignment(0), m_space(1)
 	{
-		set_padding(Padding(5, 5, 5, 5));
 	}
 
 	AbstractLayout::~AbstractLayout ()
 	{
 	}
+
+	void AbstractLayout::set_margin (const Margin& margin)
+	{
+		Margin new_value = margin;
+
+		if(update(WidgetPropertyMargin, &new_value)) m_margin = new_value;
+	}
+
+	void AbstractLayout::set_margin (int left, int right, int top, int bottom)
+	{
+		Margin new_value (left, right, top, bottom);
+
+		if(update(WidgetPropertyMargin, &new_value)) m_margin = new_value;
+	}
+
+
 
 } /* namespace BILO */

@@ -105,19 +105,19 @@ namespace BILO {
 
 		std::list<Drawable*>::const_iterator it;
 		Drawable* child = 0;
-		total_width = m_padding.left();
+		total_width = m_margin.left();
 		for (it = m_list.begin(); it != m_list.end(); it++) {
 			child = *it;
 			set_pos_priv(child, new_pos->x() + total_width,
-			        new_pos->y() + m_padding.bottom());
+			        new_pos->y() + m_margin.bottom());
 			total_width = total_width + child->size().width();
 			total_height = std::max(total_height,
-			        m_padding.top() + child->size().height() + m_padding.bottom());
+			        m_margin.top() + child->size().height() + m_margin.bottom());
 			max_widget_height = std::max(max_widget_height,
 			        child->size().height());
 
 		}
-		total_width += m_padding.right();
+		total_width += m_margin.right();
 
 		for (it = m_list.begin(); it != m_list.end(); it++) {
 			child = *it;
@@ -126,15 +126,15 @@ namespace BILO {
 				set_pos_priv(child, child->pos().x(),
 				        new_pos->y()
 				                + (total_height
-				                        - (m_padding.top()
+				                        - (m_margin.top()
 				                                + child->size().height())));
 			} else if (m_alignment & AlignBottom) {
 				set_pos_priv(child, child->pos().x(),
 				        new_pos->y()
-				                + m_padding.bottom());
+				                + m_margin.bottom());
 			} else if (m_alignment & AlignHorizontalCenter) {
 				set_pos_priv(child, child->pos().x(),
-				        new_pos->y() + m_padding.bottom()
+				        new_pos->y() + m_margin.bottom()
 				                + (max_widget_height - child->size().height())
 				                        / 2 );
 			}

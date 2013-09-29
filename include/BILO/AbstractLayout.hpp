@@ -71,6 +71,12 @@ namespace BILO {
 
 		void set_alignment (int align) {m_alignment = align;}
 
+		const Margin& margin() const {return m_margin;}
+
+		void set_margin (const Margin& margin);
+
+		void set_margin (int left, int right, int top, int bottom);
+
 	protected:
 
 		virtual void render () = 0;
@@ -80,6 +86,8 @@ namespace BILO {
 		int m_alignment;
 
 		int m_space;
+
+		Margin m_margin;
 
 		Cpp::ConnectionScope m_events;
 

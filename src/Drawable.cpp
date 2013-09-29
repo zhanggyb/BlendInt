@@ -328,39 +328,6 @@ namespace BILO {
 		}
 	}
 
-	const Padding& Drawable::padding () const
-	{
-		return m_padding;
-	}
-
-	void Drawable::set_padding (const Padding& padding)
-	{
-		Padding new_padding = padding;
-
-		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
-	}
-
-	void Drawable::set_padding (int l, int r, int t, int b)
-	{
-		Padding new_padding (l, r, t, b);
-		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
-	}
-
-	void Drawable::set_margin (const Margin& padding)
-	{
-		Margin new_value = padding;
-
-		if(update(WidgetPropertyMargin, &new_value)) m_margin = new_value;
-	}
-
-	void Drawable::set_margin (int left, int right, int top, int bottom)
-	{
-		Margin new_value (left, right, top, bottom);
-
-		if(update(WidgetPropertyMargin, &new_value)) m_margin = new_value;
-	}
-
-
 	void Drawable::set_roundcorner (RoundCornerType type)
 	{
 		if (m_roundcorner == type) return;
@@ -416,10 +383,10 @@ namespace BILO {
 
 	bool Drawable::contain(const Coord2d& cursor)
 	{
-		if (cursor.x() < (m_pos.x() + m_margin.left())||
-				cursor.y() < (m_pos.y() + m_margin.bottom()) ||
-				cursor.x() > (m_pos.x() + m_size.width() - m_margin.right()) ||
-				cursor.y() > (m_pos.y() + m_size.height() - m_margin.top())) {
+		if (cursor.x() < m_pos.x() ||
+				cursor.y() < m_pos.y() ||
+				cursor.x() > (m_pos.x() + m_size.width()) ||
+				cursor.y() > (m_pos.y() + m_size.height())) {
 			return false;
 		}
 
