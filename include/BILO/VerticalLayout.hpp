@@ -59,6 +59,11 @@ namespace BILO {
 
 		virtual void move_mouse (MouseEvent* event);
 
+	private:
+
+		void generate_layout (const Size* size);
+
+		void generate_default_layout ();
 	};
 
 }

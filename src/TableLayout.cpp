@@ -114,16 +114,11 @@ namespace BILO {
 
 				if (property) {
 					generate_layout(static_cast<const Size*>(property));
-
 				} else {	// this is called when adding widget or layout
-
 					if(m_vector.size() > static_cast<unsigned int>(m_rows * m_columns))
 						throw std::out_of_range("Exceed the table size");
-
 					generate_default_layout();
-
 				}
-
 			}
 		}
 
@@ -214,10 +209,136 @@ namespace BILO {
 		}
 	}
 
-
 	void TableLayout::generate_layout(const Size* size)
 	{
+		std::vector<bool> expandable_columns(m_columns, false);
+		std::vector<bool> expandable_rows(m_rows, false);
+		std::vector<unsigned int> max_column_width(m_columns, 0);
+		std::vector<unsigned int> max_row_height(m_rows, 0);
 
+		unsigned int fixed_width = 0;	// the total fixed width of columns
+		unsigned int fixed_height = 0;	// the total fixed height of rows
+
+		Drawable* child = 0;
+
+		for (int i = 0; i < m_rows; i++) {
+			for (int j = 0; j < m_columns; j++) {
+				child = m_vector[i * m_columns + j];
+				if (child) {
+					if (child->hexpand()) {
+						expandable_columns[j] = true;
+					} else {
+						max_column_width[j] = std::max(max_column_width[j], child->size().width());
+					}
+
+					if (child->vexpand()) {
+						expandable_rows[i] = true;
+					} else {
+						max_row_height[i] = std::max(max_row_height[i], child->size().height());
+					}
+				}
+			}
+		}
+
+		int expandable_row_count = 0;
+		for(int i = 0; i < m_rows; i++)
+		{
+			if(!expandable_rows[i]) {
+				fixed_height += max_row_height[i];
+			} else {
+				expandable_row_count++;
+			}
+		}
+		int single_expandable_column = (size->height() - m_margin.top() - m_margin.bottom() - (m_rows - 1) * m_space) / expandable_row_count;
+
+		int expandable_column_count = 0;
+		for(int j = 0; j < m_columns; j++)
+		{
+			if(!expandable_columns[j]) {
+				fixed_width += max_column_width[j];
+			} else {
+				expandable_column_count++;
+			}
+		}
+
+		for (int i = 0; i < m_rows; i++) {
+			for (int j = 0; j < m_columns; j++) {
+				child = m_vector[i * m_columns + j];
+
+				if (child) {
+					if (!expandable_columns[j])
+						fixed_width += child->size().width();
+					if (!expandable_rows[i])
+						fixed_height += child->size().height();
+				}
+			}
+		}
+
+		int flexible_width = size->width() - m_margin.left() - m_margin.right() - (m_columns - 1) * m_space - fixed_width;
+
+
+		// ------
+
+		unsigned int total_width = 0;
+		unsigned int total_height = 0;
+
+		std::vector<unsigned int> row_height(m_rows, 0);
+		std::vector<unsigned int> column_width(m_columns, 0);
+
+		for(int i = 0; i < m_rows; i++)
+		{
+			for (int j = 0; j < m_columns; j++)
+			{
+				child = m_vector[i * m_columns + j];
+				if(child) {
+					column_width[j] = std::max(column_width[j], child->size().width());
+					row_height[i] = std::max(row_height[i], child->size().height());
+				}
+			}
+		}
+
+		for(int i = 0; i < m_rows; i++) total_height += row_height[i];
+		for(int j = 0; j < m_columns; j++) total_width += column_width[j];
+
+		total_width += m_margin.left() + m_margin.right() + m_space * (m_columns - 1);
+		total_height += m_margin.top() + m_margin.bottom() + m_space * (m_rows - 1);
+
+		int x = m_pos.x() + m_margin.left();
+		int y = m_pos.y() + total_height - m_margin.top();
+		for(int i = 0; i < m_rows; i++)
+		{
+			y = y - row_height[i];
+
+			for (int j = 0; j < m_columns; j++)
+			{
+				child = m_vector[i * m_columns + j];
+				if(!child) continue;
+
+				set_pos_priv(child, x, y);
+
+				if(child->vexpand()) {
+					resize_priv (child, child->size().width(), row_height[i]);
+				}
+				if (child->hexpand()) {
+					resize_priv (child, column_width[j], child->size().height());
+				}
+
+				if (m_alignment & AlignTop) {
+						set_pos_priv(child, child->pos().x(),
+						        child->pos().y() + row_height[i] - child->size().height());
+				} else if (m_alignment & AlignBottom) {
+						set_pos_priv(child, child->pos().x(),
+								child->pos().y());
+				} else if (m_alignment & AlignHorizontalCenter) {
+						set_pos_priv(child, child->pos().x(),
+								child->pos().y() + (row_height[i] - child->size().height()) / 2);
+				}
+				x = x + column_width[j] + m_space;
+			}
+
+			x = m_pos.x() + m_margin.left();
+			y = y - m_space;
+		}
 	}
 
 	void TableLayout::generate_default_layout ()
@@ -227,11 +348,8 @@ namespace BILO {
 
 		Drawable* child = 0;
 
-		std::vector<unsigned int> row_height(m_rows);
-		std::vector<unsigned int> column_width(m_columns);
-
-		std::fill(row_height.begin(), row_height.end(), 0);
-		std::fill(column_width.begin(), column_width.end(), 0);
+		std::vector<unsigned int> row_height(m_rows, 0);
+		std::vector<unsigned int> column_width(m_columns, 0);
 
 		for(int i = 0; i < m_rows; i++)
 		{

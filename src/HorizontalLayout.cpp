@@ -206,7 +206,8 @@ namespace BILO {
 		std::vector<Drawable*>::iterator it;
 		Drawable* child = 0;
 
-		int unchangeable_width = 0;
+		// first, classify objects in layout according to "hexpand" property
+		int fixed_width = 0;
 		unsigned int total_height = size->height();
 		unsigned int max_widget_height = total_height - m_margin.top() - m_margin.bottom();
 
@@ -217,36 +218,35 @@ namespace BILO {
 				expandable_objects.push(child);
 			} else {
 				unexpandable_objects.push(child);
-				unchangeable_width += child->size().width();
+				fixed_width += child->size().width();
 			}
 			total_height = std::max(total_height,
 			        m_margin.top() + child->size().height() + m_margin.bottom());
 			max_widget_height = std::max (max_widget_height, child->size().height());
 		}
 
-		int flexible_with = size->width() - m_margin.left() - m_margin.right() - (m_vector.size() - 1) * m_space - unchangeable_width;
-		int single_flexible_with = flexible_with / expandable_objects.size();
+		// average the width of each expandable object along horizontal
+		if(expandable_objects.size() > 0) {
+			int flexible_width = size->width() - m_margin.left() - m_margin.right() - (m_vector.size() - 1) * m_space - fixed_width;
+			int single_flexible_with = flexible_width / expandable_objects.size();
 
-		while(!expandable_objects.empty()) {
-			child = expandable_objects.front();
-			resize_priv (child, single_flexible_with, child->size().height());
-			expandable_objects.pop();
+			while(!expandable_objects.empty()) {
+				child = expandable_objects.front();
+				resize_priv (child, single_flexible_with, child->size().height());
+				expandable_objects.pop();
+			}
 		}
 
+		// then move each object to the right place
 		Point pos = m_pos;
 		pos.set_x(pos.x() + m_margin.left());
 		pos.set_y(pos.y() + m_margin.bottom());
-
-		std::cout << size->width() << " " << size->height() << std::endl;
-
 
 		for (it = m_vector.begin(); it != m_vector.end(); it++) {
 			child = *it;
 
 			// set position
 			set_pos_priv(child, pos);
-
-			std::cout << child->pos().x() << " " << child->pos().y() << std::endl;
 
 			// set height
 			if (child->vexpand()) {

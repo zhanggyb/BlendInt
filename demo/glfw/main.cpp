@@ -265,7 +265,7 @@ int main(int argc, char* argv[])
 	Button* button_in_table3 = new Button(L"Button3");
 	button_in_table3->set_font(Font("Droid Sans"));
 	button_in_table3->set_name("button3");
-	button_in_table3->resize(100, 40);
+	//button_in_table3->resize(100, 40);
 
 	Button* button_in_table4 = new Button(L"Button4");
 	button_in_table4->set_font(Font("Droid Sans"));
@@ -286,6 +286,31 @@ int main(int argc, char* argv[])
 	tablelayout->add_widget(button_in_table5, 2, 1);
 
 	app->bind(tablelayout);
+
+	VerticalLayout* verticallayout1 = new VerticalLayout;
+	verticallayout1->set_pos(500, 200);
+	verticallayout1->set_alignment(BILO::AlignVerticalCenter);
+	verticallayout1->set_margin(5, 5, 5, 5);
+	verticallayout1->set_space(5);
+
+	Label* label_in_vertical1 = new Label(L"Hello");
+	label_in_vertical1->set_font(Font("Droid Sans"));
+	//label_in_vertical1->set_pos(100, 100);
+	label_in_vertical1->set_expand(true);
+	//label1->set_hexpand(true);
+
+	Button* button_in_vertical1 = new Button(L"Sample Button");
+	button_in_vertical1->set_font(Font("Droid Sans"));
+	//button_in_vertical1->set_pos(200, 200);
+	//button_in_vertical1->resize(90, 40);
+	button_in_vertical1->set_expand(true);
+
+	verticallayout1->set_pos(400, 200);
+	verticallayout1->add_widget(label_in_vertical1);
+	verticallayout1->add_widget(button_in_vertical1);
+	verticallayout1->resize(100, 200);
+
+	app->bind(verticallayout1);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
