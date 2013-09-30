@@ -57,6 +57,18 @@ namespace BILO {
 
 		virtual void render ();
 
+		virtual void press_key (KeyEvent* event);
+
+		virtual void press_context_menu (ContextMenuEvent* event);
+
+		virtual void release_context_menu (ContextMenuEvent* event);
+
+		virtual void press_mouse (MouseEvent* event);
+
+		virtual void release_mouse (MouseEvent* event);
+
+		virtual void move_mouse (MouseEvent* event);
+
 	private:
 
 		void generate_layout (const Size* size);
