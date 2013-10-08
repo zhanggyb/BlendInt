@@ -64,21 +64,6 @@ namespace BILO {
 
 		bind (widget);
 
-#ifdef DEBUG
-
-		for(int i = 0; i < m_rows; i++)
-		{
-			for(int j = 0; j < m_columns; j++)
-			{
-				if(m_vector[i * m_columns + j]) {
-					std::cout << m_vector[i * m_columns + j]->name() << " ";
-				}
-			}
-			std::cout << std::endl;
-		}
-
-#endif
-
 		update(WidgetPropertySize, 0);
 	}
 
@@ -113,11 +98,16 @@ namespace BILO {
 			if (type == WidgetPropertySize) {
 
 				if (property) {
-					generate_layout(static_cast<const Size*>(property));
+
+					if (generate_layout(static_cast<const Size*>(property))) return true;
+					else return false;
+
 				} else {	// this is called when adding widget or layout
+
 					if(m_vector.size() > static_cast<unsigned int>(m_rows * m_columns))
 						throw std::out_of_range("Exceed the table size");
 					generate_default_layout();
+
 				}
 			}
 		}
@@ -209,102 +199,133 @@ namespace BILO {
 		}
 	}
 
-	void TableLayout::generate_layout(const Size* size)
+	bool TableLayout::generate_layout(const Size* size)
 	{
-		std::vector<bool> expandable_columns(m_columns, false);
-		std::vector<bool> expandable_rows(m_rows, false);
-		std::vector<unsigned int> max_column_width(m_columns, 0);
-		std::vector<unsigned int> max_row_height(m_rows, 0);
-
-		unsigned int fixed_width = 0;	// the total fixed width of columns
-		unsigned int fixed_height = 0;	// the total fixed height of rows
-
-		Drawable* child = 0;
-
-		for (int i = 0; i < m_rows; i++) {
-			for (int j = 0; j < m_columns; j++) {
-				child = m_vector[i * m_columns + j];
-				if (child) {
-					if (child->hexpand()) {
-						expandable_columns[j] = true;
-					} else {
-						max_column_width[j] = std::max(max_column_width[j], child->size().width());
-					}
-
-					if (child->vexpand()) {
-						expandable_rows[i] = true;
-					} else {
-						max_row_height[i] = std::max(max_row_height[i], child->size().height());
-					}
-				}
-			}
-		}
-
-		int expandable_row_count = 0;
-		for(int i = 0; i < m_rows; i++)
-		{
-			if(!expandable_rows[i]) {
-				fixed_height += max_row_height[i];
-			} else {
-				expandable_row_count++;
-			}
-		}
-		int single_expandable_column = (size->height() - m_margin.top() - m_margin.bottom() - (m_rows - 1) * m_space) / expandable_row_count;
-
-		int expandable_column_count = 0;
-		for(int j = 0; j < m_columns; j++)
-		{
-			if(!expandable_columns[j]) {
-				fixed_width += max_column_width[j];
-			} else {
-				expandable_column_count++;
-			}
-		}
-
-		for (int i = 0; i < m_rows; i++) {
-			for (int j = 0; j < m_columns; j++) {
-				child = m_vector[i * m_columns + j];
-
-				if (child) {
-					if (!expandable_columns[j])
-						fixed_width += child->size().width();
-					if (!expandable_rows[i])
-						fixed_height += child->size().height();
-				}
-			}
-		}
-
-		int flexible_width = size->width() - m_margin.left() - m_margin.right() - (m_columns - 1) * m_space - fixed_width;
-
-
-		// ------
+		if(size->width() < m_minimal_size.width() ||
+				size->height() < m_minimal_size.height())
+			return false;
 
 		unsigned int total_width = 0;
 		unsigned int total_height = 0;
 
-		std::vector<unsigned int> row_height(m_rows, 0);
-		std::vector<unsigned int> column_width(m_columns, 0);
+		Drawable* child = 0;
+
+		std::vector<int> row_height(m_rows, 0);
+		std::vector<int> column_width(m_columns, 0);
+
+		int w = 0;
+		int h = 0;
+
+		int column_num = 0;
+		int row_num = 0;
+
+		column_num = total_fixed_width(&w);
+		row_num = total_fixed_height(&h);
+
+		if(size->width() > w) {
+
+			for (int j = 0; j < m_columns; j++)
+			{
+				column_width[j] = fixed_column_width(j);
+				if(column_width[j] > 0)
+					total_width += column_width[j];
+			}
+
+			if(column_num < m_columns) {
+				int single_expandable_width = (size->width() - m_margin.left() - m_margin.right() - m_space * (m_columns - 1)- total_width) / (m_columns - column_num);
+
+				for (int j = 0; j < m_columns; j++)
+				{
+					if(column_width[j] < 0)
+						column_width[j] = single_expandable_width;
+				}
+			}
+
+		} else {
+
+			for (int j = 0; j < m_columns; j++)
+			{
+				column_width[j] = fixed_column_width(j);
+				if(column_width[j] < 0) {
+					column_width[j] = minimal_column_width(j);
+				}
+
+				total_width += column_width[j];
+			}
+
+			if(column_num > 0) {
+				int single_fixed_width_diff = m_size.width() - size->width() / column_num;
+
+				for (int j = 0; j < m_columns; j++)
+				{
+					if(!(fixed_column_width(j) < 0)) {
+						column_width[j] = column_width[j] - single_fixed_width_diff;
+					}
+				}
+			}
+
+		}
+
+		if(size->height() > h) {
+
+			for (int i = 0; i < m_rows; i++)
+			{
+				row_height[i] = fixed_row_height(i);
+				if(row_height[i] > 0)
+					total_height += row_height[i];
+			}
+
+			if(row_num < m_rows) {
+				int single_expandable_height = (size->height() - m_margin.top() - m_margin.bottom() - m_space * (m_rows - 1)- total_height) / (m_rows - row_num);
+
+				for (int i = 0; i < m_rows; i++)
+				{
+					if(row_height[i] < 0)
+						row_height[i] = single_expandable_height;
+				}
+			}
+
+		} else {
+
+			for (int i = 0; i < m_rows; i++)
+			{
+				row_height[i] = fixed_row_height(i);
+				if(row_height[i] < 0) {
+					row_height[i] = minimal_row_height(i);
+				}
+
+				total_height += row_height[i];
+			}
+
+			if(row_num > 0) {
+				int single_fixed_height_diff = m_size.height() - size->height() / row_num;
+
+				for (int i = 0; i < m_rows; i++)
+				{
+					if(!(fixed_row_height(i) < 0)) {
+						row_height[i] = row_height[i] - single_fixed_height_diff;
+					}
+				}
+			}
+
+		}
+
+#ifdef DEBUG
+		std::cout << "        ";
+		for(int j = 0; j < m_columns; j++)
+		{
+			std::cout << column_width[j] << " ";
+		}
+		std::cout << endl;
 
 		for(int i = 0; i < m_rows; i++)
 		{
-			for (int j = 0; j < m_columns; j++)
-			{
-				child = m_vector[i * m_columns + j];
-				if(child) {
-					column_width[j] = std::max(column_width[j], child->size().width());
-					row_height[i] = std::max(row_height[i], child->size().height());
-				}
-			}
+			std::cout << row_height[i] << std::endl;
 		}
-
-		for(int i = 0; i < m_rows; i++) total_height += row_height[i];
-		for(int j = 0; j < m_columns; j++) total_width += column_width[j];
-
-		total_width += m_margin.left() + m_margin.right() + m_space * (m_columns - 1);
-		total_height += m_margin.top() + m_margin.bottom() + m_space * (m_rows - 1);
+#endif
 
 		int x = m_pos.x() + m_margin.left();
-		int y = m_pos.y() + total_height - m_margin.top();
+		int y = m_pos.y() + size->height() - m_margin.top();
 		for(int i = 0; i < m_rows; i++)
 		{
 			y = y - row_height[i];
@@ -339,6 +360,8 @@ namespace BILO {
 			x = m_pos.x() + m_margin.left();
 			y = y - m_space;
 		}
+
+		return true;
 	}
 
 	void TableLayout::generate_default_layout ()
@@ -408,6 +431,140 @@ namespace BILO {
 
 		m_size.set_width(total_width);
 		m_size.set_height(total_height);
+	}
+
+	int TableLayout::fixed_column_width(int column)
+	{
+		int fixed_width = -1;	// the return value
+		Drawable* child = 0;
+
+		for (int i = 0; i < m_rows; i++)
+		{
+			child = m_vector[i * m_columns + column];
+			if(child) {
+				if(!child->hexpand()) {
+					fixed_width = std::max(fixed_width, static_cast<int>(child->size().width()));
+				}
+			}
+		}
+
+		return fixed_width;
+	}
+
+	int TableLayout::fixed_row_height(int row)
+	{
+		int fixed_height = -1;	// the return value
+		Drawable* child = 0;
+
+		for (int j = 0; j < m_columns; j++)
+		{
+			child = m_vector[row * m_columns + j];
+			if(child) {
+				if(!child->vexpand()) {
+					fixed_height = std::max(fixed_height, static_cast<int>(child->size().height()));
+				}
+			}
+		}
+
+		return fixed_height;
+	}
+
+	unsigned int TableLayout::minimal_column_width(int column)
+	{
+		unsigned int minimal_width = 0;	// the return value
+		Drawable* child = 0;
+
+		for (int j = 0; j < m_columns; j++)
+		{
+			child = m_vector[j * m_columns + column];
+			if(child) {
+				minimal_width = std::max(minimal_width, child->minimal_size().width());
+			}
+		}
+
+		return minimal_width;
+	}
+
+	unsigned int TableLayout::minimal_row_height(int row)
+	{
+		unsigned int minimal_height = 0;	// the return value
+		Drawable* child = 0;
+
+		for (int j = 0; j < m_columns; j++)
+		{
+			child = m_vector[row * m_columns + j];
+			if(child) {
+				minimal_height = std::max(minimal_height, child->minimal_size().height());
+			}
+		}
+
+		return minimal_height;
+
+	}
+
+	void TableLayout::debug_print()
+	{
+		int fixed_width = 0;
+		int fixed_height = 0;
+		int columns = 0;
+		int rows = 0;
+
+		columns = total_fixed_width(&fixed_width);
+
+		rows = total_fixed_height(&fixed_height);
+
+		std::cout << "total fixed width, columns: " << columns << " width: " << fixed_width << std::endl;
+		std::cout << "total fixed height, rows: " << rows << " height: " << fixed_height << std::endl;
+	}
+
+	int TableLayout::total_fixed_width(int* width)
+	{
+		int total = 0;
+		int columns_with_fixed_width = 0;
+		int column_width = 0;
+
+		for(int j = 0; j < m_columns; j++)
+		{
+			column_width = fixed_column_width(j);
+			if(column_width < 0) {
+				column_width = minimal_column_width(j);
+			} else {
+				columns_with_fixed_width++;
+			}
+
+			total += column_width;
+		}
+
+		total += m_margin.left() + m_margin.right() + m_space * (m_columns - 1);
+
+		*width = total;
+
+		return columns_with_fixed_width;
+	}
+
+	int TableLayout::total_fixed_height(int* height)
+	{
+		int total = 0;
+		int rows_with_fixed_height = 0;
+		int row_height = 0;
+
+		for(int i = 0; i < m_rows; i++)
+		{
+			row_height = fixed_row_height(i);
+			if(row_height < 0) {
+				row_height = minimal_row_height(i);
+			} else {
+				rows_with_fixed_height++;
+			}
+
+			total += row_height;
+		}
+
+		total += m_margin.top() + m_margin.bottom() + m_space * (m_rows - 1);
+
+		*height = total;
+
+		return rows_with_fixed_height;
 	}
 
 }

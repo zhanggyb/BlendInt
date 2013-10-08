@@ -169,6 +169,12 @@ namespace BILO {
 
 		void set_name (const std::string& name);
 
+		const Size& minimal_size () const {return m_minimal_size;}
+
+		void set_minimal_size (const Size& size);
+
+		void set_minimal_size (int width, int height);
+
 	protected:	// member functions
 
 		bool contain (const Coord2d& cursor);
@@ -208,12 +214,6 @@ namespace BILO {
 		void resize_priv (Drawable* obj, int width, int height);
 
 		void resize_priv (Drawable* obj, const Size& size);
-
-		const Size& minimal_size () const {return m_minimal_size;}
-
-		void set_minimal_size (const Size& size);
-
-		void set_minimal_size (int width, int height);
 
 	protected:
 		// member variables

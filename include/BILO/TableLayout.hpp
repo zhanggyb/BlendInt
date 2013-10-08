@@ -51,6 +51,8 @@ namespace BILO {
 
 		int columns () const {return m_columns;}
 
+		void debug_print ();
+
 	protected:
 
 		virtual bool update (int type, const void* property);
@@ -71,9 +73,41 @@ namespace BILO {
 
 	private:
 
-		void generate_layout (const Size* size);
+		bool generate_layout (const Size* size);
 
 		void generate_default_layout ();
+
+		/**
+		 * @brief calculate and return the fixed width of a column
+		 * @param column
+		 * @return -1 if all cells are horizontally expandable
+		 */
+		int fixed_column_width (int column);
+
+		/**
+		 * @brief calculate and return the fixed height of a row
+		 * @param row
+		 * @return -1 if all cells are vertically expandable
+		 */
+		int fixed_row_height (int row);
+
+		/**
+		 * @brief the total fixed width of this layout
+		 * @param[out] width the minimal total fixed width
+		 * @return how many columns have fixed width
+		 */
+		int total_fixed_width (int *width);
+
+		/**
+		 * @brief the total fixed height of this layout
+		 * @param[out] height the minimal total fixed height
+		 * @return how many columns have fixed width
+		 */
+		int total_fixed_height (int *height);
+
+		unsigned int minimal_column_width (int column);
+
+		unsigned int minimal_row_height (int row);
 
 		int m_rows;
 

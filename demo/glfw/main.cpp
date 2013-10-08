@@ -253,14 +253,19 @@ int main(int argc, char* argv[])
 	Button* button_in_table0 = new Button(L"Button0");
 	button_in_table0->set_font(Font("Droid Sans"));
 	button_in_table0->set_name("button0");
+	button_in_table0->set_hexpand(true);
+	button_in_table0->set_vexpand(true);
 
 	Button* button_in_table1 = new Button(L"Button1");
 	button_in_table1->set_font(Font("Droid Sans"));
 	button_in_table1->set_name("button1");
+	button_in_table1->set_vexpand(true);
 
 	Button* button_in_table2 = new Button(L"Button2");
 	button_in_table2->set_font(Font("Droid Sans"));
 	button_in_table2->set_name("button2");
+	button_in_table2->set_hexpand(true);
+	//button_in_table2->set_vexpand(true);
 
 	Button* button_in_table3 = new Button(L"Button3");
 	button_in_table3->set_font(Font("Droid Sans"));
@@ -270,6 +275,8 @@ int main(int argc, char* argv[])
 	Button* button_in_table4 = new Button(L"Button4");
 	button_in_table4->set_font(Font("Droid Sans"));
 	button_in_table4->set_name("button4");
+	button_in_table4->set_hexpand(true);
+	//button_in_table4->set_vexpand(true);
 
 	Button* button_in_table5 = new Button(L"Button5");
 	button_in_table5->set_font(Font("Droid Sans"));
@@ -284,6 +291,10 @@ int main(int argc, char* argv[])
 	tablelayout->add_widget(button_in_table3, 1, 1);
 	tablelayout->add_widget(button_in_table4, 2, 0);
 	tablelayout->add_widget(button_in_table5, 2, 1);
+
+	tablelayout->debug_print();
+
+	tablelayout->resize(200, 80);
 
 	app->bind(tablelayout);
 
