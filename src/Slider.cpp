@@ -61,6 +61,8 @@ namespace BILO {
 	:  Widget(), m_hover(false), m_pressed(false)
 	{
 		buffer().generate(1);
+		buffer().set_target(GL_ARRAY_BUFFER);
+		buffer().set_usage(GL_STATIC_DRAW);
 
 		set_padding (0, 0, 0, 0);
 		set_radius(7);
@@ -71,6 +73,8 @@ namespace BILO {
 	:  Widget(parent), m_hover(false), m_pressed(false)
 	{
 		buffer().generate(1);
+		buffer().set_target(GL_ARRAY_BUFFER);
+		buffer().set_usage(GL_STATIC_DRAW);
 
 		set_padding (0, 0, 0, 0);
 		set_radius(7);
@@ -96,8 +100,10 @@ namespace BILO {
 			vertexes[i][1] = circle_vertexes[i][1] * m_radius;
 		}
 
-		m_buffer.bind (GL_ARRAY_BUFFER);
-		m_buffer.upload (sizeof(vertexes), vertexes, GL_STATIC_DRAW);
+		m_buffer.set_vertices(20);
+		m_buffer.set_unit_size(sizeof(vertexes[0]));
+		m_buffer.bind ();
+		m_buffer.upload (vertexes);
 		m_buffer.unbind ();
 	}
 
@@ -162,7 +168,7 @@ namespace BILO {
 					 m_radius,
 					 0);
 
-		m_buffer.rebind();
+		m_buffer.bind();
 		glVertexPointer (2, GL_FLOAT, 0, 0);
 		glEnableClientState (GL_VERTEX_ARRAY);
 		glDrawArrays(GL_POLYGON, 0, 20);

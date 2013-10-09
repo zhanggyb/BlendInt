@@ -346,13 +346,15 @@ namespace BILO {
 		m_buffer.generate(2);
 
 		m_buffer.set_index(0);
-		m_buffer.bind(GL_ARRAY_BUFFER);
-		m_buffer.upload(sizeof(m_inner_v[0]) * total_num, m_inner_v, GL_STATIC_DRAW);
+		m_buffer.set_property(total_num, sizeof(m_inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.bind();
+		m_buffer.upload(m_inner_v);
 		m_buffer.unbind();
 
 		m_buffer.set_index(1);
-		m_buffer.bind(GL_ARRAY_BUFFER);
-		m_buffer.upload(sizeof(m_outer_v[0]) * total_num, m_outer_v, GL_STATIC_DRAW);
+		m_buffer.set_property(total_num, sizeof(m_outer_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.bind();
+		m_buffer.upload(m_outer_v);
 		m_buffer.unbind();
 
 		m_vertex_num = total_num;
@@ -392,16 +394,16 @@ namespace BILO {
 		        tm->themeUI()->wcol_regular.inner.a());
 
 		m_buffer.set_index(0);
-		m_buffer.rebind();
+
+		m_buffer.bind();
 		glVertexPointer(2, GL_FLOAT, 0, 0);
 		glEnableClientState(GL_VERTEX_ARRAY);
 
-		glDrawArrays(GL_POLYGON, 0, m_vertex_num);
+		glDrawArrays(GL_POLYGON, 0, m_buffer.vertices());
 
 		glDisableClientState(GL_VERTEX_ARRAY);
 
 		m_buffer.unbind();
-
 	}
 
 	void Widget::draw_outline ()

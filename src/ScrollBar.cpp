@@ -123,6 +123,7 @@ namespace BILO {
 
 		if (m_buffer.is_buffer(0)) {
 
+			m_buffer.set_index(0);
 			Theme* tm = Theme::instance();
 
 			glColor4ub(tm->themeUI()->wcol_scroll.item.r(),
@@ -131,7 +132,7 @@ namespace BILO {
 			        tm->themeUI()->wcol_scroll.item.a());
 			//glColor3f (1.0f, 0.2f, 0.9f);
 			//glBindBuffer (GL_ARRAY_BUFFER, m_buffer);
-			m_buffer.rebind();
+			m_buffer.bind();
 			glVertexPointer(2, GL_FLOAT, 0, 0);
 			glEnableClientState(GL_VERTEX_ARRAY);
 

@@ -27,7 +27,7 @@
 namespace BILO {
 
 	/**
-	 * @brief C++ warpper of OpenGL buffer
+	 * @brief A simple warpper of OpenGL buffer
 	 */
 	class GLBuffer
 	{
@@ -41,17 +41,49 @@ namespace BILO {
 
 		bool reset (size_t index);
 
+		void set_vertices (int vertices);
+
+		int vertices () const;
+
+		void set_vertices (size_t index, int vertices);
+
+		int vertices (size_t index) const;
+
+		void set_unit_size (int size);
+
+		int unit_size () const;
+
+		void set_unit_size (size_t index, int size);
+
+		int unit_size (size_t index) const;
+
+		void set_target (GLenum target);
+
+		GLenum target () const;
+
+		void set_target (size_t index, GLenum target);
+
+		GLenum target (size_t index) const;
+
+		void set_usage (GLenum usage);
+
+		GLenum usage () const;
+
+		void set_usage (size_t index, GLenum usage);
+
+		GLenum usage (size_t index) const;
+
+		void set_property (int vertices, int unit_size, GLenum target, GLenum usage);
+
+		void set_property (size_t index, int vertices, int unit_size, GLenum target, GLenum usage);
+
 		/**
 		 * @brief bind current buffer
 		 * @return
 		 */
-		void bind (GLenum target);
+		void bind ();
 
-		bool bind (size_t index, GLenum target);
-
-		void rebind ();
-
-		void rebind (size_t index);
+		bool bind (size_t index);
 
 		/**
 		 * @brief unbind the buffer id in current index
@@ -74,11 +106,6 @@ namespace BILO {
 
 		bool is_buffer (size_t index);
 
-		const GLuint& operator [] (size_t index) const
-		{
-			return m_buffers[index];
-		}
-
 		/**
 		 * @brief creates and initializes a buffer object's data store
 		 * @param target
@@ -86,17 +113,55 @@ namespace BILO {
 		 * @param data
 		 * @param usage
 		 */
-		void upload (GLsizeiptr size, const GLvoid* data, GLenum usage);
+		void upload (const GLvoid* data);
 
-		void upload (size_t index, GLsizeiptr size, const GLvoid* data, GLenum usage);
+		void upload (size_t index, const GLvoid* data);
 
 		void destroy ();
 
-		bool destroy (size_t index);
+		void destroy (size_t index);
 
 		void clear ();
 
+#ifdef DEBUG
+
+		void print (size_t index);
+
+#endif
+
 	private:
+
+		struct Property
+		{
+			Property ()
+			: id(0), vertices(0), unit_size(0), target(0), usage(0)
+			{}
+
+			/**
+			 * Buffer ID
+			 */
+			GLuint id;
+
+			/**
+			 * Vertex number
+			 */
+			int vertices;
+
+			/**
+			 * size of one unit vertex
+			 */
+			int unit_size;
+
+			/**
+			 * Buffer target to bind
+			 */
+			GLenum target;
+
+			/**
+			 * Usage:
+			 */
+			GLenum usage;
+		};
 
 		/**
 		 * @buffer index
@@ -105,13 +170,7 @@ namespace BILO {
 		 */
 		int m_index;
 
-		std::vector<GLuint> m_buffers;
-
-		std::vector<int> m_buffer_sizes;
-
-		std::vector<GLenum> m_buffer_targets;
-
-		std::vector<GLenum> m_buffer_usages;
+		std::vector<Property> m_buffers;
 	};
 }
 

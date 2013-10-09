@@ -20,6 +20,8 @@
  */
 #include <GL/glew.h>
 
+#include <iostream>
+
 #include <BILO/GLBuffer.hpp>
 
 namespace BILO {
@@ -38,13 +40,18 @@ namespace BILO {
 	{
 		clear ();
 
+		GLuint* buffer = new GLuint[size];
+		glGenBuffers (size, buffer);
+
 		m_buffers.resize(size);
-		glGenBuffers (size, &m_buffers[0]);
+
+		for(size_t i = 0; i < size; i++)
+		{
+			m_buffers[i].id = *(buffer + i);
+		}
 		m_index = 0;
 
-		m_buffer_sizes.resize(size, 0);
-		m_buffer_targets.resize(size, 0);
-		m_buffer_usages.resize(size, 0);
+		delete [] buffer;
 
 		return;
 	}
@@ -54,57 +61,134 @@ namespace BILO {
 		if(m_buffers.empty()) return false;
 		if (index > (m_buffers.size() - 1)) return false;
 
-		glDeleteBuffers(1, &m_buffers[index]);
-		glGenBuffers(1, &m_buffers[index]);
+		glDeleteBuffers(1, &(m_buffers[index].id));
+		glGenBuffers(1, &(m_buffers[index].id));
 
-		m_buffer_sizes[index] = 0;
-		m_buffer_targets[index] = 0;
-		m_buffer_usages[index] = 0;
+		m_buffers[index].vertices = 0;
+		m_buffers[index].unit_size = 0;
+		m_buffers[index].target = 0;
+		m_buffers[index].usage = 0;
 
 		return true;
 	}
 
-	void GLBuffer::bind (GLenum target)
+	void GLBuffer::set_vertices (int vertices)
+	{
+		m_buffers[m_index].vertices = vertices;
+	}
+
+	int GLBuffer::vertices () const
+	{
+		return m_buffers[m_index].vertices;
+	}
+
+	void GLBuffer::set_vertices (size_t index, int vertices)
+	{
+		m_buffers[index].vertices = vertices;
+	}
+
+	int GLBuffer::vertices (size_t index) const
+	{
+		return m_buffers[index].vertices;
+	}
+
+	void GLBuffer::set_unit_size (int size)
+	{
+		m_buffers[m_index].unit_size = size;
+	}
+
+	int GLBuffer::unit_size () const
+	{
+		return m_buffers[m_index].unit_size;
+	}
+
+	void GLBuffer::set_unit_size (size_t index, int size)
+	{
+		m_buffers[index].unit_size = size;
+	}
+
+	int GLBuffer::unit_size (size_t index) const
+	{
+		return m_buffers[index].unit_size;
+	}
+
+	void GLBuffer::set_target (GLenum target)
+	{
+		m_buffers[m_index].target = target;
+	}
+
+	GLenum GLBuffer::target () const
+	{
+		return m_buffers[m_index].target;
+	}
+
+	void GLBuffer::set_target (size_t index, GLenum target)
+	{
+		m_buffers[index].target = target;
+	}
+
+	GLenum GLBuffer::target (size_t index) const
+	{
+		return m_buffers[index].target;
+	}
+
+	void GLBuffer::set_usage (GLenum usage)
+	{
+		m_buffers[m_index].usage = usage;
+	}
+
+	GLenum GLBuffer::usage () const
+	{
+		return m_buffers[m_index].usage;
+	}
+
+	void GLBuffer::set_usage (size_t index, GLenum usage)
+	{
+		m_buffers[index].usage = usage;
+	}
+
+	GLenum GLBuffer::usage (size_t index) const
+	{
+		return m_buffers[index].usage;
+	}
+
+	void GLBuffer::set_property (int vertices, int unit_size, GLenum target, GLenum usage)
+	{
+		m_buffers[m_index].vertices = vertices;
+		m_buffers[m_index].unit_size = unit_size;
+		m_buffers[m_index].target = target;
+		m_buffers[m_index].usage = usage;
+	}
+
+	void GLBuffer::set_property (size_t index, int vertices, int unit_size, GLenum target, GLenum usage)
+	{
+		m_buffers[index].vertices = vertices;
+		m_buffers[index].unit_size = unit_size;
+		m_buffers[index].target = target;
+		m_buffers[index].usage = usage;
+	}
+
+	void GLBuffer::bind ()
 	{
 		if(m_buffers.empty()) return;
 
-		glBindBuffer (target, m_buffers[m_index]);
-
-		m_buffer_targets[m_index] = target;
+		glBindBuffer (m_buffers[m_index].target, m_buffers[m_index].id);
 	}
 
-	bool GLBuffer::bind (size_t index, GLenum target)
+	bool GLBuffer::bind (size_t index)
 	{
 		if(m_buffers.empty()) return false;
 
 		if(index > (m_buffers.size() - 1)) return false;
 
-		glBindBuffer (target, m_buffers[index]);
-
-		m_buffer_targets[index] = target;
+		glBindBuffer (m_buffers[index].target, m_buffers[index].id);
 
 		return true;
 	}
 
-	void GLBuffer::rebind ()
-	{
-		if(m_buffers.empty()) return;
-
-		glBindBuffer (m_buffer_targets[m_index], m_buffers[m_index]);
-	}
-
-	void GLBuffer::rebind (size_t index)
-	{
-		if(m_buffers.empty()) return;
-
-		if(index > (m_buffers.size() - 1)) return;
-
-		glBindBuffer (m_buffer_targets[index], m_buffers[index]);
-	}
-
 	void GLBuffer::unbind ()
 	{
-		glBindBuffer(m_buffer_targets[m_index], 0);
+		glBindBuffer(m_buffers[m_index].target, 0);
 	}
 
 	void GLBuffer::unbind (size_t index)
@@ -113,7 +197,7 @@ namespace BILO {
 
 		if(index > (m_buffers.size() - 1)) return;
 
-		glBindBuffer (m_buffer_targets[index], 0);
+		glBindBuffer (m_buffers[index].target, 0);
 	}
 
 	void GLBuffer::set_index (size_t index)
@@ -130,7 +214,7 @@ namespace BILO {
 	{
 		if(m_buffers.empty()) return false;
 
-		if(glIsBuffer (m_buffers[m_index])) {
+		if(glIsBuffer (m_buffers[m_index].id)) {
 			return true;
 		}
 
@@ -143,75 +227,81 @@ namespace BILO {
 
 		if (index > (m_buffers.size() - 1)) return false;
 
-		if(glIsBuffer (m_buffers[index])) {
+		if(glIsBuffer (m_buffers[index].id)) {
 			return true;
 		}
 
 		return false;
 	}
 
-	void GLBuffer::upload (GLsizeiptr size, const GLvoid* data,
-        GLenum usage)
+	void GLBuffer::upload (const GLvoid* data)
 	{
-		glBufferData (m_buffer_targets[m_index], size, data, usage);
-		m_buffer_sizes[m_index] = size;
-		m_buffer_usages[m_index] = usage;
+		glBufferData (m_buffers[m_index].target,
+				m_buffers[m_index].unit_size * m_buffers[m_index].vertices,
+				data,
+				m_buffers[m_index].usage);
 	}
 
-	void GLBuffer::upload (size_t index, GLsizeiptr size, const GLvoid* data,
-        GLenum usage)
+	void GLBuffer::upload (size_t index, const GLvoid* data)
 	{
-		if(m_buffers.empty()) return;
-
-		if (index > (m_buffers.size() - 1)) return;
-
-		glBufferData (m_buffer_targets[index], size, data, usage);
-		m_buffer_sizes[index] = size;
-		m_buffer_usages[index] = usage;
+		glBufferData (m_buffers[index].target,
+				m_buffers[index].unit_size * m_buffers[index].vertices,
+				data,
+				m_buffers[index].usage);
 	}
 
 	void GLBuffer::destroy ()
 	{
 		if(m_buffers.empty()) return;
 
-		glDeleteBuffers(1, &m_buffers[m_index]);
-		m_buffers[m_index] = 0;
-
-		m_buffer_sizes[m_index] = 0;
-		m_buffer_targets[m_index] = 0;
-		m_buffer_usages[m_index] = 0;
+		glDeleteBuffers(1, &(m_buffers[m_index].id));
+		m_buffers[m_index].id = 0;
+		m_buffers[m_index].vertices = 0;
+		m_buffers[m_index].unit_size = 0;
+		m_buffers[m_index].target = 0;
+		m_buffers[m_index].usage = 0;
 	}
 
-	bool GLBuffer::destroy (size_t index)
+	void GLBuffer::destroy (size_t index)
 	{
-		if(m_buffers.empty()) return false;
-
-		if(index > (m_buffers.size() - 1)) return false;
-
-		glDeleteBuffers(1, &m_buffers[index]);
-		m_buffers[index] = 0;
-
-		m_buffer_sizes[index] = 0;
-		m_buffer_targets[index] = 0;
-		m_buffer_usages[index] = 0;
-
-		return true;
+		glDeleteBuffers(1, &(m_buffers[index].id));
+		m_buffers[index].id = 0;
+		m_buffers[index].vertices = 0;
+		m_buffers[index].unit_size = 0;
+		m_buffers[index].target = 0;
+		m_buffers[index].usage = 0;
 	}
 
 	void GLBuffer::clear ()
 	{
 		if(m_buffers.empty()) return;
 
-		std::vector<GLuint>::iterator it;
-		for(it = m_buffers.begin(); it != m_buffers.end(); it++)
+		GLuint* buffer = new GLuint[m_buffers.size()];
+
+		for(size_t i = 0; i < m_buffers.size(); i++)
 		{
-			glDeleteBuffers (m_buffers.size(), &m_buffers[0]);
+			*(buffer + i) = m_buffers[i].id;
 		}
+		glDeleteBuffers (m_buffers.size(), buffer);
+
+		delete [] buffer;
 
 		m_buffers.clear();
-		m_buffer_sizes.clear();
-		m_buffer_targets.clear();
-		m_buffer_usages.clear();
 	}
+
+#ifdef DEBUG
+
+	void GLBuffer::print (size_t index)
+	{
+		std::cout << "buffer data: "
+				<< "id: " << m_buffers[index].id << " "
+				<< "vertices: " << m_buffers[index].vertices << " "
+				<< "unit size: " << m_buffers[index].unit_size << " "
+				<< "target: " << m_buffers[index].target << " "
+				<< "usage: " << m_buffers[index].usage << " "
+				<< std::endl;
+	}
+
+#endif
 
 }

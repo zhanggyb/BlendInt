@@ -68,6 +68,8 @@ namespace BILO {
 
 		if (m_buffer.is_buffer(0)) {
 
+			m_buffer.set_index(0);
+
 			Theme* tm = Theme::instance();
 
 			if (m_status_down) {
@@ -90,7 +92,7 @@ namespace BILO {
 				}
 			}
 
-			m_buffer.rebind();
+			m_buffer.bind();
 			glVertexPointer(2, GL_FLOAT, 0, 0);
 			glEnableClientState(GL_VERTEX_ARRAY);
 

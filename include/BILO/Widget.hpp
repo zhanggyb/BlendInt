@@ -106,7 +106,6 @@ namespace BILO {
 		/**
 		 * vertexes for drawing shape
 		 */
-		//float m_vertexes[36][2];
 
 		float m_outer_v[WIDGET_SIZE_MAX][2];
 		float m_inner_v[WIDGET_SIZE_MAX][2];
