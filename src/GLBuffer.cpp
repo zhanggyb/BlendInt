@@ -41,6 +41,11 @@ namespace BILO {
 		m_buffers.resize(size);
 		glGenBuffers (size, &m_buffers[0]);
 		m_index = 0;
+
+		m_buffer_sizes.resize(size, 0);
+		m_buffer_targets.resize(size, 0);
+		m_buffer_usages.resize(size, 0);
+
 		return;
 	}
 
@@ -52,6 +57,10 @@ namespace BILO {
 		glDeleteBuffers(1, &m_buffers[index]);
 		glGenBuffers(1, &m_buffers[index]);
 
+		m_buffer_sizes[index] = 0;
+		m_buffer_targets[index] = 0;
+		m_buffer_usages[index] = 0;
+
 		return true;
 	}
 
@@ -60,6 +69,8 @@ namespace BILO {
 		if(m_buffers.empty()) return;
 
 		glBindBuffer (target, m_buffers[m_index]);
+
+		m_buffer_targets[m_index] = target;
 	}
 
 	bool GLBuffer::bind (size_t index, GLenum target)
@@ -70,12 +81,39 @@ namespace BILO {
 
 		glBindBuffer (target, m_buffers[index]);
 
+		m_buffer_targets[index] = target;
+
 		return true;
 	}
 
-	void GLBuffer::unbind (GLenum target)
+	void GLBuffer::rebind ()
 	{
-		glBindBuffer(target, 0);
+		if(m_buffers.empty()) return;
+
+		glBindBuffer (m_buffer_targets[m_index], m_buffers[m_index]);
+	}
+
+	void GLBuffer::rebind (size_t index)
+	{
+		if(m_buffers.empty()) return;
+
+		if(index > (m_buffers.size() - 1)) return;
+
+		glBindBuffer (m_buffer_targets[index], m_buffers[index]);
+	}
+
+	void GLBuffer::unbind ()
+	{
+		glBindBuffer(m_buffer_targets[m_index], 0);
+	}
+
+	void GLBuffer::unbind (size_t index)
+	{
+		if(m_buffers.empty()) return;
+
+		if(index > (m_buffers.size() - 1)) return;
+
+		glBindBuffer (m_buffer_targets[index], 0);
 	}
 
 	void GLBuffer::set_index (size_t index)
@@ -86,6 +124,17 @@ namespace BILO {
 			return;
 
 		m_index = index;
+	}
+
+	bool GLBuffer::is_buffer ()
+	{
+		if(m_buffers.empty()) return false;
+
+		if(glIsBuffer (m_buffers[m_index])) {
+			return true;
+		}
+
+		return false;
 	}
 
 	bool GLBuffer::is_buffer (size_t index)
@@ -101,10 +150,24 @@ namespace BILO {
 		return false;
 	}
 
-	void GLBuffer::upload (GLenum target, GLsizeiptr size, const GLvoid* data,
+	void GLBuffer::upload (GLsizeiptr size, const GLvoid* data,
         GLenum usage)
 	{
-		glBufferData (target, size, data, usage);
+		glBufferData (m_buffer_targets[m_index], size, data, usage);
+		m_buffer_sizes[m_index] = size;
+		m_buffer_usages[m_index] = usage;
+	}
+
+	void GLBuffer::upload (size_t index, GLsizeiptr size, const GLvoid* data,
+        GLenum usage)
+	{
+		if(m_buffers.empty()) return;
+
+		if (index > (m_buffers.size() - 1)) return;
+
+		glBufferData (m_buffer_targets[index], size, data, usage);
+		m_buffer_sizes[index] = size;
+		m_buffer_usages[index] = usage;
 	}
 
 	void GLBuffer::destroy ()
@@ -113,6 +176,10 @@ namespace BILO {
 
 		glDeleteBuffers(1, &m_buffers[m_index]);
 		m_buffers[m_index] = 0;
+
+		m_buffer_sizes[m_index] = 0;
+		m_buffer_targets[m_index] = 0;
+		m_buffer_usages[m_index] = 0;
 	}
 
 	bool GLBuffer::destroy (size_t index)
@@ -123,6 +190,10 @@ namespace BILO {
 
 		glDeleteBuffers(1, &m_buffers[index]);
 		m_buffers[index] = 0;
+
+		m_buffer_sizes[index] = 0;
+		m_buffer_targets[index] = 0;
+		m_buffer_usages[index] = 0;
 
 		return true;
 	}
@@ -138,6 +209,9 @@ namespace BILO {
 		}
 
 		m_buffers.clear();
+		m_buffer_sizes.clear();
+		m_buffer_targets.clear();
+		m_buffer_usages.clear();
 	}
 
 }

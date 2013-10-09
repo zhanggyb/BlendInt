@@ -33,6 +33,12 @@
 
 #include <Cpp/Events.hpp>
 
+#define WIDGET_AA_JITTER 8
+
+/* max as used by round_box__edges */
+#define WIDGET_CURVE_RESOLU 9
+#define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
+
 namespace BILO {
 
 	class Widget: public Drawable
@@ -89,18 +95,21 @@ namespace BILO {
 
 		void update_shape (const Size* size);
 
-		/**
-		 * @brief draw a round box when render
-		 */
-		void draw_roundbox (int mode);
+		void draw_inner ();
 
-		void draw_box (int mode, float minx, float miny, float maxx, float maxy);
+		void draw_outline ();
+
+		int m_vertex_num;
+
+		int m_halfwayvert;
 
 		/**
 		 * vertexes for drawing shape
 		 */
 		//float m_vertexes[36][2];
 
+		float m_outer_v[WIDGET_SIZE_MAX][2];
+		float m_inner_v[WIDGET_SIZE_MAX][2];
 	};
 
 } /* namespace BILO */

@@ -85,7 +85,7 @@ namespace BILO {
 
 			glDisableClientState(GL_VERTEX_ARRAY);
 
-			m_buffer.unbind(GL_ARRAY_BUFFER);
+			m_buffer.unbind();
 		}
 
 		if(!m_layout) {

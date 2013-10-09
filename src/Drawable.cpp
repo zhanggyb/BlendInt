@@ -38,7 +38,7 @@ namespace BILO {
 
 	Drawable::Drawable ()
 		: m_z(0),
-		  m_roundcorner (RoundCornerNone), m_corner_radius(0.0), m_visible(true),
+		  m_roundcorner (RoundCornerNone), m_corner_radius(4.0), m_visible(true),
 		  m_hexpand(false), m_vexpand(false)
 #ifdef DEBUG
 		  ,m_id(0)
@@ -65,7 +65,7 @@ namespace BILO {
 
 	Drawable::Drawable (Drawable* parent)
 		: m_z(0),
-		  m_roundcorner (RoundCornerNone), m_corner_radius(0.0), m_visible(true),
+		  m_roundcorner (RoundCornerNone), m_corner_radius(4.0), m_visible(true),
 		  m_hexpand(false), m_vexpand(false)
 #ifdef DEBUG
 		  , m_id(0)

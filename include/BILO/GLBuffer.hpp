@@ -49,7 +49,16 @@ namespace BILO {
 
 		bool bind (size_t index, GLenum target);
 
-		void unbind (GLenum target);
+		void rebind ();
+
+		void rebind (size_t index);
+
+		/**
+		 * @brief unbind the buffer id in current index
+		 */
+		void unbind ();
+
+		void unbind (size_t index);
 
 		void set_index (size_t index);
 
@@ -58,6 +67,10 @@ namespace BILO {
 		 * @return
 		 */
 		const size_t index () const {return m_index;}
+
+		size_t size () const {return m_buffers.size();}
+
+		bool is_buffer ();
 
 		bool is_buffer (size_t index);
 
@@ -73,7 +86,9 @@ namespace BILO {
 		 * @param data
 		 * @param usage
 		 */
-		void upload (GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage);
+		void upload (GLsizeiptr size, const GLvoid* data, GLenum usage);
+
+		void upload (size_t index, GLsizeiptr size, const GLvoid* data, GLenum usage);
 
 		void destroy ();
 
@@ -91,6 +106,12 @@ namespace BILO {
 		int m_index;
 
 		std::vector<GLuint> m_buffers;
+
+		std::vector<int> m_buffer_sizes;
+
+		std::vector<GLenum> m_buffer_targets;
+
+		std::vector<GLenum> m_buffer_usages;
 	};
 }
 

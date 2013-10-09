@@ -90,7 +90,7 @@ namespace BILO {
 				}
 			}
 
-			m_buffer.bind(GL_ARRAY_BUFFER);
+			m_buffer.rebind();
 			glVertexPointer(2, GL_FLOAT, 0, 0);
 			glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -105,7 +105,7 @@ namespace BILO {
 
 			glDisableClientState(GL_VERTEX_ARRAY);
 
-			m_buffer.unbind(GL_ARRAY_BUFFER);
+			m_buffer.unbind();
 		}
 
 		FontCache::create(m_font)->print(

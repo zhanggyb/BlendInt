@@ -85,6 +85,14 @@ int main(int argc, char* argv[])
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
+	Widget* widget = new Widget;
+	widget->set_pos(200, 200);
+	widget->set_corner_radius(10.0);
+	widget->set_roundcorner(RoundCornerAll);
+	widget->resize(400, 400);
+
+	app->bind(widget);
+
 	/*
 	Widget* widget = new Widget;
 
@@ -248,6 +256,7 @@ int main(int argc, char* argv[])
 //
 //	app->bind(layout1);
 
+	/*
 	TableLayout* tablelayout = new TableLayout(3, 2);
 
 	Button* button_in_table0 = new Button(L"Button0");
@@ -322,6 +331,8 @@ int main(int argc, char* argv[])
 	verticallayout1->resize(100, 200);
 
 	app->bind(verticallayout1);
+
+*/
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

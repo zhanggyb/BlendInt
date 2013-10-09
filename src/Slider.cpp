@@ -97,8 +97,8 @@ namespace BILO {
 		}
 
 		m_buffer.bind (GL_ARRAY_BUFFER);
-		m_buffer.upload (GL_ARRAY_BUFFER, sizeof(vertexes), vertexes, GL_STATIC_DRAW);
-		m_buffer.unbind (GL_ARRAY_BUFFER);
+		m_buffer.upload (sizeof(vertexes), vertexes, GL_STATIC_DRAW);
+		m_buffer.unbind ();
 	}
 
 	bool SliderControl::update (int type, const void* property)
@@ -162,7 +162,7 @@ namespace BILO {
 					 m_radius,
 					 0);
 
-		m_buffer.bind(GL_ARRAY_BUFFER);
+		m_buffer.rebind();
 		glVertexPointer (2, GL_FLOAT, 0, 0);
 		glEnableClientState (GL_VERTEX_ARRAY);
 		glDrawArrays(GL_POLYGON, 0, 20);
@@ -176,7 +176,7 @@ namespace BILO {
 
 		glDisableClientState (GL_VERTEX_ARRAY);
 
-		m_buffer.unbind(GL_ARRAY_BUFFER);
+		m_buffer.unbind();
 
 		glDisable(GL_BLEND);
 
