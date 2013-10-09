@@ -175,37 +175,6 @@ namespace BILO {
 
 		draw_outline();
 
-		/*
-		if (m_buffer.is_buffer(0)) {
-
-
-			Theme* tm = Theme::instance();
-
-			glColor4ub(tm->themeUI()->wcol_regular.inner.r(),
-			        tm->themeUI()->wcol_regular.inner.g(),
-			        tm->themeUI()->wcol_regular.inner.b(),
-			        tm->themeUI()->wcol_regular.inner.a() * 0.5f);
-
-			m_buffer.rebind();
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glEnableClientState(GL_VERTEX_ARRAY);
-
-			glDrawArrays(GL_POLYGON, 0, 4);
-
-			glColor4ub(tm->themeUI()->wcol_regular.outline.r(),
-			        tm->themeUI()->wcol_regular.outline.g(),
-			        tm->themeUI()->wcol_regular.outline.b(),
-			        tm->themeUI()->wcol_regular.outline.a());
-
-			glDrawArrays(GL_LINE_LOOP, 0, 4);
-
-			glDisableClientState(GL_VERTEX_ARRAY);
-
-			m_buffer.unbind();
-
-		}
-		 */
-
 		glDisable(GL_BLEND);
 
 		glPopMatrix();
@@ -341,8 +310,6 @@ namespace BILO {
 
 		assert(total_num <= WIDGET_SIZE_MAX);
 
-		//wt->totvert = total_num;
-
 		m_buffer.generate(2);
 
 		m_buffer.set_index(0);
@@ -360,27 +327,21 @@ namespace BILO {
 		m_vertex_num = total_num;
 		m_halfwayvert = halfwayvert;
 
-		std::cout << "vertex number: " << m_vertex_num << std::endl;
+		// the quad strip for outline
 
-		// ----
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+		//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 
-		/*
-		float vertexes[4][2];
-		vertexes[0][0] = 0;
-		vertexes[0][1] = 0;
-		vertexes[1][0] = size->width();
-		vertexes[1][1] = 0;
-		vertexes[2][0] = size->width();
-		vertexes[2][1] = size->height();
-		vertexes[3][0] = 0;
-		vertexes[3][1] = size->height();
+		widget_verts_to_quad_strip(m_inner_v, m_outer_v, m_vertex_num, quad_strip);
 
-		m_buffer.generate (1);
+		m_buffer.append();
+		m_buffer.set_index(2);
+		m_buffer.set_property(total_num * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
-		m_buffer.bind (GL_ARRAY_BUFFER);
-		m_buffer.upload (sizeof(vertexes[0]) * 4, vertexes, GL_STATIC_DRAW);
-		m_buffer.unbind ();
-		*/
+		m_buffer.bind();
+		m_buffer.upload(quad_strip);
+		m_buffer.unbind();
+
 	}
 
 	void Widget::draw_inner ()
@@ -408,44 +369,30 @@ namespace BILO {
 
 	void Widget::draw_outline ()
 	{
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-		float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 		Theme* tm = Theme::instance();
 
-		const unsigned char tcol[4] = {tm->themeUI()->wcol_regular.outline.r(),
-				tm->themeUI()->wcol_regular.outline.g(),
-				tm->themeUI()->wcol_regular.outline.b(),
-				tm->themeUI()->wcol_regular.outline.a() / WIDGET_AA_JITTER};
+		unsigned char tcol[4] = { tm->themeUI()->wcol_regular.outline.r(),
+		        tm->themeUI()->wcol_regular.outline.g(),
+		        tm->themeUI()->wcol_regular.outline.b(),
+		        tm->themeUI()->wcol_regular.outline.a()};
 
-		widget_verts_to_quad_strip(m_inner_v, m_outer_v, m_vertex_num, quad_strip);
+		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 
-//		if (wtb->emboss) {
-//			widget_verts_to_quad_strip_open(wtb, wtb->halfwayvert, quad_strip_emboss);
-//		}
+		m_buffer.set_index(2);
+		m_buffer.bind();
 
+		/* outline */
 		glEnableClientState(GL_VERTEX_ARRAY);
-
+		glColor4ubv(tcol);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-
-			/* outline */
-			glColor4ubv(tcol);
-
-			glVertexPointer(2, GL_FLOAT, 0, quad_strip);
-			glDrawArrays(GL_QUAD_STRIP, 0, m_vertex_num * 2 + 2);
-
-			/* emboss bottom shadow */
-//			if (wtb->emboss) {
-//				glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-//
-//				glVertexPointer(2, GL_FLOAT, 0, quad_strip_emboss);
-//				glDrawArrays(GL_QUAD_STRIP, 0, wtb->halfwayvert * 2);
-//			}
-
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
-
 		glDisableClientState(GL_VERTEX_ARRAY);
+
+		m_buffer.unbind();
 	}
 
 } /* namespace BILO */

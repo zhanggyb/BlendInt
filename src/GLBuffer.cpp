@@ -52,8 +52,22 @@ namespace BILO {
 		m_index = 0;
 
 		delete [] buffer;
+	}
 
-		return;
+	void GLBuffer::append (size_t size)
+	{
+		GLuint* buffer = new GLuint[size];
+		glGenBuffers (size, buffer);
+
+		Property buf_data;
+
+		for(size_t i = 0; i < size; i++)
+		{
+			buf_data.id = *(buffer + i);
+			m_buffers.push_back(buf_data);
+		}
+
+		delete [] buffer;
 	}
 
 	bool GLBuffer::reset (size_t index)
