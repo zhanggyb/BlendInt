@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_STRING_HPP_
-#define _BIL_STRING_HPP_
+#ifndef _BILO_STRING_HPP_
+#define _BILO_STRING_HPP_
 
 #include <string>
 #include <cwchar>

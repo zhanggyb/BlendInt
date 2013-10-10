@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BILO_COLOR_H_
-#define _BILO_COLOR_H_
+#ifndef _BILO_COLOR_HPP_
+#define _BILO_COLOR_HPP_
 
 #include <stdint.h>
 

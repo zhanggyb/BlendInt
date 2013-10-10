@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BILO_ABSTRACTBUTTON_H_
-#define _BILO_ABSTRACTBUTTON_H_
+#ifndef _BILO_ABSTRACTBUTTON_HPP_
+#define _BILO_ABSTRACTBUTTON_HPP_
 
 #include <string>
 
