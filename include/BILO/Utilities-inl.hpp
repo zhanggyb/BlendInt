@@ -53,7 +53,7 @@ namespace BILO {
 	 * @brief Copy elements in arrary from src to dist
 	 */
 	template <typename T>
-	inline void copy_arrary_v2 (T src[2], T dist[2])
+	inline void copy_arrary_v2 (const T src[2], T dist[2])
 	{
 		dist[0] = src[0];
 		dist[1] = src[1];

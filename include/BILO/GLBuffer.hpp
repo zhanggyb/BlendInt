@@ -26,6 +26,8 @@
 
 #include <vector>
 
+#define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
+
 namespace BILO {
 
 	/**
@@ -39,6 +41,10 @@ namespace BILO {
 
 		~GLBuffer ();
 
+		/**
+		 * @brief clear current buffers and generate new ones
+		 * @param size
+		 */
 		void generate (size_t size = 1);
 
 		/**

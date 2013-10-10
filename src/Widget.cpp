@@ -201,13 +201,40 @@ namespace BILO {
 
 	void Widget::update_shape(const Size* size)
 	{
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+
+		int total_num = round_box_edges(size, inner_v, outer_v);
+
+		m_buffer.generate(2);
+
+		m_buffer.set_index(0);
+		m_buffer.set_property(total_num, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.bind();
+		m_buffer.upload(inner_v);
+		m_buffer.unbind();
+
+		// the quad strip for outline
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+		//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+
+		verts_to_quad_strip (inner_v, outer_v, total_num, quad_strip);
+
+		m_buffer.set_index(1);
+		m_buffer.set_property(total_num * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		m_buffer.bind();
+		m_buffer.upload(quad_strip);
+		m_buffer.unbind();
+	}
+
+	int Widget::round_box_edges(const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
+	{
 		float rad = m_corner_radius;
 		float radi = rad - m_border_width;
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
-
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
 
 		float minx = 0.0;
 		float miny = 0.0;
@@ -328,27 +355,7 @@ namespace BILO {
 
 		assert(total_num <= WIDGET_SIZE_MAX);
 
-		m_buffer.generate(2);
-
-		m_buffer.set_index(0);
-		m_buffer.set_property(total_num, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_buffer.bind();
-		m_buffer.upload(inner_v);
-		m_buffer.unbind();
-
-		// the quad strip for outline
-
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-		//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
-
-		verts_to_quad_strip (inner_v, outer_v, total_num, quad_strip);
-
-		m_buffer.set_index(1);
-		m_buffer.set_property(total_num * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-
-		m_buffer.bind();
-		m_buffer.upload(quad_strip);
-		m_buffer.unbind();
+		return total_num;
 	}
 
 	void Widget::verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][2],
@@ -363,6 +370,30 @@ namespace BILO {
 		}
 		copy_v2_v2(quad_strip[i * 2], outer_v[0]);
 		copy_v2_v2(quad_strip[i * 2 + 1], inner_v[0]);
+	}
+
+	void Widget::shadecolors4(const Color& color, short shadetop, short shadedown, char coltop[4], char coldown[4])
+	{
+		coltop[0] = correct_in_scope(color.r() + shadetop, 0, 255);
+		coltop[1] = correct_in_scope(color.g() + shadetop, 0, 255);
+		coltop[2] = correct_in_scope(color.b() + shadetop, 0, 255);
+		coltop[3] = color.a();
+
+		coldown[0] = correct_in_scope(color.r() + shadedown, 0, 255);
+		coldown[1] = correct_in_scope(color.g() + shadedown, 0, 255);
+		coldown[2] = correct_in_scope(color.b() + shadedown, 0, 255);
+		coldown[3] = color.a();
+	}
+
+	void Widget::round_box_shade_col4_r(const char color1[4], const char color2[4], const float fac, unsigned char color_out[4])
+	{
+		const int faci = convert_color_from_float(fac);
+		const int facm = 255 - faci;
+
+		color_out[0] = (faci * color1[0] + facm * color2[0]) >> 8;
+		color_out[1] = (faci * color1[1] + facm * color2[1]) >> 8;
+		color_out[2] = (faci * color1[2] + facm * color2[2]) >> 8;
+		color_out[3] = (faci * color1[3] + facm * color2[3]) >> 8;
 	}
 
 } /* namespace BILO */

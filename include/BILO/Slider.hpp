@@ -28,9 +28,6 @@
 
 namespace BILO {
 
-	class AbstractSlider;
-	class GLBuffer;
-
 	class SliderControl: public Widget
 	{
 	public:

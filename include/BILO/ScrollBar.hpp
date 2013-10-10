@@ -30,6 +30,40 @@
 
 namespace BILO {
 
+	/**
+	 * The controller in the scrollbar
+	 */
+	class ScrollControl: public Widget
+	{
+	public:
+
+		ScrollControl ();
+
+		ScrollControl (Drawable* parent);
+
+		virtual ~ScrollControl ();
+
+	protected:
+
+		virtual bool update (int type, const void* property);
+
+		virtual void render ();
+
+		virtual void move_mouse (MouseEvent* event);
+
+		virtual void press_mouse (MouseEvent* event);
+
+		virtual void release_mouse (MouseEvent* event);
+
+	private:
+
+		void update_shape (const Size* size);
+
+		bool m_hover;
+
+		bool m_pressed;
+	};
+
 	class ScrollBar: public AbstractSlider
 	{
 	public:

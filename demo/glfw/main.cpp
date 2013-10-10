@@ -22,6 +22,7 @@
 #include <BILO/Frame.hpp>
 #include <BILO/VertexIcon.hpp>
 #include <BILO/TableLayout.hpp>
+#include <BILO/ScrollBar.hpp>
 
 using namespace BILO;
 
@@ -112,6 +113,13 @@ int main(int argc, char* argv[])
 	button2->set_name("button2");
 
 	app->bind(button2);
+
+	ScrollControl *scrollcontrol = new ScrollControl;
+	scrollcontrol->resize(24, 200);
+	scrollcontrol->set_pos(650, 100);
+
+	app->bind(scrollcontrol);
+
 	/*
 	Widget* widget = new Widget;
 

@@ -85,6 +85,27 @@ namespace BILO {
 
 		virtual void move_mouse (MouseEvent* event);
 
+		/**
+		 * @brief calculate vertices for round box edge
+		 * @param[in] size the size to calculate edges
+		 * @param[out] inner_v
+		 * @param[out] outer_v
+		 * @return how many vertices are used in the output array
+		 */
+		int round_box_edges (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
+
+		/**
+		 * @brief prepare shade colors
+		 * @param[in] color
+		 * @param[in] shadetop
+		 * @param[in] shadedown
+		 * @param[in] coltop
+		 * @param[in] coldown
+		 */
+		void shadecolors4(const Color& color, short shadetop, short shadedown, char coltop[4], char coldown[4]);
+
+		void round_box_shade_col4_r(const char color1[4], const char color2[4], const float fac, unsigned char color_out[4]);
+
 		Padding m_padding;
 
 		/**
@@ -97,7 +118,7 @@ namespace BILO {
 
 		GLBuffer m_buffer;
 
-		static void verts_to_quad_strip (
+		void verts_to_quad_strip (
 				const float inner_v[WIDGET_SIZE_MAX][2],
 				const float outer_v[WIDGET_SIZE_MAX][2],
 				const int totvert,
