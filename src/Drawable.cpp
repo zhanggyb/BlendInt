@@ -330,11 +330,11 @@ namespace BILO {
 		}
 	}
 
-	void Drawable::set_roundcorner (RoundCornerType type)
+	void Drawable::set_roundcorner (int type)
 	{
 		if (m_roundcorner == type) return;
-		RoundCornerType new_type = type;
 
+		int new_type = type;
 		if(update(WidgetPropertyRoundCorner, &new_type)) m_roundcorner = new_type;
 	}
 
@@ -345,7 +345,7 @@ namespace BILO {
 		if(update(WidgetPropertyRoundCorner, &radius)) m_corner_radius = radius;
 	}
 
-	RoundCornerType Drawable::roundcorner () const
+	int Drawable::roundcorner () const
 	{
 		return m_roundcorner;
 	}

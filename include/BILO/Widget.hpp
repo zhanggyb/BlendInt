@@ -59,6 +59,14 @@ namespace BILO {
 
 		void set_padding (int left, int right, int top, int bottom);
 
+		void set_border_width (float width = 1.0)
+		{
+			if(width > 0.0)
+				m_border_width = width;
+		}
+
+		float border_width () const {return m_border_width;}
+
 	protected:
 
 		virtual bool update (int type, const void* property);
@@ -89,26 +97,22 @@ namespace BILO {
 
 		GLBuffer m_buffer;
 
-		static const float quarter_corner_vertexes[9][2];
+		static void verts_to_quad_strip (
+				const float inner_v[WIDGET_SIZE_MAX][2],
+				const float outer_v[WIDGET_SIZE_MAX][2],
+				const int totvert,
+				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
+
+		static const float cornervec[WIDGET_CURVE_RESOLU][2];
+
+		static const float jit[WIDGET_AA_JITTER][2];
 
 	private:
 
 		void update_shape (const Size* size);
 
-		void draw_inner ();
+		float m_border_width;
 
-		void draw_outline ();
-
-		int m_vertex_num;
-
-		int m_halfwayvert;
-
-		/**
-		 * vertexes for drawing shape
-		 */
-
-		float m_outer_v[WIDGET_SIZE_MAX][2];
-		float m_inner_v[WIDGET_SIZE_MAX][2];
 	};
 
 } /* namespace BILO */

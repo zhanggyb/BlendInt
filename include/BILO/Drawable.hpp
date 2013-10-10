@@ -139,9 +139,9 @@ namespace BILO {
 
 		void reset_z (int z);
 
-		void set_roundcorner (RoundCornerType type);
+		void set_roundcorner (int type);
 
-		RoundCornerType roundcorner () const;
+		int roundcorner () const;
 
 		void set_corner_radius (float radius);
 
@@ -223,7 +223,7 @@ namespace BILO {
 		 */
 		int m_z;
 
-		RoundCornerType m_roundcorner;
+		int m_roundcorner;
 
 		/**
 		 * @brief the round corner radius

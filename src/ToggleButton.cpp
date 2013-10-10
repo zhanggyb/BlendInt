@@ -30,6 +30,7 @@ namespace BILO {
 			: AbstractButton()
 	{
 		setCheckable(true);
+		set_roundcorner(RoundCornerAll);
 		resize(90, 25);
 	}
 
@@ -37,6 +38,7 @@ namespace BILO {
 			: AbstractButton()
 	{
 		setCheckable(true);
+		set_roundcorner(RoundCornerAll);
 		set_text(text);
 	}
 
@@ -44,6 +46,7 @@ namespace BILO {
 			: AbstractButton(parent)
 	{
 		setCheckable(true);
+		set_roundcorner(RoundCornerAll);
 		resize (90, 25);
 	}
 
@@ -51,6 +54,7 @@ namespace BILO {
 			: AbstractButton(parent)
 	{
 		setCheckable(true);
+		set_roundcorner(RoundCornerAll);
 		set_text(text);
 	}
 
@@ -69,47 +73,70 @@ namespace BILO {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
-		if (m_buffer.is_buffer(0)) {
-			m_buffer.set_index(0);
-			Theme* tm = Theme::instance();
+		Theme* tm = Theme::instance();
 
+		// draw inner, simple fill
+		if (m_status_hover) {
+			if(m_status_checked) {
+				glColor4ub(tm->themeUI()->wcol_regular.inner_sel.highlight_red(),
+				        tm->themeUI()->wcol_regular.inner_sel.highlight_green(),
+				        tm->themeUI()->wcol_regular.inner_sel.highlight_blue(),
+				        tm->themeUI()->wcol_regular.inner_sel.a());
+			} else {
+				glColor4ub(tm->themeUI()->wcol_regular.inner.highlight_red(),
+						tm->themeUI()->wcol_regular.inner.highlight_green(),
+						tm->themeUI()->wcol_regular.inner.highlight_blue(),
+						tm->themeUI()->wcol_regular.inner.a());
+			}
+		} else {
 			if (m_status_checked) {
 				glColor4ub(tm->themeUI()->wcol_regular.inner_sel.r(),
 				        tm->themeUI()->wcol_regular.inner_sel.g(),
 				        tm->themeUI()->wcol_regular.inner_sel.b(),
-				        tm->themeUI()->wcol_regular.inner_sel.a() * 0.5f);
+				        tm->themeUI()->wcol_regular.inner_sel.a());
 			} else {
-				if (m_status_hover) {
-					glColor4ub(
-					        tm->themeUI()->wcol_regular.inner.highlight_red(),
-					        tm->themeUI()->wcol_regular.inner.highlight_green(),
-					        tm->themeUI()->wcol_regular.inner.highlight_blue(),
-					        tm->themeUI()->wcol_regular.inner.a() * 0.5f);
-				} else {
-					glColor4ub(tm->themeUI()->wcol_regular.inner.r(),
-					        tm->themeUI()->wcol_regular.inner.g(),
-					        tm->themeUI()->wcol_regular.inner.b(),
-					        tm->themeUI()->wcol_regular.inner.a() * 0.5f);
-				}
+				glColor4ub(tm->themeUI()->wcol_regular.inner.r(),
+				        tm->themeUI()->wcol_regular.inner.g(),
+				        tm->themeUI()->wcol_regular.inner.b(),
+				        tm->themeUI()->wcol_regular.inner.a());
 			}
-
-			m_buffer.bind();
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glEnableClientState(GL_VERTEX_ARRAY);
-
-			glDrawArrays(GL_POLYGON, 0, 4);
-
-			glColor4ub(tm->themeUI()->wcol_regular.outline.r(),
-			        tm->themeUI()->wcol_regular.outline.g(),
-			        tm->themeUI()->wcol_regular.outline.b(),
-			        tm->themeUI()->wcol_regular.outline.a());
-
-			glDrawArrays(GL_LINE_LOOP, 0, 4);
-
-			glDisableClientState(GL_VERTEX_ARRAY);
-
-			m_buffer.unbind();
 		}
+
+		m_buffer.set_index(0);
+
+		m_buffer.bind();
+		glVertexPointer(2, GL_FLOAT, 0, 0);
+		glEnableClientState(GL_VERTEX_ARRAY);
+
+		glDrawArrays(GL_POLYGON, 0, m_buffer.vertices());
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		m_buffer.unbind();
+
+		// draw outline
+		m_buffer.set_index(1);
+		unsigned char tcol[4] = { tm->themeUI()->wcol_regular.outline.r(),
+		        tm->themeUI()->wcol_regular.outline.g(),
+		        tm->themeUI()->wcol_regular.outline.b(),
+		        tm->themeUI()->wcol_regular.outline.a()};
+
+		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
+
+		m_buffer.bind();
+
+		/* outline */
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glColor4ubv(tcol);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		m_buffer.unbind();
 
 		FontCache::create(m_font)->print(
 		        m_text_outline.left() + m_padding.left(),

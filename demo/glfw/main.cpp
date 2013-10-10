@@ -93,6 +93,25 @@ int main(int argc, char* argv[])
 
 	app->bind(widget);
 
+	Button * button = new Button;
+
+	button->set_pos (200, 100);
+	//button->resize (100, 30);
+	button->set_text("Button");
+	button->set_font(Font("Droid Sans"));
+	button->set_name("button");
+
+	app->bind(button);
+
+	ToggleButton * button2 = new ToggleButton;
+
+	button2->set_pos (400, 100);
+	//button->resize (100, 30);
+	button2->set_text("Button");
+	button2->set_font(Font("Droid Sans"));
+	button2->set_name("button2");
+
+	app->bind(button2);
 	/*
 	Widget* widget = new Widget;
 

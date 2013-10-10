@@ -40,48 +40,27 @@
 
 namespace BILO {
 
-	static const float cornervec[WIDGET_CURVE_RESOLU][2] = {
+	const float Widget::cornervec[WIDGET_CURVE_RESOLU][2] = {
 		{0.0, 0.0}, {0.195, 0.02}, {0.383, 0.067},
 		{0.55, 0.169}, {0.707, 0.293}, {0.831, 0.45},
 		{0.924, 0.617}, {0.98, 0.805}, {1.0, 1.0}
 	};
 
-	static const float jit[WIDGET_AA_JITTER][2] = {
+	const float Widget::jit[WIDGET_AA_JITTER][2] = {
 			{ 0.468813, -0.481430}, {-0.155755, -0.352820},
 			{ 0.219306, -0.238501}, {-0.393286, -0.110949},
 			{-0.024699,  0.013908}, { 0.343805,  0.147431},
 			{-0.272855,  0.269918}, { 0.095909,  0.388710}
 	};
 
-	const float Widget::quarter_corner_vertexes[9][2] =
-	{
-			{0.0, 0.0}, {0.195, 0.02}, {0.383, 0.067},
-			{0.55, 0.169}, {0.707, 0.293}, {0.831, 0.45},
-			{0.924, 0.617}, {0.98, 0.805}, {1.0, 1.0}
-	};
-
-	static void widget_verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][2],
-			const float outer_v[WIDGET_SIZE_MAX][2],
-			const int totvert,
-			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
-	{
-		int a;
-		for (a = 0; a < totvert; a++) {
-			copy_v2_v2(quad_strip[a * 2], outer_v[a]);
-			copy_v2_v2(quad_strip[a * 2 + 1], inner_v[a]);
-		}
-		copy_v2_v2(quad_strip[a * 2], outer_v[0]);
-		copy_v2_v2(quad_strip[a * 2 + 1], inner_v[0]);
-	}
-
 	Widget::Widget ()
-	: Drawable(), m_vertex_num(0), m_halfwayvert(0)
+	: Drawable(), m_border_width(1.0)
 	{
 
 	}
 
 	Widget::Widget (Drawable* parent)
-			: Drawable(parent), m_vertex_num(0), m_halfwayvert(0)
+			: Drawable(parent), m_border_width(1.0)
 	{
 		// TODO Auto-generated constructor stub
 	}
@@ -171,184 +150,9 @@ namespace BILO {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		draw_inner();
-
-		draw_outline();
-
-		glDisable(GL_BLEND);
-
-		glPopMatrix();
-	}
-
-	void Widget::update_shape(const Size* size)
-	{
-		float rad = m_corner_radius;
-		float radi = rad - 1.0;
-
-		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
-
-		float minx = 0.0;
-		float miny = 0.0;
-		float maxx = size->width();
-		float maxy = size->height();
-
-		float minxi = minx + 1.0;		// U.pixelsize; // boundbox inner
-		float maxxi = maxx - 1.0; 	// U.pixelsize;
-		float minyi = miny + 1.0;		// U.pixelsize;
-		float maxyi = maxy - 1.0;		// U.pixelsize;
-
-		int total_num = 0;
-		int halfwayvert = 0;
-		int minsize = 0;
-		const int hnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerTopRight)) == (RoundCornerTopLeft | RoundCornerTopRight) ||
-		                  (m_roundcorner & (RoundCornerBottomRight | RoundCornerBottomLeft)) == (RoundCornerBottomRight | RoundCornerBottomLeft)) ? 1 : 2;
-		const int vnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerBottomLeft)) == (RoundCornerTopLeft | RoundCornerBottomLeft) ||
-		                  (m_roundcorner & (RoundCornerTopRight | RoundCornerBottomRight)) == (RoundCornerTopRight | RoundCornerBottomRight)) ? 1 : 2;
-
-		minsize = std::min(size->width() * hnum,
-		                 size->height() * vnum);
-
-		if (2.0f * m_corner_radius > minsize)
-			rad = 0.5f * minsize;
-
-		if (2.0f * (radi + 1.0f) > minsize)
-			radi = 0.5f * minsize - 1.0;	// U.pixelsize;
-
-		// mult
-		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
-			veci[i][0] = radi * cornervec[i][0];
-			veci[i][1] = radi * cornervec[i][1];
-			vec[i][0] = rad * cornervec[i][0];
-			vec[i][1] = rad * cornervec[i][1];
-		}
-
-		// corner left-bottom
-		if (m_roundcorner & RoundCornerBottomLeft) {
-
-			for (int a = 0; a < WIDGET_CURVE_RESOLU; a++, total_num++) {
-				m_inner_v[total_num][0] = minxi + veci[a][1];
-				m_inner_v[total_num][1] = minyi + radi - veci[a][0];
-
-				m_outer_v[total_num][0] = minx + vec[a][1];
-				m_outer_v[total_num][1] = miny + rad - vec[a][0];
-			}
-		}
-		else {
-			m_inner_v[total_num][0] = minxi;
-			m_inner_v[total_num][1] = minyi;
-
-			m_outer_v[total_num][0] = minx;
-			m_outer_v[total_num][1] = miny;
-
-			total_num++;
-		}
-
-		// corner right-bottom
-		if (m_roundcorner & RoundCornerBottomRight) {
-
-			for (int a = 0; a < WIDGET_CURVE_RESOLU; a++, total_num++) {
-				m_inner_v[total_num][0] = maxxi - radi + veci[a][0];
-				m_inner_v[total_num][1] = minyi + veci[a][1];
-
-				m_outer_v[total_num][0] = maxx - rad + vec[a][0];
-				m_outer_v[total_num][1] = miny + vec[a][1];
-			}
-		}
-		else {
-			m_inner_v[total_num][0] = maxxi;
-			m_inner_v[total_num][1] = minyi;
-
-			m_outer_v[total_num][0] = maxx;
-			m_outer_v[total_num][1] = miny;
-			total_num++;
-		}
-
-		halfwayvert = total_num;
-
-		// corner right-top
-		if (m_roundcorner & RoundCornerTopRight) {
-
-			for (int a = 0; a < WIDGET_CURVE_RESOLU; a++, total_num++) {
-				m_inner_v[total_num][0] = maxxi - veci[a][1];
-				m_inner_v[total_num][1] = maxyi - radi + veci[a][0];
-
-				m_outer_v[total_num][0] = maxx - vec[a][1];
-				m_outer_v[total_num][1] = maxy - rad + vec[a][0];
-			}
-		}
-		else {
-			m_inner_v[total_num][0] = maxxi;
-			m_inner_v[total_num][1] = maxyi;
-
-			m_outer_v[total_num][0] = maxx;
-			m_outer_v[total_num][1] = maxy;
-			total_num++;
-		}
-
-		// corner left-top
-		if (m_roundcorner & RoundCornerTopLeft) {
-
-			for (int a = 0; a < WIDGET_CURVE_RESOLU; a++, total_num++) {
-				m_inner_v[total_num][0] = minxi + radi - veci[a][0];
-				m_inner_v[total_num][1] = maxyi - veci[a][1];
-
-				m_outer_v[total_num][0] = minx + rad - vec[a][0];
-				m_outer_v[total_num][1] = maxy - vec[a][1];
-			}
-
-		}
-		else {
-
-			m_inner_v[total_num][0] = minxi;
-			m_inner_v[total_num][1] = maxyi;
-
-			m_outer_v[total_num][0] = minx;
-			m_outer_v[total_num][1] = maxy;
-
-			total_num++;
-		}
-
-		assert(total_num <= WIDGET_SIZE_MAX);
-
-		m_buffer.generate(2);
-
-		m_buffer.set_index(0);
-		m_buffer.set_property(total_num, sizeof(m_inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_buffer.bind();
-		m_buffer.upload(m_inner_v);
-		m_buffer.unbind();
-
-		m_buffer.set_index(1);
-		m_buffer.set_property(total_num, sizeof(m_outer_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_buffer.bind();
-		m_buffer.upload(m_outer_v);
-		m_buffer.unbind();
-
-		m_vertex_num = total_num;
-		m_halfwayvert = halfwayvert;
-
-		// the quad strip for outline
-
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-		//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
-
-		widget_verts_to_quad_strip(m_inner_v, m_outer_v, m_vertex_num, quad_strip);
-
-		m_buffer.append();
-		m_buffer.set_index(2);
-		m_buffer.set_property(total_num * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-
-		m_buffer.bind();
-		m_buffer.upload(quad_strip);
-		m_buffer.unbind();
-
-	}
-
-	void Widget::draw_inner ()
-	{
 		Theme* tm = Theme::instance();
 
-		// simple fill
+		// draw inner, simple fill
 		glColor4ub(tm->themeUI()->wcol_regular.inner.r(),
 		        tm->themeUI()->wcol_regular.inner.g(),
 		        tm->themeUI()->wcol_regular.inner.b(),
@@ -365,12 +169,9 @@ namespace BILO {
 		glDisableClientState(GL_VERTEX_ARRAY);
 
 		m_buffer.unbind();
-	}
 
-	void Widget::draw_outline ()
-	{
-		Theme* tm = Theme::instance();
-
+		// draw outline
+		m_buffer.set_index(1);
 		unsigned char tcol[4] = { tm->themeUI()->wcol_regular.outline.r(),
 		        tm->themeUI()->wcol_regular.outline.g(),
 		        tm->themeUI()->wcol_regular.outline.b(),
@@ -378,7 +179,6 @@ namespace BILO {
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 
-		m_buffer.set_index(2);
 		m_buffer.bind();
 
 		/* outline */
@@ -393,6 +193,176 @@ namespace BILO {
 		glDisableClientState(GL_VERTEX_ARRAY);
 
 		m_buffer.unbind();
+
+		glDisable(GL_BLEND);
+
+		glPopMatrix();
+	}
+
+	void Widget::update_shape(const Size* size)
+	{
+		float rad = m_corner_radius;
+		float radi = rad - m_border_width;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size->width();
+		float maxy = size->height();
+
+		float minxi = minx + m_border_width;		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - m_border_width; 	// U.pixelsize;
+		float minyi = miny + m_border_width;		// U.pixelsize;
+		float maxyi = maxy - m_border_width;		// U.pixelsize;
+
+		int total_num = 0;
+		int halfwayvert = 0;
+		int minsize = 0;
+		const int hnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerTopRight)) == (RoundCornerTopLeft | RoundCornerTopRight) ||
+		                  (m_roundcorner & (RoundCornerBottomRight | RoundCornerBottomLeft)) == (RoundCornerBottomRight | RoundCornerBottomLeft)) ? 1 : 2;
+		const int vnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerBottomLeft)) == (RoundCornerTopLeft | RoundCornerBottomLeft) ||
+		                  (m_roundcorner & (RoundCornerTopRight | RoundCornerBottomRight)) == (RoundCornerTopRight | RoundCornerBottomRight)) ? 1 : 2;
+
+		minsize = std::min(size->width() * hnum,
+		                 size->height() * vnum);
+
+		if (2.0f * m_corner_radius > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + 1.0f) > minsize)
+			radi = 0.5f * minsize - m_border_width;	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		// corner left-bottom
+		if (m_roundcorner & RoundCornerBottomLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, total_num++) {
+				inner_v[total_num][0] = minxi + veci[i][1];
+				inner_v[total_num][1] = minyi + radi - veci[i][0];
+
+				outer_v[total_num][0] = minx + vec[i][1];
+				outer_v[total_num][1] = miny + rad - vec[i][0];
+			}
+		}
+		else {
+			inner_v[total_num][0] = minxi;
+			inner_v[total_num][1] = minyi;
+
+			outer_v[total_num][0] = minx;
+			outer_v[total_num][1] = miny;
+
+			total_num++;
+		}
+
+		// corner right-bottom
+		if (m_roundcorner & RoundCornerBottomRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, total_num++) {
+				inner_v[total_num][0] = maxxi - radi + veci[i][0];
+				inner_v[total_num][1] = minyi + veci[i][1];
+
+				outer_v[total_num][0] = maxx - rad + vec[i][0];
+				outer_v[total_num][1] = miny + vec[i][1];
+			}
+		}
+		else {
+			inner_v[total_num][0] = maxxi;
+			inner_v[total_num][1] = minyi;
+
+			outer_v[total_num][0] = maxx;
+			outer_v[total_num][1] = miny;
+			total_num++;
+		}
+
+		halfwayvert = total_num;	// TODO: check how to use halfwayvert
+
+		// corner right-top
+		if (m_roundcorner & RoundCornerTopRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, total_num++) {
+				inner_v[total_num][0] = maxxi - veci[i][1];
+				inner_v[total_num][1] = maxyi - radi + veci[i][0];
+
+				outer_v[total_num][0] = maxx - vec[i][1];
+				outer_v[total_num][1] = maxy - rad + vec[i][0];
+			}
+		}
+		else {
+			inner_v[total_num][0] = maxxi;
+			inner_v[total_num][1] = maxyi;
+
+			outer_v[total_num][0] = maxx;
+			outer_v[total_num][1] = maxy;
+			total_num++;
+		}
+
+		// corner left-top
+		if (m_roundcorner & RoundCornerTopLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, total_num++) {
+				inner_v[total_num][0] = minxi + radi - veci[i][0];
+				inner_v[total_num][1] = maxyi - veci[i][1];
+
+				outer_v[total_num][0] = minx + rad - vec[i][0];
+				outer_v[total_num][1] = maxy - vec[i][1];
+			}
+
+		}
+		else {
+
+			inner_v[total_num][0] = minxi;
+			inner_v[total_num][1] = maxyi;
+
+			outer_v[total_num][0] = minx;
+			outer_v[total_num][1] = maxy;
+
+			total_num++;
+		}
+
+		assert(total_num <= WIDGET_SIZE_MAX);
+
+		m_buffer.generate(2);
+
+		m_buffer.set_index(0);
+		m_buffer.set_property(total_num, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.bind();
+		m_buffer.upload(inner_v);
+		m_buffer.unbind();
+
+		// the quad strip for outline
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+		//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+
+		verts_to_quad_strip (inner_v, outer_v, total_num, quad_strip);
+
+		m_buffer.set_index(1);
+		m_buffer.set_property(total_num * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		m_buffer.bind();
+		m_buffer.upload(quad_strip);
+		m_buffer.unbind();
+	}
+
+	void Widget::verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][2],
+			const float outer_v[WIDGET_SIZE_MAX][2],
+			const int totvert,
+			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
+	{
+		int i;
+		for (i = 0; i < totvert; i++) {
+			copy_v2_v2(quad_strip[i * 2], outer_v[i]);
+			copy_v2_v2(quad_strip[i * 2 + 1], inner_v[i]);
+		}
+		copy_v2_v2(quad_strip[i * 2], outer_v[0]);
+		copy_v2_v2(quad_strip[i * 2 + 1], inner_v[0]);
 	}
 
 } /* namespace BILO */
