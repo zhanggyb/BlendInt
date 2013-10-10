@@ -81,25 +81,25 @@ namespace BILO {
 		struct ThemeUI
 		{
 			/* Interface Elements (buttons, menus, icons) */
-			WidgetColors wcol_regular;
-			WidgetColors wcol_tool;
-			WidgetColors wcol_text;
-			WidgetColors wcol_radio;
-			WidgetColors wcol_option;
-			WidgetColors wcol_toggle;
-			WidgetColors wcol_num;
-			WidgetColors wcol_numslider;
-			WidgetColors wcol_menu;
-			WidgetColors wcol_pulldown;
-			WidgetColors wcol_menu_back;
-			WidgetColors wcol_menu_item;
-			WidgetColors wcol_tooltip;
-			WidgetColors wcol_box;
-			WidgetColors wcol_scroll;
-			WidgetColors wcol_progress;
-			WidgetColors wcol_list_item;
+			WidgetColors regular;
+			WidgetColors tool;
+			WidgetColors text;
+			WidgetColors radio_button;
+			WidgetColors option;
+			WidgetColors toggle;
+			WidgetColors number_field;
+			WidgetColors number_slider;
+			WidgetColors menu;
+			WidgetColors pulldown;
+			WidgetColors menu_back;
+			WidgetColors menu_item;
+			WidgetColors tooltip;
+			WidgetColors box;
+			WidgetColors scroll;
+			WidgetColors progress;
+			WidgetColors list_item;
 
-			WidgetStateColors wcol_state;
+			WidgetStateColors state;
 
 			PanelColors panel; /* depricated, but we keep it for do_versions (2.66.1) */
 

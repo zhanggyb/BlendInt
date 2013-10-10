@@ -76,21 +76,21 @@ namespace BILO {
 
 		// draw inner, simple fill
 		if(m_status_down) {
-			glColor4ub(tm->themeUI()->wcol_regular.inner_sel.r(),
-					tm->themeUI()->wcol_regular.inner_sel.g(),
-					tm->themeUI()->wcol_regular.inner_sel.b(),
-					tm->themeUI()->wcol_regular.inner_sel.a());
+			glColor4ub(tm->themeUI()->regular.inner_sel.r(),
+					tm->themeUI()->regular.inner_sel.g(),
+					tm->themeUI()->regular.inner_sel.b(),
+					tm->themeUI()->regular.inner_sel.a());
 		} else {
 			if(m_status_hover) {
-				glColor4ub(tm->themeUI()->wcol_regular.inner.highlight_red(),
-						tm->themeUI()->wcol_regular.inner.highlight_green(),
-						tm->themeUI()->wcol_regular.inner.highlight_blue(),
-						tm->themeUI()->wcol_regular.inner.a());
+				glColor4ub(tm->themeUI()->regular.inner.highlight_red(),
+						tm->themeUI()->regular.inner.highlight_green(),
+						tm->themeUI()->regular.inner.highlight_blue(),
+						tm->themeUI()->regular.inner.a());
 			} else {
-				glColor4ub(tm->themeUI()->wcol_regular.inner.r(),
-						tm->themeUI()->wcol_regular.inner.g(),
-						tm->themeUI()->wcol_regular.inner.b(),
-						tm->themeUI()->wcol_regular.inner.a());
+				glColor4ub(tm->themeUI()->regular.inner.r(),
+						tm->themeUI()->regular.inner.g(),
+						tm->themeUI()->regular.inner.b(),
+						tm->themeUI()->regular.inner.a());
 			}
 		}
 
@@ -108,10 +108,10 @@ namespace BILO {
 
 		// draw outline
 		m_buffer.set_index(1);
-		unsigned char tcol[4] = { tm->themeUI()->wcol_regular.outline.r(),
-		        tm->themeUI()->wcol_regular.outline.g(),
-		        tm->themeUI()->wcol_regular.outline.b(),
-		        tm->themeUI()->wcol_regular.outline.a()};
+		unsigned char tcol[4] = { tm->themeUI()->regular.outline.r(),
+		        tm->themeUI()->regular.outline.g(),
+		        tm->themeUI()->regular.outline.b(),
+		        tm->themeUI()->regular.outline.a()};
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 

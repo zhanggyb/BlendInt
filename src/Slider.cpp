@@ -142,26 +142,26 @@ namespace BILO {
 
 		Theme* tm = Theme::instance();
 
-		glColor4ub(tm->themeUI()->wcol_scroll.outline.r(),
-				tm->themeUI()->wcol_scroll.outline.g(),
-				tm->themeUI()->wcol_scroll.outline.b(),
-				tm->themeUI()->wcol_scroll.outline.a());
+		glColor4ub(tm->themeUI()->scroll.outline.r(),
+				tm->themeUI()->scroll.outline.g(),
+				tm->themeUI()->scroll.outline.b(),
+				tm->themeUI()->scroll.outline.a());
 
 		if (m_pressed) {
-			glColor4ub(tm->themeUI()->wcol_scroll.inner_sel.r(),
-					tm->themeUI()->wcol_scroll.inner_sel.g(),
-					tm->themeUI()->wcol_scroll.inner_sel.b(),
-					tm->themeUI()->wcol_scroll.inner_sel.a());
+			glColor4ub(tm->themeUI()->scroll.inner_sel.r(),
+					tm->themeUI()->scroll.inner_sel.g(),
+					tm->themeUI()->scroll.inner_sel.b(),
+					tm->themeUI()->scroll.inner_sel.a());
 		} else if (m_hover) {
-				glColor4ub(tm->themeUI()->wcol_scroll.item.highlight_red(),
-						tm->themeUI()->wcol_scroll.item.highlight_green(),
-						tm->themeUI()->wcol_scroll.item.highlight_blue(),
-						tm->themeUI()->wcol_scroll.item.a());
+				glColor4ub(tm->themeUI()->scroll.item.highlight_red(),
+						tm->themeUI()->scroll.item.highlight_green(),
+						tm->themeUI()->scroll.item.highlight_blue(),
+						tm->themeUI()->scroll.item.a());
 		} else {
-			glColor4ub(tm->themeUI()->wcol_scroll.item.r(),
-					tm->themeUI()->wcol_scroll.item.g(),
-					tm->themeUI()->wcol_scroll.item.b(),
-					tm->themeUI()->wcol_scroll.item.a());
+			glColor4ub(tm->themeUI()->scroll.item.r(),
+					tm->themeUI()->scroll.item.g(),
+					tm->themeUI()->scroll.item.b(),
+					tm->themeUI()->scroll.item.a());
 		}
 
 		glTranslatef(m_radius,
@@ -173,10 +173,10 @@ namespace BILO {
 		glEnableClientState (GL_VERTEX_ARRAY);
 		glDrawArrays(GL_POLYGON, 0, 20);
 
-		glColor4ub(tm->themeUI()->wcol_scroll.outline.r(),
-				tm->themeUI()->wcol_scroll.outline.g(),
-				tm->themeUI()->wcol_scroll.outline.b(),
-				tm->themeUI()->wcol_scroll.outline.a());
+		glColor4ub(tm->themeUI()->scroll.outline.r(),
+				tm->themeUI()->scroll.outline.g(),
+				tm->themeUI()->scroll.outline.b(),
+				tm->themeUI()->scroll.outline.a());
 
 		glDrawArrays(GL_LINE_LOOP, 0, 20);
 
@@ -344,10 +344,10 @@ namespace BILO {
 		glTranslatef(m_padding.left(),
 					 m_padding.bottom(), 0);
 
-		glColor4ub(tm->themeUI()->wcol_scroll.outline.r(),
-				tm->themeUI()->wcol_scroll.outline.g(),
-				tm->themeUI()->wcol_scroll.outline.b(),
-				tm->themeUI()->wcol_scroll.outline.a());
+		glColor4ub(tm->themeUI()->scroll.outline.r(),
+				tm->themeUI()->scroll.outline.g(),
+				tm->themeUI()->scroll.outline.b(),
+				tm->themeUI()->scroll.outline.a());
 
 		int space = 0;
 		if(orientation() == Horizontal) {

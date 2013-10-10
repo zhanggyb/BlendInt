@@ -64,7 +64,7 @@ void ThemeTest::initialize1 ()
 		theme->initialize();
 
 	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	r = theme->themeUI()->wcol_tool.outline.r();
+	r = theme->themeUI()->tool.outline.r();
 
 	if (theme != NULL) {
 		Theme::release();
@@ -110,8 +110,8 @@ void ThemeTest::initialize2 ()
 
     Theme* theme = Theme::instance();
 	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	Color bg_color = theme->themeUI()->wcol_menu_item.item;
-	Color textcolor = theme->themeUI()->wcol_menu_item.text;
+	Color bg_color = theme->themeUI()->menu_item.item;
+	Color textcolor = theme->themeUI()->menu_item.text;
 
 	Label label(L"Text in Label");
 	label.set_pos(Point(50, 50));

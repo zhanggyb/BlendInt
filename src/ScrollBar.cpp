@@ -76,10 +76,10 @@ namespace BILO {
 
 		Theme* tm = Theme::instance();
 
-		glColor4ub(tm->themeUI()->wcol_regular.inner.r(),
-		        tm->themeUI()->wcol_regular.inner.g(),
-		        tm->themeUI()->wcol_regular.inner.b(),
-		        tm->themeUI()->wcol_regular.inner.a());
+		glColor4ub(tm->themeUI()->regular.inner.r(),
+		        tm->themeUI()->regular.inner.g(),
+		        tm->themeUI()->regular.inner.b(),
+		        tm->themeUI()->regular.inner.a());
 
 		m_buffer.set_index(0);
 
@@ -96,10 +96,10 @@ namespace BILO {
 
 		// draw outline
 		m_buffer.set_index(1);
-		unsigned char tcol[4] = { tm->themeUI()->wcol_scroll.outline.r(),
-		        tm->themeUI()->wcol_scroll.outline.g(),
-		        tm->themeUI()->wcol_scroll.outline.b(),
-		        tm->themeUI()->wcol_scroll.outline.a()};
+		unsigned char tcol[4] = { tm->themeUI()->scroll.outline.r(),
+		        tm->themeUI()->scroll.outline.g(),
+		        tm->themeUI()->scroll.outline.b(),
+		        tm->themeUI()->scroll.outline.a()};
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 
@@ -303,10 +303,10 @@ namespace BILO {
 			m_buffer.set_index(0);
 			Theme* tm = Theme::instance();
 
-			glColor4ub(tm->themeUI()->wcol_scroll.item.r(),
-			        tm->themeUI()->wcol_scroll.item.g(),
-			        tm->themeUI()->wcol_scroll.item.b(),
-			        tm->themeUI()->wcol_scroll.item.a());
+			glColor4ub(tm->themeUI()->scroll.item.r(),
+			        tm->themeUI()->scroll.item.g(),
+			        tm->themeUI()->scroll.item.b(),
+			        tm->themeUI()->scroll.item.a());
 			//glColor3f (1.0f, 0.2f, 0.9f);
 			//glBindBuffer (GL_ARRAY_BUFFER, m_buffer);
 			m_buffer.bind();
@@ -317,10 +317,10 @@ namespace BILO {
 			glDrawArrays(GL_POLYGON, 0, 22);
 			//glDisable(GL_POLYGON_SMOOTH);
 
-			glColor4ub(tm->themeUI()->wcol_scroll.outline.r(),
-			        tm->themeUI()->wcol_scroll.outline.g(),
-			        tm->themeUI()->wcol_scroll.outline.b(),
-			        tm->themeUI()->wcol_scroll.outline.a());
+			glColor4ub(tm->themeUI()->scroll.outline.r(),
+			        tm->themeUI()->scroll.outline.g(),
+			        tm->themeUI()->scroll.outline.b(),
+			        tm->themeUI()->scroll.outline.a());
 
 			//glEnable(GL_LINE_SMOOTH);
 			//glLineWidth(1.25);
