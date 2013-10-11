@@ -30,36 +30,26 @@
 
 namespace BILO {
 
+	class Color;
+
+	extern Color operator + (const Color& orig, short shade);
+
+	/**
+	 * @brief make a shader color between 2 given colors
+	 * @param[in] color1
+	 * @param[in] color2
+	 * @param[in] factor must be within 0.0 ~ 1.0
+	 * @return
+	 */
+	extern Color make_shade_color (const Color& color1, const Color& color2, float factor);
+
 	class Color
 	{
 	public:
 
-		/**
-		 * @brief Convert shade colors
-		 * @param[in] color the initial color
-		 * @param[in] shadetop shade of top: -100 - 100
-		 * @param[in] shadedown shade of down: -100 - 100
-		 * @param[out] coltop Color at the top
-		 * @param[out] coldown Color at the bottom
-		 */
-		static void convert_shade_color (const Color& color,
-									   short shadetop,
-									   short shadedown,
-									   Color* top_color,
-									   Color* bottom_color);
+		Color ();
 
-		/**
-		 * @brief Conver shade colors for round box
-		 */
-		static void ConvertRoundBoxShadeColor (const Color& color1,
-											   const Color& color2,
-											   float factor,
-											   unsigned char color_output[4]);
-
-
-	public:
-
-		explicit Color (uint32_t color = 0xFFFFFFFF)
+		explicit Color (uint32_t color)
 		{
 			set_color (color);
 		}
@@ -70,78 +60,74 @@ namespace BILO {
 			set_color (r, g, b, a);
 		}
 
-		Color& operator = (const Color& orig)
-		{
-			m_red = orig.m_red;
-			m_green = orig.m_green;
-			m_blue = orig.m_blue;
-			m_alpha = orig.m_alpha;
+		Color (const Color& orig);
 
-			return *this;
-		}
+		Color& operator = (const Color& orig);
 
 		Color& operator = (uint32_t color)
 		{
 			set_color (color);
 			return *this;
 		}
-		
+
 		~Color ()
 		{}
 
 		void highlight (const Color& orig)
 		{
-			m_red = orig.r() >= 240 ? 255 : (orig.r() + 15);
-			m_green = orig.g() >= 240 ? 255 : (orig.g() + 15);
-			m_blue = orig.b() >= 240 ? 255 : (orig.b() + 15);
-			m_alpha = orig.a();
+			m_color_v[0] = orig.r() >= 240 ? 255 : (orig.r() + 15);
+			m_color_v[1] = orig.g() >= 240 ? 255 : (orig.g() + 15);
+			m_color_v[2] = orig.b() >= 240 ? 255 : (orig.b() + 15);
+			m_color_v[3] = orig.a();
 		}
 
 		void highlight (uint32_t color)
 		{
 			set_color (color);
-			m_red = m_red >= 240 ? 255 : (m_red + 15);
-			m_green = m_green >= 240 ? 255 : (m_green + 15);
-			m_blue = m_blue >= 240 ? 255 : (m_blue + 15);
+			m_color_v[0] = m_color_v[0] >= 240 ? 255 : (m_color_v[0] + 15);
+			m_color_v[1] = m_color_v[1] >= 240 ? 255 : (m_color_v[1] + 15);
+			m_color_v[2] = m_color_v[2] >= 240 ? 255 : (m_color_v[2] + 15);
 		}
 
 		unsigned char highlight_red () const
 		{
-			return m_red >= 240 ? 255 : (m_red + 15);
+			return m_color_v[0] >= 240 ? 255 : (m_color_v[0] + 15);
 		}
 
 		unsigned char highlight_green () const
 		{
-			return m_green >= 240 ? 255 : (m_green + 15);
+			return m_color_v[1] >= 240 ? 255 : (m_color_v[1] + 15);
 		}
 
 		unsigned char highlight_blue () const
 		{
-			return m_blue >= 240 ? 255 : (m_blue + 15);
+			return m_color_v[2] >= 240 ? 255 : (m_color_v[2] + 15);
 		}
+
+		void set_color (unsigned char color[4]);
 
 		void set_color (uint32_t color)
 		{
 			if (color > 0xFFFFFF) {
-				m_alpha = color & 0xFF;
-				m_blue = (color >> 8) & 0xFF;
-				m_green = (color >> 16) & 0xFF;
-				m_red = (color >> 24) & 0xFF;
+				m_color_v[3] = color & 0xFF;
+				m_color_v[2] = (color >> 8) & 0xFF;
+				m_color_v[1] = (color >> 16) & 0xFF;
+				m_color_v[0] = (color >> 24) & 0xFF;
 			} else if (color > 0xFFFF){
-				m_alpha = color & 0xFF;
-				m_blue = (color >> 8) & 0xFF;
-				m_green = (color >> 16) & 0xFF;
-				m_red = 0x00;
+				m_color_v[3] = color & 0xFF;
+				m_color_v[2] = (color >> 8) & 0xFF;
+				m_color_v[1] = (color >> 16) & 0xFF;
+				m_color_v[0] = 0x00;
 			} else if (color > 0xFF) {
-				m_alpha = color & 0xFF;
-				m_blue = (color >> 8) & 0xFF;
-				m_green = 0x00;
-				m_red = 0x00;
+				m_color_v[3] = color & 0xFF;
+				m_color_v[2] = (color >> 8) & 0xFF;
+				m_color_v[1] = 0x00;
+				m_color_v[0] = 0x00;
 			} else {
-				m_alpha = color & 0xFF;
-				m_blue = 0x00;
-				m_green = 0x00;
-				m_red = 0x00;
+				m_color_v[3] = color & 0xFF;
+				m_color_v[2] = 0x00;
+				m_color_v[1] = 0x00;
+				m_color_v[0] = 0x00;
 			}
 	 	}
 
@@ -150,111 +136,119 @@ namespace BILO {
 						unsigned char b,
 						unsigned char a = 0xFF)
 		{
-			m_red = correct_in_scope(r,
+			m_color_v[0] = correct_in_scope(r,
 									static_cast<unsigned char>(0),
 									static_cast<unsigned char>(255));
-			m_green = correct_in_scope(g,
+			m_color_v[1] = correct_in_scope(g,
 									  static_cast<unsigned char>(0),
 									  static_cast<unsigned char>(255));
-			m_blue = correct_in_scope(b,
+			m_color_v[2] = correct_in_scope(b,
 									 static_cast<unsigned char>(0),
 									 static_cast<unsigned char>(255));
-			m_alpha = correct_in_scope(a,
+			m_color_v[3] = correct_in_scope(a,
 									  static_cast<unsigned char>(0),
 									  static_cast<unsigned char>(255));
 		}
 
 		unsigned char operator [] (int index) const
 		{
-			if (index <= 0) return m_red;
-			if (index == 1) return m_green;
-			if (index == 2) return m_blue;
-			if (index >= 3) return m_alpha;
-
-			return 0;
+			return m_color_v[index];
 		}
 
 		uint32_t rgba () const
 		{
-			return (m_red << 24) & (m_green << 16) &
-				(m_blue << 8) & m_alpha;
+			return (m_color_v[0] << 24) & (m_color_v[1] << 16) &
+				(m_color_v[2] << 8) & m_color_v[3];
 		}
 
 		unsigned char red () const
 		{
-			return m_red;
+			return m_color_v[0];
 		}
 
 		unsigned char r () const
 		{
-			return m_red;
+			return m_color_v[0];
 		}
 
 		void set_red (unsigned char r)
 		{
-			m_red = correct_in_scope(r,
+			m_color_v[0] = correct_in_scope(r,
 									static_cast<unsigned char>(0),
 									static_cast<unsigned char>(255));
 		}
 
 		unsigned char green () const
 		{
-			return m_green;
+			return m_color_v[1];
 		}
 
 		unsigned char g () const
 		{
-			return m_green;
+			return m_color_v[1];
 		}
 
 		void set_green (unsigned char g)
 		{
-			m_green = correct_in_scope(g,
+			m_color_v[1] = correct_in_scope(g,
 									  static_cast<unsigned char>(0),
 									  static_cast<unsigned char>(255));
 		}
 
 		unsigned char blue () const
 		{
-			return m_blue;
+			return m_color_v[2];
 		}
 
 		unsigned char b () const
 		{
-			return m_blue;
+			return m_color_v[2];
 		}
 
 		void set_blue (unsigned char b)
 		{
-			m_blue = correct_in_scope(b,
+			m_color_v[2] = correct_in_scope(b,
 									 static_cast<unsigned char>(0),
 									 static_cast<unsigned char>(255));
 		}
 
 		unsigned char alpha () const
 		{
-			return m_alpha;
+			return m_color_v[3];
 		}
 
 		unsigned char a () const
 		{
-			return m_alpha;
+			return m_color_v[3];
 		}
 
 		void set_alpha (unsigned char a)
 		{
-			m_alpha = correct_in_scope(a,
+			m_color_v[3] = correct_in_scope(a,
 									  static_cast<unsigned char>(0),
 									  static_cast<unsigned char>(255));
 		}
 
+		void add (short shade)
+		{
+			set_red(m_color_v[0] + shade);
+			set_green(m_color_v[1] + shade);
+			set_blue(m_color_v[2] + shade);
+		}
+
+		const unsigned char* data () const {return m_color_v;}
+
 	private:
 
-		unsigned char m_red;
-		unsigned char m_green;
-		unsigned char m_blue;
-		unsigned char m_alpha;
-
+		/**
+		 * @brief Array to store color data
+		 *
+		 * [0]: red
+		 * [1]: green
+		 * [2]: blue
+		 * [3]: alpha
+		 */
+		unsigned char m_color_v[4];
 	};
 
 	/*

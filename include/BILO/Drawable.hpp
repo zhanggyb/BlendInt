@@ -48,7 +48,7 @@ namespace BILO {
 	class Drawable;
 	class Rect;
 
-	struct WidgetColors;
+	struct WidgetTheme;
 
 	enum ParentType {
 		ParentUnknown,

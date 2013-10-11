@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 	app->bind(button2);
 
 	ScrollControl *scrollcontrol = new ScrollControl;
-	scrollcontrol->resize(24, 200);
+	scrollcontrol->resize(200, 24);
 	scrollcontrol->set_pos(650, 100);
 
 	app->bind(scrollcontrol);

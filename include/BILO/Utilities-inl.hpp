@@ -42,7 +42,7 @@ namespace BILO {
 						 (max) : (value)));
 	}
 
-	inline unsigned char convert_color_from_float (float val)
+	inline unsigned char float_to_uchar (float val)
 	{
 		return (val <= 0.0f) ?
 			0 : ((val > (1.0f - 0.5f / 255.0f)) ?

@@ -150,13 +150,13 @@ namespace BILO {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		Theme* tm = Theme::instance();
+		ThemeManager* tm = ThemeManager::instance();
 
 		// draw inner, simple fill
-		glColor4ub(tm->themeUI()->regular.inner.r(),
-		        tm->themeUI()->regular.inner.g(),
-		        tm->themeUI()->regular.inner.b(),
-		        tm->themeUI()->regular.inner.a());
+		glColor4ub(tm->themes()->regular.inner.r(),
+		        tm->themes()->regular.inner.g(),
+		        tm->themes()->regular.inner.b(),
+		        tm->themes()->regular.inner.a());
 
 		m_buffer.set_index(0);
 
@@ -172,10 +172,10 @@ namespace BILO {
 
 		// draw outline
 		m_buffer.set_index(1);
-		unsigned char tcol[4] = { tm->themeUI()->regular.outline.r(),
-		        tm->themeUI()->regular.outline.g(),
-		        tm->themeUI()->regular.outline.b(),
-		        tm->themeUI()->regular.outline.a()};
+		unsigned char tcol[4] = { tm->themes()->regular.outline.r(),
+		        tm->themes()->regular.outline.g(),
+		        tm->themes()->regular.outline.b(),
+		        tm->themes()->regular.outline.a()};
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 
@@ -246,7 +246,7 @@ namespace BILO {
 		float minyi = miny + m_border_width;		// U.pixelsize;
 		float maxyi = maxy - m_border_width;		// U.pixelsize;
 
-		int total_num = 0;
+		int count = 0;
 		int halfwayvert = 0;
 		int minsize = 0;
 		const int hnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerTopRight)) == (RoundCornerTopLeft | RoundCornerTopRight) ||
@@ -273,89 +273,313 @@ namespace BILO {
 
 		// corner left-bottom
 		if (m_roundcorner & RoundCornerBottomLeft) {
-			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, total_num++) {
-				inner_v[total_num][0] = minxi + veci[i][1];
-				inner_v[total_num][1] = minyi + radi - veci[i][0];
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner_v[count][0] = minxi + veci[i][1];
+				inner_v[count][1] = minyi + radi - veci[i][0];
 
-				outer_v[total_num][0] = minx + vec[i][1];
-				outer_v[total_num][1] = miny + rad - vec[i][0];
+				outer_v[count][0] = minx + vec[i][1];
+				outer_v[count][1] = miny + rad - vec[i][0];
 			}
 		}
 		else {
-			inner_v[total_num][0] = minxi;
-			inner_v[total_num][1] = minyi;
+			inner_v[count][0] = minxi;
+			inner_v[count][1] = minyi;
 
-			outer_v[total_num][0] = minx;
-			outer_v[total_num][1] = miny;
-
-			total_num++;
+			outer_v[count][0] = minx;
+			outer_v[count][1] = miny;
+			count++;
 		}
 
 		// corner right-bottom
 		if (m_roundcorner & RoundCornerBottomRight) {
-			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, total_num++) {
-				inner_v[total_num][0] = maxxi - radi + veci[i][0];
-				inner_v[total_num][1] = minyi + veci[i][1];
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner_v[count][0] = maxxi - radi + veci[i][0];
+				inner_v[count][1] = minyi + veci[i][1];
 
-				outer_v[total_num][0] = maxx - rad + vec[i][0];
-				outer_v[total_num][1] = miny + vec[i][1];
+				outer_v[count][0] = maxx - rad + vec[i][0];
+				outer_v[count][1] = miny + vec[i][1];
 			}
 		}
 		else {
-			inner_v[total_num][0] = maxxi;
-			inner_v[total_num][1] = minyi;
+			inner_v[count][0] = maxxi;
+			inner_v[count][1] = minyi;
 
-			outer_v[total_num][0] = maxx;
-			outer_v[total_num][1] = miny;
-			total_num++;
+			outer_v[count][0] = maxx;
+			outer_v[count][1] = miny;
+			count++;
 		}
 
-		halfwayvert = total_num;	// TODO: check how to use halfwayvert
+		halfwayvert = count;	// TODO: check how to use halfwayvert
 
 		// corner right-top
 		if (m_roundcorner & RoundCornerTopRight) {
-			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, total_num++) {
-				inner_v[total_num][0] = maxxi - veci[i][1];
-				inner_v[total_num][1] = maxyi - radi + veci[i][0];
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner_v[count][0] = maxxi - veci[i][1];
+				inner_v[count][1] = maxyi - radi + veci[i][0];
 
-				outer_v[total_num][0] = maxx - vec[i][1];
-				outer_v[total_num][1] = maxy - rad + vec[i][0];
+				outer_v[count][0] = maxx - vec[i][1];
+				outer_v[count][1] = maxy - rad + vec[i][0];
 			}
 		}
 		else {
-			inner_v[total_num][0] = maxxi;
-			inner_v[total_num][1] = maxyi;
+			inner_v[count][0] = maxxi;
+			inner_v[count][1] = maxyi;
 
-			outer_v[total_num][0] = maxx;
-			outer_v[total_num][1] = maxy;
-			total_num++;
+			outer_v[count][0] = maxx;
+			outer_v[count][1] = maxy;
+			count++;
 		}
 
 		// corner left-top
 		if (m_roundcorner & RoundCornerTopLeft) {
-			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, total_num++) {
-				inner_v[total_num][0] = minxi + radi - veci[i][0];
-				inner_v[total_num][1] = maxyi - veci[i][1];
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner_v[count][0] = minxi + radi - veci[i][0];
+				inner_v[count][1] = maxyi - veci[i][1];
 
-				outer_v[total_num][0] = minx + rad - vec[i][0];
-				outer_v[total_num][1] = maxy - vec[i][1];
+				outer_v[count][0] = minx + rad - vec[i][0];
+				outer_v[count][1] = maxy - vec[i][1];
 			}
 
 		}
 		else {
 
-			inner_v[total_num][0] = minxi;
-			inner_v[total_num][1] = maxyi;
+			inner_v[count][0] = minxi;
+			inner_v[count][1] = maxyi;
 
-			outer_v[total_num][0] = minx;
-			outer_v[total_num][1] = maxy;
-
-			total_num++;
+			outer_v[count][0] = minx;
+			outer_v[count][1] = maxy;
+			count++;
 		}
 
-		assert(total_num <= WIDGET_SIZE_MAX);
+		assert(count <= WIDGET_SIZE_MAX);
 
-		return total_num;
+		return count;
+	}
+
+	int Widget::generate_vertices (const Size* size,
+			const Color& color,
+			short shadetop,
+			short shadedown,
+			bool horizontal,
+			float inner[WIDGET_SIZE_MAX][6],
+			float outer[WIDGET_SIZE_MAX][2])
+	{
+		float rad = m_corner_radius;
+		float radi = rad - m_border_width;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size->width();
+		float maxy = size->height();
+
+		float minxi = minx + m_border_width;
+		float maxxi = maxx - m_border_width;
+		float minyi = miny + m_border_width;
+		float maxyi = maxy - m_border_width;
+
+		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
+		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
+
+		int count = 0;
+		int halfwayvert = 0;
+		int minsize = 0;
+		const int hnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerTopRight)) == (RoundCornerTopLeft | RoundCornerTopRight) ||
+		                  (m_roundcorner & (RoundCornerBottomRight | RoundCornerBottomLeft)) == (RoundCornerBottomRight | RoundCornerBottomLeft)) ? 1 : 2;
+		const int vnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerBottomLeft)) == (RoundCornerTopLeft | RoundCornerBottomLeft) ||
+		                  (m_roundcorner & (RoundCornerTopRight | RoundCornerBottomRight)) == (RoundCornerTopRight | RoundCornerBottomRight)) ? 1 : 2;
+
+		Color color_top = color + shadetop;
+		Color color_down = color + shadedown;
+		Color shaded_color;
+
+		minsize = std::min(size->width() * hnum,
+		                 size->height() * vnum);
+
+		if (2.0f * m_corner_radius > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + 1.0f) > minsize)
+			radi = 0.5f * minsize - m_border_width;	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		// corner left-bottom
+		if (m_roundcorner & RoundCornerBottomLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = minxi + veci[i][1];
+				inner[count][1] = minyi + radi - veci[i][0];
+
+				outer[count][0] = minx + vec[i][1];
+				outer[count][1] = miny + rad - vec[i][0];
+
+				if (horizontal) {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}
+		else {
+			inner[count][0] = minxi;
+			inner[count][1] = minyi;
+
+			outer[count][0] = minx;
+			outer[count][1] = miny;
+
+			if (horizontal) {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		// corner right-bottom
+		if (m_roundcorner & RoundCornerBottomRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = maxxi - radi + veci[i][0];
+				inner[count][1] = minyi + veci[i][1];
+
+				outer[count][0] = maxx - rad + vec[i][0];
+				outer[count][1] = miny + vec[i][1];
+
+				if (horizontal) {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}
+		else {
+			inner[count][0] = maxxi;
+			inner[count][1] = minyi;
+
+			outer[count][0] = maxx;
+			outer[count][1] = miny;
+
+			if (horizontal) {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		halfwayvert = count;	// TODO: check how to use halfwayvert
+
+		// corner right-top
+		if (m_roundcorner & RoundCornerTopRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = maxxi - veci[i][1];
+				inner[count][1] = maxyi - radi + veci[i][0];
+
+				outer[count][0] = maxx - vec[i][1];
+				outer[count][1] = maxy - rad + vec[i][0];
+
+				if (horizontal) {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+
+			}
+		}
+		else {
+			inner[count][0] = maxxi;
+			inner[count][1] = maxyi;
+
+			outer[count][0] = maxx;
+			outer[count][1] = maxy;
+
+			if (horizontal) {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		// corner left-top
+		if (m_roundcorner & RoundCornerTopLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = minxi + radi - veci[i][0];
+				inner[count][1] = maxyi - veci[i][1];
+
+				outer[count][0] = minx + rad - vec[i][0];
+				outer[count][1] = maxy - vec[i][1];
+
+				if (horizontal) {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+
+			}
+
+		}
+		else {
+
+			inner[count][0] = minxi;
+			inner[count][1] = maxyi;
+
+			outer[count][0] = minx;
+			outer[count][1] = maxy;
+
+			if (horizontal) {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		assert(count <= WIDGET_SIZE_MAX);
+
+		return count;
 	}
 
 	void Widget::verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][2],
@@ -372,29 +596,18 @@ namespace BILO {
 		copy_v2_v2(quad_strip[i * 2 + 1], inner_v[0]);
 	}
 
-	void Widget::shadecolors4(const Color& color, short shadetop, short shadedown, char coltop[4], char coldown[4])
+	void Widget::verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][6],
+			const float outer_v[WIDGET_SIZE_MAX][2],
+			const int totvert,
+			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
 	{
-		coltop[0] = correct_in_scope(color.r() + shadetop, 0, 255);
-		coltop[1] = correct_in_scope(color.g() + shadetop, 0, 255);
-		coltop[2] = correct_in_scope(color.b() + shadetop, 0, 255);
-		coltop[3] = color.a();
-
-		coldown[0] = correct_in_scope(color.r() + shadedown, 0, 255);
-		coldown[1] = correct_in_scope(color.g() + shadedown, 0, 255);
-		coldown[2] = correct_in_scope(color.b() + shadedown, 0, 255);
-		coldown[3] = color.a();
+		int i;
+		for (i = 0; i < totvert; i++) {
+			copy_v2_v2(quad_strip[i * 2], outer_v[i]);
+			copy_v2_v2(quad_strip[i * 2 + 1], inner_v[i]);
+		}
+		copy_v2_v2(quad_strip[i * 2], outer_v[0]);
+		copy_v2_v2(quad_strip[i * 2 + 1], inner_v[0]);
 	}
-
-	void Widget::round_box_shade_col4_r(const char color1[4], const char color2[4], const float fac, unsigned char color_out[4])
-	{
-		const int faci = convert_color_from_float(fac);
-		const int facm = 255 - faci;
-
-		color_out[0] = (faci * color1[0] + facm * color2[0]) >> 8;
-		color_out[1] = (faci * color1[1] + facm * color2[1]) >> 8;
-		color_out[2] = (faci * color1[2] + facm * color2[2]) >> 8;
-		color_out[3] = (faci * color1[3] + facm * color2[3]) >> 8;
-	}
-
 } /* namespace BILO */
 

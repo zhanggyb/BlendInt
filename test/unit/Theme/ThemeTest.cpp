@@ -51,27 +51,27 @@ void ThemeTest::tearDown ()
 
 void ThemeTest::initialize1 ()
 {
-	if(!Theme::initialize()) {
+	if(!ThemeManager::initialize()) {
 		CPPUNIT_ASSERT(false);
 		return;
 	}
 
 	unsigned char r = 0x00;
 
-	Theme* theme = Theme::instance();
+	ThemeManager* theme = ThemeManager::instance();
 
 	if (theme != NULL)
 		theme->initialize();
 
 	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	r = theme->themeUI()->tool.outline.r();
+	r = theme->themes()->tool.outline.r();
 
 	if (theme != NULL) {
-		Theme::release();
+		ThemeManager::release();
 	}
 
 	cout << "Red: " << r << endl;
-	Theme::release();
+	ThemeManager::release();
 	CPPUNIT_ASSERT(r == 0x19);
 }
 
@@ -108,10 +108,10 @@ void ThemeTest::initialize2 ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-    Theme* theme = Theme::instance();
+    ThemeManager* theme = ThemeManager::instance();
 	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
-	Color bg_color = theme->themeUI()->menu_item.item;
-	Color textcolor = theme->themeUI()->menu_item.text;
+	Color bg_color = theme->themes()->menu_item.item;
+	Color textcolor = theme->themes()->menu_item.text;
 
 	Label label(L"Text in Label");
 	label.set_pos(Point(50, 50));

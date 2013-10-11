@@ -74,32 +74,35 @@ namespace BILO {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		Theme* tm = Theme::instance();
+		ThemeManager* tm = ThemeManager::instance();
 
-		glColor4ub(tm->themeUI()->regular.inner.r(),
-		        tm->themeUI()->regular.inner.g(),
-		        tm->themeUI()->regular.inner.b(),
-		        tm->themeUI()->regular.inner.a());
+//		glColor4ub(tm->themeUI()->regular.inner.r(),
+//		        tm->themeUI()->regular.inner.g(),
+//		        tm->themeUI()->regular.inner.b(),
+//		        tm->themeUI()->regular.inner.a());
 
 		m_buffer.set_index(0);
 
 		m_buffer.bind();
 		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
 
-		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
+		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glDrawArrays(GL_POLYGON, 0, m_buffer.vertices());
 
+		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 
 		m_buffer.unbind();
 
 		// draw outline
 		m_buffer.set_index(1);
-		unsigned char tcol[4] = { tm->themeUI()->scroll.outline.r(),
-		        tm->themeUI()->scroll.outline.g(),
-		        tm->themeUI()->scroll.outline.b(),
-		        tm->themeUI()->scroll.outline.a()};
+		unsigned char tcol[4] = { tm->themes()->scroll.outline.r(),
+		        tm->themes()->scroll.outline.g(),
+		        tm->themes()->scroll.outline.b(),
+		        tm->themes()->scroll.outline.a()};
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 
@@ -170,18 +173,23 @@ namespace BILO {
 	void ScrollControl::update_shape(const Size* size)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 
-		bool horizontal = size->width() > size->height();
+		bool horizontal = size->width() < size->height();
+
+		ThemeManager* tm = ThemeManager::instance();
 
 		if(horizontal)
 			m_corner_radius = 0.5f * size->height();
 		else
 			m_corner_radius = 0.5f * size->width();
 
-		Theme* tm = Theme::instance();
-
-		int total_num = round_box_edges(size, inner_v, outer_v);
+		int total_num = generate_vertices(size,
+				tm->themes()->scroll.inner_sel,
+				tm->themes()->scroll.shadetop,
+				tm->themes()->scroll.shadedown,
+				horizontal,
+				inner_v, outer_v);
 
 		m_buffer.generate(2);
 
@@ -301,12 +309,12 @@ namespace BILO {
 		if (m_buffer.is_buffer(0)) {
 
 			m_buffer.set_index(0);
-			Theme* tm = Theme::instance();
+			ThemeManager* tm = ThemeManager::instance();
 
-			glColor4ub(tm->themeUI()->scroll.item.r(),
-			        tm->themeUI()->scroll.item.g(),
-			        tm->themeUI()->scroll.item.b(),
-			        tm->themeUI()->scroll.item.a());
+			glColor4ub(tm->themes()->scroll.item.r(),
+			        tm->themes()->scroll.item.g(),
+			        tm->themes()->scroll.item.b(),
+			        tm->themes()->scroll.item.a());
 			//glColor3f (1.0f, 0.2f, 0.9f);
 			//glBindBuffer (GL_ARRAY_BUFFER, m_buffer);
 			m_buffer.bind();
@@ -317,10 +325,10 @@ namespace BILO {
 			glDrawArrays(GL_POLYGON, 0, 22);
 			//glDisable(GL_POLYGON_SMOOTH);
 
-			glColor4ub(tm->themeUI()->scroll.outline.r(),
-			        tm->themeUI()->scroll.outline.g(),
-			        tm->themeUI()->scroll.outline.b(),
-			        tm->themeUI()->scroll.outline.a());
+			glColor4ub(tm->themes()->scroll.outline.r(),
+			        tm->themes()->scroll.outline.g(),
+			        tm->themes()->scroll.outline.b(),
+			        tm->themes()->scroll.outline.a());
 
 			//glEnable(GL_LINE_SMOOTH);
 			//glLineWidth(1.25);

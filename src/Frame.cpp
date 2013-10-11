@@ -63,12 +63,12 @@ namespace BILO {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if (m_buffer.is_buffer(0)) {
-			Theme* tm = Theme::instance();
+			ThemeManager* tm = ThemeManager::instance();
 
-			glColor4ub(tm->themeUI()->regular.inner.r(),
-			        tm->themeUI()->regular.inner.g(),
-			        tm->themeUI()->regular.inner.b(),
-			        tm->themeUI()->regular.inner.a() * 0.5f);
+			glColor4ub(tm->themes()->regular.inner.r(),
+			        tm->themes()->regular.inner.g(),
+			        tm->themes()->regular.inner.b(),
+			        tm->themes()->regular.inner.a() * 0.5f);
 
 			m_buffer.bind(GL_ARRAY_BUFFER);
 			glVertexPointer(2, GL_FLOAT, 0, 0);
@@ -76,10 +76,10 @@ namespace BILO {
 
 			glDrawArrays(GL_POLYGON, 0, 4);
 
-			glColor4ub(tm->themeUI()->regular.outline.r(),
-			        tm->themeUI()->regular.outline.g(),
-			        tm->themeUI()->regular.outline.b(),
-			        tm->themeUI()->regular.outline.a());
+			glColor4ub(tm->themes()->regular.outline.r(),
+			        tm->themes()->regular.outline.g(),
+			        tm->themes()->regular.outline.b(),
+			        tm->themes()->regular.outline.a());
 
 			glDrawArrays(GL_LINE_LOOP, 0, 4);
 

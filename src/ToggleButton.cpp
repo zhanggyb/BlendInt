@@ -75,32 +75,32 @@ namespace BILO {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
-		Theme* tm = Theme::instance();
+		ThemeManager* tm = ThemeManager::instance();
 
 		// draw inner, simple fill
 		if (m_status_hover) {
 			if(m_status_checked) {
-				glColor4ub(tm->themeUI()->regular.inner_sel.highlight_red(),
-				        tm->themeUI()->regular.inner_sel.highlight_green(),
-				        tm->themeUI()->regular.inner_sel.highlight_blue(),
-				        tm->themeUI()->regular.inner_sel.a());
+				glColor4ub(tm->themes()->regular.inner_sel.highlight_red(),
+				        tm->themes()->regular.inner_sel.highlight_green(),
+				        tm->themes()->regular.inner_sel.highlight_blue(),
+				        tm->themes()->regular.inner_sel.a());
 			} else {
-				glColor4ub(tm->themeUI()->regular.inner.highlight_red(),
-						tm->themeUI()->regular.inner.highlight_green(),
-						tm->themeUI()->regular.inner.highlight_blue(),
-						tm->themeUI()->regular.inner.a());
+				glColor4ub(tm->themes()->regular.inner.highlight_red(),
+						tm->themes()->regular.inner.highlight_green(),
+						tm->themes()->regular.inner.highlight_blue(),
+						tm->themes()->regular.inner.a());
 			}
 		} else {
 			if (m_status_checked) {
-				glColor4ub(tm->themeUI()->regular.inner_sel.r(),
-				        tm->themeUI()->regular.inner_sel.g(),
-				        tm->themeUI()->regular.inner_sel.b(),
-				        tm->themeUI()->regular.inner_sel.a());
+				glColor4ub(tm->themes()->regular.inner_sel.r(),
+				        tm->themes()->regular.inner_sel.g(),
+				        tm->themes()->regular.inner_sel.b(),
+				        tm->themes()->regular.inner_sel.a());
 			} else {
-				glColor4ub(tm->themeUI()->regular.inner.r(),
-				        tm->themeUI()->regular.inner.g(),
-				        tm->themeUI()->regular.inner.b(),
-				        tm->themeUI()->regular.inner.a());
+				glColor4ub(tm->themes()->regular.inner.r(),
+				        tm->themes()->regular.inner.g(),
+				        tm->themes()->regular.inner.b(),
+				        tm->themes()->regular.inner.a());
 			}
 		}
 
@@ -118,10 +118,10 @@ namespace BILO {
 
 		// draw outline
 		m_buffer.set_index(1);
-		unsigned char tcol[4] = { tm->themeUI()->regular.outline.r(),
-		        tm->themeUI()->regular.outline.g(),
-		        tm->themeUI()->regular.outline.b(),
-		        tm->themeUI()->regular.outline.a()};
+		unsigned char tcol[4] = { tm->themes()->regular.outline.r(),
+		        tm->themes()->regular.outline.g(),
+		        tm->themes()->regular.outline.b(),
+		        tm->themes()->regular.outline.a()};
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 

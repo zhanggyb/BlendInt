@@ -32,9 +32,9 @@ namespace BILO {
 
 	class Interface;
 
-	struct WidgetColors
+	struct WidgetTheme
 	{
-		WidgetColors ();
+		WidgetTheme ();
 
 		Color outline;		// Outline
 		Color item;				// Item
@@ -48,9 +48,9 @@ namespace BILO {
 		bool alpha_check;
 	};
 
-	struct WidgetStateColors
+	struct WidgetStateTheme
 	{
-		WidgetStateColors();
+		WidgetStateTheme();
 
 		Color inner_anim;	// Animated
 		Color inner_anim_sel;	// Animated Selected
@@ -62,9 +62,9 @@ namespace BILO {
 		float pad;
 	};
 
-	struct PanelColors
+	struct PanelTheme
 	{
-		PanelColors ();
+		PanelTheme ();
 
 		Color header;
 		Color back;
@@ -73,35 +73,35 @@ namespace BILO {
 		int pad;
 	};
 
-	class Theme
+	class ThemeManager
 	{
 	public:
 		// public structures
 
-		struct ThemeUI
+		struct Themes
 		{
 			/* Interface Elements (buttons, menus, icons) */
-			WidgetColors regular;
-			WidgetColors tool;
-			WidgetColors text;
-			WidgetColors radio_button;
-			WidgetColors option;
-			WidgetColors toggle;
-			WidgetColors number_field;
-			WidgetColors number_slider;
-			WidgetColors menu;
-			WidgetColors pulldown;
-			WidgetColors menu_back;
-			WidgetColors menu_item;
-			WidgetColors tooltip;
-			WidgetColors box;
-			WidgetColors scroll;
-			WidgetColors progress;
-			WidgetColors list_item;
+			WidgetTheme regular;
+			WidgetTheme tool;
+			WidgetTheme text;
+			WidgetTheme radio_button;
+			WidgetTheme option;
+			WidgetTheme toggle;
+			WidgetTheme number_field;
+			WidgetTheme number_slider;
+			WidgetTheme menu;
+			WidgetTheme pulldown;
+			WidgetTheme menu_back;
+			WidgetTheme menu_item;
+			WidgetTheme tooltip;
+			WidgetTheme box;
+			WidgetTheme scroll;
+			WidgetTheme progress;
+			WidgetTheme list_item;
 
-			WidgetStateColors state;
+			WidgetStateTheme state;
 
-			PanelColors panel; /* depricated, but we keep it for do_versions (2.66.1) */
+			PanelTheme panel; /* depricated, but we keep it for do_versions (2.66.1) */
 
 			/* fac: 0 - 1 for blend factor, width in pixels */
 			float menu_shadow_fac;
@@ -125,16 +125,16 @@ namespace BILO {
 
 		friend class Interface;
 
-		static Theme* instance ();
+		static ThemeManager* instance ();
 
-		const ThemeUI* themeUI () const
+		const Themes* themes () const
 		{
-			return &themeUI_;
+			return &m_themes;
 		}
 
 		const FontStyle* fontStyle () const
 		{
-			return &fonts_;
+			return &m_fonts;
 		}
 
 #ifdef DEBUG
@@ -152,7 +152,7 @@ namespace BILO {
 		/**
 		 * @brief Default constructor
 		 */
-		Theme ();
+		ThemeManager ();
 
 		/**
 		 * @brief Private destructor
@@ -160,17 +160,17 @@ namespace BILO {
 		 * Move destructor to private to disallow simply delete
 		 * use release() instead
 		 */
-		~Theme ();
+		~ThemeManager ();
 
-		ThemeUI themeUI_;
+		Themes m_themes;
 
-		FontStyle fonts_;
+		FontStyle m_fonts;
 
-		static Theme* theme;
+		static ThemeManager* theme_manager;
 
-		Theme (const Theme& orig);
+		ThemeManager (const ThemeManager& orig);
 
-		Theme& operator = (const Theme& orig);
+		ThemeManager& operator = (const ThemeManager& orig);
 
 	};
 

@@ -95,16 +95,34 @@ namespace BILO {
 		int round_box_edges (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
 
 		/**
-		 * @brief prepare shade colors
-		 * @param[in] color
-		 * @param[in] shadetop
-		 * @param[in] shadedown
-		 * @param[in] coltop
-		 * @param[in] coldown
+		 * @brief generate vertices array for round box inner and edges
+		 * @param[in] size the size to calculate position and shade uv
+		 * @param[in] shadetop the top shade, defined in theme
+		 * @param[in] shadedown the bottom shade, defined in theme
+		 * @param[in] horizontal true if shade with horizontal direction
+		 * @param[out] inner inner vertices with position and color information
+		 * @param[out] outer vertices for outline
+		 * @return
 		 */
-		void shadecolors4(const Color& color, short shadetop, short shadedown, char coltop[4], char coldown[4]);
+		int generate_vertices (const Size* size,
+				const Color& color,
+				short shadetop,
+				short shadedown,
+				bool horizontal,
+				float inner[WIDGET_SIZE_MAX][6],
+				float outer[WIDGET_SIZE_MAX][2]);
 
-		void round_box_shade_col4_r(const char color1[4], const char color2[4], const float fac, unsigned char color_out[4]);
+		void verts_to_quad_strip (
+				const float inner_v[WIDGET_SIZE_MAX][2],
+				const float outer_v[WIDGET_SIZE_MAX][2],
+				const int totvert,
+				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
+
+		void verts_to_quad_strip (
+				const float inner_v[WIDGET_SIZE_MAX][6],
+				const float outer_v[WIDGET_SIZE_MAX][2],
+				const int totvert,
+				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
 
 		Padding m_padding;
 
@@ -117,12 +135,6 @@ namespace BILO {
 		Cpp::ConnectionScope m_events;
 
 		GLBuffer m_buffer;
-
-		void verts_to_quad_strip (
-				const float inner_v[WIDGET_SIZE_MAX][2],
-				const float outer_v[WIDGET_SIZE_MAX][2],
-				const int totvert,
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
 
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 

@@ -79,7 +79,7 @@ namespace BILO {
 			}
 		}
 
-		if (!Theme::initialize()) {
+		if (!ThemeManager::initialize()) {
 			std::cerr << "Cannot initialize Themes" << std::endl;
 			result = false;
 		}
@@ -108,7 +108,7 @@ namespace BILO {
 	{
 		ContextManager::release();
 		ShaderManager::release();
-		Theme::release();
+		ThemeManager::release();
 		FontCache::releaseAll();
 		FontConfig::release();
 
