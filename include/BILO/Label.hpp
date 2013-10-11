@@ -29,13 +29,15 @@
 #include <BILO/Widget.hpp>
 #include <BILO/Font.hpp>
 #include <BILO/Color.hpp>
-
+#include <BILO/Rect.hpp>
 #include <BILO/String.hpp>
 #include <BILO/Types.hpp>
 
 using namespace std;
 
 namespace BILO {
+
+	class Rect;
 
 	class Label: public Widget
 	{

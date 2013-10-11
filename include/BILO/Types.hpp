@@ -251,18 +251,9 @@ namespace BILO {
 		STICKY_MOUSE_BUTTONS = GLFW_STICKY_MOUSE_BUTTONS
 	};
 
-	enum SizePolicy {
-		SizePolicyNone = 0,
-		SizePolicyMinimum,
-		SizePolicyMaximum,
-		SizePolicyFixed,
-		SizePolicyPerfect,
-		SizePolicyExpand
-	};
-
 	enum Orientation {
-		Horizontal = 1,
-		Vertical = 2
+		Horizontal = 0,
+		Vertical = 1
 	};
 
 	enum WidgetPropertyType {

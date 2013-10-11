@@ -25,6 +25,7 @@
 
 #include <BILO/ToggleButton.hpp>
 #include <BILO/ShaderManager.hpp>
+#include <BILO/Theme.hpp>
 
 namespace BILO {
 

@@ -25,10 +25,6 @@
 #define _BILO_WIDGET_HPP_
 
 #include <BILO/Drawable.hpp>
-#include <BILO/Theme.hpp>
-#include <BILO/Color.hpp>
-#include <BILO/Theme.hpp>
-#include <BILO/Rect.hpp>
 #include <BILO/GLBuffer.hpp>
 
 #include <Cpp/Events.hpp>
@@ -40,6 +36,9 @@
 #define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
 
 namespace BILO {
+
+	struct WidgetTheme;
+	class Color;
 
 	class Widget: public Drawable
 	{
@@ -86,20 +85,35 @@ namespace BILO {
 		virtual void move_mouse (MouseEvent* event);
 
 		/**
-		 * @brief calculate vertices for round box edge
+		 * @brief calculate vertices for round box edge with no shaded color
 		 * @param[in] size the size to calculate edges
 		 * @param[out] inner_v
 		 * @param[out] outer_v
 		 * @return how many vertices are used in the output array
 		 */
-		int round_box_edges (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
+		int generate_vertices (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
+
+		/**
+		 * @brief calculate vertices for round box edges
+		 * @param size
+		 * @param theme
+		 * @param shadedir shade direction
+		 * @param inner
+		 * @param outer
+		 * @return
+		 */
+		int generate_vertices (const Size* size,
+				const WidgetTheme* theme,
+				Orientation shadedir,
+				float inner[WIDGET_SIZE_MAX][6],
+				float outer[WIDGET_SIZE_MAX][2]);
 
 		/**
 		 * @brief generate vertices array for round box inner and edges
 		 * @param[in] size the size to calculate position and shade uv
 		 * @param[in] shadetop the top shade, defined in theme
 		 * @param[in] shadedown the bottom shade, defined in theme
-		 * @param[in] horizontal true if shade with horizontal direction
+		 * @param[in] shadedir true if shade with horizontal direction
 		 * @param[out] inner inner vertices with position and color information
 		 * @param[out] outer vertices for outline
 		 * @return
@@ -108,7 +122,7 @@ namespace BILO {
 				const Color& color,
 				short shadetop,
 				short shadedown,
-				bool horizontal,
+				Orientation shadedir,
 				float inner[WIDGET_SIZE_MAX][6],
 				float outer[WIDGET_SIZE_MAX][2]);
 

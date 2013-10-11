@@ -25,6 +25,7 @@
 
 #include <BILO/Frame.hpp>
 #include <BILO/FontCache.hpp>
+#include <BILO/Theme.hpp>
 
 namespace BILO {
 

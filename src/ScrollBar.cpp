@@ -24,6 +24,7 @@
 #include <GL/glew.h>
 
 #include <BILO/ScrollBar.hpp>
+#include <BILO/Theme.hpp>
 
 namespace BILO {
 
@@ -175,21 +176,40 @@ namespace BILO {
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 
-		bool horizontal = size->width() < size->height();
+		Orientation shadedir = size->width() < size->height() ? Horizontal : Vertical;
 
 		ThemeManager* tm = ThemeManager::instance();
+		Color color = tm->themes()->scroll.item;
 
-		if(horizontal)
+		if(shadedir)
 			m_corner_radius = 0.5f * size->height();
 		else
 			m_corner_radius = 0.5f * size->width();
 
-		int total_num = generate_vertices(size,
-				tm->themes()->scroll.inner_sel,
-				tm->themes()->scroll.shadetop,
-				tm->themes()->scroll.shadedown,
-				horizontal,
-				inner_v, outer_v);
+		short shadetop = tm->themes()->scroll.shadetop;
+		short shadedown = tm->themes()->scroll.shadedown;
+
+		if (shadetop > shadedown)
+				shadetop += 20;   /* XXX violates themes... */
+		else shadedown += 20;
+
+		int total_num = 0;
+
+		if(shadedir) {
+			total_num = generate_vertices(size,
+					color,
+					shadetop,
+					shadedown,
+					shadedir,
+					inner_v, outer_v);
+		} else {	// swap shadetop and shadedown
+			total_num = generate_vertices(size,
+					color,
+					shadedown,
+					shadetop,
+					shadedir,
+					inner_v, outer_v);
+		}
 
 		m_buffer.generate(2);
 

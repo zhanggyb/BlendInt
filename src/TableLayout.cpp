@@ -316,7 +316,7 @@ namespace BILO {
 		{
 			std::cout << column_width[j] << " ";
 		}
-		std::cout << endl;
+		std::cout << std::endl;
 
 		for(int i = 0; i < m_rows; i++)
 		{

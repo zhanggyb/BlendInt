@@ -31,12 +31,13 @@
 #include <BILO/Widget.hpp>
 #include <BILO/Types.hpp>
 #include <BILO/Coord.hpp>
-
+#include <BILO/Color.hpp>
 #include <BILO/Vector.hpp>
 
 #include <BILO/Utilities-inl.hpp>
 
 #include <BILO/Interface.hpp>
+#include <BILO/Theme.hpp>
 
 namespace BILO {
 
@@ -201,10 +202,12 @@ namespace BILO {
 
 	void Widget::update_shape(const Size* size)
 	{
+		// the basic widget don't use shaded color
+
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
 
-		int total_num = round_box_edges(size, inner_v, outer_v);
+		int total_num = generate_vertices(size, inner_v, outer_v);
 
 		m_buffer.generate(2);
 
@@ -229,7 +232,7 @@ namespace BILO {
 		m_buffer.unbind();
 	}
 
-	int Widget::round_box_edges(const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
+	int Widget::generate_vertices(const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
 	{
 		float rad = m_corner_radius;
 		float radi = rad - m_border_width;
@@ -357,10 +360,232 @@ namespace BILO {
 	}
 
 	int Widget::generate_vertices (const Size* size,
+			const WidgetTheme* theme,
+			Orientation shadedir,
+			float inner[WIDGET_SIZE_MAX][6],
+			float outer[WIDGET_SIZE_MAX][2])
+	{
+		float rad = m_corner_radius;
+		float radi = rad - m_border_width;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size->width();
+		float maxy = size->height();
+
+		float minxi = minx + m_border_width;
+		float maxxi = maxx - m_border_width;
+		float minyi = miny + m_border_width;
+		float maxyi = maxy - m_border_width;
+
+		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
+		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
+
+		int count = 0;
+		int halfwayvert = 0;
+		int minsize = 0;
+		const int hnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerTopRight)) == (RoundCornerTopLeft | RoundCornerTopRight) ||
+		                  (m_roundcorner & (RoundCornerBottomRight | RoundCornerBottomLeft)) == (RoundCornerBottomRight | RoundCornerBottomLeft)) ? 1 : 2;
+		const int vnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerBottomLeft)) == (RoundCornerTopLeft | RoundCornerBottomLeft) ||
+		                  (m_roundcorner & (RoundCornerTopRight | RoundCornerBottomRight)) == (RoundCornerTopRight | RoundCornerBottomRight)) ? 1 : 2;
+
+		Color color_top = theme->inner + theme->shadetop;
+		Color color_down = theme->inner + theme->shadedown;
+		Color shaded_color;
+
+		minsize = std::min(size->width() * hnum,
+		                 size->height() * vnum);
+
+		if (2.0f * m_corner_radius > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + 1.0f) > minsize)
+			radi = 0.5f * minsize - m_border_width;	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		// corner left-bottom
+		if (m_roundcorner & RoundCornerBottomLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = minxi + veci[i][1];
+				inner[count][1] = minyi + radi - veci[i][0];
+
+				outer[count][0] = minx + vec[i][1];
+				outer[count][1] = miny + rad - vec[i][0];
+
+				if (shadedir) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}
+		else {
+			inner[count][0] = minxi;
+			inner[count][1] = minyi;
+
+			outer[count][0] = minx;
+			outer[count][1] = miny;
+
+			if (shadedir) {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		// corner right-bottom
+		if (m_roundcorner & RoundCornerBottomRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = maxxi - radi + veci[i][0];
+				inner[count][1] = minyi + veci[i][1];
+
+				outer[count][0] = maxx - rad + vec[i][0];
+				outer[count][1] = miny + vec[i][1];
+
+				if (shadedir) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}
+		else {
+			inner[count][0] = maxxi;
+			inner[count][1] = minyi;
+
+			outer[count][0] = maxx;
+			outer[count][1] = miny;
+
+			if (shadedir) {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		halfwayvert = count;	// TODO: check how to use halfwayvert
+
+		// corner right-top
+		if (m_roundcorner & RoundCornerTopRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = maxxi - veci[i][1];
+				inner[count][1] = maxyi - radi + veci[i][0];
+
+				outer[count][0] = maxx - vec[i][1];
+				outer[count][1] = maxy - rad + vec[i][0];
+
+				if (shadedir) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+
+			}
+		}
+		else {
+			inner[count][0] = maxxi;
+			inner[count][1] = maxyi;
+
+			outer[count][0] = maxx;
+			outer[count][1] = maxy;
+
+			if (shadedir) {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		// corner left-top
+		if (m_roundcorner & RoundCornerTopLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = minxi + radi - veci[i][0];
+				inner[count][1] = maxyi - veci[i][1];
+
+				outer[count][0] = minx + rad - vec[i][0];
+				outer[count][1] = maxy - vec[i][1];
+
+				if (shadedir) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}
+		else {
+
+			inner[count][0] = minxi;
+			inner[count][1] = maxyi;
+
+			outer[count][0] = minx;
+			outer[count][1] = maxy;
+
+			if (shadedir) {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		assert(count <= WIDGET_SIZE_MAX);
+
+		return count;
+	}
+
+	int Widget::generate_vertices (const Size* size,
 			const Color& color,
 			short shadetop,
 			short shadedown,
-			bool horizontal,
+			Orientation shadedir,
 			float inner[WIDGET_SIZE_MAX][6],
 			float outer[WIDGET_SIZE_MAX][2])
 	{
@@ -420,10 +645,10 @@ namespace BILO {
 				outer[count][0] = minx + vec[i][1];
 				outer[count][1] = miny + rad - vec[i][0];
 
-				if (horizontal) {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
-				} else {
+				if (shadedir) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
@@ -438,7 +663,7 @@ namespace BILO {
 			outer[count][0] = minx;
 			outer[count][1] = miny;
 
-			if (horizontal) {
+			if (shadedir) {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
 			} else {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
@@ -460,10 +685,10 @@ namespace BILO {
 				outer[count][0] = maxx - rad + vec[i][0];
 				outer[count][1] = miny + vec[i][1];
 
-				if (horizontal) {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
-				} else {
+				if (shadedir) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
@@ -478,10 +703,10 @@ namespace BILO {
 			outer[count][0] = maxx;
 			outer[count][1] = miny;
 
-			if (horizontal) {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
-			} else {
+			if (shadedir) {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -502,16 +727,15 @@ namespace BILO {
 				outer[count][0] = maxx - vec[i][1];
 				outer[count][1] = maxy - rad + vec[i][0];
 
-				if (horizontal) {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
-				} else {
+				if (shadedir) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
-
 			}
 		}
 		else {
@@ -521,7 +745,7 @@ namespace BILO {
 			outer[count][0] = maxx;
 			outer[count][1] = maxy;
 
-			if (horizontal) {
+			if (shadedir) {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
 			} else {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
@@ -543,18 +767,16 @@ namespace BILO {
 				outer[count][0] = minx + rad - vec[i][0];
 				outer[count][1] = maxy - vec[i][1];
 
-				if (horizontal) {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
-				} else {
+				if (shadedir) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
-
 			}
-
 		}
 		else {
 
@@ -564,10 +786,10 @@ namespace BILO {
 			outer[count][0] = minx;
 			outer[count][1] = maxy;
 
-			if (horizontal) {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
-			} else {
+			if (shadedir) {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;

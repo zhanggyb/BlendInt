@@ -26,6 +26,7 @@
 #include <BILO/Slider.hpp>
 
 #include <BILO/Interface.hpp>
+#include <BILO/Theme.hpp>
 
 #include <iostream>
 
