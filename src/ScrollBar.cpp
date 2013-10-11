@@ -25,18 +25,19 @@
 
 #include <BILO/ScrollBar.hpp>
 #include <BILO/Theme.hpp>
+#include <BILO/Interface.hpp>
 
 namespace BILO {
 
 	ScrollControl::ScrollControl ()
-	: Widget(), m_hover(false), m_pressed(false)
+	: Widget(), m_pressed(false)
 	{
 		set_padding(0, 0, 0, 0);
 		set_roundcorner(RoundCornerAll);
 	}
 
 	ScrollControl::ScrollControl(Drawable* parent)
-	: Widget(parent), m_hover(false), m_pressed(false)
+	: Widget(parent), m_pressed(false)
 	{
 		set_padding(0, 0, 0, 0);
 		set_roundcorner(RoundCornerAll);
@@ -75,14 +76,11 @@ namespace BILO {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		ThemeManager* tm = ThemeManager::instance();
-
-//		glColor4ub(tm->themeUI()->regular.inner.r(),
-//		        tm->themeUI()->regular.inner.g(),
-//		        tm->themeUI()->regular.inner.b(),
-//		        tm->themeUI()->regular.inner.a());
-
-		m_buffer.set_index(0);
+		if(m_pressed) {
+			m_buffer.set_index(0);
+		} else {
+			m_buffer.set_index(2);
+		}
 
 		m_buffer.bind();
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -100,10 +98,10 @@ namespace BILO {
 
 		// draw outline
 		m_buffer.set_index(1);
-		unsigned char tcol[4] = { tm->themes()->scroll.outline.r(),
-		        tm->themes()->scroll.outline.g(),
-		        tm->themes()->scroll.outline.b(),
-		        tm->themes()->scroll.outline.a()};
+		unsigned char tcol[4] = { themes()->scroll.outline.r(),
+		        themes()->scroll.outline.g(),
+		        themes()->scroll.outline.b(),
+		        themes()->scroll.outline.a()};
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 
@@ -129,27 +127,39 @@ namespace BILO {
 
 	void ScrollControl::move_mouse (MouseEvent* event)
 	{
-		// if no parent slider, don't react to mouse move
+		// if no parent scrollbar, don't react to mouse move
 		if(m_parent.type != ParentDrawable) return;
 
+		ScrollBar* parent = dynamic_cast<ScrollBar*>(m_parent.object.drawable);
+		if(!parent) return;
+
 		if(m_pressed) {
-			m_hover = false;
+
+			if(parent->orientation() == Horizontal) {
+				m_pos.set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
+				if(m_pos.x() < (parent->pos().x() + parent->padding().left()))
+				{
+					m_pos.set_x(parent->pos().x() + parent->padding().left());
+				}
+				if(m_pos.x() >
+						(int)(parent->pos().x() + parent->size().width() - parent->padding().right() - m_size.width()))
+				{
+					m_pos.set_x(parent->pos().x() + parent->size().width() - parent->padding().right() - m_size.width());
+				}
+			}
+
+			if(parent->orientation() == Vertical) {
+				m_pos.set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
+				if(m_pos.y() < (parent->pos().y() + parent->padding().bottom())) {
+					m_pos.set_y(parent->pos().y() + parent->padding().bottom());
+				}
+				if(m_pos.y() > (int)(parent->pos().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
+					m_pos.set_y(parent->pos().y() + parent->size().height() - parent->padding().top() - m_size.height());
+				}
+			}
 
 			event->accept(this);
 			return;
-
-		} else {
-
-			if(contain(event->position())) {
-				if (m_pressed) {
-					m_hover = false;
-				} else {
-					m_hover = true;
-				}
-				event->accept(this);
-			} else {
-				m_hover = false;
-			}
 		}
 	}
 
@@ -158,6 +168,9 @@ namespace BILO {
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
 				m_pressed = true;
+				m_move_start.set_x(event->position().x());
+				m_move_start.set_y(event->position().y());
+				m_position_origin = m_pos;
 				event->accept(this);
 			}
 		}
@@ -178,16 +191,15 @@ namespace BILO {
 
 		Orientation shadedir = size->width() < size->height() ? Horizontal : Vertical;
 
-		ThemeManager* tm = ThemeManager::instance();
-		Color color = tm->themes()->scroll.item;
+		Color color = themes()->scroll.item;
 
 		if(shadedir)
 			m_corner_radius = 0.5f * size->height();
 		else
 			m_corner_radius = 0.5f * size->width();
 
-		short shadetop = tm->themes()->scroll.shadetop;
-		short shadedown = tm->themes()->scroll.shadedown;
+		short shadetop = themes()->scroll.shadetop;
+		short shadedown = themes()->scroll.shadedown;
 
 		if (shadetop > shadedown)
 				shadetop += 20;   /* XXX violates themes... */
@@ -230,30 +242,71 @@ namespace BILO {
 		m_buffer.bind();
 		m_buffer.upload(quad_strip);
 		m_buffer.unbind();
+
+		color.highlight(color, 5);
+
+		if(shadedir) {
+			total_num = generate_vertices(size,
+					color,
+					shadetop,
+					shadedown,
+					shadedir,
+					inner_v, outer_v);
+		} else {	// swap shadetop and shadedown
+			total_num = generate_vertices(size,
+					color,
+					shadedown,
+					shadetop,
+					shadedir,
+					inner_v, outer_v);
+		}
+
+		m_buffer.append(1);
+
+		m_buffer.set_index(2);
+		m_buffer.set_property(total_num, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.bind();
+		m_buffer.upload(inner_v);
+		m_buffer.unbind();
+
 	}
 
+	// ---------------------------- ScrollBar -------------------------------
+
 	ScrollBar::ScrollBar (Orientation orientation)
-			: AbstractSlider(orientation)
+			: AbstractSlider(orientation), m_scroll_control(0)
 	{
-		buffer().generate(1);
+		set_padding(2, 2, 2, 2);
+
+		m_scroll_control = new ScrollControl(this);
 
 		if (orientation == Horizontal) {
-			resize(400, 25);
+			resize(400, 20);
+			m_scroll_control->resize(100, 16);
 		} else if (orientation == Vertical) {
-			resize(25, 400);
+			resize(20, 400);
+			m_scroll_control->resize(16, 100);
 		}
+
+		m_scroll_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
 	}
 
 	ScrollBar::ScrollBar (Orientation orientation, Drawable* parent)
-			: AbstractSlider(orientation, parent)
+			: AbstractSlider(orientation, parent), m_scroll_control(0)
 	{
-		buffer().generate(1);
+		set_padding(2, 2, 2, 2);
+
+		m_scroll_control = new ScrollControl(this);
 
 		if (orientation == Horizontal) {
-			resize(400, 25);
+			resize(400, 20);
+			m_scroll_control->resize(100, 16);
 		} else if (orientation == Vertical) {
-			resize(25, 400);
+			resize(20, 400);
+			m_scroll_control->resize(16, 100);
 		}
+
+		m_scroll_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
 	}
 
 	ScrollBar::~ScrollBar ()
@@ -262,58 +315,27 @@ namespace BILO {
 
 	bool ScrollBar::update (int type, const void* property)
 	{
-		/*
-		 if (orientation() == Horizontal) {
+		if(type == WidgetPropertyPosition) {
+			const Point* new_pos = static_cast<const Point*>(property);
+			m_scroll_control->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
+			return true;
+		}
 
-		 int radius = (size_.height() - padding_.top() - padding_.bottom()) / 2;
+		if (type == SliderPropertyValue) {
+			if(orientation() == Horizontal) {
+//				m_slider_control->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+//						m_slider_control->pos().y());
+				return true;
+			} else if(orientation() == Vertical) {
+//				m_slider_control->set_pos (m_slider_control->pos().x(),
+//						m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+				return true;
+			} else {
+				return false;
+			}
+		}
 
-		 if (radius > 0) {
-		 for (int i = 0; i < 11; i++)
-		 {
-		 m_vertex[i][0] = padding_.left() + radius - radius * circle_vertexes[i][1];
-		 m_vertex[i][1] = padding_.bottom() + radius + radius * circle_vertexes[i][0];
-		 }
-		 for (int i = 10; i < 20; i++)
-		 {
-		 m_vertex[i + 1][0] = size_.width() - padding_.right() - radius - radius * circle_vertexes[i][1];
-		 m_vertex[i + 1][1] = padding_.bottom() + radius + radius * circle_vertexes[i][0];
-		 }
-		 m_vertex[21][0] = size_.width() - padding_.right() - radius - radius * circle_vertexes[0][1];
-		 m_vertex[21][1] = padding_.bottom() + radius + radius * circle_vertexes[0][0];
-		 }
-
-		 } else if (orientation() == Vertical) {
-
-		 int radius = (size_.width() - padding_.left() - padding_.right()) / 2;
-
-		 if (radius > 0) {
-		 for (int i = 0; i < 11; i++)
-		 {
-		 m_vertex[i][0] = padding_.left() + radius - radius * circle_vertexes[i][0];
-		 m_vertex[i][1] = padding_.bottom() + radius - radius * circle_vertexes[i][1];
-		 }
-		 for (int i = 10; i < 20; i++)
-		 {
-		 m_vertex[i + 1][0] = padding_.left() + radius - radius * circle_vertexes[i][0];
-		 m_vertex[i + 1][1] = size_.height() - padding_.top() - radius - radius * circle_vertexes[i][1];
-		 }
-		 m_vertex[21][0] = padding_.left() + radius - radius * circle_vertexes[0][0];
-		 m_vertex[21][1] = size_.height() - padding_.top() - radius - radius * circle_vertexes[0][1];
-		 }
-
-		 }
-
-
-		 //glBindBuffer (GL_ARRAY_BUFFER, m_buffer);
-		 m_buffer.bind (GL_ARRAY_BUFFER);
-
-		 //glBufferData (GL_ARRAY_BUFFER, sizeof(m_vertex), m_vertex, GL_STATIC_DRAW);
-		 m_buffer.upload (GL_ARRAY_BUFFER, sizeof(m_vertex), m_vertex, GL_STATIC_DRAW);
-
-		 //glBindBuffer (GL_ARRAY_BUFFER, 0);
-		 m_buffer.unbind(GL_ARRAY_BUFFER);
-		 */
-		return true;
+		return Widget::update(type, property);
 	}
 
 	void ScrollBar::render ()
@@ -325,42 +347,6 @@ namespace BILO {
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		if (m_buffer.is_buffer(0)) {
-
-			m_buffer.set_index(0);
-			ThemeManager* tm = ThemeManager::instance();
-
-			glColor4ub(tm->themes()->scroll.item.r(),
-			        tm->themes()->scroll.item.g(),
-			        tm->themes()->scroll.item.b(),
-			        tm->themes()->scroll.item.a());
-			//glColor3f (1.0f, 0.2f, 0.9f);
-			//glBindBuffer (GL_ARRAY_BUFFER, m_buffer);
-			m_buffer.bind();
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glEnableClientState(GL_VERTEX_ARRAY);
-
-			//glDrawArrays(GL_POLYGON, 0, sizeof(m_vertex));
-			glDrawArrays(GL_POLYGON, 0, 22);
-			//glDisable(GL_POLYGON_SMOOTH);
-
-			glColor4ub(tm->themes()->scroll.outline.r(),
-			        tm->themes()->scroll.outline.g(),
-			        tm->themes()->scroll.outline.b(),
-			        tm->themes()->scroll.outline.a());
-
-			//glEnable(GL_LINE_SMOOTH);
-			//glLineWidth(1.25);
-			glDrawArrays(GL_LINE_LOOP, 0, 22);
-			//glDisable(GL_LINE_SMOOTH);
-
-			glDisableClientState(GL_VERTEX_ARRAY);
-
-			//glBindBuffer (GL_ARRAY_BUFFER, 0);
-			m_buffer.unbind();
-
-		}
 
 #ifdef DEBUG
 		glLineWidth(1);
@@ -381,6 +367,54 @@ namespace BILO {
 		glDisable(GL_BLEND);
 
 		glPopMatrix();
+
+		Interface::instance()->dispatch_render_event(m_scroll_control);
+	}
+
+	void ScrollBar::move_mouse (MouseEvent* event)
+	{
+		if(m_scroll_control->pressed()) {
+				Interface::instance()->dispatch_mouse_move_event(m_scroll_control, event);
+
+				// TODO: events for own
+
+				return;
+			}
+
+		if(contain(event->position())) {
+			Interface::instance()->dispatch_mouse_move_event(m_scroll_control, event);
+		}
+	}
+
+	void ScrollBar::press_mouse (MouseEvent* event)
+	{
+		if(m_scroll_control->pressed()) {
+			Interface::instance()->dispatch_mouse_press_event(m_scroll_control, event);
+			return;
+		}
+
+		if(contain(event->position())) {
+			Interface::instance()->dispatch_mouse_press_event(m_scroll_control, event);
+			if(event->accepted()) return;
+
+			// TODO: events for own
+		}
+
+	}
+
+	void ScrollBar::release_mouse (MouseEvent* event)
+	{
+		if(m_scroll_control->pressed()) {
+				Interface::instance()->dispatch_mouse_release_event(m_scroll_control, event);
+				return;
+		}
+
+		if(contain(event->position())) {
+			if (event->button() == MouseButtonLeft) {
+
+			}
+			Interface::instance()->dispatch_mouse_release_event(m_scroll_control, event);
+		}
 	}
 
 }

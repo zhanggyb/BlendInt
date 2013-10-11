@@ -32,6 +32,14 @@ namespace BILO {
 
 	class Color;
 
+	/**
+	 * @brief add r,g,b with a given value
+	 * @param orig
+	 * @param shade
+	 * @return a new Color
+	 *
+	 * This function mostly used to calculate a shaded color in Widget drawing
+	 */
 	extern Color operator + (const Color& orig, short shade);
 
 	/**
@@ -73,21 +81,9 @@ namespace BILO {
 		~Color ()
 		{}
 
-		void highlight (const Color& orig)
-		{
-			m_color_v[0] = orig.r() >= 240 ? 255 : (orig.r() + 15);
-			m_color_v[1] = orig.g() >= 240 ? 255 : (orig.g() + 15);
-			m_color_v[2] = orig.b() >= 240 ? 255 : (orig.b() + 15);
-			m_color_v[3] = orig.a();
-		}
+		void highlight (const Color& orig, unsigned char value = 15);
 
-		void highlight (uint32_t color)
-		{
-			set_color (color);
-			m_color_v[0] = m_color_v[0] >= 240 ? 255 : (m_color_v[0] + 15);
-			m_color_v[1] = m_color_v[1] >= 240 ? 255 : (m_color_v[1] + 15);
-			m_color_v[2] = m_color_v[2] >= 240 ? 255 : (m_color_v[2] + 15);
-		}
+		void highlight (uint32_t color, unsigned char value = 15);
 
 		unsigned char highlight_red () const
 		{
@@ -106,49 +102,12 @@ namespace BILO {
 
 		void set_color (unsigned char color[4]);
 
-		void set_color (uint32_t color)
-		{
-			if (color > 0xFFFFFF) {
-				m_color_v[3] = color & 0xFF;
-				m_color_v[2] = (color >> 8) & 0xFF;
-				m_color_v[1] = (color >> 16) & 0xFF;
-				m_color_v[0] = (color >> 24) & 0xFF;
-			} else if (color > 0xFFFF){
-				m_color_v[3] = color & 0xFF;
-				m_color_v[2] = (color >> 8) & 0xFF;
-				m_color_v[1] = (color >> 16) & 0xFF;
-				m_color_v[0] = 0x00;
-			} else if (color > 0xFF) {
-				m_color_v[3] = color & 0xFF;
-				m_color_v[2] = (color >> 8) & 0xFF;
-				m_color_v[1] = 0x00;
-				m_color_v[0] = 0x00;
-			} else {
-				m_color_v[3] = color & 0xFF;
-				m_color_v[2] = 0x00;
-				m_color_v[1] = 0x00;
-				m_color_v[0] = 0x00;
-			}
-	 	}
+		void set_color (uint32_t color);
 
 		void set_color (unsigned char r,
 						unsigned char g,
 						unsigned char b,
-						unsigned char a = 0xFF)
-		{
-			m_color_v[0] = correct_in_scope(r,
-									static_cast<unsigned char>(0),
-									static_cast<unsigned char>(255));
-			m_color_v[1] = correct_in_scope(g,
-									  static_cast<unsigned char>(0),
-									  static_cast<unsigned char>(255));
-			m_color_v[2] = correct_in_scope(b,
-									 static_cast<unsigned char>(0),
-									 static_cast<unsigned char>(255));
-			m_color_v[3] = correct_in_scope(a,
-									  static_cast<unsigned char>(0),
-									  static_cast<unsigned char>(255));
-		}
+						unsigned char a = 0xFF);
 
 		unsigned char operator [] (int index) const
 		{

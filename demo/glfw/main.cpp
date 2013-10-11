@@ -135,6 +135,11 @@ int main(int argc, char* argv[])
 	buffer.upload(triangle);
 	buffer.unbind();
 
+	ScrollBar* scrollbar = new ScrollBar(Horizontal);
+	scrollbar->set_pos(700, 100);
+
+	app->bind(scrollbar);
+
 	/*
 	Widget* widget = new Widget;
 

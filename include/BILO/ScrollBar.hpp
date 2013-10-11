@@ -43,6 +43,8 @@ namespace BILO {
 
 		virtual ~ScrollControl ();
 
+		bool pressed () const {return m_pressed;}
+
 	protected:
 
 		virtual bool update (int type, const void* property);
@@ -59,9 +61,11 @@ namespace BILO {
 
 		void update_shape (const Size* size);
 
-		bool m_hover;
-
 		bool m_pressed;
+
+		Point m_move_start;
+
+		Point m_position_origin;
 	};
 
 	class ScrollBar: public AbstractSlider
@@ -80,11 +84,15 @@ namespace BILO {
 
 		virtual void render ();
 
+		virtual void move_mouse (MouseEvent* event);
+
+		virtual void press_mouse (MouseEvent* event);
+
+		virtual void release_mouse (MouseEvent* event);
+
 	private:
 
-		void draw_scroll_cicle (const Rect& rect, float rad);
-
-		float m_vertex[22][2];
+		ScrollControl* m_scroll_control;
 
 	};
 

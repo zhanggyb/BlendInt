@@ -75,4 +75,65 @@ namespace BILO {
 		memcpy (m_color_v, color, sizeof(unsigned char) * 4);
 	}
 
+	void Color::set_color (uint32_t color)
+	{
+		if (color > 0xFFFFFF) {
+			m_color_v[3] = color & 0xFF;
+			m_color_v[2] = (color >> 8) & 0xFF;
+			m_color_v[1] = (color >> 16) & 0xFF;
+			m_color_v[0] = (color >> 24) & 0xFF;
+		} else if (color > 0xFFFF){
+			m_color_v[3] = color & 0xFF;
+			m_color_v[2] = (color >> 8) & 0xFF;
+			m_color_v[1] = (color >> 16) & 0xFF;
+			m_color_v[0] = 0x00;
+		} else if (color > 0xFF) {
+			m_color_v[3] = color & 0xFF;
+			m_color_v[2] = (color >> 8) & 0xFF;
+			m_color_v[1] = 0x00;
+			m_color_v[0] = 0x00;
+		} else {
+			m_color_v[3] = color & 0xFF;
+			m_color_v[2] = 0x00;
+			m_color_v[1] = 0x00;
+			m_color_v[0] = 0x00;
+		}
+ 	}
+
+	void Color::set_color (unsigned char r,
+					unsigned char g,
+					unsigned char b,
+					unsigned char a)
+	{
+		m_color_v[0] = correct_in_scope(r,
+								static_cast<unsigned char>(0),
+								static_cast<unsigned char>(255));
+		m_color_v[1] = correct_in_scope(g,
+								  static_cast<unsigned char>(0),
+								  static_cast<unsigned char>(255));
+		m_color_v[2] = correct_in_scope(b,
+								 static_cast<unsigned char>(0),
+								 static_cast<unsigned char>(255));
+		m_color_v[3] = correct_in_scope(a,
+								  static_cast<unsigned char>(0),
+								  static_cast<unsigned char>(255));
+	}
+
+	void Color::highlight (const Color& orig, unsigned char value)
+	{
+		unsigned char max = 255 - value;
+		m_color_v[0] = orig.r() >= max ? 255 : (orig.r() + value);
+		m_color_v[1] = orig.g() >= max ? 255 : (orig.g() + value);
+		m_color_v[2] = orig.b() >= max ? 255 : (orig.b() + value);
+		m_color_v[3] = orig.a();
+	}
+
+	void Color::highlight (uint32_t color, unsigned char value)
+	{
+		unsigned char max = 255 - value;
+		set_color (color);
+		m_color_v[0] = m_color_v[0] >= max ? 255 : (m_color_v[0] + value);
+		m_color_v[1] = m_color_v[1] >= max ? 255 : (m_color_v[1] + value);
+		m_color_v[2] = m_color_v[2] >= max ? 255 : (m_color_v[2] + value);
+	}
 }

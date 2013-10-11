@@ -31,6 +31,7 @@
 namespace BILO {
 
 	class Interface;
+	class ThemeManager;
 
 	struct WidgetTheme
 	{
@@ -173,6 +174,11 @@ namespace BILO {
 		ThemeManager& operator = (const ThemeManager& orig);
 
 	};
+
+	inline const ThemeManager::Themes* themes ()
+	{
+		return ThemeManager::instance()->themes();
+	}
 
 } /* namespace BILO */
 #endif /* THEME_H_ */

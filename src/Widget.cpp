@@ -151,13 +151,11 @@ namespace BILO {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		ThemeManager* tm = ThemeManager::instance();
-
 		// draw inner, simple fill
-		glColor4ub(tm->themes()->regular.inner.r(),
-		        tm->themes()->regular.inner.g(),
-		        tm->themes()->regular.inner.b(),
-		        tm->themes()->regular.inner.a());
+		glColor4ub(themes()->regular.inner.r(),
+		        themes()->regular.inner.g(),
+		        themes()->regular.inner.b(),
+		        themes()->regular.inner.a());
 
 		m_buffer.set_index(0);
 
@@ -173,10 +171,10 @@ namespace BILO {
 
 		// draw outline
 		m_buffer.set_index(1);
-		unsigned char tcol[4] = { tm->themes()->regular.outline.r(),
-		        tm->themes()->regular.outline.g(),
-		        tm->themes()->regular.outline.b(),
-		        tm->themes()->regular.outline.a()};
+		unsigned char tcol[4] = { themes()->regular.outline.r(),
+		        themes()->regular.outline.g(),
+		        themes()->regular.outline.b(),
+		        themes()->regular.outline.a()};
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 
