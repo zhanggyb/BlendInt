@@ -40,6 +40,11 @@ namespace BlendInt {
 	struct WidgetTheme;
 	class Color;
 
+	enum WidgetPropertyType {
+		WidgetPropertyBorderWidth = BasicPropertyLast + 1,
+		WidgetPropertyLast
+	};
+
 	class Widget: public Drawable
 	{
 		DISALLOW_COPY_AND_ASSIGN(Widget);
@@ -102,6 +107,13 @@ namespace BlendInt {
 		virtual void release_mouse (MouseEvent* event);
 
 		virtual void move_mouse (MouseEvent* event);
+
+		/**
+		 * @check if geometry contains the cursor, exclude padding
+		 * @param cursor
+		 * @return
+		 */
+		bool contain_no_padding (const Coord2d& cursor);
 
 		/**
 		 * @brief calculate vertices for round box edge with no shaded color

@@ -448,16 +448,33 @@ namespace BlendInt {
 	{
 		if(m_slider_control->pressed()) {
 			Interface::instance()->dispatch_mouse_move_event(m_slider_control, event);
+
 			int value = 0;
 
 			if (orientation()) {
-				value = (m_slider_control->pos().y() - m_pos.y() - m_padding.bottom()) / (float)get_space() * (maximum() - minimum());
+				int ymin = m_pos.y() + m_padding.bottom() + m_slider_control->size().height() / 2;
+				int ymax = m_pos.y() + m_size.height() - m_padding.top() - m_slider_control->size().height() / 2;
+				if(event->position().y() < ymin ||	event->position().y() > ymax)
+					return;	// if the mouse move too far, don't count the value repeatedly
+
+				value = (m_slider_control->pos().y() - m_pos.y()
+				        - m_padding.bottom()) / (float) get_space()
+				        * (maximum() - minimum());
+
 			} else {
-				value = (m_slider_control->pos().x() - m_pos.x() - m_padding.left()) / (float)get_space() * (maximum() - minimum());
+				int xmin = m_pos.x() + m_padding.left() + m_slider_control->size().width() / 2;
+				int xmax = m_pos.x() + m_size.width() - m_padding.right() - m_slider_control->size().width() / 2;
+				if(event->position().x() < xmin ||	event->position().x() > xmax)
+					return;	// if the mouse move too far, don't count the value repeatedly
+
+				value = (m_slider_control->pos().x() - m_pos.x()
+				        - m_padding.left()) / (float) get_space()
+				        * (maximum() - minimum());
 			}
 
-			set_value (value);
+			set_value(value);
 			m_slider_moved.fire(value);
+
 			return;
 		}
 
@@ -469,30 +486,50 @@ namespace BlendInt {
 	void Slider::press_mouse (MouseEvent* event)
 	{
 		if(m_slider_control->pressed()) {
-			Interface::instance()->dispatch_mouse_press_event(m_slider_control, event);
+			interface()->dispatch_mouse_press_event(m_slider_control, event);
 			return;
 		}
 
-		if(contain(event->position())) {
-			Interface::instance()->dispatch_mouse_press_event(m_slider_control, event);
+		if(contain_no_padding(event->position())) {
+			interface()->dispatch_mouse_press_event(m_slider_control, event);
 			if(event->accepted()) return;
 
-			Coord2d inner_pos;
-			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - m_padding.left() - m_slider_control->size().width() / 2));
-			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - m_padding.bottom() - m_slider_control->size().height() / 2));
-			int space = get_space();
-			int value;
+			// Move to where mouse click
+//			Coord2d inner_pos;
+//			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - m_padding.left() - m_slider_control->size().width() / 2));
+//			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - m_padding.bottom() - m_slider_control->size().height() / 2));
+//			int space = get_space();
+//			int value;
+//
+//			if (orientation()) {
+//				value = (maximum() - minimum()) * inner_pos.y() / (double) space;
+//			} else {
+//				value = (maximum() - minimum()) * inner_pos.x() / (double) space;
+//			}
+//			if(value < minimum()) value = minimum();
+//			if(value > maximum()) value = maximum();
+
+//			int space = get_space();
+
+			int val;
 
 			if (orientation()) {
-				value = (maximum() - minimum()) * inner_pos.y() / (double) space;
+				if(event->position().y() < m_slider_control->pos().y())
+					val = value() - step();
+				else
+					val = value() + step();
 			} else {
-				value = (maximum() - minimum()) * inner_pos.x() / (double) space;
+				if(event->position().x() < m_slider_control->pos().x())
+					val = value() - step();
+				else
+					val = value() + step();
 			}
-			if(value < minimum()) value = minimum();
-			if(value > maximum()) value = maximum();
+			if(val < minimum()) val = minimum();
+			if(val > maximum()) val = maximum();
 
-			set_value(value);
-			m_slider_moved.fire(value);
+			std::cout << "value: " << val << std::endl;
+			set_value(val);
+			m_slider_moved.fire(val);
 		}
 	}
 
@@ -522,4 +559,3 @@ namespace BlendInt {
 	}
 
 }
-

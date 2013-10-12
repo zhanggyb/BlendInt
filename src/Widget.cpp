@@ -268,6 +268,18 @@ namespace BlendInt {
 		}
 	}
 
+	bool Widget::contain_no_padding (const Coord2d& cursor)
+	{
+		if (cursor.x() < (m_pos.x() + m_padding.left()) ||
+				cursor.y() < (m_pos.y() + m_padding.bottom()) ||
+				cursor.x() > (m_pos.x() + m_size.width() - m_padding.right()) ||
+				cursor.y() > (m_pos.y() + m_size.height() - m_padding.top())) {
+			return false;
+		}
+
+		return true;
+	}
+
 	Widget::VerticesSum Widget::generate_vertices(const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
 	{
 		float rad = m_corner_radius;

@@ -40,7 +40,7 @@ namespace BlendInt {
 	public:
 
 		enum SliderPropertyTypeExt {
-			SliderPropertyOrientation = BasicPropertyLast + 1,
+			SliderPropertyOrientation = WidgetPropertyLast + 1,
 			SliderPropertyValue,
 			SliderPropertyMinimum,
 			SliderPropertyMaximum,
