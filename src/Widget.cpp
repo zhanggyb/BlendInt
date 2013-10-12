@@ -55,13 +55,13 @@ namespace BILO {
 	};
 
 	Widget::Widget ()
-	: Drawable(), m_border_width(1.0)
+	: Drawable(), m_border_width(1.0), m_emboss(true)
 	{
 
 	}
 
 	Widget::Widget (Drawable* parent)
-			: Drawable(parent), m_border_width(1.0)
+			: Drawable(parent), m_border_width(1.0), m_emboss(true)
 	{
 		// TODO Auto-generated constructor stub
 	}
@@ -185,13 +185,36 @@ namespace BILO {
 		glColor4ubv(tcol);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+
 			glVertexPointer(2, GL_FLOAT, 0, 0);
 			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
+
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
 
 		m_buffer.unbind();
+
+		if(m_emboss) {
+			m_buffer.set_index(2);
+			m_buffer.bind();
+
+			glEnableClientState(GL_VERTEX_ARRAY);
+
+			for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+				glTranslatef(jit[j][0], jit[j][1], 0.0f);
+
+				glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
+				glVertexPointer(2, GL_FLOAT, 0, 0);
+				glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
+
+				glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+			}
+
+			glDisableClientState(GL_VERTEX_ARRAY);
+
+			m_buffer.unbind();
+		}
 
 		glDisable(GL_BLEND);
 
@@ -205,12 +228,14 @@ namespace BILO {
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
 
-		int total_num = generate_vertices(size, inner_v, outer_v);
+		VerticesSum vert_sum;
+
+		vert_sum = generate_vertices(size, inner_v, outer_v);
 
 		m_buffer.generate(2);
 
 		m_buffer.set_index(0);
-		m_buffer.set_property(total_num, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		m_buffer.bind();
 		m_buffer.upload(inner_v);
 		m_buffer.unbind();
@@ -218,19 +243,32 @@ namespace BILO {
 		// the quad strip for outline
 
 		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-		//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 
-		verts_to_quad_strip (inner_v, outer_v, total_num, quad_strip);
+		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 		m_buffer.set_index(1);
-		m_buffer.set_property(total_num * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		m_buffer.bind();
 		m_buffer.upload(quad_strip);
 		m_buffer.unbind();
+
+		if (m_emboss) {
+			float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+
+			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
+
+			m_buffer.append();
+			m_buffer.set_index(2);
+			m_buffer.set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+			m_buffer.bind();
+			m_buffer.upload(quad_strip_emboss);
+			m_buffer.unbind();
+		}
 	}
 
-	int Widget::generate_vertices(const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
+	Widget::VerticesSum Widget::generate_vertices(const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
 	{
 		float rad = m_corner_radius;
 		float radi = rad - m_border_width;
@@ -247,8 +285,10 @@ namespace BILO {
 		float minyi = miny + m_border_width;		// U.pixelsize;
 		float maxyi = maxy - m_border_width;		// U.pixelsize;
 
+		VerticesSum sum;
+
 		int count = 0;
-		int halfwayvert = 0;
+
 		int minsize = 0;
 		const int hnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerTopRight)) == (RoundCornerTopLeft | RoundCornerTopRight) ||
 		                  (m_roundcorner & (RoundCornerBottomRight | RoundCornerBottomLeft)) == (RoundCornerBottomRight | RoundCornerBottomLeft)) ? 1 : 2;
@@ -310,7 +350,7 @@ namespace BILO {
 			count++;
 		}
 
-		halfwayvert = count;	// TODO: check how to use halfwayvert
+		sum.half = count;
 
 		// corner right-top
 		if (m_roundcorner & RoundCornerTopRight) {
@@ -354,10 +394,15 @@ namespace BILO {
 
 		assert(count <= WIDGET_SIZE_MAX);
 
-		return count;
+#ifdef DEBUG
+
+#endif
+
+		sum.total = count;
+		return sum;
 	}
 
-	int Widget::generate_vertices (const Size* size,
+	Widget::VerticesSum Widget::generate_vertices (const Size* size,
 			const WidgetTheme* theme,
 			Orientation shadedir,
 			float inner[WIDGET_SIZE_MAX][6],
@@ -381,8 +426,8 @@ namespace BILO {
 		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
 		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
 
+		VerticesSum sum;
 		int count = 0;
-		int halfwayvert = 0;
 		int minsize = 0;
 		const int hnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerTopRight)) == (RoundCornerTopLeft | RoundCornerTopRight) ||
 		                  (m_roundcorner & (RoundCornerBottomRight | RoundCornerBottomLeft)) == (RoundCornerBottomRight | RoundCornerBottomLeft)) ? 1 : 2;
@@ -490,7 +535,7 @@ namespace BILO {
 			count++;
 		}
 
-		halfwayvert = count;	// TODO: check how to use halfwayvert
+		sum.half = count;
 
 		// corner right-top
 		if (m_roundcorner & RoundCornerTopRight) {
@@ -576,10 +621,11 @@ namespace BILO {
 
 		assert(count <= WIDGET_SIZE_MAX);
 
-		return count;
+		sum.total = count;
+		return sum;
 	}
 
-	int Widget::generate_vertices (const Size* size,
+	Widget::VerticesSum Widget::generate_vertices (const Size* size,
 			const Color& color,
 			short shadetop,
 			short shadedown,
@@ -605,8 +651,8 @@ namespace BILO {
 		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
 		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
 
+		VerticesSum sum;
 		int count = 0;
-		int halfwayvert = 0;
 		int minsize = 0;
 		const int hnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerTopRight)) == (RoundCornerTopLeft | RoundCornerTopRight) ||
 		                  (m_roundcorner & (RoundCornerBottomRight | RoundCornerBottomLeft)) == (RoundCornerBottomRight | RoundCornerBottomLeft)) ? 1 : 2;
@@ -714,7 +760,7 @@ namespace BILO {
 			count++;
 		}
 
-		halfwayvert = count;	// TODO: check how to use halfwayvert
+		sum.half = count;
 
 		// corner right-top
 		if (m_roundcorner & RoundCornerTopRight) {
@@ -799,7 +845,8 @@ namespace BILO {
 
 		assert(count <= WIDGET_SIZE_MAX);
 
-		return count;
+		sum.total = count;
+		return sum;
 	}
 
 	void Widget::verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][2],
@@ -829,5 +876,19 @@ namespace BILO {
 		copy_v2_v2(quad_strip[i * 2], outer_v[0]);
 		copy_v2_v2(quad_strip[i * 2 + 1], inner_v[0]);
 	}
+
+	void Widget::verts_to_quad_strip_open (
+			const float outer_v[WIDGET_SIZE_MAX][2],
+			const int totvert,
+			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
+	{
+		for (int i = 0; i < totvert; i++) {
+			quad_strip[i * 2][0] = outer_v[i][0];
+			quad_strip[i * 2][1] = outer_v[i][1];
+			quad_strip[i * 2 + 1][0] = outer_v[i][0];
+			quad_strip[i * 2 + 1][1] = outer_v[i][1] - 1.0f;
+		}
+	}
+
 } /* namespace BILO */
 

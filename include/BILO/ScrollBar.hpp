@@ -92,6 +92,14 @@ namespace BILO {
 
 	private:
 
+		void update_shape (const Size* size);
+
+		/**
+		 * @brief calculate and return the space width in which scroll control can move
+		 * @return
+		 */
+		int get_space ();
+
 		ScrollControl* m_scroll_control;
 
 	};

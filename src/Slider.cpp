@@ -268,10 +268,12 @@ namespace BILO {
 		m_slider_control = new SliderControl(this);
 
 		// set default size
-		if (orientation == Horizontal) {
-			resize (200, 25);
-		} else if (this->orientation() == Vertical) {
+		if (orientation) {
 			resize (25, 200);
+			set_vexpand(true);
+		} else {
+			resize (200, 25);
+			set_hexpand(true);
 		}
 
 		m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
@@ -284,10 +286,12 @@ namespace BILO {
 		m_slider_control = new SliderControl(this);
 
 		// set default size
-		if (orientation == Horizontal) {
-			resize (200, 25);
-		} else if (this->orientation() == Vertical) {
+		if (orientation) {
 			resize (25, 200);
+			set_vexpand(true);
+		} else {
+			resize (200, 25);
+			set_hexpand(true);
 		}
 
 		m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
@@ -308,20 +312,19 @@ namespace BILO {
 		}
 
 		if (type == SliderPropertyValue) {
-			if(orientation() == Horizontal) {
-				m_slider_control->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
-						m_slider_control->pos().y());
-				return true;
-			} else if(orientation() == Vertical) {
+
+			if(orientation()) {
 				m_slider_control->set_pos (m_slider_control->pos().x(),
 						m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
-				return true;
 			} else {
-				return false;
+				m_slider_control->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+						m_slider_control->pos().y());
 			}
+
+			return true;
 		}
 
-		return Widget::update(type, property);
+		return true;
 	}
 
 	void Slider::render ()
@@ -347,16 +350,8 @@ namespace BILO {
 				themes()->scroll.outline.a());
 
 		int space = 0;
-		if(orientation() == Horizontal) {
-			// move radius
-			space = m_size.width() - m_padding.left() - m_padding.right() - m_slider_control->radius() * 2;
-			glTranslatef(m_slider_control->radius(), m_slider_control->radius(), 0);
-			glBegin(GL_LINES);
-				glVertex2i(0, 0);
-				glVertex2i(space, 0);
-			glEnd();
-			glTranslatef(value() * space / ((float)maximum() - (float)minimum()), 0, 0);
-		} else {
+
+		if(orientation()) {
 			space = m_size.height() - m_padding.top() - m_padding.bottom() - m_slider_control->radius() * 2;
 			glTranslatef(m_slider_control->radius(), m_slider_control->radius(), 0);
 			glBegin(GL_LINES);
@@ -364,6 +359,14 @@ namespace BILO {
 				glVertex2i(0, space);
 			glEnd();
 			glTranslatef(0, value() * space / ((float)maximum() - (float)minimum()), 0);
+		} else {
+			space = m_size.width() - m_padding.left() - m_padding.right() - m_slider_control->radius() * 2;
+			glTranslatef(m_slider_control->radius(), m_slider_control->radius(), 0);
+			glBegin(GL_LINES);
+				glVertex2i(0, 0);
+				glVertex2i(space, 0);
+			glEnd();
+			glTranslatef(value() * space / ((float)maximum() - (float)minimum()), 0, 0);
 		}
 
 		glPopMatrix();
@@ -396,12 +399,13 @@ namespace BILO {
 		if(m_slider_control->pressed()) {
 			Interface::instance()->dispatch_mouse_move_event(m_slider_control, event);
 			int value = 0;
-			if(orientation() == Horizontal) {
-				//m_slider_control;
-				value = (m_slider_control->pos().x() - m_pos.x() - m_padding.left()) / (float)get_space() * (maximum() - minimum());
-			} else if (orientation() == Vertical) {
+
+			if (orientation()) {
 				value = (m_slider_control->pos().y() - m_pos.y() - m_padding.bottom()) / (float)get_space() * (maximum() - minimum());
+			} else {
+				value = (m_slider_control->pos().x() - m_pos.x() - m_padding.left()) / (float)get_space() * (maximum() - minimum());
 			}
+
 			set_value (value);
 			m_slider_moved.fire(value);
 			return;
@@ -429,15 +433,15 @@ namespace BILO {
 			int space = get_space();
 			int value;
 
-			if (orientation() == Horizontal) {
-				if(inner_pos.x() < space) {
-					value = (maximum() - minimum()) * inner_pos.x() / (double) space;
+			if (orientation()) {
+				if(inner_pos.y() < space) {
+					value = (maximum() - minimum()) * inner_pos.y() / (double) space;
 					set_value(value);
 					m_slider_moved.fire(value);
 				}
-			} else if (orientation() == Vertical) {
-				if(inner_pos.y() < space) {
-					value = (maximum() - minimum()) * inner_pos.y() / (double) space;
+			} else {
+				if(inner_pos.x() < space) {
+					value = (maximum() - minimum()) * inner_pos.x() / (double) space;
 					set_value(value);
 					m_slider_moved.fire(value);
 				}

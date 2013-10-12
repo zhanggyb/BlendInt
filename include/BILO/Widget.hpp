@@ -66,7 +66,26 @@ namespace BILO {
 
 		float border_width () const {return m_border_width;}
 
+		void set_emboss (bool emboss)
+		{
+			m_emboss = emboss;
+		}
+
+		bool emboss () const {return m_emboss;}
+
 	protected:
+
+		/**
+		 * Structure used in calulating vertex buffer for inner and outline
+		 */
+		struct VerticesSum {
+			VerticesSum ()
+			: total(0), half(0)
+			{ }
+
+			int total;	/**< total number of vertices for widget */
+			int half;	/**< halfway vertices number */
+		};
 
 		virtual bool update (int type, const void* property);
 
@@ -91,7 +110,7 @@ namespace BILO {
 		 * @param[out] outer_v
 		 * @return how many vertices are used in the output array
 		 */
-		int generate_vertices (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
+		VerticesSum generate_vertices (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
 
 		/**
 		 * @brief calculate vertices for round box edges
@@ -102,7 +121,7 @@ namespace BILO {
 		 * @param outer
 		 * @return
 		 */
-		int generate_vertices (const Size* size,
+		VerticesSum generate_vertices (const Size* size,
 				const WidgetTheme* theme,
 				Orientation shadedir,
 				float inner[WIDGET_SIZE_MAX][6],
@@ -118,7 +137,7 @@ namespace BILO {
 		 * @param[out] outer vertices for outline
 		 * @return
 		 */
-		int generate_vertices (const Size* size,
+		VerticesSum generate_vertices (const Size* size,
 				const Color& color,
 				short shadetop,
 				short shadedown,
@@ -134,6 +153,11 @@ namespace BILO {
 
 		void verts_to_quad_strip (
 				const float inner_v[WIDGET_SIZE_MAX][6],
+				const float outer_v[WIDGET_SIZE_MAX][2],
+				const int totvert,
+				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
+
+		void verts_to_quad_strip_open (
 				const float outer_v[WIDGET_SIZE_MAX][2],
 				const int totvert,
 				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
@@ -159,6 +183,8 @@ namespace BILO {
 		void update_shape (const Size* size);
 
 		float m_border_width;
+
+		bool m_emboss;
 
 	};
 

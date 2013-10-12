@@ -34,6 +34,7 @@ namespace BILO {
 	{
 		set_padding(0, 0, 0, 0);
 		set_roundcorner(RoundCornerAll);
+		set_emboss(false);
 	}
 
 	ScrollControl::ScrollControl(Drawable* parent)
@@ -41,6 +42,7 @@ namespace BILO {
 	{
 		set_padding(0, 0, 0, 0);
 		set_roundcorner(RoundCornerAll);
+		set_emboss(false);
 	}
 
 	ScrollControl::~ScrollControl ()
@@ -189,6 +191,8 @@ namespace BILO {
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 
+		VerticesSum vert_sum;
+
 		Orientation shadedir = size->width() < size->height() ? Horizontal : Vertical;
 
 		Color color = themes()->scroll.item;
@@ -205,17 +209,15 @@ namespace BILO {
 				shadetop += 20;   /* XXX violates themes... */
 		else shadedown += 20;
 
-		int total_num = 0;
-
 		if(shadedir) {
-			total_num = generate_vertices(size,
+			vert_sum = generate_vertices(size,
 					color,
 					shadetop,
 					shadedown,
 					shadedir,
 					inner_v, outer_v);
 		} else {	// swap shadetop and shadedown
-			total_num = generate_vertices(size,
+			vert_sum = generate_vertices(size,
 					color,
 					shadedown,
 					shadetop,
@@ -226,7 +228,7 @@ namespace BILO {
 		m_buffer.generate(2);
 
 		m_buffer.set_index(0);
-		m_buffer.set_property(total_num, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		m_buffer.bind();
 		m_buffer.upload(inner_v);
 		m_buffer.unbind();
@@ -234,10 +236,10 @@ namespace BILO {
 		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
 		//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 
-		verts_to_quad_strip (inner_v, outer_v, total_num, quad_strip);
+		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 		m_buffer.set_index(1);
-		m_buffer.set_property(total_num * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		m_buffer.bind();
 		m_buffer.upload(quad_strip);
@@ -246,14 +248,14 @@ namespace BILO {
 		color.highlight(color, 5);
 
 		if(shadedir) {
-			total_num = generate_vertices(size,
+			vert_sum = generate_vertices(size,
 					color,
 					shadetop,
 					shadedown,
 					shadedir,
 					inner_v, outer_v);
 		} else {	// swap shadetop and shadedown
-			total_num = generate_vertices(size,
+			vert_sum = generate_vertices(size,
 					color,
 					shadedown,
 					shadetop,
@@ -264,7 +266,7 @@ namespace BILO {
 		m_buffer.append(1);
 
 		m_buffer.set_index(2);
-		m_buffer.set_property(total_num, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		m_buffer.bind();
 		m_buffer.upload(inner_v);
 		m_buffer.unbind();
@@ -276,37 +278,47 @@ namespace BILO {
 	ScrollBar::ScrollBar (Orientation orientation)
 			: AbstractSlider(orientation), m_scroll_control(0)
 	{
-		set_padding(2, 2, 2, 2);
+		set_padding(0, 0, 0, 0);
+		set_roundcorner(RoundCornerAll);
+		set_corner_radius(8);
 
 		m_scroll_control = new ScrollControl(this);
 
-		if (orientation == Horizontal) {
-			resize(400, 20);
-			m_scroll_control->resize(100, 16);
-		} else if (orientation == Vertical) {
-			resize(20, 400);
+		if (orientation) {	// Vertical
+			resize(16, 400);
 			m_scroll_control->resize(16, 100);
+			set_vexpand(true);
+		} else {
+			resize(400, 16);
+			m_scroll_control->resize(100, 16);
+			set_hexpand(true);
 		}
 
 		m_scroll_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		update(SliderPropertyValue, 0);
 	}
 
 	ScrollBar::ScrollBar (Orientation orientation, Drawable* parent)
 			: AbstractSlider(orientation, parent), m_scroll_control(0)
 	{
-		set_padding(2, 2, 2, 2);
+		set_padding(0, 0, 0, 0);
+		set_roundcorner(RoundCornerAll);
+		set_corner_radius(8);
 
 		m_scroll_control = new ScrollControl(this);
 
-		if (orientation == Horizontal) {
-			resize(400, 20);
-			m_scroll_control->resize(100, 16);
-		} else if (orientation == Vertical) {
-			resize(20, 400);
+		if (orientation) {	// Vertical
+			resize(16, 400);
 			m_scroll_control->resize(16, 100);
+			set_vexpand(true);
+		} else {
+			resize(400, 16);
+			m_scroll_control->resize(100, 16);
+			set_hexpand(true);
 		}
 
 		m_scroll_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		update(SliderPropertyValue, 0);
 	}
 
 	ScrollBar::~ScrollBar ()
@@ -315,27 +327,87 @@ namespace BILO {
 
 	bool ScrollBar::update (int type, const void* property)
 	{
-		if(type == WidgetPropertyPosition) {
-			const Point* new_pos = static_cast<const Point*>(property);
-			m_scroll_control->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
-			return true;
-		}
+		switch (type) {
 
-		if (type == SliderPropertyValue) {
-			if(orientation() == Horizontal) {
-//				m_slider_control->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
-//						m_slider_control->pos().y());
-				return true;
-			} else if(orientation() == Vertical) {
-//				m_slider_control->set_pos (m_slider_control->pos().x(),
-//						m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
-				return true;
-			} else {
-				return false;
+			case WidgetPropertyPosition: {
+				const Point* new_pos = static_cast<const Point*>(property);
+				m_scroll_control->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
+				break;
 			}
+
+			case WidgetPropertySize: {
+				update_shape(static_cast<const Size*>(property));
+				break;
+			}
+
+			case SliderPropertyValue: {
+				if(orientation()) {	// Vertical is 1
+					m_scroll_control->set_pos (m_scroll_control->pos().x(),
+							m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+				} else {	// Horizontal is 0
+					m_scroll_control->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+							m_scroll_control->pos().y());
+				}
+				break;
+			}
+
+			default:
+				break;
 		}
 
-		return Widget::update(type, property);
+		return true;
+	}
+
+	void ScrollBar::update_shape(const Size* size)
+	{
+		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+
+		VerticesSum vert_sum;
+
+		Orientation shadedir = orientation() ? Horizontal : Vertical;
+
+		Color color = themes()->scroll.inner;
+		short shadetop = themes()->scroll.shadetop;
+		short shadedown = themes()->scroll.shadedown;
+
+		if(shadedir)
+			vert_sum = generate_vertices(size, color, shadetop, shadedown, shadedir, inner_v, outer_v);
+		else					// swap shadetop and shadedown
+			vert_sum = generate_vertices(size, color, shadedown, shadetop, shadedir, inner_v, outer_v);
+
+		m_buffer.generate(2);
+
+		m_buffer.set_index(0);
+		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.bind();
+		m_buffer.upload(inner_v);
+		m_buffer.unbind();
+
+		// the quad strip for outline
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+
+		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+
+		m_buffer.set_index(1);
+		m_buffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		m_buffer.bind();
+		m_buffer.upload(quad_strip);
+		m_buffer.unbind();
+
+		float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+
+		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
+
+		m_buffer.append();
+		m_buffer.set_index(2);
+		m_buffer.set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		m_buffer.bind();
+		m_buffer.upload(quad_strip_emboss);
+		m_buffer.unbind();
 	}
 
 	void ScrollBar::render ()
@@ -348,21 +420,64 @@ namespace BILO {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-#ifdef DEBUG
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
+		m_buffer.set_index(0);	// index 0 is inner
 
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2i(0, 0);
-		glVertex2i(m_size.width(), 0);
-		glVertex2i(m_size.width(), m_size.height());
-		glVertex2i(0, m_size.height());
-		glEnd();
+		m_buffer.bind();
 
-		glDisable(GL_LINE_STIPPLE);
-#endif
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
+		
+		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glDrawArrays(GL_POLYGON, 0, m_buffer.vertices());
+
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		m_buffer.unbind();
+
+		// draw outline
+		m_buffer.set_index(1);	// index of 1 is outline
+		unsigned char tcol[4] = { themes()->scroll.outline.r(),
+		        themes()->scroll.outline.g(),
+		        themes()->scroll.outline.b(),
+		        themes()->scroll.outline.a()};
+
+		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
+
+		m_buffer.bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glColor4ubv(tcol);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		m_buffer.unbind();
+
+		m_buffer.set_index(2);	// emboss
+		m_buffer.bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+
+			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
+
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		m_buffer.unbind();
 
 		glDisable(GL_BLEND);
 
@@ -376,7 +491,15 @@ namespace BILO {
 		if(m_scroll_control->pressed()) {
 				Interface::instance()->dispatch_mouse_move_event(m_scroll_control, event);
 
-				// TODO: events for own
+				int value = 0;
+				if(orientation()) {
+					value = (m_scroll_control->pos().y() - m_pos.y() - m_padding.bottom()) / (float)get_space() * (maximum() - minimum());
+				} else {
+					value = (m_scroll_control->pos().x() - m_pos.x() - m_padding.left()) / (float)get_space() * (maximum() - minimum());
+				}
+
+				set_value (value);
+				m_slider_moved.fire(value);
 
 				return;
 			}
@@ -394,10 +517,30 @@ namespace BILO {
 		}
 
 		if(contain(event->position())) {
-			Interface::instance()->dispatch_mouse_press_event(m_scroll_control, event);
+			interface()->dispatch_mouse_press_event(m_scroll_control, event);
 			if(event->accepted()) return;
 
-			// TODO: events for own
+			Coord2d inner_pos;
+			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - m_padding.left() - m_scroll_control->size().width() / 2));
+			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - m_padding.bottom() - m_scroll_control->size().height() / 2));
+//			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - m_padding.left() - m_scroll_control->size().width() / 2));
+//			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - m_padding.bottom() - m_scroll_control->size().height() / 2));
+			int space = get_space();
+			int value;
+
+			if (orientation()) {
+				if(inner_pos.y() < space) {
+					value = (maximum() - minimum()) * inner_pos.y() / (double) space;
+					set_value(value);
+					m_slider_moved.fire(value);
+				}
+			} else {
+				if(inner_pos.x() < space) {
+					value = (maximum() - minimum()) * inner_pos.x() / (double) space;
+					set_value(value);
+					m_slider_moved.fire(value);
+				}
+			}
 		}
 
 	}
@@ -415,6 +558,18 @@ namespace BILO {
 			}
 			Interface::instance()->dispatch_mouse_release_event(m_scroll_control, event);
 		}
+	}
+
+	int ScrollBar::get_space ()
+	{
+		int space = 0;
+
+		if(orientation())	// Vertical is 1
+			space = m_size.height() - m_padding.top() - m_padding.bottom() - m_scroll_control->size().height();
+		else	// Horizontal is 0
+			space = m_size.width() - m_padding.left() - m_padding.right() - m_scroll_control->size().width();
+
+		return space;
 	}
 
 }

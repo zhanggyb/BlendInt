@@ -104,6 +104,13 @@ namespace BILO {
 #endif
 
 	};
+
+	inline Interface* interface()
+	{
+		return Interface::instance();
+	}
+
+
 }
 
 
