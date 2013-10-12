@@ -3,14 +3,14 @@
 #ifndef _SHADER_TEST_H
 #define _SHADER_TEST_H
 
-#include <BILO/Widget.hpp>
-#include <BILO/GLSLProgram.hpp>
+#include <BlendInt/Widget.hpp>
+#include <BlendInt/GLSLProgram.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <string>
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 class ShaderWidget1: public Widget

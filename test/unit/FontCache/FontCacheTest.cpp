@@ -7,16 +7,16 @@
 #include <iostream>
 #include <string>
 
-#include <BILO/Interface.hpp>
-#include <BILO/FontCache.hpp>
-#include <BILO/FontConfig.hpp>
-#include <BILO/String.hpp>
-#include <BILO/ContextManager.hpp>
-#include <BILO/Drawable.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/FontCache.hpp>
+#include <BlendInt/FontConfig.hpp>
+#include <BlendInt/String.hpp>
+#include <BlendInt/ContextManager.hpp>
+#include <BlendInt/Drawable.hpp>
 
 #include "FontCacheTest.h"
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FontCacheTest);
@@ -341,7 +341,7 @@ void FontCacheTest::show1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -400,7 +400,7 @@ void FontCacheTest::show1()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -430,7 +430,7 @@ void FontCacheTest::print_test1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -477,7 +477,7 @@ void FontCacheTest::print_test1()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -508,7 +508,7 @@ void FontCacheTest::show_multiple_cache1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -614,7 +614,7 @@ void FontCacheTest::show_multiple_cache1()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -644,7 +644,7 @@ void FontCacheTest::test_font_not_exist1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -750,7 +750,7 @@ void FontCacheTest::test_font_not_exist1()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -766,22 +766,22 @@ void FontCacheTest::cbError (int error, const char* description)
 
 void FontCacheTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BILO::Interface::instance()->resizeEvent(w, h);
+	BlendInt::Interface::instance()->resizeEvent(w, h);
 }
 
 void FontCacheTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BlendInt::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void FontCacheTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void FontCacheTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BlendInt::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

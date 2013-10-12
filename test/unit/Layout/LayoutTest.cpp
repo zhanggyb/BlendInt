@@ -10,16 +10,16 @@
 
 #include "LayoutTest.h"
 
-#include <BILO/Interface.hpp>
-#include <BILO/Label.hpp>
-#include <BILO/Button.hpp>
-#include <BILO/FontConfig.hpp>
-#include <BILO/Rect.hpp>
-#include <BILO/HorizontalLayout.hpp>
-#include <BILO/VerticalLayout.hpp>
-#include <BILO/Types.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/Label.hpp>
+#include <BlendInt/Button.hpp>
+#include <BlendInt/FontConfig.hpp>
+#include <BlendInt/Rect.hpp>
+#include <BlendInt/HorizontalLayout.hpp>
+#include <BlendInt/VerticalLayout.hpp>
+#include <BlendInt/Types.hpp>
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(LayoutTest);
@@ -91,7 +91,7 @@ void LayoutTest::horizontal_layout1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -103,7 +103,7 @@ void LayoutTest::horizontal_layout1()
 
 	HorizontalLayout layout1;
 	layout1.set_pos(100, 100);
-	layout1.set_alignment(BILO::AlignHorizontalCenter);
+	layout1.set_alignment(BlendInt::AlignHorizontalCenter);
 
 	Label label1(L"Hello");
 	label1.set_pos(100, 100);
@@ -116,7 +116,7 @@ void LayoutTest::horizontal_layout1()
 
 	HorizontalLayout layout2;
 	layout2.set_pos(300, 200);
-	layout2.set_alignment(BILO::AlignTop);
+	layout2.set_alignment(BlendInt::AlignTop);
 
 	Label label2(L"Hello");
 	label2.set_pos(100, 100);
@@ -129,7 +129,7 @@ void LayoutTest::horizontal_layout1()
 
 	HorizontalLayout layout3;
 	layout3.set_pos(500, 300);
-	layout3.set_alignment(BILO::AlignBottom);
+	layout3.set_alignment(BlendInt::AlignBottom);
 
 	Label label3(L"Hello");
 	label3.set_pos(100, 100);
@@ -160,7 +160,7 @@ void LayoutTest::horizontal_layout1()
 	layout2.unbind();
 	layout3.unbind();
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -190,7 +190,7 @@ void LayoutTest::vertical_layout1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -202,7 +202,7 @@ void LayoutTest::vertical_layout1()
 
 	VerticalLayout layout1;
 	layout1.set_pos(100, 100);
-	layout1.set_alignment(BILO::AlignVerticalCenter);
+	layout1.set_alignment(BlendInt::AlignVerticalCenter);
 
 	Label label1(L"Hello");
 	label1.set_pos(100, 100);
@@ -215,7 +215,7 @@ void LayoutTest::vertical_layout1()
 
 	VerticalLayout layout2;
 	layout2.set_pos(250, 100);
-	layout2.set_alignment(BILO::AlignLeft);
+	layout2.set_alignment(BlendInt::AlignLeft);
 
 	Label label2(L"Hello");
 	label2.set_pos(100, 100);
@@ -228,7 +228,7 @@ void LayoutTest::vertical_layout1()
 
 	VerticalLayout layout3;
 	layout3.set_pos(500, 100);
-	layout3.set_alignment(BILO::AlignRight);
+	layout3.set_alignment(BlendInt::AlignRight);
 
 	Label label3(L"Hello");
 	label3.set_pos(100, 100);
@@ -259,7 +259,7 @@ void LayoutTest::vertical_layout1()
 	layout2.unbind();
 	layout3.unbind();
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -289,7 +289,7 @@ void LayoutTest::layout_mix1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -301,7 +301,7 @@ void LayoutTest::layout_mix1()
 
 	VerticalLayout* layout1 = new VerticalLayout;
 	layout1->set_pos(100, 100);
-	layout1->set_alignment(BILO::AlignVerticalCenter);
+	layout1->set_alignment(BlendInt::AlignVerticalCenter);
 
 	Label* label1 = new Label(L"la1");
 	label1->set_pos(100, 100);
@@ -341,7 +341,7 @@ void LayoutTest::layout_mix1()
 	}
 
 	//delete layout2;
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -372,7 +372,7 @@ void LayoutTest::layout_mix2()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -384,7 +384,7 @@ void LayoutTest::layout_mix2()
 
 	VerticalLayout layout1;
 	layout1.set_pos(100, 100);
-	layout1.set_alignment(BILO::AlignVerticalCenter);
+	layout1.set_alignment(BlendInt::AlignVerticalCenter);
 
 	Label label1(L"Hello");
 	label1.set_pos(100, 100);
@@ -397,7 +397,7 @@ void LayoutTest::layout_mix2()
 
 	VerticalLayout layout2;
 	layout2.set_pos(250, 100);
-	layout2.set_alignment(BILO::AlignLeft);
+	layout2.set_alignment(BlendInt::AlignLeft);
 
 	Label label2(L"Hello");
 	label2.set_pos(100, 100);
@@ -410,7 +410,7 @@ void LayoutTest::layout_mix2()
 
 	VerticalLayout layout3;
 	layout3.set_pos(500, 100);
-	layout3.set_alignment(BILO::AlignRight);
+	layout3.set_alignment(BlendInt::AlignRight);
 
 	Label label3(L"Hello");
 	label3.set_pos(100, 100);
@@ -449,7 +449,7 @@ void LayoutTest::layout_mix2()
 	layout2.unbind();
 	layout1.unbind();
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -465,23 +465,23 @@ void LayoutTest::cbError (int error, const char* description)
 
 void LayoutTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BILO::Interface::instance()->resizeEvent(w, h);
+	BlendInt::Interface::instance()->resizeEvent(w, h);
 }
 
 void LayoutTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BlendInt::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void LayoutTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void LayoutTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BlendInt::Interface::instance()->cursorPosEvent(xpos, ypos);
 }
 

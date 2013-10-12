@@ -1,5 +1,5 @@
 /**
- * BILO demo
+ * BlendInt demo
  */
 
 #include <GL/glew.h>
@@ -7,25 +7,25 @@
 #include <iostream>
 
 #include <Cpp/Events.hpp>
-#include <BILO/Interface.hpp>
-#include <BILO/ContextManager.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/ContextManager.hpp>
 
-#include <BILO/ToggleButton.hpp>
-#include <BILO/VerticalLayout.hpp>
-#include <BILO/HorizontalLayout.hpp>
+#include <BlendInt/ToggleButton.hpp>
+#include <BlendInt/VerticalLayout.hpp>
+#include <BlendInt/HorizontalLayout.hpp>
 
-#include <BILO/Types.hpp>
-#include <BILO/Button.hpp>
-#include <BILO/Label.hpp>
-#include <BILO/ScrollWidget.hpp>
-#include <BILO/Slider.hpp>
-#include <BILO/Frame.hpp>
-#include <BILO/VertexIcon.hpp>
-#include <BILO/TableLayout.hpp>
-#include <BILO/ScrollBar.hpp>
-#include <BILO/GLBuffer.hpp>
+#include <BlendInt/Types.hpp>
+#include <BlendInt/Button.hpp>
+#include <BlendInt/Label.hpp>
+#include <BlendInt/ScrollWidget.hpp>
+#include <BlendInt/Slider.hpp>
+#include <BlendInt/Frame.hpp>
+#include <BlendInt/VertexIcon.hpp>
+#include <BlendInt/TableLayout.hpp>
+#include <BlendInt/ScrollBar.hpp>
+#include <BlendInt/GLBuffer.hpp>
 
-using namespace BILO;
+using namespace BlendInt;
 
 static void cbError (int error, const char* description)
 {
@@ -35,28 +35,28 @@ static void cbError (int error, const char* description)
 }
 
 static void cbWindowSize(GLFWwindow* window, int w, int h) {
-	BILO::Interface::instance()->resizeEvent(w, h);
+	BlendInt::Interface::instance()->resizeEvent(w, h);
 }
 
 static void cbKey(GLFWwindow* window, int key, int scancode, int action,
 		int mods) {
-	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BlendInt::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 static void cbMouseButton(GLFWwindow* window, int button, int action,
 		int mods) {
-	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 static void cbCursorPos(GLFWwindow* window, double xpos, double ypos) {
-	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BlendInt::Interface::instance()->cursorPosEvent(xpos, ypos);
 }
 
 int main(int argc, char* argv[])
 {
-	using namespace BILO;
+	using namespace BlendInt;
 
-	BILO_EVENTS_INIT_ONCE_IN_MAIN;
+	BlendInt_EVENTS_INIT_ONCE_IN_MAIN;
 
 	/* Initialize the library */
 	if (!glfwInit())
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		return -1;
@@ -275,7 +275,7 @@ int main(int argc, char* argv[])
 //
 //	HorizontalLayout* layout1 = new HorizontalLayout;
 //	layout1->set_pos(500, 200);
-//	layout1->set_alignment(BILO::AlignHorizontalCenter);
+//	layout1->set_alignment(BlendInt::AlignHorizontalCenter);
 //	layout1->set_margin(5, 5, 5, 5);
 //	layout1->set_space(5);
 //
@@ -339,7 +339,7 @@ int main(int argc, char* argv[])
 	button_in_table5->set_name("button5");
 
 	tablelayout->set_pos(500, 400);
-	tablelayout->set_alignment(BILO::AlignCenter);
+	tablelayout->set_alignment(BlendInt::AlignCenter);
 
 	tablelayout->add_widget(button_in_table0, 0, 0);
 	tablelayout->add_widget(button_in_table1, 0, 1);
@@ -356,7 +356,7 @@ int main(int argc, char* argv[])
 
 	VerticalLayout* verticallayout1 = new VerticalLayout;
 	verticallayout1->set_pos(500, 200);
-	verticallayout1->set_alignment(BILO::AlignVerticalCenter);
+	verticallayout1->set_alignment(BlendInt::AlignVerticalCenter);
 	verticallayout1->set_margin(5, 5, 5, 5);
 	verticallayout1->set_space(5);
 
@@ -435,7 +435,7 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();

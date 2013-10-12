@@ -6,14 +6,14 @@
 #include <iostream>
 #include <string>
 
-#include <BILO/Interface.hpp>
-#include <BILO/Label.hpp>
-#include <BILO/Theme.hpp>
-#include <BILO/Drawable.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/Label.hpp>
+#include <BlendInt/Theme.hpp>
+#include <BlendInt/Drawable.hpp>
 
 #include "ThemeTest.h"
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ThemeTest);
@@ -98,7 +98,7 @@ void ThemeTest::initialize2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -135,7 +135,7 @@ void ThemeTest::initialize2 ()
 
 	app->unbind(&label);
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -151,22 +151,22 @@ void ThemeTest::cbError (int error, const char* description)
 
 void ThemeTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BILO::Interface::instance()->resizeEvent(w, h);
+	BlendInt::Interface::instance()->resizeEvent(w, h);
 }
 
 void ThemeTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BlendInt::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void ThemeTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void ThemeTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BlendInt::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

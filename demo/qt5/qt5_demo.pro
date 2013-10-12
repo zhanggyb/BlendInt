@@ -7,7 +7,7 @@
 QT       += core gui opengl
 
 INCLUDEPATH = ../../../include
-INCLUDEPATH += ../../../include/BIL
+INCLUDEPATH += ../../../include/BlendInt
 INCLUDEPATH += ../../../extern/CppEvents/src
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

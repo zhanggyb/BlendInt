@@ -1,13 +1,13 @@
 // cpp
 
-#include <BILO/FontConfig.hpp>
-#include <BILO/Drawable.hpp>
+#include <BlendInt/FontConfig.hpp>
+#include <BlendInt/Drawable.hpp>
 #include <iostream>
 #include <string>
 
 #include "FontConfigTest.h"
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FontConfigTest);

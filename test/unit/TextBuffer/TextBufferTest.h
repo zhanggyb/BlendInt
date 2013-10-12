@@ -3,11 +3,11 @@
 #ifndef _TEXTBUFFER_TEST_H
 #define _TEXTBUFFER_TEST_H
 
-#include <BILO/Drawable.hpp>
+#include <BlendInt/Drawable.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 class TextBufferTest: public CppUnit::TestFixture

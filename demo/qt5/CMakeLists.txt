@@ -1,4 +1,4 @@
-# CMake file for BIL project
+# CMake file for BlendInt project
 #
 
 # Find the QtWidgets library
@@ -34,5 +34,5 @@ qt5_wrap_ui(ui_mainwindow.h mainwindow.ui)
 
 add_executable(qt5_demo ${qt5_demo_SRC})
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-target_link_libraries(qt5_demo BIL ${LIBS})
+target_link_libraries(qt5_demo BlendInt ${LIBS})
 

@@ -7,13 +7,13 @@
 #include <GL/glut.h>
 /* ADD GLOBAL VARIABLES HERE LATER */
 
-#include <BILO/Interface.hpp>
-#include <BILO/Label.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/Label.hpp>
 
 int init_resources(void)
 {
-	using BILO::Interface;
-	using BILO::Label;
+	using BlendInt::Interface;
+	using BlendInt::Label;
 	
 	Interface::initialize();
 	Interface* app = Interface::instance();
@@ -33,7 +33,7 @@ int init_resources(void)
 
 void onDisplay()
 {
-	using BILO::Interface;
+	using BlendInt::Interface;
 	
 	Interface::instance()->render();
 	
@@ -69,29 +69,29 @@ void onIdle() {
 
 void free_resources()
 {
-	using BILO::Interface;
+	using BlendInt::Interface;
 	
 	Interface::release();
 }
 
 void onReshape (int width, int height)
 {
-	using BILO::Interface;
+	using BlendInt::Interface;
 	
 	Interface::instance()->resize(width, height);
 }
 
 void onMouse (int button, int state, int x, int y)
 {
-	using BILO::Interface;
+	using BlendInt::Interface;
 	
 	//std::cout << "mouse position: "
-	//BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+	//BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 int main(int argc, char* argv[])
 {
-	BILO_EVENTS_INIT_ONCE_IN_MAIN;
+	BlendInt_EVENTS_INIT_ONCE_IN_MAIN;
 	
 	/* Glut-related initialising functions */
 	glutInit(&argc, argv);

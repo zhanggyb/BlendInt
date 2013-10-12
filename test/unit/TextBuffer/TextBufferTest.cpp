@@ -10,11 +10,11 @@
 
 #include "TextBufferTest.h"
 
-#include <BILO/Interface.hpp>
-#include <BILO/TextBuffer.hpp>
-#include <BILO/FontConfig.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/TextBuffer.hpp>
+#include <BlendInt/FontConfig.hpp>
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 //CPPUNIT_TEST_SUITE_REGISTRATION(TextBufferTest);
@@ -111,7 +111,7 @@ void TextBufferTest::showcharacter1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -126,7 +126,7 @@ void TextBufferTest::showcharacter1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -181,7 +181,7 @@ void TextBufferTest::showcharacter1 ()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -196,7 +196,7 @@ void TextBufferTest::showtextline1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -211,7 +211,7 @@ void TextBufferTest::showtextline1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -263,7 +263,7 @@ void TextBufferTest::showtextline1 ()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -278,7 +278,7 @@ void TextBufferTest::showtextline2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -293,7 +293,7 @@ void TextBufferTest::showtextline2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -345,7 +345,7 @@ void TextBufferTest::showtextline2 ()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -360,7 +360,7 @@ void TextBufferTest::showtextline3 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -375,7 +375,7 @@ void TextBufferTest::showtextline3 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -427,7 +427,7 @@ void TextBufferTest::showtextline3 ()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -442,7 +442,7 @@ void TextBufferTest::showtextline4 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -457,7 +457,7 @@ void TextBufferTest::showtextline4 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -509,7 +509,7 @@ void TextBufferTest::showtextline4 ()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -524,7 +524,7 @@ void TextBufferTest::multiple_buf_show1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -539,7 +539,7 @@ void TextBufferTest::multiple_buf_show1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -605,7 +605,7 @@ void TextBufferTest::multiple_buf_show1 ()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -659,22 +659,22 @@ void TextBufferTest::cbError (int error, const char* description)
 
 void TextBufferTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BILO::Interface::instance()->resizeEvent(w, h);
+	BlendInt::Interface::instance()->resizeEvent(w, h);
 }
 
 void TextBufferTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BlendInt::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void TextBufferTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void TextBufferTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BlendInt::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

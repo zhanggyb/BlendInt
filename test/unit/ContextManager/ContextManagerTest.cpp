@@ -10,14 +10,14 @@
 
 #include "ContextManagerTest.h"
 
-#include <BILO/Interface.hpp>
-#include <BILO/Label.hpp>
-#include <BILO/FontConfig.hpp>
-#include <BILO/Rect.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/Label.hpp>
+#include <BlendInt/FontConfig.hpp>
+#include <BlendInt/Rect.hpp>
 
-#include <BILO/ContextManager.hpp>
+#include <BlendInt/ContextManager.hpp>
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ContextManagerTest);
@@ -76,7 +76,7 @@ void ContextManagerTest::check_layer_0_0 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -147,7 +147,7 @@ void ContextManagerTest::check_layer_0_0 ()
 	widget1.unbind();
 	widget3.unbind();
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -177,7 +177,7 @@ void ContextManagerTest::check_layer_0_1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -245,7 +245,7 @@ void ContextManagerTest::check_layer_0_1 ()
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 0 && cm->layer_size() == 0);
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -275,7 +275,7 @@ void ContextManagerTest::check_layer_0_2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -354,7 +354,7 @@ void ContextManagerTest::check_layer_0_2 ()
 	delete widget2; delete widget4;
 	//delete widget5;
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -384,7 +384,7 @@ void ContextManagerTest::check_layer_0_3 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -452,7 +452,7 @@ void ContextManagerTest::check_layer_0_3 ()
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 0 && cm->layer_size() == 0);
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -482,7 +482,7 @@ void ContextManagerTest::check_layer_0_4 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -573,7 +573,7 @@ void ContextManagerTest::check_layer_0_4 ()
 	cm->print();
 	CPPUNIT_ASSERT(cm->index_size() == 0 && cm->layer_size() == 0);
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -590,22 +590,22 @@ void ContextManagerTest::cbError (int error, const char* description)
 
 void ContextManagerTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BILO::Interface::instance()->resizeEvent(w, h);
+	BlendInt::Interface::instance()->resizeEvent(w, h);
 }
 
 void ContextManagerTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BlendInt::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void ContextManagerTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void ContextManagerTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BlendInt::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

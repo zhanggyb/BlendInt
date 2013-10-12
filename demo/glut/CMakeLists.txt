@@ -1,4 +1,4 @@
-# CMake file for BIL project
+# CMake file for BlendInt project
 #
 
 file(GLOB sourcefiles "*/*.cpp")
@@ -15,5 +15,5 @@ set(LIBS ${LIBS} glut)
 add_executable(glut_demo ${glut_demo_SRC})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-target_link_libraries(glut_demo BIL ${LIBS})
+target_link_libraries(glut_demo BlendInt ${LIBS})
 

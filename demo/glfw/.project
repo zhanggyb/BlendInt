@@ -3,7 +3,7 @@
 	<name>glfw_demo</name>
 	<comment></comment>
 	<projects>
-		<project>BILO</project>
+		<project>BlendInt</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

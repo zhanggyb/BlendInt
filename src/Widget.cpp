@@ -1,21 +1,21 @@
 /*
- * This file is part of BILO (Blender-like Interface Library in
+ * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BILO (Blender-like Interface Library in OpenGL) is free software:
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
  * you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * BILO (Blender-like Interface Library in OpenGL) is distributed in
+ * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
  * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BILO.  If not, see
+ * License along with BlendInt.  If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -28,18 +28,18 @@
 #include <iostream>
 #include <assert.h>
 
-#include <BILO/Widget.hpp>
-#include <BILO/Types.hpp>
-#include <BILO/Coord.hpp>
-#include <BILO/Color.hpp>
-#include <BILO/Vector.hpp>
+#include <BlendInt/Widget.hpp>
+#include <BlendInt/Types.hpp>
+#include <BlendInt/Coord.hpp>
+#include <BlendInt/Color.hpp>
+#include <BlendInt/Vector.hpp>
 
-#include <BILO/Utilities-inl.hpp>
+#include <BlendInt/Utilities-inl.hpp>
 
-#include <BILO/Interface.hpp>
-#include <BILO/Theme.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/Theme.hpp>
 
-namespace BILO {
+namespace BlendInt {
 
 	const float Widget::cornervec[WIDGET_CURVE_RESOLU][2] = {
 		{0.0, 0.0}, {0.195, 0.02}, {0.383, 0.067},
@@ -890,5 +890,5 @@ namespace BILO {
 		}
 	}
 
-} /* namespace BILO */
+} /* namespace BlendInt */
 

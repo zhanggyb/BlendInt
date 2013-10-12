@@ -6,12 +6,12 @@
 #include <iostream>
 #include <string>
 
-#include <BILO/Label.hpp>
+#include <BlendInt/Label.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
-#include <BILO/GLSLProgram.hpp>
+#include <BlendInt/GLSLProgram.hpp>
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 class TextureFontTest: public CppUnit::TestFixture

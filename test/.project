@@ -3,7 +3,7 @@
 	<name>CppUnitTest</name>
 	<comment></comment>
 	<projects>
-		<project>BILO</project>
+		<project>BlendInt</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

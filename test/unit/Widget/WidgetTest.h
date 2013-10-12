@@ -3,13 +3,13 @@
 #ifndef _WIDGET_TEST_H
 #define _WIDGET_TEST_H
 
-#include <BILO/Widget.hpp>
+#include <BlendInt/Widget.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <string>
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 class testWidget: public Widget

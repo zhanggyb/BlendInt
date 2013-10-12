@@ -5,9 +5,9 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <BILO/Label.hpp>
+#include <BlendInt/Label.hpp>
 
-#include <BILO/String.hpp>
+#include <BlendInt/String.hpp>
 
 class SliderTest: public CppUnit::TestFixture
 {

@@ -3,13 +3,13 @@
 #ifndef _DRAWABLE_TEST_H
 #define _DRAWABLE_TEST_H
 
-#include <BILO/Drawable.hpp>
+#include <BlendInt/Drawable.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
 #include <string>
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 class myTexture: public Drawable

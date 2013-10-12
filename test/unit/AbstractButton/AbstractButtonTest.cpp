@@ -10,11 +10,11 @@
 
 #include "AbstractButtonTest.h"
 
-#include <BILO/Interface.hpp>
-#include <BILO/Label.hpp>
-#include <BILO/Button.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/Label.hpp>
+#include <BlendInt/Button.hpp>
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AbstractButtonTest);
@@ -73,7 +73,7 @@ void AbstractButtonTest::show1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -102,7 +102,7 @@ void AbstractButtonTest::show1 ()
 	}
 
 	button.unbind();
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -118,22 +118,22 @@ void AbstractButtonTest::cbError (int error, const char* description)
 
 void AbstractButtonTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BILO::Interface::instance()->resizeEvent(w, h);
+	BlendInt::Interface::instance()->resizeEvent(w, h);
 }
 
 void AbstractButtonTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BlendInt::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void AbstractButtonTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void AbstractButtonTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BlendInt::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

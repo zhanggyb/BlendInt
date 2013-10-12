@@ -1,8 +1,8 @@
-BILO
+BlendInt
 ===
 
-BILO (Blender Interface Library in OpenGL), is a C++ library for generating
-applications with Blender-like interface style, licensed with LGPL
+BlendInt (Blender Interface Library in OpenGL), is a C++ library for generating
+applications with a Blender-like interface style, licensed with LGPL
 v3+.
 
 Features of vertion 0.1:
@@ -32,5 +32,5 @@ Features of vertion 0.1:
 
 ## License
 
-BILO (Blender Interface Library in OpenGL) is released under the LGPL v3
+BlendInt (Blender Interface Library in OpenGL) is released under the LGPL v3
 License. See the bundled LICENSE file for details.

@@ -7,13 +7,13 @@
 #include <string>
 #include <stdio.h>
 
-#include <BILO/Interface.hpp>
-#include <BILO/Drawable.hpp>
-#include <BILO/Widget.hpp>
-#include <BILO/ContextManager.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/Drawable.hpp>
+#include <BlendInt/Widget.hpp>
+#include <BlendInt/ContextManager.hpp>
 #include "DrawableTest.h"
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(DrawableTest);
@@ -320,7 +320,7 @@ void DrawableTest::texture1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -344,7 +344,7 @@ void DrawableTest::texture1 ()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -375,7 +375,7 @@ void DrawableTest::mydrawable1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -401,7 +401,7 @@ void DrawableTest::mydrawable1 ()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -432,7 +432,7 @@ void DrawableTest::mydrawable2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -458,7 +458,7 @@ void DrawableTest::mydrawable2 ()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -489,7 +489,7 @@ void DrawableTest::mydrawable3 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -515,7 +515,7 @@ void DrawableTest::mydrawable3 ()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 
 	Interface::release();
 
@@ -547,7 +547,7 @@ void DrawableTest::bind_test1()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -594,7 +594,7 @@ void DrawableTest::bind_test1()
 	widget3.unbind();
 	widget4.unbind();
 
-	/* release BILO */
+	/* release BlendInt */
 	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 0);
 	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 0);
 
@@ -628,7 +628,7 @@ void DrawableTest::bind_test2()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -686,7 +686,7 @@ void DrawableTest::bind_test2()
 
 	CPPUNIT_ASSERT(Drawable::map_size() == 1);
 
-	/* release BILO */
+	/* release BlendInt */
 	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
 	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 1);
 
@@ -722,7 +722,7 @@ void DrawableTest::bind_test3()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -786,7 +786,7 @@ void DrawableTest::bind_test3()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
 	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 1);
 
@@ -822,7 +822,7 @@ void DrawableTest::bind_test4()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -880,7 +880,7 @@ void DrawableTest::bind_test4()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 
 	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 2);
 	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 1);
@@ -917,7 +917,7 @@ void DrawableTest::bind_test5()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -990,7 +990,7 @@ void DrawableTest::bind_test5()
 	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 0);
 	CPPUNIT_ASSERT(ContextManager::instance()->layer_size() == 0);
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 	CPPUNIT_ASSERT(Drawable::map_size() == 0);
 
@@ -1022,7 +1022,7 @@ void DrawableTest::bind_test6()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -1086,7 +1086,7 @@ void DrawableTest::bind_test6()
 		glfwPollEvents();
 	}
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 	CPPUNIT_ASSERT(Drawable::map_size() == 0);
 
@@ -1118,7 +1118,7 @@ void DrawableTest::bind_test7()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -1166,7 +1166,7 @@ void DrawableTest::bind_test7()
 	delete widget1;
 	CPPUNIT_ASSERT(Drawable::map_size() == 0);
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -1197,7 +1197,7 @@ void DrawableTest::bind_test8()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -1225,7 +1225,7 @@ void DrawableTest::bind_test8()
 
 	widget1.unbind();
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -1256,7 +1256,7 @@ void DrawableTest::bind_test9()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -1284,7 +1284,7 @@ void DrawableTest::bind_test9()
 
 	widget1.unbind();
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -1315,7 +1315,7 @@ void DrawableTest::bind_test10()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -1343,7 +1343,7 @@ void DrawableTest::bind_test10()
 
 	widget1.unbind();
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -1358,23 +1358,23 @@ void DrawableTest::cbError (int error, const char* description)
 
 void DrawableTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BILO::Interface::instance()->resizeEvent(w, h);
+	BlendInt::Interface::instance()->resizeEvent(w, h);
 }
 
 void DrawableTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BlendInt::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void DrawableTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void DrawableTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BlendInt::Interface::instance()->cursorPosEvent(xpos, ypos);
 }
 

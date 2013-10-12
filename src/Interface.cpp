@@ -1,21 +1,21 @@
 /*
- * This file is part of BILO (Blender-like Interface Library in
+ * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BILO (Blender-like Interface Library in OpenGL) is free software:
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
  * you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option)
  * any later version.
  *
- * BILO (Blender-like Interface Library in OpenGL) is distributed in
+ * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
  * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BILO.  If not, see
+ * License along with BlendInt.  If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -24,21 +24,21 @@
 #include <GL/glew.h>
 #include <iostream>
 
-#include <BILO/Interface.hpp>
+#include <BlendInt/Interface.hpp>
 
-#include <BILO/FontConfig.hpp>
-#include <BILO/FontCache.hpp>
-#include <BILO/Theme.hpp>
-#include <BILO/ShaderManager.hpp>
-#include <BILO/Size.hpp>
-#include <BILO/Drawable.hpp>
-#include <BILO/KeyEvent.hpp>
-#include <BILO/MouseEvent.hpp>
-#include <BILO/ContextMenuEvent.hpp>
-#include <BILO/ContextManager.hpp>
-#include <BILO/Drawable.hpp>
+#include <BlendInt/FontConfig.hpp>
+#include <BlendInt/FontCache.hpp>
+#include <BlendInt/Theme.hpp>
+#include <BlendInt/ShaderManager.hpp>
+#include <BlendInt/Size.hpp>
+#include <BlendInt/Drawable.hpp>
+#include <BlendInt/KeyEvent.hpp>
+#include <BlendInt/MouseEvent.hpp>
+#include <BlendInt/ContextMenuEvent.hpp>
+#include <BlendInt/ContextManager.hpp>
+#include <BlendInt/Drawable.hpp>
 
-namespace BILO {
+namespace BlendInt {
 
 	Interface* Interface::interface = 0;
 
@@ -334,7 +334,7 @@ namespace BILO {
 							dispatch_key_press_event((*set_it), &event);
 							break;
 						case KeyRelease:
-							// item->KeyReleaseEvent(dynamic_cast<BILO::KeyEvent*>(event));
+							// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
 							break;
 						case KeyRepeat:
 							// item->KeyRepeatEvent(&event);

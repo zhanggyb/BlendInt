@@ -7,13 +7,13 @@
 #include <string>
 #include <stdio.h>
 
-#include <BILO/Interface.hpp>
-#include <BILO/Widget.hpp>
-#include <BILO/Drawable.hpp>
-#include <BILO/ContextManager.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/Widget.hpp>
+#include <BlendInt/Drawable.hpp>
+#include <BlendInt/ContextManager.hpp>
 #include "WidgetTest.h"
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(WidgetTest);
@@ -86,7 +86,7 @@ void WidgetTest::widget_default_show ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt",
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -102,7 +102,7 @@ void WidgetTest::widget_default_show ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -134,7 +134,7 @@ void WidgetTest::widget_default_show ()
 
 	widget.unbind();
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -149,7 +149,7 @@ void WidgetTest::testwidget_show0 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt",
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -165,7 +165,7 @@ void WidgetTest::testwidget_show0 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -194,7 +194,7 @@ void WidgetTest::testwidget_show0 ()
 	}
 
 	widget.unbind();
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -209,7 +209,7 @@ void WidgetTest::testwidget_show1 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt",
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -225,7 +225,7 @@ void WidgetTest::testwidget_show1 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -253,7 +253,7 @@ void WidgetTest::testwidget_show1 ()
 
 	widget.unbind();
 
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -268,7 +268,7 @@ void WidgetTest::testwidget_show2 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt",
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -284,7 +284,7 @@ void WidgetTest::testwidget_show2 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -310,7 +310,7 @@ void WidgetTest::testwidget_show2 ()
 	}
 
 	widget.unbind();
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -325,7 +325,7 @@ void WidgetTest::testwidget_show3 ()
 
 	glfwSetErrorCallback(&cbError);
 
-	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BILO",
+	GLFWwindow* window = glfwCreateWindow(1200, 800, "Demo Window for BlendInt",
 	        NULL, NULL);
 	if (!window) {
 		glfwTerminate();
@@ -341,7 +341,7 @@ void WidgetTest::testwidget_show3 ()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
-	/* initialize BILO after OpenGL content is created */
+	/* initialize BlendInt after OpenGL content is created */
 	if (!Interface::initialize()) {
 		glfwTerminate();
 		CPPUNIT_ASSERT(false);
@@ -367,7 +367,7 @@ void WidgetTest::testwidget_show3 ()
 	}
 
 	widget.unbind();
-	/* release BILO */
+	/* release BlendInt */
 	Interface::release();
 
 	glfwTerminate();
@@ -382,22 +382,22 @@ void WidgetTest::cbError (int error, const char* description)
 
 void WidgetTest::cbWindowSize (GLFWwindow* window, int w, int h)
 {
-	BILO::Interface::instance()->resizeEvent(w, h);
+	BlendInt::Interface::instance()->resizeEvent(w, h);
 }
 
 void WidgetTest::cbKey (GLFWwindow* window, int key, int scancode, int action,
         int mods)
 {
-	BILO::Interface::instance()->keyEvent(key, scancode, action, mods);
+	BlendInt::Interface::instance()->keyEvent(key, scancode, action, mods);
 }
 
 void WidgetTest::cbMouseButton (GLFWwindow* window, int button, int action,
         int mods)
 {
-	BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+	BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void WidgetTest::cbCursorPos (GLFWwindow* window, double xpos, double ypos)
 {
-	BILO::Interface::instance()->cursorPosEvent(xpos, ypos);
+	BlendInt::Interface::instance()->cursorPosEvent(xpos, ypos);
 }

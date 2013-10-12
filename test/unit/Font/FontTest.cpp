@@ -7,11 +7,11 @@
 #include <iostream>
 #include <string>
 
-#include <BILO/Font.hpp>
+#include <BlendInt/Font.hpp>
 
 #include "FontTest.h"
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FontTest);

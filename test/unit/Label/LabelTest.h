@@ -6,11 +6,11 @@
 #include <iostream>
 #include <string>
 
-#include <BILO/Label.hpp>
+#include <BlendInt/Label.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 class LabelTest: public CppUnit::TestFixture

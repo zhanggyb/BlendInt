@@ -1,9 +1,9 @@
-# CMake file for BIL project
+# CMake file for BlendInt project
 #
 
 cmake_minimum_required(VERSION 2.8.11)
 
-project (BIL)
+project (BlendInt)
 
 set(CMAKE_BUILD_TYPE_INIT "Debug")
 
@@ -40,9 +40,9 @@ endif()
 #add OpenImageIO link
 set(LIBS ${LIBS} OpenImageIO)
 
-include_directories(${BIL_SOURCE_DIR}/include)
-include_directories(${BIL_SOURCE_DIR}/include/BIL)
-include_directories(${BIL_SOURCE_DIR}/extern/CppEvents/src)
+include_directories(${BlendInt_SOURCE_DIR}/include)
+include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt)
+include_directories(${BlendInt_SOURCE_DIR}/extern/CppEvents/src)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR
         CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")

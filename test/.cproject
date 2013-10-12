@@ -24,11 +24,11 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.521721332" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.1868307597" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1552078801" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO/include/BILO}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/include/BlendInt}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/include/freetype2"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO/extern/CppEvents/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/extern/CppEvents/src}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1932273863" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -40,24 +40,24 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.exe.debug.option.optimization.level.1830953483" name="Optimization Level" superClass="gnu.c.compiler.exe.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.exe.debug.option.debugging.level.225826237" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1478373542" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.951336770" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.575501844" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.226595489" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option id="gnu.cpp.link.option.libs.268117545" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="BILO"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="BlendInt"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="cppunit"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="GL"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="GLEW"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glfw"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.742827240" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/Debug}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.other.1264618154" name="Other options (-Xlinker [option])" superClass="gnu.cpp.link.option.other" valueType="stringList">
-									<listOptionValue builtIn="false" value="-rpath=&quot;${workspace_loc:/BILO/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="-rpath=&quot;${workspace_loc:/BlendInt/Debug}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1612611117" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -66,7 +66,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.2039174729" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
 								<option id="gnu.both.asm.option.include.paths.697895102" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.491936936" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -75,11 +75,11 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
-				<externalSettings containerId="BILO;cdt.managedbuild.config.gnu.so.debug.2140748179" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+				<externalSettings containerId="BlendInt;cdt.managedbuild.config.gnu.so.debug.2140748179" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/BILO"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/BILO/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="BILO" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/BlendInt"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/BlendInt/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="BlendInt" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -110,11 +110,11 @@
 									<listOptionValue builtIn="false" value="__LINUX__"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.451140709" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO/include/BILO}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/include/BlendInt}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/include/freetype2"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO/extern/CppEvents/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/extern/CppEvents/src}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1236690066" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -122,21 +122,21 @@
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.exe.release.option.optimization.level.1953727607" name="Optimization Level" superClass="gnu.c.compiler.exe.release.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.exe.release.option.debugging.level.823330608" name="Debug Level" superClass="gnu.c.compiler.exe.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.558331835" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.689730655" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.1465156700" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.835601414" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release">
 								<option id="gnu.cpp.link.option.libs.73223625" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="BILO"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="BlendInt"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="cppunit"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="GL"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="GLEW"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glfw"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1997387196" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/Release}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.2034134612" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -145,7 +145,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.release.1018693837" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.release">
 								<option id="gnu.both.asm.option.include.paths.1245091280" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BILO}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.214216309" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -154,11 +154,11 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
-				<externalSettings containerId="BILO;cdt.managedbuild.config.gnu.so.release.1931113514" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+				<externalSettings containerId="BlendInt;cdt.managedbuild.config.gnu.so.release.1931113514" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/BILO"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/BILO/Release"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="BILO" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/BlendInt"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/BlendInt/Release"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="BlendInt" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>

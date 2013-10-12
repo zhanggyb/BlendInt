@@ -3,11 +3,11 @@
 #include <iostream>
 #include <string>
 
-#include <BILO/Vector.hpp>
+#include <BlendInt/Vector.hpp>
 
 #include "VectorTest.h"
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 //CPPUNIT_TEST_SUITE_REGISTRATION (VectorTest);

@@ -5,15 +5,15 @@
 #include <stdio.h>
 #include <wchar.h>
 
-#include <BILO/Freetype.hpp>
-#include <BILO/FontConfig.hpp>
-#include <BILO/Drawable.hpp>
+#include <BlendInt/Freetype.hpp>
+#include <BlendInt/FontConfig.hpp>
+#include <BlendInt/Drawable.hpp>
 
 #include <cppunit/TestAssert.h>
 
 #include "FontEngineTest.h"
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FontEngineTest);

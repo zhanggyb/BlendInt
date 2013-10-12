@@ -3,23 +3,23 @@
 #include <iostream>
 
 #include "glwindow.h"
-#include <BILO/Interface.hpp>
+#include <BlendInt/Interface.hpp>
 #include <QMouseEvent>
 
 #include <Cpp/Events.hpp>
-#include <BILO/Interface.hpp>
-#include <BILO/ContextManager.hpp>
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/ContextManager.hpp>
 
-#include <BILO/ToggleButton.hpp>
-#include <BILO/VerticalLayout.hpp>
-#include <BILO/HorizontalLayout.hpp>
+#include <BlendInt/ToggleButton.hpp>
+#include <BlendInt/VerticalLayout.hpp>
+#include <BlendInt/HorizontalLayout.hpp>
 
-#include <BILO/Types.hpp>
-#include <BILO/Button.hpp>
-#include <BILO/Label.hpp>
-#include <BILO/ScrollWidget.hpp>
-#include <BILO/Slider.hpp>
-#include <BILO/Frame.hpp>
+#include <BlendInt/Types.hpp>
+#include <BlendInt/Button.hpp>
+#include <BlendInt/Label.hpp>
+#include <BlendInt/ScrollWidget.hpp>
+#include <BlendInt/Slider.hpp>
+#include <BlendInt/Frame.hpp>
 
 GLWindow::GLWindow(QWidget *parent) :
     QGLWidget(parent)
@@ -29,12 +29,12 @@ GLWindow::GLWindow(QWidget *parent) :
 
 GLWindow::~GLWindow()
 {
-    BILO::Interface::release ();
+    BlendInt::Interface::release ();
 }
 
 void GLWindow::initializeGL()
 {
-    using namespace BILO;
+    using namespace BlendInt;
 
     if(!Interface::initialize()) {
       exit(1);
@@ -162,13 +162,13 @@ void GLWindow::initializeGL()
 
 void GLWindow::resizeGL(int w, int h)
 {
-    BILO::Interface::instance()->resizeEvent(w, h);
+    BlendInt::Interface::instance()->resizeEvent(w, h);
 }
 
 void GLWindow::paintGL()
 {
-    using namespace BILO;
-    BILO::Interface* app = BILO::Interface::instance();
+    using namespace BlendInt;
+    BlendInt::Interface* app = BlendInt::Interface::instance();
 
     app->render();
 }
@@ -178,22 +178,22 @@ void GLWindow::mouseMoveEvent (QMouseEvent* event)
    //std::cout << event->x() << " " << event->y() << std::endl;
    // std::cout << event->pos().x() << " " << event->pos().y() << std::endl;
 
-    BILO::Interface::instance()->cursorPosEvent((double)event->x(),
+    BlendInt::Interface::instance()->cursorPosEvent((double)event->x(),
            (double) event->y());
 }
 
 void GLWindow::mousePressEvent (QMouseEvent* event)
 {
-    int button = BILO::MouseButtonNone;
-    int action = BILO::MousePress;
-    int mods = BILO::ModifierNone;
+    int button = BlendInt::MouseButtonNone;
+    int action = BlendInt::MousePress;
+    int mods = BlendInt::ModifierNone;
 
     switch(event->button()) {
         case Qt::LeftButton:
-            button = BILO::MouseButtonLeft;
+            button = BlendInt::MouseButtonLeft;
             break;
         case Qt::RightButton:
-            button = BILO::MouseButtonRight;
+            button = BlendInt::MouseButtonRight;
         default:
             break;
 
@@ -201,30 +201,30 @@ void GLWindow::mousePressEvent (QMouseEvent* event)
 
     int qt_mods = event->modifiers();
     if(qt_mods & Qt::ShiftModifier) {
-        mods = mods | BILO::ModifierShift;
+        mods = mods | BlendInt::ModifierShift;
     }
     if(qt_mods & Qt::ControlModifier) {
-        mods = mods | BILO::ModifierControl;
+        mods = mods | BlendInt::ModifierControl;
     }
     if(qt_mods & Qt::AltModifier) {
-        mods = mods | BILO::ModifierAlt;
+        mods = mods | BlendInt::ModifierAlt;
     }
 
-    BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+    BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }
 
 void GLWindow::mouseReleaseEvent (QMouseEvent* event)
 {
-    int button = BILO::MouseButtonNone;
-    int action = BILO::MouseRelease;
-    int mods = BILO::ModifierNone;
+    int button = BlendInt::MouseButtonNone;
+    int action = BlendInt::MouseRelease;
+    int mods = BlendInt::ModifierNone;
 
     switch(event->button()) {
         case Qt::LeftButton:
-            button = BILO::MouseButtonLeft;
+            button = BlendInt::MouseButtonLeft;
             break;
         case Qt::RightButton:
-            button = BILO::MouseButtonRight;
+            button = BlendInt::MouseButtonRight;
         default:
             break;
 
@@ -232,14 +232,14 @@ void GLWindow::mouseReleaseEvent (QMouseEvent* event)
 
     int qt_mods = event->modifiers();
     if(qt_mods & Qt::ShiftModifier) {
-        mods = mods | BILO::ModifierShift;
+        mods = mods | BlendInt::ModifierShift;
     }
     if(qt_mods & Qt::ControlModifier) {
-        mods = mods | BILO::ModifierControl;
+        mods = mods | BlendInt::ModifierControl;
     }
     if(qt_mods & Qt::AltModifier) {
-        mods = mods | BILO::ModifierAlt;
+        mods = mods | BlendInt::ModifierAlt;
     }
 
-    BILO::Interface::instance()->mouseButtonEvent(button, action, mods);
+    BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
 }

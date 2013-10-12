@@ -3,11 +3,11 @@
 #include <iostream>
 #include <string>
 
-#include <BILO/String.hpp>
+#include <BlendInt/String.hpp>
 
 #include "StringTest.h"
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION (StringTest);

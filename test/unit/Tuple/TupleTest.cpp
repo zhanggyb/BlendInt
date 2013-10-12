@@ -3,11 +3,11 @@
 #include <iostream>
 #include <string>
 
-#include <BILO/Tuple.hpp>
+#include <BlendInt/Tuple.hpp>
 
 #include "TupleTest.h"
 
-using namespace BILO;
+using namespace BlendInt;
 using namespace std;
 
 //CPPUNIT_TEST_SUITE_REGISTRATION (TupleTest);

@@ -1,4 +1,4 @@
-# CMake file for BIL project
+# CMake file for BlendInt project
 #
 
 add_subdirectory(unit)
