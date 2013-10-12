@@ -2,17 +2,17 @@
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
- * you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free
+ * software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
- * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is
+ * distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+ * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BlendInt.  If not, see
@@ -53,7 +53,7 @@ namespace BlendInt {
 	{
 		if (m_parent.type == ParentDrawable) {
 			const Point* new_pos = &m_pos;
-			if (type == WidgetPropertyPosition)
+			if (type == BasicPropertyPosition)
 				new_pos = static_cast<const Point*>(property);
 
 			unsigned int total_width = 0;
@@ -107,7 +107,7 @@ namespace BlendInt {
 			return true;
 		} else {
 
-			if (type == WidgetPropertySize) {
+			if (type == BasicPropertySize) {
 
 				if (property) {
 					generate_layout(static_cast<const Size*>(property));
@@ -209,7 +209,7 @@ namespace BlendInt {
 		for(it = m_vector.rbegin(); it != m_vector.rend(); it++)
 		{
 			child = *it;
-			if(child->vexpand()) {
+			if(child->expand_y()) {
 				expandable_objects.push(child);
 			} else {
 				unexpandable_objects.push(child);
@@ -244,7 +244,7 @@ namespace BlendInt {
 			set_pos_priv(child, pos);
 
 			// set width
-			if (child->hexpand()) {
+			if (child->expand_x()) {
 				resize_priv(child, max_widget_width, child->size().height());
 			} else {
 				if (m_alignment & AlignLeft) {
@@ -293,7 +293,7 @@ namespace BlendInt {
 		for (it = m_vector.rbegin(); it != m_vector.rend(); it++) {
 			child = *it;
 
-			if (child->hexpand()) {
+			if (child->expand_x()) {
 				resize_priv(child, max_widget_width, child->size().height());
 			} else {
 				if (m_alignment & AlignLeft) {

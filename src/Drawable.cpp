@@ -2,17 +2,17 @@
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
- * you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free
+ * software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
- * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is
+ * distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+ * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BlendInt.  If not, see
@@ -39,7 +39,7 @@ namespace BlendInt {
 	Drawable::Drawable ()
 		: m_z(0),
 		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0), m_visible(true),
-		  m_hexpand(false), m_vexpand(false)
+		  m_expand_x(false), m_expand_y(false)
 #ifdef DEBUG
 		  ,m_id(0)
 #endif
@@ -66,7 +66,7 @@ namespace BlendInt {
 	Drawable::Drawable (Drawable* parent)
 		: m_z(0),
 		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0), m_visible(true),
-		  m_hexpand(false), m_vexpand(false)
+		  m_expand_x(false), m_expand_y(false)
 #ifdef DEBUG
 		  , m_id(0)
 #endif
@@ -252,7 +252,7 @@ namespace BlendInt {
 		if (m_size.equal(w, h)) return;
 
 		Size new_size (w, h);
-		if (update(WidgetPropertySize, &new_size))
+		if (update(BasicPropertySize, &new_size))
 			m_size = new_size;
 	}
 
@@ -267,7 +267,7 @@ namespace BlendInt {
 		if (m_size.equal(size)) return;
 
 		Size new_size(size);
-		if (update(WidgetPropertySize, &new_size)) m_size = new_size;
+		if (update(BasicPropertySize, &new_size)) m_size = new_size;
 	}
 
 	const Point& Drawable::pos () const
@@ -286,7 +286,7 @@ namespace BlendInt {
 		if (m_pos.equal(x, y)) return;
 
 		Point new_pos(x, y);
-		if (update(WidgetPropertyPosition, &new_pos)) m_pos = new_pos;
+		if (update(BasicPropertyPosition, &new_pos)) m_pos = new_pos;
 	}
 
 	void Drawable::set_pos (const Point& pos)
@@ -300,7 +300,7 @@ namespace BlendInt {
 		if (m_pos.equal(pos)) return;
 
 		Point new_pos(pos);
-		if (update(WidgetPropertyPosition, &new_pos)) m_pos = new_pos;
+		if (update(BasicPropertyPosition, &new_pos)) m_pos = new_pos;
 	}
 
 	void Drawable::reset_z (int z)
@@ -335,14 +335,14 @@ namespace BlendInt {
 		if (m_roundcorner == type) return;
 
 		int new_type = type;
-		if(update(WidgetPropertyRoundCorner, &new_type)) m_roundcorner = new_type;
+		if(update(BasicPropertyRoundCorner, &new_type)) m_roundcorner = new_type;
 	}
 
 	void Drawable::set_corner_radius (float radius)
 	{
 		if (m_corner_radius == radius) return;
 
-		if(update(WidgetPropertyRoundCorner, &radius)) m_corner_radius = radius;
+		if(update(BasicPropertyRoundCorner, &radius)) m_corner_radius = radius;
 	}
 
 	int Drawable::roundcorner () const
@@ -357,20 +357,20 @@ namespace BlendInt {
 
 	void Drawable::set_visible (bool visible)
 	{
-		if (update (WidgetPropertyVisibility, &visible)) m_visible = visible;
+		if (update (BasicPropertyVisibility, &visible)) m_visible = visible;
 	}
 
 	void Drawable::show ()
 	{
 		bool visiable = true;
-		if (update (WidgetPropertyVisibility, &visiable)) m_visible = true;
+		if (update (BasicPropertyVisibility, &visiable)) m_visible = true;
 	}
 
 	void Drawable::hide ()
 	{
 		bool visible = false;
 
-		if (update (WidgetPropertyVisibility, &visible)) m_visible = false;
+		if (update (BasicPropertyVisibility, &visible)) m_visible = false;
 	}
 
 	const std::string& Drawable::name () const
@@ -413,7 +413,7 @@ namespace BlendInt {
 		if (obj->m_pos.equal(x, y)) return;
 
 		Point new_pos(x, y);
-		if (obj->update(WidgetPropertyPosition, &new_pos)) obj->m_pos = new_pos;
+		if (obj->update(BasicPropertyPosition, &new_pos)) obj->m_pos = new_pos;
 	}
 
 	void Drawable::set_pos_priv (Drawable* obj, const Point& pos)
@@ -421,7 +421,7 @@ namespace BlendInt {
 		if (obj->m_pos.equal(pos)) return;
 
 		Point new_pos(pos);
-		if (obj->update(WidgetPropertyPosition, &new_pos)) obj->m_pos = new_pos;
+		if (obj->update(BasicPropertyPosition, &new_pos)) obj->m_pos = new_pos;
 	}
 
 	void Drawable::resize_priv (Drawable* obj, int w, int h)
@@ -430,7 +430,7 @@ namespace BlendInt {
 
 		Size new_size (w, h);
 
-		if (obj->update(WidgetPropertySize, &new_size))
+		if (obj->update(BasicPropertySize, &new_size))
 			obj->m_size = new_size;
 	}
 
@@ -439,7 +439,7 @@ namespace BlendInt {
 		if (obj->m_size.equal(size)) return;
 
 		Size new_size(size);
-		if (obj->update(WidgetPropertySize, &new_size))
+		if (obj->update(BasicPropertySize, &new_size))
 			obj->m_size = new_size;
 	}
 

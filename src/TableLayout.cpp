@@ -2,17 +2,17 @@
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
- * you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free
+ * software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
- * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is
+ * distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+ * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BlendInt.  If not, see
@@ -64,7 +64,7 @@ namespace BlendInt {
 
 		bind (widget);
 
-		update(WidgetPropertySize, 0);
+		update(BasicPropertySize, 0);
 	}
 
 	void TableLayout::add_layout (AbstractLayout* layout, int row, int column,
@@ -84,7 +84,7 @@ namespace BlendInt {
 
 		bind (layout);
 
-		update(WidgetPropertySize, 0);
+		update(BasicPropertySize, 0);
 	}
 
 	bool TableLayout::update (int type, const void* property)
@@ -95,7 +95,7 @@ namespace BlendInt {
 
 		} else {
 
-			if (type == WidgetPropertySize) {
+			if (type == BasicPropertySize) {
 
 				if (property) {
 
@@ -337,10 +337,10 @@ namespace BlendInt {
 
 				set_pos_priv(child, x, y);
 
-				if(child->vexpand()) {
+				if(child->expand_y()) {
 					resize_priv (child, child->size().width(), row_height[i]);
 				}
-				if (child->hexpand()) {
+				if (child->expand_x()) {
 					resize_priv (child, column_width[j], child->size().height());
 				}
 
@@ -405,10 +405,10 @@ namespace BlendInt {
 
 				set_pos_priv(child, x, y);
 
-				if(child->vexpand()) {
+				if(child->expand_y()) {
 					resize_priv (child, child->size().width(), row_height[i]);
 				}
-				if (child->hexpand()) {
+				if (child->expand_x()) {
 					resize_priv (child, column_width[j], child->size().height());
 				}
 
@@ -442,7 +442,7 @@ namespace BlendInt {
 		{
 			child = m_vector[i * m_columns + column];
 			if(child) {
-				if(!child->hexpand()) {
+				if(!child->expand_x()) {
 					fixed_width = std::max(fixed_width, static_cast<int>(child->size().width()));
 				}
 			}
@@ -460,7 +460,7 @@ namespace BlendInt {
 		{
 			child = m_vector[row * m_columns + j];
 			if(child) {
-				if(!child->vexpand()) {
+				if(!child->expand_y()) {
 					fixed_height = std::max(fixed_height, static_cast<int>(child->size().height()));
 				}
 			}

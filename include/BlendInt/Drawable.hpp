@@ -2,17 +2,17 @@
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
- * you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free
+ * software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
- * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is
+ * distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+ * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BlendInt.  If not, see
@@ -147,15 +147,15 @@ namespace BlendInt {
 
 		float corner_radius () const {return m_corner_radius;}
 
-		void set_hexpand (bool expand) {m_hexpand = expand;}
+		void set_expand_x (bool expand) {m_expand_x = expand;}
 
-		bool hexpand () const {return m_hexpand;}
+		bool expand_x () const {return m_expand_x;}
 
-		void set_vexpand (bool expand) {m_vexpand = expand;}
+		void set_expand_y (bool expand) {m_expand_y = expand;}
 
-		bool vexpand () const {return m_vexpand;}
+		bool expand_y () const {return m_expand_y;}
 
-		void set_expand (bool expand) {m_hexpand = expand; m_vexpand = expand;}
+		void set_expand (bool expand) {m_expand_x = expand; m_expand_y = expand;}
 
 		bool visible () const;
 
@@ -234,9 +234,9 @@ namespace BlendInt {
 
 		bool m_visible;
 
-		bool m_hexpand;
+		bool m_expand_x;
 
-		bool m_vexpand;
+		bool m_expand_y;
 
 		Size m_size;
 

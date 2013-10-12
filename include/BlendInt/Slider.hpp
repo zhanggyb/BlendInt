@@ -2,17 +2,17 @@
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
- * you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free
+ * software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
- * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is
+ * distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+ * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BlendInt.  If not, see
@@ -38,10 +38,6 @@ namespace BlendInt {
 
 		virtual ~SliderControl ();
 
-		void set_radius (unsigned int radius);
-
-		unsigned int radius () const {return m_radius;}
-
 		bool pressed () const {return m_pressed;}
 
 	protected:
@@ -58,7 +54,7 @@ namespace BlendInt {
 
 	private:
 
-		unsigned int m_radius;
+		void update_shape (const Size* size);
 
 		bool m_hover;
 
@@ -67,8 +63,6 @@ namespace BlendInt {
 		Point m_move_start;
 
 		Point m_position_origin;
-
-		static const float circle_vertexes[20][2];
 	};
 
 	/**

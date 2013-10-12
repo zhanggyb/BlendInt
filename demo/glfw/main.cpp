@@ -121,24 +121,22 @@ int main(int argc, char* argv[])
 
 	app->bind(scrollcontrol);
 
-	float triangle[3][6] = {
-			{650, 350, 1.0, 0.0, 0.0},
-			{1150, 350, 0.0, 1.0, 0.0},
-			{900, 750, 0.0, 0.0, 1.0}
-	};
-
-	GLBuffer buffer;
-
-	buffer.generate(1);
-	buffer.set_property(3, sizeof(triangle[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-	buffer.bind();
-	buffer.upload(triangle);
-	buffer.unbind();
-
 	ScrollBar* scrollbar = new ScrollBar(Horizontal);
 	scrollbar->set_pos(700, 100);
 
 	app->bind(scrollbar);
+
+	Slider* hslider1 = new Slider;
+	hslider1->set_pos(650, 300);
+	hslider1->set_name("hslider1");
+
+	app->bind(hslider1);
+
+	Slider* vslider = new Slider(Vertical);
+	vslider->set_pos(650, 450);
+	vslider->set_name("vslider");
+
+	app->bind(vslider);
 
 	/*
 	Widget* widget = new Widget;
@@ -385,22 +383,6 @@ int main(int argc, char* argv[])
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
 		app->render();
-
-		buffer.set_index(0);
-		buffer.bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-
-		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glDrawArrays(GL_POLYGON, 0, buffer.vertices());
-
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-		buffer.unbind();
 
 		/*
 

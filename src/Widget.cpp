@@ -2,17 +2,17 @@
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
- * you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free
+ * software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
- * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is
+ * distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+ * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BlendInt.  If not, see
@@ -80,13 +80,13 @@ namespace BlendInt {
 	{
 		Padding new_padding = padding;
 
-		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
+		if(update(BasicPropertyPadding, &new_padding)) m_padding = new_padding;
 	}
 
 	void Widget::set_padding (int l, int r, int t, int b)
 	{
 		Padding new_padding (l, r, t, b);
-		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
+		if(update(BasicPropertyPadding, &new_padding)) m_padding = new_padding;
 	}
 
 
@@ -118,10 +118,10 @@ namespace BlendInt {
 	{
 		switch(type)
 		{
-			case WidgetPropertySize:
+			case BasicPropertySize:
 				update_shape(static_cast<const Size*>(property));
 				break;
-			case WidgetPropertyRoundCorner:
+			case BasicPropertyRoundCorner:
 				break;
 			default:
 				break;

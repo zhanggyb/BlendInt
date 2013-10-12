@@ -2,17 +2,17 @@
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
- * you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free
+ * software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
- * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is
+ * distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+ * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BlendInt.  If not, see
@@ -50,7 +50,7 @@ namespace BlendInt {
 		m_vector.push_back(widget);
 		bind (widget);
 
-		update(WidgetPropertySize, 0);
+		update(BasicPropertySize, 0);
 	}
 
 	void AbstractLayout::add_layout (AbstractLayout* layout)
@@ -60,7 +60,7 @@ namespace BlendInt {
 		m_vector.push_back(layout);
 		bind (layout);
 
-		update(WidgetPropertySize, 0);
+		update(BasicPropertySize, 0);
 	}
 
 	bool AbstractLayout::remove (Drawable* object)
@@ -79,7 +79,7 @@ namespace BlendInt {
 			}
 		}
 
-		update(WidgetPropertySize, 0);
+		update(BasicPropertySize, 0);
 
 		return true;
 	}
@@ -102,7 +102,7 @@ namespace BlendInt {
 
 		delete object;
 
-		update(WidgetPropertySize, 0);
+		update(BasicPropertySize, 0);
 
 		return true;
 	}
@@ -111,14 +111,14 @@ namespace BlendInt {
 	{
 		Margin new_value = margin;
 
-		if(update(WidgetPropertyMargin, &new_value)) m_margin = new_value;
+		if(update(BasicPropertyMargin, &new_value)) m_margin = new_value;
 	}
 
 	void AbstractLayout::set_margin (int left, int right, int top, int bottom)
 	{
 		Margin new_value (left, right, top, bottom);
 
-		if(update(WidgetPropertyMargin, &new_value)) m_margin = new_value;
+		if(update(BasicPropertyMargin, &new_value)) m_margin = new_value;
 	}
 
 

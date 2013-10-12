@@ -2,17 +2,17 @@
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
- * you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free
+ * software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
- * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is
+ * distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+ * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BlendInt.  If not, see
@@ -54,10 +54,10 @@ namespace BlendInt {
 	{
 		switch(type)
 		{
-			case WidgetPropertySize:
+			case BasicPropertySize:
 				update_shape(static_cast<const Size*>(property));
 				break;
-			case WidgetPropertyRoundCorner:
+			case BasicPropertyRoundCorner:
 				break;
 			default:
 				break;
@@ -287,11 +287,11 @@ namespace BlendInt {
 		if (orientation) {	// Vertical
 			resize(16, 400);
 			m_scroll_control->resize(16, 100);
-			set_vexpand(true);
+			set_expand_y(true);
 		} else {
 			resize(400, 16);
 			m_scroll_control->resize(100, 16);
-			set_hexpand(true);
+			set_expand_x(true);
 		}
 
 		m_scroll_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
@@ -310,11 +310,11 @@ namespace BlendInt {
 		if (orientation) {	// Vertical
 			resize(16, 400);
 			m_scroll_control->resize(16, 100);
-			set_vexpand(true);
+			set_expand_y(true);
 		} else {
 			resize(400, 16);
 			m_scroll_control->resize(100, 16);
-			set_hexpand(true);
+			set_expand_x(true);
 		}
 
 		m_scroll_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
@@ -329,13 +329,13 @@ namespace BlendInt {
 	{
 		switch (type) {
 
-			case WidgetPropertyPosition: {
+			case BasicPropertyPosition: {
 				const Point* new_pos = static_cast<const Point*>(property);
 				m_scroll_control->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
 				break;
 			}
 
-			case WidgetPropertySize: {
+			case BasicPropertySize: {
 				update_shape(static_cast<const Size*>(property));
 				break;
 			}
