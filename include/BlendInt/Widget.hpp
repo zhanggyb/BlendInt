@@ -176,6 +176,10 @@ namespace BlendInt {
 
 		Padding m_padding;
 
+		float m_border_width;
+
+		bool m_emboss;
+
 		/**
 		 * @brief get the GLBuffer
 		 * @return
@@ -193,11 +197,6 @@ namespace BlendInt {
 	private:
 
 		void update_shape (const Size* size);
-
-		float m_border_width;
-
-		bool m_emboss;
-
 	};
 
 } /* namespace BlendInt */

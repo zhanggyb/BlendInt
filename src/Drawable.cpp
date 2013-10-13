@@ -127,6 +127,7 @@ namespace BlendInt {
 
 		if (child->m_z != m_z) {
 			std::cerr << "Cannot bind a child in different layer" << std::endl;
+			// TODO throw an exception
 			return false;
 		}
 
@@ -202,6 +203,7 @@ namespace BlendInt {
 
 		if(parent->m_z != m_z) {
 			std::cerr << "Cannot bind to a parent in different layer" << std::endl;
+			// TODO: throw an exception
 			return false;
 		}
 

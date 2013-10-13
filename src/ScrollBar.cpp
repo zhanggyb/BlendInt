@@ -273,6 +273,195 @@ namespace BlendInt {
 
 	}
 
+	// ---------------------------- SliderBar -------------------------------
+
+	SliderBar::SliderBar(Orientation orientation)
+	: Slider(orientation)
+	{
+		set_padding(0, 0, 0, 0);
+		set_roundcorner(RoundCornerAll);
+		set_corner_radius(8);
+
+		if (orientation) {	// Vertical
+			resize(16, 400);
+			control_widget()->resize(16, 50);
+			set_expand_y(true);
+		} else {
+			resize(400, 16);
+			control_widget()->resize(50, 16);
+			set_expand_x(true);
+		}
+
+		update(SliderPropertyValue, 0);
+	}
+
+	SliderBar::SliderBar(Orientation orientation, Drawable* parent)
+	: Slider(orientation, parent)
+	{
+		set_padding(0, 0, 0, 0);
+		set_roundcorner(RoundCornerAll);
+		set_corner_radius(8);
+
+		if (orientation) {	// Vertical
+			resize(16, 400);
+			control_widget()->resize(16, 50);
+			set_expand_y(true);
+		} else {
+			resize(400, 16);
+			control_widget()->resize(50, 16);
+			set_expand_x(true);
+		}
+
+		update(SliderPropertyValue, 0);
+	}
+
+	SliderBar::~SliderBar()
+	{
+
+	}
+
+	bool SliderBar::update(int type, const void* property)
+	{
+		if(type == BasicPropertySize) {
+			update_shape(static_cast<const Size*>(property));
+			return true;
+		}
+
+		return Slider::update(type, property);
+	}
+
+	void SliderBar::render ()
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(m_pos.x(), m_pos.y(), z());
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		m_buffer.set_index(0);	// index 0 is inner
+
+		m_buffer.bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
+
+		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glDrawArrays(GL_POLYGON, 0, m_buffer.vertices());
+
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		m_buffer.unbind();
+
+		// draw outline
+		m_buffer.set_index(1);	// index of 1 is outline
+		unsigned char tcol[4] = { themes()->scroll.outline.r(),
+		        themes()->scroll.outline.g(),
+		        themes()->scroll.outline.b(),
+		        themes()->scroll.outline.a()};
+
+		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
+
+		m_buffer.bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glColor4ubv(tcol);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		m_buffer.unbind();
+
+		m_buffer.set_index(2);	// emboss
+		m_buffer.bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+
+			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
+
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		m_buffer.unbind();
+
+		glDisable(GL_BLEND);
+
+		glPopMatrix();
+
+		interface()->dispatch_render_event(control_widget());
+	}
+
+
+	void SliderBar::update_shape (const Size* size)
+	{
+		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+
+		VerticesSum vert_sum;
+
+		Orientation shadedir = orientation() ? Horizontal : Vertical;
+
+		Color color = themes()->scroll.inner;
+		short shadetop = themes()->scroll.shadetop;
+		short shadedown = themes()->scroll.shadedown;
+
+		if(shadedir)
+			vert_sum = generate_vertices(size, color, shadetop, shadedown, shadedir, inner_v, outer_v);
+		else					// swap shadetop and shadedown
+			vert_sum = generate_vertices(size, color, shadedown, shadetop, shadedir, inner_v, outer_v);
+
+		m_buffer.generate(2);
+
+				m_buffer.set_index(0);
+		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]),
+		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.bind();
+		m_buffer.upload(inner_v);
+		m_buffer.unbind();
+
+		// the quad strip for outline
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+
+		verts_to_quad_strip(inner_v, outer_v, vert_sum.total, quad_strip);
+
+		m_buffer.set_index(1);
+		m_buffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]),
+		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		m_buffer.bind();
+		m_buffer.upload(quad_strip);
+		m_buffer.unbind();
+
+		float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+
+		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
+
+		m_buffer.append();
+		m_buffer.set_index(2);
+		m_buffer.set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]),
+		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		m_buffer.bind();
+		m_buffer.upload(quad_strip_emboss);
+		m_buffer.unbind();
+
+	}
 	// ---------------------------- ScrollBar -------------------------------
 
 	ScrollBar::ScrollBar (Orientation orientation)

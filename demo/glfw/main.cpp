@@ -138,6 +138,11 @@ int main(int argc, char* argv[])
 
 	app->bind(vslider);
 
+	SliderBar* sliderbar = new SliderBar(Horizontal);
+	sliderbar->set_pos(700, 600);
+
+	app->bind(sliderbar);
+
 	/*
 	Widget* widget = new Widget;
 

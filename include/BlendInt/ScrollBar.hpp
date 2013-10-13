@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_SCROLLBAR_HPP_
 #define _BLENDINT_SCROLLBAR_HPP_
 
-#include <BlendInt/AbstractSlider.hpp>
+#include <BlendInt/Slider.hpp>
 
 #include <BlendInt/GLBuffer.hpp>
 
@@ -68,8 +68,37 @@ namespace BlendInt {
 		Point m_position_origin;
 	};
 
+	/**
+	 * @brief A slider used in ScrollBar with a dark background
+	 */
+	class SliderBar: public Slider
+	{
+		DISALLOW_COPY_AND_ASSIGN(SliderBar);
+
+	public:
+
+		SliderBar (Orientation orientation = Horizontal);
+
+		SliderBar (Orientation orientation, Drawable* parent);
+
+		virtual ~SliderBar ();
+
+	protected:
+
+		virtual bool update (int type, const void* property);
+
+		virtual void render ();
+
+	private:
+
+		void update_shape (const Size* size);
+
+	};
+
 	class ScrollBar: public AbstractSlider
 	{
+		DISALLOW_COPY_AND_ASSIGN(ScrollBar);
+
 	public:
 
 		ScrollBar (Orientation orientation = Horizontal);

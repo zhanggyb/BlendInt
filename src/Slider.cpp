@@ -35,10 +35,6 @@ namespace BlendInt {
 	SliderControl::SliderControl()
 	:  Widget(), m_hover(false), m_pressed(false)
 	{
-		buffer().generate(3);
-		buffer().set_target(GL_ARRAY_BUFFER);
-		buffer().set_usage(GL_STATIC_DRAW);
-
 		set_padding (0, 0, 0, 0);
 		set_roundcorner(RoundCornerAll);
 		set_emboss(false);
@@ -47,10 +43,6 @@ namespace BlendInt {
 	SliderControl::SliderControl(Drawable* parent)
 	:  Widget(parent), m_hover(false), m_pressed(false)
 	{
-		buffer().generate(3);
-		buffer().set_target(GL_ARRAY_BUFFER);
-		buffer().set_usage(GL_STATIC_DRAW);
-
 		set_padding (0, 0, 0, 0);
 		set_roundcorner(RoundCornerAll);
 		set_emboss(false);
@@ -222,6 +214,9 @@ namespace BlendInt {
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
+
+		if(m_buffer.size() != 3)
+			m_buffer.generate(3);
 
 		VerticesSum vert_sum;
 
@@ -527,7 +522,6 @@ namespace BlendInt {
 			if(val < minimum()) val = minimum();
 			if(val > maximum()) val = maximum();
 
-			std::cout << "value: " << val << std::endl;
 			set_value(val);
 			m_slider_moved.fire(val);
 		}

@@ -156,17 +156,12 @@ namespace BlendInt {
 		        themes()->regular.inner.g(),
 		        themes()->regular.inner.b(),
 		        themes()->regular.inner.a());
-
 		m_buffer.set_index(0);
-
 		m_buffer.bind();
 		glVertexPointer(2, GL_FLOAT, 0, 0);
 		glEnableClientState(GL_VERTEX_ARRAY);
-
 		glDrawArrays(GL_POLYGON, 0, m_buffer.vertices());
-
 		glDisableClientState(GL_VERTEX_ARRAY);
-
 		m_buffer.unbind();
 
 		// draw outline
@@ -175,49 +170,36 @@ namespace BlendInt {
 		        themes()->regular.outline.g(),
 		        themes()->regular.outline.b(),
 		        themes()->regular.outline.a()};
-
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-
 		m_buffer.bind();
-
 		/* outline */
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glColor4ubv(tcol);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-
 			glVertexPointer(2, GL_FLOAT, 0, 0);
 			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
-
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
-
 		m_buffer.unbind();
 
 		if(m_emboss) {
 			m_buffer.set_index(2);
 			m_buffer.bind();
-
 			glEnableClientState(GL_VERTEX_ARRAY);
-
 			for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 				glTranslatef(jit[j][0], jit[j][1], 0.0f);
-
 				glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 				glVertexPointer(2, GL_FLOAT, 0, 0);
 				glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
-
 				glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 			}
-
 			glDisableClientState(GL_VERTEX_ARRAY);
-
 			m_buffer.unbind();
 		}
 
 		glDisable(GL_BLEND);
-
 		glPopMatrix();
 	}
 
@@ -232,7 +214,13 @@ namespace BlendInt {
 
 		vert_sum = generate_vertices(size, inner_v, outer_v);
 
-		m_buffer.generate(2);
+		if(m_emboss) {
+			if(m_buffer.size() != 3)
+				m_buffer.generate(3);
+		}	else {
+			if(m_buffer.size() != 2)
+					m_buffer.generate(2);
+		}
 
 		m_buffer.set_index(0);
 		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
@@ -258,7 +246,6 @@ namespace BlendInt {
 
 			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
 
-			m_buffer.append();
 			m_buffer.set_index(2);
 			m_buffer.set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 

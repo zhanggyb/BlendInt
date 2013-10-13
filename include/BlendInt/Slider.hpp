@@ -90,6 +90,11 @@ namespace BlendInt {
 
 		virtual void release_mouse (MouseEvent* event);
 
+		SliderControl* control_widget ()
+		{
+			return m_slider_control;
+		}
+
 	private:
 
 		/**
@@ -102,8 +107,8 @@ namespace BlendInt {
 		{return value() * get_space() / ((float)maximum() - (float)minimum());}
 
 		SliderControl* m_slider_control;
-
 	};
+
 }
 
 #endif // _BLENDINT_SLIDER_HPP_
