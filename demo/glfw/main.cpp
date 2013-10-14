@@ -24,6 +24,7 @@
 #include <BlendInt/TableLayout.hpp>
 #include <BlendInt/ScrollBar.hpp>
 #include <BlendInt/GLBuffer.hpp>
+#include <BlendInt/VertexIcon.hpp>
 
 using namespace BlendInt;
 
@@ -88,12 +89,14 @@ int main(int argc, char* argv[])
 	app->resize(1200, 800);
 
 	Widget* widget = new Widget;
+	widget->set_emboss(true);
 	widget->set_pos(200, 200);
 	widget->set_corner_radius(10.0);
+	widget->set_border_width(4);
 	widget->set_roundcorner(RoundCornerAll);
 	widget->resize(400, 400);
 
-	app->bind(widget);
+//	app->bind(widget);
 
 	Button * button = new Button;
 
@@ -103,7 +106,7 @@ int main(int argc, char* argv[])
 	button->set_font(Font("Droid Sans"));
 	button->set_name("button");
 
-	app->bind(button);
+//	app->bind(button);
 
 	ToggleButton * button2 = new ToggleButton;
 
@@ -113,35 +116,35 @@ int main(int argc, char* argv[])
 	button2->set_font(Font("Droid Sans"));
 	button2->set_name("button2");
 
-	app->bind(button2);
+//	app->bind(button2);
 
 	ScrollControl *scrollcontrol = new ScrollControl;
 	scrollcontrol->resize(15, 200);
 	scrollcontrol->set_pos(650, 100);
 
-	app->bind(scrollcontrol);
+//	app->bind(scrollcontrol);
 
 	ScrollBar* scrollbar = new ScrollBar(Horizontal);
 	scrollbar->set_pos(700, 100);
 
-	app->bind(scrollbar);
+//	app->bind(scrollbar);
 
 	Slider* hslider1 = new Slider;
 	hslider1->set_pos(650, 300);
 	hslider1->set_name("hslider1");
 
-	app->bind(hslider1);
+//	app->bind(hslider1);
 
 	Slider* vslider = new Slider(Vertical);
 	vslider->set_pos(650, 450);
 	vslider->set_name("vslider");
 
-	app->bind(vslider);
+//	app->bind(vslider);
 
 	SliderBar* sliderbar = new SliderBar(Horizontal);
 	sliderbar->set_pos(700, 600);
 
-	app->bind(sliderbar);
+//	app->bind(sliderbar);
 
 	/*
 	Widget* widget = new Widget;
@@ -384,36 +387,28 @@ int main(int argc, char* argv[])
 
 */
 
+	VertexIcon icon;
+	icon.resize(100, 100);
+	icon.demo_init();
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
 		app->render();
 
-		/*
-
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
-
-		glTranslatef(500,
-					 200,
-					 0);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glColor3ub(255, 200, 133);
 
-		icon.display();
-		glBegin(GL_TRIANGLES);
-		glVertex2f (200, 200);
-		glVertex2f (400, 200);
-		glVertex2f (300, 300);
-		glEnd();
+		icon.display(200, 200);
 
 		glDisable(GL_BLEND);
 
 		glPopMatrix();
-		*/
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

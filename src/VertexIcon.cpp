@@ -22,10 +22,20 @@
  */
 
 #include <GL/glew.h>
+#include <iostream>
 
 #include <BlendInt/VertexIcon.hpp>
 
+#define WIDGET_AA_JITTER 8
+
 namespace BlendInt {
+
+	static const float jit[WIDGET_AA_JITTER][2] = {
+			{ 0.468813, -0.481430}, {-0.155755, -0.352820},
+			{ 0.219306, -0.238501}, {-0.393286, -0.110949},
+			{-0.024699,  0.013908}, { 0.343805,  0.147431},
+			{-0.272855,  0.269918}, { 0.095909,  0.388710}
+	};
 
 	const float VertexIcon::num_tria_vert[3][2] ={
 			{ -0.352077, 0.532607 },
@@ -68,7 +78,8 @@ namespace BlendInt {
 
 	VertexIcon::VertexIcon ()
 	{
-
+		m_size.set_width(16);
+		m_size.set_height(16);
 	}
 
 	VertexIcon::~VertexIcon ()
@@ -76,19 +87,87 @@ namespace BlendInt {
 
 	}
 
-	void VertexIcon::display()
+	void VertexIcon::demo_init ()
 	{
-		float num_vert[3][2];
-		for (int i = 0; i < 3; i++)
+		float menu[6][2];
+
+		for(size_t i = 0; i < 6; i++)
 		{
-			num_vert[i][0] = num_tria_vert[i][0] * 20;
-			num_vert[i][1] = num_tria_vert[i][1] * 20;
+			menu[i][0] = m_size.width() * menu_tria_vert[i][0];
+			menu[i][1] = m_size.height() * menu_tria_vert[i][1];
 		}
 
+		load (menu, 6, menu_tria_face, 2);
+	}
+
+	void VertexIcon::load (const float (*vertex_array)[2], size_t array_size,
+			const unsigned int (*vertex_indices)[3], size_t indeces_size)
+	{
+		m_gl_buffer.generate(2);
+
+		m_gl_buffer.set_index(0);	// 0 for ARRAY BUFFER
+		m_gl_buffer.set_property(array_size, sizeof(vertex_array[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_gl_buffer.bind();
+		m_gl_buffer.upload(vertex_array);
+		m_gl_buffer.unbind();
+
+		m_gl_buffer.set_index(1);	// 1 for ELEMENT ARRAY BUFFER
+		m_gl_buffer.set_property(indeces_size, sizeof(vertex_indices[0]), GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_gl_buffer.bind();
+		m_gl_buffer.upload(vertex_indices);
+		m_gl_buffer.unbind();
+	}
+
+	void VertexIcon::display()
+	{
+		m_gl_buffer.set_index(0);
+		m_gl_buffer.bind();
+
+		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, num_vert);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, num_tria_face);
+
+		m_gl_buffer.set_index(1);
+		m_gl_buffer.bind();
+
+		/* for each AA step */
+		for (int i = 0; i < WIDGET_AA_JITTER; i++) {
+			glTranslatef(jit[i][0], jit[i][1], 0.0f);
+			glDrawElements(GL_TRIANGLES, m_gl_buffer.vertices() * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+			glTranslatef(-jit[i][0], -jit[i][1], 0.0f);
+		}
+
 		glDisableClientState(GL_VERTEX_ARRAY);
+
+		m_gl_buffer.unbind(0);
+		m_gl_buffer.unbind(1);
+	}
+
+	void VertexIcon::display (float x, float y)
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(x, y, 0);
+
+		display();
+
+		glPopMatrix();
+	}
+
+	void VertexIcon::resize (int w, int h)
+	{
+		m_size.set_width(w);
+		m_size.set_height(h);
+	}
+
+	void VertexIcon::resize (const Size& size)
+	{
+		m_size = size;
+	}
+
+	void VertexIcon::reload ()
+	{
+
 	}
 
 }
