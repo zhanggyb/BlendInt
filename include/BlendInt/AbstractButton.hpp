@@ -55,13 +55,13 @@ namespace BlendInt {
 
 		bool down () const {return m_status_down;}
 
-		void setDown (bool down) {m_status_down = down;}
+		void set_down (bool down) {m_status_down = down;}
 
 		bool checked () const {return m_status_checked;}
 
 		bool checkable () const {return m_checkable;}
 
-		void setCheckable (bool checkable) {m_checkable = checkable;}
+		void set_checkable (bool checkable) {m_checkable = checkable;}
 
 		Cpp::EventRef<> clicked() {return m_clicked;}
 

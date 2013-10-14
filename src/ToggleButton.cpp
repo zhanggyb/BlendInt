@@ -32,7 +32,7 @@ namespace BlendInt {
 	ToggleButton::ToggleButton ()
 			: AbstractButton()
 	{
-		setCheckable(true);
+		set_checkable(true);
 		set_roundcorner(RoundCornerAll);
 		resize(90, 25);
 	}
@@ -40,7 +40,7 @@ namespace BlendInt {
 	ToggleButton::ToggleButton (const String& text)
 			: AbstractButton()
 	{
-		setCheckable(true);
+		set_checkable(true);
 		set_roundcorner(RoundCornerAll);
 		set_text(text);
 	}
@@ -48,7 +48,7 @@ namespace BlendInt {
 	ToggleButton::ToggleButton (Drawable* parent)
 			: AbstractButton(parent)
 	{
-		setCheckable(true);
+		set_checkable(true);
 		set_roundcorner(RoundCornerAll);
 		resize (90, 25);
 	}
@@ -56,7 +56,7 @@ namespace BlendInt {
 	ToggleButton::ToggleButton (const String& text, Drawable* parent)
 			: AbstractButton(parent)
 	{
-		setCheckable(true);
+		set_checkable(true);
 		set_roundcorner(RoundCornerAll);
 		set_text(text);
 	}

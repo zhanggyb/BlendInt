@@ -25,20 +25,19 @@
 #define _BLENDINT_SLIDER_HPP_
 
 #include <BlendInt/AbstractSlider.hpp>
+#include <BlendInt/Button.hpp>
 
 namespace BlendInt {
 
-	class SliderControl: public Widget
+	class SlideButton: public Button
 	{
 	public:
 
-		SliderControl ();
+		SlideButton ();
 
-		SliderControl (Drawable* parent);
+		SlideButton (Drawable* parent);
 
-		virtual ~SliderControl ();
-
-		bool pressed () const {return m_pressed;}
+		virtual ~SlideButton ();
 
 	protected:
 
@@ -55,10 +54,6 @@ namespace BlendInt {
 	private:
 
 		void update_shape (const Size* size);
-
-		bool m_hover;
-
-		bool m_pressed;
 
 		Point m_move_start;
 
@@ -78,6 +73,15 @@ namespace BlendInt {
 
 		virtual ~Slider ();
 
+		void set_control_size (size_t size);
+
+		void set_control_widget (Button *widget);
+
+		const Button* slide_button () const
+		{
+			return m_slide_button;
+		}
+
 	protected:
 
 		virtual bool update (int type, const void* property);
@@ -90,23 +94,19 @@ namespace BlendInt {
 
 		virtual void release_mouse (MouseEvent* event);
 
-		SliderControl* control_widget ()
-		{
-			return m_slider_control;
-		}
-
-	private:
-
 		/**
 		 * @brief calculate the space width in which slider can move
 		 * @return
 		 */
 		int get_space ();
 
+		Button* m_slide_button;
+
+	private:
+
 		inline float get_position ()
 		{return value() * get_space() / ((float)maximum() - (float)minimum());}
 
-		SliderControl* m_slider_control;
 	};
 
 }

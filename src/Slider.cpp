@@ -32,28 +32,26 @@
 
 namespace BlendInt {
 
-	SliderControl::SliderControl()
-	:  Widget(), m_hover(false), m_pressed(false)
+	SlideButton::SlideButton()
+	:  Button()
 	{
 		set_padding (0, 0, 0, 0);
-		set_roundcorner(RoundCornerAll);
 		set_emboss(false);
 	}
 
-	SliderControl::SliderControl(Drawable* parent)
-	:  Widget(parent), m_hover(false), m_pressed(false)
+	SlideButton::SlideButton(Drawable* parent)
+	:  Button(parent)
 	{
 		set_padding (0, 0, 0, 0);
-		set_roundcorner(RoundCornerAll);
 		set_emboss(false);
 	}
 
-	SliderControl::~SliderControl()
+	SlideButton::~SlideButton()
 	{
 
 	}
 
-	bool SliderControl::update (int type, const void* property)
+	bool SlideButton::update (int type, const void* property)
 	{
 		switch(type)
 		{
@@ -76,7 +74,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void SliderControl::render ()
+	void SlideButton::render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -88,7 +86,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		if(m_pressed) {
+		if(m_status_down) {
 			m_buffer.set_index(0);
 		} else {
 			m_buffer.set_index(2);
@@ -137,7 +135,7 @@ namespace BlendInt {
 		glPopMatrix();
 	}
 
-	void SliderControl::move_mouse(MouseEvent* event)
+	void SlideButton::move_mouse(MouseEvent* event)
 	{
 		// if no parent slider, don't react to mouse move
 		if(m_parent.type != ParentDrawable) return;
@@ -145,8 +143,8 @@ namespace BlendInt {
 		AbstractSlider* parent = dynamic_cast<AbstractSlider*>(m_parent.object.drawable);
 		if(!parent) return;
 
-		if(m_pressed) {
-			m_hover = false;
+		if(m_status_down) {
+			m_status_hover = false;
 
 			if(parent->orientation()) {	// Vertical
 
@@ -176,23 +174,23 @@ namespace BlendInt {
 		} else {
 
 			if(contain(event->position())) {
-				if (m_pressed) {
-					m_hover = false;
+				if (m_status_down) {
+					m_status_hover = false;
 				} else {
-					m_hover = true;
+					m_status_hover = true;
 				}
 				event->accept(this);
 			} else {
-				m_hover = false;
+				m_status_hover = false;
 			}
 		}
 	}
 
-	void SliderControl::press_mouse(MouseEvent* event)
+	void SlideButton::press_mouse(MouseEvent* event)
 	{
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
-				m_pressed = true;
+				m_status_down = true;
 				m_move_start.set_x(event->position().x());
 				m_move_start.set_y(event->position().y());
 				m_position_origin = m_pos;
@@ -201,16 +199,16 @@ namespace BlendInt {
 		}
 	}
 
-	void SliderControl::release_mouse(MouseEvent* event)
+	void SlideButton::release_mouse(MouseEvent* event)
 	{
 		if (event->button() == MouseButtonLeft) {
 
 		}
-		m_pressed = false;
+		m_status_down = false;
 
 	}
 
-	void SliderControl::update_shape(const Size* size)
+	void SlideButton::update_shape(const Size* size)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
@@ -306,42 +304,47 @@ namespace BlendInt {
 	// -------------------- Slider ---------------------------
 
 	Slider::Slider(Orientation orientation)
-	: AbstractSlider(orientation), m_slider_control(0)
+	: AbstractSlider(orientation), m_slide_button(0)
 	{
-		m_slider_control = new SliderControl(this);
+		m_slide_button = new SlideButton(this);
 
 		// set default size
 		if (orientation) {
 			resize (25, 200);
 			set_expand_y(true);
-			m_slider_control->resize(15, 15);
 		} else {
 			resize (200, 25);
 			set_expand_x(true);
-			m_slider_control->resize(15, 15);
 		}
 
-		m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		size_t button_size = std::min (size().width() - padding().left() - padding().right(),
+				size().height() - padding().top() - padding().bottom());
+
+		m_slide_button->resize(button_size, button_size);
+		//m_slide_button->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
 		update(SliderPropertyValue, 0);
 	}
 
 	Slider::Slider(Orientation orientation, Drawable* parent)
-	: AbstractSlider(orientation, parent), m_slider_control(0)
+	: AbstractSlider(orientation, parent), m_slide_button(0)
 	{
-		m_slider_control = new SliderControl(this);
+		m_slide_button = new SlideButton(this);
 
 		// set default size
 		if (orientation) {
 			resize (25, 200);
 			set_expand_y(true);
-			m_slider_control->resize(15, 15);
 		} else {
 			resize (200, 25);
 			set_expand_x(true);
-			m_slider_control->resize(15, 15);
 		}
 
-		m_slider_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		size_t button_size = std::min (size().width() - padding().left() - padding().right(),
+				size().height() - padding().top() - padding().bottom());
+
+		m_slide_button->resize(button_size, button_size);
+
+		//m_slide_button->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
 		update(SliderPropertyValue, 0);
 	}
 
@@ -350,25 +353,69 @@ namespace BlendInt {
 
 	}
 
+	void Slider::set_control_size (size_t size)
+	{
+		if(orientation()) {	// Vertical
+			m_slide_button->resize(m_slide_button->size().width(), size);
+		} else {
+			m_slide_button->resize(size, m_slide_button->size().height());
+		}
+	}
+
+	void Slider::set_control_widget(Button* widget)
+	{
+		if(widget) {
+			if(m_slide_button)
+				delete m_slide_button;
+
+			bind(widget);
+			m_slide_button = widget;
+		}
+	}
+
 	bool Slider::update (int type, const void* property)
 	{
-		if(type == BasicPropertyPosition) {
-			const Point* new_pos = static_cast<const Point*>(property);
-			m_slider_control->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
-			return true;
-		}
-
-		if (type == SliderPropertyValue) {
-
-			if(orientation()) {
-				m_slider_control->set_pos (m_slider_control->pos().x(),
-						m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
-			} else {
-				m_slider_control->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
-						m_slider_control->pos().y());
+		switch (type) {
+			case BasicPropertyPosition: {
+				const Point* new_pos = static_cast<const Point*>(property);
+				m_slide_button->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
+				return true;
 			}
 
-			return true;
+			case BasicPropertySize: {
+
+				const Size* new_size = static_cast<const Size*>(property);
+				size_t button_size = std::min (new_size->width() - padding().left() - padding().right(),
+						new_size->height() - padding().top() - padding().bottom());
+
+				m_slide_button->resize(button_size, button_size);
+
+				if(orientation()) {
+					m_slide_button->set_pos (m_slide_button->pos().x(),
+							m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+				} else {
+					m_slide_button->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+							m_slide_button->pos().y());
+				}
+
+				return true;
+			}
+
+			case SliderPropertyValue: {
+
+				if(orientation()) {
+					m_slide_button->set_pos (m_slide_button->pos().x(),
+							m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+				} else {
+					m_slide_button->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+							m_slide_button->pos().y());
+				}
+
+				return true;
+			}
+
+			default:
+				break;
 		}
 
 		return true;
@@ -400,14 +447,14 @@ namespace BlendInt {
 
 		if(orientation()) {
 			space = m_size.height() - m_padding.top() - m_padding.bottom();
-			glTranslatef(m_slider_control->size().width() /2, 0, 0);
+			glTranslatef(m_slide_button->size().width() /2, 0, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(0, space);
 			glEnd();
 		} else {
 			space = m_size.width() - m_padding.left() - m_padding.right();
-			glTranslatef(0, m_slider_control->size().height() / 2, 0);
+			glTranslatef(0, m_slide_button->size().height() / 2, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(space, 0);
@@ -436,33 +483,33 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		Interface::instance()->dispatch_render_event(m_slider_control);
+		Interface::instance()->dispatch_render_event(m_slide_button);
 	}
 
 	void Slider::move_mouse (MouseEvent* event)
 	{
-		if(m_slider_control->pressed()) {
-			Interface::instance()->dispatch_mouse_move_event(m_slider_control, event);
+		if(m_slide_button->down()) {
+			Interface::instance()->dispatch_mouse_move_event(m_slide_button, event);
 
 			int value = 0;
 
 			if (orientation()) {
-				int ymin = m_pos.y() + m_padding.bottom() + m_slider_control->size().height() / 2;
-				int ymax = m_pos.y() + m_size.height() - m_padding.top() - m_slider_control->size().height() / 2;
+				int ymin = m_pos.y() + m_padding.bottom() + m_slide_button->size().height() / 2;
+				int ymax = m_pos.y() + m_size.height() - m_padding.top() - m_slide_button->size().height() / 2;
 				if(event->position().y() < ymin ||	event->position().y() > ymax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
-				value = (m_slider_control->pos().y() - m_pos.y()
+				value = (m_slide_button->pos().y() - m_pos.y()
 				        - m_padding.bottom()) / (float) get_space()
 				        * (maximum() - minimum());
 
 			} else {
-				int xmin = m_pos.x() + m_padding.left() + m_slider_control->size().width() / 2;
-				int xmax = m_pos.x() + m_size.width() - m_padding.right() - m_slider_control->size().width() / 2;
+				int xmin = m_pos.x() + m_padding.left() + m_slide_button->size().width() / 2;
+				int xmax = m_pos.x() + m_size.width() - m_padding.right() - m_slide_button->size().width() / 2;
 				if(event->position().x() < xmin ||	event->position().x() > xmax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
-				value = (m_slider_control->pos().x() - m_pos.x()
+				value = (m_slide_button->pos().x() - m_pos.x()
 				        - m_padding.left()) / (float) get_space()
 				        * (maximum() - minimum());
 			}
@@ -474,19 +521,19 @@ namespace BlendInt {
 		}
 
 		if(contain(event->position())) {
-			Interface::instance()->dispatch_mouse_move_event(m_slider_control, event);
+			Interface::instance()->dispatch_mouse_move_event(m_slide_button, event);
 		}
 	}
 
 	void Slider::press_mouse (MouseEvent* event)
 	{
-		if(m_slider_control->pressed()) {
-			interface()->dispatch_mouse_press_event(m_slider_control, event);
+		if(m_slide_button->down()) {
+			interface()->dispatch_mouse_press_event(m_slide_button, event);
 			return;
 		}
 
 		if(contain_no_padding(event->position())) {
-			interface()->dispatch_mouse_press_event(m_slider_control, event);
+			interface()->dispatch_mouse_press_event(m_slide_button, event);
 			if(event->accepted()) return;
 
 			// Move to where mouse click
@@ -509,12 +556,12 @@ namespace BlendInt {
 			int val;
 
 			if (orientation()) {
-				if(event->position().y() < m_slider_control->pos().y())
+				if(event->position().y() < m_slide_button->pos().y())
 					val = value() - step();
 				else
 					val = value() + step();
 			} else {
-				if(event->position().x() < m_slider_control->pos().x())
+				if(event->position().x() < m_slide_button->pos().x())
 					val = value() - step();
 				else
 					val = value() + step();
@@ -529,15 +576,15 @@ namespace BlendInt {
 
 	void Slider::release_mouse (MouseEvent* event)
 	{
-		if(m_slider_control->pressed()) {
-			Interface::instance()->dispatch_mouse_release_event(m_slider_control, event);
+		if(m_slide_button->down()) {
+			Interface::instance()->dispatch_mouse_release_event(m_slide_button, event);
 			return;
 		}
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
 
 			}
-			Interface::instance()->dispatch_mouse_release_event(m_slider_control, event);
+			Interface::instance()->dispatch_mouse_release_event(m_slide_button, event);
 		}
 	}
 
@@ -545,9 +592,9 @@ namespace BlendInt {
 	{
 		int space = 0;
 		if(orientation())	// Vertical
-			space = m_size.height() - m_padding.top() - m_padding.bottom() - m_slider_control->size().height();
+			space = m_size.height() - m_padding.top() - m_padding.bottom() - m_slide_button->size().height();
 		else
-			space = m_size.width() - m_padding.left() - m_padding.right() - m_slider_control->size().width();
+			space = m_size.width() - m_padding.left() - m_padding.right() - m_slide_button->size().width();
 
 		return space;
 	}

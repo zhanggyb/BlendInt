@@ -280,15 +280,16 @@ namespace BlendInt {
 	{
 		set_padding(0, 0, 0, 0);
 		set_roundcorner(RoundCornerAll);
-		set_corner_radius(8);
+
+		set_control_size(50);
 
 		if (orientation) {	// Vertical
-			resize(16, 400);
-			control_widget()->resize(16, 50);
+			set_corner_radius(slide_button()->size().width()/2);
+			resize(slide_button()->size().width(), 400);
 			set_expand_y(true);
 		} else {
-			resize(400, 16);
-			control_widget()->resize(50, 16);
+			set_corner_radius(slide_button()->size().height());
+			resize(400, slide_button()->size().height());
 			set_expand_x(true);
 		}
 
@@ -300,15 +301,16 @@ namespace BlendInt {
 	{
 		set_padding(0, 0, 0, 0);
 		set_roundcorner(RoundCornerAll);
-		set_corner_radius(8);
+
+		set_control_size(50);
 
 		if (orientation) {	// Vertical
-			resize(16, 400);
-			control_widget()->resize(16, 50);
+			set_corner_radius(slide_button()->size().width()/2);
+			resize(slide_button()->size().width(), 400);
 			set_expand_y(true);
 		} else {
-			resize(400, 16);
-			control_widget()->resize(50, 16);
+			set_corner_radius(slide_button()->size().height());
+			resize(400, slide_button()->size().height());
 			set_expand_x(true);
 		}
 
@@ -403,7 +405,7 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		interface()->dispatch_render_event(control_widget());
+		interface()->dispatch_render_event(m_slide_button);
 	}
 
 
@@ -425,7 +427,8 @@ namespace BlendInt {
 		else					// swap shadetop and shadedown
 			vert_sum = generate_vertices(size, color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
-		m_buffer.generate(2);
+		if(m_buffer.size() != 3)
+			m_buffer.generate(3);
 
 				m_buffer.set_index(0);
 		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]),
@@ -452,7 +455,6 @@ namespace BlendInt {
 
 		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
 
-		m_buffer.append();
 		m_buffer.set_index(2);
 		m_buffer.set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]),
 		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
