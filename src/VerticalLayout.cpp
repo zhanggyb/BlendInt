@@ -51,72 +51,87 @@ namespace BlendInt {
 
 	bool VerticalLayout::update (int type, const void* property)
 	{
-		if (m_parent.type == ParentDrawable) {
-			const Point* new_pos = &m_pos;
-			if (type == BasicPropertyPosition)
-				new_pos = static_cast<const Point*>(property);
+		switch (type) {
+			case BasicPropertyPosition: {
+				const Point* new_pos = static_cast<const Point*>(property);
 
-			unsigned int total_width = 0;
-			unsigned int total_height = 0;
-			unsigned int max_widget_width = 0;
-
-			std::vector<Drawable*>::const_reverse_iterator rit;
-			Drawable* child = 0;
-			total_height = m_margin.bottom();
-			for (rit = m_vector.rbegin(); rit != m_vector.rend(); rit++) {
-				child = *rit;
-
-				set_pos_priv(child, new_pos->x() + m_margin.left(),
-				        new_pos->y() + total_height);
-				total_width = std::max(total_width,
-				        m_margin.left() + child->size().width()
-				                + m_margin.right());
-				max_widget_width = std::max(max_widget_width,
-				        child->size().width());
-				total_height = total_height + child->size().height();
-
-			}
-			total_height += m_margin.top();
-
-			std::vector<Drawable*>::const_iterator it;
-			for (it = m_vector.begin(); it != m_vector.end(); it++) {
-				child = *it;
-
-				if (m_alignment & AlignLeft) {
-					set_pos_priv(child, new_pos->x() + m_margin.left(),
-					        child->pos().y());
-				} else if (m_alignment & AlignRight) {
-					set_pos_priv(child,
-					        new_pos->x()
-					                + (total_width
-					                        - (m_margin.right()
-					                                + child->size().width())),
-					        child->pos().y());
-				} else if (m_alignment & AlignVerticalCenter) {
-					set_pos_priv(child,
-					        new_pos->x() + m_margin.left()
-					                + (max_widget_width - child->size().width())
-					                        / 2, child->pos().y());
+				for (size_t i = 0; i < m_vector.size(); i++)
+				{
+					set_pos_priv(m_vector[i], m_vector[i]->pos().x() + (new_pos->x() - m_pos.x()),
+							m_vector[i]->pos().y() + (new_pos->y() - m_pos.y()));
 				}
-
-			}
-
-			m_size.set_width(total_width);
-			m_size.set_height(total_height);
-
-			return true;
-		} else {
-
-			if (type == BasicPropertySize) {
-
-				if (property) {
-					generate_layout(static_cast<const Size*>(property));
-				} else {
-					generate_default_layout();
-				}
-
 				return true;
 			}
+
+			case BasicPropertySize: {
+
+				if (m_parent.type == ParentDrawable) {
+
+					unsigned int total_width = 0;
+					unsigned int total_height = 0;
+					unsigned int max_widget_width = 0;
+
+					std::vector<Drawable*>::const_reverse_iterator rit;
+					Drawable* child = 0;
+					total_height = m_margin.bottom();
+					for (rit = m_vector.rbegin(); rit != m_vector.rend();
+					        rit++) {
+						child = *rit;
+
+						set_pos_priv(child, m_pos.x() + m_margin.left(),
+						        m_pos.y() + total_height);
+						total_width = std::max(total_width,
+						        m_margin.left() + child->size().width()
+						                + m_margin.right());
+						max_widget_width = std::max(max_widget_width,
+						        child->size().width());
+						total_height = total_height + child->size().height();
+
+					}
+					total_height += m_margin.top();
+
+					std::vector<Drawable*>::const_iterator it;
+					for (it = m_vector.begin(); it != m_vector.end(); it++) {
+						child = *it;
+
+						if (m_alignment & AlignLeft) {
+							set_pos_priv(child, m_pos.x() + m_margin.left(),
+							        child->pos().y());
+						} else if (m_alignment & AlignRight) {
+							set_pos_priv(child,
+							        m_pos.x()
+							                + (total_width
+							                        - (m_margin.right()
+							                                + child->size().width())),
+							        child->pos().y());
+						} else if (m_alignment & AlignVerticalCenter) {
+							set_pos_priv(child,
+							        m_pos.x() + m_margin.left()
+							                + (max_widget_width
+							                        - child->size().width())
+							                        / 2, child->pos().y());
+						}
+
+					}
+
+					m_size.set_width(total_width);
+					m_size.set_height(total_height);
+
+					return true;
+				} else {
+					if (property) {
+						generate_layout(static_cast<const Size*>(property));
+					} else {
+						generate_default_layout();
+					}
+
+					return true;
+				}
+				break;
+			}
+
+			default:
+				break;
 		}
 
 		return true;
@@ -194,7 +209,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::generate_layout(const Size* size)
+	void VerticalLayout::generate_layout (const Size* size)
 	{
 		std::queue<Drawable*> expandable_objects;
 		std::queue<Drawable*> unexpandable_objects;
@@ -204,12 +219,12 @@ namespace BlendInt {
 
 		int fixed_height = 0;
 		unsigned int total_width = size->width();
-		unsigned int max_widget_width = total_width - m_margin.left() - m_margin.right();
+		unsigned int max_widget_width = total_width - m_margin.left()
+		        - m_margin.right();
 
-		for(it = m_vector.rbegin(); it != m_vector.rend(); it++)
-		{
+		for (it = m_vector.rbegin(); it != m_vector.rend(); it++) {
 			child = *it;
-			if(child->expand_y()) {
+			if (child->expand_y()) {
 				expandable_objects.push(child);
 			} else {
 				unexpandable_objects.push(child);
@@ -217,18 +232,23 @@ namespace BlendInt {
 			}
 			total_width = std::max(total_width,
 			        m_margin.left() + child->size().width() + m_margin.right());
-			max_widget_width = std::max (max_widget_width, child->size().width());
+			max_widget_width = std::max(max_widget_width,
+			        child->size().width());
 		}
 
-		int flexible_height = size->height() - m_margin.top() - m_margin.bottom() - (m_vector.size() - 1) * m_space - fixed_height;
+		int flexible_height = size->height() - m_margin.top()
+		        - m_margin.bottom() - (m_vector.size() - 1) * m_space
+		        - fixed_height;
 
 		if (expandable_objects.size() > 0) {
 
-			int single_flexible_height = flexible_height / expandable_objects.size();
+			int single_flexible_height = flexible_height
+			        / expandable_objects.size();
 
-			while(!expandable_objects.empty()) {
+			while (!expandable_objects.empty()) {
 				child = expandable_objects.front();
-				resize_priv (child, child->size().width(), single_flexible_height);
+				resize_priv(child, child->size().width(),
+				        single_flexible_height);
 				expandable_objects.pop();
 			}
 		}
@@ -248,18 +268,21 @@ namespace BlendInt {
 				resize_priv(child, max_widget_width, child->size().height());
 			} else {
 				if (m_alignment & AlignLeft) {
-					set_pos_priv(child, m_pos.x() + m_margin.left(), child->pos().y());
+					set_pos_priv(child, m_pos.x() + m_margin.left(),
+					        child->pos().y());
 				} else if (m_alignment & AlignRight) {
 					set_pos_priv(child,
 					        m_pos.x()
 					                + (total_width
 					                        - (m_margin.right()
 					                                + child->size().width())),
-					                                child->pos().y());
+					        child->pos().y());
 				} else if (m_alignment & AlignVerticalCenter) {
 
-					set_pos_priv(child, m_pos.x() + m_margin.right() + (max_widget_width - child->size().width()) / 2,
-							child->pos().y());
+					set_pos_priv(child,
+					        m_pos.x() + m_margin.right()
+					                + (max_widget_width - child->size().width())
+					                        / 2, child->pos().y());
 				}
 			}
 
@@ -269,7 +292,7 @@ namespace BlendInt {
 		return;
 	}
 
-	void VerticalLayout::generate_default_layout()
+	void VerticalLayout::generate_default_layout ()
 	{
 		unsigned int total_width = m_size.width();
 		unsigned int total_height = 0;
@@ -282,7 +305,8 @@ namespace BlendInt {
 			child = *it;
 			set_pos_priv(child, m_pos.x() + m_margin.left(),
 			        m_pos.y() + total_height);
-			total_width = std::max(total_width, m_margin.left() + child->size().width() + m_margin.right());
+			total_width = std::max(total_width,
+			        m_margin.left() + child->size().width() + m_margin.right());
 			total_height = total_height + child->size().height();
 			max_widget_width = std::max(max_widget_width,
 			        child->size().width());

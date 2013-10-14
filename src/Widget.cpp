@@ -80,13 +80,13 @@ namespace BlendInt {
 	{
 		Padding new_padding = padding;
 
-		if(update(BasicPropertyPadding, &new_padding)) m_padding = new_padding;
+		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
 	}
 
 	void Widget::set_padding (int l, int r, int t, int b)
 	{
 		Padding new_padding (l, r, t, b);
-		if(update(BasicPropertyPadding, &new_padding)) m_padding = new_padding;
+		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
 	}
 
 

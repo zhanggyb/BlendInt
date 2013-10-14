@@ -56,6 +56,17 @@ namespace BlendInt {
 		ParentDrawable
 	};
 
+	enum BasicPropertyType {
+		BasicPropertyUnknown = 0,
+		BasicPropertyLayer,
+		BasicPropertySize,
+		BasicPropertyMinimalSize,
+		BasicPropertyRoundCorner,
+		BasicPropertyVisibility,
+		BasicPropertyPosition,
+		BasicPropertyLast = BasicPropertyPosition
+	};
+
 	union ParentPointer {
 		ParentPointer ()
 		: nameless(0)

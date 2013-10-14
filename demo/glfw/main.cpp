@@ -388,7 +388,6 @@ int main(int argc, char* argv[])
 */
 
 	VertexIcon icon;
-	icon.resize(100, 100);
 	icon.demo_init();
 
 	/* Loop until the user closes the window */
@@ -399,14 +398,9 @@ int main(int argc, char* argv[])
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glColor3ub(255, 200, 133);
+		glColor4ub(25, 25, 25, 225);
 
 		icon.display(200, 200);
-
-		glDisable(GL_BLEND);
 
 		glPopMatrix();
 

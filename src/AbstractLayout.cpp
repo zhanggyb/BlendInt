@@ -111,16 +111,15 @@ namespace BlendInt {
 	{
 		Margin new_value = margin;
 
-		if(update(BasicPropertyMargin, &new_value)) m_margin = new_value;
+		if(update(LayoutPropertyMargin, &new_value)) m_margin = new_value;
 	}
 
 	void AbstractLayout::set_margin (int left, int right, int top, int bottom)
 	{
 		Margin new_value (left, right, top, bottom);
 
-		if(update(BasicPropertyMargin, &new_value)) m_margin = new_value;
+		if(update(LayoutPropertyMargin, &new_value)) m_margin = new_value;
 	}
-
 
 
 } /* namespace BlendInt */

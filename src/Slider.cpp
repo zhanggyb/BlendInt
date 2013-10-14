@@ -62,7 +62,7 @@ namespace BlendInt {
 				update_shape(&m_size);
 				break;
 			}
-			case BasicPropertyPadding: {
+			case WidgetPropertyPadding: {
 				// do not allow change padding
 				return false;
 				break;
@@ -447,14 +447,14 @@ namespace BlendInt {
 
 		if(orientation()) {
 			space = m_size.height() - m_padding.top() - m_padding.bottom();
-			glTranslatef(m_slide_button->size().width() /2, 0, 0);
+			glTranslatef(m_slide_button->size().width() / 2.0, 0, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(0, space);
 			glEnd();
 		} else {
 			space = m_size.width() - m_padding.left() - m_padding.right();
-			glTranslatef(0, m_slide_button->size().height() / 2, 0);
+			glTranslatef(0, m_slide_button->size().height() / 2.0 - 0.5, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(space, 0);

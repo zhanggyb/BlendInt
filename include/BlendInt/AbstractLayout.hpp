@@ -33,6 +33,14 @@
 
 namespace BlendInt {
 
+	enum LayoutPropertyType
+	{
+		LayoutPropertyAlignment = BasicPropertyLast + 1,
+		LayoutPropertySpace,
+		LayoutPropertyMargin,
+		LayoutPropertyLast = LayoutPropertyMargin
+	};
+
 	class AbstractLayout: public Drawable
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractLayout);

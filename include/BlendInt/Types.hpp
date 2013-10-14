@@ -256,18 +256,6 @@ namespace BlendInt {
 		Vertical = 1
 	};
 
-	enum BasicPropertyType {
-		BasicPropertyUnknown = 0,
-		BasicPropertyPosition,
-		BasicPropertySize,
-		BasicPropertyLayer,
-		BasicPropertyRoundCorner,
-		BasicPropertyVisibility,
-		BasicPropertyPadding,
-		BasicPropertyMargin,
-		BasicPropertyLast
-	};
-
 	struct Vertex2D {
 		GLfloat x;
 		GLfloat y;

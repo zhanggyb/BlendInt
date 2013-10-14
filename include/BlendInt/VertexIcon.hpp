@@ -36,31 +36,6 @@ namespace BlendInt {
 	{
 	public:
 
-		VertexIcon ();
-
-		~VertexIcon ();
-
-		void demo_init ();
-
-		void load (const float (*vertex_array)[2], size_t array_size,
-				const unsigned int (*vertex_indices)[3], size_t indeces_size);
-
-		void display ();
-
-		void display (float x, float y);
-
-		void resize (int w, int h);
-
-		void resize (const Size& size);
-
-	private:
-
-		void reload ();
-
-		GLBuffer m_gl_buffer;
-
-		Size m_size;
-
 		static const float num_tria_vert[3][2];
 
 		static const unsigned int num_tria_face[1][3];
@@ -76,6 +51,23 @@ namespace BlendInt {
 		static const float check_tria_vert[6][2];
 
 		static const unsigned int check_tria_face[4][3];
+
+		VertexIcon ();
+
+		~VertexIcon ();
+
+		void demo_init ();
+
+		void load (const float (*vertex_array)[2], size_t array_size,
+				const unsigned int (*vertex_indices)[3], size_t indeces_size);
+
+		void display ();
+
+		void display (float x, float y);
+
+	private:
+
+		GLBuffer m_gl_buffer;
 
 	};
 }

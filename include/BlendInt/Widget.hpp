@@ -41,8 +41,10 @@ namespace BlendInt {
 	class Color;
 
 	enum WidgetPropertyType {
-		WidgetPropertyBorderWidth = BasicPropertyLast + 1,
-		WidgetPropertyLast
+		WidgetPropertyPadding = BasicPropertyLast + 1,
+		WidgetPropertyBorderWidth,
+		WidgetPropertyEmboss,
+		WidgetPropertyLast = WidgetPropertyEmboss
 	};
 
 	class Widget: public Drawable
