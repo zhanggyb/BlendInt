@@ -54,6 +54,8 @@ namespace BlendInt {
 	protected:
 
 		virtual void render ();
+
+		virtual void add_single_widget(Widget* widget);
 	};
 
 }

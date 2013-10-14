@@ -45,12 +45,7 @@ namespace BlendInt {
 
 	void AbstractLayout::add_widget (Widget* widget)
 	{
-		if (m_children.count(widget)) return;
-
-		m_vector.push_back(widget);
-		bind (widget);
-
-		update(BasicPropertySize, 0);
+		add_single_widget(widget);
 	}
 
 	void AbstractLayout::add_layout (AbstractLayout* layout)
@@ -120,7 +115,6 @@ namespace BlendInt {
 
 		if(update(LayoutPropertyMargin, &new_value)) m_margin = new_value;
 	}
-
 
 } /* namespace BlendInt */
 

@@ -63,4 +63,9 @@ namespace BlendInt {
 	{
 	}
 
+	void GridLayout::add_single_widget(Widget* widget)
+	{
+
+	}
+
 }

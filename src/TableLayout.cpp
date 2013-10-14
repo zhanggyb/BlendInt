@@ -199,6 +199,11 @@ namespace BlendInt {
 		}
 	}
 
+	void TableLayout::add_single_widget(Widget* widget)
+	{
+
+	}
+
 	bool TableLayout::generate_layout(const Size* size)
 	{
 		if(size->width() < m_minimal_size.width() ||

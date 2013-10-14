@@ -64,70 +64,13 @@ namespace BlendInt {
 			}
 
 			case BasicPropertySize: {
-
-				if (m_parent.type == ParentDrawable) {
-
-					unsigned int total_width = 0;
-					unsigned int total_height = 0;
-					unsigned int max_widget_width = 0;
-
-					std::vector<Drawable*>::const_reverse_iterator rit;
-					Drawable* child = 0;
-					total_height = m_margin.bottom();
-					for (rit = m_vector.rbegin(); rit != m_vector.rend();
-					        rit++) {
-						child = *rit;
-
-						set_pos_priv(child, m_pos.x() + m_margin.left(),
-						        m_pos.y() + total_height);
-						total_width = std::max(total_width,
-						        m_margin.left() + child->size().width()
-						                + m_margin.right());
-						max_widget_width = std::max(max_widget_width,
-						        child->size().width());
-						total_height = total_height + child->size().height();
-
-					}
-					total_height += m_margin.top();
-
-					std::vector<Drawable*>::const_iterator it;
-					for (it = m_vector.begin(); it != m_vector.end(); it++) {
-						child = *it;
-
-						if (m_alignment & AlignLeft) {
-							set_pos_priv(child, m_pos.x() + m_margin.left(),
-							        child->pos().y());
-						} else if (m_alignment & AlignRight) {
-							set_pos_priv(child,
-							        m_pos.x()
-							                + (total_width
-							                        - (m_margin.right()
-							                                + child->size().width())),
-							        child->pos().y());
-						} else if (m_alignment & AlignVerticalCenter) {
-							set_pos_priv(child,
-							        m_pos.x() + m_margin.left()
-							                + (max_widget_width
-							                        - child->size().width())
-							                        / 2, child->pos().y());
-						}
-
-					}
-
-					m_size.set_width(total_width);
-					m_size.set_height(total_height);
-
-					return true;
+				if (property) {
+					generate_layout(static_cast<const Size*>(property));
 				} else {
-					if (property) {
-						generate_layout(static_cast<const Size*>(property));
-					} else {
-						generate_default_layout();
-					}
-
-					return true;
+					generate_default_layout();
 				}
-				break;
+
+				return true;
 			}
 
 			default:
@@ -207,6 +150,16 @@ namespace BlendInt {
 		for (it = m_vector.begin(); it != m_vector.end(); it++) {
 			Interface::instance()->dispatch_mouse_move_event(*it, event);
 		}
+	}
+
+	void VerticalLayout::add_single_widget (Widget* widget)
+	{
+		if (m_children.count(widget)) return;
+
+		m_vector.push_back(widget);
+		bind (widget);
+
+		update(BasicPropertySize, 0);
 	}
 
 	void VerticalLayout::generate_layout (const Size* size)
