@@ -45,17 +45,12 @@ namespace BlendInt {
 
 	void AbstractLayout::add_widget (Widget* widget)
 	{
-		add_single_widget(widget);
+		append(widget);
 	}
 
 	void AbstractLayout::add_layout (AbstractLayout* layout)
 	{
-		if (m_children.count(layout)) return;
-
-		m_vector.push_back(layout);
-		bind (layout);
-
-		update(BasicPropertySize, 0);
+		append(layout);
 	}
 
 	bool AbstractLayout::remove (Drawable* object)

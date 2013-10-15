@@ -95,7 +95,9 @@ namespace BlendInt {
 
 		virtual bool update (int type, const void* property) {return false;}
 
-		virtual void add_single_widget (Widget* widget) = 0;
+		virtual void append (Widget* widget) = 0;
+
+		virtual void append (AbstractLayout* layout) = 0;
 
 		int m_alignment;
 

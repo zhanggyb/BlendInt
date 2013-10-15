@@ -111,6 +111,16 @@ namespace BlendInt {
 
 		void set_height (int height) {m_height = static_cast<unsigned int>(height);}
 
+		void add_width (int width)
+		{
+			m_width = m_width + width;
+		}
+
+		void add_height (int height)
+		{
+			m_height = m_height + height;
+		}
+
 		unsigned int& operator [] (int index)
 		{
 			if(index <= 0) return m_width;

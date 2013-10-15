@@ -167,7 +167,7 @@ namespace BlendInt {
 		}
 
 		if(add_drawable(obj)) {
-			std::cerr << "add object" << std::endl;
+//			std::cerr << "add object" << std::endl;
 		} else {
 			std::cerr << "obj already in contextmanager with the same layer" << std::endl;
 		}

@@ -27,8 +27,6 @@
 #include <BlendInt/Drawable.hpp>
 #include <BlendInt/GLBuffer.hpp>
 
-#include <Cpp/Events.hpp>
-
 #define WIDGET_AA_JITTER 8
 
 /* max as used by round_box__edges */
@@ -187,8 +185,6 @@ namespace BlendInt {
 		 * @return
 		 */
 		GLBuffer& buffer () {return m_buffer;}
-
-		Cpp::ConnectionScope m_events;
 
 		GLBuffer m_buffer;
 

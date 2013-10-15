@@ -37,6 +37,8 @@
 
 #include <BlendInt/Types.hpp>
 
+#include <Cpp/Events.hpp>
+
 #ifdef DEBUG
 #include <map>
 using std::map;
@@ -63,6 +65,8 @@ namespace BlendInt {
 		BasicPropertyMinimalSize,
 		BasicPropertyRoundCorner,
 		BasicPropertyVisibility,
+		BasicPropertyExpandX,
+		BasicPropertyExpandY,
 		BasicPropertyPosition,
 		BasicPropertyLast = BasicPropertyPosition
 	};
@@ -186,6 +190,8 @@ namespace BlendInt {
 
 		void set_minimal_size (int width, int height);
 
+		const Parent* parent () const {return &m_parent;}
+
 	protected:	// member functions
 
 		bool contain (const Coord2d& cursor);
@@ -260,6 +266,8 @@ namespace BlendInt {
 		Parent m_parent;
 
 		std::set<Drawable*> m_children;
+
+		Cpp::ConnectionScope m_events;
 
 #ifdef DEBUG
 	public:

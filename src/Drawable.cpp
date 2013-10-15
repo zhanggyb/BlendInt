@@ -38,7 +38,8 @@ namespace BlendInt {
 
 	Drawable::Drawable ()
 		: m_z(0),
-		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0), m_visible(true),
+		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0),
+		  m_visible(true),
 		  m_expand_x(false), m_expand_y(false)
 #ifdef DEBUG
 		  ,m_id(0)
@@ -65,7 +66,8 @@ namespace BlendInt {
 
 	Drawable::Drawable (Drawable* parent)
 		: m_z(0),
-		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0), m_visible(true),
+		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0),
+		  m_visible(true),
 		  m_expand_x(false), m_expand_y(false)
 #ifdef DEBUG
 		  , m_id(0)

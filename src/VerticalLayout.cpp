@@ -64,12 +64,7 @@ namespace BlendInt {
 			}
 
 			case BasicPropertySize: {
-				if (property) {
-					generate_layout(static_cast<const Size*>(property));
-				} else {
-					generate_default_layout();
-				}
-
+				generate_layout(static_cast<const Size*>(property));
 				return true;
 			}
 
@@ -152,14 +147,59 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::add_single_widget (Widget* widget)
+	void VerticalLayout::append (Widget* widget)
 	{
 		if (m_children.count(widget)) return;
 
 		m_vector.push_back(widget);
 		bind (widget);
 
-		update(BasicPropertySize, 0);
+		if(m_parent.type == ParentDrawable) {
+			AbstractLayout* layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
+			if(layout) {
+				Size min = get_minimal_size();
+				Size new_size;
+
+				new_size.set_width(std::max(min.width(), m_size.width()));
+				new_size.set_height(std::max(min.height(), m_size.height()));
+
+				int diff_width = new_size.width() - m_size.width();
+				int diff_height = new_size.height() - m_size.height();
+
+				//resize_priv(this, new_size);
+
+				Size new_parent_size = layout->size();
+				new_parent_size.add_width(diff_width);
+				new_parent_size.add_height(diff_height);
+
+				resize_priv(layout, new_parent_size);
+
+			} else {
+				generate_default_layout();
+			}
+		} else {
+			generate_default_layout();
+		}
+
+	}
+
+	void VerticalLayout::append(AbstractLayout* layout)
+	{
+		if(m_children.count(layout)) return;
+
+		m_vector.push_back(layout);
+		bind (layout);
+
+		if(m_parent.type == ParentDrawable) {
+			AbstractLayout* layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
+			if(layout) {
+				// TODO: calculate layout
+			} else {
+				generate_default_layout();
+			}
+		} else {
+			generate_default_layout();
+		}
 	}
 
 	void VerticalLayout::generate_layout (const Size* size)
@@ -167,7 +207,6 @@ namespace BlendInt {
 		std::queue<Drawable*> expandable_objects;
 		std::queue<Drawable*> unexpandable_objects;
 
-		std::vector<Drawable*>::reverse_iterator it;
 		Drawable* child = 0;
 
 		int fixed_height = 0;
@@ -175,8 +214,8 @@ namespace BlendInt {
 		unsigned int max_widget_width = total_width - m_margin.left()
 		        - m_margin.right();
 
-		for (it = m_vector.rbegin(); it != m_vector.rend(); it++) {
-			child = *it;
+		for (size_t i = 0; i < m_vector.size(); i++) {
+			child = m_vector[i];
 			if (child->expand_y()) {
 				expandable_objects.push(child);
 			} else {
@@ -210,8 +249,8 @@ namespace BlendInt {
 		pos.set_x(pos.x() + m_margin.left());
 		pos.set_y(pos.y() + m_margin.bottom());
 
-		for (it = m_vector.rbegin(); it != m_vector.rend(); it++) {
-			child = *it;
+		for (size_t i = 0; i < m_vector.size(); i++) {
+			child = m_vector[i];
 
 			// set position
 			set_pos_priv(child, pos);
@@ -295,6 +334,37 @@ namespace BlendInt {
 
 		m_size.set_width(total_width);
 		m_size.set_height(total_height);
+	}
+
+	Size VerticalLayout::get_minimal_size()
+	{
+		Size minimal_size;
+
+		Drawable* child;
+		minimal_size.add_height(m_margin.top());
+
+		for(size_t i = 0; i < m_vector.size(); i++)
+		{
+			child = m_vector[i];
+			if(child->expand_y()) {
+				minimal_size.add_height(child->minimal_size().height());
+			} else {
+				minimal_size.add_height(child->size().height());
+			}
+
+			if(child->expand_x()) {
+				minimal_size.set_width(std::max(minimal_size.width(), child->minimal_size().width()));
+			} else {
+				minimal_size.set_width(std::max(minimal_size.width(), child->size().width()));
+			}
+
+			if(i != (m_vector.size() - 1))
+				minimal_size.add_height(m_space);
+		}
+		minimal_size.add_height(m_margin.bottom());
+		minimal_size.add_width(m_margin.left() + m_margin.right());
+
+		return minimal_size;
 	}
 
 }

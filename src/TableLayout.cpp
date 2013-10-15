@@ -227,7 +227,7 @@ namespace BlendInt {
 		column_num = total_fixed_width(&w);
 		row_num = total_fixed_height(&h);
 
-		if(size->width() > w) {
+		if(size->width() > static_cast<unsigned int>(w)) {
 
 			for (int j = 0; j < m_columns; j++)
 			{
@@ -271,7 +271,7 @@ namespace BlendInt {
 
 		}
 
-		if(size->height() > h) {
+		if(size->height() > static_cast<unsigned int>(h)) {
 
 			for (int i = 0; i < m_rows; i++)
 			{

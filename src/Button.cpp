@@ -34,6 +34,7 @@ namespace BlendInt {
 			: AbstractButton()
 	{
 		set_roundcorner(RoundCornerAll);
+		set_expand_x(true);
 		resize(90, 25);
 	}
 
@@ -41,6 +42,7 @@ namespace BlendInt {
 			: AbstractButton()
 	{
 		set_roundcorner(RoundCornerAll);
+		set_expand_x(true);
 		set_text(text);
 	}
 
@@ -48,6 +50,7 @@ namespace BlendInt {
 			: AbstractButton(parent)
 	{
 		set_roundcorner(RoundCornerAll);
+		set_expand_x(true);
 		resize (90, 25);
 	}
 
@@ -55,6 +58,7 @@ namespace BlendInt {
 			: AbstractButton(parent)
 	{
 		set_roundcorner(RoundCornerAll);
+		set_expand_x(true);
 		set_text(text);
 	}
 
