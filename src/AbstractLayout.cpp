@@ -28,11 +28,13 @@ namespace BlendInt {
 	AbstractLayout::AbstractLayout ()
 			: Drawable(), m_alignment(0), m_space(1)
 	{
+		set_expand(true);
 	}
 
 	AbstractLayout::AbstractLayout (Drawable *parent)
 			: Drawable (parent), m_alignment(0), m_space(1)
 	{
+		set_expand(true);
 	}
 
 	AbstractLayout::~AbstractLayout ()
@@ -48,9 +50,6 @@ namespace BlendInt {
 		bind (widget);
 		set_in_layout(widget, true);
 
-		set_expand_x(widget->expand_x());
-		set_expand_y(widget->expand_y());
-
 		update(LayoutPropertyItem, 0);
 	}
 
@@ -61,9 +60,6 @@ namespace BlendInt {
 		m_items.push_back(layout);
 		bind (layout);
 		set_in_layout(layout, true);
-
-		set_expand_x(layout->expand_x());
-		set_expand_y(layout->expand_y());
 
 		update(LayoutPropertyItem, 0);
 	}

@@ -65,8 +65,13 @@ namespace BlendInt {
 			}
 
 			case BasicPropertySize: {
-				generate_layout(static_cast<const Size*>(property));
-				return true;
+				if(expand_x()) {
+					generate_layout(static_cast<const Size*>(property));
+					return true;
+				} else {
+ 					generate_default_layout();
+ 					return false;
+				}
 			}
 
 			case LayoutPropertyItem: {
@@ -81,28 +86,6 @@ namespace BlendInt {
 					if(root_layout) {
 						root_layout->refresh();
 					}
-
-//					AbstractLayout* layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
-//					if(layout) {
-//
-//						Parent* parent = layout->parent();
-
-						// if in layout, calculate if the size need to change
-//						Size min = get_minimal_size();
-//						Size new_size;
-//
-//						new_size.set_width(std::max(min.width(), m_size.width()));
-//						new_size.set_height(std::max(min.height(), m_size.height()));
-//
-//						int diff_width = new_size.width() - m_size.width();
-//						int diff_height = new_size.height() - m_size.height();
-//
-//						Size new_parent_size = layout->size();
-//						new_parent_size.add_width(diff_width);
-//						new_parent_size.add_height(diff_height);
-
-//						resize_priv(layout, new_parent_size);
-//					}
 
 				} else {
 					generate_default_layout();

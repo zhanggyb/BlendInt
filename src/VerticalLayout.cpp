@@ -64,8 +64,13 @@ namespace BlendInt {
 			}
 
 			case BasicPropertySize: {
-				generate_layout(static_cast<const Size*>(property));
-				return true;
+				if(expand_y()) {
+					generate_layout(static_cast<const Size*>(property));
+					return true;
+				} else {
+					generate_default_layout();
+					return false;
+				}
 			}
 
 			case LayoutPropertyItem: {
