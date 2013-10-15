@@ -29,7 +29,7 @@
 
 #include <Cpp/Events.hpp>
 
-#define BlendInt_EVENTS_INIT_ONCE_IN_MAIN Cpp::Events::ProcessInit processInit
+#define BLENDINT_EVENTS_INIT_ONCE_IN_MAIN Cpp::Events::ProcessInit processInit
 
 namespace BlendInt {
 

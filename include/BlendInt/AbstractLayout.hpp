@@ -38,6 +38,7 @@ namespace BlendInt {
 		LayoutPropertyAlignment = BasicPropertyLast + 1,
 		LayoutPropertySpace,
 		LayoutPropertyMargin,
+		LayoutPropertyItem,
 		LayoutPropertyLast = LayoutPropertyMargin
 	};
 
@@ -53,9 +54,11 @@ namespace BlendInt {
 
 		virtual ~AbstractLayout ();
 
-		void add_widget (Widget* widget);
+		void add (Widget* widget);
 
-		void add_layout (AbstractLayout* layout);
+		void add (AbstractLayout* layout);
+
+		void refresh ();
 
 		/**
 		 * @brief remove the object from layout
@@ -95,17 +98,13 @@ namespace BlendInt {
 
 		virtual bool update (int type, const void* property) {return false;}
 
-		virtual void append (Widget* widget) = 0;
-
-		virtual void append (AbstractLayout* layout) = 0;
-
 		int m_alignment;
 
 		int m_space;
 
 		Margin m_margin;
 
-		std::vector<Drawable*> m_vector;
+		std::vector<Drawable*> m_items;
 
 		Cpp::ConnectionScope m_events;
 

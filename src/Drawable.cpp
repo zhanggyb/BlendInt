@@ -39,7 +39,7 @@ namespace BlendInt {
 	Drawable::Drawable ()
 		: m_z(0),
 		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0),
-		  m_visible(true),
+		  m_visible(true), m_in_layout(false),
 		  m_expand_x(false), m_expand_y(false)
 #ifdef DEBUG
 		  ,m_id(0)
@@ -67,7 +67,7 @@ namespace BlendInt {
 	Drawable::Drawable (Drawable* parent)
 		: m_z(0),
 		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0),
-		  m_visible(true),
+		  m_visible(true), m_in_layout(false),
 		  m_expand_x(false), m_expand_y(false)
 #ifdef DEBUG
 		  , m_id(0)
@@ -248,10 +248,7 @@ namespace BlendInt {
 	void Drawable::resize (int w, int h)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_parent.type == ParentDrawable) {
-			if(dynamic_cast<AbstractLayout*>(m_parent.object.drawable))
-				return;
-		}
+		if(m_in_layout) return;
 
 		if (m_size.equal(w, h)) return;
 
@@ -263,10 +260,7 @@ namespace BlendInt {
 	void Drawable::resize (const Size& size)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_parent.type == ParentDrawable) {
-			if(dynamic_cast<AbstractLayout*>(m_parent.object.drawable))
-				return;
-		}
+		if(m_in_layout) return;
 
 		if (m_size.equal(size)) return;
 
@@ -282,10 +276,7 @@ namespace BlendInt {
 	void Drawable::set_pos (int x, int y)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_parent.type == ParentDrawable) {
-			if(dynamic_cast<AbstractLayout*>(m_parent.object.drawable))
-				return;
-		}
+		if(m_in_layout) return;
 
 		if (m_pos.equal(x, y)) return;
 
@@ -296,10 +287,7 @@ namespace BlendInt {
 	void Drawable::set_pos (const Point& pos)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_parent.type == ParentDrawable) {
-			if(dynamic_cast<AbstractLayout*>(m_parent.object.drawable))
-				return;
-		}
+		if(m_in_layout) return;
 
 		if (m_pos.equal(pos)) return;
 

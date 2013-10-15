@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <typeinfo>
 
 #include <Cpp/Events.hpp>
 #include <BlendInt/Interface.hpp>
@@ -27,6 +28,73 @@
 #include <BlendInt/VertexIcon.hpp>
 
 using namespace BlendInt;
+
+class DoEvent
+{
+public:
+
+	DoEvent()
+	: i(0)
+	{
+		m_layout.set_pos(300, 300);
+	}
+
+	~DoEvent()
+	{
+
+	}
+
+	void connect(Button* button)
+	{
+		m_events.connect(button->clicked(), this, &DoEvent::add_button);
+	}
+
+	void bind()
+	{
+		interface()->bind(&m_layout);
+	}
+
+	void unbind()
+	{
+		interface()->unbind(&m_layout);
+	}
+
+	void add_button()
+	{
+		Button* button = new Button;
+
+		if(i == 0)
+			button->set_text("Button0");
+
+		if(i == 1)
+			button->set_text("Button1");
+
+		if(i == 2)
+			button->set_text("Button2");
+
+		if(i == 3)
+			button->set_text("Button3");
+
+		if(i == 4)
+			button->set_text("Button4");
+
+		m_layout.add(button);
+
+		i++;
+	}
+
+	void remove_button()
+	{
+	}
+
+private:
+
+	VerticalLayout m_layout;
+
+	int i;
+
+	Cpp::ConnectionScope m_events;
+};
 
 static void cbError (int error, const char* description)
 {
@@ -57,7 +125,7 @@ int main(int argc, char* argv[])
 {
 	using namespace BlendInt;
 
-	BlendInt_EVENTS_INIT_ONCE_IN_MAIN;
+	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
 	/* Initialize the library */
 	if (!glfwInit())
@@ -88,45 +156,47 @@ int main(int argc, char* argv[])
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	Button* button1 = new Button;
-	button1->set_text("Button1");
-	button1->set_name("button1");
+	DoEvent obj;
 
-	Button* button2 = new Button;
-	button2->set_text("Button2");
-	button2->set_name("button2");
+	obj.bind();
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
-	hlayout->add_widget(button1);
-	hlayout->add_widget(button2);
-	hlayout->set_pos(200, 200);
+	Button* button = new Button;
+	button->set_text("Add Button");
+	button->set_pos(400, 400);
 
-	Button* button3 = new Button;
-	button3->set_text("Button3");
-	button3->set_name("button3");
+	obj.connect(button);
 
-	Button* button4 = new Button;
-	button4->set_text("Button4");
-	button4->set_name("button4");
+	app->bind(button);
 
-	VerticalLayout* vlayout = new VerticalLayout;
-	vlayout->add_widget(button3);
-	vlayout->add_widget(button4);
-	vlayout->set_pos(300, 300);
+	Button* b1 = new Button;
+	b1->set_text("Button1");
 
-	vlayout->add_layout(hlayout);
+	Button* b2 = new Button;
+	b2->set_text("Button2");
 
-	app->bind(vlayout);
+	Button* b3 = new Button;
+	b3->set_text("Button3");
 
-	Button* button_add1 = new Button;
-	button_add1->set_text("Button");
+	Button* b4 = new Button;
+	b4->set_text("Button4");
 
-	hlayout->add_widget(button_add1);
+	Button* b5 = new Button;
+	b5->set_text("Button5");
 
-	Button* button_add2 = new Button;
-	button_add2->set_text("Button");
+	HorizontalLayout* hl = new HorizontalLayout;
+	hl->set_pos(300, 500);
+	hl->add(b1);
 
-	hlayout->add_widget(button_add2);
+	HorizontalLayout* hl1 = new HorizontalLayout;
+	hl1->add(b2);
+	hl1->add(b3);
+
+	hl->add(hl1);
+
+	app->bind(hl);
+
+	hl1->add(b4);
+//	hl1->add(b5);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -139,6 +209,8 @@ int main(int argc, char* argv[])
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+
+	obj.unbind();
 
 	/* release BlendInt */
 	Interface::release();

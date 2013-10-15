@@ -91,7 +91,7 @@ void onMouse (int button, int state, int x, int y)
 
 int main(int argc, char* argv[])
 {
-	BlendInt_EVENTS_INIT_ONCE_IN_MAIN;
+	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 	
 	/* Glut-related initialising functions */
 	glutInit(&argc, argv);

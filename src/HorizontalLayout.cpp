@@ -56,16 +56,58 @@ namespace BlendInt {
 			case BasicPropertyPosition: {
 				const Point* new_pos = static_cast<const Point*>(property);
 
-				for (size_t i = 0; i < m_vector.size(); i++)
+				for (size_t i = 0; i < m_items.size(); i++)
 				{
-					set_pos_priv(m_vector[i], m_vector[i]->pos().x() + (new_pos->x() - m_pos.x()),
-							m_vector[i]->pos().y() + (new_pos->y() - m_pos.y()));
+					set_pos_priv(m_items[i], m_items[i]->pos().x() + (new_pos->x() - m_pos.x()),
+							m_items[i]->pos().y() + (new_pos->y() - m_pos.y()));
 				}
 				return true;
 			}
 
 			case BasicPropertySize: {
 				generate_layout(static_cast<const Size*>(property));
+				return true;
+			}
+
+			case LayoutPropertyItem: {
+				if(m_in_layout) {
+
+					AbstractLayout* root_layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
+					while(root_layout->in_layout()) {
+						root_layout = dynamic_cast<AbstractLayout*>(root_layout->parent()->object.drawable);
+						if(!root_layout) break;
+					}
+
+					if(root_layout) {
+						root_layout->refresh();
+					}
+
+//					AbstractLayout* layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
+//					if(layout) {
+//
+//						Parent* parent = layout->parent();
+
+						// if in layout, calculate if the size need to change
+//						Size min = get_minimal_size();
+//						Size new_size;
+//
+//						new_size.set_width(std::max(min.width(), m_size.width()));
+//						new_size.set_height(std::max(min.height(), m_size.height()));
+//
+//						int diff_width = new_size.width() - m_size.width();
+//						int diff_height = new_size.height() - m_size.height();
+//
+//						Size new_parent_size = layout->size();
+//						new_parent_size.add_width(diff_width);
+//						new_parent_size.add_height(diff_height);
+
+//						resize_priv(layout, new_parent_size);
+//					}
+
+				} else {
+					generate_default_layout();
+				}
+
 				return true;
 			}
 
@@ -79,37 +121,15 @@ namespace BlendInt {
 	void HorizontalLayout::render ()
 	{
 		std::vector<Drawable*>::const_iterator it;
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_render_event(*it);
 		}
-
-#ifdef DEBUG
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(m_pos.x(), m_pos.y(), z());
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2i(0, 0);
-		glVertex2i(m_size.width(), 0);
-		glVertex2i(m_size.width(), m_size.height());
-		glVertex2i(0, m_size.height());
-		glEnd();
-
-		glDisable(GL_LINE_STIPPLE);
-
-		glPopMatrix();
-#endif
 	}
 
 	void HorizontalLayout::press_key (KeyEvent* event)
 	{
 		std::vector<Drawable*>::iterator it;
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_key_press_event(*it, event);
 		}
 	}
@@ -125,7 +145,7 @@ namespace BlendInt {
 	void HorizontalLayout::press_mouse (MouseEvent* event)
 	{
 		std::vector<Drawable*>::iterator it;
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_mouse_press_event(*it, event);
 		}
 	}
@@ -133,7 +153,7 @@ namespace BlendInt {
 	void HorizontalLayout::release_mouse (MouseEvent* event)
 	{
 		std::vector<Drawable*>::iterator it;
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_mouse_release_event(*it, event);
 		}
 	}
@@ -141,65 +161,8 @@ namespace BlendInt {
 	void HorizontalLayout::move_mouse (MouseEvent* event)
 	{
 		std::vector<Drawable*>::iterator it;
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_mouse_move_event(*it, event);
-		}
-	}
-
-	void HorizontalLayout::append(Widget* widget)
-	{
-		if(m_children.count(widget)) return;
-
-		m_vector.push_back(widget);
-		bind (widget);
-
-		if(m_parent.type == ParentDrawable) {
-			AbstractLayout* layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
-			if(layout) {
-
-				// if in layout, calculate if the size need to change
-				Size min = get_minimal_size();
-				Size new_size;
-
-				new_size.set_width(std::max(min.width(), m_size.width()));
-				new_size.set_height(std::max(min.height(), m_size.height()));
-
-				int diff_width = new_size.width() - m_size.width();
-				int diff_height = new_size.height() - m_size.height();
-
-				//resize_priv(this, new_size);
-
-				Size new_parent_size = layout->size();
-				new_parent_size.add_width(diff_width);
-				new_parent_size.add_height(diff_height);
-
-				resize_priv(layout, new_parent_size);
-
-			} else {
-				generate_default_layout();
-			}
-		} else {
-			generate_default_layout();
-		}
-
-	}
-
-	void HorizontalLayout::append(AbstractLayout* layout)
-	{
-		if(m_children.count(layout)) return;
-
-		m_vector.push_back(layout);
-		bind (layout);
-
-		if(m_parent.type == ParentDrawable) {
-			AbstractLayout* layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
-			if(layout) {
-				// TODO: calculate layout
-			} else {
-				generate_default_layout();
-			}
-		} else {
-			generate_default_layout();
 		}
 	}
 
@@ -216,8 +179,8 @@ namespace BlendInt {
 		unsigned int max_widget_height = total_height - m_margin.top()
 		        - m_margin.bottom();
 
-		for (size_t i = 0; i < m_vector.size(); i++) {
-			child = m_vector[i];
+		for (size_t i = 0; i < m_items.size(); i++) {
+			child = m_items[i];
 			if (child->expand_x()) {
 				expandable_objects.push(child);
 			} else {
@@ -234,7 +197,7 @@ namespace BlendInt {
 		// average the width of each expandable object along horizontal
 		if (expandable_objects.size() > 0) {
 			int flexible_width = size->width() - m_margin.left()
-			        - m_margin.right() - (m_vector.size() - 1) * m_space
+			        - m_margin.right() - (m_items.size() - 1) * m_space
 			        - fixed_width;
 			int single_flexible_with = flexible_width
 			        / expandable_objects.size();
@@ -252,8 +215,8 @@ namespace BlendInt {
 		pos.set_x(pos.x() + m_margin.left());
 		pos.set_y(pos.y() + m_margin.bottom());
 
-		for (size_t i = 0; i < m_vector.size(); i++) {
-			child = m_vector[i];
+		for (size_t i = 0; i < m_items.size(); i++) {
+			child = m_items[i];
 
 			// set position
 			set_pos_priv(child, pos);
@@ -291,11 +254,10 @@ namespace BlendInt {
 		unsigned int total_height = m_size.height();
 		unsigned int max_widget_height = 0;
 
-		std::vector<Drawable*>::const_iterator it;
 		Drawable* child = 0;
 		total_width = m_margin.left();
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
-			child = *it;
+		for (size_t i = 0; i < m_items.size(); i++) {
+			child = m_items[i];
 			set_pos_priv(child, m_pos.x() + total_width,
 			        m_pos.y() + m_margin.bottom());
 			total_width = total_width + child->size().width();
@@ -304,12 +266,14 @@ namespace BlendInt {
 			                + m_margin.bottom());
 			max_widget_height = std::max(max_widget_height,
 			        child->size().height());
-			total_width += m_space;
-		}
-		total_width = total_width - m_space + m_margin.right();
 
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
-			child = *it;
+			if(i != (m_items.size() - 1))
+				total_width += m_space;
+		}
+		total_width = total_width + m_margin.right();
+
+		for (size_t i = 0; i < m_items.size(); i++) {
+			child = m_items[i];
 
 			if (child->expand_y()) {
 				resize_priv(child, child->size().width(), max_widget_height);
@@ -345,9 +309,9 @@ namespace BlendInt {
 		Drawable* child;
 		minimal_size.set_width(m_margin.left());
 
-		for(size_t i = 0; i < m_vector.size(); i++)
+		for(size_t i = 0; i < m_items.size(); i++)
 		{
-			child = m_vector[i];
+			child = m_items[i];
 			if(child->expand_x()) {
 				minimal_size.add_width(child->minimal_size().width());
 			} else {
@@ -360,7 +324,7 @@ namespace BlendInt {
 				minimal_size.set_height(std::max(minimal_size.height(), child->size().height()));
 			}
 
-			if(i != (m_vector.size() - 1))
+			if(i != (m_items.size() - 1))
 				minimal_size.add_width(m_space);
 		}
 		minimal_size.add_width(m_margin.right());

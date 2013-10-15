@@ -111,8 +111,8 @@ void LayoutTest::horizontal_layout1()
 	Button button1(L"Sample Button");
 	button1.set_pos(200, 200);
 
-	layout1.add_widget(&label1);
-	layout1.add_widget(&button1);
+	layout1.add(&label1);
+	layout1.add(&button1);
 
 	HorizontalLayout layout2;
 	layout2.set_pos(300, 200);
@@ -124,8 +124,8 @@ void LayoutTest::horizontal_layout1()
 	Button button2(L"Sample Button");
 	button2.set_pos(200, 200);
 
-	layout2.add_widget(&label2);
-	layout2.add_widget(&button2);
+	layout2.add(&label2);
+	layout2.add(&button2);
 
 	HorizontalLayout layout3;
 	layout3.set_pos(500, 300);
@@ -137,8 +137,8 @@ void LayoutTest::horizontal_layout1()
 	Button button3(L"Sample Button");
 	button3.set_pos(200, 200);
 
-	layout3.add_widget(&label3);
-	layout3.add_widget(&button3);
+	layout3.add(&label3);
+	layout3.add(&button3);
 
 	app->bind(&layout1);
 	app->bind(&layout2);
@@ -210,8 +210,8 @@ void LayoutTest::vertical_layout1()
 	Button button1(L"Sample Button");
 	button1.set_pos(200, 200);
 
-	layout1.add_widget(&label1);
-	layout1.add_widget(&button1);
+	layout1.add(&label1);
+	layout1.add(&button1);
 
 	VerticalLayout layout2;
 	layout2.set_pos(250, 100);
@@ -223,8 +223,8 @@ void LayoutTest::vertical_layout1()
 	Button button2(L"Sample Button");
 	button2.set_pos(200, 200);
 
-	layout2.add_widget(&label2);
-	layout2.add_widget(&button2);
+	layout2.add(&label2);
+	layout2.add(&button2);
 
 	VerticalLayout layout3;
 	layout3.set_pos(500, 100);
@@ -236,8 +236,8 @@ void LayoutTest::vertical_layout1()
 	Button button3(L"Sample Button");
 	button3.set_pos(200, 200);
 
-	layout3.add_widget(&label3);
-	layout3.add_widget(&button3);
+	layout3.add(&label3);
+	layout3.add(&button3);
 
 	app->bind(&layout1);
 	app->bind(&layout2);
@@ -309,8 +309,8 @@ void LayoutTest::layout_mix1()
 	Button* button1 = new Button(L"Button1");
 	button1->set_pos(200, 200);
 
-	layout1->add_widget(label1);
-	layout1->add_widget(button1);
+	layout1->add(label1);
+	layout1->add(button1);
 
 	HorizontalLayout* layout2 = new HorizontalLayout;
 
@@ -320,9 +320,9 @@ void LayoutTest::layout_mix1()
 	Button* button2 = new Button(L"Sample Button");
 	button2->set_pos(200, 200);
 
-	layout2->add_widget(label2);
-	layout2->add_layout(layout1);
-	layout2->add_widget(button2);
+	layout2->add(label2);
+	layout2->add(layout1);
+	layout2->add(button2);
 
 	layout2->set_pos (400, 500);
 
@@ -392,8 +392,8 @@ void LayoutTest::layout_mix2()
 	Button button1(L"Sample Button");
 	button1.set_pos(200, 200);
 
-	layout1.add_widget(&label1);
-	layout1.add_widget(&button1);
+	layout1.add(&label1);
+	layout1.add(&button1);
 
 	VerticalLayout layout2;
 	layout2.set_pos(250, 100);
@@ -405,8 +405,8 @@ void LayoutTest::layout_mix2()
 	Button button2(L"Sample Button");
 	button2.set_pos(200, 200);
 
-	layout2.add_widget(&label2);
-	layout2.add_widget(&button2);
+	layout2.add(&label2);
+	layout2.add(&button2);
 
 	VerticalLayout layout3;
 	layout3.set_pos(500, 100);
@@ -418,16 +418,16 @@ void LayoutTest::layout_mix2()
 	Button button3(L"Sample Button");
 	button3.set_pos(200, 200);
 
-	layout3.add_widget(&label3);
-	layout3.add_widget(&button3);
+	layout3.add(&label3);
+	layout3.add(&button3);
 
 	HorizontalLayout layout4;
 	Button button4(L"Button4");
 
-	layout4.add_widget(&button4);
-	layout4.add_layout(&layout1);
-	layout4.add_layout(&layout2);
-	layout4.add_layout(&layout3);
+	layout4.add(&button4);
+	layout4.add(&layout1);
+	layout4.add(&layout2);
+	layout4.add(&layout3);
 	layout4.set_pos(400, 200);
 
 	app->bind(&layout4);

@@ -192,6 +192,8 @@ namespace BlendInt {
 
 		const Parent* parent () const {return &m_parent;}
 
+		bool in_layout () const {return m_in_layout;}
+
 	protected:	// member functions
 
 		bool contain (const Coord2d& cursor);
@@ -228,6 +230,8 @@ namespace BlendInt {
 		 */
 		void set_pos_priv (Drawable* obj, const Point& pos);
 
+		void set_in_layout (Drawable* obj, bool status) {obj->m_in_layout = status;}
+
 		void resize_priv (Drawable* obj, int width, int height);
 
 		void resize_priv (Drawable* obj, const Size& size);
@@ -250,6 +254,8 @@ namespace BlendInt {
 		float m_corner_radius;
 
 		bool m_visible;
+
+		bool m_in_layout;
 
 		bool m_expand_x;
 

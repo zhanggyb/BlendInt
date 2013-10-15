@@ -58,10 +58,6 @@ namespace BlendInt {
 
 		virtual void move_mouse (MouseEvent* event);
 
-		virtual void append (Widget* widget);
-
-		virtual void append (AbstractLayout* layout);
-
 	private:
 
 		void generate_layout (const Size* size);

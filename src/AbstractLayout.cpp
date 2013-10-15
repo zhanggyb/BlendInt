@@ -28,29 +28,51 @@ namespace BlendInt {
 	AbstractLayout::AbstractLayout ()
 			: Drawable(), m_alignment(0), m_space(1)
 	{
-		set_expand(true);
 	}
 
 	AbstractLayout::AbstractLayout (Drawable *parent)
 			: Drawable (parent), m_alignment(0), m_space(1)
 	{
-		set_expand(true);
 	}
 
 	AbstractLayout::~AbstractLayout ()
 	{
-		m_vector.clear();
+		m_items.clear();
 	}
 
-
-	void AbstractLayout::add_widget (Widget* widget)
+	void AbstractLayout::add (Widget* widget)
 	{
-		append(widget);
+		if(m_children.count(widget)) return;
+
+		m_items.push_back(widget);
+		bind (widget);
+		set_in_layout(widget, true);
+
+		set_expand_x(widget->expand_x());
+		set_expand_y(widget->expand_y());
+
+		update(LayoutPropertyItem, 0);
 	}
 
-	void AbstractLayout::add_layout (AbstractLayout* layout)
+	void AbstractLayout::add (AbstractLayout* layout)
 	{
-		append(layout);
+		if(m_children.count(layout)) return;
+
+		m_items.push_back(layout);
+		bind (layout);
+		set_in_layout(layout, true);
+
+		set_expand_x(layout->expand_x());
+		set_expand_y(layout->expand_y());
+
+		update(LayoutPropertyItem, 0);
+	}
+
+	void AbstractLayout::refresh ()
+	{
+		Size size = m_size;
+
+		update(BasicPropertySize, &size);
 	}
 
 	bool AbstractLayout::remove (Drawable* object)
@@ -60,16 +82,18 @@ namespace BlendInt {
 		m_children.erase(object);
 
 		unbind(object);
+		set_in_layout(object, false);
 
 		std::vector<Drawable*>::iterator it;
-		for(it = m_vector.begin(); it != m_vector.end(); it++)
+		for(it = m_items.begin(); it != m_items.end(); it++)
 		{
 			if (*it == object) {
-				it = m_vector.erase(it);
+				it = m_items.erase(it);
 			}
 		}
 
-		update(BasicPropertySize, 0);
+		// TODO: not use update()
+		update(LayoutPropertyItem, 0);
 
 		return true;
 	}
@@ -81,18 +105,20 @@ namespace BlendInt {
 		m_children.erase(object);
 
 		unbind(object);
+		set_in_layout(object, false);
 
 		std::vector<Drawable*>::iterator it;
-		for(it = m_vector.begin(); it != m_vector.end(); it++)
+		for(it = m_items.begin(); it != m_items.end(); it++)
 		{
 			if (*it == object) {
-				it = m_vector.erase(it);
+				it = m_items.erase(it);
 			}
 		}
 
 		delete object;
 
-		update(BasicPropertySize, 0);
+		// TODO: not use update()
+		update(LayoutPropertyItem, 0);
 
 		return true;
 	}

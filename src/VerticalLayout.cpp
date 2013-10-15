@@ -55,16 +55,35 @@ namespace BlendInt {
 			case BasicPropertyPosition: {
 				const Point* new_pos = static_cast<const Point*>(property);
 
-				for (size_t i = 0; i < m_vector.size(); i++)
+				for (size_t i = 0; i < m_items.size(); i++)
 				{
-					set_pos_priv(m_vector[i], m_vector[i]->pos().x() + (new_pos->x() - m_pos.x()),
-							m_vector[i]->pos().y() + (new_pos->y() - m_pos.y()));
+					set_pos_priv(m_items[i], m_items[i]->pos().x() + (new_pos->x() - m_pos.x()),
+							m_items[i]->pos().y() + (new_pos->y() - m_pos.y()));
 				}
 				return true;
 			}
 
 			case BasicPropertySize: {
 				generate_layout(static_cast<const Size*>(property));
+				return true;
+			}
+
+			case LayoutPropertyItem: {
+				if(m_in_layout) {
+
+					AbstractLayout* root_layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
+					while(root_layout->in_layout()) {
+						root_layout = dynamic_cast<AbstractLayout*>(root_layout->parent()->object.drawable);
+						if(!root_layout) break;
+					}
+
+					if(root_layout) {
+						root_layout->refresh();
+					}
+
+				} else {
+					generate_default_layout();
+				}
 				return true;
 			}
 
@@ -80,34 +99,12 @@ namespace BlendInt {
 
 		std::vector<Drawable*>::const_iterator it;
 		Drawable *item = 0;
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			item = *it;
 			if (item) {
 				Interface::instance()->dispatch_render_event(item);
 			}
 		}
-
-#ifdef DEBUG
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(m_pos.x(), m_pos.y(), z());
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2i(0, 0);
-		glVertex2i(m_size.width(), 0);
-		glVertex2i(m_size.width(), m_size.height());
-		glVertex2i(0, m_size.height());
-		glEnd();
-
-		glDisable(GL_LINE_STIPPLE);
-
-		glPopMatrix();
-#endif
 	}
 
 	void VerticalLayout::press_key (KeyEvent* event)
@@ -126,7 +123,7 @@ namespace BlendInt {
 	void VerticalLayout::press_mouse (MouseEvent* event)
 	{
 		std::vector<Drawable*>::iterator it;
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_mouse_press_event(*it, event);
 		}
 	}
@@ -134,7 +131,7 @@ namespace BlendInt {
 	void VerticalLayout::release_mouse (MouseEvent* event)
 	{
 		std::vector<Drawable*>::iterator it;
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_mouse_release_event(*it, event);
 		}
 	}
@@ -142,63 +139,8 @@ namespace BlendInt {
 	void VerticalLayout::move_mouse (MouseEvent* event)
 	{
 		std::vector<Drawable*>::iterator it;
-		for (it = m_vector.begin(); it != m_vector.end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_mouse_move_event(*it, event);
-		}
-	}
-
-	void VerticalLayout::append (Widget* widget)
-	{
-		if (m_children.count(widget)) return;
-
-		m_vector.push_back(widget);
-		bind (widget);
-
-		if(m_parent.type == ParentDrawable) {
-			AbstractLayout* layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
-			if(layout) {
-				Size min = get_minimal_size();
-				Size new_size;
-
-				new_size.set_width(std::max(min.width(), m_size.width()));
-				new_size.set_height(std::max(min.height(), m_size.height()));
-
-				int diff_width = new_size.width() - m_size.width();
-				int diff_height = new_size.height() - m_size.height();
-
-				//resize_priv(this, new_size);
-
-				Size new_parent_size = layout->size();
-				new_parent_size.add_width(diff_width);
-				new_parent_size.add_height(diff_height);
-
-				resize_priv(layout, new_parent_size);
-
-			} else {
-				generate_default_layout();
-			}
-		} else {
-			generate_default_layout();
-		}
-
-	}
-
-	void VerticalLayout::append(AbstractLayout* layout)
-	{
-		if(m_children.count(layout)) return;
-
-		m_vector.push_back(layout);
-		bind (layout);
-
-		if(m_parent.type == ParentDrawable) {
-			AbstractLayout* layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
-			if(layout) {
-				// TODO: calculate layout
-			} else {
-				generate_default_layout();
-			}
-		} else {
-			generate_default_layout();
 		}
 	}
 
@@ -207,6 +149,7 @@ namespace BlendInt {
 		std::queue<Drawable*> expandable_objects;
 		std::queue<Drawable*> unexpandable_objects;
 
+		std::vector<Drawable*>::reverse_iterator it;
 		Drawable* child = 0;
 
 		int fixed_height = 0;
@@ -214,8 +157,8 @@ namespace BlendInt {
 		unsigned int max_widget_width = total_width - m_margin.left()
 		        - m_margin.right();
 
-		for (size_t i = 0; i < m_vector.size(); i++) {
-			child = m_vector[i];
+		for (it = m_items.rbegin(); it != m_items.rend(); it++) {
+			child = *it;
 			if (child->expand_y()) {
 				expandable_objects.push(child);
 			} else {
@@ -229,7 +172,7 @@ namespace BlendInt {
 		}
 
 		int flexible_height = size->height() - m_margin.top()
-		        - m_margin.bottom() - (m_vector.size() - 1) * m_space
+		        - m_margin.bottom() - (m_items.size() - 1) * m_space
 		        - fixed_height;
 
 		if (expandable_objects.size() > 0) {
@@ -249,8 +192,8 @@ namespace BlendInt {
 		pos.set_x(pos.x() + m_margin.left());
 		pos.set_y(pos.y() + m_margin.bottom());
 
-		for (size_t i = 0; i < m_vector.size(); i++) {
-			child = m_vector[i];
+		for (it = m_items.rbegin(); it != m_items.rend(); it++) {
+			child = *it;
 
 			// set position
 			set_pos_priv(child, pos);
@@ -293,7 +236,7 @@ namespace BlendInt {
 		std::vector<Drawable*>::const_reverse_iterator it;
 		Drawable* child = 0;
 		total_height = m_margin.bottom();
-		for (it = m_vector.rbegin(); it != m_vector.rend(); it++) {
+		for (it = m_items.rbegin(); it != m_items.rend(); it++) {
 			child = *it;
 			set_pos_priv(child, m_pos.x() + m_margin.left(),
 			        m_pos.y() + total_height);
@@ -306,7 +249,7 @@ namespace BlendInt {
 		}
 		total_height = total_height - m_space + m_margin.top();
 
-		for (it = m_vector.rbegin(); it != m_vector.rend(); it++) {
+		for (it = m_items.rbegin(); it != m_items.rend(); it++) {
 			child = *it;
 
 			if (child->expand_x()) {
@@ -343,9 +286,9 @@ namespace BlendInt {
 		Drawable* child;
 		minimal_size.add_height(m_margin.top());
 
-		for(size_t i = 0; i < m_vector.size(); i++)
+		for(size_t i = 0; i < m_items.size(); i++)
 		{
-			child = m_vector[i];
+			child = m_items[i];
 			if(child->expand_y()) {
 				minimal_size.add_height(child->minimal_size().height());
 			} else {
@@ -358,7 +301,7 @@ namespace BlendInt {
 				minimal_size.set_width(std::max(minimal_size.width(), child->size().width()));
 			}
 
-			if(i != (m_vector.size() - 1))
+			if(i != (m_items.size() - 1))
 				minimal_size.add_height(m_space);
 		}
 		minimal_size.add_height(m_margin.bottom());

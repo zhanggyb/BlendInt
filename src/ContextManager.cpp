@@ -193,7 +193,7 @@ namespace BlendInt {
 		}
 
 		if(remove_drawable(obj)) {
-			std::cerr << "remove object" << std::endl;
+//			std::cerr << "remove object" << std::endl;
 		} else {
 			std::cerr << "obj not in in contextmanager with the same layer" << std::endl;
 		}
