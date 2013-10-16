@@ -55,13 +55,8 @@ namespace BlendInt {
 		switch (type) {
 
 			case BasicPropertySize: {
-				if (expand_x()) {
-					generate_layout(static_cast<const Size*>(property));
-					return true;
-				} else {
-					generate_default_layout();
-					return false;
-				}
+				change_layout(static_cast<const Size*>(property));
+				return true;
 			}
 
 			case LayoutPropertyItem: {
@@ -152,7 +147,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::generate_layout (const Size* size)
+	void HorizontalLayout::change_layout (const Size* size)
 	{
 		std::queue<Drawable*> expandable_objects;
 		std::queue<Drawable*> unexpandable_objects;
@@ -173,11 +168,11 @@ namespace BlendInt {
 				unexpandable_objects.push(child);
 				fixed_width += child->size().width();
 			}
-			total_height = std::max(total_height,
-			        m_margin.top() + child->size().height()
-			                + m_margin.bottom());
-			max_widget_height = std::max(max_widget_height,
-			        child->size().height());
+//			total_height = std::max(total_height,
+//			        m_margin.top() + child->size().height()
+//			                + m_margin.bottom());
+//			max_widget_height = std::max(max_widget_height,
+//			        child->size().height());
 		}
 
 		// average the width of each expandable object along horizontal
@@ -351,6 +346,12 @@ namespace BlendInt {
 		m_items.push_back(object);
 		bind(object);
 
+		if(!expand_x())
+			set_expand_x(object->expand_x());
+
+		if(!expand_y())
+			set_expand_y(object->expand_y());
+
 		align_along_x(inner_height);
 	}
 
@@ -361,18 +362,25 @@ namespace BlendInt {
 
 		for (it = m_items.begin(); it != m_items.end(); it++) {
 			child = *it;
+
+			if (child->expand_y()) {
+				resize_priv(child, child->size().width(), height);
+			}
+
 			if (m_alignment & AlignTop) {
 				set_pos_priv(child, child->pos().x(),
-						m_pos.y() + m_margin.bottom() + (height - child->size().height()));
+				        m_pos.y() + m_margin.bottom()
+				                + (height - child->size().height()));
 			} else if (m_alignment & AlignBottom) {
 //				set_pos_priv(child, child->pos().x(),
 //						child->pos().y() + m_margin.bottom());
 			} else if (m_alignment & AlignHorizontalCenter) {
 				set_pos_priv(child, child->pos().x(),
-						m_pos.y() + m_margin.bottom()
+				        m_pos.y() + m_margin.bottom()
 				                + (height - child->size().height()) / 2);
 			}
 		}
+
 	}
 
 }

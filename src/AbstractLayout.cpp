@@ -28,7 +28,6 @@ namespace BlendInt {
 	AbstractLayout::AbstractLayout ()
 			: Drawable(), m_alignment(0), m_space(1)
 	{
-		set_expand(true);
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
@@ -36,7 +35,6 @@ namespace BlendInt {
 	AbstractLayout::AbstractLayout (Drawable *parent)
 			: Drawable (parent), m_alignment(0), m_space(1)
 	{
-		set_expand(true);
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}

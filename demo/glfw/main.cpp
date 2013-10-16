@@ -177,6 +177,33 @@ int main(int argc, char* argv[])
 
 	app->bind(button);
 
+	Button* b1 = new Button;
+	Button* b2 = new Button;
+
+	HorizontalLayout* h1 = new HorizontalLayout;
+
+	h1->add(b1);
+	h1->add(b2);
+
+	Button* b3 = new Button;
+	Button* b4 = new Button;
+
+	VerticalLayout* v1 = new VerticalLayout;
+	v1->add(b3);
+	v1->add(b4);
+
+//	HorizontalLayout* h2 = new HorizontalLayout;
+//	h2->add(b3);
+//	h2->add(b4);
+
+	v1->add(h1);
+
+	v1->set_pos(500, 200);
+
+//	v1->resize(200, 60);
+
+	app->bind(v1);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */

@@ -61,7 +61,7 @@ namespace BlendInt {
 
 	private:
 
-		void generate_layout (const Size* size);
+		void change_layout (const Size* size);
 
 		void generate_default_layout ();
 
@@ -69,6 +69,10 @@ namespace BlendInt {
 
 		void add_item (Drawable* object);
 
+		/**
+		 * @brief align the objects in layout according to alignment
+		 * @param width[in] the max width of area contains children (width - (left + right margin))
+		 */
 		void align_along_y (unsigned int width);
 	};
 
