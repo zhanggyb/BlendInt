@@ -52,53 +52,33 @@ namespace BlendInt {
 
 	bool HorizontalLayout::update (int type, const void* property)
 	{
-		switch(type) {
-			case BasicPropertyPosition: {
-				const Point* new_pos = static_cast<const Point*>(property);
-
-				for (size_t i = 0; i < m_items.size(); i++)
-				{
-					set_pos_priv(m_items[i], m_items[i]->pos().x() + (new_pos->x() - m_pos.x()),
-							m_items[i]->pos().y() + (new_pos->y() - m_pos.y()));
-				}
-				return true;
-			}
+		switch (type) {
 
 			case BasicPropertySize: {
-				if(expand_x()) {
+				if (expand_x()) {
 					generate_layout(static_cast<const Size*>(property));
 					return true;
 				} else {
- 					generate_default_layout();
- 					return false;
+					generate_default_layout();
+					return false;
 				}
 			}
 
 			case LayoutPropertyItem: {
-				if(m_in_layout) {
 
-					AbstractLayout* root_layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
-					while(root_layout->in_layout()) {
-						root_layout = dynamic_cast<AbstractLayout*>(root_layout->parent()->object.drawable);
-						if(!root_layout) break;
-					}
+				const ItemData* item = static_cast<const ItemData*>(property);
 
-					if(root_layout) {
-						root_layout->refresh();
-					}
-
-				} else {
-					generate_default_layout();
+				if (item->action) {	// Add item
+					add_item(item->object);
+				} else { // remove item
 				}
 
 				return true;
 			}
 
 			default:
-				break;
+				return AbstractLayout::update(type, property);
 		}
-
-		return true;
 	}
 
 	void HorizontalLayout::render ()
@@ -107,6 +87,29 @@ namespace BlendInt {
 		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_render_event(*it);
 		}
+
+#ifdef DEBUG
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(m_pos.x(), m_pos.y(), z());
+
+		glLineWidth(1);
+		glEnable(GL_LINE_STIPPLE);
+
+		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+		glLineStipple(1, 0xAAAA);
+		glBegin(GL_LINE_LOOP);
+		glVertex2i(0, 0);
+		glVertex2i(m_size.width(), 0);
+		glVertex2i(m_size.width(), m_size.height());
+		glVertex2i(0, m_size.height());
+		glEnd();
+
+		glDisable(GL_LINE_STIPPLE);
+
+		glPopMatrix();
+#endif
 	}
 
 	void HorizontalLayout::press_key (KeyEvent* event)
@@ -250,7 +253,7 @@ namespace BlendInt {
 			max_widget_height = std::max(max_widget_height,
 			        child->size().height());
 
-			if(i != (m_items.size() - 1))
+			if (i != (m_items.size() - 1))
 				total_width += m_space;
 		}
 		total_width = total_width + m_margin.right();
@@ -292,28 +295,84 @@ namespace BlendInt {
 		Drawable* child;
 		minimal_size.set_width(m_margin.left());
 
-		for(size_t i = 0; i < m_items.size(); i++)
-		{
+		for (size_t i = 0; i < m_items.size(); i++) {
 			child = m_items[i];
-			if(child->expand_x()) {
+			if (child->expand_x()) {
 				minimal_size.add_width(child->minimal_size().width());
 			} else {
 				minimal_size.add_width(child->size().width());
 			}
 
-			if(child->expand_y()) {
-				minimal_size.set_height(std::max(minimal_size.height(), child->minimal_size().height()));
+			if (child->expand_y()) {
+				minimal_size.set_height(
+				        std::max(minimal_size.height(),
+				                child->minimal_size().height()));
 			} else {
-				minimal_size.set_height(std::max(minimal_size.height(), child->size().height()));
+				minimal_size.set_height(
+				        std::max(minimal_size.height(),
+				                child->size().height()));
 			}
 
-			if(i != (m_items.size() - 1))
+			if (i != (m_items.size() - 1))
 				minimal_size.add_width(m_space);
 		}
 		minimal_size.add_width(m_margin.right());
 		minimal_size.add_height(m_margin.top() + m_margin.bottom());
 
 		return minimal_size;
+	}
+
+	void HorizontalLayout::add_item (Drawable* object)
+	{
+		unsigned int inner_width = m_size.width() - m_margin.left()
+		        - m_margin.right();
+		unsigned int inner_height = m_size.height() - m_margin.top()
+		        - m_margin.bottom();
+
+		inner_width = inner_width + object->size().width();
+		inner_height = std::max(object->size().height(), inner_height);
+
+		if (m_items.size() == 0)
+			set_pos_priv(object, m_pos.x() + m_margin.left(),
+			        m_pos.y() + m_margin.bottom());
+		else
+			set_pos_priv(object,
+			        m_pos.x() + m_size.width() - m_margin.right() + m_space,
+			        m_pos.y() + m_margin.bottom());
+
+		if (m_items.size() == 0)
+			m_size.set_width(m_margin.left() + inner_width + m_margin.right());
+		else
+			m_size.set_width(
+			        m_margin.left() + inner_width + m_space + m_margin.right());
+
+		m_size.set_height(m_margin.top() + inner_height + m_margin.bottom());
+
+		m_items.push_back(object);
+		bind(object);
+
+		align_along_x(inner_height);
+	}
+
+	void HorizontalLayout::align_along_x (unsigned int height)
+	{
+		Drawable* child = 0;
+		std::vector<Drawable*>::iterator it;
+
+		for (it = m_items.begin(); it != m_items.end(); it++) {
+			child = *it;
+			if (m_alignment & AlignTop) {
+				set_pos_priv(child, child->pos().x(),
+						m_pos.y() + m_margin.bottom() + (height - child->size().height()));
+			} else if (m_alignment & AlignBottom) {
+//				set_pos_priv(child, child->pos().x(),
+//						child->pos().y() + m_margin.bottom());
+			} else if (m_alignment & AlignHorizontalCenter) {
+				set_pos_priv(child, child->pos().x(),
+						m_pos.y() + m_margin.bottom()
+				                + (height - child->size().height()) / 2);
+			}
+		}
 	}
 
 }

@@ -54,9 +54,7 @@ namespace BlendInt {
 
 		virtual ~AbstractLayout ();
 
-		void add (Widget* widget);
-
-		void add (AbstractLayout* layout);
+		void add (Drawable* widget);
 
 		void refresh ();
 
@@ -94,9 +92,19 @@ namespace BlendInt {
 
 	protected:
 
+		enum ItemAction {
+			Remove = 0,
+			Add
+		};
+
+		struct ItemData {
+			ItemAction action;
+			Drawable* object;
+		};
+
 		virtual void render () = 0;
 
-		virtual bool update (int type, const void* property) {return false;}
+		virtual bool update (int type, const void* property);
 
 		int m_alignment;
 

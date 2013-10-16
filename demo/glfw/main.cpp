@@ -37,6 +37,9 @@ public:
 	: i(0)
 	{
 		m_layout.set_pos(300, 300);
+		m_layout.set_margin(5, 5, 5, 5);
+		m_layout.set_space (5);
+//		m_layout.set_alignment(AlignLeft);
 	}
 
 	~DoEvent()
@@ -78,6 +81,12 @@ public:
 		if(i == 4)
 			button->set_text("Button4");
 
+		if(i == 5)
+			button->set_text("Button5");
+
+		if(i == 6)
+			button->set_text("Button6");
+
 		m_layout.add(button);
 
 		i++;
@@ -89,7 +98,7 @@ public:
 
 private:
 
-	VerticalLayout m_layout;
+	HorizontalLayout m_layout;
 
 	int i;
 
@@ -167,36 +176,6 @@ int main(int argc, char* argv[])
 	obj.connect(button);
 
 	app->bind(button);
-
-	Button* b1 = new Button;
-	b1->set_text("Button1");
-
-	Button* b2 = new Button;
-	b2->set_text("Button2");
-
-	Button* b3 = new Button;
-	b3->set_text("Button3");
-
-	Button* b4 = new Button;
-	b4->set_text("Button4");
-
-	Button* b5 = new Button;
-	b5->set_text("Button5");
-
-	HorizontalLayout* hl = new HorizontalLayout;
-	hl->set_pos(300, 500);
-	hl->add(b1);
-
-	HorizontalLayout* hl1 = new HorizontalLayout;
-	hl1->add(b2);
-	hl1->add(b3);
-
-	hl->add(hl1);
-
-	app->bind(hl);
-
-	hl1->add(b4);
-//	hl1->add(b5);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

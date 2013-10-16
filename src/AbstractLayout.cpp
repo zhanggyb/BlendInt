@@ -29,12 +29,16 @@ namespace BlendInt {
 			: Drawable(), m_alignment(0), m_space(1)
 	{
 		set_expand(true);
+		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
+		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::AbstractLayout (Drawable *parent)
 			: Drawable (parent), m_alignment(0), m_space(1)
 	{
 		set_expand(true);
+		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
+		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::~AbstractLayout ()
@@ -42,26 +46,17 @@ namespace BlendInt {
 		m_items.clear();
 	}
 
-	void AbstractLayout::add (Widget* widget)
+	void AbstractLayout::add (Drawable* object)
 	{
-		if(m_children.count(widget)) return;
+		if(m_children.count(object)) return;
 
-		m_items.push_back(widget);
-		bind (widget);
-		set_in_layout(widget, true);
+		set_in_layout(object, true);
 
-		update(LayoutPropertyItem, 0);
-	}
+		ItemData item;
+		item.action = Add;
+		item.object = object;
 
-	void AbstractLayout::add (AbstractLayout* layout)
-	{
-		if(m_children.count(layout)) return;
-
-		m_items.push_back(layout);
-		bind (layout);
-		set_in_layout(layout, true);
-
-		update(LayoutPropertyItem, 0);
+		if(update(LayoutPropertyItem, &item)) set_in_layout(object, true);
 	}
 
 	void AbstractLayout::refresh ()
@@ -88,8 +83,11 @@ namespace BlendInt {
 			}
 		}
 
-		// TODO: not use update()
-		update(LayoutPropertyItem, 0);
+		ItemData item;
+		item.action = Remove;
+		item.object = object;
+
+		update(LayoutPropertyItem, &item);
 
 		return true;
 	}
@@ -111,10 +109,49 @@ namespace BlendInt {
 			}
 		}
 
+		ItemData item;
+		item.action = Remove;
+		item.object = object;
+
+		update(LayoutPropertyItem, &item);
+
 		delete object;
 
-		// TODO: not use update()
-		update(LayoutPropertyItem, 0);
+		return true;
+	}
+
+	bool AbstractLayout::update(int type, const void* property)
+	{
+		switch (type) {
+
+			case BasicPropertyPosition: {
+				const Point* new_pos = static_cast<const Point*>(property);
+
+				for (size_t i = 0; i < m_items.size(); i++)
+				{
+					set_pos_priv(m_items[i], m_items[i]->pos().x() + (new_pos->x() - m_pos.x()),
+							m_items[i]->pos().y() + (new_pos->y() - m_pos.y()));
+				}
+				return true;
+			}
+
+			case BasicPropertySize: {
+				// always return true in Base Layout
+				return true;
+			}
+
+			case LayoutPropertyMargin: {
+				const Margin* new_margin = static_cast<const Margin*>(property);
+
+				m_size.add_width(new_margin->left() - m_margin.left() + new_margin->right() - m_margin.right());
+				m_size.add_height(new_margin->top() - m_margin.top() + new_margin->bottom() - m_margin.bottom());
+
+				return true;
+			}
+
+			default:
+				break;
+		}
 
 		return true;
 	}

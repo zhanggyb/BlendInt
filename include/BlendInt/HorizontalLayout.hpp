@@ -65,6 +65,10 @@ namespace BlendInt {
 		void generate_default_layout ();
 
 		Size get_minimal_size ();
+
+		void add_item (Drawable* object);
+
+		void align_along_x (unsigned int height);
 	};
 
 }

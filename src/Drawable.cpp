@@ -268,6 +268,28 @@ namespace BlendInt {
 		if (update(BasicPropertySize, &new_size)) m_size = new_size;
 	}
 
+	void Drawable::set_minimal_size(const Size& size)
+	{
+		// If the object is managed by a layout, disallow position setting
+		if(m_in_layout) return;
+
+		if (m_minimal_size.equal(size)) return;
+
+		Size new_min_size(size);
+		if (update(BasicPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
+	}
+
+	void Drawable::set_minimal_size(int w, int h)
+	{
+		// If the object is managed by a layout, disallow position setting
+		if(m_in_layout) return;
+
+		if (m_minimal_size.equal(w, h)) return;
+
+		Size new_min_size(w, h);
+		if (update(BasicPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
+	}
+
 	const Point& Drawable::pos () const
 	{
 		return m_pos;

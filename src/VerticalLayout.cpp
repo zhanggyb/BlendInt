@@ -52,16 +52,6 @@ namespace BlendInt {
 	bool VerticalLayout::update (int type, const void* property)
 	{
 		switch (type) {
-			case BasicPropertyPosition: {
-				const Point* new_pos = static_cast<const Point*>(property);
-
-				for (size_t i = 0; i < m_items.size(); i++)
-				{
-					set_pos_priv(m_items[i], m_items[i]->pos().x() + (new_pos->x() - m_pos.x()),
-							m_items[i]->pos().y() + (new_pos->y() - m_pos.y()));
-				}
-				return true;
-			}
 
 			case BasicPropertySize: {
 				if(expand_y()) {
@@ -74,29 +64,19 @@ namespace BlendInt {
 			}
 
 			case LayoutPropertyItem: {
-				if(m_in_layout) {
+				const ItemData* item = static_cast<const ItemData*>(property);
 
-					AbstractLayout* root_layout = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
-					while(root_layout->in_layout()) {
-						root_layout = dynamic_cast<AbstractLayout*>(root_layout->parent()->object.drawable);
-						if(!root_layout) break;
-					}
-
-					if(root_layout) {
-						root_layout->refresh();
-					}
-
-				} else {
-					generate_default_layout();
+				if (item->action) {	// Add item
+					add_item(item->object);
+				} else { // remove item
 				}
+
 				return true;
 			}
 
 			default:
-				break;
+				return AbstractLayout::update(type, property);
 		}
-
-		return true;
 	}
 
 	void VerticalLayout::render ()
@@ -110,6 +90,29 @@ namespace BlendInt {
 				Interface::instance()->dispatch_render_event(item);
 			}
 		}
+
+#ifdef DEBUG
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(m_pos.x(), m_pos.y(), z());
+
+		glLineWidth(1);
+		glEnable(GL_LINE_STIPPLE);
+
+		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+		glLineStipple(1, 0xAAAA);
+		glBegin(GL_LINE_LOOP);
+		glVertex2i(0, 0);
+		glVertex2i(m_size.width(), 0);
+		glVertex2i(m_size.width(), m_size.height());
+		glVertex2i(0, m_size.height());
+		glEnd();
+
+		glDisable(GL_LINE_STIPPLE);
+
+		glPopMatrix();
+#endif
 	}
 
 	void VerticalLayout::press_key (KeyEvent* event)
@@ -315,4 +318,67 @@ namespace BlendInt {
 		return minimal_size;
 	}
 
+	void VerticalLayout::add_item (Drawable* object)
+	{
+		unsigned int inner_width = m_size.width() - m_margin.left()
+		        - m_margin.right();
+		unsigned int inner_height = m_size.height() - m_margin.top()
+		        - m_margin.bottom();
+
+		inner_width = std::max(inner_width, object->size().width());
+		inner_height = inner_height + object->size().height();
+
+		if (m_items.size() == 0)
+			set_pos_priv(object, m_pos.x() + m_margin.left(),
+			        m_pos.y() + m_margin.bottom());
+		else
+			set_pos_priv(object,
+			        m_pos.x() + m_margin.left(),
+			        m_pos.y() - (object->size().height() + m_space));
+
+		if (m_items.size() == 0)
+			m_size.set_height(m_margin.top() + inner_height + m_margin.bottom());
+		else
+			m_size.set_height(
+			        m_margin.top() + inner_height + m_space + m_margin.bottom());
+
+		m_size.set_width(m_margin.left() + inner_width + m_margin.right());
+
+		m_items.push_back(object);
+		bind(object);
+
+		align_along_y(inner_width);
+	}
+
+	void VerticalLayout::align_along_y (unsigned int width)
+	{
+		Drawable* child = 0;
+		std::vector<Drawable*>::iterator it;
+
+		int y = m_pos.y() + m_size.height() - m_margin.top();
+		for (it = m_items.begin(); it != m_items.end(); it++) {
+			child = *it;
+
+			if(it == m_items.begin())
+				y = y - child->size().height();
+			else
+				y = y - child->size().height() - m_space;
+
+			if (m_alignment & AlignLeft) {
+				set_pos_priv(child, m_pos.x() + m_margin.left(),
+						y);
+			} else if (m_alignment & AlignRight) {
+				set_pos_priv(child,
+						m_pos.x() + m_margin.left()
+						+ (width
+								- child->size().width()),
+										y);
+			} else if (m_alignment & AlignVerticalCenter) {
+				set_pos_priv(child,
+						m_pos.x() + m_margin.left()
+						+ (width - child->size().width()) / 2,
+						y);
+			}
+		}
+	}
 }
