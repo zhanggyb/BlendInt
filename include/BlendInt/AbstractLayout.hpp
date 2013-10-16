@@ -90,6 +90,8 @@ namespace BlendInt {
 
 		int space () const {return m_space;}
 
+		AbstractLayout* root_layout ();
+
 	protected:
 
 		enum ItemAction {
@@ -105,6 +107,12 @@ namespace BlendInt {
 		virtual void render () = 0;
 
 		virtual bool update (int type, const void* property);
+
+		/**
+		 * @brief scan all child object to get the total size
+		 * @return
+		 */
+		virtual Size calculate_size () = 0;
 
 		int m_alignment;
 

@@ -36,10 +36,16 @@ public:
 	DoEvent()
 	: i(0)
 	{
-		m_layout.set_pos(300, 300);
-		m_layout.set_margin(5, 5, 5, 5);
-		m_layout.set_space (5);
+		m_hlayout.set_pos(300, 400);
+//		m_hlayout.set_margin(5, 5, 5, 5);
+		m_hlayout.set_space (2);
 //		m_layout.set_alignment(AlignLeft);
+
+		m_vlayout = new VerticalLayout;
+		m_vlayout->set_space (2);
+
+		m_hlayout.add(m_vlayout);
+
 	}
 
 	~DoEvent()
@@ -54,40 +60,68 @@ public:
 
 	void bind()
 	{
-		interface()->bind(&m_layout);
+		interface()->bind(&m_hlayout);
 	}
 
 	void unbind()
 	{
-		interface()->unbind(&m_layout);
+		interface()->unbind(&m_hlayout);
 	}
 
 	void add_button()
 	{
 		Button* button = new Button;
 
-		if(i == 0)
+		switch (i) {
+
+		case 0: {
 			button->set_text("Button0");
+			m_hlayout.add(button);
+			break;
+		}
 
-		if(i == 1)
+		case 1: {
 			button->set_text("Button1");
+			m_hlayout.add(button);
+			break;
+		}
 
-		if(i == 2)
+		case 2: {
 			button->set_text("Button2");
+			m_vlayout->add(button);
+//			m_hlayout.add(m_vlayout);
+			break;
+		}
 
-		if(i == 3)
+		case 3: {
 			button->set_text("Button3");
+			m_vlayout->add(button);
+			break;
 
-		if(i == 4)
+		}
+
+		case 4: {
 			button->set_text("Button4");
+			m_vlayout->add(button);
+			break;
+		}
 
-		if(i == 5)
+		case 5: {
 			button->set_text("Button5");
+			m_hlayout.add(button);
+			break;
+		}
 
-		if(i == 6)
+		case 6: {
 			button->set_text("Button6");
+			m_hlayout.add(button);
+			break;
+		}
 
-		m_layout.add(button);
+		default:
+			m_hlayout.add(button);
+			break;
+		}
 
 		i++;
 	}
@@ -98,7 +132,9 @@ public:
 
 private:
 
-	HorizontalLayout m_layout;
+	VerticalLayout *m_vlayout;
+
+	HorizontalLayout m_hlayout;
 
 	int i;
 
@@ -171,7 +207,7 @@ int main(int argc, char* argv[])
 
 	Button* button = new Button;
 	button->set_text("Add Button");
-	button->set_pos(400, 400);
+	button->set_pos(450, 600);
 
 	obj.connect(button);
 
@@ -181,6 +217,7 @@ int main(int argc, char* argv[])
 	Button* b2 = new Button;
 
 	HorizontalLayout* h1 = new HorizontalLayout;
+	h1->set_name("hlayout");
 
 	h1->add(b1);
 	h1->add(b2);
@@ -189,6 +226,7 @@ int main(int argc, char* argv[])
 	Button* b4 = new Button;
 
 	VerticalLayout* v1 = new VerticalLayout;
+	v1->set_name("vlayout");
 	v1->add(b3);
 	v1->add(b4);
 
@@ -196,13 +234,22 @@ int main(int argc, char* argv[])
 //	h2->add(b3);
 //	h2->add(b4);
 
-	v1->add(h1);
+	h1->add(v1);
 
-	v1->set_pos(500, 200);
+	h1->set_pos(500, 200);
 
 //	v1->resize(200, 60);
 
-	app->bind(v1);
+	app->bind(h1);
+
+	Button* b5 = new Button;
+//
+	v1->add(b5);
+//
+//	Button* b6 = new Button;
+//
+//	v1->add(b6);
+
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

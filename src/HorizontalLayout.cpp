@@ -327,21 +327,23 @@ namespace BlendInt {
 		inner_width = inner_width + object->size().width();
 		inner_height = std::max(object->size().height(), inner_height);
 
-		if (m_items.size() == 0)
+		if (m_items.size() == 0) {
 			set_pos_priv(object, m_pos.x() + m_margin.left(),
 			        m_pos.y() + m_margin.bottom());
-		else
+			m_size.set_width(m_margin.left() + inner_width + m_margin.right());
+
+			m_minimal_size.add_width(object->minimal_size().width());
+		}	else {
 			set_pos_priv(object,
 			        m_pos.x() + m_size.width() - m_margin.right() + m_space,
 			        m_pos.y() + m_margin.bottom());
-
-		if (m_items.size() == 0)
-			m_size.set_width(m_margin.left() + inner_width + m_margin.right());
-		else
 			m_size.set_width(
 			        m_margin.left() + inner_width + m_space + m_margin.right());
+			m_minimal_size.add_width(object->minimal_size().width() + m_space);
+		}
 
 		m_size.set_height(m_margin.top() + inner_height + m_margin.bottom());
+		m_minimal_size.set_height(std::max(m_minimal_size.height(), object->minimal_size().height()));
 
 		m_items.push_back(object);
 		bind(object);
@@ -353,6 +355,10 @@ namespace BlendInt {
 			set_expand_y(object->expand_y());
 
 		align_along_x(inner_height);
+
+		if(m_in_layout) {
+			dynamic_cast<AbstractLayout*>(m_parent.object.drawable)->refresh();
+		}
 	}
 
 	void HorizontalLayout::align_along_x (unsigned int height)
@@ -381,6 +387,24 @@ namespace BlendInt {
 			}
 		}
 
+	}
+
+	Size HorizontalLayout::calculate_size()
+	{
+		Size size;
+
+		std::vector<Drawable*>::iterator it;
+
+		for(it = m_items.begin(); it != m_items.end(); it++)
+		{
+			size.add_width((*it)->size().width());
+			size.set_height(std::max((*it)->size().height(), size.height()));
+		}
+
+		size.add_width(m_space * (m_items.size() - 1) + m_margin.left() + m_margin.right());
+		size.add_height(m_margin.top() + m_margin.bottom());
+
+		return size;
 	}
 
 }

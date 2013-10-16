@@ -59,9 +59,13 @@ namespace BlendInt {
 
 	void AbstractLayout::refresh ()
 	{
-		Size size = m_size;
+		Size size = calculate_size();
 
-		update(BasicPropertySize, &size);
+		if (update(BasicPropertySize, &size)) m_size = size;
+
+		if(m_in_layout) {
+			dynamic_cast<AbstractLayout*>(m_parent.object.drawable)->refresh();
+		}
 	}
 
 	bool AbstractLayout::remove (Drawable* object)
@@ -140,9 +144,12 @@ namespace BlendInt {
 
 			case LayoutPropertyMargin: {
 				const Margin* new_margin = static_cast<const Margin*>(property);
-
-				m_size.add_width(new_margin->left() - m_margin.left() + new_margin->right() - m_margin.right());
-				m_size.add_height(new_margin->top() - m_margin.top() + new_margin->bottom() - m_margin.bottom());
+				int w = new_margin->left() - m_margin.left() + new_margin->right() - m_margin.right();
+				int h = new_margin->top() - m_margin.top() + new_margin->bottom() - m_margin.bottom();
+				m_size.add_width(w);
+				m_size.add_height(h);
+				m_minimal_size.add_width(w);
+				m_minimal_size.add_height(h);
 
 				return true;
 			}
@@ -166,6 +173,21 @@ namespace BlendInt {
 		Margin new_value (left, right, top, bottom);
 
 		if(update(LayoutPropertyMargin, &new_value)) m_margin = new_value;
+	}
+
+	AbstractLayout* AbstractLayout::root_layout ()
+	{
+		AbstractLayout* root = 0;
+
+		if(m_in_layout) {
+			root = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
+			while(root->in_layout()) {
+				root = dynamic_cast<AbstractLayout*>(root->parent()->object.drawable);
+				if(!root) break;
+			}
+		}
+
+		return root;
 	}
 
 } /* namespace BlendInt */

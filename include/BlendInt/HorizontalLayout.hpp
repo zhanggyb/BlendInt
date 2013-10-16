@@ -58,6 +58,7 @@ namespace BlendInt {
 
 		virtual void move_mouse (MouseEvent* event);
 
+
 	private:
 
 		void change_layout (const Size* size);
@@ -67,6 +68,8 @@ namespace BlendInt {
 		Size get_minimal_size ();
 
 		void add_item (Drawable* object);
+
+		virtual Size calculate_size ();
 
 		/**
 		 *@align the objects in the layout according to the alignment
