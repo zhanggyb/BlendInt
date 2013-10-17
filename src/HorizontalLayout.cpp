@@ -66,6 +66,7 @@ namespace BlendInt {
 				if (item->action) {	// Add item
 					add_item(item->object);
 				} else { // remove item
+					remove_item(item->object);
 				}
 
 				return true;
@@ -292,26 +293,12 @@ namespace BlendInt {
 
 		for (size_t i = 0; i < m_items.size(); i++) {
 			child = m_items[i];
-			if (child->expand_x()) {
-				minimal_size.add_width(child->minimal_size().width());
-			} else {
-				minimal_size.add_width(child->size().width());
-			}
-
-			if (child->expand_y()) {
-				minimal_size.set_height(
+			minimal_size.add_width(child->minimal_size().width());
+			minimal_size.set_height(
 				        std::max(minimal_size.height(),
 				                child->minimal_size().height()));
-			} else {
-				minimal_size.set_height(
-				        std::max(minimal_size.height(),
-				                child->size().height()));
-			}
-
-			if (i != (m_items.size() - 1))
-				minimal_size.add_width(m_space);
 		}
-		minimal_size.add_width(m_margin.right());
+		minimal_size.add_width((m_items.size() - 1) * m_space + m_margin.right());
 		minimal_size.add_height(m_margin.top() + m_margin.bottom());
 
 		return minimal_size;
@@ -346,7 +333,6 @@ namespace BlendInt {
 		m_minimal_size.set_height(std::max(m_minimal_size.height(), object->minimal_size().height()));
 
 		m_items.push_back(object);
-		bind(object);
 
 		if(!expand_x())
 			set_expand_x(object->expand_x());
@@ -354,11 +340,29 @@ namespace BlendInt {
 		if(!expand_y())
 			set_expand_y(object->expand_y());
 
-		align_along_x(inner_height);
+		align_along_x(inner_height);	// TODO: no need to pass inner_height
 
 		if(m_in_layout) {
 			dynamic_cast<AbstractLayout*>(m_parent.object.drawable)->refresh();
 		}
+	}
+
+	void HorizontalLayout::remove_item (Drawable* object)
+	{
+		std::vector<Drawable*>::iterator it;
+		for(it = m_items.begin(); it != m_items.end();)
+		{
+			if ((*it) == object) {
+				it = m_items.erase(it);
+			} else {
+				it++;
+			}
+		}
+
+		m_minimal_size = get_minimal_size();
+		m_size = recount_size();
+
+		align_along_x(m_size.height() - m_margin.top() - m_margin.bottom());
 	}
 
 	void HorizontalLayout::align_along_x (unsigned int height)
@@ -389,7 +393,7 @@ namespace BlendInt {
 
 	}
 
-	Size HorizontalLayout::calculate_size()
+	Size HorizontalLayout::recount_size()
 	{
 		Size size;
 

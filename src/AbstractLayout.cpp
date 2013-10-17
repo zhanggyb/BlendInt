@@ -26,14 +26,14 @@
 namespace BlendInt {
 
 	AbstractLayout::AbstractLayout ()
-			: Drawable(), m_alignment(0), m_space(1)
+			: Drawable(), m_alignment(0), m_space(1), m_fixed_size(false)
 	{
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::AbstractLayout (Drawable *parent)
-			: Drawable (parent), m_alignment(0), m_space(1)
+			: Drawable (parent), m_alignment(0), m_space(1), m_fixed_size(false)
 	{
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
@@ -48,20 +48,27 @@ namespace BlendInt {
 	{
 		if(m_children.count(object)) return;
 
-		set_in_layout(object, true);
-
 		ItemData item;
 		item.action = Add;
 		item.object = object;
 
-		if(update(LayoutPropertyItem, &item)) set_in_layout(object, true);
+		if(update(LayoutPropertyItem, &item)) {
+			bind(object);
+			set_in_layout(object, true);
+		}
 	}
 
 	void AbstractLayout::refresh ()
 	{
-		Size size = calculate_size();
+		Size size;
 
-		if (update(BasicPropertySize, &size)) m_size = size;
+		if(m_fixed_size) {
+			size = m_size;
+			update(BasicPropertySize, &size);
+		} else {
+			size = recount_size();
+			if (update(BasicPropertySize, &size)) m_size = size;
+		}
 
 		if(m_in_layout) {
 			dynamic_cast<AbstractLayout*>(m_parent.object.drawable)->refresh();
@@ -72,24 +79,14 @@ namespace BlendInt {
 	{
 		if (!m_children.count(object)) return false;
 
-		m_children.erase(object);
-
-		unbind(object);
-		set_in_layout(object, false);
-
-		std::vector<Drawable*>::iterator it;
-		for(it = m_items.begin(); it != m_items.end(); it++)
-		{
-			if (*it == object) {
-				it = m_items.erase(it);
-			}
-		}
-
 		ItemData item;
 		item.action = Remove;
 		item.object = object;
 
-		update(LayoutPropertyItem, &item);
+		if(update(LayoutPropertyItem, &item)) {
+			set_in_layout(object, false);
+			unbind(object);
+		}
 
 		return true;
 	}
@@ -98,25 +95,14 @@ namespace BlendInt {
 	{
 		if (!m_children.count(object)) return false;
 
-		m_children.erase(object);
-
-		unbind(object);
-		set_in_layout(object, false);
-
-		std::vector<Drawable*>::iterator it;
-		for(it = m_items.begin(); it != m_items.end(); it++)
-		{
-			if (*it == object) {
-				it = m_items.erase(it);
-			}
-		}
-
 		ItemData item;
 		item.action = Remove;
 		item.object = object;
 
-		update(LayoutPropertyItem, &item);
-
+		if(update(LayoutPropertyItem, &item)) {
+			set_in_layout(object, false);
+			unbind(object);
+	}
 		delete object;
 
 		return true;

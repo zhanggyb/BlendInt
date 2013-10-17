@@ -28,6 +28,7 @@
 #include <BlendInt/VertexIcon.hpp>
 
 using namespace BlendInt;
+using namespace std;
 
 class DoEvent
 {
@@ -38,13 +39,13 @@ public:
 	{
 		m_hlayout.set_pos(300, 400);
 //		m_hlayout.set_margin(5, 5, 5, 5);
-		m_hlayout.set_space (2);
+//		m_hlayout.set_space (2);
 //		m_layout.set_alignment(AlignLeft);
 
-		m_vlayout = new VerticalLayout;
-		m_vlayout->set_space (2);
+//		m_vlayout = new VerticalLayout;
+//		m_vlayout->set_space (2);
 
-		m_hlayout.add(m_vlayout);
+//		m_hlayout.add(m_vlayout);
 
 	}
 
@@ -53,9 +54,14 @@ public:
 
 	}
 
-	void connect(Button* button)
+	void connect_add(Button* button)
 	{
 		m_events.connect(button->clicked(), this, &DoEvent::add_button);
+	}
+
+	void connect_remove(Button* button)
+	{
+		m_events.connect(button->clicked(), this, &DoEvent::remove_button);
 	}
 
 	void bind()
@@ -72,69 +78,30 @@ public:
 	{
 		Button* button = new Button;
 
-		switch (i) {
+		char str[20];
+		sprintf(str, "%s%u", "button", static_cast<unsigned int>(m_buttons.size()));
 
-		case 0: {
-			button->set_text("Button0");
-			m_hlayout.add(button);
-			break;
-		}
+		button->set_text(str);
+		button->set_name(str);
 
-		case 1: {
-			button->set_text("Button1");
-			m_hlayout.add(button);
-			break;
-		}
-
-		case 2: {
-			button->set_text("Button2");
-			m_vlayout->add(button);
-//			m_hlayout.add(m_vlayout);
-			break;
-		}
-
-		case 3: {
-			button->set_text("Button3");
-			m_vlayout->add(button);
-			break;
-
-		}
-
-		case 4: {
-			button->set_text("Button4");
-			m_vlayout->add(button);
-			break;
-		}
-
-		case 5: {
-			button->set_text("Button5");
-			m_hlayout.add(button);
-			break;
-		}
-
-		case 6: {
-			button->set_text("Button6");
-			m_hlayout.add(button);
-			break;
-		}
-
-		default:
-			m_hlayout.add(button);
-			break;
-		}
-
-		i++;
+		m_hlayout.add(button);
+		m_buttons.push_back(button);
 	}
 
 	void remove_button()
 	{
+		Button* button = m_buttons[m_buttons.size() - 1];
+		m_hlayout.erase(button);
+		m_buttons.pop_back();
 	}
 
 private:
 
-	VerticalLayout *m_vlayout;
+//	VerticalLayout *m_vlayout;
 
 	HorizontalLayout m_hlayout;
+
+	std::vector<Button*> m_buttons;
 
 	int i;
 
@@ -205,13 +172,20 @@ int main(int argc, char* argv[])
 
 	obj.bind();
 
-	Button* button = new Button;
-	button->set_text("Add Button");
-	button->set_pos(450, 600);
+	Button* add_button = new Button;
+	add_button->set_text("Add Button");
+	add_button->set_pos(450, 600);
 
-	obj.connect(button);
+	obj.connect_add(add_button);
 
-	app->bind(button);
+	Button* remove_button = new Button;
+	remove_button->set_text("Remove Button");
+	remove_button->set_pos(550, 600);
+
+	obj.connect_remove(remove_button);
+
+	app->bind(add_button);
+	app->bind(remove_button);
 
 	Button* b1 = new Button;
 	Button* b2 = new Button;

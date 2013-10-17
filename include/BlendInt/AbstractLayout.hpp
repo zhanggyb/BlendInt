@@ -90,6 +90,13 @@ namespace BlendInt {
 
 		int space () const {return m_space;}
 
+		bool fixed_size () const {return m_fixed_size;}
+
+		void set_fixed_size (bool fixed)
+		{
+			m_fixed_size = fixed;
+		}
+
 		AbstractLayout* root_layout ();
 
 	protected:
@@ -112,11 +119,19 @@ namespace BlendInt {
 		 * @brief scan all child object to get the total size
 		 * @return
 		 */
-		virtual Size calculate_size () = 0;
+		virtual Size recount_size () = 0;
 
 		int m_alignment;
 
 		int m_space;
+
+		/**
+		 * @brief a boolean value to enable/disable size change when add/removing child item
+		 *
+		 * This property is mostly used when this layout is the root layout in a widget
+		 * But the size can still be changes with resize()
+		 */
+		bool m_fixed_size;
 
 		Margin m_margin;
 

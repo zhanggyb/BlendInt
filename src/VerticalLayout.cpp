@@ -388,7 +388,7 @@ namespace BlendInt {
 		}
 	}
 
-	Size VerticalLayout::calculate_size()
+	Size VerticalLayout::recount_size()
 	{
 		Size size;
 

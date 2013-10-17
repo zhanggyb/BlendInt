@@ -69,7 +69,9 @@ namespace BlendInt {
 
 		void add_item (Drawable* object);
 
-		virtual Size calculate_size ();
+		void remove_item (Drawable* object);
+
+		virtual Size recount_size ();
 
 		/**
 		 *@align the objects in the layout according to the alignment
