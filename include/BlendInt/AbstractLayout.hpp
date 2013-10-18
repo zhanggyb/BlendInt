@@ -90,11 +90,11 @@ namespace BlendInt {
 
 		int space () const {return m_space;}
 
-		bool fixed_size () const {return m_fixed_size;}
+		bool beset () const {return m_beset;}
 
-		void set_fixed_size (bool fixed)
+		void set_beset (bool beset)
 		{
-			m_fixed_size = fixed;
+			m_beset = beset;
 		}
 
 		AbstractLayout* root_layout ();
@@ -131,7 +131,7 @@ namespace BlendInt {
 		 * This property is mostly used when this layout is the root layout in a widget
 		 * But the size can still be changes with resize()
 		 */
-		bool m_fixed_size;
+		bool m_beset;
 
 		Margin m_margin;
 

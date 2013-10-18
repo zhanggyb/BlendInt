@@ -334,12 +334,6 @@ namespace BlendInt {
 
 		m_items.push_back(object);
 
-		if(!expand_x())
-			set_expand_x(object->expand_x());
-
-		if(!expand_y())
-			set_expand_y(object->expand_y());
-
 		align_along_x(inner_height);	// TODO: no need to pass inner_height
 
 		if(m_in_layout) {
@@ -370,6 +364,9 @@ namespace BlendInt {
 		Drawable* child = 0;
 		std::vector<Drawable*>::iterator it;
 
+		m_expand_x = false;
+		m_expand_y = false;
+
 		for (it = m_items.begin(); it != m_items.end(); it++) {
 			child = *it;
 
@@ -389,6 +386,16 @@ namespace BlendInt {
 				        m_pos.y() + m_margin.bottom()
 				                + (height - child->size().height()) / 2);
 			}
+
+			// check expand property
+			if(!m_expand_x) {
+				m_expand_x = child->expand_x() ? true: false;
+			}
+
+			if(!m_expand_y) {
+				m_expand_y = child->expand_y() ? true: false;
+			}
+
 		}
 
 	}

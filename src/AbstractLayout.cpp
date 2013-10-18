@@ -26,14 +26,14 @@
 namespace BlendInt {
 
 	AbstractLayout::AbstractLayout ()
-			: Drawable(), m_alignment(0), m_space(1), m_fixed_size(false)
+			: Drawable(), m_alignment(0), m_space(1), m_beset(false)
 	{
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::AbstractLayout (Drawable *parent)
-			: Drawable (parent), m_alignment(0), m_space(1), m_fixed_size(false)
+			: Drawable (parent), m_alignment(0), m_space(1), m_beset(false)
 	{
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
@@ -62,7 +62,7 @@ namespace BlendInt {
 	{
 		Size size;
 
-		if(m_fixed_size) {
+		if(m_beset) {
 			size = m_size;
 			update(BasicPropertySize, &size);
 		} else {
