@@ -306,38 +306,62 @@ namespace BlendInt {
 
 	void HorizontalLayout::add_item (Drawable* object)
 	{
-		unsigned int inner_width = m_size.width() - m_margin.left()
-		        - m_margin.right();
-		unsigned int inner_height = m_size.height() - m_margin.top()
-		        - m_margin.bottom();
+		if (m_sizing_mode == LayoutFlow) {
+//			unsigned int inner_width = m_size.width() - m_margin.left()
+//			        - m_margin.right();
+//			unsigned int inner_height = m_size.height() - m_margin.top()
+//			        - m_margin.bottom();
+//
+//			inner_width = inner_width + object->size().width();
+//			inner_height = std::max(object->size().height(), inner_height);
+//
+//			if (m_items.size() == 0) {
+//				set_pos_priv(object, m_pos.x() + m_margin.left(),
+//				        m_pos.y() + m_margin.bottom());
+//				m_size.set_width(
+//				        m_margin.left() + inner_width + m_margin.right());
+//
+//				m_minimal_size.add_width(object->minimal_size().width());
+//			} else {
+//				set_pos_priv(object,
+//				        m_pos.x() + m_size.width() - m_margin.right() + m_space,
+//				        m_pos.y() + m_margin.bottom());
+//				m_size.set_width(
+//				        m_margin.left() + inner_width + m_space
+//				                + m_margin.right());
+//				m_minimal_size.add_width(
+//				        object->minimal_size().width() + m_space);
+//			}
+//
+//			m_size.set_height(
+//			        m_margin.top() + inner_height + m_margin.bottom());
+//			m_minimal_size.set_height(
+//			        std::max(m_minimal_size.height(),
+//			                object->minimal_size().height()));
+//
+//			m_items.push_back(object);
+//
+//			align_along_x(inner_height);// TODO: no need to pass inner_height
 
-		inner_width = inner_width + object->size().width();
-		inner_height = std::max(object->size().height(), inner_height);
+			m_items.push_back(object);
 
-		if (m_items.size() == 0) {
-			set_pos_priv(object, m_pos.x() + m_margin.left(),
-			        m_pos.y() + m_margin.bottom());
-			m_size.set_width(m_margin.left() + inner_width + m_margin.right());
+			Size size = recount_size();
 
-			m_minimal_size.add_width(object->minimal_size().width());
-		}	else {
-			set_pos_priv(object,
-			        m_pos.x() + m_size.width() - m_margin.right() + m_space,
-			        m_pos.y() + m_margin.bottom());
-			m_size.set_width(
-			        m_margin.left() + inner_width + m_space + m_margin.right());
-			m_minimal_size.add_width(object->minimal_size().width() + m_space);
-		}
+			if(size.width() < m_size.width()) size.set_width(m_size.width());
+			if(size.height() < m_size.height()) size.set_height(m_size.height());
 
-		m_size.set_height(m_margin.top() + inner_height + m_margin.bottom());
-		m_minimal_size.set_height(std::max(m_minimal_size.height(), object->minimal_size().height()));
+			change_layout(&size);
 
-		m_items.push_back(object);
+			if (!size.equal(m_size) && m_in_layout) {
+				dynamic_cast<AbstractLayout*>(m_parent.object.drawable)->refresh();
+			}
 
-		align_along_x(inner_height);	// TODO: no need to pass inner_height
+			m_size = size;
 
-		if(m_in_layout) {
-			dynamic_cast<AbstractLayout*>(m_parent.object.drawable)->refresh();
+		} else {	// LayoutFixed
+			m_items.push_back(object);
+			Size size = m_size;
+			change_layout(&size);
 		}
 	}
 

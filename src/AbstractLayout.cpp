@@ -26,14 +26,14 @@
 namespace BlendInt {
 
 	AbstractLayout::AbstractLayout ()
-			: Drawable(), m_alignment(0), m_space(1), m_beset(false)
+			: Drawable(), m_alignment(0), m_space(1), m_sizing_mode(LayoutFlow)
 	{
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::AbstractLayout (Drawable *parent)
-			: Drawable (parent), m_alignment(0), m_space(1), m_beset(false)
+			: Drawable (parent), m_alignment(0), m_space(1), m_sizing_mode(LayoutFlow)
 	{
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
@@ -44,7 +44,7 @@ namespace BlendInt {
 		m_items.clear();
 	}
 
-	void AbstractLayout::add (Drawable* object)
+	void AbstractLayout::add (Widget* object)
 	{
 		if(m_children.count(object)) return;
 
@@ -58,11 +58,26 @@ namespace BlendInt {
 		}
 	}
 
+	void AbstractLayout::add (AbstractLayout* object)
+	{
+		if(m_children.count(object)) return;
+
+		ItemData item;
+		item.action = Add;
+		item.object = object;
+
+		if(update(LayoutPropertyItem, &item)) {
+			bind(object);
+			set_in_layout(object, true);
+		}
+	}
+
+
 	void AbstractLayout::refresh ()
 	{
 		Size size;
 
-		if(m_beset) {
+		if(m_sizing_mode) {	// 1 == LayoutFixed
 			size = m_size;
 			update(BasicPropertySize, &size);
 		} else {

@@ -38,6 +38,8 @@ public:
 	: i(0)
 	{
 		m_hlayout.set_pos(300, 400);
+		m_hlayout.resize(400, 100);
+//		m_hlayout.set_sizing_mode(LayoutFixed);
 //		m_hlayout.set_margin(5, 5, 5, 5);
 //		m_hlayout.set_space (2);
 //		m_layout.set_alignment(AlignLeft);

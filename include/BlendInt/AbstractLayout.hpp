@@ -33,6 +33,17 @@
 
 namespace BlendInt {
 
+	/**
+	 * Sizing mode enumeration
+	 * Flow - the layout size is not restricted by the parent widget
+	 * Fixed - the layout size is fixed when add/remove its child
+	 */
+	enum LayoutSizingMode
+	{
+		LayoutFlow = 0,//!< LayoutFlow
+		LayoutFixed    //!< LayoutFixed
+	};
+
 	enum LayoutPropertyType
 	{
 		LayoutPropertyAlignment = BasicPropertyLast + 1,
@@ -54,7 +65,9 @@ namespace BlendInt {
 
 		virtual ~AbstractLayout ();
 
-		void add (Drawable* widget);
+		void add (Widget* widget);
+
+		void add (AbstractLayout* layout);
 
 		void refresh ();
 
@@ -90,11 +103,11 @@ namespace BlendInt {
 
 		int space () const {return m_space;}
 
-		bool beset () const {return m_beset;}
+		int sizing_mode () const {return m_sizing_mode;}
 
-		void set_beset (bool beset)
+		void set_sizing_mode (LayoutSizingMode mode)
 		{
-			m_beset = beset;
+			m_sizing_mode = mode;
 		}
 
 		AbstractLayout* root_layout ();
@@ -126,12 +139,12 @@ namespace BlendInt {
 		int m_space;
 
 		/**
-		 * @brief a boolean value to enable/disable size change when add/removing child item
+		 * @brief the sizing mode: flow or fixed
 		 *
 		 * This property is mostly used when this layout is the root layout in a widget
 		 * But the size can still be changes with resize()
 		 */
-		bool m_beset;
+		LayoutSizingMode m_sizing_mode;
 
 		Margin m_margin;
 
