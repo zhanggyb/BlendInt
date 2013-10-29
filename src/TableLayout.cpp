@@ -65,7 +65,7 @@ namespace BlendInt {
 		bind (widget);
 		set_in_layout(widget, true);
 
-		update(BasicPropertySize, 0);
+		update(FormPropertySize, 0);
 	}
 
 	void TableLayout::add_layout (AbstractLayout* layout, int row, int column,
@@ -86,7 +86,7 @@ namespace BlendInt {
 		bind (layout);
 		set_in_layout(layout, true);
 
-		update(BasicPropertySize, 0);
+		update(FormPropertySize, 0);
 	}
 
 	bool TableLayout::update (int type, const void* property)
@@ -97,7 +97,7 @@ namespace BlendInt {
 
 		} else {
 
-			if (type == BasicPropertySize) {
+			if (type == FormPropertySize) {
 
 				if (property) {
 

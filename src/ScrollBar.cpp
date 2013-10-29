@@ -54,10 +54,10 @@ namespace BlendInt {
 	{
 		switch(type)
 		{
-			case BasicPropertySize:
+			case FormPropertySize:
 				update_shape(static_cast<const Size*>(property));
 				break;
-			case BasicPropertyRoundCorner:
+			case FormPropertyRoundCorner:
 				break;
 			default:
 				break;
@@ -324,7 +324,7 @@ namespace BlendInt {
 
 	bool SliderBar::update(int type, const void* property)
 	{
-		if(type == BasicPropertySize) {
+		if(type == FormPropertySize) {
 			update_shape(static_cast<const Size*>(property));
 			return true;
 		}
@@ -520,13 +520,13 @@ namespace BlendInt {
 	{
 		switch (type) {
 
-			case BasicPropertyPosition: {
+			case FormPropertyPosition: {
 				const Point* new_pos = static_cast<const Point*>(property);
 				m_scroll_control->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
 				break;
 			}
 
-			case BasicPropertySize: {
+			case FormPropertySize: {
 				update_shape(static_cast<const Size*>(property));
 				break;
 			}

@@ -65,9 +65,15 @@ namespace BlendInt {
 
 		void generate_default_layout ();
 
-		bool get_size_hint (Size* min, Size* prefer);
-
-		Size get_minimal_size ();
+		/**
+		 * @brief scan the children and get the total size hint
+		 * @param[in] if count margin
+		 * @param[in] if count space
+		 * @param[out] size the layout size
+		 * @param[out] min the layout minimal size
+		 * @param[out] prefer the layout preferred size
+		 */
+		void get_size_hint (bool margin, bool space, Size* size, Size* min, Size* prefer);
 
 		void add_item (AbstractForm* object);
 

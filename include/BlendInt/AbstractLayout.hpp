@@ -46,11 +46,11 @@ namespace BlendInt {
 
 	enum LayoutPropertyType
 	{
-		LayoutPropertyAlignment = BasicPropertyLast + 1,
+		LayoutPropertyAlignment = FormPropertyLast + 1,
 		LayoutPropertySpace,
 		LayoutPropertyMargin,
 		LayoutPropertyItem,
-		LayoutPropertyLast = LayoutPropertyMargin
+		LayoutPropertyLast = LayoutPropertyItem
 	};
 
 	class AbstractLayout: public AbstractForm

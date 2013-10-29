@@ -79,10 +79,10 @@ namespace BlendInt {
 
 		if(m_sizing_mode) {	// 1 == LayoutFixed
 			size = m_size;
-			update(BasicPropertySize, &size);
+			update(FormPropertySize, &size);
 		} else {
 			size = recount_size();
-			if (update(BasicPropertySize, &size)) m_size = size;
+			if (update(FormPropertySize, &size)) m_size = size;
 		}
 
 		if(m_in_layout) {
@@ -127,7 +127,7 @@ namespace BlendInt {
 	{
 		switch (type) {
 
-			case BasicPropertyPosition: {
+			case FormPropertyPosition: {
 				const Point* new_pos = static_cast<const Point*>(property);
 
 				for (size_t i = 0; i < m_items.size(); i++)
@@ -138,7 +138,7 @@ namespace BlendInt {
 				return true;
 			}
 
-			case BasicPropertySize: {
+			case FormPropertySize: {
 				// always return true in Base Layout
 				return true;
 			}

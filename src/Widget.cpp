@@ -118,10 +118,10 @@ namespace BlendInt {
 	{
 		switch(type)
 		{
-			case BasicPropertySize:
+			case FormPropertySize:
 				update_shape(static_cast<const Size*>(property));
 				break;
-			case BasicPropertyRoundCorner:
+			case FormPropertyRoundCorner:
 				break;
 			default:
 				break;

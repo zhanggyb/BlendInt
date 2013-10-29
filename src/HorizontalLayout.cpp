@@ -54,7 +54,7 @@ namespace BlendInt {
 	{
 		switch (type) {
 
-			case BasicPropertySize: {
+			case FormPropertySize: {
 				change_layout(static_cast<const Size*>(property));
 				return true;
 			}
@@ -284,79 +284,90 @@ namespace BlendInt {
 		m_size.set_height(total_height);
 	}
 
-	Size HorizontalLayout::get_minimal_size ()
+	void HorizontalLayout::get_size_hint (bool margin, bool space, Size* size, Size* min, Size* preferred)
 	{
-		Size minimal_size;
+		Size size_out;
+		Size min_size_out;
+		Size preferred_size_out;
 
 		AbstractForm* child;
-		minimal_size.set_width(m_margin.left());
+		std::vector<AbstractForm*>::iterator it;
 
-		for (size_t i = 0; i < m_items.size(); i++) {
-			child = m_items[i];
-			minimal_size.add_width(child->minimal_size().width());
-			minimal_size.set_height(
-				        std::max(minimal_size.height(),
-				                child->minimal_size().height()));
+		if(margin) {
+			size_out.set_width(m_margin.left());
+			min_size_out.set_width(m_margin.left());
+			preferred_size_out.set_width(m_margin.left());
 		}
-		minimal_size.add_width((m_items.size() - 1) * m_space + m_margin.right());
-		minimal_size.add_height(m_margin.top() + m_margin.bottom());
 
-		return minimal_size;
+		for(it = m_items.begin(); it != m_items.end(); it++)
+		{
+			child = *it;
+			size_out.add_width(child->size().width());
+			size_out.set_height(std::max(size_out.height(),
+					child->size().height()));
+			min_size_out.add_width(child->minimal_size().width());
+			min_size_out.set_height(std::max(min_size_out.height(),
+					child->minimal_size().height()));
+			preferred_size_out.add_width(child->preferred_size().width());
+			preferred_size_out.set_height(std::max(preferred_size_out.height(),
+					child->size().height()));
+		}
+
+		if(margin) {
+			size_out.add_width(m_margin.right());
+			size_out.add_height(m_margin.top() + m_margin.bottom());
+
+			min_size_out.add_width(m_margin.right());
+			min_size_out.add_height(m_margin.top() + m_margin.bottom());
+
+			preferred_size_out.add_width(m_margin.right());
+			preferred_size_out.add_height(m_margin.top() + m_margin.bottom());
+		}
+
+		if(space) {
+			size_out.add_width((m_items.size() - 1) * m_space);
+
+			min_size_out.add_width((m_items.size() - 1) * m_space);
+
+			preferred_size_out.add_width((m_items.size() - 1) * m_space);
+		}
+
+		if(size) *size = size_out;
+		if(min) *min = min_size_out;
+		if(preferred) *preferred = preferred_size_out;
 	}
 
 	void HorizontalLayout::add_item (AbstractForm* object)
 	{
 		if (m_sizing_mode == LayoutFlow) {
-//			unsigned int inner_width = m_size.width() - m_margin.left()
-//			        - m_margin.right();
-//			unsigned int inner_height = m_size.height() - m_margin.top()
-//			        - m_margin.bottom();
-//
-//			inner_width = inner_width + object->size().width();
-//			inner_height = std::max(object->size().height(), inner_height);
-//
-//			if (m_items.size() == 0) {
-//				set_pos_priv(object, m_pos.x() + m_margin.left(),
-//				        m_pos.y() + m_margin.bottom());
-//				m_size.set_width(
-//				        m_margin.left() + inner_width + m_margin.right());
-//
-//				m_minimal_size.add_width(object->minimal_size().width());
-//			} else {
-//				set_pos_priv(object,
-//				        m_pos.x() + m_size.width() - m_margin.right() + m_space,
-//				        m_pos.y() + m_margin.bottom());
-//				m_size.set_width(
-//				        m_margin.left() + inner_width + m_space
-//				                + m_margin.right());
-//				m_minimal_size.add_width(
-//				        object->minimal_size().width() + m_space);
-//			}
-//
-//			m_size.set_height(
-//			        m_margin.top() + inner_height + m_margin.bottom());
-//			m_minimal_size.set_height(
-//			        std::max(m_minimal_size.height(),
-//			                object->minimal_size().height()));
-//
-//			m_items.push_back(object);
-//
-//			align_along_x(inner_height);// TODO: no need to pass inner_height
-
 			m_items.push_back(object);
 
-			Size size = recount_size();
+			Size layout_size;
+			Size layout_preferred_size;
+			Size layout_min_size;
 
-			if(size.width() < m_size.width()) size.set_width(m_size.width());
-			if(size.height() < m_size.height()) size.set_height(m_size.height());
+			get_size_hint(true, true, &layout_size, &layout_min_size, &layout_preferred_size);
 
-			change_layout(&size);
+			if(layout_preferred_size.width() < m_size.width()) {
+				layout_size.set_width(m_size.width());
+			} else {
+				layout_size.set_width(layout_preferred_size.width());
+			}
+			if(layout_preferred_size.height() < m_size.height()) {
+				layout_size.set_height(m_size.height());
+			} else {
+				layout_size.set_height(layout_preferred_size.height());
+			}
 
-			if (!size.equal(m_size) && m_in_layout) {
+			change_layout(&layout_size);
+			m_preferred_size = layout_preferred_size;
+			m_minimal_size = layout_min_size;
+
+			if (!layout_size.equal(m_size) && m_in_layout) {
 				dynamic_cast<AbstractLayout*>(m_parent.object.form)->refresh();
 			}
 
-			m_size = size;
+			m_size = layout_size;
 
 		} else {	// LayoutFixed
 			m_items.push_back(object);
@@ -377,10 +388,16 @@ namespace BlendInt {
 			}
 		}
 
-		m_minimal_size = get_minimal_size();
-		m_size = recount_size();
+		Size current_size = m_size;
+		Size min_size;
+		Size preferred_size;
 
-		align_along_x(m_size.height() - m_margin.top() - m_margin.bottom());
+		get_size_hint(true, true, 0, &min_size, &preferred_size);
+
+		change_layout(&current_size);
+
+		m_preferred_size = preferred_size;
+		m_minimal_size = min_size;
 	}
 
 	void HorizontalLayout::align_along_x (unsigned int height)

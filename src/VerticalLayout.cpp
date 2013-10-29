@@ -53,7 +53,7 @@ namespace BlendInt {
 	{
 		switch (type) {
 
-			case BasicPropertySize: {
+			case FormPropertySize: {
 				change_layout(static_cast<const Size*>(property));
 				return true;
 			}

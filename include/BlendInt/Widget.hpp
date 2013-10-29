@@ -39,7 +39,7 @@ namespace BlendInt {
 	class Color;
 
 	enum WidgetPropertyType {
-		WidgetPropertyPadding = BasicPropertyLast + 1,
+		WidgetPropertyPadding = FormPropertyLast + 1,
 		WidgetPropertyBorderWidth,
 		WidgetPropertyEmboss,
 		WidgetPropertyLast = WidgetPropertyEmboss

@@ -253,7 +253,7 @@ namespace BlendInt {
 		if (m_size.equal(w, h)) return;
 
 		Size new_size (w, h);
-		if (update(BasicPropertySize, &new_size))
+		if (update(FormPropertySize, &new_size))
 			m_size = new_size;
 	}
 
@@ -265,7 +265,7 @@ namespace BlendInt {
 		if (m_size.equal(size)) return;
 
 		Size new_size(size);
-		if (update(BasicPropertySize, &new_size)) m_size = new_size;
+		if (update(FormPropertySize, &new_size)) m_size = new_size;
 	}
 
 	void AbstractForm::set_preferred_size(const Size& size)
@@ -291,7 +291,7 @@ namespace BlendInt {
 		if (m_minimal_size.equal(size)) return;
 
 		Size new_min_size(size);
-		if (update(BasicPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
+		if (update(FormPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
 	}
 
 	void AbstractForm::set_minimal_size(int w, int h)
@@ -302,7 +302,7 @@ namespace BlendInt {
 		if (m_minimal_size.equal(w, h)) return;
 
 		Size new_min_size(w, h);
-		if (update(BasicPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
+		if (update(FormPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
 	}
 
 	const Point& AbstractForm::pos () const
@@ -318,7 +318,7 @@ namespace BlendInt {
 		if (m_pos.equal(x, y)) return;
 
 		Point new_pos(x, y);
-		if (update(BasicPropertyPosition, &new_pos)) m_pos = new_pos;
+		if (update(FormPropertyPosition, &new_pos)) m_pos = new_pos;
 	}
 
 	void AbstractForm::set_pos (const Point& pos)
@@ -329,7 +329,7 @@ namespace BlendInt {
 		if (m_pos.equal(pos)) return;
 
 		Point new_pos(pos);
-		if (update(BasicPropertyPosition, &new_pos)) m_pos = new_pos;
+		if (update(FormPropertyPosition, &new_pos)) m_pos = new_pos;
 	}
 
 	void AbstractForm::reset_z (int z)
@@ -364,14 +364,14 @@ namespace BlendInt {
 		if (m_roundcorner == type) return;
 
 		int new_type = type;
-		if(update(BasicPropertyRoundCorner, &new_type)) m_roundcorner = new_type;
+		if(update(FormPropertyRoundCorner, &new_type)) m_roundcorner = new_type;
 	}
 
 	void AbstractForm::set_corner_radius (float radius)
 	{
 		if (m_corner_radius == radius) return;
 
-		if(update(BasicPropertyRoundCorner, &radius)) m_corner_radius = radius;
+		if(update(FormPropertyRoundCorner, &radius)) m_corner_radius = radius;
 	}
 
 	int AbstractForm::roundcorner () const
@@ -386,20 +386,20 @@ namespace BlendInt {
 
 	void AbstractForm::set_visible (bool visible)
 	{
-		if (update (BasicPropertyVisibility, &visible)) m_visible = visible;
+		if (update (FormPropertyVisibility, &visible)) m_visible = visible;
 	}
 
 	void AbstractForm::show ()
 	{
 		bool visiable = true;
-		if (update (BasicPropertyVisibility, &visiable)) m_visible = true;
+		if (update (FormPropertyVisibility, &visiable)) m_visible = true;
 	}
 
 	void AbstractForm::hide ()
 	{
 		bool visible = false;
 
-		if (update (BasicPropertyVisibility, &visible)) m_visible = false;
+		if (update (FormPropertyVisibility, &visible)) m_visible = false;
 	}
 
 	const std::string& AbstractForm::name () const
@@ -442,7 +442,7 @@ namespace BlendInt {
 		if (obj->m_pos.equal(x, y)) return;
 
 		Point new_pos(x, y);
-		if (obj->update(BasicPropertyPosition, &new_pos)) obj->m_pos = new_pos;
+		if (obj->update(FormPropertyPosition, &new_pos)) obj->m_pos = new_pos;
 	}
 
 	void AbstractForm::set_pos_priv (AbstractForm* obj, const Point& pos)
@@ -450,7 +450,7 @@ namespace BlendInt {
 		if (obj->m_pos.equal(pos)) return;
 
 		Point new_pos(pos);
-		if (obj->update(BasicPropertyPosition, &new_pos)) obj->m_pos = new_pos;
+		if (obj->update(FormPropertyPosition, &new_pos)) obj->m_pos = new_pos;
 	}
 
 	void AbstractForm::resize_priv (AbstractForm* obj, int w, int h)
@@ -459,7 +459,7 @@ namespace BlendInt {
 
 		Size new_size (w, h);
 
-		if (obj->update(BasicPropertySize, &new_size))
+		if (obj->update(FormPropertySize, &new_size))
 			obj->m_size = new_size;
 	}
 
@@ -468,7 +468,7 @@ namespace BlendInt {
 		if (obj->m_size.equal(size)) return;
 
 		Size new_size(size);
-		if (obj->update(BasicPropertySize, &new_size))
+		if (obj->update(FormPropertySize, &new_size))
 			obj->m_size = new_size;
 	}
 

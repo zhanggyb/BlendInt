@@ -55,10 +55,10 @@ namespace BlendInt {
 	{
 		switch(type)
 		{
-			case BasicPropertySize:
+			case FormPropertySize:
 				update_shape(static_cast<const Size*>(property));
 				break;
-			case BasicPropertyRoundCorner: {
+			case FormPropertyRoundCorner: {
 				update_shape(&m_size);
 				break;
 			}
@@ -376,13 +376,13 @@ namespace BlendInt {
 	bool Slider::update (int type, const void* property)
 	{
 		switch (type) {
-			case BasicPropertyPosition: {
+			case FormPropertyPosition: {
 				const Point* new_pos = static_cast<const Point*>(property);
 				m_slide_button->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
 				return true;
 			}
 
-			case BasicPropertySize: {
+			case FormPropertySize: {
 
 				const Size* new_size = static_cast<const Size*>(property);
 				size_t button_size = std::min (new_size->width() - padding().left() - padding().right(),
