@@ -39,7 +39,7 @@ namespace BlendInt {
 		set_alignment(align);
 	}
 
-	HorizontalLayout::HorizontalLayout (int align, Drawable* parent)
+	HorizontalLayout::HorizontalLayout (int align, AbstractForm* parent)
 			: AbstractLayout(parent)
 	{
 		set_alignment(align);
@@ -79,7 +79,7 @@ namespace BlendInt {
 
 	void HorizontalLayout::render ()
 	{
-		std::vector<Drawable*>::const_iterator it;
+		std::vector<AbstractForm*>::const_iterator it;
 		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_render_event(*it);
 		}
@@ -110,7 +110,7 @@ namespace BlendInt {
 
 	void HorizontalLayout::press_key (KeyEvent* event)
 	{
-		std::vector<Drawable*>::iterator it;
+		std::vector<AbstractForm*>::iterator it;
 		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_key_press_event(*it, event);
 		}
@@ -126,7 +126,7 @@ namespace BlendInt {
 
 	void HorizontalLayout::press_mouse (MouseEvent* event)
 	{
-		std::vector<Drawable*>::iterator it;
+		std::vector<AbstractForm*>::iterator it;
 		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_mouse_press_event(*it, event);
 		}
@@ -134,7 +134,7 @@ namespace BlendInt {
 
 	void HorizontalLayout::release_mouse (MouseEvent* event)
 	{
-		std::vector<Drawable*>::iterator it;
+		std::vector<AbstractForm*>::iterator it;
 		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_mouse_release_event(*it, event);
 		}
@@ -142,7 +142,7 @@ namespace BlendInt {
 
 	void HorizontalLayout::move_mouse (MouseEvent* event)
 	{
-		std::vector<Drawable*>::iterator it;
+		std::vector<AbstractForm*>::iterator it;
 		for (it = m_items.begin(); it != m_items.end(); it++) {
 			Interface::instance()->dispatch_mouse_move_event(*it, event);
 		}
@@ -150,10 +150,10 @@ namespace BlendInt {
 
 	void HorizontalLayout::change_layout (const Size* size)
 	{
-		std::queue<Drawable*> expandable_objects;
-		std::queue<Drawable*> unexpandable_objects;
+		std::queue<AbstractForm*> expandable_objects;
+		std::queue<AbstractForm*> unexpandable_objects;
 
-		Drawable* child = 0;
+		AbstractForm* child = 0;
 
 		// first, classify objects in layout according to "hexpand" property
 		int fixed_width = 0;
@@ -236,7 +236,7 @@ namespace BlendInt {
 		unsigned int total_height = m_size.height();
 		unsigned int max_widget_height = 0;
 
-		Drawable* child = 0;
+		AbstractForm* child = 0;
 		total_width = m_margin.left();
 		for (size_t i = 0; i < m_items.size(); i++) {
 			child = m_items[i];
@@ -288,7 +288,7 @@ namespace BlendInt {
 	{
 		Size minimal_size;
 
-		Drawable* child;
+		AbstractForm* child;
 		minimal_size.set_width(m_margin.left());
 
 		for (size_t i = 0; i < m_items.size(); i++) {
@@ -304,7 +304,7 @@ namespace BlendInt {
 		return minimal_size;
 	}
 
-	void HorizontalLayout::add_item (Drawable* object)
+	void HorizontalLayout::add_item (AbstractForm* object)
 	{
 		if (m_sizing_mode == LayoutFlow) {
 //			unsigned int inner_width = m_size.width() - m_margin.left()
@@ -353,7 +353,7 @@ namespace BlendInt {
 			change_layout(&size);
 
 			if (!size.equal(m_size) && m_in_layout) {
-				dynamic_cast<AbstractLayout*>(m_parent.object.drawable)->refresh();
+				dynamic_cast<AbstractLayout*>(m_parent.object.form)->refresh();
 			}
 
 			m_size = size;
@@ -365,9 +365,9 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::remove_item (Drawable* object)
+	void HorizontalLayout::remove_item (AbstractForm* object)
 	{
-		std::vector<Drawable*>::iterator it;
+		std::vector<AbstractForm*>::iterator it;
 		for(it = m_items.begin(); it != m_items.end();)
 		{
 			if ((*it) == object) {
@@ -385,8 +385,8 @@ namespace BlendInt {
 
 	void HorizontalLayout::align_along_x (unsigned int height)
 	{
-		Drawable* child = 0;
-		std::vector<Drawable*>::iterator it;
+		AbstractForm* child = 0;
+		std::vector<AbstractForm*>::iterator it;
 
 		m_expand_x = false;
 		m_expand_y = false;
@@ -428,7 +428,7 @@ namespace BlendInt {
 	{
 		Size size;
 
-		std::vector<Drawable*>::iterator it;
+		std::vector<AbstractForm*>::iterator it;
 
 		for(it = m_items.begin(); it != m_items.end(); it++)
 		{

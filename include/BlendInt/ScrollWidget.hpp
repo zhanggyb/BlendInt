@@ -38,7 +38,7 @@ namespace BlendInt {
 
 		ScrollWidget ();
 
-		ScrollWidget (Drawable* parent);
+		ScrollWidget (AbstractForm* parent);
 
 		virtual ~ScrollWidget ();
 

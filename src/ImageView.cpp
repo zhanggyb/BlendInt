@@ -36,7 +36,7 @@ namespace BlendInt {
 		resize(64 + m_padding.left() + m_padding.right(), 64 + m_padding.top() + m_padding.bottom());
 	}
 
-	ImageView::ImageView (Drawable* parent)
+	ImageView::ImageView (AbstractForm* parent)
 	: Widget(parent)
 	{
 		glShadeModel(GL_FLAT);

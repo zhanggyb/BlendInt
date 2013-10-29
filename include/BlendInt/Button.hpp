@@ -39,9 +39,9 @@ namespace BlendInt {
 
 		Button (const String& text);
 
-		Button (Drawable* parent);
+		Button (AbstractForm* parent);
 
-		Button (const String& text, Drawable* parent);
+		Button (const String& text, AbstractForm* parent);
 
 		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
 

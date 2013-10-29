@@ -9,7 +9,7 @@
 
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Widget.hpp>
-#include <BlendInt/Drawable.hpp>
+#include <BlendInt/AbstractForm.hpp>
 #include <BlendInt/ContextManager.hpp>
 #include "WidgetTest.h"
 
@@ -18,7 +18,7 @@ using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(WidgetTest);
 
-testWidget::testWidget (int type, Drawable* parent)
+testWidget::testWidget (int type, AbstractForm* parent)
 		: Widget(parent)
 {
 	m_roundcorner = RoundCornerAll;
@@ -64,11 +64,11 @@ void WidgetTest::setUp ()
 void WidgetTest::tearDown ()
 {
 #ifdef DEBUG
-	int mapsize = Drawable::map_size();
+	int mapsize = AbstractForm::map_size();
 
 	if (mapsize > 0) {
-		map<uint64_t, Drawable*>::const_iterator it;
-		for (it = Drawable::get_map().begin(); it != Drawable::get_map().end();
+		map<uint64_t, AbstractForm*>::const_iterator it;
+		for (it = AbstractForm::get_map().begin(); it != AbstractForm::get_map().end();
 		        it++) {
 			cout << "id: " << it->first << " was not deleted!" << endl;
 		}

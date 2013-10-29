@@ -37,7 +37,7 @@ namespace BlendInt {
 		set_text(text);
 	}
 
-	Label::Label (const String& text, Drawable *parent)
+	Label::Label (const String& text, AbstractForm *parent)
 		: Widget (parent), m_background(0x00000000)
 	{
 		FontCache::create(m_font);

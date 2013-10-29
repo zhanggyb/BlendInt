@@ -26,7 +26,7 @@
 
 #include <BlendInt/ContextManager.hpp>
 
-#include <BlendInt/Drawable.hpp>
+#include <BlendInt/AbstractForm.hpp>
 
 #include <BlendInt/Types.hpp>
 
@@ -78,9 +78,9 @@ namespace BlendInt {
 
 	ContextManager::~ContextManager ()
 	{
-		map<int, set<Drawable*>* >::iterator map_it;
-		set<Drawable*>::iterator set_it;
-		set<Drawable*>* pset = 0;
+		map<int, set<AbstractForm*>* >::iterator map_it;
+		set<AbstractForm*>::iterator set_it;
+		set<AbstractForm*>* pset = 0;
 
 		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
 		{
@@ -100,11 +100,11 @@ namespace BlendInt {
 		m_index.clear();
 	}
 
-	bool ContextManager::add_drawable (Drawable* obj)
+	bool ContextManager::add_drawable (AbstractForm* obj)
 	{
 		if (!obj) return false;
 
-		map<Drawable*, int>::iterator map_it;
+		map<AbstractForm*, int>::iterator map_it;
 		
 		map_it = m_index.find(obj);
 
@@ -113,8 +113,8 @@ namespace BlendInt {
 				return false;
 			}
 
-			set<Drawable*>* p = m_layers[map_it->second];
-			set<Drawable*>::iterator it = p->find(obj);
+			set<AbstractForm*>* p = m_layers[map_it->second];
+			set<AbstractForm*>::iterator it = p->find(obj);
 			if (it != p->end()) {
 				p->erase (it);
 			} else {
@@ -128,24 +128,24 @@ namespace BlendInt {
 				delete p;
 			}
 
-			map<int, set<Drawable*>* >::iterator layer_it;
+			map<int, set<AbstractForm*>* >::iterator layer_it;
 			layer_it = m_layers.find(obj->z());
 			if(layer_it != m_layers.end()) {
 				layer_it->second->insert(obj);
 			} else {
-				set<Drawable*>* new_set = new set<Drawable*>;
+				set<AbstractForm*>* new_set = new set<AbstractForm*>;
 				new_set->insert(obj);
 				m_layers[obj->z()] = new_set;
 			}
 			
 		} else {
 
-			map<int, set<Drawable*>* >::iterator layer_it;
+			map<int, set<AbstractForm*>* >::iterator layer_it;
 			layer_it = m_layers.find(obj->z());
 			if(layer_it != m_layers.end()) {
 				layer_it->second->insert(obj);
 			} else {
-				set<Drawable*>* new_set = new set<Drawable*>;
+				set<AbstractForm*>* new_set = new set<AbstractForm*>;
 				new_set->insert(obj);
 				m_layers[obj->z()] = new_set;
 			}
@@ -156,13 +156,13 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool ContextManager::bind (Drawable* obj)
+	bool ContextManager::bind (AbstractForm* obj)
 	{
 		if (!obj) return false;
 
 		if (obj->m_parent.object.nameless) {
-			if (obj->m_parent.type == ParentDrawable) {
-				obj->m_parent.object.drawable->m_children.erase(obj);
+			if (obj->m_parent.type == ParentForm) {
+				obj->m_parent.object.form->m_children.erase(obj);
 			}
 		}
 
@@ -178,7 +178,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool ContextManager::unbind (Drawable* obj)
+	bool ContextManager::unbind (AbstractForm* obj)
 	{
 		if (!obj) return false;
 
@@ -187,7 +187,7 @@ namespace BlendInt {
 			return false;
 		}
 
-		if (obj->m_parent.type == ParentDrawable) {
+		if (obj->m_parent.type == ParentForm) {
 			std::cerr << "obj not in context manager, won't unbind it" << std::endl;
 			return false;
 		}
@@ -204,18 +204,18 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool ContextManager::remove_drawable (Drawable* obj)
+	bool ContextManager::remove_drawable (AbstractForm* obj)
 	{
 		if (!obj) return false;
 
-		map<Drawable*, int>::iterator map_it;
+		map<AbstractForm*, int>::iterator map_it;
 		
 		map_it = m_index.find(obj);
 
 		if(map_it != m_index.end()) {
 
-			set<Drawable*>* p = m_layers[map_it->second];
-			set<Drawable*>::iterator it = p->find(obj);
+			set<AbstractForm*>* p = m_layers[map_it->second];
+			set<AbstractForm*>::iterator it = p->find(obj);
 			if (it != p->end()) {
 				p->erase (it);
 			} else {

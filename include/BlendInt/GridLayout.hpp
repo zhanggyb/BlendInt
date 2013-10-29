@@ -39,7 +39,7 @@ namespace BlendInt {
 
 		GridLayout ();
 
-		GridLayout (Drawable* parent);
+		GridLayout (AbstractForm* parent);
 
 		virtual ~GridLayout ();
 
@@ -47,9 +47,9 @@ namespace BlendInt {
 
 		virtual void add_layout (AbstractLayout* layout);
 
-		virtual bool remove (Drawable* object);
+		virtual bool remove (AbstractForm* object);
 
-		virtual bool erase (Drawable* object);
+		virtual bool erase (AbstractForm* object);
 
 	protected:
 

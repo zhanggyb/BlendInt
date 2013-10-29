@@ -39,7 +39,7 @@ namespace BlendInt {
 
 	}
 
-	ScrollWidget::ScrollWidget(Drawable* parent)
+	ScrollWidget::ScrollWidget(AbstractForm* parent)
 	: Widget(parent), m_viewport(0), m_hslider(0), m_vslider(0)
 	{
 

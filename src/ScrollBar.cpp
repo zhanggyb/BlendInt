@@ -37,7 +37,7 @@ namespace BlendInt {
 		set_emboss(false);
 	}
 
-	ScrollControl::ScrollControl(Drawable* parent)
+	ScrollControl::ScrollControl(AbstractForm* parent)
 	: Widget(parent), m_pressed(false)
 	{
 		set_padding(0, 0, 0, 0);
@@ -130,9 +130,9 @@ namespace BlendInt {
 	void ScrollControl::move_mouse (MouseEvent* event)
 	{
 		// if no parent scrollbar, don't react to mouse move
-		if(m_parent.type != ParentDrawable) return;
+		if(m_parent.type != ParentForm) return;
 
-		ScrollBar* parent = dynamic_cast<ScrollBar*>(m_parent.object.drawable);
+		ScrollBar* parent = dynamic_cast<ScrollBar*>(m_parent.object.form);
 		if(!parent) return;
 
 		if(m_pressed) {
@@ -296,7 +296,7 @@ namespace BlendInt {
 		update(SliderPropertyValue, 0);
 	}
 
-	SliderBar::SliderBar(Orientation orientation, Drawable* parent)
+	SliderBar::SliderBar(Orientation orientation, AbstractForm* parent)
 	: Slider(orientation, parent)
 	{
 		set_padding(0, 0, 0, 0);
@@ -489,7 +489,7 @@ namespace BlendInt {
 		update(SliderPropertyValue, 0);
 	}
 
-	ScrollBar::ScrollBar (Orientation orientation, Drawable* parent)
+	ScrollBar::ScrollBar (Orientation orientation, AbstractForm* parent)
 			: AbstractSlider(orientation, parent), m_scroll_control(0)
 	{
 		set_padding(0, 0, 0, 0);

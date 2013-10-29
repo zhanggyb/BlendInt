@@ -28,7 +28,7 @@
 #include <set>
 #include <stdexcept>
 
-#include <BlendInt/Drawable.hpp>
+#include <BlendInt/AbstractForm.hpp>
 #include <BlendInt/ContextManager.hpp>
 #include <BlendInt/AbstractLayout.hpp>
 
@@ -36,7 +36,7 @@ namespace BlendInt {
 
 	using namespace std;
 
-	Drawable::Drawable ()
+	AbstractForm::AbstractForm ()
 		: m_z(0),
 		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0),
 		  m_visible(true), m_in_layout(false),
@@ -50,7 +50,7 @@ namespace BlendInt {
 		// generate a unique id
 		uint64_t temp = id_last;
 
-		while (Drawable::obj_map.count(id_last) == 1) {
+		while (AbstractForm::obj_map.count(id_last) == 1) {
 			id_last++;
 			if (temp == id_last)
 				throw std::out_of_range("Cannot assign unique id for object");
@@ -64,7 +64,7 @@ namespace BlendInt {
 	}
 
 
-	Drawable::Drawable (Drawable* parent)
+	AbstractForm::AbstractForm (AbstractForm* parent)
 		: m_z(0),
 		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0),
 		  m_visible(true), m_in_layout(false),
@@ -80,7 +80,7 @@ namespace BlendInt {
 		// generate a unique id
 		uint64_t temp = id_last;
 
-		while (Drawable::obj_map.count(id_last) == 1) {
+		while (AbstractForm::obj_map.count(id_last) == 1) {
 			id_last++;
 			if (temp == id_last)
 				throw std::out_of_range("Cannot assign unique id for object");
@@ -94,19 +94,19 @@ namespace BlendInt {
 
 	}
 
-	Drawable::~Drawable ()
+	AbstractForm::~AbstractForm ()
 	{
 		if(m_parent.object.nameless) {
 			if(m_parent.type == ParentContextManager) {
 				ContextManager::instance()->unbind(this);
 			}
-			if(m_parent.type == ParentDrawable) {
-				m_parent.object.drawable->m_children.erase(this);
+			if(m_parent.type == ParentForm) {
+				m_parent.object.form->m_children.erase(this);
 			}
 		}
 
 		// delete all child objects in list
-		std::set<Drawable*>::iterator it;
+		std::set<AbstractForm*>::iterator it;
 		for(it = m_children.begin(); it != m_children.end(); it++)
 		{
 			// MUST set the m_parent to avoid double set::erase in child's destruction
@@ -122,7 +122,7 @@ namespace BlendInt {
 #endif
 	}
 
-	bool Drawable::bind (Drawable* child)
+	bool AbstractForm::bind (AbstractForm* child)
 	{
 		if (!child) return false;
 		if (child == this) return false;	// cannot bind self
@@ -137,20 +137,20 @@ namespace BlendInt {
 			if (child->m_parent.type == ParentContextManager) {
 				ContextManager::instance()->unbind(child);
 			}
-			if (child->m_parent.type == ParentDrawable) {
-				if(child->m_parent.object.drawable == this) return true;
-				child->m_parent.object.drawable->m_children.erase(child);
+			if (child->m_parent.type == ParentForm) {
+				if(child->m_parent.object.form == this) return true;
+				child->m_parent.object.form->m_children.erase(child);
 			}
 		}
-		child->m_parent.type = ParentDrawable;
-		child->m_parent.object.drawable = this;
+		child->m_parent.type = ParentForm;
+		child->m_parent.object.form = this;
 
 		m_children.insert(child);
 
 		return true;
 	}
 
-	bool Drawable::unbind (Drawable* child)
+	bool AbstractForm::unbind (AbstractForm* child)
 	{
 		if(!child) return false;
 		if(child == this) return false;
@@ -166,14 +166,14 @@ namespace BlendInt {
 		return true;
 	}
 
-	void Drawable::unbind ()
+	void AbstractForm::unbind ()
 	{
 		if (m_parent.object.nameless) {
 			if (m_parent.type == ParentContextManager) {
 				ContextManager::instance()->unbind(this);
 			}
-			if (m_parent.type == ParentDrawable) {
-				m_parent.object.drawable->m_children.erase(this);
+			if (m_parent.type == ParentForm) {
+				m_parent.object.form->m_children.erase(this);
 			}
 		}
 
@@ -181,13 +181,13 @@ namespace BlendInt {
 		m_parent.object.nameless = 0;
 	}
 
-	bool Drawable::bind_to (ContextManager *parent)
+	bool AbstractForm::bind_to (ContextManager *parent)
 	{
 		if(!parent) return false;
 
 		if (m_parent.object.nameless) {
-			if (m_parent.type == ParentDrawable) {
-				m_parent.object.drawable->m_children.erase(this);
+			if (m_parent.type == ParentForm) {
+				m_parent.object.form->m_children.erase(this);
 				m_parent.type = ParentUnknown;
 				m_parent.object.nameless = 0;
 			}
@@ -198,7 +198,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool Drawable::bind_to (Drawable* parent)
+	bool AbstractForm::bind_to (AbstractForm* parent)
 	{
 		if(!parent) return false;
 		if(parent == this) return false;	// cannot bind_to self
@@ -213,25 +213,25 @@ namespace BlendInt {
 			if (m_parent.type == ParentContextManager) {
 				m_parent.object.context->unbind(this);
 			}
-			if (m_parent.type == ParentDrawable) {
-				if (m_parent.object.drawable == parent) return true;
+			if (m_parent.type == ParentForm) {
+				if (m_parent.object.form == parent) return true;
 
-				m_parent.object.drawable->m_children.erase(this);
+				m_parent.object.form->m_children.erase(this);
 			}
 		}
 
 		parent->m_children.insert (this);
-		m_parent.type = ParentDrawable;
-		m_parent.object.drawable = parent;
+		m_parent.type = ParentForm;
+		m_parent.object.form = parent;
 
 		return true;
 	}
 
-	bool Drawable::is_bound ()
+	bool AbstractForm::is_bound ()
 	{
 		Parent* parent = &m_parent;
-		while (parent->type == ParentDrawable) {
-			parent = &(parent->object.drawable->m_parent);
+		while (parent->type == ParentForm) {
+			parent = &(parent->object.form->m_parent);
 		}
 
 		if (parent->type == ParentUnknown) return false;
@@ -240,12 +240,12 @@ namespace BlendInt {
 		return true;
 	}
 
-	const Size& Drawable::size () const
+	const Size& AbstractForm::size () const
 	{
 		return m_size;
 	}
 
-	void Drawable::resize (int w, int h)
+	void AbstractForm::resize (int w, int h)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
@@ -257,7 +257,7 @@ namespace BlendInt {
 			m_size = new_size;
 	}
 
-	void Drawable::resize (const Size& size)
+	void AbstractForm::resize (const Size& size)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
@@ -268,7 +268,22 @@ namespace BlendInt {
 		if (update(BasicPropertySize, &new_size)) m_size = new_size;
 	}
 
-	void Drawable::set_minimal_size(const Size& size)
+	void AbstractForm::set_preferred_size(const Size& size)
+	{
+		// TODO: check the param first
+
+		m_preferred_size = size;
+	}
+
+	void AbstractForm::set_preferred_size(int width, int height)
+	{
+		// TODO: check the param first
+
+		m_preferred_size.set_width(width);
+		m_preferred_size.set_height(height);
+	}
+
+	void AbstractForm::set_minimal_size(const Size& size)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
@@ -279,7 +294,7 @@ namespace BlendInt {
 		if (update(BasicPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
 	}
 
-	void Drawable::set_minimal_size(int w, int h)
+	void AbstractForm::set_minimal_size(int w, int h)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
@@ -290,12 +305,12 @@ namespace BlendInt {
 		if (update(BasicPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
 	}
 
-	const Point& Drawable::pos () const
+	const Point& AbstractForm::pos () const
 	{
 		return m_pos;
 	}
 
-	void Drawable::set_pos (int x, int y)
+	void AbstractForm::set_pos (int x, int y)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
@@ -306,7 +321,7 @@ namespace BlendInt {
 		if (update(BasicPropertyPosition, &new_pos)) m_pos = new_pos;
 	}
 
-	void Drawable::set_pos (const Point& pos)
+	void AbstractForm::set_pos (const Point& pos)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
@@ -317,15 +332,15 @@ namespace BlendInt {
 		if (update(BasicPropertyPosition, &new_pos)) m_pos = new_pos;
 	}
 
-	void Drawable::reset_z (int z)
+	void AbstractForm::reset_z (int z)
 	{
 		if (m_z == z) return;
 
-		Drawable* root = 0;
+		AbstractForm* root = 0;
 		Parent* parent = &m_parent;
-		while (parent->type == ParentDrawable) {
-			root = parent->object.drawable;
-			parent = &(parent->object.drawable->m_parent);
+		while (parent->type == ParentForm) {
+			root = parent->object.form;
+			parent = &(parent->object.form->m_parent);
 		}
 
 		if (root)
@@ -344,7 +359,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Drawable::set_roundcorner (int type)
+	void AbstractForm::set_roundcorner (int type)
 	{
 		if (m_roundcorner == type) return;
 
@@ -352,52 +367,52 @@ namespace BlendInt {
 		if(update(BasicPropertyRoundCorner, &new_type)) m_roundcorner = new_type;
 	}
 
-	void Drawable::set_corner_radius (float radius)
+	void AbstractForm::set_corner_radius (float radius)
 	{
 		if (m_corner_radius == radius) return;
 
 		if(update(BasicPropertyRoundCorner, &radius)) m_corner_radius = radius;
 	}
 
-	int Drawable::roundcorner () const
+	int AbstractForm::roundcorner () const
 	{
 		return m_roundcorner;
 	}
 
-	bool Drawable::visible () const
+	bool AbstractForm::visible () const
 	{
 		return m_visible;
 	}
 
-	void Drawable::set_visible (bool visible)
+	void AbstractForm::set_visible (bool visible)
 	{
 		if (update (BasicPropertyVisibility, &visible)) m_visible = visible;
 	}
 
-	void Drawable::show ()
+	void AbstractForm::show ()
 	{
 		bool visiable = true;
 		if (update (BasicPropertyVisibility, &visiable)) m_visible = true;
 	}
 
-	void Drawable::hide ()
+	void AbstractForm::hide ()
 	{
 		bool visible = false;
 
 		if (update (BasicPropertyVisibility, &visible)) m_visible = false;
 	}
 
-	const std::string& Drawable::name () const
+	const std::string& AbstractForm::name () const
 	{
 		return m_name;
 	}
 
-	void Drawable::set_name (const std::string& name)
+	void AbstractForm::set_name (const std::string& name)
 	{
 		m_name = name;
 	}
 
-	bool Drawable::contain(const Coord2d& cursor)
+	bool AbstractForm::contain(const Coord2d& cursor)
 	{
 		if (cursor.x() < m_pos.x() ||
 				cursor.y() < m_pos.y() ||
@@ -409,11 +424,11 @@ namespace BlendInt {
 		return true;
 	}
 
-	void Drawable::set_z_simple (int z)
+	void AbstractForm::set_z_simple (int z)
 	{
 		m_z = z;
 
-		std::set<Drawable*>::iterator it;
+		std::set<AbstractForm*>::iterator it;
 		for (it = m_children.begin(); it != m_children.end(); it++)
 		{
 			(*it)->set_z_simple (z);
@@ -422,7 +437,7 @@ namespace BlendInt {
 		// TODO: call update()
 	}
 
-	void Drawable::set_pos_priv (Drawable* obj, int x, int y)
+	void AbstractForm::set_pos_priv (AbstractForm* obj, int x, int y)
 	{
 		if (obj->m_pos.equal(x, y)) return;
 
@@ -430,7 +445,7 @@ namespace BlendInt {
 		if (obj->update(BasicPropertyPosition, &new_pos)) obj->m_pos = new_pos;
 	}
 
-	void Drawable::set_pos_priv (Drawable* obj, const Point& pos)
+	void AbstractForm::set_pos_priv (AbstractForm* obj, const Point& pos)
 	{
 		if (obj->m_pos.equal(pos)) return;
 
@@ -438,7 +453,7 @@ namespace BlendInt {
 		if (obj->update(BasicPropertyPosition, &new_pos)) obj->m_pos = new_pos;
 	}
 
-	void Drawable::resize_priv (Drawable* obj, int w, int h)
+	void AbstractForm::resize_priv (AbstractForm* obj, int w, int h)
 	{
 		if (obj->m_size.equal(w, h)) return;
 
@@ -448,7 +463,7 @@ namespace BlendInt {
 			obj->m_size = new_size;
 	}
 
-	void Drawable::resize_priv (Drawable* obj, const Size& size)
+	void AbstractForm::resize_priv (AbstractForm* obj, const Size& size)
 	{
 		if (obj->m_size.equal(size)) return;
 
@@ -459,34 +474,34 @@ namespace BlendInt {
 
 #ifdef DEBUG
 
-	uint64_t Drawable::id_last = 1;
+	uint64_t AbstractForm::id_last = 1;
 
-	map<uint64_t, Drawable*> Drawable::obj_map;
+	map<uint64_t, AbstractForm*> AbstractForm::obj_map;
 
-	inline bool Drawable::register_in_map ()
+	inline bool AbstractForm::register_in_map ()
 	{
-		Drawable::obj_map[m_id] = this;
+		AbstractForm::obj_map[m_id] = this;
 		return true;
 	}
 
-	inline bool Drawable::unregister_from_map ()
+	inline bool AbstractForm::unregister_from_map ()
 	{
-		Drawable::obj_map.erase(m_id);
+		AbstractForm::obj_map.erase(m_id);
 		return true;
 	}
 
-	Drawable* Drawable::find (uint64_t id)
+	AbstractForm* AbstractForm::find (uint64_t id)
 	{
-		Drawable *ret = NULL;
-		if (Drawable::obj_map.count(id) == 1)
-			ret = Drawable::obj_map[id];
+		AbstractForm *ret = NULL;
+		if (AbstractForm::obj_map.count(id) == 1)
+			ret = AbstractForm::obj_map[id];
 
 		return ret;
 	}
 
-	void Drawable::print()
+	void AbstractForm::print()
 	{
-		map<uint64_t, Drawable*>::iterator it;
+		map<uint64_t, AbstractForm*>::iterator it;
 		std::cerr << "Print objects: "<< std::endl;
 		for(it = obj_map.begin(); it != obj_map.end(); it++)
 		{

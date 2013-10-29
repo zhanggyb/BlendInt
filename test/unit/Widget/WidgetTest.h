@@ -16,7 +16,7 @@ class testWidget: public Widget
 {
 public:
 
-	testWidget (int type = 0, Drawable* parent = 0);
+	testWidget (int type = 0, AbstractForm* parent = 0);
 
 	virtual ~testWidget ()
 	{

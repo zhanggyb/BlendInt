@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Drawable.hpp>
+#include <BlendInt/AbstractForm.hpp>
 #include <BlendInt/Widget.hpp>
 #include <BlendInt/ContextManager.hpp>
 #include "DrawableTest.h"
@@ -18,8 +18,8 @@ using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(DrawableTest);
 
-myTexture::myTexture (Drawable *parent)
-		: Drawable(parent)
+myTexture::myTexture (AbstractForm *parent)
+		: AbstractForm(parent)
 {
 	resize(400, 400);
 	set_pos(Point(20, 20));
@@ -116,8 +116,8 @@ void myTexture::makeCheckImage (void)
 	}
 }
 
-myDrawable1::myDrawable1 (Drawable* parent)
-		: Drawable(parent)
+myDrawable1::myDrawable1 (AbstractForm* parent)
+		: AbstractForm(parent)
 {
 	m_roundcorner = RoundCornerAll;
 }
@@ -166,8 +166,8 @@ void myDrawable1::move_mouse (MouseEvent* event)
 
 }
 
-myDrawable2::myDrawable2 (Drawable* parent)
-		: Drawable(parent)
+myDrawable2::myDrawable2 (AbstractForm* parent)
+		: AbstractForm(parent)
 {
 	m_roundcorner = RoundCornerAll;
 }
@@ -214,8 +214,8 @@ void myDrawable2::move_mouse (MouseEvent* event)
 
 }
 
-myDrawable3::myDrawable3 (Drawable* parent)
-		: Drawable(parent)
+myDrawable3::myDrawable3 (AbstractForm* parent)
+		: AbstractForm(parent)
 {
 	m_roundcorner = RoundCornerAll;
 }
@@ -282,11 +282,11 @@ void DrawableTest::setUp ()
 void DrawableTest::tearDown ()
 {
 #ifdef DEBUG
-	int mapsize = Drawable::map_size();
+	int mapsize = AbstractForm::map_size();
 
 	if(mapsize > 0) {
-		map<uint64_t, Drawable*>::const_iterator it;
-		for (it = Drawable::get_map().begin(); it != Drawable::get_map().end(); it++)
+		map<uint64_t, AbstractForm*>::const_iterator it;
+		for (it = AbstractForm::get_map().begin(); it != AbstractForm::get_map().end(); it++)
 		{
 			cout << "id: " << it->first << " " << it->second->name() << " " << " was not deleted!" << endl;
 		}
@@ -662,10 +662,10 @@ void DrawableTest::bind_test2()
 	widget4->set_name("widget4");
 	app->bind(widget4);
 
-	Drawable::print();
+	AbstractForm::print();
 	ContextManager::instance()->print();
 
-	CPPUNIT_ASSERT(Drawable::map_size() == 4);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 4);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -681,10 +681,10 @@ void DrawableTest::bind_test2()
 
 	delete widget1;
 
-	Drawable::print();
+	AbstractForm::print();
 	ContextManager::instance()->print();
 
-	CPPUNIT_ASSERT(Drawable::map_size() == 1);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 1);
 
 	/* release BlendInt */
 	CPPUNIT_ASSERT(ContextManager::instance()->index_size() == 1);
@@ -692,7 +692,7 @@ void DrawableTest::bind_test2()
 
 	Interface::release();
 
-	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 0);
 
 	glfwTerminate();
 	CPPUNIT_ASSERT(true);
@@ -758,7 +758,7 @@ void DrawableTest::bind_test3()
 
 	delete widget4; widget4 = 0;
 
-	CPPUNIT_ASSERT(Drawable::map_size() == 3);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 3);
 
 	widget2->bind_to(widget1);
 
@@ -792,7 +792,7 @@ void DrawableTest::bind_test3()
 
 	Interface::release();
 
-	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 0);
 
 	glfwTerminate();
 	CPPUNIT_ASSERT(true);
@@ -852,7 +852,7 @@ void DrawableTest::bind_test4()
 	widget4->resize(50, 50);
 	widget4->set_name("widget4");
 
-	CPPUNIT_ASSERT(Drawable::map_size() == 4);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 4);
 
 	CPPUNIT_ASSERT(!widget1->is_bound());
 
@@ -887,7 +887,7 @@ void DrawableTest::bind_test4()
 
 	Interface::release();
 
-	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 0);
 
 	glfwTerminate();
 	CPPUNIT_ASSERT(true);
@@ -947,7 +947,7 @@ void DrawableTest::bind_test5()
 	widget4->resize(50, 50);
 	widget4->set_name("widget4");
 
-	CPPUNIT_ASSERT(Drawable::map_size() == 4);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 4);
 
 	CPPUNIT_ASSERT(!widget1->is_bound());
 
@@ -992,7 +992,7 @@ void DrawableTest::bind_test5()
 
 	/* release BlendInt */
 	Interface::release();
-	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 0);
 
 	glfwTerminate();
 	CPPUNIT_ASSERT(true);
@@ -1058,7 +1058,7 @@ void DrawableTest::bind_test6()
 
 	delete widget4; widget4 = 0;
 
-	CPPUNIT_ASSERT(Drawable::map_size() == 3);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 3);
 
 	widget2->bind_to(widget1);
 
@@ -1088,7 +1088,7 @@ void DrawableTest::bind_test6()
 
 	/* release BlendInt */
 	Interface::release();
-	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 0);
 
 	glfwTerminate();
 	CPPUNIT_ASSERT(true);
@@ -1149,7 +1149,7 @@ void DrawableTest::bind_test7()
 	widget4->resize(50, 50);
 	widget4->set_name("widget4");
 
-	CPPUNIT_ASSERT(Drawable::map_size() == 4);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 4);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -1164,7 +1164,7 @@ void DrawableTest::bind_test7()
 	}
 
 	delete widget1;
-	CPPUNIT_ASSERT(Drawable::map_size() == 0);
+	CPPUNIT_ASSERT(AbstractForm::map_size() == 0);
 
 	/* release BlendInt */
 	Interface::release();

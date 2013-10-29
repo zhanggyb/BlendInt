@@ -3,7 +3,7 @@
 #ifndef _TEXTBUFFER_TEST_H
 #define _TEXTBUFFER_TEST_H
 
-#include <BlendInt/Drawable.hpp>
+#include <BlendInt/AbstractForm.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 

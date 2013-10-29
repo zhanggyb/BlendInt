@@ -55,13 +55,13 @@ namespace BlendInt {
 	};
 
 	Widget::Widget ()
-	: Drawable(), m_border_width(1.0), m_emboss(true)
+	: AbstractForm(), m_border_width(1.0), m_emboss(true)
 	{
 
 	}
 
-	Widget::Widget (Drawable* parent)
-			: Drawable(parent), m_border_width(1.0), m_emboss(true)
+	Widget::Widget (AbstractForm* parent)
+			: AbstractForm(parent), m_border_width(1.0), m_emboss(true)
 	{
 		// TODO Auto-generated constructor stub
 	}
@@ -133,8 +133,8 @@ namespace BlendInt {
 	void Widget::render ()
 	{
 #ifdef DEBUG
-		std::set<Drawable*>::const_iterator it;
-		Drawable *item = 0;
+		std::set<AbstractForm*>::const_iterator it;
+		AbstractForm *item = 0;
 		for (it = m_children.begin(); it != m_children.end(); it++) {
 			item = *it;
 			Interface::instance()->dispatch_render_event(item);

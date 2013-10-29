@@ -35,7 +35,7 @@ namespace BlendInt {
 
 	}
 
-	Frame::Frame (Drawable* parent)
+	Frame::Frame (AbstractForm* parent)
 	: Widget (parent), m_layout(0)
 	{
 

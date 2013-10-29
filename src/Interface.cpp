@@ -31,12 +31,11 @@
 #include <BlendInt/Theme.hpp>
 #include <BlendInt/ShaderManager.hpp>
 #include <BlendInt/Size.hpp>
-#include <BlendInt/Drawable.hpp>
+#include <BlendInt/AbstractForm.hpp>
 #include <BlendInt/KeyEvent.hpp>
 #include <BlendInt/MouseEvent.hpp>
 #include <BlendInt/ContextMenuEvent.hpp>
 #include <BlendInt/ContextManager.hpp>
-#include <BlendInt/Drawable.hpp>
 
 namespace BlendInt {
 
@@ -129,12 +128,12 @@ namespace BlendInt {
 
 	}
 
-	bool Interface::bind (Drawable* object)
+	bool Interface::bind (AbstractForm* object)
 	{
 		return ContextManager::instance()->bind(object);
 	}
 
-	bool Interface::unbind (Drawable* object)
+	bool Interface::unbind (AbstractForm* object)
 	{
 		return ContextManager::instance()->unbind(object);
 	}
@@ -185,13 +184,13 @@ namespace BlendInt {
 		draw_grid(width, height);
 #endif
 
-		map<int, set<Drawable*>* >::iterator map_it;
-		set<Drawable*>::iterator set_it;
+		map<int, set<AbstractForm*>* >::iterator map_it;
+		set<AbstractForm*>::iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
 		for(map_it = cm->m_layers.begin(); map_it != cm->m_layers.end(); map_it++)
 		{
-			set<Drawable*>* pset = map_it->second;
+			set<AbstractForm*>* pset = map_it->second;
 			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
 				if((*set_it)->m_ticktack == m_ticktack && (*set_it)->visible()) {
@@ -205,7 +204,7 @@ namespace BlendInt {
 		glDisable(GL_BLEND);
 	}
 
-	void Interface::dispatch_render_event (Drawable* obj)
+	void Interface::dispatch_render_event (AbstractForm* obj)
 	{
 		// ticktack makes sure only render once, the ticktack of Interface reversed in Interface::render()
 		if(obj->m_ticktack == m_ticktack && obj->visible()) {
@@ -278,10 +277,10 @@ namespace BlendInt {
 		if (key == Key_Menu) {
 			ContextMenuEvent event(ContextMenuEvent::Keyboard, mods);
 
-			map<int, set<Drawable*>* >::reverse_iterator map_it;
-			set<Drawable*>::reverse_iterator set_it;
+			map<int, set<AbstractForm*>* >::reverse_iterator map_it;
+			set<AbstractForm*>::reverse_iterator set_it;
 			ContextManager* cm = ContextManager::instance();
-			set<Drawable*>* pset = 0;
+			set<AbstractForm*>* pset = 0;
 
 			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 			{
@@ -318,10 +317,10 @@ namespace BlendInt {
 
 			KeyEvent event(key, scancode, action, mods);
 
-			map<int, set<Drawable*>* >::reverse_iterator map_it;
-			set<Drawable*>::reverse_iterator set_it;
+			map<int, set<AbstractForm*>* >::reverse_iterator map_it;
+			set<AbstractForm*>::reverse_iterator set_it;
 			ContextManager* cm = ContextManager::instance();
-			set<Drawable*>* pset = 0;
+			set<AbstractForm*>* pset = 0;
 			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 			{
 				pset = map_it->second;
@@ -396,13 +395,13 @@ namespace BlendInt {
 
 		MouseEvent event(mouse_action, mouseclick);
 
-		map<int, set<Drawable*>* >::reverse_iterator map_it;
-		set<Drawable*>::reverse_iterator set_it;
+		map<int, set<AbstractForm*>* >::reverse_iterator map_it;
+		set<AbstractForm*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
-			set<Drawable*>* pset = map_it->second;
+			set<AbstractForm*>* pset = map_it->second;
 			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 			{
 				if(!(*set_it)->visible()) break;
@@ -441,13 +440,13 @@ namespace BlendInt {
 
 		MouseEvent event(MouseNone, MouseButtonNone);
 
-		map<int, set<Drawable*>* >::reverse_iterator map_it;
-		set<Drawable*>::reverse_iterator set_it;
+		map<int, set<AbstractForm*>* >::reverse_iterator map_it;
+		set<AbstractForm*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
-			set<Drawable*>* pset = map_it->second;
+			set<AbstractForm*>* pset = map_it->second;
 			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 			{
 				if(!(*set_it)->visible()) break;
@@ -470,22 +469,22 @@ namespace BlendInt {
 		}
 	}
 
-	void Interface::dispatch_key_press_event (Drawable* obj, KeyEvent* event)
+	void Interface::dispatch_key_press_event (AbstractForm* obj, KeyEvent* event)
 	{
 		obj->press_key(event);
 	}
 
-	void Interface::dispatch_mouse_press_event (Drawable* obj, MouseEvent* event)
+	void Interface::dispatch_mouse_press_event (AbstractForm* obj, MouseEvent* event)
 	{
 		obj->press_mouse(event);
 	}
 
-	void Interface::dispatch_mouse_release_event (Drawable* obj, MouseEvent* event)
+	void Interface::dispatch_mouse_release_event (AbstractForm* obj, MouseEvent* event)
 	{
 		obj->release_mouse(event);
 	}
 
-	void Interface::dispatch_mouse_move_event (Drawable* obj, MouseEvent* event)
+	void Interface::dispatch_mouse_move_event (AbstractForm* obj, MouseEvent* event)
 	{
 		obj->move_mouse(event);
 	}

@@ -3,7 +3,7 @@
 #ifndef _DRAWABLE_TEST_H
 #define _DRAWABLE_TEST_H
 
-#include <BlendInt/Drawable.hpp>
+#include <BlendInt/AbstractForm.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
@@ -12,11 +12,11 @@
 using namespace BlendInt;
 using namespace std;
 
-class myTexture: public Drawable
+class myTexture: public AbstractForm
 {
 public:
 
-	myTexture (Drawable *parent = 0);
+	myTexture (AbstractForm *parent = 0);
 
 	virtual ~myTexture ();
 
@@ -48,11 +48,11 @@ private:
 	GLubyte _checkImage[checkImageHeight][checkImageWidth][4];
 };
 
-class myDrawable1: public Drawable
+class myDrawable1: public AbstractForm
 {
 public:
 
-	myDrawable1 (Drawable* parent = 0);
+	myDrawable1 (AbstractForm* parent = 0);
 
 	virtual ~myDrawable1 ();
 
@@ -75,11 +75,11 @@ protected:
 	virtual void move_mouse (MouseEvent* event);
 };
 
-class myDrawable2: public Drawable
+class myDrawable2: public AbstractForm
 {
 public:
 
-	myDrawable2 (Drawable* parent = 0);
+	myDrawable2 (AbstractForm* parent = 0);
 
 	virtual ~myDrawable2 ();
 
@@ -102,11 +102,11 @@ protected:
 	virtual void move_mouse (MouseEvent* event);
 };
 
-class myDrawable3: public Drawable
+class myDrawable3: public AbstractForm
 {
 public:
 
-	myDrawable3 (Drawable* parent = 0);
+	myDrawable3 (AbstractForm* parent = 0);
 
 	virtual ~myDrawable3 ();
 

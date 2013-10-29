@@ -26,7 +26,7 @@
 
 #include <vector>
 
-#include <BlendInt/Drawable.hpp>
+#include <BlendInt/AbstractForm.hpp>
 #include <BlendInt/Widget.hpp>
 
 #include <Cpp/Events.hpp>
@@ -53,7 +53,7 @@ namespace BlendInt {
 		LayoutPropertyLast = LayoutPropertyMargin
 	};
 
-	class AbstractLayout: public Drawable
+	class AbstractLayout: public AbstractForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractLayout);
 
@@ -61,7 +61,7 @@ namespace BlendInt {
 
 		AbstractLayout ();
 
-		AbstractLayout (Drawable *parent);
+		AbstractLayout (AbstractForm *parent);
 
 		virtual ~AbstractLayout ();
 
@@ -78,7 +78,7 @@ namespace BlendInt {
 		 *
 		 * @warning: after removing from layout, the drawable object will bind to nothing, it must be deleted manually
 		 */
-		bool remove (Drawable* object);
+		bool remove (AbstractForm* object);
 
 		/**
 		 * @brief erase the object from layout
@@ -87,7 +87,7 @@ namespace BlendInt {
 		 *
 		 * Same as remove but will delete the child object
 		 */
-		bool erase (Drawable* object);
+		bool erase (AbstractForm* object);
 
 		int alignment () const {return m_alignment;}
 
@@ -121,7 +121,7 @@ namespace BlendInt {
 
 		struct ItemData {
 			ItemAction action;
-			Drawable* object;
+			AbstractForm* object;
 		};
 
 		virtual void render () = 0;
@@ -148,7 +148,7 @@ namespace BlendInt {
 
 		Margin m_margin;
 
-		std::vector<Drawable*> m_items;
+		std::vector<AbstractForm*> m_items;
 
 		Cpp::ConnectionScope m_events;
 

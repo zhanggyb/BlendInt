@@ -46,7 +46,7 @@ namespace BlendInt {
 		set_text(text);
 	}
 
-	Button::Button (Drawable* parent)
+	Button::Button (AbstractForm* parent)
 			: AbstractButton(parent)
 	{
 		set_roundcorner(RoundCornerAll);
@@ -54,7 +54,7 @@ namespace BlendInt {
 		resize (90, 25);
 	}
 
-	Button::Button (const String& text, Drawable* parent)
+	Button::Button (const String& text, AbstractForm* parent)
 			: AbstractButton(parent)
 	{
 		set_roundcorner(RoundCornerAll);

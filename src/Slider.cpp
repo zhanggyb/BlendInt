@@ -39,7 +39,7 @@ namespace BlendInt {
 		set_emboss(false);
 	}
 
-	SlideButton::SlideButton(Drawable* parent)
+	SlideButton::SlideButton(AbstractForm* parent)
 	:  Button(parent)
 	{
 		set_padding (0, 0, 0, 0);
@@ -138,9 +138,9 @@ namespace BlendInt {
 	void SlideButton::move_mouse(MouseEvent* event)
 	{
 		// if no parent slider, don't react to mouse move
-		if(m_parent.type != ParentDrawable) return;
+		if(m_parent.type != ParentForm) return;
 
-		AbstractSlider* parent = dynamic_cast<AbstractSlider*>(m_parent.object.drawable);
+		AbstractSlider* parent = dynamic_cast<AbstractSlider*>(m_parent.object.form);
 		if(!parent) return;
 
 		if(m_status_down) {
@@ -220,10 +220,10 @@ namespace BlendInt {
 
 		Orientation shadedir;
 
-		if(m_parent.type != ParentDrawable) {
+		if(m_parent.type != ParentForm) {
 			shadedir = size->width() < size->height() ? Horizontal : Vertical;
 		} else {
-			AbstractSlider* parent = dynamic_cast<AbstractSlider*>(m_parent.object.drawable);
+			AbstractSlider* parent = dynamic_cast<AbstractSlider*>(m_parent.object.form);
 			if(parent) {
 				shadedir = parent->orientation() ? Horizontal : Vertical;
 			}
@@ -325,7 +325,7 @@ namespace BlendInt {
 		update(SliderPropertyValue, 0);
 	}
 
-	Slider::Slider(Orientation orientation, Drawable* parent)
+	Slider::Slider(Orientation orientation, AbstractForm* parent)
 	: AbstractSlider(orientation, parent), m_slide_button(0)
 	{
 		m_slide_button = new SlideButton(this);

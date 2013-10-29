@@ -49,7 +49,7 @@ namespace BlendInt {
 
 		AbstractSlider(Orientation orientation = Horizontal);
 
-		AbstractSlider(Orientation orientation, Drawable* parent);
+		AbstractSlider(Orientation orientation, AbstractForm* parent);
 
 		virtual ~AbstractSlider ();
 

@@ -45,7 +45,7 @@ namespace BlendInt {
 
 		AbstractButton ();
 
-		AbstractButton (Drawable* parent);
+		AbstractButton (AbstractForm* parent);
 
 		virtual ~AbstractButton ();
 

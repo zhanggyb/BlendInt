@@ -45,7 +45,7 @@ namespace BlendInt {
 		set_text(text);
 	}
 
-	ToggleButton::ToggleButton (Drawable* parent)
+	ToggleButton::ToggleButton (AbstractForm* parent)
 			: AbstractButton(parent)
 	{
 		set_checkable(true);
@@ -53,7 +53,7 @@ namespace BlendInt {
 		resize (90, 25);
 	}
 
-	ToggleButton::ToggleButton (const String& text, Drawable* parent)
+	ToggleButton::ToggleButton (const String& text, AbstractForm* parent)
 			: AbstractButton(parent)
 	{
 		set_checkable(true);

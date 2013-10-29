@@ -42,7 +42,7 @@ namespace BlendInt {
 
 		Frame ();
 
-		Frame (Drawable* parent);
+		Frame (AbstractForm* parent);
 
 		virtual ~Frame ();
 

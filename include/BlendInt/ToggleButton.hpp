@@ -40,9 +40,9 @@ namespace BlendInt {
 
 		ToggleButton (const String& text);
 
-		ToggleButton (Drawable* parent);
+		ToggleButton (AbstractForm* parent);
 
-		ToggleButton (const String& text, Drawable* parent);
+		ToggleButton (const String& text, AbstractForm* parent);
 
 		virtual ~ToggleButton ();
 

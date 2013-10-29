@@ -39,7 +39,7 @@ namespace BlendInt {
 
 		TableLayout (int rows, int columns);
 
-		TableLayout (int rows, int columns, Drawable* parent);
+		TableLayout (int rows, int columns, AbstractForm* parent);
 
 		virtual ~TableLayout ();
 

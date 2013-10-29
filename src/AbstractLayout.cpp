@@ -26,14 +26,14 @@
 namespace BlendInt {
 
 	AbstractLayout::AbstractLayout ()
-			: Drawable(), m_alignment(0), m_space(1), m_sizing_mode(LayoutFlow)
+			: AbstractForm(), m_alignment(0), m_space(1), m_sizing_mode(LayoutFlow)
 	{
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
-	AbstractLayout::AbstractLayout (Drawable *parent)
-			: Drawable (parent), m_alignment(0), m_space(1), m_sizing_mode(LayoutFlow)
+	AbstractLayout::AbstractLayout (AbstractForm *parent)
+			: AbstractForm (parent), m_alignment(0), m_space(1), m_sizing_mode(LayoutFlow)
 	{
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
@@ -86,11 +86,11 @@ namespace BlendInt {
 		}
 
 		if(m_in_layout) {
-			dynamic_cast<AbstractLayout*>(m_parent.object.drawable)->refresh();
+			dynamic_cast<AbstractLayout*>(m_parent.object.form)->refresh();
 		}
 	}
 
-	bool AbstractLayout::remove (Drawable* object)
+	bool AbstractLayout::remove (AbstractForm* object)
 	{
 		if (!m_children.count(object)) return false;
 
@@ -106,7 +106,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractLayout::erase (Drawable* object)
+	bool AbstractLayout::erase (AbstractForm* object)
 	{
 		if (!m_children.count(object)) return false;
 
@@ -181,9 +181,9 @@ namespace BlendInt {
 		AbstractLayout* root = 0;
 
 		if(m_in_layout) {
-			root = dynamic_cast<AbstractLayout*>(m_parent.object.drawable);
+			root = dynamic_cast<AbstractLayout*>(m_parent.object.form);
 			while(root->in_layout()) {
-				root = dynamic_cast<AbstractLayout*>(root->parent()->object.drawable);
+				root = dynamic_cast<AbstractLayout*>(root->parent()->object.form);
 				if(!root) break;
 			}
 		}

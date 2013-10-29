@@ -29,7 +29,7 @@ namespace BlendInt {
 	{
 	}
 
-	GridLayout::GridLayout (Drawable* parent)
+	GridLayout::GridLayout (AbstractForm* parent)
 	{
 	}
 
@@ -45,14 +45,14 @@ namespace BlendInt {
 	{
 	}
 
-	bool GridLayout::remove (Drawable* object)
+	bool GridLayout::remove (AbstractForm* object)
 	{
 		if (!m_children.count(object)) return false;
 
 		return true;
 	}
 
-	bool GridLayout::erase (Drawable* object)
+	bool GridLayout::erase (AbstractForm* object)
 	{
 		if (!m_children.count(object)) return false;
 

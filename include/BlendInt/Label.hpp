@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		Label (const String& label);
 
-		Label (const String& label, Drawable * parent);
+		Label (const String& label, AbstractForm * parent);
 
 		virtual ~Label ();
 

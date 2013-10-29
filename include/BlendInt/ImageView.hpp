@@ -34,7 +34,7 @@ namespace BlendInt {
 
 		ImageView ();
 
-		ImageView (Drawable* parent);
+		ImageView (AbstractForm* parent);
 
 		virtual ~ImageView ();
 

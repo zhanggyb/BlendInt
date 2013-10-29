@@ -36,7 +36,7 @@ namespace BlendInt {
 
 		HorizontalLayout(int align = AlignHorizontalCenter);
 
-		HorizontalLayout(int align, Drawable* parent);
+		HorizontalLayout(int align, AbstractForm* parent);
 
 		virtual ~HorizontalLayout ();
 
@@ -65,11 +65,13 @@ namespace BlendInt {
 
 		void generate_default_layout ();
 
+		bool get_size_hint (Size* min, Size* prefer);
+
 		Size get_minimal_size ();
 
-		void add_item (Drawable* object);
+		void add_item (AbstractForm* object);
 
-		void remove_item (Drawable* object);
+		void remove_item (AbstractForm* object);
 
 		virtual Size recount_size ();
 

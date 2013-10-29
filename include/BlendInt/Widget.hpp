@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_WIDGET_HPP_
 #define _BLENDINT_WIDGET_HPP_
 
-#include <BlendInt/Drawable.hpp>
+#include <BlendInt/AbstractForm.hpp>
 #include <BlendInt/GLBuffer.hpp>
 
 #define WIDGET_AA_JITTER 8
@@ -45,7 +45,7 @@ namespace BlendInt {
 		WidgetPropertyLast = WidgetPropertyEmboss
 	};
 
-	class Widget: public Drawable
+	class Widget: public AbstractForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(Widget);
 
@@ -53,7 +53,7 @@ namespace BlendInt {
 
 		Widget ();
 
-		Widget (Drawable* parent);
+		Widget (AbstractForm* parent);
 
 		virtual ~Widget ();
 

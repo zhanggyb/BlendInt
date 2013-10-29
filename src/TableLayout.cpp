@@ -37,7 +37,7 @@ namespace BlendInt {
 		m_items.resize(rows * columns, 0);
 	}
 
-	TableLayout::TableLayout (int rows, int columns, Drawable* parent)
+	TableLayout::TableLayout (int rows, int columns, AbstractForm* parent)
 			: AbstractLayout(parent), m_rows(rows), m_columns(columns)
 	{
 		m_items.resize(rows * columns, 0);
@@ -91,7 +91,7 @@ namespace BlendInt {
 
 	bool TableLayout::update (int type, const void* property)
 	{
-		if(m_parent.type == ParentDrawable) {
+		if(m_parent.type == ParentForm) {
 
 			return true;
 
@@ -119,7 +119,7 @@ namespace BlendInt {
 
 	void TableLayout::render ()
 	{
-		std::vector<Drawable*>::const_iterator it;
+		std::vector<AbstractForm*>::const_iterator it;
 		for (it = m_items.begin(); it != m_items.end(); it++) {
 			if(*it) {
 				Interface::instance()->dispatch_render_event(*it);
@@ -153,7 +153,7 @@ namespace BlendInt {
 
 	void TableLayout::press_key (KeyEvent* event)
 	{
-		std::vector<Drawable*>::iterator it;
+		std::vector<AbstractForm*>::iterator it;
 		for(it = m_items.begin(); it != m_items.end(); it++)
 		{
 			Interface::instance()->dispatch_key_press_event(*it, event);
@@ -170,7 +170,7 @@ namespace BlendInt {
 
 	void TableLayout::press_mouse (MouseEvent* event)
 	{
-		std::vector<Drawable*>::iterator it;
+		std::vector<AbstractForm*>::iterator it;
 		for(it = m_items.begin(); it != m_items.end(); it++)
 		{
 			if(*it) {
@@ -181,7 +181,7 @@ namespace BlendInt {
 
 	void TableLayout::release_mouse (MouseEvent* event)
 	{
-		std::vector<Drawable*>::iterator it;
+		std::vector<AbstractForm*>::iterator it;
 		for(it = m_items.begin(); it != m_items.end(); it++)
 		{
 			if (*it) {
@@ -192,7 +192,7 @@ namespace BlendInt {
 
 	void TableLayout::move_mouse (MouseEvent* event)
 	{
-		std::vector<Drawable*>::iterator it;
+		std::vector<AbstractForm*>::iterator it;
 		for(it = m_items.begin(); it != m_items.end(); it++)
 		{
 			if (*it) {
@@ -210,7 +210,7 @@ namespace BlendInt {
 		unsigned int total_width = 0;
 		unsigned int total_height = 0;
 
-		Drawable* child = 0;
+		AbstractForm* child = 0;
 
 		std::vector<int> row_height(m_rows, 0);
 		std::vector<int> column_width(m_columns, 0);
@@ -371,7 +371,7 @@ namespace BlendInt {
 		unsigned int total_width = 0;
 		unsigned int total_height = 0;
 
-		Drawable* child = 0;
+		AbstractForm* child = 0;
 
 		std::vector<unsigned int> row_height(m_rows, 0);
 		std::vector<unsigned int> column_width(m_columns, 0);
@@ -438,7 +438,7 @@ namespace BlendInt {
 	int TableLayout::fixed_column_width(int column)
 	{
 		int fixed_width = -1;	// the return value
-		Drawable* child = 0;
+		AbstractForm* child = 0;
 
 		for (int i = 0; i < m_rows; i++)
 		{
@@ -456,7 +456,7 @@ namespace BlendInt {
 	int TableLayout::fixed_row_height(int row)
 	{
 		int fixed_height = -1;	// the return value
-		Drawable* child = 0;
+		AbstractForm* child = 0;
 
 		for (int j = 0; j < m_columns; j++)
 		{
@@ -474,7 +474,7 @@ namespace BlendInt {
 	unsigned int TableLayout::minimal_column_width(int column)
 	{
 		unsigned int minimal_width = 0;	// the return value
-		Drawable* child = 0;
+		AbstractForm* child = 0;
 
 		for (int j = 0; j < m_columns; j++)
 		{
@@ -490,7 +490,7 @@ namespace BlendInt {
 	unsigned int TableLayout::minimal_row_height(int row)
 	{
 		unsigned int minimal_height = 0;	// the return value
-		Drawable* child = 0;
+		AbstractForm* child = 0;
 
 		for (int j = 0; j < m_columns; j++)
 		{

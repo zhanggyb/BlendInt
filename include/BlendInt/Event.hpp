@@ -26,7 +26,7 @@
 
 namespace BlendInt {
 
-	class Drawable;
+	class AbstractForm;
 
 	class Event
 	{
@@ -37,7 +37,7 @@ namespace BlendInt {
 		{
 		}
 
-		void accept (Drawable* object)
+		void accept (AbstractForm* object)
 		{
 			m_accepted = true;
 			m_object = object;
@@ -46,7 +46,7 @@ namespace BlendInt {
 		/**
 		 * @brief ignore the current event loop
 		 */
-		void ignore (Drawable* object)
+		void ignore (AbstractForm* object)
 		{
 			m_ignored = true;
 			m_object = object;
@@ -62,7 +62,7 @@ namespace BlendInt {
 			return m_ignored;
 		}
 
-		Drawable* object ()
+		AbstractForm* object ()
 		{
 			return m_object;
 		}
@@ -76,7 +76,7 @@ namespace BlendInt {
 		/**
 		 * @brief Drawable object who react to this event
 		 */
-		Drawable* m_object;
+		AbstractForm* m_object;
 	};
 
 } /* namespace BlendInt */

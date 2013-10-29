@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_DRAWABLE_HPP_
-#define _BLENDINT_DRAWABLE_HPP_
+#ifndef _BLENDINT_ABSTRACTFORM_HPP_
+#define _BLENDINT_ABSTRACTFORM_HPP_
 
 #include <list>
 #include <set>
@@ -47,7 +47,7 @@ using std::map;
 namespace BlendInt {
 
 	class ContextManager;
-	class Drawable;
+	class AbstractForm;
 	class Rect;
 
 	struct WidgetTheme;
@@ -55,7 +55,7 @@ namespace BlendInt {
 	enum ParentType {
 		ParentUnknown,
 		ParentContextManager,
-		ParentDrawable
+		ParentForm
 	};
 
 	enum BasicPropertyType {
@@ -78,7 +78,7 @@ namespace BlendInt {
 
 		}
 		ContextManager* context;
-		Drawable* drawable;
+		AbstractForm* form;
 		void* nameless;
 	};
 
@@ -94,15 +94,15 @@ namespace BlendInt {
 		DISALLOW_COPY_AND_ASSIGN(Parent);
 	};
 
-	class Drawable: public EventHandler
+	class AbstractForm: public EventHandler
 	{
-		DISALLOW_COPY_AND_ASSIGN(Drawable);
+		DISALLOW_COPY_AND_ASSIGN(AbstractForm);
 
 	public:
 
 		friend class ContextManager;
 
-		Drawable ();
+		AbstractForm ();
 
 		/**
 		 * @brief Default constructor
@@ -112,13 +112,13 @@ namespace BlendInt {
 		 * a static list -- solo, it's usually a pop-up widget such as
 		 * context menu, message box
 		 */
-		Drawable (Drawable* parent);
+		AbstractForm (AbstractForm* parent);
 
-		virtual ~Drawable ();
+		virtual ~AbstractForm ();
 
-		bool bind (Drawable* child);
+		bool bind (AbstractForm* child);
 
-		bool unbind (Drawable* child);
+		bool unbind (AbstractForm* child);
 
 		/**
 		 * @brief unbind this and set parent to 0
@@ -127,7 +127,7 @@ namespace BlendInt {
 
 		bool bind_to (ContextManager* parent);
 
-		bool bind_to (Drawable* parent);
+		bool bind_to (AbstractForm* parent);
 
 		/**
 		 * @brief if the root of this Drawable object is bounded to ContextManager
@@ -184,6 +184,12 @@ namespace BlendInt {
 
 		void set_name (const std::string& name);
 
+		const Size& preferred_size () const {return m_preferred_size;}
+
+		void set_preferred_size (const Size& size);
+
+		void set_preferred_size (int width, int height);
+
 		const Size& minimal_size () const {return m_minimal_size;}
 
 		void set_minimal_size (const Size& size);
@@ -219,7 +225,7 @@ namespace BlendInt {
 		 *
 		 * This function should be called in Layout only
 		 */
-		void set_pos_priv (Drawable* obj, int x, int y);
+		void set_pos_priv (AbstractForm* obj, int x, int y);
 
 		/**
 		 * @brief set Drawable object position without checking layout
@@ -228,13 +234,13 @@ namespace BlendInt {
 		 *
 		 * This function should be called in layout only
 		 */
-		void set_pos_priv (Drawable* obj, const Point& pos);
+		void set_pos_priv (AbstractForm* obj, const Point& pos);
 
-		void set_in_layout (Drawable* obj, bool status) {obj->m_in_layout = status;}
+		void set_in_layout (AbstractForm* obj, bool status) {obj->m_in_layout = status;}
 
-		void resize_priv (Drawable* obj, int width, int height);
+		void resize_priv (AbstractForm* obj, int width, int height);
 
-		void resize_priv (Drawable* obj, const Size& size);
+		void resize_priv (AbstractForm* obj, const Size& size);
 
 	protected:
 		// member variables
@@ -263,6 +269,8 @@ namespace BlendInt {
 
 		Size m_size;
 
+		Size m_preferred_size;
+
 		Size m_minimal_size;
 
 		Point m_pos;
@@ -271,21 +279,21 @@ namespace BlendInt {
 
 		Parent m_parent;
 
-		std::set<Drawable*> m_children;
+		std::set<AbstractForm*> m_children;
 
 		Cpp::ConnectionScope m_events;
 
 #ifdef DEBUG
 	public:
 
-		static Drawable* find (uint64_t id);
+		static AbstractForm* find (uint64_t id);
 
 		static unsigned int map_size ()
 		{
 			return obj_map.size();
 		}
 
-		static const map<uint64_t, Drawable*>& get_map ()
+		static const map<uint64_t, AbstractForm*>& get_map ()
 		{
 			return obj_map;
 		}
@@ -309,7 +317,7 @@ namespace BlendInt {
 		// static member variables
 		static uint64_t id_last;
 
-		static map<uint64_t, Drawable*> obj_map;
+		static map<uint64_t, AbstractForm*> obj_map;
 
 	public:
 

@@ -37,7 +37,7 @@ namespace BlendInt {
 
 		VerticalLayout(int align = AlignVerticalCenter);
 
-		VerticalLayout(int align, Drawable* parent);
+		VerticalLayout(int align, AbstractForm* parent);
 
 		virtual ~VerticalLayout ();
 
@@ -68,7 +68,7 @@ namespace BlendInt {
 
 		Size get_minimal_size ();
 
-		void add_item (Drawable* object);
+		void add_item (AbstractForm* object);
 
 		virtual Size recount_size ();
 
