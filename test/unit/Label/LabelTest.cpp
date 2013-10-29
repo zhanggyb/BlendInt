@@ -85,7 +85,7 @@ void LabelTest::show1 ()
 	app->resize(1200, 800);
 
 	Label label(L"Say Hello");
-	label.set_pos(Point(50, 50));
+	label.set_position(Point(50, 50));
 	label.set_background(Color(0x4A898B80));
 	//label.setFont(Font("Droid Sans", 24));
 	label.set_foreground(Color(0x80F0B0FF));
@@ -154,7 +154,7 @@ void LabelTest::checkfont1 ()
 	wstring string(L"Hello World!");
 
 	Label label(string);
-	label.set_pos(Point(100, 100));
+	label.set_position(Point(100, 100));
 	label.set_background(Color(0x40, 0x40, 0xFF, 0x80));
 	label.set_font(Font("Droid Sans", 100));
 
@@ -220,10 +220,10 @@ void LabelTest::checkfont2 ()
 	Label instr1(wstring(L"box size"));
 	instr1.set_font(Font("Droid Sans"));
 	instr1.set_background(Color(0x40, 0x40, 0xFF, 0x00));
-	instr1.set_pos(100, 200);
+	instr1.set_position(100, 200);
 
 	Label label(string);
-	label.set_pos(Point(100, 100));
+	label.set_position(Point(100, 100));
 	label.set_background(Color(0x40, 0x40, 0xFF, 0x80));
 	label.set_font(Font("Droid Sans", 50));
 
@@ -288,7 +288,7 @@ void LabelTest::multiline1 ()
 	wstring string(L"Hello World!!!!!\nAnother Line");
 
 	Label label(string);
-	label.set_pos(Point(100, 200));
+	label.set_position(Point(100, 200));
 	label.set_background(Color(0x40, 0x40, 0xFF, 0x80));
 	label.set_font(Font("Droid Sans", 50));
 

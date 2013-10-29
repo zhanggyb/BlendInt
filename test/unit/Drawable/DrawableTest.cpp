@@ -22,7 +22,7 @@ myTexture::myTexture (AbstractForm *parent)
 		: AbstractForm(parent)
 {
 	resize(400, 400);
-	set_pos(Point(20, 20));
+	set_position(Point(20, 20));
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -386,7 +386,7 @@ void DrawableTest::mydrawable1 ()
 	app->resize(1200, 800);
 
 	myDrawable1 widget;
-	widget.set_pos(Point(50, 50));
+	widget.set_position(Point(50, 50));
 	widget.resize(80, 40);
 
 	/* Loop until the user closes the window */
@@ -443,7 +443,7 @@ void DrawableTest::mydrawable2 ()
 	app->resize(1200, 800);
 
 	myDrawable2 widget;
-	widget.set_pos(Point(50, 50));
+	widget.set_position(Point(50, 50));
 	widget.resize(80, 40);
 
 	/* Loop until the user closes the window */
@@ -500,7 +500,7 @@ void DrawableTest::mydrawable3 ()
 	app->resize(1200, 800);
 
 	myDrawable3 widget;
-	widget.set_pos(Point(50, 50));
+	widget.set_position(Point(50, 50));
 	widget.resize(80, 40);
 
 	/* Loop until the user closes the window */
@@ -558,22 +558,22 @@ void DrawableTest::bind_test1()
 	app->resize(1200, 800);
 
 	Widget widget1;
-	widget1.set_pos(0, 0);
+	widget1.set_position(0, 0);
 	widget1.resize (50, 50);
 	widget1.bind_to (ContextManager::instance());
 
 	Widget widget2;
-	widget2.set_pos(50, 50);
+	widget2.set_position(50, 50);
 	widget2.resize (50, 50);
 	widget2.bind_to(&widget1);
 
 	Widget widget3;
-	widget3.set_pos(100, 100);
+	widget3.set_position(100, 100);
 	widget3.resize(50, 50);
 	widget2.bind(&widget3);
 
 	Widget widget4;
-	widget4.set_pos(150, 150);
+	widget4.set_position(150, 150);
 	widget4.resize(50, 50);
 	app->bind(&widget4);
 
@@ -639,25 +639,25 @@ void DrawableTest::bind_test2()
 	app->resize(1200, 800);
 
 	Widget* widget1 = new Widget;
-	widget1->set_pos(0, 0);
+	widget1->set_position(0, 0);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 	widget1->bind_to (ContextManager::instance());
 
 	Widget* widget2 = new Widget;
-	widget2->set_pos(50, 50);
+	widget2->set_position(50, 50);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 	widget2->bind_to(widget1);
 
 	Widget* widget3 = new Widget;
-	widget3->set_pos(100, 100);
+	widget3->set_position(100, 100);
 	widget3->resize(50, 50);
 	widget3->set_name("widget3");
 	widget2->bind(widget3);
 
 	Widget* widget4 = new Widget;
-	widget4->set_pos(150, 150);
+	widget4->set_position(150, 150);
 	widget4->resize(50, 50);
 	widget4->set_name("widget4");
 	app->bind(widget4);
@@ -733,25 +733,25 @@ void DrawableTest::bind_test3()
 	app->resize(1200, 800);
 
 	Widget* widget1 = new Widget;
-	widget1->set_pos(0, 0);
+	widget1->set_position(0, 0);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 	widget1->bind_to (ContextManager::instance());
 
 	Widget* widget2 = new Widget;
-	widget2->set_pos(50, 50);
+	widget2->set_position(50, 50);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 	widget2->bind_to(ContextManager::instance());
 
 	Widget* widget3 = new Widget;
-	widget3->set_pos(100, 100);
+	widget3->set_position(100, 100);
 	widget3->resize(50, 50);
 	widget3->set_name("widget3");
 	widget2->bind(widget3);
 
 	Widget* widget4 = new Widget;
-	widget4->set_pos(150, 150);
+	widget4->set_position(150, 150);
 	widget4->resize(50, 50);
 	widget4->set_name("widget4");
 	ContextManager::instance()->bind(widget4);
@@ -833,22 +833,22 @@ void DrawableTest::bind_test4()
 	app->resize(1200, 800);
 
 	Widget* widget1 = new Widget;
-	widget1->set_pos(0, 0);
+	widget1->set_position(0, 0);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 
 	Widget* widget2 = new Widget;
-	widget2->set_pos(50, 50);
+	widget2->set_position(50, 50);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
 	Widget* widget3 = new Widget;
-	widget3->set_pos(100, 100);
+	widget3->set_position(100, 100);
 	widget3->resize(50, 50);
 	widget3->set_name("widget3");
 
 	Widget* widget4 = new Widget;
-	widget4->set_pos(150, 150);
+	widget4->set_position(150, 150);
 	widget4->resize(50, 50);
 	widget4->set_name("widget4");
 
@@ -928,22 +928,22 @@ void DrawableTest::bind_test5()
 	app->resize(1200, 800);
 
 	Widget* widget1 = new Widget;
-	widget1->set_pos(0, 0);
+	widget1->set_position(0, 0);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 
 	Widget* widget2 = new Widget;
-	widget2->set_pos(50, 50);
+	widget2->set_position(50, 50);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
 	Widget* widget3 = new Widget;
-	widget3->set_pos(100, 100);
+	widget3->set_position(100, 100);
 	widget3->resize(50, 50);
 	widget3->set_name("widget3");
 
 	Widget* widget4 = new Widget;
-	widget4->set_pos(150, 150);
+	widget4->set_position(150, 150);
 	widget4->resize(50, 50);
 	widget4->set_name("widget4");
 
@@ -1033,25 +1033,25 @@ void DrawableTest::bind_test6()
 	app->resize(1200, 800);
 
 	Widget* widget1 = new Widget;
-	widget1->set_pos(0, 0);
+	widget1->set_position(0, 0);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 	widget1->bind_to (ContextManager::instance());
 
 	Widget* widget2 = new Widget;
-	widget2->set_pos(50, 50);
+	widget2->set_position(50, 50);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 	widget2->bind_to(ContextManager::instance());
 
 	Widget* widget3 = new Widget;
-	widget3->set_pos(100, 100);
+	widget3->set_position(100, 100);
 	widget3->resize(50, 50);
 	widget3->set_name("widget3");
 	widget2->bind(widget3);
 
 	Widget* widget4 = new Widget;
-	widget4->set_pos(150, 150);
+	widget4->set_position(150, 150);
 	widget4->resize(50, 50);
 	widget4->set_name("widget4");
 	ContextManager::instance()->bind(widget4);
@@ -1129,23 +1129,23 @@ void DrawableTest::bind_test7()
 	app->resize(1200, 800);
 
 	Widget* widget1 = new Widget;
-	widget1->set_pos(0, 0);
+	widget1->set_position(0, 0);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 	widget1->bind_to (ContextManager::instance());
 
 	Widget* widget2 = new Widget(widget1);
-	widget2->set_pos(50, 50);
+	widget2->set_position(50, 50);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
 	Widget* widget3 = new Widget(widget2);
-	widget3->set_pos(100, 100);
+	widget3->set_position(100, 100);
 	widget3->resize(50, 50);
 	widget3->set_name("widget3");
 
 	Widget* widget4 = new Widget(widget3);
-	widget4->set_pos(150, 150);
+	widget4->set_position(150, 150);
 	widget4->resize(50, 50);
 	widget4->set_name("widget4");
 
@@ -1208,7 +1208,7 @@ void DrawableTest::bind_test8()
 	app->resize(1200, 800);
 
 	Widget widget1;
-	widget1.set_pos(200, 200);
+	widget1.set_position(200, 200);
 	widget1.bind_to (ContextManager::instance());
 
 	/* Loop until the user closes the window */
@@ -1267,7 +1267,7 @@ void DrawableTest::bind_test9()
 	app->resize(1200, 800);
 
 	Widget widget1;
-	widget1.set_pos(200, 200);
+	widget1.set_position(200, 200);
 	widget1.bind_to (ContextManager::instance());
 
 	/* Loop until the user closes the window */
@@ -1326,7 +1326,7 @@ void DrawableTest::bind_test10()
 	app->resize(1200, 800);
 
 	Widget widget1;
-	widget1.set_pos(200, 200);
+	widget1.set_position(200, 200);
 	widget1.bind_to (ContextManager::instance());
 
 	/* Loop until the user closes the window */

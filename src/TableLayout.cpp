@@ -347,14 +347,14 @@ namespace BlendInt {
 				}
 
 				if (m_alignment & AlignTop) {
-						set_pos_priv(child, child->pos().x(),
-						        child->pos().y() + row_height[i] - child->size().height());
+						set_pos_priv(child, child->position().x(),
+						        child->position().y() + row_height[i] - child->size().height());
 				} else if (m_alignment & AlignBottom) {
-						set_pos_priv(child, child->pos().x(),
-								child->pos().y());
+						set_pos_priv(child, child->position().x(),
+								child->position().y());
 				} else if (m_alignment & AlignHorizontalCenter) {
-						set_pos_priv(child, child->pos().x(),
-								child->pos().y() + (row_height[i] - child->size().height()) / 2);
+						set_pos_priv(child, child->position().x(),
+								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + m_space;
 			}
@@ -415,14 +415,14 @@ namespace BlendInt {
 				}
 
 				if (m_alignment & AlignTop) {
-						set_pos_priv(child, child->pos().x(),
-						        child->pos().y() + row_height[i] - child->size().height());
+						set_pos_priv(child, child->position().x(),
+						        child->position().y() + row_height[i] - child->size().height());
 				} else if (m_alignment & AlignBottom) {
-						set_pos_priv(child, child->pos().x(),
-								child->pos().y());
+						set_pos_priv(child, child->position().x(),
+								child->position().y());
 				} else if (m_alignment & AlignHorizontalCenter) {
-						set_pos_priv(child, child->pos().x(),
-								child->pos().y() + (row_height[i] - child->size().height()) / 2);
+						set_pos_priv(child, child->position().x(),
+								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + m_space;
 			}

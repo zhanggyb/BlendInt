@@ -85,11 +85,11 @@ void SliderTest::slider_move_test01()
 	app->resize(1200, 800);
 
 	Slider* hslider = new Slider;
-	hslider->set_pos(200, 200);
+	hslider->set_position(200, 200);
 	hslider->set_value(50);
 
 	Slider* vslider = new Slider(Vertical);
-	vslider->set_pos(200, 250);
+	vslider->set_position(200, 250);
 	vslider->set_value(50);
 
 	app->bind(hslider);

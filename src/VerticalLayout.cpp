@@ -207,20 +207,20 @@ namespace BlendInt {
 			} else {
 				if (m_alignment & AlignLeft) {
 					set_pos_priv(child, m_pos.x() + m_margin.left(),
-					        child->pos().y());
+					        child->position().y());
 				} else if (m_alignment & AlignRight) {
 					set_pos_priv(child,
 					        m_pos.x()
 					                + (total_width
 					                        - (m_margin.right()
 					                                + child->size().width())),
-					        child->pos().y());
+					        child->position().y());
 				} else if (m_alignment & AlignVerticalCenter) {
 
 					set_pos_priv(child,
 					        m_pos.x() + m_margin.right()
 					                + (max_widget_width - child->size().width())
-					                        / 2, child->pos().y());
+					                        / 2, child->position().y());
 				}
 			}
 
@@ -260,19 +260,19 @@ namespace BlendInt {
 			} else {
 				if (m_alignment & AlignLeft) {
 					set_pos_priv(child, m_pos.x() + m_margin.left(),
-					        child->pos().y());
+					        child->position().y());
 				} else if (m_alignment & AlignRight) {
 					set_pos_priv(child,
 					        m_pos.x()
 					                + (total_width
 					                        - (m_margin.right()
 					                                + child->size().width())),
-					        child->pos().y());
+					        child->position().y());
 				} else if (m_alignment & AlignVerticalCenter) {
 					set_pos_priv(child,
 					        m_pos.x()
 					                + (total_width - child->size().width()) / 2,
-					        child->pos().y());
+					        child->position().y());
 				}
 			}
 

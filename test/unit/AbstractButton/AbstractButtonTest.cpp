@@ -85,7 +85,7 @@ void AbstractButtonTest::show1 ()
 
 	Button button(L"The Default Value");
 	button.set_font(Font("Droid Sans"));
-	button.set_pos(Point(50, 50));
+	button.set_position(Point(50, 50));
 
 	app->bind(&button);
 

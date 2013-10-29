@@ -123,6 +123,11 @@ namespace BlendInt {
 		return true;
 	}
 
+	void AbstractLayout::update ()
+	{
+
+	}
+
 	bool AbstractLayout::update(int type, const void* property)
 	{
 		switch (type) {
@@ -132,8 +137,8 @@ namespace BlendInt {
 
 				for (size_t i = 0; i < m_items.size(); i++)
 				{
-					set_pos_priv(m_items[i], m_items[i]->pos().x() + (new_pos->x() - m_pos.x()),
-							m_items[i]->pos().y() + (new_pos->y() - m_pos.y()));
+					set_pos_priv(m_items[i], m_items[i]->position().x() + (new_pos->x() - m_pos.x()),
+							m_items[i]->position().y() + (new_pos->y() - m_pos.y()));
 				}
 				return true;
 			}

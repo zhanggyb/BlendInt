@@ -22,7 +22,7 @@ testWidget::testWidget (int type, AbstractForm* parent)
 		: Widget(parent)
 {
 	m_roundcorner = RoundCornerAll;
-	set_pos(Point(100, 100));
+	set_position(Point(100, 100));
 	resize(200, 200);
 
 	switch (type) {
@@ -115,7 +115,7 @@ void WidgetTest::widget_default_show ()
 	Widget widget;
 
 	// widget.set_round_box_type(RoundBoxAll);
-	widget.set_pos(50, 50);
+	widget.set_position(50, 50);
 	widget.resize(200, 100);
 
 	ContextManager::instance()->bind(&widget);
@@ -176,7 +176,7 @@ void WidgetTest::testwidget_show0 ()
 	app->resize(1200, 800);
 
 	testWidget widget(0);
-	widget.set_pos(Point(50, 50));
+	widget.set_position(Point(50, 50));
 	widget.resize(80, 40);
 
 	ContextManager::instance()->bind(&widget);

@@ -139,24 +139,24 @@ namespace BlendInt {
 
 			if(parent->orientation() == Horizontal) {
 				m_pos.set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
-				if(m_pos.x() < (parent->pos().x() + parent->padding().left()))
+				if(m_pos.x() < (parent->position().x() + parent->padding().left()))
 				{
-					m_pos.set_x(parent->pos().x() + parent->padding().left());
+					m_pos.set_x(parent->position().x() + parent->padding().left());
 				}
 				if(m_pos.x() >
-						(int)(parent->pos().x() + parent->size().width() - parent->padding().right() - m_size.width()))
+						(int)(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width()))
 				{
-					m_pos.set_x(parent->pos().x() + parent->size().width() - parent->padding().right() - m_size.width());
+					m_pos.set_x(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width());
 				}
 			}
 
 			if(parent->orientation() == Vertical) {
 				m_pos.set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
-				if(m_pos.y() < (parent->pos().y() + parent->padding().bottom())) {
-					m_pos.set_y(parent->pos().y() + parent->padding().bottom());
+				if(m_pos.y() < (parent->position().y() + parent->padding().bottom())) {
+					m_pos.set_y(parent->position().y() + parent->padding().bottom());
 				}
-				if(m_pos.y() > (int)(parent->pos().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
-					m_pos.set_y(parent->pos().y() + parent->size().height() - parent->padding().top() - m_size.height());
+				if(m_pos.y() > (int)(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
+					m_pos.set_y(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height());
 				}
 			}
 
@@ -485,7 +485,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		m_scroll_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		m_scroll_control->set_position (position().x() + padding().left(), position().y() + padding().bottom());
 		update(SliderPropertyValue, 0);
 	}
 
@@ -508,7 +508,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		m_scroll_control->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		m_scroll_control->set_position (position().x() + padding().left(), position().y() + padding().bottom());
 		update(SliderPropertyValue, 0);
 	}
 
@@ -522,7 +522,7 @@ namespace BlendInt {
 
 			case FormPropertyPosition: {
 				const Point* new_pos = static_cast<const Point*>(property);
-				m_scroll_control->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
+				m_scroll_control->set_position (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
 				break;
 			}
 
@@ -533,11 +533,11 @@ namespace BlendInt {
 
 			case SliderPropertyValue: {
 				if(orientation()) {	// Vertical is 1
-					m_scroll_control->set_pos (m_scroll_control->pos().x(),
+					m_scroll_control->set_position (m_scroll_control->position().x(),
 							m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {	// Horizontal is 0
-					m_scroll_control->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
-							m_scroll_control->pos().y());
+					m_scroll_control->set_position (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+							m_scroll_control->position().y());
 				}
 				break;
 			}
@@ -684,9 +684,9 @@ namespace BlendInt {
 
 				int value = 0;
 				if(orientation()) {
-					value = (m_scroll_control->pos().y() - m_pos.y() - m_padding.bottom()) / (float)get_space() * (maximum() - minimum());
+					value = (m_scroll_control->position().y() - m_pos.y() - m_padding.bottom()) / (float)get_space() * (maximum() - minimum());
 				} else {
-					value = (m_scroll_control->pos().x() - m_pos.x() - m_padding.left()) / (float)get_space() * (maximum() - minimum());
+					value = (m_scroll_control->position().x() - m_pos.x() - m_padding.left()) / (float)get_space() * (maximum() - minimum());
 				}
 
 				set_value (value);

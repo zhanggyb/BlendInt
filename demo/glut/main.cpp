@@ -24,7 +24,7 @@ int init_resources(void)
 	// 	glOrtho(0.f, 1200, 0.f, 800, 100.f, -100.f);
 	
 	Label* label = new Label("Hello World!");
-	label->set_pos (200, 200);
+	label->set_position (200, 200);
 		
 	app->bind(label);
 	

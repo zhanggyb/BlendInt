@@ -92,6 +92,8 @@ namespace BlendInt {
 			int half;	/**< halfway vertices number */
 		};
 
+		virtual void update ();
+
 		virtual bool update (int type, const void* property);
 
 		virtual void render ();
@@ -123,6 +125,16 @@ namespace BlendInt {
 		 * @return how many vertices are used in the output array
 		 */
 		VerticesSum generate_vertices (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
+
+		/**
+		 * @brief calculate vertices for round box edge with no shaded color
+		 * @param[in] size the size to calculate edges
+		 * @param[out] inner_v
+		 * @param[out] outer_v
+		 * @return how many vertices are used in the output array
+		 */
+		VerticesSum generate_vertices (const Size& size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
+
 
 		/**
 		 * @brief calculate vertices for round box edges

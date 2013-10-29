@@ -305,12 +305,12 @@ namespace BlendInt {
 		if (update(FormPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
 	}
 
-	const Point& AbstractForm::pos () const
+	const Point& AbstractForm::position () const
 	{
 		return m_pos;
 	}
 
-	void AbstractForm::set_pos (int x, int y)
+	void AbstractForm::set_position (int x, int y)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
@@ -321,7 +321,7 @@ namespace BlendInt {
 		if (update(FormPropertyPosition, &new_pos)) m_pos = new_pos;
 	}
 
-	void AbstractForm::set_pos (const Point& pos)
+	void AbstractForm::set_position (const Point& pos)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;

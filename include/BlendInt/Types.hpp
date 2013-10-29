@@ -43,13 +43,19 @@
 	fprintf(stderr, "%s: %d, %s -- %s\n", __FILE__, __LINE__, __func__, msg)
 #endif
 
+/**
+ * macro to define a class property that will effect the opengl drawing,
+ * change this property should call update()
+ */
+#define DRAWABLE_PROPERTY
+
 namespace BlendInt {
 
 	enum MouseAction {
-		MouseNone = -1,
-		MousePress = 0,				/* GLFW_RELEASE */
-		MouseRelease,			/* GLFW_PRESS */
-		MouseMove				/* GLFW_REPEAT */
+		MouseNone = -1,                      //!< MouseNone
+		MousePress = 0,				/* GLFW_RELEASE *///!< MousePress
+		MouseRelease,			/* GLFW_PRESS */     //!< MouseRelease
+		MouseMove				/* GLFW_REPEAT */       //!< MouseMove
 	};
 
 	enum MouseButton {

@@ -84,7 +84,7 @@ void ScrollWidgetTest::scrollbar_test01()
 	app->resize(1200, 800);
 
 	ScrollBar bar(Horizontal);
-	bar.set_pos (200, 200);
+	bar.set_position (200, 200);
 
 	app->bind(&bar);
 

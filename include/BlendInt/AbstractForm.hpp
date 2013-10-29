@@ -103,6 +103,9 @@ namespace BlendInt {
 
 		friend class ContextManager;
 
+		/**
+		 * @brief the default constructor
+		 */
 		AbstractForm ();
 
 		/**
@@ -142,11 +145,11 @@ namespace BlendInt {
 
 		void resize (const Size& size);
 
-		const Point& pos () const;
+		const Point& position () const;
 
-		void set_pos (int x, int y);
+		void set_position (int x, int y);
 
-		void set_pos (const Point& pos);
+		void set_position (const Point& pos);
 
 		int z () const
 		{
@@ -206,6 +209,19 @@ namespace BlendInt {
 		bool contain (const Coord2d& cursor);
 
 		/**
+		 * @brief Update opengl data (usually the GL buffer) for render
+		 *
+		 * This virtual function should be implemented in each derived class,
+		 * and should only use the form's property to draw opengl elements once.
+		 *
+		 * This function will not be called automatically after changing a property,
+		 * instead, it should be called manually. This design is for the performance
+		 * of this library, because sometimes you need to change many properties with
+		 * set_xxxx() before update the GL buffer.
+		 */
+		virtual void update () = 0;
+
+		/**
 		 * @brief Update data for render, used in size, shape change only
 		 *
 		 * @return true - accept this update, false - discard this update
@@ -251,14 +267,14 @@ namespace BlendInt {
 		 */
 		int m_z;
 
-		int m_roundcorner;
+		DRAWABLE_PROPERTY int m_roundcorner;
 
 		/**
 		 * @brief the round corner radius
 		 *
 		 * should be 0.0, 1.0, 2.0 etc
 		 */
-		float m_corner_radius;
+		DRAWABLE_PROPERTY float m_corner_radius;
 
 		bool m_visible;
 
@@ -268,7 +284,7 @@ namespace BlendInt {
 
 		bool m_expand_y;
 
-		Size m_size;
+		DRAWABLE_PROPERTY Size m_size;
 
 		Size m_preferred_size;
 

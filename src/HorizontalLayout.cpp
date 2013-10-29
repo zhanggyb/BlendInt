@@ -208,16 +208,16 @@ namespace BlendInt {
 				resize_priv(child, child->size().width(), max_widget_height);
 			} else {
 				if (m_alignment & AlignTop) {
-					set_pos_priv(child, child->pos().x(),
+					set_pos_priv(child, child->position().x(),
 					        m_pos.y()
 					                + (total_height
 					                        - (m_margin.top()
 					                                + child->size().height())));
 				} else if (m_alignment & AlignBottom) {
-					set_pos_priv(child, child->pos().x(),
+					set_pos_priv(child, child->position().x(),
 					        m_pos.y() + m_margin.bottom());
 				} else if (m_alignment & AlignHorizontalCenter) {
-					set_pos_priv(child, child->pos().x(),
+					set_pos_priv(child, child->position().x(),
 					        m_pos.y() + m_margin.bottom()
 					                + (max_widget_height
 					                        - child->size().height()) / 2);
@@ -261,17 +261,17 @@ namespace BlendInt {
 				resize_priv(child, child->size().width(), max_widget_height);
 			} else {
 				if (m_alignment & AlignTop) {
-					set_pos_priv(child, child->pos().x(),
+					set_pos_priv(child, child->position().x(),
 					        m_pos.y()
 					                + (total_height
 					                        - (m_margin.top()
 					                                + child->size().height())));
 				} else if (m_alignment & AlignBottom) {
 					// TODO: not needed as already done in previous loop
-					set_pos_priv(child, child->pos().x(),
+					set_pos_priv(child, child->position().x(),
 					        m_pos.y() + m_margin.bottom());
 				} else if (m_alignment & AlignHorizontalCenter) {
-					set_pos_priv(child, child->pos().x(),
+					set_pos_priv(child, child->position().x(),
 					        m_pos.y()
 					                + (total_height - child->size().height())
 					                        / 2);
@@ -416,14 +416,14 @@ namespace BlendInt {
 			}
 
 			if (m_alignment & AlignTop) {
-				set_pos_priv(child, child->pos().x(),
+				set_pos_priv(child, child->position().x(),
 				        m_pos.y() + m_margin.bottom()
 				                + (height - child->size().height()));
 			} else if (m_alignment & AlignBottom) {
 //				set_pos_priv(child, child->pos().x(),
 //						child->pos().y() + m_margin.bottom());
 			} else if (m_alignment & AlignHorizontalCenter) {
-				set_pos_priv(child, child->pos().x(),
+				set_pos_priv(child, child->position().x(),
 				        m_pos.y() + m_margin.bottom()
 				                + (height - child->size().height()) / 2);
 			}

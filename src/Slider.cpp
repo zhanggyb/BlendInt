@@ -149,22 +149,22 @@ namespace BlendInt {
 			if(parent->orientation()) {	// Vertical
 
 				m_pos.set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
-				if(m_pos.y() < (parent->pos().y() + parent->padding().bottom())) {
-					m_pos.set_y(parent->pos().y() + parent->padding().bottom());
+				if(m_pos.y() < (parent->position().y() + parent->padding().bottom())) {
+					m_pos.set_y(parent->position().y() + parent->padding().bottom());
 				}
-				if(m_pos.y() > (int)(parent->pos().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
-					m_pos.set_y(parent->pos().y() + parent->size().height() - parent->padding().top() - m_size.height());
+				if(m_pos.y() > (int)(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
+					m_pos.set_y(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height());
 				}
 
 			} else {
 
 				m_pos.set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
-				if(m_pos.x() < (parent->pos().x() + parent->padding().left())) {
-					m_pos.set_x(parent->pos().x() + parent->padding().left());
+				if(m_pos.x() < (parent->position().x() + parent->padding().left())) {
+					m_pos.set_x(parent->position().x() + parent->padding().left());
 				}
 				if(m_pos.x() >
-						(int)(parent->pos().x() + parent->size().width() - parent->padding().right() - m_size.width())) {
-					m_pos.set_x(parent->pos().x() + parent->size().width() - parent->padding().right() - m_size.width());
+						(int)(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width())) {
+					m_pos.set_x(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width());
 				}
 
 			}
@@ -321,7 +321,7 @@ namespace BlendInt {
 				size().height() - padding().top() - padding().bottom());
 
 		m_slide_button->resize(button_size, button_size);
-		//m_slide_button->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		//m_slide_button->set_position (position().x() + padding().left(), position().y() + padding().bottom());
 		update(SliderPropertyValue, 0);
 	}
 
@@ -344,7 +344,7 @@ namespace BlendInt {
 
 		m_slide_button->resize(button_size, button_size);
 
-		//m_slide_button->set_pos (pos().x() + padding().left(), pos().y() + padding().bottom());
+		//m_slide_button->set_position (position().x() + padding().left(), position().y() + padding().bottom());
 		update(SliderPropertyValue, 0);
 	}
 
@@ -378,7 +378,7 @@ namespace BlendInt {
 		switch (type) {
 			case FormPropertyPosition: {
 				const Point* new_pos = static_cast<const Point*>(property);
-				m_slide_button->set_pos (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
+				m_slide_button->set_position (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
 				return true;
 			}
 
@@ -391,11 +391,11 @@ namespace BlendInt {
 				m_slide_button->resize(button_size, button_size);
 
 				if(orientation()) {
-					m_slide_button->set_pos (m_slide_button->pos().x(),
+					m_slide_button->set_position (m_slide_button->position().x(),
 							m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
-					m_slide_button->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
-							m_slide_button->pos().y());
+					m_slide_button->set_position (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+							m_slide_button->position().y());
 				}
 
 				return true;
@@ -404,11 +404,11 @@ namespace BlendInt {
 			case SliderPropertyValue: {
 
 				if(orientation()) {
-					m_slide_button->set_pos (m_slide_button->pos().x(),
+					m_slide_button->set_position (m_slide_button->position().x(),
 							m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
-					m_slide_button->set_pos (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
-							m_slide_button->pos().y());
+					m_slide_button->set_position (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+							m_slide_button->position().y());
 				}
 
 				return true;
@@ -499,7 +499,7 @@ namespace BlendInt {
 				if(event->position().y() < ymin ||	event->position().y() > ymax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
-				value = (m_slide_button->pos().y() - m_pos.y()
+				value = (m_slide_button->position().y() - m_pos.y()
 				        - m_padding.bottom()) / (float) get_space()
 				        * (maximum() - minimum());
 
@@ -509,7 +509,7 @@ namespace BlendInt {
 				if(event->position().x() < xmin ||	event->position().x() > xmax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
-				value = (m_slide_button->pos().x() - m_pos.x()
+				value = (m_slide_button->position().x() - m_pos.x()
 				        - m_padding.left()) / (float) get_space()
 				        * (maximum() - minimum());
 			}
@@ -556,12 +556,12 @@ namespace BlendInt {
 			int val;
 
 			if (orientation()) {
-				if(event->position().y() < m_slide_button->pos().y())
+				if(event->position().y() < m_slide_button->position().y())
 					val = value() - step();
 				else
 					val = value() + step();
 			} else {
-				if(event->position().x() < m_slide_button->pos().x())
+				if(event->position().x() < m_slide_button->position().x())
 					val = value() - step();
 				else
 					val = value() + step();

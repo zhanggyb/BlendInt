@@ -22,6 +22,8 @@ public:
 
 protected:
 
+	virtual void update () {}
+
 	virtual bool update (int type, const void* property) {return true;}
 
 	virtual void render ();
@@ -58,6 +60,8 @@ public:
 
 protected:
 
+	virtual void update () {}
+
 	virtual bool update (int type, const void* property) {return true;}
 
 	virtual void render ();
@@ -85,6 +89,8 @@ public:
 
 protected:
 
+	virtual void update () {}
+
 	virtual bool update (int type, const void* property) {return true;}
 
 	virtual void render ();
@@ -111,6 +117,8 @@ public:
 	virtual ~myDrawable3 ();
 
 protected:
+
+	virtual void update () {}
 
 	virtual bool update (int type, const void* property) {return true;}
 

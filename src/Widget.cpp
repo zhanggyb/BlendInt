@@ -114,6 +114,58 @@ namespace BlendInt {
 	{
 	}
 
+	void Widget::update ()
+	{
+		// the basic widget don't use shaded color
+
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_vertices(size(), inner_v, outer_v);
+
+		if(m_emboss) {
+			if(m_buffer.size() != 3)
+				m_buffer.generate(3);
+		}	else {
+			if(m_buffer.size() != 2)
+					m_buffer.generate(2);
+		}
+
+		m_buffer.set_index(0);
+		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.bind();
+		m_buffer.upload(inner_v);
+		m_buffer.unbind();
+
+		// the quad strip for outline
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+
+		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+
+		m_buffer.set_index(1);
+		m_buffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		m_buffer.bind();
+		m_buffer.upload(quad_strip);
+		m_buffer.unbind();
+
+		if (m_emboss) {
+			float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+
+			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
+
+			m_buffer.set_index(2);
+			m_buffer.set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+			m_buffer.bind();
+			m_buffer.upload(quad_strip_emboss);
+			m_buffer.unbind();
+		}
+	}
+
 	bool Widget::update (int type, const void* property)
 	{
 		switch(type)
@@ -296,6 +348,140 @@ namespace BlendInt {
 
 		minsize = std::min(size->width() * hnum,
 		                 size->height() * vnum);
+
+		if (2.0f * m_corner_radius > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + 1.0f) > minsize)
+			radi = 0.5f * minsize - m_border_width;	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		// corner left-bottom
+		if (m_roundcorner & RoundCornerBottomLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner_v[count][0] = minxi + veci[i][1];
+				inner_v[count][1] = minyi + radi - veci[i][0];
+
+				outer_v[count][0] = minx + vec[i][1];
+				outer_v[count][1] = miny + rad - vec[i][0];
+			}
+		}
+		else {
+			inner_v[count][0] = minxi;
+			inner_v[count][1] = minyi;
+
+			outer_v[count][0] = minx;
+			outer_v[count][1] = miny;
+			count++;
+		}
+
+		// corner right-bottom
+		if (m_roundcorner & RoundCornerBottomRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner_v[count][0] = maxxi - radi + veci[i][0];
+				inner_v[count][1] = minyi + veci[i][1];
+
+				outer_v[count][0] = maxx - rad + vec[i][0];
+				outer_v[count][1] = miny + vec[i][1];
+			}
+		}
+		else {
+			inner_v[count][0] = maxxi;
+			inner_v[count][1] = minyi;
+
+			outer_v[count][0] = maxx;
+			outer_v[count][1] = miny;
+			count++;
+		}
+
+		sum.half = count;
+
+		// corner right-top
+		if (m_roundcorner & RoundCornerTopRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner_v[count][0] = maxxi - veci[i][1];
+				inner_v[count][1] = maxyi - radi + veci[i][0];
+
+				outer_v[count][0] = maxx - vec[i][1];
+				outer_v[count][1] = maxy - rad + vec[i][0];
+			}
+		}
+		else {
+			inner_v[count][0] = maxxi;
+			inner_v[count][1] = maxyi;
+
+			outer_v[count][0] = maxx;
+			outer_v[count][1] = maxy;
+			count++;
+		}
+
+		// corner left-top
+		if (m_roundcorner & RoundCornerTopLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner_v[count][0] = minxi + radi - veci[i][0];
+				inner_v[count][1] = maxyi - veci[i][1];
+
+				outer_v[count][0] = minx + rad - vec[i][0];
+				outer_v[count][1] = maxy - vec[i][1];
+			}
+
+		}
+		else {
+
+			inner_v[count][0] = minxi;
+			inner_v[count][1] = maxyi;
+
+			outer_v[count][0] = minx;
+			outer_v[count][1] = maxy;
+			count++;
+		}
+
+		assert(count <= WIDGET_SIZE_MAX);
+
+#ifdef DEBUG
+
+#endif
+
+		sum.total = count;
+		return sum;
+	}
+
+	Widget::VerticesSum Widget::generate_vertices(const Size& size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
+	{
+		float rad = m_corner_radius;
+		float radi = rad - m_border_width;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size.width();
+		float maxy = size.height();
+
+		float minxi = minx + m_border_width;		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - m_border_width; 	// U.pixelsize;
+		float minyi = miny + m_border_width;		// U.pixelsize;
+		float maxyi = maxy - m_border_width;		// U.pixelsize;
+
+		VerticesSum sum;
+
+		int count = 0;
+
+		int minsize = 0;
+		const int hnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerTopRight)) == (RoundCornerTopLeft | RoundCornerTopRight) ||
+		                  (m_roundcorner & (RoundCornerBottomRight | RoundCornerBottomLeft)) == (RoundCornerBottomRight | RoundCornerBottomLeft)) ? 1 : 2;
+		const int vnum = ((m_roundcorner & (RoundCornerTopLeft | RoundCornerBottomLeft)) == (RoundCornerTopLeft | RoundCornerBottomLeft) ||
+		                  (m_roundcorner & (RoundCornerTopRight | RoundCornerBottomRight)) == (RoundCornerTopRight | RoundCornerBottomRight)) ? 1 : 2;
+
+		minsize = std::min(size.width() * hnum,
+		                 size.height() * vnum);
 
 		if (2.0f * m_corner_radius > minsize)
 			rad = 0.5f * minsize;

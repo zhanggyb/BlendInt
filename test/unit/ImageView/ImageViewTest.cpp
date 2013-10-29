@@ -83,7 +83,7 @@ void ImageViewTest::show1 ()
 	app->resize(1200, 800);
 
 	ImageView imageview;
-	imageview.set_pos(400, 300);
+	imageview.set_position(400, 300);
 
 	app->bind(&imageview);
 

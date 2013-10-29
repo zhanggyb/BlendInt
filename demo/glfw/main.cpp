@@ -37,7 +37,7 @@ public:
 	DoEvent()
 	: i(0)
 	{
-		m_hlayout.set_pos(300, 400);
+		m_hlayout.set_position(300, 400);
 		m_hlayout.resize(400, 100);
 //		m_hlayout.set_sizing_mode(LayoutFixed);
 //		m_hlayout.set_margin(5, 5, 5, 5);
@@ -176,13 +176,13 @@ int main(int argc, char* argv[])
 
 	Button* add_button = new Button;
 	add_button->set_text("Add Button");
-	add_button->set_pos(450, 600);
+	add_button->set_position(450, 600);
 
 	obj.connect_add(add_button);
 
 	Button* remove_button = new Button;
 	remove_button->set_text("Remove Button");
-	remove_button->set_pos(550, 600);
+	remove_button->set_position(550, 600);
 
 	obj.connect_remove(remove_button);
 
@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
 
 	h1->add(v1);
 
-	h1->set_pos(500, 200);
+	h1->set_position(500, 200);
 
 //	v1->resize(200, 60);
 

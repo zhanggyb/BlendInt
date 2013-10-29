@@ -124,6 +124,8 @@ namespace BlendInt {
 			AbstractForm* object;
 		};
 
+		virtual void update ();
+
 		virtual void render () = 0;
 
 		virtual bool update (int type, const void* property);

@@ -89,23 +89,23 @@ void ContextManagerTest::check_layer_0_0 ()
 	ContextManager* cm = ContextManager::instance();
 
 	Widget widget1;
-	widget1.set_pos(50, 50);
+	widget1.set_position(50, 50);
 	widget1.resize (50, 50);
 	widget1.set_name("widget1");
 
 	Widget widget2;
-	widget2.set_pos(100, 100);
+	widget2.set_position(100, 100);
 	widget2.resize (50, 50);
 	widget2.set_name("widget2");
 
 	Widget widget3;
-	widget3.set_pos(150, 150);
+	widget3.set_position(150, 150);
 	widget3.resize (50, 50);
 	widget3.set_name("widget3");
 	widget3.reset_z(1);
 
 	Widget widget4;
-	widget4.set_pos(200, 200);
+	widget4.set_position(200, 200);
 	widget4.resize (50, 50);
 	widget4.set_name("widget4");
 	widget4.reset_z(1);
@@ -190,23 +190,23 @@ void ContextManagerTest::check_layer_0_1 ()
 	ContextManager* cm = ContextManager::instance();
 
 	Widget* widget1 = new Widget;
-	widget1->set_pos(50, 50);
+	widget1->set_position(50, 50);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 
 	Widget* widget2 = new Widget;
-	widget2->set_pos(100, 100);
+	widget2->set_position(100, 100);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
 	Widget* widget3 = new Widget;
-	widget3->set_pos(150, 150);
+	widget3->set_position(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
 	widget3->reset_z(1);
 
 	Widget* widget4 = new Widget;
-	widget4->set_pos(200, 200);
+	widget4->set_position(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");
 	widget4->reset_z(1);
@@ -288,23 +288,23 @@ void ContextManagerTest::check_layer_0_2 ()
 	ContextManager* cm = ContextManager::instance();
 
 	Widget* widget1 = new Widget;
-	widget1->set_pos(50, 50);
+	widget1->set_position(50, 50);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 
 	Widget* widget2 = new Widget(widget1);
-	widget2->set_pos(100, 100);
+	widget2->set_position(100, 100);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
 	Widget* widget3 = new Widget;
-	widget3->set_pos(150, 150);
+	widget3->set_position(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
 	widget3->reset_z(1);
 
 	Widget* widget4 = new Widget(widget3);
-	widget4->set_pos(200, 200);
+	widget4->set_position(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");
 	widget4->reset_z(1);
@@ -397,23 +397,23 @@ void ContextManagerTest::check_layer_0_3 ()
 	ContextManager* cm = ContextManager::instance();
 
 	Widget* widget1 = new Widget;
-	widget1->set_pos(50, 50);
+	widget1->set_position(50, 50);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 
 	Widget* widget2 = new Widget(widget1);
-	widget2->set_pos(100, 100);
+	widget2->set_position(100, 100);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
 	Widget* widget3 = new Widget;
-	widget3->set_pos(150, 150);
+	widget3->set_position(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
 	widget3->reset_z(1);
 
 	Widget* widget4 = new Widget(widget3);
-	widget4->set_pos(200, 200);
+	widget4->set_position(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");
 	widget4->reset_z(1);
@@ -495,22 +495,22 @@ void ContextManagerTest::check_layer_0_4 ()
 	ContextManager* cm = ContextManager::instance();
 
 	Widget* widget1 = new Widget;
-	widget1->set_pos(50, 50);
+	widget1->set_position(50, 50);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 
 	Widget* widget2 = new Widget(widget1);
-	widget2->set_pos(100, 100);
+	widget2->set_position(100, 100);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
 	Widget* widget3 = new Widget(widget2);
-	widget3->set_pos(150, 150);
+	widget3->set_position(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
 
 	Widget* widget4 = new Widget(widget3);
-	widget4->set_pos(200, 200);
+	widget4->set_position(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");
 
