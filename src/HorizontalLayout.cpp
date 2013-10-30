@@ -50,6 +50,28 @@ namespace BlendInt {
 
 	}
 
+	void HorizontalLayout::update (int property_type)
+	{
+		switch (property_type) {
+
+			case FormPropertySize: {
+				change_layout(&m_size);
+				return;
+			}
+
+			case LayoutPropertyItem: {
+
+				generate_default_layout();
+
+				return;
+			}
+
+			default:
+				break;
+		}
+	}
+
+	/*
 	bool HorizontalLayout::update (int type, const void* property)
 	{
 		switch (type) {
@@ -76,6 +98,7 @@ namespace BlendInt {
 				return AbstractLayout::update(type, property);
 		}
 	}
+	*/
 
 	void HorizontalLayout::render ()
 	{
@@ -88,7 +111,7 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(m_pos.x(), m_pos.y(), z());
+		glTranslatef(position().x(), position().y(), z());
 
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
@@ -193,7 +216,7 @@ namespace BlendInt {
 		}
 
 		// then move each object to the right place
-		Point pos = m_pos;
+		Point pos = position();
 		pos.set_x(pos.x() + m_margin.left());
 		pos.set_y(pos.y() + m_margin.bottom());
 
@@ -209,16 +232,16 @@ namespace BlendInt {
 			} else {
 				if (m_alignment & AlignTop) {
 					set_pos_priv(child, child->position().x(),
-					        m_pos.y()
+					        position().y()
 					                + (total_height
 					                        - (m_margin.top()
 					                                + child->size().height())));
 				} else if (m_alignment & AlignBottom) {
 					set_pos_priv(child, child->position().x(),
-					        m_pos.y() + m_margin.bottom());
+					        position().y() + m_margin.bottom());
 				} else if (m_alignment & AlignHorizontalCenter) {
 					set_pos_priv(child, child->position().x(),
-					        m_pos.y() + m_margin.bottom()
+					        position().y() + m_margin.bottom()
 					                + (max_widget_height
 					                        - child->size().height()) / 2);
 				}
@@ -240,8 +263,8 @@ namespace BlendInt {
 		total_width = m_margin.left();
 		for (size_t i = 0; i < m_items.size(); i++) {
 			child = m_items[i];
-			set_pos_priv(child, m_pos.x() + total_width,
-			        m_pos.y() + m_margin.bottom());
+			set_pos_priv(child, position().x() + total_width,
+			        position().y() + m_margin.bottom());
 			total_width = total_width + child->size().width();
 			total_height = std::max(total_height,
 			        m_margin.top() + child->size().height()
@@ -262,17 +285,17 @@ namespace BlendInt {
 			} else {
 				if (m_alignment & AlignTop) {
 					set_pos_priv(child, child->position().x(),
-					        m_pos.y()
+					        position().y()
 					                + (total_height
 					                        - (m_margin.top()
 					                                + child->size().height())));
 				} else if (m_alignment & AlignBottom) {
 					// TODO: not needed as already done in previous loop
 					set_pos_priv(child, child->position().x(),
-					        m_pos.y() + m_margin.bottom());
+					        position().y() + m_margin.bottom());
 				} else if (m_alignment & AlignHorizontalCenter) {
 					set_pos_priv(child, child->position().x(),
-					        m_pos.y()
+					        position().y()
 					                + (total_height - child->size().height())
 					                        / 2);
 				}
@@ -417,14 +440,14 @@ namespace BlendInt {
 
 			if (m_alignment & AlignTop) {
 				set_pos_priv(child, child->position().x(),
-				        m_pos.y() + m_margin.bottom()
+				        position().y() + m_margin.bottom()
 				                + (height - child->size().height()));
 			} else if (m_alignment & AlignBottom) {
 //				set_pos_priv(child, child->pos().x(),
 //						child->pos().y() + m_margin.bottom());
 			} else if (m_alignment & AlignHorizontalCenter) {
 				set_pos_priv(child, child->position().x(),
-				        m_pos.y() + m_margin.bottom()
+				        position().y() + m_margin.bottom()
 				                + (height - child->size().height()) / 2);
 			}
 

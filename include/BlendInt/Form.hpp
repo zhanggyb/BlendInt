@@ -21,31 +21,50 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_VERTICALLAYOUT_HPP_
-#define _BLENDINT_VERTICALLAYOUT_HPP_
+#ifndef _BLENDINT_FORM_HPP_
+#define _BLENDINT_FORM_HPP_
 
-#include <BlendInt/AbstractLayout.hpp>
-#include <BlendInt/Types.hpp>
+#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/GLBuffer.hpp>
+
+#define WIDGET_AA_JITTER 8
+
+/* max as used by round_box__edges */
+#define WIDGET_CURVE_RESOLU 9
+#define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
 
 namespace BlendInt {
 
-	class VerticalLayout: public AbstractLayout
+	/**
+	 * @brief A Normal form
+	 */
+	class Form: public AbstractForm
 	{
-		DISALLOW_COPY_AND_ASSIGN(VerticalLayout);
+		DISALLOW_COPY_AND_ASSIGN(Form);
 
 	public:
 
-		VerticalLayout(int align = AlignVerticalCenter);
+		Form ();
 
-		VerticalLayout(int align, AbstractForm* parent);
+		Form (AbstractForm* parent);
 
-		virtual ~VerticalLayout ();
+		virtual ~Form();
 
 	protected:
 
-		virtual void update (int property_type);
+		/**
+		 * Structure used in calulating vertex buffer for inner and outline
+		 */
+		struct VerticesSum {
+			VerticesSum ()
+			: total(0), half(0)
+			{ }
 
-		//virtual bool update (int type, const void* property);
+			int total;	/**< total number of vertices for widget */
+			int half;	/**< halfway vertices number */
+		};
+
+		virtual void update (int property_type);
 
 		virtual void render ();
 
@@ -60,27 +79,7 @@ namespace BlendInt {
 		virtual void release_mouse (MouseEvent* event);
 
 		virtual void move_mouse (MouseEvent* event);
-
-
-	private:
-
-		void change_layout (const Size* size);
-
-		void generate_default_layout ();
-
-		Size get_minimal_size ();
-
-		void add_item (AbstractForm* object);
-
-		virtual Size recount_size ();
-
-		/**
-		 * @brief align the objects in layout according to alignment
-		 * @param width[in] the max width of area contains children (width - (left + right margin))
-		 */
-		void align_along_y (unsigned int width);
 	};
-
 }
 
-#endif	// _BLENDINT_VERTICALLAYOUT_HPP_
+#endif /* _BLENDINT_FORM_HPP_ */

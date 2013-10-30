@@ -24,14 +24,7 @@
 #ifndef _BLENDINT_WIDGET_HPP_
 #define _BLENDINT_WIDGET_HPP_
 
-#include <BlendInt/AbstractForm.hpp>
-#include <BlendInt/GLBuffer.hpp>
-
-#define WIDGET_AA_JITTER 8
-
-/* max as used by round_box__edges */
-#define WIDGET_CURVE_RESOLU 9
-#define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
+#include <BlendInt/Form.hpp>
 
 namespace BlendInt {
 
@@ -92,9 +85,7 @@ namespace BlendInt {
 			int half;	/**< halfway vertices number */
 		};
 
-		virtual void update ();
-
-		virtual bool update (int type, const void* property);
+		virtual void update (int property_type);
 
 		virtual void render ();
 

@@ -78,15 +78,18 @@ namespace BlendInt {
 
 	void Widget::set_padding (const Padding& padding)
 	{
-		Padding new_padding = padding;
-
-		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
+		m_padding = padding;
+		update(WidgetPropertyPadding);
 	}
 
 	void Widget::set_padding (int l, int r, int t, int b)
 	{
-		Padding new_padding (l, r, t, b);
-		if(update(WidgetPropertyPadding, &new_padding)) m_padding = new_padding;
+		m_padding.set_left(l);
+		m_padding.set_right(r);
+		m_padding.set_top(t);
+		m_padding.set_bottom(b);
+
+		update(WidgetPropertyPadding);
 	}
 
 
@@ -114,72 +117,63 @@ namespace BlendInt {
 	{
 	}
 
-	void Widget::update ()
+	void Widget::update (int property_type)
 	{
-		// the basic widget don't use shaded color
+		switch (property_type) {
 
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+			case FormPropertySize: {
 
-		VerticesSum vert_sum;
+				// the basic widget don't use shaded color
+				float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+				float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
 
-		vert_sum = generate_vertices(size(), inner_v, outer_v);
+				VerticesSum vert_sum;
 
-		if(m_emboss) {
-			if(m_buffer.size() != 3)
-				m_buffer.generate(3);
-		}	else {
-			if(m_buffer.size() != 2)
-					m_buffer.generate(2);
-		}
+				vert_sum = generate_vertices(size(), inner_v, outer_v);
 
-		m_buffer.set_index(0);
-		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_buffer.bind();
-		m_buffer.upload(inner_v);
-		m_buffer.unbind();
+				if(m_emboss) {
+					if(m_buffer.size() != 3)
+						m_buffer.generate(3);
+				}	else {
+					if(m_buffer.size() != 2)
+							m_buffer.generate(2);
+				}
 
-		// the quad strip for outline
+				m_buffer.set_index(0);
+				m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+				m_buffer.bind();
+				m_buffer.upload(inner_v);
+				m_buffer.unbind();
 
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+				// the quad strip for outline
 
-		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
 
-		m_buffer.set_index(1);
-		m_buffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+				verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		m_buffer.bind();
-		m_buffer.upload(quad_strip);
-		m_buffer.unbind();
+				m_buffer.set_index(1);
+				m_buffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
-		if (m_emboss) {
-			float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+				m_buffer.bind();
+				m_buffer.upload(quad_strip);
+				m_buffer.unbind();
 
-			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
+				if (m_emboss) {
+					float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 
-			m_buffer.set_index(2);
-			m_buffer.set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+					verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
 
-			m_buffer.bind();
-			m_buffer.upload(quad_strip_emboss);
-			m_buffer.unbind();
-		}
-	}
+					m_buffer.set_index(2);
+					m_buffer.set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
-	bool Widget::update (int type, const void* property)
-	{
-		switch(type)
-		{
-			case FormPropertySize:
-				update_shape(static_cast<const Size*>(property));
+					m_buffer.bind();
+					m_buffer.upload(quad_strip_emboss);
+					m_buffer.unbind();
+				}
+
 				break;
-			case FormPropertyRoundCorner:
-				break;
-			default:
-				break;
+			}
 		}
-
-		return true;
 	}
 
 	void Widget::render ()
@@ -196,8 +190,8 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(m_pos.x(),
-					 m_pos.y(),
+		glTranslatef(position().x(),
+					 position().y(),
 					 z());
 
 		glEnable(GL_BLEND);
@@ -309,10 +303,10 @@ namespace BlendInt {
 
 	bool Widget::contain_no_padding (const Coord2d& cursor)
 	{
-		if (cursor.x() < (m_pos.x() + m_padding.left()) ||
-				cursor.y() < (m_pos.y() + m_padding.bottom()) ||
-				cursor.x() > (m_pos.x() + m_size.width() - m_padding.right()) ||
-				cursor.y() > (m_pos.y() + m_size.height() - m_padding.top())) {
+		if (cursor.x() < (position().x() + m_padding.left()) ||
+				cursor.y() < (position().y() + m_padding.bottom()) ||
+				cursor.x() > (position().x() + m_size.width() - m_padding.right()) ||
+				cursor.y() > (position().y() + m_size.height() - m_padding.top())) {
 			return false;
 		}
 

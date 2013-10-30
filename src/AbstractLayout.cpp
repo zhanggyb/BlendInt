@@ -31,8 +31,11 @@ namespace BlendInt {
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
 	{
-		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
-		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
+		// do not use resize or set_minimal_size as the update() is pure virtual funciton
+		size_ref().set_width(margin().left() + margin().right());
+		size_ref().set_height(margin().top() + margin().bottom());
+		minimal_size_ref().set_width(margin().left() + margin().right());
+		minimal_size_ref().set_height(margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::AbstractLayout (AbstractForm *parent)
@@ -41,8 +44,11 @@ namespace BlendInt {
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
 	{
-		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
-		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
+		// do not use resize or set_minimal_size as the update() is pure virtual funciton
+		size_ref().set_width(margin().left() + margin().right());
+		size_ref().set_height(margin().top() + margin().bottom());
+		minimal_size_ref().set_width(margin().left() + margin().right());
+		minimal_size_ref().set_height(margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::~AbstractLayout ()
@@ -54,60 +60,48 @@ namespace BlendInt {
 	{
 		if(m_children.count(object)) return;
 
-		ItemData item;
-		item.action = Add;
-		item.object = object;
+		bind(object);
+		set_in_layout(object, true);
+		m_items.push_back(object);
 
-		if(update(LayoutPropertyItem, &item)) {
-			bind(object);
-			set_in_layout(object, true);
-		}
+		update(LayoutPropertyItem);
 	}
 
 	void AbstractLayout::add (AbstractLayout* object)
 	{
 		if(m_children.count(object)) return;
 
-		ItemData item;
-		item.action = Add;
-		item.object = object;
+		bind(object);
+		set_in_layout(object, true);
+		m_items.push_back(object);
 
-		if(update(LayoutPropertyItem, &item)) {
-			bind(object);
-			set_in_layout(object, true);
-		}
+		update(LayoutPropertyItem);
+
 	}
-
 
 	void AbstractLayout::refresh ()
 	{
-		Size size;
-
-		if(m_sizing_mode) {	// 1 == LayoutFixed
-			size = m_size;
-			update(FormPropertySize, &size);
-		} else {
-			size = recount_size();
-			if (update(FormPropertySize, &size)) m_size = size;
-		}
-
-		if(m_in_layout) {
-			dynamic_cast<AbstractLayout*>(m_parent.object.form)->refresh();
-		}
+		// TODO: remove this function
 	}
 
 	bool AbstractLayout::remove (AbstractForm* object)
 	{
 		if (!m_children.count(object)) return false;
 
-		ItemData item;
-		item.action = Remove;
-		item.object = object;
-
-		if(update(LayoutPropertyItem, &item)) {
-			set_in_layout(object, false);
-			unbind(object);
+		std::vector<AbstractForm*>::iterator it;
+		for(it = m_items.begin(); it != m_items.end();)
+		{
+			if ((*it) == object) {
+				it = m_items.erase(it);
+			} else {
+				it++;
+			}
 		}
+
+		set_in_layout(object, false);
+		unbind(object);
+
+		update(LayoutPropertyItem);
 
 		return true;
 	}
@@ -116,24 +110,27 @@ namespace BlendInt {
 	{
 		if (!m_children.count(object)) return false;
 
-		ItemData item;
-		item.action = Remove;
-		item.object = object;
+		std::vector<AbstractForm*>::iterator it;
+		for(it = m_items.begin(); it != m_items.end();)
+		{
+			if ((*it) == object) {
+				it = m_items.erase(it);
+			} else {
+				it++;
+			}
+		}
 
-		if(update(LayoutPropertyItem, &item)) {
-			set_in_layout(object, false);
-			unbind(object);
-	}
+		set_in_layout(object, false);
+		unbind(object);
+
+		update(LayoutPropertyItem);
+
 		delete object;
 
 		return true;
 	}
 
-	void AbstractLayout::update ()
-	{
-
-	}
-
+	/*
 	bool AbstractLayout::update(int type, const void* property)
 	{
 		switch (type) {
@@ -172,19 +169,20 @@ namespace BlendInt {
 
 		return true;
 	}
+	*/
 
 	void AbstractLayout::set_margin (const Margin& margin)
 	{
 		Margin new_value = margin;
 
-		if(update(LayoutPropertyMargin, &new_value)) m_margin = new_value;
+		m_margin = new_value;
 	}
 
 	void AbstractLayout::set_margin (int left, int right, int top, int bottom)
 	{
 		Margin new_value (left, right, top, bottom);
 
-		if(update(LayoutPropertyMargin, &new_value)) m_margin = new_value;
+		m_margin = new_value;
 	}
 
 	AbstractLayout* AbstractLayout::root_layout ()
@@ -208,7 +206,7 @@ namespace BlendInt {
 			case FormPropertyMinimalSize:
 			case FormPropertyPreferredSize:
 			case FormPropertySize:
-				update();
+				update(FormPropertySize);
 				break;
 
 			default:

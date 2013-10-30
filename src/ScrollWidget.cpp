@@ -61,8 +61,8 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(m_pos.x(),
-					 m_pos.y(),
+		glTranslatef(position().x(),
+					 position().y(),
 					 z());
 
 		glEnable(GL_BLEND);

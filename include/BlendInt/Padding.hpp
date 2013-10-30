@@ -36,57 +36,81 @@ namespace BlendInt {
 	public:
 
 		Padding ()
-		: left_(5), right_(5), top_(5), bottom_(5)
+		: m_left(5), m_right(5), m_top(5), m_bottom(5)
 		{}
 
 		Padding (int all)
-		: left_(all), right_(all), top_(all), bottom_(all)
+		: m_left(all), m_right(all), m_top(all), m_bottom(all)
 		{}
 
 		Padding (int left, int right, int top, int bottom)
-		: left_(left), right_(right), top_(top), bottom_(bottom)
+		: m_left(left), m_right(right), m_top(top), m_bottom(bottom)
 		{}
 
 		Padding (const Padding& orig)
 		{
-			left_ = orig.left_;
-			right_ = orig.right_;
-			top_ = orig.top_;
-			bottom_ = orig.bottom_;
+			m_left = orig.m_left;
+			m_right = orig.m_right;
+			m_top = orig.m_top;
+			m_bottom = orig.m_bottom;
 		}
 
 		Padding& operator = (const Padding& orig)
 		{
-			left_ = orig.left_;
-			right_ = orig.right_;
-			top_ = orig.top_;
-			bottom_ = orig.bottom_;
+			m_left = orig.m_left;
+			m_right = orig.m_right;
+			m_top = orig.m_top;
+			m_bottom = orig.m_bottom;
 
 			return *this;
 		}
 
-		int left () const {return left_;}
+		void set (int left, int right, int top, int bottom)
+		{
+			m_left = left;
+			m_right = right;
+			m_top = top;
+			m_bottom = bottom;
+		}
 
-		void set_left (int left) {left_ = left;}
+		int left () const {return m_left;}
 
-		int right () const {return right_;}
+		void set_left (int left) {m_left = left;}
 
-		void set_right (int right) {right_ = right;}
+		int right () const {return m_right;}
 
-		int top () const {return top_;}
+		void set_right (int right) {m_right = right;}
 
-		void set_top (int top) {top_ = top;}
+		int top () const {return m_top;}
 
-		int bottom () const {return bottom_;}
+		void set_top (int top) {m_top = top;}
 
-		void set_bottom (int bottom) {bottom_ = bottom;}
+		int bottom () const {return m_bottom;}
+
+		void set_bottom (int bottom) {m_bottom = bottom;}
+
+		bool equal (int left, int right, int top, int bottom)
+		{
+			return (m_left == left &&
+					m_right == right &&
+					m_top == top &&
+					m_bottom == bottom);
+		}
+
+		bool equal (const Padding& padding)
+		{
+			return (m_left == padding.left() &&
+					m_right == padding.right() &&
+					m_top == padding.top() &&
+					m_bottom == padding.bottom());
+		}
 
 	private:
 
-		int left_;
-		int right_;
-		int top_;
-		int bottom_;
+		int m_left;
+		int m_right;
+		int m_top;
+		int m_bottom;
 	};
 
 }

@@ -50,20 +50,18 @@ namespace BlendInt {
 
 	}
 
-	bool ScrollControl::update (int type, const void* property)
+	void ScrollControl::update (int property_type)
 	{
-		switch(type)
+		switch(property_type)
 		{
 			case FormPropertySize:
-				update_shape(static_cast<const Size*>(property));
+				update_shape(&m_size);
 				break;
 			case FormPropertyRoundCorner:
 				break;
 			default:
 				break;
 		}
-
-		return true;
 	}
 
 	void ScrollControl::render ()
@@ -71,8 +69,8 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(m_pos.x(),
-					 m_pos.y(),
+		glTranslatef(position().x(),
+					 position().y(),
 					 z());
 
 		glEnable(GL_BLEND);
@@ -138,25 +136,25 @@ namespace BlendInt {
 		if(m_pressed) {
 
 			if(parent->orientation() == Horizontal) {
-				m_pos.set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
-				if(m_pos.x() < (parent->position().x() + parent->padding().left()))
+				position_ref().set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
+				if(position().x() < (parent->position().x() + parent->padding().left()))
 				{
-					m_pos.set_x(parent->position().x() + parent->padding().left());
+					position_ref().set_x(parent->position().x() + parent->padding().left());
 				}
-				if(m_pos.x() >
+				if(position().x() >
 						(int)(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width()))
 				{
-					m_pos.set_x(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width());
+					position_ref().set_x(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width());
 				}
 			}
 
 			if(parent->orientation() == Vertical) {
-				m_pos.set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
-				if(m_pos.y() < (parent->position().y() + parent->padding().bottom())) {
-					m_pos.set_y(parent->position().y() + parent->padding().bottom());
+				position_ref().set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
+				if(position().y() < (parent->position().y() + parent->padding().bottom())) {
+					position_ref().set_y(parent->position().y() + parent->padding().bottom());
 				}
-				if(m_pos.y() > (int)(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
-					m_pos.set_y(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height());
+				if(position().y() > (int)(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
+					position_ref().set_y(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height());
 				}
 			}
 
@@ -172,7 +170,7 @@ namespace BlendInt {
 				m_pressed = true;
 				m_move_start.set_x(event->position().x());
 				m_move_start.set_y(event->position().y());
-				m_position_origin = m_pos;
+				m_position_origin = position();
 				event->accept(this);
 			}
 		}
@@ -293,7 +291,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		update(SliderPropertyValue, 0);
+		update(SliderPropertyValue);
 	}
 
 	SliderBar::SliderBar(Orientation orientation, AbstractForm* parent)
@@ -314,7 +312,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		update(SliderPropertyValue, 0);
+		update(SliderPropertyValue);
 	}
 
 	SliderBar::~SliderBar()
@@ -322,14 +320,14 @@ namespace BlendInt {
 
 	}
 
-	bool SliderBar::update(int type, const void* property)
+	void SliderBar::update(int property_type)
 	{
-		if(type == FormPropertySize) {
-			update_shape(static_cast<const Size*>(property));
-			return true;
+		if(property_type == FormPropertySize) {
+			update_shape(&m_size);
+			return;
 		}
 
-		return Slider::update(type, property);
+		Slider::update(property_type);
 	}
 
 	void SliderBar::render ()
@@ -337,7 +335,7 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(m_pos.x(), m_pos.y(), z());
+		glTranslatef(position().x(), position().y(), z());
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -486,7 +484,7 @@ namespace BlendInt {
 		}
 
 		m_scroll_control->set_position (position().x() + padding().left(), position().y() + padding().bottom());
-		update(SliderPropertyValue, 0);
+		update(SliderPropertyValue);
 	}
 
 	ScrollBar::ScrollBar (Orientation orientation, AbstractForm* parent)
@@ -509,34 +507,34 @@ namespace BlendInt {
 		}
 
 		m_scroll_control->set_position (position().x() + padding().left(), position().y() + padding().bottom());
-		update(SliderPropertyValue, 0);
+		update(SliderPropertyValue);
 	}
 
 	ScrollBar::~ScrollBar ()
 	{
 	}
 
-	bool ScrollBar::update (int type, const void* property)
+	void ScrollBar::update (int property_type)
 	{
-		switch (type) {
+		switch (property_type) {
 
 			case FormPropertyPosition: {
-				const Point* new_pos = static_cast<const Point*>(property);
+				const Point* new_pos = &(position());
 				m_scroll_control->set_position (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
 				break;
 			}
 
 			case FormPropertySize: {
-				update_shape(static_cast<const Size*>(property));
+				update_shape(&m_size);
 				break;
 			}
 
 			case SliderPropertyValue: {
 				if(orientation()) {	// Vertical is 1
 					m_scroll_control->set_position (m_scroll_control->position().x(),
-							m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+							position().y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {	// Horizontal is 0
-					m_scroll_control->set_position (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+					m_scroll_control->set_position (position().x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
 							m_scroll_control->position().y());
 				}
 				break;
@@ -545,8 +543,6 @@ namespace BlendInt {
 			default:
 				break;
 		}
-
-		return true;
 	}
 
 	void ScrollBar::update_shape(const Size* size)
@@ -606,7 +602,7 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(m_pos.x(), m_pos.y(), z());
+		glTranslatef(position().x(), position().y(), z());
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -684,9 +680,9 @@ namespace BlendInt {
 
 				int value = 0;
 				if(orientation()) {
-					value = (m_scroll_control->position().y() - m_pos.y() - m_padding.bottom()) / (float)get_space() * (maximum() - minimum());
+					value = (m_scroll_control->position().y() - position().y() - m_padding.bottom()) / (float)get_space() * (maximum() - minimum());
 				} else {
-					value = (m_scroll_control->position().x() - m_pos.x() - m_padding.left()) / (float)get_space() * (maximum() - minimum());
+					value = (m_scroll_control->position().x() - position().x() - m_padding.left()) / (float)get_space() * (maximum() - minimum());
 				}
 
 				set_value (value);
@@ -712,8 +708,8 @@ namespace BlendInt {
 			if(event->accepted()) return;
 
 			Coord2d inner_pos;
-			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - m_padding.left() - m_scroll_control->size().width() / 2));
-			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - m_padding.bottom() - m_scroll_control->size().height() / 2));
+			inner_pos.set_x(static_cast<double>(event->position().x() - position().x() - m_padding.left() - m_scroll_control->size().width() / 2));
+			inner_pos.set_y(static_cast<double>(event->position().y() - position().y() - m_padding.bottom() - m_scroll_control->size().height() / 2));
 //			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - m_padding.left() - m_scroll_control->size().width() / 2));
 //			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - m_padding.bottom() - m_scroll_control->size().height() / 2));
 			int space = get_space();

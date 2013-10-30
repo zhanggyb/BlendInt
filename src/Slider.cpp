@@ -51,12 +51,12 @@ namespace BlendInt {
 
 	}
 
-	bool SlideButton::update (int type, const void* property)
+	void SlideButton::update (int property_type)
 	{
-		switch(type)
+		switch(property_type)
 		{
 			case FormPropertySize:
-				update_shape(static_cast<const Size*>(property));
+				update_shape(&m_size);
 				break;
 			case FormPropertyRoundCorner: {
 				update_shape(&m_size);
@@ -64,14 +64,12 @@ namespace BlendInt {
 			}
 			case WidgetPropertyPadding: {
 				// do not allow change padding
-				return false;
+				m_padding.set(0, 0, 0, 0);
 				break;
 			}
 			default:
 				break;
 		}
-
-		return true;
 	}
 
 	void SlideButton::render ()
@@ -79,8 +77,8 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(m_pos.x(),
-					 m_pos.y(),
+		glTranslatef(position().x(),
+					 position().y(),
 					 z());
 
 		glEnable(GL_BLEND);
@@ -148,23 +146,23 @@ namespace BlendInt {
 
 			if(parent->orientation()) {	// Vertical
 
-				m_pos.set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
-				if(m_pos.y() < (parent->position().y() + parent->padding().bottom())) {
-					m_pos.set_y(parent->position().y() + parent->padding().bottom());
+				position_ref().set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
+				if(position().y() < (parent->position().y() + parent->padding().bottom())) {
+					position_ref().set_y(parent->position().y() + parent->padding().bottom());
 				}
-				if(m_pos.y() > (int)(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
-					m_pos.set_y(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height());
+				if(position().y() > (int)(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
+					position_ref().set_y(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height());
 				}
 
 			} else {
 
-				m_pos.set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
-				if(m_pos.x() < (parent->position().x() + parent->padding().left())) {
-					m_pos.set_x(parent->position().x() + parent->padding().left());
+				position_ref().set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
+				if(position().x() < (parent->position().x() + parent->padding().left())) {
+					position_ref().set_x(parent->position().x() + parent->padding().left());
 				}
-				if(m_pos.x() >
+				if(position().x() >
 						(int)(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width())) {
-					m_pos.set_x(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width());
+					position_ref().set_x(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width());
 				}
 
 			}
@@ -193,7 +191,7 @@ namespace BlendInt {
 				m_status_down = true;
 				m_move_start.set_x(event->position().x());
 				m_move_start.set_y(event->position().y());
-				m_position_origin = m_pos;
+				m_position_origin = position();
 				event->accept(this);
 			}
 		}
@@ -322,7 +320,7 @@ namespace BlendInt {
 
 		m_slide_button->resize(button_size, button_size);
 		//m_slide_button->set_position (position().x() + padding().left(), position().y() + padding().bottom());
-		update(SliderPropertyValue, 0);
+		update(SliderPropertyValue);
 	}
 
 	Slider::Slider(Orientation orientation, AbstractForm* parent)
@@ -345,7 +343,7 @@ namespace BlendInt {
 		m_slide_button->resize(button_size, button_size);
 
 		//m_slide_button->set_position (position().x() + padding().left(), position().y() + padding().bottom());
-		update(SliderPropertyValue, 0);
+		update(SliderPropertyValue);
 	}
 
 	Slider::~Slider()
@@ -373,52 +371,48 @@ namespace BlendInt {
 		}
 	}
 
-	bool Slider::update (int type, const void* property)
+	void Slider::update (int property_type)
 	{
-		switch (type) {
+		switch (property_type) {
 			case FormPropertyPosition: {
-				const Point* new_pos = static_cast<const Point*>(property);
-				m_slide_button->set_position (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
-				return true;
+				m_slide_button->set_position (position().x() + padding().left(), position().y() + padding().bottom());
+				return;
 			}
 
 			case FormPropertySize: {
 
-				const Size* new_size = static_cast<const Size*>(property);
-				size_t button_size = std::min (new_size->width() - padding().left() - padding().right(),
-						new_size->height() - padding().top() - padding().bottom());
+				size_t button_size = std::min (size().width() - padding().left() - padding().right(),
+						size().height() - padding().top() - padding().bottom());
 
 				m_slide_button->resize(button_size, button_size);
 
 				if(orientation()) {
 					m_slide_button->set_position (m_slide_button->position().x(),
-							m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+							position().y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
-					m_slide_button->set_position (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+					m_slide_button->set_position (position().x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
 							m_slide_button->position().y());
 				}
 
-				return true;
+				return;
 			}
 
 			case SliderPropertyValue: {
 
 				if(orientation()) {
 					m_slide_button->set_position (m_slide_button->position().x(),
-							m_pos.y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+							position().y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
-					m_slide_button->set_position (m_pos.x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+					m_slide_button->set_position (position().x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
 							m_slide_button->position().y());
 				}
 
-				return true;
+				return;
 			}
 
 			default:
 				break;
 		}
-
-		return true;
 	}
 
 	void Slider::render ()
@@ -426,8 +420,8 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(m_pos.x(),
-					 m_pos.y(),
+		glTranslatef(position().x(),
+					 position().y(),
 					 z());
 
 		glEnable(GL_BLEND);
@@ -494,22 +488,22 @@ namespace BlendInt {
 			int value = 0;
 
 			if (orientation()) {
-				int ymin = m_pos.y() + m_padding.bottom() + m_slide_button->size().height() / 2;
-				int ymax = m_pos.y() + m_size.height() - m_padding.top() - m_slide_button->size().height() / 2;
+				int ymin = position().y() + m_padding.bottom() + m_slide_button->size().height() / 2;
+				int ymax = position().y() + m_size.height() - m_padding.top() - m_slide_button->size().height() / 2;
 				if(event->position().y() < ymin ||	event->position().y() > ymax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
-				value = (m_slide_button->position().y() - m_pos.y()
+				value = (m_slide_button->position().y() - position().y()
 				        - m_padding.bottom()) / (float) get_space()
 				        * (maximum() - minimum());
 
 			} else {
-				int xmin = m_pos.x() + m_padding.left() + m_slide_button->size().width() / 2;
-				int xmax = m_pos.x() + m_size.width() - m_padding.right() - m_slide_button->size().width() / 2;
+				int xmin = position().x() + m_padding.left() + m_slide_button->size().width() / 2;
+				int xmax = position().x() + m_size.width() - m_padding.right() - m_slide_button->size().width() / 2;
 				if(event->position().x() < xmin ||	event->position().x() > xmax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
-				value = (m_slide_button->position().x() - m_pos.x()
+				value = (m_slide_button->position().x() - position().x()
 				        - m_padding.left()) / (float) get_space()
 				        * (maximum() - minimum());
 			}

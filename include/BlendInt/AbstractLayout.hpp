@@ -114,21 +114,9 @@ namespace BlendInt {
 
 	protected:
 
-		enum ItemAction {
-			Remove = 0,
-			Add
-		};
-
-		struct ItemData {
-			ItemAction action;
-			AbstractForm* object;
-		};
-
-		virtual void update ();
+		virtual void update (int property_type) = 0;
 
 		virtual void render () = 0;
-
-		virtual bool update (int type, const void* property);
 
 		/**
 		 * @brief scan all child object to get the total size

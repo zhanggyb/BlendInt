@@ -251,16 +251,23 @@ namespace BlendInt {
 		return m_size;
 	}
 
-	void AbstractForm::resize (int w, int h)
+	void AbstractForm::resize (unsigned int width, unsigned int height)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		if (m_size.equal(w, h)) return;
+		if (m_size.equal(width, height)) return;
 
-		Size new_size (w, h);
-		if (update(FormPropertySize, &new_size))
-			m_size = new_size;
+		if(width < m_minimal_size.width() ||
+				height < m_minimal_size.height())
+			return;
+
+		m_size.set_width(width);
+		m_size.set_height(height);
+
+		update(FormPropertySize);
+
+		m_property_changed.fire(FormPropertySize);
 	}
 
 	void AbstractForm::resize (const Size& size)
@@ -268,10 +275,17 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
+		if(size.width() < m_minimal_size.width() ||
+				size.height() < m_minimal_size.height())
+			return;
+
 		if (m_size.equal(size)) return;
 
-		Size new_size(size);
-		if (update(FormPropertySize, &new_size)) m_size = new_size;
+		m_size = size;
+
+		update(FormPropertySize);
+
+		m_property_changed.fire(FormPropertySize);
 	}
 
 	void AbstractForm::set_preferred_size(const Size& size)
@@ -341,10 +355,10 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		if (m_pos.equal(x, y)) return;
+		if (m_position.equal(x, y)) return;
 
-		m_pos.set_x(x);
-		m_pos.set_y(y);
+		m_position.set_x(x);
+		m_position.set_y(y);
 
 		// m_property_changed.fire(FormPropertyPosition);
 	}
@@ -354,9 +368,9 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		if (m_pos.equal(pos)) return;
+		if (m_position.equal(pos)) return;
 
-		m_pos = pos;
+		m_position = pos;
 
 		//m_property_changed.fire(FormPropertyPosition);
 	}
@@ -403,12 +417,15 @@ namespace BlendInt {
 	{
 		if (m_round_radius == radius) return;
 
-		if(update(FormPropertyRoundCorner, &radius)) m_round_radius = radius;
+		m_round_radius = radius;
+		update (FormPropertyRoundCorner);
+
+		m_property_changed.fire(FormPropertyRoundCorner);
 	}
 
 	void AbstractForm::set_visible (bool visible)
 	{
-		if (update (FormPropertyVisibility, &visible)) m_visible = visible;
+		m_visible = visible;
 	}
 
 	void AbstractForm::show ()
@@ -433,10 +450,10 @@ namespace BlendInt {
 
 	bool AbstractForm::contain(const Coord2d& cursor)
 	{
-		if (cursor.x() < m_pos.x() ||
-				cursor.y() < m_pos.y() ||
-				cursor.x() > (m_pos.x() + m_size.width()) ||
-				cursor.y() > (m_pos.y() + m_size.height())) {
+		if (cursor.x() < m_position.x() ||
+				cursor.y() < m_position.y() ||
+				cursor.x() > (m_position.x() + m_size.width()) ||
+				cursor.y() > (m_position.y() + m_size.height())) {
 			return false;
 		}
 
@@ -458,37 +475,44 @@ namespace BlendInt {
 
 	void AbstractForm::set_pos_priv (AbstractForm* obj, int x, int y)
 	{
-		if (obj->m_pos.equal(x, y)) return;
+		if (obj->m_position.equal(x, y)) return;
 
-		Point new_pos(x, y);
-		if (obj->update(FormPropertyPosition, &new_pos)) obj->m_pos = new_pos;
+		obj->m_position.set_x(x);
+		obj->m_position.set_y(y);
 	}
 
 	void AbstractForm::set_pos_priv (AbstractForm* obj, const Point& pos)
 	{
-		if (obj->m_pos.equal(pos)) return;
+		if (obj->m_position.equal(pos)) return;
 
-		Point new_pos(pos);
-		if (obj->update(FormPropertyPosition, &new_pos)) obj->m_pos = new_pos;
+		obj->m_position = pos;
 	}
 
-	void AbstractForm::resize_priv (AbstractForm* obj, int w, int h)
+	void AbstractForm::resize_priv (AbstractForm* obj, unsigned int width, unsigned int height)
 	{
-		if (obj->m_size.equal(w, h)) return;
+		if (obj->m_size.equal(width, height)) return;
 
-		Size new_size (w, h);
+		if(width < obj->m_minimal_size.width() ||
+				height < obj->m_minimal_size.height())
+			return;
 
-		if (obj->update(FormPropertySize, &new_size))
-			obj->m_size = new_size;
+		obj->m_size.set_width(width);
+		obj->m_size.set_height(height);
+
+		obj->update(FormPropertySize);
 	}
 
 	void AbstractForm::resize_priv (AbstractForm* obj, const Size& size)
 	{
 		if (obj->m_size.equal(size)) return;
 
-		Size new_size(size);
-		if (obj->update(FormPropertySize, &new_size))
-			obj->m_size = new_size;
+		if(size.width() < obj->m_minimal_size.width() ||
+				size.height() < obj->m_minimal_size.height())
+			return;
+
+		obj->m_size = size;
+
+		obj->update(FormPropertySize);
 	}
 
 #ifdef DEBUG

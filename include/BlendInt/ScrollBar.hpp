@@ -47,7 +47,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool update (int type, const void* property);
+		virtual void update (int property_type);
 
 		virtual void render ();
 
@@ -85,7 +85,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool update (int type, const void* property);
+		virtual void update (int property_type);
 
 		virtual void render ();
 
@@ -109,7 +109,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool update (int type, const void* property);
+		virtual void update (int property_type);
 
 		virtual void render ();
 

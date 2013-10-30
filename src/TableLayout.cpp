@@ -89,6 +89,11 @@ namespace BlendInt {
 		update(FormPropertySize, 0);
 	}
 
+	void TableLayout::update (int property_type)
+	{
+		generate_default_layout();
+	}
+
 	bool TableLayout::update (int type, const void* property)
 	{
 		if(m_parent.type == ParentForm) {
@@ -130,8 +135,8 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(m_pos.x(),
-					 m_pos.y(),
+		glTranslatef(position().x(),
+					 position().y(),
 					 z());
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
@@ -326,8 +331,8 @@ namespace BlendInt {
 		}
 #endif
 
-		int x = m_pos.x() + m_margin.left();
-		int y = m_pos.y() + size->height() - m_margin.top();
+		int x = position().x() + m_margin.left();
+		int y = position().y() + size->height() - m_margin.top();
 		for(int i = 0; i < m_rows; i++)
 		{
 			y = y - row_height[i];
@@ -359,7 +364,7 @@ namespace BlendInt {
 				x = x + column_width[j] + m_space;
 			}
 
-			x = m_pos.x() + m_margin.left();
+			x = position().x() + m_margin.left();
 			y = y - m_space;
 		}
 
@@ -394,8 +399,8 @@ namespace BlendInt {
 		total_width += m_margin.left() + m_margin.right() + m_space * (m_columns - 1);
 		total_height += m_margin.top() + m_margin.bottom() + m_space * (m_rows - 1);
 
-		int x = m_pos.x() + m_margin.left();
-		int y = m_pos.y() + total_height - m_margin.top();
+		int x = position().x() + m_margin.left();
+		int y = position().y() + total_height - m_margin.top();
 		for(int i = 0; i < m_rows; i++)
 		{
 			y = y - row_height[i];
@@ -427,7 +432,7 @@ namespace BlendInt {
 				x = x + column_width[j] + m_space;
 			}
 
-			x = m_pos.x() + m_margin.left();
+			x = position().x() + m_margin.left();
 			y = y - m_space;
 		}
 

@@ -22,7 +22,7 @@ public:
 
 protected:
 
-	virtual void update () {}
+	virtual void update (int property_type) {}
 
 	virtual bool update (int type, const void* property) {return true;}
 
@@ -60,7 +60,7 @@ public:
 
 protected:
 
-	virtual void update () {}
+	virtual void update (int property_type) {}
 
 	virtual bool update (int type, const void* property) {return true;}
 
@@ -89,7 +89,7 @@ public:
 
 protected:
 
-	virtual void update () {}
+	virtual void update (int property_type) {}
 
 	virtual bool update (int type, const void* property) {return true;}
 
@@ -118,7 +118,7 @@ public:
 
 protected:
 
-	virtual void update () {}
+	virtual void update (int property_type) {}
 
 	virtual bool update (int type, const void* property) {return true;}
 

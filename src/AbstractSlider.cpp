@@ -52,11 +52,11 @@ namespace BlendInt {
 
 		if(m_minimum != minimum) {
 			m_minimum = minimum;
-			update(SliderPropertyMinimum, 0);
+			//update(SliderPropertyMinimum, 0);
 		}
 		if(m_maximum != maximum) {
 			m_maximum = maximum;
-			update(SliderPropertyMaximum, 0);
+			//update(SliderPropertyMaximum, 0);
 		}
 	}
 
@@ -65,7 +65,7 @@ namespace BlendInt {
 		if(m_minimum == minimum) return;
 
 		m_minimum = minimum;
-		update (SliderPropertyMinimum, 0);
+		//update (SliderPropertyMinimum, 0);
 	}
 
 	void AbstractSlider::set_maximum (int maximum)
@@ -73,7 +73,7 @@ namespace BlendInt {
 		if(m_maximum == maximum) return;
 
 		m_maximum = maximum;
-		update(SliderPropertyMaximum, 0);
+		//update(SliderPropertyMaximum, 0);
 	}
 
 	void AbstractSlider::set_value (int value)
@@ -84,7 +84,7 @@ namespace BlendInt {
 
 		m_value = value;
 
-		update(SliderPropertyValue, 0);
+		//update(SliderPropertyValue, 0);
 	}
 
 	void AbstractSlider::set_step (int step)
@@ -93,7 +93,7 @@ namespace BlendInt {
 
 		m_step = step;
 
-		update(SliderPropertyStep, 0);
+		//update(SliderPropertyStep, 0);
 	}
 
 	void AbstractSlider::set_orientation (Orientation orientation)
@@ -102,7 +102,7 @@ namespace BlendInt {
 
 		m_orientation = orientation;
 
-		update(SliderPropertyOrientation, 0);
+		//update(SliderPropertyOrientation, 0);
 	}
 
 }

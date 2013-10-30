@@ -170,6 +170,7 @@ int main(int argc, char* argv[])
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
+	/*
 	DoEvent obj;
 
 	obj.bind();
@@ -225,7 +226,19 @@ int main(int argc, char* argv[])
 //	Button* b6 = new Button;
 //
 //	v1->add(b6);
+*/
 
+	Widget* widget = new Widget;
+
+	widget->resize(200, 200);
+
+	widget->set_position(200, 200);
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->set_position(100, 200);
+	hlayout->add(widget);
+
+	app->bind(hlayout);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -239,7 +252,7 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 	}
 
-	obj.unbind();
+	//obj.unbind();
 
 	/* release BlendInt */
 	Interface::release();

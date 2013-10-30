@@ -141,13 +141,13 @@ namespace BlendInt {
 
 		const Size& size () const;
 
-		void resize (int w, int h);
+		void resize (unsigned int width, unsigned int height);
 
 		void resize (const Size& size);
 
 		const Point& position () const
 		{
-			return m_pos;
+			return m_position;
 		}
 
 		void set_position (int x, int y);
@@ -234,27 +234,23 @@ namespace BlendInt {
 
 	protected:	// member functions
 
+		Size& size_ref () {return m_size;}
+
+		Size& minimal_size_ref () {return m_minimal_size;}
+
+		Point& position_ref() {return m_position;}
+
 		bool contain (const Coord2d& cursor);
 
 		/**
 		 * @brief Update opengl data (usually the GL buffer) for render
+		 * @param[in] property_type the enumeration defined by each form class, e.g.
+		 * FormPropertySize
 		 *
 		 * This virtual function should be implemented in each derived class,
 		 * and should only use the form's property to draw opengl elements once.
-		 *
-		 * This function will not be called automatically after changing a property,
-		 * instead, it should be called manually. This design is for the performance
-		 * of this library, because sometimes you need to change many properties with
-		 * set_xxxx() before update the GL buffer.
 		 */
-		virtual void update () = 0;
-
-		/**
-		 * @brief Update data for render, used in size, shape change only
-		 *
-		 * @return true - accept this update, false - discard this update
-		 */
-		virtual bool update (int type, const void* property) = 0;
+		virtual void update (int property_type) = 0;
 
 		/**
 		 * @brief just change m_z simply
@@ -283,7 +279,7 @@ namespace BlendInt {
 
 		void set_in_layout (AbstractForm* obj, bool status) {obj->m_in_layout = status;}
 
-		void resize_priv (AbstractForm* obj, int width, int height);
+		void resize_priv (AbstractForm* obj, unsigned int width, unsigned int height);
 
 		void resize_priv (AbstractForm* obj, const Size& size);
 
@@ -318,8 +314,6 @@ namespace BlendInt {
 
 		Size m_minimal_size;
 
-		Point m_pos;
-
 		std::string m_name;
 
 		Parent m_parent;
@@ -329,6 +323,8 @@ namespace BlendInt {
 	private:
 
 		bool m_visible;
+
+		Point m_position;
 
 		Cpp::ConnectionScope m_events;
 

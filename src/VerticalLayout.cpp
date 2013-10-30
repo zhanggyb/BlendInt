@@ -49,6 +49,12 @@ namespace BlendInt {
 
 	}
 
+	void VerticalLayout::update (int property_type)
+	{
+		change_layout(&m_size);
+	}
+
+	/*
 	bool VerticalLayout::update (int type, const void* property)
 	{
 		switch (type) {
@@ -73,6 +79,7 @@ namespace BlendInt {
 				return AbstractLayout::update(type, property);
 		}
 	}
+	*/
 
 	void VerticalLayout::render ()
 	{
@@ -90,7 +97,7 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(m_pos.x(), m_pos.y(), z());
+		glTranslatef(position().x(), position().y(), z());
 
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
@@ -191,7 +198,7 @@ namespace BlendInt {
 			}
 		}
 
-		Point pos = m_pos;
+		Point pos = position();
 		pos.set_x(pos.x() + m_margin.left());
 		pos.set_y(pos.y() + m_margin.bottom());
 
@@ -206,11 +213,11 @@ namespace BlendInt {
 				resize_priv(child, max_widget_width, child->size().height());
 			} else {
 				if (m_alignment & AlignLeft) {
-					set_pos_priv(child, m_pos.x() + m_margin.left(),
+					set_pos_priv(child, position().x() + m_margin.left(),
 					        child->position().y());
 				} else if (m_alignment & AlignRight) {
 					set_pos_priv(child,
-					        m_pos.x()
+					        position().x()
 					                + (total_width
 					                        - (m_margin.right()
 					                                + child->size().width())),
@@ -218,7 +225,7 @@ namespace BlendInt {
 				} else if (m_alignment & AlignVerticalCenter) {
 
 					set_pos_priv(child,
-					        m_pos.x() + m_margin.right()
+					        position().x() + m_margin.right()
 					                + (max_widget_width - child->size().width())
 					                        / 2, child->position().y());
 				}
@@ -241,8 +248,8 @@ namespace BlendInt {
 		total_height = m_margin.bottom();
 		for (it = m_items.rbegin(); it != m_items.rend(); it++) {
 			child = *it;
-			set_pos_priv(child, m_pos.x() + m_margin.left(),
-			        m_pos.y() + total_height);
+			set_pos_priv(child, position().x() + m_margin.left(),
+			        position().y() + total_height);
 			total_width = std::max(total_width,
 			        m_margin.left() + child->size().width() + m_margin.right());
 			total_height = total_height + child->size().height();
@@ -259,18 +266,18 @@ namespace BlendInt {
 				resize_priv(child, max_widget_width, child->size().height());
 			} else {
 				if (m_alignment & AlignLeft) {
-					set_pos_priv(child, m_pos.x() + m_margin.left(),
+					set_pos_priv(child, position().x() + m_margin.left(),
 					        child->position().y());
 				} else if (m_alignment & AlignRight) {
 					set_pos_priv(child,
-					        m_pos.x()
+					        position().x()
 					                + (total_width
 					                        - (m_margin.right()
 					                                + child->size().width())),
 					        child->position().y());
 				} else if (m_alignment & AlignVerticalCenter) {
 					set_pos_priv(child,
-					        m_pos.x()
+					        position().x()
 					                + (total_width - child->size().width()) / 2,
 					        child->position().y());
 				}
@@ -324,14 +331,14 @@ namespace BlendInt {
 		inner_height = inner_height + object->size().height();
 
 		if (m_items.size() == 0) {
-			set_pos_priv(object, m_pos.x() + m_margin.left(),
-			        m_pos.y() + m_margin.bottom());
+			set_pos_priv(object, position().x() + m_margin.left(),
+			        position().y() + m_margin.bottom());
 			m_size.set_height(m_margin.top() + inner_height + m_margin.bottom());
 			m_minimal_size.add_height(object->minimal_size().height());
 		} else {
 			set_pos_priv(object,
-			        m_pos.x() + m_margin.left(),
-			        m_pos.y() - (object->size().height() + m_space));
+			        position().x() + m_margin.left(),
+			        position().y() - (object->size().height() + m_space));
 			m_size.set_height(
 			        m_margin.top() + inner_height + m_space + m_margin.bottom());
 			m_minimal_size.add_height(object->minimal_size().height() + m_space);
@@ -361,7 +368,7 @@ namespace BlendInt {
 		AbstractForm* child = 0;
 		std::vector<AbstractForm*>::iterator it;
 
-		int y = m_pos.y() + m_size.height() - m_margin.top();
+		int y = position().y() + m_size.height() - m_margin.top();
 		for (it = m_items.begin(); it != m_items.end(); it++) {
 			child = *it;
 
@@ -375,14 +382,14 @@ namespace BlendInt {
 			}
 
 			if (m_alignment & AlignLeft) {
-				set_pos_priv(child, m_pos.x() + m_margin.left(), y);
+				set_pos_priv(child, position().x() + m_margin.left(), y);
 			} else if (m_alignment & AlignRight) {
 				set_pos_priv(child,
-				        m_pos.x() + m_margin.left()
+				        position().x() + m_margin.left()
 				                + (width - child->size().width()), y);
 			} else if (m_alignment & AlignVerticalCenter) {
 				set_pos_priv(child,
-				        m_pos.x() + m_margin.left()
+				        position().x() + m_margin.left()
 				                + (width - child->size().width()) / 2, y);
 			}
 		}
