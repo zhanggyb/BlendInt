@@ -231,9 +231,9 @@ namespace BlendInt {
 		Color color = themes()->scroll.item;
 
 		if(shadedir)
-			m_corner_radius = 0.5f * size->height();
+			m_round_radius = 0.5f * size->height();
 		else
-			m_corner_radius = 0.5f * size->width();
+			m_round_radius = 0.5f * size->width();
 
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;

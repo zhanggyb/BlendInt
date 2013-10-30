@@ -152,8 +152,9 @@ namespace BlendInt {
 
 		std::vector<AbstractForm*> m_items;
 
-		Cpp::ConnectionScope m_events;
+	private:
 
+		DELEGATE void item_property_changed (int type);
 	};
 
 } /* namespace BIL */

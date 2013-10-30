@@ -26,14 +26,20 @@
 namespace BlendInt {
 
 	AbstractLayout::AbstractLayout ()
-			: AbstractForm(), m_alignment(0), m_space(1), m_sizing_mode(LayoutFlow)
+			: AbstractForm(),
+			  m_alignment(0),
+			  m_space(1),
+			  m_sizing_mode(LayoutFlow)
 	{
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::AbstractLayout (AbstractForm *parent)
-			: AbstractForm (parent), m_alignment(0), m_space(1), m_sizing_mode(LayoutFlow)
+			: AbstractForm (parent),
+			  m_alignment(0),
+			  m_space(1),
+			  m_sizing_mode(LayoutFlow)
 	{
 		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
@@ -194,6 +200,20 @@ namespace BlendInt {
 		}
 
 		return root;
+	}
+
+	void AbstractLayout::item_property_changed(int type)
+	{
+		switch(type) {
+			case FormPropertyMinimalSize:
+			case FormPropertyPreferredSize:
+			case FormPropertySize:
+				update();
+				break;
+
+			default:
+				break;
+		}
 	}
 
 } /* namespace BlendInt */

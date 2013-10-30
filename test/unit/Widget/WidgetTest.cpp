@@ -21,7 +21,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(WidgetTest);
 testWidget::testWidget (int type, AbstractForm* parent)
 		: Widget(parent)
 {
-	m_roundcorner = RoundCornerAll;
+	m_round_type = RoundCornerAll;
 	set_position(Point(100, 100));
 	resize(200, 200);
 

@@ -49,6 +49,12 @@
  */
 #define DRAWABLE_PROPERTY
 
+/** macro to declare a member function is an event */
+#define EVENT
+
+/** macro to declare a member function is an delegate */
+#define DELEGATE
+
 namespace BlendInt {
 
 	enum MouseAction {

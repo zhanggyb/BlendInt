@@ -38,9 +38,12 @@ namespace BlendInt {
 
 	AbstractForm::AbstractForm ()
 		: m_z(0),
-		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0),
-		  m_visible(true), m_in_layout(false),
-		  m_expand_x(false), m_expand_y(false)
+		  m_round_type (RoundCornerNone),
+		  m_round_radius(5.0),
+		  m_in_layout(false),
+		  m_expand_x(false),
+		  m_expand_y(false),
+	m_visible(true)
 #ifdef DEBUG
 		  ,m_id(0)
 #endif
@@ -66,9 +69,12 @@ namespace BlendInt {
 
 	AbstractForm::AbstractForm (AbstractForm* parent)
 		: m_z(0),
-		  m_roundcorner (RoundCornerNone), m_corner_radius(5.0),
-		  m_visible(true), m_in_layout(false),
-		  m_expand_x(false), m_expand_y(false)
+		  m_round_type (RoundCornerNone),
+		  m_round_radius(5.0),
+		  m_in_layout(false),
+		  m_expand_x(false),
+		  m_expand_y(false),
+		  m_visible(true)
 #ifdef DEBUG
 		  , m_id(0)
 #endif
@@ -270,17 +276,31 @@ namespace BlendInt {
 
 	void AbstractForm::set_preferred_size(const Size& size)
 	{
-		// TODO: check the param first
+		// check the param first
+		if (size.width() < m_minimal_size.width() ||
+				size.height() < m_minimal_size.height())
+			return;
+
+		if(m_preferred_size.equal(size)) return;
 
 		m_preferred_size = size;
+
+		m_property_changed.fire(FormPropertyPreferredSize);
 	}
 
-	void AbstractForm::set_preferred_size(int width, int height)
+	void AbstractForm::set_preferred_size(unsigned int width, unsigned int height)
 	{
-		// TODO: check the param first
+		// check the param first
+		if(width < m_minimal_size.width() ||
+				height < m_minimal_size.height())
+			return;
+
+		if(m_preferred_size.equal(width, height)) return;
 
 		m_preferred_size.set_width(width);
 		m_preferred_size.set_height(height);
+
+		m_property_changed.fire(FormPropertyPreferredSize);
 	}
 
 	void AbstractForm::set_minimal_size(const Size& size)
@@ -290,24 +310,30 @@ namespace BlendInt {
 
 		if (m_minimal_size.equal(size)) return;
 
-		Size new_min_size(size);
-		if (update(FormPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
+		if(size.width() > m_preferred_size.width() ||
+				size.height() > m_preferred_size.height())
+			return;
+
+		m_minimal_size = size;
+
+		m_property_changed.fire(FormPropertyMinimalSize);
 	}
 
-	void AbstractForm::set_minimal_size(int w, int h)
+	void AbstractForm::set_minimal_size(unsigned int width, unsigned int height)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		if (m_minimal_size.equal(w, h)) return;
+		if (m_minimal_size.equal(width, height)) return;
 
-		Size new_min_size(w, h);
-		if (update(FormPropertyMinimalSize, &new_min_size)) m_minimal_size = new_min_size;
-	}
+		if(width > m_preferred_size.width() ||
+				height > m_preferred_size.height())
+			return;
 
-	const Point& AbstractForm::position () const
-	{
-		return m_pos;
+		m_preferred_size.set_width(width);
+		m_preferred_size.set_height(height);
+
+		m_property_changed.fire(FormPropertyMinimalSize);
 	}
 
 	void AbstractForm::set_position (int x, int y)
@@ -317,8 +343,10 @@ namespace BlendInt {
 
 		if (m_pos.equal(x, y)) return;
 
-		Point new_pos(x, y);
-		if (update(FormPropertyPosition, &new_pos)) m_pos = new_pos;
+		m_pos.set_x(x);
+		m_pos.set_y(y);
+
+		// m_property_changed.fire(FormPropertyPosition);
 	}
 
 	void AbstractForm::set_position (const Point& pos)
@@ -328,8 +356,9 @@ namespace BlendInt {
 
 		if (m_pos.equal(pos)) return;
 
-		Point new_pos(pos);
-		if (update(FormPropertyPosition, &new_pos)) m_pos = new_pos;
+		m_pos = pos;
+
+		//m_property_changed.fire(FormPropertyPosition);
 	}
 
 	void AbstractForm::reset_z (int z)
@@ -357,31 +386,24 @@ namespace BlendInt {
 					ContextManager::instance()->bind(this);
 			}
 		}
+
+		// m_property_changed.fire(FormPropertyLayer);
 	}
 
 	void AbstractForm::set_roundcorner (int type)
 	{
-		if (m_roundcorner == type) return;
+		if (m_round_type == type) return;
 
-		int new_type = type;
-		if(update(FormPropertyRoundCorner, &new_type)) m_roundcorner = new_type;
+		m_round_type = type;
+
+		m_property_changed.fire(FormPropertyRoundCorner);
 	}
 
 	void AbstractForm::set_corner_radius (float radius)
 	{
-		if (m_corner_radius == radius) return;
+		if (m_round_radius == radius) return;
 
-		if(update(FormPropertyRoundCorner, &radius)) m_corner_radius = radius;
-	}
-
-	int AbstractForm::roundcorner () const
-	{
-		return m_roundcorner;
-	}
-
-	bool AbstractForm::visible () const
-	{
-		return m_visible;
+		if(update(FormPropertyRoundCorner, &radius)) m_round_radius = radius;
 	}
 
 	void AbstractForm::set_visible (bool visible)
@@ -391,15 +413,12 @@ namespace BlendInt {
 
 	void AbstractForm::show ()
 	{
-		bool visiable = true;
-		if (update (FormPropertyVisibility, &visiable)) m_visible = true;
+		m_visible = true;
 	}
 
 	void AbstractForm::hide ()
 	{
-		bool visible = false;
-
-		if (update (FormPropertyVisibility, &visible)) m_visible = false;
+		m_visible = false;
 	}
 
 	const std::string& AbstractForm::name () const

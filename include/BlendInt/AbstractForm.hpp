@@ -145,7 +145,10 @@ namespace BlendInt {
 
 		void resize (const Size& size);
 
-		const Point& position () const;
+		const Point& position () const
+		{
+			return m_pos;
+		}
 
 		void set_position (int x, int y);
 
@@ -160,11 +163,14 @@ namespace BlendInt {
 
 		void set_roundcorner (int type);
 
-		int roundcorner () const;
+		int roundcorner () const
+		{
+			return m_round_type;
+		}
 
 		void set_corner_radius (float radius);
 
-		float corner_radius () const {return m_corner_radius;}
+		float corner_radius () const {return m_round_radius;}
 
 		void set_expand_x (bool expand) {m_expand_x = expand;}
 
@@ -176,7 +182,10 @@ namespace BlendInt {
 
 		void set_expand (bool expand) {m_expand_x = expand; m_expand_y = expand;}
 
-		bool visible () const;
+		bool visible () const
+		{
+			return m_visible;
+		}
 
 		void set_visible (bool visible);
 
@@ -188,21 +197,40 @@ namespace BlendInt {
 
 		void set_name (const std::string& name);
 
+		/**
+		 * @brief Get the preferred size
+		 * @return
+		 */
 		const Size& preferred_size () const {return m_preferred_size;}
 
+		/**
+		 * @brief set preferred size manually
+		 * @param[in] size
+		 *
+		 * Manually set the preferred size, the preferred size must larger than the minimal size
+		 */
 		void set_preferred_size (const Size& size);
 
-		void set_preferred_size (int width, int height);
+		/**
+		 * @brief set preferred size manually
+		 * @param[in] width
+		 * @param[in] height
+		 *
+		 * Manually set the preferred size, the preferred size must larger than the minimal size
+		 */
+		void set_preferred_size (unsigned int width, unsigned int height);
 
 		const Size& minimal_size () const {return m_minimal_size;}
 
 		void set_minimal_size (const Size& size);
 
-		void set_minimal_size (int width, int height);
+		void set_minimal_size (unsigned int width, unsigned int height);
 
 		const Parent* parent () const {return &m_parent;}
 
 		bool in_layout () const {return m_in_layout;}
+
+		EVENT Cpp::EventRef<int> property_changed() {return m_property_changed;}
 
 	protected:	// member functions
 
@@ -259,6 +287,8 @@ namespace BlendInt {
 
 		void resize_priv (AbstractForm* obj, const Size& size);
 
+		Cpp::ConnectionScope& events() {return m_events;}
+
 	protected:
 		// member variables
 
@@ -267,16 +297,14 @@ namespace BlendInt {
 		 */
 		int m_z;
 
-		DRAWABLE_PROPERTY int m_roundcorner;
+		DRAWABLE_PROPERTY int m_round_type;
 
 		/**
 		 * @brief the round corner radius
 		 *
 		 * should be 0.0, 1.0, 2.0 etc
 		 */
-		DRAWABLE_PROPERTY float m_corner_radius;
-
-		bool m_visible;
+		DRAWABLE_PROPERTY float m_round_radius;
 
 		bool m_in_layout;
 
@@ -298,7 +326,13 @@ namespace BlendInt {
 
 		std::set<AbstractForm*> m_children;
 
+	private:
+
+		bool m_visible;
+
 		Cpp::ConnectionScope m_events;
+
+		Cpp::Event<int> m_property_changed;
 
 #ifdef DEBUG
 	public:
