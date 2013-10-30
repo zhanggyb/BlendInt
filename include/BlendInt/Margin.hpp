@@ -47,6 +47,14 @@ namespace BlendInt {
 		: m_left(left), m_right(right), m_top(top), m_bottom(bottom)
 		{}
 
+		void set_value (int left, int right, int top, int bottom)
+		{
+			m_left = left;
+			m_right = right;
+			m_top = top;
+			m_bottom = bottom;
+		}
+
 		int left () const {return m_left;}
 
 		void set_left (int left) {m_left = left;}
@@ -62,6 +70,22 @@ namespace BlendInt {
 		int bottom () const {return m_bottom;}
 
 		void set_bottom (int bottom) {m_bottom = bottom;}
+
+		bool equal (int left, int right, int top, int bottom)
+		{
+			return (m_left == left &&
+					m_right == right &&
+					m_top == top &&
+					m_bottom == bottom);
+		}
+
+		bool equal (const Padding& padding)
+		{
+			return (m_left == padding.left() &&
+					m_right == padding.right() &&
+					m_top == padding.top() &&
+					m_bottom == padding.bottom());
+		}
 
 	private:
 

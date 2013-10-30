@@ -64,7 +64,7 @@ namespace BlendInt {
 			}
 			case WidgetPropertyPadding: {
 				// do not allow change padding
-				m_padding.set(0, 0, 0, 0);
+				m_padding.set_value(0, 0, 0, 0);
 				break;
 			}
 			default:

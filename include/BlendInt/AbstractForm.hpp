@@ -234,10 +234,6 @@ namespace BlendInt {
 
 	protected:	// member functions
 
-		Size& size_ref () {return m_size;}
-
-		Size& minimal_size_ref () {return m_minimal_size;}
-
 		Point& position_ref() {return m_position;}
 
 		bool contain (const Coord2d& cursor);

@@ -69,8 +69,6 @@ namespace BlendInt {
 
 		void add (AbstractLayout* layout);
 
-		void refresh ();
-
 		/**
 		 * @brief remove the object from layout
 		 * @param widget
@@ -114,15 +112,22 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void update (int property_type) = 0;
+		virtual void update (int property_type) {}
 
 		virtual void render () = 0;
 
-		/**
-		 * @brief scan all child object to get the total size
-		 * @return
-		 */
-		virtual Size recount_size () = 0;
+		virtual void add_item (Widget* widget) = 0;
+
+		virtual void add_item (AbstractLayout* layout) = 0;
+
+		virtual void remove_item (AbstractForm* object) = 0;
+
+		std::vector<AbstractForm*>& items_ref ()
+		{
+			return m_items;
+		}
+
+	private:
 
 		int m_alignment;
 
@@ -139,10 +144,6 @@ namespace BlendInt {
 		Margin m_margin;
 
 		std::vector<AbstractForm*> m_items;
-
-	private:
-
-		DELEGATE void item_property_changed (int type);
 	};
 
 } /* namespace BIL */

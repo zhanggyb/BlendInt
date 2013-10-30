@@ -229,10 +229,8 @@ int main(int argc, char* argv[])
 */
 
 	Widget* widget = new Widget;
-
-	widget->resize(200, 200);
-
-	widget->set_position(200, 200);
+	widget->resize(120, 80);
+	widget->set_name("widget");
 
 	HorizontalLayout* hlayout = new HorizontalLayout;
 	hlayout->set_position(100, 200);

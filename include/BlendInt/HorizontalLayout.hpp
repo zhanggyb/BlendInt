@@ -60,6 +60,11 @@ namespace BlendInt {
 
 		virtual void move_mouse (MouseEvent* event);
 
+		virtual void add_item (Widget* widget);
+
+		virtual void add_item (AbstractLayout* layout);
+
+		virtual void remove_item (AbstractForm* object);
 
 	private:
 
@@ -77,11 +82,7 @@ namespace BlendInt {
 		 */
 		void get_size_hint (bool margin, bool space, Size* size, Size* min, Size* prefer);
 
-		void add_item (AbstractForm* object);
-
-		void remove_item (AbstractForm* object);
-
-		virtual Size recount_size ();
+		Size recount_size ();
 
 		/**
 		 *@align the objects in the layout according to the alignment

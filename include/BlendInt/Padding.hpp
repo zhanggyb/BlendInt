@@ -65,7 +65,7 @@ namespace BlendInt {
 			return *this;
 		}
 
-		void set (int left, int right, int top, int bottom)
+		void set_value (int left, int right, int top, int bottom)
 		{
 			m_left = left;
 			m_right = right;

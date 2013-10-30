@@ -86,7 +86,7 @@ namespace BlendInt {
 
 		std::vector<AbstractForm*>::const_iterator it;
 		AbstractForm *item = 0;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
+		for (it = items_ref().begin(); it != items_ref().end(); it++) {
 			item = *it;
 			if (item) {
 				Interface::instance()->dispatch_render_event(item);
@@ -133,7 +133,7 @@ namespace BlendInt {
 	void VerticalLayout::press_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
+		for (it = items_ref().begin(); it != items_ref().end(); it++) {
 			Interface::instance()->dispatch_mouse_press_event(*it, event);
 		}
 	}
@@ -141,7 +141,7 @@ namespace BlendInt {
 	void VerticalLayout::release_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
+		for (it = items_ref().begin(); it != items_ref().end(); it++) {
 			Interface::instance()->dispatch_mouse_release_event(*it, event);
 		}
 	}
@@ -149,7 +149,7 @@ namespace BlendInt {
 	void VerticalLayout::move_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
+		for (it = items_ref().begin(); it != items_ref().end(); it++) {
 			Interface::instance()->dispatch_mouse_move_event(*it, event);
 		}
 	}
@@ -164,10 +164,10 @@ namespace BlendInt {
 
 		int fixed_height = 0;
 		unsigned int total_width = size->width();
-		unsigned int max_widget_width = total_width - m_margin.left()
-		        - m_margin.right();
+		unsigned int max_widget_width = total_width - margin().left()
+		        - margin().right();
 
-		for (it = m_items.rbegin(); it != m_items.rend(); it++) {
+		for (it = items_ref().rbegin(); it != items_ref().rend(); it++) {
 			child = *it;
 			if (child->expand_y()) {
 				expandable_objects.push(child);
@@ -176,13 +176,13 @@ namespace BlendInt {
 				fixed_height += child->size().height();
 			}
 //			total_width = std::max(total_width,
-//			        m_margin.left() + child->size().width() + m_margin.right());
+//			        margin().left() + child->size().width() + margin().right());
 //			max_widget_width = std::max(max_widget_width,
 //			        child->size().width());
 		}
 
-		int flexible_height = size->height() - m_margin.top()
-		        - m_margin.bottom() - (m_items.size() - 1) * m_space
+		int flexible_height = size->height() - margin().top()
+		        - margin().bottom() - (items_ref().size() - 1) * space()
 		        - fixed_height;
 
 		if (expandable_objects.size() > 0) {
@@ -199,10 +199,10 @@ namespace BlendInt {
 		}
 
 		Point pos = position();
-		pos.set_x(pos.x() + m_margin.left());
-		pos.set_y(pos.y() + m_margin.bottom());
+		pos.set_x(pos.x() + margin().left());
+		pos.set_y(pos.y() + margin().bottom());
 
-		for (it = m_items.rbegin(); it != m_items.rend(); it++) {
+		for (it = items_ref().rbegin(); it != items_ref().rend(); it++) {
 			child = *it;
 
 			// set position
@@ -212,26 +212,26 @@ namespace BlendInt {
 			if (child->expand_x()) {
 				resize_priv(child, max_widget_width, child->size().height());
 			} else {
-				if (m_alignment & AlignLeft) {
-					set_pos_priv(child, position().x() + m_margin.left(),
+				if (alignment() & AlignLeft) {
+					set_pos_priv(child, position().x() + margin().left(),
 					        child->position().y());
-				} else if (m_alignment & AlignRight) {
+				} else if (alignment() & AlignRight) {
 					set_pos_priv(child,
 					        position().x()
 					                + (total_width
-					                        - (m_margin.right()
+					                        - (margin().right()
 					                                + child->size().width())),
 					        child->position().y());
-				} else if (m_alignment & AlignVerticalCenter) {
+				} else if (alignment() & AlignVerticalCenter) {
 
 					set_pos_priv(child,
-					        position().x() + m_margin.right()
+					        position().x() + margin().right()
 					                + (max_widget_width - child->size().width())
 					                        / 2, child->position().y());
 				}
 			}
 
-			pos.set_y(pos.y() + child->size().height() + m_space);
+			pos.set_y(pos.y() + child->size().height() + space());
 		}
 
 		return;
@@ -245,37 +245,37 @@ namespace BlendInt {
 
 		std::vector<AbstractForm*>::const_reverse_iterator it;
 		AbstractForm* child = 0;
-		total_height = m_margin.bottom();
-		for (it = m_items.rbegin(); it != m_items.rend(); it++) {
+		total_height = margin().bottom();
+		for (it = items_ref().rbegin(); it != items_ref().rend(); it++) {
 			child = *it;
-			set_pos_priv(child, position().x() + m_margin.left(),
+			set_pos_priv(child, position().x() + margin().left(),
 			        position().y() + total_height);
 			total_width = std::max(total_width,
-			        m_margin.left() + child->size().width() + m_margin.right());
+			        margin().left() + child->size().width() + margin().right());
 			total_height = total_height + child->size().height();
 			max_widget_width = std::max(max_widget_width,
 			        child->size().width());
-			total_height += m_space;
+			total_height += space();
 		}
-		total_height = total_height - m_space + m_margin.top();
+		total_height = total_height - space() + margin().top();
 
-		for (it = m_items.rbegin(); it != m_items.rend(); it++) {
+		for (it = items_ref().rbegin(); it != items_ref().rend(); it++) {
 			child = *it;
 
 			if (child->expand_x()) {
 				resize_priv(child, max_widget_width, child->size().height());
 			} else {
-				if (m_alignment & AlignLeft) {
-					set_pos_priv(child, position().x() + m_margin.left(),
+				if (alignment() & AlignLeft) {
+					set_pos_priv(child, position().x() + margin().left(),
 					        child->position().y());
-				} else if (m_alignment & AlignRight) {
+				} else if (alignment() & AlignRight) {
 					set_pos_priv(child,
 					        position().x()
 					                + (total_width
-					                        - (m_margin.right()
+					                        - (margin().right()
 					                                + child->size().width())),
 					        child->position().y());
-				} else if (m_alignment & AlignVerticalCenter) {
+				} else if (alignment() & AlignVerticalCenter) {
 					set_pos_priv(child,
 					        position().x()
 					                + (total_width - child->size().width()) / 2,
@@ -294,11 +294,11 @@ namespace BlendInt {
 		Size minimal_size;
 
 		AbstractForm* child;
-		minimal_size.add_height(m_margin.top());
+		minimal_size.add_height(margin().top());
 
-		for(size_t i = 0; i < m_items.size(); i++)
+		for(size_t i = 0; i < items_ref().size(); i++)
 		{
-			child = m_items[i];
+			child = items_ref()[i];
 			if(child->expand_y()) {
 				minimal_size.add_height(child->minimal_size().height());
 			} else {
@@ -311,40 +311,40 @@ namespace BlendInt {
 				minimal_size.set_width(std::max(minimal_size.width(), child->size().width()));
 			}
 
-			if(i != (m_items.size() - 1))
-				minimal_size.add_height(m_space);
+			if(i != (items_ref().size() - 1))
+				minimal_size.add_height(space());
 		}
-		minimal_size.add_height(m_margin.bottom());
-		minimal_size.add_width(m_margin.left() + m_margin.right());
+		minimal_size.add_height(margin().bottom());
+		minimal_size.add_width(margin().left() + margin().right());
 
 		return minimal_size;
 	}
 
-	void VerticalLayout::add_item (AbstractForm* object)
+	void VerticalLayout::add_item (Widget* object)
 	{
-		unsigned int inner_width = m_size.width() - m_margin.left()
-		        - m_margin.right();
-		unsigned int inner_height = m_size.height() - m_margin.top()
-		        - m_margin.bottom();
+		unsigned int inner_width = m_size.width() - margin().left()
+		        - margin().right();
+		unsigned int inner_height = m_size.height() - margin().top()
+		        - margin().bottom();
 
 		inner_width = std::max(inner_width, object->size().width());
 		inner_height = inner_height + object->size().height();
 
-		if (m_items.size() == 0) {
-			set_pos_priv(object, position().x() + m_margin.left(),
-			        position().y() + m_margin.bottom());
-			m_size.set_height(m_margin.top() + inner_height + m_margin.bottom());
+		if (items_ref().size() == 0) {
+			set_pos_priv(object, position().x() + margin().left(),
+			        position().y() + margin().bottom());
+			m_size.set_height(margin().top() + inner_height + margin().bottom());
 			m_minimal_size.add_height(object->minimal_size().height());
 		} else {
 			set_pos_priv(object,
-			        position().x() + m_margin.left(),
-			        position().y() - (object->size().height() + m_space));
+			        position().x() + margin().left(),
+			        position().y() - (object->size().height() + space()));
 			m_size.set_height(
-			        m_margin.top() + inner_height + m_space + m_margin.bottom());
-			m_minimal_size.add_height(object->minimal_size().height() + m_space);
+			        margin().top() + inner_height + space() + margin().bottom());
+			m_minimal_size.add_height(object->minimal_size().height() + space());
 		}
 
-		m_size.set_width(m_margin.left() + inner_width + m_margin.right());
+		m_size.set_width(margin().left() + inner_width + margin().right());
 		m_minimal_size.set_width(std::max(m_minimal_size.width(), object->minimal_size().width()));
 
 		if(!expand_x())
@@ -353,14 +353,21 @@ namespace BlendInt {
 		if(!expand_y())
 			set_expand_y(object->expand_y());
 
-		m_items.push_back(object);
+		items_ref().push_back(object);
 		bind(object);
 
 		align_along_y(inner_width);
 
-		if(m_in_layout) {
-			dynamic_cast<AbstractLayout*>(m_parent.object.form)->refresh();
-		}
+	}
+
+	void VerticalLayout::add_item (AbstractLayout* layout)
+	{
+
+	}
+
+	void VerticalLayout::remove_item(AbstractForm * object)
+	{
+
 	}
 
 	void VerticalLayout::align_along_y (unsigned int width)
@@ -368,28 +375,28 @@ namespace BlendInt {
 		AbstractForm* child = 0;
 		std::vector<AbstractForm*>::iterator it;
 
-		int y = position().y() + m_size.height() - m_margin.top();
-		for (it = m_items.begin(); it != m_items.end(); it++) {
+		int y = position().y() + m_size.height() - margin().top();
+		for (it = items_ref().begin(); it != items_ref().end(); it++) {
 			child = *it;
 
-			if(it == m_items.begin())
+			if(it == items_ref().begin())
 				y = y - child->size().height();
 			else
-				y = y - child->size().height() - m_space;
+				y = y - child->size().height() - space();
 
 			if (child->expand_x()) {
 				resize_priv(child, width, child->size().height());
 			}
 
-			if (m_alignment & AlignLeft) {
-				set_pos_priv(child, position().x() + m_margin.left(), y);
-			} else if (m_alignment & AlignRight) {
+			if (alignment() & AlignLeft) {
+				set_pos_priv(child, position().x() + margin().left(), y);
+			} else if (alignment() & AlignRight) {
 				set_pos_priv(child,
-				        position().x() + m_margin.left()
+				        position().x() + margin().left()
 				                + (width - child->size().width()), y);
-			} else if (m_alignment & AlignVerticalCenter) {
+			} else if (alignment() & AlignVerticalCenter) {
 				set_pos_priv(child,
-				        position().x() + m_margin.left()
+				        position().x() + margin().left()
 				                + (width - child->size().width()) / 2, y);
 			}
 		}
@@ -401,14 +408,14 @@ namespace BlendInt {
 
 		std::vector<AbstractForm*>::iterator it;
 
-		for(it = m_items.begin(); it != m_items.end(); it++)
+		for(it = items_ref().begin(); it != items_ref().end(); it++)
 		{
 			size.set_width(std::max((*it)->size().width(), size.width()));
 			size.add_height((*it)->size().height());
 		}
 
-		size.add_height(m_space * (m_items.size() - 1) + m_margin.top() + m_margin.bottom());
-		size.add_width(m_margin.left() + m_margin.right());
+		size.add_height(space() * (items_ref().size() - 1) + margin().top() + margin().bottom());
+		size.add_width(margin().left() + margin().right());
 
 		return size;
 	}

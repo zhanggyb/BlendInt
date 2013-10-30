@@ -57,13 +57,19 @@ namespace BlendInt {
 	Widget::Widget ()
 	: AbstractForm(), m_border_width(1.0), m_emboss(true)
 	{
-
+		set_preferred_size(120, 80);
+		set_minimal_size(padding().left() + padding().right(),
+				padding().top() + padding().bottom());
+		resize(120, 80);
 	}
 
 	Widget::Widget (AbstractForm* parent)
 			: AbstractForm(parent), m_border_width(1.0), m_emboss(true)
 	{
-		// TODO Auto-generated constructor stub
+		set_preferred_size(120, 80);
+		set_minimal_size(padding().left() + padding().right(),
+				padding().top() + padding().bottom());
+		resize(120, 80);
 	}
 
 	Widget::~Widget ()

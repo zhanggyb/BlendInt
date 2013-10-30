@@ -31,11 +31,7 @@ namespace BlendInt {
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
 	{
-		// do not use resize or set_minimal_size as the update() is pure virtual funciton
-		size_ref().set_width(margin().left() + margin().right());
-		size_ref().set_height(margin().top() + margin().bottom());
-		minimal_size_ref().set_width(margin().left() + margin().right());
-		minimal_size_ref().set_height(margin().top() + margin().bottom());
+		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::AbstractLayout (AbstractForm *parent)
@@ -44,11 +40,7 @@ namespace BlendInt {
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
 	{
-		// do not use resize or set_minimal_size as the update() is pure virtual funciton
-		size_ref().set_width(margin().left() + margin().right());
-		size_ref().set_height(margin().top() + margin().bottom());
-		minimal_size_ref().set_width(margin().left() + margin().right());
-		minimal_size_ref().set_height(margin().top() + margin().bottom());
+		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::~AbstractLayout ()
@@ -60,11 +52,7 @@ namespace BlendInt {
 	{
 		if(m_children.count(object)) return;
 
-		bind(object);
-		set_in_layout(object, true);
-		m_items.push_back(object);
-
-		update(LayoutPropertyItem);
+		add_item (object);
 	}
 
 	void AbstractLayout::add (AbstractLayout* object)
@@ -79,29 +67,11 @@ namespace BlendInt {
 
 	}
 
-	void AbstractLayout::refresh ()
-	{
-		// TODO: remove this function
-	}
-
 	bool AbstractLayout::remove (AbstractForm* object)
 	{
 		if (!m_children.count(object)) return false;
 
-		std::vector<AbstractForm*>::iterator it;
-		for(it = m_items.begin(); it != m_items.end();)
-		{
-			if ((*it) == object) {
-				it = m_items.erase(it);
-			} else {
-				it++;
-			}
-		}
-
-		set_in_layout(object, false);
-		unbind(object);
-
-		update(LayoutPropertyItem);
+		remove_item(object);
 
 		return true;
 	}
@@ -110,20 +80,7 @@ namespace BlendInt {
 	{
 		if (!m_children.count(object)) return false;
 
-		std::vector<AbstractForm*>::iterator it;
-		for(it = m_items.begin(); it != m_items.end();)
-		{
-			if ((*it) == object) {
-				it = m_items.erase(it);
-			} else {
-				it++;
-			}
-		}
-
-		set_in_layout(object, false);
-		unbind(object);
-
-		update(LayoutPropertyItem);
+		remove_item(object);
 
 		delete object;
 
@@ -198,20 +155,6 @@ namespace BlendInt {
 		}
 
 		return root;
-	}
-
-	void AbstractLayout::item_property_changed(int type)
-	{
-		switch(type) {
-			case FormPropertyMinimalSize:
-			case FormPropertyPreferredSize:
-			case FormPropertySize:
-				update(FormPropertySize);
-				break;
-
-			default:
-				break;
-		}
 	}
 
 } /* namespace BlendInt */
