@@ -52,7 +52,12 @@ namespace BlendInt {
 	{
 		if(m_children.count(object)) return;
 
+		Size pre_size = size();
 		add_item (object);
+
+		if(! (pre_size == size())) {
+			// TODO: fire property_change event
+		}
 	}
 
 	void AbstractLayout::add (AbstractLayout* object)
@@ -140,6 +145,11 @@ namespace BlendInt {
 		Margin new_value (left, right, top, bottom);
 
 		m_margin = new_value;
+	}
+
+	void AbstractLayout::update (int property_type)
+	{
+
 	}
 
 	AbstractLayout* AbstractLayout::root_layout ()

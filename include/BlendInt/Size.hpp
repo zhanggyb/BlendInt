@@ -28,6 +28,16 @@
 
 namespace BlendInt {
 
+	class Size;
+
+	/**
+	 * @brief compare two size object and return true if they are equal
+	 * @param size1
+	 * @param size2
+	 * @return
+	 */
+	extern bool operator == (const Size& size1, const Size& size2);
+
 	/**
 	 * @brief Size
 	 *
