@@ -102,13 +102,17 @@ namespace BlendInt {
 		 */
 		void reset_width_of_fixed_items (std::set<AbstractForm*>* items, unsigned int width);
 
-		unsigned int get_minimal_width_of_xexpandable_items ();
+		/**
+		 * @brief calculate and return the minimal width of the expandable items
+		 * @return
+		 */
+		unsigned int minimal_expandable_width ();
 
-		unsigned int get_width_of_xunexpandable_items ();
-
-		void change_layout (const Size* size);
-
-		void generate_default_layout ();
+		/**
+		 * @brief calculate and return the width of fixed items
+		 * @return
+		 */
+		unsigned int fixed_width ();
 
 		/**
 		 * @brief scan the children and get the total size hint
@@ -129,14 +133,14 @@ namespace BlendInt {
 		void align_along_x (unsigned int height);
 
 		/**
-		 * @brief set of x expandable items
+		 * @brief set of horizontally expandable items
 		 */
-		std::set<AbstractForm*> m_xexpandable_items;
+		std::set<AbstractForm*> m_expandable_items;
 
 		/**
-		 * @brief set of x unexpandable items
+		 * @brief set of horizontally fixed items (along x)
 		 */
-		std::set<AbstractForm*> m_xunexpandable_items;
+		std::set<AbstractForm*> m_fixed_items;
 	};
 
 }

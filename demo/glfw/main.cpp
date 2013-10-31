@@ -230,25 +230,32 @@ int main(int argc, char* argv[])
 
 	Button* button1 = new Button;
 	button1->set_name("button1");
-	button1->set_minimal_size(20, button1->minimal_size().height());
+	//button1->set_minimal_size(10, button1->minimal_size().height());
 
 	Button* button2 = new Button;
 	button2->set_name("button2");
-	button2->set_minimal_size(20, button2->minimal_size().height());
+	//button2->set_minimal_size(10, button2->minimal_size().height());
 
 	Button* button3 = new Button;
 	button3->set_name("button3");
 	button3->set_minimal_size(20, button3->minimal_size().height());
 	button3->set_expand_x(false);
 
+	Button* button4 = new Button;
+	button4->set_name("button4");
+	button4->set_minimal_size(20, button4->minimal_size().height());
+	button4->set_expand_x(false);
+
 	HorizontalLayout* hlayout = new HorizontalLayout;
 	hlayout->set_position(100, 200);
-	hlayout->resize(10, 10);
+	hlayout->set_alignment(AlignTop);
+	hlayout->resize(20,20);
 	hlayout->add(button1);
 	hlayout->add(button2);
 	hlayout->add(button3);
+	hlayout->add(button4);
 
-	hlayout->resize(80, hlayout->size().height());
+//	hlayout->resize(400, hlayout->size().height());
 
 	app->bind(hlayout);
 

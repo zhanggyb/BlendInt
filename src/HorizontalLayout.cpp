@@ -61,9 +61,6 @@ namespace BlendInt {
 			}
 
 			case LayoutPropertyItem: {
-
-				generate_default_layout();
-
 				return;
 			}
 
@@ -180,15 +177,19 @@ namespace BlendInt {
 
 		set_preferred_size(preferred);
 		set_minimal_size(min);
-		resize_priv(this, current_size);
 
-		make_layout();
+		if(object->expand_x()) m_expandable_items.insert(object);
+		else m_fixed_items.insert(object);
+
+		if(! (current_size == size()))
+			resize_priv(this, current_size);	// call make_layout() through this function
+		else
+			make_layout();
+
+		std::cout << "height: " << size().height() << std::endl;
 
 		activate_events();
 		object->activate_events();
-
-		if(object->expand_x()) m_xexpandable_items.insert(object);
-		else m_xunexpandable_items.insert(object);
 
 		bind(object);
 		set_in_layout(object, true);
@@ -217,8 +218,6 @@ namespace BlendInt {
 
 		get_size_hint(true, true, 0, &min_size, &preferred_size);
 
-		change_layout(&current_size);
-
 		m_preferred_size = preferred_size;
 		m_minimal_size = min_size;
 
@@ -239,16 +238,16 @@ namespace BlendInt {
 			distribute_with_large_size();
 		}
 
-		if(size().height() == preferred_size().height()) {
-			// layout along y with preferred size
-			align_with_preferred_size();
-		} else if (size().height() < preferred_size().height()) {
-			// layout along y with small size
-			align();
-		} else {
+//		if(size().height() == preferred_size().height()) {
+//			// layout along y with preferred size
+//			align_with_preferred_size();
+//		} else if (size().height() < preferred_size().height()) {
+//			// layout along y with small size
+//			align();
+//		} else {
 			// layout along y with large size
 			align();
-		}
+//		}
 	}
 
 	void HorizontalLayout::distribute_with_preferred_size()
@@ -264,15 +263,15 @@ namespace BlendInt {
 
 			child = *it;
 			resize_priv(child, child->preferred_size().width(), child->size().height());
-			set_pos_priv(child,x, child->position().y());
-			x += child->preferred_size().width();
+			set_pos_priv(child, x, child->position().y());
+			x += child->size().width();
 		}
 	}
 
 	void HorizontalLayout::distribute_with_small_size()
 	{
-		unsigned int min_expandable_width = get_minimal_width_of_xexpandable_items();
-		unsigned int unexpandable_width = get_width_of_xunexpandable_items();
+		unsigned int min_exp_w = minimal_expandable_width();
+		unsigned int fixed_w = fixed_width();
 
 		unsigned int current_width = size().width();
 
@@ -282,11 +281,11 @@ namespace BlendInt {
 		AbstractForm* child = 0;
 		int x = position().x() + margin().left();
 
-		if((current_width - margin().left() - margin().right()) >=
-				(min_expandable_width + unexpandable_width + (items_ref().size() - 1) * space())) {
+		if((current_width - w_plus) >=
+				(min_exp_w + fixed_w + (items_ref().size() - 1) * space())) {
 
-			unsigned int single_width = current_width - w_plus - unexpandable_width - (items_ref().size() - 1)*space();
-			single_width = single_width / m_xexpandable_items.size();
+			unsigned int single_width = current_width - w_plus - fixed_w - (items_ref().size() - 1) * space();
+			single_width = single_width / m_expandable_items.size();
 
 			for(it = items_ref().begin(); it != items_ref().end(); it++)
 			{
@@ -295,25 +294,24 @@ namespace BlendInt {
 
 				child = *it;
 
-				if(m_xexpandable_items.count(child)) {
+				if(m_expandable_items.count(child)) {
 					resize_priv(child, single_width, child->size().height());
 				} else {
 					resize_priv(child, child->preferred_size().width(), child->size().height());
 				}
 
-				set_pos_priv(child,x, child->position().y());
+				set_pos_priv(child, x, child->position().y());
 				x += child->size().width();
 			}
 
 		} else {
 
-			std::set<AbstractForm*> unminimal_items(m_xunexpandable_items);
+			std::set<AbstractForm*> normal_items(m_fixed_items);	// set of unminimized items
 			//size_t unminimal_items_size = m_xunexpandable_items.size();
 
-			unsigned int fixed_width = min_expandable_width;
-			unsigned int unminimal_width = current_width - w_plus - fixed_width - (items_ref().size() - 1) * space();
+			unsigned int unminimal_width = current_width - w_plus - min_exp_w - (items_ref().size() - 1) * space();
+			unsigned int w = unminimal_width / normal_items.size();
 
-			unsigned int w = unminimal_width / unminimal_items.size();
 			for(it = items_ref().begin(); it != items_ref().end(); it++)
 			{
 				if(! (it == items_ref().begin()))
@@ -321,23 +319,23 @@ namespace BlendInt {
 
 				child = *it;
 
-				if(m_xexpandable_items.count(child)) {
+				if(m_expandable_items.count(child)) {
 					resize_priv(child, child->minimal_size().width(), child->size().height());
 				} else {
 
 					if(w < child->minimal_size().width()) {
 						resize_priv(child, child->minimal_size().width(), child->size().height());
-						unminimal_items.erase(child);
+						normal_items.erase(child);
 						unminimal_width = unminimal_width - child->minimal_size().width();
-						w = unminimal_width / unminimal_items.size();
-						reset_width_of_fixed_items(&unminimal_items, w);
+						w = unminimal_width / normal_items.size();
+						reset_width_of_fixed_items(&normal_items, w);
 					} else {
 						resize_priv(child, w, child->size().height());
 					}
 
 				}
 
-				set_pos_priv(child,x, child->position().y());
+				set_pos_priv(child, x, child->position().y());
 				x += child->size().width();
 			}
 
@@ -346,7 +344,7 @@ namespace BlendInt {
 
 	void HorizontalLayout::distribute_with_large_size()
 	{
-		unsigned int unexpandable_width = get_width_of_xunexpandable_items();
+		unsigned int fixed_w = fixed_width();
 
 		unsigned int current_width = size().width();
 
@@ -356,8 +354,10 @@ namespace BlendInt {
 		AbstractForm* child = 0;
 		int x = position().x() + margin().left();
 
-		unsigned int single_width = current_width - w_plus - unexpandable_width - (items_ref().size() - 1) * space();
-		single_width = single_width / m_xexpandable_items.size();
+		unsigned int single_width = current_width - w_plus - fixed_w - (items_ref().size() - 1) * space();
+
+		if(m_expandable_items.size())
+			single_width = single_width / m_expandable_items.size();
 
 		for(it = items_ref().begin(); it != items_ref().end(); it++)
 		{
@@ -366,7 +366,7 @@ namespace BlendInt {
 
 			child = *it;
 
-			if (m_xexpandable_items.count(child)) {
+			if (m_expandable_items.count(child)) {
 				resize_priv(child, single_width, child->size().height());
 			} else {
 				resize_priv(child, child->preferred_size().width(),
@@ -417,18 +417,21 @@ namespace BlendInt {
 		{
 			child = *it;
 
-			if (child->expand_y()) {
+			if (child->expand_y() ||
+					(child->size().height() > h)) {
 				resize_priv(child, child->size().width(), h);
-			}
+			} else {
 
-			if (alignment() & AlignTop) {
-				set_pos_priv(child, child->position().x(),
-						y + (size().height() - child->size().height()));
-			} else if (alignment() & AlignBottom) {
-				set_pos_priv(child, child->position().x(), y);
-			} else if (alignment() & AlignHorizontalCenter) {
-				set_pos_priv(child, child->position().x(),
-						y + (size().height() - child->size().height()) / 2);
+				if (alignment() & AlignTop) {
+					set_pos_priv(child, child->position().x(),
+					        y + (h - child->size().height()));
+				} else if (alignment() & AlignBottom) {
+					set_pos_priv(child, child->position().x(), y);
+				} else if (alignment() & AlignHorizontalCenter) {
+					set_pos_priv(child, child->position().x(),
+					        y + (h - child->size().height()) / 2);
+				}
+
 			}
 		}
 	}
@@ -446,12 +449,12 @@ namespace BlendInt {
 		}
 	}
 
-	unsigned int HorizontalLayout::get_minimal_width_of_xexpandable_items()
+	unsigned int HorizontalLayout::minimal_expandable_width()
 	{
 		unsigned int width = 0;
 
 		std::set<AbstractForm*>::iterator it;
-		for(it = m_xexpandable_items.begin(); it != m_xexpandable_items.end(); it++)
+		for(it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
 		{
 			width += (*it)->minimal_size().width();
 		}
@@ -459,154 +462,18 @@ namespace BlendInt {
 		return width;
 	}
 
-	unsigned int HorizontalLayout::get_width_of_xunexpandable_items()
+	unsigned int HorizontalLayout::fixed_width()
 	{
 		unsigned int width = 0;
 
 		std::set<AbstractForm*>::iterator it;
-		for(it = m_xunexpandable_items.begin(); it != m_xunexpandable_items.end(); it++)
+		for(it = m_fixed_items.begin(); it != m_fixed_items.end(); it++)
 		{
 			width += (*it)->size().width();
 		}
 
 		return width;
 
-	}
-
-	void HorizontalLayout::change_layout (const Size* size)
-	{
-		std::queue<AbstractForm*> expandable_objects;
-		std::queue<AbstractForm*> unexpandable_objects;
-
-		AbstractForm* child = 0;
-
-		// first, classify objects in layout according to "hexpand" property
-		int fixed_width = 0;
-		unsigned int total_height = size->height();
-		unsigned int max_widget_height = total_height - margin().top()
-		        - margin().bottom();
-
-		for (size_t i = 0; i < items_ref().size(); i++) {
-			child = items_ref()[i];
-			if (child->expand_x()) {
-				expandable_objects.push(child);
-			} else {
-				unexpandable_objects.push(child);
-				fixed_width += child->size().width();
-			}
-//			total_height = std::max(total_height,
-//			        margin().top() + child->size().height()
-//			                + margin().bottom());
-//			max_widget_height = std::max(max_widget_height,
-//			        child->size().height());
-		}
-
-		// average the width of each expandable object along horizontal
-		if (expandable_objects.size() > 0) {
-			int flexible_width = size->width() - margin().left()
-			        - margin().right() - (items_ref().size() - 1) * space()
-			        - fixed_width;
-			int single_flexible_with = flexible_width
-			        / expandable_objects.size();
-
-			while (!expandable_objects.empty()) {
-				child = expandable_objects.front();
-				resize_priv(child, single_flexible_with,
-				        child->size().height());
-				expandable_objects.pop();
-			}
-		}
-
-		// then move each object to the right place
-		Point pos = position();
-		pos.set_x(pos.x() + margin().left());
-		pos.set_y(pos.y() + margin().bottom());
-
-		for (size_t i = 0; i < items_ref().size(); i++) {
-			child = items_ref()[i];
-
-			// set position
-			set_pos_priv(child, pos);
-
-			// set height
-			if (child->expand_y()) {
-				resize_priv(child, child->size().width(), max_widget_height);
-			} else {
-				if (alignment() & AlignTop) {
-					set_pos_priv(child, child->position().x(),
-					        position().y()
-					                + (total_height
-					                        - (margin().top()
-					                                + child->size().height())));
-				} else if (alignment() & AlignBottom) {
-					set_pos_priv(child, child->position().x(),
-					        position().y() + margin().bottom());
-				} else if (alignment() & AlignHorizontalCenter) {
-					set_pos_priv(child, child->position().x(),
-					        position().y() + margin().bottom()
-					                + (max_widget_height
-					                        - child->size().height()) / 2);
-				}
-			}
-
-			pos.set_x(pos.x() + child->size().width() + space());
-		}
-
-		return;
-	}
-
-	void HorizontalLayout::generate_default_layout ()
-	{
-		unsigned int total_width = 0;
-		unsigned int total_height = m_size.height();
-		unsigned int max_widget_height = 0;
-
-		AbstractForm* child = 0;
-		total_width = margin().left();
-		for (size_t i = 0; i < items_ref().size(); i++) {
-			child = items_ref()[i];
-			set_pos_priv(child, position().x() + total_width,
-			        position().y() + margin().bottom());
-			total_width = total_width + child->size().width();
-			total_height = std::max(total_height,
-			        margin().top() + child->size().height()
-			                + margin().bottom());
-			max_widget_height = std::max(max_widget_height,
-			        child->size().height());
-
-			if (i != (items_ref().size() - 1))
-				total_width += space();
-		}
-		total_width = total_width + margin().right();
-
-		for (size_t i = 0; i < items_ref().size(); i++) {
-			child = items_ref()[i];
-
-			if (child->expand_y()) {
-				resize_priv(child, child->size().width(), max_widget_height);
-			} else {
-				if (alignment() & AlignTop) {
-					set_pos_priv(child, child->position().x(),
-					        position().y()
-					                + (total_height
-					                        - (margin().top()
-					                                + child->size().height())));
-				} else if (alignment() & AlignBottom) {
-					// TODO: not needed as already done in previous loop
-					set_pos_priv(child, child->position().x(),
-					        position().y() + margin().bottom());
-				} else if (alignment() & AlignHorizontalCenter) {
-					set_pos_priv(child, child->position().x(),
-					        position().y()
-					                + (total_height - child->size().height())
-					                        / 2);
-				}
-			}
-
-		}
-
-		m_size.set_width(total_width);
-		m_size.set_height(total_height);
 	}
 
 	void HorizontalLayout::get_size_hint (bool count_margin,
