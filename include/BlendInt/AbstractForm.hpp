@@ -230,7 +230,19 @@ namespace BlendInt {
 
 		bool in_layout () const {return m_in_layout;}
 
-		EVENT Cpp::EventRef<int> property_changed() {return m_property_changed;}
+		EVENT Cpp::EventRef<AbstractForm*, int> property_changed() {return m_property_changed;}
+
+		void activate_events ()
+		{
+			m_fire_events = true;
+		}
+
+		void deactivate_events ()
+		{
+			m_fire_events = false;
+		}
+
+		bool fire_events () const {return m_fire_events;}
 
 	protected:	// member functions
 
@@ -281,6 +293,11 @@ namespace BlendInt {
 
 		Cpp::ConnectionScope& events() {return m_events;}
 
+		void fire_property_changed_event (int type)
+		{
+			m_property_changed.fire(this, type);
+		}
+
 	protected:
 		// member variables
 
@@ -318,13 +335,15 @@ namespace BlendInt {
 
 	private:
 
+		bool m_fire_events;
+
 		bool m_visible;
 
 		Point m_position;
 
 		Cpp::ConnectionScope m_events;
 
-		Cpp::Event<int> m_property_changed;
+		Cpp::Event<AbstractForm*, int> m_property_changed;
 
 #ifdef DEBUG
 	public:

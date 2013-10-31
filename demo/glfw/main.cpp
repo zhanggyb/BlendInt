@@ -228,13 +228,27 @@ int main(int argc, char* argv[])
 //	v1->add(b6);
 */
 
-	Widget* widget = new Widget;
-	widget->resize(120, 80);
-	widget->set_name("widget");
+	Button* button1 = new Button;
+	button1->set_name("button1");
+	button1->set_minimal_size(20, button1->minimal_size().height());
+
+	Button* button2 = new Button;
+	button2->set_name("button2");
+	button2->set_minimal_size(20, button2->minimal_size().height());
+
+	Button* button3 = new Button;
+	button3->set_name("button3");
+	button3->set_minimal_size(20, button3->minimal_size().height());
+	button3->set_expand_x(false);
 
 	HorizontalLayout* hlayout = new HorizontalLayout;
 	hlayout->set_position(100, 200);
-	hlayout->add(widget);
+	hlayout->resize(10, 10);
+	hlayout->add(button1);
+	hlayout->add(button2);
+	hlayout->add(button3);
+
+	hlayout->resize(80, hlayout->size().height());
 
 	app->bind(hlayout);
 

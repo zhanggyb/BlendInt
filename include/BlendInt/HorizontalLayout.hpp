@@ -68,6 +68,44 @@ namespace BlendInt {
 
 	private:
 
+		void make_layout ();
+
+		/**
+		 * @brief distribute horizontally with preferred size
+		 */
+		void distribute_with_preferred_size ();
+
+		/**
+		 * @brief distribute horizontally with small size
+		 */
+		void distribute_with_small_size ();
+
+		/**
+		 * @brief distribute horizontally with large size
+		 */
+		void distribute_with_large_size ();
+
+		/**
+		 * @brief align horizontally with preferred size
+		 */
+		void align_with_preferred_size ();
+
+		/**
+		 * @brief align horizontally
+		 */
+		void align ();
+
+		/**
+		 * @brief reset the width of unexpandable items
+		 * @param[in] items
+		 * @param[in] width
+		 */
+		void reset_width_of_fixed_items (std::set<AbstractForm*>* items, unsigned int width);
+
+		unsigned int get_minimal_width_of_xexpandable_items ();
+
+		unsigned int get_width_of_xunexpandable_items ();
+
 		void change_layout (const Size* size);
 
 		void generate_default_layout ();
@@ -89,6 +127,16 @@ namespace BlendInt {
 		 * @param height[in] the max height of area contains children (height - (top + bottom margin))
 		 */
 		void align_along_x (unsigned int height);
+
+		/**
+		 * @brief set of x expandable items
+		 */
+		std::set<AbstractForm*> m_xexpandable_items;
+
+		/**
+		 * @brief set of x unexpandable items
+		 */
+		std::set<AbstractForm*> m_xunexpandable_items;
 	};
 
 }

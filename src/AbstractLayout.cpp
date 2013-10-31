@@ -31,7 +31,9 @@ namespace BlendInt {
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
 	{
-		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
+		resize(120, 80);
+		set_preferred_size(margin().left() + margin().right(), margin().top() + margin().bottom());
+		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::AbstractLayout (AbstractForm *parent)
@@ -40,7 +42,9 @@ namespace BlendInt {
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
 	{
-		resize(margin().left() + margin().right(), margin().top() + margin().bottom());
+		resize(120, 80);
+		set_preferred_size(margin().left() + margin().right(), margin().top() + margin().bottom());
+		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 	}
 
 	AbstractLayout::~AbstractLayout ()
@@ -52,12 +56,17 @@ namespace BlendInt {
 	{
 		if(m_children.count(object)) return;
 
-		Size pre_size = size();
+		Size pre_preferred_size = preferred_size();
+
 		add_item (object);
 
-		if(! (pre_size == size())) {
-			// TODO: fire property_change event
+		if(! (pre_preferred_size == preferred_size())) {
+			// fire events
 		}
+
+		// if minimal size changed
+		// fire events
+
 	}
 
 	void AbstractLayout::add (AbstractLayout* object)

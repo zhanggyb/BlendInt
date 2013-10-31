@@ -55,7 +55,8 @@ namespace BlendInt {
 		switch (property_type) {
 
 			case FormPropertySize: {
-				change_layout(&m_size);
+				if(items_ref().size())
+					make_layout();
 				return;
 			}
 
@@ -70,35 +71,6 @@ namespace BlendInt {
 				break;
 		}
 	}
-
-	/*
-	bool HorizontalLayout::update (int type, const void* property)
-	{
-		switch (type) {
-
-			case FormPropertySize: {
-				change_layout(static_cast<const Size*>(property));
-				return true;
-			}
-
-			case LayoutPropertyItem: {
-
-				const ItemData* item = static_cast<const ItemData*>(property);
-
-				if (item->action) {	// Add item
-					add_item(item->object);
-				} else { // remove item
-					remove_item(item->object);
-				}
-
-				return true;
-			}
-
-			default:
-				return AbstractLayout::update(type, property);
-		}
-	}
-	*/
 
 	void HorizontalLayout::render ()
 	{
@@ -169,6 +141,336 @@ namespace BlendInt {
 		for (it = items_ref().begin(); it != items_ref().end(); it++) {
 			Interface::instance()->dispatch_mouse_move_event(*it, event);
 		}
+	}
+
+	void HorizontalLayout::add_item (Widget* object)
+	{
+		// don't fire events when adding a widget into a layout
+		object->deactivate_events();
+		deactivate_events();
+
+		Size min = minimal_size();
+		Size preferred = preferred_size();
+		Size current_size = size();
+
+		unsigned int h_plus = margin().top() + margin().bottom();
+
+		if (items_ref().size() == 0) {
+			min.add_width(object->minimal_size().width());
+			preferred.add_width(object->preferred_size().width());
+		} else {
+			min.add_width(object->minimal_size().width() + space());
+			preferred.add_width(object->preferred_size().width() + space());
+		}
+
+		min.set_height(
+		        std::max(min.height(), object->minimal_size().height() + h_plus));
+		preferred.set_height(
+		        std::max(preferred.height(),
+		                object->preferred_size().height() + h_plus));
+
+		if (current_size.width() < preferred.width()) {
+			current_size.set_width(preferred.width());
+		}
+		if (current_size.height() < preferred.height()) {
+			current_size.set_height(preferred.height());
+		}
+
+		items_ref().push_back(object);
+
+		set_preferred_size(preferred);
+		set_minimal_size(min);
+		resize_priv(this, current_size);
+
+		make_layout();
+
+		activate_events();
+		object->activate_events();
+
+		if(object->expand_x()) m_xexpandable_items.insert(object);
+		else m_xunexpandable_items.insert(object);
+
+		bind(object);
+		set_in_layout(object, true);
+	}
+
+	void HorizontalLayout::add_item (AbstractLayout* layout)
+	{
+
+	}
+
+	void HorizontalLayout::remove_item (AbstractForm* object)
+	{
+		std::vector<AbstractForm*>::iterator it;
+		for(it = items_ref().begin(); it != items_ref().end();)
+		{
+			if ((*it) == object) {
+				it = items_ref().erase(it);
+			} else {
+				it++;
+			}
+		}
+
+		Size current_size = m_size;
+		Size min_size;
+		Size preferred_size;
+
+		get_size_hint(true, true, 0, &min_size, &preferred_size);
+
+		change_layout(&current_size);
+
+		m_preferred_size = preferred_size;
+		m_minimal_size = min_size;
+
+		set_in_layout(object, false);
+		unbind(object);
+	}
+
+	void HorizontalLayout::make_layout ()
+	{
+		if(size().width() == preferred_size().width()) {
+			// layout along x with preferred size
+			distribute_with_preferred_size();
+		} else if (size().width() < preferred_size().width()) {
+			// layout along x with small size
+			distribute_with_small_size();
+		} else {
+			// layout along x with large size
+			distribute_with_large_size();
+		}
+
+		if(size().height() == preferred_size().height()) {
+			// layout along y with preferred size
+			align_with_preferred_size();
+		} else if (size().height() < preferred_size().height()) {
+			// layout along y with small size
+			align();
+		} else {
+			// layout along y with large size
+			align();
+		}
+	}
+
+	void HorizontalLayout::distribute_with_preferred_size()
+	{
+		int x = position().x() + margin().left();
+
+		std::vector<AbstractForm*>::iterator it;
+		AbstractForm* child = 0;
+		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		{
+			if(! (it == items_ref().begin()))
+				x += space();
+
+			child = *it;
+			resize_priv(child, child->preferred_size().width(), child->size().height());
+			set_pos_priv(child,x, child->position().y());
+			x += child->preferred_size().width();
+		}
+	}
+
+	void HorizontalLayout::distribute_with_small_size()
+	{
+		unsigned int min_expandable_width = get_minimal_width_of_xexpandable_items();
+		unsigned int unexpandable_width = get_width_of_xunexpandable_items();
+
+		unsigned int current_width = size().width();
+
+		unsigned int w_plus = margin().left() + margin().right();
+
+		std::vector<AbstractForm*>::iterator it;
+		AbstractForm* child = 0;
+		int x = position().x() + margin().left();
+
+		if((current_width - margin().left() - margin().right()) >=
+				(min_expandable_width + unexpandable_width + (items_ref().size() - 1) * space())) {
+
+			unsigned int single_width = current_width - w_plus - unexpandable_width - (items_ref().size() - 1)*space();
+			single_width = single_width / m_xexpandable_items.size();
+
+			for(it = items_ref().begin(); it != items_ref().end(); it++)
+			{
+				if(! (it == items_ref().begin()))
+					x += space();
+
+				child = *it;
+
+				if(m_xexpandable_items.count(child)) {
+					resize_priv(child, single_width, child->size().height());
+				} else {
+					resize_priv(child, child->preferred_size().width(), child->size().height());
+				}
+
+				set_pos_priv(child,x, child->position().y());
+				x += child->size().width();
+			}
+
+		} else {
+
+			std::set<AbstractForm*> unminimal_items(m_xunexpandable_items);
+			//size_t unminimal_items_size = m_xunexpandable_items.size();
+
+			unsigned int fixed_width = min_expandable_width;
+			unsigned int unminimal_width = current_width - w_plus - fixed_width - (items_ref().size() - 1) * space();
+
+			unsigned int w = unminimal_width / unminimal_items.size();
+			for(it = items_ref().begin(); it != items_ref().end(); it++)
+			{
+				if(! (it == items_ref().begin()))
+					x += space();
+
+				child = *it;
+
+				if(m_xexpandable_items.count(child)) {
+					resize_priv(child, child->minimal_size().width(), child->size().height());
+				} else {
+
+					if(w < child->minimal_size().width()) {
+						resize_priv(child, child->minimal_size().width(), child->size().height());
+						unminimal_items.erase(child);
+						unminimal_width = unminimal_width - child->minimal_size().width();
+						w = unminimal_width / unminimal_items.size();
+						reset_width_of_fixed_items(&unminimal_items, w);
+					} else {
+						resize_priv(child, w, child->size().height());
+					}
+
+				}
+
+				set_pos_priv(child,x, child->position().y());
+				x += child->size().width();
+			}
+
+		}
+	}
+
+	void HorizontalLayout::distribute_with_large_size()
+	{
+		unsigned int unexpandable_width = get_width_of_xunexpandable_items();
+
+		unsigned int current_width = size().width();
+
+		unsigned int w_plus = margin().left() + margin().right();
+
+		std::vector<AbstractForm*>::iterator it;
+		AbstractForm* child = 0;
+		int x = position().x() + margin().left();
+
+		unsigned int single_width = current_width - w_plus - unexpandable_width - (items_ref().size() - 1) * space();
+		single_width = single_width / m_xexpandable_items.size();
+
+		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		{
+			if (!(it == items_ref().begin()))
+				x += space();
+
+			child = *it;
+
+			if (m_xexpandable_items.count(child)) {
+				resize_priv(child, single_width, child->size().height());
+			} else {
+				resize_priv(child, child->preferred_size().width(),
+				        child->size().height());
+			}
+
+			set_pos_priv(child, x, child->position().y());
+			x += child->size().width();
+		}
+
+	}
+
+	void HorizontalLayout::align_with_preferred_size()
+	{
+		int y = position().y() + margin().bottom();
+
+		std::vector<AbstractForm*>::iterator it;
+		AbstractForm* child = 0;
+		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		{
+			child = *it;
+
+			if (child->expand_y()) {
+				resize_priv(child, child->size().width(), preferred_size().height());
+			}
+
+			if (alignment() & AlignTop) {
+				set_pos_priv(child, child->position().x(),
+						y + (size().height() - child->size().height()));
+			} else if (alignment() & AlignBottom) {
+				set_pos_priv(child, child->position().x(), y);
+			} else if (alignment() & AlignHorizontalCenter) {
+				set_pos_priv(child, child->position().x(),
+						y + (size().height() - child->size().height()) / 2);
+			}
+		}
+	}
+
+	void HorizontalLayout::align()
+	{
+		int y = position().y() + margin().bottom();
+
+		unsigned int h = size().height() - margin().top() - margin().bottom();
+
+		std::vector<AbstractForm*>::iterator it;
+		AbstractForm* child = 0;
+		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		{
+			child = *it;
+
+			if (child->expand_y()) {
+				resize_priv(child, child->size().width(), h);
+			}
+
+			if (alignment() & AlignTop) {
+				set_pos_priv(child, child->position().x(),
+						y + (size().height() - child->size().height()));
+			} else if (alignment() & AlignBottom) {
+				set_pos_priv(child, child->position().x(), y);
+			} else if (alignment() & AlignHorizontalCenter) {
+				set_pos_priv(child, child->position().x(),
+						y + (size().height() - child->size().height()) / 2);
+			}
+		}
+	}
+
+	void HorizontalLayout::reset_width_of_fixed_items(
+			std::set<AbstractForm*>* items, unsigned int width)
+	{
+		std::set<AbstractForm*>::iterator it;
+		AbstractForm* child = 0;
+
+		for(it = items->begin(); it != items->end(); it++)
+		{
+			child = *it;
+			resize_priv(child, width, child->size().height());
+		}
+	}
+
+	unsigned int HorizontalLayout::get_minimal_width_of_xexpandable_items()
+	{
+		unsigned int width = 0;
+
+		std::set<AbstractForm*>::iterator it;
+		for(it = m_xexpandable_items.begin(); it != m_xexpandable_items.end(); it++)
+		{
+			width += (*it)->minimal_size().width();
+		}
+
+		return width;
+	}
+
+	unsigned int HorizontalLayout::get_width_of_xunexpandable_items()
+	{
+		unsigned int width = 0;
+
+		std::set<AbstractForm*>::iterator it;
+		for(it = m_xunexpandable_items.begin(); it != m_xunexpandable_items.end(); it++)
+		{
+			width += (*it)->size().width();
+		}
+
+		return width;
+
 	}
 
 	void HorizontalLayout::change_layout (const Size* size)
@@ -362,81 +664,6 @@ namespace BlendInt {
 		if(size) *size = size_out;
 		if(min) *min = min_size_out;
 		if(preferred) *preferred = preferred_size_out;
-	}
-
-	void HorizontalLayout::add_item (Widget* object)
-	{
-		bind(object);
-		set_in_layout(object, true);
-
-		if (sizing_mode() == LayoutFlow) {
-			items_ref().push_back(object);
-
-			Size layout_size;
-			Size layout_preferred_size;
-			Size layout_min_size;
-
-			get_size_hint(true, true, &layout_size, &layout_min_size, &layout_preferred_size);
-
-			std::cout << "size before: " << size().width() << " " << size().height() << std::endl;
-
-			if(layout_preferred_size.width() < size().width()) {
-				layout_size.set_width(size().width());
-			} else {
-				layout_size.set_width(layout_preferred_size.width());
-			}
-
-			if(layout_preferred_size.height() < size().height()) {
-				layout_size.set_height(size().height());
-			} else {
-				layout_size.set_height(layout_preferred_size.height());
-			}
-
-			change_layout(&layout_size);
-			m_preferred_size = layout_preferred_size;
-			m_minimal_size = layout_min_size;
-
-			resize(layout_size);
-
-			std::cout << "size: " << size().width() << " " << size().height() << std::endl;
-
-		} else {	// LayoutFixed
-			items_ref().push_back(object);
-			Size size = m_size;
-			change_layout(&size);
-		}
-	}
-
-	void HorizontalLayout::add_item (AbstractLayout* layout)
-	{
-
-	}
-
-	void HorizontalLayout::remove_item (AbstractForm* object)
-	{
-		std::vector<AbstractForm*>::iterator it;
-		for(it = items_ref().begin(); it != items_ref().end();)
-		{
-			if ((*it) == object) {
-				it = items_ref().erase(it);
-			} else {
-				it++;
-			}
-		}
-
-		Size current_size = m_size;
-		Size min_size;
-		Size preferred_size;
-
-		get_size_hint(true, true, 0, &min_size, &preferred_size);
-
-		change_layout(&current_size);
-
-		m_preferred_size = preferred_size;
-		m_minimal_size = min_size;
-
-		set_in_layout(object, false);
-		unbind(object);
 	}
 
 	void HorizontalLayout::align_along_x (unsigned int height)
