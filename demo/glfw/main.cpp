@@ -37,8 +37,8 @@ public:
 	DoEvent()
 	: i(0)
 	{
-		m_hlayout.set_position(300, 400);
-		m_hlayout.resize(400, 100);
+		m_layout.set_position(300, 400);
+		//m_hlayout.resize(400, 100);
 //		m_hlayout.set_sizing_mode(LayoutFixed);
 //		m_hlayout.set_margin(5, 5, 5, 5);
 //		m_hlayout.set_space (2);
@@ -68,40 +68,43 @@ public:
 
 	void bind()
 	{
-		interface()->bind(&m_hlayout);
+		interface()->bind(&m_layout);
 	}
 
 	void unbind()
 	{
-		interface()->unbind(&m_hlayout);
+		interface()->unbind(&m_layout);
 	}
 
 	void add_button()
 	{
 		Button* button = new Button;
 
-		char str[20];
-		sprintf(str, "%s%u", "button", static_cast<unsigned int>(m_buttons.size()));
+		//char str[20];
+		//sprintf(str, "%s%u", "button", static_cast<unsigned int>(m_buttons.size()));
 
-		button->set_text(str);
-		button->set_name(str);
+		//button->set_text(str);
+		//button->set_name(str);
 
-		m_hlayout.add(button);
+		m_layout.add(button);
 		m_buttons.push_back(button);
 	}
 
 	void remove_button()
 	{
-		Button* button = m_buttons[m_buttons.size() - 1];
-		m_hlayout.erase(button);
-		m_buttons.pop_back();
+		if(m_buttons.size()) {
+			Button* button = m_buttons[m_buttons.size() - 1];
+			m_layout.erase(button);
+			m_buttons.pop_back();
+			m_layout.resize(m_layout.preferred_size());
+		}
 	}
 
 private:
 
 //	VerticalLayout *m_vlayout;
 
-	HorizontalLayout m_hlayout;
+	VerticalLayout m_layout;
 
 	std::vector<Button*> m_buttons;
 
@@ -170,7 +173,6 @@ int main(int argc, char* argv[])
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	/*
 	DoEvent obj;
 
 	obj.bind();
@@ -190,77 +192,21 @@ int main(int argc, char* argv[])
 	app->bind(add_button);
 	app->bind(remove_button);
 
+	HorizontalLayout* layout = new HorizontalLayout;
+
+	layout->set_position(100, 100);
+
 	Button* b1 = new Button;
 	Button* b2 = new Button;
-
-	HorizontalLayout* h1 = new HorizontalLayout;
-	h1->set_name("hlayout");
-
-	h1->add(b1);
-	h1->add(b2);
-
 	Button* b3 = new Button;
 	Button* b4 = new Button;
 
-	VerticalLayout* v1 = new VerticalLayout;
-	v1->set_name("vlayout");
-	v1->add(b3);
-	v1->add(b4);
-
-//	HorizontalLayout* h2 = new HorizontalLayout;
-//	h2->add(b3);
-//	h2->add(b4);
-
-	h1->add(v1);
-
-	h1->set_position(500, 200);
-
-//	v1->resize(200, 60);
-
-	app->bind(h1);
-
-	Button* b5 = new Button;
-//
-	v1->add(b5);
-//
-//	Button* b6 = new Button;
-//
-//	v1->add(b6);
-*/
-
-	Button* button1 = new Button;
-	button1->set_name("button1");
-	//button1->set_minimal_size(10, button1->minimal_size().height());
-
-	Button* button2 = new Button;
-	button2->set_name("button2");
-	//button2->set_minimal_size(10, button2->minimal_size().height());
-
-	Button* button3 = new Button;
-	button3->set_name("button3");
-	button3->set_minimal_size(20, button3->minimal_size().height());
-	button3->set_expand_x(false);
-
-	Button* button4 = new Button;
-	button4->set_name("button4");
-	button4->set_minimal_size(20, button4->minimal_size().height());
-	button4->set_expand_x(false);
-
-	VerticalLayout* layout = new VerticalLayout;
-	layout->set_position(100, 200);
-//	layout->set_alignment(AlignTop);
-//	layout->resize(200,200);
-	layout->add(button1);
-	layout->add(button2);
-	layout->add(button3);
-	layout->add(button4);
-
-//	hlayout->resize(400, hlayout->size().height());
-	layout->resize(layout->size().width(), 200);
+	layout->add(b1);
+	layout->add(b2);
+	layout->add(b3);
+	layout->add(b4);
 
 	app->bind(layout);
-
-//	layout->erase(button4);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -274,7 +220,7 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 	}
 
-	//obj.unbind();
+	obj.unbind();
 
 	/* release BlendInt */
 	Interface::release();

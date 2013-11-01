@@ -542,11 +542,11 @@ namespace BlendInt {
 		}
 
 		if(count_space) {
-			size_out.add_height((items().size() - 1) * space());
-
-			min_size_out.add_height((items().size() - 1) * space());
-
-			preferred_size_out.add_height((items().size() - 1) * space());
+			if(items().size()) {
+				size_out.add_height((items().size() - 1) * space());
+				min_size_out.add_height((items().size() - 1) * space());
+				preferred_size_out.add_height((items().size() - 1) * space());
+			}
 		}
 
 		if(size) *size = size_out;
