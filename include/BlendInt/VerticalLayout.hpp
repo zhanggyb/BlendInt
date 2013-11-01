@@ -45,8 +45,6 @@ namespace BlendInt {
 
 		virtual void update (int property_type);
 
-		//virtual bool update (int type, const void* property);
-
 		virtual void render ();
 
 		virtual void press_key (KeyEvent* event);
@@ -69,19 +67,90 @@ namespace BlendInt {
 
 	private:
 
+		/**
+		 * @brief scan, distribute and align the items
+		 */
+		void make_layout ();
+
+		/**
+		 * @brief distribute vertically with preferred size
+		 */
+		void distribute_with_preferred_size ();
+
+		/**
+		 * @brief distribute vertically with small size
+		 */
+		void distribute_with_small_size ();
+
+		/**
+		 * @brief distribute vertically with large size
+		 */
+		void distribute_with_large_size ();
+
+		/**
+		 * @brief align vertically with preferred size
+		 */
+		void align_with_preferred_size ();
+
+		/**
+		 * @brief align vertically
+		 */
+		void align ();
+
+		/**
+		 * @brief reset the height of unexpandable items
+		 * @param[in] items
+		 * @param[in] height
+		 */
+		void reset_height_of_fixed_items (std::set<AbstractForm*>* items, unsigned int height);
+
+		/**
+		 * @brief calculate and return the minimal height of the expandable items
+		 * @return
+		 */
+		unsigned int minimal_expandable_height ();
+
+		/**
+		 * @brief calculate and return the height of fixed items
+		 * @return
+		 */
+		unsigned int fixed_height ();
+
+		/**
+		 * @brief scan the children and get the total size hint
+		 * @param count_margin if count margin
+		 * @param count_space if count space
+		 * @param size the current size of this layout
+		 * @param min the minimal size of this layout
+		 * @param prefer the preferred size of this layout
+		 */
+		void get_size_hint (bool count_margin,
+				bool count_space,
+				Size* size,
+				Size* min,
+				Size* prefer);
+
 		void change_layout (const Size* size);
 
 		void generate_default_layout ();
 
 		Size get_minimal_size ();
 
-		virtual Size recount_size ();
-
 		/**
 		 * @brief align the objects in layout according to alignment
 		 * @param width[in] the max width of area contains children (width - (left + right margin))
 		 */
 		void align_along_y (unsigned int width);
+
+		/**
+		 * @brief set of vertically expandable items
+		 */
+		std::set<AbstractForm*> m_expandable_items;
+
+		/**
+		 * @brief set of vertically fixed items (along y)
+		 */
+		std::set<AbstractForm*> m_fixed_items;
 	};
 
 }

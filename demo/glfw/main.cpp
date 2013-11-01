@@ -246,18 +246,20 @@ int main(int argc, char* argv[])
 	button4->set_minimal_size(20, button4->minimal_size().height());
 	button4->set_expand_x(false);
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
-	hlayout->set_position(100, 200);
-	hlayout->set_alignment(AlignTop);
-	hlayout->resize(20,20);
-	hlayout->add(button1);
-	hlayout->add(button2);
-	hlayout->add(button3);
-	hlayout->add(button4);
+	VerticalLayout* layout = new VerticalLayout;
+	layout->set_position(100, 200);
+//	layout->set_alignment(AlignTop);
+//	layout->resize(20,20);
+	layout->add(button1);
+	layout->add(button2);
+	layout->add(button3);
+	layout->add(button4);
 
 //	hlayout->resize(400, hlayout->size().height());
 
-	app->bind(hlayout);
+	app->bind(layout);
+
+//	layout->erase(button4);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

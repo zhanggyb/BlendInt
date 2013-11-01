@@ -34,13 +34,13 @@ namespace BlendInt {
 	TableLayout::TableLayout (int rows, int columns)
 			: AbstractLayout(), m_rows(rows), m_columns(columns)
 	{
-		items_ref().resize(rows * columns, 0);
+		items().resize(rows * columns, 0);
 	}
 
 	TableLayout::TableLayout (int rows, int columns, AbstractForm* parent)
 			: AbstractLayout(parent), m_rows(rows), m_columns(columns)
 	{
-		items_ref().resize(rows * columns, 0);
+		items().resize(rows * columns, 0);
 	}
 
 	TableLayout::~TableLayout ()
@@ -54,12 +54,12 @@ namespace BlendInt {
 
 		for (int i = 0; i < width; i++)
 		{
-			items_ref()[m_columns * row + column + i] = widget;
+			items()[m_columns * row + column + i] = widget;
 		}
 
 		for (int i = 0; i < height; i++)
 		{
-			items_ref()[m_columns * (row + i) + column] = widget;
+			items()[m_columns * (row + i) + column] = widget;
 		}
 
 		bind (widget);
@@ -75,12 +75,12 @@ namespace BlendInt {
 
 		for (int i = 0; i < width; i++)
 		{
-			items_ref()[m_columns * row + column + i] = layout;
+			items()[m_columns * row + column + i] = layout;
 		}
 
 		for (int i = 0; i < height; i++)
 		{
-			items_ref()[m_columns * (row + i) + column] = layout;
+			items()[m_columns * (row + i) + column] = layout;
 		}
 
 		bind (layout);
@@ -111,7 +111,7 @@ namespace BlendInt {
 
 				} else {	// this is called when adding widget or layout
 
-					if(items_ref().size() > static_cast<unsigned int>(m_rows * m_columns))
+					if(items().size() > static_cast<unsigned int>(m_rows * m_columns))
 						throw std::out_of_range("Exceed the table size");
 					generate_default_layout();
 
@@ -125,7 +125,7 @@ namespace BlendInt {
 	void TableLayout::render ()
 	{
 		std::vector<AbstractForm*>::const_iterator it;
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			if(*it) {
 				Interface::instance()->dispatch_render_event(*it);
 			}
@@ -159,7 +159,7 @@ namespace BlendInt {
 	void TableLayout::press_key (KeyEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			Interface::instance()->dispatch_key_press_event(*it, event);
 		}
@@ -176,7 +176,7 @@ namespace BlendInt {
 	void TableLayout::press_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			if(*it) {
 				Interface::instance()->dispatch_mouse_press_event(*it, event);
@@ -187,7 +187,7 @@ namespace BlendInt {
 	void TableLayout::release_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			if (*it) {
 				Interface::instance()->dispatch_mouse_release_event(*it, event);
@@ -198,7 +198,7 @@ namespace BlendInt {
 	void TableLayout::move_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			if (*it) {
 				Interface::instance()->dispatch_mouse_move_event(*it, event);
@@ -354,7 +354,7 @@ namespace BlendInt {
 
 			for (int j = 0; j < m_columns; j++)
 			{
-				child = items_ref()[i * m_columns + j];
+				child = items()[i * m_columns + j];
 				if(!child) continue;
 
 				set_pos_priv(child, x, y);
@@ -400,7 +400,7 @@ namespace BlendInt {
 		{
 			for (int j = 0; j < m_columns; j++)
 			{
-				child = items_ref()[i * m_columns + j];
+				child = items()[i * m_columns + j];
 				if(child) {
 					column_width[j] = std::max(column_width[j], child->size().width());
 					row_height[i] = std::max(row_height[i], child->size().height());
@@ -422,7 +422,7 @@ namespace BlendInt {
 
 			for (int j = 0; j < m_columns; j++)
 			{
-				child = items_ref()[i * m_columns + j];
+				child = items()[i * m_columns + j];
 				if(!child) continue;
 
 				set_pos_priv(child, x, y);
@@ -462,7 +462,7 @@ namespace BlendInt {
 
 		for (int i = 0; i < m_rows; i++)
 		{
-			child = items_ref()[i * m_columns + column];
+			child = items()[i * m_columns + column];
 			if(child) {
 				if(!child->expand_x()) {
 					fixed_width = std::max(fixed_width, static_cast<int>(child->size().width()));
@@ -480,7 +480,7 @@ namespace BlendInt {
 
 		for (int j = 0; j < m_columns; j++)
 		{
-			child = items_ref()[row * m_columns + j];
+			child = items()[row * m_columns + j];
 			if(child) {
 				if(!child->expand_y()) {
 					fixed_height = std::max(fixed_height, static_cast<int>(child->size().height()));
@@ -498,7 +498,7 @@ namespace BlendInt {
 
 		for (int j = 0; j < m_columns; j++)
 		{
-			child = items_ref()[j * m_columns + column];
+			child = items()[j * m_columns + column];
 			if(child) {
 				minimal_width = std::max(minimal_width, child->minimal_size().width());
 			}
@@ -514,7 +514,7 @@ namespace BlendInt {
 
 		for (int j = 0; j < m_columns; j++)
 		{
-			child = items_ref()[row * m_columns + j];
+			child = items()[row * m_columns + j];
 			if(child) {
 				minimal_height = std::max(minimal_height, child->minimal_size().height());
 			}

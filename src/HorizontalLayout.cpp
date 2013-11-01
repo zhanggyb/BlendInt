@@ -55,7 +55,7 @@ namespace BlendInt {
 		switch (property_type) {
 
 			case FormPropertySize: {
-				if(items_ref().size())
+				if(items().size())
 					make_layout();
 				return;
 			}
@@ -72,7 +72,7 @@ namespace BlendInt {
 	void HorizontalLayout::render ()
 	{
 		std::vector<AbstractForm*>::const_iterator it;
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_render_event(*it);
 		}
 
@@ -103,7 +103,7 @@ namespace BlendInt {
 	void HorizontalLayout::press_key (KeyEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_key_press_event(*it, event);
 		}
 	}
@@ -119,7 +119,7 @@ namespace BlendInt {
 	void HorizontalLayout::press_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_mouse_press_event(*it, event);
 		}
 	}
@@ -127,7 +127,7 @@ namespace BlendInt {
 	void HorizontalLayout::release_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_mouse_release_event(*it, event);
 		}
 	}
@@ -135,15 +135,15 @@ namespace BlendInt {
 	void HorizontalLayout::move_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_mouse_move_event(*it, event);
 		}
 	}
 
-	void HorizontalLayout::add_item (Widget* object)
+	void HorizontalLayout::add_item (Widget* widget)
 	{
 		// don't fire events when adding a widget into a layout
-		object->deactivate_events();
+		widget->deactivate_events();
 		deactivate_events();
 
 		Size min = minimal_size();
@@ -152,19 +152,19 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		if (items_ref().size() == 0) {
-			min.add_width(object->minimal_size().width());
-			preferred.add_width(object->preferred_size().width());
+		if (items().size() == 0) {
+			min.add_width(widget->minimal_size().width());
+			preferred.add_width(widget->preferred_size().width());
 		} else {
-			min.add_width(object->minimal_size().width() + space());
-			preferred.add_width(object->preferred_size().width() + space());
+			min.add_width(widget->minimal_size().width() + space());
+			preferred.add_width(widget->preferred_size().width() + space());
 		}
 
 		min.set_height(
-		        std::max(min.height(), object->minimal_size().height() + h_plus));
+		        std::max(min.height(), widget->minimal_size().height() + h_plus));
 		preferred.set_height(
 		        std::max(preferred.height(),
-		                object->preferred_size().height() + h_plus));
+		                widget->preferred_size().height() + h_plus));
 
 		if (current_size.width() < preferred.width()) {
 			current_size.set_width(preferred.width());
@@ -173,53 +173,112 @@ namespace BlendInt {
 			current_size.set_height(preferred.height());
 		}
 
-		items_ref().push_back(object);
+		items().push_back(widget);
 
 		set_preferred_size(preferred);
 		set_minimal_size(min);
 
-		if(object->expand_x()) m_expandable_items.insert(object);
-		else m_fixed_items.insert(object);
+		if(widget->expand_x()) m_expandable_items.insert(widget);
+		else m_fixed_items.insert(widget);
 
 		if(! (current_size == size()))
 			resize_priv(this, current_size);	// call make_layout() through this function
 		else
 			make_layout();
 
-		std::cout << "height: " << size().height() << std::endl;
-
 		activate_events();
-		object->activate_events();
+		widget->activate_events();
 
-		bind(object);
-		set_in_layout(object, true);
+		bind(widget);
+		set_in_layout(widget, true);
 	}
 
 	void HorizontalLayout::add_item (AbstractLayout* layout)
 	{
+		// TODO: currently the code in this function is the same as add_item(Widget*)
+		// check later if a special function for layout object is needed
 
+		// don't fire events when adding a widget into a layout
+		layout->deactivate_events();
+		deactivate_events();
+
+		Size min = minimal_size();
+		Size preferred = preferred_size();
+		Size current_size = size();
+
+		unsigned int h_plus = margin().top() + margin().bottom();
+
+		if (items().size() == 0) {
+			min.add_width(layout->minimal_size().width());
+			preferred.add_width(layout->preferred_size().width());
+		} else {
+			min.add_width(layout->minimal_size().width() + space());
+			preferred.add_width(layout->preferred_size().width() + space());
+		}
+
+		min.set_height(
+		        std::max(min.height(), layout->minimal_size().height() + h_plus));
+		preferred.set_height(
+		        std::max(preferred.height(),
+		                layout->preferred_size().height() + h_plus));
+
+		if (current_size.width() < preferred.width()) {
+			current_size.set_width(preferred.width());
+		}
+		if (current_size.height() < preferred.height()) {
+			current_size.set_height(preferred.height());
+		}
+
+		items().push_back(layout);
+
+		set_preferred_size(preferred);
+		set_minimal_size(min);
+
+		if(layout->expand_x()) m_expandable_items.insert(layout);
+		else m_fixed_items.insert(layout);
+
+		if(! (current_size == size()))
+			resize_priv(this, current_size);	// call make_layout() through this function
+		else
+			make_layout();
+
+		activate_events();
+		layout->activate_events();
+
+		bind(layout);
+		set_in_layout(layout, true);
 	}
 
 	void HorizontalLayout::remove_item (AbstractForm* object)
 	{
+		deactivate_events();
+
 		std::vector<AbstractForm*>::iterator it;
-		for(it = items_ref().begin(); it != items_ref().end();)
+		for(it = items().begin(); it != items().end();)
 		{
 			if ((*it) == object) {
-				it = items_ref().erase(it);
+				it = items().erase(it);
 			} else {
 				it++;
 			}
 		}
 
-		Size current_size = m_size;
-		Size min_size;
-		Size preferred_size;
+		if(object->expand_x())
+				m_expandable_items.erase(object);
+		else
+			m_fixed_items.erase(object);
 
-		get_size_hint(true, true, 0, &min_size, &preferred_size);
+		Size new_preferred_size;
+		Size new_minimal_size;
 
-		m_preferred_size = preferred_size;
-		m_minimal_size = min_size;
+		get_size_hint(true, true, 0, &new_minimal_size, &new_preferred_size);
+
+		set_minimal_size(new_minimal_size);
+		set_preferred_size(new_preferred_size);
+
+		make_layout();
+
+		activate_events();
 
 		set_in_layout(object, false);
 		unbind(object);
@@ -227,7 +286,7 @@ namespace BlendInt {
 
 	void HorizontalLayout::make_layout ()
 	{
-		if(size().width() == preferred_size().width()) {
+		if (size().width() == preferred_size().width()) {
 			// layout along x with preferred size
 			distribute_with_preferred_size();
 		} else if (size().width() < preferred_size().width()) {
@@ -238,16 +297,7 @@ namespace BlendInt {
 			distribute_with_large_size();
 		}
 
-//		if(size().height() == preferred_size().height()) {
-//			// layout along y with preferred size
-//			align_with_preferred_size();
-//		} else if (size().height() < preferred_size().height()) {
-//			// layout along y with small size
-//			align();
-//		} else {
-			// layout along y with large size
-			align();
-//		}
+		align();
 	}
 
 	void HorizontalLayout::distribute_with_preferred_size()
@@ -256,9 +306,9 @@ namespace BlendInt {
 
 		std::vector<AbstractForm*>::iterator it;
 		AbstractForm* child = 0;
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
-			if(! (it == items_ref().begin()))
+			if(! (it == items().begin()))
 				x += space();
 
 			child = *it;
@@ -282,14 +332,14 @@ namespace BlendInt {
 		int x = position().x() + margin().left();
 
 		if((current_width - w_plus) >=
-				(min_exp_w + fixed_w + (items_ref().size() - 1) * space())) {
+				(min_exp_w + fixed_w + (items().size() - 1) * space())) {
 
-			unsigned int single_width = current_width - w_plus - fixed_w - (items_ref().size() - 1) * space();
+			unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space();
 			single_width = single_width / m_expandable_items.size();
 
-			for(it = items_ref().begin(); it != items_ref().end(); it++)
+			for(it = items().begin(); it != items().end(); it++)
 			{
-				if(! (it == items_ref().begin()))
+				if(! (it == items().begin()))
 					x += space();
 
 				child = *it;
@@ -309,12 +359,12 @@ namespace BlendInt {
 			std::set<AbstractForm*> normal_items(m_fixed_items);	// set of unminimized items
 			//size_t unminimal_items_size = m_xunexpandable_items.size();
 
-			unsigned int unminimal_width = current_width - w_plus - min_exp_w - (items_ref().size() - 1) * space();
+			unsigned int unminimal_width = current_width - w_plus - min_exp_w - (items().size() - 1) * space();
 			unsigned int w = unminimal_width / normal_items.size();
 
-			for(it = items_ref().begin(); it != items_ref().end(); it++)
+			for(it = items().begin(); it != items().end(); it++)
 			{
-				if(! (it == items_ref().begin()))
+				if(! (it == items().begin()))
 					x += space();
 
 				child = *it;
@@ -354,14 +404,14 @@ namespace BlendInt {
 		AbstractForm* child = 0;
 		int x = position().x() + margin().left();
 
-		unsigned int single_width = current_width - w_plus - fixed_w - (items_ref().size() - 1) * space();
+		unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space();
 
 		if(m_expandable_items.size())
 			single_width = single_width / m_expandable_items.size();
 
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
-			if (!(it == items_ref().begin()))
+			if (!(it == items().begin()))
 				x += space();
 
 			child = *it;
@@ -385,7 +435,7 @@ namespace BlendInt {
 
 		std::vector<AbstractForm*>::iterator it;
 		AbstractForm* child = 0;
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			child = *it;
 
@@ -413,13 +463,14 @@ namespace BlendInt {
 
 		std::vector<AbstractForm*>::iterator it;
 		AbstractForm* child = 0;
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			child = *it;
 
 			if (child->expand_y() ||
 					(child->size().height() > h)) {
 				resize_priv(child, child->size().width(), h);
+				set_pos_priv(child, child->position().x(), y);
 			} else {
 
 				if (alignment() & AlignTop) {
@@ -440,12 +491,10 @@ namespace BlendInt {
 			std::set<AbstractForm*>* items, unsigned int width)
 	{
 		std::set<AbstractForm*>::iterator it;
-		AbstractForm* child = 0;
 
 		for(it = items->begin(); it != items->end(); it++)
 		{
-			child = *it;
-			resize_priv(child, width, child->size().height());
+			resize_priv(*it, width, (*it)->size().height());
 		}
 	}
 
@@ -495,7 +544,7 @@ namespace BlendInt {
 			preferred_size_out.set_width(margin().left());
 		}
 
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			child = *it;
 			size_out.add_width(child->size().width());
@@ -521,11 +570,11 @@ namespace BlendInt {
 		}
 
 		if(count_space) {
-			size_out.add_width((items_ref().size() - 1) * space());
+			size_out.add_width((items().size() - 1) * space());
 
-			min_size_out.add_width((items_ref().size() - 1) * space());
+			min_size_out.add_width((items().size() - 1) * space());
 
-			preferred_size_out.add_width((items_ref().size() - 1) * space());
+			preferred_size_out.add_width((items().size() - 1) * space());
 		}
 
 		if(size) *size = size_out;
@@ -541,7 +590,7 @@ namespace BlendInt {
 		m_expand_x = false;
 		m_expand_y = false;
 
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			child = *it;
 
 			if (child->expand_y()) {
@@ -572,24 +621,6 @@ namespace BlendInt {
 
 		}
 
-	}
-
-	Size HorizontalLayout::recount_size()
-	{
-		Size size;
-
-		std::vector<AbstractForm*>::iterator it;
-
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
-		{
-			size.add_width((*it)->size().width());
-			size.set_height(std::max((*it)->size().height(), size.height()));
-		}
-
-		size.add_width(space() * (items_ref().size() - 1) + margin().left() + margin().right());
-		size.add_height(margin().top() + margin().bottom());
-
-		return size;
 	}
 
 }

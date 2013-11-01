@@ -44,8 +44,6 @@ namespace BlendInt {
 
 		virtual void update (int property_type);
 
-		//virtual bool update (int type, const void* property);
-
 		virtual void render ();
 
 		virtual void press_key (KeyEvent* event);
@@ -68,6 +66,9 @@ namespace BlendInt {
 
 	private:
 
+		/**
+		 * @brief scan, distribute and align the items
+		 */
 		void make_layout ();
 
 		/**
@@ -123,8 +124,6 @@ namespace BlendInt {
 		 * @param[out] prefer the layout preferred size
 		 */
 		void get_size_hint (bool margin, bool space, Size* size, Size* min, Size* prefer);
-
-		Size recount_size ();
 
 		/**
 		 *@align the objects in the layout according to the alignment

@@ -51,42 +51,29 @@ namespace BlendInt {
 
 	void VerticalLayout::update (int property_type)
 	{
-		change_layout(&m_size);
-	}
-
-	/*
-	bool VerticalLayout::update (int type, const void* property)
-	{
-		switch (type) {
+		switch (property_type) {
 
 			case FormPropertySize: {
-				change_layout(static_cast<const Size*>(property));
-				return true;
+				if(items().size())
+					make_layout();
+				return;
 			}
 
 			case LayoutPropertyItem: {
-				const ItemData* item = static_cast<const ItemData*>(property);
-
-				if (item->action) {	// Add item
-					add_item(item->object);
-				} else { // remove item
-				}
-
-				return true;
+				return;
 			}
 
 			default:
-				return AbstractLayout::update(type, property);
+				break;
 		}
 	}
-	*/
 
 	void VerticalLayout::render ()
 	{
 
 		std::vector<AbstractForm*>::const_iterator it;
 		AbstractForm *item = 0;
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			item = *it;
 			if (item) {
 				Interface::instance()->dispatch_render_event(item);
@@ -119,7 +106,10 @@ namespace BlendInt {
 
 	void VerticalLayout::press_key (KeyEvent* event)
 	{
-
+		std::vector<AbstractForm*>::iterator it;
+		for (it = items().begin(); it != items().end(); it++) {
+			Interface::instance()->dispatch_key_press_event(*it, event);
+		}
 	}
 
 	void VerticalLayout::press_context_menu (ContextMenuEvent* event)
@@ -133,7 +123,7 @@ namespace BlendInt {
 	void VerticalLayout::press_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_mouse_press_event(*it, event);
 		}
 	}
@@ -141,7 +131,7 @@ namespace BlendInt {
 	void VerticalLayout::release_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_mouse_release_event(*it, event);
 		}
 	}
@@ -149,9 +139,300 @@ namespace BlendInt {
 	void VerticalLayout::move_mouse (MouseEvent* event)
 	{
 		std::vector<AbstractForm*>::iterator it;
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_mouse_move_event(*it, event);
 		}
+	}
+
+	void VerticalLayout::add_item (Widget* widget)
+	{
+		// don't fire events when adding a widget into a layout
+		widget->deactivate_events();
+		deactivate_events();
+
+		Size min = minimal_size();
+		Size preferred = preferred_size();
+		Size current_size = size();
+
+		unsigned int w_plus = margin().left() + margin().right();
+
+		if (items().size() == 0) {
+			min.add_height(widget->minimal_size().height());
+			preferred.add_height(widget->preferred_size().height());
+		} else {
+			min.add_height(widget->minimal_size().height() + space());
+			preferred.add_height(widget->preferred_size().height() + space());
+		}
+
+		min.set_width(
+		        std::max(min.width(), widget->minimal_size().width() + w_plus));
+		preferred.set_width(
+		        std::max(preferred.width(),
+		                widget->preferred_size().width() + w_plus));
+
+		if (current_size.width() < preferred.width()) {
+			current_size.set_width(preferred.width());
+		}
+		if (current_size.height() < preferred.height()) {
+			current_size.set_height(preferred.height());
+		}
+
+		items().push_back(widget);
+
+		set_preferred_size(preferred);
+		set_minimal_size(min);
+
+		if(widget->expand_y()) m_expandable_items.insert(widget);
+		else m_fixed_items.insert(widget);
+
+		if(! (current_size == size()))
+			resize_priv(this, current_size);	// call make_layout() through this function
+		else
+			make_layout();
+
+		activate_events();
+		widget->activate_events();
+
+		bind(widget);
+		set_in_layout(widget, true);
+	}
+
+	void VerticalLayout::add_item (AbstractLayout* layout)
+	{
+
+	}
+
+	void VerticalLayout::remove_item(AbstractForm * object)
+	{
+		deactivate_events();
+
+		std::vector<AbstractForm*>::iterator it;
+		for(it = items().begin(); it != items().end();)
+		{
+			if ((*it) == object) {
+				it = items().erase(it);
+			} else {
+				it++;
+			}
+		}
+
+		if(object->expand_y())
+				m_expandable_items.erase(object);
+		else
+			m_fixed_items.erase(object);
+
+		Size new_preferred_size;
+		Size new_minimal_size;
+
+		get_size_hint(true, true, 0, &new_minimal_size, &new_preferred_size);
+
+		set_minimal_size(new_minimal_size);
+		set_preferred_size(new_preferred_size);
+
+		make_layout();
+
+		activate_events();
+
+		set_in_layout(object, false);
+		unbind(object);
+	}
+
+	void VerticalLayout::make_layout()
+	{
+		if (size().height() == preferred_size().height()) {
+			distribute_with_preferred_size();			// layout along y with preferred size
+		} else if (size().height() < preferred_size().height()) {
+			distribute_with_small_size();			// layout along y with small size
+		} else {
+			distribute_with_large_size();			// layout along y with large size
+		}
+
+		align();
+	}
+
+	void VerticalLayout::distribute_with_preferred_size()
+	{
+		int y = position().y() + size().height() - margin().top();
+
+		std::vector<AbstractForm*>::reverse_iterator it;
+		AbstractForm* child = 0;
+		for(it = items().rbegin(); it != items().rend(); it++)
+		{
+			if(! (it == items().rbegin()))
+				y -= space();
+
+			child = *it;
+			resize_priv(child, child->size().width(), child->preferred_size().height());
+			y -= child->size().height();
+			set_pos_priv(child, child->position().x(), y);
+		}
+	}
+
+	void VerticalLayout::distribute_with_small_size()
+	{
+
+	}
+
+	void VerticalLayout::distribute_with_large_size()
+	{
+		unsigned int fixed_h = fixed_height();
+
+		unsigned int current_height = size().height();
+
+		unsigned int h_plus = margin().top() + margin().bottom();
+
+		std::vector<AbstractForm*>::reverse_iterator it;
+		AbstractForm* child = 0;
+		int y = position().y() + size().height() - margin().top();
+
+		unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space();
+
+		if(m_expandable_items.size())
+			single_height = single_height / m_expandable_items.size();
+
+		for(it = items().rbegin(); it != items().rend(); it++)
+		{
+			child = *it;
+
+			if (!(it == items().rbegin()))
+				y -= space();
+
+			if (m_expandable_items.count(child)) {
+				resize_priv(child, child->size().width(), single_height);
+			} else {
+				resize_priv(child, child->size().width(), child->preferred_size().height());
+			}
+
+			y -= child->size().height();
+			set_pos_priv(child, child->position().x(), y);
+		}
+	}
+
+	void VerticalLayout::align()
+	{
+		int x = position().x() + margin().left();
+
+		unsigned int w = size().width() - margin().left() - margin().right();
+
+		std::vector<AbstractForm*>::reverse_iterator it;
+		AbstractForm* child = 0;
+		for(it = items().rbegin(); it != items().rend(); it++)
+		{
+			child = *it;
+
+			if (child->expand_x() ||
+					(child->size().width() > w)) {
+				resize_priv(child, w, child->size().height());
+				set_pos_priv(child, x, child->position().y());
+			} else {
+
+				if (alignment() & AlignLeft) {
+					set_pos_priv(child, x, child->position().y());
+				} else if (alignment() & AlignRight) {
+					set_pos_priv(child,
+							x + (w - child->size().width()), child->position().y());
+				} else if (alignment() & AlignVerticalCenter) {
+					set_pos_priv(child,
+					        x + (w - child->size().width()) / 2, child->position().y());
+				}
+
+			}
+		}
+
+	}
+
+	void VerticalLayout::reset_height_of_fixed_items (std::set<AbstractForm*>* items,
+													  unsigned int height)
+	{
+		std::set<AbstractForm*>::iterator it;
+
+		for(it = items->begin(); it != items->end(); it++)
+		{
+			resize_priv(*it, (*it)->size().width(), height);
+		}
+	}
+
+	unsigned int VerticalLayout::minimal_expandable_height()
+	{
+		unsigned int height = 0;
+
+		std::set<AbstractForm*>::iterator it;
+		for(it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
+		{
+			height += (*it)->minimal_size().height();
+		}
+
+		return height;
+	}
+
+	unsigned int VerticalLayout::fixed_height()
+	{
+		unsigned int height = 0;
+
+		std::set<AbstractForm*>::iterator it;
+		for(it = m_fixed_items.begin(); it != m_fixed_items.end(); it++)
+		{
+			height += (*it)->size().height();
+		}
+
+		return height;
+	}
+
+	void VerticalLayout::get_size_hint (bool count_margin,
+										bool count_space,
+										Size* size,
+										Size* min,
+										Size* preferred)
+	{
+		Size size_out;
+		Size min_size_out;
+		Size preferred_size_out;
+
+		AbstractForm* child;
+		std::vector<AbstractForm*>::reverse_iterator it;
+
+		if(count_margin) {
+			size_out.set_height(margin().top());
+			min_size_out.set_height(margin().top());
+			preferred_size_out.set_height(margin().top());
+		}
+
+		for(it = items().rbegin(); it != items().rend(); it++)
+		{
+			child = *it;
+
+			size_out.set_width(std::max(size_out.width(), child->size().width()));
+			size_out.add_height(child->size().height());
+
+			min_size_out.set_width(std::max(min_size_out.width(), child->minimal_size().width()));
+			min_size_out.add_height(child->minimal_size().height());
+
+			preferred_size_out.set_width(std::max(preferred_size_out.width(), child->preferred_size().width()));
+			preferred_size_out.add_height(child->preferred_size().height());
+		}
+
+		if(count_margin) {
+			size_out.add_height(margin().bottom());
+			size_out.add_width(margin().left() + margin().right());
+
+			min_size_out.add_height(margin().bottom());
+			min_size_out.add_width(margin().left() + margin().right());
+
+			preferred_size_out.add_height(margin().bottom());
+			preferred_size_out.add_width(margin().left() + margin().right());
+		}
+
+		if(count_space) {
+			size_out.add_height((items().size() - 1) * space());
+
+			min_size_out.add_height((items().size() - 1) * space());
+
+			preferred_size_out.add_height((items().size() - 1) * space());
+		}
+
+		if(size) *size = size_out;
+		if(min) *min = min_size_out;
+		if(preferred) *preferred = preferred_size_out;
 	}
 
 	void VerticalLayout::change_layout (const Size* size)
@@ -167,7 +448,7 @@ namespace BlendInt {
 		unsigned int max_widget_width = total_width - margin().left()
 		        - margin().right();
 
-		for (it = items_ref().rbegin(); it != items_ref().rend(); it++) {
+		for (it = items().rbegin(); it != items().rend(); it++) {
 			child = *it;
 			if (child->expand_y()) {
 				expandable_objects.push(child);
@@ -182,7 +463,7 @@ namespace BlendInt {
 		}
 
 		int flexible_height = size->height() - margin().top()
-		        - margin().bottom() - (items_ref().size() - 1) * space()
+		        - margin().bottom() - (items().size() - 1) * space()
 		        - fixed_height;
 
 		if (expandable_objects.size() > 0) {
@@ -202,7 +483,7 @@ namespace BlendInt {
 		pos.set_x(pos.x() + margin().left());
 		pos.set_y(pos.y() + margin().bottom());
 
-		for (it = items_ref().rbegin(); it != items_ref().rend(); it++) {
+		for (it = items().rbegin(); it != items().rend(); it++) {
 			child = *it;
 
 			// set position
@@ -246,7 +527,7 @@ namespace BlendInt {
 		std::vector<AbstractForm*>::const_reverse_iterator it;
 		AbstractForm* child = 0;
 		total_height = margin().bottom();
-		for (it = items_ref().rbegin(); it != items_ref().rend(); it++) {
+		for (it = items().rbegin(); it != items().rend(); it++) {
 			child = *it;
 			set_pos_priv(child, position().x() + margin().left(),
 			        position().y() + total_height);
@@ -259,7 +540,7 @@ namespace BlendInt {
 		}
 		total_height = total_height - space() + margin().top();
 
-		for (it = items_ref().rbegin(); it != items_ref().rend(); it++) {
+		for (it = items().rbegin(); it != items().rend(); it++) {
 			child = *it;
 
 			if (child->expand_x()) {
@@ -296,9 +577,9 @@ namespace BlendInt {
 		AbstractForm* child;
 		minimal_size.add_height(margin().top());
 
-		for(size_t i = 0; i < items_ref().size(); i++)
+		for(size_t i = 0; i < items().size(); i++)
 		{
-			child = items_ref()[i];
+			child = items()[i];
 			if(child->expand_y()) {
 				minimal_size.add_height(child->minimal_size().height());
 			} else {
@@ -311,7 +592,7 @@ namespace BlendInt {
 				minimal_size.set_width(std::max(minimal_size.width(), child->size().width()));
 			}
 
-			if(i != (items_ref().size() - 1))
+			if(i != (items().size() - 1))
 				minimal_size.add_height(space());
 		}
 		minimal_size.add_height(margin().bottom());
@@ -320,66 +601,16 @@ namespace BlendInt {
 		return minimal_size;
 	}
 
-	void VerticalLayout::add_item (Widget* object)
-	{
-		unsigned int inner_width = m_size.width() - margin().left()
-		        - margin().right();
-		unsigned int inner_height = m_size.height() - margin().top()
-		        - margin().bottom();
-
-		inner_width = std::max(inner_width, object->size().width());
-		inner_height = inner_height + object->size().height();
-
-		if (items_ref().size() == 0) {
-			set_pos_priv(object, position().x() + margin().left(),
-			        position().y() + margin().bottom());
-			m_size.set_height(margin().top() + inner_height + margin().bottom());
-			m_minimal_size.add_height(object->minimal_size().height());
-		} else {
-			set_pos_priv(object,
-			        position().x() + margin().left(),
-			        position().y() - (object->size().height() + space()));
-			m_size.set_height(
-			        margin().top() + inner_height + space() + margin().bottom());
-			m_minimal_size.add_height(object->minimal_size().height() + space());
-		}
-
-		m_size.set_width(margin().left() + inner_width + margin().right());
-		m_minimal_size.set_width(std::max(m_minimal_size.width(), object->minimal_size().width()));
-
-		if(!expand_x())
-			set_expand_x(object->expand_x());
-
-		if(!expand_y())
-			set_expand_y(object->expand_y());
-
-		items_ref().push_back(object);
-		bind(object);
-
-		align_along_y(inner_width);
-
-	}
-
-	void VerticalLayout::add_item (AbstractLayout* layout)
-	{
-
-	}
-
-	void VerticalLayout::remove_item(AbstractForm * object)
-	{
-
-	}
-
 	void VerticalLayout::align_along_y (unsigned int width)
 	{
 		AbstractForm* child = 0;
 		std::vector<AbstractForm*>::iterator it;
 
 		int y = position().y() + m_size.height() - margin().top();
-		for (it = items_ref().begin(); it != items_ref().end(); it++) {
+		for (it = items().begin(); it != items().end(); it++) {
 			child = *it;
 
-			if(it == items_ref().begin())
+			if(it == items().begin())
 				y = y - child->size().height();
 			else
 				y = y - child->size().height() - space();
@@ -400,24 +631,6 @@ namespace BlendInt {
 				                + (width - child->size().width()) / 2, y);
 			}
 		}
-	}
-
-	Size VerticalLayout::recount_size()
-	{
-		Size size;
-
-		std::vector<AbstractForm*>::iterator it;
-
-		for(it = items_ref().begin(); it != items_ref().end(); it++)
-		{
-			size.set_width(std::max((*it)->size().width(), size.width()));
-			size.add_height((*it)->size().height());
-		}
-
-		size.add_height(space() * (items_ref().size() - 1) + margin().top() + margin().bottom());
-		size.add_width(margin().left() + margin().right());
-
-		return size;
 	}
 
 }

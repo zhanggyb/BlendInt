@@ -31,9 +31,9 @@ namespace BlendInt {
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
 	{
-		resize(120, 80);
 		set_preferred_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
+		resize(preferred_size());
 	}
 
 	AbstractLayout::AbstractLayout (AbstractForm *parent)
@@ -42,9 +42,9 @@ namespace BlendInt {
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
 	{
-		resize(120, 80);
 		set_preferred_size(margin().left() + margin().right(), margin().top() + margin().bottom());
 		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
+		resize(preferred_size());
 	}
 
 	AbstractLayout::~AbstractLayout ()

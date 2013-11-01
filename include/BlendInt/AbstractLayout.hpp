@@ -122,7 +122,7 @@ namespace BlendInt {
 
 		virtual void remove_item (AbstractForm* object) = 0;
 
-		std::vector<AbstractForm*>& items_ref ()
+		std::vector<AbstractForm*>& items ()
 		{
 			return m_items;
 		}
