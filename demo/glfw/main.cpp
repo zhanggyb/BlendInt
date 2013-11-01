@@ -249,13 +249,14 @@ int main(int argc, char* argv[])
 	VerticalLayout* layout = new VerticalLayout;
 	layout->set_position(100, 200);
 //	layout->set_alignment(AlignTop);
-//	layout->resize(20,20);
+//	layout->resize(200,200);
 	layout->add(button1);
 	layout->add(button2);
 	layout->add(button3);
 	layout->add(button4);
 
 //	hlayout->resize(400, hlayout->size().height());
+	layout->resize(layout->size().width(), 200);
 
 	app->bind(layout);
 

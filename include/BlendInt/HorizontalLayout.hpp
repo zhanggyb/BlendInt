@@ -74,22 +74,17 @@ namespace BlendInt {
 		/**
 		 * @brief distribute horizontally with preferred size
 		 */
-		void distribute_with_preferred_size ();
+		void distribute_with_preferred_width ();
 
 		/**
 		 * @brief distribute horizontally with small size
 		 */
-		void distribute_with_small_size ();
+		void distribute_with_small_width ();
 
 		/**
 		 * @brief distribute horizontally with large size
 		 */
-		void distribute_with_large_size ();
-
-		/**
-		 * @brief align horizontally with preferred size
-		 */
-		void align_with_preferred_size ();
+		void distribute_with_large_width ();
 
 		/**
 		 * @brief align horizontally
@@ -124,12 +119,6 @@ namespace BlendInt {
 		 * @param[out] prefer the layout preferred size
 		 */
 		void get_size_hint (bool margin, bool space, Size* size, Size* min, Size* prefer);
-
-		/**
-		 *@align the objects in the layout according to the alignment
-		 * @param height[in] the max height of area contains children (height - (top + bottom margin))
-		 */
-		void align_along_x (unsigned int height);
 
 		/**
 		 * @brief set of horizontally expandable items

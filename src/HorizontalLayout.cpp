@@ -287,20 +287,17 @@ namespace BlendInt {
 	void HorizontalLayout::make_layout ()
 	{
 		if (size().width() == preferred_size().width()) {
-			// layout along x with preferred size
-			distribute_with_preferred_size();
+			distribute_with_preferred_width();			// layout along x with preferred size
 		} else if (size().width() < preferred_size().width()) {
-			// layout along x with small size
-			distribute_with_small_size();
+			distribute_with_small_width();			// layout along x with small size
 		} else {
-			// layout along x with large size
-			distribute_with_large_size();
+			distribute_with_large_width();			// layout along x with large size
 		}
 
 		align();
 	}
 
-	void HorizontalLayout::distribute_with_preferred_size()
+	void HorizontalLayout::distribute_with_preferred_width()
 	{
 		int x = position().x() + margin().left();
 
@@ -318,7 +315,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::distribute_with_small_size()
+	void HorizontalLayout::distribute_with_small_width()
 	{
 		unsigned int min_exp_w = minimal_expandable_width();
 		unsigned int fixed_w = fixed_width();
@@ -392,7 +389,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::distribute_with_large_size()
+	void HorizontalLayout::distribute_with_large_width()
 	{
 		unsigned int fixed_w = fixed_width();
 
@@ -427,32 +424,6 @@ namespace BlendInt {
 			x += child->size().width();
 		}
 
-	}
-
-	void HorizontalLayout::align_with_preferred_size()
-	{
-		int y = position().y() + margin().bottom();
-
-		std::vector<AbstractForm*>::iterator it;
-		AbstractForm* child = 0;
-		for(it = items().begin(); it != items().end(); it++)
-		{
-			child = *it;
-
-			if (child->expand_y()) {
-				resize_priv(child, child->size().width(), preferred_size().height());
-			}
-
-			if (alignment() & AlignTop) {
-				set_pos_priv(child, child->position().x(),
-						y + (size().height() - child->size().height()));
-			} else if (alignment() & AlignBottom) {
-				set_pos_priv(child, child->position().x(), y);
-			} else if (alignment() & AlignHorizontalCenter) {
-				set_pos_priv(child, child->position().x(),
-						y + (size().height() - child->size().height()) / 2);
-			}
-		}
 	}
 
 	void HorizontalLayout::align()
@@ -580,47 +551,6 @@ namespace BlendInt {
 		if(size) *size = size_out;
 		if(min) *min = min_size_out;
 		if(preferred) *preferred = preferred_size_out;
-	}
-
-	void HorizontalLayout::align_along_x (unsigned int height)
-	{
-		AbstractForm* child = 0;
-		std::vector<AbstractForm*>::iterator it;
-
-		m_expand_x = false;
-		m_expand_y = false;
-
-		for (it = items().begin(); it != items().end(); it++) {
-			child = *it;
-
-			if (child->expand_y()) {
-				resize_priv(child, child->size().width(), height);
-			}
-
-			if (alignment() & AlignTop) {
-				set_pos_priv(child, child->position().x(),
-				        position().y() + margin().bottom()
-				                + (height - child->size().height()));
-			} else if (alignment() & AlignBottom) {
-//				set_pos_priv(child, child->pos().x(),
-//						child->pos().y() + margin().bottom());
-			} else if (alignment() & AlignHorizontalCenter) {
-				set_pos_priv(child, child->position().x(),
-				        position().y() + margin().bottom()
-				                + (height - child->size().height()) / 2);
-			}
-
-			// check expand property
-			if(!m_expand_x) {
-				m_expand_x = child->expand_x() ? true: false;
-			}
-
-			if(!m_expand_y) {
-				m_expand_y = child->expand_y() ? true: false;
-			}
-
-		}
-
 	}
 
 }
