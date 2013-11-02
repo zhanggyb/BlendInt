@@ -161,17 +161,6 @@ namespace BlendInt {
 
 		void reset_z (int z);
 
-		void set_roundcorner (int type);
-
-		int roundcorner () const
-		{
-			return m_round_type;
-		}
-
-		void set_corner_radius (float radius);
-
-		float corner_radius () const {return m_round_radius;}
-
 		void set_expand_x (bool expand) {m_expand_x = expand;}
 
 		bool expand_x () const {return m_expand_x;}
@@ -230,7 +219,7 @@ namespace BlendInt {
 
 		bool in_layout () const {return m_in_layout;}
 
-		EVENT Cpp::EventRef<AbstractForm*, int> property_changed() {return m_property_changed;}
+		EVENT_CALLER Cpp::EventRef<AbstractForm*, int> property_changed() {return m_property_changed;}
 
 		void activate_events ()
 		{
@@ -305,15 +294,6 @@ namespace BlendInt {
 		 * @brief the depth(layer) of the widget
 		 */
 		int m_z;
-
-		DRAWABLE_PROPERTY int m_round_type;
-
-		/**
-		 * @brief the round corner radius
-		 *
-		 * should be 0.0, 1.0, 2.0 etc
-		 */
-		DRAWABLE_PROPERTY float m_round_radius;
 
 		bool m_in_layout;
 

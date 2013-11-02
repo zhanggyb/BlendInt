@@ -52,13 +52,13 @@ namespace BlendInt {
 		m_items.clear();
 	}
 
-	void AbstractLayout::add (Widget* object)
+	void AbstractLayout::add (Form* form)
 	{
-		if(m_children.count(object)) return;
+		if(m_children.count(form)) return;
 
 		Size pre_preferred_size = preferred_size();
 
-		add_item (object);
+		add_item (form);
 
 		if(! (pre_preferred_size == preferred_size())) {
 			// fire events

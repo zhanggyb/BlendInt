@@ -50,7 +50,7 @@
 #define DRAWABLE_PROPERTY
 
 /** macro to declare a member function is an event */
-#define EVENT
+#define EVENT_CALLER
 
 /** macro to declare a member function is an delegate */
 #define DELEGATE

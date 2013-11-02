@@ -206,7 +206,7 @@ namespace BlendInt {
 		}
 	}
 
-	void TableLayout::add_item(Widget* widget)
+	void TableLayout::add_item(Form* form)
 	{
 
 	}

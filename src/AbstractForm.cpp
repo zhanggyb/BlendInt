@@ -38,8 +38,6 @@ namespace BlendInt {
 
 	AbstractForm::AbstractForm ()
 		: m_z(0),
-		  m_round_type (RoundCornerNone),
-		  m_round_radius(5.0),
 		  m_in_layout(false),
 		  m_expand_x(false),
 		  m_expand_y(false),
@@ -70,8 +68,6 @@ namespace BlendInt {
 
 	AbstractForm::AbstractForm (AbstractForm* parent)
 		: m_z(0),
-		  m_round_type (RoundCornerNone),
-		  m_round_radius(5.0),
 		  m_in_layout(false),
 		  m_expand_x(false),
 		  m_expand_y(false),
@@ -404,25 +400,6 @@ namespace BlendInt {
 		}
 
 		// m_property_changed.fire(FormPropertyLayer);
-	}
-
-	void AbstractForm::set_roundcorner (int type)
-	{
-		if (m_round_type == type) return;
-
-		m_round_type = type;
-
-		if(m_fire_events) m_property_changed.fire(this, FormPropertyRoundCorner);
-	}
-
-	void AbstractForm::set_corner_radius (float radius)
-	{
-		if (m_round_radius == radius) return;
-
-		m_round_radius = radius;
-		update (FormPropertyRoundCorner);
-
-		if(m_fire_events) m_property_changed.fire(this, FormPropertyRoundCorner);
 	}
 
 	void AbstractForm::set_visible (bool visible)

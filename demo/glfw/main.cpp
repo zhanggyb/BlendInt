@@ -104,7 +104,8 @@ private:
 
 //	VerticalLayout *m_vlayout;
 
-	VerticalLayout m_layout;
+	HorizontalLayout m_layout;
+//	VerticalLayout m_layout;
 
 	std::vector<Button*> m_buttons;
 

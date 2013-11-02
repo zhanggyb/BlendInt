@@ -33,7 +33,7 @@ namespace BlendInt {
 		makeCheckImage();
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		resize(64 + m_padding.left() + m_padding.right(), 64 + m_padding.top() + m_padding.bottom());
+		resize(64 + padding().left() + padding().right(), 64 + padding().top() + padding().bottom());
 	}
 
 	ImageView::ImageView (AbstractForm* parent)
@@ -43,7 +43,7 @@ namespace BlendInt {
 		makeCheckImage();
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		resize(64 + m_padding.left() + m_padding.right(), 64 + m_padding.top() + m_padding.bottom());
+		resize(64 + padding().left() + padding().right(), 64 + padding().top() + padding().bottom());
 	}
 
 	ImageView::~ImageView ()
@@ -62,7 +62,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glRasterPos2i(m_padding.left(), m_padding.bottom());
+		glRasterPos2i(padding().left(), padding().bottom());
 		glDrawPixels (checkImageWidth, checkImageHeight, GL_RGB, GL_UNSIGNED_BYTE, _checkImage);
 
 #ifdef DEBUG

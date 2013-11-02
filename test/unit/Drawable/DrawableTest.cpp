@@ -119,7 +119,6 @@ void myTexture::makeCheckImage (void)
 myDrawable1::myDrawable1 (AbstractForm* parent)
 		: AbstractForm(parent)
 {
-	m_round_type = RoundCornerAll;
 }
 
 myDrawable1::~myDrawable1 ()
@@ -169,7 +168,6 @@ void myDrawable1::move_mouse (MouseEvent* event)
 myDrawable2::myDrawable2 (AbstractForm* parent)
 		: AbstractForm(parent)
 {
-	m_round_type = RoundCornerAll;
 }
 
 myDrawable2::~myDrawable2 ()
@@ -217,7 +215,6 @@ void myDrawable2::move_mouse (MouseEvent* event)
 myDrawable3::myDrawable3 (AbstractForm* parent)
 		: AbstractForm(parent)
 {
-	m_round_type = RoundCornerAll;
 }
 
 myDrawable3::~myDrawable3 ()

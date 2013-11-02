@@ -60,7 +60,7 @@ namespace BlendInt {
 		/* Box in which hold the text */
 		Rect text_outline;
 		text_outline = FontCache::create(m_font)->get_text_outline(m_text);
-		resize (text_outline.width() + m_padding.left() + m_padding.right(), text_outline.height() + m_padding.top() + m_padding.bottom());
+		resize (text_outline.width() + padding().left() + padding().right(), text_outline.height() + padding().top() + padding().bottom());
 	}
 
 	void AbstractButton::set_font (const Font& font)
@@ -72,8 +72,8 @@ namespace BlendInt {
 		Rect text_outline;
 		text_outline = FontCache::create(m_font)->get_text_outline(m_text);
 
-		resize (text_outline.width() + m_padding.left() + m_padding.right(),
-				text_outline.height() + m_padding.top() + m_padding.bottom());
+		resize (text_outline.width() + padding().left() + padding().right(),
+				text_outline.height() + padding().top() + padding().bottom());
 	}
 
 	void AbstractButton::press_mouse (MouseEvent* event)

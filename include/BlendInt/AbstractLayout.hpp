@@ -65,7 +65,7 @@ namespace BlendInt {
 
 		virtual ~AbstractLayout ();
 
-		void add (Widget* widget);
+		void add (Form* form);
 
 		void add (AbstractLayout* layout);
 
@@ -116,7 +116,7 @@ namespace BlendInt {
 
 		virtual void render () = 0;
 
-		virtual void add_item (Widget* widget) = 0;
+		virtual void add_item (Form* form) = 0;
 
 		virtual void add_item (AbstractLayout* layout) = 0;
 

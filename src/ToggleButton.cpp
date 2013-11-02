@@ -33,7 +33,7 @@ namespace BlendInt {
 			: AbstractButton()
 	{
 		set_checkable(true);
-		set_roundcorner(RoundCornerAll);
+		set_round_type(RoundCornerAll);
 		resize(90, 25);
 	}
 
@@ -41,7 +41,7 @@ namespace BlendInt {
 			: AbstractButton()
 	{
 		set_checkable(true);
-		set_roundcorner(RoundCornerAll);
+		set_round_type(RoundCornerAll);
 		set_text(text);
 	}
 
@@ -49,7 +49,7 @@ namespace BlendInt {
 			: AbstractButton(parent)
 	{
 		set_checkable(true);
-		set_roundcorner(RoundCornerAll);
+		set_round_type(RoundCornerAll);
 		resize (90, 25);
 	}
 
@@ -57,7 +57,7 @@ namespace BlendInt {
 			: AbstractButton(parent)
 	{
 		set_checkable(true);
-		set_roundcorner(RoundCornerAll);
+		set_round_type(RoundCornerAll);
 		set_text(text);
 	}
 
@@ -105,52 +105,52 @@ namespace BlendInt {
 			}
 		}
 
-		m_buffer.set_index(0);
-		m_buffer.bind();
+		glbuffer().set_index(0);
+		glbuffer().bind();
 		glVertexPointer(2, GL_FLOAT, 0, 0);
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glDrawArrays(GL_POLYGON, 0, m_buffer.vertices());
+		glDrawArrays(GL_POLYGON, 0, glbuffer().vertices());
 		glDisableClientState(GL_VERTEX_ARRAY);
-		m_buffer.unbind();
+		glbuffer().unbind();
 
 		// draw outline
-		m_buffer.set_index(1);
+		glbuffer().set_index(1);
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
 		        themes()->regular.outline.g(),
 		        themes()->regular.outline.b(),
 		        themes()->regular.outline.a()};
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		m_buffer.bind();
+		glbuffer().bind();
 		/* outline */
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glColor4ubv(tcol);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
 			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
+			glDrawArrays(GL_QUAD_STRIP, 0, glbuffer().vertices());
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
-		m_buffer.unbind();
+		glbuffer().unbind();
 
-		if(m_emboss) {
-			m_buffer.set_index(2);
-			m_buffer.bind();
+		if(emboss()) {
+			glbuffer().set_index(2);
+			glbuffer().bind();
 			glEnableClientState(GL_VERTEX_ARRAY);
 			for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 				glTranslatef(jit[j][0], jit[j][1], 0.0f);
 				glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 				glVertexPointer(2, GL_FLOAT, 0, 0);
-				glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
+				glDrawArrays(GL_QUAD_STRIP, 0, glbuffer().vertices());
 				glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 			}
 			glDisableClientState(GL_VERTEX_ARRAY);
-			m_buffer.unbind();
+			glbuffer().unbind();
 		}
 
 		FontCache::create(m_font)->print(
-		        m_text_outline.left() + m_padding.left(),
-		        m_padding.bottom() + std::abs(m_text_outline.bottom()), m_text);
+		        m_text_outline.left() + padding().left(),
+		        padding().bottom() + std::abs(m_text_outline.bottom()), m_text);
 
 		glDisable(GL_BLEND);
 

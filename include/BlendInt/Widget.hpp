@@ -38,7 +38,10 @@ namespace BlendInt {
 		WidgetPropertyLast = WidgetPropertyEmboss
 	};
 
-	class Widget: public AbstractForm
+	/**
+	 * @brief A widget usually contains other Form or widget in a box with padding
+	 */
+	class Widget: public Form
 	{
 		DISALLOW_COPY_AND_ASSIGN(Widget);
 
@@ -50,40 +53,13 @@ namespace BlendInt {
 
 		virtual ~Widget ();
 
-		const Padding& padding () const;
+		const Padding& padding () const {return m_padding;}
 
 		void set_padding (const Padding& padding);
 
 		void set_padding (int left, int right, int top, int bottom);
 
-		void set_border_width (float width = 1.0)
-		{
-			if(width > 0.0)
-				m_border_width = width;
-		}
-
-		float border_width () const {return m_border_width;}
-
-		void set_emboss (bool emboss)
-		{
-			m_emboss = emboss;
-		}
-
-		bool emboss () const {return m_emboss;}
-
 	protected:
-
-		/**
-		 * Structure used in calulating vertex buffer for inner and outline
-		 */
-		struct VerticesSum {
-			VerticesSum ()
-			: total(0), half(0)
-			{ }
-
-			int total;	/**< total number of vertices for widget */
-			int half;	/**< halfway vertices number */
-		};
 
 		virtual void update (int property_type);
 
@@ -108,96 +84,10 @@ namespace BlendInt {
 		 */
 		bool contain_no_padding (const Coord2d& cursor);
 
-		/**
-		 * @brief calculate vertices for round box edge with no shaded color
-		 * @param[in] size the size to calculate edges
-		 * @param[out] inner_v
-		 * @param[out] outer_v
-		 * @return how many vertices are used in the output array
-		 */
-		VerticesSum generate_vertices (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
-
-		/**
-		 * @brief calculate vertices for round box edge with no shaded color
-		 * @param[in] size the size to calculate edges
-		 * @param[out] inner_v
-		 * @param[out] outer_v
-		 * @return how many vertices are used in the output array
-		 */
-		VerticesSum generate_vertices (const Size& size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
-
-
-		/**
-		 * @brief calculate vertices for round box edges
-		 * @param size
-		 * @param theme
-		 * @param shadedir shade direction
-		 * @param inner
-		 * @param outer
-		 * @return
-		 */
-		VerticesSum generate_vertices (const Size* size,
-				const WidgetTheme* theme,
-				Orientation shadedir,
-				float inner[WIDGET_SIZE_MAX][6],
-				float outer[WIDGET_SIZE_MAX][2]);
-
-		/**
-		 * @brief generate vertices array for round box inner and edges
-		 * @param[in] size the size to calculate position and shade uv
-		 * @param[in] shadetop the top shade, defined in theme
-		 * @param[in] shadedown the bottom shade, defined in theme
-		 * @param[in] shadedir true if shade with horizontal direction
-		 * @param[out] inner inner vertices with position and color information
-		 * @param[out] outer vertices for outline
-		 * @return
-		 */
-		VerticesSum generate_vertices (const Size* size,
-				const Color& color,
-				short shadetop,
-				short shadedown,
-				Orientation shadedir,
-				float inner[WIDGET_SIZE_MAX][6],
-				float outer[WIDGET_SIZE_MAX][2]);
-
-		void verts_to_quad_strip (
-				const float inner_v[WIDGET_SIZE_MAX][2],
-				const float outer_v[WIDGET_SIZE_MAX][2],
-				const int totvert,
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
-
-		void verts_to_quad_strip (
-				const float inner_v[WIDGET_SIZE_MAX][6],
-				const float outer_v[WIDGET_SIZE_MAX][2],
-				const int totvert,
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
-
-		void verts_to_quad_strip_open (
-				const float outer_v[WIDGET_SIZE_MAX][2],
-				const int totvert,
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
+	private:
 
 		Padding m_padding;
 
-		float m_border_width;
-
-		bool m_emboss;
-
-		/**
-		 * @brief get the GLBuffer
-		 * @return
-		 */
-		GLBuffer& buffer () {return m_buffer;}
-
-		GLBuffer m_buffer;
-
-		static const float cornervec[WIDGET_CURVE_RESOLU][2];
-
-		static const float jit[WIDGET_AA_JITTER][2];
-
-	private:
-
-		void update_shape (const Size* size);
 	};
 
 } /* namespace BlendInt */

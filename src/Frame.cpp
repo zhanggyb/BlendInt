@@ -63,7 +63,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		if (m_buffer.is_buffer(0)) {
+		if (glbuffer().is_buffer(0)) {
 			ThemeManager* tm = ThemeManager::instance();
 
 			glColor4ub(tm->themes()->regular.inner.r(),
@@ -71,7 +71,7 @@ namespace BlendInt {
 			        tm->themes()->regular.inner.b(),
 			        tm->themes()->regular.inner.a() * 0.5f);
 
-			m_buffer.bind(GL_ARRAY_BUFFER);
+			glbuffer().bind(GL_ARRAY_BUFFER);
 			glVertexPointer(2, GL_FLOAT, 0, 0);
 			glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -86,7 +86,7 @@ namespace BlendInt {
 
 			glDisableClientState(GL_VERTEX_ARRAY);
 
-			m_buffer.unbind();
+			glbuffer().unbind();
 		}
 
 		if(!m_layout) {

@@ -64,7 +64,7 @@ namespace BlendInt {
 			}
 			case WidgetPropertyPadding: {
 				// do not allow change padding
-				m_padding.set_value(0, 0, 0, 0);
+				set_padding(0, 0, 0, 0);
 				break;
 			}
 			default:
@@ -85,27 +85,27 @@ namespace BlendInt {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if(m_status_down) {
-			m_buffer.set_index(0);
+			glbuffer().set_index(0);
 		} else {
-			m_buffer.set_index(2);
+			glbuffer().set_index(2);
 		}
 
-		m_buffer.bind();
+		glbuffer().bind();
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
 
 		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
 		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glDrawArrays(GL_POLYGON, 0, m_buffer.vertices());
+		glDrawArrays(GL_POLYGON, 0, glbuffer().vertices());
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 
-		m_buffer.unbind();
+		glbuffer().unbind();
 
 		// draw outline
-		m_buffer.set_index(1);
+		glbuffer().set_index(1);
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
 		        themes()->scroll.outline.g(),
 		        themes()->scroll.outline.b(),
@@ -113,7 +113,7 @@ namespace BlendInt {
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 
-		m_buffer.bind();
+		glbuffer().bind();
 
 		/* outline */
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -121,12 +121,12 @@ namespace BlendInt {
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
 			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.vertices());
+			glDrawArrays(GL_QUAD_STRIP, 0, glbuffer().vertices());
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
 
-		m_buffer.unbind();
+		glbuffer().unbind();
 
 		glDisable(GL_BLEND);
 
@@ -211,8 +211,8 @@ namespace BlendInt {
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 
-		if(m_buffer.size() != 3)
-			m_buffer.generate(3);
+		if(glbuffer().size() != 3)
+			glbuffer().generate(3);
 
 		VerticesSum vert_sum;
 
@@ -229,9 +229,9 @@ namespace BlendInt {
 		Color color = themes()->scroll.item;
 
 		if(shadedir)
-			m_round_radius = 0.5f * size->height();
+			set_radius(0.5f * size->height());
 		else
-			m_round_radius = 0.5f * size->width();
+			set_radius(0.5f * size->width());
 
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
@@ -256,22 +256,22 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		m_buffer.set_index(0);
-		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_buffer.bind();
-		m_buffer.upload(inner_v);
-		m_buffer.unbind();
+		glbuffer().set_index(0);
+		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		glbuffer().bind();
+		glbuffer().upload(inner_v);
+		glbuffer().unbind();
 
 		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		m_buffer.set_index(1);
-		m_buffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		glbuffer().set_index(1);
+		glbuffer().set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
-		m_buffer.bind();
-		m_buffer.upload(quad_strip);
-		m_buffer.unbind();
+		glbuffer().bind();
+		glbuffer().upload(quad_strip);
+		glbuffer().unbind();
 
 		color.highlight(color, 5);
 
@@ -291,11 +291,11 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		m_buffer.set_index(2);
-		m_buffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_buffer.bind();
-		m_buffer.upload(inner_v);
-		m_buffer.unbind();
+		glbuffer().set_index(2);
+		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		glbuffer().bind();
+		glbuffer().upload(inner_v);
+		glbuffer().unbind();
 
 	}
 
@@ -388,9 +388,9 @@ namespace BlendInt {
 
 				if(orientation()) {
 					m_slide_button->set_position (m_slide_button->position().x(),
-							position().y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+							position().y() + padding().bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
-					m_slide_button->set_position (position().x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+					m_slide_button->set_position (position().x() + padding().left() + value() * get_space() / (float)(maximum() - minimum()),
 							m_slide_button->position().y());
 				}
 
@@ -401,9 +401,9 @@ namespace BlendInt {
 
 				if(orientation()) {
 					m_slide_button->set_position (m_slide_button->position().x(),
-							position().y() + m_padding.bottom() + value() * get_space() / (float)(maximum() - minimum()));
+							position().y() + padding().bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
-					m_slide_button->set_position (position().x() + m_padding.left() + value() * get_space() / (float)(maximum() - minimum()),
+					m_slide_button->set_position (position().x() + padding().left() + value() * get_space() / (float)(maximum() - minimum()),
 							m_slide_button->position().y());
 				}
 
@@ -429,8 +429,8 @@ namespace BlendInt {
 
 		glPushMatrix();
 
-		glTranslatef(m_padding.left(),
-					 m_padding.bottom(), 0);
+		glTranslatef(padding().left(),
+					 padding().bottom(), 0);
 
 		glColor4ub(themes()->scroll.outline.r(),
 				themes()->scroll.outline.g(),
@@ -440,14 +440,14 @@ namespace BlendInt {
 		int space = 0;
 
 		if(orientation()) {
-			space = m_size.height() - m_padding.top() - m_padding.bottom();
+			space = m_size.height() - padding().top() - padding().bottom();
 			glTranslatef(m_slide_button->size().width() / 2.0, 0, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(0, space);
 			glEnd();
 		} else {
-			space = m_size.width() - m_padding.left() - m_padding.right();
+			space = m_size.width() - padding().left() - padding().right();
 			glTranslatef(0, m_slide_button->size().height() / 2.0 - 0.5, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
@@ -488,23 +488,23 @@ namespace BlendInt {
 			int value = 0;
 
 			if (orientation()) {
-				int ymin = position().y() + m_padding.bottom() + m_slide_button->size().height() / 2;
-				int ymax = position().y() + m_size.height() - m_padding.top() - m_slide_button->size().height() / 2;
+				int ymin = position().y() + padding().bottom() + m_slide_button->size().height() / 2;
+				int ymax = position().y() + m_size.height() - padding().top() - m_slide_button->size().height() / 2;
 				if(event->position().y() < ymin ||	event->position().y() > ymax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
 				value = (m_slide_button->position().y() - position().y()
-				        - m_padding.bottom()) / (float) get_space()
+				        - padding().bottom()) / (float) get_space()
 				        * (maximum() - minimum());
 
 			} else {
-				int xmin = position().x() + m_padding.left() + m_slide_button->size().width() / 2;
-				int xmax = position().x() + m_size.width() - m_padding.right() - m_slide_button->size().width() / 2;
+				int xmin = position().x() + padding().left() + m_slide_button->size().width() / 2;
+				int xmax = position().x() + m_size.width() - padding().right() - m_slide_button->size().width() / 2;
 				if(event->position().x() < xmin ||	event->position().x() > xmax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
 				value = (m_slide_button->position().x() - position().x()
-				        - m_padding.left()) / (float) get_space()
+				        - padding().left()) / (float) get_space()
 				        * (maximum() - minimum());
 			}
 
@@ -532,8 +532,8 @@ namespace BlendInt {
 
 			// Move to where mouse click
 //			Coord2d inner_pos;
-//			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - m_padding.left() - m_slider_control->size().width() / 2));
-//			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - m_padding.bottom() - m_slider_control->size().height() / 2));
+//			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - padding().left() - m_slider_control->size().width() / 2));
+//			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - padding().bottom() - m_slider_control->size().height() / 2));
 //			int space = get_space();
 //			int value;
 //
@@ -586,9 +586,9 @@ namespace BlendInt {
 	{
 		int space = 0;
 		if(orientation())	// Vertical
-			space = m_size.height() - m_padding.top() - m_padding.bottom() - m_slide_button->size().height();
+			space = m_size.height() - padding().top() - padding().bottom() - m_slide_button->size().height();
 		else
-			space = m_size.width() - m_padding.left() - m_padding.right() - m_slide_button->size().width();
+			space = m_size.width() - padding().left() - padding().right() - m_slide_button->size().width();
 
 		return space;
 	}

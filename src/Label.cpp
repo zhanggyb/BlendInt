@@ -61,7 +61,7 @@ namespace BlendInt {
 
 		m_text_outline = FontCache::create(m_font)->get_text_outline(m_text);
 
-		resize (m_text_outline.width() + m_padding.left() + m_padding.right(), m_text_outline.height() + m_padding.top() + m_padding.bottom());
+		resize (m_text_outline.width() + padding().left() + padding().right(), m_text_outline.height() + padding().top() + padding().bottom());
 	}
 
 	void Label::set_font (const Font& font)
@@ -70,7 +70,7 @@ namespace BlendInt {
 		FontCache::create(m_font);
 
 		Rect box = FontCache::create(m_font)->get_text_outline(m_text);
-		resize (box.width() + m_padding.left() + m_padding.right(), box.height() + m_padding.top() + m_padding.bottom());
+		resize (box.width() + padding().left() + padding().right(), box.height() + padding().top() + padding().bottom());
 	}
 
 	void Label::render ()
@@ -89,7 +89,7 @@ namespace BlendInt {
 				   m_background.b(), m_background.a());
 		glRectf(0.0, 0.0, m_size.width(), m_size.height());
 
-		FontCache::create(m_font)->print(m_text_outline.left() + m_padding.left(), m_padding.bottom() + std::abs(m_text_outline.bottom()), m_text);
+		FontCache::create(m_font)->print(m_text_outline.left() + padding().left(), padding().bottom() + std::abs(m_text_outline.bottom()), m_text);
 
 #ifdef DEBUG
 		glLineWidth(1);
