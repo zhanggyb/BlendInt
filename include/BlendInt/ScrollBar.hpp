@@ -59,7 +59,7 @@ namespace BlendInt {
 
 	private:
 
-		void update_shape (const Size* size);
+		void update_shape (const Size& size);
 
 		bool m_pressed;
 
@@ -91,7 +91,7 @@ namespace BlendInt {
 
 	private:
 
-		void update_shape (const Size* size);
+		void update_shape (const Size& size);
 
 	};
 
@@ -121,7 +121,7 @@ namespace BlendInt {
 
 	private:
 
-		void update_shape (const Size* size);
+		void update_shape (const Size& size);
 
 		/**
 		 * @brief calculate and return the space width in which scroll control can move

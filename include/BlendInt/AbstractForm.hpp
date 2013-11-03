@@ -215,7 +215,7 @@ namespace BlendInt {
 
 		void set_minimal_size (unsigned int width, unsigned int height);
 
-		const Parent* parent () const {return &m_parent;}
+		const Parent& parent () const {return m_parent;}
 
 		bool in_layout () const {return m_in_layout;}
 
@@ -232,6 +232,8 @@ namespace BlendInt {
 		}
 
 		bool fire_events () const {return m_fire_events;}
+
+		const std::set<AbstractForm*>& children() const {return m_children;}
 
 	protected:	// member functions
 
@@ -282,13 +284,17 @@ namespace BlendInt {
 
 		Cpp::ConnectionScope& events() {return m_events;}
 
-		void fire_property_changed_event (int type)
+		/**
+		 * @brief fire event to inform the property of this object is changed
+		 * @param[in] type the property type, defined in FormPropertyType
+		 */
+		inline void fire_property_changed_event (int type)
 		{
-			m_property_changed.fire(this, type);
+			if (m_fire_events)
+				m_property_changed.fire(this, type);
 		}
 
-	protected:
-		// member variables
+	private:
 
 		/**
 		 * @brief the depth(layer) of the widget
@@ -301,29 +307,27 @@ namespace BlendInt {
 
 		bool m_expand_y;
 
+		bool m_fire_events;
+
+		bool m_visible;
+
 		DRAWABLE_PROPERTY Size m_size;
 
 		Size m_preferred_size;
 
 		Size m_minimal_size;
 
-		std::string m_name;
-
-		Parent m_parent;
-
-		std::set<AbstractForm*> m_children;
-
-	private:
-
-		bool m_fire_events;
-
-		bool m_visible;
-
 		Point m_position;
 
 		Cpp::ConnectionScope m_events;
 
 		Cpp::Event<AbstractForm*, int> m_property_changed;
+
+		Parent m_parent;
+
+		std::set<AbstractForm*> m_children;
+
+		std::string m_name;
 
 #ifdef DEBUG
 	public:

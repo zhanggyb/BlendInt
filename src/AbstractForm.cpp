@@ -265,7 +265,7 @@ namespace BlendInt {
 
 		update(FormPropertySize);
 
-		if(m_fire_events) m_property_changed.fire(this, FormPropertySize);
+		fire_property_changed_event(FormPropertySize);
 	}
 
 	void AbstractForm::resize (const Size& size)
@@ -283,7 +283,7 @@ namespace BlendInt {
 
 		update(FormPropertySize);
 
-		if(m_fire_events) m_property_changed.fire(this, FormPropertySize);
+		fire_property_changed_event(FormPropertySize);
 	}
 
 	void AbstractForm::set_preferred_size(const Size& size)
@@ -297,7 +297,7 @@ namespace BlendInt {
 
 		m_preferred_size = size;
 
-		if(m_fire_events) m_property_changed.fire(this, FormPropertyPreferredSize);
+		fire_property_changed_event(FormPropertyPreferredSize);
 	}
 
 	void AbstractForm::set_preferred_size(unsigned int width, unsigned int height)
@@ -312,7 +312,7 @@ namespace BlendInt {
 		m_preferred_size.set_width(width);
 		m_preferred_size.set_height(height);
 
-		if(m_fire_events) m_property_changed.fire(this, FormPropertyPreferredSize);
+		fire_property_changed_event(FormPropertyPreferredSize);
 	}
 
 	void AbstractForm::set_minimal_size(const Size& size)
@@ -328,7 +328,7 @@ namespace BlendInt {
 
 		m_minimal_size = size;
 
-		if(m_fire_events) m_property_changed.fire(this, FormPropertyMinimalSize);
+		fire_property_changed_event(FormPropertyMinimalSize);
 	}
 
 	void AbstractForm::set_minimal_size(unsigned int width, unsigned int height)
@@ -345,7 +345,7 @@ namespace BlendInt {
 		m_minimal_size.set_width(width);
 		m_minimal_size.set_height(height);
 
-		if(m_fire_events) m_property_changed.fire(this, FormPropertyMinimalSize);
+		fire_property_changed_event(FormPropertyMinimalSize);
 	}
 
 	void AbstractForm::set_position (int x, int y)

@@ -87,7 +87,7 @@ namespace BlendInt {
 
 		glColor4ub(m_background.r(), m_background.g(),
 				   m_background.b(), m_background.a());
-		glRectf(0.0, 0.0, m_size.width(), m_size.height());
+		glRectf(0.0, 0.0, size().width(), size().height());
 
 		FontCache::create(m_font)->print(m_text_outline.left() + padding().left(), padding().bottom() + std::abs(m_text_outline.bottom()), m_text);
 
@@ -99,9 +99,9 @@ namespace BlendInt {
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 			glVertex2i(0, 0);
-			glVertex2i(m_size.width(), 0);
-			glVertex2i(m_size.width(), m_size.height());
-			glVertex2i(0, m_size.height());
+			glVertex2i(size().width(), 0);
+			glVertex2i(size().width(), size().height());
+			glVertex2i(0, size().height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);

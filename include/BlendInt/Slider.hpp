@@ -53,7 +53,7 @@ namespace BlendInt {
 
 	private:
 
-		void update_shape (const Size* size);
+		void update_shape (const Size& size);
 
 		Point m_move_start;
 

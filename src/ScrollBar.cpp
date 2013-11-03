@@ -55,7 +55,7 @@ namespace BlendInt {
 		switch(property_type)
 		{
 			case FormPropertySize:
-				update_shape(&m_size);
+				update_shape(size());
 				break;
 			case FormPropertyRoundCorner:
 				break;
@@ -128,33 +128,33 @@ namespace BlendInt {
 	void ScrollControl::move_mouse (MouseEvent* event)
 	{
 		// if no parent scrollbar, don't react to mouse move
-		if(m_parent.type != ParentForm) return;
+		if(parent().type != ParentForm) return;
 
-		ScrollBar* parent = dynamic_cast<ScrollBar*>(m_parent.object.form);
-		if(!parent) return;
+		ScrollBar* parent_obj = dynamic_cast<ScrollBar*>(parent().object.form);
+		if(!parent_obj) return;
 
 		if(m_pressed) {
 
-			if(parent->orientation() == Horizontal) {
+			if(parent_obj->orientation() == Horizontal) {
 				position_ref().set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
-				if(position().x() < (parent->position().x() + parent->padding().left()))
+				if(position().x() < (parent_obj->position().x() + parent_obj->padding().left()))
 				{
-					position_ref().set_x(parent->position().x() + parent->padding().left());
+					position_ref().set_x(parent_obj->position().x() + parent_obj->padding().left());
 				}
 				if(position().x() >
-						(int)(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width()))
+						(int)(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width()))
 				{
-					position_ref().set_x(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width());
+					position_ref().set_x(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width());
 				}
 			}
 
-			if(parent->orientation() == Vertical) {
+			if(parent_obj->orientation() == Vertical) {
 				position_ref().set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
-				if(position().y() < (parent->position().y() + parent->padding().bottom())) {
-					position_ref().set_y(parent->position().y() + parent->padding().bottom());
+				if(position().y() < (parent_obj->position().y() + parent_obj->padding().bottom())) {
+					position_ref().set_y(parent_obj->position().y() + parent_obj->padding().bottom());
 				}
-				if(position().y() > (int)(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
-					position_ref().set_y(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height());
+				if(position().y() > (int)(parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height())) {
+					position_ref().set_y(parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height());
 				}
 			}
 
@@ -184,21 +184,21 @@ namespace BlendInt {
 		m_pressed = false;
 	}
 
-	void ScrollControl::update_shape(const Size* size)
+	void ScrollControl::update_shape(const Size& size)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 
 		VerticesSum vert_sum;
 
-		Orientation shadedir = size->width() < size->height() ? Horizontal : Vertical;
+		Orientation shadedir = size.width() < size.height() ? Horizontal : Vertical;
 
 		Color color = themes()->scroll.item;
 
 		if(shadedir)
-			set_radius(0.5f * size->height());
+			set_radius(0.5f * size.height());
 		else
-			set_radius(0.5f * size->width());
+			set_radius(0.5f * size.width());
 
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
@@ -323,7 +323,7 @@ namespace BlendInt {
 	void SliderBar::update(int property_type)
 	{
 		if(property_type == FormPropertySize) {
-			update_shape(&m_size);
+			update_shape(size());
 			return;
 		}
 
@@ -407,7 +407,7 @@ namespace BlendInt {
 	}
 
 
-	void SliderBar::update_shape (const Size* size)
+	void SliderBar::update_shape (const Size& size)
 	{
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
@@ -525,7 +525,7 @@ namespace BlendInt {
 			}
 
 			case FormPropertySize: {
-				update_shape(&m_size);
+				update_shape(size());
 				break;
 			}
 
@@ -545,7 +545,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollBar::update_shape(const Size* size)
+	void ScrollBar::update_shape(const Size& size)
 	{
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
@@ -752,9 +752,9 @@ namespace BlendInt {
 		int space = 0;
 
 		if(orientation())	// Vertical is 1
-			space = m_size.height() - padding().top() - padding().bottom() - m_scroll_control->size().height();
+			space = size().height() - padding().top() - padding().bottom() - m_scroll_control->size().height();
 		else	// Horizontal is 0
-			space = m_size.width() - padding().left() - padding().right() - m_scroll_control->size().width();
+			space = size().width() - padding().left() - padding().right() - m_scroll_control->size().width();
 
 		return space;
 	}

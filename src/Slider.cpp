@@ -56,10 +56,10 @@ namespace BlendInt {
 		switch(property_type)
 		{
 			case FormPropertySize:
-				update_shape(&m_size);
+				update_shape(size());
 				break;
 			case FormPropertyRoundCorner: {
-				update_shape(&m_size);
+				update_shape(size());
 				break;
 			}
 			case WidgetPropertyPadding: {
@@ -136,33 +136,33 @@ namespace BlendInt {
 	void SlideButton::move_mouse(MouseEvent* event)
 	{
 		// if no parent slider, don't react to mouse move
-		if(m_parent.type != ParentForm) return;
+		if(parent().type != ParentForm) return;
 
-		AbstractSlider* parent = dynamic_cast<AbstractSlider*>(m_parent.object.form);
-		if(!parent) return;
+		AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(parent().object.form);
+		if(!parent_obj) return;
 
 		if(m_status_down) {
 			m_status_hover = false;
 
-			if(parent->orientation()) {	// Vertical
+			if(parent_obj->orientation()) {	// Vertical
 
 				position_ref().set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
-				if(position().y() < (parent->position().y() + parent->padding().bottom())) {
-					position_ref().set_y(parent->position().y() + parent->padding().bottom());
+				if(position().y() < (parent_obj->position().y() + parent_obj->padding().bottom())) {
+					position_ref().set_y(parent_obj->position().y() + parent_obj->padding().bottom());
 				}
-				if(position().y() > (int)(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height())) {
-					position_ref().set_y(parent->position().y() + parent->size().height() - parent->padding().top() - m_size.height());
+				if(position().y() > (int)(parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height())) {
+					position_ref().set_y(parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height());
 				}
 
 			} else {
 
 				position_ref().set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
-				if(position().x() < (parent->position().x() + parent->padding().left())) {
-					position_ref().set_x(parent->position().x() + parent->padding().left());
+				if(position().x() < (parent_obj->position().x() + parent_obj->padding().left())) {
+					position_ref().set_x(parent_obj->position().x() + parent_obj->padding().left());
 				}
 				if(position().x() >
-						(int)(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width())) {
-					position_ref().set_x(parent->position().x() + parent->size().width() - parent->padding().right() - m_size.width());
+						(int)(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width())) {
+					position_ref().set_x(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width());
 				}
 
 			}
@@ -206,7 +206,7 @@ namespace BlendInt {
 
 	}
 
-	void SlideButton::update_shape(const Size* size)
+	void SlideButton::update_shape(const Size& size)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
@@ -218,20 +218,20 @@ namespace BlendInt {
 
 		Orientation shadedir;
 
-		if(m_parent.type != ParentForm) {
-			shadedir = size->width() < size->height() ? Horizontal : Vertical;
+		if(parent().type != ParentForm) {
+			shadedir = size.width() < size.height() ? Horizontal : Vertical;
 		} else {
-			AbstractSlider* parent = dynamic_cast<AbstractSlider*>(m_parent.object.form);
-			if(parent) {
-				shadedir = parent->orientation() ? Horizontal : Vertical;
+			AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(parent().object.form);
+			if(parent_obj) {
+				shadedir = parent_obj->orientation() ? Horizontal : Vertical;
 			}
 		}
 		Color color = themes()->scroll.item;
 
 		if(shadedir)
-			set_radius(0.5f * size->height());
+			set_radius(0.5f * size.height());
 		else
-			set_radius(0.5f * size->width());
+			set_radius(0.5f * size.width());
 
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
@@ -440,14 +440,14 @@ namespace BlendInt {
 		int space = 0;
 
 		if(orientation()) {
-			space = m_size.height() - padding().top() - padding().bottom();
+			space = size().height() - padding().top() - padding().bottom();
 			glTranslatef(m_slide_button->size().width() / 2.0, 0, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(0, space);
 			glEnd();
 		} else {
-			space = m_size.width() - padding().left() - padding().right();
+			space = size().width() - padding().left() - padding().right();
 			glTranslatef(0, m_slide_button->size().height() / 2.0 - 0.5, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
@@ -465,9 +465,9 @@ namespace BlendInt {
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 			glVertex2i(0, 0);
-			glVertex2i(m_size.width(), 0);
-			glVertex2i(m_size.width(), m_size.height());
-			glVertex2i(0, m_size.height());
+			glVertex2i(size().width(), 0);
+			glVertex2i(size().width(), size().height());
+			glVertex2i(0, size().height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);
@@ -489,7 +489,7 @@ namespace BlendInt {
 
 			if (orientation()) {
 				int ymin = position().y() + padding().bottom() + m_slide_button->size().height() / 2;
-				int ymax = position().y() + m_size.height() - padding().top() - m_slide_button->size().height() / 2;
+				int ymax = position().y() + size().height() - padding().top() - m_slide_button->size().height() / 2;
 				if(event->position().y() < ymin ||	event->position().y() > ymax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
@@ -499,7 +499,7 @@ namespace BlendInt {
 
 			} else {
 				int xmin = position().x() + padding().left() + m_slide_button->size().width() / 2;
-				int xmax = position().x() + m_size.width() - padding().right() - m_slide_button->size().width() / 2;
+				int xmax = position().x() + size().width() - padding().right() - m_slide_button->size().width() / 2;
 				if(event->position().x() < xmin ||	event->position().x() > xmax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
@@ -586,9 +586,9 @@ namespace BlendInt {
 	{
 		int space = 0;
 		if(orientation())	// Vertical
-			space = m_size.height() - padding().top() - padding().bottom() - m_slide_button->size().height();
+			space = size().height() - padding().top() - padding().bottom() - m_slide_button->size().height();
 		else
-			space = m_size.width() - padding().left() - padding().right() - m_slide_button->size().width();
+			space = size().width() - padding().left() - padding().right() - m_slide_button->size().width();
 
 		return space;
 	}

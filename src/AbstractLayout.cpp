@@ -54,7 +54,7 @@ namespace BlendInt {
 
 	void AbstractLayout::add (Form* form)
 	{
-		if(m_children.count(form)) return;
+		if(children().count(form)) return;
 
 		Size pre_preferred_size = preferred_size();
 
@@ -71,7 +71,7 @@ namespace BlendInt {
 
 	void AbstractLayout::add (AbstractLayout* object)
 	{
-		if(m_children.count(object)) return;
+		if(children().count(object)) return;
 
 		bind(object);
 		set_in_layout(object, true);
@@ -83,7 +83,7 @@ namespace BlendInt {
 
 	bool AbstractLayout::remove (AbstractForm* object)
 	{
-		if (!m_children.count(object)) return false;
+		if (!children().count(object)) return false;
 
 		remove_item(object);
 
@@ -92,7 +92,7 @@ namespace BlendInt {
 
 	bool AbstractLayout::erase (AbstractForm* object)
 	{
-		if (!m_children.count(object)) return false;
+		if (!children().count(object)) return false;
 
 		remove_item(object);
 
@@ -165,10 +165,10 @@ namespace BlendInt {
 	{
 		AbstractLayout* root = 0;
 
-		if(m_in_layout) {
-			root = dynamic_cast<AbstractLayout*>(m_parent.object.form);
+		if(in_layout()) {
+			root = dynamic_cast<AbstractLayout*>(parent().object.form);
 			while(root->in_layout()) {
-				root = dynamic_cast<AbstractLayout*>(root->parent()->object.form);
+				root = dynamic_cast<AbstractLayout*>(root->parent().object.form);
 				if(!root) break;
 			}
 		}

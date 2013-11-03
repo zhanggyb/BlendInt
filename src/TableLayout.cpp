@@ -50,7 +50,7 @@ namespace BlendInt {
 	void TableLayout::add_widget (Widget* widget, int row, int column,
 	        int width, int height)
 	{
-		if (m_children.count(widget)) return;
+		if (children().count(widget)) return;
 
 		for (int i = 0; i < width; i++)
 		{
@@ -71,7 +71,7 @@ namespace BlendInt {
 	void TableLayout::add_layout (AbstractLayout* layout, int row, int column,
 	        int width, int height)
 	{
-		if (m_children.count(layout)) return;
+		if (children().count(layout)) return;
 
 		for (int i = 0; i < width; i++)
 		{
@@ -96,7 +96,7 @@ namespace BlendInt {
 
 	bool TableLayout::update (int type, const void* property)
 	{
-		if(m_parent.type == ParentForm) {
+		if(parent().type == ParentForm) {
 
 			return true;
 
@@ -145,9 +145,9 @@ namespace BlendInt {
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 			glVertex2i(0, 0);
-			glVertex2i(m_size.width(), 0);
-			glVertex2i(m_size.width(), m_size.height());
-			glVertex2i(0, m_size.height());
+			glVertex2i(size().width(), 0);
+			glVertex2i(size().width(), size().height());
+			glVertex2i(0, size().height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);
@@ -221,10 +221,10 @@ namespace BlendInt {
 
 	}
 
-	bool TableLayout::generate_layout(const Size* size)
+	bool TableLayout::generate_layout(const Size* new_size)
 	{
-		if(size->width() < m_minimal_size.width() ||
-				size->height() < m_minimal_size.height())
+		if(new_size->width() < minimal_size().width() ||
+				new_size->height() < minimal_size().height())
 			return false;
 
 		unsigned int total_width = 0;
@@ -244,7 +244,7 @@ namespace BlendInt {
 		column_num = total_fixed_width(&w);
 		row_num = total_fixed_height(&h);
 
-		if(size->width() > static_cast<unsigned int>(w)) {
+		if(new_size->width() > static_cast<unsigned int>(w)) {
 
 			for (int j = 0; j < m_columns; j++)
 			{
@@ -254,7 +254,7 @@ namespace BlendInt {
 			}
 
 			if(column_num < m_columns) {
-				int single_expandable_width = (size->width() - margin().left() - margin().right() - space() * (m_columns - 1)- total_width) / (m_columns - column_num);
+				int single_expandable_width = (new_size->width() - margin().left() - margin().right() - space() * (m_columns - 1)- total_width) / (m_columns - column_num);
 
 				for (int j = 0; j < m_columns; j++)
 				{
@@ -276,7 +276,7 @@ namespace BlendInt {
 			}
 
 			if(column_num > 0) {
-				int single_fixed_width_diff = m_size.width() - size->width() / column_num;
+				int single_fixed_width_diff = size().width() - new_size->width() / column_num;
 
 				for (int j = 0; j < m_columns; j++)
 				{
@@ -288,7 +288,7 @@ namespace BlendInt {
 
 		}
 
-		if(size->height() > static_cast<unsigned int>(h)) {
+		if(new_size->height() > static_cast<unsigned int>(h)) {
 
 			for (int i = 0; i < m_rows; i++)
 			{
@@ -298,7 +298,7 @@ namespace BlendInt {
 			}
 
 			if(row_num < m_rows) {
-				int single_expandable_height = (size->height() - margin().top() - margin().bottom() - space() * (m_rows - 1)- total_height) / (m_rows - row_num);
+				int single_expandable_height = (new_size->height() - margin().top() - margin().bottom() - space() * (m_rows - 1)- total_height) / (m_rows - row_num);
 
 				for (int i = 0; i < m_rows; i++)
 				{
@@ -320,7 +320,7 @@ namespace BlendInt {
 			}
 
 			if(row_num > 0) {
-				int single_fixed_height_diff = m_size.height() - size->height() / row_num;
+				int single_fixed_height_diff = size().height() - new_size->height() / row_num;
 
 				for (int i = 0; i < m_rows; i++)
 				{
@@ -347,7 +347,7 @@ namespace BlendInt {
 #endif
 
 		int x = position().x() + margin().left();
-		int y = position().y() + size->height() - margin().top();
+		int y = position().y() + new_size->height() - margin().top();
 		for(int i = 0; i < m_rows; i++)
 		{
 			y = y - row_height[i];
@@ -451,8 +451,7 @@ namespace BlendInt {
 			y = y - space();
 		}
 
-		m_size.set_width(total_width);
-		m_size.set_height(total_height);
+		resize(total_width, total_height);
 	}
 
 	int TableLayout::fixed_column_width(int column)

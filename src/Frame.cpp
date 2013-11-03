@@ -90,7 +90,7 @@ namespace BlendInt {
 		}
 
 		if(!m_layout) {
-			FontCache::create()->print (10, m_size.height()/2, "No layout is set");
+			FontCache::create()->print (10, size().height()/2, "No layout is set");
 		}
 
 		glDisable(GL_BLEND);

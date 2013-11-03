@@ -47,14 +47,14 @@ namespace BlendInt {
 
 	bool GridLayout::remove (AbstractForm* object)
 	{
-		if (!m_children.count(object)) return false;
+		if (!children().count(object)) return false;
 
 		return true;
 	}
 
 	bool GridLayout::erase (AbstractForm* object)
 	{
-		if (!m_children.count(object)) return false;
+		if (!children().count(object)) return false;
 
 		return true;
 	}

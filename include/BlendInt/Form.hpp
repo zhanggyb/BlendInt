@@ -110,7 +110,7 @@ namespace BlendInt {
 		 * @param[out] outer_v
 		 * @return how many vertices are used in the output array
 		 */
-		VerticesSum generate_vertices (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
+		//VerticesSum generate_vertices (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
 
 		/**
 		 * @brief calculate vertices for round box edge with no shaded color
@@ -130,7 +130,7 @@ namespace BlendInt {
 		 * @param outer
 		 * @return
 		 */
-		VerticesSum generate_vertices (const Size* size,
+		VerticesSum generate_vertices (const Size& size,
 				const WidgetTheme* theme,
 				Orientation shadedir,
 				float inner[WIDGET_SIZE_MAX][6],
@@ -146,7 +146,7 @@ namespace BlendInt {
 		 * @param[out] outer vertices for outline
 		 * @return
 		 */
-		VerticesSum generate_vertices (const Size* size,
+		VerticesSum generate_vertices (const Size& size,
 				const Color& color,
 				short shadetop,
 				short shadedown,
@@ -179,7 +179,7 @@ namespace BlendInt {
 
 	private:
 
-		void update_shape (const Size* size);
+		void update_shape (const Size& size);
 
 		/**
 		 * @brief the round type defined in enumeration RoundCornerType

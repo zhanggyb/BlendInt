@@ -73,9 +73,9 @@ namespace BlendInt {
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 			glVertex2i(0, 0);
-			glVertex2i(m_size.width(), 0);
-			glVertex2i(m_size.width(), m_size.height());
-			glVertex2i(0, m_size.height());
+			glVertex2i(size().width(), 0);
+			glVertex2i(size().width(), size().height());
+			glVertex2i(0, size().height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);

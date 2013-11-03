@@ -113,7 +113,7 @@ namespace BlendInt {
 #ifdef DEBUG
 		std::set<AbstractForm*>::const_iterator it;
 		AbstractForm *item = 0;
-		for (it = m_children.begin(); it != m_children.end(); it++) {
+		for (it = children().begin(); it != children().end(); it++) {
 			item = *it;
 			Interface::instance()->dispatch_render_event(item);
 		}
@@ -124,8 +124,8 @@ namespace BlendInt {
 	{
 		if (cursor.x() < (position().x() + m_padding.left()) ||
 				cursor.y() < (position().y() + m_padding.bottom()) ||
-				cursor.x() > (position().x() + m_size.width() - m_padding.right()) ||
-				cursor.y() > (position().y() + m_size.height() - m_padding.top())) {
+				cursor.x() > (position().x() + size().width() - m_padding.right()) ||
+				cursor.y() > (position().y() + size().height() - m_padding.top())) {
 			return false;
 		}
 
