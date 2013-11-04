@@ -26,7 +26,7 @@
 
 #include <string>
 
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Form.hpp>
 #include <BlendInt/Font.hpp>
 #include <BlendInt/Color.hpp>
 #include <BlendInt/Rect.hpp>
@@ -39,7 +39,7 @@ namespace BlendInt {
 
 	class Rect;
 
-	class Label: public Widget
+	class Label: public Form
 	{
 		DISALLOW_COPY_AND_ASSIGN(Label);
 
@@ -51,8 +51,20 @@ namespace BlendInt {
 
 		virtual ~Label ();
 
+		/**
+		 * @brief set the label text
+		 * @param label
+		 *
+		 * call this function will reset the size and preferred size of this object
+		 */
 		void set_text (const String& label);
 
+		/**
+		 * @brief set the text font
+		 * @param font
+		 *
+		 * call this function will reset the preferred size of this object
+		 */
 		void set_font (const Font& font);
 
 		void set_foreground (const Color& fg)
@@ -67,14 +79,17 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void update (int property_type);
+
 		virtual void render ();
 
 	private:
-		// member functions
 
-		virtual void cursorPosEvent (double xpos, double ypos);
-
-	private:
+		/**
+		 * @brief get the valid text size to print
+		 * @return how many characters to print
+		 */
+		size_t get_valid_text_size ();
 
 		/**
 		 * @brief the text of the label
@@ -82,6 +97,16 @@ namespace BlendInt {
 		 * new line character is not allowed
 		 */
 		String m_text;
+
+		/**
+		 * @brief the position to print text
+		 */
+		Point m_origin;
+
+		/**
+		 * @brief the text string length to be printed
+		 */
+		size_t m_length;
 
 		Font m_font;
 

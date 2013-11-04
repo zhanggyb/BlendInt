@@ -136,25 +136,30 @@ namespace BlendInt {
 		if(m_pressed) {
 
 			if(parent_obj->orientation() == Horizontal) {
-				position_ref().set_x(m_position_origin.x() + event->position().x() - m_move_start.x());
+
+				set_position(m_position_origin.x() + event->position().x() - m_move_start.x(), position().y());
+
 				if(position().x() < (parent_obj->position().x() + parent_obj->padding().left()))
 				{
-					position_ref().set_x(parent_obj->position().x() + parent_obj->padding().left());
+					set_position(parent_obj->position().x() + parent_obj->padding().left(), position().y());
 				}
 				if(position().x() >
 						(int)(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width()))
 				{
-					position_ref().set_x(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width());
+					set_position(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width(), position().y());
 				}
 			}
 
 			if(parent_obj->orientation() == Vertical) {
-				position_ref().set_y(m_position_origin.y() + event->position().y() - m_move_start.y());
+				set_position(position().x(), m_position_origin.y() + event->position().y() - m_move_start.y());
 				if(position().y() < (parent_obj->position().y() + parent_obj->padding().bottom())) {
-					position_ref().set_y(parent_obj->position().y() + parent_obj->padding().bottom());
+
+					set_position(position().x(), parent_obj->position().y() + parent_obj->padding().bottom());
 				}
 				if(position().y() > (int)(parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height())) {
-					position_ref().set_y(parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height());
+
+					set_position(position().x(), parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height());
+
 				}
 			}
 

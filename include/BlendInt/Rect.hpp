@@ -79,13 +79,13 @@ namespace BlendInt {
 
 		void set_y (int y) {m_y = y;}
 
-		int width (void) const {return m_width;}
+		unsigned int width (void) const {return m_width;}
 
 		void set_width (unsigned int width) {m_width = width;}
 
 		void set_width (int width) {m_width = static_cast<unsigned int>(width);}
 
-		int height (void) const {return m_height;}
+		unsigned int height (void) const {return m_height;}
 
 		void set_height (unsigned int height) {m_height = height;}
 

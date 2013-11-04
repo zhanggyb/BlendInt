@@ -14,6 +14,7 @@
 #include <BlendInt/Label.hpp>
 #include <BlendInt/FontConfig.hpp>
 #include <BlendInt/Rect.hpp>
+#include <BlendInt/Widget.hpp>
 
 #include <BlendInt/ContextManager.hpp>
 

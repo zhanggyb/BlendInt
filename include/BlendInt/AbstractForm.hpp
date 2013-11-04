@@ -235,9 +235,35 @@ namespace BlendInt {
 
 		const std::set<AbstractForm*>& children() const {return m_children;}
 
-	protected:	// member functions
+		/**
+		 * @brief move this object along x axis
+		 * @param offset_x
+		 */
+		inline void move_x (int offset_x)
+		{
+			set_position(position().x() + offset_x, position().y());
+		}
 
-		Point& position_ref() {return m_position;}
+		/**
+		 * @brief move this object along y axis
+		 * @param offset_y
+		 */
+		inline void move_y (int offset_y)
+		{
+			set_position(position().x(), position().y() + offset_y);
+		}
+
+		/**
+		 * @brief move this object
+		 * @param offset_x
+		 * @param offset_y
+		 */
+		inline void move (int offset_x, int offset_y)
+		{
+			set_position(position().x() + offset_x, position().y() + offset_y);
+		}
+
+	protected:	// member functions
 
 		bool contain (const Coord2d& cursor);
 

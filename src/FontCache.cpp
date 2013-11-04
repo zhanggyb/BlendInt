@@ -397,6 +397,24 @@ namespace BlendInt {
 		return Rect(Point(xmin, ymin), Point(xmax, ymax));
 	}
 
+	unsigned int FontCache::get_text_width (const String& string, size_t length)
+	{
+		unsigned int width = 0;
+
+		if(!m_freetype->valid()) {
+			return width;
+		}
+
+		String::const_iterator it;
+		size_t i = 0;
+
+		for (it = string.begin(); (it != string.end()) && (i < length); it++, i++)
+		{
+			width = query(*it).advance_x + width;
+		}
+
+		return width;
+	}
 
 #ifdef DEBUG
 	void FontCache::printcount (void)

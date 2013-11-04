@@ -150,7 +150,7 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(origin_.x(), origin_.y() - fontcache_->getDescender(),
+		glTranslatef(origin_.x(), origin_.y() - fontcache_->get_descender(),
 		        origin_.z());
 
 		int line = 0;
@@ -161,7 +161,7 @@ namespace BlendInt {
 				glLoadIdentity();
 				glTranslatef(origin_.x(),
 				        origin_.y()
-				                - line_spacing_ * fontcache_->getHeight()
+				                - line_spacing_ * fontcache_->get_height()
 				                        * line, origin_.z());
 				continue;
 			}

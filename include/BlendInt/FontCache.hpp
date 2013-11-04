@@ -109,26 +109,26 @@ namespace BlendInt {
 
 		void print (float x, float y, const String& string, size_t length);
 
-		int getHeight ()
+		int get_height ()
 		{
 			if(!m_freetype) return 0;
 			
 			return m_freetype->height();
 		}
 
-		int getAscender ()
+		int get_ascender ()
 		{
 			if(m_freetype == NULL) return 0;
 			return m_freetype->ascender();
 		}
 
-		int getDescender ()
+		int get_descender ()
 		{
 			if(m_freetype == NULL) return 0;
 			return m_freetype->descender();
 		}
 
-		int getMaxAdvance ()
+		int get_max_advance ()
 		{
 			if(m_freetype == NULL) return 0;
 			return m_freetype->max_advance();
@@ -152,7 +152,22 @@ namespace BlendInt {
 			}
 		}
 
+		/**
+		 * @brief get the rectangle contains the given text
+		 * @param string
+		 * @return
+		 */
 		Rect get_text_outline (const String& string);
+
+		/**
+		 * @brief get the text width contains the given text with the length
+		 * @param string
+		 * @param length
+		 * @return
+		 */
+		unsigned int get_text_width (const String& string, size_t length);
+
+		unsigned int get_text_height ();
 
 #ifdef DEBUG
 		void printcount ();

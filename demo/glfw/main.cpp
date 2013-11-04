@@ -209,6 +209,26 @@ int main(int argc, char* argv[])
 
 	app->bind(layout);
 
+	Label* label1 = new Label("Hello World");
+
+	label1->set_position(300, 50);
+	label1->resize (200, 80);
+
+	app->bind(label1);
+
+	Label* label2 = new Label("yes, google");
+	label2->resize (200, 80);
+
+	label2->set_position(label1->position().x() + label1->size().width(), 50);
+
+	app->bind(label2);
+
+	label1->set_font(Font("Droid Sans", 24));
+	label2->set_font(Font("Droid Sans", 24));
+
+//	layout->add(label1);
+//	layout->add(label2);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */

@@ -36,7 +36,7 @@ namespace BlendInt {
 		set_round_type(RoundCornerAll);
 		set_expand_x(true);
 		resize(90, 25);
-		set_preferred_size(90, 25);
+		set_preferred_size(90, 24);
 	}
 
 	Button::Button (const String& text)
@@ -54,7 +54,7 @@ namespace BlendInt {
 		set_round_type(RoundCornerAll);
 		set_expand_x(true);
 		resize (90, 25);
-		set_preferred_size(90, 25);
+		set_preferred_size(90, 24);
 	}
 
 	Button::Button (const String& text, AbstractForm* parent)
