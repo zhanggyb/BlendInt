@@ -32,20 +32,22 @@
 namespace BlendInt {
 
 	Label::Label (const String& text)
-		: Form(), m_length(0), m_background(0x00000000)
+		: Form(), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
 	{
+		set_expand_x(true);
 		FontCache::create(m_font);
 
-		resize(80, 24);	// the same default size in Buttons
+		resize(0, 24);	// the same height of a Buttons
 		set_text(text);
 	}
 
 	Label::Label (const String& text, AbstractForm *parent)
-		: Form(parent), m_length(0), m_background(0x00000000)
+		: Form(parent), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
 	{
+		set_expand_x(true);
 		FontCache::create(m_font);
 
-		resize(80, 24);	// the same default size in Buttons
+		resize(0, 24);	// the same height of a Buttons
 		set_text(text);
 	}
 
@@ -56,39 +58,85 @@ namespace BlendInt {
 
 	void Label::set_text (const String& label)
 	{
-		FontCache* fc = FontCache::create(m_font);
+		bool cal_width = true;
 
 		m_text = label;
+		FontCache* fc = FontCache::create(m_font);
 
 		m_text_outline = fc->get_text_outline(m_text);
 
-		if(size().width() < m_text_outline.width()) {
-			resize_priv(this, m_text_outline.width(), size().height());
-		}
+		m_length = m_text.length();
 
 		if(size().height() < m_text_outline.height()) {
-			resize_priv(this, size().width(), m_text_outline.height());
+			if(expand_y()) {
+				resize_priv(this, size().width(), m_text_outline.height());
+			} else {
+				m_length = 0;
+				cal_width = false;
+			}
 		}
 
-		m_origin.set_x((size().width() - m_text_outline.width()) / 2);
-		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+		if(size().width() < m_text_outline.width()) {
+			if(expand_x()) {
+				resize_priv(this, m_text_outline.width(), size().height());
+			} else {
+				if(cal_width) m_length = get_valid_text_size();
+			}
+		}
 
-		m_length = m_text.length();
+		// FIXME: the alignment and origin was set in resize -> update, reset here?
+		if(m_alignment & AlignLeft) {
+			m_origin.set_x(0);
+		} else if(m_alignment & AlignRight) {
+			m_origin.set_x(size().width() - m_text_outline.width());
+		} else if(m_alignment & AlignVerticalCenter) {
+			m_origin.set_x((size().width() - m_text_outline.width()) / 2);
+		}
+
+		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
 
 		set_preferred_size(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void Label::set_font (const Font& font)
 	{
+		bool cal_width = true;
+
 		m_font = font;
 		FontCache* fc =	FontCache::create(m_font);
 
 		m_text_outline = fc->get_text_outline(m_text);
 
-		m_origin.set_x((size().width() - m_text_outline.width()) / 2);
-		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+		m_length = m_text.length();
 
-		m_length = get_valid_text_size();
+		if(size().height() < m_text_outline.height()) {
+			if(expand_y()) {
+				resize_priv(this, size().width(), m_text_outline.height());
+			} else {
+				m_length = 0;
+				cal_width = false;
+			}
+		}
+
+		if(size().width() < m_text_outline.width()) {
+			if(expand_x()) {
+				resize_priv(this, m_text_outline.width(), size().height());
+			} else {
+				if(cal_width) m_length = get_valid_text_size();
+			}
+		}
+
+		// FIXME: the alignment and origin was set in resize -> update, reset here?
+
+		if(m_alignment & AlignLeft) {
+			m_origin.set_x(0);
+		} else if(m_alignment & AlignRight) {
+			m_origin.set_x(size().width() - m_text_outline.width());
+		} else if(m_alignment & AlignVerticalCenter) {
+			m_origin.set_x((size().width() - m_text_outline.width()) / 2);
+		}
+
+		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
 
 		set_preferred_size(m_text_outline.width(), m_text_outline.height());
 	}
@@ -109,7 +157,13 @@ namespace BlendInt {
 				if(size().width() < m_text_outline.width()) {
 					m_origin.set_x(0);
 				} else {
-					m_origin.set_x((size().width() - m_text_outline.width()) / 2);
+					if(m_alignment & AlignLeft) {
+						m_origin.set_x(0);
+					} else if(m_alignment & AlignRight) {
+						m_origin.set_x(size().width() - m_text_outline.width());
+					} else if(m_alignment & AlignVerticalCenter) {
+						m_origin.set_x((size().width() - m_text_outline.width()) / 2);
+					}
 				}
 
 				break;
@@ -166,13 +220,14 @@ namespace BlendInt {
 
 		size_t str_len = m_text.length();
 
-		while(str_len > 0) {
+		width = FontCache::create(m_font)->get_text_width(m_text, str_len);
 
-			width = FontCache::create(m_font)->get_text_width(m_text, str_len);
-
-			if(width < size().width()) break;
-
-			str_len--;
+		if(width > size().width()) {
+			while(str_len > 0) {
+				width = FontCache::create(m_font)->get_text_width(m_text, str_len);
+				if(width < size().width()) break;
+				str_len--;
+			}
 		}
 
 		return str_len;

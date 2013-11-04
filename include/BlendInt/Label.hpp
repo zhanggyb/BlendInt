@@ -110,6 +110,8 @@ namespace BlendInt {
 
 		Font m_font;
 
+		int m_alignment;
+
 		Color m_foreground;
 
 		/** Background color, default: transparent */

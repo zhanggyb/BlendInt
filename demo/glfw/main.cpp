@@ -212,22 +212,30 @@ int main(int argc, char* argv[])
 	Label* label1 = new Label("Hello World");
 
 	label1->set_position(300, 50);
-	label1->resize (200, 80);
+	label1->set_background(Color(0xF0E04080));
 
 	app->bind(label1);
 
-	Label* label2 = new Label("yes, google");
-	label2->resize (200, 80);
+	Label* label2 = new Label("yes, google,alsfjwoeivnldljfweigblasdflJGALKGJ");
+	label2->set_background(Color(0xF0E04080));
 
 	label2->set_position(label1->position().x() + label1->size().width(), 50);
 
 	app->bind(label2);
 
-	label1->set_font(Font("Droid Sans", 24));
-	label2->set_font(Font("Droid Sans", 24));
+	label1->set_font(Font("Droid Sans"));
+	label2->set_font(Font("Droid Sans"));
 
-//	layout->add(label1);
-//	layout->add(label2);
+	layout->add(label1);
+	layout->add(label2);
+
+	Label* label3 = new Label("abcdefghi");
+
+	label3->set_position(300, 150);
+	label3->set_background(Color(0xF0E04080));
+//	label3->resize(label3->preferred_size());
+
+	app->bind(label3);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

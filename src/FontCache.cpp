@@ -305,8 +305,6 @@ namespace BlendInt {
 
 	void FontCache::print (const String& string, size_t length)
 	{
-		size_t str_length = std::min(string.length(), length);
-		String::const_iterator it;
 		ShaderManager* sm = ShaderManager::instance();
 		GLfloat black[4] = { 0, 0, 0, 1 };
 
@@ -330,11 +328,10 @@ namespace BlendInt {
 
 		/* Loop through all characters */
 		// TODO: read text in TextureFont map
+		size_t str_length = std::min(string.length(), length);
 		size_t i = 0;
-		for (it = string.begin(); it != string.end(); it++, i++)
+		for (String::const_iterator it = string.begin(); i < str_length; it++, i++)
 		{
-			if (i >= str_length) break;
-
 			/* Draw the character on the screen */
 			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
