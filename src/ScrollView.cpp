@@ -53,6 +53,29 @@ namespace BlendInt {
 
 		m_viewport = viewport;
 		bind (m_viewport);
+		m_viewport->set_position(position().x() + padding().left(), position().y() + padding().right());
+	}
+
+	void ScrollView::reset_viewport_position()
+	{
+		if(m_viewport) {
+			m_viewport->set_position(position().x() + padding().left(), position().y() + padding().right());
+		}
+	}
+
+	void ScrollView::update (int type, const void* data)
+	{
+		switch(type) {
+
+			case FormPropertyPosition: {
+				reset_viewport_position();
+				break;
+			}
+
+			default:
+				break;
+		}
+
 	}
 
 	void ScrollView::render ()

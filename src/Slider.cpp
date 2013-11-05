@@ -51,15 +51,18 @@ namespace BlendInt {
 
 	}
 
-	void SlideButton::update (int property_type)
+	void SlideButton::update (int type, const void* data)
 	{
-		switch(property_type)
+		switch(type)
 		{
-			case FormPropertySize:
-				update_shape(size());
+			case FormPropertySize: {
+				const Size* size_p = static_cast<const Size*>(data);
+				update_shape(size_p);
 				break;
+			}
 			case FormPropertyRoundCorner: {
-				update_shape(size());
+				const Size* size_p = static_cast<const Size*>(data);
+				update_shape(size_p);
 				break;
 			}
 			case WidgetPropertyPadding: {
@@ -210,7 +213,7 @@ namespace BlendInt {
 
 	}
 
-	void SlideButton::update_shape(const Size& size)
+	void SlideButton::update_shape(const Size* size)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
@@ -223,7 +226,7 @@ namespace BlendInt {
 		Orientation shadedir;
 
 		if(parent().type != ParentForm) {
-			shadedir = size.width() < size.height() ? Horizontal : Vertical;
+			shadedir = size->width() < size->height() ? Horizontal : Vertical;
 		} else {
 			AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(parent().object.form);
 			if(parent_obj) {
@@ -233,9 +236,9 @@ namespace BlendInt {
 		Color color = themes()->scroll.item;
 
 		if(shadedir)
-			set_radius(0.5f * size.height());
+			set_radius(0.5f * size->height());
 		else
-			set_radius(0.5f * size.width());
+			set_radius(0.5f * size->width());
 
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
@@ -324,7 +327,7 @@ namespace BlendInt {
 
 		m_slide_button->resize(button_size, button_size);
 		//m_slide_button->set_position (position().x() + padding().left(), position().y() + padding().bottom());
-		update(SliderPropertyValue);
+		update(SliderPropertyValue, 0);
 	}
 
 	Slider::Slider(Orientation orientation, AbstractForm* parent)
@@ -347,7 +350,7 @@ namespace BlendInt {
 		m_slide_button->resize(button_size, button_size);
 
 		//m_slide_button->set_position (position().x() + padding().left(), position().y() + padding().bottom());
-		update(SliderPropertyValue);
+		update(SliderPropertyValue, 0);
 	}
 
 	Slider::~Slider()
@@ -375,9 +378,9 @@ namespace BlendInt {
 		}
 	}
 
-	void Slider::update (int property_type)
+	void Slider::update (int type, const void* data)
 	{
-		switch (property_type) {
+		switch (type) {
 			case FormPropertyPosition: {
 				m_slide_button->set_position (position().x() + padding().left(), position().y() + padding().bottom());
 				return;

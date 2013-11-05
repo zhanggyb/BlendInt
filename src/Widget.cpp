@@ -64,18 +64,21 @@ namespace BlendInt {
 
 	void Widget::set_padding (const Padding& padding)
 	{
-		m_padding = padding;
-		update(WidgetPropertyPadding);
+		if(m_padding.equal(padding)) return;
+
+		Padding new_padding = padding;
+		update(WidgetPropertyPadding, &new_padding);
+		m_padding = new_padding;
 	}
 
 	void Widget::set_padding (int l, int r, int t, int b)
 	{
-		m_padding.set_left(l);
-		m_padding.set_right(r);
-		m_padding.set_top(t);
-		m_padding.set_bottom(b);
+		if(m_padding.equal(l, r, t, b)) return;
 
-		update(WidgetPropertyPadding);
+		Padding new_padding(l, r, t, b);
+
+		update(WidgetPropertyPadding, &new_padding);
+		m_padding = new_padding;
 	}
 
 
@@ -103,9 +106,9 @@ namespace BlendInt {
 	{
 	}
 
-	void Widget::update (int property_type)
+	void Widget::update (int type, const void* data)
 	{
-		Form::update(property_type);
+		Form::update(type, data);
 	}
 
 	void Widget::render ()

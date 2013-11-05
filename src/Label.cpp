@@ -141,28 +141,30 @@ namespace BlendInt {
 		set_preferred_size(m_text_outline.width(), m_text_outline.height());
 	}
 
-	void Label::update (int property_type)
+	void Label::update (int type, const void* data)
 	{
-		switch(property_type) {
+		switch(type) {
 
 			case FormPropertySize: {
-				if(size().height() < m_text_outline.height()) {
+				const Size* size_p = static_cast<const Size*>(data);
+
+				if(size_p->height() < m_text_outline.height()) {
 					m_length = 0;
 				} else {
 					FontCache* fc = FontCache::create(m_font);
-					m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
-					m_length = get_valid_text_size();
+					m_origin.set_y((size_p->height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+					m_length = get_valid_text_size(size_p);
 				}
 
-				if(size().width() < m_text_outline.width()) {
+				if(size_p->width() < m_text_outline.width()) {
 					m_origin.set_x(0);
 				} else {
 					if(m_alignment & AlignLeft) {
 						m_origin.set_x(0);
 					} else if(m_alignment & AlignRight) {
-						m_origin.set_x(size().width() - m_text_outline.width());
+						m_origin.set_x(size_p->width() - m_text_outline.width());
 					} else if(m_alignment & AlignVerticalCenter) {
-						m_origin.set_x((size().width() - m_text_outline.width()) / 2);
+						m_origin.set_x((size_p->width() - m_text_outline.width()) / 2);
 					}
 				}
 
@@ -226,6 +228,26 @@ namespace BlendInt {
 			while(str_len > 0) {
 				width = FontCache::create(m_font)->get_text_width(m_text, str_len);
 				if(width < size().width()) break;
+				str_len--;
+			}
+		}
+
+		return str_len;
+	}
+
+
+	size_t Label::get_valid_text_size(const Size* size)
+	{
+		size_t width = 0;
+
+		size_t str_len = m_text.length();
+
+		width = FontCache::create(m_font)->get_text_width(m_text, str_len);
+
+		if(width > size->width()) {
+			while(str_len > 0) {
+				width = FontCache::create(m_font)->get_text_width(m_text, str_len);
+				if(width < size->width()) break;
 				str_len--;
 			}
 		}

@@ -269,13 +269,14 @@ namespace BlendInt {
 
 		/**
 		 * @brief Update opengl data (usually the GL buffer) for render
-		 * @param[in] property_type the enumeration defined by each form class, e.g.
+		 * @param[in] type the enumeration defined by each form class, e.g.
 		 * FormPropertySize
+		 * @param[in] data the pointer to the new property data
 		 *
 		 * This virtual function should be implemented in each derived class,
 		 * and should only use the form's property to draw opengl elements once.
 		 */
-		virtual void update (int property_type) = 0;
+		virtual void update (int type, const void* data) = 0;
 
 		/**
 		 * @brief just change m_z simply

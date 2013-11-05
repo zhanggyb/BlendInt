@@ -260,10 +260,11 @@ namespace BlendInt {
 				height < m_minimal_size.height())
 			return;
 
-		m_size.set_width(width);
-		m_size.set_height(height);
+		Size new_size (width, height);
 
-		update(FormPropertySize);
+		update(FormPropertySize, &new_size);
+
+		m_size = new_size;
 
 		fire_property_changed_event(FormPropertySize);
 	}
@@ -279,9 +280,11 @@ namespace BlendInt {
 
 		if (m_size.equal(size)) return;
 
-		m_size = size;
+		Size new_size = size;
 
-		update(FormPropertySize);
+		update(FormPropertySize, &new_size);
+
+		m_size = new_size;
 
 		fire_property_changed_event(FormPropertySize);
 	}
@@ -295,7 +298,11 @@ namespace BlendInt {
 
 		if(m_preferred_size.equal(size)) return;
 
-		m_preferred_size = size;
+		Size new_preferred_size = size;
+
+		update(FormPropertyPreferredSize, &new_preferred_size);
+
+		m_preferred_size = new_preferred_size;
 
 		fire_property_changed_event(FormPropertyPreferredSize);
 	}
@@ -309,8 +316,11 @@ namespace BlendInt {
 
 		if(m_preferred_size.equal(width, height)) return;
 
-		m_preferred_size.set_width(width);
-		m_preferred_size.set_height(height);
+		Size new_preferred_size(width, height);
+
+		update(FormPropertyPreferredSize, &new_preferred_size);
+
+		m_preferred_size = new_preferred_size;
 
 		fire_property_changed_event(FormPropertyPreferredSize);
 	}
@@ -326,7 +336,11 @@ namespace BlendInt {
 				size.height() > m_preferred_size.height())
 			return;
 
-		m_minimal_size = size;
+		Size new_minimal_size = size;
+
+		update(FormPropertyMinimalSize, &new_minimal_size);
+
+		m_minimal_size = new_minimal_size;
 
 		fire_property_changed_event(FormPropertyMinimalSize);
 	}
@@ -342,8 +356,11 @@ namespace BlendInt {
 				height > m_preferred_size.height())
 			return;
 
-		m_minimal_size.set_width(width);
-		m_minimal_size.set_height(height);
+		Size new_minimal_size(width, height);
+
+		update(FormPropertyMinimalSize, &new_minimal_size);
+
+		m_minimal_size = new_minimal_size;
 
 		fire_property_changed_event(FormPropertyMinimalSize);
 	}
@@ -355,10 +372,13 @@ namespace BlendInt {
 
 		if (m_position.equal(x, y)) return;
 
-		m_position.set_x(x);
-		m_position.set_y(y);
+		Point new_position(x, y);
 
-		// m_property_changed.fire(FormPropertyPosition);
+		update(FormPropertyPosition, &new_position);
+
+		m_position = new_position;
+
+		fire_property_changed_event(FormPropertyPosition);
 	}
 
 	void AbstractForm::set_position (const Point& pos)
@@ -368,9 +388,13 @@ namespace BlendInt {
 
 		if (m_position.equal(pos)) return;
 
-		m_position = pos;
+		Point new_position = pos;
 
-		//m_property_changed.fire(FormPropertyPosition);
+		update(FormPropertyPosition, &new_position);
+
+		m_position = new_position;
+
+		fire_property_changed_event(FormPropertyPosition);
 	}
 
 	void AbstractForm::reset_z (int z)
@@ -475,10 +499,13 @@ namespace BlendInt {
 				height < obj->m_minimal_size.height())
 			return;
 
-		obj->m_size.set_width(width);
-		obj->m_size.set_height(height);
+		Size new_size (width, height);
 
-		obj->update(FormPropertySize);
+		obj->update(FormPropertySize, &new_size);
+
+		obj->m_size = new_size;
+
+		obj->fire_property_changed_event(FormPropertySize);
 	}
 
 	void AbstractForm::resize_priv (AbstractForm* obj, const Size& size)
@@ -489,9 +516,13 @@ namespace BlendInt {
 				size.height() < obj->m_minimal_size.height())
 			return;
 
-		obj->m_size = size;
+		Size new_size = size;
 
-		obj->update(FormPropertySize);
+		obj->update(FormPropertySize, &new_size);
+
+		obj->m_size = new_size;
+
+		obj->fire_property_changed_event(FormPropertySize);
 	}
 
 #ifdef DEBUG

@@ -50,13 +50,15 @@ namespace BlendInt {
 
 	}
 
-	void ScrollControl::update (int property_type)
+	void ScrollControl::update (int type, const void* data)
 	{
-		switch(property_type)
+		switch(type)
 		{
-			case FormPropertySize:
-				update_shape(size());
+			case FormPropertySize: {
+				const Size* size_p = static_cast<const Size*>(data);
+				update_shape(size_p);
 				break;
+			}
 			case FormPropertyRoundCorner:
 				break;
 			default:
@@ -189,21 +191,21 @@ namespace BlendInt {
 		m_pressed = false;
 	}
 
-	void ScrollControl::update_shape(const Size& size)
+	void ScrollControl::update_shape(const Size* size)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 
 		VerticesSum vert_sum;
 
-		Orientation shadedir = size.width() < size.height() ? Horizontal : Vertical;
+		Orientation shadedir = size->width() < size->height() ? Horizontal : Vertical;
 
 		Color color = themes()->scroll.item;
 
 		if(shadedir)
-			set_radius(0.5f * size.height());
+			set_radius(0.5f * size->height());
 		else
-			set_radius(0.5f * size.width());
+			set_radius(0.5f * size->width());
 
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
@@ -296,7 +298,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		update(SliderPropertyValue);
+		update(SliderPropertyValue, 0);
 	}
 
 	SliderBar::SliderBar(Orientation orientation, AbstractForm* parent)
@@ -317,7 +319,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		update(SliderPropertyValue);
+		update(SliderPropertyValue, 0);
 	}
 
 	SliderBar::~SliderBar()
@@ -325,14 +327,15 @@ namespace BlendInt {
 
 	}
 
-	void SliderBar::update(int property_type)
+	void SliderBar::update(int type, const void* data)
 	{
-		if(property_type == FormPropertySize) {
-			update_shape(size());
+		if(type == FormPropertySize) {
+			const Size* size_p = static_cast<const Size*>(data);
+			update_shape(size_p);
 			return;
 		}
 
-		Slider::update(property_type);
+		Slider::update(type, data);
 	}
 
 	void SliderBar::render ()
@@ -412,7 +415,7 @@ namespace BlendInt {
 	}
 
 
-	void SliderBar::update_shape (const Size& size)
+	void SliderBar::update_shape (const Size* size)
 	{
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
@@ -489,7 +492,7 @@ namespace BlendInt {
 		}
 
 		m_scroll_control->set_position (position().x() + padding().left(), position().y() + padding().bottom());
-		update(SliderPropertyValue);
+		update(SliderPropertyValue, 0);
 	}
 
 	ScrollBar::ScrollBar (Orientation orientation, AbstractForm* parent)
@@ -512,16 +515,16 @@ namespace BlendInt {
 		}
 
 		m_scroll_control->set_position (position().x() + padding().left(), position().y() + padding().bottom());
-		update(SliderPropertyValue);
+		update(SliderPropertyValue, 0);
 	}
 
 	ScrollBar::~ScrollBar ()
 	{
 	}
 
-	void ScrollBar::update (int property_type)
+	void ScrollBar::update (int type, const void* data)
 	{
-		switch (property_type) {
+		switch (type) {
 
 			case FormPropertyPosition: {
 				const Point* new_pos = &(position());
@@ -530,7 +533,8 @@ namespace BlendInt {
 			}
 
 			case FormPropertySize: {
-				update_shape(size());
+				const Size* size_p = static_cast<const Size*>(data);
+				update_shape(size_p);
 				break;
 			}
 
@@ -550,7 +554,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollBar::update_shape(const Size& size)
+	void ScrollBar::update_shape(const Size* size)
 	{
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline

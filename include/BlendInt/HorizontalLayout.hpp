@@ -42,7 +42,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void update (int property_type);
+		virtual void update (int type, const void* data);
 
 		virtual void render ();
 
@@ -72,6 +72,11 @@ namespace BlendInt {
 		void make_layout ();
 
 		/**
+		 * @brief scan, distribute and align the items
+		 */
+		void make_layout (const Size* size);
+
+		/**
 		 * @brief distribute horizontally with preferred size
 		 */
 		void distribute_with_preferred_width ();
@@ -82,14 +87,29 @@ namespace BlendInt {
 		void distribute_with_small_width ();
 
 		/**
+		 * @brief distribute horizontally with small size
+		 */
+		void distribute_with_small_width (const Size* size);
+
+		/**
 		 * @brief distribute horizontally with large size
 		 */
 		void distribute_with_large_width ();
 
 		/**
+		 * @brief distribute horizontally with large size
+		 */
+		void distribute_with_large_width (const Size* size);
+
+		/**
 		 * @brief align horizontally
 		 */
 		void align ();
+
+		/**
+		 * @brief align horizontally
+		 */
+		void align (const Size* size);
 
 		/**
 		 * @brief reset the width of unexpandable items

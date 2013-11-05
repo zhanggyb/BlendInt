@@ -76,9 +76,6 @@ namespace BlendInt {
 		bind(object);
 		set_in_layout(object, true);
 		m_items.push_back(object);
-
-		update(LayoutPropertyItem);
-
 	}
 
 	bool AbstractLayout::remove (AbstractForm* object)
@@ -156,7 +153,7 @@ namespace BlendInt {
 		m_margin = new_value;
 	}
 
-	void AbstractLayout::update (int property_type)
+	void AbstractLayout::update (int type, const void* data)
 	{
 
 	}

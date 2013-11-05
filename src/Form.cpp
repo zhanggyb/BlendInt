@@ -84,20 +84,22 @@ namespace BlendInt {
 	{
 		if (m_round_type == type) return;
 
+		update (FormPropertyRoundCorner, &type);
+
 		m_round_type = type;
 
-		if(fire_events()) fire_property_changed_event(FormPropertyRoundCorner);
+		fire_property_changed_event(FormPropertyRoundCorner);
 	}
 
 	void Form::set_radius(float radius)
 	{
 		if (m_radius == radius) return;
 
+		update (FormPropertyRoundCorner, &radius);
+
 		m_radius = radius;
 
-		update (FormPropertyRoundCorner);
-
-		if(fire_events()) fire_property_changed_event(FormPropertyRoundCorner);
+		fire_property_changed_event(FormPropertyRoundCorner);
 	}
 
 	void Form::set_emboss(bool emboss)
@@ -141,11 +143,13 @@ namespace BlendInt {
 	{
 	}
 
-	void Form::update (int property_type)
+	void Form::update (int type, const void* data)
 	{
-		switch (property_type) {
+		switch (type) {
 
 			case FormPropertySize: {
+
+				const Size* size_p = static_cast<const Size*>(data);
 
 				// the basic widget don't use shaded color
 				float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
@@ -153,7 +157,7 @@ namespace BlendInt {
 
 				VerticesSum vert_sum;
 
-				vert_sum = generate_vertices(size(), inner_v, outer_v);
+				vert_sum = generate_vertices(size_p, inner_v, outer_v);
 
 				if(m_emboss) {
 					if(m_glbuffer.size() != 3)
@@ -197,6 +201,9 @@ namespace BlendInt {
 
 				break;
 			}
+
+			default:
+				break;
 		}
 	}
 
@@ -264,7 +271,7 @@ namespace BlendInt {
 		glPopMatrix();
 	}
 
-	void Form::update_shape(const Size& size)
+	void Form::update_shape(const Size* size)
 	{
 		// the basic widget don't use shaded color
 
@@ -316,7 +323,7 @@ namespace BlendInt {
 		}
 	}
 
-	Form::VerticesSum Form::generate_vertices(const Size& size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
+	Form::VerticesSum Form::generate_vertices(const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
 	{
 		float rad = radius();
 		float radi = rad - m_border_width;
@@ -325,8 +332,8 @@ namespace BlendInt {
 
 		float minx = 0.0;
 		float miny = 0.0;
-		float maxx = size.width();
-		float maxy = size.height();
+		float maxx = size->width();
+		float maxy = size->height();
 
 		float minxi = minx + m_border_width;		// U.pixelsize; // boundbox inner
 		float maxxi = maxx - m_border_width; 	// U.pixelsize;
@@ -343,8 +350,8 @@ namespace BlendInt {
 		const int vnum = ((round_type() & (RoundCornerTopLeft | RoundCornerBottomLeft)) == (RoundCornerTopLeft | RoundCornerBottomLeft) ||
 		                  (round_type() & (RoundCornerTopRight | RoundCornerBottomRight)) == (RoundCornerTopRight | RoundCornerBottomRight)) ? 1 : 2;
 
-		minsize = std::min(size.width() * hnum,
-		                 size.height() * vnum);
+		minsize = std::min(size->width() * hnum,
+		                 size->height() * vnum);
 
 		if (2.0f * radius() > minsize)
 			rad = 0.5f * minsize;
@@ -446,7 +453,7 @@ namespace BlendInt {
 		return sum;
 	}
 
-	Form::VerticesSum Form::generate_vertices (const Size& size,
+	Form::VerticesSum Form::generate_vertices (const Size* size,
 			const WidgetTheme* theme,
 			Orientation shadedir,
 			float inner[WIDGET_SIZE_MAX][6],
@@ -459,8 +466,8 @@ namespace BlendInt {
 
 		float minx = 0.0;
 		float miny = 0.0;
-		float maxx = size.width();
-		float maxy = size.height();
+		float maxx = size->width();
+		float maxy = size->height();
 
 		float minxi = minx + m_border_width;
 		float maxxi = maxx - m_border_width;
@@ -482,8 +489,8 @@ namespace BlendInt {
 		Color color_down = theme->inner + theme->shadedown;
 		Color shaded_color;
 
-		minsize = std::min(size.width() * hnum,
-		                 size.height() * vnum);
+		minsize = std::min(size->width() * hnum,
+		                 size->height() * vnum);
 
 		if (2.0f * radius() > minsize)
 			rad = 0.5f * minsize;
@@ -669,7 +676,7 @@ namespace BlendInt {
 		return sum;
 	}
 
-	Form::VerticesSum Form::generate_vertices (const Size& size,
+	Form::VerticesSum Form::generate_vertices (const Size* size,
 			const Color& color,
 			short shadetop,
 			short shadedown,
@@ -684,8 +691,8 @@ namespace BlendInt {
 
 		float minx = 0.0;
 		float miny = 0.0;
-		float maxx = size.width();
-		float maxy = size.height();
+		float maxx = size->width();
+		float maxy = size->height();
 
 		float minxi = minx + m_border_width;
 		float maxxi = maxx - m_border_width;
@@ -707,8 +714,8 @@ namespace BlendInt {
 		Color color_down = color + shadedown;
 		Color shaded_color;
 
-		minsize = std::min(size.width() * hnum,
-		                 size.height() * vnum);
+		minsize = std::min(size->width() * hnum,
+		                 size->height() * vnum);
 
 		if (2.0f * radius() > minsize)
 			rad = 0.5f * minsize;

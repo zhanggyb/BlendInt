@@ -41,7 +41,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void update (int property_type);
+		virtual void update (int type, const void* data);
 
 		virtual void render ();
 
@@ -53,7 +53,7 @@ namespace BlendInt {
 
 	private:
 
-		void update_shape (const Size& size);
+		void update_shape (const Size* size);
 
 		Point m_move_start;
 
@@ -84,7 +84,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void update (int property_type);
+		virtual void update (int type, const void* data);
 
 		virtual void render ();
 

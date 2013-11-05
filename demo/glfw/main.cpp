@@ -38,7 +38,7 @@ public:
 	DoEvent()
 	: i(0)
 	{
-		m_layout.set_position(100, 600);
+		m_layout.set_position(600, 100);
 		//m_hlayout.resize(400, 100);
 //		m_hlayout.set_sizing_mode(LayoutFixed);
 //		m_hlayout.set_margin(5, 5, 5, 5);
@@ -105,8 +105,8 @@ private:
 
 //	VerticalLayout *m_vlayout;
 
-	HorizontalLayout m_layout;
-//	VerticalLayout m_layout;
+//	HorizontalLayout m_layout;
+	VerticalLayout m_layout;
 
 	std::vector<Button*> m_buttons;
 
@@ -196,10 +196,18 @@ int main(int argc, char* argv[])
 
 	// -----------------------
 
+	Cpp::ConnectionScope events;
+
+	Button* reset_button = new Button;
+	reset_button->set_text("Reset");
+	reset_button->move(640, 300);
+
+	app->bind(reset_button);
+
 	ScrollView* scroll_view = new ScrollView;
 
 	scroll_view->set_position(200, 200);
-	scroll_view->set_orientation(Vertical);
+//	scroll_view->set_orientation(Vertical);
 	scroll_view->resize(400, 400);
 
 	Button* button = new Button;
@@ -208,6 +216,17 @@ int main(int argc, char* argv[])
 	scroll_view->set_viewport(button);
 
 	app->bind(scroll_view);
+
+	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
+
+	Label* label = new Label("Hello World!");
+
+	label->set_position(50, 50);
+
+	label->set_text ("alsdkjflasdjflasfnvlkasefage");
+	label->resize(80, 40);
+
+	app->bind(label);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

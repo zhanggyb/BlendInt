@@ -50,17 +50,14 @@ namespace BlendInt {
 
 	}
 
-	void HorizontalLayout::update (int property_type)
+	void HorizontalLayout::update (int type, const void* data)
 	{
-		switch (property_type) {
+		switch (type) {
 
 			case FormPropertySize: {
+				const Size* size_p = static_cast<const Size*>(data);
 				if(items().size())
-					make_layout();
-				return;
-			}
-
-			case LayoutPropertyItem: {
+					make_layout(size_p);
 				return;
 			}
 
@@ -184,7 +181,7 @@ namespace BlendInt {
 		if(! (current_size == size()))
 			resize_priv(this, current_size);	// call make_layout() through this function
 		else
-			make_layout();
+			make_layout(&current_size);
 
 		activate_events();
 		form->activate_events();
@@ -240,7 +237,7 @@ namespace BlendInt {
 		if(! (current_size == size()))
 			resize_priv(this, current_size);	// call make_layout() through this function
 		else
-			make_layout();
+			make_layout(&current_size);
 
 		activate_events();
 		layout->activate_events();
@@ -297,6 +294,19 @@ namespace BlendInt {
 		align();
 	}
 
+	void HorizontalLayout::make_layout (const Size* size)
+	{
+		if (size->width() == preferred_size().width()) {
+			distribute_with_preferred_width();			// layout along x with preferred size
+		} else if (size->width() < preferred_size().width()) {
+			distribute_with_small_width(size);			// layout along x with small size
+		} else {
+			distribute_with_large_width(size);			// layout along x with large size
+		}
+
+		align(size);
+	}
+
 	void HorizontalLayout::distribute_with_preferred_width()
 	{
 		int x = position().x() + margin().left();
@@ -321,6 +331,80 @@ namespace BlendInt {
 		unsigned int fixed_w = fixed_width();
 
 		unsigned int current_width = size().width();
+
+		unsigned int w_plus = margin().left() + margin().right();
+
+		std::vector<AbstractForm*>::iterator it;
+		AbstractForm* child = 0;
+		int x = position().x() + margin().left();
+
+		if((current_width - w_plus) >=
+				(min_exp_w + fixed_w + (items().size() - 1) * space())) {
+
+			unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space();
+			single_width = single_width / m_expandable_items.size();
+
+			for(it = items().begin(); it != items().end(); it++)
+			{
+				if(! (it == items().begin()))
+					x += space();
+
+				child = *it;
+
+				if(m_expandable_items.count(child)) {
+					resize_priv(child, single_width, child->size().height());
+				} else {
+					resize_priv(child, child->preferred_size().width(), child->size().height());
+				}
+
+				set_pos_priv(child, x, child->position().y());
+				x += child->size().width();
+			}
+
+		} else {
+
+			std::set<AbstractForm*> normal_items(m_fixed_items);	// set of unminimized items
+			//size_t unminimal_items_size = m_xunexpandable_items.size();
+
+			unsigned int unminimal_width = current_width - w_plus - min_exp_w - (items().size() - 1) * space();
+			unsigned int w = unminimal_width / normal_items.size();
+
+			for(it = items().begin(); it != items().end(); it++)
+			{
+				if(! (it == items().begin()))
+					x += space();
+
+				child = *it;
+
+				if(m_expandable_items.count(child)) {
+					resize_priv(child, child->minimal_size().width(), child->size().height());
+				} else {
+
+					if(w < child->minimal_size().width()) {
+						resize_priv(child, child->minimal_size().width(), child->size().height());
+						normal_items.erase(child);
+						unminimal_width = unminimal_width - child->minimal_size().width();
+						w = unminimal_width / normal_items.size();
+						reset_width_of_fixed_items(&normal_items, w);
+					} else {
+						resize_priv(child, w, child->size().height());
+					}
+
+				}
+
+				set_pos_priv(child, x, child->position().y());
+				x += child->size().width();
+			}
+
+		}
+	}
+
+	void HorizontalLayout::distribute_with_small_width(const Size* size)
+	{
+		unsigned int min_exp_w = minimal_expandable_width();
+		unsigned int fixed_w = fixed_width();
+
+		unsigned int current_width = size->width();
 
 		unsigned int w_plus = margin().left() + margin().right();
 
@@ -426,6 +510,43 @@ namespace BlendInt {
 
 	}
 
+	void HorizontalLayout::distribute_with_large_width(const Size* size)
+	{
+		unsigned int fixed_w = fixed_width();
+
+		unsigned int current_width = size->width();
+
+		unsigned int w_plus = margin().left() + margin().right();
+
+		std::vector<AbstractForm*>::iterator it;
+		AbstractForm* child = 0;
+		int x = position().x() + margin().left();
+
+		unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space();
+
+		if(m_expandable_items.size())
+			single_width = single_width / m_expandable_items.size();
+
+		for(it = items().begin(); it != items().end(); it++)
+		{
+			if (!(it == items().begin()))
+				x += space();
+
+			child = *it;
+
+			if (m_expandable_items.count(child)) {
+				resize_priv(child, single_width, child->size().height());
+			} else {
+				resize_priv(child, child->preferred_size().width(),
+				        child->size().height());
+			}
+
+			set_pos_priv(child, x, child->position().y());
+			x += child->size().width();
+		}
+
+	}
+
 	void HorizontalLayout::align()
 	{
 		int y = position().y() + margin().bottom();
@@ -457,6 +578,39 @@ namespace BlendInt {
 			}
 		}
 	}
+
+	void HorizontalLayout::align(const Size* size)
+	{
+		int y = position().y() + margin().bottom();
+
+		unsigned int h = size->height() - margin().top() - margin().bottom();
+
+		std::vector<AbstractForm*>::iterator it;
+		AbstractForm* child = 0;
+		for(it = items().begin(); it != items().end(); it++)
+		{
+			child = *it;
+
+			if (child->expand_y() ||
+					(child->size().height() > h)) {
+				resize_priv(child, child->size().width(), h);
+				set_pos_priv(child, child->position().x(), y);
+			} else {
+
+				if (alignment() & AlignTop) {
+					set_pos_priv(child, child->position().x(),
+					        y + (h - child->size().height()));
+				} else if (alignment() & AlignBottom) {
+					set_pos_priv(child, child->position().x(), y);
+				} else if (alignment() & AlignHorizontalCenter) {
+					set_pos_priv(child, child->position().x(),
+					        y + (h - child->size().height()) / 2);
+				}
+
+			}
+		}
+	}
+
 
 	void HorizontalLayout::reset_width_of_fixed_items(
 			std::set<AbstractForm*>* items, unsigned int width)

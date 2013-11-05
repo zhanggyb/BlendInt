@@ -61,7 +61,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void update (int property_type);
+		virtual void update (int type, const void* data);
 
 		virtual void render ();
 

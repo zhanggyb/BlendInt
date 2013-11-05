@@ -79,7 +79,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void update (int property_type);
+		virtual void update (int type, const void* data);
 
 		virtual void render ();
 
@@ -90,6 +90,12 @@ namespace BlendInt {
 		 * @return how many characters to print
 		 */
 		size_t get_valid_text_size ();
+
+		/**
+		 * @brief get the valid text size to print
+		 * @return how many characters to print
+		 */
+		size_t get_valid_text_size (const Size* size);
 
 		/**
 		 * @brief the text of the label

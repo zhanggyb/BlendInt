@@ -94,11 +94,11 @@ namespace BlendInt {
 		generate_default_layout();
 	}
 
-	bool TableLayout::update (int type, const void* property)
+	void TableLayout::update (int type, const void* property)
 	{
 		if(parent().type == ParentForm) {
 
-			return true;
+			return;
 
 		} else {
 
@@ -106,8 +106,8 @@ namespace BlendInt {
 
 				if (property) {
 
-					if (generate_layout(static_cast<const Size*>(property))) return true;
-					else return false;
+					if (generate_layout(static_cast<const Size*>(property))) return;
+					else return;
 
 				} else {	// this is called when adding widget or layout
 
@@ -118,8 +118,6 @@ namespace BlendInt {
 				}
 			}
 		}
-
-		return true;
 	}
 
 	void TableLayout::render ()

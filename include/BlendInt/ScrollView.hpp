@@ -29,7 +29,10 @@
 namespace BlendInt {
 
 	/**
-	 * @brief A widget container in which the sub widget can be scrolled
+	 * @brief A widget container in which a sub widget can be scrolled
+	 *
+	 * The sub widget is named as a viewport and it's usually larger than
+	 * the ScrollView
 	 */
 	class ScrollView: public Widget
 	{
@@ -52,9 +55,17 @@ namespace BlendInt {
 
 		void set_viewport (AbstractForm* viewport);
 
+		/**
+		 * @brief reset the viewport position to the same position of this
+		 * widget (counting padding)
+		 */
+		void reset_viewport_position ();
+
 		const AbstractForm* viewport () const {return m_viewport;}
 
 	protected:
+
+		virtual void update (int type, const void* data);
 
 		virtual void render ();
 
