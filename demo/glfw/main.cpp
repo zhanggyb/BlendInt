@@ -26,6 +26,7 @@
 #include <BlendInt/ScrollBar.hpp>
 #include <BlendInt/GLBuffer.hpp>
 #include <BlendInt/VertexIcon.hpp>
+#include <BlendInt/ScrollView.hpp>
 
 using namespace BlendInt;
 using namespace std;
@@ -37,7 +38,7 @@ public:
 	DoEvent()
 	: i(0)
 	{
-		m_layout.set_position(300, 400);
+		m_layout.set_position(100, 600);
 		//m_hlayout.resize(400, 100);
 //		m_hlayout.set_sizing_mode(LayoutFixed);
 //		m_hlayout.set_margin(5, 5, 5, 5);
@@ -180,62 +181,33 @@ int main(int argc, char* argv[])
 
 	Button* add_button = new Button;
 	add_button->set_text("Add Button");
-	add_button->set_position(450, 600);
+	add_button->set_position(600, 700);
 
 	obj.connect_add(add_button);
 
 	Button* remove_button = new Button;
 	remove_button->set_text("Remove Button");
-	remove_button->set_position(550, 600);
+	remove_button->set_position(600, 650);
 
 	obj.connect_remove(remove_button);
 
 	app->bind(add_button);
 	app->bind(remove_button);
 
-	HorizontalLayout* layout = new HorizontalLayout;
+	// -----------------------
 
-	layout->set_position(100, 100);
+	ScrollView* scroll_view = new ScrollView;
 
-	Button* b1 = new Button;
-	Button* b2 = new Button;
-	Button* b3 = new Button;
-	Button* b4 = new Button;
+	scroll_view->set_position(200, 200);
+	scroll_view->set_orientation(Vertical);
+	scroll_view->resize(400, 400);
 
-	layout->add(b1);
-	layout->add(b2);
-	layout->add(b3);
-	layout->add(b4);
+	Button* button = new Button;
+	button->move(205, 205);
 
-	app->bind(layout);
+	scroll_view->set_viewport(button);
 
-	Label* label1 = new Label("Hello World");
-
-	label1->set_position(300, 50);
-	label1->set_background(Color(0xF0E04080));
-
-	app->bind(label1);
-
-	Label* label2 = new Label("yes, google,alsfjwoeivnldljfweigblasdflJGALKGJ");
-	label2->set_background(Color(0xF0E04080));
-
-	label2->set_position(label1->position().x() + label1->size().width(), 50);
-
-	app->bind(label2);
-
-	label1->set_font(Font("Droid Sans"));
-	label2->set_font(Font("Droid Sans"));
-
-	layout->add(label1);
-	layout->add(label2);
-
-	Label* label3 = new Label("abcdefghi");
-
-	label3->set_position(300, 150);
-	label3->set_background(Color(0xF0E04080));
-//	label3->resize(label3->preferred_size());
-
-	app->bind(label3);
+	app->bind(scroll_view);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
