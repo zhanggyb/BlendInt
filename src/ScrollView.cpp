@@ -131,62 +131,115 @@ namespace BlendInt {
 	void ScrollView::press_mouse(MouseEvent* event)
 	{
 		if(contain(event->position())) {
+
+			if(!m_viewport) return;
+
 			if (event->button() == MouseButtonMiddle) {
 
-				if(m_viewport) {
-
-					m_move_status = true;
-					m_move_start_pos.set_x(event->position().x());
-					m_move_start_pos.set_y(event->position().y());
-					m_origin_pos = m_viewport->position();
-				}
+				m_move_status = true;
+				m_move_start_pos.set_x(event->position().x());
+				m_move_start_pos.set_y(event->position().y());
+				m_origin_pos = m_viewport->position();
+			} else {
+				Interface::instance()->dispatch_mouse_press_event(m_viewport, event);
 			}
+
 		}
 	}
 
 	void ScrollView::release_mouse(MouseEvent* event)
 	{
 		if(m_move_status) m_move_status = false;
+
+		if(!m_viewport) return;
+		Interface::instance()->dispatch_mouse_release_event(m_viewport, event);
 	}
 
 	void ScrollView::move_mouse(MouseEvent* event)
 	{
+		if(!m_viewport) return;
+
 		if(m_move_status) {
-			if(m_viewport) {
 
-				if(m_orientation == Horizontal) {
+			int view_width = size().width() - padding().left() - padding().right();
+			int view_height = size().height() - padding().top() - padding().bottom();
 
-					m_viewport->set_position(m_origin_pos.x() + event->position().x() - m_move_start_pos.x(), m_viewport->position().y());
+			if (m_orientation == Horizontal) {
 
-					int x_min = position().x() + padding().left();
-					int x_max = position().x() + size().width() - padding().right() - m_viewport->size().width();
+				int x_min = position().x() + padding().left() - (m_viewport->size().width() - view_width);
+				int x_max = position().x() + padding().left();
 
-					if(m_viewport->position().x() < x_min) {
-						m_viewport->set_position(x_min, m_viewport->position().y());
-					}
+				m_viewport->set_position(
+				        m_origin_pos.x() + event->position().x()
+				                - m_move_start_pos.x(),
+				        m_viewport->position().y());
 
-					if(m_viewport->position().x() > x_max) {
-						m_viewport->set_position(x_max, m_viewport->position().y());
-					}
-				} else if(m_orientation == Vertical) {
+				if(x_min > x_max) x_min = x_max;
 
-					m_viewport->set_position(m_viewport->position().x(), m_origin_pos.y() + event->position().y() - m_move_start_pos.y());
-
-					int y_min = position().y() + padding().bottom();
-					int y_max = position().y() + size().height() - padding().top() - m_viewport->size().height();
-
-					if(m_viewport->position().y() < y_min) {
-						m_viewport->set_position(m_viewport->position().x(), y_min);
-					}
-
-					if(m_viewport->position().y() > y_max) {
-						m_viewport->set_position(m_viewport->position().x(), y_max);
-					}
-
-				} else {
-					m_viewport->move(event->position().x() - m_origin_pos.x(), event->position().y() - m_origin_pos.y());
+				if (m_viewport->position().x() < x_min) {
+					m_viewport->set_position(x_min, m_viewport->position().y());
 				}
+
+				if (m_viewport->position().x() > x_max) {
+					m_viewport->set_position(x_max, m_viewport->position().y());
+				}
+
+			} else if (m_orientation == Vertical) {
+
+				int y_min = position().y() + padding().bottom() - (m_viewport->size().height() - view_height);
+				int y_max = position().y() + padding().bottom();
+
+				m_viewport->set_position(m_viewport->position().x(),
+				        m_origin_pos.y() + event->position().y()
+				                - m_move_start_pos.y());
+
+				if(y_min > y_max) y_min = y_max;
+
+				if (m_viewport->position().y() < y_min) {
+					m_viewport->set_position(m_viewport->position().x(), y_min);
+				}
+
+				if (m_viewport->position().y() > y_max) {
+					m_viewport->set_position(m_viewport->position().x(), y_max);
+				}
+
+			} else {
+				m_viewport->set_position(
+				        m_origin_pos.x() + event->position().x()
+				                - m_move_start_pos.x(),
+				        m_origin_pos.y() + event->position().y()
+				                - m_move_start_pos.y());
+
+//				int x_min = position().x() + padding().left() - (m_viewport->size().width() - view_width);
+//				int x_max = position().x() + padding().left();
+//				if(x_min > x_max) x_min = x_max;
+//
+//				int y_min = position().y() + padding().bottom() - (m_viewport->size().height() - view_height);
+//				int y_max = position().y() + padding().bottom();
+//				if(y_min > y_max) y_min = y_max;
+//
+//				if (m_viewport->position().x() < x_min) {
+//					m_viewport->set_position(x_min, m_viewport->position().y());
+//				}
+//
+//				if (m_viewport->position().x() > x_max) {
+//					m_viewport->set_position(x_max, m_viewport->position().y());
+//				}
+//				if (m_viewport->position().y() < y_min) {
+//					m_viewport->set_position(m_viewport->position().x(), y_min);
+//				}
+//
+//				if (m_viewport->position().y() > y_max) {
+//					m_viewport->set_position(m_viewport->position().x(), y_max);
+//				}
+
 			}
+
+			return;
+		}
+
+		if(contain(event->position())) {
+			Interface::instance()->dispatch_mouse_move_event(m_viewport, event);
 		}
 	}
 

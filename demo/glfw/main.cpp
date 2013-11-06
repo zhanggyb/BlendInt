@@ -207,10 +207,12 @@ int main(int argc, char* argv[])
 	ScrollView* scroll_view = new ScrollView;
 
 	scroll_view->set_position(200, 200);
-//	scroll_view->set_orientation(Vertical);
+	scroll_view->set_orientation(2);
 	scroll_view->resize(400, 400);
 
 	Button* button = new Button;
+	button->set_text("Hello World!");
+//	button->resize(80, 600);
 	button->move(205, 205);
 
 	scroll_view->set_viewport(button);
