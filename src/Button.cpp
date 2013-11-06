@@ -33,7 +33,7 @@ namespace BlendInt {
 	Button::Button ()
 			: AbstractButton()
 	{
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		set_expand_x(true);
 		resize(90, 25);
 		set_preferred_size(90, 24);
@@ -42,7 +42,7 @@ namespace BlendInt {
 	Button::Button (const String& text)
 			: AbstractButton()
 	{
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		set_expand_x(true);
 		set_text(text);
 		set_preferred_size(size());
@@ -51,7 +51,7 @@ namespace BlendInt {
 	Button::Button (AbstractForm* parent)
 			: AbstractButton(parent)
 	{
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		set_expand_x(true);
 		resize (90, 25);
 		set_preferred_size(90, 24);
@@ -60,7 +60,7 @@ namespace BlendInt {
 	Button::Button (const String& text, AbstractForm* parent)
 			: AbstractButton(parent)
 	{
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		set_expand_x(true);
 		set_text(text);
 		set_preferred_size(size());

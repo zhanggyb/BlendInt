@@ -20,6 +20,7 @@
 #include <BlendInt/ScrollWidget.hpp>
 #include <BlendInt/Slider.hpp>
 #include <BlendInt/Frame.hpp>
+#include <BlendInt/ScrollView.hpp>
 
 GLWindow::GLWindow(QWidget *parent) :
     QGLWidget(parent)
@@ -44,120 +45,48 @@ void GLWindow::initializeGL()
   
   app->resize(size().width(), size().height());
 
-	Slider* hslider1 = new Slider;
-	hslider1->set_pos(100, 30);
-	hslider1->set_name("hslider1");
+	Button* add_button = new Button;
+	add_button->set_text("Add Button");
+	add_button->set_position(600, 700);
 
-	Slider* hslider2 = new Slider;
-	hslider2->set_pos(100, 60);
-	hslider2->set_name("hslider2");
+	Button* remove_button = new Button;
+	remove_button->set_text("Remove Button");
+	remove_button->set_position(600, 650);
 
-	Slider* hslider3 = new Slider;
-	hslider3->set_pos(100, 90);
-	hslider3->set_name("hslider3");
+	app->bind(add_button);
+	app->bind(remove_button);
 
-	Slider* hslider4 = new Slider;
-	hslider4->set_pos(100, 120);
-	hslider4->set_name("hslider4");
+	// -----------------------
 
-	Slider* hslider5 = new Slider;
-	hslider5->set_pos(100, 150);
-	hslider5->set_name("hslider4");
+	Button* reset_button = new Button;
+	reset_button->set_text("Reset");
+	reset_button->move(640, 300);
 
-	Slider* hslider6 = new Slider;
-	hslider6->set_pos(100, 180);
-	hslider6->set_name("hslider6");
+	app->bind(reset_button);
 
-	Slider* hslider7 = new Slider;
-	hslider7->set_pos(100, 210);
-	hslider7->set_name("hslider7");
+	ScrollView* scroll_view = new ScrollView;
 
-	Slider* hslider8 = new Slider;
-	hslider8->set_pos(100, 240);
-	hslider8->set_name("hslider8");
+	scroll_view->set_position(200, 200);
+	scroll_view->set_orientation(2);
+	scroll_view->resize(400, 400);
 
-	Slider* hslider9 = new Slider;
-	hslider9->set_pos(100, 270);
-	hslider9->set_name("hslider9");
+	Button* button = new Button;
+	button->set_text("Hello World!");
+//	button->resize(80, 600);
+	button->move(205, 205);
 
-	Slider* hslider10 = new Slider;
-	hslider10->set_pos(100, 300);
-	hslider10->set_name("hslider10");
+	scroll_view->set_viewport(button);
 
-	Slider* hslider11 = new Slider;
-	hslider11->set_pos(100, 330);
-	hslider11->set_name("hslider11");
+	app->bind(scroll_view);
 
-	Slider* hslider12 = new Slider;
-	hslider12->set_pos(100, 360);
-	hslider12->set_name("hslider12");
+	Label* label = new Label("Hello World!");
 
-	Slider* hslider13 = new Slider;
-	hslider13->set_pos(100, 390);
-	hslider13->set_name("hslider13");
+	label->set_position(50, 50);
 
-	Slider* hslider14 = new Slider;
-	hslider14->set_pos(100, 420);
-	hslider14->set_name("hslider14");
-
-	Slider* hslider15 = new Slider;
-	hslider15->set_pos(100, 450);
-	hslider15->set_name("hslider15");
-
-	Slider* hslider16 = new Slider;
-	hslider16->set_pos(100, 480);
-	hslider16->set_name("hslider16");
-
-	Slider* vslider = new Slider(Vertical);
-	vslider->set_pos(50, 250);
-	vslider->set_name("vslider");
-
-//	app->bind(widget);
-//	app->bind(button);
-//	app->bind(toggle);
-
-	app->bind(hslider1);
-	app->bind(hslider2);
-	app->bind(hslider3);
-	app->bind(hslider4);
-	app->bind(hslider5);
-	app->bind(hslider6);
-	app->bind(hslider7);
-	app->bind(hslider8);
-	app->bind(hslider9);
-	app->bind(hslider10);
-	app->bind(hslider11);
-	app->bind(hslider12);
-	app->bind(hslider13);
-	app->bind(hslider14);
-	app->bind(hslider15);
-	app->bind(hslider16);
-
-	app->bind(vslider);
-
-	app->events().connect(hslider1->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider2->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider3->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider4->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider5->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider6->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider7->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider8->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider9->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider10->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider11->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider12->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider13->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider14->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider15->slider_moved(), vslider, &AbstractSlider::set_value);
-	app->events().connect(hslider16->slider_moved(), vslider, &AbstractSlider::set_value);
-
-	Frame* frame = new Frame;
-
-	frame->resize(400, 400);
-	frame->set_pos(400, 200);
-
-	app->bind(frame);
+	label->set_text ("alsdkjflasdjflasfnvlkasefage");
+	label->resize(80, 40);
+	
+	app->bind(label);
 }
 
 void GLWindow::resizeGL(int w, int h)
@@ -175,8 +104,8 @@ void GLWindow::paintGL()
 
 void GLWindow::mouseMoveEvent (QMouseEvent* event)
 {
-   //std::cout << event->x() << " " << event->y() << std::endl;
-   // std::cout << event->pos().x() << " " << event->pos().y() << std::endl;
+    //std::cout << event->x() << " " << event->y() << std::endl;
+    //std::cout << event->pos().x() << " " << event->pos().y() << std::endl;
 
     BlendInt::Interface::instance()->cursorPosEvent((double)event->x(),
            (double) event->y());
@@ -194,9 +123,9 @@ void GLWindow::mousePressEvent (QMouseEvent* event)
             break;
         case Qt::RightButton:
             button = BlendInt::MouseButtonRight;
+            break;
         default:
             break;
-
     };
 
     int qt_mods = event->modifiers();
@@ -225,6 +154,7 @@ void GLWindow::mouseReleaseEvent (QMouseEvent* event)
             break;
         case Qt::RightButton:
             button = BlendInt::MouseButtonRight;
+            break;
         default:
             break;
 

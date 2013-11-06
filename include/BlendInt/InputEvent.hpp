@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_INPUTEVENT_HPP_
 #define _BLENDINT_INPUTEVENT_HPP_
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Input.hpp>
 #include <BlendInt/Event.hpp>
 
 namespace BlendInt {

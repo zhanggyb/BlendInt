@@ -399,6 +399,8 @@ namespace BlendInt {
 		set<AbstractForm*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
+        event.set_position(cursor_pos_x_, cursor_pos_y_);
+
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
 			set<AbstractForm*>* pset = map_it->second;
@@ -406,7 +408,6 @@ namespace BlendInt {
 			{
 				if(!(*set_it)->visible()) break;
 
-				event.set_position(cursor_pos_x_, cursor_pos_y_);
 				switch (action) {
 					case GLFW_PRESS:
 						dispatch_mouse_press_event((*set_it), &event);
@@ -444,6 +445,8 @@ namespace BlendInt {
 		set<AbstractForm*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
+        event.set_position(cursor_pos_x_, cursor_pos_y_);
+
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
 			set<AbstractForm*>* pset = map_it->second;
@@ -451,7 +454,6 @@ namespace BlendInt {
 			{
 				if(!(*set_it)->visible()) break;
 
-				event.set_position(cursor_pos_x_, cursor_pos_y_);
 				dispatch_mouse_move_event((*set_it), &event);
 
 				if(event.ignored()) break;

@@ -33,7 +33,7 @@ namespace BlendInt {
 			: AbstractButton()
 	{
 		set_checkable(true);
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		resize(90, 25);
 	}
 
@@ -41,7 +41,7 @@ namespace BlendInt {
 			: AbstractButton()
 	{
 		set_checkable(true);
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		set_text(text);
 	}
 
@@ -49,7 +49,7 @@ namespace BlendInt {
 			: AbstractButton(parent)
 	{
 		set_checkable(true);
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		resize (90, 25);
 	}
 
@@ -57,7 +57,7 @@ namespace BlendInt {
 			: AbstractButton(parent)
 	{
 		set_checkable(true);
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		set_text(text);
 	}
 

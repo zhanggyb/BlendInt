@@ -53,13 +53,19 @@ namespace BlendInt {
 
 		m_viewport = viewport;
 		bind (m_viewport);
-		m_viewport->set_position(position().x() + padding().left(), position().y() + padding().right());
+		reset_viewport_position();
 	}
 
 	void ScrollView::reset_viewport_position()
 	{
 		if(m_viewport) {
-			m_viewport->set_position(position().x() + padding().left(), position().y() + padding().right());
+			int w = size().width() - padding().left() - padding().right();
+			int h = size().height() - padding().top() - padding().bottom();
+
+			int x = position().x() + padding().left() + (w - static_cast<int>(m_viewport->size().width())) / 2;
+			int y = position().y() + padding().bottom() + (h - static_cast<int>(m_viewport->size().height())) / 2;
+
+			m_viewport->set_position(x, y);
 		}
 	}
 
@@ -87,18 +93,18 @@ namespace BlendInt {
 				size().height() - padding().top() - padding().bottom());
 
 		// test code
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glColor4f(0.2f, 0.05f, 0.2f, 0.5f);
-		glBegin(GL_POLYGON);
-			glVertex2d(50,50);
-			glVertex2d(1200,50);
-			glVertex2d(1200,1200);
-			glVertex2d(50,1200);
-		glEnd();
-
-		glDisable(GL_BLEND);
+//		glEnable(GL_BLEND);
+//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//
+//		glColor4f(0.2f, 0.05f, 0.2f, 0.5f);
+//		glBegin(GL_POLYGON);
+//			glVertex2d(50,50);
+//			glVertex2d(1200,50);
+//			glVertex2d(1200,1200);
+//			glVertex2d(50,1200);
+//		glEnd();
+//
+//		glDisable(GL_BLEND);
 
 		if(m_viewport) interface()->dispatch_render_event(m_viewport);
 
@@ -161,78 +167,61 @@ namespace BlendInt {
 
 		if(m_move_status) {
 
-			int view_width = size().width() - padding().left() - padding().right();
-			int view_height = size().height() - padding().top() - padding().bottom();
+			int w = size().width() - padding().left() - padding().right();
+			int h = size().height() - padding().top() - padding().bottom();
 
-			if (m_orientation == Horizontal) {
+			if (m_orientation & Horizontal) {
 
-				int x_min = position().x() + padding().left() - (m_viewport->size().width() - view_width);
-				int x_max = position().x() + padding().left();
+				if (w < m_viewport->size().width()) {
+					int x_min = position().x() + padding().left()
+					        - (m_viewport->size().width() - w);
+					int x_max = position().x() + padding().left();
+					if (x_min > x_max)
+						x_min = x_max;
 
-				m_viewport->set_position(
-				        m_origin_pos.x() + event->position().x()
-				                - m_move_start_pos.x(),
-				        m_viewport->position().y());
+					m_viewport->set_position(
+					        m_origin_pos.x() + event->position().x()
+					                - m_move_start_pos.x(),
+					        m_viewport->position().y());
 
-				if(x_min > x_max) x_min = x_max;
+					if (m_viewport->position().x() < x_min) {
+						m_viewport->set_position(x_min,
+						        m_viewport->position().y());
+					}
 
-				if (m_viewport->position().x() < x_min) {
-					m_viewport->set_position(x_min, m_viewport->position().y());
+					if (m_viewport->position().x() > x_max) {
+						m_viewport->set_position(x_max,
+						        m_viewport->position().y());
+					}
+
 				}
+			}
 
-				if (m_viewport->position().x() > x_max) {
-					m_viewport->set_position(x_max, m_viewport->position().y());
+			if (m_orientation & Vertical) {
+
+				if (h < m_viewport->size().height()) {
+					int y_min = position().y() + padding().bottom()
+					        - (m_viewport->size().height() - h);
+					int y_max = position().y() + padding().bottom();
+
+					if (y_min > y_max)
+						y_min = y_max;
+
+					m_viewport->set_position(m_viewport->position().x(),
+					        m_origin_pos.y() + event->position().y()
+					                - m_move_start_pos.y());
+
+
+					if (m_viewport->position().y() < y_min) {
+						m_viewport->set_position(m_viewport->position().x(),
+						        y_min);
+					}
+
+					if (m_viewport->position().y() > y_max) {
+						m_viewport->set_position(m_viewport->position().x(),
+						        y_max);
+					}
 				}
-
-			} else if (m_orientation == Vertical) {
-
-				int y_min = position().y() + padding().bottom() - (m_viewport->size().height() - view_height);
-				int y_max = position().y() + padding().bottom();
-
-				m_viewport->set_position(m_viewport->position().x(),
-				        m_origin_pos.y() + event->position().y()
-				                - m_move_start_pos.y());
-
-				if(y_min > y_max) y_min = y_max;
-
-				if (m_viewport->position().y() < y_min) {
-					m_viewport->set_position(m_viewport->position().x(), y_min);
-				}
-
-				if (m_viewport->position().y() > y_max) {
-					m_viewport->set_position(m_viewport->position().x(), y_max);
-				}
-
-			} else {
-				m_viewport->set_position(
-				        m_origin_pos.x() + event->position().x()
-				                - m_move_start_pos.x(),
-				        m_origin_pos.y() + event->position().y()
-				                - m_move_start_pos.y());
-
-//				int x_min = position().x() + padding().left() - (m_viewport->size().width() - view_width);
-//				int x_max = position().x() + padding().left();
-//				if(x_min > x_max) x_min = x_max;
-//
-//				int y_min = position().y() + padding().bottom() - (m_viewport->size().height() - view_height);
-//				int y_max = position().y() + padding().bottom();
-//				if(y_min > y_max) y_min = y_max;
-//
-//				if (m_viewport->position().x() < x_min) {
-//					m_viewport->set_position(x_min, m_viewport->position().y());
-//				}
-//
-//				if (m_viewport->position().x() > x_max) {
-//					m_viewport->set_position(x_max, m_viewport->position().y());
-//				}
-//				if (m_viewport->position().y() < y_min) {
-//					m_viewport->set_position(m_viewport->position().x(), y_min);
-//				}
-//
-//				if (m_viewport->position().y() > y_max) {
-//					m_viewport->set_position(m_viewport->position().x(), y_max);
-//				}
-
 			}
 
 			return;

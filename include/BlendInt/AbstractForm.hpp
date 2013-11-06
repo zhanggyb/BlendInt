@@ -64,7 +64,7 @@ namespace BlendInt {
 		FormPropertySize,
 		FormPropertyMinimalSize,
 		FormPropertyPreferredSize,
-		FormPropertyRoundCorner,
+		FormPropertyCorner,
 		FormPropertyVisibility,
 		FormPropertyExpandX,
 		FormPropertyExpandY,

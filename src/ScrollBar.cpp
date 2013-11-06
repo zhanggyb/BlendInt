@@ -33,7 +33,7 @@ namespace BlendInt {
 	: Widget(), m_pressed(false)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		set_emboss(false);
 	}
 
@@ -41,7 +41,7 @@ namespace BlendInt {
 	: Widget(parent), m_pressed(false)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		set_emboss(false);
 	}
 
@@ -59,7 +59,7 @@ namespace BlendInt {
 				update_shape(size_p);
 				break;
 			}
-			case FormPropertyRoundCorner:
+			case FormPropertyCorner:
 				break;
 			default:
 				break;
@@ -284,7 +284,7 @@ namespace BlendInt {
 	: Slider(orientation)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 
 		set_control_size(50);
 
@@ -305,7 +305,7 @@ namespace BlendInt {
 	: Slider(orientation, parent)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 
 		set_control_size(50);
 
@@ -476,7 +476,7 @@ namespace BlendInt {
 			: AbstractSlider(orientation), m_scroll_control(0)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		set_radius(8);
 
 		m_scroll_control = new ScrollControl(this);
@@ -499,7 +499,7 @@ namespace BlendInt {
 			: AbstractSlider(orientation, parent), m_scroll_control(0)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(RoundCornerAll);
+		set_round_type(CornerAll);
 		set_radius(8);
 
 		m_scroll_control = new ScrollControl(this);

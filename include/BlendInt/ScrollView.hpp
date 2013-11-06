@@ -56,8 +56,7 @@ namespace BlendInt {
 		void set_viewport (AbstractForm* viewport);
 
 		/**
-		 * @brief reset the viewport position to the same position of this
-		 * widget (counting padding)
+		 * @brief reset the viewport position to center of scroll area (counting padding)
 		 */
 		void reset_viewport_position ();
 

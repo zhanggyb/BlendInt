@@ -60,7 +60,7 @@ namespace BlendInt {
 				update_shape(size_p);
 				break;
 			}
-			case FormPropertyRoundCorner: {
+			case FormPropertyCorner: {
 				const Size* size_p = static_cast<const Size*>(data);
 				update_shape(size_p);
 				break;

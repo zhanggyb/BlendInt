@@ -28,9 +28,16 @@
 #ifndef _BLENDINT_GLYPH_HPP_
 #define _BLENDINT_GLYPH_HPP_
 
-#include <BlendInt/Types.hpp>
+#include <GL/gl.h>
 
 namespace BlendInt {
+
+		struct Vertex2D {
+			GLfloat x;
+			GLfloat y;
+			GLfloat s;
+			GLfloat t;
+		};
 
 	struct Glyph
 	{

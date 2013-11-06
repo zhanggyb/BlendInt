@@ -207,28 +207,21 @@ int main(int argc, char* argv[])
 	ScrollView* scroll_view = new ScrollView;
 
 	scroll_view->set_position(200, 200);
-	scroll_view->set_orientation(2);
-	scroll_view->resize(400, 400);
-
-	Button* button = new Button;
-	button->set_text("Hello World!");
-//	button->resize(80, 600);
-	button->move(205, 205);
-
-	scroll_view->set_viewport(button);
-
-	app->bind(scroll_view);
-
-	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
+	scroll_view->set_orientation(0x1 | 0x2);
+	scroll_view->resize(300, 200);
 
 	Label* label = new Label("Hello World!");
 
 	label->set_position(50, 50);
 
-	label->set_text ("alsdkjflasdjflasfnvlkasefage");
-	label->resize(80, 40);
+	label->set_text ("alsdkjflasdjflasfnvlkaseasdfasdfsadfasfsadfadsfasdfwaeasbvdfsfbfyful7rbsdbfage");
+	label->resize(400, 400);
 
-	app->bind(label);
+	scroll_view->set_viewport(label);
+
+	app->bind(scroll_view);
+
+	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
