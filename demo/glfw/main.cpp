@@ -207,7 +207,6 @@ int main(int argc, char* argv[])
 	ScrollView* scroll_view = new ScrollView;
 
 	scroll_view->set_position(200, 200);
-	scroll_view->set_orientation(0x1 | 0x2);
 	scroll_view->resize(300, 200);
 
 	Label* label = new Label("Hello World!");

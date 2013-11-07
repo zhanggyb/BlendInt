@@ -30,14 +30,14 @@
 namespace BlendInt {
 
 	ScrollView::ScrollView()
-	: Widget(), m_orientation(Horizontal), m_move_status(false), m_viewport(0)
+	: Widget(), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
 	{
 		resize(200, 160);
 		set_preferred_size(200, 160);
 	}
 
 	ScrollView::ScrollView(AbstractForm* parent)
-	: Widget(parent), m_orientation(Horizontal), m_move_status(false), m_viewport(0)
+	: Widget(parent), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
 	{
 		resize(200, 160);
 		set_preferred_size(200, 160);
@@ -172,7 +172,7 @@ namespace BlendInt {
 
 			if (m_orientation & Horizontal) {
 
-				if (w < m_viewport->size().width()) {
+				if (w < static_cast<int>(m_viewport->size().width())) {
 					int x_min = position().x() + padding().left()
 					        - (m_viewport->size().width() - w);
 					int x_max = position().x() + padding().left();
@@ -199,7 +199,7 @@ namespace BlendInt {
 
 			if (m_orientation & Vertical) {
 
-				if (h < m_viewport->size().height()) {
+				if (h < static_cast<int>(m_viewport->size().height())) {
 					int y_min = position().y() + padding().bottom()
 					        - (m_viewport->size().height() - h);
 					int y_max = position().y() + padding().bottom();

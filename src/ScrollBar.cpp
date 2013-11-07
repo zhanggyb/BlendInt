@@ -288,7 +288,7 @@ namespace BlendInt {
 
 		set_control_size(50);
 
-		if (orientation) {	// Vertical
+		if (orientation == Vertical) {	// Vertical
 			set_radius(slide_button()->size().width()/2);
 			resize(slide_button()->size().width(), 400);
 			set_expand_y(true);
@@ -309,7 +309,7 @@ namespace BlendInt {
 
 		set_control_size(50);
 
-		if (orientation) {	// Vertical
+		if (orientation == Vertical) {	// Vertical
 			set_radius(slide_button()->size().width()/2);
 			resize(slide_button()->size().width(), 400);
 			set_expand_y(true);
@@ -422,7 +422,7 @@ namespace BlendInt {
 
 		VerticesSum vert_sum;
 
-		Orientation shadedir = orientation() ? Horizontal : Vertical;
+		Orientation shadedir = orientation() == Horizontal ? Horizontal : Vertical;
 
 		Color color = themes()->scroll.inner;
 		short shadetop = themes()->scroll.shadetop;
@@ -481,7 +481,7 @@ namespace BlendInt {
 
 		m_scroll_control = new ScrollControl(this);
 
-		if (orientation) {	// Vertical
+		if (orientation == Vertical) {	// Vertical
 			resize(16, 400);
 			m_scroll_control->resize(16, 100);
 			set_expand_y(true);
@@ -504,7 +504,7 @@ namespace BlendInt {
 
 		m_scroll_control = new ScrollControl(this);
 
-		if (orientation) {	// Vertical
+		if (orientation == Vertical) {	// Vertical
 			resize(16, 400);
 			m_scroll_control->resize(16, 100);
 			set_expand_y(true);
@@ -539,7 +539,7 @@ namespace BlendInt {
 			}
 
 			case SliderPropertyValue: {
-				if(orientation()) {	// Vertical is 1
+				if(orientation() == Vertical) {	// Vertical is 1
 					m_scroll_control->set_position (m_scroll_control->position().x(),
 							position().y() + padding().bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {	// Horizontal is 0
@@ -561,7 +561,7 @@ namespace BlendInt {
 
 		VerticesSum vert_sum;
 
-		Orientation shadedir = orientation() ? Horizontal : Vertical;
+		Orientation shadedir = orientation() == Horizontal ? Horizontal : Vertical;
 
 		Color color = themes()->scroll.inner;
 		short shadetop = themes()->scroll.shadetop;
@@ -688,7 +688,7 @@ namespace BlendInt {
 				Interface::instance()->dispatch_mouse_move_event(m_scroll_control, event);
 
 				int value = 0;
-				if(orientation()) {
+				if(orientation() == Vertical) {
 					value = (m_scroll_control->position().y() - position().y() - padding().bottom()) / (float)get_space() * (maximum() - minimum());
 				} else {
 					value = (m_scroll_control->position().x() - position().x() - padding().left()) / (float)get_space() * (maximum() - minimum());
@@ -724,7 +724,7 @@ namespace BlendInt {
 			int space = get_space();
 			int value;
 
-			if (orientation()) {
+			if (orientation() == Vertical) {
 				if(inner_pos.y() < space) {
 					value = (maximum() - minimum()) * inner_pos.y() / (double) space;
 					set_value(value);
@@ -760,7 +760,7 @@ namespace BlendInt {
 	{
 		int space = 0;
 
-		if(orientation())	// Vertical is 1
+		if(orientation() == Vertical)
 			space = size().height() - padding().top() - padding().bottom() - m_scroll_control->size().height();
 		else	// Horizontal is 0
 			space = size().width() - padding().left() - padding().right() - m_scroll_control->size().width();

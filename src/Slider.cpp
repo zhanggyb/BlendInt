@@ -147,7 +147,7 @@ namespace BlendInt {
 		if(m_status_down) {
 			m_status_hover = false;
 
-			if(parent_obj->orientation()) {	// Vertical
+			if(parent_obj->orientation() == Vertical) {	// Vertical
 
 				set_position(position().x(), m_position_origin.y() + event->position().y() - m_move_start.y());
 
@@ -230,7 +230,7 @@ namespace BlendInt {
 		} else {
 			AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(parent().object.form);
 			if(parent_obj) {
-				shadedir = parent_obj->orientation() ? Horizontal : Vertical;
+				shadedir = parent_obj->orientation() == Horizontal ? Horizontal : Vertical;
 			}
 		}
 		Color color = themes()->scroll.item;
@@ -314,7 +314,7 @@ namespace BlendInt {
 		m_slide_button = new SlideButton(this);
 
 		// set default size
-		if (orientation) {
+		if (orientation == Vertical) {
 			resize (25, 200);
 			set_expand_y(true);
 		} else {
@@ -336,7 +336,7 @@ namespace BlendInt {
 		m_slide_button = new SlideButton(this);
 
 		// set default size
-		if (orientation) {
+		if (orientation == Vertical) {
 			resize (25, 200);
 			set_expand_y(true);
 		} else {
@@ -360,7 +360,7 @@ namespace BlendInt {
 
 	void Slider::set_control_size (size_t size)
 	{
-		if(orientation()) {	// Vertical
+		if(orientation() == Vertical) {	// Vertical
 			m_slide_button->resize(m_slide_button->size().width(), size);
 		} else {
 			m_slide_button->resize(size, m_slide_button->size().height());
@@ -393,7 +393,7 @@ namespace BlendInt {
 
 				m_slide_button->resize(button_size, button_size);
 
-				if(orientation()) {
+				if(orientation() == Vertical) {
 					m_slide_button->set_position (m_slide_button->position().x(),
 							position().y() + padding().bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
@@ -406,7 +406,7 @@ namespace BlendInt {
 
 			case SliderPropertyValue: {
 
-				if(orientation()) {
+				if(orientation() == Vertical) {
 					m_slide_button->set_position (m_slide_button->position().x(),
 							position().y() + padding().bottom() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
@@ -446,7 +446,7 @@ namespace BlendInt {
 
 		int space = 0;
 
-		if(orientation()) {
+		if(orientation() == Vertical) {
 			space = size().height() - padding().top() - padding().bottom();
 			glTranslatef(m_slide_button->size().width() / 2.0, 0, 0);
 			glBegin(GL_LINES);
@@ -494,7 +494,7 @@ namespace BlendInt {
 
 			int value = 0;
 
-			if (orientation()) {
+			if (orientation() == Vertical) {
 				int ymin = position().y() + padding().bottom() + m_slide_button->size().height() / 2;
 				int ymax = position().y() + size().height() - padding().top() - m_slide_button->size().height() / 2;
 				if(event->position().y() < ymin ||	event->position().y() > ymax)
@@ -556,7 +556,7 @@ namespace BlendInt {
 
 			int val;
 
-			if (orientation()) {
+			if (orientation() == Vertical) {
 				if(event->position().y() < m_slide_button->position().y())
 					val = value() - step();
 				else
@@ -592,7 +592,7 @@ namespace BlendInt {
 	int Slider::get_space ()
 	{
 		int space = 0;
-		if(orientation())	// Vertical
+		if(orientation() == Vertical)	// Vertical
 			space = size().height() - padding().top() - padding().bottom() - m_slide_button->size().height();
 		else
 			space = size().width() - padding().left() - padding().right() - m_slide_button->size().width();
