@@ -25,6 +25,8 @@
 #include <assert.h>
 #include <algorithm>
 
+#include <iostream>
+
 #include <BlendInt/Form.hpp>
 
 #include <BlendInt/Types.hpp>
@@ -119,86 +121,14 @@ namespace BlendInt {
 		// TODO: call update
 	}
 
-	void Form::press_key (KeyEvent* event)
-	{
-	}
-
-	void Form::press_context_menu (ContextMenuEvent* event)
-	{
-	}
-
-	void Form::release_context_menu (ContextMenuEvent* event)
-	{
-	}
-
-	void Form::press_mouse (MouseEvent* event)
-	{
-	}
-
-	void Form::release_mouse (MouseEvent* event)
-	{
-	}
-
-	void Form::move_mouse (MouseEvent* event)
-	{
-	}
 
 	void Form::update (int type, const void* data)
 	{
 		switch (type) {
 
 			case FormPropertySize: {
-
 				const Size* size_p = static_cast<const Size*>(data);
-
-				// the basic widget don't use shaded color
-				float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-				float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
-
-				VerticesSum vert_sum;
-
-				vert_sum = generate_vertices(size_p, inner_v, outer_v);
-
-				if(m_emboss) {
-					if(m_glbuffer.size() != 3)
-						m_glbuffer.generate(3);
-				}	else {
-					if(m_glbuffer.size() != 2)
-							m_glbuffer.generate(2);
-				}
-
-				m_glbuffer.set_index(0);
-				m_glbuffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-				m_glbuffer.bind();
-				m_glbuffer.upload(inner_v);
-				m_glbuffer.unbind();
-
-				// the quad strip for outline
-
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-
-				verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
-
-				m_glbuffer.set_index(1);
-				m_glbuffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-
-				m_glbuffer.bind();
-				m_glbuffer.upload(quad_strip);
-				m_glbuffer.unbind();
-
-				if (m_emboss) {
-					float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
-
-					verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
-
-					m_glbuffer.set_index(2);
-					m_glbuffer.set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-
-					m_glbuffer.bind();
-					m_glbuffer.upload(quad_strip_emboss);
-					m_glbuffer.unbind();
-				}
-
+				update_shape(size_p);
 				break;
 			}
 
@@ -224,103 +154,96 @@ namespace BlendInt {
 		        themes()->regular.inner.g(),
 		        themes()->regular.inner.b(),
 		        themes()->regular.inner.a());
-		m_glbuffer.set_index(0);
-		m_glbuffer.bind();
-		glVertexPointer(2, GL_FLOAT, 0, 0);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glDrawArrays(GL_POLYGON, 0, m_glbuffer.vertices());
-		glDisableClientState(GL_VERTEX_ARRAY);
-		m_glbuffer.unbind();
+		draw_gl_buffer(0);
 
 		// draw outline
-		m_glbuffer.set_index(1);
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
 		        themes()->regular.outline.g(),
 		        themes()->regular.outline.b(),
 		        themes()->regular.outline.a()};
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		m_glbuffer.bind();
-		/* outline */
-		glEnableClientState(GL_VERTEX_ARRAY);
 		glColor4ubv(tcol);
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(GL_QUAD_STRIP, 0, m_glbuffer.vertices());
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
-		m_glbuffer.unbind();
+
+		draw_gl_buffer_anti_alias(1);
 
 		if(m_emboss) {
-			m_glbuffer.set_index(2);
-			m_glbuffer.bind();
-			glEnableClientState(GL_VERTEX_ARRAY);
-			for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-				glTranslatef(jit[j][0], jit[j][1], 0.0f);
-				glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-				glVertexPointer(2, GL_FLOAT, 0, 0);
-				glDrawArrays(GL_QUAD_STRIP, 0, m_glbuffer.vertices());
-				glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-			}
-			glDisableClientState(GL_VERTEX_ARRAY);
-			m_glbuffer.unbind();
+			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
+			draw_gl_buffer_anti_alias(2);
 		}
 
 		glDisable(GL_BLEND);
 		glPopMatrix();
 	}
 
-	void Form::update_shape(const Size* size)
+	void Form::press_key (KeyEvent* event)
 	{
-		// the basic widget don't use shaded color
+	}
 
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+	void Form::press_context_menu (ContextMenuEvent* event)
+	{
+	}
 
-		VerticesSum vert_sum;
+	void Form::release_context_menu (ContextMenuEvent* event)
+	{
+	}
 
-		vert_sum = generate_vertices(size, inner_v, outer_v);
+	void Form::press_mouse (MouseEvent* event)
+	{
+	}
 
-		if(m_emboss) {
-			if(m_glbuffer.size() != 3)
-				m_glbuffer.generate(3);
-		}	else {
-			if(m_glbuffer.size() != 2)
-					m_glbuffer.generate(2);
-		}
+	void Form::release_mouse (MouseEvent* event)
+	{
+	}
 
-		m_glbuffer.set_index(0);
-		m_glbuffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+	void Form::move_mouse (MouseEvent* event)
+	{
+	}
+
+	void Form::draw_gl_buffer(size_t index, int mode)
+	{
+		m_glbuffer.set_index(index);
 		m_glbuffer.bind();
-		m_glbuffer.upload(inner_v);
+		glVertexPointer(2, GL_FLOAT, 0, 0);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glDrawArrays(mode, 0, m_glbuffer.vertices());
+		glDisableClientState(GL_VERTEX_ARRAY);
 		m_glbuffer.unbind();
+	}
 
-		// the quad strip for outline
-
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-
-		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
-
-		m_glbuffer.set_index(1);
-		m_glbuffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+	void Form::draw_shaded_gl_buffer(size_t index, int mode)
+	{
+		m_glbuffer.set_index(index);
 
 		m_glbuffer.bind();
-		m_glbuffer.upload(quad_strip);
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
+
+		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glDrawArrays(mode, 0, glbuffer().vertices());
+
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
 		m_glbuffer.unbind();
+	}
 
-		if (m_emboss) {
-			float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+	void Form::draw_gl_buffer_anti_alias(size_t index, int mode)
+	{
+		m_glbuffer.set_index(index);
+		m_glbuffer.bind();
 
-			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
-
-			m_glbuffer.set_index(2);
-			m_glbuffer.set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-
-			m_glbuffer.bind();
-			m_glbuffer.upload(quad_strip_emboss);
-			m_glbuffer.unbind();
+		glEnableClientState(GL_VERTEX_ARRAY);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glDrawArrays(mode, 0, m_glbuffer.vertices());
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+		m_glbuffer.unbind();
 	}
 
 	Form::VerticesSum Form::generate_vertices(const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
@@ -515,7 +438,7 @@ namespace BlendInt {
 				outer[count][0] = minx + vec[i][1];
 				outer[count][1] = miny + rad - vec[i][0];
 
-				if (shadedir) {
+				if (shadedir == Vertical) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
 				} else {
 					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
@@ -533,7 +456,7 @@ namespace BlendInt {
 			outer[count][0] = minx;
 			outer[count][1] = miny;
 
-			if (shadedir) {
+			if (shadedir == Vertical) {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
 			} else {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
@@ -555,7 +478,7 @@ namespace BlendInt {
 				outer[count][0] = maxx - rad + vec[i][0];
 				outer[count][1] = miny + vec[i][1];
 
-				if (shadedir) {
+				if (shadedir == Vertical) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
 				} else {
 					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
@@ -573,7 +496,7 @@ namespace BlendInt {
 			outer[count][0] = maxx;
 			outer[count][1] = miny;
 
-			if (shadedir) {
+			if (shadedir == Vertical) {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
 			} else {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
@@ -597,7 +520,7 @@ namespace BlendInt {
 				outer[count][0] = maxx - vec[i][1];
 				outer[count][1] = maxy - rad + vec[i][0];
 
-				if (shadedir) {
+				if (shadedir == Vertical) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
 				} else {
 					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
@@ -616,7 +539,7 @@ namespace BlendInt {
 			outer[count][0] = maxx;
 			outer[count][1] = maxy;
 
-			if (shadedir) {
+			if (shadedir == Vertical) {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
 			} else {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
@@ -638,7 +561,7 @@ namespace BlendInt {
 				outer[count][0] = minx + rad - vec[i][0];
 				outer[count][1] = maxy - vec[i][1];
 
-				if (shadedir) {
+				if (shadedir == Vertical) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
 				} else {
 					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
@@ -657,7 +580,7 @@ namespace BlendInt {
 			outer[count][0] = minx;
 			outer[count][1] = maxy;
 
-			if (shadedir) {
+			if (shadedir == Vertical) {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
 			} else {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
@@ -740,7 +663,7 @@ namespace BlendInt {
 				outer[count][0] = minx + vec[i][1];
 				outer[count][1] = miny + rad - vec[i][0];
 
-				if (shadedir) {
+				if (shadedir == Vertical) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
 				} else {
 					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
@@ -758,7 +681,7 @@ namespace BlendInt {
 			outer[count][0] = minx;
 			outer[count][1] = miny;
 
-			if (shadedir) {
+			if (shadedir == Vertical) {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
 			} else {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
@@ -780,7 +703,7 @@ namespace BlendInt {
 				outer[count][0] = maxx - rad + vec[i][0];
 				outer[count][1] = miny + vec[i][1];
 
-				if (shadedir) {
+				if (shadedir == Vertical) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
 				} else {
 					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
@@ -798,7 +721,7 @@ namespace BlendInt {
 			outer[count][0] = maxx;
 			outer[count][1] = miny;
 
-			if (shadedir) {
+			if (shadedir == Vertical) {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
 			} else {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
@@ -822,7 +745,7 @@ namespace BlendInt {
 				outer[count][0] = maxx - vec[i][1];
 				outer[count][1] = maxy - rad + vec[i][0];
 
-				if (shadedir) {
+				if (shadedir == Vertical) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
 				} else {
 					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
@@ -840,7 +763,7 @@ namespace BlendInt {
 			outer[count][0] = maxx;
 			outer[count][1] = maxy;
 
-			if (shadedir) {
+			if (shadedir == Vertical) {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
 			} else {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
@@ -862,7 +785,7 @@ namespace BlendInt {
 				outer[count][0] = minx + rad - vec[i][0];
 				outer[count][1] = maxy - vec[i][1];
 
-				if (shadedir) {
+				if (shadedir == Vertical) {
 					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
 				} else {
 					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
@@ -881,7 +804,7 @@ namespace BlendInt {
 			outer[count][0] = minx;
 			outer[count][1] = maxy;
 
-			if (shadedir) {
+			if (shadedir == Vertical) {
 				shaded_color = make_shade_color(color_top, color_down, 1.0f);
 			} else {
 				shaded_color = make_shade_color(color_top, color_down, 0.0f);
@@ -898,6 +821,84 @@ namespace BlendInt {
 
 		sum.total = count;
 		return sum;
+	}
+
+	int Form::generate_shadow_vertices (
+			const Size* size,
+			float rad,
+			float step,
+			float vert[WIDGET_SIZE_MAX][2])
+	{
+		float vec[WIDGET_CURVE_RESOLU][2];
+		float minx, miny, maxx, maxy;
+		int i, tot = 0;
+
+		rad += step;
+
+		if (2.0f * rad > size->height())
+			rad = 0.5f * size->height();
+
+		minx = 0.0f - step;
+		miny = 0.0f - step;
+		maxx = size->width() + step;
+		maxy = size->height() + step;
+
+		/* mult */
+		for (i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		/* start with left-top, anti clockwise */
+		if (round_type() & CornerTopLeft) {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = minx + rad - vec[i][0];
+				vert[tot][1] = maxy - vec[i][1];
+			}
+		} else {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = minx;
+				vert[tot][1] = maxy;
+			}
+		}
+
+		if (round_type() & CornerBottomLeft) {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = minx + vec[i][1];
+				vert[tot][1] = miny + rad - vec[i][0];
+			}
+		} else {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = minx;
+				vert[tot][1] = miny;
+			}
+		}
+
+		if (round_type() & CornerBottomRight) {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = maxx - rad + vec[i][0];
+				vert[tot][1] = miny + vec[i][1];
+			}
+		} else {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = maxx;
+				vert[tot][1] = miny;
+			}
+		}
+
+		if (round_type() & CornerTopRight) {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = maxx - vec[i][1];
+				vert[tot][1] = maxy - rad + vec[i][0];
+			}
+		} else {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = maxx;
+				vert[tot][1] = maxy;
+			}
+		}
+
+		return tot;
 	}
 
 	void Form::verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][2],
@@ -938,6 +939,57 @@ namespace BlendInt {
 			quad_strip[i * 2][1] = outer_v[i][1];
 			quad_strip[i * 2 + 1][0] = outer_v[i][0];
 			quad_strip[i * 2 + 1][1] = outer_v[i][1] - 1.0f;
+		}
+	}
+
+	void Form::update_shape(const Size* size)
+	{
+		// the basic widget don't use shaded color
+
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_vertices(size, inner_v, outer_v);
+
+		if(m_emboss) {
+			if(m_glbuffer.size() != 3)
+				m_glbuffer.generate(3);
+		}	else {
+			if(m_glbuffer.size() != 2)
+					m_glbuffer.generate(2);
+		}
+
+		m_glbuffer.set_index(0);
+		m_glbuffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_glbuffer.bind();
+		m_glbuffer.upload(inner_v);
+		m_glbuffer.unbind();
+
+		// the quad strip for outline
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+
+		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+
+		m_glbuffer.set_index(1);
+		m_glbuffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		m_glbuffer.bind();
+		m_glbuffer.upload(quad_strip);
+		m_glbuffer.unbind();
+
+		if (m_emboss) {
+			//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
+
+			m_glbuffer.set_index(2);
+			m_glbuffer.set_property(vert_sum.half * 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+			m_glbuffer.bind();
+			m_glbuffer.upload(quad_strip);
+			m_glbuffer.unbind();
 		}
 	}
 

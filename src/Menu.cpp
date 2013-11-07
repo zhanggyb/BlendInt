@@ -21,44 +21,41 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MENU_HPP_
-#define _BLENDINT_MENU_HPP_
-
-#include <BlendInt/Widget.hpp>
-#include <BlendInt/String.hpp>
+#include <BlendInt/Menu.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief The menu widget for use in menu bars, context menus,
-	 * and other popup menus.
-	 */
-	class Menu: public Widget
+	Menu::Menu()
+	: Widget()
 	{
-		DISALLOW_COPY_AND_ASSIGN(Menu);
 
-	public:
+	}
 
-		Menu ();
+	Menu::Menu(AbstractForm* parent)
+	: Widget(parent)
+	{
 
-		explicit Menu(AbstractForm* parent);
+	}
 
-		Menu (const String& title, AbstractForm* parent = 0);
+	Menu::Menu (const String& title, AbstractForm* parent)
+	: Widget(parent)
+	{
 
-		virtual ~Menu();
+	}
 
-	protected:
+	Menu::~Menu ()
+	{
 
-		virtual void update (int type, const void* data);
+	}
 
-		virtual void render ();
+	void Menu::update(int type, const void* data)
+	{
 
-	private:
+	}
 
-		String m_title;
+	void Menu::render()
+	{
 
-	};
+	}
 
 }
-
-#endif /* _BLENDINT_MENU_HPP_ */

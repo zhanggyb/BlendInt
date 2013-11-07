@@ -104,6 +104,48 @@ namespace BlendInt {
 		virtual void move_mouse (MouseEvent* event);
 
 		/**
+		 * @brief draw the GL Buffer in render()
+		 * @param index the index of the gl buffer to draw
+		 * @param mode the primitive or primitives mode defined in gl.h, 
+		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
+		 *
+		 * draw the buffer of index in render(), the parameter mode is
+		 * the enumeration type of primitive or primitives defined in
+		 * gl.h: GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
+		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
+		 * GL_QUAD_STRIP, and GL_POLYGON.
+		 */
+		void draw_gl_buffer (size_t index, int mode = GL_POLYGON);
+
+		/**
+		 * @brief draw shaded GL buffer in render()
+		 * @param index the index of the gl buffer to draw
+		 * @param mode the primitive or primitives mode defined in gl.h,
+		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
+		 *
+		 * draw the buffer of index in render(), the parameter mode is
+		 * the enumeration type of primitive or primitives defined in
+		 * gl.h: GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
+		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
+		 * GL_QUAD_STRIP, and GL_POLYGON.
+		 */
+		void draw_shaded_gl_buffer (size_t index, int mode = GL_POLYGON);
+
+		/**
+		 * @brief draw the GL Buffer in render() with anti-alias
+		 * @param index the index of the gl buffer to draw
+		 * @param mode the primitive or primitives mode defined in gl.h,
+		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
+		 *
+		 * draw the buffer of index in render(), the parameter mode is
+		 * the enumeration type of primitive or primitives defined in
+		 * gl.h: GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
+		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
+		 * GL_QUAD_STRIP, and GL_POLYGON.
+		 */
+		void draw_gl_buffer_anti_alias (size_t index, int mode = GL_QUAD_STRIP);
+
+		/**
 		 * @brief calculate vertices for round box edge with no shaded color
 		 * @param[in] size the size to calculate edges
 		 * @param[out] inner_v
@@ -144,6 +186,19 @@ namespace BlendInt {
 				Orientation shadedir,
 				float inner[WIDGET_SIZE_MAX][6],
 				float outer[WIDGET_SIZE_MAX][2]);
+
+		/**
+		 * @brief generate shadow vertices
+		 * @param[in] size
+		 * @param[in] rad
+		 * @param[in] step
+		 * @param[out] vert
+		 * @return
+		 */
+		int generate_shadow_vertices (const Size* size,
+				float rad,
+				float step,
+				float vert[WIDGET_SIZE_MAX][2]);
 
 		void verts_to_quad_strip (
 				const float inner_v[WIDGET_SIZE_MAX][2],

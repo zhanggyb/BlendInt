@@ -222,6 +222,13 @@ int main(int argc, char* argv[])
 
 	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
 
+	Form* form = new Form;
+	form->set_emboss(true);
+	form->move(700, 200);
+	form->resize(100, 100);
+
+	app->bind(form);
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
