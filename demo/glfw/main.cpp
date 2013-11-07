@@ -197,34 +197,35 @@ int main(int argc, char* argv[])
 
 	// -----------------------
 
-	Cpp::ConnectionScope events;
-
-	Button* reset_button = new Button;
-	reset_button->set_text("Reset");
-	reset_button->move(640, 300);
-
-	app->bind(reset_button);
-
-	ScrollView* scroll_view = new ScrollView;
-
-	scroll_view->set_position(200, 200);
-	scroll_view->resize(300, 200);
-
-	Label* label = new Label("Hello World!");
-
-	label->set_position(50, 50);
-
-	label->set_text ("alsdkjflasdjflasfnvlkaseasdfasdfsadfasfsadfadsfasdfwaeasbvdfsfbfyful7rbsdbfage");
-	label->resize(400, 400);
-
-	scroll_view->set_viewport(label);
-
-	app->bind(scroll_view);
-
-	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
+//	Cpp::ConnectionScope events;
+//
+//	Button* reset_button = new Button;
+//	reset_button->set_text("Reset");
+//	reset_button->move(640, 300);
+//
+//	app->bind(reset_button);
+//
+//	ScrollView* scroll_view = new ScrollView;
+//
+//	scroll_view->set_position(200, 200);
+//	scroll_view->resize(300, 200);
+//
+//	Label* label = new Label("Hello World!");
+//
+//	label->set_position(50, 50);
+//
+//	label->set_text ("alsdkjflasdjflasfnvlkaseasdfasdfsadfasfsadfadsfasdfwaeasbvdfsfbfyful7rbsdbfage");
+//	label->resize(400, 400);
+//
+//	scroll_view->set_viewport(label);
+//
+//	app->bind(scroll_view);
+//
+//	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
 
 	PopupWidget* widget = new PopupWidget;
 	widget->move(200, 200);
+	widget->set_round_type(CornerAll);
 	widget->resize(200, 200);
 
 	app->bind(widget);

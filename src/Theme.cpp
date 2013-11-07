@@ -222,6 +222,8 @@ namespace BlendInt {
 
 			//_theme.panel.header = RGBAf();
 			//_theme.panel.back = RGBAf();
+			theme_manager->m_themes.menu_shadow_fac = 0.5f;
+			theme_manager->m_themes.menu_shadow_width = 12;
 
 			theme_manager->m_themes.xaxis = 0xFF0000FF;
 			theme_manager->m_themes.yaxis = 0x00FF00FF;

@@ -51,6 +51,16 @@ namespace BlendInt {
 
 		virtual ~PopupWidget();
 
+	protected:
+
+		virtual void update (int type, const void* data);
+
+		virtual void render ();
+
+	private:
+
+		void draw_shadow (const float radin);
+
 	};
 
 }
