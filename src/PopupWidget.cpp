@@ -21,33 +21,17 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Menu.hpp>
+#include <BlendInt/PopupWidget.hpp>
 
 namespace BlendInt {
 
-	Menu::Menu()
-	: PopupWidget()
+	PopupWidget::PopupWidget()
+	: Widget()
 	{
-
+		reset_z(1);	// TODO: define layer in enumeration
 	}
 
-	Menu::Menu (const String& title)
-	: PopupWidget()
-	{
-
-	}
-
-	Menu::~Menu ()
-	{
-
-	}
-
-	void Menu::update(int type, const void* data)
-	{
-
-	}
-
-	void Menu::render()
+	PopupWidget::~PopupWidget()
 	{
 
 	}

@@ -32,6 +32,11 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief Wrapper class for OpenGL Programs
+	 *
+	 * @ingroup opengl
+	 */
 	class GLSLProgram
 	{
 	public:

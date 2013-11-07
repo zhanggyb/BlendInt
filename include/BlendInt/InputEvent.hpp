@@ -29,6 +29,11 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief Events for input devices including keyboard, mouse
+	 *
+	 * @ingroup events
+	 */
 	class InputEvent: public Event
 	{
 	public:

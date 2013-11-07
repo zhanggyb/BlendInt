@@ -95,6 +95,11 @@ namespace BlendInt {
 		DISALLOW_COPY_AND_ASSIGN(Parent);
 	};
 
+	/**
+	 * @brief The basic abstract class for GUI forms in BlendInt
+	 *
+	 * @ingroup gui
+	 */
 	class AbstractForm: public EventHandler
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractForm);

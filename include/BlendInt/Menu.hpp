@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_MENU_HPP_
 #define _BLENDINT_MENU_HPP_
 
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/PopupWidget.hpp>
 #include <BlendInt/String.hpp>
 
 namespace BlendInt {
@@ -33,7 +33,7 @@ namespace BlendInt {
 	 * @brief The menu widget for use in menu bars, context menus,
 	 * and other popup menus.
 	 */
-	class Menu: public Widget
+	class Menu: public PopupWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Menu);
 
@@ -41,9 +41,7 @@ namespace BlendInt {
 
 		Menu ();
 
-		explicit Menu(AbstractForm* parent);
-
-		Menu (const String& title, AbstractForm* parent = 0);
+		Menu (const String& title);
 
 		virtual ~Menu();
 

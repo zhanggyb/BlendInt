@@ -30,6 +30,11 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief Wrapper class for OpenGL Shader
+	 *
+	 * @ingroup opengl
+	 */
 	class GLSLShader
 	{
 	public:

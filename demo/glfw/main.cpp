@@ -27,6 +27,7 @@
 #include <BlendInt/GLBuffer.hpp>
 #include <BlendInt/VertexIcon.hpp>
 #include <BlendInt/ScrollView.hpp>
+#include <BlendInt/PopupWidget.hpp>
 
 using namespace BlendInt;
 using namespace std;
@@ -222,12 +223,11 @@ int main(int argc, char* argv[])
 
 	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
 
-	Form* form = new Form;
-	form->set_emboss(true);
-	form->move(700, 200);
-	form->resize(100, 100);
+	PopupWidget* widget = new PopupWidget;
+	widget->move(200, 200);
+	widget->resize(200, 200);
 
-	app->bind(form);
+	app->bind(widget);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

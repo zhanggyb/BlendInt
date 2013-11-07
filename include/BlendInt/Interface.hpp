@@ -21,6 +21,18 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+/**
+ * Doxygen documentation
+ */
+
+// the top level groups
+
+/** @defgroup time Time input */
+/** @defgroup interface The main interface class entry */
+/** @defgroup exceptions Exceptions */
+/** @defgroup opengl Wrapper classes for OpenGL API */
+/** @defgroup gui GUI classes */
+
 #ifndef _BLENDINT_INTERFACE_HPP_
 #define _BLENDINT_INTERFACE_HPP_
 
@@ -39,6 +51,8 @@ namespace BlendInt {
 
 	/**
 	 * @brief The main entry for this library
+	 *
+	 * @ingroup interface
 	 */
 	class Interface
 	{

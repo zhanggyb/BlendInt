@@ -24,10 +24,26 @@
 #ifndef _BLENDINT_EVENT_HPP_
 #define _BLENDINT_EVENT_HPP_
 
+/**
+ * @defgroup events Events from window system
+ *
+ * Events from window system includes:
+ * 	- Keyboard events
+ * 	- Mouse events
+ * 	- TBD...
+ *
+ * @ingroup gui
+ */
+
 namespace BlendInt {
 
 	class AbstractForm;
 
+	/**
+	 * @brief the basic event class
+	 *
+	 * @ingroup events
+	 */
 	class Event
 	{
 	public:

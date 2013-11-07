@@ -24,6 +24,12 @@
 #ifndef _BLENDINT_WIDGET_HPP_
 #define _BLENDINT_WIDGET_HPP_
 
+/**
+ * @defgroup widgets Widgets
+ *
+ * @ingroup gui
+ */
+
 #include <BlendInt/Form.hpp>
 
 namespace BlendInt {
@@ -40,6 +46,8 @@ namespace BlendInt {
 
 	/**
 	 * @brief A widget usually contains other Form or widget in a box with padding
+	 *
+	 * @ingroup widgets
 	 */
 	class Widget: public Form
 	{

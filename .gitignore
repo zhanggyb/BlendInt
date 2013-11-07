@@ -16,6 +16,8 @@
 Debug
 Release
 build
+CMakeLists.txt.user
+doc/html
 test/Debug
 test/Release
 demo/glfw/Debug

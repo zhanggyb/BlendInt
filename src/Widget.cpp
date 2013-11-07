@@ -113,14 +113,7 @@ namespace BlendInt {
 
 	void Widget::render ()
 	{
-#ifdef DEBUG
-		std::set<AbstractForm*>::const_iterator it;
-		AbstractForm *item = 0;
-		for (it = children().begin(); it != children().end(); it++) {
-			item = *it;
-			Interface::instance()->dispatch_render_event(item);
-		}
-#endif
+		Form::render();
 	}
 
 	bool Widget::contain_no_padding (const Coord2d& cursor)

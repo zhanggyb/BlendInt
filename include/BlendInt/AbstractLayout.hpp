@@ -24,6 +24,12 @@
 #ifndef _BLENDINT_ABSTRACTLAYOUT_HPP_
 #define _BLENDINT_ABSTRACTLAYOUT_HPP_
 
+/**
+ * @defgroup layouts Layouts
+ *
+ * @ingroup gui
+ */
+
 #include <vector>
 
 #include <BlendInt/AbstractForm.hpp>
@@ -53,6 +59,11 @@ namespace BlendInt {
 		LayoutPropertyLast = LayoutPropertyItem
 	};
 
+	/**
+	 * @brief Abstract layout class
+	 *
+	 * @ingroup layouts
+	 */
 	class AbstractLayout: public AbstractForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractLayout);

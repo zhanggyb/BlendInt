@@ -32,6 +32,8 @@ namespace BlendInt {
 
 	/**
 	 * @brief A simple warpper of OpenGL buffer
+	 *
+	 * @ingroup opengl
 	 */
 	class GLBuffer
 	{

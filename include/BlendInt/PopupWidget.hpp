@@ -21,35 +21,38 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Menu.hpp>
+#ifndef _BLENDINT_POPUPWIDGET_HPP_
+#define _BLENDINT_POPUPWIDGET_HPP_
+
+#include <BlendInt/Widget.hpp>
 
 namespace BlendInt {
 
-	Menu::Menu()
-	: PopupWidget()
+	/**
+	 * @brief A special widget which is constructed in higher layer for
+	 * popup menus, tooltips
+	 *
+	 * @note a popupwidget cannot be bound to another form in different layer,
+	 * trying to do this will raise an exception.
+	 *
+	 * To layout a popupwidget with others, use a @ref LadderWidget to pack it.
+	 *
+	 * @sa LadderWidget
+	 *
+	 * @ingroup widgets
+	 */
+	class PopupWidget: public Widget
 	{
+		DISALLOW_COPY_AND_ASSIGN(PopupWidget);
 
-	}
+	public:
 
-	Menu::Menu (const String& title)
-	: PopupWidget()
-	{
+		PopupWidget ();
 
-	}
+		virtual ~PopupWidget();
 
-	Menu::~Menu ()
-	{
-
-	}
-
-	void Menu::update(int type, const void* data)
-	{
-
-	}
-
-	void Menu::render()
-	{
-
-	}
+	};
 
 }
+
+#endif /* _BLENDINT_POPUPWIDGET_HPP_ */
