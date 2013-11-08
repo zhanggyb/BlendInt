@@ -48,7 +48,7 @@ namespace BlendInt {
 		set_preferred_size(size());
 	}
 
-	Button::Button (AbstractForm* parent)
+	Button::Button (AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
 		set_round_type(CornerAll);
@@ -57,7 +57,7 @@ namespace BlendInt {
 		set_preferred_size(90, 24);
 	}
 
-	Button::Button (const String& text, AbstractForm* parent)
+	Button::Button (const String& text, AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
 		set_round_type(CornerAll);
@@ -103,7 +103,7 @@ namespace BlendInt {
 			}
 		}
 
-		draw_gl_buffer(FormBufferKeyInner);
+		draw_gl_buffer(WidgetBufferKeyInner);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -113,12 +113,12 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_gl_buffer_anti_alias(FormBufferKeyOuter);
+		draw_gl_buffer_anti_alias(WidgetBufferKeyOuter);
 
 		if(emboss()) {
 			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 
-			draw_gl_buffer_anti_alias(FormBufferKeyEmboss);
+			draw_gl_buffer_anti_alias(WidgetBufferKeyEmboss);
 		}
 
 		// Draw text

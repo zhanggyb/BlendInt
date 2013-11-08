@@ -36,7 +36,7 @@ const char* ShaderWidget1::fs_source =
 	"}";
 
 ShaderWidget1::ShaderWidget1 ()
-		: Widget(NULL)
+		: Frame(0)
 {
 	init_resources();
 }
@@ -151,7 +151,7 @@ const char* ShaderWidget2::fs_source =
 	"}";
 
 ShaderWidget2::ShaderWidget2 ()
-		: Widget(NULL)
+		: Frame(0)
 {
 	init_resources();
 }
@@ -227,7 +227,7 @@ bool ShaderWidget2::init_resources()
 }
 
 ShaderWidget3::ShaderWidget3 ()
-		: Widget(NULL)
+		: Frame(0)
 {
 	init_resources();
 }
@@ -302,11 +302,11 @@ void ShaderTest::setUp ()
 void ShaderTest::tearDown ()
 {
 #ifdef DEBUG
-	int mapsize = AbstractForm::map_size();
+	int mapsize = AbstractWidget::map_size();
 
 	if(mapsize > 0) {
-		map<uint64_t, AbstractForm*>::const_iterator it;
-		for (it = AbstractForm::get_map().begin(); it != AbstractForm::get_map().end(); it++)
+		map<uint64_t, AbstractWidget*>::const_iterator it;
+		for (it = AbstractWidget::get_map().begin(); it != AbstractWidget::get_map().end(); it++)
 		{
 			cout << "id: " << it->first << " was not deleted!" << endl;
 		}

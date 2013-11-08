@@ -28,7 +28,7 @@
 
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Frame.hpp>
 #include <BlendInt/Font.hpp>
 #include <BlendInt/Tuple.hpp>
 #include <BlendInt/TextBuffer.hpp>
@@ -37,7 +37,7 @@ using namespace std;
 
 namespace BlendInt {
 
-	class AbstractButton: public Widget
+	class AbstractButton: public Frame
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractButton);
 
@@ -45,7 +45,7 @@ namespace BlendInt {
 
 		AbstractButton ();
 
-		AbstractButton (AbstractForm* parent);
+		AbstractButton (AbstractWidget* parent);
 
 		virtual ~AbstractButton ();
 

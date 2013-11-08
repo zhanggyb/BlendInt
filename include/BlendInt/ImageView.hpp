@@ -24,17 +24,17 @@
 #ifndef _BLENDINT_IMAGEVIEW_HPP_
 #define _BLENDINT_IMAGEVIEW_HPP_
 
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Frame.hpp>
 
 namespace BlendInt {
 
-	class ImageView: public Widget
+	class ImageView: public Frame
 	{
 	public:
 
 		ImageView ();
 
-		ImageView (AbstractForm* parent);
+		ImageView (AbstractWidget* parent);
 
 		virtual ~ImageView ();
 

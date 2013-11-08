@@ -39,11 +39,11 @@ namespace BlendInt {
 
 		TableLayout (int rows, int columns);
 
-		TableLayout (int rows, int columns, AbstractForm* parent);
+		TableLayout (int rows, int columns, AbstractWidget* parent);
 
 		virtual ~TableLayout ();
 
-		void add_widget (Widget* widget, int row, int column, int width = 1, int height = 1);
+		void add_widget (Frame* widget, int row, int column, int width = 1, int height = 1);
 
 		void add_layout (AbstractLayout* layout, int row, int column, int width = 1, int height = 1);
 
@@ -73,11 +73,11 @@ namespace BlendInt {
 
 		virtual void move_mouse (MouseEvent* event);
 
-		virtual void add_item (Form* form);
+		virtual void add_item (Widget* form);
 
 		virtual void add_item (AbstractLayout* layout);
 
-		virtual void remove_item (AbstractForm* object);
+		virtual void remove_item (AbstractWidget* object);
 
 	private:
 

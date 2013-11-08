@@ -24,15 +24,30 @@
 #ifndef _BLENDINT_FRAME_HPP_
 #define _BLENDINT_FRAME_HPP_
 
+/**
+ * @defgroup widgets Widgets
+ *
+ * @ingroup gui
+ */
+
 #include <BlendInt/Widget.hpp>
 
 namespace BlendInt {
 
-	class Widget;
-	class AbstractLayout;
+	struct WidgetTheme;
+	class Color;
+
+	enum FramePropertyType {
+		FramePropertyPadding = FormPropertyLast + 1,
+		WidgetPropertyBorderWidth,
+		WidgetPropertyEmboss,
+		WidgetPropertyLast = WidgetPropertyEmboss
+	};
 
 	/**
-	 * @brief a widget hold a layout and have frame
+	 * @brief A widget usually contains other Form or widget in a box with padding
+	 *
+	 * @ingroup widgets
 	 */
 	class Frame: public Widget
 	{
@@ -42,22 +57,46 @@ namespace BlendInt {
 
 		Frame ();
 
-		Frame (AbstractForm* parent);
+		Frame (AbstractWidget* parent);
 
 		virtual ~Frame ();
 
-		void set_layout (AbstractLayout* layout);
+		const Padding& padding () const {return m_padding;}
+
+		void set_padding (const Padding& padding);
+
+		void set_padding (int left, int right, int top, int bottom);
 
 	protected:
 
+		virtual void update (int type, const void* data);
+
 		virtual void render ();
+
+		virtual void press_key (KeyEvent* event);
+
+		virtual void press_context_menu (ContextMenuEvent* event);
+
+		virtual void release_context_menu (ContextMenuEvent* event);
+
+		virtual void press_mouse (MouseEvent* event);
+
+		virtual void release_mouse (MouseEvent* event);
+
+		virtual void move_mouse (MouseEvent* event);
+
+		/**
+		 * @check if geometry contains the cursor, exclude padding
+		 * @param cursor
+		 * @return
+		 */
+		bool contain_no_padding (const Coord2d& cursor);
 
 	private:
 
-		AbstractLayout* m_layout;
+		Padding m_padding;
 
 	};
-}
 
-
+} /* namespace BlendInt */
 #endif /* _BLENDINT_FRAME_HPP_ */

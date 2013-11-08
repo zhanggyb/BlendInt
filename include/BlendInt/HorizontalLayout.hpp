@@ -36,7 +36,7 @@ namespace BlendInt {
 
 		HorizontalLayout(int align = AlignHorizontalCenter);
 
-		HorizontalLayout(int align, AbstractForm* parent);
+		HorizontalLayout(int align, AbstractWidget* parent);
 
 		virtual ~HorizontalLayout ();
 
@@ -58,11 +58,11 @@ namespace BlendInt {
 
 		virtual void move_mouse (MouseEvent* event);
 
-		virtual void add_item (Form* form);
+		virtual void add_item (Widget* form);
 
 		virtual void add_item (AbstractLayout* layout);
 
-		virtual void remove_item (AbstractForm* object);
+		virtual void remove_item (AbstractWidget* object);
 
 	private:
 
@@ -116,7 +116,7 @@ namespace BlendInt {
 		 * @param[in] items
 		 * @param[in] width
 		 */
-		void reset_width_of_fixed_items (std::set<AbstractForm*>* items, unsigned int width);
+		void reset_width_of_fixed_items (std::set<AbstractWidget*>* items, unsigned int width);
 
 		/**
 		 * @brief calculate and return the minimal width of the expandable items
@@ -143,12 +143,12 @@ namespace BlendInt {
 		/**
 		 * @brief set of horizontally expandable items
 		 */
-		std::set<AbstractForm*> m_expandable_items;
+		std::set<AbstractWidget*> m_expandable_items;
 
 		/**
 		 * @brief set of horizontally fixed items (along x)
 		 */
-		std::set<AbstractForm*> m_fixed_items;
+		std::set<AbstractWidget*> m_fixed_items;
 	};
 
 }

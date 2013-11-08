@@ -39,23 +39,23 @@ namespace BlendInt {
 
 		GridLayout ();
 
-		GridLayout (AbstractForm* parent);
+		GridLayout (AbstractWidget* parent);
 
 		virtual ~GridLayout ();
 
-		virtual void add_widget (Widget* object);
+		virtual void add_widget (Frame* object);
 
 		virtual void add_layout (AbstractLayout* layout);
 
-		virtual bool remove (AbstractForm* object);
+		virtual bool remove (AbstractWidget* object);
 
-		virtual bool erase (AbstractForm* object);
+		virtual bool erase (AbstractWidget* object);
 
 	protected:
 
 		virtual void render ();
 
-		virtual void add_single_widget(Widget* widget);
+		virtual void add_single_widget(Frame* widget);
 	};
 
 }

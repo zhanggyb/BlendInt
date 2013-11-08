@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	AbstractLayout::AbstractLayout ()
-			: AbstractForm(),
+			: AbstractWidget(),
 			  m_alignment(0),
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
@@ -36,8 +36,8 @@ namespace BlendInt {
 		resize(preferred_size());
 	}
 
-	AbstractLayout::AbstractLayout (AbstractForm *parent)
-			: AbstractForm (parent),
+	AbstractLayout::AbstractLayout (AbstractWidget *parent)
+			: AbstractWidget (parent),
 			  m_alignment(0),
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
@@ -52,7 +52,7 @@ namespace BlendInt {
 		m_items.clear();
 	}
 
-	void AbstractLayout::add (Form* form)
+	void AbstractLayout::add (Widget* form)
 	{
 		if(children().count(form)) return;
 
@@ -78,7 +78,7 @@ namespace BlendInt {
 		m_items.push_back(object);
 	}
 
-	bool AbstractLayout::remove (AbstractForm* object)
+	bool AbstractLayout::remove (AbstractWidget* object)
 	{
 		if (!children().count(object)) return false;
 
@@ -87,7 +87,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractLayout::erase (AbstractForm* object)
+	bool AbstractLayout::erase (AbstractWidget* object)
 	{
 		if (!children().count(object)) return false;
 

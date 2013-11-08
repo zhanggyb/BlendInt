@@ -37,7 +37,7 @@ namespace BlendInt {
 	 * After setting the viewport widget in different layer, the
 	 * LadderWidget reset its size to the same of the viewport
 	 */
-	class LadderWidget: public Widget
+	class LadderWidget: public Frame
 	{
 		DISALLOW_COPY_AND_ASSIGN(LadderWidget);
 
@@ -45,7 +45,7 @@ namespace BlendInt {
 
 		LadderWidget();
 
-		LadderWidget(AbstractForm* parent);
+		LadderWidget(AbstractWidget* parent);
 
 	};
 

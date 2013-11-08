@@ -30,15 +30,15 @@
 namespace BlendInt {
 
 	ScrollControl::ScrollControl ()
-	: Widget(), m_pressed(false)
+	: Frame(), m_pressed(false)
 	{
 		set_padding(0, 0, 0, 0);
 		set_round_type(CornerAll);
 		set_emboss(false);
 	}
 
-	ScrollControl::ScrollControl(AbstractForm* parent)
-	: Widget(parent), m_pressed(false)
+	ScrollControl::ScrollControl(AbstractWidget* parent)
+	: Frame(parent), m_pressed(false)
 	{
 		set_padding(0, 0, 0, 0);
 		set_round_type(CornerAll);
@@ -79,9 +79,9 @@ namespace BlendInt {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if(m_pressed) {
-			glbuffer().select(FormBufferKeyInner);
+			glbuffer().select(WidgetBufferKeyInner);
 		} else {
-			glbuffer().select(FormBufferKeyLast + 1);
+			glbuffer().select(WidgetBufferKeyLast + 1);
 		}
 
 		glbuffer().bind();
@@ -99,7 +99,7 @@ namespace BlendInt {
 		glbuffer().unbind();
 
 		// draw outline
-		glbuffer().select(FormBufferKeyOuter);
+		glbuffer().select(WidgetBufferKeyOuter);
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
 		        themes()->scroll.outline.g(),
 		        themes()->scroll.outline.b(),
@@ -230,8 +230,8 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		glbuffer().create(FormBufferKeyInner);
-		glbuffer().select(FormBufferKeyInner);
+		glbuffer().create(WidgetBufferKeyInner);
+		glbuffer().select(WidgetBufferKeyInner);
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
 		glbuffer().upload(inner_v);
@@ -242,8 +242,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glbuffer().create(FormBufferKeyOuter);
-		glbuffer().select(FormBufferKeyOuter);
+		glbuffer().create(WidgetBufferKeyOuter);
+		glbuffer().select(WidgetBufferKeyOuter);
 		glbuffer().set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		glbuffer().bind();
@@ -268,8 +268,8 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		glbuffer().create(FormBufferKeyLast + 1);
-		glbuffer().select(FormBufferKeyLast + 1);
+		glbuffer().create(WidgetBufferKeyLast + 1);
+		glbuffer().select(WidgetBufferKeyLast + 1);
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
 		glbuffer().upload(inner_v);
@@ -300,7 +300,7 @@ namespace BlendInt {
 		update(SliderPropertyValue, 0);
 	}
 
-	SliderBar::SliderBar(Orientation orientation, AbstractForm* parent)
+	SliderBar::SliderBar(Orientation orientation, AbstractWidget* parent)
 	: Slider(orientation, parent)
 	{
 		set_padding(0, 0, 0, 0);
@@ -347,7 +347,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		draw_shaded_gl_buffer(FormBufferKeyInner);
+		draw_shaded_gl_buffer(WidgetBufferKeyInner);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
@@ -357,10 +357,10 @@ namespace BlendInt {
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
-		draw_gl_buffer_anti_alias(FormBufferKeyOuter);
+		draw_gl_buffer_anti_alias(WidgetBufferKeyOuter);
 
 		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-		draw_gl_buffer_anti_alias(FormBufferKeyEmboss);
+		draw_gl_buffer_anti_alias(WidgetBufferKeyEmboss);
 
 		glDisable(GL_BLEND);
 
@@ -388,8 +388,8 @@ namespace BlendInt {
 		else					// swap shadetop and shadedown
 			vert_sum = generate_vertices(size, color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
-		glbuffer().create(FormBufferKeyInner);
-		glbuffer().select(FormBufferKeyInner);
+		glbuffer().create(WidgetBufferKeyInner);
+		glbuffer().select(WidgetBufferKeyInner);
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]),
 		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
@@ -402,8 +402,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip(inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glbuffer().create(FormBufferKeyOuter);
-		glbuffer().select(FormBufferKeyOuter);
+		glbuffer().create(WidgetBufferKeyOuter);
+		glbuffer().select(WidgetBufferKeyOuter);
 		glbuffer().set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]),
 		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
@@ -415,8 +415,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
 
-		glbuffer().create(FormBufferKeyEmboss);
-		glbuffer().select(FormBufferKeyEmboss);
+		glbuffer().create(WidgetBufferKeyEmboss);
+		glbuffer().select(WidgetBufferKeyEmboss);
 		glbuffer().set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]),
 		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
@@ -450,7 +450,7 @@ namespace BlendInt {
 		update(SliderPropertyValue, 0);
 	}
 
-	ScrollBar::ScrollBar (Orientation orientation, AbstractForm* parent)
+	ScrollBar::ScrollBar (Orientation orientation, AbstractWidget* parent)
 			: AbstractSlider(orientation, parent), m_scroll_control(0)
 	{
 		set_padding(0, 0, 0, 0);
@@ -527,8 +527,8 @@ namespace BlendInt {
 		else					// swap shadetop and shadedown
 			vert_sum = generate_vertices(size, color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
-		glbuffer().create(FormBufferKeyInner);
-		glbuffer().select(FormBufferKeyInner);
+		glbuffer().create(WidgetBufferKeyInner);
+		glbuffer().select(WidgetBufferKeyInner);
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
 		glbuffer().upload(inner_v);
@@ -540,8 +540,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glbuffer().create(FormBufferKeyOuter);
-		glbuffer().select(FormBufferKeyOuter);
+		glbuffer().create(WidgetBufferKeyOuter);
+		glbuffer().select(WidgetBufferKeyOuter);
 		glbuffer().set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		glbuffer().bind();
@@ -552,8 +552,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
 
-		glbuffer().create(FormBufferKeyEmboss);
-		glbuffer().select(FormBufferKeyEmboss);
+		glbuffer().create(WidgetBufferKeyEmboss);
+		glbuffer().select(WidgetBufferKeyEmboss);
 		glbuffer().set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		glbuffer().bind();
@@ -571,7 +571,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glbuffer().select(FormBufferKeyInner);
+		glbuffer().select(WidgetBufferKeyInner);
 
 		glbuffer().bind();
 
@@ -589,7 +589,7 @@ namespace BlendInt {
 		glbuffer().unbind();
 
 		// draw outline
-		glbuffer().select(FormBufferKeyOuter);
+		glbuffer().select(WidgetBufferKeyOuter);
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
 		        themes()->scroll.outline.g(),
 		        themes()->scroll.outline.b(),
@@ -611,7 +611,7 @@ namespace BlendInt {
 
 		glbuffer().unbind();
 
-		glbuffer().select(FormBufferKeyEmboss);	// emboss
+		glbuffer().select(WidgetBufferKeyEmboss);	// emboss
 		glbuffer().bind();
 
 		glEnableClientState(GL_VERTEX_ARRAY);

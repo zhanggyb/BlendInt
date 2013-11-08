@@ -9,7 +9,7 @@
 
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Widget.hpp>
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/AbstractWidget.hpp>
 #include <BlendInt/ContextManager.hpp>
 #include "WidgetTest.h"
 
@@ -18,8 +18,8 @@ using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(WidgetTest);
 
-testWidget::testWidget (int type, AbstractForm* parent)
-		: Widget(parent)
+testWidget::testWidget (int type, AbstractWidget* parent)
+		: Frame(parent)
 {
 	set_round_type(CornerAll);
 	set_position(Point(100, 100));
@@ -64,11 +64,11 @@ void WidgetTest::setUp ()
 void WidgetTest::tearDown ()
 {
 #ifdef DEBUG
-	int mapsize = AbstractForm::map_size();
+	int mapsize = AbstractWidget::map_size();
 
 	if (mapsize > 0) {
-		map<uint64_t, AbstractForm*>::const_iterator it;
-		for (it = AbstractForm::get_map().begin(); it != AbstractForm::get_map().end();
+		map<uint64_t, AbstractWidget*>::const_iterator it;
+		for (it = AbstractWidget::get_map().begin(); it != AbstractWidget::get_map().end();
 		        it++) {
 			cout << "id: " << it->first << " was not deleted!" << endl;
 		}
@@ -112,7 +112,7 @@ void WidgetTest::widget_default_show ()
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	Widget widget;
+	Frame widget;
 
 	// widget.set_round_box_type(RoundBoxAll);
 	widget.set_position(50, 50);

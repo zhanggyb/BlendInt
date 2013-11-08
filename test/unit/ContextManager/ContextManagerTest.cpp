@@ -14,7 +14,7 @@
 #include <BlendInt/Label.hpp>
 #include <BlendInt/FontConfig.hpp>
 #include <BlendInt/Rect.hpp>
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Frame.hpp>
 
 #include <BlendInt/ContextManager.hpp>
 
@@ -40,11 +40,11 @@ void ContextManagerTest::setUp ()
 void ContextManagerTest::tearDown ()
 {
 #ifdef DEBUG
-	int mapsize = AbstractForm::map_size();
+	int mapsize = AbstractWidget::map_size();
 
 	if(mapsize > 0) {
-		map<uint64_t, AbstractForm*>::const_iterator it;
-		for (it = AbstractForm::get_map().begin(); it != AbstractForm::get_map().end(); it++)
+		map<uint64_t, AbstractWidget*>::const_iterator it;
+		for (it = AbstractWidget::get_map().begin(); it != AbstractWidget::get_map().end(); it++)
 		{
 			cout << "id: " << it->first << " was not deleted!" << endl;
 		}
@@ -89,23 +89,23 @@ void ContextManagerTest::check_layer_0_0 ()
 
 	ContextManager* cm = ContextManager::instance();
 
-	Widget widget1;
+	Frame widget1;
 	widget1.set_position(50, 50);
 	widget1.resize (50, 50);
 	widget1.set_name("widget1");
 
-	Widget widget2;
+	Frame widget2;
 	widget2.set_position(100, 100);
 	widget2.resize (50, 50);
 	widget2.set_name("widget2");
 
-	Widget widget3;
+	Frame widget3;
 	widget3.set_position(150, 150);
 	widget3.resize (50, 50);
 	widget3.set_name("widget3");
 	widget3.reset_z(1);
 
-	Widget widget4;
+	Frame widget4;
 	widget4.set_position(200, 200);
 	widget4.resize (50, 50);
 	widget4.set_name("widget4");
@@ -190,23 +190,23 @@ void ContextManagerTest::check_layer_0_1 ()
 
 	ContextManager* cm = ContextManager::instance();
 
-	Widget* widget1 = new Widget;
+	Frame* widget1 = new Frame;
 	widget1->set_position(50, 50);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 
-	Widget* widget2 = new Widget;
+	Frame* widget2 = new Frame;
 	widget2->set_position(100, 100);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
-	Widget* widget3 = new Widget;
+	Frame* widget3 = new Frame;
 	widget3->set_position(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
 	widget3->reset_z(1);
 
-	Widget* widget4 = new Widget;
+	Frame* widget4 = new Frame;
 	widget4->set_position(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");
@@ -288,23 +288,23 @@ void ContextManagerTest::check_layer_0_2 ()
 
 	ContextManager* cm = ContextManager::instance();
 
-	Widget* widget1 = new Widget;
+	Frame* widget1 = new Frame;
 	widget1->set_position(50, 50);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 
-	Widget* widget2 = new Widget(widget1);
+	Frame* widget2 = new Frame(widget1);
 	widget2->set_position(100, 100);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
-	Widget* widget3 = new Widget;
+	Frame* widget3 = new Frame;
 	widget3->set_position(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
 	widget3->reset_z(1);
 
-	Widget* widget4 = new Widget(widget3);
+	Frame* widget4 = new Frame(widget3);
 	widget4->set_position(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");
@@ -397,23 +397,23 @@ void ContextManagerTest::check_layer_0_3 ()
 
 	ContextManager* cm = ContextManager::instance();
 
-	Widget* widget1 = new Widget;
+	Frame* widget1 = new Frame;
 	widget1->set_position(50, 50);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 
-	Widget* widget2 = new Widget(widget1);
+	Frame* widget2 = new Frame(widget1);
 	widget2->set_position(100, 100);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
-	Widget* widget3 = new Widget;
+	Frame* widget3 = new Frame;
 	widget3->set_position(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
 	widget3->reset_z(1);
 
-	Widget* widget4 = new Widget(widget3);
+	Frame* widget4 = new Frame(widget3);
 	widget4->set_position(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");
@@ -495,22 +495,22 @@ void ContextManagerTest::check_layer_0_4 ()
 
 	ContextManager* cm = ContextManager::instance();
 
-	Widget* widget1 = new Widget;
+	Frame* widget1 = new Frame;
 	widget1->set_position(50, 50);
 	widget1->resize (50, 50);
 	widget1->set_name("widget1");
 
-	Widget* widget2 = new Widget(widget1);
+	Frame* widget2 = new Frame(widget1);
 	widget2->set_position(100, 100);
 	widget2->resize (50, 50);
 	widget2->set_name("widget2");
 
-	Widget* widget3 = new Widget(widget2);
+	Frame* widget3 = new Frame(widget2);
 	widget3->set_position(150, 150);
 	widget3->resize (50, 50);
 	widget3->set_name("widget3");
 
-	Widget* widget4 = new Widget(widget3);
+	Frame* widget4 = new Frame(widget3);
 	widget4->set_position(200, 200);
 	widget4->resize (50, 50);
 	widget4->set_name("widget4");

@@ -25,26 +25,26 @@
 #define _BLENDINT_SCROLLWIDGET_HPP_
 
 //#include <BlendInt/ScrollBar.hpp>
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Frame.hpp>
 
 namespace BlendInt {
 
 	class Slider;
 
-	class ScrollWidget: public Widget
+	class ScrollWidget: public Frame
 	{
 
 	public:
 
 		ScrollWidget ();
 
-		ScrollWidget (AbstractForm* parent);
+		ScrollWidget (AbstractWidget* parent);
 
 		virtual ~ScrollWidget ();
 
-		void set_viewport (Widget* widget);
+		void set_viewport (Frame* widget);
 
-		Widget* viewport () const {return m_viewport;}
+		Frame* viewport () const {return m_viewport;}
 
 	protected:
 
@@ -52,7 +52,7 @@ namespace BlendInt {
 
 	private:
 
-		Widget* m_viewport;
+		Frame* m_viewport;
 
 		// demo code
 

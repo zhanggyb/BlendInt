@@ -3,7 +3,7 @@
 #ifndef _WIDGET_TEST_H
 #define _WIDGET_TEST_H
 
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Frame.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <iostream>
@@ -12,11 +12,11 @@
 using namespace BlendInt;
 using namespace std;
 
-class testWidget: public Widget
+class testWidget: public Frame
 {
 public:
 
-	testWidget (int type = 0, AbstractForm* parent = 0);
+	testWidget (int type = 0, AbstractWidget* parent = 0);
 
 	virtual ~testWidget ()
 	{

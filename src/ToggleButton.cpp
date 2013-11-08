@@ -45,7 +45,7 @@ namespace BlendInt {
 		set_text(text);
 	}
 
-	ToggleButton::ToggleButton (AbstractForm* parent)
+	ToggleButton::ToggleButton (AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
 		set_checkable(true);
@@ -53,7 +53,7 @@ namespace BlendInt {
 		resize (90, 25);
 	}
 
-	ToggleButton::ToggleButton (const String& text, AbstractForm* parent)
+	ToggleButton::ToggleButton (const String& text, AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
 		set_checkable(true);
@@ -105,7 +105,7 @@ namespace BlendInt {
 			}
 		}
 
-		glbuffer().select(FormBufferKeyInner);
+		glbuffer().select(WidgetBufferKeyInner);
 
 		glbuffer().bind();
 		glVertexPointer(2, GL_FLOAT, 0, 0);
@@ -115,7 +115,7 @@ namespace BlendInt {
 		glbuffer().unbind();
 
 		// draw outline
-		glbuffer().select(FormBufferKeyOuter);
+		glbuffer().select(WidgetBufferKeyOuter);
 
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
 		        themes()->regular.outline.g(),
@@ -136,7 +136,7 @@ namespace BlendInt {
 		glbuffer().unbind();
 
 		if(emboss()) {
-			glbuffer().select(FormBufferKeyEmboss);
+			glbuffer().select(WidgetBufferKeyEmboss);
 			glbuffer().bind();
 			glEnableClientState(GL_VERTEX_ARRAY);
 			for (int j = 0; j < WIDGET_AA_JITTER; j++) {

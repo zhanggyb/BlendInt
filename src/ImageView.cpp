@@ -27,7 +27,7 @@
 namespace BlendInt {
 
 	ImageView::ImageView ()
-	: Widget()
+	: Frame()
 	{
 		glShadeModel(GL_FLAT);
 		makeCheckImage();
@@ -36,8 +36,8 @@ namespace BlendInt {
 		resize(64 + padding().left() + padding().right(), 64 + padding().top() + padding().bottom());
 	}
 
-	ImageView::ImageView (AbstractForm* parent)
-	: Widget(parent)
+	ImageView::ImageView (AbstractWidget* parent)
+	: Frame(parent)
 	{
 		glShadeModel(GL_FLAT);
 		makeCheckImage();

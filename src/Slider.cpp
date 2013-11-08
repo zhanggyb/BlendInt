@@ -39,7 +39,7 @@ namespace BlendInt {
 		set_emboss(false);
 	}
 
-	SlideButton::SlideButton(AbstractForm* parent)
+	SlideButton::SlideButton(AbstractWidget* parent)
 	:  Button(parent)
 	{
 		set_padding (0, 0, 0, 0);
@@ -65,7 +65,7 @@ namespace BlendInt {
 				update_shape(size_p);
 				break;
 			}
-			case WidgetPropertyPadding: {
+			case FramePropertyPadding: {
 				// do not allow change padding
 				set_padding(0, 0, 0, 0);
 				break;
@@ -88,10 +88,10 @@ namespace BlendInt {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if(m_status_down) {
-			glbuffer().select(FormBufferKeyInner);
+			glbuffer().select(WidgetBufferKeyInner);
 
 		} else {
-			glbuffer().select(FormBufferKeyLast + 1);
+			glbuffer().select(WidgetBufferKeyLast + 1);
 
 		}
 
@@ -110,7 +110,7 @@ namespace BlendInt {
 		glbuffer().unbind();
 
 		// draw outline
-		glbuffer().select(FormBufferKeyOuter);
+		glbuffer().select(WidgetBufferKeyOuter);
 
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
 		        themes()->scroll.outline.g(),
@@ -263,8 +263,8 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		glbuffer().create(FormBufferKeyInner);
-		glbuffer().select(FormBufferKeyInner);
+		glbuffer().create(WidgetBufferKeyInner);
+		glbuffer().select(WidgetBufferKeyInner);
 
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
@@ -275,8 +275,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glbuffer().create(FormBufferKeyOuter);
-		glbuffer().select(FormBufferKeyOuter);
+		glbuffer().create(WidgetBufferKeyOuter);
+		glbuffer().select(WidgetBufferKeyOuter);
 		glbuffer().set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		glbuffer().bind();
@@ -301,8 +301,8 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		glbuffer().create(FormBufferKeyLast + 1);
-		glbuffer().select(FormBufferKeyLast + 1);
+		glbuffer().create(WidgetBufferKeyLast + 1);
+		glbuffer().select(WidgetBufferKeyLast + 1);
 
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
@@ -335,7 +335,7 @@ namespace BlendInt {
 		update(SliderPropertyValue, 0);
 	}
 
-	Slider::Slider(Orientation orientation, AbstractForm* parent)
+	Slider::Slider(Orientation orientation, AbstractWidget* parent)
 	: AbstractSlider(orientation, parent), m_slide_button(0)
 	{
 		m_slide_button = new SlideButton(this);

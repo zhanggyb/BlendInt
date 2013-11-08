@@ -28,6 +28,10 @@
 
 namespace BlendInt {
 
+	class Point;
+
+
+
 	/**
 	 * @brief Point position
 	 *
@@ -103,6 +107,13 @@ namespace BlendInt {
 		int x_;
 		int y_;
 	};
+
+	extern inline bool operator == (const Point& point1, const Point& point2)
+	{
+		return ((point1.x() == point2.x())
+				&& (point1.y() == point2.y()));
+	}
+
 }
 
 #endif /* _BLENDINT_POINT_HPP_ */

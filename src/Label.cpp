@@ -32,7 +32,7 @@
 namespace BlendInt {
 
 	Label::Label (const String& text)
-		: Form(), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
+		: Widget(), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
 	{
 		set_expand_x(true);
 		FontCache::create(m_font);
@@ -41,8 +41,8 @@ namespace BlendInt {
 		set_text(text);
 	}
 
-	Label::Label (const String& text, AbstractForm *parent)
-		: Form(parent), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
+	Label::Label (const String& text, AbstractWidget *parent)
+		: Widget(parent), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
 	{
 		set_expand_x(true);
 		FontCache::create(m_font);

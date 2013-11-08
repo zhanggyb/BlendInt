@@ -1,7 +1,7 @@
 // cpp
 
 #include <BlendInt/FontConfig.hpp>
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/AbstractWidget.hpp>
 #include <iostream>
 #include <string>
 
@@ -30,11 +30,11 @@ void FontConfigTest::setUp ()
 void FontConfigTest::tearDown ()
 {
 #ifdef DEBUG
-	int mapsize = AbstractForm::map_size();
+	int mapsize = AbstractWidget::map_size();
 
 	if(mapsize > 0) {
-		map<uint64_t, AbstractForm*>::const_iterator it;
-		for (it = AbstractForm::get_map().begin(); it != AbstractForm::get_map().end(); it++)
+		map<uint64_t, AbstractWidget*>::const_iterator it;
+		for (it = AbstractWidget::get_map().begin(); it != AbstractWidget::get_map().end(); it++)
 		{
 			cout << "id: " << it->first << " was not deleted!" << endl;
 		}

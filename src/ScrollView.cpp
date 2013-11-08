@@ -30,20 +30,20 @@
 namespace BlendInt {
 
 	ScrollView::ScrollView()
-	: Widget(), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
+	: Frame(), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
 	{
 		resize(200, 160);
 		set_preferred_size(200, 160);
 	}
 
-	ScrollView::ScrollView(AbstractForm* parent)
-	: Widget(parent), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
+	ScrollView::ScrollView(AbstractWidget* parent)
+	: Frame(parent), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
 	{
 		resize(200, 160);
 		set_preferred_size(200, 160);
 	}
 
-	void ScrollView::set_viewport(AbstractForm* viewport)
+	void ScrollView::set_viewport(AbstractWidget* viewport)
 	{
 		if(!viewport) return;
 

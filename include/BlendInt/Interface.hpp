@@ -50,7 +50,7 @@
 
 namespace BlendInt {
 
-	class AbstractForm;
+	class AbstractWidget;
 	class KeyEvent;
 	class MouseEvent;
 
@@ -69,9 +69,9 @@ namespace BlendInt {
 
 		static void release ();
 
-		bool bind (AbstractForm* object);
+		bool bind (AbstractWidget* object);
 
-		bool unbind (AbstractForm* object);
+		bool unbind (AbstractWidget* object);
 
 		void render ();
 
@@ -89,15 +89,15 @@ namespace BlendInt {
 
 		void resize (const Size& size);
 
-		void dispatch_render_event (AbstractForm* obj);
+		void dispatch_render_event (AbstractWidget* obj);
 
-		void dispatch_key_press_event (AbstractForm* obj, KeyEvent* event);
+		void dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event);
 
-		void dispatch_mouse_press_event (AbstractForm* obj, MouseEvent* event);
+		void dispatch_mouse_press_event (AbstractWidget* obj, MouseEvent* event);
 
-		void dispatch_mouse_release_event (AbstractForm* obj, MouseEvent* event);
+		void dispatch_mouse_release_event (AbstractWidget* obj, MouseEvent* event);
 
-		void dispatch_mouse_move_event (AbstractForm* obj, MouseEvent* event);
+		void dispatch_mouse_move_event (AbstractWidget* obj, MouseEvent* event);
 
 		Cpp::ConnectionScope& events () {return m_events;}
 

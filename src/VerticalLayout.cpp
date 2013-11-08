@@ -38,7 +38,7 @@ namespace BlendInt {
 		set_alignment(align);
 	}
 
-	VerticalLayout::VerticalLayout (int align, AbstractForm* parent)
+	VerticalLayout::VerticalLayout (int align, AbstractWidget* parent)
 			: AbstractLayout(parent)
 	{
 		set_alignment(align);
@@ -68,8 +68,8 @@ namespace BlendInt {
 	void VerticalLayout::render ()
 	{
 
-		std::vector<AbstractForm*>::const_iterator it;
-		AbstractForm *item = 0;
+		std::vector<AbstractWidget*>::const_iterator it;
+		AbstractWidget *item = 0;
 		for (it = items().begin(); it != items().end(); it++) {
 			item = *it;
 			if (item) {
@@ -103,7 +103,7 @@ namespace BlendInt {
 
 	void VerticalLayout::press_key (KeyEvent* event)
 	{
-		std::vector<AbstractForm*>::iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_key_press_event(*it, event);
 		}
@@ -119,7 +119,7 @@ namespace BlendInt {
 
 	void VerticalLayout::press_mouse (MouseEvent* event)
 	{
-		std::vector<AbstractForm*>::iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_mouse_press_event(*it, event);
 		}
@@ -127,7 +127,7 @@ namespace BlendInt {
 
 	void VerticalLayout::release_mouse (MouseEvent* event)
 	{
-		std::vector<AbstractForm*>::iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_mouse_release_event(*it, event);
 		}
@@ -135,13 +135,13 @@ namespace BlendInt {
 
 	void VerticalLayout::move_mouse (MouseEvent* event)
 	{
-		std::vector<AbstractForm*>::iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
 			Interface::instance()->dispatch_mouse_move_event(*it, event);
 		}
 	}
 
-	void VerticalLayout::add_item (Form* form)
+	void VerticalLayout::add_item (Widget* form)
 	{
 		// don't fire events when adding a widget into a layout
 		form->deactivate_events();
@@ -250,11 +250,11 @@ namespace BlendInt {
 		set_in_layout(layout, true);
 	}
 
-	void VerticalLayout::remove_item(AbstractForm * object)
+	void VerticalLayout::remove_item(AbstractWidget * object)
 	{
 		deactivate_events();
 
-		std::vector<AbstractForm*>::iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		for(it = items().begin(); it != items().end();)
 		{
 			if ((*it) == object) {
@@ -315,8 +315,8 @@ namespace BlendInt {
 	{
 		int y = position().y() + size().height() - margin().top();
 
-		std::vector<AbstractForm*>::reverse_iterator it;
-		AbstractForm* child = 0;
+		std::vector<AbstractWidget*>::reverse_iterator it;
+		AbstractWidget* child = 0;
 		for(it = items().rbegin(); it != items().rend(); it++)
 		{
 			if(! (it == items().rbegin()))
@@ -333,8 +333,8 @@ namespace BlendInt {
 	{
 		int y = position().y() + size->height() - margin().top();
 
-		std::vector<AbstractForm*>::reverse_iterator it;
-		AbstractForm* child = 0;
+		std::vector<AbstractWidget*>::reverse_iterator it;
+		AbstractWidget* child = 0;
 		for(it = items().rbegin(); it != items().rend(); it++)
 		{
 			if(! (it == items().rbegin()))
@@ -357,8 +357,8 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		std::vector<AbstractForm*>::reverse_iterator it;
-		AbstractForm* child = 0;
+		std::vector<AbstractWidget*>::reverse_iterator it;
+		AbstractWidget* child = 0;
 		int y = position().y() + size().height() - margin().top();
 
 		if((current_height - h_plus) >=
@@ -386,7 +386,7 @@ namespace BlendInt {
 
 		} else {
 
-			std::set<AbstractForm*> normal_items(m_fixed_items);	// set of unminimized items
+			std::set<AbstractWidget*> normal_items(m_fixed_items);	// set of unminimized items
 
 			unsigned int unminimal_height = current_height - h_plus - min_exp_h - (items().size() - 1) * space();
 			unsigned int h = unminimal_height / normal_items.size();
@@ -430,8 +430,8 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		std::vector<AbstractForm*>::reverse_iterator it;
-		AbstractForm* child = 0;
+		std::vector<AbstractWidget*>::reverse_iterator it;
+		AbstractWidget* child = 0;
 		int y = position().y() + size->height() - margin().top();
 
 		if((current_height - h_plus) >=
@@ -459,7 +459,7 @@ namespace BlendInt {
 
 		} else {
 
-			std::set<AbstractForm*> normal_items(m_fixed_items);	// set of unminimized items
+			std::set<AbstractWidget*> normal_items(m_fixed_items);	// set of unminimized items
 
 			unsigned int unminimal_height = current_height - h_plus - min_exp_h - (items().size() - 1) * space();
 			unsigned int h = unminimal_height / normal_items.size();
@@ -502,8 +502,8 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		std::vector<AbstractForm*>::reverse_iterator it;
-		AbstractForm* child = 0;
+		std::vector<AbstractWidget*>::reverse_iterator it;
+		AbstractWidget* child = 0;
 		int y = position().y() + size().height() - margin().top();
 
 		unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space();
@@ -537,8 +537,8 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		std::vector<AbstractForm*>::reverse_iterator it;
-		AbstractForm* child = 0;
+		std::vector<AbstractWidget*>::reverse_iterator it;
+		AbstractWidget* child = 0;
 		int y = position().y() + size->height() - margin().top();
 
 		unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space();
@@ -571,8 +571,8 @@ namespace BlendInt {
 
 		unsigned int w = size().width() - margin().left() - margin().right();
 
-		std::vector<AbstractForm*>::reverse_iterator it;
-		AbstractForm* child = 0;
+		std::vector<AbstractWidget*>::reverse_iterator it;
+		AbstractWidget* child = 0;
 		for(it = items().rbegin(); it != items().rend(); it++)
 		{
 			child = *it;
@@ -604,8 +604,8 @@ namespace BlendInt {
 
 		unsigned int w = size->width() - margin().left() - margin().right();
 
-		std::vector<AbstractForm*>::reverse_iterator it;
-		AbstractForm* child = 0;
+		std::vector<AbstractWidget*>::reverse_iterator it;
+		AbstractWidget* child = 0;
 		for(it = items().rbegin(); it != items().rend(); it++)
 		{
 			child = *it;
@@ -631,10 +631,10 @@ namespace BlendInt {
 
 	}
 
-	void VerticalLayout::reset_height_of_fixed_items (std::set<AbstractForm*>* items,
+	void VerticalLayout::reset_height_of_fixed_items (std::set<AbstractWidget*>* items,
 													  unsigned int height)
 	{
-		std::set<AbstractForm*>::iterator it;
+		std::set<AbstractWidget*>::iterator it;
 
 		for(it = items->begin(); it != items->end(); it++)
 		{
@@ -646,7 +646,7 @@ namespace BlendInt {
 	{
 		unsigned int height = 0;
 
-		std::set<AbstractForm*>::iterator it;
+		std::set<AbstractWidget*>::iterator it;
 		for(it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
 		{
 			height += (*it)->minimal_size().height();
@@ -659,7 +659,7 @@ namespace BlendInt {
 	{
 		unsigned int height = 0;
 
-		std::set<AbstractForm*>::iterator it;
+		std::set<AbstractWidget*>::iterator it;
 		for(it = m_fixed_items.begin(); it != m_fixed_items.end(); it++)
 		{
 			height += (*it)->size().height();
@@ -678,8 +678,8 @@ namespace BlendInt {
 		Size min_size_out;
 		Size preferred_size_out;
 
-		AbstractForm* child;
-		std::vector<AbstractForm*>::reverse_iterator it;
+		AbstractWidget* child;
+		std::vector<AbstractWidget*>::reverse_iterator it;
 
 		if(count_margin) {
 			size_out.set_height(margin().top());

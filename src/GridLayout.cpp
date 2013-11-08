@@ -29,7 +29,7 @@ namespace BlendInt {
 	{
 	}
 
-	GridLayout::GridLayout (AbstractForm* parent)
+	GridLayout::GridLayout (AbstractWidget* parent)
 	{
 	}
 
@@ -37,7 +37,7 @@ namespace BlendInt {
 	{
 	}
 
-	void GridLayout::add_widget (Widget* object)
+	void GridLayout::add_widget (Frame* object)
 	{
 	}
 
@@ -45,14 +45,14 @@ namespace BlendInt {
 	{
 	}
 
-	bool GridLayout::remove (AbstractForm* object)
+	bool GridLayout::remove (AbstractWidget* object)
 	{
 		if (!children().count(object)) return false;
 
 		return true;
 	}
 
-	bool GridLayout::erase (AbstractForm* object)
+	bool GridLayout::erase (AbstractWidget* object)
 	{
 		if (!children().count(object)) return false;
 
@@ -63,7 +63,7 @@ namespace BlendInt {
 	{
 	}
 
-	void GridLayout::add_single_widget(Widget* widget)
+	void GridLayout::add_single_widget(Frame* widget)
 	{
 
 	}

@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_SCROLLVIEW_HPP_
 #define _BLENDINT_SCROLLVIEW_HPP_
 
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Frame.hpp>
 
 namespace BlendInt {
 
@@ -34,7 +34,7 @@ namespace BlendInt {
 	 * The sub widget is named as a viewport and it's usually larger than
 	 * the ScrollView
 	 */
-	class ScrollView: public Widget
+	class ScrollView: public Frame
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScrollView);
 
@@ -42,7 +42,7 @@ namespace BlendInt {
 
 		ScrollView();
 
-		ScrollView(AbstractForm* parent);
+		ScrollView(AbstractWidget* parent);
 
 		/**
 		 * @brief set the scrollable orientation
@@ -53,14 +53,14 @@ namespace BlendInt {
 			m_orientation = flag;
 		}
 
-		void set_viewport (AbstractForm* viewport);
+		void set_viewport (AbstractWidget* viewport);
 
 		/**
 		 * @brief reset the viewport position to center of scroll area (counting padding)
 		 */
 		void reset_viewport_position ();
 
-		const AbstractForm* viewport () const {return m_viewport;}
+		const AbstractWidget* viewport () const {return m_viewport;}
 
 	protected:
 
@@ -83,7 +83,7 @@ namespace BlendInt {
 		 */
 		bool m_move_status;
 
-		AbstractForm* m_viewport;
+		AbstractWidget* m_viewport;
 
 		/**
 		 * @brief the origin viewport position where start to move the viewport

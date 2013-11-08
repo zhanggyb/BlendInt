@@ -24,12 +24,12 @@
 #ifndef _BLENDINT_POPUPWIDGET_HPP_
 #define _BLENDINT_POPUPWIDGET_HPP_
 
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Frame.hpp>
 
 namespace BlendInt {
 
 	enum PopupWidgetBufferKey {
-		ShadowBufferKeyBase = FormBufferKeyLast + 1
+		ShadowBufferKeyBase = WidgetBufferKeyLast + 1
 	};
 
 	/**
@@ -45,7 +45,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class PopupWidget: public Widget
+	class PopupWidget: public Frame
 	{
 		DISALLOW_COPY_AND_ASSIGN(PopupWidget);
 

@@ -25,10 +25,6 @@
 
 namespace BlendInt {
 
-	bool operator == (const Size& size1, const Size& size2)
-	{
-		return ((size1.width() == size2.width())
-		        && (size1.height() == size2.height()));
-	}
+
 
 }

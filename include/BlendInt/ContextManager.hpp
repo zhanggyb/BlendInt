@@ -33,7 +33,7 @@ using std::set;
 namespace BlendInt {
 
 	class Interface;
-	class AbstractForm;
+	class AbstractWidget;
 
 	/**
 	 * @brief class to hold and manage drawable objects for render
@@ -46,9 +46,9 @@ namespace BlendInt {
 
 		static ContextManager* instance ();
 		
-		bool bind (AbstractForm* obj);
+		bool bind (AbstractWidget* obj);
 
-		bool unbind (AbstractForm* obj);
+		bool unbind (AbstractWidget* obj);
 
 		int index_size () const {return m_index.size();}
 
@@ -73,26 +73,26 @@ namespace BlendInt {
 		 *
 		 * add or update the Drawable object in the context list
 		 */
-		bool add_drawable (AbstractForm* obj);
+		bool add_drawable (AbstractWidget* obj);
 
 		/**
 		 * @breif remove a drawable from the context list
 		 * @param obj
 		 * @return
 		 */
-		bool remove_drawable (AbstractForm* obj);
+		bool remove_drawable (AbstractWidget* obj);
 
-		typedef map<int, set<AbstractForm*>* > LayerType;
-		typedef set<AbstractForm*> SetType;
-		typedef map<AbstractForm*, int> IndexType;
+		typedef map<int, set<AbstractWidget*>* > LayerType;
+		typedef set<AbstractWidget*> SetType;
+		typedef map<AbstractWidget*, int> IndexType;
 
 		ContextManager ();
 
 		~ContextManager ();
 
-		map<int, set<AbstractForm*>* > m_layers;
+		map<int, set<AbstractWidget*>* > m_layers;
 
-		map<AbstractForm*, int> m_index;
+		map<AbstractWidget*, int> m_index;
 
 		static ContextManager* context_manager;
 		

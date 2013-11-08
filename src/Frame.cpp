@@ -22,80 +22,111 @@
  */
 
 #include <GL/glew.h>
+#include <assert.h>
+#include <algorithm>
+
+#include <iostream>
 
 #include <BlendInt/Frame.hpp>
-#include <BlendInt/FontCache.hpp>
+#include <BlendInt/Types.hpp>
+#include <BlendInt/Coord.hpp>
+#include <BlendInt/Color.hpp>
+
+#include <BlendInt/Utilities-inl.hpp>
+
+#include <BlendInt/Interface.hpp>
 #include <BlendInt/Theme.hpp>
 
 namespace BlendInt {
 
 	Frame::Frame ()
-	: Widget(), m_layout(0)
+	: Widget()
 	{
-
+		set_minimal_size(padding().left() + padding().right(),
+				padding().top() + padding().bottom());
+		resize(120, 80);
+		set_preferred_size(120, 80);
 	}
 
-	Frame::Frame (AbstractForm* parent)
-	: Widget (parent), m_layout(0)
+	Frame::Frame (AbstractWidget* parent)
+			: Widget(parent)
 	{
-
+		set_minimal_size(padding().left() + padding().right(),
+				padding().top() + padding().bottom());
+		resize(120, 80);
+		set_preferred_size(120, 80);
 	}
 
 	Frame::~Frame ()
 	{
-
+		// TODO Auto-generated destructor stub
 	}
 
-	void Frame::set_layout(AbstractLayout* layout)
+	void Frame::set_padding (const Padding& padding)
 	{
-		if(m_layout == layout) return;
+		if(m_padding.equal(padding)) return;
+
+		Padding new_padding = padding;
+		update(FramePropertyPadding, &new_padding);
+		m_padding = new_padding;
+	}
+
+	void Frame::set_padding (int l, int r, int t, int b)
+	{
+		if(m_padding.equal(l, r, t, b)) return;
+
+		Padding new_padding(l, r, t, b);
+
+		update(FramePropertyPadding, &new_padding);
+		m_padding = new_padding;
+	}
+
+
+	void Frame::press_key (KeyEvent* event)
+	{
+	}
+
+	void Frame::press_context_menu (ContextMenuEvent* event)
+	{
+	}
+
+	void Frame::release_context_menu (ContextMenuEvent* event)
+	{
+	}
+
+	void Frame::press_mouse (MouseEvent* event)
+	{
+	}
+
+	void Frame::release_mouse (MouseEvent* event)
+	{
+	}
+
+	void Frame::move_mouse (MouseEvent* event)
+	{
+	}
+
+	void Frame::update (int type, const void* data)
+	{
+		Widget::update(type, data);
 	}
 
 	void Frame::render ()
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		if (glbuffer().is_buffer(0)) {
-			ThemeManager* tm = ThemeManager::instance();
-
-			glColor4ub(tm->themes()->regular.inner.r(),
-			        tm->themes()->regular.inner.g(),
-			        tm->themes()->regular.inner.b(),
-			        tm->themes()->regular.inner.a() * 0.5f);
-
-			glbuffer().bind(GL_ARRAY_BUFFER);
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glEnableClientState(GL_VERTEX_ARRAY);
-
-			glDrawArrays(GL_POLYGON, 0, 4);
-
-			glColor4ub(tm->themes()->regular.outline.r(),
-			        tm->themes()->regular.outline.g(),
-			        tm->themes()->regular.outline.b(),
-			        tm->themes()->regular.outline.a());
-
-			glDrawArrays(GL_LINE_LOOP, 0, 4);
-
-			glDisableClientState(GL_VERTEX_ARRAY);
-
-			glbuffer().unbind();
-		}
-
-		if(!m_layout) {
-			FontCache::create()->print (10, size().height()/2, "No layout is set");
-		}
-
-		glDisable(GL_BLEND);
-
-		glPopMatrix();
+		Widget::render();
 	}
 
-}
+	bool Frame::contain_no_padding (const Coord2d& cursor)
+	{
+		if (cursor.x() < (position().x() + m_padding.left()) ||
+				cursor.y() < (position().y() + m_padding.bottom()) ||
+				cursor.x() > (position().x() + size().width() - m_padding.right()) ||
+				cursor.y() > (position().y() + size().height() - m_padding.top())) {
+			return false;
+		}
+
+		return true;
+	}
+
+} /* namespace BlendInt */
+

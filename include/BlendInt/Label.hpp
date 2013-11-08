@@ -26,7 +26,7 @@
 
 #include <string>
 
-#include <BlendInt/Form.hpp>
+#include <BlendInt/Widget.hpp>
 #include <BlendInt/Font.hpp>
 #include <BlendInt/Color.hpp>
 #include <BlendInt/Rect.hpp>
@@ -39,7 +39,7 @@ namespace BlendInt {
 
 	class Rect;
 
-	class Label: public Form
+	class Label: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Label);
 
@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		Label (const String& label);
 
-		Label (const String& label, AbstractForm * parent);
+		Label (const String& label, AbstractWidget * parent);
 
 		virtual ~Label ();
 

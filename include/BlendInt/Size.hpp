@@ -28,16 +28,6 @@
 
 namespace BlendInt {
 
-	class Size;
-
-	/**
-	 * @brief compare two size object and return true if they are equal
-	 * @param size1
-	 * @param size2
-	 * @return
-	 */
-	extern bool operator == (const Size& size1, const Size& size2);
-
 	/**
 	 * @brief Size
 	 *
@@ -143,6 +133,18 @@ namespace BlendInt {
 		unsigned int m_height;
 	};
 
+
+	/**
+	 * @brief compare two size object and return true if they are equal
+	 * @param size1
+	 * @param size2
+	 * @return
+	 */
+	extern inline bool operator == (const Size& size1, const Size& size2)
+	{
+		return ((size1.width() == size2.width())
+		        && (size1.height() == size2.height()));
+	}
 }
 
 #endif /* SIZE_HPP_ */

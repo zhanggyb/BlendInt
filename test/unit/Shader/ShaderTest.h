@@ -3,7 +3,7 @@
 #ifndef _SHADER_TEST_H
 #define _SHADER_TEST_H
 
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Frame.hpp>
 #include <BlendInt/GLSLProgram.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -13,7 +13,7 @@
 using namespace BlendInt;
 using namespace std;
 
-class ShaderWidget1: public Widget
+class ShaderWidget1: public Frame
 {
 public:
 
@@ -47,7 +47,7 @@ private:
 	static const char* fs_source;
 };
 
-class ShaderWidget2: public Widget
+class ShaderWidget2: public Frame
 {
 public:
 
@@ -80,7 +80,7 @@ private:
 	static const char* fs_source;
 };
 
-class ShaderWidget3: public Widget
+class ShaderWidget3: public Frame
 {
 public:
 

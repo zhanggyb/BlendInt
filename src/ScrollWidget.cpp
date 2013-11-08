@@ -34,13 +34,13 @@
 namespace BlendInt {
 
 	ScrollWidget::ScrollWidget()
-	: Widget(), m_viewport(0), m_hslider(0), m_vslider(0)
+	: Frame(), m_viewport(0), m_hslider(0), m_vslider(0)
 	{
 
 	}
 
-	ScrollWidget::ScrollWidget(AbstractForm* parent)
-	: Widget(parent), m_viewport(0), m_hslider(0), m_vslider(0)
+	ScrollWidget::ScrollWidget(AbstractWidget* parent)
+	: Frame(parent), m_viewport(0), m_hslider(0), m_vslider(0)
 	{
 
 	}
@@ -50,7 +50,7 @@ namespace BlendInt {
 
 	}
 
-	void ScrollWidget::set_viewport(Widget* widget)
+	void ScrollWidget::set_viewport(Frame* widget)
 	{
 		// TODO: more code needed here
 		// add_child(widget);

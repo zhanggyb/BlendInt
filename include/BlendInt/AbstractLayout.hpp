@@ -32,8 +32,8 @@
 
 #include <vector>
 
-#include <BlendInt/AbstractForm.hpp>
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/AbstractWidget.hpp>
+#include <BlendInt/Frame.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -64,7 +64,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup layouts
 	 */
-	class AbstractLayout: public AbstractForm
+	class AbstractLayout: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractLayout);
 
@@ -72,11 +72,11 @@ namespace BlendInt {
 
 		AbstractLayout ();
 
-		AbstractLayout (AbstractForm *parent);
+		AbstractLayout (AbstractWidget *parent);
 
 		virtual ~AbstractLayout ();
 
-		void add (Form* form);
+		void add (Widget* form);
 
 		void add (AbstractLayout* layout);
 
@@ -87,7 +87,7 @@ namespace BlendInt {
 		 *
 		 * @warning: after removing from layout, the drawable object will bind to nothing, it must be deleted manually
 		 */
-		bool remove (AbstractForm* object);
+		bool remove (AbstractWidget* object);
 
 		/**
 		 * @brief erase the object from layout
@@ -96,7 +96,7 @@ namespace BlendInt {
 		 *
 		 * Same as remove but will delete the child object
 		 */
-		bool erase (AbstractForm* object);
+		bool erase (AbstractWidget* object);
 
 		int alignment () const {return m_alignment;}
 
@@ -127,13 +127,13 @@ namespace BlendInt {
 
 		virtual void render () = 0;
 
-		virtual void add_item (Form* form) = 0;
+		virtual void add_item (Widget* form) = 0;
 
 		virtual void add_item (AbstractLayout* layout) = 0;
 
-		virtual void remove_item (AbstractForm* object) = 0;
+		virtual void remove_item (AbstractWidget* object) = 0;
 
-		std::vector<AbstractForm*>& items ()
+		std::vector<AbstractWidget*>& items ()
 		{
 			return m_items;
 		}
@@ -154,7 +154,7 @@ namespace BlendInt {
 
 		Margin m_margin;
 
-		std::vector<AbstractForm*> m_items;
+		std::vector<AbstractWidget*> m_items;
 	};
 
 } /* namespace BIL */

@@ -24,7 +24,7 @@
 #ifndef _BIL_ABSTRACTSLIDER_HPP_
 #define _BIL_ABSTRACTSLIDER_HPP_
 
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Frame.hpp>
 #include <BlendInt/Types.hpp>
 
 #include <Cpp/Events.hpp>
@@ -34,7 +34,7 @@ namespace BlendInt {
 	/**
 	 * @brief The abstract class for slider widgets
 	 */
-	class AbstractSlider: public Widget
+	class AbstractSlider: public Frame
 	{
 
 	public:
@@ -49,7 +49,7 @@ namespace BlendInt {
 
 		AbstractSlider(Orientation orientation = Horizontal);
 
-		AbstractSlider(Orientation orientation, AbstractForm* parent);
+		AbstractSlider(Orientation orientation, AbstractWidget* parent);
 
 		virtual ~AbstractSlider ();
 

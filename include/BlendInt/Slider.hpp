@@ -35,7 +35,7 @@ namespace BlendInt {
 
 		SlideButton ();
 
-		SlideButton (AbstractForm* parent);
+		SlideButton (AbstractWidget* parent);
 
 		virtual ~SlideButton ();
 
@@ -69,7 +69,7 @@ namespace BlendInt {
 
 		Slider (Orientation orientation = Horizontal);
 
-		Slider (Orientation orientation, AbstractForm* parent);
+		Slider (Orientation orientation, AbstractWidget* parent);
 
 		virtual ~Slider ();
 
