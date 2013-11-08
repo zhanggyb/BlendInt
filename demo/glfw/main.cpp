@@ -176,27 +176,27 @@ int main(int argc, char* argv[])
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	DoEvent obj;
+//	DoEvent obj;
+//
+//	obj.bind();
+//
+//	Button* add_button = new Button;
+//	add_button->set_text("Add Button");
+//	add_button->set_position(600, 700);
 
-	obj.bind();
+//	obj.connect_add(add_button);
+//
+//	Button* remove_button = new Button;
+//	remove_button->set_text("Remove Button");
+//	remove_button->set_position(600, 650);
+//
+//	obj.connect_remove(remove_button);
+//
+//	app->bind(add_button);
+//	app->bind(remove_button);
 
-	Button* add_button = new Button;
-	add_button->set_text("Add Button");
-	add_button->set_position(600, 700);
-
-	obj.connect_add(add_button);
-
-	Button* remove_button = new Button;
-	remove_button->set_text("Remove Button");
-	remove_button->set_position(600, 650);
-
-	obj.connect_remove(remove_button);
-
-	app->bind(add_button);
-	app->bind(remove_button);
-
-	// -----------------------
-
+	 //-----------------------
+//
 //	Cpp::ConnectionScope events;
 //
 //	Button* reset_button = new Button;
@@ -225,10 +225,16 @@ int main(int argc, char* argv[])
 
 	PopupWidget* widget = new PopupWidget;
 	widget->move(200, 200);
-	widget->set_round_type(CornerAll);
+//	widget->set_round_type(CornerAll);
 	widget->resize(200, 200);
 
+	Widget* widget2 = new Widget;
+	widget2->move(450, 200);
+//	widget2->set_round_type(CornerAll);
+	widget2->resize(200, 200);
+
 	app->bind(widget);
+	app->bind(widget2);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
@@ -242,7 +248,7 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 	}
 
-	obj.unbind();
+//	obj.unbind();
 
 	/* release BlendInt */
 	Interface::release();

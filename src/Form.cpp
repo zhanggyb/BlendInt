@@ -213,7 +213,6 @@ namespace BlendInt {
 	void Form::draw_shaded_gl_buffer(int key, int mode)
 	{
 		m_glbuffer.select(key);
-
 		m_glbuffer.bind();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -829,6 +828,10 @@ namespace BlendInt {
 			float step,
 			float vert[WIDGET_SIZE_MAX][2])
 	{
+#ifdef DEBUG
+		static bool debug_print = true;
+#endif
+
 		float vec[WIDGET_CURVE_RESOLU][2];
 		float minx, miny, maxx, maxy;
 		int i, tot = 0;
@@ -897,6 +900,45 @@ namespace BlendInt {
 				vert[tot][1] = maxy;
 			}
 		}
+
+#ifdef DEBUG
+		if(debug_print) {
+
+			int count = 0;
+
+			std::cout << "-----------------------------------------------------------" << std::endl;
+
+			std::cout << "Top Left:" << std::endl;
+
+			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+			{
+				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+			}
+
+			std::cout << "Bottom Left:" << std::endl;
+
+			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+			{
+				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+			}
+
+			std::cout << "Bottom Right:" << std::endl;
+
+			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+			{
+				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+			}
+
+			std::cout << "Top Right:" << std::endl;
+
+			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+			{
+				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+			}
+
+//			debug_print = false;
+		}
+#endif
 
 		return tot;
 	}

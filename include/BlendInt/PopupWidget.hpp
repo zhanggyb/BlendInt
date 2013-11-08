@@ -28,6 +28,10 @@
 
 namespace BlendInt {
 
+	enum PopupWidgetBufferKey {
+		ShadowBufferKeyBase = FormBufferKeyLast + 1
+	};
+
 	/**
 	 * @brief A special widget which is constructed in higher layer for
 	 * popup menus, tooltips

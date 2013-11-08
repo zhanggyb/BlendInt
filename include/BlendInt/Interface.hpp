@@ -132,5 +132,82 @@ namespace BlendInt {
 
 }
 
-
 #endif /* _BIL_INTERFACE_HPP_ */
+
+/**
+ * Doxygen documentation
+ */
+
+/**
+ * @mainpage BlendInt -- a Blender-like Interface Library in OpenGL
+ * 
+ * @section sect_intro Introduction
+ * 
+ * BlendInt (Blender Interface Library in OpenGL) is a C++ library for
+ * building application with Blender-like style.
+ *
+ * This project is for anyone who like Blender and want to build a
+ * similar GUI application.
+ *
+ * Features of vertion 0.1 (developing):
+ * 	- Event system
+ * 	- Widgets:
+ * 		- Buttons:
+ * 		- Push Button
+ * 		- Toggle Button
+ * 		- Checkable Button
+ * 	- Scroll Widget
+ * 	- Label
+ * 	- Slider
+ * 	- Tab Widget
+ * 	- Layout
+ * 	- Horizontal Layout
+ * 	- Vertical Layout
+ * 
+ * @section usage_sec Usage
+ * 
+ * Use BlendInt is as simple as any C++ object-oriented GUI toolkit
+ * like Qt, gtkmm.  For example, create a button with BlendInt:
+ *
+ *@code
+ #include <BlendInt/Interface.hpp> // The main header to start
+ #include <BlendInt/Button.hpp>
+
+ int main (int argc, char* argv[])
+ {
+ 	// initialize opengl context
+ 	BlendInt::Interface::initialize();
+
+ 	Button* my_button = new Button;
+ 	my_button.set_pos(200, 200); 
+
+ 	// in the event-render loop
+ 	app->render();
+
+ 	// ready to close application
+ 	BlendInt::Interface::release();
+ }
+  @endcode
+ * 
+ * @section sect_compile Compile
+ * 
+ * @subsection sect_compile_require Requirements
+ * 
+
+ * @ref page_quick_guide
+ */
+
+/**
+ * @page page_quick_guide Quick Guide
+ * @tableofcontents
+ * 
+ * Here is a quick guide of using BlendInt to build a applicaiton
+ * 
+ * @section sect_install Install BlendInt
+ * 
+ * @subsection sect_install_download Download
+ * 
+ * @subsection sect_install_compile Compile
+ * 
+ * and More document later.
+ */
