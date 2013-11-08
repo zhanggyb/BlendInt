@@ -103,47 +103,22 @@ namespace BlendInt {
 			}
 		}
 
-		glbuffer().set_index(0);
-		glbuffer().bind();
-		glVertexPointer(2, GL_FLOAT, 0, 0);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glDrawArrays(GL_POLYGON, 0, glbuffer().vertices());
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glbuffer().unbind();
+		draw_gl_buffer(FormBufferKeyInner);
 
 		// draw outline
-		glbuffer().set_index(1);
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
 		        themes()->regular.outline.g(),
 		        themes()->regular.outline.b(),
 		        themes()->regular.outline.a()};
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glbuffer().bind();
-		/* outline */
-		glEnableClientState(GL_VERTEX_ARRAY);
 		glColor4ubv(tcol);
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(GL_QUAD_STRIP, 0, glbuffer().vertices());
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glbuffer().unbind();
+
+		draw_gl_buffer_anti_alias(FormBufferKeyOuter);
 
 		if(emboss()) {
-			glbuffer().set_index(2);
-			glbuffer().bind();
-			glEnableClientState(GL_VERTEX_ARRAY);
-			for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-				glTranslatef(jit[j][0], jit[j][1], 0.0f);
-				glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-				glVertexPointer(2, GL_FLOAT, 0, 0);
-				glDrawArrays(GL_QUAD_STRIP, 0, glbuffer().vertices());
-				glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-			}
-			glDisableClientState(GL_VERTEX_ARRAY);
-			glbuffer().unbind();
+			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
+
+			draw_gl_buffer_anti_alias(FormBufferKeyEmboss);
 		}
 
 		// Draw text

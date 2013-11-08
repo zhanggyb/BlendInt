@@ -39,6 +39,20 @@ namespace BlendInt {
 	class Color;
 
 	/**
+	 * @brief reserved key for Form drawing
+	 *
+	 * @note in the customized Form, avoid using these keys to create GL Buffer
+	 *
+	 * @sa GLBuffer
+	 */
+	enum FormBufferKey {
+		FormBufferKeyInner = 0,//!< Buffer for drawing the inner of a form
+		FormBufferKeyOuter,    //!< Buffer for drawing the outline of a form
+		FormBufferKeyEmboss,   //!< Buffer for drawing the emboss of a form
+		FormBufferKeyLast = FormBufferKeyEmboss      //!< Flag of the last
+	};
+
+	/**
 	 * @brief A Normal form
 	 */
 	class Form: public AbstractForm
@@ -105,7 +119,7 @@ namespace BlendInt {
 
 		/**
 		 * @brief draw the GL Buffer in render()
-		 * @param index the index of the gl buffer to draw
+		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
 		 * @param mode the primitive or primitives mode defined in gl.h, 
 		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
 		 *
@@ -115,11 +129,11 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_gl_buffer (size_t index, int mode = GL_POLYGON);
+		void draw_gl_buffer (int key, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw shaded GL buffer in render()
-		 * @param index the index of the gl buffer to draw
+		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
 		 * @param mode the primitive or primitives mode defined in gl.h,
 		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
 		 *
@@ -129,11 +143,11 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_shaded_gl_buffer (size_t index, int mode = GL_POLYGON);
+		void draw_shaded_gl_buffer (int key, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw the GL Buffer in render() with anti-alias
-		 * @param index the index of the gl buffer to draw
+		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
 		 * @param mode the primitive or primitives mode defined in gl.h,
 		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
 		 *
@@ -143,7 +157,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_gl_buffer_anti_alias (size_t index, int mode = GL_QUAD_STRIP);
+		void draw_gl_buffer_anti_alias (int key, int mode = GL_QUAD_STRIP);
 
 		/**
 		 * @brief calculate vertices for round box edge with no shaded color

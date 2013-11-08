@@ -154,7 +154,7 @@ namespace BlendInt {
 		        themes()->regular.inner.g(),
 		        themes()->regular.inner.b(),
 		        themes()->regular.inner.a());
-		draw_gl_buffer(0);
+		draw_gl_buffer(FormBufferKeyInner);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -164,11 +164,11 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_gl_buffer_anti_alias(1);
+		draw_gl_buffer_anti_alias(FormBufferKeyOuter);
 
 		if(m_emboss) {
 			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-			draw_gl_buffer_anti_alias(2);
+			draw_gl_buffer_anti_alias(FormBufferKeyEmboss);
 		}
 
 		glDisable(GL_BLEND);
@@ -199,9 +199,9 @@ namespace BlendInt {
 	{
 	}
 
-	void Form::draw_gl_buffer(size_t index, int mode)
+	void Form::draw_gl_buffer(int key, int mode)
 	{
-		m_glbuffer.set_index(index);
+		m_glbuffer.select(key);
 		m_glbuffer.bind();
 		glVertexPointer(2, GL_FLOAT, 0, 0);
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -210,9 +210,9 @@ namespace BlendInt {
 		m_glbuffer.unbind();
 	}
 
-	void Form::draw_shaded_gl_buffer(size_t index, int mode)
+	void Form::draw_shaded_gl_buffer(int key, int mode)
 	{
-		m_glbuffer.set_index(index);
+		m_glbuffer.select(key);
 
 		m_glbuffer.bind();
 
@@ -230,9 +230,9 @@ namespace BlendInt {
 		m_glbuffer.unbind();
 	}
 
-	void Form::draw_gl_buffer_anti_alias(size_t index, int mode)
+	void Form::draw_gl_buffer_anti_alias(int key, int mode)
 	{
-		m_glbuffer.set_index(index);
+		m_glbuffer.select (key);
 		m_glbuffer.bind();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -953,15 +953,8 @@ namespace BlendInt {
 
 		vert_sum = generate_vertices(size, inner_v, outer_v);
 
-		if(m_emboss) {
-			if(m_glbuffer.size() != 3)
-				m_glbuffer.generate(3);
-		}	else {
-			if(m_glbuffer.size() != 2)
-					m_glbuffer.generate(2);
-		}
-
-		m_glbuffer.set_index(0);
+		m_glbuffer.create(FormBufferKeyInner);
+		m_glbuffer.select(FormBufferKeyInner);
 		m_glbuffer.set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		m_glbuffer.bind();
 		m_glbuffer.upload(inner_v);
@@ -973,7 +966,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		m_glbuffer.set_index(1);
+		m_glbuffer.create(FormBufferKeyOuter);
+		m_glbuffer.select(FormBufferKeyOuter);
 		m_glbuffer.set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		m_glbuffer.bind();
@@ -984,7 +978,8 @@ namespace BlendInt {
 			//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
 
-			m_glbuffer.set_index(2);
+			m_glbuffer.create(FormBufferKeyEmboss);
+			m_glbuffer.select(FormBufferKeyEmboss);
 			m_glbuffer.set_property(vert_sum.half * 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 			m_glbuffer.bind();

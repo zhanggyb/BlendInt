@@ -88,9 +88,11 @@ namespace BlendInt {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if(m_status_down) {
-			glbuffer().set_index(0);
+			glbuffer().select(FormBufferKeyInner);
+
 		} else {
-			glbuffer().set_index(2);
+			glbuffer().select(FormBufferKeyLast + 1);
+
 		}
 
 		glbuffer().bind();
@@ -108,7 +110,8 @@ namespace BlendInt {
 		glbuffer().unbind();
 
 		// draw outline
-		glbuffer().set_index(1);
+		glbuffer().select(FormBufferKeyOuter);
+
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
 		        themes()->scroll.outline.g(),
 		        themes()->scroll.outline.b(),
@@ -218,9 +221,6 @@ namespace BlendInt {
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 
-		if(glbuffer().size() != 3)
-			glbuffer().generate(3);
-
 		VerticesSum vert_sum;
 
 		Orientation shadedir;
@@ -263,7 +263,9 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		glbuffer().set_index(0);
+		glbuffer().create(FormBufferKeyInner);
+		glbuffer().select(FormBufferKeyInner);
+
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
 		glbuffer().upload(inner_v);
@@ -273,7 +275,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glbuffer().set_index(1);
+		glbuffer().create(FormBufferKeyOuter);
+		glbuffer().select(FormBufferKeyOuter);
 		glbuffer().set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		glbuffer().bind();
@@ -298,7 +301,9 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		glbuffer().set_index(2);
+		glbuffer().create(FormBufferKeyLast + 1);
+		glbuffer().select(FormBufferKeyLast + 1);
+
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
 		glbuffer().upload(inner_v);

@@ -105,7 +105,8 @@ namespace BlendInt {
 			}
 		}
 
-		glbuffer().set_index(0);
+		glbuffer().select(FormBufferKeyInner);
+
 		glbuffer().bind();
 		glVertexPointer(2, GL_FLOAT, 0, 0);
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -114,7 +115,8 @@ namespace BlendInt {
 		glbuffer().unbind();
 
 		// draw outline
-		glbuffer().set_index(1);
+		glbuffer().select(FormBufferKeyOuter);
+
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
 		        themes()->regular.outline.g(),
 		        themes()->regular.outline.b(),
@@ -134,7 +136,7 @@ namespace BlendInt {
 		glbuffer().unbind();
 
 		if(emboss()) {
-			glbuffer().set_index(2);
+			glbuffer().select(FormBufferKeyEmboss);
 			glbuffer().bind();
 			glEnableClientState(GL_VERTEX_ARRAY);
 			for (int j = 0; j < WIDGET_AA_JITTER; j++) {

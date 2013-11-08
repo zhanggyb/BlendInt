@@ -33,6 +33,11 @@
 /** @defgroup opengl Wrapper classes for OpenGL API */
 /** @defgroup gui GUI classes */
 
+/**
+ * @defgroup functions_throw_exception Functions throw exception
+ * @ingroup exceptions
+ */
+
 #ifndef _BLENDINT_INTERFACE_HPP_
 #define _BLENDINT_INTERFACE_HPP_
 

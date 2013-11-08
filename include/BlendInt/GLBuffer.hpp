@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GLBUFFER_HPP_
 #define _BLENDINT_GLBUFFER_HPP_
 
-#include <vector>
+#include <map>
 
 #define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
 
@@ -44,54 +44,87 @@ namespace BlendInt {
 		~GLBuffer ();
 
 		/**
-		 * @brief clear current buffers and generate new ones
-		 * @param size
+		 * @brief create a buffer with the given key
+		 * @param key an integer for identify a gl buffer, it's not the same as a
+		 * buffer id return by glGenBuffers(), but a key in the map of buffers
+		 *
+		 * This function search the key in the built-in map, if the key was not
+		 * used, create a new gl buffer. And set the current buffer to the one
+		 * defined by key, so the next functions (bind(), upload(), etc.) use this
+		 * buffer.
 		 */
-		void generate (size_t size = 1);
+		void create (int key);
 
 		/**
-		 * @brief generate new buffer and append to the currents
-		 * @param size
+		 * @brief set buffer found by key to the current buffer for other operations
+		 * @param key the unique keyword in buffer map
+		 *
+		 * This function raises an invalid_argument exception if it's not found in buffer
+		 * map
+		 *
+		 * @ingroup functions_throw_exception
 		 */
-		void append (size_t size = 1);
+		void select (int key);
 
-		bool reset (size_t index);
+		int vertices ()
+		{
+			return m_map[m_key].vertices;
+		}
+
+		int vertices (int key)
+		{
+			return m_map[key].vertices;
+		}
 
 		void set_vertices (int vertices);
 
-		int vertices () const;
+		void set_vertices (int key, int vertices);
 
-		void set_vertices (size_t index, int vertices);
+		int unit_size ()
+		{
+			return m_map[m_key].unit_size;
+		}
 
-		int vertices (size_t index) const;
+		int unit_size (int key)
+		{
+			return m_map[key].unit_size;
+		}
 
 		void set_unit_size (int size);
 
-		int unit_size () const;
+		void set_unit_size (int key, int size);
 
-		void set_unit_size (size_t index, int size);
+		GLenum target ()
+		{
+			return m_map[m_key].target;
+		}
 
-		int unit_size (size_t index) const;
+		GLenum target (int key)
+		{
+			return m_map[key].target;
+		}
 
 		void set_target (GLenum target);
 
-		GLenum target () const;
+		void set_target (int key, GLenum target);
 
-		void set_target (size_t index, GLenum target);
+		GLenum usage ()
+		{
+			return m_map[m_key].usage;
+		}
 
-		GLenum target (size_t index) const;
+		GLenum usage (int key)
+		{
+			return m_map[key].usage;
+		}
 
 		void set_usage (GLenum usage);
 
-		GLenum usage () const;
-
-		void set_usage (size_t index, GLenum usage);
-
-		GLenum usage (size_t index) const;
+		void set_usage (int key, GLenum usage);
 
 		void set_property (int vertices, int unit_size, GLenum target, GLenum usage);
 
-		void set_property (size_t index, int vertices, int unit_size, GLenum target, GLenum usage);
+		void set_property (int key, int vertices, int unit_size, GLenum target, GLenum usage);
 
 		/**
 		 * @brief bind current buffer
@@ -99,28 +132,26 @@ namespace BlendInt {
 		 */
 		void bind ();
 
-		bool bind (size_t index);
+		void bind (int key);
 
 		/**
 		 * @brief unbind the buffer id in current index
 		 */
 		void unbind ();
 
-		void unbind (size_t index);
-
-		void set_index (size_t index);
+		void unbind (int key);
 
 		/**
 		 * @brief return the current index in the buffer vector
 		 * @return
 		 */
-		const size_t index () const {return m_index;}
+		int key () const {return m_key;}
 
-		size_t size () const {return m_buffers.size();}
+		size_t size () const {return m_map.size();}
 
 		bool is_buffer ();
 
-		bool is_buffer (size_t index);
+		bool is_buffer (int key);
 
 		/**
 		 * @brief creates and initializes a buffer object's data store
@@ -131,19 +162,13 @@ namespace BlendInt {
 		 */
 		void upload (const GLvoid* data);
 
-		void upload (size_t index, const GLvoid* data);
+		void upload (int key, const GLvoid* data);
 
 		void destroy ();
 
-		void destroy (size_t index);
+		void destroy (int key);
 
 		void clear ();
-
-#ifdef DEBUG
-
-		void print (size_t index);
-
-#endif
 
 	private:
 
@@ -169,14 +194,9 @@ namespace BlendInt {
 			GLenum usage;
 		};
 
-		/**
-		 * @buffer index
-		 *
-		 * -1 : initial status
-		 */
-		int m_index;
+		int m_key;
 
-		std::vector<Property> m_buffers;
+		std::map<int, Property> m_map;
 	};
 }
 

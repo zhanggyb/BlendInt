@@ -79,9 +79,9 @@ namespace BlendInt {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if(m_pressed) {
-			glbuffer().set_index(0);
+			glbuffer().select(FormBufferKeyInner);
 		} else {
-			glbuffer().set_index(2);
+			glbuffer().select(FormBufferKeyLast + 1);
 		}
 
 		glbuffer().bind();
@@ -99,7 +99,7 @@ namespace BlendInt {
 		glbuffer().unbind();
 
 		// draw outline
-		glbuffer().set_index(1);
+		glbuffer().select(FormBufferKeyOuter);
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
 		        themes()->scroll.outline.g(),
 		        themes()->scroll.outline.b(),
@@ -230,9 +230,8 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		glbuffer().generate(2);
-
-		glbuffer().set_index(0);
+		glbuffer().create(FormBufferKeyInner);
+		glbuffer().select(FormBufferKeyInner);
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
 		glbuffer().upload(inner_v);
@@ -243,7 +242,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glbuffer().set_index(1);
+		glbuffer().create(FormBufferKeyOuter);
+		glbuffer().select(FormBufferKeyOuter);
 		glbuffer().set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		glbuffer().bind();
@@ -268,9 +268,8 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		glbuffer().append(1);
-
-		glbuffer().set_index(2);
+		glbuffer().create(FormBufferKeyLast + 1);
+		glbuffer().select(FormBufferKeyLast + 1);
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
 		glbuffer().upload(inner_v);
@@ -348,64 +347,20 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glbuffer().set_index(0);	// index 0 is inner
-
-		glbuffer().bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-
-		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glDrawArrays(GL_POLYGON, 0, glbuffer().vertices());
-
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-		glbuffer().unbind();
+		draw_shaded_gl_buffer(FormBufferKeyInner);
 
 		// draw outline
-		glbuffer().set_index(1);	// index of 1 is outline
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
 		        themes()->scroll.outline.g(),
 		        themes()->scroll.outline.b(),
 		        themes()->scroll.outline.a()};
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-
-		glbuffer().bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
 		glColor4ubv(tcol);
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(GL_QUAD_STRIP, 0, glbuffer().vertices());
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
+		draw_gl_buffer_anti_alias(FormBufferKeyOuter);
 
-		glbuffer().unbind();
-
-		glbuffer().set_index(2);	// emboss
-		glbuffer().bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-
-			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(GL_QUAD_STRIP, 0, glbuffer().vertices());
-
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-		glbuffer().unbind();
+		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
+		draw_gl_buffer_anti_alias(FormBufferKeyEmboss);
 
 		glDisable(GL_BLEND);
 
@@ -433,10 +388,8 @@ namespace BlendInt {
 		else					// swap shadetop and shadedown
 			vert_sum = generate_vertices(size, color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
-		if(glbuffer().size() != 3)
-			glbuffer().generate(3);
-
-				glbuffer().set_index(0);
+		glbuffer().create(FormBufferKeyInner);
+		glbuffer().select(FormBufferKeyInner);
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]),
 		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
@@ -449,7 +402,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip(inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glbuffer().set_index(1);
+		glbuffer().create(FormBufferKeyOuter);
+		glbuffer().select(FormBufferKeyOuter);
 		glbuffer().set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]),
 		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
@@ -461,7 +415,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
 
-		glbuffer().set_index(2);
+		glbuffer().create(FormBufferKeyEmboss);
+		glbuffer().select(FormBufferKeyEmboss);
 		glbuffer().set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]),
 		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
@@ -572,9 +527,8 @@ namespace BlendInt {
 		else					// swap shadetop and shadedown
 			vert_sum = generate_vertices(size, color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
-		glbuffer().generate(2);
-
-		glbuffer().set_index(0);
+		glbuffer().create(FormBufferKeyInner);
+		glbuffer().select(FormBufferKeyInner);
 		glbuffer().set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		glbuffer().bind();
 		glbuffer().upload(inner_v);
@@ -586,7 +540,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glbuffer().set_index(1);
+		glbuffer().create(FormBufferKeyOuter);
+		glbuffer().select(FormBufferKeyOuter);
 		glbuffer().set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		glbuffer().bind();
@@ -597,8 +552,8 @@ namespace BlendInt {
 
 		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
 
-		glbuffer().append();
-		glbuffer().set_index(2);
+		glbuffer().create(FormBufferKeyEmboss);
+		glbuffer().select(FormBufferKeyEmboss);
 		glbuffer().set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
 		glbuffer().bind();
@@ -616,7 +571,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glbuffer().set_index(0);	// index 0 is inner
+		glbuffer().select(FormBufferKeyInner);
 
 		glbuffer().bind();
 
@@ -634,7 +589,7 @@ namespace BlendInt {
 		glbuffer().unbind();
 
 		// draw outline
-		glbuffer().set_index(1);	// index of 1 is outline
+		glbuffer().select(FormBufferKeyOuter);
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
 		        themes()->scroll.outline.g(),
 		        themes()->scroll.outline.b(),
@@ -656,7 +611,7 @@ namespace BlendInt {
 
 		glbuffer().unbind();
 
-		glbuffer().set_index(2);	// emboss
+		glbuffer().select(FormBufferKeyEmboss);	// emboss
 		glbuffer().bind();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
