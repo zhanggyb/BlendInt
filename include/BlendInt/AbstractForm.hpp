@@ -51,18 +51,50 @@ namespace BlendInt {
 			return m_position;
 		}
 
-		void set_position (int x, int y);
+		/**
+		 * @brief set the form's position
+		 * @param x
+		 * @param y
+		 * @return true if new position is set, false if it's the same as the current position
+		 */
+		bool set_position (int x, int y);
 
-		void set_position (const Point& position);
+		/**
+		 * @brief set the form's position
+		 * @param position
+		 * @return true if new position is set, false if it's the same as the current position
+		 */
+		bool set_position (const Point& position);
 
 		const Size& size () const
 		{
 			return m_size;
 		}
 
-		void resize (unsigned int width, unsigned int height);
+		/**
+		 * @brief reset the size of the form
+		 * @param width
+		 * @param height
+		 * @return true if the new size is set, false if it's the same as the current size
+		 *
+		 * Reset the form's size, return true if the new size is set, and the update() was
+		 * called once (this usually some operations of OpenGL API, e.g. update the GL Buffer
+		 */
+		bool resize (unsigned int width, unsigned int height);
 
-		void resize (const Size& size);
+		/**
+		 * @brief reset the size of the form
+		 * @param size
+		 * @return true if the new size is set, false if it's the same as the current size
+		 *
+		 * Reset the form's size, return true if the new size is set, and the update() was
+		 * called once (this usually some operations of OpenGL API, e.g. update the GL Buffer
+		 */
+		bool resize (const Size& size);
+
+		bool contain (const Point& point);
+
+		bool contain (int x, int y);
 
 	protected:
 

@@ -28,7 +28,7 @@
 #include <set>
 #include <string>
 
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/ExpandableForm.hpp>
 #include <BlendInt/MouseEvent.hpp>
 #include <BlendInt/KeyEvent.hpp>
 #include <BlendInt/ContextMenuEvent.hpp>
@@ -63,13 +63,9 @@ namespace BlendInt {
 	enum FormPropertyType {
 		FormPropertyUnknown = AbstrctFormPropertyLast + 1,
 		FormPropertyLayer,
-		FormPropertyMinimalSize,
-		FormPropertyPreferredSize,
 		FormPropertyCorner,
 		FormPropertyVisibility,
-		FormPropertyExpandX,
-		FormPropertyExpandY,
-		FormPropertyLast = FormPropertyExpandY
+		FormPropertyLast = FormPropertyVisibility
 	};
 
 	union ParentPointer {
@@ -100,7 +96,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup gui
 	 */
-	class AbstractWidget: public AbstractForm
+	class AbstractWidget: public ExpandableForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractWidget);
 
@@ -169,16 +165,6 @@ namespace BlendInt {
 
 		void reset_z (int z);
 
-		void set_expand_x (bool expand) {m_expand_x = expand;}
-
-		bool expand_x () const {return m_expand_x;}
-
-		void set_expand_y (bool expand) {m_expand_y = expand;}
-
-		bool expand_y () const {return m_expand_y;}
-
-		void set_expand (bool expand) {m_expand_x = expand; m_expand_y = expand;}
-
 		bool visible () const
 		{
 			return m_visible;
@@ -193,12 +179,6 @@ namespace BlendInt {
 		const std::string& name () const;
 
 		void set_name (const std::string& name);
-
-		/**
-		 * @brief Get the preferred size
-		 * @return
-		 */
-		const Size& preferred_size () const {return m_preferred_size;}
 
 		/**
 		 * @brief set preferred size manually
@@ -216,8 +196,6 @@ namespace BlendInt {
 		 * Manually set the preferred size, the preferred size must larger than the minimal size
 		 */
 		void set_preferred_size (unsigned int width, unsigned int height);
-
-		const Size& minimal_size () const {return m_minimal_size;}
 
 		void set_minimal_size (const Size& size);
 
@@ -350,19 +328,11 @@ namespace BlendInt {
 
 		bool m_in_layout;
 
-		bool m_expand_x;
-
-		bool m_expand_y;
-
 		bool m_fire_events;
 
 		bool m_visible;
 
 //		DRAWABLE_PROPERTY Size m_size;
-
-		Size m_preferred_size;
-
-		Size m_minimal_size;
 
 //		Point m_position;
 

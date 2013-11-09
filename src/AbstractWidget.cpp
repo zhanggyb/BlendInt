@@ -37,10 +37,9 @@ namespace BlendInt {
 	using namespace std;
 
 	AbstractWidget::AbstractWidget ()
-		: m_z(0),
+		: ExpandableForm(),
+		  m_z(0),
 		  m_in_layout(false),
-		  m_expand_x(false),
-		  m_expand_y(false),
 		  m_fire_events(true),
 		  m_visible(true)
 #ifdef DEBUG
@@ -67,10 +66,9 @@ namespace BlendInt {
 
 
 	AbstractWidget::AbstractWidget (AbstractWidget* parent)
-		: m_z(0),
+		: ExpandableForm(),
+				m_z(0),
 		  m_in_layout(false),
-		  m_expand_x(false),
-		  m_expand_y(false),
 		  m_fire_events(true),
 		  m_visible(true)
 #ifdef DEBUG
@@ -254,13 +252,9 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		if(width < m_minimal_size.width() ||
-				height < m_minimal_size.height())
-			return;
-
-		AbstractForm::resize(width, height);
-
-		fire_property_changed_event(FormPropertySize);
+		if(ExpandableForm::resize(width, height)) {
+			fire_property_changed_event(FormPropertySize);
+		}
 	}
 
 	void AbstractWidget::resize (const Size& size)
@@ -268,49 +262,23 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		if(size.width() < m_minimal_size.width() ||
-				size.height() < m_minimal_size.height())
-			return;
-
-		AbstractForm::resize(size);
-
-		fire_property_changed_event(FormPropertySize);
+		if(ExpandableForm::resize(size)) {
+			fire_property_changed_event(FormPropertySize);
+		}
 	}
 
 	void AbstractWidget::set_preferred_size(const Size& size)
 	{
-		// check the param first
-		if (size.width() < m_minimal_size.width() ||
-				size.height() < m_minimal_size.height())
-			return;
-
-		if(m_preferred_size.equal(size)) return;
-
-		Size new_preferred_size = size;
-
-		update(FormPropertyPreferredSize, &new_preferred_size);
-
-		m_preferred_size = new_preferred_size;
-
-		fire_property_changed_event(FormPropertyPreferredSize);
+		if(ExpandableForm::set_preferred_size(size)) {
+			fire_property_changed_event(FormPropertyPreferredSize);
+		}
 	}
 
 	void AbstractWidget::set_preferred_size(unsigned int width, unsigned int height)
 	{
-		// check the param first
-		if(width < m_minimal_size.width() ||
-				height < m_minimal_size.height())
-			return;
-
-		if(m_preferred_size.equal(width, height)) return;
-
-		Size new_preferred_size(width, height);
-
-		update(FormPropertyPreferredSize, &new_preferred_size);
-
-		m_preferred_size = new_preferred_size;
-
-		fire_property_changed_event(FormPropertyPreferredSize);
+		if (ExpandableForm::set_preferred_size(width, height)) {
+			fire_property_changed_event(FormPropertyPreferredSize);
+		}
 	}
 
 	void AbstractWidget::set_minimal_size(const Size& size)
@@ -318,19 +286,9 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		if (m_minimal_size.equal(size)) return;
-
-		if(size.width() > m_preferred_size.width() ||
-				size.height() > m_preferred_size.height())
-			return;
-
-		Size new_minimal_size = size;
-
-		update(FormPropertyMinimalSize, &new_minimal_size);
-
-		m_minimal_size = new_minimal_size;
-
-		fire_property_changed_event(FormPropertyMinimalSize);
+		if(ExpandableForm::set_minimal_size(size)) {
+			fire_property_changed_event(FormPropertyMinimalSize);
+		}
 	}
 
 	void AbstractWidget::set_minimal_size(unsigned int width, unsigned int height)
@@ -338,19 +296,9 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		if (m_minimal_size.equal(width, height)) return;
-
-		if(width > m_preferred_size.width() ||
-				height > m_preferred_size.height())
-			return;
-
-		Size new_minimal_size(width, height);
-
-		update(FormPropertyMinimalSize, &new_minimal_size);
-
-		m_minimal_size = new_minimal_size;
-
-		fire_property_changed_event(FormPropertyMinimalSize);
+		if(ExpandableForm::set_minimal_size(width, height)) {
+			fire_property_changed_event(FormPropertyMinimalSize);
+		}
 	}
 
 	void AbstractWidget::set_position (int x, int y)
@@ -358,9 +306,9 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		AbstractForm::set_position(x, y);
-
-		fire_property_changed_event(FormPropertyPosition);
+		if(ExpandableForm::set_position(x, y)) {
+			fire_property_changed_event(FormPropertyPosition);
+		}
 	}
 
 	void AbstractWidget::set_position (const Point& pos)
@@ -368,9 +316,9 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		AbstractForm::set_position(pos);
-
-		fire_property_changed_event(FormPropertyPosition);
+		if(ExpandableForm::set_position(pos)) {
+			fire_property_changed_event(FormPropertyPosition);
+		}
 	}
 
 	void AbstractWidget::reset_z (int z)
@@ -470,8 +418,8 @@ namespace BlendInt {
 	{
 		if (obj->size().width() == width && obj->size().height() == height) return;
 
-		if(width < obj->m_minimal_size.width() ||
-				height < obj->m_minimal_size.height())
+		if(width < obj->minimal_size().width() ||
+				height < obj->minimal_size().height())
 			return;
 
 		Size new_size (width, height);
@@ -487,8 +435,8 @@ namespace BlendInt {
 	{
 		if (obj->size() == size) return;
 
-		if(size.width() < obj->m_minimal_size.width() ||
-				size.height() < obj->m_minimal_size.height())
+		if(size.width() < obj->minimal_size().width() ||
+				size.height() < obj->minimal_size().height())
 			return;
 
 		Size new_size = size;

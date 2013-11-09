@@ -57,41 +57,75 @@ namespace BlendInt {
 
 	}
 
-	void AbstractForm::resize(unsigned int width, unsigned int height)
+	bool AbstractForm::resize(unsigned int width, unsigned int height)
 	{
 		Size new_size (width, height);
 
-		if (m_size == new_size) return;
+		if (m_size == new_size) return false;
 
 		update(FormPropertySize, &new_size);
 
 		m_size.set_width(width);
 		m_size.set_height(height);
+
+		return true;
 	}
 
-	void AbstractForm::resize(const Size& size)
+	bool AbstractForm::resize(const Size& size)
 	{
-		if(m_size == size) return;
+		if(m_size == size) return false;
 
 		update(FormPropertySize, &size);
 		m_size = size;
+
+		return true;
 	}
 
-	void AbstractForm::set_position(int x, int y)
+	bool AbstractForm::set_position(int x, int y)
 	{
 		Point new_pos (x, y);
-		if(m_position == new_pos) return;
+		if(m_position == new_pos) return false;
 
 		update(FormPropertyPosition, &new_pos);
 		m_position.set_x(x);
 		m_position.set_y(y);
+
+		return true;
 	}
 
-	void AbstractForm::set_position(const Point& pos)
+	bool AbstractForm::set_position(const Point& pos)
 	{
-		if(m_position == pos) return;
+		if(m_position == pos) return false;
 		update(FormPropertyPosition, &pos);
 		m_position = pos;
+
+		return true;
+	}
+
+	bool AbstractForm::contain (const Point& point)
+	{
+		if(point.x() < m_position.x() ||
+				point.y() < m_position.y() ||
+				point.x() > static_cast<int>(m_position.x() + m_size.width()) ||
+				point.y() > static_cast<int>(m_position.y() + m_size.height()))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool AbstractForm::contain (int x, int y)
+	{
+		if(x < m_position.x() ||
+				y < m_position.y() ||
+				x > static_cast<int>(m_position.x() + m_size.width()) ||
+				y > static_cast<int>(m_position.y() + m_size.height()))
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 }
