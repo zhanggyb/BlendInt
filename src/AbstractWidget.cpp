@@ -254,17 +254,11 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		Size new_size (width, height);
-
-		if (size() == new_size) return;
-
 		if(width < m_minimal_size.width() ||
 				height < m_minimal_size.height())
 			return;
 
-		update(FormPropertySize, &new_size);
-
-		AbstractForm::resize(new_size);
+		AbstractForm::resize(width, height);
 
 		fire_property_changed_event(FormPropertySize);
 	}
@@ -277,12 +271,6 @@ namespace BlendInt {
 		if(size.width() < m_minimal_size.width() ||
 				size.height() < m_minimal_size.height())
 			return;
-
-		if (AbstractForm::size() == size) return;
-
-//		Size new_size = size;
-//
-		update(FormPropertySize, &size);
 
 		AbstractForm::resize(size);
 
@@ -370,12 +358,6 @@ namespace BlendInt {
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
 
-		Point new_position(x, y);
-
-		if (position() == new_position) return;
-
-		update(FormPropertyPosition, &new_position);
-
 		AbstractForm::set_position(x, y);
 
 		fire_property_changed_event(FormPropertyPosition);
@@ -385,10 +367,6 @@ namespace BlendInt {
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_in_layout) return;
-
-		if (position() == pos) return;
-
-		update(FormPropertyPosition, &pos);
 
 		AbstractForm::set_position(pos);
 

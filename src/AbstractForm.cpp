@@ -57,4 +57,41 @@ namespace BlendInt {
 
 	}
 
+	void AbstractForm::resize(unsigned int width, unsigned int height)
+	{
+		Size new_size (width, height);
+
+		if (m_size == new_size) return;
+
+		update(FormPropertySize, &new_size);
+
+		m_size.set_width(width);
+		m_size.set_height(height);
+	}
+
+	void AbstractForm::resize(const Size& size)
+	{
+		if(m_size == size) return;
+
+		update(FormPropertySize, &size);
+		m_size = size;
+	}
+
+	void AbstractForm::set_position(int x, int y)
+	{
+		Point new_pos (x, y);
+		if(m_position == new_pos) return;
+
+		update(FormPropertyPosition, &new_pos);
+		m_position.set_x(x);
+		m_position.set_y(y);
+	}
+
+	void AbstractForm::set_position(const Point& pos)
+	{
+		if(m_position == pos) return;
+		update(FormPropertyPosition, &pos);
+		m_position = pos;
+	}
+
 }

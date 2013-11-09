@@ -61,17 +61,15 @@ namespace BlendInt {
 	};
 
 	enum FormPropertyType {
-		FormPropertyUnknown = 0,
+		FormPropertyUnknown = AbstrctFormPropertyLast + 1,
 		FormPropertyLayer,
-		FormPropertySize,
 		FormPropertyMinimalSize,
 		FormPropertyPreferredSize,
 		FormPropertyCorner,
 		FormPropertyVisibility,
 		FormPropertyExpandX,
 		FormPropertyExpandY,
-		FormPropertyPosition,
-		FormPropertyLast = FormPropertyPosition
+		FormPropertyLast = FormPropertyExpandY
 	};
 
 	union ParentPointer {

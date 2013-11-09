@@ -29,6 +29,12 @@
 
 namespace BlendInt {
 
+	enum AbstractFormProperty {
+		FormPropertyPosition,
+		FormPropertySize,
+		AbstrctFormPropertyLast = FormPropertySize
+	};
+
 	/**
 	 * @brief Abstract form class
 	 */
@@ -45,32 +51,18 @@ namespace BlendInt {
 			return m_position;
 		}
 
-		void set_position (int x, int y)
-		{
-			m_position.set_x(x);
-			m_position.set_y(y);
-		}
+		void set_position (int x, int y);
 
-		void set_position (const Point& position)
-		{
-			m_position = position;
-		}
+		void set_position (const Point& position);
 
 		const Size& size () const
 		{
 			return m_size;
 		}
 
-		void resize (unsigned int width, unsigned int height)
-		{
-			m_size.set_width(width);
-			m_size.set_height(height);
-		}
+		void resize (unsigned int width, unsigned int height);
 
-		void resize (const Size& size)
-		{
-			m_size = size;
-		}
+		void resize (const Size& size);
 
 	protected:
 
