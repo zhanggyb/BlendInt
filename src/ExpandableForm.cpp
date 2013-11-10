@@ -63,7 +63,10 @@ namespace BlendInt {
 	        unsigned int height)
 	{
 		// check the param first
-		if (width < m_minimal_size.width() || height < m_minimal_size.height())
+		if (width < m_minimal_size.width() ||
+				height < m_minimal_size.height() ||
+				width > m_maximal_size.width() ||
+				height > m_maximal_size.height())
 			return false;
 
 		Size new_pref_size(width, height);
@@ -82,7 +85,9 @@ namespace BlendInt {
 	bool ExpandableForm::set_preferred_size(const Size& size)
 	{
 		if (size.width() < m_minimal_size.width() ||
-				size.height() < m_minimal_size.height())
+				size.height() < m_minimal_size.height()||
+				size.width() > m_maximal_size.width() ||
+				size.height() > m_maximal_size.height())
 			return false;
 
 		if(m_preferred_size == size) return false;

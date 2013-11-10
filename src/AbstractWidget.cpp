@@ -242,11 +242,6 @@ namespace BlendInt {
 		return true;
 	}
 
-//	const Size& AbstractWidget::size () const
-//	{
-//		return m_size;
-//	}
-
 	void AbstractWidget::resize (unsigned int width, unsigned int height)
 	{
 		// If the object is managed by a layout, disallow position setting
@@ -267,40 +262,6 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::set_preferred_size(const Size& size)
-	{
-		if(ExpandableForm::set_preferred_size(size)) {
-			fire_property_changed_event(FormPropertyPreferredSize);
-		}
-	}
-
-	void AbstractWidget::set_preferred_size(unsigned int width, unsigned int height)
-	{
-		if (ExpandableForm::set_preferred_size(width, height)) {
-			fire_property_changed_event(FormPropertyPreferredSize);
-		}
-	}
-
-	void AbstractWidget::set_minimal_size(const Size& size)
-	{
-		// If the object is managed by a layout, disallow position setting
-		if(m_in_layout) return;
-
-		if(ExpandableForm::set_minimal_size(size)) {
-			fire_property_changed_event(FormPropertyMinimalSize);
-		}
-	}
-
-	void AbstractWidget::set_minimal_size(unsigned int width, unsigned int height)
-	{
-		// If the object is managed by a layout, disallow position setting
-		if(m_in_layout) return;
-
-		if(ExpandableForm::set_minimal_size(width, height)) {
-			fire_property_changed_event(FormPropertyMinimalSize);
-		}
-	}
-
 	void AbstractWidget::set_position (int x, int y)
 	{
 		// If the object is managed by a layout, disallow position setting
@@ -318,6 +279,48 @@ namespace BlendInt {
 
 		if(ExpandableForm::set_position(pos)) {
 			fire_property_changed_event(FormPropertyPosition);
+		}
+	}
+
+	void AbstractWidget::set_preferred_size(unsigned int width, unsigned int height)
+	{
+		if(ExpandableForm::set_preferred_size(width, height)) {
+			fire_property_changed_event(FormPropertyPreferredSize);
+		}
+	}
+
+	void AbstractWidget::set_preferred_size(const Size& size)
+	{
+		if(ExpandableForm::set_preferred_size(size)) {
+			fire_property_changed_event(FormPropertyPreferredSize);
+		}
+	}
+
+	void AbstractWidget::set_minimal_size(unsigned int width, unsigned int height)
+	{
+		if(ExpandableForm::set_minimal_size(width, height)) {
+			fire_property_changed_event(FormPropertyMinimalSize);
+		}
+	}
+
+	void AbstractWidget::set_minimal_size(const Size& size)
+	{
+		if(ExpandableForm::set_minimal_size(size)) {
+			fire_property_changed_event(FormPropertyMinimalSize);
+		}
+	}
+
+	void AbstractWidget::set_maximal_size(unsigned int width, unsigned int height)
+	{
+		if(ExpandableForm::set_maximal_size(width, height)) {
+			fire_property_changed_event(FormPropertyMaximalSize);
+		}
+	}
+
+	void AbstractWidget::set_maximal_size(const Size& size)
+	{
+		if(ExpandableForm::set_maximal_size(size)) {
+			fire_property_changed_event(FormPropertyMaximalSize);
 		}
 	}
 

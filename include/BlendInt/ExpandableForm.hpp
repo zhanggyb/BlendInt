@@ -80,16 +80,49 @@ namespace BlendInt {
 		 */
 		bool resize (const Size& size);
 
+		/**
+		 * @brief set the preferred size
+		 * @param width
+		 * @param height
+		 * @return true if new preferred size is set, false if not
+		 */
 		bool set_preferred_size (unsigned int width, unsigned int height);
 
+		/**
+		 * @brief set the preferred size
+		 * @param size
+		 * @return true if new preferred size is set, false if not
+		 */
 		bool set_preferred_size (const Size& size);
 
+		/**
+		 * @brief set the minimal size
+		 * @param width
+		 * @param height
+		 * @return true if the new minimal size is set, false if not
+		 */
 		bool set_minimal_size (unsigned int width, unsigned int height);
 
+		/**
+		 * @brief set the minimal size
+		 * @param size
+		 * @return true if the new minimal size is set, false if not
+		 */
 		bool set_minimal_size (const Size& size);
 
+		/**
+		 * @brief set the maximal size
+		 * @param width
+		 * @param height
+		 * @return true if the new maximial size is set, false if not
+		 */
 		bool set_maximal_size (unsigned int width, unsigned int height);
 
+		/**
+		 * @brief set the maximal size
+		 * @param size
+		 * @return true if the new maximal size is set, false if not
+		 */
 		bool set_maximal_size (const Size& size);
 
 		void set_expand_x (bool expand) {m_expand_x = expand;}

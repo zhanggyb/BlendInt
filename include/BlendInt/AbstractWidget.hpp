@@ -158,6 +158,18 @@ namespace BlendInt {
 
 		void set_position (const Point& pos);
 
+		void set_preferred_size (unsigned int widt, unsigned int height);
+
+		void set_preferred_size (const Size& size);
+
+		void set_minimal_size (unsigned int width, unsigned int height);
+
+		void set_minimal_size (const Size& size);
+
+		void set_maximal_size (unsigned int width, unsigned int height);
+
+		void set_maximal_size (const Size& size);
+
 		int z () const
 		{
 			return m_z;
@@ -179,27 +191,6 @@ namespace BlendInt {
 		const std::string& name () const;
 
 		void set_name (const std::string& name);
-
-		/**
-		 * @brief set preferred size manually
-		 * @param[in] size
-		 *
-		 * Manually set the preferred size, the preferred size must larger than the minimal size
-		 */
-		void set_preferred_size (const Size& size);
-
-		/**
-		 * @brief set preferred size manually
-		 * @param[in] width
-		 * @param[in] height
-		 *
-		 * Manually set the preferred size, the preferred size must larger than the minimal size
-		 */
-		void set_preferred_size (unsigned int width, unsigned int height);
-
-		void set_minimal_size (const Size& size);
-
-		void set_minimal_size (unsigned int width, unsigned int height);
 
 		const Parent& parent () const {return m_parent;}
 
