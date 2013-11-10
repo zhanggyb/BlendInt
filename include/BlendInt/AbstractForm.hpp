@@ -44,7 +44,16 @@ namespace BlendInt {
 
 		AbstractForm();
 
+		AbstractForm(const AbstractForm& orig);
+
 		virtual ~AbstractForm();
+
+		AbstractForm& operator = (const AbstractForm& orig)
+		{
+			m_position = orig.position();
+			m_size = orig.size();
+			return *this;
+		}
 
 		const Point& position () const
 		{

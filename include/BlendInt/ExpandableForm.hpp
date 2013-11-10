@@ -44,7 +44,22 @@ namespace BlendInt {
 
 		ExpandableForm();
 
+		ExpandableForm(const ExpandableForm& orig);
+
 		virtual ~ExpandableForm();
+
+		ExpandableForm& operator = (const ExpandableForm& orig)
+		{
+			set_position(orig.position());
+			resize(orig.size());
+			m_expand_x = orig.expand_x();
+			m_expand_y = orig.expand_y();
+			m_preferred_size = orig.preferred_size();
+			m_minimal_size = orig.minimal_size();
+			m_maximal_size = orig.maximal_size();
+
+			return *this;
+		}
 
 		const Size& preferred_size () const
 		{
@@ -139,16 +154,15 @@ namespace BlendInt {
 
 	private:
 
+		bool m_expand_x;
+
+		bool m_expand_y;
+
 		Size m_preferred_size;
 
 		Size m_minimal_size;
 
 		Size m_maximal_size;
-
-		bool m_expand_x;
-
-		bool m_expand_y;
-
 	};
 
 }

@@ -30,6 +30,12 @@ namespace BlendInt {
 
 	}
 
+	AbstractForm::AbstractForm(const AbstractForm& orig)
+	{
+		m_position = orig.position();
+		m_size = orig.size();
+	}
+
 	AbstractForm::~AbstractForm()
 	{
 

@@ -32,6 +32,18 @@ namespace BlendInt {
 		m_maximal_size.set_height(65536);
 	}
 
+	ExpandableForm::ExpandableForm(const ExpandableForm& orig)
+	: AbstractForm()
+	{
+		set_position(orig.position());
+		resize(orig.size());
+		m_expand_x = orig.expand_x();
+		m_expand_y = orig.expand_y();
+		m_preferred_size = orig.preferred_size();
+		m_minimal_size = orig.minimal_size();
+		m_maximal_size = orig.maximal_size();
+	}
+
 	ExpandableForm::~ExpandableForm()
 	{
 
