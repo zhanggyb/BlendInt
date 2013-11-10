@@ -25,28 +25,6 @@
 
 namespace BlendInt {
 
-	void AbstractForm::resize (AbstractForm* form, unsigned int w, unsigned int h)
-	{
-		form->m_size.set_width(w);
-		form->m_size.set_height(h);
-	}
-
-	void AbstractForm::resize (AbstractForm* form, const Size& size)
-	{
-		form->m_size = size;
-	}
-
-	void AbstractForm::set_position(AbstractForm* form, int x, int y)
-	{
-		form->m_position.set_x(x);
-		form->m_position.set_y(y);
-	}
-
-	void AbstractForm::set_position(AbstractForm* form, const Point& pos)
-	{
-		form->m_position = pos;
-	}
-
 	AbstractForm::AbstractForm()
 	{
 

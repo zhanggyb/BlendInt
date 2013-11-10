@@ -183,7 +183,7 @@ namespace BlendInt {
 		else m_fixed_items.insert(form);
 
 		if(! (current_size == size()))
-			resize_priv(this, current_size);	// call make_layout() through this function
+			dynamic_cast<ExpandableForm*>(this)->resize(current_size);	// call make_layout() through this function
 		else
 			make_layout(&current_size);
 
@@ -239,7 +239,7 @@ namespace BlendInt {
 		else m_fixed_items.insert(layout);
 
 		if(! (current_size == size()))
-			resize_priv(this, current_size);	// call make_layout() through this function
+			dynamic_cast<ExpandableForm*>(this)->resize(current_size);	// call make_layout() through this function
 		else
 			make_layout(&current_size);
 
@@ -323,9 +323,12 @@ namespace BlendInt {
 				y -= space();
 
 			child = *it;
-			resize_priv(child, child->size().width(), child->preferred_size().height());
+			//resize_priv(child, child->size().width(), child->preferred_size().height());
+			dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), child->preferred_size().height());
+			//child->resize(child->size().width(), child->preferred_size().height());
+
 			y -= child->size().height();
-			set_pos_priv(child, child->position().x(), y);
+			dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(), y);
 		}
 	}
 
@@ -341,9 +344,11 @@ namespace BlendInt {
 				y -= space();
 
 			child = *it;
-			resize_priv(child, child->size().width(), child->preferred_size().height());
+			//resize_priv(child, child->size().width(), child->preferred_size().height());
+			dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), child->preferred_size().height());
+			//child->resize(child->size().width(), child->preferred_size().height());
 			y -= child->size().height();
-			set_pos_priv(child, child->position().x(), y);
+			dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(), y);
 		}
 	}
 
@@ -375,13 +380,13 @@ namespace BlendInt {
 					y -= space();
 
 				if(m_expandable_items.count(child)) {
-					resize_priv(child, child->size().width(), single_height);
+					dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), single_height);
 				} else {
-					resize_priv(child, child->size().width(), child->preferred_size().height());
+					dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), child->preferred_size().height());
 				}
 
 				y -= child->size().height();
-				set_pos_priv(child, child->position().x(), y);
+				dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(), y);
 			}
 
 		} else {
@@ -399,23 +404,23 @@ namespace BlendInt {
 					y -= space();
 
 				if(m_expandable_items.count(child)) {
-					resize_priv(child, child->size().width(), child->minimal_size().height());
+					dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), child->minimal_size().height());
 				} else {
 
 					if(h < child->minimal_size().height()) {
-						resize_priv(child, child->size().width(), child->minimal_size().height());
+						dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), child->minimal_size().height());
 						normal_items.erase(child);
 						unminimal_height = unminimal_height - child->minimal_size().height();
 						h = unminimal_height / normal_items.size();
 						reset_height_of_fixed_items(&normal_items, h);
 					} else {
-						resize_priv(child, child->size().width(), h);
+						dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), h);
 					}
 
 				}
 
 				y -= child->size().height();
-				set_pos_priv(child, child->position().x(), y);
+				dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(), y);
 			}
 
 		}
@@ -448,13 +453,13 @@ namespace BlendInt {
 					y -= space();
 
 				if(m_expandable_items.count(child)) {
-					resize_priv(child, child->size().width(), single_height);
+					dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), single_height);
 				} else {
-					resize_priv(child, child->size().width(), child->preferred_size().height());
+					dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), child->preferred_size().height());
 				}
 
 				y -= child->size().height();
-				set_pos_priv(child, child->position().x(), y);
+				dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(), y);
 			}
 
 		} else {
@@ -472,23 +477,23 @@ namespace BlendInt {
 					y -= space();
 
 				if(m_expandable_items.count(child)) {
-					resize_priv(child, child->size().width(), child->minimal_size().height());
+					dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), child->minimal_size().height());
 				} else {
 
 					if(h < child->minimal_size().height()) {
-						resize_priv(child, child->size().width(), child->minimal_size().height());
+						dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), child->minimal_size().height());
 						normal_items.erase(child);
 						unminimal_height = unminimal_height - child->minimal_size().height();
 						h = unminimal_height / normal_items.size();
 						reset_height_of_fixed_items(&normal_items, h);
 					} else {
-						resize_priv(child, child->size().width(), h);
+						dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), h);
 					}
 
 				}
 
 				y -= child->size().height();
-				set_pos_priv(child, child->position().x(), y);
+				dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(), y);
 			}
 
 		}
@@ -519,13 +524,13 @@ namespace BlendInt {
 				y -= space();
 
 			if (m_expandable_items.count(child)) {
-				resize_priv(child, child->size().width(), single_height);
+				dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), single_height);
 			} else {
-				resize_priv(child, child->size().width(), child->preferred_size().height());
+				dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), child->preferred_size().height());
 			}
 
 			y -= child->size().height();
-			set_pos_priv(child, child->position().x(), y);
+			dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(), y);
 		}
 	}
 
@@ -554,13 +559,13 @@ namespace BlendInt {
 				y -= space();
 
 			if (m_expandable_items.count(child)) {
-				resize_priv(child, child->size().width(), single_height);
+				dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), single_height);
 			} else {
-				resize_priv(child, child->size().width(), child->preferred_size().height());
+				dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), child->preferred_size().height());
 			}
 
 			y -= child->size().height();
-			set_pos_priv(child, child->position().x(), y);
+			dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(), y);
 		}
 	}
 
@@ -579,18 +584,16 @@ namespace BlendInt {
 
 			if (child->expand_x() ||
 					(child->size().width() > w)) {
-				resize_priv(child, w, child->size().height());
-				set_pos_priv(child, x, child->position().y());
+				dynamic_cast<ExpandableForm*>(child)->resize(w, child->size().height());
+				dynamic_cast<ExpandableForm*>(child)->set_position(x, child->position().y());
 			} else {
 
 				if (alignment() & AlignLeft) {
-					set_pos_priv(child, x, child->position().y());
+					dynamic_cast<ExpandableForm*>(child)->set_position(x, child->position().y());
 				} else if (alignment() & AlignRight) {
-					set_pos_priv(child,
-							x + (w - child->size().width()), child->position().y());
+					dynamic_cast<ExpandableForm*>(child)->set_position(x + (w - child->size().width()), child->position().y());
 				} else if (alignment() & AlignVerticalCenter) {
-					set_pos_priv(child,
-					        x + (w - child->size().width()) / 2, child->position().y());
+					dynamic_cast<ExpandableForm*>(child)->set_position(x + (w - child->size().width()) / 2, child->position().y());
 				}
 
 			}
@@ -612,18 +615,16 @@ namespace BlendInt {
 
 			if (child->expand_x() ||
 					(child->size().width() > w)) {
-				resize_priv(child, w, child->size().height());
-				set_pos_priv(child, x, child->position().y());
+				dynamic_cast<ExpandableForm*>(child)->resize(w, child->size().height());
+				dynamic_cast<ExpandableForm*>(child)->set_position(x, child->position().y());
 			} else {
 
 				if (alignment() & AlignLeft) {
-					set_pos_priv(child, x, child->position().y());
+					dynamic_cast<ExpandableForm*>(child)->set_position(x, child->position().y());
 				} else if (alignment() & AlignRight) {
-					set_pos_priv(child,
-							x + (w - child->size().width()), child->position().y());
+					dynamic_cast<ExpandableForm*>(child)->set_position(x + (w - child->size().width()), child->position().y());
 				} else if (alignment() & AlignVerticalCenter) {
-					set_pos_priv(child,
-					        x + (w - child->size().width()) / 2, child->position().y());
+					dynamic_cast<ExpandableForm*>(child)->set_position(x + (w - child->size().width()) / 2, child->position().y());
 				}
 
 			}
@@ -638,7 +639,7 @@ namespace BlendInt {
 
 		for(it = items->begin(); it != items->end(); it++)
 		{
-			resize_priv(*it, (*it)->size().width(), height);
+			dynamic_cast<ExpandableForm*>(*it)->resize((*it)->size().width(), height);
 		}
 	}
 

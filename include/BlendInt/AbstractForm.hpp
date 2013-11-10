@@ -102,14 +102,6 @@ namespace BlendInt {
 
 		virtual void render () = 0;
 
-		static void resize (AbstractForm* form, unsigned int w, unsigned int h);
-
-		static void resize (AbstractForm* form, const Size& s);
-
-		static void set_position (AbstractForm* form, int x, int y);
-
-		static void set_position (AbstractForm* form, const Point& pos);
-
 	private:
 
 		Point m_position;

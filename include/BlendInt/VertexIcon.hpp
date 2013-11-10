@@ -24,15 +24,15 @@
 #ifndef _BLENDINT_VERTEXICON_HPP_
 #define _BLENDINT_VERTEXICON_HPP_
 
+#include <BlendInt/AbstractForm.hpp>
 #include <BlendInt/GLBuffer.hpp>
-#include <BlendInt/Size.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * Icon displayed with vertexes
 	 */
-	class VertexIcon
+	class VertexIcon: public AbstractForm
 	{
 	public:
 
@@ -61,7 +61,11 @@ namespace BlendInt {
 		void load (const float (*vertex_array)[2], size_t array_size,
 				const unsigned int (*vertex_indices)[3], size_t indeces_size);
 
-		void display ();
+	protected:
+
+		virtual void update (int type, const void* data);
+
+		virtual void render ();
 
 		void display (float x, float y);
 

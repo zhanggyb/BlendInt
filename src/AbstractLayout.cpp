@@ -155,7 +155,24 @@ namespace BlendInt {
 
 	void AbstractLayout::update (int type, const void* data)
 	{
+		switch (type) {
 
+			case FormPropertyPosition: {
+				const Point* new_pos = static_cast<const Point*>(data);
+
+				for (size_t i = 0; i < m_items.size(); i++)
+				{
+					dynamic_cast<ExpandableForm*>(m_items[i])->set_position(
+							m_items[i]->position().x() + (new_pos->x() - position().x()),
+							m_items[i]->position().y() + (new_pos->y() - position().y()));
+
+				}
+				break;
+			}
+
+			default:
+				break;
+		}
 	}
 
 	AbstractLayout* AbstractLayout::root_layout ()

@@ -403,54 +403,6 @@ namespace BlendInt {
 		// TODO: call update()
 	}
 
-	void AbstractWidget::set_pos_priv (AbstractWidget* obj, int x, int y)
-	{
-		if (obj->position().x() == x && obj->position().y() == y) return;
-
-		obj->set_position(x, y);
-		AbstractForm::set_position(obj, x, y);
-	}
-
-	void AbstractWidget::set_pos_priv (AbstractWidget* obj, const Point& pos)
-	{
-		if (obj->position() == pos) return;
-		AbstractForm::set_position(obj, pos);
-	}
-
-	void AbstractWidget::resize_priv (AbstractWidget* obj, unsigned int width, unsigned int height)
-	{
-		if (obj->size().width() == width && obj->size().height() == height) return;
-
-		if(width < obj->minimal_size().width() ||
-				height < obj->minimal_size().height())
-			return;
-
-		Size new_size (width, height);
-
-		obj->update(FormPropertySize, &new_size);
-
-		AbstractForm::resize(obj, width, height);
-
-		obj->fire_property_changed_event(FormPropertySize);
-	}
-
-	void AbstractWidget::resize_priv (AbstractWidget* obj, const Size& size)
-	{
-		if (obj->size() == size) return;
-
-		if(size.width() < obj->minimal_size().width() ||
-				size.height() < obj->minimal_size().height())
-			return;
-
-		Size new_size = size;
-
-		obj->update(FormPropertySize, &new_size);
-
-		AbstractForm::resize(obj, new_size);
-
-		obj->fire_property_changed_event(FormPropertySize);
-	}
-
 #ifdef DEBUG
 
 	uint64_t AbstractWidget::id_last = 1;

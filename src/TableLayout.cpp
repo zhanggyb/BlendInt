@@ -355,23 +355,23 @@ namespace BlendInt {
 				child = items()[i * m_columns + j];
 				if(!child) continue;
 
-				set_pos_priv(child, x, y);
+				dynamic_cast<ExpandableForm*>(child)->set_position(x, y);
 
 				if(child->expand_y()) {
-					resize_priv (child, child->size().width(), row_height[i]);
+					dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					resize_priv (child, column_width[j], child->size().height());
+					dynamic_cast<ExpandableForm*>(child)->resize(column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-						set_pos_priv(child, child->position().x(),
+					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-						set_pos_priv(child, child->position().x(),
+					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-						set_pos_priv(child, child->position().x(),
+					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();
@@ -423,23 +423,23 @@ namespace BlendInt {
 				child = items()[i * m_columns + j];
 				if(!child) continue;
 
-				set_pos_priv(child, x, y);
+				dynamic_cast<ExpandableForm*>(child)->set_position(x, y);
 
 				if(child->expand_y()) {
-					resize_priv (child, child->size().width(), row_height[i]);
+					dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					resize_priv (child, column_width[j], child->size().height());
+					dynamic_cast<ExpandableForm*>(child)->resize(column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-						set_pos_priv(child, child->position().x(),
+					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-						set_pos_priv(child, child->position().x(),
+					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-						set_pos_priv(child, child->position().x(),
+					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();

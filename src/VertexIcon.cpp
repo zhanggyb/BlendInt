@@ -77,6 +77,7 @@ namespace BlendInt {
 	        4, 5 }, { 1, 0, 3 }, { 0, 2, 3 } };
 
 	VertexIcon::VertexIcon ()
+	: AbstractForm()
 	{
 	}
 
@@ -116,7 +117,12 @@ namespace BlendInt {
 		m_gl_buffer.unbind();
 	}
 
-	void VertexIcon::display()
+	void VertexIcon::update (int type, const void* data)
+	{
+
+	}
+
+	void VertexIcon::render()
 	{
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -157,7 +163,7 @@ namespace BlendInt {
 
 		glTranslatef(x, y, 0);
 
-		display();
+		render();
 
 		glPopMatrix();
 	}

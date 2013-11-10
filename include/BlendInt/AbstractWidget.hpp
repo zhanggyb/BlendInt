@@ -273,30 +273,7 @@ namespace BlendInt {
 		 */
 		void set_z_simple (int z);
 
-		/**
-		 * @brief set Drawable object position without checking layout
-		 * @param obj
-		 * @param x
-		 * @param y
-		 *
-		 * This function should be called in Layout only
-		 */
-		void set_pos_priv (AbstractWidget* obj, int x, int y);
-
-		/**
-		 * @brief set Drawable object position without checking layout
-		 * @param obj
-		 * @param pos
-		 *
-		 * This function should be called in layout only
-		 */
-		void set_pos_priv (AbstractWidget* obj, const Point& pos);
-
 		void set_in_layout (AbstractWidget* obj, bool status) {obj->m_in_layout = status;}
-
-		void resize_priv (AbstractWidget* obj, unsigned int width, unsigned int height);
-
-		void resize_priv (AbstractWidget* obj, const Size& size);
 
 		Cpp::ConnectionScope& events() {return m_events;}
 
