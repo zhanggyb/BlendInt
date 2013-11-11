@@ -27,12 +27,6 @@
 #include <BlendInt/AbstractWidget.hpp>
 #include <BlendInt/GLBuffer.hpp>
 
-#define WIDGET_AA_JITTER 8
-
-/* max as used by round_box__edges */
-#define WIDGET_CURVE_RESOLU 9
-#define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
-
 namespace BlendInt {
 
 	struct WidgetTheme;
@@ -69,15 +63,11 @@ namespace BlendInt {
 
 		void set_round_type (int type);
 
-		int round_type () const {return m_round_type;}
-
 		/**
 		 * @brief set the round radius for the corner
 		 * @param radius
 		 */
 		void set_radius (float radius);
-
-		float radius () const {return m_radius;}
 
 		void set_emboss (bool emboss);
 
@@ -233,25 +223,9 @@ namespace BlendInt {
 
 		GLBuffer& glbuffer() {return m_glbuffer;}
 
-		static const float cornervec[WIDGET_CURVE_RESOLU][2];
-
-		static const float jit[WIDGET_AA_JITTER][2];
-
 	private:
 
 		void update_shape (const Size* size);
-
-		/**
-		 * @brief the round type defined in enumeration RoundCornerType
-		 */
-		DRAWABLE_PROPERTY int m_round_type;
-
-		/**
-		 * @brief the radius of the round corner
-		 *
-		 * should be 0.0, 1.0, 2.0 etc
-		 */
-		DRAWABLE_PROPERTY float m_radius;
 
 		/**
 		 * @brief border width

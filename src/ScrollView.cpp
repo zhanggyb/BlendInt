@@ -73,7 +73,7 @@ namespace BlendInt {
 	{
 		switch(type) {
 
-			case FormPropertyPosition: {
+			case FormPosition: {
 				reset_viewport_position();
 				break;
 			}

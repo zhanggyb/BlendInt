@@ -28,7 +28,7 @@
 #include <set>
 #include <string>
 
-#include <BlendInt/ExpandableForm.hpp>
+#include <BlendInt/AbstractExpForm.hpp>
 #include <BlendInt/MouseEvent.hpp>
 #include <BlendInt/KeyEvent.hpp>
 #include <BlendInt/ContextMenuEvent.hpp>
@@ -96,7 +96,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup gui
 	 */
-	class AbstractWidget: public ExpandableForm
+	class AbstractWidget: public AbstractExpForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractWidget);
 

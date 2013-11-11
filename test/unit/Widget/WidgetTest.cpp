@@ -21,7 +21,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(WidgetTest);
 testWidget::testWidget (int type, AbstractWidget* parent)
 		: Frame(parent)
 {
-	set_round_type(CornerAll);
+	set_round_type(RoundAll);
 	set_position(Point(100, 100));
 	resize(200, 200);
 

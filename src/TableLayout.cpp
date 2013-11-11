@@ -65,7 +65,7 @@ namespace BlendInt {
 		bind (widget);
 		set_in_layout(widget, true);
 
-		update(FormPropertySize, 0);
+		update(FormSize, 0);
 	}
 
 	void TableLayout::add_layout (AbstractLayout* layout, int row, int column,
@@ -86,7 +86,7 @@ namespace BlendInt {
 		bind (layout);
 		set_in_layout(layout, true);
 
-		update(FormPropertySize, 0);
+		update(FormSize, 0);
 	}
 
 	void TableLayout::update (int property_type)
@@ -102,7 +102,7 @@ namespace BlendInt {
 
 		} else {
 
-			if (type == FormPropertySize) {
+			if (type == FormSize) {
 
 				if (property) {
 
@@ -355,23 +355,23 @@ namespace BlendInt {
 				child = items()[i * m_columns + j];
 				if(!child) continue;
 
-				dynamic_cast<ExpandableForm*>(child)->set_position(x, y);
+				dynamic_cast<AbstractExpForm*>(child)->set_position(x, y);
 
 				if(child->expand_y()) {
-					dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), row_height[i]);
+					dynamic_cast<AbstractExpForm*>(child)->resize(child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					dynamic_cast<ExpandableForm*>(child)->resize(column_width[j], child->size().height());
+					dynamic_cast<AbstractExpForm*>(child)->resize(column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();
@@ -423,23 +423,23 @@ namespace BlendInt {
 				child = items()[i * m_columns + j];
 				if(!child) continue;
 
-				dynamic_cast<ExpandableForm*>(child)->set_position(x, y);
+				dynamic_cast<AbstractExpForm*>(child)->set_position(x, y);
 
 				if(child->expand_y()) {
-					dynamic_cast<ExpandableForm*>(child)->resize(child->size().width(), row_height[i]);
+					dynamic_cast<AbstractExpForm*>(child)->resize(child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					dynamic_cast<ExpandableForm*>(child)->resize(column_width[j], child->size().height());
+					dynamic_cast<AbstractExpForm*>(child)->resize(column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-					dynamic_cast<ExpandableForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();

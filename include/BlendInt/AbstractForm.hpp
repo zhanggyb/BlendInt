@@ -30,9 +30,9 @@
 namespace BlendInt {
 
 	enum AbstractFormProperty {
-		FormPropertyPosition,
-		FormPropertySize,
-		AbstrctFormPropertyLast = FormPropertySize
+		FormPosition,
+		FormSize,
+		AbstrctFormPropertyLast = FormSize
 	};
 
 	/**

@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		switch(type) {
 
-			case FormPropertySize: {
+			case FormSize: {
 
 				Size shadow_size = *(static_cast<const Size*>(data));
 

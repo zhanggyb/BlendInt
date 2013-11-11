@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		if (m_size == new_size) return false;
 
-		update(FormPropertySize, &new_size);
+		update(FormSize, &new_size);
 
 		m_size.set_width(width);
 		m_size.set_height(height);
@@ -59,7 +59,7 @@ namespace BlendInt {
 	{
 		if(m_size == size) return false;
 
-		update(FormPropertySize, &size);
+		update(FormSize, &size);
 		m_size = size;
 
 		return true;
@@ -70,7 +70,7 @@ namespace BlendInt {
 		Point new_pos (x, y);
 		if(m_position == new_pos) return false;
 
-		update(FormPropertyPosition, &new_pos);
+		update(FormPosition, &new_pos);
 		m_position.set_x(x);
 		m_position.set_y(y);
 
@@ -80,7 +80,7 @@ namespace BlendInt {
 	bool AbstractForm::set_position(const Point& pos)
 	{
 		if(m_position == pos) return false;
-		update(FormPropertyPosition, &pos);
+		update(FormPosition, &pos);
 		m_position = pos;
 
 		return true;

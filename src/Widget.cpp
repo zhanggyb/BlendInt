@@ -40,23 +40,8 @@
 
 namespace BlendInt {
 
-	const float Widget::cornervec[WIDGET_CURVE_RESOLU][2] = {
-		{0.0, 0.0}, {0.195, 0.02}, {0.383, 0.067},
-		{0.55, 0.169}, {0.707, 0.293}, {0.831, 0.45},
-		{0.924, 0.617}, {0.98, 0.805}, {1.0, 1.0}
-	};
-
-	const float Widget::jit[WIDGET_AA_JITTER][2] = {
-			{ 0.468813, -0.481430}, {-0.155755, -0.352820},
-			{ 0.219306, -0.238501}, {-0.393286, -0.110949},
-			{-0.024699,  0.013908}, { 0.343805,  0.147431},
-			{-0.272855,  0.269918}, { 0.095909,  0.388710}
-	};
-
 	Widget::Widget()
 	: AbstractWidget(),
-	  m_round_type(CornerNone),
-	  m_radius(5.0),
 	  m_border_width(1.0),
 	  m_emboss(true)
 	{
@@ -67,8 +52,6 @@ namespace BlendInt {
 
 	Widget::Widget(AbstractWidget* parent)
 	: AbstractWidget(parent),
-	  m_round_type(CornerNone),
-	  m_radius(5.0),
 	  m_border_width(1.0),
 	  m_emboss(true)
 	{
@@ -84,24 +67,16 @@ namespace BlendInt {
 
 	void Widget::set_round_type(int type)
 	{
-		if (m_round_type == type) return;
-
-		update (FormPropertyCorner, &type);
-
-		m_round_type = type;
-
-		fire_property_changed_event(FormPropertyCorner);
+		if(AbstractExpForm::set_round_type(type)) {
+			fire_property_changed_event(FormRoundType);
+		}
 	}
 
 	void Widget::set_radius(float radius)
 	{
-		if (m_radius == radius) return;
-
-		update (FormPropertyCorner, &radius);
-
-		m_radius = radius;
-
-		fire_property_changed_event(FormPropertyCorner);
+		if(AbstractExpForm::set_radius(radius)) {
+			fire_property_changed_event(FormRoundType);
+		}
 	}
 
 	void Widget::set_emboss(bool emboss)
@@ -126,7 +101,7 @@ namespace BlendInt {
 	{
 		switch (type) {
 
-			case FormPropertySize: {
+			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				update_shape(size_p);
 				break;
@@ -267,10 +242,10 @@ namespace BlendInt {
 		int count = 0;
 
 		int minsize = 0;
-		const int hnum = ((round_type() & (CornerTopLeft | CornerTopRight)) == (CornerTopLeft | CornerTopRight) ||
-		                  (round_type() & (CornerBottomRight | CornerBottomLeft)) == (CornerBottomRight | CornerBottomLeft)) ? 1 : 2;
-		const int vnum = ((round_type() & (CornerTopLeft | CornerBottomLeft)) == (CornerTopLeft | CornerBottomLeft) ||
-		                  (round_type() & (CornerTopRight | CornerBottomRight)) == (CornerTopRight | CornerBottomRight)) ? 1 : 2;
+		const int hnum = ((round_type() & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight) ||
+		                  (round_type() & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)) ? 1 : 2;
+		const int vnum = ((round_type() & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft) ||
+		                  (round_type() & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)) ? 1 : 2;
 
 		minsize = std::min(size->width() * hnum,
 		                 size->height() * vnum);
@@ -290,7 +265,7 @@ namespace BlendInt {
 		}
 
 		// corner left-bottom
-		if (round_type() & CornerBottomLeft) {
+		if (round_type() & RoundBottomLeft) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner_v[count][0] = minxi + veci[i][1];
 				inner_v[count][1] = minyi + radi - veci[i][0];
@@ -309,7 +284,7 @@ namespace BlendInt {
 		}
 
 		// corner right-bottom
-		if (round_type() & CornerBottomRight) {
+		if (round_type() & RoundBottomRight) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner_v[count][0] = maxxi - radi + veci[i][0];
 				inner_v[count][1] = minyi + veci[i][1];
@@ -330,7 +305,7 @@ namespace BlendInt {
 		sum.half = count;
 
 		// corner right-top
-		if (round_type() & CornerTopRight) {
+		if (round_type() & RoundTopRight) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner_v[count][0] = maxxi - veci[i][1];
 				inner_v[count][1] = maxyi - radi + veci[i][0];
@@ -349,7 +324,7 @@ namespace BlendInt {
 		}
 
 		// corner left-top
-		if (round_type() & CornerTopLeft) {
+		if (round_type() & RoundTopLeft) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner_v[count][0] = minxi + radi - veci[i][0];
 				inner_v[count][1] = maxyi - veci[i][1];
@@ -402,10 +377,10 @@ namespace BlendInt {
 		VerticesSum sum;
 		int count = 0;
 		int minsize = 0;
-		const int hnum = ((round_type() & (CornerTopLeft | CornerTopRight)) == (CornerTopLeft | CornerTopRight) ||
-		                  (round_type() & (CornerBottomRight | CornerBottomLeft)) == (CornerBottomRight | CornerBottomLeft)) ? 1 : 2;
-		const int vnum = ((round_type() & (CornerTopLeft | CornerBottomLeft)) == (CornerTopLeft | CornerBottomLeft) ||
-		                  (round_type() & (CornerTopRight | CornerBottomRight)) == (CornerTopRight | CornerBottomRight)) ? 1 : 2;
+		const int hnum = ((round_type() & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight) ||
+		                  (round_type() & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)) ? 1 : 2;
+		const int vnum = ((round_type() & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft) ||
+		                  (round_type() & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)) ? 1 : 2;
 
 		Color color_top = theme->inner + theme->shadetop;
 		Color color_down = theme->inner + theme->shadedown;
@@ -429,7 +404,7 @@ namespace BlendInt {
 		}
 
 		// corner left-bottom
-		if (round_type() & CornerBottomLeft) {
+		if (round_type() & RoundBottomLeft) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner[count][0] = minxi + veci[i][1];
 				inner[count][1] = minyi + radi - veci[i][0];
@@ -469,7 +444,7 @@ namespace BlendInt {
 		}
 
 		// corner right-bottom
-		if (round_type() & CornerBottomRight) {
+		if (round_type() & RoundBottomRight) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner[count][0] = maxxi - radi + veci[i][0];
 				inner[count][1] = minyi + veci[i][1];
@@ -511,7 +486,7 @@ namespace BlendInt {
 		sum.half = count;
 
 		// corner right-top
-		if (round_type() & CornerTopRight) {
+		if (round_type() & RoundTopRight) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner[count][0] = maxxi - veci[i][1];
 				inner[count][1] = maxyi - radi + veci[i][0];
@@ -552,7 +527,7 @@ namespace BlendInt {
 		}
 
 		// corner left-top
-		if (round_type() & CornerTopLeft) {
+		if (round_type() & RoundTopLeft) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner[count][0] = minxi + radi - veci[i][0];
 				inner[count][1] = maxyi - veci[i][1];
@@ -627,10 +602,10 @@ namespace BlendInt {
 		VerticesSum sum;
 		int count = 0;
 		int minsize = 0;
-		const int hnum = ((round_type() & (CornerTopLeft | CornerTopRight)) == (CornerTopLeft | CornerTopRight) ||
-		                  (round_type() & (CornerBottomRight | CornerBottomLeft)) == (CornerBottomRight | CornerBottomLeft)) ? 1 : 2;
-		const int vnum = ((round_type() & (CornerTopLeft | CornerBottomLeft)) == (CornerTopLeft | CornerBottomLeft) ||
-		                  (round_type() & (CornerTopRight | CornerBottomRight)) == (CornerTopRight | CornerBottomRight)) ? 1 : 2;
+		const int hnum = ((round_type() & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight) ||
+		                  (round_type() & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)) ? 1 : 2;
+		const int vnum = ((round_type() & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft) ||
+		                  (round_type() & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)) ? 1 : 2;
 
 		Color color_top = color + shadetop;
 		Color color_down = color + shadedown;
@@ -654,7 +629,7 @@ namespace BlendInt {
 		}
 
 		// corner left-bottom
-		if (round_type() & CornerBottomLeft) {
+		if (round_type() & RoundBottomLeft) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner[count][0] = minxi + veci[i][1];
 				inner[count][1] = minyi + radi - veci[i][0];
@@ -694,7 +669,7 @@ namespace BlendInt {
 		}
 
 		// corner right-bottom
-		if (round_type() & CornerBottomRight) {
+		if (round_type() & RoundBottomRight) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner[count][0] = maxxi - radi + veci[i][0];
 				inner[count][1] = minyi + veci[i][1];
@@ -736,7 +711,7 @@ namespace BlendInt {
 		sum.half = count;
 
 		// corner right-top
-		if (round_type() & CornerTopRight) {
+		if (round_type() & RoundTopRight) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner[count][0] = maxxi - veci[i][1];
 				inner[count][1] = maxyi - radi + veci[i][0];
@@ -776,7 +751,7 @@ namespace BlendInt {
 		}
 
 		// corner left-top
-		if (round_type() & CornerTopLeft) {
+		if (round_type() & RoundTopLeft) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				inner[count][0] = minxi + radi - veci[i][0];
 				inner[count][1] = maxyi - veci[i][1];
@@ -853,7 +828,7 @@ namespace BlendInt {
 		}
 
 		/* start with left-top, anti clockwise */
-		if (round_type() & CornerTopLeft) {
+		if (round_type() & RoundTopLeft) {
 			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
 				vert[tot][0] = minx + rad - vec[i][0];
 				vert[tot][1] = maxy - vec[i][1];
@@ -865,7 +840,7 @@ namespace BlendInt {
 			}
 		}
 
-		if (round_type() & CornerBottomLeft) {
+		if (round_type() & RoundBottomLeft) {
 			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
 				vert[tot][0] = minx + vec[i][1];
 				vert[tot][1] = miny + rad - vec[i][0];
@@ -877,7 +852,7 @@ namespace BlendInt {
 			}
 		}
 
-		if (round_type() & CornerBottomRight) {
+		if (round_type() & RoundBottomRight) {
 			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
 				vert[tot][0] = maxx - rad + vec[i][0];
 				vert[tot][1] = miny + vec[i][1];
@@ -889,7 +864,7 @@ namespace BlendInt {
 			}
 		}
 
-		if (round_type() & CornerTopRight) {
+		if (round_type() & RoundTopRight) {
 			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
 				vert[tot][0] = maxx - vec[i][1];
 				vert[tot][1] = maxy - rad + vec[i][0];

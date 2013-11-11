@@ -24,16 +24,33 @@
 #ifndef _BLENDINT_SHADOW_HPP_
 #define _BLENDINT_SHADOW_HPP_
 
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/AbstractRoundBox.hpp>
+#include <BlendInt/Types.hpp>
 
 namespace BlendInt {
+
+	enum ShadowDirection {
+		ShadowNone = 0x0,
+		ShadowLeft = (0x1 << 0),
+		ShadowRight = (0x1 << 1),
+		ShadowTop = (0x1 << 2),
+		ShadowBottom = (0x1 << 3),
+		ShadowAll = (ShadowLeft | ShadowRight | ShadowTop | ShadowBottom)
+	};
+
+	enum ShadowPropertyType {
+		ShadowBlurRadius = AbstractRoundBoxPropertyLast + 1
+	};
 
 	/**
 	 * @brief Shadow form
 	 */
-	class Shadow: public AbstractForm
+	class Shadow: public AbstractRoundBox
 	{
+		DISALLOW_COPY_AND_ASSIGN(Shadow);
+
 	public:
+
 		Shadow ();
 
 		virtual ~Shadow ();
@@ -45,6 +62,19 @@ namespace BlendInt {
 		virtual void render ();
 
 	private:
+
+		/**
+		 * @brief generate shadow vertices
+		 * @param[in] size
+		 * @param[in] rad
+		 * @param[in] step
+		 * @param[out] vert
+		 * @return
+		 */
+		int generate_shadow_vertices (const Size* size,
+				float rad,
+				float step,
+				float vert[WIDGET_SIZE_MAX][2]);
 
 		int m_offset_x;
 

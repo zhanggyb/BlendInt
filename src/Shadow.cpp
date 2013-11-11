@@ -23,4 +23,153 @@
 
 #include <BlendInt/Shadow.hpp>
 
+#include <iostream>
 
+namespace BlendInt {
+
+	Shadow::Shadow()
+	: AbstractRoundBox(),
+	  m_offset_x(0),
+	  m_offset_y(0),
+	  m_direction(ShadowAll),
+	  m_blur_rad(5.0)
+	{
+
+	}
+
+	Shadow::~Shadow()
+	{
+
+	}
+
+	void Shadow::update (int type, const void* data)
+	{
+
+	}
+
+	void Shadow::render ()
+	{
+
+	}
+
+	int Shadow::generate_shadow_vertices (
+			const Size* size,
+			float rad,
+			float step,
+			float vert[WIDGET_SIZE_MAX][2])
+	{
+#ifdef DEBUG
+		static bool debug_print = true;
+#endif
+
+		float vec[WIDGET_CURVE_RESOLU][2];
+		float minx, miny, maxx, maxy;
+		int i, tot = 0;
+
+		rad += step;
+
+		if (2.0f * rad > size->height())
+			rad = 0.5f * size->height();
+
+		minx = 0.0f - step;
+		miny = 0.0f - step;
+		maxx = size->width() + step;
+		maxy = size->height() + step;
+
+		/* mult */
+		for (i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		/* start with left-top, anti clockwise */
+		if (round_type() & RoundTopLeft) {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = minx + rad - vec[i][0];
+				vert[tot][1] = maxy - vec[i][1];
+			}
+		} else {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = minx;
+				vert[tot][1] = maxy;
+			}
+		}
+
+		if (round_type() & RoundBottomLeft) {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = minx + vec[i][1];
+				vert[tot][1] = miny + rad - vec[i][0];
+			}
+		} else {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = minx;
+				vert[tot][1] = miny;
+			}
+		}
+
+		if (round_type() & RoundBottomRight) {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = maxx - rad + vec[i][0];
+				vert[tot][1] = miny + vec[i][1];
+			}
+		} else {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = maxx;
+				vert[tot][1] = miny;
+			}
+		}
+
+		if (round_type() & RoundTopRight) {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = maxx - vec[i][1];
+				vert[tot][1] = maxy - rad + vec[i][0];
+			}
+		} else {
+			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
+				vert[tot][0] = maxx;
+				vert[tot][1] = maxy;
+			}
+		}
+
+#ifdef DEBUG
+		if(debug_print) {
+
+			int count = 0;
+
+			std::cout << "-----------------------------------------------------------" << std::endl;
+
+			std::cout << "Top Left:" << std::endl;
+
+			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+			{
+				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+			}
+
+			std::cout << "Bottom Left:" << std::endl;
+
+			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+			{
+				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+			}
+
+			std::cout << "Bottom Right:" << std::endl;
+
+			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+			{
+				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+			}
+
+			std::cout << "Top Right:" << std::endl;
+
+			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+			{
+				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+			}
+
+//			debug_print = false;
+		}
+#endif
+
+		return tot;
+	}
+}

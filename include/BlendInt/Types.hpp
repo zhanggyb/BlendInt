@@ -53,6 +53,13 @@
 /** macro to declare a member function is an delegate */
 #define DELEGATE
 
+
+#define WIDGET_AA_JITTER 8
+
+/* max as used by round_box__edges */
+#define WIDGET_CURVE_RESOLU 9
+#define WIDGET_SIZE_MAX (WIDGET_CURVE_RESOLU * 4)
+
 namespace BlendInt {
 
 	enum HorizontalAlignment {
@@ -79,18 +86,17 @@ namespace BlendInt {
 	 * |      		|
 	 * 8------4
 	 */
-	enum CornerType
-	{
-		CornerNone = 0,
-		CornerTopLeft = (1 << 0),
-		CornerTopRight = (1 << 1),
-		CornerBottomRight = (1 << 2),
-		CornerBottomLeft = (1 << 3),
-		/* just for convenience */
-		CornerAll = (CornerTopLeft | CornerTopRight
-		        | CornerBottomRight | CornerBottomLeft),
-		UI_RB_ALPHA = CornerAll + 1
-	};
+//	enum CornerType
+//	{
+//		CornerNone = 0,
+//		CornerTopLeft = (1 << 0),
+//		CornerTopRight = (1 << 1),
+//		CornerBottomRight = (1 << 2),
+//		CornerBottomLeft = (1 << 3),
+//		/* just for convenience */
+//		CornerAll = (CornerTopLeft | CornerTopRight
+//		        | CornerBottomRight | CornerBottomLeft)
+//	};
 
 	enum ScrollState
 	{

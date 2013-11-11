@@ -21,19 +21,19 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/ExpandableForm.hpp>
+#include <BlendInt/AbstractExpForm.hpp>
 
 namespace BlendInt {
 
-	ExpandableForm::ExpandableForm()
-	: AbstractForm(), m_expand_x(false), m_expand_y(false)
+	AbstractExpForm::AbstractExpForm()
+	: AbstractRoundBox(), m_expand_x(false), m_expand_y(false)
 	{
 		m_maximal_size.set_width(65536);
 		m_maximal_size.set_height(65536);
 	}
 
-	ExpandableForm::ExpandableForm(const ExpandableForm& orig)
-	: AbstractForm()
+	AbstractExpForm::AbstractExpForm(const AbstractExpForm& orig)
+	: AbstractRoundBox()
 	{
 		set_position(orig.position());
 		resize(orig.size());
@@ -44,12 +44,12 @@ namespace BlendInt {
 		m_maximal_size = orig.maximal_size();
 	}
 
-	ExpandableForm::~ExpandableForm()
+	AbstractExpForm::~AbstractExpForm()
 	{
 
 	}
 
-	bool ExpandableForm::resize (unsigned int width, unsigned int height)
+	bool AbstractExpForm::resize (unsigned int width, unsigned int height)
 	{
 		if(width < m_minimal_size.width() ||
 				height < m_minimal_size.height() ||
@@ -60,7 +60,7 @@ namespace BlendInt {
 		return AbstractForm::resize(width, height);
 	}
 
-	bool ExpandableForm::resize (const Size& size)
+	bool AbstractExpForm::resize (const Size& size)
 	{
 		if(size.width() < m_minimal_size.width() ||
 				size.height() < m_minimal_size.height() ||
@@ -71,7 +71,7 @@ namespace BlendInt {
 		return AbstractForm::resize(size);
 	}
 
-	bool ExpandableForm::set_preferred_size (unsigned int width,
+	bool AbstractExpForm::set_preferred_size (unsigned int width,
 	        unsigned int height)
 	{
 		// check the param first
@@ -86,7 +86,7 @@ namespace BlendInt {
 		if (m_preferred_size == new_pref_size)
 			return false;
 
-		update(FormPropertyPreferredSize, &new_pref_size);
+		update(FormPreferredSize, &new_pref_size);
 
 		m_preferred_size.set_width(width);
 		m_preferred_size.set_height(height);
@@ -94,7 +94,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool ExpandableForm::set_preferred_size(const Size& size)
+	bool AbstractExpForm::set_preferred_size(const Size& size)
 	{
 		if (size.width() < m_minimal_size.width() ||
 				size.height() < m_minimal_size.height()||
@@ -104,14 +104,14 @@ namespace BlendInt {
 
 		if(m_preferred_size == size) return false;
 
-		update(FormPropertyPreferredSize, &size);
+		update(FormPreferredSize, &size);
 
 		m_preferred_size = size;
 
 		return true;
 	}
 
-	bool ExpandableForm::set_minimal_size(unsigned int width, unsigned int height)
+	bool AbstractExpForm::set_minimal_size(unsigned int width, unsigned int height)
 	{
 		if(width > m_preferred_size.width() ||
 				height > m_preferred_size.height())
@@ -121,14 +121,14 @@ namespace BlendInt {
 
 		if (m_minimal_size == new_min_size) return false;
 
-		update(FormPropertyMinimalSize, &new_min_size);
+		update(FormMinimalSize, &new_min_size);
 
 		m_minimal_size = new_min_size;
 
 		return true;
 	}
 
-	bool ExpandableForm::set_minimal_size(const Size& size)
+	bool AbstractExpForm::set_minimal_size(const Size& size)
 	{
 		if(size.width() > m_preferred_size.width() ||
 				size.height() > m_preferred_size.height())
@@ -136,14 +136,14 @@ namespace BlendInt {
 
 		if (m_minimal_size.equal(size)) return false;
 
-		update(FormPropertyMinimalSize, &size);
+		update(FormMinimalSize, &size);
 
 		m_minimal_size = size;
 
 		return true;
 	}
 
-	bool ExpandableForm::set_maximal_size(unsigned int width, unsigned int height)
+	bool AbstractExpForm::set_maximal_size(unsigned int width, unsigned int height)
 	{
 		if(width < m_preferred_size.width() ||
 				height < m_preferred_size.height())
@@ -153,14 +153,14 @@ namespace BlendInt {
 
 		if(m_maximal_size == new_max_size) return false;
 
-		update(FormPropertyMaximalSize, &new_max_size);
+		update(FormMaximalSize, &new_max_size);
 
 		m_maximal_size = new_max_size;
 
 		return true;
 	}
 
-	bool ExpandableForm::set_maximal_size(const Size& size)
+	bool AbstractExpForm::set_maximal_size(const Size& size)
 	{
 		if(size.width() < m_preferred_size.width() ||
 				size.height() < m_preferred_size.height())
@@ -168,7 +168,7 @@ namespace BlendInt {
 
 		if(m_maximal_size == size) return false;
 
-		update(FormPropertyMaximalSize, &size);
+		update(FormMaximalSize, &size);
 
 		m_maximal_size = size;
 

@@ -24,31 +24,31 @@
 #ifndef _BLENDINT_EXPANDABLEFORM_HPP_
 #define _BLENDINT_EXPANDABLEFORM_HPP_
 
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/AbstractRoundBox.hpp>
 
 namespace BlendInt {
 
 	enum ExpandableFormProperty {
-		FormPropertyPreferredSize = AbstrctFormPropertyLast + 1,
-		FormPropertyMinimalSize,
-		FormPropertyMaximalSize,
-		ExpandableFormPropertyLast = FormPropertyMaximalSize
+		FormPreferredSize = AbstractRoundBoxPropertyLast + 1,
+		FormMinimalSize,
+		FormMaximalSize,
+		AbstractExpFormPropertyLast = FormMaximalSize
 	};
 
 	/**
 	 * @brief A Form which is expandable along x or y axis
 	 */
-	class ExpandableForm: public AbstractForm
+	class AbstractExpForm: public AbstractRoundBox
 	{
 	public:
 
-		ExpandableForm();
+		AbstractExpForm();
 
-		ExpandableForm(const ExpandableForm& orig);
+		AbstractExpForm(const AbstractExpForm& orig);
 
-		virtual ~ExpandableForm();
+		virtual ~AbstractExpForm();
 
-		ExpandableForm& operator = (const ExpandableForm& orig)
+		AbstractExpForm& operator = (const AbstractExpForm& orig)
 		{
 			set_position(orig.position());
 			resize(orig.size());

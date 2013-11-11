@@ -33,7 +33,7 @@ namespace BlendInt {
 	: Frame(), m_pressed(false)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(CornerAll);
+		set_round_type(RoundAll);
 		set_emboss(false);
 	}
 
@@ -41,7 +41,7 @@ namespace BlendInt {
 	: Frame(parent), m_pressed(false)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(CornerAll);
+		set_round_type(RoundAll);
 		set_emboss(false);
 	}
 
@@ -54,7 +54,7 @@ namespace BlendInt {
 	{
 		switch(type)
 		{
-			case FormPropertySize: {
+			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				update_shape(size_p);
 				break;
@@ -283,7 +283,7 @@ namespace BlendInt {
 	: Slider(orientation)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(CornerAll);
+		set_round_type(RoundAll);
 
 		set_control_size(50);
 
@@ -304,7 +304,7 @@ namespace BlendInt {
 	: Slider(orientation, parent)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(CornerAll);
+		set_round_type(RoundAll);
 
 		set_control_size(50);
 
@@ -328,7 +328,7 @@ namespace BlendInt {
 
 	void SliderBar::update(int type, const void* data)
 	{
-		if(type == FormPropertySize) {
+		if(type == FormSize) {
 			const Size* size_p = static_cast<const Size*>(data);
 			update_shape(size_p);
 			return;
@@ -431,7 +431,7 @@ namespace BlendInt {
 			: AbstractSlider(orientation), m_scroll_control(0)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(CornerAll);
+		set_round_type(RoundAll);
 		set_radius(8);
 
 		m_scroll_control = new ScrollControl(this);
@@ -454,7 +454,7 @@ namespace BlendInt {
 			: AbstractSlider(orientation, parent), m_scroll_control(0)
 	{
 		set_padding(0, 0, 0, 0);
-		set_round_type(CornerAll);
+		set_round_type(RoundAll);
 		set_radius(8);
 
 		m_scroll_control = new ScrollControl(this);
@@ -481,13 +481,13 @@ namespace BlendInt {
 	{
 		switch (type) {
 
-			case FormPropertyPosition: {
+			case FormPosition: {
 				const Point* new_pos = &(position());
 				m_scroll_control->set_position (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
 				break;
 			}
 
-			case FormPropertySize: {
+			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				update_shape(size_p);
 				break;
