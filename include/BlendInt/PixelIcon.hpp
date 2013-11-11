@@ -27,12 +27,14 @@
 
 #include <vector>
 
+#include <BlendInt/AbstractExpForm.hpp>
+
 namespace BlendInt {
 
 	/**
 	 * Icon displayed with pixels
 	 */
-	class PixelIcon
+	class PixelIcon: public AbstractForm
 	{
 	public:
 
@@ -48,10 +50,6 @@ namespace BlendInt {
 
 		const unsigned char* pixels () const {return &m_pixels[0];}
 
-		int width () const {return m_width;}
-
-		int height () const {return m_height;}
-
 		void scale (float ratio);
 
 		void scale (int width, int height);
@@ -60,12 +58,15 @@ namespace BlendInt {
 
 		void display (float x, float y);
 
+	protected:
+
+		virtual void update (int type, const void* data);
+
+		virtual void render ();
+
 	private:
 
 		std::vector<unsigned char> m_pixels;
-
-		int m_width;
-		int m_height;
 
 		static const int default_icon_size = 16;	// 16 x 16
 

@@ -56,6 +56,10 @@ namespace BlendInt {
 
 		virtual ~Shadow ();
 
+		void set_blur_radius (float blur_rad);
+
+		float blur_radius () const {return m_blur_rad;}
+
 	protected:
 
 		virtual void update (int type, const void* data);
@@ -92,7 +96,7 @@ namespace BlendInt {
 		 *
 		 * The direction of the projection
 		 */
-		int m_direction;
+//		int m_direction;
 
 		/**
 		 * @brief the blur radius

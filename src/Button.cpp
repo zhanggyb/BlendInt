@@ -35,8 +35,8 @@ namespace BlendInt {
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);
-		resize(90, 25);
-		set_preferred_size(90, 24);
+		resize(90, 20);
+		set_preferred_size(90, 20);
 	}
 
 	Button::Button (const String& text)
@@ -53,8 +53,8 @@ namespace BlendInt {
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);
-		resize (90, 25);
-		set_preferred_size(90, 24);
+		resize (90, 20);
+		set_preferred_size(90, 20);
 	}
 
 	Button::Button (const String& text, AbstractWidget* parent)

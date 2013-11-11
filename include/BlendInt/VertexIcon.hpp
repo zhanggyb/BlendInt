@@ -67,8 +67,6 @@ namespace BlendInt {
 
 		virtual void render ();
 
-		void display (float x, float y);
-
 	private:
 
 		GLBuffer m_gl_buffer;

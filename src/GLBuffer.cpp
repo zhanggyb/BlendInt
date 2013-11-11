@@ -172,21 +172,25 @@ namespace BlendInt {
 	void GLBuffer::destroy ()
 	{
 		glDeleteBuffers(1, &(m_map[m_key].id));
-		m_map[m_key].id = 0;
-		m_map[m_key].vertices = 0;
-		m_map[m_key].unit_size = 0;
-		m_map[m_key].target = 0;
-		m_map[m_key].usage = 0;
+//		m_map[m_key].id = 0;
+//		m_map[m_key].vertices = 0;
+//		m_map[m_key].unit_size = 0;
+//		m_map[m_key].target = 0;
+//		m_map[m_key].usage = 0;
+
+		m_map.erase(m_key);
 	}
 
 	void GLBuffer::destroy (int key)
 	{
 		glDeleteBuffers(1, &(m_map[key].id));
-		m_map[key].id = 0;
-		m_map[key].vertices = 0;
-		m_map[key].unit_size = 0;
-		m_map[key].target = 0;
-		m_map[key].usage = 0;
+//		m_map[key].id = 0;
+//		m_map[key].vertices = 0;
+//		m_map[key].unit_size = 0;
+//		m_map[key].target = 0;
+//		m_map[key].usage = 0;
+
+		m_map.erase(key);
 	}
 
 	void GLBuffer::clear ()

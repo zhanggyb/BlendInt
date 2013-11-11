@@ -36,17 +36,26 @@ namespace BlendInt {
 	: AbstractRoundBox(),
 	  m_offset_x(0),
 	  m_offset_y(0),
-	  m_direction(ShadowAll),
-	  m_blur_rad(20.0)
+//	  m_direction(ShadowAll),
+	  m_blur_rad(12.0)
 	{
 		set_round_type(RoundAll);
 //		m_offset_x = 5;
-//		m_offset_y = 5;
+//		m_offset_y = -5;
 	}
 
 	Shadow::~Shadow()
 	{
 
+	}
+
+	void Shadow::set_blur_radius(float blur_rad)
+	{
+		if(blur_rad == m_blur_rad) return;
+
+		update(ShadowBlurRadius, &blur_rad);
+
+		m_blur_rad = blur_rad;
 	}
 
 	void Shadow::update (int type, const void* data)
@@ -75,6 +84,7 @@ namespace BlendInt {
 				totvert = generate_shadow_vertices(&shadow_size, radius(), 0.0f,
 				        inner_v);
 
+				m_gl_buffer.clear();
 				for (step = 1; step <= (int) m_blur_rad; step++) {
 					generate_shadow_vertices(&shadow_size, radius(), (float) step,
 					        outer_v);
@@ -85,11 +95,17 @@ namespace BlendInt {
 					m_gl_buffer.set_property(totvert * 2 + 2,
 					        sizeof(quad_strip[0]), GL_ARRAY_BUFFER,
 					        GL_STATIC_DRAW);
-
 					m_gl_buffer.bind();
 					m_gl_buffer.upload(quad_strip);
 					m_gl_buffer.unbind();
 				}
+
+				break;
+			}
+
+			case ShadowBlurRadius: {
+
+				// TODO: code for blur radius change
 
 				break;
 			}
@@ -145,7 +161,7 @@ namespace BlendInt {
 			float vert[WIDGET_SIZE_MAX][2])
 	{
 #ifdef DEBUG
-		static bool debug_print = true;
+		static bool debug_print = false;
 #endif
 
 		float vec[WIDGET_CURVE_RESOLU][2];
@@ -175,10 +191,9 @@ namespace BlendInt {
 				vert[tot][1] = maxy - vec[i][1];
 			}
 		} else {
-			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
-				vert[tot][0] = minx;
-				vert[tot][1] = maxy;
-			}
+			vert[tot][0] = minx;
+			vert[tot][1] = maxy;
+			tot++;
 		}
 
 		if (round_type() & RoundBottomLeft) {
@@ -187,10 +202,9 @@ namespace BlendInt {
 				vert[tot][1] = miny + rad - vec[i][0];
 			}
 		} else {
-			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
-				vert[tot][0] = minx;
-				vert[tot][1] = miny;
-			}
+			vert[tot][0] = minx;
+			vert[tot][1] = miny;
+			tot++;
 		}
 
 		if (round_type() & RoundBottomRight) {
@@ -199,10 +213,9 @@ namespace BlendInt {
 				vert[tot][1] = miny + vec[i][1];
 			}
 		} else {
-			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
-				vert[tot][0] = maxx;
-				vert[tot][1] = miny;
-			}
+			vert[tot][0] = maxx;
+			vert[tot][1] = miny;
+			tot++;
 		}
 
 		if (round_type() & RoundTopRight) {
@@ -211,10 +224,9 @@ namespace BlendInt {
 				vert[tot][1] = maxy - rad + vec[i][0];
 			}
 		} else {
-			for (i = 0; i < WIDGET_CURVE_RESOLU; i++, tot++) {
-				vert[tot][0] = maxx;
-				vert[tot][1] = maxy;
-			}
+			vert[tot][0] = maxx;
+			vert[tot][1] = maxy;
+			tot++;
 		}
 
 #ifdef DEBUG
@@ -224,32 +236,53 @@ namespace BlendInt {
 
 			std::cout << "-----------------------------------------------------------" << std::endl;
 
+			std::cout << "total vertices: " << tot << std::endl;
+
 			std::cout << "Top Left:" << std::endl;
 
-			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
-			{
+			if(round_type() & RoundTopLeft) {
+				for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+				{
+					std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+				}
+			} else {
 				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+				count++;
 			}
 
 			std::cout << "Bottom Left:" << std::endl;
 
-			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
-			{
+			if(round_type() & RoundBottomLeft) {
+				for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+				{
+					std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+				}
+			} else {
 				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+				count++;
 			}
 
 			std::cout << "Bottom Right:" << std::endl;
 
-			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
-			{
+			if(round_type() & RoundBottomRight) {
+				for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+				{
+					std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+				}
+			}	else {
 				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+				count++;
 			}
-
 			std::cout << "Top Right:" << std::endl;
 
-			for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
-			{
+			if(round_type() & RoundTopRight) {
+				for(int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++)
+				{
+					std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+				}
+			} else {
 				std::cout << "    " << vert[count][0] << " " << vert[count][1] << std::endl;
+				count++;
 			}
 
 //			debug_print = false;

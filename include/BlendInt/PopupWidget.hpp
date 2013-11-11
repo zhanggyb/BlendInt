@@ -26,7 +26,9 @@
 
 #include <BlendInt/Frame.hpp>
 
-#include <Shadow.hpp>
+#include <BlendInt/Shadow.hpp>
+
+#include <BlendInt/VertexIcon.hpp>
 
 namespace BlendInt {
 
@@ -66,6 +68,8 @@ namespace BlendInt {
 	private:
 
 		Shadow m_shadow;
+
+		VertexIcon m_icon;	// demo code
 
 	};
 

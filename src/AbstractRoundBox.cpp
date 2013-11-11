@@ -130,8 +130,7 @@ namespace BlendInt {
 				outer_v[count][0] = minx + vec[i][1];
 				outer_v[count][1] = miny + rad - vec[i][0];
 			}
-		}
-		else {
+		}	else {
 			inner_v[count][0] = minxi;
 			inner_v[count][1] = minyi;
 
@@ -149,8 +148,7 @@ namespace BlendInt {
 				outer_v[count][0] = maxx - rad + vec[i][0];
 				outer_v[count][1] = miny + vec[i][1];
 			}
-		}
-		else {
+		}	else {
 			inner_v[count][0] = maxxi;
 			inner_v[count][1] = minyi;
 
@@ -170,8 +168,7 @@ namespace BlendInt {
 				outer_v[count][0] = maxx - vec[i][1];
 				outer_v[count][1] = maxy - rad + vec[i][0];
 			}
-		}
-		else {
+		}	else {
 			inner_v[count][0] = maxxi;
 			inner_v[count][1] = maxyi;
 
@@ -190,9 +187,7 @@ namespace BlendInt {
 				outer_v[count][1] = maxy - vec[i][1];
 			}
 
-		}
-		else {
-
+		}	else {
 			inner_v[count][0] = minxi;
 			inner_v[count][1] = maxyi;
 
@@ -280,8 +275,7 @@ namespace BlendInt {
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}
-		else {
+		} else {
 			inner[count][0] = minxi;
 			inner[count][1] = minyi;
 
@@ -320,8 +314,7 @@ namespace BlendInt {
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}
-		else {
+		}	else {
 			inner[count][0] = maxxi;
 			inner[count][1] = minyi;
 
@@ -363,8 +356,7 @@ namespace BlendInt {
 				inner[count][5] = shaded_color[3] / 255.0;
 
 			}
-		}
-		else {
+		}	else {
 			inner[count][0] = maxxi;
 			inner[count][1] = maxyi;
 
@@ -403,8 +395,7 @@ namespace BlendInt {
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}
-		else {
+		}	else {
 
 			inner[count][0] = minxi;
 			inner[count][1] = maxyi;
@@ -506,8 +497,7 @@ namespace BlendInt {
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}
-		else {
+		}	else {
 			inner[count][0] = minxi;
 			inner[count][1] = minyi;
 
@@ -546,8 +536,7 @@ namespace BlendInt {
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}
-		else {
+		}	else {
 			inner[count][0] = maxxi;
 			inner[count][1] = minyi;
 
@@ -588,8 +577,7 @@ namespace BlendInt {
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}
-		else {
+		}	else {
 			inner[count][0] = maxxi;
 			inner[count][1] = maxyi;
 
@@ -628,8 +616,7 @@ namespace BlendInt {
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}
-		else {
+		}	else {
 
 			inner[count][0] = minxi;
 			inner[count][1] = maxyi;

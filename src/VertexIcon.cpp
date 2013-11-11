@@ -88,15 +88,44 @@ namespace BlendInt {
 
 	void VertexIcon::demo_init ()
 	{
-		float vec[6][2];
+		float vec[16][2];
 
-		for(size_t i = 0; i < 6; i++)
+		for(size_t i = 0; i < 3; i++)
 		{
-			vec[i][0] = 20 * scroll_circle_vert[i][0];
-			vec[i][1] = 20 * scroll_circle_vert[i][1];
+			vec[i][0] = 0.5 * 14 * num_tria_vert[i][0];
+			vec[i][1] = 0.5 * 14 * num_tria_vert[i][1];
 		}
 
-		load (vec, 16, scroll_circle_face, 14);
+		load (vec, 3, num_tria_face, 1);
+
+//		for(size_t i = 0; i < 16; i++)
+//		{
+//			vec[i][0] = 0.5 * 10 * scroll_circle_vert[i][0];
+//			vec[i][1] = 0.5 * 10 * scroll_circle_vert[i][1];
+//		}
+//
+//		load (vec, 16, scroll_circle_face, 14);
+
+
+		// check menu icon
+//		for(size_t i = 0; i < 6; i++)
+//		{
+//			vec[i][0] = 0.5 * 17 * menu_tria_vert[i][0];
+//			vec[i][1] = 0.5 * 17 * menu_tria_vert[i][1];
+//		}
+//
+//		load (vec, 6, menu_tria_face, 2);
+
+		// check icon
+
+//		for(size_t i = 0; i < 6; i++)
+//		{
+//			vec[i][0] = 0.5 * 14 * check_tria_vert[i][0];
+//			vec[i][1] = 0.5 * 14 * check_tria_vert[i][1];
+//		}
+//
+//		load (vec, 6, check_tria_face, 4);
+
 	}
 
 	void VertexIcon::load (const float (*vertex_array)[2], size_t array_size,
@@ -124,20 +153,26 @@ namespace BlendInt {
 
 	void VertexIcon::render()
 	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(position().x(), position().y(), 0);
+
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if (m_gl_buffer.size() == 1) {
 
 		} else if (m_gl_buffer.size() == 2) {
-			m_gl_buffer.select(0);
-			m_gl_buffer.bind();
 
-			glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
-			glEnableClientState(GL_VERTEX_ARRAY);
+			m_gl_buffer.select(0);
+			m_gl_buffer.bind();	// bind ARRAY BUFFER
 
 			m_gl_buffer.select(1);
-			m_gl_buffer.bind();
+			m_gl_buffer.bind();	// bind ELEMENT ARRAY BUFFER
+
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
 
 			/* for each AA step */
 			for (int i = 0; i < WIDGET_AA_JITTER; i++) {
@@ -154,16 +189,6 @@ namespace BlendInt {
 		}
 
 		glDisable(GL_BLEND);
-	}
-
-	void VertexIcon::display (float x, float y)
-	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(x, y, 0);
-
-		render();
 
 		glPopMatrix();
 	}

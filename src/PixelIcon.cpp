@@ -26,17 +26,17 @@
 namespace BlendInt {
 
 	PixelIcon::PixelIcon ()
-	: m_width(0), m_height(0)
+	: AbstractForm()
 	{
 	}
 
 	PixelIcon::PixelIcon (const unsigned char* pixels, int width, int height)
-	: m_width(0), m_height(0)
+	: AbstractForm()
 	{
 	}
 
 	PixelIcon::PixelIcon (const PixelIcon& orig)
-	: m_width(0), m_height(0)
+	: AbstractForm()
 	{
 	}
 
@@ -56,11 +56,13 @@ namespace BlendInt {
 	{
 	}
 
-	void PixelIcon::display ()
+
+	void PixelIcon::update(int type, const void* data)
 	{
+
 	}
 
-	void PixelIcon::display (float x, float y)
+	void PixelIcon::render ()
 	{
 	}
 

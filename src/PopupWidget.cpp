@@ -35,6 +35,10 @@ namespace BlendInt {
 	{
 		reset_z(1);	// TODO: define layer in enumeration
 		set_emboss(false);
+
+		m_icon.demo_init();
+
+		m_icon.set_position(50, 50);
 	}
 
 	PopupWidget::~PopupWidget()
@@ -54,6 +58,7 @@ namespace BlendInt {
 
 				m_shadow.resize(shadow_size);
 
+				m_icon.resize(16, 16);
 				break;
 			}
 
@@ -65,7 +70,6 @@ namespace BlendInt {
 
 	void PopupWidget::render ()
 	{
-
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
@@ -101,6 +105,9 @@ namespace BlendInt {
 		}
 
 		glDisable(GL_BLEND);
+
+		dispatch_render(&m_icon);
+
 		glPopMatrix();
 	}
 
