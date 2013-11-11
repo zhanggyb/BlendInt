@@ -23,6 +23,8 @@
 
 #include <BlendInt/AbstractForm.hpp>
 
+#include <BlendInt/Utilities-inl.hpp>
+
 namespace BlendInt {
 
 	AbstractForm::AbstractForm()
@@ -110,6 +112,52 @@ namespace BlendInt {
 		}
 
 		return true;
+	}
+
+	void AbstractForm::verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][2],
+			const float outer_v[WIDGET_SIZE_MAX][2],
+			const int totvert,
+			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
+	{
+		int i;
+		for (i = 0; i < totvert; i++) {
+			copy_v2_v2(quad_strip[i * 2], outer_v[i]);
+			copy_v2_v2(quad_strip[i * 2 + 1], inner_v[i]);
+		}
+		copy_v2_v2(quad_strip[i * 2], outer_v[0]);
+		copy_v2_v2(quad_strip[i * 2 + 1], inner_v[0]);
+	}
+
+	void AbstractForm::verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][6],
+			const float outer_v[WIDGET_SIZE_MAX][2],
+			const int totvert,
+			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
+	{
+		int i;
+		for (i = 0; i < totvert; i++) {
+			copy_v2_v2(quad_strip[i * 2], outer_v[i]);
+			copy_v2_v2(quad_strip[i * 2 + 1], inner_v[i]);
+		}
+		copy_v2_v2(quad_strip[i * 2], outer_v[0]);
+		copy_v2_v2(quad_strip[i * 2 + 1], inner_v[0]);
+	}
+
+	void AbstractForm::verts_to_quad_strip_open (
+			const float outer_v[WIDGET_SIZE_MAX][2],
+			const int totvert,
+			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
+	{
+		for (int i = 0; i < totvert; i++) {
+			quad_strip[i * 2][0] = outer_v[i][0];
+			quad_strip[i * 2][1] = outer_v[i][1];
+			quad_strip[i * 2 + 1][0] = outer_v[i][0];
+			quad_strip[i * 2 + 1][1] = outer_v[i][1] - 1.0f;
+		}
+	}
+
+	void AbstractForm::dispatch_render(AbstractForm* obj)
+	{
+		obj->render();
 	}
 
 }

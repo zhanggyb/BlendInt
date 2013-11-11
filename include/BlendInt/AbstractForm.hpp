@@ -26,6 +26,7 @@
 
 #include <BlendInt/Point.hpp>
 #include <BlendInt/Size.hpp>
+#include <BlendInt/Types.hpp>
 
 namespace BlendInt {
 
@@ -37,6 +38,10 @@ namespace BlendInt {
 
 	/**
 	 * @brief Abstract form class
+	 *
+	 * An AbstractForm is a 2 dimension object with the position/size.
+	 *
+	 * The default size is 0 at (0, 0), so it draws nothing
 	 */
 	class AbstractForm
 	{
@@ -110,6 +115,25 @@ namespace BlendInt {
 		virtual void update (int type, const void* data) = 0;
 
 		virtual void render () = 0;
+
+		static void verts_to_quad_strip (
+				const float inner_v[WIDGET_SIZE_MAX][2],
+				const float outer_v[WIDGET_SIZE_MAX][2],
+				const int totvert,
+				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
+
+		static void verts_to_quad_strip (
+				const float inner_v[WIDGET_SIZE_MAX][6],
+				const float outer_v[WIDGET_SIZE_MAX][2],
+				const int totvert,
+				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
+
+		static void verts_to_quad_strip_open (
+				const float outer_v[WIDGET_SIZE_MAX][2],
+				const int totvert,
+				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
+
+		static void dispatch_render (AbstractForm* obj);
 
 	private:
 

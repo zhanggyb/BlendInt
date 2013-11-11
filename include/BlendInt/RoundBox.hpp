@@ -21,54 +21,30 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_POPUPWIDGET_HPP_
-#define _BLENDINT_POPUPWIDGET_HPP_
+#ifndef _BLENDINT_ROUNDBOX_HPP_
+#define _BLENDINT_ROUNDBOX_HPP_
 
-#include <BlendInt/Frame.hpp>
+#include <BlendInt/Types.hpp>
 
-#include <Shadow.hpp>
+#include <BlendInt/AbstractRoundBox.hpp>
 
 namespace BlendInt {
 
-	enum PopupWidgetBufferKey {
-		ShadowBufferKeyBase = WidgetBufferKeyLast + 1
-	};
-
-	/**
-	 * @brief A special widget which is constructed in higher layer for
-	 * popup menus, tooltips
-	 *
-	 * @note a popupwidget cannot be bound to another form in different layer,
-	 * trying to do this will raise an exception.
-	 *
-	 * To layout a popupwidget with others, use a @ref LadderWidget to pack it.
-	 *
-	 * @sa LadderWidget
-	 *
-	 * @ingroup widgets
-	 */
-	class PopupWidget: public Frame
+	class RoundBox: public AbstractRoundBox
 	{
-		DISALLOW_COPY_AND_ASSIGN(PopupWidget);
-
 	public:
 
-		PopupWidget ();
+		RoundBox();
 
-		virtual ~PopupWidget();
+		virtual ~RoundBox();
 
 	protected:
 
-		virtual void update (int type, const void* data);
+		void update (int type, const void* data);
 
-		virtual void render ();
-
-	private:
-
-		Shadow m_shadow;
-
+		void render ();
 	};
 
 }
 
-#endif /* _BLENDINT_POPUPWIDGET_HPP_ */
+#endif /* _BLENDINT_ROUNDBOX_HPP_ */

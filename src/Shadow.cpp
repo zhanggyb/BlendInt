@@ -21,7 +21,12 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <GL/glew.h>
+
 #include <BlendInt/Shadow.hpp>
+#include <BlendInt/Theme.hpp>
+
+#include <math.h>
 
 #include <iostream>
 
@@ -32,9 +37,11 @@ namespace BlendInt {
 	  m_offset_x(0),
 	  m_offset_y(0),
 	  m_direction(ShadowAll),
-	  m_blur_rad(5.0)
+	  m_blur_rad(20.0)
 	{
-
+		set_round_type(RoundAll);
+//		m_offset_x = 5;
+//		m_offset_y = 5;
 	}
 
 	Shadow::~Shadow()
@@ -44,12 +51,91 @@ namespace BlendInt {
 
 	void Shadow::update (int type, const void* data)
 	{
+		switch (type) {
 
+			case FormSize: {
+
+				Size shadow_size = *(static_cast<const Size*>(data));
+
+				int step, totvert;
+
+				float inner_v[WIDGET_SIZE_MAX][2];
+				float outer_v[WIDGET_SIZE_MAX][2];
+
+				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2];
+
+				// #define UI_DPI_FAC ((U.pixelsize * (float)U.dpi) / 72.0f)
+//				const float radout = themes()->menu_shadow_width * 1.0;
+
+				/* prevent tooltips to not show round shadow */
+//						if (radout > 0.2f * size().height())
+//							shadow_size.add_height(-0.2f * size().height());
+//						else
+//							shadow_size.add_height(-radout);
+				totvert = generate_shadow_vertices(&shadow_size, radius(), 0.0f,
+				        inner_v);
+
+				for (step = 1; step <= (int) m_blur_rad; step++) {
+					generate_shadow_vertices(&shadow_size, radius(), (float) step,
+					        outer_v);
+					verts_to_quad_strip(inner_v, outer_v, totvert, quad_strip);
+
+					m_gl_buffer.create(step);
+					m_gl_buffer.select(step);
+					m_gl_buffer.set_property(totvert * 2 + 2,
+					        sizeof(quad_strip[0]), GL_ARRAY_BUFFER,
+					        GL_STATIC_DRAW);
+
+					m_gl_buffer.bind();
+					m_gl_buffer.upload(quad_strip);
+					m_gl_buffer.unbind();
+				}
+
+				break;
+			}
+
+			default:
+				break;
+		}
 	}
 
 	void Shadow::render ()
 	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
 
+		glTranslatef(position().x() + m_offset_x,
+					 position().y() + m_offset_y, 0.0);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		float alphastep;
+		int step;
+
+		// #define UI_DPI_FAC ((U.pixelsize * (float)U.dpi) / 72.0f)
+//		const float radout = themes()->menu_shadow_width * 1.0;
+//		alphastep = 3.0f * themes()->menu_shadow_fac / radout;
+		alphastep = 3.0f * themes()->menu_shadow_fac / m_blur_rad;
+
+		float expfac = 0.0;
+
+		for (step = 1; step <= (int)m_blur_rad; step++) {
+			expfac = sqrt(step / m_blur_rad);
+
+			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
+
+			m_gl_buffer.select(step);
+			m_gl_buffer.bind();
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glDrawArrays(GL_QUAD_STRIP, 0, m_gl_buffer.vertices());
+			glDisableClientState(GL_VERTEX_ARRAY);
+			m_gl_buffer.unbind();
+		}
+
+		glDisable(GL_BLEND);
+		glPopMatrix();
 	}
 
 	int Shadow::generate_shadow_vertices (
@@ -172,4 +258,64 @@ namespace BlendInt {
 
 		return tot;
 	}
+
+
+	void Shadow::draw(const float radin)
+	{
+		float alphastep;
+		int step, totvert;
+
+		float inner_v[WIDGET_SIZE_MAX][2];
+		float outer_v[WIDGET_SIZE_MAX][2];
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2];
+
+		// #define UI_DPI_FAC ((U.pixelsize * (float)U.dpi) / 72.0f)
+		const float radout = themes()->menu_shadow_width * 1.0;
+
+		Size shadow_size = size();
+
+		/* disabled shadow */
+		if (radout == 0.0f)
+			return;
+
+		/* prevent tooltips to not show round shadow */
+		if (radout > 0.2f * size().height())
+			shadow_size.add_height(-0.2f * size().height());
+		else
+			shadow_size.add_height(-radout);
+
+		/* inner part */
+		//totvert = round_box_shadow_edges(wtb.inner_v, &rect1, radin, roundboxalign & (UI_CNR_BOTTOM_RIGHT | UI_CNR_BOTTOM_LEFT), 0.0f);
+		totvert = generate_shadow_vertices(&shadow_size, radin, 0.0f, inner_v);
+
+		/* we draw a number of increasing size alpha quad strips */
+		// alphastep = 3.0f * btheme->tui.menu_shadow_fac / radout;
+		alphastep = 3.0f * themes()->menu_shadow_fac / radout;
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+
+		for (step = 1; step <= (int)radout; step++) {
+			float expfac = sqrt(step / radout);
+
+			//round_box_shadow_edges(wtb.outer_v, &rect1, radin, UI_CNR_ALL, (float)step);
+			generate_shadow_vertices(&shadow_size, radin, (float)step, outer_v);
+
+//#ifdef DEBUG
+//			glColor4f(0.9f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
+//#else
+			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
+//#endif
+
+			//widget_verts_to_quad_strip(&wtb, totvert, quad_strip);
+			verts_to_quad_strip(inner_v, outer_v, totvert, quad_strip);
+
+			glVertexPointer(2, GL_FLOAT, 0, quad_strip);
+			glDrawArrays(GL_QUAD_STRIP, 0, totvert * 2); /* add + 2 for getting a complete soft rect. Now it skips top edge to allow transparent menus */
+		}
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+	}
+
 }

@@ -249,6 +249,7 @@ namespace BlendInt {
 
 		if(shadedir) {
 			vert_sum = generate_vertices(size,
+					border_width(),
 					color,
 					shadetop,
 					shadedown,
@@ -256,6 +257,7 @@ namespace BlendInt {
 					inner_v, outer_v);
 		} else {	// swap shadetop and shadedown
 			vert_sum = generate_vertices(size,
+					border_width(),
 					color,
 					shadedown,
 					shadetop,
@@ -287,6 +289,7 @@ namespace BlendInt {
 
 		if(shadedir) {
 			vert_sum = generate_vertices(size,
+					border_width(),
 					color,
 					shadetop,
 					shadedown,
@@ -294,6 +297,7 @@ namespace BlendInt {
 					inner_v, outer_v);
 		} else {	// swap shadetop and shadedown
 			vert_sum = generate_vertices(size,
+					border_width(),
 					color,
 					shadedown,
 					shadetop,

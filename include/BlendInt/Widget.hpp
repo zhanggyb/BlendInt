@@ -79,18 +79,6 @@ namespace BlendInt {
 
 	protected:
 
-		/**
-		 * Structure used in calulating vertex buffer for inner and outline
-		 */
-		struct VerticesSum {
-			VerticesSum ()
-			: total(0), half(0)
-			{ }
-
-			int total;	/**< total number of vertices for widget */
-			int half;	/**< halfway vertices number */
-		};
-
 		virtual void update (int type, const void* data);
 
 		virtual void render ();
@@ -148,78 +136,6 @@ namespace BlendInt {
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
 		void draw_gl_buffer_anti_alias (int key, int mode = GL_QUAD_STRIP);
-
-		/**
-		 * @brief calculate vertices for round box edge with no shaded color
-		 * @param[in] size the size to calculate edges
-		 * @param[out] inner_v
-		 * @param[out] outer_v
-		 * @return how many vertices are used in the output array
-		 */
-		VerticesSum generate_vertices (const Size* size, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
-
-		/**
-		 * @brief calculate vertices for round box edges
-		 * @param size
-		 * @param theme
-		 * @param shadedir shade direction
-		 * @param inner
-		 * @param outer
-		 * @return
-		 */
-		VerticesSum generate_vertices (const Size* size,
-				const WidgetTheme* theme,
-				Orientation shadedir,
-				float inner[WIDGET_SIZE_MAX][6],
-				float outer[WIDGET_SIZE_MAX][2]);
-
-		/**
-		 * @brief generate vertices array for round box inner and edges
-		 * @param[in] size the size to calculate position and shade uv
-		 * @param[in] shadetop the top shade, defined in theme
-		 * @param[in] shadedown the bottom shade, defined in theme
-		 * @param[in] shadedir true if shade with horizontal direction
-		 * @param[out] inner inner vertices with position and color information
-		 * @param[out] outer vertices for outline
-		 * @return
-		 */
-		VerticesSum generate_vertices (const Size* size,
-				const Color& color,
-				short shadetop,
-				short shadedown,
-				Orientation shadedir,
-				float inner[WIDGET_SIZE_MAX][6],
-				float outer[WIDGET_SIZE_MAX][2]);
-
-		/**
-		 * @brief generate shadow vertices
-		 * @param[in] size
-		 * @param[in] rad
-		 * @param[in] step
-		 * @param[out] vert
-		 * @return
-		 */
-		int generate_shadow_vertices (const Size* size,
-				float rad,
-				float step,
-				float vert[WIDGET_SIZE_MAX][2]);
-
-		void verts_to_quad_strip (
-				const float inner_v[WIDGET_SIZE_MAX][2],
-				const float outer_v[WIDGET_SIZE_MAX][2],
-				const int totvert,
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
-
-		void verts_to_quad_strip (
-				const float inner_v[WIDGET_SIZE_MAX][6],
-				const float outer_v[WIDGET_SIZE_MAX][2],
-				const int totvert,
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
-
-		void verts_to_quad_strip_open (
-				const float outer_v[WIDGET_SIZE_MAX][2],
-				const int totvert,
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
 
 		GLBuffer& glbuffer() {return m_glbuffer;}
 

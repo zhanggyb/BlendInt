@@ -26,6 +26,7 @@
 
 #include <BlendInt/AbstractRoundBox.hpp>
 #include <BlendInt/Types.hpp>
+#include <BlendInt/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -76,6 +77,12 @@ namespace BlendInt {
 				float step,
 				float vert[WIDGET_SIZE_MAX][2]);
 
+		/**
+		 * @brief draw shadow without GL Buffer
+		 * @param radin
+		 */
+		void draw (const float radin);
+
 		int m_offset_x;
 
 		int m_offset_y;
@@ -91,6 +98,8 @@ namespace BlendInt {
 		 * @brief the blur radius
 		 */
 		float m_blur_rad;
+
+		GLBuffer m_gl_buffer;
 	};
 
 }

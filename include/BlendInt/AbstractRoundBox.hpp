@@ -21,11 +21,13 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ROUNDBOX_HPP_
-#define _BLENDINT_ROUNDBOX_HPP_
+#ifndef _BLENDINT_ABSTRACTROUNDBOX_HPP_
+#define _BLENDINT_ABSTRACTROUNDBOX_HPP_
 
 #include <BlendInt/AbstractForm.hpp>
 #include <BlendInt/Types.hpp>
+#include <BlendInt/Color.hpp>
+#include <BlendInt/Theme.hpp>
 
 namespace BlendInt {
 
@@ -52,6 +54,20 @@ namespace BlendInt {
 		FormRoundType = AbstrctFormPropertyLast + 1,
 		FormRoundRadius,
 		AbstractRoundBoxPropertyLast = FormRoundRadius
+	};
+
+	/**
+	 * Structure used in calulating vertex buffer for inner and outline
+	 *
+	 * @note don't use nested class for SWIG later
+	 */
+	struct VerticesSum {
+		VerticesSum ()
+		: total(0), half(0)
+		{ }
+
+		int total;	/**< total number of vertices for widget */
+		int half;	/**< halfway vertices number */
 	};
 
 	class AbstractRoundBox: public AbstractForm
@@ -84,6 +100,53 @@ namespace BlendInt {
 
 		static const float jit[WIDGET_AA_JITTER][2];
 
+		/**
+		 * @brief calculate vertices for round box edge with no shaded color
+		 * @param[in] size the size to calculate edges
+		 * @param[in] border border width
+		 * @param[out] inner_v
+		 * @param[out] outer_v
+		 * @return how many vertices are used in the output array
+		 */
+		VerticesSum generate_vertices (const Size* size, float border, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2]);
+
+		/**
+		 * @brief calculate vertices for round box edges
+		 * @param size
+		 * @param border
+		 * @param theme
+		 * @param shadedir shade direction
+		 * @param inner
+		 * @param outer
+		 * @return
+		 */
+		VerticesSum generate_vertices (const Size* size,
+				float border,
+				const WidgetTheme* theme,
+				Orientation shadedir,
+				float inner[WIDGET_SIZE_MAX][6],
+				float outer[WIDGET_SIZE_MAX][2]);
+
+		/**
+		 * @brief generate vertices array for round box inner and edges
+		 * @param[in] size the size to calculate position and shade uv
+		 * @param[in] border
+		 * @param[in] shadetop the top shade, defined in theme
+		 * @param[in] shadedown the bottom shade, defined in theme
+		 * @param[in] shadedir true if shade with horizontal direction
+		 * @param[out] inner inner vertices with position and color information
+		 * @param[out] outer vertices for outline
+		 * @return
+		 */
+		VerticesSum generate_vertices (const Size* size,
+				float border,
+				const Color& color,
+				short shadetop,
+				short shadedown,
+				Orientation shadedir,
+				float inner[WIDGET_SIZE_MAX][6],
+				float outer[WIDGET_SIZE_MAX][2]);
+
 	private:
 
 		int m_round_type;
@@ -93,4 +156,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_ROUNDBOX_HPP_ */
+#endif /* _BLENDINT_ABSTRACTROUNDBOX_HPP_ */
