@@ -65,10 +65,10 @@ namespace BlendInt {
 		if(!service) {
 			result = false;
 		} else {
-			if(!service->loadDefaultFontToMem()) {
-				std::cerr << "Fail to load default font file to memory" << std::endl;
-				result = false;
-			}
+//			if(!service->loadDefaultFontToMem()) {
+//				std::cerr << "Fail to load default font file to memory" << std::endl;
+//				result = false;
+//			}
 		}
 
 		return result;

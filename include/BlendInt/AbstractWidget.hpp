@@ -28,6 +28,8 @@
 #include <set>
 #include <string>
 
+#include <boost/smart_ptr.hpp>
+
 #include <BlendInt/AbstractExtraForm.hpp>
 #include <BlendInt/MouseEvent.hpp>
 #include <BlendInt/KeyEvent.hpp>
@@ -273,7 +275,9 @@ namespace BlendInt {
 
 		void set_in_layout (AbstractWidget* obj, bool status) {obj->m_in_layout = status;}
 
-		Cpp::ConnectionScope& events() {return m_events;}
+		//Cpp::ConnectionScope& events() {return m_events;}
+
+		boost::scoped_ptr<Cpp::ConnectionScope>& events() {return m_events;}
 
 		/**
 		 * @brief fire event to inform the property of this object is changed
@@ -302,7 +306,8 @@ namespace BlendInt {
 
 //		Point m_position;
 
-		Cpp::ConnectionScope m_events;
+		//Cpp::ConnectionScope m_events;
+		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
 		Cpp::Event<AbstractWidget*, int> m_property_changed;
 

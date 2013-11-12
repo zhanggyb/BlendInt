@@ -62,6 +62,8 @@ namespace BlendInt {
 		register_in_map();
 		id_last++;
 #endif
+
+		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	AbstractWidget::AbstractWidget (AbstractWidget* parent)
@@ -92,6 +94,8 @@ namespace BlendInt {
 		register_in_map();
 		id_last++;
 #endif
+
+		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	AbstractWidget::~AbstractWidget ()

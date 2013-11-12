@@ -105,49 +105,49 @@ namespace BlendInt {
 			}
 		}
 
-		glbuffer().select(WidgetBufferKeyInner);
+		glbuffer()->select(WidgetBufferKeyInner);
 
-		glbuffer().bind();
+		glbuffer()->bind();
 		glVertexPointer(2, GL_FLOAT, 0, 0);
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glDrawArrays(GL_POLYGON, 0, glbuffer().vertices());
+		glDrawArrays(GL_POLYGON, 0, glbuffer()->vertices());
 		glDisableClientState(GL_VERTEX_ARRAY);
-		glbuffer().unbind();
+		glbuffer()->unbind();
 
 		// draw outline
-		glbuffer().select(WidgetBufferKeyOuter);
+		glbuffer()->select(WidgetBufferKeyOuter);
 
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
 		        themes()->regular.outline.g(),
 		        themes()->regular.outline.b(),
 		        themes()->regular.outline.a()};
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glbuffer().bind();
+		glbuffer()->bind();
 		/* outline */
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glColor4ubv(tcol);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
 			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(GL_QUAD_STRIP, 0, glbuffer().vertices());
+			glDrawArrays(GL_QUAD_STRIP, 0, glbuffer()->vertices());
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
-		glbuffer().unbind();
+		glbuffer()->unbind();
 
 		if(emboss()) {
-			glbuffer().select(WidgetBufferKeyEmboss);
-			glbuffer().bind();
+			glbuffer()->select(WidgetBufferKeyEmboss);
+			glbuffer()->bind();
 			glEnableClientState(GL_VERTEX_ARRAY);
 			for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 				glTranslatef(jit[j][0], jit[j][1], 0.0f);
 				glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 				glVertexPointer(2, GL_FLOAT, 0, 0);
-				glDrawArrays(GL_QUAD_STRIP, 0, glbuffer().vertices());
+				glDrawArrays(GL_QUAD_STRIP, 0, glbuffer()->vertices());
 				glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 			}
 			glDisableClientState(GL_VERTEX_ARRAY);
-			glbuffer().unbind();
+			glbuffer()->unbind();
 		}
 
 		FontCache::create(m_font)->print(

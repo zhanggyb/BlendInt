@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_FORM_HPP_
 #define _BLENDINT_FORM_HPP_
 
+#include <boost/smart_ptr.hpp>
+
 #include <BlendInt/AbstractWidget.hpp>
 #include <BlendInt/GLBuffer.hpp>
 
@@ -135,7 +137,9 @@ namespace BlendInt {
 		 */
 		void draw_gl_buffer_anti_alias (int key, int mode = GL_QUAD_STRIP);
 
-		GLBuffer& glbuffer() {return m_glbuffer;}
+//		GLBuffer& glbuffer() {return m_glbuffer;}
+
+		boost::scoped_ptr<GLBuffer>& glbuffer() {return m_glbuffer;}
 
 	private:
 
@@ -154,7 +158,9 @@ namespace BlendInt {
 		/**
 		 * @brief the buffer for vertices
 		 */
-		GLBuffer m_glbuffer;
+//		GLBuffer m_glbuffer;
+
+		boost::scoped_ptr<GLBuffer> m_glbuffer;
 
 	};
 }

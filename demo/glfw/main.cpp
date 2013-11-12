@@ -251,6 +251,14 @@ int main(int argc, char* argv[])
 
 	hl1->set_position(250, 50);
 
+	std::cout << "size of widget: " << sizeof(Widget) << std::endl;
+
+	std::cout << "size of slider: " << sizeof(Slider) << std::endl;
+
+	std::cout << "size of button: " << sizeof(Button) << std::endl;
+
+	std::cout << "size of layout: " << sizeof(HorizontalLayout) << std::endl;
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
