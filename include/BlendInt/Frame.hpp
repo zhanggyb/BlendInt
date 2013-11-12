@@ -38,10 +38,8 @@ namespace BlendInt {
 	class Color;
 
 	enum FramePropertyType {
-		FramePropertyPadding = FormPropertyLast + 1,
-		WidgetPropertyBorderWidth,
-		WidgetPropertyEmboss,
-		WidgetPropertyLast = WidgetPropertyEmboss
+		FramePadding = WidgetPropertyLast + 1,
+		FramePropertyLast = FramePadding
 	};
 
 	/**

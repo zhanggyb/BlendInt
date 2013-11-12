@@ -153,11 +153,6 @@ namespace BlendInt {
 
 	void VertexIcon::render()
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(), position().y(), 0);
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -189,8 +184,6 @@ namespace BlendInt {
 		}
 
 		glDisable(GL_BLEND);
-
-		glPopMatrix();
 	}
 
 }

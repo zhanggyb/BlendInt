@@ -31,7 +31,6 @@
 namespace BlendInt {
 
 	enum AbstractFormProperty {
-		FormPosition,
 		FormSize,
 		AbstrctFormPropertyLast = FormSize
 	};
@@ -55,30 +54,10 @@ namespace BlendInt {
 
 		AbstractForm& operator = (const AbstractForm& orig)
 		{
-			m_position = orig.position();
 			m_size = orig.size();
 			return *this;
 		}
 
-		const Point& position () const
-		{
-			return m_position;
-		}
-
-		/**
-		 * @brief set the form's position
-		 * @param x
-		 * @param y
-		 * @return true if new position is set, false if it's the same as the current position
-		 */
-		bool set_position (int x, int y);
-
-		/**
-		 * @brief set the form's position
-		 * @param position
-		 * @return true if new position is set, false if it's the same as the current position
-		 */
-		bool set_position (const Point& position);
 
 		const Size& size () const
 		{
@@ -106,10 +85,6 @@ namespace BlendInt {
 		 */
 		bool resize (const Size& size);
 
-		bool contain (const Point& point);
-
-		bool contain (int x, int y);
-
 	protected:
 
 		virtual void update (int type, const void* data) = 0;
@@ -136,8 +111,6 @@ namespace BlendInt {
 		static void dispatch_render (AbstractForm* obj);
 
 	private:
-
-		Point m_position;
 
 		Size m_size;
 

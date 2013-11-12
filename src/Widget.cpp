@@ -63,37 +63,22 @@ namespace BlendInt {
 
 	}
 
-	void Widget::set_round_type(int type)
-	{
-		if(AbstractExpForm::set_round_type(type)) {
-			fire_property_changed_event(FormRoundType);
-		}
-	}
-
-	void Widget::set_radius(float radius)
-	{
-		if(AbstractExpForm::set_radius(radius)) {
-			fire_property_changed_event(FormRoundType);
-		}
-	}
-
 	void Widget::set_emboss(bool emboss)
 	{
-		m_emboss = emboss;
+		update(WidgetEmboss, &emboss);
 
-		// TODO: call update
+		m_emboss = emboss;
 	}
 
 	void Widget::set_border_width(float width)
 	{
-		if(width > 0.0)
-			m_border_width = width;
-		else
-			return;
+		if(width < 0.0) return;
 
 		// TODO: call update
-	}
+		update(WidgetBorderWidth, &width);
 
+		m_border_width = width;
+	}
 
 	void Widget::update (int type, const void* data)
 	{
@@ -102,6 +87,12 @@ namespace BlendInt {
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				update_shape(size_p);
+				break;
+			}
+
+			case WidgetEmboss: {
+				if(!(*static_cast<const bool*>(data)))
+					m_glbuffer.destroy(WidgetBufferKeyEmboss);
 				break;
 			}
 

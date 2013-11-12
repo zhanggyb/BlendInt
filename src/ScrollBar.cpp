@@ -59,8 +59,6 @@ namespace BlendInt {
 				update_shape(size_p);
 				break;
 			}
-			case FormPropertyCorner:
-				break;
 			default:
 				break;
 		}

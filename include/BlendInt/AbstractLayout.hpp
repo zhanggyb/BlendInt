@@ -52,7 +52,7 @@ namespace BlendInt {
 
 	enum LayoutPropertyType
 	{
-		LayoutPropertyAlignment = FormPropertyLast + 1,
+		LayoutPropertyAlignment = AbstractWidgetPropertyLast + 1,
 		LayoutPropertySpace,
 		LayoutPropertyMargin,
 		LayoutPropertyItem,
@@ -122,6 +122,8 @@ namespace BlendInt {
 		AbstractLayout* root_layout ();
 
 	protected:
+
+		virtual void initialize () {}
 
 		virtual void update (int type, const void* data);
 

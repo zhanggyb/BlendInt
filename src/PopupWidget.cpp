@@ -37,8 +37,6 @@ namespace BlendInt {
 		set_emboss(false);
 
 		m_icon.demo_init();
-
-		m_icon.set_position(50, 50);
 	}
 
 	PopupWidget::~PopupWidget()

@@ -355,23 +355,23 @@ namespace BlendInt {
 				child = items()[i * m_columns + j];
 				if(!child) continue;
 
-				dynamic_cast<AbstractExpForm*>(child)->set_position(x, y);
+				dynamic_cast<AbstractExtraForm*>(child)->set_position(x, y);
 
 				if(child->expand_y()) {
-					dynamic_cast<AbstractExpForm*>(child)->resize(child->size().width(), row_height[i]);
+					dynamic_cast<AbstractExtraForm*>(child)->resize(child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					dynamic_cast<AbstractExpForm*>(child)->resize(column_width[j], child->size().height());
+					dynamic_cast<AbstractExtraForm*>(child)->resize(column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();
@@ -423,23 +423,23 @@ namespace BlendInt {
 				child = items()[i * m_columns + j];
 				if(!child) continue;
 
-				dynamic_cast<AbstractExpForm*>(child)->set_position(x, y);
+				dynamic_cast<AbstractExtraForm*>(child)->set_position(x, y);
 
 				if(child->expand_y()) {
-					dynamic_cast<AbstractExpForm*>(child)->resize(child->size().width(), row_height[i]);
+					dynamic_cast<AbstractExtraForm*>(child)->resize(child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					dynamic_cast<AbstractExpForm*>(child)->resize(column_width[j], child->size().height());
+					dynamic_cast<AbstractExtraForm*>(child)->resize(column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-					dynamic_cast<AbstractExpForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();

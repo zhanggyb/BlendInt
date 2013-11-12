@@ -22,6 +22,8 @@ public:
 
 protected:
 
+	virtual void initialize () {}
+
 	virtual void update (int type, const void* property) {}
 
 	virtual void render ();
@@ -58,6 +60,8 @@ public:
 
 protected:
 
+	virtual void initialize () {}
+
 	virtual void update (int type, const void* property) {}
 
 	virtual void render ();
@@ -85,6 +89,8 @@ public:
 
 protected:
 
+	virtual void initialize () {}
+
 	virtual void update (int type, const void* property) {}
 
 	virtual void render ();
@@ -111,6 +117,8 @@ public:
 	virtual ~myDrawable3 ();
 
 protected:
+
+	virtual void initialize () {}
 
 	virtual void update (int type, const void* property) {}
 

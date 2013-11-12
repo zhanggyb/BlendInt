@@ -21,34 +21,35 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_EXPANDABLEFORM_HPP_
-#define _BLENDINT_EXPANDABLEFORM_HPP_
+#ifndef _BLENDINT_ABSTRACTEXTRAFORM_HPP_
+#define _BLENDINT_ABSTRACTEXTRAFORM_HPP_
 
 #include <BlendInt/AbstractRoundBox.hpp>
 
 namespace BlendInt {
 
 	enum ExpandableFormProperty {
-		FormPreferredSize = AbstractRoundBoxPropertyLast + 1,
+		FormPosition = AbstractRoundBoxPropertyLast + 1,
+		FormPreferredSize,
 		FormMinimalSize,
 		FormMaximalSize,
-		AbstractExpFormPropertyLast = FormMaximalSize
+		AbstractExtraFormPropertyLast = FormMaximalSize
 	};
 
 	/**
-	 * @brief A Form which is expandable along x or y axis
+	 * @brief A Form which holds position and expandable along x or y axis
 	 */
-	class AbstractExpForm: public AbstractRoundBox
+	class AbstractExtraForm: public AbstractRoundBox
 	{
 	public:
 
-		AbstractExpForm();
+		AbstractExtraForm();
 
-		AbstractExpForm(const AbstractExpForm& orig);
+		AbstractExtraForm(const AbstractExtraForm& orig);
 
-		virtual ~AbstractExpForm();
+		virtual ~AbstractExtraForm();
 
-		AbstractExpForm& operator = (const AbstractExpForm& orig)
+		AbstractExtraForm& operator = (const AbstractExtraForm& orig)
 		{
 			set_position(orig.position());
 			resize(orig.size());
@@ -59,6 +60,11 @@ namespace BlendInt {
 			m_maximal_size = orig.maximal_size();
 
 			return *this;
+		}
+
+		const Point& position () const
+		{
+			return m_position;
 		}
 
 		const Size& preferred_size () const
@@ -75,6 +81,21 @@ namespace BlendInt {
 		{
 			return m_maximal_size;
 		}
+
+		/**
+		 * @brief set the form's position
+		 * @param x
+		 * @param y
+		 * @return true if new position is set, false if it's the same as the current position
+		 */
+		bool set_position (int x, int y);
+
+		/**
+		 * @brief set the form's position
+		 * @param position
+		 * @return true if new position is set, false if it's the same as the current position
+		 */
+		bool set_position (const Point& position);
 
 		/**
 		 * @brief reset the size of the form
@@ -150,13 +171,17 @@ namespace BlendInt {
 
 		void set_expand (bool expand) {m_expand_x = expand; m_expand_y = expand;}
 
-	protected:
+		bool contain (const Point& point);
+
+		bool contain (int x, int y);
 
 	private:
 
 		bool m_expand_x;
 
 		bool m_expand_y;
+
+		Point m_position;
 
 		Size m_preferred_size;
 
@@ -167,4 +192,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_EXPANDABLEFORM_HPP_ */
+#endif /* _BLENDINT_ABSTRACTEXTRAFORM_HPP_ */

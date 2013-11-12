@@ -60,12 +60,12 @@ namespace BlendInt {
 				update_shape(size_p);
 				break;
 			}
-			case FormPropertyCorner: {
+			case FormRoundRadius: {
 				const Size* size_p = static_cast<const Size*>(data);
 				update_shape(size_p);
 				break;
 			}
-			case FramePropertyPadding: {
+			case FramePadding: {
 				// do not allow change padding
 				set_padding(0, 0, 0, 0);
 				break;

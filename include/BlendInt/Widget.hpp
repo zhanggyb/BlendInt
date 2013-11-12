@@ -32,6 +32,12 @@ namespace BlendInt {
 	struct WidgetTheme;
 	class Color;
 
+	enum WidgetPropertyType {
+		WidgetBorderWidth = AbstractWidgetPropertyLast + 1,
+		WidgetEmboss,
+		WidgetPropertyLast = WidgetEmboss
+	};
+
 	/**
 	 * @brief reserved key for Form drawing
 	 *
@@ -60,14 +66,6 @@ namespace BlendInt {
 		Widget (AbstractWidget* parent);
 
 		virtual ~Widget();
-
-		void set_round_type (int type);
-
-		/**
-		 * @brief set the round radius for the corner
-		 * @param radius
-		 */
-		void set_radius (float radius);
 
 		void set_emboss (bool emboss);
 

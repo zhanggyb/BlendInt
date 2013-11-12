@@ -21,18 +21,18 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/AbstractExpForm.hpp>
+#include <BlendInt/AbstractExtraForm.hpp>
 
 namespace BlendInt {
 
-	AbstractExpForm::AbstractExpForm()
+	AbstractExtraForm::AbstractExtraForm()
 	: AbstractRoundBox(), m_expand_x(false), m_expand_y(false)
 	{
 		m_maximal_size.set_width(65536);
 		m_maximal_size.set_height(65536);
 	}
 
-	AbstractExpForm::AbstractExpForm(const AbstractExpForm& orig)
+	AbstractExtraForm::AbstractExtraForm(const AbstractExtraForm& orig)
 	: AbstractRoundBox()
 	{
 		set_position(orig.position());
@@ -44,12 +44,60 @@ namespace BlendInt {
 		m_maximal_size = orig.maximal_size();
 	}
 
-	AbstractExpForm::~AbstractExpForm()
+	AbstractExtraForm::~AbstractExtraForm()
 	{
 
 	}
 
-	bool AbstractExpForm::resize (unsigned int width, unsigned int height)
+
+	bool AbstractExtraForm::set_position(int x, int y)
+	{
+		Point new_pos (x, y);
+		if(m_position == new_pos) return false;
+
+		update(FormPosition, &new_pos);
+		m_position.set_x(x);
+		m_position.set_y(y);
+
+		return true;
+	}
+
+	bool AbstractExtraForm::set_position(const Point& pos)
+	{
+		if(m_position == pos) return false;
+		update(FormPosition, &pos);
+		m_position = pos;
+
+		return true;
+	}
+
+	bool AbstractExtraForm::contain (const Point& point)
+	{
+		if(point.x() < m_position.x() ||
+				point.y() < m_position.y() ||
+				point.x() > static_cast<int>(m_position.x() + size().width()) ||
+				point.y() > static_cast<int>(m_position.y() + size().height()))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool AbstractExtraForm::contain (int x, int y)
+	{
+		if(x < m_position.x() ||
+				y < m_position.y() ||
+				x > static_cast<int>(m_position.x() + size().width()) ||
+				y > static_cast<int>(m_position.y() + size().height()))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool AbstractExtraForm::resize (unsigned int width, unsigned int height)
 	{
 		if(width < m_minimal_size.width() ||
 				height < m_minimal_size.height() ||
@@ -60,7 +108,7 @@ namespace BlendInt {
 		return AbstractForm::resize(width, height);
 	}
 
-	bool AbstractExpForm::resize (const Size& size)
+	bool AbstractExtraForm::resize (const Size& size)
 	{
 		if(size.width() < m_minimal_size.width() ||
 				size.height() < m_minimal_size.height() ||
@@ -71,7 +119,7 @@ namespace BlendInt {
 		return AbstractForm::resize(size);
 	}
 
-	bool AbstractExpForm::set_preferred_size (unsigned int width,
+	bool AbstractExtraForm::set_preferred_size (unsigned int width,
 	        unsigned int height)
 	{
 		// check the param first
@@ -94,7 +142,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractExpForm::set_preferred_size(const Size& size)
+	bool AbstractExtraForm::set_preferred_size(const Size& size)
 	{
 		if (size.width() < m_minimal_size.width() ||
 				size.height() < m_minimal_size.height()||
@@ -111,7 +159,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractExpForm::set_minimal_size(unsigned int width, unsigned int height)
+	bool AbstractExtraForm::set_minimal_size(unsigned int width, unsigned int height)
 	{
 		if(width > m_preferred_size.width() ||
 				height > m_preferred_size.height())
@@ -128,7 +176,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractExpForm::set_minimal_size(const Size& size)
+	bool AbstractExtraForm::set_minimal_size(const Size& size)
 	{
 		if(size.width() > m_preferred_size.width() ||
 				size.height() > m_preferred_size.height())
@@ -143,7 +191,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractExpForm::set_maximal_size(unsigned int width, unsigned int height)
+	bool AbstractExtraForm::set_maximal_size(unsigned int width, unsigned int height)
 	{
 		if(width < m_preferred_size.width() ||
 				height < m_preferred_size.height())
@@ -160,7 +208,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractExpForm::set_maximal_size(const Size& size)
+	bool AbstractExtraForm::set_maximal_size(const Size& size)
 	{
 		if(size.width() < m_preferred_size.width() ||
 				size.height() < m_preferred_size.height())

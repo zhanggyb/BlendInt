@@ -27,7 +27,7 @@
 
 #include <vector>
 
-#include <BlendInt/AbstractExpForm.hpp>
+#include <BlendInt/AbstractForm.hpp>
 
 namespace BlendInt {
 

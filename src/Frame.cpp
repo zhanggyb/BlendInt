@@ -67,7 +67,7 @@ namespace BlendInt {
 		if(m_padding.equal(padding)) return;
 
 		Padding new_padding = padding;
-		update(FramePropertyPadding, &new_padding);
+		update(FramePadding, &new_padding);
 		m_padding = new_padding;
 	}
 
@@ -77,7 +77,7 @@ namespace BlendInt {
 
 		Padding new_padding(l, r, t, b);
 
-		update(FramePropertyPadding, &new_padding);
+		update(FramePadding, &new_padding);
 		m_padding = new_padding;
 	}
 

@@ -28,7 +28,7 @@
 #include <set>
 #include <string>
 
-#include <BlendInt/AbstractExpForm.hpp>
+#include <BlendInt/AbstractExtraForm.hpp>
 #include <BlendInt/MouseEvent.hpp>
 #include <BlendInt/KeyEvent.hpp>
 #include <BlendInt/ContextMenuEvent.hpp>
@@ -60,12 +60,10 @@ namespace BlendInt {
 		ParentForm
 	};
 
-	enum FormPropertyType {
-		FormPropertyUnknown = AbstrctFormPropertyLast + 1,
-		FormPropertyLayer,
-		FormPropertyCorner,
-		FormPropertyVisibility,
-		FormPropertyLast = FormPropertyVisibility
+	enum AbstractWidgetPropertyType {
+		WidgetLayer = AbstractExtraFormPropertyLast + 1,
+		WidgetVisibility,
+		AbstractWidgetPropertyLast = WidgetVisibility
 	};
 
 	union ParentPointer {
@@ -96,7 +94,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup gui
 	 */
-	class AbstractWidget: public AbstractExpForm
+	class AbstractWidget: public AbstractExtraForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractWidget);
 
