@@ -257,8 +257,14 @@ int main(int argc, char* argv[])
 	menu->resize(200, 400);
 	menu->set_position(100, 100);
 
-	menu->add("Hello");
-	menu->add("there");
+	menu->add("File");
+	menu->add("exit");
+	menu->add("there2");
+	menu->add("there2");
+	menu->add("there2");
+	menu->add("there2");
+	menu->add("there2");
+	menu->add("there2");
 	menu->add("there2");
 
 	app->bind(menu);

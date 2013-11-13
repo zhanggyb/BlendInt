@@ -74,20 +74,17 @@ namespace BlendInt {
 			return;
 		}
 
-		int h = event->position().y();
+		int h = position().y() + size().height() - event->position().y();
 
-		size_t index = h / (size().height() / m_list.size()) - 1;
+		size_t index = h / (size().height() / m_list.size());
 
 		if(m_select) m_select->set_highlight(false);
 
 		std::list<MenuItem*>::iterator it = m_list.begin();
-
 		std::advance(it, index);
 
 		m_select = *it;
-
 		m_select->set_highlight(true);
-
 		event->accept(this);
 	}
 
@@ -133,7 +130,8 @@ namespace BlendInt {
 		std::list<MenuItem*>::iterator it;
 		for (it = m_list.begin(); it != m_list.end(); it++) {
 			h = - (*it)->size().height();
-			glTranslatef(0.0, h - 2, 0.0);
+			glTranslatef(0.0, h, 0.0);
+//			glTranslatef(0.0, h - 2, 0.0);
 			dispatch_render(*it);
 		}
 

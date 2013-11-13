@@ -57,6 +57,10 @@ namespace BlendInt {
 	{
 //		FontCache::create(Font())->print(m_text);
 
+		FontCache* fc = FontCache::create(Font());
+
+		int y = (size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender());
+
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -79,7 +83,7 @@ namespace BlendInt {
 				themes()->menu_item.text.b(),
 				themes()->menu_item.text.a());
 
-		FontCache::create(Font())->print(4, 0, m_text);	// move offset x 4
+		FontCache::create(Font())->print(4, y, m_text);	// move offset x 4
 
 		glDisable(GL_BLEND);
 	}
