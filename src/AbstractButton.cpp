@@ -30,15 +30,16 @@
 namespace BlendInt {
 
 	AbstractButton::AbstractButton ()
-	: m_status_down(false), m_checkable(false),
-	  m_status_checked(false), m_status_hover(false)
+	: Widget(),
+			m_status_down(false), m_checkable(false),
+	  m_status_checked(false), m_status_hover(false), m_length(0)
 	{
 		FontCache::create(m_font);
 	}
 
 	AbstractButton::AbstractButton (AbstractWidget *parent)
-		: Frame(parent), m_status_down(false), m_checkable(false),
-		  m_status_checked(false), m_status_hover(false)
+		: Widget(parent), m_status_down(false), m_checkable(false),
+		  m_status_checked(false), m_status_hover(false), m_length(0)
 	{
 		FontCache::create(m_font);
 	}
@@ -51,29 +52,79 @@ namespace BlendInt {
 	void AbstractButton::set_text (const String& text)
 	{
 		if(text.empty()) {
-			resize (90, 25);
+			resize (90, 20);
 			return;
 		}
 
-		m_text = text;
+		bool cal_width = true;
 
-		/* Box in which hold the text */
-		Rect text_outline;
-		text_outline = FontCache::create(m_font)->get_text_outline(m_text);
-		resize (text_outline.width() + padding().left() + padding().right(), text_outline.height() + padding().top() + padding().bottom());
+		m_text = text;
+		FontCache* fc = FontCache::create(m_font);
+
+		m_text_outline = fc->get_text_outline(m_text);
+
+		m_length = m_text.length();
+
+		if(size().height() < m_text_outline.height()) {
+			if(expand_y()) {
+				dynamic_cast<AbstractExtraForm*>(this)->resize(size().width(), m_text_outline.height());
+			} else {
+				m_length = 0;
+				cal_width = false;
+			}
+		}
+
+		if(size().width() < m_text_outline.width()) {
+			if(expand_x()) {
+				dynamic_cast<AbstractExtraForm*>(this)->resize(m_text_outline.width(), size().height());
+			} else {
+				if(cal_width) m_length = get_valid_text_size();
+			}
+		}
+
+		// FIXME: the alignment and origin was set in resize -> update, reset here?
+		m_origin.set_x((size().width() - m_text_outline.width()) / 2);
+
+		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+
+		set_preferred_size(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void AbstractButton::set_font (const Font& font)
 	{
+		bool cal_width = true;
+
 		m_font = font;
-		FontCache::create(m_font);
+		FontCache* fc =	FontCache::create(m_font);
 
-		/* Box in which hold the text */
-		Rect text_outline;
-		text_outline = FontCache::create(m_font)->get_text_outline(m_text);
+		m_text_outline = fc->get_text_outline(m_text);
 
-		resize (text_outline.width() + padding().left() + padding().right(),
-				text_outline.height() + padding().top() + padding().bottom());
+		m_length = m_text.length();
+
+		if(size().height() < m_text_outline.height()) {
+			if(expand_y()) {
+				dynamic_cast<AbstractExtraForm*>(this)->resize(size().width(), m_text_outline.height());
+			} else {
+				m_length = 0;
+				cal_width = false;
+			}
+		}
+
+		if(size().width() < m_text_outline.width()) {
+			if(expand_x()) {
+				dynamic_cast<AbstractExtraForm*>(this)->resize(m_text_outline.width(), size().height());
+			} else {
+				if(cal_width) m_length = get_valid_text_size();
+			}
+		}
+
+		// FIXME: the alignment and origin was set in resize -> update, reset here?
+
+		m_origin.set_x((size().width() - m_text_outline.width()) / 2);
+
+		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+
+		set_preferred_size(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void AbstractButton::press_mouse (MouseEvent* event)
@@ -118,6 +169,25 @@ namespace BlendInt {
 			m_status_hover = false;
 			m_status_down = false;
 		}
+	}
+
+	size_t AbstractButton::get_valid_text_size()
+	{
+		size_t width = 0;
+
+		size_t str_len = m_text.length();
+
+		width = FontCache::create(m_font)->get_text_width(m_text, str_len);
+
+		if(width > size().width()) {
+			while(str_len > 0) {
+				width = FontCache::create(m_font)->get_text_width(m_text, str_len);
+				if(width < size().width()) break;
+				str_len--;
+			}
+		}
+
+		return str_len;
 	}
 
 } /* namespace BlendInt */

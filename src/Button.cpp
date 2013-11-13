@@ -121,9 +121,7 @@ namespace BlendInt {
 		}
 
 		// Draw text
-		FontCache::create(m_font)->print(
-		        m_text_outline.left() + padding().left(),
-		        padding().bottom() + std::abs(m_text_outline.bottom()), m_text);
+		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
 
 		glDisable(GL_BLEND);
 

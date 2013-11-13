@@ -21,38 +21,47 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_IMAGEVIEW_HPP_
-#define _BLENDINT_IMAGEVIEW_HPP_
+#include <BlendInt/AbstractForm.hpp>
 
-#include <BlendInt/Frame.hpp>
+#include <BlendInt/MouseEvent.hpp>
+
+#include <BlendInt/String.hpp>
+
+#ifndef _BLENDINT_MENUITEM_HPP_
+#define _BLENDINT_MENUITEM_HPP_
 
 namespace BlendInt {
 
-	class ImageView: public Widget
+	class MenuItem: public AbstractForm
 	{
+//		DISALLOW_COPY_AND_ASSIGN(MenuItem);
+
 	public:
 
-		ImageView ();
+		MenuItem ();
 
-		ImageView (AbstractWidget* parent);
+		MenuItem (const String& text);
 
-		virtual ~ImageView ();
+		virtual ~MenuItem();
+
+		void set_highlight (bool highlight)
+		{
+			m_highlight = highlight;
+		}
 
 	protected:
+
+		virtual void update (int type, const void* data);
 
 		virtual void render ();
 
 	private:
 
-		void makeCheckImage ();
+		bool m_highlight;
 
-		static const int checkImageWidth = 64;
-		static const int checkImageHeight = 64;
-
-		GLubyte _checkImage[checkImageHeight][checkImageWidth][4];
-
+		String m_text;
 	};
+
 }
 
-
-#endif /* _BIL_IMAGEVIEW_HPP_ */
+#endif /* _BLENDINT_MENUITEM_HPP_ */

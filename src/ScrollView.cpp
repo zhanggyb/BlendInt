@@ -30,14 +30,14 @@
 namespace BlendInt {
 
 	ScrollView::ScrollView()
-	: Frame(), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
+	: Widget(), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
 	{
 		resize(200, 160);
 		set_preferred_size(200, 160);
 	}
 
 	ScrollView::ScrollView(AbstractWidget* parent)
-	: Frame(parent), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
+	: Widget(parent), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
 	{
 		resize(200, 160);
 		set_preferred_size(200, 160);
@@ -59,11 +59,11 @@ namespace BlendInt {
 	void ScrollView::reset_viewport_position()
 	{
 		if(m_viewport) {
-			int w = size().width() - padding().left() - padding().right();
-			int h = size().height() - padding().top() - padding().bottom();
+			int w = size().width();
+			int h = size().height();
 
-			int x = position().x() + padding().left() + (w - static_cast<int>(m_viewport->size().width())) / 2;
-			int y = position().y() + padding().bottom() + (h - static_cast<int>(m_viewport->size().height())) / 2;
+			int x = position().x() + (w - static_cast<int>(m_viewport->size().width())) / 2;
+			int y = position().y() + (h - static_cast<int>(m_viewport->size().height())) / 2;
 
 			m_viewport->set_position(x, y);
 		}
@@ -87,10 +87,10 @@ namespace BlendInt {
 	void ScrollView::render ()
 	{
 		glEnable (GL_SCISSOR_TEST);
-		glScissor (position().x() + padding().left(),
-				position().y() + padding().bottom(),
-				size().width() - padding().left() - padding().right(),
-				size().height() - padding().top() - padding().bottom());
+		glScissor (position().x(),
+				position().y(),
+				size().width(),
+				size().height());
 
 		// test code
 //		glEnable(GL_BLEND);
@@ -167,15 +167,14 @@ namespace BlendInt {
 
 		if(m_move_status) {
 
-			int w = size().width() - padding().left() - padding().right();
-			int h = size().height() - padding().top() - padding().bottom();
+			int w = size().width();
+			int h = size().height();
 
 			if (m_orientation & Horizontal) {
 
 				if (w < static_cast<int>(m_viewport->size().width())) {
-					int x_min = position().x() + padding().left()
-					        - (m_viewport->size().width() - w);
-					int x_max = position().x() + padding().left();
+					int x_min = position().x() - (m_viewport->size().width() - w);
+					int x_max = position().x();
 					if (x_min > x_max)
 						x_min = x_max;
 
@@ -200,9 +199,8 @@ namespace BlendInt {
 			if (m_orientation & Vertical) {
 
 				if (h < static_cast<int>(m_viewport->size().height())) {
-					int y_min = position().y() + padding().bottom()
-					        - (m_viewport->size().height() - h);
-					int y_max = position().y() + padding().bottom();
+					int y_min = position().y() - (m_viewport->size().height() - h);
+					int y_max = position().y();
 
 					if (y_min > y_max)
 						y_min = y_max;

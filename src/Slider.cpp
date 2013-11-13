@@ -35,14 +35,12 @@ namespace BlendInt {
 	SlideButton::SlideButton()
 	:  Button()
 	{
-		set_padding (0, 0, 0, 0);
 		set_emboss(false);
 	}
 
 	SlideButton::SlideButton(AbstractWidget* parent)
 	:  Button(parent)
 	{
-		set_padding (0, 0, 0, 0);
 		set_emboss(false);
 	}
 
@@ -65,11 +63,7 @@ namespace BlendInt {
 				update_shape(size_p);
 				break;
 			}
-			case FramePadding: {
-				// do not allow change padding
-				set_padding(0, 0, 0, 0);
-				break;
-			}
+
 			default:
 				break;
 		}
@@ -154,25 +148,25 @@ namespace BlendInt {
 
 				set_position(position().x(), m_position_origin.y() + event->position().y() - m_move_start.y());
 
-				if(position().y() < (parent_obj->position().y() + parent_obj->padding().bottom())) {
+				if(position().y() < (parent_obj->position().y())) {
 
-					set_position(position().x(), parent_obj->position().y() + parent_obj->padding().bottom());
+					set_position(position().x(), parent_obj->position().y());
 
 				}
-				if(position().y() > (int)(parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height())) {
-					set_position(position().x(), parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height());
+				if(position().y() > (int)(parent_obj->position().y() + parent_obj->size().height() - size().height())) {
+					set_position(position().x(), parent_obj->position().y() + parent_obj->size().height() - size().height());
 
 				}
 
 			} else {
 
 				set_position(m_position_origin.x() + event->position().x() - m_move_start.x(), position().y());
-				if(position().x() < (parent_obj->position().x() + parent_obj->padding().left())) {
-					set_position(parent_obj->position().x() + parent_obj->padding().left(), position().y());
+				if(position().x() < (parent_obj->position().x())) {
+					set_position(parent_obj->position().x(), position().y());
 				}
 				if(position().x() >
-						(int)(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width())) {
-					set_position(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width(), position().y());
+						(int)(parent_obj->position().x() + parent_obj->size().width() - size().width())) {
+					set_position(parent_obj->position().x() + parent_obj->size().width() - size().width(), position().y());
 				}
 
 			}
@@ -331,8 +325,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		size_t button_size = std::min (size().width() - padding().left() - padding().right(),
-				size().height() - padding().top() - padding().bottom());
+		size_t button_size = std::min (size().width(), size().height());
 
 		m_slide_button->resize(button_size, button_size);
 		//m_slide_button->set_position (position().x() + padding().left(), position().y() + padding().bottom());
@@ -353,8 +346,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		size_t button_size = std::min (size().width() - padding().left() - padding().right(),
-				size().height() - padding().top() - padding().bottom());
+		size_t button_size = std::min (size().width(), size().height());
 
 		m_slide_button->resize(button_size, button_size);
 
@@ -391,22 +383,22 @@ namespace BlendInt {
 	{
 		switch (type) {
 			case FormPosition: {
-				m_slide_button->set_position (position().x() + padding().left(), position().y() + padding().bottom());
+				m_slide_button->set_position (position().x(), position().y());
 				return;
 			}
 
 			case FormSize: {
 
-				size_t button_size = std::min (size().width() - padding().left() - padding().right(),
-						size().height() - padding().top() - padding().bottom());
+				size_t button_size = std::min (size().width(),
+						size().height());
 
 				m_slide_button->resize(button_size, button_size);
 
 				if(orientation() == Vertical) {
 					m_slide_button->set_position (m_slide_button->position().x(),
-							position().y() + padding().bottom() + value() * get_space() / (float)(maximum() - minimum()));
+							position().y() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
-					m_slide_button->set_position (position().x() + padding().left() + value() * get_space() / (float)(maximum() - minimum()),
+					m_slide_button->set_position (position().x() + value() * get_space() / (float)(maximum() - minimum()),
 							m_slide_button->position().y());
 				}
 
@@ -417,9 +409,9 @@ namespace BlendInt {
 
 				if(orientation() == Vertical) {
 					m_slide_button->set_position (m_slide_button->position().x(),
-							position().y() + padding().bottom() + value() * get_space() / (float)(maximum() - minimum()));
+							position().y() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
-					m_slide_button->set_position (position().x() + padding().left() + value() * get_space() / (float)(maximum() - minimum()),
+					m_slide_button->set_position (position().x() + value() * get_space() / (float)(maximum() - minimum()),
 							m_slide_button->position().y());
 				}
 
@@ -443,11 +435,6 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glPushMatrix();
-
-		glTranslatef(padding().left(),
-					 padding().bottom(), 0);
-
 		glColor4ub(themes()->scroll.outline.r(),
 				themes()->scroll.outline.g(),
 				themes()->scroll.outline.b(),
@@ -456,22 +443,20 @@ namespace BlendInt {
 		int space = 0;
 
 		if(orientation() == Vertical) {
-			space = size().height() - padding().top() - padding().bottom();
+			space = size().height();
 			glTranslatef(m_slide_button->size().width() / 2.0, 0, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(0, space);
 			glEnd();
 		} else {
-			space = size().width() - padding().left() - padding().right();
+			space = size().width();
 			glTranslatef(0, m_slide_button->size().height() / 2.0 - 0.5, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(space, 0);
 			glEnd();
 		}
-
-		glPopMatrix();
 
 #ifdef DEBUG
 		glLineWidth(1);
@@ -504,23 +489,21 @@ namespace BlendInt {
 			int value = 0;
 
 			if (orientation() == Vertical) {
-				int ymin = position().y() + padding().bottom() + m_slide_button->size().height() / 2;
-				int ymax = position().y() + size().height() - padding().top() - m_slide_button->size().height() / 2;
+				int ymin = position().y() + m_slide_button->size().height() / 2;
+				int ymax = position().y() + size().height() - m_slide_button->size().height() / 2;
 				if(event->position().y() < ymin ||	event->position().y() > ymax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
-				value = (m_slide_button->position().y() - position().y()
-				        - padding().bottom()) / (float) get_space()
+				value = (m_slide_button->position().y() - position().y()) / (float) get_space()
 				        * (maximum() - minimum());
 
 			} else {
-				int xmin = position().x() + padding().left() + m_slide_button->size().width() / 2;
-				int xmax = position().x() + size().width() - padding().right() - m_slide_button->size().width() / 2;
+				int xmin = position().x() + m_slide_button->size().width() / 2;
+				int xmax = position().x() + size().width() - m_slide_button->size().width() / 2;
 				if(event->position().x() < xmin ||	event->position().x() > xmax)
 					return;	// if the mouse move too far, don't count the value repeatedly
 
-				value = (m_slide_button->position().x() - position().x()
-				        - padding().left()) / (float) get_space()
+				value = (m_slide_button->position().x() - position().x()) / (float) get_space()
 				        * (maximum() - minimum());
 			}
 
@@ -542,7 +525,7 @@ namespace BlendInt {
 			return;
 		}
 
-		if(contain_no_padding(event->position())) {
+		if(contain(event->position())) {
 			interface()->dispatch_mouse_press_event(m_slide_button, event);
 			if(event->accepted()) return;
 
@@ -602,9 +585,9 @@ namespace BlendInt {
 	{
 		int space = 0;
 		if(orientation() == Vertical)	// Vertical
-			space = size().height() - padding().top() - padding().bottom() - m_slide_button->size().height();
+			space = size().height() - m_slide_button->size().height();
 		else
-			space = size().width() - padding().left() - padding().right() - m_slide_button->size().width();
+			space = size().width() - m_slide_button->size().width();
 
 		return space;
 	}

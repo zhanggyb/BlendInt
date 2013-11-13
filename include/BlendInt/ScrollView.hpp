@@ -34,7 +34,7 @@ namespace BlendInt {
 	 * The sub widget is named as a viewport and it's usually larger than
 	 * the ScrollView
 	 */
-	class ScrollView: public Frame
+	class ScrollView: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScrollView);
 

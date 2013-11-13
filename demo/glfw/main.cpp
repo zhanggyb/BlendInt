@@ -28,6 +28,7 @@
 #include <BlendInt/VertexIcon.hpp>
 #include <BlendInt/ScrollView.hpp>
 #include <BlendInt/PopupWidget.hpp>
+#include <BlendInt/Menu.hpp>
 
 using namespace BlendInt;
 using namespace std;
@@ -223,18 +224,18 @@ int main(int argc, char* argv[])
 //
 //	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
 
-	PopupWidget* widget = new PopupWidget;
-	widget->move(200, 200);
-//	widget->set_round_type(CornerAll);
-	widget->resize(200, 200);
-//
-	Frame* widget2 = new Frame;
-	widget2->move(450, 200);
-//	widget2->set_round_type(CornerAll);
-	widget2->resize(200, 200);
-//
-	app->bind(widget);
-	app->bind(widget2);
+//	PopupWidget* widget = new PopupWidget;
+//	widget->move(200, 200);
+////	widget->set_round_type(CornerAll);
+//	widget->resize(200, 200);
+////
+//	Frame* widget2 = new Frame;
+//	widget2->move(450, 200);
+////	widget2->set_round_type(CornerAll);
+//	widget2->resize(200, 200);
+////
+//	app->bind(widget);
+//	app->bind(widget2);
 //
 //	Button* b1 = new Button;
 //	b1->set_position(100, 100);
@@ -251,6 +252,17 @@ int main(int argc, char* argv[])
 //
 //	hl1->set_position(250, 50);
 
+	Menu *menu = new Menu;
+
+	menu->resize(200, 400);
+	menu->set_position(100, 100);
+
+	menu->add("Hello");
+	menu->add("there");
+	menu->add("there2");
+
+	app->bind(menu);
+
 	std::cout << "size of widget: " << sizeof(Widget) << std::endl;
 
 	std::cout << "size of slider: " << sizeof(Slider) << std::endl;
@@ -258,6 +270,8 @@ int main(int argc, char* argv[])
 	std::cout << "size of button: " << sizeof(Button) << std::endl;
 
 	std::cout << "size of layout: " << sizeof(HorizontalLayout) << std::endl;
+
+	std::cout << "size of menu item: " << sizeof(MenuItem) << std::endl;
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

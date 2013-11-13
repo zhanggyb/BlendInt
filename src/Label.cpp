@@ -235,7 +235,6 @@ namespace BlendInt {
 		return str_len;
 	}
 
-
 	size_t Label::get_valid_text_size(const Size* size)
 	{
 		size_t width = 0;

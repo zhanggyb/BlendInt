@@ -30,17 +30,15 @@
 namespace BlendInt {
 
 	ScrollControl::ScrollControl ()
-	: Frame(), m_pressed(false)
+	: Widget(), m_pressed(false)
 	{
-		set_padding(0, 0, 0, 0);
 		set_round_type(RoundAll);
 		set_emboss(false);
 	}
 
 	ScrollControl::ScrollControl(AbstractWidget* parent)
-	: Frame(parent), m_pressed(false)
+	: Widget(parent), m_pressed(false)
 	{
-		set_padding(0, 0, 0, 0);
 		set_round_type(RoundAll);
 		set_emboss(false);
 	}
@@ -139,26 +137,26 @@ namespace BlendInt {
 
 				set_position(m_position_origin.x() + event->position().x() - m_move_start.x(), position().y());
 
-				if(position().x() < (parent_obj->position().x() + parent_obj->padding().left()))
+				if(position().x() < (parent_obj->position().x()))
 				{
-					set_position(parent_obj->position().x() + parent_obj->padding().left(), position().y());
+					set_position(parent_obj->position().x(), position().y());
 				}
 				if(position().x() >
-						(int)(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width()))
+						(int)(parent_obj->position().x() + parent_obj->size().width() - size().width()))
 				{
-					set_position(parent_obj->position().x() + parent_obj->size().width() - parent_obj->padding().right() - size().width(), position().y());
+					set_position(parent_obj->position().x() + parent_obj->size().width() - size().width(), position().y());
 				}
 			}
 
 			if(parent_obj->orientation() == Vertical) {
 				set_position(position().x(), m_position_origin.y() + event->position().y() - m_move_start.y());
-				if(position().y() < (parent_obj->position().y() + parent_obj->padding().bottom())) {
+				if(position().y() < (parent_obj->position().y())) {
 
-					set_position(position().x(), parent_obj->position().y() + parent_obj->padding().bottom());
+					set_position(position().x(), parent_obj->position().y());
 				}
-				if(position().y() > (int)(parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height())) {
+				if(position().y() > (int)(parent_obj->position().y() + parent_obj->size().height() - size().height())) {
 
-					set_position(position().x(), parent_obj->position().y() + parent_obj->size().height() - parent_obj->padding().top() - size().height());
+					set_position(position().x(), parent_obj->position().y() + parent_obj->size().height() - size().height());
 
 				}
 			}
@@ -284,7 +282,6 @@ namespace BlendInt {
 	SliderBar::SliderBar(Orientation orientation)
 	: Slider(orientation)
 	{
-		set_padding(0, 0, 0, 0);
 		set_round_type(RoundAll);
 
 		set_control_size(50);
@@ -305,7 +302,6 @@ namespace BlendInt {
 	SliderBar::SliderBar(Orientation orientation, AbstractWidget* parent)
 	: Slider(orientation, parent)
 	{
-		set_padding(0, 0, 0, 0);
 		set_round_type(RoundAll);
 
 		set_control_size(50);
@@ -432,7 +428,6 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation)
 			: AbstractSlider(orientation), m_scroll_control(0)
 	{
-		set_padding(0, 0, 0, 0);
 		set_round_type(RoundAll);
 		set_radius(8);
 
@@ -448,14 +443,13 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		m_scroll_control->set_position (position().x() + padding().left(), position().y() + padding().bottom());
+		m_scroll_control->set_position (position().x(), position().y());
 		update(SliderPropertyValue, 0);
 	}
 
 	ScrollBar::ScrollBar (Orientation orientation, AbstractWidget* parent)
 			: AbstractSlider(orientation, parent), m_scroll_control(0)
 	{
-		set_padding(0, 0, 0, 0);
 		set_round_type(RoundAll);
 		set_radius(8);
 
@@ -471,7 +465,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		m_scroll_control->set_position (position().x() + padding().left(), position().y() + padding().bottom());
+		m_scroll_control->set_position (position().x(), position().y());
 		update(SliderPropertyValue, 0);
 	}
 
@@ -485,7 +479,7 @@ namespace BlendInt {
 
 			case FormPosition: {
 				const Point* new_pos = &(position());
-				m_scroll_control->set_position (new_pos->x() + padding().left(), new_pos->y() + padding().bottom());
+				m_scroll_control->set_position (new_pos->x(), new_pos->y());
 				break;
 			}
 
@@ -498,9 +492,9 @@ namespace BlendInt {
 			case SliderPropertyValue: {
 				if(orientation() == Vertical) {	// Vertical is 1
 					m_scroll_control->set_position (m_scroll_control->position().x(),
-							position().y() + padding().bottom() + value() * get_space() / (float)(maximum() - minimum()));
+							position().y() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {	// Horizontal is 0
-					m_scroll_control->set_position (position().x() + padding().left() + value() * get_space() / (float)(maximum() - minimum()),
+					m_scroll_control->set_position (position().x() + value() * get_space() / (float)(maximum() - minimum()),
 							m_scroll_control->position().y());
 				}
 				break;
@@ -646,9 +640,9 @@ namespace BlendInt {
 
 				int value = 0;
 				if(orientation() == Vertical) {
-					value = (m_scroll_control->position().y() - position().y() - padding().bottom()) / (float)get_space() * (maximum() - minimum());
+					value = (m_scroll_control->position().y() - position().y()) / (float)get_space() * (maximum() - minimum());
 				} else {
-					value = (m_scroll_control->position().x() - position().x() - padding().left()) / (float)get_space() * (maximum() - minimum());
+					value = (m_scroll_control->position().x() - position().x()) / (float)get_space() * (maximum() - minimum());
 				}
 
 				set_value (value);
@@ -674,8 +668,8 @@ namespace BlendInt {
 			if(event->accepted()) return;
 
 			Coord2d inner_pos;
-			inner_pos.set_x(static_cast<double>(event->position().x() - position().x() - padding().left() - m_scroll_control->size().width() / 2));
-			inner_pos.set_y(static_cast<double>(event->position().y() - position().y() - padding().bottom() - m_scroll_control->size().height() / 2));
+			inner_pos.set_x(static_cast<double>(event->position().x() - position().x() - m_scroll_control->size().width() / 2));
+			inner_pos.set_y(static_cast<double>(event->position().y() - position().y() - m_scroll_control->size().height() / 2));
 //			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - padding().left() - m_scroll_control->size().width() / 2));
 //			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - padding().bottom() - m_scroll_control->size().height() / 2));
 			int space = get_space();
@@ -718,9 +712,9 @@ namespace BlendInt {
 		int space = 0;
 
 		if(orientation() == Vertical)
-			space = size().height() - padding().top() - padding().bottom() - m_scroll_control->size().height();
+			space = size().height() - m_scroll_control->size().height();
 		else	// Horizontal is 0
-			space = size().width() - padding().left() - padding().right() - m_scroll_control->size().width();
+			space = size().width() - m_scroll_control->size().width();
 
 		return space;
 	}

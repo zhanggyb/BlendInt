@@ -34,7 +34,7 @@ namespace BlendInt {
 	/**
 	 * @brief The abstract class for slider widgets
 	 */
-	class AbstractSlider: public Frame
+	class AbstractSlider: public Widget
 	{
 
 	public:

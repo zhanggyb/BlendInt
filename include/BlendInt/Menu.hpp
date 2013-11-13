@@ -27,13 +27,17 @@
 #include <BlendInt/PopupWidget.hpp>
 #include <BlendInt/String.hpp>
 
+#include <BlendInt/MenuItem.hpp>
+
+#include <list>
+
 namespace BlendInt {
 
 	/**
 	 * @brief The menu widget for use in menu bars, context menus,
 	 * and other popup menus.
 	 */
-	class Menu: public PopupWidget
+	class Menu: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Menu);
 
@@ -41,19 +45,25 @@ namespace BlendInt {
 
 		Menu ();
 
-		Menu (const String& title);
+		Menu (const String& title, AbstractWidget* parent = 0);
 
 		virtual ~Menu();
 
+		void add (const String& text);
+
 	protected:
 
-		virtual void update (int type, const void* data);
+		virtual void move_mouse (MouseEvent* event);
 
 		virtual void render ();
 
 	private:
 
+		MenuItem* m_select;
+
 		String m_title;
+
+		std::list<MenuItem*> m_list;
 
 	};
 

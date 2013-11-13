@@ -27,23 +27,23 @@
 namespace BlendInt {
 
 	ImageView::ImageView ()
-	: Frame()
+	: Widget()
 	{
 		glShadeModel(GL_FLAT);
 		makeCheckImage();
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		resize(64 + padding().left() + padding().right(), 64 + padding().top() + padding().bottom());
+		resize(64, 64);
 	}
 
 	ImageView::ImageView (AbstractWidget* parent)
-	: Frame(parent)
+	: Widget(parent)
 	{
 		glShadeModel(GL_FLAT);
 		makeCheckImage();
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		resize(64 + padding().left() + padding().right(), 64 + padding().top() + padding().bottom());
+		resize(64, 64);
 	}
 
 	ImageView::~ImageView ()
@@ -62,7 +62,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glRasterPos2i(padding().left(), padding().bottom());
+//		glRasterPos2i(padding().left(), padding().bottom());
 		glDrawPixels (checkImageWidth, checkImageHeight, GL_RGB, GL_UNSIGNED_BYTE, _checkImage);
 
 #ifdef DEBUG

@@ -37,7 +37,7 @@ using namespace std;
 
 namespace BlendInt {
 
-	class AbstractButton: public Frame
+	class AbstractButton: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractButton);
 
@@ -77,7 +77,7 @@ namespace BlendInt {
 
 		virtual void move_mouse (MouseEvent* event);
 
-	protected:
+		size_t get_valid_text_size ();
 
 		bool m_status_down;
 
@@ -87,6 +87,10 @@ namespace BlendInt {
 
 		// if the mouse is hover on the button
 		bool m_status_hover;
+
+		size_t m_length;
+
+		Point m_origin;
 
 		// TextBuffer text_;
 		String m_text;

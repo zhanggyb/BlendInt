@@ -314,6 +314,9 @@ namespace BlendInt {
 		ShaderManager* sm = ShaderManager::instance();
 		GLfloat black[4] = { 0, 0, 0, 1 };
 
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -350,6 +353,7 @@ namespace BlendInt {
 
 		glUseProgram(0);
 		glDisable(GL_BLEND);
+		glPopMatrix();
 	}
 
 	void FontCache::print (float x, float y, const String& string)

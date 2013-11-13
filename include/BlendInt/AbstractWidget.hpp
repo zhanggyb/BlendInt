@@ -289,6 +289,14 @@ namespace BlendInt {
 				m_property_changed.fire(this, type);
 		}
 
+		static void dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event);
+
+		static void dispatch_mouse_move_event (AbstractWidget* obj, MouseEvent* event);
+
+		static void dispatch_mouse_press_event (AbstractWidget* obj, MouseEvent* event);
+
+		static void dispatch_mouse_release_event (AbstractWidget* obj, MouseEvent* event);
+
 	private:
 
 		/**
