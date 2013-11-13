@@ -43,7 +43,9 @@ namespace BlendInt {
 	  m_border_width(1.0),
 	  m_emboss(true)
 	{
-		m_glbuffer.reset(new GLBuffer);
+		m_inner_buffer.reset(new GLBuffer);
+		m_outer_buffer.reset(new GLBuffer);
+		m_emboss_buffer.reset(new GLBuffer);
 		set_minimal_size(0, 0);
 		resize(120, 80);
 		set_preferred_size(120, 80);
@@ -54,7 +56,9 @@ namespace BlendInt {
 	  m_border_width(1.0),
 	  m_emboss(true)
 	{
-		m_glbuffer.reset(new GLBuffer);
+		m_inner_buffer.reset(new GLBuffer);
+		m_outer_buffer.reset(new GLBuffer);
+		m_emboss_buffer.reset(new GLBuffer);
 		set_minimal_size(0, 0);
 		resize(120, 80);
 		set_preferred_size(120, 80);
@@ -93,8 +97,8 @@ namespace BlendInt {
 			}
 
 			case WidgetEmboss: {
-				if(!(*static_cast<const bool*>(data)))
-					m_glbuffer->destroy(WidgetBufferKeyEmboss);
+//				if(!(*static_cast<const bool*>(data)))
+//					m_glbuffer->destroy(WidgetBufferKeyEmboss);
 				break;
 			}
 
@@ -120,7 +124,7 @@ namespace BlendInt {
 		        themes()->regular.inner.g(),
 		        themes()->regular.inner.b(),
 		        themes()->regular.inner.a());
-		draw_gl_buffer(WidgetBufferKeyInner);
+		draw_gl_buffer(m_inner_buffer.get());
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -130,11 +134,11 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_gl_buffer_anti_alias(WidgetBufferKeyOuter);
+		draw_gl_buffer_anti_alias(m_outer_buffer.get());
 
 		if(m_emboss) {
 			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-			draw_gl_buffer_anti_alias(WidgetBufferKeyEmboss);
+			draw_gl_buffer_anti_alias(m_emboss_buffer.get());
 		}
 
 		glDisable(GL_BLEND);
@@ -165,21 +169,21 @@ namespace BlendInt {
 	{
 	}
 
-	void Widget::draw_gl_buffer(int key, int mode)
+	void Widget::draw_gl_buffer(GLBuffer* buffer, size_t index, int mode)
 	{
-		m_glbuffer->select(key);
-		m_glbuffer->bind();
+		buffer->select(index);
+		buffer->bind();
 		glVertexPointer(2, GL_FLOAT, 0, 0);
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glDrawArrays(mode, 0, m_glbuffer->vertices());
+		glDrawArrays(mode, 0, buffer->vertices());
 		glDisableClientState(GL_VERTEX_ARRAY);
-		m_glbuffer->unbind();
+		buffer->unbind();
 	}
 
-	void Widget::draw_shaded_gl_buffer(int key, int mode)
+	void Widget::draw_shaded_gl_buffer(GLBuffer* buffer, size_t index, int mode)
 	{
-		m_glbuffer->select(key);
-		m_glbuffer->bind();
+		buffer->select(index);
+		buffer->bind();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
@@ -187,28 +191,28 @@ namespace BlendInt {
 		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
 		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glDrawArrays(mode, 0, glbuffer()->vertices());
+		glDrawArrays(mode, 0, buffer->vertices());
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 
-		m_glbuffer->unbind();
+		buffer->unbind();
 	}
 
-	void Widget::draw_gl_buffer_anti_alias(int key, int mode)
+	void Widget::draw_gl_buffer_anti_alias(GLBuffer* buffer, size_t index, int mode)
 	{
-		m_glbuffer->select (key);
-		m_glbuffer->bind();
+		buffer->select (index);
+		buffer->bind();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
 			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(mode, 0, m_glbuffer->vertices());
+			glDrawArrays(mode, 0, buffer->vertices());
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
-		m_glbuffer->unbind();
+		buffer->unbind();
 	}
 
 	void Widget::update_shape(const Size* size)
@@ -222,12 +226,12 @@ namespace BlendInt {
 
 		vert_sum = generate_vertices(size, border_width(), inner_v, outer_v);
 
-		m_glbuffer->create(WidgetBufferKeyInner);
-		m_glbuffer->select(WidgetBufferKeyInner);
-		m_glbuffer->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_glbuffer->bind();
-		m_glbuffer->upload(inner_v);
-		m_glbuffer->unbind();
+		m_inner_buffer->generate();
+		m_inner_buffer->select(0);
+		m_inner_buffer->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_inner_buffer->bind();
+		m_inner_buffer->upload(inner_v);
+		m_inner_buffer->unbind();
 
 		// the quad strip for outline
 
@@ -235,25 +239,25 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		m_glbuffer->create(WidgetBufferKeyOuter);
-		m_glbuffer->select(WidgetBufferKeyOuter);
-		m_glbuffer->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_outer_buffer->generate();
+		m_outer_buffer->select(0);
+		m_outer_buffer->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
-		m_glbuffer->bind();
-		m_glbuffer->upload(quad_strip);
-		m_glbuffer->unbind();
+		m_outer_buffer->bind();
+		m_outer_buffer->upload(quad_strip);
+		m_outer_buffer->unbind();
 
 		if (m_emboss) {
 			//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
 
-			m_glbuffer->create(WidgetBufferKeyEmboss);
-			m_glbuffer->select(WidgetBufferKeyEmboss);
-			m_glbuffer->set_property(vert_sum.half * 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+			m_emboss_buffer->generate();
+			m_emboss_buffer->select(0);
+			m_emboss_buffer->set_property(vert_sum.half * 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
-			m_glbuffer->bind();
-			m_glbuffer->upload(quad_strip);
-			m_glbuffer->unbind();
+			m_emboss_buffer->bind();
+			m_emboss_buffer->upload(quad_strip);
+			m_emboss_buffer->unbind();
 		}
 	}
 

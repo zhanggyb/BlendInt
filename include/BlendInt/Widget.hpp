@@ -107,7 +107,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_gl_buffer (int key, int mode = GL_POLYGON);
+		void draw_gl_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw shaded GL buffer in render()
@@ -121,7 +121,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_shaded_gl_buffer (int key, int mode = GL_POLYGON);
+		void draw_shaded_gl_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw the GL Buffer in render() with anti-alias
@@ -135,11 +135,15 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_gl_buffer_anti_alias (int key, int mode = GL_QUAD_STRIP);
+		void draw_gl_buffer_anti_alias (GLBuffer* buffer, size_t index = 0, int mode = GL_QUAD_STRIP);
 
 //		GLBuffer& glbuffer() {return m_glbuffer;}
 
-		boost::scoped_ptr<GLBuffer>& glbuffer() {return m_glbuffer;}
+		boost::scoped_ptr<GLBuffer>& inner_buffer() {return m_inner_buffer;}
+
+		boost::scoped_ptr<GLBuffer>& outer_buffer() {return m_outer_buffer;}
+
+		boost::scoped_ptr<GLBuffer>& emboss_buffer() {return m_emboss_buffer;}
 
 	private:
 
@@ -160,8 +164,11 @@ namespace BlendInt {
 		 */
 //		GLBuffer m_glbuffer;
 
-		boost::scoped_ptr<GLBuffer> m_glbuffer;
+		boost::scoped_ptr<GLBuffer> m_inner_buffer;
 
+		boost::scoped_ptr<GLBuffer> m_outer_buffer;
+
+		boost::scoped_ptr<GLBuffer> m_emboss_buffer;
 	};
 }
 

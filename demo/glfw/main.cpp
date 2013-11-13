@@ -227,29 +227,29 @@ int main(int argc, char* argv[])
 	widget->move(200, 200);
 //	widget->set_round_type(CornerAll);
 	widget->resize(200, 200);
-
+//
 	Frame* widget2 = new Frame;
 	widget2->move(450, 200);
 //	widget2->set_round_type(CornerAll);
 	widget2->resize(200, 200);
-
+//
 	app->bind(widget);
 	app->bind(widget2);
-
-	Button* b1 = new Button;
-	b1->set_position(100, 100);
-
-	Button* b2 = new Button;
-	b2->set_position(190, 100);
-
-	HorizontalLayout* hl1 = new HorizontalLayout;
-	hl1->set_position(200, 50);
-	hl1->add(b1);
-	hl1->add(b2);
-
-	app->bind(hl1);
-
-	hl1->set_position(250, 50);
+//
+//	Button* b1 = new Button;
+//	b1->set_position(100, 100);
+//
+//	Button* b2 = new Button;
+//	b2->set_position(190, 100);
+//
+//	HorizontalLayout* hl1 = new HorizontalLayout;
+//	hl1->set_position(200, 50);
+//	hl1->add(b1);
+//	hl1->add(b2);
+//
+//	app->bind(hl1);
+//
+//	hl1->set_position(250, 50);
 
 	std::cout << "size of widget: " << sizeof(Widget) << std::endl;
 

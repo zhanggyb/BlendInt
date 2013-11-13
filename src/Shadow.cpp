@@ -84,14 +84,13 @@ namespace BlendInt {
 				totvert = generate_shadow_vertices(&shadow_size, radius(), 0.0f,
 				        inner_v);
 
-				m_gl_buffer.clear();
+				m_gl_buffer.generate((int)m_blur_rad);
 				for (step = 1; step <= (int) m_blur_rad; step++) {
 					generate_shadow_vertices(&shadow_size, radius(), (float) step,
 					        outer_v);
 					verts_to_quad_strip(inner_v, outer_v, totvert, quad_strip);
 
-					m_gl_buffer.create(step);
-					m_gl_buffer.select(step);
+					m_gl_buffer.select(step - 1);
 					m_gl_buffer.set_property(totvert * 2 + 2,
 					        sizeof(quad_strip[0]), GL_ARRAY_BUFFER,
 					        GL_STATIC_DRAW);
@@ -140,7 +139,7 @@ namespace BlendInt {
 
 			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
 
-			m_gl_buffer.select(step);
+			m_gl_buffer.select(step - 1);
 			m_gl_buffer.bind();
 			glVertexPointer(2, GL_FLOAT, 0, 0);
 			glEnableClientState(GL_VERTEX_ARRAY);

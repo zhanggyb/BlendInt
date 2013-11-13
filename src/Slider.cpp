@@ -88,29 +88,29 @@ namespace BlendInt {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if(m_status_down) {
-			glbuffer()->select(WidgetBufferKeyInner);
+//			glbuffer()->select(WidgetBufferKeyInner);
 
 		} else {
-			glbuffer()->select(WidgetBufferKeyLast + 1);
+//			glbuffer()->select(WidgetBufferKeyLast + 1);
 
 		}
 
-		glbuffer()->bind();
+//		glbuffer()->bind();
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
 
 		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
 		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glDrawArrays(GL_POLYGON, 0, glbuffer()->vertices());
+//		glDrawArrays(GL_POLYGON, 0, glbuffer()->vertices());
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 
-		glbuffer()->unbind();
+//		glbuffer()->unbind();
 
 		// draw outline
-		glbuffer()->select(WidgetBufferKeyOuter);
+//		glbuffer()->select(WidgetBufferKeyOuter);
 
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
 		        themes()->scroll.outline.g(),
@@ -119,7 +119,7 @@ namespace BlendInt {
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 
-		glbuffer()->bind();
+//		glbuffer()->bind();
 
 		/* outline */
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -127,12 +127,12 @@ namespace BlendInt {
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
 			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(GL_QUAD_STRIP, 0, glbuffer()->vertices());
+//			glDrawArrays(GL_QUAD_STRIP, 0, glbuffer()->vertices());
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
 
-		glbuffer()->unbind();
+//		glbuffer()->unbind();
 
 		glDisable(GL_BLEND);
 
@@ -265,25 +265,25 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		glbuffer()->create(WidgetBufferKeyInner);
-		glbuffer()->select(WidgetBufferKeyInner);
-
-		glbuffer()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		glbuffer()->bind();
-		glbuffer()->upload(inner_v);
-		glbuffer()->unbind();
+//		glbuffer()->generate(WidgetBufferKeyInner);
+//		glbuffer()->select(WidgetBufferKeyInner);
+//
+//		glbuffer()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+//		glbuffer()->bind();
+//		glbuffer()->upload(inner_v);
+//		glbuffer()->unbind();
 
 		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glbuffer()->create(WidgetBufferKeyOuter);
-		glbuffer()->select(WidgetBufferKeyOuter);
-		glbuffer()->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-
-		glbuffer()->bind();
-		glbuffer()->upload(quad_strip);
-		glbuffer()->unbind();
+//		glbuffer()->generate(WidgetBufferKeyOuter);
+//		glbuffer()->select(WidgetBufferKeyOuter);
+//		glbuffer()->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+//
+//		glbuffer()->bind();
+//		glbuffer()->upload(quad_strip);
+//		glbuffer()->unbind();
 
 		color.highlight(color, 5);
 
@@ -305,13 +305,13 @@ namespace BlendInt {
 					inner_v, outer_v);
 		}
 
-		glbuffer()->create(WidgetBufferKeyLast + 1);
-		glbuffer()->select(WidgetBufferKeyLast + 1);
-
-		glbuffer()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		glbuffer()->bind();
-		glbuffer()->upload(inner_v);
-		glbuffer()->unbind();
+//		glbuffer()->generate(WidgetBufferKeyLast + 1);
+//		glbuffer()->select(WidgetBufferKeyLast + 1);
+//
+//		glbuffer()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+//		glbuffer()->bind();
+//		glbuffer()->upload(inner_v);
+//		glbuffer()->unbind();
 
 	}
 

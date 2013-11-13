@@ -24,6 +24,7 @@
 #include <GL/glew.h>
 
 #include <stdexcept>
+#include <iterator>
 #include <iostream>
 
 #include <BlendInt/GLBuffer.hpp>
@@ -31,7 +32,7 @@
 namespace BlendInt {
 
 	GLBuffer::GLBuffer ()
-	: m_key(0)
+	: m_index(0)
 	{
 	}
 
@@ -40,113 +41,104 @@ namespace BlendInt {
 		clear ();
 	}
 
-	void GLBuffer::create (int key)
+	void GLBuffer::generate (size_t num)
 	{
-		if(m_map.count(key)) {
-			return;
-		}
+		if(m_ids.size()) clear();
 
-		GLuint buffer_id;
-		glGenBuffers(1, &buffer_id);
+		m_ids.resize(num);
+		m_properties.resize(num);
 
-		m_map[key].id = buffer_id;
-	}
-
-	void GLBuffer::select (int key)
-	{
-		if(!m_map.count(key)) throw std::invalid_argument("Invalid key");
-
-		m_key = key;
+		glGenBuffers(num, &(m_ids[0]));
 	}
 
 	void GLBuffer::set_vertices (int vertices)
 	{
-		m_map[m_key].vertices = vertices;
+		m_properties[m_index].vertices = vertices;
 	}
 
-	void GLBuffer::set_vertices (int key, int vertices)
+	void GLBuffer::set_vertices (size_t index, int vertices)
 	{
-		m_map[key].vertices = vertices;
+		m_properties[index].vertices = vertices;
 	}
 
 	void GLBuffer::set_unit_size (int size)
 	{
-		m_map[m_key].unit_size = size;
+		m_properties[m_index].unit_size = size;
 	}
 
-	void GLBuffer::set_unit_size (int key, int size)
+	void GLBuffer::set_unit_size (size_t index, int size)
 	{
-		m_map[key].unit_size = size;
+		m_properties[index].unit_size = size;
 	}
 
 	void GLBuffer::set_target (GLenum target)
 	{
-		m_map[m_key].target = target;
+		m_properties[m_index].target = target;
 	}
 
-	void GLBuffer::set_target (int key, GLenum target)
+	void GLBuffer::set_target (size_t index, GLenum target)
 	{
-		m_map[key].target = target;
+		m_properties[index].target = target;
 	}
 
 	void GLBuffer::set_usage (GLenum usage)
 	{
-		m_map[m_key].usage = usage;
+		m_properties[m_index].usage = usage;
 	}
 
-	void GLBuffer::set_usage (int key, GLenum usage)
+	void GLBuffer::set_usage (size_t index, GLenum usage)
 	{
-		m_map[key].usage = usage;
+		m_properties[index].usage = usage;
 	}
 
 	void GLBuffer::set_property (int vertices, int unit_size, GLenum target, GLenum usage)
 	{
-		m_map[m_key].vertices = vertices;
-		m_map[m_key].unit_size = unit_size;
-		m_map[m_key].target = target;
-		m_map[m_key].usage = usage;
+		m_properties[m_index].vertices = vertices;
+		m_properties[m_index].unit_size = unit_size;
+		m_properties[m_index].target = target;
+		m_properties[m_index].usage = usage;
 	}
 
-	void GLBuffer::set_property (int key, int vertices, int unit_size, GLenum target, GLenum usage)
+	void GLBuffer::set_property (size_t index, int vertices, int unit_size, GLenum target, GLenum usage)
 	{
-		m_map[key].vertices = vertices;
-		m_map[key].unit_size = unit_size;
-		m_map[key].target = target;
-		m_map[key].usage = usage;
+		m_properties[index].vertices = vertices;
+		m_properties[index].unit_size = unit_size;
+		m_properties[index].target = target;
+		m_properties[index].usage = usage;
 	}
 
 	void GLBuffer::bind ()
 	{
-		glBindBuffer (m_map[m_key].target, m_map[m_key].id);
+		glBindBuffer(m_properties[m_index].target, m_ids[m_index]);
 	}
 
-	void GLBuffer::bind (int key)
+	void GLBuffer::bind (size_t index)
 	{
-		glBindBuffer (m_map[key].target, m_map[m_key].id);
+		glBindBuffer(m_properties[index].target, m_ids[m_index]);
 	}
 
 	void GLBuffer::unbind ()
 	{
-		glBindBuffer(m_map[m_key].target, 0);
+		glBindBuffer(m_properties[m_index].target, 0);
 	}
 
-	void GLBuffer::unbind (int key)
+	void GLBuffer::unbind (size_t index)
 	{
-		glBindBuffer(m_map[key].target, 0);
+		glBindBuffer(m_properties[index].target, 0);
 	}
 
 	bool GLBuffer::is_buffer ()
 	{
-		if(glIsBuffer (m_map[m_key].id)) {
+		if(glIsBuffer (m_ids[m_index])) {
 			return true;
 		}
 
 		return false;
 	}
 
-	bool GLBuffer::is_buffer (int key)
+	bool GLBuffer::is_buffer (size_t index)
 	{
-		if(glIsBuffer (m_map[key].id)) {
+		if(glIsBuffer (m_ids[index])) {
 			return true;
 		}
 
@@ -155,54 +147,56 @@ namespace BlendInt {
 
 	void GLBuffer::upload (const GLvoid* data)
 	{
-		glBufferData (m_map[m_key].target,
-				m_map[m_key].unit_size * m_map[m_key].vertices,
+		glBufferData (m_properties[m_index].target,
+				m_properties[m_index].unit_size * m_properties[m_index].vertices,
 				data,
-				m_map[m_key].usage);
+				m_properties[m_index].usage);
 	}
 
-	void GLBuffer::upload (int key, const GLvoid* data)
+	void GLBuffer::upload (size_t index, const GLvoid* data)
 	{
-		glBufferData (m_map[key].target,
-				m_map[key].unit_size * m_map[key].vertices,
+		glBufferData (m_properties[index].target,
+				m_properties[index].unit_size * m_properties[index].vertices,
 				data,
-				m_map[key].usage);
+				m_properties[index].usage);
 	}
 
 	void GLBuffer::destroy ()
 	{
-		glDeleteBuffers(1, &(m_map[m_key].id));
-//		m_map[m_key].id = 0;
-//		m_map[m_key].vertices = 0;
-//		m_map[m_key].unit_size = 0;
-//		m_map[m_key].target = 0;
-//		m_map[m_key].usage = 0;
+		glDeleteBuffers(1, &(m_ids[m_index]));
 
-		m_map.erase(m_key);
+		std::vector<GLuint>::iterator it_id = m_ids.begin();
+		std::vector<Property>::iterator it_pro = m_properties.begin();
+
+		std::advance(it_id, m_index);
+		std::advance(it_pro, m_index);
+
+		m_ids.erase(it_id);
+		m_properties.erase(it_pro);
 	}
 
-	void GLBuffer::destroy (int key)
+	void GLBuffer::destroy (size_t index)
 	{
-		glDeleteBuffers(1, &(m_map[key].id));
-//		m_map[key].id = 0;
-//		m_map[key].vertices = 0;
-//		m_map[key].unit_size = 0;
-//		m_map[key].target = 0;
-//		m_map[key].usage = 0;
+		glDeleteBuffers(1, &(m_ids[index]));
 
-		m_map.erase(key);
+		if(m_index > index) m_index -= 1;
+
+		std::vector<GLuint>::iterator it_id = m_ids.begin();
+		std::vector<Property>::iterator it_pro = m_properties.begin();
+
+		std::advance(it_id, index);
+		std::advance(it_pro, index);
+
+		m_ids.erase(it_id);
+		m_properties.erase(it_pro);
 	}
 
 	void GLBuffer::clear ()
 	{
-		std::map<int, Property>::iterator it;
+		glDeleteBuffers(m_ids.size(), &(m_ids[0]));
 
-		for(it = m_map.begin(); it != m_map.end(); it++)
-		{
-			glDeleteBuffers (1, &(it->second.id));
-		}
-
-		m_map.clear();
+		m_ids.clear();
+		m_properties.clear();
 	}
 
 }

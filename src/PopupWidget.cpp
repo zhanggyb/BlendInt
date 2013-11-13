@@ -34,7 +34,7 @@ namespace BlendInt {
 	: Frame()
 	{
 		reset_z(1);	// TODO: define layer in enumeration
-		set_emboss(false);
+//		set_emboss(false);
 
 		m_icon.demo_init();
 	}
@@ -57,6 +57,7 @@ namespace BlendInt {
 				m_shadow.resize(shadow_size);
 
 				m_icon.resize(16, 16);
+
 				break;
 			}
 
@@ -85,7 +86,7 @@ namespace BlendInt {
 		        themes()->regular.inner.g(),
 		        themes()->regular.inner.b(),
 		        themes()->regular.inner.a());
-		draw_gl_buffer(WidgetBufferKeyInner);
+		draw_gl_buffer(inner_buffer().get());
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -95,11 +96,11 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_gl_buffer_anti_alias(WidgetBufferKeyOuter);
+		draw_gl_buffer_anti_alias(outer_buffer().get());
 
 		if(emboss()) {
 			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-			draw_gl_buffer_anti_alias(WidgetBufferKeyEmboss);
+			draw_gl_buffer_anti_alias(emboss_buffer().get());
 		}
 
 		glDisable(GL_BLEND);
