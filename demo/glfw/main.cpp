@@ -177,24 +177,24 @@ int main(int argc, char* argv[])
 	Interface* app = Interface::instance();
 	app->resize(1200, 800);
 
-	DoEvent obj;
-
-	obj.bind();
-
-	Button* add_button = new Button;
-	add_button->set_text("Add Button");
-	add_button->set_position(600, 700);
-
-	obj.connect_add(add_button);
-
-	Button* remove_button = new Button;
-	remove_button->set_text("Remove Button");
-	remove_button->set_position(600, 650);
-
-	obj.connect_remove(remove_button);
-
-	app->bind(add_button);
-	app->bind(remove_button);
+//	DoEvent obj;
+//
+//	obj.bind();
+//
+//	Button* add_button = new Button;
+//	add_button->set_text("Add Button");
+//	add_button->set_position(600, 700);
+//
+//	obj.connect_add(add_button);
+//
+//	Button* remove_button = new Button;
+//	remove_button->set_text("Remove Button");
+//	remove_button->set_position(600, 650);
+//
+//	obj.connect_remove(remove_button);
+//
+//	app->bind(add_button);
+//	app->bind(remove_button);
 
 	 //-----------------------
 //
@@ -251,11 +251,12 @@ int main(int argc, char* argv[])
 //	app->bind(hl1);
 //
 //	hl1->set_position(250, 50);
-
+//
 	Menu *menu = new Menu;
 
 	menu->resize(200, 400);
 	menu->set_position(100, 100);
+	menu->set_round_type(RoundAll);
 
 	menu->add("File");
 	menu->add("exit");
@@ -268,6 +269,26 @@ int main(int argc, char* argv[])
 	menu->add("there2");
 
 	app->bind(menu);
+
+
+	Button* b = new Button;
+
+	b->set_position(500, 300);
+
+	//b->set_round_type(RoundTopLeft | RoundTopRight);
+
+	b->set_round_type(RoundTopLeft|RoundTopRight);
+	b->set_radius(6.0);
+
+//	b->resize(100, 25);
+
+	app->bind(b);
+
+	ToggleButton* w = new ToggleButton;
+
+	w->set_position(500, 200);
+
+	app->bind(w);
 
 	std::cout << "size of widget: " << sizeof(Widget) << std::endl;
 
@@ -291,7 +312,7 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 	}
 
-	obj.unbind();
+//	obj.unbind();
 
 	/* release BlendInt */
 	Interface::release();

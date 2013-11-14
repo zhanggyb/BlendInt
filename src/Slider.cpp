@@ -35,13 +35,11 @@ namespace BlendInt {
 	SlideButton::SlideButton()
 	:  Button()
 	{
-		set_emboss(false);
 	}
 
 	SlideButton::SlideButton(AbstractWidget* parent)
 	:  Button(parent)
 	{
-		set_emboss(false);
 	}
 
 	SlideButton::~SlideButton()

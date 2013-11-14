@@ -100,6 +100,13 @@ namespace BlendInt {
 
 		static const float jit[WIDGET_AA_JITTER][2];
 
+		VerticesSum generate_vertices (const Size* size,
+				float border,
+				int round_type,
+				float radius,
+				float inner_v[WIDGET_SIZE_MAX][2],
+				float outer_v[WIDGET_SIZE_MAX][2]);
+
 		/**
 		 * @brief calculate vertices for round box edge with no shaded color
 		 * @param[in] size the size to calculate edges

@@ -86,7 +86,7 @@ namespace BlendInt {
 		        themes()->regular.inner.g(),
 		        themes()->regular.inner.b(),
 		        themes()->regular.inner.a());
-		draw_gl_buffer(inner_buffer().get());
+//		draw_gl_buffer(inner_buffer().get());
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -96,11 +96,11 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_gl_buffer_anti_alias(outer_buffer().get());
+//		draw_gl_buffer_anti_alias(outer_buffer().get());
 
-		if(emboss()) {
+		if(false) {
 			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-			draw_gl_buffer_anti_alias(emboss_buffer().get());
+//			draw_gl_buffer_anti_alias(emboss_buffer().get());
 		}
 
 		glDisable(GL_BLEND);

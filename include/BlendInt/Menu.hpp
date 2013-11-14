@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_MENU_HPP_
 #define _BLENDINT_MENU_HPP_
 
+#include <boost/smart_ptr.hpp>
+
 #include <BlendInt/PopupWidget.hpp>
 #include <BlendInt/String.hpp>
 
@@ -55,6 +57,8 @@ namespace BlendInt {
 
 		virtual void move_mouse (MouseEvent* event);
 
+		virtual void update (int type, const void* data);
+
 		virtual void render ();
 
 	private:
@@ -65,6 +69,7 @@ namespace BlendInt {
 
 		std::list<MenuItem*> m_list;
 
+		boost::scoped_ptr<GLBuffer> m_buffer;
 	};
 
 }

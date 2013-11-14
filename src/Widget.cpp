@@ -40,12 +40,8 @@ namespace BlendInt {
 
 	Widget::Widget()
 	: AbstractWidget(),
-	  m_border_width(1.0),
-	  m_emboss(true)
+	  m_border_width(1.0)
 	{
-		m_inner_buffer.reset(new GLBuffer);
-		m_outer_buffer.reset(new GLBuffer);
-		m_emboss_buffer.reset(new GLBuffer);
 		set_minimal_size(0, 0);
 		resize(120, 80);
 		set_preferred_size(120, 80);
@@ -53,12 +49,8 @@ namespace BlendInt {
 
 	Widget::Widget(AbstractWidget* parent)
 	: AbstractWidget(parent),
-	  m_border_width(1.0),
-	  m_emboss(true)
+	  m_border_width(1.0)
 	{
-		m_inner_buffer.reset(new GLBuffer);
-		m_outer_buffer.reset(new GLBuffer);
-		m_emboss_buffer.reset(new GLBuffer);
 		set_minimal_size(0, 0);
 		resize(120, 80);
 		set_preferred_size(120, 80);
@@ -67,13 +59,6 @@ namespace BlendInt {
 	Widget::~Widget()
 	{
 
-	}
-
-	void Widget::set_emboss(bool emboss)
-	{
-		update(WidgetEmboss, &emboss);
-
-		m_emboss = emboss;
 	}
 
 	void Widget::set_border_width(float width)
@@ -88,27 +73,22 @@ namespace BlendInt {
 
 	void Widget::update (int type, const void* data)
 	{
-		switch (type) {
-
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
-				update_shape(size_p);
-				break;
-			}
-
-			case WidgetEmboss: {
-//				if(!(*static_cast<const bool*>(data)))
-//					m_glbuffer->destroy(WidgetBufferKeyEmboss);
-				break;
-			}
-
-			default:
-				break;
-		}
+		// do nothing in this base class
 	}
 
 	void Widget::render()
 	{
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_vertices(&(size()), border_width(), inner_v, outer_v);
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+
+		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
@@ -124,7 +104,10 @@ namespace BlendInt {
 		        themes()->regular.inner.g(),
 		        themes()->regular.inner.b(),
 		        themes()->regular.inner.a());
-		draw_gl_buffer(m_inner_buffer.get());
+
+		draw_inner(inner_v, vert_sum.total);
+
+//		draw_gl_buffer(m_inner_buffer.get());
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -134,12 +117,9 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_gl_buffer_anti_alias(m_outer_buffer.get());
+//		draw_gl_buffer_anti_alias(m_outer_buffer.get());
 
-		if(m_emboss) {
-			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-			draw_gl_buffer_anti_alias(m_emboss_buffer.get());
-		}
+		draw_outline(quad_strip, vert_sum.total * 2 + 2);
 
 		glDisable(GL_BLEND);
 		glPopMatrix();
@@ -169,7 +149,28 @@ namespace BlendInt {
 	{
 	}
 
-	void Widget::draw_gl_buffer(GLBuffer* buffer, size_t index, int mode)
+	void Widget::draw_outline(const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num)
+	{
+		glEnableClientState(GL_VERTEX_ARRAY);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			glVertexPointer(2, GL_FLOAT, 0, quad_strip);
+			glDrawArrays(GL_QUAD_STRIP, 0, num);
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+	}
+
+	void Widget::draw_inner(const float inner_v[WIDGET_SIZE_MAX][2], int num)
+	{
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, inner_v);
+
+		glDrawArrays(GL_POLYGON, 0, num);
+		glDisableClientState(GL_VERTEX_ARRAY);
+	}
+
+	void Widget::draw_inner_buffer(GLBuffer* buffer, size_t index, int mode)
 	{
 		buffer->select(index);
 		buffer->bind();
@@ -180,7 +181,7 @@ namespace BlendInt {
 		buffer->unbind();
 	}
 
-	void Widget::draw_shaded_gl_buffer(GLBuffer* buffer, size_t index, int mode)
+	void Widget::draw_shaded_inner_buffer(GLBuffer* buffer, size_t index, int mode)
 	{
 		buffer->select(index);
 		buffer->bind();
@@ -199,7 +200,7 @@ namespace BlendInt {
 		buffer->unbind();
 	}
 
-	void Widget::draw_gl_buffer_anti_alias(GLBuffer* buffer, size_t index, int mode)
+	void Widget::draw_outline_buffer(GLBuffer* buffer, size_t index, int mode)
 	{
 		buffer->select (index);
 		buffer->bind();
@@ -215,23 +216,25 @@ namespace BlendInt {
 		buffer->unbind();
 	}
 
-	void Widget::update_shape(const Size* size)
+	void Widget::generate_form_buffer(const Size* size, bool emboss, int round_type, float radius, GLBuffer* buffer)
 	{
-		// the basic widget don't use shaded color
-
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
 
 		VerticesSum vert_sum;
 
-		vert_sum = generate_vertices(size, border_width(), inner_v, outer_v);
+		vert_sum = generate_vertices(size, border_width(), round_type, radius, inner_v, outer_v);
 
-		m_inner_buffer->generate();
-		m_inner_buffer->select(0);
-		m_inner_buffer->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_inner_buffer->bind();
-		m_inner_buffer->upload(inner_v);
-		m_inner_buffer->unbind();
+		if(emboss)
+			buffer->generate(3);
+		else
+			buffer->generate(2);
+
+		buffer->select(0);
+		buffer->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->bind();
+		buffer->upload(inner_v);
+		buffer->unbind();
 
 		// the quad strip for outline
 
@@ -239,26 +242,117 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		m_outer_buffer->generate();
-		m_outer_buffer->select(0);
-		m_outer_buffer->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->select(1);
+		buffer->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
-		m_outer_buffer->bind();
-		m_outer_buffer->upload(quad_strip);
-		m_outer_buffer->unbind();
+		buffer->bind();
+		buffer->upload(quad_strip);
+		buffer->unbind();
 
-		if (m_emboss) {
+		if(emboss) {
 			//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
 
-			m_emboss_buffer->generate();
-			m_emboss_buffer->select(0);
-			m_emboss_buffer->set_property(vert_sum.half * 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+			buffer->select(2);
+			buffer->set_property(vert_sum.half * 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 
-			m_emboss_buffer->bind();
-			m_emboss_buffer->upload(quad_strip);
-			m_emboss_buffer->unbind();
+			buffer->bind();
+			buffer->upload(quad_strip);
+			buffer->unbind();
 		}
 	}
+
+
+	void Widget::generate_form_buffer(const Size* size, bool emboss, GLBuffer* buffer)
+	{
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_vertices(size, border_width(), inner_v, outer_v);
+
+		if(emboss)
+			buffer->generate(3);
+		else
+			buffer->generate(2);
+
+		buffer->select(0);
+		buffer->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->bind();
+		buffer->upload(inner_v);
+		buffer->unbind();
+
+		// the quad strip for outline
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+
+		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+
+		buffer->select(1);
+		buffer->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		buffer->bind();
+		buffer->upload(quad_strip);
+		buffer->unbind();
+
+		if(emboss) {
+			//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
+
+			buffer->select(2);
+			buffer->set_property(vert_sum.half * 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+			buffer->bind();
+			buffer->upload(quad_strip);
+			buffer->unbind();
+		}
+	}
+
+//	void Widget::update_shape(const Size* size)
+//	{
+//		// the basic widget don't use shaded color
+//
+//		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+//		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+//
+//		VerticesSum vert_sum;
+//
+//		vert_sum = generate_vertices(size, border_width(), inner_v, outer_v);
+//
+//		m_inner_buffer->generate();
+//		m_inner_buffer->select(0);
+//		m_inner_buffer->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+//		m_inner_buffer->bind();
+//		m_inner_buffer->upload(inner_v);
+//		m_inner_buffer->unbind();
+//
+//		// the quad strip for outline
+//
+//		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+//
+//		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+//
+//		m_outer_buffer->generate();
+//		m_outer_buffer->select(0);
+//		m_outer_buffer->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+//
+//		m_outer_buffer->bind();
+//		m_outer_buffer->upload(quad_strip);
+//		m_outer_buffer->unbind();
+//
+//		if (m_emboss) {
+//			//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+//			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
+//
+//			m_emboss_buffer->generate();
+//			m_emboss_buffer->select(0);
+//			m_emboss_buffer->set_property(vert_sum.half * 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+//
+//			m_emboss_buffer->bind();
+//			m_emboss_buffer->upload(quad_strip);
+//			m_emboss_buffer->unbind();
+//		}
+//	}
 
 }

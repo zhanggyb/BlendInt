@@ -32,12 +32,13 @@ namespace BlendInt {
 	Menu::Menu()
 	: Widget(), m_select (0)
 	{
-
+		m_buffer.reset(new GLBuffer);
 	}
 
 	Menu::Menu (const String& title, AbstractWidget* parent)
-	: Widget(parent), m_select(0)
+	: Widget(parent), m_select(0), m_title(title)
 	{
+		m_buffer.reset(new GLBuffer);
 	}
 
 	Menu::~Menu ()
@@ -88,6 +89,33 @@ namespace BlendInt {
 		event->accept(this);
 	}
 
+	void Menu::update(int type, const void* data)
+	{
+		switch (type) {
+
+			case FormSize: {
+				const Size* size_p = static_cast<const Size*>(data);
+				generate_form_buffer(size_p, false, m_buffer.get());
+				break;
+			}
+
+			case FormRoundType: {
+				const int* type_p = static_cast<const int*>(data);
+				generate_form_buffer(&(size()), true, *type_p, radius(), m_buffer.get());
+				break;
+			}
+			case FormRoundRadius: {
+				const float* radius_p = static_cast<const float*>(data);
+				generate_form_buffer(&(size()), true, round_type(), *radius_p, m_buffer.get());
+				break;
+			}
+
+			default:
+				Widget::update(type, data);
+				break;
+		}
+	}
+
 	void Menu::render()
 	{
 		glMatrixMode(GL_MODELVIEW);
@@ -105,7 +133,7 @@ namespace BlendInt {
 		        themes()->menu.inner.g(),
 		        themes()->menu.inner.b(),
 		        themes()->menu.inner.a());
-		draw_gl_buffer(inner_buffer().get());
+		draw_inner_buffer(m_buffer.get(), 0);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->menu.outline.r(),
@@ -115,12 +143,7 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_gl_buffer_anti_alias(outer_buffer().get());
-
-		if(emboss()) {
-			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-			draw_gl_buffer_anti_alias(emboss_buffer().get());
-		}
+		draw_outline_buffer(m_buffer.get(), 1);
 
 		glDisable(GL_BLEND);
 

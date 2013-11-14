@@ -32,37 +32,81 @@ namespace BlendInt {
 	ToggleButton::ToggleButton ()
 			: AbstractButton()
 	{
-		set_checkable(true);
+		m_buffer.reset(new GLBuffer);
+
 		set_round_type(RoundAll);
-		resize(90, 25);
+		set_expand_x(true);
+		set_checkable(true);
+		resize(90, 20);
+		set_preferred_size(90, 20);
 	}
 
 	ToggleButton::ToggleButton (const String& text)
 			: AbstractButton()
 	{
-		set_checkable(true);
+		m_buffer.reset(new GLBuffer);
+
 		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_checkable(true);
 		set_text(text);
+		set_preferred_size(size());
 	}
 
 	ToggleButton::ToggleButton (AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
-		set_checkable(true);
+		m_buffer.reset(new GLBuffer);
+
 		set_round_type(RoundAll);
-		resize (90, 25);
+		set_expand_x(true);
+		set_checkable(true);
+		resize (90, 20);
+		set_preferred_size(90, 20);
 	}
 
 	ToggleButton::ToggleButton (const String& text, AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
-		set_checkable(true);
+		m_buffer.reset(new GLBuffer);
+
 		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_checkable(true);
 		set_text(text);
+		set_preferred_size(size());
 	}
 
 	ToggleButton::~ToggleButton ()
 	{
+
+	}
+
+	void ToggleButton::update(int type, const void* data)
+	{
+		switch (type) {
+
+			case FormSize: {
+				const Size* size_p = static_cast<const Size*>(data);
+				generate_form_buffer(size_p, true, m_buffer.get());
+				break;
+			}
+
+			case FormRoundType: {
+				const int* type_p = static_cast<const int*>(data);
+				generate_form_buffer(&(size()), true, *type_p, radius(), m_buffer.get());
+				break;
+			}
+			case FormRoundRadius: {
+				const float* radius_p = static_cast<const float*>(data);
+				generate_form_buffer(&(size()), true, round_type(), *radius_p, m_buffer.get());
+				break;
+			}
+
+			default:
+				AbstractButton::update(type, data);
+				break;
+		}
 
 	}
 
@@ -105,50 +149,22 @@ namespace BlendInt {
 			}
 		}
 
-//		glbuffer()->select(WidgetBufferKeyInner);
-
-//		glbuffer()->bind();
-		glVertexPointer(2, GL_FLOAT, 0, 0);
-		glEnableClientState(GL_VERTEX_ARRAY);
-//		glDrawArrays(GL_POLYGON, 0, glbuffer()->vertices());
-		glDisableClientState(GL_VERTEX_ARRAY);
-//		glbuffer()->unbind();
+		draw_inner_buffer(m_buffer.get(), 0);
 
 		// draw outline
-//		glbuffer()->select(WidgetBufferKeyOuter);
-
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
 		        themes()->regular.outline.g(),
 		        themes()->regular.outline.b(),
 		        themes()->regular.outline.a()};
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-//		glbuffer()->bind();
-		/* outline */
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glColor4ubv(tcol);
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-//			glDrawArrays(GL_QUAD_STRIP, 0, glbuffer()->vertices());
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
-//		glbuffer()->unbind();
 
-		if(emboss()) {
-//			glbuffer()->select(WidgetBufferKeyEmboss);
-//			glbuffer()->bind();
-			glEnableClientState(GL_VERTEX_ARRAY);
-			for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-				glTranslatef(jit[j][0], jit[j][1], 0.0f);
-				glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-				glVertexPointer(2, GL_FLOAT, 0, 0);
-//				glDrawArrays(GL_QUAD_STRIP, 0, glbuffer()->vertices());
-				glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-			}
-			glDisableClientState(GL_VERTEX_ARRAY);
-//			glbuffer()->unbind();
-		}
+		glColor4ubv(tcol);
+
+		/* outline */
+		draw_outline_buffer(m_buffer.get(), 1);
+
+		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
+		draw_outline_buffer(m_buffer.get(), 2);
 
 		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
 

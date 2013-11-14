@@ -69,8 +69,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void render () = 0;
-
 		virtual void press_mouse (MouseEvent* event);
 
 		virtual void release_mouse (MouseEvent* event);

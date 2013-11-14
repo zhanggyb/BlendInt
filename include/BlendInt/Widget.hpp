@@ -24,8 +24,6 @@
 #ifndef _BLENDINT_FORM_HPP_
 #define _BLENDINT_FORM_HPP_
 
-#include <boost/smart_ptr.hpp>
-
 #include <BlendInt/AbstractWidget.hpp>
 #include <BlendInt/GLBuffer.hpp>
 
@@ -36,22 +34,7 @@ namespace BlendInt {
 
 	enum WidgetPropertyType {
 		WidgetBorderWidth = AbstractWidgetPropertyLast + 1,
-		WidgetEmboss,
-		WidgetPropertyLast = WidgetEmboss
-	};
-
-	/**
-	 * @brief reserved key for Form drawing
-	 *
-	 * @note in the customized Form, avoid using these keys to create GL Buffer
-	 *
-	 * @sa GLBuffer
-	 */
-	enum WidgetBufferKey {
-		WidgetBufferKeyInner = 0,//!< Buffer for drawing the inner of a form
-		WidgetBufferKeyOuter,    //!< Buffer for drawing the outline of a form
-		WidgetBufferKeyEmboss,   //!< Buffer for drawing the emboss of a form
-		WidgetBufferKeyLast = WidgetBufferKeyEmboss      //!< Flag of the last
+		WidgetPropertyLast = WidgetBorderWidth
 	};
 
 	/**
@@ -69,9 +52,9 @@ namespace BlendInt {
 
 		virtual ~Widget();
 
-		void set_emboss (bool emboss);
+//		void set_emboss (bool emboss);
 
-		bool emboss () const {return m_emboss;}
+//		bool emboss () const {return m_emboss;}
 
 		void set_border_width (float width = 1.0);
 
@@ -96,6 +79,16 @@ namespace BlendInt {
 		virtual void move_mouse (MouseEvent* event);
 
 		/**
+		 * @brief draw vertices without buffer
+		 */
+		void draw_outline (const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num);
+
+		/**
+		 * @brief draw vertices without buffer
+		 */
+		void draw_inner (const float inner_v[WIDGET_SIZE_MAX][2], int num);
+
+		/**
 		 * @brief draw the GL Buffer in render()
 		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
 		 * @param mode the primitive or primitives mode defined in gl.h, 
@@ -107,7 +100,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_gl_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
+		void draw_inner_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw shaded GL buffer in render()
@@ -121,7 +114,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_shaded_gl_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
+		void draw_shaded_inner_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw the GL Buffer in render() with anti-alias
@@ -135,19 +128,15 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_gl_buffer_anti_alias (GLBuffer* buffer, size_t index = 0, int mode = GL_QUAD_STRIP);
+		void draw_outline_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_QUAD_STRIP);
 
-//		GLBuffer& glbuffer() {return m_glbuffer;}
+		void generate_form_buffer (const Size* size, bool emboss, int round_type, float radius, GLBuffer* buffer);
 
-		boost::scoped_ptr<GLBuffer>& inner_buffer() {return m_inner_buffer;}
-
-		boost::scoped_ptr<GLBuffer>& outer_buffer() {return m_outer_buffer;}
-
-		boost::scoped_ptr<GLBuffer>& emboss_buffer() {return m_emboss_buffer;}
+		void generate_form_buffer (const Size* size, bool emboss, GLBuffer* buffer);
 
 	private:
 
-		void update_shape (const Size* size);
+//		void update_shape (const Size* size);
 
 		/**
 		 * @brief border width
@@ -156,19 +145,11 @@ namespace BlendInt {
 
 		/**
 		 * @brief If draw emboss
+		 *
+		 * @todo only menu and scroll bar set emboss off, remove this property later
 		 */
-		DRAWABLE_PROPERTY bool m_emboss;
+//		DRAWABLE_PROPERTY bool m_emboss;
 
-		/**
-		 * @brief the buffer for vertices
-		 */
-//		GLBuffer m_glbuffer;
-
-		boost::scoped_ptr<GLBuffer> m_inner_buffer;
-
-		boost::scoped_ptr<GLBuffer> m_outer_buffer;
-
-		boost::scoped_ptr<GLBuffer> m_emboss_buffer;
 	};
 }
 

@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_CHECKBUTTON_HPP_
 #define _BLENDINT_CHECKBUTTON_HPP_
 
+#include <boost/smart_ptr.hpp>
+
 #include <BlendInt/AbstractButton.hpp>
 
 namespace BlendInt {
@@ -48,8 +50,13 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void update (int type, const void* data);
+
 		virtual void render ();
 
+	private:
+
+		boost::scoped_ptr<GLBuffer> m_buffer;
 	};
 
 }

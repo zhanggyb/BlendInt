@@ -33,14 +33,12 @@ namespace BlendInt {
 	: Widget(), m_pressed(false)
 	{
 		set_round_type(RoundAll);
-		set_emboss(false);
 	}
 
 	ScrollControl::ScrollControl(AbstractWidget* parent)
 	: Widget(parent), m_pressed(false)
 	{
 		set_round_type(RoundAll);
-		set_emboss(false);
 	}
 
 	ScrollControl::~ScrollControl ()

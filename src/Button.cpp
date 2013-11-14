@@ -33,6 +33,8 @@ namespace BlendInt {
 	Button::Button ()
 			: AbstractButton()
 	{
+		m_buffer.reset(new GLBuffer);
+
 		set_round_type(RoundAll);
 		set_expand_x(true);
 		resize(90, 20);
@@ -42,6 +44,8 @@ namespace BlendInt {
 	Button::Button (const String& text)
 			: AbstractButton()
 	{
+		m_buffer.reset(new GLBuffer);
+
 		set_round_type(RoundAll);
 		set_expand_x(true);
 		set_text(text);
@@ -51,6 +55,8 @@ namespace BlendInt {
 	Button::Button (AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
+		m_buffer.reset(new GLBuffer);
+
 		set_round_type(RoundAll);
 		set_expand_x(true);
 		resize (90, 20);
@@ -60,6 +66,8 @@ namespace BlendInt {
 	Button::Button (const String& text, AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
+		m_buffer.reset(new GLBuffer);
+
 		set_round_type(RoundAll);
 		set_expand_x(true);
 		set_text(text);
@@ -69,6 +77,34 @@ namespace BlendInt {
 	Button::~Button ()
 	{
 
+	}
+
+	void Button::update(int type, const void* data)
+	{
+		switch (type) {
+
+			case FormSize: {
+				const Size* size_p = static_cast<const Size*>(data);
+//				update_shape(size_p);
+				generate_form_buffer(size_p, true, m_buffer.get());
+				break;
+			}
+
+			case FormRoundType: {
+				const int* type_p = static_cast<const int*>(data);
+				generate_form_buffer(&(size()), true, *type_p, radius(), m_buffer.get());
+				break;
+			}
+			case FormRoundRadius: {
+				const float* radius_p = static_cast<const float*>(data);
+				generate_form_buffer(&(size()), true, round_type(), *radius_p, m_buffer.get());
+				break;
+			}
+
+			default:
+				AbstractButton::update(type, data);
+				break;
+		}
 	}
 
 	void Button::render ()
@@ -103,7 +139,7 @@ namespace BlendInt {
 			}
 		}
 
-		draw_gl_buffer(inner_buffer().get());
+		draw_inner_buffer(m_buffer.get(), 0);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -113,12 +149,10 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_gl_buffer_anti_alias(outer_buffer().get());
+		draw_outline_buffer(m_buffer.get(), 1);
 
-		if(emboss()) {
-			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-			draw_gl_buffer_anti_alias(emboss_buffer().get());
-		}
+		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
+		draw_outline_buffer(m_buffer.get(), 2);
 
 		// Draw text
 		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
