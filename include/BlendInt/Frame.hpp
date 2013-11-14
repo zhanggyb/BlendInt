@@ -65,6 +65,10 @@ namespace BlendInt {
 
 		void set_padding (int left, int right, int top, int bottom);
 
+		void set_widget (AbstractWidget* widget);
+
+		AbstractWidget* widget () const {return m_widget;}
+
 	protected:
 
 		virtual void update (int type, const void* data);
@@ -93,6 +97,8 @@ namespace BlendInt {
 	private:
 
 		Padding m_padding;
+
+		AbstractWidget* m_widget;
 
 	};
 

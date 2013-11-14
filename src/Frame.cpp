@@ -40,7 +40,7 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-	: Widget()
+	: Widget(), m_widget(0)
 	{
 		set_minimal_size(padding().left() + padding().right(),
 				padding().top() + padding().bottom());
@@ -49,7 +49,7 @@ namespace BlendInt {
 	}
 
 	Frame::Frame (AbstractWidget* parent)
-			: Widget(parent)
+			: Widget(parent), m_widget(0)
 	{
 		set_minimal_size(padding().left() + padding().right(),
 				padding().top() + padding().bottom());
@@ -81,6 +81,19 @@ namespace BlendInt {
 		m_padding = new_padding;
 	}
 
+	void Frame::set_widget(AbstractWidget* widget)
+	{
+		if(widget && (widget != m_widget)) {
+			delete m_widget;
+			m_widget = widget;
+
+			m_widget->set_position(position().x() + padding().left(), position().y() + padding().bottom());
+			m_widget->resize(size().width() - padding().left() - padding().right(),
+					size().height() - padding().top() - padding().bottom());
+
+			bind(m_widget);
+		}
+	}
 
 	void Frame::press_key (KeyEvent* event)
 	{
@@ -108,12 +121,77 @@ namespace BlendInt {
 
 	void Frame::update (int type, const void* data)
 	{
-		Widget::update(type, data);
+		switch (type) {
+
+			case FormPosition: {
+				if(m_widget) {
+					const Point* pos_p = static_cast<const Point*>(data);
+					int offset_x = pos_p->x() - position().x();
+					int offset_y = pos_p->y() - position().y();
+					m_widget->set_position(m_widget->position().x() + offset_x, m_widget->position().y() + offset_y);
+				}
+				break;
+			}
+
+			case FormSize: {
+				if(m_widget) {
+					Size size = *(static_cast<const Size*>(data));
+					size.add_width( - (padding().left() + padding().right()) );
+					size.add_height( - (padding().top() + padding().bottom()) );
+					m_widget->resize(size);
+				}
+				break;
+			}
+
+			case FramePadding: {
+				if(m_widget) {
+					const Padding* pad_p = static_cast<const Padding*>(data);
+					Size new_size(size().width() - pad_p->left() - pad_p->right(), size().height() - pad_p->top() - pad_p->bottom());
+					m_widget->resize(new_size);
+				}
+				break;
+			}
+
+			default:
+				Widget::update (type, data);
+				break;
+		}
 	}
 
 	void Frame::render ()
 	{
-		Widget::render();
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(position().x(),
+					 position().y(),
+					 z());
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+#ifdef DEBUG
+		glLineWidth(1);
+		glEnable(GL_LINE_STIPPLE);
+
+		glColor4f(1.0f, 0.0f, 0.0f, 0.45f);
+		glLineStipple(1, 0xAAAA);
+		glBegin(GL_LINE_LOOP);
+			glVertex2i(0, 0);
+			glVertex2i(size().width(), 0);
+			glVertex2i(size().width(), size().height());
+			glVertex2i(0, size().height());
+		glEnd();
+
+		glDisable(GL_LINE_STIPPLE);
+#endif
+
+		glDisable(GL_BLEND);
+
+		glPopMatrix();
+
+		if(m_widget)
+			dispatch_render(m_widget);
 	}
 
 	bool Frame::contain_no_padding (const Coord2d& cursor)
