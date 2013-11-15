@@ -30,6 +30,7 @@
 #include <BlendInt/PopupWidget.hpp>
 #include <BlendInt/Menu.hpp>
 #include <BlendInt/RoundWidget.hpp>
+#include <BlendInt/ImageView.hpp>
 
 using namespace BlendInt;
 using namespace std;
@@ -225,17 +226,17 @@ int main(int argc, char* argv[])
 //
 //	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
 
-//	PopupWidget* widget = new PopupWidget;
-//	widget->move(200, 200);
-////	widget->set_round_type(CornerAll);
-//	widget->resize(200, 200);
+	PopupWidget* widget = new PopupWidget;
+	widget->set_position(200, 200);
+//	widget->set_round_type(CornerAll);
+	widget->resize(200, 200);
 ////
 //	Frame* widget2 = new Frame;
 //	widget2->move(450, 200);
 ////	widget2->set_round_type(CornerAll);
 //	widget2->resize(200, 200);
 ////
-//	app->bind(widget);
+	app->bind(widget);
 //	app->bind(widget2);
 //
 //	Button* b1 = new Button;
@@ -272,18 +273,18 @@ int main(int argc, char* argv[])
 //	app->bind(menu);
 
 
-	Button* b = new Button;
-
-	b->set_position(800, 300);
-
-	//b->set_round_type(RoundTopLeft | RoundTopRight);
-
-	b->set_round_type(RoundTopLeft|RoundTopRight);
-	b->set_radius(6.0);
-
-//	b->resize(100, 25);
-
-	app->bind(b);
+//	Button* b = new Button;
+//
+//	b->set_position(800, 300);
+//
+//	//b->set_round_type(RoundTopLeft | RoundTopRight);
+//
+//	b->set_round_type(RoundTopLeft|RoundTopRight);
+//	b->set_radius(6.0);
+//
+////	b->resize(100, 25);
+//
+//	app->bind(b);
 
 //	ToggleButton* w = new ToggleButton;
 //
@@ -291,19 +292,30 @@ int main(int argc, char* argv[])
 //
 //	app->bind(w);
 
-	RoundWidget* w = new RoundWidget;
-	w->set_round_type(RoundAll);
-	w->resize (200, 200);
-	w->set_position(100, 300);
+//	RoundWidget* rw = new RoundWidget;
+//	rw->set_round_type(RoundAll);
+//	rw->resize (200, 200);
+//	rw->set_position(100, 300);
+//
+//	app->bind(rw);
+//
+//	Frame* f = new Frame;
+//	f->set_widget(rw);
+//
+//	f->resize(500, 400);
+//	f->set_position(200, 200);
+//	app->bind(f);
+//
+//	Widget* w = new Widget;
+//	w->resize (100, 100);
+//	w->set_position(100, 300);
+//
+//	app->bind(w);
 
-	app->bind(w);
+	ImageView *iv = new ImageView;
+	iv->set_position(400, 300);
 
-	Frame* f = new Frame;
-	f->set_widget(w);
-
-	f->resize(500, 400);
-	f->set_position(200, 200);
-	app->bind(f);
+	app->bind(iv);
 
 	std::cout << "size of widget: " << sizeof(Widget) << std::endl;
 

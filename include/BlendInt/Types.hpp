@@ -129,6 +129,34 @@ namespace BlendInt {
 				| RoundBottomRight | RoundBottomLeft),
 		UI_RB_ALPHA = RoundAll + 1
 	};
+
+
+	enum FormPropertyType {
+		FormSize,
+		FormPosition,
+		FormPreferredSize,
+		FormMinimalSize,
+		FormMaximalSize,
+		WidgetLayer,
+		WidgetVisibility,
+		WidgetBorderWidth,
+		FormRoundType,
+		FormRoundRadius,
+		FrameMargin,
+		LayoutPropertyAlignment,
+		LayoutPropertySpace,
+		LayoutPropertyMargin,
+		LayoutPropertyItem,
+
+		SliderPropertyOrientation,
+		SliderPropertyValue,
+		SliderPropertyMinimum,
+		SliderPropertyMaximum,
+		SliderPropertyStep,
+
+		FormPropertyLast
+	};
+
 }
 
 #endif	/* _BIL_TYPES_H_ */

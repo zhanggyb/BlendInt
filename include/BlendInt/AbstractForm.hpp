@@ -31,13 +31,7 @@
 namespace BlendInt {
 
 	struct WidgetTheme;
-
 	class Color;
-
-	enum AbstractFormProperty {
-		FormSize,
-		AbstrctFormPropertyLast = FormSize
-	};
 
 	/**
 	 * Structure used in calulating vertex buffer for inner and outline
@@ -52,7 +46,6 @@ namespace BlendInt {
 		int total;	/**< total number of vertices for widget */
 		int half;	/**< halfway vertices number */
 	};
-
 
 	/**
 	 * @brief Abstract form class

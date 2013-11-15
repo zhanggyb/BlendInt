@@ -39,6 +39,10 @@ namespace BlendInt {
 
 		// TODO: hide set_radius and set_round_type
 
+		void set_round_type (int type);
+
+		void set_radius (float radius);
+
 	};
 
 }

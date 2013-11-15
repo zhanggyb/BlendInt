@@ -39,14 +39,6 @@ namespace BlendInt {
 
 	public:
 
-		enum SliderPropertyTypeExt {
-			SliderPropertyOrientation = WidgetPropertyLast + 1,
-			SliderPropertyValue,
-			SliderPropertyMinimum,
-			SliderPropertyMaximum,
-			SliderPropertyStep
-		};
-
 		AbstractSlider(Orientation orientation = Horizontal);
 
 		AbstractSlider(Orientation orientation, AbstractWidget* parent);

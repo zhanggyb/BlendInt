@@ -50,15 +50,6 @@ namespace BlendInt {
 		LayoutFixed    //!< LayoutFixed
 	};
 
-	enum LayoutPropertyType
-	{
-		LayoutPropertyAlignment = AbstractWidgetPropertyLast + 1,
-		LayoutPropertySpace,
-		LayoutPropertyMargin,
-		LayoutPropertyItem,
-		LayoutPropertyLast = LayoutPropertyItem
-	};
-
 	/**
 	 * @brief Abstract layout class
 	 *

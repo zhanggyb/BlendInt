@@ -28,14 +28,6 @@
 
 namespace BlendInt {
 
-	enum ExpandableFormProperty {
-		FormPosition = AbstrctFormPropertyLast + 1,
-		FormPreferredSize,
-		FormMinimalSize,
-		FormMaximalSize,
-		AbstractExtraFormPropertyLast = FormMaximalSize
-	};
-
 	/**
 	 * @brief A Form which holds position and expandable along x or y axis
 	 */

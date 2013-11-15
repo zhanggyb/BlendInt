@@ -37,11 +37,6 @@ namespace BlendInt {
 	struct WidgetTheme;
 	class Color;
 
-	enum FramePropertyType {
-		FrameMargin = WidgetPropertyLast + 1,
-		FramePropertyLast = FrameMargin
-	};
-
 	/**
 	 * @brief A widget usually contains other Form or widget in a box with padding
 	 *

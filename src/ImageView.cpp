@@ -62,7 +62,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//		glRasterPos2i(padding().left(), padding().bottom());
+		glRasterPos2i(0, 0);
 		glDrawPixels (checkImageWidth, checkImageHeight, GL_RGB, GL_UNSIGNED_BYTE, _checkImage);
 
 #ifdef DEBUG
@@ -91,7 +91,7 @@ namespace BlendInt {
 		int i, j, c;
 		for (i = 0; i < checkImageHeight; i++) {
 			for (j = 0; j < checkImageWidth; j++) {
-				c = (((i & 0x8) == 0) ^ ((j & 0x8)) == 0) * 255;
+				c = (((i & 0x8) == 0) ^ (((j & 0x8) == 0))) * 255;
 				_checkImage[i][j][0] = (GLubyte) c;
 				_checkImage[i][j][1] = (GLubyte) c;
 				_checkImage[i][j][2] = (GLubyte) c;

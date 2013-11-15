@@ -32,11 +32,6 @@ namespace BlendInt {
 	struct WidgetTheme;
 	class Color;
 
-	enum WidgetPropertyType {
-		WidgetBorderWidth = AbstractWidgetPropertyLast + 1,
-		WidgetPropertyLast = WidgetBorderWidth
-	};
-
 	/**
 	 * @brief A Normal form
 	 */

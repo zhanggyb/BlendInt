@@ -37,7 +37,6 @@
 #include <BlendInt/ContextMenuEvent.hpp>
 #include <BlendInt/Point.hpp>
 #include <BlendInt/Size.hpp>
-#include <BlendInt/Padding.hpp>
 #include <BlendInt/Margin.hpp>
 
 #include <BlendInt/Types.hpp>
@@ -61,12 +60,6 @@ namespace BlendInt {
 		ParentUnknown,
 		ParentContextManager,
 		ParentForm
-	};
-
-	enum AbstractWidgetPropertyType {
-		WidgetLayer = AbstractExtraFormPropertyLast + 1,
-		WidgetVisibility,
-		AbstractWidgetPropertyLast = WidgetVisibility
 	};
 
 	union ParentPointer {

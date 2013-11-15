@@ -40,10 +40,10 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-	: Widget(), m_widget(0)
+			: Widget(), m_widget(0)
 	{
 		set_minimal_size(padding().left() + padding().right(),
-				padding().top() + padding().bottom());
+		        padding().top() + padding().bottom());
 		resize(120, 80);
 		set_preferred_size(120, 80);
 	}
@@ -52,7 +52,7 @@ namespace BlendInt {
 			: Widget(parent), m_widget(0)
 	{
 		set_minimal_size(padding().left() + padding().right(),
-				padding().top() + padding().bottom());
+		        padding().top() + padding().bottom());
 		resize(120, 80);
 		set_preferred_size(120, 80);
 	}
@@ -64,7 +64,8 @@ namespace BlendInt {
 
 	void Frame::set_margin (const Margin& margin)
 	{
-		if(m_margin.equal(margin)) return;
+		if (m_margin.equal(margin))
+			return;
 
 		update(FrameMargin, &margin);
 		m_margin = margin;
@@ -72,7 +73,8 @@ namespace BlendInt {
 
 	void Frame::set_margin (int l, int r, int t, int b)
 	{
-		if(m_margin.equal(l, r, t, b)) return;
+		if (m_margin.equal(l, r, t, b))
+			return;
 
 		Margin new_margin(l, r, t, b);
 
@@ -80,15 +82,17 @@ namespace BlendInt {
 		m_margin = new_margin;
 	}
 
-	void Frame::set_widget(AbstractWidget* widget)
+	void Frame::set_widget (AbstractWidget* widget)
 	{
-		if(widget && (widget != m_widget)) {
+		if (widget && (widget != m_widget)) {
 			delete m_widget;
 			m_widget = widget;
 
-			m_widget->set_position(position().x() + padding().left(), position().y() + padding().bottom());
-			m_widget->resize(size().width() - padding().left() - padding().right(),
-					size().height() - padding().top() - padding().bottom());
+			m_widget->set_position(position().x() + padding().left(),
+			        position().y() + padding().bottom());
+			m_widget->resize(
+			        size().width() - padding().left() - padding().right(),
+			        size().height() - padding().top() - padding().bottom());
 
 			bind(m_widget);
 		}
@@ -123,36 +127,41 @@ namespace BlendInt {
 		switch (type) {
 
 			case FormPosition: {
-				if(m_widget) {
+				if (m_widget) {
 					const Point* pos_p = static_cast<const Point*>(data);
 					int offset_x = pos_p->x() - position().x();
 					int offset_y = pos_p->y() - position().y();
-					m_widget->set_position(m_widget->position().x() + offset_x, m_widget->position().y() + offset_y);
+					m_widget->set_position(m_widget->position().x() + offset_x,
+					        m_widget->position().y() + offset_y);
 				}
 				break;
 			}
 
 			case FormSize: {
-				if(m_widget) {
+				if (m_widget) {
 					Size size = *(static_cast<const Size*>(data));
-					size.add_width( - (padding().left() + padding().right()) );
-					size.add_height( - (padding().top() + padding().bottom()) );
+					size.add_width(-(padding().left() + padding().right()));
+					size.add_height(-(padding().top() + padding().bottom()));
 					m_widget->resize(size);
 				}
 				break;
 			}
 
 			case FrameMargin: {
-				if(m_widget) {
-					const Padding* pad_p = static_cast<const Padding*>(data);
-					Size new_size(size().width() - pad_p->left() - pad_p->right(), size().height() - pad_p->top() - pad_p->bottom());
+				if (m_widget) {
+					const Margin* margin_p = static_cast<const Margin*>(data);
+					Size new_size(
+					        size().width() - margin_p->left()
+					                - margin_p->right(),
+					        size().height() - margin_p->top()
+					                - margin_p->bottom());
 					m_widget->resize(new_size);
 				}
 				break;
 			}
 
 			default:
-				Widget::update (type, data);
+				Widget::update(type, data);
 				break;
 		}
 	}
@@ -162,9 +171,7 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
+		glTranslatef(position().x(), position().y(), z());
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -176,10 +183,10 @@ namespace BlendInt {
 		glColor4f(1.0f, 0.0f, 0.0f, 0.45f);
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
-			glVertex2i(0, 0);
-			glVertex2i(size().width(), 0);
-			glVertex2i(size().width(), size().height());
-			glVertex2i(0, size().height());
+		glVertex2i(0, 0);
+		glVertex2i(size().width(), 0);
+		glVertex2i(size().width(), size().height());
+		glVertex2i(0, size().height());
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);
@@ -189,16 +196,18 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		if(m_widget)
+		if (m_widget)
 			dispatch_render(m_widget);
 	}
 
 	bool Frame::contain_no_padding (const Coord2d& cursor)
 	{
-		if (cursor.x() < (position().x() + m_margin.left()) ||
-				cursor.y() < (position().y() + m_margin.bottom()) ||
-				cursor.x() > (position().x() + size().width() - m_margin.right()) ||
-				cursor.y() > (position().y() + size().height() - m_margin.top())) {
+		if (cursor.x() < (position().x() + m_margin.left())
+		        || cursor.y() < (position().y() + m_margin.bottom())
+		        || cursor.x()
+		                > (position().x() + size().width() - m_margin.right())
+		        || cursor.y()
+		                > (position().y() + size().height() - m_margin.top())) {
 			return false;
 		}
 

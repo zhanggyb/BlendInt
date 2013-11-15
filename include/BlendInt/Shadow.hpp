@@ -40,7 +40,7 @@ namespace BlendInt {
 	};
 
 	enum ShadowPropertyType {
-		ShadowBlurRadius = AbstrctFormPropertyLast + 1
+		ShadowBlurRadius = FormPropertyLast + 1
 	};
 
 	/**

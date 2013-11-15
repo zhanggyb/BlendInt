@@ -209,7 +209,7 @@ namespace BlendInt {
 		else shadedown += 20;
 
 		if(shadedir) {
-			vert_sum = generate_vertices_round(size,
+			vert_sum = generate_vertices(size,
 					border_width(),
 					color,
 					shadetop,
@@ -217,7 +217,7 @@ namespace BlendInt {
 					shadedir,
 					inner_v, outer_v);
 		} else {	// swap shadetop and shadedown
-			vert_sum = generate_vertices_round(size,
+			vert_sum = generate_vertices(size,
 					border_width(),
 					color,
 					shadedown,
@@ -249,7 +249,7 @@ namespace BlendInt {
 		color.highlight(color, 5);
 
 		if(shadedir) {
-			vert_sum = generate_vertices_round(size,
+			vert_sum = generate_vertices(size,
 					border_width(),
 					color,
 					shadetop,
@@ -257,7 +257,7 @@ namespace BlendInt {
 					shadedir,
 					inner_v, outer_v);
 		} else {	// swap shadetop and shadedown
-			vert_sum = generate_vertices_round(size,
+			vert_sum = generate_vertices(size,
 					border_width(),
 					color,
 					shadedown,
@@ -380,9 +380,9 @@ namespace BlendInt {
 		short shadedown = themes()->scroll.shadedown;
 
 		if(shadedir)
-			vert_sum = generate_vertices_round(size, border_width(), color, shadetop, shadedown, shadedir, inner_v, outer_v);
+			vert_sum = generate_vertices(size, border_width(), color, shadetop, shadedown, shadedir, inner_v, outer_v);
 		else					// swap shadetop and shadedown
-			vert_sum = generate_vertices_round(size, border_width(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
+			vert_sum = generate_vertices(size, border_width(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
 //		glbuffer()->generate(WidgetBufferKeyInner);
 //		glbuffer()->select(WidgetBufferKeyInner);
@@ -517,9 +517,9 @@ namespace BlendInt {
 		short shadedown = themes()->scroll.shadedown;
 
 		if(shadedir)
-			vert_sum = generate_vertices_round(size, border_width(), color, shadetop, shadedown, shadedir, inner_v, outer_v);
+			vert_sum = generate_vertices(size, border_width(), color, shadetop, shadedown, shadedir, inner_v, outer_v);
 		else					// swap shadetop and shadedown
-			vert_sum = generate_vertices_round(size, border_width(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
+			vert_sum = generate_vertices(size, border_width(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
 //		glbuffer()->generate(WidgetBufferKeyInner);
 //		glbuffer()->select(WidgetBufferKeyInner);

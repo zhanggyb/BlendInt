@@ -97,35 +97,25 @@ namespace BlendInt {
 		float minyi = miny + border;		// U.pixelsize;
 		float maxyi = maxy - border;		// U.pixelsize;
 
-		int count = 0;
+		inner_v[0][0] = minxi;
+		inner_v[0][1] = minyi;
+		outer_v[0][0] = minx;
+		outer_v[0][1] = miny;
 
-		inner_v[count][0] = minxi;
-		inner_v[count][1] = minyi;
+		inner_v[1][0] = maxxi;
+		inner_v[1][1] = minyi;
+		outer_v[1][0] = maxx;
+		outer_v[1][1] = miny;
 
-		outer_v[count][0] = minx;
-		outer_v[count][1] = miny;
-		count++;
+		inner_v[2][0] = maxxi;
+		inner_v[2][1] = maxyi;
+		outer_v[2][0] = maxx;
+		outer_v[2][1] = maxy;
 
-		inner_v[count][0] = maxxi;
-		inner_v[count][1] = minyi;
-
-		outer_v[count][0] = maxx;
-		outer_v[count][1] = miny;
-		count++;
-
-		inner_v[count][0] = maxxi;
-		inner_v[count][1] = maxyi;
-
-		outer_v[count][0] = maxx;
-		outer_v[count][1] = maxy;
-		count++;
-
-		inner_v[count][0] = minxi;
-		inner_v[count][1] = maxyi;
-
-		outer_v[count][0] = minx;
-		outer_v[count][1] = maxy;
-		//count++;
+		inner_v[3][0] = minxi;
+		inner_v[3][1] = maxyi;
+		outer_v[3][0] = minx;
+		outer_v[3][1] = maxy;
 	}
 
 	VerticesSum AbstractForm::generate_round_vertices(const Size* size,

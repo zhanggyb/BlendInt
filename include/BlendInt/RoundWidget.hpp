@@ -29,12 +29,6 @@
 
 namespace BlendInt {
 
-	enum RoundBoxPropertyType {
-		FormRoundType = WidgetPropertyLast + 1,
-		FormRoundRadius,
-		RoundWidgetPropertyLast = FormRoundRadius
-	};
-
 	/**
 	 * @brief Widget with round corner
 	 */
@@ -77,7 +71,7 @@ namespace BlendInt {
 		 * @param[out] outer_v
 		 * @return how many vertices are used in the output array
 		 */
-		inline VerticesSum generate_vertices_round (const Size* size, float border, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
+		inline VerticesSum generate_vertices (const Size* size, float border, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
 		{
 			return generate_round_vertices(size, border, round_type(), radius(), inner_v, outer_v);
 		}
@@ -92,7 +86,7 @@ namespace BlendInt {
 		 * @param outer
 		 * @return
 		 */
-		inline VerticesSum generate_vertices_round (const Size* size,
+		inline VerticesSum generate_vertices (const Size* size,
 				float border,
 				const WidgetTheme* theme,
 				Orientation shadedir,
@@ -120,7 +114,7 @@ namespace BlendInt {
 		 * @param[out] outer vertices for outline
 		 * @return
 		 */
-		inline VerticesSum generate_vertices_round (const Size* size,
+		inline VerticesSum generate_vertices (const Size* size,
 				float border,
 				const Color& color,
 				short shadetop,
