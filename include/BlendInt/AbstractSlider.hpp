@@ -24,7 +24,7 @@
 #ifndef _BIL_ABSTRACTSLIDER_HPP_
 #define _BIL_ABSTRACTSLIDER_HPP_
 
-#include <BlendInt/Frame.hpp>
+#include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/Types.hpp>
 
 #include <Cpp/Events.hpp>
@@ -34,7 +34,7 @@ namespace BlendInt {
 	/**
 	 * @brief The abstract class for slider widgets
 	 */
-	class AbstractSlider: public Widget
+	class AbstractSlider: public RoundWidget
 	{
 
 	public:

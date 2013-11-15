@@ -29,7 +29,7 @@
 namespace BlendInt {
 
 	enum ExpandableFormProperty {
-		FormPosition = AbstractRoundBoxPropertyLast + 1,
+		FormPosition = AbstrctFormPropertyLast + 1,
 		FormPreferredSize,
 		FormMinimalSize,
 		FormMaximalSize,

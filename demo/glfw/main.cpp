@@ -29,6 +29,7 @@
 #include <BlendInt/ScrollView.hpp>
 #include <BlendInt/PopupWidget.hpp>
 #include <BlendInt/Menu.hpp>
+#include <BlendInt/RoundWidget.hpp>
 
 using namespace BlendInt;
 using namespace std;
@@ -290,7 +291,8 @@ int main(int argc, char* argv[])
 //
 //	app->bind(w);
 
-	Widget* w = new Widget;
+	RoundWidget* w = new RoundWidget;
+	w->set_round_type(RoundAll);
 	w->resize (200, 200);
 	w->set_position(100, 300);
 

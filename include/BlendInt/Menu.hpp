@@ -26,7 +26,7 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/PopupWidget.hpp>
+#include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/String.hpp>
 
 #include <BlendInt/MenuItem.hpp>
@@ -39,7 +39,7 @@ namespace BlendInt {
 	 * @brief The menu widget for use in menu bars, context menus,
 	 * and other popup menus.
 	 */
-	class Menu: public Widget
+	class Menu: public RoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Menu);
 

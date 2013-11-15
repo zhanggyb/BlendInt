@@ -78,16 +78,14 @@ namespace BlendInt {
 
 	void Widget::render()
 	{
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+		float outer_v[4][2];	// vertices for drawing outline
+		float inner_v[4][2];	// vertices for drawing inner
 
-		VerticesSum vert_sum;
+		generate_rect_vertices(&(size()), border_width(), inner_v, outer_v);
 
-		vert_sum = generate_vertices(&(size()), border_width(), inner_v, outer_v);
+		float quad_strip[4 * 2 + 2][2]; /* + 2 because the last pair is wrapped */
 
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-
-		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+		verts_to_quad_strip (inner_v, outer_v, 4, quad_strip);
 
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -105,9 +103,7 @@ namespace BlendInt {
 		        themes()->regular.inner.b(),
 		        themes()->regular.inner.a());
 
-		draw_inner(inner_v, vert_sum.total);
-
-//		draw_gl_buffer(m_inner_buffer.get());
+		draw_inner(inner_v, 4);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -117,9 +113,7 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-//		draw_gl_buffer_anti_alias(m_outer_buffer.get());
-
-		draw_outline(quad_strip, vert_sum.total * 2 + 2);
+		draw_outline(quad_strip, 4 * 2 + 2);
 
 		glDisable(GL_BLEND);
 		glPopMatrix();
@@ -223,7 +217,7 @@ namespace BlendInt {
 
 		VerticesSum vert_sum;
 
-		vert_sum = generate_vertices(size, border_width(), round_type, radius, inner_v, outer_v);
+		vert_sum = generate_round_vertices(size, border_width(), round_type, radius, inner_v, outer_v);
 
 		if(emboss)
 			buffer->generate(3);
@@ -270,7 +264,7 @@ namespace BlendInt {
 
 		VerticesSum vert_sum;
 
-		vert_sum = generate_vertices(size, border_width(), inner_v, outer_v);
+		vert_sum = generate_round_vertices(size, border_width(), RoundNone, 1.0, inner_v, outer_v);
 
 		if(emboss)
 			buffer->generate(3);

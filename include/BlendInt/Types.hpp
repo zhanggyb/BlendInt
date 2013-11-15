@@ -110,6 +110,25 @@ namespace BlendInt {
 		Horizontal = 0x1, Vertical = 0x2
 	};
 
+
+	/**
+	 * flags to set which corners will become rounded:
+	 *
+	 * 1------2
+	 * |      		|
+	 * 8------4
+	 */
+	enum RoundType {
+		RoundNone = 0,
+		RoundTopLeft = (1 << 0),
+		RoundTopRight = (1 << 1),
+		RoundBottomRight = (1 << 2),
+		RoundBottomLeft = (1 << 3),
+		/* just for convenience */
+		RoundAll = (RoundTopLeft | RoundTopRight
+				| RoundBottomRight | RoundBottomLeft),
+		UI_RB_ALPHA = RoundAll + 1
+	};
 }
 
 #endif	/* _BIL_TYPES_H_ */

@@ -38,7 +38,6 @@ namespace BlendInt {
 
 	AbstractWidget::AbstractWidget ()
 		: AbstractExtraForm(),
-		  RoundBoxBase(),
 		  m_z(0),
 		  m_in_layout(false),
 		  m_fire_events(true),
@@ -69,7 +68,6 @@ namespace BlendInt {
 
 	AbstractWidget::AbstractWidget (AbstractWidget* parent)
 		: AbstractExtraForm(),
-		  RoundBoxBase(),
 			m_z(0),
 		  m_in_layout(false),
 		  m_fire_events(true),
@@ -326,24 +324,6 @@ namespace BlendInt {
 		if(AbstractExtraForm::set_maximal_size(size)) {
 			fire_property_changed_event(FormMaximalSize);
 		}
-	}
-
-	void AbstractWidget::set_round_type(int type)
-	{
-		if(round_type() == type) return;
-
-		update(FormRoundType, &type);
-
-		RoundBoxBase::set_round_type(type);
-	}
-
-	void AbstractWidget::set_radius(float rad)
-	{
-		if(radius() == rad) return;
-
-		update(FormRoundRadius, &rad);
-
-		RoundBoxBase::set_radius(rad);
 	}
 
 	void AbstractWidget::reset_z (int z)

@@ -30,13 +30,13 @@
 namespace BlendInt {
 
 	Menu::Menu()
-	: Widget(), m_select (0)
+	: RoundWidget(), m_select (0)
 	{
 		m_buffer.reset(new GLBuffer);
 	}
 
 	Menu::Menu (const String& title, AbstractWidget* parent)
-	: Widget(parent), m_select(0), m_title(title)
+	: RoundWidget(parent), m_select(0), m_title(title)
 	{
 		m_buffer.reset(new GLBuffer);
 	}

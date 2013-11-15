@@ -30,10 +30,29 @@
 
 namespace BlendInt {
 
+	struct WidgetTheme;
+
+	class Color;
+
 	enum AbstractFormProperty {
 		FormSize,
 		AbstrctFormPropertyLast = FormSize
 	};
+
+	/**
+	 * Structure used in calulating vertex buffer for inner and outline
+	 *
+	 * @note don't use nested class for SWIG later
+	 */
+	struct VerticesSum {
+		VerticesSum ()
+		: total(0), half(0)
+		{ }
+
+		int total;	/**< total number of vertices for widget */
+		int half;	/**< halfway vertices number */
+	};
+
 
 	/**
 	 * @brief Abstract form class
@@ -87,9 +106,68 @@ namespace BlendInt {
 
 	protected:
 
+		static const float cornervec[WIDGET_CURVE_RESOLU][2];
+
+		static const float jit[WIDGET_AA_JITTER][2];
+
 		virtual void update (int type, const void* data) = 0;
 
 		virtual void render () = 0;
+
+		void generate_rect_vertices (const Size* size,
+				float border,
+				float inner_v[4][2],
+				float outer_v[4][2]);
+
+		VerticesSum generate_round_vertices (const Size* size,
+				float border,
+				int round_type,
+				float radius,
+				float inner_v[WIDGET_SIZE_MAX][2],
+				float outer_v[WIDGET_SIZE_MAX][2]);
+
+
+		/**
+		 * @brief calculate vertices for round box edges
+		 * @param size
+		 * @param border
+		 * @param theme
+		 * @param shadedir shade direction
+		 * @param inner
+		 * @param outer
+		 * @return
+		 */
+		VerticesSum generate_round_vertices (const Size* size,
+				float border,
+				int round_type,
+				float radius,
+				const WidgetTheme* theme,
+				Orientation shadedir,
+				float inner[WIDGET_SIZE_MAX][6],
+				float outer[WIDGET_SIZE_MAX][2]);
+
+		/**
+		 * @brief generate vertices array for round box inner and edges
+		 * @param[in] size the size to calculate position and shade uv
+		 * @param[in] border
+		 * @param[in] shadetop the top shade, defined in theme
+		 * @param[in] shadedown the bottom shade, defined in theme
+		 * @param[in] shadedir true if shade with horizontal direction
+		 * @param[out] inner inner vertices with position and color information
+		 * @param[out] outer vertices for outline
+		 * @return
+		 */
+		VerticesSum generate_round_vertices (const Size* size,
+				float border,
+				int round_type,
+				float radius,
+				const Color& color,
+				short shadetop,
+				short shadedown,
+				Orientation shadedir,
+				float inner[WIDGET_SIZE_MAX][6],
+				float outer[WIDGET_SIZE_MAX][2]);
+
 
 		static void verts_to_quad_strip (
 				const float inner_v[WIDGET_SIZE_MAX][2],

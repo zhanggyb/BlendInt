@@ -33,7 +33,7 @@ namespace BlendInt {
 	/**
 	 * The controller in the scrollbar
 	 */
-	class ScrollControl: public Widget
+	class ScrollControl: public RoundWidget
 	{
 	public:
 
