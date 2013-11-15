@@ -26,14 +26,14 @@
 namespace BlendInt {
 
 	AbstractExtraForm::AbstractExtraForm()
-	: AbstractRoundBox(), m_expand_x(false), m_expand_y(false)
+	: AbstractForm(), m_expand_x(false), m_expand_y(false)
 	{
 		m_maximal_size.set_width(65536);
 		m_maximal_size.set_height(65536);
 	}
 
 	AbstractExtraForm::AbstractExtraForm(const AbstractExtraForm& orig)
-	: AbstractRoundBox()
+	: AbstractForm()
 	{
 		set_position(orig.position());
 		resize(orig.size());

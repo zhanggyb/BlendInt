@@ -62,23 +62,22 @@ namespace BlendInt {
 		// TODO Auto-generated destructor stub
 	}
 
-	void Frame::set_padding (const Padding& padding)
+	void Frame::set_margin (const Margin& margin)
 	{
-		if(m_padding.equal(padding)) return;
+		if(m_margin.equal(margin)) return;
 
-		Padding new_padding = padding;
-		update(FramePadding, &new_padding);
-		m_padding = new_padding;
+		update(FrameMargin, &margin);
+		m_margin = margin;
 	}
 
-	void Frame::set_padding (int l, int r, int t, int b)
+	void Frame::set_margin (int l, int r, int t, int b)
 	{
-		if(m_padding.equal(l, r, t, b)) return;
+		if(m_margin.equal(l, r, t, b)) return;
 
-		Padding new_padding(l, r, t, b);
+		Margin new_margin(l, r, t, b);
 
-		update(FramePadding, &new_padding);
-		m_padding = new_padding;
+		update(FrameMargin, &new_margin);
+		m_margin = new_margin;
 	}
 
 	void Frame::set_widget(AbstractWidget* widget)
@@ -143,7 +142,7 @@ namespace BlendInt {
 				break;
 			}
 
-			case FramePadding: {
+			case FrameMargin: {
 				if(m_widget) {
 					const Padding* pad_p = static_cast<const Padding*>(data);
 					Size new_size(size().width() - pad_p->left() - pad_p->right(), size().height() - pad_p->top() - pad_p->bottom());
@@ -196,10 +195,10 @@ namespace BlendInt {
 
 	bool Frame::contain_no_padding (const Coord2d& cursor)
 	{
-		if (cursor.x() < (position().x() + m_padding.left()) ||
-				cursor.y() < (position().y() + m_padding.bottom()) ||
-				cursor.x() > (position().x() + size().width() - m_padding.right()) ||
-				cursor.y() > (position().y() + size().height() - m_padding.top())) {
+		if (cursor.x() < (position().x() + m_margin.left()) ||
+				cursor.y() < (position().y() + m_margin.bottom()) ||
+				cursor.x() > (position().x() + size().width() - m_margin.right()) ||
+				cursor.y() > (position().y() + size().height() - m_margin.top())) {
 			return false;
 		}
 

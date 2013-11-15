@@ -31,6 +31,7 @@
 #include <boost/smart_ptr.hpp>
 
 #include <BlendInt/AbstractExtraForm.hpp>
+#include <BlendInt/RoundBoxBase.hpp>
 #include <BlendInt/MouseEvent.hpp>
 #include <BlendInt/KeyEvent.hpp>
 #include <BlendInt/ContextMenuEvent.hpp>
@@ -96,7 +97,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup gui
 	 */
-	class AbstractWidget: public AbstractExtraForm
+	class AbstractWidget: public AbstractExtraForm, public RoundBoxBase
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractWidget);
 
@@ -169,6 +170,21 @@ namespace BlendInt {
 		void set_maximal_size (unsigned int width, unsigned int height);
 
 		void set_maximal_size (const Size& size);
+
+		/**
+		 * @brief set round type
+		 * @param type
+		 *
+		 * Hide the same function in RoundBoxBase to call update
+		 */
+		void set_round_type (int type);
+
+		/**
+		 * @brief set round radius
+		 * @param radius
+		 * Hide the same function in RoundBoxBase to call update
+		 */
+		void set_radius (float radius);
 
 		int z () const
 		{

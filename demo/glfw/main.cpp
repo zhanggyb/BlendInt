@@ -273,7 +273,7 @@ int main(int argc, char* argv[])
 
 	Button* b = new Button;
 
-	b->set_position(500, 300);
+	b->set_position(800, 300);
 
 	//b->set_round_type(RoundTopLeft | RoundTopRight);
 
@@ -295,6 +295,13 @@ int main(int argc, char* argv[])
 	w->set_position(100, 300);
 
 	app->bind(w);
+
+	Frame* f = new Frame;
+	f->set_widget(w);
+
+	f->resize(500, 400);
+	f->set_position(200, 200);
+	app->bind(f);
 
 	std::cout << "size of widget: " << sizeof(Widget) << std::endl;
 

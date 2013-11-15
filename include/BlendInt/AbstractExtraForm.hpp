@@ -39,7 +39,7 @@ namespace BlendInt {
 	/**
 	 * @brief A Form which holds position and expandable along x or y axis
 	 */
-	class AbstractExtraForm: public AbstractRoundBox
+	class AbstractExtraForm: public AbstractForm
 	{
 	public:
 

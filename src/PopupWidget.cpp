@@ -34,7 +34,6 @@ namespace BlendInt {
 	: Frame()
 	{
 		reset_z(1);	// TODO: define layer in enumeration
-//		set_emboss(false);
 
 		m_icon.demo_init();
 	}

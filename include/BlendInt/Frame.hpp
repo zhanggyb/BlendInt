@@ -38,8 +38,8 @@ namespace BlendInt {
 	class Color;
 
 	enum FramePropertyType {
-		FramePadding = WidgetPropertyLast + 1,
-		FramePropertyLast = FramePadding
+		FrameMargin = WidgetPropertyLast + 1,
+		FramePropertyLast = FrameMargin
 	};
 
 	/**
@@ -59,11 +59,11 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
-		const Padding& padding () const {return m_padding;}
+		const Margin& padding () const {return m_margin;}
 
-		void set_padding (const Padding& padding);
+		void set_margin (const Margin& margin);
 
-		void set_padding (int left, int right, int top, int bottom);
+		void set_margin (int left, int right, int top, int bottom);
 
 		void set_widget (AbstractWidget* widget);
 
@@ -96,7 +96,7 @@ namespace BlendInt {
 
 	private:
 
-		Padding m_padding;
+		Margin m_margin;
 
 		AbstractWidget* m_widget;
 

@@ -36,7 +36,7 @@ namespace BlendInt {
 	public:
 
 		Margin ()
-		: m_left(1), m_right(1), m_top(1), m_bottom(1)
+		: m_left(5), m_right(5), m_top(5), m_bottom(5)
 		{}
 
 		Margin (int all)
@@ -79,12 +79,12 @@ namespace BlendInt {
 					m_bottom == bottom);
 		}
 
-		bool equal (const Padding& padding)
+		bool equal (const Margin& margin)
 		{
-			return (m_left == padding.left() &&
-					m_right == padding.right() &&
-					m_top == padding.top() &&
-					m_bottom == padding.bottom());
+			return (m_left == margin.left() &&
+					m_right == margin.right() &&
+					m_top == margin.top() &&
+					m_bottom == margin.bottom());
 		}
 
 	private:
