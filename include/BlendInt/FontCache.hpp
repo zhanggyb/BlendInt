@@ -107,16 +107,6 @@ namespace BlendInt {
 		 * @brief Print the string with the given string length
 		 * @param string
 		 * @param length
-		 *
-		 * @bug call print in render() cause the following OpenGL API now working sometimes:
-		* @code{.cpp}
-		 	glEnableClientState(GL_VERTEX_ARRAY);
-		 	glVertexPointer(...);
-		 	glDrawArrays(...);
-		 	glDisableClientState(GL_VERTEX_ARRAY);
-		  @endcode
-		*
-		* @todo fix this known bug
 		 */
 		void print (const String& string, size_t length);
 

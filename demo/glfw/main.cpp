@@ -252,23 +252,23 @@ int main(int argc, char* argv[])
 //
 //	hl1->set_position(250, 50);
 //
-	Menu *menu = new Menu;
-
-	menu->resize(200, 400);
-	menu->set_position(100, 100);
-	menu->set_round_type(RoundAll);
-
-	menu->add("File");
-	menu->add("exit");
-	menu->add("there2");
-	menu->add("there2");
-	menu->add("there2");
-	menu->add("there2");
-	menu->add("there2");
-	menu->add("there2");
-	menu->add("there2");
-
-	app->bind(menu);
+//	Menu *menu = new Menu;
+//
+//	menu->resize(200, 400);
+//	menu->set_position(100, 100);
+//	menu->set_round_type(RoundAll);
+//
+//	menu->add("File");
+//	menu->add("exit");
+//	menu->add("there2");
+//	menu->add("there2");
+//	menu->add("there2");
+//	menu->add("there2");
+//	menu->add("there2");
+//	menu->add("there2");
+//	menu->add("there2");
+//
+//	app->bind(menu);
 
 
 	Button* b = new Button;
@@ -284,9 +284,15 @@ int main(int argc, char* argv[])
 
 	app->bind(b);
 
-	ToggleButton* w = new ToggleButton;
+//	ToggleButton* w = new ToggleButton;
+//
+//	w->set_position(500, 200);
+//
+//	app->bind(w);
 
-	w->set_position(500, 200);
+	Widget* w = new Widget;
+	w->resize (200, 200);
+	w->set_position(100, 300);
 
 	app->bind(w);
 

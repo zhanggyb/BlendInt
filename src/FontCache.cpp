@@ -305,12 +305,6 @@ namespace BlendInt {
 
 	void FontCache::print (const String& string, size_t length)
 	{
-		// FIXME: call print in render() cause the following OpenGL API now working sometimes:
-		// 		glEnableClientState(GL_VERTEX_ARRAY);
-		//		glVertexPointer(...);
-		//		glDrawArrays(...);
-		//		glDisableClientState(GL_VERTEX_ARRAY);
-
 		ShaderManager* sm = ShaderManager::instance();
 		GLfloat black[4] = { 0, 0, 0, 1 };
 
@@ -352,6 +346,8 @@ namespace BlendInt {
 		glDisableVertexAttribArray(sm->text_attribute_coord());
 
 		glUseProgram(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);	// do not forget unbind buffer
+
 		glDisable(GL_BLEND);
 		glPopMatrix();
 	}

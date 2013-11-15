@@ -85,7 +85,6 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-//				update_shape(size_p);
 				generate_form_buffer(size_p, true, m_buffer.get());
 				break;
 			}
