@@ -193,7 +193,7 @@ namespace BlendInt {
 			theme_manager->m_themes.scroll.text = 0x000000FF;
 			theme_manager->m_themes.scroll.text_sel = 0xFFFFFFFF;
 			theme_manager->m_themes.scroll.shaded = true;
-			theme_manager->m_themes.scroll.shadetop = 5;
+			theme_manager->m_themes.scroll.shadetop = 5 + 20;
 			theme_manager->m_themes.scroll.shadedown = -5;
 
 			// Progress Bar

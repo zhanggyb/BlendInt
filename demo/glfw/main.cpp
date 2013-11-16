@@ -226,17 +226,17 @@ int main(int argc, char* argv[])
 //
 //	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
 
-	PopupWidget* widget = new PopupWidget;
-	widget->set_position(200, 200);
+//	PopupWidget* widget = new PopupWidget;
+//	widget->set_position(200, 200);
 //	widget->set_round_type(CornerAll);
-	widget->resize(200, 200);
+//	widget->resize(200, 200);
 ////
 //	Frame* widget2 = new Frame;
 //	widget2->move(450, 200);
 ////	widget2->set_round_type(CornerAll);
 //	widget2->resize(200, 200);
 ////
-	app->bind(widget);
+//	app->bind(widget);
 //	app->bind(widget2);
 //
 //	Button* b1 = new Button;
@@ -312,10 +312,10 @@ int main(int argc, char* argv[])
 //
 //	app->bind(w);
 
-	ImageView *iv = new ImageView;
-	iv->set_position(400, 300);
-
-	app->bind(iv);
+//	ImageView *iv = new ImageView;
+//	iv->set_position(400, 300);
+//
+//	app->bind(iv);
 
 	std::cout << "size of widget: " << sizeof(Widget) << std::endl;
 
@@ -326,6 +326,20 @@ int main(int argc, char* argv[])
 	std::cout << "size of layout: " << sizeof(HorizontalLayout) << std::endl;
 
 	std::cout << "size of menu item: " << sizeof(MenuItem) << std::endl;
+
+	SlideButton* sb = new SlideButton;
+	sb->set_position(100, 100);
+	sb->resize(20, 20);
+
+	app->bind(sb);
+
+	ScrollControl* sc = new ScrollControl;
+	sc->set_radius(12.0);
+	sc->resize(200, 24);
+
+	sc->set_position(200, 200);
+
+	app->bind(sc);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

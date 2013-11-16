@@ -193,9 +193,7 @@ namespace BlendInt {
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				if((*set_it)->visible()) {
-					(*set_it)->render();
-				}
+				(*set_it)->render();
 			}
 		}
 		m_ticktack = m_ticktack ? 0 : 1;
@@ -206,9 +204,7 @@ namespace BlendInt {
 	void Interface::dispatch_render_event (AbstractWidget* obj)
 	{
 		// ticktack makes sure only render once, the ticktack of Interface reversed in Interface::render()
-		if(obj->visible()) {
-			obj->render();
-		}
+		obj->render();
 	}
 
 #ifdef DEBUG
@@ -285,8 +281,6 @@ namespace BlendInt {
 				pset = map_it->second;
 				for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 				{
-					if (!(*set_it)->visible()) break;
-
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
 						case KeyPress:
@@ -324,7 +318,7 @@ namespace BlendInt {
 				pset = map_it->second;
 				for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 				{
-					if(!(*set_it)->visible()) break;
+					//if(!(*set_it)->visible()) break;
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
 						case KeyPress:
@@ -404,7 +398,7 @@ namespace BlendInt {
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 			{
-				if(!(*set_it)->visible()) break;
+				//if(!(*set_it)->visible()) break;
 
 				switch (action) {
 					case GLFW_PRESS:
@@ -450,7 +444,7 @@ namespace BlendInt {
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 			{
-				if(!(*set_it)->visible()) break;
+				//if(!(*set_it)->visible()) break;
 
 				dispatch_mouse_move_event((*set_it), &event);
 

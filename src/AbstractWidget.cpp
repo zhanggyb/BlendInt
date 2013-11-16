@@ -39,9 +39,8 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget ()
 		: AbstractExtraForm(),
 		  m_z(0),
-		  m_in_layout(false),
-		  m_fire_events(true),
-		  m_visible(true)
+		  m_lock(false),
+		  m_fire_events(true)
 #ifdef DEBUG
 		  ,m_id(0)
 #endif
@@ -69,9 +68,8 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget (AbstractWidget* parent)
 		: AbstractExtraForm(),
 			m_z(0),
-		  m_in_layout(false),
-		  m_fire_events(true),
-		  m_visible(true)
+		  m_lock(false),
+		  m_fire_events(true)
 #ifdef DEBUG
 		  , m_id(0)
 #endif
@@ -247,7 +245,7 @@ namespace BlendInt {
 	void AbstractWidget::resize (unsigned int width, unsigned int height)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_in_layout) return;
+		if(m_lock) return;
 
 		if(AbstractExtraForm::resize(width, height)) {
 			fire_property_changed_event(FormSize);
@@ -257,7 +255,7 @@ namespace BlendInt {
 	void AbstractWidget::resize (const Size& size)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_in_layout) return;
+		if(m_lock) return;
 
 		if(AbstractExtraForm::resize(size)) {
 			fire_property_changed_event(FormSize);
@@ -267,7 +265,7 @@ namespace BlendInt {
 	void AbstractWidget::set_position (int x, int y)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_in_layout) return;
+		if(m_lock) return;
 
 		if(AbstractExtraForm::set_position(x, y)) {
 			fire_property_changed_event(FormPosition);
@@ -277,7 +275,7 @@ namespace BlendInt {
 	void AbstractWidget::set_position (const Point& pos)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_in_layout) return;
+		if(m_lock) return;
 
 		if(AbstractExtraForm::set_position(pos)) {
 			fire_property_changed_event(FormPosition);
@@ -353,21 +351,6 @@ namespace BlendInt {
 		}
 
 		// m_property_changed.fire(FormPropertyLayer);
-	}
-
-	void AbstractWidget::set_visible (bool visible)
-	{
-		m_visible = visible;
-	}
-
-	void AbstractWidget::show ()
-	{
-		m_visible = true;
-	}
-
-	void AbstractWidget::hide ()
-	{
-		m_visible = false;
 	}
 
 	const std::string& AbstractWidget::name () const

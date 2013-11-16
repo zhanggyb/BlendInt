@@ -125,9 +125,48 @@ namespace BlendInt {
 		 */
 		void draw_outline_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_QUAD_STRIP);
 
+		/**
+		 * @brief generate GL buffer for form drawing
+		 * @param[in] size the size to enclose vertices
+		 * @param[in] emboss if draw emboss
+		 * @param[in] round_type round type
+		 * @param[in] radius round radius
+		 * @param[in] buffer the buffer generated
+		 *
+		 * If emboss is true, 3 buffers are generated, if emboss is false, 2 buffers are generated:
+		 * 	- index 0: for inner drawing
+		 * 	- index 1: for outline drawing
+		 * 	- index 2: for emboss drawing
+		 */
 		void generate_form_buffer (const Size* size, bool emboss, int round_type, float radius, GLBuffer* buffer);
 
-		void generate_form_buffer (const Size* size, bool emboss, GLBuffer* buffer);
+		/**
+		 * @brief generate GL buffer for rect form drawing
+		 * @param size
+		 * @param emboss
+		 * @param buffer
+		 */
+		void generate_rect_form_buffer (const Size* size, bool emboss, GLBuffer* buffer);
+
+		void generate_shaded_form_buffer (const Size* size,
+				float border,
+				int round_type,
+				float radius,
+				const WidgetTheme* theme,
+				Orientation shadedir,
+				short highlight,
+				GLBuffer* buffer);
+
+		void generate_shaded_form_buffer (const Size* size,
+				float border,
+				int round_type,
+				float radius,
+				const Color& color,
+				short shadetop,
+				short shadedown,
+				Orientation shadedir,
+				short highlight,
+				GLBuffer* buffer);
 
 	private:
 

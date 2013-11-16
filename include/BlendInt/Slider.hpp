@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_SLIDER_HPP_
 #define _BLENDINT_SLIDER_HPP_
 
+#include <boost/smart_ptr.hpp>
+
 #include <BlendInt/AbstractSlider.hpp>
 #include <BlendInt/Button.hpp>
 

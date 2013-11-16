@@ -171,13 +171,6 @@ namespace BlendInt {
 
 		void reset_z (int z);
 
-		bool visible () const
-		{
-			return m_visible;
-		}
-
-		void set_visible (bool visible);
-
 		void show ();
 
 		void hide ();
@@ -188,7 +181,7 @@ namespace BlendInt {
 
 		const Parent& parent () const {return m_parent;}
 
-		bool in_layout () const {return m_in_layout;}
+		bool in_layout () const {return m_lock;}
 
 		EVENT_CALLER Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
 
@@ -267,7 +260,7 @@ namespace BlendInt {
 		 */
 		void set_z_simple (int z);
 
-		void set_in_layout (AbstractWidget* obj, bool status) {obj->m_in_layout = status;}
+		void set_in_layout (AbstractWidget* obj, bool status) {obj->m_lock = status;}
 
 		//Cpp::ConnectionScope& events() {return m_events;}
 
@@ -298,11 +291,12 @@ namespace BlendInt {
 		 */
 		int m_z;
 
-		bool m_in_layout;
+		/**
+		 * @brief if lock the geometry of this widget
+		 */
+		bool m_lock;
 
 		bool m_fire_events;
-
-		bool m_visible;
 
 //		DRAWABLE_PROPERTY Size m_size;
 

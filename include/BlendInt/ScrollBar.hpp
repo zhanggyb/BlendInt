@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_SCROLLBAR_HPP_
 #define _BLENDINT_SCROLLBAR_HPP_
 
+#include <boost/smart_ptr.hpp>
 #include <BlendInt/Slider.hpp>
 
 #include <BlendInt/GLBuffer.hpp>
@@ -66,6 +67,8 @@ namespace BlendInt {
 		Point m_move_start;
 
 		Point m_position_origin;
+
+		boost::scoped_ptr<GLBuffer> m_buffer;
 	};
 
 	/**
