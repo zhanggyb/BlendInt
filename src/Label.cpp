@@ -32,23 +32,23 @@
 namespace BlendInt {
 
 	Label::Label (const String& text)
-		: Widget(), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
+		: Widget(), m_text(text), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
 	{
 		set_expand_x(true);
-		FontCache::create(m_font);
 
-		resize(0, 24);	// the same height of a Buttons
-		set_text(text);
+		preset_size(0, 24);	// the same height of a Buttons
+
+		init();
 	}
 
 	Label::Label (const String& text, AbstractWidget *parent)
-		: Widget(parent), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
+		: Widget(parent), m_text(text), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
 	{
 		set_expand_x(true);
-		FontCache::create(m_font);
 
-		resize(0, 24);	// the same height of a Buttons
-		set_text(text);
+		preset_size(0, 24);	// the same height of a Buttons
+
+		init();
 	}
 
 	Label::~Label ()
@@ -253,5 +253,39 @@ namespace BlendInt {
 
 		return str_len;
 	}
+
+	void Label::init ()
+	{
+		bool cal_width = true;
+
+		FontCache* fc = FontCache::create(m_font);
+
+		m_text_outline = fc->get_text_outline(m_text);
+
+		m_length = m_text.length();
+
+		if(size().height() < m_text_outline.height()) {
+			if(expand_y()) {
+				preset_size(size().width(), m_text_outline.height());
+			} else {
+				m_length = 0;
+				cal_width = false;
+			}
+		}
+
+		if(size().width() < m_text_outline.width()) {
+			if(expand_x()) {
+				preset_size(m_text_outline.width(), size().height());
+			} else {
+				if(cal_width) m_length = get_valid_text_size();
+			}
+		}
+
+		m_origin.set_x(0);
+		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+
+		preset_preferred_size(m_text_outline.width(), m_text_outline.height());
+	}
+
 
 } /* namespace BlendInt */

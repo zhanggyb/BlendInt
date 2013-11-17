@@ -251,13 +251,14 @@ int main(int argc, char* argv[])
 	hl1->set_position(100, 700);
 
 	Label* label = new Label("Click to create: ");
+	label->set_position(400, 300);
 
-	hl1->add(label);
+//	hl1->add(label);
 
 	hl1->add(b1);
 	hl1->add(b2);
 
-//	app->bind(label);
+	app->bind(label);
 	app->bind(hl1);
 
 	std::cout << "label position: " << label->position().x() << " " << label->position().y() << std::endl;

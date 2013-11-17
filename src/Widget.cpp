@@ -42,18 +42,18 @@ namespace BlendInt {
 	: AbstractWidget(),
 	  m_border_width(1.0)
 	{
-		set_minimal_size(0, 0);
-		resize(120, 80);
-		set_preferred_size(120, 80);
+		preset_minimal_size(0, 0);
+		preset_size(120, 80);
+		preset_preferred_size(120, 80);
 	}
 
 	Widget::Widget(AbstractWidget* parent)
 	: AbstractWidget(parent),
 	  m_border_width(1.0)
 	{
-		set_minimal_size(0, 0);
-		resize(120, 80);
-		set_preferred_size(120, 80);
+		preset_minimal_size(0, 0);
+		preset_size(120, 80);
+		preset_preferred_size(120, 80);
 	}
 
 	Widget::~Widget()
@@ -65,7 +65,6 @@ namespace BlendInt {
 	{
 		if(width < 0.0) return;
 
-		// TODO: call update
 		update(WidgetBorderWidth, &width);
 
 		m_border_width = width;

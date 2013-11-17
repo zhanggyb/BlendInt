@@ -85,6 +85,8 @@ namespace BlendInt {
 
 	private:
 
+		void init ();
+
 		/**
 		 * @brief get the valid text size to print
 		 * @return how many characters to print

@@ -195,6 +195,39 @@ namespace BlendInt {
 			m_position = pos;
 		}
 
+		inline void preset_preferred_size (const Size& size)
+		{
+			m_preferred_size = size;
+		}
+
+		inline void preset_preferred_size (unsigned int w, unsigned int h)
+		{
+			m_preferred_size.set_width(w);
+			m_preferred_size.set_height(h);
+		}
+
+		inline void preset_minimal_size (const Size& size)
+		{
+			m_minimal_size = size;
+		}
+
+		inline void preset_minimal_size (unsigned int w, unsigned int h)
+		{
+			m_minimal_size.set_width(w);
+			m_minimal_size.set_height(h);
+		}
+
+		inline void preset_maximal_size (const Size& size)
+		{
+			m_maximal_size = size;
+		}
+
+		inline void preset_maximal_size (unsigned int w, unsigned int h)
+		{
+			m_maximal_size.set_width(w);
+			m_maximal_size.set_height(h);
+		}
+
 	private:
 
 		bool m_expand_x;

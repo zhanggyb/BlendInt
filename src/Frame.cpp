@@ -42,19 +42,19 @@ namespace BlendInt {
 	Frame::Frame ()
 			: Widget(), m_widget(0)
 	{
-		set_minimal_size(margin().left() + margin().right(),
+		preset_minimal_size(margin().left() + margin().right(),
 		        margin().top() + margin().bottom());
-		resize(120, 80);
-		set_preferred_size(120, 80);
+		preset_size(120, 80);
+		preset_preferred_size(120, 80);
 	}
 
 	Frame::Frame (AbstractWidget* parent)
 			: Widget(parent), m_widget(0)
 	{
-		set_minimal_size(margin().left() + margin().right(),
+		preset_minimal_size(margin().left() + margin().right(),
 		        margin().top() + margin().bottom());
-		resize(120, 80);
-		set_preferred_size(120, 80);
+		preset_size(120, 80);
+		preset_preferred_size(120, 80);
 	}
 
 	Frame::~Frame ()
