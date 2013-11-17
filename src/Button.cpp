@@ -35,7 +35,7 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		set_round_type(RoundAll);
+		preset_round_type(RoundAll);
 		set_expand_x(true);
 		resize(90, 20);
 		set_preferred_size(90, 20);
@@ -46,8 +46,9 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		set_round_type(RoundAll);
+		preset_round_type(RoundAll);
 		set_expand_x(true);
+		resize(90, 20);
 		set_text(text);
 		set_preferred_size(size());
 	}
@@ -57,7 +58,7 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		set_round_type(RoundAll);
+		preset_round_type(RoundAll);
 		set_expand_x(true);
 		resize (90, 20);
 		set_preferred_size(90, 20);
@@ -68,8 +69,9 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		set_round_type(RoundAll);
+		preset_round_type(RoundAll);
 		set_expand_x(true);
+		resize(90, 20);
 		set_text(text);
 		set_preferred_size(size());
 	}
@@ -85,7 +87,7 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				generate_rect_form_buffer(size_p, true, m_buffer.get());
+				generate_form_buffer(size_p, true, round_type(), radius(), m_buffer.get());
 				break;
 			}
 
@@ -94,6 +96,7 @@ namespace BlendInt {
 				generate_form_buffer(&(size()), true, *type_p, radius(), m_buffer.get());
 				break;
 			}
+
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
 				generate_form_buffer(&(size()), true, round_type(), *radius_p, m_buffer.get());
@@ -153,10 +156,10 @@ namespace BlendInt {
 		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 		draw_outline_buffer(m_buffer.get(), 2);
 
+		glDisable(GL_BLEND);
+
 		// Draw text
 		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
-
-		glDisable(GL_BLEND);
 
 		glPopMatrix();
 	}

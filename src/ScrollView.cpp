@@ -25,7 +25,6 @@
 #include <iostream>
 
 #include <BlendInt/ScrollView.hpp>
-#include <BlendInt/Interface.hpp>
 
 namespace BlendInt {
 
@@ -106,7 +105,7 @@ namespace BlendInt {
 //
 //		glDisable(GL_BLEND);
 
-		if(m_viewport) interface()->dispatch_render_event(m_viewport);
+		if(m_viewport) dispatch_render(m_viewport);
 
 		glDisable(GL_SCISSOR_TEST);
 
@@ -147,7 +146,7 @@ namespace BlendInt {
 				m_move_start_pos.set_y(event->position().y());
 				m_origin_pos = m_viewport->position();
 			} else {
-				Interface::instance()->dispatch_mouse_press_event(m_viewport, event);
+				dispatch_mouse_press_event(m_viewport, event);
 			}
 
 		}
@@ -158,7 +157,7 @@ namespace BlendInt {
 		if(m_move_status) m_move_status = false;
 
 		if(!m_viewport) return;
-		Interface::instance()->dispatch_mouse_release_event(m_viewport, event);
+		dispatch_mouse_release_event(m_viewport, event);
 	}
 
 	void ScrollView::move_mouse(MouseEvent* event)
@@ -226,7 +225,7 @@ namespace BlendInt {
 		}
 
 		if(contain(event->position())) {
-			Interface::instance()->dispatch_mouse_move_event(m_viewport, event);
+			dispatch_mouse_move_event(m_viewport, event);
 		}
 	}
 

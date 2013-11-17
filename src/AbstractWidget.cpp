@@ -388,6 +388,30 @@ namespace BlendInt {
 		// TODO: call update()
 	}
 
+	void AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
+	        KeyEvent* event)
+	{
+		obj->press_key(event);
+	}
+
+	void AbstractWidget::dispatch_mouse_move_event (AbstractWidget* obj,
+	        MouseEvent* event)
+	{
+		obj->move_mouse(event);
+	}
+
+	void AbstractWidget::dispatch_mouse_press_event (AbstractWidget* obj,
+	        MouseEvent* event)
+	{
+		obj->press_mouse(event);
+	}
+
+	void AbstractWidget::dispatch_mouse_release_event (AbstractWidget* obj,
+	        MouseEvent* event)
+	{
+		obj->release_mouse(event);
+	}
+
 #ifdef DEBUG
 
 	uint64_t AbstractWidget::id_last = 1;
@@ -430,3 +454,4 @@ namespace BlendInt {
 #endif
 
 } /* namespace BlendInt */
+

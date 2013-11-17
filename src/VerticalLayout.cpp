@@ -73,7 +73,7 @@ namespace BlendInt {
 		for (it = items().begin(); it != items().end(); it++) {
 			item = *it;
 			if (item) {
-				Interface::instance()->dispatch_render_event(item);
+				dispatch_render(item);
 			}
 		}
 
@@ -105,7 +105,7 @@ namespace BlendInt {
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
-			Interface::instance()->dispatch_key_press_event(*it, event);
+			dispatch_key_press_event(*it, event);
 		}
 	}
 
@@ -121,7 +121,7 @@ namespace BlendInt {
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
-			Interface::instance()->dispatch_mouse_press_event(*it, event);
+			dispatch_mouse_press_event(*it, event);
 		}
 	}
 
@@ -129,7 +129,7 @@ namespace BlendInt {
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
-			Interface::instance()->dispatch_mouse_release_event(*it, event);
+			dispatch_mouse_release_event(*it, event);
 		}
 	}
 
@@ -137,7 +137,7 @@ namespace BlendInt {
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
-			Interface::instance()->dispatch_mouse_move_event(*it, event);
+			dispatch_mouse_move_event(*it, event);
 		}
 	}
 

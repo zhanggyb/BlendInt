@@ -42,8 +42,8 @@ namespace BlendInt {
 	Frame::Frame ()
 			: Widget(), m_widget(0)
 	{
-		set_minimal_size(padding().left() + padding().right(),
-		        padding().top() + padding().bottom());
+		set_minimal_size(margin().left() + margin().right(),
+		        margin().top() + margin().bottom());
 		resize(120, 80);
 		set_preferred_size(120, 80);
 	}
@@ -51,8 +51,8 @@ namespace BlendInt {
 	Frame::Frame (AbstractWidget* parent)
 			: Widget(parent), m_widget(0)
 	{
-		set_minimal_size(padding().left() + padding().right(),
-		        padding().top() + padding().bottom());
+		set_minimal_size(margin().left() + margin().right(),
+		        margin().top() + margin().bottom());
 		resize(120, 80);
 		set_preferred_size(120, 80);
 	}
@@ -88,11 +88,11 @@ namespace BlendInt {
 			delete m_widget;
 			m_widget = widget;
 
-			m_widget->set_position(position().x() + padding().left(),
-			        position().y() + padding().bottom());
+			m_widget->set_position(position().x() + margin().left(),
+			        position().y() + margin().bottom());
 			m_widget->resize(
-			        size().width() - padding().left() - padding().right(),
-			        size().height() - padding().top() - padding().bottom());
+			        size().width() - margin().left() - margin().right(),
+			        size().height() - margin().top() - margin().bottom());
 
 			bind(m_widget);
 		}
@@ -112,14 +112,20 @@ namespace BlendInt {
 
 	void Frame::press_mouse (MouseEvent* event)
 	{
+		if(m_widget)
+			dispatch_mouse_press_event(m_widget, event);
 	}
 
 	void Frame::release_mouse (MouseEvent* event)
 	{
+		if(m_widget)
+			dispatch_mouse_release_event(m_widget, event);
 	}
 
 	void Frame::move_mouse (MouseEvent* event)
 	{
+		if(m_widget)
+			dispatch_mouse_move_event(m_widget,event);
 	}
 
 	void Frame::update (int type, const void* data)
@@ -131,7 +137,7 @@ namespace BlendInt {
 					const Point* pos_p = static_cast<const Point*>(data);
 					int offset_x = pos_p->x() - position().x();
 					int offset_y = pos_p->y() - position().y();
-					m_widget->set_position(m_widget->position().x() + offset_x,
+					dynamic_cast<AbstractExtraForm*>(m_widget)->set_position(m_widget->position().x() + offset_x,
 					        m_widget->position().y() + offset_y);
 				}
 				break;
@@ -140,8 +146,8 @@ namespace BlendInt {
 			case FormSize: {
 				if (m_widget) {
 					Size size = *(static_cast<const Size*>(data));
-					size.add_width(-(padding().left() + padding().right()));
-					size.add_height(-(padding().top() + padding().bottom()));
+					size.add_width(-(margin().left() + margin().right()));
+					size.add_height(-(margin().top() + margin().bottom()));
 					m_widget->resize(size);
 				}
 				break;
@@ -200,7 +206,7 @@ namespace BlendInt {
 			dispatch_render(m_widget);
 	}
 
-	bool Frame::contain_no_padding (const Coord2d& cursor)
+	bool Frame::contain_no_margin (const Coord2d& cursor)
 	{
 		if (cursor.x() < (position().x() + m_margin.left())
 		        || cursor.y() < (position().y() + m_margin.bottom())

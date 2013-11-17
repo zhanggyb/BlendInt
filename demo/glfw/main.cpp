@@ -32,6 +32,8 @@
 #include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/ImageView.hpp>
 
+#include "DemoFrame.hpp"
+
 using namespace BlendInt;
 using namespace std;
 
@@ -239,21 +241,29 @@ int main(int argc, char* argv[])
 //	app->bind(widget);
 //	app->bind(widget2);
 //
-//	Button* b1 = new Button;
-//	b1->set_position(100, 100);
-//
-//	Button* b2 = new Button;
-//	b2->set_position(190, 100);
-//
-//	HorizontalLayout* hl1 = new HorizontalLayout;
-//	hl1->set_position(200, 50);
-//	hl1->add(b1);
-//	hl1->add(b2);
-//
-//	app->bind(hl1);
-//
-//	hl1->set_position(250, 50);
-//
+	Button* b1 = new Button("Hello");
+	b1->set_position(100, 100);
+
+	Button* b2 = new Button;
+	b2->set_position(190, 100);
+
+	HorizontalLayout* hl1 = new HorizontalLayout;
+	hl1->set_position(100, 700);
+
+	Label* label = new Label("Click to create: ");
+
+	hl1->add(label);
+
+	hl1->add(b1);
+	hl1->add(b2);
+
+//	app->bind(label);
+	app->bind(hl1);
+
+	std::cout << "label position: " << label->position().x() << " " << label->position().y() << std::endl;
+
+//	hl1->resize(800, 40);
+
 //	Menu *menu = new Menu;
 //
 //	menu->resize(200, 400);
@@ -340,6 +350,13 @@ int main(int argc, char* argv[])
 	sc->set_position(200, 200);
 
 	app->bind(sc);
+
+	DemoFrame* frame = new DemoFrame;
+
+	app->bind(frame);
+
+//	frame->resize(800, 45);
+//	frame->set_position(100, 700);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

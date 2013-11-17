@@ -34,7 +34,7 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		set_round_type(RoundAll);
+		preset_round_type(RoundAll);
 		set_expand_x(true);
 		set_checkable(true);
 		resize(90, 20);
@@ -46,7 +46,7 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		set_round_type(RoundAll);
+		preset_round_type(RoundAll);
 		set_expand_x(true);
 		set_checkable(true);
 		set_text(text);
@@ -58,7 +58,7 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		set_round_type(RoundAll);
+		preset_round_type(RoundAll);
 		set_expand_x(true);
 		set_checkable(true);
 		resize (90, 20);
@@ -70,7 +70,7 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		set_round_type(RoundAll);
+		preset_round_type(RoundAll);
 		set_expand_x(true);
 		set_checkable(true);
 		set_text(text);
@@ -88,7 +88,7 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				generate_rect_form_buffer(size_p, true, m_buffer.get());
+				generate_form_buffer(size_p, true, round_type(), radius(), m_buffer.get());
 				break;
 			}
 
@@ -166,9 +166,9 @@ namespace BlendInt {
 		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 		draw_outline_buffer(m_buffer.get(), 2);
 
-		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
-
 		glDisable(GL_BLEND);
+
+		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
 
 		glPopMatrix();
 	}

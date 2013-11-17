@@ -57,6 +57,18 @@ namespace BlendInt {
 
 		float radius () const {return m_radius;}
 
+	protected:
+
+		inline void preset_round_type (int type)
+		{
+			m_round_type = type;
+		}
+
+		inline void preset_radius (float radius)
+		{
+			m_radius = radius;
+		}
+
 	private:
 
 		int m_round_type;

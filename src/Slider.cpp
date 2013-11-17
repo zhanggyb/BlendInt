@@ -25,7 +25,6 @@
 
 #include <BlendInt/Slider.hpp>
 
-#include <BlendInt/Interface.hpp>
 #include <BlendInt/Theme.hpp>
 
 #include <iostream>
@@ -470,13 +469,13 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		Interface::instance()->dispatch_render_event(m_slide_button);
+		dispatch_render(m_slide_button);
 	}
 
 	void Slider::move_mouse (MouseEvent* event)
 	{
 		if(m_slide_button->down()) {
-			Interface::instance()->dispatch_mouse_move_event(m_slide_button, event);
+			dispatch_mouse_move_event(m_slide_button, event);
 
 			int value = 0;
 
@@ -506,19 +505,19 @@ namespace BlendInt {
 		}
 
 		if(contain(event->position())) {
-			Interface::instance()->dispatch_mouse_move_event(m_slide_button, event);
+			dispatch_mouse_move_event(m_slide_button, event);
 		}
 	}
 
 	void Slider::press_mouse (MouseEvent* event)
 	{
 		if(m_slide_button->down()) {
-			interface()->dispatch_mouse_press_event(m_slide_button, event);
+			dispatch_mouse_press_event(m_slide_button, event);
 			return;
 		}
 
 		if(contain(event->position())) {
-			interface()->dispatch_mouse_press_event(m_slide_button, event);
+			dispatch_mouse_press_event(m_slide_button, event);
 			if(event->accepted()) return;
 
 			// Move to where mouse click
@@ -562,14 +561,14 @@ namespace BlendInt {
 	void Slider::release_mouse (MouseEvent* event)
 	{
 		if(m_slide_button->down()) {
-			Interface::instance()->dispatch_mouse_release_event(m_slide_button, event);
+			dispatch_mouse_release_event(m_slide_button, event);
 			return;
 		}
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
 
 			}
-			Interface::instance()->dispatch_mouse_release_event(m_slide_button, event);
+			dispatch_mouse_release_event(m_slide_button, event);
 		}
 	}
 

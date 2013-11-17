@@ -89,6 +89,10 @@ namespace BlendInt {
 
 		void resize (const Size& size);
 
+		Cpp::ConnectionScope& events () {return m_events;}
+
+	private:
+
 		void dispatch_render_event (AbstractWidget* obj);
 
 		void dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event);
@@ -98,10 +102,6 @@ namespace BlendInt {
 		void dispatch_mouse_release_event (AbstractWidget* obj, MouseEvent* event);
 
 		void dispatch_mouse_move_event (AbstractWidget* obj, MouseEvent* event);
-
-		Cpp::ConnectionScope& events () {return m_events;}
-
-	private:
 
 		Interface ();
 

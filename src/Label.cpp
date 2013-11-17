@@ -188,29 +188,29 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glColor4ub(m_background.r(), m_background.g(),
-				   m_background.b(), m_background.a());
-		glRectf(0.0, 0.0, size().width(), size().height());
+//		glColor4ub(m_background.r(), m_background.g(),
+//				   m_background.b(), m_background.a());
+//		glRectf(0.0, 0.0, size().width(), size().height());
 
-		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
-
-#ifdef DEBUG
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-			glVertex2i(0, 0);
-			glVertex2i(size().width(), 0);
-			glVertex2i(size().width(), size().height());
-			glVertex2i(0, size().height());
-		glEnd();
-
-		glDisable(GL_LINE_STIPPLE);
-#endif
+//#ifdef DEBUG
+//		glLineWidth(1);
+//		glEnable(GL_LINE_STIPPLE);
+//
+//		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+//		glLineStipple(1, 0xAAAA);
+//		glBegin(GL_LINE_LOOP);
+//			glVertex2i(0, 0);
+//			glVertex2i(size().width(), 0);
+//			glVertex2i(size().width(), size().height());
+//			glVertex2i(0, size().height());
+//		glEnd();
+//
+//		glDisable(GL_LINE_STIPPLE);
+//#endif
 
 		glDisable(GL_BLEND);
+
+		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
 
 		glPopMatrix();
 

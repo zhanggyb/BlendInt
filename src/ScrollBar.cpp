@@ -25,7 +25,6 @@
 
 #include <BlendInt/ScrollBar.hpp>
 #include <BlendInt/Theme.hpp>
-#include <BlendInt/Interface.hpp>
 
 namespace BlendInt {
 
@@ -352,7 +351,7 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		interface()->dispatch_render_event(m_slide_button);
+		dispatch_render(m_slide_button);
 	}
 
 
@@ -618,13 +617,13 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		Interface::instance()->dispatch_render_event(m_scroll_control);
+		dispatch_render(m_scroll_control);
 	}
 
 	void ScrollBar::move_mouse (MouseEvent* event)
 	{
 		if(m_scroll_control->pressed()) {
-				Interface::instance()->dispatch_mouse_move_event(m_scroll_control, event);
+				dispatch_mouse_move_event(m_scroll_control, event);
 
 				int value = 0;
 				if(orientation() == Vertical) {
@@ -640,19 +639,19 @@ namespace BlendInt {
 			}
 
 		if(contain(event->position())) {
-			Interface::instance()->dispatch_mouse_move_event(m_scroll_control, event);
+			dispatch_mouse_move_event(m_scroll_control, event);
 		}
 	}
 
 	void ScrollBar::press_mouse (MouseEvent* event)
 	{
 		if(m_scroll_control->pressed()) {
-			Interface::instance()->dispatch_mouse_press_event(m_scroll_control, event);
+			dispatch_mouse_press_event(m_scroll_control, event);
 			return;
 		}
 
 		if(contain(event->position())) {
-			interface()->dispatch_mouse_press_event(m_scroll_control, event);
+			dispatch_mouse_press_event(m_scroll_control, event);
 			if(event->accepted()) return;
 
 			Coord2d inner_pos;
@@ -683,7 +682,7 @@ namespace BlendInt {
 	void ScrollBar::release_mouse (MouseEvent* event)
 	{
 		if(m_scroll_control->pressed()) {
-				Interface::instance()->dispatch_mouse_release_event(m_scroll_control, event);
+				dispatch_mouse_release_event(m_scroll_control, event);
 				return;
 		}
 
@@ -691,7 +690,7 @@ namespace BlendInt {
 			if (event->button() == MouseButtonLeft) {
 
 			}
-			Interface::instance()->dispatch_mouse_release_event(m_scroll_control, event);
+			dispatch_mouse_release_event(m_scroll_control, event);
 		}
 	}
 

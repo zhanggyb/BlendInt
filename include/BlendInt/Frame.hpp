@@ -54,7 +54,7 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
-		const Margin& padding () const {return m_margin;}
+		const Margin& margin () const {return m_margin;}
 
 		void set_margin (const Margin& margin);
 
@@ -87,7 +87,7 @@ namespace BlendInt {
 		 * @param cursor
 		 * @return
 		 */
-		bool contain_no_padding (const Coord2d& cursor);
+		bool contain_no_margin (const Coord2d& cursor);
 
 	private:
 

@@ -99,6 +99,32 @@ namespace BlendInt {
 
 	protected:
 
+		/**
+		 * @brief preset the size of the form
+		 * @param width
+		 * @param height
+		 *
+		 * @note this function should be called only in the constructor of subclass to set
+		 * the size without through update() for performance.
+		 */
+		inline void preset_size (unsigned int width, unsigned int height)
+		{
+			m_size.set_width(width);
+			m_size.set_height(height);
+		}
+
+		/**
+		 * @brief preset the size of the form
+		 * @param size
+		 *
+		 * @note this function should be called only in the constructor of subclass to set
+		 * the size without through update() for performance.
+		 */
+		inline void preset_size (const Size& size)
+		{
+			m_size = size;
+		}
+
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 
 		static const float jit[WIDGET_AA_JITTER][2];

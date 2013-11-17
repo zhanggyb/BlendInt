@@ -167,6 +167,34 @@ namespace BlendInt {
 
 		bool contain (int x, int y);
 
+	protected:
+
+		/**
+		 * @brief preset the form's position
+		 * @param x
+		 * @param y
+		 *
+		 * @note this function should be called only in the constructor of subclass
+		 * to set the position without through update() for performance.
+		 */
+		inline void preset_position (int x, int y)
+		{
+			m_position.set_x(x);
+			m_position.set_y(y);
+		}
+
+		/**
+		 * @brief preset the form's position
+		 * @param pos
+		 *
+		 * @note this function should be called only in the constructor of subclass
+		 * to set the position without through update() for performance.
+		 */
+		inline void preset_position (const Point& pos)
+		{
+			m_position = pos;
+		}
+
 	private:
 
 		bool m_expand_x;

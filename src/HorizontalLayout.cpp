@@ -29,8 +29,6 @@
 
 #include <BlendInt/HorizontalLayout.hpp>
 
-#include <BlendInt/Interface.hpp>
-
 namespace BlendInt {
 
 	HorizontalLayout::HorizontalLayout (int align)
@@ -71,38 +69,38 @@ namespace BlendInt {
 	{
 		std::vector<AbstractWidget*>::const_iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
-			Interface::instance()->dispatch_render_event(*it);
+			dispatch_render(*it);
 		}
 
-#ifdef DEBUG
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(), position().y(), z());
-
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2i(0, 0);
-		glVertex2i(size().width(), 0);
-		glVertex2i(size().width(), size().height());
-		glVertex2i(0, size().height());
-		glEnd();
-
-		glDisable(GL_LINE_STIPPLE);
-
-		glPopMatrix();
-#endif
+//#ifdef DEBUG
+//		glMatrixMode(GL_MODELVIEW);
+//		glPushMatrix();
+//
+//		glTranslatef(position().x(), position().y(), z());
+//
+//		glLineWidth(1);
+//		glEnable(GL_LINE_STIPPLE);
+//
+//		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+//		glLineStipple(1, 0xAAAA);
+//		glBegin(GL_LINE_LOOP);
+//		glVertex2i(0, 0);
+//		glVertex2i(size().width(), 0);
+//		glVertex2i(size().width(), size().height());
+//		glVertex2i(0, size().height());
+//		glEnd();
+//
+//		glDisable(GL_LINE_STIPPLE);
+//
+//		glPopMatrix();
+//#endif
 	}
 
 	void HorizontalLayout::press_key (KeyEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
-			Interface::instance()->dispatch_key_press_event(*it, event);
+			dispatch_key_press_event(*it, event);
 		}
 	}
 
@@ -118,7 +116,7 @@ namespace BlendInt {
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
-			Interface::instance()->dispatch_mouse_press_event(*it, event);
+			dispatch_mouse_press_event(*it, event);
 		}
 	}
 
@@ -126,7 +124,7 @@ namespace BlendInt {
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
-			Interface::instance()->dispatch_mouse_release_event(*it, event);
+			dispatch_mouse_release_event(*it, event);
 		}
 	}
 
@@ -134,7 +132,7 @@ namespace BlendInt {
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
-			Interface::instance()->dispatch_mouse_move_event(*it, event);
+			dispatch_mouse_move_event(*it, event);
 		}
 	}
 
