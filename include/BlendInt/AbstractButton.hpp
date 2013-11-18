@@ -51,9 +51,13 @@ namespace BlendInt {
 
 		void set_text (const String& text);
 
+		const Font& font () const {return m_font;}
+
 		void set_font (const Font& font);
 
 		bool down () const {return m_status_down;}
+
+		bool hover () const {return m_status_hover;}
 
 		void set_down (bool down) {m_status_down = down;}
 
@@ -62,6 +66,8 @@ namespace BlendInt {
 		bool checkable () const {return m_checkable;}
 
 		void set_checkable (bool checkable) {m_checkable = checkable;}
+
+		const String& text () const {return m_text;}
 
 		Cpp::EventRef<> clicked() {return m_clicked;}
 
@@ -75,7 +81,18 @@ namespace BlendInt {
 
 		virtual void move_mouse (MouseEvent* event);
 
+		void set_hover (bool status)
+		{
+			m_status_hover = status;
+		}
+
 		size_t get_valid_text_size ();
+
+		size_t valid_text_length() const {return m_length;}
+
+		const Point& origin () const {return m_origin;}
+
+	private:
 
 		bool m_status_down;
 
@@ -99,8 +116,6 @@ namespace BlendInt {
 		 * @brief Box in which hold the text
 		 */
 		Rect m_text_outline;
-
-	protected:	// Events
 
 		Cpp::Event<> m_clicked;
 

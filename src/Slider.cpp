@@ -79,7 +79,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		if(m_status_down) {
+		if(down()) {
 			buffer()->select(0);
 
 		} else {
@@ -138,8 +138,8 @@ namespace BlendInt {
 		AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(parent().object.form);
 		if(!parent_obj) return;
 
-		if(m_status_down) {
-			m_status_hover = false;
+		if(down()) {
+			set_hover(false);
 
 			if(parent_obj->orientation() == Vertical) {	// Vertical
 
@@ -173,14 +173,14 @@ namespace BlendInt {
 		} else {
 
 			if(contain(event->position())) {
-				if (m_status_down) {
-					m_status_hover = false;
+				if (down()) {
+					set_hover(false);
 				} else {
-					m_status_hover = true;
+					set_hover(true);
 				}
 				event->accept(this);
 			} else {
-				m_status_hover = false;
+				set_hover(false);
 			}
 		}
 	}
@@ -189,7 +189,7 @@ namespace BlendInt {
 	{
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
-				m_status_down = true;
+				set_down(true);
 				m_move_start.set_x(event->position().x());
 				m_move_start.set_y(event->position().y());
 				m_position_origin = position();
@@ -203,7 +203,7 @@ namespace BlendInt {
 		if (event->button() == MouseButtonLeft) {
 
 		}
-		m_status_down = false;
+		set_down(false);
 
 	}
 

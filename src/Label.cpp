@@ -284,8 +284,8 @@ namespace BlendInt {
 		m_origin.set_x(0);
 		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
 
-		preset_preferred_size(m_text_outline.width(), m_text_outline.height());
+		// preset_preferred_size(m_text_outline.width(), m_text_outline.height());
+		preset_preferred_size(size());
 	}
-
 
 } /* namespace BlendInt */

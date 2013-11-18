@@ -122,13 +122,13 @@ namespace BlendInt {
 		ThemeManager* tm = ThemeManager::instance();
 
 		// draw inner, simple fill
-		if(m_status_down) {
+		if(down()) {
 			glColor4ub(tm->themes()->regular.inner_sel.r(),
 					tm->themes()->regular.inner_sel.g(),
 					tm->themes()->regular.inner_sel.b(),
 					tm->themes()->regular.inner_sel.a());
 		} else {
-			if(m_status_hover) {
+			if(hover()) {
 				glColor4ub(tm->themes()->regular.inner.highlight_red(),
 						tm->themes()->regular.inner.highlight_green(),
 						tm->themes()->regular.inner.highlight_blue(),
@@ -159,7 +159,7 @@ namespace BlendInt {
 		glDisable(GL_BLEND);
 
 		// Draw text
-		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
+		FontCache::create(font())->print(origin().x(), origin().y(), text(), valid_text_length());
 
 		glPopMatrix();
 	}
