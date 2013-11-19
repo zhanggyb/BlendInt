@@ -24,9 +24,9 @@ protected:
 
 	virtual void initialize () {}
 
-	virtual void update (int type, const void* property) {}
+	virtual void Update (int type, const void* property) {}
 
-	virtual void render ();
+	virtual void Render ();
 
 	virtual void press_key (KeyEvent* event);
 
@@ -62,9 +62,9 @@ protected:
 
 	virtual void initialize () {}
 
-	virtual void update (int type, const void* property) {}
+	virtual void Update (int type, const void* property) {}
 
-	virtual void render ();
+	virtual void Render ();
 
 	virtual void press_key (KeyEvent* event);
 
@@ -91,9 +91,9 @@ protected:
 
 	virtual void initialize () {}
 
-	virtual void update (int type, const void* property) {}
+	virtual void Update (int type, const void* property) {}
 
-	virtual void render ();
+	virtual void Render ();
 
 	virtual void press_key (KeyEvent* event);
 
@@ -120,9 +120,9 @@ protected:
 
 	virtual void initialize () {}
 
-	virtual void update (int type, const void* property) {}
+	virtual void Update (int type, const void* property) {}
 
-	virtual void render ();
+	virtual void Render ();
 
 	virtual void press_key (KeyEvent* event);
 

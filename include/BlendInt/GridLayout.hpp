@@ -53,7 +53,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void render ();
+		virtual void Render ();
 
 		virtual void add_single_widget(Frame* widget);
 	};

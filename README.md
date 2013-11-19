@@ -45,8 +45,8 @@ int main (int argc, char* argv[])
     Button* my_button = new Button;
     my_button.set_pos(200, 200); 
 
-    // in the event-render loop
-    app->render();
+    // in the event-Render loop
+    app->Render();
 
     // ready to close application
     BlendInt::Interface::release();

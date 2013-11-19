@@ -32,14 +32,14 @@ namespace BlendInt {
 	: RoundWidget(), m_pressed(false)
 	{
 		m_buffer.reset(new GLBuffer);
-		set_round_type(RoundAll);
+		SetRoundType(RoundAll);
 	}
 
 	ScrollControl::ScrollControl(AbstractWidget* parent)
 	: RoundWidget(parent), m_pressed(false)
 	{
 		m_buffer.reset(new GLBuffer);
-		set_round_type(RoundAll);
+		SetRoundType(RoundAll);
 	}
 
 	ScrollControl::~ScrollControl ()
@@ -47,7 +47,7 @@ namespace BlendInt {
 
 	}
 
-	void ScrollControl::update (int type, const void* data)
+	void ScrollControl::Update (int type, const void* data)
 	{
 		switch(type)
 		{
@@ -77,7 +77,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollControl::render ()
+	void ScrollControl::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -123,28 +123,28 @@ namespace BlendInt {
 
 			if(parent_obj->orientation() == Horizontal) {
 
-				set_position(m_position_origin.x() + event->position().x() - m_move_start.x(), position().y());
+				SetPosition(m_position_origin.x() + event->position().x() - m_move_start.x(), position().y());
 
 				if(position().x() < (parent_obj->position().x()))
 				{
-					set_position(parent_obj->position().x(), position().y());
+					SetPosition(parent_obj->position().x(), position().y());
 				}
 				if(position().x() >
 						(int)(parent_obj->position().x() + parent_obj->size().width() - size().width()))
 				{
-					set_position(parent_obj->position().x() + parent_obj->size().width() - size().width(), position().y());
+					SetPosition(parent_obj->position().x() + parent_obj->size().width() - size().width(), position().y());
 				}
 			}
 
 			if(parent_obj->orientation() == Vertical) {
-				set_position(position().x(), m_position_origin.y() + event->position().y() - m_move_start.y());
+				SetPosition(position().x(), m_position_origin.y() + event->position().y() - m_move_start.y());
 				if(position().y() < (parent_obj->position().y())) {
 
-					set_position(position().x(), parent_obj->position().y());
+					SetPosition(position().x(), parent_obj->position().y());
 				}
 				if(position().y() > (int)(parent_obj->position().y() + parent_obj->size().height() - size().height())) {
 
-					set_position(position().x(), parent_obj->position().y() + parent_obj->size().height() - size().height());
+					SetPosition(position().x(), parent_obj->position().y() + parent_obj->size().height() - size().height());
 
 				}
 			}
@@ -187,9 +187,9 @@ namespace BlendInt {
 		Color color = themes()->scroll.item;
 
 //		if(shadedir)
-//			set_radius(0.5f * size->height());
+//			SetRadius(0.5f * size->height());
 //		else
-//			set_radius(0.5f * size->width());
+//			SetRadius(0.5f * size->width());
 
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
@@ -269,41 +269,41 @@ namespace BlendInt {
 	SliderBar::SliderBar(Orientation orientation)
 	: Slider(orientation)
 	{
-		set_round_type(RoundAll);
+		SetRoundType(RoundAll);
 
 		set_control_size(50);
 
 		if (orientation == Vertical) {	// Vertical
-			set_radius(slide_button()->size().width()/2);
-			resize(slide_button()->size().width(), 400);
-			set_expand_y(true);
+			SetRadius(slide_button()->size().width()/2);
+			Resize(slide_button()->size().width(), 400);
+			SetExpandY(true);
 		} else {
-			set_radius(slide_button()->size().height());
-			resize(400, slide_button()->size().height());
-			set_expand_x(true);
+			SetRadius(slide_button()->size().height());
+			Resize(400, slide_button()->size().height());
+			SetExpandX(true);
 		}
 
-		update(SliderPropertyValue, 0);
+		Update(SliderPropertyValue, 0);
 	}
 
 	SliderBar::SliderBar(Orientation orientation, AbstractWidget* parent)
 	: Slider(orientation, parent)
 	{
-		set_round_type(RoundAll);
+		SetRoundType(RoundAll);
 
 		set_control_size(50);
 
 		if (orientation == Vertical) {	// Vertical
-			set_radius(slide_button()->size().width()/2);
-			resize(slide_button()->size().width(), 400);
-			set_expand_y(true);
+			SetRadius(slide_button()->size().width()/2);
+			Resize(slide_button()->size().width(), 400);
+			SetExpandY(true);
 		} else {
-			set_radius(slide_button()->size().height());
-			resize(400, slide_button()->size().height());
-			set_expand_x(true);
+			SetRadius(slide_button()->size().height());
+			Resize(400, slide_button()->size().height());
+			SetExpandX(true);
 		}
 
-		update(SliderPropertyValue, 0);
+		Update(SliderPropertyValue, 0);
 	}
 
 	SliderBar::~SliderBar()
@@ -311,7 +311,7 @@ namespace BlendInt {
 
 	}
 
-	void SliderBar::update(int type, const void* data)
+	void SliderBar::Update(int type, const void* data)
 	{
 		if(type == FormSize) {
 			const Size* size_p = static_cast<const Size*>(data);
@@ -319,10 +319,10 @@ namespace BlendInt {
 			return;
 		}
 
-		Slider::update(type, data);
+		Slider::Update(type, data);
 	}
 
-	void SliderBar::render ()
+	void SliderBar::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -415,58 +415,58 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation)
 			: AbstractSlider(orientation), m_scroll_control(0)
 	{
-		set_round_type(RoundAll);
-		set_radius(8);
+		SetRoundType(RoundAll);
+		SetRadius(8);
 
 		m_scroll_control = new ScrollControl(this);
 
 		if (orientation == Vertical) {	// Vertical
-			resize(16, 400);
-			m_scroll_control->resize(16, 100);
-			set_expand_y(true);
+			Resize(16, 400);
+			m_scroll_control->Resize(16, 100);
+			SetExpandY(true);
 		} else {
-			resize(400, 16);
-			m_scroll_control->resize(100, 16);
-			set_expand_x(true);
+			Resize(400, 16);
+			m_scroll_control->Resize(100, 16);
+			SetExpandX(true);
 		}
 
-		m_scroll_control->set_position (position().x(), position().y());
-		update(SliderPropertyValue, 0);
+		m_scroll_control->SetPosition (position().x(), position().y());
+		Update(SliderPropertyValue, 0);
 	}
 
 	ScrollBar::ScrollBar (Orientation orientation, AbstractWidget* parent)
 			: AbstractSlider(orientation, parent), m_scroll_control(0)
 	{
-		set_round_type(RoundAll);
-		set_radius(8);
+		SetRoundType(RoundAll);
+		SetRadius(8);
 
 		m_scroll_control = new ScrollControl(this);
 
 		if (orientation == Vertical) {	// Vertical
-			resize(16, 400);
-			m_scroll_control->resize(16, 100);
-			set_expand_y(true);
+			Resize(16, 400);
+			m_scroll_control->Resize(16, 100);
+			SetExpandY(true);
 		} else {
-			resize(400, 16);
-			m_scroll_control->resize(100, 16);
-			set_expand_x(true);
+			Resize(400, 16);
+			m_scroll_control->Resize(100, 16);
+			SetExpandX(true);
 		}
 
-		m_scroll_control->set_position (position().x(), position().y());
-		update(SliderPropertyValue, 0);
+		m_scroll_control->SetPosition (position().x(), position().y());
+		Update(SliderPropertyValue, 0);
 	}
 
 	ScrollBar::~ScrollBar ()
 	{
 	}
 
-	void ScrollBar::update (int type, const void* data)
+	void ScrollBar::Update (int type, const void* data)
 	{
 		switch (type) {
 
 			case FormPosition: {
 				const Point* new_pos = &(position());
-				m_scroll_control->set_position (new_pos->x(), new_pos->y());
+				m_scroll_control->SetPosition (new_pos->x(), new_pos->y());
 				break;
 			}
 
@@ -478,10 +478,10 @@ namespace BlendInt {
 
 			case SliderPropertyValue: {
 				if(orientation() == Vertical) {	// Vertical is 1
-					m_scroll_control->set_position (m_scroll_control->position().x(),
+					m_scroll_control->SetPosition (m_scroll_control->position().x(),
 							position().y() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {	// Horizontal is 0
-					m_scroll_control->set_position (position().x() + value() * get_space() / (float)(maximum() - minimum()),
+					m_scroll_control->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
 							m_scroll_control->position().y());
 				}
 				break;
@@ -544,7 +544,7 @@ namespace BlendInt {
 //		m_buffer.get()->unbind();
 	}
 
-	void ScrollBar::render ()
+	void ScrollBar::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

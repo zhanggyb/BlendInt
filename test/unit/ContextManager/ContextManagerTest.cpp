@@ -85,29 +85,29 @@ void ContextManagerTest::check_layer_0_0 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	ContextManager* cm = ContextManager::instance();
 
 	Frame widget1;
-	widget1.set_position(50, 50);
-	widget1.resize (50, 50);
+	widget1.SetPosition(50, 50);
+	widget1.Resize (50, 50);
 	widget1.set_name("widget1");
 
 	Frame widget2;
-	widget2.set_position(100, 100);
-	widget2.resize (50, 50);
+	widget2.SetPosition(100, 100);
+	widget2.Resize (50, 50);
 	widget2.set_name("widget2");
 
 	Frame widget3;
-	widget3.set_position(150, 150);
-	widget3.resize (50, 50);
+	widget3.SetPosition(150, 150);
+	widget3.Resize (50, 50);
 	widget3.set_name("widget3");
 	widget3.reset_z(1);
 
 	Frame widget4;
-	widget4.set_position(200, 200);
-	widget4.resize (50, 50);
+	widget4.SetPosition(200, 200);
+	widget4.Resize (50, 50);
 	widget4.set_name("widget4");
 	widget4.reset_z(1);
 
@@ -131,7 +131,7 @@ void ContextManagerTest::check_layer_0_0 ()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -186,29 +186,29 @@ void ContextManagerTest::check_layer_0_1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	ContextManager* cm = ContextManager::instance();
 
 	Frame* widget1 = new Frame;
-	widget1->set_position(50, 50);
-	widget1->resize (50, 50);
+	widget1->SetPosition(50, 50);
+	widget1->Resize (50, 50);
 	widget1->set_name("widget1");
 
 	Frame* widget2 = new Frame;
-	widget2->set_position(100, 100);
-	widget2->resize (50, 50);
+	widget2->SetPosition(100, 100);
+	widget2->Resize (50, 50);
 	widget2->set_name("widget2");
 
 	Frame* widget3 = new Frame;
-	widget3->set_position(150, 150);
-	widget3->resize (50, 50);
+	widget3->SetPosition(150, 150);
+	widget3->Resize (50, 50);
 	widget3->set_name("widget3");
 	widget3->reset_z(1);
 
 	Frame* widget4 = new Frame;
-	widget4->set_position(200, 200);
-	widget4->resize (50, 50);
+	widget4->SetPosition(200, 200);
+	widget4->Resize (50, 50);
 	widget4->set_name("widget4");
 	widget4->reset_z(1);
 
@@ -231,7 +231,7 @@ void ContextManagerTest::check_layer_0_1 ()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -284,29 +284,29 @@ void ContextManagerTest::check_layer_0_2 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	ContextManager* cm = ContextManager::instance();
 
 	Frame* widget1 = new Frame;
-	widget1->set_position(50, 50);
-	widget1->resize (50, 50);
+	widget1->SetPosition(50, 50);
+	widget1->Resize (50, 50);
 	widget1->set_name("widget1");
 
 	Frame* widget2 = new Frame(widget1);
-	widget2->set_position(100, 100);
-	widget2->resize (50, 50);
+	widget2->SetPosition(100, 100);
+	widget2->Resize (50, 50);
 	widget2->set_name("widget2");
 
 	Frame* widget3 = new Frame;
-	widget3->set_position(150, 150);
-	widget3->resize (50, 50);
+	widget3->SetPosition(150, 150);
+	widget3->Resize (50, 50);
 	widget3->set_name("widget3");
 	widget3->reset_z(1);
 
 	Frame* widget4 = new Frame(widget3);
-	widget4->set_position(200, 200);
-	widget4->resize (50, 50);
+	widget4->SetPosition(200, 200);
+	widget4->Resize (50, 50);
 	widget4->set_name("widget4");
 	widget4->reset_z(1);
 
@@ -337,7 +337,7 @@ void ContextManagerTest::check_layer_0_2 ()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -393,29 +393,29 @@ void ContextManagerTest::check_layer_0_3 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	ContextManager* cm = ContextManager::instance();
 
 	Frame* widget1 = new Frame;
-	widget1->set_position(50, 50);
-	widget1->resize (50, 50);
+	widget1->SetPosition(50, 50);
+	widget1->Resize (50, 50);
 	widget1->set_name("widget1");
 
 	Frame* widget2 = new Frame(widget1);
-	widget2->set_position(100, 100);
-	widget2->resize (50, 50);
+	widget2->SetPosition(100, 100);
+	widget2->Resize (50, 50);
 	widget2->set_name("widget2");
 
 	Frame* widget3 = new Frame;
-	widget3->set_position(150, 150);
-	widget3->resize (50, 50);
+	widget3->SetPosition(150, 150);
+	widget3->Resize (50, 50);
 	widget3->set_name("widget3");
 	widget3->reset_z(1);
 
 	Frame* widget4 = new Frame(widget3);
-	widget4->set_position(200, 200);
-	widget4->resize (50, 50);
+	widget4->SetPosition(200, 200);
+	widget4->Resize (50, 50);
 	widget4->set_name("widget4");
 	widget4->reset_z(1);
 
@@ -438,7 +438,7 @@ void ContextManagerTest::check_layer_0_3 ()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -491,28 +491,28 @@ void ContextManagerTest::check_layer_0_4 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	ContextManager* cm = ContextManager::instance();
 
 	Frame* widget1 = new Frame;
-	widget1->set_position(50, 50);
-	widget1->resize (50, 50);
+	widget1->SetPosition(50, 50);
+	widget1->Resize (50, 50);
 	widget1->set_name("widget1");
 
 	Frame* widget2 = new Frame(widget1);
-	widget2->set_position(100, 100);
-	widget2->resize (50, 50);
+	widget2->SetPosition(100, 100);
+	widget2->Resize (50, 50);
 	widget2->set_name("widget2");
 
 	Frame* widget3 = new Frame(widget2);
-	widget3->set_position(150, 150);
-	widget3->resize (50, 50);
+	widget3->SetPosition(150, 150);
+	widget3->Resize (50, 50);
 	widget3->set_name("widget3");
 
 	Frame* widget4 = new Frame(widget3);
-	widget4->set_position(200, 200);
-	widget4->resize (50, 50);
+	widget4->SetPosition(200, 200);
+	widget4->Resize (50, 50);
 	widget4->set_name("widget4");
 
 	cm->print();
@@ -560,7 +560,7 @@ void ContextManagerTest::check_layer_0_4 ()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

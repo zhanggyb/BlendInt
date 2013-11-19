@@ -99,43 +99,43 @@ void LayoutTest::horizontal_layout1()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	HorizontalLayout layout1;
-	layout1.set_position(100, 100);
+	layout1.SetPosition(100, 100);
 	layout1.set_alignment(BlendInt::AlignHorizontalCenter);
 
 	Label label1(L"Hello");
-	label1.set_position(100, 100);
+	label1.SetPosition(100, 100);
 
 	Button button1(L"Sample Button");
-	button1.set_position(200, 200);
+	button1.SetPosition(200, 200);
 
 	layout1.add(&label1);
 	layout1.add(&button1);
 
 	HorizontalLayout layout2;
-	layout2.set_position(300, 200);
+	layout2.SetPosition(300, 200);
 	layout2.set_alignment(BlendInt::AlignTop);
 
 	Label label2(L"Hello");
-	label2.set_position(100, 100);
+	label2.SetPosition(100, 100);
 
 	Button button2(L"Sample Button");
-	button2.set_position(200, 200);
+	button2.SetPosition(200, 200);
 
 	layout2.add(&label2);
 	layout2.add(&button2);
 
 	HorizontalLayout layout3;
-	layout3.set_position(500, 300);
+	layout3.SetPosition(500, 300);
 	layout3.set_alignment(BlendInt::AlignBottom);
 
 	Label label3(L"Hello");
-	label3.set_position(100, 100);
+	label3.SetPosition(100, 100);
 
 	Button button3(L"Sample Button");
-	button3.set_position(200, 200);
+	button3.SetPosition(200, 200);
 
 	layout3.add(&label3);
 	layout3.add(&button3);
@@ -147,7 +147,7 @@ void LayoutTest::horizontal_layout1()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -198,43 +198,43 @@ void LayoutTest::vertical_layout1()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	VerticalLayout layout1;
-	layout1.set_position(100, 100);
+	layout1.SetPosition(100, 100);
 	layout1.set_alignment(BlendInt::AlignVerticalCenter);
 
 	Label label1(L"Hello");
-	label1.set_position(100, 100);
+	label1.SetPosition(100, 100);
 
 	Button button1(L"Sample Button");
-	button1.set_position(200, 200);
+	button1.SetPosition(200, 200);
 
 	layout1.add(&label1);
 	layout1.add(&button1);
 
 	VerticalLayout layout2;
-	layout2.set_position(250, 100);
+	layout2.SetPosition(250, 100);
 	layout2.set_alignment(BlendInt::AlignLeft);
 
 	Label label2(L"Hello");
-	label2.set_position(100, 100);
+	label2.SetPosition(100, 100);
 
 	Button button2(L"Sample Button");
-	button2.set_position(200, 200);
+	button2.SetPosition(200, 200);
 
 	layout2.add(&label2);
 	layout2.add(&button2);
 
 	VerticalLayout layout3;
-	layout3.set_position(500, 100);
+	layout3.SetPosition(500, 100);
 	layout3.set_alignment(BlendInt::AlignRight);
 
 	Label label3(L"Hello");
-	label3.set_position(100, 100);
+	label3.SetPosition(100, 100);
 
 	Button button3(L"Sample Button");
-	button3.set_position(200, 200);
+	button3.SetPosition(200, 200);
 
 	layout3.add(&label3);
 	layout3.add(&button3);
@@ -246,7 +246,7 @@ void LayoutTest::vertical_layout1()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -297,17 +297,17 @@ void LayoutTest::layout_mix1()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	VerticalLayout* layout1 = new VerticalLayout;
-	layout1->set_position(100, 100);
+	layout1->SetPosition(100, 100);
 	layout1->set_alignment(BlendInt::AlignVerticalCenter);
 
 	Label* label1 = new Label(L"la1");
-	label1->set_position(100, 100);
+	label1->SetPosition(100, 100);
 
 	Button* button1 = new Button(L"Button1");
-	button1->set_position(200, 200);
+	button1->SetPosition(200, 200);
 
 	layout1->add(label1);
 	layout1->add(button1);
@@ -315,23 +315,23 @@ void LayoutTest::layout_mix1()
 	HorizontalLayout* layout2 = new HorizontalLayout;
 
 	Label* label2 = new Label(L"Hello Blender");
-	label2->set_position(500, 500);
+	label2->SetPosition(500, 500);
 
 	Button* button2 = new Button(L"Sample Button");
-	button2->set_position(200, 200);
+	button2->SetPosition(200, 200);
 
 	layout2->add(label2);
 	layout2->add(layout1);
 	layout2->add(button2);
 
-	layout2->set_position (400, 500);
+	layout2->SetPosition (400, 500);
 
 	app->bind(layout2);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -380,43 +380,43 @@ void LayoutTest::layout_mix2()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	VerticalLayout layout1;
-	layout1.set_position(100, 100);
+	layout1.SetPosition(100, 100);
 	layout1.set_alignment(BlendInt::AlignVerticalCenter);
 
 	Label label1(L"Hello");
-	label1.set_position(100, 100);
+	label1.SetPosition(100, 100);
 
 	Button button1(L"Sample Button");
-	button1.set_position(200, 200);
+	button1.SetPosition(200, 200);
 
 	layout1.add(&label1);
 	layout1.add(&button1);
 
 	VerticalLayout layout2;
-	layout2.set_position(250, 100);
+	layout2.SetPosition(250, 100);
 	layout2.set_alignment(BlendInt::AlignLeft);
 
 	Label label2(L"Hello");
-	label2.set_position(100, 100);
+	label2.SetPosition(100, 100);
 
 	Button button2(L"Sample Button");
-	button2.set_position(200, 200);
+	button2.SetPosition(200, 200);
 
 	layout2.add(&label2);
 	layout2.add(&button2);
 
 	VerticalLayout layout3;
-	layout3.set_position(500, 100);
+	layout3.SetPosition(500, 100);
 	layout3.set_alignment(BlendInt::AlignRight);
 
 	Label label3(L"Hello");
-	label3.set_position(100, 100);
+	label3.SetPosition(100, 100);
 
 	Button button3(L"Sample Button");
-	button3.set_position(200, 200);
+	button3.SetPosition(200, 200);
 
 	layout3.add(&label3);
 	layout3.add(&button3);
@@ -428,14 +428,14 @@ void LayoutTest::layout_mix2()
 	layout4.add(&layout1);
 	layout4.add(&layout2);
 	layout4.add(&layout3);
-	layout4.set_position(400, 200);
+	layout4.SetPosition(400, 200);
 
 	app->bind(&layout4);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

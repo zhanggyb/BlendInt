@@ -136,7 +136,7 @@ namespace BlendInt {
 //		return box;
 //	}
 
-	void TextBuffer::render ()
+	void TextBuffer::Render ()
 	{
 		//glDisable(GL_LIGHTING);
 		//glDisable(GL_DEPTH_TEST);

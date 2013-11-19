@@ -43,8 +43,8 @@ namespace BlendInt {
 
 		AbstractExtraForm& operator = (const AbstractExtraForm& orig)
 		{
-			set_position(orig.position());
-			resize(orig.size());
+			SetPosition(orig.position());
+			Resize(orig.size());
 			m_expand_x = orig.expand_x();
 			m_expand_y = orig.expand_y();
 			m_preferred_size = orig.preferred_size();
@@ -80,14 +80,14 @@ namespace BlendInt {
 		 * @param y
 		 * @return true if new position is set, false if it's the same as the current position
 		 */
-		bool set_position (int x, int y);
+		bool SetPosition (int x, int y);
 
 		/**
 		 * @brief set the form's position
 		 * @param position
 		 * @return true if new position is set, false if it's the same as the current position
 		 */
-		bool set_position (const Point& position);
+		bool SetPosition (const Point& position);
 
 		/**
 		 * @brief reset the size of the form
@@ -97,16 +97,16 @@ namespace BlendInt {
 		 *
 		 * Hide the same function in base class
 		 */
-		bool resize (unsigned int width, unsigned int height);
+		bool Resize (unsigned int width, unsigned int height);
 
 		/**
 		 * @brief reset the size of the form
 		 * @param size
 		 * @return
 		 *
-		 * Check if the given size is in [min, max], if is, call resize() in base class
+		 * Check if the given size is in [min, max], if is, call Resize() in base class
 		 */
-		bool resize (const Size& size);
+		bool Resize (const Size& size);
 
 		/**
 		 * @brief set the preferred size
@@ -114,14 +114,14 @@ namespace BlendInt {
 		 * @param height
 		 * @return true if new preferred size is set, false if not
 		 */
-		bool set_preferred_size (unsigned int width, unsigned int height);
+		bool SetPreferredSize (unsigned int width, unsigned int height);
 
 		/**
 		 * @brief set the preferred size
 		 * @param size
 		 * @return true if new preferred size is set, false if not
 		 */
-		bool set_preferred_size (const Size& size);
+		bool SetPreferredSize (const Size& size);
 
 		/**
 		 * @brief set the minimal size
@@ -129,14 +129,14 @@ namespace BlendInt {
 		 * @param height
 		 * @return true if the new minimal size is set, false if not
 		 */
-		bool set_minimal_size (unsigned int width, unsigned int height);
+		bool SetMinimalSize (unsigned int width, unsigned int height);
 
 		/**
 		 * @brief set the minimal size
 		 * @param size
 		 * @return true if the new minimal size is set, false if not
 		 */
-		bool set_minimal_size (const Size& size);
+		bool SetMinimalSize (const Size& size);
 
 		/**
 		 * @brief set the maximal size
@@ -144,24 +144,24 @@ namespace BlendInt {
 		 * @param height
 		 * @return true if the new maximial size is set, false if not
 		 */
-		bool set_maximal_size (unsigned int width, unsigned int height);
+		bool SetMaximalSize (unsigned int width, unsigned int height);
 
 		/**
 		 * @brief set the maximal size
 		 * @param size
 		 * @return true if the new maximal size is set, false if not
 		 */
-		bool set_maximal_size (const Size& size);
+		bool SetMaximalSize (const Size& size);
 
-		void set_expand_x (bool expand) {m_expand_x = expand;}
+		void SetExpandX (bool expand) {m_expand_x = expand;}
 
 		bool expand_x () const {return m_expand_x;}
 
-		void set_expand_y (bool expand) {m_expand_y = expand;}
+		void SetExpandY (bool expand) {m_expand_y = expand;}
 
 		bool expand_y () const {return m_expand_y;}
 
-		void set_expand (bool expand) {m_expand_x = expand; m_expand_y = expand;}
+		void SetExpand (bool expand) {m_expand_x = expand; m_expand_y = expand;}
 
 		bool contain (const Point& point);
 
@@ -175,9 +175,9 @@ namespace BlendInt {
 		 * @param y
 		 *
 		 * @note this function should be called only in the constructor of subclass
-		 * to set the position without through update() for performance.
+		 * to set the position without through Update() for performance.
 		 */
-		inline void preset_position (int x, int y)
+		inline void set_position (int x, int y)
 		{
 			m_position.set_x(x);
 			m_position.set_y(y);
@@ -188,45 +188,74 @@ namespace BlendInt {
 		 * @param pos
 		 *
 		 * @note this function should be called only in the constructor of subclass
-		 * to set the position without through update() for performance.
+		 * to set the position without through Update() for performance.
 		 */
-		inline void preset_position (const Point& pos)
+		inline void set_position (const Point& pos)
 		{
 			m_position = pos;
 		}
 
-		inline void preset_preferred_size (const Size& size)
+		inline void set_preferred_size (const Size& size)
 		{
 			m_preferred_size = size;
 		}
 
-		inline void preset_preferred_size (unsigned int w, unsigned int h)
+		inline void set_preferred_size (unsigned int w, unsigned int h)
 		{
 			m_preferred_size.set_width(w);
 			m_preferred_size.set_height(h);
 		}
 
-		inline void preset_minimal_size (const Size& size)
+		inline void set_minimal_size (const Size& size)
 		{
 			m_minimal_size = size;
 		}
 
-		inline void preset_minimal_size (unsigned int w, unsigned int h)
+		inline void set_minimal_size (unsigned int w, unsigned int h)
 		{
 			m_minimal_size.set_width(w);
 			m_minimal_size.set_height(h);
 		}
 
-		inline void preset_maximal_size (const Size& size)
+		inline void set_maximal_size (const Size& size)
 		{
 			m_maximal_size = size;
 		}
 
-		inline void preset_maximal_size (unsigned int w, unsigned int h)
+		inline void set_maximal_size (unsigned int w, unsigned int h)
 		{
 			m_maximal_size.set_width(w);
 			m_maximal_size.set_height(h);
 		}
+
+		inline void set_expand_x (bool expand)
+		{
+			m_expand_x = expand;
+		}
+
+		inline void set_expand_y (bool expand)
+		{
+			m_expand_y = expand;
+		}
+
+		/**
+		 * @brief resize other object's size
+		 * @param obj
+		 * @param w
+		 * @param h
+		 *
+		 * @note should be used in layout only
+		 */
+		static void Resize (AbstractExtraForm* obj, unsigned int w, unsigned int h);
+
+		/**
+		 * @brief resize other object's size
+		 * @param obj
+		 * @param size
+		 *
+		 * @note should be used in layout only
+		 */
+		static void Resize (AbstractExtraForm* obj, const Size& size);
 
 	private:
 

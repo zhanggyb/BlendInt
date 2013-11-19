@@ -44,7 +44,6 @@ namespace BlendInt {
 #ifdef DEBUG
 		  ,m_id(0)
 #endif
-
 	{
 #ifdef DEBUG
 		// generate a unique id
@@ -73,7 +72,6 @@ namespace BlendInt {
 #ifdef DEBUG
 		  , m_id(0)
 #endif
-
 	{
 		bind_to(parent);
 
@@ -242,84 +240,84 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractWidget::resize (unsigned int width, unsigned int height)
+	void AbstractWidget::Resize (unsigned int width, unsigned int height)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_lock) return;
 
-		if(AbstractExtraForm::resize(width, height)) {
+		if(AbstractExtraForm::Resize(width, height)) {
 			fire_property_changed_event(FormSize);
 		}
 	}
 
-	void AbstractWidget::resize (const Size& size)
+	void AbstractWidget::Resize (const Size& size)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_lock) return;
 
-		if(AbstractExtraForm::resize(size)) {
+		if(AbstractExtraForm::Resize(size)) {
 			fire_property_changed_event(FormSize);
 		}
 	}
 
-	void AbstractWidget::set_position (int x, int y)
+	void AbstractWidget::SetPosition (int x, int y)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_lock) return;
 
-		if(AbstractExtraForm::set_position(x, y)) {
+		if(AbstractExtraForm::SetPosition(x, y)) {
 			fire_property_changed_event(FormPosition);
 		}
 	}
 
-	void AbstractWidget::set_position (const Point& pos)
+	void AbstractWidget::SetPosition (const Point& pos)
 	{
 		// If the object is managed by a layout, disallow position setting
 		if(m_lock) return;
 
-		if(AbstractExtraForm::set_position(pos)) {
+		if(AbstractExtraForm::SetPosition(pos)) {
 			fire_property_changed_event(FormPosition);
 		}
 	}
 
-	void AbstractWidget::set_preferred_size(unsigned int width, unsigned int height)
+	void AbstractWidget::SetPreferredSize(unsigned int width, unsigned int height)
 	{
-		if(AbstractExtraForm::set_preferred_size(width, height)) {
+		if(AbstractExtraForm::SetPreferredSize(width, height)) {
 			fire_property_changed_event(FormPreferredSize);
 		}
 	}
 
-	void AbstractWidget::set_preferred_size(const Size& size)
+	void AbstractWidget::SetPreferredSize(const Size& size)
 	{
-		if(AbstractExtraForm::set_preferred_size(size)) {
+		if(AbstractExtraForm::SetPreferredSize(size)) {
 			fire_property_changed_event(FormPreferredSize);
 		}
 	}
 
-	void AbstractWidget::set_minimal_size(unsigned int width, unsigned int height)
+	void AbstractWidget::SetMinimalSize(unsigned int width, unsigned int height)
 	{
-		if(AbstractExtraForm::set_minimal_size(width, height)) {
+		if(AbstractExtraForm::SetMinimalSize(width, height)) {
 			fire_property_changed_event(FormMinimalSize);
 		}
 	}
 
-	void AbstractWidget::set_minimal_size(const Size& size)
+	void AbstractWidget::SetMinimalSize(const Size& size)
 	{
-		if(AbstractExtraForm::set_minimal_size(size)) {
+		if(AbstractExtraForm::SetMinimalSize(size)) {
 			fire_property_changed_event(FormMinimalSize);
 		}
 	}
 
-	void AbstractWidget::set_maximal_size(unsigned int width, unsigned int height)
+	void AbstractWidget::SetMaximalSize(unsigned int width, unsigned int height)
 	{
-		if(AbstractExtraForm::set_maximal_size(width, height)) {
+		if(AbstractExtraForm::SetMaximalSize(width, height)) {
 			fire_property_changed_event(FormMaximalSize);
 		}
 	}
 
-	void AbstractWidget::set_maximal_size(const Size& size)
+	void AbstractWidget::SetMaximalSize(const Size& size)
 	{
-		if(AbstractExtraForm::set_maximal_size(size)) {
+		if(AbstractExtraForm::SetMaximalSize(size)) {
 			fire_property_changed_event(FormMaximalSize);
 		}
 	}
@@ -385,7 +383,7 @@ namespace BlendInt {
 			(*it)->set_z_simple (z);
 		}
 
-		// TODO: call update()
+		// TODO: call Update()
 	}
 
 	void AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,

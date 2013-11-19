@@ -81,18 +81,18 @@ void AbstractButtonTest::show1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Button button(L"The Default Value");
 	button.set_font(Font("Droid Sans"));
-	button.set_position(Point(50, 50));
+	button.SetPosition(Point(50, 50));
 
 	app->bind(&button);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

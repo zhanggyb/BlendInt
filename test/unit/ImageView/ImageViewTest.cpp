@@ -80,17 +80,17 @@ void ImageViewTest::show1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	ImageView imageview;
-	imageview.set_position(400, 300);
+	imageview.SetPosition(400, 300);
 
 	app->bind(&imageview);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

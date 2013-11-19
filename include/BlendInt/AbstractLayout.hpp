@@ -116,9 +116,9 @@ namespace BlendInt {
 
 		virtual void initialize () {}
 
-		virtual void update (int type, const void* data);
+		virtual void Update (int type, const void* data);
 
-		virtual void render () = 0;
+		virtual void Render () = 0;
 
 		virtual void add_item (Widget* form) = 0;
 
@@ -141,7 +141,7 @@ namespace BlendInt {
 		 * @brief the sizing mode: flow or fixed
 		 *
 		 * This property is mostly used when this layout is the root layout in a widget
-		 * But the size can still be changes with resize()
+		 * But the size can still be changes with Resize()
 		 */
 		LayoutSizingMode m_sizing_mode;
 

@@ -36,22 +36,22 @@ namespace BlendInt {
 
 	}
 
-	void AbstractRoundBox::set_round_type(int type)
+	void AbstractRoundBox::SetRoundType(int type)
 	{
 		if(round_type() == type) return;
 
-		update (FormRoundType, &type);
+		Update (FormRoundType, &type);
 
-		RoundBoxBase::set_round_type(type);
+		set_round_type(type);
 	}
 
-	void AbstractRoundBox::set_radius(float rad)
+	void AbstractRoundBox::SetRadius(float rad)
 	{
 		if(radius() == rad) return;
 
-		update(FormRoundRadius, &rad);
+		Update(FormRoundRadius, &rad);
 
-		RoundBoxBase::set_radius(rad);
+		set_radius(rad);
 	}
 
 }

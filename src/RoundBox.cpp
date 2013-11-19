@@ -36,12 +36,12 @@ namespace BlendInt {
 
 	}
 
-	void RoundBox::update (int type, const void* data)
+	void RoundBox::Update (int type, const void* data)
 	{
 
 	}
 
-	void RoundBox::render()
+	void RoundBox::Render()
 	{
 
 	}

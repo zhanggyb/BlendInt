@@ -31,15 +31,15 @@ namespace BlendInt {
 	ScrollView::ScrollView()
 	: Widget(), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
 	{
-		resize(200, 160);
-		set_preferred_size(200, 160);
+		Resize(200, 160);
+		SetPreferredSize(200, 160);
 	}
 
 	ScrollView::ScrollView(AbstractWidget* parent)
 	: Widget(parent), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
 	{
-		resize(200, 160);
-		set_preferred_size(200, 160);
+		Resize(200, 160);
+		SetPreferredSize(200, 160);
 	}
 
 	void ScrollView::set_viewport(AbstractWidget* viewport)
@@ -64,11 +64,11 @@ namespace BlendInt {
 			int x = position().x() + (w - static_cast<int>(m_viewport->size().width())) / 2;
 			int y = position().y() + (h - static_cast<int>(m_viewport->size().height())) / 2;
 
-			m_viewport->set_position(x, y);
+			m_viewport->SetPosition(x, y);
 		}
 	}
 
-	void ScrollView::update (int type, const void* data)
+	void ScrollView::Update (int type, const void* data)
 	{
 		switch(type) {
 
@@ -83,7 +83,7 @@ namespace BlendInt {
 
 	}
 
-	void ScrollView::render ()
+	void ScrollView::Render ()
 	{
 		glEnable (GL_SCISSOR_TEST);
 		glScissor (position().x(),
@@ -177,18 +177,18 @@ namespace BlendInt {
 					if (x_min > x_max)
 						x_min = x_max;
 
-					m_viewport->set_position(
+					m_viewport->SetPosition(
 					        m_origin_pos.x() + event->position().x()
 					                - m_move_start_pos.x(),
 					        m_viewport->position().y());
 
 					if (m_viewport->position().x() < x_min) {
-						m_viewport->set_position(x_min,
+						m_viewport->SetPosition(x_min,
 						        m_viewport->position().y());
 					}
 
 					if (m_viewport->position().x() > x_max) {
-						m_viewport->set_position(x_max,
+						m_viewport->SetPosition(x_max,
 						        m_viewport->position().y());
 					}
 
@@ -204,18 +204,18 @@ namespace BlendInt {
 					if (y_min > y_max)
 						y_min = y_max;
 
-					m_viewport->set_position(m_viewport->position().x(),
+					m_viewport->SetPosition(m_viewport->position().x(),
 					        m_origin_pos.y() + event->position().y()
 					                - m_move_start_pos.y());
 
 
 					if (m_viewport->position().y() < y_min) {
-						m_viewport->set_position(m_viewport->position().x(),
+						m_viewport->SetPosition(m_viewport->position().x(),
 						        y_min);
 					}
 
 					if (m_viewport->position().y() > y_max) {
-						m_viewport->set_position(m_viewport->position().x(),
+						m_viewport->SetPosition(m_viewport->position().x(),
 						        y_max);
 					}
 				}

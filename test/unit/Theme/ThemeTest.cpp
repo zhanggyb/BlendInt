@@ -106,7 +106,7 @@ void ThemeTest::initialize2 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
     ThemeManager* theme = ThemeManager::instance();
 	//_themeUI.wcol_tool.outline = RGBAf(0.098, 0.098, 0.098);
@@ -114,7 +114,7 @@ void ThemeTest::initialize2 ()
 	Color textcolor = theme->themes()->menu_item.text;
 
 	Label label(L"Text in Label");
-	label.set_position(Point(50, 50));
+	label.SetPosition(Point(50, 50));
 	label.set_background(bg_color);
 	label.set_font(Font("Droid Sans", 12));
 	label.set_foreground(textcolor);
@@ -124,7 +124,7 @@ void ThemeTest::initialize2 ()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

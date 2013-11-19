@@ -50,9 +50,9 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void update (int type, const void* data);
+		virtual void Update (int type, const void* data);
 
-		virtual void render ();
+		virtual void Render ();
 
 	private:
 

@@ -143,18 +143,18 @@ namespace BlendInt {
 		return size_;
 	}
 
-	void Interface::resize (int width, int height)
+	void Interface::Resize (int width, int height)
 	{
 		size_.set_width(width);
 		size_.set_height(height);
 	}
 
-	void Interface::resize (const Size& size)
+	void Interface::Resize (const Size& size)
 	{
 		size_ = size;
 	}
 
-	void Interface::render ()
+	void Interface::Render ()
 	{
 		int width = size_.width();
 		int height = size_.height();
@@ -193,7 +193,7 @@ namespace BlendInt {
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				(*set_it)->render();
+				(*set_it)->Render();
 			}
 		}
 		m_ticktack = m_ticktack ? 0 : 1;
@@ -203,8 +203,8 @@ namespace BlendInt {
 
 	void Interface::dispatch_render_event (AbstractWidget* obj)
 	{
-		// ticktack makes sure only render once, the ticktack of Interface reversed in Interface::render()
-		obj->render();
+		// ticktack makes sure only Render once, the ticktack of Interface reversed in Interface::Render()
+		obj->Render();
 	}
 
 #ifdef DEBUG
@@ -261,7 +261,7 @@ namespace BlendInt {
 
 	void Interface::resizeEvent (int width, int height)
 	{
-		// TODO: resize all widgets/layouts in children
+		// TODO: Resize all widgets/layouts in children
 		size_.set_width(width);
 		size_.set_height(height);
 	}
@@ -391,7 +391,7 @@ namespace BlendInt {
 		set<AbstractWidget*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
-        event.set_position(cursor_pos_x_, cursor_pos_y_);
+        event.SetPosition(cursor_pos_x_, cursor_pos_y_);
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
@@ -437,7 +437,7 @@ namespace BlendInt {
 		set<AbstractWidget*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
-        event.set_position(cursor_pos_x_, cursor_pos_y_);
+        event.SetPosition(cursor_pos_x_, cursor_pos_y_);
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{

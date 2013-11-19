@@ -134,7 +134,7 @@ void TextBufferTest::showcharacter1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Font font("Sans", 16);
 
@@ -169,8 +169,8 @@ void TextBufferTest::showcharacter1 ()
 		glLoadIdentity();
 
 		draw_grid (width, height);
-		// Test buffer render
-		buf.render();
+		// Test buffer Render
+		buf.Render();
 
 		glDisable(GL_BLEND);
 
@@ -219,7 +219,7 @@ void TextBufferTest::showtextline1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	TextBuffer buf;
 	buf.setFont(Font("Sans",16));
@@ -251,8 +251,8 @@ void TextBufferTest::showtextline1 ()
 
 		draw_grid (width, height);
 
-		// Test buffer render
-		buf.render();
+		// Test buffer Render
+		buf.Render();
 
 		glDisable(GL_BLEND);
 
@@ -301,7 +301,7 @@ void TextBufferTest::showtextline2 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	TextBuffer buf;
 	buf.setFont(Font("Sans", 16));
@@ -333,8 +333,8 @@ void TextBufferTest::showtextline2 ()
 
 		draw_grid (width, height);
 
-		// Test buffer render
-		buf.render();
+		// Test buffer Render
+		buf.Render();
 
 		glDisable(GL_BLEND);
 
@@ -383,7 +383,7 @@ void TextBufferTest::showtextline3 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	TextBuffer buf;
 	buf.setFont(Font("Sans", 16));
@@ -415,8 +415,8 @@ void TextBufferTest::showtextline3 ()
 
 		draw_grid (width, height);
 
-		// Test buffer render
-		buf.render();
+		// Test buffer Render
+		buf.Render();
 
 		glDisable(GL_BLEND);
 
@@ -465,7 +465,7 @@ void TextBufferTest::showtextline4 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	TextBuffer buf;
 	buf.setFont(Font("Sans", 16));
@@ -497,8 +497,8 @@ void TextBufferTest::showtextline4 ()
 
 		draw_grid (width, height);
 
-		// Test buffer render
-		buf.render();
+		// Test buffer Render
+		buf.Render();
 
 		glDisable(GL_BLEND);
 
@@ -547,7 +547,7 @@ void TextBufferTest::multiple_buf_show1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	String str1 = L"Hello World!";
 	TextBuffer buf1(str1);
@@ -589,12 +589,12 @@ void TextBufferTest::multiple_buf_show1 ()
 
 		draw_grid (width, height);
 
-		// Test buffer render
-		buf1.render();
+		// Test buffer Render
+		buf1.Render();
 
-		buf2.render();
+		buf2.Render();
 
-		buf3.render();
+		buf3.Render();
 
 		glDisable(GL_BLEND);
 

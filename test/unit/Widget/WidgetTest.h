@@ -24,7 +24,7 @@ public:
 
 protected:
 
-	virtual void render ();
+	virtual void Render ();
 };
 
 class WidgetTest: public CppUnit::TestFixture

@@ -63,7 +63,7 @@ namespace BlendInt {
 			h = size().height();
 		}
 
-		resize(w_max, item->size().height() + h);
+		Resize(w_max, item->size().height() + h);
 		m_list.push_back(item);
 	}
 
@@ -89,7 +89,7 @@ namespace BlendInt {
 		event->accept(this);
 	}
 
-	void Menu::update(int type, const void* data)
+	void Menu::Update(int type, const void* data)
 	{
 		switch (type) {
 
@@ -111,12 +111,12 @@ namespace BlendInt {
 			}
 
 			default:
-				Widget::update(type, data);
+				Widget::Update(type, data);
 				break;
 		}
 	}
 
-	void Menu::render()
+	void Menu::Render()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

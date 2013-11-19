@@ -87,7 +87,7 @@ void TextureFontTest::show1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Freetype fe;
 	fe.open(Font("Sans"), 96);
@@ -101,7 +101,7 @@ void TextureFontTest::show1 ()
 	while (!glfwWindowShouldClose(window)) {
 
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Enable blending, necessary for our alpha texture */
 		glEnable(GL_BLEND);
@@ -120,7 +120,7 @@ void TextureFontTest::show1 ()
 		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
 		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-		// render character from atlas here
+		// Render character from atlas here
 		/* Calculate the vertex and texture coordinates */
 		float x2 = 100 + tex_font.glyph().bitmap_left;
 		float y2 = 100 + tex_font.glyph().bitmap_top;
@@ -185,7 +185,7 @@ void TextureFontTest::show2 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Freetype fe;
 	fe.open(Font("Sans"), 96);
@@ -199,7 +199,7 @@ void TextureFontTest::show2 ()
 	while (!glfwWindowShouldClose(window)) {
 
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Enable blending, necessary for our alpha texture */
 		glEnable(GL_BLEND);
@@ -218,7 +218,7 @@ void TextureFontTest::show2 ()
 		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
 		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-		// render character from atlas here
+		// Render character from atlas here
 		/* Calculate the vertex and texture coordinates */
 
 		float x2 = 100 + tex_font.glyph().bitmap_left;

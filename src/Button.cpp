@@ -35,10 +35,10 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		preset_round_type(RoundAll);
-		set_expand_x(true);
-		resize(90, 20);
-		set_preferred_size(90, 20);
+		set_round_type(RoundAll);
+		SetExpandX(true);
+		Resize(90, 20);
+		SetPreferredSize(90, 20);
 	}
 
 	Button::Button (const String& text)
@@ -46,11 +46,11 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		preset_round_type(RoundAll);
-		set_expand_x(true);
-		resize(90, 20);
+		set_round_type(RoundAll);
+		SetExpandX(true);
+		Resize(90, 20);
 		set_text(text);
-		set_preferred_size(size());
+		SetPreferredSize(size());
 	}
 
 	Button::Button (AbstractWidget* parent)
@@ -58,10 +58,10 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		preset_round_type(RoundAll);
-		set_expand_x(true);
-		resize (90, 20);
-		set_preferred_size(90, 20);
+		set_round_type(RoundAll);
+		SetExpandX(true);
+		Resize (90, 20);
+		SetPreferredSize(90, 20);
 	}
 
 	Button::Button (const String& text, AbstractWidget* parent)
@@ -69,11 +69,11 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		preset_round_type(RoundAll);
-		set_expand_x(true);
-		resize(90, 20);
+		set_round_type(RoundAll);
+		SetExpandX(true);
+		Resize(90, 20);
 		set_text(text);
-		set_preferred_size(size());
+		SetPreferredSize(size());
 	}
 
 	Button::~Button ()
@@ -81,7 +81,7 @@ namespace BlendInt {
 
 	}
 
-	void Button::update(int type, const void* data)
+	void Button::Update(int type, const void* data)
 	{
 		switch (type) {
 
@@ -104,12 +104,12 @@ namespace BlendInt {
 			}
 
 			default:
-				AbstractButton::update(type, data);
+				AbstractButton::Update(type, data);
 				break;
 		}
 	}
 
-	void Button::render ()
+	void Button::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

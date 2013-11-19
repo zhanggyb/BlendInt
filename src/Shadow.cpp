@@ -39,7 +39,7 @@ namespace BlendInt {
 //	  m_direction(ShadowAll),
 	  m_blur_rad(12.0)
 	{
-		set_round_type(RoundAll);
+		SetRoundType(RoundAll);
 //		m_offset_x = 5;
 //		m_offset_y = -5;
 	}
@@ -53,12 +53,12 @@ namespace BlendInt {
 	{
 		if(blur_rad == m_blur_rad) return;
 
-		update(ShadowBlurRadius, &blur_rad);
+		Update(ShadowBlurRadius, &blur_rad);
 
 		m_blur_rad = blur_rad;
 	}
 
-	void Shadow::update (int type, const void* data)
+	void Shadow::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -114,7 +114,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Shadow::render ()
+	void Shadow::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

@@ -57,9 +57,9 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void update (int type, const void* data);
+		virtual void Update (int type, const void* data);
 
-		virtual void render ();
+		virtual void Render ();
 
 		virtual void press_key (KeyEvent* event);
 
@@ -84,12 +84,12 @@ namespace BlendInt {
 		void draw_inner (const float inner_v[WIDGET_SIZE_MAX][2], int num);
 
 		/**
-		 * @brief draw the GL Buffer in render()
+		 * @brief draw the GL Buffer in Render()
 		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
 		 * @param mode the primitive or primitives mode defined in gl.h, 
 		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
 		 *
-		 * draw the buffer of index in render(), the parameter mode is
+		 * draw the buffer of index in Render(), the parameter mode is
 		 * the enumeration type of primitive or primitives defined in
 		 * gl.h: GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
@@ -98,12 +98,12 @@ namespace BlendInt {
 		void draw_inner_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
 
 		/**
-		 * @brief draw shaded GL buffer in render()
+		 * @brief draw shaded GL buffer in Render()
 		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
 		 * @param mode the primitive or primitives mode defined in gl.h,
 		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
 		 *
-		 * draw the buffer of index in render(), the parameter mode is
+		 * draw the buffer of index in Render(), the parameter mode is
 		 * the enumeration type of primitive or primitives defined in
 		 * gl.h: GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
@@ -112,12 +112,12 @@ namespace BlendInt {
 		void draw_shaded_inner_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
 
 		/**
-		 * @brief draw the GL Buffer in render() with anti-alias
+		 * @brief draw the GL Buffer in Render() with anti-alias
 		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
 		 * @param mode the primitive or primitives mode defined in gl.h,
 		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
 		 *
-		 * draw the buffer of index in render(), the parameter mode is
+		 * draw the buffer of index in Render(), the parameter mode is
 		 * the enumeration type of primitive or primitives defined in
 		 * gl.h: GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,

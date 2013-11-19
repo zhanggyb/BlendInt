@@ -44,8 +44,8 @@ public:
 	DoEvent()
 	: i(0)
 	{
-		m_layout.set_position(600, 100);
-		//m_hlayout.resize(400, 100);
+		m_layout.SetPosition(600, 100);
+		//m_hlayout.Resize(400, 100);
 //		m_hlayout.set_sizing_mode(LayoutFixed);
 //		m_hlayout.set_margin(5, 5, 5, 5);
 //		m_hlayout.set_space (2);
@@ -103,7 +103,7 @@ public:
 			Button* button = m_buttons[m_buttons.size() - 1];
 			m_layout.erase(button);
 			m_buttons.pop_back();
-			m_layout.resize(m_layout.preferred_size());
+			m_layout.Resize(m_layout.preferred_size());
 		}
 	}
 
@@ -179,7 +179,7 @@ int main(int argc, char* argv[])
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 //	DoEvent obj;
 //
@@ -187,13 +187,13 @@ int main(int argc, char* argv[])
 //
 //	Button* add_button = new Button;
 //	add_button->set_text("Add Button");
-//	add_button->set_position(600, 700);
+//	add_button->SetPosition(600, 700);
 //
 //	obj.connect_add(add_button);
 //
 //	Button* remove_button = new Button;
 //	remove_button->set_text("Remove Button");
-//	remove_button->set_position(600, 650);
+//	remove_button->SetPosition(600, 650);
 //
 //	obj.connect_remove(remove_button);
 //
@@ -212,15 +212,15 @@ int main(int argc, char* argv[])
 //
 //	ScrollView* scroll_view = new ScrollView;
 //
-//	scroll_view->set_position(200, 200);
-//	scroll_view->resize(300, 200);
+//	scroll_view->SetPosition(200, 200);
+//	scroll_view->Resize(300, 200);
 //
 //	Label* label = new Label("Hello World!");
 //
-//	label->set_position(50, 50);
+//	label->SetPosition(50, 50);
 //
 //	label->set_text ("alsdkjflasdjflasfnvlkaseasdfasdfsadfasfsadfadsfasdfwaeasbvdfsfbfyful7rbsdbfage");
-//	label->resize(400, 400);
+//	label->Resize(400, 400);
 //
 //	scroll_view->set_viewport(label);
 //
@@ -229,29 +229,29 @@ int main(int argc, char* argv[])
 //	events.connect(reset_button->clicked(), scroll_view, &ScrollView::reset_viewport_position);
 
 //	PopupWidget* widget = new PopupWidget;
-//	widget->set_position(200, 200);
-//	widget->set_round_type(CornerAll);
-//	widget->resize(200, 200);
+//	widget->SetPosition(200, 200);
+//	widget->SetRoundType(CornerAll);
+//	widget->Resize(200, 200);
 ////
 //	Frame* widget2 = new Frame;
 //	widget2->move(450, 200);
-////	widget2->set_round_type(CornerAll);
-//	widget2->resize(200, 200);
+////	widget2->SetRoundType(CornerAll);
+//	widget2->Resize(200, 200);
 ////
 //	app->bind(widget);
 //	app->bind(widget2);
 //
 	Button* b1 = new Button("Hello");
-	b1->set_position(100, 100);
+	b1->SetPosition(100, 100);
 
 	Button* b2 = new Button;
-	b2->set_position(190, 100);
+	b2->SetPosition(190, 100);
 
 	HorizontalLayout* hl1 = new HorizontalLayout;
-	hl1->set_position(100, 700);
+	hl1->SetPosition(100, 700);
 
 	Label* label = new Label("Click to create: ");
-	label->set_position(400, 300);
+	label->SetPosition(400, 300);
 
 //	hl1->add(label);
 
@@ -263,13 +263,13 @@ int main(int argc, char* argv[])
 
 	std::cout << "label position: " << label->position().x() << " " << label->position().y() << std::endl;
 
-//	hl1->resize(800, 40);
+//	hl1->Resize(800, 40);
 
 //	Menu *menu = new Menu;
 //
-//	menu->resize(200, 400);
-//	menu->set_position(100, 100);
-//	menu->set_round_type(RoundAll);
+//	menu->Resize(200, 400);
+//	menu->SetPosition(100, 100);
+//	menu->SetRoundType(RoundAll);
 //
 //	menu->add("File");
 //	menu->add("exit");
@@ -286,45 +286,45 @@ int main(int argc, char* argv[])
 
 //	Button* b = new Button;
 //
-//	b->set_position(800, 300);
+//	b->SetPosition(800, 300);
 //
-//	//b->set_round_type(RoundTopLeft | RoundTopRight);
+//	//b->SetRoundType(RoundTopLeft | RoundTopRight);
 //
-//	b->set_round_type(RoundTopLeft|RoundTopRight);
-//	b->set_radius(6.0);
+//	b->SetRoundType(RoundTopLeft|RoundTopRight);
+//	b->SetRadius(6.0);
 //
-////	b->resize(100, 25);
+////	b->Resize(100, 25);
 //
 //	app->bind(b);
 
 //	ToggleButton* w = new ToggleButton;
 //
-//	w->set_position(500, 200);
+//	w->SetPosition(500, 200);
 //
 //	app->bind(w);
 
 //	RoundWidget* rw = new RoundWidget;
-//	rw->set_round_type(RoundAll);
-//	rw->resize (200, 200);
-//	rw->set_position(100, 300);
+//	rw->SetRoundType(RoundAll);
+//	rw->Resize (200, 200);
+//	rw->SetPosition(100, 300);
 //
 //	app->bind(rw);
 //
 //	Frame* f = new Frame;
 //	f->set_widget(rw);
 //
-//	f->resize(500, 400);
-//	f->set_position(200, 200);
+//	f->Resize(500, 400);
+//	f->SetPosition(200, 200);
 //	app->bind(f);
 //
 //	Widget* w = new Widget;
-//	w->resize (100, 100);
-//	w->set_position(100, 300);
+//	w->Resize (100, 100);
+//	w->SetPosition(100, 300);
 //
 //	app->bind(w);
 
 //	ImageView *iv = new ImageView;
-//	iv->set_position(400, 300);
+//	iv->SetPosition(400, 300);
 //
 //	app->bind(iv);
 
@@ -339,16 +339,16 @@ int main(int argc, char* argv[])
 	std::cout << "size of menu item: " << sizeof(MenuItem) << std::endl;
 
 	SlideButton* sb = new SlideButton;
-	sb->set_position(100, 100);
-	sb->resize(20, 20);
+	sb->SetPosition(100, 100);
+	sb->Resize(20, 20);
 
 	app->bind(sb);
 
 	ScrollControl* sc = new ScrollControl;
-	sc->set_radius(12.0);
-	sc->resize(200, 24);
+	sc->SetRadius(12.0);
+	sc->Resize(200, 24);
 
-	sc->set_position(200, 200);
+	sc->SetPosition(200, 200);
 
 	app->bind(sc);
 
@@ -356,13 +356,13 @@ int main(int argc, char* argv[])
 
 	app->bind(frame);
 
-//	frame->resize(800, 45);
-//	frame->set_position(100, 700);
+//	frame->Resize(800, 45);
+//	frame->SetPosition(100, 700);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

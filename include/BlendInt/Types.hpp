@@ -43,7 +43,7 @@
 
 /**
  * macro to define a class property that will effect the opengl drawing,
- * change this property should call update()
+ * change this property should call Update()
  */
 #define DRAWABLE_PROPERTY
 

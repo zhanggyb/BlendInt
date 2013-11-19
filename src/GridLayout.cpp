@@ -59,7 +59,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void GridLayout::render ()
+	void GridLayout::Render ()
 	{
 	}
 

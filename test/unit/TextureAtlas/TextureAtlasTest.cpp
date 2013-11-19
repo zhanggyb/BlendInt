@@ -83,7 +83,7 @@ void TextureAtlasTest::show1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Freetype fe;
 	fe.open(Font("Sans"), 96);
@@ -99,10 +99,10 @@ void TextureAtlasTest::show1 ()
 	while (!glfwWindowShouldClose(window)) {
 
 		/* Render here */
-		app->render();
+		app->Render();
 		atlas.render_text(L"greetings, let's say yes!", 100.0, 100.0, 1.0, 1.0);
 
-		// render character from atlas here
+		// Render character from atlas here
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -151,7 +151,7 @@ void TextureAtlasTest::show2 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Freetype fe;
 	fe.open(Font("Sans"), 96);
@@ -165,9 +165,9 @@ void TextureAtlasTest::show2 ()
 	while (!glfwWindowShouldClose(window)) {
 
 		/* Render here */
-		app->render();
+		app->Render();
 
-		// render character from atlas here
+		// Render character from atlas here
 		atlas.render_text(L"一丁丂七丄丅丆万丈三上下丌不与丏丐丑丒专且丕世", 100.0, 100.0, 1.0, 1.0);
 
 		/* Swap front and back buffers */

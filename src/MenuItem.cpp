@@ -32,13 +32,13 @@ namespace BlendInt {
 	MenuItem::MenuItem ()
 	: AbstractForm(), m_highlight(false)
 	{
-		resize(200, 20);
+		Resize(200, 20);
 	}
 
 	MenuItem::MenuItem (const String& text)
 	: AbstractForm(), m_highlight(false)
 	{
-		resize(200, 20);
+		Resize(200, 20);
 		m_text = text;
 	}
 
@@ -48,12 +48,12 @@ namespace BlendInt {
 
 	}
 
-	void MenuItem::update(int type, const void* data)
+	void MenuItem::Update(int type, const void* data)
 	{
 		// Do nothing here
 	}
 
-	void MenuItem::render ()
+	void MenuItem::Render ()
 	{
 //		FontCache::create(Font())->print(m_text);
 

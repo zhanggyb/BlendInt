@@ -39,32 +39,18 @@ namespace BlendInt {
 
 		~RoundBoxBase();
 
-		void set_round_type (int type)
-		{
-			m_round_type = type;
-		}
-
 		int round_type () const {return m_round_type;}
-
-		/**
-		 * @brief set the round radius for the corner
-		 * @param radius
-		 */
-		void set_radius (float radius)
-		{
-			m_radius = radius;
-		}
 
 		float radius () const {return m_radius;}
 
 	protected:
 
-		inline void preset_round_type (int type)
+		inline void set_round_type (int type)
 		{
 			m_round_type = type;
 		}
 
-		inline void preset_radius (float radius)
+		inline void set_radius (float radius)
 		{
 			m_radius = radius;
 		}

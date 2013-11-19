@@ -136,33 +136,33 @@ namespace BlendInt {
 		bool is_bound ();
 
 		/**
-		 * @brief Call update() and resize the widget
+		 * @brief Call Update() and Resize the widget
 		 * @param width the newwidth of the widget
 		 * @param height the new height of the widget
 		 *
 		 * @note this function hide the same function in the base class
-		 * (AbstractForm::resize()) as it need to check the new size and call
-		 * update()
+		 * (AbstractForm::Resize()) as it need to check the new size and call
+		 * Update()
 		 */
-		void resize (unsigned int width, unsigned int height);
+		void Resize (unsigned int width, unsigned int height);
 
-		void resize (const Size& size);
+		void Resize (const Size& size);
 
-		void set_position (int x, int y);
+		void SetPosition (int x, int y);
 
-		void set_position (const Point& pos);
+		void SetPosition (const Point& pos);
 
-		void set_preferred_size (unsigned int widt, unsigned int height);
+		void SetPreferredSize (unsigned int widt, unsigned int height);
 
-		void set_preferred_size (const Size& size);
+		void SetPreferredSize (const Size& size);
 
-		void set_minimal_size (unsigned int width, unsigned int height);
+		void SetMinimalSize (unsigned int width, unsigned int height);
 
-		void set_minimal_size (const Size& size);
+		void SetMinimalSize (const Size& size);
 
-		void set_maximal_size (unsigned int width, unsigned int height);
+		void SetMaximalSize (unsigned int width, unsigned int height);
 
-		void set_maximal_size (const Size& size);
+		void SetMaximalSize (const Size& size);
 
 		int z () const
 		{
@@ -205,7 +205,7 @@ namespace BlendInt {
 		 */
 		inline void move_x (int offset_x)
 		{
-			set_position(position().x() + offset_x, position().y());
+			SetPosition(position().x() + offset_x, position().y());
 		}
 
 		/**
@@ -214,7 +214,7 @@ namespace BlendInt {
 		 */
 		inline void move_y (int offset_y)
 		{
-			set_position(position().x(), position().y() + offset_y);
+			SetPosition(position().x(), position().y() + offset_y);
 		}
 
 		/**
@@ -224,7 +224,7 @@ namespace BlendInt {
 		 */
 		inline void move (int offset_x, int offset_y)
 		{
-			set_position(position().x() + offset_x, position().y() + offset_y);
+			SetPosition(position().x() + offset_x, position().y() + offset_y);
 		}
 
 	protected:	// member functions
@@ -244,7 +244,7 @@ namespace BlendInt {
 		bool contain (const Coord2d& cursor);
 
 		/**
-		 * @brief Update opengl data (usually the GL buffer) for render
+		 * @brief Update opengl data (usually the GL buffer) for Render
 		 * @param[in] type the enumeration defined by each form class, e.g.
 		 * FormPropertySize
 		 * @param[in] data the pointer to the new property data
@@ -252,7 +252,7 @@ namespace BlendInt {
 		 * This virtual function should be implemented in each derived class,
 		 * and should only use the form's property to draw opengl elements once.
 		 */
-		virtual void update (int type, const void* data) = 0;
+		virtual void Update (int type, const void* data) = 0;
 
 		/**
 		 * @brief just change m_z simply

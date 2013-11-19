@@ -42,19 +42,19 @@ namespace BlendInt {
 	Frame::Frame ()
 			: Widget(), m_widget(0)
 	{
-		preset_minimal_size(margin().left() + margin().right(),
+		set_minimal_size(margin().left() + margin().right(),
 		        margin().top() + margin().bottom());
-		preset_size(120, 80);
-		preset_preferred_size(120, 80);
+		set_size(120, 80);
+		set_preferred_size(120, 80);
 	}
 
 	Frame::Frame (AbstractWidget* parent)
 			: Widget(parent), m_widget(0)
 	{
-		preset_minimal_size(margin().left() + margin().right(),
+		set_minimal_size(margin().left() + margin().right(),
 		        margin().top() + margin().bottom());
-		preset_size(120, 80);
-		preset_preferred_size(120, 80);
+		set_size(120, 80);
+		set_preferred_size(120, 80);
 	}
 
 	Frame::~Frame ()
@@ -67,7 +67,7 @@ namespace BlendInt {
 		if (m_margin.equal(margin))
 			return;
 
-		update(FrameMargin, &margin);
+		Update(FrameMargin, &margin);
 		m_margin = margin;
 	}
 
@@ -78,7 +78,7 @@ namespace BlendInt {
 
 		Margin new_margin(l, r, t, b);
 
-		update(FrameMargin, &new_margin);
+		Update(FrameMargin, &new_margin);
 		m_margin = new_margin;
 	}
 
@@ -88,9 +88,9 @@ namespace BlendInt {
 			delete m_widget;
 			m_widget = widget;
 
-			m_widget->set_position(position().x() + margin().left(),
+			m_widget->SetPosition(position().x() + margin().left(),
 			        position().y() + margin().bottom());
-			m_widget->resize(
+			m_widget->Resize(
 			        size().width() - margin().left() - margin().right(),
 			        size().height() - margin().top() - margin().bottom());
 
@@ -128,7 +128,7 @@ namespace BlendInt {
 			dispatch_mouse_move_event(m_widget,event);
 	}
 
-	void Frame::update (int type, const void* data)
+	void Frame::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -137,7 +137,7 @@ namespace BlendInt {
 					const Point* pos_p = static_cast<const Point*>(data);
 					int offset_x = pos_p->x() - position().x();
 					int offset_y = pos_p->y() - position().y();
-					dynamic_cast<AbstractExtraForm*>(m_widget)->set_position(m_widget->position().x() + offset_x,
+					dynamic_cast<AbstractExtraForm*>(m_widget)->SetPosition(m_widget->position().x() + offset_x,
 					        m_widget->position().y() + offset_y);
 				}
 				break;
@@ -148,7 +148,7 @@ namespace BlendInt {
 					Size size = *(static_cast<const Size*>(data));
 					size.add_width(-(margin().left() + margin().right()));
 					size.add_height(-(margin().top() + margin().bottom()));
-					m_widget->resize(size);
+					m_widget->Resize(size);
 				}
 				break;
 			}
@@ -161,18 +161,18 @@ namespace BlendInt {
 					                - margin_p->right(),
 					        size().height() - margin_p->top()
 					                - margin_p->bottom());
-					m_widget->resize(new_size);
+					m_widget->Resize(new_size);
 				}
 				break;
 			}
 
 			default:
-				Widget::update(type, data);
+				Widget::Update(type, data);
 				break;
 		}
 	}
 
-	void Frame::render ()
+	void Frame::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

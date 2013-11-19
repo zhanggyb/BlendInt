@@ -55,11 +55,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void update (int property_type);
+		virtual void Update (int property_type);
 
-		virtual void update (int type, const void* property);
+		virtual void Update (int type, const void* property);
 
-		virtual void render ();
+		virtual void Render ();
 
 		virtual void press_key (KeyEvent* event);
 

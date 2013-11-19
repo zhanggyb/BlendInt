@@ -70,7 +70,6 @@ namespace BlendInt {
 			return *this;
 		}
 
-
 		const Size& size () const
 		{
 			return m_size;
@@ -82,20 +81,20 @@ namespace BlendInt {
 		 * @param height
 		 * @return true if the new size is set, false if it's the same as the current size
 		 *
-		 * Reset the form's size, return true if the new size is set, and the update() was
-		 * called once (this usually some operations of OpenGL API, e.g. update the GL Buffer
+		 * Reset the form's size, return true if the new size is set, and the Update() was
+		 * called once (this usually some operations of OpenGL API, e.g. Update the GL Buffer
 		 */
-		bool resize (unsigned int width, unsigned int height);
+		bool Resize (unsigned int width, unsigned int height);
 
 		/**
 		 * @brief reset the size of the form
 		 * @param size
 		 * @return true if the new size is set, false if it's the same as the current size
 		 *
-		 * Reset the form's size, return true if the new size is set, and the update() was
-		 * called once (this usually some operations of OpenGL API, e.g. update the GL Buffer
+		 * Reset the form's size, return true if the new size is set, and the Update() was
+		 * called once (this usually some operations of OpenGL API, e.g. Update the GL Buffer
 		 */
-		bool resize (const Size& size);
+		bool Resize (const Size& size);
 
 	protected:
 
@@ -105,9 +104,9 @@ namespace BlendInt {
 		 * @param height
 		 *
 		 * @note this function should be called only in the constructor of subclass to set
-		 * the size without through update() for performance.
+		 * the size without through Update() for performance.
 		 */
-		inline void preset_size (unsigned int width, unsigned int height)
+		inline void set_size (unsigned int width, unsigned int height)
 		{
 			m_size.set_width(width);
 			m_size.set_height(height);
@@ -118,20 +117,16 @@ namespace BlendInt {
 		 * @param size
 		 *
 		 * @note this function should be called only in the constructor of subclass to set
-		 * the size without through update() for performance.
+		 * the size without through Update() for performance.
 		 */
-		inline void preset_size (const Size& size)
+		inline void set_size (const Size& size)
 		{
 			m_size = size;
 		}
 
-		static const float cornervec[WIDGET_CURVE_RESOLU][2];
+		virtual void Update (int type, const void* data) = 0;
 
-		static const float jit[WIDGET_AA_JITTER][2];
-
-		virtual void update (int type, const void* data) = 0;
-
-		virtual void render () = 0;
+		virtual void Render () = 0;
 
 		void generate_rect_vertices (const Size* size,
 				float border,
@@ -206,6 +201,10 @@ namespace BlendInt {
 				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
 
 		static void dispatch_render (AbstractForm* obj);
+
+		static const float cornervec[WIDGET_CURVE_RESOLU][2];
+
+		static const float jit[WIDGET_AA_JITTER][2];
 
 	private:
 

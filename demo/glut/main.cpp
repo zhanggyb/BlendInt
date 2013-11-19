@@ -19,7 +19,7 @@ int init_resources(void)
 	
 	Interface::initialize();
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 	
 	// 	glMatrixMode(GL_PROJECTION);
 	// 	glLoadIdentity();
@@ -27,11 +27,11 @@ int init_resources(void)
 
 	Button* add_button = new Button;
 	add_button->set_text("Add Button");
-	add_button->set_position(600, 700);
+	add_button->SetPosition(600, 700);
 
 	Button* remove_button = new Button;
 	remove_button->set_text("Remove Button");
-	remove_button->set_position(600, 650);
+	remove_button->SetPosition(600, 650);
 
 	app->bind(add_button);
 	app->bind(remove_button);
@@ -46,13 +46,13 @@ int init_resources(void)
 
 	ScrollView* scroll_view = new ScrollView;
 
-	scroll_view->set_position(200, 200);
+	scroll_view->SetPosition(200, 200);
 	scroll_view->set_orientation(2);
-	scroll_view->resize(400, 400);
+	scroll_view->Resize(400, 400);
 
 	Button* button = new Button;
 	button->set_text("Hello World!");
-//	button->resize(80, 600);
+//	button->Resize(80, 600);
 	button->move(205, 205);
 
 	scroll_view->set_viewport(button);
@@ -61,10 +61,10 @@ int init_resources(void)
 
 	Label* label = new Label("Hello World!");
 
-	label->set_position(50, 50);
+	label->SetPosition(50, 50);
 
 	label->set_text ("alsdkjflasdjflasfnvlkasefage");
-	label->resize(80, 40);
+	label->Resize(80, 40);
 	
 	app->bind(label);
 	
@@ -75,7 +75,7 @@ void onDisplay()
 {
 	using BlendInt::Interface;
 	
-	Interface::instance()->render();
+	Interface::instance()->Render();
 	
 	/* FILLED IN LATER */
 // 	glMatrixMode(GL_MODELVIEW);
@@ -118,7 +118,7 @@ void onReshape (int width, int height)
 {
 	using BlendInt::Interface;
 	
-	Interface::instance()->resize(width, height);
+	Interface::instance()->Resize(width, height);
 }
 
 void onMouse (int button, int state, int x, int y)

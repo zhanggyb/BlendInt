@@ -37,11 +37,9 @@ namespace BlendInt {
 
 		virtual ~AbstractRoundBox();
 
-		// TODO: hide set_radius and set_round_type
+		void SetRoundType (int type);
 
-		void set_round_type (int type);
-
-		void set_radius (float radius);
+		void SetRadius (float radius);
 
 	};
 

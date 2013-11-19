@@ -21,9 +21,9 @@ CPPUNIT_TEST_SUITE_REGISTRATION(WidgetTest);
 testWidget::testWidget (int type, AbstractWidget* parent)
 		: Frame(parent)
 {
-	set_round_type(RoundAll);
-	set_position(Point(100, 100));
-	resize(200, 200);
+	SetRoundType(RoundAll);
+	SetPosition(Point(100, 100));
+	Resize(200, 200);
 
 	switch (type) {
 		case 0:
@@ -42,7 +42,7 @@ testWidget::testWidget (int type, AbstractWidget* parent)
 
 }
 
-void testWidget::render (void)
+void testWidget::Render (void)
 {
 }
 
@@ -110,20 +110,20 @@ void WidgetTest::widget_default_show ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame widget;
 
 	// widget.set_round_box_type(RoundBoxAll);
-	widget.set_position(50, 50);
-	widget.resize(200, 100);
+	widget.SetPosition(50, 50);
+	widget.Resize(200, 100);
 
 	ContextManager::instance()->bind(&widget);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -173,18 +173,18 @@ void WidgetTest::testwidget_show0 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	testWidget widget(0);
-	widget.set_position(Point(50, 50));
-	widget.resize(80, 40);
+	widget.SetPosition(Point(50, 50));
+	widget.Resize(80, 40);
 
 	ContextManager::instance()->bind(&widget);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -233,7 +233,7 @@ void WidgetTest::testwidget_show1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	testWidget widget(1);
 
@@ -242,7 +242,7 @@ void WidgetTest::testwidget_show1 ()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -292,7 +292,7 @@ void WidgetTest::testwidget_show2 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	testWidget widget(2);
 	ContextManager::instance()->bind(&widget);
@@ -300,7 +300,7 @@ void WidgetTest::testwidget_show2 ()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -349,7 +349,7 @@ void WidgetTest::testwidget_show3 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	testWidget widget(3);
 	ContextManager::instance()->bind(&widget);
@@ -357,7 +357,7 @@ void WidgetTest::testwidget_show3 ()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

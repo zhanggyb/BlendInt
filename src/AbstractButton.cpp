@@ -52,7 +52,7 @@ namespace BlendInt {
 	void AbstractButton::set_text (const String& text)
 	{
 		if(text.empty()) {
-			resize (90, 20);
+			Resize (90, 20);
 			return;
 		}
 
@@ -67,7 +67,7 @@ namespace BlendInt {
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
-				dynamic_cast<AbstractExtraForm*>(this)->resize(size().width(), m_text_outline.height());
+				dynamic_cast<AbstractExtraForm*>(this)->Resize(size().width(), m_text_outline.height());
 			} else {
 				m_length = 0;
 				cal_width = false;
@@ -76,18 +76,18 @@ namespace BlendInt {
 
 		if(size().width() < m_text_outline.width()) {
 			if(expand_x()) {
-				dynamic_cast<AbstractExtraForm*>(this)->resize(m_text_outline.width(), size().height());
+				dynamic_cast<AbstractExtraForm*>(this)->Resize(m_text_outline.width(), size().height());
 			} else {
 				if(cal_width) m_length = get_valid_text_size();
 			}
 		}
 
-		// FIXME: the alignment and origin was set in resize -> update, reset here?
+		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
 		m_origin.set_x((size().width() - m_text_outline.width()) / 2);
 
 		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
 
-		set_preferred_size(m_text_outline.width(), m_text_outline.height());
+		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void AbstractButton::set_font (const Font& font)
@@ -103,7 +103,7 @@ namespace BlendInt {
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
-				dynamic_cast<AbstractExtraForm*>(this)->resize(size().width(), m_text_outline.height());
+				dynamic_cast<AbstractExtraForm*>(this)->Resize(size().width(), m_text_outline.height());
 			} else {
 				m_length = 0;
 				cal_width = false;
@@ -112,19 +112,19 @@ namespace BlendInt {
 
 		if(size().width() < m_text_outline.width()) {
 			if(expand_x()) {
-				dynamic_cast<AbstractExtraForm*>(this)->resize(m_text_outline.width(), size().height());
+				dynamic_cast<AbstractExtraForm*>(this)->Resize(m_text_outline.width(), size().height());
 			} else {
 				if(cal_width) m_length = get_valid_text_size();
 			}
 		}
 
-		// FIXME: the alignment and origin was set in resize -> update, reset here?
+		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
 
 		m_origin.set_x((size().width() - m_text_outline.width()) / 2);
 
 		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
 
-		set_preferred_size(m_text_outline.width(), m_text_outline.height());
+		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void AbstractButton::press_mouse (MouseEvent* event)

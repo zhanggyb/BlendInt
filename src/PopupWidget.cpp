@@ -43,9 +43,9 @@ namespace BlendInt {
 
 	}
 
-	void PopupWidget::update(int type, const void* data)
+	void PopupWidget::Update(int type, const void* data)
 	{
-		Frame::update(type, data);
+		Frame::Update(type, data);
 
 		switch(type) {
 
@@ -53,9 +53,9 @@ namespace BlendInt {
 
 				Size shadow_size = *(static_cast<const Size*>(data));
 
-				m_shadow.resize(shadow_size);
+				m_shadow.Resize(shadow_size);
 
-				m_icon.resize(16, 16);
+				m_icon.Resize(16, 16);
 
 				break;
 			}
@@ -66,7 +66,7 @@ namespace BlendInt {
 
 	}
 
-	void PopupWidget::render ()
+	void PopupWidget::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

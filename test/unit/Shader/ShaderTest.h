@@ -23,7 +23,7 @@ public:
 
 protected:
 
-	virtual void render ();
+	virtual void Render ();
 
 private:
 
@@ -57,7 +57,7 @@ public:
 
 protected:
 
-	virtual void render ();
+	virtual void Render ();
 
 private:
 
@@ -90,7 +90,7 @@ public:
 
 protected:
 
-	virtual void render ();
+	virtual void Render ();
 
 private:
 

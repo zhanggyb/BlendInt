@@ -48,20 +48,20 @@ namespace BlendInt {
 		 * @brief set round type
 		 * @param type
 		 *
-		 * Hide the same function in RoundBoxBase to call update
+		 * Hide the same function in RoundBoxBase to call Update
 		 */
-		void set_round_type (int type);
+		void SetRoundType (int type);
 
 		/**
 		 * @brief set round radius
 		 * @param radius
-		 * Hide the same function in RoundBoxBase to call update
+		 * Hide the same function in RoundBoxBase to call Update
 		 */
-		void set_radius (float radius);
+		void SetRadius (float radius);
 
 	protected:
 
-		virtual void render ();
+		virtual void Render ();
 
 		/**
 		 * @brief calculate vertices for round box edge with no shaded color

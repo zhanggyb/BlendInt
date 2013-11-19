@@ -81,17 +81,17 @@ void ScrollWidgetTest::scrollbar_test01()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	ScrollBar bar(Horizontal);
-	bar.set_position (200, 200);
+	bar.SetPosition (200, 200);
 
 	app->bind(&bar);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

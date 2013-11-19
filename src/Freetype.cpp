@@ -327,7 +327,7 @@ namespace BlendInt {
 		error = FT_Render_Glyph(face_->glyph, // glyph slot
 		        render_mode);
 		if (error) {
-			cerr << "Fail to render glyph" << endl;
+			cerr << "Fail to Render glyph" << endl;
 			return false;
 		}
 

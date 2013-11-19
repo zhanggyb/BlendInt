@@ -34,11 +34,11 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		preset_round_type(RoundAll);
-		set_expand_x(true);
+		set_round_type(RoundAll);
+		SetExpandX(true);
 		set_checkable(true);
-		resize(90, 20);
-		set_preferred_size(90, 20);
+		Resize(90, 20);
+		SetPreferredSize(90, 20);
 	}
 
 	ToggleButton::ToggleButton (const String& text)
@@ -46,11 +46,11 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		preset_round_type(RoundAll);
-		set_expand_x(true);
+		set_round_type(RoundAll);
+		SetExpandX(true);
 		set_checkable(true);
 		set_text(text);
-		set_preferred_size(size());
+		SetPreferredSize(size());
 	}
 
 	ToggleButton::ToggleButton (AbstractWidget* parent)
@@ -58,11 +58,11 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		preset_round_type(RoundAll);
-		set_expand_x(true);
+		set_round_type(RoundAll);
+		SetExpandX(true);
 		set_checkable(true);
-		resize (90, 20);
-		set_preferred_size(90, 20);
+		Resize (90, 20);
+		SetPreferredSize(90, 20);
 	}
 
 	ToggleButton::ToggleButton (const String& text, AbstractWidget* parent)
@@ -70,11 +70,11 @@ namespace BlendInt {
 	{
 		m_buffer.reset(new GLBuffer);
 
-		preset_round_type(RoundAll);
-		set_expand_x(true);
+		set_round_type(RoundAll);
+		SetExpandX(true);
 		set_checkable(true);
 		set_text(text);
-		set_preferred_size(size());
+		SetPreferredSize(size());
 	}
 
 	ToggleButton::~ToggleButton ()
@@ -82,7 +82,7 @@ namespace BlendInt {
 
 	}
 
-	void ToggleButton::update(int type, const void* data)
+	void ToggleButton::Update(int type, const void* data)
 	{
 		switch (type) {
 
@@ -104,13 +104,13 @@ namespace BlendInt {
 			}
 
 			default:
-				AbstractButton::update(type, data);
+				AbstractButton::Update(type, data);
 				break;
 		}
 
 	}
 
-	void ToggleButton::render ()
+	void ToggleButton::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

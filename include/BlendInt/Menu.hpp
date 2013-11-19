@@ -57,9 +57,9 @@ namespace BlendInt {
 
 		virtual void move_mouse (MouseEvent* event);
 
-		virtual void update (int type, const void* data);
+		virtual void Update (int type, const void* data);
 
-		virtual void render ();
+		virtual void Render ();
 
 	private:
 

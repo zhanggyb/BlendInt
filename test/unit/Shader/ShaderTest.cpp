@@ -46,7 +46,7 @@ ShaderWidget1::~ShaderWidget1()
 	glDeleteBuffers(1, &vbo_triangle);
 }
 
-void ShaderWidget1::render ()
+void ShaderWidget1::Render ()
 {
 	//glClearColor(1.0, 1.0, 1.0, 1.0);
 	//glClear (GL_COLOR_BUFFER_BIT);
@@ -162,7 +162,7 @@ ShaderWidget2::~ShaderWidget2()
 	glDeleteVertexArrays(1, &vao_triangle);
 }
 
-void ShaderWidget2::render ()
+void ShaderWidget2::Render ()
 {
 	//glClearColor(1.0, 1.0, 1.0, 1.0);
 	//glClear (GL_COLOR_BUFFER_BIT);
@@ -249,7 +249,7 @@ const char* ShaderWidget3::fs_source =
 	"	gl_FragColor = vec4(color, 0.2);"
 	"}";
 
-void ShaderWidget3::render ()
+void ShaderWidget3::Render ()
 {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -347,19 +347,19 @@ void ShaderTest::shader_load1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	ShaderWidget1 widget;
 
 	// widget.set_round_box_type(RoundBoxAll);
 	// widget.set_pos(100, 100);
-	// widget.resize(200, 200);
+	// widget.Resize(200, 200);
 
 	app->bind(&widget);
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -407,19 +407,19 @@ void ShaderTest::shader_load2 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	ShaderWidget2 widget;
 
 	// widget.set_round_box_type(RoundBoxAll);
 	// widget.set_pos(100, 100);
-	// widget.resize(200, 200);
+	// widget.Resize(200, 200);
 
 	app->bind(&widget);
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -467,20 +467,20 @@ void ShaderTest::shader_load3 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	ShaderWidget3 widget;
 
 	// widget.set_round_box_type(RoundBoxAll);
 	// widget.set_pos(100, 100);
-	// widget.resize(200, 200);
+	// widget.Resize(200, 200);
 
 	app->bind(&widget);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

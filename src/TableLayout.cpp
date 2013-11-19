@@ -65,7 +65,7 @@ namespace BlendInt {
 		bind (widget);
 		set_in_layout(widget, true);
 
-		update(FormSize, 0);
+		Update(FormSize, 0);
 	}
 
 	void TableLayout::add_layout (AbstractLayout* layout, int row, int column,
@@ -86,15 +86,15 @@ namespace BlendInt {
 		bind (layout);
 		set_in_layout(layout, true);
 
-		update(FormSize, 0);
+		Update(FormSize, 0);
 	}
 
-	void TableLayout::update (int property_type)
+	void TableLayout::Update (int property_type)
 	{
 		generate_default_layout();
 	}
 
-	void TableLayout::update (int type, const void* property)
+	void TableLayout::Update (int type, const void* property)
 	{
 		if(parent().type == ParentForm) {
 
@@ -120,7 +120,7 @@ namespace BlendInt {
 		}
 	}
 
-	void TableLayout::render ()
+	void TableLayout::Render ()
 	{
 		std::vector<AbstractWidget*>::const_iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
@@ -355,23 +355,23 @@ namespace BlendInt {
 				child = items()[i * m_columns + j];
 				if(!child) continue;
 
-				dynamic_cast<AbstractExtraForm*>(child)->set_position(x, y);
+				dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, y);
 
 				if(child->expand_y()) {
-					dynamic_cast<AbstractExtraForm*>(child)->resize(child->size().width(), row_height[i]);
+					dynamic_cast<AbstractExtraForm*>(child)->Resize(child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					dynamic_cast<AbstractExtraForm*>(child)->resize(column_width[j], child->size().height());
+					dynamic_cast<AbstractExtraForm*>(child)->Resize(column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();
@@ -423,23 +423,23 @@ namespace BlendInt {
 				child = items()[i * m_columns + j];
 				if(!child) continue;
 
-				dynamic_cast<AbstractExtraForm*>(child)->set_position(x, y);
+				dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, y);
 
 				if(child->expand_y()) {
-					dynamic_cast<AbstractExtraForm*>(child)->resize(child->size().width(), row_height[i]);
+					dynamic_cast<AbstractExtraForm*>(child)->Resize(child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					dynamic_cast<AbstractExtraForm*>(child)->resize(column_width[j], child->size().height());
+					dynamic_cast<AbstractExtraForm*>(child)->Resize(column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-					dynamic_cast<AbstractExtraForm*>(child)->set_position(child->position().x(),
+					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();
@@ -449,7 +449,7 @@ namespace BlendInt {
 			y = y - space();
 		}
 
-		resize(total_width, total_height);
+		Resize(total_width, total_height);
 	}
 
 	int TableLayout::fixed_column_width(int column)

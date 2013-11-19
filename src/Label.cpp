@@ -36,9 +36,9 @@ namespace BlendInt {
 	{
 		set_expand_x(true);
 
-		preset_size(0, 24);	// the same height of a Buttons
+		set_size(0, 24);	// the same height of a Buttons
 
-		init();
+		Init();
 	}
 
 	Label::Label (const String& text, AbstractWidget *parent)
@@ -46,9 +46,9 @@ namespace BlendInt {
 	{
 		set_expand_x(true);
 
-		preset_size(0, 24);	// the same height of a Buttons
+		set_size(0, 24);	// the same height of a Buttons
 
-		init();
+		Init();
 	}
 
 	Label::~Label ()
@@ -69,7 +69,7 @@ namespace BlendInt {
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
-				dynamic_cast<AbstractExtraForm*>(this)->resize(size().width(), m_text_outline.height());
+				dynamic_cast<AbstractExtraForm*>(this)->Resize(size().width(), m_text_outline.height());
 			} else {
 				m_length = 0;
 				cal_width = false;
@@ -78,13 +78,13 @@ namespace BlendInt {
 
 		if(size().width() < m_text_outline.width()) {
 			if(expand_x()) {
-				dynamic_cast<AbstractExtraForm*>(this)->resize(m_text_outline.width(), size().height());
+				dynamic_cast<AbstractExtraForm*>(this)->Resize(m_text_outline.width(), size().height());
 			} else {
 				if(cal_width) m_length = get_valid_text_size();
 			}
 		}
 
-		// FIXME: the alignment and origin was set in resize -> update, reset here?
+		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
 		if(m_alignment & AlignLeft) {
 			m_origin.set_x(0);
 		} else if(m_alignment & AlignRight) {
@@ -95,7 +95,7 @@ namespace BlendInt {
 
 		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
 
-		set_preferred_size(m_text_outline.width(), m_text_outline.height());
+		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void Label::set_font (const Font& font)
@@ -111,7 +111,7 @@ namespace BlendInt {
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
-				dynamic_cast<AbstractExtraForm*>(this)->resize(size().width(), m_text_outline.height());
+				dynamic_cast<AbstractExtraForm*>(this)->Resize(size().width(), m_text_outline.height());
 			} else {
 				m_length = 0;
 				cal_width = false;
@@ -120,13 +120,13 @@ namespace BlendInt {
 
 		if(size().width() < m_text_outline.width()) {
 			if(expand_x()) {
-				dynamic_cast<AbstractExtraForm*>(this)->resize(m_text_outline.width(), size().height());
+				dynamic_cast<AbstractExtraForm*>(this)->Resize(m_text_outline.width(), size().height());
 			} else {
 				if(cal_width) m_length = get_valid_text_size();
 			}
 		}
 
-		// FIXME: the alignment and origin was set in resize -> update, reset here?
+		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
 
 		if(m_alignment & AlignLeft) {
 			m_origin.set_x(0);
@@ -138,10 +138,10 @@ namespace BlendInt {
 
 		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
 
-		set_preferred_size(m_text_outline.width(), m_text_outline.height());
+		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
-	void Label::update (int type, const void* data)
+	void Label::Update (int type, const void* data)
 	{
 		switch(type) {
 
@@ -176,7 +176,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Label::render ()
+	void Label::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -254,7 +254,7 @@ namespace BlendInt {
 		return str_len;
 	}
 
-	void Label::init ()
+	void Label::Init ()
 	{
 		bool cal_width = true;
 
@@ -266,7 +266,7 @@ namespace BlendInt {
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
-				preset_size(size().width(), m_text_outline.height());
+				set_size(size().width(), m_text_outline.height());
 			} else {
 				m_length = 0;
 				cal_width = false;
@@ -275,7 +275,7 @@ namespace BlendInt {
 
 		if(size().width() < m_text_outline.width()) {
 			if(expand_x()) {
-				preset_size(m_text_outline.width(), size().height());
+				set_size(m_text_outline.width(), size().height());
 			} else {
 				if(cal_width) m_length = get_valid_text_size();
 			}
@@ -284,8 +284,8 @@ namespace BlendInt {
 		m_origin.set_x(0);
 		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
 
-		// preset_preferred_size(m_text_outline.width(), m_text_outline.height());
-		preset_preferred_size(size());
+		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
+		set_preferred_size(size());
 	}
 
 } /* namespace BlendInt */

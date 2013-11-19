@@ -71,7 +71,7 @@ namespace BlendInt {
 			return m_position;
 		}
 
-		void set_position (float x, float y)
+		void SetPosition (float x, float y)
 		{
 			m_position.set_x (x);
 			m_position.set_y (y);

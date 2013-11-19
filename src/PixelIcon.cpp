@@ -57,12 +57,12 @@ namespace BlendInt {
 	}
 
 
-	void PixelIcon::update(int type, const void* data)
+	void PixelIcon::Update(int type, const void* data)
 	{
 
 	}
 
-	void PixelIcon::render ()
+	void PixelIcon::Render ()
 	{
 	}
 

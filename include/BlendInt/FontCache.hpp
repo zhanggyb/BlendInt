@@ -185,7 +185,7 @@ namespace BlendInt {
 		 * @return true for success, false for failure
          *
          * @warning Do not simply initialize all characer in ascii
-         * cause render error. I dont't know why this happens
+         * cause Render error. I dont't know why this happens
 		 */
 		bool setup ();
 

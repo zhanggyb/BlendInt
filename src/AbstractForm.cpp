@@ -58,13 +58,13 @@ namespace BlendInt {
 
 	}
 
-	bool AbstractForm::resize(unsigned int width, unsigned int height)
+	bool AbstractForm::Resize(unsigned int width, unsigned int height)
 	{
 		Size new_size (width, height);
 
 		if (m_size == new_size) return false;
 
-		update(FormSize, &new_size);
+		Update(FormSize, &new_size);
 
 		m_size.set_width(width);
 		m_size.set_height(height);
@@ -72,11 +72,11 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractForm::resize(const Size& size)
+	bool AbstractForm::Resize(const Size& size)
 	{
 		if(m_size == size) return false;
 
-		update(FormSize, &size);
+		Update(FormSize, &size);
 		m_size = size;
 
 		return true;
@@ -737,7 +737,7 @@ namespace BlendInt {
 
 	void AbstractForm::dispatch_render(AbstractForm* obj)
 	{
-		obj->render();
+		obj->Render();
 	}
 
 }

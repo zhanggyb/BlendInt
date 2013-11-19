@@ -1433,7 +1433,7 @@ FORMULA_FONTSIZE       = 10
 
 FORMULA_TRANSPARENT    = YES
 
-# Enable the USE_MATHJAX option to render LaTeX formulas using MathJax (see
+# Enable the USE_MATHJAX option to Render LaTeX formulas using MathJax (see
 # http://www.mathjax.org) which uses client side Javascript for the rendering
 # instead of using prerendered bitmaps. Use this if you do not have LaTeX
 # installed or if you want to formulas look prettier in the HTML output. When

@@ -77,7 +77,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void render () = 0;
+		virtual void Render () = 0;
 
 		Cpp::Event<int> m_slider_moved;
 

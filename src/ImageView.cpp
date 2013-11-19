@@ -33,7 +33,7 @@ namespace BlendInt {
 		makeCheckImage();
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		resize(64, 64);
+		Resize(64, 64);
 	}
 
 	ImageView::ImageView (AbstractWidget* parent)
@@ -43,14 +43,14 @@ namespace BlendInt {
 		makeCheckImage();
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		resize(64, 64);
+		Resize(64, 64);
 	}
 
 	ImageView::~ImageView ()
 	{
 	}
 
-	void ImageView::render ()
+	void ImageView::Render ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

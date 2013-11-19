@@ -45,25 +45,25 @@ namespace BlendInt {
 
 	}
 
-	void RoundWidget::set_round_type(int type)
+	void RoundWidget::SetRoundType(int type)
 	{
 		if(round_type() == type) return;
 
-		update(FormRoundType, &type);
+		Update(FormRoundType, &type);
 
-		RoundBoxBase::set_round_type(type);
+		set_round_type(type);
 	}
 
-	void RoundWidget::set_radius(float rad)
+	void RoundWidget::SetRadius(float rad)
 	{
 		if(radius() == rad) return;
 
-		update(FormRoundRadius, &rad);
+		Update(FormRoundRadius, &rad);
 
-		RoundBoxBase::set_radius(rad);
+		set_radius(rad);
 	}
 
-	void RoundWidget::render()
+	void RoundWidget::Render()
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner

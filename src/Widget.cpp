@@ -42,18 +42,18 @@ namespace BlendInt {
 	: AbstractWidget(),
 	  m_border_width(1.0)
 	{
-		preset_minimal_size(0, 0);
-		preset_size(120, 80);
-		preset_preferred_size(120, 80);
+		set_minimal_size(0, 0);
+		set_size(120, 80);
+		set_preferred_size(120, 80);
 	}
 
 	Widget::Widget(AbstractWidget* parent)
 	: AbstractWidget(parent),
 	  m_border_width(1.0)
 	{
-		preset_minimal_size(0, 0);
-		preset_size(120, 80);
-		preset_preferred_size(120, 80);
+		set_minimal_size(0, 0);
+		set_size(120, 80);
+		set_preferred_size(120, 80);
 	}
 
 	Widget::~Widget()
@@ -65,17 +65,17 @@ namespace BlendInt {
 	{
 		if(width < 0.0) return;
 
-		update(WidgetBorderWidth, &width);
+		Update(WidgetBorderWidth, &width);
 
 		m_border_width = width;
 	}
 
-	void Widget::update (int type, const void* data)
+	void Widget::Update (int type, const void* data)
 	{
 		// do nothing in this base class
 	}
 
-	void Widget::render()
+	void Widget::Render()
 	{
 		float outer_v[4][2];	// vertices for drawing outline
 		float inner_v[4][2];	// vertices for drawing inner

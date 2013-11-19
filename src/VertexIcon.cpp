@@ -145,12 +145,12 @@ namespace BlendInt {
 		m_gl_buffer.unbind();
 	}
 
-	void VertexIcon::update (int type, const void* data)
+	void VertexIcon::Update (int type, const void* data)
 	{
 
 	}
 
-	void VertexIcon::render()
+	void VertexIcon::Render()
 	{
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

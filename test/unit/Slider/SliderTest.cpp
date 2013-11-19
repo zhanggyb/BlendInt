@@ -82,14 +82,14 @@ void SliderTest::slider_move_test01()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Slider* hslider = new Slider;
-	hslider->set_position(200, 200);
+	hslider->SetPosition(200, 200);
 	hslider->set_value(50);
 
 	Slider* vslider = new Slider(Vertical);
-	vslider->set_position(200, 250);
+	vslider->SetPosition(200, 250);
 	vslider->set_value(50);
 
 	app->bind(hslider);
@@ -100,7 +100,7 @@ void SliderTest::slider_move_test01()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

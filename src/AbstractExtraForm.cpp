@@ -35,8 +35,8 @@ namespace BlendInt {
 	AbstractExtraForm::AbstractExtraForm(const AbstractExtraForm& orig)
 	: AbstractForm()
 	{
-		set_position(orig.position());
-		resize(orig.size());
+		m_position = orig.position();
+		set_size(orig.size());
 		m_expand_x = orig.expand_x();
 		m_expand_y = orig.expand_y();
 		m_preferred_size = orig.preferred_size();
@@ -50,22 +50,22 @@ namespace BlendInt {
 	}
 
 
-	bool AbstractExtraForm::set_position(int x, int y)
+	bool AbstractExtraForm::SetPosition(int x, int y)
 	{
 		Point new_pos (x, y);
 		if(m_position == new_pos) return false;
 
-		update(FormPosition, &new_pos);
+		Update(FormPosition, &new_pos);
 		m_position.set_x(x);
 		m_position.set_y(y);
 
 		return true;
 	}
 
-	bool AbstractExtraForm::set_position(const Point& pos)
+	bool AbstractExtraForm::SetPosition(const Point& pos)
 	{
 		if(m_position == pos) return false;
-		update(FormPosition, &pos);
+		Update(FormPosition, &pos);
 		m_position = pos;
 
 		return true;
@@ -97,7 +97,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractExtraForm::resize (unsigned int width, unsigned int height)
+	bool AbstractExtraForm::Resize (unsigned int width, unsigned int height)
 	{
 		if(width < m_minimal_size.width() ||
 				height < m_minimal_size.height() ||
@@ -105,10 +105,10 @@ namespace BlendInt {
 				height > m_maximal_size.height())
 			return false;
 
-		return AbstractForm::resize(width, height);
+		return AbstractForm::Resize(width, height);
 	}
 
-	bool AbstractExtraForm::resize (const Size& size)
+	bool AbstractExtraForm::Resize (const Size& size)
 	{
 		if(size.width() < m_minimal_size.width() ||
 				size.height() < m_minimal_size.height() ||
@@ -116,10 +116,10 @@ namespace BlendInt {
 				size.height() > m_maximal_size.height())
 			return false;
 
-		return AbstractForm::resize(size);
+		return AbstractForm::Resize(size);
 	}
 
-	bool AbstractExtraForm::set_preferred_size (unsigned int width,
+	bool AbstractExtraForm::SetPreferredSize (unsigned int width,
 	        unsigned int height)
 	{
 		// check the param first
@@ -134,7 +134,7 @@ namespace BlendInt {
 		if (m_preferred_size == new_pref_size)
 			return false;
 
-		update(FormPreferredSize, &new_pref_size);
+		Update(FormPreferredSize, &new_pref_size);
 
 		m_preferred_size.set_width(width);
 		m_preferred_size.set_height(height);
@@ -142,7 +142,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractExtraForm::set_preferred_size(const Size& size)
+	bool AbstractExtraForm::SetPreferredSize(const Size& size)
 	{
 		if (size.width() < m_minimal_size.width() ||
 				size.height() < m_minimal_size.height()||
@@ -152,14 +152,14 @@ namespace BlendInt {
 
 		if(m_preferred_size == size) return false;
 
-		update(FormPreferredSize, &size);
+		Update(FormPreferredSize, &size);
 
 		m_preferred_size = size;
 
 		return true;
 	}
 
-	bool AbstractExtraForm::set_minimal_size(unsigned int width, unsigned int height)
+	bool AbstractExtraForm::SetMinimalSize(unsigned int width, unsigned int height)
 	{
 		if(width > m_preferred_size.width() ||
 				height > m_preferred_size.height())
@@ -169,14 +169,14 @@ namespace BlendInt {
 
 		if (m_minimal_size == new_min_size) return false;
 
-		update(FormMinimalSize, &new_min_size);
+		Update(FormMinimalSize, &new_min_size);
 
 		m_minimal_size = new_min_size;
 
 		return true;
 	}
 
-	bool AbstractExtraForm::set_minimal_size(const Size& size)
+	bool AbstractExtraForm::SetMinimalSize(const Size& size)
 	{
 		if(size.width() > m_preferred_size.width() ||
 				size.height() > m_preferred_size.height())
@@ -184,14 +184,14 @@ namespace BlendInt {
 
 		if (m_minimal_size.equal(size)) return false;
 
-		update(FormMinimalSize, &size);
+		Update(FormMinimalSize, &size);
 
 		m_minimal_size = size;
 
 		return true;
 	}
 
-	bool AbstractExtraForm::set_maximal_size(unsigned int width, unsigned int height)
+	bool AbstractExtraForm::SetMaximalSize(unsigned int width, unsigned int height)
 	{
 		if(width < m_preferred_size.width() ||
 				height < m_preferred_size.height())
@@ -201,14 +201,14 @@ namespace BlendInt {
 
 		if(m_maximal_size == new_max_size) return false;
 
-		update(FormMaximalSize, &new_max_size);
+		Update(FormMaximalSize, &new_max_size);
 
 		m_maximal_size = new_max_size;
 
 		return true;
 	}
 
-	bool AbstractExtraForm::set_maximal_size(const Size& size)
+	bool AbstractExtraForm::SetMaximalSize(const Size& size)
 	{
 		if(size.width() < m_preferred_size.width() ||
 				size.height() < m_preferred_size.height())
@@ -216,7 +216,7 @@ namespace BlendInt {
 
 		if(m_maximal_size == size) return false;
 
-		update(FormMaximalSize, &size);
+		Update(FormMaximalSize, &size);
 
 		m_maximal_size = size;
 

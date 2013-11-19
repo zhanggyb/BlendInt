@@ -31,9 +31,9 @@ namespace BlendInt {
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
 	{
-		set_preferred_size(margin().left() + margin().right(), margin().top() + margin().bottom());
-		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
-		resize(preferred_size());
+		SetPreferredSize(margin().left() + margin().right(), margin().top() + margin().bottom());
+		SetMinimalSize(margin().left() + margin().right(), margin().top() + margin().bottom());
+		Resize(preferred_size());
 	}
 
 	AbstractLayout::AbstractLayout (AbstractWidget *parent)
@@ -42,9 +42,9 @@ namespace BlendInt {
 			  m_space(1),
 			  m_sizing_mode(LayoutFlow)
 	{
-		set_preferred_size(margin().left() + margin().right(), margin().top() + margin().bottom());
-		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
-		resize(preferred_size());
+		SetPreferredSize(margin().left() + margin().right(), margin().top() + margin().bottom());
+		SetMinimalSize(margin().left() + margin().right(), margin().top() + margin().bottom());
+		Resize(preferred_size());
 	}
 
 	AbstractLayout::~AbstractLayout ()
@@ -99,7 +99,7 @@ namespace BlendInt {
 	}
 
 	/*
-	bool AbstractLayout::update(int type, const void* property)
+	bool AbstractLayout::Update(int type, const void* property)
 	{
 		switch (type) {
 
@@ -153,7 +153,7 @@ namespace BlendInt {
 		m_margin = new_value;
 	}
 
-	void AbstractLayout::update (int type, const void* data)
+	void AbstractLayout::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -162,7 +162,7 @@ namespace BlendInt {
 
 				for (size_t i = 0; i < m_items.size(); i++)
 				{
-					dynamic_cast<AbstractExtraForm*>(m_items[i])->set_position(
+					dynamic_cast<AbstractExtraForm*>(m_items[i])->SetPosition(
 							m_items[i]->position().x() + (new_pos->x() - position().x()),
 							m_items[i]->position().y() + (new_pos->y() - position().y()));
 

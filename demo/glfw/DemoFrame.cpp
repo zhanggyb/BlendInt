@@ -24,12 +24,12 @@ DemoFrame::DemoFrame()
 	button = new Button("ScrollView");
 	m_hlayout->add(button);
 
-	preset_size(m_hlayout->size().width() + margin().left() + margin().right(),
+	set_size(m_hlayout->size().width() + margin().left() + margin().right(),
 				m_hlayout->size().height() + margin().top() + margin().bottom());
 
 	set_widget(m_hlayout);
 
-	set_preferred_size(size());
+	SetPreferredSize(size());
 }
 
 DemoFrame::~DemoFrame()

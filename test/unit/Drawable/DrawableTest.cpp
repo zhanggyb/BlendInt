@@ -21,8 +21,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION(DrawableTest);
 myTexture::myTexture (AbstractWidget *parent)
 		: AbstractWidget(parent)
 {
-	resize(400, 400);
-	set_position(Point(20, 20));
+	Resize(400, 400);
+	SetPosition(Point(20, 20));
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -49,7 +49,7 @@ myTexture::~myTexture ()
 
 }
 
-void myTexture::render (void)
+void myTexture::Render (void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -126,7 +126,7 @@ myDrawable1::~myDrawable1 ()
 
 }
 
-void myDrawable1::render (void)
+void myDrawable1::Render (void)
 {
 
 	glEnable(GL_BLEND);
@@ -175,7 +175,7 @@ myDrawable2::~myDrawable2 ()
 
 }
 
-void myDrawable2::render (void)
+void myDrawable2::Render (void)
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -222,7 +222,7 @@ myDrawable3::~myDrawable3 ()
 
 }
 
-void myDrawable3::render (void)
+void myDrawable3::Render (void)
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
@@ -325,14 +325,14 @@ void DrawableTest::texture1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	myTexture widget;
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -380,16 +380,16 @@ void DrawableTest::mydrawable1 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	myDrawable1 widget;
-	widget.set_position(Point(50, 50));
-	widget.resize(80, 40);
+	widget.SetPosition(Point(50, 50));
+	widget.Resize(80, 40);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -437,16 +437,16 @@ void DrawableTest::mydrawable2 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	myDrawable2 widget;
-	widget.set_position(Point(50, 50));
-	widget.resize(80, 40);
+	widget.SetPosition(Point(50, 50));
+	widget.Resize(80, 40);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -494,16 +494,16 @@ void DrawableTest::mydrawable3 ()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	myDrawable3 widget;
-	widget.set_position(Point(50, 50));
-	widget.resize(80, 40);
+	widget.SetPosition(Point(50, 50));
+	widget.Resize(80, 40);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -552,32 +552,32 @@ void DrawableTest::bind_test1()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame widget1;
-	widget1.set_position(0, 0);
-	widget1.resize (50, 50);
+	widget1.SetPosition(0, 0);
+	widget1.Resize (50, 50);
 	widget1.bind_to (ContextManager::instance());
 
 	Frame widget2;
-	widget2.set_position(50, 50);
-	widget2.resize (50, 50);
+	widget2.SetPosition(50, 50);
+	widget2.Resize (50, 50);
 	widget2.bind_to(&widget1);
 
 	Frame widget3;
-	widget3.set_position(100, 100);
-	widget3.resize(50, 50);
+	widget3.SetPosition(100, 100);
+	widget3.Resize(50, 50);
 	widget2.bind(&widget3);
 
 	Frame widget4;
-	widget4.set_position(150, 150);
-	widget4.resize(50, 50);
+	widget4.SetPosition(150, 150);
+	widget4.Resize(50, 50);
 	app->bind(&widget4);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -633,29 +633,29 @@ void DrawableTest::bind_test2()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame* widget1 = new Frame;
-	widget1->set_position(0, 0);
-	widget1->resize (50, 50);
+	widget1->SetPosition(0, 0);
+	widget1->Resize (50, 50);
 	widget1->set_name("widget1");
 	widget1->bind_to (ContextManager::instance());
 
 	Frame* widget2 = new Frame;
-	widget2->set_position(50, 50);
-	widget2->resize (50, 50);
+	widget2->SetPosition(50, 50);
+	widget2->Resize (50, 50);
 	widget2->set_name("widget2");
 	widget2->bind_to(widget1);
 
 	Frame* widget3 = new Frame;
-	widget3->set_position(100, 100);
-	widget3->resize(50, 50);
+	widget3->SetPosition(100, 100);
+	widget3->Resize(50, 50);
 	widget3->set_name("widget3");
 	widget2->bind(widget3);
 
 	Frame* widget4 = new Frame;
-	widget4->set_position(150, 150);
-	widget4->resize(50, 50);
+	widget4->SetPosition(150, 150);
+	widget4->Resize(50, 50);
 	widget4->set_name("widget4");
 	app->bind(widget4);
 
@@ -667,7 +667,7 @@ void DrawableTest::bind_test2()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -727,29 +727,29 @@ void DrawableTest::bind_test3()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame* widget1 = new Frame;
-	widget1->set_position(0, 0);
-	widget1->resize (50, 50);
+	widget1->SetPosition(0, 0);
+	widget1->Resize (50, 50);
 	widget1->set_name("widget1");
 	widget1->bind_to (ContextManager::instance());
 
 	Frame* widget2 = new Frame;
-	widget2->set_position(50, 50);
-	widget2->resize (50, 50);
+	widget2->SetPosition(50, 50);
+	widget2->Resize (50, 50);
 	widget2->set_name("widget2");
 	widget2->bind_to(ContextManager::instance());
 
 	Frame* widget3 = new Frame;
-	widget3->set_position(100, 100);
-	widget3->resize(50, 50);
+	widget3->SetPosition(100, 100);
+	widget3->Resize(50, 50);
 	widget3->set_name("widget3");
 	widget2->bind(widget3);
 
 	Frame* widget4 = new Frame;
-	widget4->set_position(150, 150);
-	widget4->resize(50, 50);
+	widget4->SetPosition(150, 150);
+	widget4->Resize(50, 50);
 	widget4->set_name("widget4");
 	ContextManager::instance()->bind(widget4);
 
@@ -774,7 +774,7 @@ void DrawableTest::bind_test3()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -827,26 +827,26 @@ void DrawableTest::bind_test4()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame* widget1 = new Frame;
-	widget1->set_position(0, 0);
-	widget1->resize (50, 50);
+	widget1->SetPosition(0, 0);
+	widget1->Resize (50, 50);
 	widget1->set_name("widget1");
 
 	Frame* widget2 = new Frame;
-	widget2->set_position(50, 50);
-	widget2->resize (50, 50);
+	widget2->SetPosition(50, 50);
+	widget2->Resize (50, 50);
 	widget2->set_name("widget2");
 
 	Frame* widget3 = new Frame;
-	widget3->set_position(100, 100);
-	widget3->resize(50, 50);
+	widget3->SetPosition(100, 100);
+	widget3->Resize(50, 50);
 	widget3->set_name("widget3");
 
 	Frame* widget4 = new Frame;
-	widget4->set_position(150, 150);
-	widget4->resize(50, 50);
+	widget4->SetPosition(150, 150);
+	widget4->Resize(50, 50);
 	widget4->set_name("widget4");
 
 	CPPUNIT_ASSERT(AbstractWidget::map_size() == 4);
@@ -868,7 +868,7 @@ void DrawableTest::bind_test4()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -922,26 +922,26 @@ void DrawableTest::bind_test5()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame* widget1 = new Frame;
-	widget1->set_position(0, 0);
-	widget1->resize (50, 50);
+	widget1->SetPosition(0, 0);
+	widget1->Resize (50, 50);
 	widget1->set_name("widget1");
 
 	Frame* widget2 = new Frame;
-	widget2->set_position(50, 50);
-	widget2->resize (50, 50);
+	widget2->SetPosition(50, 50);
+	widget2->Resize (50, 50);
 	widget2->set_name("widget2");
 
 	Frame* widget3 = new Frame;
-	widget3->set_position(100, 100);
-	widget3->resize(50, 50);
+	widget3->SetPosition(100, 100);
+	widget3->Resize(50, 50);
 	widget3->set_name("widget3");
 
 	Frame* widget4 = new Frame;
-	widget4->set_position(150, 150);
-	widget4->resize(50, 50);
+	widget4->SetPosition(150, 150);
+	widget4->Resize(50, 50);
 	widget4->set_name("widget4");
 
 	CPPUNIT_ASSERT(AbstractWidget::map_size() == 4);
@@ -972,7 +972,7 @@ void DrawableTest::bind_test5()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -1027,29 +1027,29 @@ void DrawableTest::bind_test6()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame* widget1 = new Frame;
-	widget1->set_position(0, 0);
-	widget1->resize (50, 50);
+	widget1->SetPosition(0, 0);
+	widget1->Resize (50, 50);
 	widget1->set_name("widget1");
 	widget1->bind_to (ContextManager::instance());
 
 	Frame* widget2 = new Frame;
-	widget2->set_position(50, 50);
-	widget2->resize (50, 50);
+	widget2->SetPosition(50, 50);
+	widget2->Resize (50, 50);
 	widget2->set_name("widget2");
 	widget2->bind_to(ContextManager::instance());
 
 	Frame* widget3 = new Frame;
-	widget3->set_position(100, 100);
-	widget3->resize(50, 50);
+	widget3->SetPosition(100, 100);
+	widget3->Resize(50, 50);
 	widget3->set_name("widget3");
 	widget2->bind(widget3);
 
 	Frame* widget4 = new Frame;
-	widget4->set_position(150, 150);
-	widget4->resize(50, 50);
+	widget4->SetPosition(150, 150);
+	widget4->Resize(50, 50);
 	widget4->set_name("widget4");
 	ContextManager::instance()->bind(widget4);
 
@@ -1074,7 +1074,7 @@ void DrawableTest::bind_test6()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -1123,27 +1123,27 @@ void DrawableTest::bind_test7()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame* widget1 = new Frame;
-	widget1->set_position(0, 0);
-	widget1->resize (50, 50);
+	widget1->SetPosition(0, 0);
+	widget1->Resize (50, 50);
 	widget1->set_name("widget1");
 	widget1->bind_to (ContextManager::instance());
 
 	Frame* widget2 = new Frame(widget1);
-	widget2->set_position(50, 50);
-	widget2->resize (50, 50);
+	widget2->SetPosition(50, 50);
+	widget2->Resize (50, 50);
 	widget2->set_name("widget2");
 
 	Frame* widget3 = new Frame(widget2);
-	widget3->set_position(100, 100);
-	widget3->resize(50, 50);
+	widget3->SetPosition(100, 100);
+	widget3->Resize(50, 50);
 	widget3->set_name("widget3");
 
 	Frame* widget4 = new Frame(widget3);
-	widget4->set_position(150, 150);
-	widget4->resize(50, 50);
+	widget4->SetPosition(150, 150);
+	widget4->Resize(50, 50);
 	widget4->set_name("widget4");
 
 	CPPUNIT_ASSERT(AbstractWidget::map_size() == 4);
@@ -1151,7 +1151,7 @@ void DrawableTest::bind_test7()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -1202,16 +1202,16 @@ void DrawableTest::bind_test8()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame widget1;
-	widget1.set_position(200, 200);
+	widget1.SetPosition(200, 200);
 	widget1.bind_to (ContextManager::instance());
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -1261,16 +1261,16 @@ void DrawableTest::bind_test9()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame widget1;
-	widget1.set_position(200, 200);
+	widget1.SetPosition(200, 200);
 	widget1.bind_to (ContextManager::instance());
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -1320,16 +1320,16 @@ void DrawableTest::bind_test10()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	Frame widget1;
-	widget1.set_position(200, 200);
+	widget1.SetPosition(200, 200);
 	widget1.bind_to (ContextManager::instance());
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		app->render();
+		app->Render();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

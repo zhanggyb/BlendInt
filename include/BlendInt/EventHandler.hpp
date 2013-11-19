@@ -57,12 +57,12 @@ namespace BlendInt {
 
 		virtual void move_mouse (MouseEvent* event) = 0;
 
-		virtual void render () = 0;
+		virtual void Render () = 0;
 
 	private:
 
 		/**
-		 * A ticktack for one render loop
+		 * A ticktack for one Render loop
 		 */
 		unsigned char m_ticktack;
 	};

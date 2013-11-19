@@ -36,7 +36,7 @@ namespace BlendInt {
 	class AbstractWidget;
 
 	/**
-	 * @brief class to hold and manage drawable objects for render
+	 * @brief class to hold and manage drawable objects for Render
 	 */
 	class ContextManager
 	{
@@ -71,7 +71,7 @@ namespace BlendInt {
 		 * @param obj
 		 * @return false if object already exist and at the same layer
 		 *
-		 * add or update the Drawable object in the context list
+		 * add or Update the Drawable object in the context list
 		 */
 		bool add_drawable (AbstractWidget* obj);
 

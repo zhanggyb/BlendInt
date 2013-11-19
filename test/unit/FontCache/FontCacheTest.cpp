@@ -349,7 +349,7 @@ void FontCacheTest::show1()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	FontCache* cache = FontCache::create(Font("Droid Sans Fallback", 24));
 
@@ -390,7 +390,7 @@ void FontCacheTest::show1()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-		// Test buffer render
+		// Test buffer Render
 		//glyph->Render();
 
 		/* Swap front and back buffers */
@@ -438,7 +438,7 @@ void FontCacheTest::print_test1()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	FontCache* cache = FontCache::create(Font("Droid Sans Fallback", 24));
 
@@ -516,7 +516,7 @@ void FontCacheTest::show_multiple_cache1()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	FontCache* cache1 = FontCache::create(Font("Lucida Grande", 48));
 
@@ -566,7 +566,7 @@ void FontCacheTest::show_multiple_cache1()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-		// Test buffer render
+		// Test buffer Render
 		glPushMatrix();
 		glTranslatef(100.0f, 100.0f, 0.0f);
 		for (it = str1.begin(); it != str1.end(); it++)
@@ -652,7 +652,7 @@ void FontCacheTest::test_font_not_exist1()
 	}
 
 	Interface* app = Interface::instance();
-	app->resize(1200, 800);
+	app->Resize(1200, 800);
 
 	FontCache* cache1 = FontCache::create(Font("Lucida Grande", 48));
 
@@ -702,7 +702,7 @@ void FontCacheTest::test_font_not_exist1()
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-		// Test buffer render
+		// Test buffer Render
 		glPushMatrix();
 		glTranslatef(100.0f, 100.0f, 0.0f);
 		for (it = str1.begin(); it != str1.end(); it++)
