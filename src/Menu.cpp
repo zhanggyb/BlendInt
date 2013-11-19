@@ -101,12 +101,12 @@ namespace BlendInt {
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(data);
-				generate_form_buffer(&(size()), true, *type_p, radius(), m_buffer.get());
+				GetFormBuffer(&(size()), true, *type_p, radius(), m_buffer.get());
 				break;
 			}
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
-				generate_form_buffer(&(size()), true, round_type(), *radius_p, m_buffer.get());
+				GetFormBuffer(&(size()), true, round_type(), *radius_p, m_buffer.get());
 				break;
 			}
 

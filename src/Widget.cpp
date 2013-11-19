@@ -209,7 +209,7 @@ namespace BlendInt {
 		buffer->unbind();
 	}
 
-	void Widget::generate_form_buffer(const Size* size, bool emboss, int round_type, float radius, GLBuffer* buffer)
+	void Widget::GetFormBuffer(const Size* size, bool emboss, int round_type, float radius, GLBuffer* buffer)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner

@@ -131,14 +131,15 @@ namespace BlendInt {
 		 * @param[in] emboss if draw emboss
 		 * @param[in] round_type round type
 		 * @param[in] radius round radius
-		 * @param[in] buffer the buffer generated
+		 * @param[out] buffer the buffer generated
 		 *
 		 * If emboss is true, 3 buffers are generated, if emboss is false, 2 buffers are generated:
 		 * 	- index 0: for inner drawing
 		 * 	- index 1: for outline drawing
 		 * 	- index 2: for emboss drawing
 		 */
-		void generate_form_buffer (const Size* size, bool emboss, int round_type, float radius, GLBuffer* buffer);
+		void GetFormBuffer (const Size* size, bool emboss, int round_type,
+		        float radius, GLBuffer* buffer);
 
 		/**
 		 * @brief generate GL buffer for rect form drawing
@@ -148,6 +149,24 @@ namespace BlendInt {
 		 */
 		void generate_rect_form_buffer (const Size* size, bool emboss, GLBuffer* buffer);
 
+		/**
+		 * @brief generate buffer with shaded color
+		 * @param[in] size
+		 * @param[in] border
+		 * @param[in] round_type
+		 * @param[in] radius
+		 * @param[in] theme
+		 * @param[in] shadedir
+		 * @param[in] highlight
+		 * @param[out] buffer
+		 *
+		 * This function calculate the output GLBuffers with shaded color
+		 *
+		 * If highlight > 0, 3 buffers will be generated, if not, 2 buffers generated:
+		 * 	- buffer index 0: used for inner
+		 * 	- buffer index 1: used for outline
+		 * 	- buffer index 2: used for inner highlight
+		 */
 		void generate_shaded_form_buffer (const Size* size,
 				float border,
 				int round_type,
@@ -157,6 +176,26 @@ namespace BlendInt {
 				short highlight,
 				GLBuffer* buffer);
 
+		/**
+		 * @brief generate buffer with shaded color
+		 * @param[in] size
+		 * @param[in] border
+		 * @param[in] round_type
+		 * @param[in] radius
+		 * @param[in] color
+		 * @param[in] shadetop
+		 * @param[in] shadedown
+		 * @param[in] shadedir
+		 * @param[in] highlight
+		 * @param[out] buffer
+		 *
+		 * This function calculate the output GLBuffers with shaded color
+		 *
+		 * If highlight > 0, 3 buffers will be generated, if not, 2 buffers generated:
+		 * 	- buffer index 0: used for inner
+		 * 	- buffer index 1: used for outline
+		 * 	- buffer index 2: used for inner highlight
+		 */
 		void generate_shaded_form_buffer (const Size* size,
 				float border,
 				int round_type,
