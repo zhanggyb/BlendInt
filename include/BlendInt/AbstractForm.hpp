@@ -111,11 +111,28 @@ namespace BlendInt {
 
 		virtual void Render () = 0;
 
+		/**
+		 * @brief generate vertices for drawing rectangle based on the given size and border width
+		 * @param[in] size
+		 * @param[in] border
+		 * @param[out] inner_v
+		 * @param[out] outer_v
+		 */
 		void generate_rect_vertices (const Size* size,
 				float border,
 				float inner_v[4][2],
 				float outer_v[4][2]);
 
+		/**
+		 * @brief generate vertices for drawing round box based on the given size, border width, round type, radius
+		 * @param[in] size
+		 * @param[in] border
+		 * @param[in] round_type
+		 * @param[in] radius
+		 * @param[out] inner_v
+		 * @param[out] outer_v
+		 * @return
+		 */
 		VerticesSum generate_round_vertices (const Size* size,
 				float border,
 				int round_type,
@@ -126,12 +143,14 @@ namespace BlendInt {
 
 		/**
 		 * @brief calculate vertices for round box edges
-		 * @param size
-		 * @param border
-		 * @param theme
-		 * @param shadedir shade direction
-		 * @param inner
-		 * @param outer
+		 * @param[in] size
+		 * @param[in] border
+		 * @param[in] round_type
+		 * @param[in] radius
+		 * @param[in] theme
+		 * @param[in] shadedir shade direction
+		 * @param[out] inner
+		 * @param[out] outer
 		 * @return
 		 */
 		VerticesSum generate_round_vertices (const Size* size,
@@ -147,6 +166,9 @@ namespace BlendInt {
 		 * @brief generate vertices array for round box inner and edges
 		 * @param[in] size the size to calculate position and shade uv
 		 * @param[in] border
+		 * @param[in] round_type
+		 * @param[in] radius
+		 * @param[in] color
 		 * @param[in] shadetop the top shade, defined in theme
 		 * @param[in] shadedown the bottom shade, defined in theme
 		 * @param[in] shadedir true if shade with horizontal direction

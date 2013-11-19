@@ -96,6 +96,8 @@ namespace BlendInt {
 
 		void update_shape (const Size* size);
 
+		boost::scoped_ptr<GLBuffer> m_buffer;
+
 	};
 
 	class ScrollBar: public AbstractSlider
@@ -133,6 +135,8 @@ namespace BlendInt {
 		int get_space ();
 
 		ScrollControl* m_scroll_control;
+
+		boost::scoped_ptr<GLBuffer> m_buffer;
 
 	};
 

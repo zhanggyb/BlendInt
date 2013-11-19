@@ -174,100 +174,12 @@ namespace BlendInt {
 		m_pressed = false;
 	}
 
-	void ScrollControl::update_shape(const Size* size)
-	{
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
-
-		VerticesSum vert_sum;
-
-		Orientation shadedir = size->width() < size->height() ? Horizontal : Vertical;
-
-		Color color = themes()->scroll.item;
-
-//		if(shadedir)
-//			SetRadius(0.5f * size->height());
-//		else
-//			SetRadius(0.5f * size->width());
-
-		short shadetop = themes()->scroll.shadetop;
-		short shadedown = themes()->scroll.shadedown;
-
-//		if (shadetop > shadedown)
-//				shadetop += 20;   /* XXX violates themes... */
-//		else shadedown += 20;
-
-		if(shadedir) {
-			vert_sum = generate_vertices(size,
-					border_width(),
-					color,
-					shadetop,
-					shadedown,
-					shadedir,
-					inner_v, outer_v);
-		} else {	// swap shadetop and shadedown
-			vert_sum = generate_vertices(size,
-					border_width(),
-					color,
-					shadedown,
-					shadetop,
-					shadedir,
-					inner_v, outer_v);
-		}
-
-		m_buffer.get()->generate(3);
-
-		m_buffer.get()->select(0);
-		m_buffer.get()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_buffer.get()->bind();
-		m_buffer.get()->upload(inner_v);
-		m_buffer.get()->unbind();
-
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-		//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
-
-		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
-
-		m_buffer.get()->select(1);
-		m_buffer.get()->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-
-		m_buffer.get()->bind();
-		m_buffer.get()->upload(quad_strip);
-		m_buffer.get()->unbind();
-
-		color.highlight(color, 5);
-
-		if(shadedir == Vertical) {
-			vert_sum = generate_vertices(size,
-					border_width(),
-					color,
-					shadetop,
-					shadedown,
-					shadedir,
-					inner_v, outer_v);
-		} else {	// swap shadetop and shadedown
-			vert_sum = generate_vertices(size,
-					border_width(),
-					color,
-					shadedown,
-					shadetop,
-					shadedir,
-					inner_v, outer_v);
-		}
-
-		m_buffer.get()->select(2);
-		m_buffer.get()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_buffer.get()->bind();
-		m_buffer.get()->upload(inner_v);
-		m_buffer.get()->unbind();
-
-	}
-
 	// ---------------------------- SliderBar -------------------------------
 
 	SliderBar::SliderBar(Orientation orientation)
 	: Slider(orientation)
 	{
+		m_buffer.reset(new GLBuffer);
 		SetRoundType(RoundAll);
 
 		set_control_size(50);
@@ -288,6 +200,7 @@ namespace BlendInt {
 	SliderBar::SliderBar(Orientation orientation, AbstractWidget* parent)
 	: Slider(orientation, parent)
 	{
+		m_buffer.reset(new GLBuffer);
 		SetRoundType(RoundAll);
 
 		set_control_size(50);
@@ -331,7 +244,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//		draw_shaded_gl_buffer(WidgetBufferKeyInner);
+		draw_shaded_inner_buffer(m_buffer.get(), 0);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
@@ -341,7 +254,8 @@ namespace BlendInt {
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
-//		draw_gl_buffer_anti_alias(WidgetBufferKeyOuter);
+
+		draw_outline_buffer(m_buffer.get(), 1);
 
 		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 //		draw_gl_buffer_anti_alias(WidgetBufferKeyEmboss);
@@ -372,13 +286,14 @@ namespace BlendInt {
 		else					// swap shadetop and shadedown
 			vert_sum = generate_vertices(size, border_width(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
-//		m_buffer.get()->generate(WidgetBufferKeyInner);
-//		m_buffer.get()->select(WidgetBufferKeyInner);
-//		m_buffer.get()->set_property(vert_sum.total, sizeof(inner_v[0]),
-//		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-//		m_buffer.get()->bind();
-//		m_buffer.get()->upload(inner_v);
-//		m_buffer.get()->unbind();
+		m_buffer.get()->generate(2);
+
+		m_buffer.get()->select(0);
+		m_buffer.get()->set_property(vert_sum.total, sizeof(inner_v[0]),
+		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.get()->bind();
+		m_buffer.get()->upload(inner_v);
+		m_buffer.get()->unbind();
 
 		// the quad strip for outline
 
@@ -386,21 +301,19 @@ namespace BlendInt {
 
 		verts_to_quad_strip(inner_v, outer_v, vert_sum.total, quad_strip);
 
-//		m_buffer.get()->generate(WidgetBufferKeyOuter);
-//		m_buffer.get()->select(WidgetBufferKeyOuter);
-//		m_buffer.get()->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]),
-//		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.get()->select(1);
+		m_buffer.get()->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]),
+		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		m_buffer.get()->bind();
+		m_buffer.get()->upload(quad_strip);
+		m_buffer.get()->unbind();
+
+//		float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 //
-//		m_buffer.get()->bind();
-//		m_buffer.get()->upload(quad_strip);
-//		m_buffer.get()->unbind();
-
-		float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
-
-		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
-
-//		m_buffer.get()->generate(WidgetBufferKeyEmboss);
-//		m_buffer.get()->select(WidgetBufferKeyEmboss);
+//		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
+//
+//		m_buffer.get()->select(2);
 //		m_buffer.get()->set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]),
 //		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 //
@@ -414,6 +327,7 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation)
 			: AbstractSlider(orientation), m_scroll_control(0)
 	{
+		m_buffer.reset(new GLBuffer);
 		SetRoundType(RoundAll);
 		SetRadius(8);
 
@@ -436,6 +350,8 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation, AbstractWidget* parent)
 			: AbstractSlider(orientation, parent), m_scroll_control(0)
 	{
+		m_buffer.reset(new GLBuffer);
+
 		SetRoundType(RoundAll);
 		SetRadius(8);
 
@@ -464,8 +380,9 @@ namespace BlendInt {
 		switch (type) {
 
 			case FormPosition: {
-				const Point* new_pos = &(position());
-				m_scroll_control->SetPosition (new_pos->x(), new_pos->y());
+				const Point* pos = static_cast<const Point*>(data);
+				m_scroll_control->SetPosition (m_scroll_control->position().x() + (pos->x() - position().x()),
+						m_scroll_control->position().y() + (pos->y() - position().y()));
 				break;
 			}
 
@@ -509,12 +426,12 @@ namespace BlendInt {
 		else					// swap shadetop and shadedown
 			vert_sum = generate_vertices(size, border_width(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
-//		m_buffer.get()->generate(WidgetBufferKeyInner);
-//		m_buffer.get()->select(WidgetBufferKeyInner);
-//		m_buffer.get()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-//		m_buffer.get()->bind();
-//		m_buffer.get()->upload(inner_v);
-//		m_buffer.get()->unbind();
+		m_buffer.get()->generate(2);
+		m_buffer.get()->select(0);
+		m_buffer.get()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.get()->bind();
+		m_buffer.get()->upload(inner_v);
+		m_buffer.get()->unbind();
 
 		// the quad strip for outline
 
@@ -522,13 +439,12 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-//		m_buffer.get()->generate(WidgetBufferKeyOuter);
-//		m_buffer.get()->select(WidgetBufferKeyOuter);
-//		m_buffer.get()->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-//
-//		m_buffer.get()->bind();
-//		m_buffer.get()->upload(quad_strip);
-//		m_buffer.get()->unbind();
+		m_buffer.get()->select(1);
+		m_buffer.get()->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+
+		m_buffer.get()->bind();
+		m_buffer.get()->upload(quad_strip);
+		m_buffer.get()->unbind();
 
 		float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 
@@ -553,25 +469,9 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//		m_buffer.get()->select(WidgetBufferKeyInner);
-
-//		m_buffer.get()->bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-		
-		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-//		glDrawArrays(GL_POLYGON, 0, m_buffer.get()->vertices());
-
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-//		m_buffer.get()->unbind();
+		draw_shaded_inner_buffer(m_buffer.get(), 0);
 
 		// draw outline
-//		m_buffer.get()->select(WidgetBufferKeyOuter);
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
 		        themes()->scroll.outline.g(),
 		        themes()->scroll.outline.b(),
@@ -579,38 +479,9 @@ namespace BlendInt {
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 
-//		m_buffer.get()->bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
 		glColor4ubv(tcol);
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-//			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.get()->vertices());
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
 
-//		m_buffer.get()->unbind();
-
-//		m_buffer.get()->select(WidgetBufferKeyEmboss);	// emboss
-//		m_buffer.get()->bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-
-			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-//			glDrawArrays(GL_QUAD_STRIP, 0, m_buffer.get()->vertices());
-
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-//		m_buffer.get()->unbind();
+		draw_outline_buffer(m_buffer.get(), 1);
 
 		glDisable(GL_BLEND);
 
