@@ -43,8 +43,8 @@ namespace BlendInt {
 
 		AbstractExtraForm& operator = (const AbstractExtraForm& orig)
 		{
-			SetPosition(orig.position());
-			Resize(orig.size());
+			set_position(orig.position());
+			set_size(orig.size());
 			m_expand_x = orig.expand_x();
 			m_expand_y = orig.expand_y();
 			m_preferred_size = orig.preferred_size();
@@ -73,85 +73,6 @@ namespace BlendInt {
 		{
 			return m_maximal_size;
 		}
-
-		/**
-		 * @brief set the form's position
-		 * @param x
-		 * @param y
-		 * @return true if new position is set, false if it's the same as the current position
-		 */
-		bool SetPosition (int x, int y);
-
-		/**
-		 * @brief set the form's position
-		 * @param position
-		 * @return true if new position is set, false if it's the same as the current position
-		 */
-		bool SetPosition (const Point& position);
-
-		/**
-		 * @brief reset the size of the form
-		 * @param width
-		 * @param height
-		 * @return
-		 *
-		 * Hide the same function in base class
-		 */
-		bool Resize (unsigned int width, unsigned int height);
-
-		/**
-		 * @brief reset the size of the form
-		 * @param size
-		 * @return
-		 *
-		 * Check if the given size is in [min, max], if is, call Resize() in base class
-		 */
-		bool Resize (const Size& size);
-
-		/**
-		 * @brief set the preferred size
-		 * @param width
-		 * @param height
-		 * @return true if new preferred size is set, false if not
-		 */
-		bool SetPreferredSize (unsigned int width, unsigned int height);
-
-		/**
-		 * @brief set the preferred size
-		 * @param size
-		 * @return true if new preferred size is set, false if not
-		 */
-		bool SetPreferredSize (const Size& size);
-
-		/**
-		 * @brief set the minimal size
-		 * @param width
-		 * @param height
-		 * @return true if the new minimal size is set, false if not
-		 */
-		bool SetMinimalSize (unsigned int width, unsigned int height);
-
-		/**
-		 * @brief set the minimal size
-		 * @param size
-		 * @return true if the new minimal size is set, false if not
-		 */
-		bool SetMinimalSize (const Size& size);
-
-		/**
-		 * @brief set the maximal size
-		 * @param width
-		 * @param height
-		 * @return true if the new maximial size is set, false if not
-		 */
-		bool SetMaximalSize (unsigned int width, unsigned int height);
-
-		/**
-		 * @brief set the maximal size
-		 * @param size
-		 * @return true if the new maximal size is set, false if not
-		 */
-		bool SetMaximalSize (const Size& size);
 
 		void SetExpandX (bool expand) {m_expand_x = expand;}
 
@@ -237,25 +158,6 @@ namespace BlendInt {
 		{
 			m_expand_y = expand;
 		}
-
-		/**
-		 * @brief resize other object's size
-		 * @param obj
-		 * @param w
-		 * @param h
-		 *
-		 * @note should be used in layout only
-		 */
-		static void Resize (AbstractExtraForm* obj, unsigned int w, unsigned int h);
-
-		/**
-		 * @brief resize other object's size
-		 * @param obj
-		 * @param size
-		 *
-		 * @note should be used in layout only
-		 */
-		static void Resize (AbstractExtraForm* obj, const Size& size);
 
 	private:
 

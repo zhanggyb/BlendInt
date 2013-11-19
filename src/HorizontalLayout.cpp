@@ -178,7 +178,7 @@ namespace BlendInt {
 		else m_fixed_items.insert(form);
 
 		if(! (current_size == size()))
-			dynamic_cast<AbstractExtraForm*>(this)->Resize(current_size);
+			Resize(this, current_size);
 		else
 			make_layout(&current_size);
 
@@ -234,7 +234,7 @@ namespace BlendInt {
 		else m_fixed_items.insert(layout);
 
 		if(! (current_size == size()))
-			dynamic_cast<AbstractExtraForm*>(this)->Resize(current_size);	// call make_layout() through this function
+			Resize(this, current_size);	// call make_layout() through this function
 		else
 			make_layout(&current_size);
 
@@ -319,8 +319,8 @@ namespace BlendInt {
 
 			child = *it;
 			//resize_priv(child, child->preferred_size().width(), child->size().height());
-			dynamic_cast<AbstractExtraForm*>(child)->Resize(child->preferred_size().width(), child->size().height());
-			dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, child->position().y());
+			Resize(child, child->preferred_size().width(), child->size().height());
+			SetPosition(child, x, child->position().y());
 			x += child->size().width();
 		}
 	}
@@ -352,12 +352,12 @@ namespace BlendInt {
 				child = *it;
 
 				if(m_expandable_items.count(child)) {
-					dynamic_cast<AbstractExtraForm*>(child)->Resize(single_width, child->size().height());
+					Resize(child, single_width, child->size().height());
 				} else {
-					dynamic_cast<AbstractExtraForm*>(child)->Resize(child->preferred_size().width(), child->size().height());
+					Resize(child, child->preferred_size().width(), child->size().height());
 				}
 
-				dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, child->position().y());
+				SetPosition(child, x, child->position().y());
 				x += child->size().width();
 			}
 
@@ -377,22 +377,22 @@ namespace BlendInt {
 				child = *it;
 
 				if(m_expandable_items.count(child)) {
-					dynamic_cast<AbstractExtraForm*>(child)->Resize(child->minimal_size().width(), child->size().height());
+					Resize(child, child->minimal_size().width(), child->size().height());
 				} else {
 
 					if(w < child->minimal_size().width()) {
-						dynamic_cast<AbstractExtraForm*>(child)->Resize(child->minimal_size().width(), child->size().height());
+						Resize(child, child->minimal_size().width(), child->size().height());
 						normal_items.erase(child);
 						unminimal_width = unminimal_width - child->minimal_size().width();
 						w = unminimal_width / normal_items.size();
 						reset_width_of_fixed_items(&normal_items, w);
 					} else {
-						dynamic_cast<AbstractExtraForm*>(child)->Resize(w, child->size().height());
+						Resize(child, w, child->size().height());
 					}
 
 				}
 
-				dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, child->position().y());
+				SetPosition(child, x, child->position().y());
 				x += child->size().width();
 			}
 
@@ -426,12 +426,12 @@ namespace BlendInt {
 				child = *it;
 
 				if(m_expandable_items.count(child)) {
-					dynamic_cast<AbstractExtraForm*>(child)->Resize(single_width, child->size().height());
+					Resize(child, single_width, child->size().height());
 				} else {
-					dynamic_cast<AbstractExtraForm*>(child)->Resize(child->preferred_size().width(), child->size().height());
+					Resize(child, child->preferred_size().width(), child->size().height());
 				}
 
-				dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, child->position().y());
+				SetPosition(child, x, child->position().y());
 				x += child->size().width();
 			}
 
@@ -451,22 +451,22 @@ namespace BlendInt {
 				child = *it;
 
 				if(m_expandable_items.count(child)) {
-					dynamic_cast<AbstractExtraForm*>(child)->Resize(child->minimal_size().width(), child->size().height());
+					Resize(child, child->minimal_size().width(), child->size().height());
 				} else {
 
 					if(w < child->minimal_size().width()) {
-						dynamic_cast<AbstractExtraForm*>(child)->Resize(child->minimal_size().width(), child->size().height());
+						Resize(child, child->minimal_size().width(), child->size().height());
 						normal_items.erase(child);
 						unminimal_width = unminimal_width - child->minimal_size().width();
 						w = unminimal_width / normal_items.size();
 						reset_width_of_fixed_items(&normal_items, w);
 					} else {
-						dynamic_cast<AbstractExtraForm*>(child)->Resize(w, child->size().height());
+						Resize(child, w, child->size().height());
 					}
 
 				}
 
-				dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, child->position().y());
+				SetPosition(child, x, child->position().y());
 				x += child->size().width();
 			}
 
@@ -498,13 +498,13 @@ namespace BlendInt {
 			child = *it;
 
 			if (m_expandable_items.count(child)) {
-				dynamic_cast<AbstractExtraForm*>(child)->Resize(single_width, child->size().height());
+				Resize(child, single_width, child->size().height());
 			} else {
-				dynamic_cast<AbstractExtraForm*>(child)->Resize(child->preferred_size().width(),
+				Resize(child, child->preferred_size().width(),
 				        child->size().height());
 			}
 
-			dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, child->position().y());
+			SetPosition(child, x, child->position().y());
 			x += child->size().width();
 		}
 
@@ -535,13 +535,13 @@ namespace BlendInt {
 			child = *it;
 
 			if (m_expandable_items.count(child)) {
-				dynamic_cast<AbstractExtraForm*>(child)->Resize(single_width, child->size().height());
+				Resize(child, single_width, child->size().height());
 			} else {
-				dynamic_cast<AbstractExtraForm*>(child)->Resize(child->preferred_size().width(),
+				Resize(child, child->preferred_size().width(),
 				        child->size().height());
 			}
 
-			dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, child->position().y());
+			SetPosition(child, x, child->position().y());
 			x += child->size().width();
 		}
 
@@ -561,17 +561,17 @@ namespace BlendInt {
 
 			if (child->expand_y() ||
 					(child->size().height() > h)) {
-				dynamic_cast<AbstractExtraForm*>(child)->Resize(child->size().width(), h);
-				dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(), y);
+				Resize(child, child->size().width(), h);
+				SetPosition(child, child->position().x(), y);
 			} else {
 
 				if (alignment() & AlignTop) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
+					SetPosition(child, child->position().x(),
 					        y + (h - child->size().height()));
 				} else if (alignment() & AlignBottom) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(), y);
+					SetPosition(child, child->position().x(), y);
 				} else if (alignment() & AlignHorizontalCenter) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
+					SetPosition(child, child->position().x(),
 					        y + (h - child->size().height()) / 2);
 				}
 
@@ -593,17 +593,17 @@ namespace BlendInt {
 
 			if (child->expand_y() ||
 					(child->size().height() > h)) {
-				dynamic_cast<AbstractExtraForm*>(child)->Resize(child->size().width(), h);
-				dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(), y);
+				Resize(child, child->size().width(), h);
+				SetPosition(child, child->position().x(), y);
 			} else {
 
 				if (alignment() & AlignTop) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
+					SetPosition(child, child->position().x(),
 					        y + (h - child->size().height()));
 				} else if (alignment() & AlignBottom) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(), y);
+					SetPosition(child, child->position().x(), y);
 				} else if (alignment() & AlignHorizontalCenter) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
+					SetPosition(child, child->position().x(),
 					        y + (h - child->size().height()) / 2);
 				}
 
@@ -619,7 +619,7 @@ namespace BlendInt {
 
 		for(it = items->begin(); it != items->end(); it++)
 		{
-			dynamic_cast<AbstractExtraForm*>(*it)->Resize(width, (*it)->size().height());
+			Resize(*it, width, (*it)->size().height());
 		}
 	}
 

@@ -26,17 +26,17 @@
 namespace BlendInt {
 
 	PixelIcon::PixelIcon ()
-	: AbstractForm()
+	: FormBase()
 	{
 	}
 
 	PixelIcon::PixelIcon (const unsigned char* pixels, int width, int height)
-	: AbstractForm()
+	: FormBase()
 	{
 	}
 
 	PixelIcon::PixelIcon (const PixelIcon& orig)
-	: AbstractForm()
+	: FormBase()
 	{
 	}
 

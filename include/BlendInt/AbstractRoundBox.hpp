@@ -24,12 +24,12 @@
 #ifndef _BLENDINT_ABSTRACTROUNDBOX_HPP_
 #define _BLENDINT_ABSTRACTROUNDBOX_HPP_
 
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/FormBase.hpp>
 #include <BlendInt/RoundBoxBase.hpp>
 
 namespace BlendInt {
 
-	class AbstractRoundBox: public AbstractForm, public RoundBoxBase
+	class AbstractRoundBox: public FormBase, public RoundBoxBase
 	{
 	public:
 
@@ -40,7 +40,6 @@ namespace BlendInt {
 		void SetRoundType (int type);
 
 		void SetRadius (float radius);
-
 	};
 
 }

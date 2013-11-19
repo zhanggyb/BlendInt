@@ -30,13 +30,13 @@
 namespace BlendInt {
 
 	MenuItem::MenuItem ()
-	: AbstractForm(), m_highlight(false)
+	: FormBase(), m_highlight(false)
 	{
 		Resize(200, 20);
 	}
 
 	MenuItem::MenuItem (const String& text)
-	: AbstractForm(), m_highlight(false)
+	: FormBase(), m_highlight(false)
 	{
 		Resize(200, 20);
 		m_text = text;

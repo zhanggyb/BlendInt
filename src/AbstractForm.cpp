@@ -58,30 +58,6 @@ namespace BlendInt {
 
 	}
 
-	bool AbstractForm::Resize(unsigned int width, unsigned int height)
-	{
-		Size new_size (width, height);
-
-		if (m_size == new_size) return false;
-
-		Update(FormSize, &new_size);
-
-		m_size.set_width(width);
-		m_size.set_height(height);
-
-		return true;
-	}
-
-	bool AbstractForm::Resize(const Size& size)
-	{
-		if(m_size == size) return false;
-
-		Update(FormSize, &size);
-		m_size = size;
-
-		return true;
-	}
-
 	void AbstractForm::generate_rect_vertices(const Size* size,
 			float border,
 			float inner_v[4][2],

@@ -69,7 +69,7 @@ namespace BlendInt {
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
-				dynamic_cast<AbstractExtraForm*>(this)->Resize(size().width(), m_text_outline.height());
+				Resize(this, size().width(), m_text_outline.height());
 			} else {
 				m_length = 0;
 				cal_width = false;
@@ -78,7 +78,7 @@ namespace BlendInt {
 
 		if(size().width() < m_text_outline.width()) {
 			if(expand_x()) {
-				dynamic_cast<AbstractExtraForm*>(this)->Resize(m_text_outline.width(), size().height());
+				Resize(this, m_text_outline.width(), size().height());
 			} else {
 				if(cal_width) m_length = get_valid_text_size();
 			}
@@ -111,7 +111,7 @@ namespace BlendInt {
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
-				dynamic_cast<AbstractExtraForm*>(this)->Resize(size().width(), m_text_outline.height());
+				Resize(this, size().width(), m_text_outline.height());
 			} else {
 				m_length = 0;
 				cal_width = false;
@@ -120,7 +120,7 @@ namespace BlendInt {
 
 		if(size().width() < m_text_outline.width()) {
 			if(expand_x()) {
-				dynamic_cast<AbstractExtraForm*>(this)->Resize(m_text_outline.width(), size().height());
+				Resize(this, m_text_outline.width(), size().height());
 			} else {
 				if(cal_width) m_length = get_valid_text_size();
 			}

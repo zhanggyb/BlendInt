@@ -355,23 +355,23 @@ namespace BlendInt {
 				child = items()[i * m_columns + j];
 				if(!child) continue;
 
-				dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, y);
+				SetPosition(child, x, y);
 
 				if(child->expand_y()) {
-					dynamic_cast<AbstractExtraForm*>(child)->Resize(child->size().width(), row_height[i]);
+					Resize(child, child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					dynamic_cast<AbstractExtraForm*>(child)->Resize(column_width[j], child->size().height());
+					Resize(child, column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
+					SetPosition(child, child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
+					SetPosition(child, child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
+					SetPosition(child, child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();
@@ -423,23 +423,23 @@ namespace BlendInt {
 				child = items()[i * m_columns + j];
 				if(!child) continue;
 
-				dynamic_cast<AbstractExtraForm*>(child)->SetPosition(x, y);
+				SetPosition(child, x, y);
 
 				if(child->expand_y()) {
-					dynamic_cast<AbstractExtraForm*>(child)->Resize(child->size().width(), row_height[i]);
+					Resize(child, child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					dynamic_cast<AbstractExtraForm*>(child)->Resize(column_width[j], child->size().height());
+					Resize(child, column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
+					SetPosition(child, child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
+					SetPosition(child, child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-					dynamic_cast<AbstractExtraForm*>(child)->SetPosition(child->position().x(),
+					SetPosition(child, child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();

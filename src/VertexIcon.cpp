@@ -77,7 +77,7 @@ namespace BlendInt {
 	        4, 5 }, { 1, 0, 3 }, { 0, 2, 3 } };
 
 	VertexIcon::VertexIcon ()
-	: AbstractForm()
+	: FormBase()
 	{
 	}
 

@@ -276,6 +276,29 @@ namespace BlendInt {
 				m_property_changed.fire(this, type);
 		}
 
+		static void SetPosition (AbstractWidget* obj, int x, int y);
+
+		static void SetPosition (AbstractWidget* obj, const Point& pos);
+
+		/**
+		 * @brief resize other object's size
+		 * @param obj
+		 * @param w
+		 * @param h
+		 *
+		 * @note should be used in layout only
+		 */
+		static void Resize (AbstractWidget* obj, unsigned int w, unsigned int h);
+
+		/**
+		 * @brief resize other object's size
+		 * @param obj
+		 * @param size
+		 *
+		 * @note should be used in layout only
+		 */
+		static void Resize (AbstractWidget* obj, const Size& size);
+
 		static void dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event);
 
 		static void dispatch_mouse_move_event (AbstractWidget* obj, MouseEvent* event);

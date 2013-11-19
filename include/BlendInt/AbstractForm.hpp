@@ -50,9 +50,13 @@ namespace BlendInt {
 	/**
 	 * @brief Abstract form class
 	 *
-	 * An AbstractForm is a 2 dimension object with the position/size.
+	 * An AbstractForm is the base class for all GUI elements in 2 dimension.
 	 *
-	 * The default size is 0 at (0, 0), so it draws nothing
+	 * The default size is 0 at (0, 0) and the subclass must provide a public
+	 * method to resize the form, this method usually need to call Update for redraw
+	 * the form.
+	 *
+	 * @sa Update()
 	 */
 	class AbstractForm
 	{
@@ -74,27 +78,6 @@ namespace BlendInt {
 		{
 			return m_size;
 		}
-
-		/**
-		 * @brief reset the size of the form
-		 * @param width
-		 * @param height
-		 * @return true if the new size is set, false if it's the same as the current size
-		 *
-		 * Reset the form's size, return true if the new size is set, and the Update() was
-		 * called once (this usually some operations of OpenGL API, e.g. Update the GL Buffer
-		 */
-		bool Resize (unsigned int width, unsigned int height);
-
-		/**
-		 * @brief reset the size of the form
-		 * @param size
-		 * @return true if the new size is set, false if it's the same as the current size
-		 *
-		 * Reset the form's size, return true if the new size is set, and the Update() was
-		 * called once (this usually some operations of OpenGL API, e.g. Update the GL Buffer
-		 */
-		bool Resize (const Size& size);
 
 	protected:
 

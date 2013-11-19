@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/FormBase.hpp>
 
 #include <BlendInt/MouseEvent.hpp>
 
@@ -32,7 +32,7 @@
 
 namespace BlendInt {
 
-	class MenuItem: public AbstractForm
+	class MenuItem: public FormBase
 	{
 //		DISALLOW_COPY_AND_ASSIGN(MenuItem);
 

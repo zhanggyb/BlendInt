@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	AbstractRoundBox::AbstractRoundBox()
-	: AbstractForm(), RoundBoxBase()
+	: FormBase(), RoundBoxBase()
 	{
 
 	}
@@ -53,5 +53,6 @@ namespace BlendInt {
 
 		set_radius(rad);
 	}
+
 
 }

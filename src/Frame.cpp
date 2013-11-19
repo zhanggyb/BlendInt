@@ -137,7 +137,7 @@ namespace BlendInt {
 					const Point* pos_p = static_cast<const Point*>(data);
 					int offset_x = pos_p->x() - position().x();
 					int offset_y = pos_p->y() - position().y();
-					dynamic_cast<AbstractExtraForm*>(m_widget)->SetPosition(m_widget->position().x() + offset_x,
+					SetPosition(m_widget, m_widget->position().x() + offset_x,
 					        m_widget->position().y() + offset_y);
 				}
 				break;

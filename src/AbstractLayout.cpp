@@ -162,7 +162,7 @@ namespace BlendInt {
 
 				for (size_t i = 0; i < m_items.size(); i++)
 				{
-					dynamic_cast<AbstractExtraForm*>(m_items[i])->SetPosition(
+					SetPosition(m_items[i],
 							m_items[i]->position().x() + (new_pos->x() - position().x()),
 							m_items[i]->position().y() + (new_pos->y() - position().y()));
 

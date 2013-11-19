@@ -21,57 +21,34 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_VERTEXICON_HPP_
-#define _BLENDINT_VERTEXICON_HPP_
+#ifndef _BLENDINT_FORMBASE_HPP_
+#define _BLENDINT_FORMBASE_HPP_
 
-#include <BlendInt/FormBase.hpp>
-#include <BlendInt/GLBuffer.hpp>
+#include <BlendInt/AbstractForm.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * Icon displayed with vertexes
+	 * @brief a simple form class inherit from AbstractForm and provide Resize function
 	 */
-	class VertexIcon: public FormBase
+	class FormBase: public AbstractForm
 	{
 	public:
 
-		static const float num_tria_vert[3][2];
+		FormBase ()
+		: AbstractForm()
+		{}
 
-		static const unsigned int num_tria_face[1][3];
+		virtual ~FormBase () {}
 
-		static const float scroll_circle_vert[16][2];
+		void Resize (unsigned int width, unsigned int height);
 
-		static const unsigned int scroll_circle_face[14][3];
-
-		static const float menu_tria_vert[6][2];
-
-		static const unsigned int menu_tria_face[2][3];
-
-		static const float check_tria_vert[6][2];
-
-		static const unsigned int check_tria_face[4][3];
-
-		VertexIcon ();
-
-		~VertexIcon ();
-
-		void demo_init ();
-
-		void load (const float (*vertex_array)[2], size_t array_size,
-				const unsigned int (*vertex_indices)[3], size_t indeces_size);
-
-	protected:
-
-		virtual void Update (int type, const void* data);
-
-		virtual void Render ();
-
-	private:
-
-		GLBuffer m_gl_buffer;
+		void Resize (const Size& size);
 
 	};
+
 }
 
-#endif /* VERTEXICON_HPP_ */
+
+
+#endif /* FORM_HPP_ */
