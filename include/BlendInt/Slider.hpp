@@ -31,7 +31,7 @@
 
 namespace BlendInt {
 
-	class SlideButton: public Button
+	class SlideButton: public AbstractButton
 	{
 	public:
 
@@ -55,11 +55,11 @@ namespace BlendInt {
 
 	private:
 
-		void update_shape (const Size* size);
-
 		Point m_move_start;
 
 		Point m_position_origin;
+
+		boost::scoped_ptr<GLBuffer> m_buffer;
 	};
 
 	/**
@@ -77,9 +77,9 @@ namespace BlendInt {
 
 		void set_control_size (size_t size);
 
-		void set_control_widget (Button *widget);
+		void set_control_widget (SlideButton *widget);
 
-		const Button* slide_button () const
+		const SlideButton* slide_button () const
 		{
 			return m_slide_button;
 		}
@@ -102,7 +102,7 @@ namespace BlendInt {
 		 */
 		int get_space ();
 
-		Button* m_slide_button;
+		SlideButton* m_slide_button;
 
 	private:
 

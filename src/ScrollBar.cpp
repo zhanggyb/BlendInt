@@ -58,7 +58,6 @@ namespace BlendInt {
 				short shadetop = themes()->scroll.shadetop;
 				short shadedown = themes()->scroll.shadedown;
 
-//				update_shape(size_p);
 				generate_shaded_form_buffer(size_p,
 						border_width(),
 						round_type(),

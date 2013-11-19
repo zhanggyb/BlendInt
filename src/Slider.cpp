@@ -32,13 +32,15 @@
 namespace BlendInt {
 
 	SlideButton::SlideButton()
-	:  Button()
+	:  AbstractButton()
 	{
+		m_buffer.reset(new GLBuffer);
 	}
 
 	SlideButton::SlideButton(AbstractWidget* parent)
-	:  Button(parent)
+	:  AbstractButton(parent)
 	{
+		m_buffer.reset(new GLBuffer);
 	}
 
 	SlideButton::~SlideButton()
@@ -52,13 +54,44 @@ namespace BlendInt {
 		{
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				update_shape(size_p);
+				Orientation shadedir = size_p->width() < size_p->height() ? Horizontal : Vertical;
+				const Color& color = themes()->scroll.item;
+				short shadetop = themes()->scroll.shadetop;
+				short shadedown = themes()->scroll.shadedown;
+
+				generate_shaded_form_buffer(size_p,
+						border_width(),
+						round_type(),
+						radius(),
+						color,
+						shadetop,
+						shadedown,
+						shadedir,
+						5,
+						m_buffer.get()
+						);
 				break;
 			}
 
 			case FormRoundRadius: {
-				const Size* size_p = static_cast<const Size*>(data);
-				update_shape(size_p);
+				const Size* size_p = &(size());
+				Orientation shadedir = size_p->width() < size_p->height() ? Horizontal : Vertical;
+				const float* radius_p = static_cast<const float*>(data);
+				const Color& color = themes()->scroll.item;
+				short shadetop = themes()->scroll.shadetop;
+				short shadedown = themes()->scroll.shadedown;
+
+				generate_shaded_form_buffer(size_p,
+						border_width(),
+						round_type(),
+						*radius_p,
+						color,
+						shadetop,
+						shadedown,
+						shadedir,
+						5,
+						m_buffer.get()
+						);
 				break;
 			}
 
@@ -80,50 +113,20 @@ namespace BlendInt {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if(down()) {
-			buffer()->select(0);
-
+			draw_shaded_inner_buffer(m_buffer.get(), 0);
 		} else {
-			buffer()->select(2);
+			draw_shaded_inner_buffer(m_buffer.get(), 2);
 		}
-
-		buffer()->bind();
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-
-		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glDrawArrays(GL_POLYGON, 0, buffer()->vertices());
-
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-		buffer()->unbind();
 
 		// draw outline
-		buffer()->select(1);
-
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
-		        themes()->scroll.outline.g(),
-		        themes()->scroll.outline.b(),
-		        themes()->scroll.outline.a()};
+		        themes()->scroll.outline.g(), themes()->scroll.outline.b(),
+		        themes()->scroll.outline.a() };
 
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-
-		buffer()->bind();
-
-		/* outline */
-		glEnableClientState(GL_VERTEX_ARRAY);
 		glColor4ubv(tcol);
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(GL_QUAD_STRIP, 0, buffer()->vertices());
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
 
-		buffer()->unbind();
+		draw_outline_buffer(m_buffer.get(), 1);
 
 		glDisable(GL_BLEND);
 
@@ -138,34 +141,39 @@ namespace BlendInt {
 		AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(parent().object.form);
 		if(!parent_obj) return;
 
-		if(down()) {
+		if (down()) {
 			set_hover(false);
+			if (parent_obj->orientation() == Vertical) {
+				SetPosition(position().x(),
+				        m_position_origin.y() + event->position().y()
+				                - m_move_start.y());
 
-			if(parent_obj->orientation() == Vertical) {	// Vertical
-
-				SetPosition(position().x(), m_position_origin.y() + event->position().y() - m_move_start.y());
-
-				if(position().y() < (parent_obj->position().y())) {
-
+				if (position().y() < (parent_obj->position().y())) {
 					SetPosition(position().x(), parent_obj->position().y());
-
 				}
-				if(position().y() > (int)(parent_obj->position().y() + parent_obj->size().height() - size().height())) {
-					SetPosition(position().x(), parent_obj->position().y() + parent_obj->size().height() - size().height());
-
+				if (position().y()
+				        > (int) (parent_obj->position().y()
+				                + parent_obj->size().height() - size().height())) {
+					SetPosition(position().x(),
+					        parent_obj->position().y()
+					                + parent_obj->size().height()
+					                - size().height());
 				}
-
 			} else {
-
-				SetPosition(m_position_origin.x() + event->position().x() - m_move_start.x(), position().y());
-				if(position().x() < (parent_obj->position().x())) {
+				SetPosition(
+				        m_position_origin.x() + event->position().x()
+				                - m_move_start.x(), position().y());
+				if (position().x() < (parent_obj->position().x())) {
 					SetPosition(parent_obj->position().x(), position().y());
 				}
-				if(position().x() >
-						(int)(parent_obj->position().x() + parent_obj->size().width() - size().width())) {
-					SetPosition(parent_obj->position().x() + parent_obj->size().width() - size().width(), position().y());
+				if (position().x()
+				        > (int) (parent_obj->position().x()
+				                + parent_obj->size().width() - size().width())) {
+					SetPosition(
+					        parent_obj->position().x()
+					                + parent_obj->size().width()
+					                - size().width(), position().y());
 				}
-
 			}
 			event->accept(this);
 			return;
@@ -204,100 +212,6 @@ namespace BlendInt {
 
 		}
 		set_down(false);
-
-	}
-
-	void SlideButton::update_shape(const Size* size)
-	{
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
-
-		VerticesSum vert_sum;
-
-		Orientation shadedir;
-
-		if(parent().type != ParentForm) {
-			shadedir = size->width() < size->height() ? Horizontal : Vertical;
-		} else {
-			AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(parent().object.form);
-			if(parent_obj) {
-				shadedir = parent_obj->orientation() == Horizontal ? Horizontal : Vertical;
-			}
-		}
-		Color color = themes()->scroll.item;
-
-//		if(shadedir == Vertical)
-//			SetRadius(0.5f * size->height());
-//		else
-//			SetRadius(0.5f * size->width());
-
-		short shadetop = themes()->scroll.shadetop;
-		short shadedown = themes()->scroll.shadedown;
-
-		if(shadedir == Vertical) {
-			vert_sum = generate_vertices(size,
-					border_width(),
-					color,
-					shadetop,
-					shadedown,
-					shadedir,
-					inner_v, outer_v);
-		} else {	// swap shadetop and shadedown
-			vert_sum = generate_vertices(size,
-					border_width(),
-					color,
-					shadedown,
-					shadetop,
-					shadedir,
-					inner_v, outer_v);
-		}
-
-		buffer()->generate(3);
-		buffer()->select(0);
-
-		buffer()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		buffer()->bind();
-		buffer()->upload(inner_v);
-		buffer()->unbind();
-
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-
-		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
-
-		buffer()->select(1);
-		buffer()->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-
-		buffer()->bind();
-		buffer()->upload(quad_strip);
-		buffer()->unbind();
-
-		color.highlight(color, 5);
-
-		if(shadedir == Vertical) {
-			vert_sum = generate_vertices(size,
-					border_width(),
-					color,
-					shadetop,
-					shadedown,
-					shadedir,
-					inner_v, outer_v);
-		} else {	// swap shadetop and shadedown
-			vert_sum = generate_vertices(size,
-					border_width(),
-					color,
-					shadedown,
-					shadetop,
-					shadedir,
-					inner_v, outer_v);
-		}
-
-		buffer()->select(2);
-
-		buffer()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		buffer()->bind();
-		buffer()->upload(inner_v);
-		buffer()->unbind();
-
 	}
 
 	// -------------------- Slider ---------------------------
@@ -309,18 +223,29 @@ namespace BlendInt {
 
 		// set default size
 		if (orientation == Vertical) {
-			Resize (25, 200);
-			SetExpandY(true);
+			set_size (18, 200);
+			set_expand_y(true);
 		} else {
-			Resize (200, 25);
-			SetExpandX(true);
+			set_size (200, 18);
+			set_expand_x(true);
 		}
 
 		size_t button_size = std::min (size().width(), size().height());
 
 		m_slide_button->Resize(button_size, button_size);
-		//m_slide_button->SetPosition (position().x() + padding().left(), position().y() + padding().bottom());
-		Update(SliderPropertyValue, 0);
+
+		m_slide_button->SetRoundType(RoundAll);
+		m_slide_button->SetRadius(button_size / 2.0f);
+
+		m_slide_button->SetPosition (position().x(), position().y());
+
+//		if(orientation == Vertical) {
+//			m_slide_button->SetPosition (m_slide_button->position().x(),
+//					position().y() + value() * get_space() / (float)(maximum() - minimum()));
+//		} else {
+//			m_slide_button->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
+//					m_slide_button->position().y());
+//		}
 	}
 
 	Slider::Slider(Orientation orientation, AbstractWidget* parent)
@@ -330,19 +255,22 @@ namespace BlendInt {
 
 		// set default size
 		if (orientation == Vertical) {
-			Resize (25, 200);
-			SetExpandY(true);
+			set_size (18, 200);
+			set_expand_y(true);
 		} else {
-			Resize (200, 25);
-			SetExpandX(true);
+			set_size (200, 18);
+			set_expand_x(true);
 		}
 
 		size_t button_size = std::min (size().width(), size().height());
 
 		m_slide_button->Resize(button_size, button_size);
 
-		//m_slide_button->SetPosition (position().x() + padding().left(), position().y() + padding().bottom());
-		Update(SliderPropertyValue, 0);
+		m_slide_button->SetRoundType(RoundAll);
+		m_slide_button->SetRadius(button_size / 2.0f);
+
+		m_slide_button->SetPosition (position().x(), position().y());
+//		Update(SliderPropertyValue, 0);
 	}
 
 	Slider::~Slider()
@@ -359,7 +287,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Slider::set_control_widget(Button* widget)
+	void Slider::set_control_widget(SlideButton* widget)
 	{
 		if(widget) {
 			if(m_slide_button)
@@ -374,12 +302,13 @@ namespace BlendInt {
 	{
 		switch (type) {
 			case FormPosition: {
-				m_slide_button->SetPosition (position().x(), position().y());
+				const Point* pos = static_cast<const Point*>(data);
+				m_slide_button->SetPosition(m_slide_button->position().x() + (pos->x() - position().x()),
+						m_slide_button->position().y() + (pos->y() - position().y()));
 				return;
 			}
 
 			case FormSize: {
-
 				size_t button_size = std::min (size().width(),
 						size().height());
 
@@ -433,21 +362,29 @@ namespace BlendInt {
 
 		int space = 0;
 
+#ifdef DEBUG
+		glPushMatrix();
+#endif
+
 		if(orientation() == Vertical) {
 			space = size().height();
-			glTranslatef(m_slide_button->size().width() / 2.0, 0, 0);
+			glTranslatef(size().width() / 2.0, 0, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(0, space);
 			glEnd();
 		} else {
 			space = size().width();
-			glTranslatef(0, m_slide_button->size().height() / 2.0 - 0.5, 0);
+			glTranslatef(0, size().height() / 2.0 - 0.5, 0);
 			glBegin(GL_LINES);
 				glVertex2i(0, 0);
 				glVertex2i(space, 0);
 			glEnd();
 		}
+
+#ifdef DEBUG
+		glPopMatrix();
+#endif
 
 #ifdef DEBUG
 		glLineWidth(1);

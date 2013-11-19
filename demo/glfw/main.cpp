@@ -359,6 +359,14 @@ int main(int argc, char* argv[])
 //	frame->Resize(800, 45);
 //	frame->SetPosition(100, 700);
 
+	Slider * slider = new Slider;
+
+	slider->SetPosition(600, 200);
+
+	app->bind(slider);
+
+	std::cout << "slider size: " << slider->size().width() << " " << slider->size().height() << std::endl;
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
