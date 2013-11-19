@@ -29,14 +29,14 @@
 namespace BlendInt {
 
 	ScrollControl::ScrollControl ()
-	: RoundWidget(), m_pressed(false)
+	: AbstractButton()
 	{
 		m_buffer.reset(new GLBuffer);
 		SetRoundType(RoundAll);
 	}
 
 	ScrollControl::ScrollControl(AbstractWidget* parent)
-	: RoundWidget(parent), m_pressed(false)
+	: AbstractButton(parent)
 	{
 		m_buffer.reset(new GLBuffer);
 		SetRoundType(RoundAll);
@@ -53,24 +53,35 @@ namespace BlendInt {
 		{
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				Orientation shadedir = size_p->width() < size_p->height() ? Horizontal : Vertical;
+				Orientation shadedir =
+				        size_p->width() < size_p->height() ?
+				                Horizontal : Vertical;
 				const Color& color = themes()->scroll.item;
 				short shadetop = themes()->scroll.shadetop;
 				short shadedown = themes()->scroll.shadedown;
 
-				generate_shaded_form_buffer(size_p,
-						border_width(),
-						round_type(),
-						radius(),
-						color,
-						shadetop,
-						shadedown,
-						shadedir,
-						5,
-						m_buffer.get()
-						);
+				GenerateShadedFormBuffer(size_p, border_width(), round_type(),
+				        radius(), color, shadetop, shadedown, shadedir, 5,
+				        m_buffer.get());
 				break;
 			}
+
+			case FormRoundRadius: {
+				const Size* size_p = &(size());
+				Orientation shadedir =
+				        size_p->width() < size_p->height() ?
+				                Horizontal : Vertical;
+				const float* radius_p = static_cast<const float*>(data);
+				const Color& color = themes()->scroll.item;
+				short shadetop = themes()->scroll.shadetop;
+				short shadedown = themes()->scroll.shadedown;
+
+				GenerateShadedFormBuffer(size_p, border_width(), round_type(),
+				        *radius_p, color, shadetop, shadedown, shadedir, 5,
+				        m_buffer.get());
+				break;
+			}
+
 			default:
 				break;
 		}
@@ -88,7 +99,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		if(m_pressed) {
+		if(down()) {
 			draw_shaded_inner_buffer(m_buffer.get(), 0);
 		} else {
 			draw_shaded_inner_buffer(m_buffer.get(), 2);
@@ -118,7 +129,7 @@ namespace BlendInt {
 		ScrollBar* parent_obj = dynamic_cast<ScrollBar*>(parent().object.form);
 		if(!parent_obj) return;
 
-		if(m_pressed) {
+		if(down()) {
 
 			if(parent_obj->orientation() == Horizontal) {
 
@@ -157,7 +168,7 @@ namespace BlendInt {
 	{
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
-				m_pressed = true;
+				set_down(true);
 				m_move_start.set_x(event->position().x());
 				m_move_start.set_y(event->position().y());
 				m_position_origin = position();
@@ -171,26 +182,28 @@ namespace BlendInt {
 		if (event->button() == MouseButtonLeft) {
 
 		}
-		m_pressed = false;
+		set_down(false);
 	}
 
 	// ---------------------------- SliderBar -------------------------------
 
 	SliderBar::SliderBar(Orientation orientation)
-	: Slider(orientation)
+	: AbstractSlider(orientation), m_control_button(0)
 	{
 		m_buffer.reset(new GLBuffer);
+		m_control_button = new ScrollControl(this);
+
 		SetRoundType(RoundAll);
 
 		set_control_size(50);
 
 		if (orientation == Vertical) {	// Vertical
-			SetRadius(slide_button()->size().width()/2);
-			Resize(slide_button()->size().width(), 400);
+			SetRadius(m_control_button->size().width()/2);
+			Resize(m_control_button->size().width(), 400);
 			SetExpandY(true);
 		} else {
-			SetRadius(slide_button()->size().height());
-			Resize(400, slide_button()->size().height());
+			SetRadius(m_control_button->size().height());
+			Resize(400, m_control_button->size().height());
 			SetExpandX(true);
 		}
 
@@ -198,20 +211,22 @@ namespace BlendInt {
 	}
 
 	SliderBar::SliderBar(Orientation orientation, AbstractWidget* parent)
-	: Slider(orientation, parent)
+	: AbstractSlider(orientation, parent), m_control_button(0)
 	{
 		m_buffer.reset(new GLBuffer);
+		m_control_button = new ScrollControl(this);
+
 		SetRoundType(RoundAll);
 
 		set_control_size(50);
 
 		if (orientation == Vertical) {	// Vertical
-			SetRadius(slide_button()->size().width()/2);
-			Resize(slide_button()->size().width(), 400);
+			SetRadius(m_control_button->size().width()/2);
+			Resize(m_control_button->size().width(), 400);
 			SetExpandY(true);
 		} else {
-			SetRadius(slide_button()->size().height());
-			Resize(400, slide_button()->size().height());
+			SetRadius(m_control_button->size().height());
+			Resize(400, m_control_button->size().height());
 			SetExpandX(true);
 		}
 
@@ -223,15 +238,43 @@ namespace BlendInt {
 
 	}
 
-	void SliderBar::Update(int type, const void* data)
+	void SliderBar::Update (int type, const void* data)
 	{
-		if(type == FormSize) {
-			const Size* size_p = static_cast<const Size*>(data);
-			update_shape(size_p);
-			return;
-		}
+		switch (type) {
+			case FormSize: {
+				const Size* size_p = static_cast<const Size*>(data);
+				Orientation shadedir =
+				        size_p->width() < size_p->height() ?
+				                Horizontal : Vertical;
+				const Color& color = themes()->scroll.item;
+				short shadetop = themes()->scroll.shadetop;
+				short shadedown = themes()->scroll.shadedown;
 
-		Slider::Update(type, data);
+				GenerateShadedFormBuffer(size_p, border_width(), round_type(),
+				        radius(), color, shadetop, shadedown, shadedir, 5,
+				        m_buffer.get());
+				break;
+			}
+
+			case FormRoundRadius: {
+				const Size* size_p = &(size());
+				Orientation shadedir =
+				        size_p->width() < size_p->height() ?
+				                Horizontal : Vertical;
+				const float* radius_p = static_cast<const float*>(data);
+				const Color& color = themes()->scroll.item;
+				short shadetop = themes()->scroll.shadetop;
+				short shadedown = themes()->scroll.shadedown;
+
+				GenerateShadedFormBuffer(size_p, border_width(), round_type(),
+				        *radius_p, color, shadetop, shadedown, shadedir, 5,
+				        m_buffer.get());
+				break;
+			}
+
+			default:
+				break;
+		}
 	}
 
 	void SliderBar::Render ()
@@ -264,9 +307,17 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		dispatch_render(m_slide_button);
+		dispatch_render(m_control_button);
 	}
 
+	void SliderBar::set_control_size (size_t size)
+	{
+		if(orientation() == Vertical) {	// Vertical
+			m_control_button->Resize(m_control_button->size().width(), size);
+		} else {
+			m_control_button->Resize(size, m_control_button->size().height());
+		}
+	}
 
 	void SliderBar::update_shape (const Size* size)
 	{
@@ -336,10 +387,12 @@ namespace BlendInt {
 		if (orientation == Vertical) {	// Vertical
 			Resize(16, 400);
 			m_scroll_control->Resize(16, 100);
+			m_scroll_control->SetRadius(8.0);
 			SetExpandY(true);
 		} else {
 			Resize(400, 16);
 			m_scroll_control->Resize(100, 16);
+			m_scroll_control->SetRadius(8.0);
 			SetExpandX(true);
 		}
 
@@ -360,10 +413,12 @@ namespace BlendInt {
 		if (orientation == Vertical) {	// Vertical
 			Resize(16, 400);
 			m_scroll_control->Resize(16, 100);
+			m_scroll_control->SetRadius(8.0);
 			SetExpandY(true);
 		} else {
 			Resize(400, 16);
 			m_scroll_control->Resize(100, 16);
+			m_scroll_control->SetRadius(8.0);
 			SetExpandX(true);
 		}
 
@@ -492,7 +547,7 @@ namespace BlendInt {
 
 	void ScrollBar::move_mouse (MouseEvent* event)
 	{
-		if(m_scroll_control->pressed()) {
+		if(m_scroll_control->down()) {
 				dispatch_mouse_move_event(m_scroll_control, event);
 
 				int value = 0;
@@ -515,7 +570,7 @@ namespace BlendInt {
 
 	void ScrollBar::press_mouse (MouseEvent* event)
 	{
-		if(m_scroll_control->pressed()) {
+		if(m_scroll_control->down()) {
 			dispatch_mouse_press_event(m_scroll_control, event);
 			return;
 		}
@@ -551,7 +606,7 @@ namespace BlendInt {
 
 	void ScrollBar::release_mouse (MouseEvent* event)
 	{
-		if(m_scroll_control->pressed()) {
+		if(m_scroll_control->down()) {
 				dispatch_mouse_release_event(m_scroll_control, event);
 				return;
 		}

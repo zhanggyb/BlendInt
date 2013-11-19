@@ -47,10 +47,6 @@ namespace BlendInt {
 
 		virtual ~Widget();
 
-//		void set_emboss (bool emboss);
-
-//		bool emboss () const {return m_emboss;}
-
 		void set_border_width (float width = 1.0);
 
 		float border_width () const {return m_border_width;}
@@ -138,7 +134,7 @@ namespace BlendInt {
 		 * 	- index 1: for outline drawing
 		 * 	- index 2: for emboss drawing
 		 */
-		void GetFormBuffer (const Size* size, bool emboss, int round_type,
+		void GenerateFormBuffer (const Size* size, bool emboss, int round_type,
 		        float radius, GLBuffer* buffer);
 
 		/**
@@ -147,7 +143,7 @@ namespace BlendInt {
 		 * @param emboss
 		 * @param buffer
 		 */
-		void generate_rect_form_buffer (const Size* size, bool emboss, GLBuffer* buffer);
+		void GenerateRectFormBuffer (const Size* size, bool emboss, GLBuffer* buffer);
 
 		/**
 		 * @brief generate buffer with shaded color
@@ -167,7 +163,7 @@ namespace BlendInt {
 		 * 	- buffer index 1: used for outline
 		 * 	- buffer index 2: used for inner highlight
 		 */
-		void generate_shaded_form_buffer (const Size* size,
+		void GenerateShadedFormBuffer (const Size* size,
 				float border,
 				int round_type,
 				float radius,
@@ -196,7 +192,7 @@ namespace BlendInt {
 		 * 	- buffer index 1: used for outline
 		 * 	- buffer index 2: used for inner highlight
 		 */
-		void generate_shaded_form_buffer (const Size* size,
+		void GenerateShadedFormBuffer (const Size* size,
 				float border,
 				int round_type,
 				float radius,
@@ -209,20 +205,16 @@ namespace BlendInt {
 
 	private:
 
-//		void update_shape (const Size* size);
-
 		/**
 		 * @brief border width
 		 */
-		DRAWABLE_PROPERTY float m_border_width;
+		float m_border_width;
 
 		/**
 		 * @brief If draw emboss
 		 *
 		 * @todo only menu and scroll bar set emboss off, remove this property later
 		 */
-//		DRAWABLE_PROPERTY bool m_emboss;
-
 	};
 }
 

@@ -209,7 +209,7 @@ namespace BlendInt {
 		buffer->unbind();
 	}
 
-	void Widget::GetFormBuffer(const Size* size, bool emboss, int round_type, float radius, GLBuffer* buffer)
+	void Widget::GenerateFormBuffer(const Size* size, bool emboss, int round_type, float radius, GLBuffer* buffer)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
@@ -255,7 +255,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Widget::generate_rect_form_buffer(const Size* size, bool emboss, GLBuffer* buffer)
+	void Widget::GenerateRectFormBuffer(const Size* size, bool emboss, GLBuffer* buffer)
 	{
 		float outer_v[4][2];	// vertices for drawing outline
 		float inner_v[4][2];	// vertices for drawing inner
@@ -299,7 +299,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Widget::generate_shaded_form_buffer(const Size* size,
+	void Widget::GenerateShadedFormBuffer(const Size* size,
 			float border,
 			int round_type,
 			float radius,
@@ -367,7 +367,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Widget::generate_shaded_form_buffer (const Size* size,
+	void Widget::GenerateShadedFormBuffer (const Size* size,
 			float border,
 			int round_type,
 			float radius,

@@ -367,7 +367,7 @@ int main(int argc, char* argv[])
 
 	std::cout << "slider size: " << slider->size().width() << " " << slider->size().height() << std::endl;
 
-	ScrollBar* scrollbar = new ScrollBar;
+	ScrollBar* scrollbar = new ScrollBar(Vertical);
 
 	scrollbar->SetPosition(400, 400);
 

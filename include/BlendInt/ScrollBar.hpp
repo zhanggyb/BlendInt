@@ -34,7 +34,7 @@ namespace BlendInt {
 	/**
 	 * The controller in the scrollbar
 	 */
-	class ScrollControl: public RoundWidget
+	class ScrollControl: public AbstractButton
 	{
 	public:
 
@@ -43,8 +43,6 @@ namespace BlendInt {
 		ScrollControl (AbstractWidget* parent);
 
 		virtual ~ScrollControl ();
-
-		bool pressed () const {return m_pressed;}
 
 	protected:
 
@@ -62,8 +60,6 @@ namespace BlendInt {
 
 		void update_shape (const Size* size);
 
-		bool m_pressed;
-
 		Point m_move_start;
 
 		Point m_position_origin;
@@ -74,7 +70,7 @@ namespace BlendInt {
 	/**
 	 * @brief A slider used in ScrollBar with a dark background
 	 */
-	class SliderBar: public Slider
+	class SliderBar: public AbstractSlider
 	{
 		DISALLOW_COPY_AND_ASSIGN(SliderBar);
 
@@ -94,10 +90,13 @@ namespace BlendInt {
 
 	private:
 
+		void set_control_size (size_t size);
+
 		void update_shape (const Size* size);
 
 		boost::scoped_ptr<GLBuffer> m_buffer;
 
+		ScrollControl* m_control_button;
 	};
 
 	class ScrollBar: public AbstractSlider
