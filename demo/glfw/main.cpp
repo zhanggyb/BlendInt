@@ -241,27 +241,6 @@ int main(int argc, char* argv[])
 //	app->bind(widget);
 //	app->bind(widget2);
 //
-	Button* b1 = new Button("Hello");
-	b1->SetPosition(100, 100);
-
-	Button* b2 = new Button;
-	b2->SetPosition(190, 100);
-
-	HorizontalLayout* hl1 = new HorizontalLayout;
-	hl1->SetPosition(100, 700);
-
-	Label* label = new Label("Click to create: ");
-	label->SetPosition(400, 300);
-
-//	hl1->add(label);
-
-	hl1->add(b1);
-	hl1->add(b2);
-
-	app->bind(label);
-	app->bind(hl1);
-
-	std::cout << "label position: " << label->position().x() << " " << label->position().y() << std::endl;
 
 //	hl1->Resize(800, 40);
 
@@ -338,40 +317,16 @@ int main(int argc, char* argv[])
 
 	std::cout << "size of menu item: " << sizeof(MenuItem) << std::endl;
 
-	SlideButton* sb = new SlideButton;
-	sb->SetPosition(100, 100);
-	sb->Resize(20, 20);
-
-	app->bind(sb);
-
-	ScrollControl* sc = new ScrollControl;
-	sc->SetRadius(12.0);
-	sc->Resize(200, 24);
-
-	sc->SetPosition(200, 200);
-
-	app->bind(sc);
-
 	DemoFrame* frame = new DemoFrame;
 
 	app->bind(frame);
 
-//	frame->Resize(800, 45);
-//	frame->SetPosition(100, 700);
+	SliderBar* sliderbar = new SliderBar;
 
-	Slider * slider = new Slider;
+	sliderbar->SetPosition(400, 400);
 
-	slider->SetPosition(600, 200);
+	app->bind(sliderbar);
 
-	app->bind(slider);
-
-	std::cout << "slider size: " << slider->size().width() << " " << slider->size().height() << std::endl;
-
-	ScrollBar* scrollbar = new ScrollBar(Vertical);
-
-	scrollbar->SetPosition(400, 400);
-
-	app->bind(scrollbar);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

@@ -32,14 +32,18 @@ namespace BlendInt {
 	: AbstractButton()
 	{
 		m_buffer.reset(new GLBuffer);
-		SetRoundType(RoundAll);
+		set_round_type(RoundAll);
+
+		Init ();
 	}
 
 	ScrollControl::ScrollControl(AbstractWidget* parent)
 	: AbstractButton(parent)
 	{
 		m_buffer.reset(new GLBuffer);
-		SetRoundType(RoundAll);
+		set_round_type(RoundAll);
+
+		Init ();
 	}
 
 	ScrollControl::~ScrollControl ()
@@ -185,6 +189,19 @@ namespace BlendInt {
 		set_down(false);
 	}
 
+	void ScrollControl::Init ()
+	{
+		const Size* size_p = &(size());
+		Orientation shadedir =
+		        size_p->width() < size_p->height() ? Horizontal : Vertical;
+		const Color& color = themes()->scroll.item;
+		short shadetop = themes()->scroll.shadetop;
+		short shadedown = themes()->scroll.shadedown;
+
+		GenerateShadedFormBuffer(size_p, border_width(), round_type(), radius(),
+		        color, shadetop, shadedown, shadedir, 5, m_buffer.get());
+	}
+
 	// ---------------------------- SliderBar -------------------------------
 
 	SliderBar::SliderBar(Orientation orientation)
@@ -193,21 +210,26 @@ namespace BlendInt {
 		m_buffer.reset(new GLBuffer);
 		m_control_button = new ScrollControl(this);
 
-		SetRoundType(RoundAll);
-
-		set_control_size(50);
+		set_round_type(RoundAll);
 
 		if (orientation == Vertical) {	// Vertical
-			SetRadius(m_control_button->size().width()/2);
-			Resize(m_control_button->size().width(), 400);
-			SetExpandY(true);
+			set_size(16, 400);
+			m_control_button->Resize(16, 100);
+			m_control_button->SetRadius(8.0);
+			set_radius(m_control_button->size().width()/2);
+			set_size(m_control_button->size().width(), 400);
+			set_expand_y(true);
 		} else {
-			SetRadius(m_control_button->size().height());
-			Resize(400, m_control_button->size().height());
-			SetExpandX(true);
+			set_size(400, 16);
+			m_control_button->Resize(100, 16);
+			m_control_button->SetRadius(8.0);
+			set_radius(m_control_button->size().height());
+			set_size(400, m_control_button->size().height());
+			set_expand_x(true);
 		}
 
-		Update(SliderPropertyValue, 0);
+		Init();
+		m_control_button->SetPosition (position().x(), position().y());
 	}
 
 	SliderBar::SliderBar(Orientation orientation, AbstractWidget* parent)
@@ -216,21 +238,28 @@ namespace BlendInt {
 		m_buffer.reset(new GLBuffer);
 		m_control_button = new ScrollControl(this);
 
-		SetRoundType(RoundAll);
+		set_round_type(RoundAll);
 
 		set_control_size(50);
 
 		if (orientation == Vertical) {	// Vertical
-			SetRadius(m_control_button->size().width()/2);
-			Resize(m_control_button->size().width(), 400);
-			SetExpandY(true);
+			set_size(16, 400);
+			m_control_button->Resize(16, 100);
+			m_control_button->SetRadius(8.0);
+			set_radius(m_control_button->size().width()/2);
+			set_size(m_control_button->size().width(), 400);
+			set_expand_y(true);
 		} else {
-			SetRadius(m_control_button->size().height());
-			Resize(400, m_control_button->size().height());
-			SetExpandX(true);
+			set_size(400, 16);
+			m_control_button->Resize(100, 16);
+			m_control_button->SetRadius(8.0);
+			set_radius(m_control_button->size().height());
+			set_size(400, m_control_button->size().height());
+			set_expand_x(true);
 		}
 
-		Update(SliderPropertyValue, 0);
+		Init();
+		m_control_button->SetPosition (position().x(), position().y());
 	}
 
 	SliderBar::~SliderBar()
@@ -241,6 +270,14 @@ namespace BlendInt {
 	void SliderBar::Update (int type, const void* data)
 	{
 		switch (type) {
+
+			case FormPosition: {
+				const Point* pos = static_cast<const Point*>(data);
+				m_control_button->SetPosition(m_control_button->position().x() + (pos->x() - position().x()),
+						m_control_button->position().y() + (pos->y() - position().y()));
+				return;
+			}
+
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				Orientation shadedir =
@@ -300,7 +337,7 @@ namespace BlendInt {
 
 		draw_outline_buffer(m_buffer.get(), 1);
 
-		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
+//		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 //		draw_gl_buffer_anti_alias(WidgetBufferKeyEmboss);
 
 		glDisable(GL_BLEND);
@@ -319,60 +356,21 @@ namespace BlendInt {
 		}
 	}
 
-	void SliderBar::update_shape (const Size* size)
+	void SliderBar::Init ()
 	{
-		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-
-		VerticesSum vert_sum;
-
-		Orientation shadedir = orientation() == Horizontal ? Horizontal : Vertical;
+		const Size* size_p = &(size());
+		Orientation shadedir =
+		        size_p->width() < size_p->height() ? Horizontal : Vertical;
 
 		Color color = themes()->scroll.inner;
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		if(shadedir)
-			vert_sum = generate_vertices(size, border_width(), color, shadetop, shadedown, shadedir, inner_v, outer_v);
-		else					// swap shadetop and shadedown
-			vert_sum = generate_vertices(size, border_width(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
-
-		m_buffer.get()->generate(2);
-
-		m_buffer.get()->select(0);
-		m_buffer.get()->set_property(vert_sum.total, sizeof(inner_v[0]),
-		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_buffer.get()->bind();
-		m_buffer.get()->upload(inner_v);
-		m_buffer.get()->unbind();
-
-		// the quad strip for outline
-
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-
-		verts_to_quad_strip(inner_v, outer_v, vert_sum.total, quad_strip);
-
-		m_buffer.get()->select(1);
-		m_buffer.get()->set_property(vert_sum.total * 2 + 2, sizeof(quad_strip[0]),
-		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-
-		m_buffer.get()->bind();
-		m_buffer.get()->upload(quad_strip);
-		m_buffer.get()->unbind();
-
-//		float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
-//
-//		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
-//
-//		m_buffer.get()->select(2);
-//		m_buffer.get()->set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]),
-//		        GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-//
-//		m_buffer.get()->bind();
-//		m_buffer.get()->upload(quad_strip_emboss);
-//		m_buffer.get()->unbind();
-
+		// TODO: index 2 is not used
+		GenerateShadedFormBuffer(size_p, border_width(), round_type(), radius(),
+		        color, shadetop, shadedown, shadedir, 5, m_buffer.get());
 	}
+
 	// ---------------------------- ScrollBar -------------------------------
 
 	ScrollBar::ScrollBar (Orientation orientation)

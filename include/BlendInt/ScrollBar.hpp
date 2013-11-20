@@ -58,7 +58,7 @@ namespace BlendInt {
 
 	private:
 
-		void update_shape (const Size* size);
+		void Init ();
 
 		Point m_move_start;
 
@@ -90,9 +90,9 @@ namespace BlendInt {
 
 	private:
 
-		void set_control_size (size_t size);
+		void Init ();
 
-		void update_shape (const Size* size);
+		void set_control_size (size_t size);
 
 		boost::scoped_ptr<GLBuffer> m_buffer;
 
