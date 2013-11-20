@@ -284,10 +284,10 @@ namespace BlendInt {
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
 						case KeyPress:
-							(*set_it)->press_context_menu(&event);
+							(*set_it)->ContextMenuPressEvent(&event);
 							break;
 						case KeyRelease:
-							(*set_it)->release_context_menu(&event);
+							(*set_it)->ContextMenuReleaseEvent(&event);
 							break;
 						default:
 							break;
@@ -405,7 +405,7 @@ namespace BlendInt {
 						dispatch_mouse_press_event((*set_it), &event);
 						break;
 					case GLFW_RELEASE:
-						(*set_it)->release_mouse(&event);
+						(*set_it)->MouseReleaseEvent(&event);
 						break;
 					default:
 						break;
@@ -465,22 +465,22 @@ namespace BlendInt {
 
 	void Interface::dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event)
 	{
-		obj->press_key(event);
+		obj->KeyPressEvent(event);
 	}
 
 	void Interface::dispatch_mouse_press_event (AbstractWidget* obj, MouseEvent* event)
 	{
-		obj->press_mouse(event);
+		obj->MousePressEvent(event);
 	}
 
 	void Interface::dispatch_mouse_release_event (AbstractWidget* obj, MouseEvent* event)
 	{
-		obj->release_mouse(event);
+		obj->MouseReleaseEvent(event);
 	}
 
 	void Interface::dispatch_mouse_move_event (AbstractWidget* obj, MouseEvent* event)
 	{
-		obj->move_mouse(event);
+		obj->MouseMoveEvent(event);
 	}
 
 }

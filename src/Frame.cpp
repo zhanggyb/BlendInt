@@ -98,31 +98,31 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::press_key (KeyEvent* event)
+	void Frame::KeyPressEvent (KeyEvent* event)
 	{
 	}
 
-	void Frame::press_context_menu (ContextMenuEvent* event)
+	void Frame::ContextMenuPressEvent (ContextMenuEvent* event)
 	{
 	}
 
-	void Frame::release_context_menu (ContextMenuEvent* event)
+	void Frame::ContextMenuReleaseEvent (ContextMenuEvent* event)
 	{
 	}
 
-	void Frame::press_mouse (MouseEvent* event)
+	void Frame::MousePressEvent (MouseEvent* event)
 	{
 		if(m_widget)
 			dispatch_mouse_press_event(m_widget, event);
 	}
 
-	void Frame::release_mouse (MouseEvent* event)
+	void Frame::MouseReleaseEvent (MouseEvent* event)
 	{
 		if(m_widget)
 			dispatch_mouse_release_event(m_widget, event);
 	}
 
-	void Frame::move_mouse (MouseEvent* event)
+	void Frame::MouseMoveEvent (MouseEvent* event)
 	{
 		if(m_widget)
 			dispatch_mouse_move_event(m_widget,event);

@@ -96,7 +96,7 @@ namespace BlendInt {
 #endif
 	}
 
-	void HorizontalLayout::press_key (KeyEvent* event)
+	void HorizontalLayout::KeyPressEvent (KeyEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
@@ -104,15 +104,15 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::press_context_menu (ContextMenuEvent* event)
+	void HorizontalLayout::ContextMenuPressEvent (ContextMenuEvent* event)
 	{
 	}
 
-	void HorizontalLayout::release_context_menu (ContextMenuEvent* event)
+	void HorizontalLayout::ContextMenuReleaseEvent (ContextMenuEvent* event)
 	{
 	}
 
-	void HorizontalLayout::press_mouse (MouseEvent* event)
+	void HorizontalLayout::MousePressEvent (MouseEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
@@ -120,7 +120,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::release_mouse (MouseEvent* event)
+	void HorizontalLayout::MouseReleaseEvent (MouseEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
@@ -128,7 +128,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::move_mouse (MouseEvent* event)
+	void HorizontalLayout::MouseMoveEvent (MouseEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for (it = items().begin(); it != items().end(); it++) {

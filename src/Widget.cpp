@@ -118,27 +118,27 @@ namespace BlendInt {
 		glPopMatrix();
 	}
 
-	void Widget::press_key (KeyEvent* event)
+	void Widget::KeyPressEvent (KeyEvent* event)
 	{
 	}
 
-	void Widget::press_context_menu (ContextMenuEvent* event)
+	void Widget::ContextMenuPressEvent (ContextMenuEvent* event)
 	{
 	}
 
-	void Widget::release_context_menu (ContextMenuEvent* event)
+	void Widget::ContextMenuReleaseEvent (ContextMenuEvent* event)
 	{
 	}
 
-	void Widget::press_mouse (MouseEvent* event)
+	void Widget::MousePressEvent (MouseEvent* event)
 	{
 	}
 
-	void Widget::release_mouse (MouseEvent* event)
+	void Widget::MouseReleaseEvent (MouseEvent* event)
 	{
 	}
 
-	void Widget::move_mouse (MouseEvent* event)
+	void Widget::MouseMoveEvent (MouseEvent* event)
 	{
 	}
 

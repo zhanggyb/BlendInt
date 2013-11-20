@@ -133,7 +133,7 @@ namespace BlendInt {
 #endif
 	}
 
-	void ScrollView::press_mouse(MouseEvent* event)
+	void ScrollView::MousePressEvent(MouseEvent* event)
 	{
 		if(contain(event->position())) {
 
@@ -152,7 +152,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollView::release_mouse(MouseEvent* event)
+	void ScrollView::MouseReleaseEvent(MouseEvent* event)
 	{
 		if(m_move_status) m_move_status = false;
 
@@ -160,7 +160,7 @@ namespace BlendInt {
 		dispatch_mouse_release_event(m_viewport, event);
 	}
 
-	void ScrollView::move_mouse(MouseEvent* event)
+	void ScrollView::MouseMoveEvent(MouseEvent* event)
 	{
 		if(!m_viewport) return;
 

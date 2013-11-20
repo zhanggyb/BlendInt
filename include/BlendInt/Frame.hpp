@@ -70,17 +70,17 @@ namespace BlendInt {
 
 		virtual void Render ();
 
-		virtual void press_key (KeyEvent* event);
+		virtual void KeyPressEvent (KeyEvent* event);
 
-		virtual void press_context_menu (ContextMenuEvent* event);
+		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
 
-		virtual void release_context_menu (ContextMenuEvent* event);
+		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
 
-		virtual void press_mouse (MouseEvent* event);
+		virtual void MousePressEvent (MouseEvent* event);
 
-		virtual void release_mouse (MouseEvent* event);
+		virtual void MouseReleaseEvent (MouseEvent* event);
 
-		virtual void move_mouse (MouseEvent* event);
+		virtual void MouseMoveEvent (MouseEvent* event);
 
 		/**
 		 * @check if geometry contains the cursor, exclude padding

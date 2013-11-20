@@ -125,7 +125,7 @@ namespace BlendInt {
 		glPopMatrix();
 	}
 
-	void ScrollControl::move_mouse (MouseEvent* event)
+	void ScrollControl::MouseMoveEvent (MouseEvent* event)
 	{
 		// if no parent scrollbar, don't react to mouse move
 		if(parent().type != ParentForm) return;
@@ -168,7 +168,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollControl::press_mouse (MouseEvent* event)
+	void ScrollControl::MousePressEvent (MouseEvent* event)
 	{
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
@@ -181,7 +181,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollControl::release_mouse (MouseEvent* event)
+	void ScrollControl::MouseReleaseEvent (MouseEvent* event)
 	{
 		if (event->button() == MouseButtonLeft) {
 
@@ -347,6 +347,81 @@ namespace BlendInt {
 		dispatch_render(m_control_button);
 	}
 
+	void SliderBar::MouseMoveEvent (MouseEvent* event)
+	{
+		if(m_control_button->down()) {
+				dispatch_mouse_move_event(m_control_button, event);
+
+				int value = 0;
+				if(orientation() == Vertical) {
+					value = (m_control_button->position().y() - position().y()) / (float)GetSpace() * (maximum() - minimum());
+				} else {
+					value = (m_control_button->position().x() - position().x()) / (float)GetSpace() * (maximum() - minimum());
+				}
+
+				set_value (value);
+				m_slider_moved.fire(value);
+
+				return;
+			}
+
+		if(contain(event->position())) {
+			dispatch_mouse_move_event(m_control_button, event);
+		}
+	}
+
+	void SliderBar::MousePressEvent (MouseEvent* event)
+	{
+		if(m_control_button->down()) {
+			dispatch_mouse_press_event(m_control_button, event);
+			return;
+		}
+
+		if(contain(event->position())) {
+			dispatch_mouse_press_event(m_control_button, event);
+			if(event->accepted()) return;
+
+			Coord2d inner_pos;
+			inner_pos.set_x(static_cast<double>(event->position().x() - position().x() - m_control_button->size().width() / 2));
+			inner_pos.set_y(static_cast<double>(event->position().y() - position().y() - m_control_button->size().height() / 2));
+//			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - padding().left() - m_control_button->size().width() / 2));
+//			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - padding().bottom() - m_control_button->size().height() / 2));
+			int space = GetSpace();
+			int value;
+
+			if (orientation() == Vertical) {
+				if(inner_pos.y() < space) {
+					value = (maximum() - minimum()) * inner_pos.y() / (double) space;
+					set_value(value);
+					m_slider_moved.fire(value);
+				}
+			} else {
+				if(inner_pos.x() < space) {
+					value = (maximum() - minimum()) * inner_pos.x() / (double) space;
+					set_value(value);
+					m_slider_moved.fire(value);
+				}
+			}
+		}
+
+	}
+
+	void SliderBar::MouseReleaseEvent (MouseEvent* event)
+	{
+		if(m_control_button->down()) {
+				dispatch_mouse_release_event(m_control_button, event);
+				return;
+		}
+
+		if(contain(event->position())) {
+			if (event->button() == MouseButtonLeft) {
+
+			}
+			dispatch_mouse_release_event(m_control_button, event);
+		}
+	}
+
+
 	void SliderBar::set_control_size (size_t size)
 	{
 		if(orientation() == Vertical) {	// Vertical
@@ -366,9 +441,20 @@ namespace BlendInt {
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		// TODO: index 2 is not used
 		GenerateShadedFormBuffer(size_p, border_width(), round_type(), radius(),
-		        color, shadetop, shadedown, shadedir, 5, m_buffer.get());
+		        color, shadetop, shadedown, shadedir, 0, m_buffer.get());
+	}
+
+	int SliderBar::GetSpace ()
+	{
+		int space = 0;
+
+		if(orientation() == Vertical)
+			space = size().height() - m_control_button->size().height();
+		else	// Horizontal is 0
+			space = size().width() - m_control_button->size().width();
+
+		return space;
 	}
 
 	// ---------------------------- ScrollBar -------------------------------
@@ -543,7 +629,7 @@ namespace BlendInt {
 		dispatch_render(m_scroll_control);
 	}
 
-	void ScrollBar::move_mouse (MouseEvent* event)
+	void ScrollBar::MouseMoveEvent (MouseEvent* event)
 	{
 		if(m_scroll_control->down()) {
 				dispatch_mouse_move_event(m_scroll_control, event);
@@ -566,7 +652,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollBar::press_mouse (MouseEvent* event)
+	void ScrollBar::MousePressEvent (MouseEvent* event)
 	{
 		if(m_scroll_control->down()) {
 			dispatch_mouse_press_event(m_scroll_control, event);
@@ -602,7 +688,7 @@ namespace BlendInt {
 
 	}
 
-	void ScrollBar::release_mouse (MouseEvent* event)
+	void ScrollBar::MouseReleaseEvent (MouseEvent* event)
 	{
 		if(m_scroll_control->down()) {
 				dispatch_mouse_release_event(m_scroll_control, event);

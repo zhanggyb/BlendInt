@@ -127,7 +127,7 @@ namespace BlendInt {
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
-	void AbstractButton::press_mouse (MouseEvent* event)
+	void AbstractButton::MousePressEvent (MouseEvent* event)
 	{
 		if (!contain(event->position())) return;
 
@@ -142,7 +142,7 @@ namespace BlendInt {
 		event->accept(this);
 	}
 
-	void AbstractButton::release_mouse(MouseEvent* event)
+	void AbstractButton::MouseReleaseEvent(MouseEvent* event)
 	{
 		m_status_down = false;
 
@@ -155,7 +155,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractButton::move_mouse (MouseEvent* event)
+	void AbstractButton::MouseMoveEvent (MouseEvent* event)
 	{
 		if (m_status_down) {
 			event->accept(this);

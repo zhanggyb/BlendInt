@@ -47,11 +47,11 @@ namespace BlendInt {
 
 		virtual void Render ();
 
-		virtual void move_mouse (MouseEvent* event);
+		virtual void MouseMoveEvent (MouseEvent* event);
 
-		virtual void press_mouse (MouseEvent* event);
+		virtual void MousePressEvent (MouseEvent* event);
 
-		virtual void release_mouse (MouseEvent* event);
+		virtual void MouseReleaseEvent (MouseEvent* event);
 
 	private:
 
@@ -90,11 +90,11 @@ namespace BlendInt {
 
 		virtual void Render ();
 
-		virtual void move_mouse (MouseEvent* event);
+		virtual void MouseMoveEvent (MouseEvent* event);
 
-		virtual void press_mouse (MouseEvent* event);
+		virtual void MousePressEvent (MouseEvent* event);
 
-		virtual void release_mouse (MouseEvent* event);
+		virtual void MouseReleaseEvent (MouseEvent* event);
 
 		/**
 		 * @brief calculate the space width in which slider can move

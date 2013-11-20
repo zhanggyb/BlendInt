@@ -133,7 +133,7 @@ namespace BlendInt {
 		glPopMatrix();
 	}
 
-	void SlideButton::move_mouse(MouseEvent* event)
+	void SlideButton::MouseMoveEvent(MouseEvent* event)
 	{
 		// if no parent slider, don't react to mouse move
 		if(parent().type != ParentForm) return;
@@ -193,7 +193,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SlideButton::press_mouse(MouseEvent* event)
+	void SlideButton::MousePressEvent(MouseEvent* event)
 	{
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
@@ -206,7 +206,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SlideButton::release_mouse(MouseEvent* event)
+	void SlideButton::MouseReleaseEvent(MouseEvent* event)
 	{
 		if (event->button() == MouseButtonLeft) {
 
@@ -409,7 +409,7 @@ namespace BlendInt {
 		dispatch_render(m_slide_button);
 	}
 
-	void Slider::move_mouse (MouseEvent* event)
+	void Slider::MouseMoveEvent (MouseEvent* event)
 	{
 		if(m_slide_button->down()) {
 			dispatch_mouse_move_event(m_slide_button, event);
@@ -446,7 +446,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Slider::press_mouse (MouseEvent* event)
+	void Slider::MousePressEvent (MouseEvent* event)
 	{
 		if(m_slide_button->down()) {
 			dispatch_mouse_press_event(m_slide_button, event);
@@ -495,7 +495,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Slider::release_mouse (MouseEvent* event)
+	void Slider::MouseReleaseEvent (MouseEvent* event)
 	{
 		if(m_slide_button->down()) {
 			dispatch_mouse_release_event(m_slide_button, event);

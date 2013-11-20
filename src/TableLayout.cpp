@@ -154,7 +154,7 @@ namespace BlendInt {
 #endif
 	}
 
-	void TableLayout::press_key (KeyEvent* event)
+	void TableLayout::KeyPressEvent (KeyEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for(it = items().begin(); it != items().end(); it++)
@@ -163,15 +163,15 @@ namespace BlendInt {
 		}
 	}
 
-	void TableLayout::press_context_menu (ContextMenuEvent* event)
+	void TableLayout::ContextMenuPressEvent (ContextMenuEvent* event)
 	{
 	}
 
-	void TableLayout::release_context_menu (ContextMenuEvent* event)
+	void TableLayout::ContextMenuReleaseEvent (ContextMenuEvent* event)
 	{
 	}
 
-	void TableLayout::press_mouse (MouseEvent* event)
+	void TableLayout::MousePressEvent (MouseEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for(it = items().begin(); it != items().end(); it++)
@@ -182,7 +182,7 @@ namespace BlendInt {
 		}
 	}
 
-	void TableLayout::release_mouse (MouseEvent* event)
+	void TableLayout::MouseReleaseEvent (MouseEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for(it = items().begin(); it != items().end(); it++)
@@ -193,7 +193,7 @@ namespace BlendInt {
 		}
 	}
 
-	void TableLayout::move_mouse (MouseEvent* event)
+	void TableLayout::MouseMoveEvent (MouseEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
 		for(it = items().begin(); it != items().end(); it++)

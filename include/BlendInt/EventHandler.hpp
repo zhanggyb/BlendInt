@@ -45,17 +45,17 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void press_key (KeyEvent* event) = 0;
+		virtual void KeyPressEvent (KeyEvent* event) = 0;
 
-		virtual void press_context_menu (ContextMenuEvent* event) = 0;
+		virtual void ContextMenuPressEvent (ContextMenuEvent* event) = 0;
 
-		virtual void release_context_menu (ContextMenuEvent* event) = 0;
+		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event) = 0;
 
-		virtual void press_mouse (MouseEvent* event) = 0;
+		virtual void MousePressEvent (MouseEvent* event) = 0;
 
-		virtual void release_mouse (MouseEvent* event) = 0;
+		virtual void MouseReleaseEvent (MouseEvent* event) = 0;
 
-		virtual void move_mouse (MouseEvent* event) = 0;
+		virtual void MouseMoveEvent (MouseEvent* event) = 0;
 
 		virtual void Render () = 0;
 

@@ -75,11 +75,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void press_mouse (MouseEvent* event);
+		virtual void MousePressEvent (MouseEvent* event);
 
-		virtual void release_mouse (MouseEvent* event);
+		virtual void MouseReleaseEvent (MouseEvent* event);
 
-		virtual void move_mouse (MouseEvent* event);
+		virtual void MouseMoveEvent (MouseEvent* event);
 
 		void set_hover (bool status)
 		{

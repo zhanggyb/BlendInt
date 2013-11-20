@@ -67,7 +67,7 @@ namespace BlendInt {
 		m_list.push_back(item);
 	}
 
-	void Menu::move_mouse(MouseEvent* event)
+	void Menu::MouseMoveEvent(MouseEvent* event)
 	{
 		if(!contain(event->position())) {
 			if(m_select) m_select->set_highlight(false);

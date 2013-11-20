@@ -506,25 +506,25 @@ namespace BlendInt {
 	void AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
 	        KeyEvent* event)
 	{
-		obj->press_key(event);
+		obj->KeyPressEvent(event);
 	}
 
 	void AbstractWidget::dispatch_mouse_move_event (AbstractWidget* obj,
 	        MouseEvent* event)
 	{
-		obj->move_mouse(event);
+		obj->MouseMoveEvent(event);
 	}
 
 	void AbstractWidget::dispatch_mouse_press_event (AbstractWidget* obj,
 	        MouseEvent* event)
 	{
-		obj->press_mouse(event);
+		obj->MousePressEvent(event);
 	}
 
 	void AbstractWidget::dispatch_mouse_release_event (AbstractWidget* obj,
 	        MouseEvent* event)
 	{
-		obj->release_mouse(event);
+		obj->MouseReleaseEvent(event);
 	}
 
 #ifdef DEBUG

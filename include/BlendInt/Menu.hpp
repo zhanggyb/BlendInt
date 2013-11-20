@@ -55,7 +55,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void move_mouse (MouseEvent* event);
+		virtual void MouseMoveEvent (MouseEvent* event);
 
 		virtual void Update (int type, const void* data);
 

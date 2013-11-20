@@ -73,31 +73,31 @@ void myTexture::Render (void)
 	glDisable(GL_TEXTURE_2D);
 }
 
-void myTexture::press_key (KeyEvent* event)
+void myTexture::KeyPressEvent (KeyEvent* event)
 {
 }
 
-void myTexture::press_context_menu (ContextMenuEvent* event)
-{
-
-}
-
-void myTexture::release_context_menu (ContextMenuEvent* event)
+void myTexture::ContextMenuPressEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myTexture::press_mouse (MouseEvent* event)
+void myTexture::ContextMenuReleaseEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myTexture::release_mouse (MouseEvent* event)
+void myTexture::MousePressEvent (MouseEvent* event)
 {
 
 }
 
-void myTexture::move_mouse (MouseEvent* event)
+void myTexture::MouseReleaseEvent (MouseEvent* event)
+{
+
+}
+
+void myTexture::MouseMoveEvent (MouseEvent* event)
 {
 
 }
@@ -137,30 +137,30 @@ void myDrawable1::Render (void)
 	glDisable(GL_BLEND);
 }
 
-void myDrawable1::press_key (KeyEvent* event)
+void myDrawable1::KeyPressEvent (KeyEvent* event)
 {
 }
 
-void myDrawable1::press_context_menu (ContextMenuEvent* event)
-{
-
-}
-
-void myDrawable1::release_context_menu (ContextMenuEvent* event)
+void myDrawable1::ContextMenuPressEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myDrawable1::press_mouse (MouseEvent* event)
-{
-}
-
-void myDrawable1::release_mouse (MouseEvent* event)
+void myDrawable1::ContextMenuReleaseEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myDrawable1::move_mouse (MouseEvent* event)
+void myDrawable1::MousePressEvent (MouseEvent* event)
+{
+}
+
+void myDrawable1::MouseReleaseEvent (MouseEvent* event)
+{
+
+}
+
+void myDrawable1::MouseMoveEvent (MouseEvent* event)
 {
 
 }
@@ -185,29 +185,29 @@ void myDrawable2::Render (void)
 	glDisable(GL_BLEND);
 }
 
-void myDrawable2::press_key (KeyEvent* event)
+void myDrawable2::KeyPressEvent (KeyEvent* event)
 {
 }
 
-void myDrawable2::press_context_menu (ContextMenuEvent* event)
-{
-
-}
-
-void myDrawable2::release_context_menu (ContextMenuEvent* event)
+void myDrawable2::ContextMenuPressEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myDrawable2::press_mouse (MouseEvent* event)
+void myDrawable2::ContextMenuReleaseEvent (ContextMenuEvent* event)
+{
+
+}
+
+void myDrawable2::MousePressEvent (MouseEvent* event)
 {
 }
 
-void myDrawable2::release_mouse (MouseEvent* event)
+void myDrawable2::MouseReleaseEvent (MouseEvent* event)
 {
 }
 
-void myDrawable2::move_mouse (MouseEvent* event)
+void myDrawable2::MouseMoveEvent (MouseEvent* event)
 {
 
 }
@@ -232,31 +232,31 @@ void myDrawable3::Render (void)
 	glDisable(GL_BLEND);
 }
 
-void myDrawable3::press_key (KeyEvent* event)
+void myDrawable3::KeyPressEvent (KeyEvent* event)
 {
 }
 
-void myDrawable3::press_context_menu (ContextMenuEvent* event)
-{
-
-}
-
-void myDrawable3::release_context_menu (ContextMenuEvent* event)
+void myDrawable3::ContextMenuPressEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myDrawable3::press_mouse (MouseEvent* event)
+void myDrawable3::ContextMenuReleaseEvent (ContextMenuEvent* event)
 {
 
 }
 
-void myDrawable3::release_mouse (MouseEvent* event)
+void myDrawable3::MousePressEvent (MouseEvent* event)
 {
 
 }
 
-void myDrawable3::move_mouse (MouseEvent* event)
+void myDrawable3::MouseReleaseEvent (MouseEvent* event)
+{
+
+}
+
+void myDrawable3::MouseMoveEvent (MouseEvent* event)
 {
 
 }
