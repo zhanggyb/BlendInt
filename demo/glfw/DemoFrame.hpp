@@ -12,6 +12,8 @@
 #include <BlendInt/HorizontalLayout.hpp>
 #include <BlendInt/Button.hpp>
 
+#include <BlendInt/Timer.hpp>
+
 using namespace BlendInt;
 
 class DemoFrame: public Frame
@@ -24,7 +26,13 @@ public:
 
 private:
 
+	void start_time ();
+
+	void stop_time ();
+
 	HorizontalLayout* m_hlayout;
+
+	Timer* m_timer;
 
 };
 
