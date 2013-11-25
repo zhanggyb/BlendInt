@@ -31,7 +31,7 @@ DemoFrame::DemoFrame()
 	set_size(m_hlayout->size().width() + margin().left() + margin().right(),
 				m_hlayout->size().height() + margin().top() + margin().bottom());
 
-	set_widget(m_hlayout);
+	SetWidget(m_hlayout);
 
 	SetPreferredSize(size());
 

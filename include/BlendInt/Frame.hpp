@@ -56,11 +56,11 @@ namespace BlendInt {
 
 		const Margin& margin () const {return m_margin;}
 
-		void set_margin (const Margin& margin);
+		void SetMargin (const Margin& margin);
 
-		void set_margin (int left, int right, int top, int bottom);
+		void SetMargin (int left, int right, int top, int bottom);
 
-		void set_widget (AbstractWidget* widget);
+		void SetWidget (AbstractWidget* widget);
 
 		AbstractWidget* widget () const {return m_widget;}
 

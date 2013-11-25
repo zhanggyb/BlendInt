@@ -5,6 +5,7 @@
 #include <Common/Window.hpp>
 
 #include <BlendInt/Timer.hpp>
+#include <BlendInt/Viewport3D.hpp>
 
 #include <gtest/gtest.h>
 
@@ -54,6 +55,13 @@ int main (int argc, char* argv[])
 
     // add test code here
 	// testing::InitGoogleTest (&argc, argv);
+
+    Viewport3D* view = new Viewport3D;
+
+    view->Resize(500, 400);
+    view->SetPosition(100, 100);
+
+    Interface::instance()->bind(view);
 
     RunLoop(window);
 

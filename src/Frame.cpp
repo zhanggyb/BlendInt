@@ -62,7 +62,7 @@ namespace BlendInt {
 		// TODO Auto-generated destructor stub
 	}
 
-	void Frame::set_margin (const Margin& margin)
+	void Frame::SetMargin (const Margin& margin)
 	{
 		if (m_margin.equal(margin))
 			return;
@@ -71,7 +71,7 @@ namespace BlendInt {
 		m_margin = margin;
 	}
 
-	void Frame::set_margin (int l, int r, int t, int b)
+	void Frame::SetMargin (int l, int r, int t, int b)
 	{
 		if (m_margin.equal(l, r, t, b))
 			return;
@@ -82,7 +82,7 @@ namespace BlendInt {
 		m_margin = new_margin;
 	}
 
-	void Frame::set_widget (AbstractWidget* widget)
+	void Frame::SetWidget (AbstractWidget* widget)
 	{
 		if (widget && (widget != m_widget)) {
 			delete m_widget;
