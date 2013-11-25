@@ -60,7 +60,7 @@ void GLWindow::initializeGL()
 
 	Button* reset_button = new Button;
 	reset_button->set_text("Reset");
-	reset_button->move(640, 300);
+	reset_button->Move(640, 300);
 
 	app->bind(reset_button);
 
@@ -73,7 +73,7 @@ void GLWindow::initializeGL()
 	Button* button = new Button;
 	button->set_text("Hello World!");
 //	button->Resize(80, 600);
-	button->move(205, 205);
+	button->Move(205, 205);
 
 	scroll_view->set_viewport(button);
 

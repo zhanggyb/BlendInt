@@ -323,7 +323,7 @@ int main(int argc, char* argv[])
 
 	SliderBar* sliderbar = new SliderBar;
 
-	sliderbar->SetPosition(400, 400);
+	sliderbar->Move(400, 400);
 
 	app->bind(sliderbar);
 

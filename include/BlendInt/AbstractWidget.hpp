@@ -203,7 +203,7 @@ namespace BlendInt {
 		 * @brief move this object along x axis
 		 * @param offset_x
 		 */
-		inline void move_x (int offset_x)
+		inline void MoveX (int offset_x)
 		{
 			SetPosition(position().x() + offset_x, position().y());
 		}
@@ -212,7 +212,7 @@ namespace BlendInt {
 		 * @brief move this object along y axis
 		 * @param offset_y
 		 */
-		inline void move_y (int offset_y)
+		inline void MoveY (int offset_y)
 		{
 			SetPosition(position().x(), position().y() + offset_y);
 		}
@@ -222,7 +222,7 @@ namespace BlendInt {
 		 * @param offset_x
 		 * @param offset_y
 		 */
-		inline void move (int offset_x, int offset_y)
+		inline void Move (int offset_x, int offset_y)
 		{
 			SetPosition(position().x() + offset_x, position().y() + offset_y);
 		}

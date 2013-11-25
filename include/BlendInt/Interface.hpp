@@ -21,23 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-/**
- * Doxygen documentation
- */
-
-// the top level groups
-
-/** @defgroup time Time input */
-/** @defgroup interface The main interface class entry */
-/** @defgroup exceptions Exceptions */
-/** @defgroup opengl Wrapper classes for OpenGL API */
-/** @defgroup gui GUI classes */
-
-/**
- * @defgroup functions_throw_exception Functions throw exception
- * @ingroup exceptions
- */
-
 #ifndef _BLENDINT_INTERFACE_HPP_
 #define _BLENDINT_INTERFACE_HPP_
 
@@ -138,6 +121,19 @@ namespace BlendInt {
  * Doxygen documentation
  */
 
+// the top level groups
+
+/** @defgroup time Time input */
+/** @defgroup interface The main interface class entry */
+/** @defgroup exceptions Exceptions */
+/** @defgroup opengl Wrapper classes for OpenGL API */
+/** @defgroup gui GUI classes */
+
+/**
+ * @defgroup functions_throw_exception Functions throw exception
+ * @ingroup exceptions
+ */
+
 /**
  * @mainpage BlendInt -- a Blender-like Interface Library in OpenGL
  * 
@@ -179,7 +175,7 @@ namespace BlendInt {
  	BlendInt::Interface::initialize();
 
  	Button* my_button = new Button;
- 	my_button.set_pos(200, 200); 
+ 	my_button.SetPosition(200, 200);
 
  	// in the event-Render loop
  	app->Render();
@@ -193,7 +189,6 @@ namespace BlendInt {
  * 
  * @subsection sect_compile_require Requirements
  * 
-
  * @ref page_quick_guide
  */
 
@@ -210,4 +205,11 @@ namespace BlendInt {
  * @subsection sect_install_compile Compile
  * 
  * and More document later.
+ */
+
+/**
+ * @page code_style The C++ Coding Style Used in This Project
+ *
+ * This project follows Google's C++ coding style, see the document on its home page:
+ * http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
  */
