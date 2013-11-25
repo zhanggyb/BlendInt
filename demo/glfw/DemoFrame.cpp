@@ -8,6 +8,7 @@
 #include "DemoFrame.hpp"
 
 #include <BlendInt/Label.hpp>
+#include <iostream>
 
 DemoFrame::DemoFrame()
 : Frame(), m_hlayout(0), m_timer(0)
@@ -21,6 +22,9 @@ DemoFrame::DemoFrame()
 	Button* start_button = new Button("Start");
 	m_hlayout->add(start_button);
 
+	Button* reset_button = new Button("Reset Interval");
+	m_hlayout->add(reset_button);
+
 	Button* stop_button = new Button("Stop");
 	m_hlayout->add(stop_button);
 
@@ -32,10 +36,10 @@ DemoFrame::DemoFrame()
 	SetPreferredSize(size());
 
 	m_timer = new Timer;
-//	m_timer->Start();
 
 	// connect timer
 	events()->connect(start_button->clicked(),this, &DemoFrame::start_time);
+	events()->connect(reset_button->clicked(), this, &DemoFrame::reset_time);
 	events()->connect(stop_button->clicked(), this, &DemoFrame::stop_time);
 }
 
@@ -50,7 +54,15 @@ void DemoFrame::start_time()
 	m_timer->Start();
 }
 
+void DemoFrame::reset_time()
+{
+	m_timer->SetInterval(2000);
+}
+
 void DemoFrame::stop_time()
 {
+	unsigned int time_left = m_timer->GetTimeLeft();
+	std::cout << "time left: (ms)" << time_left << std::endl;
+
 	m_timer->Stop();
 }

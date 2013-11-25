@@ -28,6 +28,8 @@ private:
 
 	void start_time ();
 
+	void reset_time ();
+
 	void stop_time ();
 
 	HorizontalLayout* m_hlayout;

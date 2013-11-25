@@ -22,13 +22,15 @@
  */
 
 #include <iostream>
+#include <errno.h>
+#include <string.h>
 
 #include <BlendInt/Timer.hpp>
 
 namespace BlendInt {
 
 	Timer::Timer()
-	: m_id (0), m_interval(50)
+	: m_id (0), m_interval(40), m_enabled(false)
 	{
 		Create();
 	}
@@ -43,35 +45,66 @@ namespace BlendInt {
 		int ret = -1;
 		struct itimerspec ts;
 
-		// debug time
-		ts.it_interval.tv_sec = 1;
-		ts.it_interval.tv_nsec = 0;
-		ts.it_value.tv_sec = 1;
-		ts.it_value.tv_nsec = 0;
+		unsigned int sec = m_interval / 1000;
+		long nsec = (m_interval % 1000) * 1000 * 1000;
+
+		ts.it_interval.tv_sec = sec;
+		ts.it_interval.tv_nsec = nsec;
+		ts.it_value.tv_sec = sec;
+		ts.it_value.tv_nsec = nsec;
 
 		ret = timer_settime(m_id, 0, &ts, 0);
 
 		if(ret < 0) {
-			std::cout << "Fail to start timer" << std::endl;
+			std::cout << "Fail to start timer in " << __func__ << std::endl;
+			m_enabled = false;
+		} else {
+			m_enabled = true;
 		}
 	}
 
 	void Timer::Stop ()
 	{
+		if(! m_enabled) return;
+
 		int ret = -1;
 		struct itimerspec ts;
-
-		// debug time
-		ts.it_interval.tv_sec = 1;
-		ts.it_interval.tv_nsec = 0;
-		ts.it_value.tv_sec = 0;
-		ts.it_value.tv_nsec = 0;
+		memset (&ts, 0, sizeof(ts));
 
 		ret = timer_settime(m_id, 0, &ts, 0);
 
 		if(ret < 0) {
-			std::cout << "Fail to start timer" << std::endl;
+			std::cerr << "Fail to stop timer in " << __func__ << std::endl;
 		}
+
+		m_enabled = false;
+	}
+
+	void Timer::SetInterval(unsigned int interval)
+	{
+		if(m_interval == interval) return;
+
+		m_interval = interval;
+
+		if(m_enabled)	Start ();
+	}
+
+	unsigned int Timer::GetTimeLeft()
+	{
+		if(!m_enabled)
+			return 0;
+
+		struct itimerspec ts;
+
+		int ret = -1;
+
+		ret = timer_gettime (m_id, &ts);
+
+		if(ret < 0) {
+			std::cerr << "Fail to get timer in " << __func__ << std::endl;
+		}
+
+		return ts.it_value.tv_nsec / 1000 / 1000;
 	}
 
 	void Timer::Create()
@@ -86,7 +119,10 @@ namespace BlendInt {
 		ret = timer_create(CLOCK_REALTIME, &sev, &m_id);
 		if(ret < 0) {
 			// do error
-			std::cout << "Fail to create timer" << std::endl;
+			std::cerr << "Fail to create timer in " << __func__ << std::endl;
+			if(ret == EAGAIN) {
+				std::cerr << "The calling process has already created all of the timers it is allowed by this implementation" << std::endl;
+			}
 		}
 	}
 

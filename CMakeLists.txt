@@ -40,6 +40,9 @@ endif()
 #add OpenImageIO link
 set(LIBS ${LIBS} OpenImageIO)
 
+# add rt library
+set(LIBS ${LIBS} rt)
+
 include_directories(${BlendInt_SOURCE_DIR}/include)
 include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt)
 include_directories(${BlendInt_SOURCE_DIR}/extern/CppEvents/src)

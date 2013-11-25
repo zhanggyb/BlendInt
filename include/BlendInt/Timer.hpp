@@ -32,36 +32,85 @@
 namespace BlendInt {
 
 	/**
-	 * @brief the timer in BlendInt
+	 * @brief The timer class
+	 *
+	 * The Timer class provides timers which will fire event when time out.
+	 *
+	 * To use it, create a timer and connect the timeout() event to the appropriate event callee,
+	 * and call Start() to enable the timer.
+	 *
+	 * For example:
+	 * @code
+	 	 Timer* timer = new Timer;
+	 	 events()->connect(timer->timeout(), this, &Foo::do_sth);
+	 	 timer->SetInterval(50);	// 50 ms
+	  @endcode
 	 */
 	class Timer
 	{
 	public:
 
+		/**
+		 * @brief Default constructor
+		 */
 		Timer ();
 
+		/**
+		 * @brief Destructor
+		 */
 		~Timer ();
 
+		/**
+		 * @brief Start the timer
+		 */
 		void Start ();
 
+		/**
+		 * @brief Stop the timer
+		 */
 		void Stop ();
 
 		/**
-		 * @brief Set Interval
+		 * @brief Reset the Interval
 		 * @param interval the interval in millisecond
+		 *
+		 * Reset the interval time of the timer, if it's already started, the timer will
+		 * continue to running with new interval
 		 */
-		void set_interval (unsigned int interval)
-		{
-			m_interval = interval;
-		}
+		void SetInterval (unsigned int interval);
 
+		/**
+		 * @brief Get the time left
+		 * @return the milliseconds left
+		 */
+		unsigned int GetTimeLeft ();
+
+		/**
+		 * @brief Get the interval time
+		 * @return
+		 */
 		unsigned int interval () const {return m_interval;}
 
+		/**
+		 * @brief Check if the timer is active (enabled)
+		 * @return true: enabled
+		 */
+		bool enabled () const {return m_enabled;}
+
+		/**
+		 * @brief The timeout event
+		 * @return Reference to a Cpp::Event
+		 */
 		Cpp::EventRef<> timeout() {return m_timeout;}
 
 	protected:
 
 		static void ThreadCallback (union sigval sigev_value);
+
+		void set_interval (unsigned int interval)
+		{
+			m_interval = interval;
+		}
 
 	private:
 
@@ -69,7 +118,14 @@ namespace BlendInt {
 
 		timer_t m_id;
 
+		/**
+		 * @brief the interval time in millisecond
+		 *
+		 * The default is 40ms: 25fps
+		 */
 		unsigned int m_interval;
+
+		bool m_enabled;
 
 		/**
 		 * @brief the time out event
