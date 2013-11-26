@@ -38,9 +38,20 @@
 
 namespace BlendInt {
 
+	float Widget::default_border_width = 1.0f;
+
+	void Widget::SetDefaultBorderWidth(float border)
+	{
+		default_border_width = border;
+	}
+
+	float Widget::DefaultBorderWidth()
+	{
+		return default_border_width;
+	}
+
 	Widget::Widget()
-	: AbstractWidget(),
-	  m_border_width(1.0)
+	: AbstractWidget()
 	{
 		set_minimal_size(0, 0);
 		set_size(120, 80);
@@ -48,8 +59,7 @@ namespace BlendInt {
 	}
 
 	Widget::Widget(AbstractWidget* parent)
-	: AbstractWidget(parent),
-	  m_border_width(1.0)
+	: AbstractWidget(parent)
 	{
 		set_minimal_size(0, 0);
 		set_size(120, 80);
@@ -59,15 +69,6 @@ namespace BlendInt {
 	Widget::~Widget()
 	{
 
-	}
-
-	void Widget::set_border_width(float width)
-	{
-		if(width < 0.0) return;
-
-		Update(WidgetBorderWidth, &width);
-
-		m_border_width = width;
 	}
 
 	void Widget::Update (int type, const void* data)
@@ -80,7 +81,7 @@ namespace BlendInt {
 		float outer_v[4][2];	// vertices for drawing outline
 		float inner_v[4][2];	// vertices for drawing inner
 
-		generate_rect_vertices(&(size()), border_width(), inner_v, outer_v);
+		generate_rect_vertices(&(size()), DefaultBorderWidth(), inner_v, outer_v);
 
 		float quad_strip[4 * 2 + 2][2]; /* + 2 because the last pair is wrapped */
 
@@ -216,7 +217,7 @@ namespace BlendInt {
 
 		VerticesSum vert_sum;
 
-		vert_sum = generate_round_vertices(size, border_width(), round_type, radius, inner_v, outer_v);
+		vert_sum = generate_round_vertices(size, DefaultBorderWidth(), round_type, radius, inner_v, outer_v);
 
 		if(emboss)
 			buffer->generate(3);
@@ -260,7 +261,7 @@ namespace BlendInt {
 		float outer_v[4][2];	// vertices for drawing outline
 		float inner_v[4][2];	// vertices for drawing inner
 
-		generate_rect_vertices(size, border_width(), inner_v, outer_v);
+		generate_rect_vertices(size, DefaultBorderWidth(), inner_v, outer_v);
 
 		if(emboss)
 			buffer->generate(3);

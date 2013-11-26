@@ -47,9 +47,9 @@ namespace BlendInt {
 
 		virtual ~Widget();
 
-		void set_border_width (float width = 1.0);
+		static void SetDefaultBorderWidth (float border);
 
-		float border_width () const {return m_border_width;}
+		static float DefaultBorderWidth ();
 
 	protected:
 
@@ -205,16 +205,8 @@ namespace BlendInt {
 
 	private:
 
-		/**
-		 * @brief border width
-		 */
-		float m_border_width;
+		static float default_border_width;
 
-		/**
-		 * @brief If draw emboss
-		 *
-		 * @todo only menu and scroll bar set emboss off, remove this property later
-		 */
 	};
 }
 

@@ -52,11 +52,11 @@ int main (int argc, char* argv[])
     // add test code here
     Viewport3D* view = new Viewport3D;
 
-    view->Resize(500, 400);
+    view->Resize(800, 600);
     view->SetPosition(100, 100);
 
     Button* button = new Button("OK");
-    button->SetPosition(600, 600);
+    button->SetPosition(1000, 400);
 
     Interface::instance()->bind(view);
     Interface::instance()->bind(button);

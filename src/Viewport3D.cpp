@@ -62,31 +62,32 @@ namespace BlendInt {
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-
 		glOrtho(0.f, (float) size().width(), 0.f, (float) size().height(), 100.f, -100.f);
-
-		// Calculate The Aspect Ratio Of The Window
-//		gluPerspective(45.0f,(GLfloat)size().width()/(GLfloat)size().height(),0.1f,100.0f);
+		//gluPerspective(45.0f,(GLfloat)size().width()/(GLfloat)size().height(),0.1f,100.0f);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-		// test code
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//		glClear(GL_COLOR_BUFFER_BIT);
+		//-------------------------------------------------------------------------------------------------------
 
-		glClearColor(1.0, 0.1, 0.1, 0.25);
-		glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+		//test code
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glClearColor(1.0, 1.0, 1.0, 0.75);
+		glTranslatef(200.f, 150.f, 0.0f);
+		glRotatef((float) glfwGetTime() * 60.f, 0.f, 0.f, 1.f);
 		glBegin(GL_TRIANGLES);
 		glColor3f(1.f, 0.f, 0.f);
-		glVertex3f(100.f, 0.0f, 0.f);
+		glVertex3f(-200.f, 0.0f, 0.f);
 		glColor3f(0.f, 1.f, 0.f);
-		glVertex3f(500.f, 0.0f, 0.f);
+		glVertex3f(200.f, 0.0f, 0.f);
 		glColor3f(0.f, 0.f, 1.f);
-		glVertex3f(300.f, 300.f, 0.f);
+		glVertex3f(000.f, 300.f, 0.f);
 		glEnd();
+
+		//-------------------------------------------------------------------------------------------------------
 
 		glDisable(GL_SCISSOR_TEST);
 
@@ -104,10 +105,13 @@ namespace BlendInt {
 		glPushMatrix();
 		glTranslatef(position().x(), position().y(), z());
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
 
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+		glColor4f(1.0f, 1.0f, 1.0f, 0.75f);
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 		glVertex2i(0, 0);
@@ -117,6 +121,8 @@ namespace BlendInt {
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);
+
+		glDisable(GL_BLEND);
 
 		glPopMatrix();
 #endif

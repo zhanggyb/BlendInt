@@ -64,7 +64,7 @@ namespace BlendInt {
 				short shadetop = themes()->scroll.shadetop;
 				short shadedown = themes()->scroll.shadedown;
 
-				GenerateShadedFormBuffer(size_p, border_width(), round_type(),
+				GenerateShadedFormBuffer(size_p, DefaultBorderWidth(), round_type(),
 				        radius(), color, shadetop, shadedown, shadedir, 5,
 				        m_buffer.get());
 				break;
@@ -80,7 +80,7 @@ namespace BlendInt {
 				short shadetop = themes()->scroll.shadetop;
 				short shadedown = themes()->scroll.shadedown;
 
-				GenerateShadedFormBuffer(size_p, border_width(), round_type(),
+				GenerateShadedFormBuffer(size_p, DefaultBorderWidth(), round_type(),
 				        *radius_p, color, shadetop, shadedown, shadedir, 5,
 				        m_buffer.get());
 				break;
@@ -198,7 +198,7 @@ namespace BlendInt {
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		GenerateShadedFormBuffer(size_p, border_width(), round_type(), radius(),
+		GenerateShadedFormBuffer(size_p, DefaultBorderWidth(), round_type(), radius(),
 		        color, shadetop, shadedown, shadedir, 5, m_buffer.get());
 	}
 
@@ -287,7 +287,7 @@ namespace BlendInt {
 				short shadetop = themes()->scroll.shadetop;
 				short shadedown = themes()->scroll.shadedown;
 
-				GenerateShadedFormBuffer(size_p, border_width(), round_type(),
+				GenerateShadedFormBuffer(size_p, DefaultBorderWidth(), round_type(),
 				        radius(), color, shadetop, shadedown, shadedir, 5,
 				        m_buffer.get());
 				break;
@@ -303,7 +303,7 @@ namespace BlendInt {
 				short shadetop = themes()->scroll.shadetop;
 				short shadedown = themes()->scroll.shadedown;
 
-				GenerateShadedFormBuffer(size_p, border_width(), round_type(),
+				GenerateShadedFormBuffer(size_p, DefaultBorderWidth(), round_type(),
 				        *radius_p, color, shadetop, shadedown, shadedir, 5,
 				        m_buffer.get());
 				break;
@@ -441,7 +441,7 @@ namespace BlendInt {
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		GenerateShadedFormBuffer(size_p, border_width(), round_type(), radius(),
+		GenerateShadedFormBuffer(size_p, DefaultBorderWidth(), round_type(), radius(),
 		        color, shadetop, shadedown, shadedir, 0, m_buffer.get());
 	}
 
@@ -561,9 +561,9 @@ namespace BlendInt {
 		short shadedown = themes()->scroll.shadedown;
 
 		if(shadedir)
-			vert_sum = generate_vertices(size, border_width(), color, shadetop, shadedown, shadedir, inner_v, outer_v);
+			vert_sum = generate_vertices(size, DefaultBorderWidth(), color, shadetop, shadedown, shadedir, inner_v, outer_v);
 		else					// swap shadetop and shadedown
-			vert_sum = generate_vertices(size, border_width(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
+			vert_sum = generate_vertices(size, DefaultBorderWidth(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
 		m_buffer.get()->generate(2);
 		m_buffer.get()->select(0);

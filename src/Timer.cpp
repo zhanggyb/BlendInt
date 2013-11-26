@@ -128,9 +128,6 @@ namespace BlendInt {
 
 	void Timer::ThreadCallback(union sigval sigev_value)
 	{
-#ifdef DEBUG
-		std::cout << "Timer callback in thread" << std::endl;
-#endif
 		Timer* timer = static_cast<Timer*>(sigev_value.sival_ptr);
 		timer->m_timeout.fire();
 	}

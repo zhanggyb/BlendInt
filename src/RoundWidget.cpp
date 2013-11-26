@@ -70,7 +70,7 @@ namespace BlendInt {
 
 		VerticesSum vert_sum;
 
-		vert_sum = generate_vertices(&(size()), border_width(), inner_v, outer_v);
+		vert_sum = generate_vertices(&(size()), DefaultBorderWidth(), inner_v, outer_v);
 
 		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
 
