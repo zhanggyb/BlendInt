@@ -93,9 +93,7 @@ namespace BlendInt {
 		double cursor_pos_x_;	/** cursor x position */
 		double cursor_pos_y_;	/** cursor y position */
 
-		Size size_;
-
-		unsigned char m_ticktack;
+		Size m_size;
 
 		Cpp::ConnectionScope m_events;
 

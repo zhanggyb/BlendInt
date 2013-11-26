@@ -24,6 +24,7 @@
 #include <GL/glew.h>
 
 #include <BlendInt/Viewport3D.hpp>
+#include <BlendInt/Interface.hpp>
 
 namespace BlendInt {
 
@@ -46,65 +47,61 @@ namespace BlendInt {
 
 	void Viewport3D::Render ()
 	{
+		// store the current matrices
+		GLdouble proj_matrix[16];
+		GLdouble model_matrix[16];
+
+		glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
+		glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
+
 		glEnable (GL_SCISSOR_TEST);
 		glScissor (position().x(),
 				position().y(),
 				size().width(),
 				size().height());
 
-		glViewport(position().x(), position().y(), size().width(), size().height());
-
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 
-		//glOrtho(0.f, (float) size().width(), 0.f, (float) size().height(), 100.f, -100.f);
+		glOrtho(0.f, (float) size().width(), 0.f, (float) size().height(), 100.f, -100.f);
 
 		// Calculate The Aspect Ratio Of The Window
-		gluPerspective(45.0f,(GLfloat)size().width()/(GLfloat)size().height(),0.1f,100.0f);
+//		gluPerspective(45.0f,(GLfloat)size().width()/(GLfloat)size().height(),0.1f,100.0f);
+
+		glViewport(position().x(), position().y(), size().width(), size().height());
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
 		// test code
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//		glClear(GL_COLOR_BUFFER_BIT);
 
+		glClearColor(1.0, 0.1, 0.1, 0.25);
+		glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
 		glBegin(GL_TRIANGLES);
-
-		glColor3f(1.0f,0.0f,0.0f);			// Red
-		glVertex3f( 0.0f, 1.0f, 0.0f);			// Top Of Triangle (Front)
-		glColor3f(0.0f,1.0f,0.0f);			// Green
-		glVertex3f(-1.0f,-1.0f, 1.0f);			// Left Of Triangle (Front)
-		glColor3f(0.0f,0.0f,1.0f);			// Blue
-		glVertex3f( 1.0f,-1.0f, 1.0f);			// Right Of Triangle (Front)
-
-		glColor3f(1.0f,0.0f,0.0f);			// Red
-		glVertex3f( 0.0f, 1.0f, 0.0f);			// Top Of Triangle (Right)
-		glColor3f(0.0f,0.0f,1.0f);			// Blue
-		glVertex3f( 1.0f,-1.0f, 1.0f);			// Left Of Triangle (Right)
-		glColor3f(0.0f,1.0f,0.0f);			// Green
-		glVertex3f( 1.0f,-1.0f, -1.0f);			// Right Of Triangle (Right)
-
-		glColor3f(1.0f,0.0f,0.0f);			// Red
-		glVertex3f( 0.0f, 1.0f, 0.0f);			// Top Of Triangle (Back)
-		glColor3f(0.0f,1.0f,0.0f);			// Green
-		glVertex3f( 1.0f,-1.0f, -1.0f);			// Left Of Triangle (Back)
-		glColor3f(0.0f,0.0f,1.0f);			// Blue
-		glVertex3f(-1.0f,-1.0f, -1.0f);			// Right Of Triangle (Back)
-
-		glColor3f(1.0f,0.0f,0.0f);			// Red
-		glVertex3f( 0.0f, 1.0f, 0.0f);			// Top Of Triangle (Left)
-		glColor3f(0.0f,0.0f,1.0f);			// Blue
-		glVertex3f(-1.0f,-1.0f,-1.0f);			// Left Of Triangle (Left)
-		glColor3f(0.0f,1.0f,0.0f);			// Green
-		glVertex3f(-1.0f,-1.0f, 1.0f);			// Right Of Triangle (Left)
+		glColor3f(1.f, 0.f, 0.f);
+		glVertex3f(100.f, 0.0f, 0.f);
+		glColor3f(0.f, 1.f, 0.f);
+		glVertex3f(500.f, 0.0f, 0.f);
+		glColor3f(0.f, 0.f, 1.f);
+		glVertex3f(300.f, 300.f, 0.f);
 		glEnd();
 
 		glDisable(GL_SCISSOR_TEST);
 
+		// set back the previous matrices and viewport
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixd(proj_matrix);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixd(model_matrix);
+
+		glViewport(0, 0, Interface::instance()->size().width(), Interface::instance()->size().height());
+
 #ifdef DEBUG
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
-
 		glTranslatef(position().x(), position().y(), z());
 
 		glLineWidth(1);

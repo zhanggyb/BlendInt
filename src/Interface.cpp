@@ -118,7 +118,7 @@ namespace BlendInt {
 	}
 
 	Interface::Interface ()
-			: cursor_pos_x_(0.0), cursor_pos_y_(0.0), m_ticktack(0)
+			: cursor_pos_x_(0.0), cursor_pos_y_(0.0)
 	{
 
 	}
@@ -140,24 +140,24 @@ namespace BlendInt {
 
 	const Size& Interface::size () const
 	{
-		return size_;
+		return m_size;
 	}
 
 	void Interface::Resize (int width, int height)
 	{
-		size_.set_width(width);
-		size_.set_height(height);
+		m_size.set_width(width);
+		m_size.set_height(height);
 	}
 
 	void Interface::Resize (const Size& size)
 	{
-		size_ = size;
+		m_size = size;
 	}
 
 	void Interface::Render ()
 	{
-		int width = size_.width();
-		int height = size_.height();
+		int width = m_size.width();
+		int height = m_size.height();
 		// float ratio = width / (float) height;
 
 		// float bg = 114.0 / 255;	// the default blender background color
@@ -196,7 +196,7 @@ namespace BlendInt {
 				(*set_it)->Render();
 			}
 		}
-		m_ticktack = m_ticktack ? 0 : 1;
+//		m_ticktack = m_ticktack ? 0 : 1;
 
 		glDisable(GL_BLEND);
 	}
@@ -262,8 +262,8 @@ namespace BlendInt {
 	void Interface::resizeEvent (int width, int height)
 	{
 		// TODO: Resize all widgets/layouts in children
-		size_.set_width(width);
-		size_.set_height(height);
+		m_size.set_width(width);
+		m_size.set_height(height);
 	}
 
 	void Interface::keyEvent (int key, int scancode, int action, int mods)
@@ -429,7 +429,7 @@ namespace BlendInt {
 	void Interface::cursorPosEvent (double xpos, double ypos)
 	{
 		cursor_pos_x_ = xpos;
-		cursor_pos_y_ = size_.height() - ypos;
+		cursor_pos_y_ = m_size.height() - ypos;
 
 		MouseEvent event(MouseNone, MouseButtonNone);
 

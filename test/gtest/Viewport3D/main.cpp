@@ -1,10 +1,9 @@
 /*
- * Unit test for Timer
+ * Unit test for Viewport3D
  */
 
 #include <Common/Window.hpp>
 
-#include <BlendInt/Timer.hpp>
 #include <BlendInt/Viewport3D.hpp>
 #include <BlendInt/Button.hpp>
 
@@ -14,16 +13,16 @@
 
 using namespace BlendInt;
 
-class TimerTest: public testing::Test
+class Viewport3DTest: public testing::Test
 {
 
 protected:
 
-	TimerTest () {
+	Viewport3DTest () {
 
 	}
 
-	virtual ~TimerTest () {
+	virtual ~Viewport3DTest () {
 
 	}
 
@@ -37,13 +36,9 @@ protected:
 
 };
 
-TEST_F(TimerTest, CheckTimeOut)
+TEST_F(Viewport3DTest, CheckTimeOut)
 {
-	Timer timer;
-
-	timer.Start ();
-
-	timer.Stop ();
+    // TODO
 }
 
 int main (int argc, char* argv[])
@@ -55,8 +50,6 @@ int main (int argc, char* argv[])
     GLFWwindow* window = CreateWindow("Timer Test");
 
     // add test code here
-	// testing::InitGoogleTest (&argc, argv);
-
     Viewport3D* view = new Viewport3D;
 
     view->Resize(500, 400);
@@ -75,3 +68,4 @@ int main (int argc, char* argv[])
 	//return RUN_ALL_TESTS();
 	return 0;
 }
+
