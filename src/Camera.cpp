@@ -21,46 +21,20 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_VIEWPORT3D_HPP_
-#define _BLENDINT_VIEWPORT3D_HPP_
-
-#include <vector>
-
-#include <BlendInt/Widget.hpp>
 #include <BlendInt/Camera.hpp>
-
-using std::vector;
 
 namespace BlendInt {
 
-	class Viewport3D: public Widget
+	Camera::Camera ()
 	{
-		DISALLOW_COPY_AND_ASSIGN(Viewport3D);
+		m_position.set_x(10.0);
+		m_position.set_z(10.0);
+		m_direction.set_y(1.0);
+	}
 
-	public:
+	Camera::~Camera()
+	{
 
-		Viewport3D();
-
-		Viewport3D(AbstractWidget* parent);
-
-		virtual ~Viewport3D ();
-
-	protected:
-
-		virtual void KeyPressEvent (KeyEvent* event);
-
-		virtual void MousePressEvent (MouseEvent* event);
-
-		virtual void MouseReleaseEvent (MouseEvent* event);
-
-		virtual void MouseMoveEvent (MouseEvent* event);
-
-		virtual void Render ();
-
-		vector<Camera*> m_cameras;
-
-	};
+	}
 
 }
-
-#endif /* _BLENDINT_VIEWPORT3D_HPP_ */

@@ -59,6 +59,12 @@ namespace BlendInt {
 
 		}
 
+		int key () const {return _key;}
+
+		int scancode () const {return _scancode;}
+
+		int action () const {return _action;}
+
 	private:
 
 		int _key;

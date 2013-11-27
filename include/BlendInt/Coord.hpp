@@ -62,13 +62,13 @@ namespace BlendInt {
 			return *this;
 		}
 
-		void Add (const Coord2& other)
+		void add (const Coord2& other)
 		{
 			x_ += other.x_;
 			y_ += other.y_;
 		}
 
-		void Add (const T& x, const T& y)
+		void add (const T& x, const T& y)
 		{
 			x_ += x;
 			y_ += y;
@@ -124,14 +124,14 @@ namespace BlendInt {
 			return *this;
 		}
 
-		void Add (const Coord3& other)
+		void add (const Coord3& other)
 		{
 			x_ += other.x_;
 			y_ += other.y_;
 			z_ += other.z_;
 		}
 
-		void Add (const T& x, const T& y, const T& z)
+		void add (const T& x, const T& y, const T& z)
 		{
 			x_ += x;
 			y_ += y;
