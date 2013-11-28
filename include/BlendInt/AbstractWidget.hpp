@@ -321,11 +321,6 @@ namespace BlendInt {
 
 		bool m_fire_events;
 
-//		DRAWABLE_PROPERTY Size m_size;
-
-//		Point m_position;
-
-		//Cpp::ConnectionScope m_events;
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
 		Cpp::Event<AbstractWidget*, int> m_property_changed;
@@ -363,11 +358,8 @@ namespace BlendInt {
 
 		inline bool unregister_from_map ();
 
-		// member variables
-
 		uint64_t m_id; /** A unique ID for object */
 
-		// static member variables
 		static uint64_t id_last;
 
 		static map<uint64_t, AbstractWidget*> obj_map;

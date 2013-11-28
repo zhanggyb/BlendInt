@@ -24,11 +24,9 @@
 #ifndef _BLENDINT_STACKEDWIDGET_HPP_
 #define _BLENDINT_STACKEDWIDGET_HPP_
 
-#include <stack>
+#include <vector>
 
 #include <BlendInt/Widget.hpp>
-
-using std::stack;
 
 namespace BlendInt {
 
@@ -44,9 +42,35 @@ namespace BlendInt {
 
 		virtual ~StackedWidget ();
 
+		void Add (Widget* widget);
+
+		void Insert (size_t index, Widget* widget);
+
+		void Remove (Widget* widget);
+
+		int count () const {return m_stack.size();}
+
+		void SetIndex (size_t index);
+
+		Widget* current_widget () const
+		{
+			return m_stack[m_index];
+		}
+
+		Widget* widget (size_t index)
+		{
+			return m_stack[index];
+		}
+
+	protected:
+
+		virtual void Render ();
+
 	private:
 
-		stack<Widget*> m_stack;
+		std::vector<Widget*> m_stack;
+
+		size_t m_index;
 
 	};
 

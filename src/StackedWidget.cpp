@@ -22,17 +22,18 @@
  */
 
 #include <BlendInt/StackedWidget.hpp>
+#include <algorithm>
 
 namespace BlendInt {
 
 	StackedWidget::StackedWidget()
-	: Widget()
+	: Widget(), m_index(0)
 	{
 
 	}
 
 	StackedWidget::StackedWidget(AbstractWidget* parent)
-	: Widget (parent)
+	: Widget (parent), m_index(0)
 	{
 
 	}
@@ -40,6 +41,61 @@ namespace BlendInt {
 	StackedWidget::~StackedWidget()
 	{
 
+	}
+
+	void StackedWidget::Add (Widget* widget)
+	{
+		if(children().count(widget)) return;
+
+		m_stack.push_back(widget);
+		bind(widget);
+
+		widget->Resize(size());
+	}
+
+	void StackedWidget::Insert (size_t index, Widget* widget)
+	{
+		if(children().count(widget)) return;
+		if(index > (m_stack.size() - 1)) return;
+
+		std::vector<Widget*>::iterator it = m_stack.begin();
+		std::advance(it, index);
+
+		m_stack.insert(it, widget);
+		bind(widget);
+
+		widget->Resize(size());
+	}
+
+	void StackedWidget::Remove (Widget* widget)
+	{
+		if(! children().count(widget)) return;
+
+		std::vector<Widget*>::iterator it;
+		it = std::find(m_stack.begin(), m_stack.end(), widget);
+
+		if(it != m_stack.end()) {
+			m_stack.erase(it);
+			unbind(widget);
+
+			if(m_index > (m_stack.size() - 1)) {
+				m_index = m_stack.size() - 1;
+			}
+		}
+	}
+
+	void StackedWidget::SetIndex (size_t index)
+	{
+		if(index > (m_stack.size() - 1)) return;
+
+		m_index = index;
+	}
+
+	void StackedWidget::Render ()
+	{
+		if(m_stack.size() == 0) return;
+
+		dispatch_render(m_stack[m_index]);
 	}
 
 }
