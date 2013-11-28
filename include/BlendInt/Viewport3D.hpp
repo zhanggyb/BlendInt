@@ -45,6 +45,8 @@ namespace BlendInt {
 
 		virtual ~Viewport3D ();
 
+		void Zoom (float factor);
+
 	protected:
 
 		virtual void KeyPressEvent (KeyEvent* event);
@@ -58,6 +60,10 @@ namespace BlendInt {
 		virtual void Render ();
 
 		vector<Camera*> m_cameras;
+
+	private:
+
+		void DrawGrid (float width, float height, float small_step, float big_step);
 
 	};
 

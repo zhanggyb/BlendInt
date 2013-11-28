@@ -28,11 +28,30 @@
 
 namespace BlendInt {
 
+	GLfloat light_diffuse[] = {1.0, 0.0, 0.0, 1.0};  /* Red diffuse light. */
+	GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};  /* Infinite light location. */
+	GLfloat n[6][3] = {  /* Normals for the 6 faces of a cube. */
+	  {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
+	  {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
+	GLint faces[6][4] = {  /* Vertex indices for the 6 faces of a cube. */
+	  {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
+	  {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
+	GLfloat v[8][3];  /* Will be filled in with X,Y,Z vertexes. */
+
 	Viewport3D::Viewport3D()
 	: Widget()
 	{
 		Camera* default_camera = new Camera;
 		m_cameras.push_back(default_camera);
+
+		  /* Setup cube vertex data. */
+		  v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
+		  v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
+		  v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
+		  v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
+		  v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
+		  v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
+
 	}
 
 	Viewport3D::Viewport3D(AbstractWidget* parent)
@@ -40,6 +59,15 @@ namespace BlendInt {
 	{
 		Camera* default_camera = new Camera;
 		m_cameras.push_back(default_camera);
+
+		  /* Setup cube vertex data. */
+		  v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
+		  v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
+		  v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
+		  v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
+		  v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
+		  v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
+
 	}
 
 	Viewport3D::~Viewport3D ()
@@ -68,6 +96,14 @@ namespace BlendInt {
 
 				case Key_Right:
 					m_cameras[0]->set_position(x + 5, y, z);
+					break;
+
+				case Key_Up:
+					m_cameras[0]->set_position(x, y, z + 5);
+					break;
+
+				case Key_Down:
+					m_cameras[0]->set_position(x, y, z - 5);
 					break;
 
 				default:
@@ -145,47 +181,30 @@ namespace BlendInt {
 //		glVertex3f(0.f, 200.f, 0.f);
 //		glEnd();
 
-		glBegin(GL_QUADS);                  // Start Drawing The Cube
+		  /* Use depth buffering for hidden surface elimination. */
+		  glEnable(GL_DEPTH_TEST);
 
-		glColor3f(0.0f,1.0f,0.0f);          // Set The Color To Green
-		glVertex3f( 1.0f, 1.0f,-1.0f);          // Top Right Of The Quad (Top)
-		glVertex3f(-1.0f, 1.0f,-1.0f);          // Top Left Of The Quad (Top)
-		glVertex3f(-1.0f, 1.0f, 1.0f);          // Bottom Left Of The Quad (Top)
-		glVertex3f( 1.0f, 1.0f, 1.0f);          // Bottom Right Of The Quad (Top)
+		  int i;
 
-		glColor3f(1.0f,0.5f,0.0f);          // Set The Color To Orange
-		glVertex3f( 1.0f,-1.0f, 1.0f);          // Top Right Of The Quad (Bottom)
-		glVertex3f(-1.0f,-1.0f, 1.0f);          // Top Left Of The Quad (Bottom)
-		glVertex3f(-1.0f,-1.0f,-1.0f);          // Bottom Left Of The Quad (Bottom)
-		glVertex3f( 1.0f,-1.0f,-1.0f);          // Bottom Right Of The Quad (Bottom)
-
-		glColor3f(1.0f,0.0f,0.0f);          // Set The Color To Red
-		glVertex3f( 1.0f, 1.0f, 1.0f);          // Top Right Of The Quad (Front)
-		glVertex3f(-1.0f, 1.0f, 1.0f);          // Top Left Of The Quad (Front)
-		glVertex3f(-1.0f,-1.0f, 1.0f);          // Bottom Left Of The Quad (Front)
-		glVertex3f( 1.0f,-1.0f, 1.0f);          // Bottom Right Of The Quad (Front)
-
-		glColor3f(1.0f,1.0f,0.0f);          // Set The Color To Yellow
-		glVertex3f( 1.0f,-1.0f,-1.0f);          // Bottom Left Of The Quad (Back)
-		glVertex3f(-1.0f,-1.0f,-1.0f);          // Bottom Right Of The Quad (Back)
-		glVertex3f(-1.0f, 1.0f,-1.0f);          // Top Right Of The Quad (Back)
-		glVertex3f( 1.0f, 1.0f,-1.0f);          // Top Left Of The Quad (Back)
-
-		glColor3f(0.0f,0.0f,1.0f);          // Set The Color To Blue
-		glVertex3f(-1.0f, 1.0f, 1.0f);          // Top Right Of The Quad (Left)
-		glVertex3f(-1.0f, 1.0f,-1.0f);          // Top Left Of The Quad (Left)
-		glVertex3f(-1.0f,-1.0f,-1.0f);          // Bottom Left Of The Quad (Left)
-		glVertex3f(-1.0f,-1.0f, 1.0f);          // Bottom Right Of The Quad (Left)
-
-		        glColor3f(1.0f,0.0f,1.0f);          // Set The Color To Violet
-		        glVertex3f( 1.0f, 1.0f,-1.0f);          // Top Right Of The Quad (Right)
-		        glVertex3f( 1.0f, 1.0f, 1.0f);          // Top Left Of The Quad (Right)
-		        glVertex3f( 1.0f,-1.0f, 1.0f);          // Bottom Left Of The Quad (Right)
-		        glVertex3f( 1.0f,-1.0f,-1.0f);          // Bottom Right Of The Quad (Right)
+		  for (i = 0; i < 6; i++) {
+		    glBegin(GL_QUADS);
+		    glNormal3fv(&n[i][0]);
+		    glVertex3fv(&v[faces[i][0]][0]);
+		    glVertex3fv(&v[faces[i][1]][0]);
+		    glVertex3fv(&v[faces[i][2]][0]);
+		    glVertex3fv(&v[faces[i][3]][0]);
 		    glEnd();
+		  }
+		 DrawGrid(10.f, 10.f, 0.2f, 1.0f);
+
 		//-------------------------------------------------------------------------------------------------------
 
+		  glDisable(GL_DEPTH_TEST);
+
+
 		glDisable(GL_SCISSOR_TEST);
+
+
 
 		// set back the previous matrices and viewport
 		glMatrixMode(GL_PROJECTION);
@@ -222,6 +241,59 @@ namespace BlendInt {
 
 		glPopMatrix();
 #endif
+	}
+
+	void Viewport3D::DrawGrid (float width, float height, float small_step, float big_step)
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(- width / 2.0, - height / 2.0, 0.0);
+
+		glLineWidth(1);
+		glEnable(GL_LINE_STIPPLE);
+
+		glColor4f(1.0f, 1.0f, 1.0f, 0.1f);
+		glLineStipple(1, 0xAAAA);
+
+		for (int num = 1; num < width; num++) {
+			int step = num * small_step;
+			glBegin(GL_LINES);
+			glVertex2f(0, step);
+			glVertex2f(width, step);
+			glEnd();
+		}
+
+		for (int num = 1; num < height; num++) {
+			int step = num * small_step;
+			glBegin(GL_LINES);
+			glVertex2f(step, 0);
+			glVertex2f(step, height);
+			glEnd();
+		}
+
+		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+		glLineStipple(1, 0xAAAA);
+		for (int num = 1; num < width; num++) {
+			int step = num * big_step;
+			glBegin(GL_LINES);
+			glVertex2f(0, step);
+			glVertex2f(width, step);
+			glEnd();
+		}
+
+		for (int num = 1; num < height; num++) {
+			int step = num * big_step;
+			glBegin(GL_LINES);
+			glVertex2f(step, 0);
+			glVertex2f(step, height);
+			glEnd();
+		}
+
+		glDisable(GL_LINE_STIPPLE);
+
+		glPopMatrix();
+
 	}
 
 }

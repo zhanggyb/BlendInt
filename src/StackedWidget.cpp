@@ -21,18 +21,23 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Camera.hpp>
+#include <BlendInt/StackedWidget.hpp>
 
 namespace BlendInt {
 
-	Camera::Camera ()
+	StackedWidget::StackedWidget()
+	: Widget()
 	{
-		m_position.set_x(10.0);
-		m_position.set_z(10.0);
-		m_direction.set_z(1.0);
+
 	}
 
-	Camera::~Camera()
+	StackedWidget::StackedWidget(AbstractWidget* parent)
+	: Widget (parent)
+	{
+
+	}
+
+	StackedWidget::~StackedWidget()
 	{
 
 	}

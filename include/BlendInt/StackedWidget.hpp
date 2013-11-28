@@ -21,20 +21,35 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Camera.hpp>
+#ifndef _BLENDINT_STACKEDWIDGET_HPP_
+#define _BLENDINT_STACKEDWIDGET_HPP_
+
+#include <stack>
+
+#include <BlendInt/Widget.hpp>
+
+using std::stack;
 
 namespace BlendInt {
 
-	Camera::Camera ()
+	class StackedWidget: public Widget
 	{
-		m_position.set_x(10.0);
-		m_position.set_z(10.0);
-		m_direction.set_z(1.0);
-	}
+		DISALLOW_COPY_AND_ASSIGN(StackedWidget);
 
-	Camera::~Camera()
-	{
+	public:
 
-	}
+		StackedWidget ();
+
+		StackedWidget (AbstractWidget* parent);
+
+		virtual ~StackedWidget ();
+
+	private:
+
+		stack<Widget*> m_stack;
+
+	};
 
 }
+
+#endif /* _BLENDINT_STACKEDWIDGET_HPP_ */
