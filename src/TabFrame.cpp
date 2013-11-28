@@ -21,56 +21,51 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STACKEDWIDGET_HPP_
-#define _BLENDINT_STACKEDWIDGET_HPP_
-
-#include <vector>
-
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/TabFrame.hpp>
+#include <BlendInt/String.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief class for stacked widgets
-	 */
-	class StackedWidget: public Widget
+	TabFrame::TabFrame()
+	: Frame(), m_stack_widget(0), m_layout(0), m_vlayout(0)
 	{
-		DISALLOW_COPY_AND_ASSIGN(StackedWidget);
+		Init();
+	}
 
-	public:
+	TabFrame::TabFrame(AbstractWidget* parent)
+	: Frame(parent), m_stack_widget(0), m_layout(0), m_vlayout(0)
+	{
+		Init();
+	}
 
-		StackedWidget ();
+	TabFrame::~TabFrame()
+	{
 
-		StackedWidget (AbstractWidget* parent);
+	}
 
-		virtual ~StackedWidget ();
+	void TabFrame::Add (const String& title, Widget* widget)
+	{
+		Button* button = new Button(title);
+		m_layout->add(button);
 
-		void Add (Widget* widget);
+		m_stack_widget->Add(widget);
+	}
 
-		void Insert (size_t index, Widget* widget);
+	void TabFrame::Init ()
+	{
+		m_stack_widget = new StackedWidget;
+		m_layout = new HorizontalLayout;
 
-		void Remove (Widget* widget);
+		m_vlayout = new VerticalLayout;
+		m_vlayout->add(m_layout);
+		m_vlayout->add(m_stack_widget);
+		bind(m_vlayout);
 
-		int count () const {return m_stack.size();}
+		set_size(400 + margin().left() + margin().right(), 300 + margin().top() + margin().bottom());
+		m_vlayout->Resize(size());
+		m_vlayout->SetPosition(position().x() + margin().left(), position().y() + margin().bottom());
 
-		void SetIndex (size_t index);
-
-		Widget* GetActiveWidget () const;
-
-		Widget* GetWidget (size_t index);
-
-	protected:
-
-		virtual void Render ();
-
-	private:
-
-		std::vector<Widget*> m_stack;
-
-		size_t m_index;
-
-	};
+		LockGeometry(m_vlayout, true);
+	}
 
 }
-
-#endif /* _BLENDINT_STACKEDWIDGET_HPP_ */

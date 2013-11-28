@@ -24,6 +24,28 @@ public:
 
 	virtual ~DemoFrame();
 
+	void SetWidget (AbstractWidget* widget);
+
+	AbstractWidget* widget () const {return m_widget;}
+
+protected:
+
+	virtual void Update (int type, const void* data);
+
+	virtual void Render ();
+
+	virtual void KeyPressEvent (KeyEvent* event);
+
+	virtual void ContextMenuPressEvent (ContextMenuEvent* event);
+
+	virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
+
+	virtual void MousePressEvent (MouseEvent* event);
+
+	virtual void MouseReleaseEvent (MouseEvent* event);
+
+	virtual void MouseMoveEvent (MouseEvent* event);
+
 private:
 
 	void start_time ();
@@ -35,6 +57,8 @@ private:
 	HorizontalLayout* m_hlayout;
 
 	Timer* m_timer;
+
+	AbstractWidget* m_widget;
 
 };
 

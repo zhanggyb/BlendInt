@@ -31,6 +31,7 @@
 #include <BlendInt/Menu.hpp>
 #include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/ImageView.hpp>
+#include <BlendInt/TabFrame.hpp>
 
 #include "DemoFrame.hpp"
 
@@ -327,6 +328,11 @@ int main(int argc, char* argv[])
 
 	app->bind(sliderbar);
 
+	TabFrame* tabframe = new TabFrame;
+
+	tabframe->Move(600, 300);
+
+	app->bind(tabframe);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {

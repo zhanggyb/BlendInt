@@ -60,27 +60,9 @@ namespace BlendInt {
 
 		void SetMargin (int left, int right, int top, int bottom);
 
-		void SetWidget (AbstractWidget* widget);
-
-		AbstractWidget* widget () const {return m_widget;}
-
 	protected:
 
-		virtual void Update (int type, const void* data);
-
 		virtual void Render ();
-
-		virtual void KeyPressEvent (KeyEvent* event);
-
-		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
-
-		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
-
-		virtual void MousePressEvent (MouseEvent* event);
-
-		virtual void MouseReleaseEvent (MouseEvent* event);
-
-		virtual void MouseMoveEvent (MouseEvent* event);
 
 		/**
 		 * @check if geometry contains the cursor, exclude padding
@@ -92,8 +74,6 @@ namespace BlendInt {
 	private:
 
 		Margin m_margin;
-
-		AbstractWidget* m_widget;
 
 	};
 

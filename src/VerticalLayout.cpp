@@ -191,7 +191,7 @@ namespace BlendInt {
 		form->activate_events();
 
 		bind(form);
-		set_in_layout(form, true);
+		LockGeometry(form, true);
 	}
 
 	void VerticalLayout::add_item (AbstractLayout* layout)
@@ -247,7 +247,7 @@ namespace BlendInt {
 		layout->activate_events();
 
 		bind(layout);
-		set_in_layout(layout, true);
+		LockGeometry(layout, true);
 	}
 
 	void VerticalLayout::remove_item(AbstractWidget * object)
@@ -281,7 +281,7 @@ namespace BlendInt {
 
 		activate_events();
 
-		set_in_layout(object, false);
+		LockGeometry(object, false);
 		unbind(object);
 	}
 

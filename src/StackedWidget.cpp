@@ -91,6 +91,20 @@ namespace BlendInt {
 		m_index = index;
 	}
 
+	Widget* StackedWidget::GetActiveWidget () const
+	{
+		if(m_stack.size() == 0) return 0;
+
+		return m_stack[m_index];
+	}
+
+	Widget* StackedWidget::GetWidget (size_t index)
+	{
+		if(index > (m_stack.size() - 1)) return 0;
+
+		return m_stack[index];
+	}
+
 	void StackedWidget::Render ()
 	{
 		if(m_stack.size() == 0) return;

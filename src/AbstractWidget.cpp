@@ -39,7 +39,7 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget ()
 		: AbstractExtraForm(),
 		  m_z(0),
-		  m_lock(false),
+		  m_locked(false),
 		  m_fire_events(true)
 #ifdef DEBUG
 		  ,m_id(0)
@@ -67,7 +67,7 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget (AbstractWidget* parent)
 		: AbstractExtraForm(),
 			m_z(0),
-		  m_lock(false),
+		  m_locked(false),
 		  m_fire_events(true)
 #ifdef DEBUG
 		  , m_id(0)
@@ -243,7 +243,7 @@ namespace BlendInt {
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_lock) return;
+		if(m_locked) return;
 
 		if(size().width() == width && size().height() == height) return;
 
@@ -259,7 +259,7 @@ namespace BlendInt {
 	void AbstractWidget::Resize (const Size& size)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_lock) return;
+		if(m_locked) return;
 
 		if(AbstractWidget::size() == size) return;
 
@@ -273,7 +273,7 @@ namespace BlendInt {
 	void AbstractWidget::SetPosition (int x, int y)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_lock) return;
+		if(m_locked) return;
 
 		if(position().x() == x && position().y() == y) return;
 
@@ -288,7 +288,7 @@ namespace BlendInt {
 	void AbstractWidget::SetPosition (const Point& pos)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_lock) return;
+		if(m_locked) return;
 
 		if(position() == pos) return;
 

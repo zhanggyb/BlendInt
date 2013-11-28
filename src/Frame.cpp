@@ -40,7 +40,7 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-			: Widget(), m_widget(0)
+			: Widget()
 	{
 		set_minimal_size(margin().left() + margin().right(),
 		        margin().top() + margin().bottom());
@@ -49,7 +49,7 @@ namespace BlendInt {
 	}
 
 	Frame::Frame (AbstractWidget* parent)
-			: Widget(parent), m_widget(0)
+			: Widget(parent)
 	{
 		set_minimal_size(margin().left() + margin().right(),
 		        margin().top() + margin().bottom());
@@ -82,98 +82,10 @@ namespace BlendInt {
 		m_margin = new_margin;
 	}
 
-	void Frame::SetWidget (AbstractWidget* widget)
-	{
-		if (widget && (widget != m_widget)) {
-			delete m_widget;
-			m_widget = widget;
-
-			m_widget->SetPosition(position().x() + margin().left(),
-			        position().y() + margin().bottom());
-			m_widget->Resize(
-			        size().width() - margin().left() - margin().right(),
-			        size().height() - margin().top() - margin().bottom());
-
-			bind(m_widget);
-		}
-	}
-
-	void Frame::KeyPressEvent (KeyEvent* event)
-	{
-	}
-
-	void Frame::ContextMenuPressEvent (ContextMenuEvent* event)
-	{
-	}
-
-	void Frame::ContextMenuReleaseEvent (ContextMenuEvent* event)
-	{
-	}
-
-	void Frame::MousePressEvent (MouseEvent* event)
-	{
-		if(m_widget)
-			dispatch_mouse_press_event(m_widget, event);
-	}
-
-	void Frame::MouseReleaseEvent (MouseEvent* event)
-	{
-		if(m_widget)
-			dispatch_mouse_release_event(m_widget, event);
-	}
-
-	void Frame::MouseMoveEvent (MouseEvent* event)
-	{
-		if(m_widget)
-			dispatch_mouse_move_event(m_widget,event);
-	}
-
-	void Frame::Update (int type, const void* data)
-	{
-		switch (type) {
-
-			case FormPosition: {
-				if (m_widget) {
-					const Point* pos_p = static_cast<const Point*>(data);
-					int offset_x = pos_p->x() - position().x();
-					int offset_y = pos_p->y() - position().y();
-					SetPosition(m_widget, m_widget->position().x() + offset_x,
-					        m_widget->position().y() + offset_y);
-				}
-				break;
-			}
-
-			case FormSize: {
-				if (m_widget) {
-					Size size = *(static_cast<const Size*>(data));
-					size.add_width(-(margin().left() + margin().right()));
-					size.add_height(-(margin().top() + margin().bottom()));
-					m_widget->Resize(size);
-				}
-				break;
-			}
-
-			case FrameMargin: {
-				if (m_widget) {
-					const Margin* margin_p = static_cast<const Margin*>(data);
-					Size new_size(
-					        size().width() - margin_p->left()
-					                - margin_p->right(),
-					        size().height() - margin_p->top()
-					                - margin_p->bottom());
-					m_widget->Resize(new_size);
-				}
-				break;
-			}
-
-			default:
-				Widget::Update(type, data);
-				break;
-		}
-	}
-
 	void Frame::Render ()
 	{
+		Widget::Render();
+
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
@@ -201,9 +113,6 @@ namespace BlendInt {
 		glDisable(GL_BLEND);
 
 		glPopMatrix();
-
-		if (m_widget)
-			dispatch_render(m_widget);
 	}
 
 	bool Frame::contain_no_margin (const Coord2d& cursor)

@@ -63,7 +63,7 @@ namespace BlendInt {
 		}
 
 		bind (widget);
-		set_in_layout(widget, true);
+		LockGeometry(widget, true);
 
 		Update(FormSize, 0);
 	}
@@ -84,7 +84,7 @@ namespace BlendInt {
 		}
 
 		bind (layout);
-		set_in_layout(layout, true);
+		LockGeometry(layout, true);
 
 		Update(FormSize, 0);
 	}

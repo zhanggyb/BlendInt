@@ -181,7 +181,7 @@ namespace BlendInt {
 
 		const Parent& parent () const {return m_parent;}
 
-		bool in_layout () const {return m_lock;}
+		bool locked () const {return m_locked;}
 
 		EVENT_CALLER Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
 
@@ -260,7 +260,7 @@ namespace BlendInt {
 		 */
 		void set_z_simple (int z);
 
-		void set_in_layout (AbstractWidget* obj, bool status) {obj->m_lock = status;}
+		void LockGeometry (AbstractWidget* obj, bool status) {obj->m_locked = status;}
 
 		//Cpp::ConnectionScope& events() {return m_events;}
 
@@ -317,7 +317,7 @@ namespace BlendInt {
 		/**
 		 * @brief if lock the geometry of this widget
 		 */
-		bool m_lock;
+		bool m_locked;
 
 		bool m_fire_events;
 

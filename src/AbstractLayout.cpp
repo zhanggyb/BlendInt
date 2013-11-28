@@ -74,7 +74,7 @@ namespace BlendInt {
 		if(children().count(object)) return;
 
 		bind(object);
-		set_in_layout(object, true);
+		LockGeometry(object, true);
 		m_items.push_back(object);
 	}
 
@@ -179,9 +179,9 @@ namespace BlendInt {
 	{
 		AbstractLayout* root = 0;
 
-		if(in_layout()) {
+		if(locked()) {
 			root = dynamic_cast<AbstractLayout*>(parent().object.form);
-			while(root->in_layout()) {
+			while(root->locked()) {
 				root = dynamic_cast<AbstractLayout*>(root->parent().object.form);
 				if(!root) break;
 			}
