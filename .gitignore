@@ -12,6 +12,9 @@
 *.la
 *.a
 
+# temp files in Mac
+*.DS_Store
+
 # Build directories
 Debug
 Release

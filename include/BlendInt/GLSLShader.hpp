@@ -24,7 +24,11 @@
 #ifndef _BLENDINT_SHADER_HPP_
 #define _BLENDINT_SHADER_HPP_
 
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 #include <string>
 

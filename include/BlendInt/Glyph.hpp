@@ -28,7 +28,11 @@
 #ifndef _BLENDINT_GLYPH_HPP_
 #define _BLENDINT_GLYPH_HPP_
 
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 namespace BlendInt {
 

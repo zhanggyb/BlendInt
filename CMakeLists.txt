@@ -7,6 +7,24 @@ project (BlendInt)
 
 set(CMAKE_BUILD_TYPE_INIT "Debug")
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/"
+    ${CMAKE_MODULE_PATH})
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_definitions(-D__UNIX__)
+    add_definitions(-D__LINUX__)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    add_definitions(-D__WIN__)
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(APPLE TRUE)
+    add_definitions(-D__UNIX__)
+    add_definitions(-D__APPLE__)
+endif()
+
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
     include_directories(${OPENGL_INCLUDE_DIR})
@@ -25,10 +43,15 @@ if(GLEW_FOUND)
     set(LIBS ${LIBS} ${GLEW_LIBRARIES})
 endif()
 
-find_package(Freetype REQUIRED)
-if(FREETYPE_FOUND)
-    include_directories(${FREETYPE_INCLUDE_DIRS})
-    set(LIBS ${LIBS} ${FREETYPE_LIBRARIES})
+if(APPLE)
+    include_directories(/usr/local/include/freetype2)
+    set(LIBS ${LIBS} freetype)
+else()
+    find_package(Freetype REQUIRED)
+    if(FREETYPE_FOUND)
+        include_directories(${FREETYPE_INCLUDE_DIRS})
+        set(LIBS ${LIBS} ${FREETYPE_LIBRARIES})
+    endif()
 endif()
 
 find_package(Boost REQUIRED)
@@ -50,14 +73,6 @@ include_directories(${BlendInt_SOURCE_DIR}/extern/CppEvents/src)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR
         CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     add_definitions(-DDEBUG)
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    add_definitions(-D__LINUX__)
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    add_definitions(-D__WIN__)
 endif()
 
 if(MSVC)

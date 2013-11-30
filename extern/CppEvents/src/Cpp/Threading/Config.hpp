@@ -23,7 +23,7 @@
 #ifndef __CPP__THREADING__CONFIG__HPP
 #define __CPP__THREADING__CONFIG__HPP
 
-#ifdef __LINUX__
+#ifdef __UNIX__
 #define CPP_THREADING_PLATFORM_DIR POSIX
 #else
 #ifdef __WIN__

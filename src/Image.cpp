@@ -22,9 +22,14 @@
  */
 
 #include <BlendInt/Image.hpp>
-#include <OpenImageIO/imageio.h>
 
+#ifndef __APPLE__
+#include <OpenImageIO/imageio.h>
+#endif
+
+#ifndef __APPLE__
 OIIO_NAMESPACE_USING
+#endif
 
 namespace BlendInt {
 
@@ -41,6 +46,7 @@ namespace BlendInt {
 
 	bool Image::read (const String& filename)
 	{
+#ifndef __APPLE__
 		ImageInput *in = ImageInput::open (ConvertFromString(filename));
 
 		if (! in)
@@ -56,6 +62,7 @@ namespace BlendInt {
 		in->close ();
 
 		delete in;
+#endif
 
 		return true;
 	}

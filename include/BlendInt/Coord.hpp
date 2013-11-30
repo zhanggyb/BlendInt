@@ -26,6 +26,10 @@
 
 #include <algorithm>
 
+#ifdef __APPLE__
+#include <cstdlib>
+#endif
+
 namespace BlendInt {
 
 	template<typename T>

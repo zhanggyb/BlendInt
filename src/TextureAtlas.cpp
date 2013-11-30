@@ -22,7 +22,6 @@
  */
 
 #include <GL/glew.h>
-#include <GL/gl.h>
 
 #include <string.h>
 #include <iostream>
