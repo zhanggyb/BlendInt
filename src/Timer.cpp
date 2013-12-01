@@ -37,11 +37,19 @@ namespace BlendInt {
 
 	Timer::~Timer()
 	{
+#ifdef __UNIX__
+#ifndef __APPLE__
 		timer_delete(m_id);
+#else
+		// TODO: find implementation in Mac OS
+#endif	// __APPLE__
+#endif	// __UNIX__
 	}
 
 	void Timer::Start ()
 	{
+#ifdef __UNIX__
+#ifndef __APPLE__
 		int ret = -1;
 		struct itimerspec ts;
 
@@ -61,10 +69,16 @@ namespace BlendInt {
 		} else {
 			m_enabled = true;
 		}
+#else
+		// TODO: code for Mac OS X
+#endif
+#endif
 	}
 
 	void Timer::Stop ()
 	{
+#ifdef __UNIX__
+#ifndef __APPLE__
 		if(! m_enabled) return;
 
 		int ret = -1;
@@ -78,6 +92,10 @@ namespace BlendInt {
 		}
 
 		m_enabled = false;
+#else
+		// TODO: code for Mac OS X
+#endif	// __APPLE__
+#endif	// __UNIX__
 	}
 
 	void Timer::SetInterval(unsigned int interval)
@@ -91,6 +109,9 @@ namespace BlendInt {
 
 	unsigned int Timer::GetTimeLeft()
 	{
+#ifdef __UNIX__
+
+#ifdef __LINUX__
 		if(!m_enabled)
 			return 0;
 
@@ -105,10 +126,20 @@ namespace BlendInt {
 		}
 
 		return ts.it_value.tv_nsec / 1000 / 1000;
+#endif	// __LINUX__
+		
+#ifdef __APPLE__
+		return 0;
+#endif	// __APPLE__
+
+#endif	// __UNIX__
 	}
 
 	void Timer::Create()
 	{
+#ifdef __UNIX__
+
+#ifdef __LINUX__
 		int ret = -1;
 		struct sigevent sev;
 		sev.sigev_notify = SIGEV_THREAD;
@@ -124,6 +155,13 @@ namespace BlendInt {
 				std::cerr << "The calling process has already created all of the timers it is allowed by this implementation" << std::endl;
 			}
 		}
+#endif	// __LINUX__
+		
+#ifdef __APPLE__
+		// TODO: code for Mac OS X
+#endif	// __APPLE__
+
+#endif	// __UNIX__
 	}
 
 	void Timer::ThreadCallback(union sigval sigev_value)

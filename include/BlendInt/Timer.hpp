@@ -116,7 +116,17 @@ namespace BlendInt {
 
 		void Create ();
 
+#ifdef __UNIX__
+		
+#ifdef __LINUX__
 		timer_t m_id;
+#endif	// __LINUX__
+				
+#ifdef __APPLE__
+		unsigned int m_id;
+#endif	// __APPLE__
+
+#endif
 
 		/**
 		 * @brief the interval time in millisecond

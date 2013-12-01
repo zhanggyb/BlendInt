@@ -32,7 +32,11 @@ if(OPENGL_FOUND)
 endif()
 
 #find_package(glfw REQUIRED)
-set(LIBS ${LIBS} glfw)
+if(APPLE)
+    set(LIBS ${LIBS} glfw3)
+else()
+    set(LIBS ${LIBS} glfw)
+endif()
 
 #find_package(fontconfig REQUIRED)
 set(LIBS ${LIBS} fontconfig)
@@ -61,10 +65,18 @@ if(Boost_FOUND)
 endif()
 
 #add OpenImageIO link
-set(LIBS ${LIBS} OpenImageIO)
+if(APPLE)
+    # todo: install openimageio
+else()
+    set(LIBS ${LIBS} OpenImageIO)
+endif()
 
 # add rt library
+if(APPLE)
+    # todo: install openimageio
+else()
 set(LIBS ${LIBS} rt)
+endif()
 
 include_directories(${BlendInt_SOURCE_DIR}/include)
 include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt)
@@ -92,5 +104,11 @@ endif()
 
 add_subdirectory(extern)
 add_subdirectory(src)
-add_subdirectory(test)
+
+if(APPLE)
+#add_subdirectory(test)
+else()
+    add_subdirectory(test)
+endif()
+
 add_subdirectory(demo)
