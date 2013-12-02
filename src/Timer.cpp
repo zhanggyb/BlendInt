@@ -38,18 +38,23 @@ namespace BlendInt {
 	Timer::~Timer()
 	{
 #ifdef __UNIX__
-#ifndef __APPLE__
+
+#ifdef __LINUX__
 		timer_delete(m_id);
-#else
+#endif	// __LINUX__
+
+#ifdef __APPLE__
 		// TODO: find implementation in Mac OS
 #endif	// __APPLE__
+
 #endif	// __UNIX__
 	}
 
 	void Timer::Start ()
 	{
 #ifdef __UNIX__
-#ifndef __APPLE__
+
+#ifdef __LINUX__
 		int ret = -1;
 		struct itimerspec ts;
 
@@ -69,16 +74,20 @@ namespace BlendInt {
 		} else {
 			m_enabled = true;
 		}
-#else
+#endif	// __LINUX__
+
+#ifdef __APPLE__
 		// TODO: code for Mac OS X
 #endif
+
 #endif
 	}
 
 	void Timer::Stop ()
 	{
 #ifdef __UNIX__
-#ifndef __APPLE__
+
+#ifdef __LINUX__
 		if(! m_enabled) return;
 
 		int ret = -1;
@@ -92,9 +101,12 @@ namespace BlendInt {
 		}
 
 		m_enabled = false;
-#else
+#endif	// __LINUX__
+
+#ifdef __APPLE__
 		// TODO: code for Mac OS X
 #endif	// __APPLE__
+
 #endif	// __UNIX__
 	}
 
