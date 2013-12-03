@@ -141,10 +141,10 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::add_item (Widget* form)
+	void VerticalLayout::add_item (Widget* widget)
 	{
 		// don't fire events when adding a widget into a layout
-		form->deactivate_events();
+		widget->deactivate_events();
 		deactivate_events();
 
 		Size min = minimal_size();
@@ -154,18 +154,18 @@ namespace BlendInt {
 		unsigned int w_plus = margin().left() + margin().right();
 
 		if (items().size() == 0) {
-			min.add_height(form->minimal_size().height());
-			preferred.add_height(form->preferred_size().height());
+			min.add_height(widget->minimal_size().height());
+			preferred.add_height(widget->preferred_size().height());
 		} else {
-			min.add_height(form->minimal_size().height() + space());
-			preferred.add_height(form->preferred_size().height() + space());
+			min.add_height(widget->minimal_size().height() + space());
+			preferred.add_height(widget->preferred_size().height() + space());
 		}
 
 		min.set_width(
-		        std::max(min.width(), form->minimal_size().width() + w_plus));
+		        std::max(min.width(), widget->minimal_size().width() + w_plus));
 		preferred.set_width(
 		        std::max(preferred.width(),
-		                form->preferred_size().width() + w_plus));
+		                widget->preferred_size().width() + w_plus));
 
 		if (current_size.width() < preferred.width()) {
 			current_size.set_width(preferred.width());
@@ -174,13 +174,13 @@ namespace BlendInt {
 			current_size.set_height(preferred.height());
 		}
 
-		items().push_back(form);
+		items().push_back(widget);
 
 		SetPreferredSize(preferred);
 		SetMinimalSize(min);
 
-		if(form->expand_y()) m_expandable_items.insert(form);
-		else m_fixed_items.insert(form);
+		if(widget->expand_y()) m_expandable_items.insert(widget);
+		else m_fixed_items.insert(widget);
 
 		if(! (current_size == size()))
 			Resize(this, current_size);	// call make_layout() through this function
@@ -188,10 +188,10 @@ namespace BlendInt {
 			make_layout(&current_size);
 
 		activate_events();
-		form->activate_events();
+		widget->activate_events();
 
-		bind(form);
-		LockGeometry(form, true);
+		bind(widget);
+		LockGeometry(widget, true);
 	}
 
 	void VerticalLayout::add_item (AbstractLayout* layout)

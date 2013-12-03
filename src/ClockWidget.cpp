@@ -66,6 +66,9 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_POLYGON_SMOOTH);
+
 		glColor4ub(m_background.red(), m_background.green(), m_background.blue(), m_background.alpha());
 		DrawCircle(size().width() / 2, size().height() / 2, radius, true);
 
@@ -78,6 +81,9 @@ namespace BlendInt {
 		glVertex2i(-5, 0);
 		glVertex2i(radius - 5, 0);
 		glEnd();
+
+		glDisable(GL_LINE_SMOOTH);
+		glDisable(GL_POLYGON_SMOOTH);
 
 		glDisable(GL_BLEND);
 		glPopMatrix();
@@ -140,6 +146,7 @@ namespace BlendInt {
 	{
 		m_background.set_color(45, 45, 45, 235);
 		set_size(200, 200);
+		set_preferred_size(200, 200);
 		set_expand_x(true);
 		set_expand_y(true);
 		m_timer.reset(new Timer);

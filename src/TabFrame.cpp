@@ -23,17 +23,18 @@
 
 #include <BlendInt/TabFrame.hpp>
 #include <BlendInt/String.hpp>
+#include <BlendInt/Button.hpp>
 
 namespace BlendInt {
 
 	TabFrame::TabFrame()
-	: Frame(), m_stack_widget(0), m_layout(0), m_vlayout(0)
+	: Frame(), m_stack_widget(0), m_button_layout(0), m_body_layout(0)
 	{
 		Init();
 	}
 
 	TabFrame::TabFrame(AbstractWidget* parent)
-	: Frame(parent), m_stack_widget(0), m_layout(0), m_vlayout(0)
+	: Frame(parent), m_stack_widget(0), m_button_layout(0), m_body_layout(0)
 	{
 		Init();
 	}
@@ -46,9 +47,11 @@ namespace BlendInt {
 	void TabFrame::Add (const String& title, Widget* widget)
 	{
 		Button* button = new Button(title);
-		m_layout->add(button);
+		m_button_layout->add(button);
 
 		m_stack_widget->Add(widget);
+
+		//events()->connect(button->clicked(), this, &TabFrame::Switch);
 	}
 
 	void TabFrame::Update (int type, const void* data)
@@ -58,9 +61,9 @@ namespace BlendInt {
 			case FormPosition: {
 				const Point* new_pos = static_cast<const Point*>(data);
 
-				SetPosition(m_vlayout,
-						m_vlayout->position().x() + (new_pos->x() - position().x()),
-						m_vlayout->position().y() + (new_pos->y() - position().y()));
+				SetPosition(m_body_layout,
+						m_body_layout->position().x() + (new_pos->x() - position().x()),
+						m_body_layout->position().y() + (new_pos->y() - position().y()));
 
 				break;
 			}
@@ -68,7 +71,7 @@ namespace BlendInt {
 			case FormSize: {
 				const Size* new_size = static_cast<const Size*>(data);
 
-				Resize(m_vlayout, *new_size);
+				Resize(m_body_layout, *new_size);
 
 				break;
 			}
@@ -80,12 +83,12 @@ namespace BlendInt {
 
 	void TabFrame::Render ()
 	{
-		dispatch_render(m_vlayout);
+		dispatch_render(m_body_layout);
 	}
 
 	void TabFrame::KeyPressEvent (KeyEvent* event)
 	{
-		dispatch_key_press_event(m_vlayout, event);
+		dispatch_key_press_event(m_body_layout, event);
 	}
 
 	void TabFrame::ContextMenuPressEvent (ContextMenuEvent* event)
@@ -98,34 +101,39 @@ namespace BlendInt {
 
 	void TabFrame::MousePressEvent (MouseEvent* event)
 	{
-		dispatch_mouse_press_event(m_vlayout, event);
+		dispatch_mouse_press_event(m_body_layout, event);
 	}
 
 	void TabFrame::MouseReleaseEvent (MouseEvent* event)
 	{
-		dispatch_mouse_release_event(m_vlayout, event);
+		dispatch_mouse_release_event(m_body_layout, event);
 	}
 
 	void TabFrame::MouseMoveEvent (MouseEvent* event)
 	{
-		dispatch_mouse_move_event(m_vlayout, event);
+		dispatch_mouse_move_event(m_body_layout, event);
+	}
+
+	void TabFrame::Switch()
+	{
+		std::cout << "Button clicked" << std::endl;
 	}
 
 	void TabFrame::Init ()
 	{
 		m_stack_widget = new StackedWidget;
-		m_layout = new HorizontalLayout;
+		m_button_layout = new HorizontalLayout;
 
-		m_vlayout = new VerticalLayout;
-		m_vlayout->add(m_layout);
-		m_vlayout->add(m_stack_widget);
-		bind(m_vlayout);
+		m_body_layout = new VerticalLayout;
+		m_body_layout->add(m_button_layout);
+		m_body_layout->add(m_stack_widget);
+		bind(m_body_layout);
 
 		set_size(400 + margin().left() + margin().right(), 300 + margin().top() + margin().bottom());
-		m_vlayout->Resize(size());
-		m_vlayout->SetPosition(position().x() + margin().left(), position().y() + margin().bottom());
+		m_body_layout->Resize(size());
+		m_body_layout->SetPosition(position().x() + margin().left(), position().y() + margin().bottom());
 
-		LockGeometry(m_vlayout, true);
+		LockGeometry(m_body_layout, true);
 	}
 
 }

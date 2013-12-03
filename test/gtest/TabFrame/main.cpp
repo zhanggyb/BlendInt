@@ -57,6 +57,7 @@ int main (int argc, char* argv[])
 
     ClockWidget* clock1 = new ClockWidget;
     ClockWidget* clock2 = new ClockWidget;
+    clock2->set_background(Color(255, 200, 210, 245));
 
     tf->Add("Button1", clock1);
     tf->Add("Button2", clock2);

@@ -25,7 +25,6 @@
 #define _BLENDINT_TABFRAME_HPP_
 
 #include <BlendInt/Frame.hpp>
-#include <BlendInt/Button.hpp>
 #include <BlendInt/StackedWidget.hpp>
 #include <BlendInt/HorizontalLayout.hpp>
 #include <BlendInt/VerticalLayout.hpp>
@@ -68,13 +67,15 @@ namespace BlendInt {
 
 	private:
 
+		void Switch ();
+
 		void Init ();
 
 		StackedWidget* m_stack_widget;
 
-		HorizontalLayout* m_layout;
+		HorizontalLayout* m_button_layout;
 
-		VerticalLayout* m_vlayout;
+		VerticalLayout* m_body_layout;
 	};
 
 }
