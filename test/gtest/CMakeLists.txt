@@ -3,6 +3,9 @@
 
 list(APPEND LIBS gtest)
 
+add_subdirectory(ClockWidget)
+add_subdirectory(StackedWidget)
+add_subdirectory(TabFrame)
 add_subdirectory(Timer)
 add_subdirectory(Viewport3D)
 

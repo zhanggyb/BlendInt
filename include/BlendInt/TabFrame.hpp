@@ -48,6 +48,24 @@ namespace BlendInt {
 
 		void Add (const String& title, Widget* widget);
 
+	protected:
+
+		virtual void Update (int type, const void* data);
+
+		virtual void Render ();
+
+		void KeyPressEvent (KeyEvent* event);
+
+		void ContextMenuPressEvent (ContextMenuEvent* event);
+
+		void ContextMenuReleaseEvent (ContextMenuEvent* event);
+
+		void MousePressEvent (MouseEvent* event);
+
+		void MouseReleaseEvent (MouseEvent* event);
+
+		void MouseMoveEvent (MouseEvent* event);
+
 	private:
 
 		void Init ();

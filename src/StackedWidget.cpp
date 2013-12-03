@@ -51,6 +51,7 @@ namespace BlendInt {
 		bind(widget);
 
 		widget->Resize(size());
+		widget->SetPosition(position());
 	}
 
 	void StackedWidget::Insert (size_t index, Widget* widget)
@@ -65,6 +66,7 @@ namespace BlendInt {
 		bind(widget);
 
 		widget->Resize(size());
+		widget->SetPosition(position());
 	}
 
 	void StackedWidget::Remove (Widget* widget)
@@ -103,6 +105,40 @@ namespace BlendInt {
 		if(index > (m_stack.size() - 1)) return 0;
 
 		return m_stack[index];
+	}
+
+	void StackedWidget::Update (int type, const void* data)
+	{
+		switch (type) {
+
+			case FormPosition: {
+				const Point* new_pos = static_cast<const Point*>(data);
+				std::vector<Widget*>::iterator it;
+
+				for (it = m_stack.begin(); it != m_stack.end(); it++)
+				{
+					SetPosition(*it,
+							(*it)->position().x() + (new_pos->x() - position().x()),
+							(*it)->position().y() + (new_pos->y() - position().y()));
+				}
+				break;
+			}
+
+			case FormSize: {
+				const Size* new_size = static_cast<const Size*>(data);
+				std::vector<Widget*>::iterator it;
+
+				for (it = m_stack.begin(); it != m_stack.end(); it++)
+				{
+					Resize((*it), *new_size);
+				}
+
+				break;
+			}
+
+			default:
+				break;
+		}
 	}
 
 	void StackedWidget::Render ()

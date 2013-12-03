@@ -51,6 +51,66 @@ namespace BlendInt {
 		m_stack_widget->Add(widget);
 	}
 
+	void TabFrame::Update (int type, const void* data)
+	{
+		switch (type) {
+
+			case FormPosition: {
+				const Point* new_pos = static_cast<const Point*>(data);
+
+				SetPosition(m_vlayout,
+						m_vlayout->position().x() + (new_pos->x() - position().x()),
+						m_vlayout->position().y() + (new_pos->y() - position().y()));
+
+				break;
+			}
+
+			case FormSize: {
+				const Size* new_size = static_cast<const Size*>(data);
+
+				Resize(m_vlayout, *new_size);
+
+				break;
+			}
+
+			default:
+				break;
+		}
+	}
+
+	void TabFrame::Render ()
+	{
+		dispatch_render(m_vlayout);
+	}
+
+	void TabFrame::KeyPressEvent (KeyEvent* event)
+	{
+		dispatch_key_press_event(m_vlayout, event);
+	}
+
+	void TabFrame::ContextMenuPressEvent (ContextMenuEvent* event)
+	{
+	}
+
+	void TabFrame::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	{
+	}
+
+	void TabFrame::MousePressEvent (MouseEvent* event)
+	{
+		dispatch_mouse_press_event(m_vlayout, event);
+	}
+
+	void TabFrame::MouseReleaseEvent (MouseEvent* event)
+	{
+		dispatch_mouse_release_event(m_vlayout, event);
+	}
+
+	void TabFrame::MouseMoveEvent (MouseEvent* event)
+	{
+		dispatch_mouse_move_event(m_vlayout, event);
+	}
+
 	void TabFrame::Init ()
 	{
 		m_stack_widget = new StackedWidget;
