@@ -7,8 +7,7 @@ project (BlendInt)
 
 set(CMAKE_BUILD_TYPE_INIT "Debug")
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/"
-    ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions(-D__UNIX__)
@@ -25,26 +24,18 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_definitions(-D__APPLE__)
 endif()
 
+# start of options
+option(WITH_ALL_DEMOS "Build all demo programs" OFF)
+option(WITH_GLFW3_DEMO "Build GLFW3 demo program" OFF)
+option(WITH_GLUT_DEMO "Build GLUT demo program" OFF)
+option(WITH_QT5_DEMO "Build Qt5 demo program" OFF)
+option(WITH_UNIT_TEST "Build unit test code" OFF)
+# end of options
+
 find_package(OpenGL REQUIRED)
 if(OPENGL_FOUND)
     include_directories(${OPENGL_INCLUDE_DIR})
     set(LIBS ${LIBS} ${OPENGL_LIBRARIES})
-endif()
-
-#find_package(glfw REQUIRED)
-if(APPLE)
-    set(LIBS ${LIBS} glfw3)
-else()
-    set(LIBS ${LIBS} glfw)
-endif()
-
-#find_package(fontconfig REQUIRED)
-set(LIBS ${LIBS} fontconfig)
-
-find_package(GLEW REQUIRED)
-if(GLEW_FOUND)
-    include_directories(${GLEW_INCLUDE_DIRS})
-    set(LIBS ${LIBS} ${GLEW_LIBRARIES})
 endif()
 
 if(APPLE)
@@ -53,15 +44,34 @@ if(APPLE)
 else()
     find_package(Freetype REQUIRED)
     if(FREETYPE_FOUND)
+        include_directories(/usr/include/freetype2)
         include_directories(${FREETYPE_INCLUDE_DIRS})
         set(LIBS ${LIBS} ${FREETYPE_LIBRARIES})
     endif()
+endif()
+
+find_package(FontConfig REQUIRED)
+if(FONTCONFIG_FOUND)
+    include_directories(${FONTCONFIG_INCLUDE_DIR})
+    set(LIBS ${LIBS} ${FONTCONFIG_LIBRARY})
+endif()
+#set(LIBS ${LIBS} fontconfig)
+
+find_package(GLEW REQUIRED)
+if(GLEW_FOUND)
+    include_directories(${GLEW_INCLUDE_DIRS})
+    set(LIBS ${LIBS} ${GLEW_LIBRARIES})
 endif()
 
 find_package(Boost REQUIRED)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     set(LIBS ${LIBS} ${Boost_LIBRARIES} boost_system boost_filesystem)
+endif()
+
+find_package(GLM REQUIRED)
+if(GLM_FOUND)
+    include_directories(${GLM_INCLUDE_DIRS})
 endif()
 
 #add OpenImageIO link
@@ -73,9 +83,9 @@ endif()
 
 # add rt library
 if(APPLE)
-    # todo: install openimageio
+    # todo: no posix.1b api in mac
 else()
-set(LIBS ${LIBS} rt)
+    set(LIBS ${LIBS} rt)
 endif()
 
 include_directories(${BlendInt_SOURCE_DIR}/include)
@@ -99,16 +109,22 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
 endif()
 
-#set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
-#set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
-
 add_subdirectory(extern)
 add_subdirectory(src)
 
-if(APPLE)
-#add_subdirectory(test)
-else()
-    add_subdirectory(test)
+if(WITH_UNIT_TEST)
+    if(APPLE)
+        #add_subdirectory(test)
+    else()
+        add_subdirectory(test)
+    endif()
+endif() # WITH_UNIT_TEST
+
+if(WITH_ALL_DEMOS)
+    set(WITH_GLFW3_DEMO TRUE)
+    set(WITH_GLUT_DEMO TRUE)
+    set(WITH_QT5_DEMO TRUE)
 endif()
 
 add_subdirectory(demo)
+

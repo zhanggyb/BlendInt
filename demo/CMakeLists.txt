@@ -1,6 +1,15 @@
 # CMake file for BIL project
 #
 
-add_subdirectory(glfw)
-#add_subdirectory(qt5)
-#add_subdirectory(glut)
+if(WITH_GLFW3_DEMO)
+    add_subdirectory(glfw)
+endif()
+
+if(WITH_QT5_DEMO)
+    add_subdirectory(qt5)
+endif()
+
+if(WITH_GLUT_DEMO)
+    add_subdirectory(glut)
+endif()
+
