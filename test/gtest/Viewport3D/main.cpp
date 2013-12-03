@@ -7,12 +7,13 @@
 #include <BlendInt/Viewport3D.hpp>
 #include <BlendInt/Button.hpp>
 
-#include <gtest/gtest.h>
+//#include <gtest/gtest.h>
 
 // The fixture for testing class Foo.
 
 using namespace BlendInt;
 
+/*
 class Viewport3DTest: public testing::Test
 {
 
@@ -40,6 +41,8 @@ TEST_F(Viewport3DTest, CheckTimeOut)
 {
     // TODO
 }
+
+*/
 
 int main (int argc, char* argv[])
 {

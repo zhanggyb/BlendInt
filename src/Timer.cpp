@@ -62,9 +62,9 @@ namespace BlendInt {
 	void Timer::Start ()
 	{
 #ifdef __UNIX__
+		int ret = -1;
 
 #ifdef __LINUX__
-		int ret = -1;
 		struct itimerspec ts;
 
 		unsigned int sec = m_interval / 1000;
@@ -78,7 +78,7 @@ namespace BlendInt {
 		ret = timer_settime(m_id, 0, &ts, 0);
 
 		if(ret < 0) {
-			std::cout << "Fail to start timer in " << __func__ << std::endl;
+			std::cerr << "Fail to start timer in " << __func__ << std::endl;
 			m_enabled = false;
 		} else {
 			m_enabled = true;
@@ -86,8 +86,15 @@ namespace BlendInt {
 #endif	// __LINUX__
 
 #ifdef __APPLE__
-		// TODO: code for Mac OS X
-#endif
+		// Create a thread
+		ret = pthread_create (&m_id, NULL, Timer::ThreadCallback, this);
+		if(ret == 0) {
+			m_enabled = true;
+		} else {
+			std::cerr << "Fail to start timer in " << __func__ << std::endl;
+			m_enabled = false;
+		}
+#endif	// __APPLE__
 
 #endif
 	}
@@ -113,7 +120,10 @@ namespace BlendInt {
 #endif	// __LINUX__
 
 #ifdef __APPLE__
-		// TODO: code for Mac OS X
+		if(m_enabled) {
+			pthread_cancel(m_id);
+			// TODO: check return
+		}
 #endif	// __APPLE__
 
 #endif	// __UNIX__
@@ -177,12 +187,6 @@ namespace BlendInt {
 			}
 		}
 #endif	// __LINUX__
-		
-#ifdef __APPLE__
-		// TODO: code for Mac OS X
-		// Create a thread
-		pthread_create (&m_id, NULL, ThreadCallback, this);
-#endif	// __APPLE__
 
 #endif	// __UNIX__
 	}
@@ -201,20 +205,21 @@ namespace BlendInt {
 
 #ifdef __APPLE__
 
-	void Timer::ThreadCallback (void* data)
+	void *Timer::ThreadCallback (void* data)
 	{
 		Timer* timer = static_cast<Timer*>(data);
 		struct timespec ts;
 		int ret = 0;
 
-		unsigned int sec = m_interval / 1000;
-		long nsec = (m_interval % 1000) * 1000 * 1000;
+		pthread_detach(pthread_self());
+
+		unsigned int sec = timer->m_interval / 1000;
+		long nsec = (timer->m_interval % 1000) * 1000 * 1000;
 
 		ts.tv_sec = sec;
 		ts.tv_nsec = nsec;
 
 		while(true) {
-
 			// TODO: call nanosleep()
 			ret = nanosleep (&ts, NULL);
 

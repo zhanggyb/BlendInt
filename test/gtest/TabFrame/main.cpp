@@ -7,13 +7,14 @@
 #include <BlendInt/TabFrame.hpp>
 #include <BlendInt/ClockWidget.hpp>
 
-#include <gtest/gtest.h>
+// #include <gtest/gtest.h>
 #include <boost/smart_ptr.hpp>
 
 // The fixture for testing class Foo.
 
 using namespace BlendInt;
 
+/*
 class TabFrameTest: public testing::Test
 {
 
@@ -40,6 +41,7 @@ protected:
 TEST_F(TabFrameTest, CheckTabFrame1)
 {
 }
+*/
 
 int main (int argc, char* argv[])
 {

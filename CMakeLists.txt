@@ -69,9 +69,13 @@ if(Boost_FOUND)
     set(LIBS ${LIBS} ${Boost_LIBRARIES} boost_system boost_filesystem)
 endif()
 
+if(APPLE)
+    #include_directories(/usr/local/include/glm)
+else()
 find_package(GLM REQUIRED)
 if(GLM_FOUND)
     include_directories(${GLM_INCLUDE_DIRS})
+endif()
 endif()
 
 #add OpenImageIO link
@@ -113,12 +117,8 @@ add_subdirectory(extern)
 add_subdirectory(src)
 
 if(WITH_UNIT_TEST)
-    if(APPLE)
-        #add_subdirectory(test)
-    else()
-        add_subdirectory(test)
-    endif()
-endif() # WITH_UNIT_TEST
+    add_subdirectory(test)
+endif()
 
 if(WITH_ALL_DEMOS)
     set(WITH_GLFW3_DEMO TRUE)

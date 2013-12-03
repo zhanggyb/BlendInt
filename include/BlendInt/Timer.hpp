@@ -114,7 +114,7 @@ namespace BlendInt {
 #ifdef __UNIX__
 
 #ifdef __APPLE__
-		static void ThreadCallback (void* data);
+		static void *ThreadCallback (void* data);
 #endif
 
 #ifdef __LINUX__

@@ -1,7 +1,7 @@
 # CMake file for BlendInt project
 #
 
-list(APPEND LIBS gtest)
+#list(APPEND LIBS gtest)
 
 add_subdirectory(ClockWidget)
 add_subdirectory(Layout)

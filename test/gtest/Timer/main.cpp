@@ -8,7 +8,7 @@
 #include <BlendInt/Viewport3D.hpp>
 #include <BlendInt/Button.hpp>
 
-#include <gtest/gtest.h>
+//#include <gtest/gtest.h>
 #include <boost/smart_ptr.hpp>
 
 // The fixture for testing class Foo.
@@ -96,6 +96,7 @@ void AnimatingWidget::AddAngle ()
 	m_angle += 0.5f;
 }
 
+/*
 class TimerTest: public testing::Test
 {
 
@@ -127,6 +128,7 @@ TEST_F(TimerTest, CheckTimeOut)
 
 	timer.Stop ();
 }
+*/
 
 int main (int argc, char* argv[])
 {
