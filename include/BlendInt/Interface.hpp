@@ -184,10 +184,32 @@ namespace BlendInt {
   @endcode
  * 
  * @section sect_compile Compile
+ *
+ * @ref page_compile
  * 
- * @subsection sect_compile_require Requirements
- * 
+ * @section sect_quick_guide Quick Guide
+ *
  * @ref page_quick_guide
+ */
+
+/**
+ * @page page_compile Compile
+ * @tableofcontents
+ * 
+ * @section sect_compile_require Requirements
+ *
+ * BlendInt depends on:
+ * 	- OpenGL (built-in framework)
+ * 	- GLEW (http://glew.sourceforge.net)
+ * 	- GLM (http://glm.g-truc.net)
+ * 	- boost (http://www.boost.org)
+ * 	- freetype
+ * 	- fontconfig
+ * 	- OpenImageIO
+ *
+ * @section sect_compile_in_linux Compile in Linux
+ *
+ * 
  */
 
 /**

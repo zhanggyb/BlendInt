@@ -81,10 +81,10 @@ else()
     set(LIBS ${LIBS} OpenImageIO)
 endif()
 
-# add rt library
 if(APPLE)
-    # todo: no posix.1b api in mac
+    set(LIBS ${LIBS} pthread)
 else()
+    # add rt library
     set(LIBS ${LIBS} rt)
 endif()
 

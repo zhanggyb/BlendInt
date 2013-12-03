@@ -27,6 +27,12 @@
 #include <signal.h>
 #include <time.h>
 
+// Mac OS X does not support POSIX.1b timer
+// We have to design our own timer with posix thread
+#ifdef __APPLE__
+#include <pthread.h>
+#endif
+
 #include <Cpp/Events.hpp>
 
 namespace BlendInt {
@@ -105,7 +111,17 @@ namespace BlendInt {
 
 	protected:
 
+#ifdef __UNIX__
+
+#ifdef __APPLE__
+		static void ThreadCallback (void* data);
+#endif
+
+#ifdef __LINUX__
 		static void ThreadCallback (union sigval sigev_value);
+#endif
+
+#endif	// __UNIX__
 
 		void set_interval (unsigned int interval)
 		{
@@ -123,7 +139,7 @@ namespace BlendInt {
 #endif	// __LINUX__
 				
 #ifdef __APPLE__
-		unsigned int m_id;
+		pthread_t m_id;	// thread id
 #endif	// __APPLE__
 
 #endif

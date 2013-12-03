@@ -30,7 +30,12 @@
 namespace BlendInt {
 
 	Timer::Timer()
-	: m_id (0), m_interval(40), m_enabled(false)
+	:
+#ifndef __APPLE__
+			m_id (0),
+#endif
+			m_interval(40),
+			m_enabled(false)
 	{
 		Create();
 	}
@@ -44,7 +49,11 @@ namespace BlendInt {
 #endif	// __LINUX__
 
 #ifdef __APPLE__
-		// TODO: find implementation in Mac OS
+		m_enabled = false;
+		int ret = pthread_cancel(m_id);
+		if(ret != 0) {
+			std::cerr << "Error: Fail to cancel the timer thread!" << std::endl;
+		}
 #endif	// __APPLE__
 
 #endif	// __UNIX__
@@ -171,15 +180,56 @@ namespace BlendInt {
 		
 #ifdef __APPLE__
 		// TODO: code for Mac OS X
+		// Create a thread
+		pthread_create (&m_id, NULL, ThreadCallback, this);
 #endif	// __APPLE__
 
 #endif	// __UNIX__
 	}
+
+#ifdef __UNIX__
+
+#ifdef __LINUX__
 
 	void Timer::ThreadCallback(union sigval sigev_value)
 	{
 		Timer* timer = static_cast<Timer*>(sigev_value.sival_ptr);
 		timer->m_timeout.fire();
 	}
+
+#endif	// __LINUX__
+
+#ifdef __APPLE__
+
+	void Timer::ThreadCallback (void* data)
+	{
+		Timer* timer = static_cast<Timer*>(data);
+		struct timespec ts;
+		int ret = 0;
+
+		unsigned int sec = m_interval / 1000;
+		long nsec = (m_interval % 1000) * 1000 * 1000;
+
+		ts.tv_sec = sec;
+		ts.tv_nsec = nsec;
+
+		while(true) {
+
+			// TODO: call nanosleep()
+			ret = nanosleep (&ts, NULL);
+
+			if(timer->enabled()) {
+				timer->m_timeout.fire();
+			} else {
+				break;
+			}
+		}
+
+		pthread_exit(NULL);
+	}
+
+#endif	// __APPLE__
+
+#endif	// __UNIX__
 
 }
