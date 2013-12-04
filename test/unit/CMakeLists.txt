@@ -1,12 +1,14 @@
 # CMake file for BlendInt project
 #
 
-file(GLOB runtest_SRC "*/*.cpp")
-list(APPEND runtest_SRC "runtest.cpp")
+#list(APPEND LIBS gtest)
 
-list(APPEND LIBS cppunit)
+add_subdirectory(ClockWidget)
+add_subdirectory(Layout)
+add_subdirectory(StackedWidget)
+add_subdirectory(TabFrame)
+add_subdirectory(Timer)
+add_subdirectory(Viewport3D)
 
-add_executable(runtest ${runtest_SRC})
+#set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-target_link_libraries(runtest BlendInt ${LIBS})
