@@ -31,7 +31,7 @@ namespace BlendInt {
 
 	Timer::Timer()
 	:
-#ifndef __APPLE__
+#if BLENDINT_USE_POSIX_TIMER
 			m_id (0),
 #endif
 			m_interval(40),
@@ -42,29 +42,18 @@ namespace BlendInt {
 
 	Timer::~Timer()
 	{
-#ifdef __UNIX__
-
-#ifdef __LINUX__
+#if BLENDINT_USE_POSIX_TIMER
 		timer_delete(m_id);
-#endif	// __LINUX__
-
-#ifdef __APPLE__
-		m_enabled = false;
-		int ret = pthread_cancel(m_id);
-		if(ret != 0) {
-			std::cerr << "Error: Fail to cancel the timer thread!" << std::endl;
-		}
-#endif	// __APPLE__
-
-#endif	// __UNIX__
+#else
+		Stop();
+#endif
 	}
 
 	void Timer::Start ()
 	{
-#ifdef __UNIX__
 		int ret = -1;
 
-#ifdef __LINUX__
+#if BLENDINT_USE_POSIX_TIMER
 		struct itimerspec ts;
 
 		unsigned int sec = m_interval / 1000;
@@ -83,10 +72,10 @@ namespace BlendInt {
 		} else {
 			m_enabled = true;
 		}
-#endif	// __LINUX__
-
-#ifdef __APPLE__
-		// Create a thread
+#else
+		if(m_enabled) Stop();
+		
+		// Create a thread		
 		ret = pthread_create (&m_id, NULL, Timer::ThreadCallback, this);
 		if(ret == 0) {
 			m_enabled = true;
@@ -94,16 +83,13 @@ namespace BlendInt {
 			std::cerr << "Fail to start timer in " << __func__ << std::endl;
 			m_enabled = false;
 		}
-#endif	// __APPLE__
-
 #endif
+
 	}
 
 	void Timer::Stop ()
 	{
-#ifdef __UNIX__
-
-#ifdef __LINUX__
+#if BLENDINT_USE_POSIX_TIMER
 		if(! m_enabled) return;
 
 		int ret = -1;
@@ -117,16 +103,16 @@ namespace BlendInt {
 		}
 
 		m_enabled = false;
-#endif	// __LINUX__
-
-#ifdef __APPLE__
+#else
 		if(m_enabled) {
-			pthread_cancel(m_id);
-			// TODO: check return
+			int ret = pthread_cancel(m_id);
+			if(ret != 0) {
+				std::cerr << "Error: Fail to cancel the timer thread!" << std::endl;
+			}
+			
+			m_enabled = false;
 		}
-#endif	// __APPLE__
-
-#endif	// __UNIX__
+#endif
 	}
 
 	void Timer::SetInterval(unsigned int interval)
@@ -135,42 +121,19 @@ namespace BlendInt {
 
 		m_interval = interval;
 
-		if(m_enabled)	Start ();
-	}
-
-	unsigned int Timer::GetTimeLeft()
-	{
-#ifdef __UNIX__
-
-#ifdef __LINUX__
-		if(!m_enabled)
-			return 0;
-
-		struct itimerspec ts;
-
-		int ret = -1;
-
-		ret = timer_gettime (m_id, &ts);
-
-		if(ret < 0) {
-			std::cerr << "Fail to get timer in " << __func__ << std::endl;
+#if BLENDINT_USE_POSIX_TIMER
+		if(m_enabled) Start ();
+#else
+		if(m_enabled) {
+			Stop();
+			Start();
 		}
-
-		return ts.it_value.tv_nsec / 1000 / 1000;
-#endif	// __LINUX__
-		
-#ifdef __APPLE__
-		return 0;
-#endif	// __APPLE__
-
-#endif	// __UNIX__
+#endif
 	}
 
 	void Timer::Create()
 	{
-#ifdef __UNIX__
-
-#ifdef __LINUX__
+#if BLENDINT_USE_POSIX_TIMER
 		int ret = -1;
 		struct sigevent sev;
 		sev.sigev_notify = SIGEV_THREAD;
@@ -186,14 +149,10 @@ namespace BlendInt {
 				std::cerr << "The calling process has already created all of the timers it is allowed by this implementation" << std::endl;
 			}
 		}
-#endif	// __LINUX__
-
-#endif	// __UNIX__
+#endif
 	}
 
-#ifdef __UNIX__
-
-#ifdef __LINUX__
+#if BLENDINT_USE_POSIX_TIMER
 
 	void Timer::ThreadCallback(union sigval sigev_value)
 	{
@@ -201,9 +160,7 @@ namespace BlendInt {
 		timer->m_timeout.fire();
 	}
 
-#endif	// __LINUX__
-
-#ifdef __APPLE__
+#else
 
 	void *Timer::ThreadCallback (void* data)
 	{
@@ -234,7 +191,5 @@ namespace BlendInt {
 	}
 
 #endif	// __APPLE__
-
-#endif	// __UNIX__
 
 }

@@ -182,8 +182,7 @@ void DemoFrame::MouseMoveEvent(MouseEvent* event) {
 
 void DemoFrame::stop_time()
 {
-	unsigned int time_left = m_timer->GetTimeLeft();
-	std::cout << "time left: (ms)" << time_left << std::endl;
+	std::cout << "Stop timer" << std::endl;
 
 	m_timer->Stop();
 }
