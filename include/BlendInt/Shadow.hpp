@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_SHADOW_HPP_
 #define _BLENDINT_SHADOW_HPP_
 
-#include <BlendInt/AbstractRoundBox.hpp>
+#include <BlendInt/AbstractRoundForm.hpp>
 #include <BlendInt/Types.hpp>
 #include <BlendInt/GLBuffer.hpp>
 
@@ -46,7 +46,7 @@ namespace BlendInt {
 	/**
 	 * @brief Shadow form
 	 */
-	class Shadow: public AbstractRoundBox
+	class Shadow: public AbstractRoundForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(Shadow);
 

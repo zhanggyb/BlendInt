@@ -28,14 +28,14 @@ namespace BlendInt {
 
 	RoundWidget::RoundWidget()
 	: Widget(),
-	  RoundBoxBase()
+	  RoundShapeBase()
 	{
 
 	}
 
 	RoundWidget::RoundWidget(AbstractWidget* parent)
 	: Widget(parent),
-	  RoundBoxBase()
+	  RoundShapeBase()
 	{
 
 	}

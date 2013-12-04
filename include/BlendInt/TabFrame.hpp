@@ -33,6 +33,9 @@ namespace BlendInt {
 
 	class String;
 
+	/**
+	 * @brief A class provide Tab
+	 */
 	class TabFrame: public Frame
 	{
 		DISALLOW_COPY_AND_ASSIGN(TabFrame);

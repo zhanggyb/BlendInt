@@ -25,14 +25,14 @@
 #define _BLENDINT_ROUNDWIDGET_HPP_
 
 #include <BlendInt/Widget.hpp>
-#include <BlendInt/RoundBoxBase.hpp>
+#include <BlendInt/RoundShapeBase.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief Widget with round corner
 	 */
-	class RoundWidget: public Widget, public RoundBoxBase
+	class RoundWidget: public Widget, public RoundShapeBase
 	{
 		DISALLOW_COPY_AND_ASSIGN(RoundWidget);
 

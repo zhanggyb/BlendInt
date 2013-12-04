@@ -21,30 +21,47 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ROUNDBOX_HPP_
-#define _BLENDINT_ROUNDBOX_HPP_
+#ifndef _BLENDINT_ROUNDSHAPEBASE_HPP_
+#define _BLENDINT_ROUNDSHAPEBASE_HPP_
 
+#include <BlendInt/AbstractForm.hpp>
 #include <BlendInt/Types.hpp>
-
-#include <BlendInt/AbstractRoundBox.hpp>
+#include <BlendInt/Color.hpp>
+#include <BlendInt/Theme.hpp>
 
 namespace BlendInt {
 
-	class RoundBox: public AbstractRoundBox
+	class RoundShapeBase
 	{
 	public:
 
-		RoundBox();
+		RoundShapeBase();
 
-		virtual ~RoundBox();
+		~RoundShapeBase();
+
+		int round_type () const {return m_round_type;}
+
+		float radius () const {return m_radius;}
 
 	protected:
 
-		void Update (int type, const void* data);
+		inline void set_round_type (int type)
+		{
+			m_round_type = type;
+		}
 
-		void Render ();
+		inline void set_radius (float radius)
+		{
+			m_radius = radius;
+		}
+
+	private:
+
+		int m_round_type;
+
+		float m_radius;
 	};
 
 }
 
-#endif /* _BLENDINT_ROUNDBOX_HPP_ */
+#endif /* _BLENDINT_ROUNDSHAPEBASE_HPP_ */

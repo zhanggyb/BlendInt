@@ -33,7 +33,7 @@
 namespace BlendInt {
 
 	Shadow::Shadow()
-	: AbstractRoundBox(),
+	: AbstractRoundForm(),
 	  m_offset_x(0),
 	  m_offset_y(0),
 //	  m_direction(ShadowAll),

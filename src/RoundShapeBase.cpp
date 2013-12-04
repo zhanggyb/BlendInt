@@ -21,20 +21,20 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <RoundBoxBase.hpp>
+#include <RoundShapeBase.hpp>
 
 #include <assert.h>
 
 namespace BlendInt {
 
-	RoundBoxBase::RoundBoxBase()
+	RoundShapeBase::RoundShapeBase()
 	: m_round_type(RoundNone),
 	  m_radius(5.0)
 	{
 
 	}
 
-	RoundBoxBase::~RoundBoxBase()
+	RoundShapeBase::~RoundShapeBase()
 	{
 
 	}

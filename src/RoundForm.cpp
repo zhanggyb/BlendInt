@@ -21,27 +21,29 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ABSTRACTROUNDBOX_HPP_
-#define _BLENDINT_ABSTRACTROUNDBOX_HPP_
-
-#include <BlendInt/FormBase.hpp>
-#include <BlendInt/RoundBoxBase.hpp>
+#include <BlendInt/RoundForm.hpp>
 
 namespace BlendInt {
 
-	class AbstractRoundBox: public FormBase, public RoundBoxBase
+	RoundForm::RoundForm()
+	: AbstractRoundForm()
 	{
-	public:
 
-		AbstractRoundBox();
+	}
 
-		virtual ~AbstractRoundBox();
+	RoundForm::~RoundForm()
+	{
 
-		void SetRoundType (int type);
+	}
 
-		void SetRadius (float radius);
-	};
+	void RoundForm::Update (int type, const void* data)
+	{
+
+	}
+
+	void RoundForm::Render()
+	{
+
+	}
 
 }
-
-#endif /* _BLENDINT_ABSTRACTROUNDBOX_HPP_ */
