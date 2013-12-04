@@ -10,7 +10,6 @@ list(APPEND glfw_demo_SRC ${headfiles})
 file(GLOB headerfiles "*/*.hpp")
 list(APPEND glfw_demo_SRC ${headfiles})
 
-#set(LIBS ${LIBS} glfw)
 if(APPLE)
     set(LIBS ${LIBS} glfw3)
 else()

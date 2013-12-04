@@ -1,0 +1,34 @@
+/**
+
+@page page_quick_guide Quick Guide
+@tableofcontents
+
+@section sect_opengl_window Choose an OpenGL Window
+
+BlendInt is a collection of code to draw widgets in OpenGL Context, it does not provide
+a window system to create opengl context and manage input events. You need to choose an
+opengl utility toolkit to create such window and pass events to BlendInt. Fortunately,
+there're many open-source, cross-platform toolkits you can use, for example:
+	- GLFW: http://www.glfw.org
+	- freeGLUT: http://freeglut.sourceforge.net
+	- Qt (use the Qt OpenGL framework): http://www.qt-project.org
+	- Gtk (GTK+ OpenGL extension): http://www.gtk.org
+
+Below we demonstrate how to use BlendInt in the OpenGL Context created by GLFW3
+
+@section sect_simple_example A simple example
+
+@subsection sect_including Including the BlendInt header
+
+@subsection sect_initialize Initializing Resources
+ 
+@subsection sect_terminate Terminating
+ 
+@subsection sect_create_and_render_widgets Create and Render Widgets
+ 
+@section sect_using_cpp_events Using CppEvents
+
+@include glfw/main.cpp
+@example glfw/main.cpp
+
+*/

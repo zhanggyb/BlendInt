@@ -3,9 +3,8 @@
  */
 
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
+
 #include <iostream>
-#include <typeinfo>
 
 #include <Cpp/Events.hpp>
 #include <BlendInt/Interface.hpp>
@@ -32,6 +31,8 @@
 #include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/ImageView.hpp>
 #include <BlendInt/TabFrame.hpp>
+
+#include "Window.hpp"
 
 #include "DemoFrame.hpp"
 
@@ -122,65 +123,15 @@ private:
 	Cpp::ConnectionScope m_events;
 };
 
-static void cbError (int error, const char* description)
-{
-	std::cerr << "Error: " << description
-			<< " (error code: " << error << ")"
-			<< std::endl;
-}
-
-static void cbWindowSize(GLFWwindow* window, int w, int h) {
-	BlendInt::Interface::instance()->resizeEvent(w, h);
-}
-
-static void cbKey(GLFWwindow* window, int key, int scancode, int action,
-		int mods) {
-	BlendInt::Interface::instance()->keyEvent(key, scancode, action, mods);
-}
-
-static void cbMouseButton(GLFWwindow* window, int button, int action,
-		int mods) {
-	BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
-}
-
-static void cbCursorPos(GLFWwindow* window, double xpos, double ypos) {
-	BlendInt::Interface::instance()->cursorPosEvent(xpos, ypos);
-}
-
 int main(int argc, char* argv[])
 {
-	using namespace BlendInt;
-
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-	/* Initialize the library */
-	if (!glfwInit())
-		return -1;
-
-	glfwSetErrorCallback(&cbError);
-
-	GLFWwindow* window = glfwCreateWindow(1200, 800, __func__, NULL, NULL);
-	if (!window) {
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwSetWindowSizeCallback(window, &cbWindowSize);
-	glfwSetKeyCallback(window, &cbKey);
-	glfwSetMouseButtonCallback(window, &cbMouseButton);
-	glfwSetCursorPosCallback(window, &cbCursorPos);
-
-	/* Make the window's context current */
-	glfwMakeContextCurrent(window);
-
-	/* initialize BlendInt after OpenGL content is created */
-	if (!Interface::initialize()) {
-		glfwTerminate();
-		return -1;
-	}
+    Init();
+	
+    GLFWwindow* window = CreateWindow("GLFW3 Demo");
 
 	Interface* app = Interface::instance();
-	app->Resize(1200, 800);
 
 //	DoEvent obj;
 //
@@ -334,24 +285,10 @@ int main(int argc, char* argv[])
 
 	app->bind(tabframe);
 
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window)) {
-		/* Render here */
-		app->Render();
-
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
-
-		/* Poll for and process events */
-		glfwPollEvents();
-	}
+    RunLoop(window);
 
 //	obj.unbind();
 
-	/* release BlendInt */
-	Interface::release();
-
-	glfwTerminate();
-	return 0;
+    Terminate();
 }
 

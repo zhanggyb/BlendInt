@@ -44,27 +44,9 @@ namespace BlendInt {
 
 		void Add (AbstractButton* button);
 
-	protected:
-
-		virtual void Render ();
-
-		virtual void KeyPressEvent (KeyEvent* event);
-
-		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
-
-		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
-
-		virtual void MousePressEvent (MouseEvent* event);
-
-		virtual void MouseReleaseEvent (MouseEvent* event);
-
-		virtual void MouseMoveEvent (MouseEvent* event);
-
 	private:
 
 		void Init ();
-
-		AbstractLayout* m_layout;
 
 		AbstractButton* m_active_button;
 	};

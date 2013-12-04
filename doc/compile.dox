@@ -1,0 +1,19 @@
+/**
+
+@page page_compile Compile
+@tableofcontents
+
+@section sect_compile_require Requirements
+
+BlendInt depends on:
+	- OpenGL (built-in framework)
+	- GLEW (http://glew.sourceforge.net)
+	- GLM (http://glm.g-truc.net)
+	- boost (http://www.boost.org)
+	- freetype
+	- fontconfig
+	- OpenImageIO
+
+@section sect_compile_in_linux Compile in Linux
+
+*/

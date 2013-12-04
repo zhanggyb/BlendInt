@@ -24,10 +24,11 @@
 #ifndef _BLENDINT_TABFRAME_HPP_
 #define _BLENDINT_TABFRAME_HPP_
 
-#include <BlendInt/Frame.hpp>
+#include <BlendInt/LayoutFrame.hpp>
 #include <BlendInt/StackedWidget.hpp>
 #include <BlendInt/HorizontalLayout.hpp>
 #include <BlendInt/VerticalLayout.hpp>
+#include <BlendInt/ButtonBox.hpp>
 
 namespace BlendInt {
 
@@ -36,7 +37,7 @@ namespace BlendInt {
 	/**
 	 * @brief A class provide Tab
 	 */
-	class TabFrame: public Frame
+	class TabFrame: public LayoutFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(TabFrame);
 
@@ -52,21 +53,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Update (int type, const void* data);
-
-		virtual void Render ();
-
-		void KeyPressEvent (KeyEvent* event);
-
-		void ContextMenuPressEvent (ContextMenuEvent* event);
-
-		void ContextMenuReleaseEvent (ContextMenuEvent* event);
-
-		void MousePressEvent (MouseEvent* event);
-
-		void MouseReleaseEvent (MouseEvent* event);
-
-		void MouseMoveEvent (MouseEvent* event);
+//		virtual void Update (int type, const void* data);
 
 	private:
 
@@ -76,9 +63,7 @@ namespace BlendInt {
 
 		StackedWidget* m_stack_widget;
 
-		HorizontalLayout* m_button_layout;
-
-		VerticalLayout* m_body_layout;
+		ButtonBox* m_button_box;
 	};
 
 }

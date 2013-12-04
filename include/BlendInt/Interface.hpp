@@ -21,6 +21,23 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+/**
+ * Doxygen documentation
+ */
+
+// the top level groups
+
+/** @defgroup time Time input */
+/** @defgroup interface The main interface class entry */
+/** @defgroup exceptions Exceptions */
+/** @defgroup opengl Wrapper classes for OpenGL API */
+/** @defgroup gui GUI classes */
+
+/**
+ * @defgroup functions_throw_exception Functions throw exception
+ * @ingroup exceptions
+ */
+
 #ifndef _BLENDINT_INTERFACE_HPP_
 #define _BLENDINT_INTERFACE_HPP_
 
@@ -115,121 +132,3 @@ namespace BlendInt {
 
 #endif /* _BIL_INTERFACE_HPP_ */
 
-/**
- * Doxygen documentation
- */
-
-// the top level groups
-
-/** @defgroup time Time input */
-/** @defgroup interface The main interface class entry */
-/** @defgroup exceptions Exceptions */
-/** @defgroup opengl Wrapper classes for OpenGL API */
-/** @defgroup gui GUI classes */
-
-/**
- * @defgroup functions_throw_exception Functions throw exception
- * @ingroup exceptions
- */
-
-/**
- * @mainpage BlendInt -- a Blender-like Interface Library in OpenGL
- * 
- * @section sect_intro Introduction
- * 
- * BlendInt (Blender Interface Library in OpenGL) is a C++ library for
- * building application with Blender-like style.
- *
- * This project is for anyone who like Blender and want to build a
- * similar GUI application.
- *
- * Features of vertion 0.1 (developing):
- * 	- Event system
- * 	- Widgets:
- * 		- Buttons:
- * 		- Push Button
- * 		- Toggle Button
- * 		- Checkable Button
- * 	- Scroll Widget
- * 	- Label
- * 	- Slider
- * 	- Tab Widget
- * 	- Layout
- * 	- Horizontal Layout
- * 	- Vertical Layout
- * 
- * @section usage_sec Usage
- * 
- * Use BlendInt is as simple as any C++ object-oriented GUI toolkit
- * like Qt, gtkmm.  For example, create a button with BlendInt:
- *
- *@code
- #include <BlendInt/Interface.hpp> // The main header to start
- #include <BlendInt/Button.hpp>
-
- int main (int argc, char* argv[])
- {
- 	// initialize opengl context
- 	BlendInt::Interface::initialize();
-
- 	Button* my_button = new Button;
- 	my_button.SetPosition(200, 200);
-
- 	// in the event-Render loop
- 	app->Render();
-
- 	// ready to close application
- 	BlendInt::Interface::release();
- }
-  @endcode
- * 
- * @section sect_compile Compile
- *
- * @ref page_compile
- * 
- * @section sect_quick_guide Quick Guide
- *
- * @ref page_quick_guide
- */
-
-/**
- * @page page_compile Compile
- * @tableofcontents
- * 
- * @section sect_compile_require Requirements
- *
- * BlendInt depends on:
- * 	- OpenGL (built-in framework)
- * 	- GLEW (http://glew.sourceforge.net)
- * 	- GLM (http://glm.g-truc.net)
- * 	- boost (http://www.boost.org)
- * 	- freetype
- * 	- fontconfig
- * 	- OpenImageIO
- *
- * @section sect_compile_in_linux Compile in Linux
- *
- * 
- */
-
-/**
- * @page page_quick_guide Quick Guide
- * @tableofcontents
- * 
- * Here is a quick guide of using BlendInt to build a applicaiton
- * 
- * @section sect_install Install BlendInt
- * 
- * @subsection sect_install_download Download
- * 
- * @subsection sect_install_compile Compile
- * 
- * and More document later.
- */
-
-/**
- * @page code_style The C++ Coding Style Used in This Project
- *
- * This project follows Google's C++ coding style, see the document on its home page:
- * http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
- */

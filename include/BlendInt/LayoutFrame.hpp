@@ -44,6 +44,8 @@ namespace BlendInt {
 
 		void SetLayout (AbstractLayout* layout);
 
+		AbstractLayout* layout () const {return m_layout;}
+
 	protected:
 
 		virtual void Update (int type, const void* data);

@@ -1,0 +1,8 @@
+/**
+
+@page code_style The C++ Coding Style Used in This Project
+
+This project follows Google's C++ coding style, see the document on its home page:
+http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
+
+*/

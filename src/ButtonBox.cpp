@@ -22,17 +22,18 @@
  */
 
 #include <BlendInt/ButtonBox.hpp>
+#include <BlendInt/HorizontalLayout.hpp>
 
 namespace BlendInt {
 
 	ButtonBox::ButtonBox ()
-	: LayoutFrame(), m_layout(0), m_active_button(0)
+	: LayoutFrame(), m_active_button(0)
 	{
 		Init ();
 	}
 
 	ButtonBox::ButtonBox (AbstractWidget* parent)
-	: LayoutFrame(parent), m_layout(0), m_active_button(0)
+	: LayoutFrame(parent), m_active_button(0)
 	{
 		Init ();
 	}
@@ -44,39 +45,15 @@ namespace BlendInt {
 
 	void ButtonBox::Add (AbstractButton* button)
 	{
-	}
-
-	void ButtonBox::Render ()
-	{
-	}
-
-	void ButtonBox::KeyPressEvent (KeyEvent* event)
-	{
-	}
-
-	void ButtonBox::ContextMenuPressEvent (ContextMenuEvent* event)
-	{
-	}
-
-	void ButtonBox::ContextMenuReleaseEvent (ContextMenuEvent* event)
-	{
-	}
-
-	void ButtonBox::MousePressEvent (MouseEvent* event)
-	{
-	}
-
-	void ButtonBox::MouseReleaseEvent (MouseEvent* event)
-	{
-	}
-
-	void ButtonBox::MouseMoveEvent (MouseEvent* event)
-	{
+		if(layout())
+			layout()->add(button);
 	}
 
 	void ButtonBox::Init ()
 	{
-
+		// DEMO: use HLayout temporarily
+		HorizontalLayout* layout = new HorizontalLayout;
+		SetLayout(layout);
 	}
 
 }

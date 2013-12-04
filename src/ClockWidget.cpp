@@ -66,14 +66,13 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_POLYGON_SMOOTH);
-
 		glColor4ub(m_background.red(), m_background.green(), m_background.blue(), m_background.alpha());
 		DrawCircle(size().width() / 2, size().height() / 2, radius, true);
 
 		glTranslatef(size().width() / 2, size().height() / 2, 0.0);
 		glRotatef(-m_angle, 0, 0, 1);
+
+		glEnable(GL_LINE_SMOOTH);
 
 		glLineWidth(2);
 		glColor3ub(255, 0, 0);
@@ -83,7 +82,6 @@ namespace BlendInt {
 		glEnd();
 
 		glDisable(GL_LINE_SMOOTH);
-		glDisable(GL_POLYGON_SMOOTH);
 
 		glDisable(GL_BLEND);
 		glPopMatrix();
