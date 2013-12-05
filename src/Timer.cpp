@@ -166,7 +166,7 @@ namespace BlendInt {
 	{
 		Timer* timer = static_cast<Timer*>(data);
 		struct timespec ts;
-		int ret = 0;
+		// int ret = 0;
 
 		pthread_detach(pthread_self());
 
@@ -178,7 +178,8 @@ namespace BlendInt {
 
 		while(true) {
 			// TODO: call nanosleep()
-			ret = nanosleep (&ts, NULL);
+			//ret = nanosleep (&ts, NULL);
+			nanosleep (&ts, NULL);
 
 			if(timer->enabled()) {
 				timer->m_timeout.fire();

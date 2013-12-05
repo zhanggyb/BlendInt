@@ -27,11 +27,10 @@
 #include <signal.h>
 #include <time.h>
 
-#define BLENDINT_USE_POSIX_TIMER 0
-
 #ifdef __LINUX__
 #define BLENDINT_USE_POSIX_TIMER 1
 #else
+#define BLENDINT_USE_POSIX_TIMER 0
 #include <pthread.h>
 #endif
 
