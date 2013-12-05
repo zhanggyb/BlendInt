@@ -2,7 +2,7 @@
 #
 
 include_directories(${BlendInt_SOURCE_DIR}/test)
-include_directories(${BlendInt_SOURCE_DIR}/test/gtest)
+include_directories(${BlendInt_SOURCE_DIR}/test/gtest/include)
 
 #set(LIBS ${LIBS} glfw)
 if(APPLE)
