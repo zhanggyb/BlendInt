@@ -747,6 +747,7 @@ INPUT                  = ../ \
                          main.dox \
                          code_style.dox \
                          compile.dox \
+                         devel.dox \
                          quick.dox \
                          cp_events.dox
 

@@ -38,7 +38,7 @@ using namespace std;
 
 namespace BlendInt {
 
-	class Font;
+	struct Font;
 	class String;
 
 	template<class T>

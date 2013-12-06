@@ -1,0 +1,42 @@
+/**
+
+@page page_development Development
+@tableofcontents
+
+@section sect_eclipse Develop in Eclipse CDT
+
+@subsection sect_eclipse_create Create Eclipse Project Files
+
+CMake (from 2.6) includes a generator for Eclipse CDT 4.0 or newer
+(see http://www.cmake.org/Wiki/Eclipse_CDT4_Generator).
+
+Follow these steps to generate eclipse project files for importing
+into Eclipse:
+
+assume checkout BlendInt source code to ~/BlendInt
+
+	$ cd ~	# change current directory to HOME
+	$ mkdir build # make a new directory to generate cmake build files
+	$ cd build
+	$ cmake ../BlendInt -DCMAKE_BUILD_TYPE=Debug	# Add Debug definition if needed
+	$ cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../BlendInt
+
+@subsection sect_eclipse_import Import Project
+
+- Open Eclipse
+- "File" -> "Import" -> "General" -> "Existing Projects into Workspace"
+- Select directory "~/build" in the import dialog
+- "Finish"
+
+@section sect_unit_test Unit Test
+
+It's encouraged that all code in BlendInt library should be tested.
+
+BlendInt uses Google Test to do so, and all test code are submitted in
+"test/unit" and gtest source code in "test/gtest".
+
+@subsection sect_unit_test_example An Example of Unit Test
+
+TBD...
+
+*/
