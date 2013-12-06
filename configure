@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+# A simple script to run cmake with pre-defined options
+#
+
+SCRIPT_FILE=`readlink -f $0`
+SOURCE_DIR=`dirname $SCRIPT_FILE`
+CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DWITH_UNIT_TEST=True"
+
+# help info
+#
+function print_help () {
+    cat << EOF
+
+ARGUMENTS for $SCRIPT_FILE:
+
+    -h, --help
+        Show this message and exit.
+
+	--debug
+        Build source code in debug mode.
+
+    -p <path>, --prefix=<path>
+        Path where to install (defaults is /usr/local).
+
+    --demo
+        If build all demos.
+
+    --test
+        If build unit test code.
+
+EOF
+}
+
+if [ $SOURCE_DIR == $PWD ]
+then
+    echo "Error: cannot create build files in source directory, exit"
+    exit 1
+fi
+
+cmake $SOURCE_DIR $CMAKE_OPTIONS
+cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" $CMAKE_OPTIONS
+
+exit 0
+
+ARGS=`getopt -o "hdp:ot" -l "help,debug,prefix:,demo,test" -n "getopt.sh" -- "$@"`
+if [ $? != 0 ]; then echo "Terminating..." >&2; exit 2; fi
+
+eval set -- "$ARGS"
+while true; do
+    case $1 in
+        -h|--help)
+            print_help
+            shift
+            exit 0
+            ;;
+        -d|--debug)
+            CMAKE_OPTIONS="$CMAKE_OPTIONS -DCMAKE_BUILD_TYPE=Debug"
+            shift
+            ;;
+        -p|--prefix)
+            PREFIX="$2"
+            shift 2
+            ;;
+        -o|--demo)
+            CMAKE_OPTIONS="$CMAKE_OPTIONS -DWITH_ALL_DEMOS=True"
+            shift
+            ;;
+        -t|--test)
+            CMAKE_OPTIONS="$CMAKE_OPTIONS -DWITH_UNIT_TEST=True"
+            shift
+            ;;
+        *)
+            echo "Wrong parameter!"
+            exit 3
+            ;;
+    esac
+done
+
+echo $CMAKE_OPTIONS
+
