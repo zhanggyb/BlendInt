@@ -18,22 +18,23 @@ namespace BlendInt {
 				  << std::endl;
 	}
 
-	static void CbWindowSize(GLFWwindow* window, int w, int h) {
-		Interface::instance()->resizeEvent(w, h);
+	static void CbWindowSize(GLFWwindow* window, int w, int h)
+	{
+		Interface::instance()->Resize(w, h);
 	}
 
 	static void CbKey(GLFWwindow* window, int key, int scancode, int action,
 					  int mods) {
-		Interface::instance()->keyEvent(key, scancode, action, mods);
+		Interface::instance()->GLFWKeyEvent(key, scancode, action, mods);
 	}
 
 	static void CbMouseButton(GLFWwindow* window, int button, int action,
 							  int mods) {
-		Interface::instance()->mouseButtonEvent(button, action, mods);
+		Interface::instance()->GLFWMouseButtonEvent(button, action, mods);
 	}
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos) {
-		Interface::instance()->cursorPosEvent(xpos, ypos);
+		Interface::instance()->GLFWCursorPosEvent(xpos, ypos);
 	}
 
 	void Init ()

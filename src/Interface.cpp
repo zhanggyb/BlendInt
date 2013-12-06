@@ -121,7 +121,7 @@ namespace BlendInt {
 	Interface::Interface ()
 			: cursor_pos_x_(0.0), cursor_pos_y_(0.0)
 	{
-
+		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	Interface::~Interface ()
@@ -144,15 +144,10 @@ namespace BlendInt {
 		return m_size;
 	}
 
-	void Interface::Resize (int width, int height)
-	{
-		m_size.set_width(width);
-		m_size.set_height(height);
-	}
-
 	void Interface::Resize (const Size& size)
 	{
 		m_size = size;
+		m_resized.fire(m_size.width(), m_size.height());
 	}
 
 	void Interface::Render ()
@@ -200,12 +195,6 @@ namespace BlendInt {
 //		m_ticktack = m_ticktack ? 0 : 1;
 
 		glDisable(GL_BLEND);
-	}
-
-	void Interface::dispatch_render_event (AbstractWidget* obj)
-	{
-		// ticktack makes sure only Render once, the ticktack of Interface reversed in Interface::Render()
-		obj->Render();
 	}
 
 #ifdef DEBUG
@@ -260,14 +249,15 @@ namespace BlendInt {
 	}
 #endif
 
-	void Interface::resizeEvent (int width, int height)
+	void Interface::Resize (unsigned int width, unsigned int height)
 	{
-		// TODO: Resize all widgets/layouts in children
 		m_size.set_width(width);
 		m_size.set_height(height);
+
+		m_resized.fire(m_size.width(), m_size.height());
 	}
 
-	void Interface::keyEvent (int key, int scancode, int action, int mods)
+	void Interface::GLFWKeyEvent (int key, int scancode, int action, int mods)
 	{
 		if (key == Key_Menu) {
 			ContextMenuEvent event(ContextMenuEvent::Keyboard, mods);
@@ -351,7 +341,7 @@ namespace BlendInt {
 
 	}
 
-	void Interface::mouseButtonEvent (int button, int action, int mods)
+	void Interface::GLFWMouseButtonEvent (int button, int action, int mods)
 	{
 		MouseButton mouseclick = MouseButtonNone;
 		switch (button) {
@@ -427,7 +417,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Interface::cursorPosEvent (double xpos, double ypos)
+	void Interface::GLFWCursorPosEvent (double xpos, double ypos)
 	{
 		cursor_pos_x_ = xpos;
 		cursor_pos_y_ = m_size.height() - ypos;
@@ -464,6 +454,22 @@ namespace BlendInt {
 		}
 	}
 
+	void Interface::DispatchKeyEvent (KeyEvent* event)
+	{
+	}
+
+	void Interface::DispatchMousePressEvent (MouseEvent* event)
+	{
+	}
+
+	void Interface::DispatchMouseReleaseEvent (MouseEvent* event)
+	{
+	}
+
+	void Interface::DispatchMouseMoveEvent (MouseEvent* event)
+	{
+	}
+
 	void Interface::dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event)
 	{
 		obj->KeyPressEvent(event);
@@ -485,3 +491,4 @@ namespace BlendInt {
 	}
 
 }
+

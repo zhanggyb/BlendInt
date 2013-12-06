@@ -14,6 +14,23 @@ BlendInt depends on:
 	- fontconfig
 	- OpenImageIO
 
+@subsection sect_compile_require_install_in_Mac Install requirements in Linux
+
+Most Linux distributions provide the packges already,  install them through the
+default package management.
+
+For example,  install by pacman command:
+
+	$ sudo pacman install glew glm boost boost-libs
+	
+@subsection sect_compile_require_install_in_Mac Install requirements in Mac OS X
+
+The required packages can be installed through homebrew (http://brew.sh/):
+
+	$ brew install freetype fontconfig boost
+
 @section sect_compile_in_linux Compile in Linux
+
+@section sect_compile_in_mac Compile in Mac OS X
 
 */

@@ -25,16 +25,16 @@
 #define _BLENDINT_INPUTEVENT_HPP_
 
 #include <BlendInt/Input.hpp>
-#include <BlendInt/Event.hpp>
+#include <BlendInt/DeviceEvent.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief Events for input devices including keyboard, mouse
 	 *
-	 * @ingroup events
+	 * @ingroup device_events
 	 */
-	class InputEvent: public Event
+	class InputEvent: public DeviceEvent
 	{
 	public:
 		

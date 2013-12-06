@@ -39,13 +39,11 @@
 using namespace BlendInt;
 using namespace std;
 
-class DoEvent
-{
+class DoEvent {
 public:
 
-	DoEvent()
-	: i(0)
-	{
+	DoEvent() :
+			i(0) {
 		m_layout.SetPosition(600, 100);
 		//m_hlayout.Resize(400, 100);
 //		m_hlayout.set_sizing_mode(LayoutFixed);
@@ -60,33 +58,27 @@ public:
 
 	}
 
-	~DoEvent()
-	{
+	~DoEvent() {
 
 	}
 
-	void connect_add(Button* button)
-	{
+	void connect_add(Button* button) {
 		m_events.connect(button->clicked(), this, &DoEvent::add_button);
 	}
 
-	void connect_remove(Button* button)
-	{
+	void connect_remove(Button* button) {
 		m_events.connect(button->clicked(), this, &DoEvent::remove_button);
 	}
 
-	void bind()
-	{
+	void bind() {
 		interface()->bind(&m_layout);
 	}
 
-	void unbind()
-	{
+	void unbind() {
 		interface()->unbind(&m_layout);
 	}
 
-	void add_button()
-	{
+	void add_button() {
 		Button* button = new Button;
 
 		//char str[20];
@@ -95,15 +87,14 @@ public:
 		//button->set_text(str);
 		//button->set_name(str);
 
-		m_layout.add(button);
+		m_layout.Add(button);
 		m_buttons.push_back(button);
 	}
 
-	void remove_button()
-	{
-		if(m_buttons.size()) {
+	void remove_button() {
+		if (m_buttons.size()) {
 			Button* button = m_buttons[m_buttons.size() - 1];
-			m_layout.erase(button);
+			m_layout.Erase(button);
 			m_buttons.pop_back();
 			m_layout.Resize(m_layout.preferred_size());
 		}
@@ -123,13 +114,12 @@ private:
 	Cpp::ConnectionScope m_events;
 };
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-    Init();
-	
-    GLFWwindow* window = CreateWindow("GLFW3 Demo");
+	Init();
+
+	GLFWwindow* window = CreateWindow("GLFW3 Demo");
 
 	Interface* app = Interface::instance();
 
@@ -152,7 +142,7 @@ int main(int argc, char* argv[])
 //	app->bind(add_button);
 //	app->bind(remove_button);
 
-	 //-----------------------
+	//-----------------------
 //
 //	Cpp::ConnectionScope events;
 //
@@ -213,7 +203,6 @@ int main(int argc, char* argv[])
 //	menu->add("there2");
 //
 //	app->bind(menu);
-
 
 //	Button* b = new Button;
 //
@@ -285,10 +274,12 @@ int main(int argc, char* argv[])
 
 	app->bind(tabframe);
 
-    RunLoop(window);
+	// app->events()->connect(app->resized(), frame, &DemoFrame::FullWindow);
+
+	RunLoop(window);
 
 //	obj.unbind();
 
-    Terminate();
+	Terminate();
 }
 

@@ -25,7 +25,6 @@
 #define _BLENDINT_MOUSEEVENT_HPP_
 
 #include <BlendInt/Types.hpp>
-#include <BlendInt/Event.hpp>
 #include <BlendInt/InputEvent.hpp>
 
 #include <BlendInt/Coord.hpp>
@@ -34,6 +33,11 @@ namespace BlendInt {
 
 	class InputEvent;
 
+	/**
+	 * @brief Mouse event class
+	 *
+	 * @ingroup device_events
+	 */
 	class MouseEvent: public InputEvent
 	{
 	public:

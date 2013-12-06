@@ -17,16 +17,16 @@ DemoFrame::DemoFrame()
 	m_hlayout->set_margin(0, 0, 0, 0);
 
 	Label* label = new Label("Click to create: ");
-	m_hlayout->add(label);
+	m_hlayout->Add(label);
 
 	Button* start_button = new Button("Start");
-	m_hlayout->add(start_button);
+	m_hlayout->Add(start_button);
 
 	Button* reset_button = new Button("Reset Interval");
-	m_hlayout->add(reset_button);
+	m_hlayout->Add(reset_button);
 
 	Button* stop_button = new Button("Stop");
-	m_hlayout->add(stop_button);
+	m_hlayout->Add(stop_button);
 
 	set_size(m_hlayout->size().width() + margin().left() + margin().right(),
 				m_hlayout->size().height() + margin().top() + margin().bottom());
@@ -64,6 +64,12 @@ void DemoFrame::SetWidget (AbstractWidget* widget)
 
 		bind(m_widget);
 	}
+}
+
+void DemoFrame::FullWindow(unsigned int width, unsigned int height)
+{
+	std::cout << "Get FullWindow event: " << width << " " << height << std::endl;
+	Resize(width, height);
 }
 
 void DemoFrame::Update(int type, const void* data)
@@ -182,8 +188,7 @@ void DemoFrame::MouseMoveEvent(MouseEvent* event) {
 
 void DemoFrame::stop_time()
 {
-	unsigned int time_left = m_timer->GetTimeLeft();
-	std::cout << "time left: (ms)" << time_left << std::endl;
+	std::cout << "Stop timer" << std::endl;
 
 	m_timer->Stop();
 }

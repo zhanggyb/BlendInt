@@ -32,7 +32,7 @@ namespace BlendInt {
 	/**
 	 * @brief Keyboard events
 	 *
-	 * @ingroup events
+	 * @ingroup device_events
 	 */
 	class KeyEvent: public InputEvent
 	{

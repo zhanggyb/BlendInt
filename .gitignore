@@ -16,13 +16,13 @@
 *.DS_Store
 
 # Build directories
-Debug
-Release
+Debug*
+Release*
 build
 CMakeLists.txt.user
 doc/html
-test/Debug
-test/Release
-demo/glfw/Debug
-demo/glfw/Release
+test/Debug*
+test/Release*
+demo/glfw/Debug*
+demo/glfw/Release*
 demo/qt5/qt5_demo.pro.user

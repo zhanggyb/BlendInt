@@ -91,7 +91,7 @@ void GLWindow::initializeGL()
 
 void GLWindow::resizeGL(int w, int h)
 {
-    BlendInt::Interface::instance()->resizeEvent(w, h);
+    BlendInt::Interface::instance()->Resize(w, h);
 }
 
 void GLWindow::paintGL()
@@ -107,7 +107,7 @@ void GLWindow::mouseMoveEvent (QMouseEvent* event)
     //std::cout << event->x() << " " << event->y() << std::endl;
     //std::cout << event->pos().x() << " " << event->pos().y() << std::endl;
 
-    BlendInt::Interface::instance()->cursorPosEvent((double)event->x(),
+    BlendInt::Interface::instance()->GLFWCursorPosEvent((double)event->x(),
            (double) event->y());
 }
 
@@ -139,7 +139,7 @@ void GLWindow::mousePressEvent (QMouseEvent* event)
         mods = mods | BlendInt::ModifierAlt;
     }
 
-    BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
+    BlendInt::Interface::instance()->GLFWMouseButtonEvent(button, action, mods);
 }
 
 void GLWindow::mouseReleaseEvent (QMouseEvent* event)
@@ -171,5 +171,5 @@ void GLWindow::mouseReleaseEvent (QMouseEvent* event)
         mods = mods | BlendInt::ModifierAlt;
     }
 
-    BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
+    BlendInt::Interface::instance()->GLFWMouseButtonEvent(button, action, mods);
 }

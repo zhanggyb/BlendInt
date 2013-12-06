@@ -40,17 +40,6 @@
 namespace BlendInt {
 
 	/**
-	 * Sizing mode enumeration
-	 * Flow - the layout size is not restricted by the parent widget
-	 * Fixed - the layout size is fixed when add/remove its child
-	 */
-	enum LayoutSizingMode
-	{
-		LayoutFlow = 0,//!< LayoutFlow
-		LayoutFixed    //!< LayoutFixed
-	};
-
-	/**
 	 * @brief Abstract layout class
 	 *
 	 * @ingroup layouts
@@ -67,9 +56,9 @@ namespace BlendInt {
 
 		virtual ~AbstractLayout ();
 
-		void add (Widget* form);
+		void Add (Widget* form);
 
-		void add (AbstractLayout* layout);
+		void Add (AbstractLayout* layout);
 
 		/**
 		 * @brief remove the object from layout
@@ -78,7 +67,7 @@ namespace BlendInt {
 		 *
 		 * @warning: after removing from layout, the drawable object will bind to nothing, it must be deleted manually
 		 */
-		bool remove (AbstractWidget* object);
+		bool Remove (AbstractWidget* object);
 
 		/**
 		 * @brief erase the object from layout
@@ -87,7 +76,7 @@ namespace BlendInt {
 		 *
 		 * Same as remove but will delete the child object
 		 */
-		bool erase (AbstractWidget* object);
+		bool Erase (AbstractWidget* object);
 
 		int alignment () const {return m_alignment;}
 
@@ -102,13 +91,6 @@ namespace BlendInt {
 		void set_space (int space) {m_space = space;}
 
 		int space () const {return m_space;}
-
-		int sizing_mode () const {return m_sizing_mode;}
-
-		void set_sizing_mode (LayoutSizingMode mode)
-		{
-			m_sizing_mode = mode;
-		}
 
 		AbstractLayout* root_layout ();
 
@@ -136,14 +118,6 @@ namespace BlendInt {
 		int m_alignment;
 
 		int m_space;
-
-		/**
-		 * @brief the sizing mode: flow or fixed
-		 *
-		 * This property is mostly used when this layout is the root layout in a widget
-		 * But the size can still be changes with Resize()
-		 */
-		LayoutSizingMode m_sizing_mode;
 
 		Margin m_margin;
 

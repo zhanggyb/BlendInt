@@ -1,0 +1,211 @@
+/**
+
+@page cpp_events Use Cpp-Events for events/delegates
+
+@tableofcontents
+
+@section sect_initialization Initialization
+
+Library stores some data in thread-local storage and this data must be
+initialized before library can be used. Per-process initialization and
+deinitialization is done by creating instance of the class
+Cpp::Events::ProcessInit on the stack of the main() function. This
+class does nothing more than invoking static function
+Cpp::Events::constructProcessData() in constructor and
+Cpp::Events::destructProcessData() in destructor, but it is preferable
+to use Cpp::Events::ProcessInit class instead of calling these
+functions directly, because it is exception-safe.
+
+@code
+#include <Cpp/Events.hpp>
+
+int main(int argc, char * argv[])
+{
+    Cpp::Events::ProcessInit processInit;
+
+    // ...
+
+    return 0;
+}
+@endcode
+
+For threads other than the main one, library must be initialized
+separately. The Cpp::Events::ThreadInit class is used or this. In the
+same way as Cpp::Events::ProcessInit does, this class does nothing
+more than invoking static function Cpp::Events::constructThreadData()
+in constructor and Cpp::Events::destructThreadData() in destructor.
+
+@code
+void myThreadProc(void * threadParam)
+{
+    Cpp::Events::ThreadInit threadInit;
+    
+    // all the thread stuff goes here ...
+
+}
+@endcode
+
+@section sect_declaring Declaring Events
+
+Event object has two interfaces - one for invocation and another for
+managing connections. The first one is used by sender object to
+perform notifications. The second one is used by receiver objects (or
+by the third party) to connect and disconnect event handlers.
+
+Unlike Boost.Signals and other template-based implementations,
+Cpp::Events separates these two interfaces. So event in Cpp::Events
+implementation is represented by the two entities.
+
+The first one is a member variable of template class Cpp::Event<>. The
+second one is a member function that takes no arguments and returns
+temporary object of class Cpp::EventRef<> constructed from a reference
+to that variable. The variable is an event implementation itself. The
+function is a provider of the connection management interface. To draw
+an analogy with C#, the function is an event itself, and the variable
+is an underlying multicast delegate.
+
+@code
+class Button : public Widget
+{
+public:
+    Button(Widget * parentWidget);
+
+    // Event connection interface
+    Cpp::EventRef<> clicked() { return clicked_; }
+protected:
+    virtual void mouseDown(MouseParams const & mouseParams);
+private:
+    // Event implementation
+    Cpp::Event clicked_;
+};
+
+void Button::mouseDown(MouseParams const & mouseParams)
+{
+    if(mouseParams.button() == MouseParams::LeftButton)
+    {
+        clicked_.fire();
+    }
+}
+@endcode
+
+@section sect_connecting Connecting Events
+
+Events are connected to event handlers. In Cpp::Events event handlers
+are member functions bound to the specific object. Such pair is called
+a delegate. For some reasons there are no built-in delegates in
+C++. Internally Cpp::Events uses hackish delegate library by Don
+Clugston, but when making connections pointer to object and pointer to
+member function are passed as separate values.
+
+Event is connected to delegate with the help of the object of
+Cpp::ConnectionScope class. That object determines lifetime of the
+established connection - when connection scope object dies all related
+connections are automatically broken.
+
+Connection is established by connect() method of the
+Cpp::ConnectionScope. It is overloaded function that requires at least
+three arguments. The first one is the Cpp::EventRef<> object, the
+second one is a pointer to the receiver object and the third one is a
+pointer to the member of the receiver object.
+
+@code
+class Dialog : public Widget
+{
+public:
+    Dialog(Widget * parentWidget)
+        : Widget(parentWidget)
+    {
+        okButton_.reset(new Button(this));
+        okButton_->setGeometry(100, 200, 100, 50);
+        scope_.connect(okButton_->clicked(), this, &Dialog::accept);
+        
+        cancelButton_.reset(new Button(this));
+        cancelButton_->setGeometry(300, 200, 100, 50);
+        scope_.connect(cancelButton_->clicked(), this, &Dialog::reject);
+    }
+
+private:
+    std::auto_ptr<Button> okButton_;
+    std::auto_ptr<Button> cancelButton_;
+    Cpp::ConnectionScope scope_;
+
+    void accept();
+    void reject();
+};
+@endcode
+
+@section sect_arguments Arguments
+
+Events can have arguments. Types of arguments are specified as
+arguments for template classes Cpp::Event<> and Cpp::EventRef<>.
+
+@code
+class CheckBox : public Widget
+{
+public:
+   CheckBox(Widget * parentWidget);
+
+   bool isChecked() const { return isChecked_; }
+   void setChecked(bool b);
+
+   Cpp::EventRef<bool> toggled() { return toggled_; }
+private:
+   bool isChecked_;
+   Cpp::Event<bool> toggled_;
+};
+
+void CheckBox::setChecked(bool b)
+{
+    isChecked_ = b;
+    repaint();
+    toggled_.fire(b);
+}
+@endcode
+
+No type transformations are applied to the argument types specified in
+the declaration. If argument should be passed by const reference
+instead of copying it, then const reference type should be used in
+Cpp::Event<> and Cpp::EventRef<>.
+
+@code
+class ComboBox : public Widget
+{
+public:
+    ComboBox(Widget * parentWidget);
+
+    void appendItem(String const & item);
+    void insertItem(int index, String const & item);
+    void removeItem(int index);
+    int findItem(String const & item);
+
+    int currentItem() const;
+    void setCurrentItem(int i);
+
+    Cpp::EventRef<int, String const &> currentItemChanged() { return currentItemChanged_; }
+private:
+    std::vector<String> items_;
+    int currentItemIndex_;
+    Cpp::Event<int, String const &> currentItemChanged_;
+};
+
+void ComboBox::setCurrentItem(int i)
+{
+    currentItemIndex_ = i;
+    repaint();
+    currentItemChanged_.fire(i, items_[i]);
+}
+@endcode
+
+@section sect_signature Signature Transformation
+
+@subsection sect_signature_parametrization Parametrization
+
+@subsection sect_signature_argument_conversion Argument Conversion
+
+@subsection sect_arguments_discarding_arguments Discarding Arguments
+
+@section sect_chaining Event Chaining
+
+@section sect_virtual Virtual Events
+
+ */
