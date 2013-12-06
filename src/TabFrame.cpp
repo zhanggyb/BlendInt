@@ -93,8 +93,8 @@ namespace BlendInt {
 		m_button_box = new ButtonBox;
 
 		VerticalLayout* body = new VerticalLayout;
-		body->add(m_stack_widget);
-		body->add(m_button_box);
+		body->Add(m_stack_widget);
+		body->Add(m_button_box);
 
 		set_size(400 + margin().left() + margin().right(), 300 + margin().top() + margin().bottom());
 		//body->Resize(size());

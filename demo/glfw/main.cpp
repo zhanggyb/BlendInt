@@ -95,7 +95,7 @@ public:
 		//button->set_text(str);
 		//button->set_name(str);
 
-		m_layout.add(button);
+		m_layout.Add(button);
 		m_buttons.push_back(button);
 	}
 
@@ -103,7 +103,7 @@ public:
 	{
 		if(m_buttons.size()) {
 			Button* button = m_buttons[m_buttons.size() - 1];
-			m_layout.erase(button);
+			m_layout.Erase(button);
 			m_buttons.pop_back();
 			m_layout.Resize(m_layout.preferred_size());
 		}

@@ -52,6 +52,8 @@ namespace BlendInt {
 	 	 events()->connect(timer->timeout(), this, &Foo::do_sth);
 	 	 timer->SetInterval(50);	// 50 ms
 	  @endcode
+	 *
+	 * @ingroup animation
 	 */
 	class Timer
 	{

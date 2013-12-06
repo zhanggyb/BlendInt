@@ -17,16 +17,16 @@ DemoFrame::DemoFrame()
 	m_hlayout->set_margin(0, 0, 0, 0);
 
 	Label* label = new Label("Click to create: ");
-	m_hlayout->add(label);
+	m_hlayout->Add(label);
 
 	Button* start_button = new Button("Start");
-	m_hlayout->add(start_button);
+	m_hlayout->Add(start_button);
 
 	Button* reset_button = new Button("Reset Interval");
-	m_hlayout->add(reset_button);
+	m_hlayout->Add(reset_button);
 
 	Button* stop_button = new Button("Stop");
-	m_hlayout->add(stop_button);
+	m_hlayout->Add(stop_button);
 
 	set_size(m_hlayout->size().width() + margin().left() + margin().right(),
 				m_hlayout->size().height() + margin().top() + margin().bottom());

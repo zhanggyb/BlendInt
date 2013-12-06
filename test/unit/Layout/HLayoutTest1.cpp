@@ -9,7 +9,8 @@
 
 using namespace BlendInt;
 
-TEST_F(HLayoutTest1, CheckHLayout1)
+// test the default Add() method
+TEST_F(HLayoutTest1, Add1)
 {
     Init ();
     GLFWwindow* window = CreateWindow("Timer Test");
@@ -23,8 +24,8 @@ TEST_F(HLayoutTest1, CheckHLayout1)
     ClockWidget* clock2 = new ClockWidget;
     clock2->set_background(Color(100, 200, 200, 245));
 
-    hlayout->add(clock1);
-    hlayout->add(clock2);
+    hlayout->Add(clock1);
+    hlayout->Add(clock2);
 
     Interface::instance()->bind(hlayout);
 
@@ -35,3 +36,82 @@ TEST_F(HLayoutTest1, CheckHLayout1)
     ASSERT_TRUE(true);
 }
 
+TEST_F(HLayoutTest1, Add2)
+{
+    Init ();
+    GLFWwindow* window = CreateWindow("Timer Test");
+	
+    // add test code here
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->SetPosition(200, 200);
+    
+    ClockWidget* clock1 = new ClockWidget;
+    ClockWidget* clock2 = new ClockWidget;
+    clock2->set_background(Color(100, 200, 200, 245));
+
+    hlayout->Add(clock1);
+    hlayout->Add(clock2);
+
+    Interface::instance()->bind(hlayout);
+
+    RunLoop(window);
+
+    Terminate();
+
+    ASSERT_TRUE(true);
+}
+
+TEST_F(HLayoutTest1, Resize1)
+{
+    Init ();
+    GLFWwindow* window = CreateWindow("Timer Test");
+	
+    // add test code here
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->SetPosition(200, 200);
+    
+    ClockWidget* clock1 = new ClockWidget;
+    ClockWidget* clock2 = new ClockWidget;
+    clock2->set_background(Color(100, 200, 200, 245));
+
+    hlayout->Add(clock1);
+    hlayout->Add(clock2);
+
+    Interface::instance()->bind(hlayout);
+
+	hlayout->Resize(300, 150);
+	
+    RunLoop(window);
+
+    Terminate();
+
+    ASSERT_TRUE(true);
+}
+
+TEST_F(HLayoutTest1, Resize2)
+{
+    Init ();
+    GLFWwindow* window = CreateWindow("Timer Test");
+	
+    // add test code here
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->SetPosition(200, 200);
+    
+    ClockWidget* clock1 = new ClockWidget;
+    ClockWidget* clock2 = new ClockWidget;
+    clock2->set_background(Color(100, 200, 200, 245));
+
+    hlayout->Add(clock1);
+    hlayout->Add(clock2);
+
+    Interface::instance()->bind(hlayout);
+
+    RunLoop(window);
+
+    Terminate();
+
+    ASSERT_TRUE(true);
+}

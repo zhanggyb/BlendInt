@@ -46,7 +46,7 @@ namespace BlendInt {
 	void ButtonBox::Add (AbstractButton* button)
 	{
 		if(layout())
-			layout()->add(button);
+			layout()->Add(button);
 	}
 
 	void ButtonBox::Init ()

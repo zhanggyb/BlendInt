@@ -32,6 +32,7 @@
 /** @defgroup exceptions Exceptions */
 /** @defgroup opengl Wrapper classes for OpenGL API */
 /** @defgroup gui GUI classes */
+/** @defgroup animation Animation */
 
 /**
  * @defgroup functions_throw_exception Functions throw exception
