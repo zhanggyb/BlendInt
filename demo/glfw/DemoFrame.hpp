@@ -28,6 +28,8 @@ public:
 
 	AbstractWidget* widget () const {return m_widget;}
 
+	void FullWindow (unsigned int width, unsigned int height);
+
 protected:
 
 	virtual void Update (int type, const void* data);
@@ -59,7 +61,6 @@ private:
 	Timer* m_timer;
 
 	AbstractWidget* m_widget;
-
 };
 
 #endif /* DEMOFRAME_HPP_ */

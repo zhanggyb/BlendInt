@@ -47,6 +47,8 @@
 
 #include <Cpp/Events.hpp>
 
+#include <boost/smart_ptr.hpp>
+
 #define BLENDINT_EVENTS_INIT_ONCE_IN_MAIN Cpp::Events::ProcessInit processInit
 
 namespace BlendInt {
@@ -76,25 +78,32 @@ namespace BlendInt {
 
 		void Render ();
 
-		void resizeEvent (int width, int height);
+		void GLFWKeyEvent (int key, int scancode, int action, int mods);
 
-		void keyEvent (int key, int scancode, int action, int mods);
+		void GLFWMouseButtonEvent (int button, int action, int mods);
 
-		void mouseButtonEvent (int button, int action, int mods);
+		void GLFWCursorPosEvent (double xpos, double ypos);
 
-		void cursorPosEvent (double xpos, double ypos);
+		void DispatchKeyEvent (KeyEvent* event);
+
+		void DispatchMousePressEvent (MouseEvent* event);
+
+		void DispatchMouseReleaseEvent (MouseEvent* event);
+
+		void DispatchMouseMoveEvent (MouseEvent* event);
 
 		const Size& size () const;
 
-		void Resize (int width, int height);
-
 		void Resize (const Size& size);
 
-		Cpp::ConnectionScope& events () {return m_events;}
+		void Resize (unsigned int width, unsigned int height);
+
+		Cpp::EventRef<unsigned int, unsigned int> resized() {return m_resized;}
+
+		// Cpp::ConnectionScope& events () {return m_events;}
+		boost::scoped_ptr<Cpp::ConnectionScope>& events() {return m_events;}
 
 	private:
-
-		void dispatch_render_event (AbstractWidget* obj);
 
 		void dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event);
 
@@ -113,7 +122,9 @@ namespace BlendInt {
 
 		Size m_size;
 
-		Cpp::ConnectionScope m_events;
+		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
+
+		Cpp::Event<unsigned int, unsigned int> m_resized;
 
 		static Interface* interface;
 

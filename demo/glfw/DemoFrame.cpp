@@ -66,6 +66,12 @@ void DemoFrame::SetWidget (AbstractWidget* widget)
 	}
 }
 
+void DemoFrame::FullWindow(unsigned int width, unsigned int height)
+{
+	std::cout << "Get FullWindow event: " << width << " " << height << std::endl;
+	Resize(width, height);
+}
+
 void DemoFrame::Update(int type, const void* data)
 {
 	switch (type) {

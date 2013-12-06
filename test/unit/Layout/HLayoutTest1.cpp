@@ -50,6 +50,11 @@ TEST_F(HLayoutTest1, Add2)
     ClockWidget* clock2 = new ClockWidget;
     clock2->set_background(Color(100, 200, 200, 245));
 
+	clock1->Resize(100, 100);
+	clock2->Resize(100, 100);
+	
+	hlayout->Resize(400, 400);
+	
     hlayout->Add(clock1);
     hlayout->Add(clock2);
 

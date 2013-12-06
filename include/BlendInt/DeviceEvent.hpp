@@ -21,16 +21,18 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_EVENT_HPP_
-#define _BLENDINT_EVENT_HPP_
+#ifndef _BLENDINT_DEVICEEVENT_HPP_
+#define _BLENDINT_DEVICEEVENT_HPP_
 
 /**
- * @defgroup events Events from window system
+ * @defgroup device_events Device events from window system
  *
- * Events from window system includes:
- * 	- Keyboard events
- * 	- Mouse events
- * 	- TBD...
+ * Device events come from the window system, usually are triggered by a input device
+ * like keyboard or mouse.
+ *
+ * BlendInt does not provide a mechanism to generate device events inside, instead it only
+ * receive them from the native window system. And a device event is different from the event
+ * fired in certain widget object, see the details of event/delegate in @ref cpp_events
  *
  * @ingroup gui
  */
@@ -42,13 +44,13 @@ namespace BlendInt {
 	/**
 	 * @brief the basic event class
 	 *
-	 * @ingroup events
+	 * @ingroup device_events
 	 */
-	class Event
+	class DeviceEvent
 	{
 	public:
 
-		Event()
+		DeviceEvent()
 		: m_accepted(false), m_ignored(false), m_object(0)
 		{
 		}
@@ -97,4 +99,4 @@ namespace BlendInt {
 
 } /* namespace BlendInt */
 
-#endif	/* _BLENDINT_EVENT_HPP_ */
+#endif	/* _BLENDINT_DEVICEEVENT_HPP_ */
