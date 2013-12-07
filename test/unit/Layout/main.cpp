@@ -2,7 +2,9 @@
  * Unit test for Layout
  */
 
-#include "HLayoutTest1.hpp"
+//#include "HLayoutTest1.hpp"
+//#include "VLayoutTest1.hpp"
+#include <gtest/gtest.h>
 #include <BlendInt/Interface.hpp>
 
 int main (int argc, char* argv[])
