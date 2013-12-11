@@ -103,7 +103,7 @@ $1Test1::~$1Test1()
 TEST_F($1Test1, Foo1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("$1 Test");
+	GLFWwindow* window = CreateWindow("$1 - Foo1");
 
 	// TODO: add test code here
 

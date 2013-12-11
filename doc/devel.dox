@@ -30,10 +30,49 @@ assume checkout BlendInt source code to ~/BlendInt
 
 @section sect_unit_test Unit Test
 
-It's encouraged that all code in BlendInt library should be tested.
+It's encouraged that each module should be tested and every line shoule be
+covered in the unit test.
 
-BlendInt uses Google Test to do so, and all test code are submitted in
-"test/unit" and gtest source code in "test/gtest".
+BlendInt uses Google Test (1.7) to develop unit test. The folder in 
+"test/gtest" is a complete copy of Google Test 1.7.
+
+@subsection sect_unit_test_build Build the Unit Test code
+
+To build the existing unit test code,  run CMake with option -DWITH_UNIT_TEST
+
+	$ cmake <BlendInt source dir> -DWITH_UNIT_TEST=TRUE
+	
+In mose cases,  it's also needed to enable DEBUG macro as some test code need it.
+
+	$ cmake <BlendInt source dir> -DCMAKE_BUILD_TYPE=Debug -DWITH_UNIT_TEST
+
+@subsection sect_unit_test_run Run a unit test
+
+A unit test is built into "bin/" in the build directory after building with cmake/make.
+
+To run a unit test,  for example,  to run unit test for Widget,  run
+
+	$ ./bin/testWidget
+	
+As BlendInt is a GUI toolkit, most unit test need to observe the behavior in
+the OpenGL Context window instead of simply check the return value.
+	
+@subsection sect_unit_test_write Write an unit test
+
+To write a new unit test,  follow these steps:
+
+- create a new folder in "test/unit"
+- create source for main()
+- create test fixture
+- edit CMakeLists.txt in the new folder
+- update CMakeLists.txt in "test/unit"
+
+To simplify these steps,  use the script "create_test.sh" in "test/script", 
+for example:
+
+	$ ~/BlendInt/test/script/create_test.sh Layout
+
+This will create new folder in "test/unit" and copy some templates files.
 
 @subsection sect_unit_test_example An Example of Unit Test
 

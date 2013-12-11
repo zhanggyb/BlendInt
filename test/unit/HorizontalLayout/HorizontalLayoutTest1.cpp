@@ -23,7 +23,7 @@ HorizontalLayoutTest1::~HorizontalLayoutTest1()
 TEST_F(HorizontalLayoutTest1, Add1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("HorizontalLayout Test");
+	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add1");
 
 	HorizontalLayout* hlayout = new HorizontalLayout;
 	hlayout->SetPosition(200, 200);
@@ -55,7 +55,7 @@ TEST_F(HorizontalLayoutTest1, Add1)
 TEST_F(HorizontalLayoutTest1, Add2)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("HorizontalLayout Test");
+	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add2");
 
 	HorizontalLayout* hlayout = new HorizontalLayout;
 	hlayout->SetPosition(200, 200);
@@ -72,6 +72,72 @@ TEST_F(HorizontalLayoutTest1, Add2)
 
 	hlayout->Add(widget1);
 	hlayout->Add(widget2);
+
+	Interface::instance()->bind(hlayout);
+
+	RunLoop(window);
+
+	Terminate();
+
+	ASSERT_TRUE(true);
+}
+
+/**
+ * Test resize
+ *
+ * Expected result: the children in the HLayout resize too according to the layout size
+ */
+TEST_F(HorizontalLayoutTest1, Resize1)
+{
+	Init();
+	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Resize1");
+
+	// add test code here
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->SetPosition(200, 200);
+
+	Widget* widget1 = new Widget;
+	widget1->SetExpand(true);
+	Widget* widget2 = new Widget;
+	widget2->SetExpand(true);
+
+	hlayout->Add(widget1);
+	hlayout->Add(widget2);
+
+	hlayout->Resize(400, 200);
+
+	Interface::instance()->bind(hlayout);
+
+	RunLoop(window);
+
+	Terminate();
+
+	ASSERT_TRUE(true);
+}
+
+/**
+ * Test resize, no child is expandable
+ *
+ * Expected result: the children in the HLayout resize too according to the layout size
+ */
+TEST_F(HorizontalLayoutTest1, Resize2)
+{
+	Init();
+	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Resize2");
+
+	// add test code here
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->SetPosition(200, 200);
+
+	Widget* widget1 = new Widget;
+	Widget* widget2 = new Widget;
+
+	hlayout->Add(widget1);
+	hlayout->Add(widget2);
+
+	hlayout->Resize(400, 200);
 
 	Interface::instance()->bind(hlayout);
 
