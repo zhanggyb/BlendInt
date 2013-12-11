@@ -6,6 +6,7 @@
 SCRIPT_FILE=`readlink -f $0`
 SOURCE_DIR=`dirname $SCRIPT_FILE`
 CMAKE_OPTIONS="-DCMAKE_BUILD_TYPE=Debug -DWITH_UNIT_TEST=True"
+SYSTEM=`uname -o`
 
 # help info
 #
@@ -38,8 +39,16 @@ then
     exit 1
 fi
 
-cmake $SOURCE_DIR $CMAKE_OPTIONS
-cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" $CMAKE_OPTIONS
+if [ "$SYSTEM"x = "GNU/Linux"x ]
+then
+    echo "Generate Eclipse CDT4 - Unix Makefiles"
+    cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" \
+        -DCMAKE_ECLIPSE_VERSION=3.7 $CMAKE_OPTIONS
+elif [ "$SYSTEM"x = "Darwin"x ]
+then
+    echo "OS is Mac OS X"
+    cmake $SOURCE_DIR -G"Xcode" $CMAKE_OPTIONS
+fi
 
 exit 0
 
