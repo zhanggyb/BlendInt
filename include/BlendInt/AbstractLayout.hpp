@@ -56,9 +56,7 @@ namespace BlendInt {
 
 		virtual ~AbstractLayout ();
 
-		void Add (Widget* form);
-
-		void Add (AbstractLayout* layout);
+		void Add (AbstractWidget* obj);
 
 		/**
 		 * @brief remove the object from layout
@@ -102,9 +100,7 @@ namespace BlendInt {
 
 		virtual void Render () = 0;
 
-		virtual void add_item (Widget* form) = 0;
-
-		virtual void add_item (AbstractLayout* layout) = 0;
+		virtual void add_item (AbstractWidget* form) = 0;
 
 		virtual void remove_item (AbstractWidget* object) = 0;
 

@@ -204,12 +204,7 @@ namespace BlendInt {
 		}
 	}
 
-	void TableLayout::add_item(Widget* form)
-	{
-
-	}
-
-	void TableLayout::add_item(AbstractLayout* layout)
+	void TableLayout::add_item(AbstractWidget* object)
 	{
 
 	}

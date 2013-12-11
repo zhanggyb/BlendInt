@@ -334,6 +334,11 @@ namespace BlendInt {
 #ifdef DEBUG
 	public:
 
+		inline void lock (bool status)
+		{
+			m_locked = status;
+		}
+
 		static AbstractWidget* find (uint64_t id);
 
 		static unsigned int map_size ()

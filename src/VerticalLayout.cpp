@@ -141,10 +141,10 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::add_item (Widget* widget)
+	void VerticalLayout::add_item (AbstractWidget* object)
 	{
 		// don't fire events when adding a widget into a layout
-		widget->deactivate_events();
+		object->deactivate_events();
 		deactivate_events();
 
 		Size min = minimal_size();
@@ -154,33 +154,37 @@ namespace BlendInt {
 		unsigned int w_plus = margin().left() + margin().right();
 
 		if (items().size() == 0) {
-			min.add_height(widget->minimal_size().height());
-			preferred.add_height(widget->preferred_size().height());
+			min.add_height(object->minimal_size().height());
+			preferred.add_height(object->preferred_size().height());
 		} else {
-			min.add_height(widget->minimal_size().height() + space());
-			preferred.add_height(widget->preferred_size().height() + space());
+			min.add_height(object->minimal_size().height() + space());
+			preferred.add_height(object->preferred_size().height() + space());
 		}
 
 		min.set_width(
-		        std::max(min.width(), widget->minimal_size().width() + w_plus));
+		        std::max(min.width(), object->minimal_size().width() + w_plus));
 		preferred.set_width(
 		        std::max(preferred.width(),
-		                widget->preferred_size().width() + w_plus));
+		                object->preferred_size().width() + w_plus));
 
-		if (current_size.width() < preferred.width()) {
-			current_size.set_width(preferred.width());
-		}
-		if (current_size.height() < preferred.height()) {
-			current_size.set_height(preferred.height());
+		if(!locked()) {
+			if (current_size.width() < preferred.width()) {
+				current_size.set_width(preferred.width());
+			}
+			if (current_size.height() < preferred.height()) {
+				current_size.set_height(preferred.height());
+			}
+		} else {
+			// TODO: if geometry is not locked, to sth.
 		}
 
-		items().push_back(widget);
+		items().push_back(object);
 
 		SetPreferredSize(preferred);
 		SetMinimalSize(min);
 
-		if(widget->expand_y()) m_expandable_items.insert(widget);
-		else m_fixed_items.insert(widget);
+		if(object->expand_y()) m_expandable_items.insert(object);
+		else m_fixed_items.insert(object);
 
 		if(! (current_size == size()))
 			Resize(this, current_size);	// call make_layout() through this function
@@ -188,66 +192,10 @@ namespace BlendInt {
 			make_layout(&current_size);
 
 		activate_events();
-		widget->activate_events();
+		object->activate_events();
 
-		bind(widget);
-		LockGeometry(widget, true);
-	}
-
-	void VerticalLayout::add_item (AbstractLayout* layout)
-	{
-		// TODO: currently the code in this function is the same as add_item(Widget*)
-		// check later if a special function for layout object is needed
-
-		// don't fire events when adding a widget into a layout
-		layout->deactivate_events();
-		deactivate_events();
-
-		Size min = minimal_size();
-		Size preferred = preferred_size();
-		Size current_size = size();
-
-		unsigned int w_plus = margin().left() + margin().right();
-
-		if (items().size() == 0) {
-			min.add_height(layout->minimal_size().height());
-			preferred.add_height(layout->preferred_size().height());
-		} else {
-			min.add_height(layout->minimal_size().height() + space());
-			preferred.add_height(layout->preferred_size().height() + space());
-		}
-
-		min.set_width(
-		        std::max(min.width(), layout->minimal_size().width() + w_plus));
-		preferred.set_width(
-		        std::max(preferred.width(),
-		                layout->preferred_size().width() + w_plus));
-
-		if (current_size.width() < preferred.width()) {
-			current_size.set_width(preferred.width());
-		}
-		if (current_size.height() < preferred.height()) {
-			current_size.set_height(preferred.height());
-		}
-
-		items().push_back(layout);
-
-		SetPreferredSize(preferred);
-		SetMinimalSize(min);
-
-		if(layout->expand_y()) m_expandable_items.insert(layout);
-		else m_fixed_items.insert(layout);
-
-		if(! (current_size == size()))
-			Resize(this, current_size);	// call make_layout() through this function
-		else
-			make_layout(&current_size);
-
-		activate_events();
-		layout->activate_events();
-
-		bind(layout);
-		LockGeometry(layout, true);
+		bind(object);
+		LockGeometry(object, true);
 	}
 
 	void VerticalLayout::remove_item(AbstractWidget * object)

@@ -59,9 +59,7 @@ namespace BlendInt {
 
 		virtual void MouseMoveEvent (MouseEvent* event);
 
-		virtual void add_item (Widget* form);
-
-		virtual void add_item (AbstractLayout* layout);
+		virtual void add_item (AbstractWidget* object);
 
 		virtual void remove_item (AbstractWidget* object);
 

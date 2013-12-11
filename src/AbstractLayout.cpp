@@ -50,13 +50,13 @@ namespace BlendInt {
 		m_items.clear();
 	}
 
-	void AbstractLayout::Add (Widget* form)
+	void AbstractLayout::Add (AbstractWidget* obj)
 	{
-		if(children().count(form)) return;
+		if(children().count(obj)) return;
 
 		Size pre_preferred_size = preferred_size();
 
-		add_item (form);
+		add_item (obj);
 
 		if(! (pre_preferred_size == preferred_size())) {
 			// fire events
@@ -65,15 +65,6 @@ namespace BlendInt {
 		// if minimal size changed
 		// fire events
 
-	}
-
-	void AbstractLayout::Add (AbstractLayout* object)
-	{
-		if(children().count(object)) return;
-
-		bind(object);
-		LockGeometry(object, true);
-		m_items.push_back(object);
 	}
 
 	bool AbstractLayout::Remove (AbstractWidget* object)

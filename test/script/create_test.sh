@@ -36,7 +36,7 @@ EOF
  */
 
 #include <gtest/gtest.h>
-#include <BlendInt/Interface.h>
+#include <BlendInt/Interface.hpp>
 
 int main (int argc, char* argv[])
 {
@@ -80,8 +80,7 @@ EOF
 
 	cat << EOF >> $1Test1.cpp
 #include "$1Test1.hpp"
-#include <BlendInt/Interface.hpp>
-#include <BlendInt/VerticalLayout.hpp>
+#include <BlendInt/$1.hpp>
 
 using namespace BlendInt;
 
@@ -96,7 +95,11 @@ $1Test1::~$1Test1()
 	// TODO: add destructor code
 }
 
-// test Foo() method
+/**
+ * test Foo() method
+ *
+ * Expected result: 
+ */
 TEST_F($1Test1, Foo1)
 {
 	Init ();
