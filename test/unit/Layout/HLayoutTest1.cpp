@@ -25,7 +25,7 @@ TEST_F(HLayoutTest1, Add1) {
 	hlayout->Add(clock1);
 	hlayout->Add(clock2);
 
-	Interface::instance()->bind(hlayout);
+	Interface::Instance()->Bind(hlayout);
 
 	RunLoop(window);
 
@@ -55,7 +55,7 @@ TEST_F(HLayoutTest1, Add2) {
 	hlayout->Add(clock1);
 	hlayout->Add(clock2);
 
-	Interface::instance()->bind(hlayout);
+	Interface::Instance()->Bind(hlayout);
 
 	RunLoop(window);
 
@@ -80,7 +80,7 @@ TEST_F(HLayoutTest1, Resize1) {
 	hlayout->Add(clock1);
 	hlayout->Add(clock2);
 
-	Interface::instance()->bind(hlayout);
+	Interface::Instance()->Bind(hlayout);
 
 	hlayout->Resize(300, 150);
 
@@ -107,7 +107,7 @@ TEST_F(HLayoutTest1, Resize2) {
 	hlayout->Add(clock1);
 	hlayout->Add(clock2);
 
-	Interface::instance()->bind(hlayout);
+	Interface::Instance()->Bind(hlayout);
 
 	RunLoop(window);
 

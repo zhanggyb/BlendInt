@@ -30,18 +30,18 @@ GLWindow::GLWindow(QWidget *parent) :
 
 GLWindow::~GLWindow()
 {
-    BlendInt::Interface::release ();
+    BlendInt::Interface::Release ();
 }
 
 void GLWindow::initializeGL()
 {
     using namespace BlendInt;
 
-    if(!Interface::initialize()) {
+    if(!Interface::Initialize()) {
       exit(1);
     }
     
-  Interface* app = Interface::instance();
+  Interface* app = Interface::Instance();
   
   app->Resize(size().width(), size().height());
 
@@ -53,8 +53,8 @@ void GLWindow::initializeGL()
 	remove_button->set_text("Remove Button");
 	remove_button->SetPosition(600, 650);
 
-	app->bind(add_button);
-	app->bind(remove_button);
+	app->Bind(add_button);
+	app->Bind(remove_button);
 
 	// -----------------------
 
@@ -62,7 +62,7 @@ void GLWindow::initializeGL()
 	reset_button->set_text("Reset");
 	reset_button->Move(640, 300);
 
-	app->bind(reset_button);
+	app->Bind(reset_button);
 
 	ScrollView* scroll_view = new ScrollView;
 
@@ -77,7 +77,7 @@ void GLWindow::initializeGL()
 
 	scroll_view->set_viewport(button);
 
-	app->bind(scroll_view);
+	app->Bind(scroll_view);
 
 	Label* label = new Label("Hello World!");
 
@@ -86,18 +86,18 @@ void GLWindow::initializeGL()
 	label->set_text ("alsdkjflasdjflasfnvlkasefage");
 	label->Resize(80, 40);
 	
-	app->bind(label);
+	app->Bind(label);
 }
 
 void GLWindow::resizeGL(int w, int h)
 {
-    BlendInt::Interface::instance()->Resize(w, h);
+    BlendInt::Interface::Instance()->Resize(w, h);
 }
 
 void GLWindow::paintGL()
 {
     using namespace BlendInt;
-    BlendInt::Interface* app = BlendInt::Interface::instance();
+    BlendInt::Interface* app = BlendInt::Interface::Instance();
 
     app->Render();
 }
@@ -107,7 +107,7 @@ void GLWindow::mouseMoveEvent (QMouseEvent* event)
     //std::cout << event->x() << " " << event->y() << std::endl;
     //std::cout << event->pos().x() << " " << event->pos().y() << std::endl;
 
-    BlendInt::Interface::instance()->GLFWCursorPosEvent((double)event->x(),
+    BlendInt::Interface::Instance()->GLFWCursorPosEvent((double)event->x(),
            (double) event->y());
 }
 
@@ -139,7 +139,7 @@ void GLWindow::mousePressEvent (QMouseEvent* event)
         mods = mods | BlendInt::ModifierAlt;
     }
 
-    BlendInt::Interface::instance()->GLFWMouseButtonEvent(button, action, mods);
+    BlendInt::Interface::Instance()->GLFWMouseButtonEvent(button, action, mods);
 }
 
 void GLWindow::mouseReleaseEvent (QMouseEvent* event)
@@ -171,5 +171,5 @@ void GLWindow::mouseReleaseEvent (QMouseEvent* event)
         mods = mods | BlendInt::ModifierAlt;
     }
 
-    BlendInt::Interface::instance()->GLFWMouseButtonEvent(button, action, mods);
+    BlendInt::Interface::Instance()->GLFWMouseButtonEvent(button, action, mods);
 }

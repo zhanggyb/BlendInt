@@ -26,6 +26,8 @@
 #include <BlendInt/Viewport3D.hpp>
 #include <BlendInt/Interface.hpp>
 
+#include <iostream>
+
 namespace BlendInt {
 
 	GLfloat light_diffuse[] = {1.0, 0.0, 0.0, 1.0};  /* Red diffuse light. */
@@ -39,7 +41,7 @@ namespace BlendInt {
 	GLfloat v[8][3];  /* Will be filled in with X,Y,Z vertexes. */
 
 	Viewport3D::Viewport3D()
-	: Widget()
+	: Widget(), m_xold(0), m_yold(0), m_rotate_x(0.0), m_rotate_y(0.0), m_left_down(false)
 	{
 		Camera* default_camera = new Camera;
 		m_cameras.push_back(default_camera);
@@ -55,7 +57,7 @@ namespace BlendInt {
 	}
 
 	Viewport3D::Viewport3D(AbstractWidget* parent)
-	: Widget(parent)
+	: Widget(parent), m_xold(0), m_yold(0), m_rotate_x(0.0), m_rotate_y(0.0), m_left_down(false)
 	{
 		Camera* default_camera = new Camera;
 		m_cameras.push_back(default_camera);
@@ -114,14 +116,35 @@ namespace BlendInt {
 
 	void Viewport3D::MousePressEvent (MouseEvent* event)
 	{
+		if(event->button() == MouseButtonLeft) {
+			m_left_down = true;
+		}
+		m_xold = event->position().x();
+		m_yold = event->position().y();
 	}
 
 	void Viewport3D::MouseReleaseEvent (MouseEvent* event)
 	{
+		if(event->button() == MouseButtonLeft) {
+			m_left_down = false;
+		}
 	}
 
 	void Viewport3D::MouseMoveEvent (MouseEvent* event)
 	{
+		if (m_left_down)
+		{
+			m_rotate_y = m_rotate_y + (event->position().y() - m_yold) / 5.f;
+			m_rotate_x = m_rotate_x + (event->position().x() - m_xold) / 5.f;
+
+			if (m_rotate_y > 90)
+				m_rotate_y = 90;
+			if (m_rotate_y < -90)
+				m_rotate_y = -90;
+		}
+
+		m_xold = event->position().x();
+		m_yold = event->position().y();
 	}
 
 	void Viewport3D::Render ()
@@ -164,47 +187,21 @@ namespace BlendInt {
 
 		//-------------------------------------------------------------------------------------------------------
 
-		//test code
+		/* Clear the buffer, clear the matrix */
+		//glClearColor(0.5, 0.5, 0.5, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glClearColor(1.0, 1.0, 1.0, 0.75);
-		//glTranslatef(200.f, 150.f, 0.0f);
-		//glRotatef((float) glfwGetTime() * 60.f, 0.f, 0.f, 1.f);
-//		glBegin(GL_POLYGON);
-//		glColor3f(1.f, 0.f, 0.f);
-//		glVertex3f(0.f, 0.0f, 0.f);
-//		glColor3f(0.f, 1.f, 0.f);
-//		glVertex3f(200.f, 0.0f, 0.f);
-//		glColor3f(0.f, 0.f, 1.f);
-//		glVertex3f(200.f, 200.f, 0.f);
-//		glColor3f(1.f, 1.f, 1.f);
-//		glVertex3f(0.f, 200.f, 0.f);
-//		glEnd();
+		glRotatef(m_rotate_y, 1, 0, 0);
+		glRotatef(m_rotate_x, 0, 1, 0);
 
-		  /* Use depth buffering for hidden surface elimination. */
-		  glEnable(GL_DEPTH_TEST);
-
-		  int i;
-
-		  for (i = 0; i < 6; i++) {
-		    glBegin(GL_QUADS);
-		    glNormal3fv(&n[i][0]);
-		    glVertex3fv(&v[faces[i][0]][0]);
-		    glVertex3fv(&v[faces[i][1]][0]);
-		    glVertex3fv(&v[faces[i][2]][0]);
-		    glVertex3fv(&v[faces[i][3]][0]);
-		    glEnd();
-		  }
-		 DrawGrid(10.f, 10.f, 0.2f, 1.0f);
+		//test code
+		DrawCube();
 
 		//-------------------------------------------------------------------------------------------------------
 
-		  glDisable(GL_DEPTH_TEST);
-
+		glDisable(GL_DEPTH_TEST);
 
 		glDisable(GL_SCISSOR_TEST);
-
-
 
 		// set back the previous matrices and viewport
 		glMatrixMode(GL_PROJECTION);
@@ -213,7 +210,7 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixd(model_matrix);
 
-		glViewport(0, 0, Interface::instance()->size().width(), Interface::instance()->size().height());
+		glViewport(0, 0, Interface::Instance()->size().width(), Interface::Instance()->size().height());
 
 #ifdef DEBUG
 		glMatrixMode(GL_MODELVIEW);
@@ -241,6 +238,46 @@ namespace BlendInt {
 
 		glPopMatrix();
 #endif
+	}
+
+	void Viewport3D::DrawCube ()
+	{
+		/* We tell we want to draw quads */
+		glBegin(GL_QUADS);
+
+		/* Every four calls to glVertex, a quad is drawn */
+		glColor3f(0, 0, 0); glVertex3f(-1, -1, -1);
+		glColor3f(0, 0, 1); glVertex3f(-1, -1,  1);
+		glColor3f(0, 1, 1); glVertex3f(-1,  1,  1);
+		glColor3f(0, 1, 0); glVertex3f(-1,  1, -1);
+
+		glColor3f(1, 0, 0); glVertex3f( 1, -1, -1);
+		glColor3f(1, 0, 1); glVertex3f( 1, -1,  1);
+		glColor3f(1, 1, 1); glVertex3f( 1,  1,  1);
+		glColor3f(1, 1, 0); glVertex3f( 1,  1, -1);
+
+		glColor3f(0, 0, 0); glVertex3f(-1, -1, -1);
+		glColor3f(0, 0, 1); glVertex3f(-1, -1,  1);
+		glColor3f(1, 0, 1); glVertex3f( 1, -1,  1);
+		glColor3f(1, 0, 0); glVertex3f( 1, -1, -1);
+
+		glColor3f(0, 1, 0); glVertex3f(-1,  1, -1);
+		glColor3f(0, 1, 1); glVertex3f(-1,  1,  1);
+		glColor3f(1, 1, 1); glVertex3f( 1,  1,  1);
+		glColor3f(1, 1, 0); glVertex3f( 1,  1, -1);
+
+		glColor3f(0, 0, 0); glVertex3f(-1, -1, -1);
+		glColor3f(0, 1, 0); glVertex3f(-1,  1, -1);
+		glColor3f(1, 1, 0); glVertex3f( 1,  1, -1);
+		glColor3f(1, 0, 0); glVertex3f( 1, -1, -1);
+
+		glColor3f(0, 0, 1); glVertex3f(-1, -1,  1);
+		glColor3f(0, 1, 1); glVertex3f(-1,  1,  1);
+		glColor3f(1, 1, 1); glVertex3f( 1,  1,  1);
+		glColor3f(1, 0, 1); glVertex3f( 1, -1,  1);
+
+		/* No more quads */
+		glEnd();
 	}
 
 	void Viewport3D::DrawGrid (float width, float height, float small_step, float big_step)

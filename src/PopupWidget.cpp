@@ -34,8 +34,6 @@ namespace BlendInt {
 	: Frame()
 	{
 		reset_z(1);	// TODO: define layer in enumeration
-
-		m_icon.demo_init();
 	}
 
 	PopupWidget::~PopupWidget()
@@ -54,8 +52,6 @@ namespace BlendInt {
 				Size shadow_size = *(static_cast<const Size*>(data));
 
 				m_shadow.Resize(shadow_size);
-
-				m_icon.Resize(16, 16);
 
 				break;
 			}
@@ -103,8 +99,6 @@ namespace BlendInt {
 		}
 
 		glDisable(GL_BLEND);
-
-		dispatch_render(&m_icon);
 
 		glPopMatrix();
 	}

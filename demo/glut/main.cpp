@@ -17,8 +17,8 @@ int init_resources(void)
 	using BlendInt::Interface;
 	using namespace BlendInt;
 	
-	Interface::initialize();
-	Interface* app = Interface::instance();
+	Interface::Initialize();
+	Interface* app = Interface::Instance();
 	app->Resize(1200, 800);
 	
 	// 	glMatrixMode(GL_PROJECTION);
@@ -33,8 +33,8 @@ int init_resources(void)
 	remove_button->set_text("Remove Button");
 	remove_button->SetPosition(600, 650);
 
-	app->bind(add_button);
-	app->bind(remove_button);
+	app->Bind(add_button);
+	app->Bind(remove_button);
 
 	// -----------------------
 
@@ -42,7 +42,7 @@ int init_resources(void)
 	reset_button->set_text("Reset");
 	reset_button->Move(640, 300);
 
-	app->bind(reset_button);
+	app->Bind(reset_button);
 
 	ScrollView* scroll_view = new ScrollView;
 
@@ -57,7 +57,7 @@ int init_resources(void)
 
 	scroll_view->set_viewport(button);
 
-	app->bind(scroll_view);
+	app->Bind(scroll_view);
 
 	Label* label = new Label("Hello World!");
 
@@ -66,7 +66,7 @@ int init_resources(void)
 	label->set_text ("alsdkjflasdjflasfnvlkasefage");
 	label->Resize(80, 40);
 	
-	app->bind(label);
+	app->Bind(label);
 	
 	return 1;
 }
@@ -75,7 +75,7 @@ void onDisplay()
 {
 	using BlendInt::Interface;
 	
-	Interface::instance()->Render();
+	Interface::Instance()->Render();
 	
 	/* FILLED IN LATER */
 // 	glMatrixMode(GL_MODELVIEW);
@@ -111,14 +111,14 @@ void free_resources()
 {
 	using BlendInt::Interface;
 	
-	Interface::release();
+	Interface::Release();
 }
 
 void onReshape (int width, int height)
 {
 	using BlendInt::Interface;
 	
-	Interface::instance()->Resize(width, height);
+	Interface::Instance()->Resize(width, height);
 }
 
 void onMouse (int button, int state, int x, int y)

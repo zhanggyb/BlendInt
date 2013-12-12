@@ -61,8 +61,8 @@ int main (int argc, char* argv[])
     Button* button = new Button("OK");
     button->SetPosition(1000, 400);
 
-    Interface::instance()->bind(view);
-    Interface::instance()->bind(button);
+    Interface::Instance()->Bind(view);
+    Interface::Instance()->Bind(button);
 
     RunLoop(window);
 

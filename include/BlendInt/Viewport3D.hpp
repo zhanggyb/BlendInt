@@ -63,7 +63,18 @@ namespace BlendInt {
 
 	private:
 
+		void DrawCube ();
+
 		void DrawGrid (float width, float height, float small_step, float big_step);
+
+		int m_xold;
+		int m_yold;
+
+		float m_rotate_x;
+
+		float m_rotate_y;
+
+		bool m_left_down;
 
 	};
 

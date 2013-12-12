@@ -20,21 +20,21 @@ namespace BlendInt {
 
 	static void CbWindowSize(GLFWwindow* window, int w, int h)
 	{
-		Interface::instance()->Resize(w, h);
+		Interface::Instance()->Resize(w, h);
 	}
 
 	static void CbKey(GLFWwindow* window, int key, int scancode, int action,
 					  int mods) {
-		Interface::instance()->GLFWKeyEvent(key, scancode, action, mods);
+		Interface::Instance()->GLFWKeyEvent(key, scancode, action, mods);
 	}
 
 	static void CbMouseButton(GLFWwindow* window, int button, int action,
 							  int mods) {
-		Interface::instance()->GLFWMouseButtonEvent(button, action, mods);
+		Interface::Instance()->GLFWMouseButtonEvent(button, action, mods);
 	}
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos) {
-		Interface::instance()->GLFWCursorPosEvent(xpos, ypos);
+		Interface::Instance()->GLFWCursorPosEvent(xpos, ypos);
 	}
 
 	void Init ()
@@ -63,12 +63,12 @@ namespace BlendInt {
 		glfwMakeContextCurrent(window);
 	
 		/* initialize BlendInt after OpenGL content is created */
-		if (!Interface::initialize()) {
+		if (!Interface::Initialize()) {
 			glfwTerminate();
 			exit(-1);
 		}
 
-		Interface::instance()->Resize(1200, 800);
+		Interface::Instance()->Resize(1200, 800);
 	
 		return window;
 	}
@@ -78,7 +78,7 @@ namespace BlendInt {
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
 			/* Render here */
-			Interface::instance()->Render();
+			Interface::Instance()->Render();
 		
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);
@@ -92,7 +92,7 @@ namespace BlendInt {
 	void Terminate ()
 	{
 		/* release BlendInt */
-		Interface::release();
+		Interface::Release();
 	
 		glfwTerminate();
 	}

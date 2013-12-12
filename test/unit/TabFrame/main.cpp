@@ -64,7 +64,7 @@ int main (int argc, char* argv[])
     tf->Add("Button1", clock1);
     tf->Add("Button2", clock2);
 
-	Interface::instance()->bind(tf);
+	Interface::Instance()->Bind(tf);
 
     RunLoop(window);
 

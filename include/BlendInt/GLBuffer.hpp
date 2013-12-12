@@ -25,6 +25,7 @@
 #define _BLENDINT_GLBUFFER_HPP_
 
 #include <vector>
+#include <GL/gl.h>
 
 #define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
 

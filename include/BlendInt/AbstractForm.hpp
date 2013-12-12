@@ -62,6 +62,10 @@ namespace BlendInt {
 	{
 	public:
 
+#ifdef DEBUG
+		friend class Interface;
+#endif
+
 		AbstractForm();
 
 		AbstractForm(const AbstractForm& orig);

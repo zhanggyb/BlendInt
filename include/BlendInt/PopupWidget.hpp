@@ -64,9 +64,6 @@ namespace BlendInt {
 	private:
 
 		Shadow m_shadow;
-
-		VertexIcon m_icon;	// demo code
-
 	};
 
 }

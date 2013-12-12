@@ -56,8 +56,6 @@ namespace BlendInt {
 
 		~VertexIcon ();
 
-		void demo_init ();
-
 		void load (const float (*vertex_array)[2], size_t array_size,
 				const unsigned int (*vertex_indices)[3], size_t indeces_size);
 

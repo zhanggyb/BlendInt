@@ -71,11 +71,11 @@ public:
 	}
 
 	void bind() {
-		interface()->bind(&m_layout);
+		interface()->Bind(&m_layout);
 	}
 
 	void unbind() {
-		interface()->unbind(&m_layout);
+		interface()->Unbind(&m_layout);
 	}
 
 	void add_button() {
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
 
 	GLFWwindow* window = CreateWindow("GLFW3 Demo");
 
-	Interface* app = Interface::instance();
+	Interface* app = Interface::Instance();
 
 //	DoEvent obj;
 //
@@ -260,19 +260,19 @@ int main(int argc, char* argv[]) {
 
 	DemoFrame* frame = new DemoFrame;
 
-	app->bind(frame);
+	app->Bind(frame);
 
 	SliderBar* sliderbar = new SliderBar;
 
 	sliderbar->Move(400, 400);
 
-	app->bind(sliderbar);
+	app->Bind(sliderbar);
 
 	TabFrame* tabframe = new TabFrame;
 
 	tabframe->Move(600, 300);
 
-	app->bind(tabframe);
+	app->Bind(tabframe);
 
 	// app->events()->connect(app->resized(), frame, &DemoFrame::FullWindow);
 

@@ -35,7 +35,7 @@ TEST_F(VerticalLayoutTest1, Add1)
 	vlayout->Add(widget1);
 	vlayout->Add(widget2);
 
-	Interface::instance()->bind(vlayout);
+	Interface::Instance()->Bind(vlayout);
 
 	RunLoop(window);
 
@@ -72,7 +72,7 @@ TEST_F(VerticalLayoutTest1, Add2)
 	vlayout->Add(widget1);
 	vlayout->Add(widget2);
 
-	Interface::instance()->bind(vlayout);
+	Interface::Instance()->Bind(vlayout);
 
 	RunLoop(window);
 

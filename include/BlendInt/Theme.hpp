@@ -74,54 +74,51 @@ namespace BlendInt {
 		int pad;
 	};
 
+	struct Themes
+	{
+		/* Interface Elements (buttons, menus, icons) */
+		WidgetTheme regular;
+		WidgetTheme tool;
+		WidgetTheme text;
+		WidgetTheme radio_button;
+		WidgetTheme option;
+		WidgetTheme toggle;
+		WidgetTheme number_field;
+		WidgetTheme number_slider;
+		WidgetTheme menu;
+		WidgetTheme pulldown;
+		WidgetTheme menu_back;
+		WidgetTheme menu_item;
+		WidgetTheme tooltip;
+		WidgetTheme box;
+		WidgetTheme scroll;
+		WidgetTheme progress;
+		WidgetTheme list_item;
+
+		WidgetStateTheme state;
+
+		PanelTheme panel; /* depricated, but we keep it for do_versions (2.66.1) */
+
+		/* fac: 0 - 1 for blend factor, width in pixels */
+		float menu_shadow_fac;
+		short menu_shadow_width;
+
+		short pad;
+
+		char iconfile[256];	// FILE_MAXFILE length
+		float icon_alpha;
+
+		/* Axis Colors */
+		Color xaxis, yaxis, zaxis;
+	};
+
+	struct FontStyle {
+		FontStyle();
+		Font regular;
+	};
+
 	class ThemeManager
 	{
-	public:
-		// public structures
-
-		struct Themes
-		{
-			/* Interface Elements (buttons, menus, icons) */
-			WidgetTheme regular;
-			WidgetTheme tool;
-			WidgetTheme text;
-			WidgetTheme radio_button;
-			WidgetTheme option;
-			WidgetTheme toggle;
-			WidgetTheme number_field;
-			WidgetTheme number_slider;
-			WidgetTheme menu;
-			WidgetTheme pulldown;
-			WidgetTheme menu_back;
-			WidgetTheme menu_item;
-			WidgetTheme tooltip;
-			WidgetTheme box;
-			WidgetTheme scroll;
-			WidgetTheme progress;
-			WidgetTheme list_item;
-
-			WidgetStateTheme state;
-
-			PanelTheme panel; /* depricated, but we keep it for do_versions (2.66.1) */
-
-			/* fac: 0 - 1 for blend factor, width in pixels */
-			float menu_shadow_fac;
-			short menu_shadow_width;
-
-			short pad;
-
-			char iconfile[256];	// FILE_MAXFILE length
-			float icon_alpha;
-
-			/* Axis Colors */
-			Color xaxis, yaxis, zaxis;
-		};
-
-		struct FontStyle {
-			FontStyle();
-			Font regular;
-		};
-
 	public:
 
 		friend class Interface;
@@ -175,7 +172,7 @@ namespace BlendInt {
 
 	};
 
-	inline const ThemeManager::Themes* themes ()
+	inline const Themes* themes ()
 	{
 		return ThemeManager::instance()->themes();
 	}

@@ -31,7 +31,7 @@ namespace BlendInt {
 
 	ThemeManager* ThemeManager::theme_manager = 0;
 
-	ThemeManager* ThemeManager::instance (void)
+	ThemeManager* ThemeManager::instance ()
 	{
 		if (!theme_manager) {
 			std::cerr << "The theme is not initialized successfully! Exit"
@@ -264,7 +264,7 @@ namespace BlendInt {
 
 	}
 
-	ThemeManager::FontStyle::FontStyle ()
+	FontStyle::FontStyle ()
 	{
 		// TODO: init fonts in fontconfig
 		regular = Font("Droid Sans", 9);

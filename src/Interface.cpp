@@ -15,7 +15,7 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.  If not, see
+ * License along with BlendInt.	 If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -37,24 +37,25 @@
 #include <BlendInt/MouseEvent.hpp>
 #include <BlendInt/ContextMenuEvent.hpp>
 #include <BlendInt/ContextManager.hpp>
+#include <BlendInt/StockIcon.hpp>
 
 namespace BlendInt {
 
 	Interface* Interface::interface = 0;
 
-	Interface* Interface::instance ()
+	Interface* Interface::Instance ()
 	{
 		if (!interface) {
 			std::cerr
-			        << "The Interface Library is not initialized successfully! Exit"
-			        << std::endl;
+				<< "The Interface Library is not initialized successfully! Exit"
+				<< std::endl;
 			exit(EXIT_FAILURE);
 		}
 
 		return interface;
 	}
 
-	bool Interface::initialize ()
+	bool Interface::Initialize ()
 	{
 		glewExperimental = true;	// Needed in core profile
 		if (glewInit() != GLEW_OK) {
@@ -94,6 +95,11 @@ namespace BlendInt {
 			result = false;
 		}
 
+		if (!StockIcon::Initialize()) {
+			std::cerr << "Cannot initialize Stock Icons" << std::endl;
+			result = false;
+		}
+
 		if (!interface) {
 			interface = new Interface();
 		}
@@ -104,8 +110,9 @@ namespace BlendInt {
 		return result;
 	}
 
-	void Interface::release ()
+	void Interface::Release ()
 	{
+		StockIcon::Release();
 		ContextManager::release();
 		ShaderManager::release();
 		ThemeManager::release();
@@ -119,7 +126,7 @@ namespace BlendInt {
 	}
 
 	Interface::Interface ()
-			: cursor_pos_x_(0.0), cursor_pos_y_(0.0)
+		: cursor_pos_x_(0.0), cursor_pos_y_(0.0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
@@ -129,12 +136,12 @@ namespace BlendInt {
 
 	}
 
-	bool Interface::bind (AbstractWidget* object)
+	bool Interface::Bind (AbstractWidget* object)
 	{
 		return ContextManager::instance()->bind(object);
 	}
 
-	bool Interface::unbind (AbstractWidget* object)
+	bool Interface::Unbind (AbstractWidget* object)
 	{
 		return ContextManager::instance()->unbind(object);
 	}
@@ -192,7 +199,7 @@ namespace BlendInt {
 				(*set_it)->Render();
 			}
 		}
-//		m_ticktack = m_ticktack ? 0 : 1;
+		// m_ticktack = m_ticktack ? 0 : 1;
 
 		glDisable(GL_BLEND);
 	}
@@ -210,6 +217,7 @@ namespace BlendInt {
 
 		glColor4f(1.0f, 1.0f, 1.0f, 0.1f);
 		glLineStipple(1, 0xAAAA);
+
 		for (int num = 1; num < width; num++) {
 			int step = num * small_step;
 			glBegin(GL_LINES);
@@ -218,6 +226,7 @@ namespace BlendInt {
 			glEnd();
 
 		}
+
 		for (int num = 1; num < height; num++) {
 			int step = num * small_step;
 			glBegin(GL_LINES);
@@ -228,6 +237,7 @@ namespace BlendInt {
 
 		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
 		glLineStipple(1, 0xAAAA);
+
 		for (int num = 1; num < width; num++) {
 			int step = num * big_step;
 			glBegin(GL_LINES);
@@ -274,14 +284,14 @@ namespace BlendInt {
 				{
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
-						case KeyPress:
-							(*set_it)->ContextMenuPressEvent(&event);
-							break;
-						case KeyRelease:
-							(*set_it)->ContextMenuReleaseEvent(&event);
-							break;
-						default:
-							break;
+					case KeyPress:
+						(*set_it)->ContextMenuPressEvent(&event);
+						break;
+					case KeyRelease:
+						(*set_it)->ContextMenuReleaseEvent(&event);
+						break;
+					default:
+						break;
 					}
 					if (event.ignored()) break;
 					if (event.accepted()) {
@@ -312,17 +322,17 @@ namespace BlendInt {
 					//if(!(*set_it)->visible()) break;
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
-						case KeyPress:
-							dispatch_key_press_event((*set_it), &event);
-							break;
-						case KeyRelease:
-							// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
-							break;
-						case KeyRepeat:
-							// item->KeyRepeatEvent(&event);
-							break;
-						default:
-							break;
+					case KeyPress:
+						dispatch_key_press_event((*set_it), &event);
+						break;
+					case KeyRelease:
+						// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
+						break;
+					case KeyRepeat:
+						// item->KeyRepeatEvent(&event);
+						break;
+					default:
+						break;
 					}
 					if(event.ignored()) break;
 					if(event.accepted()) {
@@ -345,35 +355,35 @@ namespace BlendInt {
 	{
 		MouseButton mouseclick = MouseButtonNone;
 		switch (button) {
-			case GLFW_MOUSE_BUTTON_1:
-				mouseclick = MouseButtonLeft;
-				break;
-			case GLFW_MOUSE_BUTTON_2:
-				mouseclick = MouseButtonRight;
-				break;
-			case GLFW_MOUSE_BUTTON_3:
-				mouseclick = MouseButtonMiddle;
-				break;
-			case GLFW_MOUSE_BUTTON_4:
-				mouseclick = MouseButtonScrollUp;
-				break;
-			case GLFW_MOUSE_BUTTON_5:
-				mouseclick = MouseButtonScrollDown;
-				break;
-			default:
-				break;
+		case GLFW_MOUSE_BUTTON_1:
+			mouseclick = MouseButtonLeft;
+			break;
+		case GLFW_MOUSE_BUTTON_2:
+			mouseclick = MouseButtonRight;
+			break;
+		case GLFW_MOUSE_BUTTON_3:
+			mouseclick = MouseButtonMiddle;
+			break;
+		case GLFW_MOUSE_BUTTON_4:
+			mouseclick = MouseButtonScrollUp;
+			break;
+		case GLFW_MOUSE_BUTTON_5:
+			mouseclick = MouseButtonScrollDown;
+			break;
+		default:
+			break;
 		}
 
 		MouseAction mouse_action = MouseNone;
 		switch (action) {
-			case GLFW_PRESS:
-				mouse_action = MousePress;
-				break;
-			case GLFW_RELEASE:
-				mouse_action = MouseRelease;
-				break;
-			default:
-				break;
+		case GLFW_PRESS:
+			mouse_action = MousePress;
+			break;
+		case GLFW_RELEASE:
+			mouse_action = MouseRelease;
+			break;
+		default:
+			break;
 		}
 
 		MouseEvent event(mouse_action, mouseclick);
@@ -382,7 +392,7 @@ namespace BlendInt {
 		set<AbstractWidget*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
-        event.SetPosition(cursor_pos_x_, cursor_pos_y_);
+		event.SetPosition(cursor_pos_x_, cursor_pos_y_);
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
@@ -392,14 +402,14 @@ namespace BlendInt {
 				//if(!(*set_it)->visible()) break;
 
 				switch (action) {
-					case GLFW_PRESS:
-						dispatch_mouse_press_event((*set_it), &event);
-						break;
-					case GLFW_RELEASE:
-						(*set_it)->MouseReleaseEvent(&event);
-						break;
-					default:
-						break;
+				case GLFW_PRESS:
+					dispatch_mouse_press_event((*set_it), &event);
+					break;
+				case GLFW_RELEASE:
+					(*set_it)->MouseReleaseEvent(&event);
+					break;
+				default:
+					break;
 				}
 				if(event.ignored())	break;
 
@@ -428,7 +438,7 @@ namespace BlendInt {
 		set<AbstractWidget*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::instance();
 
-        event.SetPosition(cursor_pos_x_, cursor_pos_y_);
+		event.SetPosition(cursor_pos_x_, cursor_pos_y_);
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
@@ -454,6 +464,13 @@ namespace BlendInt {
 		}
 	}
 
+#ifdef DEBUG
+	void Interface::DispatchRender(AbstractForm* form)
+	{
+		form->Render();
+	}
+#endif
+
 	void Interface::DispatchKeyEvent (KeyEvent* event)
 	{
 	}
@@ -468,6 +485,11 @@ namespace BlendInt {
 
 	void Interface::DispatchMouseMoveEvent (MouseEvent* event)
 	{
+	}
+
+	bool Interface::TakeScreenshot(const std::string& path)
+	{
+		return true;
 	}
 
 	void Interface::dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event)
@@ -491,4 +513,3 @@ namespace BlendInt {
 	}
 
 }
-

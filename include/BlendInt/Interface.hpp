@@ -15,7 +15,7 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.  If not, see
+ * License along with BlendInt.	 If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -45,9 +45,15 @@
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Size.hpp>
 
+#ifdef DEBUG
+#include <BlendInt/AbstractForm.hpp>
+#endif
+
 #include <Cpp/Events.hpp>
 
 #include <boost/smart_ptr.hpp>
+
+#include <string>
 
 #define BLENDINT_EVENTS_INIT_ONCE_IN_MAIN Cpp::Events::ProcessInit processInit
 
@@ -66,15 +72,21 @@ namespace BlendInt {
 	{
 	public:
 
-		static Interface* instance ();
+		/**
+		 * @brief Get the instance object of this class
+		 * @return Pointer to the Interface object
+		 *
+		 * Must be used after Interface::Initialize()
+		 */
+		static Interface* Instance ();
 
-		static bool initialize ();
+		static bool Initialize ();
 
-		static void release ();
+		static void Release ();
 
-		bool bind (AbstractWidget* object);
+		bool Bind (AbstractWidget* object);
 
-		bool unbind (AbstractWidget* object);
+		bool Unbind (AbstractWidget* object);
 
 		void Render ();
 
@@ -83,6 +95,10 @@ namespace BlendInt {
 		void GLFWMouseButtonEvent (int button, int action, int mods);
 
 		void GLFWCursorPosEvent (double xpos, double ypos);
+
+#ifdef DEBUG
+		void DispatchRender (AbstractForm* form);
+#endif
 
 		void DispatchKeyEvent (KeyEvent* event);
 
@@ -94,9 +110,21 @@ namespace BlendInt {
 
 		const Size& size () const;
 
+		/**
+		 * @brief Resize the interface
+		 */
 		void Resize (const Size& size);
 
+		/**
+		 * @brief Resize the interface
+		 */
 		void Resize (unsigned int width, unsigned int height);
+
+		/**
+		 * @brief Take a screenshot and save to the given path
+		 * @param[in] path the directory where to store the screenshot
+		 */
+		bool TakeScreenshot (const std::string& path);
 
 		Cpp::EventRef<unsigned int, unsigned int> resized() {return m_resized;}
 
@@ -134,11 +162,10 @@ namespace BlendInt {
 
 	};
 
-	inline Interface* interface()
+	inline Interface* interface ()
 	{
-		return Interface::instance();
+		return Interface::Instance();
 	}
-
 
 }
 

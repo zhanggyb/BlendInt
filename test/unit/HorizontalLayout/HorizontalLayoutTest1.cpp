@@ -36,7 +36,7 @@ TEST_F(HorizontalLayoutTest1, Add1)
 	hlayout->Add(widget1);
 	hlayout->Add(widget2);
 
-	Interface::instance()->bind(hlayout);
+	Interface::Instance()->Bind(hlayout);
 
 	RunLoop(window);
 
@@ -73,7 +73,7 @@ TEST_F(HorizontalLayoutTest1, Add2)
 	hlayout->Add(widget1);
 	hlayout->Add(widget2);
 
-	Interface::instance()->bind(hlayout);
+	Interface::Instance()->Bind(hlayout);
 
 	RunLoop(window);
 
@@ -107,7 +107,7 @@ TEST_F(HorizontalLayoutTest1, Resize1)
 
 	hlayout->Resize(400, 200);
 
-	Interface::instance()->bind(hlayout);
+	Interface::Instance()->Bind(hlayout);
 
 	RunLoop(window);
 
@@ -139,7 +139,7 @@ TEST_F(HorizontalLayoutTest1, Resize2)
 
 	hlayout->Resize(400, 200);
 
-	Interface::instance()->bind(hlayout);
+	Interface::Instance()->Bind(hlayout);
 
 	RunLoop(window);
 
