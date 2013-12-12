@@ -25,7 +25,14 @@
 #define _BLENDINT_GLBUFFER_HPP_
 
 #include <vector>
+
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#else
 #include <GL/gl.h>
+#endif
+#endif  // __UNIX__
 
 #define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
 
