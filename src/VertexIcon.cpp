@@ -97,6 +97,7 @@ namespace BlendInt {
 	VertexIcon::VertexIcon ()
 		: FormBase()
 	{
+		set_size(16, 16);
 	}
 
 	VertexIcon::~VertexIcon ()
@@ -158,7 +159,26 @@ namespace BlendInt {
 			m_gl_buffer.unbind(1);
 		}
 
+#ifdef DEBUG
+		glLineWidth(1);
+		glEnable(GL_LINE_STIPPLE);
+
+//		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+		float x = size().width() / 2.0;
+		float y = size().height() / 2.0;
+		glLineStipple(1, 0xAAAA);
+		glBegin(GL_LINE_LOOP);
+		glVertex2f( - x, - y);
+		glVertex2f(x, - y);
+		glVertex2f(x, y);
+		glVertex2f(- x, y);
+		glEnd();
+
+		glDisable(GL_LINE_STIPPLE);
+#endif
+
 		glDisable(GL_BLEND);
+
 	}
 
 }
