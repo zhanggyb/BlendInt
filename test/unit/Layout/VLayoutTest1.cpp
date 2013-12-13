@@ -1,13 +1,14 @@
 /*
  * VLayoutTest1.cpp
  *
- *  Created on: 2013Äê12ÔÂ7ÈÕ
+ *  Created on: 2013ï¿½ï¿½12ï¿½ï¿½7ï¿½ï¿½
  *      Author: zhanggy
  */
 
 #include "VLayoutTest1.hpp"
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/VerticalLayout.hpp>
+#include <BlendInt/HorizontalLayout.hpp>
 
 using namespace BlendInt;
 
@@ -29,6 +30,23 @@ TEST_F(VLayoutTest1, Add1)
 	GLFWwindow* window = CreateWindow("Vertical Layout Test");
 
 	// add test code here
+
+	VerticalLayout* vlayout = new VerticalLayout;
+
+	vlayout->SetPosition(200, 200);
+
+	Widget* widget1 = new Widget;
+	Widget* widget2 = new Widget;
+	Widget* widget3 = new Widget;
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->Add(widget2);
+	hlayout->Add(widget3);
+
+	vlayout->Add(widget1);
+	vlayout->Add(hlayout);
+
+	Interface::Instance()->Bind(vlayout);
 
 	RunLoop(window);
 

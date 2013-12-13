@@ -59,9 +59,10 @@ namespace BlendInt {
 				return;
 			}
 
-			default:
+			default: {
 				AbstractLayout::Update (type, data);
 				break;
+			}
 		}
 	}
 

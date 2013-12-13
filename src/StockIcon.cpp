@@ -73,8 +73,8 @@ namespace BlendInt {
 		m_menu = new VertexIcon;
 		for(size_t i = 0; i < 6; i++)
 		{
-			vec[i][0] = 0.5 * 17 * VertexIcon::menu_tria_vert[i][0];
-			vec[i][1] = 0.5 * 17 * VertexIcon::menu_tria_vert[i][1];
+			vec[i][0] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][0];
+			vec[i][1] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][1];
 		}
 
 		m_menu->load (vec, 6, VertexIcon::menu_tria_face, 2);
@@ -103,8 +103,8 @@ namespace BlendInt {
 
 		for(size_t i = 0; i < 3; i++)
 		{
-			vec[i][0] = 0.5 * 14 * VertexIcon::num_tria_vert[i][0];
-			vec[i][1] = 0.5 * 14 * VertexIcon::num_tria_vert[i][1];
+			vec[i][0] = 0.5 * 10 * VertexIcon::num_tria_vert[i][0];
+			vec[i][1] = 0.5 * 10 * VertexIcon::num_tria_vert[i][1];
 		}
 
 		m_num->load (vec, 3, VertexIcon::num_tria_face, 1);
