@@ -391,7 +391,7 @@ namespace BlendInt {
 			//size_t unminimal_items_size = m_xunexpandable_items.size();
 
 			unsigned int unminimal_width = current_width - w_plus - min_exp_w - (items().size() - 1) * space();
-			unsigned int w = unminimal_width / normal_items.size();
+			unsigned int w = unminimal_width / normal_items.size();		// FIXME: if no fixed items, this cause dividing by 0
 
 			for(it = items().begin(); it != items().end(); it++)
 			{

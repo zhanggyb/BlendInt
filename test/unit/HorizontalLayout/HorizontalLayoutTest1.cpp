@@ -83,6 +83,44 @@ TEST_F(HorizontalLayoutTest1, Add2)
 }
 
 /**
+ * Test behavior if HLayout geometry is locked and 1 expandable + 1 fixed size
+ *
+ * Expected result: the 2 widgets should fill the layout
+ *
+ * Note: this test is only valid in DEBUG build
+ */
+TEST_F(HorizontalLayoutTest1, Add3)
+{
+	Init ();
+	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add3");
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->SetPosition(200, 200);
+	hlayout->Resize(400, 200);
+
+#ifdef DEBUG
+	hlayout->lock(true);
+#endif
+
+	Widget* widget1 = new Widget;
+	widget1->SetExpandX(false);
+	widget1->SetExpandY(true);
+	Widget* widget2 = new Widget;
+	widget2->SetExpand(true);
+
+	hlayout->Add(widget1);
+	hlayout->Add(widget2);
+
+	Interface::Instance()->Bind(hlayout);
+
+	RunLoop(window);
+
+	Terminate();
+
+	ASSERT_TRUE(true);
+}
+
+/**
  * Test resize
  *
  * Expected result: the children in the HLayout resize too according to the layout size

@@ -38,16 +38,17 @@ namespace BlendInt {
 
 	void BoxFrame::SetLayout (AbstractLayout* layout)
 	{
+		if(!layout) return;
 		if(m_layout) delete m_layout;
 
 		m_layout = layout;
 
 		bind(m_layout);
 
-		unsigned int width = size().width() - margin().left() - margin().right();
-		unsigned int height = size().height() - margin().top() - margin().bottom();
+		unsigned int width = layout->size().width() + margin().left() + margin().right();
+		unsigned int height = layout->size().height() + margin().top() + margin().bottom();
 
-		m_layout->Resize (width, height);
+		Resize (width, height);
 
 		m_layout->SetPosition(position().x() + margin().left(), position().y() + margin().bottom());
 

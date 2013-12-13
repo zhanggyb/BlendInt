@@ -265,11 +265,11 @@ namespace BlendInt {
 	{
 		int y = position().y() + size().height() - margin().top();
 
-		std::vector<AbstractWidget*>::reverse_iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		for(it = items().rbegin(); it != items().rend(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
-			if(! (it == items().rbegin()))
+			if(! (it == items().begin()))
 				y -= space();
 
 			child = *it;
@@ -284,11 +284,11 @@ namespace BlendInt {
 	{
 		int y = position().y() + size->height() - margin().top();
 
-		std::vector<AbstractWidget*>::reverse_iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		for(it = items().rbegin(); it != items().rend(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
-			if(! (it == items().rbegin()))
+			if(! (it == items().begin()))
 				y -= space();
 
 			child = *it;
@@ -308,7 +308,7 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		std::vector<AbstractWidget*>::reverse_iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
 		int y = position().y() + size().height() - margin().top();
 
@@ -318,11 +318,11 @@ namespace BlendInt {
 			unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space();
 			single_height = single_height / m_expandable_items.size();
 
-			for(it = items().rbegin(); it != items().rend(); it++)
+			for(it = items().begin(); it != items().end(); it++)
 			{
 				child = *it;
 
-				if(! (it == items().rbegin()))
+				if(! (it == items().begin()))
 					y -= space();
 
 				if(m_expandable_items.count(child)) {
@@ -342,11 +342,11 @@ namespace BlendInt {
 			unsigned int unminimal_height = current_height - h_plus - min_exp_h - (items().size() - 1) * space();
 			unsigned int h = unminimal_height / normal_items.size();
 
-			for(it = items().rbegin(); it != items().rend(); it++)
+			for(it = items().begin(); it != items().end(); it++)
 			{
 				child = *it;
 
-				if(! (it == items().rbegin()))
+				if(! (it == items().begin()))
 					y -= space();
 
 				if(m_expandable_items.count(child)) {
@@ -381,7 +381,7 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		std::vector<AbstractWidget*>::reverse_iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
 		int y = position().y() + size->height() - margin().top();
 
@@ -391,11 +391,11 @@ namespace BlendInt {
 			unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space();
 			single_height = single_height / m_expandable_items.size();
 
-			for(it = items().rbegin(); it != items().rend(); it++)
+			for(it = items().begin(); it != items().end(); it++)
 			{
 				child = *it;
 
-				if(! (it == items().rbegin()))
+				if(! (it == items().begin()))
 					y -= space();
 
 				if(m_expandable_items.count(child)) {
@@ -415,11 +415,11 @@ namespace BlendInt {
 			unsigned int unminimal_height = current_height - h_plus - min_exp_h - (items().size() - 1) * space();
 			unsigned int h = unminimal_height / normal_items.size();
 
-			for(it = items().rbegin(); it != items().rend(); it++)
+			for(it = items().begin(); it != items().end(); it++)
 			{
 				child = *it;
 
-				if(! (it == items().rbegin()))
+				if(! (it == items().begin()))
 					y -= space();
 
 				if(m_expandable_items.count(child)) {
@@ -453,7 +453,7 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		std::vector<AbstractWidget*>::reverse_iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
 		int y = position().y() + size().height() - margin().top();
 
@@ -462,11 +462,11 @@ namespace BlendInt {
 		if(m_expandable_items.size())
 			single_height = single_height / m_expandable_items.size();
 
-		for(it = items().rbegin(); it != items().rend(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			child = *it;
 
-			if (!(it == items().rbegin()))
+			if (!(it == items().begin()))
 				y -= space();
 
 			if (m_expandable_items.count(child)) {
@@ -488,7 +488,7 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		std::vector<AbstractWidget*>::reverse_iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
 		int y = position().y() + size->height() - margin().top();
 
@@ -497,11 +497,11 @@ namespace BlendInt {
 		if(m_expandable_items.size())
 			single_height = single_height / m_expandable_items.size();
 
-		for(it = items().rbegin(); it != items().rend(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			child = *it;
 
-			if (!(it == items().rbegin()))
+			if (!(it == items().begin()))
 				y -= space();
 
 			if (m_expandable_items.count(child)) {
@@ -522,9 +522,9 @@ namespace BlendInt {
 
 		unsigned int w = size().width() - margin().left() - margin().right();
 
-		std::vector<AbstractWidget*>::reverse_iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		for(it = items().rbegin(); it != items().rend(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			child = *it;
 
@@ -553,9 +553,9 @@ namespace BlendInt {
 
 		unsigned int w = size->width() - margin().left() - margin().right();
 
-		std::vector<AbstractWidget*>::reverse_iterator it;
+		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		for(it = items().rbegin(); it != items().rend(); it++)
+		for(it = items().begin(); it != items().end(); it++)
 		{
 			child = *it;
 

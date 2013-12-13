@@ -1,5 +1,6 @@
 #include "VerticalLayoutTest1.hpp"
 #include <BlendInt/VerticalLayout.hpp>
+#include <BlendInt/Button.hpp>
 
 using namespace BlendInt;
 
@@ -27,11 +28,13 @@ TEST_F(VerticalLayoutTest1, Add1)
 	VerticalLayout* vlayout = new VerticalLayout;
 	vlayout->SetPosition(200, 200);
 
+	Button* button1 = new Button;
 	Widget* widget1 = new Widget;
 	widget1->SetExpand(false);
 	Widget* widget2 = new Widget;
 	widget1->SetExpand(false);
 
+	vlayout->Add(button1);
 	vlayout->Add(widget1);
 	vlayout->Add(widget2);
 
@@ -70,6 +73,42 @@ TEST_F(VerticalLayoutTest1, Add2)
 	widget2->SetExpand(true);
 
 	vlayout->Add(widget1);
+	vlayout->Add(widget2);
+
+	Interface::Instance()->Bind(vlayout);
+
+	RunLoop(window);
+
+	Terminate();
+
+	ASSERT_TRUE(true);
+}
+
+/**
+ * Test behavior if HLayout geometry is locked and add 1 expandable + 1 fixed
+ *
+ * Expected result: the 2 widgets should fill the layout
+ *
+ * Note: this test is only valid in DEBUG build
+ */
+TEST_F(VerticalLayoutTest1, Add3)
+{
+	Init ();
+	GLFWwindow* window = CreateWindow("VerticalLayout Test - Add3");
+
+	VerticalLayout* vlayout = new VerticalLayout;
+	vlayout->SetPosition(200, 200);
+	vlayout->Resize(200, 400);
+
+#ifdef DEBUG
+	vlayout->lock(true);
+#endif
+
+	Button* button1 = new Button;
+	Widget* widget2 = new Widget;
+	widget2->SetExpand(true);
+
+	vlayout->Add(button1);
 	vlayout->Add(widget2);
 
 	Interface::Instance()->Bind(vlayout);
