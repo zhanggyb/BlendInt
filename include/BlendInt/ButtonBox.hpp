@@ -24,13 +24,13 @@
 #ifndef _BLENDINT_BUTTONBOX_HPP_
 #define _BLENDINT_BUTTONBOX_HPP_
 
-#include <BlendInt/LayoutFrame.hpp>
+#include <BlendInt/BoxFrame.hpp>
 #include <BlendInt/AbstractButton.hpp>
 #include <BlendInt/AbstractLayout.hpp>
 
 namespace BlendInt {
 
-	class ButtonBox: public LayoutFrame
+	class ButtonBox: public BoxFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(ButtonBox);
 

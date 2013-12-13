@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_TABFRAME_HPP_
 #define _BLENDINT_TABFRAME_HPP_
 
-#include <BlendInt/LayoutFrame.hpp>
+#include <BlendInt/BoxFrame.hpp>
 #include <BlendInt/StackedWidget.hpp>
 #include <BlendInt/HorizontalLayout.hpp>
 #include <BlendInt/VerticalLayout.hpp>
@@ -37,7 +37,7 @@ namespace BlendInt {
 	/**
 	 * @brief A class provide Tab
 	 */
-	class TabFrame: public LayoutFrame
+	class TabFrame: public BoxFrame
 	{
 		DISALLOW_COPY_AND_ASSIGN(TabFrame);
 

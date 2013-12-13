@@ -28,6 +28,11 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief Context Menu event (mostly the right-click)
+	 *
+	 * @ingroup device_events
+	 */
 	class ContextMenuEvent: public InputEvent
 	{
 	public:

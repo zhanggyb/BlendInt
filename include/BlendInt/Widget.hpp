@@ -15,7 +15,7 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.  If not, see
+ * License along with BlendInt.	 If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -33,7 +33,9 @@ namespace BlendInt {
 	class Color;
 
 	/**
-	 * @brief A Normal form
+	 * @brief A Normal widget
+	 *
+	 * @ingroup widgets
 	 */
 	class Widget: public AbstractWidget
 	{
@@ -130,12 +132,12 @@ namespace BlendInt {
 		 * @param[out] buffer the buffer generated
 		 *
 		 * If emboss is true, 3 buffers are generated, if emboss is false, 2 buffers are generated:
-		 * 	- index 0: for inner drawing
-		 * 	- index 1: for outline drawing
-		 * 	- index 2: for emboss drawing
+		 *	- index 0: for inner drawing
+		 *	- index 1: for outline drawing
+		 *	- index 2: for emboss drawing
 		 */
 		void GenerateFormBuffer (const Size* size, bool emboss, int round_type,
-		        float radius, GLBuffer* buffer);
+								 float radius, GLBuffer* buffer);
 
 		/**
 		 * @brief generate GL buffer for rect form drawing
@@ -159,18 +161,18 @@ namespace BlendInt {
 		 * This function calculate the output GLBuffers with shaded color
 		 *
 		 * If highlight > 0, 3 buffers will be generated, if not, 2 buffers generated:
-		 * 	- buffer index 0: used for inner
-		 * 	- buffer index 1: used for outline
-		 * 	- buffer index 2: used for inner highlight
+		 *	- buffer index 0: used for inner
+		 *	- buffer index 1: used for outline
+		 *	- buffer index 2: used for inner highlight
 		 */
 		void GenerateShadedFormBuffer (const Size* size,
-				float border,
-				int round_type,
-				float radius,
-				const WidgetTheme* theme,
-				Orientation shadedir,
-				short highlight,
-				GLBuffer* buffer);
+									   float border,
+									   int round_type,
+									   float radius,
+									   const WidgetTheme* theme,
+									   Orientation shadedir,
+									   short highlight,
+									   GLBuffer* buffer);
 
 		/**
 		 * @brief generate buffer with shaded color
@@ -188,20 +190,20 @@ namespace BlendInt {
 		 * This function calculate the output GLBuffers with shaded color
 		 *
 		 * If highlight > 0, 3 buffers will be generated, if not, 2 buffers generated:
-		 * 	- buffer index 0: used for inner
-		 * 	- buffer index 1: used for outline
-		 * 	- buffer index 2: used for inner highlight
+		 *	- buffer index 0: used for inner
+		 *	- buffer index 1: used for outline
+		 *	- buffer index 2: used for inner highlight
 		 */
 		void GenerateShadedFormBuffer (const Size* size,
-				float border,
-				int round_type,
-				float radius,
-				const Color& color,
-				short shadetop,
-				short shadedown,
-				Orientation shadedir,
-				short highlight,
-				GLBuffer* buffer);
+									   float border,
+									   int round_type,
+									   float radius,
+									   const Color& color,
+									   short shadetop,
+									   short shadedown,
+									   Orientation shadedir,
+									   short highlight,
+									   GLBuffer* buffer);
 
 	private:
 

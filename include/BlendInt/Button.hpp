@@ -31,6 +31,11 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief The most common button class
+	 *
+	 * @ingroup widgets
+	 */
 	class Button: public AbstractButton
 	{
 		DISALLOW_COPY_AND_ASSIGN(Button);

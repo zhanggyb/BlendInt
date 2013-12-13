@@ -32,6 +32,11 @@ namespace BlendInt {
 
 	class String;
 
+	/**
+	 * @brief Toggle Button
+	 *
+	 * @ingroup widgets
+	 */
 	class ToggleButton: public AbstractButton
 	{
 		DISALLOW_COPY_AND_ASSIGN(ToggleButton);

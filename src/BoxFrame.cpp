@@ -21,22 +21,22 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/LayoutFrame.hpp>
+#include <BlendInt/BoxFrame.hpp>
 
 namespace BlendInt {
 
 
-	LayoutFrame::LayoutFrame ()
+	BoxFrame::BoxFrame ()
 	: Frame(), m_layout(0)
 	{
 	}
 
-	LayoutFrame::LayoutFrame (AbstractWidget* parent)
+	BoxFrame::BoxFrame (AbstractWidget* parent)
 	: Frame(parent), m_layout(0)
 	{
 	}
 
-	void LayoutFrame::SetLayout (AbstractLayout* layout)
+	void BoxFrame::SetLayout (AbstractLayout* layout)
 	{
 		if(m_layout) delete m_layout;
 
@@ -54,7 +54,7 @@ namespace BlendInt {
 		LockGeometry(m_layout, true);
 	}
 
-	void LayoutFrame::Update (int type, const void* data)
+	void BoxFrame::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -85,39 +85,39 @@ namespace BlendInt {
 		}
 	}
 
-	void LayoutFrame::Render ()
+	void BoxFrame::Render ()
 	{
 		if(m_layout)
 			dispatch_render(m_layout);
 	}
 
-	void LayoutFrame::KeyPressEvent (KeyEvent* event)
+	void BoxFrame::KeyPressEvent (KeyEvent* event)
 	{
 		if(m_layout)
 			dispatch_key_press_event(m_layout, event);
 	}
 
-	void LayoutFrame::ContextMenuPressEvent (ContextMenuEvent* event)
+	void BoxFrame::ContextMenuPressEvent (ContextMenuEvent* event)
 	{
 	}
 
-	void LayoutFrame::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	void BoxFrame::ContextMenuReleaseEvent (ContextMenuEvent* event)
 	{
 	}
 
-	void LayoutFrame::MousePressEvent (MouseEvent* event)
+	void BoxFrame::MousePressEvent (MouseEvent* event)
 	{
 		if(m_layout)
 			dispatch_mouse_press_event(m_layout, event);
 	}
 
-	void LayoutFrame::MouseReleaseEvent (MouseEvent* event)
+	void BoxFrame::MouseReleaseEvent (MouseEvent* event)
 	{
 		if(m_layout)
 			dispatch_mouse_release_event(m_layout, event);
 	}
 
-	void LayoutFrame::MouseMoveEvent (MouseEvent* event)
+	void BoxFrame::MouseMoveEvent (MouseEvent* event)
 	{
 		if(m_layout)
 			dispatch_mouse_release_event(m_layout, event);

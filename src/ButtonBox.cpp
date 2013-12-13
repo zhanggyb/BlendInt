@@ -27,13 +27,13 @@
 namespace BlendInt {
 
 	ButtonBox::ButtonBox ()
-	: LayoutFrame(), m_active_button(0)
+	: BoxFrame(), m_active_button(0)
 	{
 		Init ();
 	}
 
 	ButtonBox::ButtonBox (AbstractWidget* parent)
-	: LayoutFrame(parent), m_active_button(0)
+	: BoxFrame(parent), m_active_button(0)
 	{
 		Init ();
 	}

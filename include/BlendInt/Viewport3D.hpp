@@ -33,6 +33,11 @@ using std::vector;
 
 namespace BlendInt {
 
+	/**
+	 * @brief A simple 3D viewport
+	 *
+	 * @ingroup widgets
+	 */
 	class Viewport3D: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Viewport3D);

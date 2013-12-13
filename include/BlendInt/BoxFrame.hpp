@@ -32,15 +32,15 @@ namespace BlendInt {
 	/**
 	 * @brief A special frame with a default layout packed
 	 */
-	class LayoutFrame: public Frame
+	class BoxFrame: public Frame
 	{
-		DISALLOW_COPY_AND_ASSIGN(LayoutFrame);
+		DISALLOW_COPY_AND_ASSIGN(BoxFrame);
 
 	public:
 
-		LayoutFrame();
+		BoxFrame();
 
-		LayoutFrame(AbstractWidget* parent);
+		BoxFrame(AbstractWidget* parent);
 
 		void SetLayout (AbstractLayout* layout);
 
