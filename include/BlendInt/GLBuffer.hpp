@@ -155,7 +155,7 @@ namespace BlendInt {
 		 * @brief return the current index in the buffer vector
 		 * @return
 		 */
-		int index () const {return m_index;}
+		size_t index () const {return m_index;}
 
 		size_t size () const {return m_ids.size();}
 

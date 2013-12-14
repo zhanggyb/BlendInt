@@ -51,7 +51,7 @@ namespace BlendInt {
 
 		void Remove (Widget* widget);
 
-		int count () const {return m_stack.size();}
+		size_t count () const {return m_stack.size();}
 
 		void SetIndex (size_t index);
 

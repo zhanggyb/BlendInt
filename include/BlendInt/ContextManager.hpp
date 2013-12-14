@@ -50,9 +50,9 @@ namespace BlendInt {
 
 		bool unbind (AbstractWidget* obj);
 
-		int index_size () const {return m_index.size();}
+		size_t index_size () const {return m_index.size();}
 
-		int layer_size () const {return m_layers.size();}
+		size_t layer_size () const {return m_layers.size();}
 
 #ifdef DEBUG
 

@@ -341,7 +341,11 @@ namespace BlendInt {
 
 		static AbstractWidget* find (uint64_t id);
 
-		static unsigned int map_size ()
+#ifdef __APPLE__
+		static unsigned long map_size ()
+#else
+        static unsigned int map_size ()
+#endif
 		{
 			return obj_map.size();
 		}

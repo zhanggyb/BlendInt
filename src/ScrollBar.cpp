@@ -425,9 +425,9 @@ namespace BlendInt {
 	void SliderBar::set_control_size (size_t size)
 	{
 		if(orientation() == Vertical) {	// Vertical
-			m_control_button->Resize(m_control_button->size().width(), size);
+			m_control_button->Resize(m_control_button->size().width(), static_cast<unsigned int>(size));
 		} else {
-			m_control_button->Resize(size, m_control_button->size().height());
+			m_control_button->Resize(static_cast<unsigned int>(size), m_control_button->size().height());
 		}
 	}
 

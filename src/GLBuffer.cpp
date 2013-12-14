@@ -48,7 +48,7 @@ namespace BlendInt {
 		m_ids.resize(num);
 		m_properties.resize(num);
 
-		glGenBuffers(num, &(m_ids[0]));
+		glGenBuffers((GLsizei)num, &(m_ids[0]));
 	}
 
 	void GLBuffer::set_vertices (int vertices)
@@ -193,7 +193,7 @@ namespace BlendInt {
 
 	void GLBuffer::clear ()
 	{
-		glDeleteBuffers(m_ids.size(), &(m_ids[0]));
+		glDeleteBuffers((GLsizei)m_ids.size(), &(m_ids[0]));
 
 		m_ids.clear();
 		m_properties.clear();
