@@ -981,6 +981,8 @@
 		157BB9E4185BEEF9009B6ED5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CURRENT_PROJECT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				HEADER_SEARCH_PATHS = (
@@ -989,6 +991,7 @@
 					/usr/local/include/freetype2,
 					/usr/local/include,
 					"$(SRCROOT)/extern/CppEvents/src",
+					"$(SRCROOT)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -999,6 +1002,7 @@
 					"$(OTHER_CFLAGS)",
 					"-D__APPLE__",
 					"-D__UNIX__",
+					"-DDEBUG",
 				);
 				OTHER_LDFLAGS = (
 					"-lfreetype",
@@ -1017,6 +1021,8 @@
 		157BB9E5185BEEF9009B6ED5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CURRENT_PROJECT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				HEADER_SEARCH_PATHS = (
@@ -1025,6 +1031,7 @@
 					/usr/local/include/freetype2,
 					/usr/local/include,
 					"$(SRCROOT)/extern/CppEvents/src",
+					"$(SRCROOT)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,

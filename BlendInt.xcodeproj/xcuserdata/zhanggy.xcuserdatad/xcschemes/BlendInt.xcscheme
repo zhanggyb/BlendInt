@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "157BB9DE185BEEF9009B6ED5"
-               BuildableName = "libBlendInt.dylib"
+               BuildableName = "libBlendInt.1.dylib"
                BlueprintName = "BlendInt"
                ReferencedContainer = "container:BlendInt.xcodeproj">
             </BuildableReference>

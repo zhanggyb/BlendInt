@@ -230,7 +230,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		size_t button_size = std::min (size().width(), size().height());
+		unsigned int button_size = static_cast<unsigned int>(std::min (size().width(), size().height()));
 
 		m_slide_button->Resize(button_size, button_size);
 
@@ -262,7 +262,7 @@ namespace BlendInt {
 			set_expand_x(true);
 		}
 
-		size_t button_size = std::min (size().width(), size().height());
+		unsigned int button_size = static_cast<unsigned int>(std::min (size().width(), size().height()));
 
 		m_slide_button->Resize(button_size, button_size);
 
@@ -309,8 +309,8 @@ namespace BlendInt {
 			}
 
 			case FormSize: {
-				size_t button_size = std::min (size().width(),
-						size().height());
+				unsigned int button_size = static_cast<unsigned int>(std::min(size().width(),
+						size().height()));
 
 				m_slide_button->Resize(button_size, button_size);
 
