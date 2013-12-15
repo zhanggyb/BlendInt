@@ -58,6 +58,13 @@ namespace BlendInt {
 
 		virtual void MouseMoveEvent (MouseEvent* event);
 
+		/**
+		 * @brief Add a Widget object into this layout
+		 * @param object
+		 *
+		 * Change and lock the object geometry, and put this widget into HorizontalLayout
+		 *
+		 */
 		virtual void add_item (AbstractWidget* object);
 
 		virtual void remove_item (AbstractWidget* object);
@@ -67,12 +74,12 @@ namespace BlendInt {
 		/**
 		 * @brief scan, distribute and align the items
 		 */
-		void make_layout ();
+		void MakeLayout ();
 
 		/**
 		 * @brief scan, distribute and align the items
 		 */
-		void make_layout (const Size* size);
+		void MakeLayout (const Size* size);
 
 		/**
 		 * @brief distribute horizontally with preferred size
@@ -120,13 +127,13 @@ namespace BlendInt {
 		 * @brief calculate and return the minimal width of the expandable items
 		 * @return
 		 */
-		unsigned int minimal_expandable_width ();
+		unsigned int GetAllMinimalExpandableWidth ();
 
 		/**
 		 * @brief calculate and return the width of fixed items
 		 * @return
 		 */
-		unsigned int fixed_width ();
+		unsigned int GetAllFixedWidth ();
 
 		/**
 		 * @brief scan the children and get the total size hint

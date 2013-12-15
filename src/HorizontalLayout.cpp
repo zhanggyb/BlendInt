@@ -55,7 +55,7 @@ namespace BlendInt {
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				if(items().size())
-					make_layout(size_p);
+					MakeLayout(size_p);
 				return;
 			}
 
@@ -143,50 +143,50 @@ namespace BlendInt {
 		object->deactivate_events();
 		deactivate_events();
 
-		Size min = minimal_size();
-		Size preferred = preferred_size();
+		Size min_size = minimal_size();
+		Size prefer_size = preferred_size();
 		Size current_size = size();
+		// TODO: count max size
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
 		if (items().size() == 0) {
-			min.add_width(object->minimal_size().width());
-			preferred.add_width(object->preferred_size().width());
+			min_size.add_width(object->minimal_size().width());
+			prefer_size.add_width(object->preferred_size().width());
 		} else {
-			min.add_width(object->minimal_size().width() + space());
-			preferred.add_width(object->preferred_size().width() + space());
+			min_size.add_width(object->minimal_size().width() + space());
+			prefer_size.add_width(object->preferred_size().width() + space());
 		}
 
-		min.set_height(
-		        std::max(min.height(), object->minimal_size().height() + h_plus));
-		preferred.set_height(
-		        std::max(preferred.height(),
+		min_size.set_height(
+		        std::max(min_size.height(), object->minimal_size().height() + h_plus));
+		prefer_size.set_height(
+		        std::max(prefer_size.height(),
 		                object->preferred_size().height() + h_plus));
 
 		if (!locked()) {
-			if (current_size.width() < preferred.width()) {
-				current_size.set_width(preferred.width());
+			if (current_size.width() < prefer_size.width()) {
+				current_size.set_width(prefer_size.width());
 			}
-			if (current_size.height() < preferred.height()) {
-				current_size.set_height(preferred.height());
+			if (current_size.height() < prefer_size.height()) {
+				current_size.set_height(prefer_size.height());
 			}
 		} else {
-			// TODO: if geometry is not locked, to sth.
-
+			// TODO: if geometry is not locked, do sth.
 		}
 
 		items().push_back(object);
 
-		SetPreferredSize(preferred);
-		SetMinimalSize(min);
+		SetPreferredSize(prefer_size);
+		SetMinimalSize(min_size);
 
 		if(object->expand_x()) m_expandable_items.insert(object);
 		else m_fixed_items.insert(object);
 
-		if(! (current_size == size()))
+		if( !(current_size == size()) )
 			Resize(this, current_size);
 		else
-			make_layout(&current_size);
+			MakeLayout(&current_size);
 
 		activate_events();
 		object->activate_events();
@@ -222,7 +222,7 @@ namespace BlendInt {
 		SetMinimalSize(new_minimal_size);
 		SetPreferredSize(new_preferred_size);
 
-		make_layout();
+		MakeLayout();
 
 		activate_events();
 
@@ -230,7 +230,7 @@ namespace BlendInt {
 		unbind(object);
 	}
 
-	void HorizontalLayout::make_layout ()
+	void HorizontalLayout::MakeLayout ()
 	{
 		if (size().width() == preferred_size().width()) {
 			distribute_with_preferred_width();			// layout along x with preferred size
@@ -243,7 +243,7 @@ namespace BlendInt {
 		align();
 	}
 
-	void HorizontalLayout::make_layout (const Size* size)
+	void HorizontalLayout::MakeLayout (const Size* size)
 	{
 		if (size->width() == preferred_size().width()) {
 			distribute_with_preferred_width();			// layout along x with preferred size
@@ -277,73 +277,85 @@ namespace BlendInt {
 
 	void HorizontalLayout::distribute_with_small_width()
 	{
-		unsigned int min_exp_w = minimal_expandable_width();
-		unsigned int fixed_w = fixed_width();
+		unsigned int min_expd_width = GetAllMinimalExpandableWidth();
+		unsigned int fixed_width = GetAllFixedWidth();
 
 		unsigned int current_width = size().width();
 
-		unsigned int w_plus = margin().left() + margin().right();
+		unsigned int width_plus = margin().left() + margin().right();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
 		int x = position().x() + margin().left();
 
-		if((current_width - w_plus) >=
-				(min_exp_w + fixed_w + (items().size() - 1) * space())) {
+		if((current_width - width_plus) >=
+				(min_expd_width + fixed_width + (items().size() - 1) * space())) {
 
-			unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space();
-			single_width = single_width / m_expandable_items.size();
+			if(m_expandable_items.size() > 0) {
+				unsigned int single_min_width = current_width - width_plus - fixed_width
+				        - (items().size() - 1) * space();
+				single_min_width = single_min_width / m_expandable_items.size();
 
-			for(it = items().begin(); it != items().end(); it++)
-			{
-				if(! (it == items().begin()))
-					x += space();
+				for (it = items().begin(); it != items().end(); it++) {
+					if (!(it == items().begin()))
+						x += space();
 
-				child = *it;
+					child = *it;
 
-				if(m_expandable_items.count(child)) {
-					Resize(child, single_width, child->size().height());
-				} else {
-					Resize(child, child->preferred_size().width(), child->size().height());
+					if (m_expandable_items.count(child)) {
+						Resize(child, single_min_width, child->size().height());
+					} else {
+						Resize(child, child->preferred_size().width(),
+						        child->size().height());
+					}
+
+					SetPosition(child, x, child->position().y());
+					x += child->size().width();
 				}
-
-				SetPosition(child, x, child->position().y());
-				x += child->size().width();
 			}
 
 		} else {
 
-			std::set<AbstractWidget*> normal_items(m_fixed_items);	// set of unminimized items
-			//size_t unminimal_items_size = m_xunexpandable_items.size();
+			if(m_fixed_items.size() > 0) {
+				std::set<AbstractWidget*> fixed_items(m_fixed_items);// set of unminimized items
 
-			unsigned int unminimal_width = current_width - w_plus - min_exp_w - (items().size() - 1) * space();
-			unsigned int w = unminimal_width / normal_items.size();
+				unsigned int total_fixed_width = current_width - width_plus
+				        - min_expd_width - (items().size() - 1) * space();
+				unsigned int single_fixed_width = total_fixed_width / fixed_items.size();
 
-			for(it = items().begin(); it != items().end(); it++)
-			{
-				if(! (it == items().begin()))
-					x += space();
+				for(it = items().begin(); it != items().end(); it++) {
+					if (!(it == items().begin()))
+						x += space();
 
-				child = *it;
+					child = *it;
 
-				if(m_expandable_items.count(child)) {
-					Resize(child, child->minimal_size().width(), child->size().height());
-				} else {
-
-					if(w < child->minimal_size().width()) {
-						Resize(child, child->minimal_size().width(), child->size().height());
-						normal_items.erase(child);
-						unminimal_width = unminimal_width - child->minimal_size().width();
-						w = unminimal_width / normal_items.size();
-						reset_width_of_fixed_items(&normal_items, w);
+					if(m_expandable_items.count(child)) {
+						Resize(child, child->minimal_size().width(),
+						        child->size().height());
 					} else {
-						Resize(child, w, child->size().height());
+						if (fixed_items.size() > 0) {
+							if (single_fixed_width
+							        < child->minimal_size().width()) {
+								Resize(child, child->minimal_size().width(),
+								        child->size().height());
+								fixed_items.erase(child);
+								total_fixed_width = total_fixed_width
+								        - child->minimal_size().width();
+								single_fixed_width = total_fixed_width
+								        / fixed_items.size();
+								reset_width_of_fixed_items(&fixed_items,
+								        single_fixed_width);
+							} else {
+								Resize(child, single_fixed_width,
+								        child->size().height());
+							}
+						}
+
 					}
 
+					SetPosition(child, x, child->position().y());
+					x += child->size().width();
 				}
-
-				SetPosition(child, x, child->position().y());
-				x += child->size().width();
 			}
 
 		}
@@ -351,81 +363,99 @@ namespace BlendInt {
 
 	void HorizontalLayout::distribute_with_small_width(const Size* size)
 	{
-		unsigned int min_exp_w = minimal_expandable_width();
-		unsigned int fixed_w = fixed_width();
+		unsigned int min_expd_width = GetAllMinimalExpandableWidth();
+		unsigned int fixed_width = GetAllFixedWidth();
 
 		unsigned int current_width = size->width();
 
-		unsigned int w_plus = margin().left() + margin().right();
+		unsigned int width_plus = margin().left() + margin().right();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		int x = position().x() + margin().left();
+		int x = position().x() + margin().left();	// the x position of each child widget, update in each for loop
 
-		if((current_width - w_plus) >=
-				(min_exp_w + fixed_w + (items().size() - 1) * space())) {
+		if((current_width - width_plus) >=
+				(min_expd_width + fixed_width + (items().size() - 1) * space())) {
 
-			unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space();
-			single_width = single_width / m_expandable_items.size();
+			// just change expandable widgets
+			if (m_expandable_items.size() > 0) {
 
-			for(it = items().begin(); it != items().end(); it++)
-			{
-				if(! (it == items().begin()))
-					x += space();
+				unsigned int single_min_width = current_width - width_plus
+				        - fixed_width - (items().size() - 1) * space();
+				single_min_width = single_min_width / m_expandable_items.size();
 
-				child = *it;
+				for (it = items().begin(); it != items().end(); it++) {
+					if (!(it == items().begin()))
+						x += space();
 
-				if(m_expandable_items.count(child)) {
-					Resize(child, single_width, child->size().height());
-				} else {
-					Resize(child, child->preferred_size().width(), child->size().height());
+					child = *it;
+
+					if (m_expandable_items.count(child)) {
+						Resize(child, single_min_width, child->size().height());
+					} else {
+						Resize(child, child->preferred_size().width(),
+						        child->size().height());
+					}
+
+					SetPosition(child, x, child->position().y());
+					x += child->size().width();
 				}
 
-				SetPosition(child, x, child->position().y());
-				x += child->size().width();
 			}
 
 		} else {
 
-			std::set<AbstractWidget*> normal_items(m_fixed_items);	// set of unminimized items
-			//size_t unminimal_items_size = m_xunexpandable_items.size();
+			if(m_fixed_items.size() > 0) {
 
-			unsigned int unminimal_width = current_width - w_plus - min_exp_w - (items().size() - 1) * space();
-			unsigned int w = unminimal_width / normal_items.size();		// FIXME: if no fixed items, this cause dividing by 0
+				std::set<AbstractWidget*> fixed_items(m_fixed_items);// set of unminimized items
 
-			for(it = items().begin(); it != items().end(); it++)
-			{
-				if(! (it == items().begin()))
-					x += space();
+				unsigned int total_fixed_width = current_width - width_plus
+				        - min_expd_width - (items().size() - 1) * space();
+				unsigned int single_fixed_width = total_fixed_width / fixed_items.size();
 
-				child = *it;
+				for (it = items().begin(); it != items().end(); it++) {
 
-				if(m_expandable_items.count(child)) {
-					Resize(child, child->minimal_size().width(), child->size().height());
-				} else {
+					if(fixed_items.size() == 0) break;
 
-					if(w < child->minimal_size().width()) {
-						Resize(child, child->minimal_size().width(), child->size().height());
-						normal_items.erase(child);
-						unminimal_width = unminimal_width - child->minimal_size().width();
-						w = unminimal_width / normal_items.size();
-						reset_width_of_fixed_items(&normal_items, w);
+					if (!(it == items().begin()))
+						x += space();
+
+					child = *it;
+
+					if (m_expandable_items.count(child)) {
+						Resize(child, child->minimal_size().width(),
+						        child->size().height());
 					} else {
-						Resize(child, w, child->size().height());
+						if (fixed_items.size() > 0) {
+							if (single_fixed_width
+							        < child->minimal_size().width()) {
+								Resize(child, child->minimal_size().width(),
+								        child->size().height());
+								fixed_items.erase(child);
+								total_fixed_width = total_fixed_width
+								        - child->minimal_size().width();
+								single_fixed_width = total_fixed_width
+								        / fixed_items.size();
+								reset_width_of_fixed_items(&fixed_items,
+								        single_fixed_width);
+							} else {
+								Resize(child, single_fixed_width,
+								        child->size().height());
+							}
+						}
 					}
 
+					SetPosition(child, x, child->position().y());
+					x += child->size().width();
 				}
 
-				SetPosition(child, x, child->position().y());
-				x += child->size().width();
 			}
-
 		}
 	}
 
 	void HorizontalLayout::distribute_with_large_width()
 	{
-		unsigned int fixed_w = fixed_width();
+		unsigned int fixed_w = GetAllFixedWidth();
 
 		unsigned int current_width = size().width();
 
@@ -462,7 +492,7 @@ namespace BlendInt {
 
 	void HorizontalLayout::distribute_with_large_width(const Size* size)
 	{
-		unsigned int fixed_w = fixed_width();
+		unsigned int fixed_w = GetAllFixedWidth();
 
 		unsigned int current_width = size->width();
 
@@ -475,7 +505,7 @@ namespace BlendInt {
 		unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space();
 
 		if(m_expandable_items.size())
-			single_width = single_width / m_expandable_items.size();
+			single_width = single_width / m_expandable_items.size();	// TODO: check if divided by 0
 
 		for(it = items().begin(); it != items().end(); it++)
 		{
@@ -573,7 +603,7 @@ namespace BlendInt {
 		}
 	}
 
-	unsigned int HorizontalLayout::minimal_expandable_width()
+	unsigned int HorizontalLayout::GetAllMinimalExpandableWidth()
 	{
 		unsigned int width = 0;
 
@@ -586,7 +616,7 @@ namespace BlendInt {
 		return width;
 	}
 
-	unsigned int HorizontalLayout::fixed_width()
+	unsigned int HorizontalLayout::GetAllFixedWidth()
 	{
 		unsigned int width = 0;
 

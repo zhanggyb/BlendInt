@@ -53,6 +53,7 @@ namespace BlendInt {
 	{
 		// DEMO: use HLayout temporarily
 		HorizontalLayout* layout = new HorizontalLayout;
+		layout->set_margin(1, 1, 1, 1);
 		SetLayout(layout);
 	}
 

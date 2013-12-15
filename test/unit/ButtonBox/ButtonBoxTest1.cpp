@@ -28,6 +28,7 @@ TEST_F(ButtonBoxTest1, Add1)
 	// TODO: add test code here
 
 	ButtonBox* box = new ButtonBox;
+	box->SetMargin(1, 1, 1, 1);
 
 	Button* button1 = new Button;
 	Button* button2 = new Button;
@@ -57,6 +58,7 @@ TEST_F(ButtonBoxTest1, Resize1)
 	// TODO: add test code here
 
 	ButtonBox* box = new ButtonBox;
+	box->SetMargin(1, 1, 1, 1);
 
 	Button* button1 = new Button;
 	Button* button2 = new Button;
