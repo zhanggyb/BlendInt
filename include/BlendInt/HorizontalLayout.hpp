@@ -74,47 +74,27 @@ namespace BlendInt {
 		/**
 		 * @brief scan, distribute and align the items
 		 */
-		void MakeLayout ();
-
-		/**
-		 * @brief scan, distribute and align the items
-		 */
-		void MakeLayout (const Size* size);
+		void MakeLayout (const Size* size, const Margin* margin, int space);
 
 		/**
 		 * @brief distribute horizontally with preferred size
 		 */
-		void distribute_with_preferred_width ();
+		void DistributeWithPreferredWidth (const Margin* margin, int space);
 
 		/**
 		 * @brief distribute horizontally with small size
 		 */
-		void distribute_with_small_width ();
-
-		/**
-		 * @brief distribute horizontally with small size
-		 */
-		void distribute_with_small_width (const Size* size);
+		void DistributeWithSmallWidth (const Size* size, const Margin* margin, int space);
 
 		/**
 		 * @brief distribute horizontally with large size
 		 */
-		void distribute_with_large_width ();
-
-		/**
-		 * @brief distribute horizontally with large size
-		 */
-		void distribute_with_large_width (const Size* size);
+		void DistributeWithLargeWidth (const Size* size, const Margin* margin, int space);
 
 		/**
 		 * @brief align horizontally
 		 */
-		void align ();
-
-		/**
-		 * @brief align horizontally
-		 */
-		void align (const Size* size);
+		void Align (const Size* size, const Margin* margin);
 
 		/**
 		 * @brief reset the width of unexpandable items

@@ -185,3 +185,77 @@ TEST_F(HorizontalLayoutTest1, Resize2)
 
 	ASSERT_TRUE(true);
 }
+
+/**
+ * Test SetMargin
+ *
+ * Expected result: the children in the HLayout resize too according to the new margin
+ */
+TEST_F(HorizontalLayoutTest1, SetMargin1)
+{
+	Init();
+	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - SetMargin1");
+
+	// add test code here
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->SetPosition(200, 200);
+
+	Widget* widget1 = new Widget;
+    widget1->SetExpand(true);
+    widget1->Resize(100, 80);
+	Widget* widget2 = new Widget;
+    widget2->SetExpand(true);
+    widget2->Resize(100, 80);
+
+	hlayout->Add(widget1);
+	hlayout->Add(widget2);
+
+    hlayout->Resize(400, 200);
+	Interface::Instance()->Bind(hlayout);
+
+    hlayout->SetMargin(20, 20, 20, 20);
+
+	RunLoop(window);
+
+	Terminate();
+
+	ASSERT_TRUE(true);
+}
+
+/**
+ * Test SetSpace
+ *
+ * Expected result: the children in the HLayout resize too according to the new space
+ */
+TEST_F(HorizontalLayoutTest1, SetSpace1)
+{
+	Init();
+	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - SetSpace1");
+
+	// add test code here
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->SetPosition(200, 200);
+
+	Widget* widget1 = new Widget;
+    widget1->SetExpand(true);
+    widget1->Resize(100, 80);
+	Widget* widget2 = new Widget;
+    widget2->SetExpand(true);
+    widget2->Resize(100, 80);
+
+	hlayout->Add(widget1);
+	hlayout->Add(widget2);
+
+    hlayout->Resize(400, 200);
+	Interface::Instance()->Bind(hlayout);
+
+    hlayout->SetSpace(10);
+
+	RunLoop(window);
+
+	Terminate();
+
+	ASSERT_TRUE(true);
+}

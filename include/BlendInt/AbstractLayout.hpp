@@ -82,17 +82,19 @@ namespace BlendInt {
 
 		const Margin& margin() const {return m_margin;}
 
-		void set_margin (const Margin& margin);
+		void SetMargin (const Margin& margin);
 
-		void set_margin (int left, int right, int top, int bottom);
+		void SetMargin (int left, int right, int top, int bottom);
 
-		void set_space (int space) {m_space = space;}
+		void SetSpace (int space);
 
 		int space () const {return m_space;}
 
 		AbstractLayout* root_layout ();
 
 	protected:
+
+		void set_space (int space) {m_space = space;}
 
 		virtual void initialize () {}
 

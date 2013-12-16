@@ -14,7 +14,7 @@ DemoFrame::DemoFrame()
 : Frame(), m_hlayout(0), m_timer(0), m_widget(0)
 {
 	m_hlayout = new HorizontalLayout(AlignHorizontalCenter, this);
-	m_hlayout->set_margin(0, 0, 0, 0);
+	m_hlayout->SetMargin(0, 0, 0, 0);
 
 	Label* label = new Label("Click to create: ");
 	m_hlayout->Add(label);

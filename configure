@@ -42,14 +42,16 @@ fi
 if [ "$SYSTEM"x = "GNU/Linux"x ]
 then
     #echo "Generate Eclipse CDT4 - Unix Makefiles"
-    cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" \
-        -DCMAKE_ECLIPSE_VERSION="3.7" $CMAKE_OPTIONS
+    #cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" \
+    #    -DCMAKE_ECLIPSE_VERSION="3.7" $CMAKE_OPTIONS
+    cmake $SOURCE_DIR $CMAKE_OPTIONS
 elif [ "$SYSTEM"x = "Darwin"x ]
 then
     #echo "OS is Mac OS X"
     #cmake $SOURCE_DIR -G"Xcode" $CMAKE_OPTIONS
-    cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" \
-        -DCMAKE_ECLIPSE_VERSION="3.7" $CMAKE_OPTIONS
+    #cmake $SOURCE_DIR -G"Eclipse CDT4 - Unix Makefiles" \
+    #    -DCMAKE_ECLIPSE_VERSION="3.7" $CMAKE_OPTIONS
+    cmake $SOURCE_DIR $CMAKE_OPTIONS
 fi
 
 exit 0

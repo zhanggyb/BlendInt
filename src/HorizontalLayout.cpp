@@ -55,7 +55,21 @@ namespace BlendInt {
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				if(items().size())
-					MakeLayout(size_p);
+					MakeLayout(size_p, &margin(), space());
+				return;
+			}
+
+			case LayoutPropertyMargin: {
+				const Margin* margin_p = static_cast<const Margin*>(data);
+				if(items().size())
+					MakeLayout(&size(), margin_p, space());
+				return;
+			}
+
+			case LayoutPropertySpace: {
+				const int* space_p = static_cast<const int*>(data);
+				if(items().size())
+					MakeLayout(&size(), &margin(), *space_p);
 				return;
 			}
 
@@ -186,7 +200,7 @@ namespace BlendInt {
 		if( !(current_size == size()) )
 			Resize(this, current_size);
 		else
-			MakeLayout(&current_size);
+			MakeLayout(&current_size, &margin(), space());
 
 		activate_events();
 		object->activate_events();
@@ -222,7 +236,7 @@ namespace BlendInt {
 		SetMinimalSize(new_minimal_size);
 		SetPreferredSize(new_preferred_size);
 
-		MakeLayout();
+		MakeLayout(&size(), &margin(), space());
 
 		activate_events();
 
@@ -230,42 +244,30 @@ namespace BlendInt {
 		unbind(object);
 	}
 
-	void HorizontalLayout::MakeLayout ()
-	{
-		if (size().width() == preferred_size().width()) {
-			distribute_with_preferred_width();			// layout along x with preferred size
-		} else if (size().width() < preferred_size().width()) {
-			distribute_with_small_width();			// layout along x with small size
-		} else {
-			distribute_with_large_width();			// layout along x with large size
-		}
-
-		align();
-	}
-
-	void HorizontalLayout::MakeLayout (const Size* size)
+	void HorizontalLayout::MakeLayout (const Size* size, const Margin* margin,
+	        int space)
 	{
 		if (size->width() == preferred_size().width()) {
-			distribute_with_preferred_width();			// layout along x with preferred size
+			DistributeWithPreferredWidth(margin, space);			// layout along x with preferred size
 		} else if (size->width() < preferred_size().width()) {
-			distribute_with_small_width(size);			// layout along x with small size
+			DistributeWithSmallWidth(size, margin, space);			// layout along x with small size
 		} else {
-			distribute_with_large_width(size);			// layout along x with large size
+			DistributeWithLargeWidth(size, margin, space);			// layout along x with large size
 		}
 
-		align(size);
+		Align (size, margin);
 	}
 
-	void HorizontalLayout::distribute_with_preferred_width()
+	void HorizontalLayout::DistributeWithPreferredWidth(const Margin* margin, int space)
 	{
-		int x = position().x() + margin().left();
+		int x = position().x() + margin->left();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
 		for(it = items().begin(); it != items().end(); it++)
 		{
 			if(! (it == items().begin()))
-				x += space();
+				x += space;
 
 			child = *it;
 			//resize_priv(child, child->preferred_size().width(), child->size().height());
@@ -275,118 +277,31 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::distribute_with_small_width()
+	void HorizontalLayout::DistributeWithSmallWidth(const Size* size, const Margin* margin, int space)
 	{
 		unsigned int min_expd_width = GetAllMinimalExpandableWidth();
 		unsigned int fixed_width = GetAllFixedWidth();
-
-		unsigned int current_width = size().width();
-
-		unsigned int width_plus = margin().left() + margin().right();
-
-		std::vector<AbstractWidget*>::iterator it;
-		AbstractWidget* child = 0;
-		int x = position().x() + margin().left();
-
-		if((current_width - width_plus) >=
-				(min_expd_width + fixed_width + (items().size() - 1) * space())) {
-
-			if(m_expandable_items.size() > 0) {
-				unsigned int single_min_width = current_width - width_plus - fixed_width
-				        - (items().size() - 1) * space();
-				single_min_width = single_min_width / m_expandable_items.size();
-
-				for (it = items().begin(); it != items().end(); it++) {
-					if (!(it == items().begin()))
-						x += space();
-
-					child = *it;
-
-					if (m_expandable_items.count(child)) {
-						Resize(child, single_min_width, child->size().height());
-					} else {
-						Resize(child, child->preferred_size().width(),
-						        child->size().height());
-					}
-
-					SetPosition(child, x, child->position().y());
-					x += child->size().width();
-				}
-			}
-
-		} else {
-
-			if(m_fixed_items.size() > 0) {
-				std::set<AbstractWidget*> fixed_items(m_fixed_items);// set of unminimized items
-
-				unsigned int total_fixed_width = current_width - width_plus
-				        - min_expd_width - (items().size() - 1) * space();
-				unsigned int single_fixed_width = total_fixed_width / fixed_items.size();
-
-				for(it = items().begin(); it != items().end(); it++) {
-					if (!(it == items().begin()))
-						x += space();
-
-					child = *it;
-
-					if(m_expandable_items.count(child)) {
-						Resize(child, child->minimal_size().width(),
-						        child->size().height());
-					} else {
-						if (fixed_items.size() > 0) {
-							if (single_fixed_width
-							        < child->minimal_size().width()) {
-								Resize(child, child->minimal_size().width(),
-								        child->size().height());
-								fixed_items.erase(child);
-								total_fixed_width = total_fixed_width
-								        - child->minimal_size().width();
-								single_fixed_width = total_fixed_width
-								        / fixed_items.size();
-								reset_width_of_fixed_items(&fixed_items,
-								        single_fixed_width);
-							} else {
-								Resize(child, single_fixed_width,
-								        child->size().height());
-							}
-						}
-
-					}
-
-					SetPosition(child, x, child->position().y());
-					x += child->size().width();
-				}
-			}
-
-		}
-	}
-
-	void HorizontalLayout::distribute_with_small_width(const Size* size)
-	{
-		unsigned int min_expd_width = GetAllMinimalExpandableWidth();
-		unsigned int fixed_width = GetAllFixedWidth();
-
 		unsigned int current_width = size->width();
-
-		unsigned int width_plus = margin().left() + margin().right();
+		unsigned int width_plus = margin->left() + margin->right();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		int x = position().x() + margin().left();	// the x position of each child widget, update in each for loop
+		int x = position().x() + margin->left();	// the x position of each child widget, update in each for loop
 
-		if((current_width - width_plus) >=
-				(min_expd_width + fixed_width + (items().size() - 1) * space())) {
+		bool change_expd_items = (current_width - width_plus) >= (min_expd_width + fixed_width + (items().size() - 1) * space);
+
+		if(change_expd_items) {
 
 			// just change expandable widgets
 			if (m_expandable_items.size() > 0) {
 
 				unsigned int single_min_width = current_width - width_plus
-				        - fixed_width - (items().size() - 1) * space();
+				        - fixed_width - (items().size() - 1) * space;
 				single_min_width = single_min_width / m_expandable_items.size();
 
 				for (it = items().begin(); it != items().end(); it++) {
 					if (!(it == items().begin()))
-						x += space();
+						x += space;
 
 					child = *it;
 
@@ -410,7 +325,7 @@ namespace BlendInt {
 				std::set<AbstractWidget*> fixed_items(m_fixed_items);// set of unminimized items
 
 				unsigned int total_fixed_width = current_width - width_plus
-				        - min_expd_width - (items().size() - 1) * space();
+				        - min_expd_width - (items().size() - 1) * space;
 				unsigned int single_fixed_width = total_fixed_width / fixed_items.size();
 
 				for (it = items().begin(); it != items().end(); it++) {
@@ -418,7 +333,7 @@ namespace BlendInt {
 					if(fixed_items.size() == 0) break;
 
 					if (!(it == items().begin()))
-						x += space();
+						x += space;
 
 					child = *it;
 
@@ -453,19 +368,17 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::distribute_with_large_width()
+	void HorizontalLayout::DistributeWithLargeWidth(const Size* size, const Margin* margin, int space)
 	{
 		unsigned int fixed_w = GetAllFixedWidth();
-
-		unsigned int current_width = size().width();
-
-		unsigned int w_plus = margin().left() + margin().right();
+		unsigned int current_width = size->width();
+		unsigned int w_plus = margin->left() + margin->right();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		int x = position().x() + margin().left();
+		int x = position().x() + margin->left();
 
-		unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space();
+		unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space;
 
 		if(m_expandable_items.size())
 			single_width = single_width / m_expandable_items.size();
@@ -473,7 +386,7 @@ namespace BlendInt {
 		for(it = items().begin(); it != items().end(); it++)
 		{
 			if (!(it == items().begin()))
-				x += space();
+				x += space;
 
 			child = *it;
 
@@ -490,48 +403,11 @@ namespace BlendInt {
 
 	}
 
-	void HorizontalLayout::distribute_with_large_width(const Size* size)
+	void HorizontalLayout::Align(const Size* size, const Margin* margin)
 	{
-		unsigned int fixed_w = GetAllFixedWidth();
+		int y = position().y() + margin->bottom();
 
-		unsigned int current_width = size->width();
-
-		unsigned int w_plus = margin().left() + margin().right();
-
-		std::vector<AbstractWidget*>::iterator it;
-		AbstractWidget* child = 0;
-		int x = position().x() + margin().left();
-
-		unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space();
-
-		if(m_expandable_items.size())
-			single_width = single_width / m_expandable_items.size();	// TODO: check if divided by 0
-
-		for(it = items().begin(); it != items().end(); it++)
-		{
-			if (!(it == items().begin()))
-				x += space();
-
-			child = *it;
-
-			if (m_expandable_items.count(child)) {
-				Resize(child, single_width, child->size().height());
-			} else {
-				Resize(child, child->preferred_size().width(),
-				        child->size().height());
-			}
-
-			SetPosition(child, x, child->position().y());
-			x += child->size().width();
-		}
-
-	}
-
-	void HorizontalLayout::align()
-	{
-		int y = position().y() + margin().bottom();
-
-		unsigned int h = size().height() - margin().top() - margin().bottom();
+		unsigned int h = size->height() - margin->top() - margin->bottom();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
@@ -558,39 +434,6 @@ namespace BlendInt {
 			}
 		}
 	}
-
-	void HorizontalLayout::align(const Size* size)
-	{
-		int y = position().y() + margin().bottom();
-
-		unsigned int h = size->height() - margin().top() - margin().bottom();
-
-		std::vector<AbstractWidget*>::iterator it;
-		AbstractWidget* child = 0;
-		for(it = items().begin(); it != items().end(); it++)
-		{
-			child = *it;
-
-			if (child->expand_y() ||
-					(child->size().height() > h)) {
-				Resize(child, child->size().width(), h);
-				SetPosition(child, child->position().x(), y);
-			} else {
-
-				if (alignment() & AlignTop) {
-					SetPosition(child, child->position().x(),
-					        y + (h - child->size().height()));
-				} else if (alignment() & AlignBottom) {
-					SetPosition(child, child->position().x(), y);
-				} else if (alignment() & AlignHorizontalCenter) {
-					SetPosition(child, child->position().x(),
-					        y + (h - child->size().height()) / 2);
-				}
-
-			}
-		}
-	}
-
 
 	void HorizontalLayout::reset_width_of_fixed_items(
 			std::set<AbstractWidget*>* items, unsigned int width)
