@@ -351,7 +351,7 @@ namespace BlendInt {
 								        - child->minimal_size().width();
 								single_fixed_width = total_fixed_width
 								        / fixed_items.size();
-								reset_width_of_fixed_items(&fixed_items,
+								ResetWidthOfFixedItems(&fixed_items,
 								        single_fixed_width);
 							} else {
 								Resize(child, single_fixed_width,
@@ -370,7 +370,8 @@ namespace BlendInt {
 
 	void HorizontalLayout::DistributeWithLargeWidth(const Size* size, const Margin* margin, int space)
 	{
-		unsigned int fixed_w = GetAllFixedWidth();
+		//unsigned int max_expd_width = GetAllMaximalExpandableWidth();
+		unsigned int fixed_width = GetAllFixedWidth();
 		unsigned int current_width = size->width();
 		unsigned int w_plus = margin->left() + margin->right();
 
@@ -378,10 +379,14 @@ namespace BlendInt {
 		AbstractWidget* child = 0;
 		int x = position().x() + margin->left();
 
-		unsigned int single_width = current_width - w_plus - fixed_w - (items().size() - 1) * space;
+		unsigned int single_width = current_width - w_plus - fixed_width - (items().size() - 1) * space;
 
-		if(m_expandable_items.size())
+		if(m_expandable_items.size()) {
 			single_width = single_width / m_expandable_items.size();
+		} else {
+			// if no expandable items, center all items
+			x = x + (current_width - w_plus - fixed_width - (m_fixed_items.size() - 1) * space) / 2;
+		}
 
 		for(it = items().begin(); it != items().end(); it++)
 		{
@@ -400,7 +405,6 @@ namespace BlendInt {
 			SetPosition(child, x, child->position().y());
 			x += child->size().width();
 		}
-
 	}
 
 	void HorizontalLayout::Align(const Size* size, const Margin* margin)
@@ -435,7 +439,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::reset_width_of_fixed_items(
+	void HorizontalLayout::ResetWidthOfFixedItems(
 			std::set<AbstractWidget*>* items, unsigned int width)
 	{
 		std::set<AbstractWidget*>::iterator it;
@@ -459,6 +463,19 @@ namespace BlendInt {
 		return width;
 	}
 
+	unsigned int HorizontalLayout::GetAllMaximalExpandableWidth()
+	{
+		unsigned int width = 0;
+
+		std::set<AbstractWidget*>::iterator it;
+		for(it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
+		{
+			width += (*it)->maximal_size().width();
+		}
+
+		return width;
+	}
+
 	unsigned int HorizontalLayout::GetAllFixedWidth()
 	{
 		unsigned int width = 0;
@@ -470,7 +487,6 @@ namespace BlendInt {
 		}
 
 		return width;
-
 	}
 
 	void HorizontalLayout::get_size_hint (bool count_margin,
