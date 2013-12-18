@@ -330,7 +330,7 @@ namespace BlendInt {
 
 				for (it = items().begin(); it != items().end(); it++) {
 
-					if(fixed_items.size() == 0) break;
+					//if(fixed_items.size() == 0) break;
 
 					if (!(it == items().begin()))
 						x += space;
@@ -341,7 +341,7 @@ namespace BlendInt {
 						Resize(child, child->minimal_size().width(),
 						        child->size().height());
 					} else {
-						if (fixed_items.size() > 0) {
+						if (fixed_items.size()) {
 							if (single_fixed_width
 							        < child->minimal_size().width()) {
 								Resize(child, child->minimal_size().width(),
@@ -353,6 +353,19 @@ namespace BlendInt {
 								        / fixed_items.size();
 								ResetWidth(&fixed_items,
 								        single_fixed_width);
+
+								// TODO: reset x
+								x = position().x() + margin->left();
+								std::vector<AbstractWidget*>::iterator j;
+								for(j = items().begin(); j != it; j++)
+								{
+									if(!(j == items().begin())) {
+										x += space;
+									}
+									x += (*j)->size().width();
+								}
+								if(!(it == items().begin())) x += space;
+
 							} else {
 								Resize(child, single_fixed_width,
 								        child->size().height());
@@ -376,14 +389,10 @@ namespace BlendInt {
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		int x = position().x() + margin->left();
 
 		if(m_expandable_items.size()) {
 
 			unsigned int max_expd_width = GetAllMaximalExpandableWidth();
-//			unsigned int single_width = (current_width - margin_plus
-//			        - fixed_width - (items().size() - 1) * space)
-//			        / m_expandable_items.size();
 			bool change_expd_items = (current_width - margin_plus)
 			        <= (max_expd_width + fixed_width
 			                + (items().size() - 1) * space);
@@ -393,10 +402,11 @@ namespace BlendInt {
 				unsigned int total_expd_width = current_width - margin_plus
 				        - fixed_width - (items().size() - 1) * space;
 				unsigned int single_expd_width = total_expd_width / expd_items.size();
+				int x = position().x() + margin->left();
 
 				for (it = items().begin(); it != items().end(); it++) {
 
-					if(expd_items.size() == 0) break;
+					//if(expd_items.size() == 0) break;
 
 					if (!(it == items().begin()))
 						x += space;
@@ -407,7 +417,7 @@ namespace BlendInt {
 						Resize(child, child->size().width(),
 						        child->size().height());
 					} else {
-						if (expd_items.size() > 0) {
+						if (expd_items.size()) {
 							if (single_expd_width
 							        > child->maximal_size().width()) {
 								Resize(child, child->maximal_size().width(),
@@ -419,6 +429,19 @@ namespace BlendInt {
 								        / expd_items.size();
 								ResetWidth(&expd_items,
 								        single_expd_width);
+
+								// TODO: reset x
+								x = position().x() + margin->left();
+								std::vector<AbstractWidget*>::iterator j;
+								for(j = items().begin(); j != it; j++)
+								{
+									if(!(j == items().begin())) {
+										x += space;
+									}
+									x += (*j)->size().width();
+								}
+								if(!(it == items().begin())) x += space;
+
 							} else {
 								Resize(child, single_expd_width,
 								        child->size().height());
@@ -430,6 +453,7 @@ namespace BlendInt {
 				}
 
 			} else {
+				int x = position().x() + margin->left();
 
 				x = x + (current_width - margin_plus - max_expd_width - fixed_width
 		                - (items().size() - 1) * space) / 2;
@@ -455,6 +479,8 @@ namespace BlendInt {
 			}
 
 		} else {
+			int x = position().x() + margin->left();
+
 			// if no expandable items, center all items
 			x = x + (current_width - margin_plus - fixed_width - (m_fixed_items.size() - 1) * space) / 2;
 

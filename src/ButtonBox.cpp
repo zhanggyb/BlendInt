@@ -47,6 +47,11 @@ namespace BlendInt {
 	{
 		if(layout())
 			layout()->Add(button);
+
+		unsigned int width = layout()->preferred_size().width();
+		unsigned int height = layout()->preferred_size().height();
+
+		Resize(width + margin().left() + margin().right(), height + margin().top() + margin().bottom());
 	}
 
 	void ButtonBox::Init ()

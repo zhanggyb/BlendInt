@@ -136,11 +136,11 @@ TEST_F(HorizontalLayoutTest1, Add4)
 
 	Widget* widget1 = new Widget;
 	widget1->SetExpand(true);
-    widget1->SetPreferredSize(40, widget1->size().height());
+    widget1->SetPreferredSize(40, widget1->preferred_size().height());
     widget1->SetMaximalSize(80, widget1->maximal_size().height());
 	Widget* widget2 = new Widget;
 	widget2->SetExpand(true);
-    widget2->SetPreferredSize(40, widget2->size().height());
+    widget2->SetPreferredSize(40, widget2->preferred_size().height());
     widget2->SetMaximalSize(80, widget2->maximal_size().height());
 
 	hlayout->Add(widget1);
@@ -155,6 +155,50 @@ TEST_F(HorizontalLayoutTest1, Add4)
 	ASSERT_TRUE(true);
 }
 
+/**
+ * Test behavior if more than 1 expandable child with max width and 1 more fixed child
+ *
+ * Expected result: the widgets should fill the layout
+ */
+TEST_F(HorizontalLayoutTest1, Add5)
+{
+	Init ();
+	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add5");
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->SetPosition(200, 200);
+	hlayout->Resize(600, 200);
+
+	Widget* widget1 = new Widget;
+	widget1->SetExpand(true);
+    //widget1->SetPreferredSize(40, widget1->preferred_size().height());
+    //widget1->SetMaximalSize(80, widget1->maximal_size().height());
+	Widget* widget2 = new Widget;
+	widget2->SetExpand(true);
+    widget2->SetPreferredSize(40, widget2->preferred_size().height());
+    widget2->SetMaximalSize(80, widget2->maximal_size().height());
+	Widget* widget3 = new Widget;
+	widget3->SetExpand(true);
+    widget3->SetPreferredSize(40, widget3->preferred_size().height());
+    widget3->SetMaximalSize(60, widget3->maximal_size().height());
+	Widget* widget4 = new Widget;
+	widget4->SetExpand(true);
+    widget4->SetPreferredSize(40, widget4->preferred_size().height());
+    widget4->SetMaximalSize(70, widget4->maximal_size().height());
+	
+    hlayout->Add(widget1);
+	hlayout->Add(widget2);
+	hlayout->Add(widget3);
+	hlayout->Add(widget4);
+
+	Interface::Instance()->Bind(hlayout);
+
+	RunLoop(window);
+
+	Terminate();
+
+	ASSERT_TRUE(true);
+}
 
 /**
  * Test resize
@@ -212,6 +256,44 @@ TEST_F(HorizontalLayoutTest1, Resize2)
 	hlayout->Add(widget2);
 
 	hlayout->Resize(400, 200);
+
+	Interface::Instance()->Bind(hlayout);
+
+	RunLoop(window);
+
+	Terminate();
+
+	ASSERT_TRUE(true);
+}
+
+/**
+ * Test resize to small size
+ *
+ * Expected result: the children in the HLayout resize too according to the layout size
+ */
+TEST_F(HorizontalLayoutTest1, Resize3)
+{
+	Init();
+	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Resize3");
+
+	// add test code here
+
+	HorizontalLayout* hlayout = new HorizontalLayout;
+	hlayout->SetPosition(200, 200);
+
+	Widget* widget1 = new Widget;
+	Widget* widget2 = new Widget;
+    widget2->SetMinimalSize(30, widget2->minimal_size().height());
+	Widget* widget3 = new Widget;
+    widget3->SetMinimalSize(20, widget3->minimal_size().height());
+	Widget* widget4 = new Widget;
+
+	hlayout->Add(widget1);
+	hlayout->Add(widget2);
+	hlayout->Add(widget3);
+	hlayout->Add(widget4);
+
+	hlayout->Resize(80, 100);
 
 	Interface::Instance()->Bind(hlayout);
 

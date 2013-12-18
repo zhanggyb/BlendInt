@@ -56,14 +56,14 @@ int main(int argc, char* argv[]) {
 	hlayout->SetPosition(200, 200);
 	hlayout->Resize(400, 200);
 
-#ifdef DEBUG
-	hlayout->lock(true);
-#endif
-
 	Widget* widget1 = new Widget;
 	widget1->SetExpand(true);
+    //widget1->SetPreferredSize(40, widget1->preferred_size().height());
+    //widget1->SetMaximalSize(80, widget1->maximal_size().height());
 	Widget* widget2 = new Widget;
 	widget2->SetExpand(true);
+	widget2->SetPreferredSize(40, widget2->preferred_size().height());
+	widget2->SetMaximalSize(80, widget2->maximal_size().height());
 
 	hlayout->Add(widget1);
 	hlayout->Add(widget2);
