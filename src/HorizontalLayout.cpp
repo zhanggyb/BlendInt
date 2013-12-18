@@ -282,20 +282,20 @@ namespace BlendInt {
 		unsigned int min_expd_width = GetAllMinimalExpandableWidth();
 		unsigned int fixed_width = GetAllFixedWidth();
 		unsigned int current_width = size->width();
-		unsigned int width_plus = margin->left() + margin->right();
+		unsigned int margin_plus = margin->left() + margin->right();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
 		int x = position().x() + margin->left();	// the x position of each child widget, update in each for loop
 
-		bool change_expd_items = (current_width - width_plus) >= (min_expd_width + fixed_width + (items().size() - 1) * space);
+		bool change_expd_items = (current_width - margin_plus) >= (min_expd_width + fixed_width + (items().size() - 1) * space);
 
 		if(change_expd_items) {
 
 			// just change expandable widgets
 			if (m_expandable_items.size() > 0) {
 
-				unsigned int single_min_width = current_width - width_plus
+				unsigned int single_min_width = current_width - margin_plus
 				        - fixed_width - (items().size() - 1) * space;
 				single_min_width = single_min_width / m_expandable_items.size();
 
@@ -324,7 +324,7 @@ namespace BlendInt {
 
 				std::set<AbstractWidget*> fixed_items(m_fixed_items);// set of unminimized items
 
-				unsigned int total_fixed_width = current_width - width_plus
+				unsigned int total_fixed_width = current_width - margin_plus
 				        - min_expd_width - (items().size() - 1) * space;
 				unsigned int single_fixed_width = total_fixed_width / fixed_items.size();
 
@@ -351,7 +351,7 @@ namespace BlendInt {
 								        - child->minimal_size().width();
 								single_fixed_width = total_fixed_width
 								        / fixed_items.size();
-								ResetWidthOfFixedItems(&fixed_items,
+								ResetWidth(&fixed_items,
 								        single_fixed_width);
 							} else {
 								Resize(child, single_fixed_width,
@@ -370,41 +370,110 @@ namespace BlendInt {
 
 	void HorizontalLayout::DistributeWithLargeWidth(const Size* size, const Margin* margin, int space)
 	{
-		//unsigned int max_expd_width = GetAllMaximalExpandableWidth();
 		unsigned int fixed_width = GetAllFixedWidth();
 		unsigned int current_width = size->width();
-		unsigned int w_plus = margin->left() + margin->right();
+		unsigned int margin_plus = margin->left() + margin->right();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
 		int x = position().x() + margin->left();
 
-		unsigned int single_width = current_width - w_plus - fixed_width - (items().size() - 1) * space;
-
 		if(m_expandable_items.size()) {
-			single_width = single_width / m_expandable_items.size();
-		} else {
-			// if no expandable items, center all items
-			x = x + (current_width - w_plus - fixed_width - (m_fixed_items.size() - 1) * space) / 2;
-		}
 
-		for(it = items().begin(); it != items().end(); it++)
-		{
-			if (!(it == items().begin()))
-				x += space;
+			unsigned int max_expd_width = GetAllMaximalExpandableWidth();
+//			unsigned int single_width = (current_width - margin_plus
+//			        - fixed_width - (items().size() - 1) * space)
+//			        / m_expandable_items.size();
+			bool change_expd_items = (current_width - margin_plus)
+			        <= (max_expd_width + fixed_width
+			                + (items().size() - 1) * space);
 
-			child = *it;
+			if(change_expd_items) {
+				std::set<AbstractWidget*> expd_items(m_expandable_items);// set of unmaximized items
+				unsigned int total_expd_width = current_width - margin_plus
+				        - fixed_width - (items().size() - 1) * space;
+				unsigned int single_expd_width = total_expd_width / expd_items.size();
 
-			if (m_expandable_items.count(child)) {
-				Resize(child, single_width, child->size().height());
+				for (it = items().begin(); it != items().end(); it++) {
+
+					if(expd_items.size() == 0) break;
+
+					if (!(it == items().begin()))
+						x += space;
+
+					child = *it;
+
+					if (m_fixed_items.count(child)) {
+						Resize(child, child->size().width(),
+						        child->size().height());
+					} else {
+						if (expd_items.size() > 0) {
+							if (single_expd_width
+							        > child->maximal_size().width()) {
+								Resize(child, child->maximal_size().width(),
+								        child->size().height());
+								expd_items.erase(child);
+								total_expd_width = total_expd_width
+								        - child->maximal_size().width();
+								single_expd_width = total_expd_width
+								        / expd_items.size();
+								ResetWidth(&expd_items,
+								        single_expd_width);
+							} else {
+								Resize(child, single_expd_width,
+								        child->size().height());
+							}
+						}
+					}
+					SetPosition(child, x, child->position().y());
+					x += child->size().width();
+				}
+
 			} else {
-				Resize(child, child->preferred_size().width(),
-				        child->size().height());
+
+				x = x + (current_width - margin_plus - max_expd_width - fixed_width
+		                - (items().size() - 1) * space) / 2;
+
+				// resize all with the max size
+				for(it = items().begin(); it != items().end(); it++)
+				{
+					if (!(it == items().begin()))
+						x += space;
+
+					child = *it;
+
+					if (m_expandable_items.count(child)) {
+						Resize(child, child->maximal_size().width(), child->size().height());
+					} else {
+						Resize(child, child->preferred_size().width(),
+						        child->size().height());
+					}
+					SetPosition(child, x, child->position().y());
+					x += child->size().width();
+				}
+
 			}
 
-			SetPosition(child, x, child->position().y());
-			x += child->size().width();
+		} else {
+			// if no expandable items, center all items
+			x = x + (current_width - margin_plus - fixed_width - (m_fixed_items.size() - 1) * space) / 2;
+
+			for(it = items().begin(); it != items().end(); it++)
+			{
+				if (!(it == items().begin()))
+					x += space;
+
+				child = *it;
+
+				Resize(child, child->preferred_size().width(),
+					        child->size().height());
+
+				SetPosition(child, x, child->position().y());
+				x += child->size().width();
+			}
+
 		}
+
 	}
 
 	void HorizontalLayout::Align(const Size* size, const Margin* margin)
@@ -439,7 +508,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::ResetWidthOfFixedItems(
+	void HorizontalLayout::ResetWidth(
 			std::set<AbstractWidget*>* items, unsigned int width)
 	{
 		std::set<AbstractWidget*>::iterator it;

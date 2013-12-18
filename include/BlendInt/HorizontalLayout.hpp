@@ -101,7 +101,7 @@ namespace BlendInt {
 		 * @param[in] items
 		 * @param[in] width
 		 */
-		void ResetWidthOfFixedItems (std::set<AbstractWidget*>* items, unsigned int width);
+		void ResetWidth (std::set<AbstractWidget*>* items, unsigned int width);
 
 		/**
 		 * @brief calculate and return the minimal width of the expandable items
