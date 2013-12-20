@@ -98,14 +98,9 @@ namespace BlendInt {
 		 */
 		void Align (const Size* size, const Margin* margin);
 
-		/**
-		 * @brief reset the width of unexpandable items
-		 * @param[in] items
-		 * @param[in] width
-		 */
-		void ResetWidth (std::set<AbstractWidget*>* item_set, unsigned int width);
-
 		unsigned int AdjustExpandableWidth (std::list<AbstractWidget*>* item_list_p, unsigned int width_plus);
+
+		unsigned int AdjustMinimalWidth (std::list<AbstractWidget*>* item_list_p, unsigned int width_plus);
 
 		/**
 		 * @brief calculate and return the minimal width of the expandable items

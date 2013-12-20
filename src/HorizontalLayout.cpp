@@ -293,47 +293,38 @@ namespace BlendInt {
 		if(change_expd_items) {
 
 			// just change expandable widgets
-			if (m_expandable_items.size() > 0) {
+			if (m_expandable_items.size()) {
 
-				unsigned int single_min_width = current_width - margin_plus
+				unsigned int average_min_width = current_width - margin_plus
 				        - fixed_width - (items().size() - 1) * space;
-				single_min_width = single_min_width / m_expandable_items.size();
+				average_min_width = average_min_width / m_expandable_items.size();
 
 				for (it = items().begin(); it != items().end(); it++) {
-					if (!(it == items().begin()))
-						x += space;
-
 					child = *it;
 
 					if (m_expandable_items.count(child)) {
-						Resize(child, single_min_width, child->size().height());
+						Resize(child, average_min_width, child->size().height());
 					} else {
 						Resize(child, child->preferred_size().width(),
 						        child->size().height());
 					}
-
-					SetPosition(child, x, child->position().y());
-					x += child->size().width();
 				}
 
 			}
 
 		} else {
 
-			if(m_fixed_items.size() > 0) {
+			if(m_fixed_items.size()) {
 
-				std::set<AbstractWidget*> fixed_items(m_fixed_items);// set of unminimized items
+//				std::set<AbstractWidget*> fixed_items(m_fixed_items);// set of unminimized items
+				std::list<AbstractWidget*> unminimized_items;
+				unsigned int width_plus = 0;
 
 				unsigned int total_fixed_width = current_width - margin_plus
 				        - min_expd_width - (items().size() - 1) * space;
-				unsigned int single_fixed_width = total_fixed_width / fixed_items.size();
+				unsigned int average_fixed_width = total_fixed_width / m_fixed_items.size();
 
 				for (it = items().begin(); it != items().end(); it++) {
-
-					//if(fixed_items.size() == 0) break;
-
-					if (!(it == items().begin()))
-						x += space;
 
 					child = *it;
 
@@ -341,44 +332,27 @@ namespace BlendInt {
 						Resize(child, child->minimal_size().width(),
 						        child->size().height());
 					} else {
-						if (fixed_items.size()) {
-							if (single_fixed_width
-							        < child->minimal_size().width()) {
-								Resize(child, child->minimal_size().width(),
-								        child->size().height());
-								fixed_items.erase(child);
-								total_fixed_width = total_fixed_width
-								        - child->minimal_size().width();
-								single_fixed_width = total_fixed_width
-								        / fixed_items.size();
-								ResetWidth(&fixed_items,
-								        single_fixed_width);
-
-								// TODO: reset x
-								x = position().x() + margin->left();
-								std::vector<AbstractWidget*>::iterator j;
-								for(j = items().begin(); j != it; j++)
-								{
-									if(!(j == items().begin())) {
-										x += space;
-									}
-									x += (*j)->size().width();
-								}
-								if(!(it == items().begin())) x += space;
-
-							} else {
-								Resize(child, single_fixed_width,
-								        child->size().height());
-							}
+						if (average_fixed_width
+								< child->minimal_size().width()) {
+							width_plus = width_plus + child->minimal_size().width() - average_fixed_width;
+							Resize(child, child->minimal_size().width(),
+									child->size().height());
+						} else {
+							unminimized_items.push_back(child);
+							Resize(child, average_fixed_width,
+									child->size().height());
 						}
 					}
+				}
 
-					SetPosition(child, x, child->position().y());
-					x += child->size().width();
+				if(width_plus > 0) {
+					AdjustMinimalWidth(&unminimized_items, width_plus);
 				}
 
 			}
 		}
+
+		Distribute(space, x);
 	}
 
 	void HorizontalLayout::DistributeWithLargeWidth(const Size* size, const Margin* margin, int space)
@@ -411,17 +385,12 @@ namespace BlendInt {
 				for (it = items().begin(); it != items().end(); it++) {
 					child = *it;
 					if(m_expandable_items.count(child)) {
-
 						if(average_expd_width > child->maximal_size().width()) {
 							width_plus = width_plus + average_expd_width - child->maximal_size().width();
 							Resize(child, child->maximal_size().width(), child->size().height());
-							//width_plus = AdjustExpandableWidth(&unmaximized_list, width_plus);
-
 						} else {
-
 							unmaximized_list.push_back(child);
 							Resize(child, average_expd_width, child->size().height());
-
 						}
 					}
 				}
@@ -517,21 +486,9 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::ResetWidth(
-			std::set<AbstractWidget*>* item_set_p, unsigned int width)
-	{
-		std::set<AbstractWidget*>::iterator it;
-
-		for(it = item_set_p->begin(); it != item_set_p->end(); it++)
-		{
-			Resize(*it, width, (*it)->size().height());
-		}
-	}
-
 	unsigned int HorizontalLayout::AdjustExpandableWidth(std::list<AbstractWidget*>* item_list_p, unsigned int width_plus)
 	{
 		if(!item_list_p) return width_plus;
-
 		if(item_list_p->size() == 0) return width_plus;
 
 		unsigned int remainder = 0;
@@ -540,9 +497,9 @@ namespace BlendInt {
 
 		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
 		{
-			if (average_width_plus	> (*it)->maximal_size().width()) {
+			if ((average_width_plus + (*it)->size().width()) > (*it)->maximal_size().width()) {
 				Resize(*it, (*it)->maximal_size().width(), (*it)->size().height());
-				remainder = remainder + average_width_plus - (*it)->maximal_size().width();
+				remainder = remainder + average_width_plus + (*it)->size().width() - (*it)->maximal_size().width();
 				it = item_list_p->erase(it);
 			} else {
 				Resize(*it, (*it)->size().width() + average_width_plus, (*it)->size().height());
@@ -552,6 +509,34 @@ namespace BlendInt {
 		if(remainder != 0) {
 			// TODO: do not use iteration procedure
 			remainder = AdjustExpandableWidth(item_list_p, remainder);
+		}
+
+		return remainder;
+	}
+
+	unsigned int HorizontalLayout::AdjustMinimalWidth(std::list<AbstractWidget*>* item_list_p, unsigned int width_plus)
+	{
+		if(!item_list_p) return width_plus;
+		if(item_list_p->size() == 0) return width_plus;
+
+		unsigned int remainder = 0;
+		std::list<AbstractWidget*>::iterator it;
+		unsigned int average_width_plus = width_plus / item_list_p->size();
+
+		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
+		{
+			if (((*it)->size().width() - average_width_plus) < (*it)->minimal_size().width()) {
+				Resize(*it, (*it)->minimal_size().width(), (*it)->size().height());
+				remainder = remainder + (*it)->minimal_size().width() - ((*it)->size().width() - average_width_plus);
+				it = item_list_p->erase(it);
+			} else {
+				Resize(*it, (*it)->size().width() - average_width_plus, (*it)->size().height());
+			}
+		}
+
+		if(remainder != 0) {
+			// TODO: do not use iteration procedure
+			remainder = AdjustMinimalWidth(item_list_p, remainder);
 		}
 
 		return remainder;
