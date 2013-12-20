@@ -91,6 +91,8 @@ namespace BlendInt {
 		 */
 		void DistributeWithLargeWidth (const Size* size, const Margin* margin, int space);
 
+		void Distribute (int space, int start = 0);
+
 		/**
 		 * @brief align horizontally
 		 */
@@ -101,7 +103,9 @@ namespace BlendInt {
 		 * @param[in] items
 		 * @param[in] width
 		 */
-		void ResetWidth (std::set<AbstractWidget*>* items, unsigned int width);
+		void ResetWidth (std::set<AbstractWidget*>* item_set, unsigned int width);
+
+		unsigned int AdjustExpandableWidth (std::list<AbstractWidget*>* item_list_p, unsigned int width_plus);
 
 		/**
 		 * @brief calculate and return the minimal width of the expandable items

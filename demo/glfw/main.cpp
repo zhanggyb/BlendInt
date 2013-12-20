@@ -46,29 +46,33 @@ int main(int argc, char* argv[]) {
 
 	GLFWwindow* window = CreateWindow("GLFW3 Demo");
 
-	Interface* app = Interface::Instance();
-
-//	DemoFrame* frame = new DemoFrame;
-
-//	app->Bind(frame);
-
 	HorizontalLayout* hlayout = new HorizontalLayout;
 	hlayout->SetPosition(200, 200);
-	hlayout->Resize(400, 200);
+	hlayout->Resize(600, 200);
 
 	Widget* widget1 = new Widget;
 	widget1->SetExpand(true);
-    //widget1->SetPreferredSize(40, widget1->preferred_size().height());
-    //widget1->SetMaximalSize(80, widget1->maximal_size().height());
+//	widget1->SetPreferredSize(40, widget1->preferred_size().height());
+//	widget1->SetMaximalSize(80, widget1->maximal_size().height());
 	Widget* widget2 = new Widget;
 	widget2->SetExpand(true);
 	widget2->SetPreferredSize(40, widget2->preferred_size().height());
 	widget2->SetMaximalSize(80, widget2->maximal_size().height());
+	Widget* widget3 = new Widget;
+	widget3->SetExpand(true);
+//	widget3->SetPreferredSize(40, widget3->preferred_size().height());
+//	widget3->SetMaximalSize(60, widget3->maximal_size().height());
+	Widget* widget4 = new Widget;
+	widget4->SetExpand(true);
+//	widget4->SetPreferredSize(40, widget4->preferred_size().height());
+//	widget4->SetMaximalSize(70, widget4->maximal_size().height());
 
 	hlayout->Add(widget1);
 	hlayout->Add(widget2);
+	hlayout->Add(widget3);
+	hlayout->Add(widget4);
 
-	app->Bind(hlayout);
+	Interface::Instance()->Bind(hlayout);
 
 	RunLoop(window);
 
