@@ -124,7 +124,7 @@ namespace BlendInt {
 		 * @param[out] min the layout minimal size
 		 * @param[out] prefer the layout preferred size
 		 */
-		void get_size_hint (bool margin, bool space, Size* size, Size* min, Size* prefer);
+		void GetSizeHint (bool margin, bool space, Size* size, Size* min, Size* prefer);
 
 		/**
 		 * @brief set of horizontally expandable items

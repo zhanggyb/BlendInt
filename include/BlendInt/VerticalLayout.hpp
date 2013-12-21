@@ -65,25 +65,12 @@ namespace BlendInt {
 
 	private:
 
-		/**
-		 * @brief scan, distribute and align the items
-		 */
-		void make_layout ();
-
-		/**
-		 * @brief scan, distribute and align the items
-		 */
-		void make_layout (const Size* size);
+		void MakeLayout (const Size* size, const Margin* margin, int space);
 
 		/**
 		 * @brief distribute vertically with preferred size
 		 */
-		void distribute_with_preferred_height ();
-
-		/**
-		 * @brief distribute vertically with preferred size
-		 */
-		void distribute_with_preferred_height (const Size* size);
+		void DistributeWithPreferredHeight (const Margin* margin, int space);
 
 		/**
 		 * @brief distribute vertically with small size
@@ -93,7 +80,7 @@ namespace BlendInt {
 		/**
 		 * @brief distribute vertically with small size
 		 */
-		void distribute_with_small_height (const Size* size);
+		void DistributeWithSmallHeight (const Size* size, const Margin* margin, int space);
 
 		/**
 		 * @brief distribute vertically with large size
@@ -104,6 +91,8 @@ namespace BlendInt {
 		 * @brief distribute vertically with large size
 		 */
 		void distribute_with_large_height (const Size* size);
+
+		void Distribute (int space, int start = 0);
 
 		/**
 		 * @brief align vertically
@@ -132,7 +121,7 @@ namespace BlendInt {
 		 * @brief calculate and return the height of fixed items
 		 * @return
 		 */
-		unsigned int fixed_height ();
+		unsigned int GetFixedHeight ();
 
 		/**
 		 * @brief scan the children and get the total size hint

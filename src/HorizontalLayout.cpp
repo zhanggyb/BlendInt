@@ -231,7 +231,7 @@ namespace BlendInt {
 		Size new_preferred_size;
 		Size new_minimal_size;
 
-		get_size_hint(true, true, 0, &new_minimal_size, &new_preferred_size);
+		GetSizeHint(true, true, 0, &new_minimal_size, &new_preferred_size);
 
 		SetMinimalSize(new_minimal_size);
 		SetPreferredSize(new_preferred_size);
@@ -262,19 +262,12 @@ namespace BlendInt {
 	{
 		int x = position().x() + margin->left();
 
-		std::vector<AbstractWidget*>::iterator it;
-		AbstractWidget* child = 0;
-		for(it = items().begin(); it != items().end(); it++)
+		for(std::vector<AbstractWidget*>::iterator it = items().begin(); it != items().end(); it++)
 		{
-			if(! (it == items().begin()))
-				x += space;
-
-			child = *it;
-			//resize_priv(child, child->preferred_size().width(), child->size().height());
-			Resize(child, child->preferred_size().width(), child->size().height());
-			SetPosition(child, x, child->position().y());
-			x += child->size().width();
+			Resize(*it, (*it)->preferred_size().width(), (*it)->size().height());
 		}
+
+		Distribute(space, x);
 	}
 
 	void HorizontalLayout::DistributeWithSmallWidth(const Size* size, const Margin* margin, int space)
@@ -444,10 +437,10 @@ namespace BlendInt {
 
 	void HorizontalLayout::Distribute(int space, int start)
 	{
+		start -= space;	// subtract one space to make sure no space if only 1 child in layout
 		for(std::vector<AbstractWidget*>::iterator it = items().begin(); it != items().end(); it++)
 		{
-			if (!(it == items().begin()))
-				start += space;
+			start += space;
 
 			SetPosition(*it, start, (*it)->position().y());
 			start += (*it)->size().width();
@@ -581,7 +574,7 @@ namespace BlendInt {
 		return width;
 	}
 
-	void HorizontalLayout::get_size_hint (bool count_margin,
+	void HorizontalLayout::GetSizeHint (bool count_margin,
 										  bool count_space,
 										  Size* size,
 										  Size* min,

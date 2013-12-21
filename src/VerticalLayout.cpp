@@ -56,7 +56,21 @@ namespace BlendInt {
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				if(items().size())
-					make_layout(size_p);
+					MakeLayout(size_p, &margin(), space());
+				return;
+			}
+
+			case LayoutPropertyMargin: {
+				const Margin* margin_p = static_cast<const Margin*>(data);
+				if(items().size())
+					MakeLayout(&size(), margin_p, space());
+				return;
+			}
+
+			case LayoutPropertySpace: {
+				const int* space_p = static_cast<const int*>(data);
+				if(items().size())
+					MakeLayout(&size(), &margin(), *space_p);
 				return;
 			}
 
@@ -191,7 +205,7 @@ namespace BlendInt {
 		if(! (current_size == size()))
 			Resize(this, current_size);	// call make_layout() through this function
 		else
-			make_layout(&current_size);
+			MakeLayout(&current_size, &margin(), space());
 
 		activate_events();
 		object->activate_events();
@@ -227,7 +241,7 @@ namespace BlendInt {
 		SetMinimalSize(new_minimal_size);
 		SetPreferredSize(new_preferred_size);
 
-		make_layout();
+		MakeLayout(&size(), &margin(), space());
 
 		activate_events();
 
@@ -235,11 +249,11 @@ namespace BlendInt {
 		unbind(object);
 	}
 
-	void VerticalLayout::make_layout()
+	void VerticalLayout::MakeLayout(const Size* size, const Margin* margin, int space)
 	{
-		if (size().height() == preferred_size().height()) {
-			distribute_with_preferred_height();			// layout along y with preferred size
-		} else if (size().height() < preferred_size().height()) {
+		if (size->height() == preferred_size().height()) {
+			DistributeWithPreferredHeight(margin, space);			// layout along y with preferred size
+		} else if (size->height() < preferred_size().height()) {
 			distribute_with_small_height();			// layout along y with small size
 		} else {
 			distribute_with_large_height();			// layout along y with large size
@@ -248,61 +262,23 @@ namespace BlendInt {
 		align();
 	}
 
-	void VerticalLayout::make_layout(const Size* size)
+	void VerticalLayout::DistributeWithPreferredHeight(const Margin* margin, int space)
 	{
-		if (size->height() == preferred_size().height()) {
-			distribute_with_preferred_height(size);			// layout along y with preferred size
-		} else if (size->height() < preferred_size().height()) {
-			distribute_with_small_height(size);			// layout along y with small size
-		} else {
-			distribute_with_large_height(size);			// layout along y with large size
-		}
+		int y = position().y() + size().height() - margin->top();
 
-		align(size);
-	}
-
-	void VerticalLayout::distribute_with_preferred_height()
-	{
-		int y = position().y() + size().height() - margin().top();
-
-		std::vector<AbstractWidget*>::iterator it;
-		AbstractWidget* child = 0;
-		for(it = items().begin(); it != items().end(); it++)
+		for(std::vector<AbstractWidget*>::iterator it = items().begin(); it != items().end(); it++)
 		{
-			if(! (it == items().begin()))
-				y -= space();
-
-			child = *it;
-			Resize(child, child->size().width(), child->preferred_size().height());
-
-			y -= child->size().height();
-			SetPosition(child, child->position().x(), y);
+			Resize(*it, (*it)->size().width(), (*it)->preferred_size().height());
 		}
-	}
 
-	void VerticalLayout::distribute_with_preferred_height(const Size* size)
-	{
-		int y = position().y() + size->height() - margin().top();
-
-		std::vector<AbstractWidget*>::iterator it;
-		AbstractWidget* child = 0;
-		for(it = items().begin(); it != items().end(); it++)
-		{
-			if(! (it == items().begin()))
-				y -= space();
-
-			child = *it;
-			Resize(child, child->size().width(), child->preferred_size().height());
-			y -= child->size().height();
-			SetPosition(child, child->position().x(), y);
-		}
+		Distribute(space, y);
 	}
 
 
 	void VerticalLayout::distribute_with_small_height()
 	{
 		unsigned int min_exp_h = minimal_expandable_height();
-		unsigned int fixed_h = fixed_height();
+		unsigned int fixed_h = GetFixedHeight();
 
 		unsigned int current_height = size().height();
 
@@ -372,23 +348,21 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::distribute_with_small_height(const Size* size)
+	void VerticalLayout::DistributeWithSmallHeight(const Size* size, const Margin* margin, int space)
 	{
-		unsigned int min_exp_h = minimal_expandable_height();
-		unsigned int fixed_h = fixed_height();
-
+		unsigned int min_expd_height = minimal_expandable_height();
+		unsigned int fixed_height = GetFixedHeight();
 		unsigned int current_height = size->height();
-
-		unsigned int h_plus = margin().top() + margin().bottom();
+		unsigned int margin_plus = margin->top() + margin->bottom();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		int y = position().y() + size->height() - margin().top();
+		int y = position().y() + size->height() - margin->top();
 
-		if((current_height - h_plus) >=
-				(min_exp_h + fixed_h + (items().size() - 1) * space())) {
+		if((current_height - margin_plus) >=
+				(min_expd_height + fixed_height + (items().size() - 1) * space)) {
 
-			unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space();
+			unsigned int single_height = current_height - margin_plus - fixed_height - (items().size() - 1) * space;
 			single_height = single_height / m_expandable_items.size();
 
 			for(it = items().begin(); it != items().end(); it++)
@@ -396,7 +370,7 @@ namespace BlendInt {
 				child = *it;
 
 				if(! (it == items().begin()))
-					y -= space();
+					y -= space;
 
 				if(m_expandable_items.count(child)) {
 					Resize(child, child->size().width(), single_height);
@@ -412,7 +386,7 @@ namespace BlendInt {
 
 			std::set<AbstractWidget*> normal_items(m_fixed_items);	// set of unminimized items
 
-			unsigned int unminimal_height = current_height - h_plus - min_exp_h - (items().size() - 1) * space();
+			unsigned int unminimal_height = current_height - margin_plus - min_expd_height - (items().size() - 1) * space;
 			unsigned int h = unminimal_height / normal_items.size();
 
 			for(it = items().begin(); it != items().end(); it++)
@@ -420,7 +394,7 @@ namespace BlendInt {
 				child = *it;
 
 				if(! (it == items().begin()))
-					y -= space();
+					y -= space;
 
 				if(m_expandable_items.count(child)) {
 					Resize(child, child->size().width(), child->minimal_size().height());
@@ -447,7 +421,7 @@ namespace BlendInt {
 
 	void VerticalLayout::distribute_with_large_height()
 	{
-		unsigned int fixed_h = fixed_height();
+		unsigned int fixed_h = GetFixedHeight();
 
 		unsigned int current_height = size().height();
 
@@ -482,7 +456,7 @@ namespace BlendInt {
 
 	void VerticalLayout::distribute_with_large_height(const Size* size)
 	{
-		unsigned int fixed_h = fixed_height();
+		unsigned int fixed_h = GetFixedHeight();
 
 		unsigned int current_height = size->height();
 
@@ -515,6 +489,17 @@ namespace BlendInt {
 		}
 	}
 
+	void VerticalLayout::Distribute(int space, int start)
+	{
+		start += space;	// add one space to make sure no space if only 1 child in layout
+		for(std::vector<AbstractWidget*>::iterator it = items().begin(); it != items().end(); it++)
+		{
+			start -= space;
+
+			start -= (*it)->size().height();
+			SetPosition(*it, (*it)->position().x(), start);
+		}
+	}
 
 	void VerticalLayout::align()
 	{
@@ -602,7 +587,7 @@ namespace BlendInt {
 		return height;
 	}
 
-	unsigned int VerticalLayout::fixed_height()
+	unsigned int VerticalLayout::GetFixedHeight()
 	{
 		unsigned int height = 0;
 
