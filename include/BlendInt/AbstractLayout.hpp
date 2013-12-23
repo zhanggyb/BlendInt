@@ -102,9 +102,9 @@ namespace BlendInt {
 
 		virtual void Render () = 0;
 
-		virtual void add_item (AbstractWidget* form) = 0;
+		virtual void AddItem (AbstractWidget* form) = 0;
 
-		virtual void remove_item (AbstractWidget* object) = 0;
+		virtual void RemoveItem (AbstractWidget* object) = 0;
 
 		std::vector<AbstractWidget*>& items ()
 		{

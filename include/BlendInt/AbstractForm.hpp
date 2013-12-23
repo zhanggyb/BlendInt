@@ -209,7 +209,7 @@ namespace BlendInt {
 				const int totvert,
 				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
 
-		static void dispatch_render (AbstractForm* obj);
+		static void DispatchRender (AbstractForm* obj);
 
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 

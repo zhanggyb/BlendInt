@@ -69,7 +69,7 @@ namespace BlendInt {
 		 * @param cursor
 		 * @return
 		 */
-		bool contain_no_margin (const Coord2d& cursor);
+		bool ContainNoMargin (const Coord2d& cursor);
 
 	private:
 

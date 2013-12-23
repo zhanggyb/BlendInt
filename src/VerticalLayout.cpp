@@ -89,7 +89,7 @@ namespace BlendInt {
 		for (it = items().begin(); it != items().end(); it++) {
 			item = *it;
 			if (item) {
-				dispatch_render(item);
+				DispatchRender(item);
 			}
 		}
 
@@ -157,7 +157,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::add_item (AbstractWidget* object)
+	void VerticalLayout::AddItem (AbstractWidget* object)
 	{
 		// don't fire events when adding a widget into a layout
 		object->deactivate_events();
@@ -183,15 +183,11 @@ namespace BlendInt {
 		        std::max(preferred.width(),
 		                object->preferred_size().width() + w_plus));
 
-		if(!locked()) {
-			if (current_size.width() < preferred.width()) {
-				current_size.set_width(preferred.width());
-			}
-			if (current_size.height() < preferred.height()) {
-				current_size.set_height(preferred.height());
-			}
-		} else {
-			// TODO: if geometry is not locked, to sth.
+		if (current_size.width() < preferred.width()) {
+			current_size.set_width(preferred.width());
+		}
+		if (current_size.height() < preferred.height()) {
+			current_size.set_height(preferred.height());
 		}
 
 		items().push_back(object);
@@ -214,7 +210,7 @@ namespace BlendInt {
 		LockGeometry(object, true);
 	}
 
-	void VerticalLayout::remove_item(AbstractWidget * object)
+	void VerticalLayout::RemoveItem(AbstractWidget * object)
 	{
 		deactivate_events();
 

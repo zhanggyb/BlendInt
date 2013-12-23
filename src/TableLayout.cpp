@@ -125,7 +125,7 @@ namespace BlendInt {
 		std::vector<AbstractWidget*>::const_iterator it;
 		for (it = items().begin(); it != items().end(); it++) {
 			if(*it) {
-				dispatch_render(*it);
+				DispatchRender(*it);
 			}
 		}
 
@@ -204,12 +204,12 @@ namespace BlendInt {
 		}
 	}
 
-	void TableLayout::add_item(AbstractWidget* object)
+	void TableLayout::AddItem(AbstractWidget* object)
 	{
 
 	}
 
-	void TableLayout::remove_item(AbstractWidget* object)
+	void TableLayout::RemoveItem(AbstractWidget* object)
 	{
 
 	}

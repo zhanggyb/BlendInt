@@ -145,7 +145,7 @@ namespace BlendInt {
 	{
 		if(m_stack.size() == 0) return;
 
-		dispatch_render(m_stack[m_index]);
+		DispatchRender(m_stack[m_index]);
 	}
 
 }

@@ -155,7 +155,7 @@ namespace BlendInt {
 			h = - (*it)->size().height();
 			glTranslatef(0.0, h, 0.0);
 //			glTranslatef(0.0, h - 2, 0.0);
-			dispatch_render(*it);
+			DispatchRender(*it);
 		}
 
 		glPopMatrix();

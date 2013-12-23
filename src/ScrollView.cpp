@@ -105,7 +105,7 @@ namespace BlendInt {
 //
 //		glDisable(GL_BLEND);
 
-		if(m_viewport) dispatch_render(m_viewport);
+		if(m_viewport) DispatchRender(m_viewport);
 
 		glDisable(GL_SCISSOR_TEST);
 

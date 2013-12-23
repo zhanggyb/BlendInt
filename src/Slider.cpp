@@ -406,7 +406,7 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		dispatch_render(m_slide_button);
+		DispatchRender(m_slide_button);
 	}
 
 	void Slider::MouseMoveEvent (MouseEvent* event)

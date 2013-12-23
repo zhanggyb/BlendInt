@@ -56,7 +56,7 @@ namespace BlendInt {
 
 		Size pre_preferred_size = preferred_size();
 
-		add_item (obj);
+		AddItem (obj);
 
 		if(! (pre_preferred_size == preferred_size())) {
 			// fire events
@@ -71,7 +71,7 @@ namespace BlendInt {
 	{
 		if (!children().count(object)) return false;
 
-		remove_item(object);
+		RemoveItem(object);
 
 		return true;
 	}
@@ -80,7 +80,7 @@ namespace BlendInt {
 	{
 		if (!children().count(object)) return false;
 
-		remove_item(object);
+		RemoveItem(object);
 
 		delete object;
 

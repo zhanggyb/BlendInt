@@ -115,7 +115,7 @@ namespace BlendInt {
 		glPopMatrix();
 	}
 
-	bool Frame::contain_no_margin (const Coord2d& cursor)
+	bool Frame::ContainNoMargin (const Coord2d& cursor)
 	{
 		if (cursor.x() < (position().x() + m_margin.left())
 		        || cursor.y() < (position().y() + m_margin.bottom())

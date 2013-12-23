@@ -65,9 +65,9 @@ namespace BlendInt {
 		 * Change and lock the object geometry, and put this widget into HorizontalLayout
 		 *
 		 */
-		virtual void add_item (AbstractWidget* object);
+		virtual void AddItem (AbstractWidget* object);
 
-		virtual void remove_item (AbstractWidget* object);
+		virtual void RemoveItem (AbstractWidget* object);
 
 	private:
 

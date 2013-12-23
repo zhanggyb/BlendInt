@@ -31,7 +31,7 @@
 namespace BlendInt {
 
 	PopupWidget::PopupWidget()
-	: Frame()
+	: Widget()
 	{
 		reset_z(1);	// TODO: define layer in enumeration
 	}
@@ -43,8 +43,7 @@ namespace BlendInt {
 
 	void PopupWidget::Update(int type, const void* data)
 	{
-		Frame::Update(type, data);
-
+		Widget::Update(type, data);
 		switch(type) {
 
 			case FormSize: {
@@ -64,6 +63,8 @@ namespace BlendInt {
 
 	void PopupWidget::Render ()
 	{
+		Widget::Render();
+
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
@@ -71,34 +72,7 @@ namespace BlendInt {
 					 position().y(),
 					 z());
 
-		dispatch_render(&m_shadow);
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		// draw inner, simple fill
-		glColor4ub(themes()->regular.inner.r(),
-		        themes()->regular.inner.g(),
-		        themes()->regular.inner.b(),
-		        themes()->regular.inner.a());
-//		draw_gl_buffer(inner_buffer().get());
-
-		// draw outline
-		unsigned char tcol[4] = { themes()->regular.outline.r(),
-		        themes()->regular.outline.g(),
-		        themes()->regular.outline.b(),
-		        themes()->regular.outline.a()};
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glColor4ubv(tcol);
-
-//		draw_gl_buffer_anti_alias(outer_buffer().get());
-
-		if(false) {
-			glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-//			draw_gl_buffer_anti_alias(emboss_buffer().get());
-		}
-
-		glDisable(GL_BLEND);
+		DispatchRender(&m_shadow);
 
 		glPopMatrix();
 	}

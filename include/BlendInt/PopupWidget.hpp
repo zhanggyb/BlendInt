@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_POPUPWIDGET_HPP_
 #define _BLENDINT_POPUPWIDGET_HPP_
 
-#include <BlendInt/Frame.hpp>
+#include <BlendInt/Widget.hpp>
 
 #include <BlendInt/Shadow.hpp>
 
@@ -45,7 +45,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class PopupWidget: public Frame
+	class PopupWidget: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(PopupWidget);
 

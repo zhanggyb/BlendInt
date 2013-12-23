@@ -38,7 +38,7 @@ namespace BlendInt {
 
 	void BoxFrame::SetLayout (AbstractLayout* layout)
 	{
-		if(!layout) return;
+		if((!layout) || m_layout == layout) return;
 		if(m_layout) delete m_layout;
 
 		m_layout = layout;
@@ -53,6 +53,8 @@ namespace BlendInt {
 		m_layout->SetPosition(position().x() + margin().left(), position().y() + margin().bottom());
 
 		LockGeometry(m_layout, true);
+
+		// TODO: update preferred, min, max size;
 	}
 
 	void BoxFrame::Update (int type, const void* data)
@@ -89,7 +91,7 @@ namespace BlendInt {
 	void BoxFrame::Render ()
 	{
 		if(m_layout)
-			dispatch_render(m_layout);
+			DispatchRender(m_layout);
 	}
 
 	void BoxFrame::KeyPressEvent (KeyEvent* event)

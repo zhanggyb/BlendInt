@@ -344,7 +344,7 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		dispatch_render(m_control_button);
+		DispatchRender(m_control_button);
 	}
 
 	void SliderBar::MouseMoveEvent (MouseEvent* event)
@@ -626,7 +626,7 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		dispatch_render(m_scroll_control);
+		DispatchRender(m_scroll_control);
 	}
 
 	void ScrollBar::MouseMoveEvent (MouseEvent* event)

@@ -147,7 +147,7 @@ void DemoFrame::Render ()
 	glPopMatrix();
 
 	if(m_widget)
-		dispatch_render(m_widget);
+		DispatchRender(m_widget);
 }
 
 void DemoFrame::start_time()
