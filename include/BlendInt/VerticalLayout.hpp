@@ -90,7 +90,7 @@ namespace BlendInt {
 		/**
 		 * @brief distribute vertically with large size
 		 */
-		void distribute_with_large_height (const Size* size);
+		void DistributeWithLargeHeight (const Size* size, const Margin* margin, int space);
 
 		void Distribute (int space, int start = 0);
 
@@ -102,7 +102,7 @@ namespace BlendInt {
 		/**
 		 * @brief align vertically
 		 */
-		void align (const Size* size);
+		void Align (const Size* size, const Margin* margin);
 
 		/**
 		 * @brief reset the height of unexpandable items
@@ -111,17 +111,23 @@ namespace BlendInt {
 		 */
 		void reset_height_of_fixed_items (std::set<AbstractWidget*>* items, unsigned int height);
 
+		unsigned int AdjustExpandableHeight (std::list<AbstractWidget*>* item_list_p, unsigned int height_plus);
+
+		unsigned int AdjustMinimalHeight (std::list<AbstractWidget*>* item_list_p, unsigned int height_plus);
+
 		/**
 		 * @brief calculate and return the minimal height of the expandable items
 		 * @return
 		 */
-		unsigned int minimal_expandable_height ();
+		unsigned int GetAllMinimalExpandableHeight ();
+
+		unsigned int GetAllMaximalExpandableHeight ();
 
 		/**
 		 * @brief calculate and return the height of fixed items
 		 * @return
 		 */
-		unsigned int GetFixedHeight ();
+		unsigned int GetAllFixedHeight ();
 
 		/**
 		 * @brief scan the children and get the total size hint
@@ -131,7 +137,7 @@ namespace BlendInt {
 		 * @param min the minimal size of this layout
 		 * @param prefer the preferred size of this layout
 		 */
-		void get_size_hint (bool count_margin,
+		void GetSizeHint (bool count_margin,
 				bool count_space,
 				Size* size,
 				Size* min,

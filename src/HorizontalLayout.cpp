@@ -260,13 +260,12 @@ namespace BlendInt {
 
 	void HorizontalLayout::DistributeWithPreferredWidth(const Margin* margin, int space)
 	{
-		int x = position().x() + margin->left();
-
 		for(std::vector<AbstractWidget*>::iterator it = items().begin(); it != items().end(); it++)
 		{
 			Resize(*it, (*it)->preferred_size().width(), (*it)->size().height());
 		}
 
+		int x = position().x() + margin->left();
 		Distribute(space, x);
 	}
 
@@ -279,7 +278,6 @@ namespace BlendInt {
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		int x = position().x() + margin->left();	// the x position of each child widget, update in each for loop
 
 		bool change_expd_items = (current_width - margin_plus) >= (min_expd_width + fixed_width + (items().size() - 1) * space);
 
@@ -345,6 +343,7 @@ namespace BlendInt {
 			}
 		}
 
+		int x = position().x() + margin->left();	// the x position of each child widget, update in each for loop
 		Distribute(space, x);
 	}
 
@@ -539,8 +538,7 @@ namespace BlendInt {
 	{
 		unsigned int width = 0;
 
-		std::set<AbstractWidget*>::iterator it;
-		for(it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
+		for(std::set<AbstractWidget*>::iterator it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
 		{
 			width += (*it)->minimal_size().width();
 		}
@@ -552,8 +550,7 @@ namespace BlendInt {
 	{
 		unsigned int width = 0;
 
-		std::set<AbstractWidget*>::iterator it;
-		for(it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
+		for(std::set<AbstractWidget*>::iterator it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
 		{
 			width += (*it)->maximal_size().width();
 		}
@@ -565,8 +562,7 @@ namespace BlendInt {
 	{
 		unsigned int width = 0;
 
-		std::set<AbstractWidget*>::iterator it;
-		for(it = m_fixed_items.begin(); it != m_fixed_items.end(); it++)
+		for(std::set<AbstractWidget*>::iterator it = m_fixed_items.begin(); it != m_fixed_items.end(); it++)
 		{
 			width += (*it)->size().width();
 		}

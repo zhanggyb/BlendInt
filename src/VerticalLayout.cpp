@@ -236,7 +236,7 @@ namespace BlendInt {
 		Size new_preferred_size;
 		Size new_minimal_size;
 
-		get_size_hint(true, true, 0, &new_minimal_size, &new_preferred_size);
+		GetSizeHint(true, true, 0, &new_minimal_size, &new_preferred_size);
 
 		SetMinimalSize(new_minimal_size);
 		SetPreferredSize(new_preferred_size);
@@ -256,10 +256,10 @@ namespace BlendInt {
 		} else if (size->height() < preferred_size().height()) {
 			distribute_with_small_height();			// layout along y with small size
 		} else {
-			distribute_with_large_height();			// layout along y with large size
+			DistributeWithLargeHeight(size, margin, space);			// layout along y with large size
 		}
 
-		align();
+		Align(size, margin);
 	}
 
 	void VerticalLayout::DistributeWithPreferredHeight(const Margin* margin, int space)
@@ -274,11 +274,10 @@ namespace BlendInt {
 		Distribute(space, y);
 	}
 
-
 	void VerticalLayout::distribute_with_small_height()
 	{
-		unsigned int min_exp_h = minimal_expandable_height();
-		unsigned int fixed_h = GetFixedHeight();
+		unsigned int min_exp_h = GetAllMinimalExpandableHeight();
+		unsigned int fixed_h = GetAllFixedHeight();
 
 		unsigned int current_height = size().height();
 
@@ -350,8 +349,8 @@ namespace BlendInt {
 
 	void VerticalLayout::DistributeWithSmallHeight(const Size* size, const Margin* margin, int space)
 	{
-		unsigned int min_expd_height = minimal_expandable_height();
-		unsigned int fixed_height = GetFixedHeight();
+		unsigned int min_expd_height = GetAllMinimalExpandableHeight();
+		unsigned int fixed_height = GetAllFixedHeight();
 		unsigned int current_height = size->height();
 		unsigned int margin_plus = margin->top() + margin->bottom();
 
@@ -421,7 +420,7 @@ namespace BlendInt {
 
 	void VerticalLayout::distribute_with_large_height()
 	{
-		unsigned int fixed_h = GetFixedHeight();
+		unsigned int fixed_h = GetAllFixedHeight();
 
 		unsigned int current_height = size().height();
 
@@ -454,19 +453,19 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::distribute_with_large_height(const Size* size)
+	void VerticalLayout::DistributeWithLargeHeight(const Size* size, const Margin* margin, int space)
 	{
-		unsigned int fixed_h = GetFixedHeight();
+		unsigned int fixed_h = GetAllFixedHeight();
 
 		unsigned int current_height = size->height();
 
-		unsigned int h_plus = margin().top() + margin().bottom();
+		unsigned int h_plus = margin->top() + margin->bottom();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		int y = position().y() + size->height() - margin().top();
+		int y = position().y() + size->height() - margin->top();
 
-		unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space();
+		unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space;
 
 		if(m_expandable_items.size())
 			single_height = single_height / m_expandable_items.size();
@@ -476,7 +475,7 @@ namespace BlendInt {
 			child = *it;
 
 			if (!(it == items().begin()))
-				y -= space();
+				y -= space;
 
 			if (m_expandable_items.count(child)) {
 				Resize(child, child->size().width(), single_height);
@@ -501,11 +500,11 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::align()
+	void VerticalLayout::Align(const Size* size, const Margin* margin)
 	{
-		int x = position().x() + margin().left();
+		int x = position().x() + margin->left();
 
-		unsigned int w = size().width() - margin().left() - margin().right();
+		unsigned int w = size->width() - margin->left() - margin->right();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
@@ -529,38 +528,6 @@ namespace BlendInt {
 
 			}
 		}
-
-	}
-
-	void VerticalLayout::align(const Size* size)
-	{
-		int x = position().x() + margin().left();
-
-		unsigned int w = size->width() - margin().left() - margin().right();
-
-		std::vector<AbstractWidget*>::iterator it;
-		AbstractWidget* child = 0;
-		for(it = items().begin(); it != items().end(); it++)
-		{
-			child = *it;
-
-			if (child->expand_x() ||
-					(child->size().width() > w)) {
-				Resize(child, w, child->size().height());
-				SetPosition(child, x, child->position().y());
-			} else {
-
-				if (alignment() & AlignLeft) {
-					SetPosition(child, x, child->position().y());
-				} else if (alignment() & AlignRight) {
-					SetPosition(child, x + (w - child->size().width()), child->position().y());
-				} else if (alignment() & AlignVerticalCenter) {
-					SetPosition(child, x + (w - child->size().width()) / 2, child->position().y());
-				}
-
-			}
-		}
-
 	}
 
 	void VerticalLayout::reset_height_of_fixed_items (std::set<AbstractWidget*>* items,
@@ -574,12 +541,67 @@ namespace BlendInt {
 		}
 	}
 
-	unsigned int VerticalLayout::minimal_expandable_height()
+	unsigned int VerticalLayout::AdjustExpandableHeight(std::list<AbstractWidget*>* item_list_p, unsigned int height_plus)
+	{
+		if(!item_list_p) return height_plus;
+		if(item_list_p->size() == 0) return height_plus;
+
+		unsigned int remainder = 0;
+		std::list<AbstractWidget*>::iterator it;
+		unsigned int average_height_plus = height_plus / item_list_p->size();
+
+		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
+		{
+			if ((average_height_plus + (*it)->size().height()) > (*it)->maximal_size().height()) {
+				Resize(*it, (*it)->size().width(), (*it)->maximal_size().height());
+				remainder = remainder + average_height_plus + (*it)->size().height() - (*it)->maximal_size().height();
+				it = item_list_p->erase(it);
+			} else {
+				Resize(*it, (*it)->size().width(), (*it)->size().height() + average_height_plus);
+			}
+		}
+
+		if(remainder != 0) {
+			// TODO: do not use iteration procedure
+			remainder = AdjustExpandableHeight(item_list_p, remainder);
+		}
+
+		return remainder;
+	}
+
+	unsigned int VerticalLayout::AdjustMinimalHeight(std::list<AbstractWidget*>* item_list_p, unsigned int height_plus)
+	{
+		if(!item_list_p) return height_plus;
+		if(item_list_p->size() == 0) return height_plus;
+
+		unsigned int remainder = 0;
+		std::list<AbstractWidget*>::iterator it;
+		unsigned int average_height_plus = height_plus / item_list_p->size();
+
+		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
+		{
+			if (((*it)->size().height() - average_height_plus) < (*it)->minimal_size().height()) {
+				Resize(*it, (*it)->size().width(), (*it)->minimal_size().height());
+				remainder = remainder + (*it)->minimal_size().height() - ((*it)->size().height() - average_height_plus);
+				it = item_list_p->erase(it);
+			} else {
+				Resize(*it, (*it)->size().width(), (*it)->size().height() - average_height_plus);
+			}
+		}
+
+		if(remainder != 0) {
+			// TODO: do not use iteration procedure
+			remainder = AdjustMinimalHeight(item_list_p, remainder);
+		}
+
+		return remainder;
+	}
+
+	unsigned int VerticalLayout::GetAllMinimalExpandableHeight()
 	{
 		unsigned int height = 0;
 
-		std::set<AbstractWidget*>::iterator it;
-		for(it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
+		for(std::set<AbstractWidget*>::iterator it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
 		{
 			height += (*it)->minimal_size().height();
 		}
@@ -587,12 +609,23 @@ namespace BlendInt {
 		return height;
 	}
 
-	unsigned int VerticalLayout::GetFixedHeight()
+	unsigned int VerticalLayout::GetAllMaximalExpandableHeight()
 	{
 		unsigned int height = 0;
 
-		std::set<AbstractWidget*>::iterator it;
-		for(it = m_fixed_items.begin(); it != m_fixed_items.end(); it++)
+		for(std::set<AbstractWidget*>::iterator it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
+		{
+			height += (*it)->maximal_size().height();
+		}
+
+		return height;
+	}
+
+	unsigned int VerticalLayout::GetAllFixedHeight()
+	{
+		unsigned int height = 0;
+
+		for(std::set<AbstractWidget*>::iterator it = m_fixed_items.begin(); it != m_fixed_items.end(); it++)
 		{
 			height += (*it)->size().height();
 		}
@@ -600,7 +633,7 @@ namespace BlendInt {
 		return height;
 	}
 
-	void VerticalLayout::get_size_hint (bool count_margin,
+	void VerticalLayout::GetSizeHint (bool count_margin,
 										bool count_space,
 										Size* size,
 										Size* min,
