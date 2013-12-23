@@ -70,22 +70,12 @@ namespace BlendInt {
 		/**
 		 * @brief distribute vertically with preferred size
 		 */
-		void DistributeWithPreferredHeight (const Margin* margin, int space);
-
-		/**
-		 * @brief distribute vertically with small size
-		 */
-		void distribute_with_small_height ();
+		void DistributeWithPreferredHeight (const Size* size, const Margin* margin, int space);
 
 		/**
 		 * @brief distribute vertically with small size
 		 */
 		void DistributeWithSmallHeight (const Size* size, const Margin* margin, int space);
-
-		/**
-		 * @brief distribute vertically with large size
-		 */
-		void distribute_with_large_height ();
 
 		/**
 		 * @brief distribute vertically with large size
@@ -97,19 +87,7 @@ namespace BlendInt {
 		/**
 		 * @brief align vertically
 		 */
-		void align ();
-
-		/**
-		 * @brief align vertically
-		 */
 		void Align (const Size* size, const Margin* margin);
-
-		/**
-		 * @brief reset the height of unexpandable items
-		 * @param[in] items
-		 * @param[in] height
-		 */
-		void reset_height_of_fixed_items (std::set<AbstractWidget*>* items, unsigned int height);
 
 		unsigned int AdjustExpandableHeight (std::list<AbstractWidget*>* item_list_p, unsigned int height_plus);
 

@@ -286,15 +286,15 @@ namespace BlendInt {
 			// just change expandable widgets
 			if (m_expandable_items.size()) {
 
-				unsigned int average_min_width = current_width - margin_plus
+				unsigned int average_expd_width = current_width - margin_plus
 				        - fixed_width - (items().size() - 1) * space;
-				average_min_width = average_min_width / m_expandable_items.size();
+				average_expd_width = average_expd_width / m_expandable_items.size();
 
 				for (it = items().begin(); it != items().end(); it++) {
 					child = *it;
 
 					if (m_expandable_items.count(child)) {
-						Resize(child, average_min_width, child->size().height());
+						Resize(child, average_expd_width, child->size().height());
 					} else {
 						Resize(child, child->preferred_size().width(),
 						        child->size().height());
@@ -307,7 +307,6 @@ namespace BlendInt {
 
 			if(m_fixed_items.size()) {
 
-//				std::set<AbstractWidget*> fixed_items(m_fixed_items);// set of unminimized items
 				std::list<AbstractWidget*> unminimized_items;
 				unsigned int width_plus = 0;
 
@@ -369,7 +368,6 @@ namespace BlendInt {
 
 			if(change_expd_items) {
 
-				//std::set<AbstractWidget*> expd_items(m_expandable_items);// set of unmaximized items
 				std::list<AbstractWidget*> unmaximized_list;
 				unsigned int width_plus = 0;
 				int x = position().x() + margin->left();

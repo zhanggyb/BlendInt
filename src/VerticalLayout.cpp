@@ -252,9 +252,9 @@ namespace BlendInt {
 	void VerticalLayout::MakeLayout(const Size* size, const Margin* margin, int space)
 	{
 		if (size->height() == preferred_size().height()) {
-			DistributeWithPreferredHeight(margin, space);			// layout along y with preferred size
+			DistributeWithPreferredHeight(size, margin, space);			// layout along y with preferred size
 		} else if (size->height() < preferred_size().height()) {
-			distribute_with_small_height();			// layout along y with small size
+			DistributeWithSmallHeight(size, margin, space);			// layout along y with small size
 		} else {
 			DistributeWithLargeHeight(size, margin, space);			// layout along y with large size
 		}
@@ -262,9 +262,9 @@ namespace BlendInt {
 		Align(size, margin);
 	}
 
-	void VerticalLayout::DistributeWithPreferredHeight(const Margin* margin, int space)
+	void VerticalLayout::DistributeWithPreferredHeight(const Size* size, const Margin* margin, int space)
 	{
-		int y = position().y() + size().height() - margin->top();
+		int y = position().y() + size->height() - margin->top();
 
 		for(std::vector<AbstractWidget*>::iterator it = items().begin(); it != items().end(); it++)
 		{
@@ -272,79 +272,6 @@ namespace BlendInt {
 		}
 
 		Distribute(space, y);
-	}
-
-	void VerticalLayout::distribute_with_small_height()
-	{
-		unsigned int min_exp_h = GetAllMinimalExpandableHeight();
-		unsigned int fixed_h = GetAllFixedHeight();
-
-		unsigned int current_height = size().height();
-
-		unsigned int h_plus = margin().top() + margin().bottom();
-
-		std::vector<AbstractWidget*>::iterator it;
-		AbstractWidget* child = 0;
-		int y = position().y() + size().height() - margin().top();
-
-		if((current_height - h_plus) >=
-				(min_exp_h + fixed_h + (items().size() - 1) * space())) {
-
-			unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space();
-			single_height = single_height / m_expandable_items.size();
-
-			for(it = items().begin(); it != items().end(); it++)
-			{
-				child = *it;
-
-				if(! (it == items().begin()))
-					y -= space();
-
-				if(m_expandable_items.count(child)) {
-					Resize(child, child->size().width(), single_height);
-				} else {
-					Resize(child, child->size().width(), child->preferred_size().height());
-				}
-
-				y -= child->size().height();
-				SetPosition(child, child->position().x(), y);
-			}
-
-		} else {
-
-			std::set<AbstractWidget*> normal_items(m_fixed_items);	// set of unminimized items
-
-			unsigned int unminimal_height = current_height - h_plus - min_exp_h - (items().size() - 1) * space();
-			unsigned int h = unminimal_height / normal_items.size();
-
-			for(it = items().begin(); it != items().end(); it++)
-			{
-				child = *it;
-
-				if(! (it == items().begin()))
-					y -= space();
-
-				if(m_expandable_items.count(child)) {
-					Resize(child, child->size().width(), child->minimal_size().height());
-				} else {
-
-					if(h < child->minimal_size().height()) {
-						Resize(child, child->size().width(), child->minimal_size().height());
-						normal_items.erase(child);
-						unminimal_height = unminimal_height - child->minimal_size().height();
-						h = unminimal_height / normal_items.size();
-						reset_height_of_fixed_items(&normal_items, h);
-					} else {
-						Resize(child, child->size().width(), h);
-					}
-
-				}
-
-				y -= child->size().height();
-				SetPosition(child, child->position().x(), y);
-			}
-
-		}
 	}
 
 	void VerticalLayout::DistributeWithSmallHeight(const Size* size, const Margin* margin, int space)
@@ -356,136 +283,151 @@ namespace BlendInt {
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		int y = position().y() + size->height() - margin->top();
 
-		if((current_height - margin_plus) >=
-				(min_expd_height + fixed_height + (items().size() - 1) * space)) {
+		bool change_expd_items = (current_height - margin_plus) >=
+						(min_expd_height + fixed_height + (items().size() - 1) * space);
 
-			unsigned int single_height = current_height - margin_plus - fixed_height - (items().size() - 1) * space;
-			single_height = single_height / m_expandable_items.size();
 
-			for(it = items().begin(); it != items().end(); it++)
-			{
-				child = *it;
+		if(change_expd_items) {
 
-				if(! (it == items().begin()))
-					y -= space;
+			if (m_expandable_items.size()) {
+				unsigned int average_expd_height = current_height - margin_plus
+				        - fixed_height - (items().size() - 1) * space;
+				average_expd_height = average_expd_height / m_expandable_items.size();
 
-				if(m_expandable_items.count(child)) {
-					Resize(child, child->size().width(), single_height);
-				} else {
-					Resize(child, child->size().width(), child->preferred_size().height());
+				for (it = items().begin(); it != items().end(); it++) {
+					child = *it;
+
+					if (m_expandable_items.count(child)) {
+						Resize(child, child->size().width(), average_expd_height);
+					} else {
+						Resize(child, child->size().width(),
+						        child->preferred_size().height());
+					}
 				}
-
-				y -= child->size().height();
-				SetPosition(child, child->position().x(), y);
 			}
 
 		} else {
 
-			std::set<AbstractWidget*> normal_items(m_fixed_items);	// set of unminimized items
+			if (m_fixed_items.size()) {
 
-			unsigned int unminimal_height = current_height - margin_plus - min_expd_height - (items().size() - 1) * space;
-			unsigned int h = unminimal_height / normal_items.size();
+				std::list<AbstractWidget*> unminimized_items;
+				unsigned int height_plus = 0;
 
-			for(it = items().begin(); it != items().end(); it++)
-			{
-				child = *it;
+				unsigned int total_fixed_height = current_height - margin_plus
+				        - min_expd_height - (items().size() - 1) * space;
+				unsigned int average_fixed_height = total_fixed_height / m_fixed_items.size();
 
-				if(! (it == items().begin()))
-					y -= space;
+				for (it = items().begin(); it != items().end(); it++) {
+					child = *it;
 
-				if(m_expandable_items.count(child)) {
-					Resize(child, child->size().width(), child->minimal_size().height());
-				} else {
-
-					if(h < child->minimal_size().height()) {
-						Resize(child, child->size().width(), child->minimal_size().height());
-						normal_items.erase(child);
-						unminimal_height = unminimal_height - child->minimal_size().height();
-						h = unminimal_height / normal_items.size();
-						reset_height_of_fixed_items(&normal_items, h);
+					if (m_expandable_items.count(child)) {
+						Resize(child, child->size().width(),
+						        child->minimal_size().height());
 					} else {
-						Resize(child, child->size().width(), h);
+
+						if (average_fixed_height < child->minimal_size().height()) {
+							height_plus = height_plus + child->minimal_size().height() - average_fixed_height;
+							Resize(child, child->size().width(),
+							        child->minimal_size().height());
+						} else {
+							unminimized_items.push_back(child);
+							Resize(child, child->size().width(), average_fixed_height);
+						}
+
 					}
 
 				}
-
-				y -= child->size().height();
-				SetPosition(child, child->position().x(), y);
+				if(height_plus > 0) {
+					AdjustMinimalHeight(&unminimized_items, height_plus);
+				}
 			}
 
 		}
-	}
 
-	void VerticalLayout::distribute_with_large_height()
-	{
-		unsigned int fixed_h = GetAllFixedHeight();
-
-		unsigned int current_height = size().height();
-
-		unsigned int h_plus = margin().top() + margin().bottom();
-
-		std::vector<AbstractWidget*>::iterator it;
-		AbstractWidget* child = 0;
-		int y = position().y() + size().height() - margin().top();
-
-		unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space();
-
-		if(m_expandable_items.size())
-			single_height = single_height / m_expandable_items.size();
-
-		for(it = items().begin(); it != items().end(); it++)
-		{
-			child = *it;
-
-			if (!(it == items().begin()))
-				y -= space();
-
-			if (m_expandable_items.count(child)) {
-				Resize(child, child->size().width(), single_height);
-			} else {
-				Resize(child, child->size().width(), child->preferred_size().height());
-			}
-
-			y -= child->size().height();
-			SetPosition(child, child->position().x(), y);
-		}
+		int y = position().y() + size->height() - margin->top();
+		Distribute(space, y);
 	}
 
 	void VerticalLayout::DistributeWithLargeHeight(const Size* size, const Margin* margin, int space)
 	{
-		unsigned int fixed_h = GetAllFixedHeight();
-
+		unsigned int fixed_height = GetAllFixedHeight();
 		unsigned int current_height = size->height();
-
-		unsigned int h_plus = margin->top() + margin->bottom();
+		unsigned int margin_plus = margin->top() + margin->bottom();
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		int y = position().y() + size->height() - margin->top();
 
-		unsigned int single_height = current_height - h_plus - fixed_h - (items().size() - 1) * space;
+		if(m_expandable_items.size()) {
 
-		if(m_expandable_items.size())
-			single_height = single_height / m_expandable_items.size();
+			unsigned int max_expd_height = GetAllMaximalExpandableHeight();
+			unsigned int total_expd_height = current_height - margin_plus - fixed_height - (items().size() - 1) * space;
+			unsigned int average_expd_height = total_expd_height / m_expandable_items.size();
 
-		for(it = items().begin(); it != items().end(); it++)
-		{
-			child = *it;
+			bool change_expd_items = (current_height - margin_plus) <= (max_expd_height + fixed_height
+					+ (items().size() - 1) * space);
 
-			if (!(it == items().begin()))
-				y -= space;
+			if(change_expd_items) {
+				std::list<AbstractWidget*> unmaximized_list;
+				unsigned int height_plus = 0;
+				int y = position().y() + size->height() - margin->top();
 
-			if (m_expandable_items.count(child)) {
-				Resize(child, child->size().width(), single_height);
+				for (it = items().begin(); it != items().end(); it++) {
+					child = *it;
+					if(m_expandable_items.count(child)) {
+						if(average_expd_height > child->maximal_size().height()) {
+							height_plus = height_plus + average_expd_height - child->maximal_size().height();
+							Resize(child, child->size().width(), child->maximal_size().height());
+						} else {
+							unmaximized_list.push_back(child);
+							Resize(child, child->size().width(), average_expd_height);
+						}
+					}
+				}
+
+				if(height_plus > 0) {	// check the last item
+					AdjustExpandableHeight(&unmaximized_list, height_plus);
+				}
+
+				Distribute(space, y);
 			} else {
-				Resize(child, child->size().width(), child->preferred_size().height());
+				int y = position().x() + size->height() - margin->top();
+
+				y = y - (current_height - margin_plus - max_expd_height - fixed_height
+		                - (items().size() - 1) * space) / 2;
+
+				// resize all with the max size
+				for(it = items().begin(); it != items().end(); it++)
+				{
+					child = *it;
+
+					if (m_expandable_items.count(child)) {
+						Resize(child, child->size().width(), child->maximal_size().height());
+					} else {
+						Resize(child, child->size().width(), child->preferred_size().height());
+					}
+				}
+
+				Distribute(space, y);
 			}
 
-			y -= child->size().height();
-			SetPosition(child, child->position().x(), y);
+		} else {
+			int y = position().y() + size->height() - margin->top();
+
+			// if no expandable items, center all items
+			y = y - (current_height - margin_plus - fixed_height - (m_fixed_items.size() - 1) * space) / 2;
+
+			// resize all with preferred width
+			for(it = items().begin(); it != items().end(); it++)
+			{
+				child = *it;
+				Resize(child, child->preferred_size().width(),
+					        child->size().height());
+			}
+
+			Distribute(space, y);
 		}
+
 	}
 
 	void VerticalLayout::Distribute(int space, int start)
@@ -527,17 +469,6 @@ namespace BlendInt {
 				}
 
 			}
-		}
-	}
-
-	void VerticalLayout::reset_height_of_fixed_items (std::set<AbstractWidget*>* items,
-													  unsigned int height)
-	{
-		std::set<AbstractWidget*>::iterator it;
-
-		for(it = items->begin(); it != items->end(); it++)
-		{
-			Resize(*it, (*it)->size().width(), height);
 		}
 	}
 
