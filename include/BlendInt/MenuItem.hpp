@@ -21,9 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/FormBase.hpp>
-
-#include <BlendInt/MouseEvent.hpp>
+#include <list>
 
 #include <BlendInt/String.hpp>
 
@@ -32,31 +30,36 @@
 
 namespace BlendInt {
 
-	class MenuItem: public FormBase
+	class MenuItem
 	{
-//		DISALLOW_COPY_AND_ASSIGN(MenuItem);
-
 	public:
 
 		MenuItem ();
 
 		MenuItem (const String& text);
 
-		virtual ~MenuItem();
+		~MenuItem();
 
 		void set_highlight (bool highlight)
 		{
 			m_highlight = highlight;
 		}
 
-	protected:
+		void PushBack (MenuItem* item);
 
-		virtual void Update (int type, const void* data);
+		void PushFront (MenuItem* item);
 
-		virtual void Render ();
+		void Append (MenuItem* subitem);
+
+		void LinkTo (MenuItem* parentitem);
 
 	private:
 
+		MenuItem* m_up;
+		MenuItem* m_prev;
+		MenuItem* m_next;
+
+		std::list<MenuItem*> m_subs;
 		bool m_highlight;
 
 		String m_text;

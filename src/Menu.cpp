@@ -30,19 +30,18 @@
 namespace BlendInt {
 
 	Menu::Menu()
-	: RoundWidget(), m_select (0)
+	: RoundWidget()
 	{
-		m_buffer.reset(new GLBuffer);
 	}
 
 	Menu::Menu (const String& title, AbstractWidget* parent)
-	: RoundWidget(parent), m_select(0), m_title(title)
+	: RoundWidget(parent), m_title(title)
 	{
-		m_buffer.reset(new GLBuffer);
 	}
 
 	Menu::~Menu ()
 	{
+		/*
 		std::list<MenuItem*>::iterator it;
 
 		for(it = m_list.begin(); it != m_list.end(); it++)
@@ -51,10 +50,12 @@ namespace BlendInt {
 		}
 
 		m_list.clear();
+		*/
 	}
 
 	void Menu::add (const String& text)
 	{
+		/*
 		MenuItem* item = new MenuItem(text);
 
 		int w_max = std::max(size().width(), item->size().width());
@@ -65,16 +66,18 @@ namespace BlendInt {
 
 		Resize(w_max, item->size().height() + h);
 		m_list.push_back(item);
+		*/
 	}
 
 	void Menu::MouseMoveEvent(MouseEvent* event)
 	{
 		if(!contain(event->position())) {
-			if(m_select) m_select->set_highlight(false);
-			m_select = 0;
+			//if(m_select) m_select->set_highlight(false);
+			//m_select = 0;
 			return;
 		}
 
+		/*
 		int h = position().y() + size().height() - event->position().y();
 
 		size_t index = h / (size().height() / m_list.size());
@@ -87,6 +90,7 @@ namespace BlendInt {
 		m_select = *it;
 		m_select->set_highlight(true);
 		event->accept(this);
+		*/
 	}
 
 	void Menu::Update(int type, const void* data)
@@ -94,19 +98,19 @@ namespace BlendInt {
 		switch (type) {
 
 			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
-				GenerateRectFormBuffer(size_p, false, m_buffer.get());
+				//const Size* size_p = static_cast<const Size*>(data);
+				//GenerateRectFormBuffer(size_p, false, m_buffer.get());
 				break;
 			}
 
 			case FormRoundType: {
-				const int* type_p = static_cast<const int*>(data);
-				GenerateFormBuffer(&(size()), true, *type_p, radius(), m_buffer.get());
+				//const int* type_p = static_cast<const int*>(data);
+				//GenerateFormBuffer(&(size()), true, *type_p, radius(), m_buffer.get());
 				break;
 			}
 			case FormRoundRadius: {
-				const float* radius_p = static_cast<const float*>(data);
-				GenerateFormBuffer(&(size()), true, round_type(), *radius_p, m_buffer.get());
+				//const float* radius_p = static_cast<const float*>(data);
+				//GenerateFormBuffer(&(size()), true, round_type(), *radius_p, m_buffer.get());
 				break;
 			}
 
@@ -118,6 +122,9 @@ namespace BlendInt {
 
 	void Menu::Render()
 	{
+		RoundWidget::Render();
+
+		/*
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
@@ -159,6 +166,7 @@ namespace BlendInt {
 		}
 
 		glPopMatrix();
+		*/
 	}
 
 }

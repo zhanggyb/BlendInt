@@ -63,13 +63,13 @@ namespace BlendInt {
 
 	private:
 
-		MenuItem* m_select;
+		//MenuItem* m_select;
 
 		String m_title;
 
-		std::list<MenuItem*> m_list;
+		//std::list<MenuItem*> m_list;
 
-		boost::scoped_ptr<GLBuffer> m_buffer;
+		//boost::scoped_ptr<GLBuffer> m_buffer;
 	};
 
 }

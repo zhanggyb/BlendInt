@@ -30,62 +30,75 @@
 namespace BlendInt {
 
 	MenuItem::MenuItem ()
-	: FormBase(), m_highlight(false)
+	: m_up(0), m_prev(0), m_next(0), m_highlight(false)
 	{
-		Resize(200, 20);
 	}
 
 	MenuItem::MenuItem (const String& text)
-	: FormBase(), m_highlight(false)
+	: m_up(0), m_prev(0), m_next(0), m_highlight(false), m_text(text)
 	{
-		Resize(200, 20);
-		m_text = text;
 	}
 
 
 	MenuItem::~MenuItem()
 	{
-
-	}
-
-	void MenuItem::Update(int type, const void* data)
-	{
-		// Do nothing here
-	}
-
-	void MenuItem::Render ()
-	{
-//		FontCache::create(Font())->print(m_text);
-
-		FontCache* fc = FontCache::create(Font());
-
-		int y = (size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender());
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		if(m_highlight) {
-			glColor4ub(themes()->menu_item.inner_sel.r(),
-					themes()->menu_item.inner_sel.g(),
-					themes()->menu_item.inner_sel.b(),
-					themes()->menu_item.inner_sel.a());
-		} else {
-			glColor4ub(themes()->menu_item.inner.r(),
-					themes()->menu_item.inner.g(),
-					themes()->menu_item.inner.b(),
-					themes()->menu_item.inner.a());
+		if(m_up) {
+			m_up->m_subs.remove(this);
+			m_up = 0;
 		}
 
-		glRectf(0.0, 0.0, size().width(), size().height());
+		if(m_prev) {
+			m_prev->m_next = m_next;
+		}
 
-		glColor4ub(themes()->menu_item.text.r(),
-				themes()->menu_item.text.g(),
-				themes()->menu_item.text.b(),
-				themes()->menu_item.text.a());
+		if(m_next) {
+			m_next->m_prev = m_prev;
+		}
 
-		FontCache::create(Font())->print(4, y, m_text);	// move offset x 4
+		std::list<MenuItem*>::iterator it;
+		for(it = m_subs.begin(); it != m_subs.end(); it++)
+		{
+			(*it)->m_up = 0;
+			delete *it;
+		}
+		m_subs.clear();
+	}
 
-		glDisable(GL_BLEND);
+	void MenuItem::PushBack (MenuItem* item)
+	{
+		if(!item) return;
+		if(item == m_next) return;
+
+		if(m_next)
+			delete m_next;
+
+		m_next = item;
+		item->m_prev = this;
+
+		// TODO: set item's parent
+	}
+
+	void MenuItem::PushFront (MenuItem* item)
+	{
+		if(!item) return;
+		if(item == m_prev) return;
+
+		if (m_prev)
+			delete m_prev;
+
+		m_prev = item;
+		item->m_next = this;
+
+		// TODO: set item's parent
+	}
+
+	void MenuItem::Append (MenuItem* subitem)
+	{
+	}
+
+	void MenuItem::LinkTo (MenuItem* parentitem)
+	{
 	}
 
 }
+
