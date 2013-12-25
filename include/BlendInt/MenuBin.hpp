@@ -21,68 +21,50 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MENU_HPP_
-#define _BLENDINT_MENU_HPP_
+#ifndef _BLENDINT_MENUBIN_HPP_
+#define _BLENDINT_MENUBIN_HPP_
 
-#include <list>
+#include <boost/smart_ptr.hpp>
 
+#include <BlendInt/RoundWidget.hpp>
+#include <BlendInt/Menu.hpp>
 #include <BlendInt/String.hpp>
-#include <BlendInt/MenuItem.hpp>
+#include <BlendInt/GLBuffer.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief The menu widget for use in menu bars, context menus,
-	 * and other popup menus.
-	 */
-	class Menu
+	class MenuBin: public RoundWidget
 	{
+		DISALLOW_COPY_AND_ASSIGN(MenuBin);
+
 	public:
 
-		friend class MenuItem;
+		MenuBin ();
 
-		Menu ();
+		MenuBin (AbstractWidget* parent);
 
-		Menu (const String& title);
+		virtual ~MenuBin();
 
-		~Menu();
+		void SetTitle (const String& title);
 
-		inline void set_title (const String& title)
-		{
-			m_title = title;
-		}
+		void AddMenuItem (const String& text);
 
-		inline const String& title () const {return m_title;}
+		static int DefaultMenuItemHeight;
 
-		inline size_t size () const {return m_list.size();}
+	protected:
 
-		inline std::list<MenuItem*>& list () {return m_list;}
+		virtual void Update (int type, const void* data);
 
-		void Add (const String& text);
+		virtual void Render ();
 
-		void Add (FormBase* icon, const String& text);
-
-		void Add (MenuItem* item);
-
-		void SetParent (MenuItem* item);
-
-		void Remove (MenuItem* item);
-
-		void Delete (MenuItem* item);
-
-#ifdef DEBUG
-		void print_menu_items ();
-#endif
+		virtual void MouseMoveEvent(MouseEvent* event);
 
 	private:
 
-		String m_title;
-
-		MenuItem* m_parent;
-
-		std::list<MenuItem*> m_list;
+		boost::scoped_ptr<Menu> m_menu;
+		boost::scoped_ptr<GLBuffer> m_buffer;
 	};
 
 }
 
-#endif /* _BLENDINT_MENU_HPP_ */
+#endif /* _BLENDINT_MENUBIN_HPP_ */
