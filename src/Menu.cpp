@@ -22,151 +22,115 @@
  */
 
 #include <GL/glew.h>
+#include <iostream>
+#include <algorithm>
 
 #include <BlendInt/Menu.hpp>
-
-#include <iostream>
 
 namespace BlendInt {
 
 	Menu::Menu()
-	: RoundWidget()
+	: m_parent (0)
 	{
 	}
 
-	Menu::Menu (const String& title, AbstractWidget* parent)
-	: RoundWidget(parent), m_title(title)
+	Menu::Menu (const String& title)
+	: m_title(title), m_parent (0)
 	{
 	}
 
 	Menu::~Menu ()
 	{
-		/*
+#ifdef DEBUG
+		std::wcout << "Delete Menu: " << m_title << std::endl;
+#endif
 		std::list<MenuItem*>::iterator it;
-
 		for(it = m_list.begin(); it != m_list.end(); it++)
 		{
+			(*it)->m_parent = 0;
 			delete *it;
 		}
-
 		m_list.clear();
-		*/
+
+		if(m_parent)
+			m_parent->m_sub = 0;
 	}
 
-	void Menu::add (const String& text)
+	void Menu::Add (const String& text)
 	{
-		/*
-		MenuItem* item = new MenuItem(text);
+		MenuItem* new_item = new MenuItem (text);
 
-		int w_max = std::max(size().width(), item->size().width());
-		int h = 0;
-		if(m_list.size()) {
-			h = size().height();
-		}
+		new_item->m_parent = this;
+		m_list.push_back(new_item);
+	}
 
-		Resize(w_max, item->size().height() + h);
+	void Menu::Add (FormBase* icon, const String& text)
+	{
+		MenuItem* new_item = new MenuItem (icon, text);
+
+		new_item->m_parent = this;
+		m_list.push_back(new_item);
+	}
+
+	void Menu::Add (MenuItem* item)
+	{
+		if(!item) return;
+		if(item->m_parent == this) return;
+
 		m_list.push_back(item);
-		*/
+		item->m_parent = this;
 	}
 
-	void Menu::MouseMoveEvent(MouseEvent* event)
+	void Menu::SetParent (MenuItem* item)
 	{
-		if(!contain(event->position())) {
-			//if(m_select) m_select->set_highlight(false);
-			//m_select = 0;
-			return;
+		if(m_parent == item) return;
+
+		if(m_parent) {
+			m_parent->m_sub = 0;
 		}
 
-		/*
-		int h = position().y() + size().height() - event->position().y();
+		if(item)
+			item->m_sub = this;
 
-		size_t index = h / (size().height() / m_list.size());
-
-		if(m_select) m_select->set_highlight(false);
-
-		std::list<MenuItem*>::iterator it = m_list.begin();
-		std::advance(it, index);
-
-		m_select = *it;
-		m_select->set_highlight(true);
-		event->accept(this);
-		*/
+		m_parent = item;
 	}
 
-	void Menu::Update(int type, const void* data)
+	void Menu::Remove (MenuItem *item)
 	{
-		switch (type) {
+		if(!item) return;
 
-			case FormSize: {
-				//const Size* size_p = static_cast<const Size*>(data);
-				//GenerateRectFormBuffer(size_p, false, m_buffer.get());
-				break;
-			}
+		std::list<MenuItem*>::iterator it = std::find (m_list.begin(), m_list.end(), item);
 
-			case FormRoundType: {
-				//const int* type_p = static_cast<const int*>(data);
-				//GenerateFormBuffer(&(size()), true, *type_p, radius(), m_buffer.get());
-				break;
-			}
-			case FormRoundRadius: {
-				//const float* radius_p = static_cast<const float*>(data);
-				//GenerateFormBuffer(&(size()), true, round_type(), *radius_p, m_buffer.get());
-				break;
-			}
+		if(it == m_list.end()) return;
 
-			default:
-				Widget::Update(type, data);
-				break;
-		}
+		m_list.erase(it);
+		item->m_parent = 0;
 	}
 
-	void Menu::Render()
+	void Menu::Delete (MenuItem* item)
 	{
-		RoundWidget::Render();
+		if(!item) return;
 
-		/*
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		std::list<MenuItem*>::iterator it = std::find (m_list.begin(), m_list.end(), item);
 
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
+		if(it == m_list.end()) return;
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		m_list.erase(it);
+		item->m_parent = 0;
 
-		// draw inner, simple fill
-		glColor4ub(themes()->menu.inner.r(),
-		        themes()->menu.inner.g(),
-		        themes()->menu.inner.b(),
-		        themes()->menu.inner.a());
-		draw_inner_buffer(m_buffer.get(), 0);
+		delete item;
+	}
 
-		// draw outline
-		unsigned char tcol[4] = { themes()->menu.outline.r(),
-		        themes()->menu.outline.g(),
-		        themes()->menu.outline.b(),
-		        themes()->menu.outline.a()};
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glColor4ubv(tcol);
-
-		draw_outline_buffer(m_buffer.get(), 1);
-
-		glDisable(GL_BLEND);
-
-		int h = 0;
-		glTranslatef(0.0, size().height(), 0.0);
-
+	void Menu::print_menu_items()
+	{
 		std::list<MenuItem*>::iterator it;
-		for (it = m_list.begin(); it != m_list.end(); it++) {
-			h = - (*it)->size().height();
-			glTranslatef(0.0, h, 0.0);
-//			glTranslatef(0.0, h - 2, 0.0);
-			DispatchRender(*it);
+		for(it = m_list.begin(); it != m_list.end(); it++)
+		{
+			std::wcout << "Menu Item Text: " << (*it)->text() << std::endl;
+			if((*it)->m_sub) {
+				(*it)->m_sub->print_menu_items();
+			}
 		}
-
-		glPopMatrix();
-		*/
 	}
 
 }

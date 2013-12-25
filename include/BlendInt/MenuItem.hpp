@@ -21,48 +21,61 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <list>
-
+#include <BlendInt/Menu.hpp>
 #include <BlendInt/String.hpp>
+#include <BlendInt/FormBase.hpp>
 
 #ifndef _BLENDINT_MENUITEM_HPP_
 #define _BLENDINT_MENUITEM_HPP_
 
 namespace BlendInt {
 
+	class Menu;
+
 	class MenuItem
 	{
 	public:
+
+		friend class Menu;
 
 		MenuItem ();
 
 		MenuItem (const String& text);
 
+		MenuItem (FormBase* icon, const String& text);
+
 		~MenuItem();
+
+		void SetIcon (FormBase* icon);
+
+		void set_text (const String& text)
+		{
+			m_text = text;
+		}
+
+		const String& text () const {return m_text;}
 
 		void set_highlight (bool highlight)
 		{
 			m_highlight = highlight;
 		}
 
-		void PushBack (MenuItem* item);
+		void SetParentMenu (Menu* parent);
 
-		void PushFront (MenuItem* item);
-
-		void Append (MenuItem* subitem);
-
-		void LinkTo (MenuItem* parentitem);
+		void SetSubMenu (Menu* sub);
 
 	private:
 
-		MenuItem* m_up;
-		MenuItem* m_prev;
-		MenuItem* m_next;
+		void RemoveIcon ();
 
-		std::list<MenuItem*> m_subs;
-		bool m_highlight;
+		FormBase* m_icon;
 
 		String m_text;
+
+		Menu* m_parent;
+		Menu* m_sub;
+
+		bool m_highlight;
 	};
 
 }

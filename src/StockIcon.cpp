@@ -66,6 +66,16 @@ namespace BlendInt {
 	{
 	}
 
+	bool StockIcon::Find (const FormBase* icon) const
+	{
+		return icon == m_menu ?
+		        true :
+		        (icon == m_circle ?
+		                true :
+		                (icon == m_checkbox ?
+		                        true : (icon == m_num ? true : false)));
+	}
+
 	void StockIcon::CreateIcons()
 	{
 		float vec[16][2];
@@ -113,3 +123,5 @@ namespace BlendInt {
 
 	}
 }
+
+

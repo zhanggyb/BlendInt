@@ -21,83 +21,92 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <GL/glew.h>
+#include <iostream>
 
 #include <BlendInt/MenuItem.hpp>
 #include <BlendInt/Theme.hpp>
 #include <BlendInt/FontCache.hpp>
 
+#include <BlendInt/StockIcon.hpp>
+
 namespace BlendInt {
 
 	MenuItem::MenuItem ()
-	: m_up(0), m_prev(0), m_next(0), m_highlight(false)
+	: m_icon(0), m_parent(0), m_sub(0), m_highlight(false)
 	{
 	}
 
 	MenuItem::MenuItem (const String& text)
-	: m_up(0), m_prev(0), m_next(0), m_highlight(false), m_text(text)
+	: m_icon(0), m_text(text), m_parent(0), m_sub(0), m_highlight(false)
 	{
 	}
 
+	MenuItem::MenuItem (FormBase* icon, const String& text)
+	: m_icon(icon), m_text(text), m_parent(0), m_sub(0), m_highlight(false)
+	{
+	}
 
 	MenuItem::~MenuItem()
 	{
-		if(m_up) {
-			m_up->m_subs.remove(this);
-			m_up = 0;
+#ifdef DEBUG
+		std::wcout << "Delete MenuItem: " << m_text << std::endl;
+#endif
+
+		if(m_sub) {
+			m_sub->m_parent = 0;
+			delete m_sub;
+			m_sub = 0;
 		}
 
-		if(m_prev) {
-			m_prev->m_next = m_next;
+		if(m_parent) {
+			m_parent->Remove(this);
 		}
 
-		if(m_next) {
-			m_next->m_prev = m_prev;
+		RemoveIcon();
+	}
+
+	void MenuItem::SetIcon(FormBase* icon)
+	{
+		if(m_icon == icon) return;
+
+		RemoveIcon();
+
+		m_icon = icon;
+	}
+
+	void MenuItem::SetParentMenu(Menu* parent)
+	{
+		if(m_parent == parent) return;
+
+		if(parent) {
+			parent->m_list.push_back(this);
 		}
 
-		std::list<MenuItem*>::iterator it;
-		for(it = m_subs.begin(); it != m_subs.end(); it++)
-		{
-			(*it)->m_up = 0;
-			delete *it;
+		m_parent = parent;
+	}
+
+	void MenuItem::SetSubMenu (Menu* sub)
+	{
+		if(m_sub == sub) return;
+
+		if(m_sub) {
+			m_sub->m_parent = 0;
+			// delete m_sub;
 		}
-		m_subs.clear();
+
+		if(sub) {
+			sub->SetParent(this);
+		}
 	}
 
-	void MenuItem::PushBack (MenuItem* item)
+	void MenuItem::RemoveIcon()
 	{
-		if(!item) return;
-		if(item == m_next) return;
-
-		if(m_next)
-			delete m_next;
-
-		m_next = item;
-		item->m_prev = this;
-
-		// TODO: set item's parent
-	}
-
-	void MenuItem::PushFront (MenuItem* item)
-	{
-		if(!item) return;
-		if(item == m_prev) return;
-
-		if (m_prev)
-			delete m_prev;
-
-		m_prev = item;
-		item->m_next = this;
-
-		// TODO: set item's parent
-	}
-
-	void MenuItem::Append (MenuItem* subitem)
-	{
-	}
-
-	void MenuItem::LinkTo (MenuItem* parentitem)
-	{
+		if(StockIcon::Instance()->Find(m_icon))
+			m_icon = 0;
+		else {
+			delete m_icon;
+			m_icon = 0;
+		}
 	}
 
 }

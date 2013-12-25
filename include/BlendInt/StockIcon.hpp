@@ -51,6 +51,8 @@ namespace BlendInt {
 
 		VertexIcon* num () const {return m_num;}
 
+		bool Find (const FormBase* icon) const;
+
 	private:
 
 		/**

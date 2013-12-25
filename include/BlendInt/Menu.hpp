@@ -24,14 +24,10 @@
 #ifndef _BLENDINT_MENU_HPP_
 #define _BLENDINT_MENU_HPP_
 
-#include <boost/smart_ptr.hpp>
-
-#include <BlendInt/RoundWidget.hpp>
-#include <BlendInt/String.hpp>
-
-#include <BlendInt/MenuItem.hpp>
-
 #include <list>
+
+#include <BlendInt/String.hpp>
+#include <BlendInt/MenuItem.hpp>
 
 namespace BlendInt {
 
@@ -39,37 +35,48 @@ namespace BlendInt {
 	 * @brief The menu widget for use in menu bars, context menus,
 	 * and other popup menus.
 	 */
-	class Menu: public RoundWidget
+	class Menu
 	{
-		DISALLOW_COPY_AND_ASSIGN(Menu);
-
 	public:
+
+		friend class MenuItem;
 
 		Menu ();
 
-		Menu (const String& title, AbstractWidget* parent = 0);
+		Menu (const String& title);
 
-		virtual ~Menu();
+		~Menu();
 
-		void add (const String& text);
+		void set_title (const String& title)
+		{
+			m_title = title;
+		}
 
-	protected:
+		const String& title () const {return m_title;}
 
-		virtual void MouseMoveEvent (MouseEvent* event);
+		void Add (const String& text);
 
-		virtual void Update (int type, const void* data);
+		void Add (FormBase* icon, const String& text);
 
-		virtual void Render ();
+		void Add (MenuItem* item);
+
+		void SetParent (MenuItem* item);
+
+		void Remove (MenuItem* item);
+
+		void Delete (MenuItem* item);
+
+#ifdef DEBUG
+		void print_menu_items ();
+#endif
 
 	private:
 
-		//MenuItem* m_select;
-
 		String m_title;
 
-		//std::list<MenuItem*> m_list;
+		MenuItem* m_parent;
 
-		//boost::scoped_ptr<GLBuffer> m_buffer;
+		std::list<MenuItem*> m_list;
 	};
 
 }
