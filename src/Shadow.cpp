@@ -84,7 +84,7 @@ namespace BlendInt {
 				totvert = generate_shadow_vertices(&shadow_size, radius(), 0.0f,
 				        inner_v);
 
-				m_gl_buffer.generate((int)m_blur_rad);
+				m_gl_buffer.Generate((int)m_blur_rad);
 				for (step = 1; step <= (int) m_blur_rad; step++) {
 					generate_shadow_vertices(&shadow_size, radius(), (float) step,
 					        outer_v);

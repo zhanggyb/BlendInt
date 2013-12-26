@@ -220,9 +220,9 @@ namespace BlendInt {
 		vert_sum = generate_round_vertices(size, DefaultBorderWidth(), round_type, radius, inner_v, outer_v);
 
 		if(emboss)
-			buffer->generate(3);
+			buffer->Generate(3);
 		else
-			buffer->generate(2);
+			buffer->Generate(2);
 
 		buffer->select(0);
 		buffer->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
@@ -264,9 +264,9 @@ namespace BlendInt {
 		generate_rect_vertices(size, DefaultBorderWidth(), inner_v, outer_v);
 
 		if(emboss)
-			buffer->generate(3);
+			buffer->Generate(3);
 		else
-			buffer->generate(2);
+			buffer->Generate(2);
 
 		buffer->select(0);
 		buffer->set_property(4, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
@@ -323,9 +323,9 @@ namespace BlendInt {
 				inner_v, outer_v);
 
 		if(highlight > 0)
-			buffer->generate(3);
+			buffer->Generate(3);
 		else
-			buffer->generate(2);
+			buffer->Generate(2);
 
 		buffer->select(0);
 
@@ -395,9 +395,9 @@ namespace BlendInt {
 				inner_v, outer_v);
 
 		if(highlight > 0)
-			buffer->generate(3);
+			buffer->Generate(3);
 		else
-			buffer->generate(2);
+			buffer->Generate(2);
 
 		buffer->select(0);
 

@@ -26,3 +26,4 @@ test/Release*
 demo/glfw/Debug*
 demo/glfw/Release*
 demo/qt5/qt5_demo.pro.user
+/Debug_Linux

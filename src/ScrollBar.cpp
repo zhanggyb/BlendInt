@@ -565,7 +565,7 @@ namespace BlendInt {
 		else					// swap shadetop and shadedown
 			vert_sum = generate_vertices(size, DefaultBorderWidth(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
 
-		m_buffer.get()->generate(2);
+		m_buffer.get()->Generate(2);
 		m_buffer.get()->select(0);
 		m_buffer.get()->set_property(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		m_buffer.get()->bind();

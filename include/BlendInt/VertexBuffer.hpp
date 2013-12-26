@@ -24,10 +24,10 @@
 #ifndef _BLENDINT_VERTEXBUFFER_HPP_
 #define _BLENDINT_VERTEXBUFFER_HPP_
 
+#include <boost/smart_ptr.hpp>
+
 #include <BlendInt/GLBuffer.hpp>
 #include <BlendInt/GLSLProgram.hpp>
-
-#include <boost/smart_ptr.hpp>
 
 namespace BlendInt {
 
@@ -52,11 +52,21 @@ namespace BlendInt {
 		 */
 		~VertexBuffer ();
 
+		void Generate (size_t num = 1);
+
+		void Upload (int vertices, int unit_size, GLenum target, GLenum usage, const GLvoid* data, size_t index = 0);
+
+		void SetProgram (GLSLProgram* program);
+
+		void Render ();
+
 	private:
 
-		boost::scoped_ptr<GLBuffer> m_buffer;
+		void DeleteProgram ();
 
-		boost::scoped_ptr<GLSLProgram> m_program;
+		GLSLProgram* m_program;
+
+		boost::scoped_ptr<GLBuffer> m_buffer;
 	};
 
 }

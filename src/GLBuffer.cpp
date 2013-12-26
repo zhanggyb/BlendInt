@@ -21,13 +21,11 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <GL/glew.h>
+#include <BlendInt/GLBuffer.hpp>
 
 #include <stdexcept>
 #include <iterator>
 #include <iostream>
-
-#include <BlendInt/GLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -38,93 +36,17 @@ namespace BlendInt {
 
 	GLBuffer::~GLBuffer ()
 	{
-		clear ();
+		Clear ();
 	}
 
-	void GLBuffer::generate (size_t num)
+	void GLBuffer::Generate (size_t num)
 	{
-		if(m_ids.size()) clear();
+		if(m_ids.size()) Clear();
 
 		m_ids.resize(num);
 		m_properties.resize(num);
 
 		glGenBuffers((GLsizei)num, &(m_ids[0]));
-	}
-
-	void GLBuffer::set_vertices (int vertices)
-	{
-		m_properties[m_index].vertices = vertices;
-	}
-
-	void GLBuffer::set_vertices (size_t index, int vertices)
-	{
-		m_properties[index].vertices = vertices;
-	}
-
-	void GLBuffer::set_unit_size (int size)
-	{
-		m_properties[m_index].unit_size = size;
-	}
-
-	void GLBuffer::set_unit_size (size_t index, int size)
-	{
-		m_properties[index].unit_size = size;
-	}
-
-	void GLBuffer::set_target (GLenum target)
-	{
-		m_properties[m_index].target = target;
-	}
-
-	void GLBuffer::set_target (size_t index, GLenum target)
-	{
-		m_properties[index].target = target;
-	}
-
-	void GLBuffer::set_usage (GLenum usage)
-	{
-		m_properties[m_index].usage = usage;
-	}
-
-	void GLBuffer::set_usage (size_t index, GLenum usage)
-	{
-		m_properties[index].usage = usage;
-	}
-
-	void GLBuffer::set_property (int vertices, int unit_size, GLenum target, GLenum usage)
-	{
-		m_properties[m_index].vertices = vertices;
-		m_properties[m_index].unit_size = unit_size;
-		m_properties[m_index].target = target;
-		m_properties[m_index].usage = usage;
-	}
-
-	void GLBuffer::set_property (size_t index, int vertices, int unit_size, GLenum target, GLenum usage)
-	{
-		m_properties[index].vertices = vertices;
-		m_properties[index].unit_size = unit_size;
-		m_properties[index].target = target;
-		m_properties[index].usage = usage;
-	}
-
-	void GLBuffer::bind ()
-	{
-		glBindBuffer(m_properties[m_index].target, m_ids[m_index]);
-	}
-
-	void GLBuffer::bind (size_t index)
-	{
-		glBindBuffer(m_properties[index].target, m_ids[m_index]);
-	}
-
-	void GLBuffer::unbind ()
-	{
-		glBindBuffer(m_properties[m_index].target, 0);
-	}
-
-	void GLBuffer::unbind (size_t index)
-	{
-		glBindBuffer(m_properties[index].target, 0);
 	}
 
 	bool GLBuffer::is_buffer ()
@@ -145,23 +67,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	void GLBuffer::upload (const GLvoid* data)
-	{
-		glBufferData (m_properties[m_index].target,
-				m_properties[m_index].unit_size * m_properties[m_index].vertices,
-				data,
-				m_properties[m_index].usage);
-	}
-
-	void GLBuffer::upload (size_t index, const GLvoid* data)
-	{
-		glBufferData (m_properties[index].target,
-				m_properties[index].unit_size * m_properties[index].vertices,
-				data,
-				m_properties[index].usage);
-	}
-
-	void GLBuffer::destroy ()
+	void GLBuffer::Destroy ()
 	{
 		glDeleteBuffers(1, &(m_ids[m_index]));
 
@@ -175,7 +81,7 @@ namespace BlendInt {
 		m_properties.erase(it_pro);
 	}
 
-	void GLBuffer::destroy (size_t index)
+	void GLBuffer::Destroy (size_t index)
 	{
 		glDeleteBuffers(1, &(m_ids[index]));
 
@@ -191,7 +97,7 @@ namespace BlendInt {
 		m_properties.erase(it_pro);
 	}
 
-	void GLBuffer::clear ()
+	void GLBuffer::Clear ()
 	{
 		glDeleteBuffers((GLsizei)m_ids.size(), &(m_ids[0]));
 

@@ -12,6 +12,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions(-D__UNIX__)
     add_definitions(-D__LINUX__)
+    add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")

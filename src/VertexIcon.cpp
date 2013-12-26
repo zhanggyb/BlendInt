@@ -108,7 +108,7 @@ namespace BlendInt {
 	void VertexIcon::load (const float (*vertex_array)[2], size_t array_size,
 						   const unsigned int (*vertex_indices)[3], size_t indeces_size)
 	{
-		m_gl_buffer.generate(2);
+		m_gl_buffer.Generate(2);
 		m_gl_buffer.select(0);	// 0 for ARRAY BUFFER
 		m_gl_buffer.set_property(array_size, sizeof(vertex_array[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
 		m_gl_buffer.bind();

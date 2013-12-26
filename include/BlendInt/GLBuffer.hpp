@@ -24,22 +24,51 @@
 #ifndef _BLENDINT_GLBUFFER_HPP_
 #define _BLENDINT_GLBUFFER_HPP_
 
-#include <vector>
-
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
 #else
 #include <GL/gl.h>
+#include <GL/glext.h>
 #endif
 #endif  // __UNIX__
+
+#include <vector>
 
 #define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
 
 namespace BlendInt {
 
+	struct GLBufferProperty
+	{
+		GLBufferProperty ()
+		: vertices(0), unit_size(0), target(0), usage(0)
+		{}
+
+		/** Vertex number -- how many vertices are used in this buffer */
+		int vertices;
+
+		/** size of one unit vertex */
+		int unit_size;
+
+		/** The target buffer object, it's used for glBindBuffer() and glBufferData() */
+		GLenum target;
+
+		/** Usage: */
+		GLenum usage;
+	};
+
 	/**
 	 * @brief A simple warpper of OpenGL buffer
+	 *
+	 * Usage:
+	 * 	-# Define or new a GLBuffer object: e.g. GLBuffer buffer; // or GLBuffer* buffer = new GLBuffer;
+	 * 	-# Generate buffers: buffer.Generate (1);
+	 * 	-# Set the property of generated buffer(s): buffer.set_property();
+	 * 	-# Upload data to this buffer: buffer.Upload();
+	 * 	-# Bind the buffer to draw something: buffer.bind();
+	 * 	-# drawing code here
+	 * 	-# Unbind the buffer: buffer.unbind();
 	 *
 	 * @ingroup opengl
 	 */
@@ -49,7 +78,7 @@ namespace BlendInt {
 
 		GLBuffer ();
 
-		~GLBuffer ();
+		virtual ~GLBuffer ();
 
 		/**
 		 * @brief create buffers with the given number
@@ -60,7 +89,7 @@ namespace BlendInt {
 		 * defined by key, so the next functions (bind(), upload(), etc.) use this
 		 * buffer.
 		 */
-		void generate (size_t num = 1);
+		virtual void Generate (size_t num = 1);
 
 		/**
 		 * @brief set buffer found by key to the current buffer for other operations
@@ -71,93 +100,141 @@ namespace BlendInt {
 		 *
 		 * @ingroup functions_throw_exception
 		 */
-		void select (size_t index)
+		inline void select (size_t index)
 		{
 			m_index = index;
 		}
 
-		int vertices ()
+		inline int vertices ()
 		{
 			return m_properties[m_index].vertices;
 		}
 
-		int vertices (size_t index)
+		inline int vertices (size_t index)
 		{
 			return m_properties[index].vertices;
 		}
 
-		void set_vertices (int vertices);
+		inline void set_vertices (int vertices)
+		{
+			m_properties[m_index].vertices = vertices;
+		}
 
-		void set_vertices (size_t index, int vertices);
+		inline void set_vertices (size_t index, int vertices)
+		{
+			m_properties[index].vertices = vertices;
+		}
 
-		int unit_size ()
+		inline int unit_size ()
 		{
 			return m_properties[m_index].unit_size;
 		}
 
-		int unit_size (size_t index)
+		inline int unit_size (size_t index)
 		{
 			return m_properties[index].unit_size;
 		}
 
-		void set_unit_size (int size);
+		inline void set_unit_size (int size)
+		{
+			m_properties[m_index].unit_size = size;
+		}
 
-		void set_unit_size (size_t index, int size);
+		inline void set_unit_size (size_t index, int size)
+		{
+			m_properties[index].unit_size = size;
+		}
 
-		GLenum target ()
+		inline GLenum target ()
 		{
 			return m_properties[m_index].target;
 		}
 
-		GLenum target (size_t index)
+		inline GLenum target (size_t index)
 		{
 			return m_properties[index].target;
 		}
 
-		void set_target (GLenum target);
+		inline void set_target (GLenum target)
+		{
+			m_properties[m_index].target = target;
+		}
 
-		void set_target (size_t index, GLenum target);
+		inline void set_target (size_t index, GLenum target)
+		{
+			m_properties[index].target = target;
+		}
 
-		GLenum usage ()
+		inline GLenum usage ()
 		{
 			return m_properties[m_index].usage;
 		}
 
-		GLenum usage (size_t index)
+		inline GLenum usage (size_t index)
 		{
 			return m_properties[index].usage;
 		}
 
-		void set_usage (GLenum usage);
+		inline void set_usage (GLenum usage)
+		{
+			m_properties[m_index].usage = usage;
+		}
 
-		void set_usage (size_t index, GLenum usage);
+		inline void set_usage (size_t index, GLenum usage)
+		{
+			m_properties[index].usage = usage;
+		}
 
-		void set_property (int vertices, int unit_size, GLenum target, GLenum usage);
+		inline void set_property (int vertices, int unit_size, GLenum target, GLenum usage)
+		{
+			m_properties[m_index].vertices = vertices;
+			m_properties[m_index].unit_size = unit_size;
+			m_properties[m_index].target = target;
+			m_properties[m_index].usage = usage;
+		}
 
-		void set_property (size_t index, int vertices, int unit_size, GLenum target, GLenum usage);
+		inline void set_property (size_t index, int vertices, int unit_size, GLenum target, GLenum usage)
+		{
+			m_properties[index].vertices = vertices;
+			m_properties[index].unit_size = unit_size;
+			m_properties[index].target = target;
+			m_properties[index].usage = usage;
+		}
 
 		/**
 		 * @brief bind current buffer
 		 * @return
 		 */
-		void bind ();
+		inline void bind ()
+		{
+			glBindBuffer(m_properties[m_index].target, m_ids[m_index]);
+		}
 
-		void bind (size_t index);
+		inline void bind (size_t index)
+		{
+			glBindBuffer(m_properties[index].target, m_ids[m_index]);
+		}
 
 		/**
 		 * @brief unbind the buffer id in current index
 		 */
-		void unbind ();
+		inline void unbind ()
+		{
+			glBindBuffer(m_properties[m_index].target, 0);
+		}
 
-		void unbind (size_t index);
+		inline void unbind (size_t index)
+		{
+			glBindBuffer(m_properties[index].target, 0);
+		}
 
 		/**
 		 * @brief return the current index in the buffer vector
 		 * @return
 		 */
-		size_t index () const {return m_index;}
+		inline size_t index () const {return m_index;}
 
-		size_t size () const {return m_ids.size();}
+		inline size_t size () const {return m_ids.size();}
 
 		bool is_buffer ();
 
@@ -170,42 +247,35 @@ namespace BlendInt {
 		 * @param data
 		 * @param usage
 		 */
-		void upload (const GLvoid* data);
+		inline void upload (const GLvoid* data)
+		{
+			glBufferData (m_properties[m_index].target,
+					m_properties[m_index].unit_size * m_properties[m_index].vertices,
+					data,
+					m_properties[m_index].usage);
+		}
 
-		void upload (size_t index, const GLvoid* data);
+		inline void upload (size_t index, const GLvoid* data)
+		{
+			glBufferData (m_properties[index].target,
+					m_properties[index].unit_size * m_properties[index].vertices,
+					data,
+					m_properties[index].usage);
+		}
 
-		void destroy ();
+		virtual void Destroy ();
 
-		void destroy (size_t index);
+		virtual void Destroy (size_t index);
 
-		void clear ();
+		virtual void Clear ();
 
 	private:
-
-		struct Property
-		{
-			Property ()
-			: vertices(0), unit_size(0), target(0), usage(0)
-			{}
-
-			/** Vertex number -- how many vertices are used in this buffer */
-			int vertices;
-
-			/** size of one unit vertex */
-			int unit_size;
-
-			/** The target buffer object, it's used for glBindBuffer() and glBufferData() */
-			GLenum target;
-
-			/** Usage: */
-			GLenum usage;
-		};
 
 		size_t m_index;
 
 		std::vector<GLuint> m_ids;
 
-		std::vector<Property> m_properties;
+		std::vector<GLBufferProperty> m_properties;
 	};
 }
 

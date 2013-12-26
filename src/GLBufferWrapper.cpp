@@ -21,56 +21,33 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/VertexBuffer.hpp>
-#include <BlendInt/ShaderManager.hpp>
+#include <BlendInt/GLBufferWrapper.hpp>
 
 namespace BlendInt {
 
-	VertexBuffer::VertexBuffer()
-	: m_program(0)
+	GLBufferWrapper::GLBufferWrapper ()
+	: m_index(0)
 	{
-		m_buffer.reset(new GLBuffer);
 	}
 
-	VertexBuffer::~VertexBuffer()
+	GLBufferWrapper::~GLBufferWrapper ()
 	{
-		// TODO: delete program
 	}
 
-	void VertexBuffer::Generate (size_t num)
+	void GLBufferWrapper::Generate (size_t num)
 	{
-		m_buffer->Generate(num);
 	}
 
-	void VertexBuffer::Upload (int vertices, int unit_size, GLenum target, GLenum usage, const GLvoid* data, size_t index)
+	void GLBufferWrapper::Destroy ()
 	{
-		m_buffer->select(index);
-		m_buffer->set_property(vertices, unit_size, target, usage);
-		m_buffer->bind();
-		m_buffer->upload(data);
-		m_buffer->unbind();
 	}
 
-	void VertexBuffer::SetProgram(GLSLProgram* program)
+	void GLBufferWrapper::Destroy (size_t index)
 	{
-		if(m_program == program) return;
-
-		DeleteProgram();
-
-		m_program = program;
 	}
 
-	void VertexBuffer::Render()
+	void GLBufferWrapper::Clear ()
 	{
-
-	}
-
-	void VertexBuffer::DeleteProgram()
-	{
-		if(m_program) {
-			delete m_program;
-			m_program = 0;
-		}
 	}
 
 }
