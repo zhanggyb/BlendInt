@@ -66,12 +66,11 @@ namespace BlendInt {
 
 		/**
 		 * @brief create buffers with the given number
-		 * @param num how many buffers need to be generate, default is 1
+		 * @param[in] num how many buffers need to be generated, default is 1
 		 *
-		 * This function search the key in the built-in map, if the key was not
-		 * used, create a new gl buffer. And set the current buffer to the one
-		 * defined by key, so the next functions (bind(), upload(), etc.) use this
-		 * buffer.
+		 * Generate new GL buffers. And set the current index to 0.
+		 *
+		 * If there're buffers generated before, call Clear() to delete these.
 		 */
 		virtual void Generate (size_t num = 1);
 

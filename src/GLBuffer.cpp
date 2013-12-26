@@ -72,7 +72,7 @@ namespace BlendInt {
 		glDeleteBuffers(1, &(m_ids[m_index]));
 
 		std::vector<GLuint>::iterator it_id = m_ids.begin();
-		std::vector<Property>::iterator it_pro = m_properties.begin();
+		std::vector<GLBufferProperty>::iterator it_pro = m_properties.begin();
 
 		std::advance(it_id, m_index);
 		std::advance(it_pro, m_index);
@@ -88,7 +88,7 @@ namespace BlendInt {
 		if(m_index > index) m_index -= 1;
 
 		std::vector<GLuint>::iterator it_id = m_ids.begin();
-		std::vector<Property>::iterator it_pro = m_properties.begin();
+		std::vector<GLBufferProperty>::iterator it_pro = m_properties.begin();
 
 		std::advance(it_id, index);
 		std::advance(it_pro, index);

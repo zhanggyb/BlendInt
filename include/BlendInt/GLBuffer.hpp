@@ -27,6 +27,7 @@
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
+#include <OpenGL/gl.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -34,6 +35,8 @@
 #endif  // __UNIX__
 
 #include <vector>
+
+#include <BlendInt/GLBufferWrapper.hpp>
 
 #define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
 
