@@ -31,78 +31,87 @@
 namespace BlendInt {
 
 	GLSLProgram::GLSLProgram ()
-			: id_(0)
+			: m_id(0)
 	{
-		id_ = glCreateProgram();
 	}
 
 	GLSLProgram::~GLSLProgram ()
 	{
-		clear();
+		Clear();
 	}
 
-	void GLSLProgram::attachShaderPair(const char* vertex_shader, const char* fragment_shader)
+	bool GLSLProgram::Create ()
 	{
-		if(shaders_.size() > 0) {
+		Clear();
+
+		m_id = glCreateProgram();
+
+		if(m_id) return true;
+		else return false;
+	}
+
+	void GLSLProgram::AttachShaderPair(const char* vertex_shader, const char* fragment_shader)
+	{
+		if(m_shaders.size() > 0) {
 			std::vector<GLSLShader*>::iterator it;
-			for (it = shaders_.begin(); it != shaders_.end(); it++) {
+			for (it = m_shaders.begin(); it != m_shaders.end(); it++) {
 				delete *it;
 				*it = NULL;
 			}
-			shaders_.clear();
+			m_shaders.clear();
 		}
 
-		attachShader(vertex_shader, GL_VERTEX_SHADER);
-		attachShader(fragment_shader, GL_FRAGMENT_SHADER);
+		AttachShader(vertex_shader, GL_VERTEX_SHADER);
+		AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
 	}
 
-	void GLSLProgram::attachShaderPair(const std::string& vertex_shader, const std::string& fragment_shader)
+	void GLSLProgram::AttachShaderPair(const std::string& vertex_shader, const std::string& fragment_shader)
 	{
-		if(shaders_.size() > 0) {
+		if(m_shaders.size() > 0) {
 			std::vector<GLSLShader*>::iterator it;
-			for (it = shaders_.begin(); it != shaders_.end(); it++) {
+			for (it = m_shaders.begin(); it != m_shaders.end(); it++) {
 				delete *it;
 				*it = NULL;
 			}
-			shaders_.clear();
+			m_shaders.clear();
 		}
 
-		attachShader(vertex_shader, GL_VERTEX_SHADER);
-		attachShader(fragment_shader, GL_FRAGMENT_SHADER);
+		AttachShader(vertex_shader, GL_VERTEX_SHADER);
+		AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
 	}
 
-	void GLSLProgram::attachShader (const std::string& filename, GLenum type)
+	void GLSLProgram::AttachShader (const std::string& filename, GLenum type)
 	{
-		if (glIsProgram(id_)) {
+		if (glIsProgram(m_id)) {
 			GLSLShader* shader = new GLSLShader;
-			shader->load(filename, type);
-			shaders_.push_back(shader);
-			glAttachShader(id_, shader->id());
+			shader->Load(filename, type);
+			m_shaders.push_back(shader);
+			glAttachShader(m_id, shader->id());
 		}
 	}
 
-	void GLSLProgram::attachShader (const char* buf, GLenum type)
+	void GLSLProgram::AttachShader (const char* buf, GLenum type)
 	{
-		if (glIsProgram(id_)) {
+		if (glIsProgram(m_id)) {
 			GLSLShader* shader = new GLSLShader;
-			shader->load(buf, type);
-			shaders_.push_back(shader);
-			glAttachShader(id_, shader->id());
+			shader->Load(buf, type);
+			m_shaders.push_back(shader);
+			glAttachShader(m_id, shader->id());
 		}
 	}
 
-	bool GLSLProgram::isValid () const
+	bool GLSLProgram::IsValid () const
 	{
-		return glIsProgram(id_);
+		return glIsProgram(m_id);
 	}
 
-	bool GLSLProgram::link ()
+	bool GLSLProgram::Link ()
 	{
 		GLint link_ok = GL_FALSE;
 
-		if (glIsProgram(id_)) {
-			glLinkProgram(id_);
-			glGetProgramiv(id_, GL_LINK_STATUS, &link_ok);
+		if (glIsProgram(m_id)) {
+			glLinkProgram(m_id);
+			glGetProgramiv(m_id, GL_LINK_STATUS, &link_ok);
 			if (!link_ok) {
 				std::cerr << "Fail to glLinkProgram" << std::endl;
 			}
@@ -111,27 +120,27 @@ namespace BlendInt {
 		return link_ok == GL_TRUE ? true : false;
 	}
 
-	void GLSLProgram::clear ()
+	void GLSLProgram::Clear ()
 	{
 		std::vector<GLSLShader*>::iterator it;
-		for (it = shaders_.begin(); it != shaders_.end(); it++) {
+		for (it = m_shaders.begin(); it != m_shaders.end(); it++) {
 			delete *it;
 			*it = NULL;
 		}
-		shaders_.clear();
+		m_shaders.clear();
 
-		if (id_) {
-			if (glIsProgram(id_))
-				glDeleteProgram(id_);
-			id_ = 0;
+		if (m_id) {
+			if (glIsProgram(m_id))
+				glDeleteProgram(m_id);
+			m_id = 0;
 		}
 	}
 
-	GLint GLSLProgram::getAttributeLocation (const char *name)
+	GLint GLSLProgram::GetAttributeLocation (const char *name)
 	{
 		GLint attribute = -1;
-		if(glIsProgram(id_)) {
-			attribute = glGetAttribLocation(id_, name);
+		if(glIsProgram(m_id)) {
+			attribute = glGetAttribLocation(m_id, name);
 		}
 
 		if(attribute == -1)
@@ -140,12 +149,12 @@ namespace BlendInt {
 		return attribute;
 	}
 
-	GLint GLSLProgram::getUniformLocation (const char *name)
+	GLint GLSLProgram::GetUniformLocation (const char *name)
 	{
 		GLint uniform = -1;
 
-		if(glIsProgram(id_)) {
-			uniform = glGetUniformLocation(id_, name);
+		if(glIsProgram(m_id)) {
+			uniform = glGetUniformLocation(m_id, name);
 		}
 
 		if(uniform == -1)
@@ -154,23 +163,23 @@ namespace BlendInt {
 		return uniform;
 	}
 
-	void GLSLProgram::activate()
+	void GLSLProgram::Activate()
 	{
-		if (glIsProgram(id_))
-			glUseProgram (id_);
+		if (glIsProgram(m_id))
+			glUseProgram (m_id);
 	}
 
-	void GLSLProgram::deactivate()
+	void GLSLProgram::Deactivate()
 	{
 		glUseProgram(0);
 	}
 
-	void GLSLProgram::print_log ()
+	void GLSLProgram::PrintLog ()
 	{
 		GLint log_length = 0;
 
-		if (glIsProgram(id_))
-			glGetProgramiv(id_, GL_INFO_LOG_LENGTH, &log_length);
+		if (glIsProgram(m_id))
+			glGetProgramiv(m_id, GL_INFO_LOG_LENGTH, &log_length);
 		else {
 			fprintf(stderr, "printlog: Not a program\n");
 			return;
@@ -178,8 +187,8 @@ namespace BlendInt {
 
 		char* log = (char*) malloc(log_length);
 
-		if (glIsProgram(id_))
-			glGetProgramInfoLog(id_, log_length, NULL, log);
+		if (glIsProgram(m_id))
+			glGetProgramInfoLog(m_id, log_length, NULL, log);
 
 		fprintf(stderr, "%s", log);
 		free(log);

@@ -39,11 +39,11 @@ namespace BlendInt {
 
 		friend class Interface;
 
-		static ShaderManager* instance ();
+		static ShaderManager* Instance ();
 
 		const GLSLProgram& text_program ()
 		{
-			return text_program_;
+			return m_text_program;
 		}
 
 		const GLint& text_attribute_coord ()
@@ -68,26 +68,26 @@ namespace BlendInt {
 
 	private:
 
-		static bool initialize ();
+		static bool Initialize ();
 
-		static void release ();
+		static void Release ();
 
 		ShaderManager ();
 
 		~ShaderManager ();
 
-		bool setup ();
+		bool Setup ();
 
 		GLint text_attribute_coord_;
 		GLint text_uniform_tex_;
 		GLint text_uniform_color_;
 		GLuint text_vbo_;
 
-		GLSLProgram text_program_;
+		GLSLProgram m_text_program;
 
-		static const char* text_vs_shader_;
+		static const char* text_vertex_shader;
 
-		static const char* text_fs_shader_;
+		static const char* text_fragment_shader;
 
 		static ShaderManager* shader_manager;
 

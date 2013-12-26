@@ -68,12 +68,16 @@ namespace BlendInt {
 		return window;
 	}
 
-	void RunLoop (GLFWwindow* window)
+	void RunLoop (GLFWwindow* window, RenderCallback callback, void* param)
 	{
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
 			/* Render here */
 			Interface::Instance()->Render();
+
+            if(callback) {
+                (*callback)(param);
+            }
 		
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);

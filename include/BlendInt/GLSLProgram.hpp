@@ -39,50 +39,138 @@ namespace BlendInt {
 	/**
 	 * @brief Wrapper class for OpenGL Programs
 	 *
+	 * Usage:
+	 * 	-# Define or new a GLSLProgram object, e.g. GLSLProgram foo; // or GLSLProgram* foo = new GLSLProgram;
+	 * 	-# Call Create(): foo.Create()
+	 * 	-# Attach shaders: foo.AttachShaderPair(vs_shader, fs_shader);
+	 * 	-# Call Link(): foo.Link()
+	 * 	-# Call Activate() for drawing: foo.Activate();	// and draw sth
+	 * 	-# Call Deactivate() after drawing: foo.Deactivate();
+	 *
 	 * @ingroup opengl
 	 */
 	class GLSLProgram
 	{
 	public:
 
+		/**
+		 * @brief Default constructor
+		 */
 		GLSLProgram ();
 
+		/**
+		 * @brief Destructor
+		 */
 		~GLSLProgram ();
 
-		void attachShaderPair (const char* vertex_shader, const char* fragment_shader);
+		/**
+		 * @brief Create the GLSL program
+		 * @return
+		 * 	- true if success
+		 * 	- false if fail
+		 */
+		bool Create ();
 
-		void attachShaderPair (const std::string& vertex_shader, const std::string& fragment_shader);
+		/**
+		 * @brief Attach vertex and fragment shaders
+		 * @param vertex_shader The vertex shader stored in memory as string
+		 * @param fragment_shader The vertex shader stored in memory as string
+		 */
+		void AttachShaderPair (const char* vertex_shader, const char* fragment_shader);
 
-		void attachShader (const char* buf, GLenum type);
+		/**
+		 * @brief Attach vertex and fragment shaders
+		 * @param vertex_shader File name of the vertex shader
+		 * @param fragment_shader File name of the fragment shader
+		 */
+		void AttachShaderPair (const std::string& vertex_shader, const std::string& fragment_shader);
 
-		void attachShader (const std::string& filename, GLenum type);
+		/**
+		 * @brief Attach shader
+		 * @param[in] buf The shader stored in memory as string
+		 * @param[in] type The shader type, must be one of GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
+		 *      GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER.
+		 *
+		 * The param type is defined in manual of glCreateShader
+		 */
+		void AttachShader (const char* buf, GLenum type);
 
-		bool link ();
+		/**
+		 * @brief Attach shader
+		 * @param[in] filename The path of the shader file
+		 * @param[in] type The shader type, must be one of GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
+		 *      GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER.
+		 *
+		 * The param type is defined in manual of glCreateShader
+		 */
+		void AttachShader (const std::string& filename, GLenum type);
 
-		bool isValid () const;
+		/**
+		 * @brief Link the program
+		 * @return
+		 * 	- true if success
+		 * 	- false if fail
+		 *
+		 * 	@note this function should be called after attaching correct shaders
+		 */
+		bool Link ();
 
-		void clear ();
+		/**
+		 * @brief Get if the program is valid
+		 * @return
+		 * 	- true if valid
+		 * 	- false if not valid
+		 */
+		bool IsValid () const;
 
-		void activate ();
+		/**
+		 * @brief Clear all shaders created
+		 */
+		void Clear ();
 
-		void deactivate ();
+		/**
+		 * @brief Use this program for render
+		 */
+		void Activate ();
 
-		void print_log ();
+		/**
+		 * @brief Unuse this program for render
+		 */
+		void Deactivate ();
 
+		/**
+		 * @brief Print log
+		 */
+		void PrintLog ();
+
+		/**
+		 * @brief Get the program id
+		 * @return GLSL program id
+		 */
 		GLuint id () const
 		{
-			return id_;
+			return m_id;
 		}
 
-		GLint getAttributeLocation (const char *name);
+		/**
+		 * @brief Get attribute location
+		 * @param name The attribute name
+		 * @return The attribute location
+		 */
+		GLint GetAttributeLocation (const char *name);
 
-		GLint getUniformLocation (const char *name);
+		/**
+		 * @brief Get uniform location
+		 * @param name The uniform name
+		 * @return The uniform location
+		 */
+		GLint GetUniformLocation (const char *name);
 
 	private:
 
-		GLuint id_;
+		GLuint m_id;
 
-		std::vector<GLSLShader*> shaders_;
+		std::vector<GLSLShader*> m_shaders;
 	};
 
 }

@@ -29,7 +29,8 @@
 
 namespace BlendInt {
 
-	const char* ShaderManager::text_vs_shader_ =
+	const char* ShaderManager::text_vertex_shader =
+			"#version 120\n"
 			"attribute vec4 coord;"
 			"varying vec2 texpos;"
 			""
@@ -38,7 +39,8 @@ namespace BlendInt {
 			"  texpos = coord.zw;"
 			"}";
 
-	const char* ShaderManager::text_fs_shader_ =
+	const char* ShaderManager::text_fragment_shader =
+			"#version 120\n"
 			"varying vec2 texpos;"
 			"uniform sampler2D tex;"
 			"uniform vec4 color;"
@@ -49,16 +51,16 @@ namespace BlendInt {
 
 	ShaderManager* ShaderManager::shader_manager = 0;
 
-	bool ShaderManager::initialize()
+	bool ShaderManager::Initialize()
 	{
 		if(!shader_manager) {
 			shader_manager = new ShaderManager;
 		}
 
-		return shader_manager->setup();
+		return shader_manager->Setup();
 	}
 
-	void ShaderManager::release()
+	void ShaderManager::Release()
 	{
 		if(shader_manager) {
 			delete shader_manager;
@@ -66,7 +68,7 @@ namespace BlendInt {
 		}
 	}
 
-	ShaderManager* ShaderManager::instance()
+	ShaderManager* ShaderManager::Instance()
 	{
 		if (!shader_manager) {
 			std::cerr << "The Shader Manager is not initialized successfully! Exit" << std::endl;
@@ -87,21 +89,24 @@ namespace BlendInt {
 
 	ShaderManager::~ShaderManager()
 	{
-		text_program_.clear();
+		m_text_program.Clear();
 
 		glDeleteBuffers(1, &text_vbo_);
 	}
 
-	bool ShaderManager::setup ()
+	bool ShaderManager::Setup ()
 	{
-		text_program_.attachShaderPair(text_vs_shader_, text_fs_shader_);
-		if(!text_program_.link()) {
+		if(!m_text_program.Create())
+			return false;
+
+		m_text_program.AttachShaderPair(text_vertex_shader, text_fragment_shader);
+		if(!m_text_program.Link()) {
 			return false;
 		}
 
-		text_attribute_coord_ = text_program_.getAttributeLocation("coord");
-		text_uniform_tex_ = text_program_.getUniformLocation("tex");
-		text_uniform_color_ = text_program_.getUniformLocation("color");
+		text_attribute_coord_ = m_text_program.GetAttributeLocation("coord");
+		text_uniform_tex_ = m_text_program.GetUniformLocation("tex");
+		text_uniform_color_ = m_text_program.GetUniformLocation("color");
 		if(text_attribute_coord_ == -1 || text_uniform_tex_ == -1 || text_uniform_color_ == -1) {
 			std::cerr << "Error: cannot get attributes and uniforms" << std::endl;
 			return false;

@@ -85,7 +85,7 @@ namespace BlendInt {
 			result = false;
 		}
 
-		if (!ShaderManager::initialize()) {
+		if (!ShaderManager::Initialize()) {
 			std::cerr << "Cannot initialize Shader Manager" << std::endl;
 			result = false;
 		}
@@ -114,7 +114,7 @@ namespace BlendInt {
 	{
 		StockIcon::Release();
 		ContextManager::release();
-		ShaderManager::release();
+		ShaderManager::Release();
 		ThemeManager::release();
 		FontCache::releaseAll();
 		FontConfig::release();

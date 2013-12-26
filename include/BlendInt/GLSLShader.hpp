@@ -55,30 +55,30 @@ namespace BlendInt {
 		 * @param filename filename to be loaded
 		 * @param type Shader Type defined in OpenGL
 		 *
-		 * Must be one of: Must be one of GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
+		 * Must be one of: GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
 		 *       GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER
 		 */
-		void load (const std::string& filename, GLenum type);
+		void Load (const std::string& filename, GLenum type);
 
-		void load (const char* buf, GLenum type);
+		void Load (const char* buf, GLenum type);
 
 		GLuint id () const
 		{
-			return id_;
+			return m_id;
 		}
 
 		GLenum type () const;
 
-		bool isValid () const;
+		bool IsValid () const;
 
-		bool isDeleted () const;
+		bool IsDeleted () const;
 
 		/**
 		 * Display compilation errors from the OpenGL shader compiler
 		 */
-		void print_log ();
+		void PrintLog ();
 
-		void clear ();
+		void Clear ();
 
 	private:
 		/**
@@ -87,7 +87,7 @@ namespace BlendInt {
 		 * @return a newly-allocated text buffer containing code.
 		 * This buffer must be freed after usage
 		 */
-		char* read (const char *filename);
+		char* Read (const char *filename);
 
 		/**
 		 * @brief Compile a shader from a text buffer
@@ -95,11 +95,11 @@ namespace BlendInt {
 		 * @param type type of shader
 		 * @return the shader object on the compiled program
 		 */
-		GLuint compile (const char* source, const GLenum type);
+		GLuint Compile (const char* source, const GLenum type);
 
-		GLuint id_;
+		GLuint m_id;
 	};
 
 }
 
-#endif /* _BIL_SHADER_HPP_ */
+#endif /* _BLENDINT_SHADER_HPP_ */

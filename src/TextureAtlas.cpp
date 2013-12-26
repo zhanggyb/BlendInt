@@ -80,19 +80,20 @@ namespace BlendInt {
 
 	void TextureAtlas::initialize()
 	{
-		program_.attachShaderPair(vs_shader, fs_shader);
-		if(!program_.isValid()) {
+		program_.Create();
+		program_.AttachShaderPair(vs_shader, fs_shader);
+		if(!program_.IsValid()) {
 			std::cerr << "Cannot compile shaders" << std::endl;
 			return;
 		}
-		if(!program_.link()) {
+		if(!program_.Link()) {
 			std::cerr << "Cannot link program" << std::endl;
 			return;
 		}
 
-		attribute_coord_ = program_.getAttributeLocation("coord");
-		uniform_tex_ = program_.getUniformLocation("tex");
-		uniform_color_ = program_.getUniformLocation("color");
+		attribute_coord_ = program_.GetAttributeLocation("coord");
+		uniform_tex_ = program_.GetUniformLocation("tex");
+		uniform_color_ = program_.GetUniformLocation("color");
 
 		if(attribute_coord_ == -1 || uniform_tex_ == -1 || uniform_color_ == -1) {
 			std::cerr << "Fatal Error: cannot get attributes and uniforms" << std::endl;

@@ -31,72 +31,72 @@
 namespace BlendInt {
 
 	GLSLShader::GLSLShader ()
-			: id_(0)
+			: m_id(0)
 	{
 	}
 
 	GLSLShader::~GLSLShader ()
 	{
-		clear();
+		Clear();
 	}
 
 	GLenum GLSLShader::type () const
 	{
 		GLint type;
-		glGetShaderiv(id_, GL_SHADER_TYPE, &type);
+		glGetShaderiv(m_id, GL_SHADER_TYPE, &type);
 
 		return type;
 	}
 
-	bool GLSLShader::isValid () const
+	bool GLSLShader::IsValid () const
 	{
-		return glIsShader(id_);
+		return glIsShader(m_id);
 	}
 
-	bool GLSLShader::isDeleted () const
+	bool GLSLShader::IsDeleted () const
 	{
 		GLint status;
-		glGetShaderiv(id_, GL_DELETE_STATUS, &status);
+		glGetShaderiv(m_id, GL_DELETE_STATUS, &status);
 
 		return status == GL_TRUE ? true : false;
 	}
 
-	void GLSLShader::load (const std::string& filename, GLenum type)
+	void GLSLShader::Load (const std::string& filename, GLenum type)
 	{
-		clear();
+		Clear();
 
-		char* buf = read(filename.c_str());
+		char* buf = Read(filename.c_str());
 
 		if (buf) {
-			id_ = compile(buf, type);
+			m_id = Compile(buf, type);
 			free(buf);
 		}
 	}
 
-	void GLSLShader::load (const char* buf, GLenum type)
+	void GLSLShader::Load (const char* buf, GLenum type)
 	{
-		clear();
+		Clear();
 
 		if (buf) {
-			id_ = compile(buf, type);
+			m_id = Compile(buf, type);
 		}
 	}
 
-	void GLSLShader::clear ()
+	void GLSLShader::Clear ()
 	{
-		if (id_) {
-			if (glIsShader(id_)) {
-				glDeleteShader(id_);
+		if (m_id) {
+			if (glIsShader(m_id)) {
+				glDeleteShader(m_id);
 			}
-			id_ = 0;
+			m_id = 0;
 		}
 	}
 
-	void GLSLShader::print_log ()
+	void GLSLShader::PrintLog ()
 	{
 		GLint log_length = 0;
-		if (glIsShader(id_))
-			glGetShaderiv(id_, GL_INFO_LOG_LENGTH, &log_length);
+		if (glIsShader(m_id))
+			glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &log_length);
 		else {
 			fprintf(stderr, "printlog: Not a shader\n");
 			return;
@@ -104,13 +104,13 @@ namespace BlendInt {
 
 		char* log = (char*) malloc(log_length);
 
-		glGetShaderInfoLog(id_, log_length, NULL, log);
+		glGetShaderInfoLog(m_id, log_length, NULL, log);
 
 		fprintf(stderr, "%s", log);
 		free(log);
 	}
 
-	char* GLSLShader::read (const char* filename)
+	char* GLSLShader::Read (const char* filename)
 	{
 		FILE * file;
 		char * buffer;
@@ -131,7 +131,7 @@ namespace BlendInt {
 		return buffer;
 	}
 
-	GLuint GLSLShader::compile (const char* source, const GLenum type)
+	GLuint GLSLShader::Compile (const char* source, const GLenum type)
 	{
 		GLint compile_status;
 		GLuint shader = glCreateShader(type);

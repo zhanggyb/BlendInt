@@ -305,7 +305,7 @@ namespace BlendInt {
 
 	void FontCache::print (const String& string, size_t length)
 	{
-		ShaderManager* sm = ShaderManager::instance();
+		ShaderManager* sm = ShaderManager::Instance();
 		GLfloat black[4] = { 0, 0, 0, 1 };
 
 		glMatrixMode(GL_MODELVIEW);
