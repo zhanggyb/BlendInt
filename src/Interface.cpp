@@ -21,7 +21,14 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <GL/glew.h>
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
 
 #include <iostream>
 
@@ -57,6 +64,7 @@ namespace BlendInt {
 
 	bool Interface::Initialize ()
 	{
+		/*
 		glewExperimental = true;	// Needed in core profile
 		if (glewInit() != GLEW_OK) {
 			std::cerr << "Fail to initialize GLEW" << endl;
@@ -67,6 +75,7 @@ namespace BlendInt {
 			std::cerr << "No support for OpenGL 2.0 found" << std::endl;
 			return false;
 		}
+		*/
 
 		bool result = true;
 		if (!FontConfig::initialize()) {
