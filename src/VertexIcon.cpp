@@ -110,16 +110,16 @@ namespace BlendInt {
 	{
 		m_gl_buffer.Generate(2);
 		m_gl_buffer.select(0);	// 0 for ARRAY BUFFER
-		m_gl_buffer.set_property(array_size, sizeof(vertex_array[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_gl_buffer.bind();
-		m_gl_buffer.upload(vertex_array);
-		m_gl_buffer.unbind();
+		m_gl_buffer.SetProperty(array_size, sizeof(vertex_array[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_gl_buffer.Bind();
+		m_gl_buffer.Upload(vertex_array);
+		m_gl_buffer.Unbind();
 
 		m_gl_buffer.select(1);	// 1 for ELEMENT ARRAY BUFFER
-		m_gl_buffer.set_property(indeces_size, sizeof(vertex_indices[0]), GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
-		m_gl_buffer.bind();
-		m_gl_buffer.upload(vertex_indices);
-		m_gl_buffer.unbind();
+		m_gl_buffer.SetProperty(indeces_size, sizeof(vertex_indices[0]), GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_gl_buffer.Bind();
+		m_gl_buffer.Upload(vertex_indices);
+		m_gl_buffer.Unbind();
 	}
 
 	void VertexIcon::Update (int type, const void* data)
@@ -137,10 +137,10 @@ namespace BlendInt {
 		} else if (m_gl_buffer.size() == 2) {
 
 			m_gl_buffer.select(0);
-			m_gl_buffer.bind();	// bind ARRAY BUFFER
+			m_gl_buffer.Bind();	// bind ARRAY BUFFER
 
 			m_gl_buffer.select(1);
-			m_gl_buffer.bind();	// bind ELEMENT ARRAY BUFFER
+			m_gl_buffer.Bind();	// bind ELEMENT ARRAY BUFFER
 
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
@@ -148,15 +148,15 @@ namespace BlendInt {
 			/* for each AA step */
 			for (int i = 0; i < WIDGET_AA_JITTER; i++) {
 				glTranslatef(jit[i][0], jit[i][1], 0.0f);
-				glDrawElements(GL_TRIANGLES, m_gl_buffer.vertices() * 3,
+				glDrawElements(GL_TRIANGLES, m_gl_buffer.Vertices() * 3,
 							   GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 				glTranslatef(-jit[i][0], -jit[i][1], 0.0f);
 			}
 
 			glDisableClientState(GL_VERTEX_ARRAY);
 
-			m_gl_buffer.unbind(0);
-			m_gl_buffer.unbind(1);
+			m_gl_buffer.Unbind(0);
+			m_gl_buffer.Unbind(1);
 		}
 
 #ifdef DEBUG

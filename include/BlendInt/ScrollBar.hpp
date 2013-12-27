@@ -27,7 +27,7 @@
 #include <boost/smart_ptr.hpp>
 #include <BlendInt/Slider.hpp>
 
-#include <BlendInt/GLBuffer.hpp>
+#include <BlendInt/AbstractGLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -64,7 +64,7 @@ namespace BlendInt {
 
 		Point m_position_origin;
 
-		boost::scoped_ptr<GLBuffer> m_buffer;
+		boost::scoped_ptr<GLBufferMultiple> m_buffer;
 	};
 
 	/**
@@ -106,7 +106,7 @@ namespace BlendInt {
 
 		void set_control_size (size_t size);
 
-		boost::scoped_ptr<GLBuffer> m_buffer;
+		boost::scoped_ptr<GLBufferMultiple> m_buffer;
 
 		ScrollControl* m_control_button;
 	};
@@ -147,7 +147,7 @@ namespace BlendInt {
 
 		ScrollControl* m_scroll_control;
 
-		boost::scoped_ptr<GLBuffer> m_buffer;
+		boost::scoped_ptr<GLBufferMultiple> m_buffer;
 
 	};
 

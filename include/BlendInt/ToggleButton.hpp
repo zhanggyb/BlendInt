@@ -61,7 +61,7 @@ namespace BlendInt {
 
 	private:
 
-		boost::scoped_ptr<GLBuffer> m_buffer;
+		boost::scoped_ptr<GLBufferMultiple> m_buffer;
 	};
 
 }

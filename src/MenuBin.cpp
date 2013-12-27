@@ -31,7 +31,7 @@ namespace BlendInt {
 	MenuBin::MenuBin ()
 	: RoundWidget()
 	{
-		m_buffer.reset(new GLBuffer);
+		m_buffer.reset(new GLBufferMultiple);
 		m_menu.reset(new Menu);
 
 		set_size(20, 20);
@@ -42,7 +42,7 @@ namespace BlendInt {
 	MenuBin::MenuBin (AbstractWidget* parent)
 	: RoundWidget(parent)
 	{
-		m_buffer.reset(new GLBuffer);
+		m_buffer.reset(new GLBufferMultiple);
 		set_size(20, 20);
 
 		GenerateRectFormBuffer(&size(), false, m_buffer.get());

@@ -25,7 +25,7 @@
 #define _BLENDINT_VERTEXICON_HPP_
 
 #include <BlendInt/FormBase.hpp>
-#include <BlendInt/GLBuffer.hpp>
+#include <BlendInt/GLBufferMultiple.hpp>
 
 namespace BlendInt {
 
@@ -67,7 +67,7 @@ namespace BlendInt {
 
 	private:
 
-		GLBuffer m_gl_buffer;
+		GLBufferMultiple m_gl_buffer;
 
 	};
 }

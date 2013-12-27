@@ -21,54 +21,21 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_BUTTON_HPP_
-#define _BLENDINT_BUTTON_HPP_
+#include <BlendInt/AbstractGLBuffer.hpp>
 
-#include <boost/smart_ptr.hpp>
-
-#include <BlendInt/AbstractButton.hpp>
-#include <BlendInt/String.hpp>
-
-#include <BlendInt/GLBufferMultiple.hpp>
+#include <stdexcept>
+#include <iterator>
+#include <iostream>
 
 namespace BlendInt {
 
-	/**
-	 * @brief The most common button class
-	 *
-	 * @ingroup widgets
-	 */
-	class Button: public AbstractButton
+	AbstractGLBuffer::AbstractGLBuffer ()
+	: GLBufferWrapper()
 	{
-		DISALLOW_COPY_AND_ASSIGN(Button);
+	}
 
-	public:
-
-		Button ();
-
-		Button (const String& text);
-
-		Button (AbstractWidget* parent);
-
-		Button (const String& text, AbstractWidget* parent);
-
-		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
-
-		virtual ~Button ();
-
-	protected:
-
-		GLBufferMultiple* buffer () {return m_buffer.get();}
-
-		virtual void Update (int type, const void* data);
-
-		virtual void Render ();
-
-	private:
-
-		boost::scoped_ptr<GLBufferMultiple> m_buffer;
-	};
+	AbstractGLBuffer::~AbstractGLBuffer ()
+	{
+	}
 
 }
-
-#endif	// _BIL_BUTTON_H_

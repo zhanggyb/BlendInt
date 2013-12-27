@@ -21,15 +21,15 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GLBUFFERMULTIPLE_HPP_
-#define _BLENDINT_GLBUFFERMULTIPLE_HPP_
+#ifndef _BLENDINT_GLBUFFERSIMPLE_HPP_
+#define _BLENDINT_GLBUFFERSIMPLE_HPP_
 
 #include <BlendInt/AbstractGLBuffer.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief Multiple GLBuffers, each buffer with own property
+	 * @brief A simple GLBuffer with 1 property for all buffers
 	 *
 	 * Usage:
 	 * 	-# Define or new a object: e.g. GLBufferSimple buffer; // or GLBufferSimple* buffer = new GLBufferSimple;
@@ -42,37 +42,21 @@ namespace BlendInt {
 	 *
 	 * @ingroup opengl
 	 */
-	class GLBufferMultiple: public AbstractGLBuffer
+	class GLBufferSimple: public AbstractGLBuffer
 	{
 	public:
 
-		GLBufferMultiple();
+		GLBufferSimple ();
 
-		virtual ~GLBufferMultiple ();
-
-		virtual void Generate (size_t num = 1);
-
-		virtual void Destroy ();
-
-		virtual void Destroy (size_t index);
-
-		virtual void Clear ();
+		virtual ~GLBufferSimple ();
 
 		virtual void SetProperty (int vertices, int unit_size, GLenum target, GLenum usage);
 
-		void SetProperty (size_t index, int vertices, int unit_size, GLenum target, GLenum usage);
-
 		virtual void Bind ();
-
-		void Bind (size_t index);
 
 		virtual void Unbind ();
 
-		void Unbind (size_t index);
-
 		virtual void Upload (const GLvoid* data);
-
-		void Upload (size_t index, const GLvoid* data);
 
 		virtual int Vertices ();
 
@@ -82,70 +66,32 @@ namespace BlendInt {
 
 		virtual GLenum Usage ();
 
-		inline int vertices (size_t index)
-		{
-			return m_properties[index].vertices;
-		}
-
 		inline void set_vertices (int vertices)
 		{
-			m_properties[index()].vertices = vertices;
-		}
-
-		inline void set_vertices (size_t index, int vertices)
-		{
-			m_properties[index].vertices = vertices;
-		}
-
-		inline int unit_size ()
-		{
-			return m_properties[index()].unit_size;
+			m_property.vertices = vertices;
 		}
 
 		inline void set_unit_size (int size)
 		{
-			m_properties[index()].unit_size = size;
-		}
-
-		inline void set_unit_size (size_t index, int size)
-		{
-			m_properties[index].unit_size = size;
-		}
-
-		inline GLenum target (size_t index)
-		{
-			return m_properties[index].target;
+			m_property.unit_size = size;
 		}
 
 		inline void set_target (GLenum target)
 		{
-			m_properties[index()].target = target;
-		}
-
-		inline void set_target (size_t index, GLenum target)
-		{
-			m_properties[index].target = target;
-		}
-
-		inline GLenum usage (size_t index)
-		{
-			return m_properties[index].usage;
+			m_property.target = target;
 		}
 
 		inline void set_usage (GLenum usage)
 		{
-			m_properties[index()].usage = usage;
-		}
-
-		inline void set_usage (size_t index, GLenum usage)
-		{
-			m_properties[index].usage = usage;
+			m_property.usage = usage;
 		}
 
 	private:
 
-		std::vector<GLBufferProperty> m_properties;
+		GLBufferProperty m_property;
+
 	};
+
 }
 
-#endif /* _BLENDINT_GLBUFFERMULTIPLE_HPP_ */
+#endif /* _BLENDINT_GLBUFFERSIMPLE_HPP_ */

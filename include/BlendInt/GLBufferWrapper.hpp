@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GLBUFFERSIMPLE_HPP_
+#ifndef _BLENDINT_GLBUFFERWRAPPER_HPP_
 #define _BLENDINT_GLBUFFERWRAPPER_HPP_
 
 #ifdef __UNIX__
@@ -34,6 +34,8 @@
 #endif  // __UNIX__
 
 #include <vector>
+
+#define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
 
 namespace BlendInt {
 
@@ -74,20 +76,25 @@ namespace BlendInt {
 		 */
 		virtual void Generate (size_t num = 1);
 
+		/**
+		 * @brief Destroy the current buffer
+		 */
 		virtual void Destroy ();
 
+		/**
+		 * @brief Destroy the buffer at given index
+		 * @param index The index in the vector where stores buffer ids
+		 */
 		virtual void Destroy (size_t index);
 
+		/**
+		 * @brief Delete all buffers created
+		 */
 		virtual void Clear ();
 
 		/**
-		 * @brief set buffer found by key to the current buffer for other operations
-		 * @param index the unique keyword in buffer map
-		 *
-		 * This function raises an invalid_argument exception if it's not found in buffer
-		 * map
-		 *
-		 * @ingroup functions_throw_exception
+		 * @brief Set the current buffer id
+		 * @param index The index in buffer vector
 		 */
 		inline void select (size_t index)
 		{
@@ -101,6 +108,19 @@ namespace BlendInt {
 		inline GLuint id () const {return m_ids[m_index];}
 
 		inline GLuint id (size_t index) const {return m_ids[index];}
+
+		bool IsBuffer ();
+
+		bool IsBuffer (size_t index);
+
+	protected:
+
+		std::vector<GLuint>& ids() {return m_ids;}
+
+		inline void set_index (size_t index)
+		{
+			m_index = index;
+		}
 
 	private:
 

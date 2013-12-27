@@ -21,56 +21,65 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/VertexBuffer.hpp>
-#include <BlendInt/ShaderManager.hpp>
+#include <BlendInt/GLBufferSimple.hpp>
 
 namespace BlendInt {
 
-	VertexBuffer::VertexBuffer()
-	: m_program(0)
-	{
-		m_buffer.reset(new GLBufferMultiple);
-	}
-
-	VertexBuffer::~VertexBuffer()
-	{
-		// TODO: delete program
-	}
-
-	void VertexBuffer::Generate (size_t num)
-	{
-		m_buffer->Generate(num);
-	}
-
-	void VertexBuffer::Upload (int vertices, int unit_size, GLenum target, GLenum usage, const GLvoid* data, size_t index)
-	{
-		m_buffer->select(index);
-		m_buffer->SetProperty(vertices, unit_size, target, usage);
-		m_buffer->Bind();
-		m_buffer->Upload(data);
-		m_buffer->Unbind();
-	}
-
-	void VertexBuffer::SetProgram(GLSLProgram* program)
-	{
-		if(m_program == program) return;
-
-		DeleteProgram();
-
-		m_program = program;
-	}
-
-	void VertexBuffer::Render()
+	GLBufferSimple::GLBufferSimple()
+	: AbstractGLBuffer()
 	{
 
 	}
 
-	void VertexBuffer::DeleteProgram()
+	GLBufferSimple::~GLBufferSimple ()
 	{
-		if(m_program) {
-			delete m_program;
-			m_program = 0;
-		}
+	}
+
+	void GLBufferSimple::SetProperty (int vertices, int unit_size,
+	        GLenum target, GLenum usage)
+	{
+		m_property.vertices = vertices;
+		m_property.unit_size = unit_size;
+		m_property.target = target;
+		m_property.usage = usage;
+	}
+
+	void GLBufferSimple::Bind ()
+	{
+		//glBindBuffer(m_property.target, ids()[index()]);
+	}
+
+	void GLBufferSimple::Unbind ()
+	{
+		glBindBuffer(m_property.target, 0);
+	}
+
+	void GLBufferSimple::Upload (const GLvoid* data)
+	{
+		glBufferData (m_property.target,
+				m_property.unit_size * m_property.vertices,
+				data,
+				m_property.usage);
+	}
+
+	int GLBufferSimple::Vertices ()
+	{
+		return m_property.vertices;
+	}
+
+	int GLBufferSimple::UnitSize ()
+	{
+		return m_property.unit_size;
+	}
+
+	GLenum GLBufferSimple::Target ()
+	{
+		return m_property.target;
+	}
+
+	GLenum GLBufferSimple::Usage ()
+	{
+		return m_property.usage;
 	}
 
 }

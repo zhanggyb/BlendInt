@@ -45,7 +45,8 @@ namespace BlendInt {
 
 	GLBufferWrapper::~GLBufferWrapper ()
 	{
-		Clear();
+		glDeleteBuffers((GLsizei)m_ids.size(), &(m_ids[0]));
+		m_ids.clear();
 	}
 
 	void GLBufferWrapper::Generate (size_t num)
@@ -94,6 +95,25 @@ namespace BlendInt {
 	{
 		glDeleteBuffers((GLsizei)m_ids.size(), &(m_ids[0]));
 		m_ids.clear();
+	}
+
+
+	bool GLBufferWrapper::IsBuffer ()
+	{
+		if(glIsBuffer (m_ids[m_index])) {
+			return true;
+		}
+
+		return false;
+	}
+
+	bool GLBufferWrapper::IsBuffer (size_t index)
+	{
+		if(glIsBuffer (m_ids[index])) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

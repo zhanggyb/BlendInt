@@ -25,7 +25,8 @@
 #define _BLENDINT_FORM_HPP_
 
 #include <BlendInt/AbstractWidget.hpp>
-#include <BlendInt/GLBuffer.hpp>
+#include <BlendInt/AbstractGLBuffer.hpp>
+#include <BlendInt/GLBufferMultiple.hpp>
 
 namespace BlendInt {
 
@@ -93,7 +94,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_inner_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
+		void draw_inner_buffer (AbstractGLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw shaded GL buffer in Render()
@@ -107,7 +108,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_shaded_inner_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
+		void draw_shaded_inner_buffer (AbstractGLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw the GL Buffer in Render() with anti-alias
@@ -121,7 +122,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_outline_buffer (GLBuffer* buffer, size_t index = 0, int mode = GL_QUAD_STRIP);
+		void draw_outline_buffer (AbstractGLBuffer* buffer, size_t index = 0, int mode = GL_QUAD_STRIP);
 
 		/**
 		 * @brief generate GL buffer for form drawing
@@ -137,7 +138,7 @@ namespace BlendInt {
 		 *	- index 2: for emboss drawing
 		 */
 		void GenerateFormBuffer (const Size* size, bool emboss, int round_type,
-								 float radius, GLBuffer* buffer);
+								 float radius, GLBufferMultiple* buffer);
 
 		/**
 		 * @brief generate GL buffer for rect form drawing
@@ -145,7 +146,7 @@ namespace BlendInt {
 		 * @param emboss
 		 * @param buffer
 		 */
-		void GenerateRectFormBuffer (const Size* size, bool emboss, GLBuffer* buffer);
+		void GenerateRectFormBuffer (const Size* size, bool emboss, GLBufferMultiple* buffer);
 
 		/**
 		 * @brief generate buffer with shaded color
@@ -172,7 +173,7 @@ namespace BlendInt {
 									   const WidgetTheme* theme,
 									   Orientation shadedir,
 									   short highlight,
-									   GLBuffer* buffer);
+									   GLBufferMultiple* buffer);
 
 		/**
 		 * @brief generate buffer with shaded color
@@ -203,7 +204,7 @@ namespace BlendInt {
 									   short shadedown,
 									   Orientation shadedir,
 									   short highlight,
-									   GLBuffer* buffer);
+									   GLBufferMultiple* buffer);
 
 	private:
 

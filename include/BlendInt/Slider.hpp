@@ -59,7 +59,7 @@ namespace BlendInt {
 
 		Point m_position_origin;
 
-		boost::scoped_ptr<GLBuffer> m_buffer;
+		boost::scoped_ptr<GLBufferMultiple> m_buffer;
 	};
 
 	/**

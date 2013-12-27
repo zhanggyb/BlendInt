@@ -29,7 +29,7 @@
 #include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/Menu.hpp>
 #include <BlendInt/String.hpp>
-#include <BlendInt/GLBuffer.hpp>
+#include <BlendInt/AbstractGLBuffer.hpp>
 
 namespace BlendInt {
 
@@ -62,7 +62,7 @@ namespace BlendInt {
 	private:
 
 		boost::scoped_ptr<Menu> m_menu;
-		boost::scoped_ptr<GLBuffer> m_buffer;
+		boost::scoped_ptr<GLBufferMultiple> m_buffer;
 	};
 
 }

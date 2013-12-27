@@ -91,12 +91,12 @@ namespace BlendInt {
 					verts_to_quad_strip(inner_v, outer_v, totvert, quad_strip);
 
 					m_gl_buffer.select(step - 1);
-					m_gl_buffer.set_property(totvert * 2 + 2,
+					m_gl_buffer.SetProperty(totvert * 2 + 2,
 					        sizeof(quad_strip[0]), GL_ARRAY_BUFFER,
 					        GL_STATIC_DRAW);
-					m_gl_buffer.bind();
-					m_gl_buffer.upload(quad_strip);
-					m_gl_buffer.unbind();
+					m_gl_buffer.Bind();
+					m_gl_buffer.Upload(quad_strip);
+					m_gl_buffer.Unbind();
 				}
 
 				break;
@@ -140,12 +140,12 @@ namespace BlendInt {
 			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
 
 			m_gl_buffer.select(step - 1);
-			m_gl_buffer.bind();
+			m_gl_buffer.Bind();
 			glVertexPointer(2, GL_FLOAT, 0, 0);
 			glEnableClientState(GL_VERTEX_ARRAY);
-			glDrawArrays(GL_QUAD_STRIP, 0, m_gl_buffer.vertices());
+			glDrawArrays(GL_QUAD_STRIP, 0, m_gl_buffer.Vertices());
 			glDisableClientState(GL_VERTEX_ARRAY);
-			m_gl_buffer.unbind();
+			m_gl_buffer.Unbind();
 		}
 
 		glDisable(GL_BLEND);
