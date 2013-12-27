@@ -42,20 +42,31 @@ namespace BlendInt {
 
 		MenuItem (const String& text);
 
+		MenuItem (const String& text, const String& shortcut);
+
 		MenuItem (FormBase* icon, const String& text);
+
+		MenuItem (FormBase* icon, const String& text, const String& shortcut);
 
 		~MenuItem();
 
 		void SetIcon (FormBase* icon);
 
-		void set_text (const String& text)
+		inline void set_text (const String& text)
 		{
 			m_text = text;
 		}
 
-		const String& text () const {return m_text;}
+		inline const String& text () const {return m_text;}
 
-		void set_highlight (bool highlight)
+		inline void set_shortcut (const String& shortcut)
+		{
+			m_shortcut = shortcut;
+		}
+
+		inline const String& shortcut () const {return m_shortcut;}
+
+		inline void set_highlight (bool highlight)
 		{
 			m_highlight = highlight;
 		}
@@ -71,6 +82,7 @@ namespace BlendInt {
 		FormBase* m_icon;
 
 		String m_text;
+		String m_shortcut;
 
 		Menu* m_parent;
 		Menu* m_sub;

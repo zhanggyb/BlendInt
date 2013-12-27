@@ -30,9 +30,11 @@ TEST_F(MenuBinTest1, Foo1)
 
     menubin->SetPosition(200, 200);
 
-    //menubin->AddMenuItem("MenuItem1");
-    //menubin->AddMenuItem("MenuItem2");
-    //menubin->AddMenuItem("MenuItem3");
+    menubin->AddMenuItem("MenuItem1");
+    menubin->AddMenuItem("MenuItem2");
+    menubin->AddMenuItem("MenuItem3");
+    menubin->AddMenuItem("MenuItem4");
+    menubin->AddMenuItem("MenuItem5");
     
     Interface::Instance()->Bind(menubin);
 

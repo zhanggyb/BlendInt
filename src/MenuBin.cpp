@@ -29,23 +29,23 @@ namespace BlendInt {
 	int MenuBin::DefaultMenuItemHeight = 20;
 
 	MenuBin::MenuBin ()
-	: RoundWidget()
+	: RoundWidget(), m_highlight(0)
 	{
 		m_buffer.reset(new GLBufferMultiple);
 		m_menu.reset(new Menu);
 
 		set_size(20, 20);
 
-		GenerateRectFormBuffer(&size(), false, m_buffer.get());
+		GenerateFormBuffer(&(size()), false, round_type(), radius(), m_buffer.get());
 	}
 
 	MenuBin::MenuBin (AbstractWidget* parent)
-	: RoundWidget(parent)
+	: RoundWidget(parent), m_highlight(0)
 	{
 		m_buffer.reset(new GLBufferMultiple);
 		set_size(20, 20);
 
-		GenerateRectFormBuffer(&size(), false, m_buffer.get());
+		GenerateFormBuffer(&(size()), false, round_type(), radius(), m_buffer.get());
 	}
 
 	MenuBin::~MenuBin ()
@@ -66,22 +66,24 @@ namespace BlendInt {
 	void MenuBin::MouseMoveEvent(MouseEvent* event)
 	{
 		if(!contain(event->position())) {
-			//if(m_select) m_select->set_highlight(false);
-			//m_select = 0;
+			m_highlight = 0;
 			return;
 		}
 
-		// int h = position().y() + size().height() - event->position().y();
+		if(!m_menu->size()) {
+			m_highlight = 0;
+			return;
+		}
 
-		//size_t index = h / (size().height() / m_list.size());
+		int h = position().y() + size().height() - event->position().y();
 
-		//if(m_select) m_select->set_highlight(false);
+		if(h < radius() || h > (size().height() - radius())) {
+			m_highlight = 0;
+			event->accept(this);
+		}
 
-		//std::list<MenuItem*>::iterator it = m_list.begin();
-		//std::advance(it, index);
+		m_highlight = (h - radius()) / (size().height() / m_menu->size()) + 1;
 
-		//m_select = *it;
-		//m_select->set_highlight(true);
 		event->accept(this);
 	}
 
@@ -91,7 +93,8 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				GenerateRectFormBuffer(size_p, false, m_buffer.get());
+				GenerateFormBuffer(size_p, false, round_type(), radius(), m_buffer.get());
+
 				break;
 			}
 
@@ -108,7 +111,7 @@ namespace BlendInt {
 			}
 
 			default:
-				Widget::Update(type, data);
+				// Widget::Update(type, data);
 				break;
 		}
 	}
@@ -144,17 +147,29 @@ namespace BlendInt {
 
 		draw_outline_buffer(m_buffer.get(), 1);
 
-		glDisable(GL_BLEND);
+//		int h = 0;
+//		glTranslatef(0.0, size().height() - radius(), 0.0);
+//
+//		glColor4ub(0, 0, 225, 25);
+//
+//		for (std::list<MenuItem*>::iterator it = m_menu->list().begin(); it != m_menu->list().end(); it++) {
+//			h = - DefaultMenuItemHeight;
+//			glTranslatef(0.0, h, 0.0);
+//			//DispatchRender(*it);
+//			glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
+//		}
 
-		//int h = 0;
-		glTranslatef(0.0, size().height(), 0.0);
-
-		std::list<MenuItem*>::iterator it;
-		for (it = m_menu->list().begin(); it != m_menu->list().end(); it++) {
-			//h = - DefaultMenuItemHeight;
-			//glTranslatef(0.0, h, 0.0);
-			//DispatchRender(*it);
+		if(m_highlight) {
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(position().x(),
+						 position().y() + size().height() - radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight),
+						 z());
+			glColor4ub(0, 0, 225, 25);
+			glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
 		}
+
+		glDisable(GL_BLEND);
 
 		glPopMatrix();
 	}

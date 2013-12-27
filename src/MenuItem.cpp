@@ -41,8 +41,19 @@ namespace BlendInt {
 	{
 	}
 
+	MenuItem::MenuItem (const String& text, const String& shortcut)
+	: m_icon(0), m_text(text), m_shortcut(shortcut), m_parent(0), m_sub(0), m_highlight(false)
+	{
+	}
+
+
 	MenuItem::MenuItem (FormBase* icon, const String& text)
 	: m_icon(icon), m_text(text), m_parent(0), m_sub(0), m_highlight(false)
+	{
+	}
+
+	MenuItem::MenuItem (FormBase* icon, const String& text, const String& shortcut)
+	: m_icon(icon), m_text(text), m_shortcut(shortcut), m_parent(0), m_sub(0), m_highlight(false)
 	{
 	}
 

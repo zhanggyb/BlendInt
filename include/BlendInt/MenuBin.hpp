@@ -33,6 +33,9 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief A widget contains and handles a menu
+	 */
 	class MenuBin: public RoundWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(MenuBin);
@@ -60,6 +63,14 @@ namespace BlendInt {
 		virtual void MouseMoveEvent(MouseEvent* event);
 
 	private:
+
+		/**
+		 * @brief The highlight item in Menu
+		 *
+		 * 	- 0: no highlight
+		 * 	- n: the n'th item in the Menu
+		 */
+		unsigned int m_highlight;	// the highlight item index
 
 		boost::scoped_ptr<Menu> m_menu;
 		boost::scoped_ptr<GLBufferMultiple> m_buffer;
