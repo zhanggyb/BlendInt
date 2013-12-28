@@ -175,7 +175,6 @@
 									<listOptionValue builtIn="false" value="BlendInt"/>
 									<listOptionValue builtIn="false" value="glfw3"/>
 									<listOptionValue builtIn="false" value="m"/>
-									<listOptionValue builtIn="false" value="GLEW"/>
 									<listOptionValue builtIn="false" value="GL"/>
 									<listOptionValue builtIn="false" value="GLU"/>
 								</option>
@@ -183,7 +182,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/Debug_Mac}&quot;"/>
 									<listOptionValue builtIn="false" value="/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries"/>
 								</option>
-								<option id="macosx.cpp.link.option.other.323737916" name="Other options (-Xlinker [option])" superClass="macosx.cpp.link.option.other" valueType="stringList"/>
+								<option id="macosx.cpp.link.option.other.323737916" name="Other options (-Xlinker [option])" superClass="macosx.cpp.link.option.other"/>
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.1649953143" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

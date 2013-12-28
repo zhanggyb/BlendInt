@@ -29,7 +29,8 @@
 #include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/Menu.hpp>
 #include <BlendInt/String.hpp>
-#include <BlendInt/AbstractGLBuffer.hpp>
+#include <BlendInt/GLBufferSimple.hpp>
+#include <BlendInt/GLBufferMultiple.hpp>
 
 namespace BlendInt {
 
@@ -64,6 +65,10 @@ namespace BlendInt {
 
 	private:
 
+		void ResetHighlightBuffer (unsigned int width);
+
+		unsigned int GetHighlightNo (int y);
+
 		/**
 		 * @brief The highlight item in Menu
 		 *
@@ -74,6 +79,7 @@ namespace BlendInt {
 
 		boost::scoped_ptr<Menu> m_menu;
 		boost::scoped_ptr<GLBufferMultiple> m_buffer;
+		boost::scoped_ptr<GLBufferSimple> m_highlight_buffer;
 	};
 
 }

@@ -148,6 +148,14 @@ namespace BlendInt {
 		 */
 		void GenerateRectFormBuffer (const Size* size, bool emboss, GLBufferMultiple* buffer);
 
+		void GenerateShadedFormBuffer (const Size* size,
+									   float border,
+									   int round_type,
+									   float radius,
+									   const WidgetTheme* theme,
+									   Orientation shadedir,
+									   AbstractGLBuffer* buffer);
+
 		/**
 		 * @brief generate buffer with shaded color
 		 * @param[in] size
@@ -166,7 +174,7 @@ namespace BlendInt {
 		 *	- buffer index 1: used for outline
 		 *	- buffer index 2: used for inner highlight
 		 */
-		void GenerateShadedFormBuffer (const Size* size,
+		void GenerateShadedFormBuffers (const Size* size,
 									   float border,
 									   int round_type,
 									   float radius,
@@ -174,6 +182,16 @@ namespace BlendInt {
 									   Orientation shadedir,
 									   short highlight,
 									   GLBufferMultiple* buffer);
+
+		void GenerateShadedFormBuffer (const Size* size,
+									   float border,
+									   int round_type,
+									   float radius,
+									   const Color& color,
+									   short shadetop,
+									   short shadedown,
+									   Orientation shadedir,
+									   AbstractGLBuffer* buffer);
 
 		/**
 		 * @brief generate buffer with shaded color
@@ -195,7 +213,7 @@ namespace BlendInt {
 		 *	- buffer index 1: used for outline
 		 *	- buffer index 2: used for inner highlight
 		 */
-		void GenerateShadedFormBuffer (const Size* size,
+		void GenerateShadedFormBuffers (const Size* size,
 									   float border,
 									   int round_type,
 									   float radius,

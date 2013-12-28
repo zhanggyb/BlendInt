@@ -230,6 +230,197 @@ namespace BlendInt {
 			float radius,
 			const WidgetTheme* theme,
 			Orientation shadedir,
+			float inner[WIDGET_SIZE_MAX][6])
+	{
+		float rad = radius;
+		float radi = rad - border;
+
+		float veci[WIDGET_CURVE_RESOLU][2];
+
+		float minxi = 0.0 + border;
+		float maxxi = size->width() - border;
+		float minyi = 0.0 + border;
+		float maxyi = size->height() - border;
+
+		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
+		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
+
+		VerticesSum sum;
+		int count = 0;
+		int minsize = 0;
+		const int hnum = ((round_type & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight) ||
+		                  (round_type & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)) ? 1 : 2;
+		const int vnum = ((round_type & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft) ||
+		                  (round_type & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)) ? 1 : 2;
+
+		Color color_top = theme->inner + theme->shadetop;
+		Color color_down = theme->inner + theme->shadedown;
+		Color shaded_color;
+
+		minsize = std::min(size->width() * hnum,
+		                 size->height() * vnum);
+
+		if (2.0f * radius > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + 1.0f) > minsize)
+			radi = 0.5f * minsize - border;	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+		}
+
+		// corner left-bottom
+		if (round_type & RoundBottomLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = minxi + veci[i][1];
+				inner[count][1] = minyi + radi - veci[i][0];
+
+				if (shadedir == Vertical) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		} else {
+			inner[count][0] = minxi;
+			inner[count][1] = minyi;
+
+			if (shadedir == Vertical) {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		// corner right-bottom
+		if (round_type & RoundBottomRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = maxxi - radi + veci[i][0];
+				inner[count][1] = minyi + veci[i][1];
+
+				if (shadedir == Vertical) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}	else {
+			inner[count][0] = maxxi;
+			inner[count][1] = minyi;
+
+			if (shadedir == Vertical) {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		sum.half = count;
+
+		// corner right-top
+		if (round_type & RoundTopRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = maxxi - veci[i][1];
+				inner[count][1] = maxyi - radi + veci[i][0];
+
+				if (shadedir == Vertical) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+
+			}
+		}	else {
+			inner[count][0] = maxxi;
+			inner[count][1] = maxyi;
+
+			if (shadedir == Vertical) {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		// corner left-top
+		if (round_type & RoundTopLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = minxi + radi - veci[i][0];
+				inner[count][1] = maxyi - veci[i][1];
+
+				if (shadedir == Vertical) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}	else {
+
+			inner[count][0] = minxi;
+			inner[count][1] = maxyi;
+
+			if (shadedir == Vertical) {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		assert(count <= WIDGET_SIZE_MAX);
+
+		sum.total = count;
+		return sum;
+	}
+
+
+	VerticesSum AbstractForm::generate_round_vertices (const Size* size,
+			float border,
+			int round_type,
+			float radius,
+			const WidgetTheme* theme,
+			Orientation shadedir,
 			float inner[WIDGET_SIZE_MAX][6],
 			float outer[WIDGET_SIZE_MAX][2])
 	{
@@ -445,6 +636,198 @@ namespace BlendInt {
 		sum.total = count;
 		return sum;
 	}
+
+	VerticesSum AbstractForm::generate_round_vertices (const Size* size,
+			float border,
+			int round_type,
+			float radius,
+			const Color& color,
+			short shadetop,
+			short shadedown,
+			Orientation shadedir,
+			float inner[WIDGET_SIZE_MAX][6])
+	{
+		float rad = radius;
+		float radi = rad - border;
+
+		float veci[WIDGET_CURVE_RESOLU][2];
+
+		float minxi = 0.0 + border;
+		float maxxi = size->width() - border;
+		float minyi = 0.0 + border;
+		float maxyi = size->height() - border;
+
+		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
+		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;
+
+		VerticesSum sum;
+		int count = 0;
+		int minsize = 0;
+		const int hnum = ((round_type & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight) ||
+		                  (round_type & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)) ? 1 : 2;
+		const int vnum = ((round_type & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft) ||
+		                  (round_type & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)) ? 1 : 2;
+
+		Color color_top = color + shadetop;
+		Color color_down = color + shadedown;
+		Color shaded_color;
+
+		minsize = std::min(size->width() * hnum,
+		                 size->height() * vnum);
+
+		if (2.0f * radius > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + 1.0f) > minsize)
+			radi = 0.5f * minsize - border;	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+		}
+
+		// corner left-bottom
+		if (round_type & RoundBottomLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = minxi + veci[i][1];
+				inner[count][1] = minyi + radi - veci[i][0];
+
+				if (shadedir == Vertical) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}	else {
+			inner[count][0] = minxi;
+			inner[count][1] = minyi;
+
+			if (shadedir == Vertical) {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		// corner right-bottom
+		if (round_type & RoundBottomRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = maxxi - radi + veci[i][0];
+				inner[count][1] = minyi + veci[i][1];
+
+				if (shadedir == Vertical) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}	else {
+			inner[count][0] = maxxi;
+			inner[count][1] = minyi;
+
+			if (shadedir == Vertical) {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		sum.half = count;
+
+		// corner right-top
+		if (round_type & RoundTopRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = maxxi - veci[i][1];
+				inner[count][1] = maxyi - radi + veci[i][0];
+
+				if (shadedir == Vertical) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}	else {
+			inner[count][0] = maxxi;
+			inner[count][1] = maxyi;
+
+			if (shadedir == Vertical) {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		// corner left-top
+		if (round_type & RoundTopLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				inner[count][0] = minxi + radi - veci[i][0];
+				inner[count][1] = maxyi - veci[i][1];
+
+				if (shadedir == Vertical) {
+					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+				} else {
+					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+				}
+				inner[count][2] = shaded_color[0] / 255.0;
+				inner[count][3] = shaded_color[1] / 255.0;
+				inner[count][4] = shaded_color[2] / 255.0;
+				inner[count][5] = shaded_color[3] / 255.0;
+			}
+		}	else {
+
+			inner[count][0] = minxi;
+			inner[count][1] = maxyi;
+
+			if (shadedir == Vertical) {
+				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+			} else {
+				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+			}
+			inner[count][2] = shaded_color[0] / 255.0;
+			inner[count][3] = shaded_color[1] / 255.0;
+			inner[count][4] = shaded_color[2] / 255.0;
+			inner[count][5] = shaded_color[3] / 255.0;
+
+			count++;
+		}
+
+		assert(count <= WIDGET_SIZE_MAX);
+
+		sum.total = count;
+		return sum;
+	}
+
 
 	VerticesSum AbstractForm::generate_round_vertices (const Size* size,
 			float border,

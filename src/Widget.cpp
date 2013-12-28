@@ -314,6 +314,35 @@ namespace BlendInt {
 			float radius,
 			const WidgetTheme* theme,
 			Orientation shadedir,
+			AbstractGLBuffer* buffer)
+	{
+		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_round_vertices(size,
+				border,
+				round_type,
+				radius,
+				theme,
+				shadedir,
+				inner_v);
+
+		buffer->Generate(1);
+		buffer->select(0);
+
+		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->Bind();
+		buffer->Upload(inner_v);
+		buffer->Unbind();
+	}
+
+	void Widget::GenerateShadedFormBuffers(const Size* size,
+			float border,
+			int round_type,
+			float radius,
+			const WidgetTheme* theme,
+			Orientation shadedir,
 			short highlight,
 			GLBufferMultiple* buffer)
 	{
@@ -377,6 +406,39 @@ namespace BlendInt {
 	}
 
 	void Widget::GenerateShadedFormBuffer (const Size* size,
+			float border,
+			int round_type,
+			float radius,
+			const Color& color,
+			short shadetop,
+			short shadedown,
+			Orientation shadedir,
+			AbstractGLBuffer* buffer)
+	{
+		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_round_vertices(size,
+				border,
+				round_type,
+				radius,
+				color,
+				shadetop,
+				shadedown,
+				shadedir,
+				inner_v);
+
+		buffer->Generate(1);
+		buffer->select(0);
+
+		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->Bind();
+		buffer->Upload(inner_v);
+		buffer->Unbind();
+	}
+
+	void Widget::GenerateShadedFormBuffers (const Size* size,
 			float border,
 			int round_type,
 			float radius,

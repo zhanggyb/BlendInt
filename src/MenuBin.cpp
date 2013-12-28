@@ -31,6 +31,9 @@
 #endif  // __UNIX__
 
 #include <BlendInt/MenuBin.hpp>
+#include <BlendInt/Theme.hpp>
+
+#include <iostream>
 
 namespace BlendInt {
 
@@ -39,21 +42,29 @@ namespace BlendInt {
 	MenuBin::MenuBin ()
 	: RoundWidget(), m_highlight(0)
 	{
-		m_buffer.reset(new GLBufferMultiple);
 		m_menu.reset(new Menu);
+		m_buffer.reset(new GLBufferMultiple);
+		m_highlight_buffer.reset(new GLBufferSimple);
 
 		set_size(20, 20);
 
 		GenerateFormBuffer(&(size()), false, round_type(), radius(), m_buffer.get());
+
+		ResetHighlightBuffer(20);
 	}
 
 	MenuBin::MenuBin (AbstractWidget* parent)
 	: RoundWidget(parent), m_highlight(0)
 	{
+		m_menu.reset(new Menu);
 		m_buffer.reset(new GLBufferMultiple);
+		m_highlight_buffer.reset(new GLBufferSimple);
+
 		set_size(20, 20);
 
 		GenerateFormBuffer(&(size()), false, round_type(), radius(), m_buffer.get());
+
+		ResetHighlightBuffer(20);
 	}
 
 	MenuBin::~MenuBin ()
@@ -83,14 +94,7 @@ namespace BlendInt {
 			return;
 		}
 
-		int h = position().y() + size().height() - event->position().y();
-
-		if(h < radius() || h > (size().height() - radius())) {
-			m_highlight = 0;
-			event->accept(this);
-		}
-
-		m_highlight = (h - radius()) / (size().height() / m_menu->size()) + 1;
+		m_highlight = GetHighlightNo(static_cast<int>(event->position().y()));
 
 		event->accept(this);
 	}
@@ -102,7 +106,7 @@ namespace BlendInt {
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				GenerateFormBuffer(size_p, false, round_type(), radius(), m_buffer.get());
-
+				ResetHighlightBuffer(size_p->width());
 				break;
 			}
 
@@ -173,13 +177,64 @@ namespace BlendInt {
 			glTranslatef(position().x(),
 						 position().y() + size().height() - radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight),
 						 z());
-			glColor4ub(0, 0, 225, 25);
-			glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
+
+//			glColor4ub(0, 0, 225, 25);
+//			glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
+
+			m_highlight_buffer->select(0);
+			m_highlight_buffer->Bind();
+
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glEnableClientState(GL_COLOR_ARRAY);
+
+			glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+			glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+			glDrawArrays(GL_POLYGON, 0, m_highlight_buffer->Vertices());
+
+			glDisableClientState(GL_COLOR_ARRAY);
+			glDisableClientState(GL_VERTEX_ARRAY);
+
+
+			m_highlight_buffer->Unbind();
 		}
 
 		glDisable(GL_BLEND);
 
 		glPopMatrix();
+	}
+
+	void MenuBin::ResetHighlightBuffer (unsigned int width)
+	{
+		Size size(width, DefaultMenuItemHeight);
+
+//		GenerateShadedFormBuffer (&size,
+//				DefaultBorderWidth(),
+//				RoundNone,
+//				0.0,
+//				&(themes()->menu_item),
+//				Vertical,
+//				m_highlight_buffer.get());
+
+		GenerateShadedFormBuffer (&size,
+				DefaultBorderWidth(),
+				RoundNone,
+				0.0,
+				themes()->menu_item.inner_sel,
+				themes()->menu_item.shadetop,
+				themes()->menu_item.shadedown,
+				Vertical,
+				m_highlight_buffer.get());
+	}
+
+	unsigned int MenuBin::GetHighlightNo(int y)
+	{
+		int h = position().y() + size().height() - y;
+
+		if(h < radius() || h > (size().height() - radius())) {
+			return 0;
+		}
+
+		return (h - radius()) / (size().height() / m_menu->size()) + 1;
 	}
 
 }

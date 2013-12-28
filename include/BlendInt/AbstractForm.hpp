@@ -127,6 +127,12 @@ namespace BlendInt {
 				float inner_v[4][2],
 				float outer_v[4][2]);
 
+		VerticesSum generate_round_vertices (const Size* size,
+				float border,
+				int round_type,
+				float radius,
+				float inner_v[WIDGET_SIZE_MAX][2]);
+
 		/**
 		 * @brief generate vertices for drawing round box based on the given size, border width, round type, radius
 		 * @param[in] size
@@ -144,6 +150,13 @@ namespace BlendInt {
 				float inner_v[WIDGET_SIZE_MAX][2],
 				float outer_v[WIDGET_SIZE_MAX][2]);
 
+		VerticesSum generate_round_vertices (const Size* size,
+				float border,
+				int round_type,
+				float radius,
+				const WidgetTheme* theme,
+				Orientation shadedir,
+				float inner[WIDGET_SIZE_MAX][6]);
 
 		/**
 		 * @brief calculate vertices for round box edges
@@ -165,6 +178,16 @@ namespace BlendInt {
 				Orientation shadedir,
 				float inner[WIDGET_SIZE_MAX][6],
 				float outer[WIDGET_SIZE_MAX][2]);
+
+		VerticesSum generate_round_vertices (const Size* size,
+				float border,
+				int round_type,
+				float radius,
+				const Color& color,
+				short shadetop,
+				short shadedown,
+				Orientation shadedir,
+				float inner[WIDGET_SIZE_MAX][6]);
 
 		/**
 		 * @brief generate vertices array for round box inner and edges

@@ -55,7 +55,7 @@ namespace BlendInt {
 
 	void GLBufferSimple::Bind ()
 	{
-		//glBindBuffer(m_property.target, ids()[index()]);
+		glBindBuffer(m_property.target, ids()[index()]);
 	}
 
 	void GLBufferSimple::Unbind ()

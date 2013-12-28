@@ -2,9 +2,6 @@
  * Common Window for Test, based on GLFW
  */
 
-// load GLEW first
-#include <GL/glew.h>
-
 #include <GLFW/glfw3.h>
 
 #include <BlendInt/Interface.hpp>

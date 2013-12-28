@@ -1,7 +1,14 @@
-// Load GLEW first
-#include <GL/glew.h>
-
 #include "Window.hpp"
+
+// Load GLEW first
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
 
 #include <iostream>
 #include <BlendInt/Interface.hpp>
