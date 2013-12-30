@@ -60,7 +60,7 @@ namespace BlendInt {
 		m_program = program;
 	}
 
-	void VertexBuffer::Render()
+	void VertexBuffer::Draw()
 	{
 
 	}

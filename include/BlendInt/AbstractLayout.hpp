@@ -100,7 +100,7 @@ namespace BlendInt {
 
 		virtual void Update (int type, const void* data);
 
-		virtual void Render () = 0;
+		virtual void Draw () = 0;
 
 		virtual void AddItem (AbstractWidget* form) = 0;
 

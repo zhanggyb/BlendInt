@@ -117,7 +117,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Button::Render ()
+	void Button::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

@@ -42,7 +42,7 @@ namespace BlendInt {
 
 		void Update (int type, const void* data);
 
-		void Render ();
+		void Draw ();
 	};
 
 }

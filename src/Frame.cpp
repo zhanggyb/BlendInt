@@ -90,9 +90,9 @@ namespace BlendInt {
 		m_margin = new_margin;
 	}
 
-	void Frame::Render ()
+	void Frame::Draw ()
 	{
-		Widget::Render();
+		Widget::Draw();
 
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

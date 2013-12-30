@@ -41,7 +41,7 @@ namespace BlendInt {
 
 	}
 
-	void RoundForm::Render()
+	void RoundForm::Draw()
 	{
 
 	}

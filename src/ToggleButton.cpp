@@ -117,7 +117,7 @@ namespace BlendInt {
 
 	}
 
-	void ToggleButton::Render ()
+	void ToggleButton::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

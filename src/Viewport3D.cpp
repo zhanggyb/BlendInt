@@ -28,6 +28,7 @@
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
+#include <GL/glu.h>
 #endif
 #endif  // __UNIX__
 
@@ -155,7 +156,7 @@ namespace BlendInt {
 		m_yold = event->position().y();
 	}
 
-	void Viewport3D::Render ()
+	void Viewport3D::Draw ()
 	{
 		// store the current matrices
 		GLdouble proj_matrix[16];

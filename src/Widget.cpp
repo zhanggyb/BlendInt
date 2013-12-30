@@ -84,7 +84,7 @@ namespace BlendInt {
 		// do nothing in this base class
 	}
 
-	void Widget::Render()
+	void Widget::Draw()
 	{
 		float outer_v[4][2];	// vertices for drawing outline
 		float inner_v[4][2];	// vertices for drawing inner

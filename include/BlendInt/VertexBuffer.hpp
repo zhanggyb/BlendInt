@@ -58,7 +58,7 @@ namespace BlendInt {
 
 		void SetProgram (GLSLProgram* program);
 
-		void Render ();
+		void Draw ();
 
 	private:
 

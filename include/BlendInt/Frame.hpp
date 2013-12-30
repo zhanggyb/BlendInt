@@ -62,7 +62,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Render ();
+		virtual void Draw ();
 
 		/**
 		 * @check if geometry contains the cursor, exclude padding

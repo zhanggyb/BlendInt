@@ -40,7 +40,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Render ();
+		virtual void Draw ();
 
 	private:
 

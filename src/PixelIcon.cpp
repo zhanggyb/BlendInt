@@ -62,7 +62,7 @@ namespace BlendInt {
 
 	}
 
-	void PixelIcon::Render ()
+	void PixelIcon::Draw ()
 	{
 	}
 

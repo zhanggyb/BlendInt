@@ -141,7 +141,7 @@ namespace BlendInt {
 		}
 	}
 
-	void StackedWidget::Render ()
+	void StackedWidget::Draw ()
 	{
 		if(m_stack.size() == 0) return;
 

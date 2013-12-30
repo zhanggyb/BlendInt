@@ -88,7 +88,7 @@ namespace BlendInt {
 		}
 	}
 
-	void BoxFrame::Render ()
+	void BoxFrame::Draw ()
 	{
 		if(m_layout)
 			DispatchRender(m_layout);

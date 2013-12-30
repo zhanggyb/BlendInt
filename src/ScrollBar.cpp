@@ -98,7 +98,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollControl::Render ()
+	void ScrollControl::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -321,7 +321,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SliderBar::Render ()
+	void SliderBar::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -605,7 +605,7 @@ namespace BlendInt {
 //		m_buffer.get()->unbind();
 	}
 
-	void ScrollBar::Render ()
+	void ScrollBar::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

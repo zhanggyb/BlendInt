@@ -59,7 +59,7 @@ namespace BlendInt {
 //
 //	}
 
-	void ClockWidget::Render()
+	void ClockWidget::Draw()
 	{
 		int radius = std::min(size().width(), size().height()) / 2;
 

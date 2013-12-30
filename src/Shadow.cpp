@@ -121,7 +121,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Shadow::Render ()
+	void Shadow::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

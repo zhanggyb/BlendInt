@@ -91,7 +91,7 @@ namespace BlendInt {
 
 	}
 
-	void ScrollView::Render ()
+	void ScrollView::Draw ()
 	{
 		glEnable (GL_SCISSOR_TEST);
 		glScissor (position().x(),

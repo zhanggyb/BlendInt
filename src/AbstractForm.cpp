@@ -1096,7 +1096,7 @@ namespace BlendInt {
 
 	void AbstractForm::DispatchRender(AbstractForm* obj)
 	{
-		obj->Render();
+		obj->Draw();
 	}
 
 }

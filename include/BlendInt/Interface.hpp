@@ -88,7 +88,7 @@ namespace BlendInt {
 
 		bool Unbind (AbstractWidget* object);
 
-		void Render ();
+		void Draw ();
 
 		void GLFWKeyEvent (int key, int scancode, int action, int mods);
 

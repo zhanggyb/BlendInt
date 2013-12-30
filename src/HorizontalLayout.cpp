@@ -88,7 +88,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::Render ()
+	void HorizontalLayout::Draw ()
 	{
 		std::vector<AbstractWidget*>::const_iterator it;
 		for (it = items().begin(); it != items().end(); it++) {

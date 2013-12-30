@@ -71,7 +71,7 @@ namespace BlendInt {
 		set_radius(rad);
 	}
 
-	void RoundWidget::Render()
+	void RoundWidget::Draw()
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner

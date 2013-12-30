@@ -183,7 +183,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Label::Render ()
+	void Label::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

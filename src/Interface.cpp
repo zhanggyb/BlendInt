@@ -166,7 +166,7 @@ namespace BlendInt {
 		m_resized.fire(m_size.width(), m_size.height());
 	}
 
-	void Interface::Render ()
+	void Interface::Draw ()
 	{
 		int width = m_size.width();
 		int height = m_size.height();
@@ -205,7 +205,7 @@ namespace BlendInt {
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				(*set_it)->Render();
+				(*set_it)->Draw();
 			}
 		}
 		// m_ticktack = m_ticktack ? 0 : 1;
@@ -476,7 +476,7 @@ namespace BlendInt {
 #ifdef DEBUG
 	void Interface::DispatchRender(AbstractForm* form)
 	{
-		form->Render();
+		form->Draw();
 	}
 #endif
 

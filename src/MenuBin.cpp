@@ -128,7 +128,7 @@ namespace BlendInt {
 		}
 	}
 
-	void MenuBin::Render ()
+	void MenuBin::Draw ()
 	{
 		//RoundWidget::Render();
 

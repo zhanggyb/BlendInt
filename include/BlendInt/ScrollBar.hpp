@@ -48,7 +48,7 @@ namespace BlendInt {
 
 		virtual void Update (int type, const void* data);
 
-		virtual void Render ();
+		virtual void Draw ();
 
 		virtual void MouseMoveEvent (MouseEvent* event);
 
@@ -86,7 +86,7 @@ namespace BlendInt {
 
 		virtual void Update (int type, const void* data);
 
-		virtual void Render ();
+		virtual void Draw ();
 
 		virtual void MouseMoveEvent (MouseEvent* event);
 
@@ -127,7 +127,7 @@ namespace BlendInt {
 
 		virtual void Update (int type, const void* data);
 
-		virtual void Render ();
+		virtual void Draw ();
 
 		virtual void MouseMoveEvent (MouseEvent* event);
 

@@ -63,7 +63,7 @@ namespace BlendInt {
 		// add_child(widget);
 	}
 
-	void ScrollWidget::Render ()
+	void ScrollWidget::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

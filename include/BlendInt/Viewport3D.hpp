@@ -62,7 +62,7 @@ namespace BlendInt {
 
 		virtual void MouseMoveEvent (MouseEvent* event);
 
-		virtual void Render ();
+		virtual void Draw ();
 
 		vector<Camera*> m_cameras;
 

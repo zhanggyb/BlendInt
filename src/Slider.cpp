@@ -106,7 +106,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SlideButton::Render ()
+	void SlideButton::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -349,7 +349,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Slider::Render ()
+	void Slider::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

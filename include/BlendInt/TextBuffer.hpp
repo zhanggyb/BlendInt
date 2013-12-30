@@ -90,7 +90,7 @@ namespace BlendInt {
 
 		void setFont (const Font& font);
 
-		void Render (); /* Render the text */
+		void Draw (); /* Render the text */
 
 		void clear (); /* clear the text */
 

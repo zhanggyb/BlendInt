@@ -29,7 +29,7 @@ TEST_F(StockIconTest1, Foo1)
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		Interface::Instance()->Render();
+		Interface::Instance()->Draw();
 
 #ifdef DEBUG
 		// render icons:

@@ -113,7 +113,7 @@ namespace BlendInt {
 
 		virtual void Update (int type, const void* data) = 0;
 
-		virtual void Render () = 0;
+		virtual void Draw () = 0;
 
 		/**
 		 * @brief generate vertices for drawing rectangle based on the given size and border width

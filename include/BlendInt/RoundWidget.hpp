@@ -61,7 +61,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Render ();
+		virtual void Draw ();
 
 		/**
 		 * @brief calculate vertices for round box edge with no shaded color

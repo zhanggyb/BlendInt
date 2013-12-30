@@ -89,7 +89,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::Render ()
+	void VerticalLayout::Draw ()
 	{
 
 		std::vector<AbstractWidget*>::const_iterator it;

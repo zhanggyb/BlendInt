@@ -58,7 +58,7 @@ namespace BlendInt {
 
 //		virtual void Update (int type, const void* data);
 
-		virtual void Render ();
+		virtual void Draw ();
 
 	private:
 

@@ -58,7 +58,7 @@ namespace BlendInt {
 	{
 	}
 
-	void ImageView::Render ()
+	void ImageView::Draw ()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
