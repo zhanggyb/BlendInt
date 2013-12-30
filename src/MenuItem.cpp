@@ -85,7 +85,7 @@ namespace BlendInt {
 		m_icon = icon;
 	}
 
-	void MenuItem::SetParentMenu(Menu* parent)
+	void MenuItem::SetParentMenu(MenuItemBin* parent)
 	{
 		if(m_parent == parent) return;
 
@@ -96,7 +96,7 @@ namespace BlendInt {
 		m_parent = parent;
 	}
 
-	void MenuItem::SetSubMenu (Menu* sub)
+	void MenuItem::SetSubMenu (MenuItemBin* sub)
 	{
 		if(m_sub == sub) return;
 

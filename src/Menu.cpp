@@ -30,126 +30,238 @@
 #endif
 #endif  // __UNIX__
 
-#include <iostream>
-#include <algorithm>
-#include <iterator>
-
 #include <BlendInt/Menu.hpp>
+#include <BlendInt/Theme.hpp>
+#include <BlendInt/FontCache.hpp>
+
+#include <iostream>
 
 namespace BlendInt {
 
-	Menu::Menu()
-	: m_parent (0)
+	int Menu::DefaultMenuItemHeight = 20;
+
+	Menu::Menu ()
+	: RoundWidget(), m_highlight(0)
 	{
+		m_menubin.reset(new MenuItemBin);
+		m_buffer.reset(new GLBufferMultiple);
+		m_highlight_buffer.reset(new GLBufferSimple);
+
+		set_size(20, 20);
+
+		GenerateFormBuffer(&(size()), false, round_type(), radius(), m_buffer.get());
+
+		ResetHighlightBuffer(20);
 	}
 
-	Menu::Menu (const String& title)
-	: m_title(title), m_parent (0)
+	Menu::Menu (AbstractWidget* parent)
+	: RoundWidget(parent), m_highlight(0)
 	{
+		m_menubin.reset(new MenuItemBin);
+		m_buffer.reset(new GLBufferMultiple);
+		m_highlight_buffer.reset(new GLBufferSimple);
+
+		set_size(20, 20);
+
+		GenerateFormBuffer(&(size()), false, round_type(), radius(), m_buffer.get());
+
+		ResetHighlightBuffer(20);
 	}
 
 	Menu::~Menu ()
 	{
-#ifdef DEBUG
-		std::wcout << "Delete Menu: " << m_title << std::endl;
-#endif
-		std::list<MenuItem*>::iterator it;
-		for(it = m_list.begin(); it != m_list.end(); it++)
-		{
-			(*it)->m_parent = 0;
-			delete *it;
-		}
-		m_list.clear();
-
-		if(m_parent)
-			m_parent->m_sub = 0;
 	}
 
-	MenuItem* Menu::GetMenuItem (size_t index)
+	void Menu::SetTitle(const String& title)
 	{
-		std::list<MenuItem*>::iterator it = m_list.begin();
-		std::advance(it, index);
-
-		if(it == m_list.end()) return 0;
-
-		return *it;
+		m_menubin->set_title(title);
 	}
 
-	void Menu::Add (const String& text)
+	void Menu::AddMenuItem(const String& text)
 	{
-		MenuItem* new_item = new MenuItem (text);
-
-		new_item->m_parent = this;
-		m_list.push_back(new_item);
+		m_menubin->Add(text);
+		Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
 	}
 
-	void Menu::Add (FormBase* icon, const String& text)
+	void Menu::MouseMoveEvent(MouseEvent* event)
 	{
-		MenuItem* new_item = new MenuItem (icon, text);
-
-		new_item->m_parent = this;
-		m_list.push_back(new_item);
-	}
-
-	void Menu::Add (MenuItem* item)
-	{
-		if(!item) return;
-		if(item->m_parent == this) return;
-
-		m_list.push_back(item);
-		item->m_parent = this;
-	}
-
-	void Menu::SetParent (MenuItem* item)
-	{
-		if(m_parent == item) return;
-
-		if(m_parent) {
-			m_parent->m_sub = 0;
+		if(!contain(event->position())) {
+			m_highlight = 0;
+			return;
 		}
 
-		if(item)
-			item->m_sub = this;
+		if(!m_menubin->size()) {
+			m_highlight = 0;
+			return;
+		}
 
-		m_parent = item;
+		m_highlight = GetHighlightNo(static_cast<int>(event->position().y()));
+
+		event->accept(this);
 	}
 
-	void Menu::Remove (MenuItem *item)
+	void Menu::MousePressEvent (MouseEvent* event)
 	{
-		if(!item) return;
+		if(!contain(event->position())) {
+			return;
+		}
 
-		std::list<MenuItem*>::iterator it = std::find (m_list.begin(), m_list.end(), item);
+		if(!m_menubin->size()) {
+			return;
+		}
 
-		if(it == m_list.end()) return;
+		event->accept(this);
 
-		m_list.erase(it);
-		item->m_parent = 0;
+		m_triggered.fire(m_menubin->GetMenuItem(m_highlight - 1));
 	}
 
-	void Menu::Delete (MenuItem* item)
+	void Menu::MouseReleaseEvent (MouseEvent* event)
 	{
-		if(!item) return;
-
-		std::list<MenuItem*>::iterator it = std::find (m_list.begin(), m_list.end(), item);
-
-		if(it == m_list.end()) return;
-
-		m_list.erase(it);
-		item->m_parent = 0;
-
-		delete item;
 	}
 
-	void Menu::print_menu_items()
+	void Menu::Update(int type, const void* data)
 	{
-		std::list<MenuItem*>::iterator it;
-		for(it = m_list.begin(); it != m_list.end(); it++)
-		{
-			std::wcout << "Menu Item Text: " << (*it)->text() << std::endl;
-			if((*it)->m_sub) {
-				(*it)->m_sub->print_menu_items();
+		switch (type) {
+
+			case FormSize: {
+				const Size* size_p = static_cast<const Size*>(data);
+				GenerateFormBuffer(size_p, false, round_type(), radius(), m_buffer.get());
+				ResetHighlightBuffer(size_p->width());
+				break;
 			}
+
+			case FormRoundType: {
+				const int* type_p = static_cast<const int*>(data);
+				GenerateFormBuffer(&(size()), false, *type_p, radius(), m_buffer.get());
+				break;
+			}
+
+			case FormRoundRadius: {
+				const float* radius_p = static_cast<const float*>(data);
+				GenerateFormBuffer(&(size()), false, round_type(), *radius_p, m_buffer.get());
+				break;
+			}
+
+			default:
+				// Widget::Update(type, data);
+				break;
 		}
+	}
+
+	void Menu::Draw ()
+	{
+		//RoundWidget::Render();
+
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(position().x(),
+					 position().y(),
+					 z());
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		// draw inner, simple fill
+		glColor4ub(themes()->menu.inner.r(),
+		        themes()->menu.inner.g(),
+		        themes()->menu.inner.b(),
+		        themes()->menu.inner.a());
+		draw_inner_buffer(m_buffer.get(), 0);
+
+		// draw outline
+		unsigned char tcol[4] = { themes()->menu.outline.r(),
+		        themes()->menu.outline.g(),
+		        themes()->menu.outline.b(),
+		        themes()->menu.outline.a()};
+		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
+		glColor4ubv(tcol);
+
+		draw_outline_buffer(m_buffer.get(), 1);
+
+		FontCache* fc = FontCache::create(Font("Sans"));
+
+		/* Draw nomal menu item */
+		int h = 0;
+		glTranslatef(0.0, size().height() - radius(), 0.0);
+
+		//glColor4ub(0, 0, 225, 25);
+
+		for (std::list<MenuItem*>::iterator it = m_menubin->list().begin(); it != m_menubin->list().end(); it++) {
+			h = - DefaultMenuItemHeight;
+			glTranslatef(0.0, h, 0.0);
+			//DispatchRender(*it);
+			//glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
+			fc->print(5 + 16, 5, (*it)->text());
+		}
+
+		/* draw highlight menu item */
+		if(m_highlight) {
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(position().x(),
+						 position().y() + size().height() - radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight),
+						 z());
+
+//			glColor4ub(0, 0, 225, 25);
+//			glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
+
+			m_highlight_buffer->select(0);
+			m_highlight_buffer->Bind();
+
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glEnableClientState(GL_COLOR_ARRAY);
+
+			glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+			glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+			glDrawArrays(GL_POLYGON, 0, m_highlight_buffer->Vertices());
+
+			glDisableClientState(GL_COLOR_ARRAY);
+			glDisableClientState(GL_VERTEX_ARRAY);
+
+			m_highlight_buffer->Unbind();
+
+			fc->print(5 + 16, 5, m_menubin->GetMenuItem(m_highlight - 1)->text());
+
+		}
+
+		glDisable(GL_BLEND);
+
+		glPopMatrix();
+	}
+
+	void Menu::ResetHighlightBuffer (unsigned int width)
+	{
+		Size size(width, DefaultMenuItemHeight);
+
+//		GenerateShadedFormBuffer (&size,
+//				DefaultBorderWidth(),
+//				RoundNone,
+//				0.0,
+//				&(themes()->menu_item),
+//				Vertical,
+//				m_highlight_buffer.get());
+
+		GenerateShadedFormBuffer (&size,
+				DefaultBorderWidth(),
+				RoundNone,
+				0.0,
+				themes()->menu_item.inner_sel,
+				themes()->menu_item.shadetop,
+				themes()->menu_item.shadedown,
+				Vertical,
+				m_highlight_buffer.get());
+	}
+
+	unsigned int Menu::GetHighlightNo(int y)
+	{
+		int h = position().y() + size().height() - y;
+
+		if(h < radius() || h > (size().height() - radius())) {
+			return 0;
+		}
+
+		return (h - radius()) / (size().height() / m_menubin->size()) + 1;
 	}
 
 }

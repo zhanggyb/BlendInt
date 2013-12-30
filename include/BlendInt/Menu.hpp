@@ -21,123 +21,78 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MENU_HPP_
-#define _BLENDINT_MENU_HPP_
+#ifndef _BLENDINT_MENUITEMBIN_HPP_
+#define _BLENDINT_MENUITEMBIN_HPP_
 
-#include <list>
+#include <boost/smart_ptr.hpp>
 
+#include <BlendInt/RoundWidget.hpp>
+#include <BlendInt/MenuItemBin.hpp>
 #include <BlendInt/String.hpp>
-#include <BlendInt/MenuItem.hpp>
+#include <BlendInt/GLBufferSimple.hpp>
+#include <BlendInt/GLBufferMultiple.hpp>
+
+#include <Cpp/Events.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief A class to store menu items
+	 * @brief A widget contains and handles a menu
 	 */
-	class Menu
+	class Menu: public RoundWidget
 	{
+		DISALLOW_COPY_AND_ASSIGN(Menu);
+
 	public:
 
-		friend class MenuItem;
-
-		/**
-		 * @brief Default constructor
-		 */
 		Menu ();
 
-		/**
-		 * @brief Constructor with title
-		 * @param[in] title The title of this menu
-		 */
-		Menu (const String& title);
+		Menu (AbstractWidget* parent);
 
-		/**
-		 * @brief Destructor
-		 */
-		~Menu();
+		virtual ~Menu();
 
-		MenuItem* GetMenuItem (size_t index);
+		void SetTitle (const String& title);
 
-		/**
-		 * @brief Set the title of this menu
-		 * @param[in] title The title of this menu
-		 *
-		 * This inline function just simply set the title of the menu.
-		 */
-		inline void set_title (const String& title)
-		{
-			m_title = title;
-		}
+		void AddMenuItem (const String& text);
 
-		/**
-		 * @brief Get the title of this menu
-		 * @return The title string
-		 */
-		inline const String& title () const {return m_title;}
+		Cpp::EventRef<MenuItem*> triggered () {return m_triggered;}
 
-		/**
-		 * @brief Get the size of menu items
-		 * @return The size of menu items
-		 */
-		inline size_t size () const {return m_list.size();}
+		static int DefaultMenuItemHeight;
 
-		/**
-		 * @brief Get the reference of menu item list
-		 * @return Reference of the std::list member
-		 */
-		inline std::list<MenuItem*>& list () {return m_list;}
+	protected:
 
-		/**
-		 * @brief Add a menu item and set the text
-		 * @param[in] text The text string shown in the menu item
-		 */
-		void Add (const String& text);
+		virtual void Update (int type, const void* data);
 
-		/**
-		 *
-		 */
-		void Add (FormBase* icon, const String& text);
+		virtual void Draw ();
 
-		void Add (MenuItem* item);
+		virtual void MouseMoveEvent(MouseEvent* event);
 
-		/**
-		 * @brief Set the parent MenuItem of this menu
-		 * @param[in] item The parent MenuItem
-		 */
-		void SetParent (MenuItem* item);
+		virtual void MousePressEvent (MouseEvent* event);
 
-		/**
-		 * @brief Remove a MenuItem from this menu
-		 * @param[in] item The MenuItem object need to be removed
-		 *
-		 * @note This function will not delete the item removed, do to so, use Menu::Delete instead
-		 * or delete it manually.
-		 *
-		 * @sa Delete
-		 */
-		void Remove (MenuItem* item);
-
-		/**
-		 * @brief Remove and delete a MenuItem from this menu
-		 * @param[in] item The MenuItem object need to be deleted
-		 *
-		 * @sa Remove
-		 */
-		void Delete (MenuItem* item);
-
-#ifdef DEBUG
-		void print_menu_items ();
-#endif
+		virtual void MouseReleaseEvent (MouseEvent* event);
 
 	private:
 
-		String m_title;
+		void ResetHighlightBuffer (unsigned int width);
 
-		MenuItem* m_parent;
+		unsigned int GetHighlightNo (int y);
 
-		std::list<MenuItem*> m_list;
+		/**
+		 * @brief The highlight item in Menu
+		 *
+		 * 	- 0: no highlight
+		 * 	- n: the n'th item in the Menu
+		 */
+		unsigned int m_highlight;	// the highlight item index
+
+		boost::scoped_ptr<MenuItemBin> m_menubin;
+		boost::scoped_ptr<GLBufferMultiple> m_buffer;
+		boost::scoped_ptr<GLBufferSimple> m_highlight_buffer;
+
+		Cpp::Event<MenuItem*> m_triggered;
 	};
 
 }
 
-#endif /* _BLENDINT_MENU_HPP_ */
+#endif /* _BLENDINT_MENUBIN_HPP_ */
+

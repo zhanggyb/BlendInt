@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Menu.hpp>
+#include <BlendInt/MenuItemBin.hpp>
 #include <BlendInt/String.hpp>
 #include <BlendInt/FormBase.hpp>
 
@@ -30,13 +30,13 @@
 
 namespace BlendInt {
 
-	class Menu;
+	class MenuItemBin;
 
 	class MenuItem
 	{
 	public:
 
-		friend class Menu;
+		friend class MenuItemBin;
 
 		MenuItem ();
 
@@ -71,9 +71,9 @@ namespace BlendInt {
 			m_highlight = highlight;
 		}
 
-		void SetParentMenu (Menu* parent);
+		void SetParentMenu (MenuItemBin* parent);
 
-		void SetSubMenu (Menu* sub);
+		void SetSubMenu (MenuItemBin* sub);
 
 	private:
 
@@ -84,8 +84,8 @@ namespace BlendInt {
 		String m_text;
 		String m_shortcut;
 
-		Menu* m_parent;
-		Menu* m_sub;
+		MenuItemBin* m_parent;
+		MenuItemBin* m_sub;
 
 		bool m_highlight;
 	};

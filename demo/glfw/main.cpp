@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 
 	GLFWwindow* window = CreateWindow("GLFW3 Demo");
 
-    MenuBin* menubin = new MenuBin;
+    MenuItemBin* menubin = new MenuItemBin;
     menubin->SetRoundType(RoundAll);
 
     menubin->SetPosition(200, 200);

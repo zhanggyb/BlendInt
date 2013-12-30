@@ -1,5 +1,6 @@
 #include "MenuTest1.hpp"
 #include <BlendInt/Menu.hpp>
+#include "InfoWidget.hpp"
 
 using namespace BlendInt;
 
@@ -19,24 +20,24 @@ MenuTest1::~MenuTest1()
  *
  * Expected result: 
  */
-TEST_F(MenuTest1, Add1)
+TEST_F(MenuTest1, Foo1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("Menu - Add1");
+	GLFWwindow* window = CreateWindow("Menu - Foo1");
 
 	// TODO: add test code here
+    Menu* menubin = new Menu;
+    menubin->SetRoundType(RoundAll);
+
+    menubin->SetPosition(200, 200);
+
+    menubin->AddMenuItem("MenuItem1");
+    menubin->AddMenuItem("MenuItem2");
+    menubin->AddMenuItem("MenuItem3");
+    menubin->AddMenuItem("MenuItem4");
+    menubin->AddMenuItem("MenuItem5");
     
-    Menu* menu = new Menu("Menu");
-
-    menu->Add("item1");
-    menu->Add("item2");
-    menu->Add("item3");
-
-#ifdef DEBUG
-    menu->print_menu_items();
-#endif
-
-    delete menu;
+    Interface::Instance()->Bind(menubin);
 
 	RunLoop(window);
 
@@ -50,122 +51,32 @@ TEST_F(MenuTest1, Add1)
  *
  * Expected result: 
  */
-TEST_F(MenuTest1, Add2)
+TEST_F(MenuTest1, Click1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("Menu - Add2");
+	GLFWwindow* window = CreateWindow("MenuTest1 - Click1");
 
 	// TODO: add test code here
+    Menu* menubin = new Menu;
+    menubin->SetRoundType(RoundAll);
+
+    menubin->SetPosition(200, 200);
+
+    menubin->AddMenuItem("MenuItem1");
+    menubin->AddMenuItem("MenuItem2");
+    menubin->AddMenuItem("MenuItem3");
+    menubin->AddMenuItem("MenuItem4");
+    menubin->AddMenuItem("MenuItem5");
     
-    Menu* menu = new Menu("Menu");
-
-    MenuItem* item1 = new MenuItem("item1");
-    MenuItem* item2 = new MenuItem("item2");
-    MenuItem* item3 = new MenuItem("item3");
-
-    menu->Add(item1);
-    menu->Add(item2);
-    menu->Add(item3);
-
-#ifdef DEBUG
-    menu->print_menu_items();
-#endif
-
-    delete menu;
-
-	RunLoop(window);
-
-	Terminate();
-
-	ASSERT_TRUE(true);
-}
-
-/**
- * test Foo() method
- *
- * Expected result: 
- */
-TEST_F(MenuTest1, Add3)
-{
-	Init ();
-	GLFWwindow* window = CreateWindow("Menu - Add3");
-
-	// TODO: add test code here
-    
-    Menu* menu1 = new Menu("Menu1");
-
-    MenuItem* item1 = new MenuItem("item1");
-    MenuItem* item2 = new MenuItem("item2");
-    MenuItem* item3 = new MenuItem("item3");
-
-    menu1->Add(item1);
-    menu1->Add(item2);
-    menu1->Add(item3);
-
-    Menu* menu2 = new Menu("Menu2");
-    MenuItem* item4 = new MenuItem("item4");
-    MenuItem* item5 = new MenuItem("item5");
-    MenuItem* item6 = new MenuItem("item6");
-    menu2->Add(item4);
-    menu2->Add(item5);
-    menu2->Add(item6);
-
-    item3->SetSubMenu(menu2);
-
-#ifdef DEBUG
-    menu1->print_menu_items();
-#endif
-
-    delete menu1;
-
-	RunLoop(window);
-
-	Terminate();
-
-	ASSERT_TRUE(true);
-}
-
-/**
- * test Foo() method
- *
- * Expected result: 
- */
-TEST_F(MenuTest1, Add4)
-{
-	Init ();
-	GLFWwindow* window = CreateWindow("Menu - Add4");
-
-	// TODO: add test code here
-    
-    Menu* menu1 = new Menu("Menu1");
-
-    MenuItem* item1 = new MenuItem("item1");
-    MenuItem* item2 = new MenuItem("item2");
-    MenuItem* item3 = new MenuItem("item3");
-
-    menu1->Add(item1);
-    menu1->Add(item2);
-    menu1->Add(item3);
-
-    Menu* menu2 = new Menu("Menu2");
-    MenuItem* item4 = new MenuItem("item4");
-    MenuItem* item5 = new MenuItem("item5");
-    MenuItem* item6 = new MenuItem("item6");
-    menu2->Add(item4);
-    menu2->Add(item5);
-    menu2->Add(item6);
-
-    item3->SetSubMenu(menu2);
-
-    MenuItem* item7 = new MenuItem("item7");
-    item7->SetParentMenu(menu1);
-    item7->SetSubMenu(menu2);
-
-#ifdef DEBUG
-    menu1->print_menu_items();
-#endif
-
-    delete menu1;
+    Interface::Instance()->Bind(menubin);
+	
+	InfoWidget* info = new InfoWidget;
+	
+	info->SetPosition(600, 200);
+	
+	Interface::Instance()->Bind(info);
+	
+	Interface::Instance()->events()->connect(menubin->triggered(), info, &InfoWidget::onShowText);
 
 	RunLoop(window);
 
