@@ -50,15 +50,22 @@ namespace BlendInt {
 		/**
 		 * @brief Destructor
 		 */
-		~VertexBuffer ();
+		virtual ~VertexBuffer ();
 
 		void Generate (size_t num = 1);
 
 		void Upload (int vertices, int unit_size, GLenum target, GLenum usage, const GLvoid* data, size_t index = 0);
 
+		/**
+		 * @brief Set GLSL program for drawing
+		 * @param program GLSLProgram object, can be allocated by new or from ShaderManager
+		 *
+		 * @note When this class is destructed, it will delete the program object if it's not
+		 * managed by ShaderManager.
+		 */
 		void SetProgram (GLSLProgram* program);
 
-		void Draw ();
+		virtual void Draw ();
 
 	private:
 

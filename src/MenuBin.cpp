@@ -32,6 +32,7 @@
 
 #include <BlendInt/MenuBin.hpp>
 #include <BlendInt/Theme.hpp>
+#include <BlendInt/FontCache.hpp>
 
 #include <iostream>
 
@@ -99,6 +100,25 @@ namespace BlendInt {
 		event->accept(this);
 	}
 
+	void MenuBin::MousePressEvent (MouseEvent* event)
+	{
+		if(!contain(event->position())) {
+			return;
+		}
+
+		if(!m_menu->size()) {
+			return;
+		}
+
+		event->accept(this);
+
+		m_triggered.fire(m_menu->GetMenuItem(m_highlight - 1));
+	}
+
+	void MenuBin::MouseReleaseEvent (MouseEvent* event)
+	{
+	}
+
 	void MenuBin::Update(int type, const void* data)
 	{
 		switch (type) {
@@ -159,18 +179,23 @@ namespace BlendInt {
 
 		draw_outline_buffer(m_buffer.get(), 1);
 
-//		int h = 0;
-//		glTranslatef(0.0, size().height() - radius(), 0.0);
-//
-//		glColor4ub(0, 0, 225, 25);
-//
-//		for (std::list<MenuItem*>::iterator it = m_menu->list().begin(); it != m_menu->list().end(); it++) {
-//			h = - DefaultMenuItemHeight;
-//			glTranslatef(0.0, h, 0.0);
-//			//DispatchRender(*it);
-//			glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
-//		}
+		FontCache* fc = FontCache::create(Font("Sans"));
 
+		/* Draw nomal menu item */
+		int h = 0;
+		glTranslatef(0.0, size().height() - radius(), 0.0);
+
+		//glColor4ub(0, 0, 225, 25);
+
+		for (std::list<MenuItem*>::iterator it = m_menu->list().begin(); it != m_menu->list().end(); it++) {
+			h = - DefaultMenuItemHeight;
+			glTranslatef(0.0, h, 0.0);
+			//DispatchRender(*it);
+			//glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
+			fc->print(5 + 16, 5, (*it)->text());
+		}
+
+		/* draw highlight menu item */
 		if(m_highlight) {
 			glPopMatrix();
 			glPushMatrix();
@@ -194,8 +219,10 @@ namespace BlendInt {
 			glDisableClientState(GL_COLOR_ARRAY);
 			glDisableClientState(GL_VERTEX_ARRAY);
 
-
 			m_highlight_buffer->Unbind();
+
+			fc->print(5 + 16, 5, m_menu->GetMenuItem(m_highlight - 1)->text());
+
 		}
 
 		glDisable(GL_BLEND);

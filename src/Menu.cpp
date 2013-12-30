@@ -32,6 +32,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <iterator>
 
 #include <BlendInt/Menu.hpp>
 
@@ -62,6 +63,16 @@ namespace BlendInt {
 
 		if(m_parent)
 			m_parent->m_sub = 0;
+	}
+
+	MenuItem* Menu::GetMenuItem (size_t index)
+	{
+		std::list<MenuItem*>::iterator it = m_list.begin();
+		std::advance(it, index);
+
+		if(it == m_list.end()) return 0;
+
+		return *it;
 	}
 
 	void Menu::Add (const String& text)
@@ -142,3 +153,4 @@ namespace BlendInt {
 	}
 
 }
+

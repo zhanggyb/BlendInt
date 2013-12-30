@@ -89,31 +89,32 @@ namespace BlendInt {
 	: text_attribute_coord_(-1),
 	text_uniform_tex_(-1),
 	text_uniform_color_(-1),
-	text_vbo_(0)
+	text_vbo_(0),
+	m_text_program(0)
 	{
-
+		m_text_program = new GLSLProgram;
 	}
 
 	ShaderManager::~ShaderManager()
 	{
-		m_text_program.Clear();
+		delete m_text_program;
 
 		glDeleteBuffers(1, &text_vbo_);
 	}
 
 	bool ShaderManager::Setup ()
 	{
-		if(!m_text_program.Create())
+		if(!m_text_program->Create())
 			return false;
 
-		m_text_program.AttachShaderPair(text_vertex_shader, text_fragment_shader);
-		if(!m_text_program.Link()) {
+		m_text_program->AttachShaderPair(text_vertex_shader, text_fragment_shader);
+		if(!m_text_program->Link()) {
 			return false;
 		}
 
-		text_attribute_coord_ = m_text_program.GetAttributeLocation("coord");
-		text_uniform_tex_ = m_text_program.GetUniformLocation("tex");
-		text_uniform_color_ = m_text_program.GetUniformLocation("color");
+		text_attribute_coord_ = m_text_program->GetAttributeLocation("coord");
+		text_uniform_tex_ = m_text_program->GetUniformLocation("tex");
+		text_uniform_color_ = m_text_program->GetUniformLocation("color");
 		if(text_attribute_coord_ == -1 || text_uniform_tex_ == -1 || text_uniform_color_ == -1) {
 			std::cerr << "Error: cannot get attributes and uniforms" << std::endl;
 			return false;
@@ -133,5 +134,12 @@ namespace BlendInt {
 		*/
 
 		return true;
+	}
+
+	bool ShaderManager::Find(const GLSLProgram* program)
+	{
+		if(m_text_program == program) return true;
+
+		return false;
 	}
 }

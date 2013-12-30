@@ -32,6 +32,8 @@
 #include <BlendInt/GLBufferSimple.hpp>
 #include <BlendInt/GLBufferMultiple.hpp>
 
+#include <Cpp/Events.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -53,6 +55,8 @@ namespace BlendInt {
 
 		void AddMenuItem (const String& text);
 
+		Cpp::EventRef<MenuItem*> triggered () {return m_triggered;}
+
 		static int DefaultMenuItemHeight;
 
 	protected:
@@ -62,6 +66,10 @@ namespace BlendInt {
 		virtual void Draw ();
 
 		virtual void MouseMoveEvent(MouseEvent* event);
+
+		virtual void MousePressEvent (MouseEvent* event);
+
+		virtual void MouseReleaseEvent (MouseEvent* event);
 
 	private:
 
@@ -80,6 +88,8 @@ namespace BlendInt {
 		boost::scoped_ptr<Menu> m_menu;
 		boost::scoped_ptr<GLBufferMultiple> m_buffer;
 		boost::scoped_ptr<GLBufferSimple> m_highlight_buffer;
+
+		Cpp::Event<MenuItem*> m_triggered;
 	};
 
 }

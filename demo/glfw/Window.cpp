@@ -85,7 +85,7 @@ namespace BlendInt {
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
 			/* Render here */
-			Interface::Instance()->Render();
+			Interface::Instance()->Draw();
 		
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);

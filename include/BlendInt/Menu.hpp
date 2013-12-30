@@ -56,6 +56,8 @@ namespace BlendInt {
 		 */
 		~Menu();
 
+		MenuItem* GetMenuItem (size_t index);
+
 		/**
 		 * @brief Set the title of this menu
 		 * @param[in] title The title of this menu

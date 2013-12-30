@@ -41,10 +41,12 @@ namespace BlendInt {
 
 		static ShaderManager* Instance ();
 
-		const GLSLProgram& text_program ()
+		GLSLProgram* text_program () const
 		{
 			return m_text_program;
 		}
+
+		bool Find (const GLSLProgram* program);
 
 		const GLint& text_attribute_coord ()
 		{
@@ -83,7 +85,7 @@ namespace BlendInt {
 		GLint text_uniform_color_;
 		GLuint text_vbo_;
 
-		GLSLProgram m_text_program;
+		GLSLProgram* m_text_program;
 
 		static const char* text_vertex_shader;
 
