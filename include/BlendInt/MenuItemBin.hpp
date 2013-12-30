@@ -96,7 +96,7 @@ namespace BlendInt {
 		/**
 		 *
 		 */
-		void Add (FormBase* icon, const String& text);
+		void Add (Icon* icon, const String& text);
 
 		void Add (MenuItem* item);
 

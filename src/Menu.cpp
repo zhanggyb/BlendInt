@@ -83,6 +83,13 @@ namespace BlendInt {
 		Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
 	}
 
+	void Menu::AddMenuItem(Icon* icon, const String& text)
+	{
+		m_menubin->Add(icon, text);
+		Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
+	}
+
+
 	void Menu::MouseMoveEvent(MouseEvent* event)
 	{
 		if(!contain(event->position())) {
@@ -185,13 +192,16 @@ namespace BlendInt {
 		int h = 0;
 		glTranslatef(0.0, size().height() - radius(), 0.0);
 
-		//glColor4ub(0, 0, 225, 25);
+		glColor4ub(225, 225, 225, 255);
 
 		for (std::list<MenuItem*>::iterator it = m_menubin->list().begin(); it != m_menubin->list().end(); it++) {
 			h = - DefaultMenuItemHeight;
 			glTranslatef(0.0, h, 0.0);
 			//DispatchRender(*it);
 			//glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
+			if((*it)->icon()) {
+				DispatchRender ((*it)->icon());
+			}
 			fc->print(5 + 16, 5, (*it)->text());
 		}
 

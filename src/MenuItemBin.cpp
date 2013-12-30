@@ -83,7 +83,7 @@ namespace BlendInt {
 		m_list.push_back(new_item);
 	}
 
-	void MenuItemBin::Add (FormBase* icon, const String& text)
+	void MenuItemBin::Add (Icon* icon, const String& text)
 	{
 		MenuItem* new_item = new MenuItem (icon, text);
 

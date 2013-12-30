@@ -23,7 +23,7 @@
 
 #include <BlendInt/MenuItemBin.hpp>
 #include <BlendInt/String.hpp>
-#include <BlendInt/FormBase.hpp>
+#include <BlendInt/Icon.hpp>
 
 #ifndef _BLENDINT_MENUITEM_HPP_
 #define _BLENDINT_MENUITEM_HPP_
@@ -44,13 +44,13 @@ namespace BlendInt {
 
 		MenuItem (const String& text, const String& shortcut);
 
-		MenuItem (FormBase* icon, const String& text);
+		MenuItem (Icon* icon, const String& text);
 
-		MenuItem (FormBase* icon, const String& text, const String& shortcut);
+		MenuItem (Icon* icon, const String& text, const String& shortcut);
 
 		~MenuItem();
 
-		void SetIcon (FormBase* icon);
+		void SetIcon (Icon* icon);
 
 		inline void set_text (const String& text)
 		{
@@ -58,6 +58,8 @@ namespace BlendInt {
 		}
 
 		inline const String& text () const {return m_text;}
+
+		inline Icon* icon() const {return m_icon;}
 
 		inline void set_shortcut (const String& shortcut)
 		{
@@ -79,7 +81,7 @@ namespace BlendInt {
 
 		void RemoveIcon ();
 
-		FormBase* m_icon;
+		Icon* m_icon;
 
 		String m_text;
 		String m_shortcut;

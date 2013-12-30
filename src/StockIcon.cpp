@@ -66,7 +66,7 @@ namespace BlendInt {
 	{
 	}
 
-	bool StockIcon::Find (const FormBase* icon) const
+	bool StockIcon::Find (const AbstractResizableForm* icon) const
 	{
 		return icon == m_menu ?
 		        true :

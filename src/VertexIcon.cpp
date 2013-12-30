@@ -103,7 +103,7 @@ namespace BlendInt {
 	};
 
 	VertexIcon::VertexIcon ()
-		: FormBase()
+		: Icon()
 	{
 		set_size(16, 16);
 	}

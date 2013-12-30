@@ -27,14 +27,14 @@
 
 #include <vector>
 
-#include <BlendInt/FormBase.hpp>
+#include <BlendInt/Icon.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * Icon displayed with pixels
 	 */
-	class PixelIcon: public FormBase
+	class PixelIcon: public Icon
 	{
 	public:
 

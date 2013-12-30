@@ -31,15 +31,15 @@ namespace BlendInt {
 	/**
 	 * @brief a simple form class inherit from AbstractForm and provide Resize function
 	 */
-	class FormBase: public AbstractForm
+	class AbstractResizableForm: public AbstractForm
 	{
 	public:
 
-		FormBase ()
+		AbstractResizableForm ()
 		: AbstractForm()
 		{}
 
-		virtual ~FormBase () {}
+		virtual ~AbstractResizableForm () {}
 
 		void Resize (unsigned int width, unsigned int height);
 

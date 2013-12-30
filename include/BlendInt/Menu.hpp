@@ -31,6 +31,7 @@
 #include <BlendInt/String.hpp>
 #include <BlendInt/GLBufferSimple.hpp>
 #include <BlendInt/GLBufferMultiple.hpp>
+#include <BlendInt/Icon.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -54,6 +55,8 @@ namespace BlendInt {
 		void SetTitle (const String& title);
 
 		void AddMenuItem (const String& text);
+
+		void AddMenuItem (Icon* icon, const String& text);
 
 		Cpp::EventRef<MenuItem*> triggered () {return m_triggered;}
 

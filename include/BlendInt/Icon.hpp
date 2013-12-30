@@ -21,43 +21,22 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_VERTEXICON_HPP_
-#define _BLENDINT_VERTEXICON_HPP_
+#ifndef _BLENDINT_ICON_HPP_
+#define _BLENDINT_ICON_HPP_
 
-#include <BlendInt/Icon.hpp>
-#include <BlendInt/GLBufferMultiple.hpp>
+#include <BlendInt/AbstractResizableForm.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * Icon displayed with vertexes
-	 */
-	class VertexIcon: public Icon
+	class Icon: public AbstractResizableForm
 	{
+		DISALLOW_COPY_AND_ASSIGN(Icon);
+
 	public:
 
-		static const float num_tria_vert[3][2];
+		Icon ();
 
-		static const unsigned int num_tria_face[1][3];
-
-		static const float scroll_circle_vert[16][2];
-
-		static const unsigned int scroll_circle_face[14][3];
-
-		static const float menu_tria_vert[6][2];
-
-		static const unsigned int menu_tria_face[2][3];
-
-		static const float check_tria_vert[6][2];
-
-		static const unsigned int check_tria_face[4][3];
-
-		VertexIcon ();
-
-		~VertexIcon ();
-
-		void load (const float (*vertex_array)[2], size_t array_size,
-				const unsigned int (*vertex_indices)[3], size_t indeces_size);
+		virtual ~Icon ();
 
 	protected:
 
@@ -65,11 +44,8 @@ namespace BlendInt {
 
 		virtual void Draw ();
 
-	private:
-
-		GLBufferMultiple m_gl_buffer;
-
 	};
+
 }
 
-#endif /* VERTEXICON_HPP_ */
+#endif /* _BLENDINT_ICON_HPP_ */

@@ -21,55 +21,50 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_VERTEXICON_HPP_
-#define _BLENDINT_VERTEXICON_HPP_
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
 
 #include <BlendInt/Icon.hpp>
-#include <BlendInt/GLBufferMultiple.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * Icon displayed with vertexes
-	 */
-	class VertexIcon: public Icon
+	Icon::Icon ()
+	: AbstractResizableForm()
 	{
-	public:
+	}
 
-		static const float num_tria_vert[3][2];
+	Icon::~Icon ()
+	{
+	}
 
-		static const unsigned int num_tria_face[1][3];
+	void Icon::Update (int type, const void* data)
+	{
+		// Do nothing
+	}
 
-		static const float scroll_circle_vert[16][2];
+	void Icon::Draw ()
+	{
+#ifdef DEBUG
+		glLineWidth(1);
+		glEnable(GL_LINE_STIPPLE);
 
-		static const unsigned int scroll_circle_face[14][3];
+		glLineStipple(1, 0xAAAA);
+		glBegin(GL_LINE_LOOP);
+		glVertex2f(0.0, 0.0);
+		glVertex2f(size().width(), 0.0);
+		glVertex2f(size().width(), size().height());
+		glVertex2f(0.0, size().height());
+		glEnd();
 
-		static const float menu_tria_vert[6][2];
+		glDisable(GL_LINE_STIPPLE);
+#endif
 
-		static const unsigned int menu_tria_face[2][3];
+	}
 
-		static const float check_tria_vert[6][2];
-
-		static const unsigned int check_tria_face[4][3];
-
-		VertexIcon ();
-
-		~VertexIcon ();
-
-		void load (const float (*vertex_array)[2], size_t array_size,
-				const unsigned int (*vertex_indices)[3], size_t indeces_size);
-
-	protected:
-
-		virtual void Update (int type, const void* data);
-
-		virtual void Draw ();
-
-	private:
-
-		GLBufferMultiple m_gl_buffer;
-
-	};
 }
-
-#endif /* VERTEXICON_HPP_ */

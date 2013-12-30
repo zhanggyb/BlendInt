@@ -7,12 +7,12 @@
 
 
 
-#include <BlendInt/FormBase.hpp>
+#include <BlendInt/AbstractResizableForm.hpp>
 
 
 namespace BlendInt {
 
-	void FormBase::Resize (unsigned int width, unsigned int height)
+	void AbstractResizableForm::Resize (unsigned int width, unsigned int height)
 	{
 		if(size().width() == width && size().height() == height) return;
 
@@ -23,9 +23,9 @@ namespace BlendInt {
 		set_size(width, height);
 	}
 
-	void FormBase::Resize (const Size& size)
+	void AbstractResizableForm::Resize (const Size& size)
 	{
-		if(FormBase::size() == size) return;
+		if(AbstractResizableForm::size() == size) return;
 
 		Update(FormSize, &size);
 
