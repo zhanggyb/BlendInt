@@ -58,6 +58,8 @@ namespace BlendInt {
 
 		void AddMenuItem (Icon* icon, const String& text);
 
+		void AddMenuItem (Icon* icon, const String& text, const String& shortcut);
+
 		Cpp::EventRef<MenuItem*> triggered () {return m_triggered;}
 
 		static int DefaultMenuItemHeight;

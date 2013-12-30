@@ -28,7 +28,7 @@
 #include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/ImageView.hpp>
 #include <BlendInt/TabFrame.hpp>
-#include <BlendInt/MenuBin.hpp>
+#include <BlendInt/MenuItemBin.hpp>
 
 #include "Window.hpp"
 
@@ -44,18 +44,18 @@ int main(int argc, char* argv[]) {
 
 	GLFWwindow* window = CreateWindow("GLFW3 Demo");
 
-    MenuItemBin* menubin = new MenuItemBin;
-    menubin->SetRoundType(RoundAll);
+    Menu* menu = new Menu;
+    menu->SetRoundType(RoundAll);
 
-    menubin->SetPosition(200, 200);
+    menu->SetPosition(200, 200);
 
-    menubin->AddMenuItem("MenuItem1");
-    menubin->AddMenuItem("MenuItem2");
-    menubin->AddMenuItem("MenuItem3");
-    menubin->AddMenuItem("MenuItem4");
-    menubin->AddMenuItem("MenuItem5");
+    menu->AddMenuItem("MenuItem1");
+    menu->AddMenuItem("MenuItem2");
+    menu->AddMenuItem("MenuItem3");
+    menu->AddMenuItem("MenuItem4");
+    menu->AddMenuItem("MenuItem5");
 
-    Interface::Instance()->Bind(menubin);
+    Interface::Instance()->Bind(menu);
 
 	RunLoop(window);
 

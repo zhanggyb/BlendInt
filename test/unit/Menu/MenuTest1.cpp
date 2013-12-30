@@ -65,11 +65,11 @@ TEST_F(MenuTest1, Click1)
 
     menubin->SetPosition(200, 200);
 
-    menubin->AddMenuItem(icon, "MenuItem1");
-    menubin->AddMenuItem(icon, "MenuItem2");
-    menubin->AddMenuItem(icon, "MenuItem3");
-    menubin->AddMenuItem(icon, "MenuItem4");
-    menubin->AddMenuItem(icon, "MenuItem5");
+    menubin->AddMenuItem(icon, "MenuItem1", "Ctrl + A");
+    menubin->AddMenuItem(icon, "MenuItem2", "Ctrl + B");
+    menubin->AddMenuItem(icon, "MenuItem3", "Ctrl + C");
+    menubin->AddMenuItem(icon, "MenuItem4", "Ctrl + D");
+    menubin->AddMenuItem(icon, "MenuItem5", "Ctrl + E");
     
     Interface::Instance()->Bind(menubin);
 	

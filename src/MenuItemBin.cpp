@@ -91,6 +91,14 @@ namespace BlendInt {
 		m_list.push_back(new_item);
 	}
 
+	void MenuItemBin::Add (Icon* icon, const String& text, const String& shortcut)
+	{
+		MenuItem* new_item = new MenuItem (icon, text, shortcut);
+
+		new_item->m_parent = this;
+		m_list.push_back(new_item);
+	}
+
 	void MenuItemBin::Add (MenuItem* item)
 	{
 		if(!item) return;

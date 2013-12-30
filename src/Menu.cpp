@@ -89,6 +89,11 @@ namespace BlendInt {
 		Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
 	}
 
+	void Menu::AddMenuItem(Icon* icon, const String& text, const String& shortcut)
+	{
+		m_menubin->Add(icon, text, shortcut);
+		Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
+	}
 
 	void Menu::MouseMoveEvent(MouseEvent* event)
 	{
@@ -203,6 +208,7 @@ namespace BlendInt {
 				DispatchRender ((*it)->icon());
 			}
 			fc->print(5 + 16, 5, (*it)->text());
+			fc->print(120, 5, (*it)->shortcut());
 		}
 
 		/* draw highlight menu item */
@@ -231,7 +237,13 @@ namespace BlendInt {
 
 			m_highlight_buffer->Unbind();
 
-			fc->print(5 + 16, 5, m_menubin->GetMenuItem(m_highlight - 1)->text());
+			MenuItem* item = m_menubin->GetMenuItem(m_highlight - 1);
+
+			if(item->icon()) {
+				DispatchRender (item->icon());
+			}
+			fc->print(5 + 16, 5, item->text());
+			fc->print(120, 5, item->shortcut());
 
 		}
 
