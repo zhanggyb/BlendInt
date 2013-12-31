@@ -21,66 +21,31 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GLTEXTURE2D_HPP_
-#define _BLENDINT_GLTEXTURE2D_HPP_
-
-#include <vector>
-
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
-#else
-#include <GL/gl.h>
-#endif
-#endif  // __UNIX__
+#include <BlendInt/GLFramebuffer.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief C++ wrapper for 2D texture
-	 *
-	 * @ingroup opengl
-	 */
-	class GLTexture2D
+	GLFramebuffer::GLFramebuffer()
+	: m_index (0)
 	{
-	public:
 
-		GLTexture2D ();
+	}
 
-		~GLTexture2D ();
+	GLFramebuffer::~GLFramebuffer ()
+	{
 
-		void Generate (size_t size = 1);
+	}
 
-		inline void select (size_t index)
-		{
-			m_index = index;
-		}
+	void GLFramebuffer::Generate (size_t size)
+	{
+	}
 
-		void Bind ();
+	void GLFramebuffer::Bind ()
+	{
+	}
 
-		void SetParameter (GLenum pname, GLint param);
+	void GLFramebuffer::Unbind ()
+	{
+	}
 
-		void SetParameter (GLenum pname, GLfloat param);
-
-		void Map (GLint level,
-				GLint internalFormat,
-				GLsizei width,
-				GLsizei height,
-				GLint border,
-				GLenum format,
-				GLenum type,
-				const GLvoid * data);
-
-		void Unbind ();
-
-		void Clear ();
-
-	private:
-
-		size_t m_index;
-
-		std::vector<GLuint> m_ids;
-	};
 }
-
-#endif /* _BLENDINT_GLTEXTURE2D_HPP_ */

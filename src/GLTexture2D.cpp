@@ -26,11 +26,56 @@
 namespace BlendInt {
 
 	GLTexture2D::GLTexture2D ()
+	: m_index(0)
 	{
 	}
 
 	GLTexture2D::~GLTexture2D ()
 	{
+		Clear();
+	}
+
+	void GLTexture2D::Generate (size_t size)
+	{
+		if(m_ids.size()) Clear ();
+
+		m_ids.resize(size);
+
+		glGenTextures((GLsizei)size, &(m_ids[0]));
+	}
+
+	void GLTexture2D::Bind()
+	{
+		glBindTexture(GL_TEXTURE_2D, m_ids[m_index]);
+	}
+
+	void GLTexture2D::SetParameter (GLenum pname, GLint param)
+	{
+		glTexParameteri(GL_TEXTURE_2D, pname, param);
+	}
+
+	void GLTexture2D::SetParameter (GLenum pname, GLfloat param)
+	{
+		glTexParameterf(GL_TEXTURE_2D, pname, param);
+	}
+
+	void GLTexture2D::Map (GLint level, GLint internalFormat, GLsizei width,
+	        GLsizei height, GLint border, GLenum format, GLenum type,
+	        const GLvoid* data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, border,
+		                         format, type, data);
+	}
+
+	void GLTexture2D::Unbind ()
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void GLTexture2D::Clear ()
+	{
+		glDeleteTextures((GLsizei)m_ids.size(), &(m_ids[0]));
+		m_ids.clear();
 	}
 
 }
