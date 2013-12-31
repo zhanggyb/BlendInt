@@ -278,6 +278,11 @@ namespace BlendInt {
 
 	void Interface::GLFWKeyEvent (int key, int scancode, int action, int mods)
 	{
+#ifdef DEBUG
+		if(key == GLFW_KEY_F1 && action == GLFW_PRESS)
+			RenderToImage();
+#endif
+
 		if (key == Key_Menu) {
 			ContextMenuEvent event(ContextMenuEvent::Keyboard, mods);
 
@@ -499,6 +504,11 @@ namespace BlendInt {
 	bool Interface::TakeScreenshot(const std::string& path)
 	{
 		return true;
+	}
+
+	void Interface::RenderToImage()
+	{
+		std::cout << "Render to Image" << std::endl;
 	}
 
 	void Interface::dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event)

@@ -31,6 +31,7 @@
 #endif
 #endif  // __UNIX__
 
+#include <BlendInt/Types.hpp>
 #include <BlendInt/Icon.hpp>
 
 namespace BlendInt {
@@ -40,13 +41,36 @@ namespace BlendInt {
 	{
 	}
 
+	Icon::Icon (const Icon& orig)
+	{
+		set_size(orig.size());
+	}
+
 	Icon::~Icon ()
 	{
+	}
+
+	Icon& Icon::operator = (const Icon& orig)
+	{
+		set_size(orig.size());
+		return *this;
 	}
 
 	void Icon::Update (int type, const void* data)
 	{
 		// Do nothing
+	}
+
+	void Icon::Scale (float ratio)
+	{
+		if(ratio < 0.0) return;
+
+		Size new_size;
+		new_size.set_width(static_cast<unsigned int>(size().width() * ratio));
+		new_size.set_height(static_cast<unsigned int>(size().height() * ratio));
+
+		Update(FormSize, &new_size);
+		set_size(new_size);
 	}
 
 	void Icon::Draw ()

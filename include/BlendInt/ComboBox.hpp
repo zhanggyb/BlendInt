@@ -21,35 +21,30 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ICON_HPP_
-#define _BLENDINT_ICON_HPP_
+#ifndef _BLENDINT_COMBOBOX_HPP_
+#define _BLENDINT_COMBOBOX_HPP_
 
-#include <BlendInt/AbstractResizableForm.hpp>
+#include <BlendInt/RoundWidget.hpp>
 
 namespace BlendInt {
 
-	class Icon: public AbstractResizableForm
+	/**
+	 * @brief A combined button and popup list.
+	 */
+	class ComboBox: public RoundWidget
 	{
+		DISALLOW_COPY_AND_ASSIGN(ComboBox);
+
 	public:
 
-		Icon ();
+		ComboBox ();
 
-		Icon (const Icon& orig);
+		ComboBox (AbstractWidget* parent);
 
-		virtual ~Icon ();
-
-		Icon& operator = (const Icon& orig);
-
-		void Scale (float ratio);
-
-	protected:
-
-		virtual void Update (int type, const void* data);
-
-		virtual void Draw ();
+		virtual ~ComboBox ();
 
 	};
 
 }
 
-#endif /* _BLENDINT_ICON_HPP_ */
+#endif /* _BLENDINT_COMBOBOX_HPP_ */

@@ -21,35 +21,20 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ICON_HPP_
-#define _BLENDINT_ICON_HPP_
-
-#include <BlendInt/AbstractResizableForm.hpp>
+#include <BlendInt/NumberSlider.hpp>
 
 namespace BlendInt {
 
-	class Icon: public AbstractResizableForm
+	NumberSlider::NumberSlider ()
 	{
-	public:
+	}
 
-		Icon ();
+	NumberSlider::NumberSlider (AbstractWidget* parent)
+	{
+	}
 
-		Icon (const Icon& orig);
-
-		virtual ~Icon ();
-
-		Icon& operator = (const Icon& orig);
-
-		void Scale (float ratio);
-
-	protected:
-
-		virtual void Update (int type, const void* data);
-
-		virtual void Draw ();
-
-	};
+	NumberSlider::~NumberSlider ()
+	{
+	}
 
 }
-
-#endif /* _BLENDINT_ICON_HPP_ */

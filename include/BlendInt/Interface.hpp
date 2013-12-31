@@ -133,6 +133,8 @@ namespace BlendInt {
 
 	private:
 
+		void RenderToImage ();
+
 		void dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event);
 
 		void dispatch_mouse_press_event (AbstractWidget* obj, MouseEvent* event);

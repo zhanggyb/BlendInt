@@ -21,35 +21,20 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ICON_HPP_
-#define _BLENDINT_ICON_HPP_
-
-#include <BlendInt/AbstractResizableForm.hpp>
+#include <BlendInt/MenuBar.hpp>
 
 namespace BlendInt {
 
-	class Icon: public AbstractResizableForm
+	MenuBar::MenuBar ()
 	{
-	public:
+	}
 
-		Icon ();
+	MenuBar::MenuBar (AbstractWidget* parent)
+	{
+	}
 
-		Icon (const Icon& orig);
-
-		virtual ~Icon ();
-
-		Icon& operator = (const Icon& orig);
-
-		void Scale (float ratio);
-
-	protected:
-
-		virtual void Update (int type, const void* data);
-
-		virtual void Draw ();
-
-	};
+	MenuBar::~MenuBar ()
+	{
+	}
 
 }
-
-#endif /* _BLENDINT_ICON_HPP_ */
