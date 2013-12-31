@@ -44,8 +44,8 @@ namespace BlendInt {
 	: RoundWidget(), m_highlight(0)
 	{
 		m_menubin.reset(new MenuItemBin);
-		m_buffer.reset(new GLBufferMultiple);
-		m_highlight_buffer.reset(new GLBufferSimple);
+		m_buffer.reset(new GLArrayBufferMultiple);
+		m_highlight_buffer.reset(new GLArrayBufferSimple);
 
 		set_size(20, 20);
 
@@ -58,8 +58,8 @@ namespace BlendInt {
 	: RoundWidget(parent), m_highlight(0)
 	{
 		m_menubin.reset(new MenuItemBin);
-		m_buffer.reset(new GLBufferMultiple);
-		m_highlight_buffer.reset(new GLBufferSimple);
+		m_buffer.reset(new GLArrayBufferMultiple);
+		m_highlight_buffer.reset(new GLArrayBufferSimple);
 
 		set_size(20, 20);
 

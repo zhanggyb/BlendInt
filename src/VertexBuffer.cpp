@@ -29,7 +29,7 @@ namespace BlendInt {
 	VertexBuffer::VertexBuffer()
 	: m_program(0)
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 	}
 
 	VertexBuffer::~VertexBuffer()

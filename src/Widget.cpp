@@ -218,7 +218,7 @@ namespace BlendInt {
 		buffer->Unbind();
 	}
 
-	void Widget::GenerateFormBuffer(const Size* size, bool emboss, int round_type, float radius, GLBufferMultiple* buffer)
+	void Widget::GenerateFormBuffer(const Size* size, bool emboss, int round_type, float radius, GLArrayBufferMultiple* buffer)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
@@ -233,7 +233,7 @@ namespace BlendInt {
 			buffer->Generate(2);
 
 		buffer->select(0);
-		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
 		buffer->Bind();
 		buffer->Upload(inner_v);
 		buffer->Unbind();
@@ -245,7 +245,7 @@ namespace BlendInt {
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 		buffer->select(1);
-		buffer->SetProperty(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->SetProperty(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
 
 		buffer->Bind();
 		buffer->Upload(quad_strip);
@@ -256,7 +256,7 @@ namespace BlendInt {
 			verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
 
 			buffer->select(2);
-			buffer->SetProperty(vert_sum.half * 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+			buffer->SetProperty(vert_sum.half * 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
 
 			buffer->Bind();
 			buffer->Upload(quad_strip);
@@ -264,7 +264,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Widget::GenerateRectFormBuffer(const Size* size, bool emboss, GLBufferMultiple* buffer)
+	void Widget::GenerateRectFormBuffer(const Size* size, bool emboss, GLArrayBufferMultiple* buffer)
 	{
 		float outer_v[4][2];	// vertices for drawing outline
 		float inner_v[4][2];	// vertices for drawing inner
@@ -277,7 +277,7 @@ namespace BlendInt {
 			buffer->Generate(2);
 
 		buffer->select(0);
-		buffer->SetProperty(4, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->SetProperty(4, sizeof(inner_v[0]), GL_STATIC_DRAW);
 		buffer->Bind();
 		buffer->Upload(inner_v);
 		buffer->Unbind();
@@ -289,7 +289,7 @@ namespace BlendInt {
 		verts_to_quad_strip (inner_v, outer_v, 4, quad_strip);
 
 		buffer->select(1);
-		buffer->SetProperty(4 * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->SetProperty(4 * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
 
 		buffer->Bind();
 		buffer->Upload(quad_strip);
@@ -300,7 +300,7 @@ namespace BlendInt {
 			verts_to_quad_strip_open(outer_v, 2, quad_strip);
 
 			buffer->select(2);
-			buffer->SetProperty(2 * 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+			buffer->SetProperty(2 * 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
 
 			buffer->Bind();
 			buffer->Upload(quad_strip);
@@ -331,7 +331,7 @@ namespace BlendInt {
 		buffer->Generate(1);
 		buffer->select(0);
 
-		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
 		buffer->Bind();
 		buffer->Upload(inner_v);
 		buffer->Unbind();
@@ -344,7 +344,7 @@ namespace BlendInt {
 			const WidgetTheme* theme,
 			Orientation shadedir,
 			short highlight,
-			GLBufferMultiple* buffer)
+			GLArrayBufferMultiple* buffer)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
@@ -366,7 +366,7 @@ namespace BlendInt {
 
 		buffer->select(0);
 
-		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
 		buffer->Bind();
 		buffer->Upload(inner_v);
 		buffer->Unbind();
@@ -376,7 +376,7 @@ namespace BlendInt {
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 		buffer->select(1);
-		buffer->SetProperty(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->SetProperty(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
 
 		buffer->Bind();
 		buffer->Upload(quad_strip);
@@ -397,7 +397,7 @@ namespace BlendInt {
 							inner_v, outer_v);
 
 			buffer->select(2);
-			buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+			buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
 
 			buffer->Bind();
 			buffer->Upload(inner_v);
@@ -432,7 +432,7 @@ namespace BlendInt {
 		buffer->Generate(1);
 		buffer->select(0);
 
-		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
 		buffer->Bind();
 		buffer->Upload(inner_v);
 		buffer->Unbind();
@@ -447,7 +447,7 @@ namespace BlendInt {
 			short shadedown,
 			Orientation shadedir,
 			short highlight,
-			GLBufferMultiple* buffer)
+			GLArrayBufferMultiple* buffer)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
@@ -471,7 +471,7 @@ namespace BlendInt {
 
 		buffer->select(0);
 
-		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
 		buffer->Bind();
 		buffer->Upload(inner_v);
 		buffer->Unbind();
@@ -481,7 +481,7 @@ namespace BlendInt {
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 		buffer->select(1);
-		buffer->SetProperty(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		buffer->SetProperty(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
 
 		buffer->Bind();
 		buffer->Upload(quad_strip);
@@ -502,7 +502,7 @@ namespace BlendInt {
 							inner_v, outer_v);
 
 			buffer->select(2);
-			buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+			buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
 
 			buffer->Bind();
 			buffer->Upload(inner_v);

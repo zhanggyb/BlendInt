@@ -98,9 +98,7 @@ namespace BlendInt {
 					verts_to_quad_strip(inner_v, outer_v, totvert, quad_strip);
 
 					m_gl_buffer.select(step - 1);
-					m_gl_buffer.SetProperty(totvert * 2 + 2,
-					        sizeof(quad_strip[0]), GL_ARRAY_BUFFER,
-					        GL_STATIC_DRAW);
+					m_gl_buffer.SetProperty(totvert * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
 					m_gl_buffer.Bind();
 					m_gl_buffer.Upload(quad_strip);
 					m_gl_buffer.Unbind();

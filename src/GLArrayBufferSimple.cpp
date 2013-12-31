@@ -30,63 +30,62 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/GLBufferSimple.hpp>
+#include <BlendInt/GLArrayBufferSimple.hpp>
 
 namespace BlendInt {
 
-	GLBufferSimple::GLBufferSimple()
+	GLArrayBufferSimple::GLArrayBufferSimple()
 	: AbstractGLBuffer()
 	{
 
 	}
 
-	GLBufferSimple::~GLBufferSimple ()
+	GLArrayBufferSimple::~GLArrayBufferSimple ()
 	{
 	}
 
-	void GLBufferSimple::SetProperty (int vertices, int unit_size,
-	        GLenum target, GLenum usage)
+	void GLArrayBufferSimple::SetProperty (int vertices, int unit_size,
+	        GLenum usage)
 	{
 		m_property.vertices = vertices;
 		m_property.unit_size = unit_size;
-		m_property.target = target;
 		m_property.usage = usage;
 	}
 
-	void GLBufferSimple::Bind ()
+	void GLArrayBufferSimple::Bind ()
 	{
-		glBindBuffer(m_property.target, ids()[index()]);
+		glBindBuffer(GL_ARRAY_BUFFER, ids()[index()]);
 	}
 
-	void GLBufferSimple::Unbind ()
+	void GLArrayBufferSimple::Unbind ()
 	{
-		glBindBuffer(m_property.target, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void GLBufferSimple::Upload (const GLvoid* data)
+	void GLArrayBufferSimple::Upload (const GLvoid* data)
 	{
-		glBufferData (m_property.target,
+		glBufferData (GL_ARRAY_BUFFER,
 				m_property.unit_size * m_property.vertices,
 				data,
 				m_property.usage);
 	}
 
-	int GLBufferSimple::Vertices ()
+	int GLArrayBufferSimple::Vertices ()
 	{
 		return m_property.vertices;
 	}
 
-	int GLBufferSimple::UnitSize ()
+	int GLArrayBufferSimple::UnitSize ()
 	{
 		return m_property.unit_size;
 	}
 
-	GLenum GLBufferSimple::Target ()
+	GLenum GLArrayBufferSimple::Target ()
 	{
-		return m_property.target;
+		return GL_ARRAY_BUFFER;
 	}
 
-	GLenum GLBufferSimple::Usage ()
+	GLenum GLArrayBufferSimple::Usage ()
 	{
 		return m_property.usage;
 	}

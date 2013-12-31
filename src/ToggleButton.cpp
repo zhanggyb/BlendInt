@@ -39,7 +39,7 @@ namespace BlendInt {
 	ToggleButton::ToggleButton ()
 			: AbstractButton()
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 
 		set_round_type(RoundAll);
 		SetExpandX(true);
@@ -51,7 +51,7 @@ namespace BlendInt {
 	ToggleButton::ToggleButton (const String& text)
 			: AbstractButton()
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 
 		set_round_type(RoundAll);
 		SetExpandX(true);
@@ -63,7 +63,7 @@ namespace BlendInt {
 	ToggleButton::ToggleButton (AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 
 		set_round_type(RoundAll);
 		SetExpandX(true);
@@ -75,7 +75,7 @@ namespace BlendInt {
 	ToggleButton::ToggleButton (const String& text, AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 
 		set_round_type(RoundAll);
 		SetExpandX(true);

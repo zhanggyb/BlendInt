@@ -29,8 +29,8 @@
 #include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/MenuItemBin.hpp>
 #include <BlendInt/String.hpp>
-#include <BlendInt/GLBufferSimple.hpp>
-#include <BlendInt/GLBufferMultiple.hpp>
+#include <BlendInt/GLArrayBufferSimple.hpp>
+#include <BlendInt/GLArrayBufferMultiple.hpp>
 #include <BlendInt/Icon.hpp>
 
 #include <Cpp/Events.hpp>
@@ -91,8 +91,8 @@ namespace BlendInt {
 		unsigned int m_highlight;	// the highlight item index
 
 		boost::scoped_ptr<MenuItemBin> m_menubin;
-		boost::scoped_ptr<GLBufferMultiple> m_buffer;
-		boost::scoped_ptr<GLBufferSimple> m_highlight_buffer;
+		boost::scoped_ptr<GLArrayBufferMultiple> m_buffer;
+		boost::scoped_ptr<GLArrayBufferSimple> m_highlight_buffer;
 
 		Cpp::Event<MenuItem*> m_triggered;
 	};

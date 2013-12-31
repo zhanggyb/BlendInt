@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GLBUFFERMULTIPLE_HPP_
-#define _BLENDINT_GLBUFFERMULTIPLE_HPP_
+#ifndef _BLENDINT_GLARRAYBUFFERMULTIPLE_HPP_
+#define _BLENDINT_GLARRAYBUFFERMULTIPLE_HPP_
 
 #include <BlendInt/AbstractGLBuffer.hpp>
 
@@ -42,13 +42,13 @@ namespace BlendInt {
 	 *
 	 * @ingroup opengl
 	 */
-	class GLBufferMultiple: public AbstractGLBuffer
+	class GLArrayBufferMultiple: public AbstractGLBuffer
 	{
 	public:
 
-		GLBufferMultiple();
+		GLArrayBufferMultiple();
 
-		virtual ~GLBufferMultiple ();
+		virtual ~GLArrayBufferMultiple ();
 
 		virtual void Generate (size_t num = 1);
 
@@ -58,17 +58,15 @@ namespace BlendInt {
 
 		virtual void Clear ();
 
-		virtual void SetProperty (int vertices, int unit_size, GLenum target, GLenum usage);
+		virtual void SetProperty (int vertices, int unit_size, GLenum usage);
 
-		void SetProperty (size_t index, int vertices, int unit_size, GLenum target, GLenum usage);
+		void SetProperty (size_t index, int vertices, int unit_size, GLenum usage);
 
 		virtual void Bind ();
 
 		void Bind (size_t index);
 
 		virtual void Unbind ();
-
-		void Unbind (size_t index);
 
 		virtual void Upload (const GLvoid* data);
 
@@ -112,21 +110,6 @@ namespace BlendInt {
 			m_properties[index].unit_size = size;
 		}
 
-		inline GLenum target (size_t index)
-		{
-			return m_properties[index].target;
-		}
-
-		inline void set_target (GLenum target)
-		{
-			m_properties[index()].target = target;
-		}
-
-		inline void set_target (size_t index, GLenum target)
-		{
-			m_properties[index].target = target;
-		}
-
 		inline GLenum usage (size_t index)
 		{
 			return m_properties[index].usage;
@@ -148,4 +131,4 @@ namespace BlendInt {
 	};
 }
 
-#endif /* _BLENDINT_GLBUFFERMULTIPLE_HPP_ */
+#endif /* _BLENDINT_GLARRAYBUFFERMULTIPLE_HPP_ */

@@ -33,21 +33,21 @@
 
 #include <iterator>
 
-#include <BlendInt/GLBufferMultiple.hpp>
+#include <BlendInt/GLArrayBufferMultiple.hpp>
 
 namespace BlendInt {
 
-	GLBufferMultiple::GLBufferMultiple ()
+	GLArrayBufferMultiple::GLArrayBufferMultiple ()
 	: AbstractGLBuffer()
 	{
 	}
 
-	GLBufferMultiple::~GLBufferMultiple ()
+	GLArrayBufferMultiple::~GLArrayBufferMultiple ()
 	{
 		m_properties.clear();
 	}
 
-	void GLBufferMultiple::Generate (size_t num)
+	void GLArrayBufferMultiple::Generate (size_t num)
 	{
 		if(ids().size()) Clear();
 
@@ -57,7 +57,7 @@ namespace BlendInt {
 		m_properties.resize(num);
 	}
 
-	void GLBufferMultiple::Destroy ()
+	void GLArrayBufferMultiple::Destroy ()
 	{
 		size_t index_last = ids().size() - 1;
 
@@ -76,7 +76,7 @@ namespace BlendInt {
 			set_index(index() - 1);
 	}
 
-	void GLBufferMultiple::Destroy (size_t idx)
+	void GLArrayBufferMultiple::Destroy (size_t idx)
 	{
 		size_t index_last = ids().size() - 1;
 
@@ -98,86 +98,77 @@ namespace BlendInt {
 		m_properties.erase(it_pro);
 	}
 
-	void GLBufferMultiple::Clear ()
+	void GLArrayBufferMultiple::Clear ()
 	{
 		GLBufferWrapper::Clear();
 
 		m_properties.clear();
 	}
 
-	void GLBufferMultiple::SetProperty (int vertices, int unit_size,
-        GLenum target, GLenum usage)
+	void GLArrayBufferMultiple::SetProperty (int vertices, int unit_size, GLenum usage)
 	{
 		m_properties[index()].vertices = vertices;
 		m_properties[index()].unit_size = unit_size;
-		m_properties[index()].target = target;
 		m_properties[index()].usage = usage;
 	}
 
-	void GLBufferMultiple::SetProperty (size_t index, int vertices,
-        int unit_size, GLenum target, GLenum usage)
+	void GLArrayBufferMultiple::SetProperty (size_t index, int vertices,
+        int unit_size, GLenum usage)
 	{
 		// TODO: check index is in scope
 		m_properties[index].vertices = vertices;
 		m_properties[index].unit_size = unit_size;
-		m_properties[index].target = target;
 		m_properties[index].usage = usage;
 	}
 
-	void GLBufferMultiple::Bind ()
+	void GLArrayBufferMultiple::Bind ()
 	{
-		glBindBuffer(m_properties[index()].target, ids()[index()]);
+		glBindBuffer(GL_ARRAY_BUFFER, ids()[index()]);
 	}
 
-	void GLBufferMultiple::Bind (size_t index)
+	void GLArrayBufferMultiple::Bind (size_t index)
 	{
 		// TODO: check index is in scope
-		glBindBuffer(m_properties[index].target, ids()[index]);
+		glBindBuffer(GL_ARRAY_BUFFER, ids()[index]);
 	}
 
-	void GLBufferMultiple::Unbind ()
+	void GLArrayBufferMultiple::Unbind ()
 	{
-		glBindBuffer(m_properties[index()].target, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void GLBufferMultiple::Unbind (size_t index)
+	void GLArrayBufferMultiple::Upload (const GLvoid* data)
 	{
-		// TODO: check index is in scope
-		glBindBuffer(m_properties[index].target, 0);
-	}
-
-	void GLBufferMultiple::Upload (const GLvoid* data)
-	{
-		glBufferData (m_properties[index()].target,
+		glBufferData (GL_ARRAY_BUFFER,
 				m_properties[index()].unit_size * m_properties[index()].vertices,
 				data,
 				m_properties[index()].usage);
 	}
 
-	void GLBufferMultiple::Upload (size_t index, const GLvoid* data)
+	void GLArrayBufferMultiple::Upload (size_t index, const GLvoid* data)
 	{
-		glBufferData (m_properties[index].target,
+		glBufferData (GL_ARRAY_BUFFER,
 				m_properties[index].unit_size * m_properties[index].vertices,
 				data,
 				m_properties[index].usage);
 	}
 
-	int GLBufferMultiple::Vertices ()
+	int GLArrayBufferMultiple::Vertices ()
 	{
 		return m_properties[index()].vertices;
 	}
 
-	int GLBufferMultiple::UnitSize ()
+	int GLArrayBufferMultiple::UnitSize ()
 	{
 		return m_properties[index()].unit_size;
 	}
 
-	GLenum GLBufferMultiple::Target ()
+	GLenum GLArrayBufferMultiple::Target ()
 	{
-		return m_properties[index()].target;
+		return GL_ARRAY_BUFFER;
 	}
 
-	GLenum GLBufferMultiple::Usage ()
+	GLenum GLArrayBufferMultiple::Usage ()
 	{
 		return m_properties[index()].usage;
 	}

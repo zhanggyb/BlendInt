@@ -21,18 +21,18 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GLBUFFERSIMPLE_HPP_
-#define _BLENDINT_GLBUFFERSIMPLE_HPP_
+#ifndef _BLENDINT_GLELEMENTARRAYBUFFERSIMPLE_HPP_
+#define _BLENDINT_GLELEMENTARRAYBUFFERSIMPLE_HPP_
 
 #include <BlendInt/AbstractGLBuffer.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief A simple GLBuffer with 1 property for all buffers
+	 * @brief A simple element array buffer with 1 property for all buffers
 	 *
 	 * Usage:
-	 * 	-# Define or new a object: e.g. GLBufferSimple buffer; // or GLBufferSimple* buffer = new GLBufferSimple;
+	 * 	-# Define or new a object: e.g. GLElementArrayBufferSimple buffer; // or GLElementArrayBufferSimple* buffer = new GLElementArrayBufferSimple;
 	 * 	-# Generate buffers: buffer.Generate (1);
 	 * 	-# Set the property of generated buffer(s): buffer.SetProperty();
 	 * 	-# Upload data to this buffer: buffer.Upload();
@@ -42,15 +42,15 @@ namespace BlendInt {
 	 *
 	 * @ingroup opengl
 	 */
-	class GLBufferSimple: public AbstractGLBuffer
+	class GLElementArrayBufferSimple: public AbstractGLBuffer
 	{
 	public:
 
-		GLBufferSimple ();
+		GLElementArrayBufferSimple ();
 
-		virtual ~GLBufferSimple ();
+		virtual ~GLElementArrayBufferSimple ();
 
-		virtual void SetProperty (int vertices, int unit_size, GLenum target, GLenum usage);
+		virtual void SetProperty (int vertices, int unit_size, GLenum usage);
 
 		virtual void Bind ();
 
@@ -76,11 +76,6 @@ namespace BlendInt {
 			m_property.unit_size = size;
 		}
 
-		inline void set_target (GLenum target)
-		{
-			m_property.target = target;
-		}
-
 		inline void set_usage (GLenum usage)
 		{
 			m_property.usage = usage;
@@ -94,4 +89,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_GLBUFFERSIMPLE_HPP_ */
+#endif /* _BLENDINT_GLELEMENTARRAYBUFFERSIMPLE_HPP_ */

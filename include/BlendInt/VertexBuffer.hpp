@@ -26,7 +26,7 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/GLBufferMultiple.hpp>
+#include <BlendInt/GLArrayBufferMultiple.hpp>
 #include <BlendInt/GLSLProgram.hpp>
 
 namespace BlendInt {
@@ -73,7 +73,7 @@ namespace BlendInt {
 
 		GLSLProgram* m_program;
 
-		boost::scoped_ptr<GLBufferMultiple> m_buffer;
+		boost::scoped_ptr<GLArrayBufferMultiple> m_buffer;
 	};
 
 }

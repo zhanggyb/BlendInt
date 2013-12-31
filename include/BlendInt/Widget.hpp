@@ -25,8 +25,7 @@
 #define _BLENDINT_FORM_HPP_
 
 #include <BlendInt/AbstractWidget.hpp>
-#include <BlendInt/AbstractGLBuffer.hpp>
-#include <BlendInt/GLBufferMultiple.hpp>
+#include <BlendInt/GLArrayBufferMultiple.hpp>
 
 namespace BlendInt {
 
@@ -138,7 +137,7 @@ namespace BlendInt {
 		 *	- index 2: for emboss drawing
 		 */
 		void GenerateFormBuffer (const Size* size, bool emboss, int round_type,
-								 float radius, GLBufferMultiple* buffer);
+								 float radius, GLArrayBufferMultiple* buffer);
 
 		/**
 		 * @brief generate GL buffer for rect form drawing
@@ -146,7 +145,7 @@ namespace BlendInt {
 		 * @param emboss
 		 * @param buffer
 		 */
-		void GenerateRectFormBuffer (const Size* size, bool emboss, GLBufferMultiple* buffer);
+		void GenerateRectFormBuffer (const Size* size, bool emboss, GLArrayBufferMultiple* buffer);
 
 		void GenerateShadedFormBuffer (const Size* size,
 									   float border,
@@ -181,7 +180,7 @@ namespace BlendInt {
 									   const WidgetTheme* theme,
 									   Orientation shadedir,
 									   short highlight,
-									   GLBufferMultiple* buffer);
+									   GLArrayBufferMultiple* buffer);
 
 		void GenerateShadedFormBuffer (const Size* size,
 									   float border,
@@ -222,7 +221,7 @@ namespace BlendInt {
 									   short shadedown,
 									   Orientation shadedir,
 									   short highlight,
-									   GLBufferMultiple* buffer);
+									   GLArrayBufferMultiple* buffer);
 
 	private:
 

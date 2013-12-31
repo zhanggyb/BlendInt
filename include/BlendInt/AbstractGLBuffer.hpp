@@ -41,7 +41,10 @@ namespace BlendInt {
 	struct GLBufferProperty
 	{
 		GLBufferProperty ()
-		: vertices(0), unit_size(0), target(0), usage(0)
+		: vertices(0),
+		  unit_size(0),
+		  //target(0),
+		  usage(0)
 		{}
 
 		/** Vertex number -- how many vertices are used in this buffer */
@@ -51,7 +54,7 @@ namespace BlendInt {
 		int unit_size;
 
 		/** The target buffer object, it's used for glBindBuffer() and glBufferData() */
-		GLenum target;
+		// GLenum target;
 
 		/** Usage: */
 		GLenum usage;
@@ -79,7 +82,7 @@ namespace BlendInt {
 
 		virtual ~AbstractGLBuffer ();
 
-		virtual void SetProperty (int vertices, int unit_size, GLenum target, GLenum usage) = 0;
+		virtual void SetProperty (int vertices, int unit_size, GLenum usage) = 0;
 
 		virtual void Bind () = 0;
 

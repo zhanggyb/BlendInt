@@ -25,7 +25,8 @@
 #define _BLENDINT_VERTEXICON_HPP_
 
 #include <BlendInt/Icon.hpp>
-#include <BlendInt/GLBufferMultiple.hpp>
+#include <BlendInt/GLArrayBufferSimple.hpp>
+#include <BlendInt/GLElementArrayBufferSimple.hpp>
 
 namespace BlendInt {
 
@@ -67,7 +68,8 @@ namespace BlendInt {
 
 	private:
 
-		GLBufferMultiple m_gl_buffer;
+		GLArrayBufferSimple m_gl_buffer;
+		GLElementArrayBufferSimple m_index_buffer;
 
 	};
 }

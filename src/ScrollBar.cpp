@@ -38,7 +38,7 @@ namespace BlendInt {
 	ScrollControl::ScrollControl ()
 	: AbstractButton()
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 		set_round_type(RoundAll);
 
 		Init ();
@@ -47,7 +47,7 @@ namespace BlendInt {
 	ScrollControl::ScrollControl(AbstractWidget* parent)
 	: AbstractButton(parent)
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 		set_round_type(RoundAll);
 
 		Init ();
@@ -214,7 +214,7 @@ namespace BlendInt {
 	SliderBar::SliderBar(Orientation orientation)
 	: AbstractSlider(orientation), m_control_button(0)
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 		m_control_button = new ScrollControl(this);
 
 		set_round_type(RoundAll);
@@ -242,7 +242,7 @@ namespace BlendInt {
 	SliderBar::SliderBar(Orientation orientation, AbstractWidget* parent)
 	: AbstractSlider(orientation, parent), m_control_button(0)
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 		m_control_button = new ScrollControl(this);
 
 		set_round_type(RoundAll);
@@ -469,7 +469,7 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation)
 			: AbstractSlider(orientation), m_scroll_control(0)
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 		SetRoundType(RoundAll);
 		SetRadius(8);
 
@@ -494,7 +494,7 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation, AbstractWidget* parent)
 			: AbstractSlider(orientation, parent), m_scroll_control(0)
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 
 		SetRoundType(RoundAll);
 		SetRadius(8);
@@ -574,7 +574,7 @@ namespace BlendInt {
 
 		m_buffer.get()->Generate(2);
 		m_buffer.get()->select(0);
-		m_buffer.get()->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.get()->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
 		m_buffer.get()->Bind();
 		m_buffer.get()->Upload(inner_v);
 		m_buffer.get()->Unbind();
@@ -586,7 +586,7 @@ namespace BlendInt {
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 		m_buffer.get()->select(1);
-		m_buffer.get()->SetProperty(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+		m_buffer.get()->SetProperty(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
 
 		m_buffer.get()->Bind();
 		m_buffer.get()->Upload(quad_strip);
@@ -598,7 +598,7 @@ namespace BlendInt {
 
 //		m_buffer.get()->generate(WidgetBufferKeyEmboss);
 //		m_buffer.get()->select(WidgetBufferKeyEmboss);
-//		m_buffer.get()->set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_ARRAY_BUFFER, GL_STATIC_DRAW);
+//		m_buffer.get()->set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_STATIC_DRAW);
 //
 //		m_buffer.get()->bind();
 //		m_buffer.get()->upload(quad_strip_emboss);

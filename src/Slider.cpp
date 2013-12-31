@@ -40,13 +40,13 @@ namespace BlendInt {
 	SlideButton::SlideButton()
 	:  AbstractButton()
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 	}
 
 	SlideButton::SlideButton(AbstractWidget* parent)
 	:  AbstractButton(parent)
 	{
-		m_buffer.reset(new GLBufferMultiple);
+		m_buffer.reset(new GLArrayBufferMultiple);
 	}
 
 	SlideButton::~SlideButton()

@@ -15,55 +15,43 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.  If not, see
+ * License along with BlendInt.	 If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CHECKBUTTON_HPP_
-#define _BLENDINT_CHECKBUTTON_HPP_
+#ifndef _BLENDINT_GLTEXTURE2D_HPP_
+#define _BLENDINT_GLTEXTURE2D_HPP_
 
-#include <boost/smart_ptr.hpp>
+#include <vector>
 
-#include <BlendInt/AbstractButton.hpp>
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#else
+#include <GL/gl.h>
+#endif
+#endif  // __UNIX__
 
 namespace BlendInt {
 
-	class String;
-
 	/**
-	 * @brief Toggle Button
+	 * @brief C++ wrapper for 2D texture
 	 *
-	 * @ingroup widgets
+	 * @ingroup opengl
 	 */
-	class ToggleButton: public AbstractButton
+	class GLTexture2D
 	{
-		DISALLOW_COPY_AND_ASSIGN(ToggleButton);
-
 	public:
+		GLTexture2D ();
 
-		ToggleButton ();
-
-		ToggleButton (const String& text);
-
-		ToggleButton (AbstractWidget* parent);
-
-		ToggleButton (const String& text, AbstractWidget* parent);
-
-		virtual ~ToggleButton ();
-
-	protected:
-
-		virtual void Update (int type, const void* data);
-
-		virtual void Draw ();
+		~GLTexture2D ();
 
 	private:
 
-		boost::scoped_ptr<GLArrayBufferMultiple> m_buffer;
+		std::vector<GLuint> m_ids;
 	};
-
 }
 
-#endif /* _BIL_CHECKBUTTON_HPP_ */
+#endif /* _BLENDINT_GLTEXTURE2D_HPP_ */
