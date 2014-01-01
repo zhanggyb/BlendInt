@@ -24,6 +24,8 @@
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -529,8 +531,11 @@ namespace BlendInt {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		// Set "renderedTexture" as our colour attachement #0
+#ifdef __APPLE__
+		glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedTexture, 0);
+#else
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedTexture, 0);
-
+#endif
 		// Set the list of draw buffers.
 		GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
 		glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
