@@ -24,6 +24,31 @@ ObjectTest1::~ObjectTest1()
 TEST_F(ObjectTest1, New1)
 {
 	// TODO: add test code here
+    Object obj1;
+    obj1.set_name("obj1");
+
+    std::cout << "obj1 ref count: " << obj1.GetReferenceCount() << std::endl;
+	
+	Object* obj2 = new Object;
+	
+	obj2->set_name("obj2");
+	
+    std::cout << "obj2 ref count: " << obj2->GetReferenceCount() << std::endl;
+
+	delete obj2;
+
+	ASSERT_TRUE(true);
+}
+
+
+/**
+ * test new Object 
+ *
+ * Expected result: 
+ */
+TEST_F(ObjectTest1, New2)
+{
+	// TODO: add test code here
     Object* obj1 = new Object;
     obj1->set_name("obj1");
 
@@ -256,6 +281,123 @@ TEST_F(ObjectTest1, LoopBind1)
     obj4->PrintSubs();
 
     delete obj1;
+
+	ASSERT_TRUE(Object::GetMapSize() == 0);
+}
+
+/**
+ * test unbindall
+ *
+ * Expected result: 
+ */
+TEST_F(ObjectTest1, UnbindAll1)
+{
+	// TODO: add test code here
+    Object* obj1 = new Object;
+    obj1->set_name("obj1");
+
+    Object* obj2 = new Object;
+    obj2->set_name("obj2");
+ 
+    Object* obj3 = new Object;
+    obj3->set_name("obj3");
+   
+    Object* obj4 = new Object;
+    obj4->set_name("obj4");
+    
+   	obj1->Bind(obj2);
+	obj1->Bind(obj3);
+	obj1->Bind(obj4);
+
+    obj1->PrintSubs();
+    obj2->PrintSupers();
+    obj3->PrintSupers();
+    obj4->PrintSupers();
+
+	obj1->UnbindAll();
+
+    delete obj1;
+	delete obj2;
+	delete obj3;
+	delete obj4;
+
+	ASSERT_TRUE(Object::GetMapSize() == 0);
+}
+
+/**
+ * test unbindall
+ *
+ * Expected result: 
+ */
+TEST_F(ObjectTest1, UnbindFromAll1)
+{
+	// TODO: add test code here
+    Object* obj1 = new Object;
+    obj1->set_name("obj1");
+
+    Object* obj2 = new Object;
+    obj2->set_name("obj2");
+ 
+    Object* obj3 = new Object;
+    obj3->set_name("obj3");
+   
+    Object* obj4 = new Object;
+    obj4->set_name("obj4");
+    
+   	obj1->Bind(obj4);
+	obj2->Bind(obj4);
+	obj3->Bind(obj4);
+
+    obj1->PrintSubs();
+    obj2->PrintSubs();
+    obj3->PrintSubs();
+    obj4->PrintSupers();
+
+	obj4->UnbindFromAll();
+
+    delete obj1;
+	delete obj2;
+	delete obj3;
+	delete obj4;
+
+	ASSERT_TRUE(Object::GetMapSize() == 0);
+}
+
+/**
+ * test mix bind
+ *
+ * Expected result: 
+ */
+TEST_F(ObjectTest1, MixBind1)
+{
+	// TODO: add test code here
+    Object* obj1 = new Object;
+    obj1->set_name("obj1");
+
+    Object* obj2 = new Object;
+    obj2->set_name("obj2");
+ 
+    Object* obj3 = new Object;
+    obj3->set_name("obj3");
+   
+    Object* obj4 = new Object;
+    obj4->set_name("obj4");
+
+    Object* obj5 = new Object;
+    obj5->set_name("obj5");
+    
+    Object* obj6 = new Object;
+    obj6->set_name("obj6");
+
+   	obj1->Bind(obj2);
+	obj2->Bind(obj3);
+	obj3->Bind(obj4);
+
+	obj5->Bind(obj2);
+	obj6->Bind(obj5);
+
+    delete obj1;
+	delete obj6;
 
 	ASSERT_TRUE(Object::GetMapSize() == 0);
 }

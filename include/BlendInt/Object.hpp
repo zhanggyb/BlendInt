@@ -36,10 +36,6 @@ namespace BlendInt {
 	{
 	public:
 
-		//void* operator new(size_t);
-
-		//void operator delete (void*);
-
 		Object ();
 
 		Object (Object* parent);
@@ -49,6 +45,8 @@ namespace BlendInt {
 		bool Bind (Object* sub);
 
 		bool Unbind (Object* sub);
+
+		void UnbindAll ();
 
 		bool UnbindFrom (Object* super);
 
@@ -66,11 +64,9 @@ namespace BlendInt {
 			m_name = name;
 		}
 
-		unsigned int ref_count () const {return m_ref_count;}
+		size_t GetReferenceCount ();
 
 	private:
-
-		unsigned int m_ref_count;
 
 		boost::scoped_ptr<std::set<Object*> > m_superiors;
 

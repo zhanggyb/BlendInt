@@ -30,15 +30,15 @@
 namespace BlendInt {
 
 	Object::Object()
-	: m_ref_count(0)
+	:
 #ifdef DEBUG
-	, m_id(0)
+	m_id(0)
 #endif
 	{
 		m_superiors.reset(new std::set<Object*>);
 		m_subordinates.reset(new std::set<Object*>);
 
-		#ifdef DEBUG
+#ifdef DEBUG
 		// generate a unique id
 		uint64_t temp = id_last;
 
@@ -56,9 +56,9 @@ namespace BlendInt {
 	}
 
 	Object::Object(Object* parent)
-	: m_ref_count(0)
+	:
 #ifdef DEBUG
-	, m_id(0)
+	m_id(0)
 #endif
 	{
 		m_superiors.reset(new std::set<Object*>);
@@ -86,14 +86,13 @@ namespace BlendInt {
 	Object::~Object()
 	{
 #ifdef DEBUG
-		std::cout << "Destructor in object: " << m_name << "(" << m_ref_count << ")" << std::endl;
+		std::cout << "Destructor in object: " << m_name << "(" << m_superiors->size() << ")" << std::endl;
 #endif
 
 		std::set<Object*>::iterator it;
 		while (m_superiors->size()) {
 			it = m_superiors->begin();
 			(*it)->m_subordinates->erase(this);
-			m_ref_count--;
 			m_superiors->erase(it);
 		}
 
@@ -102,9 +101,8 @@ namespace BlendInt {
 			it = m_subordinates->begin();
 			sub = *it;
 			(*it)->m_superiors->erase(this);
-			(*it)->m_ref_count--;
 			m_subordinates->erase(it);
-			if(sub->m_ref_count == 0) {
+			if(sub->m_superiors->size() == 0) {
 				delete sub;
 				sub = 0;
 			}
@@ -123,7 +121,6 @@ namespace BlendInt {
 		if(m_subordinates->count(sub)) return true;
 
 		sub->m_superiors->insert(this);
-		sub->m_ref_count++;
 
 		m_subordinates->insert(sub);
 
@@ -139,9 +136,19 @@ namespace BlendInt {
 			return false;
 
 		sub->m_superiors->erase(this);
-		sub->m_ref_count--;
 		m_subordinates->erase(sub);
 		return true;
+	}
+
+	void Object::UnbindAll ()
+	{
+		std::set<Object*>::iterator it;
+
+		while (m_subordinates->size()) {
+			it = m_subordinates->begin();
+			(*it)->m_superiors->erase(this);
+			m_subordinates->erase(it);
+		}
 	}
 
 	bool Object::UnbindFrom (Object* super)
@@ -153,7 +160,6 @@ namespace BlendInt {
 			return false;
 
 		super->m_subordinates->erase(this);
-		m_ref_count--;
 		m_superiors->erase(super);
 		return true;
 	}
@@ -165,7 +171,6 @@ namespace BlendInt {
 		while (m_superiors->size()) {
 			it = m_superiors->begin();
 			(*it)->m_subordinates->erase(this);
-			m_ref_count--;
 			m_superiors->erase(it);
 		}
 	}
@@ -178,9 +183,13 @@ namespace BlendInt {
 		if (m_superiors->count(super)) return true;
 
 		super->m_subordinates->insert(this);
-		m_ref_count++;
 		m_superiors->insert(super);
 		return true;
+	}
+
+	size_t Object::GetReferenceCount()
+	{
+		return m_superiors->size();
 	}
 
 #ifdef DEBUG
@@ -217,7 +226,7 @@ namespace BlendInt {
 		std::cout << "Superior(s) of " << m_name << ":";
 		for(it = m_superiors->begin(); it!= m_superiors->end(); it++)
 		{
-			std::cout << " " << (*it)->m_name << "(" << (*it)->ref_count() << ")";
+			std::cout << " " << (*it)->m_name << "(" << (*it)->m_superiors->size() << ")";
 		}
 		std::cout << std::endl;
 	}
@@ -229,7 +238,7 @@ namespace BlendInt {
 		std::cout << "Subordinate(s) of " << m_name << ":";
 		for(it = m_subordinates->begin(); it!= m_subordinates->end(); it++)
 		{
-			std::cout << " " <<  (*it)->m_name << "(" << (*it)->ref_count() << ")";
+			std::cout << " " <<  (*it)->m_name << "(" << (*it)->m_superiors->size() << ")";
 		}
 		std::cout << std::endl;
 	}
