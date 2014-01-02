@@ -165,6 +165,8 @@ namespace BlendInt {
 			return false;
 		}
 
+		obj->m_flag.set(2);
+
 		m_events->connect(obj->destroyed(), this, &ContextManager::OnDestroyObject);
 
 		return true;
@@ -181,6 +183,8 @@ namespace BlendInt {
 			return false;
 		}
 
+		obj->m_flag.reset(2);
+
 		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
 		return true;
@@ -190,6 +194,7 @@ namespace BlendInt {
 	{
 		std::cout << "Get event" << std::endl;
 		RemoveWidget(obj);
+		obj->m_flag.reset(2);
 		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 	}
 

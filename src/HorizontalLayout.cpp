@@ -31,8 +31,6 @@
 #endif  // __UNIX__
 
 #include <algorithm>
-
-#include <queue>
 #include <iostream>
 
 #include <BlendInt/HorizontalLayout.hpp>

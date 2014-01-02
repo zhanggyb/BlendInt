@@ -24,9 +24,7 @@
 #ifndef _BLENDINT_ABSTRACTWIDGET_HPP_
 #define _BLENDINT_ABSTRACTWIDGET_HPP_
 
-#include <list>
-#include <set>
-#include <string>
+#include <bitset>
 
 #include <boost/smart_ptr.hpp>
 
@@ -133,11 +131,10 @@ namespace BlendInt {
 
 		void hide ();
 
-		const std::string& name () const;
-
-		void set_name (const std::string& name);
-
-		bool locked () const {return m_locked;}
+		inline bool locked () const
+		{
+			return m_flag[0];
+		}
 
 		Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
 
@@ -145,15 +142,18 @@ namespace BlendInt {
 
 		void activate_events ()
 		{
-			m_fire_events = true;
+			m_flag.set(1);
 		}
 
 		void deactivate_events ()
 		{
-			m_fire_events = false;
+			m_flag.reset(1);
 		}
 
-		bool fire_events () const {return m_fire_events;}
+		bool fire_events () const
+		{
+			return m_flag[1];
+		}
 
 		/**
 		 * @brief move this object along x axis
@@ -216,7 +216,10 @@ namespace BlendInt {
 		 */
 		void set_z_simple (int z);
 
-		void LockGeometry (AbstractWidget* obj, bool status) {obj->m_locked = status;}
+		void LockGeometry (AbstractWidget* obj, bool status)
+		{
+			obj->m_flag[0] = status ? 1 : 0;
+		}
 
 		boost::scoped_ptr<Cpp::ConnectionScope>& events() {return m_events;}
 
@@ -226,7 +229,7 @@ namespace BlendInt {
 		 */
 		inline void fire_property_changed_event (int type)
 		{
-			if (m_fire_events)
+			//if (m_fire_events)
 				m_property_changed.fire(this, type);
 		}
 
@@ -269,11 +272,13 @@ namespace BlendInt {
 		int m_z;
 
 		/**
-		 * @brief if lock the geometry of this widget
+		 * @brief The bit flag of this widget
+		 *
+		 * - bit 0: lock geometry
+		 * - bit 1: fire events
+		 * - bit 2: bound to context manager
 		 */
-		bool m_locked;
-
-		bool m_fire_events;
+		std::bitset<32> m_flag;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
@@ -281,14 +286,12 @@ namespace BlendInt {
 
 		Cpp::Event<AbstractWidget*> m_destroyed;
 
-		std::string m_name;
-
 #ifdef DEBUG
 	public:
 
 		inline void lock (bool status)
 		{
-			m_locked = status;
+			m_flag[0] = status ? 1 : 0;
 		}
 
 #endif

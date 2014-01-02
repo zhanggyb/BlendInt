@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_HORIZONTALLAYOUT_HPP_
 #define _BLENDINT_HORIZONTALLAYOUT_HPP_
 
+#include <list>
+
 #include <BlendInt/AbstractLayout.hpp>
 
 namespace BlendInt {

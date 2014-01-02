@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_VERTICALLAYOUT_HPP_
 #define _BLENDINT_VERTICALLAYOUT_HPP_
 
+#include <list>
+
 #include <BlendInt/AbstractLayout.hpp>
 #include <BlendInt/Types.hpp>
 

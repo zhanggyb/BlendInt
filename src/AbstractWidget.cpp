@@ -45,18 +45,14 @@ namespace BlendInt {
 
 	AbstractWidget::AbstractWidget ()
 		: AbstractExtraForm(),
-		  m_z(0),
-		  m_locked(false),
-		  m_fire_events(true)
+		  m_z(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	AbstractWidget::AbstractWidget (AbstractWidget* super)
 		: AbstractExtraForm(super),
-			m_z(0),
-		  m_locked(false),
-		  m_fire_events(true)
+			m_z(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
@@ -70,6 +66,8 @@ namespace BlendInt {
 	{
 		if(!parent) return false;
 
+		if(m_flag[2]) return true;
+
 		parent->Bind(this);
 
 		return true;
@@ -78,6 +76,8 @@ namespace BlendInt {
 	bool AbstractWidget::UnboundFrom (ContextManager *parent)
 	{
 		if(!parent) return false;
+
+		if(!m_flag[2]) return true;
 
 		parent->Unbind(this);
 
@@ -94,7 +94,7 @@ namespace BlendInt {
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_locked) return;
+		if(locked()) return;
 
 		if(size().width() == width && size().height() == height) return;
 
@@ -110,7 +110,7 @@ namespace BlendInt {
 	void AbstractWidget::Resize (const Size& size)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_locked) return;
+		if(locked()) return;
 
 		if(AbstractWidget::size() == size) return;
 
@@ -124,7 +124,7 @@ namespace BlendInt {
 	void AbstractWidget::SetPosition (int x, int y)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_locked) return;
+		if(locked()) return;
 
 		if(position().x() == x && position().y() == y) return;
 
@@ -139,7 +139,7 @@ namespace BlendInt {
 	void AbstractWidget::SetPosition (const Point& pos)
 	{
 		// If the object is managed by a layout, disallow position setting
-		if(m_locked) return;
+		if(locked()) return;
 
 		if(position() == pos) return;
 
@@ -279,16 +279,6 @@ namespace BlendInt {
 
 		set_z_simple(z);
 		// m_property_changed.fire(FormPropertyLayer);
-	}
-
-	const std::string& AbstractWidget::name () const
-	{
-		return m_name;
-	}
-
-	void AbstractWidget::set_name (const std::string& name)
-	{
-		m_name = name;
 	}
 
 	bool AbstractWidget::contain(const Coord2d& cursor)
