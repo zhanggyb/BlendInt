@@ -87,9 +87,6 @@ namespace BlendInt {
 			pset = map_it->second;
 			for(set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				// MUST set the m_parent to avoid double set::erase in child's destruction
-				(*set_it)->m_parent.type = ParentUnknown;
-				(*set_it)->m_parent.object.nameless = 0;
 				(*set_it)->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 				delete *set_it;
 			}
@@ -161,20 +158,12 @@ namespace BlendInt {
 	{
 		if (!obj) return false;
 
-		if (obj->m_parent.object.nameless) {
-			if (obj->m_parent.type == ParentForm) {
-				obj->m_parent.object.form->m_children.erase(obj);
-			}
-		}
-
 		if(AddWidget(obj)) {
 //			std::cerr << "add object" << std::endl;
 		} else {
 			std::cerr << "obj already in contextmanager with the same layer" << std::endl;
+			return false;
 		}
-
-		obj->m_parent.type = ParentContextManager;
-		obj->m_parent.object.context = this;
 
 		m_events->connect(obj->destroyed(), this, &ContextManager::OnDestroyObject);
 
@@ -185,24 +174,12 @@ namespace BlendInt {
 	{
 		if (!obj) return false;
 
-		if (!obj->m_parent.object.nameless) {
-			std::cerr << "obj not in context manager, won't unbind it" << std::endl;
-			return false;
-		}
-
-		if (obj->m_parent.type == ParentForm) {
-			std::cerr << "obj not in context manager, won't unbind it" << std::endl;
-			return false;
-		}
-
 		if(RemoveWidget(obj)) {
 //			std::cerr << "remove object" << std::endl;
 		} else {
 			std::cerr << "obj not in in contextmanager with the same layer" << std::endl;
+			return false;
 		}
-
-		obj->m_parent.type = ParentUnknown;
-		obj->m_parent.object.nameless = 0;
 
 		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 

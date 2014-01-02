@@ -51,7 +51,7 @@ namespace BlendInt {
 
 		Object (Object* superior);
 
-		~Object ();
+		virtual ~Object ();
 
 		bool Bind (Object* sub);
 
@@ -61,7 +61,7 @@ namespace BlendInt {
 
 		bool UnboundFrom (Object* super);
 
-		void UnboundFromAll ();
+		virtual void UnboundFromAll ();
 
 		bool BoundTo (Object* super);
 
@@ -75,7 +75,13 @@ namespace BlendInt {
 			m_name = name;
 		}
 
+		const std::string& name () const {return m_name;}
+
 		size_t GetReferenceCount ();
+
+		inline const std::set<Object*>* superiors() const {return m_superiors.get();}
+
+		inline const std::set<Object*>* subordinates() const {return m_subordinates.get();}
 
 	private:
 

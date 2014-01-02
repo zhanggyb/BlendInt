@@ -45,7 +45,7 @@ namespace BlendInt {
 
 	void StackedWidget::Add (Widget* widget)
 	{
-		if(children().count(widget)) return;
+		if(subordinates()->count(widget)) return;
 
 		m_stack.push_back(widget);
 		Bind(widget);
@@ -56,7 +56,7 @@ namespace BlendInt {
 
 	void StackedWidget::Insert (size_t index, Widget* widget)
 	{
-		if(children().count(widget)) return;
+		if(subordinates()->count(widget)) return;
 		if(index > (m_stack.size() - 1)) return;
 
 		std::vector<Widget*>::iterator it = m_stack.begin();
@@ -71,14 +71,14 @@ namespace BlendInt {
 
 	void StackedWidget::Remove (Widget* widget)
 	{
-		if(! children().count(widget)) return;
+		if(! subordinates()->count(widget)) return;
 
 		std::vector<Widget*>::iterator it;
 		it = std::find(m_stack.begin(), m_stack.end(), widget);
 
 		if(it != m_stack.end()) {
 			m_stack.erase(it);
-			unbind(widget);
+			Unbind(widget);
 
 			if(m_index > (m_stack.size() - 1)) {
 				m_index = m_stack.size() - 1;

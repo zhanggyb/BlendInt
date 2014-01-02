@@ -19,24 +19,29 @@ WidgetTest1::~WidgetTest1()
  *
  * Expected result: 
  */
-TEST_F(WidgetTest1, Foo1)
+TEST_F(WidgetTest1, Show1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("Widget - Foo1");
+	GLFWwindow* window = CreateWindow("Widget - Show1");
 
 	// TODO: add test code here
-    Widget* widget = new Widget;
+    Widget* widget1 = new Widget;
+    widget1->set_name("widget1");
+    widget1->SetPosition(200, 200);
 
-    widget->SetPosition(200, 200);
-
-    Interface::Instance()->Bind(widget);
-
-    delete widget;
+    Widget* widget2 = new Widget;
+    widget2->set_name("widget2");
+    widget2->SetPosition(400, 200);
+    
+    Interface::Instance()->Bind(widget1);
+    Interface::Instance()->Bind(widget2);
 
 	RunLoop(window);
 
-
 	Terminate();
+
+    std::cout << "size of char: " << sizeof (char) << std::endl;
+    std::cout << "size of widget: " << sizeof (Widget) << std::endl;
 
 	ASSERT_TRUE(true);
 }

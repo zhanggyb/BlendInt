@@ -58,7 +58,7 @@ namespace BlendInt {
 	void TableLayout::add_widget (Frame* widget, int row, int column,
 	        int width, int height)
 	{
-		if (children().count(widget)) return;
+		if (subordinates()->count(widget)) return;
 
 		for (int i = 0; i < width; i++)
 		{
@@ -79,7 +79,7 @@ namespace BlendInt {
 	void TableLayout::add_layout (AbstractLayout* layout, int row, int column,
 	        int width, int height)
 	{
-		if (children().count(layout)) return;
+		if (subordinates()->count(layout)) return;
 
 		for (int i = 0; i < width; i++)
 		{
@@ -104,28 +104,22 @@ namespace BlendInt {
 
 	void TableLayout::Update (int type, const void* property)
 	{
-		if(parent().type == ParentForm) {
+		if (type == FormSize) {
 
-			return;
+			if (property) {
 
-		} else {
+				if (generate_layout(static_cast<const Size*>(property))) return;
+				else return;
 
-			if (type == FormSize) {
+			} else {	// this is called when adding widget or layout
 
-				if (property) {
+				if(items().size() > static_cast<unsigned int>(m_rows * m_columns))
+					throw std::out_of_range("Exceed the table size");
+				generate_default_layout();
 
-					if (generate_layout(static_cast<const Size*>(property))) return;
-					else return;
-
-				} else {	// this is called when adding widget or layout
-
-					if(items().size() > static_cast<unsigned int>(m_rows * m_columns))
-						throw std::out_of_range("Exceed the table size");
-					generate_default_layout();
-
-				}
 			}
 		}
+
 	}
 
 	void TableLayout::Draw ()

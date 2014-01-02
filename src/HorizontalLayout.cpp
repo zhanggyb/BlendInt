@@ -245,7 +245,7 @@ namespace BlendInt {
 		activate_events();
 
 		LockGeometry(object, false);
-		unbind(object);
+		Unbind(object);
 	}
 
 	void HorizontalLayout::MakeLayout (const Size* size, const Margin* margin,

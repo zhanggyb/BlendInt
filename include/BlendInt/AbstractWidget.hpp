@@ -56,35 +56,6 @@ namespace BlendInt {
 
 	struct WidgetTheme;
 
-	enum ParentType {
-		ParentUnknown,
-		ParentContextManager,
-		ParentForm
-	};
-
-	union ParentPointer {
-		ParentPointer ()
-		: nameless(0)
-		{
-
-		}
-		ContextManager* context;
-		AbstractWidget* form;
-		void* nameless;
-	};
-
-	struct Parent {
-		Parent ()
-		: type(ParentUnknown)
-		{
-
-		}
-		ParentType type;
-		ParentPointer object;
-
-		DISALLOW_COPY_AND_ASSIGN(Parent);
-	};
-
 	/**
 	 * @brief The basic abstract class for GUI forms in BlendInt
 	 *
@@ -112,28 +83,15 @@ namespace BlendInt {
 		 * a static list -- solo, it's usually a pop-up widget such as
 		 * context menu, message box
 		 */
-		AbstractWidget (AbstractWidget* parent);
+		AbstractWidget (AbstractWidget* super);
 
 		virtual ~AbstractWidget ();
 
-		bool Bind (AbstractWidget* child);
+		bool BoundTo (ContextManager* parent);
 
-		bool unbind (AbstractWidget* child);
+		bool UnboundFrom (ContextManager* parent);
 
-		/**
-		 * @brief unbind this and set parent to 0
-		 */
-		void unbind ();
-
-		bool bind_to (ContextManager* parent);
-
-		bool bind_to (AbstractWidget* parent);
-
-		/**
-		 * @brief if the root of this Drawable object is bounded to ContextManager
-		 * @return
-		 */
-		bool is_bound ();
+		virtual void UnboundFromAll ();
 
 		/**
 		 * @brief Call Update() and Resize the widget
@@ -179,8 +137,6 @@ namespace BlendInt {
 
 		void set_name (const std::string& name);
 
-		const Parent& parent () const {return m_parent;}
-
 		bool locked () const {return m_locked;}
 
 		Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
@@ -198,8 +154,6 @@ namespace BlendInt {
 		}
 
 		bool fire_events () const {return m_fire_events;}
-
-		const std::set<AbstractWidget*>& children() const {return m_children;}
 
 		/**
 		 * @brief move this object along x axis
@@ -264,8 +218,6 @@ namespace BlendInt {
 
 		void LockGeometry (AbstractWidget* obj, bool status) {obj->m_locked = status;}
 
-		//Cpp::ConnectionScope& events() {return m_events;}
-
 		boost::scoped_ptr<Cpp::ConnectionScope>& events() {return m_events;}
 
 		/**
@@ -329,10 +281,6 @@ namespace BlendInt {
 
 		Cpp::Event<AbstractWidget*> m_destroyed;
 
-		Parent m_parent;
-
-		std::set<AbstractWidget*> m_children;
-
 		std::string m_name;
 
 #ifdef DEBUG
@@ -342,44 +290,6 @@ namespace BlendInt {
 		{
 			m_locked = status;
 		}
-
-		static AbstractWidget* find (uint64_t id);
-
-#ifdef __APPLE__
-		static unsigned long map_size ()
-#else
-        static unsigned int map_size ()
-#endif
-		{
-			return obj_map.size();
-		}
-
-		static const map<uint64_t, AbstractWidget*>& get_map ()
-		{
-			return obj_map;
-		}
-
-		static void reset ()
-		{
-			id_last = 1;
-			obj_map.clear();
-		}
-
-	private:
-
-		inline bool register_in_map ();
-
-		inline bool unregister_from_map ();
-
-		uint64_t m_id; /** A unique ID for object */
-
-		static uint64_t id_last;
-
-		static map<uint64_t, AbstractWidget*> obj_map;
-
-	public:
-
-		static void print ();
 
 #endif
 

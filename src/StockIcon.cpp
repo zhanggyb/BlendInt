@@ -39,7 +39,7 @@ namespace BlendInt {
 
 	void StockIcon::Release()
 	{
-		if (!stock_icon) {
+		if (stock_icon) {
 			delete stock_icon;
 			stock_icon = 0;
 		}
@@ -64,6 +64,10 @@ namespace BlendInt {
 
 	StockIcon::~StockIcon()
 	{
+		delete m_menu;
+		delete m_circle;
+		delete m_checkbox;
+		delete m_num;
 	}
 
 	bool StockIcon::Find (const AbstractResizableForm* icon) const
@@ -81,6 +85,7 @@ namespace BlendInt {
 		float vec[16][2];
 
 		m_menu = new VertexIcon;
+		m_menu->set_name("Menu Icon");
 		for(size_t i = 0; i < 6; i++)
 		{
 			vec[i][0] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][0];
@@ -90,6 +95,7 @@ namespace BlendInt {
 		m_menu->load (vec, 6, VertexIcon::menu_tria_face, 2);
 
 		m_circle = new VertexIcon;
+		m_circle->set_name("Circle Icon");
 
 		for(size_t i = 0; i < 16; i++)
 		{
@@ -100,6 +106,7 @@ namespace BlendInt {
 		m_circle->load (vec, 16, VertexIcon::scroll_circle_face, 14);
 
 		m_checkbox = new VertexIcon;
+		m_checkbox->set_name("Checkbox Icon");
 
 		for(size_t i = 0; i < 6; i++)
 		{
@@ -110,6 +117,7 @@ namespace BlendInt {
 		m_checkbox->load (vec, 6, VertexIcon::check_tria_face, 4);
 
 		m_num = new VertexIcon;
+		m_num->set_name("Number slider Icon");
 
 		for(size_t i = 0; i < 3; i++)
 		{

@@ -135,9 +135,9 @@ namespace BlendInt {
 	void ScrollControl::MouseMoveEvent (MouseEvent* event)
 	{
 		// if no parent scrollbar, don't react to mouse move
-		if(parent().type != ParentForm) return;
 
-		ScrollBar* parent_obj = dynamic_cast<ScrollBar*>(parent().object.form);
+		ScrollBar* parent_obj = dynamic_cast<ScrollBar*>(*(superiors()->begin()));
+
 		if(!parent_obj) return;
 
 		if(down()) {

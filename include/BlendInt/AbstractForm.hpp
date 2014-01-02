@@ -28,6 +28,8 @@
 #include <BlendInt/Size.hpp>
 #include <BlendInt/Types.hpp>
 
+#include <BlendInt/Object.hpp>
+
 namespace BlendInt {
 
 	struct WidgetTheme;
@@ -58,7 +60,7 @@ namespace BlendInt {
 	 *
 	 * @sa Update()
 	 */
-	class AbstractForm
+	class AbstractForm: public Object
 	{
 	public:
 
@@ -67,6 +69,8 @@ namespace BlendInt {
 #endif
 
 		AbstractForm();
+
+		AbstractForm (Object *super);
 
 		AbstractForm(const AbstractForm& orig);
 

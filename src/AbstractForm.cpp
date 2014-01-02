@@ -44,8 +44,13 @@ namespace BlendInt {
 
 
 	AbstractForm::AbstractForm()
+	: Object()
 	{
+	}
 
+	AbstractForm::AbstractForm(Object *super)
+	: Object(super)
+	{
 	}
 
 	AbstractForm::AbstractForm(const AbstractForm& orig)

@@ -48,205 +48,47 @@ namespace BlendInt {
 		  m_z(0),
 		  m_locked(false),
 		  m_fire_events(true)
-#ifdef DEBUG
-		  ,m_id(0)
-#endif
 	{
-#ifdef DEBUG
-		// generate a unique id
-		uint64_t temp = id_last;
-
-		while (AbstractWidget::obj_map.count(id_last) == 1) {
-			id_last++;
-			if (temp == id_last)
-				throw std::out_of_range("Cannot assign unique id for object");
-		}
-
-		m_id = id_last;
-
-		register_in_map();
-		id_last++;
-#endif
-
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
-	AbstractWidget::AbstractWidget (AbstractWidget* parent)
-		: AbstractExtraForm(),
+	AbstractWidget::AbstractWidget (AbstractWidget* super)
+		: AbstractExtraForm(super),
 			m_z(0),
 		  m_locked(false),
 		  m_fire_events(true)
-#ifdef DEBUG
-		  , m_id(0)
-#endif
 	{
-		bind_to(parent);
-
-#ifdef DEBUG
-		// generate a unique id
-		uint64_t temp = id_last;
-
-		while (AbstractWidget::obj_map.count(id_last) == 1) {
-			id_last++;
-			if (temp == id_last)
-				throw std::out_of_range("Cannot assign unique id for object");
-		}
-
-		m_id = id_last;
-
-		register_in_map();
-		id_last++;
-#endif
-
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	AbstractWidget::~AbstractWidget ()
 	{
-		if(m_parent.object.nameless) {
-			if(m_parent.type == ParentContextManager) {
-				ContextManager::Instance()->Unbind(this);
-			}
-			if(m_parent.type == ParentForm) {
-				m_parent.object.form->m_children.erase(this);
-			}
-		}
-
-		// delete all child objects in list
-		std::set<AbstractWidget*>::iterator it;
-		for(it = m_children.begin(); it != m_children.end(); it++)
-		{
-			// MUST set the m_parent to avoid double set::erase in child's destruction
-			(*it)->m_parent.type = ParentUnknown;
-			(*it)->m_parent.object.nameless = 0;
-			delete *it;
-		}
-
-		m_children.clear();
-
-#ifdef DEBUG
-		unregister_from_map();
-#endif
-
 		m_destroyed.fire(this);
 	}
 
-	bool AbstractWidget::Bind (AbstractWidget* child)
-	{
-		if (!child) return false;
-		if (child == this) return false;	// cannot bind self
-
-		if (child->m_z != m_z) {
-			std::cerr << "Cannot bind a child in different layer" << std::endl;
-			// TODO throw an exception
-			return false;
-		}
-
-		if (child->m_parent.object.nameless) {
-			if (child->m_parent.type == ParentContextManager) {
-				ContextManager::Instance()->Unbind(child);
-			}
-			if (child->m_parent.type == ParentForm) {
-				if(child->m_parent.object.form == this) return true;
-				child->m_parent.object.form->m_children.erase(child);
-			}
-		}
-		child->m_parent.type = ParentForm;
-		child->m_parent.object.form = this;
-
-		m_children.insert(child);
-
-		return true;
-	}
-
-	bool AbstractWidget::unbind (AbstractWidget* child)
-	{
-		if(!child) return false;
-		if(child == this) return false;
-
-		if(!m_children.count(child))
-			return false;
-
-		child->m_parent.type = ParentUnknown;
-		child->m_parent.object.nameless = 0;
-
-		m_children.erase(child);
-
-		return true;
-	}
-
-	void AbstractWidget::unbind ()
-	{
-		if (m_parent.object.nameless) {
-			if (m_parent.type == ParentContextManager) {
-				ContextManager::Instance()->Unbind(this);
-			}
-			if (m_parent.type == ParentForm) {
-				m_parent.object.form->m_children.erase(this);
-			}
-		}
-
-		m_parent.type = ParentUnknown;
-		m_parent.object.nameless = 0;
-	}
-
-	bool AbstractWidget::bind_to (ContextManager *parent)
+	bool AbstractWidget::BoundTo (ContextManager *parent)
 	{
 		if(!parent) return false;
-
-		if (m_parent.object.nameless) {
-			if (m_parent.type == ParentForm) {
-				m_parent.object.form->m_children.erase(this);
-				m_parent.type = ParentUnknown;
-				m_parent.object.nameless = 0;
-			}
-		}
 
 		parent->Bind(this);
 
 		return true;
 	}
 
-	bool AbstractWidget::bind_to (AbstractWidget* parent)
+	bool AbstractWidget::UnboundFrom (ContextManager *parent)
 	{
 		if(!parent) return false;
-		if(parent == this) return false;	// cannot bind_to self
 
-		if(parent->m_z != m_z) {
-			std::cerr << "Cannot bind to a parent in different layer" << std::endl;
-			// TODO: throw an exception
-			return false;
-		}
-
-		if (m_parent.object.nameless) {
-			if (m_parent.type == ParentContextManager) {
-				m_parent.object.context->Unbind(this);
-			}
-			if (m_parent.type == ParentForm) {
-				if (m_parent.object.form == parent) return true;
-
-				m_parent.object.form->m_children.erase(this);
-			}
-		}
-
-		parent->m_children.insert (this);
-		m_parent.type = ParentForm;
-		m_parent.object.form = parent;
+		parent->Unbind(this);
 
 		return true;
 	}
 
-	bool AbstractWidget::is_bound ()
+	void AbstractWidget::UnboundFromAll()
 	{
-		Parent* parent = &m_parent;
-		while (parent->type == ParentForm) {
-			parent = &(parent->object.form->m_parent);
-		}
+		AbstractExtraForm::UnboundFromAll();
 
-		if (parent->type == ParentUnknown) return false;
-
-		// return true if parent type is Context Manager
-		return true;
+		ContextManager::Instance()->Unbind(this);
 	}
 
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)
@@ -413,28 +255,29 @@ namespace BlendInt {
 	{
 		if (m_z == z) return;
 
-		AbstractWidget* root = 0;
-		Parent* parent = &m_parent;
-		while (parent->type == ParentForm) {
-			root = parent->object.form;
-			parent = &(parent->object.form->m_parent);
-		}
+//		AbstractWidget* root = 0;
+//		Parent* parent = &m_parent;
+//		while (parent->type == ParentForm) {
+//			root = parent->object.form;
+//			parent = &(parent->object.form->m_parent);
+//		}
+//
+//		if (root)
+//			root->set_z_simple(z);
+//		else
+//			set_z_simple(z);
+//
+//		if(root) {
+//			if (root->m_parent.type == ParentContextManager) {
+//					ContextManager::Instance()->Bind(root);
+//			}
+//		} else {
+//			if (m_parent.type == ParentContextManager) {
+//					ContextManager::Instance()->Bind(this);
+//			}
+//		}
 
-		if (root)
-			root->set_z_simple(z);
-		else
-			set_z_simple(z);
-
-		if(root) {
-			if (root->m_parent.type == ParentContextManager) {
-					ContextManager::Instance()->Bind(root);
-			}
-		} else {
-			if (m_parent.type == ParentContextManager) {
-					ContextManager::Instance()->Bind(this);
-			}
-		}
-
+		set_z_simple(z);
 		// m_property_changed.fire(FormPropertyLayer);
 	}
 
@@ -464,11 +307,11 @@ namespace BlendInt {
 	{
 		m_z = z;
 
-		std::set<AbstractWidget*>::iterator it;
-		for (it = m_children.begin(); it != m_children.end(); it++)
-		{
-			(*it)->set_z_simple (z);
-		}
+//		std::set<AbstractWidget*>::iterator it;
+//		for (it = m_children.begin(); it != m_children.end(); it++)
+//		{
+//			(*it)->set_z_simple (z);
+//		}
 
 		// TODO: call Update()
 	}
@@ -535,47 +378,6 @@ namespace BlendInt {
 	{
 		obj->MouseReleaseEvent(event);
 	}
-
-#ifdef DEBUG
-
-	uint64_t AbstractWidget::id_last = 1;
-
-	map<uint64_t, AbstractWidget*> AbstractWidget::obj_map;
-
-	inline bool AbstractWidget::register_in_map ()
-	{
-		AbstractWidget::obj_map[m_id] = this;
-		return true;
-	}
-
-	inline bool AbstractWidget::unregister_from_map ()
-	{
-		AbstractWidget::obj_map.erase(m_id);
-		return true;
-	}
-
-	AbstractWidget* AbstractWidget::find (uint64_t id)
-	{
-		AbstractWidget *ret = NULL;
-		if (AbstractWidget::obj_map.count(id) == 1)
-			ret = AbstractWidget::obj_map[id];
-
-		return ret;
-	}
-
-	void AbstractWidget::print()
-	{
-		map<uint64_t, AbstractWidget*>::iterator it;
-		std::cerr << "Print objects: "<< std::endl;
-		for(it = obj_map.begin(); it != obj_map.end(); it++)
-		{
-			std::cerr << it->second->m_name << " ";
-		}
-		std::cerr << std::endl;
-
-	}
-
-#endif
 
 } /* namespace BlendInt */
 

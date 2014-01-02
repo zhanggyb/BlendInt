@@ -37,6 +37,8 @@ namespace BlendInt {
 
 		AbstractExtraForm();
 
+		AbstractExtraForm(Object* super);
+
 		AbstractExtraForm(const AbstractExtraForm& orig);
 
 		virtual ~AbstractExtraForm();

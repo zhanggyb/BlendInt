@@ -99,13 +99,15 @@ namespace BlendInt {
 	bool CheckAllocatedObjects ()
 	{
 #ifdef DEBUG
-		int mapsize = AbstractWidget::map_size();
+		unsigned int mapsize = Object::GetMapSize();
+
+        cout << "map size: " << mapsize << endl;
 
 		if(mapsize > 0) {
-			map<uint64_t, AbstractWidget*>::const_iterator it;
-			for (it = AbstractWidget::get_map().begin(); it != AbstractWidget::get_map().end(); it++)
+			map<uint64_t, Object*>::const_iterator it;
+			for (it = Object::GetMap().begin(); it != Object::GetMap().end(); it++)
 			{
-				cout << "id: " << it->first << " was not deleted!" << endl;
+				cout << "id: " << it->first << " name: " << it->second->name() << " was not deleted!" << endl;
 			}
 		}
 

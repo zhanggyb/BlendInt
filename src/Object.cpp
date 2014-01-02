@@ -56,7 +56,7 @@ namespace BlendInt {
 #endif
 	}
 
-	Object::Object(Object* superior)
+	Object::Object(Object* super)
 	:
 #ifdef DEBUG
 	m_id(0)
@@ -65,7 +65,7 @@ namespace BlendInt {
 		m_superiors.reset(new std::set<Object*>);
 		m_subordinates.reset(new std::set<Object*>);
 
-		BoundTo (superior);
+		BoundTo (super);
 
 #ifdef DEBUG
 		// generate a unique id

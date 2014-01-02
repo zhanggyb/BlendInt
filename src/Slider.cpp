@@ -142,9 +142,8 @@ namespace BlendInt {
 	void SlideButton::MouseMoveEvent(MouseEvent* event)
 	{
 		// if no parent slider, don't react to mouse move
-		if(parent().type != ParentForm) return;
 
-		AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(parent().object.form);
+		AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(*(superiors()->begin()));
 		if(!parent_obj) return;
 
 		if (down()) {
