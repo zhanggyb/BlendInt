@@ -27,6 +27,9 @@
 #include <map>
 #include <set>
 
+#include <boost/smart_ptr.hpp>
+#include <Cpp/Events.hpp>
+
 using std::map;
 using std::set;
 
@@ -66,6 +69,8 @@ namespace BlendInt {
 
 		static void Release ();
 
+		void OnDestroyObject (AbstractWidget* obj);
+
 		/**
 		 * @brief add the drawable in the context list
 		 * @param obj
@@ -96,6 +101,8 @@ namespace BlendInt {
 
 		static ContextManager* context_manager;
 		
+		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
+
 	};
 
 }

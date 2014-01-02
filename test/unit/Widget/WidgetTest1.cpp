@@ -31,7 +31,10 @@ TEST_F(WidgetTest1, Foo1)
 
     Interface::Instance()->Bind(widget);
 
+    delete widget;
+
 	RunLoop(window);
+
 
 	Terminate();
 

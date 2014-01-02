@@ -127,6 +127,8 @@ namespace BlendInt {
 #ifdef DEBUG
 		unregister_from_map();
 #endif
+
+		m_destroyed.fire(this);
 	}
 
 	bool AbstractWidget::Bind (AbstractWidget* child)

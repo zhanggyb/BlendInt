@@ -73,7 +73,7 @@ namespace BlendInt {
 
 	ContextManager::ContextManager ()
 	{
-
+		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	ContextManager::~ContextManager ()
@@ -90,6 +90,7 @@ namespace BlendInt {
 				// MUST set the m_parent to avoid double set::erase in child's destruction
 				(*set_it)->m_parent.type = ParentUnknown;
 				(*set_it)->m_parent.object.nameless = 0;
+				(*set_it)->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 				delete *set_it;
 			}
 
@@ -175,6 +176,8 @@ namespace BlendInt {
 		obj->m_parent.type = ParentContextManager;
 		obj->m_parent.object.context = this;
 
+		m_events->connect(obj->destroyed(), this, &ContextManager::OnDestroyObject);
+
 		return true;
 	}
 
@@ -201,7 +204,16 @@ namespace BlendInt {
 		obj->m_parent.type = ParentUnknown;
 		obj->m_parent.object.nameless = 0;
 
+		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
+
 		return true;
+	}
+
+	void ContextManager::OnDestroyObject(AbstractWidget* obj)
+	{
+		std::cout << "Get event" << std::endl;
+		RemoveWidget(obj);
+		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 	}
 
 	bool ContextManager::RemoveWidget (AbstractWidget* obj)

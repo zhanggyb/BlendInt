@@ -44,18 +44,16 @@ int main(int argc, char* argv[]) {
 
 	GLFWwindow* window = CreateWindow("GLFW3 Demo");
 
-    Menu* menu = new Menu;
-    menu->SetRoundType(RoundAll);
+	Widget* widget1 = new Widget;
+	Widget* widget2 = new Widget;
 
-    menu->SetPosition(200, 200);
+	widget1->SetPosition(200, 200);
+	widget2->SetPosition(400, 200);
 
-    menu->AddMenuItem("MenuItem1");
-    menu->AddMenuItem("MenuItem2");
-    menu->AddMenuItem("MenuItem3");
-    menu->AddMenuItem("MenuItem4");
-    menu->AddMenuItem("MenuItem5");
+	Interface::Instance()->Bind(widget1);
+	Interface::Instance()->Bind(widget2);
 
-    Interface::Instance()->Bind(menu);
+	delete widget2;
 
 	RunLoop(window);
 

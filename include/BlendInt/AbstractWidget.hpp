@@ -183,7 +183,9 @@ namespace BlendInt {
 
 		bool locked () const {return m_locked;}
 
-		EVENT_CALLER Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
+		Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
+
+		Cpp::EventRef<AbstractWidget*> destroyed () {return m_destroyed;}
 
 		void activate_events ()
 		{
@@ -325,7 +327,7 @@ namespace BlendInt {
 
 		Cpp::Event<AbstractWidget*, int> m_property_changed;
 
-		// Cpp::Event<AbstractWidget*> m_destroied;
+		Cpp::Event<AbstractWidget*> m_destroyed;
 
 		Parent m_parent;
 
