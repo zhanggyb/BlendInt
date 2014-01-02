@@ -48,7 +48,7 @@ namespace BlendInt {
 		if(children().count(widget)) return;
 
 		m_stack.push_back(widget);
-		bind(widget);
+		Bind(widget);
 
 		widget->Resize(size());
 		widget->SetPosition(position());
@@ -63,7 +63,7 @@ namespace BlendInt {
 		std::advance(it, index);
 
 		m_stack.insert(it, widget);
-		bind(widget);
+		Bind(widget);
 
 		widget->Resize(size());
 		widget->SetPosition(position());

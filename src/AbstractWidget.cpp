@@ -105,7 +105,7 @@ namespace BlendInt {
 	{
 		if(m_parent.object.nameless) {
 			if(m_parent.type == ParentContextManager) {
-				ContextManager::instance()->unbind(this);
+				ContextManager::Instance()->Unbind(this);
 			}
 			if(m_parent.type == ParentForm) {
 				m_parent.object.form->m_children.erase(this);
@@ -129,7 +129,7 @@ namespace BlendInt {
 #endif
 	}
 
-	bool AbstractWidget::bind (AbstractWidget* child)
+	bool AbstractWidget::Bind (AbstractWidget* child)
 	{
 		if (!child) return false;
 		if (child == this) return false;	// cannot bind self
@@ -142,7 +142,7 @@ namespace BlendInt {
 
 		if (child->m_parent.object.nameless) {
 			if (child->m_parent.type == ParentContextManager) {
-				ContextManager::instance()->unbind(child);
+				ContextManager::Instance()->Unbind(child);
 			}
 			if (child->m_parent.type == ParentForm) {
 				if(child->m_parent.object.form == this) return true;
@@ -177,7 +177,7 @@ namespace BlendInt {
 	{
 		if (m_parent.object.nameless) {
 			if (m_parent.type == ParentContextManager) {
-				ContextManager::instance()->unbind(this);
+				ContextManager::Instance()->Unbind(this);
 			}
 			if (m_parent.type == ParentForm) {
 				m_parent.object.form->m_children.erase(this);
@@ -200,7 +200,7 @@ namespace BlendInt {
 			}
 		}
 
-		parent->bind(this);
+		parent->Bind(this);
 
 		return true;
 	}
@@ -218,7 +218,7 @@ namespace BlendInt {
 
 		if (m_parent.object.nameless) {
 			if (m_parent.type == ParentContextManager) {
-				m_parent.object.context->unbind(this);
+				m_parent.object.context->Unbind(this);
 			}
 			if (m_parent.type == ParentForm) {
 				if (m_parent.object.form == parent) return true;
@@ -425,11 +425,11 @@ namespace BlendInt {
 
 		if(root) {
 			if (root->m_parent.type == ParentContextManager) {
-					ContextManager::instance()->bind(root);
+					ContextManager::Instance()->Bind(root);
 			}
 		} else {
 			if (m_parent.type == ParentContextManager) {
-					ContextManager::instance()->bind(this);
+					ContextManager::Instance()->Bind(this);
 			}
 		}
 

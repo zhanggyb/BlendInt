@@ -25,6 +25,7 @@
 
 #ifdef DEBUG
 #include <iostream>
+#include <stdexcept>
 #endif
 
 namespace BlendInt {
@@ -55,7 +56,7 @@ namespace BlendInt {
 #endif
 	}
 
-	Object::Object(Object* parent)
+	Object::Object(Object* superior)
 	:
 #ifdef DEBUG
 	m_id(0)
@@ -64,7 +65,7 @@ namespace BlendInt {
 		m_superiors.reset(new std::set<Object*>);
 		m_subordinates.reset(new std::set<Object*>);
 
-		BindTo (parent);
+		BoundTo (superior);
 
 #ifdef DEBUG
 		// generate a unique id
@@ -151,7 +152,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool Object::UnbindFrom (Object* super)
+	bool Object::UnboundFrom (Object* super)
 	{
 		if(!super) return false;
 		if(super == this) return false;
@@ -164,7 +165,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void Object::UnbindFromAll ()
+	void Object::UnboundFromAll ()
 	{
 		std::set<Object*>::iterator it;
 
@@ -175,7 +176,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool Object::BindTo (Object* super)
+	bool Object::BoundTo (Object* super)
 	{
 		if (!super) return false;
 		if (super == this) return false;	// cannot bind self

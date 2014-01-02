@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_OBJECT_HPP_
 #define _BLENDINT_OBJECT_HPP_
 
+#include <stdint.h>
+
 #include <set>
 #ifdef DEBUG
 #include <map>
@@ -32,13 +34,22 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief The base class of most BlendInt objects
+	 *
+	 * Objects organize themselves in object trees. When you create a Object with another
+	 * object as superior, the object will automatically add itself to the superior's sub set.
+	 * The superior object takes ownership of the object; i.e., it will automatically delete
+	 * its children in its sub objects. You can look for an object by name and optionally type
+	 * using findChild() or findChildren().
+	 */
 	class Object
 	{
 	public:
 
 		Object ();
 
-		Object (Object* parent);
+		Object (Object* superior);
 
 		~Object ();
 
@@ -48,11 +59,11 @@ namespace BlendInt {
 
 		void UnbindAll ();
 
-		bool UnbindFrom (Object* super);
+		bool UnboundFrom (Object* super);
 
-		void UnbindFromAll ();
+		void UnboundFromAll ();
 
-		bool BindTo (Object* super);
+		bool BoundTo (Object* super);
 
 		inline void set_name (const char* name)
 		{

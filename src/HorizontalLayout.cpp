@@ -209,7 +209,7 @@ namespace BlendInt {
 		activate_events();
 		object->activate_events();
 
-		bind(object);
+		Bind(object);
 		LockGeometry(object, true);
 	}
 

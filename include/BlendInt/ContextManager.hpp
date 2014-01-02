@@ -44,11 +44,11 @@ namespace BlendInt {
 
 		friend class Interface;
 
-		static ContextManager* instance ();
+		static ContextManager* Instance ();
 		
-		bool bind (AbstractWidget* obj);
+		bool Bind (AbstractWidget* obj);
 
-		bool unbind (AbstractWidget* obj);
+		bool Unbind (AbstractWidget* obj);
 
 		size_t index_size () const {return m_index.size();}
 
@@ -62,9 +62,9 @@ namespace BlendInt {
 
 	private:
 
-		static bool initialize ();
+		static bool Initialize ();
 
-		static void release ();
+		static void Release ();
 
 		/**
 		 * @brief add the drawable in the context list
@@ -73,14 +73,14 @@ namespace BlendInt {
 		 *
 		 * add or Update the Drawable object in the context list
 		 */
-		bool add_drawable (AbstractWidget* obj);
+		bool AddWidget (AbstractWidget* obj);
 
 		/**
 		 * @breif remove a drawable from the context list
 		 * @param obj
 		 * @return
 		 */
-		bool remove_drawable (AbstractWidget* obj);
+		bool RemoveWidget (AbstractWidget* obj);
 
 		typedef map<int, set<AbstractWidget*>* > LayerType;
 		typedef set<AbstractWidget*> SetType;

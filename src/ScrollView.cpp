@@ -59,7 +59,7 @@ namespace BlendInt {
 		}
 
 		m_viewport = viewport;
-		bind (m_viewport);
+		Bind (m_viewport);
 		reset_viewport_position();
 	}
 

@@ -62,6 +62,29 @@ TEST_F(ObjectTest1, New2)
 }
 
 /**
+ * test new Object
+ *
+ * Expected result: 
+ */
+TEST_F(ObjectTest1, New3)
+{
+	// TODO: add test code here
+    Object* obj1 = new Object;
+    obj1->set_name("obj1");
+
+    Object* obj2 = new Object(obj1);
+    obj2->set_name("obj2");
+    
+    obj1->PrintSubs();
+    obj2->PrintSupers();
+    
+    delete obj1;
+
+	ASSERT_TRUE(Object::GetMapSize() == 0);
+}
+
+
+/**
  * test Object::Bind(Object* sub) method
  *
  * Expected result: 
@@ -170,11 +193,11 @@ TEST_F(ObjectTest1, Unbind1)
 }
 
 /**
- * test Object::BindTo(Object* super) and UnbindFrom method
+ * test Object::BoundTo(Object* super) and UnboundFrom method
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, BindTo1)
+TEST_F(ObjectTest1, BoundTo1)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -189,18 +212,18 @@ TEST_F(ObjectTest1, BindTo1)
     Object* obj4 = new Object;
     obj4->set_name("obj4");
     
-    obj2->BindTo(obj1);
-    obj3->BindTo(obj1);
-    obj4->BindTo(obj1);
+    obj2->BoundTo(obj1);
+    obj3->BoundTo(obj1);
+    obj4->BoundTo(obj1);
 
     obj1->PrintSubs();
     obj2->PrintSupers();
     obj3->PrintSupers();
     obj4->PrintSupers();
 
-    obj2->UnbindFrom(obj1);
-    obj3->UnbindFrom(obj1);
-    obj4->UnbindFrom(obj1);
+    obj2->UnboundFrom(obj1);
+    obj3->UnboundFrom(obj1);
+    obj4->UnboundFrom(obj1);
 
     obj1->PrintSubs();
     obj2->PrintSupers();
@@ -329,7 +352,7 @@ TEST_F(ObjectTest1, UnbindAll1)
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, UnbindFromAll1)
+TEST_F(ObjectTest1, UnboundFromAll1)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -353,7 +376,7 @@ TEST_F(ObjectTest1, UnbindFromAll1)
     obj3->PrintSubs();
     obj4->PrintSupers();
 
-	obj4->UnbindFromAll();
+	obj4->UnboundFromAll();
 
     delete obj1;
 	delete obj2;

@@ -70,7 +70,7 @@ namespace BlendInt {
 			items()[m_columns * (row + i) + column] = widget;
 		}
 
-		bind (widget);
+		Bind (widget);
 		LockGeometry(widget, true);
 
 		Update(FormSize, 0);
@@ -91,7 +91,7 @@ namespace BlendInt {
 			items()[m_columns * (row + i) + column] = layout;
 		}
 
-		bind (layout);
+		Bind (layout);
 		LockGeometry(layout, true);
 
 		Update(FormSize, 0);

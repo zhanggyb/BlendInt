@@ -38,7 +38,7 @@ namespace BlendInt {
 
 	ContextManager* ContextManager::context_manager = 0;
 
-	ContextManager* ContextManager::instance ()
+	ContextManager* ContextManager::Instance ()
 	{
 		if (!context_manager) {
 			cerr << "The Context Manager is not initialized successfully! Exit"
@@ -49,7 +49,7 @@ namespace BlendInt {
 		return context_manager;
 	}
 
-	bool ContextManager::initialize ()
+	bool ContextManager::Initialize ()
 	{
 		bool result = true;
 
@@ -64,7 +64,7 @@ namespace BlendInt {
 		return result;
 	}
 
-	void ContextManager::release ()
+	void ContextManager::Release ()
 	{
 		if(context_manager)
 			delete context_manager;
@@ -100,7 +100,7 @@ namespace BlendInt {
 		m_index.clear();
 	}
 
-	bool ContextManager::add_drawable (AbstractWidget* obj)
+	bool ContextManager::AddWidget (AbstractWidget* obj)
 	{
 		if (!obj) return false;
 
@@ -156,7 +156,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool ContextManager::bind (AbstractWidget* obj)
+	bool ContextManager::Bind (AbstractWidget* obj)
 	{
 		if (!obj) return false;
 
@@ -166,7 +166,7 @@ namespace BlendInt {
 			}
 		}
 
-		if(add_drawable(obj)) {
+		if(AddWidget(obj)) {
 //			std::cerr << "add object" << std::endl;
 		} else {
 			std::cerr << "obj already in contextmanager with the same layer" << std::endl;
@@ -178,7 +178,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool ContextManager::unbind (AbstractWidget* obj)
+	bool ContextManager::Unbind (AbstractWidget* obj)
 	{
 		if (!obj) return false;
 
@@ -192,7 +192,7 @@ namespace BlendInt {
 			return false;
 		}
 
-		if(remove_drawable(obj)) {
+		if(RemoveWidget(obj)) {
 //			std::cerr << "remove object" << std::endl;
 		} else {
 			std::cerr << "obj not in in contextmanager with the same layer" << std::endl;
@@ -204,7 +204,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool ContextManager::remove_drawable (AbstractWidget* obj)
+	bool ContextManager::RemoveWidget (AbstractWidget* obj)
 	{
 		if (!obj) return false;
 

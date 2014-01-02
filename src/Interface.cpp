@@ -101,7 +101,7 @@ namespace BlendInt {
 			result = false;
 		}
 
-		if (!ContextManager::initialize()) {
+		if (!ContextManager::Initialize()) {
 			std::cerr << "Cannot initialize Context Manager" << std::endl;
 			result = false;
 		}
@@ -124,7 +124,7 @@ namespace BlendInt {
 	void Interface::Release ()
 	{
 		StockIcon::Release();
-		ContextManager::release();
+		ContextManager::Release();
 		ShaderManager::Release();
 		ThemeManager::release();
 		FontCache::releaseAll();
@@ -149,12 +149,12 @@ namespace BlendInt {
 
 	bool Interface::Bind (AbstractWidget* object)
 	{
-		return ContextManager::instance()->bind(object);
+		return ContextManager::Instance()->Bind(object);
 	}
 
 	bool Interface::Unbind (AbstractWidget* object)
 	{
-		return ContextManager::instance()->unbind(object);
+		return ContextManager::Instance()->Unbind(object);
 	}
 
 	const Size& Interface::size () const
@@ -200,7 +200,7 @@ namespace BlendInt {
 
 		map<int, set<AbstractWidget*>* >::iterator map_it;
 		set<AbstractWidget*>::iterator set_it;
-		ContextManager* cm = ContextManager::instance();
+		ContextManager* cm = ContextManager::Instance();
 
 		for(map_it = cm->m_layers.begin(); map_it != cm->m_layers.end(); map_it++)
 		{
@@ -290,7 +290,7 @@ namespace BlendInt {
 
 			map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
 			set<AbstractWidget*>::reverse_iterator set_it;
-			ContextManager* cm = ContextManager::instance();
+			ContextManager* cm = ContextManager::Instance();
 			set<AbstractWidget*>* pset = 0;
 
 			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
@@ -328,7 +328,7 @@ namespace BlendInt {
 
 			map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
 			set<AbstractWidget*>::reverse_iterator set_it;
-			ContextManager* cm = ContextManager::instance();
+			ContextManager* cm = ContextManager::Instance();
 			set<AbstractWidget*>* pset = 0;
 			for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 			{
@@ -406,7 +406,7 @@ namespace BlendInt {
 
 		map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
 		set<AbstractWidget*>::reverse_iterator set_it;
-		ContextManager* cm = ContextManager::instance();
+		ContextManager* cm = ContextManager::Instance();
 
 		event.SetPosition(cursor_pos_x_, cursor_pos_y_);
 
@@ -452,7 +452,7 @@ namespace BlendInt {
 
 		map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
 		set<AbstractWidget*>::reverse_iterator set_it;
-		ContextManager* cm = ContextManager::instance();
+		ContextManager* cm = ContextManager::Instance();
 
 		event.SetPosition(cursor_pos_x_, cursor_pos_y_);
 

@@ -116,7 +116,7 @@ namespace BlendInt {
 
 		virtual ~AbstractWidget ();
 
-		bool bind (AbstractWidget* child);
+		bool Bind (AbstractWidget* child);
 
 		bool unbind (AbstractWidget* child);
 
@@ -324,6 +324,8 @@ namespace BlendInt {
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
 		Cpp::Event<AbstractWidget*, int> m_property_changed;
+
+		// Cpp::Event<AbstractWidget*> m_destroied;
 
 		Parent m_parent;
 

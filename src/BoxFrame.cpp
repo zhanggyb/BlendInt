@@ -43,7 +43,7 @@ namespace BlendInt {
 
 		m_layout = layout;
 
-		bind(m_layout);
+		Bind(m_layout);
 
 		unsigned int width = layout->size().width() + margin().left() + margin().right();
 		unsigned int height = layout->size().height() + margin().top() + margin().bottom();

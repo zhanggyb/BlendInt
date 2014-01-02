@@ -299,7 +299,7 @@ namespace BlendInt {
 			if(m_slide_button)
 				delete m_slide_button;
 
-			bind(widget);
+			Bind(widget);
 			m_slide_button = widget;
 		}
 	}
