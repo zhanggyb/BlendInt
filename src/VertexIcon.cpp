@@ -38,13 +38,6 @@
 
 namespace BlendInt {
 
-	static const float jit[WIDGET_AA_JITTER][2] = {
-		{ 0.468813, -0.481430}, {-0.155755, -0.352820},
-		{ 0.219306, -0.238501}, {-0.393286, -0.110949},
-		{-0.024699,	 0.013908}, { 0.343805,	 0.147431},
-		{-0.272855,	 0.269918}, { 0.095909,	 0.388710}
-	};
-
 	const float VertexIcon::num_tria_vert[3][2] ={
 		{ -0.352077, 0.532607 },
 		{ -0.352077, -0.549313 },
@@ -116,12 +109,12 @@ namespace BlendInt {
 	void VertexIcon::load (const float (*vertex_array)[2], size_t array_size,
 						   const unsigned int (*vertex_indices)[3], size_t indeces_size)
 	{
-		m_gl_buffer.Generate(1);
-		m_gl_buffer.select(0);	// 0 for ARRAY BUFFER
-		m_gl_buffer.SetProperty(array_size, sizeof(vertex_array[0]), GL_STATIC_DRAW);
-		m_gl_buffer.Bind();
-		m_gl_buffer.Upload(vertex_array);
-		m_gl_buffer.Unbind();
+		m_array_buffer.Generate(1);
+		m_array_buffer.select(0);	// 0 for ARRAY BUFFER
+		m_array_buffer.SetProperty(array_size, sizeof(vertex_array[0]), GL_STATIC_DRAW);
+		m_array_buffer.Bind();
+		m_array_buffer.Upload(vertex_array);
+		m_array_buffer.Unbind();
 
 		m_index_buffer.Generate(1);
 		m_index_buffer.select(0);	// 1 for ELEMENT ARRAY BUFFER
@@ -138,13 +131,18 @@ namespace BlendInt {
 
 	void VertexIcon::Draw()
 	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(size().width()/2.0, size().height()/2.0, 0.0);
+
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		if (m_gl_buffer.size() && m_index_buffer.size()) {
+		if (m_array_buffer.size() && m_index_buffer.size()) {
 
-			m_gl_buffer.select(0);
-			m_gl_buffer.Bind();	// bind ARRAY BUFFER
+			m_array_buffer.select(0);
+			m_array_buffer.Bind();	// bind ARRAY BUFFER
 
 			m_index_buffer.select(0);
 			m_index_buffer.Bind();	// bind ELEMENT ARRAY BUFFER
@@ -155,7 +153,7 @@ namespace BlendInt {
 			/* for each AA step */
 			for (int i = 0; i < WIDGET_AA_JITTER; i++) {
 				glTranslatef(jit[i][0], jit[i][1], 0.0f);
-				glDrawElements(GL_TRIANGLES, m_gl_buffer.Vertices() * 3,
+				glDrawElements(GL_TRIANGLES, m_index_buffer.Vertices() * 3,
 							   GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 				glTranslatef(-jit[i][0], -jit[i][1], 0.0f);
 			}
@@ -163,29 +161,14 @@ namespace BlendInt {
 			glDisableClientState(GL_VERTEX_ARRAY);
 
 			m_index_buffer.Unbind();
-			m_gl_buffer.Unbind();
+			m_array_buffer.Unbind();
 		}
-
-#ifdef DEBUG
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-//		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		float x = size().width() / 2.0;
-		float y = size().height() / 2.0;
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2f( - x, - y);
-		glVertex2f(x, - y);
-		glVertex2f(x, y);
-		glVertex2f(- x, y);
-		glEnd();
-
-		glDisable(GL_LINE_STIPPLE);
-#endif
 
 		glDisable(GL_BLEND);
 
+		glPopMatrix();
+
+		//Icon::Draw();
 	}
 
 }

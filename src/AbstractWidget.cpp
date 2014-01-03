@@ -234,6 +234,9 @@ namespace BlendInt {
 
 	void AbstractWidget::SetLayer (int z)
 	{
+		// If the object is managed by a layout, disallow position setting
+		if(locked()) return;
+
 		if(m_z == z) return;
 
 		if(m_flag[2]) {

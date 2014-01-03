@@ -68,7 +68,7 @@ namespace BlendInt {
 
 	private:
 
-		GLArrayBufferSimple m_gl_buffer;
+		GLArrayBufferSimple m_array_buffer;
 		GLElementArrayBufferSimple m_index_buffer;
 
 	};

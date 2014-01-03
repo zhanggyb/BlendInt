@@ -46,22 +46,53 @@ int main(int argc, char* argv[]) {
 
 	// TODO: add test code here
 
-	VertexIcon* icon = StockIcon::Instance()->menu();
+	Button* button = new Button("Hello");
+	button->SetPosition(200, 400);
+	button->Register();
 
-	Menu* menu = new Menu;
-	menu->SetRoundType(RoundAll);
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(window)) {
+		/* Render here */
+		Interface::Instance()->Draw();
 
-	menu->SetPosition(200, 200);
+#ifdef DEBUG
+		// render icons:
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
 
-	menu->AddMenuItem(icon, "MenuItem1", "Ctrl + A");
-	menu->AddMenuItem(icon, "MenuItem2", "Ctrl + B");
-	menu->AddMenuItem(icon, "MenuItem3", "Ctrl + C");
-	menu->AddMenuItem(icon, "MenuItem4", "Ctrl + D");
-	menu->AddMenuItem(icon, "MenuItem5", "Ctrl + E");
+		glTranslatef(100, 100, 0);
 
-	menu->Register();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	RunLoop(window);
+		// draw inner, simple fill
+		glColor4ub(55, 55, 55, 225);
+
+		Interface::Instance()->DispatchRender(StockIcon::Instance()->menu());
+
+		glTranslatef(50, 0, 0);
+
+		Interface::Instance()->DispatchRender(StockIcon::Instance()->circle());
+
+		glTranslatef(50, 0, 0);
+
+		Interface::Instance()->DispatchRender(StockIcon::Instance()->checkbox());
+
+		glTranslatef(50, 0, 0);
+
+		Interface::Instance()->DispatchRender(StockIcon::Instance()->num());
+
+		glDisable(GL_BLEND);
+		glPopMatrix();
+
+#endif
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
 
 	Terminate();
 
