@@ -62,14 +62,14 @@ namespace BlendInt {
 		m_destroyed.fire(this);
 	}
 
-	void AbstractWidget::Register ()
+	bool AbstractWidget::Register ()
 	{
-		ContextManager::Instance()->Register(this);
+		return ContextManager::Instance()->Register(this);
 	}
 
-	void AbstractWidget::Unregister ()
+	bool AbstractWidget::Unregister ()
 	{
-		ContextManager::Instance()->Unregister(this);
+		return ContextManager::Instance()->Unregister(this);
 	}
 
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)

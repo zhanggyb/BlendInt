@@ -101,13 +101,13 @@ namespace BlendInt {
 			result = false;
 		}
 
-		if (!ContextManager::Initialize()) {
-			std::cerr << "Cannot initialize Context Manager" << std::endl;
+		if (!StockIcon::Initialize()) {
+			std::cerr << "Cannot initialize Stock Icons" << std::endl;
 			result = false;
 		}
 
-		if (!StockIcon::Initialize()) {
-			std::cerr << "Cannot initialize Stock Icons" << std::endl;
+		if (!ContextManager::Initialize()) {
+			std::cerr << "Cannot initialize Context Manager" << std::endl;
 			result = false;
 		}
 
@@ -123,8 +123,8 @@ namespace BlendInt {
 
 	void Interface::Release ()
 	{
-		StockIcon::Release();
 		ContextManager::Release();
+		StockIcon::Release();
 		ShaderManager::Release();
 		ThemeManager::release();
 		FontCache::releaseAll();

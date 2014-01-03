@@ -65,6 +65,13 @@ namespace BlendInt {
 		 */
 		~StockIcon ();
 
+		/**
+		 * @brief Create default icons
+		 *
+		 * Call in constructor
+		 */
+		void CreateIcons ();
+
 		static StockIcon* stock_icon;
 
 		VertexIcon* m_menu;
@@ -75,12 +82,7 @@ namespace BlendInt {
 
 		VertexIcon* m_num;
 
-		/**
-		 * @brief Create default icons
-		 *
-		 * Call in constructor
-		 */
-		void CreateIcons ();
+		Object m_store;
 
 		/**
 		 * @brief Copy constructor, disabled

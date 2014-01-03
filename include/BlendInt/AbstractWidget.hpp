@@ -85,9 +85,33 @@ namespace BlendInt {
 
 		virtual ~AbstractWidget ();
 
-		void Register ();
+		/**
+		 * @brief Register this widget in context manager
+		 * @return
+		 * 	- true Succeed to register
+		 * 	- false Fail to register because this is locked
+		 *
+		 * Register this widget in context manager so that it can be drawn in window and receive
+		 * device events.
+		 *
+		 * @note An unregistered widget still can be drawn or react device events passed from
+		 * superior object.
+		 */
+		bool Register ();
 
-		void Unregister ();
+		/**
+		 * @brief Unregister this widget from context manager
+		 * @return
+		 * 	- true Scceed to unregister
+		 * 	- false This widget is not in context or it's locked
+		 *
+		 * 	Unregister this widget from context manager so that it will not be drawn in window and
+		 * 	do not receive device events.
+		 *
+		 * @note An unregistered widget still can be drawn or react device events passed from
+		 * superior object.
+		 */
+		bool Unregister ();
 
 		/**
 		 * @brief Call Update() and Resize the widget

@@ -112,12 +112,12 @@ namespace BlendInt {
 
 	void MenuItem::RemoveIcon()
 	{
-		//if(StockIcon::Instance()->Find(m_icon))
-		//	m_icon = 0;
-		//else {
-			//delete m_icon;
+		if(m_icon) {
+			if(!m_icon->GetReferenceCount())
+				delete m_icon;
+
 			m_icon = 0;
-		//}
+		}
 	}
 
 }

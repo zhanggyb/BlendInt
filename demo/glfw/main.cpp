@@ -29,6 +29,7 @@
 #include <BlendInt/ImageView.hpp>
 #include <BlendInt/TabFrame.hpp>
 #include <BlendInt/MenuItemBin.hpp>
+#include <BlendInt/StockIcon.hpp>
 
 #include "Window.hpp"
 
@@ -40,23 +41,29 @@ using namespace std;
 int main(int argc, char* argv[]) {
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-	Init();
+	Init ();
+	GLFWwindow* window = CreateWindow("MenuTest1 - Click1");
 
-	GLFWwindow* window = CreateWindow("GLFW3 Demo");
+	// TODO: add test code here
 
-	Widget* widget1 = new Widget;
-	Widget* widget2 = new Widget;
+	VertexIcon* icon = StockIcon::Instance()->menu();
 
-	widget1->SetPosition(200, 200);
-	widget2->SetPosition(400, 200);
+	Menu* menu = new Menu;
+	menu->SetRoundType(RoundAll);
 
-    widget1->Register();
-    widget2->Register();
+	menu->SetPosition(200, 200);
 
-	delete widget2;
+	menu->AddMenuItem(icon, "MenuItem1", "Ctrl + A");
+	menu->AddMenuItem(icon, "MenuItem2", "Ctrl + B");
+	menu->AddMenuItem(icon, "MenuItem3", "Ctrl + C");
+	menu->AddMenuItem(icon, "MenuItem4", "Ctrl + D");
+	menu->AddMenuItem(icon, "MenuItem5", "Ctrl + E");
+
+	menu->Register();
 
 	RunLoop(window);
 
 	Terminate();
+
 }
 

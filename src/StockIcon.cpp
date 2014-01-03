@@ -64,10 +64,6 @@ namespace BlendInt {
 
 	StockIcon::~StockIcon()
 	{
-		delete m_menu;
-		delete m_circle;
-		delete m_checkbox;
-		delete m_num;
 	}
 
 	bool StockIcon::Find (const AbstractResizableForm* icon) const
@@ -129,6 +125,11 @@ namespace BlendInt {
 
 		// check icon
 
+		// Bind once to increase the referecne count and delete them automatically.
+		m_store.Bind(m_menu);
+		m_store.Bind(m_circle);
+		m_store.Bind(m_checkbox);
+		m_store.Bind(m_num);
 	}
 }
 

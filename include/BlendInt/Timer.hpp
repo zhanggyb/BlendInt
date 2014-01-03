@@ -36,6 +36,8 @@
 
 #include <Cpp/Events.hpp>
 
+#include <BlendInt/Object.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -55,7 +57,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup animation
 	 */
-	class Timer
+	class Timer: public Object
 	{
 	public:
 
@@ -63,6 +65,8 @@ namespace BlendInt {
 		 * @brief Default constructor
 		 */
 		Timer ();
+
+		Timer (Object *super);
 
 		/**
 		 * @brief Destructor
