@@ -25,7 +25,6 @@
 #include <stdlib.h>
 
 #include <BlendInt/ContextManager.hpp>
-
 #include <BlendInt/AbstractWidget.hpp>
 
 #include <BlendInt/Types.hpp>
@@ -66,9 +65,10 @@ namespace BlendInt {
 
 	void ContextManager::Release ()
 	{
-		if(context_manager)
+		if(context_manager) {
 			delete context_manager;
-		context_manager = 0;
+			context_manager = 0;
+		}
 	}
 
 	ContextManager::ContextManager ()
@@ -98,72 +98,14 @@ namespace BlendInt {
 		m_index.clear();
 	}
 
-	bool ContextManager::AddWidget (AbstractWidget* obj)
+
+	bool ContextManager::Register (AbstractWidget* obj)
 	{
 		if (!obj) return false;
 
-		map<AbstractWidget*, int>::iterator map_it;
-		
-		map_it = m_index.find(obj);
+		if(obj->m_flag[2]) return true;
 
-		if(map_it != m_index.end()) {
-			if (map_it->second == obj->z()) {
-				return false;
-			}
-
-			set<AbstractWidget*>* p = m_layers[map_it->second];
-			set<AbstractWidget*>::iterator it = p->find(obj);
-			if (it != p->end()) {
-				p->erase (it);
-			} else {
-#ifdef DEBUG
-				std::cerr << "Note: object is not recorded" << std::endl;
-#endif
-			}
-
-			if (p->empty()) {
-				m_layers.erase(map_it->second);
-				delete p;
-			}
-
-			map<int, set<AbstractWidget*>* >::iterator layer_it;
-			layer_it = m_layers.find(obj->z());
-			if(layer_it != m_layers.end()) {
-				layer_it->second->insert(obj);
-			} else {
-				set<AbstractWidget*>* new_set = new set<AbstractWidget*>;
-				new_set->insert(obj);
-				m_layers[obj->z()] = new_set;
-			}
-			
-		} else {
-
-			map<int, set<AbstractWidget*>* >::iterator layer_it;
-			layer_it = m_layers.find(obj->z());
-			if(layer_it != m_layers.end()) {
-				layer_it->second->insert(obj);
-			} else {
-				set<AbstractWidget*>* new_set = new set<AbstractWidget*>;
-				new_set->insert(obj);
-				m_layers[obj->z()] = new_set;
-			}
-			
-		}
-
-		m_index[obj] = obj->z();
-		return true;
-	}
-
-	bool ContextManager::Bind (AbstractWidget* obj)
-	{
-		if (!obj) return false;
-
-		if(AddWidget(obj)) {
-//			std::cerr << "add object" << std::endl;
-		} else {
-			std::cerr << "obj already in contextmanager with the same layer" << std::endl;
-			return false;
-		}
+		AddWidget(obj);
 
 		obj->m_flag.set(2);
 
@@ -172,13 +114,14 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool ContextManager::Unbind (AbstractWidget* obj)
+	bool ContextManager::Unregister (AbstractWidget* obj)
 	{
 		if (!obj) return false;
 
-		if(RemoveWidget(obj)) {
-//			std::cerr << "remove object" << std::endl;
-		} else {
+		if(!obj->m_flag[2]) return true;
+
+		if(!RemoveWidget(obj)) {
+			obj->m_flag.reset(2);
 			std::cerr << "obj not in in contextmanager with the same layer" << std::endl;
 			return false;
 		}
@@ -190,9 +133,65 @@ namespace BlendInt {
 		return true;
 	}
 
+	void ContextManager::AddWidget (AbstractWidget* obj)
+	{
+//		map<AbstractWidget*, int>::iterator map_it;
+//
+//		map_it = m_index.find(obj);
+//
+//		if(map_it != m_index.end()) {
+//			if (map_it->second == obj->z()) {
+//				return false;
+//			}
+//
+//			set<AbstractWidget*>* p = m_layers[map_it->second];
+//			set<AbstractWidget*>::iterator it = p->find(obj);
+//			if (it != p->end()) {
+//				p->erase (it);
+//			} else {
+//#ifdef DEBUG
+//				std::cerr << "Note: object is not recorded" << std::endl;
+//#endif
+//			}
+//
+//			if (p->empty()) {
+//				m_layers.erase(map_it->second);
+//				delete p;
+//			}
+//
+//			map<int, set<AbstractWidget*>* >::iterator layer_it;
+//			layer_it = m_layers.find(obj->z());
+//			if(layer_it != m_layers.end()) {
+//				layer_it->second->insert(obj);
+//			} else {
+//				set<AbstractWidget*>* new_set = new set<AbstractWidget*>;
+//				new_set->insert(obj);
+//				m_layers[obj->z()] = new_set;
+//			}
+//
+//		} else {
+
+			map<int, set<AbstractWidget*>* >::iterator layer_it;
+			layer_it = m_layers.find(obj->z());
+			if(layer_it != m_layers.end()) {
+				layer_it->second->insert(obj);
+			} else {
+				set<AbstractWidget*>* new_set = new set<AbstractWidget*>;
+				new_set->insert(obj);
+				m_layers[obj->z()] = new_set;
+			}
+			
+//		}
+
+		m_index[obj] = obj->z();
+		//return true;
+	}
+
 	void ContextManager::OnDestroyObject(AbstractWidget* obj)
 	{
 		std::cout << "Get event" << std::endl;
+		if(!obj) return;
+
 		RemoveWidget(obj);
 		obj->m_flag.reset(2);
 		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);

@@ -36,7 +36,7 @@ TEST_F(VerticalLayoutTest1, Add1)
 	vlayout->Add(widget1);
 	vlayout->Add(widget2);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 
@@ -73,7 +73,7 @@ TEST_F(VerticalLayoutTest1, Add2)
 	vlayout->Add(widget1);
 	vlayout->Add(widget2);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 
@@ -111,7 +111,7 @@ TEST_F(VerticalLayoutTest1, Add3)
 	vlayout->Add(widget1);
 	vlayout->Add(widget2);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 
@@ -146,7 +146,7 @@ TEST_F(VerticalLayoutTest1, Add4)
 	vlayout->Add(widget1);
 	vlayout->Add(widget2);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 
@@ -192,7 +192,7 @@ TEST_F(VerticalLayoutTest1, Add5)
 	vlayout->Add(widget3);
 	vlayout->Add(widget4);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 
@@ -235,7 +235,7 @@ TEST_F(VerticalLayoutTest1, Add6)
 	vlayout->Add(widget3);
 	vlayout->Add(widget4);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 
@@ -273,7 +273,7 @@ TEST_F(VerticalLayoutTest1, Add7)
 
 	vlayout->Resize(100, 80);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 
@@ -308,7 +308,7 @@ TEST_F(VerticalLayoutTest1, Resize1)
 
 	vlayout->Resize(200, 400);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 
@@ -340,7 +340,7 @@ TEST_F(VerticalLayoutTest1, Resize2)
 
 	vlayout->Resize(200, 400);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 
@@ -378,7 +378,7 @@ TEST_F(VerticalLayoutTest1, Resize3)
 
 	vlayout->Resize(100, 80);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 
@@ -413,7 +413,8 @@ TEST_F(VerticalLayoutTest1, SetMargin1)
 	vlayout->Add(widget2);
 
     vlayout->Resize(200, 400);
-	Interface::Instance()->Bind(vlayout);
+
+    vlayout->Register();
 
     vlayout->SetMargin(20, 20, 20, 20);
 
@@ -450,7 +451,8 @@ TEST_F(VerticalLayoutTest1, SetSpace1)
 	vlayout->Add(widget2);
 
     vlayout->Resize(200, 400);
-	Interface::Instance()->Bind(vlayout);
+
+    vlayout->Register();
 
     vlayout->SetSpace(10);
 

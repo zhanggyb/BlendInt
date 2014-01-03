@@ -61,7 +61,7 @@ namespace BlendInt {
 
 		bool UnboundFrom (Object* super);
 
-		virtual void UnboundFromAll ();
+		void UnboundFromAll ();
 
 		bool BoundTo (Object* super);
 

@@ -32,9 +32,9 @@ TEST_F(WidgetTest1, Show1)
     Widget* widget2 = new Widget;
     widget2->set_name("widget2");
     widget2->SetPosition(400, 200);
-    
-    Interface::Instance()->Bind(widget1);
-    Interface::Instance()->Bind(widget2);
+
+    widget1->Register();
+    widget2->Register();
 
 	RunLoop(window);
 

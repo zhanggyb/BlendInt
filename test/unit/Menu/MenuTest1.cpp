@@ -37,8 +37,8 @@ TEST_F(MenuTest1, Foo1)
     menubin->AddMenuItem("MenuItem3");
     menubin->AddMenuItem("MenuItem4");
     menubin->AddMenuItem("MenuItem5");
-    
-    Interface::Instance()->Bind(menubin);
+
+    menubin->Register();
 
 	RunLoop(window);
 
@@ -71,13 +71,13 @@ TEST_F(MenuTest1, Click1)
     menubin->AddMenuItem(icon, "MenuItem4", "Ctrl + D");
     menubin->AddMenuItem(icon, "MenuItem5", "Ctrl + E");
     
-    Interface::Instance()->Bind(menubin);
-	
+    menubin->Register();
+
 	InfoWidget* info = new InfoWidget;
 	
 	info->SetPosition(600, 200);
-	
-	Interface::Instance()->Bind(info);
+
+    info->Register();
 	
 	Interface::Instance()->events()->connect(menubin->triggered(), info, &InfoWidget::onShowText);
 

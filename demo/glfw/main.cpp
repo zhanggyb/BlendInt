@@ -50,8 +50,8 @@ int main(int argc, char* argv[]) {
 	widget1->SetPosition(200, 200);
 	widget2->SetPosition(400, 200);
 
-	Interface::Instance()->Bind(widget1);
-	Interface::Instance()->Bind(widget2);
+    widget1->Register();
+    widget2->Register();
 
 	delete widget2;
 

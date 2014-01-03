@@ -49,9 +49,9 @@ namespace BlendInt {
 
 		static ContextManager* Instance ();
 		
-		bool Bind (AbstractWidget* obj);
+		bool Register (AbstractWidget* obj);
 
-		bool Unbind (AbstractWidget* obj);
+		bool Unregister (AbstractWidget* obj);
 
 		size_t index_size () const {return m_index.size();}
 
@@ -74,11 +74,10 @@ namespace BlendInt {
 		/**
 		 * @brief add the drawable in the context list
 		 * @param obj
-		 * @return false if object already exist and at the same layer
 		 *
 		 * add or Update the Drawable object in the context list
 		 */
-		bool AddWidget (AbstractWidget* obj);
+		void AddWidget (AbstractWidget* obj);
 
 		/**
 		 * @breif remove a drawable from the context list

@@ -40,7 +40,7 @@ TEST_F(BoxFrameTest1, SetLayout1)
 
 	boxframe->SetLayout(hlayout);
 
-	Interface::Instance()->Bind(boxframe);
+    boxframe->Register();
 
 	RunLoop(window);
 
@@ -75,7 +75,7 @@ TEST_F(BoxFrameTest1, Move1)
 
 	boxframe->SetPosition(400, 400);
 
-	Interface::Instance()->Bind(boxframe);
+    boxframe->Register();
 
 	RunLoop(window);
 

@@ -46,7 +46,7 @@ TEST_F(VLayoutTest1, Add1)
 	vlayout->Add(widget1);
 	vlayout->Add(hlayout);
 
-	Interface::Instance()->Bind(vlayout);
+    vlayout->Register();
 
 	RunLoop(window);
 

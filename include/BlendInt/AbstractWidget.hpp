@@ -85,11 +85,9 @@ namespace BlendInt {
 
 		virtual ~AbstractWidget ();
 
-		bool BoundTo (ContextManager* parent);
+		void Register ();
 
-		bool UnboundFrom (ContextManager* parent);
-
-		virtual void UnboundFromAll ();
+		void Unregister ();
 
 		/**
 		 * @brief Call Update() and Resize the widget
@@ -120,12 +118,19 @@ namespace BlendInt {
 
 		void SetMaximalSize (const Size& size);
 
-		int z () const
+		void SetLayer (int z);
+
+		inline int layer () const
 		{
 			return m_z;
 		}
 
-		void reset_z (int z);
+		inline int z () const
+		{
+			return m_z;
+		}
+
+		//void reset_z (int z);
 
 		void show ();
 
@@ -134,6 +139,11 @@ namespace BlendInt {
 		inline bool locked () const
 		{
 			return m_flag[0];
+		}
+
+		inline bool registered() const
+		{
+			return m_flag[2];
 		}
 
 		Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
@@ -214,7 +224,7 @@ namespace BlendInt {
 		 * @brief just change m_z simply
 		 * @param z
 		 */
-		void set_z_simple (int z);
+		//void set_z_simple (int z);
 
 		void LockGeometry (AbstractWidget* obj, bool status)
 		{
@@ -229,7 +239,7 @@ namespace BlendInt {
 		 */
 		inline void fire_property_changed_event (int type)
 		{
-			//if (m_fire_events)
+			if (m_flag[1])
 				m_property_changed.fire(this, type);
 		}
 
@@ -276,7 +286,7 @@ namespace BlendInt {
 		 *
 		 * - bit 0: lock geometry
 		 * - bit 1: fire events
-		 * - bit 2: bound to context manager
+		 * - bit 2: registered in context manager
 		 */
 		std::bitset<32> m_flag;
 

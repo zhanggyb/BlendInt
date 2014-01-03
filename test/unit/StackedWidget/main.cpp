@@ -65,7 +65,7 @@ int main (int argc, char* argv[])
 
     tf->Resize(400, 400);
 
-	Interface::Instance()->Bind(tf);
+    tf->Register();
 
     RunLoop(window);
 

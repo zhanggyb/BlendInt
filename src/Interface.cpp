@@ -147,16 +147,6 @@ namespace BlendInt {
 
 	}
 
-	bool Interface::Bind (AbstractWidget* object)
-	{
-		return ContextManager::Instance()->Bind(object);
-	}
-
-	bool Interface::Unbind (AbstractWidget* object)
-	{
-		return ContextManager::Instance()->Unbind(object);
-	}
-
 	const Size& Interface::size () const
 	{
 		return m_size;

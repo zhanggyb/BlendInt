@@ -62,33 +62,14 @@ namespace BlendInt {
 		m_destroyed.fire(this);
 	}
 
-	bool AbstractWidget::BoundTo (ContextManager *parent)
+	void AbstractWidget::Register ()
 	{
-		if(!parent) return false;
-
-		if(m_flag[2]) return true;
-
-		parent->Bind(this);
-
-		return true;
+		ContextManager::Instance()->Register(this);
 	}
 
-	bool AbstractWidget::UnboundFrom (ContextManager *parent)
+	void AbstractWidget::Unregister ()
 	{
-		if(!parent) return false;
-
-		if(!m_flag[2]) return true;
-
-		parent->Unbind(this);
-
-		return true;
-	}
-
-	void AbstractWidget::UnboundFromAll()
-	{
-		AbstractExtraForm::UnboundFromAll();
-
-		ContextManager::Instance()->Unbind(this);
+		ContextManager::Instance()->Unregister(this);
 	}
 
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)
@@ -251,9 +232,27 @@ namespace BlendInt {
 		fire_property_changed_event(FormMaximalSize);
 	}
 
-	void AbstractWidget::reset_z (int z)
+	void AbstractWidget::SetLayer (int z)
 	{
-		if (m_z == z) return;
+		if(m_z == z) return;
+
+		if(m_flag[2]) {
+			ContextManager::Instance()->Unregister(this);
+			Update (WidgetLayer, &z);
+			m_z = z;
+			ContextManager::Instance()->Register(this);
+		} else {
+			Update (WidgetLayer, &z);
+			m_z = z;
+		}
+
+		fire_property_changed_event(WidgetLayer);
+	}
+
+
+	//void AbstractWidget::reset_z (int z)
+	//{
+		//if (m_z == z) return;
 
 //		AbstractWidget* root = 0;
 //		Parent* parent = &m_parent;
@@ -277,9 +276,9 @@ namespace BlendInt {
 //			}
 //		}
 
-		set_z_simple(z);
+		//set_z_simple(z);
 		// m_property_changed.fire(FormPropertyLayer);
-	}
+	//}
 
 	bool AbstractWidget::contain(const Coord2d& cursor)
 	{
@@ -293,9 +292,9 @@ namespace BlendInt {
 		return true;
 	}
 
-	void AbstractWidget::set_z_simple (int z)
-	{
-		m_z = z;
+	//void AbstractWidget::set_z_simple (int z)
+	//{
+	//	m_z = z;
 
 //		std::set<AbstractWidget*>::iterator it;
 //		for (it = m_children.begin(); it != m_children.end(); it++)
@@ -304,7 +303,7 @@ namespace BlendInt {
 //		}
 
 		// TODO: call Update()
-	}
+	//}
 
 	void AbstractWidget::SetPosition(AbstractWidget* obj, int x, int y)
 	{

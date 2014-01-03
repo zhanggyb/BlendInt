@@ -41,7 +41,7 @@ namespace BlendInt {
 	PopupWidget::PopupWidget()
 	: Widget()
 	{
-		reset_z(1);	// TODO: define layer in enumeration
+		SetLayer(1);	// TODO: define layer in enumeration
 	}
 
 	PopupWidget::~PopupWidget()

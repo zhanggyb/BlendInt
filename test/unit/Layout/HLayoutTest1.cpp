@@ -31,7 +31,7 @@ TEST_F(HLayoutTest1, Mix1)
 	hlayout->Add(widget1);
 	hlayout->Add(vlayout);
 
-	Interface::Instance()->Bind(hlayout);
+    hlayout->Register();
 
 	RunLoop(window);
 

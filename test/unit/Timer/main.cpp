@@ -144,7 +144,7 @@ int main (int argc, char* argv[])
 
 	widget->SetPosition(200, 200);
 
-	Interface::Instance()->Bind(widget);
+    widget->Register();
 
     RunLoop(window);
 
