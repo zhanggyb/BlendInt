@@ -34,8 +34,6 @@
 #endif
 #endif  // __UNIX__
 
-#include <vector>
-
 namespace BlendInt {
 
 	/**
@@ -47,21 +45,131 @@ namespace BlendInt {
 
 		Texture2D();
 
+		Texture2D(GLsizei width, GLsizei height);
+
 		~Texture2D();
 
-		void Generate (size_t size = 1);
+		void Generate ();
 
-		void Bind (size_t index);
+		void Bind ();
+
+		void SetSize (GLsizei width, GLsizei height);
+
+		/**
+		 * @brief Get the index of the lowest defined mipmap level
+		 * @return Index of the level
+		 */
+		GLint GetBaseLevel ();
+
+		/**
+		 * @brief Specifies the index of the lowest defined mipmap level.
+		 * @param[in] level The index of the level, integer value, initial is 0
+		 */
+		void SetBaseLevel (GLint level);
+
+		/**
+		 * @brief Set the border color
+		 * @param color
+		 */
+		void SetBorderColor (const GLint color[4]);
+
+		/**
+		 * @brief Set the border color
+		 * @param color
+		 */
+		void SetBorderColor (const GLfloat color[4]);
+
+		/**
+		 * @brief Specifies the comparison operator used when GL_TEXTURE_COMPARE_MODE is set to GL_COMPARE_REF_TO_TEXTURE.
+		 * @param value
+		 */
+		void SetCompareFunc (GLint func);
+
+		/**
+		 * @brief Specifies the texture comparison mode for currently bound depth textures
+		 * @param mode
+		 */
+		void SetCompareMode (GLint mode);
+
+		void SetLodBias (GLfloat value);
+
+		void SetMinFilter (GLint filter);
+
+		void SetMagFilter (GLint filter);
+
+		/**
+		 * @brief Sets the wrap parameter for texture coordinates
+		 * @param[in] s_mode The wrap mode for S(X) coordinate
+		 * @param[in] t_mode The wrap mode for T(Y) coordinate
+		 *
+		 * Both s_mode, t_mode should be one of:
+		 * 	- GL_CLAMP_TO_EDGE
+		 * 	- GL_CLAMP_TO_BORDER
+		 * 	- GL_MIRRORED_REPEAT
+		 * 	- GL_REPEAT
+		 */
+		void SetWrapMode (GLint s_mode, GLint t_mode);
+
+		/**
+		 * @brief Sets the wrap parameter for texture S(X) coordinate
+		 * @param[in] mode The wrap mode for S(X) coordinate
+		 *
+		 * The parameter mode, should be one of:
+		 * 	- GL_CLAMP_TO_EDGE
+		 * 	- GL_CLAMP_TO_BORDER
+		 * 	- GL_MIRRORED_REPEAT
+		 * 	- GL_REPEAT
+		 */
+		void SetWrapModeS (GLint mode);
+
+		/**
+		 * @brief Sets the wrap parameter for texture T(Y) coordinate
+		 * @param[in] mode The wrap mode for T(Y) coordinate
+		 *
+		 * The parameter mode, should be one of:
+		 * 	- GL_CLAMP_TO_EDGE
+		 * 	- GL_CLAMP_TO_BORDER
+		 * 	- GL_MIRRORED_REPEAT
+		 * 	- GL_REPEAT
+		 */
+		void SetWrapModeT (GLint mode);
+
+		/**
+		 * @brief Sets the minimal level-of-detail parameter
+		 * @param value
+		 */
+		void SetMinLod (GLint value);
+
+		/**
+		 * @brief Sets the maximal level-of-detail parameter
+		 * @param value
+		 */
+		void SetMaxLod (GLint value);
+
+		/**
+		 * @brief Sets the inex of the highest defined mipmap level.
+		 * @param level Integer value, initial is 1000
+		 */
+		void SetMaxLevel (GLint level);
 
 		void SetParameter (GLenum name, GLint value);
 
 		void SetParameter (GLenum name, GLfloat value);
 
-		void SetImage (GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
+		void SetImage (GLint level, GLint internalFormat, GLint border, GLenum format, GLenum type, const GLvoid* data);
+
+		void Unbind ();
 
 	private:
 
-		std::vector<GLuint> m_ids;
+		void Clear();
+
+		GLuint m_id;
+
+		GLsizei m_width;
+		GLsizei m_height;
+
+		bool m_bind;
 	};
 
 }
