@@ -195,6 +195,7 @@
 							<tool id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.1169008438" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base">
 								<option id="macosx.cpp.link.option.libs.1111773605" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="boost_system"/>
+									<listOptionValue builtIn="false" value="OpenImageIO"/>
 									<listOptionValue builtIn="false" value="freetype"/>
 									<listOptionValue builtIn="false" value="GLU"/>
 									<listOptionValue builtIn="false" value="fontconfig"/>
@@ -205,6 +206,7 @@
 								<option defaultValue="true" id="macosx.cpp.link.option.shared.1989592287" name="Shared (-dynamiclib)" superClass="macosx.cpp.link.option.shared" valueType="boolean"/>
 								<option id="macosx.cpp.link.option.paths.185187606" name="Library search path (-L)" superClass="macosx.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries"/>
+									<listOptionValue builtIn="false" value="/Users/zhanggy/Opt/lib"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.127328608" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -218,6 +220,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.129274260" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
 								<option id="gnu.cpp.compiler.option.include.paths.1491440649" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/libdrm"/>
+									<listOptionValue builtIn="false" value="/Users/zhanggy/Opt/include"/>
 									<listOptionValue builtIn="false" value="/usr/local/include/freetype2"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/extern/CppEvents/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include/BlendInt}&quot;"/>

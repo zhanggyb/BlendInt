@@ -124,8 +124,7 @@ namespace BlendInt {
 
 		Cpp::EventRef<unsigned int, unsigned int> resized() {return m_resized;}
 
-		// Cpp::ConnectionScope& events () {return m_events;}
-		boost::scoped_ptr<Cpp::ConnectionScope>& events() {return m_events;}
+		Cpp::ConnectionScope* events() const {return m_events.get();}
 
 	private:
 

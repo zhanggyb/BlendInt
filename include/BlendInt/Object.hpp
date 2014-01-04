@@ -49,7 +49,7 @@ namespace BlendInt {
 
 		Object ();
 
-		Object (Object* superior);
+		explicit Object (Object* superior);
 
 		virtual ~Object ();
 

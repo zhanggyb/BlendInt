@@ -46,8 +46,8 @@ namespace BlendInt {
 
 		void makeCheckImage ();
 
-		static const int checkImageWidth = 64;
-		static const int checkImageHeight = 64;
+		static const int checkImageWidth = 512;
+		static const int checkImageHeight = 512;
 
 		GLubyte _checkImage[checkImageHeight][checkImageWidth][4];
 

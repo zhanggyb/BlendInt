@@ -30,9 +30,9 @@
 namespace BlendInt {
 
 	Timer::Timer()
-	: Object()
+	: Object(),
 #if BLENDINT_USE_POSIX_TIMER
-			, m_id (0),
+			m_id (0),
 #endif
 			m_interval(40),
 			m_enabled(false)
@@ -41,9 +41,9 @@ namespace BlendInt {
 	}
 
 	Timer::Timer(Object* super)
-	: Object(super)
+	: Object(super),
 #if BLENDINT_USE_POSIX_TIMER
-			,m_id (0),
+			m_id (0),
 #endif
 			m_interval(40),
 			m_enabled(false)

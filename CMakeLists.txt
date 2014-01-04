@@ -81,7 +81,10 @@ endif()
 
 #add OpenImageIO link
 if(APPLE)
-    # todo: install openimageio
+    # use the libraries from Blender repository
+    include_directories($ENV{HOME}/Opt/include)
+    LINK_DIRECTORIES($ENV{HOME}/Opt/lib)
+    set(LIBS ${LIBS} OpenImageIO)
 else()
     set(LIBS ${LIBS} OpenImageIO)
 endif()

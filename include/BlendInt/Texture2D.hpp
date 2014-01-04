@@ -21,44 +21,49 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Image.hpp>
+#ifndef _BLENDINT_TEXTURE2D_HPP_
+#define _BLENDINT_TEXTURE2D_HPP_
 
-#include <OpenImageIO/imageio.h>
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
 
-OIIO_NAMESPACE_USING
+#include <vector>
 
 namespace BlendInt {
 
-	Image::Image ()
-	: m_width(0), m_height(0), m_channels(0)
+	/**
+	 * @brief 2D Texture
+	 */
+	class Texture2D
 	{
+	public:
 
-	}
+		Texture2D();
 
-	Image::~Image()
-	{
+		~Texture2D();
 
-	}
+		void Generate (size_t size = 1);
 
-	bool Image::read (const String& filename)
-	{
-		ImageInput *in = ImageInput::open (ConvertFromString(filename));
+		void Bind (size_t index);
 
-		if (! in)
-			return false;
+		void SetParameter (GLenum name, GLint value);
 
-		const ImageSpec &spec = in->spec();
+		void SetParameter (GLenum name, GLfloat value);
 
-		m_width = spec.width;
-		m_height = spec.height;
-		m_channels = spec.nchannels;
-		m_pixels.resize (m_width * m_height * m_channels);
-		in->read_image (TypeDesc::UINT8, &m_pixels[0]);
-		in->close ();
+		void SetImage (GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
 
-		delete in;
+	private:
 
-		return true;
-	}
+		std::vector<GLuint> m_ids;
+	};
 
 }
+
+#endif	// _BLENDINT_TEXTURE2D_HPP_

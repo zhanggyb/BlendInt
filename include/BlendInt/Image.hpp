@@ -37,6 +37,7 @@ namespace BlendInt {
 	public:
 
 		Image ();
+
 		~Image ();
 
 		bool read (const String& filename);

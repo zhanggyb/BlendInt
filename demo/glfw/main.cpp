@@ -45,54 +45,12 @@ int main(int argc, char* argv[]) {
 	GLFWwindow* window = CreateWindow("MenuTest1 - Click1");
 
 	// TODO: add test code here
+	ImageView* iv = new ImageView;
+	iv->SetPosition(200, 200);
 
-	Button* button = new Button("Hello");
-	button->SetPosition(200, 400);
-	button->Register();
+	iv->Register();
 
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window)) {
-		/* Render here */
-		Interface::Instance()->Draw();
-
-#ifdef DEBUG
-		// render icons:
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(100, 100, 0);
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		// draw inner, simple fill
-		glColor4ub(55, 55, 55, 225);
-
-		Interface::Instance()->DispatchRender(StockIcon::Instance()->menu());
-
-		glTranslatef(50, 0, 0);
-
-		Interface::Instance()->DispatchRender(StockIcon::Instance()->circle());
-
-		glTranslatef(50, 0, 0);
-
-		Interface::Instance()->DispatchRender(StockIcon::Instance()->checkbox());
-
-		glTranslatef(50, 0, 0);
-
-		Interface::Instance()->DispatchRender(StockIcon::Instance()->num());
-
-		glDisable(GL_BLEND);
-		glPopMatrix();
-
-#endif
-
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
-
-		/* Poll for and process events */
-		glfwPollEvents();
-	}
+	RunLoop(window);
 
 	Terminate();
 

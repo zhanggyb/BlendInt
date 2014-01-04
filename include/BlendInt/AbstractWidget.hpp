@@ -81,7 +81,7 @@ namespace BlendInt {
 		 * a static list -- solo, it's usually a pop-up widget such as
 		 * context menu, message box
 		 */
-		AbstractWidget (AbstractWidget* super);
+		explicit AbstractWidget (AbstractWidget* super);
 
 		virtual ~AbstractWidget ();
 
@@ -255,7 +255,7 @@ namespace BlendInt {
 			obj->m_flag[0] = status ? 1 : 0;
 		}
 
-		boost::scoped_ptr<Cpp::ConnectionScope>& events() {return m_events;}
+		Cpp::ConnectionScope* events() const {return m_events.get();}
 
 		/**
 		 * @brief fire event to inform the property of this object is changed
