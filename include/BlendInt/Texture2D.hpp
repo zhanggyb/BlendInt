@@ -51,6 +51,8 @@ namespace BlendInt {
 
 		~Texture2D();
 
+		inline GLuint id() const {return m_id;}
+
 		void Generate ();
 
 		void Bind ();

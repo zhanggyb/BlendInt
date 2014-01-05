@@ -31,6 +31,7 @@
 #endif  // __UNIX__
 
 #include <iostream>
+#include <boost/filesystem.hpp>
 
 #include <OpenImageIO/imageio.h>
 OIIO_NAMESPACE_USING
@@ -189,20 +190,38 @@ namespace BlendInt {
 		SetParameter(GL_TEXTURE_WRAP_T, mode);
 	}
 
-	bool Texture2D::WriteToFile (const std::string& path)
+	bool Texture2D::WriteToFile (const std::string& filename)
 	{
 		if(!m_flag[2]) return false;
 
+		using namespace boost;
+
+		filesystem::path pathname (filename);
+
+		if(filesystem::exists(pathname)) {
+			if(filesystem::is_directory(pathname)) {
+			}
+			if(filesystem::is_regular_file(pathname)) {
+
+			}
+
+			std::cerr << pathname << " exists, abort writing to this file!" << std::endl;
+			return false;
+		} else {
+
+		}
+
+		// demo code
 		unsigned char pixels[m_width * m_height * 4];
 
 		glGetTexImage (GL_TEXTURE_2D, m_level, m_format, m_type, pixels);
 
-		ImageOutput* out = ImageOutput::create(path);
+		ImageOutput* out = ImageOutput::create(filename);
 		if(!out)
 			return false;
 
 		ImageSpec spec (m_width, m_height, 4, TypeDesc::UINT8);
-		out->open(path, spec);
+		out->open(filename, spec);
 		out->write_image(TypeDesc::UINT8, pixels);
 		out->close();
 		delete out;
@@ -228,6 +247,9 @@ namespace BlendInt {
 
 	void Texture2D::Clear ()
 	{
+		if(m_flag[1]) {
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 		if (glIsTexture(m_id)) {
 			glDeleteTextures(1, &m_id);
 		}

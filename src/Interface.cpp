@@ -47,6 +47,7 @@
 #include <BlendInt/ContextMenuEvent.hpp>
 #include <BlendInt/ContextManager.hpp>
 #include <BlendInt/StockIcon.hpp>
+#include <BlendInt/Texture2D.hpp>
 
 namespace BlendInt {
 
@@ -172,6 +173,7 @@ namespace BlendInt {
 		// enable anti-alias
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 		//glEnable (GL_POINT_SMOOTH);
 		//glEnable (GL_LINE_SMOOTH);
 		//glEnable (GL_POLYGON_SMOOTH);
@@ -202,6 +204,7 @@ namespace BlendInt {
 		}
 		// m_ticktack = m_ticktack ? 0 : 1;
 
+		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 	}
 
@@ -271,7 +274,7 @@ namespace BlendInt {
 	void Interface::GLFWKeyEvent (int key, int scancode, int action, int mods)
 	{
 #ifdef DEBUG
-		if(key == GLFW_KEY_F1 && action == GLFW_PRESS)
+		if(key == GLFW_KEY_F6 && action == GLFW_PRESS)
 			RenderToImage();
 #endif
 
@@ -501,51 +504,73 @@ namespace BlendInt {
 	void Interface::RenderToImage()
 	{
 		std::cout << "Render to Image" << std::endl;
+
+		// Create and set texture to render to.
+		Texture2D* tex = new Texture2D;
+		tex->Generate();
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(m_size.width(), m_size.height(), 0);
+
 		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-		GLuint FramebufferName = 0;
-		glGenFramebuffers(1, &FramebufferName);
-		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
-
-		// The texture we're going to render to
-		GLuint renderedTexture;
-		glGenTextures(1, &renderedTexture);
-
-		// "Bind" the newly created texture : all future texture functions will modify this texture
-		glBindTexture(GL_TEXTURE_2D, renderedTexture);
-
-		// Give an empty image to OpenGL ( the last "0" )
-		glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, 1024, 768, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
-
-		// Poor filtering. Needed !
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		GLuint fb = 0;
+		glGenFramebuffers(1, &fb);
+		glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
 		// Set "renderedTexture" as our colour attachement #0
-#ifdef __APPLE__
-		glFramebufferTextureEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedTexture, 0);
-#else
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, renderedTexture, 0);
-#endif
-		// Set the list of draw buffers.
-		GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-		glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		        GL_TEXTURE_2D, tex->id(), 0);
 
-		// Always check that our framebuffer is ok
-		if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-			glDeleteTextures(1, &renderedTexture);
-			glDeleteFramebuffers(1, &FramebufferName);
-			return;
-			//return false;
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER_EXT, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+		        m_size.width(), m_size.height());
+
+		//-------------------------
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		        GL_RENDERBUFFER, rb);
+
+		//-------------------------
+		//Does the GPU support current FBO configuration?
+		GLenum status;
+		status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		switch (status) {
+			case GL_FRAMEBUFFER_COMPLETE:
+				std::cout << "good" << std::endl;
+				break;
+			default:
+				std::cerr << "Fail to check framebuffer status" << std::endl;
+				break;
 		}
 
-		// Render to our framebuffer
-		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+		//-------------------------
+		//and now render to GL_TEXTURE_2D
+		glBindFramebuffer(GL_FRAMEBUFFER_EXT, fb);
+
 		Draw();
 
-		// Render to the screen
+		//Bind 0, which means render to back buffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glDeleteTextures(1, &renderedTexture);
-		glDeleteFramebuffers(1, &FramebufferName);
+
+		tex->WriteToFile("output.png");
+		tex->Unbind();
+
+		//Delete resources
+		delete tex;
+		tex = 0;
+
+		glDeleteRenderbuffers(1, &rb);
+
+		//Bind 0, which means render to back buffer, as a result, fb is unbound
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDeleteFramebuffers(1, &fb);
 
 		Draw();
 	}

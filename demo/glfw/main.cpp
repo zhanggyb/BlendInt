@@ -46,20 +46,11 @@ int main(int argc, char* argv[]) {
 	GLFWwindow* window = CreateWindow("MenuTest1 - Click1");
 
 	// TODO: add test code here
-	unsigned char image[512][512][4];
-	Texture2D::MakeCheckImage (image);
+	Widget* widget = new Widget;
+	widget->SetPosition(200, 200);
+	widget->Resize(400, 300);
 
-	Texture2D* tex = new Texture2D;
-
-	tex->Generate();
-	tex->Bind();
-
-	tex->SetImage (512, 512, image);
-	tex->WriteToFile ("test.png");
-
-	tex->Unbind();
-
-	delete tex;
+	widget->Register();
 
 	RunLoop(window);
 
