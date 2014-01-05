@@ -30,6 +30,7 @@
 #include <BlendInt/TabFrame.hpp>
 #include <BlendInt/MenuItemBin.hpp>
 #include <BlendInt/StockIcon.hpp>
+#include <BlendInt/Texture2D.hpp>
 
 #include "Window.hpp"
 
@@ -45,10 +46,20 @@ int main(int argc, char* argv[]) {
 	GLFWwindow* window = CreateWindow("MenuTest1 - Click1");
 
 	// TODO: add test code here
-	ImageView* iv = new ImageView;
-	iv->SetPosition(200, 200);
+	unsigned char image[512][512][4];
+	Texture2D::MakeCheckImage (image);
 
-	iv->Register();
+	Texture2D* tex = new Texture2D;
+
+	tex->Generate();
+	tex->Bind();
+
+	tex->SetImage (512, 512, image);
+	tex->WriteToFile ("test.png");
+
+	tex->Unbind();
+
+	delete tex;
 
 	RunLoop(window);
 

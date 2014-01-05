@@ -32,18 +32,21 @@
 
 #include <iostream>
 
+#include <OpenImageIO/imageio.h>
+OIIO_NAMESPACE_USING
+
 #include <BlendInt/Texture2D.hpp>
 
 namespace BlendInt {
 
 	Texture2D::Texture2D ()
-			: m_id(0), m_width(512), m_height(512), m_bind(false)
+			: m_id(0), m_width(512), m_height(512), m_level(0), m_internal_format(GL_RGBA8), m_format(GL_RGBA), m_type(GL_UNSIGNED_BYTE)
 	{
 
 	}
 
 	Texture2D::Texture2D (GLsizei width, GLsizei height)
-			: m_id(0), m_width(width), m_height(height), m_bind(false)
+			: m_id(0), m_width(width), m_height(height), m_level(0), m_internal_format(GL_RGBA8), m_format(GL_RGBA), m_type(GL_UNSIGNED_BYTE)
 	{
 
 	}
@@ -55,28 +58,29 @@ namespace BlendInt {
 
 	void Texture2D::Generate ()
 	{
-		Clear();
-
-		glGenTextures(1, &m_id);
+		if(!m_flag[0]) {
+			glGenTextures(1, &m_id);
+			m_flag.set(0);
+		}
 	}
 
 	void Texture2D::Bind ()
 	{
-		if (!m_bind) {
+		if (!m_flag[0]) {
+			std::cerr
+			        << "The texture is not generated, call Texture2D::Generate() first!"
+			        << std::endl;
+			return;
+		} else if (!m_flag[1])		{
 			glBindTexture(GL_TEXTURE_2D, m_id);
-			m_bind = true;
+			m_flag[1] = 1;
 		}
 	}
 
 	void Texture2D::SetSize (GLsizei width, GLsizei height)
 	{
-		if (m_bind) {
-			// TODO: if should reset the texture
-		} else {
-			std::cerr
-			        << "The texture is not bound, call Texture2D::Bind() first!"
-			        << std::endl;
-			return;
+		if(m_flag[2]) {
+			// TODO: if reset image?
 		}
 
 		m_width = width;
@@ -85,23 +89,16 @@ namespace BlendInt {
 
 	GLint Texture2D::GetBaseLevel()
 	{
-		if(m_bind) {
-			return 0;
-		} else {
-			std::cerr
-			        << "The texture is not bound, call Texture2D::Bind() first!"
-			        << std::endl;
-			return 0;
-		}
+		return 0;
 	}
 	
 	void Texture2D::SetBaseLevel (GLint level)
 	{
-		if (m_bind) {
+		if (m_flag[1]) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, level);
 		} else {
 			std::cerr
-			        << "The texture is not bound, call Texture2D::Bind() first!"
+			        << "The texture is not bound, call Texture2D::Bind() before this function!"
 			        << std::endl;
 			return;
 		}
@@ -109,11 +106,11 @@ namespace BlendInt {
 
 	void Texture2D::SetParameter (GLenum name, GLint value)
 	{
-		if (m_bind) {
+		if (m_flag[1]) {
 			glTexParameteri(GL_TEXTURE_2D, name, value);
 		} else {
 			std::cerr
-			        << "The texture is not bound, call Texture2D::Bind() first!"
+			        << "The texture is not bound, call Texture2D::Bind() before this funciton!"
 			        << std::endl;
 			return;
 		}
@@ -121,25 +118,31 @@ namespace BlendInt {
 
 	void Texture2D::SetParameter (GLenum name, GLfloat value)
 	{
-		if (m_bind) {
+		if (m_flag[1]) {
 			glTexParameterf(GL_TEXTURE_2D, name, value);
 		} else {
 			std::cerr
-			        << "The texture is not bound, call Texture2D::Bind() first!"
+			        << "The texture is not bound, call Texture2D::Bind() before this function!"
 			        << std::endl;
 			return;
 		}
 	}
 
-	void Texture2D::SetImage (GLint level, GLint internalFormat, GLint border,
-	        GLenum format, GLenum type, const GLvoid* data)
+	void Texture2D::SetImage (GLsizei width, GLsizei height, const GLvoid* data)
 	{
-		if (m_bind) {
-			glTexImage2D(GL_TEXTURE_2D, level, internalFormat, m_width,
-			        m_height, border, format, type, data);
+		if (m_flag[1]) {
+			m_width = width;
+			m_height = height;
+			glTexImage2D(GL_TEXTURE_2D, m_level, m_internal_format, m_width,
+			        m_height, 0, m_format, m_type, data);
+			if(data) {
+				m_flag.set(2);
+			} else {
+				m_flag.reset(2);
+			}
 		} else {
 			std::cerr
-			        << "The texture is not bound, call Texture2D::Bind() first!"
+			        << "The texture is not bound, call Texture2D::Bind() before this function!"
 			        << std::endl;
 			return;
 		}
@@ -147,9 +150,9 @@ namespace BlendInt {
 
 	void Texture2D::Unbind ()
 	{
-		if (m_bind) {
+		if (m_flag[1]) {
 			glBindTexture(GL_TEXTURE_2D, 0);
-			m_bind = false;
+			m_flag.reset(1);
 		}
 	}
 
@@ -165,12 +168,12 @@ namespace BlendInt {
 
 	void Texture2D::SetWrapMode (GLint s_mode, GLint t_mode)
 	{
-		if (m_bind) {
+		if (m_flag[1]) {
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, s_mode);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, t_mode);
 		} else {
 			std::cerr
-			        << "The texture is not bound, call Texture2D::Bind() first!"
+			        << "The texture is not bound, call Texture2D::Bind() before this function!"
 			        << std::endl;
 			return;
 		}
@@ -186,6 +189,43 @@ namespace BlendInt {
 		SetParameter(GL_TEXTURE_WRAP_T, mode);
 	}
 
+	bool Texture2D::WriteToFile (const std::string& path)
+	{
+		if(!m_flag[2]) return false;
+
+		unsigned char pixels[m_width * m_height * 4];
+
+		glGetTexImage (GL_TEXTURE_2D, m_level, m_format, m_type, pixels);
+
+		ImageOutput* out = ImageOutput::create(path);
+		if(!out)
+			return false;
+
+		ImageSpec spec (m_width, m_height, 4, TypeDesc::UINT8);
+		out->open(path, spec);
+		out->write_image(TypeDesc::UINT8, pixels);
+		out->close();
+		delete out;
+
+		return true;
+	}
+
+#ifdef DEBUG
+	void Texture2D::MakeCheckImage(unsigned char image[512][512][4])
+	{
+		int i, j, c;
+		for (i = 0; i < 512; i++) {
+			for (j = 0; j < 512; j++) {
+				c = (((i & 0x8) == 0) ^ (((j & 0x8) == 0))) * 255;
+				image[i][j][0] = (GLubyte) c;
+				image[i][j][1] = (GLubyte) c;
+				image[i][j][2] = (GLubyte) c;
+				image[i][j][3] = (GLubyte) c;
+			}
+		}
+	}
+#endif
+
 	void Texture2D::Clear ()
 	{
 		if (glIsTexture(m_id)) {
@@ -193,7 +233,7 @@ namespace BlendInt {
 		}
 
 		m_id = 0;
-		m_bind = false;
+		m_flag.reset();
 	}
 
 }

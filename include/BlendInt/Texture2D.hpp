@@ -34,6 +34,8 @@
 #endif
 #endif  // __UNIX__
 
+#include <bitset>
+
 namespace BlendInt {
 
 	/**
@@ -156,9 +158,20 @@ namespace BlendInt {
 
 		void SetParameter (GLenum name, GLfloat value);
 
-		void SetImage (GLint level, GLint internalFormat, GLint border, GLenum format, GLenum type, const GLvoid* data);
+		void SetImage (GLsizei width, GLsizei height, const GLvoid* data);
 
 		void Unbind ();
+
+		/**
+		 * @brief Write the texture to file
+		 * @param path
+		 * @return
+		 */
+		bool WriteToFile (const std::string& path);
+
+#ifdef DEBUG
+		static void MakeCheckImage (unsigned char image[512][512][4]);
+#endif
 
 	private:
 
@@ -169,7 +182,78 @@ namespace BlendInt {
 		GLsizei m_width;
 		GLsizei m_height;
 
-		bool m_bind;
+		/**
+		 * @brief The level-of-detail number
+		 *
+		 * Level 0 is the base image level. Level n is the nth mipmap reduction image.
+		 *
+		 * Default is 0.
+		 */
+		GLint m_level;
+
+		/**
+		 * @brief The number of color components in the texture
+		 *
+		 * Default is GL_RGBA8.
+		 */
+		GLint m_internal_format;
+
+		/**
+		 * @brief The format of the pixel data
+		 *
+		 * The following symbolic values are accepted:
+		 * 	- GL_RED
+		 * 	- GL_RG
+		 * 	- GL_RGB
+		 * 	- GL_BGR
+		 * 	- GL_RGBA
+		 * 	- GL_BGRA
+		 *
+		 * Default is GL_RGBA.
+		 *
+		 * This member variable is used in glTexImage2D() in SetData().
+		 */
+		GLenum m_format;
+
+		/**
+		 * @brief The data type of the pixel data
+		 *
+		 * The following symbolic values are accepted:
+		 * 	- GL_UNSIGNED_BYTE
+		 * 	- GL_BYTE
+		 * 	- GL_UNSIGNED_SHORT
+		 * 	- GL_SHORT
+		 * 	- GL_UNSIGNED_INT
+		 * 	- GL_INT
+		 * 	- GL_FLOAT
+		 * 	- GL_UNSIGNED_BYTE_3_3_2
+		 * 	- GL_UNSIGNED_BYTE_2_3_3_REV
+		 * 	- GL_UNSIGNED_SHORT_5_6_5
+		 * 	- GL_UNSIGNED_SHORT_5_6_5_REV
+		 * 	- GL_UNSIGNED_SHORT_4_4_4_4
+		 * 	- GL_UNSIGNED_SHORT_4_4_4_4_REV
+		 * 	- GL_UNSIGNED_SHORT_5_5_5_1
+		 * 	- GL_UNSIGNED_SHORT_1_5_5_5_REV
+		 * 	- GL_UNSIGNED_INT_8_8_8_8
+		 * 	- GL_UNSIGNED_INT_8_8_8_8_REV
+		 * 	- GL_UNSIGNED_INT_10_10_10_2
+		 * 	- GL_UNSIGNED_INT_2_10_10_10_REV
+		 *
+		 * Default is GL_UNSIGNED_BYTE
+		 *
+		 * This member variable is used in glTexImage2D() in SetData().
+		 */
+		GLenum m_type;
+
+		/**
+		 * @brief The usage flag of the texture
+		 *
+		 * The usage flag of the texture:
+		 * 	- bit 0: if it's generated
+		 * 	- bit 1: if it's bound
+		 * 	- bit 2: if the texture is set
+		 */
+		std::bitset<8> m_flag;
 	};
 
 }
