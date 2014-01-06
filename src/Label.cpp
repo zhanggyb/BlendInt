@@ -63,7 +63,7 @@ namespace BlendInt {
 
 	}
 
-	void Label::set_text (const String& label)
+	void Label::SetText (const String& label)
 	{
 		bool cal_width = true;
 
@@ -105,7 +105,7 @@ namespace BlendInt {
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
-	void Label::set_font (const Font& font)
+	void Label::SetFont (const Font& font)
 	{
 		bool cal_width = true;
 

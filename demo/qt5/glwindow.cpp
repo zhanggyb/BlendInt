@@ -45,48 +45,10 @@ void GLWindow::initializeGL()
   
   app->Resize(size().width(), size().height());
 
-	Button* add_button = new Button;
-	add_button->set_text("Add Button");
-	add_button->SetPosition(600, 700);
+  ToggleButton* button = new ToggleButton;
 
-	Button* remove_button = new Button;
-	remove_button->set_text("Remove Button");
-	remove_button->SetPosition(600, 650);
-
-	app->Bind(add_button);
-	app->Bind(remove_button);
-
-	// -----------------------
-
-	Button* reset_button = new Button;
-	reset_button->set_text("Reset");
-	reset_button->Move(640, 300);
-
-	app->Bind(reset_button);
-
-	ScrollView* scroll_view = new ScrollView;
-
-	scroll_view->SetPosition(200, 200);
-	scroll_view->set_orientation(2);
-	scroll_view->Resize(400, 400);
-
-	Button* button = new Button;
-	button->set_text("Hello World!");
-//	button->Resize(80, 600);
-	button->Move(205, 205);
-
-	scroll_view->set_viewport(button);
-
-	app->Bind(scroll_view);
-
-	Label* label = new Label("Hello World!");
-
-	label->SetPosition(50, 50);
-
-	label->set_text ("alsdkjflasdjflasfnvlkasefage");
-	label->Resize(80, 40);
-	
-	app->Bind(label);
+  button->SetPosition(200, 200);
+  button->Register();
 }
 
 void GLWindow::resizeGL(int w, int h)
@@ -99,7 +61,7 @@ void GLWindow::paintGL()
     using namespace BlendInt;
     BlendInt::Interface* app = BlendInt::Interface::Instance();
 
-    app->Render();
+    app->Draw();
 }
 
 void GLWindow::mouseMoveEvent (QMouseEvent* event)

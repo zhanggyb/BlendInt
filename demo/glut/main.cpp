@@ -7,98 +7,31 @@
 #include <GL/glut.h>
 /* ADD GLOBAL VARIABLES HERE LATER */
 
+#include <iostream>
+
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Label.hpp>
 #include <BlendInt/Button.hpp>
 #include <BlendInt/ScrollView.hpp>
 
+using namespace BlendInt;
+
 int init_resources(void)
 {
-	using BlendInt::Interface;
-	using namespace BlendInt;
-	
 	Interface::Initialize();
 	Interface* app = Interface::Instance();
 	app->Resize(1200, 800);
-	
-	// 	glMatrixMode(GL_PROJECTION);
-	// 	glLoadIdentity();
-	// 	glOrtho(0.f, 1200, 0.f, 800, 100.f, -100.f);
 
-	Button* add_button = new Button;
-	add_button->set_text("Add Button");
-	add_button->SetPosition(600, 700);
-
-	Button* remove_button = new Button;
-	remove_button->set_text("Remove Button");
-	remove_button->SetPosition(600, 650);
-
-	app->Bind(add_button);
-	app->Bind(remove_button);
-
-	// -----------------------
-
-	Button* reset_button = new Button;
-	reset_button->set_text("Reset");
-	reset_button->Move(640, 300);
-
-	app->Bind(reset_button);
-
-	ScrollView* scroll_view = new ScrollView;
-
-	scroll_view->SetPosition(200, 200);
-	scroll_view->set_orientation(2);
-	scroll_view->Resize(400, 400);
-
-	Button* button = new Button;
-	button->set_text("Hello World!");
-//	button->Resize(80, 600);
-	button->Move(205, 205);
-
-	scroll_view->set_viewport(button);
-
-	app->Bind(scroll_view);
-
-	Label* label = new Label("Hello World!");
-
-	label->SetPosition(50, 50);
-
-	label->set_text ("alsdkjflasdjflasfnvlkasefage");
-	label->Resize(80, 40);
-	
-	app->Bind(label);
+    Widget* widget = new Widget;
+    widget->SetPosition(200, 200);
+    widget->Register();
 	
 	return 1;
 }
 
 void onDisplay()
 {
-	using BlendInt::Interface;
-	
-	Interface::Instance()->Render();
-	
-	/* FILLED IN LATER */
-// 	glMatrixMode(GL_MODELVIEW);
-// 	glPushMatrix();
-// 	
-// 	glTranslatef(500,
-// 				 200,
-// 			  0);
-// 	
-// 	glEnable(GL_BLEND);
-// 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-// 	
-// 	glColor3ub(255, 200, 133);
-// 	
-// 	glBegin(GL_TRIANGLES);
-// 	glVertex2f (200, 200);
-// 	glVertex2f (400, 200);
-// 	glVertex2f (300, 300);
-// 	glEnd();
-// 	
-// 	glDisable(GL_BLEND);
-// 	
-// 	glPopMatrix();
+	Interface::Instance()->Draw();
 	
 	glutSwapBuffers();
 }
@@ -109,24 +42,31 @@ void onIdle() {
 
 void free_resources()
 {
-	using BlendInt::Interface;
-	
 	Interface::Release();
 }
 
 void onReshape (int width, int height)
 {
-	using BlendInt::Interface;
-	
 	Interface::Instance()->Resize(width, height);
+}
+
+void onKey (unsigned char key, int x, int y)
+{
+    std::cout << "key pressed: " << key << std::endl;
 }
 
 void onMouse (int button, int state, int x, int y)
 {
-	using BlendInt::Interface;
-	
-	//std::cout << "mouse position: "
-	//BlendInt::Interface::instance()->mouseButtonEvent(button, action, mods);
+}
+
+void onMotion (int x, int y)
+{
+    std::cout << "position: " << x << " " << y << std::endl;
+}
+
+void onPassiveMotion (int x, int y)
+{
+    std::cout << "position: " << x << " " << y << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -146,6 +86,10 @@ int main(int argc, char* argv[])
 		/* We can display it if everything goes OK */
 		glutDisplayFunc(onDisplay);
 		glutReshapeFunc(onReshape);
+        glutKeyboardFunc (onKey);
+        glutMouseFunc(onMouse);
+        glutMotionFunc(onMotion);
+        glutPassiveMotionFunc(onPassiveMotion);
 		glutIdleFunc(onIdle);
 		glutMainLoop();
 	}
@@ -155,3 +99,4 @@ int main(int argc, char* argv[])
 	free_resources();
 	return EXIT_SUCCESS;
 }
+

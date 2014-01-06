@@ -44,6 +44,7 @@
 
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Size.hpp>
+#include <BlendInt/Point.hpp>
 
 #ifdef DEBUG
 #include <BlendInt/AbstractForm.hpp>
@@ -142,8 +143,9 @@ namespace BlendInt {
 
 		~Interface ();
 
-		double cursor_pos_x_;	/** cursor x position */
-		double cursor_pos_y_;	/** cursor y position */
+		//int cursor_pos_x_;	/** cursor x position */
+		//int cursor_pos_y_;	/** cursor y position */
+		Point m_cursor;
 
 		Size m_size;
 

@@ -31,7 +31,11 @@ namespace BlendInt {
 	}
 
 	static void CbKey(GLFWwindow* window, int key, int scancode, int action,
-					  int mods) {
+					  int mods)
+	{
+		std::cout << "Get key number from GLFW: " << key << std::endl;
+		std::cout << "Get scancode from GLFW: " << scancode << std::endl;
+
 		Interface::Instance()->GLFWKeyEvent(key, scancode, action, mods);
 	}
 

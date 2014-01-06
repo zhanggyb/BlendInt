@@ -30,7 +30,8 @@
 #include <BlendInt/TabFrame.hpp>
 #include <BlendInt/MenuItemBin.hpp>
 #include <BlendInt/StockIcon.hpp>
-#include <BlendInt/Texture2D.hpp>
+#include <BlendInt/GLTexture2D.hpp>
+#include <BlendInt/TextEntry.hpp>
 
 #include "Window.hpp"
 
@@ -46,9 +47,9 @@ int main(int argc, char* argv[]) {
 	GLFWwindow* window = CreateWindow("MenuTest1 - Click1");
 
 	// TODO: add test code here
-	Widget* widget = new Widget;
+	TextEntry* widget = new TextEntry;
+	widget->SetFont(Font("Droid Sans"));
 	widget->SetPosition(200, 200);
-	widget->Resize(400, 300);
 
 	widget->Register();
 

@@ -142,7 +142,6 @@ namespace BlendInt {
 	}
 
 	Interface::Interface ()
-		: cursor_pos_x_(0.0), cursor_pos_y_(0.0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
@@ -399,13 +398,13 @@ namespace BlendInt {
 			break;
 		}
 
-		MouseEvent event(mouse_action, mouseclick);
+		MouseEvent event(mouse_action, mouseclick, m_cursor);
 
 		map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
 		set<AbstractWidget*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::Instance();
 
-		event.SetPosition(cursor_pos_x_, cursor_pos_y_);
+		//event.set_position(m_cursor);
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
@@ -442,16 +441,16 @@ namespace BlendInt {
 
 	void Interface::GLFWCursorPosEvent (double xpos, double ypos)
 	{
-		cursor_pos_x_ = xpos;
-		cursor_pos_y_ = m_size.height() - ypos;
+		m_cursor.set_x(static_cast<int>(xpos));
+		m_cursor.set_y(static_cast<int>(ypos));
 
-		MouseEvent event(MouseNone, MouseButtonNone);
+		MouseEvent event(MouseNone, MouseButtonNone, m_cursor);
 
 		map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
 		set<AbstractWidget*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::Instance();
 
-		event.SetPosition(cursor_pos_x_, cursor_pos_y_);
+		//event.SetPosition(cursor_pos_x_, cursor_pos_y_);
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{

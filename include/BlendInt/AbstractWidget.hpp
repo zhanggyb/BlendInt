@@ -231,7 +231,7 @@ namespace BlendInt {
 
 		virtual void MouseMoveEvent (MouseEvent* event) = 0;
 
-		bool contain (const Coord2d& cursor);
+		bool contain (const Point& cursor);
 
 		/**
 		 * @brief Update opengl data (usually the GL buffer) for Render

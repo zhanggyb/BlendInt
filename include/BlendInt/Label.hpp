@@ -57,7 +57,7 @@ namespace BlendInt {
 		 *
 		 * call this function will reset the size and preferred size of this object
 		 */
-		void set_text (const String& label);
+		void SetText (const String& label);
 
 		/**
 		 * @brief set the text font
@@ -65,7 +65,7 @@ namespace BlendInt {
 		 *
 		 * call this function will reset the preferred size of this object
 		 */
-		void set_font (const Font& font);
+		void SetFont (const Font& font);
 
 		void set_foreground (const Color& fg)
 		{

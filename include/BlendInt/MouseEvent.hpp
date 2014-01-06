@@ -27,7 +27,7 @@
 #include <BlendInt/Types.hpp>
 #include <BlendInt/InputEvent.hpp>
 
-#include <BlendInt/Coord.hpp>
+#include <BlendInt/Point.hpp>
 
 namespace BlendInt {
 
@@ -47,12 +47,11 @@ namespace BlendInt {
 		 * @param[in] type one of Event::Type
 		 */
 		MouseEvent (MouseAction action, MouseButton button)
-			: m_action(action), m_button(button),
-			m_position(Coord2d(0.0, 0.0))
+			: m_action(action), m_button(button)
 			{}
 		
 		MouseEvent (MouseAction action, MouseButton button,
-					const Coord2d& position)
+					const Point& position)
 			: m_action(action), m_button(button),
 			m_position(position)
 		{}
@@ -70,12 +69,17 @@ namespace BlendInt {
 			return m_button;
 		}
 
-		const Coord2d& position () const
+		const Point& position () const
 		{
 			return m_position;
 		}
 
-		void SetPosition (float x, float y)
+		void set_position (const Point& pos)
+		{
+			m_position = pos;
+		}
+
+		void set_position (int x, int y)
 		{
 			m_position.set_x (x);
 			m_position.set_y (y);
@@ -85,7 +89,7 @@ namespace BlendInt {
 
 		MouseAction m_action;
 		MouseButton m_button;
-		Coord2d m_position;
+		Point m_position;
 	};
 
 }

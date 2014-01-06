@@ -283,12 +283,12 @@ namespace BlendInt {
 		// m_property_changed.fire(FormPropertyLayer);
 	//}
 
-	bool AbstractWidget::contain(const Coord2d& cursor)
+	bool AbstractWidget::contain(const Point& cursor)
 	{
 		if (cursor.x() < position().x() ||
 				cursor.y() < position().y() ||
-				cursor.x() > (position().x() + size().width()) ||
-				cursor.y() > (position().y() + size().height())) {
+				cursor.x() > (position().x() + static_cast<int>(size().width())) ||
+				cursor.y() > (position().y() + static_cast<int>(size().height()))) {
 			return false;
 		}
 
