@@ -21,6 +21,16 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+#endif  // __UNIX__
+#include <vector>
+
 #include <iostream>
 
 #include <BlendInt/GLFramebuffer.hpp>

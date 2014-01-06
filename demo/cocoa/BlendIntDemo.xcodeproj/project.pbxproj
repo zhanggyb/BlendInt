@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		151CF7B1187ACF2F00FB9740 /* OpenGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 151CF7B0187ACF2F00FB9740 /* OpenGLView.mm */; };
 		157AE7731879AF8100A98BD6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 157AE7721879AF8100A98BD6 /* Cocoa.framework */; };
 		157AE77D1879AF8100A98BD6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 157AE77B1879AF8100A98BD6 /* InfoPlist.strings */; };
 		157AE77F1879AF8100A98BD6 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 157AE77E1879AF8100A98BD6 /* main.mm */; };
@@ -32,6 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		151CF7AF187ACF2F00FB9740 /* OpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLView.h; sourceTree = "<group>"; };
+		151CF7B0187ACF2F00FB9740 /* OpenGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenGLView.mm; sourceTree = "<group>"; };
 		157AE76F1879AF8100A98BD6 /* BlendIntDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlendIntDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		157AE7721879AF8100A98BD6 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		157AE7751879AF8100A98BD6 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -124,6 +127,8 @@
 				157AE7871879AF8100A98BD6 /* MainMenu.xib */,
 				157AE78A1879AF8100A98BD6 /* Images.xcassets */,
 				157AE7791879AF8100A98BD6 /* Supporting Files */,
+				151CF7AF187ACF2F00FB9740 /* OpenGLView.h */,
+				151CF7B0187ACF2F00FB9740 /* OpenGLView.mm */,
 			);
 			path = BlendIntDemo;
 			sourceTree = "<group>";
@@ -257,6 +262,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				157AE7861879AF8100A98BD6 /* AppDelegate.mm in Sources */,
+				151CF7B1187ACF2F00FB9740 /* OpenGLView.mm in Sources */,
 				157AE77F1879AF8100A98BD6 /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -498,6 +504,7 @@
 				157AE7A21879AF8100A98BD6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		157AE7A31879AF8100A98BD6 /* Build configuration list for PBXNativeTarget "BlendIntDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -506,6 +513,7 @@
 				157AE7A51879AF8100A98BD6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
