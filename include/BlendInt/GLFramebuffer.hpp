@@ -33,6 +33,8 @@
 #endif  // __UNIX__
 #include <vector>
 
+#include <bitset>
+
 namespace BlendInt {
 
 	/**
@@ -48,22 +50,22 @@ namespace BlendInt {
 
 		~GLFramebuffer ();
 
-		void Generate (size_t size = 1);
-
-		inline void select (size_t index)
-		{
-			m_index = index;
-		}
+		void Generate ();
 
 		void Bind ();
 
 		void Unbind ();
 
+		void Clear ();
+
+		GLuint id () const {return m_id;}
+
 	private:
 
-		size_t m_index;
+		GLuint m_id;
 
-		std::vector<GLuint> m_ids;
+		std::bitset<8> m_flag;
+
 	};
 
 }

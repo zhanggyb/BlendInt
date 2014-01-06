@@ -15,7 +15,7 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.	 If not, see
+ * License along with BlendInt.  If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -24,19 +24,32 @@
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
-#include <OpenGL/gl.h>
 #else
 #include <GL/gl.h>
+#include <GL/glext.h>
 #endif
 #endif  // __UNIX__
+
+#include <iostream>
+#include <boost/filesystem.hpp>
+
+#include <OpenImageIO/imageio.h>
+OIIO_NAMESPACE_USING
 
 #include <BlendInt/GLTexture2D.hpp>
 
 namespace BlendInt {
 
 	GLTexture2D::GLTexture2D ()
-	: m_index(0)
+			: m_id(0), m_width(512), m_height(512), m_level(0), m_internal_format(GL_RGBA8), m_format(GL_RGBA), m_type(GL_UNSIGNED_BYTE)
 	{
+
+	}
+
+	GLTexture2D::GLTexture2D (GLsizei width, GLsizei height)
+			: m_id(0), m_width(width), m_height(height), m_level(0), m_internal_format(GL_RGBA8), m_format(GL_RGBA), m_type(GL_UNSIGNED_BYTE)
+	{
+
 	}
 
 	GLTexture2D::~GLTexture2D ()
@@ -44,47 +57,205 @@ namespace BlendInt {
 		Clear();
 	}
 
-	void GLTexture2D::Generate (size_t size)
+	void GLTexture2D::Generate ()
 	{
-		if(m_ids.size()) Clear ();
-
-		m_ids.resize(size);
-
-		glGenTextures((GLsizei)size, &(m_ids[0]));
+		if(!m_flag[0]) {
+			glGenTextures(1, &m_id);
+			m_flag.set(0);
+		}
 	}
 
-	void GLTexture2D::Bind()
+	void GLTexture2D::Bind ()
 	{
-		glBindTexture(GL_TEXTURE_2D, m_ids[m_index]);
+		if (!m_flag[0]) {
+			std::cerr
+			        << "The texture is not generated, call GLTexture2D::Generate() first!"
+			        << std::endl;
+			return;
+		} else if (!m_flag[1])		{
+			glBindTexture(GL_TEXTURE_2D, m_id);
+			m_flag.set(1);
+		}
 	}
 
-	void GLTexture2D::SetParameter (GLenum pname, GLint param)
+	void GLTexture2D::SetSize (GLsizei width, GLsizei height)
 	{
-		glTexParameteri(GL_TEXTURE_2D, pname, param);
+		if(m_flag[2]) {
+			// TODO: if reset image?
+		}
+
+		m_width = width;
+		m_height = height;
 	}
 
-	void GLTexture2D::SetParameter (GLenum pname, GLfloat param)
+	GLint GLTexture2D::GetBaseLevel()
 	{
-		glTexParameterf(GL_TEXTURE_2D, pname, param);
+		return 0;
 	}
 
-	void GLTexture2D::Map (GLint level, GLint internalFormat, GLsizei width,
-	        GLsizei height, GLint border, GLenum format, GLenum type,
-	        const GLvoid* data)
+	void GLTexture2D::SetBaseLevel (GLint level)
 	{
-		glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, border,
-		                         format, type, data);
+		if (m_flag[1]) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, level);
+		} else {
+			std::cerr
+			        << "The texture is not bound, call GLTexture2D::Bind() before this function!"
+			        << std::endl;
+			return;
+		}
+	}
+
+	void GLTexture2D::SetParameter (GLenum name, GLint value)
+	{
+		if (m_flag[1]) {
+			glTexParameteri(GL_TEXTURE_2D, name, value);
+		} else {
+			std::cerr
+			        << "The texture is not bound, call GLTexture2D::Bind() before this funciton!"
+			        << std::endl;
+			return;
+		}
+	}
+
+	void GLTexture2D::SetParameter (GLenum name, GLfloat value)
+	{
+		if (m_flag[1]) {
+			glTexParameterf(GL_TEXTURE_2D, name, value);
+		} else {
+			std::cerr
+			        << "The texture is not bound, call GLTexture2D::Bind() before this function!"
+			        << std::endl;
+			return;
+		}
+	}
+
+	void GLTexture2D::SetImage (GLsizei width, GLsizei height, const GLvoid* data)
+	{
+		if (m_flag[1]) {
+			m_width = width;
+			m_height = height;
+			glTexImage2D(GL_TEXTURE_2D, m_level, m_internal_format, m_width,
+			        m_height, 0, m_format, m_type, data);
+			if(data) {
+				m_flag.set(2);
+			} else {
+				m_flag.reset(2);
+			}
+		} else {
+			std::cerr
+			        << "The texture is not bound, call GLTexture2D::Bind() before this function!"
+			        << std::endl;
+			return;
+		}
 	}
 
 	void GLTexture2D::Unbind ()
 	{
-		glBindTexture(GL_TEXTURE_2D, 0);
+		if (m_flag[1]) {
+			glBindTexture(GL_TEXTURE_2D, 0);
+			m_flag.reset(1);
+		}
 	}
+
+	void GLTexture2D::SetMinFilter (GLint filter)
+	{
+		SetParameter(GL_TEXTURE_MIN_FILTER, filter);
+	}
+
+	void GLTexture2D::SetMagFilter (GLint filter)
+	{
+		SetParameter(GL_TEXTURE_MAG_FILTER, filter);
+	}
+
+	void GLTexture2D::SetWrapMode (GLint s_mode, GLint t_mode)
+	{
+		if (m_flag[1]) {
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, s_mode);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, t_mode);
+		} else {
+			std::cerr
+			        << "The texture is not bound, call GLTexture2D::Bind() before this function!"
+			        << std::endl;
+			return;
+		}
+	}
+
+	void GLTexture2D::SetWrapModeS (GLint mode)
+	{
+		SetParameter(GL_TEXTURE_WRAP_S, mode);
+	}
+
+	void GLTexture2D::SetWrapModeT (GLint mode)
+	{
+		SetParameter(GL_TEXTURE_WRAP_T, mode);
+	}
+
+	bool GLTexture2D::WriteToFile (const std::string& filename)
+	{
+		//if(!m_flag[2]) return false;
+
+		using namespace boost;
+
+		filesystem::path pathname (filename);
+
+		if(filesystem::exists(pathname)) {
+			if(filesystem::is_directory(pathname)) {
+			}
+			if(filesystem::is_regular_file(pathname)) {
+
+			}
+
+			std::cerr << pathname << " exists, abort writing to this file!" << std::endl;
+			return false;
+		} else {
+
+		}
+
+		// demo code
+		unsigned char pixels[m_width * m_height * 4];
+
+		glGetTexImage (GL_TEXTURE_2D, m_level, m_format, m_type, pixels);
+
+		ImageOutput* out = ImageOutput::create(filename);
+		if(!out)
+			return false;
+
+		ImageSpec spec (m_width, m_height, 4, TypeDesc::UINT8);
+		out->open(filename, spec);
+		out->write_image(TypeDesc::UINT8, pixels);
+		out->close();
+		delete out;
+
+		return true;
+	}
+
+#ifdef DEBUG
+	void GLTexture2D::MakeCheckImage(unsigned char image[512][512][4])
+	{
+		int i, j, c;
+		for (i = 0; i < 512; i++) {
+			for (j = 0; j < 512; j++) {
+				c = (((i & 0x8) == 0) ^ (((j & 0x8) == 0))) * 255;
+				image[i][j][0] = (GLubyte) c;
+				image[i][j][1] = (GLubyte) c;
+				image[i][j][2] = (GLubyte) c;
+				image[i][j][3] = (GLubyte) c;
+			}
+		}
+	}
+#endif
 
 	void GLTexture2D::Clear ()
 	{
-		glDeleteTextures((GLsizei)m_ids.size(), &(m_ids[0]));
-		m_ids.clear();
+		if(m_flag[1]) {
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		if (glIsTexture(m_id)) {
+			glDeleteTextures(1, &m_id);
+		}
+
+		m_id = 0;
+		m_flag.reset();
 	}
 
 }

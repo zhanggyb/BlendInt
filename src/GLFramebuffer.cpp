@@ -21,31 +21,63 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <iostream>
+
 #include <BlendInt/GLFramebuffer.hpp>
 
 namespace BlendInt {
 
 	GLFramebuffer::GLFramebuffer()
-	: m_index (0)
+	: m_id(0)
 	{
 
 	}
 
 	GLFramebuffer::~GLFramebuffer ()
 	{
-
+		Clear();
 	}
 
-	void GLFramebuffer::Generate (size_t size)
+	void GLFramebuffer::Generate ()
 	{
+		if(!m_flag[0]) {
+			glGenFramebuffers (1, &m_id);
+			m_flag.set(0);
+		}
 	}
 
 	void GLFramebuffer::Bind ()
 	{
+		if(!m_flag[0]) {
+			std::cerr
+			        << "The framebuffer is not generated, call GLFramebuffer::Generate() first!"
+			        << std::endl;
+			return;
+		} else if (!m_flag[1]) {
+			glBindFramebuffer(GL_FRAMEBUFFER, m_id);
+			m_flag.set(1);
+		}
 	}
 
 	void GLFramebuffer::Unbind ()
 	{
+		if(m_flag[1]) {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			m_flag.reset(1);
+		}
+	}
+
+	void GLFramebuffer::Clear ()
+	{
+		if(m_flag[1]) {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+		if(glIsFramebuffer(m_id)) {
+			glDeleteFramebuffers(1, &m_id);
+		}
+
+		m_id = 0;
+		m_flag.reset();
 	}
 
 }

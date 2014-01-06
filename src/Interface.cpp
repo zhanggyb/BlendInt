@@ -47,7 +47,9 @@
 #include <BlendInt/ContextMenuEvent.hpp>
 #include <BlendInt/ContextManager.hpp>
 #include <BlendInt/StockIcon.hpp>
-#include <BlendInt/Texture2D.hpp>
+#include <BlendInt/GLTexture2D.hpp>
+
+#include <BlendInt/GLFramebuffer.hpp>
 
 namespace BlendInt {
 
@@ -508,7 +510,7 @@ namespace BlendInt {
 		std::cout << "Render to Image" << std::endl;
 
 		// Create and set texture to render to.
-		Texture2D* tex = new Texture2D;
+		GLTexture2D* tex = new GLTexture2D;
 		tex->Generate();
 		tex->Bind();
 		tex->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
@@ -517,9 +519,9 @@ namespace BlendInt {
 		tex->SetImage(m_size.width(), m_size.height(), 0);
 
 		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-		GLuint fb = 0;
-		glGenFramebuffers(1, &fb);
-		glBindFramebuffer(GL_FRAMEBUFFER, fb);
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
 
 		// Set "renderedTexture" as our colour attachement #0
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -556,12 +558,12 @@ namespace BlendInt {
 
 		//-------------------------
 		//and now render to GL_TEXTURE_2D
-		glBindFramebuffer(GL_FRAMEBUFFER, fb);
+		fb->Bind();
 
 		Draw();
 
 		//Bind 0, which means render to back buffer
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		fb->Unbind();
 
 		tex->WriteToFile("output.png");
 		tex->Unbind();
@@ -574,7 +576,7 @@ namespace BlendInt {
 
 		//Bind 0, which means render to back buffer, as a result, fb is unbound
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glDeleteFramebuffers(1, &fb);
+		delete fb; fb = 0;
 
 		Draw();
 	}
