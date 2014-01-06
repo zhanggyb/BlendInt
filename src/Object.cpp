@@ -30,6 +30,8 @@
 
 namespace BlendInt {
 
+	ObjectEvents* Object::events = 0;
+
 	Object::Object()
 	:
 #ifdef DEBUG
@@ -65,7 +67,7 @@ namespace BlendInt {
 		m_superiors.reset(new std::set<Object*>);
 		m_subordinates.reset(new std::set<Object*>);
 
-		BoundTo (super);
+		AttachTo (super);
 
 #ifdef DEBUG
 		// generate a unique id
@@ -114,7 +116,7 @@ namespace BlendInt {
 #endif
 	}
 
-	bool Object::Bind (Object* sub)
+	bool Object::Attach (Object* sub)
 	{
 		if (!sub) return false;
 		if (sub == this) return false;	// cannot bind self
@@ -128,7 +130,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool Object::Unbind (Object* sub)
+	bool Object::Detach (Object* sub)
 	{
 		if(!sub) return false;
 		if(sub == this) return false;
@@ -141,7 +143,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void Object::UnbindAll ()
+	void Object::DetachAllSubs ()
 	{
 		std::set<Object*>::iterator it;
 
@@ -152,7 +154,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool Object::UnboundFrom (Object* super)
+	bool Object::DetachFrom (Object* super)
 	{
 		if(!super) return false;
 		if(super == this) return false;
@@ -165,7 +167,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void Object::UnboundFromAll ()
+	void Object::DetachFromAllSupers ()
 	{
 		std::set<Object*>::iterator it;
 
@@ -176,7 +178,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool Object::BoundTo (Object* super)
+	bool Object::AttachTo (Object* super)
 	{
 		if (!super) return false;
 		if (super == this) return false;	// cannot bind self
@@ -258,3 +260,4 @@ namespace BlendInt {
 #endif
 
 }
+

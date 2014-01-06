@@ -32,7 +32,35 @@
 #endif	// DEBUG
 #include <boost/smart_ptr.hpp>
 
+#include <Cpp/Events.hpp>
+
 namespace BlendInt {
+
+	class Interface;
+
+	class ObjectEvents
+	{
+	public:
+
+		friend class Interface;
+
+		ObjectEvents ()
+		: m_connections(0)
+		{
+			m_connections = new Cpp::ConnectionScope;
+		}
+
+		Cpp::ConnectionScope* operator -> () const {return m_connections;}
+
+	private:
+
+		~ObjectEvents ()
+		{
+			delete m_connections;
+		}
+
+		Cpp::ConnectionScope* m_connections;
+	};
 
 	/**
 	 * @brief The base class of most BlendInt objects
@@ -53,17 +81,17 @@ namespace BlendInt {
 
 		virtual ~Object ();
 
-		bool Bind (Object* sub);
+		bool Attach (Object* sub);
 
-		bool Unbind (Object* sub);
+		bool Detach (Object* sub);
 
-		void UnbindAll ();
+		void DetachAllSubs ();
 
-		bool UnboundFrom (Object* super);
+		bool DetachFrom (Object* super);
 
-		void UnboundFromAll ();
+		void DetachFromAllSupers ();
 
-		bool BoundTo (Object* super);
+		bool AttachTo (Object* super);
 
 		inline void set_name (const char* name)
 		{
@@ -84,6 +112,8 @@ namespace BlendInt {
 		inline const std::set<Object*>* subordinates() const {return m_subordinates.get();}
 
 	private:
+
+		static ObjectEvents* events;
 
 		boost::scoped_ptr<std::set<Object*> > m_superiors;
 

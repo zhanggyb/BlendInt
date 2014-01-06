@@ -112,6 +112,8 @@ namespace BlendInt {
 			result = false;
 		}
 
+
+
 		if (!interface) {
 			interface = new Interface();
 		}
@@ -173,7 +175,7 @@ namespace BlendInt {
 		// enable anti-alias
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_DEPTH_TEST);
 		//glEnable (GL_POINT_SMOOTH);
 		//glEnable (GL_LINE_SMOOTH);
 		//glEnable (GL_POLYGON_SMOOTH);
@@ -204,7 +206,7 @@ namespace BlendInt {
 		}
 		// m_ticktack = m_ticktack ? 0 : 1;
 
-		glDisable(GL_DEPTH_TEST);
+		//glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 	}
 
@@ -509,7 +511,7 @@ namespace BlendInt {
 		Texture2D* tex = new Texture2D;
 		tex->Generate();
 		tex->Bind();
-		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		tex->SetMinFilter(GL_NEAREST);
 		tex->SetMagFilter(GL_NEAREST);
 		tex->SetImage(m_size.width(), m_size.height(), 0);
@@ -523,6 +525,7 @@ namespace BlendInt {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
 		        GL_TEXTURE_2D, tex->id(), 0);
 
+		/*
 		GLuint rb = 0;
 		glGenRenderbuffers(1, &rb);
 
@@ -549,10 +552,11 @@ namespace BlendInt {
 				std::cerr << "Fail to check framebuffer status" << std::endl;
 				break;
 		}
+		*/
 
 		//-------------------------
 		//and now render to GL_TEXTURE_2D
-		glBindFramebuffer(GL_FRAMEBUFFER_EXT, fb);
+		glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
 		Draw();
 
@@ -566,10 +570,10 @@ namespace BlendInt {
 		delete tex;
 		tex = 0;
 
-		glDeleteRenderbuffers(1, &rb);
+		//glDeleteRenderbuffers(1, &rb);
 
 		//Bind 0, which means render to back buffer, as a result, fb is unbound
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDeleteFramebuffers(1, &fb);
 
 		Draw();

@@ -85,11 +85,11 @@ TEST_F(ObjectTest1, New3)
 
 
 /**
- * test Object::Bind(Object* sub) method
+ * test Object::Attach(Object* sub) method
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, Bind1)
+TEST_F(ObjectTest1, Attach1)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -98,7 +98,7 @@ TEST_F(ObjectTest1, Bind1)
     Object* obj2 = new Object;
     obj2->set_name("obj2");
  
-    obj1->Bind(obj2);
+    obj1->Attach(obj2);
 
     Object::Print();
 
@@ -111,11 +111,11 @@ TEST_F(ObjectTest1, Bind1)
 }
 
 /**
- * test Object::Bind(Object* sub) method
+ * test Object::Attach(Object* sub) method
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, Bind2)
+TEST_F(ObjectTest1, Attach2)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -130,9 +130,9 @@ TEST_F(ObjectTest1, Bind2)
     Object* obj4 = new Object;
     obj4->set_name("obj4");
     
-    obj1->Bind(obj2);
-    obj1->Bind(obj3);
-    obj1->Bind(obj4);
+    obj1->Attach(obj2);
+    obj1->Attach(obj3);
+    obj1->Attach(obj4);
 
     Object::Print();
 
@@ -147,11 +147,11 @@ TEST_F(ObjectTest1, Bind2)
 }
 
 /**
- * test Object::Unbind(Object* sub) method
+ * test Object::Detach(Object* sub) method
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, Unbind1)
+TEST_F(ObjectTest1, Detach1)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -166,18 +166,18 @@ TEST_F(ObjectTest1, Unbind1)
     Object* obj4 = new Object;
     obj4->set_name("obj4");
     
-    obj1->Bind(obj2);
-    obj1->Bind(obj3);
-    obj1->Bind(obj4);
+    obj1->Attach(obj2);
+    obj1->Attach(obj3);
+    obj1->Attach(obj4);
 
     obj1->PrintSubs();
     obj2->PrintSupers();
     obj3->PrintSupers();
     obj4->PrintSupers();
 
-    obj1->Unbind(obj2);
-    obj1->Unbind(obj3);
-    obj1->Unbind(obj4);
+    obj1->Detach(obj2);
+    obj1->Detach(obj3);
+    obj1->Detach(obj4);
 
     obj1->PrintSubs();
     obj2->PrintSupers();
@@ -193,11 +193,11 @@ TEST_F(ObjectTest1, Unbind1)
 }
 
 /**
- * test Object::BoundTo(Object* super) and UnboundFrom method
+ * test Object::AttachTo(Object* super) and DetachFrom method
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, BoundTo1)
+TEST_F(ObjectTest1, AttachTo1)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -212,18 +212,18 @@ TEST_F(ObjectTest1, BoundTo1)
     Object* obj4 = new Object;
     obj4->set_name("obj4");
     
-    obj2->BoundTo(obj1);
-    obj3->BoundTo(obj1);
-    obj4->BoundTo(obj1);
+    obj2->AttachTo(obj1);
+    obj3->AttachTo(obj1);
+    obj4->AttachTo(obj1);
 
     obj1->PrintSubs();
     obj2->PrintSupers();
     obj3->PrintSupers();
     obj4->PrintSupers();
 
-    obj2->UnboundFrom(obj1);
-    obj3->UnboundFrom(obj1);
-    obj4->UnboundFrom(obj1);
+    obj2->DetachFrom(obj1);
+    obj3->DetachFrom(obj1);
+    obj4->DetachFrom(obj1);
 
     obj1->PrintSubs();
     obj2->PrintSupers();
@@ -243,7 +243,7 @@ TEST_F(ObjectTest1, BoundTo1)
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, MultiBind1)
+TEST_F(ObjectTest1, MultiAttach1)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -258,9 +258,9 @@ TEST_F(ObjectTest1, MultiBind1)
     Object* obj4 = new Object;
     obj4->set_name("obj4");
     
-   	obj1->Bind(obj3);
-	obj2->Bind(obj3);
-	obj3->Bind(obj4);
+   	obj1->Attach(obj3);
+	obj2->Attach(obj3);
+	obj3->Attach(obj4);
 
     obj1->PrintSubs();
     obj2->PrintSubs();
@@ -278,7 +278,7 @@ TEST_F(ObjectTest1, MultiBind1)
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, LoopBind1)
+TEST_F(ObjectTest1, LoopAttach1)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -293,10 +293,10 @@ TEST_F(ObjectTest1, LoopBind1)
     Object* obj4 = new Object;
     obj4->set_name("obj4");
     
-   	obj1->Bind(obj2);
-	obj2->Bind(obj3);
-	obj3->Bind(obj4);
-	obj4->Bind(obj1);
+   	obj1->Attach(obj2);
+	obj2->Attach(obj3);
+	obj3->Attach(obj4);
+	obj4->Attach(obj1);
 
     obj1->PrintSubs();
     obj2->PrintSubs();
@@ -313,7 +313,7 @@ TEST_F(ObjectTest1, LoopBind1)
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, UnbindAll1)
+TEST_F(ObjectTest1, DetachAll1)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -328,16 +328,16 @@ TEST_F(ObjectTest1, UnbindAll1)
     Object* obj4 = new Object;
     obj4->set_name("obj4");
     
-   	obj1->Bind(obj2);
-	obj1->Bind(obj3);
-	obj1->Bind(obj4);
+   	obj1->Attach(obj2);
+	obj1->Attach(obj3);
+	obj1->Attach(obj4);
 
     obj1->PrintSubs();
     obj2->PrintSupers();
     obj3->PrintSupers();
     obj4->PrintSupers();
 
-	obj1->UnbindAll();
+	obj1->DetachAllSubs();
 
     delete obj1;
 	delete obj2;
@@ -352,7 +352,7 @@ TEST_F(ObjectTest1, UnbindAll1)
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, UnboundFromAll1)
+TEST_F(ObjectTest1, DetachFromAllSupers1)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -367,16 +367,16 @@ TEST_F(ObjectTest1, UnboundFromAll1)
     Object* obj4 = new Object;
     obj4->set_name("obj4");
     
-   	obj1->Bind(obj4);
-	obj2->Bind(obj4);
-	obj3->Bind(obj4);
+   	obj1->Attach(obj4);
+	obj2->Attach(obj4);
+	obj3->Attach(obj4);
 
     obj1->PrintSubs();
     obj2->PrintSubs();
     obj3->PrintSubs();
     obj4->PrintSupers();
 
-	obj4->UnboundFromAll();
+	obj4->DetachFromAllSupers();
 
     delete obj1;
 	delete obj2;
@@ -391,7 +391,7 @@ TEST_F(ObjectTest1, UnboundFromAll1)
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, MixBind1)
+TEST_F(ObjectTest1, MixAttach1)
 {
 	// TODO: add test code here
     Object* obj1 = new Object;
@@ -412,12 +412,12 @@ TEST_F(ObjectTest1, MixBind1)
     Object* obj6 = new Object;
     obj6->set_name("obj6");
 
-   	obj1->Bind(obj2);
-	obj2->Bind(obj3);
-	obj3->Bind(obj4);
+   	obj1->Attach(obj2);
+	obj2->Attach(obj3);
+	obj3->Attach(obj4);
 
-	obj5->Bind(obj2);
-	obj6->Bind(obj5);
+	obj5->Attach(obj2);
+	obj6->Attach(obj5);
 
     delete obj1;
 	delete obj6;

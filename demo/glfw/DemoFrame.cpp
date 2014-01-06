@@ -62,7 +62,7 @@ void DemoFrame::SetWidget (AbstractWidget* widget)
 		        size().width() - margin().left() - margin().right(),
 		        size().height() - margin().top() - margin().bottom());
 
-		Bind(m_widget);
+		Attach(m_widget);
 	}
 }
 

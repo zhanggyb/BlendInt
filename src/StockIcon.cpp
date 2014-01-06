@@ -126,10 +126,10 @@ namespace BlendInt {
 		// check icon
 
 		// Bind once to increase the referecne count and delete them automatically.
-		m_store.Bind(m_menu);
-		m_store.Bind(m_circle);
-		m_store.Bind(m_checkbox);
-		m_store.Bind(m_num);
+		m_store.Attach(m_menu);
+		m_store.Attach(m_circle);
+		m_store.Attach(m_checkbox);
+		m_store.Attach(m_num);
 	}
 }
 

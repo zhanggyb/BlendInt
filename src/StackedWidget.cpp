@@ -48,7 +48,7 @@ namespace BlendInt {
 		if(subordinates()->count(widget)) return;
 
 		m_stack.push_back(widget);
-		Bind(widget);
+		Attach(widget);
 
 		widget->Resize(size());
 		widget->SetPosition(position());
@@ -63,7 +63,7 @@ namespace BlendInt {
 		std::advance(it, index);
 
 		m_stack.insert(it, widget);
-		Bind(widget);
+		Attach(widget);
 
 		widget->Resize(size());
 		widget->SetPosition(position());
@@ -78,7 +78,7 @@ namespace BlendInt {
 
 		if(it != m_stack.end()) {
 			m_stack.erase(it);
-			Unbind(widget);
+			Detach(widget);
 
 			if(m_index > (m_stack.size() - 1)) {
 				m_index = m_stack.size() - 1;

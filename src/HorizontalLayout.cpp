@@ -207,7 +207,7 @@ namespace BlendInt {
 		activate_events();
 		object->activate_events();
 
-		Bind(object);
+		Attach(object);
 		LockGeometry(object, true);
 	}
 
@@ -243,7 +243,7 @@ namespace BlendInt {
 		activate_events();
 
 		LockGeometry(object, false);
-		Unbind(object);
+		Detach(object);
 	}
 
 	void HorizontalLayout::MakeLayout (const Size* size, const Margin* margin,

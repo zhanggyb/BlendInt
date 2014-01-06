@@ -192,7 +192,7 @@ namespace BlendInt {
 
 	bool Texture2D::WriteToFile (const std::string& filename)
 	{
-		if(!m_flag[2]) return false;
+		//if(!m_flag[2]) return false;
 
 		using namespace boost;
 
