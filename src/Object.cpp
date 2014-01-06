@@ -38,8 +38,8 @@ namespace BlendInt {
 	m_id(0)
 #endif
 	{
-		m_superiors.reset(new std::set<Object*>);
-		m_subordinates.reset(new std::set<Object*>);
+		m_supers.reset(new std::set<Object*>);
+		m_subs.reset(new std::set<Object*>);
 
 #ifdef DEBUG
 		// generate a unique id
@@ -64,8 +64,8 @@ namespace BlendInt {
 	m_id(0)
 #endif
 	{
-		m_superiors.reset(new std::set<Object*>);
-		m_subordinates.reset(new std::set<Object*>);
+		m_supers.reset(new std::set<Object*>);
+		m_subs.reset(new std::set<Object*>);
 
 		AttachTo (super);
 
@@ -89,23 +89,23 @@ namespace BlendInt {
 	Object::~Object()
 	{
 #ifdef DEBUG
-		std::cout << "Destructor in object: " << m_name << "(" << m_superiors->size() << ")" << std::endl;
+		std::cout << "Destructor in object: " << m_name << "(" << m_supers->size() << ")" << std::endl;
 #endif
 
 		std::set<Object*>::iterator it;
-		while (m_superiors->size()) {
-			it = m_superiors->begin();
-			(*it)->m_subordinates->erase(this);
-			m_superiors->erase(it);
+		while (m_supers->size()) {
+			it = m_supers->begin();
+			(*it)->m_subs->erase(this);
+			m_supers->erase(it);
 		}
 
 		Object* sub;
-		while(m_subordinates->size()) {
-			it = m_subordinates->begin();
+		while(m_subs->size()) {
+			it = m_subs->begin();
 			sub = *it;
-			(*it)->m_superiors->erase(this);
-			m_subordinates->erase(it);
-			if(sub->m_superiors->size() == 0) {
+			(*it)->m_supers->erase(this);
+			m_subs->erase(it);
+			if(sub->m_supers->size() == 0) {
 				delete sub;
 				sub = 0;
 			}
@@ -121,11 +121,11 @@ namespace BlendInt {
 		if (!sub) return false;
 		if (sub == this) return false;	// cannot bind self
 
-		if(m_subordinates->count(sub)) return true;
+		if(m_subs->count(sub)) return true;
 
-		sub->m_superiors->insert(this);
+		sub->m_supers->insert(this);
 
-		m_subordinates->insert(sub);
+		m_subs->insert(sub);
 
 		return true;
 	}
@@ -135,11 +135,11 @@ namespace BlendInt {
 		if(!sub) return false;
 		if(sub == this) return false;
 
-		if(!m_subordinates->count(sub))
+		if(!m_subs->count(sub))
 			return false;
 
-		sub->m_superiors->erase(this);
-		m_subordinates->erase(sub);
+		sub->m_supers->erase(this);
+		m_subs->erase(sub);
 		return true;
 	}
 
@@ -147,10 +147,10 @@ namespace BlendInt {
 	{
 		std::set<Object*>::iterator it;
 
-		while (m_subordinates->size()) {
-			it = m_subordinates->begin();
-			(*it)->m_superiors->erase(this);
-			m_subordinates->erase(it);
+		while (m_subs->size()) {
+			it = m_subs->begin();
+			(*it)->m_supers->erase(this);
+			m_subs->erase(it);
 		}
 	}
 
@@ -159,11 +159,11 @@ namespace BlendInt {
 		if(!super) return false;
 		if(super == this) return false;
 
-		if(!m_superiors->count(super))
+		if(!m_supers->count(super))
 			return false;
 
-		super->m_subordinates->erase(this);
-		m_superiors->erase(super);
+		super->m_subs->erase(this);
+		m_supers->erase(super);
 		return true;
 	}
 
@@ -171,10 +171,10 @@ namespace BlendInt {
 	{
 		std::set<Object*>::iterator it;
 
-		while (m_superiors->size()) {
-			it = m_superiors->begin();
-			(*it)->m_subordinates->erase(this);
-			m_superiors->erase(it);
+		while (m_supers->size()) {
+			it = m_supers->begin();
+			(*it)->m_subs->erase(this);
+			m_supers->erase(it);
 		}
 	}
 
@@ -183,16 +183,30 @@ namespace BlendInt {
 		if (!super) return false;
 		if (super == this) return false;	// cannot bind self
 
-		if (m_superiors->count(super)) return true;
+		if (m_supers->count(super)) return true;
 
-		super->m_subordinates->insert(this);
-		m_superiors->insert(super);
+		super->m_subs->insert(this);
+		m_supers->insert(super);
 		return true;
+	}
+
+	bool Object::Destroy (Object* sub)
+	{
+		if(Detach(sub)) {
+			if(!sub->m_supers->size()) {
+				delete sub;
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 	size_t Object::GetReferenceCount()
 	{
-		return m_superiors->size();
+		return m_supers->size();
 	}
 
 #ifdef DEBUG
@@ -227,9 +241,9 @@ namespace BlendInt {
 		std::set<Object*>::iterator it;
 
 		std::cout << "Superior(s) of " << m_name << ":";
-		for(it = m_superiors->begin(); it!= m_superiors->end(); it++)
+		for(it = m_supers->begin(); it!= m_supers->end(); it++)
 		{
-			std::cout << " " << (*it)->m_name << "(" << (*it)->m_superiors->size() << ")";
+			std::cout << " " << (*it)->m_name << "(" << (*it)->m_supers->size() << ")";
 		}
 		std::cout << std::endl;
 	}
@@ -239,9 +253,9 @@ namespace BlendInt {
 	{
 		std::set<Object*>::iterator it;
 		std::cout << "Subordinate(s) of " << m_name << ":";
-		for(it = m_subordinates->begin(); it!= m_subordinates->end(); it++)
+		for(it = m_subs->begin(); it!= m_subs->end(); it++)
 		{
-			std::cout << " " <<  (*it)->m_name << "(" << (*it)->m_superiors->size() << ")";
+			std::cout << " " <<  (*it)->m_name << "(" << (*it)->m_supers->size() << ")";
 		}
 		std::cout << std::endl;
 	}

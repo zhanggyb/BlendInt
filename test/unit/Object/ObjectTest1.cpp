@@ -424,3 +424,47 @@ TEST_F(ObjectTest1, MixAttach1)
 
 	ASSERT_TRUE(Object::GetMapSize() == 0);
 }
+
+/**
+ * test destroy()
+ *
+ * Expected result: 
+ */
+TEST_F(ObjectTest1, Destroy1)
+{
+	// TODO: add test code here
+    Object* obj1 = new Object;
+    obj1->set_name("obj1");
+
+    Object* obj2 = new Object;
+    obj2->set_name("obj2");
+ 
+    Object* obj3 = new Object;
+    obj3->set_name("obj3");
+   
+    Object* obj4 = new Object;
+    obj4->set_name("obj4");
+
+    Object* obj5 = new Object;
+    obj5->set_name("obj5");
+    
+    Object* obj6 = new Object;
+    obj6->set_name("obj6");
+
+   	obj1->Attach(obj2);
+	obj1->Attach(obj3);
+
+    obj4->Attach(obj3);
+	obj5->Attach(obj3);
+
+	obj6->Attach(obj1);
+	obj6->Attach(obj4);
+	obj6->Attach(obj5);
+
+    obj1->Destroy(obj2);
+    obj1->Destroy(obj3);
+
+    delete obj6;
+
+	ASSERT_TRUE(Object::GetMapSize() == 0);
+}

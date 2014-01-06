@@ -77,7 +77,7 @@ namespace BlendInt {
 
 		Object ();
 
-		explicit Object (Object* superior);
+		explicit Object (Object* super);
 
 		virtual ~Object ();
 
@@ -93,6 +93,21 @@ namespace BlendInt {
 
 		bool AttachTo (Object* super);
 
+		/**
+		 * @brief Detach and try to delete sub object
+		 * @param[in] sub The sub object
+		 * @return
+		 * 	- true if success
+		 * 	- false if fail
+		 *
+		 * This function detach and try to delete the sub object if it has no more super
+		 * object.
+		 *
+		 * Return false if the sub is not in sub objects, or it's not deleted if it has
+		 * more super object attaching.
+		 */
+		bool Destroy (Object* sub);
+
 		inline void set_name (const char* name)
 		{
 			m_name = name;
@@ -107,17 +122,17 @@ namespace BlendInt {
 
 		size_t GetReferenceCount ();
 
-		inline const std::set<Object*>* superiors() const {return m_superiors.get();}
+		inline const std::set<Object*>* superiors() const {return m_supers.get();}
 
-		inline const std::set<Object*>* subordinates() const {return m_subordinates.get();}
+		inline const std::set<Object*>* subordinates() const {return m_subs.get();}
 
 	private:
 
 		static ObjectEvents* events;
 
-		boost::scoped_ptr<std::set<Object*> > m_superiors;
+		boost::scoped_ptr<std::set<Object*> > m_supers;
 
-		boost::scoped_ptr<std::set<Object*> > m_subordinates;
+		boost::scoped_ptr<std::set<Object*> > m_subs;
 
 		std::string m_name;
 
