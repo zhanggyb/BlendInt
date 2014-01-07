@@ -27,26 +27,25 @@ namespace BlendInt {
 	static void CbKey(GLFWwindow* window, int key, int scancode, int action,
 					  int mods)
 	{
-		KeyAction key_action = KeyNone;
 		switch (action) {
 			case GLFW_PRESS:
-				key_action = KeyPress;
+                global_key_event.set_action(KeyPress);
 				break;
 			case GLFW_RELEASE:
-				key_action = KeyRelease;
+                global_key_event.set_action(KeyRelease);
 				break;
 			case GLFW_REPEAT:
-				key_action = KeyRepeat;
+                global_key_event.set_action(KeyRepeat);
 				break;
 			default:
+                global_key_event.set_action(KeyNone);
 				break;
 		}
 
 		global_key_event.set_key(key);
 		global_key_event.set_scancode(scancode);
-		global_key_event.set_action(key_action);
 		global_key_event.set_modifiers(mods);
-		global_key_event.clear_text();
+        global_key_event.clear_text();
 
 		Interface::Instance()->DispatchKeyEvent(&global_key_event);
 	}

@@ -68,7 +68,7 @@ namespace BlendInt {
 		 *
 		 * This signature a key event
 		 */
-		KeyEvent (int action, int key, int scancode, int mods, const String& text = String())
+		KeyEvent (KeyAction action, int key, int scancode, int mods, const String& text = String())
 		: InputEvent(mods),
 		  m_action(action),
 		  m_key(key),
@@ -89,9 +89,9 @@ namespace BlendInt {
 
 		void set_scancode (int scancode) {m_scancode = scancode;}
 
-		int action () const {return m_action;}
+		KeyAction action () const {return m_action;}
 
-		void set_action (int action) {m_action = action;}
+		void set_action (KeyAction action) {m_action = action;}
 
 		const String& text () const {return m_text;}
 
@@ -103,7 +103,7 @@ namespace BlendInt {
 
 	private:
 
-		int m_action;
+		KeyAction m_action;
 		int m_key;
 		int m_scancode;
 

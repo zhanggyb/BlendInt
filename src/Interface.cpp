@@ -320,7 +320,23 @@ namespace BlendInt {
 
 		} else {
 
-			KeyEvent event(action, key, action, mods);
+			KeyAction key_action = KeyNone;
+
+			switch(action) {
+				case GLFW_PRESS:
+					key_action = KeyPress;
+					break;
+				case GLFW_RELEASE:
+					key_action = KeyRelease;
+					break;
+				case GLFW_REPEAT:
+					key_action = KeyRepeat;
+					break;
+				default:
+					break;
+			}
+
+			KeyEvent event(key_action, key, scancode, mods);
 
 			map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
 			set<AbstractWidget*>::reverse_iterator set_it;

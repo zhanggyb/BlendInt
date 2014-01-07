@@ -53,10 +53,10 @@ namespace BlendInt {
 
 	enum KeyModifier {
 		ModifierNone = 0x0,					/* 0x0000 */
-		ModifierShift = GLFW_MOD_SHIFT, /* 0x0001 */
-		ModifierControl = GLFW_MOD_CONTROL, /* 0x0002 */
-		ModifierAlt = GLFW_MOD_ALT,		 /* 0x0004 */
-		ModifierSuper = GLFW_MOD_SUPER		 /* 0x0008 */
+		ModifierShift = 0x0001, /* GLFW_MOD_SHIFT */
+		ModifierControl = 0x0002, /* GLFW_MOD_CONTROL */
+		ModifierAlt = 0x0004,		 /* GLFW_MOD_ALT */
+		ModifierSuper = 0x0008		 /* GLFW_MOD_SUPER */
 	};
 
 	enum Key {
