@@ -27,6 +27,8 @@
 #include <BlendInt/Types.hpp>
 #include <BlendInt/InputEvent.hpp>
 
+#include <BlendInt/String.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -48,28 +50,64 @@ namespace BlendInt {
 		 *
 		 * This signature a key event
 		 */
-		KeyEvent(int key, int scancode,
-				 int action, int mods)
-			: InputEvent (mods), _key(key),
-			_scancode(scancode), _action(action)
-		{ }
+		KeyEvent ()
+		: InputEvent(),
+		  m_action(KeyNone),
+		  m_key(Key_Unknown),
+		  m_scancode(0)
+		{
+		}
+
+		/**
+		 * @brief Default Constructor of KeyEvent
+		 *
+		 * @param[in] key The keyboard key that was pressed or released
+		 * @param[in] scancode The system-specific scancode of the key
+		 * @param[in] action KeyButtonAction
+		 * @param[in] mods Bit field describing which modifier keys were held down
+		 *
+		 * This signature a key event
+		 */
+		KeyEvent (int action, int key, int scancode, int mods, const String& text = String())
+		: InputEvent(mods),
+		  m_action(action),
+		  m_key(key),
+		  m_scancode(scancode),
+		  m_text (text)
+		{
+		}
 
 		virtual ~KeyEvent()
 		{
-
 		}
 
-		int key () const {return _key;}
+		int key () const {return m_key;}
 
-		int scancode () const {return _scancode;}
+		void set_key (int key) {m_key = key;}
 
-		int action () const {return _action;}
+		int scancode () const {return m_scancode;}
+
+		void set_scancode (int scancode) {m_scancode = scancode;}
+
+		int action () const {return m_action;}
+
+		void set_action (int action) {m_action = action;}
+
+		const String& text () const {return m_text;}
+
+		void set_text (const String& text) {m_text = text;}
+
+		void set_text (unsigned int character) {m_text.clear(); m_text.push_back(character);}
+
+		void clear_text () {m_text.clear();}
 
 	private:
 
-		int _key;
-		int _scancode;
-		int _action;
+		int m_action;
+		int m_key;
+		int m_scancode;
+
+		String m_text;
 	};
 
 }

@@ -43,16 +43,25 @@ namespace BlendInt {
 	public:
 
 		/**
+		 * @brief Default constructor
+		 */
+		MouseEvent ()
+			: InputEvent(),
+				m_action(MouseNone),
+			  m_button(MouseButtonNone)
+			{}
+
+		/**
 		 * @brief Constructor
 		 * @param[in] type one of Event::Type
 		 */
 		MouseEvent (MouseAction action, MouseButton button)
-			: m_action(action), m_button(button)
+			: InputEvent(), m_action(action), m_button(button)
 			{}
 		
 		MouseEvent (MouseAction action, MouseButton button,
 					const Point& position)
-			: m_action(action), m_button(button),
+			: InputEvent(), m_action(action), m_button(button),
 			m_position(position)
 		{}
 
@@ -64,10 +73,14 @@ namespace BlendInt {
 			return m_action;
 		}
 
+		void set_action (MouseAction action) {m_action = action;}
+
 		MouseButton button () const
 		{
 			return m_button;
 		}
+
+		void set_button (MouseButton button) {m_button = button;}
 
 		const Point& position () const
 		{

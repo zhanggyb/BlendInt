@@ -72,14 +72,9 @@ namespace BlendInt {
 
 	void TextEntry::KeyPressEvent (KeyEvent* event)
 	{
-		int ch = event->key();
+		std::cout << "get text" << std::endl;
 
-		std::cout << "get key: " << ch << std::endl;
-
-		// if numbers
-		if(ch >= 32 && ch <= 127) {
-			m_text += (char)(ch);
-		}
+		m_text += event->text();
 		event->accept(this);
 	}
 

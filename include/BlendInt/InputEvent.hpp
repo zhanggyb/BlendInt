@@ -43,7 +43,7 @@ namespace BlendInt {
 		 * @param modifiers Bitwise conbination of KeyModifier
 		 */
 		InputEvent(int modifiers = ModifierNone)
-			: modifiers_(modifiers)
+			: m_modifiers(modifiers)
 		{
 		}
 
@@ -51,9 +51,13 @@ namespace BlendInt {
 		{
 		}
 
+		int modifiers () const {return m_modifiers;}
+
+		void set_modifiers (int mods) {m_modifiers = mods;}
+
 	protected:
 
-		int modifiers_;
+		int m_modifiers;
 
 	};
 

@@ -99,11 +99,7 @@ namespace BlendInt {
 
 		void DispatchKeyEvent (KeyEvent* event);
 
-		void DispatchMousePressEvent (MouseEvent* event);
-
-		void DispatchMouseReleaseEvent (MouseEvent* event);
-
-		void DispatchMouseMoveEvent (MouseEvent* event);
+		void DispatchMouseEvent (MouseEvent* event);
 
 		const Size& size () const;
 

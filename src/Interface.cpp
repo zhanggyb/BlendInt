@@ -320,7 +320,7 @@ namespace BlendInt {
 
 		} else {
 
-			KeyEvent event(key, scancode, action, mods);
+			KeyEvent event(action, key, action, mods);
 
 			map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
 			set<AbstractWidget*>::reverse_iterator set_it;
@@ -485,18 +485,89 @@ namespace BlendInt {
 
 	void Interface::DispatchKeyEvent (KeyEvent* event)
 	{
+		if(!event) return;
+
+		map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
+		set<AbstractWidget*>::reverse_iterator set_it;
+		ContextManager* cm = ContextManager::Instance();
+		set<AbstractWidget*>* pset = 0;
+
+		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
+		{
+			pset = map_it->second;
+			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
+			{
+				//if(!(*set_it)->visible()) break;
+				// TODO: only the focused widget can dispose key event
+				switch (event->action()) {
+				case KeyPress:
+					(*set_it)->KeyPressEvent(event);
+					break;
+				case KeyRelease:
+					// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
+					break;
+				case KeyRepeat:
+					// item->KeyRepeatEvent(&event);
+					break;
+				default:
+					break;
+				}
+				if(event->ignored()) break;
+				if(event->accepted()) {
+					// TODO: do sth needed
+					//break;
+				}
+
+			}
+			if(event->ignored())	break;
+			if (event->accepted()) {
+				// TODO: do sth needed
+				//break;
+			}
+		}
+
 	}
 
-	void Interface::DispatchMousePressEvent (MouseEvent* event)
+	void Interface::DispatchMouseEvent (MouseEvent* event)
 	{
-	}
+		if(!event) return;
 
-	void Interface::DispatchMouseReleaseEvent (MouseEvent* event)
-	{
-	}
+		map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
+		set<AbstractWidget*>::reverse_iterator set_it;
+		ContextManager* cm = ContextManager::Instance();
 
-	void Interface::DispatchMouseMoveEvent (MouseEvent* event)
-	{
+		for (map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend();
+		        map_it++)
+		{
+			set<AbstractWidget*>* pset = map_it->second;
+			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++) {
+				//if(!(*set_it)->visible()) break;
+
+				switch (event->action()) {
+					case MousePress:
+						dispatch_mouse_press_event((*set_it), event);
+						break;
+					case MouseRelease:
+						(*set_it)->MouseReleaseEvent(event);
+						break;
+					default:
+						break;
+				}
+				if (event->ignored())
+					break;
+
+				if (event->accepted()) {
+					// TODO: do sth needed
+					break;
+				}
+			}
+			if (event->ignored())
+				break;
+			if (event->accepted()) {
+				// TODO: do sth needed
+				break;
+			}
+		}
 	}
 
 	bool Interface::TakeScreenshot(const std::string& path)
