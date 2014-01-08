@@ -38,6 +38,7 @@
 #include <utility>
 #include <stdexcept>
 #include <algorithm>
+#include <iterator>
 
 #include <BlendInt/FontCache.hpp>
 #include <BlendInt/ShaderManager.hpp>
@@ -305,12 +306,96 @@ namespace BlendInt {
 		*/
 //	}
 
-	void FontCache::print (const String& string)
+	void FontCache::Print (const String& string, size_t start, bool restore)
 	{
-		print (string, string.length());
+		Print (string, string.length(), start, restore);
 	}
 
-	void FontCache::print (const String& string, size_t length)
+	void FontCache::Print (const String& string, size_t length, size_t start,
+	        bool restore)
+	{
+		ShaderManager* sm = ShaderManager::Instance();
+		GLfloat black[4] = { 0, 0, 0, 1 };
+
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glUseProgram(sm->text_program()->id());
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_atlas.texture());
+		glUniform1i(sm->text_uniform_tex(), 0);
+
+		glUniform4fv(sm->text_uniform_color(), 1, black);
+
+		/* Set up the VBO for our vertex data */
+		glEnableVertexAttribArray(sm->text_attribute_coord());
+		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
+		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		//Vertex2D vertex[6];
+
+		/* Loop through all characters */
+		// TODO: read text in TextureFont map
+		size_t str_length = std::min(string.length(), length);
+
+		// TODO: support left->right, and right->left text
+		String::const_iterator it = string.begin();
+		std::advance(it, start);
+
+		for (size_t i = 0; i < str_length; it++, i++)
+		{
+			/* Draw the character on the screen */
+			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			glTranslatef(m_atlas.glyph(*it).advance_x, 0, 0);
+		}
+
+		glDisableVertexAttribArray(sm->text_attribute_coord());
+
+		glUseProgram(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);	// do not forget unbind buffer
+
+		glDisable(GL_BLEND);
+
+		if(restore) {
+			glPopMatrix();
+		}
+	}
+
+	void FontCache::Print (float x, float y, const String& string, size_t start, bool restore)
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(x, y, 0);
+
+		Print (string, string.length(), start, restore);
+
+		if(restore)
+			glPopMatrix();
+	}
+
+	void FontCache::Print (float x, float y, const String& string, size_t length, size_t start, bool restore)
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(x, y, 0);
+
+		Print (string, length, start, restore);
+
+		if(restore)
+			glPopMatrix();
+	}
+
+
+	void FontCache::print (const String& string, size_t length, bool restore)
 	{
 		ShaderManager* sm = ShaderManager::Instance();
 		GLfloat black[4] = { 0, 0, 0, 1 };
@@ -356,32 +441,41 @@ namespace BlendInt {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);	// do not forget unbind buffer
 
 		glDisable(GL_BLEND);
-		glPopMatrix();
+
+		if(restore) {
+			glPopMatrix();
+		}
 	}
 
-	void FontCache::print (float x, float y, const String& string)
+	void FontCache::print (const String& string, bool restore)
+	{
+		print (string, string.length(), restore);
+	}
+
+	void FontCache::print (float x, float y, const String& string, bool restore)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(x, y, 0);
 
-		print (string, string.length());
+		print (string, string.length(), restore);
 
-		glPopMatrix();
-
+		if(restore)
+			glPopMatrix();
 	}
 
-	void FontCache::print (float x, float y, const String& string, size_t length)
+	void FontCache::print (float x, float y, const String& string, size_t length, bool restore)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(x, y, 0);
 
-		print (string, length);
+		print (string, length, restore);
 
-		glPopMatrix();
+		if(restore)
+			glPopMatrix();
 	}
 
 	Rect FontCache::get_text_outline (const String& string)

@@ -30,6 +30,8 @@
 #include <BlendInt/Point.hpp>
 #include <BlendInt/Rect.hpp>
 
+#include <BlendInt/Timer.hpp>
+
 namespace BlendInt {
 
 	class TextEntry: public RoundWidget
@@ -60,13 +62,26 @@ namespace BlendInt {
 
 		void Init ();
 
+		void OnReverseCursor ();
+
 		size_t GetValidTextSize ();
+
+		/**
+		 * @brief Get the index and length of the text to show
+		 * @param[out] start The index in the text to print
+		 * @param[out] length The length of the text to print
+		 */
+		void GetVisibleTextPlace (size_t* start, size_t* length);
 
 		Font m_font;
 
 		String m_text;
 
+		size_t m_start;	// where start print the text
+
 		size_t m_length;
+
+		size_t m_cursor_position;
 
 		/**
 		 * @brief The position to print text
@@ -77,6 +92,10 @@ namespace BlendInt {
 		 * @brief Box in which hold the text
 		 */
 		Rect m_text_outline;
+
+		Timer* m_timer;
+
+		bool m_flicker;
 	};
 
 }

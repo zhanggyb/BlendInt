@@ -29,18 +29,14 @@
 namespace BlendInt {
 
 	TextEntry::TextEntry ()
-	: RoundWidget(), m_length(0)
+	: RoundWidget(), m_start(0), m_length(0), m_cursor_position(0), m_timer(0), m_flicker(true)
 	{
-		set_expand_x(true);
-		set_size (100, 24);	// the same height of a button
 		Init();
 	}
 
 	TextEntry::TextEntry (AbstractWidget* parent)
-	: RoundWidget(parent), m_length(0)
+	: RoundWidget(parent), m_start(0), m_length(0), m_cursor_position(0), m_timer(0), m_flicker(true)
 	{
-		set_expand_x(true);
-		set_size (100, 24);	// the same height of a button
 		Init();
 	}
 
@@ -64,7 +60,13 @@ namespace BlendInt {
 
 		glDisable(GL_BLEND);
 
-		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text);
+		FontCache::create(m_font)->Print(m_origin.x(), m_origin.y(), m_text, m_length, m_start, false);
+
+		if(m_flicker) {
+			//glTranslatef(2, 2, 0);
+			glColor4ub(0, 255, 255, 200);
+			glRecti(0, -m_origin.y() + 2, 2, 14);
+		}
 
 		glPopMatrix();
 
@@ -72,9 +74,15 @@ namespace BlendInt {
 
 	void TextEntry::KeyPressEvent (KeyEvent* event)
 	{
-		std::cout << "get text" << std::endl;
+		if(event->key() == Key_Backspace) {
+			if(m_text.size())
+				m_text.erase(m_text.length() - 1, 1);
+		} else {
+			m_text += event->text();
+		}
 
-		m_text += event->text();
+		//m_length = GetValidTextSize();
+		GetVisibleTextPlace(&m_start, &m_length);
 		event->accept(this);
 	}
 
@@ -155,6 +163,9 @@ namespace BlendInt {
 	{
 		bool cal_width = true;
 
+		set_expand_x(true);
+		set_size (100, 24);	// the same height of a button
+
 		FontCache* fc = FontCache::create(m_font);
 
 		m_text_outline = fc->get_text_outline(m_text);
@@ -186,25 +197,61 @@ namespace BlendInt {
 
 		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
 		set_preferred_size(size());
+
+		// and set timer
+		m_timer = new Timer(this);
+		m_timer->SetInterval(500);	// 100 ms
+		events()->connect(m_timer->timeout(), this, &TextEntry::OnReverseCursor);
+
+		m_timer->Start();
+	}
+
+	void TextEntry::OnReverseCursor()
+	{
+		m_flicker = m_flicker ? false: true;
 	}
 
 	size_t TextEntry::GetValidTextSize ()
 	{
 		size_t width = 0;
+		FontCache* fc = FontCache::create(m_font);
 
 		size_t str_len = m_text.length();
 
-		width = FontCache::create(m_font)->get_text_width(m_text, str_len);
+		width = fc->get_text_width(m_text, str_len);
 
 		if(width > size().width()) {
 			while(str_len > 0) {
-				width = FontCache::create(m_font)->get_text_width(m_text, str_len);
+				width = fc->get_text_width(m_text, str_len);
 				if(width < size().width()) break;
 				str_len--;
 			}
 		}
 
 		return str_len;
+	}
+
+	void TextEntry::GetVisibleTextPlace (size_t* start, size_t* length)
+	{
+		size_t str_len = m_text.length();
+		FontCache* fc = FontCache::create(m_font);
+
+		size_t width = fc->get_text_width(m_text, str_len);
+
+		if(width < size().width() - 4) {
+			*start = 0;
+			*length = str_len;
+		} else {
+			while(str_len > 0) {
+				str_len--;
+				width = fc->get_text_width(m_text, str_len);
+				if(width < size().width() - 4) break;
+			}
+
+			*start = m_text.length() - str_len;
+			*length = str_len;
+		}
+
 	}
 
 }

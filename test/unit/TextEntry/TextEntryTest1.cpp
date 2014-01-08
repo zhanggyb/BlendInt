@@ -29,7 +29,6 @@ TEST_F(TextEntryTest1, Foo1)
 
     TextEntry* lineedit = new TextEntry;
     lineedit->SetPosition(200, 200);
-    lineedit->SetRoundType(RoundAll);
     
     lineedit->Register();
 
