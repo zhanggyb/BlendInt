@@ -31,6 +31,9 @@
 #include <BlendInt/Rect.hpp>
 
 #include <BlendInt/Timer.hpp>
+#include <BlendInt/GLArrayBuffer.hpp>
+
+#include <boost/smart_ptr.hpp>
 
 namespace BlendInt {
 
@@ -98,6 +101,8 @@ namespace BlendInt {
 		Timer* m_timer;
 
 		bool m_flicker;
+
+		boost::scoped_ptr<GLArrayBuffer<float, 6> > m_inner_buffer;
 
 		static Margin DefaultTextEntryPadding;
 	};

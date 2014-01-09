@@ -34,6 +34,8 @@
 #endif
 #endif  // __UNIX__
 
+#include <stddef.h>
+
 namespace BlendInt {
 
 	/**
@@ -50,6 +52,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup opengl
 	 */
+	template<typename T, size_t N>
 	class GLArrayBuffer
 	{
 	public:
@@ -75,26 +78,13 @@ namespace BlendInt {
 
 		inline GLuint id () const {return m_id;}
 
-		inline bool is_buffer ()
-		{
-			return glIsBuffer(m_id);
-		}
-
-		inline void set_property (int vertices, int unit_size)
-		{
-			m_vertices = vertices;
-			m_unit_size = unit_size;
-		}
+		bool IsBbuffer ();
 
 		void Bind ();
 
-		void Unbind ();
+		static void Unbind ();
 
-		void SetData (GLsizeiptr size, const GLvoid* data, GLenum usage);
-
-		int vertices () {return m_vertices;}
-
-		inline int unit_size () {return m_unit_size;}
+		void SetData (GLsizeiptr size, const T* data, GLenum usage);
 
 		inline GLenum target ()
 		{
@@ -105,26 +95,96 @@ namespace BlendInt {
 
 		GLint GetBufferSize ();
 
-		inline void set_vertices (int vertices)
-		{
-			m_vertices = vertices;
-		}
-
-		inline void set_unit_size (int size)
-		{
-			m_unit_size = size;
-		}
+		size_t GetVertices ();
 
 	private:
 
 		GLuint m_id;
 
-		/** Vertex number -- how many vertices are used in this buffer */
-		int m_vertices;
-
-		/** size of one unit vertex */
-		int m_unit_size;
 	};
+
+	template<typename T, size_t N>
+	GLArrayBuffer<T, N>::GLArrayBuffer()
+	: m_id(0)
+	{
+
+	}
+
+	template<typename T, size_t N>
+	GLArrayBuffer<T, N>::~GLArrayBuffer()
+	{
+		glDeleteBuffers(1, &m_id);
+	}
+
+	template<typename T, size_t N>
+	void GLArrayBuffer<T, N>::Generate()
+	{
+		if(!m_id)
+			Clear();
+
+		glGenBuffers(1, &m_id);
+	}
+
+	template<typename T, size_t N>
+	void GLArrayBuffer<T, N>::Clear()
+	{
+		glDeleteBuffers(1, &m_id);
+		m_id = 0;
+	}
+
+	template<typename T, size_t N>
+	bool GLArrayBuffer<T, N>::IsBbuffer ()
+	{
+		return glIsBuffer(m_id);
+	}
+
+	template<typename T, size_t N>
+	void GLArrayBuffer<T, N>::Bind()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_id);
+	}
+
+	template<typename T, size_t N>
+	void GLArrayBuffer<T, N>::Unbind ()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	template<typename T, size_t N>
+	void GLArrayBuffer<T, N>::SetData (GLsizeiptr size, const T* data, GLenum usage)
+	{
+		glBufferData (GL_ARRAY_BUFFER, size, data, usage);
+	}
+
+	template<typename T, size_t N>
+	GLenum GLArrayBuffer<T, N>::GetUsage ()
+	{
+		GLint usage = 0;
+
+		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
+
+		return usage;
+	}
+
+	template<typename T, size_t N>
+	GLint GLArrayBuffer<T, N>::GetBufferSize ()
+	{
+		GLint size = 0;
+		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_USAGE, &size);
+
+		return size;
+	}
+
+	template<typename T, size_t N>
+	size_t GLArrayBuffer<T, N>::GetVertices()
+	{
+		size_t num = 0;
+		GLint buffer_size = 0;
+
+		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_USAGE, &buffer_size);
+
+		num = buffer_size / (sizeof(T) * N);
+	}
 
 }
 

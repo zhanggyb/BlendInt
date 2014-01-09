@@ -181,6 +181,8 @@ namespace BlendInt {
 
 	void TextEntry::Init ()
 	{
+		m_inner_buffer.reset(new GLArrayBuffer<float, 6>);
+
 		bool cal_width = true;
 
 		set_expand_x(true);

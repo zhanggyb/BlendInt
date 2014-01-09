@@ -26,6 +26,7 @@
 
 #include <BlendInt/AbstractWidget.hpp>
 #include <BlendInt/GLArrayBufferMultiple.hpp>
+#include <BlendInt/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 
@@ -190,7 +191,52 @@ namespace BlendInt {
 									   short shadetop,
 									   short shadedown,
 									   Orientation shadedir,
+									   GLArrayBuffer<float, 6>* buffer);
+
+
+		void GenerateShadedFormBuffer (const Size* size,
+									   float border,
+									   int round_type,
+									   float radius,
+									   const Color& color,
+									   short shadetop,
+									   short shadedown,
+									   Orientation shadedir,
 									   AbstractGLBuffer* buffer);
+
+		/**
+		 * @brief generate buffer with shaded color
+		 * @param[in] size
+		 * @param[in] border
+		 * @param[in] round_type
+		 * @param[in] radius
+		 * @param[in] color
+		 * @param[in] shadetop
+		 * @param[in] shadedown
+		 * @param[in] shadedir
+		 * @param[in] highlight
+		 * @param[out] buffer
+		 *
+		 * This function calculate the output GLBuffers with shaded color
+		 *
+		 * If highlight > 0, 3 buffers will be generated, if not, 2 buffers generated:
+		 *	- buffer index 0: used for inner
+		 *	- buffer index 1: used for outline
+		 *	- buffer index 2: used for inner highlight
+		 */
+		void GenerateShadedFormBuffers (const Size* size,
+									   float border,
+									   int round_type,
+									   float radius,
+									   const Color& color,
+									   short shadetop,
+									   short shadedown,
+									   Orientation shadedir,
+									   short highlight,
+									   GLArrayBuffer<float, 6>* inner_buffer,
+									   GLArrayBuffer<float, 2>* outer_buffer,
+									   GLArrayBuffer<float, 6>* highlight_buffer);
+
 
 		/**
 		 * @brief generate buffer with shaded color
