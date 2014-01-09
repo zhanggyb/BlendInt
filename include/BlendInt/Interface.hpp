@@ -113,15 +113,18 @@ namespace BlendInt {
 		 */
 		void Resize (unsigned int width, unsigned int height);
 
-		/**
-		 * @brief Take a screenshot and save to the given path
-		 * @param[in] path the directory where to store the screenshot
-		 */
-		bool TakeScreenshot (const std::string& path);
-
 		Cpp::EventRef<unsigned int, unsigned int> resized() {return m_resized;}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
+
+		void set_focus_style (FocusStyle style)
+		{
+			m_focus_style = style;
+		}
+
+		FocusStyle focus_style () const {
+			return m_focus_style;
+		}
 
 	private:
 
@@ -148,6 +151,8 @@ namespace BlendInt {
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
 		Cpp::Event<unsigned int, unsigned int> m_resized;
+
+		FocusStyle m_focus_style;
 
 		static Interface* interface;
 

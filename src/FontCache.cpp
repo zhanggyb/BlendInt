@@ -306,13 +306,12 @@ namespace BlendInt {
 		*/
 //	}
 
-	void FontCache::Print (const String& string, size_t start, bool restore)
+	void FontCache::Print (const String& string, size_t start)
 	{
-		Print (string, string.length(), start, restore);
+		Print (string, string.length(), start);
 	}
 
-	void FontCache::Print (const String& string, size_t length, size_t start,
-	        bool restore)
+	void FontCache::Print (const String& string, size_t length, size_t start)
 	{
 		ShaderManager* sm = ShaderManager::Instance();
 		GLfloat black[4] = { 0, 0, 0, 1 };
@@ -363,39 +362,35 @@ namespace BlendInt {
 
 		glDisable(GL_BLEND);
 
-		if(restore) {
-			glPopMatrix();
-		}
+		glPopMatrix();
 	}
 
-	void FontCache::Print (float x, float y, const String& string, size_t start, bool restore)
+	void FontCache::Print (float x, float y, const String& string, size_t start)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(x, y, 0);
 
-		Print (string, string.length(), start, restore);
+		Print (string, string.length(), start);
 
-		if(restore)
-			glPopMatrix();
+		glPopMatrix();
 	}
 
-	void FontCache::Print (float x, float y, const String& string, size_t length, size_t start, bool restore)
+	void FontCache::Print (float x, float y, const String& string, size_t length, size_t start)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(x, y, 0);
 
-		Print (string, length, start, restore);
+		Print (string, length, start);
 
-		if(restore)
-			glPopMatrix();
+		glPopMatrix();
 	}
 
 
-	void FontCache::print (const String& string, size_t length, bool restore)
+	void FontCache::print (const String& string, size_t length)
 	{
 		ShaderManager* sm = ShaderManager::Instance();
 		GLfloat black[4] = { 0, 0, 0, 1 };
@@ -442,40 +437,36 @@ namespace BlendInt {
 
 		glDisable(GL_BLEND);
 
-		if(restore) {
-			glPopMatrix();
-		}
+		glPopMatrix();
 	}
 
-	void FontCache::print (const String& string, bool restore)
+	void FontCache::print (const String& string)
 	{
-		print (string, string.length(), restore);
+		print (string, string.length());
 	}
 
-	void FontCache::print (float x, float y, const String& string, bool restore)
+	void FontCache::print (float x, float y, const String& string)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(x, y, 0);
 
-		print (string, string.length(), restore);
+		print (string, string.length());
 
-		if(restore)
-			glPopMatrix();
+		glPopMatrix();
 	}
 
-	void FontCache::print (float x, float y, const String& string, size_t length, bool restore)
+	void FontCache::print (float x, float y, const String& string, size_t length)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
 		glTranslatef(x, y, 0);
 
-		print (string, length, restore);
+		print (string, length);
 
-		if(restore)
-			glPopMatrix();
+		glPopMatrix();
 	}
 
 	Rect FontCache::get_text_outline (const String& string)

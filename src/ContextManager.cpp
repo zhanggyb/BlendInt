@@ -72,12 +72,15 @@ namespace BlendInt {
 	}
 
 	ContextManager::ContextManager ()
+	: m_focus(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	ContextManager::~ContextManager ()
 	{
+		m_focus = 0;
+
 		map<int, set<AbstractWidget*>* >::iterator map_it;
 		set<AbstractWidget*>::iterator set_it;
 		set<AbstractWidget*>* pset = 0;
@@ -200,6 +203,10 @@ namespace BlendInt {
 	bool ContextManager::RemoveWidget (AbstractWidget* obj)
 	{
 		if (!obj) return false;
+
+		if(m_focus == obj) {
+			m_focus = 0;
+		}
 
 		map<AbstractWidget*, int>::iterator map_it;
 		

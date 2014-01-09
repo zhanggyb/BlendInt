@@ -144,6 +144,21 @@ namespace BlendInt {
 
 		void SetLayer (int z);
 
+		inline void show ()
+		{
+			m_flag.set(WidgetVisibility);
+		}
+
+		inline void hide ()
+		{
+			m_flag.reset(WidgetVisibility);
+		}
+
+		inline bool visible () const
+		{
+			return m_flag[WidgetVisibility];
+		}
+
 		inline int layer () const
 		{
 			return m_z;
@@ -156,44 +171,41 @@ namespace BlendInt {
 
 		//void reset_z (int z);
 
-		void show ();
-
-		void hide ();
-
 		inline bool locked () const
 		{
-			return m_flag[0];
+			return m_flag[WidgetLockGeometry];
 		}
 
 		inline bool registered() const
 		{
-			return m_flag[2];
+			return m_flag[WidgetRegistered];
 		}
-
-		Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
-
-		Cpp::EventRef<AbstractWidget*> destroyed () {return m_destroyed;}
 
 		void activate_events ()
 		{
-			m_flag.set(1);
+			m_flag.set(WidgetFireEvents);
 		}
 
 		void deactivate_events ()
 		{
-			m_flag.reset(1);
+			m_flag.reset(WidgetFireEvents);
 		}
 
 		bool fire_events () const
 		{
-			return m_flag[1];
+			return m_flag[WidgetFireEvents];
+		}
+
+		inline bool focused () const
+		{
+			return m_flag[WidgetFocus];
 		}
 
 		/**
 		 * @brief move this object along x axis
 		 * @param offset_x
 		 */
-		inline void MoveX (int offset_x)
+		inline void move_x (int offset_x)
 		{
 			SetPosition(position().x() + offset_x, position().y());
 		}
@@ -202,7 +214,7 @@ namespace BlendInt {
 		 * @brief move this object along y axis
 		 * @param offset_y
 		 */
-		inline void MoveY (int offset_y)
+		inline void move_y (int offset_y)
 		{
 			SetPosition(position().x(), position().y() + offset_y);
 		}
@@ -212,10 +224,14 @@ namespace BlendInt {
 		 * @param offset_x
 		 * @param offset_y
 		 */
-		inline void Move (int offset_x, int offset_y)
+		inline void move (int offset_x, int offset_y)
 		{
 			SetPosition(position().x() + offset_x, position().y() + offset_y);
 		}
+
+		Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
+
+		Cpp::EventRef<AbstractWidget*> destroyed () {return m_destroyed;}
 
 	protected:	// member functions
 
@@ -230,8 +246,6 @@ namespace BlendInt {
 		virtual void MouseReleaseEvent (MouseEvent* event) = 0;
 
 		virtual void MouseMoveEvent (MouseEvent* event) = 0;
-
-		bool contain (const Point& cursor);
 
 		/**
 		 * @brief Update opengl data (usually the GL buffer) for Render
@@ -252,7 +266,7 @@ namespace BlendInt {
 
 		void LockGeometry (AbstractWidget* obj, bool status)
 		{
-			obj->m_flag[0] = status ? 1 : 0;
+			obj->m_flag[WidgetLockGeometry] = status ? 1 : 0;
 		}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
@@ -263,7 +277,7 @@ namespace BlendInt {
 		 */
 		inline void fire_property_changed_event (int type)
 		{
-			if (m_flag[1])
+			if (m_flag[WidgetFireEvents])
 				m_property_changed.fire(this, type);
 		}
 
@@ -299,6 +313,14 @@ namespace BlendInt {
 		static void dispatch_mouse_release_event (AbstractWidget* obj, MouseEvent* event);
 
 	private:
+
+		enum WidgetFlagIndex {
+			WidgetLockGeometry = 0,
+			WidgetFireEvents,
+			WidgetRegistered,
+			WidgetVisibility,
+			WidgetFocus
+		};
 
 		/**
 		 * @brief the depth(layer) of the widget

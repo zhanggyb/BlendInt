@@ -60,9 +60,9 @@ namespace BlendInt {
 
 		glDisable(GL_BLEND);
 
-		FontCache::create(m_font)->Print(m_origin.x(), m_origin.y(), m_text, m_length, m_start, false);
+		FontCache::create(m_font)->Print(m_origin.x(), m_origin.y(), m_text, m_length, m_start);
 
-		if(m_flicker) {
+		if(focused() && m_flicker) {
 			//glTranslatef(2, 2, 0);
 			glColor4ub(0, 255, 255, 200);
 			glRecti(0, -m_origin.y() + 2, 2, 14);

@@ -31,10 +31,12 @@ TEST_F(TextEntryTest1, Foo1)
     lineedit->SetPosition(200, 200);
     
     lineedit->Register();
+    lineedit->show();
 
     Label* label = new Label("Label");
     label->SetPosition(400, 200);
     label->Register();
+    label->show();
 
 	RunLoop(window);
 

@@ -142,6 +142,7 @@ namespace BlendInt {
 	}
 
 	Interface::Interface ()
+	: m_focus_style(FocusOnClick)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
@@ -202,7 +203,9 @@ namespace BlendInt {
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				(*set_it)->Draw();
+				if((*set_it)->visible()) {
+					(*set_it)->Draw();
+				}
 			}
 		}
 		// m_ticktack = m_ticktack ? 0 : 1;
@@ -503,9 +506,27 @@ namespace BlendInt {
 	{
 		if(!event) return;
 
+		ContextManager* cm = ContextManager::Instance();
+
+		if(cm->m_focus) {
+			switch (event->action()) {
+				case KeyPress:
+					cm->m_focus->KeyPressEvent(event);
+					break;
+				case KeyRelease:
+					// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
+					break;
+				case KeyRepeat:
+					// item->KeyRepeatEvent(&event);
+					break;
+				default:
+					break;
+			}
+		}
+
+		/*
 		map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
 		set<AbstractWidget*>::reverse_iterator set_it;
-		ContextManager* cm = ContextManager::Instance();
 		set<AbstractWidget*>* pset = 0;
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
@@ -541,34 +562,73 @@ namespace BlendInt {
 				//break;
 			}
 		}
+		*/
 
 	}
 
 	void Interface::DispatchMouseEvent (MouseEvent* event)
 	{
-		if(!event) return;
+		if (!event)
+			return;
 
-		map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
+		map<int, set<AbstractWidget*>*>::reverse_iterator map_it;
 		set<AbstractWidget*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::Instance();
 
+		AbstractWidget* widget = 0;
+
 		for (map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend();
-		        map_it++)
-		{
+		        map_it++) {
+
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++) {
-				//if(!(*set_it)->visible()) break;
+				widget = *set_it;
+
+				if (!widget->visible())
+					continue;
+
+				if (!widget->contain(event->position()))
+					continue;
 
 				switch (event->action()) {
-					case MousePress:
-						dispatch_mouse_press_event((*set_it), event);
+					case MousePress: {
+						if (m_focus_style == FocusOnClick) {
+							// TODO: send unfocus event
+							if(cm->m_focus != widget) {
+								if(cm->m_focus) {
+									cm->m_focus->m_flag.reset(
+									        AbstractWidget::WidgetFocus);
+								}
+								cm->m_focus = widget;
+								cm->m_focus->m_flag.set(
+								        AbstractWidget::WidgetFocus);
+							}
+						}
+
+						widget->MousePressEvent(event);
+
 						break;
+					}
 					case MouseRelease:
-						(*set_it)->MouseReleaseEvent(event);
+						widget->MouseReleaseEvent(event);
 						break;
-					default:
+
+					default: {
+						if (m_focus_style == FocusOnHover) {
+							// TODO: send unfocus event first
+							if (cm->m_focus) {
+								cm->m_focus->m_flag.reset(
+								        AbstractWidget::WidgetFocus);
+							}
+							cm->m_focus = widget;
+							cm->m_focus->m_flag.set(
+							        AbstractWidget::WidgetFocus);
+						}
+						(*set_it)->MouseMoveEvent(event);
 						break;
+					}
 				}
+
 				if (event->ignored())
 					break;
 
@@ -583,12 +643,8 @@ namespace BlendInt {
 				// TODO: do sth needed
 				break;
 			}
-		}
-	}
 
-	bool Interface::TakeScreenshot(const std::string& path)
-	{
-		return true;
+		}
 	}
 
 	void Interface::RenderToImage()

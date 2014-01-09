@@ -98,6 +98,11 @@ namespace BlendInt {
 //		        | CornerBottomRight | CornerBottomLeft)
 //	};
 
+	enum FocusStyle {
+		FocusOnClick,
+		FocusOnHover
+	};
+
 	enum ScrollState
 	{
 		SCROLL_PRESSED = (1 << 0),

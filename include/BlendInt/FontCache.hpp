@@ -101,7 +101,7 @@ namespace BlendInt {
 
 		//unsigned int queryHeight (wchar_t charcode, bool create = true);
 
-		void print (const String& string, bool restore = true);
+		void print (const String& string);
 
 		/**
 		 * @brief Print the string with the given string length
@@ -109,19 +109,19 @@ namespace BlendInt {
 		 * @param length
 		 * @param restore If restore position after print
 		 */
-		void print (const String& string, size_t length, bool restore = true);
+		void print (const String& string, size_t length);
 
-		void print (float x, float y, const String& string, bool restore = true);
+		void print (float x, float y, const String& string);
 
-		void print (float x, float y, const String& string, size_t length, bool restore = true);
+		void print (float x, float y, const String& string, size_t length);
 
-		void Print (const String& string, size_t start = 0, bool restore = true);
+		void Print (const String& string, size_t start = 0);
 
-		void Print (const String& string, size_t length, size_t start = 0, bool restore = true);
+		void Print (const String& string, size_t length, size_t start = 0);
 
-		void Print (float x, float y, const String& string, size_t start = 0, bool restore = true);
+		void Print (float x, float y, const String& string, size_t start = 0);
 
-		void Print (float x, float y, const String& string, size_t length, size_t start = 0, bool restore = true);
+		void Print (float x, float y, const String& string, size_t length, size_t start = 0);
 
 		int get_height ()
 		{

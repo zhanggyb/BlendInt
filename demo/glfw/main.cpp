@@ -48,10 +48,26 @@ int main(int argc, char* argv[]) {
 
 	// TODO: add test code here
 	TextEntry* widget = new TextEntry;
+	widget->set_name("TextEntry1");
 	widget->SetFont(Font("Droid Sans"));
 	widget->SetPosition(200, 200);
 
 	widget->Register();
+	widget->show();
+
+	TextEntry* widget2 = new TextEntry;
+	widget2->set_name("TextEntry2");
+	widget2->SetFont(Font("Droid Sans"));
+	widget2->SetPosition(400, 200);
+
+	widget2->Register();
+	widget2->show();
+
+	Button* button = new Button;
+	button->set_name("button1");
+	button->SetPosition(200, 300);
+	button->Register();
+	button->show();
 
 	RunLoop(window);
 

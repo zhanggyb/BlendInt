@@ -98,6 +98,8 @@ namespace BlendInt {
 
 		map<AbstractWidget*, int> m_index;
 
+		AbstractWidget* m_focus;	// The current focused widget;
+
 		static ContextManager* context_manager;
 		
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;

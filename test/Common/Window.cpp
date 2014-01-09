@@ -101,7 +101,9 @@ namespace BlendInt {
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos)
 	{
-		global_mouse_event.set_position(static_cast<int>(xpos), static_cast<int>(ypos));
+        global_mouse_event.set_action(MouseNone);
+        global_mouse_event.set_button(MouseButtonNone);
+		global_mouse_event.set_position(static_cast<int>(xpos), Interface::Instance()->size().height() - static_cast<int>(ypos));
 
 		Interface::Instance()->DispatchMouseEvent(&global_mouse_event);
 	}
