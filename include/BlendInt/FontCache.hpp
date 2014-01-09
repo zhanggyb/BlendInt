@@ -174,12 +174,13 @@ namespace BlendInt {
 		Rect get_text_outline (const String& string);
 
 		/**
-		 * @brief get the text width contains the given text with the length
+		 * @brief Get the text width contains the given text with the length
 		 * @param string
 		 * @param length
+		 * @param start The index where start to calculate the width
 		 * @return
 		 */
-		unsigned int get_text_width (const String& string, size_t length);
+		unsigned int GetTextWidth (const String& string, size_t length, size_t start = 0);
 
 		unsigned int get_text_height ();
 

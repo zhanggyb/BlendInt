@@ -492,7 +492,7 @@ namespace BlendInt {
 		return Rect(Point(xmin, ymin), Point(xmax, ymax));
 	}
 
-	unsigned int FontCache::get_text_width (const String& string, size_t length)
+	unsigned int FontCache::GetTextWidth (const String& string, size_t length, size_t start)
 	{
 		unsigned int width = 0;
 
@@ -500,10 +500,11 @@ namespace BlendInt {
 			return width;
 		}
 
-		String::const_iterator it;
+		String::const_iterator it = string.begin();
+		std::advance(it, start);
 		size_t i = 0;
 
-		for (it = string.begin(); (it != string.end()) && (i < length); it++, i++)
+		for (; (it != string.end()) && (i < length); it++, i++)
 		{
 			width = query(*it).advance_x + width;
 		}

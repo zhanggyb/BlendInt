@@ -184,11 +184,11 @@ namespace BlendInt {
 
 		size_t str_len = m_text.length();
 
-		width = FontCache::create(m_font)->get_text_width(m_text, str_len);
+		width = FontCache::create(m_font)->GetTextWidth(m_text, str_len);
 
 		if(width > size().width()) {
 			while(str_len > 0) {
-				width = FontCache::create(m_font)->get_text_width(m_text, str_len);
+				width = FontCache::create(m_font)->GetTextWidth(m_text, str_len);
 				if(width < size().width()) break;
 				str_len--;
 			}

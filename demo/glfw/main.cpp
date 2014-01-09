@@ -51,6 +51,8 @@ int main(int argc, char* argv[]) {
 	widget->set_name("TextEntry1");
 	widget->SetFont(Font("Droid Sans"));
 	widget->SetPosition(200, 200);
+	widget->SetRadius(12.0);
+	widget->SetRoundType(RoundAll);
 
 	widget->Register();
 	widget->show();

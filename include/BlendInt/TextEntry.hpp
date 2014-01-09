@@ -54,6 +54,8 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void Update (int type, const void* data);
+
 		virtual void KeyPressEvent (KeyEvent* event);
 
 		virtual void Draw ();
@@ -96,6 +98,8 @@ namespace BlendInt {
 		Timer* m_timer;
 
 		bool m_flicker;
+
+		static Margin DefaultTextEntryPadding;
 	};
 
 }

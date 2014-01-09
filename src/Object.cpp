@@ -88,10 +88,6 @@ namespace BlendInt {
 
 	Object::~Object()
 	{
-#ifdef DEBUG
-		std::cout << "Destructor in object: " << m_name << "(" << m_supers->size() << ")" << std::endl;
-#endif
-
 		std::set<Object*>::iterator it;
 		while (m_supers->size()) {
 			it = m_supers->begin();
