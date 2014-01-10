@@ -96,6 +96,8 @@ namespace BlendInt {
 		 */
 		void draw_inner_buffer (AbstractGLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
 
+		void DrawInnerBuffer (GLArrayBufferF* buffer, int mode = GL_POLYGON);
+
 		/**
 		 * @brief draw shaded GL buffer in Render()
 		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
@@ -109,6 +111,8 @@ namespace BlendInt {
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
 		void draw_shaded_inner_buffer (AbstractGLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
+
+		void DrawShadedInnerBuffer (GLArrayBufferF* buffer, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw the GL Buffer in Render() with anti-alias
@@ -124,10 +128,24 @@ namespace BlendInt {
 		 */
 		void draw_outline_buffer (AbstractGLBuffer* buffer, size_t index = 0, int mode = GL_QUAD_STRIP);
 
-		void GenerateFormBuffer (const Size* size, int round_type,
-								 float radius, GLArrayBufferF<2>* inner_buffer,
-								 GLArrayBufferF<2>* outer_buffer,
-								 GLArrayBufferF<2>* emboss_buffer);
+		void DrawOutlineBuffer (GLArrayBufferF* buffer, int mode = GL_QUAD_STRIP);
+
+
+		/**
+		 * @brief Generate vertex buffer object for drawing a form
+		 * @param[in] size The size of the form
+		 * @param[in] round_type The round type
+		 * @param[in] radius The radius of the round corner
+		 * @param[out] inner_buffer Buffer object for drawing the inner
+		 * @param[out] outer_buffer Buffer object for drawing the outer
+		 * @param[out] emboss_buffer Buffer object for drawing the emboss
+		 */
+		void GenerateFormBuffer (const Size* size,
+				int round_type,
+				float radius,
+				GLArrayBufferF* inner_buffer,
+				GLArrayBufferF* outer_buffer,
+				GLArrayBufferF* emboss_buffer);
 
 		/**
 		 * @brief generate GL buffer for form drawing
@@ -196,7 +214,7 @@ namespace BlendInt {
 									   short shadetop,
 									   short shadedown,
 									   Orientation shadedir,
-									   GLArrayBufferF<6>* buffer);
+									   GLArrayBufferF* buffer);
 
 
 		void GenerateShadedFormBuffer (const Size* size,
@@ -230,7 +248,6 @@ namespace BlendInt {
 		 *	- buffer index 2: used for inner highlight
 		 */
 		void GenerateShadedFormBuffers (const Size* size,
-									   float border,
 									   int round_type,
 									   float radius,
 									   const Color& color,
@@ -238,9 +255,9 @@ namespace BlendInt {
 									   short shadedown,
 									   Orientation shadedir,
 									   short highlight,
-									   GLArrayBufferF<6>* inner_buffer,
-									   GLArrayBufferF<2>* outer_buffer,
-									   GLArrayBufferF<6>* highlight_buffer);
+									   GLArrayBufferF* inner_buffer,
+									   GLArrayBufferF* outer_buffer,
+									   GLArrayBufferF* highlight_buffer);
 
 
 		/**

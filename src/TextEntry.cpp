@@ -58,8 +58,26 @@ namespace BlendInt {
 			}
 
 			case FormSize: {
+				//const Size* size_p = static_cast<const Size*>(data);
+				//GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+
 				const Size* size_p = static_cast<const Size*>(data);
-				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				const Color& color = themes()->text.inner;
+				short shadetop = themes()->text.shadetop;
+				short shadedown = themes()->text.shadedown;
+
+				GenerateShadedFormBuffers(size_p,
+						round_type(),
+						radius(),
+						color,
+						shadetop,
+						shadedown,
+						Vertical,
+						5,
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						0
+						);
 				return;
 			}
 
@@ -81,28 +99,26 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		ThemeManager* tm = ThemeManager::instance();
+		// ThemeManager* tm = ThemeManager::instance();
 
+		/*
 		glColor4ub(tm->themes()->text.inner_sel.r(),
 					tm->themes()->text.inner_sel.g(),
 					tm->themes()->text.inner_sel.b(),
 					tm->themes()->text.inner_sel.a());
+		*/
 
-		m_inner_buffer->Bind();
-		m_inner_buffer->Draw(GL_POLYGON);
-		m_inner_buffer->Unbind();
+		DrawShadedInnerBuffer(m_inner_buffer.get());
 
 		// draw outline
-		unsigned char tcol[4] = { themes()->regular.outline.r(),
-		        themes()->regular.outline.g(),
-		        themes()->regular.outline.b(),
-		        themes()->regular.outline.a()};
+		unsigned char tcol[4] = { themes()->text.outline.r(),
+		        themes()->text.outline.g(),
+		        themes()->text.outline.b(),
+		        themes()->text.outline.a()};
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		m_outer_buffer->Bind();
-		m_outer_buffer->DrawAntiAlias(GL_QUAD_STRIP);
-		m_outer_buffer->Unbind();
+		DrawOutlineBuffer(m_outer_buffer.get());
 
 		FontCache::create(m_font)->Print(m_origin.x(), m_origin.y(), m_text, m_length, m_start);
 
@@ -210,8 +226,8 @@ namespace BlendInt {
 
 	void TextEntry::InitOnce ()
 	{
-		m_inner_buffer.reset(new GLArrayBufferF<2>);
-		m_outer_buffer.reset(new GLArrayBufferF<2>);
+		m_inner_buffer.reset(new GLArrayBufferF);
+		m_outer_buffer.reset(new GLArrayBufferF);
 
 		bool cal_width = true;
 
@@ -243,7 +259,22 @@ namespace BlendInt {
 			}
 		}
 
-		GenerateFormBuffer(&size(), round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+		const Color& color = themes()->text.inner;
+		short shadetop = themes()->text.shadetop;
+		short shadedown = themes()->text.shadedown;
+
+		GenerateShadedFormBuffers(&size(),
+				round_type(),
+				radius(),
+				color,
+				shadetop,
+				shadedown,
+				Vertical,
+				5,
+				m_inner_buffer.get(),
+				m_outer_buffer.get(),
+				0
+				);
 
 		m_origin.set_x(2);
 		m_origin.set_y(

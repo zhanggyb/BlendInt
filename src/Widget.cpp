@@ -183,6 +183,18 @@ namespace BlendInt {
 		buffer->Unbind();
 	}
 
+	void Widget::DrawInnerBuffer (GLArrayBufferF* buffer, int mode)
+	{
+		if(!buffer) return;
+
+		buffer->Bind();
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
+		glDrawArrays(mode, 0, buffer->GetVertices());
+		glDisableClientState(GL_VERTEX_ARRAY);
+		buffer->Unbind();
+	}
+
 	void Widget::draw_shaded_inner_buffer(AbstractGLBuffer* buffer, size_t index, int mode)
 	{
 		buffer->select(index);
@@ -195,6 +207,25 @@ namespace BlendInt {
 		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glDrawArrays(mode, 0, buffer->Vertices());
+
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		buffer->Unbind();
+	}
+
+	void Widget::DrawShadedInnerBuffer(GLArrayBufferF* buffer, int mode)
+	{
+		if(!buffer) return;
+
+		buffer->Bind();
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
+
+		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glDrawArrays(mode, 0, buffer->GetVertices());
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
@@ -218,10 +249,28 @@ namespace BlendInt {
 		buffer->Unbind();
 	}
 
+	void Widget::DrawOutlineBuffer(GLArrayBufferF* buffer, int mode)
+	{
+		if(!buffer) return;
+
+		buffer->Bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			glVertexPointer(2, GL_FLOAT, 0, 0);
+			glDrawArrays(mode, 0, buffer->GetVertices());
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+		buffer->Unbind();
+	}
+
+
 	void Widget::GenerateFormBuffer(const Size* size, int round_type,
-			 float radius, GLArrayBufferF<2>* inner_buffer,
-			 GLArrayBufferF<2>* outer_buffer,
-			 GLArrayBufferF<2>* emboss_buffer)
+			 float radius, GLArrayBufferF* inner_buffer,
+			 GLArrayBufferF* outer_buffer,
+			 GLArrayBufferF* emboss_buffer)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
@@ -235,7 +284,7 @@ namespace BlendInt {
 
 			inner_buffer->Generate();
 			inner_buffer->Bind();
-			inner_buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v[0]);
+			inner_buffer->SetData(2, vert_sum.total * sizeof(inner_v[0]), inner_v[0]);
 
 			std::cout << "Get buffer size: " << inner_buffer->GetBufferSize() << std::endl;
 			std::cout << "Get vertices number: " << inner_buffer->GetVertices() << std::endl;
@@ -254,7 +303,7 @@ namespace BlendInt {
 
 				outer_buffer->Generate();
 				outer_buffer->Bind();
-				outer_buffer->SetData((vert_sum.total * 2 + 2) * sizeof(quad_strip[0]), quad_strip[0]);
+				outer_buffer->SetData(2, (vert_sum.total * 2 + 2) * sizeof(quad_strip[0]), quad_strip[0]);
 				outer_buffer->Unbind();
 			}
 
@@ -265,7 +314,7 @@ namespace BlendInt {
 
 				emboss_buffer->Generate();
 				emboss_buffer->Bind();
-				emboss_buffer->SetData(vert_sum.half * 2 * sizeof(quad_strip[0]), quad_strip[0]);
+				emboss_buffer->SetData(2, vert_sum.half * 2 * sizeof(quad_strip[0]), quad_strip[0]);
 				emboss_buffer->Unbind();
 		}
 
@@ -467,7 +516,7 @@ namespace BlendInt {
 			short shadetop,
 			short shadedown,
 			Orientation shadedir,
-			GLArrayBufferF<6>* buffer)
+			GLArrayBufferF* buffer)
 	{
 		if(!buffer) return;
 
@@ -487,7 +536,7 @@ namespace BlendInt {
 
 		buffer->Generate();
 		buffer->Bind();
-		buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
+		buffer->SetData(6, vert_sum.total * sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
 		buffer->Unbind();
 	}
 
@@ -525,12 +574,11 @@ namespace BlendInt {
 		buffer->Unbind();
 	}
 
-	void Widget::GenerateShadedFormBuffers (const Size* size, float border,
-	        int round_type, float radius, const Color& color, short shadetop,
+	void Widget::GenerateShadedFormBuffers (const Size* size, int round_type, float radius, const Color& color, short shadetop,
 	        short shadedown, Orientation shadedir, short highlight,
-	        GLArrayBufferF<6>* inner_buffer,
-	        GLArrayBufferF<2>* outer_buffer,
-	        GLArrayBufferF<6>* highlight_buffer)
+	        GLArrayBufferF* inner_buffer,
+	        GLArrayBufferF* outer_buffer,
+	        GLArrayBufferF* highlight_buffer)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
@@ -538,7 +586,7 @@ namespace BlendInt {
 		VerticesSum vert_sum;
 
 		vert_sum = generate_round_vertices(size,
-				border,
+				default_border_width,
 				round_type,
 				radius,
 				color,
@@ -550,7 +598,7 @@ namespace BlendInt {
 		if(inner_buffer) {
 			inner_buffer->Generate();
 			inner_buffer->Bind();
-			inner_buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
+			inner_buffer->SetData(6, vert_sum.total * sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
 			inner_buffer->Unbind();
 		}
 
@@ -560,7 +608,7 @@ namespace BlendInt {
 
 			outer_buffer->Generate();
 			outer_buffer->Bind();
-			outer_buffer->SetData((vert_sum.total * 2 + 2) * sizeof(quad_strip[0]),
+			outer_buffer->SetData(2, (vert_sum.total * 2 + 2) * sizeof(quad_strip[0]),
 					quad_strip[0],
 					GL_STATIC_DRAW);
 			outer_buffer->Unbind();
@@ -571,7 +619,7 @@ namespace BlendInt {
 			hcolor.highlight(hcolor, highlight);
 
 			vert_sum = generate_round_vertices(size,
-							border,
+							default_border_width,
 							round_type,
 							radius,
 							hcolor,
@@ -582,7 +630,7 @@ namespace BlendInt {
 
 			highlight_buffer->Generate();
 			highlight_buffer->Bind();
-			highlight_buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
+			highlight_buffer->SetData(6, vert_sum.total * sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
 			highlight_buffer->Unbind();
 		}
 
@@ -661,3 +709,4 @@ namespace BlendInt {
 	}
 
 }
+

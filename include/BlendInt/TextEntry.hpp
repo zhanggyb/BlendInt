@@ -102,8 +102,8 @@ namespace BlendInt {
 
 		bool m_flicker;
 
-		boost::scoped_ptr<GLArrayBufferF<2> > m_inner_buffer;
-		boost::scoped_ptr<GLArrayBufferF<2> > m_outer_buffer;
+		boost::scoped_ptr<GLArrayBufferF> m_inner_buffer;
+		boost::scoped_ptr<GLArrayBufferF> m_outer_buffer;
 
 		static Margin DefaultTextEntryPadding;
 	};
