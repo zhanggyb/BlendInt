@@ -26,7 +26,7 @@
 
 #include <BlendInt/AbstractWidget.hpp>
 #include <BlendInt/GLArrayBufferMultiple.hpp>
-#include <BlendInt/GLArrayBuffer.hpp>
+#include <BlendInt/GLArrayBufferF.hpp>
 
 namespace BlendInt {
 
@@ -124,6 +124,11 @@ namespace BlendInt {
 		 */
 		void draw_outline_buffer (AbstractGLBuffer* buffer, size_t index = 0, int mode = GL_QUAD_STRIP);
 
+		void GenerateFormBuffer (const Size* size, int round_type,
+								 float radius, GLArrayBufferF<2>* inner_buffer,
+								 GLArrayBufferF<2>* outer_buffer,
+								 GLArrayBufferF<2>* emboss_buffer);
+
 		/**
 		 * @brief generate GL buffer for form drawing
 		 * @param[in] size the size to enclose vertices
@@ -191,7 +196,7 @@ namespace BlendInt {
 									   short shadetop,
 									   short shadedown,
 									   Orientation shadedir,
-									   GLArrayBuffer<float, 6>* buffer);
+									   GLArrayBufferF<6>* buffer);
 
 
 		void GenerateShadedFormBuffer (const Size* size,
@@ -233,9 +238,9 @@ namespace BlendInt {
 									   short shadedown,
 									   Orientation shadedir,
 									   short highlight,
-									   GLArrayBuffer<float, 6>* inner_buffer,
-									   GLArrayBuffer<float, 2>* outer_buffer,
-									   GLArrayBuffer<float, 6>* highlight_buffer);
+									   GLArrayBufferF<6>* inner_buffer,
+									   GLArrayBufferF<2>* outer_buffer,
+									   GLArrayBufferF<6>* highlight_buffer);
 
 
 		/**

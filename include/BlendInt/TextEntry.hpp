@@ -31,7 +31,7 @@
 #include <BlendInt/Rect.hpp>
 
 #include <BlendInt/Timer.hpp>
-#include <BlendInt/GLArrayBuffer.hpp>
+#include <BlendInt/GLArrayBufferF.hpp>
 
 #include <boost/smart_ptr.hpp>
 
@@ -65,7 +65,7 @@ namespace BlendInt {
 
 	private:
 
-		void Init ();
+		void InitOnce ();
 
 		void OnReverseCursor ();
 
@@ -102,7 +102,8 @@ namespace BlendInt {
 
 		bool m_flicker;
 
-		boost::scoped_ptr<GLArrayBuffer<float, 6> > m_inner_buffer;
+		boost::scoped_ptr<GLArrayBufferF<2> > m_inner_buffer;
+		boost::scoped_ptr<GLArrayBufferF<2> > m_outer_buffer;
 
 		static Margin DefaultTextEntryPadding;
 	};

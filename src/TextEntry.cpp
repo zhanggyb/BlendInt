@@ -33,13 +33,13 @@ namespace BlendInt {
 	TextEntry::TextEntry ()
 	: RoundWidget(), m_start(0), m_length(0), m_cursor_position(0), m_timer(0), m_flicker(true)
 	{
-		Init();
+		InitOnce();
 	}
 
 	TextEntry::TextEntry (AbstractWidget* parent)
 	: RoundWidget(parent), m_start(0), m_length(0), m_cursor_position(0), m_timer(0), m_flicker(true)
 	{
-		Init();
+		InitOnce();
 	}
 
 	TextEntry::~TextEntry ()
@@ -49,12 +49,20 @@ namespace BlendInt {
 	void TextEntry::Update (int type, const void* data)
 	{
 		switch (type) {
-			case (FormRoundRadius): {
+
+			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
 				m_origin.set_x(*radius_p + DefaultTextEntryPadding.left());
 				m_cursor_position += static_cast<int>(*radius_p - radius());
 				break;
 			}
+
+			case FormSize: {
+				const Size* size_p = static_cast<const Size*>(data);
+				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				return;
+			}
+
 			default:
 				break;
 		}
@@ -63,8 +71,6 @@ namespace BlendInt {
 
 	void TextEntry::Draw ()
 	{
-		RoundWidget::Draw();
-
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
@@ -74,6 +80,29 @@ namespace BlendInt {
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		ThemeManager* tm = ThemeManager::instance();
+
+		glColor4ub(tm->themes()->text.inner_sel.r(),
+					tm->themes()->text.inner_sel.g(),
+					tm->themes()->text.inner_sel.b(),
+					tm->themes()->text.inner_sel.a());
+
+		m_inner_buffer->Bind();
+		m_inner_buffer->Draw(GL_POLYGON);
+		m_inner_buffer->Unbind();
+
+		// draw outline
+		unsigned char tcol[4] = { themes()->regular.outline.r(),
+		        themes()->regular.outline.g(),
+		        themes()->regular.outline.b(),
+		        themes()->regular.outline.a()};
+		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
+		glColor4ubv(tcol);
+
+		m_outer_buffer->Bind();
+		m_outer_buffer->DrawAntiAlias(GL_QUAD_STRIP);
+		m_outer_buffer->Unbind();
 
 		FontCache::create(m_font)->Print(m_origin.x(), m_origin.y(), m_text, m_length, m_start);
 
@@ -179,9 +208,10 @@ namespace BlendInt {
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
-	void TextEntry::Init ()
+	void TextEntry::InitOnce ()
 	{
-		m_inner_buffer.reset(new GLArrayBuffer<float, 6>);
+		m_inner_buffer.reset(new GLArrayBufferF<2>);
+		m_outer_buffer.reset(new GLArrayBufferF<2>);
 
 		bool cal_width = true;
 
@@ -212,6 +242,8 @@ namespace BlendInt {
 					m_length = GetValidTextSize();
 			}
 		}
+
+		GenerateFormBuffer(&size(), round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 
 		m_origin.set_x(2);
 		m_origin.set_y(
