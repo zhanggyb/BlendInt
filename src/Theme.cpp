@@ -244,7 +244,7 @@ namespace BlendInt {
 	WidgetTheme::WidgetTheme ()
 			: outline(0x191919FF), item(0x191919FF), inner(0x999999FF), inner_sel(
 			        0x646464FF), text(0x000000FF), text_sel(0xFFFFFFFF), shaded(
-			        false), shadetop(0), shadedown(0), alpha_check(0)
+			        false), shaderdir(Vertical), shadetop(0), shadedown(0), alpha_check(0)
 	{
 	}
 

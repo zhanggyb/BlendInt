@@ -440,6 +440,76 @@ namespace BlendInt {
 		buffer->Unbind();
 	}
 
+	void Widget::GenerateShadedFormBuffers (const Size* size,
+								   int round_type,
+								   float radius,
+								   const WidgetTheme* theme,
+								   GLArrayBufferF* inner_buffer_p,
+								   GLArrayBufferF* outer_buffer_p,
+								   GLArrayBufferF* highlight_buffer_p)
+	{
+		/*
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_round_vertices(size,
+				border,
+				round_type,
+				radius,
+				theme,
+				shadedir,
+				inner_v, outer_v);
+
+		if(highlight > 0)
+			buffer->Generate(3);
+		else
+			buffer->Generate(2);
+
+		buffer->select(0);
+
+		buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
+		buffer->Bind();
+		buffer->Upload(inner_v);
+		buffer->Unbind();
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; // + 2 because the last pair is wrapped
+
+		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+
+		buffer->select(1);
+		buffer->SetProperty(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
+
+		buffer->Bind();
+		buffer->Upload(quad_strip);
+		buffer->Unbind();
+
+		if(highlight > 0) {
+			Color hcolor = theme->item;
+			hcolor.highlight(hcolor, highlight);
+
+			vert_sum = generate_round_vertices(size,
+							border,
+							round_type,
+							radius,
+							hcolor,
+							theme->shadetop,
+							theme->shadedown,
+							shadedir,
+							inner_v, outer_v);
+
+			buffer->select(2);
+			buffer->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
+
+			buffer->Bind();
+			buffer->Upload(inner_v);
+			buffer->Unbind();
+		}
+		*/
+	}
+
+
 	void Widget::GenerateShadedFormBuffers(const Size* size,
 			float border,
 			int round_type,

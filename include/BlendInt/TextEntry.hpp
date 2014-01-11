@@ -86,7 +86,7 @@ namespace BlendInt {
 
 		size_t m_length;
 
-		size_t m_cursor_position;
+		int m_cursor_position;
 
 		/**
 		 * @brief The position to print text

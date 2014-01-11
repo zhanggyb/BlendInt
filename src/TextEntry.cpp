@@ -46,6 +46,75 @@ namespace BlendInt {
 	{
 	}
 
+	void TextEntry::KeyPressEvent (KeyEvent* event)
+	{
+		if(event->text().size()) {
+
+			m_text.insert(m_cursor_position, event->text());
+			m_cursor_position += event->text().length();
+			m_length += event->text().length();
+
+			FontCache* fc = FontCache::create(m_font);
+			unsigned text_width = fc->GetTextWidth(m_text, m_length, m_start);
+
+			std::cout << "text width: " << text_width << std::endl;
+			int valid_width = size().width() - DefaultTextEntryPadding.left() - DefaultTextEntryPadding.right();
+
+			if(text_width > valid_width) {
+				m_length -= event->text().length();
+				m_start += event->text().length();
+			}
+
+			text_width = fc->GetTextWidth(m_text, m_length, m_start);
+			while (text_width > valid_width) {
+				m_length -= 1;
+				m_start += 1;
+				text_width = fc->GetTextWidth(m_text, m_length, m_start);
+			}
+
+			event->accept(this);
+			return;
+		}
+
+		switch(event->key()) {
+
+			case Key_Backspace: {
+				break;
+			}
+
+			case Key_Delete: {
+				break;
+			}
+
+			case Key_Left: {
+				m_cursor_position--;
+				if(m_cursor_position < 0)
+					m_cursor_position = 0;
+				break;
+			}
+
+			case Key_Right: {
+				m_cursor_position++;
+				if(m_cursor_position >= m_text.length())
+					m_cursor_position = m_text.length() - 1;
+				break;
+			}
+
+			case Key_Up: {
+				break;
+			}
+
+			case Key_Down: {
+				break;
+			}
+
+			default:
+				break;
+		}
+
+		event->accept(this);
+	}
+
 	void TextEntry::Update (int type, const void* data)
 	{
 		switch (type) {
@@ -53,7 +122,6 @@ namespace BlendInt {
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
 				m_origin.set_x(*radius_p + DefaultTextEntryPadding.left());
-				m_cursor_position += static_cast<int>(*radius_p - radius());
 				break;
 			}
 
@@ -120,35 +188,22 @@ namespace BlendInt {
 
 		DrawOutlineBuffer(m_outer_buffer.get());
 
-		FontCache::create(m_font)->Print(m_origin.x(), m_origin.y(), m_text, m_length, m_start);
+		FontCache* fc = FontCache::create(m_font);
+
+		fc->Print(m_origin.x(), m_origin.y(), m_text, m_length, m_start);
+
+		unsigned int text_width = fc->GetTextWidth(m_text, m_cursor_position, m_start);
 
 		if(focused() && m_flicker) {
-			glTranslatef(m_cursor_position, 2, 0);
+			glTranslatef(text_width + 1, 2, 0);
 			glColor4ub(0, 125, 255, 175);
-			glRecti(0, 0, 2, 18);
+			glRecti(0, 0, DefaultTextEntryPadding.bottom(), size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
 		}
 
 		glDisable(GL_BLEND);
 
 		glPopMatrix();
 
-	}
-
-	void TextEntry::KeyPressEvent (KeyEvent* event)
-	{
-		if(event->key() == Key_Backspace) {
-			if(m_text.size()) {
-				m_text.erase(m_text.length() - 1, 1);
-			}
-		} else {
-			m_text += event->text();
-		}
-
-		//m_length = GetValidTextSize();
-		GetVisibleTextPlace(&m_start, &m_length);
-		m_cursor_position = FontCache::create(m_font)->GetTextWidth(m_text, m_text.length());
-		m_cursor_position += static_cast<int>(radius()) + DefaultTextEntryPadding.left() + 1;
-		event->accept(this);
 	}
 
 	void TextEntry::SetText (const String& text)
@@ -232,32 +287,10 @@ namespace BlendInt {
 		bool cal_width = true;
 
 		set_expand_x(true);
-		set_size (100, 24);	// the same height of a button
+		set_size (120, 24);	// the same height of a button
 		set_radius(0.0);
 
 		FontCache* fc = FontCache::create(m_font);
-
-		m_text_outline = fc->get_text_outline(m_text);
-
-		m_length = m_text.length();
-
-		if (size().height() < m_text_outline.height()) {
-			if (expand_y()) {
-				set_size(size().width(), m_text_outline.height());
-			} else {
-				m_length = 0;
-				cal_width = false;
-			}
-		}
-
-		if (size().width() < m_text_outline.width()) {
-			if (expand_x()) {
-				set_size(m_text_outline.width(), size().height());
-			} else {
-				if (cal_width)
-					m_length = GetValidTextSize();
-			}
-		}
 
 		const Color& color = themes()->text.inner;
 		short shadetop = themes()->text.shadetop;
@@ -276,16 +309,15 @@ namespace BlendInt {
 				0
 				);
 
-		m_origin.set_x(2);
-		m_origin.set_y(
-		        (size().height() - fc->get_height()) / 2
+		m_origin.set_x(DefaultTextEntryPadding.left());
+		m_origin.set_y((size().height() - fc->get_height()) / 2
 		                + std::abs(fc->get_descender()));
 
 		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
 		set_preferred_size(size());
 
 		// set where start display the cursor
-		m_cursor_position = static_cast<int>(radius()) + DefaultTextEntryPadding.left();
+		m_origin.set_x(m_origin.x() + static_cast<int>(radius()));
 
 		// and set timer
 		m_timer = new Timer(this);

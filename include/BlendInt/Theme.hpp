@@ -27,6 +27,7 @@
 //#include <BlendInt/Tuple.hpp>
 #include <BlendInt/Color.hpp>
 #include <BlendInt/Font.hpp>
+#include <BlendInt/Types.hpp>
 
 namespace BlendInt {
 
@@ -44,6 +45,7 @@ namespace BlendInt {
 		Color text;				// Text
 		Color text_sel;		// Text Selected
 		bool shaded;			// Is Shaded
+		Orientation shaderdir;	// shader orientation
 		short shadetop;			// Shade Top, -100 - 100
 		short shadedown;	// Shade Down
 		bool alpha_check;

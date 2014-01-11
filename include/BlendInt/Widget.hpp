@@ -179,6 +179,15 @@ namespace BlendInt {
 									   Orientation shadedir,
 									   AbstractGLBuffer* buffer);
 
+		void GenerateShadedFormBuffers (const Size* size,
+									   int round_type,
+									   float radius,
+									   const WidgetTheme* theme,
+									   GLArrayBufferF* inner_buffer_p,
+									   GLArrayBufferF* outer_buffer_p,
+									   GLArrayBufferF* highlight_buffer_p);
+
+
 		/**
 		 * @brief generate buffer with shaded color
 		 * @param[in] size

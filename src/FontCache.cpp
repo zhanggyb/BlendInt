@@ -512,6 +512,7 @@ namespace BlendInt {
 		return width;
 	}
 
+
 #ifdef DEBUG
 	void FontCache::printcount (void)
 	{
