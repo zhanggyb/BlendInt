@@ -57,8 +57,7 @@ namespace BlendInt {
 			FontCache* fc = FontCache::create(m_font);
 			unsigned text_width = fc->GetTextWidth(m_text, m_length, m_start);
 
-			std::cout << "text width: " << text_width << std::endl;
-			int valid_width = size().width() - DefaultTextEntryPadding.left() - DefaultTextEntryPadding.right();
+			unsigned int valid_width = size().width() - DefaultTextEntryPadding.left() - DefaultTextEntryPadding.right();
 
 			if(text_width > valid_width) {
 				m_length -= event->text().length();
@@ -67,8 +66,8 @@ namespace BlendInt {
 
 			text_width = fc->GetTextWidth(m_text, m_length, m_start);
 			while (text_width > valid_width) {
-				m_length -= 1;
-				m_start += 1;
+				m_length--;
+				m_start++;
 				text_width = fc->GetTextWidth(m_text, m_length, m_start);
 			}
 
@@ -87,16 +86,32 @@ namespace BlendInt {
 			}
 
 			case Key_Left: {
+
 				m_cursor_position--;
 				if(m_cursor_position < 0)
 					m_cursor_position = 0;
+
+				if(m_cursor_position < m_start) {
+					m_start--;
+				}
+
+				AdjustVisibleTextLength();
+				
 				break;
 			}
 
 			case Key_Right: {
+
 				m_cursor_position++;
-				if(m_cursor_position >= m_text.length())
-					m_cursor_position = m_text.length() - 1;
+				if(m_cursor_position > m_text.length())
+					m_cursor_position = m_text.length();
+
+				if(m_cursor_position > (m_start + m_length)) {
+					m_start++;
+				}
+
+				AdjustVisibleTextLength();
+
 				break;
 			}
 
@@ -110,6 +125,17 @@ namespace BlendInt {
 
 			default:
 				break;
+		}
+
+		event->accept(this);
+	}
+
+	void TextEntry::MousePressEvent(MouseEvent* event)
+	{
+		if(!contain(event->position())) return;
+
+		if(m_text.size()) {
+			//m_cursor_position = GetCursorPosition(event);
 		}
 
 		event->accept(this);
@@ -192,7 +218,7 @@ namespace BlendInt {
 
 		fc->Print(m_origin.x(), m_origin.y(), m_text, m_length, m_start);
 
-		unsigned int text_width = fc->GetTextWidth(m_text, m_cursor_position, m_start);
+		unsigned int text_width = fc->GetTextWidth(m_text, m_cursor_position - m_start, m_start);
 
 		if(focused() && m_flicker) {
 			glTranslatef(text_width + 1, 2, 0);
@@ -235,7 +261,7 @@ namespace BlendInt {
 		}
 
 		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
-		m_origin.set_x(4);
+		m_origin.set_x(2);
 
 		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
 
@@ -244,47 +270,21 @@ namespace BlendInt {
 
 	void TextEntry::SetFont (const Font& font)
 	{
-		bool cal_width = true;
-
 		m_font = font;
 		FontCache* fc =	FontCache::create(m_font);
 
 		m_text_outline = fc->get_text_outline(m_text);
 
-		m_length = m_text.length();
+		AdjustVisibleTextLength();
 
-		if(size().height() < m_text_outline.height()) {
-			if(expand_y()) {
-				Resize(this, size().width(), m_text_outline.height());
-			} else {
-				m_length = 0;
-				cal_width = false;
-			}
-		}
-
-		if(size().width() < m_text_outline.width()) {
-			if(expand_x()) {
-				Resize(this, m_text_outline.width(), size().height());
-			} else {
-				if(cal_width) m_length = GetValidTextSize();
-			}
-		}
-
-		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
-
-		m_origin.set_x(4);
-
+		m_origin.set_x(DefaultTextEntryPadding.left());
 		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
-
-		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void TextEntry::InitOnce ()
 	{
 		m_inner_buffer.reset(new GLArrayBufferF);
 		m_outer_buffer.reset(new GLArrayBufferF);
-
-		bool cal_width = true;
 
 		set_expand_x(true);
 		set_size (120, 24);	// the same height of a button
@@ -315,6 +315,11 @@ namespace BlendInt {
 
 		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
 		set_preferred_size(size());
+		set_minimal_size(
+		        DefaultTextEntryPadding.left()
+		                + DefaultTextEntryPadding.right(),
+		        DefaultTextEntryPadding.top()
+		                + DefaultTextEntryPadding.bottom());
 
 		// set where start display the cursor
 		m_origin.set_x(m_origin.x() + static_cast<int>(radius()));
@@ -373,6 +378,50 @@ namespace BlendInt {
 			*length = str_len;
 		}
 
+	}
+
+	void TextEntry::AdjustVisibleTextLength ()
+	{
+		FontCache* fc = FontCache::create(m_font);
+		unsigned text_width = fc->GetTextWidth(m_text, m_length, m_start);
+		unsigned int valid_width = size().width() - DefaultTextEntryPadding.left() - DefaultTextEntryPadding.right();
+
+		if(text_width > valid_width) {
+			m_length--;
+			text_width = fc->GetTextWidth(m_text, m_length, m_start);
+			while ((text_width > valid_width) && (m_length > 0)) {
+				m_length--;
+				text_width = fc->GetTextWidth(m_text, m_length, m_start);
+			}
+		}
+	}
+
+
+	int TextEntry::GetCursorPosition (const MouseEvent* event)
+	{
+		FontCache* fc = FontCache::create(m_font);
+		unsigned text_width = fc->GetTextWidth(m_text, m_length, m_start);
+		int click_width = event->position().x() - position().x() - DefaultTextEntryPadding.left();
+
+		if(click_width < 0 || click_width > (size().width() - DefaultTextEntryPadding.right())) {
+			return m_cursor_position;
+		}
+
+		int cursor_offset = 1;
+
+		text_width = fc->GetTextWidth(m_text, cursor_offset, m_start);
+		if(text_width > click_width) {
+			cursor_offset--;
+		} else {
+			cursor_offset++;
+			text_width = fc->GetTextWidth(m_text, cursor_offset, m_start);
+			while(text_width < click_width && cursor_offset <= m_length) {
+				cursor_offset++;
+				text_width = fc->GetTextWidth(m_text, cursor_offset, m_start);
+			}
+		}
+
+		return m_start + cursor_offset;
 	}
 
 }

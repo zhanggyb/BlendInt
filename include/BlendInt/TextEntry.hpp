@@ -61,6 +61,8 @@ namespace BlendInt {
 
 		virtual void KeyPressEvent (KeyEvent* event);
 
+		virtual void MousePressEvent (MouseEvent* event);
+
 		virtual void Draw ();
 
 	private:
@@ -71,12 +73,16 @@ namespace BlendInt {
 
 		size_t GetValidTextSize ();
 
+		int GetCursorPosition (const MouseEvent* event);
+
 		/**
 		 * @brief Get the index and length of the text to show
 		 * @param[out] start The index in the text to print
 		 * @param[out] length The length of the text to print
 		 */
 		void GetVisibleTextPlace (size_t* start, size_t* length);
+
+		void AdjustVisibleTextLength ();
 
 		Font m_font;
 
