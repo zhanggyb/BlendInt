@@ -3,8 +3,16 @@
 
 file(GLOB libBlendInt_SRC "*.cpp")
 
-add_library (BlendInt SHARED ${libBlendInt_SRC})
+if(BUILD_STATIC_LIBRARY)
+    add_library (BlendInt ${libBlendInt_SRC})
+else()
+    add_library (BlendInt SHARED ${libBlendInt_SRC})
+endif()
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
-set_target_properties(BlendInt PROPERTIES VERSION 1 SOVERSION 1)
+
+if(NOT DEFINED BUILD_STATIC_LIBRARY)
+    set_target_properties(BlendInt PROPERTIES VERSION 1 SOVERSION 1)
+endif()
+
 target_link_libraries(BlendInt CppEvents ${LIBS})

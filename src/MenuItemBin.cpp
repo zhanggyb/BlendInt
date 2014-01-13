@@ -148,6 +148,7 @@ namespace BlendInt {
 		delete item;
 	}
 
+#ifdef DEBUG
 	void MenuItemBin::print_menu_items()
 	{
 		std::list<MenuItem*>::iterator it;
@@ -159,6 +160,7 @@ namespace BlendInt {
 			}
 		}
 	}
+#endif
 
 }
 

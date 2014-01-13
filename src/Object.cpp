@@ -33,9 +33,8 @@ namespace BlendInt {
 	ObjectEvents* Object::events = 0;
 
 	Object::Object()
-	:
 #ifdef DEBUG
-	m_id(0)
+	: m_id(0)
 #endif
 	{
 		m_supers.reset(new std::set<Object*>);
@@ -59,9 +58,8 @@ namespace BlendInt {
 	}
 
 	Object::Object(Object* super)
-	:
 #ifdef DEBUG
-	m_id(0)
+	: m_id(0)
 #endif
 	{
 		m_supers.reset(new std::set<Object*>);
