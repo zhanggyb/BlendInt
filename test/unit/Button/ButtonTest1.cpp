@@ -30,7 +30,6 @@ TEST_F(ButtonTest1, Foo1)
     button->SetPosition(200, 200);
 
     button->Register();
-    button->show();
 
 	RunLoop(window);
 

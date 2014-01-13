@@ -55,7 +55,6 @@ int main(int argc, char* argv[]) {
 	widget->SetRoundType(RoundAll);
 
 	widget->Register();
-	widget->show();
 
 	TextEntry* widget2 = new TextEntry;
 	widget2->set_name("TextEntry2");
@@ -63,13 +62,11 @@ int main(int argc, char* argv[]) {
 	widget2->SetPosition(400, 200);
 
 	widget2->Register();
-	widget2->show();
 
 	Button* button = new Button;
 	button->set_name("button1");
 	button->SetPosition(200, 300);
 	button->Register();
-	button->show();
 
 	RunLoop(window);
 

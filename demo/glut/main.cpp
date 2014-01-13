@@ -1,11 +1,9 @@
 /* Using the standard output for fprintf */
 #include <stdio.h>
 #include <stdlib.h>
-/* Use glew.h instead of gl.h to get all the GL prototypes declared */
-#include <GL/glew.h>
-/* Using the GLUT library for the base windowing setup */
+#include <GL/gl.h>
+#include <GL/glext.h>
 #include <GL/glut.h>
-/* ADD GLOBAL VARIABLES HERE LATER */
 
 #include <iostream>
 
@@ -16,15 +14,18 @@
 
 using namespace BlendInt;
 
+static KeyEvent global_key_event;
+static MouseEvent global_mouse_event;
+
 int init_resources(void)
 {
 	Interface::Initialize();
 	Interface* app = Interface::Instance();
 	app->Resize(1200, 800);
 
-    Widget* widget = new Widget;
-    widget->SetPosition(200, 200);
-    widget->Register();
+	Button* button = new Button;
+	button->SetPosition(200, 200);
+	button->Register();
 	
 	return 1;
 }
@@ -52,7 +53,7 @@ void onReshape (int width, int height)
 
 void onKey (unsigned char key, int x, int y)
 {
-    std::cout << "key pressed: " << key << std::endl;
+    std::cout << "key pressed: " << key << " " << x << " " << y << std::endl;
 }
 
 void onMouse (int button, int state, int x, int y)
@@ -66,8 +67,14 @@ void onMotion (int x, int y)
 
 void onPassiveMotion (int x, int y)
 {
-    std::cout << "position: " << x << " " << y << std::endl;
+    global_mouse_event.set_action(MouseNone);
+    global_mouse_event.set_button(MouseButtonNone);
+
+    global_mouse_event.set_position(x, Interface::Instance()->size().height() - y);
+
+    Interface::Instance()->DispatchMouseEvent(&global_mouse_event);
 }
+
 
 int main(int argc, char* argv[])
 {

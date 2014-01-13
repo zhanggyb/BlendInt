@@ -144,21 +144,6 @@ namespace BlendInt {
 
 		void SetLayer (int z);
 
-		inline void show ()
-		{
-			m_flag.set(WidgetVisibility);
-		}
-
-		inline void hide ()
-		{
-			m_flag.reset(WidgetVisibility);
-		}
-
-		inline bool visible () const
-		{
-			return m_flag[WidgetVisibility];
-		}
-
 		inline int layer () const
 		{
 			return m_z;
@@ -173,32 +158,32 @@ namespace BlendInt {
 
 		inline bool locked () const
 		{
-			return m_flag[WidgetLockGeometry];
+			return m_flag[WidgetFlagLockGeometry];
 		}
 
 		inline bool registered() const
 		{
-			return m_flag[WidgetRegistered];
+			return m_flag[WidgetFlagRegistered];
 		}
 
 		void activate_events ()
 		{
-			m_flag.set(WidgetFireEvents);
+			m_flag.set(WidgetFlagFireEvents);
 		}
 
 		void deactivate_events ()
 		{
-			m_flag.reset(WidgetFireEvents);
+			m_flag.reset(WidgetFlagFireEvents);
 		}
 
 		bool fire_events () const
 		{
-			return m_flag[WidgetFireEvents];
+			return m_flag[WidgetFlagFireEvents];
 		}
 
 		inline bool focused () const
 		{
-			return m_flag[WidgetFocus];
+			return m_flag[WidgetFlagFocus];
 		}
 
 		/**
@@ -266,7 +251,7 @@ namespace BlendInt {
 
 		void LockGeometry (AbstractWidget* obj, bool status)
 		{
-			obj->m_flag[WidgetLockGeometry] = status ? 1 : 0;
+			obj->m_flag[WidgetFlagLockGeometry] = status ? 1 : 0;
 		}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
@@ -277,7 +262,7 @@ namespace BlendInt {
 		 */
 		inline void fire_property_changed_event (int type)
 		{
-			if (m_flag[WidgetFireEvents])
+			if (m_flag[WidgetFlagFireEvents])
 				m_property_changed.fire(this, type);
 		}
 
@@ -315,11 +300,10 @@ namespace BlendInt {
 	private:
 
 		enum WidgetFlagIndex {
-			WidgetLockGeometry = 0,
-			WidgetFireEvents,
-			WidgetRegistered,
-			WidgetVisibility,
-			WidgetFocus
+			WidgetFlagLockGeometry = 0,
+			WidgetFlagFireEvents,
+			WidgetFlagRegistered,
+			WidgetFlagFocus
 		};
 
 		/**

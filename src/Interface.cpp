@@ -203,9 +203,7 @@ namespace BlendInt {
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				if((*set_it)->visible()) {
-					(*set_it)->Draw();
-				}
+				(*set_it)->Draw();
 			}
 		}
 		// m_ticktack = m_ticktack ? 0 : 1;
@@ -572,38 +570,36 @@ namespace BlendInt {
 			return;
 
 		map<int, set<AbstractWidget*>*>::reverse_iterator map_it;
-		set<AbstractWidget*>::reverse_iterator set_it;
+		set<AbstractWidget*>::iterator set_it;
 		ContextManager* cm = ContextManager::Instance();
 
+		set<AbstractWidget*>* pset = 0;
 		AbstractWidget* widget = 0;
 
 		for (map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend();
-		        map_it++) {
-
-			set<AbstractWidget*>* pset = map_it->second;
-			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++) {
+		        map_it++)
+		{
+			pset = map_it->second;
+			for (set_it = pset->begin(); set_it != pset->end(); set_it++) {
 				widget = *set_it;
-
-				if (!widget->visible())
-					continue;
-
-				if (!widget->contain(event->position()))
-					continue;
 
 				switch (event->action()) {
 					case MousePress: {
+
+						/*
 						if (m_focus_style == FocusOnClick) {
 							// TODO: send unfocus event
 							if(cm->m_focus != widget) {
 								if(cm->m_focus) {
 									cm->m_focus->m_flag.reset(
-									        AbstractWidget::WidgetFocus);
+									        AbstractWidget::WidgetFlagFocus);
 								}
 								cm->m_focus = widget;
 								cm->m_focus->m_flag.set(
-								        AbstractWidget::WidgetFocus);
+								        AbstractWidget::WidgetFlagFocus);
 							}
 						}
+						*/
 
 						widget->MousePressEvent(event);
 
@@ -614,16 +610,18 @@ namespace BlendInt {
 						break;
 
 					default: {
+						/*
 						if (m_focus_style == FocusOnHover) {
 							// TODO: send unfocus event first
 							if (cm->m_focus) {
 								cm->m_focus->m_flag.reset(
-								        AbstractWidget::WidgetFocus);
+								        AbstractWidget::WidgetFlagFocus);
 							}
 							cm->m_focus = widget;
 							cm->m_focus->m_flag.set(
-							        AbstractWidget::WidgetFocus);
+							        AbstractWidget::WidgetFlagFocus);
 						}
+						*/
 						(*set_it)->MouseMoveEvent(event);
 						break;
 					}
@@ -634,14 +632,14 @@ namespace BlendInt {
 
 				if (event->accepted()) {
 					// TODO: do sth needed
-					break;
+					//break;
 				}
 			}
 			if (event->ignored())
-				break;
+				//break;
 			if (event->accepted()) {
 				// TODO: do sth needed
-				break;
+				//break;
 			}
 
 		}
