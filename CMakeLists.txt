@@ -27,6 +27,7 @@ endif()
 
 # start of options
 option(BUILD_STATIC_LIBRARY "Build static library instead of shared" OFF)
+option(WITH_GPERFTOOLS "Build with Google perftools option" OFF)
 option(WITH_ALL_DEMOS "Build all demo programs" OFF)
 option(WITH_GLFW3_DEMO "Build GLFW3 demo program" OFF)
 option(WITH_GLUT_DEMO "Build GLUT demo program" OFF)
@@ -82,9 +83,6 @@ endif()
 
 #add OpenImageIO link
 if(APPLE)
-    # use the libraries from Blender repository
-    include_directories($ENV{HOME}/Opt/include)
-    LINK_DIRECTORIES($ENV{HOME}/Opt/lib)
     set(LIBS ${LIBS} OpenImageIO)
 else()
     set(LIBS ${LIBS} OpenImageIO)
@@ -109,6 +107,9 @@ endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -p -pg")
+    endif()
+    if(WITH_GPERFTOOLS)
+        set(LIBS ${LIBS} profiler)
     endif()
 endif()
 
