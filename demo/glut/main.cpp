@@ -11,6 +11,7 @@
 #include <BlendInt/Label.hpp>
 #include <BlendInt/Button.hpp>
 #include <BlendInt/ScrollView.hpp>
+#include <BlendInt/HorizontalLayout.hpp>
 
 using namespace BlendInt;
 
@@ -23,9 +24,27 @@ int init_resources(void)
 	Interface* app = Interface::Instance();
 	app->Resize(1200, 800);
 
-	Button* button = new Button;
-	button->SetPosition(200, 200);
-	button->Register();
+	int max_x = 12;
+	int max_y = 20;
+	HorizontalLayout* layout[max_y];
+	Button* btn[max_x];
+	int x_pos = 50;
+	int y_pos = 5;
+	for(int i = 0; i < max_y; i++)
+	{
+		layout[i] = new HorizontalLayout;
+		layout[i]->Register();
+
+		for(int j = 0; j < max_x; j++)
+		{
+			btn[j] = new Button;
+			layout[i]->Add(btn[j]);
+		}
+
+		layout[i]->SetPosition(x_pos, y_pos);
+
+		y_pos += 40;
+	}
 	
 	return 1;
 }

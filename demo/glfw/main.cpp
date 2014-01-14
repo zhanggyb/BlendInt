@@ -47,26 +47,30 @@ int main(int argc, char* argv[]) {
 	GLFWwindow* window = CreateWindow("MenuTest1 - Click1");
 
 	// TODO: add test code here
-	TextEntry* widget = new TextEntry;
-	widget->set_name("TextEntry1");
-	widget->SetFont(Font("Droid Sans"));
-	widget->SetPosition(200, 200);
-	widget->SetRadius(12.0);
-	widget->SetRoundType(RoundAll);
 
-	widget->Register();
+	int max_x = 50;
+	int max_y = 20;
+	HorizontalLayout* layout[max_y];
+	Button* btn[max_x];
+	int x_pos = 5;
+	int y_pos = 5;
+	for(int i = 0; i < max_y; i++)
+	{
+		layout[i] = new HorizontalLayout;
+		layout[i]->Register();
 
-	TextEntry* widget2 = new TextEntry;
-	widget2->set_name("TextEntry2");
-	widget2->SetFont(Font("Droid Sans"));
-	widget2->SetPosition(400, 200);
+		for(int j = 0; j < max_x; j++)
+		{
+			btn[j] = new Button;
+			btn[j]->Resize(24, 24);
+			btn[j]->SetPreferredSize(24, 24);
+			layout[i]->Add(btn[j]);
+		}
 
-	widget2->Register();
+		layout[i]->SetPosition(x_pos, y_pos);
 
-	Button* button = new Button;
-	button->set_name("button1");
-	button->SetPosition(200, 300);
-	button->Register();
+		y_pos += 40;
+	}
 
 	RunLoop(window);
 

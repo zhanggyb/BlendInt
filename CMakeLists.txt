@@ -26,6 +26,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 # start of options
+option(BUILD_STATIC_LIBRARY "Build static library instead of shared" OFF)
 option(WITH_ALL_DEMOS "Build all demo programs" OFF)
 option(WITH_GLFW3_DEMO "Build GLFW3 demo program" OFF)
 option(WITH_GLUT_DEMO "Build GLUT demo program" OFF)
@@ -105,6 +106,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR
     add_definitions(-DDEBUG)
 endif()
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -p -pg")
+    endif()
+endif()
+
 if(MSVC)
     # Force to always compile with W4
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
@@ -120,6 +127,10 @@ endif()
 
 add_subdirectory(extern)
 add_subdirectory(src)
+
+if(BUILD_STATIC_LIBRARY)
+    set(LIBS ${LIBS} pthread)
+endif()
 
 if(WITH_UNIT_TEST)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-variadic-macros")

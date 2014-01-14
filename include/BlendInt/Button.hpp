@@ -29,7 +29,7 @@
 #include <BlendInt/AbstractButton.hpp>
 #include <BlendInt/String.hpp>
 
-#include <BlendInt/GLArrayBufferMultiple.hpp>
+#include <BlendInt/GLArrayBufferF.hpp>
 
 namespace BlendInt {
 
@@ -58,15 +58,15 @@ namespace BlendInt {
 
 	protected:
 
-		GLArrayBufferMultiple* buffer () {return m_buffer.get();}
-
 		virtual void Update (int type, const void* data);
 
 		virtual void Draw ();
 
 	private:
 
-		boost::scoped_ptr<GLArrayBufferMultiple> m_buffer;
+		boost::scoped_ptr<GLArrayBufferF> m_inner_buffer;
+		boost::scoped_ptr<GLArrayBufferF> m_outer_buffer;
+		boost::scoped_ptr<GLArrayBufferF> m_emboss_buffer;
 	};
 
 }

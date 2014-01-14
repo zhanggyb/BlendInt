@@ -86,11 +86,21 @@ namespace BlendInt {
 
 		bool IsBbuffer ();
 
-		void Bind ();
+		inline void bind ()
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, m_id);
+		}
 
-		static void Unbind ();
+		inline void unbind ()
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		}
 
-		void SetData (GLint num_per_vertex, GLsizeiptr size, const float* data, GLenum usage = GL_STATIC_DRAW);
+		inline void set_data (int vertices, size_t size, const float* data, GLenum usage = GL_STATIC_DRAW)
+		{
+			m_vertices = vertices;
+			glBufferData (GL_ARRAY_BUFFER, size * m_vertices, data, usage);
+		}
 
 		inline GLenum target ()
 		{
@@ -101,13 +111,21 @@ namespace BlendInt {
 
 		GLint GetBufferSize ();
 
-		size_t GetVertices ();
+		/**
+		 * @brief Get vertex number used in this buffer
+		 * @param size Must be 2, 3, how many float variables for one vertex
+		 * @return
+		 */
+		inline GLint vertices ()
+		{
+			return m_vertices;
+		}
 
 	private:
 
 		GLuint m_id;
 
-		GLint m_num_per_vertex;	// how many variables per vertex
+		GLint m_vertices;
 
 		static const float jit[WIDGET_AA_JITTER][2];
 	};

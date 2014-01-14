@@ -185,14 +185,14 @@ namespace BlendInt {
 
 	void Widget::DrawInnerBuffer (GLArrayBufferF* buffer, int mode)
 	{
-		if(!buffer) return;
+		//if(!buffer) return;
 
-		buffer->Bind();
+		buffer->bind();
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
-		glDrawArrays(mode, 0, buffer->GetVertices());
+		glDrawArrays(mode, 0, buffer->vertices());
 		glDisableClientState(GL_VERTEX_ARRAY);
-		buffer->Unbind();
+		buffer->unbind();
 	}
 
 	void Widget::draw_shaded_inner_buffer(AbstractGLBuffer* buffer, size_t index, int mode)
@@ -216,21 +216,21 @@ namespace BlendInt {
 
 	void Widget::DrawShadedInnerBuffer(GLArrayBufferF* buffer, int mode)
 	{
-		if(!buffer) return;
+		//if(!buffer) return;
 
-		buffer->Bind();
+		buffer->bind();
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
 
 		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
 		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glDrawArrays(mode, 0, buffer->GetVertices());
+		glDrawArrays(mode, 0, buffer->vertices());
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 
-		buffer->Unbind();
+		buffer->unbind();
 	}
 
 	void Widget::draw_outline_buffer(AbstractGLBuffer* buffer, size_t index, int mode)
@@ -251,19 +251,19 @@ namespace BlendInt {
 
 	void Widget::DrawOutlineBuffer(GLArrayBufferF* buffer, int mode)
 	{
-		if(!buffer) return;
+		//if(!buffer) return;
 
-		buffer->Bind();
+		buffer->bind();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
 			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glDrawArrays(mode, 0, buffer->GetVertices());
+			glDrawArrays(mode, 0, buffer->vertices());
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
-		buffer->Unbind();
+		buffer->unbind();
 	}
 
 
@@ -280,16 +280,10 @@ namespace BlendInt {
 		vert_sum = generate_round_vertices(size, DefaultBorderWidth(), round_type, radius, inner_v, outer_v);
 
 		if(inner_buffer) {
-			std::cout << "To generate buffer data: " << vert_sum.total * sizeof(inner_v[0]) << std::endl;
-
 			inner_buffer->Generate();
-			inner_buffer->Bind();
-			inner_buffer->SetData(2, vert_sum.total * sizeof(inner_v[0]), inner_v[0]);
-
-			std::cout << "Get buffer size: " << inner_buffer->GetBufferSize() << std::endl;
-			std::cout << "Get vertices number: " << inner_buffer->GetVertices() << std::endl;
-
-			inner_buffer->Unbind();
+			inner_buffer->bind();
+			inner_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v[0]);
+			inner_buffer->unbind();
 		}
 
 		// the quad strip for outline
@@ -302,9 +296,9 @@ namespace BlendInt {
 				verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 				outer_buffer->Generate();
-				outer_buffer->Bind();
-				outer_buffer->SetData(2, (vert_sum.total * 2 + 2) * sizeof(quad_strip[0]), quad_strip[0]);
-				outer_buffer->Unbind();
+				outer_buffer->bind();
+				outer_buffer->set_data((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip[0]);
+				outer_buffer->unbind();
 			}
 
 			if(emboss_buffer) {
@@ -313,9 +307,9 @@ namespace BlendInt {
 				verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
 
 				emboss_buffer->Generate();
-				emboss_buffer->Bind();
-				emboss_buffer->SetData(2, vert_sum.half * 2 * sizeof(quad_strip[0]), quad_strip[0]);
-				emboss_buffer->Unbind();
+				emboss_buffer->bind();
+				emboss_buffer->set_data(vert_sum.half * 2, sizeof(quad_strip[0]), quad_strip[0]);
+				emboss_buffer->unbind();
 		}
 
 		}
@@ -605,9 +599,9 @@ namespace BlendInt {
 				inner_v);
 
 		buffer->Generate();
-		buffer->Bind();
-		buffer->SetData(6, vert_sum.total * sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
-		buffer->Unbind();
+		buffer->bind();
+		buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
+		buffer->unbind();
 	}
 
 
@@ -667,9 +661,9 @@ namespace BlendInt {
 
 		if(inner_buffer) {
 			inner_buffer->Generate();
-			inner_buffer->Bind();
-			inner_buffer->SetData(6, vert_sum.total * sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
-			inner_buffer->Unbind();
+			inner_buffer->bind();
+			inner_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
+			inner_buffer->unbind();
 		}
 
 		if(outer_buffer) {
@@ -677,11 +671,11 @@ namespace BlendInt {
 			verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 			outer_buffer->Generate();
-			outer_buffer->Bind();
-			outer_buffer->SetData(2, (vert_sum.total * 2 + 2) * sizeof(quad_strip[0]),
+			outer_buffer->bind();
+			outer_buffer->set_data((vert_sum.total * 2 + 2), sizeof(quad_strip[0]),
 					quad_strip[0],
 					GL_STATIC_DRAW);
-			outer_buffer->Unbind();
+			outer_buffer->unbind();
 		}
 
 		if(highlight_buffer) {
@@ -699,9 +693,9 @@ namespace BlendInt {
 							inner_v, outer_v);
 
 			highlight_buffer->Generate();
-			highlight_buffer->Bind();
-			highlight_buffer->SetData(6, vert_sum.total * sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
-			highlight_buffer->Unbind();
+			highlight_buffer->bind();
+			highlight_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
+			highlight_buffer->unbind();
 		}
 
 	}

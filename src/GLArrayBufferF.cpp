@@ -33,7 +33,7 @@ namespace BlendInt {
 	};
 
 	GLArrayBufferF::GLArrayBufferF()
-	: m_id(0), m_num_per_vertex(0)
+	: m_id(0), m_vertices(0)
 	{
 
 	}
@@ -62,22 +62,6 @@ namespace BlendInt {
 		return glIsBuffer(m_id);
 	}
 
-	void GLArrayBufferF::Bind()
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_id);
-	}
-
-	void GLArrayBufferF::Unbind ()
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
-
-	void GLArrayBufferF::SetData (GLint num_per_vertex, GLsizeiptr size, const float* data, GLenum usage)
-	{
-		glBufferData (GL_ARRAY_BUFFER, size, data, usage);
-		m_num_per_vertex = num_per_vertex;
-	}
-
 	GLenum GLArrayBufferF::GetUsage ()
 	{
 		GLint usage = 0;
@@ -95,15 +79,15 @@ namespace BlendInt {
 		return buffer_size;
 	}
 
-	size_t GLArrayBufferF::GetVertices()
-	{
-		size_t num = 0;
-		GLint buffer_size = 0;
-
-		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);
-		num = buffer_size / (sizeof(float) * m_num_per_vertex);
-
-		return num;
-	}
+//	GLint GLArrayBufferF::vertices(GLint size)
+//	{
+//		size_t num = 0;
+//		GLint buffer_size = 0;
+//
+//		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);
+//		num = buffer_size / (sizeof(float) * size);
+//
+//		return num;
+//	}
 
 }
