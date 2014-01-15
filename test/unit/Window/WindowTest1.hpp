@@ -1,8 +1,9 @@
 #ifndef _WINDOWTEST1_HPP_
 #define _WINDOWTEST1_HPP_
 
-#include <Common/Window.hpp>
 #include <gtest/gtest.h>
+#include <BlendInt/Window.hpp>
+#include <BlendInt/Object.hpp>
 
 class WindowTest1: public testing::Test
 {
@@ -14,12 +15,16 @@ protected:
 
 	virtual void SetUp ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
+#ifdef DEBUG
+		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
+#endif
 	}
 
 	virtual void TearDown ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
+#ifdef DEBUG
+		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
+#endif
 	}
 };
 

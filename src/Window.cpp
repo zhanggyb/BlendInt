@@ -23,7 +23,6 @@
 
 #include <iostream>
 
-//using BlendInt::Interface;
 #include <BlendInt/Window.hpp>
 #include <BlendInt/AbstractWidget.hpp>
 #include <BlendInt/KeyEvent.hpp>
@@ -60,6 +59,7 @@ namespace BlendInt {
 			glfwSetCharCallback(m_window->m_glfw_window, &CharacterInputCallback);
 			glfwSetMouseButtonCallback(m_window->m_glfw_window, &MouseButtonCallback);
 			glfwSetCursorPosCallback(m_window->m_glfw_window, &MouseMoveCallback);
+			glfwSetWindowFocusCallback(m_window->m_glfw_window, &WindowFocusCallback);
 
 			/* Make the window's context current */
 			glfwMakeContextCurrent(m_window->m_glfw_window);
@@ -103,6 +103,11 @@ namespace BlendInt {
 		if(m_window) {
 			glfwSwapBuffers(m_window->m_glfw_window);
 		}
+	}
+
+	void Window::Resize(int width, int height)
+	{
+		glfwSetWindowSize (m_glfw_window, width, height);
 	}
 
 	Window::Window ()
@@ -216,26 +221,11 @@ namespace BlendInt {
 		Interface::Instance()->DispatchMouseEvent(m_window->m_mouse_event);
 	}
 
-#ifdef DEBUG
-	
-	bool Window::CheckAllocatedObjects ()
+	void Window::WindowFocusCallback (GLFWwindow* window, int focused)
 	{
-		unsigned int mapsize = Object::GetMapSize();
-
-        cout << "map size: " << mapsize << endl;
-
-		if(mapsize > 0) {
-			map<uint64_t, Object*>::const_iterator it;
-			for (it = Object::GetMap().begin(); it != Object::GetMap().end(); it++)
-			{
-				cout << "id: " << it->first << " name: " << it->second->name() << " was not deleted!" << endl;
-			}
+		if(focused == GL_TRUE) {
+			glfwMakeContextCurrent(window);
 		}
-
-		return (mapsize == 0);
 	}
 
-#endif
-
 }
-

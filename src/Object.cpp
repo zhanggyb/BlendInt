@@ -265,6 +265,22 @@ namespace BlendInt {
 		std::cerr << std::endl;
 	}
 
+	bool Object::CheckAllocatedObjects ()
+	{
+		unsigned int mapsize = Object::GetMapSize();
+		std::cout << "map size: " << mapsize << std::endl;
+
+		if(mapsize > 0) {
+			std::map<uint64_t, Object*>::const_iterator it;
+			for (it = Object::GetMap().begin(); it != Object::GetMap().end(); it++)
+			{
+				std::cout << "id: " << it->first << " name: " << it->second->name() << " was not deleted!" << std::endl;
+			}
+		}
+
+		return (mapsize == 0);
+	}
+
 #endif
 
 }

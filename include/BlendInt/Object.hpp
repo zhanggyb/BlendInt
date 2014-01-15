@@ -181,6 +181,8 @@ namespace BlendInt {
 
 		static void Print ();
 
+		static bool CheckAllocatedObjects ();
+
 #endif
 	};
 

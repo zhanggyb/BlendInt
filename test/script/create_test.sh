@@ -54,7 +54,8 @@ EOF
 #define _${hpp_header}_HPP_
 
 #include <gtest/gtest.h>
-#include <Common/Window.hpp>
+#include <BlendInt/Window.hpp>
+#include <BlendInt/Object.hpp>
 
 class $1Test1: public testing::Test
 {
@@ -66,12 +67,16 @@ protected:
 
 	virtual void SetUp ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
+#ifdef DEBUG
+		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
+#endif
 	}
 
 	virtual void TearDown ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
+#ifdef DEBUG
+		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
+#endif
 	}
 };
 
@@ -102,14 +107,22 @@ $1Test1::~$1Test1()
  */
 TEST_F($1Test1, Foo1)
 {
-	Init ();
-	GLFWwindow* window = CreateWindow("$1 - Foo1");
+	Window::Initialize ();
+	Window::Create("$1 - Foo1", 1280, 800);
 
-	// TODO: add test code here
+    if(!Interface::Initialize()) {
+        Window::Release();
+        ASSERT_TRUE(false);
+    }
 
-	RunLoop(window);
+    Interface::Instance()->Resize(1280, 800);
+	
+    // TODO: add test code here
 
-	Terminate();
+    Window::Run();
+
+    Interface::Release();
+    Window::Release();
 
 	ASSERT_TRUE(true);
 }

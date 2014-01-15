@@ -46,14 +46,14 @@ int main(int argc, char* argv[])
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
 	Window::Initialize();
-	Window::Create("glfw demo", 1280, 800);
+	Window* win = Window::Create("glfw demo", 1024, 768);
 
 	if(!Interface::Initialize()) {
 		Window::Release();
 		exit(1);
 	}
 
-	Interface::Instance()->Resize(1280, 800);
+	win->Resize(1280, 800);
 
 	Widget* widget = new Widget;
 	widget->SetPosition(200, 200);

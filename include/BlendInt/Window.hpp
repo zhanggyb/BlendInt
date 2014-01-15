@@ -47,9 +47,7 @@ namespace BlendInt {
 
 		static void Refresh ();
 
-#ifdef DEBUG
-		static bool CheckAllocatedObjects ();
-#endif
+		void Resize (int width, int height);
 
 	private:
 
@@ -64,6 +62,8 @@ namespace BlendInt {
 		static void MouseButtonCallback (GLFWwindow* window, int button, int action, int mods);
 
 		static void MouseMoveCallback (GLFWwindow* window, double xpos, double ypos);
+
+		static void WindowFocusCallback (GLFWwindow* window, int focused);
 
 		Window ();
 
