@@ -32,49 +32,43 @@
 #include <BlendInt/StockIcon.hpp>
 #include <BlendInt/GLTexture2D.hpp>
 #include <BlendInt/TextEntry.hpp>
+#include <BlendInt/ClockWidget.hpp>
 
-#include "Window.hpp"
+#include <BlendInt/Window.hpp>
 
 #include "DemoFrame.hpp"
 
 using namespace BlendInt;
 using namespace std;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-	Init ();
-	GLFWwindow* window = CreateWindow("MenuTest1 - Click1");
+	Window::Initialize();
+	Window::Create("glfw demo", 1280, 800);
 
-	// TODO: add test code here
-
-	int max_x = 50;
-	int max_y = 20;
-	HorizontalLayout* layout[max_y];
-	Button* btn[max_x];
-	int x_pos = 5;
-	int y_pos = 5;
-	for(int i = 0; i < max_y; i++)
-	{
-		layout[i] = new HorizontalLayout;
-		layout[i]->Register();
-
-		for(int j = 0; j < max_x; j++)
-		{
-			btn[j] = new Button;
-			btn[j]->Resize(24, 24);
-			btn[j]->SetPreferredSize(24, 24);
-			layout[i]->Add(btn[j]);
-		}
-
-		layout[i]->SetPosition(x_pos, y_pos);
-
-		y_pos += 40;
+	if(!Interface::Initialize()) {
+		Window::Release();
+		exit(1);
 	}
 
-	RunLoop(window);
+	Interface::Instance()->Resize(1280, 800);
 
-	Terminate();
+	Widget* widget = new Widget;
+	widget->SetPosition(200, 200);
+	widget->Register();
 
+	ClockWidget* clock = new ClockWidget;
+	clock->SetPosition(400, 200);
+	clock->Register();
+
+	Window::Run();
+
+	Interface::Release();
+
+	Window::Release();
+
+	return 0;
 }
 
