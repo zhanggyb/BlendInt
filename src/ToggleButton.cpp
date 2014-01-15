@@ -39,49 +39,25 @@ namespace BlendInt {
 	ToggleButton::ToggleButton ()
 			: AbstractButton()
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
-
-		set_round_type(RoundAll);
-		SetExpandX(true);
-		set_checkable(true);
-		Resize(90, 20);
-		SetPreferredSize(90, 20);
+		InitializeOnce();
 	}
 
 	ToggleButton::ToggleButton (const String& text)
 			: AbstractButton()
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
-
-		set_round_type(RoundAll);
-		SetExpandX(true);
-		set_checkable(true);
-		set_text(text);
-		SetPreferredSize(size());
+		InitializeOnce(text);
 	}
 
 	ToggleButton::ToggleButton (AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
-
-		set_round_type(RoundAll);
-		SetExpandX(true);
-		set_checkable(true);
-		Resize (90, 20);
-		SetPreferredSize(90, 20);
+		InitializeOnce();
 	}
 
 	ToggleButton::ToggleButton (const String& text, AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
-
-		set_round_type(RoundAll);
-		SetExpandX(true);
-		set_checkable(true);
-		set_text(text);
-		SetPreferredSize(size());
+		InitializeOnce(text);
 	}
 
 	ToggleButton::~ToggleButton ()
@@ -95,18 +71,25 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				GenerateFormBuffer(size_p, true, round_type(), radius(), m_buffer.get());
+				GenerateFormBuffer(size_p, round_type(), radius(),
+				        m_inner_buffer.get(), m_outer_buffer.get(),
+				        m_emboss_buffer.get());
 				break;
 			}
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(data);
-				GenerateFormBuffer(&(size()), true, *type_p, radius(), m_buffer.get());
+				GenerateFormBuffer(&(size()), *type_p, radius(),
+				        m_inner_buffer.get(), m_outer_buffer.get(),
+				        m_emboss_buffer.get());
 				break;
 			}
+
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
-				GenerateFormBuffer(&(size()), true, round_type(), *radius_p, m_buffer.get());
+				GenerateFormBuffer(&(size()), round_type(), *radius_p,
+				        m_inner_buffer.get(), m_outer_buffer.get(),
+				        m_emboss_buffer.get());
 				break;
 			}
 
@@ -156,7 +139,7 @@ namespace BlendInt {
 			}
 		}
 
-		draw_inner_buffer(m_buffer.get(), 0);
+		DrawInnerBuffer(m_inner_buffer.get());
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -168,16 +151,51 @@ namespace BlendInt {
 		glColor4ubv(tcol);
 
 		/* outline */
-		draw_outline_buffer(m_buffer.get(), 1);
+		DrawOutlineBuffer(m_outer_buffer.get());
 
 		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-		draw_outline_buffer(m_buffer.get(), 2);
+		DrawOutlineBuffer(m_emboss_buffer.get());
 
 		glDisable(GL_BLEND);
 
-		FontCache::create(font())->print(origin().x(), origin().y(), text(), valid_text_length());
+		if(text().size())
+			FontCache::create(font())->print(origin().x(), origin().y(), text(), valid_text_length());
 
 		glPopMatrix();
+	}
+
+	void ToggleButton::InitializeOnce ()
+	{
+		m_inner_buffer.reset(new GLArrayBufferF);
+		m_outer_buffer.reset(new GLArrayBufferF);
+		m_emboss_buffer.reset(new GLArrayBufferF);
+
+		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_checkable(true);
+		set_size(90, 20);
+		set_preferred_size(90, 20);
+
+		GenerateFormBuffer(&size(), round_type(), radius(),
+		        m_inner_buffer.get(), m_outer_buffer.get(),
+		        m_emboss_buffer.get());
+	}
+
+	void ToggleButton::InitializeOnce (const String& text)
+	{
+		m_inner_buffer.reset(new GLArrayBufferF);
+		m_outer_buffer.reset(new GLArrayBufferF);
+		m_emboss_buffer.reset(new GLArrayBufferF);
+
+		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_checkable(true);
+		set_text(text);	// this change the button size
+		set_preferred_size(size());
+
+		GenerateFormBuffer(&size(), round_type(), radius(),
+		        m_inner_buffer.get(), m_outer_buffer.get(),
+		        m_emboss_buffer.get());
 	}
 
 }

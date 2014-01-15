@@ -34,7 +34,6 @@
 #include <algorithm>
 
 #include <BlendInt/ClockWidget.hpp>
-#include <BlendInt/Window.hpp>
 
 namespace BlendInt {
 
