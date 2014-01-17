@@ -45,20 +45,35 @@ namespace BlendInt {
 
 	AbstractWidget::AbstractWidget ()
 		: AbstractExtraForm(),
-		  m_z(0)
+		  m_z(0),
+		  m_parent(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	AbstractWidget::AbstractWidget (AbstractWidget* super)
 		: AbstractExtraForm(super),
-			m_z(0)
+			m_z(0),
+			m_parent(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	AbstractWidget::~AbstractWidget ()
 	{
+		if(m_parent) {
+			m_parent->m_children.erase(this);
+			m_parent = 0;
+		}
+
+		std::set<AbstractWidget*>::iterator it;
+		while(m_children.size()) {
+			it = m_children.begin();
+			(*it)->m_parent = 0;
+			delete *it;
+			m_children.erase(it);
+		}
+
 		m_destroyed.fire(this);
 	}
 
@@ -70,6 +85,52 @@ namespace BlendInt {
 	bool AbstractWidget::Unregister ()
 	{
 		return ContextManager::Instance()->Unregister(this);
+	}
+
+	bool AbstractWidget::Insert (AbstractWidget* child)
+	{
+		if(child->m_parent == this) return true;
+
+		if(child->m_parent) {
+			child->m_parent->m_children.erase(child);
+		}
+
+		child->m_parent = this;
+		m_children.insert(child);
+
+		if(child->layer() != layer()) {
+			child->SetLayer(layer());
+		}
+
+		return true;
+	}
+
+	bool AbstractWidget::InsertedTo(AbstractWidget* parent)
+	{
+		if(m_parent == parent) return true;
+
+		if(m_parent) {
+			m_parent->m_children.erase(this);
+		}
+
+		m_parent = parent;
+		m_parent->m_children.insert(this);
+
+		if(layer() != m_parent->layer()) {
+			SetLayer(m_parent->layer());
+		}
+
+		return true;
+	}
+
+	bool AbstractWidget::Remove(AbstractWidget* child)
+	{
+		if(child->m_parent != this) return false;
+
+		child->m_parent = 0;
+		m_children.erase(child);
+
+		return true;
 	}
 
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)

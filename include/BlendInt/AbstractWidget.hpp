@@ -113,6 +113,12 @@ namespace BlendInt {
 		 */
 		bool Unregister ();
 
+		bool Insert (AbstractWidget* child);
+
+		bool InsertedTo (AbstractWidget* parent);
+
+		bool Remove (AbstractWidget* child);
+
 		/**
 		 * @brief Call Update() and Resize the widget
 		 * @param width the newwidth of the widget
@@ -325,6 +331,10 @@ namespace BlendInt {
 		Cpp::Event<AbstractWidget*, int> m_property_changed;
 
 		Cpp::Event<AbstractWidget*> m_destroyed;
+
+		AbstractWidget* m_parent;
+
+		std::set<AbstractWidget*> m_children;
 
 #ifdef DEBUG
 	public:

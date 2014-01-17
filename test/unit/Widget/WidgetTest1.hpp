@@ -2,7 +2,8 @@
 #define _WIDGETTEST1_HPP_
 
 #include <gtest/gtest.h>
-#include <Common/Window.hpp>
+#include <BlendInt/Window.hpp>
+#include <BlendInt/Object.hpp>
 
 class WidgetTest1: public testing::Test
 {
@@ -14,12 +15,12 @@ protected:
 
 	virtual void SetUp ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
+		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
 	}
 
 	virtual void TearDown ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
+		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
 	}
 };
 
