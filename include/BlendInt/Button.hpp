@@ -54,9 +54,9 @@ namespace BlendInt {
 
 		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
 
-		virtual ~Button ();
-
 	protected:
+
+		virtual ~Button ();
 
 		virtual void Update (int type, const void* data);
 

@@ -82,8 +82,6 @@ namespace BlendInt {
 
 		VertexIcon* m_num;
 
-		Object m_store;
-
 		/**
 		 * @brief Copy constructor, disabled
 		 */

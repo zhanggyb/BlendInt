@@ -19,7 +19,7 @@ WidgetTest1::~WidgetTest1()
  *
  * Expected result: 
  */
-TEST_F(WidgetTest1, Insert1)
+TEST_F(WidgetTest1, Add1)
 {
     Window::Initialize();
     Window::Create("WidgetTest1 -- Show1", 1280, 800);
@@ -42,7 +42,7 @@ TEST_F(WidgetTest1, Insert1)
     widget1->Register();
     widget2->Register();
 
-    widget1->Insert(widget2);
+    widget1->AddChild(widget2);
 
     delete widget1;
 
@@ -58,7 +58,7 @@ TEST_F(WidgetTest1, Insert1)
  *
  * Expected result: 
  */
-TEST_F(WidgetTest1, Insert2)
+TEST_F(WidgetTest1, Add2)
 {
     Window::Initialize();
     Window::Create("WidgetTest1 -- Insert2", 1280, 800);
@@ -91,20 +91,20 @@ TEST_F(WidgetTest1, Insert2)
     widget4->Register();
 
     /*
-    widget1->Insert(widget2);
-    widget2->Insert(widget3);
-    widget3->Insert(widget4);
-    widget4->Insert(widget1);
+    widget1->AddChild(widget2);
+    widget2->AddChild(widget3);
+    widget3->AddChild(widget4);
+    widget4->AddChild(widget1);
     */
 
-    widget2->InsertedTo(widget1);
-    widget3->InsertedTo(widget2);
-    widget4->InsertedTo(widget3);
-    widget1->InsertedTo(widget4);
+    widget2->SetParent(widget1);
+    widget3->SetParent(widget2);
+    widget4->SetParent(widget3);
+    widget1->SetParent(widget4);
 
-    widget1->Remove(widget2);
-    widget2->Remove(widget3);
-    widget3->Remove(widget4);
+    widget1->RemoveChild(widget2);
+    widget2->RemoveChild(widget3);
+    widget3->RemoveChild(widget4);
 
     delete widget1;
 

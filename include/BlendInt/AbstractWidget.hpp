@@ -25,6 +25,7 @@
 #define _BLENDINT_ABSTRACTWIDGET_HPP_
 
 #include <bitset>
+#include <set>
 
 #include <boost/smart_ptr.hpp>
 
@@ -81,7 +82,7 @@ namespace BlendInt {
 		 * a static list -- solo, it's usually a pop-up widget such as
 		 * context menu, message box
 		 */
-		explicit AbstractWidget (AbstractWidget* super);
+		explicit AbstractWidget (AbstractWidget* parent);
 
 		virtual ~AbstractWidget ();
 
@@ -113,11 +114,11 @@ namespace BlendInt {
 		 */
 		bool Unregister ();
 
-		bool Insert (AbstractWidget* child);
+		bool AddChild (AbstractWidget* child);
 
-		bool InsertedTo (AbstractWidget* parent);
+		bool SetParent (AbstractWidget* parent);
 
-		bool Remove (AbstractWidget* child);
+		bool RemoveChild (AbstractWidget* child);
 
 		/**
 		 * @brief Call Update() and Resize the widget
@@ -259,6 +260,8 @@ namespace BlendInt {
 		{
 			obj->m_flag[WidgetFlagLockGeometry] = status ? 1 : 0;
 		}
+
+		AbstractWidget* parent() const {return m_parent;}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 

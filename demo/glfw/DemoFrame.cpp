@@ -36,6 +36,7 @@ DemoFrame::DemoFrame()
 	SetPreferredSize(size());
 
 	m_timer = new Timer;
+	CountOnce (m_timer);
 
 	// connect timer
 	events()->connect(start_button->clicked(),this, &DemoFrame::start_time);
@@ -45,8 +46,7 @@ DemoFrame::DemoFrame()
 
 DemoFrame::~DemoFrame()
 {
-	if(m_timer)
-		delete m_timer;
+	Destroy(m_timer);
 }
 
 
@@ -62,7 +62,7 @@ void DemoFrame::SetWidget (AbstractWidget* widget)
 		        size().width() - margin().left() - margin().right(),
 		        size().height() - margin().top() - margin().bottom());
 
-		Attach(m_widget);
+//		Attach(m_widget);
 	}
 }
 

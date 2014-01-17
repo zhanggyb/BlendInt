@@ -24,8 +24,6 @@
 #ifndef _BLENDINT_CLOCKWIDGET_HPP_
 #define _BLENDINT_CLOCKWIDGET_HPP_
 
-#include <boost/smart_ptr.hpp>
-
 #include <BlendInt/Widget.hpp>
 #include <BlendInt/Timer.hpp>
 #include <BlendInt/Color.hpp>
@@ -47,14 +45,14 @@ namespace BlendInt {
 
 		ClockWidget(AbstractWidget* parent);
 
-		virtual ~ClockWidget();
-
 		void set_background (const Color& color)
 		{
 			m_background = color;
 		}
 
 	protected:
+
+		virtual ~ClockWidget();
 
 //		virtual void Update (int type, const void* data);
 
@@ -72,9 +70,9 @@ namespace BlendInt {
 
 		void Init ();
 
-		boost::scoped_ptr<Timer> m_timer;
-
 		int m_angle;
+
+		Timer* m_timer;
 
 		Color m_background;
 	};

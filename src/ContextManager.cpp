@@ -91,7 +91,9 @@ namespace BlendInt {
 			for(set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
 				(*set_it)->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
-				delete *set_it;
+
+				if((*set_it)->ref_count() == 0)
+					delete *set_it;
 			}
 
 			pset->clear();

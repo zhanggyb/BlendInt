@@ -64,6 +64,10 @@ namespace BlendInt {
 
 	StockIcon::~StockIcon()
 	{
+		Object::Destroy(m_menu);
+		Object::Destroy(m_circle);
+		Object::Destroy(m_checkbox);
+		Object::Destroy(m_num);
 	}
 
 	bool StockIcon::Find (const AbstractResizableForm* icon) const
@@ -123,13 +127,6 @@ namespace BlendInt {
 
 		m_num->load (vec, 3, VertexIcon::num_tria_face, 1);
 
-		// check icon
-
-		// Bind once to increase the referecne count and delete them automatically.
-		m_store.Attach(m_menu);
-		m_store.Attach(m_circle);
-		m_store.Attach(m_checkbox);
-		m_store.Attach(m_num);
 	}
 }
 

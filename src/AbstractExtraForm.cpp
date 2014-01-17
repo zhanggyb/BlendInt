@@ -32,13 +32,6 @@ namespace BlendInt {
 		m_maximal_size.set_height(65536);
 	}
 
-	AbstractExtraForm::AbstractExtraForm(Object* super)
-	: AbstractForm(super), m_expand_x(false), m_expand_y(false)
-	{
-		m_maximal_size.set_width(65536);
-		m_maximal_size.set_height(65536);
-	}
-
 	AbstractExtraForm::AbstractExtraForm(const AbstractExtraForm& orig)
 	: AbstractForm()
 	{

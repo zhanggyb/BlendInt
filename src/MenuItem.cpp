@@ -113,10 +113,7 @@ namespace BlendInt {
 	void MenuItem::RemoveIcon()
 	{
 		if(m_icon) {
-			if(!m_icon->GetReferenceCount())
-				delete m_icon;
-
-			m_icon = 0;
+			Object::Destroy(m_icon);
 		}
 	}
 

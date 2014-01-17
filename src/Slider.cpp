@@ -143,7 +143,7 @@ namespace BlendInt {
 	{
 		// if no parent slider, don't react to mouse move
 
-		AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(*(superiors()->begin()));
+		AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(parent());
 		if(!parent_obj) return;
 
 		if (down()) {
@@ -298,7 +298,7 @@ namespace BlendInt {
 			if(m_slide_button)
 				delete m_slide_button;
 
-			Attach(widget);
+//			Attach(widget);
 			m_slide_button = widget;
 		}
 	}

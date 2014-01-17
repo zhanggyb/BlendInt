@@ -26,41 +26,15 @@
 
 #include <stdint.h>
 
-#include <set>
 #ifdef DEBUG
 #include <map>
 #endif	// DEBUG
-#include <boost/smart_ptr.hpp>
 
-#include <Cpp/Events.hpp>
+#include <string>
 
 namespace BlendInt {
 
 	class Interface;
-
-	class ObjectEvents
-	{
-	public:
-
-		friend class Interface;
-
-		ObjectEvents ()
-		: m_connections(0)
-		{
-			m_connections = new Cpp::ConnectionScope;
-		}
-
-		Cpp::ConnectionScope* operator -> () const {return m_connections;}
-
-	private:
-
-		~ObjectEvents ()
-		{
-			delete m_connections;
-		}
-
-		Cpp::ConnectionScope* m_connections;
-	};
 
 	/**
 	 * @brief The base class of most BlendInt objects
@@ -77,37 +51,6 @@ namespace BlendInt {
 
 		Object ();
 
-		explicit Object (Object* super);
-
-		virtual ~Object ();
-
-		bool Attach (Object* sub);
-
-		bool Detach (Object* sub);
-
-		void DetachAllSubs ();
-
-		bool DetachFrom (Object* super);
-
-		void DetachFromAllSupers ();
-
-		bool AttachTo (Object* super);
-
-		/**
-		 * @brief Detach and try to delete sub object
-		 * @param[in] sub The sub object
-		 * @return
-		 * 	- true if success
-		 * 	- false if fail
-		 *
-		 * This function detach and try to delete the sub object if it has no more super
-		 * object.
-		 *
-		 * Return false if the sub is not in sub objects, or it's not deleted if it has
-		 * more super object attaching.
-		 */
-		bool Destroy (Object* sub);
-
 		inline void set_name (const char* name)
 		{
 			m_name = name;
@@ -120,19 +63,28 @@ namespace BlendInt {
 
 		const std::string& name () const {return m_name;}
 
-		size_t GetReferenceCount ();
+		inline size_t ref_count ()
+		{
+			return m_ref_count;
+		}
 
-		inline const std::set<Object*>* superiors() const {return m_supers.get();}
+#ifdef DEBUG
+		static void CountOnce (Object* obj);
+#endif
 
-		inline const std::set<Object*>* subordinates() const {return m_subs.get();}
+		static void Destroy (Object* obj);
+
+	protected:
+
+		virtual ~Object ();
+
+#ifndef DEBUG
+		static void CountOnce (Object* obj);
+#endif
 
 	private:
 
-		static ObjectEvents* events;
-
-		boost::scoped_ptr<std::set<Object*> > m_supers;
-
-		boost::scoped_ptr<std::set<Object*> > m_subs;
+		size_t m_ref_count;
 
 		std::string m_name;
 
@@ -149,10 +101,6 @@ namespace BlendInt {
 		{
 			return obj_map.size();
 		}
-
-		void PrintSupers ();
-
-		void PrintSubs ();
 
 		static const std::map<uint64_t, Object*>& GetMap ()
 		{

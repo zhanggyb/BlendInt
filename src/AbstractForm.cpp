@@ -48,11 +48,6 @@ namespace BlendInt {
 	{
 	}
 
-	AbstractForm::AbstractForm(Object *super)
-	: Object(super)
-	{
-	}
-
 	AbstractForm::AbstractForm(const AbstractForm& orig)
 	{
 		m_size = orig.size();

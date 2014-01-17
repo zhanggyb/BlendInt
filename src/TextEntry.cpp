@@ -44,6 +44,7 @@ namespace BlendInt {
 
 	TextEntry::~TextEntry ()
 	{
+		Destroy(m_timer);
 	}
 
 	void TextEntry::KeyPressEvent (KeyEvent* event)
@@ -325,7 +326,7 @@ namespace BlendInt {
 		m_origin.set_x(m_origin.x() + static_cast<int>(radius()));
 
 		// and set timer
-		m_timer = new Timer(this);
+		m_timer = new Timer;
 		m_timer->SetInterval(500);	// 100 ms
 		events()->connect(m_timer->timeout(), this, &TextEntry::OnReverseCursor);
 

@@ -47,14 +47,14 @@ namespace BlendInt {
 
 	bool GridLayout::remove (AbstractWidget* object)
 	{
-		if (!subordinates()->count(object)) return false;
+//		if (!subordinates()->count(object)) return false;
 
 		return true;
 	}
 
 	bool GridLayout::erase (AbstractWidget* object)
 	{
-		if (!subordinates()->count(object)) return false;
+//		if (!subordinates()->count(object)) return false;
 
 		return true;
 	}

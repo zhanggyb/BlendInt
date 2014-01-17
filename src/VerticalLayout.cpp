@@ -214,7 +214,7 @@ namespace BlendInt {
 		activate_events();
 		object->activate_events();
 
-		Attach(object);
+//		Attach(object);
 		LockGeometry(object, true);
 	}
 
@@ -250,7 +250,7 @@ namespace BlendInt {
 		activate_events();
 
 		LockGeometry(object, false);
-		Detach(object);
+//		Detach(object);
 	}
 
 	void VerticalLayout::MakeLayout(const Size* size, const Margin* margin, int space)

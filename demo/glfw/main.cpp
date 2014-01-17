@@ -57,11 +57,9 @@ int main(int argc, char* argv[])
 
 	Widget* widget = new Widget;
 	widget->SetPosition(200, 200);
-	widget->Register();
-
-	ClockWidget* clock = new ClockWidget;
-	clock->SetPosition(400, 200);
-	clock->Register();
+	//widget->Register();
+	//Object::Destroy(widget);
+	delete widget;
 
 	Window::Run();
 

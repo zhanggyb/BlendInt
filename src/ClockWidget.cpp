@@ -38,20 +38,20 @@
 namespace BlendInt {
 
 	ClockWidget::ClockWidget()
-	: Widget(), m_angle(0)
+	: Widget(), m_angle(0), m_timer(0)
 	{
 		Init();
 	}
 
 	ClockWidget::ClockWidget(AbstractWidget* parent)
-	: Widget (parent), m_angle(0)
+	: Widget (parent), m_angle(0), m_timer(0)
 	{
 		Init();
 	}
 
 	ClockWidget::~ClockWidget ()
 	{
-
+		Destroy(m_timer);
 	}
 
 //	void ClockWidget::Update(int type, const void* data)
@@ -154,12 +154,14 @@ namespace BlendInt {
 		set_preferred_size(200, 200);
 		set_expand_x(true);
 		set_expand_y(true);
-		m_timer.reset(new Timer);
-		m_timer.get()->SetInterval(1000);
 
-		events()->connect(m_timer.get()->timeout(), this, &ClockWidget::UpdateClockHands);
+		m_timer = new Timer;
+		CountOnce(m_timer);
+		m_timer->SetInterval(1000);
 
-		m_timer.get()->Start();
+		events()->connect(m_timer->timeout(), this, &ClockWidget::UpdateClockHands);
+
+		m_timer->Start();
 	}
 
 }

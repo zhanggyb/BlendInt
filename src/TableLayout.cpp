@@ -58,7 +58,7 @@ namespace BlendInt {
 	void TableLayout::add_widget (Frame* widget, int row, int column,
 	        int width, int height)
 	{
-		if (subordinates()->count(widget)) return;
+		AddChild(widget);
 
 		for (int i = 0; i < width; i++)
 		{
@@ -70,7 +70,6 @@ namespace BlendInt {
 			items()[m_columns * (row + i) + column] = widget;
 		}
 
-		Attach (widget);
 		LockGeometry(widget, true);
 
 		Update(FormSize, 0);
@@ -79,7 +78,7 @@ namespace BlendInt {
 	void TableLayout::add_layout (AbstractLayout* layout, int row, int column,
 	        int width, int height)
 	{
-		if (subordinates()->count(layout)) return;
+		AddChild(layout);
 
 		for (int i = 0; i < width; i++)
 		{
@@ -91,7 +90,6 @@ namespace BlendInt {
 			items()[m_columns * (row + i) + column] = layout;
 		}
 
-		Attach (layout);
 		LockGeometry(layout, true);
 
 		Update(FormSize, 0);

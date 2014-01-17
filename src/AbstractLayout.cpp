@@ -52,7 +52,7 @@ namespace BlendInt {
 
 	void AbstractLayout::Add (AbstractWidget* obj)
 	{
-		if(subordinates()->count(obj)) return;
+//		if(subordinates()->count(obj)) return;
 
 		Size pre_preferred_size = preferred_size();
 
@@ -69,7 +69,7 @@ namespace BlendInt {
 
 	bool AbstractLayout::Remove (AbstractWidget* object)
 	{
-		if (!subordinates()->count(object)) return false;
+//		if (!subordinates()->count(object)) return false;
 
 		RemoveItem(object);
 
@@ -78,7 +78,7 @@ namespace BlendInt {
 
 	bool AbstractLayout::Erase (AbstractWidget* object)
 	{
-		if (!subordinates()->count(object)) return false;
+//		if (!subordinates()->count(object)) return false;
 
 		RemoveItem(object);
 

@@ -8,9 +8,6 @@
 #include <BlendInt/Viewport3D.hpp>
 #include <BlendInt/Button.hpp>
 
-//#include <gtest/gtest.h>
-#include <boost/smart_ptr.hpp>
-
 // The fixture for testing class Foo.
 
 using namespace BlendInt;
@@ -23,45 +20,54 @@ public:
 
 protected:
 
+    virtual ~AnimatingWidget();
+
 	virtual void Render ();
 
 private:
 
 	void AddAngle ();
 
-	boost::scoped_ptr<Timer> m_timer;
-
 	float m_angle;
+	Timer* m_timer;
 };
 
 AnimatingWidget::AnimatingWidget ()
-	: Widget(), m_angle(0.0)
+	: Widget(), m_angle(0.0), m_timer(0)
 {
-	m_timer.reset(new Timer);
-	events()->connect(m_timer.get()->timeout(), this, &AnimatingWidget::AddAngle);
+	m_timer = new Timer;
+    CountOnce(m_timer);
+
+	events()->connect(m_timer->timeout(), this, &AnimatingWidget::AddAngle);
 
 	set_size(500, 400);
 	set_preferred_size (500, 400);
 	set_maximal_size(500, 400);
 	set_minimal_size(500, 400);
 
-	m_timer.get()->SetInterval(5);
-	m_timer.get()->Start();
+	m_timer->SetInterval(5);
+	m_timer->Start();
 }
 
 AnimatingWidget::AnimatingWidget(AbstractWidget* parent)
-	: Widget(parent), m_angle(0.0)
+	: Widget(parent), m_angle(0.0), m_timer(0)
 {
-	m_timer.reset(new Timer);
-	events()->connect(m_timer.get()->timeout(), this, &AnimatingWidget::AddAngle);
+	m_timer = new Timer;
+    CountOnce(m_timer);
+	events()->connect(m_timer->timeout(), this, &AnimatingWidget::AddAngle);
 
 	set_size(500, 400);
 	set_preferred_size(500, 400);
 	set_maximal_size(500, 400);
 	set_minimal_size(500, 400);
 
-	m_timer.get()->SetInterval(5);
-	m_timer.get()->Start();
+	m_timer->SetInterval(5);
+	m_timer->Start();
+}
+
+AnimatingWidget::~AnimatingWidget()
+{
+    Destroy(m_timer);
 }
 
 void AnimatingWidget::Render ()

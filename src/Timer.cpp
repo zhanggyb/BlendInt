@@ -40,17 +40,6 @@ namespace BlendInt {
 		Create();
 	}
 
-	Timer::Timer(Object* super)
-	: Object(super),
-#if BLENDINT_USE_POSIX_TIMER
-			m_id (0),
-#endif
-			m_interval(40),
-			m_enabled(false)
-	{
-		Create();
-	}
-
 	Timer::~Timer()
 	{
 #if BLENDINT_USE_POSIX_TIMER

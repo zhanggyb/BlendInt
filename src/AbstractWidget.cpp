@@ -51,12 +51,16 @@ namespace BlendInt {
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
-	AbstractWidget::AbstractWidget (AbstractWidget* super)
-		: AbstractExtraForm(super),
-			m_z(0),
+	AbstractWidget::AbstractWidget (AbstractWidget* parent)
+		: m_z(0),
 			m_parent(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
+
+		if(parent) {
+			parent->m_children.insert(this);
+			m_parent = parent;
+		}
 	}
 
 	AbstractWidget::~AbstractWidget ()
@@ -70,7 +74,8 @@ namespace BlendInt {
 		while(m_children.size()) {
 			it = m_children.begin();
 			(*it)->m_parent = 0;
-			delete *it;
+			if((*it)->ref_count() == 0)
+				delete *it;
 			m_children.erase(it);
 		}
 
@@ -87,7 +92,7 @@ namespace BlendInt {
 		return ContextManager::Instance()->Unregister(this);
 	}
 
-	bool AbstractWidget::Insert (AbstractWidget* child)
+	bool AbstractWidget::AddChild (AbstractWidget* child)
 	{
 		if(child->m_parent == this) return true;
 
@@ -105,7 +110,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractWidget::InsertedTo(AbstractWidget* parent)
+	bool AbstractWidget::SetParent(AbstractWidget* parent)
 	{
 		if(m_parent == parent) return true;
 
@@ -123,7 +128,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractWidget::Remove(AbstractWidget* child)
+	bool AbstractWidget::RemoveChild(AbstractWidget* child)
 	{
 		if(child->m_parent != this) return false;
 

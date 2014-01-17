@@ -52,9 +52,9 @@ namespace BlendInt {
 
 		ToggleButton (const String& text, AbstractWidget* parent);
 
-		virtual ~ToggleButton ();
-
 	protected:
+
+		virtual ~ToggleButton ();
 
 		virtual void Update (int type, const void* data);
 

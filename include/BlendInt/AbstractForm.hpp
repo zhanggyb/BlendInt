@@ -70,11 +70,9 @@ namespace BlendInt {
 
 		AbstractForm();
 
-		explicit AbstractForm (Object *super);
+		virtual ~AbstractForm();
 
 		explicit AbstractForm(const AbstractForm& orig);
-
-		virtual ~AbstractForm();
 
 		AbstractForm& operator = (const AbstractForm& orig)
 		{
