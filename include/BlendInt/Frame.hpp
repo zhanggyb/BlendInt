@@ -52,8 +52,6 @@ namespace BlendInt {
 
 		Frame (AbstractWidget* parent);
 
-		virtual ~Frame ();
-
 		const Margin& margin () const {return m_margin;}
 
 		void SetMargin (const Margin& margin);
@@ -61,6 +59,8 @@ namespace BlendInt {
 		void SetMargin (int left, int right, int top, int bottom);
 
 	protected:
+
+		virtual ~Frame ();
 
 		virtual void Draw ();
 

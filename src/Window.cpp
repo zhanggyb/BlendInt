@@ -102,6 +102,9 @@ namespace BlendInt {
 	{
 		if(m_window) {
 			glfwSwapBuffers(m_window->m_glfw_window);
+			// glfwPollEvents();
+
+			//TODO: refresh the opengl context
 		}
 	}
 

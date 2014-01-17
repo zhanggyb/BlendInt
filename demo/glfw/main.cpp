@@ -57,9 +57,7 @@ int main(int argc, char* argv[])
 
 	Widget* widget = new Widget;
 	widget->SetPosition(200, 200);
-	//widget->Register();
-	//Object::Destroy(widget);
-	delete widget;
+	widget->Register();
 
 	Window::Run();
 
