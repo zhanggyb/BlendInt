@@ -47,7 +47,7 @@ namespace BlendInt {
 
 	AbstractLayout::~AbstractLayout ()
 	{
-		m_items.clear();
+		//m_items.clear();
 	}
 
 	void AbstractLayout::Add (AbstractWidget* obj)
@@ -163,18 +163,6 @@ namespace BlendInt {
 	void AbstractLayout::Update (int type, const void* data)
 	{
 		switch (type) {
-
-			case FormPosition: {
-				const Point* new_pos = static_cast<const Point*>(data);
-
-				for (size_t i = 0; i < m_items.size(); i++)
-				{
-					SetPosition(m_items[i],
-							m_items[i]->position().x() + (new_pos->x() - position().x()),
-							m_items[i]->position().y() + (new_pos->y() - position().y()));
-				}
-				break;
-			}
 
 			default:
 				break;

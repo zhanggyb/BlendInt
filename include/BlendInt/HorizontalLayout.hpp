@@ -137,6 +137,8 @@ namespace BlendInt {
 		 * @brief set of horizontally fixed items (along x)
 		 */
 		std::set<AbstractWidget*> m_fixed_items;
+
+		std::vector<AbstractWidget*> m_items;
 	};
 
 }

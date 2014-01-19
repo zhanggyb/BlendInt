@@ -106,10 +106,10 @@ namespace BlendInt {
 
 		virtual void RemoveItem (AbstractWidget* object) = 0;
 
-		std::vector<AbstractWidget*>& items ()
-		{
-			return m_items;
-		}
+//		std::vector<AbstractWidget*>& items ()
+//		{
+//			return m_items;
+//		}
 
 	private:
 
@@ -119,7 +119,6 @@ namespace BlendInt {
 
 		Margin m_margin;
 
-		std::vector<AbstractWidget*> m_items;
 	};
 
 } /* namespace BIL */

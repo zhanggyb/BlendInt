@@ -51,30 +51,46 @@ namespace BlendInt {
 
 	HorizontalLayout::~HorizontalLayout ()
 	{
-
+		for(std::vector<AbstractWidget*>::iterator it = m_items.begin(); it != m_items.end(); it++)
+		{
+			Destroy(*it);
+		}
+		m_items.clear();
 	}
 
 	void HorizontalLayout::Update (int type, const void* data)
 	{
 		switch (type) {
 
+			case FormPosition: {
+				const Point* new_pos = static_cast<const Point*>(data);
+
+				for (size_t i = 0; i < m_items.size(); i++)
+				{
+					SetPosition(m_items[i],
+							m_items[i]->position().x() + (new_pos->x() - position().x()),
+							m_items[i]->position().y() + (new_pos->y() - position().y()));
+				}
+				break;
+			}
+
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				if(items().size())
+				if(m_items.size())
 					MakeLayout(size_p, &margin(), space());
 				return;
 			}
 
 			case LayoutPropertyMargin: {
 				const Margin* margin_p = static_cast<const Margin*>(data);
-				if(items().size())
+				if(m_items.size())
 					MakeLayout(&size(), margin_p, space());
 				return;
 			}
 
 			case LayoutPropertySpace: {
 				const int* space_p = static_cast<const int*>(data);
-				if(items().size())
+				if(m_items.size())
 					MakeLayout(&size(), &margin(), *space_p);
 				return;
 			}
@@ -89,7 +105,7 @@ namespace BlendInt {
 	void HorizontalLayout::Draw ()
 	{
 		std::vector<AbstractWidget*>::const_iterator it;
-		for (it = items().begin(); it != items().end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			DispatchRender(*it);
 		}
 
@@ -120,7 +136,7 @@ namespace BlendInt {
 	void HorizontalLayout::KeyPressEvent (KeyEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
-		for (it = items().begin(); it != items().end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			dispatch_key_press_event(*it, event);
 		}
 	}
@@ -136,7 +152,7 @@ namespace BlendInt {
 	void HorizontalLayout::MousePressEvent (MouseEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
-		for (it = items().begin(); it != items().end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			dispatch_mouse_press_event(*it, event);
 		}
 	}
@@ -144,7 +160,7 @@ namespace BlendInt {
 	void HorizontalLayout::MouseReleaseEvent (MouseEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
-		for (it = items().begin(); it != items().end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			dispatch_mouse_release_event(*it, event);
 		}
 	}
@@ -152,7 +168,7 @@ namespace BlendInt {
 	void HorizontalLayout::MouseMoveEvent (MouseEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;
-		for (it = items().begin(); it != items().end(); it++) {
+		for (it = m_items.begin(); it != m_items.end(); it++) {
 			dispatch_mouse_move_event(*it, event);
 		}
 	}
@@ -170,7 +186,7 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		if (items().size() == 0) {
+		if (m_items.size() == 0) {
 			min_size.add_width(object->minimal_size().width());
 			prefer_size.add_width(object->preferred_size().width());
 		} else {
@@ -191,7 +207,7 @@ namespace BlendInt {
 			current_size.set_height(prefer_size.height());
 		}
 
-		items().push_back(object);
+		m_items.push_back(object);
 
 		SetPreferredSize(prefer_size);
 		SetMinimalSize(min_size);
@@ -207,7 +223,8 @@ namespace BlendInt {
 		activate_events();
 		object->activate_events();
 
-//		Attach(object);
+		AddChild(object);
+		CountOnce(object);
 		LockGeometry(object, true);
 	}
 
@@ -216,10 +233,10 @@ namespace BlendInt {
 		deactivate_events();
 
 		std::vector<AbstractWidget*>::iterator it;
-		for(it = items().begin(); it != items().end();)
+		for(it = m_items.begin(); it != m_items.end();)
 		{
 			if ((*it) == object) {
-				it = items().erase(it);
+				it = m_items.erase(it);
 			} else {
 				it++;
 			}
@@ -243,7 +260,8 @@ namespace BlendInt {
 		activate_events();
 
 		LockGeometry(object, false);
-//		Detach(object);
+		RemoveChild(object);
+		Destroy(object);
 	}
 
 	void HorizontalLayout::MakeLayout (const Size* size, const Margin* margin,
@@ -262,7 +280,7 @@ namespace BlendInt {
 
 	void HorizontalLayout::DistributeWithPreferredWidth(const Margin* margin, int space)
 	{
-		for(std::vector<AbstractWidget*>::iterator it = items().begin(); it != items().end(); it++)
+		for(std::vector<AbstractWidget*>::iterator it = m_items.begin(); it != m_items.end(); it++)
 		{
 			Resize(*it, (*it)->preferred_size().width(), (*it)->size().height());
 		}
@@ -281,7 +299,7 @@ namespace BlendInt {
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
 
-		bool change_expd_items = (current_width - margin_plus) >= (min_expd_width + fixed_width + (items().size() - 1) * space);
+		bool change_expd_items = (current_width - margin_plus) >= (min_expd_width + fixed_width + (m_items.size() - 1) * space);
 
 		if(change_expd_items) {
 
@@ -289,10 +307,10 @@ namespace BlendInt {
 			if (m_expandable_items.size()) {
 
 				unsigned int average_expd_width = current_width - margin_plus
-				        - fixed_width - (items().size() - 1) * space;
+				        - fixed_width - (m_items.size() - 1) * space;
 				average_expd_width = average_expd_width / m_expandable_items.size();
 
-				for (it = items().begin(); it != items().end(); it++) {
+				for (it = m_items.begin(); it != m_items.end(); it++) {
 					child = *it;
 
 					if (m_expandable_items.count(child)) {
@@ -313,10 +331,10 @@ namespace BlendInt {
 				unsigned int width_plus = 0;
 
 				unsigned int total_fixed_width = current_width - margin_plus
-				        - min_expd_width - (items().size() - 1) * space;
+				        - min_expd_width - (m_items.size() - 1) * space;
 				unsigned int average_fixed_width = total_fixed_width / m_fixed_items.size();
 
-				for (it = items().begin(); it != items().end(); it++) {
+				for (it = m_items.begin(); it != m_items.end(); it++) {
 
 					child = *it;
 
@@ -361,12 +379,12 @@ namespace BlendInt {
 
 			unsigned int max_expd_width = GetAllMaximalExpandableWidth();
 			unsigned int total_expd_width = current_width - margin_plus
-			        - fixed_width - (items().size() - 1) * space;
+			        - fixed_width - (m_items.size() - 1) * space;
 			unsigned int average_expd_width = total_expd_width / m_expandable_items.size();
 
 			bool change_expd_items = (current_width - margin_plus)
 			        <= (max_expd_width + fixed_width
-			                + (items().size() - 1) * space);
+			                + (m_items.size() - 1) * space);
 
 			if(change_expd_items) {
 
@@ -374,7 +392,7 @@ namespace BlendInt {
 				unsigned int width_plus = 0;
 				int x = position().x() + margin->left();
 
-				for (it = items().begin(); it != items().end(); it++) {
+				for (it = m_items.begin(); it != m_items.end(); it++) {
 					child = *it;
 					if(m_expandable_items.count(child)) {
 						if(average_expd_width > child->maximal_size().width()) {
@@ -397,10 +415,10 @@ namespace BlendInt {
 				int x = position().x() + margin->left();
 
 				x = x + (current_width - margin_plus - max_expd_width - fixed_width
-		                - (items().size() - 1) * space) / 2;
+		                - (m_items.size() - 1) * space) / 2;
 
 				// resize all with the max size
-				for(it = items().begin(); it != items().end(); it++)
+				for(it = m_items.begin(); it != m_items.end(); it++)
 				{
 					child = *it;
 
@@ -422,7 +440,7 @@ namespace BlendInt {
 			x = x + (current_width - margin_plus - fixed_width - (m_fixed_items.size() - 1) * space) / 2;
 
 			// resize all with preferred width
-			for(it = items().begin(); it != items().end(); it++)
+			for(it = m_items.begin(); it != m_items.end(); it++)
 			{
 				child = *it;
 				Resize(child, child->preferred_size().width(),
@@ -437,7 +455,7 @@ namespace BlendInt {
 	void HorizontalLayout::Distribute(int space, int start)
 	{
 		start -= space;	// subtract one space to make sure no space if only 1 child in layout
-		for(std::vector<AbstractWidget*>::iterator it = items().begin(); it != items().end(); it++)
+		for(std::vector<AbstractWidget*>::iterator it = m_items.begin(); it != m_items.end(); it++)
 		{
 			start += space;
 
@@ -454,7 +472,7 @@ namespace BlendInt {
 
 		std::vector<AbstractWidget*>::iterator it;
 		AbstractWidget* child = 0;
-		for(it = items().begin(); it != items().end(); it++)
+		for(it = m_items.begin(); it != m_items.end(); it++)
 		{
 			child = *it;
 
@@ -589,7 +607,7 @@ namespace BlendInt {
 			preferred_size_out.set_width(margin().left());
 		}
 
-		for(it = items().begin(); it != items().end(); it++)
+		for(it = m_items.begin(); it != m_items.end(); it++)
 		{
 			child = *it;
 			size_out.add_width(child->size().width());
@@ -615,10 +633,10 @@ namespace BlendInt {
 		}
 
 		if(count_space) {
-			if(items().size()) {
-				size_out.add_width((items().size() - 1) * space());
-				min_size_out.add_width((items().size() - 1) * space());
-				preferred_size_out.add_width((items().size() - 1) * space());
+			if(m_items.size()) {
+				size_out.add_width((m_items.size() - 1) * space());
+				min_size_out.add_width((m_items.size() - 1) * space());
+				preferred_size_out.add_width((m_items.size() - 1) * space());
 			}
 		}
 

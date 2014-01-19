@@ -119,6 +119,7 @@ namespace BlendInt {
 
 		int m_columns;
 
+		std::vector<AbstractWidget*> m_items;
 	};
 }
 
