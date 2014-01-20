@@ -72,14 +72,21 @@ namespace BlendInt {
 	}
 
 	ContextManager::ContextManager ()
-	: m_focus(0)
+	: m_focus(0), m_cursor_widget_stack(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	ContextManager::~ContextManager ()
 	{
+		// set focus widget to 0
 		m_focus = 0;
+
+		// delete the cursor widget stack
+		if(m_cursor_widget_stack) {
+			delete m_cursor_widget_stack;
+			m_cursor_widget_stack = 0;
+		}
 
 		map<int, set<AbstractWidget*>* >::iterator map_it;
 		set<AbstractWidget*>::iterator set_it;
@@ -200,6 +207,8 @@ namespace BlendInt {
 		RemoveWidget(obj);
 		obj->m_flag.reset(2);
 		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
+
+		// TODO: remove this widget and its children if it's in m_cursor_widget_stack
 	}
 
 	bool ContextManager::RemoveWidget (AbstractWidget* obj)

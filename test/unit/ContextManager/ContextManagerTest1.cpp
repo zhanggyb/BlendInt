@@ -1,6 +1,7 @@
 #include "ContextManagerTest1.hpp"
 #include <BlendInt/ContextManager.hpp>
 #include <BlendInt/Widget.hpp>
+#include <BlendInt/Window.hpp>
 
 using namespace BlendInt;
 
@@ -22,15 +23,23 @@ ContextManagerTest1::~ContextManagerTest1()
  */
 TEST_F(ContextManagerTest1, Foo1)
 {
-	Init ();
-	GLFWwindow* window = CreateWindow("ContextManager - Foo1");
+    Window::Initialize();
+
+	Window* win = Window::Create("ContextManager - Foo1", 1280, 800);
+
+    if(!Interface::Initialize()) {
+        Window::Release();
+        ASSERT_TRUE(false);
+    }
+
+    Interface::Instance()->Resize(1280, 800);
 
     // TODO: add test code here
-    Widget* w1;
+    Widget* w1 = new Widget;
     w1->set_name("widget1");
     w1->SetPosition(200, 200);
 
-    Widget* w2;
+    Widget* w2 = new Widget;
     w2->set_name("widget2");
     w2->SetPosition(400, 200);
 
@@ -39,8 +48,11 @@ TEST_F(ContextManagerTest1, Foo1)
 
     ContextManager::Instance()->print();
 
-    RunLoop(window);
-	Terminate();
+    Window::Run();
+
+    Interface::Release();
+
+    Window::Release();
 
 	ASSERT_TRUE(true);
 }
@@ -52,15 +64,23 @@ TEST_F(ContextManagerTest1, Foo1)
  */
 TEST_F(ContextManagerTest1, Layer1)
 {
-	Init ();
-	GLFWwindow* window = CreateWindow("ContextManager - Layer1");
+    Window::Initialize();
+
+    Window* win = Window::Create("ContextManager - Layer1", 1280, 800);
+
+    if(!Interface::Initialize()) {
+        Window::Release();
+        ASSERT_TRUE(false);
+    }
+
+    Interface::Instance()->Resize(1280, 800);
 
     // TODO: add test code here
-    Widget* w1;
+    Widget* w1 = new Widget;
     w1->set_name("widget1");
     w1->SetPosition(200, 200);
         
-    Widget* w2;
+    Widget* w2 = new Widget;
     w2->set_name("widget2");
     w2->SetPosition(400, 200);
     w2->SetLayer(1);
@@ -70,9 +90,11 @@ TEST_F(ContextManagerTest1, Layer1)
 
     ContextManager::Instance()->print();
 
-    RunLoop(window);
-	
-    Terminate();
+    Window::Run();
+
+    Interface::Release();
+
+    Window::Release();
 
 	ASSERT_TRUE(true);
 }
@@ -84,15 +106,23 @@ TEST_F(ContextManagerTest1, Layer1)
  */
 TEST_F(ContextManagerTest1, Layer2)
 {
-	Init ();
-	GLFWwindow* window = CreateWindow("ContextManager - Layer1");
+    Window::Initialize();
+
+    Window* win = Window::Create("ContextManager - Layer2", 1280, 800);
+
+    if(!Interface::Initialize()) {
+        Window::Release();
+        ASSERT_TRUE(false);
+    }
+
+    Interface::Instance()->Resize(1280, 800);
 
     // TODO: add test code here
-    Widget* w1;
+    Widget* w1 = new Widget;
     w1->set_name("widget1");
     w1->SetPosition(200, 200);
 
-    Widget* w2;
+    Widget* w2 = new Widget;
     w2->set_name("widget2");
     w2->SetPosition(400, 200);
 
@@ -103,8 +133,11 @@ TEST_F(ContextManagerTest1, Layer2)
 
     ContextManager::Instance()->print();
 
-    RunLoop(window);
-	Terminate();
+    Window::Run();
+
+    Interface::Release();
+
+    Window::Release();
 
 	ASSERT_TRUE(true);
 }

@@ -2,7 +2,8 @@
 #define _CONTEXTMANAGERTEST1_HPP_
 
 #include <gtest/gtest.h>
-#include <Common/Window.hpp>
+
+#include <BlendInt/Object.hpp>
 
 class ContextManagerTest1: public testing::Test
 {
@@ -14,12 +15,16 @@ protected:
 
 	virtual void SetUp ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
+#ifdef DEBUG
+		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
+#endif
 	}
 
 	virtual void TearDown ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
+#ifdef DEBUG
+		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
+#endif
 	}
 };
 

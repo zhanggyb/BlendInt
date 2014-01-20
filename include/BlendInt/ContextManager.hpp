@@ -26,6 +26,7 @@
 
 #include <map>
 #include <set>
+#include <stack>
 
 #include <boost/smart_ptr.hpp>
 #include <Cpp/Events.hpp>
@@ -104,6 +105,10 @@ namespace BlendInt {
 		
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
+		/**
+		 * @brief The widget stack to contain the current mouse cursor
+		 */
+		std::stack<AbstractWidget*>* m_cursor_widget_stack;
 	};
 
 }
