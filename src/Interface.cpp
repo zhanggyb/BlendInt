@@ -584,10 +584,11 @@ namespace BlendInt {
 				// search which widget in stack contains the cursor
 				while (cm->m_cursor_widget_list->size()) {
 
-					widget = cm->m_cursor_widget_list->back();
-
-					if(widget->contain(event->position())) {
+					if(cm->m_cursor_widget_list->back()->contain(event->position())) {
+						widget = cm->m_cursor_widget_list->back();
 						break;
+					} else {
+						// TODO: call leaveEvent
 					}
 
 					cm->m_cursor_widget_list->pop_back();
@@ -598,9 +599,6 @@ namespace BlendInt {
 
 			for(std::list<AbstractWidget*>::reverse_iterator it = cm->m_cursor_widget_list->rbegin(); it != cm->m_cursor_widget_list->rend(); it++)
 			{
-#ifdef DEBUG
-				std::cout << "Widget: " << cm->m_cursor_widget_list->back()->name() << " get mouse move event" << std::endl;
-#endif
 				(*it)->MouseMoveEvent(event);
 			}
 

@@ -2,7 +2,7 @@
 #define _PERFORMANCETEST1_HPP_
 
 #include <gtest/gtest.h>
-#include <Common/Window.hpp>
+#include <BlendInt/Object.hpp>
 
 class PerformanceTest1: public testing::Test
 {
@@ -14,12 +14,12 @@ protected:
 
 	virtual void SetUp ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
+		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
 	}
 
 	virtual void TearDown ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
+		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
 	}
 };
 

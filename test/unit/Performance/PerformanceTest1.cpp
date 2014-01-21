@@ -2,6 +2,7 @@
 #include <BlendInt/Button.hpp>
 #include <BlendInt/Label.hpp>
 #include <BlendInt/HorizontalLayout.hpp>
+#include <BlendInt/Window.hpp>
 
 using namespace BlendInt;
 
@@ -21,9 +22,15 @@ PerformanceTest1::~PerformanceTest1()
  */
 TEST_F(PerformanceTest1, Layout1)
 {
-	Init ();
-	GLFWwindow* window = CreateWindow("Performance - Layout1");
+    Window::Initialize();
+    Window* win = Window::Create("Button Test - Foo1", 1024, 768);
 
+    if(!Interface::Initialize()) {
+        Window::Release();
+        ASSERT_TRUE(false);
+    }
+
+    win->Resize(1280, 800);
 	// TODO: add test code here
 
 
@@ -49,11 +56,12 @@ TEST_F(PerformanceTest1, Layout1)
         y_pos += 40;
     }
 
-	RunLoop(window);
+    Window::Run();
+    Interface::Release();
 
-	Terminate();
+    Window::Release();
 
-	ASSERT_TRUE(true);
+    ASSERT_TRUE(true);
 }
 
 /**

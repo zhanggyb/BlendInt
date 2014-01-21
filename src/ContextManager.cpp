@@ -252,43 +252,41 @@ namespace BlendInt {
 	void ContextManager::BuildWidgetListAtCursorPoint (const Point& cursor_point,
 	        const AbstractWidget* parent)
 	{
-		/*
-		if(!m_cursor_widget_stack.get()) {
-			m_cursor_widget_stack.reset(new std::stack<AbstractWidget*>);
-		}
-		*/
-
-		if(parent) {
-			for(std::set<AbstractWidget*>::iterator it = parent->m_children.begin(); it != parent->m_children.end(); it++) {
-				if((*it)->contain(cursor_point)) {
+		if (parent) {
+			for (std::set<AbstractWidget*>::iterator it =
+			        parent->m_children.begin(); it != parent->m_children.end();
+			        it++) {
+				if ((*it)->contain(cursor_point)) {
 					m_cursor_widget_list->push_back(*it);
 					BuildWidgetListAtCursorPoint(cursor_point, *it);
-					break;
+					break;	// if break or continue the loop?
 				}
 			}
 		} else {
 			m_cursor_widget_list->clear();
 
-			map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
+			map<int, set<AbstractWidget*>*>::reverse_iterator map_it;
 			set<AbstractWidget*>::iterator set_it;
 			set<AbstractWidget*>* set_p = 0;
 
 			bool stop = false;
 
 			for (map_it = m_layers.rbegin(); map_it != m_layers.rend();
-				        map_it++)
-			{
-					set_p = map_it->second;
-					for (set_it = set_p->begin(); set_it != set_p->end(); set_it++) {
-						if((*set_it)->contain(cursor_point)) {
-							m_cursor_widget_list->push_back(*set_it);
-							BuildWidgetListAtCursorPoint(cursor_point, *set_it);
-							stop = true;
-						}
-
-						if(stop) break;
+			        map_it++) {
+				set_p = map_it->second;
+				for (set_it = set_p->begin(); set_it != set_p->end();
+				        set_it++) {
+					if ((*set_it)->contain(cursor_point)) {
+						m_cursor_widget_list->push_back(*set_it);
+						BuildWidgetListAtCursorPoint(cursor_point, *set_it);
+						stop = true;
 					}
-					if(stop) break;
+
+					if (stop)
+						break;
+				}
+				if (stop)
+					break;
 			}
 		}
 	}
