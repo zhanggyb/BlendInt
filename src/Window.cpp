@@ -92,7 +92,8 @@ namespace BlendInt {
 	void Window::Release ()
 	{
 		if(m_window) {
-			glfwTerminate();
+            glfwDestroyWindow(m_window->m_glfw_window);
+            glfwTerminate();
 			delete m_window;
 			m_window = 0;
 		}
@@ -217,7 +218,7 @@ namespace BlendInt {
 
 	void Window::MouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 	{
-		m_window->m_mouse_event->set_action(MouseNone);
+		m_window->m_mouse_event->set_action(MouseMove);
 		m_window->m_mouse_event->set_button(MouseButtonNone);
 		m_window->m_mouse_event->set_position(static_cast<int>(xpos), Interface::Instance()->size().height() - static_cast<int>(ypos));
 

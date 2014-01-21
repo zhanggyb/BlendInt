@@ -26,10 +26,12 @@
 
 #include <map>
 #include <set>
-#include <stack>
+#include <list>
 
 #include <boost/smart_ptr.hpp>
 #include <Cpp/Events.hpp>
+
+#include <BlendInt/Point.hpp>
 
 using std::map;
 using std::set;
@@ -95,6 +97,8 @@ namespace BlendInt {
 
 		~ContextManager ();
 
+		void BuildWidgetListAtCursorPoint (const Point& cursor_point, const AbstractWidget* parent);
+
 		map<int, set<AbstractWidget*>* > m_layers;
 
 		map<AbstractWidget*, int> m_index;
@@ -108,7 +112,7 @@ namespace BlendInt {
 		/**
 		 * @brief The widget stack to contain the current mouse cursor
 		 */
-		std::stack<AbstractWidget*>* m_cursor_widget_stack;
+		boost::scoped_ptr<std::list<AbstractWidget*> > m_cursor_widget_list;
 	};
 
 }

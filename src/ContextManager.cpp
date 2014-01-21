@@ -72,21 +72,16 @@ namespace BlendInt {
 	}
 
 	ContextManager::ContextManager ()
-	: m_focus(0), m_cursor_widget_stack(0)
+	: m_focus(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
+		m_cursor_widget_list.reset(new std::list<AbstractWidget*>);
 	}
 
 	ContextManager::~ContextManager ()
 	{
 		// set focus widget to 0
 		m_focus = 0;
-
-		// delete the cursor widget stack
-		if(m_cursor_widget_stack) {
-			delete m_cursor_widget_stack;
-			m_cursor_widget_stack = 0;
-		}
 
 		map<int, set<AbstractWidget*>* >::iterator map_it;
 		set<AbstractWidget*>::iterator set_it;
@@ -254,6 +249,50 @@ namespace BlendInt {
 
 #ifdef DEBUG
 
+	void ContextManager::BuildWidgetListAtCursorPoint (const Point& cursor_point,
+	        const AbstractWidget* parent)
+	{
+		/*
+		if(!m_cursor_widget_stack.get()) {
+			m_cursor_widget_stack.reset(new std::stack<AbstractWidget*>);
+		}
+		*/
+
+		if(parent) {
+			for(std::set<AbstractWidget*>::iterator it = parent->m_children.begin(); it != parent->m_children.end(); it++) {
+				if((*it)->contain(cursor_point)) {
+					m_cursor_widget_list->push_back(*it);
+					BuildWidgetListAtCursorPoint(cursor_point, *it);
+					break;
+				}
+			}
+		} else {
+			m_cursor_widget_list->clear();
+
+			map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
+			set<AbstractWidget*>::iterator set_it;
+			set<AbstractWidget*>* set_p = 0;
+
+			bool stop = false;
+
+			for (map_it = m_layers.rbegin(); map_it != m_layers.rend();
+				        map_it++)
+			{
+					set_p = map_it->second;
+					for (set_it = set_p->begin(); set_it != set_p->end(); set_it++) {
+						if((*set_it)->contain(cursor_point)) {
+							m_cursor_widget_list->push_back(*set_it);
+							BuildWidgetListAtCursorPoint(cursor_point, *set_it);
+							stop = true;
+						}
+
+						if(stop) break;
+					}
+					if(stop) break;
+			}
+		}
+	}
+
 	void ContextManager::print ()
 	{
 		LayerType::iterator map_it;
@@ -280,3 +319,4 @@ namespace BlendInt {
 #endif
 
 }
+

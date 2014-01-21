@@ -1,5 +1,7 @@
 #include "ButtonTest1.hpp"
 #include <BlendInt/Button.hpp>
+#include <BlendInt/Window.hpp>
+#include <BlendInt/HorizontalLayout.hpp>
 
 using namespace BlendInt;
 
@@ -21,19 +23,48 @@ ButtonTest1::~ButtonTest1()
  */
 TEST_F(ButtonTest1, Foo1)
 {
-	Init ();
-	GLFWwindow* window = CreateWindow("Button - Foo1");
+    Window::Initialize();
+    Window* win = Window::Create("Button Test - Foo1", 1024, 768);
+
+    if(!Interface::Initialize()) {
+        Window::Release();
+        ASSERT_TRUE(false);
+    }
+
+    win->Resize(1280, 800);
 
 	// TODO: add test code here
+    //HorizontalLayout* hl1 = new HorizontalLayout;
+    //hl1->SetPosition(300, 400);
+    //hl1->set_name("Hlayout1");
 
-    Button* button = new Button;
-    button->SetPosition(200, 200);
+    Button* bt1 = new Button;
+    bt1->SetPosition(200, 200);
+    bt1->set_name("Button 1");
 
-    button->Register();
+    Button* bt2 = new Button;
+    bt2->SetPosition(300, 200);
+    bt2->set_name("Button 2");
 
-	RunLoop(window);
+    Button* bt3 = new Button;
+    bt3->SetPosition(400, 200);
+    bt3->set_name("Button 3");
+    
+    bt1->Register();
+    bt2->Register();
+    bt3->Register();
 
-	Terminate();
+    //hl1->Add(bt1);
+    //hl1->Add(bt2);
+    //hl1->Add(bt3);
+
+    //hl1->Register();
+
+    Window::Run();
+    Interface::Release();
+
+    Window::Release();
 
 	ASSERT_TRUE(true);
 }
+

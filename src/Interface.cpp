@@ -467,16 +467,16 @@ namespace BlendInt {
 		set<AbstractWidget*>::reverse_iterator set_it;
 		ContextManager* cm = ContextManager::Instance();
 
-		//event.SetPosition(cursor_pos_x_, cursor_pos_y_);
+		AbstractWidget* widget = 0;
 
 		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
 		{
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
 			{
-				//if(!(*set_it)->visible()) break;
+				widget = *set_it;
 
-				dispatch_mouse_move_event((*set_it), &event);
+				widget->MouseMoveEvent(&event);
 
 				if(event.ignored()) break;
 
@@ -573,14 +573,49 @@ namespace BlendInt {
 		set<AbstractWidget*>::iterator set_it;
 		ContextManager* cm = ContextManager::Instance();
 
-		set<AbstractWidget*>* pset = 0;
+		set<AbstractWidget*>* set_p = 0;
 		AbstractWidget* widget = 0;
+
+		if(event->action() == MouseMove) {
+
+			// build a stack contians the mouse cursor
+			if(cm->m_cursor_widget_list->size()) {
+
+				// search which widget in stack contains the cursor
+				while (cm->m_cursor_widget_list->size()) {
+
+					widget = cm->m_cursor_widget_list->back();
+
+					if(widget->contain(event->position())) {
+						break;
+					}
+
+					cm->m_cursor_widget_list->pop_back();
+				}
+			}
+
+			cm->BuildWidgetListAtCursorPoint(event->position(), widget);
+
+			for(std::list<AbstractWidget*>::reverse_iterator it = cm->m_cursor_widget_list->rbegin(); it != cm->m_cursor_widget_list->rend(); it++)
+			{
+#ifdef DEBUG
+				std::cout << "Widget: " << cm->m_cursor_widget_list->back()->name() << " get mouse move event" << std::endl;
+#endif
+				(*it)->MouseMoveEvent(event);
+			}
+
+			if(event->accepted()) {
+				// TODO: do sth
+			}
+
+			return;
+		}
 
 		for (map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend();
 		        map_it++)
 		{
-			pset = map_it->second;
-			for (set_it = pset->begin(); set_it != pset->end(); set_it++) {
+			set_p = map_it->second;
+			for (set_it = set_p->begin(); set_it != set_p->end(); set_it++) {
 				widget = *set_it;
 
 				switch (event->action()) {
@@ -609,6 +644,10 @@ namespace BlendInt {
 						widget->MouseReleaseEvent(event);
 						break;
 
+					case MouseMove:
+						widget->MouseMoveEvent(event);
+						break;
+
 					default: {
 						/*
 						if (m_focus_style == FocusOnHover) {
@@ -622,7 +661,7 @@ namespace BlendInt {
 							        AbstractWidget::WidgetFlagFocus);
 						}
 						*/
-						(*set_it)->MouseMoveEvent(event);
+						// (*set_it)->MouseMoveEvent(event);
 						break;
 					}
 				}
@@ -742,3 +781,4 @@ namespace BlendInt {
 	}
 
 }
+
