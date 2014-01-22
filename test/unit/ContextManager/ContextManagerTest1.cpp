@@ -25,14 +25,14 @@ TEST_F(ContextManagerTest1, Foo1)
 {
     Window::Initialize();
 
-	Window* win = Window::Create("ContextManager - Foo1", 1280, 800);
+	Window* win = Window::Create("ContextManager - Foo1", 1024, 768);
 
     if(!Interface::Initialize()) {
         Window::Release();
         ASSERT_TRUE(false);
     }
 
-    Interface::Instance()->Resize(1280, 800);
+    win->Resize(1280, 800);
 
     // TODO: add test code here
     Widget* w1 = new Widget;
@@ -66,14 +66,14 @@ TEST_F(ContextManagerTest1, Layer1)
 {
     Window::Initialize();
 
-    Window* win = Window::Create("ContextManager - Layer1", 1280, 800);
+    Window* win = Window::Create("ContextManager - Layer1", 1024, 768);
 
     if(!Interface::Initialize()) {
         Window::Release();
         ASSERT_TRUE(false);
     }
 
-    Interface::Instance()->Resize(1280, 800);
+    win->Resize(1280, 800);
 
     // TODO: add test code here
     Widget* w1 = new Widget;
@@ -108,14 +108,14 @@ TEST_F(ContextManagerTest1, Layer2)
 {
     Window::Initialize();
 
-    Window* win = Window::Create("ContextManager - Layer2", 1280, 800);
+    Window* win = Window::Create("ContextManager - Layer2", 1024, 768);
 
     if(!Interface::Initialize()) {
         Window::Release();
         ASSERT_TRUE(false);
     }
 
-    Interface::Instance()->Resize(1280, 800);
+    win->Resize(1280, 800);
 
     // TODO: add test code here
     Widget* w1 = new Widget;

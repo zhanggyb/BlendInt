@@ -75,6 +75,8 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void CursorEnterEvent (bool entered);
+
 		virtual void MousePressEvent (MouseEvent* event);
 
 		virtual void MouseReleaseEvent (MouseEvent* event);

@@ -104,17 +104,12 @@ namespace BlendInt {
 
 	void HorizontalLayout::Draw ()
 	{
-		std::vector<AbstractWidget*>::const_iterator it;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
-			DispatchRender(*it);
-		}
+//		std::vector<AbstractWidget*>::const_iterator it;
+//		for (it = m_items.begin(); it != m_items.end(); it++) {
+//			DispatchRender(*it);
+//		}
 
 #ifdef DEBUG
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(), position().y(), z());
-
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
 
@@ -128,9 +123,12 @@ namespace BlendInt {
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);
-
-		glPopMatrix();
 #endif
+	}
+
+	void HorizontalLayout::CursorEnterEvent(bool entered)
+	{
+
 	}
 
 	void HorizontalLayout::KeyPressEvent (KeyEvent* event)

@@ -184,13 +184,6 @@ namespace BlendInt {
 
 	void TextEntry::Draw ()
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -228,9 +221,6 @@ namespace BlendInt {
 		}
 
 		glDisable(GL_BLEND);
-
-		glPopMatrix();
-
 	}
 
 	void TextEntry::SetText (const String& text)

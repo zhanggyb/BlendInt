@@ -107,22 +107,7 @@ namespace BlendInt {
 
 	void VerticalLayout::Draw ()
 	{
-
-		std::vector<AbstractWidget*>::const_iterator it;
-		AbstractWidget *item = 0;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
-			item = *it;
-			if (item) {
-				DispatchRender(item);
-			}
-		}
-
 #ifdef DEBUG
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(), position().y(), z());
-
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
 
@@ -137,8 +122,12 @@ namespace BlendInt {
 
 		glDisable(GL_LINE_STIPPLE);
 
-		glPopMatrix();
 #endif
+	}
+
+	void VerticalLayout::CursorEnterEvent(bool entered)
+	{
+
 	}
 
 	void VerticalLayout::KeyPressEvent (KeyEvent* event)

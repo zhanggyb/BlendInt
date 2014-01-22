@@ -65,6 +65,8 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget ()
 	{
+		// TODO: remove self from Context mouse event list
+
 		if(m_parent) {
 			m_parent->m_children.erase(this);
 			m_parent = 0;

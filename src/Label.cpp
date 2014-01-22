@@ -185,13 +185,6 @@ namespace BlendInt {
 
 	void Label::Draw ()
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -218,9 +211,6 @@ namespace BlendInt {
 		glDisable(GL_BLEND);
 
 		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
-
-		glPopMatrix();
-
 	}
 
 	size_t Label::get_valid_text_size()

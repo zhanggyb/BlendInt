@@ -227,6 +227,8 @@ namespace BlendInt {
 
 	protected:	// member functions
 
+		virtual void CursorEnterEvent (bool entered) = 0;
+
 		virtual void KeyPressEvent (KeyEvent* event) = 0;
 
 		virtual void ContextMenuPressEvent (ContextMenuEvent* event) = 0;

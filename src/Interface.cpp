@@ -196,14 +196,14 @@ namespace BlendInt {
 
 		map<int, set<AbstractWidget*>* >::iterator map_it;
 		set<AbstractWidget*>::iterator set_it;
-		ContextManager* cm = ContextManager::Instance();
 
-		for(map_it = cm->m_layers.begin(); map_it != cm->m_layers.end(); map_it++)
+		for(map_it = ContextManager::context_manager->m_layers.begin(); map_it != ContextManager::context_manager->m_layers.end(); map_it++)
 		{
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
 			{
-				(*set_it)->Draw();
+				//(*set_it)->Draw();
+				DispatchDrawEvent(*set_it);
 			}
 		}
 		// m_ticktack = m_ticktack ? 0 : 1;
@@ -352,7 +352,7 @@ namespace BlendInt {
 					// TODO: only the focused widget can dispose key event
 					switch (action) {
 					case KeyPress:
-						dispatch_key_press_event((*set_it), &event);
+						(*set_it)->KeyPressEvent(&event);
 						break;
 					case KeyRelease:
 						// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
@@ -432,7 +432,7 @@ namespace BlendInt {
 
 				switch (action) {
 				case GLFW_PRESS:
-					dispatch_mouse_press_event((*set_it), &event);
+					(*set_it)->MousePressEvent(&event);
 					break;
 				case GLFW_RELEASE:
 					(*set_it)->MouseReleaseEvent(&event);
@@ -492,13 +492,6 @@ namespace BlendInt {
 			}
 		}
 	}
-
-#ifdef DEBUG
-	void Interface::DispatchRender(AbstractForm* form)
-	{
-		form->Draw();
-	}
-#endif
 
 	void Interface::DispatchKeyEvent (KeyEvent* event)
 	{
@@ -569,116 +562,25 @@ namespace BlendInt {
 		if (!event)
 			return;
 
-		map<int, set<AbstractWidget*>*>::reverse_iterator map_it;
-		set<AbstractWidget*>::iterator set_it;
-		ContextManager* cm = ContextManager::Instance();
+		switch (event->action()) {
 
-		set<AbstractWidget*>* set_p = 0;
-		AbstractWidget* widget = 0;
-
-		if(event->action() == MouseMove) {
-
-			// build a stack contians the mouse cursor
-			if(cm->m_cursor_widget_list->size()) {
-
-				// search which widget in stack contains the cursor
-				while (cm->m_cursor_widget_list->size()) {
-
-					if(cm->m_cursor_widget_list->back()->contain(event->position())) {
-						widget = cm->m_cursor_widget_list->back();
-						break;
-					} else {
-						// TODO: call leaveEvent
-					}
-
-					cm->m_cursor_widget_list->pop_back();
-				}
+			case MouseMove: {
+				DispatchCursorMoveEvent(event);
+				return;
 			}
 
-			cm->BuildWidgetListAtCursorPoint(event->position(), widget);
-
-			for(std::list<AbstractWidget*>::reverse_iterator it = cm->m_cursor_widget_list->rbegin(); it != cm->m_cursor_widget_list->rend(); it++)
-			{
-				(*it)->MouseMoveEvent(event);
+			case MousePress: {
+				DispatchMousePressEvent(event);
+				return;
 			}
 
-			if(event->accepted()) {
-				// TODO: do sth
+			case MouseRelease: {
+				DispatchMouseReleaseEvent(event);
+				return;
 			}
 
-			return;
-		}
-
-		for (map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend();
-		        map_it++)
-		{
-			set_p = map_it->second;
-			for (set_it = set_p->begin(); set_it != set_p->end(); set_it++) {
-				widget = *set_it;
-
-				switch (event->action()) {
-					case MousePress: {
-
-						/*
-						if (m_focus_style == FocusOnClick) {
-							// TODO: send unfocus event
-							if(cm->m_focus != widget) {
-								if(cm->m_focus) {
-									cm->m_focus->m_flag.reset(
-									        AbstractWidget::WidgetFlagFocus);
-								}
-								cm->m_focus = widget;
-								cm->m_focus->m_flag.set(
-								        AbstractWidget::WidgetFlagFocus);
-							}
-						}
-						*/
-
-						widget->MousePressEvent(event);
-
-						break;
-					}
-					case MouseRelease:
-						widget->MouseReleaseEvent(event);
-						break;
-
-					case MouseMove:
-						widget->MouseMoveEvent(event);
-						break;
-
-					default: {
-						/*
-						if (m_focus_style == FocusOnHover) {
-							// TODO: send unfocus event first
-							if (cm->m_focus) {
-								cm->m_focus->m_flag.reset(
-								        AbstractWidget::WidgetFlagFocus);
-							}
-							cm->m_focus = widget;
-							cm->m_focus->m_flag.set(
-							        AbstractWidget::WidgetFlagFocus);
-						}
-						*/
-						// (*set_it)->MouseMoveEvent(event);
-						break;
-					}
-				}
-
-				if (event->ignored())
-					break;
-
-				if (event->accepted()) {
-					// TODO: do sth needed
-					//break;
-				}
-			}
-			if (event->ignored())
-				//break;
-			if (event->accepted()) {
-				// TODO: do sth needed
-				//break;
-			}
-
+			default:
+				break;
 		}
 	}
 
@@ -758,25 +660,131 @@ namespace BlendInt {
 		Draw();
 	}
 
-	void Interface::dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event)
+
+	void Interface::DispatchCursorMoveEvent (MouseEvent* event)
 	{
-		obj->KeyPressEvent(event);
+		AbstractWidget* widget = 0;
+
+		// build a stack contians the mouse cursor
+		if (ContextManager::context_manager->m_cursor_widget_list->size()) {
+
+			// search which widget in stack contains the cursor
+			while (ContextManager::context_manager->m_cursor_widget_list->size()) {
+
+				if (ContextManager::context_manager->m_cursor_widget_list->back()->contain(
+				        event->position())) {
+					widget =
+					        ContextManager::context_manager->m_cursor_widget_list->back();
+					break;
+				} else {
+					ContextManager::context_manager->m_cursor_widget_list->back()->CursorEnterEvent(
+					        false);
+				}
+
+				ContextManager::context_manager->m_cursor_widget_list->pop_back();
+			}
+		}
+
+		BuildWidgetListAtCursorPoint(event->position(), widget, event);
+
+		for (std::list<AbstractWidget*>::reverse_iterator it =
+		        ContextManager::context_manager->m_cursor_widget_list->rbegin();
+		        it
+		                != ContextManager::context_manager->m_cursor_widget_list->rend();
+		        it++) {
+			(*it)->MouseMoveEvent(event);
+		}
+
+		if (event->accepted()) {
+			// TODO: do sth
+		}
 	}
 
-	void Interface::dispatch_mouse_press_event (AbstractWidget* obj, MouseEvent* event)
+	void Interface::DispatchMousePressEvent(MouseEvent* event)
 	{
-		obj->MousePressEvent(event);
+		ContextManager* cm = ContextManager::context_manager;
+
+		for(std::list<AbstractWidget*>::reverse_iterator it = cm->m_cursor_widget_list->rbegin(); it != cm->m_cursor_widget_list->rend(); it++)
+		{
+			(*it)->MousePressEvent(event);
+
+			if(event->accepted()) break;
+		}
 	}
 
-	void Interface::dispatch_mouse_release_event (AbstractWidget* obj, MouseEvent* event)
+	void Interface::DispatchMouseReleaseEvent(MouseEvent* event)
 	{
-		obj->MouseReleaseEvent(event);
+		ContextManager* cm = ContextManager::context_manager;
+
+		for(std::list<AbstractWidget*>::reverse_iterator it = cm->m_cursor_widget_list->rbegin(); it != cm->m_cursor_widget_list->rend(); it++)
+		{
+			(*it)->MouseReleaseEvent(event);
+
+			if(event->accepted()) break;
+		}
 	}
 
-	void Interface::dispatch_mouse_move_event (AbstractWidget* obj, MouseEvent* event)
+	void Interface::DispatchDrawEvent(AbstractWidget* widget)
 	{
-		obj->MouseMoveEvent(event);
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(widget->position().x(),
+					 widget->position().y(),
+					 widget->z());
+
+		widget->Draw();
+
+		glPopMatrix();
+
+		for(std::set<AbstractWidget*>::iterator it = widget->m_children.begin(); it != widget->m_children.end(); it++)
+		{
+			DispatchDrawEvent(*it);
+		}
+	}
+
+	void Interface::BuildWidgetListAtCursorPoint (const Point& cursor_point,
+	        const AbstractWidget* parent, MouseEvent* event)
+	{
+		if (parent) {
+			for (std::set<AbstractWidget*>::iterator it =
+			        parent->m_children.begin(); it != parent->m_children.end();
+			        it++) {
+				if ((*it)->contain(cursor_point)) {
+					ContextManager::context_manager->m_cursor_widget_list->push_back(*it);
+					ContextManager::context_manager->m_cursor_widget_list->back()->CursorEnterEvent(true);
+					BuildWidgetListAtCursorPoint(cursor_point, *it, event);
+					break;	// if break or continue the loop?
+				}
+			}
+		} else {
+			ContextManager::context_manager->m_cursor_widget_list->clear();
+
+			map<int, set<AbstractWidget*>*>::reverse_iterator map_it;
+			set<AbstractWidget*>::iterator set_it;
+			set<AbstractWidget*>* set_p = 0;
+
+			bool stop = false;
+
+			for (map_it = ContextManager::context_manager->m_layers.rbegin(); map_it != ContextManager::context_manager->m_layers.rend();
+			        map_it++) {
+				set_p = map_it->second;
+				for (set_it = set_p->begin(); set_it != set_p->end();
+				        set_it++) {
+					if ((*set_it)->contain(cursor_point)) {
+						ContextManager::context_manager->m_cursor_widget_list->push_back(*set_it);
+						ContextManager::context_manager->m_cursor_widget_list->back()->CursorEnterEvent(true);
+						BuildWidgetListAtCursorPoint(cursor_point, *set_it, event);
+						stop = true;
+					}
+
+					if (stop)
+						break;
+				}
+				if (stop)
+					break;
+			}
+		}
 	}
 
 }
-

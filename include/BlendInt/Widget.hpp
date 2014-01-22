@@ -60,6 +60,8 @@ namespace BlendInt {
 
 		virtual void Draw ();
 
+		virtual void CursorEnterEvent (bool entered);
+
 		virtual void KeyPressEvent (KeyEvent* event);
 
 		virtual void ContextMenuPressEvent (ContextMenuEvent* event);

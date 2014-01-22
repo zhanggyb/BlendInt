@@ -32,6 +32,7 @@ TEST_F(StockIconTest1, Foo1)
 		Interface::Instance()->Draw();
 
 #ifdef DEBUG
+        /*
 		// render icons:
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -60,7 +61,7 @@ TEST_F(StockIconTest1, Foo1)
 
 		glDisable(GL_BLEND);
 		glPopMatrix();
-
+        */
 #endif
 
 		/* Swap front and back buffers */
@@ -93,6 +94,7 @@ TEST_F(StockIconTest1, Foo2)
 		Interface::Instance()->Draw();
 
 #ifdef DEBUG
+        /*
 		// render icons:
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -121,7 +123,7 @@ TEST_F(StockIconTest1, Foo2)
 
 		glDisable(GL_BLEND);
 		glPopMatrix();
-
+        */
 #endif
 
 		/* Swap front and back buffers */

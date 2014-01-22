@@ -174,6 +174,11 @@ namespace BlendInt {
 #endif
 	}
 
+	void TableLayout::CursorEnterEvent (bool entered)
+	{
+
+	}
+
 	void TableLayout::KeyPressEvent (KeyEvent* event)
 	{
 		std::vector<AbstractWidget*>::iterator it;

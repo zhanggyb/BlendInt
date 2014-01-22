@@ -93,10 +93,6 @@ namespace BlendInt {
 
 		void GLFWCursorPosEvent (double xpos, double ypos);
 
-#ifdef DEBUG
-		void DispatchRender (AbstractForm* form);
-#endif
-
 		void DispatchKeyEvent (KeyEvent* event);
 
 		void DispatchMouseEvent (MouseEvent* event);
@@ -128,19 +124,21 @@ namespace BlendInt {
 
 	private:
 
-		void RenderToImage ();
-
-		void dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event);
-
-		void dispatch_mouse_press_event (AbstractWidget* obj, MouseEvent* event);
-
-		void dispatch_mouse_release_event (AbstractWidget* obj, MouseEvent* event);
-
-		void dispatch_mouse_move_event (AbstractWidget* obj, MouseEvent* event);
-
 		Interface ();
 
 		~Interface ();
+
+		void RenderToImage ();
+
+		void DispatchCursorMoveEvent (MouseEvent* event);
+
+		void DispatchMousePressEvent (MouseEvent* event);
+
+		void DispatchMouseReleaseEvent (MouseEvent* event);
+
+		void DispatchDrawEvent (AbstractWidget* widget);
+
+		void BuildWidgetListAtCursorPoint (const Point& cursor_point, const AbstractWidget* parent, MouseEvent* event);
 
 		//int cursor_pos_x_;	/** cursor x position */
 		//int cursor_pos_y_;	/** cursor y position */

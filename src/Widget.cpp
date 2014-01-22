@@ -95,13 +95,6 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, 4, quad_strip);
 
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -124,7 +117,11 @@ namespace BlendInt {
 		draw_outline(quad_strip, 4 * 2 + 2);
 
 		glDisable(GL_BLEND);
-		glPopMatrix();
+	}
+
+	void Widget::CursorEnterEvent(bool entered)
+	{
+
 	}
 
 	void Widget::KeyPressEvent (KeyEvent* event)

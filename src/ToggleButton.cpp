@@ -102,11 +102,6 @@ namespace BlendInt {
 
 	void ToggleButton::Draw ()
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(), position().y(), z());
-
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
@@ -160,8 +155,6 @@ namespace BlendInt {
 
 		if(text().size())
 			FontCache::create(font())->print(origin().x(), origin().y(), text(), valid_text_length());
-
-		glPopMatrix();
 	}
 
 	void ToggleButton::InitializeOnce ()
