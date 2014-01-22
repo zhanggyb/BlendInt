@@ -60,6 +60,8 @@ namespace BlendInt {
 
 		size_t layer_size () const {return m_layers.size();}
 
+		void RemoveWidgetFromHoverList (AbstractWidget* widget);
+
 #ifdef DEBUG
 
 		void print ();
@@ -112,7 +114,7 @@ namespace BlendInt {
 		/**
 		 * @brief The widget stack to contain the current mouse cursor
 		 */
-		boost::scoped_ptr<std::list<AbstractWidget*> > m_cursor_widget_list;
+		boost::scoped_ptr<std::list<AbstractWidget*> > m_hover_list;
 	};
 
 }

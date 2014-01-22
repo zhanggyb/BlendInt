@@ -66,6 +66,9 @@ namespace BlendInt {
 	AbstractWidget::~AbstractWidget ()
 	{
 		// TODO: remove self from Context mouse event list
+		if(m_flag[WidgetFlagContextHoverList]) {
+			ContextManager::Instance()->RemoveWidgetFromHoverList(this);
+		}
 
 		if(m_parent) {
 			m_parent->m_children.erase(this);

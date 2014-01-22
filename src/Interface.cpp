@@ -660,37 +660,33 @@ namespace BlendInt {
 		Draw();
 	}
 
-
 	void Interface::DispatchCursorMoveEvent (MouseEvent* event)
 	{
 		AbstractWidget* widget = 0;
+		ContextManager* cm = ContextManager::context_manager;
 
 		// build a stack contians the mouse cursor
-		if (ContextManager::context_manager->m_cursor_widget_list->size()) {
+		if (cm->m_hover_list->size()) {
 
 			// search which widget in stack contains the cursor
-			while (ContextManager::context_manager->m_cursor_widget_list->size()) {
+			while (cm->m_hover_list->size()) {
 
-				if (ContextManager::context_manager->m_cursor_widget_list->back()->contain(
-				        event->position())) {
-					widget =
-					        ContextManager::context_manager->m_cursor_widget_list->back();
+				if (cm->m_hover_list->back()->contain(event->position())) {
+					widget = cm->m_hover_list->back();
 					break;
 				} else {
-					ContextManager::context_manager->m_cursor_widget_list->back()->CursorEnterEvent(
-					        false);
+					cm->m_hover_list->back()->CursorEnterEvent(false);
+					cm->m_hover_list->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
 				}
 
-				ContextManager::context_manager->m_cursor_widget_list->pop_back();
+				cm->m_hover_list->pop_back();
 			}
 		}
 
-		BuildWidgetListAtCursorPoint(event->position(), widget, event);
+		BuildWidgetListAtCursorPoint(event->position(), widget);
 
 		for (std::list<AbstractWidget*>::reverse_iterator it =
-		        ContextManager::context_manager->m_cursor_widget_list->rbegin();
-		        it
-		                != ContextManager::context_manager->m_cursor_widget_list->rend();
+		        cm->m_hover_list->rbegin(); it != cm->m_hover_list->rend();
 		        it++) {
 			(*it)->MouseMoveEvent(event);
 		}
@@ -704,7 +700,7 @@ namespace BlendInt {
 	{
 		ContextManager* cm = ContextManager::context_manager;
 
-		for(std::list<AbstractWidget*>::reverse_iterator it = cm->m_cursor_widget_list->rbegin(); it != cm->m_cursor_widget_list->rend(); it++)
+		for(std::list<AbstractWidget*>::reverse_iterator it = cm->m_hover_list->rbegin(); it != cm->m_hover_list->rend(); it++)
 		{
 			(*it)->MousePressEvent(event);
 
@@ -716,7 +712,7 @@ namespace BlendInt {
 	{
 		ContextManager* cm = ContextManager::context_manager;
 
-		for(std::list<AbstractWidget*>::reverse_iterator it = cm->m_cursor_widget_list->rbegin(); it != cm->m_cursor_widget_list->rend(); it++)
+		for(std::list<AbstractWidget*>::reverse_iterator it = cm->m_hover_list->rbegin(); it != cm->m_hover_list->rend(); it++)
 		{
 			(*it)->MouseReleaseEvent(event);
 
@@ -744,21 +740,22 @@ namespace BlendInt {
 	}
 
 	void Interface::BuildWidgetListAtCursorPoint (const Point& cursor_point,
-	        const AbstractWidget* parent, MouseEvent* event)
+	        AbstractWidget* parent)
 	{
 		if (parent) {
+			parent->m_flag.set(AbstractWidget::WidgetFlagContextHoverList);
 			for (std::set<AbstractWidget*>::iterator it =
 			        parent->m_children.begin(); it != parent->m_children.end();
 			        it++) {
 				if ((*it)->contain(cursor_point)) {
-					ContextManager::context_manager->m_cursor_widget_list->push_back(*it);
-					ContextManager::context_manager->m_cursor_widget_list->back()->CursorEnterEvent(true);
-					BuildWidgetListAtCursorPoint(cursor_point, *it, event);
+					ContextManager::context_manager->m_hover_list->push_back(*it);
+					ContextManager::context_manager->m_hover_list->back()->CursorEnterEvent(true);
+					BuildWidgetListAtCursorPoint(cursor_point, *it);
 					break;	// if break or continue the loop?
 				}
 			}
 		} else {
-			ContextManager::context_manager->m_cursor_widget_list->clear();
+			ContextManager::context_manager->m_hover_list->clear();
 
 			map<int, set<AbstractWidget*>*>::reverse_iterator map_it;
 			set<AbstractWidget*>::iterator set_it;
@@ -772,9 +769,9 @@ namespace BlendInt {
 				for (set_it = set_p->begin(); set_it != set_p->end();
 				        set_it++) {
 					if ((*set_it)->contain(cursor_point)) {
-						ContextManager::context_manager->m_cursor_widget_list->push_back(*set_it);
-						ContextManager::context_manager->m_cursor_widget_list->back()->CursorEnterEvent(true);
-						BuildWidgetListAtCursorPoint(cursor_point, *set_it, event);
+						ContextManager::context_manager->m_hover_list->push_back(*set_it);
+						ContextManager::context_manager->m_hover_list->back()->CursorEnterEvent(true);
+						BuildWidgetListAtCursorPoint(cursor_point, *set_it);
 						stop = true;
 					}
 

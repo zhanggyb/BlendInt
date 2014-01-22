@@ -314,7 +314,10 @@ namespace BlendInt {
 			WidgetFlagLockGeometry = 0,
 			WidgetFlagFireEvents,
 			WidgetFlagRegistered,
-			WidgetFlagFocus
+			WidgetFlagFocus,
+
+			/** If this widget is in cursor hover list in ContextManager */
+			WidgetFlagContextHoverList
 		};
 
 		/**

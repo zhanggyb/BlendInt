@@ -138,7 +138,7 @@ namespace BlendInt {
 
 		void DispatchDrawEvent (AbstractWidget* widget);
 
-		void BuildWidgetListAtCursorPoint (const Point& cursor_point, const AbstractWidget* parent, MouseEvent* event);
+		void BuildWidgetListAtCursorPoint (const Point& cursor_point, AbstractWidget* parent);
 
 		//int cursor_pos_x_;	/** cursor x position */
 		//int cursor_pos_y_;	/** cursor y position */

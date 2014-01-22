@@ -75,7 +75,7 @@ namespace BlendInt {
 	: m_focus(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
-		m_cursor_widget_list.reset(new std::list<AbstractWidget*>);
+		m_hover_list.reset(new std::list<AbstractWidget*>);
 	}
 
 	ContextManager::~ContextManager ()
@@ -257,13 +257,13 @@ namespace BlendInt {
 			        parent->m_children.begin(); it != parent->m_children.end();
 			        it++) {
 				if ((*it)->contain(cursor_point)) {
-					m_cursor_widget_list->push_back(*it);
+					m_hover_list->push_back(*it);
 					BuildWidgetListAtCursorPoint(cursor_point, *it);
 					break;	// if break or continue the loop?
 				}
 			}
 		} else {
-			m_cursor_widget_list->clear();
+			m_hover_list->clear();
 
 			map<int, set<AbstractWidget*>*>::reverse_iterator map_it;
 			set<AbstractWidget*>::iterator set_it;
@@ -277,7 +277,7 @@ namespace BlendInt {
 				for (set_it = set_p->begin(); set_it != set_p->end();
 				        set_it++) {
 					if ((*set_it)->contain(cursor_point)) {
-						m_cursor_widget_list->push_back(*set_it);
+						m_hover_list->push_back(*set_it);
 						BuildWidgetListAtCursorPoint(cursor_point, *set_it);
 						stop = true;
 					}
@@ -288,6 +288,20 @@ namespace BlendInt {
 				if (stop)
 					break;
 			}
+		}
+	}
+
+	void ContextManager::RemoveWidgetFromHoverList(AbstractWidget* widget)
+	{
+		while(m_hover_list->size()) {
+			m_hover_list->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
+
+			if(m_hover_list->back() == widget) {
+				m_hover_list->pop_back();
+				break;
+			}
+
+			m_hover_list->pop_back();
 		}
 	}
 
