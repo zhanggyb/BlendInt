@@ -77,6 +77,7 @@ namespace BlendInt {
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(m_window->m_glfw_window)) {
+
 			/* Render here */
 			Interface::Instance()->Draw();
 
@@ -102,7 +103,8 @@ namespace BlendInt {
 	void Window::Refresh ()
 	{
 		if(m_window) {
-			glfwSwapBuffers(m_window->m_glfw_window);
+
+			//glfwSwapBuffers(m_window->m_glfw_window);
 			// glfwPollEvents();
 
 			//TODO: refresh the opengl context

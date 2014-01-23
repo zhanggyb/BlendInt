@@ -92,7 +92,7 @@ namespace BlendInt {
 				if(m_cursor_position < 0)
 					m_cursor_position = 0;
 
-				if(m_cursor_position < m_start) {
+				if(m_cursor_position < static_cast<int>(m_start)) {
 					m_start--;
 				}
 
@@ -104,10 +104,10 @@ namespace BlendInt {
 			case Key_Right: {
 
 				m_cursor_position++;
-				if(m_cursor_position > m_text.length())
+				if(m_cursor_position > static_cast<int>(m_text.length()))
 					m_cursor_position = m_text.length();
 
-				if(m_cursor_position > (m_start + m_length)) {
+				if(m_cursor_position > static_cast<int>(m_start + m_length)) {
 					m_start++;
 				}
 
@@ -391,10 +391,11 @@ namespace BlendInt {
 	int TextEntry::GetCursorPosition (const MouseEvent* event)
 	{
 		FontCache* fc = FontCache::create(m_font);
-		unsigned text_width = fc->GetTextWidth(m_text, m_length, m_start);
+		int text_width = fc->GetTextWidth(m_text, m_length, m_start);
 		int click_width = event->position().x() - position().x() - DefaultTextEntryPadding.left();
 
-		if(click_width < 0 || click_width > (size().width() - DefaultTextEntryPadding.right())) {
+		if(click_width < 0 ||
+		   click_width > static_cast<int>(size().width() - DefaultTextEntryPadding.right())) {
 			return m_cursor_position;
 		}
 
@@ -406,7 +407,8 @@ namespace BlendInt {
 		} else {
 			cursor_offset++;
 			text_width = fc->GetTextWidth(m_text, cursor_offset, m_start);
-			while(text_width < click_width && cursor_offset <= m_length) {
+			while((text_width < click_width) &&
+				  (cursor_offset <= static_cast<int>(m_length))) {
 				cursor_offset++;
 				text_width = fc->GetTextWidth(m_text, cursor_offset, m_start);
 			}

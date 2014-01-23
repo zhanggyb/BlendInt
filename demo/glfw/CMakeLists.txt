@@ -10,14 +10,8 @@ list(APPEND glfw_demo_SRC ${headfiles})
 file(GLOB headerfiles "*/*.hpp")
 list(APPEND glfw_demo_SRC ${headfiles})
 
-if(APPLE)
-    set(LIBS ${LIBS} glfw3)
-else()
-    set(LIBS ${LIBS} glfw)
-endif()
-
 add_executable(glfw_demo ${glfw_demo_SRC})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-target_link_libraries(glfw_demo BlendInt ${LIBS})
+target_link_libraries(glfw_demo BlendInt glfw ${GLFW_LIBRARIES} ${LIBS})
 

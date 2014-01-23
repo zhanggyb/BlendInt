@@ -26,7 +26,7 @@
 
 #include <map>
 #include <set>
-#include <list>
+#include <deque>
 
 #include <boost/smart_ptr.hpp>
 #include <Cpp/Events.hpp>
@@ -114,7 +114,7 @@ namespace BlendInt {
 		/**
 		 * @brief The widget stack to contain the current mouse cursor
 		 */
-		boost::scoped_ptr<std::list<AbstractWidget*> > m_hover_list;
+		boost::scoped_ptr<std::deque<AbstractWidget*> > m_hover_deque;
 	};
 
 }
