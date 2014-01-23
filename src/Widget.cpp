@@ -253,16 +253,15 @@ namespace BlendInt {
 		buffer->bind();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, 0);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glVertexPointer(2, GL_FLOAT, 0, 0);
 			glDrawArrays(mode, 0, buffer->vertices());
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
 		buffer->unbind();
 	}
-
 
 	void Widget::GenerateFormBuffer(const Size* size, int round_type,
 			 float radius, GLArrayBufferF* inner_buffer,

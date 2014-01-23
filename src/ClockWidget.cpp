@@ -64,13 +64,6 @@ namespace BlendInt {
 	{
 		int radius = std::min(size().width(), size().height()) / 2;
 
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -92,7 +85,6 @@ namespace BlendInt {
 		glDisable(GL_LINE_SMOOTH);
 
 		glDisable(GL_BLEND);
-		glPopMatrix();
 	}
 
 	void ClockWidget::UpdateClockHands()

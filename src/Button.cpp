@@ -41,60 +41,32 @@ namespace BlendInt {
 	Button::Button ()
 			: AbstractButton()
 	{
-		m_inner_buffer.reset(new GLArrayBufferF);
-		m_outer_buffer.reset(new GLArrayBufferF);
-		m_emboss_buffer.reset(new GLArrayBufferF);
-
-		set_round_type(RoundAll);
-		SetExpandX(true);
-		Resize(90, 20);
-		SetPreferredSize(90, 20);
+		InitOnce();
 	}
 
 	Button::Button (const String& text)
 			: AbstractButton()
 	{
-		m_inner_buffer.reset(new GLArrayBufferF);
-		m_outer_buffer.reset(new GLArrayBufferF);
-		m_emboss_buffer.reset(new GLArrayBufferF);
-
-		set_round_type(RoundAll);
-		SetExpandX(true);
-		Resize(90, 20);
-		set_text(text);
-		SetPreferredSize(size());
+		InitOnce(text);
 	}
 
 	Button::Button (AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
-		m_inner_buffer.reset(new GLArrayBufferF);
-		m_outer_buffer.reset(new GLArrayBufferF);
-		m_emboss_buffer.reset(new GLArrayBufferF);
-
-		set_round_type(RoundAll);
-		SetExpandX(true);
-		Resize (90, 20);
-		SetPreferredSize(90, 20);
+		InitOnce();
 	}
 
 	Button::Button (const String& text, AbstractWidget* parent)
 			: AbstractButton(parent)
 	{
-		m_inner_buffer.reset(new GLArrayBufferF);
-		m_outer_buffer.reset(new GLArrayBufferF);
-		m_emboss_buffer.reset(new GLArrayBufferF);
-
-		set_round_type(RoundAll);
-		SetExpandX(true);
-		Resize(90, 20);
-		set_text(text);
-		SetPreferredSize(size());
+		InitOnce(text);
 	}
 
 	Button::~Button ()
 	{
-
+		delete m_inner_buffer;
+		delete m_outer_buffer;
+		delete m_emboss_buffer;
 	}
 
 	void Button::Update(int type, const void* data)
@@ -103,20 +75,20 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), m_emboss_buffer.get());
+				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer, m_outer_buffer, m_emboss_buffer);
 
 				break;
 			}
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(data);
-				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), m_emboss_buffer.get());
+				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer, m_outer_buffer, m_emboss_buffer);
 				break;
 			}
 
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
-				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), m_emboss_buffer.get());
+				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer, m_outer_buffer, m_emboss_buffer);
 				break;
 			}
 
@@ -160,7 +132,7 @@ namespace BlendInt {
 			}
 		}
 
-		DrawInnerBuffer(m_inner_buffer.get());
+		DrawInnerBuffer(m_inner_buffer);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -170,10 +142,10 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		DrawOutlineBuffer(m_outer_buffer.get());
+		DrawOutlineBuffer(m_outer_buffer);
 
 		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-		DrawOutlineBuffer(m_emboss_buffer.get());
+		DrawOutlineBuffer(m_emboss_buffer);
 
 		glDisable(GL_BLEND);
 
@@ -183,6 +155,31 @@ namespace BlendInt {
 		}
 
 		//glPopMatrix();
+	}
+
+	void Button::InitOnce ()
+	{
+		m_inner_buffer = new GLArrayBufferF;
+		m_outer_buffer = new GLArrayBufferF;
+		m_emboss_buffer = new GLArrayBufferF;
+
+		set_round_type(RoundAll);
+		SetExpandX(true);
+		Resize(90, 20);
+		SetPreferredSize(90, 20);
+	}
+
+	void Button::InitOnce (const String& text)
+	{
+		m_inner_buffer = new GLArrayBufferF;
+		m_outer_buffer = new GLArrayBufferF;
+		m_emboss_buffer = new GLArrayBufferF;
+
+		set_round_type(RoundAll);
+		SetExpandX(true);
+		Resize(90, 20);
+		set_text(text);
+		SetPreferredSize(size());
 	}
 
 }

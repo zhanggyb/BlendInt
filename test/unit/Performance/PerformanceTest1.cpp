@@ -37,7 +37,7 @@ TEST_F(PerformanceTest1, Layout1)
     int max_x = 12;
     int max_y = 20;
     HorizontalLayout* layout[max_y];
-    Widget* btn[max_x];
+    Button* btn[max_x];
     int x_pos = 50;
     int y_pos = 5;
     for(int i = 0; i < max_y; i++)
@@ -47,9 +47,7 @@ TEST_F(PerformanceTest1, Layout1)
 
         for(int j = 0; j < max_x; j++)
         {
-            btn[j] = new Widget;
-            btn[j]->Resize(90, 20);
-            btn[j]->SetPreferredSize(90, 20);
+            btn[j] = new Button;
             layout[i]->Add(btn[j]);
         }
     

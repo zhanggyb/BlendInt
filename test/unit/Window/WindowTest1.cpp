@@ -37,10 +37,6 @@ TEST_F(WindowTest1, Create1)
     m_clock->SetPosition(200, 200);
     m_clock->Register();
 
-    Widget* widget = new Widget;
-    widget->SetPosition(400, 300);
-    widget->Register();
-
     Window::Run ();
 
     Interface::Release();

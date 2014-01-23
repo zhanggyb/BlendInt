@@ -24,8 +24,6 @@
 #ifndef _BLENDINT_BUTTON_HPP_
 #define _BLENDINT_BUTTON_HPP_
 
-#include <boost/smart_ptr.hpp>
-
 #include <BlendInt/AbstractButton.hpp>
 #include <BlendInt/String.hpp>
 
@@ -64,9 +62,13 @@ namespace BlendInt {
 
 	private:
 
-		boost::scoped_ptr<GLArrayBufferF> m_inner_buffer;
-		boost::scoped_ptr<GLArrayBufferF> m_outer_buffer;
-		boost::scoped_ptr<GLArrayBufferF> m_emboss_buffer;
+		void InitOnce ();
+
+		void InitOnce (const String& text);
+
+		GLArrayBufferF* m_inner_buffer;
+		GLArrayBufferF* m_outer_buffer;
+		GLArrayBufferF* m_emboss_buffer;
 	};
 
 }
