@@ -497,7 +497,7 @@ namespace BlendInt {
 	{
 		if(!event) return;
 
-		ContextManager* cm = ContextManager::Instance();
+		ContextManager* cm = ContextManager::context_manager;
 
 		if(cm->m_focus) {
 			switch (event->action()) {
@@ -506,6 +506,7 @@ namespace BlendInt {
 					break;
 				case KeyRelease:
 					// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
+					//cm->m_focus->KeyReleaseEvent(event);
 					break;
 				case KeyRepeat:
 					// item->KeyRepeatEvent(&event);
@@ -704,7 +705,11 @@ namespace BlendInt {
 		{
 			(*it)->MousePressEvent(event);
 
-			if(event->accepted()) break;
+			if(event->accepted()) {
+				cm->SetFocusedWidget(*it);
+				std::cout << "widget is focused" << (*it)->name() << std::endl;
+				break;
+			}
 		}
 	}
 

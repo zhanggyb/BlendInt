@@ -60,7 +60,9 @@ namespace BlendInt {
 
 		size_t layer_size () const {return m_layers.size();}
 
-		void RemoveWidgetFromHoverList (AbstractWidget* widget);
+		void RemoveWidgetFromHoverDeque (AbstractWidget* widget);
+
+		void SetFocusedWidget (AbstractWidget* widget);
 
 #ifdef DEBUG
 

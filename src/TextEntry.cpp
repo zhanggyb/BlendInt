@@ -133,7 +133,7 @@ namespace BlendInt {
 
 	void TextEntry::MousePressEvent(MouseEvent* event)
 	{
-		if(!contain(event->position())) return;
+		std::cout << "pressed" << std::endl;
 
 		if(m_text.size()) {
 			//m_cursor_position = GetCursorPosition(event);

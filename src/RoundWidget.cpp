@@ -84,13 +84,6 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -117,7 +110,6 @@ namespace BlendInt {
 		draw_outline(quad_strip, vert_sum.total * 2 + 2);
 
 		glDisable(GL_BLEND);
-		glPopMatrix();
 	}
 
 }

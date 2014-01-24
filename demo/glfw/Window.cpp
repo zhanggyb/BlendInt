@@ -101,7 +101,7 @@ namespace BlendInt {
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos)
 	{
-        global_mouse_event.set_action(MouseNone);
+        global_mouse_event.set_action(MouseMove);
         global_mouse_event.set_button(MouseButtonNone);
 		global_mouse_event.set_position(static_cast<int>(xpos), Interface::Instance()->size().height() - static_cast<int>(ypos));
 
@@ -115,11 +115,13 @@ namespace BlendInt {
 			exit(-1);
 
 		glfwSetErrorCallback(&CbError);
+
+        glfwWindowHint(GLFW_REFRESH_RATE, 1);
 	}
 
-	GLFWwindow* CreateWindow (const char* name)
+	GLFWwindow* CreateWindow (const char* name, int width, int height)
 	{
-		GLFWwindow* window = glfwCreateWindow(1200, 800, name, NULL, NULL);
+		GLFWwindow* window = glfwCreateWindow(width, height, name, NULL, NULL);
 		if (!window) {
 			glfwTerminate();
 			exit(-1);
@@ -140,7 +142,7 @@ namespace BlendInt {
 			exit(-1);
 		}
 
-		Interface::Instance()->Resize(1200, 800);
+		Interface::Instance()->Resize(width, height);
 	
 		return window;
 	}

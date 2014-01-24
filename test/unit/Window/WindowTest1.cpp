@@ -1,5 +1,5 @@
 #include "WindowTest1.hpp"
-#include <BlendInt/Window.hpp>
+#include <Common/Window.hpp>
 #include <BlendInt/ClockWidget.hpp>
 
 using namespace BlendInt;
@@ -22,26 +22,20 @@ WindowTest1::~WindowTest1()
  */
 TEST_F(WindowTest1, Create1)
 {
-    Window::Initialize();
+    Init();
 
-    Window::Create("WindowTest1 -- Create1", 1280, 800);
-
-    if(!Interface::Initialize()) {
-        Window::Release();
-        ASSERT_TRUE(false);
-    }
-    Interface::Instance()->Resize(1280, 800);
+    GLFWwindow* win = CreateWindow("WindowTest1 -- Create1");
 
     // TODO: add test code here
     ClockWidget* m_clock = new ClockWidget;
     m_clock->SetPosition(200, 200);
     m_clock->Register();
 
-    Window::Run ();
+    RunLoop (win);
 
     Interface::Release();
 
-    Window::Release();
+    Terminate();
 
 	ASSERT_TRUE(true);
 }

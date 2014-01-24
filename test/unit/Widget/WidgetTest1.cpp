@@ -1,5 +1,6 @@
 #include "WidgetTest1.hpp"
 #include <BlendInt/Widget.hpp>
+#include <Common/Window.hpp>
 
 using namespace BlendInt;
 
@@ -21,14 +22,8 @@ WidgetTest1::~WidgetTest1()
  */
 TEST_F(WidgetTest1, Add1)
 {
-    Window::Initialize();
-    Window::Create("WidgetTest1 -- Show1", 1280, 800);
-
-    if(!Interface::Initialize()) {
-        Window::Release();
-        ASSERT_TRUE(false);
-    }
-    Interface::Instance()->Resize(1280, 800);
+    Init();
+    GLFWwindow* win = CreateWindow("WidgetTest1 -- Show1");
 
 	// TODO: add test code here
     Widget* widget1 = new Widget;
@@ -46,9 +41,11 @@ TEST_F(WidgetTest1, Add1)
 
     Object::Destroy(widget1);
 
-    Window::Run();
+    RunLoop(win);
+
     Interface::Release();
-    Window::Release();
+
+    Terminate();
 
 	ASSERT_TRUE(true);
 }
@@ -60,14 +57,8 @@ TEST_F(WidgetTest1, Add1)
  */
 TEST_F(WidgetTest1, Add2)
 {
-    Window::Initialize();
-    Window::Create("WidgetTest1 -- Insert2", 1280, 800);
-
-    if(!Interface::Initialize()) {
-        Window::Release();
-        ASSERT_TRUE(false);
-    }
-    Interface::Instance()->Resize(1280, 800);
+    Init();
+    GLFWwindow* win = CreateWindow("WidgetTest1 -- Add2");
 
 	// TODO: add test code here
     Widget* widget1 = new Widget;
@@ -108,9 +99,10 @@ TEST_F(WidgetTest1, Add2)
 
     Object::Destroy(widget1);
 
-    Window::Run();
+    RunLoop(win);
     Interface::Release();
-    Window::Release();
+
+    Terminate();
 
 	ASSERT_TRUE(true);
 }

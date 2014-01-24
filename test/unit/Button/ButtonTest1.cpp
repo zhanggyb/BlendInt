@@ -1,6 +1,6 @@
 #include "ButtonTest1.hpp"
 #include <BlendInt/Button.hpp>
-#include <BlendInt/Window.hpp>
+#include <Common/Window.hpp>
 #include <BlendInt/HorizontalLayout.hpp>
 
 using namespace BlendInt;
@@ -23,15 +23,8 @@ ButtonTest1::~ButtonTest1()
  */
 TEST_F(ButtonTest1, Foo1)
 {
-    Window::Initialize();
-    Window* win = Window::Create("Button Test - Foo1", 1024, 768);
-
-    if(!Interface::Initialize()) {
-        Window::Release();
-        ASSERT_TRUE(false);
-    }
-
-    win->Resize(1280, 800);
+    Init();
+    GLFWwindow* win = CreateWindow("Button Test - Foo1");
 
 	// TODO: add test code here
     HorizontalLayout* hl1 = new HorizontalLayout;
@@ -60,10 +53,10 @@ TEST_F(ButtonTest1, Foo1)
 
     hl1->Register();
 
-    Window::Run();
+    RunLoop(win);
     Interface::Release();
 
-    Window::Release();
+    Terminate();
 
 	ASSERT_TRUE(true);
 }

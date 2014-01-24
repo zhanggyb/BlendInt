@@ -2,7 +2,6 @@
 #define _TOGGLEBUTTONTEST1_HPP_
 
 #include <gtest/gtest.h>
-#include <BlendInt/Window.hpp>
 #include <BlendInt/Object.hpp>
 
 class ToggleButtonTest1: public testing::Test

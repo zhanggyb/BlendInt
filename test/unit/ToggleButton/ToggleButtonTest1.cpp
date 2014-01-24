@@ -1,5 +1,6 @@
 #include "ToggleButtonTest1.hpp"
 #include <BlendInt/ToggleButton.hpp>
+#include <Common/Window.hpp>
 
 using namespace BlendInt;
 
@@ -21,25 +22,19 @@ ToggleButtonTest1::~ToggleButtonTest1()
  */
 TEST_F(ToggleButtonTest1, Foo1)
 {
-	Window::Initialize ();
-	Window::Create("ToggleButton - Foo1", 1280, 800);
+	Init ();
+	GLFWwindow* win = CreateWindow("ToggleButton - Foo1");
 
-    if(!Interface::Initialize()) {
-        Window::Release();
-        ASSERT_TRUE(false);
-    }
-
-    Interface::Instance()->Resize(1280, 800);
-	
     // TODO: add test code here
     ToggleButton* btn = new ToggleButton;
     btn->SetPosition(200, 200);
     btn->Register();
 
-    Window::Run();
+    RunLoop(win);
 
     Interface::Release();
-    Window::Release();
+
+    Terminate();
 
 	ASSERT_TRUE(true);
 }

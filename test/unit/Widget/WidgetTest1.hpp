@@ -2,7 +2,6 @@
 #define _WIDGETTEST1_HPP_
 
 #include <gtest/gtest.h>
-#include <BlendInt/Window.hpp>
 #include <BlendInt/Object.hpp>
 
 class WidgetTest1: public testing::Test

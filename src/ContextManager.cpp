@@ -81,7 +81,11 @@ namespace BlendInt {
 	ContextManager::~ContextManager ()
 	{
 		// set focus widget to 0
-		m_focus = 0;
+
+		if(m_focus) {
+			m_focus->m_flag.reset(AbstractWidget::WidgetFlagFocus);
+			m_focus = 0;
+		}
 
 		map<int, set<AbstractWidget*>* >::iterator map_it;
 		set<AbstractWidget*>::iterator set_it;
@@ -94,7 +98,7 @@ namespace BlendInt {
 			{
 				(*set_it)->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
-				Object::Destroy(*set_it);
+				if((*set_it)->ref_count() == 0) delete *set_it;
 			}
 
 			pset->clear();
@@ -290,7 +294,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ContextManager::RemoveWidgetFromHoverList(AbstractWidget* widget)
+	void ContextManager::RemoveWidgetFromHoverDeque(AbstractWidget* widget)
 	{
 		while(m_hover_deque->size()) {
 			m_hover_deque->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
@@ -301,6 +305,18 @@ namespace BlendInt {
 			}
 
 			m_hover_deque->pop_back();
+		}
+	}
+
+	void ContextManager::SetFocusedWidget (AbstractWidget* widget)
+	{
+		if(m_focus) {
+			m_focus->m_flag.reset(AbstractWidget::WidgetFlagFocus);
+		}
+
+		m_focus = widget;
+		if(m_focus) {
+			m_focus->m_flag.set(AbstractWidget::WidgetFlagFocus);
 		}
 	}
 

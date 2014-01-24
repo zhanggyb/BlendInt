@@ -12,7 +12,7 @@ namespace BlendInt {
 
 	extern void Init ();
 
-	extern GLFWwindow* CreateWindow (const char* name);
+	extern GLFWwindow* CreateWindow (const char* name, int width = 1280, int height = 800);
 
 	extern void RunLoop (GLFWwindow* window, RenderCallback callback = 0, void* param = 0);
 

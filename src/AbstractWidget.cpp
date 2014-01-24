@@ -49,6 +49,8 @@ namespace BlendInt {
 		  m_parent(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
+
+		ContextManager::Instance()->SetFocusedWidget(this);
 	}
 
 	AbstractWidget::AbstractWidget (AbstractWidget* parent)
@@ -61,13 +63,18 @@ namespace BlendInt {
 			parent->m_children.insert(this);
 			m_parent = parent;
 		}
+
+		ContextManager::Instance()->SetFocusedWidget(this);
 	}
 
 	AbstractWidget::~AbstractWidget ()
 	{
-		// TODO: remove self from Context mouse event list
 		if(m_flag[WidgetFlagContextHoverList]) {
-			ContextManager::Instance()->RemoveWidgetFromHoverList(this);
+			ContextManager::Instance()->RemoveWidgetFromHoverDeque(this);
+		}
+
+		if(m_flag[WidgetFlagFocus]) {
+			ContextManager::Instance()->SetFocusedWidget(0);
 		}
 
 		if(m_parent) {

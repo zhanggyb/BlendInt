@@ -1,7 +1,7 @@
 #include "ContextManagerTest1.hpp"
 #include <BlendInt/ContextManager.hpp>
 #include <BlendInt/Widget.hpp>
-#include <BlendInt/Window.hpp>
+#include <Common/Window.hpp>
 
 using namespace BlendInt;
 
@@ -23,16 +23,9 @@ ContextManagerTest1::~ContextManagerTest1()
  */
 TEST_F(ContextManagerTest1, Foo1)
 {
-    Window::Initialize();
+    Init();
 
-	Window* win = Window::Create("ContextManager - Foo1", 1024, 768);
-
-    if(!Interface::Initialize()) {
-        Window::Release();
-        ASSERT_TRUE(false);
-    }
-
-    win->Resize(1280, 800);
+	GLFWwindow* win = CreateWindow("ContextManager - Foo1");
 
     // TODO: add test code here
     Widget* w1 = new Widget;
@@ -48,11 +41,11 @@ TEST_F(ContextManagerTest1, Foo1)
 
     ContextManager::Instance()->print();
 
-    Window::Run();
+    RunLoop(win);
 
     Interface::Release();
 
-    Window::Release();
+    Terminate();
 
 	ASSERT_TRUE(true);
 }
@@ -64,16 +57,9 @@ TEST_F(ContextManagerTest1, Foo1)
  */
 TEST_F(ContextManagerTest1, Layer1)
 {
-    Window::Initialize();
+    Init();
 
-    Window* win = Window::Create("ContextManager - Layer1", 1024, 768);
-
-    if(!Interface::Initialize()) {
-        Window::Release();
-        ASSERT_TRUE(false);
-    }
-
-    win->Resize(1280, 800);
+    GLFWwindow* win = CreateWindow("ContextManager - Layer1");
 
     // TODO: add test code here
     Widget* w1 = new Widget;
@@ -90,11 +76,11 @@ TEST_F(ContextManagerTest1, Layer1)
 
     ContextManager::Instance()->print();
 
-    Window::Run();
+    RunLoop(win);
 
     Interface::Release();
 
-    Window::Release();
+    Terminate();
 
 	ASSERT_TRUE(true);
 }
@@ -106,16 +92,9 @@ TEST_F(ContextManagerTest1, Layer1)
  */
 TEST_F(ContextManagerTest1, Layer2)
 {
-    Window::Initialize();
+    Init();
 
-    Window* win = Window::Create("ContextManager - Layer2", 1024, 768);
-
-    if(!Interface::Initialize()) {
-        Window::Release();
-        ASSERT_TRUE(false);
-    }
-
-    win->Resize(1280, 800);
+    GLFWwindow* win = CreateWindow("ContextManager - Layer2");
 
     // TODO: add test code here
     Widget* w1 = new Widget;
@@ -133,11 +112,11 @@ TEST_F(ContextManagerTest1, Layer2)
 
     ContextManager::Instance()->print();
 
-    Window::Run();
+    RunLoop(win);
 
     Interface::Release();
 
-    Window::Release();
+    Terminate();
 
 	ASSERT_TRUE(true);
 }

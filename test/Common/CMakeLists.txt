@@ -2,5 +2,7 @@
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
+set(LIBS ${LIBS} glfw)
+
 add_library (Common Window.cpp)
 target_link_libraries(Common BlendInt ${LIBS})

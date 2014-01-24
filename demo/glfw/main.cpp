@@ -34,7 +34,7 @@
 #include <BlendInt/TextEntry.hpp>
 #include <BlendInt/ClockWidget.hpp>
 
-#include <BlendInt/Window.hpp>
+#include "Window.hpp"
 
 #include "DemoFrame.hpp"
 
@@ -45,39 +45,28 @@ int main(int argc, char* argv[])
 {
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-	Window::Initialize();
-	Window* win = Window::Create("glfw demo", 1024, 768);
+	Init();
 
-	if(!Interface::Initialize()) {
-		Window::Release();
-		exit(1);
-	}
+	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
 
-	win->Resize(640, 480);
+	// Add Code:
 
-	HorizontalLayout* h1 = new HorizontalLayout;
+	TextEntry* text = new TextEntry;
+	text->set_name("TextEntry");
+	text->SetPosition(200, 200);
 
-	Button* b1 = new Button;
-	Button* b2 = new Button;
+	text->Register();
 
-	h1->Add(b1);
-	h1->Add(b2);
+	Button* btn = new Button;
+	btn->set_name("Button");
+	btn->SetPosition(200, 250);
+	btn->Register();
 
-	h1->SetPosition(200, 200);
-
-	h1->Register();
-
-	ClockWidget* clock = new ClockWidget;
-	clock->Resize(200, 200);
-	clock->SetPosition(200, 200);
-
-	clock->Register();
-
-	Window::Run();
+	RunLoop (win);
 
 	Interface::Release();
 
-	Window::Release();
+	Terminate();
 
 	return 0;
 }
