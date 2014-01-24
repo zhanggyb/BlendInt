@@ -39,16 +39,6 @@ then
     exit 1
 fi
 
-# check out glfw
-#
-if [ ! -d $SOURCE_DIR/extern/glfw ];
-then
-    git clone https://github.com/zhanggyb/glfw.git $SOURCE_DIR/extern/glfw
-    #pushd $SOURCE_DIR/extern/glfw
-    #git pull || exit 1
-    #popd
-fi
-
 if [ "$SYSTEM"x = "GNU/Linux"x ]
 then
     #echo "Generate Eclipse CDT4 - Unix Makefiles"

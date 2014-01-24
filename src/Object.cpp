@@ -75,7 +75,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Object::CountOnce(Object* obj)
+	void Object::Retain(Object* obj)
 	{
 		obj->m_ref_count++;
 	}

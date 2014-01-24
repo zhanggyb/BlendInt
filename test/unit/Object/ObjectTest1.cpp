@@ -38,8 +38,8 @@ TEST_F(ObjectTest1, New1)
     Object::Destroy(obj2);
 
 #ifdef DEBUG
-    Object::CountOnce (obj1);
-    Object::CountOnce (obj1);
+    Object::Retain (obj1);
+    Object::Retain (obj1);
     std::cout << "obj1 ref count: " << obj1->ref_count() << std::endl;
     Object::Destroy(obj1);
     Object::Destroy(obj1);

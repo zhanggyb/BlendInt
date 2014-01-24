@@ -174,7 +174,7 @@ namespace BlendInt {
 		object->activate_events();
 
 		AddChild(object);
-		CountOnce(object);
+		Retain(object);
 		LockGeometry(object, true);
 	}
 

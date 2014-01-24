@@ -36,7 +36,7 @@ AnimatingWidget::AnimatingWidget ()
 	: Widget(), m_angle(0.0), m_timer(0)
 {
 	m_timer = new Timer;
-    CountOnce(m_timer);
+	Retain(m_timer);
 
 	events()->connect(m_timer->timeout(), this, &AnimatingWidget::AddAngle);
 
@@ -53,7 +53,7 @@ AnimatingWidget::AnimatingWidget(AbstractWidget* parent)
 	: Widget(parent), m_angle(0.0), m_timer(0)
 {
 	m_timer = new Timer;
-    CountOnce(m_timer);
+    Retain(m_timer);
 	events()->connect(m_timer->timeout(), this, &AnimatingWidget::AddAngle);
 
 	set_size(500, 400);

@@ -151,7 +151,7 @@ namespace BlendInt {
 		set_expand_y(true);
 
 		m_timer = new Timer;
-		CountOnce(m_timer);
+		Retain(m_timer);
 		m_timer->SetInterval(1000);
 
 		events()->connect(m_timer->timeout(), this, &ClockWidget::UpdateClockHands);

@@ -34,7 +34,7 @@ TEST_F(PerformanceTest1, Layout1)
 	// TODO: add test code here
 
 
-    int max_x = 12;
+    int max_x = 50;
     int max_y = 20;
     HorizontalLayout* layout[max_y];
     Button* btn[max_x];
@@ -48,6 +48,7 @@ TEST_F(PerformanceTest1, Layout1)
         for(int j = 0; j < max_x; j++)
         {
             btn[j] = new Button;
+            btn[j]->SetPreferredSize(25, btn[j]->size().height());
             layout[i]->Add(btn[j]);
         }
     

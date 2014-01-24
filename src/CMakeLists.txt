@@ -15,4 +15,5 @@ if(NOT DEFINED BUILD_STATIC_LIBRARY)
     set_target_properties(BlendInt PROPERTIES VERSION 1 SOVERSION 1)
 endif()
 
-target_link_libraries(BlendInt CppEvents glfw ${GLFW_LIBRARIES} ${LIBS})
+target_link_libraries(BlendInt CppEvents ${LIBS})
+

@@ -69,7 +69,7 @@ namespace BlendInt {
 		}
 
 #ifdef DEBUG
-		static void CountOnce (Object* obj);
+		static void Retain (Object* obj);
 #endif
 
 		static void Destroy (Object* obj);
@@ -79,7 +79,7 @@ namespace BlendInt {
 		virtual ~Object ();
 
 #ifndef DEBUG
-		static void CountOnce (Object* obj);
+		static void Retain (Object* obj);
 #endif
 
 	private:
