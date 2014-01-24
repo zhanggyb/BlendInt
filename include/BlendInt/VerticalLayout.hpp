@@ -49,20 +49,6 @@ namespace BlendInt {
 
 		virtual void Draw ();
 
-		virtual void CursorEnterEvent (bool entered);
-
-		virtual void KeyPressEvent (KeyEvent* event);
-
-		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
-
-		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
-
-		virtual void MousePressEvent (MouseEvent* event);
-
-		virtual void MouseReleaseEvent (MouseEvent* event);
-
-		virtual void MouseMoveEvent (MouseEvent* event);
-
 		virtual void AddItem (AbstractWidget* object);
 
 		virtual void RemoveItem (AbstractWidget* object);

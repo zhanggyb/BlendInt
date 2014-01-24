@@ -98,9 +98,19 @@ namespace BlendInt {
 
 		virtual void initialize () {}
 
-		virtual void Update (int type, const void* data);
+		virtual void CursorEnterEvent (bool entered);
 
-		virtual void Draw () = 0;
+		virtual void KeyPressEvent (KeyEvent* event);
+
+		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
+
+		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
+
+		virtual void MousePressEvent (MouseEvent* event);
+
+		virtual void MouseReleaseEvent (MouseEvent* event);
+
+		virtual void MouseMoveEvent (MouseEvent* event);
 
 		virtual void AddItem (AbstractWidget* form) = 0;
 

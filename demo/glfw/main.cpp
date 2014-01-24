@@ -53,11 +53,25 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 
-	win->Resize(1280, 800);
+	win->Resize(640, 480);
 
-	Widget* widget = new Widget;
-	widget->SetPosition(200, 200);
-	widget->Register();
+	HorizontalLayout* h1 = new HorizontalLayout;
+
+	Button* b1 = new Button;
+	Button* b2 = new Button;
+
+	h1->Add(b1);
+	h1->Add(b2);
+
+	h1->SetPosition(200, 200);
+
+	h1->Register();
+
+	ClockWidget* clock = new ClockWidget;
+	clock->Resize(200, 200);
+	clock->SetPosition(200, 200);
+
+	clock->Register();
 
 	Window::Run();
 

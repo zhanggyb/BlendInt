@@ -135,6 +135,12 @@ namespace BlendInt {
 					generate_default_layout();
 
 				}
+
+				break;
+			}
+
+			default: {
+				break;
 			}
 		}
 
@@ -172,61 +178,6 @@ namespace BlendInt {
 
 		glPopMatrix();
 #endif
-	}
-
-	void TableLayout::CursorEnterEvent (bool entered)
-	{
-
-	}
-
-	void TableLayout::KeyPressEvent (KeyEvent* event)
-	{
-		std::vector<AbstractWidget*>::iterator it;
-		for(it = m_items.begin(); it != m_items.end(); it++)
-		{
-			dispatch_key_press_event(*it, event);
-		}
-	}
-
-	void TableLayout::ContextMenuPressEvent (ContextMenuEvent* event)
-	{
-	}
-
-	void TableLayout::ContextMenuReleaseEvent (ContextMenuEvent* event)
-	{
-	}
-
-	void TableLayout::MousePressEvent (MouseEvent* event)
-	{
-		std::vector<AbstractWidget*>::iterator it;
-		for(it = m_items.begin(); it != m_items.end(); it++)
-		{
-			if(*it) {
-				dispatch_mouse_press_event(*it, event);
-			}
-		}
-	}
-
-	void TableLayout::MouseReleaseEvent (MouseEvent* event)
-	{
-		std::vector<AbstractWidget*>::iterator it;
-		for(it = m_items.begin(); it != m_items.end(); it++)
-		{
-			if (*it) {
-				dispatch_mouse_release_event(*it, event);
-			}
-		}
-	}
-
-	void TableLayout::MouseMoveEvent (MouseEvent* event)
-	{
-		std::vector<AbstractWidget*>::iterator it;
-		for(it = m_items.begin(); it != m_items.end(); it++)
-		{
-			if (*it) {
-				dispatch_mouse_move_event(*it, event);
-			}
-		}
 	}
 
 	void TableLayout::AddItem(AbstractWidget* object)

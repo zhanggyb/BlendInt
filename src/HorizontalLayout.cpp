@@ -78,25 +78,24 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(data);
 				if(m_items.size())
 					MakeLayout(size_p, &margin(), space());
-				return;
+				break;
 			}
 
 			case LayoutPropertyMargin: {
 				const Margin* margin_p = static_cast<const Margin*>(data);
 				if(m_items.size())
 					MakeLayout(&size(), margin_p, space());
-				return;
+				break;
 			}
 
 			case LayoutPropertySpace: {
 				const int* space_p = static_cast<const int*>(data);
 				if(m_items.size())
 					MakeLayout(&size(), &margin(), *space_p);
-				return;
+				break;
 			}
 
 			default: {
-				AbstractLayout::Update (type, data);
 				break;
 			}
 		}
@@ -104,11 +103,6 @@ namespace BlendInt {
 
 	void HorizontalLayout::Draw ()
 	{
-//		std::vector<AbstractWidget*>::const_iterator it;
-//		for (it = m_items.begin(); it != m_items.end(); it++) {
-//			DispatchRender(*it);
-//		}
-
 #ifdef DEBUG
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
@@ -124,51 +118,6 @@ namespace BlendInt {
 
 		glDisable(GL_LINE_STIPPLE);
 #endif
-	}
-
-	void HorizontalLayout::CursorEnterEvent(bool entered)
-	{
-
-	}
-
-	void HorizontalLayout::KeyPressEvent (KeyEvent* event)
-	{
-		std::vector<AbstractWidget*>::iterator it;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
-			dispatch_key_press_event(*it, event);
-		}
-	}
-
-	void HorizontalLayout::ContextMenuPressEvent (ContextMenuEvent* event)
-	{
-	}
-
-	void HorizontalLayout::ContextMenuReleaseEvent (ContextMenuEvent* event)
-	{
-	}
-
-	void HorizontalLayout::MousePressEvent (MouseEvent* event)
-	{
-		std::vector<AbstractWidget*>::iterator it;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
-			dispatch_mouse_press_event(*it, event);
-		}
-	}
-
-	void HorizontalLayout::MouseReleaseEvent (MouseEvent* event)
-	{
-		std::vector<AbstractWidget*>::iterator it;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
-			dispatch_mouse_release_event(*it, event);
-		}
-	}
-
-	void HorizontalLayout::MouseMoveEvent (MouseEvent* event)
-	{
-		std::vector<AbstractWidget*>::iterator it;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
-			dispatch_mouse_move_event(*it, event);
-		}
 	}
 
 	void HorizontalLayout::AddItem (AbstractWidget* object)

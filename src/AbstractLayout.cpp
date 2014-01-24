@@ -30,9 +30,9 @@ namespace BlendInt {
 			  m_alignment(0),
 			  m_space(1)
 	{
-		SetPreferredSize(margin().left() + margin().right(), margin().top() + margin().bottom());
-		SetMinimalSize(margin().left() + margin().right(), margin().top() + margin().bottom());
-		Resize(preferred_size());
+		set_preferred_size(margin().left() + margin().right(), margin().top() + margin().bottom());
+		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
+		set_size(preferred_size());
 	}
 
 	AbstractLayout::AbstractLayout (AbstractWidget *parent)
@@ -40,9 +40,9 @@ namespace BlendInt {
 			  m_alignment(0),
 			  m_space(1)
 	{
-		SetPreferredSize(margin().left() + margin().right(), margin().top() + margin().bottom());
-		SetMinimalSize(margin().left() + margin().right(), margin().top() + margin().bottom());
-		Resize(preferred_size());
+		set_preferred_size(margin().left() + margin().right(), margin().top() + margin().bottom());
+		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
+		set_size(preferred_size());
 	}
 
 	AbstractLayout::~AbstractLayout ()
@@ -128,6 +128,41 @@ namespace BlendInt {
 	}
 	*/
 
+	void AbstractLayout::CursorEnterEvent (bool entered)
+	{
+
+	}
+
+	void AbstractLayout::KeyPressEvent (KeyEvent* event)
+	{
+
+	}
+
+	void AbstractLayout::ContextMenuPressEvent (ContextMenuEvent* event)
+	{
+
+	}
+
+	void AbstractLayout::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	{
+
+	}
+
+	void AbstractLayout::MousePressEvent(MouseEvent* event)
+	{
+
+	}
+
+	void AbstractLayout::MouseReleaseEvent(MouseEvent* event)
+	{
+
+	}
+
+	void AbstractLayout::MouseMoveEvent(MouseEvent* event)
+	{
+
+	}
+
 	void AbstractLayout::SetMargin (const Margin& margin)
 	{
 		if(m_margin.equal(margin)) return;
@@ -160,15 +195,6 @@ namespace BlendInt {
 		m_space = space;
 	}
 
-	void AbstractLayout::Update (int type, const void* data)
-	{
-		switch (type) {
-
-			default:
-				break;
-		}
-	}
-
 	AbstractLayout* AbstractLayout::root_layout ()
 	{
 		AbstractLayout* root = 0;
@@ -185,4 +211,3 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
-
