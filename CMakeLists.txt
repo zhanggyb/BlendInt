@@ -27,6 +27,7 @@ endif()
 
 # start of options
 option(BUILD_STATIC_LIBRARY "Build static library instead of shared" OFF)
+option(WITH_BUILTIN_GLFW3 "Build with built-in GLFW3 source code" OFF)
 option(WITH_GPERFTOOLS "Build with Google perftools option" OFF)
 option(WITH_ALL_DEMOS "Build all demo programs" OFF)
 option(WITH_GLFW3_DEMO "Build GLFW3 demo program" OFF)
@@ -125,6 +126,12 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     # Update if necessary
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -pedantic")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+endif()
+
+# build glfw
+if(WITH_BUILTIN_GLFW3)
+    add_subdirectory(extern/glfw)
+    include_directories(extern/glfw/include)
 endif()
 
 add_subdirectory(extern/CppEvents/src)
