@@ -171,6 +171,7 @@ namespace BlendInt {
 
 		// float bg = 114.0 / 255;	// the default blender background color
 		glClearColor(0.447, 0.447, 0.447, 1.00);
+		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glColor4f(1.00, 1.00, 1.00, 1.00);
 

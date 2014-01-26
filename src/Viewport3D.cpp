@@ -165,6 +165,8 @@ namespace BlendInt {
 		glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
 		glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
 
+		glEnable(GL_DEPTH_TEST);
+
 		glEnable (GL_SCISSOR_TEST);
 		glScissor (position().x(),
 				position().y(),
@@ -222,10 +224,6 @@ namespace BlendInt {
 		glViewport(0, 0, Interface::Instance()->size().width(), Interface::Instance()->size().height());
 
 #ifdef DEBUG
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-		glTranslatef(position().x(), position().y(), z());
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -244,8 +242,6 @@ namespace BlendInt {
 		glDisable(GL_LINE_STIPPLE);
 
 		glDisable(GL_BLEND);
-
-		glPopMatrix();
 #endif
 	}
 

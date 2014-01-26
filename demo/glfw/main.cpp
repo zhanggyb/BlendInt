@@ -33,6 +33,7 @@
 #include <BlendInt/GLTexture2D.hpp>
 #include <BlendInt/TextEntry.hpp>
 #include <BlendInt/ClockWidget.hpp>
+#include <BlendInt/Viewport3D.hpp>
 
 #include "Window.hpp"
 
@@ -51,16 +52,22 @@ int main(int argc, char* argv[])
 
 	// Add Code:
 
-	TextEntry* text = new TextEntry;
-	text->set_name("TextEntry");
-	text->SetPosition(200, 200);
-
-	text->Register();
+//	TextEntry* text = new TextEntry;
+//	text->set_name("TextEntry");
+//	text->SetPosition(200, 200);
+//
+//	text->Register();
 
 	Button* btn = new Button;
 	btn->set_name("Button");
-	btn->SetPosition(200, 250);
+	btn->SetPosition(530, 250);
 	btn->Register();
+
+	Viewport3D* view3d = new Viewport3D;
+	view3d->set_name("Viewport 3D");
+	view3d->SetPosition(20, 20);
+	view3d->Resize(500, 400);
+	view3d->Register();
 
 	RunLoop (win);
 
