@@ -39,7 +39,7 @@
 namespace BlendInt {
 
 	GLSLProgram::GLSLProgram ()
-			: m_id(0)
+			: Object(), m_id(0)
 	{
 	}
 
@@ -63,8 +63,7 @@ namespace BlendInt {
 		if(m_shaders.size() > 0) {
 			std::vector<GLSLShader*>::iterator it;
 			for (it = m_shaders.begin(); it != m_shaders.end(); it++) {
-				delete *it;
-				*it = NULL;
+				Object::Destroy(*it);
 			}
 			m_shaders.clear();
 		}
@@ -78,8 +77,7 @@ namespace BlendInt {
 		if(m_shaders.size() > 0) {
 			std::vector<GLSLShader*>::iterator it;
 			for (it = m_shaders.begin(); it != m_shaders.end(); it++) {
-				delete *it;
-				*it = NULL;
+				Object::Destroy(*it);
 			}
 			m_shaders.clear();
 		}
@@ -132,8 +130,7 @@ namespace BlendInt {
 	{
 		std::vector<GLSLShader*>::iterator it;
 		for (it = m_shaders.begin(); it != m_shaders.end(); it++) {
-			delete *it;
-			*it = NULL;
+			Object::Destroy(*it);
 		}
 		m_shaders.clear();
 

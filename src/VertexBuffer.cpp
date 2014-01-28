@@ -34,7 +34,7 @@ namespace BlendInt {
 
 	VertexBuffer::~VertexBuffer()
 	{
-		DeleteProgram();
+		Object::Destroy(m_program);
 	}
 
 	void VertexBuffer::Generate (size_t num)
@@ -55,9 +55,10 @@ namespace BlendInt {
 	{
 		if(m_program == program) return;
 
-		DeleteProgram();
+		Object::Destroy(m_program);
 
 		m_program = program;
+		Object::Retain(m_program);
 	}
 
 	void VertexBuffer::Draw()
@@ -67,15 +68,7 @@ namespace BlendInt {
 
 	void VertexBuffer::DeleteProgram()
 	{
-		if(ShaderManager::Instance()->Find(m_program)) {
-			m_program = 0;
-			return;
-		}
-
-		if(m_program) {
-			delete m_program;
-			m_program = 0;
-		}
+		Object::Destroy(m_program);
 	}
 
 }

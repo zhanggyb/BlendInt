@@ -76,7 +76,7 @@ namespace BlendInt {
 		 */
 		GLuint texture_;		// texture object
 
-		GLSLProgram program_;
+		GLSLProgram* m_program;
 
 		GLint uniform_tex_;
 

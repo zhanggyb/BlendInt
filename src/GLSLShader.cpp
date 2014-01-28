@@ -38,7 +38,7 @@
 namespace BlendInt {
 
 	GLSLShader::GLSLShader ()
-			: m_id(0)
+			: Object(), m_id(0)
 	{
 	}
 

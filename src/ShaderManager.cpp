@@ -93,11 +93,12 @@ namespace BlendInt {
 	m_text_program(0)
 	{
 		m_text_program = new GLSLProgram;
+		Object::Retain(m_text_program);
 	}
 
 	ShaderManager::~ShaderManager()
 	{
-		delete m_text_program;
+		Object::Destroy(m_text_program);
 
 		glDeleteBuffers(1, &text_vbo_);
 	}

@@ -21,44 +21,32 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <glm/glm.hpp>
-#include <glm/gtx/euler_angles.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#ifndef _BLENDINT_MESH_HPP_
+#define _BLENDINT_MESH_HPP_
 
-#include <BlendInt/FreeCamera.hpp>
+#include <glm/glm.hpp>
+#include <BlendInt/Object.hpp>
+
 
 namespace BlendInt {
 
-	FreeCamera::FreeCamera ()
+	class Mesh: public Object
 	{
-		m_translation = glm::vec3(0);
-	}
+	public:
 
-	FreeCamera::~FreeCamera ()
-	{
-	}
+		Mesh ();
 
-	void FreeCamera::Update ()
-	{
-		glm::mat4 R = glm::yawPitchRoll(yaw(), pitch(), roll());
+		virtual ~Mesh();
 
-		set_position(position() + m_translation);
-		m_translation = glm::vec3(0);
+		void Render (const glm::mat4& MVP);
 
-		set_look(glm::vec3(R * glm::vec4(0, 0, 1, 0)));
-		glm::vec3 target = position() + look();
-		set_up(glm::vec3(R * glm::vec4(0, 1, 0, 0)));
-		set_right(glm::cross(look(), up()));
+	private:
 
-		set_view(glm::lookAt(position(), target, up()));
-	}
+		/** Vertex Buffer object */
+		GLuint m_vbo;
 
-	void FreeCamera::Rotate (float yaw, float pitch, float roll)
-	{
-		set_yaw(yaw);
-		set_pitch(pitch);
-		set_roll(roll);
-	}
+	};
 
 }
 
+#endif /* _BLENDINT_MESH_HPP_ */

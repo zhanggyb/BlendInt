@@ -41,5 +41,14 @@ namespace BlendInt {
 	{
 	}
 
+	void AbstractCamera::Rotate(float yaw, float pitch, float roll)
+	{
+		m_yaw = glm::radians(yaw);
+		m_pitch = glm::radians(pitch);
+		m_roll = glm::radians(roll);
+
+		Update ();
+	}
+
 }
 

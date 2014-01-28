@@ -63,11 +63,13 @@ namespace BlendInt {
 
 
 	TextureAtlas::TextureAtlas ()
-			: texture_(0), uniform_tex_(-1), attribute_coord_(-1),
+			: texture_(0), m_program(0), uniform_tex_(-1), attribute_coord_(-1),
 			  uniform_color_(-1), vbo_(0),
 			  width_(0), height_(0), starting_charcode_(0), stride_(0),
 			  glyph_array_(0)
 	{
+		m_program = new GLSLProgram;
+		Object::Retain(m_program);
 	}
 
 	TextureAtlas::~TextureAtlas ()
@@ -83,24 +85,26 @@ namespace BlendInt {
 		if(glyph_array_) {
 			delete [] glyph_array_;
 		}
+
+		Object::Destroy(m_program);
 	}
 
 	void TextureAtlas::initialize()
 	{
-		program_.Create();
-		program_.AttachShaderPair(vs_shader, fs_shader);
-		if(!program_.IsValid()) {
+		m_program->Create();
+		m_program->AttachShaderPair(vs_shader, fs_shader);
+		if(!m_program->IsValid()) {
 			std::cerr << "Cannot compile shaders" << std::endl;
 			return;
 		}
-		if(!program_.Link()) {
+		if(!m_program->Link()) {
 			std::cerr << "Cannot link program" << std::endl;
 			return;
 		}
 
-		attribute_coord_ = program_.GetAttributeLocation("coord");
-		uniform_tex_ = program_.GetUniformLocation("tex");
-		uniform_color_ = program_.GetUniformLocation("color");
+		attribute_coord_ = m_program->GetAttributeLocation("coord");
+		uniform_tex_ = m_program->GetUniformLocation("tex");
+		uniform_color_ = m_program->GetUniformLocation("color");
 
 		if(attribute_coord_ == -1 || uniform_tex_ == -1 || uniform_color_ == -1) {
 			std::cerr << "Fatal Error: cannot get attributes and uniforms" << std::endl;
@@ -281,7 +285,7 @@ namespace BlendInt {
 	{
 		const wchar_t* p;
 
-		glUseProgram(program_.id());
+		glUseProgram(m_program->id());
 
 		/* White background */
 		//glClearColor(1, 1, 1, 1);

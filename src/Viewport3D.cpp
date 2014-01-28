@@ -156,6 +156,21 @@ namespace BlendInt {
 		m_yold = event->position().y();
 	}
 
+	void Viewport3D::Render ()
+	{
+		/* Clear the buffer, clear the matrix */
+		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glRotatef(m_rotate_y, 1, 0, 0);
+		glRotatef(m_rotate_x, 0, 1, 0);
+
+		DrawGrid(50, 50, 1, 10);
+
+		//test code
+		DrawCube();
+	}
+
 	void Viewport3D::Draw ()
 	{
 		// store the current matrices
@@ -166,7 +181,6 @@ namespace BlendInt {
 		glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
 
 		glEnable(GL_DEPTH_TEST);
-
 		glEnable (GL_SCISSOR_TEST);
 		glScissor (position().x(),
 				position().y(),
@@ -198,20 +212,11 @@ namespace BlendInt {
 
 		//-------------------------------------------------------------------------------------------------------
 
-		/* Clear the buffer, clear the matrix */
-		//glClearColor(0.5, 0.5, 0.5, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glRotatef(m_rotate_y, 1, 0, 0);
-		glRotatef(m_rotate_x, 0, 1, 0);
-
-		//test code
-		DrawCube();
+		Render ();
 
 		//-------------------------------------------------------------------------------------------------------
 
 		glDisable(GL_DEPTH_TEST);
-
 		glDisable(GL_SCISSOR_TEST);
 
 		// set back the previous matrices and viewport

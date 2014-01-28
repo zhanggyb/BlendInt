@@ -32,6 +32,7 @@
 
 #include <vector>
 
+#include <BlendInt/Object.hpp>
 #include <BlendInt/GLSLShader.hpp>
 
 namespace BlendInt {
@@ -49,7 +50,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup opengl
 	 */
-	class GLSLProgram
+	class GLSLProgram: public Object
 	{
 	public:
 
@@ -57,11 +58,6 @@ namespace BlendInt {
 		 * @brief Default constructor
 		 */
 		GLSLProgram ();
-
-		/**
-		 * @brief Destructor
-		 */
-		~GLSLProgram ();
 
 		/**
 		 * @brief Create the GLSL program
@@ -165,6 +161,13 @@ namespace BlendInt {
 		 * @return The uniform location
 		 */
 		GLint GetUniformLocation (const char *name);
+
+	protected:
+
+		/**
+		 * @brief Destructor
+		 */
+		virtual ~GLSLProgram ();
 
 	private:
 

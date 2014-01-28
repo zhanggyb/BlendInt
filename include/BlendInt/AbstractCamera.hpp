@@ -72,6 +72,23 @@ namespace BlendInt {
 			m_up = up;
 		}
 
+		const glm::vec3& right () const
+		{
+			return m_right;
+		}
+
+		void set_right (const glm::vec3& right)
+		{
+			m_right = right;
+		}
+
+		void set_right (float x, float y, float z)
+		{
+			m_right.x = x;
+			m_right.y = y;
+			m_right.z = z;
+		}
+
 		const glm::vec3& center () const
 		{
 			return m_center;
@@ -167,6 +184,8 @@ namespace BlendInt {
 		 */
 		virtual void Update () = 0;
 
+		virtual void Rotate (float yaw, float pitch, float roll);
+
 	protected:
 
 		void set_projection (const glm::mat4& projection)
@@ -188,6 +207,9 @@ namespace BlendInt {
 
 		/** Direction of the up vector */
 		glm::vec3 m_up;
+
+		/** Direction of the right */
+		glm::vec3 m_right;
 
 		/** Position of the reference point */
 		glm::vec3 m_center;

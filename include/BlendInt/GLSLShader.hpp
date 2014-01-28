@@ -32,6 +32,8 @@
 
 #include <string>
 
+#include <BlendInt/Object.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -39,7 +41,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup opengl
 	 */
-	class GLSLShader
+	class GLSLShader: public Object
 	{
 	public:
 
@@ -47,8 +49,6 @@ namespace BlendInt {
 		 * @brief Default Constructor
 		 */
 		GLSLShader ();
-
-		~GLSLShader ();
 
 		/**
 		 * @brief Load a vertex or fragment shader sources and compile
@@ -79,6 +79,10 @@ namespace BlendInt {
 		void PrintLog ();
 
 		void Clear ();
+
+	protected:
+
+		virtual ~GLSLShader ();
 
 	private:
 		/**
