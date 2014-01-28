@@ -47,7 +47,7 @@ namespace BlendInt {
 		Clear();
 	}
 
-	GLenum GLSLShader::type () const
+	GLenum GLSLShader::GetType () const
 	{
 		GLint type;
 		glGetShaderiv(m_id, GL_SHADER_TYPE, &type);
@@ -58,6 +58,14 @@ namespace BlendInt {
 	bool GLSLShader::IsValid () const
 	{
 		return glIsShader(m_id);
+	}
+
+	bool GLSLShader::IsCompiled () const
+	{
+		GLint status;
+		glGetShaderiv(m_id, GL_COMPILE_STATUS, &status);
+
+		return status == GL_TRUE ? true : false;
 	}
 
 	bool GLSLShader::IsDeleted () const
@@ -154,5 +162,6 @@ namespace BlendInt {
 		}
 		return shader;
 	}
+
 
 }

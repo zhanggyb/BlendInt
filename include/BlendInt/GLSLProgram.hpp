@@ -67,6 +67,8 @@ namespace BlendInt {
 		 */
 		bool Create ();
 
+		void Attach (const char* shader, GLenum type);
+
 		/**
 		 * @brief Attach vertex and fragment shaders
 		 * @param vertex_shader The vertex shader stored in memory as string
@@ -100,6 +102,10 @@ namespace BlendInt {
 		 * The param type is defined in manual of glCreateShader
 		 */
 		void AttachShader (const std::string& filename, GLenum type);
+
+		void Detach (GLuint shader);
+
+		//void Detach ()
 
 		/**
 		 * @brief Link the program

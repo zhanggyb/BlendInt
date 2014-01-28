@@ -70,6 +70,7 @@ namespace BlendInt {
 
 			case FormSize: {
 
+				/*
 				Size shadow_size = *(static_cast<const Size*>(data));
 
 				int step, totvert;
@@ -79,6 +80,8 @@ namespace BlendInt {
 
 				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2];
 
+				*/
+
 				// #define UI_DPI_FAC ((U.pixelsize * (float)U.dpi) / 72.0f)
 //				const float radout = themes()->menu_shadow_width * 1.0;
 
@@ -87,8 +90,10 @@ namespace BlendInt {
 //							shadow_size.add_height(-0.2f * size().height());
 //						else
 //							shadow_size.add_height(-radout);
+				/*
 				totvert = generate_shadow_vertices(&shadow_size, radius(), 0.0f,
 				        inner_v);
+				*/
 
 				/*
 				m_gl_buffer.Generate((int)m_blur_rad);

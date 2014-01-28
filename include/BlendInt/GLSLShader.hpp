@@ -67,10 +67,31 @@ namespace BlendInt {
 			return m_id;
 		}
 
-		GLenum type () const;
+		/**
+		 * @brief Get the shader type
+		 * @return The shader type defined in OpenGL:
+		 * 	- GL_VERTEX_SHADER
+		 * 	- GL_GEOMETRY_SHADER
+		 * 	- GL_FRAGMENT_SHADER
+		 */
+		GLenum GetType () const;
 
 		bool IsValid () const;
 
+		/**
+		 * @brief Get the last compile operation on shader was successfully
+		 * @return
+		 * 	- true If successfully compiled
+		 * 	- false If not
+		 */
+		bool IsCompiled () const;
+
+		/**
+		 * @brief Check if shader is currently flagged for deletion
+		 * @return
+		 * 	- true If shader is currently flagged for deletion
+		 * 	- false If otherwise
+		 */
 		bool IsDeleted () const;
 
 		/**
