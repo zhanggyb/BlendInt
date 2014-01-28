@@ -41,35 +41,49 @@ namespace BlendInt {
 	int Menu::DefaultMenuItemHeight = 20;
 
 	Menu::Menu ()
-	: RoundWidget(), m_highlight(0)
+	: RoundWidget(), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{
 		m_menubin.reset(new MenuItemBin);
-		m_buffer.reset(new GLArrayBufferMultiple);
-		m_highlight_buffer.reset(new GLArrayBufferSimple);
+
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+		m_highlight_buffer = new GLArrayBuffer;
+		Retain(m_highlight_buffer);
 
 		set_size(20, 20);
 
-		GenerateFormBuffer(&(size()), false, round_type(), radius(), m_buffer.get());
+		GenerateFormBuffer(&(size()), round_type(), radius(), m_inner_buffer, m_outer_buffer, 0);
 
 		ResetHighlightBuffer(20);
 	}
 
 	Menu::Menu (AbstractWidget* parent)
-	: RoundWidget(parent), m_highlight(0)
+	: RoundWidget(parent), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{
+
 		m_menubin.reset(new MenuItemBin);
-		m_buffer.reset(new GLArrayBufferMultiple);
-		m_highlight_buffer.reset(new GLArrayBufferSimple);
+
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+		m_highlight_buffer = new GLArrayBuffer;
+		Retain(m_highlight_buffer);
 
 		set_size(20, 20);
 
-		GenerateFormBuffer(&(size()), false, round_type(), radius(), m_buffer.get());
+		GenerateFormBuffer(&(size()), round_type(), radius(), m_inner_buffer, m_outer_buffer, 0);
 
 		ResetHighlightBuffer(20);
 	}
 
 	Menu::~Menu ()
 	{
+		Destroy(m_inner_buffer);
+		Destroy(m_outer_buffer);
+		Destroy(m_highlight_buffer);
 	}
 
 	void Menu::SetTitle(const String& title)
@@ -137,20 +151,20 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				GenerateFormBuffer(size_p, false, round_type(), radius(), m_buffer.get());
+				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer, m_outer_buffer, 0);
 				ResetHighlightBuffer(size_p->width());
 				break;
 			}
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(data);
-				GenerateFormBuffer(&(size()), false, *type_p, radius(), m_buffer.get());
+				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer, m_outer_buffer, 0);
 				break;
 			}
 
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
-				GenerateFormBuffer(&(size()), false, round_type(), *radius_p, m_buffer.get());
+				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer, m_outer_buffer, 0);
 				break;
 			}
 
@@ -171,7 +185,7 @@ namespace BlendInt {
 		        themes()->menu.inner.g(),
 		        themes()->menu.inner.b(),
 		        themes()->menu.inner.a());
-		draw_inner_buffer(m_buffer.get(), 0);
+		DrawInnerBuffer(m_inner_buffer);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->menu.outline.r(),
@@ -181,7 +195,7 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_outline_buffer(m_buffer.get(), 1);
+		DrawOutlineBuffer(m_outer_buffer);
 
 		FontCache* fc = FontCache::create(Font("Sans"));
 
@@ -214,20 +228,19 @@ namespace BlendInt {
 //			glColor4ub(0, 0, 225, 25);
 //			glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
 
-			m_highlight_buffer->select(0);
-			m_highlight_buffer->Bind();
+			m_highlight_buffer->bind();
 
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glEnableClientState(GL_COLOR_ARRAY);
 
 			glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
 			glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
-			glDrawArrays(GL_POLYGON, 0, m_highlight_buffer->Vertices());
+			glDrawArrays(GL_POLYGON, 0, m_highlight_buffer->vertices());
 
 			glDisableClientState(GL_COLOR_ARRAY);
 			glDisableClientState(GL_VERTEX_ARRAY);
 
-			m_highlight_buffer->Unbind();
+			m_highlight_buffer->unbind();
 
 			MenuItem* item = m_menubin->GetMenuItem(m_highlight - 1);
 
@@ -262,7 +275,7 @@ namespace BlendInt {
 				themes()->menu_item.shadetop,
 				themes()->menu_item.shadedown,
 				Vertical,
-				m_highlight_buffer.get());
+				m_highlight_buffer);
 	}
 
 	unsigned int Menu::GetHighlightNo(int y)

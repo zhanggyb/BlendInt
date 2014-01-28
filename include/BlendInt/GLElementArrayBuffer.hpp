@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GLARRAYBUFFERF_HPP_
-#define _BLENDINT_GLARRAYBUFFERF_HPP_
+#ifndef _BLENDINT_GLELEMENTARRAYBUFFER_HPP_
+#define _BLENDINT_GLELEMENTARRAYBUFFER_HPP_
 
 #ifdef __UNIX__
 #ifdef __APPLE__
@@ -34,37 +34,20 @@
 #endif
 #endif  // __UNIX__
 
-#include <stddef.h>
-
-#include <BlendInt/Types.hpp>
-
-#define BUFFER_OFFSET(bytes) ((GLubyte*) NULL + (bytes))
+#include <BlendInt/Object.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief Array buffer for 2D vertices in float
+	 * @brief A simple element array buffer with 1 property for all buffers
 	 *
-	 * The N in template is the number to describe how many float variable for a vertex
-	 *
-	 * for example:
-	 * 	- for 2D vertex array, only 2 variables (x ,y) for a vertex axis, in this case N is 2
-	 * 	- for 3D vertex array, 3 variables (x, y, z) are needed, N is 3
-	 * 	- for 2D vertex array with color, there're 6 variables for one vertex: (x, y) and (r, g, b, a), in this case N is 6
+	 * @ingroup opengl
 	 */
-	class GLArrayBufferF
+	class GLElementArrayBuffer: public Object
 	{
 	public:
 
-		/**
-		 * @brief Default constructor
-		 */
-		GLArrayBufferF ();
-
-		/**
-		 * @brief Destructor
-		 */
-		~GLArrayBufferF ();
+		GLElementArrayBuffer ();
 
 		/**
 		 * @brief Generate buffer
@@ -88,23 +71,23 @@ namespace BlendInt {
 
 		inline void bind ()
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, m_id);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
 		}
 
 		inline void unbind ()
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 
-		inline void set_data (int vertices, size_t size, const float* data, GLenum usage = GL_STATIC_DRAW)
+		inline void set_data (int vertices, size_t size, const GLuint* data, GLenum usage = GL_STATIC_DRAW)
 		{
 			m_vertices = vertices;
-			glBufferData (GL_ARRAY_BUFFER, size * m_vertices, data, usage);
+			glBufferData (GL_ELEMENT_ARRAY_BUFFER, size * m_vertices, data, usage);
 		}
 
 		inline GLenum target ()
 		{
-			return GL_ARRAY_BUFFER;
+			return GL_ELEMENT_ARRAY_BUFFER;
 		}
 
 		GLenum GetUsage ();
@@ -121,16 +104,18 @@ namespace BlendInt {
 			return m_vertices;
 		}
 
+	protected:
+
+		virtual ~GLElementArrayBuffer ();
+
 	private:
 
 		GLuint m_id;
 
 		GLint m_vertices;
 
-		static const float jit[WIDGET_AA_JITTER][2];
 	};
-
 
 }
 
-#endif /* _BLENDINT_GLARRAYBUFFERF_HPP_ */
+#endif /* _BLENDINT_GLELEMENTARRAYBUFFER_HPP_ */

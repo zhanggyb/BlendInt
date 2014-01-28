@@ -38,20 +38,22 @@
 namespace BlendInt {
 
 	SlideButton::SlideButton()
-	:  AbstractButton()
+	:  AbstractButton(), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
+		InitOnce();
 	}
 
 	SlideButton::SlideButton(AbstractWidget* parent)
-	:  AbstractButton(parent)
+	:  AbstractButton(parent), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
+		InitOnce();
 	}
 
 	SlideButton::~SlideButton()
 	{
-
+		Destroy(m_inner_buffer);
+		Destroy(m_outer_buffer);
+		Destroy(m_highlight_buffer);
 	}
 
 	void SlideButton::Update (int type, const void* data)
@@ -66,7 +68,6 @@ namespace BlendInt {
 				short shadedown = themes()->scroll.shadedown;
 
 				GenerateShadedFormBuffers(size_p,
-						DefaultBorderWidth(),
 						round_type(),
 						radius(),
 						color,
@@ -74,7 +75,9 @@ namespace BlendInt {
 						shadedown,
 						shadedir,
 						5,
-						m_buffer.get()
+						m_inner_buffer,
+						m_outer_buffer,
+						m_highlight_buffer
 						);
 				break;
 			}
@@ -88,7 +91,6 @@ namespace BlendInt {
 				short shadedown = themes()->scroll.shadedown;
 
 				GenerateShadedFormBuffers(size_p,
-						DefaultBorderWidth(),
 						round_type(),
 						*radius_p,
 						color,
@@ -96,7 +98,9 @@ namespace BlendInt {
 						shadedown,
 						shadedir,
 						5,
-						m_buffer.get()
+						m_inner_buffer,
+						m_outer_buffer,
+						m_highlight_buffer
 						);
 				break;
 			}
@@ -108,20 +112,13 @@ namespace BlendInt {
 
 	void SlideButton::Draw ()
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if(down()) {
-			draw_shaded_inner_buffer(m_buffer.get(), 0);
+			DrawShadedInnerBuffer(m_inner_buffer);
 		} else {
-			draw_shaded_inner_buffer(m_buffer.get(), 2);
+			DrawShadedInnerBuffer(m_highlight_buffer);
 		}
 
 		// draw outline
@@ -132,11 +129,9 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_outline_buffer(m_buffer.get(), 1);
+		DrawOutlineBuffer(m_outer_buffer);
 
 		glDisable(GL_BLEND);
-
-		glPopMatrix();
 	}
 
 	void SlideButton::MouseMoveEvent(MouseEvent* event)
@@ -219,12 +214,43 @@ namespace BlendInt {
 		set_down(false);
 	}
 
+	void SlideButton::InitOnce()
+	{
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+
+		m_highlight_buffer = new GLArrayBuffer;
+		Retain(m_highlight_buffer);
+
+		Orientation shadedir = size().width() < size().height() ? Horizontal : Vertical;
+		const Color& color = themes()->scroll.item;
+		short shadetop = themes()->scroll.shadetop;
+		short shadedown = themes()->scroll.shadedown;
+
+		GenerateShadedFormBuffers(&size(),
+				round_type(),
+				radius(),
+				color,
+				shadetop,
+				shadedown,
+				shadedir,
+				5,
+				m_inner_buffer,
+				m_outer_buffer,
+				m_highlight_buffer
+				);
+	}
+
 	// -------------------- Slider ---------------------------
 
 	Slider::Slider(Orientation orientation)
 	: AbstractSlider(orientation), m_slide_button(0)
 	{
 		m_slide_button = new SlideButton(this);
+		Retain(m_slide_button);
 
 		// set default size
 		if (orientation == Vertical) {
@@ -257,6 +283,7 @@ namespace BlendInt {
 	: AbstractSlider(orientation, parent), m_slide_button(0)
 	{
 		m_slide_button = new SlideButton(this);
+		Retain(m_slide_button);
 
 		// set default size
 		if (orientation == Vertical) {
@@ -280,7 +307,7 @@ namespace BlendInt {
 
 	Slider::~Slider()
 	{
-
+		Destroy(m_slide_button);
 	}
 
 	void Slider::set_control_size (size_t size)
@@ -294,13 +321,14 @@ namespace BlendInt {
 
 	void Slider::set_control_widget(SlideButton* widget)
 	{
-		if(widget) {
-			if(m_slide_button)
-				delete m_slide_button;
+		if(!widget) return;
 
-//			Attach(widget);
-			m_slide_button = widget;
-		}
+		if(m_slide_button == widget) return;
+
+		Destroy(m_slide_button);
+
+		m_slide_button = widget;
+		Retain(m_slide_button);
 	}
 
 	void Slider::Update (int type, const void* data)
@@ -350,13 +378,6 @@ namespace BlendInt {
 
 	void Slider::Draw ()
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -367,9 +388,9 @@ namespace BlendInt {
 
 		int space = 0;
 
-#ifdef DEBUG
-		glPushMatrix();
-#endif
+//#ifdef DEBUG
+//		glPushMatrix();
+//#endif
 
 		if(orientation() == Vertical) {
 			space = size().height();
@@ -387,9 +408,9 @@ namespace BlendInt {
 			glEnd();
 		}
 
-#ifdef DEBUG
-		glPopMatrix();
-#endif
+//#ifdef DEBUG
+//		glPopMatrix();
+//#endif
 
 #ifdef DEBUG
 		glLineWidth(1);
@@ -409,9 +430,7 @@ namespace BlendInt {
 
 		glDisable(GL_BLEND);
 
-		glPopMatrix();
-
-		DispatchRender(m_slide_button);
+		//DispatchRender(m_slide_button);
 	}
 
 	void Slider::MouseMoveEvent (MouseEvent* event)

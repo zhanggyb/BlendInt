@@ -24,10 +24,9 @@
 #ifndef _BLENDINT_SLIDER_HPP_
 #define _BLENDINT_SLIDER_HPP_
 
-#include <boost/smart_ptr.hpp>
-
 #include <BlendInt/AbstractSlider.hpp>
 #include <BlendInt/Button.hpp>
+#include <BlendInt/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 
@@ -39,9 +38,9 @@ namespace BlendInt {
 
 		SlideButton (AbstractWidget* parent);
 
-		virtual ~SlideButton ();
-
 	protected:
+
+		virtual ~SlideButton ();
 
 		virtual void Update (int type, const void* data);
 
@@ -55,11 +54,15 @@ namespace BlendInt {
 
 	private:
 
+		void InitOnce ();
+
 		Point m_move_start;
 
 		Point m_position_origin;
 
-		boost::scoped_ptr<GLArrayBufferMultiple> m_buffer;
+		GLArrayBuffer* m_inner_buffer;
+		GLArrayBuffer* m_outer_buffer;
+		GLArrayBuffer* m_highlight_buffer;
 	};
 
 	/**
@@ -73,8 +76,6 @@ namespace BlendInt {
 
 		Slider (Orientation orientation, AbstractWidget* parent);
 
-		virtual ~Slider ();
-
 		void set_control_size (size_t size);
 
 		void set_control_widget (SlideButton *widget);
@@ -85,6 +86,8 @@ namespace BlendInt {
 		}
 
 	protected:
+
+		virtual ~Slider ();
 
 		virtual void Update (int type, const void* data);
 

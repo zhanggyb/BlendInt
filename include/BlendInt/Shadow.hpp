@@ -26,7 +26,7 @@
 
 #include <BlendInt/AbstractRoundForm.hpp>
 #include <BlendInt/Types.hpp>
-#include <BlendInt/GLArrayBufferMultiple.hpp>
+#include <BlendInt/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 
@@ -103,7 +103,9 @@ namespace BlendInt {
 		 */
 		float m_blur_rad;
 
-		GLArrayBufferMultiple m_gl_buffer;
+		//GLArrayBuffer* m_gl_buffer;
+
+		//std::vector<GLuint> m_ids;
 	};
 
 }

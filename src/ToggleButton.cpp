@@ -62,7 +62,9 @@ namespace BlendInt {
 
 	ToggleButton::~ToggleButton ()
 	{
-
+		Destroy(m_inner_buffer);
+		Destroy(m_outer_buffer);
+		Destroy(m_emboss_buffer);
 	}
 
 	void ToggleButton::Update(int type, const void* data)
@@ -72,24 +74,24 @@ namespace BlendInt {
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				GenerateFormBuffer(size_p, round_type(), radius(),
-				        m_inner_buffer.get(), m_outer_buffer.get(),
-				        m_emboss_buffer.get());
+				        m_inner_buffer, m_outer_buffer,
+				        m_emboss_buffer);
 				break;
 			}
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(data);
 				GenerateFormBuffer(&(size()), *type_p, radius(),
-				        m_inner_buffer.get(), m_outer_buffer.get(),
-				        m_emboss_buffer.get());
+				        m_inner_buffer, m_outer_buffer,
+				        m_emboss_buffer);
 				break;
 			}
 
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
 				GenerateFormBuffer(&(size()), round_type(), *radius_p,
-				        m_inner_buffer.get(), m_outer_buffer.get(),
-				        m_emboss_buffer.get());
+				        m_inner_buffer, m_outer_buffer,
+				        m_emboss_buffer);
 				break;
 			}
 
@@ -134,7 +136,7 @@ namespace BlendInt {
 			}
 		}
 
-		DrawInnerBuffer(m_inner_buffer.get());
+		DrawInnerBuffer(m_inner_buffer);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -146,10 +148,10 @@ namespace BlendInt {
 		glColor4ubv(tcol);
 
 		/* outline */
-		DrawOutlineBuffer(m_outer_buffer.get());
+		DrawOutlineBuffer(m_outer_buffer);
 
 		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-		DrawOutlineBuffer(m_emboss_buffer.get());
+		DrawOutlineBuffer(m_emboss_buffer);
 
 		glDisable(GL_BLEND);
 
@@ -159,9 +161,12 @@ namespace BlendInt {
 
 	void ToggleButton::InitializeOnce ()
 	{
-		m_inner_buffer.reset(new GLArrayBufferF);
-		m_outer_buffer.reset(new GLArrayBufferF);
-		m_emboss_buffer.reset(new GLArrayBufferF);
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+		m_emboss_buffer = new GLArrayBuffer;
+		Retain(m_emboss_buffer);
 
 		set_round_type(RoundAll);
 		set_expand_x(true);
@@ -170,15 +175,18 @@ namespace BlendInt {
 		set_preferred_size(90, 20);
 
 		GenerateFormBuffer(&size(), round_type(), radius(),
-		        m_inner_buffer.get(), m_outer_buffer.get(),
-		        m_emboss_buffer.get());
+		        m_inner_buffer, m_outer_buffer,
+		        m_emboss_buffer);
 	}
 
 	void ToggleButton::InitializeOnce (const String& text)
 	{
-		m_inner_buffer.reset(new GLArrayBufferF);
-		m_outer_buffer.reset(new GLArrayBufferF);
-		m_emboss_buffer.reset(new GLArrayBufferF);
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+		m_emboss_buffer = new GLArrayBuffer;
+		Retain(m_emboss_buffer);
 
 		set_round_type(RoundAll);
 		set_expand_x(true);
@@ -187,8 +195,8 @@ namespace BlendInt {
 		set_preferred_size(size());
 
 		GenerateFormBuffer(&size(), round_type(), radius(),
-		        m_inner_buffer.get(), m_outer_buffer.get(),
-		        m_emboss_buffer.get());
+		        m_inner_buffer, m_outer_buffer,
+		        m_emboss_buffer);
 	}
 
 }

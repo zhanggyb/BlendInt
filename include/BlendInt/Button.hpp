@@ -27,7 +27,7 @@
 #include <BlendInt/AbstractButton.hpp>
 #include <BlendInt/String.hpp>
 
-#include <BlendInt/GLArrayBufferF.hpp>
+#include <BlendInt/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 
@@ -66,9 +66,9 @@ namespace BlendInt {
 
 		void InitOnce (const String& text);
 
-		GLArrayBufferF* m_inner_buffer;
-		GLArrayBufferF* m_outer_buffer;
-		GLArrayBufferF* m_emboss_buffer;
+		GLArrayBuffer* m_inner_buffer;
+		GLArrayBuffer* m_outer_buffer;
+		GLArrayBuffer* m_emboss_buffer;
 	};
 
 }

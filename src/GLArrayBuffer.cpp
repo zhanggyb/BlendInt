@@ -21,54 +21,55 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/VertexBuffer.hpp>
-#include <BlendInt/ShaderManager.hpp>
+#include <GLArrayBuffer.hpp>
 
 namespace BlendInt {
 
-	VertexBuffer::VertexBuffer()
-	: m_program(0)
-	{
-		m_buffer.reset(new GLArrayBufferMultiple);
-	}
-
-	VertexBuffer::~VertexBuffer()
-	{
-		Object::Destroy(m_program);
-	}
-
-	void VertexBuffer::Generate (size_t num)
-	{
-		m_buffer->Generate(num);
-	}
-
-	void VertexBuffer::Upload (int vertices, int unit_size, GLenum target, GLenum usage, const GLvoid* data, size_t index)
-	{
-		m_buffer->select(index);
-		m_buffer->SetProperty(vertices, unit_size, target, usage);
-		m_buffer->Bind();
-		m_buffer->Upload(data);
-		m_buffer->Unbind();
-	}
-
-	void VertexBuffer::SetProgram(GLSLProgram* program)
-	{
-		if(m_program == program) return;
-
-		Object::Destroy(m_program);
-
-		m_program = program;
-		Object::Retain(m_program);
-	}
-
-	void VertexBuffer::Draw()
+	GLArrayBuffer::GLArrayBuffer()
+		: Object(), m_id(0), m_vertices(0)
 	{
 
 	}
 
-	void VertexBuffer::DeleteProgram()
+	GLArrayBuffer::~GLArrayBuffer()
 	{
-		Object::Destroy(m_program);
+		glDeleteBuffers(1, &m_id);
+	}
+
+	void GLArrayBuffer::Generate()
+	{
+		if(!m_id)
+			Clear();
+
+		glGenBuffers(1, &m_id);
+	}
+
+	void GLArrayBuffer::Clear()
+	{
+		glDeleteBuffers(1, &m_id);
+		m_id = 0;
+	}
+
+	bool GLArrayBuffer::IsBbuffer ()
+	{
+		return glIsBuffer(m_id);
+	}
+
+	GLenum GLArrayBuffer::GetUsage ()
+	{
+		GLint usage = 0;
+
+		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
+
+		return usage;
+	}
+
+	GLint GLArrayBuffer::GetBufferSize ()
+	{
+		GLint buffer_size = 0;
+		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);
+
+		return buffer_size;
 	}
 
 }

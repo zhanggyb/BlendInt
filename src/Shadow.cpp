@@ -53,7 +53,6 @@ namespace BlendInt {
 
 	Shadow::~Shadow()
 	{
-
 	}
 
 	void Shadow::set_blur_radius(float blur_rad)
@@ -91,6 +90,7 @@ namespace BlendInt {
 				totvert = generate_shadow_vertices(&shadow_size, radius(), 0.0f,
 				        inner_v);
 
+				/*
 				m_gl_buffer.Generate((int)m_blur_rad);
 				for (step = 1; step <= (int) m_blur_rad; step++) {
 					generate_shadow_vertices(&shadow_size, radius(), (float) step,
@@ -103,6 +103,7 @@ namespace BlendInt {
 					m_gl_buffer.Upload(quad_strip);
 					m_gl_buffer.Unbind();
 				}
+				*/
 
 				break;
 			}
@@ -144,6 +145,7 @@ namespace BlendInt {
 
 			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
 
+			/*
 			m_gl_buffer.select(step - 1);
 			m_gl_buffer.Bind();
 			glVertexPointer(2, GL_FLOAT, 0, 0);
@@ -151,6 +153,8 @@ namespace BlendInt {
 			glDrawArrays(GL_QUAD_STRIP, 0, m_gl_buffer.Vertices());
 			glDisableClientState(GL_VERTEX_ARRAY);
 			m_gl_buffer.Unbind();
+					*/
+
 		}
 
 		glDisable(GL_BLEND);

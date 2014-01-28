@@ -93,7 +93,7 @@ namespace BlendInt {
 		        themes()->regular.inner.b(),
 		        themes()->regular.inner.a());
 
-		draw_inner(inner_v, vert_sum.total);
+		DrawInnerArray(inner_v, vert_sum.total);
 
 //		draw_gl_buffer(m_inner_buffer.get());
 
@@ -107,7 +107,7 @@ namespace BlendInt {
 
 //		draw_gl_buffer_anti_alias(m_outer_buffer.get());
 
-		draw_outline(quad_strip, vert_sum.total * 2 + 2);
+		DrawOutlineArray(quad_strip, vert_sum.total * 2 + 2);
 
 		glDisable(GL_BLEND);
 	}

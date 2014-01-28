@@ -25,8 +25,7 @@
 #define _BLENDINT_FORM_HPP_
 
 #include <BlendInt/AbstractWidget.hpp>
-#include <BlendInt/GLArrayBufferMultiple.hpp>
-#include <BlendInt/GLArrayBufferF.hpp>
+#include <BlendInt/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 
@@ -77,12 +76,12 @@ namespace BlendInt {
 		/**
 		 * @brief draw vertices without buffer
 		 */
-		void draw_outline (const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num);
+		void DrawOutlineArray (const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num);
 
 		/**
 		 * @brief draw vertices without buffer
 		 */
-		void draw_inner (const float inner_v[WIDGET_SIZE_MAX][2], int num);
+		void DrawInnerArray (const float inner_v[WIDGET_SIZE_MAX][2], int num);
 
 		/**
 		 * @brief draw the GL Buffer in Render()
@@ -96,9 +95,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_inner_buffer (AbstractGLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
-
-		void DrawInnerBuffer (GLArrayBufferF* buffer, int mode = GL_POLYGON);
+		void DrawInnerBuffer (GLArrayBuffer* buffer, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw shaded GL buffer in Render()
@@ -112,9 +109,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_shaded_inner_buffer (AbstractGLBuffer* buffer, size_t index = 0, int mode = GL_POLYGON);
-
-		void DrawShadedInnerBuffer (GLArrayBufferF* buffer, int mode = GL_POLYGON);
+		void DrawShadedInnerBuffer (GLArrayBuffer* buffer, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw the GL Buffer in Render() with anti-alias
@@ -128,10 +123,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void draw_outline_buffer (AbstractGLBuffer* buffer, size_t index = 0, int mode = GL_QUAD_STRIP);
-
-		void DrawOutlineBuffer (GLArrayBufferF* buffer, int mode = GL_QUAD_STRIP);
-
+		void DrawOutlineBuffer (GLArrayBuffer* buffer, int mode = GL_QUAD_STRIP);
 
 		/**
 		 * @brief Generate vertex buffer object for drawing a form
@@ -145,77 +137,19 @@ namespace BlendInt {
 		void GenerateFormBuffer (const Size* size,
 				int round_type,
 				float radius,
-				GLArrayBufferF* inner_buffer,
-				GLArrayBufferF* outer_buffer,
-				GLArrayBufferF* emboss_buffer);
-
-		/**
-		 * @brief generate GL buffer for form drawing
-		 * @param[in] size the size to enclose vertices
-		 * @param[in] emboss if draw emboss
-		 * @param[in] round_type round type
-		 * @param[in] radius round radius
-		 * @param[out] buffer the buffer generated
-		 *
-		 * If emboss is true, 3 buffers are generated, if emboss is false, 2 buffers are generated:
-		 *	- index 0: for inner drawing
-		 *	- index 1: for outline drawing
-		 *	- index 2: for emboss drawing
-		 */
-		void GenerateFormBuffer (const Size* size, bool emboss, int round_type,
-								 float radius, GLArrayBufferMultiple* buffer);
-
-		/**
-		 * @brief generate GL buffer for rect form drawing
-		 * @param size
-		 * @param emboss
-		 * @param buffer
-		 */
-		void GenerateRectFormBuffer (const Size* size, bool emboss, GLArrayBufferMultiple* buffer);
-
-		void GenerateShadedFormBuffer (const Size* size,
-									   float border,
-									   int round_type,
-									   float radius,
-									   const WidgetTheme* theme,
-									   Orientation shadedir,
-									   AbstractGLBuffer* buffer);
+				GLArrayBuffer* inner_buffer,
+				GLArrayBuffer* outer_buffer,
+				GLArrayBuffer* emboss_buffer);
 
 		void GenerateShadedFormBuffers (const Size* size,
-									   int round_type,
-									   float radius,
-									   const WidgetTheme* theme,
-									   GLArrayBufferF* inner_buffer_p,
-									   GLArrayBufferF* outer_buffer_p,
-									   GLArrayBufferF* highlight_buffer_p);
-
-
-		/**
-		 * @brief generate buffer with shaded color
-		 * @param[in] size
-		 * @param[in] border
-		 * @param[in] round_type
-		 * @param[in] radius
-		 * @param[in] theme
-		 * @param[in] shadedir
-		 * @param[in] highlight
-		 * @param[out] buffer
-		 *
-		 * This function calculate the output GLBuffers with shaded color
-		 *
-		 * If highlight > 0, 3 buffers will be generated, if not, 2 buffers generated:
-		 *	- buffer index 0: used for inner
-		 *	- buffer index 1: used for outline
-		 *	- buffer index 2: used for inner highlight
-		 */
-		void GenerateShadedFormBuffers (const Size* size,
-									   float border,
 									   int round_type,
 									   float radius,
 									   const WidgetTheme* theme,
 									   Orientation shadedir,
 									   short highlight,
-									   GLArrayBufferMultiple* buffer);
+									   GLArrayBuffer* inner_buffer_p,
+									   GLArrayBuffer* outer_buffer_p,
+									   GLArrayBuffer* highlight_buffer_p);
 
 		void GenerateShadedFormBuffer (const Size* size,
 									   float border,
@@ -225,18 +159,7 @@ namespace BlendInt {
 									   short shadetop,
 									   short shadedown,
 									   Orientation shadedir,
-									   GLArrayBufferF* buffer);
-
-
-		void GenerateShadedFormBuffer (const Size* size,
-									   float border,
-									   int round_type,
-									   float radius,
-									   const Color& color,
-									   short shadetop,
-									   short shadedown,
-									   Orientation shadedir,
-									   AbstractGLBuffer* buffer);
+									   GLArrayBuffer* buffer);
 
 		/**
 		 * @brief generate buffer with shaded color
@@ -266,41 +189,9 @@ namespace BlendInt {
 									   short shadedown,
 									   Orientation shadedir,
 									   short highlight,
-									   GLArrayBufferF* inner_buffer,
-									   GLArrayBufferF* outer_buffer,
-									   GLArrayBufferF* highlight_buffer);
-
-
-		/**
-		 * @brief generate buffer with shaded color
-		 * @param[in] size
-		 * @param[in] border
-		 * @param[in] round_type
-		 * @param[in] radius
-		 * @param[in] color
-		 * @param[in] shadetop
-		 * @param[in] shadedown
-		 * @param[in] shadedir
-		 * @param[in] highlight
-		 * @param[out] buffer
-		 *
-		 * This function calculate the output GLBuffers with shaded color
-		 *
-		 * If highlight > 0, 3 buffers will be generated, if not, 2 buffers generated:
-		 *	- buffer index 0: used for inner
-		 *	- buffer index 1: used for outline
-		 *	- buffer index 2: used for inner highlight
-		 */
-		void GenerateShadedFormBuffers (const Size* size,
-									   float border,
-									   int round_type,
-									   float radius,
-									   const Color& color,
-									   short shadetop,
-									   short shadedown,
-									   Orientation shadedir,
-									   short highlight,
-									   GLArrayBufferMultiple* buffer);
+									   GLArrayBuffer* inner_buffer,
+									   GLArrayBuffer* outer_buffer,
+									   GLArrayBuffer* highlight_buffer);
 
 	private:
 

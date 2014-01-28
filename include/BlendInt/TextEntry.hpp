@@ -31,9 +31,7 @@
 #include <BlendInt/Rect.hpp>
 
 #include <BlendInt/Timer.hpp>
-#include <BlendInt/GLArrayBufferF.hpp>
-
-#include <boost/smart_ptr.hpp>
+#include <BlendInt/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 
@@ -47,8 +45,6 @@ namespace BlendInt {
 
 		TextEntry(AbstractWidget* parent);
 
-		virtual ~TextEntry();
-
 		void SetText (const String& text);
 
 		void SetFont (const Font& font);
@@ -56,6 +52,8 @@ namespace BlendInt {
 		const String& text () const {return m_text;}
 
 	protected:
+
+		virtual ~TextEntry();
 
 		virtual void Update (int type, const void* data);
 
@@ -108,8 +106,8 @@ namespace BlendInt {
 
 		bool m_flicker;
 
-		boost::scoped_ptr<GLArrayBufferF> m_inner_buffer;
-		boost::scoped_ptr<GLArrayBufferF> m_outer_buffer;
+		GLArrayBuffer* m_inner_buffer;
+		GLArrayBuffer* m_outer_buffer;
 
 		static Margin DefaultTextEntryPadding;
 	};

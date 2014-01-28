@@ -36,18 +36,34 @@
 namespace BlendInt {
 
 	ScrollControl::ScrollControl ()
-	: AbstractButton()
+	: AbstractButton(), m_inner_buffer(0), m_outer_buffer(0)
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+
+		m_highlight_buffer = new GLArrayBuffer;
+		Retain(m_highlight_buffer);
+
 		set_round_type(RoundAll);
 
 		Init ();
 	}
 
 	ScrollControl::ScrollControl(AbstractWidget* parent)
-	: AbstractButton(parent)
+	: AbstractButton(parent), m_inner_buffer(0), m_outer_buffer(0)
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+
+		m_highlight_buffer = new GLArrayBuffer;
+		Retain(m_highlight_buffer);
+
 		set_round_type(RoundAll);
 
 		Init ();
@@ -55,7 +71,8 @@ namespace BlendInt {
 
 	ScrollControl::~ScrollControl ()
 	{
-
+		Destroy(m_inner_buffer);
+		Destroy(m_outer_buffer);
 	}
 
 	void ScrollControl::Update (int type, const void* data)
@@ -71,9 +88,9 @@ namespace BlendInt {
 				short shadetop = themes()->scroll.shadetop;
 				short shadedown = themes()->scroll.shadedown;
 
-				GenerateShadedFormBuffers(size_p, DefaultBorderWidth(), round_type(),
+				GenerateShadedFormBuffers(size_p, round_type(),
 				        radius(), color, shadetop, shadedown, shadedir, 5,
-				        m_buffer.get());
+				        m_inner_buffer, m_outer_buffer, m_highlight_buffer);
 				break;
 			}
 
@@ -87,9 +104,9 @@ namespace BlendInt {
 				short shadetop = themes()->scroll.shadetop;
 				short shadedown = themes()->scroll.shadedown;
 
-				GenerateShadedFormBuffers(size_p, DefaultBorderWidth(), round_type(),
+				GenerateShadedFormBuffers(size_p, round_type(),
 				        *radius_p, color, shadetop, shadedown, shadedir, 5,
-				        m_buffer.get());
+				        m_inner_buffer, m_outer_buffer, m_highlight_buffer);
 				break;
 			}
 
@@ -111,9 +128,9 @@ namespace BlendInt {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		if(down()) {
-			draw_shaded_inner_buffer(m_buffer.get(), 0);
+			DrawShadedInnerBuffer(m_inner_buffer);
 		} else {
-			draw_shaded_inner_buffer(m_buffer.get(), 2);
+			DrawShadedInnerBuffer(m_highlight_buffer);
 		}
 
 		// draw outline
@@ -125,7 +142,7 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_outline_buffer(m_buffer.get(), 1);
+		DrawOutlineBuffer(m_outer_buffer);
 
 		glDisable(GL_BLEND);
 
@@ -205,17 +222,23 @@ namespace BlendInt {
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		GenerateShadedFormBuffers(size_p, DefaultBorderWidth(), round_type(), radius(),
-		        color, shadetop, shadedown, shadedir, 5, m_buffer.get());
+		GenerateShadedFormBuffers(size_p, round_type(), radius(),
+		        color, shadetop, shadedown, shadedir, 5, m_inner_buffer, m_outer_buffer, m_highlight_buffer);
 	}
 
 	// ---------------------------- SliderBar -------------------------------
 
 	SliderBar::SliderBar(Orientation orientation)
-	: AbstractSlider(orientation), m_control_button(0)
+	: AbstractSlider(orientation), m_inner_buffer(0), m_outer_buffer(0), m_control_button(0)
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+
 		m_control_button = new ScrollControl(this);
+		Retain(m_control_button);
 
 		set_round_type(RoundAll);
 
@@ -240,10 +263,16 @@ namespace BlendInt {
 	}
 
 	SliderBar::SliderBar(Orientation orientation, AbstractWidget* parent)
-	: AbstractSlider(orientation, parent), m_control_button(0)
+	: AbstractSlider(orientation, parent), m_inner_buffer(0), m_outer_buffer(0), m_control_button(0)
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+
 		m_control_button = new ScrollControl(this);
+		Retain(m_control_button);
 
 		set_round_type(RoundAll);
 
@@ -271,7 +300,9 @@ namespace BlendInt {
 
 	SliderBar::~SliderBar()
 	{
-
+		Destroy(m_inner_buffer);
+		Destroy(m_outer_buffer);
+		Destroy(m_control_button);
 	}
 
 	void SliderBar::Update (int type, const void* data)
@@ -294,9 +325,9 @@ namespace BlendInt {
 				short shadetop = themes()->scroll.shadetop;
 				short shadedown = themes()->scroll.shadedown;
 
-				GenerateShadedFormBuffers(size_p, DefaultBorderWidth(), round_type(),
+				GenerateShadedFormBuffers(size_p, round_type(),
 				        radius(), color, shadetop, shadedown, shadedir, 5,
-				        m_buffer.get());
+				        m_inner_buffer, m_outer_buffer, 0);
 				break;
 			}
 
@@ -310,9 +341,9 @@ namespace BlendInt {
 				short shadetop = themes()->scroll.shadetop;
 				short shadedown = themes()->scroll.shadedown;
 
-				GenerateShadedFormBuffers(size_p, DefaultBorderWidth(), round_type(),
+				GenerateShadedFormBuffers(size_p, round_type(),
 				        *radius_p, color, shadetop, shadedown, shadedir, 5,
-				        m_buffer.get());
+				        m_inner_buffer, m_outer_buffer, 0);
 				break;
 			}
 
@@ -331,7 +362,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		draw_shaded_inner_buffer(m_buffer.get(), 0);
+		DrawShadedInnerBuffer(m_inner_buffer);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
@@ -342,10 +373,7 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		draw_outline_buffer(m_buffer.get(), 1);
-
-//		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-//		draw_gl_buffer_anti_alias(WidgetBufferKeyEmboss);
+		DrawOutlineBuffer(m_outer_buffer);
 
 		glDisable(GL_BLEND);
 
@@ -448,8 +476,8 @@ namespace BlendInt {
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		GenerateShadedFormBuffers(size_p, DefaultBorderWidth(), round_type(), radius(),
-		        color, shadetop, shadedown, shadedir, 0, m_buffer.get());
+		GenerateShadedFormBuffers(size_p, round_type(), radius(),
+		        color, shadetop, shadedown, shadedir, 0, m_inner_buffer, m_outer_buffer, 0);
 	}
 
 	int SliderBar::GetSpace ()
@@ -467,13 +495,19 @@ namespace BlendInt {
 	// ---------------------------- ScrollBar -------------------------------
 
 	ScrollBar::ScrollBar (Orientation orientation)
-			: AbstractSlider(orientation), m_scroll_control(0)
+			: AbstractSlider(orientation), m_scroll_control(0), m_inner_buffer(0), m_outer_buffer(0)
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
-		SetRoundType(RoundAll);
-		SetRadius(8);
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
 
 		m_scroll_control = new ScrollControl(this);
+		Retain(m_scroll_control);
+
+		SetRoundType(RoundAll);
+		SetRadius(8);
 
 		if (orientation == Vertical) {	// Vertical
 			Resize(16, 400);
@@ -492,9 +526,16 @@ namespace BlendInt {
 	}
 
 	ScrollBar::ScrollBar (Orientation orientation, AbstractWidget* parent)
-			: AbstractSlider(orientation, parent), m_scroll_control(0)
+			: AbstractSlider(orientation, parent), m_scroll_control(0), m_inner_buffer(0), m_outer_buffer(0)
 	{
-		m_buffer.reset(new GLArrayBufferMultiple);
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+
+		m_scroll_control = new ScrollControl(this);
+		Retain(m_scroll_control);
 
 		SetRoundType(RoundAll);
 		SetRadius(8);
@@ -556,53 +597,14 @@ namespace BlendInt {
 
 	void ScrollBar::update_shape(const Size* size)
 	{
-		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-
-		VerticesSum vert_sum;
-
 		Orientation shadedir = orientation() == Horizontal ? Horizontal : Vertical;
 
 		Color color = themes()->scroll.inner;
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		if(shadedir)
-			vert_sum = generate_vertices(size, DefaultBorderWidth(), color, shadetop, shadedown, shadedir, inner_v, outer_v);
-		else					// swap shadetop and shadedown
-			vert_sum = generate_vertices(size, DefaultBorderWidth(), color, shadedown, shadetop, shadedir, inner_v, outer_v);
-
-		m_buffer.get()->Generate(2);
-		m_buffer.get()->select(0);
-		m_buffer.get()->SetProperty(vert_sum.total, sizeof(inner_v[0]), GL_STATIC_DRAW);
-		m_buffer.get()->Bind();
-		m_buffer.get()->Upload(inner_v);
-		m_buffer.get()->Unbind();
-
-		// the quad strip for outline
-
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-
-		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
-
-		m_buffer.get()->select(1);
-		m_buffer.get()->SetProperty(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
-
-		m_buffer.get()->Bind();
-		m_buffer.get()->Upload(quad_strip);
-		m_buffer.get()->Unbind();
-
-		float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
-
-		verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip_emboss);
-
-//		m_buffer.get()->generate(WidgetBufferKeyEmboss);
-//		m_buffer.get()->select(WidgetBufferKeyEmboss);
-//		m_buffer.get()->set_property(vert_sum.half * 2, sizeof(quad_strip_emboss[0]), GL_STATIC_DRAW);
-//
-//		m_buffer.get()->bind();
-//		m_buffer.get()->upload(quad_strip_emboss);
-//		m_buffer.get()->unbind();
+		GenerateShadedFormBuffers(size, round_type(), radius(), color, shadetop,
+		        shadedown, shadedir, 0, m_inner_buffer, m_outer_buffer, 0);
 	}
 
 	void ScrollBar::Draw ()
@@ -615,7 +617,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		draw_shaded_inner_buffer(m_buffer.get(), 0);
+		DrawShadedInnerBuffer(m_inner_buffer);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
@@ -627,7 +629,7 @@ namespace BlendInt {
 
 		glColor4ubv(tcol);
 
-		draw_outline_buffer(m_buffer.get(), 1);
+		DrawOutlineBuffer(m_outer_buffer);
 
 		glDisable(GL_BLEND);
 

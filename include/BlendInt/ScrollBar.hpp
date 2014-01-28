@@ -24,10 +24,9 @@
 #ifndef _BLENDINT_SCROLLBAR_HPP_
 #define _BLENDINT_SCROLLBAR_HPP_
 
-#include <boost/smart_ptr.hpp>
 #include <BlendInt/Slider.hpp>
 
-#include <BlendInt/AbstractGLBuffer.hpp>
+#include <BlendInt/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 
@@ -42,9 +41,9 @@ namespace BlendInt {
 
 		ScrollControl (AbstractWidget* parent);
 
-		virtual ~ScrollControl ();
-
 	protected:
+
+		virtual ~ScrollControl ();
 
 		virtual void Update (int type, const void* data);
 
@@ -64,7 +63,9 @@ namespace BlendInt {
 
 		Point m_position_origin;
 
-		boost::scoped_ptr<GLArrayBufferMultiple> m_buffer;
+		GLArrayBuffer* m_inner_buffer;
+		GLArrayBuffer* m_outer_buffer;
+		GLArrayBuffer* m_highlight_buffer;
 	};
 
 	/**
@@ -106,7 +107,8 @@ namespace BlendInt {
 
 		void set_control_size (size_t size);
 
-		boost::scoped_ptr<GLArrayBufferMultiple> m_buffer;
+		GLArrayBuffer* m_inner_buffer;
+		GLArrayBuffer* m_outer_buffer;
 
 		ScrollControl* m_control_button;
 	};
@@ -147,8 +149,8 @@ namespace BlendInt {
 
 		ScrollControl* m_scroll_control;
 
-		boost::scoped_ptr<GLArrayBufferMultiple> m_buffer;
-
+		GLArrayBuffer* m_inner_buffer;
+		GLArrayBuffer* m_outer_buffer;
 	};
 
 }

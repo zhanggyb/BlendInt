@@ -64,9 +64,9 @@ namespace BlendInt {
 
 	Button::~Button ()
 	{
-		delete m_inner_buffer;
-		delete m_outer_buffer;
-		delete m_emboss_buffer;
+		Destroy(m_inner_buffer);
+		Destroy(m_outer_buffer);
+		Destroy(m_emboss_buffer);
 	}
 
 	void Button::Update(int type, const void* data)
@@ -150,9 +150,12 @@ namespace BlendInt {
 
 	void Button::InitOnce ()
 	{
-		m_inner_buffer = new GLArrayBufferF;
-		m_outer_buffer = new GLArrayBufferF;
-		m_emboss_buffer = new GLArrayBufferF;
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+		m_emboss_buffer = new GLArrayBuffer;
+		Retain(m_emboss_buffer);
 
 		set_round_type(RoundAll);
 		SetExpandX(true);
@@ -162,9 +165,12 @@ namespace BlendInt {
 
 	void Button::InitOnce (const String& text)
 	{
-		m_inner_buffer = new GLArrayBufferF;
-		m_outer_buffer = new GLArrayBufferF;
-		m_emboss_buffer = new GLArrayBufferF;
+		m_inner_buffer = new GLArrayBuffer;
+		Retain(m_inner_buffer);
+		m_outer_buffer = new GLArrayBuffer;
+		Retain(m_outer_buffer);
+		m_emboss_buffer = new GLArrayBuffer;
+		Retain(m_emboss_buffer);
 
 		set_round_type(RoundAll);
 		SetExpandX(true);

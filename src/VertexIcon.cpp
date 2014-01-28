@@ -96,32 +96,34 @@ namespace BlendInt {
 	};
 
 	VertexIcon::VertexIcon ()
-		: Icon()
+		: Icon(), m_array_buffer(0), m_index_buffer(0)
 	{
 		set_size(16, 16);
+		m_array_buffer = new GLArrayBuffer;
+		Retain(m_array_buffer);
+
+		m_index_buffer = new GLElementArrayBuffer;
+		Retain(m_index_buffer);
 	}
 
 	VertexIcon::~VertexIcon ()
 	{
-
+		Destroy(m_array_buffer);
+		Destroy(m_index_buffer);
 	}
 
 	void VertexIcon::load (const float (*vertex_array)[2], size_t array_size,
 						   const unsigned int (*vertex_indices)[3], size_t indeces_size)
 	{
-		m_array_buffer.Generate(1);
-		m_array_buffer.select(0);	// 0 for ARRAY BUFFER
-		m_array_buffer.SetProperty(array_size, sizeof(vertex_array[0]), GL_STATIC_DRAW);
-		m_array_buffer.Bind();
-		m_array_buffer.Upload(vertex_array);
-		m_array_buffer.Unbind();
+		m_array_buffer->Generate();
+		m_array_buffer->bind();
+		m_array_buffer->set_data(array_size, sizeof(vertex_array[0]), vertex_array[0]);
+		m_array_buffer->unbind();
 
-		m_index_buffer.Generate(1);
-		m_index_buffer.select(0);	// 1 for ELEMENT ARRAY BUFFER
-		m_index_buffer.SetProperty(indeces_size, sizeof(vertex_indices[0]), GL_STATIC_DRAW);
-		m_index_buffer.Bind();
-		m_index_buffer.Upload(vertex_indices);
-		m_index_buffer.Unbind();
+		m_index_buffer->Generate();
+		m_index_buffer->bind();
+		m_index_buffer->set_data(indeces_size, sizeof(vertex_indices[0]), vertex_indices[0]);
+		m_index_buffer->unbind();
 	}
 
 	void VertexIcon::Update (int type, const void* data)
@@ -139,13 +141,11 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		if (m_array_buffer.size() && m_index_buffer.size()) {
+		if (m_array_buffer && m_index_buffer) {
 
-			m_array_buffer.select(0);
-			m_array_buffer.Bind();	// bind ARRAY BUFFER
+			m_array_buffer->bind();	// bind ARRAY BUFFER
 
-			m_index_buffer.select(0);
-			m_index_buffer.Bind();	// bind ELEMENT ARRAY BUFFER
+			m_index_buffer->bind();	// bind ELEMENT ARRAY BUFFER
 
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
@@ -153,15 +153,15 @@ namespace BlendInt {
 			/* for each AA step */
 			for (int i = 0; i < WIDGET_AA_JITTER; i++) {
 				glTranslatef(jit[i][0], jit[i][1], 0.0f);
-				glDrawElements(GL_TRIANGLES, m_index_buffer.Vertices() * 3,
+				glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
 							   GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 				glTranslatef(-jit[i][0], -jit[i][1], 0.0f);
 			}
 
 			glDisableClientState(GL_VERTEX_ARRAY);
 
-			m_index_buffer.Unbind();
-			m_array_buffer.Unbind();
+			m_index_buffer->unbind();
+			m_array_buffer->unbind();
 		}
 
 		glDisable(GL_BLEND);

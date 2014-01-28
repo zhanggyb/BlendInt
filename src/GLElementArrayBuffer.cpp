@@ -21,29 +21,31 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <GLArrayBufferF.hpp>
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
+#include <BlendInt/GLElementArrayBuffer.hpp>
 
 namespace BlendInt {
 
-	const float GLArrayBufferF::jit[WIDGET_AA_JITTER][2] = {
-			{ 0.468813, -0.481430}, {-0.155755, -0.352820},
-			{ 0.219306, -0.238501}, {-0.393286, -0.110949},
-			{-0.024699,  0.013908}, { 0.343805,  0.147431},
-			{-0.272855,  0.269918}, { 0.095909,  0.388710}
-	};
-
-	GLArrayBufferF::GLArrayBufferF()
-	: m_id(0), m_vertices(0)
+	GLElementArrayBuffer::GLElementArrayBuffer()
+	: Object(), m_id(0), m_vertices(0)
 	{
 
 	}
 
-	GLArrayBufferF::~GLArrayBufferF()
+	GLElementArrayBuffer::~GLElementArrayBuffer ()
 	{
 		glDeleteBuffers(1, &m_id);
 	}
 
-	void GLArrayBufferF::Generate()
+	void GLElementArrayBuffer::Generate()
 	{
 		if(!m_id)
 			Clear();
@@ -51,43 +53,32 @@ namespace BlendInt {
 		glGenBuffers(1, &m_id);
 	}
 
-	void GLArrayBufferF::Clear()
+	void GLElementArrayBuffer::Clear()
 	{
 		glDeleteBuffers(1, &m_id);
 		m_id = 0;
 	}
 
-	bool GLArrayBufferF::IsBbuffer ()
+	bool GLElementArrayBuffer::IsBbuffer ()
 	{
 		return glIsBuffer(m_id);
 	}
 
-	GLenum GLArrayBufferF::GetUsage ()
+	GLenum GLElementArrayBuffer::GetUsage ()
 	{
 		GLint usage = 0;
 
-		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
+		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_USAGE, &usage);
 
 		return usage;
 	}
 
-	GLint GLArrayBufferF::GetBufferSize ()
+	GLint GLElementArrayBuffer::GetBufferSize ()
 	{
 		GLint buffer_size = 0;
-		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);
+		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);
 
 		return buffer_size;
 	}
-
-//	GLint GLArrayBufferF::vertices(GLint size)
-//	{
-//		size_t num = 0;
-//		GLint buffer_size = 0;
-//
-//		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);
-//		num = buffer_size / (sizeof(float) * size);
-//
-//		return num;
-//	}
 
 }
