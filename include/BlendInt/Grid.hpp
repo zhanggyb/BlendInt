@@ -21,46 +21,35 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MESH_HPP_
-#define _BLENDINT_MESH_HPP_
+#ifndef _BLENDINT_GRID_HPP_
+#define _BLENDINT_GRID_HPP_
 
-#include <glm/glm.hpp>
-#include <BlendInt/Object.hpp>
-
-#include <BlendInt/GLArrayBuffer.hpp>
-#include <BlendInt/GLSLProgram.hpp>
-#include <BlendInt/GLElementArrayBuffer.hpp>
+#include <BlendInt/AbstractPrimitive.hpp>
 
 namespace BlendInt {
 
-	class Mesh: public Object
+	class Grid: public AbstractPrimitive
 	{
 	public:
 
-		Mesh ();
-
-		void SetProgram (GLSLProgram* program);
-
-		void SetVertexBuffer (GLArrayBuffer* vb);
-
-		void SetIndexBuffer (GLElementArrayBuffer* ib);
+		Grid ();
 
 		virtual void Render (const glm::mat4& MVP);
 
 	protected:
 
-		virtual ~Mesh();
+		virtual ~Grid ();
 
 	private:
 
-		GLArrayBuffer* m_vertices;
+		void InitOnce ();
 
-		GLElementArrayBuffer* m_index;
-
-		GLSLProgram* m_program;
-
+		int m_size;
+		int m_step;
 	};
 
 }
 
-#endif /* _BLENDINT_MESH_HPP_ */
+
+
+#endif /* _BLENDINT_GRID_HPP_ */

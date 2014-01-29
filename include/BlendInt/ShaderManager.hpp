@@ -63,6 +63,11 @@ namespace BlendInt {
 			return text_uniform_color_;
 		}
 
+		const GLint& uniform_mvp ()
+		{
+			return m_uniform_mvp;
+		}
+
 		const GLuint& text_vbo ()
 		{
 			return text_vbo_;
@@ -87,9 +92,17 @@ namespace BlendInt {
 
 		GLSLProgram* m_text_program;
 
+		GLint m_uniform_mvp;
+
+		GLSLProgram* m_primitive_program;
+
 		static const char* text_vertex_shader;
 
 		static const char* text_fragment_shader;
+
+		static const char* primitive_vertex_shader;
+
+		static const char* primitive_fragment_shader;
 
 		static ShaderManager* shader_manager;
 

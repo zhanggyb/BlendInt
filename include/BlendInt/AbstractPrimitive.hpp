@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MESH_HPP_
-#define _BLENDINT_MESH_HPP_
+#ifndef _BLENDINT_ABSTRACTPRIMITIVE_HPP_
+#define _BLENDINT_ABSTRACTPRIMITIVE_HPP_
 
 #include <glm/glm.hpp>
 #include <BlendInt/Object.hpp>
@@ -33,11 +33,11 @@
 
 namespace BlendInt {
 
-	class Mesh: public Object
+	class AbstractPrimitive: public Object
 	{
 	public:
 
-		Mesh ();
+		AbstractPrimitive ();
 
 		void SetProgram (GLSLProgram* program);
 
@@ -45,11 +45,15 @@ namespace BlendInt {
 
 		void SetIndexBuffer (GLElementArrayBuffer* ib);
 
-		virtual void Render (const glm::mat4& MVP);
+		virtual void Render (const glm::mat4& MVP) = 0;
 
 	protected:
 
-		virtual ~Mesh();
+		GLSLProgram* program () const {return m_program;}
+
+		GLArrayBuffer* vertices () const {return m_vertices;}
+
+		virtual ~AbstractPrimitive();
 
 	private:
 
@@ -63,4 +67,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_MESH_HPP_ */
+#endif /* _BLENDINT_ABSTRACTPRIMITIVE_HPP_ */

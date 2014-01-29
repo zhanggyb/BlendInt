@@ -232,7 +232,7 @@ namespace BlendInt {
 		if(inner_buffer) {
 			inner_buffer->Generate();
 			inner_buffer->bind();
-			inner_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v[0]);
+			inner_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
 			inner_buffer->unbind();
 		}
 
@@ -247,7 +247,7 @@ namespace BlendInt {
 
 				outer_buffer->Generate();
 				outer_buffer->bind();
-				outer_buffer->set_data((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip[0]);
+				outer_buffer->set_data((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip);
 				outer_buffer->unbind();
 			}
 
@@ -258,7 +258,7 @@ namespace BlendInt {
 
 				emboss_buffer->Generate();
 				emboss_buffer->bind();
-				emboss_buffer->set_data(vert_sum.half * 2, sizeof(quad_strip[0]), quad_strip[0]);
+				emboss_buffer->set_data(vert_sum.half * 2, sizeof(quad_strip[0]), quad_strip);
 				emboss_buffer->unbind();
 		}
 
@@ -291,7 +291,7 @@ namespace BlendInt {
 		if(inner_buffer_p) {
 			inner_buffer_p->Generate();
 			inner_buffer_p->bind();
-			inner_buffer_p->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v[0]);
+			inner_buffer_p->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
 			inner_buffer_p->unbind();
 		}
 
@@ -303,8 +303,7 @@ namespace BlendInt {
 
 			outer_buffer_p->Generate();
 			outer_buffer_p->bind();
-			outer_buffer_p->set_data(vert_sum.total * 2 + 2,
-			        sizeof(quad_strip[0]), quad_strip[0]);
+			outer_buffer_p->set_data(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), quad_strip);
 			outer_buffer_p->unbind();
 		}
 
@@ -320,8 +319,7 @@ namespace BlendInt {
 			highlight_buffer_p->Generate();
 			highlight_buffer_p->bind();
 
-			highlight_buffer_p->set_data(vert_sum.total, sizeof(inner_v[0]),
-			        inner_v[0]);
+			highlight_buffer_p->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
 			highlight_buffer_p->unbind();
 		}
 	}
@@ -354,7 +352,7 @@ namespace BlendInt {
 
 		buffer->Generate();
 		buffer->bind();
-		buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
+		buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
 		buffer->unbind();
 	}
 
@@ -388,7 +386,7 @@ namespace BlendInt {
 		if(inner_buffer) {
 			inner_buffer->Generate();
 			inner_buffer->bind();
-			inner_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
+			inner_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
 			inner_buffer->unbind();
 		}
 
@@ -398,9 +396,7 @@ namespace BlendInt {
 
 			outer_buffer->Generate();
 			outer_buffer->bind();
-			outer_buffer->set_data((vert_sum.total * 2 + 2), sizeof(quad_strip[0]),
-					quad_strip[0],
-					GL_STATIC_DRAW);
+			outer_buffer->set_data((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip);
 			outer_buffer->unbind();
 		}
 
@@ -420,7 +416,7 @@ namespace BlendInt {
 
 			highlight_buffer->Generate();
 			highlight_buffer->bind();
-			highlight_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v[0], GL_STATIC_DRAW);
+			highlight_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
 			highlight_buffer->unbind();
 		}
 

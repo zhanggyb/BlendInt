@@ -56,6 +56,21 @@ namespace BlendInt {
 			"  gl_FragColor = vec4(1, 1, 1, texture2D(tex, texpos).a) * color;"
 			"}";
 
+	const char* ShaderManager::primitive_vertex_shader =
+			"#version 120\n"
+			"uniform mat4 MVP;"
+			""
+			"void main(void) {"
+			"  gl_Position = MVP * gl_Vertex;"
+			"}";
+
+	const char* ShaderManager::primitive_fragment_shader =
+			"#version 120\n"
+			""
+			"void main(void) {"
+			"  gl_FragColor = gl_Color;"
+			"}";
+
 	ShaderManager* ShaderManager::shader_manager = 0;
 
 	bool ShaderManager::Initialize()
@@ -90,15 +105,21 @@ namespace BlendInt {
 	text_uniform_tex_(-1),
 	text_uniform_color_(-1),
 	text_vbo_(0),
-	m_text_program(0)
+	m_text_program(0),
+	m_uniform_mvp(0),
+	m_primitive_program(0)
 	{
 		m_text_program = new GLSLProgram;
 		Object::Retain(m_text_program);
+
+		m_primitive_program = new GLSLProgram;
+		Object::Retain(m_primitive_program);
 	}
 
 	ShaderManager::~ShaderManager()
 	{
 		Object::Destroy(m_text_program);
+		Object::Destroy(m_primitive_program);
 
 		glDeleteBuffers(1, &text_vbo_);
 	}
@@ -108,8 +129,17 @@ namespace BlendInt {
 		if(!m_text_program->Create())
 			return false;
 
+		if(!m_primitive_program->Create()) {
+			return false;
+		}
+
 		m_text_program->AttachShaderPair(text_vertex_shader, text_fragment_shader);
 		if(!m_text_program->Link()) {
+			return false;
+		}
+
+		m_primitive_program->AttachShaderPair(primitive_vertex_shader, primitive_fragment_shader);
+		if(!m_primitive_program->Link()) {
 			return false;
 		}
 
@@ -118,6 +148,11 @@ namespace BlendInt {
 		text_uniform_color_ = m_text_program->GetUniformLocation("color");
 		if(text_attribute_coord_ == -1 || text_uniform_tex_ == -1 || text_uniform_color_ == -1) {
 			std::cerr << "Error: cannot get attributes and uniforms" << std::endl;
+			return false;
+		}
+
+		m_uniform_mvp = m_primitive_program->GetUniformLocation("MVP");
+		if(m_uniform_mvp == -1) {
 			return false;
 		}
 

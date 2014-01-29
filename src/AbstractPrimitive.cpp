@@ -21,46 +21,53 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MESH_HPP_
-#define _BLENDINT_MESH_HPP_
-
-#include <glm/glm.hpp>
-#include <BlendInt/Object.hpp>
-
-#include <BlendInt/GLArrayBuffer.hpp>
-#include <BlendInt/GLSLProgram.hpp>
-#include <BlendInt/GLElementArrayBuffer.hpp>
+#include <BlendInt/AbstractPrimitive.hpp>
 
 namespace BlendInt {
 
-	class Mesh: public Object
+	AbstractPrimitive::AbstractPrimitive ()
+	: Object(), m_vertices(0), m_index(0), m_program(0)
 	{
-	public:
+	}
 
-		Mesh ();
+	void AbstractPrimitive::SetProgram (GLSLProgram* program)
+	{
+		if(!program) return;
+		if(m_program == program) return;
 
-		void SetProgram (GLSLProgram* program);
+		if(m_program)
+			Destroy(m_program);
 
-		void SetVertexBuffer (GLArrayBuffer* vb);
+		m_program = program;
+		Retain(m_program);
+	}
 
-		void SetIndexBuffer (GLElementArrayBuffer* ib);
+	void AbstractPrimitive::SetVertexBuffer (GLArrayBuffer* vb)
+	{
+		if(!vb) return;
+		if(m_vertices == vb) return;
 
-		virtual void Render (const glm::mat4& MVP);
+		if(m_vertices) Destroy(m_vertices);
+		m_vertices = vb;
+		Retain(m_vertices);
+	}
 
-	protected:
+	void AbstractPrimitive::SetIndexBuffer (GLElementArrayBuffer* ib)
+	{
+		if(!ib) return;
+		if(m_index == ib) return;
 
-		virtual ~Mesh();
+		if(m_index) Destroy(m_index);
+		m_index = ib;
+		Retain(m_index);
+	}
 
-	private:
-
-		GLArrayBuffer* m_vertices;
-
-		GLElementArrayBuffer* m_index;
-
-		GLSLProgram* m_program;
-
-	};
+	AbstractPrimitive::~AbstractPrimitive ()
+	{
+		Destroy(m_vertices);
+		Destroy(m_index);
+		Destroy(m_program);
+	}
 
 }
 
-#endif /* _BLENDINT_MESH_HPP_ */
