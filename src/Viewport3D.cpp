@@ -151,8 +151,8 @@ namespace BlendInt {
 	void Viewport3D::Render ()
 	{
 //		/* Clear the buffer, clear the matrix */
-//		glClearColor(0.0, 0.0, 0.0, 1.0);
-//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.25, 0.25, 0.25, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //
 //		glRotatef(m_rotate_y, 1, 0, 0);
 //		glRotatef(m_rotate_x, 0, 1, 0);
@@ -160,9 +160,15 @@ namespace BlendInt {
 //		DrawGrid(50, 50, 1, 10);
 //
 //		//test code
-//		DrawCube();
+		//DrawCube();
 
-		m_grid->Render(m_default_camera->view() * m_default_camera->projection());
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -4.0));
+		glm::mat4 view = glm::lookAt(glm::vec3(0.0, 2.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
+		glm::mat4 projection = glm::perspective(45.0f, 1.0f*5/4, 0.1f, 10.0f);
+
+		glm::mat4 mvp = projection * view * model;
+
+		m_grid->Render(mvp);
 	}
 
 	void Viewport3D::Draw ()
@@ -186,20 +192,8 @@ namespace BlendInt {
 		//glOrtho(0.f, (float) size().width(), 0.f, (float) size().height(), 100.f, -100.f);
 		//glOrtho(0.f, 8.0f, 0.f, 6.0f, 100.f, -100.f);
 
-		/*
 		gluPerspective(45.0f,(GLfloat)size().width()/(GLfloat)size().height(),0.1f,100.0f);
-		//gluLookAt (5.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-		gluLookAt (m_cameras[0]->position().x(),
-				m_cameras[0]->position().y(),
-				m_cameras[0]->position().z(),
-				m_cameras[0]->target().x(),
-				m_cameras[0]->target().y(),
-				m_cameras[0]->target().z(),
-				m_cameras[0]->direction().x(),
-				m_cameras[0]->direction().y(),
-				m_cameras[0]->direction().z()
-		);
-		*/
+		gluLookAt (5.0f, 5.0f, 7.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 

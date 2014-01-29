@@ -21,37 +21,34 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GRID_HPP_
-#define _BLENDINT_GRID_HPP_
+#ifndef _BLENDINT_CUBE_HPP_
+#define _BLENDINT_CUBE_HPP_
 
 #include <BlendInt/AbstractPrimitive.hpp>
 
 namespace BlendInt {
 
-	class Grid: public AbstractPrimitive
+	class Cube: public AbstractPrimitive
 	{
 	public:
 
-		Grid ();
+		Cube ();
 
-		virtual void Render (const glm::mat4& MVP);
+		virtual void Render (const glm::mat4& mvp);
 
 	protected:
 
-		virtual ~Grid ();
+		virtual ~Cube ();
 
 	private:
 
 		void InitOnce ();
 
-		int m_size;
-		int m_step;
-
-		GLArrayBuffer* m_vb;
+		GLArrayBuffer* m_vb;	// vertex buffer
+		GLArrayBuffer* m_cb;	// color buffer
+		GLElementArrayBuffer* m_ib;	// index buffer
 	};
 
 }
 
-
-
-#endif /* _BLENDINT_GRID_HPP_ */
+#endif /* _BLENDINT_CUBE_HPP_ */

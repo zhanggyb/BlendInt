@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	AbstractPrimitive::AbstractPrimitive ()
-	: Object(), m_vertex_buffer(0), m_index_buffer(0), m_program(0)
+	: Object(), m_program(0)
 	{
 	}
 
@@ -42,30 +42,8 @@ namespace BlendInt {
 		Retain(m_program);
 	}
 
-	void AbstractPrimitive::SetVertexBuffer (GLArrayBuffer* vb)
-	{
-		if(!vb) return;
-		if(m_vertex_buffer == vb) return;
-
-		if(m_vertex_buffer) Destroy(m_vertex_buffer);
-		m_vertex_buffer = vb;
-		Retain(m_vertex_buffer);
-	}
-
-	void AbstractPrimitive::SetIndexBuffer (GLElementArrayBuffer* ib)
-	{
-		if(!ib) return;
-		if(m_index_buffer == ib) return;
-
-		if(m_index_buffer) Destroy(m_index_buffer);
-		m_index_buffer = ib;
-		Retain(m_index_buffer);
-	}
-
 	AbstractPrimitive::~AbstractPrimitive ()
 	{
-		Destroy(m_vertex_buffer);
-		Destroy(m_index_buffer);
 		Destroy(m_program);
 	}
 

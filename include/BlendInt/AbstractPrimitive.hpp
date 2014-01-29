@@ -41,25 +41,15 @@ namespace BlendInt {
 
 		void SetProgram (GLSLProgram* program);
 
-		void SetVertexBuffer (GLArrayBuffer* vb);
-
-		void SetIndexBuffer (GLElementArrayBuffer* ib);
-
 		virtual void Render (const glm::mat4& MVP) = 0;
 
 	protected:
 
 		GLSLProgram* program () const {return m_program;}
 
-		GLArrayBuffer* vertex_buffer () const {return m_vertex_buffer;}
-
 		virtual ~AbstractPrimitive();
 
 	private:
-
-		GLArrayBuffer* m_vertex_buffer;
-
-		GLElementArrayBuffer* m_index_buffer;
 
 		GLSLProgram* m_program;
 

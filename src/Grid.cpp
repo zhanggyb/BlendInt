@@ -33,25 +33,23 @@
 namespace BlendInt {
 
 	Grid::Grid ()
-	: m_size(10), m_step(10)
+	: AbstractPrimitive(), m_size(10), m_step(10), m_vb(0)
 	{
 	}
 
-	void Grid::Render (const glm::mat4& MVP)
+	void Grid::Render (const glm::mat4& mvp)
 	{
 		if(program()) {
 			program()->Activate();
-			glUniform4fv(program()->GetUniformLocation("MVP"), 1, glm::value_ptr(MVP));
+			glUniformMatrix4fv(program()->GetUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(mvp));
 		}
 
-		if(vertex_buffer()) {
-			vertex_buffer()->bind();
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3, GL_INT, 0, BUFFER_OFFSET(0));
-			glDrawArrays(GL_LINES, 0, vertex_buffer()->vertices());
-			glDisableClientState(GL_VERTEX_ARRAY);
-			vertex_buffer()->unbind();
-		}
+		m_vb->bind();
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_INT, 0, BUFFER_OFFSET(0));
+		glDrawArrays(GL_LINES, 0, m_vb->vertices());
+		glDisableClientState(GL_VERTEX_ARRAY);
+		m_vb->unbind();
 
 		if(program()) {
 			program()->Deactivate();
@@ -60,11 +58,11 @@ namespace BlendInt {
 
 	Grid::~Grid ()
 	{
+		Destroy(m_vb);
 	}
 
 	void Grid::InitOnce()
 	{
-		GLArrayBuffer* buffer = new GLArrayBuffer;
 		GLint vertices[4][3] = {
 				{-5, -5, 0},
 				{ 5, -5, 0},
@@ -72,12 +70,13 @@ namespace BlendInt {
 				{-5, 5, 0}
 		};
 
-		buffer->Generate();
-		buffer->bind();
-		buffer->set_data(4, sizeof(vertices[0]), vertices);
-		buffer->unbind();
+		m_vb = new GLArrayBuffer;
+		Retain(m_vb);
 
-		SetVertexBuffer(buffer);
+		m_vb->Generate();
+		m_vb->bind();
+		m_vb->set_data(4, sizeof(vertices[0]), vertices);
+		m_vb->unbind();
 	}
 
 }
