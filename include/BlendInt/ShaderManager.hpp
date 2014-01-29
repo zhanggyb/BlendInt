@@ -46,6 +46,11 @@ namespace BlendInt {
 			return m_text_program;
 		}
 
+		GLSLProgram* primitive_program () const
+		{
+			return m_primitive_program;
+		}
+
 		bool Find (const GLSLProgram* program);
 
 		const GLint& text_attribute_coord ()

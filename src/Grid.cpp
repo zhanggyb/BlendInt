@@ -44,13 +44,13 @@ namespace BlendInt {
 			glUniform4fv(program()->GetUniformLocation("MVP"), 1, glm::value_ptr(MVP));
 		}
 
-		if(vertices()) {
-			vertices()->bind();
+		if(vertex_buffer()) {
+			vertex_buffer()->bind();
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(3, GL_INT, 0, BUFFER_OFFSET(0));
-			glDrawArrays(GL_LINES, 0, vertices()->vertices());
+			glDrawArrays(GL_LINES, 0, vertex_buffer()->vertices());
 			glDisableClientState(GL_VERTEX_ARRAY);
-			vertices()->unbind();
+			vertex_buffer()->unbind();
 		}
 
 		if(program()) {
@@ -65,17 +65,16 @@ namespace BlendInt {
 	void Grid::InitOnce()
 	{
 		GLArrayBuffer* buffer = new GLArrayBuffer;
-		GLint vertices[11][3];
-
-		for(int i = 0; i < 11; i++) 	{
-			vertices[i][0] = i - 5;
-			vertices[i][1] = i - 5;
-			vertices[i][2] = 0;
-		}
+		GLint vertices[4][3] = {
+				{-5, -5, 0},
+				{ 5, -5, 0},
+				{ 5,  5, 0},
+				{-5, 5, 0}
+		};
 
 		buffer->Generate();
 		buffer->bind();
-		buffer->set_data(11, sizeof(vertices[0]), vertices, GL_STATIC_DRAW);
+		buffer->set_data(4, sizeof(vertices[0]), vertices);
 		buffer->unbind();
 
 		SetVertexBuffer(buffer);

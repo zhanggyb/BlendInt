@@ -32,10 +32,15 @@
 #endif
 #endif  // __UNIX__
 
+#include <iostream>
+
 #include <BlendInt/Viewport3D.hpp>
 #include <BlendInt/Interface.hpp>
+#include <BlendInt/ShaderManager.hpp>
 
-#include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace BlendInt {
 
@@ -49,45 +54,30 @@ namespace BlendInt {
 	  {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
 	GLfloat v[8][3];  /* Will be filled in with X,Y,Z vertexes. */
 
-	Viewport3D::Viewport3D()
-	: Widget(), m_xold(0), m_yold(0), m_rotate_x(0.0), m_rotate_y(0.0), m_left_down(false)
+	Viewport3D::Viewport3D ()
+			: Widget(), m_default_camera(0), m_grid(0), m_xold(0), m_yold(0), m_rotate_x(
+			        0.0), m_rotate_y(0.0), m_left_down(false)
 	{
-		Camera* default_camera = new Camera;
-		m_cameras.push_back(default_camera);
-
-		  /* Setup cube vertex data. */
-		  v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
-		  v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
-		  v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
-		  v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
-		  v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
-		  v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
-
+		InitOnce();
 	}
 
-	Viewport3D::Viewport3D(AbstractWidget* parent)
-	: Widget(parent), m_xold(0), m_yold(0), m_rotate_x(0.0), m_rotate_y(0.0), m_left_down(false)
+	Viewport3D::Viewport3D (AbstractWidget* parent)
+			: Widget(parent), m_default_camera(0), m_grid(0), m_xold(0), m_yold(
+			        0), m_rotate_x(0.0), m_rotate_y(0.0), m_left_down(false)
 	{
-		Camera* default_camera = new Camera;
-		m_cameras.push_back(default_camera);
-
-		  /* Setup cube vertex data. */
-		  v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
-		  v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
-		  v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
-		  v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
-		  v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
-		  v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
-
+		InitOnce();
 	}
 
 	Viewport3D::~Viewport3D ()
 	{
-		vector<Camera*>::iterator it;
+		Destroy(m_default_camera);
+		Destroy(m_grid);
+
+		vector<AbstractCamera*>::iterator it;
 
 		for(it = m_cameras.begin(); it != m_cameras.end(); it++)
 		{
-			delete *it;
+			Destroy(*it);
 		}
 
 		m_cameras.clear();
@@ -95,6 +85,7 @@ namespace BlendInt {
 
 	void Viewport3D::KeyPressEvent (KeyEvent* event)
 	{
+		/*
 		if(event->action() == KeyPress) {
 			float x = m_cameras[0]->position().x();
 			float y = m_cameras[0]->position().y();
@@ -121,6 +112,7 @@ namespace BlendInt {
 					break;
 			}
 		}
+		*/
 	}
 
 	void Viewport3D::MousePressEvent (MouseEvent* event)
@@ -158,17 +150,19 @@ namespace BlendInt {
 
 	void Viewport3D::Render ()
 	{
-		/* Clear the buffer, clear the matrix */
-		glClearColor(0.0, 0.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//		/* Clear the buffer, clear the matrix */
+//		glClearColor(0.0, 0.0, 0.0, 1.0);
+//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//		glRotatef(m_rotate_y, 1, 0, 0);
+//		glRotatef(m_rotate_x, 0, 1, 0);
+//
+//		DrawGrid(50, 50, 1, 10);
+//
+//		//test code
+//		DrawCube();
 
-		glRotatef(m_rotate_y, 1, 0, 0);
-		glRotatef(m_rotate_x, 0, 1, 0);
-
-		DrawGrid(50, 50, 1, 10);
-
-		//test code
-		DrawCube();
+		m_grid->Render(m_default_camera->view() * m_default_camera->projection());
 	}
 
 	void Viewport3D::Draw ()
@@ -192,6 +186,7 @@ namespace BlendInt {
 		//glOrtho(0.f, (float) size().width(), 0.f, (float) size().height(), 100.f, -100.f);
 		//glOrtho(0.f, 8.0f, 0.f, 6.0f, 100.f, -100.f);
 
+		/*
 		gluPerspective(45.0f,(GLfloat)size().width()/(GLfloat)size().height(),0.1f,100.0f);
 		//gluLookAt (5.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		gluLookAt (m_cameras[0]->position().x(),
@@ -204,6 +199,7 @@ namespace BlendInt {
 				m_cameras[0]->direction().y(),
 				m_cameras[0]->direction().z()
 		);
+		*/
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 
@@ -340,7 +336,37 @@ namespace BlendInt {
 		glDisable(GL_LINE_STIPPLE);
 
 		glPopMatrix();
+	}
 
+	void Viewport3D::InitOnce()
+	{
+		m_default_camera = new FreeCamera;
+		Retain(m_default_camera);
+
+		// setup camera
+		glm::vec3 p = glm::vec3(5.f);
+		m_default_camera->set_position(5.f, 5.f, 5.f);
+		glm::vec3 look =  glm::normalize(p);
+
+		//rotate the camera for proper orientation
+		float yaw = glm::degrees(float(atan2(look.z, look.x)+M_PI));
+		float pitch = glm::degrees(asin(look.y));
+		m_default_camera->Rotate(yaw,pitch,0);
+
+		m_default_camera->SetProjection(45, 5.0f/4);
+
+		m_grid = new Grid;
+		Retain(m_grid);
+
+		m_grid->SetProgram(ShaderManager::Instance()->primitive_program());
+
+		/* Setup cube vertex data. */
+		v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
+		v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
+		v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
+		v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
+		v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
+		v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
 	}
 
 }

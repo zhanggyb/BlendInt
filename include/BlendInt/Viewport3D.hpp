@@ -27,7 +27,9 @@
 #include <vector>
 
 #include <BlendInt/Widget.hpp>
-#include <BlendInt/Camera.hpp>
+
+#include <BlendInt/Grid.hpp>
+#include <BlendInt/FreeCamera.hpp>
 
 using std::vector;
 
@@ -64,8 +66,6 @@ namespace BlendInt {
 
 		virtual void Render ();
 
-		vector<Camera*> m_cameras;
-
 	private:
 
 		virtual void Draw ();
@@ -74,11 +74,18 @@ namespace BlendInt {
 
 		void DrawGrid (float width, float height, float small_step, float big_step);
 
+		void InitOnce ();
+
+		vector<AbstractCamera*> m_cameras;
+
+		FreeCamera* m_default_camera;
+
+		Grid* m_grid;
+
 		int m_xold;
 		int m_yold;
 
 		float m_rotate_x;
-
 		float m_rotate_y;
 
 		bool m_left_down;

@@ -110,9 +110,15 @@ namespace BlendInt {
 	m_primitive_program(0)
 	{
 		m_text_program = new GLSLProgram;
+#ifdef DEBUG
+		m_text_program->set_name("Text GLSLProgram");
+#endif
 		Object::Retain(m_text_program);
 
 		m_primitive_program = new GLSLProgram;
+#ifdef DEBUG
+		m_primitive_program->set_name("Primitive GLSLProgram");
+#endif
 		Object::Retain(m_primitive_program);
 	}
 

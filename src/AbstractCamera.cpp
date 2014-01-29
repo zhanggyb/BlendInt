@@ -22,6 +22,7 @@
  */
 
 #include <BlendInt/AbstractCamera.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace BlendInt {
 
@@ -30,7 +31,7 @@ namespace BlendInt {
 	  m_fovy(0.0),
 	  m_aspect(1.0),
 	  m_near(0.1f),
-	  m_far(100),
+	  m_far(100.f),
 	  m_yaw(0.0),
 	  m_pitch(0.0),
 	  m_roll(0.0)
@@ -39,6 +40,16 @@ namespace BlendInt {
 
 	AbstractCamera::~AbstractCamera ()
 	{
+	}
+
+	void AbstractCamera::SetProjection (const float fovy, const float aspect,
+	        const float near, const float far)
+	{
+		m_near = near;
+		m_far = far;
+		m_fovy = fovy;
+		m_aspect = aspect;
+		m_projection = glm::perspective(m_near, m_aspect, m_near, m_far);
 	}
 
 	void AbstractCamera::Rotate(float yaw, float pitch, float roll)

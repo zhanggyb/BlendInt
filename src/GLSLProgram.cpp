@@ -90,6 +90,7 @@ namespace BlendInt {
 	{
 		if (glIsProgram(m_id)) {
 			GLSLShader* shader = new GLSLShader;
+			Retain(shader);
 			shader->Load(filename, type);
 			m_shaders.push_back(shader);
 			glAttachShader(m_id, shader->id());
@@ -100,6 +101,7 @@ namespace BlendInt {
 	{
 		if (glIsProgram(m_id)) {
 			GLSLShader* shader = new GLSLShader;
+			Retain(shader);
 			shader->Load(buf, type);
 			m_shaders.push_back(shader);
 			glAttachShader(m_id, shader->id());

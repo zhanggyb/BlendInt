@@ -43,7 +43,7 @@ namespace BlendInt {
 		glm::mat4 R = glm::yawPitchRoll(yaw(), pitch(), roll());
 
 		set_position(position() + m_translation);
-		m_translation = glm::vec3(0);
+		// m_translation = glm::vec3(0);
 
 		set_look(glm::vec3(R * glm::vec4(0, 0, 1, 0)));
 		glm::vec3 target = position() + look();
@@ -51,13 +51,6 @@ namespace BlendInt {
 		set_right(glm::cross(look(), up()));
 
 		set_view(glm::lookAt(position(), target, up()));
-	}
-
-	void FreeCamera::Rotate (float yaw, float pitch, float roll)
-	{
-		set_yaw(yaw);
-		set_pitch(pitch);
-		set_roll(roll);
 	}
 
 }

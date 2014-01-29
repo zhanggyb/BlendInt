@@ -86,6 +86,8 @@ namespace BlendInt {
 
 		m_menu = new VertexIcon;
 		m_menu->set_name("Menu Icon");
+		Object::Retain(m_menu);
+
 		for(size_t i = 0; i < 6; i++)
 		{
 			vec[i][0] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][0];
@@ -96,6 +98,7 @@ namespace BlendInt {
 
 		m_circle = new VertexIcon;
 		m_circle->set_name("Circle Icon");
+		Object::Retain(m_circle);
 
 		for(size_t i = 0; i < 16; i++)
 		{
@@ -107,6 +110,7 @@ namespace BlendInt {
 
 		m_checkbox = new VertexIcon;
 		m_checkbox->set_name("Checkbox Icon");
+		Object::Retain(m_checkbox);
 
 		for(size_t i = 0; i < 6; i++)
 		{
@@ -118,6 +122,7 @@ namespace BlendInt {
 
 		m_num = new VertexIcon;
 		m_num->set_name("Number slider Icon");
+		Object::Retain(m_num);
 
 		for(size_t i = 0; i < 3; i++)
 		{

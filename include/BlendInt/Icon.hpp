@@ -28,9 +28,13 @@
 
 namespace BlendInt {
 
+	class StockIcon;
+
 	class Icon: public AbstractResizableForm
 	{
 	public:
+
+		friend class StockIcon;
 
 		Icon ();
 

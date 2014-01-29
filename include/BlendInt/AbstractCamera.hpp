@@ -38,6 +38,9 @@ namespace BlendInt {
 
 		virtual ~AbstractCamera ();
 
+		void SetProjection (const float fovy, const float aspect,
+		        const float near = 0.1f, const float far = 100.f);
+
 		void set_position (const glm::vec3& pos)
 		{
 			m_position = pos;

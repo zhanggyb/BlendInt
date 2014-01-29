@@ -39,8 +39,6 @@ namespace BlendInt {
 
 		virtual void Update ();
 
-		virtual void Rotate (float yaw, float pitch, float roll);
-
 	private:
 
 		glm::vec3 m_translation;

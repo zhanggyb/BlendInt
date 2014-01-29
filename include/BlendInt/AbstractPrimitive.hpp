@@ -51,15 +51,15 @@ namespace BlendInt {
 
 		GLSLProgram* program () const {return m_program;}
 
-		GLArrayBuffer* vertices () const {return m_vertices;}
+		GLArrayBuffer* vertex_buffer () const {return m_vertex_buffer;}
 
 		virtual ~AbstractPrimitive();
 
 	private:
 
-		GLArrayBuffer* m_vertices;
+		GLArrayBuffer* m_vertex_buffer;
 
-		GLElementArrayBuffer* m_index;
+		GLElementArrayBuffer* m_index_buffer;
 
 		GLSLProgram* m_program;
 

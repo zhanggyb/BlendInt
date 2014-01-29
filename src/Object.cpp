@@ -63,7 +63,12 @@ namespace BlendInt {
 
 	void Object::Destroy(Object *obj)
 	{
+		if(obj == 0) return;
+
 		if(obj->m_ref_count == 0) {
+#ifdef DEBUG
+			std::cerr << "Warning: object " << obj->name() << " deleted with no reference" << std::endl;
+#endif
 			delete obj;
 			obj = 0;
 		} else {
