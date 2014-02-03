@@ -72,6 +72,7 @@ namespace BlendInt {
 	{
 		Destroy(m_default_camera);
 		Destroy(m_grid);
+		Destroy(m_cube);
 
 		vector<AbstractCamera*>::iterator it;
 
@@ -160,15 +161,17 @@ namespace BlendInt {
 //		DrawGrid(50, 50, 1, 10);
 //
 //		//test code
-		//DrawCube();
+		DrawCube();
 
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -4.0));
-		glm::mat4 view = glm::lookAt(glm::vec3(0.0, 2.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
-		glm::mat4 projection = glm::perspective(45.0f, 1.0f*5/4, 0.1f, 10.0f);
+//		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -4.0));
+//		glm::mat4 view = glm::lookAt(glm::vec3(0.0, 2.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
+//		glm::mat4 projection = glm::perspective(45.0f, 1.0f*5/4, 0.1f, 10.0f);
+//
+//		glm::mat4 mvp = projection * view * model;
+//
+//		m_grid->Render(mvp);
 
-		glm::mat4 mvp = projection * view * model;
-
-		m_grid->Render(mvp);
+		m_cube->Render(m_default_camera->projection() * m_default_camera->view());
 	}
 
 	void Viewport3D::Draw ()
@@ -353,6 +356,10 @@ namespace BlendInt {
 		Retain(m_grid);
 
 		m_grid->SetProgram(ShaderManager::Instance()->primitive_program());
+
+		m_cube = new Cube;
+		Retain(m_cube);
+		m_cube->SetProgram(ShaderManager::Instance()->primitive_program());
 
 		/* Setup cube vertex data. */
 		v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;

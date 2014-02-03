@@ -26,6 +26,8 @@
 
 #include <BlendInt/AbstractPrimitive.hpp>
 
+#include <glm/glm.hpp>
+
 namespace BlendInt {
 
 	class Cube: public AbstractPrimitive
@@ -42,11 +44,17 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		int InitOnce ();
 
-		GLArrayBuffer* m_vb;	// vertex buffer
-		GLArrayBuffer* m_cb;	// color buffer
-		GLElementArrayBuffer* m_ib;	// index buffer
+		GLuint vbo_cube_vertices;
+		GLuint vbo_cube_colors;
+		GLuint ibo_cube_elements;
+		GLuint program;
+		GLint attribute_coord3d;
+		GLint attribute_v_color;
+		GLint uniform_mvp;
+
+		glm::mat4 mvp;
 	};
 
 }

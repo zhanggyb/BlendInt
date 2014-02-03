@@ -29,6 +29,7 @@
 #include <BlendInt/Widget.hpp>
 
 #include <BlendInt/Grid.hpp>
+#include <BlendInt/Cube.hpp>
 #include <BlendInt/FreeCamera.hpp>
 
 using std::vector;
@@ -81,6 +82,7 @@ namespace BlendInt {
 		FreeCamera* m_default_camera;
 
 		Grid* m_grid;
+		Cube* m_cube;
 
 		int m_xold;
 		int m_yold;
