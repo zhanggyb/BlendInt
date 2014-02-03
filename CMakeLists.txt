@@ -135,7 +135,7 @@ if(WITH_BUILTIN_GLFW3)
 endif()
 
 add_subdirectory(extern/CppEvents/src)
-add_subdirectory(src)
+add_subdirectory(src/gui)
 
 if(BUILD_STATIC_LIBRARY)
     set(LIBS ${LIBS} pthread)
