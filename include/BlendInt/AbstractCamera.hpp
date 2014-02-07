@@ -75,6 +75,11 @@ namespace BlendInt {
 			m_up = up;
 		}
 
+		void set_up (float x, float y, float z)
+		{
+			m_up = glm::vec3(x, y, z);
+		}
+
 		const glm::vec3& right () const
 		{
 			return m_right;
@@ -100,6 +105,11 @@ namespace BlendInt {
 		void set_center (const glm::vec3& center)
 		{
 			m_center = center;
+		}
+
+		void set_center (float x, float y, float z)
+		{
+			m_center = glm::vec3(x, y, z);
 		}
 
 		const glm::mat4& projection () const

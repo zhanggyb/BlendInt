@@ -60,28 +60,12 @@ namespace BlendInt {
 
 	void GLSLProgram::AttachShaderPair(const char* vertex_shader, const char* fragment_shader)
 	{
-		if(m_shaders.size() > 0) {
-			std::vector<GLSLShader*>::iterator it;
-			for (it = m_shaders.begin(); it != m_shaders.end(); it++) {
-				Object::Destroy(*it);
-			}
-			m_shaders.clear();
-		}
-
 		AttachShader(vertex_shader, GL_VERTEX_SHADER);
 		AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
 	}
 
 	void GLSLProgram::AttachShaderPair(const std::string& vertex_shader, const std::string& fragment_shader)
 	{
-		if(m_shaders.size() > 0) {
-			std::vector<GLSLShader*>::iterator it;
-			for (it = m_shaders.begin(); it != m_shaders.end(); it++) {
-				Object::Destroy(*it);
-			}
-			m_shaders.clear();
-		}
-
 		AttachShader(vertex_shader, GL_VERTEX_SHADER);
 		AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
 	}
@@ -89,22 +73,23 @@ namespace BlendInt {
 	void GLSLProgram::AttachShader (const std::string& filename, GLenum type)
 	{
 		if (glIsProgram(m_id)) {
-			GLSLShader* shader = new GLSLShader;
-			Retain(shader);
-			shader->Load(filename, type);
-			m_shaders.push_back(shader);
-			glAttachShader(m_id, shader->id());
+			GLuint shader = GLSLShader::Load(filename, type);
+			glAttachShader(m_id, shader);
 		}
 	}
 
 	void GLSLProgram::AttachShader (const char* buf, GLenum type)
 	{
 		if (glIsProgram(m_id)) {
-			GLSLShader* shader = new GLSLShader;
-			Retain(shader);
-			shader->Load(buf, type);
-			m_shaders.push_back(shader);
-			glAttachShader(m_id, shader->id());
+			GLuint shader = GLSLShader::Load(buf, type);
+			glAttachShader(m_id, shader);
+		}
+	}
+
+	void GLSLProgram::AttachShader (const GLSLShader& shader)
+	{
+		if (glIsProgram(m_id)) {
+			glAttachShader(m_id, shader.id());
 		}
 	}
 
@@ -128,8 +113,62 @@ namespace BlendInt {
 		return link_ok == GL_TRUE ? true : false;
 	}
 
+	bool GLSLProgram::DetachShader(GLuint shader)
+	{
+		bool ret = false;
+
+		if(glIsProgram(m_id)) {
+			glDetachShader(m_id, shader);
+
+			ret = glGetError() == GL_NO_ERROR? true : false;
+		}
+
+		return ret;
+	}
+
+	bool GLSLProgram::DetachShader(const GLSLShader& shader)
+	{
+		bool ret = false;
+
+		if(glIsProgram(m_id)) {
+			glDetachShader(m_id, shader.id());
+			ret = glGetError() == GL_NO_ERROR? true : false;
+		}
+
+		return ret;
+	}
+
 	void GLSLProgram::Clear ()
 	{
+		if(glIsProgram(m_id)) {
+
+			GLint num = 0;
+			glGetProgramiv(m_id, GL_ATTACHED_SHADERS, &num);
+
+			if(num) {
+
+				GLuint shaders[32];
+				GLsizei max = 32;
+				GLsizei count = 0;
+
+				glGetAttachedShaders(m_id, max, &count, shaders);
+
+				do {
+					for(int i = 0; i < count; i++) {
+						glDetachShader(m_id, shaders[i]);
+						glDeleteShader(shaders[i]);
+					}
+
+					glGetAttachedShaders(m_id, max, &count, shaders);
+				} while (count);
+			}
+
+			glDeleteProgram(m_id);
+		}
+
+		m_id = 0;
+
+		/* old code
 		std::vector<GLSLShader*>::iterator it;
 		for (it = m_shaders.begin(); it != m_shaders.end(); it++) {
 			Object::Destroy(*it);
@@ -141,6 +180,7 @@ namespace BlendInt {
 				glDeleteProgram(m_id);
 			m_id = 0;
 		}
+		*/
 	}
 
 	GLint GLSLProgram::GetAttributeLocation (const char *name)

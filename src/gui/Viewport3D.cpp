@@ -161,7 +161,7 @@ namespace BlendInt {
 //		DrawGrid(50, 50, 1, 10);
 //
 //		//test code
-		DrawCube();
+		//DrawCube();
 
 //		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -4.0));
 //		glm::mat4 view = glm::lookAt(glm::vec3(0.0, 2.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
@@ -195,8 +195,8 @@ namespace BlendInt {
 		//glOrtho(0.f, (float) size().width(), 0.f, (float) size().height(), 100.f, -100.f);
 		//glOrtho(0.f, 8.0f, 0.f, 6.0f, 100.f, -100.f);
 
-		gluPerspective(45.0f,(GLfloat)size().width()/(GLfloat)size().height(),0.1f,100.0f);
-		gluLookAt (5.0f, 5.0f, 7.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+//		gluPerspective(45.0f,(GLfloat)size().width()/(GLfloat)size().height(),0.1f,100.0f);
+//		gluLookAt (5.0f, 5.0f, 7.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
 		glViewport(position().x(), position().y(), size().width(), size().height());
 

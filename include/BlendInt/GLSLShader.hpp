@@ -50,6 +50,12 @@ namespace BlendInt {
 		 */
 		GLSLShader ();
 
+		void Create (GLenum shaderType);
+
+		void SetSource (const char* source);
+
+		bool Compile ();
+
 		/**
 		 * @brief Load a vertex or fragment shader sources and compile
 		 * @param filename filename to be loaded
@@ -58,9 +64,9 @@ namespace BlendInt {
 		 * Must be one of: GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
 		 *       GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER
 		 */
-		void Load (const std::string& filename, GLenum type);
+		static GLuint Load (const std::string& filename, GLenum type);
 
-		void Load (const char* buf, GLenum type);
+		static GLuint Load (const char* buf, GLenum type);
 
 		GLuint id () const
 		{
@@ -105,14 +111,13 @@ namespace BlendInt {
 
 		virtual ~GLSLShader ();
 
-	private:
 		/**
 		 * @brief Read a fragment or vertex shader from a file
 		 * @param filename file to read shader from
 		 * @return a newly-allocated text buffer containing code.
 		 * This buffer must be freed after usage
 		 */
-		char* Read (const char *filename);
+		static char* Read (const char *filename);
 
 		/**
 		 * @brief Compile a shader from a text buffer
@@ -120,7 +125,9 @@ namespace BlendInt {
 		 * @param type type of shader
 		 * @return the shader object on the compiled program
 		 */
-		GLuint Compile (const char* source, const GLenum type);
+		static GLuint Compile (const char* source, const GLenum shaderType);
+
+	private:
 
 		GLuint m_id;
 	};

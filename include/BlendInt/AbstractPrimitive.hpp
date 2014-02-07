@@ -41,6 +41,14 @@ namespace BlendInt {
 
 		void SetProgram (GLSLProgram* program);
 
+		/**
+		 * @brief Render the primitive in Viewport3D
+		 * @param MVP
+		 *
+		 * The following OpenGL APIs should not be used in this virtual function:
+		 * 	- glClearColor
+		 * 	- glClear
+		 */
 		virtual void Render (const glm::mat4& MVP) = 0;
 
 	protected:

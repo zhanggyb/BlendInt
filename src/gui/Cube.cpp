@@ -37,7 +37,7 @@ namespace BlendInt {
 	vbo_cube_colors(0), ibo_cube_elements(0), program(0),
 	attribute_coord3d (0), attribute_v_color(0), uniform_mvp(0)
 	{
-
+		InitOnce();
 	}
 
 	void Cube::Render (const glm::mat4& mvp)
@@ -46,6 +46,9 @@ namespace BlendInt {
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glUseProgram(program);
+
+		//glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
+
 		glEnableVertexAttribArray(attribute_coord3d);
 		// Describe our vertices array to OpenGL (it can't guess its format automatically)
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_cube_vertices);
@@ -70,15 +73,10 @@ namespace BlendInt {
 		/* Push each element in buffer_vertices to the vertex shader */
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
 
-		/*
 		int size;
 		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
 		glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT,
 		        0);
-		 */
-		//std::cout << "size: " << size << std::endl;
-		glDrawElements(GL_TRIANGLES, 0, GL_UNSIGNED_SHORT, 0);
-
 
 		glDisableVertexAttribArray(attribute_v_color);
 		glDisableVertexAttribArray(attribute_coord3d);
@@ -153,8 +151,14 @@ namespace BlendInt {
 
 		GLuint vs, fs;
 
-		if ((vs = create_shader("cube.v.glsl", GL_VERTEX_SHADER))   == 0) return 0;
-		if ((fs = create_shader("cube.f.glsl", GL_FRAGMENT_SHADER)) == 0) return 0;
+		if ((vs = create_shader("cube.v.glsl", GL_VERTEX_SHADER))   == 0) {
+			std::cout << "cannot create vertex shader" << std::endl;
+			return 0;
+		}
+		if ((fs = create_shader("cube.f.glsl", GL_FRAGMENT_SHADER)) == 0) {
+			std::cout << "cannot create fragment shader" << std::endl;
+			return 0;
+		}
 
 		program = glCreateProgram();
 		glAttachShader(program, vs);
@@ -190,15 +194,16 @@ namespace BlendInt {
 			return 0;
 		}
 
-		float angle = 0;  // 45бу per second
+		float angle = 0;  // 45 degree per second
 		glm::vec3 axis_y(0, 1, 0);
 		glm::mat4 anim = glm::rotate(glm::mat4(1.0f), angle, axis_y);
 
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -4.0));
-		glm::mat4 view = glm::lookAt(glm::vec3(0.0, 2.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
+		//glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -4.0));
+		glm::mat4 view = glm::lookAt(glm::vec3(5.0, 5.0, 5.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 		glm::mat4 projection = glm::perspective(45.0f, 1.0f*5/4, 0.1f, 10.0f);
 
-		mvp = projection * view * model * anim;
+		//mvp = projection * view * model * anim;
+		mvp = projection * view * anim;
 
 		glUseProgram(program);
 		glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));

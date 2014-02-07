@@ -47,6 +47,34 @@ namespace BlendInt {
 		Clear();
 	}
 
+	void GLSLShader::Create(GLenum shaderType)
+	{
+		Clear ();
+
+		m_id = glCreateShader(shaderType);
+	}
+
+	void GLSLShader::SetSource(const char* source)
+	{
+		glShaderSource(m_id, 1, &source, 0);
+	}
+
+	bool GLSLShader::Compile()
+	{
+		GLint compile_status;
+
+		glCompileShader(m_id);
+
+		glGetShaderiv(m_id, GL_COMPILE_STATUS, &compile_status);
+		if (compile_status == GL_FALSE) {
+			GLchar messages[256];
+			glGetShaderInfoLog(m_id, sizeof(messages), 0, &messages[0]);
+			fprintf(stderr, "%s\n", messages);
+		}
+
+		return compile_status == GL_TRUE? true : false;
+	}
+
 	GLenum GLSLShader::GetType () const
 	{
 		GLint type;
@@ -76,35 +104,38 @@ namespace BlendInt {
 		return status == GL_TRUE ? true : false;
 	}
 
-	void GLSLShader::Load (const std::string& filename, GLenum type)
+	GLuint GLSLShader::Load (const std::string& filename, GLenum type)
 	{
-		Clear();
+		GLuint shader = 0;
 
 		char* buf = Read(filename.c_str());
 
 		if (buf) {
-			m_id = Compile(buf, type);
+			shader = Compile(buf, type);
 			free(buf);
 		}
+
+		return shader;
 	}
 
-	void GLSLShader::Load (const char* buf, GLenum type)
+	GLuint GLSLShader::Load (const char* buf, GLenum type)
 	{
-		Clear();
+		GLuint shader = 0;
 
 		if (buf) {
-			m_id = Compile(buf, type);
+			shader = Compile(buf, type);
 		}
+
+		return shader;
 	}
 
 	void GLSLShader::Clear ()
 	{
-		if (m_id) {
-			if (glIsShader(m_id)) {
-				glDeleteShader(m_id);
-			}
-			m_id = 0;
+		if (glIsShader(m_id)) {
+			glDeleteShader(m_id);
 		}
+
+		m_id = 0;
 	}
 
 	void GLSLShader::PrintLog ()
@@ -146,10 +177,10 @@ namespace BlendInt {
 		return buffer;
 	}
 
-	GLuint GLSLShader::Compile (const char* source, const GLenum type)
+	GLuint GLSLShader::Compile (const char* source, const GLenum shaderType)
 	{
 		GLint compile_status;
-		GLuint shader = glCreateShader(type);
+		GLuint shader = glCreateShader(shaderType);
 		glShaderSource(shader, 1, &source, 0);
 		glCompileShader(shader);
 
@@ -157,8 +188,8 @@ namespace BlendInt {
 		if (compile_status == GL_FALSE) {
 			GLchar messages[256];
 			glGetShaderInfoLog(shader, sizeof(messages), 0, &messages[0]);
-			fprintf( stderr, "%s\n", messages);
-			exit( EXIT_FAILURE);
+			fprintf(stderr, "%s\n", messages);
+			exit(EXIT_FAILURE);
 		}
 		return shader;
 	}

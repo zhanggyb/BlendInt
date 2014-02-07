@@ -30,8 +30,6 @@
 #include <GL/gl.h>
 #endif
 
-#include <vector>
-
 #include <BlendInt/Object.hpp>
 #include <BlendInt/GLSLShader.hpp>
 
@@ -67,27 +65,15 @@ namespace BlendInt {
 		 */
 		bool Create ();
 
-		void Attach (const char* shader, GLenum type);
-
-		/**
-		 * @brief Attach vertex and fragment shaders
-		 * @param vertex_shader The vertex shader stored in memory as string
-		 * @param fragment_shader The vertex shader stored in memory as string
-		 */
-		void AttachShaderPair (const char* vertex_shader, const char* fragment_shader);
-
-		/**
-		 * @brief Attach vertex and fragment shaders
-		 * @param vertex_shader File name of the vertex shader
-		 * @param fragment_shader File name of the fragment shader
-		 */
-		void AttachShaderPair (const std::string& vertex_shader, const std::string& fragment_shader);
-
 		/**
 		 * @brief Attach shader
 		 * @param[in] buf The shader stored in memory as string
-		 * @param[in] type The shader type, must be one of GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
-		 *      GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER.
+		 * @param[in] type The shader type, must be one of:
+		 * 	- GL_VERTEX_SHADER
+		 * 	- GL_TESS_CONTROL_SHADER
+		 * 	- GL_TESS_EVALUATION_SHADER
+		 * 	- GL_GEOMETRY_SHADER
+		 * 	- GL_FRAGMENT_SHADER
 		 *
 		 * The param type is defined in manual of glCreateShader
 		 */
@@ -96,16 +82,33 @@ namespace BlendInt {
 		/**
 		 * @brief Attach shader
 		 * @param[in] filename The path of the shader file
-		 * @param[in] type The shader type, must be one of GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
-		 *      GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER.
+		 * @param[in] type The shader type, must be one of:
+		 * 	- GL_VERTEX_SHADER
+		 * 	- GL_TESS_CONTROL_SHADER
+		 * 	- GL_TESS_EVALUATION_SHADER
+		 * 	- GL_GEOMETRY_SHADER
+		 * 	- GL_FRAGMENT_SHADER
 		 *
 		 * The param type is defined in manual of glCreateShader
 		 */
 		void AttachShader (const std::string& filename, GLenum type);
 
-		void Detach (GLuint shader);
+		void AttachShader (const GLSLShader& shader);
 
-		//void Detach ()
+		/**
+		 * @brief Attach vertex and fragment shaders
+		 * @param vertex_shader The vertex shader stored in memory as string
+		 * @param fragment_shader The vertex shader stored in memory as string
+		 */
+		void AttachShaderPair (const char* vertex_shader,
+		        const char* fragment_shader);
+
+		/**
+		 * @brief Attach vertex and fragment shaders
+		 * @param vertex_shader File name of the vertex shader
+		 * @param fragment_shader File name of the fragment shader
+		 */
+		void AttachShaderPair (const std::string& vertex_shader, const std::string& fragment_shader);
 
 		/**
 		 * @brief Link the program
@@ -116,6 +119,10 @@ namespace BlendInt {
 		 * 	@note this function should be called after attaching correct shaders
 		 */
 		bool Link ();
+
+		bool DetachShader (GLuint shader);
+
+		bool DetachShader (const GLSLShader& shader);
 
 		/**
 		 * @brief Get if the program is valid
@@ -178,8 +185,6 @@ namespace BlendInt {
 	private:
 
 		GLuint m_id;
-
-		std::vector<GLSLShader*> m_shaders;
 	};
 
 }

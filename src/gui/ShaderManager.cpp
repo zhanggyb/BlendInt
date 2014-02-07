@@ -31,6 +31,7 @@
 #endif  // __UNIX__
 #include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <BlendInt/ShaderManager.hpp>
 
@@ -195,9 +196,9 @@ namespace BlendInt {
 				return 0;
 			glAttachShader(program, shader);
 
-			glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE_EXT, input);
-			glProgramParameteriEXT(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, output);
-			glProgramParameteriEXT(program, GL_GEOMETRY_VERTICES_OUT_EXT, vertices);
+			glProgramParameteri(program, GL_GEOMETRY_INPUT_TYPE_EXT, input);
+			glProgramParameteri(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, output);
+			glProgramParameteri(program, GL_GEOMETRY_VERTICES_OUT_EXT, vertices);
 		}
 
 		if(fragmentfile) {
@@ -239,9 +240,6 @@ namespace BlendInt {
 			fprintf(stderr, "Could not bind uniform %s\n", name);
 		return uniform;
 	}
-
-
-
 
 	const char* ShaderManager::text_vertex_shader =
 			"#version 120\n"
