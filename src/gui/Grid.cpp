@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <math.h>
+
 // vec3, vec4, ivec4, mat4
 #include <glm/glm.hpp>
 // translate, rotate, scale, perspective
@@ -35,6 +37,33 @@ namespace BlendInt {
 	Grid::Grid ()
 	: AbstractPrimitive(), m_size(10), m_step(10), m_vb(0)
 	{
+		InitOnce();
+	}
+
+	void Grid::SetSize (int size)
+	{
+		m_size = size;
+
+		Update ();
+	}
+
+	void Grid::Update()
+	{
+		int points_one_line = 2 * m_size + 1;
+
+		int* p = new int[points_one_line * points_one_line * 3];
+
+		for(int i = 0; i < points_one_line; i++)
+		{
+			for(int j = 0; j < points_one_line; j++)
+			{
+				*(p + i * points_one_line + j) = j;
+				*(p + i * points_one_line + j + 1) = j;
+				*(p + i * points_one_line + j + 2) = j;
+			}
+		}
+
+		delete p;
 	}
 
 	void Grid::Render (const glm::mat4& mvp)
@@ -63,20 +92,10 @@ namespace BlendInt {
 
 	void Grid::InitOnce()
 	{
-		GLint vertices[4][3] = {
-				{-5, -5, 0},
-				{ 5, -5, 0},
-				{ 5,  5, 0},
-				{-5, 5, 0}
-		};
-
 		m_vb = new GLArrayBuffer;
 		Retain(m_vb);
 
-		m_vb->Generate();
-		m_vb->bind();
-		m_vb->set_data(4, sizeof(vertices[0]), vertices);
-		m_vb->Reset();
+		Update ();
 	}
 
 }

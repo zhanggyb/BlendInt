@@ -46,14 +46,14 @@ namespace BlendInt {
 
 	Viewport3D::Viewport3D ()
 			: Widget(), m_default_camera(0), m_xold(0),
-			  m_yold(0), m_left_down(false)
+			  m_yold(0), m_rX(0.0), m_rY(0.0), m_left_down(false)
 	{
 		InitOnce();
 	}
 
 	Viewport3D::Viewport3D (AbstractWidget* parent)
 			: Widget(parent), m_default_camera(0), m_xold(0),
-			  m_yold(0), m_left_down(false)
+			  m_yold(0), m_rX(0.0), m_rY(0.0), m_left_down(false)
 	{
 		InitOnce();
 	}
@@ -75,34 +75,7 @@ namespace BlendInt {
 
 	void Viewport3D::KeyPressEvent (KeyEvent* event)
 	{
-		/*
-		if(event->action() == KeyPress) {
-			float x = m_cameras[0]->position().x();
-			float y = m_cameras[0]->position().y();
-			float z = m_cameras[0]->position().z();
 
-			switch (event->key()) {
-				case Key_Left:
-					m_cameras[0]->set_position(x - 5, y, z);
-					break;
-
-				case Key_Right:
-					m_cameras[0]->set_position(x + 5, y, z);
-					break;
-
-				case Key_Up:
-					m_cameras[0]->set_position(x, y, z + 5);
-					break;
-
-				case Key_Down:
-					m_cameras[0]->set_position(x, y, z - 5);
-					break;
-
-				default:
-					break;
-			}
-		}
-		*/
 	}
 
 	void Viewport3D::MousePressEvent (MouseEvent* event)
@@ -123,8 +96,13 @@ namespace BlendInt {
 
 	void Viewport3D::MouseMoveEvent (MouseEvent* event)
 	{
-		m_xold = event->position().x();
-		m_yold = event->position().y();
+		if(m_left_down) {
+			m_rY += (event->position().y() - m_yold) / 100.0f;
+			m_rX += (m_xold - event->position().x()) / 100.0f;
+
+			m_default_camera->Rotate(m_rX, m_rY, 0);
+			m_default_camera->Update();
+		}
 	}
 
 	void Viewport3D::Render ()
@@ -218,10 +196,11 @@ namespace BlendInt {
 		//rotate the camera for proper orientation
 		float yaw = glm::degrees(float(atan2(look.z, look.x)+M_PI));
 		float pitch = glm::degrees(asin(look.y));
+		m_default_camera->set_look(look);
 		m_default_camera->Rotate(yaw,pitch,0);
 
-		m_default_camera->SetProjection(45, 5.0f/4);
-
+		m_default_camera->SetProjection(m_default_camera->fovy(), 5.0f/4);
+		//m_default_camera->Rotate(10.f, 5.f, 15.f);
 		m_default_camera->Update();
 
 		m_cube = new Cube;

@@ -44,29 +44,28 @@ namespace BlendInt {
 
 	void FreeCamera::Update ()
 	{
-//		glm::mat4 R = glm::yawPitchRoll(yaw(), pitch(), roll());
-//
-//		set_position(position() + m_translation);
-//		// m_translation = glm::vec3(0);
-//
-//		set_look(glm::vec3(R * glm::vec4(0, 0, 1, 0)));
-//		glm::vec3 target = position() + look();
-//		set_up(glm::vec3(R * glm::vec4(0, 1, 0, 0)));
-//		set_right(glm::cross(look(), up()));
-//
-//		set_view(glm::lookAt(position(), target, up()));
+		glm::mat4 R = glm::yawPitchRoll(yaw(), pitch(), roll());
 
-		float angle = 0;  // 45�� per second
-		glm::vec3 axis_y(0, 1, 0);
-		glm::mat4 anim = glm::rotate(glm::mat4(1.0f), angle, axis_y);
+		// set_position(position() + m_translation);
+		// m_translation = glm::vec3(0);
 
-		//glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -4.0));
+		set_look(glm::vec3(R * glm::vec4(0, 0, 1, 0)));
+		//glm::vec3 center = position() + look();
+		//set_center(position() + look());
+		set_up(glm::vec3(R * glm::vec4(0, 1, 0, 0)));
+		set_right(glm::cross(look(), up()));
+
+		set_view(glm::lookAt(position(), center(), up()));
+
+		SetProjection (45.0f, 1.0f*5/4,
+		        0.1f, 10.0f);
+
+		/*
 		glm::mat4 view = glm::lookAt(glm::vec3(5.0, 5.0, 5.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 		glm::mat4 projection = glm::perspective(45.0f, 1.0f*5/4, 0.1f, 10.0f);
-
-		//mvp = projection * view * model * anim;
 		set_view(view);
 		set_projection(projection);
+		*/
 	}
 
 }

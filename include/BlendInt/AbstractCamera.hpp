@@ -216,6 +216,7 @@ namespace BlendInt {
 		/** The eye position */
 		glm::vec3 m_position;
 
+		/** Direction where to look */
 		glm::vec3 m_look;
 
 		/** Direction of the up vector */

@@ -28,7 +28,7 @@ namespace BlendInt {
 
 	AbstractCamera::AbstractCamera ()
 	: Object(),
-	  m_fovy(0.0),
+	  m_fovy(45.0f),
 	  m_aspect(1.0),
 	  m_near(0.1f),
 	  m_far(100.f),
@@ -49,7 +49,7 @@ namespace BlendInt {
 		m_far = far;
 		m_fovy = fovy;
 		m_aspect = aspect;
-		m_projection = glm::perspective(m_near, m_aspect, m_near, m_far);
+		m_projection = glm::perspective(m_fovy, m_aspect, m_near, m_far);
 	}
 
 	void AbstractCamera::Rotate(float yaw, float pitch, float roll)

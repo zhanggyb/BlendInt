@@ -82,6 +82,10 @@ namespace BlendInt {
 		int m_xold;
 		int m_yold;
 
+		float m_rX;
+
+		float m_rY;
+
 		bool m_left_down;
 
 	};

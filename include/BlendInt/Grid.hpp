@@ -35,6 +35,10 @@ namespace BlendInt {
 
 		Grid ();
 
+		void SetSize (int size);
+
+		void Update ();
+
 		virtual void Render (const glm::mat4& MVP);
 
 	protected:
