@@ -71,24 +71,16 @@ namespace BlendInt {
 
 		virtual void Draw ();
 
-		void DrawCube ();
-
-		void DrawGrid (float width, float height, float small_step, float big_step);
-
 		void InitOnce ();
 
 		vector<AbstractCamera*> m_cameras;
 
 		FreeCamera* m_default_camera;
 
-		Grid* m_grid;
 		Cube* m_cube;
 
 		int m_xold;
 		int m_yold;
-
-		float m_rotate_x;
-		float m_rotate_y;
 
 		bool m_left_down;
 

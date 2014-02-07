@@ -140,12 +140,12 @@ namespace BlendInt {
 		/**
 		 * @brief Use this program for render
 		 */
-		void Activate ();
+		void Use ();
 
 		/**
 		 * @brief Unuse this program for render
 		 */
-		void Deactivate ();
+		static void Reset ();
 
 		/**
 		 * @brief Print log

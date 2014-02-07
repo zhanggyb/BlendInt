@@ -25,6 +25,7 @@
 #define _BLENDINT_GRID_HPP_
 
 #include <BlendInt/AbstractPrimitive.hpp>
+#include <BlendInt/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 

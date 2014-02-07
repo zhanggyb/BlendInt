@@ -29,61 +29,69 @@
 #include <BlendInt/Cube.hpp>
 
 #include <BlendInt/ShaderManager.hpp>
+#include <BlendInt/GLSLProgram.hpp>
 
 namespace BlendInt {
 
 	Cube::Cube()
-	: AbstractPrimitive(), vbo_cube_vertices(0),
-	vbo_cube_colors(0), ibo_cube_elements(0), program(0),
-	attribute_coord3d (0), attribute_v_color(0), uniform_mvp(0)
+	: AbstractPrimitive(), m_vbo_cube_vertices(0),
+	m_vbo_cube_colors(0), m_ibo_cube_elements(0),
+	m_attribute_coord3d (0), m_attribute_v_color(0), m_uniform_mvp(0)
 	{
 		InitOnce();
 	}
 
 	void Cube::Render (const glm::mat4& mvp)
 	{
-		//glClearColor(1.0, 1.0, 1.0, 1.0);
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		if (program()) {
 
-		glUseProgram(program);
+			program()->Use();
 
-		//glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
+			glUniformMatrix4fv(m_uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
 
-		glEnableVertexAttribArray(attribute_coord3d);
-		// Describe our vertices array to OpenGL (it can't guess its format automatically)
-		glBindBuffer(GL_ARRAY_BUFFER, vbo_cube_vertices);
-		glVertexAttribPointer(attribute_coord3d, // attribute
-		        3,                // number of elements per vertex, here (x,y,z)
-		        GL_FLOAT,          // the type of each element
-		        GL_FALSE,          // take our values as-is
-		        0,                 // no extra data between each position
-		        0                  // offset of first element
-		        );
+			glEnableVertexAttribArray(m_attribute_coord3d);
+			// Describe our vertices array to OpenGL (it can't guess its format automatically)
+			glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_vertices);
+			glVertexAttribPointer(m_attribute_coord3d, // attribute
+			        3,            // number of elements per vertex, here (x,y,z)
+			        GL_FLOAT,          // the type of each element
+			        GL_FALSE,          // take our values as-is
+			        0,                 // no extra data between each position
+			        0                  // offset of first element
+			        );
 
-		glEnableVertexAttribArray(attribute_v_color);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo_cube_colors);
-		glVertexAttribPointer(attribute_v_color, // attribute
-		        3,                // number of elements per vertex, here (R,G,B)
-		        GL_FLOAT,          // the type of each element
-		        GL_FALSE,          // take our values as-is
-		        0,                 // no extra data between each position
-		        0                  // offset of first element
-		        );
+			glEnableVertexAttribArray(m_attribute_v_color);
+			glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_colors);
+			glVertexAttribPointer(m_attribute_v_color, // attribute
+			        3,            // number of elements per vertex, here (R,G,B)
+			        GL_FLOAT,          // the type of each element
+			        GL_FALSE,          // take our values as-is
+			        0,                 // no extra data between each position
+			        0                  // offset of first element
+			        );
 
-		/* Push each element in buffer_vertices to the vertex shader */
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
+			/* Push each element in buffer_vertices to the vertex shader */
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo_cube_elements);
 
-		int size;
-		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-		glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT,
-		        0);
+			int size;
+			glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE,
+			        &size);
+			glDrawElements(GL_TRIANGLES, size / sizeof(GLushort),
+			        GL_UNSIGNED_SHORT, 0);
 
-		glDisableVertexAttribArray(attribute_v_color);
-		glDisableVertexAttribArray(attribute_coord3d);
+			glDisableVertexAttribArray(m_attribute_v_color);
+			glDisableVertexAttribArray(m_attribute_coord3d);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glUseProgram(0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+			glUseProgram(0);
+
+			program()->Reset();
+
+		} else {
+			std::cout << "program is not valid" << std::endl;
+		}
 	}
 
 	int Cube::InitOnce()
@@ -101,8 +109,8 @@ namespace BlendInt {
 				-1.0,  1.0, -1.0,
 		};
 
-		glGenBuffers(1, &vbo_cube_vertices);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo_cube_vertices);
+		glGenBuffers(1, &m_vbo_cube_vertices);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_vertices);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
 
 		GLfloat cube_colors[] = {
@@ -118,8 +126,8 @@ namespace BlendInt {
 				1.0, 1.0, 1.0,
 		};
 
-		glGenBuffers(1, &vbo_cube_colors);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo_cube_colors);
+		glGenBuffers(1, &m_vbo_cube_colors);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_colors);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_colors), cube_colors, GL_STATIC_DRAW);
 
 		GLushort cube_elements[] = {
@@ -143,71 +151,36 @@ namespace BlendInt {
 				6, 7, 3,
 		};
 
-		glGenBuffers(1, &ibo_cube_elements);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
+		glGenBuffers(1, &m_ibo_cube_elements);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo_cube_elements);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
 
-		GLint link_ok = GL_FALSE;
+		SetProgram(ShaderManager::Instance()->primitive_program());
+		program()->Use();
 
-		GLuint vs, fs;
+		m_attribute_coord3d = program()->GetAttributeLocation("coord3d");
+		m_attribute_v_color = program()->GetAttributeLocation("v_color");
+		m_uniform_mvp = program()->GetUniformLocation("ModelViewProjectionMatrix");
 
-		if ((vs = create_shader("cube.v.glsl", GL_VERTEX_SHADER))   == 0) {
-			std::cout << "cannot create vertex shader" << std::endl;
-			return 0;
-		}
-		if ((fs = create_shader("cube.f.glsl", GL_FRAGMENT_SHADER)) == 0) {
-			std::cout << "cannot create fragment shader" << std::endl;
-			return 0;
-		}
+		program()->Reset();
 
-		program = glCreateProgram();
-		glAttachShader(program, vs);
-		glAttachShader(program, fs);
-		glLinkProgram(program);
-		glGetProgramiv(program, GL_LINK_STATUS, &link_ok);
-		if (!link_ok) {
-			fprintf(stderr, "glLinkProgram:");
-			print_log(program);
-			return 0;
-		}
-
-		const char* attribute_name;
-		attribute_name = "coord3d";
-		attribute_coord3d = glGetAttribLocation(program, attribute_name);
-		if (attribute_coord3d == -1) {
-			fprintf(stderr, "Could not bind attribute %s\n", attribute_name);
-			return 0;
-		}
-
-		attribute_name = "v_color";
-		attribute_v_color = glGetAttribLocation(program, attribute_name);
-		if (attribute_v_color == -1) {
-			fprintf(stderr, "Could not bind attribute %s\n", attribute_name);
-			return 0;
-		}
-
-		const char* uniform_name;
-		uniform_name = "mvp";
-		uniform_mvp = glGetUniformLocation(program, uniform_name);
-		if (uniform_mvp == -1) {
-			fprintf(stderr, "Could not bind uniform %s\n", uniform_name);
-			return 0;
-		}
-
+		/*
 		float angle = 0;  // 45 degree per second
 		glm::vec3 axis_y(0, 1, 0);
 		glm::mat4 anim = glm::rotate(glm::mat4(1.0f), angle, axis_y);
 
 		//glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -4.0));
-		glm::mat4 view = glm::lookAt(glm::vec3(5.0, 5.0, 5.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-		glm::mat4 projection = glm::perspective(45.0f, 1.0f*5/4, 0.1f, 10.0f);
+		glm::mat4 view = glm::lookAt(glm::vec3(5.0, 5.0, 5.0),
+				glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+		glm::mat4 projection = glm::perspective(45.0f, 1.0f * 5 / 4, 0.1f,
+				10.0f);
 
 		//mvp = projection * view * model * anim;
 		mvp = projection * view * anim;
 
-		glUseProgram(program);
 		glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
-		glUseProgram(0);
+		program()->Reset();
+		 */
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -217,10 +190,9 @@ namespace BlendInt {
 
 	Cube::~Cube()
 	{
-		glDeleteProgram(program);
-		glDeleteBuffers(1, &vbo_cube_vertices);
-		glDeleteBuffers(1, &vbo_cube_colors);
-		glDeleteBuffers(1, &ibo_cube_elements);
+		glDeleteBuffers(1, &m_vbo_cube_vertices);
+		glDeleteBuffers(1, &m_vbo_cube_colors);
+		glDeleteBuffers(1, &m_ibo_cube_elements);
 	}
 
 }

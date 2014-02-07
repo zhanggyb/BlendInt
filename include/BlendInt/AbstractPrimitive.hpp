@@ -27,9 +27,8 @@
 #include <glm/glm.hpp>
 #include <BlendInt/Object.hpp>
 
-#include <BlendInt/GLArrayBuffer.hpp>
 #include <BlendInt/GLSLProgram.hpp>
-#include <BlendInt/GLElementArrayBuffer.hpp>
+#include <BlendInt/AbstractCamera.hpp>
 
 namespace BlendInt {
 
@@ -60,7 +59,6 @@ namespace BlendInt {
 	private:
 
 		GLSLProgram* m_program;
-
 	};
 
 }

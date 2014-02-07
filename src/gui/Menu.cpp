@@ -240,7 +240,7 @@ namespace BlendInt {
 			glDisableClientState(GL_COLOR_ARRAY);
 			glDisableClientState(GL_VERTEX_ARRAY);
 
-			m_highlight_buffer->unbind();
+			m_highlight_buffer->Reset();
 
 			MenuItem* item = m_menubin->GetMenuItem(m_highlight - 1);
 

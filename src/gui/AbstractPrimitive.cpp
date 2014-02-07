@@ -32,14 +32,15 @@ namespace BlendInt {
 
 	void AbstractPrimitive::SetProgram (GLSLProgram* program)
 	{
-		if(!program) return;
 		if(m_program == program) return;
 
 		if(m_program)
 			Destroy(m_program);
 
 		m_program = program;
-		Retain(m_program);
+
+		if(m_program)
+			Retain(m_program);
 	}
 
 	AbstractPrimitive::~AbstractPrimitive ()

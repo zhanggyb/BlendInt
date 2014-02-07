@@ -46,13 +46,12 @@ namespace BlendInt {
 
 		int InitOnce ();
 
-		GLuint vbo_cube_vertices;
-		GLuint vbo_cube_colors;
-		GLuint ibo_cube_elements;
-		GLuint program;
-		GLint attribute_coord3d;
-		GLint attribute_v_color;
-		GLint uniform_mvp;
+		GLuint m_vbo_cube_vertices;
+		GLuint m_vbo_cube_colors;
+		GLuint m_ibo_cube_elements;
+		GLint m_attribute_coord3d;
+		GLint m_attribute_v_color;
+		GLint m_uniform_mvp;
 
 		glm::mat4 mvp;
 	};

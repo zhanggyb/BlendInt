@@ -64,6 +64,11 @@ namespace BlendInt {
 		return glIsBuffer(m_id);
 	}
 
+	void GLElementArrayBuffer::Reset()
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+
 	GLenum GLElementArrayBuffer::GetUsage ()
 	{
 		GLint usage = 0;

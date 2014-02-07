@@ -107,7 +107,7 @@ namespace BlendInt {
 			return obj_map;
 		}
 
-		static void Reset ()
+		static void ResetID ()
 		{
 			id_last = 1;
 			obj_map.clear();

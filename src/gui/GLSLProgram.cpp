@@ -54,8 +54,10 @@ namespace BlendInt {
 
 		m_id = glCreateProgram();
 
-		if(m_id) return true;
-		else return false;
+		if (glIsProgram(m_id))
+			return true;
+		else
+			return false;
 	}
 
 	void GLSLProgram::AttachShaderPair(const char* vertex_shader, const char* fragment_shader)
@@ -210,13 +212,13 @@ namespace BlendInt {
 		return uniform;
 	}
 
-	void GLSLProgram::Activate()
+	void GLSLProgram::Use()
 	{
 		if (glIsProgram(m_id))
 			glUseProgram (m_id);
 	}
 
-	void GLSLProgram::Deactivate()
+	void GLSLProgram::Reset()
 	{
 		glUseProgram(0);
 	}

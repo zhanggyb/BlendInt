@@ -40,7 +40,7 @@ namespace BlendInt {
 	void Grid::Render (const glm::mat4& mvp)
 	{
 		if(program()) {
-			program()->Activate();
+			program()->Use();
 			glUniformMatrix4fv(program()->GetUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(mvp));
 		}
 
@@ -49,10 +49,10 @@ namespace BlendInt {
 		glVertexPointer(3, GL_INT, 0, BUFFER_OFFSET(0));
 		glDrawArrays(GL_LINES, 0, m_vb->vertices());
 		glDisableClientState(GL_VERTEX_ARRAY);
-		m_vb->unbind();
+		m_vb->Reset();
 
 		if(program()) {
-			program()->Deactivate();
+			program()->Reset();
 		}
 	}
 
@@ -76,7 +76,7 @@ namespace BlendInt {
 		m_vb->Generate();
 		m_vb->bind();
 		m_vb->set_data(4, sizeof(vertices[0]), vertices);
-		m_vb->unbind();
+		m_vb->Reset();
 	}
 
 }

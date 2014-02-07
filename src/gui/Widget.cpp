@@ -178,7 +178,7 @@ namespace BlendInt {
 		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
 		glDrawArrays(mode, 0, buffer->vertices());
 		glDisableClientState(GL_VERTEX_ARRAY);
-		buffer->unbind();
+		buffer->Reset();
 	}
 
 	void Widget::DrawShadedInnerBuffer(GLArrayBuffer* buffer, int mode)
@@ -197,7 +197,7 @@ namespace BlendInt {
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 
-		buffer->unbind();
+		buffer->Reset();
 	}
 
 	void Widget::DrawOutlineBuffer(GLArrayBuffer* buffer, int mode)
@@ -214,7 +214,7 @@ namespace BlendInt {
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
-		buffer->unbind();
+		buffer->Reset();
 	}
 
 	void Widget::GenerateFormBuffer(const Size* size, int round_type,
@@ -233,7 +233,7 @@ namespace BlendInt {
 			inner_buffer->Generate();
 			inner_buffer->bind();
 			inner_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
-			inner_buffer->unbind();
+			inner_buffer->Reset();
 		}
 
 		// the quad strip for outline
@@ -248,7 +248,7 @@ namespace BlendInt {
 				outer_buffer->Generate();
 				outer_buffer->bind();
 				outer_buffer->set_data((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip);
-				outer_buffer->unbind();
+				outer_buffer->Reset();
 			}
 
 			if(emboss_buffer) {
@@ -259,7 +259,7 @@ namespace BlendInt {
 				emboss_buffer->Generate();
 				emboss_buffer->bind();
 				emboss_buffer->set_data(vert_sum.half * 2, sizeof(quad_strip[0]), quad_strip);
-				emboss_buffer->unbind();
+				emboss_buffer->Reset();
 		}
 
 		}
@@ -292,7 +292,7 @@ namespace BlendInt {
 			inner_buffer_p->Generate();
 			inner_buffer_p->bind();
 			inner_buffer_p->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
-			inner_buffer_p->unbind();
+			inner_buffer_p->Reset();
 		}
 
 		if (outer_buffer_p) {
@@ -304,7 +304,7 @@ namespace BlendInt {
 			outer_buffer_p->Generate();
 			outer_buffer_p->bind();
 			outer_buffer_p->set_data(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), quad_strip);
-			outer_buffer_p->unbind();
+			outer_buffer_p->Reset();
 		}
 
 		if (highlight_buffer_p) {
@@ -320,7 +320,7 @@ namespace BlendInt {
 			highlight_buffer_p->bind();
 
 			highlight_buffer_p->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
-			highlight_buffer_p->unbind();
+			highlight_buffer_p->Reset();
 		}
 	}
 
@@ -353,7 +353,7 @@ namespace BlendInt {
 		buffer->Generate();
 		buffer->bind();
 		buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
-		buffer->unbind();
+		buffer->Reset();
 	}
 
 	void Widget::GenerateShadedFormBuffers (const Size* size,
@@ -387,7 +387,7 @@ namespace BlendInt {
 			inner_buffer->Generate();
 			inner_buffer->bind();
 			inner_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
-			inner_buffer->unbind();
+			inner_buffer->Reset();
 		}
 
 		if(outer_buffer) {
@@ -397,7 +397,7 @@ namespace BlendInt {
 			outer_buffer->Generate();
 			outer_buffer->bind();
 			outer_buffer->set_data((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip);
-			outer_buffer->unbind();
+			outer_buffer->Reset();
 		}
 
 		if(highlight_buffer) {
@@ -417,7 +417,7 @@ namespace BlendInt {
 			highlight_buffer->Generate();
 			highlight_buffer->bind();
 			highlight_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
-			highlight_buffer->unbind();
+			highlight_buffer->Reset();
 		}
 
 	}
