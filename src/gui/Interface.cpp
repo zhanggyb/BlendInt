@@ -142,7 +142,7 @@ namespace BlendInt {
 	}
 
 	Interface::Interface ()
-	: m_focus_style(FocusOnClick)
+	: m_main(0), m_focus_style(FocusOnClick)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
@@ -274,6 +274,19 @@ namespace BlendInt {
 		m_size.set_height(height);
 
 		m_resized.fire(m_size.width(), m_size.height());
+
+		if(m_main) {
+			AbstractWidget::Resize(m_main, width, height);
+		}
+	}
+
+	void Interface::SetMainWidget(AbstractWidget* widget)
+	{
+		m_main = widget;
+
+		if(m_main) {
+			AbstractWidget::Resize(m_main, m_size);
+		}
 	}
 
 	void Interface::GLFWKeyEvent (int key, int scancode, int action, int mods)

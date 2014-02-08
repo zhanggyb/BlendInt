@@ -58,8 +58,12 @@ int main(int argc, char* argv[])
 //
 //	text->Register();
 
+	HorizontalLayout* layout = new HorizontalLayout;
+	layout->Register();
+
 	Button* btn = new Button;
 	btn->set_name("Button");
+	btn->SetExpandX(false);
 	btn->SetPosition(530, 250);
 	btn->Register();
 
@@ -68,6 +72,11 @@ int main(int argc, char* argv[])
 	view3d->SetPosition(20, 20);
 	view3d->Resize(500, 400);
 	view3d->Register();
+
+	layout->Add(view3d);
+	layout->Add(btn);
+
+	interface()->SetMainWidget(layout);
 
 	RunLoop (win);
 

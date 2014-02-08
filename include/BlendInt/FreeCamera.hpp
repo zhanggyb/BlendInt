@@ -37,6 +37,12 @@ namespace BlendInt {
 
 		virtual ~FreeCamera ();
 
+		void Orbit (float x, float y);
+
+		void Pan (float x, float y);
+
+		void Zoom (float fac);
+
 		virtual void Update ();
 
 	private:

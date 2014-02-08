@@ -65,6 +65,8 @@ namespace BlendInt {
 
 		virtual void MouseMoveEvent (MouseEvent* event);
 
+		virtual void Update (int type, const void* data);
+
 		virtual void Render ();
 
 	private:

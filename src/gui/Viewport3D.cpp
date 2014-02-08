@@ -83,7 +83,7 @@ namespace BlendInt {
 				glm::vec3 center = glm::vec3(0);
 				glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
 				m_default_camera->LookAt(pos, center, up);
-				m_default_camera->SetPerspective(m_default_camera->fovy(), 5.0f/4);
+				m_default_camera->SetPerspective(m_default_camera->fovy(), 1.0f * size().width()/size().height());
 				break;
 			}
 
@@ -117,8 +117,8 @@ namespace BlendInt {
 				if(event->modifiers() == ModifierNone) {
 
 				} else if (event->modifiers() == ModifierShift) {
-					float dx = static_cast<float>(event->position().x() - m_last_x);
-					float dy = static_cast<float>(event->position().y() - m_last_y);
+					float dx = static_cast<float>(m_last_x - event->position().x());
+					float dy = static_cast<float>(m_last_y - event->position().y());
 					m_default_camera->Pan(dx, dy);
 				} else if (event->modifiers() == ModifierControl) {
 					m_default_camera->Zoom(event->position().y() - m_last_y);
@@ -134,6 +134,21 @@ namespace BlendInt {
 			default:
 				break;
 		}
+	}
+
+	void Viewport3D::Update(int type, const void* data)
+	{
+		switch(type) {
+			case FormSize: {
+
+				const Size* size_p = static_cast<const Size*>(data);
+				m_default_camera->SetPerspective(m_default_camera->fovy(), 1.f * size_p->width()/size_p->height());
+
+				break;
+			}
+		}
+
+		Widget::Update(type, data);
 	}
 
 	void Viewport3D::Render ()
@@ -218,6 +233,9 @@ namespace BlendInt {
 
 	void Viewport3D::InitOnce()
 	{
+		set_expand_x(true);
+		set_expand_y(true);
+
 		m_default_camera = new FreeCamera;
 		Retain(m_default_camera);
 
@@ -235,7 +253,7 @@ namespace BlendInt {
 		//m_default_camera->set_n(look);
 		m_default_camera->Rotate(yaw,pitch,0);
 
-		m_default_camera->SetPerspective(m_default_camera->fovy(), 5.0f/4);
+		m_default_camera->SetPerspective(m_default_camera->fovy(), 1.f * size().width()/size().height());
 		//m_default_camera->Rotate(10.f, 5.f, 15.f);
 		m_default_camera->Update();
 

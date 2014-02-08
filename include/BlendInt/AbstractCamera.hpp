@@ -52,12 +52,6 @@ namespace BlendInt {
 		void SetPerspective (const float fovy, const float aspect,
 		        const float near = 0.1f, const float far = 100.f);
 
-		void Orbit (float x, float y);
-
-		void Pan (float x, float y);
-
-		void Zoom (float fac);
-
 		glm::mat4 GetMatrixUsingYawPitchRoll (float yaw, float pitch, float roll);
 
 		const glm::vec3& position () const {return m_position;}

@@ -42,6 +42,37 @@ namespace BlendInt {
 	{
 	}
 
+	void FreeCamera::Orbit (float x, float y)
+	{
+	}
+
+	void FreeCamera::Pan (float x, float y)
+	{
+		glm::vec3 pos = position() + u() * (x / 200.f);
+		pos = pos + v() * (y / 200.f);
+
+		glm::vec3 cent = center() + u() * (x / 200.f);
+		cent = cent + v() * (y / 200.f);
+
+		//m_position = pos;
+		//m_center = cent;
+
+		set_view(glm::lookAt(pos, cent, up()));
+
+		//LookAt(pos, cent, up());
+	}
+
+	void FreeCamera::Zoom (float fac)
+	{
+		//m_position = m_position + m_n * (fac / 500.f);
+
+		glm::vec3 pos = position() + n() * (fac / 200.f);
+
+		set_view(glm::lookAt(pos, center(), up()));
+
+		//Update ();
+	}
+
 	void FreeCamera::Update ()
 	{
 		set_view(glm::lookAt(position(), center(), up()));

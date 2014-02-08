@@ -109,6 +109,8 @@ namespace BlendInt {
 		 */
 		void Resize (unsigned int width, unsigned int height);
 
+		void SetMainWidget (AbstractWidget* widget);
+
 		Cpp::EventRef<unsigned int, unsigned int> resized() {return m_resized;}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
@@ -139,6 +141,8 @@ namespace BlendInt {
 		void DispatchDrawEvent (AbstractWidget* widget);
 
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point, AbstractWidget* parent);
+
+		AbstractWidget* m_main;
 
 		//int cursor_pos_x_;	/** cursor x position */
 		//int cursor_pos_y_;	/** cursor y position */
