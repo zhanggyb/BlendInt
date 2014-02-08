@@ -100,7 +100,7 @@ namespace BlendInt {
 			/* Push each element in buffer_vertices to the vertex shader */
 			m_ib->bind();
 
-			glDrawElements(GL_LINES, 100 * 101 * 4,
+			glDrawElements(GL_LINES, 20 * 21 * 4,
 			        GL_UNSIGNED_SHORT, 0);
 
 			glDisableVertexAttribArray(m_attribute_coord2d);
@@ -135,11 +135,11 @@ namespace BlendInt {
 
 		program()->Reset();
 
-		glm::vec2 vertices[101][101];
-		for (int i = 0; i < 101; i++) {
-			for (int j = 0; j < 101; j++) {
-				vertices[i][j].x = (j - 50) / 5.f;
-				vertices[i][j].y = (i - 50) / 5.f;
+		glm::vec2 vertices[21][21];
+		for (int i = 0; i < 21; i++) {
+			for (int j = 0; j < 21; j++) {
+				vertices[i][j].x = (j - 10) / 1.f;
+				vertices[i][j].y = (i - 10) / 1.f;
 			}
 		}
 
@@ -148,25 +148,24 @@ namespace BlendInt {
 		m_vb->Generate();
 		m_vb->bind();
 
-		std::cout << "sizeof vertices: " << sizeof(vertices) << std::endl;
-		m_vb->set_data(101 * 101, sizeof(glm::vec2), vertices);
+		m_vb->set_data(21 * 21, sizeof(glm::vec2), vertices);
 		m_vb->Reset();
 
 		// Create an array of indices into the vertex array that traces both horizontal and vertical lines
-		GLushort indices[100 * 101 * 4];
+		GLushort indices[20 * 21 * 4];
 		int i = 0;
 
-		for (int y = 0; y < 101; y++) {
-			for (int x = 0; x < 100; x++) {
-				indices[i++] = y * 101 + x;
-				indices[i++] = y * 101 + x + 1;
+		for (int y = 0; y < 21; y++) {
+			for (int x = 0; x < 20; x++) {
+				indices[i++] = y * 21 + x;
+				indices[i++] = y * 21 + x + 1;
 			}
 		}
 
-		for (int x = 0; x < 101; x++) {
-			for (int y = 0; y < 100; y++) {
-				indices[i++] = y * 101 + x;
-				indices[i++] = (y + 1) * 101 + x;
+		for (int x = 0; x < 21; x++) {
+			for (int y = 0; y < 20; y++) {
+				indices[i++] = y * 21 + x;
+				indices[i++] = (y + 1) * 21 + x;
 			}
 		}
 
@@ -175,7 +174,7 @@ namespace BlendInt {
 
 		m_ib->Generate();
 		m_ib->bind();
-		m_ib->set_data(100 * 101 * 4, sizeof(GLushort), indices);
+		m_ib->set_data(20 * 21 * 4, sizeof(GLushort), indices);
 		m_ib->Reset();
 
 		Update ();

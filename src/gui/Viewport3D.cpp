@@ -76,7 +76,20 @@ namespace BlendInt {
 
 	void Viewport3D::KeyPressEvent (KeyEvent* event)
 	{
+		switch(event->key()) {
+			case Key_KP_Decimal: {
+				// setup camera
+				glm::vec3 pos = glm::vec3(5.f);
+				glm::vec3 center = glm::vec3(0);
+				glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
+				m_default_camera->LookAt(pos, center, up);
+				m_default_camera->SetPerspective(m_default_camera->fovy(), 5.0f/4);
+				break;
+			}
 
+			default:
+				break;
+		}
 	}
 
 	void Viewport3D::MousePressEvent (MouseEvent* event)
@@ -104,7 +117,9 @@ namespace BlendInt {
 				if(event->modifiers() == ModifierNone) {
 
 				} else if (event->modifiers() == ModifierShift) {
-
+					float dx = static_cast<float>(event->position().x() - m_last_x);
+					float dy = static_cast<float>(event->position().y() - m_last_y);
+					m_default_camera->Pan(dx, dy);
 				} else if (event->modifiers() == ModifierControl) {
 					m_default_camera->Zoom(event->position().y() - m_last_y);
 				}

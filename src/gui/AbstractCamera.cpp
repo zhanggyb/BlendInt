@@ -94,6 +94,18 @@ namespace BlendInt {
 
 	void AbstractCamera::Pan (float x, float y)
 	{
+		glm::vec3 pos = m_position + m_u * (x / 200.f);
+		pos = pos + m_v * (y / 200.f);
+
+		glm::vec3 cent = m_center + m_u * (x / 200.f);
+		cent = cent + m_v * (y / 200.f);
+
+		//m_position = pos;
+		//m_center = cent;
+
+		//m_view = glm::lookAt(m_position, m_center, m_up);
+
+		LookAt(pos, cent, up());
 	}
 
 	void AbstractCamera::Zoom (float fac)
