@@ -78,6 +78,7 @@ namespace BlendInt {
 		FreeCamera* m_default_camera;
 
 		Cube* m_cube;
+		Grid* m_grid;
 
 		int m_last_x;
 		int m_last_y;

@@ -33,7 +33,7 @@ namespace BlendInt {
 	{
 		set_position(5.0, 5.0, 5.0);
 		set_center(0.0, 0.0, 0.0);
-		set_up(0.0, 1.0, 0.0);
+		set_up(0.0, 0.0, 1.0);
 
 		m_translation = glm::vec3(0);
 	}

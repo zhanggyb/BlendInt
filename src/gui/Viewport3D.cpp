@@ -45,14 +45,14 @@
 namespace BlendInt {
 
 	Viewport3D::Viewport3D ()
-			: Widget(), m_default_camera(0), m_last_x(0),
+			: Widget(), m_default_camera(0), m_cube(0), m_grid(0), m_last_x(0),
 			  m_last_y(0), m_rX(0.0), m_rY(0.0), m_button_down(MouseButtonNone)
 	{
 		InitOnce();
 	}
 
 	Viewport3D::Viewport3D (AbstractWidget* parent)
-			: Widget(parent), m_default_camera(0), m_last_x(0),
+			: Widget(parent), m_default_camera(0), m_cube(0), m_grid(0), m_last_x(0),
 			  m_last_y(0), m_rX(0.0), m_rY(0.0), m_button_down(MouseButtonNone)
 	{
 		InitOnce();
@@ -61,6 +61,7 @@ namespace BlendInt {
 	Viewport3D::~Viewport3D ()
 	{
 		Destroy(m_default_camera);
+		Destroy(m_grid);
 		Destroy(m_cube);
 
 		vector<AbstractCamera*>::iterator it;
@@ -118,14 +119,6 @@ namespace BlendInt {
 			default:
 				break;
 		}
-
-//		if(m_left_down) {
-//			m_rY += (event->position().y() - m_last_y) / 100.0f;
-//			m_rX += (m_last_x - event->position().x()) / 100.0f;
-//
-//			m_default_camera->Rotate(m_rX, m_rY, 0);
-//			m_default_camera->Update();
-//		}
 	}
 
 	void Viewport3D::Render ()
@@ -135,6 +128,8 @@ namespace BlendInt {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		m_cube->Render(m_default_camera->projection() * m_default_camera->view());
+
+		m_grid->Render(m_default_camera->projection() * m_default_camera->view());
 	}
 
 	void Viewport3D::Draw ()
@@ -214,7 +209,7 @@ namespace BlendInt {
 		// setup camera
 		glm::vec3 pos = glm::vec3(5.f);
 		glm::vec3 center = glm::vec3(0);
-		glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
+		glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
 		m_default_camera->LookAt(pos, center, up);
 
 		glm::vec3 look =  glm::normalize(pos);
@@ -231,7 +226,9 @@ namespace BlendInt {
 
 		m_cube = new Cube;
 		Retain(m_cube);
-		//m_cube->SetProgram(ShaderManager::Instance()->primitive_program());
+
+		m_grid = new Grid;
+		Retain(m_grid);
 	}
 
 }

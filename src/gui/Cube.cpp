@@ -85,8 +85,6 @@ namespace BlendInt {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			glUseProgram(0);
-
 			program()->Reset();
 
 		} else {
@@ -163,24 +161,6 @@ namespace BlendInt {
 		m_uniform_mvp = program()->GetUniformLocation("ModelViewProjectionMatrix");
 
 		program()->Reset();
-
-		/*
-		float angle = 0;  // 45 degree per second
-		glm::vec3 axis_y(0, 1, 0);
-		glm::mat4 anim = glm::rotate(glm::mat4(1.0f), angle, axis_y);
-
-		//glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -4.0));
-		glm::mat4 view = glm::lookAt(glm::vec3(5.0, 5.0, 5.0),
-				glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-		glm::mat4 projection = glm::perspective(45.0f, 1.0f * 5 / 4, 0.1f,
-				10.0f);
-
-		//mvp = projection * view * model * anim;
-		mvp = projection * view * anim;
-
-		glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
-		program()->Reset();
-		 */
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);

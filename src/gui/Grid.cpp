@@ -22,6 +22,8 @@
  */
 
 #include <math.h>
+#include <assert.h>
+#include <iostream>
 
 // vec3, vec4, ivec4, mat4
 #include <glm/glm.hpp>
@@ -31,11 +33,26 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <BlendInt/Grid.hpp>
+#include <BlendInt/GLSLProgram.hpp>
 
 namespace BlendInt {
 
+	const char* Grid::vertex_shader =
+			"attribute vec2 coord2d;"
+			"uniform mat4 ModelViewProjectionMatrix;"
+			""
+			"void main(void) {"
+			"	gl_Position = ModelViewProjectionMatrix * vec4(coord2d, 0, 1);"
+			"}";
+
+	const char* Grid::fragment_shader =
+			"void main(void) {"
+			"	gl_FragColor = vec4(0.55, 0.55, 0.55, 0.65);"
+			"}";
+
 	Grid::Grid ()
-	: AbstractPrimitive(), m_size(10), m_step(10), m_vb(0)
+	: AbstractPrimitive(), m_size(10), m_step(10), m_vb(0), m_ib(0),
+	  m_uniform_mvp(0)
 	{
 		InitOnce();
 	}
@@ -44,56 +61,122 @@ namespace BlendInt {
 	{
 		m_size = size;
 
-		Update ();
+//		Update ();
 	}
 
 	void Grid::Update()
 	{
-		int points_one_line = 2 * m_size + 1;
-
-		int* p = new int[points_one_line * points_one_line * 3];
-
-		for(int i = 0; i < points_one_line; i++)
-		{
-			for(int j = 0; j < points_one_line; j++)
-			{
-				*(p + i * points_one_line + j) = j;
-				*(p + i * points_one_line + j + 1) = j;
-				*(p + i * points_one_line + j + 2) = j;
-			}
-		}
-
-		delete p;
+//		int points_one_line = 2 * m_size + 1;
+//
+//		int* p = new int[points_one_line * points_one_line * 3];
+//
+//		for(int i = 0; i < points_one_line; i++)
+//		{
+//			for(int j = 0; j < points_one_line; j++)
+//			{
+//				*(p + i * points_one_line + j) = j;
+//				*(p + i * points_one_line + j + 1) = j;
+//				*(p + i * points_one_line + j + 2) = j;
+//			}
+//		}
+//
+//		delete p;
 	}
 
 	void Grid::Render (const glm::mat4& mvp)
 	{
 		if(program()) {
+
 			program()->Use();
-			glUniformMatrix4fv(program()->GetUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(mvp));
-		}
 
-		m_vb->bind();
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_INT, 0, BUFFER_OFFSET(0));
-		glDrawArrays(GL_LINES, 0, m_vb->vertices());
-		glDisableClientState(GL_VERTEX_ARRAY);
-		m_vb->Reset();
+			glUniformMatrix4fv(m_uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
 
-		if(program()) {
+			/* Draw the grid using the indices to our vertices using our vertex buffer objects */
+			glEnableVertexAttribArray(m_attribute_coord2d);
+
+			m_vb->bind();
+			glVertexAttribPointer(m_attribute_coord2d, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+			/* Push each element in buffer_vertices to the vertex shader */
+			m_ib->bind();
+
+			glDrawElements(GL_LINES, 100 * 101 * 4,
+			        GL_UNSIGNED_SHORT, 0);
+
+			glDisableVertexAttribArray(m_attribute_coord2d);
+
+			m_ib->Reset();
+			m_vb->Reset();
+
 			program()->Reset();
 		}
 	}
 
 	Grid::~Grid ()
 	{
+		Destroy(m_ib);
 		Destroy(m_vb);
 	}
 
 	void Grid::InitOnce()
 	{
+		GLSLProgram* prog = new GLSLProgram;
+		prog->Create();
+		prog->AttachShaderPair(vertex_shader, fragment_shader);
+		prog->Link();
+
+		SetProgram(prog);
+
+		program()->Use();
+
+		m_attribute_coord2d = program()->GetAttributeLocation("coord2d");
+		m_uniform_mvp = program()->GetUniformLocation("ModelViewProjectionMatrix");
+		assert((m_attribute_coord2d != -1) && (m_uniform_mvp != -1));
+
+		program()->Reset();
+
+		glm::vec2 vertices[101][101];
+		for (int i = 0; i < 101; i++) {
+			for (int j = 0; j < 101; j++) {
+				vertices[i][j].x = (j - 50) / 5.f;
+				vertices[i][j].y = (i - 50) / 5.f;
+			}
+		}
+
 		m_vb = new GLArrayBuffer;
 		Retain(m_vb);
+		m_vb->Generate();
+		m_vb->bind();
+
+		std::cout << "sizeof vertices: " << sizeof(vertices) << std::endl;
+		m_vb->set_data(101 * 101, sizeof(glm::vec2), vertices);
+		m_vb->Reset();
+
+		// Create an array of indices into the vertex array that traces both horizontal and vertical lines
+		GLushort indices[100 * 101 * 4];
+		int i = 0;
+
+		for (int y = 0; y < 101; y++) {
+			for (int x = 0; x < 100; x++) {
+				indices[i++] = y * 101 + x;
+				indices[i++] = y * 101 + x + 1;
+			}
+		}
+
+		for (int x = 0; x < 101; x++) {
+			for (int y = 0; y < 100; y++) {
+				indices[i++] = y * 101 + x;
+				indices[i++] = (y + 1) * 101 + x;
+			}
+		}
+
+		m_ib = new GLElementArrayBuffer;
+		Retain(m_ib);
+
+		m_ib->Generate();
+		m_ib->bind();
+		m_ib->set_data(100 * 101 * 4, sizeof(GLushort), indices);
+		m_ib->Reset();
 
 		Update ();
 	}

@@ -36,7 +36,7 @@ namespace BlendInt {
 	  m_pitch(0.0),
 	  m_roll(0.0)
 	{
-		LookAt (glm::vec3(5.f, 5.f, 5.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+		LookAt (glm::vec3(5.f, 5.f, 5.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 1.f));
 
 		m_projection = glm::perspective(m_fovy, m_aspect, m_near, m_far);
 	}

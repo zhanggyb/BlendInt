@@ -26,6 +26,7 @@
 
 #include <BlendInt/AbstractPrimitive.hpp>
 #include <BlendInt/GLArrayBuffer.hpp>
+#include <BlendInt/GLElementArrayBuffer.hpp>
 
 namespace BlendInt {
 
@@ -52,7 +53,16 @@ namespace BlendInt {
 		int m_size;
 		int m_step;
 
-		GLArrayBuffer* m_vb;
+		GLArrayBuffer* m_vb;	// vertex buffer
+		GLElementArrayBuffer* m_ib;	// index buffer
+
+		GLint m_attribute_coord2d;
+		GLint m_uniform_mvp;
+
+		static const char* vertex_shader;
+
+		static const char* fragment_shader;
+
 	};
 
 }
