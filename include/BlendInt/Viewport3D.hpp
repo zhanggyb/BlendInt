@@ -79,15 +79,14 @@ namespace BlendInt {
 
 		Cube* m_cube;
 
-		int m_xold;
-		int m_yold;
+		int m_last_x;
+		int m_last_y;
 
 		float m_rX;
 
 		float m_rY;
 
-		bool m_left_down;
-
+		MouseButton m_button_down;
 	};
 
 }

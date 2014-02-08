@@ -36,10 +36,68 @@ namespace BlendInt {
 
 		AbstractCamera ();
 
+		AbstractCamera (const glm::vec3& pos, const glm::vec3& center, const glm::vec3& up);
+
 		virtual ~AbstractCamera ();
 
-		void SetProjection (const float fovy, const float aspect,
+		void LookAt (const glm::vec3& pos, const glm::vec3& center, const glm::vec3& up);
+
+		/**
+		 * @brief Set the projection data of this camera
+		 * @param fovy
+		 * @param aspect
+		 * @param near
+		 * @param far
+		 */
+		void SetPerspective (const float fovy, const float aspect,
 		        const float near = 0.1f, const float far = 100.f);
+
+		void Orbit (float x, float y);
+
+		void Pan (float x, float y);
+
+		void Zoom (float fac);
+
+		glm::mat4 GetMatrixUsingYawPitchRoll (float yaw, float pitch, float roll);
+
+		const glm::vec3& position () const {return m_position;}
+
+		const glm::vec3& center () const {return m_center;}
+
+		const glm::vec3& up () const {	return m_up;}
+
+		const glm::vec3& n () const {return m_n;}
+
+		const glm::vec3& u () const {return m_u;}
+
+		const glm::vec3& v () const {return m_v;}
+
+		const glm::mat4& projection () const	{return m_projection;}
+
+		const glm::mat4& view () const {return m_view;}
+
+		float fovy () const {return m_fovy;}
+
+		float aspect () const	{return m_aspect;}
+
+		float near () const	{return m_near;}
+
+		float far () const {return m_far;}
+
+		float yaw () const {return m_yaw;}
+
+		float pitch () const {return m_pitch;}
+
+		float roll () const {return m_roll;}
+
+		/**
+		 * @brief Update the model view projection matrix
+		 */
+		virtual void Update () = 0;
+
+		virtual void Rotate (float yaw, float pitch, float roll);
+
+	protected:
 
 		void set_position (const glm::vec3& pos)
 		{
@@ -53,21 +111,14 @@ namespace BlendInt {
 			m_position.z = z;
 		}
 
-		const glm::vec3& position () const {return m_position;}
-
-		const glm::vec3& look () const
+		void set_center (const glm::vec3& center)
 		{
-			return m_look;
+			m_center = center;
 		}
 
-		void set_look (const glm::vec3& look)
+		void set_center (float x, float y, float z)
 		{
-			m_look = look;
-		}
-
-		const glm::vec3& up () const
-		{
-			return m_up;
+			m_center = glm::vec3(x, y, z);
 		}
 
 		void set_up (const glm::vec3& up)
@@ -80,126 +131,41 @@ namespace BlendInt {
 			m_up = glm::vec3(x, y, z);
 		}
 
-		const glm::vec3& right () const
+		void set_n (const glm::vec3& n)
 		{
-			return m_right;
+			m_n = n;
 		}
 
-		void set_right (const glm::vec3& right)
+		void set_n (float x, float y, float z)
 		{
-			m_right = right;
+			m_n.x = x;
+			m_n.y = y;
+			m_n.z = z;
 		}
 
-		void set_right (float x, float y, float z)
+		void set_u (const glm::vec3& u)
 		{
-			m_right.x = x;
-			m_right.y = y;
-			m_right.z = z;
+			m_u = u;
 		}
 
-		const glm::vec3& center () const
+		void set_u (float x, float y, float z)
 		{
-			return m_center;
+			m_u.x = x;
+			m_u.y = y;
+			m_u.z = z;
 		}
 
-		void set_center (const glm::vec3& center)
+		void set_v (const glm::vec3& v)
 		{
-			m_center = center;
+			m_v = v;
 		}
 
-		void set_center (float x, float y, float z)
+		void set_v (float x, float y, float z)
 		{
-			m_center = glm::vec3(x, y, z);
+			m_v.x = x;
+			m_v.y = y;
+			m_v.z = z;
 		}
-
-		const glm::mat4& projection () const
-		{
-			return m_projection;
-		}
-
-		const glm::mat4& view () const
-		{
-			return m_view;
-		}
-
-		float fovy () const
-		{
-			return m_fovy;
-		}
-
-		void set_fovy (float fovy)
-		{
-			m_fovy = fovy;
-		}
-
-		float aspect () const
-		{
-			return m_aspect;
-		}
-
-		void set_aspect (float aspect)
-		{
-			m_aspect = aspect;
-		}
-
-		float near () const
-		{
-			return m_near;
-		}
-
-		void set_near (float near)
-		{
-			m_near = near;
-		}
-
-		float far () const
-		{
-			return m_far;
-		}
-
-		void set_far (float far)
-		{
-			m_far = far;
-		}
-
-		float yaw () const
-		{
-			return m_yaw;
-		}
-
-		void set_yaw (float yaw)
-		{
-			m_yaw = yaw;
-		}
-
-		float pitch () const
-		{
-			return m_pitch;
-		}
-
-		void set_pitch (float pitch)
-		{
-			m_pitch = pitch;
-		}
-
-		float roll () const
-		{
-			return m_roll;
-		}
-
-		void set_roll (float roll)
-		{
-			m_roll = roll;
-		}
-
-		/**
-		 * @brief Update the model view projection matrix
-		 */
-		virtual void Update () = 0;
-
-		virtual void Rotate (float yaw, float pitch, float roll);
-
-	protected:
 
 		void set_projection (const glm::mat4& projection)
 		{
@@ -211,22 +177,60 @@ namespace BlendInt {
 			m_view = view;
 		}
 
+		void set_fovy (float fovy)
+		{
+			m_fovy = fovy;
+		}
+
+		void set_aspect (float aspect)
+		{
+			m_aspect = aspect;
+		}
+
+		void set_near (float near)
+		{
+			m_near = near;
+		}
+
+		void set_far (float far)
+		{
+			m_far = far;
+		}
+
+		void set_yaw (float yaw)
+		{
+			m_yaw = yaw;
+		}
+
+		void set_pitch (float pitch)
+		{
+			m_pitch = pitch;
+		}
+
+		void set_roll (float roll)
+		{
+			m_roll = roll;
+		}
+
 	private:
 
 		/** The eye position */
 		glm::vec3 m_position;
 
-		/** Direction where to look */
-		glm::vec3 m_look;
+		/** Position of the reference point */
+		glm::vec3 m_center;
 
 		/** Direction of the up vector */
 		glm::vec3 m_up;
 
-		/** Direction of the right */
-		glm::vec3 m_right;
+		/** Look direction of the camera */
+		glm::vec3 m_n;
 
-		/** Position of the reference point */
-		glm::vec3 m_center;
+		/** Up direction of the camera */
+		glm::vec3 m_v;
+
+		/** Right direction of the camera */
+		glm::vec3 m_u;
 
 		/** The view matrix */
 		glm::mat4 m_view;

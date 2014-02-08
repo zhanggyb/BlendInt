@@ -37,11 +37,11 @@ namespace BlendInt {
 
 	enum MouseButton {
 		MouseButtonNone = -1,
-		MouseButtonLeft = GLFW_MOUSE_BUTTON_1, /* 0 */
-		MouseButtonRight = GLFW_MOUSE_BUTTON_2, /* 1 */
-		MouseButtonMiddle = GLFW_MOUSE_BUTTON_3, /* 2 */
-		MouseButtonScrollUp = GLFW_MOUSE_BUTTON_4, /* 3 */
-		MouseButtonScrollDown = GLFW_MOUSE_BUTTON_5 /* 4 */
+		MouseButtonLeft = 0, /* 0 GLFW_MOUSE_BUTTON_1 */
+		MouseButtonRight, /* 1 GLFW_MOUSE_BUTTON_2 */
+		MouseButtonMiddle, /* 2 GLFW_MOUSE_BUTTON_3 */
+		MouseButtonScrollUp, /* 3 GLFW_MOUSE_BUTTON_4 */
+		MouseButtonScrollDown/* 4 GLFW_MOUSE_BUTTON_5 */
 	};
 
 	enum KeyAction {

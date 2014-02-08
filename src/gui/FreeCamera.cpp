@@ -44,21 +44,25 @@ namespace BlendInt {
 
 	void FreeCamera::Update ()
 	{
+		set_view(glm::lookAt(position(), center(), up()));
+
+		/*
 		glm::mat4 R = glm::yawPitchRoll(yaw(), pitch(), roll());
 
 		// set_position(position() + m_translation);
 		// m_translation = glm::vec3(0);
 
-		set_look(glm::vec3(R * glm::vec4(0, 0, 1, 0)));
+		set_n(glm::vec3(R * glm::vec4(0, 0, 1, 0)));
 		//glm::vec3 center = position() + look();
 		//set_center(position() + look());
-		set_up(glm::vec3(R * glm::vec4(0, 1, 0, 0)));
-		set_right(glm::cross(look(), up()));
+		set_v(glm::vec3(R * glm::vec4(0, 1, 0, 0)));
+		set_u(glm::cross(n(), v()));
 
 		set_view(glm::lookAt(position(), center(), up()));
 
-		SetProjection (45.0f, 1.0f*5/4,
+		SetPerspective (45.0f, 1.0f*5/4,
 		        0.1f, 10.0f);
+		*/
 
 		/*
 		glm::mat4 view = glm::lookAt(glm::vec3(5.0, 5.0, 5.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));

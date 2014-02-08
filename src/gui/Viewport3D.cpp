@@ -45,15 +45,15 @@
 namespace BlendInt {
 
 	Viewport3D::Viewport3D ()
-			: Widget(), m_default_camera(0), m_xold(0),
-			  m_yold(0), m_rX(0.0), m_rY(0.0), m_left_down(false)
+			: Widget(), m_default_camera(0), m_last_x(0),
+			  m_last_y(0), m_rX(0.0), m_rY(0.0), m_button_down(MouseButtonNone)
 	{
 		InitOnce();
 	}
 
 	Viewport3D::Viewport3D (AbstractWidget* parent)
-			: Widget(parent), m_default_camera(0), m_xold(0),
-			  m_yold(0), m_rX(0.0), m_rY(0.0), m_left_down(false)
+			: Widget(parent), m_default_camera(0), m_last_x(0),
+			  m_last_y(0), m_rX(0.0), m_rY(0.0), m_button_down(MouseButtonNone)
 	{
 		InitOnce();
 	}
@@ -80,29 +80,52 @@ namespace BlendInt {
 
 	void Viewport3D::MousePressEvent (MouseEvent* event)
 	{
-		if(event->button() == MouseButtonLeft) {
-			m_left_down = true;
-		}
-		m_xold = event->position().x();
-		m_yold = event->position().y();
+		m_button_down = event->button();
+
+		m_last_x = event->position().x();
+		m_last_y = event->position().y();
 	}
 
 	void Viewport3D::MouseReleaseEvent (MouseEvent* event)
 	{
-		if(event->button() == MouseButtonLeft) {
-			m_left_down = false;
-		}
+		m_button_down = MouseButtonNone;
 	}
 
 	void Viewport3D::MouseMoveEvent (MouseEvent* event)
 	{
-		if(m_left_down) {
-			m_rY += (event->position().y() - m_yold) / 100.0f;
-			m_rX += (m_xold - event->position().x()) / 100.0f;
+		switch(m_button_down) {
+			case MouseButtonLeft: {
+				break;
+			}
 
-			m_default_camera->Rotate(m_rX, m_rY, 0);
-			m_default_camera->Update();
+			case MouseButtonMiddle: {
+
+				if(event->modifiers() == ModifierNone) {
+
+				} else if (event->modifiers() == ModifierShift) {
+
+				} else if (event->modifiers() == ModifierControl) {
+					m_default_camera->Zoom(event->position().y() - m_last_y);
+				}
+
+				break;
+			}
+
+			case MouseButtonRight: {
+				break;
+			}
+
+			default:
+				break;
 		}
+
+//		if(m_left_down) {
+//			m_rY += (event->position().y() - m_last_y) / 100.0f;
+//			m_rX += (m_last_x - event->position().x()) / 100.0f;
+//
+//			m_default_camera->Rotate(m_rX, m_rY, 0);
+//			m_default_camera->Update();
+//		}
 	}
 
 	void Viewport3D::Render ()
@@ -189,17 +212,20 @@ namespace BlendInt {
 		Retain(m_default_camera);
 
 		// setup camera
-		glm::vec3 p = glm::vec3(5.f);
-		m_default_camera->set_position(5.f, 5.f, 5.f);
-		glm::vec3 look =  glm::normalize(p);
+		glm::vec3 pos = glm::vec3(5.f);
+		glm::vec3 center = glm::vec3(0);
+		glm::vec3 up = glm::vec3(0.0, 1.0, 0.0);
+		m_default_camera->LookAt(pos, center, up);
+
+		glm::vec3 look =  glm::normalize(pos);
 
 		//rotate the camera for proper orientation
 		float yaw = glm::degrees(float(atan2(look.z, look.x)+M_PI));
 		float pitch = glm::degrees(asin(look.y));
-		m_default_camera->set_look(look);
+		//m_default_camera->set_n(look);
 		m_default_camera->Rotate(yaw,pitch,0);
 
-		m_default_camera->SetProjection(m_default_camera->fovy(), 5.0f/4);
+		m_default_camera->SetPerspective(m_default_camera->fovy(), 5.0f/4);
 		//m_default_camera->Rotate(10.f, 5.f, 15.f);
 		m_default_camera->Update();
 
