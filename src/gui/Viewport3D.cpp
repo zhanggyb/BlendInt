@@ -123,6 +123,7 @@ namespace BlendInt {
 			if(event->modifiers() == ModifierNone) {
 
                 m_default_camera->SaveCurrentPosition();
+                m_default_camera->SaveCurrentCenter();
 
 			} else if (event->modifiers() == ModifierShift) {
 

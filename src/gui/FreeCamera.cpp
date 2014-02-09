@@ -26,8 +26,8 @@
 #include <iostream>
 
 #include <glm/glm.hpp>
-#include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include <BlendInt/FreeCamera.hpp>
 
@@ -49,8 +49,22 @@ namespace BlendInt {
 
 	void FreeCamera::Orbit (float dx, float dy)
 	{
-		float radius = glm::distance(m_last_position, center());
+		float radius = glm::distance(m_last_position, m_last_center);
 
+		glm::mat4 m = glm::mat4(1);
+
+		glm::mat4 T = glm::translate(m, m_last_center);
+		glm::mat4 R = glm::rotate(T, dx / radius, up());
+
+		glm::vec4 pos = R * glm::vec4(m_last_position, 1.0);
+
+		R = glm::rotate(R, -dy / radius, local_x());
+
+		pos = R * pos;
+
+		LookAt(glm::vec3(pos), m_last_center, up());
+
+		/*
 		glm::vec3 pos = m_last_position;
 
 		float alpha = atan2(m_last_position.y - center().y, m_last_position.x - center().x);
@@ -64,6 +78,7 @@ namespace BlendInt {
 		pos.z = radius * sin(gamma) + center().z;
 
 		LookAt(pos, center(), up());
+		*/
 	}
 
 	void FreeCamera::Pan (float x, float y)
