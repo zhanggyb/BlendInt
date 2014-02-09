@@ -43,11 +43,17 @@ namespace BlendInt {
 
 		void Zoom (float fac);
 
+        void SaveCurrentPosition ();
+        
+        void SaveCurrentCenter ();
+        
 		virtual void Update ();
 
 	private:
 
-		glm::vec3 m_translation;
+		glm::vec3 m_last_position;
+        glm::vec3 m_last_center;
+        
 	};
 
 }

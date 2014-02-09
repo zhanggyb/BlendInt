@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
 	Init();
 
-	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
+	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1200, 800);
 
 	// Add Code:
 

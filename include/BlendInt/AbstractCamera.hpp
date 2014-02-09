@@ -52,20 +52,18 @@ namespace BlendInt {
 		void SetPerspective (const float fovy, const float aspect,
 		        const float near = 0.1f, const float far = 100.f);
 
-		glm::mat4 GetMatrixUsingYawPitchRoll (float yaw, float pitch, float roll);
-
 		const glm::vec3& position () const {return m_position;}
 
 		const glm::vec3& center () const {return m_center;}
 
 		const glm::vec3& up () const {	return m_up;}
 
-		const glm::vec3& n () const {return m_n;}
+		const glm::vec3& local_x () const {return m_local_x;}
 
-		const glm::vec3& u () const {return m_u;}
+		const glm::vec3& local_y () const {return m_local_y;}
 
-		const glm::vec3& v () const {return m_v;}
-
+        const glm::vec3& local_z () const {return m_local_z;}
+        
 		const glm::mat4& projection () const	{return m_projection;}
 
 		const glm::mat4& view () const {return m_view;}
@@ -78,18 +76,10 @@ namespace BlendInt {
 
 		float far () const {return m_far;}
 
-		float yaw () const {return m_yaw;}
-
-		float pitch () const {return m_pitch;}
-
-		float roll () const {return m_roll;}
-
 		/**
 		 * @brief Update the model view projection matrix
 		 */
 		virtual void Update () = 0;
-
-		virtual void Rotate (float yaw, float pitch, float roll);
 
 	protected:
 
@@ -125,40 +115,40 @@ namespace BlendInt {
 			m_up = glm::vec3(x, y, z);
 		}
 
-		void set_n (const glm::vec3& n)
+		void set_local_x (const glm::vec3& x)
 		{
-			m_n = n;
+			m_local_x = x;
 		}
 
-		void set_n (float x, float y, float z)
+		void set_local_x (float x, float y, float z)
 		{
-			m_n.x = x;
-			m_n.y = y;
-			m_n.z = z;
+			m_local_x.x = x;
+			m_local_x.y = y;
+			m_local_x.z = z;
 		}
 
-		void set_u (const glm::vec3& u)
+		void set_local_y (const glm::vec3& y)
 		{
-			m_u = u;
+			m_local_y = y;
 		}
 
-		void set_u (float x, float y, float z)
+		void set_local_y (float x, float y, float z)
 		{
-			m_u.x = x;
-			m_u.y = y;
-			m_u.z = z;
+			m_local_y.x = x;
+			m_local_y.y = y;
+			m_local_y.z = z;
 		}
 
-		void set_v (const glm::vec3& v)
+        void set_local_z (const glm::vec3& z)
 		{
-			m_v = v;
+			m_local_z = z;
 		}
-
-		void set_v (float x, float y, float z)
+        
+		void set_local_z (float x, float y, float z)
 		{
-			m_v.x = x;
-			m_v.y = y;
-			m_v.z = z;
+			m_local_z.x = x;
+			m_local_z.y = y;
+			m_local_z.z = z;
 		}
 
 		void set_projection (const glm::mat4& projection)
@@ -191,21 +181,6 @@ namespace BlendInt {
 			m_far = far;
 		}
 
-		void set_yaw (float yaw)
-		{
-			m_yaw = yaw;
-		}
-
-		void set_pitch (float pitch)
-		{
-			m_pitch = pitch;
-		}
-
-		void set_roll (float roll)
-		{
-			m_roll = roll;
-		}
-
 	private:
 
 		/** The eye position */
@@ -217,15 +192,15 @@ namespace BlendInt {
 		/** Direction of the up vector */
 		glm::vec3 m_up;
 
-		/** Look direction of the camera */
-		glm::vec3 m_n;
+		/** Right direction of the camera */
+		glm::vec3 m_local_x;
 
 		/** Up direction of the camera */
-		glm::vec3 m_v;
-
-		/** Right direction of the camera */
-		glm::vec3 m_u;
-
+		glm::vec3 m_local_y;
+        
+        /** Look direction of the camera */
+		glm::vec3 m_local_z;
+        
 		/** The view matrix */
 		glm::mat4 m_view;
 
@@ -244,12 +219,6 @@ namespace BlendInt {
 		/** The distance from the viewer to the far clipping plane (always positive) */
 		float m_far;
 
-		/** Used in glm::yawPitchRoll */
-		float m_yaw;
-
-		float m_pitch;
-
-		float m_roll;
 	};
 
 }

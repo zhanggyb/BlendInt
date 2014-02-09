@@ -76,20 +76,39 @@ namespace BlendInt {
 
 	void Viewport3D::KeyPressEvent (KeyEvent* event)
 	{
-		switch(event->key()) {
-			case Key_KP_Decimal: {
-				// setup camera
-				glm::vec3 pos = glm::vec3(5.f);
-				glm::vec3 center = glm::vec3(0);
-				glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
-				m_default_camera->LookAt(pos, center, up);
-				m_default_camera->SetPerspective(m_default_camera->fovy(), 1.0f * size().width()/size().height());
-				break;
-			}
+        if(event->action() == KeyPress) {
+            switch(event->key()) {
+                case Key_KP_Decimal: {
+                    // setup camera
+                    glm::vec3 pos = glm::vec3(5.f);
+                    glm::vec3 center = glm::vec3(0);
+                    glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
+                    m_default_camera->LookAt(pos, center, up);
+                    m_default_camera->SetPerspective(m_default_camera->fovy(), 1.0f * size().width()/size().height());
+                    break;
+                }
+                    
+                default:
+                    break;
+            }
+        } else if(event->action() == KeyRelease && m_button_down == MouseButtonMiddle) {
 
-			default:
-				break;
-		}
+        	// currently does nothing
+        	switch(event->key()) {
+        		case Key_LeftShift:
+        		case Key_RightShift:
+        			break;
+
+        		case Key_LeftAlt:
+        		case Key_RightAlt:
+        			break;
+
+        		default:
+        			break;
+            }
+
+        }
+        event->accept(this);
 	}
 
 	void Viewport3D::MousePressEvent (MouseEvent* event)
@@ -98,11 +117,49 @@ namespace BlendInt {
 
 		m_last_x = event->position().x();
 		m_last_y = event->position().y();
+
+		if(m_button_down == MouseButtonMiddle) {
+
+			if(event->modifiers() == ModifierNone) {
+
+                m_default_camera->SaveCurrentPosition();
+
+			} else if (event->modifiers() == ModifierShift) {
+
+				m_default_camera->SaveCurrentPosition();
+				m_default_camera->SaveCurrentCenter();
+
+            } else if (event->modifiers() == ModifierControl) {
+
+                m_default_camera->SaveCurrentPosition();
+
+            }
+
+		} else if (m_button_down == MouseButtonScrollUp) {
+
+			std::cout << "scroll up" << std::endl;
+
+            m_default_camera->SaveCurrentPosition();
+
+			m_default_camera->Zoom(5.f);
+
+		} else if (m_button_down == MouseButtonScrollDown) {
+
+			std::cout << "scroll down" << std::endl;
+
+			m_default_camera->SaveCurrentPosition();
+
+			m_default_camera->Zoom(-5.f);
+
+		}
+
+		event->accept(this);
 	}
 
 	void Viewport3D::MouseReleaseEvent (MouseEvent* event)
 	{
 		m_button_down = MouseButtonNone;
+		event->accept(this);
 	}
 
 	void Viewport3D::MouseMoveEvent (MouseEvent* event)
@@ -115,14 +172,22 @@ namespace BlendInt {
 			case MouseButtonMiddle: {
 
 				if(event->modifiers() == ModifierNone) {
+				
+                    float dx = static_cast<float>(m_last_x - event->position().x());
+					float dy = static_cast<float>(m_last_y - event->position().y());
+                    m_default_camera->Orbit(dx, dy);
 
 				} else if (event->modifiers() == ModifierShift) {
+
 					float dx = static_cast<float>(m_last_x - event->position().x());
 					float dy = static_cast<float>(m_last_y - event->position().y());
 					m_default_camera->Pan(dx, dy);
-				} else if (event->modifiers() == ModifierControl) {
-					m_default_camera->Zoom(event->position().y() - m_last_y);
-				}
+			
+                } else if (event->modifiers() == ModifierControl) {
+			
+                    m_default_camera->Zoom(m_last_y - event->position().y());
+			
+                }
 
 				break;
 			}
@@ -134,6 +199,8 @@ namespace BlendInt {
 			default:
 				break;
 		}
+
+		event->accept(this);
 	}
 
 	void Viewport3D::Update(int type, const void* data)
@@ -245,16 +312,7 @@ namespace BlendInt {
 		glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
 		m_default_camera->LookAt(pos, center, up);
 
-		glm::vec3 look =  glm::normalize(pos);
-
-		//rotate the camera for proper orientation
-		float yaw = glm::degrees(float(atan2(look.z, look.x)+M_PI));
-		float pitch = glm::degrees(asin(look.y));
-		//m_default_camera->set_n(look);
-		m_default_camera->Rotate(yaw,pitch,0);
-
 		m_default_camera->SetPerspective(m_default_camera->fovy(), 1.f * size().width()/size().height());
-		//m_default_camera->Rotate(10.f, 5.f, 15.f);
 		m_default_camera->Update();
 
 		m_cube = new Cube;

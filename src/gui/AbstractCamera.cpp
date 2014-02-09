@@ -31,10 +31,7 @@ namespace BlendInt {
 	  m_fovy(45.0f),
 	  m_aspect(1.0),
 	  m_near(0.1f),
-	  m_far(100.f),
-	  m_yaw(0.0),
-	  m_pitch(0.0),
-	  m_roll(0.0)
+	  m_far(100.f)
 	{
 		LookAt (glm::vec3(5.f, 5.f, 5.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 1.f));
 
@@ -46,10 +43,7 @@ namespace BlendInt {
 	  m_fovy(45.0f),
 	  m_aspect(1.0),
 	  m_near(0.1f),
-	  m_far(100.f),
-	  m_yaw(0.0),
-	  m_pitch(0.0),
-	  m_roll(0.0)
+	  m_far(100.f)
 	{
 		LookAt (pos, center, up);
 
@@ -66,13 +60,13 @@ namespace BlendInt {
 		m_center = center;
 		m_up = up;
 
-		m_n = m_center - m_position;
-		m_u = glm::cross(m_n, m_up);
-		m_v = glm::cross(m_u, m_n);
+		m_local_z = m_position - m_center;
+		m_local_x = glm::cross(m_up, m_local_z);
+		m_local_y = glm::cross(m_local_z, m_local_x);
 
-		m_n = glm::normalize(m_n);
-		m_u = glm::normalize(m_u);
-		m_v = glm::normalize(m_v);
+		m_local_x = glm::normalize(m_local_x);
+		m_local_y = glm::normalize(m_local_y);
+		m_local_z = glm::normalize(m_local_z);
 
 		m_view = glm::lookAt(m_position, m_center, m_up);
 	}
@@ -86,26 +80,6 @@ namespace BlendInt {
 		m_aspect = aspect;
 
 		m_projection = glm::perspective(m_fovy, m_aspect, m_near, m_far);
-	}
-
-	void AbstractCamera::Rotate(float yaw, float pitch, float roll)
-	{
-		m_yaw = glm::radians(yaw);
-		m_pitch = glm::radians(pitch);
-		m_roll = glm::radians(roll);
-
-		Update ();
-	}
-
-	glm::mat4 AbstractCamera::GetMatrixUsingYawPitchRoll(float yaw, float pitch, float roll)
-	{
-		glm::mat4 R = glm::mat4(1);
-
-		R = glm::rotate(R, roll, glm::vec3(0, 0, 1));
-		R = glm::rotate(R, yaw, glm::vec3(0, 1, 0));
-		R = glm::rotate(R, pitch, glm::vec3(1, 0, 0));
-
-		return R;
 	}
 
 }

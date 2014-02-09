@@ -245,8 +245,18 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="cdt.managedbuild.config.gnu.so.debug.2140748179.144891928.317319065" name="/" resourcePath="src/window/cocoa">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base.179026055" name="MacOSX GCC" superClass="cdt.managedbuild.toolchain.gnu.macosx.base" unusedChildren="">
+							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.base.1851072122" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base.2012220846"/>
+							<tool id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.1541137924" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.1169008438"/>
+							<tool id="cdt.managedbuild.tool.gnu.assembler.macosx.base.2133541812" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base.957996907"/>
+							<tool id="cdt.managedbuild.tool.gnu.archiver.macosx.base.1356645070" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base.1201363781"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.1151134785" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.129274260"/>
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1357351277" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1935757471"/>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
-						<entry excluding="doc|cmake|demo|test/" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/window/cocoa|doc|cmake|demo|test/" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
