@@ -25,8 +25,8 @@
 #define _BLENDINT_ABSTRACTPRIMITIVE_HPP_
 
 #include <glm/glm.hpp>
-#include <BlendInt/Object.hpp>
 
+#include <BlendInt/Object.hpp>
 #include <BlendInt/GLSLProgram.hpp>
 #include <BlendInt/AbstractCamera.hpp>
 
@@ -48,7 +48,7 @@ namespace BlendInt {
 		 * 	- glClearColor
 		 * 	- glClear
 		 */
-		virtual void Render (const glm::mat4& MVP) = 0;
+		virtual void Render (const glm::mat4& mvp) = 0;
 
 	protected:
 

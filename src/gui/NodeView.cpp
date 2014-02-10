@@ -21,48 +21,27 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MESH_HPP_
-#define _BLENDINT_MESH_HPP_
-
-#include <vector>
-
-#include <BlendInt/AbstractPrimitive.hpp>
-
-#include <BlendInt/GLArrayBuffer.hpp>
-#include <BlendInt/GLSLProgram.hpp>
-#include <BlendInt/GLElementArrayBuffer.hpp>
+#include <BlendInt/NodeView.hpp>
 
 namespace BlendInt {
 
-	class Mesh: public AbstractPrimitive
+	NodeView::NodeView()
 	{
-	public:
 
-		Mesh ();
+	}
 
-		bool LoadObj (const char* filename);
+	NodeView::NodeView (AbstractWidget* parent)
+	: Widget(parent)
+	{
+	}
 
-		virtual void Render (const glm::mat4& mvp);
+	void NodeView::Update (int type, const void* data)
+	{
+	}
 
+	void NodeView::Draw()
+	{
 
-
-	protected:
-
-		virtual ~Mesh();
-
-	private:
-
-		void InitOnce ();
-
-		GLArrayBuffer* m_vb;
-
-		GLElementArrayBuffer* m_ib;
-
-		std::vector<glm::vec4> m_vertices;
-		std::vector<glm::vec3> m_normals;
-		std::vector<GLushort> m_elements;
-	};
+	}
 
 }
-
-#endif /* _BLENDINT_MESH_HPP_ */

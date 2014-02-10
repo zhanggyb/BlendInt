@@ -87,12 +87,6 @@ namespace BlendInt {
 
 		void Draw ();
 
-		void GLFWKeyEvent (int key, int scancode, int action, int mods);
-
-		void GLFWMouseButtonEvent (int button, int action, int mods);
-
-		void GLFWCursorPosEvent (double xpos, double ypos);
-
 		void DispatchKeyEvent (KeyEvent* event);
 
 		void DispatchMouseEvent (MouseEvent* event);

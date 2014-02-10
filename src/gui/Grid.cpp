@@ -40,14 +40,20 @@ namespace BlendInt {
 	const char* Grid::vertex_shader =
 			"attribute vec2 coord2d;"
 			"uniform mat4 ModelViewProjectionMatrix;"
+			// TODO: define grid color
+			"varying vec3 f_color;"
 			""
 			"void main(void) {"
+			"		f_color = vec3(0.35, 0.35, 0.35);"
+			""
 			"	gl_Position = ModelViewProjectionMatrix * vec4(coord2d, 0, 1);"
 			"}";
 
 	const char* Grid::fragment_shader =
+			"varying vec3 f_color;"
+			""
 			"void main(void) {"
-			"	gl_FragColor = vec4(0.55, 0.55, 0.55, 0.65);"
+			"	gl_FragColor = vec4(f_color, 0.6);"
 			"}";
 
 	Grid::Grid ()
@@ -61,26 +67,12 @@ namespace BlendInt {
 	{
 		m_size = size;
 
-//		Update ();
+		//Update ();
 	}
 
 	void Grid::Update()
 	{
-//		int points_one_line = 2 * m_size + 1;
-//
-//		int* p = new int[points_one_line * points_one_line * 3];
-//
-//		for(int i = 0; i < points_one_line; i++)
-//		{
-//			for(int j = 0; j < points_one_line; j++)
-//			{
-//				*(p + i * points_one_line + j) = j;
-//				*(p + i * points_one_line + j + 1) = j;
-//				*(p + i * points_one_line + j + 2) = j;
-//			}
-//		}
-//
-//		delete p;
+
 	}
 
 	void Grid::Render (const glm::mat4& mvp)
