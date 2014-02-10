@@ -83,6 +83,7 @@ else()
 find_package(GLM REQUIRED)
 if(GLM_FOUND)
     include_directories(${GLM_INCLUDE_DIRS})
+    add_definitions(-DGLM_FORCE_RADIANS)
 endif()
 endif()
 

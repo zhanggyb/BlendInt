@@ -165,30 +165,32 @@ namespace BlendInt {
 
 	void Viewport3D::MouseMoveEvent (MouseEvent* event)
 	{
-		switch(m_button_down) {
+		switch (m_button_down) {
 			case MouseButtonLeft: {
 				break;
 			}
 
 			case MouseButtonMiddle: {
 
-				if(event->modifiers() == ModifierNone) {
-				
-                    float dx = static_cast<float>(m_last_x - event->position().x());
-					float dy = static_cast<float>(m_last_y - event->position().y());
-                    m_default_camera->Orbit(dx, dy);
+				if (event->modifiers() == ModifierShift) {
 
-				} else if (event->modifiers() == ModifierShift) {
-
-					float dx = static_cast<float>(m_last_x - event->position().x());
-					float dy = static_cast<float>(m_last_y - event->position().y());
+					float dx = static_cast<float>(m_last_x
+					        - event->position().x());
+					float dy = static_cast<float>(m_last_y
+					        - event->position().y());
 					m_default_camera->Pan(dx, dy);
-			
-                } else if (event->modifiers() == ModifierControl) {
-			
-                    m_default_camera->Zoom(m_last_y - event->position().y());
-			
-                }
+
+				} else if (event->modifiers() == ModifierControl) {
+
+					m_default_camera->Zoom(m_last_y - event->position().y());
+
+				} else if (event->modifiers() == ModifierNone) {
+					float dx = static_cast<float>(m_last_x
+					        - event->position().x());
+					float dy = static_cast<float>(m_last_y
+					        - event->position().y());
+					m_default_camera->Orbit(dx, dy);
+				}
 
 				break;
 			}
@@ -284,7 +286,11 @@ namespace BlendInt {
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
 
-		glColor4f(1.0f, 1.0f, 1.0f, 0.75f);
+		if(focused()) {
+			glColor4f(1.0f, 1.0f, 0.0f, 0.75f);
+		} else {
+			glColor4f(1.0f, 1.0f, 1.0f, 0.75f);
+		}
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
 		glVertex2i(0, 0);
@@ -304,7 +310,7 @@ namespace BlendInt {
 		set_expand_x(true);
 		set_expand_y(true);
 
-		m_default_camera = new FreeCamera;
+		m_default_camera = new NavigationCamera;
 		Retain(m_default_camera);
 
 		// setup camera

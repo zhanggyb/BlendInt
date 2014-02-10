@@ -30,7 +30,7 @@
 
 #include <BlendInt/Grid.hpp>
 #include <BlendInt/Cube.hpp>
-#include <BlendInt/FreeCamera.hpp>
+#include <BlendInt/NavigationCamera.hpp>
 
 using std::vector;
 
@@ -77,7 +77,7 @@ namespace BlendInt {
 
 		vector<AbstractCamera*> m_cameras;
 
-		FreeCamera* m_default_camera;
+		NavigationCamera* m_default_camera;
 
 		Cube* m_cube;
 		Grid* m_grid;

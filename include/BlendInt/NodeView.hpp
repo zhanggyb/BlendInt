@@ -21,20 +21,33 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Camera.hpp>
+#ifndef _BLENDINT_NODEVIEW_HPP_
+#define _BLENDINT_NODEVIEW_HPP_
+
+#include <BlendInt/Widget.hpp>
 
 namespace BlendInt {
 
-	Camera::Camera ()
+	class NodeView: public Widget
 	{
-		m_position.set_x(10.0);
-		m_position.set_z(10.0);
-		m_direction.set_z(1.0);
-	}
+		DISALLOW_COPY_AND_ASSIGN(NodeView);
 
-	Camera::~Camera()
-	{
+	public:
 
-	}
+		NodeView ();
+
+		NodeView (AbstractWidget* parent);
+
+	protected:
+
+		virtual void Update (int type, const void* data);
+
+		virtual void Draw ();
+
+	private:
+
+	};
 
 }
+
+#endif /* _BLENDINT_NODEVIEW_HPP_ */
