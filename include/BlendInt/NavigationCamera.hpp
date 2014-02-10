@@ -49,6 +49,13 @@ namespace BlendInt {
 
 		virtual void Update ();
 
+		float speed () {return m_speed;}
+
+		void set_speed (float speed)
+		{
+			m_speed = speed;
+		}
+
 	private:
 
 		glm::vec3 m_last_position;

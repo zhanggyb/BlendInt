@@ -34,7 +34,7 @@
 namespace BlendInt {
 
 	NavigationCamera::NavigationCamera ()
-	: m_speed(100.f)
+	: m_speed(200.f)
 	{
 		set_position(5.0, 5.0, 5.0);
 		set_center(0.0, 0.0, 0.0);
@@ -52,28 +52,21 @@ namespace BlendInt {
 	{
 		float radius = glm::distance(m_last_position, m_last_center);
 
-		std::cout << "radius before: " << radius << std::endl;
-
 		glm::mat4 I = glm::mat4(1);
-
 		glm::mat4 T1 = glm::translate(I, m_last_center * (-1.f));
 		glm::mat4 T2 = glm::translate(I, m_last_center);
-		glm::mat4 Rh = glm::rotate(I, dx / radius / m_speed, up());
-		glm::mat4 Rv = glm::rotate(I, -dy / radius / m_speed, local_x());
+		glm::mat4 Rh = glm::rotate(I, dx / radius / (m_speed / 2), up());
+		glm::mat4 Rv = glm::rotate(I, -dy / radius / (m_speed / 2), local_x());
 
 		glm::vec4 pos = glm::vec4(m_last_position, 1.0);
 		pos = T2 * Rv * Rh * T1 * pos;
 
 		LookAt(glm::vec3(pos), m_last_center, up());
-
-		radius = glm::distance(position(), center());
-
-		std::cout << "radius after: " << radius << std::endl;
 	}
 
-	void NavigationCamera::Pan (float x, float y)
+	void NavigationCamera::Pan (float dx, float dy)
 	{
-		glm::vec3 translate = local_x() * (x / m_speed) + local_y() * (y / m_speed);
+		glm::vec3 translate = local_x() * (dx / m_speed) + local_y() * (dy / m_speed);
 
 		set_position(m_last_position + translate);
 		set_center(m_last_center + translate);
@@ -81,9 +74,16 @@ namespace BlendInt {
 		set_view(glm::lookAt(position(), center(), up()));
 	}
 
-	void NavigationCamera::Zoom (float fac)
+	void NavigationCamera::Zoom (float dy)
 	{
-		set_position(m_last_position + local_z() * (fac / m_speed));
+		glm::vec3 direct_orig = glm::normalize(m_last_position - center());
+		glm::vec3 pos = m_last_position + local_z() * (dy / m_speed / 2);
+		glm::vec3 direct_new = glm::normalize(pos - center());
+
+		if(direct_new != direct_orig)
+			return;
+
+		set_position(pos);
 		set_view(glm::lookAt(position(), center(), up()));
 	}
 
