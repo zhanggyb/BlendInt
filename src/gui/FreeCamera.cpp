@@ -38,97 +38,15 @@ namespace BlendInt {
 		set_position(5.0, 5.0, 5.0);
 		set_center(0.0, 0.0, 0.0);
 		set_up(0.0, 0.0, 1.0);
-
-        m_last_position = glm::vec3(0);
-		m_last_center = glm::vec3(0);
 	}
 
 	FreeCamera::~FreeCamera ()
 	{
 	}
 
-	void FreeCamera::Orbit (float dx, float dy)
-	{
-		float radius = glm::distance(m_last_position, m_last_center);
-
-		glm::mat4 m = glm::mat4(1);
-
-		glm::mat4 T = glm::translate(m, m_last_center);
-		glm::mat4 R = glm::rotate(T, dx / radius, up());
-
-		glm::vec4 pos = R * glm::vec4(m_last_position, 1.0);
-
-		R = glm::rotate(R, -dy / radius, local_x());
-
-		pos = R * pos;
-
-		LookAt(glm::vec3(pos), m_last_center, up());
-
-		/*
-		glm::vec3 pos = m_last_position;
-
-		float alpha = atan2(m_last_position.y - center().y, m_last_position.x - center().x);
-		float beta = asin((m_last_position.z - center().z)/radius);
-
-		float theta = alpha + dx/radius;
-		float gamma = beta + dy/radius;
-
-		pos.x = radius * cos(theta) + center().x;
-		pos.y = radius * sin(theta) + center().y;
-		pos.z = radius * sin(gamma) + center().z;
-
-		LookAt(pos, center(), up());
-		*/
-	}
-
-	void FreeCamera::Pan (float x, float y)
-	{
-//		glm::vec3 pos = position() + local_x() * (x / 200.f);
-//		pos = pos + local_y() * (y / 200.f);
-//
-//		glm::vec3 cent = center() + local_x() * (x / 200.f);
-//		cent = cent + local_y() * (y / 200.f);
-//
-//		set_view(glm::lookAt(pos, cent, up()));
-
-		glm::vec3 translate = local_x() * (x / 200.f) + local_y() * (y / 200.f);
-
-		set_position(m_last_position + translate);
-
-		set_center(m_last_center + translate);
-
-		//m_position = pos;
-		//m_center = cent;
-
-		set_view(glm::lookAt(position(), center(), up()));
-
-		//LookAt(pos, cent, up());
-	}
-
-	void FreeCamera::Zoom (float fac)
-	{
-		//m_position = m_position + m_n * (fac / 500.f);
-
-		set_position(m_last_position + local_z() * (fac / 200.f));
-
-		set_view(glm::lookAt(position(), center(), up()));
-
-		//Update ();
-	}
-
-    void FreeCamera::SaveCurrentPosition()
-    {
-        m_last_position = position();
-    }
-    
-    void FreeCamera::SaveCurrentCenter()
-    {
-        m_last_center = center();
-    }
-    
 	void FreeCamera::Update ()
 	{
-		set_view(glm::lookAt(position(), center(), up()));
+		//set_view(glm::lookAt(position(), center(), up()));
 
 		/*
 		glm::mat4 R = glm::yawPitchRoll(yaw(), pitch(), roll());

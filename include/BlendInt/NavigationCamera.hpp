@@ -24,69 +24,43 @@
 #ifndef _BLENDINT_CAMERA_HPP_
 #define _BLENDINT_CAMERA_HPP_
 
-#include <BlendInt/Coord.hpp>
+#include <glm/vec3.hpp>
+#include <BlendInt/AbstractCamera.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief The Camera class used in Viewport3D
-	 */
-	class Camera
+	class NavigationCamera: public AbstractCamera
 	{
 	public:
 
-		Camera ();
+		NavigationCamera ();
 
-		~Camera ();
+		virtual ~NavigationCamera ();
 
-		void set_position (const Coord3f& pos)
-		{
-			m_position = pos;
-		}
+		void Orbit (float x, float y);
 
-		void set_position (float x, float y, float z)
-		{
-			m_position.set_x(x);
-			m_position.set_y(y);
-			m_position.set_z(z);
-		}
+		void Pan (float x, float y);
 
-		void set_target (const Coord3f& target)
-		{
-			m_target = target;
-		}
+		void Zoom (float fac);
 
-		void set_target (float x, float y, float z)
-		{
-			m_target.set_x(x);
-			m_target.set_y(y);
-			m_target.set_z(z);
-		}
+		void SaveCurrentPosition ();
 
-		void set_direction (const Coord3f& direction)
-		{
-			m_direction = direction;
-		}
+		void SaveCurrentCenter ();
 
-		void set_direction (float x, float y, float z)
-		{
-			m_direction.set_x(x);
-			m_direction.set_y(y);
-			m_direction.set_z(z);
-		}
-
-		const Coord3f& position () const {return m_position;}
-
-		const Coord3f& target() const {return m_target;}
-
-		const Coord3f& direction() const {return m_direction;}
+		virtual void Update ();
 
 	private:
 
-		Coord3f m_position;
-		Coord3f m_target;
-		Coord3f m_direction;
+		glm::vec3 m_last_position;
+		glm::vec3 m_last_center;
+
+		/**
+		 * Speed used in Orbit, Pan, Zoom, more large, more slower
+		 */
+		float m_speed;
+
 	};
+
 }
 
 #endif /* _BLENDINT_CAMERA_HPP_ */
