@@ -297,16 +297,29 @@ namespace BlendInt {
 
 		if(cm->m_focus) {
 			switch (event->action()) {
-				case KeyPress:
+
+				case KeyPress: {
+#ifdef DEBUG
+					std::cout << "Press once" << std::endl;
+					if(event->key() == Key_F6) {
+						RenderToImage();
+					}
+#endif
 					cm->m_focus->KeyPressEvent(event);
 					break;
-				case KeyRelease:
+				}
+
+				case KeyRelease: {
 					// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
 					//cm->m_focus->KeyReleaseEvent(event);
 					break;
-				case KeyRepeat:
+				}
+
+				case KeyRepeat: {
 					// item->KeyRepeatEvent(&event);
 					break;
+				}
+
 				default:
 					break;
 			}
@@ -388,7 +401,7 @@ namespace BlendInt {
 		// Create and set texture to render to.
 		GLTexture2D* tex = new GLTexture2D;
 		tex->Generate();
-		tex->Bind();
+		tex->bind();
 		tex->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		tex->SetMinFilter(GL_NEAREST);
 		tex->SetMagFilter(GL_NEAREST);
@@ -397,13 +410,12 @@ namespace BlendInt {
 		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
 		GLFramebuffer* fb = new GLFramebuffer;
 		fb->Generate();
-		fb->Bind();
+		fb->bind();
 
 		// Set "renderedTexture" as our colour attachement #0
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
 		        GL_TEXTURE_2D, tex->id(), 0);
 
-		/*
 		GLuint rb = 0;
 		glGenRenderbuffers(1, &rb);
 
@@ -430,19 +442,18 @@ namespace BlendInt {
 				std::cerr << "Fail to check framebuffer status" << std::endl;
 				break;
 		}
-		*/
 
 		//-------------------------
 		//and now render to GL_TEXTURE_2D
-		fb->Bind();
+		fb->Reset();
 
 		Draw();
 
 		//Bind 0, which means render to back buffer
-		fb->Unbind();
+		fb->Reset();
 
 		tex->WriteToFile("output.png");
-		tex->Unbind();
+		tex->Reset();
 
 		//Delete resources
 		delete tex;

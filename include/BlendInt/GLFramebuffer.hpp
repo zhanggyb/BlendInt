@@ -35,6 +35,8 @@
 
 #include <bitset>
 
+#include <BlendInt/Object.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -52,9 +54,12 @@ namespace BlendInt {
 
 		void Generate ();
 
-		void Bind ();
+		inline void bind ()
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, m_id);
+		}
 
-		void Unbind ();
+		static void Reset ();
 
 		void Clear ();
 
@@ -63,8 +68,6 @@ namespace BlendInt {
 	private:
 
 		GLuint m_id;
-
-		std::bitset<8> m_flag;
 
 	};
 

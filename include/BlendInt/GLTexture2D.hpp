@@ -26,15 +26,13 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/gl.h>
+#include <gl.h>
+#include <glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
 #endif  // __UNIX__
-
-#include <bitset>
 
 namespace BlendInt {
 
@@ -55,7 +53,10 @@ namespace BlendInt {
 
 		void Generate ();
 
-		void Bind ();
+		inline void bind ()
+		{
+			glBindTexture(GL_TEXTURE_2D, m_id);
+		}
 
 		void SetSize (GLsizei width, GLsizei height);
 
@@ -162,7 +163,7 @@ namespace BlendInt {
 
 		void SetImage (GLsizei width, GLsizei height, const GLvoid* data);
 
-		void Unbind ();
+		void Reset ();
 
 		/**
 		 * @brief Write the texture to file
@@ -247,16 +248,6 @@ namespace BlendInt {
 		 * This member variable is used in glTexImage2D() in SetData().
 		 */
 		GLenum m_type;
-
-		/**
-		 * @brief The usage flag of the texture
-		 *
-		 * The usage flag of the texture:
-		 * 	- bit 0: if it's generated
-		 * 	- bit 1: if it's bound
-		 * 	- bit 2: if the texture is set
-		 */
-		std::bitset<8> m_flag;
 	};
 
 }
