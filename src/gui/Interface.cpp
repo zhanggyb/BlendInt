@@ -34,6 +34,9 @@
 
 #include <iostream>
 
+#include <OpenImageIO/imageio.h>
+OIIO_NAMESPACE_USING
+
 #include <BlendInt/Interface.hpp>
 
 #include <BlendInt/FontConfig.hpp>
@@ -315,9 +318,8 @@ namespace BlendInt {
 
 				case KeyPress: {
 #ifdef DEBUG
-					std::cout << "Press once" << std::endl;
 					if(event->key() == Key_F6) {
-						RenderToImage();
+						DrawToOffScreen();
 					}
 #endif
 					cm->m_focus->KeyPressEvent(event);
@@ -339,47 +341,6 @@ namespace BlendInt {
 					break;
 			}
 		}
-
-		/*
-		map<int, set<AbstractWidget*>* >::reverse_iterator map_it;
-		set<AbstractWidget*>::reverse_iterator set_it;
-		set<AbstractWidget*>* pset = 0;
-
-		for(map_it = cm->m_layers.rbegin(); map_it != cm->m_layers.rend(); map_it++)
-		{
-			pset = map_it->second;
-			for (set_it = pset->rbegin(); set_it != pset->rend(); set_it++)
-			{
-				//if(!(*set_it)->visible()) break;
-				// TODO: only the focused widget can dispose key event
-				switch (event->action()) {
-				case KeyPress:
-					(*set_it)->KeyPressEvent(event);
-					break;
-				case KeyRelease:
-					// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
-					break;
-				case KeyRepeat:
-					// item->KeyRepeatEvent(&event);
-					break;
-				default:
-					break;
-				}
-				if(event->ignored()) break;
-				if(event->accepted()) {
-					// TODO: do sth needed
-					//break;
-				}
-
-			}
-			if(event->ignored())	break;
-			if (event->accepted()) {
-				// TODO: do sth needed
-				//break;
-			}
-		}
-		*/
-
 	}
 
 	void Interface::DispatchMouseEvent (MouseEvent* event)
@@ -411,7 +372,8 @@ namespace BlendInt {
 
 	void Interface::RenderToImage()
 	{
-		std::cout << "Render to Image" << std::endl;
+		GLsizei width = m_size.width();
+		GLsizei height = m_size.height();
 
 		// Create and set texture to render to.
 		GLTexture2D* tex = new GLTexture2D;
@@ -420,7 +382,7 @@ namespace BlendInt {
 		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
 		tex->SetMinFilter(GL_NEAREST);
 		tex->SetMagFilter(GL_NEAREST);
-		tex->SetImage(m_size.width(), m_size.height(), 0);
+		tex->SetImage(width, height, 0);
 
 		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
 		GLFramebuffer* fb = new GLFramebuffer;
@@ -432,19 +394,19 @@ namespace BlendInt {
 		//        GL_TEXTURE_2D, tex->id(), 0);
 		fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
-		GLuint rb = 0;
-		glGenRenderbuffers(1, &rb);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, rb);
-
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-		        m_size.width(), m_size.height());
+//		GLuint rb = 0;
+//		glGenRenderbuffers(1, &rb);
+//
+//		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+//
+//		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+//		        m_size.width(), m_size.height());
 
 		//-------------------------
 
-		//Attach depth buffer to FBO
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		        GL_RENDERBUFFER, rb);
+//		//Attach depth buffer to FBO
+//		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+//		        GL_RENDERBUFFER, rb);
 
 		//-------------------------
 		//Does the GPU support current FBO configuration?
@@ -465,9 +427,6 @@ namespace BlendInt {
 
 		Draw();
 
-		GLubyte pixels[4*4*4];
-		glReadPixels(0, 0, 4, 4, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
-
 		//Bind 0, which means render to back buffer
 		fb->Reset();
 
@@ -475,19 +434,88 @@ namespace BlendInt {
 		tex->Reset();
 
 		//Delete resources
-		delete tex;
-		tex = 0;
+		delete tex; tex = 0;
 
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		glDeleteRenderbuffers(1, &rb);
+//		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+//		glDeleteRenderbuffers(1, &rb);
 
 		//Bind 0, which means render to back buffer, as a result, fb is unbound
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		fb->Reset();
-
 		delete fb; fb = 0;
 
+		//Draw();
+	}
+
+	void Interface::DrawToOffScreen()
+	{
+		GLsizei width = m_size.width();
+		GLsizei height = m_size.height();
+
+		GLuint fb;
+		//RGBA8 RenderBuffer, 24 bit depth RenderBuffer, 256x256
+		glGenFramebuffers(1, &fb);
+		glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+		//Create and attach a color buffer
+		GLuint color_rb;
+		glGenRenderbuffers(1, &color_rb);
+		//We must bind color_rb before we call glRenderbufferStorageEXT
+		glBindRenderbuffer(GL_RENDERBUFFER, color_rb);
+		//The storage format is RGBA8
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
+		//Attach color buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+		        GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color_rb);
+
+		//-------------------------
+		GLuint depth_rb;
+		glGenRenderbuffers(1, &depth_rb);
+		glBindRenderbuffer(GL_RENDERBUFFER, depth_rb);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+		//-------------------------
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+		        GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_rb);
+
+		//-------------------------
+		//Does the GPU support current FBO configuration?
+		GLenum status;
+		status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		switch (status) {
+			case GL_FRAMEBUFFER_COMPLETE:
+				std::cout << "good" << std::endl;
+				break;
+			default:
+				break;
+		}
+
+		//-------------------------
+		//and now you can render to the FBO (also called RenderBuffer)
+		glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
 		Draw();
+
+		//-------------------------
+		GLubyte pixels[width * height * 4];
+		glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+		//pixels 0, 1, 2 should be white
+		//pixel 4 should be black
+
+		ImageOutput* out = ImageOutput::create("image.png");
+
+		if(out) {
+			ImageSpec spec (width, height, 4, TypeDesc::UINT8);
+			out->open("image.png", spec);
+			out->write_image(TypeDesc::UINT8, pixels);
+			out->close();
+			delete out;
+		}
+
+		//----------------
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		//Bind 0, which means render to back buffer
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void Interface::DispatchCursorMoveEvent (MouseEvent* event)

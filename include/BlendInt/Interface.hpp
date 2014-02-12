@@ -126,6 +126,8 @@ namespace BlendInt {
 
 		void RenderToImage ();
 
+		void DrawToOffScreen ();
+
 		void DispatchCursorMoveEvent (MouseEvent* event);
 
 		void DispatchMousePressEvent (MouseEvent* event);
