@@ -177,9 +177,6 @@ namespace BlendInt {
 	void Menu::Draw ()
 	{
 		//RoundWidget::Render();
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		// draw inner, simple fill
 		glColor4ub(themes()->menu.inner.r(),
 		        themes()->menu.inner.g(),
@@ -251,8 +248,6 @@ namespace BlendInt {
 			fc->print(120, 5, item->shortcut());
 
 		}
-
-		glDisable(GL_BLEND);
 	}
 
 	void Menu::ResetHighlightBuffer (unsigned int width)

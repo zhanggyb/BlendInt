@@ -148,9 +148,6 @@ namespace BlendInt {
 		//glDisable(GL_LIGHTING);
 		//glDisable(GL_DEPTH_TEST);
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-
 		glColor4ub(foreground_.r(), foreground_.g(), foreground_.b(),
 		        foreground_.a());
 
@@ -183,8 +180,6 @@ namespace BlendInt {
 		}
 
 		glPopMatrix();
-		glDisable(GL_BLEND);
-
 	}
 
 	void TextBuffer::clear (void)

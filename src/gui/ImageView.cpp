@@ -67,9 +67,6 @@ namespace BlendInt {
 					 position().y(),
 					 z());
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		glRasterPos2i(0, 0);
 		glDrawPixels (checkImageWidth, checkImageHeight, GL_RGB, GL_UNSIGNED_BYTE, _checkImage);
 
@@ -88,8 +85,6 @@ namespace BlendInt {
 
 		glDisable(GL_LINE_STIPPLE);
 #endif
-
-		glDisable(GL_BLEND);
 
 		glPopMatrix();
 	}

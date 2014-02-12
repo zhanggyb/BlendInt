@@ -104,9 +104,6 @@ namespace BlendInt {
 
 	void ToggleButton::Draw ()
 	{
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-
 		ThemeManager* tm = ThemeManager::instance();
 
 		// draw inner, simple fill
@@ -152,8 +149,6 @@ namespace BlendInt {
 
 		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 		DrawOutlineBuffer(m_emboss_buffer);
-
-		glDisable(GL_BLEND);
 
 		if(text().size())
 			FontCache::create(font())->print(origin().x(), origin().y(), text(), valid_text_length());

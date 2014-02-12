@@ -185,9 +185,6 @@ namespace BlendInt {
 
 	void Label::Draw ()
 	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 //		glColor4ub(m_background.r(), m_background.g(),
 //				   m_background.b(), m_background.a());
 //		glRectf(0.0, 0.0, size().width(), size().height());
@@ -207,8 +204,6 @@ namespace BlendInt {
 //
 //		glDisable(GL_LINE_STIPPLE);
 //#endif
-
-		glDisable(GL_BLEND);
 
 		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
 	}

@@ -319,9 +319,6 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		glUseProgram(sm->text_program()->id());
 
 		glActiveTexture(GL_TEXTURE0);
@@ -360,8 +357,6 @@ namespace BlendInt {
 		glUseProgram(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);	// do not forget unbind buffer
 
-		glDisable(GL_BLEND);
-
 		glPopMatrix();
 	}
 
@@ -398,9 +393,6 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		glUseProgram(sm->text_program()->id());
 
 		glActiveTexture(GL_TEXTURE0);
@@ -434,8 +426,6 @@ namespace BlendInt {
 
 		glUseProgram(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);	// do not forget unbind buffer
-
-		glDisable(GL_BLEND);
 
 		glPopMatrix();
 	}

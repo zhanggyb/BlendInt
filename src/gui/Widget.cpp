@@ -95,9 +95,6 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, 4, quad_strip);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		// draw inner, simple fill
 		glColor4ub(themes()->regular.inner.r(),
 		        themes()->regular.inner.g(),
@@ -115,8 +112,6 @@ namespace BlendInt {
 		glColor4ubv(tcol);
 
 		DrawOutlineArray(quad_strip, 4 * 2 + 2);
-
-		glDisable(GL_BLEND);
 	}
 
 	void Widget::CursorEnterEvent(bool entered)

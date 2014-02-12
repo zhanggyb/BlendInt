@@ -138,9 +138,6 @@ namespace BlendInt {
 
 		glTranslatef(size().width()/2.0, size().height()/2.0, 0.0);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		if (m_array_buffer && m_index_buffer) {
 
 			m_array_buffer->Bind();	// bind ARRAY BUFFER
@@ -163,8 +160,6 @@ namespace BlendInt {
 			m_index_buffer->ResetID();
 			m_array_buffer->ResetID();
 		}
-
-		glDisable(GL_BLEND);
 
 		glPopMatrix();
 

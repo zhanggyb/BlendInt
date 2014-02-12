@@ -61,11 +61,17 @@ int main(int argc, char* argv[])
 	HorizontalLayout* layout = new HorizontalLayout;
 	layout->Register();
 
-	Button* btn = new Button;
-	btn->set_name("Button");
-	btn->SetExpandX(false);
-	btn->SetPosition(530, 250);
-	btn->Register();
+	Button* btn1 = new Button;
+	btn1->set_name("Button1");
+	btn1->SetExpandX(false);
+	btn1->SetPosition(530, 250);
+	btn1->Register();
+
+//	Button* btn2 = new Button;
+//	btn2->set_name("Button2");
+//	btn2->SetExpandX(false);
+//	btn2->SetPosition(530, 250);
+//	btn2->Register();
 
 	Viewport3D* view3d = new Viewport3D;
 	view3d->set_name("Viewport 3D");
@@ -74,7 +80,8 @@ int main(int argc, char* argv[])
 	view3d->Register();
 
 	layout->Add(view3d);
-	layout->Add(btn);
+	layout->Add(btn1);
+	//layout->Add(btn2);
 
 	interface()->SetMainWidget(layout);
 

@@ -124,9 +124,6 @@ namespace BlendInt {
 					 position().y(),
 					 z());
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		if(down()) {
 			DrawShadedInnerBuffer(m_inner_buffer);
 		} else {
@@ -143,8 +140,6 @@ namespace BlendInt {
 		glColor4ubv(tcol);
 
 		DrawOutlineBuffer(m_outer_buffer);
-
-		glDisable(GL_BLEND);
 
 		glPopMatrix();
 	}
@@ -359,9 +354,6 @@ namespace BlendInt {
 
 		glTranslatef(position().x(), position().y(), z());
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		DrawShadedInnerBuffer(m_inner_buffer);
 
 		// draw outline
@@ -374,8 +366,6 @@ namespace BlendInt {
 		glColor4ubv(tcol);
 
 		DrawOutlineBuffer(m_outer_buffer);
-
-		glDisable(GL_BLEND);
 
 		glPopMatrix();
 
@@ -614,9 +604,6 @@ namespace BlendInt {
 
 		glTranslatef(position().x(), position().y(), z());
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		DrawShadedInnerBuffer(m_inner_buffer);
 
 		// draw outline
@@ -630,8 +617,6 @@ namespace BlendInt {
 		glColor4ubv(tcol);
 
 		DrawOutlineBuffer(m_outer_buffer);
-
-		glDisable(GL_BLEND);
 
 		glPopMatrix();
 

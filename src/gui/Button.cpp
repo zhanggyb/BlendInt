@@ -100,9 +100,6 @@ namespace BlendInt {
 
 	void Button::Draw ()
 	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		ThemeManager* tm = ThemeManager::instance();
 
 		// draw inner, simple fill
@@ -139,8 +136,6 @@ namespace BlendInt {
 
 		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
 		DrawOutlineBuffer(m_emboss_buffer);
-
-		glDisable(GL_BLEND);
 
 		// Draw text
 		if(text().size()) {

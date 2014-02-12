@@ -72,9 +72,6 @@ namespace BlendInt {
 					 position().y(),
 					 z());
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		glEnable (GL_SCISSOR_TEST);
 		glScissor (100, 100, 1000, 1000);
 
@@ -87,8 +84,6 @@ namespace BlendInt {
 		glEnd();
 
 		glDisable(GL_SCISSOR_TEST);
-
-		glDisable(GL_BLEND);
 
 		glPopMatrix();
 	}

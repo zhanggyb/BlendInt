@@ -291,10 +291,6 @@ namespace BlendInt {
 		//glClearColor(1, 1, 1, 1);
 		//glClear(GL_COLOR_BUFFER_BIT);
 
-		/* Enable blending, necessary for our alpha texture */
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		GLfloat black[4] = { 0, 0, 0, 1 };
 		//GLfloat red[4] = { 1, 0, 0, 1 };
 		//GLfloat transparent_green[4] = { 0, 1, 0, 0.5 };
@@ -383,7 +379,6 @@ namespace BlendInt {
 
 		glUseProgram(0);
 
-		glDisable(GL_BLEND);
 	}
 
 }

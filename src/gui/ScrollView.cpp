@@ -99,20 +99,6 @@ namespace BlendInt {
 				size().width(),
 				size().height());
 
-		// test code
-//		glEnable(GL_BLEND);
-//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//
-//		glColor4f(0.2f, 0.05f, 0.2f, 0.5f);
-//		glBegin(GL_POLYGON);
-//			glVertex2d(50,50);
-//			glVertex2d(1200,50);
-//			glVertex2d(1200,1200);
-//			glVertex2d(50,1200);
-//		glEnd();
-//
-//		glDisable(GL_BLEND);
-
 		if(m_viewport) DispatchRender(m_viewport);
 
 		glDisable(GL_SCISSOR_TEST);

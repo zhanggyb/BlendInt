@@ -94,9 +94,6 @@ namespace BlendInt {
 	{
 		Widget::Draw();
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 #ifdef DEBUG
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
@@ -112,8 +109,6 @@ namespace BlendInt {
 
 		glDisable(GL_LINE_STIPPLE);
 #endif
-
-		glDisable(GL_BLEND);
 	}
 
 	bool Frame::ContainNoMargin (const Coord2d& cursor)

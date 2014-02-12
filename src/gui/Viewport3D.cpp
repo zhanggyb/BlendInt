@@ -280,9 +280,6 @@ namespace BlendInt {
 		glViewport(0, 0, Interface::Instance()->size().width(), Interface::Instance()->size().height());
 
 #ifdef DEBUG
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
 
@@ -301,7 +298,6 @@ namespace BlendInt {
 
 		glDisable(GL_LINE_STIPPLE);
 
-		glDisable(GL_BLEND);
 #endif
 	}
 

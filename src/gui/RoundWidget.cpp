@@ -84,9 +84,6 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		// draw inner, simple fill
 		glColor4ub(themes()->regular.inner.r(),
 		        themes()->regular.inner.g(),
@@ -108,8 +105,6 @@ namespace BlendInt {
 //		draw_gl_buffer_anti_alias(m_outer_buffer.get());
 
 		DrawOutlineArray(quad_strip, vert_sum.total * 2 + 2);
-
-		glDisable(GL_BLEND);
 	}
 
 }

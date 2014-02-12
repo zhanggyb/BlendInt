@@ -132,9 +132,6 @@ namespace BlendInt {
 
 		glTranslatef(m_offset_x, m_offset_y, 0.0);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		float alphastep;
 		int step;
 
@@ -162,7 +159,6 @@ namespace BlendInt {
 
 		}
 
-		glDisable(GL_BLEND);
 		glPopMatrix();
 	}
 

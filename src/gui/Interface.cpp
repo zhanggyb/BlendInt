@@ -83,52 +83,66 @@ namespace BlendInt {
 		}
 		*/
 
-		bool result = true;
-		if (!FontConfig::initialize()) {
-			std::cerr << "Cannot initialize FontConfig" << std::endl;
-			result = false;
-		} else {
-			FontConfig* ftconfig = FontConfig::instance();
-			if (!ftconfig->loadDefaultFontToMem()) {
-				cerr << "Cannot load default font into memory" << endl;
-				result = false;
-			}
-		}
-
-		if (!ThemeManager::initialize()) {
-			std::cerr << "Cannot initialize Themes" << std::endl;
-			result = false;
-		}
-
-		if (!ShaderManager::Initialize()) {
-			std::cerr << "Cannot initialize Shader Manager" << std::endl;
-			result = false;
-		}
-
-		if (!StockIcon::Initialize()) {
-			std::cerr << "Cannot initialize Stock Icons" << std::endl;
-			result = false;
-		}
-
-		if (!ContextManager::Initialize()) {
-			std::cerr << "Cannot initialize Context Manager" << std::endl;
-			result = false;
-		}
-
-
+		bool success = true;
 
 		if (!interface) {
 			interface = new Interface();
 		}
 
 		if (!interface)
-			result = false;
+			success = false;
 
-		return result;
+		if (success && FontConfig::initialize()) {
+
+			/*
+			FontConfig* ftconfig = FontConfig::instance();
+			if (!ftconfig->loadDefaultFontToMem()) {
+				cerr << "Cannot load default font into memory" << endl;
+				success = false;
+			}
+			*/
+
+		} else {
+
+			std::cerr << "Cannot initialize FontConfig" << std::endl;
+			success = false;
+
+		}
+
+		if (success && ThemeManager::initialize()) {
+			// do nothing
+		} else {
+			std::cerr << "Cannot initialize Themes" << std::endl;
+			success = false;
+		}
+
+		if (success && ShaderManager::Initialize()) {
+			// do nothing
+		} else {
+			std::cerr << "Cannot initialize Shader Manager" << std::endl;
+			success = false;
+		}
+
+		if (success && StockIcon::Initialize()) {
+			// do nothing
+		} else {
+			std::cerr << "Cannot initialize Stock Icons" << std::endl;
+			success = false;
+		}
+
+		if (success && ContextManager::Initialize()) {
+			// do nothing
+		} else {
+			std::cerr << "Cannot initialize Context Manager" << std::endl;
+			success = false;
+		}
+
+		return success;
 	}
 
 	void Interface::Release ()
 	{
+
 		ContextManager::Release();
 		StockIcon::Release();
 		ShaderManager::Release();
@@ -170,7 +184,6 @@ namespace BlendInt {
 		int height = m_size.height();
 		// float ratio = width / (float) height;
 
-		// float bg = 114.0 / 255;	// the default blender background color
 		glClearColor(0.447, 0.447, 0.447, 1.00);
 		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -179,7 +192,7 @@ namespace BlendInt {
 		// enable anti-alias
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
-		//glEnable(GL_DEPTH_TEST);
+
 		//glEnable (GL_POINT_SMOOTH);
 		//glEnable (GL_LINE_SMOOTH);
 		//glEnable (GL_POLYGON_SMOOTH);
@@ -212,6 +225,7 @@ namespace BlendInt {
 
 		//glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
+
 	}
 
 #ifdef DEBUG

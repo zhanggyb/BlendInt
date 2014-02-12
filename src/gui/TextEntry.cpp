@@ -186,9 +186,6 @@ namespace BlendInt {
 
 	void TextEntry::Draw ()
 	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		// ThemeManager* tm = ThemeManager::instance();
 
 		/*
@@ -222,7 +219,6 @@ namespace BlendInt {
 			glRecti(0, 0, DefaultTextEntryPadding.bottom(), size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
 		}
 
-		glDisable(GL_BLEND);
 	}
 
 	void TextEntry::SetText (const String& text)

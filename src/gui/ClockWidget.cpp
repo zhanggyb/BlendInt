@@ -58,9 +58,6 @@ namespace BlendInt {
 	{
 		int radius = std::min(size().width(), size().height()) / 2;
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		glColor4ub(m_background.red(), m_background.green(), m_background.blue(), m_background.alpha());
 		DrawCircle(size().width() / 2, size().height() / 2, radius, true);
 
@@ -77,8 +74,6 @@ namespace BlendInt {
 		glEnd();
 
 		glDisable(GL_LINE_SMOOTH);
-
-		glDisable(GL_BLEND);
 	}
 
 	void ClockWidget::UpdateClockHands()

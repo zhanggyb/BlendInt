@@ -112,9 +112,6 @@ namespace BlendInt {
 
 	void SlideButton::Draw ()
 	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		if(down()) {
 			DrawShadedInnerBuffer(m_inner_buffer);
 		} else {
@@ -130,8 +127,6 @@ namespace BlendInt {
 		glColor4ubv(tcol);
 
 		DrawOutlineBuffer(m_outer_buffer);
-
-		glDisable(GL_BLEND);
 	}
 
 	void SlideButton::MouseMoveEvent(MouseEvent* event)
@@ -378,9 +373,6 @@ namespace BlendInt {
 
 	void Slider::Draw ()
 	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		glColor4ub(themes()->scroll.outline.r(),
 				themes()->scroll.outline.g(),
 				themes()->scroll.outline.b(),
@@ -427,8 +419,6 @@ namespace BlendInt {
 
 		glDisable(GL_LINE_STIPPLE);
 #endif
-
-		glDisable(GL_BLEND);
 
 		//DispatchRender(m_slide_button);
 	}
