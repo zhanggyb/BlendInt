@@ -54,7 +54,7 @@ EOF
 #define _${hpp_header}_HPP_
 
 #include <gtest/gtest.h>
-#include <BlendInt/Window.hpp>
+#include <Common/Window.hpp>
 #include <BlendInt/Object.hpp>
 
 class $1Test1: public testing::Test
@@ -107,22 +107,17 @@ $1Test1::~$1Test1()
  */
 TEST_F($1Test1, Foo1)
 {
-	Window::Initialize ();
-	Window::Create("$1 - Foo1", 1280, 800);
+	Init ();
 
-    if(!Interface::Initialize()) {
-        Window::Release();
-        ASSERT_TRUE(false);
-    }
+    GLFWwindow* win = CreateWindow("$1 - Foo1");
 
-    Interface::Instance()->Resize(1280, 800);
-	
     // TODO: add test code here
 
-    Window::Run();
+    RunLoop(win);
 
     Interface::Release();
-    Window::Release();
+
+    Terminate();
 
 	ASSERT_TRUE(true);
 }

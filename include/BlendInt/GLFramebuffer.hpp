@@ -35,6 +35,7 @@
 
 #include <BlendInt/Object.hpp>
 #include <BlendInt/GLTexture2D.hpp>
+#include <BlendInt/GLRenderbuffer.hpp>
 
 namespace BlendInt {
 
@@ -58,6 +59,8 @@ namespace BlendInt {
 		void Bind ();
 
 		bool Attach (const GLTexture2D& tex, GLenum attachment = GL_COLOR_ATTACHMENT0);
+
+		bool Attach (const GLRenderbuffer& renderbuffer, GLenum attachment = GL_COLOR_ATTACHMENT0);
 
 		static void Reset ();
 

@@ -67,21 +67,32 @@ int main(int argc, char* argv[])
 	btn1->SetPosition(530, 250);
 	btn1->Register();
 
-//	Button* btn2 = new Button;
-//	btn2->set_name("Button2");
-//	btn2->SetExpandX(false);
-//	btn2->SetPosition(530, 250);
-//	btn2->Register();
+	Button* btn2 = new Button;
+	btn2->set_name("Button2");
+	btn2->SetExpandX(false);
+	btn2->SetPosition(530, 250);
+	btn2->Register();
 
-	Viewport3D* view3d = new Viewport3D;
-	view3d->set_name("Viewport 3D");
-	view3d->SetPosition(20, 20);
-	view3d->Resize(500, 400);
-	view3d->Register();
+//	Viewport3D* view3d1 = new Viewport3D;
+//	view3d1->set_name("Viewport 3D1");
+//	view3d1->SetPosition(20, 20);
+//	view3d1->Resize(500, 400);
+//	view3d1->Register();
 
-	layout->Add(view3d);
-	layout->Add(btn1);
-	//layout->Add(btn2);
+//	Viewport3D* view3d2 = new Viewport3D;
+//	view3d2->set_name("Viewport 3D2");
+//	view3d2->SetPosition(20, 20);
+//	view3d2->Resize(500, 400);
+//	view3d2->Register();
+
+	VerticalLayout* vlayout = new VerticalLayout;
+	vlayout->Add(btn1);
+	vlayout->Add(btn2);
+
+	//layout->Add(view3d1);
+	//layout->Add(view3d2);
+
+	layout->Add(vlayout);
 
 	interface()->SetMainWidget(layout);
 

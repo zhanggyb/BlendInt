@@ -96,6 +96,35 @@ namespace BlendInt {
 		return error == GL_NO_ERROR ? true : false;
 	}
 
+	bool GLFramebuffer::Attach (const GLRenderbuffer& renderbuffer, GLenum attachment)
+	{
+		GLenum error = GL_NO_ERROR;
+
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer.id());
+
+		error = glGetError();
+
+		switch(error) {
+
+			case GL_INVALID_ENUM: {
+				std::cerr << "Target is not one of the accepted tokens."
+						"Or the render buffer target is not GL_RENDERBUFFER."
+						<< std::endl;
+				break;
+			}
+
+			case GL_INVALID_OPERATION: {
+				std::cerr << "Zero is bound to target." << std::endl;
+				break;
+			}
+
+			default:
+				break;
+		}
+
+		return error == GL_NO_ERROR ? true : false;
+	}
+
 	void GLFramebuffer::Reset ()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

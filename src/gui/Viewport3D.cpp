@@ -267,8 +267,8 @@ namespace BlendInt {
 
 		//-------------------------------------------------------------------------------------------------------
 
-		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_SCISSOR_TEST);
+		glDisable(GL_DEPTH_TEST);
 
 		// set back the previous matrices and viewport
 		glMatrixMode(GL_PROJECTION);

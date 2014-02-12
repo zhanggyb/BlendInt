@@ -185,20 +185,15 @@ namespace BlendInt {
 	{
 		int width = m_size.width();
 		int height = m_size.height();
-		// float ratio = width / (float) height;
 
 		glClearColor(0.447, 0.447, 0.447, 1.00);
 		glClearDepth(1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glColor4f(1.00, 1.00, 1.00, 1.00);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		// enable anti-alias
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
-
-		//glEnable (GL_POINT_SMOOTH);
-		//glEnable (GL_LINE_SMOOTH);
-		//glEnable (GL_POLYGON_SMOOTH);
 
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
@@ -215,7 +210,9 @@ namespace BlendInt {
 		map<int, set<AbstractWidget*>* >::iterator map_it;
 		set<AbstractWidget*>::iterator set_it;
 
-		for(map_it = ContextManager::context_manager->m_layers.begin(); map_it != ContextManager::context_manager->m_layers.end(); map_it++)
+		for(map_it = ContextManager::context_manager->m_layers.begin();
+				map_it != ContextManager::context_manager->m_layers.end();
+				map_it++)
 		{
 			set<AbstractWidget*>* pset = map_it->second;
 			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
@@ -226,9 +223,7 @@ namespace BlendInt {
 		}
 		// m_ticktack = m_ticktack ? 0 : 1;
 
-		//glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-
 	}
 
 #ifdef DEBUG
@@ -390,23 +385,23 @@ namespace BlendInt {
 		fb->Bind();
 
 		// Set "renderedTexture" as our colour attachement #0
-		//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-		//        GL_TEXTURE_2D, tex->id(), 0);
-		fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		        GL_TEXTURE_2D, tex->id(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
-//		GLuint rb = 0;
-//		glGenRenderbuffers(1, &rb);
-//
-//		glBindRenderbuffer(GL_RENDERBUFFER, rb);
-//
-//		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-//		        m_size.width(), m_size.height());
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+		        width, height);
 
 		//-------------------------
 
 //		//Attach depth buffer to FBO
-//		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-//		        GL_RENDERBUFFER, rb);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		        GL_RENDERBUFFER, rb);
 
 		//-------------------------
 		//Does the GPU support current FBO configuration?
@@ -436,8 +431,8 @@ namespace BlendInt {
 		//Delete resources
 		delete tex; tex = 0;
 
-//		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-//		glDeleteRenderbuffers(1, &rb);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
 
 		//Bind 0, which means render to back buffer, as a result, fb is unbound
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -473,6 +468,7 @@ namespace BlendInt {
 		glGenRenderbuffers(1, &depth_rb);
 		glBindRenderbuffer(GL_RENDERBUFFER, depth_rb);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+
 		//-------------------------
 		//Attach depth buffer to FBO
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER,

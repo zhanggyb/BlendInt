@@ -36,7 +36,7 @@ TEST_F(Texture2DTest1, Foo1)
 	tex->SetImage (512, 512, image);
 	tex->WriteToFile ("test.png");
 
-	tex->Unbind();
+	tex->Reset();
 
 	delete tex;
 
