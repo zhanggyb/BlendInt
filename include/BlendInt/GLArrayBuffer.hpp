@@ -26,8 +26,8 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/gl.h>
+#include <gl.h>
+#include <glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -75,20 +75,13 @@ namespace BlendInt {
 		 */
 		inline GLuint id () const {return m_id;}
 
-		bool IsBbuffer ();
+		bool IsBuffer ();
 
-		inline void bind ()
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, m_id);
-		}
+		void Bind ();
 
 		static void Reset ();
 
-		inline void set_data (int vertices, size_t size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW)
-		{
-			m_vertices = vertices;
-			glBufferData (GL_ARRAY_BUFFER, size * m_vertices, data, usage);
-		}
+		void SetData (int vertices, size_t size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
 
 		inline GLenum target ()
 		{
@@ -114,7 +107,7 @@ namespace BlendInt {
 		/**
 		 * @brief Destructor
 		 */
-		~GLArrayBuffer ();
+		virtual ~GLArrayBuffer ();
 
 	private:
 

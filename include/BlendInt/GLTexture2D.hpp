@@ -53,10 +53,7 @@ namespace BlendInt {
 
 		void Generate ();
 
-		inline void bind ()
-		{
-			glBindTexture(GL_TEXTURE_2D, m_id);
-		}
+		void Bind ();
 
 		void SetSize (GLsizei width, GLsizei height);
 
@@ -163,7 +160,9 @@ namespace BlendInt {
 
 		void SetImage (GLsizei width, GLsizei height, const GLvoid* data);
 
-		void Reset ();
+		GLint level () const {return m_level;}
+
+		static void Reset ();
 
 		/**
 		 * @brief Write the texture to file

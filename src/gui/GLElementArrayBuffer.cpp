@@ -23,12 +23,15 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl.h>
+#include <glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
 #endif  // __UNIX__
+
+#include <iostream>
 
 #include <BlendInt/GLElementArrayBuffer.hpp>
 
@@ -55,7 +58,10 @@ namespace BlendInt {
 
 	void GLElementArrayBuffer::Clear()
 	{
-		glDeleteBuffers(1, &m_id);
+		//if(glIsBuffer(m_id)) {
+			glDeleteBuffers(1, &m_id);
+		//}
+
 		m_id = 0;
 	}
 
@@ -63,6 +69,35 @@ namespace BlendInt {
 	{
 		return glIsBuffer(m_id);
 	}
+
+	void GLElementArrayBuffer::Bind()
+	{
+		if(m_id) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
+		} else {
+			std::cerr << "The element array buffer is not generated! call Generate() first." << std::endl;
+		}
+	}
+
+	void GLElementArrayBuffer::SetData (int vertices, size_t size, const GLvoid* data, GLenum usage)
+	{
+		if(glIsBuffer(m_id) == GL_FALSE) {
+			std::cerr << "The element array buffer is not generated!" << std::endl;
+			return;
+		}
+
+		GLint buffer = 0;
+		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &buffer);
+
+		if(m_id != static_cast<GLuint>(buffer)) {
+			std::cerr << "The current element array buffer binding is not the one to be set data, call Bind() first!" << std::endl;
+			return;
+		}
+
+		m_vertices = vertices;
+		glBufferData (GL_ELEMENT_ARRAY_BUFFER, size * m_vertices, data, usage);
+	}
+
 
 	void GLElementArrayBuffer::Reset()
 	{

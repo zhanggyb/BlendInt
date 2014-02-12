@@ -116,13 +116,13 @@ namespace BlendInt {
 						   const unsigned int (*vertex_indices)[3], size_t indeces_size)
 	{
 		m_array_buffer->Generate();
-		m_array_buffer->bind();
-		m_array_buffer->set_data(array_size, sizeof(vertex_array[0]), vertex_array[0]);
+		m_array_buffer->Bind();
+		m_array_buffer->SetData(array_size, sizeof(vertex_array[0]), vertex_array[0]);
 		m_array_buffer->ResetID();
 
 		m_index_buffer->Generate();
-		m_index_buffer->bind();
-		m_index_buffer->set_data(indeces_size, sizeof(vertex_indices[0]), vertex_indices[0]);
+		m_index_buffer->Bind();
+		m_index_buffer->SetData(indeces_size, sizeof(vertex_indices[0]), vertex_indices[0]);
 		m_index_buffer->ResetID();
 	}
 
@@ -143,9 +143,9 @@ namespace BlendInt {
 
 		if (m_array_buffer && m_index_buffer) {
 
-			m_array_buffer->bind();	// bind ARRAY BUFFER
+			m_array_buffer->Bind();	// bind ARRAY BUFFER
 
-			m_index_buffer->bind();	// bind ELEMENT ARRAY BUFFER
+			m_index_buffer->Bind();	// bind ELEMENT ARRAY BUFFER
 
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));

@@ -15,49 +15,42 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.	 If not, see
+ * License along with BlendInt.  If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GLFRAMEBUFFER_HPP_
-#define _BLENDINT_GLFRAMEBUFFER_HPP_
+#ifndef _BLENDINT_GLRENDERBUFFER_HPP_
+#define _BLENDINT_GLRENDERBUFFER_HPP_
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl.h>
+#include <glext.h>
 #else
 #include <GL/gl.h>
+#include <GL/glext.h>
 #endif
 #endif  // __UNIX__
-#include <vector>
 
 #include <BlendInt/Object.hpp>
-#include <BlendInt/GLTexture2D.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief C++ wrapper to GL Framebuffer object
-	 *
-	 * Usage of this class:
-	 *
-	 * @ingroup opengl
-	 */
-	class GLFramebuffer
+	class GLRenderbuffer
 	{
 	public:
 
-		GLFramebuffer ();
+		GLRenderbuffer ();
 
-		~GLFramebuffer ();
+		~GLRenderbuffer ();
 
 		void Generate ();
 
 		void Bind ();
 
-		bool Attach (const GLTexture2D& tex, GLenum attachment = GL_COLOR_ATTACHMENT0);
+		void SetStorage (GLenum internalformat, GLsizei width, GLsizei height);
 
 		static void Reset ();
 
@@ -68,9 +61,8 @@ namespace BlendInt {
 	private:
 
 		GLuint m_id;
-
 	};
 
 }
 
-#endif /* _BLENDINT_GLFRAMEBUFFER_HPP_ */
+#endif /* _BLENDINT_GLRENDERBUFFER_HPP_ */

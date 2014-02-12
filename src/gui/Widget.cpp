@@ -173,7 +173,7 @@ namespace BlendInt {
 	{
 		//if(!buffer) return;
 
-		buffer->bind();
+		buffer->Bind();
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
 		glDrawArrays(mode, 0, buffer->vertices());
@@ -185,7 +185,7 @@ namespace BlendInt {
 	{
 		//if(!buffer) return;
 
-		buffer->bind();
+		buffer->Bind();
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
 
@@ -204,7 +204,7 @@ namespace BlendInt {
 	{
 		//if(!buffer) return;
 
-		buffer->bind();
+		buffer->Bind();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, 0);
@@ -231,8 +231,8 @@ namespace BlendInt {
 
 		if(inner_buffer) {
 			inner_buffer->Generate();
-			inner_buffer->bind();
-			inner_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			inner_buffer->Bind();
+			inner_buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
 			inner_buffer->Reset();
 		}
 
@@ -246,8 +246,8 @@ namespace BlendInt {
 				verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 				outer_buffer->Generate();
-				outer_buffer->bind();
-				outer_buffer->set_data((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip);
+				outer_buffer->Bind();
+				outer_buffer->SetData((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip);
 				outer_buffer->Reset();
 			}
 
@@ -257,8 +257,8 @@ namespace BlendInt {
 				verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
 
 				emboss_buffer->Generate();
-				emboss_buffer->bind();
-				emboss_buffer->set_data(vert_sum.half * 2, sizeof(quad_strip[0]), quad_strip);
+				emboss_buffer->Bind();
+				emboss_buffer->SetData(vert_sum.half * 2, sizeof(quad_strip[0]), quad_strip);
 				emboss_buffer->Reset();
 		}
 
@@ -290,8 +290,8 @@ namespace BlendInt {
 
 		if(inner_buffer_p) {
 			inner_buffer_p->Generate();
-			inner_buffer_p->bind();
-			inner_buffer_p->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			inner_buffer_p->Bind();
+			inner_buffer_p->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
 			inner_buffer_p->Reset();
 		}
 
@@ -302,8 +302,8 @@ namespace BlendInt {
 			verts_to_quad_strip(inner_v, outer_v, vert_sum.total, quad_strip);
 
 			outer_buffer_p->Generate();
-			outer_buffer_p->bind();
-			outer_buffer_p->set_data(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), quad_strip);
+			outer_buffer_p->Bind();
+			outer_buffer_p->SetData(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), quad_strip);
 			outer_buffer_p->Reset();
 		}
 
@@ -317,9 +317,9 @@ namespace BlendInt {
 			        theme->shadedown, shadedir, inner_v, outer_v);
 
 			highlight_buffer_p->Generate();
-			highlight_buffer_p->bind();
+			highlight_buffer_p->Bind();
 
-			highlight_buffer_p->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			highlight_buffer_p->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
 			highlight_buffer_p->Reset();
 		}
 	}
@@ -351,8 +351,8 @@ namespace BlendInt {
 				inner_v);
 
 		buffer->Generate();
-		buffer->bind();
-		buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
+		buffer->Bind();
+		buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
 		buffer->Reset();
 	}
 
@@ -385,8 +385,8 @@ namespace BlendInt {
 
 		if(inner_buffer) {
 			inner_buffer->Generate();
-			inner_buffer->bind();
-			inner_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			inner_buffer->Bind();
+			inner_buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
 			inner_buffer->Reset();
 		}
 
@@ -395,8 +395,8 @@ namespace BlendInt {
 			verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 			outer_buffer->Generate();
-			outer_buffer->bind();
-			outer_buffer->set_data((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip);
+			outer_buffer->Bind();
+			outer_buffer->SetData((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip);
 			outer_buffer->Reset();
 		}
 
@@ -415,8 +415,8 @@ namespace BlendInt {
 							inner_v, outer_v);
 
 			highlight_buffer->Generate();
-			highlight_buffer->bind();
-			highlight_buffer->set_data(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			highlight_buffer->Bind();
+			highlight_buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
 			highlight_buffer->Reset();
 		}
 

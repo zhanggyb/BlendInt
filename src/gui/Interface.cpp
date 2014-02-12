@@ -50,6 +50,7 @@
 #include <BlendInt/GLTexture2D.hpp>
 
 #include <BlendInt/GLFramebuffer.hpp>
+#include <BlendInt/GLRenderbuffer.hpp>
 
 namespace BlendInt {
 
@@ -401,8 +402,8 @@ namespace BlendInt {
 		// Create and set texture to render to.
 		GLTexture2D* tex = new GLTexture2D;
 		tex->Generate();
-		tex->bind();
-		tex->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
 		tex->SetMinFilter(GL_NEAREST);
 		tex->SetMagFilter(GL_NEAREST);
 		tex->SetImage(m_size.width(), m_size.height(), 0);
@@ -410,16 +411,17 @@ namespace BlendInt {
 		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
 		GLFramebuffer* fb = new GLFramebuffer;
 		fb->Generate();
-		fb->bind();
+		fb->Bind();
 
 		// Set "renderedTexture" as our colour attachement #0
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-		        GL_TEXTURE_2D, tex->id(), 0);
+		//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		//        GL_TEXTURE_2D, tex->id(), 0);
+		fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
 		GLuint rb = 0;
 		glGenRenderbuffers(1, &rb);
 
-		glBindRenderbuffer(GL_RENDERBUFFER_EXT, rb);
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
 
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
 		        m_size.width(), m_size.height());
@@ -445,9 +447,12 @@ namespace BlendInt {
 
 		//-------------------------
 		//and now render to GL_TEXTURE_2D
-		fb->Reset();
+		fb->Bind();
 
 		Draw();
+
+		GLubyte pixels[4*4*4];
+		glReadPixels(0, 0, 4, 4, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 
 		//Bind 0, which means render to back buffer
 		fb->Reset();
@@ -459,10 +464,13 @@ namespace BlendInt {
 		delete tex;
 		tex = 0;
 
-		//glDeleteRenderbuffers(1, &rb);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
 
 		//Bind 0, which means render to back buffer, as a result, fb is unbound
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		fb->Reset();
+
 		delete fb; fb = 0;
 
 		Draw();

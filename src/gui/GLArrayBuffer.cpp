@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <iostream>
+
 #include <GLArrayBuffer.hpp>
 
 namespace BlendInt {
@@ -46,13 +48,44 @@ namespace BlendInt {
 
 	void GLArrayBuffer::Clear()
 	{
-		glDeleteBuffers(1, &m_id);
+		//if(glIsBuffer(m_id)) {
+			glDeleteBuffers(1, &m_id);
+		//}
 		m_id = 0;
 	}
 
-	bool GLArrayBuffer::IsBbuffer ()
+	bool GLArrayBuffer::IsBuffer ()
 	{
 		return glIsBuffer(m_id);
+	}
+
+	void GLArrayBuffer::SetData (int vertices, size_t size, const GLvoid* data,
+	        GLenum usage)
+	{
+		if(glIsBuffer(m_id) == GL_FALSE) {
+			std::cerr << "The array buffer is not generated!" << std::endl;
+			return;
+		}
+
+		GLint buffer = 0;
+		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &buffer);
+
+		if(m_id != static_cast<GLuint>(buffer)) {
+			std::cerr << "The current array buffer binding is not the one to be set data, call Bind() first." << std::endl;
+			return;
+		}
+
+		m_vertices = vertices;
+		glBufferData (GL_ARRAY_BUFFER, size * m_vertices, data, usage);
+	}
+
+	void GLArrayBuffer::Bind()
+	{
+		if(m_id) {
+			glBindBuffer(GL_ARRAY_BUFFER, m_id);
+		} else {
+			std::cerr << "The array buffer is not generated! call Generate() first." << std::endl;
+		}
 	}
 
 	void GLArrayBuffer::Reset()
@@ -78,3 +111,4 @@ namespace BlendInt {
 	}
 
 }
+

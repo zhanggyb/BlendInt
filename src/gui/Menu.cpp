@@ -228,7 +228,7 @@ namespace BlendInt {
 //			glColor4ub(0, 0, 225, 25);
 //			glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
 
-			m_highlight_buffer->bind();
+			m_highlight_buffer->Bind();
 
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glEnableClientState(GL_COLOR_ARRAY);

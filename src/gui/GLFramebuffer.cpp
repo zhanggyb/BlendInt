@@ -45,13 +45,55 @@ namespace BlendInt {
 
 	GLFramebuffer::~GLFramebuffer ()
 	{
-		Clear();
+		glDeleteFramebuffers(1, &m_id);
 	}
 
 	void GLFramebuffer::Generate ()
 	{
-		Clear();
+		if(m_id) {
+			Clear();
+		}
+
 		glGenFramebuffers (1, &m_id);
+	}
+
+	void GLFramebuffer::Bind()
+	{
+		if(m_id) {
+			glBindFramebuffer(GL_FRAMEBUFFER, m_id);
+		} else {
+			std::cerr << "The frame buffer is not generated! call Generate() first." << std::endl;
+		}
+	}
+
+	bool GLFramebuffer::Attach (const GLTexture2D& tex, GLenum attachment)
+	{
+		GLenum error = GL_NO_ERROR;
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex.id(), tex.level());
+
+		error = glGetError();
+
+		switch(error) {
+
+			case GL_INVALID_ENUM: {
+				std::cerr << "Target is not one of the accepted tokens."
+						"Or the render buffer target is not GL_RENDERBUFFER."
+						<< std::endl;
+				break;
+			}
+
+			case GL_INVALID_OPERATION: {
+				std::cerr << "Zero is bound to target."
+						<< "Or the texture target and texture are not compatible." << std::endl;
+				break;
+			}
+
+			default:
+				break;
+		}
+
+		return error == GL_NO_ERROR ? true : false;
 	}
 
 	void GLFramebuffer::Reset ()
@@ -61,9 +103,9 @@ namespace BlendInt {
 
 	void GLFramebuffer::Clear ()
 	{
-		if(glIsFramebuffer(m_id)) {
-			glDeleteFramebuffers(1, &m_id);
-		}
+		//if(glIsFramebuffer(m_id)) {
+		glDeleteFramebuffers(1, &m_id);
+		//}
 
 		m_id = 0;
 	}

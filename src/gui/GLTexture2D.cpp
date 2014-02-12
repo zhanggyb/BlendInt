@@ -54,14 +54,27 @@ namespace BlendInt {
 
 	GLTexture2D::~GLTexture2D ()
 	{
-		Clear();
+		if(m_id) {
+			Clear();
+		}
 	}
 
 	void GLTexture2D::Generate ()
 	{
-		Clear();
+		if(m_id) {
+			Clear();
+		}
 
 		glGenTextures(1, &m_id);
+	}
+
+	void GLTexture2D::Bind()
+	{
+		if(m_id) {
+			glBindTexture(GL_TEXTURE_2D, m_id);
+		} else {
+			std::cerr << "The texture is not generated! call Generate() first." << std::endl;
+		}
 	}
 
 	void GLTexture2D::SetSize (GLsizei width, GLsizei height)
@@ -186,9 +199,9 @@ namespace BlendInt {
 
 	void GLTexture2D::Clear ()
 	{
-		if (glIsTexture(m_id)) {
-			glDeleteTextures(1, &m_id);
-		}
+		//if (glIsTexture(m_id)) {
+		glDeleteTextures(1, &m_id);
+		//}
 
 		m_id = 0;
 	}

@@ -86,11 +86,11 @@ namespace BlendInt {
 			/* Draw the grid using the indices to our vertices using our vertex buffer objects */
 			glEnableVertexAttribArray(m_attribute_coord2d);
 
-			m_vb->bind();
+			m_vb->Bind();
 			glVertexAttribPointer(m_attribute_coord2d, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 			/* Push each element in buffer_vertices to the vertex shader */
-			m_ib->bind();
+			m_ib->Bind();
 
 			glDrawElements(GL_LINES, 20 * 21 * 4,
 			        GL_UNSIGNED_SHORT, 0);
@@ -138,9 +138,9 @@ namespace BlendInt {
 		m_vb = new GLArrayBuffer;
 		Retain(m_vb);
 		m_vb->Generate();
-		m_vb->bind();
+		m_vb->Bind();
 
-		m_vb->set_data(21 * 21, sizeof(glm::vec2), vertices);
+		m_vb->SetData(21 * 21, sizeof(glm::vec2), vertices);
 		m_vb->Reset();
 
 		// Create an array of indices into the vertex array that traces both horizontal and vertical lines
@@ -165,8 +165,8 @@ namespace BlendInt {
 		Retain(m_ib);
 
 		m_ib->Generate();
-		m_ib->bind();
-		m_ib->set_data(20 * 21 * 4, sizeof(GLushort), indices);
+		m_ib->Bind();
+		m_ib->SetData(20 * 21 * 4, sizeof(GLushort), indices);
 		m_ib->Reset();
 
 		Update ();

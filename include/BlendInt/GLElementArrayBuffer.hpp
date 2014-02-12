@@ -69,18 +69,11 @@ namespace BlendInt {
 
 		bool IsBbuffer ();
 
-		inline void bind ()
-		{
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
-		}
+		void Bind ();
+
+		void SetData (int vertices, size_t size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
 
 		static void Reset ();
-
-		inline void set_data (int vertices, size_t size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW)
-		{
-			m_vertices = vertices;
-			glBufferData (GL_ELEMENT_ARRAY_BUFFER, size * m_vertices, data, usage);
-		}
 
 		inline GLenum target ()
 		{
