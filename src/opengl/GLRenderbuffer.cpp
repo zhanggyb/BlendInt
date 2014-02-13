@@ -64,11 +64,6 @@ namespace BlendInt {
 	void GLRenderbuffer::SetStorage (GLenum internalformat, GLsizei width,
 	        GLsizei height)
 	{
-		if(glIsBuffer(m_id) == GL_FALSE) {
-			std::cerr << "The element array buffer is not generated!" << std::endl;
-			return;
-		}
-
 		GLint buffer = 0;
 		glGetIntegerv(GL_RENDERBUFFER_BINDING, &buffer);
 

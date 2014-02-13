@@ -66,63 +66,14 @@ namespace BlendInt {
 		}
 	}
 
-	bool GLFramebuffer::Attach (const GLTexture2D& tex, GLenum attachment)
+	void GLFramebuffer::Attach (const GLTexture2D& tex, GLenum attachment)
 	{
-		GLenum error = GL_NO_ERROR;
-
 		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex.id(), tex.level());
-
-		error = glGetError();
-
-		switch(error) {
-
-			case GL_INVALID_ENUM: {
-				std::cerr << "Target is not one of the accepted tokens."
-						"Or the render buffer target is not GL_RENDERBUFFER."
-						<< std::endl;
-				break;
-			}
-
-			case GL_INVALID_OPERATION: {
-				std::cerr << "Zero is bound to target."
-						<< "Or the texture target and texture are not compatible." << std::endl;
-				break;
-			}
-
-			default:
-				break;
-		}
-
-		return error == GL_NO_ERROR ? true : false;
 	}
 
-	bool GLFramebuffer::Attach (const GLRenderbuffer& renderbuffer, GLenum attachment)
+	void GLFramebuffer::Attach (const GLRenderbuffer& renderbuffer, GLenum attachment)
 	{
-		GLenum error = GL_NO_ERROR;
-
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer.id());
-
-		error = glGetError();
-
-		switch(error) {
-
-			case GL_INVALID_ENUM: {
-				std::cerr << "Target is not one of the accepted tokens."
-						"Or the render buffer target is not GL_RENDERBUFFER."
-						<< std::endl;
-				break;
-			}
-
-			case GL_INVALID_OPERATION: {
-				std::cerr << "Zero is bound to target." << std::endl;
-				break;
-			}
-
-			default:
-				break;
-		}
-
-		return error == GL_NO_ERROR ? true : false;
 	}
 
 	void GLFramebuffer::Clear ()

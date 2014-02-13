@@ -58,9 +58,9 @@ namespace BlendInt {
 
 		void Bind ();
 
-		bool Attach (const GLTexture2D& tex, GLenum attachment = GL_COLOR_ATTACHMENT0);
+		void Attach (const GLTexture2D& tex, GLenum attachment = GL_COLOR_ATTACHMENT0);
 
-		bool Attach (const GLRenderbuffer& renderbuffer, GLenum attachment = GL_COLOR_ATTACHMENT0);
+		void Attach (const GLRenderbuffer& renderbuffer, GLenum attachment = GL_COLOR_ATTACHMENT0);
 
 		void Clear ();
 
