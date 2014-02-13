@@ -62,11 +62,13 @@ namespace BlendInt {
 
 		bool Attach (const GLRenderbuffer& renderbuffer, GLenum attachment = GL_COLOR_ATTACHMENT0);
 
-		static void Reset ();
-
 		void Clear ();
 
 		GLuint id () const {return m_id;}
+
+		static void Reset ();
+
+		static bool CheckStatus ();
 
 	private:
 
