@@ -141,6 +141,7 @@ endif()
 
 add_subdirectory(extern/CppEvents/src)
 add_subdirectory(src/gui)
+add_subdirectory(src/opengl)
 
 if(BUILD_STATIC_LIBRARY)
     set(LIBS ${LIBS} pthread)

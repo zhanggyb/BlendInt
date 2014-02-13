@@ -50,10 +50,10 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/ContextMenuEvent.hpp>
 #include <BlendInt/ContextManager.hpp>
 #include <BlendInt/StockIcon.hpp>
-#include <BlendInt/GLTexture2D.hpp>
+#include <BlendInt/opengl/GLTexture2D.hpp>
 
-#include <BlendInt/GLFramebuffer.hpp>
-#include <BlendInt/GLRenderbuffer.hpp>
+#include <BlendInt/opengl/GLFramebuffer.hpp>
+#include <BlendInt/opengl/GLRenderbuffer.hpp>
 
 namespace BlendInt {
 
@@ -313,7 +313,7 @@ namespace BlendInt {
 
 				case KeyPress: {
 #ifdef DEBUG
-					if(event->key() == Key_F6) {
+					if(event->key() == Key_F6 && event->text().empty()) {
 						DrawToOffScreen();
 					}
 #endif
@@ -490,7 +490,41 @@ namespace BlendInt {
 		//and now you can render to the FBO (also called RenderBuffer)
 		glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
-		Draw();
+		//Draw();
+
+        float ratio;
+
+        width = size().width();
+        height = size().height();
+
+        ratio = width / (float) height;
+
+        glClearColor(1.f, 1.f, 1.f, 1.f);
+		glClearDepth(1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+
+        glViewport(0, 0, width, height);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        //glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+        glBegin(GL_TRIANGLES);
+        	glColor3f(1.f, 0.f, 0.f);
+        	glVertex3f(-0.6f, -0.4f, 0.f);
+        	glColor3f(0.f, 1.f, 0.f);
+        	glVertex3f(0.6f, -0.4f, 0.f);
+        	glColor3f(0.f, 0.f, 1.f);
+        	glVertex3f(0.f, 0.6f, 0.f);
+        glEnd();
+
+        glDisable(GL_BLEND);
 
 		//-------------------------
 		GLubyte pixels[width * height * 4];

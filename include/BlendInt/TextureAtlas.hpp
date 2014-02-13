@@ -28,7 +28,7 @@
 #include <BlendInt/Vector.hpp>
 #include <string>
 
-#include <BlendInt/GLSLProgram.hpp>
+#include <BlendInt/opengl/GLSLProgram.hpp>
 #include <BlendInt/Freetype.hpp>
 #include <BlendInt/Glyph.hpp>
 

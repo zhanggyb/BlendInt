@@ -31,7 +31,7 @@
 #endif
 
 #include <BlendInt/Object.hpp>
-#include <BlendInt/GLSLShader.hpp>
+#include <BlendInt/opengl/GLSLShader.hpp>
 
 namespace BlendInt {
 

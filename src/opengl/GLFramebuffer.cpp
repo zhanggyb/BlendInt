@@ -33,7 +33,7 @@
 
 #include <iostream>
 
-#include <BlendInt/GLFramebuffer.hpp>
+#include <BlendInt/opengl/GLFramebuffer.hpp>
 
 namespace BlendInt {
 

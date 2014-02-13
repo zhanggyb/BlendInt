@@ -33,7 +33,7 @@
 
 #include <iostream>
 
-#include <BlendInt/GLElementArrayBuffer.hpp>
+#include <BlendInt/opengl/GLElementArrayBuffer.hpp>
 
 namespace BlendInt {
 

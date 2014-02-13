@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_TEXTUREFONT_HPP_
 #define _BLENDINT_TEXTUREFONT_HPP_
 
-#include <BlendInt/GLSLProgram.hpp>
+#include <BlendInt/opengl/GLSLProgram.hpp>
 #include <BlendInt/Freetype.hpp>
 #include <BlendInt/Glyph.hpp>
 

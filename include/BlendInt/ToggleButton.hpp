@@ -25,7 +25,7 @@
 #define _BLENDINT_CHECKBUTTON_HPP_
 
 #include <BlendInt/AbstractButton.hpp>
-#include <BlendInt/GLArrayBuffer.hpp>
+#include <BlendInt/opengl/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 

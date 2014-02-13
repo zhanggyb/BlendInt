@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_SHADERMANAGER_HPP_
 #define _BLENDINT_SHADERMANAGER_HPP_
 
-#include <BlendInt/GLSLProgram.hpp>
+#include <BlendInt/opengl/GLSLProgram.hpp>
 
 namespace BlendInt {
 

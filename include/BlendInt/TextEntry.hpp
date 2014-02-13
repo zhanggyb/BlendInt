@@ -31,7 +31,7 @@
 #include <BlendInt/Rect.hpp>
 
 #include <BlendInt/Timer.hpp>
-#include <BlendInt/GLArrayBuffer.hpp>
+#include <BlendInt/opengl/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 

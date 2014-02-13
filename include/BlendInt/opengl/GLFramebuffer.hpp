@@ -34,8 +34,8 @@
 #include <vector>
 
 #include <BlendInt/Object.hpp>
-#include <BlendInt/GLTexture2D.hpp>
-#include <BlendInt/GLRenderbuffer.hpp>
+#include <BlendInt/opengl/GLTexture2D.hpp>
+#include <BlendInt/opengl/GLRenderbuffer.hpp>
 
 namespace BlendInt {
 

@@ -26,7 +26,7 @@
 
 #include <BlendInt/AbstractRoundForm.hpp>
 #include <BlendInt/Types.hpp>
-#include <BlendInt/GLArrayBuffer.hpp>
+#include <BlendInt/opengl/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 

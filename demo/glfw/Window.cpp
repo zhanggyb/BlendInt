@@ -152,18 +152,50 @@ namespace BlendInt {
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
 			/* Render here */
-			Interface::Instance()->Draw();
+			//Interface::Instance()->Draw();
 
             if(callback) {
                 (*callback)(param);
             }
 		
+            float ratio;
+            int width, height;
+            glfwGetFramebufferSize(window, &width, &height);
+            ratio = width / (float) height;
+
+            glClearColor(1.f, 1.f, 1.f, 1.f);
+    		glClearDepth(1.0);
+    		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+
+    		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    		glEnable(GL_BLEND);
+
+            glViewport(0, 0, width, height);
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            //glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+            glBegin(GL_TRIANGLES);
+            	glColor4f(1.f, 0.f, 0.f, 0.5f);
+            	glVertex3f(-0.6f, -0.4f, 0.f);
+            	glColor4f(0.f, 1.f, 0.f, 0.5f);
+            	glVertex3f(0.6f, -0.4f, 0.f);
+            	glColor4f(0.f, 0.f, 1.f, 0.5f);
+            	glVertex3f(0.f, 0.6f, 0.f);
+            glEnd();
+
+            glDisable(GL_BLEND);
+
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);
 		
 			/* Poll for and process events */
-			//glfwPollEvents();
-			glfwWaitEvents();
+			glfwPollEvents();
+			//glfwWaitEvents();
 		}
 	
 	}
