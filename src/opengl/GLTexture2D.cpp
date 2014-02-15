@@ -55,7 +55,7 @@ namespace BlendInt {
 	GLTexture2D::~GLTexture2D ()
 	{
 		if(m_id) {
-			Clear();
+			glDeleteTextures(1, &m_id);
 		}
 	}
 

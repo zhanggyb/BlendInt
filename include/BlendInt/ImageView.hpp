@@ -26,6 +26,10 @@
 
 #include <BlendInt/Frame.hpp>
 
+#include <BlendInt/opengl/GLTexture2D.hpp>
+#include <BlendInt/opengl/GLSLProgram.hpp>
+#include <BlendInt/opengl/GLArrayBuffer.hpp>
+
 namespace BlendInt {
 
 	class ImageView: public Widget
@@ -44,12 +48,28 @@ namespace BlendInt {
 
 	private:
 
+		void InitOnce ();
+
 		void makeCheckImage ();
 
 		static const int checkImageWidth = 512;
 		static const int checkImageHeight = 512;
 
 		GLubyte _checkImage[checkImageHeight][checkImageWidth][4];
+
+		GLTexture2D* m_texture;
+
+		GLSLProgram* m_program;
+
+		GLArrayBuffer* m_vbo;
+		GLArrayBuffer* m_tbo;	// texture coords
+
+		GLint uniform_texture;
+		GLint attribute_coord3d;
+		GLint attribute_texcoord;
+
+		static const char* vertex_shader;
+		static const char* fragment_shader;
 
 	};
 }

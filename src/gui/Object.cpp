@@ -70,12 +70,10 @@ namespace BlendInt {
 			std::cerr << "Warning: object " << obj->name() << " deleted with no reference" << std::endl;
 #endif
 			delete obj;
-			obj = 0;
 		} else {
 			obj->m_ref_count--;
 			if(obj->m_ref_count == 0) {
 				delete obj;
-				obj = 0;
 			}
 		}
 	}

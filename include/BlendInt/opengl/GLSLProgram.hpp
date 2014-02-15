@@ -43,8 +43,8 @@ namespace BlendInt {
 	 * 	-# Call Create(): foo.Create()
 	 * 	-# Attach shaders: foo.AttachShaderPair(vs_shader, fs_shader);
 	 * 	-# Call Link(): foo.Link()
-	 * 	-# Call Activate() for drawing: foo.Activate();	// and draw sth
-	 * 	-# Call Deactivate() after drawing: foo.Deactivate();
+	 * 	-# Call Use() for drawing: foo.Use();	// and draw sth
+	 * 	-# Call Reset() after drawing: foo.Reset();
 	 *
 	 * @ingroup opengl
 	 */

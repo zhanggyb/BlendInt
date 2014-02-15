@@ -58,20 +58,20 @@ int main(int argc, char* argv[])
 //
 //	text->Register();
 
-	HorizontalLayout* layout = new HorizontalLayout;
-	layout->Register();
-
-	Button* btn1 = new Button;
-	btn1->set_name("Button1");
-	btn1->SetExpandX(false);
-	btn1->SetPosition(530, 250);
-	btn1->Register();
-
-	Button* btn2 = new Button;
-	btn2->set_name("Button2");
-	btn2->SetExpandX(false);
-	btn2->SetPosition(530, 250);
-	btn2->Register();
+//	HorizontalLayout* layout = new HorizontalLayout;
+//	layout->Register();
+//
+//	Button* btn1 = new Button;
+//	btn1->set_name("Button1");
+//	btn1->SetExpandX(false);
+//	btn1->SetPosition(530, 250);
+//	btn1->Register();
+//
+//	Button* btn2 = new Button;
+//	btn2->set_name("Button2");
+//	btn2->SetExpandX(false);
+//	btn2->SetPosition(530, 250);
+//	btn2->Register();
 
 //	Viewport3D* view3d1 = new Viewport3D;
 //	view3d1->set_name("Viewport 3D1");
@@ -85,16 +85,21 @@ int main(int argc, char* argv[])
 //	view3d2->Resize(500, 400);
 //	view3d2->Register();
 
-	VerticalLayout* vlayout = new VerticalLayout;
-	vlayout->Add(btn1);
-	vlayout->Add(btn2);
+//	VerticalLayout* vlayout = new VerticalLayout;
+//	vlayout->Add(btn1);
+//	vlayout->Add(btn2);
 
 	//layout->Add(view3d1);
 	//layout->Add(view3d2);
 
-	layout->Add(vlayout);
+//	layout->Add(vlayout);
 
-	interface()->SetMainWidget(layout);
+	ImageView* iv = new ImageView;
+
+	iv->SetPosition(100, 100);
+	iv->Register();
+
+	//interface()->SetMainWidget(layout);
 
 	RunLoop (win);
 

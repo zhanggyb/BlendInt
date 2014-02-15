@@ -23,52 +23,111 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl.h>
+#include <glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
 #endif  // __UNIX__
 
+#include <iostream>
+
 #include <BlendInt/ImageView.hpp>
 
 namespace BlendInt {
 
-	ImageView::ImageView ()
-	: Widget()
-	{
-		glShadeModel(GL_FLAT);
-		makeCheckImage();
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	const char* ImageView::vertex_shader =
+			"#version 120\n"
+			"attribute vec3 coord3d;"
+			"attribute vec2 texcoord;"
+			"varying vec2 f_texcoord;"
+			""
+			"void main(void) {"
+			"	gl_Position = gl_ModelViewProjectionMatrix * vec4(coord3d, 1.0);"
+			"	f_texcoord = texcoord;"
+			"}";
 
-		Resize(64, 64);
+	const char* ImageView::fragment_shader =
+			"varying vec2 f_texcoord;"
+			"uniform sampler2D texture;"
+			""
+			"void main(void) {"
+			"	gl_FragColor = texture2D(texture, f_texcoord);"
+			"}";
+
+	ImageView::ImageView ()
+	: Widget(), m_texture(0), m_program(0), m_vbo(0), m_tbo(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
+	{
+		InitOnce();
 	}
 
 	ImageView::ImageView (AbstractWidget* parent)
-	: Widget(parent)
+	: Widget(parent), m_texture(0), m_program(0), m_vbo(0), m_tbo(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
 	{
-		glShadeModel(GL_FLAT);
-		makeCheckImage();
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-		Resize(64, 64);
+		InitOnce();
 	}
 
 	ImageView::~ImageView ()
 	{
+		Destroy(m_tbo);
+		Destroy(m_vbo);
+		Destroy(m_program);
+
+		delete m_texture;
 	}
 
 	void ImageView::Draw ()
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+//		glRasterPos2i(0, 0);
+//		glDrawPixels (checkImageWidth, checkImageHeight, GL_RGB, GL_UNSIGNED_BYTE, _checkImage);
 
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
+//		glColor4ub(122, 155, 55, 255);
 
-		glRasterPos2i(0, 0);
-		glDrawPixels (checkImageWidth, checkImageHeight, GL_RGB, GL_UNSIGNED_BYTE, _checkImage);
+		m_program->Use();
+
+		glActiveTexture(GL_TEXTURE0);
+		m_texture->Bind();
+		glUniform1i(uniform_texture, 0);
+
+		glEnableVertexAttribArray(attribute_coord3d);
+		m_vbo->Bind();
+		glVertexAttribPointer(
+				attribute_coord3d,
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				0
+				);
+
+		glEnableVertexAttribArray(attribute_texcoord);
+		m_tbo->Bind();
+		glVertexAttribPointer(
+				attribute_texcoord,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				0
+				);
+
+		m_vbo->Bind();
+
+		//glEnableClientState(GL_VERTEX_ARRAY);
+		//glVertexPointer(3, GL_FLOAT, 0, BUFFER_OFFSET(0));
+		glDrawArrays(GL_POLYGON, 0, 4);
+
+		//glDisableClientState(GL_VERTEX_ARRAY);
+
+		glDisableVertexAttribArray(attribute_texcoord);
+		glDisableVertexAttribArray(attribute_coord3d);
+
+		m_vbo->Reset();
+
+		m_texture->Reset();
+
+		m_program->Reset();
 
 #ifdef DEBUG
 		glLineWidth(1);
@@ -85,8 +144,73 @@ namespace BlendInt {
 
 		glDisable(GL_LINE_STIPPLE);
 #endif
+	}
 
-		glPopMatrix();
+	void ImageView::InitOnce ()
+	{
+//		glShadeModel(GL_FLAT);
+		makeCheckImage();
+//		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		m_texture = new GLTexture2D;
+		m_texture->Generate();
+		m_texture->Bind();
+		m_texture->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		m_texture->SetMinFilter(GL_LINEAR);
+		m_texture->SetMagFilter(GL_LINEAR);
+
+		m_texture->SetImage(checkImageWidth, checkImageHeight, _checkImage);
+
+		m_texture->Reset();
+
+		float vertices[] = {
+			0.0, 0.0, 0.0,
+			checkImageWidth, 0.0, 0.0,
+			checkImageWidth, checkImageHeight, 0.0,
+			0.0, checkImageHeight, 0.0
+		};
+
+		m_vbo = new GLArrayBuffer;
+		Retain(m_vbo);
+		m_vbo->Generate();
+		m_vbo->Bind();
+		m_vbo->SetData(4, sizeof(float) * 3, vertices);
+		m_vbo->Reset();
+
+		m_program = new GLSLProgram;
+		Retain(m_program);
+
+		m_program->Create();
+		m_program->AttachShaderPair(vertex_shader, fragment_shader);
+
+		if(m_program->Link()) {
+			m_program->Use();
+			attribute_coord3d = m_program->GetAttributeLocation("coord3d");
+			attribute_texcoord = m_program->GetAttributeLocation("texcoord");
+			uniform_texture = m_program->GetUniformLocation("texture");
+
+			if(attribute_texcoord == -1 || attribute_coord3d == -1 || uniform_texture == -1) {
+				std::cerr << "Fail to get attribute" << std::endl;
+			}
+		}
+		m_program->Reset();
+
+		GLfloat texcoords[] = {
+				0.0, 0.0,
+				1.0, 0.0,
+				1.0, 1.0,
+				0.0, 1.0
+		};
+
+		m_tbo = new GLArrayBuffer;
+		Retain(m_tbo);
+
+		m_tbo->Generate();
+		m_tbo->Bind();
+		m_tbo->SetData(4, sizeof(GLfloat) * 2, texcoords);
+		m_tbo->Reset();
+
+		Resize(checkImageWidth, checkImageHeight);
 	}
 
 	void ImageView::makeCheckImage ()
@@ -94,7 +218,7 @@ namespace BlendInt {
 		int i, j, c;
 		for (i = 0; i < checkImageHeight; i++) {
 			for (j = 0; j < checkImageWidth; j++) {
-				c = (((i & 0x8) == 0) ^ (((j & 0x8) == 0))) * 255;
+				c = (((i & 0x8) == 0) ^ (((j & 0x8) == 0))) * (255);
 				_checkImage[i][j][0] = (GLubyte) c;
 				_checkImage[i][j][1] = (GLubyte) c;
 				_checkImage[i][j][2] = (GLubyte) c;
