@@ -187,6 +187,7 @@ namespace BlendInt {
 		int height = m_size.height();
 
 		glClearColor(0.447, 0.447, 0.447, 1.00);
+
 		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -314,8 +315,8 @@ namespace BlendInt {
 				case KeyPress: {
 #ifdef DEBUG
 					if(event->key() == Key_F6 && event->text().empty()) {
-						//DrawToOffScreen();
-						RenderToImage();
+						DrawToOffScreen();
+						//RenderToImage();
 					}
 #endif
 					cm->m_focus->KeyPressEvent(event);
@@ -491,41 +492,7 @@ namespace BlendInt {
 		//and now you can render to the FBO (also called RenderBuffer)
 		glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
-		//Draw();
-
-        float ratio;
-
-        width = size().width();
-        height = size().height();
-
-        ratio = width / (float) height;
-
-        glClearColor(1.f, 1.f, 1.f, 1.f);
-		glClearDepth(1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-
-        glViewport(0, 0, width, height);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        //glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-        glBegin(GL_TRIANGLES);
-        	glColor4f(1.f, 0.f, 0.f, 0.5f);
-        	glVertex3f(-0.6f, -0.4f, 0.f);
-        	glColor4f(0.f, 1.f, 0.f, 0.5f);
-        	glVertex3f(0.6f, -0.4f, 0.f);
-        	glColor4f(0.f, 0.f, 1.f, 0.5f);
-        	glVertex3f(0.f, 0.6f, 0.f);
-        glEnd();
-
-        glDisable(GL_BLEND);
+		Draw();
 
 		//-------------------------
 		GLubyte pixels[width * height * 4];

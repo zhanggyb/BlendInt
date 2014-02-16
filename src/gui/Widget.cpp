@@ -89,9 +89,9 @@ namespace BlendInt {
 		float outer_v[4][2];	// vertices for drawing outline
 		float inner_v[4][2];	// vertices for drawing inner
 
-		generate_rect_vertices(&(size()), DefaultBorderWidth(), inner_v, outer_v);
+		generate_rect_vertices(&(size()), default_border_width, inner_v, outer_v);
 
-		float quad_strip[4 * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+		float quad_strip[4 * 2 + 2][2]; // + 2 because the last pair is wrapped
 
 		verts_to_quad_strip (inner_v, outer_v, 4, quad_strip);
 
@@ -104,7 +104,7 @@ namespace BlendInt {
 		DrawInnerArray(inner_v, 4);
 
 		// draw outline
-		unsigned char tcol[4] = { themes()->regular.outline.r(),
+		unsigned char tcol[4] = {themes()->regular.outline.r(),
 		        themes()->regular.outline.g(),
 		        themes()->regular.outline.b(),
 		        themes()->regular.outline.a()};

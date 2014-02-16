@@ -118,12 +118,12 @@ namespace BlendInt {
 		m_array_buffer->Generate();
 		m_array_buffer->Bind();
 		m_array_buffer->SetData(array_size, sizeof(vertex_array[0]), vertex_array[0]);
-		m_array_buffer->ResetID();
+		m_array_buffer->Reset();
 
 		m_index_buffer->Generate();
 		m_index_buffer->Bind();
 		m_index_buffer->SetData(indeces_size, sizeof(vertex_indices[0]), vertex_indices[0]);
-		m_index_buffer->ResetID();
+		m_index_buffer->Reset();
 	}
 
 	void VertexIcon::Update (int type, const void* data)
@@ -157,8 +157,8 @@ namespace BlendInt {
 
 			glDisableClientState(GL_VERTEX_ARRAY);
 
-			m_index_buffer->ResetID();
-			m_array_buffer->ResetID();
+			m_index_buffer->Reset();
+			m_array_buffer->Reset();
 		}
 
 		glPopMatrix();

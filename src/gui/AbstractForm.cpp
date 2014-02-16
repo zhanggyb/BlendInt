@@ -1058,8 +1058,8 @@ namespace BlendInt {
 			const int totvert,
 			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
 	{
-		int i;
-		for (i = 0; i < totvert; i++) {
+		int i = 0;
+		for (; i < totvert; i++) {
 			copy_v2_v2(quad_strip[i * 2], outer_v[i]);
 			copy_v2_v2(quad_strip[i * 2 + 1], inner_v[i]);
 		}

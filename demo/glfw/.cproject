@@ -205,6 +205,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.738048994" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
 								<option id="gnu.cpp.compiler.option.include.paths.1872145553" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt}&quot;"/>
+									<listOptionValue builtIn="false" value="/System/Library/Frameworks/OpenGL.framework/Headers"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/include/BlendInt}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/BlendInt/extern/CppEvents/src}&quot;"/>
