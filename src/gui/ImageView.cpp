@@ -35,6 +35,8 @@
 
 #include <BlendInt/ImageView.hpp>
 
+#include <BlendInt/opengl/GLFramebuffer.hpp>
+
 namespace BlendInt {
 
 	const char* ImageView::vertex_shader =
@@ -153,15 +155,17 @@ namespace BlendInt {
 //		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		m_texture = new GLTexture2D;
-		m_texture->Generate();
-		m_texture->Bind();
-		m_texture->SetWrapMode(GL_REPEAT, GL_REPEAT);
-		m_texture->SetMinFilter(GL_LINEAR);
-		m_texture->SetMagFilter(GL_LINEAR);
+//		m_texture->Generate();
+//		m_texture->Bind();
+//		m_texture->SetWrapMode(GL_REPEAT, GL_REPEAT);
+//		m_texture->SetMinFilter(GL_LINEAR);
+//		m_texture->SetMagFilter(GL_LINEAR);
+//
+//		m_texture->SetImage(checkImageWidth, checkImageHeight, _checkImage);
+//
+//		m_texture->Reset();
 
-		m_texture->SetImage(checkImageWidth, checkImageHeight, _checkImage);
-
-		m_texture->Reset();
+		RenderToTexture();
 
 		float vertices[] = {
 			0.0, 0.0, 0.0,
@@ -225,6 +229,106 @@ namespace BlendInt {
 				_checkImage[i][j][3] = (GLubyte) c;
 			}
 		}
+	}
+
+	void ImageView::RenderToTexture()
+	{
+		GLsizei width = checkImageWidth;
+		GLsizei height = checkImageHeight;
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = m_texture;
+		tex->Generate();
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(width, height, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		        GL_TEXTURE_2D, tex->id(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+		        width, height);
+
+		//-------------------------
+
+//		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		        GL_RENDERBUFFER, rb);
+
+		//-------------------------
+		//Does the GPU support current FBO configuration?
+		GLenum status;
+		status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		switch (status) {
+			case GL_FRAMEBUFFER_COMPLETE:
+				std::cout << "good" << std::endl;
+				break;
+			default:
+				std::cerr << "Fail to check framebuffer status" << std::endl;
+				break;
+		}
+
+		//-------------------------
+		//and now render to GL_TEXTURE_2D
+		fb->Bind();
+
+		// Draw();
+        float ratio = width / (float) height;
+
+        glClearColor(1.f, 1.f, 1.f, 1.f);
+		glClearDepth(1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+
+        glViewport(0, 0, width, height);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        //glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+        glBegin(GL_TRIANGLES);
+        	glColor4f(1.f, 0.f, 0.f, 0.5f);
+        	glVertex3f(-0.6f, -0.4f, 0.f);
+        	glColor4f(0.f, 1.f, 0.f, 0.5f);
+        	glVertex3f(0.6f, -0.4f, 0.f);
+        	glColor4f(0.f, 0.f, 1.f, 0.5f);
+        	glVertex3f(0.f, 0.6f, 0.f);
+        glEnd();
+
+        //glDisable(GL_BLEND);
+
+		//Bind 0, which means render to back buffer
+		fb->Reset();
+
+		tex->Reset();
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		//Bind 0, which means render to back buffer, as a result, fb is unbound
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		fb->Reset();
+		delete fb; fb = 0;
+
 	}
 
 }

@@ -52,6 +52,8 @@ namespace BlendInt {
 
 		void makeCheckImage ();
 
+		void RenderToTexture ();
+
 		static const int checkImageWidth = 512;
 		static const int checkImageHeight = 512;
 
