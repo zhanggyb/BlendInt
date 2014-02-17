@@ -157,8 +157,8 @@ namespace BlendInt {
 
 			}
 
-			std::cerr << pathname << " exists, abort writing to this file!" << std::endl;
-			return false;
+			std::cerr << "Warning: file \"" << pathname << "\" exists, overwrite to this file!" << std::endl;
+			//return false;
 		} else {
 
 		}

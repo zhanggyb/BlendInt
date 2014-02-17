@@ -93,6 +93,7 @@ namespace BlendInt {
 
 		glActiveTexture(GL_TEXTURE0);
 		m_texture->Bind();
+
 		glUniform1i(uniform_texture, 0);
 
 		glEnableVertexAttribArray(attribute_coord3d);
@@ -287,15 +288,15 @@ namespace BlendInt {
 		//and now render to GL_TEXTURE_2D
 		fb->Bind();
 
-		// Draw();
-		//float ratio = width / (float) height;
+		glClearColor(0.447, 0.447, 0.447, 0.0);
 
-		glClearColor(0.447, 0.447, 0.447, 0.00);
 
 		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendFuncSeparate(GL_SRC_COLOR, GL_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glEnable(GL_BLEND);
 
 		glViewport(0, 0, width, height);
@@ -305,18 +306,6 @@ namespace BlendInt {
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-
-		// ---------------------------------------------
-
-//        //glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-//        glBegin(GL_TRIANGLES);
-//        	glColor4f(1.f, 0.f, 0.f, 0.5f);
-//        	glVertex3f(-0.6f, -0.4f, 0.f);
-//        	glColor4f(0.f, 1.f, 0.f, 0.5f);
-//        	glVertex3f(0.6f, -0.4f, 0.f);
-//        	glColor4f(0.f, 0.f, 1.f, 0.5f);
-//        	glVertex3f(0.f, 0.6f, 0.f);
-//        glEnd();
 
 		// ---------------------------------------------
 
@@ -340,7 +329,10 @@ namespace BlendInt {
 		        themes()->regular.inner.b(),
 		        themes()->regular.inner.a());
 
-		DrawInnerArray(inner_v, vert_sum.total);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, inner_v);
+		glDrawArrays(GL_POLYGON, 0, vert_sum.total);
+		glDisableClientState(GL_VERTEX_ARRAY);
 
 		// draw outline
 		unsigned char tcol[4] = {themes()->regular.outline.r(),
@@ -363,6 +355,7 @@ namespace BlendInt {
 		glDisable(GL_BLEND);
 
 		// ---------------------------------------------
+//		tex->WriteToFile("imageview.png");
 
 		//Bind 0, which means render to back buffer
 		fb->Reset();
