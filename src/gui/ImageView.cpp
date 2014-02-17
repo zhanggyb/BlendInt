@@ -86,6 +86,9 @@ namespace BlendInt {
 
 //		glColor4ub(122, 155, 55, 255);
 
+		glBlendFunc(GL_ONE, GL_ZERO);
+		//glDisable(GL_BLEND);
+
 		m_program->Use();
 
 		glActiveTexture(GL_TEXTURE0);
@@ -287,7 +290,7 @@ namespace BlendInt {
 		// Draw();
 		//float ratio = width / (float) height;
 
-		glClearColor(0.447, 0.447, 0.447, 1.00);
+		glClearColor(0.447, 0.447, 0.447, 0.00);
 
 		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -325,7 +328,7 @@ namespace BlendInt {
 		VerticesSum vert_sum;
 		Size rsize(200, 200);
 
-		vert_sum = generate_round_vertices(&rsize, DefaultBorderWidth(), RoundAll, 1.0, inner_v, outer_v);
+		vert_sum = generate_round_vertices(&rsize, DefaultBorderWidth(), RoundAll, 5.0, inner_v, outer_v);
 
 		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; // + 2 because the last pair is wrapped
 
@@ -346,10 +349,16 @@ namespace BlendInt {
 		        themes()->regular.outline.a()};
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		//tcol[3] = 225;
-
 		glColor4ubv(tcol);
 
-		DrawOutlineArray(quad_strip, vert_sum.total * 2 + 2);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			glVertexPointer(2, GL_FLOAT, 0, quad_strip);
+			glDrawArrays(GL_QUAD_STRIP, 0, vert_sum.total * 2 + 2);
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+		glDisableClientState(GL_VERTEX_ARRAY);
 
 		glDisable(GL_BLEND);
 

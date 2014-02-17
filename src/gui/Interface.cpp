@@ -205,6 +205,7 @@ namespace BlendInt {
 		glLoadIdentity();
 
 #ifdef DEBUG
+		//DrawTriangle(false);
 		draw_grid(width, height);
 #endif
 
@@ -224,7 +225,7 @@ namespace BlendInt {
 		}
 		// m_ticktack = m_ticktack ? 0 : 1;
 
-		glDisable(GL_BLEND);
+		//glDisable(GL_BLEND);
 	}
 
 #ifdef DEBUG
@@ -280,7 +281,53 @@ namespace BlendInt {
 		glDisable(GL_LINE_STIPPLE);
 
 	}
-#endif
+
+	void Interface::DrawTriangle(bool fbo)
+	{
+		GLsizei width, height;
+
+		width = size().width();
+		height = size().height();
+
+		float ratio = width/(float)height;
+
+		glClearColor(1.0, 1.0, 1.0, 1.0);
+
+		glClearDepth(1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+
+		if(fbo) {
+			//glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		} else {
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+		glEnable(GL_BLEND);
+
+		glViewport(0, 0, width, height);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		for(int i = 0; i < 8; i++) {
+			glBegin(GL_TRIANGLES);
+			glColor4f(1.f, 0.f, 0.f, 0.125f);
+			glVertex3f(-0.6f, -0.4f, 0.f);
+			glColor4f(0.f, 1.f, 0.f, 0.125f);
+			glVertex3f(0.6f, -0.4f, 0.f);
+			glColor4f(0.f, 0.f, 1.f, 0.125f);
+			glVertex3f(0.f, 0.6f, 0.f);
+			glEnd();
+		}
+	}
+
+#endif	// DEBUG
 
 	void Interface::Resize (unsigned int width, unsigned int height)
 	{
@@ -492,7 +539,8 @@ namespace BlendInt {
 		//and now you can render to the FBO (also called RenderBuffer)
 		glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
-		Draw();
+		//Draw();
+		DrawTriangle(true);
 
 		//-------------------------
 		GLubyte pixels[width * height * 4];

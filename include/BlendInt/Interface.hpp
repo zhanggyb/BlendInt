@@ -155,7 +155,11 @@ namespace BlendInt {
 		static Interface* interface;
 
 #ifdef DEBUG
+
 		void draw_grid (int width, int height);
+
+		void DrawTriangle (bool fbo);
+
 #endif
 
 	};

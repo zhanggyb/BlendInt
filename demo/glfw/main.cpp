@@ -60,13 +60,13 @@ int main(int argc, char* argv[])
 
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();
-//
-//	Button* btn1 = new Button;
-//	btn1->set_name("Button1");
-//	btn1->SetExpandX(false);
-//	btn1->SetPosition(530, 250);
-//	btn1->Resize(200, 200);
-//	btn1->Register();
+
+	Button* btn1 = new Button;
+	btn1->set_name("Button1");
+	btn1->SetExpandX(false);
+	btn1->SetPosition(630, 250);
+	btn1->Resize(200, 200);
+	btn1->Register();
 
 //	Button* btn2 = new Button;
 //	btn2->set_name("Button2");
@@ -101,14 +101,6 @@ int main(int argc, char* argv[])
 	iv->Register();
 
 //	interface()->SetMainWidget(layout);
-
-	Widget* widget = new Widget;
-
-	widget->set_name("Widget");
-	widget->Resize(200, 150);
-	widget->SetPosition(700, 400);
-
-	widget->Register();
 
 	RunLoop (win);
 
