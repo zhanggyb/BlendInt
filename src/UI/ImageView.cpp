@@ -81,13 +81,10 @@ namespace BlendInt {
 
 	void ImageView::Draw ()
 	{
-//		glRasterPos2i(0, 0);
-//		glDrawPixels (checkImageWidth, checkImageHeight, GL_RGB, GL_UNSIGNED_BYTE, _checkImage);
-
-//		glColor4ub(122, 155, 55, 255);
-
-		glBlendFunc(GL_ONE, GL_ZERO);
-		//glDisable(GL_BLEND);
+		//glBlendFunc(GL_ONE, GL_ZERO);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 		m_program->Use();
 
@@ -120,11 +117,7 @@ namespace BlendInt {
 
 		m_vbo->Bind();
 
-		//glEnableClientState(GL_VERTEX_ARRAY);
-		//glVertexPointer(3, GL_FLOAT, 0, BUFFER_OFFSET(0));
 		glDrawArrays(GL_POLYGON, 0, 4);
-
-		//glDisableClientState(GL_VERTEX_ARRAY);
 
 		glDisableVertexAttribArray(attribute_texcoord);
 		glDisableVertexAttribArray(attribute_coord3d);
@@ -148,6 +141,8 @@ namespace BlendInt {
 
 		glDisable(GL_LINE_STIPPLE);
 #endif
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	void ImageView::InitOnce ()
@@ -288,14 +283,13 @@ namespace BlendInt {
 		//and now render to GL_TEXTURE_2D
 		fb->Bind();
 
-		glClearColor(0.447, 0.447, 0.447, 0.0);
-
+		glClearColor(0.0, 0.0, 0.0, 0.0);
 
 		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//glBlendFuncSeparate(GL_SRC_COLOR, GL_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_BLEND);
 
@@ -355,7 +349,7 @@ namespace BlendInt {
 		glDisable(GL_BLEND);
 
 		// ---------------------------------------------
-//		tex->WriteToFile("imageview.png");
+		// tex->WriteToFile("imageview.png");
 
 		//Bind 0, which means render to back buffer
 		fb->Reset();
