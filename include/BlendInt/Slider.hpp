@@ -26,7 +26,7 @@
 
 #include <BlendInt/AbstractSlider.hpp>
 #include <BlendInt/Button.hpp>
-#include <BlendInt/opengl/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 

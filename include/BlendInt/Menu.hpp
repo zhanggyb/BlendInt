@@ -29,7 +29,7 @@
 #include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/MenuItemBin.hpp>
 #include <BlendInt/String.hpp>
-#include <BlendInt/opengl/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Icon.hpp>
 
 #include <Cpp/Events.hpp>

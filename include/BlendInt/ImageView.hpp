@@ -26,9 +26,9 @@
 
 #include <BlendInt/Frame.hpp>
 
-#include <BlendInt/opengl/GLTexture2D.hpp>
-#include <BlendInt/opengl/GLSLProgram.hpp>
-#include <BlendInt/opengl/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 

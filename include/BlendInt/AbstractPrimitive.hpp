@@ -27,7 +27,7 @@
 #include <glm/glm.hpp>
 
 #include <BlendInt/Object.hpp>
-#include <BlendInt/opengl/GLSLProgram.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/AbstractCamera.hpp>
 
 namespace BlendInt {

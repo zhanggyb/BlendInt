@@ -28,9 +28,9 @@
 
 #include <BlendInt/AbstractPrimitive.hpp>
 
-#include <BlendInt/opengl/GLArrayBuffer.hpp>
-#include <BlendInt/opengl/GLSLProgram.hpp>
-#include <BlendInt/opengl/GLElementArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
 
 namespace BlendInt {
 

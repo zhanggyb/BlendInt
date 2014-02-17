@@ -33,7 +33,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <BlendInt/Grid.hpp>
-#include <BlendInt/opengl/GLSLProgram.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
 
 namespace BlendInt {
 

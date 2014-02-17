@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <BlendInt/opengl/GLSLProgram.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
 
 namespace BlendInt {
 

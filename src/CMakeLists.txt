@@ -1,6 +1,9 @@
 # CMake file for BlendInt project
 #
 
+add_subdirectory(OpenGL)
+add_subdirectory(UI)
+
 file(GLOB libBlendInt_SRC "*.cpp")
 
 if(BUILD_STATIC_LIBRARY)
@@ -19,5 +22,5 @@ if(WITH_BUILTIN_GLFW3)
     set(LIBS ${LIBS} glfw ${GLFW_LIBRARIES})
 endif()
 
-target_link_libraries(BlendInt opengl CppEvents ${LIBS})
+target_link_libraries(BlendInt OpenGL UI CppEvents ${LIBS})
 

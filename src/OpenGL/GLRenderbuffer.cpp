@@ -23,7 +23,7 @@
 
 #include <iostream>
 
-#include <BlendInt/opengl/GLRenderbuffer.hpp>
+#include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 namespace BlendInt {
 

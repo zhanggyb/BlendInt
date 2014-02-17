@@ -25,7 +25,7 @@
 #define _BLENDINT_FORM_HPP_
 
 #include <BlendInt/AbstractWidget.hpp>
-#include <BlendInt/opengl/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 namespace BlendInt {
 

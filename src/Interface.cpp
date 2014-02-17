@@ -50,10 +50,10 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/ContextMenuEvent.hpp>
 #include <BlendInt/ContextManager.hpp>
 #include <BlendInt/StockIcon.hpp>
-#include <BlendInt/opengl/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 
-#include <BlendInt/opengl/GLFramebuffer.hpp>
-#include <BlendInt/opengl/GLRenderbuffer.hpp>
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+#include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 namespace BlendInt {
 

@@ -30,7 +30,7 @@
 #include <BlendInt/TabFrame.hpp>
 #include <BlendInt/MenuItemBin.hpp>
 #include <BlendInt/StockIcon.hpp>
-#include <BlendInt/opengl/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/TextEntry.hpp>
 #include <BlendInt/ClockWidget.hpp>
 #include <BlendInt/Viewport3D.hpp>

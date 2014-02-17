@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <BlendInt/opengl/GLSLShader.hpp>
+#include <BlendInt/OpenGL/GLSLShader.hpp>
 
 namespace BlendInt {
 
