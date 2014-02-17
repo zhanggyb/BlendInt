@@ -27,7 +27,7 @@
 #include <BlendInt/Types.hpp>
 #include <BlendInt/InputEvent.hpp>
 
-#include <BlendInt/Point.hpp>
+#include <BlendInt/Core/Point.hpp>
 
 namespace BlendInt {
 

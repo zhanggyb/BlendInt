@@ -22,7 +22,7 @@
  */
 
 #include <assert.h>
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/UI/AbstractForm.hpp>
 
 #include <BlendInt/Utilities-inl.hpp>
 #include <BlendInt/Theme.hpp>

@@ -36,7 +36,7 @@
 
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 namespace BlendInt {
 

@@ -34,7 +34,7 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 namespace BlendInt {
 

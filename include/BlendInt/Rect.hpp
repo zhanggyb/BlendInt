@@ -27,8 +27,8 @@
 #include <cstdlib>
 #include <algorithm>
 
-#include <BlendInt/Point.hpp>
-#include <BlendInt/Size.hpp>
+#include <BlendInt/Core/Point.hpp>
+#include <BlendInt/Core/Size.hpp>
 
 namespace BlendInt {
 

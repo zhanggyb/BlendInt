@@ -43,8 +43,8 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/FontCache.hpp>
 #include <BlendInt/Theme.hpp>
 #include <BlendInt/ShaderManager.hpp>
-#include <BlendInt/Size.hpp>
-#include <BlendInt/AbstractWidget.hpp>
+#include <BlendInt/Core/Size.hpp>
+#include <BlendInt/UI/AbstractWidget.hpp>
 #include <BlendInt/KeyEvent.hpp>
 #include <BlendInt/MouseEvent.hpp>
 #include <BlendInt/ContextMenuEvent.hpp>

@@ -27,7 +27,7 @@
 #include <BlendInt/RoundWidget.hpp>
 #include <BlendInt/Font.hpp>
 #include <BlendInt/String.hpp>
-#include <BlendInt/Point.hpp>
+#include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Rect.hpp>
 
 #include <BlendInt/Timer.hpp>

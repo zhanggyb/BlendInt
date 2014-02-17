@@ -32,7 +32,7 @@
 
 #include <string>
 
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 namespace BlendInt {
 

@@ -26,7 +26,7 @@
 
 #include <glm/glm.hpp>
 
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/AbstractCamera.hpp>
 

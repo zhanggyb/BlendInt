@@ -33,7 +33,7 @@
 #endif  // __UNIX__
 #include <vector>
 
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 

@@ -32,7 +32,7 @@
 
 #include <vector>
 
-#include <BlendInt/AbstractWidget.hpp>
+#include <BlendInt/UI/AbstractWidget.hpp>
 #include <BlendInt/Frame.hpp>
 
 #include <Cpp/Events.hpp>

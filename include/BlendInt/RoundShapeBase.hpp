@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_ROUNDSHAPEBASE_HPP_
 #define _BLENDINT_ROUNDSHAPEBASE_HPP_
 
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/UI/AbstractForm.hpp>
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Color.hpp>
 #include <BlendInt/Theme.hpp>

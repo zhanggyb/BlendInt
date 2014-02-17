@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_FORMBASE_HPP_
 #define _BLENDINT_FORMBASE_HPP_
 
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/UI/AbstractForm.hpp>
 
 namespace BlendInt {
 

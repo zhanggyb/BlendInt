@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Size.hpp>
+#include <BlendInt/Core/Size.hpp>
 
 namespace BlendInt {
 

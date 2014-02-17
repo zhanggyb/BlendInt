@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_ABSTRACTFORM_HPP_
 #define _BLENDINT_ABSTRACTFORM_HPP_
 
-#include <BlendInt/Point.hpp>
-#include <BlendInt/Size.hpp>
+#include <BlendInt/Core/Point.hpp>
+#include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Types.hpp>
 
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 namespace BlendInt {
 

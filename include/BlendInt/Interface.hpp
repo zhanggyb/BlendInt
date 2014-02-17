@@ -43,11 +43,11 @@
 #define _BLENDINT_INTERFACE_HPP_
 
 #include <BlendInt/Types.hpp>
-#include <BlendInt/Size.hpp>
-#include <BlendInt/Point.hpp>
+#include <BlendInt/Core/Size.hpp>
+#include <BlendInt/Core/Point.hpp>
 
 #ifdef DEBUG
-#include <BlendInt/AbstractForm.hpp>
+#include <BlendInt/UI/AbstractForm.hpp>
 #endif
 
 #include <Cpp/Events.hpp>

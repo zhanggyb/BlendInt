@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 #ifdef DEBUG
 #include <iostream>

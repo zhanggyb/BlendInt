@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_SIZE_HPP_
 #define _BLENDINT_SIZE_HPP_
 
-#include <BlendInt/Point.hpp>
+#include <BlendInt/Core/Point.hpp>
 
 namespace BlendInt {
 

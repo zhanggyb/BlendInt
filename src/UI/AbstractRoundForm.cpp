@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <AbstractRoundForm.hpp>
+#include <BlendInt/UI/AbstractRoundForm.hpp>
 
 namespace BlendInt {
 

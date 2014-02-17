@@ -31,7 +31,7 @@
 #include <boost/smart_ptr.hpp>
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Point.hpp>
+#include <BlendInt/Core/Point.hpp>
 
 using std::map;
 using std::set;

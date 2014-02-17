@@ -30,7 +30,7 @@
 #include <GL/gl.h>
 #endif
 
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 #include <BlendInt/OpenGL/GLSLShader.hpp>
 
 namespace BlendInt {

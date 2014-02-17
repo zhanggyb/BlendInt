@@ -30,7 +30,7 @@
 #include <BlendInt/FontCache.hpp>
 #include <BlendInt/Color.hpp>
 #include <BlendInt/Coord.hpp>
-#include <BlendInt/Size.hpp>
+#include <BlendInt/Core/Size.hpp>
 #include <BlendInt/String.hpp>
 #include <BlendInt/Rect.hpp>
 

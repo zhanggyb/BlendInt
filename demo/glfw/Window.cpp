@@ -3,7 +3,7 @@
 #include <iostream>
 
 //using BlendInt::Interface;
-#include <BlendInt/AbstractWidget.hpp>
+#include <BlendInt/UI/AbstractWidget.hpp>
 #include <BlendInt/KeyEvent.hpp>
 #include <BlendInt/MouseEvent.hpp>
 

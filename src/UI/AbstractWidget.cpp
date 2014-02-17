@@ -35,7 +35,7 @@
 #include <set>
 #include <stdexcept>
 
-#include <BlendInt/AbstractWidget.hpp>
+#include <BlendInt/UI/AbstractWidget.hpp>
 #include <BlendInt/ContextManager.hpp>
 #include <BlendInt/AbstractLayout.hpp>
 

@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_SHADOW_HPP_
 #define _BLENDINT_SHADOW_HPP_
 
-#include <BlendInt/AbstractRoundForm.hpp>
+#include <BlendInt/UI/AbstractRoundForm.hpp>
 #include <BlendInt/Types.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 

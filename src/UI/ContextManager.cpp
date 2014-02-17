@@ -25,7 +25,7 @@
 #include <stdlib.h>
 
 #include <BlendInt/ContextManager.hpp>
-#include <BlendInt/AbstractWidget.hpp>
+#include <BlendInt/UI/AbstractWidget.hpp>
 
 #include <BlendInt/Types.hpp>
 
