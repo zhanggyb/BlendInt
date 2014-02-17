@@ -124,12 +124,12 @@ namespace BlendInt {
 		 * @param[out] inner_v
 		 * @param[out] outer_v
 		 */
-		void generate_rect_vertices (const Size* size,
+		static void generate_rect_vertices (const Size* size,
 				float border,
 				float inner_v[4][2],
 				float outer_v[4][2]);
 
-		VerticesSum generate_round_vertices (const Size* size,
+		static VerticesSum generate_round_vertices (const Size* size,
 				float border,
 				int round_type,
 				float radius,
@@ -145,14 +145,14 @@ namespace BlendInt {
 		 * @param[out] outer_v
 		 * @return
 		 */
-		VerticesSum generate_round_vertices (const Size* size,
+		static VerticesSum generate_round_vertices (const Size* size,
 				float border,
 				int round_type,
 				float radius,
 				float inner_v[WIDGET_SIZE_MAX][2],
 				float outer_v[WIDGET_SIZE_MAX][2]);
 
-		VerticesSum generate_round_vertices (const Size* size,
+		static VerticesSum generate_round_vertices (const Size* size,
 				float border,
 				int round_type,
 				float radius,
@@ -172,7 +172,7 @@ namespace BlendInt {
 		 * @param[out] outer
 		 * @return
 		 */
-		VerticesSum generate_round_vertices (const Size* size,
+		static VerticesSum generate_round_vertices (const Size* size,
 				float border,
 				int round_type,
 				float radius,
@@ -181,7 +181,7 @@ namespace BlendInt {
 				float inner[WIDGET_SIZE_MAX][6],
 				float outer[WIDGET_SIZE_MAX][2]);
 
-		VerticesSum generate_round_vertices (const Size* size,
+		static VerticesSum generate_round_vertices (const Size* size,
 				float border,
 				int round_type,
 				float radius,
@@ -205,7 +205,7 @@ namespace BlendInt {
 		 * @param[out] outer vertices for outline
 		 * @return
 		 */
-		VerticesSum generate_round_vertices (const Size* size,
+		static VerticesSum generate_round_vertices (const Size* size,
 				float border,
 				int round_type,
 				float radius,

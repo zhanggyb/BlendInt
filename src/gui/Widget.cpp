@@ -219,7 +219,7 @@ namespace BlendInt {
 
 		VerticesSum vert_sum;
 
-		vert_sum = generate_round_vertices(size, DefaultBorderWidth(),
+		vert_sum = generate_round_vertices(size, default_border_width,
 		        round_type, radius, inner_v, outer_v);
 
 		if (inner_buffer) {

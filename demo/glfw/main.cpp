@@ -95,10 +95,10 @@ int main(int argc, char* argv[])
 //
 //	layout->Add(vlayout);
 
-//	ImageView* iv = new ImageView;
-//
-//	iv->SetPosition(100, 100);
-//	iv->Register();
+	ImageView* iv = new ImageView;
+
+	iv->SetPosition(100, 100);
+	iv->Register();
 
 //	interface()->SetMainWidget(layout);
 
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 
 	widget->set_name("Widget");
 	widget->Resize(200, 150);
-	widget->SetPosition(200, 400);
+	widget->SetPosition(700, 400);
 
 	widget->Register();
 

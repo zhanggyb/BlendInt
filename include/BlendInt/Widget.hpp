@@ -76,12 +76,12 @@ namespace BlendInt {
 		/**
 		 * @brief draw vertices without buffer
 		 */
-		void DrawOutlineArray (const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num);
+		static void DrawOutlineArray (const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num);
 
 		/**
 		 * @brief draw vertices without buffer
 		 */
-		void DrawInnerArray (const float inner_v[WIDGET_SIZE_MAX][2], int num);
+		static void DrawInnerArray (const float inner_v[WIDGET_SIZE_MAX][2], int num);
 
 		/**
 		 * @brief draw the GL Buffer in Render()
@@ -95,7 +95,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void DrawInnerBuffer (GLArrayBuffer* buffer, int mode = GL_POLYGON);
+		static void DrawInnerBuffer (GLArrayBuffer* buffer, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw shaded GL buffer in Render()
@@ -109,7 +109,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void DrawShadedInnerBuffer (GLArrayBuffer* buffer, int mode = GL_POLYGON);
+		static void DrawShadedInnerBuffer (GLArrayBuffer* buffer, int mode = GL_POLYGON);
 
 		/**
 		 * @brief draw the GL Buffer in Render() with anti-alias
@@ -123,7 +123,7 @@ namespace BlendInt {
 		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
-		void DrawOutlineBuffer (GLArrayBuffer* buffer, int mode = GL_QUAD_STRIP);
+		static void DrawOutlineBuffer (GLArrayBuffer* buffer, int mode = GL_QUAD_STRIP);
 
 		/**
 		 * @brief Generate vertex buffer object for drawing a form
@@ -134,14 +134,14 @@ namespace BlendInt {
 		 * @param[out] outer_buffer Buffer object for drawing the outer
 		 * @param[out] emboss_buffer Buffer object for drawing the emboss
 		 */
-		void GenerateFormBuffer (const Size* size,
+		static void GenerateFormBuffer (const Size* size,
 				int round_type,
 				float radius,
 				GLArrayBuffer* inner_buffer,
 				GLArrayBuffer* outer_buffer,
 				GLArrayBuffer* emboss_buffer);
 
-		void GenerateShadedFormBuffers (const Size* size,
+		static void GenerateShadedFormBuffers (const Size* size,
 									   int round_type,
 									   float radius,
 									   const WidgetTheme* theme,
@@ -151,7 +151,7 @@ namespace BlendInt {
 									   GLArrayBuffer* outer_buffer_p,
 									   GLArrayBuffer* highlight_buffer_p);
 
-		void GenerateShadedFormBuffer (const Size* size,
+		static void GenerateShadedFormBuffer (const Size* size,
 									   float border,
 									   int round_type,
 									   float radius,
@@ -181,7 +181,7 @@ namespace BlendInt {
 		 *	- buffer index 1: used for outline
 		 *	- buffer index 2: used for inner highlight
 		 */
-		void GenerateShadedFormBuffers (const Size* size,
+		static void GenerateShadedFormBuffers (const Size* size,
 									   int round_type,
 									   float radius,
 									   const Color& color,

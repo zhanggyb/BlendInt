@@ -126,9 +126,7 @@ namespace BlendInt {
 		glDisableVertexAttribArray(attribute_coord3d);
 
 		m_vbo->Reset();
-
 		m_texture->Reset();
-
 		m_program->Reset();
 
 #ifdef DEBUG
@@ -287,38 +285,78 @@ namespace BlendInt {
 		fb->Bind();
 
 		// Draw();
-        float ratio = width / (float) height;
+		//float ratio = width / (float) height;
 
-        glClearColor(1.f, 1.f, 1.f, 1.f);
+		glClearColor(0.447, 0.447, 0.447, 1.00);
+
 		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 
-        glViewport(0, 0, width, height);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        //glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-        glBegin(GL_TRIANGLES);
-        	glColor4f(1.f, 0.f, 0.f, 0.5f);
-        	glVertex3f(-0.6f, -0.4f, 0.f);
-        	glColor4f(0.f, 1.f, 0.f, 0.5f);
-        	glVertex3f(0.6f, -0.4f, 0.f);
-        	glColor4f(0.f, 0.f, 1.f, 0.5f);
-        	glVertex3f(0.f, 0.6f, 0.f);
-        glEnd();
+		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
 
-        //glDisable(GL_BLEND);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		// ---------------------------------------------
+
+//        //glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+//        glBegin(GL_TRIANGLES);
+//        	glColor4f(1.f, 0.f, 0.f, 0.5f);
+//        	glVertex3f(-0.6f, -0.4f, 0.f);
+//        	glColor4f(0.f, 1.f, 0.f, 0.5f);
+//        	glVertex3f(0.6f, -0.4f, 0.f);
+//        	glColor4f(0.f, 0.f, 1.f, 0.5f);
+//        	glVertex3f(0.f, 0.6f, 0.f);
+//        glEnd();
+
+		// ---------------------------------------------
+
+		glTranslatef(50, 50, 0);
+
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+		Size rsize(200, 200);
+
+		vert_sum = generate_round_vertices(&rsize, DefaultBorderWidth(), RoundAll, 1.0, inner_v, outer_v);
+
+		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; // + 2 because the last pair is wrapped
+
+		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+
+		// draw inner, simple fill
+		glColor4ub(themes()->regular.inner.r(),
+		        themes()->regular.inner.g(),
+		        themes()->regular.inner.b(),
+		        themes()->regular.inner.a());
+
+		DrawInnerArray(inner_v, vert_sum.total);
+
+		// draw outline
+		unsigned char tcol[4] = {themes()->regular.outline.r(),
+		        themes()->regular.outline.g(),
+		        themes()->regular.outline.b(),
+		        themes()->regular.outline.a()};
+		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
+		//tcol[3] = 225;
+
+		glColor4ubv(tcol);
+
+		DrawOutlineArray(quad_strip, vert_sum.total * 2 + 2);
+
+		glDisable(GL_BLEND);
+
+		// ---------------------------------------------
 
 		//Bind 0, which means render to back buffer
 		fb->Reset();
-
 		tex->Reset();
 
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
