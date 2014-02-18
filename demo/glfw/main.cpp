@@ -95,10 +95,10 @@ int main(int argc, char* argv[])
 //
 //	layout->Add(vlayout);
 
-	ImageView* iv = new ImageView;
-
-	iv->SetPosition(100, 100);
-	iv->Register();
+//	ImageView* iv = new ImageView;
+//
+//	iv->SetPosition(100, 100);
+//	iv->Register();
 
 //	interface()->SetMainWidget(layout);
 

@@ -57,6 +57,8 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Service/StockIcon.hpp>
 
+#include "Intern/ScreenBuffer.hpp"
+
 namespace BlendInt {
 
 	Interface* Interface::interface = 0;
@@ -162,14 +164,15 @@ namespace BlendInt {
 	}
 
 	Interface::Interface ()
-	: m_main(0), m_focus_style(FocusOnClick)
+	: m_main(0), m_refresh(true), m_focus_style(FocusOnClick)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
+		m_screenbuffer = new ScreenBuffer;
 	}
 
 	Interface::~Interface ()
 	{
-
+		if(m_screenbuffer) delete m_screenbuffer;
 	}
 
 	const Size& Interface::size () const
@@ -181,13 +184,45 @@ namespace BlendInt {
 	{
 		m_size = size;
 		m_resized.fire(m_size.width(), m_size.height());
+
+		m_screenbuffer->Resize(size);
+
+		if(m_main) {
+			AbstractWidget::Resize(m_main, size);
+		}
+
+		m_refresh = true;
+	}
+
+	void Interface::Resize (unsigned int width, unsigned int height)
+	{
+		m_size.set_width(width);
+		m_size.set_height(height);
+
+		m_resized.fire(m_size.width(), m_size.height());
+
+		m_screenbuffer->Resize(Size(width, height));
+
+		if(m_main) {
+			AbstractWidget::Resize(m_main, width, height);
+		}
+
+		m_refresh = true;
 	}
 
 	void Interface::Draw ()
 	{
-		int width = m_size.width();
-		int height = m_size.height();
+		if(m_refresh) {
+			RenderToScreenBuffer();
+		}
 
+		m_screenbuffer->Render();
+
+		m_refresh = false;
+	}
+
+	void Interface::PreDrawContext (bool fbo)
+	{
 		glClearColor(0.447, 0.447, 0.447, 1.00);
 
 		glClearDepth(1.0);
@@ -195,8 +230,19 @@ namespace BlendInt {
 
 		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		if(fbo) {
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		} else {
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+
 		glEnable(GL_BLEND);
+	}
+
+	void Interface::DrawContext()
+	{
+		int width = m_size.width();
+		int height = m_size.height();
 
 		glViewport(0, 0, width, height);
 		glMatrixMode(GL_PROJECTION);
@@ -284,64 +330,7 @@ namespace BlendInt {
 
 	}
 
-	void Interface::DrawTriangle(bool fbo)
-	{
-		GLsizei width, height;
-
-		width = size().width();
-		height = size().height();
-
-		float ratio = width/(float)height;
-
-		glClearColor(1.0, 1.0, 1.0, 1.0);
-
-		glClearDepth(1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-
-		if(fbo) {
-			//glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		} else {
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		}
-		glEnable(GL_BLEND);
-
-		glViewport(0, 0, width, height);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-
-		for(int i = 0; i < 8; i++) {
-			glBegin(GL_TRIANGLES);
-			glColor4f(1.f, 0.f, 0.f, 0.125f);
-			glVertex3f(-0.6f, -0.4f, 0.f);
-			glColor4f(0.f, 1.f, 0.f, 0.125f);
-			glVertex3f(0.6f, -0.4f, 0.f);
-			glColor4f(0.f, 0.f, 1.f, 0.125f);
-			glVertex3f(0.f, 0.6f, 0.f);
-			glEnd();
-		}
-	}
-
 #endif	// DEBUG
-
-	void Interface::Resize (unsigned int width, unsigned int height)
-	{
-		m_size.set_width(width);
-		m_size.set_height(height);
-
-		m_resized.fire(m_size.width(), m_size.height());
-
-		if(m_main) {
-			AbstractWidget::Resize(m_main, width, height);
-		}
-	}
 
 	void Interface::SetMainWidget(AbstractWidget* widget)
 	{
@@ -493,6 +482,84 @@ namespace BlendInt {
 		//Draw();
 	}
 
+	void Interface::RenderToScreenBuffer ()
+	{
+		GLsizei width = m_size.width();
+		GLsizei height = m_size.height();
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = m_screenbuffer->m_texture;
+		tex->Generate();
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(width, height, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		        GL_TEXTURE_2D, tex->id(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+		        width, height);
+
+		//-------------------------
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		        GL_RENDERBUFFER, rb);
+
+		//-------------------------
+		//Does the GPU support current FBO configuration?
+		GLenum status;
+		status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		switch (status) {
+			case GL_FRAMEBUFFER_COMPLETE:
+				std::cout << "good" << std::endl;
+				break;
+			default:
+				std::cerr << "Fail to check framebuffer status" << std::endl;
+				break;
+		}
+
+		//-------------------------
+		//and now render to GL_TEXTURE_2D
+		fb->Bind();
+
+		PreDrawContext(true);
+
+		DrawContext();
+
+		// ---------------------------------------------
+
+
+		// ---------------------------------------------
+
+		//Bind 0, which means render to back buffer
+		fb->Reset();
+		tex->Reset();
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		//Bind 0, which means render to back buffer, as a result, fb is unbound
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		fb->Reset();
+		delete fb; fb = 0;
+
+	}
+
 	void Interface::DrawToOffScreen()
 	{
 		GLsizei width = m_size.width();
@@ -542,7 +609,6 @@ namespace BlendInt {
 		glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
 		//Draw();
-		DrawTriangle(true);
 
 		//-------------------------
 		GLubyte pixels[width * height * 4];
@@ -695,3 +761,4 @@ namespace BlendInt {
 	}
 
 }
+

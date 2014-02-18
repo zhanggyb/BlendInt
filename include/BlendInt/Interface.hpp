@@ -64,6 +64,8 @@ namespace BlendInt {
 	class KeyEvent;
 	class MouseEvent;
 
+	class ScreenBuffer;
+
 	/**
 	 * @brief The main entry for this library
 	 *
@@ -126,6 +128,12 @@ namespace BlendInt {
 
 		void RenderToImage ();
 
+		void PreDrawContext (bool fbo = false);
+
+		void DrawContext ();
+
+		void RenderToScreenBuffer ();
+
 		void DrawToOffScreen ();
 
 		void DispatchCursorMoveEvent (MouseEvent* event);
@@ -140,11 +148,13 @@ namespace BlendInt {
 
 		AbstractWidget* m_main;
 
-		//int cursor_pos_x_;	/** cursor x position */
-		//int cursor_pos_y_;	/** cursor y position */
 		Point m_cursor;
 
 		Size m_size;
+
+		bool m_refresh;
+
+		ScreenBuffer* m_screenbuffer;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
@@ -157,8 +167,6 @@ namespace BlendInt {
 #ifdef DEBUG
 
 		void draw_grid (int width, int height);
-
-		void DrawTriangle (bool fbo);
 
 #endif
 
