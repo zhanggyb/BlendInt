@@ -31,8 +31,9 @@
 #endif  // __UNIX__
 
 #include <BlendInt/UI/ToggleButton.hpp>
-#include <BlendInt/ShaderManager.hpp>
-#include <BlendInt/Theme.hpp>
+
+#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 

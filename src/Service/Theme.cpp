@@ -25,7 +25,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <BlendInt/Theme.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 

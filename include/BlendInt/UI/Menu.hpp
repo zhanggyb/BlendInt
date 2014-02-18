@@ -26,11 +26,12 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/UI/RoundWidget.hpp>
-#include <BlendInt/MenuItemBin.hpp>
-#include <BlendInt/String.hpp>
+#include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Icon.hpp>
+
+#include <BlendInt/UI/RoundWidget.hpp>
+#include <BlendInt/UI/MenuItemBin.hpp>
+#include <BlendInt/UI/Icon.hpp>
 
 #include <Cpp/Events.hpp>
 

@@ -25,7 +25,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include <BlendInt/Timer.hpp>
+#include <BlendInt/Core/Timer.hpp>
 
 namespace BlendInt {
 

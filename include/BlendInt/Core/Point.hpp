@@ -24,13 +24,9 @@
 #ifndef _BLENDINT_POINT_HPP_
 #define _BLENDINT_POINT_HPP_
 
-#include <BlendInt/Coord.hpp>
-
 namespace BlendInt {
 
 	class Point;
-
-
 
 	/**
 	 * @brief Point position
@@ -63,13 +59,6 @@ namespace BlendInt {
 			x_ = orig.x_;
 			y_ = orig.y_;
 
-			return *this;
-		}
-
-		Point& operator = (const Coord2f& orig)
-		{
-			x_ = static_cast<int>(orig.x());
-			y_ = static_cast<int>(orig.y());
 			return *this;
 		}
 

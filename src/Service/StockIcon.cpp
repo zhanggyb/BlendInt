@@ -21,9 +21,11 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <stdlib.h>
+
 #include <iostream>
 
-#include <BlendInt/StockIcon.hpp>
+#include <BlendInt/Service/StockIcon.hpp>
 
 namespace BlendInt {
 

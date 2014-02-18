@@ -4,6 +4,7 @@
 add_subdirectory(Core)
 add_subdirectory(OpenGL)
 add_subdirectory(UI)
+add_subdirectory(Service)
 
 file(GLOB libBlendInt_SRC "*.cpp")
 

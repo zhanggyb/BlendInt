@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/String.hpp>
+#include <BlendInt/Core/String.hpp>
 
 namespace BlendInt {
 

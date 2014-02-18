@@ -37,7 +37,9 @@
 namespace BlendInt {
 
 	/**
-	 * @brief 2D Texture
+	 * @brief C++ wrapper for 2D Texture
+	 *
+	 * @ingroup opengl
 	 */
 	class GLTexture2D
 	{

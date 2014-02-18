@@ -32,7 +32,7 @@
 #endif  // __UNIX__
 
 #include <BlendInt/Types.hpp>
-#include <BlendInt/Icon.hpp>
+#include <BlendInt/UI/Icon.hpp>
 
 namespace BlendInt {
 

@@ -37,13 +37,12 @@
 
 #include <BlendInt/UI/Frame.hpp>
 #include <BlendInt/Types.hpp>
-#include <BlendInt/Coord.hpp>
 #include <BlendInt/Core/Color.hpp>
 
 #include <BlendInt/Utilities-inl.hpp>
 
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Theme.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 
@@ -109,20 +108,6 @@ namespace BlendInt {
 
 		glDisable(GL_LINE_STIPPLE);
 #endif
-	}
-
-	bool Frame::ContainNoMargin (const Coord2d& cursor)
-	{
-		if (cursor.x() < (position().x() + m_margin.left())
-		        || cursor.y() < (position().y() + m_margin.bottom())
-		        || cursor.x()
-		                > (position().x() + size().width() - m_margin.right())
-		        || cursor.y()
-		                > (position().y() + size().height() - m_margin.top())) {
-			return false;
-		}
-
-		return true;
 	}
 
 } /* namespace BlendInt */

@@ -6,7 +6,7 @@
 
 #include <Cpp/Events.hpp>
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/ContextManager.hpp>
+#include <BlendInt/Service/ContextManager.hpp>
 
 #include <BlendInt/UI/ToggleButton.hpp>
 #include <BlendInt/UI/VerticalLayout.hpp>
@@ -23,13 +23,13 @@
 #include <BlendInt/UI/ScrollBar.hpp>
 #include <BlendInt/UI/VertexIcon.hpp>
 #include <BlendInt/UI/ScrollView.hpp>
-#include <BlendInt/PopupWidget.hpp>
-#include <BlendInt/Menu.hpp>
+#include <BlendInt/UI/PopupWidget.hpp>
+#include <BlendInt/UI/Menu.hpp>
 #include <BlendInt/UI/RoundWidget.hpp>
 #include <BlendInt/UI/ImageView.hpp>
-#include <BlendInt/TabFrame.hpp>
-#include <BlendInt/MenuItemBin.hpp>
-#include <BlendInt/StockIcon.hpp>
+#include <BlendInt/UI/TabFrame.hpp>
+#include <BlendInt/UI/MenuItemBin.hpp>
+#include <BlendInt/Service/StockIcon.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/UI/TextEntry.hpp>
 #include <BlendInt/UI/ClockWidget.hpp>

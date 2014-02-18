@@ -21,51 +21,46 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_TABFRAME_HPP_
-#define _BLENDINT_TABFRAME_HPP_
+#ifndef _BLENDINT_INPUTEVENT_HPP_
+#define _BLENDINT_INPUTEVENT_HPP_
 
-#include <BlendInt/BoxFrame.hpp>
-#include <BlendInt/UI/StackedWidget.hpp>
-#include <BlendInt/UI/HorizontalLayout.hpp>
-#include <BlendInt/UI/VerticalLayout.hpp>
-#include <BlendInt/UI/ButtonBox.hpp>
+#include <BlendInt/Window/Input.hpp>
+#include <BlendInt/Window/DeviceEvent.hpp>
 
 namespace BlendInt {
 
-	class String;
-
 	/**
-	 * @brief A class provide Tab
+	 * @brief Events for input devices including keyboard, mouse
+	 *
+	 * @ingroup device_events
 	 */
-	class TabFrame: public BoxFrame
+	class InputEvent: public DeviceEvent
 	{
-		DISALLOW_COPY_AND_ASSIGN(TabFrame);
-
 	public:
+		
+		/**
+		 * @brief Default Constructor
+		 * @param modifiers Bitwise conbination of KeyModifier
+		 */
+		InputEvent(int modifiers = ModifierNone)
+			: m_modifiers(modifiers)
+		{
+		}
 
-		TabFrame ();
+		virtual ~InputEvent()
+		{
+		}
 
-		TabFrame (AbstractWidget* parent);
+		int modifiers () const {return m_modifiers;}
 
-		virtual ~TabFrame ();
-
-		void Add (const String& title, Widget* widget);
+		void set_modifiers (int mods) {m_modifiers = mods;}
 
 	protected:
 
-//		virtual void Update (int type, const void* data);
+		int m_modifiers;
 
-	private:
-
-		void Switch ();
-
-		void Init ();
-
-		StackedWidget* m_stack_widget;
-
-		ButtonBox* m_button_box;
 	};
 
-}
+} /* namespace BlendInt */
 
-#endif /* _BLENDINT_TABFRAME_HPP_ */
+#endif	/* _BIL_INPUTEVENT_H_ */

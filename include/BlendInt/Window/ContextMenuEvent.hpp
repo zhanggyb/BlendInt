@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_CONTEXTMENUEVENT_HPP_
 #define _BLENDINT_CONTEXTMENUEVENT_HPP_
 
-#include <BlendInt/InputEvent.hpp>
+#include <BlendInt/Window/InputEvent.hpp>
 
 namespace BlendInt {
 
@@ -45,15 +45,13 @@ namespace BlendInt {
 
 		ContextMenuEvent (Source source,
 						  int mods)
-			: InputEvent(mods), source_(source),
-			pos_(Coord2f(0.0, 0.0)), window_pos_(Coord2f(0.0, 0.0))
+			: InputEvent(mods), source_(source)
 		{}
-
 
 		ContextMenuEvent (Source source,
 						  int mods,
-						  const Coord2f& local_pos,
-						  const Coord2f& window_pos)
+						  const Point& local_pos,
+						  const Point& window_pos)
 			: InputEvent(mods), source_(source),
 			pos_(local_pos), window_pos_(window_pos)
 		{}
@@ -66,23 +64,23 @@ namespace BlendInt {
 			return source_;
 		}
 
-		const Coord2f& pos (void) const
+		const Point& pos (void) const
 		{
 			return pos_;
 		}
 
-		void set_pos (float x, float y)
+		void set_pos (int x, int y)
 		{
 			pos_.set_x (x);
 			pos_.set_y (y);
 		}
 
-		const Coord2f& window_pos (void) const
+		const Point& window_pos (void) const
 		{
 			return window_pos_;
 		}
 
-		void set_window_pos (float x, float y)
+		void set_window_pos (int x, int y)
 		{
 			window_pos_.set_x(x);
 			window_pos_.set_y(y);
@@ -92,9 +90,9 @@ namespace BlendInt {
 
 		Source source_;
 
-		Coord2f pos_;
+		Point pos_;
 
-		Coord2f window_pos_;
+		Point window_pos_;
 	};
 
 }

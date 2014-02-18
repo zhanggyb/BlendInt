@@ -21,27 +21,51 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MENUBAR_HPP_
-#define _BLENDINT_MENUBAR_HPP_
+#ifndef _BLENDINT_TABFRAME_HPP_
+#define _BLENDINT_TABFRAME_HPP_
 
-#include <BlendInt/BoxFrame.hpp>
+#include <BlendInt/UI/BoxFrame.hpp>
+#include <BlendInt/UI/StackedWidget.hpp>
+#include <BlendInt/UI/HorizontalLayout.hpp>
+#include <BlendInt/UI/VerticalLayout.hpp>
+#include <BlendInt/UI/ButtonBox.hpp>
 
 namespace BlendInt {
 
-	class MenuBar: public BoxFrame
+	class String;
+
+	/**
+	 * @brief A class provide Tab
+	 */
+	class TabFrame: public BoxFrame
 	{
-		DISALLOW_COPY_AND_ASSIGN(MenuBar);
+		DISALLOW_COPY_AND_ASSIGN(TabFrame);
 
 	public:
 
-		MenuBar ();
+		TabFrame ();
 
-		MenuBar (AbstractWidget* parent);
+		TabFrame (AbstractWidget* parent);
 
-		virtual ~MenuBar ();
+		virtual ~TabFrame ();
 
+		void Add (const String& title, Widget* widget);
+
+	protected:
+
+//		virtual void Update (int type, const void* data);
+
+	private:
+
+		void Switch ();
+
+		void Init ();
+
+		StackedWidget* m_stack_widget;
+
+		ButtonBox* m_button_box;
 	};
 
 }
 
-#endif /* _BLENDINT_MENUBAR_HPP_ */
+#endif /* _BLENDINT_TABFRAME_HPP_ */

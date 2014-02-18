@@ -30,7 +30,7 @@
 #include <BlendInt/UI/Font.hpp>
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Core/Rect.hpp>
-#include <BlendInt/String.hpp>
+#include <BlendInt/Core/String.hpp>
 #include <BlendInt/Types.hpp>
 
 using namespace std;

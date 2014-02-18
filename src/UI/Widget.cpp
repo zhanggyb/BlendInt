@@ -38,11 +38,10 @@
 #include <BlendInt/UI/Widget.hpp>
 
 #include <BlendInt/Types.hpp>
-#include <BlendInt/Coord.hpp>
 #include <BlendInt/Core/Color.hpp>
 
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Theme.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 

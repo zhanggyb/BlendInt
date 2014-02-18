@@ -41,7 +41,7 @@
 #include <iterator>
 
 #include <BlendInt/UI/FontCache.hpp>
-#include <BlendInt/ShaderManager.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Types.hpp>
 
 using namespace std;

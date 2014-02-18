@@ -4,8 +4,8 @@
 
 //using BlendInt::Interface;
 #include <BlendInt/UI/AbstractWidget.hpp>
-#include <BlendInt/KeyEvent.hpp>
-#include <BlendInt/MouseEvent.hpp>
+#include <BlendInt/Window/KeyEvent.hpp>
+#include <BlendInt/Window/MouseEvent.hpp>
 
 namespace BlendInt {
 

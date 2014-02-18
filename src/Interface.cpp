@@ -49,13 +49,13 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/UI/FontCache.hpp>
 #include <BlendInt/UI/AbstractWidget.hpp>
 
-#include <BlendInt/Theme.hpp>
-#include <BlendInt/ShaderManager.hpp>
-#include <BlendInt/KeyEvent.hpp>
-#include <BlendInt/MouseEvent.hpp>
-#include <BlendInt/ContextMenuEvent.hpp>
-#include <BlendInt/ContextManager.hpp>
-#include <BlendInt/StockIcon.hpp>
+#include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Window/KeyEvent.hpp>
+#include <BlendInt/Window/MouseEvent.hpp>
+#include <BlendInt/Window/ContextMenuEvent.hpp>
+#include <BlendInt/Service/ContextManager.hpp>
+#include <BlendInt/Service/StockIcon.hpp>
 
 namespace BlendInt {
 

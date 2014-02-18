@@ -25,7 +25,8 @@
 #define _BLENDINT_MOUSEEVENT_HPP_
 
 #include <BlendInt/Types.hpp>
-#include <BlendInt/InputEvent.hpp>
+
+#include <BlendInt/Window/InputEvent.hpp>
 
 #include <BlendInt/Core/Point.hpp>
 

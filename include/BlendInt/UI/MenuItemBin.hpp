@@ -26,8 +26,8 @@
 
 #include <list>
 
-#include <BlendInt/String.hpp>
-#include <BlendInt/MenuItem.hpp>
+#include <BlendInt/Core/String.hpp>
+#include <BlendInt/UI/MenuItem.hpp>
 
 namespace BlendInt {
 

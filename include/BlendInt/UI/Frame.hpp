@@ -64,13 +64,6 @@ namespace BlendInt {
 
 		virtual void Draw ();
 
-		/**
-		 * @check if geometry contains the cursor, exclude padding
-		 * @param cursor
-		 * @return
-		 */
-		bool ContainNoMargin (const Coord2d& cursor);
-
 	private:
 
 		Margin m_margin;

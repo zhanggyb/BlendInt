@@ -30,11 +30,11 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/Menu.hpp>
-#include <BlendInt/Theme.hpp>
-#include <BlendInt/UI/FontCache.hpp>
-
 #include <iostream>
+
+#include <BlendInt/UI/Menu.hpp>
+#include <BlendInt/UI/FontCache.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 

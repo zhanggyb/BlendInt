@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_IMAGE_HPP_
 #define _BLENDINT_IMAGE_HPP_
 
-#include <BlendInt/String.hpp>
+#include <BlendInt/Core/String.hpp>
 #include <vector>
 
 namespace BlendInt {

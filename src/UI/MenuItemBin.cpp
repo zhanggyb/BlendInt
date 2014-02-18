@@ -34,7 +34,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include <BlendInt/MenuItemBin.hpp>
+#include <BlendInt/UI/MenuItemBin.hpp>
 
 namespace BlendInt {
 

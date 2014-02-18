@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <BlendInt/ShaderManager.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 

@@ -23,11 +23,11 @@
 
 #include <iostream>
 
-#include <BlendInt/MenuItem.hpp>
-#include <BlendInt/Theme.hpp>
+#include <BlendInt/UI/MenuItem.hpp>
 #include <BlendInt/UI/FontCache.hpp>
 
-#include <BlendInt/StockIcon.hpp>
+#include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Service/StockIcon.hpp>
 
 namespace BlendInt {
 

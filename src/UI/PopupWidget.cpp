@@ -32,9 +32,9 @@
 
 #include <math.h>
 
-#include <BlendInt/PopupWidget.hpp>
+#include <BlendInt/UI/PopupWidget.hpp>
 
-#include <BlendInt/Theme.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 

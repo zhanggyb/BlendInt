@@ -24,10 +24,11 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include <BlendInt/ContextManager.hpp>
+#include <BlendInt/Types.hpp>
+
 #include <BlendInt/UI/AbstractWidget.hpp>
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Service/ContextManager.hpp>
 
 using std::cout;
 using std::cerr;

@@ -38,6 +38,11 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief Renderbuffer object wrapper
+	 *
+	 * @ingroup opengl
+	 */
 	class GLRenderbuffer
 	{
 	public:

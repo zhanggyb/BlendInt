@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/BoxFrame.hpp>
+#include <BlendInt/UI/BoxFrame.hpp>
 
 namespace BlendInt {
 

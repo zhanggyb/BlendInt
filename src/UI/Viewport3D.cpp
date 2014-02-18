@@ -34,13 +34,14 @@
 
 #include <iostream>
 
-#include <BlendInt/UI/Viewport3D.hpp>
-#include <BlendInt/Interface.hpp>
-#include <BlendInt/ShaderManager.hpp>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <BlendInt/UI/Viewport3D.hpp>
+#include <BlendInt/Interface.hpp>
+
+#include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 

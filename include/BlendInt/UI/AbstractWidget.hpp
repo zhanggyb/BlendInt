@@ -29,14 +29,16 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/UI/AbstractExtraForm.hpp>
-#include <BlendInt/UI/RoundShapeBase.hpp>
-#include <BlendInt/MouseEvent.hpp>
-#include <BlendInt/KeyEvent.hpp>
-#include <BlendInt/ContextMenuEvent.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
-#include <BlendInt/Margin.hpp>
+#include <BlendInt/Core/Margin.hpp>
+
+#include <BlendInt/Window/MouseEvent.hpp>
+#include <BlendInt/Window/KeyEvent.hpp>
+#include <BlendInt/Window/ContextMenuEvent.hpp>
+
+#include <BlendInt/UI/AbstractExtraForm.hpp>
+#include <BlendInt/UI/RoundShapeBase.hpp>
 
 #include <BlendInt/Types.hpp>
 

@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/MenuBar.hpp>
+#include <BlendInt/UI/MenuBar.hpp>
 
 namespace BlendInt {
 

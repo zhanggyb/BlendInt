@@ -27,7 +27,7 @@
 
 #include <vector>
 
-#include <BlendInt/Icon.hpp>
+#include <BlendInt/UI/Icon.hpp>
 
 namespace BlendInt {
 

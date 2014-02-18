@@ -25,13 +25,14 @@
 #define _BLENDINT_TEXTENTRY_HPP_
 
 #include <BlendInt/Core/Rect.hpp>
-#include <BlendInt/Timer.hpp>
+#include <BlendInt/Core/Timer.hpp>
+#include <BlendInt/Core/String.hpp>
+#include <BlendInt/Core/Point.hpp>
+
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/UI/RoundWidget.hpp>
 #include <BlendInt/UI/Font.hpp>
-#include <BlendInt/String.hpp>
-#include <BlendInt/Core/Point.hpp>
 
 namespace BlendInt {
 

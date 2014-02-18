@@ -21,9 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/MenuItemBin.hpp>
-#include <BlendInt/String.hpp>
-#include <BlendInt/Icon.hpp>
+#include <BlendInt/Core/String.hpp>
+
+#include <BlendInt/UI/MenuItemBin.hpp>
+#include <BlendInt/UI/Icon.hpp>
 
 #ifndef _BLENDINT_MENUITEM_HPP_
 #define _BLENDINT_MENUITEM_HPP_

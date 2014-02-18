@@ -24,9 +24,10 @@
 #ifndef _BLENDINT_VERTEXICON_HPP_
 #define _BLENDINT_VERTEXICON_HPP_
 
-#include <BlendInt/Icon.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
+
+#include <BlendInt/UI/Icon.hpp>
 
 namespace BlendInt {
 

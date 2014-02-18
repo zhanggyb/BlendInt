@@ -25,7 +25,7 @@
 #include <BlendInt/UI/AbstractForm.hpp>
 
 #include <BlendInt/Utilities-inl.hpp>
-#include <BlendInt/Theme.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 

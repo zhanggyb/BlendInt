@@ -26,7 +26,7 @@
 
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/UI/Widget.hpp>
-#include <BlendInt/Timer.hpp>
+#include <BlendInt/Core/Timer.hpp>
 
 namespace BlendInt {
 

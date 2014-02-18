@@ -31,7 +31,7 @@
 #endif  // __UNIX__
 
 #include <BlendInt/UI/Slider.hpp>
-#include <BlendInt/Theme.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 #include <iostream>
 

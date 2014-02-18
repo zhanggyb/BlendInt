@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_FONT_HPP_
 #define _BLENDINT_FONT_HPP_
 
-#include <BlendInt/String.hpp>
+#include <BlendInt/Core/String.hpp>
 
 using namespace std;
 

@@ -25,7 +25,7 @@
 #define _BLENDINT_BUTTON_HPP_
 
 #include <BlendInt/UI/AbstractButton.hpp>
-#include <BlendInt/String.hpp>
+#include <BlendInt/Core/String.hpp>
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 

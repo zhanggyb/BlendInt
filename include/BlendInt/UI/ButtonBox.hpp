@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_BUTTONBOX_HPP_
 #define _BLENDINT_BUTTONBOX_HPP_
 
-#include <BlendInt/BoxFrame.hpp>
+#include <BlendInt/UI/BoxFrame.hpp>
 #include <BlendInt/UI/AbstractButton.hpp>
 #include <BlendInt/UI/AbstractLayout.hpp>
 

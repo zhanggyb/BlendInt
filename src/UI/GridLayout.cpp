@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/GridLayout.hpp>
+#include <BlendInt/UI/GridLayout.hpp>
 
 namespace BlendInt {
 

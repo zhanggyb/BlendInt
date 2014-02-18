@@ -24,10 +24,11 @@
 #ifndef _BLENDINT_KEYEVENT_HPP_
 #define _BLENDINT_KEYEVENT_HPP_
 
-#include <BlendInt/Types.hpp>
-#include <BlendInt/InputEvent.hpp>
+#include <BlendInt/Core/String.hpp>
 
-#include <BlendInt/String.hpp>
+#include <BlendInt/Types.hpp>
+#include <BlendInt/Window/InputEvent.hpp>
+
 
 namespace BlendInt {
 

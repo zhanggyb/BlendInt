@@ -154,7 +154,7 @@ namespace BlendInt {
 		glPushMatrix();
 
 		glTranslatef(origin_.x(), origin_.y() - fontcache_->get_descender(),
-		        origin_.z());
+		        0);
 
 		int line = 0;
 		String::const_iterator it;
@@ -165,7 +165,7 @@ namespace BlendInt {
 				glTranslatef(origin_.x(),
 				        origin_.y()
 				                - line_spacing_ * fontcache_->get_height()
-				                        * line, origin_.z());
+				                        * line, 0);
 				continue;
 			}
 

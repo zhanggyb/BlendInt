@@ -31,7 +31,7 @@
 #endif  // __UNIX__
 
 #include <BlendInt/UI/ScrollBar.hpp>
-#include <BlendInt/Theme.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 
@@ -406,9 +406,9 @@ namespace BlendInt {
 			dispatch_mouse_press_event(m_control_button, event);
 			if(event->accepted()) return;
 
-			Coord2d inner_pos;
-			inner_pos.set_x(static_cast<double>(event->position().x() - position().x() - m_control_button->size().width() / 2));
-			inner_pos.set_y(static_cast<double>(event->position().y() - position().y() - m_control_button->size().height() / 2));
+			Point inner_pos;
+			inner_pos.set_x(event->position().x() - position().x() - m_control_button->size().width() / 2);
+			inner_pos.set_y(event->position().y() - position().y() - m_control_button->size().height() / 2);
 //			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - padding().left() - m_control_button->size().width() / 2));
 //			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - padding().bottom() - m_control_button->size().height() / 2));
 			int space = GetSpace();
@@ -657,9 +657,9 @@ namespace BlendInt {
 			dispatch_mouse_press_event(m_scroll_control, event);
 			if(event->accepted()) return;
 
-			Coord2d inner_pos;
-			inner_pos.set_x(static_cast<double>(event->position().x() - position().x() - m_scroll_control->size().width() / 2));
-			inner_pos.set_y(static_cast<double>(event->position().y() - position().y() - m_scroll_control->size().height() / 2));
+			Point inner_pos;
+			inner_pos.set_x(event->position().x() - position().x() - m_scroll_control->size().width() / 2);
+			inner_pos.set_y(event->position().y() - position().y() - m_scroll_control->size().height() / 2);
 //			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - padding().left() - m_scroll_control->size().width() / 2));
 //			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - padding().bottom() - m_scroll_control->size().height() / 2));
 			int space = get_space();

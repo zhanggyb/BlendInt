@@ -28,7 +28,7 @@
 
 #include <BlendInt/Cube.hpp>
 
-#include <BlendInt/ShaderManager.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 
 namespace BlendInt {

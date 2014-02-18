@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/TabFrame.hpp>
-#include <BlendInt/String.hpp>
+#include <BlendInt/Core/String.hpp>
+#include <BlendInt/UI/TabFrame.hpp>
 #include <BlendInt/UI/Button.hpp>
 
 namespace BlendInt {

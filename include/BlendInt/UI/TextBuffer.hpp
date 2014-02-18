@@ -26,12 +26,13 @@
 
 #include <list>
 
-#include <BlendInt/UI/FontCache.hpp>
 #include <BlendInt/Core/Color.hpp>
-#include <BlendInt/Coord.hpp>
 #include <BlendInt/Core/Size.hpp>
-#include <BlendInt/String.hpp>
+#include <BlendInt/Core/String.hpp>
 #include <BlendInt/Core/Rect.hpp>
+#include <BlendInt/Core/Point.hpp>
+
+#include <BlendInt/UI/FontCache.hpp>
 
 using namespace std;
 
@@ -82,11 +83,6 @@ namespace BlendInt {
 			background_ = color;
 		}
 
-		void setOrigin (const Coord3f& origin)
-		{
-			origin_ = origin;
-		}
-
 		void setFont (const Font& font);
 
 		void Draw (); /* Render the text */
@@ -131,7 +127,7 @@ namespace BlendInt {
 		Color background_;
 
 		/** Pen origin */
-		Coord3f origin_;
+		Point origin_;
 
 		/** string */
 		String text_;

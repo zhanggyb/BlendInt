@@ -12,7 +12,7 @@
 #include <BlendInt/UI/HorizontalLayout.hpp>
 #include <BlendInt/UI/Button.hpp>
 
-#include <BlendInt/Timer.hpp>
+#include <BlendInt/Core/Timer.hpp>
 
 using namespace BlendInt;
 

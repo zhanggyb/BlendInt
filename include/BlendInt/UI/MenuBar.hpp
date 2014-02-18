@@ -21,46 +21,27 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_INPUTEVENT_HPP_
-#define _BLENDINT_INPUTEVENT_HPP_
+#ifndef _BLENDINT_MENUBAR_HPP_
+#define _BLENDINT_MENUBAR_HPP_
 
-#include <BlendInt/Input.hpp>
-#include <BlendInt/DeviceEvent.hpp>
+#include <BlendInt/UI/BoxFrame.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief Events for input devices including keyboard, mouse
-	 *
-	 * @ingroup device_events
-	 */
-	class InputEvent: public DeviceEvent
+	class MenuBar: public BoxFrame
 	{
+		DISALLOW_COPY_AND_ASSIGN(MenuBar);
+
 	public:
-		
-		/**
-		 * @brief Default Constructor
-		 * @param modifiers Bitwise conbination of KeyModifier
-		 */
-		InputEvent(int modifiers = ModifierNone)
-			: m_modifiers(modifiers)
-		{
-		}
 
-		virtual ~InputEvent()
-		{
-		}
+		MenuBar ();
 
-		int modifiers () const {return m_modifiers;}
+		MenuBar (AbstractWidget* parent);
 
-		void set_modifiers (int mods) {m_modifiers = mods;}
-
-	protected:
-
-		int m_modifiers;
+		virtual ~MenuBar ();
 
 	};
 
-} /* namespace BlendInt */
+}
 
-#endif	/* _BIL_INPUTEVENT_H_ */
+#endif /* _BLENDINT_MENUBAR_HPP_ */
