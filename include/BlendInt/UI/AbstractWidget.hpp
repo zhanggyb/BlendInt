@@ -153,6 +153,8 @@ namespace BlendInt {
 
 		void SetLayer (int z);
 
+		void Refresh ();
+
 		inline int layer () const
 		{
 			return m_z;

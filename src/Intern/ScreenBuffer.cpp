@@ -127,7 +127,18 @@ namespace BlendInt {
 		m_vbo = new GLArrayBuffer;
 		Retain(m_vbo);
 
-		Resize(Size(1280, 800));
+		m_vbo->Generate();
+
+		float vertices[] = {
+			0.0, 0.0, 0.0,
+			0.0, 0.0, 0,0,
+			0.0, 0.0, 0.0,
+			0.0, 0.0, 0.0
+		};
+
+		m_vbo->Bind();
+		m_vbo->SetData(4, sizeof(float) * 3, vertices);
+		m_vbo->Reset();
 
 		m_program = new GLSLProgram;
 		Retain(m_program);
@@ -165,20 +176,20 @@ namespace BlendInt {
 		m_tbo->Reset();
 	}
 
-	void ScreenBuffer::Resize (const Size& size)
+	void ScreenBuffer::Resize (float width, float height, float depth)
 	{
 		float vertices[] = {
-			0.0, 0.0, 0.0,
-			(float)size.width(), 0.0, 0.0,
-			(float)size.width(), (float)size.height(), 0.0,
-			0.0, (float)size.height(), 0.0
+			0.0, 0.0, depth,
+			width, 0.0, depth,
+			width, height, depth,
+			0.0, height, depth
 		};
 
-		m_vbo->Generate();
 		m_vbo->Bind();
-		m_vbo->SetData(4, sizeof(float) * 3, vertices);
+		m_vbo->UpdateData(vertices, 4 * sizeof(float) * 3);
 		m_vbo->Reset();
 	}
+
 
 	void ScreenBuffer::RenderToTexture()
 	{

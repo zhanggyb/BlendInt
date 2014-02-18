@@ -55,7 +55,7 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		void Resize (const Size& size);
+		void Resize (float width, float height, float depth = 0.0);
 
 		void RenderToTexture ();
 

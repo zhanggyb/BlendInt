@@ -141,6 +141,8 @@ namespace BlendInt {
 		if(!entered) {
 			m_status_down = false;
 		}
+
+		Refresh();
 	}
 
 	void AbstractButton::MousePressEvent (MouseEvent* event)
@@ -153,12 +155,17 @@ namespace BlendInt {
 			m_status_down = true;
 			m_clicked.fire();
 		}
+
+		Refresh();
 		event->accept(this);
 	}
 
 	void AbstractButton::MouseReleaseEvent(MouseEvent* event)
 	{
 		m_status_down = false;
+
+		Refresh();
+		event->accept(this);
 	}
 
 	void AbstractButton::MouseMoveEvent (MouseEvent* event)

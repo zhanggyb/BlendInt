@@ -185,7 +185,7 @@ namespace BlendInt {
 		m_size = size;
 		m_resized.fire(m_size.width(), m_size.height());
 
-		m_screenbuffer->Resize(size);
+		m_screenbuffer->Resize((float)size.width(), (float)size.height());
 
 		if(m_main) {
 			AbstractWidget::Resize(m_main, size);
@@ -201,7 +201,7 @@ namespace BlendInt {
 
 		m_resized.fire(m_size.width(), m_size.height());
 
-		m_screenbuffer->Resize(Size(width, height));
+		m_screenbuffer->Resize((float)width, (float)height);
 
 		if(m_main) {
 			AbstractWidget::Resize(m_main, width, height);

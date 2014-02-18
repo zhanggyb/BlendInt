@@ -120,6 +120,11 @@ namespace BlendInt {
 			return m_focus_style;
 		}
 
+		void set_refresh_on ()
+		{
+			m_refresh = true;
+		}
+
 	private:
 
 		Interface ();

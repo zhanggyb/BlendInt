@@ -39,6 +39,7 @@
 #include <BlendInt/UI/AbstractLayout.hpp>
 
 #include <BlendInt/Service/ContextManager.hpp>
+#include <BlendInt/Interface.hpp>
 
 namespace BlendInt {
 
@@ -331,6 +332,10 @@ namespace BlendInt {
 		fire_property_changed_event(WidgetLayer);
 	}
 
+	void AbstractWidget::Refresh()
+	{
+		Interface::Instance()->set_refresh_on();
+	}
 
 	//void AbstractWidget::reset_z (int z)
 	//{

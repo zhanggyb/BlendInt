@@ -83,6 +83,12 @@ namespace BlendInt {
 
 		void SetData (int vertices, size_t size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
 
+		void UpdateData (const GLvoid* data, GLsizeiptr size, GLintptr offset = 0);
+
+		GLvoid* Map (GLenum access = GL_READ_ONLY);
+
+		bool Unmap ();
+
 		inline GLenum target ()
 		{
 			return GL_ARRAY_BUFFER;
