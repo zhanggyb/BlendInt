@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_STOCKICON_HPP_
 #define _BLENDINT_STOCKICON_HPP_
 
-#include <BlendInt/UI/VertexIcon.hpp>
+#include <BlendInt/Gui/VertexIcon.hpp>
 
 namespace BlendInt {
 

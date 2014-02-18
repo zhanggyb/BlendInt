@@ -1,13 +1,13 @@
 /*
  * DemoFrame.cpp
  *
- *  Created on: 2013年11月16日
+ *  Created on: 2013骞�11���16���
  *      Author: zhanggyb
  */
 
 #include "DemoFrame.hpp"
 
-#include <BlendInt/UI/Label.hpp>
+#include <BlendInt/Gui/Label.hpp>
 #include <iostream>
 
 DemoFrame::DemoFrame()

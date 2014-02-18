@@ -25,7 +25,7 @@
 #define _BLENDINT_THEME_HPP_
 
 #include <BlendInt/Core/Color.hpp>
-#include <BlendInt/UI/Font.hpp>
+#include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Types.hpp>
 
 namespace BlendInt {

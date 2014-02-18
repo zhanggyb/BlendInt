@@ -26,7 +26,7 @@
 
 #include <BlendInt/Types.hpp>
 
-#include <BlendInt/UI/AbstractWidget.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 #include <BlendInt/Service/ContextManager.hpp>
 

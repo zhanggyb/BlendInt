@@ -1,16 +1,16 @@
 /*
  * DemoFrame.hpp
  *
- *  Created on: 2013年11月16日
+ *  Created on: 2013骞�11���16���
  *      Author: zhanggyb
  */
 
 #ifndef DEMOFRAME_HPP_
 #define DEMOFRAME_HPP_
 
-#include <BlendInt/UI/Frame.hpp>
-#include <BlendInt/UI/HorizontalLayout.hpp>
-#include <BlendInt/UI/Button.hpp>
+#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 #include <BlendInt/Core/Timer.hpp>
 

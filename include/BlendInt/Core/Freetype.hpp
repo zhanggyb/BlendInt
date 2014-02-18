@@ -32,7 +32,7 @@
 #include FT_STROKER_H
 
 #include <BlendInt/Glyph.hpp>
-#include <BlendInt/UI/Font.hpp>
+#include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Core/Rect.hpp>
 
 using namespace std;

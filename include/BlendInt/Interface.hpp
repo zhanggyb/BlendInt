@@ -47,7 +47,7 @@
 #include <BlendInt/Core/Point.hpp>
 
 #ifdef DEBUG
-#include <BlendInt/UI/AbstractForm.hpp>
+#include <BlendInt/Gui/AbstractForm.hpp>
 #endif
 
 #include <Cpp/Events.hpp>

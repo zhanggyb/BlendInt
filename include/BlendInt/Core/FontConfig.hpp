@@ -31,7 +31,7 @@
 #include <fontconfig/fontconfig.h>
 
 #include <BlendInt/Core/Freetype.hpp>
-#include <BlendInt/UI/Font.hpp>
+#include <BlendInt/Gui/Font.hpp>
 
 using namespace std;
 
