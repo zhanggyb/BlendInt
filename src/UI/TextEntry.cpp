@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/TextEntry.hpp>
-#include <BlendInt/FontCache.hpp>
+#include <BlendInt/UI/TextEntry.hpp>
+#include <BlendInt/UI/FontCache.hpp>
 
 #include <iostream>
 

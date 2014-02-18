@@ -25,7 +25,7 @@
 
 #include <BlendInt/MenuItem.hpp>
 #include <BlendInt/Theme.hpp>
-#include <BlendInt/FontCache.hpp>
+#include <BlendInt/UI/FontCache.hpp>
 
 #include <BlendInt/StockIcon.hpp>
 

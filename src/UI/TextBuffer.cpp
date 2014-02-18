@@ -33,11 +33,10 @@
 #include <iostream>
 #include <algorithm>
 
-#include <BlendInt/Freetype.hpp>
-#include <BlendInt/FontConfig.hpp>
-#include <BlendInt/TextBuffer.hpp>
+#include <BlendInt/Core/Freetype.hpp>
+#include <BlendInt/Core/FontConfig.hpp>
+#include <BlendInt/UI/TextBuffer.hpp>
 
-#include <BlendInt/Tuple.hpp>
 
 using namespace std;
 

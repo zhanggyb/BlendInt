@@ -35,10 +35,10 @@
 
 #include <iostream>
 
-#include <BlendInt/Frame.hpp>
+#include <BlendInt/UI/Frame.hpp>
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Coord.hpp>
-#include <BlendInt/Color.hpp>
+#include <BlendInt/Core/Color.hpp>
 
 #include <BlendInt/Utilities-inl.hpp>
 

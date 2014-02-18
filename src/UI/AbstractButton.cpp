@@ -30,7 +30,7 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/AbstractButton.hpp>
+#include <BlendInt/UI/AbstractButton.hpp>
 
 #include <iostream>
 

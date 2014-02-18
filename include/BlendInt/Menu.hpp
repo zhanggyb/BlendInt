@@ -26,7 +26,7 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/RoundWidget.hpp>
+#include <BlendInt/UI/RoundWidget.hpp>
 #include <BlendInt/MenuItemBin.hpp>
 #include <BlendInt/String.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>

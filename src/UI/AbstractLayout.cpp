@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/AbstractLayout.hpp>
+#include <BlendInt/UI/AbstractLayout.hpp>
 
 namespace BlendInt {
 

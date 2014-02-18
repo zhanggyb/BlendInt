@@ -30,7 +30,7 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/ToggleButton.hpp>
+#include <BlendInt/UI/ToggleButton.hpp>
 #include <BlendInt/ShaderManager.hpp>
 #include <BlendInt/Theme.hpp>
 

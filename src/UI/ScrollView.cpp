@@ -32,7 +32,7 @@
 
 #include <iostream>
 
-#include <BlendInt/ScrollView.hpp>
+#include <BlendInt/UI/ScrollView.hpp>
 
 namespace BlendInt {
 

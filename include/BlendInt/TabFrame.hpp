@@ -25,10 +25,10 @@
 #define _BLENDINT_TABFRAME_HPP_
 
 #include <BlendInt/BoxFrame.hpp>
-#include <BlendInt/StackedWidget.hpp>
-#include <BlendInt/HorizontalLayout.hpp>
-#include <BlendInt/VerticalLayout.hpp>
-#include <BlendInt/ButtonBox.hpp>
+#include <BlendInt/UI/StackedWidget.hpp>
+#include <BlendInt/UI/HorizontalLayout.hpp>
+#include <BlendInt/UI/VerticalLayout.hpp>
+#include <BlendInt/UI/ButtonBox.hpp>
 
 namespace BlendInt {
 

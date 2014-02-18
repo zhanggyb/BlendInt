@@ -24,8 +24,8 @@
 #ifndef _BLENDINT_LAYOUTFRAME_HPP_
 #define _BLENDINT_LAYOUTFRAME_HPP_
 
-#include <BlendInt/Frame.hpp>
-#include <BlendInt/AbstractLayout.hpp>
+#include <BlendInt/UI/Frame.hpp>
+#include <BlendInt/UI/AbstractLayout.hpp>
 
 namespace BlendInt {
 

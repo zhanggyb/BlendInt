@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/ButtonBox.hpp>
-#include <BlendInt/HorizontalLayout.hpp>
+#include <BlendInt/UI/ButtonBox.hpp>
+#include <BlendInt/UI/HorizontalLayout.hpp>
 
 namespace BlendInt {
 

@@ -8,9 +8,9 @@
 #ifndef DEMOFRAME_HPP_
 #define DEMOFRAME_HPP_
 
-#include <BlendInt/Frame.hpp>
-#include <BlendInt/HorizontalLayout.hpp>
-#include <BlendInt/Button.hpp>
+#include <BlendInt/UI/Frame.hpp>
+#include <BlendInt/UI/HorizontalLayout.hpp>
+#include <BlendInt/UI/Button.hpp>
 
 #include <BlendInt/Timer.hpp>
 

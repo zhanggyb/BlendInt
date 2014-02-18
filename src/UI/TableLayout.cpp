@@ -34,8 +34,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include <BlendInt/TableLayout.hpp>
 #include <BlendInt/Interface.hpp>
+#include <BlendInt/UI/TableLayout.hpp>
 
 namespace BlendInt {
 

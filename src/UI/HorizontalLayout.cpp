@@ -33,7 +33,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include <BlendInt/HorizontalLayout.hpp>
+#include <BlendInt/UI/HorizontalLayout.hpp>
 
 namespace BlendInt {
 

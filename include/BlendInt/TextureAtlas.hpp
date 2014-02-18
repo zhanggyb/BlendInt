@@ -25,11 +25,10 @@
 #define _BLENDINT_TEXTUREATLAS_HPP_
 
 #include <vector>
-#include <BlendInt/Vector.hpp>
 #include <string>
 
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
-#include <BlendInt/Freetype.hpp>
+#include <BlendInt/Core/Freetype.hpp>
 #include <BlendInt/Glyph.hpp>
 
 namespace BlendInt {

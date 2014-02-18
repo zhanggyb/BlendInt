@@ -30,7 +30,7 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/ScrollBar.hpp>
+#include <BlendInt/UI/ScrollBar.hpp>
 #include <BlendInt/Theme.hpp>
 
 namespace BlendInt {

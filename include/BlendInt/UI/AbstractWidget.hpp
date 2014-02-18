@@ -30,7 +30,7 @@
 #include <boost/smart_ptr.hpp>
 
 #include <BlendInt/UI/AbstractExtraForm.hpp>
-#include <BlendInt/RoundShapeBase.hpp>
+#include <BlendInt/UI/RoundShapeBase.hpp>
 #include <BlendInt/MouseEvent.hpp>
 #include <BlendInt/KeyEvent.hpp>
 #include <BlendInt/ContextMenuEvent.hpp>

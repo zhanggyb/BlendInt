@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-#include <BlendInt/Font.hpp>
+#include <BlendInt/UI/Font.hpp>
 
 namespace BlendInt {
 

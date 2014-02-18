@@ -32,7 +32,7 @@
 
 #include <BlendInt/Menu.hpp>
 #include <BlendInt/Theme.hpp>
-#include <BlendInt/FontCache.hpp>
+#include <BlendInt/UI/FontCache.hpp>
 
 #include <iostream>
 

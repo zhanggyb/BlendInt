@@ -30,7 +30,7 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/Shadow.hpp>
+#include <BlendInt/UI/Shadow.hpp>
 #include <BlendInt/Theme.hpp>
 
 #include <math.h>

@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_ICON_HPP_
 #define _BLENDINT_ICON_HPP_
 
-#include <BlendInt/AbstractResizableForm.hpp>
+#include <BlendInt/UI/AbstractResizableForm.hpp>
 
 namespace BlendInt {
 

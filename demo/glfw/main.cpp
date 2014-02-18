@@ -8,32 +8,32 @@
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/ContextManager.hpp>
 
-#include <BlendInt/ToggleButton.hpp>
-#include <BlendInt/VerticalLayout.hpp>
-#include <BlendInt/HorizontalLayout.hpp>
+#include <BlendInt/UI/ToggleButton.hpp>
+#include <BlendInt/UI/VerticalLayout.hpp>
+#include <BlendInt/UI/HorizontalLayout.hpp>
 
 #include <BlendInt/Types.hpp>
-#include <BlendInt/Button.hpp>
-#include <BlendInt/Label.hpp>
-#include <BlendInt/ScrollWidget.hpp>
-#include <BlendInt/Slider.hpp>
-#include <BlendInt/Frame.hpp>
-#include <BlendInt/VertexIcon.hpp>
-#include <BlendInt/TableLayout.hpp>
-#include <BlendInt/ScrollBar.hpp>
-#include <BlendInt/VertexIcon.hpp>
-#include <BlendInt/ScrollView.hpp>
+#include <BlendInt/UI/Button.hpp>
+#include <BlendInt/UI/Label.hpp>
+#include <BlendInt/UI/ScrollWidget.hpp>
+#include <BlendInt/UI/Slider.hpp>
+#include <BlendInt/UI/Frame.hpp>
+#include <BlendInt/UI/VertexIcon.hpp>
+#include <BlendInt/UI/TableLayout.hpp>
+#include <BlendInt/UI/ScrollBar.hpp>
+#include <BlendInt/UI/VertexIcon.hpp>
+#include <BlendInt/UI/ScrollView.hpp>
 #include <BlendInt/PopupWidget.hpp>
 #include <BlendInt/Menu.hpp>
-#include <BlendInt/RoundWidget.hpp>
-#include <BlendInt/ImageView.hpp>
+#include <BlendInt/UI/RoundWidget.hpp>
+#include <BlendInt/UI/ImageView.hpp>
 #include <BlendInt/TabFrame.hpp>
 #include <BlendInt/MenuItemBin.hpp>
 #include <BlendInt/StockIcon.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
-#include <BlendInt/TextEntry.hpp>
-#include <BlendInt/ClockWidget.hpp>
-#include <BlendInt/Viewport3D.hpp>
+#include <BlendInt/UI/TextEntry.hpp>
+#include <BlendInt/UI/ClockWidget.hpp>
+#include <BlendInt/UI/Viewport3D.hpp>
 
 #include "Window.hpp"
 

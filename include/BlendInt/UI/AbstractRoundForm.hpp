@@ -24,8 +24,8 @@
 #ifndef _BLENDINT_ABSTRACTROUNDFORM_HPP_
 #define _BLENDINT_ABSTRACTROUNDFORM_HPP_
 
-#include <BlendInt/AbstractResizableForm.hpp>
-#include <BlendInt/RoundShapeBase.hpp>
+#include <BlendInt/UI/AbstractResizableForm.hpp>
+#include <BlendInt/UI/RoundShapeBase.hpp>
 
 namespace BlendInt {
 

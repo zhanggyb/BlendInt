@@ -1,9 +1,9 @@
 # CMake file for BlendInt project
 #
 
-file(GLOB UI_SRC "*.cpp")
+file(GLOB BlendIntUI_SRC "*.cpp")
 
-add_library (UI ${UI_SRC})
+add_library (BlendIntUI ${BlendIntUI_SRC})
 
-target_link_libraries(UI OpenGL ${LIBS})
+target_link_libraries(BlendIntUI BlendIntCore BlendIntOpenGL ${LIBS})
 

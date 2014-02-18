@@ -30,7 +30,7 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/ScrollWidget.hpp>
+#include <BlendInt/UI/ScrollWidget.hpp>
 #include <BlendInt/Theme.hpp>
 
 #include <BlendInt/Interface.hpp>

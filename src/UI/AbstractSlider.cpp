@@ -23,7 +23,7 @@
 
 #include <algorithm>
 
-#include <BlendInt/AbstractSlider.hpp>
+#include <BlendInt/UI/AbstractSlider.hpp>
 
 namespace BlendInt {
 

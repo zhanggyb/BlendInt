@@ -7,7 +7,7 @@
 
 
 
-#include <BlendInt/AbstractResizableForm.hpp>
+#include <BlendInt/UI/AbstractResizableForm.hpp>
 
 
 namespace BlendInt {

@@ -24,9 +24,8 @@
 #ifndef _BLENDINT_THEME_HPP_
 #define _BLENDINT_THEME_HPP_
 
-//#include <BlendInt/Tuple.hpp>
-#include <BlendInt/Color.hpp>
-#include <BlendInt/Font.hpp>
+#include <BlendInt/Core/Color.hpp>
+#include <BlendInt/UI/Font.hpp>
 #include <BlendInt/Types.hpp>
 
 namespace BlendInt {

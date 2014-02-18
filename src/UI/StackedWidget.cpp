@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/StackedWidget.hpp>
+#include <BlendInt/UI/StackedWidget.hpp>
 #include <algorithm>
 
 namespace BlendInt {

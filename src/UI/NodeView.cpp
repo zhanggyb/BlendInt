@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/NodeView.hpp>
+#include <BlendInt/UI/NodeView.hpp>
 
 namespace BlendInt {
 

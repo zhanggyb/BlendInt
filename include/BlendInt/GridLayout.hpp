@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GRIDLAYOUT_HPP_
 #define _BLENDINT_GRIDLAYOUT_HPP_
 
-#include <BlendInt/AbstractLayout.hpp>
+#include <BlendInt/UI/AbstractLayout.hpp>
 
 namespace BlendInt {
 

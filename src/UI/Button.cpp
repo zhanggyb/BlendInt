@@ -32,7 +32,7 @@
 
 #include <iostream>
 
-#include <BlendInt/Button.hpp>
+#include <BlendInt/UI/Button.hpp>
 #include <BlendInt/ShaderManager.hpp>
 #include <BlendInt/Theme.hpp>
 

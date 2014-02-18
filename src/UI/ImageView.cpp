@@ -33,9 +33,8 @@
 
 #include <iostream>
 
-#include <BlendInt/ImageView.hpp>
-
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
+#include <BlendInt/UI/ImageView.hpp>
 
 namespace BlendInt {
 

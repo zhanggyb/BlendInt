@@ -32,9 +32,8 @@
 
 #include <iostream>
 
-#include <BlendInt/Label.hpp>
-
-#include <BlendInt/FontCache.hpp>
+#include <BlendInt/UI/FontCache.hpp>
+#include <BlendInt/UI/Label.hpp>
 
 namespace BlendInt {
 

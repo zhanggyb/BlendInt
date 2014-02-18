@@ -7,7 +7,7 @@
 
 #include "DemoFrame.hpp"
 
-#include <BlendInt/Label.hpp>
+#include <BlendInt/UI/Label.hpp>
 #include <iostream>
 
 DemoFrame::DemoFrame()

@@ -39,21 +39,23 @@ OIIO_NAMESPACE_USING
 
 #include <BlendInt/Interface.hpp>
 
-#include <BlendInt/FontConfig.hpp>
-#include <BlendInt/FontCache.hpp>
+#include <BlendInt/Core/Size.hpp>
+#include <BlendInt/Core/FontConfig.hpp>
+
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+#include <BlendInt/OpenGL/GLRenderbuffer.hpp>
+
+#include <BlendInt/UI/FontCache.hpp>
+#include <BlendInt/UI/AbstractWidget.hpp>
+
 #include <BlendInt/Theme.hpp>
 #include <BlendInt/ShaderManager.hpp>
-#include <BlendInt/Core/Size.hpp>
-#include <BlendInt/UI/AbstractWidget.hpp>
 #include <BlendInt/KeyEvent.hpp>
 #include <BlendInt/MouseEvent.hpp>
 #include <BlendInt/ContextMenuEvent.hpp>
 #include <BlendInt/ContextManager.hpp>
 #include <BlendInt/StockIcon.hpp>
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
-
-#include <BlendInt/OpenGL/GLFramebuffer.hpp>
-#include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 namespace BlendInt {
 

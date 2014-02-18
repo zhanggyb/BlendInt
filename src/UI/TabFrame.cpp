@@ -23,7 +23,7 @@
 
 #include <BlendInt/TabFrame.hpp>
 #include <BlendInt/String.hpp>
-#include <BlendInt/Button.hpp>
+#include <BlendInt/UI/Button.hpp>
 
 namespace BlendInt {
 

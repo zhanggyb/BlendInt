@@ -35,8 +35,9 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include <BlendInt/Core/Freetype.hpp>
+
 #include <BlendInt/TextureAtlas.hpp>
-#include <BlendInt/Freetype.hpp>
 
 // Maximum texture width
 #define MAXWIDTH 2048

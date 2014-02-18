@@ -37,7 +37,7 @@
 
 #include <BlendInt/UI/AbstractWidget.hpp>
 #include <BlendInt/ContextManager.hpp>
-#include <BlendInt/AbstractLayout.hpp>
+#include <BlendInt/UI/AbstractLayout.hpp>
 
 namespace BlendInt {
 

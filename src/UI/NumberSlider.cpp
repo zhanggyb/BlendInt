@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/NumberSlider.hpp>
+#include <BlendInt/UI/NumberSlider.hpp>
 
 namespace BlendInt {
 

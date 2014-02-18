@@ -34,7 +34,7 @@
 #include <queue>
 #include <iostream>
 
-#include <BlendInt/VerticalLayout.hpp>
+#include <BlendInt/UI/VerticalLayout.hpp>
 
 #include <BlendInt/Interface.hpp>
 

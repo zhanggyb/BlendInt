@@ -30,7 +30,7 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/Slider.hpp>
+#include <BlendInt/UI/Slider.hpp>
 #include <BlendInt/Theme.hpp>
 
 #include <iostream>

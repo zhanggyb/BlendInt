@@ -23,5 +23,5 @@ if(WITH_BUILTIN_GLFW3)
     set(LIBS ${LIBS} glfw ${GLFW_LIBRARIES})
 endif()
 
-target_link_libraries(BlendInt BlendIntCore OpenGL UI CppEvents ${LIBS})
+target_link_libraries(BlendInt BlendIntCore BlendIntOpenGL BlendIntUI CppEvents ${LIBS})
 

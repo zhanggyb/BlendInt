@@ -34,7 +34,7 @@
 
 #include <iostream>
 
-#include <BlendInt/Viewport3D.hpp>
+#include <BlendInt/UI/Viewport3D.hpp>
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/ShaderManager.hpp>
 

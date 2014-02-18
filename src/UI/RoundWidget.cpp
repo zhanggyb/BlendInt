@@ -30,7 +30,7 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/RoundWidget.hpp>
+#include <BlendInt/UI/RoundWidget.hpp>
 
 namespace BlendInt {
 

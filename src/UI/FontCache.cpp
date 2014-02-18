@@ -40,7 +40,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include <BlendInt/FontCache.hpp>
+#include <BlendInt/UI/FontCache.hpp>
 #include <BlendInt/ShaderManager.hpp>
 #include <BlendInt/Types.hpp>
 

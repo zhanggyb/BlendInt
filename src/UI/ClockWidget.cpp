@@ -33,7 +33,7 @@
 #include <math.h>
 #include <algorithm>
 
-#include <BlendInt/ClockWidget.hpp>
+#include <BlendInt/UI/ClockWidget.hpp>
 
 namespace BlendInt {
 

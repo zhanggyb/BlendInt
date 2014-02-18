@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/PixelIcon.hpp>
+#include <BlendInt/UI/PixelIcon.hpp>
 
 namespace BlendInt {
 

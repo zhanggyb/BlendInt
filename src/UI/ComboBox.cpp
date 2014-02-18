@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/ComboBox.hpp>
+#include <BlendInt/UI/ComboBox.hpp>
 
 namespace BlendInt {
 

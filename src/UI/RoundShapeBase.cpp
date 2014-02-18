@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <RoundShapeBase.hpp>
+#include <BlendInt/UI/RoundShapeBase.hpp>
 
 #include <assert.h>
 

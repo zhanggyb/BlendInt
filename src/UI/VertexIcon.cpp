@@ -32,7 +32,7 @@
 
 #include <iostream>
 
-#include <BlendInt/VertexIcon.hpp>
+#include <BlendInt/UI/VertexIcon.hpp>
 
 #define WIDGET_AA_JITTER 8
 

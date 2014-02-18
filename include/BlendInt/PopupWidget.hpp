@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_POPUPWIDGET_HPP_
 #define _BLENDINT_POPUPWIDGET_HPP_
 
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/UI/Widget.hpp>
 
-#include <BlendInt/Shadow.hpp>
+#include <BlendInt/UI/Shadow.hpp>
 
-#include <BlendInt/VertexIcon.hpp>
+#include <BlendInt/UI/VertexIcon.hpp>
 
 namespace BlendInt {
 
