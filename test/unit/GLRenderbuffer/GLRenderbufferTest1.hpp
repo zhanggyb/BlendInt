@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 #include <Common/Window.hpp>
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 class GLRenderbufferTest1: public testing::Test
 {

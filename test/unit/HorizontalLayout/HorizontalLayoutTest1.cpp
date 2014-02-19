@@ -1,6 +1,6 @@
 #include "HorizontalLayoutTest1.hpp"
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/HorizontalLayout.hpp>
+#include <BlendInt/Gui/HorizontalLayout.hpp>
 
 using namespace BlendInt;
 

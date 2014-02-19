@@ -2,7 +2,7 @@
 #define _PERFORMANCETEST1_HPP_
 
 #include <gtest/gtest.h>
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 class PerformanceTest1: public testing::Test
 {

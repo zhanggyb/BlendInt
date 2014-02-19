@@ -1,9 +1,9 @@
 #ifndef _INFO_WIDGET_HPP_
 #define _INFO_WIDGET_HPP_
 
-#include <BlendInt/Widget.hpp>
-#include <BlendInt/String.hpp>
-#include <BlendInt/MenuItem.hpp>
+#include <BlendInt/Core/String.hpp>
+#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/MenuItem.hpp>
 
 class InfoWidget: public BlendInt::Widget
 {

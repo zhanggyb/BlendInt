@@ -1,7 +1,7 @@
 #include "MenuTest1.hpp"
-#include <BlendInt/Menu.hpp>
+#include <BlendInt/Gui/Menu.hpp>
 #include "InfoWidget.hpp"
-#include <BlendInt/StockIcon.hpp>
+#include <BlendInt/Service/StockIcon.hpp>
 
 using namespace BlendInt;
 

@@ -4,9 +4,9 @@
 
 #include <Common/Window.hpp>
 
-#include <BlendInt/Timer.hpp>
-#include <BlendInt/Viewport3D.hpp>
-#include <BlendInt/Button.hpp>
+#include <BlendInt/Core/Timer.hpp>
+#include <BlendInt/Gui/Viewport3D.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 // The fixture for testing class Foo.
 

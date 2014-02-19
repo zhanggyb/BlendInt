@@ -1,5 +1,5 @@
 #include "ToggleButtonTest1.hpp"
-#include <BlendInt/ToggleButton.hpp>
+#include <BlendInt/Gui/ToggleButton.hpp>
 #include <Common/Window.hpp>
 
 using namespace BlendInt;

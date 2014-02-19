@@ -1,6 +1,6 @@
 #include "TextEntryTest1.hpp"
-#include <BlendInt/TextEntry.hpp>
-#include <BlendInt/Label.hpp>
+#include <BlendInt/Gui/TextEntry.hpp>
+#include <BlendInt/Gui/Label.hpp>
 
 using namespace BlendInt;
 

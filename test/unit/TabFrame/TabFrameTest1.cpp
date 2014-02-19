@@ -1,5 +1,5 @@
 #include "TabFrameTest1.hpp"
-#include <BlendInt/TabFrame.hpp>
+#include <BlendInt/Gui/TabFrame.hpp>
 
 using namespace BlendInt;
 

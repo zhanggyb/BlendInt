@@ -3,9 +3,9 @@
 #include <iostream>
 
 //using BlendInt::Interface;
-#include <BlendInt/AbstractWidget.hpp>
-#include <BlendInt/KeyEvent.hpp>
-#include <BlendInt/MouseEvent.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Window/KeyEvent.hpp>
+#include <BlendInt/Window/MouseEvent.hpp>
 
 namespace BlendInt {
 
@@ -179,6 +179,8 @@ namespace BlendInt {
 	bool CheckAllocatedObjects ()
 	{
 #ifdef DEBUG
+        using namespace std;
+
 		unsigned int mapsize = Object::GetMapSize();
 
         cout << "map size: " << mapsize << endl;

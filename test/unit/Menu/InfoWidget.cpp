@@ -9,7 +9,7 @@
 #endif  // __UNIX__
 
 #include "InfoWidget.hpp"
-#include <BlendInt/FontCache.hpp>
+#include <BlendInt/Gui/FontCache.hpp>
 
 InfoWidget::InfoWidget ()
 : BlendInt::Widget()

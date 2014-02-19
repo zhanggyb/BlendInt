@@ -1,6 +1,6 @@
 #include "WindowTest1.hpp"
 #include <Common/Window.hpp>
-#include <BlendInt/ClockWidget.hpp>
+#include <BlendInt/Gui/ClockWidget.hpp>
 
 using namespace BlendInt;
 

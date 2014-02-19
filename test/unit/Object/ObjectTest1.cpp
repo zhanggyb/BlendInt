@@ -1,5 +1,5 @@
 #include "ObjectTest1.hpp"
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 #include <iostream>
 

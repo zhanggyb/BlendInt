@@ -4,8 +4,8 @@
 
 #include <Common/Window.hpp>
 
-#include <BlendInt/StackedWidget.hpp>
-#include <BlendInt/ClockWidget.hpp>
+#include <BlendInt/Gui/StackedWidget.hpp>
+#include <BlendInt/Gui/ClockWidget.hpp>
 
 // #include <gtest/gtest.h>
 #include <boost/smart_ptr.hpp>

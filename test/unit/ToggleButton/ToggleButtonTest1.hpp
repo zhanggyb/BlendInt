@@ -2,7 +2,7 @@
 #define _TOGGLEBUTTONTEST1_HPP_
 
 #include <gtest/gtest.h>
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 class ToggleButtonTest1: public testing::Test
 {

@@ -77,6 +77,8 @@ namespace BlendInt {
 				GenerateFormBuffer(size_p, round_type(), radius(),
 				        m_inner_buffer, m_outer_buffer,
 				        m_emboss_buffer);
+
+				Refresh();
 				break;
 			}
 
@@ -85,6 +87,8 @@ namespace BlendInt {
 				GenerateFormBuffer(&(size()), *type_p, radius(),
 				        m_inner_buffer, m_outer_buffer,
 				        m_emboss_buffer);
+
+				Refresh();
 				break;
 			}
 
@@ -93,6 +97,8 @@ namespace BlendInt {
 				GenerateFormBuffer(&(size()), round_type(), *radius_p,
 				        m_inner_buffer, m_outer_buffer,
 				        m_emboss_buffer);
+
+				Refresh();
 				break;
 			}
 

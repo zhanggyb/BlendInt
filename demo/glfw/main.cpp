@@ -68,6 +68,14 @@ int main(int argc, char* argv[])
 	btn1->Resize(200, 200);
 	btn1->Register();
 
+	ToggleButton* toggle1 = new ToggleButton;
+	toggle1->set_name("ToggleButton1");
+	toggle1->SetExpandX(false);
+	toggle1->SetPosition(230, 250);
+	toggle1->Resize(200, 200);
+	toggle1->Register();
+
+
 //	Button* btn2 = new Button;
 //	btn2->set_name("Button2");
 //	btn2->SetExpandX(false);

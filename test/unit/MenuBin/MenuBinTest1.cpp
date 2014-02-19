@@ -1,5 +1,5 @@
 #include "MenuBinTest1.hpp"
-#include <BlendInt/MenuItemBin.hpp>
+#include <BlendInt/Gui/MenuItemBin.hpp>
 
 using namespace BlendInt;
 

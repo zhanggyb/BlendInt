@@ -4,8 +4,8 @@
 
 #include <Common/Window.hpp>
 
-#include <BlendInt/Viewport3D.hpp>
-#include <BlendInt/Button.hpp>
+#include <BlendInt/Gui/Viewport3D.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 //#include <gtest/gtest.h>
 

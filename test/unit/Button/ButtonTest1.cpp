@@ -1,7 +1,7 @@
 #include "ButtonTest1.hpp"
-#include <BlendInt/Button.hpp>
+#include <BlendInt/Gui/Button.hpp>
 #include <Common/Window.hpp>
-#include <BlendInt/HorizontalLayout.hpp>
+#include <BlendInt/Gui/HorizontalLayout.hpp>
 
 using namespace BlendInt;
 

@@ -2,7 +2,7 @@
 #define _WINDOWTEST1_HPP_
 
 #include <gtest/gtest.h>
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 class WindowTest1: public testing::Test
 {

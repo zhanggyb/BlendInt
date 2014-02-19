@@ -4,7 +4,7 @@
 
 #include <Common/Window.hpp>
 
-#include <BlendInt/ClockWidget.hpp>
+#include <BlendInt/Gui/ClockWidget.hpp>
 
 //#include <gtest/gtest.h>
 #include <boost/smart_ptr.hpp>

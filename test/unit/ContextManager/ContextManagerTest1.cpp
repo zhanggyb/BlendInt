@@ -1,6 +1,6 @@
 #include "ContextManagerTest1.hpp"
-#include <BlendInt/ContextManager.hpp>
-#include <BlendInt/Widget.hpp>
+#include <BlendInt/Service/ContextManager.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <Common/Window.hpp>
 
 using namespace BlendInt;

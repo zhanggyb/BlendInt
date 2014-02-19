@@ -1,6 +1,6 @@
 #include "VerticalLayoutTest1.hpp"
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/VerticalLayout.hpp>
+#include <BlendInt/Gui/VerticalLayout.hpp>
 
 using namespace BlendInt;
 

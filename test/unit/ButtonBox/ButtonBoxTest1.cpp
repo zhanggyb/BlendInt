@@ -1,6 +1,6 @@
 #include "ButtonBoxTest1.hpp"
-#include <BlendInt/ButtonBox.hpp>
-#include <BlendInt/Button.hpp>
+#include <BlendInt/Gui/ButtonBox.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 using namespace BlendInt;
 

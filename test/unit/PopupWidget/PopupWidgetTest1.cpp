@@ -1,5 +1,5 @@
 #include "PopupWidgetTest1.hpp"
-#include <BlendInt/PopupWidget.hpp>
+#include <BlendInt/Gui/PopupWidget.hpp>
 
 using namespace BlendInt;
 
