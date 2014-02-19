@@ -57,7 +57,7 @@ namespace BlendInt {
 
 		void Resize (float width, float height, float depth = 0.0);
 
-		void RenderToTexture ();
+		void SaveToFile (const char* filename);
 
 		GLTexture2D* m_texture;
 

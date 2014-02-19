@@ -99,7 +99,6 @@ namespace BlendInt {
 
 		switch (status) {
 			case GL_FRAMEBUFFER_COMPLETE:
-				std::cout << "good" << std::endl;
 				ret = true;
 				break;
 

@@ -514,47 +514,24 @@ namespace BlendInt {
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
 		        width, height);
 
-		//-------------------------
-
 		//Attach depth buffer to FBO
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
 		        GL_RENDERBUFFER, rb);
 
-		//-------------------------
-		//Does the GPU support current FBO configuration?
-		GLenum status;
-		status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		switch (status) {
-			case GL_FRAMEBUFFER_COMPLETE:
-				std::cout << "good" << std::endl;
-				break;
-			default:
-				std::cerr << "Fail to check framebuffer status" << std::endl;
-				break;
+		if(GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+			PreDrawContext(true);
+			DrawContext();
+
 		}
 
-		//-------------------------
-		//and now render to GL_TEXTURE_2D
-		fb->Bind();
-
-		PreDrawContext(true);
-
-		DrawContext();
-
-		// ---------------------------------------------
-
-
-		// ---------------------------------------------
-
-		//Bind 0, which means render to back buffer
 		fb->Reset();
 		tex->Reset();
 
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		glDeleteRenderbuffers(1, &rb);
 
-		//Bind 0, which means render to back buffer, as a result, fb is unbound
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		fb->Reset();
 		delete fb; fb = 0;
 

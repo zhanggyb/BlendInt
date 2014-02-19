@@ -190,97 +190,9 @@ namespace BlendInt {
 		m_vbo->Reset();
 	}
 
-
-	void ScreenBuffer::RenderToTexture()
+	void ScreenBuffer::SaveToFile (const char* filename)
 	{
-		GLsizei width = 800;
-		GLsizei height = 600;
-
-		// Create and set texture to render to.
-		GLTexture2D* tex = m_texture;
-		tex->Generate();
-		tex->Bind();
-		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-		tex->SetMinFilter(GL_NEAREST);
-		tex->SetMagFilter(GL_NEAREST);
-		tex->SetImage(width, height, 0);
-
-		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-		GLFramebuffer* fb = new GLFramebuffer;
-		fb->Generate();
-		fb->Bind();
-
-		// Set "renderedTexture" as our colour attachement #0
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-		        GL_TEXTURE_2D, tex->id(), 0);
-		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-
-		GLuint rb = 0;
-		glGenRenderbuffers(1, &rb);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, rb);
-
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-		        width, height);
-
-		//-------------------------
-
-//		//Attach depth buffer to FBO
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		        GL_RENDERBUFFER, rb);
-
-		//-------------------------
-		//Does the GPU support current FBO configuration?
-		GLenum status;
-		status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		switch (status) {
-			case GL_FRAMEBUFFER_COMPLETE:
-				std::cout << "good" << std::endl;
-				break;
-			default:
-				std::cerr << "Fail to check framebuffer status" << std::endl;
-				break;
-		}
-
-		//-------------------------
-		//and now render to GL_TEXTURE_2D
-		fb->Bind();
-
-		glClearColor(0.0, 0.0, 0.0, 0.0);
-
-		glClearDepth(1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-		glEnable(GL_BLEND);
-
-		glViewport(0, 0, width, height);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-
-		// ---------------------------------------------
-
-
-		// ---------------------------------------------
-
-		//Bind 0, which means render to back buffer
-		fb->Reset();
-		tex->Reset();
-
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		glDeleteRenderbuffers(1, &rb);
-
-		//Bind 0, which means render to back buffer, as a result, fb is unbound
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		fb->Reset();
-		delete fb; fb = 0;
-
+		m_texture->WriteToFile(filename);
 	}
 
 

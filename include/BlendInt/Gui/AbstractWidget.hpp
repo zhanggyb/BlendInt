@@ -38,7 +38,6 @@
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 
 #include <BlendInt/Gui/AbstractExtraForm.hpp>
-#include <BlendInt/Gui/RoundShapeBase.hpp>
 
 #include <BlendInt/Types.hpp>
 
@@ -154,6 +153,8 @@ namespace BlendInt {
 		void SetLayer (int z);
 
 		void Refresh ();
+
+		void RenderToFile (const char* filename, unsigned int border = 10);
 
 		inline int layer () const
 		{

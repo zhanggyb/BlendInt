@@ -34,6 +34,7 @@
 #include <iostream>
 
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 #include <BlendInt/Gui/ImageView.hpp>
 

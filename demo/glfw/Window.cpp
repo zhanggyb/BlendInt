@@ -179,6 +179,8 @@ namespace BlendInt {
 	bool CheckAllocatedObjects ()
 	{
 #ifdef DEBUG
+		using namespace std;
+
 		unsigned int mapsize = Object::GetMapSize();
 
         cout << "map size: " << mapsize << endl;
