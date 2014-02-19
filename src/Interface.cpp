@@ -585,13 +585,12 @@ namespace BlendInt {
 		//and now you can render to the FBO (also called RenderBuffer)
 		glBindFramebuffer(GL_FRAMEBUFFER, fb);
 
-		//Draw();
+		PreDrawContext(true);
+		DrawContext();
 
 		//-------------------------
 		GLubyte pixels[width * height * 4];
 		glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-		//pixels 0, 1, 2 should be white
-		//pixel 4 should be black
 
 		ImageOutput* out = ImageOutput::create("image.png");
 
@@ -607,6 +606,10 @@ namespace BlendInt {
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		//Bind 0, which means render to back buffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glDeleteRenderbuffers(1, &depth_rb);
+		glDeleteRenderbuffers(1, &color_rb);
+		glDeleteFramebuffers(1, &fb);
 	}
 
 	void Interface::DispatchCursorMoveEvent (MouseEvent* event)

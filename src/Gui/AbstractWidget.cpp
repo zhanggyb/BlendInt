@@ -35,6 +35,9 @@
 #include <set>
 #include <stdexcept>
 
+#include <OpenImageIO/imageio.h>
+OIIO_NAMESPACE_USING
+
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
@@ -407,7 +410,6 @@ namespace BlendInt {
 
 			// ---------------------------------------------
 			tex->WriteToFile(filename);
-
 		}
 
 		fb->Reset();
@@ -528,5 +530,104 @@ namespace BlendInt {
 		obj->MouseReleaseEvent(event);
 	}
 
-} /* namespace BlendInt */
+	bool AbstractWidget::CompositeToScreenBuffer (GLTexture2D* tex,
+	        unsigned int border)
+	{
+		bool result = false;
 
+		GLsizei width = size().width() + border * 2;
+		GLsizei height = size().height() + border * 2;
+
+		GLuint fb;
+		//RGBA8 RenderBuffer, 24 bit depth RenderBuffer, 256x256
+		glGenFramebuffers(1, &fb);
+		glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+		//Create and attach a color buffer
+		GLuint color_rb;
+		glGenRenderbuffers(1, &color_rb);
+		//We must bind color_rb before we call glRenderbufferStorageEXT
+		glBindRenderbuffer(GL_RENDERBUFFER, color_rb);
+		//The storage format is RGBA8
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
+		//Attach color buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+		        GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color_rb);
+
+		//-------------------------
+		GLuint depth_rb;
+		glGenRenderbuffers(1, &depth_rb);
+		glBindRenderbuffer(GL_RENDERBUFFER, depth_rb);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+
+		//-------------------------
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER,
+		        GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_rb);
+
+		//-------------------------
+
+		if(GLFramebuffer::CheckStatus()) {
+
+			//and now you can render to the FBO (also called RenderBuffer)
+			glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+			glClearColor(0.0, 0.0, 0.0, 0.0);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+			glEnable(GL_BLEND);
+
+			glViewport(0, 0, width, height);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			glPushMatrix();
+
+			glTranslatef(border, border, 0);
+
+			Draw();
+
+			/*
+			GLubyte pixels[width * height * 4];
+			glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+			ImageOutput* out = ImageOutput::create("image.png");
+
+			if(out) {
+				ImageSpec spec (width, height, 4, TypeDesc::UINT8);
+				out->open("image.png", spec);
+				out->write_image(TypeDesc::UINT8, pixels);
+				out->close();
+				delete out;
+			}
+			*/
+			tex->Bind();
+			tex->CopySubimage(0, position().x(), position().y(), 0, 0, width, height);
+			tex->Reset();
+
+			glPopMatrix();
+
+			result = true;
+		}
+
+		//----------------
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		//Bind 0, which means render to back buffer
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glDeleteRenderbuffers(1, &depth_rb);
+		glDeleteRenderbuffers(1, &color_rb);
+		glDeleteFramebuffers(1, &fb);
+
+		return result;
+	}
+
+} /* namespace BlendInt */

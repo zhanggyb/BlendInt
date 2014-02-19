@@ -53,6 +53,7 @@ namespace BlendInt {
 	class ContextManager;
 	class AbstractWidget;
 	class Rect;
+	class GLTexture2D;
 
 	struct WidgetTheme;
 
@@ -324,6 +325,13 @@ namespace BlendInt {
 			/** If this widget is in cursor hover list in ContextManager */
 			WidgetFlagContextHoverList
 		};
+
+		/**
+		 * @brief Used in Interface class to render the widget to a screenbuffer
+		 * @param tex
+		 * @param border
+		 */
+		bool CompositeToScreenBuffer (GLTexture2D* tex, unsigned int border = 0);
 
 		/**
 		 * @brief the depth(layer) of the widget

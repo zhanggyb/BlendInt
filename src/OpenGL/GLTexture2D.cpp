@@ -111,6 +111,11 @@ namespace BlendInt {
 				m_height, 0, m_format, m_type, data);
 	}
 
+	void GLTexture2D::CopySubimage(GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
+	{
+		glCopyTexSubImage2D(GL_TEXTURE_2D, level, xoffset, yoffset, x, y, width, height);
+	}
+
 	void GLTexture2D::Reset ()
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);

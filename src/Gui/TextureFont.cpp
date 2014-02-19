@@ -33,7 +33,7 @@
 #include <cwchar>
 #include <iostream>
 
-#include <BlendInt/TextureFont.hpp>
+#include <BlendInt/Gui/TextureFont.hpp>
 
 namespace BlendInt {
 

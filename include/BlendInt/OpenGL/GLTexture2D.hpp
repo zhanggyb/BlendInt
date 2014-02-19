@@ -162,6 +162,8 @@ namespace BlendInt {
 
 		void SetImage (GLsizei width, GLsizei height, const GLvoid* data);
 
+		void CopySubimage (GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
+
 		GLint level () const {return m_level;}
 
 		static void Reset ();

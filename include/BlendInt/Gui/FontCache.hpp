@@ -31,8 +31,8 @@
 #include <BlendInt/Core/Freetype.hpp>
 #include <BlendInt/Glyph.hpp>
 
-#include <BlendInt/TextureFont.hpp>
-#include <BlendInt/TextureAtlas.hpp>
+#include <BlendInt/Gui/TextureFont.hpp>
+#include <BlendInt/Gui/TextureAtlas.hpp>
 
 using namespace std;
 
