@@ -42,7 +42,7 @@ namespace BlendInt {
 	class AbstractWidget;
 
 	/**
-	 * @brief class to hold and manage drawable objects for Render
+	 * @brief Class to hold and manage widget objects for Render
 	 */
 	class ContextManager
 	{
@@ -106,8 +106,6 @@ namespace BlendInt {
 		map<int, set<AbstractWidget*>* > m_layers;
 
 		map<AbstractWidget*, int> m_index;
-
-		AbstractWidget* m_focus;	// The current focused widget;
 
 		static ContextManager* context_manager;
 		

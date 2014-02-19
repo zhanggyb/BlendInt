@@ -73,7 +73,6 @@ namespace BlendInt {
 	}
 
 	ContextManager::ContextManager ()
-	: m_focus(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 		m_hover_deque.reset(new std::deque<AbstractWidget*>);
@@ -83,9 +82,9 @@ namespace BlendInt {
 	{
 		// set focus widget to 0
 
-		if(m_focus) {
-			m_focus->m_flag.reset(AbstractWidget::WidgetFlagFocus);
-			m_focus = 0;
+		if(AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->m_flag.reset(AbstractWidget::WidgetFlagFocus);
+			AbstractWidget::focused_widget = 0;
 		}
 
 		map<int, set<AbstractWidget*>* >::iterator map_it;
@@ -214,8 +213,8 @@ namespace BlendInt {
 	{
 		if (!obj) return false;
 
-		if(m_focus == obj) {
-			m_focus = 0;
+		if(AbstractWidget::focused_widget == obj) {
+			AbstractWidget::focused_widget = 0;
 		}
 
 		map<AbstractWidget*, int>::iterator map_it;
@@ -311,13 +310,13 @@ namespace BlendInt {
 
 	void ContextManager::SetFocusedWidget (AbstractWidget* widget)
 	{
-		if(m_focus) {
-			m_focus->m_flag.reset(AbstractWidget::WidgetFlagFocus);
+		if(AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->m_flag.reset(AbstractWidget::WidgetFlagFocus);
 		}
 
-		m_focus = widget;
-		if(m_focus) {
-			m_focus->m_flag.set(AbstractWidget::WidgetFlagFocus);
+		AbstractWidget::focused_widget = widget;
+		if(AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->m_flag.set(AbstractWidget::WidgetFlagFocus);
 		}
 	}
 

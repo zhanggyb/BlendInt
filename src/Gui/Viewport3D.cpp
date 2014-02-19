@@ -86,6 +86,7 @@ namespace BlendInt {
                     glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
                     m_default_camera->LookAt(pos, center, up);
                     m_default_camera->SetPerspective(m_default_camera->fovy(), 1.0f * size().width()/size().height());
+                    Refresh();
                     break;
                 }
                     
@@ -204,6 +205,7 @@ namespace BlendInt {
 				break;
 		}
 
+		Refresh();
 		event->accept(this);
 	}
 

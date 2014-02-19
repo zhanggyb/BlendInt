@@ -53,6 +53,8 @@ namespace BlendInt {
 
 	bool AbstractWidget::refresh_all = true;
 
+	AbstractWidget* AbstractWidget::focused_widget = 0;
+
 	AbstractWidget::AbstractWidget ()
 		: AbstractExtraForm(),
 		  m_z(0),

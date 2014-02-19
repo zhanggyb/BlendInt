@@ -362,6 +362,8 @@ namespace BlendInt {
 
 		static bool refresh_all;
 
+		static AbstractWidget* focused_widget;
+
 #ifdef DEBUG
 	public:
 

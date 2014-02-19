@@ -162,8 +162,11 @@ namespace BlendInt {
 			glfwSwapBuffers(window);
 		
 			/* Poll for and process events */
-			//glfwPollEvents();
+#ifdef __APPLE__
+			glfwPollEvents();
+#else
 			glfwWaitEvents();
+#endif  // __APPLE__
 		}
 	
 	}

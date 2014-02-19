@@ -347,7 +347,7 @@ namespace BlendInt {
 
 		ContextManager* cm = ContextManager::context_manager;
 
-		if(cm->m_focus) {
+		if(AbstractWidget::focused_widget) {
 			switch (event->action()) {
 
 				case KeyPress: {
@@ -357,7 +357,7 @@ namespace BlendInt {
 						//RenderToImage();
 					}
 #endif
-					cm->m_focus->KeyPressEvent(event);
+					AbstractWidget::focused_widget->KeyPressEvent(event);
 					break;
 				}
 
