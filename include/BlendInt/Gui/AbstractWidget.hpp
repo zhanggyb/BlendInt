@@ -323,7 +323,10 @@ namespace BlendInt {
 			WidgetFlagFocus,
 
 			/** If this widget is in cursor hover list in ContextManager */
-			WidgetFlagContextHoverList
+			WidgetFlagContextHoverList,
+
+			/** If the widget need to be refresh in the render loop */
+			WidgetFlagRefresh
 		};
 
 		/**
@@ -356,6 +359,8 @@ namespace BlendInt {
 		AbstractWidget* m_parent;
 
 		std::set<AbstractWidget*> m_children;
+
+		static bool refresh_all;
 
 #ifdef DEBUG
 	public:

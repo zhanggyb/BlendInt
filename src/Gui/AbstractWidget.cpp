@@ -51,6 +51,8 @@ namespace BlendInt {
 
 	using namespace std;
 
+	bool AbstractWidget::refresh_all = true;
+
 	AbstractWidget::AbstractWidget ()
 		: AbstractExtraForm(),
 		  m_z(0),
@@ -340,7 +342,7 @@ namespace BlendInt {
 
 	void AbstractWidget::Refresh()
 	{
-		Interface::Instance()->set_refresh_on();
+		refresh_all = true;
 	}
 
 	void AbstractWidget::RenderToFile(const char* filename, unsigned int border)

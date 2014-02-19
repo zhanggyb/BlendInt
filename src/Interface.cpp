@@ -164,7 +164,7 @@ namespace BlendInt {
 	}
 
 	Interface::Interface ()
-	: m_main(0), m_refresh(true), m_focus_style(FocusOnClick)
+	: m_main(0), m_focus_style(FocusOnClick)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 		m_screenbuffer = new ScreenBuffer;
@@ -191,7 +191,7 @@ namespace BlendInt {
 			AbstractWidget::Resize(m_main, size);
 		}
 
-		m_refresh = true;
+		AbstractWidget::refresh_all = true;
 	}
 
 	void Interface::Resize (unsigned int width, unsigned int height)
@@ -207,18 +207,18 @@ namespace BlendInt {
 			AbstractWidget::Resize(m_main, width, height);
 		}
 
-		m_refresh = true;
+		AbstractWidget::refresh_all = true;
 	}
 
 	void Interface::Draw ()
 	{
-		if(m_refresh) {
+		if(AbstractWidget::refresh_all) {
 			RenderToScreenBuffer();
 		}
 
 		m_screenbuffer->Render();
 
-		m_refresh = false;
+		AbstractWidget::refresh_all = false;
 	}
 
 	void Interface::PreDrawContext (bool fbo)

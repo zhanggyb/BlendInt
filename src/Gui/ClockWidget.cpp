@@ -82,6 +82,8 @@ namespace BlendInt {
 		if(m_angle > 360) {
 			m_angle = m_angle % 360;
 		}
+
+		Refresh();
 	}
 
 	void ClockWidget::DrawArc (float x, float y, float start_angle,
