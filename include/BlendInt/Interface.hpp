@@ -32,6 +32,7 @@
 /** @defgroup exceptions Exceptions */
 /** @defgroup opengl Wrapper classes for OpenGL API */
 /** @defgroup gui GUI classes */
+/** @defgroup window Classes to process native window system */
 /** @defgroup animation Animation */
 
 /**
@@ -45,6 +46,8 @@
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Point.hpp>
+
+#include <BlendInt/Window/DisplayEvent.hpp>
 
 #ifdef DEBUG
 #include <BlendInt/Gui/AbstractForm.hpp>
@@ -177,5 +180,5 @@ namespace BlendInt {
 
 }
 
-#endif /* _BIL_INTERFACE_HPP_ */
+#endif /* _BLENDINT_INTERFACE_HPP_ */
 

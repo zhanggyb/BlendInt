@@ -345,8 +345,6 @@ namespace BlendInt {
 	{
 		if(!event) return;
 
-		ContextManager* cm = ContextManager::context_manager;
-
 		if(AbstractWidget::focused_widget) {
 			switch (event->action()) {
 

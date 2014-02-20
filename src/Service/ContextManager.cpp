@@ -113,11 +113,11 @@ namespace BlendInt {
 	{
 		if (!obj) return false;
 
-		if(obj->m_flag[2]) return true;
+		if(obj->m_flag[AbstractWidget::WidgetFlagRegistered]) return true;
 
 		AddWidget(obj);
 
-		obj->m_flag.set(2);
+		obj->m_flag.set(AbstractWidget::WidgetFlagRegistered);
 
 		m_events->connect(obj->destroyed(), this, &ContextManager::OnDestroyObject);
 
@@ -128,15 +128,15 @@ namespace BlendInt {
 	{
 		if (!obj) return false;
 
-		if(!obj->m_flag[2]) return true;
+		if(!obj->m_flag[AbstractWidget::WidgetFlagRegistered]) return true;
 
 		if(!RemoveWidget(obj)) {
-			obj->m_flag.reset(2);
+			obj->m_flag.reset(AbstractWidget::WidgetFlagRegistered);
 			std::cerr << "obj not in in contextmanager with the same layer" << std::endl;
 			return false;
 		}
 
-		obj->m_flag.reset(2);
+		obj->m_flag.reset(AbstractWidget::WidgetFlagRegistered);
 
 		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
@@ -203,7 +203,7 @@ namespace BlendInt {
 		if(!obj) return;
 
 		RemoveWidget(obj);
-		obj->m_flag.reset(2);
+		obj->m_flag.reset(AbstractWidget::WidgetFlagRegistered);
 		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
 		// TODO: remove this widget and its children if it's in m_cursor_widget_stack

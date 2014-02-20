@@ -27,14 +27,17 @@
 /**
  * @defgroup device_events Device events from window system
  *
- * Device events come from the window system, usually are triggered by a input device
- * like keyboard or mouse.
+ * Device events come from the window system, usually are triggered by
+ * a input device like keyboard or mouse.
  *
- * BlendInt does not provide a mechanism to generate device events inside, instead it only
- * receive them from the native window system. And a device event is different from the event
- * fired in certain widget object, see the details of event/delegate in @ref cpp_events
+ * BlendInt does not provide a mechanism to generate device events
+ * inside, instead it only receive them from the native window
+ * system.
  *
- * @ingroup gui
+ * @note A device event is different from the event fired in certain
+ * widget object, see the details of event/delegate in @ref cpp_events
+ *
+ * @ingroup window
  */
 
 namespace BlendInt {
@@ -50,10 +53,13 @@ namespace BlendInt {
 	{
 	public:
 
-		DeviceEvent()
+		DeviceEvent ()
 		: m_accepted(false), m_ignored(false), m_object(0)
 		{
 		}
+
+		~DeviceEvent ()
+		{}
 
 		void accept (AbstractWidget* object)
 		{
