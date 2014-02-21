@@ -157,12 +157,12 @@ namespace BlendInt {
 
 		void RenderToFile (const char* filename, unsigned int border = 10);
 
-		inline int layer () const
+		const int& layer () const
 		{
 			return m_z;
 		}
 
-		inline int z () const
+		const int& z () const
 		{
 			return m_z;
 		}
@@ -361,6 +361,8 @@ namespace BlendInt {
 		std::set<AbstractWidget*> m_children;
 
 		static bool refresh_all;
+
+		static std::set<int> refresh_layers;
 
 		static AbstractWidget* focused_widget;
 

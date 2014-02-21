@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_SCREENBUFFER_HPP_
 #define _BLENDINT_SCREENBUFFER_HPP_
 
+#include <vector>
+
 #include <BlendInt/Core/Object.hpp>
 #include <BlendInt/Core/Size.hpp>
 
@@ -35,6 +37,11 @@ namespace BlendInt {
 
 	class Interface;
 
+	struct WidgetsLayerBuffer {
+		int layer;
+		GLTexture2D* texture_buffer;
+	};
+
 	/**
 	 * @brief A special class used in Interface only to work as a screen buffer
 	 *
@@ -45,9 +52,9 @@ namespace BlendInt {
 
 		friend class Interface;
 
-		void Render ();
-
 	private:
+
+		void Render ();
 
 		ScreenBuffer ();
 
@@ -69,6 +76,12 @@ namespace BlendInt {
 		GLint uniform_texture;
 		GLint attribute_coord3d;
 		GLint attribute_texcoord;
+
+		std::vector<WidgetsLayerBuffer> m_widgets_layer_buffers;
+
+		static bool force_refresh_all_buffers;
+
+		static unsigned int max_widgets_layer_buffer_size;
 
 		static const char* vertex_shader;
 		static const char* fragment_shader;

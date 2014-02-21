@@ -132,7 +132,7 @@ namespace BlendInt {
 
 		if(!RemoveWidget(obj)) {
 			obj->m_flag.reset(AbstractWidget::WidgetFlagRegistered);
-			std::cerr << "obj not in in contextmanager with the same layer" << std::endl;
+			std::cerr << "obj not in in context manager with the same layer" << std::endl;
 			return false;
 		}
 
@@ -189,6 +189,9 @@ namespace BlendInt {
 				set<AbstractWidget*>* new_set = new set<AbstractWidget*>;
 				new_set->insert(obj);
 				m_layers[obj->z()] = new_set;
+
+				// Refresh this layer in the render loop
+				AbstractWidget::refresh_layers.insert(obj->z());
 			}
 			
 //		}
@@ -217,32 +220,36 @@ namespace BlendInt {
 			AbstractWidget::focused_widget = 0;
 		}
 
-		map<AbstractWidget*, int>::iterator map_it;
+		map<AbstractWidget*, int>::iterator map_iter;
 		
-		map_it = m_index.find(obj);
+		map_iter = m_index.find(obj);
 
-		if(map_it != m_index.end()) {
+		if(map_iter != m_index.end()) {
 
-			set<AbstractWidget*>* p = m_layers[map_it->second];
-			set<AbstractWidget*>::iterator it = p->find(obj);
-			if (it != p->end()) {
-				p->erase (it);
+			set<AbstractWidget*>* p = m_layers[map_iter->second];
+			set<AbstractWidget*>::iterator set_iter = p->find(obj);
+			if (set_iter != p->end()) {
+				p->erase (set_iter);
 			} else {
 #ifdef DEBUG
-				std::cerr << "Error: object " << obj->name() << " is not recorded" << std::endl;
+				std::cerr << "Error: object " << obj->name() << " is not recorded in set" << std::endl;
 #endif
 			}
 
 			if (p->empty()) {
-				m_layers.erase(map_it->second);
+				m_layers.erase(map_iter->second);
 				delete p;
+
+				if(AbstractWidget::refresh_layers.count(obj->z())) {
+					AbstractWidget::refresh_layers.erase(obj->z());
+				}
 			}
 
 			m_index.erase(obj);
 
 		} else {
 #ifdef DEBUG
-			std::cerr << "Error: object " << obj->name() << " is not recorded" << std::endl;
+			std::cerr << "Error: object " << obj->name() << " is not recorded in map" << std::endl;
 #endif
 			return false;
 		}

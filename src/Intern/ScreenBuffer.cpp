@@ -58,6 +58,10 @@ namespace BlendInt {
 			"	gl_FragColor = texture2D(texture, f_texcoord);"
 			"}";
 
+	unsigned int ScreenBuffer::max_widgets_layer_buffer_size = 4;
+
+	bool ScreenBuffer::force_refresh_all_buffers = false;
+
 	ScreenBuffer::ScreenBuffer()
 	: Object(), m_texture(0), m_program(0), m_vbo(0), m_tbo(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
 	{
@@ -66,6 +70,15 @@ namespace BlendInt {
 
 	ScreenBuffer::~ScreenBuffer()
 	{
+		for(std::vector<WidgetsLayerBuffer>::iterator it = m_widgets_layer_buffers.begin(); it != m_widgets_layer_buffers.end(); it++)
+		{
+			(*it).texture_buffer->Clear();
+			delete (*it).texture_buffer;
+			(*it).texture_buffer = 0;
+		}
+
+		m_widgets_layer_buffers.clear();
+
 		if(m_texture) delete m_texture;
 
 		Object::Destroy(m_tbo);

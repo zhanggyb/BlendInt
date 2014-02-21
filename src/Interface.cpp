@@ -192,6 +192,7 @@ namespace BlendInt {
 		}
 
 		AbstractWidget::refresh_all = true;
+		ScreenBuffer::force_refresh_all_buffers = true;
 	}
 
 	void Interface::Resize (unsigned int width, unsigned int height)
@@ -208,10 +209,18 @@ namespace BlendInt {
 		}
 
 		AbstractWidget::refresh_all = true;
+		ScreenBuffer::force_refresh_all_buffers = true;
 	}
 
 	void Interface::Draw ()
 	{
+#ifdef DEBUG
+		for(std::set<int>::iterator it = AbstractWidget::refresh_layers.begin(); it != AbstractWidget::refresh_layers.end(); it++)
+		{
+			std::cout << "Layer: " << *it << " need to be refreshed" << std::endl;
+		}
+#endif	// DEBUG
+
 		if(AbstractWidget::refresh_all) {
 			RenderToScreenBuffer();
 		}
@@ -219,6 +228,9 @@ namespace BlendInt {
 		m_screenbuffer->Render();
 
 		AbstractWidget::refresh_all = false;
+		AbstractWidget::refresh_layers.clear();
+
+		ScreenBuffer::force_refresh_all_buffers = false;
 	}
 
 	void Interface::PreDrawContext (bool fbo)
