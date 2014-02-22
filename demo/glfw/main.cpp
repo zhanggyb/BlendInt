@@ -64,16 +64,24 @@ int main(int argc, char* argv[])
 	Button* btn1 = new Button;
 	btn1->set_name("Button1");
 	btn1->SetExpandX(false);
-	btn1->SetPosition(630, 250);
-	btn1->Resize(200, 200);
+	btn1->SetPosition(100, 250);
+	btn1->Resize(100, 100);
 	btn1->Register();
 
 	ToggleButton* toggle1 = new ToggleButton;
 	toggle1->set_name("ToggleButton1");
 	toggle1->SetExpandX(false);
-	toggle1->SetPosition(230, 250);
-	toggle1->Resize(200, 200);
+	toggle1->SetPosition(100, 450);
+	toggle1->Resize(100, 100);
 	toggle1->Register();
+
+	Button* btn2 = new Button;
+	btn2->set_name("Button2");
+	btn2->SetExpandX(false);
+	btn2->SetPosition(600, 250);
+	btn2->Resize(100, 100);
+	btn2->SetLayer(1);
+	btn2->Register();
 
 
 //	Button* btn2 = new Button;
@@ -105,7 +113,7 @@ int main(int argc, char* argv[])
 
 //	ImageView* iv = new ImageView;
 //
-//	iv->SetPosition(100, 100);
+//	iv->SetPosition(400, 100);
 //	iv->Register();
 
 //	interface()->SetMainWidget(layout);

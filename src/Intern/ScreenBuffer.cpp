@@ -86,14 +86,14 @@ namespace BlendInt {
 		Object::Destroy(m_program);
 	}
 
-	void ScreenBuffer::Render()
+	void ScreenBuffer::Render(GLTexture2D* texture)
 	{
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 		m_program->Use();
 
 		glActiveTexture(GL_TEXTURE0);
-		m_texture->Bind();
+		texture->Bind();
 
 		glUniform1i(uniform_texture, 0);
 
@@ -127,7 +127,7 @@ namespace BlendInt {
 		glDisableVertexAttribArray(attribute_coord3d);
 
 		m_vbo->Reset();
-		m_texture->Reset();
+		texture->Reset();
 		m_program->Reset();
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

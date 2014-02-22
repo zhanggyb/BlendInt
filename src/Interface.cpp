@@ -222,10 +222,50 @@ namespace BlendInt {
 #endif	// DEBUG
 
 		if(AbstractWidget::refresh_all) {
+
+			map<int, ContextLayer>::iterator layer_iter;
+			unsigned int count = 0;
+			set<AbstractWidget*>* widget_set_p = 0;
+
+			for(layer_iter = ContextManager::context_manager->m_layers.begin();
+					layer_iter != ContextManager::context_manager->m_layers.end();
+					layer_iter++)
+			{
+				widget_set_p = layer_iter->second.widgets;
+
+				if(layer_iter->second.refresh) {
+
+					if(!layer_iter->second.buffer) {
+						layer_iter->second.buffer = new GLTexture2D;
+						layer_iter->second.buffer->Generate();
+					}
+					OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+
+				} else {
+
+					if(!layer_iter->second.buffer) {
+						layer_iter->second.buffer = new GLTexture2D;
+						layer_iter->second.buffer->Generate();
+
+						OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+					} else if (layer_iter->second.buffer->id() == 0) {
+						layer_iter->second.buffer->Generate();
+
+						OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+					}
+				}
+
+				count++;
+
+				layer_iter->second.refresh = false;
+			}
+
+
+
 			RenderToScreenBuffer();
 		}
 
-		m_screenbuffer->Render();
+		m_screenbuffer->Render(m_screenbuffer->m_texture);
 
 		AbstractWidget::refresh_all = false;
 		AbstractWidget::refresh_layers.clear();
@@ -266,27 +306,112 @@ namespace BlendInt {
 
 #ifdef DEBUG
 		//DrawTriangle(false);
-		draw_grid(width, height);
+		//draw_grid(width, height);
 #endif
 
-		map<int, set<AbstractWidget*>* >::iterator map_it;
-		set<AbstractWidget*>::iterator set_it;
+		map<int, ContextLayer>::iterator layer_iter;
+		set<AbstractWidget*>::iterator widget_iter;
 
-		for(map_it = ContextManager::context_manager->m_layers.begin();
-				map_it != ContextManager::context_manager->m_layers.end();
-				map_it++)
+		for(layer_iter = ContextManager::context_manager->m_layers.begin();
+				layer_iter != ContextManager::context_manager->m_layers.end();
+				layer_iter++)
 		{
-			set<AbstractWidget*>* pset = map_it->second;
-			for (set_it = pset->begin(); set_it != pset->end(); set_it++)
+			set<AbstractWidget*>* pset = layer_iter->second.widgets;
+			for (widget_iter = pset->begin(); widget_iter != pset->end(); widget_iter++)
 			{
 				//(*set_it)->Draw();
-				DispatchDrawEvent(*set_it);
+				DispatchDrawEvent(*widget_iter);
 			}
 		}
 		// m_ticktack = m_ticktack ? 0 : 1;
 
 		//glDisable(GL_BLEND);
 	}
+
+	void Interface::OffScreenRenderToTexture (int layer, std::set<AbstractWidget*>* widgets, GLTexture2D* texture)
+	{
+		GLsizei width = m_size.width();
+		GLsizei height = m_size.height();
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = texture;
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(width, height, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		        GL_TEXTURE_2D, tex->id(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+		        width, height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		        GL_RENDERBUFFER, rb);
+
+		if(GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			glClearColor(0.0, 0.0, 0.0, 0.00);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+			glEnable(GL_BLEND);
+
+			glViewport(0, 0, width, height);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			set<AbstractWidget*>::iterator widget_iter;
+
+			for (widget_iter = widgets->begin(); widget_iter != widgets->end(); widget_iter++)
+			{
+				//(*set_it)->Draw();
+				DispatchDrawEvent(*widget_iter);
+			}
+
+			std::string str("layer");
+			char buf[4];
+			sprintf(buf, "%d", layer);
+			str = str + buf + ".png";
+			tex->WriteToFile(str);
+		}
+
+
+		fb->Reset();
+		tex->Reset();
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb; fb = 0;
+
+	}
+
 
 #ifdef DEBUG
 
@@ -668,7 +793,7 @@ namespace BlendInt {
 
 			if(event->accepted()) {
 				cm->SetFocusedWidget(*it);
-				std::cout << "widget is focused" << (*it)->name() << std::endl;
+				std::cout << "widget is focused: " << (*it)->name() << std::endl;
 				break;
 			}
 		}
@@ -723,7 +848,7 @@ namespace BlendInt {
 		} else {
 			ContextManager::context_manager->m_hover_deque->clear();
 
-			map<int, set<AbstractWidget*>*>::reverse_iterator map_it;
+			map<int, ContextLayer>::reverse_iterator map_it;
 			set<AbstractWidget*>::iterator set_it;
 			set<AbstractWidget*>* set_p = 0;
 
@@ -731,7 +856,7 @@ namespace BlendInt {
 
 			for (map_it = ContextManager::context_manager->m_layers.rbegin(); map_it != ContextManager::context_manager->m_layers.rend();
 			        map_it++) {
-				set_p = map_it->second;
+				set_p = map_it->second.widgets;
 				for (set_it = set_p->begin(); set_it != set_p->end();
 				        set_it++) {
 					if ((*set_it)->contain(cursor_point)) {

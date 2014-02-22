@@ -26,6 +26,8 @@
 
 #include <BlendInt/Types.hpp>
 
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
+
 #include <BlendInt/Gui/AbstractWidget.hpp>
 
 #include <BlendInt/Service/ContextManager.hpp>
@@ -35,6 +37,33 @@ using std::cerr;
 using std::endl;
 
 namespace BlendInt {
+
+	ContextLayer::ContextLayer()
+	: refresh(true), widgets(0), buffer(0)
+	{
+
+	}
+
+	ContextLayer::~ContextLayer()
+	{
+		if(buffer) {
+			std::cout << "Delete texture buffer in context layer" << std::endl;
+			delete buffer;
+		}
+
+		if(widgets) {
+			std::cout << "Delete widget set in context layer" << std::endl;
+
+			set<AbstractWidget*>::iterator it;
+
+			for(it = widgets->begin(); it != widgets->end(); it++)
+			{
+				if((*it)->ref_count() == 0) delete *it;
+			}
+
+			widgets->clear();
+		}
+	}
 
 	ContextManager* ContextManager::context_manager = 0;
 
@@ -87,21 +116,21 @@ namespace BlendInt {
 			AbstractWidget::focused_widget = 0;
 		}
 
-		map<int, set<AbstractWidget*>* >::iterator map_it;
-		set<AbstractWidget*>::iterator set_it;
-		set<AbstractWidget*>* pset = 0;
+		map<int, ContextLayer>::iterator layer_iter;
+		set<AbstractWidget*>::iterator widget_iter;
+		set<AbstractWidget*>* widget_set_p = 0;
 
-		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
+		for(layer_iter = m_layers.begin(); layer_iter != m_layers.end(); layer_iter++)
 		{
-			pset = map_it->second;
-			for(set_it = pset->begin(); set_it != pset->end(); set_it++)
+			widget_set_p = layer_iter->second.widgets;
+			for(widget_iter = widget_set_p->begin(); widget_iter != widget_set_p->end(); widget_iter++)
 			{
-				(*set_it)->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
+				(*widget_iter)->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
-				if((*set_it)->ref_count() == 0) delete *set_it;
+				if((*widget_iter)->ref_count() == 0) delete *widget_iter;
 			}
 
-			pset->clear();
+			widget_set_p->clear();
 		}
 
 		m_layers.clear();
@@ -181,17 +210,18 @@ namespace BlendInt {
 //
 //		} else {
 
-			map<int, set<AbstractWidget*>* >::iterator layer_it;
-			layer_it = m_layers.find(obj->z());
-			if(layer_it != m_layers.end()) {
-				layer_it->second->insert(obj);
+			map<int, ContextLayer>::iterator layer_iter;
+			layer_iter = m_layers.find(obj->z());
+			if(layer_iter != m_layers.end()) {
+				layer_iter->second.widgets->insert(obj);
 			} else {
-				set<AbstractWidget*>* new_set = new set<AbstractWidget*>;
-				new_set->insert(obj);
-				m_layers[obj->z()] = new_set;
+				set<AbstractWidget*>* new_widget_set_p = new set<AbstractWidget*>;
+				new_widget_set_p->insert(obj);
+				m_layers[obj->z()].widgets = new_widget_set_p;
 
 				// Refresh this layer in the render loop
 				AbstractWidget::refresh_layers.insert(obj->z());
+				m_layers[obj->z()].refresh = true;
 			}
 			
 //		}
@@ -200,45 +230,34 @@ namespace BlendInt {
 		//return true;
 	}
 
-	void ContextManager::OnDestroyObject(AbstractWidget* obj)
-	{
-		std::cout << "Get event" << std::endl;
-		if(!obj) return;
-
-		RemoveWidget(obj);
-		obj->m_flag.reset(AbstractWidget::WidgetFlagRegistered);
-		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
-
-		// TODO: remove this widget and its children if it's in m_cursor_widget_stack
-	}
-
 	bool ContextManager::RemoveWidget (AbstractWidget* obj)
 	{
 		if (!obj) return false;
 
 		if(AbstractWidget::focused_widget == obj) {
+			obj->m_flag.reset(AbstractWidget::WidgetFlagFocus);
 			AbstractWidget::focused_widget = 0;
 		}
 
-		map<AbstractWidget*, int>::iterator map_iter;
+		map<AbstractWidget*, int>::iterator index_iter;
 		
-		map_iter = m_index.find(obj);
+		index_iter = m_index.find(obj);
 
-		if(map_iter != m_index.end()) {
+		if(index_iter != m_index.end()) {
 
-			set<AbstractWidget*>* p = m_layers[map_iter->second];
-			set<AbstractWidget*>::iterator set_iter = p->find(obj);
-			if (set_iter != p->end()) {
-				p->erase (set_iter);
+			set<AbstractWidget*>* widget_set_p = m_layers[index_iter->second].widgets;
+			set<AbstractWidget*>::iterator widget_iter = widget_set_p->find(obj);
+			if (widget_iter != widget_set_p->end()) {
+				widget_set_p->erase (widget_iter);
 			} else {
 #ifdef DEBUG
 				std::cerr << "Error: object " << obj->name() << " is not recorded in set" << std::endl;
 #endif
 			}
 
-			if (p->empty()) {
-				m_layers.erase(map_iter->second);
-				delete p;
+			if (widget_set_p->empty()) {
+				m_layers.erase(index_iter->second);
+				delete widget_set_p;
 
 				if(AbstractWidget::refresh_layers.count(obj->z())) {
 					AbstractWidget::refresh_layers.erase(obj->z());
@@ -255,6 +274,18 @@ namespace BlendInt {
 		}
 
 		return true;
+	}
+
+	void ContextManager::OnDestroyObject(AbstractWidget* obj)
+	{
+		std::cout << "Get event" << std::endl;
+		if(!obj) return;
+
+		RemoveWidget(obj);
+		obj->m_flag.reset(AbstractWidget::WidgetFlagRegistered);
+		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
+
+		// TODO: remove this widget and its children if it's in m_cursor_widget_stack
 	}
 
 #ifdef DEBUG
@@ -275,20 +306,20 @@ namespace BlendInt {
 		} else {
 			m_hover_deque->clear();
 
-			map<int, set<AbstractWidget*>*>::reverse_iterator map_it;
-			set<AbstractWidget*>::iterator set_it;
-			set<AbstractWidget*>* set_p = 0;
+			map<int, ContextLayer>::reverse_iterator layer_riter;
+			set<AbstractWidget*>::iterator widget_iter;
+			set<AbstractWidget*>* widget_set_p = 0;
 
 			bool stop = false;
 
-			for (map_it = m_layers.rbegin(); map_it != m_layers.rend();
-			        map_it++) {
-				set_p = map_it->second;
-				for (set_it = set_p->begin(); set_it != set_p->end();
-				        set_it++) {
-					if ((*set_it)->contain(cursor_point)) {
-						m_hover_deque->push_back(*set_it);
-						BuildWidgetListAtCursorPoint(cursor_point, *set_it);
+			for (layer_riter = m_layers.rbegin(); layer_riter != m_layers.rend();
+			        layer_riter++) {
+				widget_set_p = layer_riter->second.widgets;
+				for (widget_iter = widget_set_p->begin(); widget_iter != widget_set_p->end();
+				        widget_iter++) {
+					if ((*widget_iter)->contain(cursor_point)) {
+						m_hover_deque->push_back(*widget_iter);
+						BuildWidgetListAtCursorPoint(cursor_point, *widget_iter);
 						stop = true;
 					}
 
@@ -329,22 +360,22 @@ namespace BlendInt {
 
 	void ContextManager::print ()
 	{
-		LayerType::iterator map_it;
-		SetType::iterator set_it;
+		map<int, ContextLayer>::iterator layer_iter;
+		set<AbstractWidget*>::iterator widget_iter;
 
-		SetType* pset;
+		set<AbstractWidget*>* widget_set_p;
 		std::cout << std::endl;
 
 		std::cerr << "size of index map:" << m_index.size() << std::endl;
 		std::cerr << "size of layer map:" << m_layers.size() << std::endl;
 
-		for(map_it = m_layers.begin(); map_it != m_layers.end(); map_it++)
+		for(layer_iter = m_layers.begin(); layer_iter != m_layers.end(); layer_iter++)
 		{
-			std::cerr << "Layer: " << map_it->first << std::endl;
-			pset = map_it->second;
-			for(set_it = pset->begin(); set_it != pset->end(); set_it++)
+			std::cerr << "Layer: " << layer_iter->first << std::endl;
+			widget_set_p = layer_iter->second.widgets;
+			for(widget_iter = widget_set_p->begin(); widget_iter != widget_set_p->end(); widget_iter++)
 			{
-				std::cerr << (*set_it)->name() << " ";
+				std::cerr << (*widget_iter)->name() << " ";
 			}
 			std::cerr << std::endl;
 		}

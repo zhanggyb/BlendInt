@@ -43,6 +43,8 @@
 #ifndef _BLENDINT_INTERFACE_HPP_
 #define _BLENDINT_INTERFACE_HPP_
 
+#include <set>
+
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Point.hpp>
@@ -66,6 +68,8 @@ namespace BlendInt {
 	class AbstractWidget;
 	class KeyEvent;
 	class MouseEvent;
+
+	class GLTexture2D;
 
 	class ScreenBuffer;
 
@@ -134,6 +138,8 @@ namespace BlendInt {
 		void PreDrawContext (bool fbo = false);
 
 		void DrawContext ();
+
+		void OffScreenRenderToTexture (int layer, std::set<AbstractWidget*>* widgets, GLTexture2D* texture);
 
 		void RenderToScreenBuffer ();
 

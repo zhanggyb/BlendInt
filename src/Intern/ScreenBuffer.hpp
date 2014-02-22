@@ -54,7 +54,7 @@ namespace BlendInt {
 
 	private:
 
-		void Render ();
+		void Render (GLTexture2D* texture);
 
 		ScreenBuffer ();
 

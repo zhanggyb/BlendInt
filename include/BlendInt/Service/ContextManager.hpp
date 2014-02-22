@@ -40,6 +40,19 @@ namespace BlendInt {
 
 	class Interface;
 	class AbstractWidget;
+	class GLTexture2D;
+
+	struct ContextLayer {
+
+		ContextLayer ();
+		~ContextLayer ();
+
+		bool refresh;
+
+		set<AbstractWidget*>* widgets;
+
+		GLTexture2D* buffer;
+	};
 
 	/**
 	 * @brief Class to hold and manage widget objects for Render
@@ -93,17 +106,13 @@ namespace BlendInt {
 		 */
 		bool RemoveWidget (AbstractWidget* obj);
 
-		typedef map<int, set<AbstractWidget*>* > LayerType;
-		typedef set<AbstractWidget*> SetType;
-		typedef map<AbstractWidget*, int> IndexType;
-
 		ContextManager ();
 
 		~ContextManager ();
 
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point, const AbstractWidget* parent);
 
-		map<int, set<AbstractWidget*>* > m_layers;
+		map<int, ContextLayer > m_layers;
 
 		map<AbstractWidget*, int> m_index;
 

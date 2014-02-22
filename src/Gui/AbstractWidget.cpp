@@ -331,7 +331,7 @@ namespace BlendInt {
 
 		if(m_z == z) return;
 
-		if(m_flag[2]) {
+		if(m_flag[WidgetFlagRegistered]) {
 			ContextManager::Instance()->Unregister(this);
 			Update (WidgetLayer, &z);
 			m_z = z;
