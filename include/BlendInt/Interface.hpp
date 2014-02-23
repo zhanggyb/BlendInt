@@ -44,6 +44,7 @@
 #define _BLENDINT_INTERFACE_HPP_
 
 #include <set>
+#include <deque>
 
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Core/Size.hpp>
@@ -168,6 +169,8 @@ namespace BlendInt {
 		Cpp::Event<unsigned int, unsigned int> m_resized;
 
 		FocusStyle m_focus_style;
+
+		std::deque<GLTexture2D*> m_deque;
 
 		static Interface* interface;
 

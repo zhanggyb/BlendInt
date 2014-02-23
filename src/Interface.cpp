@@ -172,6 +172,7 @@ namespace BlendInt {
 
 	Interface::~Interface ()
 	{
+		m_deque.clear();
 		if(m_screenbuffer) delete m_screenbuffer;
 	}
 
@@ -214,6 +215,8 @@ namespace BlendInt {
 
 	void Interface::Draw ()
 	{
+		m_deque.clear();
+
 		if(ContextManager::force_refresh_all) {
 
 			map<int, ContextLayer>::iterator layer_iter;
@@ -234,7 +237,9 @@ namespace BlendInt {
 					layer_iter->second.buffer = new GLTexture2D;
 					layer_iter->second.buffer->Generate();
 				}
+
 				OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+				m_deque.push_back(layer_iter->second.buffer);
 
 				count++;
 
@@ -244,7 +249,7 @@ namespace BlendInt {
 			RenderToScreenBuffer();
 
 			ContextManager::refresh_once = false;
-
+			ContextManager::force_refresh_all = false;
 
 		} else if(ContextManager::refresh_once) {
 
@@ -286,6 +291,7 @@ namespace BlendInt {
 
 				count++;
 
+				m_deque.push_back(layer_iter->second.buffer);
 				layer_iter->second.refresh = false;
 			}
 
@@ -330,8 +336,6 @@ namespace BlendInt {
 		// ---------
 
 		m_screenbuffer->Render(m_screenbuffer->m_texture);
-
-		ContextManager::force_refresh_all = false;
 	}
 
 	void Interface::PreDrawContext (bool fbo)
@@ -454,11 +458,14 @@ namespace BlendInt {
 				DispatchDrawEvent(*widget_iter);
 			}
 
+			// uncomment the code below to test the layer buffer (texture)
+			/*
 			std::string str("layer");
 			char buf[4];
 			sprintf(buf, "%d", layer);
 			str = str + buf + ".png";
 			tex->WriteToFile(str);
+			 */
 		}
 
 
@@ -764,15 +771,22 @@ namespace BlendInt {
 
 	#ifdef DEBUG
 			//DrawTriangle(false);
-			//draw_grid(width, height);
+			draw_grid(width, height);
 	#endif
 
+			/*
 			map<int, ContextLayer>::iterator layer_iter;
 			for(layer_iter = ContextManager::context_manager->m_layers.begin();
 					layer_iter != ContextManager::context_manager->m_layers.end();
 					layer_iter++)
 			{
 				m_screenbuffer->Render(layer_iter->second.buffer);
+			}
+			*/
+			std::deque<GLTexture2D*>::iterator it;
+			for(it = m_deque.begin(); it != m_deque.end(); it++)
+			{
+				m_screenbuffer->Render(*it);
 			}
 
 		}
