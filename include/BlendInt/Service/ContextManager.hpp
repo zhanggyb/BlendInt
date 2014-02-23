@@ -77,6 +77,8 @@ namespace BlendInt {
 
 		void SetFocusedWidget (AbstractWidget* widget);
 
+		void RefreshLayer (int layer);
+
 #ifdef DEBUG
 
 		void print ();
@@ -115,6 +117,10 @@ namespace BlendInt {
 		map<int, ContextLayer > m_layers;
 
 		map<AbstractWidget*, int> m_index;
+
+		static bool refresh_once;
+
+		static bool force_refresh_all;
 
 		static ContextManager* context_manager;
 		

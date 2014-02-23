@@ -360,10 +360,6 @@ namespace BlendInt {
 
 		std::set<AbstractWidget*> m_children;
 
-		static bool refresh_all;
-
-		static std::set<int> refresh_layers;
-
 		static AbstractWidget* focused_widget;
 
 #ifdef DEBUG

@@ -67,6 +67,10 @@ namespace BlendInt {
 
 	ContextManager* ContextManager::context_manager = 0;
 
+	bool ContextManager::refresh_once = false;
+
+	bool ContextManager::force_refresh_all = true;
+
 	ContextManager* ContextManager::Instance ()
 	{
 		if (!context_manager) {
@@ -220,8 +224,9 @@ namespace BlendInt {
 				m_layers[obj->z()].widgets = new_widget_set_p;
 
 				// Refresh this layer in the render loop
-				AbstractWidget::refresh_layers.insert(obj->z());
 				m_layers[obj->z()].refresh = true;
+				refresh_once = true;
+
 			}
 			
 //		}
@@ -258,10 +263,6 @@ namespace BlendInt {
 			if (widget_set_p->empty()) {
 				m_layers.erase(index_iter->second);
 				delete widget_set_p;
-
-				if(AbstractWidget::refresh_layers.count(obj->z())) {
-					AbstractWidget::refresh_layers.erase(obj->z());
-				}
 			}
 
 			m_index.erase(obj);
@@ -355,6 +356,18 @@ namespace BlendInt {
 		AbstractWidget::focused_widget = widget;
 		if(AbstractWidget::focused_widget) {
 			AbstractWidget::focused_widget->m_flag.set(AbstractWidget::WidgetFlagFocus);
+		}
+	}
+
+	void ContextManager::RefreshLayer (int layer)
+	{
+		map<int, ContextLayer>::iterator layer_iter;
+
+		layer_iter = m_layers.find(layer);
+
+		if(layer_iter != m_layers.end()) {
+			m_layers[layer].refresh = true;
+			refresh_once = true;
 		}
 	}
 

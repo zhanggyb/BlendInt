@@ -79,8 +79,6 @@ namespace BlendInt {
 
 		std::vector<WidgetsLayerBuffer> m_widgets_layer_buffers;
 
-		static bool force_refresh_all_buffers;
-
 		static unsigned int max_widgets_layer_buffer_size;
 
 		static const char* vertex_shader;

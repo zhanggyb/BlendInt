@@ -60,8 +60,6 @@ namespace BlendInt {
 
 	unsigned int ScreenBuffer::max_widgets_layer_buffer_size = 4;
 
-	bool ScreenBuffer::force_refresh_all_buffers = false;
-
 	ScreenBuffer::ScreenBuffer()
 	: Object(), m_texture(0), m_program(0), m_vbo(0), m_tbo(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
 	{

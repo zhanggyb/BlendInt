@@ -191,8 +191,8 @@ namespace BlendInt {
 			AbstractWidget::Resize(m_main, size);
 		}
 
-		AbstractWidget::refresh_all = true;
-		ScreenBuffer::force_refresh_all_buffers = true;
+		ContextManager::refresh_once = true;
+		ContextManager::force_refresh_all = true;
 	}
 
 	void Interface::Resize (unsigned int width, unsigned int height)
@@ -208,20 +208,45 @@ namespace BlendInt {
 			AbstractWidget::Resize(m_main, width, height);
 		}
 
-		AbstractWidget::refresh_all = true;
-		ScreenBuffer::force_refresh_all_buffers = true;
+		ContextManager::refresh_once = true;
+		ContextManager::force_refresh_all = true;
 	}
 
 	void Interface::Draw ()
 	{
+		if(ContextManager::force_refresh_all) {
+
+			map<int, ContextLayer>::iterator layer_iter;
+			unsigned int count = 0;
+			set<AbstractWidget*>* widget_set_p = 0;
+
+			for(layer_iter = ContextManager::context_manager->m_layers.begin();
+					layer_iter != ContextManager::context_manager->m_layers.end();
+					layer_iter++)
+			{
+				widget_set_p = layer_iter->second.widgets;
+
 #ifdef DEBUG
-		for(std::set<int>::iterator it = AbstractWidget::refresh_layers.begin(); it != AbstractWidget::refresh_layers.end(); it++)
-		{
-			std::cout << "Layer: " << *it << " need to be refreshed" << std::endl;
-		}
+				std::cout << "Layer: " << layer_iter->first << " need to be refreshed" << std::endl;
 #endif	// DEBUG
 
-		if(AbstractWidget::refresh_all) {
+				if(!layer_iter->second.buffer) {
+					layer_iter->second.buffer = new GLTexture2D;
+					layer_iter->second.buffer->Generate();
+				}
+				OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+
+				count++;
+
+				layer_iter->second.refresh = false;
+			}
+
+			RenderToScreenBuffer();
+
+			ContextManager::refresh_once = false;
+
+
+		} else if(ContextManager::refresh_once) {
 
 			map<int, ContextLayer>::iterator layer_iter;
 			unsigned int count = 0;
@@ -234,6 +259,10 @@ namespace BlendInt {
 				widget_set_p = layer_iter->second.widgets;
 
 				if(layer_iter->second.refresh) {
+
+#ifdef DEBUG
+					std::cout << "Layer: " << layer_iter->first << " need to be refreshed" << std::endl;
+#endif	// DEBUG
 
 					if(!layer_iter->second.buffer) {
 						layer_iter->second.buffer = new GLTexture2D;
@@ -260,17 +289,49 @@ namespace BlendInt {
 				layer_iter->second.refresh = false;
 			}
 
-
-
 			RenderToScreenBuffer();
+
+			ContextManager::refresh_once = false;
 		}
+
+		// ---------
+		/*
+
+		glClearColor(0.447, 0.447, 0.447, 1.00);
+		glClearDepth(1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+		//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+//		glEnable(GL_BLEND);
+
+//		glViewport(0, 0, size().width(), size().height());
+//		glMatrixMode(GL_PROJECTION);
+//		glLoadIdentity();
+//		glOrtho(0.f, (float) size().width(), 0.f, (float) size().width(), 100.f, -100.f);
+
+//		glMatrixMode(GL_MODELVIEW);
+//		glLoadIdentity();
+
+		draw_grid(size().width(), size().height());
+
+		map<int, ContextLayer>::iterator layer_iter;
+		for(layer_iter = ContextManager::context_manager->m_layers.begin();
+				layer_iter != ContextManager::context_manager->m_layers.end();
+				layer_iter++)
+		{
+			m_screenbuffer->Render(layer_iter->second.buffer);
+		}
+		*/
+
+		// ---------
 
 		m_screenbuffer->Render(m_screenbuffer->m_texture);
 
-		AbstractWidget::refresh_all = false;
-		AbstractWidget::refresh_layers.clear();
-
-		ScreenBuffer::force_refresh_all_buffers = false;
+		ContextManager::force_refresh_all = false;
 	}
 
 	void Interface::PreDrawContext (bool fbo)
@@ -656,8 +717,63 @@ namespace BlendInt {
 		if(GLFramebuffer::CheckStatus()) {
 
 			fb->Bind();
+
+			/* -- old
+
 			PreDrawContext(true);
-			DrawContext();
+
+			glViewport(0, 0, width, height);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+	#ifdef DEBUG
+			//DrawTriangle(false);
+			draw_grid(width, height);
+	#endif
+
+			map<int, ContextLayer>::iterator layer_iter;
+			set<AbstractWidget*>::iterator widget_iter;
+
+			for(layer_iter = ContextManager::context_manager->m_layers.begin();
+					layer_iter != ContextManager::context_manager->m_layers.end();
+					layer_iter++)
+			{
+				set<AbstractWidget*>* pset = layer_iter->second.widgets;
+				for (widget_iter = pset->begin(); widget_iter != pset->end(); widget_iter++)
+				{
+					//(*set_it)->Draw();
+					DispatchDrawEvent(*widget_iter);
+				}
+			}
+
+			*/
+
+			PreDrawContext(true);
+
+			glViewport(0, 0, width, height);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+	#ifdef DEBUG
+			//DrawTriangle(false);
+			//draw_grid(width, height);
+	#endif
+
+			map<int, ContextLayer>::iterator layer_iter;
+			for(layer_iter = ContextManager::context_manager->m_layers.begin();
+					layer_iter != ContextManager::context_manager->m_layers.end();
+					layer_iter++)
+			{
+				m_screenbuffer->Render(layer_iter->second.buffer);
+			}
 
 		}
 

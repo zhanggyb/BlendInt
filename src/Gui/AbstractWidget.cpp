@@ -51,10 +51,6 @@ namespace BlendInt {
 
 	using namespace std;
 
-	bool AbstractWidget::refresh_all = true;
-
-	std::set<int> AbstractWidget::refresh_layers;
-
 	AbstractWidget* AbstractWidget::focused_widget = 0;
 
 	AbstractWidget::AbstractWidget ()
@@ -349,8 +345,7 @@ namespace BlendInt {
 		if(!m_flag[WidgetFlagRegistered])
 			return;
 
-		refresh_all = true;
-		refresh_layers.insert(m_z);
+		ContextManager::Instance()->RefreshLayer(m_z);
 	}
 
 	void AbstractWidget::RenderToFile(const char* filename, unsigned int border)
