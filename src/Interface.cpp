@@ -138,7 +138,7 @@ namespace BlendInt {
 		}
 
 		if (success && ContextManager::Initialize()) {
-			// do nothing
+
 		} else {
 			std::cerr << "Cannot initialize Context Manager" << std::endl;
 			success = false;
@@ -164,7 +164,7 @@ namespace BlendInt {
 	}
 
 	Interface::Interface ()
-	: m_main(0), m_focus_style(FocusOnClick)
+	: m_main(0), m_screenbuffer(0), m_focus_style(FocusOnClick)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 		m_screenbuffer = new ScreenBuffer;
@@ -335,7 +335,7 @@ namespace BlendInt {
 
 		// ---------
 
-		m_screenbuffer->Render(m_screenbuffer->m_texture);
+		m_screenbuffer->Render(ContextManager::context_manager->m_main_buffer);
 	}
 
 	void Interface::PreDrawContext (bool fbo)
@@ -691,7 +691,7 @@ namespace BlendInt {
 		GLsizei height = m_size.height();
 
 		// Create and set texture to render to.
-		GLTexture2D* tex = m_screenbuffer->m_texture;
+		GLTexture2D* tex = ContextManager::context_manager->m_main_buffer;
 		tex->Generate();
 		tex->Bind();
 		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);

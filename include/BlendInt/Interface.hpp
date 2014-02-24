@@ -158,11 +158,11 @@ namespace BlendInt {
 
 		AbstractWidget* m_main;
 
+		ScreenBuffer* m_screenbuffer;
+
 		Point m_cursor;
 
 		Size m_size;
-
-		ScreenBuffer* m_screenbuffer;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 

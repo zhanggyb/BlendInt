@@ -106,9 +106,12 @@ namespace BlendInt {
 	}
 
 	ContextManager::ContextManager ()
+	: m_main_buffer(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 		m_hover_deque.reset(new std::deque<AbstractWidget*>);
+
+		m_main_buffer = new GLTexture2D;
 	}
 
 	ContextManager::~ContextManager ()
@@ -139,6 +142,11 @@ namespace BlendInt {
 
 		m_layers.clear();
 		m_index.clear();
+
+		if(m_main_buffer) {
+			m_main_buffer->Clear();
+			delete m_main_buffer;
+		}
 	}
 
 
@@ -250,7 +258,9 @@ namespace BlendInt {
 
 		if(index_iter != m_index.end()) {
 
-			set<AbstractWidget*>* widget_set_p = m_layers[index_iter->second].widgets;
+			int z = index_iter->second;
+
+			set<AbstractWidget*>* widget_set_p = m_layers[z].widgets;
 			set<AbstractWidget*>::iterator widget_iter = widget_set_p->find(obj);
 			if (widget_iter != widget_set_p->end()) {
 				widget_set_p->erase (widget_iter);
@@ -261,8 +271,13 @@ namespace BlendInt {
 			}
 
 			if (widget_set_p->empty()) {
-				m_layers.erase(index_iter->second);
-				delete widget_set_p;
+				//delete widget_set_p; widget_set_p = 0;
+				delete m_layers[z].widgets; m_layers[z].widgets = 0;
+
+				m_layers[z].buffer->Clear();
+				delete m_layers[z].buffer; m_layers[z].buffer = 0;
+
+				m_layers.erase(z);
 			}
 
 			m_index.erase(obj);

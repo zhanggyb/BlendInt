@@ -75,13 +75,13 @@ int main(int argc, char* argv[])
 	toggle1->Resize(100, 100);
 	toggle1->Register();
 
-	Button* btn2 = new Button;
-	btn2->set_name("Button2");
-	btn2->SetExpandX(false);
-	btn2->SetPosition(600, 250);
-	btn2->Resize(100, 100);
-	btn2->SetLayer(1);
-	btn2->Register();
+//	Button* btn2 = new Button;
+//	btn2->set_name("Button2");
+//	btn2->SetExpandX(false);
+//	btn2->SetPosition(600, 250);
+//	btn2->Resize(100, 100);
+//	btn2->SetLayer(1);
+//	btn2->Register();
 
 
 //	Button* btn2 = new Button;
@@ -95,13 +95,13 @@ int main(int argc, char* argv[])
 //	view3d1->SetPosition(20, 20);
 //	view3d1->Resize(500, 400);
 //	view3d1->Register();
-//
-//	Viewport3D* view3d2 = new Viewport3D;
-//	view3d2->set_name("Viewport 3D2");
-//	view3d2->SetPosition(20, 20);
-//	view3d2->Resize(500, 400);
-//	view3d2->Register();
-//
+
+	Viewport3D* view3d2 = new Viewport3D;
+	view3d2->set_name("Viewport 3D2");
+	view3d2->SetPosition(20, 20);
+	view3d2->Resize(500, 400);
+	view3d2->Register();
+
 //	VerticalLayout* vlayout = new VerticalLayout;
 //	vlayout->Add(btn1);
 //	vlayout->Add(btn2);

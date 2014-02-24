@@ -61,7 +61,7 @@ namespace BlendInt {
 	unsigned int ScreenBuffer::max_widgets_layer_buffer_size = 4;
 
 	ScreenBuffer::ScreenBuffer()
-	: Object(), m_texture(0), m_program(0), m_vbo(0), m_tbo(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
+	: Object(), m_program(0), m_vbo(0), m_tbo(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
 	{
 		InitOnce();
 	}
@@ -76,8 +76,6 @@ namespace BlendInt {
 		}
 
 		m_widgets_layer_buffers.clear();
-
-		if(m_texture) delete m_texture;
 
 		Object::Destroy(m_tbo);
 		Object::Destroy(m_vbo);
@@ -133,8 +131,6 @@ namespace BlendInt {
 
 	void ScreenBuffer::InitOnce()
 	{
-		m_texture = new GLTexture2D;
-
 		m_vbo = new GLArrayBuffer;
 		Retain(m_vbo);
 
@@ -203,7 +199,7 @@ namespace BlendInt {
 
 	void ScreenBuffer::SaveToFile (const char* filename)
 	{
-		m_texture->WriteToFile(filename);
+		//m_texture->WriteToFile(filename);
 	}
 
 

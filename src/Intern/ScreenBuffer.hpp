@@ -66,8 +66,6 @@ namespace BlendInt {
 
 		void SaveToFile (const char* filename);
 
-		GLTexture2D* m_texture;
-
 		GLSLProgram* m_program;
 
 		GLArrayBuffer* m_vbo;

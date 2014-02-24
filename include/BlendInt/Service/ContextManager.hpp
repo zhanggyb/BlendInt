@@ -52,6 +52,7 @@ namespace BlendInt {
 		set<AbstractWidget*>* widgets;
 
 		GLTexture2D* buffer;
+
 	};
 
 	/**
@@ -117,6 +118,8 @@ namespace BlendInt {
 		map<int, ContextLayer > m_layers;
 
 		map<AbstractWidget*, int> m_index;
+
+		GLTexture2D* m_main_buffer;
 
 		static bool refresh_once;
 
