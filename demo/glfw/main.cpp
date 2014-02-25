@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 
 	Viewport3D* view3d2 = new Viewport3D;
 	view3d2->set_name("Viewport 3D2");
-	view3d2->SetPosition(20, 20);
+	view3d2->SetPosition(220, 20);
 	view3d2->Resize(500, 400);
 	view3d2->Register();
 

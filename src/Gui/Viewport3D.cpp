@@ -194,6 +194,8 @@ namespace BlendInt {
 					m_default_camera->Orbit(dx, dy);
 				}
 
+				Refresh();
+
 				break;
 			}
 
@@ -205,7 +207,6 @@ namespace BlendInt {
 				break;
 		}
 
-		Refresh();
 		event->accept(this);
 	}
 
