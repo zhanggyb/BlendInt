@@ -30,8 +30,13 @@
 
 namespace BlendInt {
 
+	ObjectPtr Object::Create ()
+	{
+		return new Object;
+	}
+
 	Object::Object()
-	: m_ref_count(0)
+	: m_count(0)
 #ifdef DEBUG
 	, m_id(0)
 #endif
@@ -65,14 +70,14 @@ namespace BlendInt {
 	{
 		if(obj == 0) return;
 
-		if(obj->m_ref_count == 0) {
+		if(obj->m_count == 0) {
 #ifdef DEBUG
 			std::cerr << "Warning: object " << obj->name() << " deleted with no reference" << std::endl;
 #endif
 			delete obj;
 		} else {
-			obj->m_ref_count--;
-			if(obj->m_ref_count == 0) {
+			obj->m_count--;
+			if(obj->m_count == 0) {
 				delete obj;
 			}
 		}
@@ -80,7 +85,7 @@ namespace BlendInt {
 
 	void Object::Retain(Object* obj)
 	{
-		obj->m_ref_count++;
+		obj->m_count++;
 	}
 
 #ifdef DEBUG

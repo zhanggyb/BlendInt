@@ -24,28 +24,13 @@ ObjectTest1::~ObjectTest1()
 TEST_F(ObjectTest1, New1)
 {
 	// TODO: add test code here
-    Object* obj1 = new Object;
-    obj1->set_name("obj1");
+    ObjectPtr obj1 = Object::Create();
 
-    std::cout << "obj1 ref count: " << obj1->ref_count() << std::endl;
-	
-	Object* obj2 = new Object;
-	
-	obj2->set_name("obj2");
-	
-    std::cout << "obj2 ref count: " << obj2->ref_count() << std::endl;
+    ObjectPtr obj2 = Object::Create();
 
-    Object::Destroy(obj2);
+    obj2 = obj1;
 
-#ifdef DEBUG
-    Object::Retain (obj1);
-    Object::Retain (obj1);
-    std::cout << "obj1 ref count: " << obj1->ref_count() << std::endl;
-    Object::Destroy(obj1);
-    Object::Destroy(obj1);
-#endif
-
-    std::cout << "size of object: " << sizeof(Object) << std::endl;
+    std::cout << "Object ref count: " << obj1->ref_count() << std::endl;
 
 	ASSERT_TRUE(true);
 }

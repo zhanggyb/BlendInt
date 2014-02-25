@@ -31,10 +31,11 @@
 #endif	// DEBUG
 
 #include <string>
+#include <stdexcept>
 
 namespace BlendInt {
 
-	class Interface;
+	class ObjectPtr;
 
 	/**
 	 * @brief The base class of most BlendInt objects
@@ -49,7 +50,7 @@ namespace BlendInt {
 	{
 	public:
 
-		Object ();
+		static ObjectPtr Create ();
 
 		inline void set_name (const char* name)
 		{
@@ -65,7 +66,7 @@ namespace BlendInt {
 
 		inline size_t ref_count ()
 		{
-			return m_ref_count;
+			return m_count;
 		}
 
 #ifdef DEBUG
@@ -76,6 +77,8 @@ namespace BlendInt {
 
 	protected:
 
+		Object ();
+
 		virtual ~Object ();
 
 #ifndef DEBUG
@@ -84,7 +87,7 @@ namespace BlendInt {
 
 	private:
 
-		size_t m_ref_count;
+		size_t m_count;
 
 		std::string m_name;
 
@@ -115,6 +118,8 @@ namespace BlendInt {
 
 	private:
 
+		friend class ObjectPtr;
+
 		inline bool register_in_map ();
 
 		inline bool unregister_from_map ();
@@ -132,6 +137,69 @@ namespace BlendInt {
 		static bool CheckAllocatedObjects ();
 
 #endif
+	};
+
+	class ObjectPtr
+	{
+	public:
+
+		ObjectPtr ()
+		: m_p(0)
+		{
+		}
+
+		ObjectPtr (Object* p)
+				: m_p(p)
+		{
+			++m_p->m_count;
+		}
+
+		ObjectPtr (const ObjectPtr& orig)
+				: m_p(orig.m_p)
+		{
+			++m_p->m_count;
+		}
+
+		~ObjectPtr ()
+		{
+			if (--m_p->m_count == 0)
+				delete m_p;
+		}
+
+		Object* operator-> ()
+		{
+			return m_p;
+		}
+
+		Object& operator* ()
+		{
+			if(!m_p) {
+				throw std::logic_error("No object stored!");
+			}
+			return *m_p;
+		}
+
+		ObjectPtr& operator = (const ObjectPtr& orig)
+		{
+			if(m_p) {
+
+				Object* const old = m_p;
+				m_p = orig.m_p;
+				++m_p->m_count;
+
+				if (--old->m_count == 0)
+					delete old;
+
+			} else {
+				m_p = orig.m_p;
+				++m_p->m_count;
+			}
+
+			return *this;
+		}
+
+	private:
+		Object* m_p;
 	};
 
 }
