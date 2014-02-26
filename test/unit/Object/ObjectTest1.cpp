@@ -24,13 +24,13 @@ ObjectTest1::~ObjectTest1()
 TEST_F(ObjectTest1, New1)
 {
 	// TODO: add test code here
-    ObjectPtr obj1 = Object::Create();
+    RefPtr<Object> obj1 = Object::Create();
 
-    ObjectPtr obj2 = Object::Create();
+    RefPtr<Object> obj2 = Object::Create();
 
     obj2 = obj1;
 
-    std::cout << "Object ref count: " << obj1->ref_count() << std::endl;
+    std::cout << "Object ref count: " << obj1->count() << std::endl;
 
 	ASSERT_TRUE(true);
 }

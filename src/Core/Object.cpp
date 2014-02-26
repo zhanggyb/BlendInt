@@ -30,9 +30,10 @@
 
 namespace BlendInt {
 
-	ObjectPtr Object::Create ()
+	RefPtr<Object> Object::Create ()
 	{
-		return new Object;
+		RefPtr<Object> ret(new Object);
+		return ret;
 	}
 
 	Object::Object()

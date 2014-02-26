@@ -96,7 +96,7 @@ namespace BlendInt {
 		while(m_children.size()) {
 			it = m_children.begin();
 			(*it)->m_parent = 0;
-			if((*it)->ref_count() == 0)
+			if((*it)->count() == 0)
 				delete *it;
 			m_children.erase(it);
 		}

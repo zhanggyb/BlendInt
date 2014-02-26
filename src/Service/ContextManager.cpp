@@ -58,7 +58,7 @@ namespace BlendInt {
 
 			for(it = widgets->begin(); it != widgets->end(); it++)
 			{
-				if((*it)->ref_count() == 0) delete *it;
+				if((*it)->count() == 0) delete *it;
 			}
 
 			widgets->clear();
@@ -134,7 +134,7 @@ namespace BlendInt {
 			{
 				(*widget_iter)->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
-				if((*widget_iter)->ref_count() == 0) delete *widget_iter;
+				if((*widget_iter)->count() == 0) delete *widget_iter;
 			}
 
 			widget_set_p->clear();
