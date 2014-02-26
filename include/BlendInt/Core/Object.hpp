@@ -50,7 +50,7 @@ namespace BlendInt {
 	{
 	public:
 
-		static RefPtr<Object> Create ();
+		static RefPtr<Object> Create (const char* name = 0);
 
 		inline void set_name (const char* name)
 		{

@@ -30,9 +30,10 @@
 
 namespace BlendInt {
 
-	RefPtr<Object> Object::Create ()
+	RefPtr<Object> Object::Create (const char* name)
 	{
 		RefPtr<Object> ret(new Object);
+		ret->m_name = name;
 		return ret;
 	}
 
@@ -64,6 +65,8 @@ namespace BlendInt {
 	{
 #ifdef DEBUG
 		unregister_from_map();
+
+		std::cout << "Object: " << m_name << " is destroyed." << std::endl;
 #endif
 	}
 

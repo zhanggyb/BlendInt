@@ -43,15 +43,27 @@ namespace BlendInt {
 
 		inline RefPtr<T>& operator = (const RefPtr<T>& orig);
 
+		inline void destroy ();
+
+		inline RefPtr<T>& swap (RefPtr<T>& other);
+
 		inline T* operator-> () const;
 
 		inline T& operator* () const;
 
 		inline bool operator== (const RefPtr<T>& src) const;
 
-		inline bool operator != (const RefPtr<T>& src) const;
+		inline bool operator!= (const RefPtr<T>& src) const;
 
 		inline operator bool() const;
+
+		inline bool operator< (const RefPtr<T>& src) const;
+
+		inline bool operator<= (const RefPtr<T>& src) const;
+
+		inline bool operator> (const RefPtr<T>& src) const;
+
+		inline bool operator>= (const RefPtr<T>& src) const;
 
 	private:
 		T* m_ptr;
@@ -82,8 +94,7 @@ namespace BlendInt {
 	template <typename T> inline
 	RefPtr<T>::~RefPtr()
 	{
-		if(--m_ptr->m_count == 0)
-			delete m_ptr;
+		destroy();
 	}
 
 	template <typename T> inline
@@ -108,6 +119,25 @@ namespace BlendInt {
 	}
 
 	template <typename T> inline
+	void RefPtr<T>::destroy ()
+	{
+		if(m_ptr) {
+			if(--m_ptr->m_count == 0)
+				delete m_ptr;
+
+			m_ptr = 0;
+		}
+	}
+
+	template <typename T> inline
+	RefPtr<T>& RefPtr<T>::swap (RefPtr<T>& other)
+	{
+		T* const temp = m_ptr;
+		m_ptr = other.m_ptr;
+		other.m_ptr = temp;
+	}
+
+	template <typename T> inline
 	T* RefPtr<T>::operator-> () const
 	{
 		return m_ptr;
@@ -117,7 +147,7 @@ namespace BlendInt {
 	T& RefPtr<T>::operator* () const
 	{
 		if(!m_ptr) {
-			throw std::logic_error("No object stored!");
+			throw std::runtime_error("No object stored!");
 		}
 
 		return *m_ptr;
@@ -139,6 +169,30 @@ namespace BlendInt {
 	RefPtr<T>::operator bool() const
 	{
 		return (m_ptr != 0);
+	}
+
+	template <typename T> inline
+	bool RefPtr<T>::operator< (const RefPtr<T>& src) const
+	{
+		return (m_ptr < src.m_ptr);
+	}
+
+	template <typename T> inline
+	bool RefPtr<T>::operator<= (const RefPtr<T>& src) const
+	{
+		return (m_ptr <= src.m_ptr);
+	}
+
+	template <typename T> inline
+	bool RefPtr<T>::operator> (const RefPtr<T>& src) const
+	{
+		return (m_ptr > src.m_ptr);
+	}
+
+	template <typename T> inline
+	bool RefPtr<T>::operator>= (const RefPtr<T>& src) const
+	{
+		return (m_ptr >= src.m_ptr);
 	}
 
 }
