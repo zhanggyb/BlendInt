@@ -35,24 +35,23 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&)
 
-#ifdef DEBUG
-#include <stdio.h>
-#define PRINT_DEBUG_MSG(msg) \
-	fprintf(stderr, "%s: %d, %s -- %s\n", __FILE__, __LINE__, __func__, msg)
+#ifdef __UNIX__
+#include <string.h>
+#define FILE_BASE_NAME (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+#else
+#include <string.h>
+#define FILE_BASE_FILENAME (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #endif
 
-/**
- * macro to define a class property that will effect the opengl drawing,
- * change this property should call Update()
- */
-#define DRAWABLE_PROPERTY
-
-/** macro to declare a member function is an event */
-#define EVENT_CALLER
-
-/** macro to declare a member function is an delegate */
-#define DELEGATE
-
+#ifdef DEBUG
+#include <stdio.h>
+#define DBG_PRINT_MSG(fmt, args...) \
+	do { \
+		fprintf(stderr, "%s:%d:%s(): "fmt"\n", FILE_BASE_NAME, __LINE__, __FUNCTION__, args); \
+	} while (0)
+#else
+#define DBG_PRINT_MSG(fmt, args...) ((void)0)
+#endif
 
 #define WIDGET_AA_JITTER 8
 

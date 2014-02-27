@@ -25,8 +25,9 @@
 
 #ifdef DEBUG
 #include <iostream>
-#include <stdexcept>
 #endif
+
+#include <BlendInt/Types.hpp>
 
 namespace BlendInt {
 
@@ -65,9 +66,9 @@ namespace BlendInt {
 	{
 #ifdef DEBUG
 		unregister_from_map();
-
-		std::cout << "Object: " << m_name << " is destroyed." << std::endl;
 #endif
+
+		DBG_PRINT_MSG("object is destroyed: %s", m_name.c_str());
 	}
 
 	void Object::Destroy(Object *obj)
@@ -75,9 +76,7 @@ namespace BlendInt {
 		if(obj == 0) return;
 
 		if(obj->m_count == 0) {
-#ifdef DEBUG
-			std::cerr << "Warning: object " << obj->name() << " deleted with no reference" << std::endl;
-#endif
+			DBG_PRINT_MSG("WARNING: object %s is deleted with no reference", obj->name().c_str());
 			delete obj;
 		} else {
 			obj->m_count--;
