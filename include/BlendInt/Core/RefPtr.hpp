@@ -140,6 +140,10 @@ namespace BlendInt {
 	template <typename T> inline
 	T* RefPtr<T>::operator-> () const
 	{
+		if(!m_ptr) {
+			throw std::runtime_error("No object stored!");
+		}
+
 		return m_ptr;
 	}
 

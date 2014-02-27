@@ -68,7 +68,7 @@ namespace BlendInt {
 		unregister_from_map();
 #endif
 
-		DBG_PRINT_MSG("object is destroyed: %s", m_name.c_str());
+		//DBG_PRINT_MSG("object is destroyed: %s", m_name.c_str());
 	}
 
 	void Object::Destroy(Object *obj)
