@@ -69,7 +69,7 @@ namespace BlendInt {
 
 				for (size_t i = 0; i < m_items.size(); i++)
 				{
-					SetPosition(m_items[i].ptr(),
+					SetPosition(m_items[i].get(),
 							m_items[i]->position().x() + (new_pos->x() - position().x()),
 							m_items[i]->position().y() + (new_pos->y() - position().y()));
 				}
@@ -231,7 +231,7 @@ namespace BlendInt {
 	{
 		for(std::vector<AbstractWidgetPtr>::iterator it = m_items.begin(); it != m_items.end(); it++)
 		{
-			Resize((*it).ptr(), (*it)->preferred_size().width(), (*it)->size().height());
+			Resize((*it).get(), (*it)->preferred_size().width(), (*it)->size().height());
 		}
 
 		int x = position().x() + margin->left();
@@ -260,7 +260,7 @@ namespace BlendInt {
 				average_expd_width = average_expd_width / m_expandable_items.size();
 
 				for (it = m_items.begin(); it != m_items.end(); it++) {
-					child = (*it).ptr();
+					child = (*it).get();
 
 					if (m_expandable_items.count(child)) {
 						Resize(child, average_expd_width, child->size().height());
@@ -285,7 +285,7 @@ namespace BlendInt {
 
 				for (it = m_items.begin(); it != m_items.end(); it++) {
 
-					child = (*it).ptr();
+					child = (*it).get();
 
 					if (m_expandable_items.count(child)) {
 						Resize(child, child->minimal_size().width(),
@@ -342,7 +342,7 @@ namespace BlendInt {
 				int x = position().x() + margin->left();
 
 				for (it = m_items.begin(); it != m_items.end(); it++) {
-					child = (*it).ptr();
+					child = (*it).get();
 					if(m_expandable_items.count(child)) {
 						if(average_expd_width > child->maximal_size().width()) {
 							width_plus = width_plus + average_expd_width - child->maximal_size().width();
@@ -369,7 +369,7 @@ namespace BlendInt {
 				// resize all with the max size
 				for(it = m_items.begin(); it != m_items.end(); it++)
 				{
-					child = (*it).ptr();
+					child = (*it).get();
 
 					if (m_expandable_items.count(child)) {
 						Resize(child, child->maximal_size().width(), child->size().height());
@@ -391,7 +391,7 @@ namespace BlendInt {
 			// resize all with preferred width
 			for(it = m_items.begin(); it != m_items.end(); it++)
 			{
-				child = (*it).ptr();
+				child = (*it).get();
 				Resize(child, child->preferred_size().width(),
 					        child->size().height());
 			}
@@ -408,7 +408,7 @@ namespace BlendInt {
 		{
 			start += space;
 
-			SetPosition((*it).ptr(), start, (*it)->position().y());
+			SetPosition((*it).get(), start, (*it)->position().y());
 			start += (*it)->size().width();
 		}
 	}
@@ -423,7 +423,7 @@ namespace BlendInt {
 		AbstractWidget* child = 0;
 		for(it = m_items.begin(); it != m_items.end(); it++)
 		{
-			child = (*it).ptr();
+			child = (*it).get();
 
 			if (child->expand_y() ||
 					(child->size().height() > h)) {
@@ -558,7 +558,7 @@ namespace BlendInt {
 
 		for(it = m_items.begin(); it != m_items.end(); it++)
 		{
-			child = (*it).ptr();
+			child = (*it).get();
 			size_out.add_width(child->size().width());
 			size_out.set_height(std::max(size_out.height(),
 					child->size().height()));
