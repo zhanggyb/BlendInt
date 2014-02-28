@@ -51,6 +51,8 @@ namespace BlendInt {
 
 		inline T& operator* () const;
 
+		inline T* ptr () const;
+
 		inline bool operator== (const RefPtr<T>& src) const;
 
 		inline bool operator!= (const RefPtr<T>& src) const;
@@ -155,6 +157,12 @@ namespace BlendInt {
 		}
 
 		return *m_ptr;
+	}
+
+	template <typename T> inline
+	T* RefPtr<T>::ptr () const
+	{
+		return m_ptr;
 	}
 
 	template <typename T> inline

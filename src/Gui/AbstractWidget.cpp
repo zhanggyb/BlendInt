@@ -56,7 +56,7 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget ()
 		: AbstractExtraForm(),
 		  m_z(0),
-		  m_parent(0)
+		  m_trunk(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 
@@ -65,13 +65,13 @@ namespace BlendInt {
 
 	AbstractWidget::AbstractWidget (AbstractWidget* parent)
 		: m_z(0),
-			m_parent(0)
+			m_trunk(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 
 		if(parent) {
-			parent->m_children.insert(this);
-			m_parent = parent;
+			parent->m_branches.insert(this);
+			m_trunk = parent;
 		}
 
 		ContextManager::Instance()->SetFocusedWidget(this);
@@ -87,11 +87,17 @@ namespace BlendInt {
 			ContextManager::Instance()->SetFocusedWidget(0);
 		}
 
-		if(m_parent) {
-			m_parent->m_children.erase(this);
-			m_parent = 0;
+		if(m_trunk) {
+			m_trunk->m_branches.erase(this);
+			m_trunk = 0;
 		}
 
+		for(std::set<AbstractWidget*>::iterator it = m_branches.begin(); it != m_branches.end(); it++)
+		{
+			(*it)->m_trunk = 0;
+		}
+
+		/*
 		std::set<AbstractWidget*>::iterator it;
 		while(m_children.size()) {
 			it = m_children.begin();
@@ -100,6 +106,9 @@ namespace BlendInt {
 				delete *it;
 			m_children.erase(it);
 		}
+		*/
+
+		m_branches.clear();
 
 		m_destroyed.fire(this);
 	}
@@ -116,14 +125,14 @@ namespace BlendInt {
 
 	bool AbstractWidget::AddChild (AbstractWidget* child)
 	{
-		if(child->m_parent == this) return true;
+		if(child->m_trunk == this) return true;
 
-		if(child->m_parent) {
-			child->m_parent->m_children.erase(child);
+		if(child->m_trunk) {
+			child->m_trunk->m_branches.erase(child);
 		}
 
-		child->m_parent = this;
-		m_children.insert(child);
+		child->m_trunk = this;
+		m_branches.insert(child);
 
 		if(child->layer() != layer()) {
 			child->SetLayer(layer());
@@ -134,17 +143,17 @@ namespace BlendInt {
 
 	bool AbstractWidget::SetParent(AbstractWidget* parent)
 	{
-		if(m_parent == parent) return true;
+		if(m_trunk == parent) return true;
 
-		if(m_parent) {
-			m_parent->m_children.erase(this);
+		if(m_trunk) {
+			m_trunk->m_branches.erase(this);
 		}
 
-		m_parent = parent;
-		m_parent->m_children.insert(this);
+		m_trunk = parent;
+		m_trunk->m_branches.insert(this);
 
-		if(layer() != m_parent->layer()) {
-			SetLayer(m_parent->layer());
+		if(layer() != m_trunk->layer()) {
+			SetLayer(m_trunk->layer());
 		}
 
 		return true;
@@ -152,10 +161,10 @@ namespace BlendInt {
 
 	bool AbstractWidget::RemoveChild(AbstractWidget* child)
 	{
-		if(child->m_parent != this) return false;
+		if(child->m_trunk != this) return false;
 
-		child->m_parent = 0;
-		m_children.erase(child);
+		child->m_trunk = 0;
+		m_branches.erase(child);
 
 		return true;
 	}

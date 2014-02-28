@@ -121,7 +121,8 @@ namespace BlendInt {
 		 */
 		std::set<AbstractWidget*> m_fixed_items;
 
-		std::vector<AbstractWidget*> m_items;
+		//std::vector<AbstractWidget*> m_items;
+		std::vector<AbstractWidgetPtr> m_items;
 	};
 
 }

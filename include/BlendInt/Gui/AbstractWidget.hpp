@@ -33,6 +33,7 @@
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Margin.hpp>
 
+#include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/KeyEvent.hpp>
 #include <BlendInt/Window/ContextMenuEvent.hpp>
@@ -56,6 +57,8 @@ namespace BlendInt {
 	class GLTexture2D;
 
 	struct WidgetTheme;
+
+	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
 
 	/**
 	 * @brief The basic abstract class for GUI forms in BlendInt
@@ -269,7 +272,7 @@ namespace BlendInt {
 			obj->m_flag[WidgetFlagLockGeometry] = status ? 1 : 0;
 		}
 
-		AbstractWidget* parent() const {return m_parent;}
+		AbstractWidget* parent() const {return m_trunk;}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 
@@ -356,9 +359,9 @@ namespace BlendInt {
 
 		Cpp::Event<AbstractWidget*> m_destroyed;
 
-		AbstractWidget* m_parent;
+		AbstractWidget* m_trunk;
 
-		std::set<AbstractWidget*> m_children;
+		std::set<AbstractWidget*> m_branches;
 
 		static AbstractWidget* focused_widget;
 

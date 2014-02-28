@@ -950,7 +950,7 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		for(std::set<AbstractWidget*>::iterator it = widget->m_children.begin(); it != widget->m_children.end(); it++)
+		for(std::set<AbstractWidget*>::iterator it = widget->m_branches.begin(); it != widget->m_branches.end(); it++)
 		{
 			DispatchDrawEvent(*it);
 		}
@@ -962,7 +962,7 @@ namespace BlendInt {
 		if (parent) {
 			parent->m_flag.set(AbstractWidget::WidgetFlagContextHoverList);
 			for (std::set<AbstractWidget*>::iterator it =
-			        parent->m_children.begin(); it != parent->m_children.end();
+			        parent->m_branches.begin(); it != parent->m_branches.end();
 			        it++) {
 				if ((*it)->contain(cursor_point)) {
 					ContextManager::context_manager->m_hover_deque->push_back(*it);
