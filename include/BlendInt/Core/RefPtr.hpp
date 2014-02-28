@@ -238,7 +238,7 @@ namespace BlendInt {
 		if(m_ptr) {
 
 			T* const old = m_ptr;
-			m_ptr = src.m_ptr;
+			m_ptr = src.get();
 			++m_ptr->m_count;
 
 			if (--old->m_count == 0)
@@ -246,7 +246,7 @@ namespace BlendInt {
 
 		} else {
 
-			m_ptr = src.m_ptr;
+			m_ptr = src.get();
 			++m_ptr->m_count;
 		}
 
@@ -385,9 +385,6 @@ namespace BlendInt {
 	{
 		T* const ptr = dynamic_cast<T*>(src.get());
 
-		if (ptr)
-			++ptr->m_count;
-
 		return RefPtr<T>(ptr);
 	}
 
@@ -398,9 +395,6 @@ namespace BlendInt {
 	{
 		T * const ptr = static_cast<T*>(src.get());
 
-		if (ptr)
-			++ptr->m_count;
-
 		return RefPtr<T>(ptr);
 	}
 
@@ -410,9 +404,6 @@ namespace BlendInt {
 	RefPtr<T> RefPtr<T>::cast_const (const RefPtr<T_CastFrom>& src)
 	{
 		T * const ptr = const_cast<T*>(src.get());
-
-		if (ptr)
-			++ptr->m_count;
 
 		return RefPtr<T>(ptr);
 	}

@@ -126,6 +126,38 @@ TEST_F(ObjectTest1, RefPtr6)
 }
 
 /**
+ * Test RefPtr cast functions
+ */
+TEST_F(ObjectTest1, RefPtr7)
+{
+    RefPtr<WidgetSim> widget;
+
+	widget.reset(new WidgetSim);
+	widget->set_name("Widget");
+
+	std::cout << "reference count of " << widget->name() << ": " << widget->count () << std::endl;
+
+	RefPtr<Object> obj = RefPtr<Object>::cast_dynamic(widget);
+
+	if(obj)
+		std::cout << "object count: " << obj->count() << std::endl;
+
+	RefPtr<Object> obj2;
+
+	obj2.operator=<WidgetSim>(widget);
+	
+	if(obj2)
+		std::cout << "object2 count: " << obj2->count() << std::endl;
+
+	RefPtr<Object> obj3;
+	obj3 = widget;
+	if(obj3)
+		std::cout << "object3 count: " << obj3->count() << std::endl;
+
+    ASSERT_TRUE(true);
+}
+
+/**
  * Test RefPtr::destroy
  */
 TEST_F(ObjectTest1, Children1)

@@ -26,8 +26,6 @@ namespace BlendInt {
 
 		void print();
 
-	protected:
-
 	private:
 
 		template <typename T> friend class RefPtr;

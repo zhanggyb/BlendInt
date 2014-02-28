@@ -52,6 +52,10 @@ namespace BlendInt {
 
 		static RefPtr<Object> Create (const char* name = 0);
 
+		Object ();
+
+		virtual ~Object ();
+
 		inline void set_name (const char* name)
 		{
 			m_name = name;
@@ -76,10 +80,6 @@ namespace BlendInt {
 		static void Destroy (Object* obj);
 
 	protected:
-
-		Object ();
-
-		virtual ~Object ();
 
 #ifndef DEBUG
 		static void Retain (Object* obj);
