@@ -25,21 +25,21 @@
 
 #include <iostream>
 
-#include <BlendInt/Service/StockIcon.hpp>
+#include <BlendInt/Service/StockIcons.hpp>
 
 namespace BlendInt {
 
-	StockIcon* StockIcon::stock_icon = 0;
+	StockIcons* StockIcons::stock_icon = 0;
 
-	bool StockIcon::Initialize()
+	bool StockIcons::Initialize()
 	{
 		if (!stock_icon)
-			stock_icon = new StockIcon;
+			stock_icon = new StockIcons;
 
 		return true;
 	}
 
-	void StockIcon::Release()
+	void StockIcons::Release()
 	{
 		if (stock_icon) {
 			delete stock_icon;
@@ -47,7 +47,7 @@ namespace BlendInt {
 		}
 	}
 
-	StockIcon* StockIcon::Instance()
+	StockIcons* StockIcons::Instance()
 	{
 		if (!stock_icon) {
 			std::cerr << "Stock Icons are not initialized successfully! Exit"
@@ -58,37 +58,21 @@ namespace BlendInt {
 		return stock_icon;
 	}
 
-	StockIcon::StockIcon()
-	: m_menu(0), m_circle(0), m_checkbox(0), m_num(0)
+	StockIcons::StockIcons()
 	{
 		CreateIcons();
 	}
 
-	StockIcon::~StockIcon()
+	StockIcons::~StockIcons()
 	{
-		Object::Destroy(m_menu);
-		Object::Destroy(m_circle);
-		Object::Destroy(m_checkbox);
-		Object::Destroy(m_num);
 	}
 
-	bool StockIcon::Find (const AbstractResizableForm* icon) const
-	{
-		return icon == m_menu ?
-		        true :
-		        (icon == m_circle ?
-		                true :
-		                (icon == m_checkbox ?
-		                        true : (icon == m_num ? true : false)));
-	}
-
-	void StockIcon::CreateIcons()
+	void StockIcons::CreateIcons()
 	{
 		float vec[16][2];
 
-		m_menu = new VertexIcon;
+		m_menu.reset(new VertexIcon);
 		m_menu->set_name("Menu Icon");
-		Object::Retain(m_menu);
 
 		for(size_t i = 0; i < 6; i++)
 		{
@@ -98,9 +82,8 @@ namespace BlendInt {
 
 		m_menu->load (vec, 6, VertexIcon::menu_tria_face, 2);
 
-		m_circle = new VertexIcon;
+		m_circle.reset(new VertexIcon);
 		m_circle->set_name("Circle Icon");
-		Object::Retain(m_circle);
 
 		for(size_t i = 0; i < 16; i++)
 		{
@@ -110,9 +93,8 @@ namespace BlendInt {
 
 		m_circle->load (vec, 16, VertexIcon::scroll_circle_face, 14);
 
-		m_checkbox = new VertexIcon;
+		m_checkbox.reset(new VertexIcon);
 		m_checkbox->set_name("Checkbox Icon");
-		Object::Retain(m_checkbox);
 
 		for(size_t i = 0; i < 6; i++)
 		{
@@ -122,9 +104,8 @@ namespace BlendInt {
 
 		m_checkbox->load (vec, 6, VertexIcon::check_tria_face, 4);
 
-		m_num = new VertexIcon;
+		m_num.reset(new VertexIcon);
 		m_num->set_name("Number slider Icon");
-		Object::Retain(m_num);
 
 		for(size_t i = 0; i < 3; i++)
 		{

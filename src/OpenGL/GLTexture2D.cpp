@@ -41,13 +41,27 @@ OIIO_NAMESPACE_USING
 namespace BlendInt {
 
 	GLTexture2D::GLTexture2D ()
-	: m_id(0), m_width(512), m_height(512), m_level(0), m_internal_format(GL_RGBA8), m_format(GL_RGBA), m_type(GL_UNSIGNED_BYTE)
+	: Object(),
+	  m_id(0),
+	  m_width(512),
+	  m_height(512),
+	  m_level(0),
+	  m_internal_format(GL_RGBA8),
+	  m_format(GL_RGBA),
+	  m_type(GL_UNSIGNED_BYTE)
 	{
 
 	}
 
 	GLTexture2D::GLTexture2D (GLsizei width, GLsizei height)
-	: m_id(0), m_width(width), m_height(height), m_level(0), m_internal_format(GL_RGBA8), m_format(GL_RGBA), m_type(GL_UNSIGNED_BYTE)
+	: Object(),
+	  m_id(0),
+	  m_width(width),
+	  m_height(height),
+	  m_level(0),
+	  m_internal_format(GL_RGBA8),
+	  m_format(GL_RGBA),
+	  m_type(GL_UNSIGNED_BYTE)
 	{
 
 	}

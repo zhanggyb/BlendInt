@@ -55,7 +55,7 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 #include <BlendInt/Service/ContextManager.hpp>
-#include <BlendInt/Service/StockIcon.hpp>
+#include <BlendInt/Service/StockIcons.hpp>
 
 #include "Intern/ScreenBuffer.hpp"
 
@@ -130,7 +130,7 @@ namespace BlendInt {
 			success = false;
 		}
 
-		if (success && StockIcon::Initialize()) {
+		if (success && StockIcons::Initialize()) {
 			// do nothing
 		} else {
 			std::cerr << "Cannot initialize Stock Icons" << std::endl;
@@ -151,7 +151,7 @@ namespace BlendInt {
 	{
 
 		ContextManager::Release();
-		StockIcon::Release();
+		StockIcons::Release();
 		ShaderManager::Release();
 		ThemeManager::release();
 		FontCache::releaseAll();

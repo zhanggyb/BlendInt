@@ -208,7 +208,7 @@ namespace BlendInt {
 			//DispatchRender(*it);
 			//glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
 			if((*it)->icon()) {
-				DispatchRender ((*it)->icon());
+				//DispatchRender ((*it)->icon());
 			}
 			fc->print(5 + 16, 5, (*it)->text());
 			fc->print(120, 5, (*it)->shortcut());
@@ -242,7 +242,7 @@ namespace BlendInt {
 			MenuItem* item = m_menubin->GetMenuItem(m_highlight - 1);
 
 			if(item->icon()) {
-				DispatchRender (item->icon());
+				//DispatchRender (item->icon());
 			}
 			fc->print(5 + 16, 5, item->text());
 			fc->print(120, 5, item->shortcut());

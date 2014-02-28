@@ -49,6 +49,8 @@ namespace BlendInt {
 
 		GLElementArrayBuffer ();
 
+		virtual ~GLElementArrayBuffer ();
+
 		/**
 		 * @brief Generate buffer
 		 *
@@ -93,10 +95,6 @@ namespace BlendInt {
 		{
 			return m_vertices;
 		}
-
-	protected:
-
-		virtual ~GLElementArrayBuffer ();
 
 	private:
 

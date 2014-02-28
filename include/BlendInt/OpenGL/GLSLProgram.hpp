@@ -58,6 +58,11 @@ namespace BlendInt {
 		GLSLProgram ();
 
 		/**
+		 * @brief Destructor
+		 */
+		virtual ~GLSLProgram ();
+
+		/**
 		 * @brief Create the GLSL program
 		 * @return
 		 * 	- true if success
@@ -174,13 +179,6 @@ namespace BlendInt {
 		 * @return The uniform location
 		 */
 		GLint GetUniformLocation (const char *name);
-
-	protected:
-
-		/**
-		 * @brief Destructor
-		 */
-		virtual ~GLSLProgram ();
 
 	private:
 

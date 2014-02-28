@@ -34,6 +34,8 @@
 #endif
 #endif  // __UNIX__
 
+#include <BlendInt/Core/Object.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -41,7 +43,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup opengl
 	 */
-	class GLTexture2D
+	class GLTexture2D: public Object
 	{
 	public:
 

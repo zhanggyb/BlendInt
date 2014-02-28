@@ -27,7 +27,7 @@
 #include <BlendInt/Gui/FontCache.hpp>
 
 #include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/StockIcon.hpp>
+#include <BlendInt/Service/StockIcons.hpp>
 
 namespace BlendInt {
 
@@ -78,11 +78,7 @@ namespace BlendInt {
 
 	void MenuItem::SetIcon(Icon* icon)
 	{
-		if(m_icon == icon) return;
-
-		RemoveIcon();
-
-		m_icon = icon;
+		m_icon.reset(icon);
 	}
 
 	void MenuItem::SetParentMenu(MenuItemBin* parent)
@@ -112,9 +108,6 @@ namespace BlendInt {
 
 	void MenuItem::RemoveIcon()
 	{
-		if(m_icon) {
-			Object::Destroy(m_icon);
-		}
 	}
 
 }

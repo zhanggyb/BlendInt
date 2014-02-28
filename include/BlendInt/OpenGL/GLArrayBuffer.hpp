@@ -58,6 +58,11 @@ namespace BlendInt {
 		GLArrayBuffer ();
 
 		/**
+		 * @brief Destructor
+		 */
+		virtual ~GLArrayBuffer ();
+
+		/**
 		 * @brief Generate buffer
 		 *
 		 * Generate new GL buffers, if there's buffer generated before, this will delete these.
@@ -107,13 +112,6 @@ namespace BlendInt {
 		{
 			return m_vertices;
 		}
-
-	protected:
-
-		/**
-		 * @brief Destructor
-		 */
-		virtual ~GLArrayBuffer ();
 
 	private:
 

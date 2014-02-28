@@ -29,7 +29,7 @@
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/TabFrame.hpp>
 #include <BlendInt/Gui/MenuItemBin.hpp>
-#include <BlendInt/Service/StockIcon.hpp>
+#include <BlendInt/Service/StockIcons.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/ClockWidget.hpp>

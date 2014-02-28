@@ -50,6 +50,8 @@ namespace BlendInt {
 		 */
 		GLSLShader ();
 
+		virtual ~GLSLShader ();
+
 		void Create (GLenum shaderType);
 
 		void SetSource (const char* source);
@@ -108,8 +110,6 @@ namespace BlendInt {
 		void Clear ();
 
 	protected:
-
-		virtual ~GLSLShader ();
 
 		/**
 		 * @brief Read a fragment or vertex shader from a file

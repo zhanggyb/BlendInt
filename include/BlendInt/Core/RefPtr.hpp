@@ -43,6 +43,10 @@ namespace BlendInt {
 
 		inline RefPtr<T>& operator = (const RefPtr<T>& orig);
 
+		inline void reset (T* obj);
+
+		inline void reset (const RefPtr<T>& other);
+
 		inline void destroy ();
 
 		inline RefPtr<T>& swap (RefPtr<T>& other);
@@ -118,6 +122,44 @@ namespace BlendInt {
 		}
 
 		return *this;
+	}
+
+	template <typename T> inline
+	void RefPtr<T>::reset (T* obj)
+	{
+		if(m_ptr) {
+
+			T* const old = m_ptr;
+			m_ptr = obj;
+			++m_ptr->m_count;
+
+			if (--old->m_count == 0)
+				delete old;
+
+		} else {
+
+			m_ptr = obj;
+			++m_ptr->m_count;
+		}
+	}
+
+	template <typename T> inline
+	void RefPtr<T>::reset (const RefPtr<T>& other)
+	{
+		if(m_ptr) {
+
+			T* const old = m_ptr;
+			m_ptr = other.m_ptr;
+			++m_ptr->m_count;
+
+			if (--old->m_count == 0)
+				delete old;
+
+		} else {
+
+			m_ptr = other.m_ptr;
+			++m_ptr->m_count;
+		}
 	}
 
 	template <typename T> inline

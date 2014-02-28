@@ -21,6 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/Core/String.hpp>
 
 #include <BlendInt/Gui/MenuItemBin.hpp>
@@ -60,7 +61,7 @@ namespace BlendInt {
 
 		inline const String& text () const {return m_text;}
 
-		inline Icon* icon() const {return m_icon;}
+		RefPtr<Icon> icon() const {return m_icon;}
 
 		inline void set_shortcut (const String& shortcut)
 		{
@@ -82,7 +83,7 @@ namespace BlendInt {
 
 		void RemoveIcon ();
 
-		Icon* m_icon;
+		RefPtr<Icon> m_icon;
 
 		String m_text;
 		String m_shortcut;
