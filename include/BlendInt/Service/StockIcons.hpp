@@ -21,9 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STOCKICON_HPP_
-#define _BLENDINT_STOCKICON_HPP_
+#ifndef _BLENDINT_STOCKICONS_HPP_
+#define _BLENDINT_STOCKICONS_HPP_
 
+#include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
 
 namespace BlendInt {
@@ -33,7 +34,7 @@ namespace BlendInt {
 	 *
 	 * MUST initialized in Interface::Initialize()
 	 */
-	class StockIcon
+	class StockIcons
 	{
 	public:
 
@@ -41,29 +42,27 @@ namespace BlendInt {
 
 		static void Release ();
 
-		static StockIcon* Instance ();
+		static StockIcons* Instance ();
 
-		VertexIcon* menu () const {return m_menu;}
+		RefPtr<VertexIcon> menu () const {return m_menu;}
 
-		VertexIcon* circle () const {return m_circle;}
+		RefPtr<VertexIcon> circle () const {return m_circle;}
 
-		VertexIcon* checkbox() const {return m_checkbox;}
+		RefPtr<VertexIcon> checkbox() const {return m_checkbox;}
 
-		VertexIcon* num () const {return m_num;}
-
-		bool Find (const AbstractResizableForm* icon) const;
+		RefPtr<VertexIcon> num () const {return m_num;}
 
 	private:
 
 		/**
 		 * @brief Default constructor
 		 */
-		StockIcon ();
+		StockIcons ();
 
 		/**
 		 * @brief private destructor
 		 */
-		~StockIcon ();
+		~StockIcons ();
 
 		/**
 		 * @brief Create default icons
@@ -72,28 +71,28 @@ namespace BlendInt {
 		 */
 		void CreateIcons ();
 
-		static StockIcon* stock_icon;
+		static StockIcons* stock_icon;
 
-		VertexIcon* m_menu;
+		RefPtr<VertexIcon> m_menu;
 
-		VertexIcon* m_circle;
+		RefPtr<VertexIcon> m_circle;
 
-		VertexIcon* m_checkbox;
+		RefPtr<VertexIcon> m_checkbox;
 
-		VertexIcon* m_num;
+		RefPtr<VertexIcon> m_num;
 
 		/**
 		 * @brief Copy constructor, disabled
 		 */
-		StockIcon (const StockIcon& orig);
+		StockIcons (const StockIcons& orig);
 
 		/**
 		 * @brief Assignment operation, disabled
 		 */
-		StockIcon& operator = (const StockIcon& orig);
+		StockIcons& operator = (const StockIcons& orig);
 
 	};
 
 }
 
-#endif /* _BLENDINT_STOCKICON_HPP_ */
+#endif /* _BLENDINT_STOCKICONS_HPP_ */

@@ -26,6 +26,8 @@
 
 #include <list>
 
+#include <BlendInt/Core/RefPtr.hpp>
+
 #include <BlendInt/Gui/AbstractLayout.hpp>
 
 namespace BlendInt {
@@ -126,7 +128,8 @@ namespace BlendInt {
 		 */
 		std::set<AbstractWidget*> m_fixed_items;
 
-		std::vector<AbstractWidget*> m_items;
+		//std::vector<AbstractWidget*> m_items;
+		std::vector<RefPtr<AbstractWidget> > m_items;
 	};
 
 }

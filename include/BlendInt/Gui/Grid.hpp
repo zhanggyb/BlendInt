@@ -21,28 +21,50 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_FREECAMERA_HPP_
-#define _BLENDINT_FREECAMERA_HPP_
+#ifndef _BLENDINT_GRID_HPP_
+#define _BLENDINT_GRID_HPP_
 
-#include <glm/vec3.hpp>
-#include <BlendInt/AbstractCamera.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
+#include <BlendInt/Gui/AbstractPrimitive.hpp>
 
 namespace BlendInt {
 
-	class FreeCamera: public AbstractCamera
+	class Grid: public AbstractPrimitive
 	{
 	public:
 
-		FreeCamera ();
+		Grid ();
 
-		virtual ~FreeCamera ();
+		virtual ~Grid ();
 
-		virtual void Update ();
+		void SetSize (int size);
+
+		void Update ();
+
+		virtual void Render (const glm::mat4& MVP);
 
 	private:
+
+		void InitOnce ();
+
+		int m_size;
+		int m_step;
+
+		RefPtr<GLArrayBuffer> m_vb;	// vertex buffer
+		RefPtr<GLElementArrayBuffer> m_ib;	// index buffer
+
+		GLint m_attribute_coord2d;
+		GLint m_uniform_mvp;
+
+		static const char* vertex_shader;
+
+		static const char* fragment_shader;
 
 	};
 
 }
 
-#endif /* _BLENDINT_FREECAMERA_HPP_ */
+
+
+#endif /* _BLENDINT_GRID_HPP_ */

@@ -54,12 +54,14 @@ namespace BlendInt {
 		if(widgets) {
 			std::cout << "Delete widget set in context layer" << std::endl;
 
+			/*
 			set<AbstractWidget*>::iterator it;
 
 			for(it = widgets->begin(); it != widgets->end(); it++)
 			{
-				if((*it)->ref_count() == 0) delete *it;
+				if((*it)->count() == 0) delete *it;
 			}
+			*/
 
 			widgets->clear();
 		}
@@ -134,7 +136,7 @@ namespace BlendInt {
 			{
 				(*widget_iter)->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
-				if((*widget_iter)->ref_count() == 0) delete *widget_iter;
+				//if((*widget_iter)->count() == 0) delete *widget_iter;
 			}
 
 			widget_set_p->clear();
@@ -173,7 +175,7 @@ namespace BlendInt {
 
 		if(!RemoveWidget(obj)) {
 			obj->m_flag.reset(AbstractWidget::WidgetFlagRegistered);
-			std::cerr << "obj not in in context manager with the same layer" << std::endl;
+			DBG_PRINT_MSG("object: %s is not in stored in layer %d in context manager", obj->name().c_str(), obj->z());
 			return false;
 		}
 
@@ -265,9 +267,7 @@ namespace BlendInt {
 			if (widget_iter != widget_set_p->end()) {
 				widget_set_p->erase (widget_iter);
 			} else {
-#ifdef DEBUG
-				std::cerr << "Error: object " << obj->name() << " is not recorded in set" << std::endl;
-#endif
+				DBG_PRINT_MSG("Error: object %s is not recorded in set", obj->name().c_str());
 			}
 
 			if (widget_set_p->empty()) {
@@ -283,9 +283,7 @@ namespace BlendInt {
 			m_index.erase(obj);
 
 		} else {
-#ifdef DEBUG
-			std::cerr << "Error: object " << obj->name() << " is not recorded in map" << std::endl;
-#endif
+			DBG_PRINT_MSG("Error: object %s is not recorded in map", obj->name().c_str());
 			return false;
 		}
 
@@ -311,7 +309,7 @@ namespace BlendInt {
 	{
 		if (parent) {
 			for (std::set<AbstractWidget*>::iterator it =
-			        parent->m_children.begin(); it != parent->m_children.end();
+			        parent->m_branches.begin(); it != parent->m_branches.end();
 			        it++) {
 				if ((*it)->contain(cursor_point)) {
 					m_hover_deque->push_back(*it);

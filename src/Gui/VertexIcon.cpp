@@ -99,17 +99,13 @@ namespace BlendInt {
 		: Icon(), m_array_buffer(0), m_index_buffer(0)
 	{
 		set_size(16, 16);
-		m_array_buffer = new GLArrayBuffer;
-		Retain(m_array_buffer);
+		m_array_buffer.reset(new GLArrayBuffer);
 
-		m_index_buffer = new GLElementArrayBuffer;
-		Retain(m_index_buffer);
+		m_index_buffer.reset(new GLElementArrayBuffer);
 	}
 
 	VertexIcon::~VertexIcon ()
 	{
-		Destroy(m_array_buffer);
-		Destroy(m_index_buffer);
 	}
 
 	void VertexIcon::load (const float (*vertex_array)[2], size_t array_size,

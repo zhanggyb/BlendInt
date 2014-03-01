@@ -21,52 +21,39 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GRID_HPP_
-#define _BLENDINT_GRID_HPP_
+#ifndef _BLENDINT_CUBE_HPP_
+#define _BLENDINT_CUBE_HPP_
 
-#include <BlendInt/AbstractPrimitive.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
+#include <BlendInt/Gui/AbstractPrimitive.hpp>
+
+#include <glm/glm.hpp>
 
 namespace BlendInt {
 
-	class Grid: public AbstractPrimitive
+	class Cube: public AbstractPrimitive
 	{
 	public:
 
-		Grid ();
+		Cube ();
 
-		void SetSize (int size);
+		virtual ~Cube ();
 
-		void Update ();
-
-		virtual void Render (const glm::mat4& MVP);
-
-	protected:
-
-		virtual ~Grid ();
+		virtual void Render (const glm::mat4& mvp);
 
 	private:
 
-		void InitOnce ();
+		int InitOnce ();
 
-		int m_size;
-		int m_step;
-
-		GLArrayBuffer* m_vb;	// vertex buffer
-		GLElementArrayBuffer* m_ib;	// index buffer
-
-		GLint m_attribute_coord2d;
+		GLuint m_vbo_cube_vertices;
+		GLuint m_vbo_cube_colors;
+		GLuint m_ibo_cube_elements;
+		GLint m_attribute_coord3d;
+		GLint m_attribute_v_color;
 		GLint m_uniform_mvp;
 
-		static const char* vertex_shader;
-
-		static const char* fragment_shader;
-
+		glm::mat4 mvp;
 	};
 
 }
 
-
-
-#endif /* _BLENDINT_GRID_HPP_ */
+#endif /* _BLENDINT_CUBE_HPP_ */

@@ -21,53 +21,46 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CAMERA_HPP_
-#define _BLENDINT_CAMERA_HPP_
+#ifndef _BLENDINT_MESH_HPP_
+#define _BLENDINT_MESH_HPP_
 
-#include <glm/vec3.hpp>
-#include <BlendInt/AbstractCamera.hpp>
+#include <vector>
+
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
+
+#include <BlendInt/Gui/AbstractPrimitive.hpp>
 
 namespace BlendInt {
 
-	class NavigationCamera: public AbstractCamera
+	class Mesh: public AbstractPrimitive
 	{
 	public:
 
-		NavigationCamera ();
+		Mesh ();
 
-		virtual ~NavigationCamera ();
+		bool LoadObj (const char* filename);
 
-		void Orbit (float x, float y);
+		virtual void Render (const glm::mat4& mvp);
 
-		void Pan (float x, float y);
+	protected:
 
-		void Zoom (float fac);
-
-		void SaveCurrentPosition ();
-
-		void SaveCurrentCenter ();
-
-		virtual void Update ();
-
-		float speed () {return m_speed;}
-
-		void set_speed (float speed)
-		{
-			m_speed = speed;
-		}
+		virtual ~Mesh();
 
 	private:
 
-		glm::vec3 m_last_position;
-		glm::vec3 m_last_center;
+		void InitOnce ();
 
-		/**
-		 * Speed used in Orbit, Pan, Zoom, more large, more slower
-		 */
-		float m_speed;
+		RefPtr<GLArrayBuffer> m_vb;
 
+		RefPtr<GLElementArrayBuffer> m_ib;
+
+		std::vector<glm::vec4> m_vertices;
+		std::vector<glm::vec3> m_normals;
+		std::vector<GLushort> m_elements;
 	};
 
 }
 
-#endif /* _BLENDINT_CAMERA_HPP_ */
+#endif /* _BLENDINT_MESH_HPP_ */

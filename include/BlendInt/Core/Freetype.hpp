@@ -31,9 +31,9 @@
 #include FT_LCD_FILTER_H
 #include FT_STROKER_H
 
-#include <BlendInt/Glyph.hpp>
-#include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Core/Rect.hpp>
+#include <BlendInt/Gui/Glyph.hpp>
+#include <BlendInt/Gui/Font.hpp>
 
 using namespace std;
 

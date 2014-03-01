@@ -51,9 +51,6 @@ namespace BlendInt {
 
 	SlideButton::~SlideButton()
 	{
-		Destroy(m_inner_buffer);
-		Destroy(m_outer_buffer);
-		Destroy(m_highlight_buffer);
 	}
 
 	void SlideButton::Update (int type, const void* data)
@@ -75,9 +72,9 @@ namespace BlendInt {
 						shadedown,
 						shadedir,
 						5,
-						m_inner_buffer,
-						m_outer_buffer,
-						m_highlight_buffer
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						m_highlight_buffer.get()
 						);
 				break;
 			}
@@ -98,9 +95,9 @@ namespace BlendInt {
 						shadedown,
 						shadedir,
 						5,
-						m_inner_buffer,
-						m_outer_buffer,
-						m_highlight_buffer
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						m_highlight_buffer.get()
 						);
 				break;
 			}
@@ -113,9 +110,9 @@ namespace BlendInt {
 	void SlideButton::Draw ()
 	{
 		if(down()) {
-			DrawShadedInnerBuffer(m_inner_buffer);
+			DrawShadedInnerBuffer(m_inner_buffer.get());
 		} else {
-			DrawShadedInnerBuffer(m_highlight_buffer);
+			DrawShadedInnerBuffer(m_highlight_buffer.get());
 		}
 
 		// draw outline
@@ -126,7 +123,7 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		DrawOutlineBuffer(m_outer_buffer);
+		DrawOutlineBuffer(m_outer_buffer.get());
 	}
 
 	void SlideButton::MouseMoveEvent(MouseEvent* event)
@@ -211,14 +208,9 @@ namespace BlendInt {
 
 	void SlideButton::InitOnce()
 	{
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
-
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-
-		m_highlight_buffer = new GLArrayBuffer;
-		Retain(m_highlight_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_highlight_buffer.reset(new GLArrayBuffer);
 
 		Orientation shadedir = size().width() < size().height() ? Horizontal : Vertical;
 		const Color& color = themes()->scroll.item;
@@ -233,9 +225,9 @@ namespace BlendInt {
 				shadedown,
 				shadedir,
 				5,
-				m_inner_buffer,
-				m_outer_buffer,
-				m_highlight_buffer
+				m_inner_buffer.get(),
+				m_outer_buffer.get(),
+				m_highlight_buffer.get()
 				);
 	}
 
@@ -244,8 +236,7 @@ namespace BlendInt {
 	Slider::Slider(Orientation orientation)
 	: AbstractSlider(orientation), m_slide_button(0)
 	{
-		m_slide_button = new SlideButton(this);
-		Retain(m_slide_button);
+		m_slide_button.reset(new SlideButton(this));
 
 		// set default size
 		if (orientation == Vertical) {
@@ -277,8 +268,7 @@ namespace BlendInt {
 	Slider::Slider(Orientation orientation, AbstractWidget* parent)
 	: AbstractSlider(orientation, parent), m_slide_button(0)
 	{
-		m_slide_button = new SlideButton(this);
-		Retain(m_slide_button);
+		m_slide_button.reset(new SlideButton(this));
 
 		// set default size
 		if (orientation == Vertical) {
@@ -302,7 +292,6 @@ namespace BlendInt {
 
 	Slider::~Slider()
 	{
-		Destroy(m_slide_button);
 	}
 
 	void Slider::set_control_size (size_t size)
@@ -318,12 +307,7 @@ namespace BlendInt {
 	{
 		if(!widget) return;
 
-		if(m_slide_button == widget) return;
-
-		Destroy(m_slide_button);
-
-		m_slide_button = widget;
-		Retain(m_slide_button);
+		m_slide_button.reset(widget);
 	}
 
 	void Slider::Update (int type, const void* data)
@@ -426,7 +410,7 @@ namespace BlendInt {
 	void Slider::MouseMoveEvent (MouseEvent* event)
 	{
 		if(m_slide_button->down()) {
-			dispatch_mouse_move_event(m_slide_button, event);
+			dispatch_mouse_move_event(m_slide_button.get(), event);
 
 			int value = 0;
 
@@ -456,19 +440,19 @@ namespace BlendInt {
 		}
 
 		if(contain(event->position())) {
-			dispatch_mouse_move_event(m_slide_button, event);
+			dispatch_mouse_move_event(m_slide_button.get(), event);
 		}
 	}
 
 	void Slider::MousePressEvent (MouseEvent* event)
 	{
 		if(m_slide_button->down()) {
-			dispatch_mouse_press_event(m_slide_button, event);
+			dispatch_mouse_press_event(m_slide_button.get(), event);
 			return;
 		}
 
 		if(contain(event->position())) {
-			dispatch_mouse_press_event(m_slide_button, event);
+			dispatch_mouse_press_event(m_slide_button.get(), event);
 			if(event->accepted()) return;
 
 			// Move to where mouse click
@@ -512,14 +496,14 @@ namespace BlendInt {
 	void Slider::MouseReleaseEvent (MouseEvent* event)
 	{
 		if(m_slide_button->down()) {
-			dispatch_mouse_release_event(m_slide_button, event);
+			dispatch_mouse_release_event(m_slide_button.get(), event);
 			return;
 		}
 		if(contain(event->position())) {
 			if (event->button() == MouseButtonLeft) {
 
 			}
-			dispatch_mouse_release_event(m_slide_button, event);
+			dispatch_mouse_release_event(m_slide_button.get(), event);
 		}
 	}
 

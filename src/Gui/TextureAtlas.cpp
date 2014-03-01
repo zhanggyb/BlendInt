@@ -69,8 +69,7 @@ namespace BlendInt {
 			  width_(0), height_(0), starting_charcode_(0), stride_(0),
 			  glyph_array_(0)
 	{
-		m_program = new GLSLProgram;
-		Object::Retain(m_program);
+		m_program.reset(new GLSLProgram);
 	}
 
 	TextureAtlas::~TextureAtlas ()
@@ -86,8 +85,6 @@ namespace BlendInt {
 		if(glyph_array_) {
 			delete [] glyph_array_;
 		}
-
-		Object::Destroy(m_program);
 	}
 
 	void TextureAtlas::initialize()

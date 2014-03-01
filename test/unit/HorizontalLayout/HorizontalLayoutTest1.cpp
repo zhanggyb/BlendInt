@@ -40,6 +40,8 @@ TEST_F(HorizontalLayoutTest1, Add1)
 
 	RunLoop(window);
 
+	delete hlayout;
+
 	Terminate();
 
 	ASSERT_TRUE(true);
@@ -76,6 +78,8 @@ TEST_F(HorizontalLayoutTest1, Add2)
     hlayout->Register();
 
 	RunLoop(window);
+
+	delete hlayout;
 
 	Terminate();
 
@@ -115,6 +119,8 @@ TEST_F(HorizontalLayoutTest1, Add3)
 
 	RunLoop(window);
 
+	delete hlayout;
+
 	Terminate();
 
 	ASSERT_TRUE(true);
@@ -149,6 +155,8 @@ TEST_F(HorizontalLayoutTest1, Add4)
     hlayout->Register();
 
 	RunLoop(window);
+	
+	delete hlayout;
 
 	Terminate();
 
@@ -196,6 +204,8 @@ TEST_F(HorizontalLayoutTest1, Add5)
 
 	RunLoop(window);
 
+	delete hlayout;
+
 	Terminate();
 
 	ASSERT_TRUE(true);
@@ -239,6 +249,8 @@ TEST_F(HorizontalLayoutTest1, Add6)
 
 	RunLoop(window);
 
+	delete hlayout;
+
 	Terminate();
 
 	ASSERT_TRUE(true);
@@ -277,6 +289,8 @@ TEST_F(HorizontalLayoutTest1, Add7)
 
 	RunLoop(window);
 
+	delete hlayout;
+
 	Terminate();
 
 	ASSERT_TRUE(true);
@@ -312,6 +326,8 @@ TEST_F(HorizontalLayoutTest1, Resize1)
 
 	RunLoop(window);
 
+	delete hlayout;
+
 	Terminate();
 
 	ASSERT_TRUE(true);
@@ -343,6 +359,8 @@ TEST_F(HorizontalLayoutTest1, Resize2)
     hlayout->Register();
 
 	RunLoop(window);
+
+	delete hlayout;
 
 	Terminate();
 
@@ -382,6 +400,8 @@ TEST_F(HorizontalLayoutTest1, Resize3)
 
 	RunLoop(window);
 
+	delete hlayout;
+
 	Terminate();
 
 	ASSERT_TRUE(true);
@@ -420,6 +440,8 @@ TEST_F(HorizontalLayoutTest1, SetMargin1)
 
 	RunLoop(window);
 
+	delete hlayout;
+
 	Terminate();
 
 	ASSERT_TRUE(true);
@@ -456,6 +478,8 @@ TEST_F(HorizontalLayoutTest1, SetSpace1)
     hlayout->SetSpace(10);
 
 	RunLoop(window);
+
+	delete hlayout;
 
 	Terminate();
 

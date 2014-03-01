@@ -91,9 +91,10 @@ namespace BlendInt {
 		unsigned int m_highlight;	// the highlight item index
 
 		boost::scoped_ptr<MenuItemBin> m_menubin;
-		GLArrayBuffer* m_inner_buffer;
-		GLArrayBuffer* m_outer_buffer;
-		GLArrayBuffer* m_highlight_buffer;
+
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_highlight_buffer;
 
 		Cpp::Event<MenuItem*> m_triggered;
 	};

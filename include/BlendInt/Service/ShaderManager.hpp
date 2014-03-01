@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_SHADERMANAGER_HPP_
 #define _BLENDINT_SHADERMANAGER_HPP_
 
+#include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 
 namespace BlendInt {
@@ -41,17 +42,17 @@ namespace BlendInt {
 
 		static ShaderManager* Instance ();
 
-		GLSLProgram* text_program () const
+		RefPtr<GLSLProgram> text_program () const
 		{
 			return m_text_program;
 		}
 
-		GLSLProgram* primitive_program () const
+		RefPtr<GLSLProgram> primitive_program () const
 		{
 			return m_primitive_program;
 		}
 
-		bool Find (const GLSLProgram* program);
+		//bool Find (const GLSLProgram* program);
 
 		const GLint& text_attribute_coord ()
 		{
@@ -95,11 +96,13 @@ namespace BlendInt {
 		GLint text_uniform_color_;
 		GLuint text_vbo_;
 
-		GLSLProgram* m_text_program;
+		RefPtr<GLSLProgram> m_text_program;
+		//GLSLProgram* m_text_program;
 
 		GLint m_uniform_mvp;
 
-		GLSLProgram* m_primitive_program;
+		RefPtr<GLSLProgram> m_primitive_program;
+		//GLSLProgram* m_primitive_program;
 
 		static const char* text_vertex_shader;
 

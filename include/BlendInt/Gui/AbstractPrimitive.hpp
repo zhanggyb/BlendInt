@@ -21,48 +21,49 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MESH_HPP_
-#define _BLENDINT_MESH_HPP_
+#ifndef _BLENDINT_ABSTRACTPRIMITIVE_HPP_
+#define _BLENDINT_ABSTRACTPRIMITIVE_HPP_
 
-#include <vector>
+#include <glm/glm.hpp>
 
-#include <BlendInt/AbstractPrimitive.hpp>
-
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/Core/Object.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
-#include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
+#include <BlendInt/Gui/AbstractCamera.hpp>
 
 namespace BlendInt {
 
-	class Mesh: public AbstractPrimitive
+	class AbstractPrimitive: public Object
 	{
 	public:
 
-		Mesh ();
+		AbstractPrimitive ();
 
-		bool LoadObj (const char* filename);
+		void set_program (const RefPtr<GLSLProgram>& program)
+		{
+			m_program = program;
+		}
 
-		virtual void Render (const glm::mat4& mvp);
-
-
+		/**
+		 * @brief Render the primitive in Viewport3D
+		 * @param MVP
+		 *
+		 * The following OpenGL APIs should not be used in this virtual function:
+		 * 	- glClearColor
+		 * 	- glClear
+		 */
+		virtual void Render (const glm::mat4& mvp) = 0;
 
 	protected:
 
-		virtual ~Mesh();
+		RefPtr<GLSLProgram> program () const {return m_program;}
+
+		virtual ~AbstractPrimitive();
 
 	private:
 
-		void InitOnce ();
-
-		GLArrayBuffer* m_vb;
-
-		GLElementArrayBuffer* m_ib;
-
-		std::vector<glm::vec4> m_vertices;
-		std::vector<glm::vec3> m_normals;
-		std::vector<GLushort> m_elements;
+		RefPtr<GLSLProgram> m_program;
 	};
 
 }
 
-#endif /* _BLENDINT_MESH_HPP_ */
+#endif /* _BLENDINT_ABSTRACTPRIMITIVE_HPP_ */

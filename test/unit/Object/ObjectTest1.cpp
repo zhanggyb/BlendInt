@@ -3,6 +3,11 @@
 
 #include <iostream>
 
+#include <list>
+#include <set>
+
+#include "WidgetSim.hpp"
+
 using namespace BlendInt;
 
 ObjectTest1::ObjectTest1()
@@ -21,32 +26,146 @@ ObjectTest1::~ObjectTest1()
  *
  * Expected result: 
  */
-TEST_F(ObjectTest1, New1)
+TEST_F(ObjectTest1, RefPtr1)
 {
-	// TODO: add test code here
-    Object* obj1 = new Object;
-    obj1->set_name("obj1");
+    RefPtr<Object> obj1 = Object::Create("obj1");
 
-    std::cout << "obj1 ref count: " << obj1->ref_count() << std::endl;
+    RefPtr<Object> obj2;
+
+	ASSERT_FALSE(obj2);
+
+    obj2 = obj1;
+
+    RefPtr<Object> obj3(obj2);
+
+	ASSERT_TRUE(obj3->count() == 3);
+}
+
+/**
+ *
+ *
+ */
+TEST_F(ObjectTest1, RefPtr2)
+{
+    RefPtr<Object> obj1 = Object::Create("obj1");
+
+    RefPtr<Object> obj2 = Object::Create("obj2");
+
+    obj2 = obj1;
+
+    RefPtr<Object> obj3(obj2);
+
+	ASSERT_TRUE(obj3->count() == 3);
+}
+
+/**
+ * Test RefPtr in container
+ */
+TEST_F(ObjectTest1, RefPtr3)
+{
+    std::list< RefPtr<Object> > test_list;
+
+    test_list.push_back(Object::Create("obj1"));
+    test_list.push_back(Object::Create("obj2"));
+
+    test_list.clear();
 	
-	Object* obj2 = new Object;
+    ASSERT_TRUE(true);
+}
+
+/**
+ * Test RefPtr in std::set
+ */
+TEST_F(ObjectTest1, RefPtr4)
+{
+    std::set< RefPtr<Object> > test_set;
+
+    test_set.insert(Object::Create("obj1"));
+    test_set.insert(Object::Create("obj2"));
+    test_set.insert(Object::Create("obj3"));
+
+    test_set.clear();
 	
-	obj2->set_name("obj2");
+    ASSERT_TRUE(true);
+}
+
+/**
+ * Test RefPtr::destroy
+ */
+TEST_F(ObjectTest1, RefPtr5)
+{
+    RefPtr<Object> obj;
+
+    obj = Object::Create("Object");
+
+    obj.destroy();
 	
-    std::cout << "obj2 ref count: " << obj2->ref_count() << std::endl;
+    ASSERT_TRUE(true);
+}
 
-    Object::Destroy(obj2);
+/**
+ * Test RefPtr::destroy
+ */
+TEST_F(ObjectTest1, RefPtr6)
+{
+    RefPtr<Object> obj1 = Object::Create("obj1");
+    RefPtr<Object> obj2 = Object::Create("obj2");
 
-#ifdef DEBUG
-    Object::Retain (obj1);
-    Object::Retain (obj1);
-    std::cout << "obj1 ref count: " << obj1->ref_count() << std::endl;
-    Object::Destroy(obj1);
-    Object::Destroy(obj1);
-#endif
+    std::set< RefPtr<Object> > test_set;
 
-    std::cout << "size of object: " << sizeof(Object) << std::endl;
+    test_set.insert(obj1);
+    test_set.insert(obj2);
 
-	ASSERT_TRUE(true);
+    std::cout << "obj1 count: " << obj1->count() << std::endl;
+
+    test_set.erase(obj2);
+
+    std::cout << "obj2 count: " << obj2->count() << std::endl;
+
+    ASSERT_TRUE(true);
+}
+
+/**
+ * Test RefPtr cast functions
+ */
+TEST_F(ObjectTest1, RefPtr7)
+{
+    RefPtr<WidgetSim> widget;
+
+	widget.reset(new WidgetSim);
+	widget->set_name("Widget");
+
+	RefPtr<Object> obj = RefPtr<Object>::cast_dynamic(widget);
+
+	RefPtr<Object> obj2;
+
+	obj2.operator=<WidgetSim>(widget);
+	
+	RefPtr<Object> obj3;
+	obj3 = widget;
+
+    RefPtr<Object> obj4(widget);
+
+    ASSERT_TRUE(obj4->count() == 5);
+}
+
+/**
+ * Test RefPtr::destroy
+ */
+TEST_F(ObjectTest1, Children1)
+{
+    WidgetSimPtr widget1(new WidgetSim);
+
+    {
+        WidgetSimPtr widget2(new WidgetSim);
+        WidgetSimPtr widget3(new WidgetSim);
+
+        widget1->AddChild(widget2);
+        widget1->AddChild(widget3);
+    }
+
+    widget1->print();
+
+    ASSERT_TRUE(true);
 }
 

@@ -38,14 +38,9 @@ namespace BlendInt {
 	ScrollControl::ScrollControl ()
 	: AbstractButton(), m_inner_buffer(0), m_outer_buffer(0)
 	{
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
-
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-
-		m_highlight_buffer = new GLArrayBuffer;
-		Retain(m_highlight_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_highlight_buffer.reset(new GLArrayBuffer);
 
 		set_round_type(RoundAll);
 
@@ -55,14 +50,9 @@ namespace BlendInt {
 	ScrollControl::ScrollControl(AbstractWidget* parent)
 	: AbstractButton(parent), m_inner_buffer(0), m_outer_buffer(0)
 	{
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
-
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-
-		m_highlight_buffer = new GLArrayBuffer;
-		Retain(m_highlight_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_highlight_buffer.reset(new GLArrayBuffer);
 
 		set_round_type(RoundAll);
 
@@ -71,8 +61,6 @@ namespace BlendInt {
 
 	ScrollControl::~ScrollControl ()
 	{
-		Destroy(m_inner_buffer);
-		Destroy(m_outer_buffer);
 	}
 
 	void ScrollControl::Update (int type, const void* data)
@@ -90,7 +78,7 @@ namespace BlendInt {
 
 				GenerateShadedFormBuffers(size_p, round_type(),
 				        radius(), color, shadetop, shadedown, shadedir, 5,
-				        m_inner_buffer, m_outer_buffer, m_highlight_buffer);
+				        m_inner_buffer.get(), m_outer_buffer.get(), m_highlight_buffer.get());
 				break;
 			}
 
@@ -106,7 +94,7 @@ namespace BlendInt {
 
 				GenerateShadedFormBuffers(size_p, round_type(),
 				        *radius_p, color, shadetop, shadedown, shadedir, 5,
-				        m_inner_buffer, m_outer_buffer, m_highlight_buffer);
+				        m_inner_buffer.get(), m_outer_buffer.get(), m_highlight_buffer.get());
 				break;
 			}
 
@@ -125,9 +113,9 @@ namespace BlendInt {
 					 z());
 
 		if(down()) {
-			DrawShadedInnerBuffer(m_inner_buffer);
+			DrawShadedInnerBuffer(m_inner_buffer.get());
 		} else {
-			DrawShadedInnerBuffer(m_highlight_buffer);
+			DrawShadedInnerBuffer(m_highlight_buffer.get());
 		}
 
 		// draw outline
@@ -139,7 +127,7 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		DrawOutlineBuffer(m_outer_buffer);
+		DrawOutlineBuffer(m_outer_buffer.get());
 
 		glPopMatrix();
 	}
@@ -218,7 +206,7 @@ namespace BlendInt {
 		short shadedown = themes()->scroll.shadedown;
 
 		GenerateShadedFormBuffers(size_p, round_type(), radius(),
-		        color, shadetop, shadedown, shadedir, 5, m_inner_buffer, m_outer_buffer, m_highlight_buffer);
+		        color, shadetop, shadedown, shadedir, 5, m_inner_buffer.get(), m_outer_buffer.get(), m_highlight_buffer.get());
 	}
 
 	// ---------------------------- SliderBar -------------------------------
@@ -226,14 +214,10 @@ namespace BlendInt {
 	SliderBar::SliderBar(Orientation orientation)
 	: AbstractSlider(orientation), m_inner_buffer(0), m_outer_buffer(0), m_control_button(0)
 	{
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
 
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-
-		m_control_button = new ScrollControl(this);
-		Retain(m_control_button);
+		m_control_button.reset(new ScrollControl(this));
 
 		set_round_type(RoundAll);
 
@@ -260,14 +244,10 @@ namespace BlendInt {
 	SliderBar::SliderBar(Orientation orientation, AbstractWidget* parent)
 	: AbstractSlider(orientation, parent), m_inner_buffer(0), m_outer_buffer(0), m_control_button(0)
 	{
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
 
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-
-		m_control_button = new ScrollControl(this);
-		Retain(m_control_button);
+		m_control_button.reset(new ScrollControl(this));
 
 		set_round_type(RoundAll);
 
@@ -295,9 +275,6 @@ namespace BlendInt {
 
 	SliderBar::~SliderBar()
 	{
-		Destroy(m_inner_buffer);
-		Destroy(m_outer_buffer);
-		Destroy(m_control_button);
 	}
 
 	void SliderBar::Update (int type, const void* data)
@@ -322,7 +299,7 @@ namespace BlendInt {
 
 				GenerateShadedFormBuffers(size_p, round_type(),
 				        radius(), color, shadetop, shadedown, shadedir, 5,
-				        m_inner_buffer, m_outer_buffer, 0);
+				        m_inner_buffer.get(), m_outer_buffer.get(), 0);
 				break;
 			}
 
@@ -338,7 +315,7 @@ namespace BlendInt {
 
 				GenerateShadedFormBuffers(size_p, round_type(),
 				        *radius_p, color, shadetop, shadedown, shadedir, 5,
-				        m_inner_buffer, m_outer_buffer, 0);
+				        m_inner_buffer.get(), m_outer_buffer.get(), 0);
 				break;
 			}
 
@@ -354,7 +331,7 @@ namespace BlendInt {
 
 		glTranslatef(position().x(), position().y(), z());
 
-		DrawShadedInnerBuffer(m_inner_buffer);
+		DrawShadedInnerBuffer(m_inner_buffer.get());
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
@@ -365,17 +342,17 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		DrawOutlineBuffer(m_outer_buffer);
+		DrawOutlineBuffer(m_outer_buffer.get());
 
 		glPopMatrix();
 
-		DispatchRender(m_control_button);
+		DispatchRender(m_control_button.get());
 	}
 
 	void SliderBar::MouseMoveEvent (MouseEvent* event)
 	{
 		if(m_control_button->down()) {
-				dispatch_mouse_move_event(m_control_button, event);
+				dispatch_mouse_move_event(m_control_button.get(), event);
 
 				int value = 0;
 				if(orientation() == Vertical) {
@@ -391,19 +368,19 @@ namespace BlendInt {
 			}
 
 		if(contain(event->position())) {
-			dispatch_mouse_move_event(m_control_button, event);
+			dispatch_mouse_move_event(m_control_button.get(), event);
 		}
 	}
 
 	void SliderBar::MousePressEvent (MouseEvent* event)
 	{
 		if(m_control_button->down()) {
-			dispatch_mouse_press_event(m_control_button, event);
+			dispatch_mouse_press_event(m_control_button.get(), event);
 			return;
 		}
 
 		if(contain(event->position())) {
-			dispatch_mouse_press_event(m_control_button, event);
+			dispatch_mouse_press_event(m_control_button.get(), event);
 			if(event->accepted()) return;
 
 			Point inner_pos;
@@ -434,7 +411,7 @@ namespace BlendInt {
 	void SliderBar::MouseReleaseEvent (MouseEvent* event)
 	{
 		if(m_control_button->down()) {
-				dispatch_mouse_release_event(m_control_button, event);
+				dispatch_mouse_release_event(m_control_button.get(), event);
 				return;
 		}
 
@@ -442,7 +419,7 @@ namespace BlendInt {
 			if (event->button() == MouseButtonLeft) {
 
 			}
-			dispatch_mouse_release_event(m_control_button, event);
+			dispatch_mouse_release_event(m_control_button.get(), event);
 		}
 	}
 
@@ -467,7 +444,7 @@ namespace BlendInt {
 		short shadedown = themes()->scroll.shadedown;
 
 		GenerateShadedFormBuffers(size_p, round_type(), radius(),
-		        color, shadetop, shadedown, shadedir, 0, m_inner_buffer, m_outer_buffer, 0);
+		        color, shadetop, shadedown, shadedir, 0, m_inner_buffer.get(), m_outer_buffer.get(), 0);
 	}
 
 	int SliderBar::GetSpace ()
@@ -487,14 +464,10 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation)
 			: AbstractSlider(orientation), m_scroll_control(0), m_inner_buffer(0), m_outer_buffer(0)
 	{
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
 
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-
-		m_scroll_control = new ScrollControl(this);
-		Retain(m_scroll_control);
+		m_scroll_control.reset(new ScrollControl(this));
 
 		SetRoundType(RoundAll);
 		SetRadius(8);
@@ -518,19 +491,13 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation, AbstractWidget* parent)
 			: AbstractSlider(orientation, parent), m_scroll_control(0), m_inner_buffer(0), m_outer_buffer(0)
 	{
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
 
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-
-		m_scroll_control = new ScrollControl(this);
-		Retain(m_scroll_control);
+		m_scroll_control.reset(new ScrollControl(this));
 
 		SetRoundType(RoundAll);
 		SetRadius(8);
-
-		m_scroll_control = new ScrollControl(this);
 
 		if (orientation == Vertical) {	// Vertical
 			Resize(16, 400);
@@ -594,7 +561,7 @@ namespace BlendInt {
 		short shadedown = themes()->scroll.shadedown;
 
 		GenerateShadedFormBuffers(size, round_type(), radius(), color, shadetop,
-		        shadedown, shadedir, 0, m_inner_buffer, m_outer_buffer, 0);
+		        shadedown, shadedir, 0, m_inner_buffer.get(), m_outer_buffer.get(), 0);
 	}
 
 	void ScrollBar::Draw ()
@@ -604,7 +571,7 @@ namespace BlendInt {
 
 		glTranslatef(position().x(), position().y(), z());
 
-		DrawShadedInnerBuffer(m_inner_buffer);
+		DrawShadedInnerBuffer(m_inner_buffer.get());
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->scroll.outline.r(),
@@ -616,17 +583,17 @@ namespace BlendInt {
 
 		glColor4ubv(tcol);
 
-		DrawOutlineBuffer(m_outer_buffer);
+		DrawOutlineBuffer(m_outer_buffer.get());
 
 		glPopMatrix();
 
-		DispatchRender(m_scroll_control);
+		DispatchRender(m_scroll_control.get());
 	}
 
 	void ScrollBar::MouseMoveEvent (MouseEvent* event)
 	{
 		if(m_scroll_control->down()) {
-				dispatch_mouse_move_event(m_scroll_control, event);
+				dispatch_mouse_move_event(m_scroll_control.get(), event);
 
 				int value = 0;
 				if(orientation() == Vertical) {
@@ -642,19 +609,19 @@ namespace BlendInt {
 			}
 
 		if(contain(event->position())) {
-			dispatch_mouse_move_event(m_scroll_control, event);
+			dispatch_mouse_move_event(m_scroll_control.get(), event);
 		}
 	}
 
 	void ScrollBar::MousePressEvent (MouseEvent* event)
 	{
 		if(m_scroll_control->down()) {
-			dispatch_mouse_press_event(m_scroll_control, event);
+			dispatch_mouse_press_event(m_scroll_control.get(), event);
 			return;
 		}
 
 		if(contain(event->position())) {
-			dispatch_mouse_press_event(m_scroll_control, event);
+			dispatch_mouse_press_event(m_scroll_control.get(), event);
 			if(event->accepted()) return;
 
 			Point inner_pos;
@@ -685,7 +652,7 @@ namespace BlendInt {
 	void ScrollBar::MouseReleaseEvent (MouseEvent* event)
 	{
 		if(m_scroll_control->down()) {
-				dispatch_mouse_release_event(m_scroll_control, event);
+				dispatch_mouse_release_event(m_scroll_control.get(), event);
 				return;
 		}
 
@@ -693,7 +660,7 @@ namespace BlendInt {
 			if (event->button() == MouseButtonLeft) {
 
 			}
-			dispatch_mouse_release_event(m_scroll_control, event);
+			dispatch_mouse_release_event(m_scroll_control.get(), event);
 		}
 	}
 

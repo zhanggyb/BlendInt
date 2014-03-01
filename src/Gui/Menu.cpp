@@ -45,16 +45,13 @@ namespace BlendInt {
 	{
 		m_menubin.reset(new MenuItemBin);
 
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-		m_highlight_buffer = new GLArrayBuffer;
-		Retain(m_highlight_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_highlight_buffer.reset(new GLArrayBuffer);
 
 		set_size(20, 20);
 
-		GenerateFormBuffer(&(size()), round_type(), radius(), m_inner_buffer, m_outer_buffer, 0);
+		GenerateFormBuffer(&(size()), round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 
 		ResetHighlightBuffer(20);
 	}
@@ -65,25 +62,19 @@ namespace BlendInt {
 
 		m_menubin.reset(new MenuItemBin);
 
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-		m_highlight_buffer = new GLArrayBuffer;
-		Retain(m_highlight_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_highlight_buffer.reset(new GLArrayBuffer);
 
 		set_size(20, 20);
 
-		GenerateFormBuffer(&(size()), round_type(), radius(), m_inner_buffer, m_outer_buffer, 0);
+		GenerateFormBuffer(&(size()), round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 
 		ResetHighlightBuffer(20);
 	}
 
 	Menu::~Menu ()
 	{
-		Destroy(m_inner_buffer);
-		Destroy(m_outer_buffer);
-		Destroy(m_highlight_buffer);
 	}
 
 	void Menu::SetTitle(const String& title)
@@ -151,20 +142,20 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer, m_outer_buffer, 0);
+				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 				ResetHighlightBuffer(size_p->width());
 				break;
 			}
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(data);
-				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer, m_outer_buffer, 0);
+				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 				break;
 			}
 
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
-				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer, m_outer_buffer, 0);
+				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
 				break;
 			}
 
@@ -182,7 +173,7 @@ namespace BlendInt {
 		        themes()->menu.inner.g(),
 		        themes()->menu.inner.b(),
 		        themes()->menu.inner.a());
-		DrawInnerBuffer(m_inner_buffer);
+		DrawInnerBuffer(m_inner_buffer.get());
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->menu.outline.r(),
@@ -192,7 +183,7 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		DrawOutlineBuffer(m_outer_buffer);
+		DrawOutlineBuffer(m_outer_buffer.get());
 
 		FontCache* fc = FontCache::create(Font("Sans"));
 
@@ -208,7 +199,7 @@ namespace BlendInt {
 			//DispatchRender(*it);
 			//glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
 			if((*it)->icon()) {
-				DispatchRender ((*it)->icon());
+				//DispatchRender ((*it)->icon());
 			}
 			fc->print(5 + 16, 5, (*it)->text());
 			fc->print(120, 5, (*it)->shortcut());
@@ -242,7 +233,7 @@ namespace BlendInt {
 			MenuItem* item = m_menubin->GetMenuItem(m_highlight - 1);
 
 			if(item->icon()) {
-				DispatchRender (item->icon());
+				//DispatchRender (item->icon());
 			}
 			fc->print(5 + 16, 5, item->text());
 			fc->print(120, 5, item->shortcut());
@@ -270,7 +261,7 @@ namespace BlendInt {
 				themes()->menu_item.shadetop,
 				themes()->menu_item.shadedown,
 				Vertical,
-				m_highlight_buffer);
+				m_highlight_buffer.get());
 	}
 
 	unsigned int Menu::GetHighlightNo(int y)

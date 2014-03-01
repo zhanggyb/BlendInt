@@ -25,13 +25,21 @@
 
 #ifdef DEBUG
 #include <iostream>
-#include <stdexcept>
 #endif
+
+#include <BlendInt/Types.hpp>
 
 namespace BlendInt {
 
+	RefPtr<Object> Object::Create (const char* name)
+	{
+		RefPtr<Object> ret(new Object);
+		ret->m_name = name;
+		return ret;
+	}
+
 	Object::Object()
-	: m_ref_count(0)
+	: m_count(0)
 #ifdef DEBUG
 	, m_id(0)
 #endif
@@ -59,28 +67,8 @@ namespace BlendInt {
 #ifdef DEBUG
 		unregister_from_map();
 #endif
-	}
 
-	void Object::Destroy(Object *obj)
-	{
-		if(obj == 0) return;
-
-		if(obj->m_ref_count == 0) {
-#ifdef DEBUG
-			std::cerr << "Warning: object " << obj->name() << " deleted with no reference" << std::endl;
-#endif
-			delete obj;
-		} else {
-			obj->m_ref_count--;
-			if(obj->m_ref_count == 0) {
-				delete obj;
-			}
-		}
-	}
-
-	void Object::Retain(Object* obj)
-	{
-		obj->m_ref_count++;
+		//DBG_PRINT_MSG("object is destroyed: %s", m_name.c_str());
 	}
 
 #ifdef DEBUG

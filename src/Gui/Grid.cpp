@@ -32,8 +32,8 @@
 // value_ptr
 #include <glm/gtc/type_ptr.hpp>
 
-#include <BlendInt/Grid.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/Gui/Grid.hpp>
 
 namespace BlendInt {
 
@@ -106,18 +106,16 @@ namespace BlendInt {
 
 	Grid::~Grid ()
 	{
-		Destroy(m_ib);
-		Destroy(m_vb);
 	}
 
 	void Grid::InitOnce()
 	{
-		GLSLProgram* prog = new GLSLProgram;
+		RefPtr<GLSLProgram> prog(new GLSLProgram);
 		prog->Create();
 		prog->AttachShaderPair(vertex_shader, fragment_shader);
 		prog->Link();
 
-		SetProgram(prog);
+		set_program(prog);
 
 		program()->Use();
 
@@ -135,8 +133,7 @@ namespace BlendInt {
 			}
 		}
 
-		m_vb = new GLArrayBuffer;
-		Retain(m_vb);
+		m_vb.reset(new GLArrayBuffer);
 		m_vb->Generate();
 		m_vb->Bind();
 
@@ -161,8 +158,7 @@ namespace BlendInt {
 			}
 		}
 
-		m_ib = new GLElementArrayBuffer;
-		Retain(m_ib);
+		m_ib.reset(new GLElementArrayBuffer);
 
 		m_ib->Generate();
 		m_ib->Bind();

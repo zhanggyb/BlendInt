@@ -162,8 +162,8 @@ namespace BlendInt {
 			glfwSwapBuffers(window);
 		
 			/* Poll for and process events */
-			//glfwPollEvents();
-			glfwWaitEvents();
+			glfwPollEvents();
+			//glfwWaitEvents();
 		}
 	
 	}

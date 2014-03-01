@@ -27,9 +27,9 @@
 #include <vector>
 #include <string>
 
-#include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/Core/Freetype.hpp>
-#include <BlendInt/Glyph.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/Gui/Glyph.hpp>
 
 namespace BlendInt {
 
@@ -75,7 +75,7 @@ namespace BlendInt {
 		 */
 		GLuint texture_;		// texture object
 
-		GLSLProgram* m_program;
+		RefPtr<GLSLProgram> m_program;
 
 		GLint uniform_tex_;
 

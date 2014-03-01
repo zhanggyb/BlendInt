@@ -31,10 +31,11 @@
 #endif	// DEBUG
 
 #include <string>
+#include <stdexcept>
+
+#include <BlendInt/Core/RefPtr.hpp>
 
 namespace BlendInt {
-
-	class Interface;
 
 	/**
 	 * @brief The base class of most BlendInt objects
@@ -49,7 +50,11 @@ namespace BlendInt {
 	{
 	public:
 
+		static RefPtr<Object> Create (const char* name = 0);
+
 		Object ();
+
+		virtual ~Object ();
 
 		inline void set_name (const char* name)
 		{
@@ -63,28 +68,14 @@ namespace BlendInt {
 
 		const std::string& name () const {return m_name;}
 
-		inline size_t ref_count ()
+		inline size_t count ()
 		{
-			return m_ref_count;
+			return m_count;
 		}
-
-#ifdef DEBUG
-		static void Retain (Object* obj);
-#endif
-
-		static void Destroy (Object* obj);
-
-	protected:
-
-		virtual ~Object ();
-
-#ifndef DEBUG
-		static void Retain (Object* obj);
-#endif
 
 	private:
 
-		size_t m_ref_count;
+		size_t m_count;
 
 		std::string m_name;
 
@@ -114,6 +105,8 @@ namespace BlendInt {
 		}
 
 	private:
+
+		template <typename T> friend class RefPtr;
 
 		inline bool register_in_map ();
 

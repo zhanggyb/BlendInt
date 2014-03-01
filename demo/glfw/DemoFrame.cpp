@@ -36,7 +36,6 @@ DemoFrame::DemoFrame()
 	SetPreferredSize(size());
 
 	m_timer = new Timer;
-	Retain (m_timer);
 
 	// connect timer
 	events()->connect(start_button->clicked(),this, &DemoFrame::start_time);
@@ -46,7 +45,7 @@ DemoFrame::DemoFrame()
 
 DemoFrame::~DemoFrame()
 {
-	Destroy(m_timer);
+	delete m_timer;
 }
 
 

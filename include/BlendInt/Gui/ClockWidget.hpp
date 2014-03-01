@@ -46,14 +46,14 @@ namespace BlendInt {
 
 		ClockWidget(AbstractWidget* parent);
 
+		virtual ~ClockWidget();
+
 		void set_background (const Color& color)
 		{
 			m_background = color;
 		}
 
 	protected:
-
-		virtual ~ClockWidget();
 
 //		virtual void Update (int type, const void* data);
 
@@ -73,7 +73,7 @@ namespace BlendInt {
 
 		int m_angle;
 
-		Timer* m_timer;
+		RefPtr<Timer> m_timer;
 
 		Color m_background;
 	};

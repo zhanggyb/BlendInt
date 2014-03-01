@@ -39,9 +39,9 @@ namespace BlendInt {
 
 		SlideButton (AbstractWidget* parent);
 
-	protected:
-
 		virtual ~SlideButton ();
+
+	protected:
 
 		virtual void Update (int type, const void* data);
 
@@ -61,9 +61,9 @@ namespace BlendInt {
 
 		Point m_position_origin;
 
-		GLArrayBuffer* m_inner_buffer;
-		GLArrayBuffer* m_outer_buffer;
-		GLArrayBuffer* m_highlight_buffer;
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_highlight_buffer;
 	};
 
 	/**
@@ -77,18 +77,13 @@ namespace BlendInt {
 
 		Slider (Orientation orientation, AbstractWidget* parent);
 
+		virtual ~Slider ();
+
 		void set_control_size (size_t size);
 
 		void set_control_widget (SlideButton *widget);
 
-		const SlideButton* slide_button () const
-		{
-			return m_slide_button;
-		}
-
 	protected:
-
-		virtual ~Slider ();
 
 		virtual void Update (int type, const void* data);
 
@@ -106,7 +101,7 @@ namespace BlendInt {
 		 */
 		int get_space ();
 
-		SlideButton* m_slide_button;
+		RefPtr<SlideButton> m_slide_button;
 
 	private:
 

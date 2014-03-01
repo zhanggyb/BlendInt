@@ -47,13 +47,13 @@ namespace BlendInt {
 
 		Widget (AbstractWidget* parent);
 
+		virtual ~Widget();
+
 		static void SetDefaultBorderWidth (float border);
 
 		static float DefaultBorderWidth ();
 
 	protected:
-
-		virtual ~Widget();
 
 		virtual void Update (int type, const void* data);
 

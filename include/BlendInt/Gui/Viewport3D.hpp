@@ -28,9 +28,9 @@
 
 #include <BlendInt/Gui/Widget.hpp>
 
-#include <BlendInt/Grid.hpp>
-#include <BlendInt/Cube.hpp>
-#include <BlendInt/NavigationCamera.hpp>
+#include <BlendInt/Gui/Grid.hpp>
+#include <BlendInt/Gui/Cube.hpp>
+#include <BlendInt/Gui/NavigationCamera.hpp>
 
 using std::vector;
 
@@ -75,12 +75,12 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		vector<AbstractCamera*> m_cameras;
+		vector<RefPtr<AbstractCamera> > m_cameras;
 
-		NavigationCamera* m_default_camera;
+		RefPtr<NavigationCamera> m_default_camera;
 
-		Cube* m_cube;
-		Grid* m_grid;
+		RefPtr<Cube> m_cube;
+		RefPtr<Grid> m_grid;
 
 		int m_last_x;
 		int m_last_y;

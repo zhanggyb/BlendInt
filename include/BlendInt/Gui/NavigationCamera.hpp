@@ -21,41 +21,53 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CUBE_HPP_
-#define _BLENDINT_CUBE_HPP_
+#ifndef _BLENDINT_CAMERA_HPP_
+#define _BLENDINT_CAMERA_HPP_
 
-#include <BlendInt/AbstractPrimitive.hpp>
-
-#include <glm/glm.hpp>
+#include <glm/vec3.hpp>
+#include <BlendInt/Gui/AbstractCamera.hpp>
 
 namespace BlendInt {
 
-	class Cube: public AbstractPrimitive
+	class NavigationCamera: public AbstractCamera
 	{
 	public:
 
-		Cube ();
+		NavigationCamera ();
 
-		virtual void Render (const glm::mat4& mvp);
+		virtual ~NavigationCamera ();
 
-	protected:
+		void Orbit (float x, float y);
 
-		virtual ~Cube ();
+		void Pan (float x, float y);
+
+		void Zoom (float fac);
+
+		void SaveCurrentPosition ();
+
+		void SaveCurrentCenter ();
+
+		virtual void Update ();
+
+		float speed () {return m_speed;}
+
+		void set_speed (float speed)
+		{
+			m_speed = speed;
+		}
 
 	private:
 
-		int InitOnce ();
+		glm::vec3 m_last_position;
+		glm::vec3 m_last_center;
 
-		GLuint m_vbo_cube_vertices;
-		GLuint m_vbo_cube_colors;
-		GLuint m_ibo_cube_elements;
-		GLint m_attribute_coord3d;
-		GLint m_attribute_v_color;
-		GLint m_uniform_mvp;
+		/**
+		 * Speed used in Orbit, Pan, Zoom, more large, more slower
+		 */
+		float m_speed;
 
-		glm::mat4 mvp;
 	};
 
 }
 
-#endif /* _BLENDINT_CUBE_HPP_ */
+#endif /* _BLENDINT_CAMERA_HPP_ */

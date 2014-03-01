@@ -55,7 +55,7 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 #include <BlendInt/Service/ContextManager.hpp>
-#include <BlendInt/Service/StockIcon.hpp>
+#include <BlendInt/Service/StockIcons.hpp>
 
 #include "Intern/ScreenBuffer.hpp"
 
@@ -130,7 +130,7 @@ namespace BlendInt {
 			success = false;
 		}
 
-		if (success && StockIcon::Initialize()) {
+		if (success && StockIcons::Initialize()) {
 			// do nothing
 		} else {
 			std::cerr << "Cannot initialize Stock Icons" << std::endl;
@@ -151,7 +151,7 @@ namespace BlendInt {
 	{
 
 		ContextManager::Release();
-		StockIcon::Release();
+		StockIcons::Release();
 		ShaderManager::Release();
 		ThemeManager::release();
 		FontCache::releaseAll();
@@ -229,9 +229,7 @@ namespace BlendInt {
 			{
 				widget_set_p = layer_iter->second.widgets;
 
-#ifdef DEBUG
-				std::cout << "Layer: " << layer_iter->first << " need to be refreshed" << std::endl;
-#endif	// DEBUG
+				DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
 
 				if(!layer_iter->second.buffer) {
 					layer_iter->second.buffer = new GLTexture2D;
@@ -265,9 +263,7 @@ namespace BlendInt {
 
 				if(layer_iter->second.refresh) {
 
-#ifdef DEBUG
-					std::cout << "Layer: " << layer_iter->first << " need to be refreshed" << std::endl;
-#endif	// DEBUG
+					DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
 
 					if(!layer_iter->second.buffer) {
 						layer_iter->second.buffer = new GLTexture2D;
@@ -954,7 +950,7 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		for(std::set<AbstractWidget*>::iterator it = widget->m_children.begin(); it != widget->m_children.end(); it++)
+		for(std::set<AbstractWidget*>::iterator it = widget->m_branches.begin(); it != widget->m_branches.end(); it++)
 		{
 			DispatchDrawEvent(*it);
 		}
@@ -966,7 +962,7 @@ namespace BlendInt {
 		if (parent) {
 			parent->m_flag.set(AbstractWidget::WidgetFlagContextHoverList);
 			for (std::set<AbstractWidget*>::iterator it =
-			        parent->m_children.begin(); it != parent->m_children.end();
+			        parent->m_branches.begin(); it != parent->m_branches.end();
 			        it++) {
 				if ((*it)->contain(cursor_point)) {
 					ContextManager::context_manager->m_hover_deque->push_back(*it);

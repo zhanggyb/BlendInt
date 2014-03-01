@@ -21,31 +21,17 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/AbstractPrimitive.hpp>
+#include <BlendInt/Gui/AbstractPrimitive.hpp>
 
 namespace BlendInt {
 
 	AbstractPrimitive::AbstractPrimitive ()
-	: Object(), m_program(0)
+	: Object()
 	{
-	}
-
-	void AbstractPrimitive::SetProgram (GLSLProgram* program)
-	{
-		if(m_program == program) return;
-
-		if(m_program)
-			Destroy(m_program);
-
-		m_program = program;
-
-		if(m_program)
-			Retain(m_program);
 	}
 
 	AbstractPrimitive::~AbstractPrimitive ()
 	{
-		Destroy(m_program);
 	}
 
 }

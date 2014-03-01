@@ -29,8 +29,7 @@
 #include <wchar.h>
 
 #include <BlendInt/Core/Freetype.hpp>
-#include <BlendInt/Glyph.hpp>
-
+#include <BlendInt/Gui/Glyph.hpp>
 #include <BlendInt/Gui/TextureFont.hpp>
 #include <BlendInt/Gui/TextureAtlas.hpp>
 
