@@ -112,12 +112,12 @@ namespace BlendInt {
 
 	void Grid::InitOnce()
 	{
-		GLSLProgram* prog = new GLSLProgram;
+		RefPtr<GLSLProgram> prog(new GLSLProgram);
 		prog->Create();
 		prog->AttachShaderPair(vertex_shader, fragment_shader);
 		prog->Link();
 
-		SetProgram(prog);
+		set_program(prog);
 
 		program()->Use();
 

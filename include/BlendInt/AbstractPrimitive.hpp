@@ -38,7 +38,10 @@ namespace BlendInt {
 
 		AbstractPrimitive ();
 
-		void SetProgram (GLSLProgram* program);
+		void set_program (const RefPtr<GLSLProgram>& program)
+		{
+			m_program = program;
+		}
 
 		/**
 		 * @brief Render the primitive in Viewport3D
@@ -52,13 +55,13 @@ namespace BlendInt {
 
 	protected:
 
-		GLSLProgram* program () const {return m_program;}
+		RefPtr<GLSLProgram> program () const {return m_program;}
 
 		virtual ~AbstractPrimitive();
 
 	private:
 
-		GLSLProgram* m_program;
+		RefPtr<GLSLProgram> m_program;
 	};
 
 }

@@ -153,7 +153,7 @@ namespace BlendInt {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo_cube_elements);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
 
-		SetProgram(ShaderManager::Instance()->primitive_program());
+		set_program(ShaderManager::Instance()->primitive_program());
 		program()->Use();
 
 		m_attribute_coord3d = program()->GetAttributeLocation("coord3d");

@@ -76,11 +76,18 @@ namespace BlendInt {
 		 * @brief Copy constructor
 		 * @param orig A RefPtr already exists
 		 *
-		 * Create from a already existing RefPtr, this will increase the
+		 * Create from an already existing RefPtr, this will increase the
 		 * shared reference count of the object stored.
 		 */
-		RefPtr (const RefPtr<T>& orig);
+		inline RefPtr (const RefPtr<T>& orig);
 
+		/**
+		 * @brief Copy constructor (from different, but castable type)
+		 * @param orig A different RefPtr which holds another Object inheritance
+		 *
+		 * Create from an already existing RefPtr which holds another Object inheritance,
+		 * and increase the shared reference count.
+		 */
 		template <typename T_CastFrom>
 		inline RefPtr(const RefPtr<T_CastFrom>& orig);
 
@@ -92,23 +99,79 @@ namespace BlendInt {
 		 */
 		inline ~RefPtr ();
 
+		/**
+		 * @brief Assignment operator overloading
+		 * @param src A RefPtr
+		 * @return This RefPtr
+		 *
+		 * Copy from another RefPtr, and increase the reference count.
+		 */
 		inline RefPtr<T>& operator = (const RefPtr<T>& src);
 
+		/**
+		 * @brief Assignment operator overloading
+		 * @param src Another type of RefPtr
+		 * @return This RefPtr
+		 *
+		 * Copy from different but castable type of RefPtr, and increase the reference count.
+		 */
 		template <typename T_CastFrom>
 		inline RefPtr<T>& operator = (const RefPtr<T_CastFrom>& src);
 
+		/**
+		 * @brief Reset the pointer
+		 * @param obj A new object pointer
+		 *
+		 * @note If obj = 0, this function is the same as destroy()
+		 */
 		inline void reset (T* obj);
 
+		/**
+		 * @brief Reset the pointer
+		 * @param other Another RefPtr
+		 */
 		inline void reset (const RefPtr<T>& other);
 
+		/**
+		 * @brief Try to delete the object pointer stored
+		 *
+		 * This function decrease the reference count of the object, if count is 0, delete it.
+		 *
+		 * After calling this function, the object pointer becomes 0 and
+		 * @code
+		 * 	if(ptr)
+		 * @endcode
+		 *
+		 * always returns false
+		 */
 		inline void destroy ();
 
+		/**
+		 * @brief Swap the contents of two RefPtr<>.
+		 *
+		 * This method swaps the internal pointers to object T. This can be
+		 * done safely without involving a reference/unreference cycle and is
+		 * therefore highly efficient.
+		 */
 		inline RefPtr<T>& swap (RefPtr<T>& other);
 
+		/**
+		 * @brief Overload "->" operator for dereferencing
+		 * @return The pointer to the T object
+		 *
+		 * Use the methods of the underlying instance like so:
+		 * @code
+		 * refptr->memberfun();
+		 * @endcode
+		 */
 		inline T* operator-> () const;
 
 		inline T& operator* () const;
 
+		/**
+		 * @brief Get the pointer
+		 * @return A pointer of object T
+		 */
 		inline T* get () const;
 
 		inline bool operator== (const RefPtr<T>& src) const;
@@ -212,20 +275,14 @@ namespace BlendInt {
 	template <typename T> inline
 	RefPtr<T>& RefPtr<T>::operator =(const RefPtr<T>& src)
 	{
-		if(m_ptr) {
+		T* const old = m_ptr;
+		m_ptr = src.m_ptr;
 
-			T* const old = m_ptr;
-			m_ptr = src.m_ptr;
+		if(m_ptr)
 			++m_ptr->m_count;
 
-			if (--old->m_count == 0)
-				delete old;
-
-		} else {
-
-			m_ptr = src.m_ptr;
-			++m_ptr->m_count;
-		}
+		if (old && (--old->m_count == 0))
+			delete old;
 
 		return *this;
 	}
@@ -235,20 +292,14 @@ namespace BlendInt {
 	inline
 	RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T_CastFrom>& src)
 	{
-		if(m_ptr) {
+		T* const old = m_ptr;
+		m_ptr = src.get();
 
-			T* const old = m_ptr;
-			m_ptr = src.get();
+		if(m_ptr)
 			++m_ptr->m_count;
 
-			if (--old->m_count == 0)
-				delete old;
-
-		} else {
-
-			m_ptr = src.get();
-			++m_ptr->m_count;
-		}
+		if (old && (--old->m_count == 0))
+			delete old;
 
 		return *this;
 	}
@@ -256,47 +307,34 @@ namespace BlendInt {
 	template <typename T> inline
 	void RefPtr<T>::reset (T* obj)
 	{
-		if(m_ptr) {
+		T* const old = m_ptr;
+		m_ptr = obj;
 
-			T* const old = m_ptr;
-			m_ptr = obj;
+		if(m_ptr)
 			++m_ptr->m_count;
 
-			if (--old->m_count == 0)
-				delete old;
-
-		} else {
-
-			m_ptr = obj;
-			++m_ptr->m_count;
-		}
+		if (old && (--old->m_count == 0))
+			delete old;
 	}
 
 	template <typename T> inline
 	void RefPtr<T>::reset (const RefPtr<T>& other)
 	{
-		if(m_ptr) {
+		T* const old = m_ptr;
+		m_ptr = other.m_ptr;
 
-			T* const old = m_ptr;
-			m_ptr = other.m_ptr;
+		if(m_ptr)
 			++m_ptr->m_count;
 
-			if (--old->m_count == 0)
-				delete old;
-
-		} else {
-
-			m_ptr = other.m_ptr;
-			++m_ptr->m_count;
-		}
+		if (old && (--old->m_count == 0))
+			delete old;
 	}
 
 	template <typename T> inline
 	void RefPtr<T>::destroy ()
 	{
-		if(m_ptr) {
-			if(--m_ptr->m_count == 0)
-				delete m_ptr;
+		if(m_ptr && (--m_ptr->m_count == 0)) {
+			delete m_ptr;
 
 			m_ptr = 0;
 		}

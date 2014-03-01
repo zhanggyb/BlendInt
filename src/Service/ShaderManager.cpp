@@ -113,28 +113,21 @@ namespace BlendInt {
 	text_uniform_tex_(-1),
 	text_uniform_color_(-1),
 	text_vbo_(0),
-	m_text_program(0),
-	m_uniform_mvp(0),
-	m_primitive_program(0)
+	m_uniform_mvp(0)
 	{
-		m_text_program = new GLSLProgram;
+		m_text_program.reset(new GLSLProgram);
 #ifdef DEBUG
 		m_text_program->set_name("Text GLSLProgram");
 #endif
-		Object::Retain(m_text_program);
 
-		m_primitive_program = new GLSLProgram;
+		m_primitive_program.reset(new GLSLProgram);
 #ifdef DEBUG
 		m_primitive_program->set_name("Primitive GLSLProgram");
 #endif
-		Object::Retain(m_primitive_program);
 	}
 
 	ShaderManager::~ShaderManager()
 	{
-		Object::Destroy(m_text_program);
-		Object::Destroy(m_primitive_program);
-
 		glDeleteBuffers(1, &text_vbo_);
 	}
 
@@ -186,11 +179,11 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool ShaderManager::Find(const GLSLProgram* program)
-	{
-		if(m_text_program == program) return true;
-		if(m_primitive_program == program) return true;
-
-		return false;
-	}
+//	bool ShaderManager::Find(const GLSLProgram* program)
+//	{
+//		if(m_text_program == program) return true;
+//		if(m_primitive_program == program) return true;
+//
+//		return false;
+//	}
 }
