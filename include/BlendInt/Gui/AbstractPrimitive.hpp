@@ -21,52 +21,49 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GRID_HPP_
-#define _BLENDINT_GRID_HPP_
+#ifndef _BLENDINT_ABSTRACTPRIMITIVE_HPP_
+#define _BLENDINT_ABSTRACTPRIMITIVE_HPP_
 
-#include <BlendInt/AbstractPrimitive.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
+#include <glm/glm.hpp>
+
+#include <BlendInt/Core/Object.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/Gui/AbstractCamera.hpp>
 
 namespace BlendInt {
 
-	class Grid: public AbstractPrimitive
+	class AbstractPrimitive: public Object
 	{
 	public:
 
-		Grid ();
+		AbstractPrimitive ();
 
-		void SetSize (int size);
+		void set_program (const RefPtr<GLSLProgram>& program)
+		{
+			m_program = program;
+		}
 
-		void Update ();
-
-		virtual void Render (const glm::mat4& MVP);
+		/**
+		 * @brief Render the primitive in Viewport3D
+		 * @param MVP
+		 *
+		 * The following OpenGL APIs should not be used in this virtual function:
+		 * 	- glClearColor
+		 * 	- glClear
+		 */
+		virtual void Render (const glm::mat4& mvp) = 0;
 
 	protected:
 
-		virtual ~Grid ();
+		RefPtr<GLSLProgram> program () const {return m_program;}
+
+		virtual ~AbstractPrimitive();
 
 	private:
 
-		void InitOnce ();
-
-		int m_size;
-		int m_step;
-
-		GLArrayBuffer* m_vb;	// vertex buffer
-		GLElementArrayBuffer* m_ib;	// index buffer
-
-		GLint m_attribute_coord2d;
-		GLint m_uniform_mvp;
-
-		static const char* vertex_shader;
-
-		static const char* fragment_shader;
-
+		RefPtr<GLSLProgram> m_program;
 	};
 
 }
 
-
-
-#endif /* _BLENDINT_GRID_HPP_ */
+#endif /* _BLENDINT_ABSTRACTPRIMITIVE_HPP_ */

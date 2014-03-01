@@ -22,7 +22,7 @@
  */
 
 #include <string.h>
-#include <BlendInt/Glyph.hpp>
+#include <BlendInt/Gui/Glyph.hpp>
 
 namespace BlendInt {
 

@@ -26,10 +26,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <BlendInt/Cube.hpp>
-
 #include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/Gui/Cube.hpp>
 
 namespace BlendInt {
 

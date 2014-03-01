@@ -21,53 +21,52 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CAMERA_HPP_
-#define _BLENDINT_CAMERA_HPP_
+#ifndef _BLENDINT_GRID_HPP_
+#define _BLENDINT_GRID_HPP_
 
-#include <glm/vec3.hpp>
-#include <BlendInt/AbstractCamera.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
+#include <BlendInt/Gui/AbstractPrimitive.hpp>
 
 namespace BlendInt {
 
-	class NavigationCamera: public AbstractCamera
+	class Grid: public AbstractPrimitive
 	{
 	public:
 
-		NavigationCamera ();
+		Grid ();
 
-		virtual ~NavigationCamera ();
+		void SetSize (int size);
 
-		void Orbit (float x, float y);
+		void Update ();
 
-		void Pan (float x, float y);
+		virtual void Render (const glm::mat4& MVP);
 
-		void Zoom (float fac);
+	protected:
 
-		void SaveCurrentPosition ();
-
-		void SaveCurrentCenter ();
-
-		virtual void Update ();
-
-		float speed () {return m_speed;}
-
-		void set_speed (float speed)
-		{
-			m_speed = speed;
-		}
+		virtual ~Grid ();
 
 	private:
 
-		glm::vec3 m_last_position;
-		glm::vec3 m_last_center;
+		void InitOnce ();
 
-		/**
-		 * Speed used in Orbit, Pan, Zoom, more large, more slower
-		 */
-		float m_speed;
+		int m_size;
+		int m_step;
+
+		GLArrayBuffer* m_vb;	// vertex buffer
+		GLElementArrayBuffer* m_ib;	// index buffer
+
+		GLint m_attribute_coord2d;
+		GLint m_uniform_mvp;
+
+		static const char* vertex_shader;
+
+		static const char* fragment_shader;
 
 	};
 
 }
 
-#endif /* _BLENDINT_CAMERA_HPP_ */
+
+
+#endif /* _BLENDINT_GRID_HPP_ */

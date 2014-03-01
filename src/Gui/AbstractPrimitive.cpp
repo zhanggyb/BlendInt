@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/AbstractPrimitive.hpp>
+#include <BlendInt/Gui/AbstractPrimitive.hpp>
 
 namespace BlendInt {
 

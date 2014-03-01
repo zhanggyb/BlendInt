@@ -21,11 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Image.hpp>
-
 #include <OpenImageIO/imageio.h>
-
 OIIO_NAMESPACE_USING
+
+#include <BlendInt/Core/Image.hpp>
 
 namespace BlendInt {
 

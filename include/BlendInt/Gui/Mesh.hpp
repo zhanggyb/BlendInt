@@ -21,28 +21,48 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_FREECAMERA_HPP_
-#define _BLENDINT_FREECAMERA_HPP_
+#ifndef _BLENDINT_MESH_HPP_
+#define _BLENDINT_MESH_HPP_
 
-#include <glm/vec3.hpp>
-#include <BlendInt/AbstractCamera.hpp>
+#include <vector>
+
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
+
+#include <BlendInt/Gui/AbstractPrimitive.hpp>
 
 namespace BlendInt {
 
-	class FreeCamera: public AbstractCamera
+	class Mesh: public AbstractPrimitive
 	{
 	public:
 
-		FreeCamera ();
+		Mesh ();
 
-		virtual ~FreeCamera ();
+		bool LoadObj (const char* filename);
 
-		virtual void Update ();
+		virtual void Render (const glm::mat4& mvp);
+
+
+
+	protected:
+
+		virtual ~Mesh();
 
 	private:
 
+		void InitOnce ();
+
+		GLArrayBuffer* m_vb;
+
+		GLElementArrayBuffer* m_ib;
+
+		std::vector<glm::vec4> m_vertices;
+		std::vector<glm::vec3> m_normals;
+		std::vector<GLushort> m_elements;
 	};
 
 }
 
-#endif /* _BLENDINT_FREECAMERA_HPP_ */
+#endif /* _BLENDINT_MESH_HPP_ */

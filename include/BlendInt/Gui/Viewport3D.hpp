@@ -28,9 +28,9 @@
 
 #include <BlendInt/Gui/Widget.hpp>
 
-#include <BlendInt/Grid.hpp>
-#include <BlendInt/Cube.hpp>
-#include <BlendInt/NavigationCamera.hpp>
+#include <BlendInt/Gui/Grid.hpp>
+#include <BlendInt/Gui/Cube.hpp>
+#include <BlendInt/Gui/NavigationCamera.hpp>
 
 using std::vector;
 

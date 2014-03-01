@@ -21,48 +21,41 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MESH_HPP_
-#define _BLENDINT_MESH_HPP_
+#ifndef _BLENDINT_CUBE_HPP_
+#define _BLENDINT_CUBE_HPP_
 
-#include <vector>
+#include <BlendInt/Gui/AbstractPrimitive.hpp>
 
-#include <BlendInt/AbstractPrimitive.hpp>
-
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/OpenGL/GLSLProgram.hpp>
-#include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
+#include <glm/glm.hpp>
 
 namespace BlendInt {
 
-	class Mesh: public AbstractPrimitive
+	class Cube: public AbstractPrimitive
 	{
 	public:
 
-		Mesh ();
-
-		bool LoadObj (const char* filename);
+		Cube ();
 
 		virtual void Render (const glm::mat4& mvp);
 
-
-
 	protected:
 
-		virtual ~Mesh();
+		virtual ~Cube ();
 
 	private:
 
-		void InitOnce ();
+		int InitOnce ();
 
-		GLArrayBuffer* m_vb;
+		GLuint m_vbo_cube_vertices;
+		GLuint m_vbo_cube_colors;
+		GLuint m_ibo_cube_elements;
+		GLint m_attribute_coord3d;
+		GLint m_attribute_v_color;
+		GLint m_uniform_mvp;
 
-		GLElementArrayBuffer* m_ib;
-
-		std::vector<glm::vec4> m_vertices;
-		std::vector<glm::vec3> m_normals;
-		std::vector<GLushort> m_elements;
+		glm::mat4 mvp;
 	};
 
 }
 
-#endif /* _BLENDINT_MESH_HPP_ */
+#endif /* _BLENDINT_CUBE_HPP_ */

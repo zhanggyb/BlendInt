@@ -21,49 +21,28 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ABSTRACTPRIMITIVE_HPP_
-#define _BLENDINT_ABSTRACTPRIMITIVE_HPP_
+#ifndef _BLENDINT_FREECAMERA_HPP_
+#define _BLENDINT_FREECAMERA_HPP_
 
-#include <glm/glm.hpp>
-
-#include <BlendInt/Core/Object.hpp>
-#include <BlendInt/OpenGL/GLSLProgram.hpp>
-#include <BlendInt/AbstractCamera.hpp>
+#include <glm/vec3.hpp>
+#include <BlendInt/Gui/AbstractCamera.hpp>
 
 namespace BlendInt {
 
-	class AbstractPrimitive: public Object
+	class FreeCamera: public AbstractCamera
 	{
 	public:
 
-		AbstractPrimitive ();
+		FreeCamera ();
 
-		void set_program (const RefPtr<GLSLProgram>& program)
-		{
-			m_program = program;
-		}
+		virtual ~FreeCamera ();
 
-		/**
-		 * @brief Render the primitive in Viewport3D
-		 * @param MVP
-		 *
-		 * The following OpenGL APIs should not be used in this virtual function:
-		 * 	- glClearColor
-		 * 	- glClear
-		 */
-		virtual void Render (const glm::mat4& mvp) = 0;
-
-	protected:
-
-		RefPtr<GLSLProgram> program () const {return m_program;}
-
-		virtual ~AbstractPrimitive();
+		virtual void Update ();
 
 	private:
 
-		RefPtr<GLSLProgram> m_program;
 	};
 
 }
 
-#endif /* _BLENDINT_ABSTRACTPRIMITIVE_HPP_ */
+#endif /* _BLENDINT_FREECAMERA_HPP_ */

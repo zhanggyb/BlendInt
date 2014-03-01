@@ -25,7 +25,7 @@
 #include <fstream>
 #include <sstream>
 
-#include <BlendInt/Mesh.hpp>
+#include <BlendInt/Gui/Mesh.hpp>
 
 namespace BlendInt {
 

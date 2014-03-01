@@ -32,8 +32,8 @@
 // value_ptr
 #include <glm/gtc/type_ptr.hpp>
 
-#include <BlendInt/Grid.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
+#include <BlendInt/Gui/Grid.hpp>
 
 namespace BlendInt {
 
