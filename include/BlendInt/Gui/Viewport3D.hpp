@@ -75,12 +75,12 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		vector<AbstractCamera*> m_cameras;
+		vector<RefPtr<AbstractCamera> > m_cameras;
 
-		NavigationCamera* m_default_camera;
+		RefPtr<NavigationCamera> m_default_camera;
 
-		Cube* m_cube;
-		Grid* m_grid;
+		RefPtr<Cube> m_cube;
+		RefPtr<Grid> m_grid;
 
 		int m_last_x;
 		int m_last_y;

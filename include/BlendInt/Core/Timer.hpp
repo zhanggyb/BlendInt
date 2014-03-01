@@ -67,6 +67,11 @@ namespace BlendInt {
 		Timer ();
 
 		/**
+		 * @brief Destructor
+		 */
+		~Timer ();
+
+		/**
 		 * @brief Start the timer
 		 */
 		void Start ();
@@ -104,11 +109,6 @@ namespace BlendInt {
 		Cpp::EventRef<> timeout() {return m_timeout;}
 
 	protected:
-
-		/**
-		 * @brief Destructor
-		 */
-		~Timer ();
 
 #if BLENDINT_USE_POSIX_TIMER
 		static void ThreadCallback (union sigval sigev_value);

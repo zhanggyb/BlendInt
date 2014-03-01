@@ -30,7 +30,7 @@
 namespace BlendInt {
 
 	Mesh::Mesh ()
-	: AbstractPrimitive(), m_vb(0), m_ib(0)
+	: AbstractPrimitive()
 	{
 	}
 
@@ -122,8 +122,6 @@ namespace BlendInt {
 
 	Mesh::~Mesh ()
 	{
-		Destroy(m_vb);
-		Destroy(m_ib);
 	}
 
 	void Mesh::InitOnce ()

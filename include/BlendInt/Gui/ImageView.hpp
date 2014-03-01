@@ -59,12 +59,10 @@ namespace BlendInt {
 
 		GLubyte _checkImage[checkImageHeight][checkImageWidth][4];
 
-		GLTexture2D* m_texture;
-
-		GLSLProgram* m_program;
-
-		GLArrayBuffer* m_vbo;
-		GLArrayBuffer* m_tbo;	// texture coords
+		RefPtr<GLTexture2D> m_texture;
+		RefPtr<GLSLProgram> m_program;
+		RefPtr<GLArrayBuffer> m_vbo;
+		RefPtr<GLArrayBuffer> m_tbo;	// texture coords
 
 		GLint uniform_texture;
 		GLint attribute_coord3d;

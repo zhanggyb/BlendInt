@@ -64,9 +64,6 @@ namespace BlendInt {
 
 	Button::~Button ()
 	{
-		Destroy(m_inner_buffer);
-		Destroy(m_outer_buffer);
-		Destroy(m_emboss_buffer);
 	}
 
 	void Button::Update(int type, const void* data)
@@ -75,7 +72,7 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer, m_outer_buffer, m_emboss_buffer);
+				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), m_emboss_buffer.get());
 
 				Refresh();
 				break;
@@ -83,7 +80,7 @@ namespace BlendInt {
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(data);
-				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer, m_outer_buffer, m_emboss_buffer);
+				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), m_emboss_buffer.get());
 
 				Refresh();
 				break;
@@ -91,7 +88,7 @@ namespace BlendInt {
 
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
-				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer, m_outer_buffer, m_emboss_buffer);
+				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), m_emboss_buffer.get());
 
 				Refresh();
 				break;
@@ -127,7 +124,7 @@ namespace BlendInt {
 			}
 		}
 
-		DrawInnerBuffer(m_inner_buffer);
+		DrawInnerBuffer(m_inner_buffer.get());
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -137,10 +134,10 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		DrawOutlineBuffer(m_outer_buffer);
+		DrawOutlineBuffer(m_outer_buffer.get());
 
 		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-		DrawOutlineBuffer(m_emboss_buffer);
+		DrawOutlineBuffer(m_emboss_buffer.get());
 
 		// Draw text
 		if(text().size()) {
@@ -150,12 +147,9 @@ namespace BlendInt {
 
 	void Button::InitOnce ()
 	{
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-		m_emboss_buffer = new GLArrayBuffer;
-		Retain(m_emboss_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_emboss_buffer.reset(new GLArrayBuffer);
 
 		set_round_type(RoundAll);
 		SetExpandX(true);
@@ -165,12 +159,9 @@ namespace BlendInt {
 
 	void Button::InitOnce (const String& text)
 	{
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
-		m_emboss_buffer = new GLArrayBuffer;
-		Retain(m_emboss_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_emboss_buffer.reset(new GLArrayBuffer);
 
 		set_round_type(RoundAll);
 		SetExpandX(true);

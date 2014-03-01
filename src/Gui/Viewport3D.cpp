@@ -61,17 +61,6 @@ namespace BlendInt {
 
 	Viewport3D::~Viewport3D ()
 	{
-		Destroy(m_default_camera);
-		Destroy(m_grid);
-		Destroy(m_cube);
-
-		vector<AbstractCamera*>::iterator it;
-
-		for(it = m_cameras.begin(); it != m_cameras.end(); it++)
-		{
-			Destroy(*it);
-		}
-
 		m_cameras.clear();
 	}
 
@@ -310,8 +299,7 @@ namespace BlendInt {
 		set_expand_x(true);
 		set_expand_y(true);
 
-		m_default_camera = new NavigationCamera;
-		Retain(m_default_camera);
+		m_default_camera.reset(new NavigationCamera);
 
 		// setup camera
 		glm::vec3 pos = glm::vec3(5.f);
@@ -322,11 +310,9 @@ namespace BlendInt {
 		m_default_camera->SetPerspective(m_default_camera->fovy(), 1.f * size().width()/size().height());
 		m_default_camera->Update();
 
-		m_cube = new Cube;
-		Retain(m_cube);
+		m_cube.reset(new Cube);
 
-		m_grid = new Grid;
-		Retain(m_grid);
+		m_grid.reset(new Grid);
 	}
 
 }

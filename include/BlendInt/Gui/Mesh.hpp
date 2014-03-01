@@ -44,8 +44,6 @@ namespace BlendInt {
 
 		virtual void Render (const glm::mat4& mvp);
 
-
-
 	protected:
 
 		virtual ~Mesh();
@@ -54,9 +52,9 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		GLArrayBuffer* m_vb;
+		RefPtr<GLArrayBuffer> m_vb;
 
-		GLElementArrayBuffer* m_ib;
+		RefPtr<GLElementArrayBuffer> m_ib;
 
 		std::vector<glm::vec4> m_vertices;
 		std::vector<glm::vec3> m_normals;

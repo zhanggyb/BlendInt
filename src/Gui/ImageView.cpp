@@ -73,11 +73,6 @@ namespace BlendInt {
 
 	ImageView::~ImageView ()
 	{
-		Destroy(m_tbo);
-		Destroy(m_vbo);
-		Destroy(m_program);
-
-		delete m_texture;
 	}
 
 	void ImageView::Draw ()
@@ -145,7 +140,7 @@ namespace BlendInt {
 		makeCheckImage();
 //		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		m_texture = new GLTexture2D;
+		m_texture.reset(new GLTexture2D);
 		m_texture->Generate();
 		m_texture->Bind();
 		m_texture->SetWrapMode(GL_REPEAT, GL_REPEAT);
@@ -163,15 +158,13 @@ namespace BlendInt {
 			0.0, checkImageHeight, 0.0
 		};
 
-		m_vbo = new GLArrayBuffer;
-		Retain(m_vbo);
+		m_vbo.reset(new GLArrayBuffer);
 		m_vbo->Generate();
 		m_vbo->Bind();
 		m_vbo->SetData(4, sizeof(float) * 3, vertices);
 		m_vbo->Reset();
 
-		m_program = new GLSLProgram;
-		Retain(m_program);
+		m_program.reset(new GLSLProgram);
 
 		m_program->Create();
 		m_program->AttachShaderPair(vertex_shader, fragment_shader);
@@ -195,8 +188,7 @@ namespace BlendInt {
 				0.0, 1.0
 		};
 
-		m_tbo = new GLArrayBuffer;
-		Retain(m_tbo);
+		m_tbo.reset(new GLArrayBuffer);
 
 		m_tbo->Generate();
 		m_tbo->Bind();

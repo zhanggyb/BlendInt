@@ -69,8 +69,8 @@ namespace BlendInt {
 
 	private:
 
-		GLArrayBuffer* m_array_buffer;
-		GLElementArrayBuffer* m_index_buffer;
+		RefPtr<GLArrayBuffer> m_array_buffer;
+		RefPtr<GLElementArrayBuffer> m_index_buffer;
 
 	};
 }

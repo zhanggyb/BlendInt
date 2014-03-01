@@ -66,10 +66,10 @@ namespace BlendInt {
 
 		void SaveToFile (const char* filename);
 
-		GLSLProgram* m_program;
+		RefPtr<GLSLProgram> m_program;
 
-		GLArrayBuffer* m_vbo;
-		GLArrayBuffer* m_tbo;	// texture coords
+		RefPtr<GLArrayBuffer> m_vbo;
+		RefPtr<GLArrayBuffer> m_tbo;	// texture coords
 
 		GLint uniform_texture;
 		GLint attribute_coord3d;

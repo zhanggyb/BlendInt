@@ -73,18 +73,6 @@ namespace BlendInt {
 			return m_count;
 		}
 
-#ifdef DEBUG
-		static void Retain (Object* obj);
-#endif
-
-		static void Destroy (Object* obj);
-
-	protected:
-
-#ifndef DEBUG
-		static void Retain (Object* obj);
-#endif
-
 	private:
 
 		size_t m_count;

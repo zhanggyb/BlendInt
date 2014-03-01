@@ -71,26 +71,6 @@ namespace BlendInt {
 		//DBG_PRINT_MSG("object is destroyed: %s", m_name.c_str());
 	}
 
-	void Object::Destroy(Object *obj)
-	{
-		if(obj == 0) return;
-
-		if(obj->m_count == 0) {
-			DBG_PRINT_MSG("WARNING: object %s is deleted with no reference", obj->name().c_str());
-			delete obj;
-		} else {
-			obj->m_count--;
-			if(obj->m_count == 0) {
-				delete obj;
-			}
-		}
-	}
-
-	void Object::Retain(Object* obj)
-	{
-		obj->m_count++;
-	}
-
 #ifdef DEBUG
 
 	uint64_t Object::id_last = 1;

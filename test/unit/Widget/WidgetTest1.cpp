@@ -39,7 +39,7 @@ TEST_F(WidgetTest1, Add1)
 
     widget1->AddChild(widget2);
 
-    Object::Destroy(widget1);
+    delete widget1;
 
     RunLoop(win);
 
@@ -97,7 +97,7 @@ TEST_F(WidgetTest1, Add2)
     widget2->RemoveChild(widget3);
     widget3->RemoveChild(widget4);
 
-    Object::Destroy(widget1);
+    delete widget1;
 
     RunLoop(win);
     Interface::Release();

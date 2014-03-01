@@ -51,7 +51,6 @@ namespace BlendInt {
 
 	ClockWidget::~ClockWidget ()
 	{
-		Destroy(m_timer);
 	}
 
 	void ClockWidget::Draw()
@@ -139,8 +138,7 @@ namespace BlendInt {
 		set_expand_x(true);
 		set_expand_y(true);
 
-		m_timer = new Timer;
-		Retain(m_timer);
+		m_timer.reset(new Timer);
 		m_timer->SetInterval(1000);
 
 		events()->connect(m_timer->timeout(), this, &ClockWidget::UpdateClockHands);

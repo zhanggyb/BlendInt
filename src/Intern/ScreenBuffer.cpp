@@ -61,7 +61,7 @@ namespace BlendInt {
 	unsigned int ScreenBuffer::max_widgets_layer_buffer_size = 4;
 
 	ScreenBuffer::ScreenBuffer()
-	: Object(), m_program(0), m_vbo(0), m_tbo(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
+	: Object(), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
 	{
 		InitOnce();
 	}
@@ -76,10 +76,6 @@ namespace BlendInt {
 		}
 
 		m_widgets_layer_buffers.clear();
-
-		Object::Destroy(m_tbo);
-		Object::Destroy(m_vbo);
-		Object::Destroy(m_program);
 	}
 
 	void ScreenBuffer::Render(GLTexture2D* texture)
@@ -131,8 +127,7 @@ namespace BlendInt {
 
 	void ScreenBuffer::InitOnce()
 	{
-		m_vbo = new GLArrayBuffer;
-		Retain(m_vbo);
+		m_vbo.reset(new GLArrayBuffer);
 
 		m_vbo->Generate();
 
@@ -147,8 +142,7 @@ namespace BlendInt {
 		m_vbo->SetData(4, sizeof(float) * 3, vertices);
 		m_vbo->Reset();
 
-		m_program = new GLSLProgram;
-		Retain(m_program);
+		m_program.reset(new GLSLProgram);
 
 		m_program->Create();
 		m_program->AttachShaderPair(vertex_shader, fragment_shader);
@@ -167,8 +161,7 @@ namespace BlendInt {
 			m_program->Reset();
 		}
 
-		m_tbo = new GLArrayBuffer;
-		Retain(m_tbo);
+		m_tbo.reset(new GLArrayBuffer);
 
 		GLfloat texcoords[] = {
 				0.0, 0.0,

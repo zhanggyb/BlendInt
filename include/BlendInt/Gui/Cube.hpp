@@ -36,11 +36,9 @@ namespace BlendInt {
 
 		Cube ();
 
-		virtual void Render (const glm::mat4& mvp);
-
-	protected:
-
 		virtual ~Cube ();
+
+		virtual void Render (const glm::mat4& mvp);
 
 	private:
 

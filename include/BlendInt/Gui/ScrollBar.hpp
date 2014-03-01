@@ -40,9 +40,9 @@ namespace BlendInt {
 
 		ScrollControl (AbstractWidget* parent);
 
-	protected:
-
 		virtual ~ScrollControl ();
+
+	protected:
 
 		virtual void Update (int type, const void* data);
 
@@ -62,9 +62,9 @@ namespace BlendInt {
 
 		Point m_position_origin;
 
-		GLArrayBuffer* m_inner_buffer;
-		GLArrayBuffer* m_outer_buffer;
-		GLArrayBuffer* m_highlight_buffer;
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_highlight_buffer;
 	};
 
 	/**
@@ -106,10 +106,10 @@ namespace BlendInt {
 
 		void set_control_size (size_t size);
 
-		GLArrayBuffer* m_inner_buffer;
-		GLArrayBuffer* m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
 
-		ScrollControl* m_control_button;
+		RefPtr<ScrollControl> m_control_button;
 	};
 
 	class ScrollBar: public AbstractSlider
@@ -146,10 +146,10 @@ namespace BlendInt {
 		 */
 		int get_space ();
 
-		ScrollControl* m_scroll_control;
+		RefPtr<ScrollControl> m_scroll_control;
 
-		GLArrayBuffer* m_inner_buffer;
-		GLArrayBuffer* m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
 	};
 
 }

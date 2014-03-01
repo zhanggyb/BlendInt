@@ -24,8 +24,8 @@
 #ifndef _BLENDINT_CHECKBUTTON_HPP_
 #define _BLENDINT_CHECKBUTTON_HPP_
 
-#include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/Gui/AbstractButton.hpp>
 
 namespace BlendInt {
 
@@ -50,9 +50,9 @@ namespace BlendInt {
 
 		ToggleButton (const String& text, AbstractWidget* parent);
 
-	protected:
-
 		virtual ~ToggleButton ();
+
+	protected:
 
 		virtual void Update (int type, const void* data);
 
@@ -64,9 +64,9 @@ namespace BlendInt {
 
 		void InitializeOnce (const String& text);
 
-		GLArrayBuffer* m_inner_buffer;
-		GLArrayBuffer* m_outer_buffer;
-		GLArrayBuffer* m_emboss_buffer;
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_emboss_buffer;
 
 	};
 

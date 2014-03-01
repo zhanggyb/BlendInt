@@ -106,8 +106,6 @@ namespace BlendInt {
 
 	Grid::~Grid ()
 	{
-		Destroy(m_ib);
-		Destroy(m_vb);
 	}
 
 	void Grid::InitOnce()
@@ -135,8 +133,7 @@ namespace BlendInt {
 			}
 		}
 
-		m_vb = new GLArrayBuffer;
-		Retain(m_vb);
+		m_vb.reset(new GLArrayBuffer);
 		m_vb->Generate();
 		m_vb->Bind();
 
@@ -161,8 +158,7 @@ namespace BlendInt {
 			}
 		}
 
-		m_ib = new GLElementArrayBuffer;
-		Retain(m_ib);
+		m_ib.reset(new GLElementArrayBuffer);
 
 		m_ib->Generate();
 		m_ib->Bind();

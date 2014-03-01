@@ -54,6 +54,9 @@ TEST_F(ButtonTest1, Foo1)
     hl1->Register();
 
     RunLoop(win);
+
+    delete hl1;
+
     Interface::Release();
 
     Terminate();

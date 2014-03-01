@@ -32,6 +32,8 @@ TEST_F(ToggleButtonTest1, Foo1)
 
     RunLoop(win);
 
+    delete btn;
+
     Interface::Release();
 
     Terminate();

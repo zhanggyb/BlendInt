@@ -214,7 +214,6 @@ namespace BlendInt {
 
 		LockGeometry(object, false);
 		RemoveChild(object);
-		Destroy(object);
 	}
 
 	void VerticalLayout::MakeLayout(const Size* size, const Margin* margin, int space)

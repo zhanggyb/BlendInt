@@ -44,9 +44,6 @@ namespace BlendInt {
 
 	TextEntry::~TextEntry ()
 	{
-		Destroy(m_timer);
-		Destroy(m_inner_buffer);
-		Destroy(m_outer_buffer);
 	}
 
 	void TextEntry::KeyPressEvent (KeyEvent* event)
@@ -171,8 +168,8 @@ namespace BlendInt {
 						shadedown,
 						Vertical,
 						5,
-						m_inner_buffer,
-						m_outer_buffer,
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
 						0
 						);
 				return;
@@ -195,7 +192,7 @@ namespace BlendInt {
 					tm->themes()->text.inner_sel.a());
 		*/
 
-		DrawShadedInnerBuffer(m_inner_buffer);
+		DrawShadedInnerBuffer(m_inner_buffer.get());
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->text.outline.r(),
@@ -205,7 +202,7 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		DrawOutlineBuffer(m_outer_buffer);
+		DrawOutlineBuffer(m_outer_buffer.get());
 
 		FontCache* fc = FontCache::create(m_font);
 
@@ -272,10 +269,8 @@ namespace BlendInt {
 
 	void TextEntry::InitOnce ()
 	{
-		m_inner_buffer = new GLArrayBuffer;
-		Retain(m_inner_buffer);
-		m_outer_buffer = new GLArrayBuffer;
-		Retain(m_outer_buffer);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
 
 		set_expand_x(true);
 		set_size (120, 24);	// the same height of a button
@@ -295,8 +290,8 @@ namespace BlendInt {
 				shadedown,
 				Vertical,
 				5,
-				m_inner_buffer,
-				m_outer_buffer,
+				m_inner_buffer.get(),
+				m_outer_buffer.get(),
 				0
 				);
 
@@ -316,7 +311,7 @@ namespace BlendInt {
 		m_origin.set_x(m_origin.x() + static_cast<int>(radius()));
 
 		// and set timer
-		m_timer = new Timer;
+		m_timer.reset(new Timer);
 		m_timer->SetInterval(500);	// 100 ms
 		events()->connect(m_timer->timeout(), this, &TextEntry::OnReverseCursor);
 

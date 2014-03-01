@@ -55,7 +55,7 @@ namespace BlendInt {
 	{
 		for(std::vector<AbstractWidget*>::iterator it = m_items.begin(); it != m_items.end(); it++)
 		{
-			Destroy(*it);
+			delete *it;
 		}
 		m_items.clear();
 	}

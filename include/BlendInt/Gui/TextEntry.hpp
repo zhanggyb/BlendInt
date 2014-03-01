@@ -46,6 +46,8 @@ namespace BlendInt {
 
 		TextEntry(AbstractWidget* parent);
 
+		virtual ~TextEntry();
+
 		void SetText (const String& text);
 
 		void SetFont (const Font& font);
@@ -53,8 +55,6 @@ namespace BlendInt {
 		const String& text () const {return m_text;}
 
 	protected:
-
-		virtual ~TextEntry();
 
 		virtual void Update (int type, const void* data);
 
@@ -103,12 +103,12 @@ namespace BlendInt {
 		 */
 		Rect m_text_outline;
 
-		Timer* m_timer;
+		RefPtr<Timer> m_timer;
 
 		bool m_flicker;
 
-		GLArrayBuffer* m_inner_buffer;
-		GLArrayBuffer* m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
 
 		static Margin DefaultTextEntryPadding;
 	};
