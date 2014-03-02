@@ -26,17 +26,7 @@
 namespace BlendInt {
 
 	AbstractLayout::AbstractLayout ()
-			: AbstractWidget(),
-			  m_alignment(0),
-			  m_space(1)
-	{
-		set_preferred_size(margin().left() + margin().right(), margin().top() + margin().bottom());
-		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
-		set_size(preferred_size());
-	}
-
-	AbstractLayout::AbstractLayout (AbstractWidget *parent)
-			: AbstractWidget (parent),
+			: AbstractContainer(),
 			  m_alignment(0),
 			  m_space(1)
 	{

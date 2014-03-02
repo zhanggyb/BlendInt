@@ -28,7 +28,7 @@
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
@@ -51,8 +51,6 @@ namespace BlendInt {
 		void InitOnce ();
 
 		void makeCheckImage ();
-
-		void RenderToTexture ();
 
 		static const int checkImageWidth = 512;
 		static const int checkImageHeight = 512;

@@ -13,7 +13,8 @@
 DemoFrame::DemoFrame()
 : Frame(), m_hlayout(0), m_timer(0), m_widget(0)
 {
-	m_hlayout = new HorizontalLayout(AlignHorizontalCenter, this);
+	m_hlayout = new HorizontalLayout(AlignHorizontalCenter);
+	AddChild(m_hlayout);
 	m_hlayout->SetMargin(0, 0, 0, 0);
 
 	Label* label = new Label("Click to create: ");
@@ -110,7 +111,7 @@ void DemoFrame::Update(int type, const void* data)
 		}
 
 		default:
-			Widget::Update(type, data);
+			Frame::Update(type, data);
 			break;
 	}
 }

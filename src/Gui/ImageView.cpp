@@ -60,13 +60,13 @@ namespace BlendInt {
 			"}";
 
 	ImageView::ImageView ()
-	: Widget(), m_texture(0), m_program(0), m_vbo(0), m_tbo(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
+	: Widget(), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
 	{
 		InitOnce();
 	}
 
 	ImageView::ImageView (AbstractWidget* parent)
-	: Widget(parent), m_texture(0), m_program(0), m_vbo(0), m_tbo(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
+	: Widget(parent), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
 	{
 		InitOnce();
 	}

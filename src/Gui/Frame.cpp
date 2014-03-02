@@ -47,16 +47,7 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-			: Widget()
-	{
-		set_minimal_size(margin().left() + margin().right(),
-		        margin().top() + margin().bottom());
-		set_size(120, 80);
-		set_preferred_size(120, 80);
-	}
-
-	Frame::Frame (AbstractWidget* parent)
-			: Widget(parent)
+			: AbstractContainer()
 	{
 		set_minimal_size(margin().left() + margin().right(),
 		        margin().top() + margin().bottom());
@@ -69,30 +60,41 @@ namespace BlendInt {
 		// TODO Auto-generated destructor stub
 	}
 
-	void Frame::SetMargin (const Margin& margin)
-	{
-		if (m_margin.equal(margin))
-			return;
 
-		Update(FrameMargin, &margin);
-		m_margin = margin;
+	void Frame::Update (int type, const void* data)
+	{
 	}
 
-	void Frame::SetMargin (int l, int r, int t, int b)
+	void Frame::CursorEnterEvent (bool entered)
 	{
-		if (m_margin.equal(l, r, t, b))
-			return;
+	}
 
-		Margin new_margin(l, r, t, b);
+	void Frame::KeyPressEvent (KeyEvent* event)
+	{
+	}
 
-		Update(FrameMargin, &new_margin);
-		m_margin = new_margin;
+	void Frame::ContextMenuPressEvent (ContextMenuEvent* event)
+	{
+	}
+
+	void Frame::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	{
+	}
+
+	void Frame::MousePressEvent (MouseEvent* event)
+	{
+	}
+
+	void Frame::MouseReleaseEvent (MouseEvent* event)
+	{
+	}
+
+	void Frame::MouseMoveEvent (MouseEvent* event)
+	{
 	}
 
 	void Frame::Draw ()
 	{
-		Widget::Draw();
-
 #ifdef DEBUG
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);

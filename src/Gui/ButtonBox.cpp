@@ -32,12 +32,6 @@ namespace BlendInt {
 		Init ();
 	}
 
-	ButtonBox::ButtonBox (AbstractWidget* parent)
-	: BoxFrame(parent), m_active_button(0)
-	{
-		Init ();
-	}
-
 	ButtonBox::~ButtonBox ()
 	{
 

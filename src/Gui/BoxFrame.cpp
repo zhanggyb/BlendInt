@@ -31,11 +31,6 @@ namespace BlendInt {
 	{
 	}
 
-	BoxFrame::BoxFrame (AbstractWidget* parent)
-	: Frame(parent), m_layout(0)
-	{
-	}
-
 	void BoxFrame::SetLayout (AbstractLayout* layout)
 	{
 		if((!layout) || m_layout == layout) return;

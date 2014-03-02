@@ -43,12 +43,6 @@ namespace BlendInt {
 		set_alignment(align);
 	}
 
-	HorizontalLayout::HorizontalLayout (int align, AbstractWidget* parent)
-			: AbstractLayout(parent)
-	{
-		set_alignment(align);
-	}
-
 	HorizontalLayout::~HorizontalLayout ()
 	{
 		/*

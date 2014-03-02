@@ -38,8 +38,6 @@ namespace BlendInt {
 
 		ButtonBox ();
 
-		ButtonBox (AbstractWidget* parent);
-
 		virtual ~ButtonBox ();
 
 		void Add (AbstractButton* button);

@@ -9,6 +9,7 @@
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Gui/VerticalLayout.hpp>
 #include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 using namespace BlendInt;
 

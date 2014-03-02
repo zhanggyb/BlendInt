@@ -40,8 +40,6 @@ namespace BlendInt {
 
 		BoxFrame();
 
-		BoxFrame(AbstractWidget* parent);
-
 		void SetLayout (AbstractLayout* layout);
 
 		AbstractLayout* layout () const {return m_layout;}

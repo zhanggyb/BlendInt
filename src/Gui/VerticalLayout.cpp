@@ -46,12 +46,6 @@ namespace BlendInt {
 		set_alignment(align);
 	}
 
-	VerticalLayout::VerticalLayout (int align, AbstractWidget* parent)
-			: AbstractLayout(parent)
-	{
-		set_alignment(align);
-	}
-
 	VerticalLayout::~VerticalLayout ()
 	{
 		/*

@@ -61,20 +61,20 @@ int main(int argc, char* argv[])
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();
 
-	Button* btn1 = new Button;
-	btn1->set_name("Button1");
-	btn1->SetExpandX(false);
-	btn1->SetPosition(100, 250);
-	btn1->Resize(100, 100);
-	btn1->Register();
-
-	ToggleButton* toggle1 = new ToggleButton;
-	toggle1->set_name("ToggleButton1");
-	toggle1->SetExpandX(false);
-	toggle1->SetPosition(100, 450);
-	toggle1->Resize(100, 100);
-	toggle1->Register();
-
+//	Button* btn1 = new Button;
+//	btn1->set_name("Button1");
+//	btn1->SetExpandX(false);
+//	btn1->SetPosition(100, 250);
+//	btn1->Resize(100, 100);
+//	btn1->Register();
+//
+//	ToggleButton* toggle1 = new ToggleButton;
+//	toggle1->set_name("ToggleButton1");
+//	toggle1->SetExpandX(false);
+//	toggle1->SetPosition(100, 450);
+//	toggle1->Resize(100, 100);
+//	toggle1->Register();
+//
 //	Button* btn2 = new Button;
 //	btn2->set_name("Button2");
 //	btn2->SetExpandX(false);
@@ -96,11 +96,11 @@ int main(int argc, char* argv[])
 //	view3d1->Resize(500, 400);
 //	view3d1->Register();
 
-	Viewport3D* view3d2 = new Viewport3D;
-	view3d2->set_name("Viewport 3D2");
-	view3d2->SetPosition(220, 20);
-	view3d2->Resize(500, 400);
-	view3d2->Register();
+//	Viewport3D* view3d2 = new Viewport3D;
+//	view3d2->set_name("Viewport 3D2");
+//	view3d2->SetPosition(220, 20);
+//	view3d2->Resize(500, 400);
+//	view3d2->Register();
 
 //	VerticalLayout* vlayout = new VerticalLayout;
 //	vlayout->Add(btn1);
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 
 //	ImageView* iv = new ImageView;
 //
-//	iv->SetPosition(400, 100);
+//	iv->SetPosition(100, 100);
 //	iv->Register();
 
 //	interface()->SetMainWidget(layout);

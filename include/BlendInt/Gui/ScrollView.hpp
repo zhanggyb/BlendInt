@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_SCROLLVIEW_HPP_
 #define _BLENDINT_SCROLLVIEW_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 

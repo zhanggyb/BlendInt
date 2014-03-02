@@ -39,11 +39,9 @@ namespace BlendInt {
 
 		TableLayout (int rows, int columns);
 
-		TableLayout (int rows, int columns, AbstractWidget* parent);
-
 		virtual ~TableLayout ();
 
-		void add_widget (Frame* widget, int row, int column, int width = 1, int height = 1);
+		void add_widget (AbstractWidget* widget, int row, int column, int width = 1, int height = 1);
 
 		void add_layout (AbstractLayout* layout, int row, int column, int width = 1, int height = 1);
 

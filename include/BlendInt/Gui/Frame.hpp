@@ -30,7 +30,7 @@
  * @ingroup gui
  */
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
@@ -42,7 +42,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Frame: public Widget
+	class Frame: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Frame);
 
@@ -50,23 +50,27 @@ namespace BlendInt {
 
 		Frame ();
 
-		Frame (AbstractWidget* parent);
-
-		const Margin& margin () const {return m_margin;}
-
-		void SetMargin (const Margin& margin);
-
-		void SetMargin (int left, int right, int top, int bottom);
-
 	protected:
 
 		virtual ~Frame ();
 
+		virtual void Update (int type, const void* data);
+
 		virtual void Draw ();
 
-	private:
+		virtual void CursorEnterEvent (bool entered);
 
-		Margin m_margin;
+		virtual void KeyPressEvent (KeyEvent* event);
+
+		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
+
+		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
+
+		virtual void MousePressEvent (MouseEvent* event);
+
+		virtual void MouseReleaseEvent (MouseEvent* event);
+
+		virtual void MouseMoveEvent (MouseEvent* event);
 
 	};
 

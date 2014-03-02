@@ -45,12 +45,6 @@ namespace BlendInt {
 		m_items.resize(rows * columns, 0);
 	}
 
-	TableLayout::TableLayout (int rows, int columns, AbstractWidget* parent)
-			: AbstractLayout(parent), m_rows(rows), m_columns(columns)
-	{
-		m_items.resize(rows * columns, 0);
-	}
-
 	TableLayout::~TableLayout ()
 	{
 		for(std::vector<AbstractWidget*>::iterator it = m_items.begin(); it != m_items.end(); it++)
@@ -60,7 +54,7 @@ namespace BlendInt {
 		m_items.clear();
 	}
 
-	void TableLayout::add_widget (Frame* widget, int row, int column,
+	void TableLayout::add_widget (AbstractWidget* widget, int row, int column,
 	        int width, int height)
 	{
 		AddChild(widget);

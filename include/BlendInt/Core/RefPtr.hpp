@@ -166,6 +166,10 @@ namespace BlendInt {
 		 */
 		inline T* operator-> () const;
 
+		/**
+		 * @brief Get the reference of the object
+		 * @return A reference to the object stored
+		 */
 		inline T& operator* () const;
 
 		/**
@@ -231,7 +235,9 @@ namespace BlendInt {
 		static inline RefPtr<T> cast_const (const RefPtr<T_CastFrom>& src);
 
 	private:
+
 		T* m_ptr;
+
 	};
 
 	template <typename T> inline
@@ -351,20 +357,12 @@ namespace BlendInt {
 	template <typename T> inline
 	T* RefPtr<T>::operator-> () const
 	{
-		if(!m_ptr) {
-			throw std::runtime_error("No object stored!");
-		}
-
 		return m_ptr;
 	}
 
 	template <typename T> inline
 	T& RefPtr<T>::operator* () const
 	{
-		if(!m_ptr) {
-			throw std::runtime_error("No object stored!");
-		}
-
 		return *m_ptr;
 	}
 

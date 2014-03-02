@@ -46,12 +46,6 @@ namespace BlendInt {
 
 	}
 
-	ScrollWidget::ScrollWidget(AbstractWidget* parent)
-	: Frame(parent), m_viewport(0), m_hslider(0), m_vslider(0)
-	{
-
-	}
-
 	ScrollWidget::~ScrollWidget ()
 	{
 

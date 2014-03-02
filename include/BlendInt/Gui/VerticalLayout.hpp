@@ -39,8 +39,6 @@ namespace BlendInt {
 
 		VerticalLayout(int align = AlignVerticalCenter);
 
-		VerticalLayout(int align, AbstractWidget* parent);
-
 		virtual ~VerticalLayout ();
 
 	protected:

@@ -32,8 +32,7 @@
 
 #include <vector>
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -44,15 +43,13 @@ namespace BlendInt {
 	 *
 	 * @ingroup layouts
 	 */
-	class AbstractLayout: public AbstractWidget
+	class AbstractLayout: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractLayout);
 
 	public:
 
 		AbstractLayout ();
-
-		AbstractLayout (AbstractWidget *parent);
 
 		virtual ~AbstractLayout ();
 

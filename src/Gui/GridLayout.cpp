@@ -37,7 +37,7 @@ namespace BlendInt {
 	{
 	}
 
-	void GridLayout::add_widget (Frame* object)
+	void GridLayout::add_widget (AbstractWidget* object)
 	{
 	}
 
@@ -63,7 +63,7 @@ namespace BlendInt {
 	{
 	}
 
-	void GridLayout::add_single_widget(Frame* widget)
+	void GridLayout::add_single_widget(AbstractWidget* widget)
 	{
 
 	}

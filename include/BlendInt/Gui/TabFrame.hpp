@@ -45,8 +45,6 @@ namespace BlendInt {
 
 		TabFrame ();
 
-		TabFrame (AbstractWidget* parent);
-
 		virtual ~TabFrame ();
 
 		void Add (const String& title, Widget* widget);

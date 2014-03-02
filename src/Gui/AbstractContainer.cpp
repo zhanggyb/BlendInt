@@ -21,43 +21,38 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GRIDLAYOUT_HPP_
-#define _BLENDINT_GRIDLAYOUT_HPP_
-
-#include <BlendInt/Gui/AbstractLayout.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * Grid layout
-	 */
-	class GridLayout: public AbstractLayout
+	AbstractContainer::AbstractContainer ()
 	{
-		DISALLOW_COPY_AND_ASSIGN(GridLayout);
+	}
 
-	public:
+	AbstractContainer::~AbstractContainer ()
+	{
+	}
 
-		GridLayout ();
+	void AbstractContainer::SetMargin (const Margin& margin)
+	{
+		if (m_margin.equal(margin))
+			return;
 
-		GridLayout (AbstractWidget* parent);
+		Update(FrameMargin, &margin);
+		m_margin = margin;
+	}
 
-		virtual ~GridLayout ();
+	void AbstractContainer::SetMargin (int l, int r, int t, int b)
+	{
+		if (m_margin.equal(l, r, t, b))
+			return;
 
-		virtual void add_widget (AbstractWidget* object);
+		Margin new_margin(l, r, t, b);
 
-		virtual void add_layout (AbstractLayout* layout);
+		Update(FrameMargin, &new_margin);
+		m_margin = new_margin;
+	}
 
-		virtual bool remove (AbstractWidget* object);
-
-		virtual bool erase (AbstractWidget* object);
-
-	protected:
-
-		virtual void Draw ();
-
-		virtual void add_single_widget(AbstractWidget* widget);
-	};
 
 }
 
-#endif /* GRIDLAYOUT_HPP_ */

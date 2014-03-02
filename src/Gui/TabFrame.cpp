@@ -33,12 +33,6 @@ namespace BlendInt {
 		Init();
 	}
 
-	TabFrame::TabFrame(AbstractWidget* parent)
-	: BoxFrame(parent), m_stack_widget(0), m_button_box(0)
-	{
-		Init();
-	}
-
 	TabFrame::~TabFrame()
 	{
 

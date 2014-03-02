@@ -40,8 +40,6 @@ namespace BlendInt {
 
 		HorizontalLayout(int align = AlignHorizontalCenter);
 
-		HorizontalLayout(int align, AbstractWidget* parent);
-
 		virtual ~HorizontalLayout ();
 
 	protected:
