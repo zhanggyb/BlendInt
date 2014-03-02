@@ -32,6 +32,7 @@
 #include <Cpp/Events.hpp>
 
 #include <BlendInt/Core/Point.hpp>
+#include <BlendInt/Core/Size.hpp>
 
 using std::map;
 using std::set;
@@ -41,6 +42,7 @@ namespace BlendInt {
 	class Interface;
 	class AbstractWidget;
 	class GLTexture2D;
+	class ScreenBuffer;
 
 	struct ContextLayer {
 
@@ -92,6 +94,16 @@ namespace BlendInt {
 
 		static void Release ();
 
+		void Draw ();
+
+		void OffScreenRenderToTexture (int layer, std::set<AbstractWidget*>* widgets, GLTexture2D* texture);
+
+		void RenderToScreenBuffer ();
+
+		void PreDrawContext (bool fbo = false);
+
+		void DispatchDrawEvent (AbstractWidget* widget);
+
 		void OnDestroyObject (AbstractWidget* obj);
 
 		/**
@@ -115,24 +127,30 @@ namespace BlendInt {
 
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point, const AbstractWidget* parent);
 
+		Size m_size;
+
 		map<int, ContextLayer > m_layers;
 
 		map<AbstractWidget*, int> m_index;
 
 		GLTexture2D* m_main_buffer;
 
-		static bool refresh_once;
+		ScreenBuffer* m_screenbuffer;
 
-		static bool force_refresh_all;
+		std::deque<GLTexture2D*> m_deque;
 
-		static ContextManager* context_manager;
-		
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
 		/**
 		 * @brief The widget stack to contain the current mouse cursor
 		 */
 		boost::scoped_ptr<std::deque<AbstractWidget*> > m_hover_deque;
+
+		static bool refresh_once;
+
+		static bool force_refresh_all;
+
+		static ContextManager* context_manager;
 	};
 
 }

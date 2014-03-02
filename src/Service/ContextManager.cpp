@@ -26,11 +26,16 @@
 
 #include <BlendInt/Types.hpp>
 
+#include <BlendInt/Core/Size.hpp>
+
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+#include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
-
 #include <BlendInt/Service/ContextManager.hpp>
+
+#include "../Intern/ScreenBuffer.hpp"
 
 using std::cout;
 using std::cerr;
@@ -108,9 +113,11 @@ namespace BlendInt {
 	}
 
 	ContextManager::ContextManager ()
-	: m_main_buffer(0)
+	: m_main_buffer(0), m_screenbuffer(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
+
+		m_screenbuffer = new ScreenBuffer;
 		m_hover_deque.reset(new std::deque<AbstractWidget*>);
 
 		m_main_buffer = new GLTexture2D;
@@ -119,7 +126,6 @@ namespace BlendInt {
 	ContextManager::~ContextManager ()
 	{
 		// set focus widget to 0
-
 		if(AbstractWidget::focused_widget) {
 			AbstractWidget::focused_widget->m_flag.reset(AbstractWidget::WidgetFlagFocus);
 			AbstractWidget::focused_widget = 0;
@@ -135,12 +141,13 @@ namespace BlendInt {
 			for(widget_iter = widget_set_p->begin(); widget_iter != widget_set_p->end(); widget_iter++)
 			{
 				(*widget_iter)->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
-
 				//if((*widget_iter)->count() == 0) delete *widget_iter;
 			}
 
 			widget_set_p->clear();
 		}
+
+		if(m_screenbuffer) delete m_screenbuffer;
 
 		m_layers.clear();
 		m_index.clear();
@@ -288,6 +295,368 @@ namespace BlendInt {
 		}
 
 		return true;
+	}
+
+	void ContextManager::Draw ()
+	{
+		m_deque.clear();
+
+		if(force_refresh_all) {
+
+			map<int, ContextLayer>::iterator layer_iter;
+			unsigned int count = 0;
+			set<AbstractWidget*>* widget_set_p = 0;
+
+			for(layer_iter = m_layers.begin();
+					layer_iter != m_layers.end();
+					layer_iter++)
+			{
+				widget_set_p = layer_iter->second.widgets;
+
+				DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
+
+				if(!layer_iter->second.buffer) {
+					layer_iter->second.buffer = new GLTexture2D;
+					layer_iter->second.buffer->Generate();
+				}
+
+				OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+				m_deque.push_back(layer_iter->second.buffer);
+
+				count++;
+
+				layer_iter->second.refresh = false;
+			}
+
+			RenderToScreenBuffer();
+
+			refresh_once = false;
+			force_refresh_all = false;
+
+		} else if(refresh_once) {
+
+			map<int, ContextLayer>::iterator layer_iter;
+			unsigned int count = 0;
+			set<AbstractWidget*>* widget_set_p = 0;
+
+			for(layer_iter = m_layers.begin();
+					layer_iter != m_layers.end();
+					layer_iter++)
+			{
+				widget_set_p = layer_iter->second.widgets;
+
+				if(layer_iter->second.refresh) {
+
+					DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
+
+					if(!layer_iter->second.buffer) {
+						layer_iter->second.buffer = new GLTexture2D;
+						layer_iter->second.buffer->Generate();
+					}
+					OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+
+				} else {
+
+					if(!layer_iter->second.buffer) {
+						layer_iter->second.buffer = new GLTexture2D;
+						layer_iter->second.buffer->Generate();
+
+						OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+					} else if (layer_iter->second.buffer->id() == 0) {
+						layer_iter->second.buffer->Generate();
+
+						OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+					}
+				}
+
+				count++;
+
+				m_deque.push_back(layer_iter->second.buffer);
+				layer_iter->second.refresh = false;
+			}
+
+			RenderToScreenBuffer();
+
+			refresh_once = false;
+		}
+
+		// ---------
+		/*
+
+		glClearColor(0.447, 0.447, 0.447, 1.00);
+		glClearDepth(1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+		//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+//		glEnable(GL_BLEND);
+
+//		glViewport(0, 0, size().width(), size().height());
+//		glMatrixMode(GL_PROJECTION);
+//		glLoadIdentity();
+//		glOrtho(0.f, (float) size().width(), 0.f, (float) size().width(), 100.f, -100.f);
+
+//		glMatrixMode(GL_MODELVIEW);
+//		glLoadIdentity();
+
+		draw_grid(size().width(), size().height());
+
+		map<int, ContextLayer>::iterator layer_iter;
+		for(layer_iter = ContextManager::context_manager->m_layers.begin();
+				layer_iter != ContextManager::context_manager->m_layers.end();
+				layer_iter++)
+		{
+			m_screenbuffer->Render(layer_iter->second.buffer);
+		}
+		*/
+
+		// ---------
+
+		m_screenbuffer->Render(context_manager->m_main_buffer);
+	}
+
+
+	void ContextManager::OffScreenRenderToTexture (int layer, std::set<AbstractWidget*>* widgets, GLTexture2D* texture)
+	{
+		GLsizei width = m_size.width();
+		GLsizei height = m_size.height();
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = texture;
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(width, height, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		        GL_TEXTURE_2D, tex->id(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+		        width, height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		        GL_RENDERBUFFER, rb);
+
+		if(GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			glClearColor(0.0, 0.0, 0.0, 0.00);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+			glEnable(GL_BLEND);
+
+			glViewport(0, 0, width, height);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			set<AbstractWidget*>::iterator widget_iter;
+
+			for (widget_iter = widgets->begin(); widget_iter != widgets->end(); widget_iter++)
+			{
+				//(*set_it)->Draw();
+				DispatchDrawEvent(*widget_iter);
+			}
+
+			// uncomment the code below to test the layer buffer (texture)
+			/*
+			std::string str("layer");
+			char buf[4];
+			sprintf(buf, "%d", layer);
+			str = str + buf + ".png";
+			tex->WriteToFile(str);
+			 */
+		}
+
+		fb->Reset();
+		tex->Reset();
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb; fb = 0;
+
+	}
+
+	void ContextManager::RenderToScreenBuffer ()
+	{
+		GLsizei width = m_size.width();
+		GLsizei height = m_size.height();
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = ContextManager::m_main_buffer;
+		tex->Generate();
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(width, height, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		GL_TEXTURE_2D, tex->id(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width,
+		        height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_RENDERBUFFER, rb);
+
+		if (GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			/* -- old
+
+			 PreDrawContext(true);
+
+			 glViewport(0, 0, width, height);
+			 glMatrixMode(GL_PROJECTION);
+			 glLoadIdentity();
+			 glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+			 glMatrixMode(GL_MODELVIEW);
+			 glLoadIdentity();
+
+			 #ifdef DEBUG
+			 //DrawTriangle(false);
+			 draw_grid(width, height);
+			 #endif
+
+			 map<int, ContextLayer>::iterator layer_iter;
+			 set<AbstractWidget*>::iterator widget_iter;
+
+			 for(layer_iter = ContextManager::context_manager->m_layers.begin();
+			 layer_iter != ContextManager::context_manager->m_layers.end();
+			 layer_iter++)
+			 {
+			 set<AbstractWidget*>* pset = layer_iter->second.widgets;
+			 for (widget_iter = pset->begin(); widget_iter != pset->end(); widget_iter++)
+			 {
+			 //(*set_it)->Draw();
+			 DispatchDrawEvent(*widget_iter);
+			 }
+			 }
+
+			 */
+
+			PreDrawContext(true);
+
+			glViewport(0, 0, width, height);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+#ifdef DEBUG
+			//DrawTriangle(false);
+			//draw_grid(width, height);
+#endif
+
+			/*
+			 map<int, ContextLayer>::iterator layer_iter;
+			 for(layer_iter = ContextManager::context_manager->m_layers.begin();
+			 layer_iter != ContextManager::context_manager->m_layers.end();
+			 layer_iter++)
+			 {
+			 m_screenbuffer->Render(layer_iter->second.buffer);
+			 }
+			 */
+			std::deque<GLTexture2D*>::iterator it;
+			for (it = m_deque.begin(); it != m_deque.end(); it++) {
+				m_screenbuffer->Render(*it);
+			}
+
+		}
+
+		fb->Reset();
+		tex->Reset();
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb;
+		fb = 0;
+
+	}
+
+	void ContextManager::PreDrawContext (bool fbo)
+	{
+		glClearColor(0.447, 0.447, 0.447, 1.00);
+
+		glClearDepth(1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+
+		if(fbo) {
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		} else {
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+
+		glEnable(GL_BLEND);
+	}
+
+	void ContextManager::DispatchDrawEvent(AbstractWidget* widget)
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		glTranslatef(widget->position().x(),
+					 widget->position().y(),
+					 widget->z());
+
+		widget->Draw();
+
+		glPopMatrix();
+
+		for(std::set<AbstractWidget*>::iterator it = widget->m_branches.begin(); it != widget->m_branches.end(); it++)
+		{
+			DispatchDrawEvent(*it);
+		}
 	}
 
 	void ContextManager::OnDestroyObject(AbstractWidget* obj)

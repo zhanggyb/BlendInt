@@ -36,6 +36,7 @@
 namespace BlendInt {
 
 	class Interface;
+	class ContextManager;
 
 	struct WidgetsLayerBuffer {
 		int layer;
@@ -48,11 +49,10 @@ namespace BlendInt {
 	 */
 	class ScreenBuffer: public Object
 	{
-	public:
+	private:
 
 		friend class Interface;
-
-	private:
+		friend class ContextManager;
 
 		void Render (GLTexture2D* texture);
 
