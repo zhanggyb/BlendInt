@@ -178,7 +178,7 @@ namespace BlendInt {
 	{
 		// if no parent slider, don't react to mouse move
 
-		AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(parent());
+		AbstractSlider* parent_obj = dynamic_cast<AbstractSlider*>(container());
 		if(!parent_obj) return;
 
 		if (down()) {

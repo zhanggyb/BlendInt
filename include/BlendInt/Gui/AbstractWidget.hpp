@@ -73,6 +73,7 @@ namespace BlendInt {
 
 		friend class ContextManager;
 		friend class Interface;
+		friend class AbstractContainer;
 
 		/**
 		 * @brief the default constructor
@@ -202,6 +203,11 @@ namespace BlendInt {
 			return m_flag[WidgetFlagFocus];
 		}
 
+		inline bool in_container () const
+		{
+			return m_flag[WidgetFlagInContainer];
+		}
+
 		/**
 		 * @brief move this object along x axis
 		 * @param offset_x
@@ -233,6 +239,8 @@ namespace BlendInt {
 		Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
 
 		Cpp::EventRef<AbstractWidget*> destroyed () {return m_destroyed;}
+
+		AbstractWidget* container() const {return m_container;}
 
 	protected:	// member functions
 
@@ -271,8 +279,6 @@ namespace BlendInt {
 		{
 			obj->m_flag[WidgetFlagLockGeometry] = status ? 1 : 0;
 		}
-
-		AbstractWidget* parent() const {return m_trunk;}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 
@@ -325,6 +331,9 @@ namespace BlendInt {
 			WidgetFlagRegistered,
 			WidgetFlagFocus,
 
+			/** If this widget is in container */
+			WidgetFlagInContainer,
+
 			/** If this widget is in cursor hover list in ContextManager */
 			WidgetFlagContextHoverList,
 
@@ -359,7 +368,7 @@ namespace BlendInt {
 
 		Cpp::Event<AbstractWidget*> m_destroyed;
 
-		AbstractWidget* m_trunk;
+		AbstractWidget* m_container;
 
 		std::set<AbstractWidget*> m_branches;
 

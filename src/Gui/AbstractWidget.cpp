@@ -56,20 +56,20 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget ()
 		: AbstractExtraForm(),
 		  m_z(0),
-		  m_trunk(0)
+		  m_container(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	AbstractWidget::AbstractWidget (AbstractWidget* parent)
 		: m_z(0),
-			m_trunk(0)
+			m_container(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 
 		if(parent) {
 			parent->m_branches.insert(this);
-			m_trunk = parent;
+			m_container = parent;
 		}
 	}
 
@@ -83,14 +83,14 @@ namespace BlendInt {
 			ContextManager::Instance()->SetFocusedWidget(0);
 		}
 
-		if(m_trunk) {
-			m_trunk->m_branches.erase(this);
-			m_trunk = 0;
+		if(m_container) {
+			m_container->m_branches.erase(this);
+			m_container = 0;
 		}
 
 		for(std::set<AbstractWidget*>::iterator it = m_branches.begin(); it != m_branches.end(); it++)
 		{
-			(*it)->m_trunk = 0;
+			(*it)->m_container = 0;
 		}
 
 		/*
@@ -121,13 +121,13 @@ namespace BlendInt {
 
 	bool AbstractWidget::AddChild (AbstractWidget* child)
 	{
-		if(child->m_trunk == this) return true;
+		if(child->m_container == this) return true;
 
-		if(child->m_trunk) {
-			child->m_trunk->m_branches.erase(child);
+		if(child->m_container) {
+			child->m_container->m_branches.erase(child);
 		}
 
-		child->m_trunk = this;
+		child->m_container = this;
 		m_branches.insert(child);
 
 		if(child->layer() != layer()) {
@@ -139,17 +139,17 @@ namespace BlendInt {
 
 	bool AbstractWidget::SetParent(AbstractWidget* parent)
 	{
-		if(m_trunk == parent) return true;
+		if(m_container == parent) return true;
 
-		if(m_trunk) {
-			m_trunk->m_branches.erase(this);
+		if(m_container) {
+			m_container->m_branches.erase(this);
 		}
 
-		m_trunk = parent;
-		m_trunk->m_branches.insert(this);
+		m_container = parent;
+		m_container->m_branches.insert(this);
 
-		if(layer() != m_trunk->layer()) {
-			SetLayer(m_trunk->layer());
+		if(layer() != m_container->layer()) {
+			SetLayer(m_container->layer());
 		}
 
 		return true;
@@ -157,9 +157,9 @@ namespace BlendInt {
 
 	bool AbstractWidget::RemoveChild(AbstractWidget* child)
 	{
-		if(child->m_trunk != this) return false;
+		if(child->m_container != this) return false;
 
-		child->m_trunk = 0;
+		child->m_container = 0;
 		m_branches.erase(child);
 
 		return true;

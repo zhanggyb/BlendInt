@@ -136,7 +136,7 @@ namespace BlendInt {
 	{
 		// if no parent scrollbar, don't react to mouse move
 
-		ScrollBar* parent_obj = dynamic_cast<ScrollBar*>(parent());
+		ScrollBar* parent_obj = dynamic_cast<ScrollBar*>(container());
 
 		if(!parent_obj) return;
 

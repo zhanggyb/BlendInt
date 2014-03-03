@@ -21,6 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <algorithm>
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
@@ -55,19 +56,65 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractContainer::Mount (AbstractWidget* widget)
+	void AbstractContainer::AddSubWidget (AbstractWidget* widget)
 	{
-		if(widget) {
-			//widget->SetContainer(this);
-			m_sub_widgets.insert(widget);
+		if(!widget) return;
+
+		if(widget == ContextManager::Instance()) return;	// Cannot add the context manager
+
+		// Remove the widget from the original container
+		if(widget->container()) {
+
+			if(widget->container() == this) return;	// already contained in this
+
+			if(widget->container() == ContextManager::Instance()) {
+
+				ContextManager::Instance()->Unregister(widget);
+
+			} else {
+
+				AbstractContainer* origin = dynamic_cast<AbstractContainer*>(widget->container());
+
+				if(origin) {
+					origin->RemoveSubWidget(widget);
+				} else {
+					DBG_PRINT_MSG("%s", "The widget's container is not identified");
+				}
+
+			}
+
 		}
+
+		RefPtr<AbstractWidget> child(widget);
+		m_sub_widgets.push_back(child);
+
+		widget->m_container = this;
+		widget->m_flag.set(WidgetFlagInContainer);
+
 	}
 
-	void AbstractContainer::Unmount (AbstractWidget* widget)
+	void AbstractContainer::RemoveSubWidget (AbstractWidget* widget)
 	{
 		if(widget) {
 			//widget->SetContainer(0);
-			m_sub_widgets.erase(widget);
+			//m_sub_widgets.erase(widget);
+
+			if(widget->container() == this) {
+
+				RefPtr<AbstractWidget> child(widget);
+				WidgetDeque::iterator it = std::find(m_sub_widgets.begin(), m_sub_widgets.end(), child);
+				if(it != m_sub_widgets.end()) {
+					m_sub_widgets.erase(it);
+
+					widget->m_container = 0;
+					widget->m_flag.reset(WidgetFlagInContainer);
+
+				} else {
+					DBG_PRINT_MSG("Warning: object %s is not found in container %s", widget->name().c_str(), name().c_str());
+				}
+
+			}
+
 		}
 	}
 

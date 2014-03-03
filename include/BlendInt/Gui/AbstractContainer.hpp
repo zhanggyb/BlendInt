@@ -24,12 +24,14 @@
 #ifndef _BLENDINT_CONTAINER_HPP_
 #define _BLENDINT_CONTAINER_HPP_
 
-#include <set>
+#include <deque>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Service/ContextManager.hpp>
 
 namespace BlendInt {
+
+	typedef std::deque<AbstractWidgetPtr> WidgetDeque;
 
 	/**
 	 * @brief Base class for widgets which contain other widgets
@@ -50,9 +52,9 @@ namespace BlendInt {
 
 		void SetMargin (int left, int right, int top, int bottom);
 
-		void Mount (AbstractWidget* widget);
+		void AddSubWidget (AbstractWidget* widget);
 
-		void Unmount (AbstractWidget* widget);
+		void RemoveSubWidget (AbstractWidget* widget);
 
 	private:
 
@@ -63,7 +65,7 @@ namespace BlendInt {
 		/**
 		 * @brief Sub widgets which build a tree to accept render and device events
 		 */
-		std::set<AbstractWidget*> m_sub_widgets;
+		WidgetDeque m_sub_widgets;
 	};
 
 }
