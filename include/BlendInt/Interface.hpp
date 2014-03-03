@@ -136,16 +136,6 @@ namespace BlendInt {
 
 		void RenderToImage ();
 
-		void PreDrawContext (bool fbo = false);
-
-		void DrawContext ();
-
-		void OffScreenRenderToTexture (int layer, std::set<AbstractWidget*>* widgets, GLTexture2D* texture);
-
-		void RenderToScreenBuffer ();
-
-		void DrawToOffScreen ();
-
 		void DispatchCursorMoveEvent (MouseEvent* event);
 
 		void DispatchMousePressEvent (MouseEvent* event);
@@ -156,13 +146,9 @@ namespace BlendInt {
 
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point, AbstractWidget* parent);
 
-		AbstractWidget* m_main;
-
-		ScreenBuffer* m_screenbuffer;
+		//AbstractWidget* m_main;
 
 		Point m_cursor;
-
-		Size m_size;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
@@ -170,16 +156,7 @@ namespace BlendInt {
 
 		FocusStyle m_focus_style;
 
-		std::deque<GLTexture2D*> m_deque;
-
 		static Interface* interface;
-
-#ifdef DEBUG
-
-		void draw_grid (int width, int height);
-
-#endif
-
 	};
 
 	inline Interface* interface ()

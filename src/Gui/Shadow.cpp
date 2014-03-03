@@ -64,7 +64,7 @@ namespace BlendInt {
 		m_blur_rad = blur_rad;
 	}
 
-	void Shadow::Update (int type, const void* data)
+	bool Shadow::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -110,18 +110,18 @@ namespace BlendInt {
 				}
 				*/
 
-				break;
+				return true;
 			}
 
 			case ShadowBlurRadius: {
 
 				// TODO: code for blur radius change
 
-				break;
+				return true;
 			}
 
 			default:
-				break;
+				return true;
 		}
 	}
 

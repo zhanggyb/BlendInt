@@ -36,9 +36,9 @@ namespace BlendInt {
 
 	}
 
-	void RoundForm::Update (int type, const void* data)
+	bool RoundForm::Update (int type, const void* data)
 	{
-
+		return true;
 	}
 
 	void RoundForm::Draw()

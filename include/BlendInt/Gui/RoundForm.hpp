@@ -40,9 +40,9 @@ namespace BlendInt {
 
 	protected:
 
-		void Update (int type, const void* data);
+		virtual bool Update (int type, const void* data);
 
-		void Draw ();
+		virtual void Draw ();
 	};
 
 }

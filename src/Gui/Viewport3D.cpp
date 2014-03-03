@@ -199,7 +199,7 @@ namespace BlendInt {
 		event->accept(this);
 	}
 
-	void Viewport3D::Update(int type, const void* data)
+	bool Viewport3D::Update(int type, const void* data)
 	{
 		switch(type) {
 			case FormSize: {
@@ -207,11 +207,13 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(data);
 				m_default_camera->SetPerspective(m_default_camera->fovy(), 1.f * size_p->width()/size_p->height());
 
-				break;
+				return true;
 			}
+
+			default:
+				return Widget::Update(type, data);
 		}
 
-		Widget::Update(type, data);
 	}
 
 	void Viewport3D::Render ()

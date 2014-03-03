@@ -113,7 +113,7 @@ namespace BlendInt {
 			m_size = size;
 		}
 
-		virtual void Update (int type, const void* data) = 0;
+		virtual bool Update (int type, const void* data) = 0;
 
 		virtual void Draw () = 0;
 

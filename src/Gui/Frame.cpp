@@ -61,8 +61,9 @@ namespace BlendInt {
 	}
 
 
-	void Frame::Update (int type, const void* data)
+	bool Frame::Update (int type, const void* data)
 	{
+		return true;
 	}
 
 	void Frame::CursorEnterEvent (bool entered)

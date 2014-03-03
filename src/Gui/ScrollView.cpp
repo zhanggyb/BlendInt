@@ -76,17 +76,17 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollView::Update (int type, const void* data)
+	bool ScrollView::Update (int type, const void* data)
 	{
 		switch(type) {
 
 			case FormPosition: {
 				reset_viewport_position();
-				break;
+				return true;
 			}
 
 			default:
-				break;
+				return true;
 		}
 
 	}

@@ -136,7 +136,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Menu::Update(int type, const void* data)
+	bool Menu::Update(int type, const void* data)
 	{
 		switch (type) {
 
@@ -144,24 +144,23 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(data);
 				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 				ResetHighlightBuffer(size_p->width());
-				break;
+				return true;
 			}
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(data);
 				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
-				break;
+				return true;
 			}
 
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
 				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
-				break;
+				return true;
 			}
 
 			default:
-				// Widget::Update(type, data);
-				break;
+				return RoundWidget::Update(type, data);
 		}
 	}
 

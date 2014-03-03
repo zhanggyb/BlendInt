@@ -72,7 +72,7 @@ void DemoFrame::FullWindow(unsigned int width, unsigned int height)
 	Resize(width, height);
 }
 
-void DemoFrame::Update(int type, const void* data)
+bool DemoFrame::Update(int type, const void* data)
 {
 	switch (type) {
 
@@ -84,7 +84,8 @@ void DemoFrame::Update(int type, const void* data)
 				SetPosition(m_widget, m_widget->position().x() + offset_x,
 				        m_widget->position().y() + offset_y);
 			}
-			break;
+
+			return true;
 		}
 
 		case FormSize: {
@@ -94,7 +95,7 @@ void DemoFrame::Update(int type, const void* data)
 				size.add_height(-(margin().top() + margin().bottom()));
 				m_widget->Resize(size);
 			}
-			break;
+			return true;
 		}
 
 		case FrameMargin: {
@@ -107,12 +108,11 @@ void DemoFrame::Update(int type, const void* data)
 				                - margin_p->bottom());
 				m_widget->Resize(new_size);
 			}
-			break;
+			return true;
 		}
 
 		default:
-			Frame::Update(type, data);
-			break;
+			return Frame::Update(type, data);
 	}
 }
 

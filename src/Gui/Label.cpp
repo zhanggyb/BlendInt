@@ -147,7 +147,7 @@ namespace BlendInt {
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
-	void Label::Update (int type, const void* data)
+	bool Label::Update (int type, const void* data)
 	{
 		switch(type) {
 
@@ -174,11 +174,11 @@ namespace BlendInt {
 					}
 				}
 
-				break;
+				return true;
 			}
 
 			default:
-				break;
+				return Widget::Update(type, data);
 		}
 	}
 

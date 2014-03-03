@@ -80,7 +80,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Update (int type, const void* data);
+		virtual bool Update (int type, const void* data);
 
 		virtual void Draw ();
 

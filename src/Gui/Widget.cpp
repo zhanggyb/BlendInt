@@ -78,9 +78,10 @@ namespace BlendInt {
 
 	}
 
-	void Widget::Update (int type, const void* data)
+	bool Widget::Update (int type, const void* data)
 	{
 		// do nothing in this base class
+		return true;
 	}
 
 	void Widget::Draw()

@@ -49,7 +49,7 @@ namespace BlendInt {
 
 	}
 
-	void PopupWidget::Update(int type, const void* data)
+	bool PopupWidget::Update(int type, const void* data)
 	{
 		Widget::Update(type, data);
 		switch(type) {
@@ -60,11 +60,11 @@ namespace BlendInt {
 
 				m_shadow.Resize(shadow_size);
 
-				break;
+				return true;
 			}
 
 			default:
-				break;
+				return Widget::Update(type, data);
 		}
 
 	}

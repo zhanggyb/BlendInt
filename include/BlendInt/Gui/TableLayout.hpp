@@ -55,7 +55,7 @@ namespace BlendInt {
 
 		virtual void Update (int property_type);
 
-		virtual void Update (int type, const void* property);
+		virtual bool Update (int type, const void* property);
 
 		virtual void Draw ();
 

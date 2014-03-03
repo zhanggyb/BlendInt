@@ -65,7 +65,7 @@ namespace BlendInt {
 	{
 	}
 
-	void ToggleButton::Update(int type, const void* data)
+	bool ToggleButton::Update(int type, const void* data)
 	{
 		switch (type) {
 
@@ -76,7 +76,7 @@ namespace BlendInt {
 				        m_emboss_buffer.get());
 
 				Refresh();
-				break;
+				return true;
 			}
 
 			case FormRoundType: {
@@ -86,7 +86,7 @@ namespace BlendInt {
 				        m_emboss_buffer.get());
 
 				Refresh();
-				break;
+				return true;
 			}
 
 			case FormRoundRadius: {
@@ -96,12 +96,11 @@ namespace BlendInt {
 				        m_emboss_buffer.get());
 
 				Refresh();
-				break;
+				return true;
 			}
 
 			default:
-				AbstractButton::Update(type, data);
-				break;
+				return true;
 		}
 
 	}

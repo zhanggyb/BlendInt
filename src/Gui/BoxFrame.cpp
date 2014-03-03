@@ -52,7 +52,7 @@ namespace BlendInt {
 		// TODO: update preferred, min, max size;
 	}
 
-	void BoxFrame::Update (int type, const void* data)
+	bool BoxFrame::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -65,7 +65,7 @@ namespace BlendInt {
 							m_layout->position().y() + (new_pos->y() - position().y()));
 
 				}
-				break;
+				return true;
 			}
 
 			case FormSize: {
@@ -75,11 +75,11 @@ namespace BlendInt {
 					unsigned int height = new_size->height() - margin().top() - margin().bottom();
 					Resize(m_layout, width, height);
 				}
-				break;
+				return true;
 			}
 
 			default:
-				break;
+				return true;
 		}
 	}
 

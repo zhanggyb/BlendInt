@@ -57,7 +57,7 @@ namespace BlendInt {
 		m_items.clear();
 	}
 
-	void VerticalLayout::Update (int type, const void* data)
+	bool VerticalLayout::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -70,32 +70,34 @@ namespace BlendInt {
 							m_items[i]->position().x() + (new_pos->x() - position().x()),
 							m_items[i]->position().y() + (new_pos->y() - position().y()));
 				}
-				break;
+
+				return true;
 			}
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				if(m_items.size())
 					MakeLayout(size_p, &margin(), space());
-				break;
+
+				return true;
 			}
 
 			case LayoutPropertyMargin: {
 				const Margin* margin_p = static_cast<const Margin*>(data);
 				if(m_items.size())
 					MakeLayout(&size(), margin_p, space());
-				break;
+				return true;
 			}
 
 			case LayoutPropertySpace: {
 				const int* space_p = static_cast<const int*>(data);
 				if(m_items.size())
 					MakeLayout(&size(), &margin(), *space_p);
-				break;
+				return true;
 			}
 
 			default: {
-				break;
+				return true;
 			}
 		}
 	}

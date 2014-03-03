@@ -107,7 +107,7 @@ namespace BlendInt {
 		return m_stack[index];
 	}
 
-	void StackedWidget::Update (int type, const void* data)
+	bool StackedWidget::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -121,7 +121,8 @@ namespace BlendInt {
 							(*it)->position().x() + (new_pos->x() - position().x()),
 							(*it)->position().y() + (new_pos->y() - position().y()));
 				}
-				break;
+
+				return true;
 			}
 
 			case FormSize: {
@@ -133,11 +134,11 @@ namespace BlendInt {
 					Resize((*it), *new_size);
 				}
 
-				break;
+				return true;
 			}
 
 			default:
-				break;
+				return true;
 		}
 	}
 

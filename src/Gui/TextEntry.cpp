@@ -141,14 +141,15 @@ namespace BlendInt {
 		event->accept(this);
 	}
 
-	void TextEntry::Update (int type, const void* data)
+	bool TextEntry::Update (int type, const void* data)
 	{
 		switch (type) {
 
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
 				m_origin.set_x(*radius_p + DefaultTextEntryPadding.left());
-				break;
+
+				return true;
 			}
 
 			case FormSize: {
@@ -172,13 +173,12 @@ namespace BlendInt {
 						m_outer_buffer.get(),
 						0
 						);
-				return;
+				return true;
 			}
 
 			default:
-				break;
+				return RoundWidget::Update(type, data);
 		}
-		RoundWidget::Update(type, data);
 	}
 
 	void TextEntry::Draw ()

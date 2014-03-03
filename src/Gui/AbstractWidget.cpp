@@ -59,8 +59,6 @@ namespace BlendInt {
 		  m_trunk(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
-
-		ContextManager::Instance()->SetFocusedWidget(this);
 	}
 
 	AbstractWidget::AbstractWidget (AbstractWidget* parent)
@@ -73,8 +71,6 @@ namespace BlendInt {
 			parent->m_branches.insert(this);
 			m_trunk = parent;
 		}
-
-		ContextManager::Instance()->SetFocusedWidget(this);
 	}
 
 	AbstractWidget::~AbstractWidget ()
@@ -178,11 +174,10 @@ namespace BlendInt {
 
 		Size new_size (width, height);
 
-		Update(FormSize, &new_size);
-
-		set_size(width, height);
-
-		fire_property_changed_event(FormSize);
+		if(Update(FormSize, &new_size)) {
+			set_size(width, height);
+			fire_property_changed_event(FormSize);
+		}
 	}
 
 	void AbstractWidget::Resize (const Size& size)
@@ -192,11 +187,10 @@ namespace BlendInt {
 
 		if(AbstractWidget::size() == size) return;
 
-		Update(FormSize, &size);
-
-		set_size(size);
-
-		fire_property_changed_event(FormSize);
+		if(Update(FormSize, &size)) {
+			set_size(size);
+			fire_property_changed_event(FormSize);
+		}
 	}
 
 	void AbstractWidget::SetPosition (int x, int y)
@@ -207,11 +201,11 @@ namespace BlendInt {
 		if(position().x() == x && position().y() == y) return;
 
 		Point new_pos (x, y);
-		Update(FormPosition, &new_pos);
 
-		set_position(x, y);
-
-		fire_property_changed_event(FormPosition);
+		if(Update(FormPosition, &new_pos)) {
+			set_position(x, y);
+			fire_property_changed_event(FormPosition);
+		}
 	}
 
 	void AbstractWidget::SetPosition (const Point& pos)
@@ -221,11 +215,10 @@ namespace BlendInt {
 
 		if(position() == pos) return;
 
-		Update(FormPosition, &pos);
-
-		set_position(pos);
-
-		fire_property_changed_event(FormPosition);
+		if(Update(FormPosition, &pos)) {
+			set_position(pos);
+			fire_property_changed_event(FormPosition);
+		}
 	}
 
 	void AbstractWidget::SetPreferredSize(unsigned int width, unsigned int height)
@@ -241,11 +234,10 @@ namespace BlendInt {
 
 		Size new_pref_size(width, height);
 
-		Update(FormPreferredSize, &new_pref_size);
-
-		set_preferred_size(width, height);
-
-		fire_property_changed_event(FormPreferredSize);
+		if(Update(FormPreferredSize, &new_pref_size)) {
+			set_preferred_size(width, height);
+			fire_property_changed_event(FormPreferredSize);
+		}
 	}
 
 	void AbstractWidget::SetPreferredSize(const Size& size)
@@ -258,11 +250,10 @@ namespace BlendInt {
 
 		if(preferred_size() == size) return;
 
-		Update(FormPreferredSize, &size);
-
-		set_preferred_size(size);
-
-		fire_property_changed_event(FormPreferredSize);
+		if(Update(FormPreferredSize, &size)) {
+			set_preferred_size(size);
+			fire_property_changed_event(FormPreferredSize);
+		}
 	}
 
 	void AbstractWidget::SetMinimalSize(unsigned int width, unsigned int height)
@@ -275,11 +266,10 @@ namespace BlendInt {
 
 		Size new_min_size(width, height);
 
-		Update(FormMinimalSize, &new_min_size);
-
-		set_minimal_size(width, height);
-
-		fire_property_changed_event(FormMinimalSize);
+		if(Update(FormMinimalSize, &new_min_size)) {
+			set_minimal_size(width, height);
+			fire_property_changed_event(FormMinimalSize);
+		}
 	}
 
 	void AbstractWidget::SetMinimalSize(const Size& size)
@@ -290,11 +280,10 @@ namespace BlendInt {
 
 		if (minimal_size() == size) return;
 
-		Update(FormMinimalSize, &size);
-
-		set_minimal_size(size);
-
-		fire_property_changed_event(FormMinimalSize);
+		if(Update(FormMinimalSize, &size)) {
+			set_minimal_size(size);
+			fire_property_changed_event(FormMinimalSize);
+		}
 	}
 
 	void AbstractWidget::SetMaximalSize(unsigned int width, unsigned int height)
@@ -307,11 +296,10 @@ namespace BlendInt {
 
 		Size new_max_size (width, height);
 
-		Update(FormMaximalSize, &new_max_size);
-
-		set_maximal_size(new_max_size);
-
-		fire_property_changed_event(FormMaximalSize);
+		if(Update(FormMaximalSize, &new_max_size)) {
+			set_maximal_size(new_max_size);
+			fire_property_changed_event(FormMaximalSize);
+		}
 	}
 
 	void AbstractWidget::SetMaximalSize(const Size& size)
@@ -322,11 +310,10 @@ namespace BlendInt {
 
 		if(maximal_size() == size) return;
 
-		Update(FormMaximalSize, &size);
-
-		set_maximal_size(size);
-
-		fire_property_changed_event(FormMaximalSize);
+		if(Update(FormMaximalSize, &size)) {
+			set_maximal_size(size);
+			fire_property_changed_event(FormMaximalSize);
+		}
 	}
 
 	void AbstractWidget::SetLayer (int z)
@@ -338,15 +325,19 @@ namespace BlendInt {
 
 		if(m_flag[WidgetFlagRegistered]) {
 			ContextManager::Instance()->Unregister(this);
-			Update (WidgetLayer, &z);
-			m_z = z;
-			ContextManager::Instance()->Register(this);
+
+			if(Update (WidgetLayer, &z)) {
+				m_z = z;
+				ContextManager::Instance()->Register(this);
+				fire_property_changed_event(WidgetLayer);
+			}
 		} else {
-			Update (WidgetLayer, &z);
-			m_z = z;
+			if(Update (WidgetLayer, &z)) {
+				m_z = z;
+				fire_property_changed_event(WidgetLayer);
+			}
 		}
 
-		fire_property_changed_event(WidgetLayer);
 	}
 
 	void AbstractWidget::Refresh()
@@ -486,18 +477,19 @@ namespace BlendInt {
 		if(obj->position().x() == x && obj->position().y() == y) return;
 
 		Point new_pos (x, y);
-		obj->Update(FormPosition, &new_pos);
 
-		obj->set_position(x, y);
+		if(obj->Update(FormPosition, &new_pos)) {
+			obj->set_position(x, y);
+		}
 	}
 
 	void AbstractWidget::SetPosition(AbstractWidget* obj, const Point& pos)
 	{
 		if(obj->position() == pos) return;
 
-		obj->Update(FormPosition, &pos);
-
-		obj->set_position(pos);
+		if(obj->Update(FormPosition, &pos)) {
+			obj->set_position(pos);
+		}
 	}
 
 	void AbstractWidget::Resize (AbstractWidget* obj, unsigned int width, unsigned int height)
@@ -506,18 +498,18 @@ namespace BlendInt {
 
 		Size new_size (width, height);
 
-		obj->Update(FormSize, &new_size);
-
-		obj->set_size(width, height);
+		if(obj->Update(FormSize, &new_size)) {
+			obj->set_size(width, height);
+		}
 	}
 
 	void AbstractWidget::Resize (AbstractWidget* obj, const Size& size)
 	{
 		if(obj->size() == size) return;
 
-		obj->Update(FormSize, &size);
-
-		obj->set_size(size);
+		if(obj->Update(FormSize, &size)) {
+			obj->set_size(size);
+		}
 	}
 
 	void AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,

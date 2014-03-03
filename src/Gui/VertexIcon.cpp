@@ -122,9 +122,10 @@ namespace BlendInt {
 		m_index_buffer->Reset();
 	}
 
-	void VertexIcon::Update (int type, const void* data)
+	bool VertexIcon::Update (int type, const void* data)
 	{
 		// TODO: update shape
+		return true;
 	}
 
 	void VertexIcon::Draw()

@@ -99,7 +99,7 @@ namespace BlendInt {
 		generate_default_layout();
 	}
 
-	void TableLayout::Update (int type, const void* data)
+	bool TableLayout::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -112,15 +112,16 @@ namespace BlendInt {
 							m_items[i]->position().x() + (new_pos->x() - position().x()),
 							m_items[i]->position().y() + (new_pos->y() - position().y()));
 				}
-				break;
+
+				return true;
 			}
 
 			case FormSize: {
 
 				if (data) {
 
-					if (generate_layout(static_cast<const Size*>(data))) return;
-					else return;
+					if (generate_layout(static_cast<const Size*>(data))) return true;
+					else return false;
 
 				} else {	// this is called when adding widget or layout
 
@@ -130,11 +131,11 @@ namespace BlendInt {
 
 				}
 
-				break;
+				return true;
 			}
 
 			default: {
-				break;
+				return true;
 			}
 		}
 

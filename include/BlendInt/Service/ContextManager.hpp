@@ -34,6 +34,8 @@
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
 
+#include <BlendInt/Gui/AbstractWidget.hpp>
+
 using std::map;
 using std::set;
 
@@ -60,7 +62,7 @@ namespace BlendInt {
 	/**
 	 * @brief Class to hold and manage widget objects for Render
 	 */
-	class ContextManager
+	class ContextManager: public AbstractWidget
 	{
 	public:
 
@@ -88,13 +90,35 @@ namespace BlendInt {
 
 #endif
 
+	protected:
+
+		virtual bool Update (int type, const void* data);
+
+		virtual void Draw ();
+
+		virtual void CursorEnterEvent (bool entered);
+
+		virtual void KeyPressEvent (KeyEvent* event);
+
+		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
+
+		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
+
+		virtual void MousePressEvent (MouseEvent* event);
+
+		virtual void MouseReleaseEvent (MouseEvent* event);
+
+		virtual void MouseMoveEvent (MouseEvent* event);
+
 	private:
+
+#ifdef DEBUG
+		void DrawGrid (int width, int height);
+#endif
 
 		static bool Initialize ();
 
 		static void Release ();
-
-		void Draw ();
 
 		void OffScreenRenderToTexture (int layer, std::set<AbstractWidget*>* widgets, GLTexture2D* texture);
 
@@ -127,8 +151,6 @@ namespace BlendInt {
 
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point, const AbstractWidget* parent);
 
-		Size m_size;
-
 		map<int, ContextLayer > m_layers;
 
 		map<AbstractWidget*, int> m_index;
@@ -138,8 +160,6 @@ namespace BlendInt {
 		ScreenBuffer* m_screenbuffer;
 
 		std::deque<GLTexture2D*> m_deque;
-
-		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
 		/**
 		 * @brief The widget stack to contain the current mouse cursor

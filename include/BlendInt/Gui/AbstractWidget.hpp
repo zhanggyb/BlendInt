@@ -259,7 +259,7 @@ namespace BlendInt {
 		 * This virtual function should be implemented in each derived class,
 		 * and should only use the form's property to draw opengl elements once.
 		 */
-		virtual void Update (int type, const void* data) = 0;
+		virtual bool Update (int type, const void* data) = 0;
 
 		/**
 		 * @brief just change m_z simply

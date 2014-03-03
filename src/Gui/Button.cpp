@@ -66,7 +66,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Button::Update(int type, const void* data)
+	bool Button::Update(int type, const void* data)
 	{
 		switch (type) {
 
@@ -75,7 +75,7 @@ namespace BlendInt {
 				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), m_emboss_buffer.get());
 
 				Refresh();
-				break;
+				return true;
 			}
 
 			case FormRoundType: {
@@ -83,7 +83,7 @@ namespace BlendInt {
 				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), m_emboss_buffer.get());
 
 				Refresh();
-				break;
+				return true;
 			}
 
 			case FormRoundRadius: {
@@ -91,12 +91,11 @@ namespace BlendInt {
 				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), m_emboss_buffer.get());
 
 				Refresh();
-				break;
+				return true;
 			}
 
 			default:
-				AbstractButton::Update(type, data);
-				break;
+				return AbstractButton::Update(type, data);
 		}
 	}
 

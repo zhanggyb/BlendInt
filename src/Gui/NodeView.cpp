@@ -35,8 +35,9 @@ namespace BlendInt {
 	{
 	}
 
-	void NodeView::Update (int type, const void* data)
+	bool NodeView::Update (int type, const void* data)
 	{
+		return true;
 	}
 
 	void NodeView::Draw()

@@ -53,7 +53,7 @@ namespace BlendInt {
 	{
 	}
 
-	void SlideButton::Update (int type, const void* data)
+	bool SlideButton::Update (int type, const void* data)
 	{
 		switch(type)
 		{
@@ -76,7 +76,7 @@ namespace BlendInt {
 						m_outer_buffer.get(),
 						m_highlight_buffer.get()
 						);
-				break;
+				return true;
 			}
 
 			case FormRoundRadius: {
@@ -99,11 +99,11 @@ namespace BlendInt {
 						m_outer_buffer.get(),
 						m_highlight_buffer.get()
 						);
-				break;
+				return true;
 			}
 
 			default:
-				break;
+				return true;
 		}
 	}
 
@@ -310,14 +310,14 @@ namespace BlendInt {
 		m_slide_button.reset(widget);
 	}
 
-	void Slider::Update (int type, const void* data)
+	bool Slider::Update (int type, const void* data)
 	{
 		switch (type) {
 			case FormPosition: {
 				const Point* pos = static_cast<const Point*>(data);
 				m_slide_button->SetPosition(m_slide_button->position().x() + (pos->x() - position().x()),
 						m_slide_button->position().y() + (pos->y() - position().y()));
-				return;
+				return true;
 			}
 
 			case FormSize: {
@@ -334,7 +334,7 @@ namespace BlendInt {
 							m_slide_button->position().y());
 				}
 
-				return;
+				return true;
 			}
 
 			case SliderPropertyValue: {
@@ -347,11 +347,11 @@ namespace BlendInt {
 							m_slide_button->position().y());
 				}
 
-				return;
+				return true;
 			}
 
 			default:
-				break;
+				return true;
 		}
 	}
 

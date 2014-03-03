@@ -54,7 +54,7 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
-		virtual void Update (int type, const void* data);
+		virtual bool Update (int type, const void* data);
 
 		virtual void Draw ();
 

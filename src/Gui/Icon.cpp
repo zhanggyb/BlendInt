@@ -56,9 +56,10 @@ namespace BlendInt {
 		return *this;
 	}
 
-	void Icon::Update (int type, const void* data)
+	bool Icon::Update (int type, const void* data)
 	{
 		// Do nothing
+		return true;
 	}
 
 	void Icon::Scale (float ratio)

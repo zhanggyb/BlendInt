@@ -57,9 +57,9 @@ namespace BlendInt {
 	}
 
 
-	void PixelIcon::Update(int type, const void* data)
+	bool PixelIcon::Update(int type, const void* data)
 	{
-
+		return true;
 	}
 
 	void PixelIcon::Draw ()

@@ -63,7 +63,7 @@ namespace BlendInt {
 	{
 	}
 
-	void ScrollControl::Update (int type, const void* data)
+	bool ScrollControl::Update (int type, const void* data)
 	{
 		switch(type)
 		{
@@ -79,7 +79,7 @@ namespace BlendInt {
 				GenerateShadedFormBuffers(size_p, round_type(),
 				        radius(), color, shadetop, shadedown, shadedir, 5,
 				        m_inner_buffer.get(), m_outer_buffer.get(), m_highlight_buffer.get());
-				break;
+				return true;
 			}
 
 			case FormRoundRadius: {
@@ -95,11 +95,11 @@ namespace BlendInt {
 				GenerateShadedFormBuffers(size_p, round_type(),
 				        *radius_p, color, shadetop, shadedown, shadedir, 5,
 				        m_inner_buffer.get(), m_outer_buffer.get(), m_highlight_buffer.get());
-				break;
+				return true;
 			}
 
 			default:
-				break;
+				return true;
 		}
 	}
 
@@ -277,7 +277,7 @@ namespace BlendInt {
 	{
 	}
 
-	void SliderBar::Update (int type, const void* data)
+	bool SliderBar::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -285,7 +285,7 @@ namespace BlendInt {
 				const Point* pos = static_cast<const Point*>(data);
 				m_control_button->SetPosition(m_control_button->position().x() + (pos->x() - position().x()),
 						m_control_button->position().y() + (pos->y() - position().y()));
-				return;
+				return true;
 			}
 
 			case FormSize: {
@@ -300,7 +300,7 @@ namespace BlendInt {
 				GenerateShadedFormBuffers(size_p, round_type(),
 				        radius(), color, shadetop, shadedown, shadedir, 5,
 				        m_inner_buffer.get(), m_outer_buffer.get(), 0);
-				break;
+				return true;
 			}
 
 			case FormRoundRadius: {
@@ -316,11 +316,11 @@ namespace BlendInt {
 				GenerateShadedFormBuffers(size_p, round_type(),
 				        *radius_p, color, shadetop, shadedown, shadedir, 5,
 				        m_inner_buffer.get(), m_outer_buffer.get(), 0);
-				break;
+				return true;
 			}
 
 			default:
-				break;
+				return true;
 		}
 	}
 
@@ -519,7 +519,7 @@ namespace BlendInt {
 	{
 	}
 
-	void ScrollBar::Update (int type, const void* data)
+	bool ScrollBar::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -527,13 +527,15 @@ namespace BlendInt {
 				const Point* pos = static_cast<const Point*>(data);
 				m_scroll_control->SetPosition (m_scroll_control->position().x() + (pos->x() - position().x()),
 						m_scroll_control->position().y() + (pos->y() - position().y()));
-				break;
+
+				return true;
 			}
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 				update_shape(size_p);
-				break;
+
+				return true;
 			}
 
 			case SliderPropertyValue: {
@@ -544,11 +546,12 @@ namespace BlendInt {
 					m_scroll_control->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
 							m_scroll_control->position().y());
 				}
-				break;
+
+				return true;
 			}
 
 			default:
-				break;
+				return true;
 		}
 	}
 

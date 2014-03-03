@@ -80,11 +80,12 @@ namespace BlendInt {
 
 	ContextManager* ContextManager::Instance ()
 	{
+#ifdef DEBUG
 		if (!context_manager) {
-			cerr << "The Context Manager is not initialized successfully! Exit"
-			        << endl;
+			DBG_PRINT_MSG("%s", "The Context Manager is not initialized successfully! Exit");
 			exit(EXIT_FAILURE);
 		}
+#endif
 
 		return context_manager;
 	}
@@ -113,10 +114,8 @@ namespace BlendInt {
 	}
 
 	ContextManager::ContextManager ()
-	: m_main_buffer(0), m_screenbuffer(0)
+	: AbstractWidget(), m_main_buffer(0), m_screenbuffer(0)
 	{
-		m_events.reset(new Cpp::ConnectionScope);
-
 		m_screenbuffer = new ScreenBuffer;
 		m_hover_deque.reset(new std::deque<AbstractWidget*>);
 
@@ -147,6 +146,7 @@ namespace BlendInt {
 			widget_set_p->clear();
 		}
 
+		m_deque.clear();
 		if(m_screenbuffer) delete m_screenbuffer;
 
 		m_layers.clear();
@@ -157,7 +157,6 @@ namespace BlendInt {
 			delete m_main_buffer;
 		}
 	}
-
 
 	bool ContextManager::Register (AbstractWidget* obj)
 	{
@@ -297,6 +296,39 @@ namespace BlendInt {
 		return true;
 	}
 
+	bool ContextManager::Update (int type, const void* data)
+	{
+		return true;
+	}
+
+	void ContextManager::CursorEnterEvent (bool entered)
+	{
+	}
+
+	void ContextManager::KeyPressEvent (KeyEvent* event)
+	{
+	}
+
+	void ContextManager::ContextMenuPressEvent (ContextMenuEvent* event)
+	{
+	}
+
+	void ContextManager::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	{
+	}
+
+	void ContextManager::MousePressEvent (MouseEvent* event)
+	{
+	}
+
+	void ContextManager::MouseReleaseEvent (MouseEvent* event)
+	{
+	}
+
+	void ContextManager::MouseMoveEvent (MouseEvent* event)
+	{
+	}
+
 	void ContextManager::Draw ()
 	{
 		m_deque.clear();
@@ -418,11 +450,65 @@ namespace BlendInt {
 		m_screenbuffer->Render(context_manager->m_main_buffer);
 	}
 
+#ifdef DEBUG
+
+	void ContextManager::DrawGrid(int width, int height)
+	{
+		// Draw grid for debug
+		const int small_step = 20;
+		const int big_step = 100;
+
+		glLineWidth(1);
+		glEnable(GL_LINE_STIPPLE);
+
+		glColor4f(1.0f, 1.0f, 1.0f, 0.1f);
+		glLineStipple(1, 0xAAAA);
+
+		for (int num = 1; num < width; num++) {
+			int step = num * small_step;
+			glBegin(GL_LINES);
+			glVertex2i(0, step);
+			glVertex2i(width, step);
+			glEnd();
+
+		}
+
+		for (int num = 1; num < height; num++) {
+			int step = num * small_step;
+			glBegin(GL_LINES);
+			glVertex2i(step, 0);
+			glVertex2i(step, height);
+			glEnd();
+		}
+
+		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+		glLineStipple(1, 0xAAAA);
+
+		for (int num = 1; num < width; num++) {
+			int step = num * big_step;
+			glBegin(GL_LINES);
+			glVertex2i(0, step);
+			glVertex2i(width, step);
+			glEnd();
+		}
+
+		for (int num = 1; num < height; num++) {
+			int step = num * big_step;
+			glBegin(GL_LINES);
+			glVertex2i(step, 0);
+			glVertex2i(step, height);
+			glEnd();
+		}
+
+		glDisable(GL_LINE_STIPPLE);
+	}
+
+#endif
 
 	void ContextManager::OffScreenRenderToTexture (int layer, std::set<AbstractWidget*>* widgets, GLTexture2D* texture)
 	{
-		GLsizei width = m_size.width();
-		GLsizei height = m_size.height();
+		GLsizei width = size().width();
+		GLsizei height = size().height();
 
 		// Create and set texture to render to.
 		GLTexture2D* tex = texture;
@@ -507,8 +593,8 @@ namespace BlendInt {
 
 	void ContextManager::RenderToScreenBuffer ()
 	{
-		GLsizei width = m_size.width();
-		GLsizei height = m_size.height();
+		GLsizei width = size().width();
+		GLsizei height = size().height();
 
 		// Create and set texture to render to.
 		GLTexture2D* tex = ContextManager::m_main_buffer;
@@ -591,7 +677,7 @@ namespace BlendInt {
 
 #ifdef DEBUG
 			//DrawTriangle(false);
-			//draw_grid(width, height);
+			DrawGrid(width, height);
 #endif
 
 			/*
@@ -779,4 +865,3 @@ namespace BlendInt {
 #endif
 
 }
-
