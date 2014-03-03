@@ -38,8 +38,9 @@ namespace BlendInt {
 		if (m_margin.equal(margin))
 			return;
 
-		Update(FrameMargin, &margin);
-		m_margin = margin;
+		if(Update(FrameMargin, &margin)) {
+			m_margin = margin;
+		}
 	}
 
 	void AbstractContainer::SetMargin (int l, int r, int t, int b)
@@ -49,10 +50,25 @@ namespace BlendInt {
 
 		Margin new_margin(l, r, t, b);
 
-		Update(FrameMargin, &new_margin);
-		m_margin = new_margin;
+		if(Update(FrameMargin, &new_margin)) {
+			m_margin = new_margin;
+		}
 	}
 
+	void AbstractContainer::Mount (AbstractWidget* widget)
+	{
+		if(widget) {
+			//widget->SetContainer(this);
+			m_sub_widgets.insert(widget);
+		}
+	}
+
+	void AbstractContainer::Unmount (AbstractWidget* widget)
+	{
+		if(widget) {
+			//widget->SetContainer(0);
+			m_sub_widgets.erase(widget);
+		}
+	}
 
 }
-

@@ -177,20 +177,12 @@ namespace BlendInt {
 
 	void Interface::Resize (const Size& size)
 	{
-		ContextManager::context_manager->Resize(size);
-		ContextManager::context_manager->m_screenbuffer->Resize((float)size.width(), (float)size.height());
-
-		ContextManager::refresh_once = true;
-		ContextManager::force_refresh_all = true;
+		ContextManager::context_manager->ResizeFromInterface(size);
 	}
 
 	void Interface::Resize (unsigned int width, unsigned int height)
 	{
-		ContextManager::context_manager->Resize(width, height);
-		ContextManager::context_manager->m_screenbuffer->Resize((float)width, (float)height);
-
-		ContextManager::refresh_once = true;
-		ContextManager::force_refresh_all = true;
+		ContextManager::context_manager->ResizeFromInterface(width, height);
 	}
 
 	void Interface::Draw ()

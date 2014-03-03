@@ -24,7 +24,10 @@
 #ifndef _BLENDINT_CONTAINER_HPP_
 #define _BLENDINT_CONTAINER_HPP_
 
+#include <set>
+
 #include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Service/ContextManager.hpp>
 
 namespace BlendInt {
 
@@ -47,10 +50,20 @@ namespace BlendInt {
 
 		void SetMargin (int left, int right, int top, int bottom);
 
+		void Mount (AbstractWidget* widget);
+
+		void Unmount (AbstractWidget* widget);
+
 	private:
+
+		friend class ContextManager;
 
 		Margin m_margin;
 
+		/**
+		 * @brief Sub widgets which build a tree to accept render and device events
+		 */
+		std::set<AbstractWidget*> m_sub_widgets;
 	};
 
 }

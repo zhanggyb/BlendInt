@@ -116,6 +116,14 @@ namespace BlendInt {
 		void DrawGrid (int width, int height);
 #endif
 
+		ContextManager ();
+
+		~ContextManager ();
+
+		void ResizeFromInterface (const Size& size);
+
+		void ResizeFromInterface (unsigned int width, unsigned int height);
+
 		static bool Initialize ();
 
 		static void Release ();
@@ -144,10 +152,6 @@ namespace BlendInt {
 		 * @return
 		 */
 		bool RemoveWidget (AbstractWidget* obj);
-
-		ContextManager ();
-
-		~ContextManager ();
 
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point, const AbstractWidget* parent);
 

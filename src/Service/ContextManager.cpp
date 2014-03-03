@@ -192,6 +192,24 @@ namespace BlendInt {
 		return true;
 	}
 
+	void ContextManager::ResizeFromInterface (const Size& size)
+	{
+		set_size(size);
+		m_screenbuffer->Resize((float)size.width(), (float)size.height());
+
+		refresh_once = true;
+		force_refresh_all = true;
+	}
+
+	void ContextManager::ResizeFromInterface (unsigned int width, unsigned int height)
+	{
+		set_size(width, height);
+		m_screenbuffer->Resize((float)width, (float)height);
+
+		refresh_once = true;
+		force_refresh_all = true;
+	}
+
 	void ContextManager::AddWidget (AbstractWidget* obj)
 	{
 //		map<AbstractWidget*, int>::iterator map_it;
@@ -298,7 +316,7 @@ namespace BlendInt {
 
 	bool ContextManager::Update (int type, const void* data)
 	{
-		return true;
+		return false;
 	}
 
 	void ContextManager::CursorEnterEvent (bool entered)

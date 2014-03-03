@@ -37,6 +37,54 @@
 
 namespace BlendInt {
 
+	SlideSwitch::SlideSwitch()
+	: AbstractRoundForm()
+	{
+
+	}
+
+	SlideSwitch::~SlideSwitch()
+	{
+
+	}
+
+	bool SlideSwitch::Update(int type, const void* data)
+	{
+
+		return true;
+	}
+
+	void SlideSwitch::Draw()
+	{
+
+	}
+
+	void SlideSwitch::InitOnce()
+	{
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+
+		Orientation shadedir = size().width() < size().height() ? Horizontal : Vertical;
+		const Color& color = themes()->scroll.item;
+		short shadetop = themes()->scroll.shadetop;
+		short shadedown = themes()->scroll.shadedown;
+
+		/*
+		GenerateShadedFormBuffers(&size(),
+				round_type(),
+				radius(),
+				color,
+				shadetop,
+				shadedown,
+				shadedir,
+				5,
+				m_inner_buffer.get(),
+				m_outer_buffer.get(),
+				0
+				);
+				*/
+	}
+
 	SlideButton::SlideButton()
 	:  AbstractButton(), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{

@@ -27,9 +27,32 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractSlider.hpp>
+#include <BlendInt/Gui/AbstractRoundForm.hpp>
 #include <BlendInt/Gui/Button.hpp>
 
 namespace BlendInt {
+
+	class SlideSwitch: public AbstractRoundForm
+	{
+	public:
+
+		SlideSwitch ();
+
+		virtual ~SlideSwitch ();
+
+	protected:
+
+		virtual bool Update (int type, const void* data);
+
+		virtual void Draw ();
+
+	private:
+
+		void InitOnce ();
+
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
+	};
 
 	class SlideButton: public AbstractButton
 	{
