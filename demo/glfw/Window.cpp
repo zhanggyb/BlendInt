@@ -21,7 +21,7 @@ namespace BlendInt {
 
 	static void CbWindowSize(GLFWwindow* window, int w, int h)
 	{
-		Interface::Instance()->Resize(w, h);
+		Interface::instance->Resize(w, h);
 	}
 
 	static void CbKey(GLFWwindow* window, int key, int scancode, int action,
@@ -47,14 +47,14 @@ namespace BlendInt {
 		global_key_event.set_modifiers(mods);
         global_key_event.clear_text();
 
-		Interface::Instance()->DispatchKeyEvent(&global_key_event);
+		Interface::instance->DispatchKeyEvent(&global_key_event);
 	}
 
 	static void CbChar(GLFWwindow* window, unsigned int character)
 	{
 		global_key_event.set_text(character);
 
-		Interface::Instance()->DispatchKeyEvent(&global_key_event);
+		Interface::instance->DispatchKeyEvent(&global_key_event);
 	}
 
 	static void CbMouseButton(GLFWwindow* window, int button, int action,
@@ -96,16 +96,16 @@ namespace BlendInt {
 		global_mouse_event.set_action(mouse_action);
 		global_mouse_event.set_modifiers(mods);
 
-		Interface::Instance()->DispatchMouseEvent(&global_mouse_event);
+		Interface::instance->DispatchMouseEvent(&global_mouse_event);
 	}
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos)
 	{
         global_mouse_event.set_action(MouseMove);
         global_mouse_event.set_button(MouseButtonNone);
-		global_mouse_event.set_position(static_cast<int>(xpos), Interface::Instance()->size().height() - static_cast<int>(ypos));
+		global_mouse_event.set_position(static_cast<int>(xpos), Interface::instance->size().height() - static_cast<int>(ypos));
 
-		Interface::Instance()->DispatchMouseEvent(&global_mouse_event);
+		Interface::instance->DispatchMouseEvent(&global_mouse_event);
 	}
 
 	void Init ()
@@ -142,7 +142,7 @@ namespace BlendInt {
 			exit(-1);
 		}
 
-		Interface::Instance()->Resize(width, height);
+		Interface::instance->Resize(width, height);
 	
 		return window;
 	}
@@ -152,7 +152,7 @@ namespace BlendInt {
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
 			/* Render here */
-			Interface::Instance()->Draw();
+			Interface::instance->Draw();
 
             if(callback) {
                 (*callback)(param);

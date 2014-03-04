@@ -81,7 +81,7 @@ TEST_F(MenuTest1, Click1)
 
     info->Register();
 	
-	Interface::Instance()->events()->connect(menubin->triggered(), info, &InfoWidget::onShowText);
+	Interface::instance->events()->connect(menubin->triggered(), info, &InfoWidget::onShowText);
 
 	RunLoop(window);
 

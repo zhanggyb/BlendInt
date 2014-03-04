@@ -56,21 +56,22 @@ namespace BlendInt {
 	Size AbstractWidget::invisible_size;
 
 	AbstractWidget::AbstractWidget ()
-		: AbstractExtraForm(),
-		  m_z(0),
-		  m_container(0)
+	: AbstractExtraForm(),
+	m_z(0),
+	m_container(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
+		m_flag.set(WidgetFlagVisibility);
 	}
 
 	AbstractWidget::~AbstractWidget ()
 	{
 		/*
-		if(m_container) {
-			m_container->m_branches.erase(this);
-			m_container = 0;
-		}
-		*/
+		 if(m_container) {
+		 m_container->m_branches.erase(this);
+		 m_container = 0;
+		 }
+		 */
 
 		m_destroyed.fire(this);
 	}
@@ -86,38 +87,38 @@ namespace BlendInt {
 	}
 
 	/*
-	void AbstractWidget::SetContainer(AbstractWidget* container)
-	{
-		if(!container) return;
-		if(m_container == container) return;
+	 void AbstractWidget::SetContainer(AbstractWidget* container)
+	 {
+	 if(!container) return;
+	 if(m_container == container) return;
 
-		if (container == ContextManager::Instance()) {
+	 if (container == ContextManager::Instance()) {
 
-			if(m_container) {
-				m_container->RemoveChild(this);
-			}
+	 if(m_container) {
+	 m_container->RemoveChild(this);
+	 }
 
-			ContextManager::Instance()->Register(this);
+	 ContextManager::Instance()->Register(this);
 
-		} else {
+	 } else {
 
-			AbstractContainer* p = dynamic_cast<AbstractContainer*>(container);
+	 AbstractContainer* p = dynamic_cast<AbstractContainer*>(container);
 
-			if(p) {
+	 if(p) {
 
-				if(m_container) {
-					m_container->RemoveChild(this);
-				}
+	 if(m_container) {
+	 m_container->RemoveChild(this);
+	 }
 
-				p->AddSubWidget(this);
+	 p->AddSubWidget(this);
 
-			} else {
-				DBG_PRINT_MSG("%s is not a container object", container->name().c_str());
-			}
+	 } else {
+	 DBG_PRINT_MSG("%s is not a container object", container->name().c_str());
+	 }
 
-		}
-	}
-	*/
+	 }
+	 }
+	 */
 
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)
 	{
@@ -218,7 +219,7 @@ namespace BlendInt {
 				height < minimal_size().height() ||
 				width > maximal_size().width() ||
 				height > maximal_size().height())
-			return;
+		return;
 
 		if(preferred_size().width() == width && preferred_size().height() == height) return;
 
@@ -236,7 +237,7 @@ namespace BlendInt {
 				size.height() < minimal_size().height()||
 				size.width() > maximal_size().width() ||
 				size.height() > maximal_size().height())
-			return;
+		return;
 
 		if(preferred_size() == size) return;
 
@@ -250,7 +251,7 @@ namespace BlendInt {
 	{
 		if(width > preferred_size().width() ||
 				height > preferred_size().height())
-			return;
+		return;
 
 		if(minimal_size().width() == width && minimal_size().height() == height) return;
 
@@ -266,7 +267,7 @@ namespace BlendInt {
 	{
 		if(size.width() > preferred_size().width() ||
 				size.height() > preferred_size().height())
-			return;
+		return;
 
 		if (minimal_size() == size) return;
 
@@ -280,7 +281,7 @@ namespace BlendInt {
 	{
 		if(width < preferred_size().width() ||
 				height < preferred_size().height())
-			return;
+		return;
 
 		if(maximal_size().width() == width && maximal_size().height() == height) return;
 
@@ -296,7 +297,7 @@ namespace BlendInt {
 	{
 		if(size.width() < preferred_size().width() ||
 				size.height() < preferred_size().height())
-			return;
+		return;
 
 		if(maximal_size() == size) return;
 
@@ -333,7 +334,7 @@ namespace BlendInt {
 	void AbstractWidget::SetVisible(bool visible)
 	{
 		if(m_flag[WidgetFlagVisibility] == visible)
-			return;
+		return;
 
 		if(Update (WidgetVisibility, &visible)) {
 			m_flag[WidgetFlagVisibility] = visible ? 1 : 0;
@@ -344,7 +345,7 @@ namespace BlendInt {
 	void AbstractWidget::Refresh()
 	{
 		if(!m_flag[WidgetFlagInContextManager])
-			return;
+		return;
 
 		ContextManager::instance->RefreshLayer(m_z);
 	}
@@ -370,7 +371,7 @@ namespace BlendInt {
 
 		// Set "renderedTexture" as our colour attachement #0
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-		        GL_TEXTURE_2D, tex->id(), 0);
+				GL_TEXTURE_2D, tex->id(), 0);
 		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
 		GLuint rb = 0;
@@ -379,11 +380,11 @@ namespace BlendInt {
 		glBindRenderbuffer(GL_RENDERBUFFER, rb);
 
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-		        width, height);
+				width, height);
 
 		//Attach depth buffer to FBO
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		        GL_RENDERBUFFER, rb);
+				GL_RENDERBUFFER, rb);
 
 		if(GLFramebuffer::CheckStatus()) {
 
@@ -432,7 +433,7 @@ namespace BlendInt {
 
 	//void AbstractWidget::reset_z (int z)
 	//{
-		//if (m_z == z) return;
+	//if (m_z == z) return;
 
 //		AbstractWidget* root = 0;
 //		Parent* parent = &m_parent;
@@ -456,8 +457,8 @@ namespace BlendInt {
 //			}
 //		}
 
-		//set_z_simple(z);
-		// m_property_changed.fire(FormPropertyLayer);
+	//set_z_simple(z);
+	// m_property_changed.fire(FormPropertyLayer);
 	//}
 
 	//void AbstractWidget::set_z_simple (int z)
@@ -470,7 +471,7 @@ namespace BlendInt {
 //			(*it)->set_z_simple (z);
 //		}
 
-		// TODO: call Update()
+	// TODO: call Update()
 	//}
 
 	void AbstractWidget::SetPosition(AbstractWidget* obj, int x, int y)
@@ -514,31 +515,31 @@ namespace BlendInt {
 	}
 
 	void AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
-	        KeyEvent* event)
+			KeyEvent* event)
 	{
 		obj->KeyPressEvent(event);
 	}
 
 	void AbstractWidget::dispatch_mouse_move_event (AbstractWidget* obj,
-	        MouseEvent* event)
+			MouseEvent* event)
 	{
 		obj->MouseMoveEvent(event);
 	}
 
 	void AbstractWidget::dispatch_mouse_press_event (AbstractWidget* obj,
-	        MouseEvent* event)
+			MouseEvent* event)
 	{
 		obj->MousePressEvent(event);
 	}
 
 	void AbstractWidget::dispatch_mouse_release_event (AbstractWidget* obj,
-	        MouseEvent* event)
+			MouseEvent* event)
 	{
 		obj->MouseReleaseEvent(event);
 	}
 
 	bool AbstractWidget::CompositeToScreenBuffer (GLTexture2D* tex,
-	        unsigned int border)
+			unsigned int border)
 	{
 		bool result = false;
 
@@ -559,7 +560,7 @@ namespace BlendInt {
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
 		//Attach color buffer to FBO
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-		        GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color_rb);
+				GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color_rb);
 
 		//-------------------------
 		GLuint depth_rb;
@@ -570,7 +571,7 @@ namespace BlendInt {
 		//-------------------------
 		//Attach depth buffer to FBO
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-		        GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_rb);
+				GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth_rb);
 
 		//-------------------------
 
@@ -603,19 +604,19 @@ namespace BlendInt {
 			Draw();
 
 			/*
-			GLubyte pixels[width * height * 4];
-			glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+			 GLubyte pixels[width * height * 4];
+			 glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
-			ImageOutput* out = ImageOutput::create("image.png");
+			 ImageOutput* out = ImageOutput::create("image.png");
 
-			if(out) {
-				ImageSpec spec (width, height, 4, TypeDesc::UINT8);
-				out->open("image.png", spec);
-				out->write_image(TypeDesc::UINT8, pixels);
-				out->close();
-				delete out;
-			}
-			*/
+			 if(out) {
+			 ImageSpec spec (width, height, 4, TypeDesc::UINT8);
+			 out->open("image.png", spec);
+			 out->write_image(TypeDesc::UINT8, pixels);
+			 out->close();
+			 delete out;
+			 }
+			 */
 			tex->Bind();
 			tex->CopySubimage(0, position().x(), position().y(), 0, 0, width, height);
 			tex->Reset();

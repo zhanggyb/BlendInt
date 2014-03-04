@@ -44,29 +44,29 @@ using std::endl;
 
 namespace BlendInt {
 
-	ContextLayer::ContextLayer()
-	: refresh(true), widgets(0), buffer(0)
+	ContextLayer::ContextLayer ()
+			: refresh(true), widgets(0), buffer(0)
 	{
 	}
 
-	ContextLayer::~ContextLayer()
+	ContextLayer::~ContextLayer ()
 	{
-		if(buffer) {
+		if (buffer) {
 			DBG_PRINT_MSG("%s", "Delete texture buffer in context layer");
 			delete buffer;
 		}
 
-		if(widgets) {
+		if (widgets) {
 			DBG_PRINT_MSG("%s", "Delete widget set in context layer");
 
 			/*
-			set<AbstractWidget*>::iterator it;
+			 set<AbstractWidget*>::iterator it;
 
-			for(it = widgets->begin(); it != widgets->end(); it++)
-			{
-				if((*it)->count() == 0) delete *it;
-			}
-			*/
+			 for(it = widgets->begin(); it != widgets->end(); it++)
+			 {
+			 if((*it)->count() == 0) delete *it;
+			 }
+			 */
 
 			widgets->clear();
 		}
@@ -95,14 +95,14 @@ namespace BlendInt {
 
 	void ContextManager::Release ()
 	{
-		if(instance) {
+		if (instance) {
 			delete instance;
 			instance = 0;
 		}
 	}
 
 	ContextManager::ContextManager ()
-	: AbstractWidget(), m_main_buffer(0), m_screenbuffer(0)
+			: AbstractWidget(), m_main_buffer(0), m_screenbuffer(0)
 	{
 		m_screenbuffer = new ScreenBuffer;
 		m_hover_deque.reset(new std::deque<AbstractWidget*>);
@@ -113,8 +113,9 @@ namespace BlendInt {
 	ContextManager::~ContextManager ()
 	{
 		// set focus widget to 0
-		if(AbstractWidget::focused_widget) {
-			AbstractWidget::focused_widget->m_flag.reset(AbstractWidget::WidgetFlagFocus);
+		if (AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->m_flag.reset(
+			        AbstractWidget::WidgetFlagFocus);
 			AbstractWidget::focused_widget = 0;
 		}
 
@@ -122,14 +123,15 @@ namespace BlendInt {
 		set<AbstractWidget*>::iterator widget_iter;
 		set<AbstractWidget*>* widget_set_p = 0;
 
-		for(layer_iter = m_layers.begin(); layer_iter != m_layers.end(); layer_iter++)
-		{
+		for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
+		        layer_iter++) {
 			widget_set_p = layer_iter->second.widgets;
-			for(widget_iter = widget_set_p->begin(); widget_iter != widget_set_p->end(); widget_iter++)
-			{
-				(*widget_iter)->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
+			for (widget_iter = widget_set_p->begin();
+			        widget_iter != widget_set_p->end(); widget_iter++) {
+				(*widget_iter)->destroyed().disconnectOne(this,
+				        &ContextManager::OnDestroyObject);
 				//if((*widget_iter)->count() == 0) delete *widget_iter;
-				if((*widget_iter)->m_flag[AbstractWidget::WidgetFlagManaged]) {
+				if ((*widget_iter)->m_flag[AbstractWidget::WidgetFlagManaged]) {
 					delete *widget_iter;
 				}
 			}
@@ -138,12 +140,13 @@ namespace BlendInt {
 		}
 
 		m_deque.clear();
-		if(m_screenbuffer) delete m_screenbuffer;
+		if (m_screenbuffer)
+			delete m_screenbuffer;
 
 		m_layers.clear();
 		m_index.clear();
 
-		if(m_main_buffer) {
+		if (m_main_buffer) {
 			m_main_buffer->Clear();
 			delete m_main_buffer;
 		}
@@ -151,14 +154,18 @@ namespace BlendInt {
 
 	bool ContextManager::Register (AbstractWidget* obj)
 	{
-		if (!obj) return false;
-		if(obj->m_flag[AbstractWidget::WidgetFlagInContextManager]) return true;
+		if (!obj)
+			return false;
+		if (obj->m_flag[AbstractWidget::WidgetFlagInContextManager])
+			return true;
 
-		if(obj->m_container && obj->m_container != this) {
+		if (obj->m_container && obj->m_container != this) {
 
-			AbstractContainer* p = dynamic_cast<AbstractContainer*>(obj->m_container);
-			if(p) {
-				DBG_PRINT_MSG("Reference count of widget %s: %ld", obj->name().c_str(), obj->count());
+			AbstractContainer* p =
+			        dynamic_cast<AbstractContainer*>(obj->m_container);
+			if (p) {
+				DBG_PRINT_MSG("Reference count of widget %s: %ld",
+				        obj->name().c_str(), obj->count());
 				obj->m_count++;
 				p->RemoveSubWidgetOnly(obj);
 				obj->m_count--;
@@ -173,20 +180,25 @@ namespace BlendInt {
 		obj->m_container = this;
 		obj->m_flag.reset(AbstractWidget::WidgetFlagInContainer);
 
-		m_events->connect(obj->destroyed(), this, &ContextManager::OnDestroyObject);
+		m_events->connect(obj->destroyed(), this,
+		        &ContextManager::OnDestroyObject);
 
 		return true;
 	}
 
 	bool ContextManager::Unregister (AbstractWidget* obj)
 	{
-		if (!obj) return false;
+		if (!obj)
+			return false;
 
-		if(!obj->m_flag[AbstractWidget::WidgetFlagInContextManager]) return true;
+		if (!obj->m_flag[AbstractWidget::WidgetFlagInContextManager])
+			return true;
 
-		if(!RemoveWidget(obj)) {
+		if (!RemoveWidget(obj)) {
 			obj->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);
-			DBG_PRINT_MSG("object: %s is not in stored in layer %d in context manager", obj->name().c_str(), obj->z());
+			DBG_PRINT_MSG(
+			        "object: %s is not in stored in layer %d in context manager",
+			        obj->name().c_str(), obj->z());
 			return false;
 		}
 
@@ -200,16 +212,17 @@ namespace BlendInt {
 	void ContextManager::ResizeFromInterface (const Size& size)
 	{
 		set_size(size);
-		m_screenbuffer->Resize((float)size.width(), (float)size.height());
+		m_screenbuffer->Resize((float) size.width(), (float) size.height());
 
 		refresh_once = true;
 		force_refresh_all = true;
 	}
 
-	void ContextManager::ResizeFromInterface (unsigned int width, unsigned int height)
+	void ContextManager::ResizeFromInterface (unsigned int width,
+	        unsigned int height)
 	{
 		set_size(width, height);
-		m_screenbuffer->Resize((float)width, (float)height);
+		m_screenbuffer->Resize((float) width, (float) height);
 
 		refresh_once = true;
 		force_refresh_all = true;
@@ -253,21 +266,21 @@ namespace BlendInt {
 //
 //		} else {
 
-			map<int, ContextLayer>::iterator layer_iter;
-			layer_iter = m_layers.find(obj->z());
-			if(layer_iter != m_layers.end()) {
-				layer_iter->second.widgets->insert(obj);
-			} else {
-				set<AbstractWidget*>* new_widget_set_p = new set<AbstractWidget*>;
-				new_widget_set_p->insert(obj);
-				m_layers[obj->z()].widgets = new_widget_set_p;
+		map<int, ContextLayer>::iterator layer_iter;
+		layer_iter = m_layers.find(obj->z());
+		if (layer_iter != m_layers.end()) {
+			layer_iter->second.widgets->insert(obj);
+		} else {
+			set<AbstractWidget*>* new_widget_set_p = new set<AbstractWidget*>;
+			new_widget_set_p->insert(obj);
+			m_layers[obj->z()].widgets = new_widget_set_p;
 
-				// Refresh this layer in the render loop
-				m_layers[obj->z()].refresh = true;
-				refresh_once = true;
+			// Refresh this layer in the render loop
+			m_layers[obj->z()].refresh = true;
+			refresh_once = true;
 
-			}
-			
+		}
+
 //		}
 
 		m_index[obj] = obj->z();
@@ -276,43 +289,49 @@ namespace BlendInt {
 
 	bool ContextManager::RemoveWidget (AbstractWidget* obj)
 	{
-		if (!obj) return false;
+		if (!obj)
+			return false;
 
-		if(AbstractWidget::focused_widget == obj) {
+		if (AbstractWidget::focused_widget == obj) {
 			obj->m_flag.reset(AbstractWidget::WidgetFlagFocus);
 			AbstractWidget::focused_widget = 0;
 		}
 
 		map<AbstractWidget*, int>::iterator index_iter;
-		
+
 		index_iter = m_index.find(obj);
 
-		if(index_iter != m_index.end()) {
+		if (index_iter != m_index.end()) {
 
 			int z = index_iter->second;
 
 			set<AbstractWidget*>* widget_set_p = m_layers[z].widgets;
-			set<AbstractWidget*>::iterator widget_iter = widget_set_p->find(obj);
+			set<AbstractWidget*>::iterator widget_iter = widget_set_p->find(
+			        obj);
 			if (widget_iter != widget_set_p->end()) {
-				widget_set_p->erase (widget_iter);
+				widget_set_p->erase(widget_iter);
 			} else {
-				DBG_PRINT_MSG("Error: object %s is not recorded in set", obj->name().c_str());
+				DBG_PRINT_MSG("Error: object %s is not recorded in set",
+				        obj->name().c_str());
 			}
 
 			if (widget_set_p->empty()) {
 				DBG_PRINT_MSG("layer %d is empty, delete it", z);
 				//delete widget_set_p; widget_set_p = 0;
-				delete m_layers[z].widgets; m_layers[z].widgets = 0;
+				delete m_layers[z].widgets;
+				m_layers[z].widgets = 0;
 
 				m_layers[z].buffer->Clear();
-				delete m_layers[z].buffer; m_layers[z].buffer = 0;
+				delete m_layers[z].buffer;
+				m_layers[z].buffer = 0;
 				m_layers.erase(z);
 			}
 
 			m_index.erase(obj);
 
 		} else {
-			DBG_PRINT_MSG("Error: object %s is not recorded in map", obj->name().c_str());
+			DBG_PRINT_MSG("Error: object %s is not recorded in map",
+			        obj->name().c_str());
 			return false;
 		}
 
@@ -356,26 +375,26 @@ namespace BlendInt {
 	{
 		m_deque.clear();
 
-		if(force_refresh_all) {
+		if (force_refresh_all) {
 
 			map<int, ContextLayer>::iterator layer_iter;
 			unsigned int count = 0;
 			set<AbstractWidget*>* widget_set_p = 0;
 
-			for(layer_iter = m_layers.begin();
-					layer_iter != m_layers.end();
-					layer_iter++)
-			{
+			for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
+			        layer_iter++) {
 				widget_set_p = layer_iter->second.widgets;
 
-				DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
+				DBG_PRINT_MSG("layer need to be refreshed: %d",
+				        layer_iter->first);
 
-				if(!layer_iter->second.buffer) {
+				if (!layer_iter->second.buffer) {
 					layer_iter->second.buffer = new GLTexture2D;
 					layer_iter->second.buffer->Generate();
 				}
 
-				OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+				OffScreenRenderToTexture(layer_iter->first, widget_set_p,
+				        layer_iter->second.buffer);
 				m_deque.push_back(layer_iter->second.buffer);
 
 				count++;
@@ -388,39 +407,41 @@ namespace BlendInt {
 			refresh_once = false;
 			force_refresh_all = false;
 
-		} else if(refresh_once) {
+		} else if (refresh_once) {
 
 			map<int, ContextLayer>::iterator layer_iter;
 			unsigned int count = 0;
 			set<AbstractWidget*>* widget_set_p = 0;
 
-			for(layer_iter = m_layers.begin();
-					layer_iter != m_layers.end();
-					layer_iter++)
-			{
+			for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
+			        layer_iter++) {
 				widget_set_p = layer_iter->second.widgets;
 
-				if(layer_iter->second.refresh) {
+				if (layer_iter->second.refresh) {
 
-					DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
+					DBG_PRINT_MSG("layer need to be refreshed: %d",
+					        layer_iter->first);
 
-					if(!layer_iter->second.buffer) {
+					if (!layer_iter->second.buffer) {
 						layer_iter->second.buffer = new GLTexture2D;
 						layer_iter->second.buffer->Generate();
 					}
-					OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+					OffScreenRenderToTexture(layer_iter->first, widget_set_p,
+					        layer_iter->second.buffer);
 
 				} else {
 
-					if(!layer_iter->second.buffer) {
+					if (!layer_iter->second.buffer) {
 						layer_iter->second.buffer = new GLTexture2D;
 						layer_iter->second.buffer->Generate();
 
-						OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+						OffScreenRenderToTexture(layer_iter->first,
+						        widget_set_p, layer_iter->second.buffer);
 					} else if (layer_iter->second.buffer->id() == 0) {
 						layer_iter->second.buffer->Generate();
 
-						OffScreenRenderToTexture (layer_iter->first, widget_set_p, layer_iter->second.buffer);
+						OffScreenRenderToTexture(layer_iter->first,
+						        widget_set_p, layer_iter->second.buffer);
 					}
 				}
 
@@ -438,44 +459,43 @@ namespace BlendInt {
 		// ---------
 		/*
 
-		glClearColor(0.447, 0.447, 0.447, 1.00);
-		glClearDepth(1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		 glClearColor(0.447, 0.447, 0.447, 1.00);
+		 glClearDepth(1.0);
+		 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-		//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		 // Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+		 //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		 //		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//		glEnable(GL_BLEND);
+		 //		glEnable(GL_BLEND);
 
-//		glViewport(0, 0, size().width(), size().height());
-//		glMatrixMode(GL_PROJECTION);
-//		glLoadIdentity();
-//		glOrtho(0.f, (float) size().width(), 0.f, (float) size().width(), 100.f, -100.f);
+		 //		glViewport(0, 0, size().width(), size().height());
+		 //		glMatrixMode(GL_PROJECTION);
+		 //		glLoadIdentity();
+		 //		glOrtho(0.f, (float) size().width(), 0.f, (float) size().width(), 100.f, -100.f);
 
-//		glMatrixMode(GL_MODELVIEW);
-//		glLoadIdentity();
+		 //		glMatrixMode(GL_MODELVIEW);
+		 //		glLoadIdentity();
 
-		draw_grid(size().width(), size().height());
+		 draw_grid(size().width(), size().height());
 
-		map<int, ContextLayer>::iterator layer_iter;
-		for(layer_iter = ContextManager::context_manager->m_layers.begin();
-				layer_iter != ContextManager::context_manager->m_layers.end();
-				layer_iter++)
-		{
-			m_screenbuffer->Render(layer_iter->second.buffer);
-		}
-		*/
+		 map<int, ContextLayer>::iterator layer_iter;
+		 for(layer_iter = ContextManager::context_manager->m_layers.begin();
+		 layer_iter != ContextManager::context_manager->m_layers.end();
+		 layer_iter++)
+		 {
+		 m_screenbuffer->Render(layer_iter->second.buffer);
+		 }
+		 */
 
 		// ---------
-
 		m_screenbuffer->Render(instance->m_main_buffer);
 	}
 
 #ifdef DEBUG
 
-	void ContextManager::DrawGrid(int width, int height)
+	void ContextManager::DrawGrid (int width, int height)
 	{
 		// Draw grid for debug
 		const int small_step = 20;
@@ -528,7 +548,8 @@ namespace BlendInt {
 
 #endif
 
-	void ContextManager::OffScreenRenderToTexture (int layer, std::set<AbstractWidget*>* widgets, GLTexture2D* texture)
+	void ContextManager::OffScreenRenderToTexture (int layer,
+	        std::set<AbstractWidget*>* widgets, GLTexture2D* texture)
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -548,7 +569,7 @@ namespace BlendInt {
 
 		// Set "renderedTexture" as our colour attachement #0
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-		        GL_TEXTURE_2D, tex->id(), 0);
+		GL_TEXTURE_2D, tex->id(), 0);
 		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
 		GLuint rb = 0;
@@ -556,24 +577,27 @@ namespace BlendInt {
 
 		glBindRenderbuffer(GL_RENDERBUFFER, rb);
 
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-		        width, height);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width,
+		        height);
 
 		//Attach depth buffer to FBO
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		        GL_RENDERBUFFER, rb);
+		GL_RENDERBUFFER, rb);
 
-		if(GLFramebuffer::CheckStatus()) {
+		if (GLFramebuffer::CheckStatus()) {
 
 			fb->Bind();
 
 			glClearColor(0.0, 0.0, 0.0, 0.00);
 
 			glClearDepth(1.0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			glClear(
+			        GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
+			                | GL_STENCIL_BUFFER_BIT);
 
 			// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE,
+			        GL_ONE_MINUS_SRC_ALPHA);
 
 			glEnable(GL_BLEND);
 
@@ -587,19 +611,19 @@ namespace BlendInt {
 
 			set<AbstractWidget*>::iterator widget_iter;
 
-			for (widget_iter = widgets->begin(); widget_iter != widgets->end(); widget_iter++)
-			{
+			for (widget_iter = widgets->begin(); widget_iter != widgets->end();
+			        widget_iter++) {
 				//(*set_it)->Draw();
 				DispatchDrawEvent(*widget_iter);
 			}
 
 			// uncomment the code below to test the layer buffer (texture)
 			/*
-			std::string str("layer");
-			char buf[4];
-			sprintf(buf, "%d", layer);
-			str = str + buf + ".png";
-			tex->WriteToFile(str);
+			 std::string str("layer");
+			 char buf[4];
+			 sprintf(buf, "%d", layer);
+			 str = str + buf + ".png";
+			 tex->WriteToFile(str);
 			 */
 		}
 
@@ -610,7 +634,8 @@ namespace BlendInt {
 		glDeleteRenderbuffers(1, &rb);
 
 		fb->Reset();
-		delete fb; fb = 0;
+		delete fb;
+		fb = 0;
 
 	}
 
@@ -736,12 +761,15 @@ namespace BlendInt {
 		glClearColor(0.447, 0.447, 0.447, 1.00);
 
 		glClearDepth(1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glClear(
+		        GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
+		                | GL_STENCIL_BUFFER_BIT);
 
 		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
 
-		if(fbo) {
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		if (fbo) {
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE,
+			        GL_ONE_MINUS_SRC_ALPHA);
 		} else {
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
@@ -749,15 +777,14 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 	}
 
-	void ContextManager::DispatchDrawEvent(AbstractWidget* widget)
+	void ContextManager::DispatchDrawEvent (AbstractWidget* widget)
 	{
-		if(widget->visiable()) {
+		if (widget->visiable()) {
 			glMatrixMode(GL_MODELVIEW);
 			glPushMatrix();
 
-			glTranslatef(widget->position().x(),
-					widget->position().y(),
-					widget->z());
+			glTranslatef(widget->position().x(), widget->position().y(),
+			        widget->z());
 
 			widget->Draw();
 
@@ -766,20 +793,22 @@ namespace BlendInt {
 
 		AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
 
-		if(p) {
+		if (p) {
 
-			for(std::deque<AbstractWidget*>::iterator it = p->m_sub_widgets.begin(); it != p->m_sub_widgets.end(); it++)
-			{
+			for (std::deque<AbstractWidget*>::iterator it =
+			        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
+			        it++) {
 				DispatchDrawEvent(*it);
 			}
 
 		}
 	}
 
-	void ContextManager::OnDestroyObject(AbstractWidget* obj)
+	void ContextManager::OnDestroyObject (AbstractWidget* obj)
 	{
 		std::cout << "Get event" << std::endl;
-		if(!obj) return;
+		if (!obj)
+			return;
 
 		RemoveWidget(obj);
 
@@ -789,16 +818,17 @@ namespace BlendInt {
 		// TODO: remove this widget and its children if it's in m_cursor_widget_stack
 	}
 
-	void ContextManager::BuildWidgetListAtCursorPoint (const Point& cursor_point,
-	        AbstractWidget* parent)
+	void ContextManager::BuildWidgetListAtCursorPoint (
+	        const Point& cursor_point, AbstractWidget* parent)
 	{
 		if (parent) {
 
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
-			if(p) {
+			if (p) {
 
-				for(std::deque<AbstractWidget*>::iterator it = p->m_sub_widgets.begin(); it != p->m_sub_widgets.end(); it++)
-				{
+				for (std::deque<AbstractWidget*>::iterator it =
+				        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
+				        it++) {
 					if ((*it)->contain(cursor_point)) {
 						m_hover_deque->push_back(*it);
 						BuildWidgetListAtCursorPoint(cursor_point, *it);
@@ -820,14 +850,15 @@ namespace BlendInt {
 
 			bool stop = false;
 
-			for (layer_riter = m_layers.rbegin(); layer_riter != m_layers.rend();
-			        layer_riter++) {
+			for (layer_riter = m_layers.rbegin();
+			        layer_riter != m_layers.rend(); layer_riter++) {
 				widget_set_p = layer_riter->second.widgets;
-				for (widget_iter = widget_set_p->begin(); widget_iter != widget_set_p->end();
-				        widget_iter++) {
+				for (widget_iter = widget_set_p->begin();
+				        widget_iter != widget_set_p->end(); widget_iter++) {
 					if ((*widget_iter)->contain(cursor_point)) {
 						m_hover_deque->push_back(*widget_iter);
-						BuildWidgetListAtCursorPoint(cursor_point, *widget_iter);
+						BuildWidgetListAtCursorPoint(cursor_point,
+						        *widget_iter);
 						stop = true;
 					}
 
@@ -840,12 +871,13 @@ namespace BlendInt {
 		}
 	}
 
-	void ContextManager::RemoveWidgetFromHoverDeque(AbstractWidget* widget)
+	void ContextManager::RemoveWidgetFromHoverDeque (AbstractWidget* widget)
 	{
-		while(m_hover_deque->size()) {
-			m_hover_deque->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
+		while (m_hover_deque->size()) {
+			m_hover_deque->back()->m_flag.reset(
+			        AbstractWidget::WidgetFlagContextHoverList);
 
-			if(m_hover_deque->back() == widget) {
+			if (m_hover_deque->back() == widget) {
 				m_hover_deque->pop_back();
 				break;
 			}
@@ -856,13 +888,15 @@ namespace BlendInt {
 
 	void ContextManager::SetFocusedWidget (AbstractWidget* widget)
 	{
-		if(AbstractWidget::focused_widget) {
-			AbstractWidget::focused_widget->m_flag.reset(AbstractWidget::WidgetFlagFocus);
+		if (AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->m_flag.reset(
+			        AbstractWidget::WidgetFlagFocus);
 		}
 
 		AbstractWidget::focused_widget = widget;
-		if(AbstractWidget::focused_widget) {
-			AbstractWidget::focused_widget->m_flag.set(AbstractWidget::WidgetFlagFocus);
+		if (AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->m_flag.set(
+			        AbstractWidget::WidgetFlagFocus);
 		}
 	}
 
@@ -872,7 +906,7 @@ namespace BlendInt {
 
 		layer_iter = m_layers.find(layer);
 
-		if(layer_iter != m_layers.end()) {
+		if (layer_iter != m_layers.end()) {
 			m_layers[layer].refresh = true;
 			refresh_once = true;
 		}
@@ -891,12 +925,12 @@ namespace BlendInt {
 		std::cerr << "size of index map:" << m_index.size() << std::endl;
 		std::cerr << "size of layer map:" << m_layers.size() << std::endl;
 
-		for(layer_iter = m_layers.begin(); layer_iter != m_layers.end(); layer_iter++)
-		{
+		for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
+		        layer_iter++) {
 			std::cerr << "Layer: " << layer_iter->first << std::endl;
 			widget_set_p = layer_iter->second.widgets;
-			for(widget_iter = widget_set_p->begin(); widget_iter != widget_set_p->end(); widget_iter++)
-			{
+			for (widget_iter = widget_set_p->begin();
+			        widget_iter != widget_set_p->end(); widget_iter++) {
 				std::cerr << (*widget_iter)->name() << " ";
 			}
 			std::cerr << std::endl;

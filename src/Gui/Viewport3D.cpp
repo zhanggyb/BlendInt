@@ -46,8 +46,8 @@
 namespace BlendInt {
 
 	Viewport3D::Viewport3D ()
-			: Widget(), m_default_camera(0), m_cube(0), m_grid(0), m_last_x(0),
-			  m_last_y(0), m_rX(0.0), m_rY(0.0), m_button_down(MouseButtonNone)
+			: Widget(), m_default_camera(0), m_cube(0), m_grid(0), m_last_x(0), m_last_y(
+			        0), m_rX(0.0), m_rY(0.0), m_button_down(MouseButtonNone)
 	{
 		InitOnce();
 	}
@@ -59,40 +59,42 @@ namespace BlendInt {
 
 	void Viewport3D::KeyPressEvent (KeyEvent* event)
 	{
-        if(event->action() == KeyPress) {
-            switch(event->key()) {
-                case Key_KP_Decimal: {
-                    // setup camera
-                    glm::vec3 pos = glm::vec3(5.f);
-                    glm::vec3 center = glm::vec3(0);
-                    glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
-                    m_default_camera->LookAt(pos, center, up);
-                    m_default_camera->SetPerspective(m_default_camera->fovy(), 1.0f * size().width()/size().height());
-                    Refresh();
-                    break;
-                }
-                    
-                default:
-                    break;
-            }
-        } else if(event->action() == KeyRelease && m_button_down == MouseButtonMiddle) {
+		if (event->action() == KeyPress) {
+			switch (event->key()) {
+				case Key_KP_Decimal: {
+					// setup camera
+					glm::vec3 pos = glm::vec3(5.f);
+					glm::vec3 center = glm::vec3(0);
+					glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
+					m_default_camera->LookAt(pos, center, up);
+					m_default_camera->SetPerspective(m_default_camera->fovy(),
+					        1.0f * size().width() / size().height());
+					Refresh();
+					break;
+				}
 
-        	// currently does nothing
-        	switch(event->key()) {
-        		case Key_LeftShift:
-        		case Key_RightShift:
-        			break;
+				default:
+					break;
+			}
+		} else if (event->action() == KeyRelease
+		        && m_button_down == MouseButtonMiddle) {
 
-        		case Key_LeftAlt:
-        		case Key_RightAlt:
-        			break;
+			// currently does nothing
+			switch (event->key()) {
+				case Key_LeftShift:
+				case Key_RightShift:
+					break;
 
-        		default:
-        			break;
-            }
+				case Key_LeftAlt:
+				case Key_RightAlt:
+					break;
 
-        }
-        event->accept(this);
+				default:
+					break;
+			}
+
+		}
+		event->accept(this);
 	}
 
 	void Viewport3D::MousePressEvent (MouseEvent* event)
@@ -102,29 +104,29 @@ namespace BlendInt {
 		m_last_x = event->position().x();
 		m_last_y = event->position().y();
 
-		if(m_button_down == MouseButtonMiddle) {
+		if (m_button_down == MouseButtonMiddle) {
 
-			if(event->modifiers() == ModifierNone) {
+			if (event->modifiers() == ModifierNone) {
 
-                m_default_camera->SaveCurrentPosition();
-                m_default_camera->SaveCurrentCenter();
+				m_default_camera->SaveCurrentPosition();
+				m_default_camera->SaveCurrentCenter();
 
 			} else if (event->modifiers() == ModifierShift) {
 
 				m_default_camera->SaveCurrentPosition();
 				m_default_camera->SaveCurrentCenter();
 
-            } else if (event->modifiers() == ModifierControl) {
+			} else if (event->modifiers() == ModifierControl) {
 
-                m_default_camera->SaveCurrentPosition();
+				m_default_camera->SaveCurrentPosition();
 
-            }
+			}
 
 		} else if (m_button_down == MouseButtonScrollUp) {
 
 			std::cout << "scroll up" << std::endl;
 
-            m_default_camera->SaveCurrentPosition();
+			m_default_camera->SaveCurrentPosition();
 
 			m_default_camera->Zoom(5.f);
 
@@ -192,13 +194,14 @@ namespace BlendInt {
 		event->accept(this);
 	}
 
-	bool Viewport3D::Update(int type, const void* data)
+	bool Viewport3D::Update (int type, const void* data)
 	{
-		switch(type) {
+		switch (type) {
 			case FormSize: {
 
 				const Size* size_p = static_cast<const Size*>(data);
-				m_default_camera->SetPerspective(m_default_camera->fovy(), 1.f * size_p->width()/size_p->height());
+				m_default_camera->SetPerspective(m_default_camera->fovy(),
+				        1.f * size_p->width() / size_p->height());
 
 				return true;
 			}
@@ -215,9 +218,11 @@ namespace BlendInt {
 		glClearColor(0.25, 0.25, 0.25, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		m_cube->Render(m_default_camera->projection() * m_default_camera->view());
+		m_cube->Render(
+		        m_default_camera->projection() * m_default_camera->view());
 
-		m_grid->Render(m_default_camera->projection() * m_default_camera->view());
+		m_grid->Render(
+		        m_default_camera->projection() * m_default_camera->view());
 	}
 
 	void Viewport3D::Draw ()
@@ -230,11 +235,9 @@ namespace BlendInt {
 		glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
 
 		glEnable(GL_DEPTH_TEST);
-		glEnable (GL_SCISSOR_TEST);
-		glScissor (position().x(),
-				position().y(),
-				size().width(),
-				size().height());
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(position().x(), position().y(), size().width(),
+		        size().height());
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -244,14 +247,15 @@ namespace BlendInt {
 		//gluPerspective(45.0f,(GLfloat)size().width()/(GLfloat)size().height(),0.1f,100.0f);
 		//gluLookAt (5.0f, 5.0f, 7.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
-		glViewport(position().x(), position().y(), size().width(), size().height());
+		glViewport(position().x(), position().y(), size().width(),
+		        size().height());
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
 		//-------------------------------------------------------------------------------------------------------
 
-		Render ();
+		Render();
 
 		//-------------------------------------------------------------------------------------------------------
 
@@ -265,13 +269,14 @@ namespace BlendInt {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixd(model_matrix);
 
-		glViewport(0, 0, Interface::Instance()->size().width(), Interface::Instance()->size().height());
+		glViewport(0, 0, Interface::instance->size().width(),
+		        Interface::instance->size().height());
 
 #ifdef DEBUG
 		glLineWidth(1);
 		glEnable(GL_LINE_STIPPLE);
 
-		if(focused()) {
+		if (focused()) {
 			glColor4f(1.0f, 1.0f, 0.0f, 0.75f);
 		} else {
 			glColor4f(1.0f, 1.0f, 1.0f, 0.75f);
@@ -285,11 +290,10 @@ namespace BlendInt {
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE);
-
 #endif
 	}
 
-	void Viewport3D::InitOnce()
+	void Viewport3D::InitOnce ()
 	{
 		set_expand_x(true);
 		set_expand_y(true);
@@ -302,7 +306,8 @@ namespace BlendInt {
 		glm::vec3 up = glm::vec3(0.0, 0.0, 1.0);
 		m_default_camera->LookAt(pos, center, up);
 
-		m_default_camera->SetPerspective(m_default_camera->fovy(), 1.f * size().width()/size().height());
+		m_default_camera->SetPerspective(m_default_camera->fovy(),
+		        1.f * size().width() / size().height());
 		m_default_camera->Update();
 
 		m_cube.reset(new Cube);

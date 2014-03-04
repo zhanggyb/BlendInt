@@ -29,7 +29,7 @@ TEST_F(StockIconTest1, Foo1)
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		Interface::Instance()->Draw();
+		Interface::instance->Draw();
 
 #ifdef DEBUG
         /*
@@ -91,7 +91,7 @@ TEST_F(StockIconTest1, Foo2)
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 		/* Render here */
-		Interface::Instance()->Draw();
+		Interface::instance->Draw();
 
 #ifdef DEBUG
         /*

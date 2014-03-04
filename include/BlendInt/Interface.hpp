@@ -26,7 +26,6 @@
  */
 
 // the top level groups
-
 /** @defgroup time Time input */
 /** @defgroup interface The main interface class entry */
 /** @defgroup exceptions Exceptions */
@@ -45,6 +44,9 @@
 
 #include <set>
 #include <deque>
+#include <string>
+
+#include <boost/smart_ptr.hpp>
 
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Core/Size.hpp>
@@ -57,10 +59,6 @@
 #endif
 
 #include <Cpp/Events.hpp>
-
-#include <boost/smart_ptr.hpp>
-
-#include <string>
 
 #define BLENDINT_EVENTS_INIT_ONCE_IN_MAIN Cpp::Events::ProcessInit processInit
 
@@ -83,13 +81,7 @@ namespace BlendInt {
 	{
 	public:
 
-		/**
-		 * @brief Get the instance object of this class
-		 * @return Pointer to the Interface object
-		 *
-		 * Must be used after Interface::Initialize()
-		 */
-		static Interface* Instance ();
+		static Interface* instance;
 
 		static bool Initialize ();
 
@@ -115,16 +107,23 @@ namespace BlendInt {
 
 		void SetMainWidget (AbstractWidget* widget);
 
-		Cpp::EventRef<unsigned int, unsigned int> resized() {return m_resized;}
+		Cpp::EventRef<unsigned int, unsigned int> resized ()
+		{
+			return m_resized;
+		}
 
-		Cpp::ConnectionScope* events() const {return m_events.get();}
+		Cpp::ConnectionScope* events () const
+		{
+			return m_events.get();
+		}
 
 		void set_focus_style (FocusStyle style)
 		{
 			m_focus_style = style;
 		}
 
-		FocusStyle focus_style () const {
+		FocusStyle focus_style () const
+		{
 			return m_focus_style;
 		}
 
@@ -142,7 +141,8 @@ namespace BlendInt {
 
 		void DispatchMouseReleaseEvent (MouseEvent* event);
 
-		void BuildWidgetListAtCursorPoint (const Point& cursor_point, AbstractWidget* parent);
+		void BuildWidgetListAtCursorPoint (const Point& cursor_point,
+		        AbstractWidget* parent);
 
 		//AbstractWidget* m_main;
 
@@ -153,14 +153,7 @@ namespace BlendInt {
 		Cpp::Event<unsigned int, unsigned int> m_resized;
 
 		FocusStyle m_focus_style;
-
-		static Interface* interface;
 	};
-
-	inline Interface* interface ()
-	{
-		return Interface::Instance();
-	}
 
 }
 

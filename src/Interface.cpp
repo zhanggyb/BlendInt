@@ -60,53 +60,41 @@ OIIO_NAMESPACE_USING
 
 namespace BlendInt {
 
-	Interface* Interface::interface = 0;
-
-	Interface* Interface::Instance ()
-	{
-#ifdef DEBUG
-		if (!interface) {
-			DBG_PRINT_MSG("%s", "The Interface Library is not initialized successfully! Exit");
-			exit(EXIT_FAILURE);
-#endif
-		}
-
-		return interface;
-	}
+	Interface* Interface::instance = 0;
 
 	bool Interface::Initialize ()
 	{
 		/*
-		glewExperimental = true;	// Needed in core profile
-		if (glewInit() != GLEW_OK) {
-			std::cerr << "Fail to initialize GLEW" << endl;
-			return false;
-		}
+		 glewExperimental = true;	// Needed in core profile
+		 if (glewInit() != GLEW_OK) {
+		 std::cerr << "Fail to initialize GLEW" << endl;
+		 return false;
+		 }
 
-		if (!GLEW_VERSION_2_0) {
-			std::cerr << "No support for OpenGL 2.0 found" << std::endl;
-			return false;
-		}
-		*/
+		 if (!GLEW_VERSION_2_0) {
+		 std::cerr << "No support for OpenGL 2.0 found" << std::endl;
+		 return false;
+		 }
+		 */
 
 		bool success = true;
 
-		if (!interface) {
-			interface = new Interface();
+		if (!instance) {
+			instance = new Interface();
 		}
 
-		if (!interface)
-			success = false;
+		if (!instance)
+		success = false;
 
 		if (success && FontConfig::initialize()) {
 
 			/*
-			FontConfig* ftconfig = FontConfig::instance();
-			if (!ftconfig->loadDefaultFontToMem()) {
-				cerr << "Cannot load default font into memory" << endl;
-				success = false;
-			}
-			*/
+			 FontConfig* ftconfig = FontConfig::instance();
+			 if (!ftconfig->loadDefaultFontToMem()) {
+			 cerr << "Cannot load default font into memory" << endl;
+			 success = false;
+			 }
+			 */
 
 		} else {
 
@@ -155,9 +143,9 @@ namespace BlendInt {
 		FontCache::releaseAll();
 		FontConfig::release();
 
-		if (interface) {
-			delete interface;
-			interface = 0;
+		if (instance) {
+			delete instance;
+			instance = 0;
 		}
 	}
 
@@ -225,7 +213,7 @@ namespace BlendInt {
 				}
 
 				default:
-					break;
+				break;
 			}
 		}
 	}
@@ -233,7 +221,7 @@ namespace BlendInt {
 	void Interface::DispatchMouseEvent (MouseEvent* event)
 	{
 		if (!event)
-			return;
+		return;
 
 		switch (event->action()) {
 
@@ -253,7 +241,7 @@ namespace BlendInt {
 			}
 
 			default:
-				break;
+			break;
 		}
 	}
 
@@ -278,7 +266,7 @@ namespace BlendInt {
 
 		// Set "renderedTexture" as our colour attachement #0
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-		        GL_TEXTURE_2D, tex->id(), 0);
+				GL_TEXTURE_2D, tex->id(), 0);
 		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
 
 		GLuint rb = 0;
@@ -287,13 +275,13 @@ namespace BlendInt {
 		glBindRenderbuffer(GL_RENDERBUFFER, rb);
 
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-		        width, height);
+				width, height);
 
 		//-------------------------
 
 //		//Attach depth buffer to FBO
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		        GL_RENDERBUFFER, rb);
+				GL_RENDERBUFFER, rb);
 
 		//-------------------------
 		//Does the GPU support current FBO configuration?
@@ -301,11 +289,11 @@ namespace BlendInt {
 		status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		switch (status) {
 			case GL_FRAMEBUFFER_COMPLETE:
-				DBG_PRINT_MSG("%s", "good");
-				break;
+			DBG_PRINT_MSG("%s", "good");
+			break;
 			default:
-				DBG_PRINT_MSG("%s", "Fail to check framebuffer status");
-				break;
+			DBG_PRINT_MSG("%s", "Fail to check framebuffer status");
+			break;
 		}
 
 		//-------------------------
@@ -360,8 +348,8 @@ namespace BlendInt {
 		BuildWidgetListAtCursorPoint(event->position(), widget);
 
 		for (std::deque<AbstractWidget*>::reverse_iterator it =
-		        cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend();
-		        it++) {
+				cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend();
+				it++) {
 			(*it)->MouseMoveEvent(event);
 		}
 
@@ -399,7 +387,7 @@ namespace BlendInt {
 	}
 
 	void Interface::BuildWidgetListAtCursorPoint (const Point& cursor_point,
-	        AbstractWidget* parent)
+			AbstractWidget* parent)
 	{
 		if (parent) {
 			parent->m_flag.set(AbstractWidget::WidgetFlagContextHoverList);
@@ -408,8 +396,8 @@ namespace BlendInt {
 
 			if(p) {
 				for (std::deque<AbstractWidget*>::iterator it =
-				        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
-				        it++) {
+						p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
+						it++) {
 					if ((*it)->contain(cursor_point)) {
 						ContextManager::instance->m_hover_deque->push_back(*it);
 						ContextManager::instance->m_hover_deque->back()->CursorEnterEvent(true);
@@ -430,10 +418,10 @@ namespace BlendInt {
 			bool stop = false;
 
 			for (map_it = ContextManager::instance->m_layers.rbegin(); map_it != ContextManager::instance->m_layers.rend();
-			        map_it++) {
+					map_it++) {
 				set_p = map_it->second.widgets;
 				for (set_it = set_p->begin(); set_it != set_p->end();
-				        set_it++) {
+						set_it++) {
 					if ((*set_it)->contain(cursor_point)) {
 						ContextManager::instance->m_hover_deque->push_back(*set_it);
 						ContextManager::instance->m_hover_deque->back()->CursorEnterEvent(true);
@@ -442,10 +430,10 @@ namespace BlendInt {
 					}
 
 					if (stop)
-						break;
+					break;
 				}
 				if (stop)
-					break;
+				break;
 			}
 		}
 	}
