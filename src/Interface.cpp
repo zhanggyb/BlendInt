@@ -407,13 +407,13 @@ namespace BlendInt {
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
 
 			if(p) {
-				for (std::deque<AbstractWidgetPtr>::iterator it =
+				for (std::deque<AbstractWidget*>::iterator it =
 				        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
 				        it++) {
 					if ((*it)->contain(cursor_point)) {
-						ContextManager::context_manager->m_hover_deque->push_back((*it).get());
+						ContextManager::context_manager->m_hover_deque->push_back(*it);
 						ContextManager::context_manager->m_hover_deque->back()->CursorEnterEvent(true);
-						BuildWidgetListAtCursorPoint(cursor_point, (*it).get());
+						BuildWidgetListAtCursorPoint(cursor_point, *it);
 						break;	// if break or continue the loop?
 					}
 				}

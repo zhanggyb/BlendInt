@@ -7,8 +7,8 @@
 
 #include "VLayoutTest1.hpp"
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Gui/VerticalLayout.hpp>
-#include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 using namespace BlendInt;
@@ -32,7 +32,7 @@ TEST_F(VLayoutTest1, Add1)
 
 	// add test code here
 
-	VerticalLayout* vlayout = new VerticalLayout;
+	VLayout* vlayout = new VLayout;
 
 	vlayout->SetPosition(200, 200);
 
@@ -40,7 +40,7 @@ TEST_F(VLayoutTest1, Add1)
 	Widget* widget2 = new Widget;
 	Widget* widget3 = new Widget;
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->Add(widget2);
 	hlayout->Add(widget3);
 

@@ -25,21 +25,22 @@
 #define _BLENDINT_VERTICALLAYOUT_HPP_
 
 #include <list>
+#include <set>
 
 #include <BlendInt/Gui/AbstractLayout.hpp>
 #include <BlendInt/Types.hpp>
 
 namespace BlendInt {
 
-	class VerticalLayout: public AbstractLayout
+	class VLayout: public AbstractLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(VerticalLayout);
+		DISALLOW_COPY_AND_ASSIGN(VLayout);
 
 	public:
 
-		VerticalLayout(int align = AlignVerticalCenter);
+		VLayout(int align = AlignVerticalCenter);
 
-		virtual ~VerticalLayout ();
+		virtual ~VLayout ();
 
 	protected:
 

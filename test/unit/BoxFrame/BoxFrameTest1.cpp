@@ -1,6 +1,6 @@
 #include "BoxFrameTest1.hpp"
 #include <BlendInt/Gui/BoxFrame.hpp>
-#include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Button.hpp>
 
 using namespace BlendInt;
@@ -29,7 +29,7 @@ TEST_F(BoxFrameTest1, SetLayout1)
 	// TODO: add test code here
 	BoxFrame* boxframe = new BoxFrame;
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	// hlayout->Resize(400, 400);
 
 	Button* button = new Button;
@@ -62,7 +62,7 @@ TEST_F(BoxFrameTest1, Move1)
 	// TODO: add test code here
 	BoxFrame* boxframe = new BoxFrame;
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	// hlayout->Resize(400, 400);
 
 	Button* button = new Button;

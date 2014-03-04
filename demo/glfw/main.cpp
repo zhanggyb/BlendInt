@@ -9,8 +9,8 @@
 #include <BlendInt/Service/ContextManager.hpp>
 
 #include <BlendInt/Gui/ToggleButton.hpp>
-#include <BlendInt/Gui/VerticalLayout.hpp>
-#include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Gui/Button.hpp>
@@ -119,18 +119,19 @@ int main(int argc, char* argv[])
 //	interface()->SetMainWidget(layout);
 	ContextManager* cm = ContextManager::Instance();
 
-	Button* btn1 = new Button;
-	btn1->set_name("btn1");
+	Button btn1;
+	btn1.set_name("btn1");
 
-	btn1->SetPosition(200, 400);
+	btn1.SetPosition(200, 200);
 
-	cm->Register(btn1);
+	Frame frame;
+	frame.set_name("frame");
+	frame.SetPosition(400, 400);
 
 	cm->print();
 
 	RunLoop (win);
 
-	delete btn1;
 	Interface::Release();
 
 	Terminate();

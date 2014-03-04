@@ -22,6 +22,7 @@
  */
 
 #include <algorithm>
+
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
 #include <BlendInt/Service/ContextManager.hpp>
@@ -30,6 +31,7 @@ namespace BlendInt {
 
 	AbstractContainer::AbstractContainer ()
 	{
+		ContextManager::Instance()->Register(this);
 	}
 
 	AbstractContainer::~AbstractContainer ()
@@ -40,6 +42,14 @@ namespace BlendInt {
 
 		if(focused()) {
 			ContextManager::Instance()->SetFocusedWidget(0);
+		}
+
+		for(WidgetDeque::iterator it = m_sub_widgets.begin(); it != m_sub_widgets.end(); it++)
+		{
+			// check if need to delete
+			if((*it)->m_flag[AbstractWidget::WidgetFlagManaged]) {
+				delete *it;
+			}
 		}
 	}
 
@@ -87,8 +97,7 @@ namespace BlendInt {
 
 		}
 
-		RefPtr<AbstractWidget> child(widget);
-		m_sub_widgets.push_back(child);
+		m_sub_widgets.push_back(widget);
 
 		if(old_container) {
 			old_container->RemoveSubWidgetOnly(widget);
@@ -98,6 +107,8 @@ namespace BlendInt {
 
 		widget->m_container = this;
 		widget->m_flag.set(WidgetFlagInContainer);
+
+		events()->connect(widget->destroyed(), this, &AbstractContainer::OnSubWidgetDestroyed);
 	}
 
 	void AbstractContainer::RemoveSubWidget (AbstractWidget* widget)
@@ -108,12 +119,16 @@ namespace BlendInt {
 
 			if(widget->container() == this) {
 
-				RefPtr<AbstractWidget> child(widget);
-				WidgetDeque::iterator it = std::find(m_sub_widgets.begin(), m_sub_widgets.end(), child);
+				widget->destroyed().disconnectOne(this, &AbstractContainer::OnSubWidgetDestroyed);
+
+				widget->m_container = 0;
+
+				ContextManager::Instance()->Register(widget);
+
+				WidgetDeque::iterator it = std::find(m_sub_widgets.begin(), m_sub_widgets.end(), widget);
 				if(it != m_sub_widgets.end()) {
 					m_sub_widgets.erase(it);
 
-					widget->m_container = 0;
 					widget->m_flag.reset(WidgetFlagInContainer);
 
 				} else {
@@ -125,13 +140,30 @@ namespace BlendInt {
 		}
 	}
 
+	void AbstractContainer::OnSubWidgetDestroyed(AbstractWidget* widget)
+	{
+		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the container %s", widget->name().c_str(), name().c_str());
+
+		WidgetDeque::iterator it = std::find(m_sub_widgets.begin(),
+		        m_sub_widgets.end(), widget);
+		if (it != m_sub_widgets.end()) {
+			m_sub_widgets.erase(it);
+		} else {
+			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
+			        widget->name().c_str(), name().c_str());
+		}
+
+		widget->destroyed().disconnectOne(this, &AbstractContainer::OnSubWidgetDestroyed);
+	}
+
 	void AbstractContainer::RemoveSubWidgetOnly (AbstractWidget* widget)
 	{
 		if(widget) {
 
-			RefPtr<AbstractWidget> child(widget);
+			widget->destroyed().disconnectOne(this, &AbstractContainer::OnSubWidgetDestroyed);
+
 			WidgetDeque::iterator it = std::find(m_sub_widgets.begin(),
-			        m_sub_widgets.end(), child);
+			        m_sub_widgets.end(), widget);
 			if (it != m_sub_widgets.end()) {
 				m_sub_widgets.erase(it);
 			} else {

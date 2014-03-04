@@ -28,6 +28,7 @@
 #include <BlendInt/Core/Timer.hpp>
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Core/Point.hpp>
+#include <BlendInt/Core/Margin.hpp>
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 

@@ -26,8 +26,8 @@
 
 #include <BlendInt/Gui/BoxFrame.hpp>
 #include <BlendInt/Gui/StackedWidget.hpp>
-#include <BlendInt/Gui/HorizontalLayout.hpp>
-#include <BlendInt/Gui/VerticalLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/ButtonBox.hpp>
 
 namespace BlendInt {

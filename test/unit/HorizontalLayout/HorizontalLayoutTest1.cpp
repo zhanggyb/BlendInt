@@ -1,17 +1,17 @@
 #include "HorizontalLayoutTest1.hpp"
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 using namespace BlendInt;
 
-HorizontalLayoutTest1::HorizontalLayoutTest1()
+HLayoutTest1::HLayoutTest1()
 : testing::Test()
 {
 	// TODO: add constructor code
 }
 
-HorizontalLayoutTest1::~HorizontalLayoutTest1()
+HLayoutTest1::~HLayoutTest1()
 {
 	// TODO: add destructor code
 }
@@ -21,12 +21,12 @@ HorizontalLayoutTest1::~HorizontalLayoutTest1()
  *
  * Expected result: the 2 widgets should fill the layout and resize with the preferred size
  */
-TEST_F(HorizontalLayoutTest1, Add1)
+TEST_F(HLayoutTest1, Add1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add1");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add1");
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 
 	Widget* widget1 = new Widget;
@@ -55,12 +55,12 @@ TEST_F(HorizontalLayoutTest1, Add1)
  *
  * Note: this test is only valid in DEBUG build
  */
-TEST_F(HorizontalLayoutTest1, Add2)
+TEST_F(HLayoutTest1, Add2)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add2");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add2");
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 	hlayout->Resize(400, 200);
 
@@ -94,12 +94,12 @@ TEST_F(HorizontalLayoutTest1, Add2)
  *
  * Note: this test is only valid in DEBUG build
  */
-TEST_F(HorizontalLayoutTest1, Add3)
+TEST_F(HLayoutTest1, Add3)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add3");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add3");
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 	hlayout->Resize(400, 200);
 
@@ -132,12 +132,12 @@ TEST_F(HorizontalLayoutTest1, Add3)
  *
  * Expected result: the widgets should fill the layout
  */
-TEST_F(HorizontalLayoutTest1, Add4)
+TEST_F(HLayoutTest1, Add4)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add4");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add4");
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 	hlayout->Resize(400, 200);
 
@@ -169,12 +169,12 @@ TEST_F(HorizontalLayoutTest1, Add4)
  *
  * Expected result: the widgets should fill the layout
  */
-TEST_F(HorizontalLayoutTest1, Add5)
+TEST_F(HLayoutTest1, Add5)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add5");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add5");
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 	hlayout->Resize(600, 200);
 
@@ -217,12 +217,12 @@ TEST_F(HorizontalLayoutTest1, Add5)
  *
  * Expected result: the widgets should fill the layout
  */
-TEST_F(HorizontalLayoutTest1, Add6)
+TEST_F(HLayoutTest1, Add6)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add6");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add6");
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 	hlayout->Resize(50, 200);
 
@@ -262,12 +262,12 @@ TEST_F(HorizontalLayoutTest1, Add6)
  *
  * Expected result: the widgets should fill the layout
  */
-TEST_F(HorizontalLayoutTest1, Add7)
+TEST_F(HLayoutTest1, Add7)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Add7");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add7");
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 
 	Widget* widget1 = new Widget;
@@ -303,14 +303,14 @@ TEST_F(HorizontalLayoutTest1, Add7)
  *
  * Expected result: the children in the HLayout resize too according to the layout size
  */
-TEST_F(HorizontalLayoutTest1, Resize1)
+TEST_F(HLayoutTest1, Resize1)
 {
 	Init();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Resize1");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - Resize1");
 
 	// add test code here
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 
 	Widget* widget1 = new Widget;
@@ -339,14 +339,14 @@ TEST_F(HorizontalLayoutTest1, Resize1)
  *
  * Expected result: the children in the HLayout resize too according to the layout size
  */
-TEST_F(HorizontalLayoutTest1, Resize2)
+TEST_F(HLayoutTest1, Resize2)
 {
 	Init();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Resize2");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - Resize2");
 
 	// add test code here
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 
 	Widget* widget1 = new Widget;
@@ -373,14 +373,14 @@ TEST_F(HorizontalLayoutTest1, Resize2)
  *
  * Expected result: the children in the HLayout resize too according to the layout size
  */
-TEST_F(HorizontalLayoutTest1, Resize3)
+TEST_F(HLayoutTest1, Resize3)
 {
 	Init();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - Resize3");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - Resize3");
 
 	// add test code here
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 
 	Widget* widget1 = new Widget;
@@ -413,14 +413,14 @@ TEST_F(HorizontalLayoutTest1, Resize3)
  *
  * Expected result: the children in the HLayout resize too according to the new margin
  */
-TEST_F(HorizontalLayoutTest1, SetMargin1)
+TEST_F(HLayoutTest1, SetMargin1)
 {
 	Init();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - SetMargin1");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - SetMargin1");
 
 	// add test code here
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 
 	Widget* widget1 = new Widget;
@@ -453,14 +453,14 @@ TEST_F(HorizontalLayoutTest1, SetMargin1)
  *
  * Expected result: the children in the HLayout resize too according to the new space
  */
-TEST_F(HorizontalLayoutTest1, SetSpace1)
+TEST_F(HLayoutTest1, SetSpace1)
 {
 	Init();
-	GLFWwindow* window = CreateWindow("HorizontalLayoutTest1 - SetSpace1");
+	GLFWwindow* window = CreateWindow("HLayoutTest1 - SetSpace1");
 
 	// add test code here
 
-	HorizontalLayout* hlayout = new HorizontalLayout;
+	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(200, 200);
 
 	Widget* widget1 = new Widget;

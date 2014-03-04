@@ -34,19 +34,19 @@
 #include <queue>
 #include <iostream>
 
-#include <BlendInt/Gui/VerticalLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 #include <BlendInt/Interface.hpp>
 
 namespace BlendInt {
 
-	VerticalLayout::VerticalLayout (int align)
+	VLayout::VLayout (int align)
 			: AbstractLayout()
 	{
 		set_alignment(align);
 	}
 
-	VerticalLayout::~VerticalLayout ()
+	VLayout::~VLayout ()
 	{
 		/*
 		for(std::vector<AbstractWidget*>::iterator it = m_items.begin(); it != m_items.end(); it++)
@@ -57,7 +57,7 @@ namespace BlendInt {
 		m_items.clear();
 	}
 
-	bool VerticalLayout::Update (int type, const void* data)
+	bool VLayout::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -102,7 +102,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::Draw ()
+	void VLayout::Draw ()
 	{
 #ifdef DEBUG
 		glLineWidth(1);
@@ -122,7 +122,7 @@ namespace BlendInt {
 #endif
 	}
 
-	void VerticalLayout::AddItem (AbstractWidget* object)
+	void VLayout::AddItem (AbstractWidget* object)
 	{
 		// don't fire events when adding a widget into a layout
 		object->deactivate_events();
@@ -176,7 +176,7 @@ namespace BlendInt {
 		LockGeometry(object, true);
 	}
 
-	void VerticalLayout::RemoveItem(AbstractWidget * object)
+	void VLayout::RemoveItem(AbstractWidget * object)
 	{
 		deactivate_events();
 		RefPtr<AbstractWidget> obj(object);
@@ -212,7 +212,7 @@ namespace BlendInt {
 		RemoveSubWidget(object);
 	}
 
-	void VerticalLayout::MakeLayout(const Size* size, const Margin* margin, int space)
+	void VLayout::MakeLayout(const Size* size, const Margin* margin, int space)
 	{
 		if (size->height() == preferred_size().height()) {
 			DistributeWithPreferredHeight(size, margin, space);			// layout along y with preferred size
@@ -225,7 +225,7 @@ namespace BlendInt {
 		Align(size, margin);
 	}
 
-	void VerticalLayout::DistributeWithPreferredHeight(const Size* size, const Margin* margin, int space)
+	void VLayout::DistributeWithPreferredHeight(const Size* size, const Margin* margin, int space)
 	{
 		int y = position().y() + size->height() - margin->top();
 
@@ -237,7 +237,7 @@ namespace BlendInt {
 		Distribute(space, y);
 	}
 
-	void VerticalLayout::DistributeWithSmallHeight(const Size* size, const Margin* margin, int space)
+	void VLayout::DistributeWithSmallHeight(const Size* size, const Margin* margin, int space)
 	{
 		unsigned int min_expd_height = GetAllMinimalExpandableHeight();
 		unsigned int fixed_height = GetAllFixedHeight();
@@ -312,7 +312,7 @@ namespace BlendInt {
 		Distribute(space, y);
 	}
 
-	void VerticalLayout::DistributeWithLargeHeight(const Size* size, const Margin* margin, int space)
+	void VLayout::DistributeWithLargeHeight(const Size* size, const Margin* margin, int space)
 	{
 		unsigned int fixed_height = GetAllFixedHeight();
 		unsigned int current_height = size->height();
@@ -393,7 +393,7 @@ namespace BlendInt {
 
 	}
 
-	void VerticalLayout::Distribute(int space, int start)
+	void VLayout::Distribute(int space, int start)
 	{
 		start += space;	// add one space to make sure no space if only 1 child in layout
 		for(std::vector<AbstractWidgetPtr>::iterator it = m_items.begin(); it != m_items.end(); it++)
@@ -405,7 +405,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VerticalLayout::Align(const Size* size, const Margin* margin)
+	void VLayout::Align(const Size* size, const Margin* margin)
 	{
 		int x = position().x() + margin->left();
 
@@ -435,7 +435,7 @@ namespace BlendInt {
 		}
 	}
 
-	unsigned int VerticalLayout::AdjustExpandableHeight(std::list<AbstractWidget*>* item_list_p, unsigned int height_plus)
+	unsigned int VLayout::AdjustExpandableHeight(std::list<AbstractWidget*>* item_list_p, unsigned int height_plus)
 	{
 		if(!item_list_p) return height_plus;
 		if(item_list_p->size() == 0) return height_plus;
@@ -463,7 +463,7 @@ namespace BlendInt {
 		return remainder;
 	}
 
-	unsigned int VerticalLayout::AdjustMinimalHeight(std::list<AbstractWidget*>* item_list_p, unsigned int height_plus)
+	unsigned int VLayout::AdjustMinimalHeight(std::list<AbstractWidget*>* item_list_p, unsigned int height_plus)
 	{
 		if(!item_list_p) return height_plus;
 		if(item_list_p->size() == 0) return height_plus;
@@ -491,7 +491,7 @@ namespace BlendInt {
 		return remainder;
 	}
 
-	unsigned int VerticalLayout::GetAllMinimalExpandableHeight()
+	unsigned int VLayout::GetAllMinimalExpandableHeight()
 	{
 		unsigned int height = 0;
 
@@ -503,7 +503,7 @@ namespace BlendInt {
 		return height;
 	}
 
-	unsigned int VerticalLayout::GetAllMaximalExpandableHeight()
+	unsigned int VLayout::GetAllMaximalExpandableHeight()
 	{
 		unsigned int height = 0;
 
@@ -515,7 +515,7 @@ namespace BlendInt {
 		return height;
 	}
 
-	unsigned int VerticalLayout::GetAllFixedHeight()
+	unsigned int VLayout::GetAllFixedHeight()
 	{
 		unsigned int height = 0;
 
@@ -527,7 +527,7 @@ namespace BlendInt {
 		return height;
 	}
 
-	void VerticalLayout::GetSizeHint (bool count_margin,
+	void VLayout::GetSizeHint (bool count_margin,
 										bool count_space,
 										Size* size,
 										Size* min,

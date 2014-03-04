@@ -1,7 +1,7 @@
 #include "PerformanceTest1.hpp"
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Label.hpp>
-#include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 #include <Common/Window.hpp>
 
 using namespace BlendInt;
@@ -29,13 +29,13 @@ TEST_F(PerformanceTest1, Layout1)
 
     int max_x = 50;
     int max_y = 20;
-    HorizontalLayout* layout[max_y];
+    HLayout* layout[max_y];
     Button* btn[max_x];
     int x_pos = 50;
     int y_pos = 5;
     for(int i = 0; i < max_y; i++)
     {
-        layout[i] = new HorizontalLayout;
+        layout[i] = new HLayout;
         layout[i]->Register();
 
         for(int j = 0; j < max_x; j++)

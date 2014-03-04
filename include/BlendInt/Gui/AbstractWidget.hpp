@@ -25,13 +25,12 @@
 #define _BLENDINT_ABSTRACTWIDGET_HPP_
 
 #include <bitset>
-#include <set>
 
 #include <boost/smart_ptr.hpp>
 
+#include <BlendInt/Types.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
-#include <BlendInt/Core/Margin.hpp>
 
 #include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/Window/MouseEvent.hpp>
@@ -39,8 +38,6 @@
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 
 #include <BlendInt/Gui/AbstractExtraForm.hpp>
-
-#include <BlendInt/Types.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -61,7 +58,7 @@ namespace BlendInt {
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
 
 	/**
-	 * @brief The basic abstract class for GUI forms in BlendInt
+	 * @brief The base abstract class for widgets
 	 *
 	 * @ingroup gui
 	 */
@@ -76,10 +73,13 @@ namespace BlendInt {
 		friend class AbstractContainer;
 
 		/**
-		 * @brief the default constructor
+		 * @brief The default constructor
 		 */
 		AbstractWidget ();
 
+		/**
+		 * @brief Destructor
+		 */
 		virtual ~AbstractWidget ();
 
 		/**
@@ -110,19 +110,23 @@ namespace BlendInt {
 		 */
 		bool Unregister ();
 
-		//void SetContainer (AbstractWidget* container);
-
 		/**
-		 * @brief Call Update() and Resize the widget
-		 * @param width the newwidth of the widget
-		 * @param height the new height of the widget
+		 * @brief Resize the widget
+		 * @param[in] width The new width of the widget
+		 * @param[in] height The new height of the widget
 		 *
-		 * @note this function hide the same function in the base class
-		 * (AbstractForm::Resize()) as it need to check the new size and call
-		 * Update()
+		 * Call Update() to check the parameters, if valid, resize the
+		 * widget.
 		 */
 		void Resize (unsigned int width, unsigned int height);
 
+		/**
+		 * @brief Resize the widget
+		 * @param[in] size The new size of the widget
+		 *
+		 * Call Update() to check the parameters, if valid, resize the
+		 * widget.
+		 */
 		void Resize (const Size& size);
 
 		/**
@@ -131,7 +135,13 @@ namespace BlendInt {
 		 * 	- The size of widget
 		 * 	- (0, 0) if the widget is hiden
 		 */
-		const Size& GetSize () const;
+		const Size& GetVisibleSize () const;
+
+		const Size& GetVisiblePreferredSize () const;
+
+		const Size& GetVisibleMinimalSize () const;
+
+		const Size& GetVisibleMaximalSize () const;
 
 		void SetPosition (int x, int y);
 
@@ -174,7 +184,7 @@ namespace BlendInt {
 
 		inline bool registered() const
 		{
-			return m_flag[WidgetFlagRegistered];
+			return m_flag[WidgetFlagInContextManager];
 		}
 
 		void activate_events ()
@@ -327,7 +337,7 @@ namespace BlendInt {
 		enum WidgetFlagIndex {
 			WidgetFlagLockGeometry = 0,
 			WidgetFlagFireEvents,
-			WidgetFlagRegistered,
+			WidgetFlagInContextManager,
 			WidgetFlagFocus,
 
 			/** If this widget is in container */
@@ -339,7 +349,9 @@ namespace BlendInt {
 			/** If the widget need to be refresh in the render loop */
 			WidgetFlagRefresh,
 
-			WidgetFlagVisibility
+			WidgetFlagVisibility,
+
+			WidgetFlagManaged
 		};
 
 		/**

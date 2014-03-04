@@ -56,7 +56,6 @@ namespace BlendInt {
 		set<AbstractWidget*>* widgets;
 
 		GLTexture2D* buffer;
-
 	};
 
 	/**

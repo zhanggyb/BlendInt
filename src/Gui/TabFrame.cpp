@@ -86,7 +86,7 @@ namespace BlendInt {
 		m_stack_widget = new StackedWidget;
 		m_button_box = new ButtonBox;
 
-		VerticalLayout* body = new VerticalLayout;
+		VLayout* body = new VLayout;
 		body->Add(m_stack_widget);
 		body->Add(m_button_box);
 

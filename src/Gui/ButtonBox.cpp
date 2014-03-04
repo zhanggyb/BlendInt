@@ -22,7 +22,7 @@
  */
 
 #include <BlendInt/Gui/ButtonBox.hpp>
-#include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 
 namespace BlendInt {
 
@@ -51,7 +51,7 @@ namespace BlendInt {
 	void ButtonBox::Init ()
 	{
 		// DEMO: use HLayout temporarily
-		HorizontalLayout* layout = new HorizontalLayout;
+		HLayout* layout = new HLayout;
 		layout->SetMargin(1, 1, 1, 1);
 		SetLayout(layout);
 	}

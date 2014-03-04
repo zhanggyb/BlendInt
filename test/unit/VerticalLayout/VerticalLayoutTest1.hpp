@@ -4,11 +4,11 @@
 #include <gtest/gtest.h>
 #include <Common/Window.hpp>
 
-class VerticalLayoutTest1: public testing::Test
+class VLayoutTest1: public testing::Test
 {
 public:
-	VerticalLayoutTest1 ();
-	virtual ~VerticalLayoutTest1 ();
+	VLayoutTest1 ();
+	virtual ~VLayoutTest1 ();
 
 protected:
 

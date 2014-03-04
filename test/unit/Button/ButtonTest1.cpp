@@ -1,7 +1,7 @@
 #include "ButtonTest1.hpp"
 #include <BlendInt/Gui/Button.hpp>
 #include <Common/Window.hpp>
-#include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 
 using namespace BlendInt;
 
@@ -27,7 +27,7 @@ TEST_F(ButtonTest1, Foo1)
     GLFWwindow* win = CreateWindow("Button Test - Foo1");
 
 	// TODO: add test code here
-    HorizontalLayout* hl1 = new HorizontalLayout;
+    HLayout* hl1 = new HLayout;
     hl1->SetPosition(300, 400);
     hl1->set_name("Hlayout1");
 

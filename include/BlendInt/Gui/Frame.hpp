@@ -50,9 +50,9 @@ namespace BlendInt {
 
 		Frame ();
 
-	protected:
-
 		virtual ~Frame ();
+
+	protected:
 
 		virtual bool Update (int type, const void* data);
 

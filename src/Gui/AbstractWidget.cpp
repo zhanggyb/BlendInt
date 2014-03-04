@@ -147,10 +147,37 @@ namespace BlendInt {
 		}
 	}
 
-	const Size& AbstractWidget::GetSize() const
+	const Size& AbstractWidget::GetVisibleSize() const
 	{
 		if(m_flag[WidgetFlagVisibility]) {
 			return size();
+		} else {
+			return invisible_size;
+		}
+	}
+
+	const Size& AbstractWidget::GetVisiblePreferredSize () const
+	{
+		if(m_flag[WidgetFlagVisibility]) {
+			return preferred_size();
+		} else {
+			return invisible_size;
+		}
+	}
+
+	const Size& AbstractWidget::GetVisibleMinimalSize() const
+	{
+		if(m_flag[WidgetFlagVisibility]) {
+			return minimal_size();
+		} else {
+			return invisible_size;
+		}
+	}
+
+	const Size& AbstractWidget::GetVisibleMaximalSize() const
+	{
+		if(m_flag[WidgetFlagVisibility]) {
+			return maximal_size();
 		} else {
 			return invisible_size;
 		}
@@ -286,7 +313,7 @@ namespace BlendInt {
 
 		if(m_z == z) return;
 
-		if(m_flag[WidgetFlagRegistered]) {
+		if(m_flag[WidgetFlagInContextManager]) {
 			ContextManager::Instance()->Unregister(this);
 
 			if(Update (WidgetLayer, &z)) {
@@ -305,7 +332,7 @@ namespace BlendInt {
 
 	void AbstractWidget::Refresh()
 	{
-		if(!m_flag[WidgetFlagRegistered])
+		if(!m_flag[WidgetFlagInContextManager])
 			return;
 
 		ContextManager::Instance()->RefreshLayer(m_z);

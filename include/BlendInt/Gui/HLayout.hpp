@@ -25,6 +25,7 @@
 #define _BLENDINT_HORIZONTALLAYOUT_HPP_
 
 #include <list>
+#include <set>
 
 #include <BlendInt/Core/RefPtr.hpp>
 
@@ -32,15 +33,15 @@
 
 namespace BlendInt {
 
-	class HorizontalLayout: public AbstractLayout
+	class HLayout: public AbstractLayout
 	{
-		DISALLOW_COPY_AND_ASSIGN(HorizontalLayout);
+		DISALLOW_COPY_AND_ASSIGN(HLayout);
 
 	public:
 
-		HorizontalLayout(int align = AlignHorizontalCenter);
+		HLayout(int align = AlignHorizontalCenter);
 
-		virtual ~HorizontalLayout ();
+		virtual ~HLayout ();
 
 	protected:
 

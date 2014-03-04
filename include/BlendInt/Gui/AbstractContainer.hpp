@@ -26,12 +26,14 @@
 
 #include <deque>
 
+#include <BlendInt/Core/Margin.hpp>
+
 #include <BlendInt/Gui/AbstractWidget.hpp>
 //#include <BlendInt/Service/ContextManager.hpp>
 
 namespace BlendInt {
 
-	typedef std::deque<AbstractWidgetPtr> WidgetDeque;
+	typedef std::deque<AbstractWidget*> WidgetDeque;
 
 	class ContextManager;
 	class Interface;
@@ -63,6 +65,8 @@ namespace BlendInt {
 
 		friend class ContextManager;
 		friend class Interface;
+
+		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
 		void RemoveSubWidgetOnly (AbstractWidget* widget);
 

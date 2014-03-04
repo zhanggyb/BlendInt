@@ -33,17 +33,17 @@
 #include <algorithm>
 #include <iostream>
 
-#include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 
 namespace BlendInt {
 
-	HorizontalLayout::HorizontalLayout (int align)
+	HLayout::HLayout (int align)
 			: AbstractLayout()
 	{
 		set_alignment(align);
 	}
 
-	HorizontalLayout::~HorizontalLayout ()
+	HLayout::~HLayout ()
 	{
 		/*
 		for(std::vector<AbstractWidget*>::iterator it = m_items.begin(); it != m_items.end(); it++)
@@ -54,7 +54,7 @@ namespace BlendInt {
 		m_items.clear();
 	}
 
-	bool HorizontalLayout::Update (int type, const void* data)
+	bool HLayout::Update (int type, const void* data)
 	{
 		switch (type) {
 
@@ -100,7 +100,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::Draw ()
+	void HLayout::Draw ()
 	{
 #ifdef DEBUG
 		glLineWidth(1);
@@ -119,7 +119,7 @@ namespace BlendInt {
 #endif
 	}
 
-	void HorizontalLayout::AddItem (AbstractWidget* object)
+	void HLayout::AddItem (AbstractWidget* object)
 	{
 		// don't fire events when adding a widget into a layout
 		object->deactivate_events();
@@ -174,7 +174,7 @@ namespace BlendInt {
 		LockGeometry(object, true);
 	}
 
-	void HorizontalLayout::RemoveItem (AbstractWidget* object)
+	void HLayout::RemoveItem (AbstractWidget* object)
 	{
 		deactivate_events();
 		RefPtr<AbstractWidget> obj(object);
@@ -210,7 +210,7 @@ namespace BlendInt {
 		RemoveSubWidget(object);
 	}
 
-	void HorizontalLayout::MakeLayout (const Size* size, const Margin* margin,
+	void HLayout::MakeLayout (const Size* size, const Margin* margin,
 	        int space)
 	{
 		if (size->width() == preferred_size().width()) {
@@ -224,7 +224,7 @@ namespace BlendInt {
 		Align (size, margin);
 	}
 
-	void HorizontalLayout::DistributeWithPreferredWidth(const Margin* margin, int space)
+	void HLayout::DistributeWithPreferredWidth(const Margin* margin, int space)
 	{
 		for(std::vector<AbstractWidgetPtr>::iterator it = m_items.begin(); it != m_items.end(); it++)
 		{
@@ -235,7 +235,7 @@ namespace BlendInt {
 		Distribute(space, x);
 	}
 
-	void HorizontalLayout::DistributeWithSmallWidth(const Size* size, const Margin* margin, int space)
+	void HLayout::DistributeWithSmallWidth(const Size* size, const Margin* margin, int space)
 	{
 		unsigned int min_expd_width = GetAllMinimalExpandableWidth();
 		unsigned int fixed_width = GetAllFixedWidth();
@@ -312,7 +312,7 @@ namespace BlendInt {
 		Distribute(space, x);
 	}
 
-	void HorizontalLayout::DistributeWithLargeWidth(const Size* size, const Margin* margin, int space)
+	void HLayout::DistributeWithLargeWidth(const Size* size, const Margin* margin, int space)
 	{
 		unsigned int fixed_width = GetAllFixedWidth();
 		unsigned int current_width = size->width();
@@ -398,7 +398,7 @@ namespace BlendInt {
 
 	}
 
-	void HorizontalLayout::Distribute(int space, int start)
+	void HLayout::Distribute(int space, int start)
 	{
 		start -= space;	// subtract one space to make sure no space if only 1 child in layout
 		for(std::vector<AbstractWidgetPtr>::iterator it = m_items.begin(); it != m_items.end(); it++)
@@ -410,7 +410,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HorizontalLayout::Align(const Size* size, const Margin* margin)
+	void HLayout::Align(const Size* size, const Margin* margin)
 	{
 		int y = position().y() + margin->bottom();
 
@@ -442,7 +442,7 @@ namespace BlendInt {
 		}
 	}
 
-	unsigned int HorizontalLayout::AdjustExpandableWidth(std::list<AbstractWidget*>* item_list_p, unsigned int width_plus)
+	unsigned int HLayout::AdjustExpandableWidth(std::list<AbstractWidget*>* item_list_p, unsigned int width_plus)
 	{
 		if(!item_list_p) return width_plus;
 		if(item_list_p->size() == 0) return width_plus;
@@ -470,7 +470,7 @@ namespace BlendInt {
 		return remainder;
 	}
 
-	unsigned int HorizontalLayout::AdjustMinimalWidth(std::list<AbstractWidget*>* item_list_p, unsigned int width_plus)
+	unsigned int HLayout::AdjustMinimalWidth(std::list<AbstractWidget*>* item_list_p, unsigned int width_plus)
 	{
 		if(!item_list_p) return width_plus;
 		if(item_list_p->size() == 0) return width_plus;
@@ -498,7 +498,7 @@ namespace BlendInt {
 		return remainder;
 	}
 
-	unsigned int HorizontalLayout::GetAllMinimalExpandableWidth()
+	unsigned int HLayout::GetAllMinimalExpandableWidth()
 	{
 		unsigned int width = 0;
 
@@ -510,7 +510,7 @@ namespace BlendInt {
 		return width;
 	}
 
-	unsigned int HorizontalLayout::GetAllMaximalExpandableWidth()
+	unsigned int HLayout::GetAllMaximalExpandableWidth()
 	{
 		unsigned int width = 0;
 
@@ -522,7 +522,7 @@ namespace BlendInt {
 		return width;
 	}
 
-	unsigned int HorizontalLayout::GetAllFixedWidth()
+	unsigned int HLayout::GetAllFixedWidth()
 	{
 		unsigned int width = 0;
 
@@ -534,7 +534,7 @@ namespace BlendInt {
 		return width;
 	}
 
-	void HorizontalLayout::GetSizeHint (bool count_margin,
+	void HLayout::GetSizeHint (bool count_margin,
 										  bool count_space,
 										  Size* size,
 										  Size* min,

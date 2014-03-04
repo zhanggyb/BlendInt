@@ -9,7 +9,7 @@
 #define DEMOFRAME_HPP_
 
 #include <BlendInt/Gui/Frame.hpp>
-#include <BlendInt/Gui/HorizontalLayout.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Button.hpp>
 
 #include <BlendInt/Core/Timer.hpp>
@@ -56,7 +56,7 @@ private:
 
 	void stop_time ();
 
-	HorizontalLayout* m_hlayout;
+	HLayout* m_hlayout;
 
 	Timer* m_timer;
 
