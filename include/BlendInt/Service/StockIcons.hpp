@@ -29,6 +29,8 @@
 
 namespace BlendInt {
 
+	class Interface;
+
 	/**
 	 * @brief class for Stock Icons
 	 *
@@ -36,13 +38,11 @@ namespace BlendInt {
 	 */
 	class StockIcons
 	{
+		DISALLOW_COPY_AND_ASSIGN(StockIcons);
+
 	public:
 
-		static bool Initialize ();
-
-		static void Release ();
-
-		static StockIcons* Instance ();
+		static StockIcons* instance;
 
 		RefPtr<VertexIcon> menu () const {return m_menu;}
 
@@ -53,6 +53,12 @@ namespace BlendInt {
 		RefPtr<VertexIcon> num () const {return m_num;}
 
 	private:
+
+		friend class Interface;
+
+		static bool Initialize ();
+
+		static void Release ();
 
 		/**
 		 * @brief Default constructor
@@ -71,8 +77,6 @@ namespace BlendInt {
 		 */
 		void CreateIcons ();
 
-		static StockIcons* stock_icon;
-
 		RefPtr<VertexIcon> m_menu;
 
 		RefPtr<VertexIcon> m_circle;
@@ -80,17 +84,6 @@ namespace BlendInt {
 		RefPtr<VertexIcon> m_checkbox;
 
 		RefPtr<VertexIcon> m_num;
-
-		/**
-		 * @brief Copy constructor, disabled
-		 */
-		StockIcons (const StockIcons& orig);
-
-		/**
-		 * @brief Assignment operation, disabled
-		 */
-		StockIcons& operator = (const StockIcons& orig);
-
 	};
 
 }

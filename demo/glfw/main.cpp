@@ -117,16 +117,18 @@ int main(int argc, char* argv[])
 //	iv->Register();
 
 //	interface()->SetMainWidget(layout);
-	ContextManager* cm = ContextManager::Instance();
+	ContextManager* cm = ContextManager::instance;
 
 	Button btn1;
 	btn1.set_name("btn1");
+	btn1.SetVisible(true);
 
 	btn1.SetPosition(200, 200);
 
 	Frame frame;
 	frame.set_name("frame");
 	frame.SetPosition(400, 400);
+	frame.SetVisible(true);
 
 	cm->print();
 

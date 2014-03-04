@@ -29,33 +29,22 @@
 
 namespace BlendInt {
 
-	StockIcons* StockIcons::stock_icon = 0;
+	StockIcons* StockIcons::instance = 0;
 
 	bool StockIcons::Initialize()
 	{
-		if (!stock_icon)
-			stock_icon = new StockIcons;
+		if (!instance)
+			instance = new StockIcons;
 
 		return true;
 	}
 
 	void StockIcons::Release()
 	{
-		if (stock_icon) {
-			delete stock_icon;
-			stock_icon = 0;
+		if (instance) {
+			delete instance;
+			instance = 0;
 		}
-	}
-
-	StockIcons* StockIcons::Instance()
-	{
-		if (!stock_icon) {
-			std::cerr << "Stock Icons are not initialized successfully! Exit"
-			        << std::endl;
-			exit(EXIT_FAILURE);
-		}
-
-		return stock_icon;
 	}
 
 	StockIcons::StockIcons()

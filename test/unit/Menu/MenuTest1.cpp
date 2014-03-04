@@ -59,7 +59,7 @@ TEST_F(MenuTest1, Click1)
 
 	// TODO: add test code here
     //
-    RefPtr<VertexIcon> icon = StockIcons::Instance()->menu();
+    RefPtr<VertexIcon> icon = StockIcons::instance->menu();
     Menu* menubin = new Menu;
     menubin->SetRoundType(RoundAll);
 

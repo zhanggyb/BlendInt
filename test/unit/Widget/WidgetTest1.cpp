@@ -29,7 +29,7 @@ TEST_F(WidgetTest1, Add1)
 
 	// TODO: add test code here
     
-    ContextManager* cm = ContextManager::Instance();
+    ContextManager* cm = ContextManager::instance;
     
     Widget* widget1 = new Widget;
     widget1->set_name("widget1");

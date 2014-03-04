@@ -39,7 +39,7 @@ TEST_F(ContextManagerTest1, Foo1)
     w1->Register();
     w2->Register();
 
-    ContextManager::Instance()->print();
+    ContextManager::instance->print();
 
     RunLoop(win);
 
@@ -74,7 +74,7 @@ TEST_F(ContextManagerTest1, Layer1)
     w1->Register();
     w2->Register();
 
-    ContextManager::Instance()->print();
+    ContextManager::instance->print();
 
     RunLoop(win);
 
@@ -110,7 +110,7 @@ TEST_F(ContextManagerTest1, Layer2)
 
     w2->SetLayer(1);
 
-    ContextManager::Instance()->print();
+    ContextManager::instance->print();
 
     RunLoop(win);
 

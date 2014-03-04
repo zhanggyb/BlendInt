@@ -72,33 +72,21 @@ namespace BlendInt {
 		}
 	}
 
-	ContextManager* ContextManager::context_manager = 0;
+	ContextManager* ContextManager::instance = 0;
 
 	bool ContextManager::refresh_once = false;
 
 	bool ContextManager::force_refresh_all = true;
 
-	ContextManager* ContextManager::Instance ()
-	{
-#ifdef DEBUG
-		if (!context_manager) {
-			DBG_PRINT_MSG("%s", "The Context Manager is not initialized successfully! Exit");
-			exit(EXIT_FAILURE);
-		}
-#endif
-
-		return context_manager;
-	}
-
 	bool ContextManager::Initialize ()
 	{
 		bool result = true;
 
-		if (!context_manager) {
-			context_manager = new ContextManager;
+		if (!instance) {
+			instance = new ContextManager;
 		}
 
-		if (!context_manager) {
+		if (!instance) {
 			result = false;
 		}
 
@@ -107,9 +95,9 @@ namespace BlendInt {
 
 	void ContextManager::Release ()
 	{
-		if(context_manager) {
-			delete context_manager;
-			context_manager = 0;
+		if(instance) {
+			delete instance;
+			instance = 0;
 		}
 	}
 
@@ -482,7 +470,7 @@ namespace BlendInt {
 
 		// ---------
 
-		m_screenbuffer->Render(context_manager->m_main_buffer);
+		m_screenbuffer->Render(instance->m_main_buffer);
 	}
 
 #ifdef DEBUG
@@ -763,16 +751,18 @@ namespace BlendInt {
 
 	void ContextManager::DispatchDrawEvent(AbstractWidget* widget)
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		if(widget->visiable()) {
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
 
-		glTranslatef(widget->position().x(),
-					 widget->position().y(),
-					 widget->z());
+			glTranslatef(widget->position().x(),
+					widget->position().y(),
+					widget->z());
 
-		widget->Draw();
+			widget->Draw();
 
-		glPopMatrix();
+			glPopMatrix();
+		}
 
 		AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
 

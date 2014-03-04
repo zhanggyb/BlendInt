@@ -77,12 +77,12 @@ namespace BlendInt {
 
 	bool AbstractWidget::Register ()
 	{
-		return ContextManager::Instance()->Register(this);
+		return ContextManager::instance->Register(this);
 	}
 
 	bool AbstractWidget::Unregister ()
 	{
-		return ContextManager::Instance()->Unregister(this);
+		return ContextManager::instance->Unregister(this);
 	}
 
 	/*
@@ -314,11 +314,11 @@ namespace BlendInt {
 		if(m_z == z) return;
 
 		if(m_flag[WidgetFlagInContextManager]) {
-			ContextManager::Instance()->Unregister(this);
+			ContextManager::instance->Unregister(this);
 
 			if(Update (WidgetLayer, &z)) {
 				m_z = z;
-				ContextManager::Instance()->Register(this);
+				ContextManager::instance->Register(this);
 				fire_property_changed_event(WidgetLayer);
 			}
 		} else {
@@ -330,12 +330,23 @@ namespace BlendInt {
 
 	}
 
+	void AbstractWidget::SetVisible(bool visible)
+	{
+		if(m_flag[WidgetFlagVisibility] == visible)
+			return;
+
+		if(Update (WidgetVisibility, &visible)) {
+			m_flag[WidgetFlagVisibility] = visible ? 1 : 0;
+			fire_property_changed_event(WidgetVisibility);
+		}
+	}
+
 	void AbstractWidget::Refresh()
 	{
 		if(!m_flag[WidgetFlagInContextManager])
 			return;
 
-		ContextManager::Instance()->RefreshLayer(m_z);
+		ContextManager::instance->RefreshLayer(m_z);
 	}
 
 	void AbstractWidget::RenderToFile(const char* filename, unsigned int border)

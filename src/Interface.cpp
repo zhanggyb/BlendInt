@@ -173,22 +173,22 @@ namespace BlendInt {
 
 	const Size& Interface::size () const
 	{
-		return ContextManager::context_manager->size();
+		return ContextManager::instance->size();
 	}
 
 	void Interface::Resize (const Size& size)
 	{
-		ContextManager::context_manager->ResizeFromInterface(size);
+		ContextManager::instance->ResizeFromInterface(size);
 	}
 
 	void Interface::Resize (unsigned int width, unsigned int height)
 	{
-		ContextManager::context_manager->ResizeFromInterface(width, height);
+		ContextManager::instance->ResizeFromInterface(width, height);
 	}
 
 	void Interface::Draw ()
 	{
-		ContextManager::context_manager->Draw();
+		ContextManager::instance->Draw();
 	}
 
 	void Interface::SetMainWidget(AbstractWidget* widget)
@@ -259,8 +259,8 @@ namespace BlendInt {
 
 	void Interface::RenderToImage()
 	{
-		GLsizei width = ContextManager::context_manager->size().width();
-		GLsizei height = ContextManager::context_manager->size().height();
+		GLsizei width = ContextManager::instance->size().width();
+		GLsizei height = ContextManager::instance->size().height();
 
 		// Create and set texture to render to.
 		GLTexture2D* tex = new GLTexture2D;
@@ -337,7 +337,7 @@ namespace BlendInt {
 	void Interface::DispatchCursorMoveEvent (MouseEvent* event)
 	{
 		AbstractWidget* widget = 0;
-		ContextManager* cm = ContextManager::context_manager;
+		ContextManager* cm = ContextManager::instance;
 
 		// build a stack contians the mouse cursor
 		if (cm->m_hover_deque->size()) {
@@ -372,7 +372,7 @@ namespace BlendInt {
 
 	void Interface::DispatchMousePressEvent(MouseEvent* event)
 	{
-		ContextManager* cm = ContextManager::context_manager;
+		ContextManager* cm = ContextManager::instance;
 
 		for(std::deque<AbstractWidget*>::reverse_iterator it = cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend(); it++)
 		{
@@ -388,7 +388,7 @@ namespace BlendInt {
 
 	void Interface::DispatchMouseReleaseEvent(MouseEvent* event)
 	{
-		ContextManager* cm = ContextManager::context_manager;
+		ContextManager* cm = ContextManager::instance;
 
 		for(std::deque<AbstractWidget*>::reverse_iterator it = cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend(); it++)
 		{
@@ -411,8 +411,8 @@ namespace BlendInt {
 				        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
 				        it++) {
 					if ((*it)->contain(cursor_point)) {
-						ContextManager::context_manager->m_hover_deque->push_back(*it);
-						ContextManager::context_manager->m_hover_deque->back()->CursorEnterEvent(true);
+						ContextManager::instance->m_hover_deque->push_back(*it);
+						ContextManager::instance->m_hover_deque->back()->CursorEnterEvent(true);
 						BuildWidgetListAtCursorPoint(cursor_point, *it);
 						break;	// if break or continue the loop?
 					}
@@ -421,7 +421,7 @@ namespace BlendInt {
 
 			}
 		} else {
-			ContextManager::context_manager->m_hover_deque->clear();
+			ContextManager::instance->m_hover_deque->clear();
 
 			map<int, ContextLayer>::reverse_iterator map_it;
 			set<AbstractWidget*>::iterator set_it;
@@ -429,14 +429,14 @@ namespace BlendInt {
 
 			bool stop = false;
 
-			for (map_it = ContextManager::context_manager->m_layers.rbegin(); map_it != ContextManager::context_manager->m_layers.rend();
+			for (map_it = ContextManager::instance->m_layers.rbegin(); map_it != ContextManager::instance->m_layers.rend();
 			        map_it++) {
 				set_p = map_it->second.widgets;
 				for (set_it = set_p->begin(); set_it != set_p->end();
 				        set_it++) {
 					if ((*set_it)->contain(cursor_point)) {
-						ContextManager::context_manager->m_hover_deque->push_back(*set_it);
-						ContextManager::context_manager->m_hover_deque->back()->CursorEnterEvent(true);
+						ContextManager::instance->m_hover_deque->push_back(*set_it);
+						ContextManager::instance->m_hover_deque->back()->CursorEnterEvent(true);
 						BuildWidgetListAtCursorPoint(cursor_point, *set_it);
 						stop = true;
 					}

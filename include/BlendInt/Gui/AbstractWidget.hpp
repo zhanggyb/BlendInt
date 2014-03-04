@@ -161,6 +161,8 @@ namespace BlendInt {
 
 		void SetLayer (int z);
 
+		void SetVisible (bool visible);
+
 		void Refresh ();
 
 		void RenderToFile (const char* filename, unsigned int border = 10);
@@ -215,6 +217,11 @@ namespace BlendInt {
 		inline bool hover () const
 		{
 			return m_flag[WidgetFlagContextHoverList];
+		}
+
+		inline bool visiable () const
+		{
+			return m_flag[WidgetFlagVisibility];
 		}
 
 		/**

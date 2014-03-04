@@ -67,8 +67,8 @@ namespace BlendInt {
 
 		friend class Interface;
 
-		static ContextManager* Instance ();
-		
+		static ContextManager* instance;
+
 		bool Register (AbstractWidget* obj);
 
 		bool Unregister (AbstractWidget* obj);
@@ -172,8 +172,6 @@ namespace BlendInt {
 		static bool refresh_once;
 
 		static bool force_refresh_all;
-
-		static ContextManager* context_manager;
 	};
 
 }

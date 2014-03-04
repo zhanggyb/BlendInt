@@ -22,12 +22,24 @@
  */
 
 #include <assert.h>
+
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
 #include <BlendInt/Gui/AbstractForm.hpp>
 
 #include <BlendInt/Utilities-inl.hpp>
 #include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
+
+	float AbstractForm::default_border_width = 1.0f;
 
 	const float AbstractForm::cornervec[WIDGET_CURVE_RESOLU][2] = {
 		{0.0, 0.0}, {0.195, 0.02}, {0.383, 0.067},
@@ -42,6 +54,16 @@ namespace BlendInt {
 			{-0.272855,  0.269918}, { 0.095909,  0.388710}
 	};
 
+
+	void AbstractForm::SetDefaultBorderWidth(float border)
+	{
+		default_border_width = border;
+	}
+
+	float AbstractForm::DefaultBorderWidth()
+	{
+		return default_border_width;
+	}
 
 	AbstractForm::AbstractForm()
 	: Object()
@@ -1093,6 +1115,282 @@ namespace BlendInt {
 			quad_strip[i * 2 + 1][1] = outer_v[i][1] - 1.0f;
 		}
 	}
+
+	void AbstractForm::DrawOutlineArray(const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num)
+	{
+		glEnableClientState(GL_VERTEX_ARRAY);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			glVertexPointer(2, GL_FLOAT, 0, quad_strip);
+			glDrawArrays(GL_QUAD_STRIP, 0, num);
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+	}
+
+	void AbstractForm::DrawInnerArray(const float inner_v[WIDGET_SIZE_MAX][2], int num)
+	{
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, inner_v);
+
+		glDrawArrays(GL_POLYGON, 0, num);
+		glDisableClientState(GL_VERTEX_ARRAY);
+	}
+
+	void AbstractForm::DrawInnerBuffer (GLArrayBuffer* buffer, int mode)
+	{
+		buffer->Bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
+		glDrawArrays(mode, 0, buffer->vertices());
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		buffer->Reset();
+	}
+
+	void AbstractForm::DrawShadedInnerBuffer(GLArrayBuffer* buffer, int mode)
+	{
+		buffer->Bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
+
+		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glDrawArrays(mode, 0, buffer->vertices());
+
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		buffer->Reset();
+	}
+
+	void AbstractForm::DrawOutlineBuffer(GLArrayBuffer* buffer, int mode)
+	{
+		buffer->Bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, 0);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			glDrawArrays(mode, 0, buffer->vertices());
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		buffer->Reset();
+	}
+
+	void AbstractForm::GenerateFormBuffer (const Size* size, int round_type,
+	        float radius, GLArrayBuffer* inner_buffer,
+	        GLArrayBuffer* outer_buffer, GLArrayBuffer* emboss_buffer)
+	{
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_round_vertices(size, default_border_width,
+		        round_type, radius, inner_v, outer_v);
+
+		if (inner_buffer) {
+			inner_buffer->Generate();
+			inner_buffer->Bind();
+			inner_buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			inner_buffer->Reset();
+		}
+
+		// the quad strip for outline
+		if (outer_buffer || emboss_buffer) {
+
+			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+
+			if (outer_buffer) {
+
+				verts_to_quad_strip(inner_v, outer_v, vert_sum.total,
+				        quad_strip);
+
+				outer_buffer->Generate();
+				outer_buffer->Bind();
+				outer_buffer->SetData((vert_sum.total * 2 + 2),
+				        sizeof(quad_strip[0]), quad_strip);
+				outer_buffer->Reset();
+			}
+
+			if (emboss_buffer) {
+
+				//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+				verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
+
+				emboss_buffer->Generate();
+				emboss_buffer->Bind();
+				emboss_buffer->SetData(vert_sum.half * 2, sizeof(quad_strip[0]),
+				        quad_strip);
+				emboss_buffer->Reset();
+			}
+
+		}
+	}
+
+	void AbstractForm::GenerateShadedFormBuffers (const Size* size,
+								   int round_type,
+								   float radius,
+								   const WidgetTheme* theme,
+								   Orientation shadedir,
+								   short highlight,
+								   GLArrayBuffer* inner_buffer_p,
+								   GLArrayBuffer* outer_buffer_p,
+								   GLArrayBuffer* highlight_buffer_p)
+	{
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_round_vertices(size,
+				default_border_width,
+				round_type,
+				radius,
+				theme,
+				shadedir,
+				inner_v, outer_v);
+
+		if(inner_buffer_p) {
+			inner_buffer_p->Generate();
+			inner_buffer_p->Bind();
+			inner_buffer_p->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			inner_buffer_p->Reset();
+		}
+
+		if (outer_buffer_p) {
+
+			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; // + 2 because the last pair is wrapped
+
+			verts_to_quad_strip(inner_v, outer_v, vert_sum.total, quad_strip);
+
+			outer_buffer_p->Generate();
+			outer_buffer_p->Bind();
+			outer_buffer_p->SetData(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), quad_strip);
+			outer_buffer_p->Reset();
+		}
+
+		if (highlight_buffer_p) {
+
+			Color hcolor = theme->item;
+			hcolor.highlight(hcolor, highlight);
+
+			vert_sum = generate_round_vertices(size, default_border_width,
+			        round_type, radius, hcolor, theme->shadetop,
+			        theme->shadedown, shadedir, inner_v, outer_v);
+
+			highlight_buffer_p->Generate();
+			highlight_buffer_p->Bind();
+
+			highlight_buffer_p->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			highlight_buffer_p->Reset();
+		}
+	}
+
+	void AbstractForm::GenerateShadedFormBuffer (const Size* size,
+			float border,
+			int round_type,
+			float radius,
+			const Color& color,
+			short shadetop,
+			short shadedown,
+			Orientation shadedir,
+			GLArrayBuffer* buffer)
+	{
+		if(!buffer) return;
+
+		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_round_vertices(size,
+				border,
+				round_type,
+				radius,
+				color,
+				shadetop,
+				shadedown,
+				shadedir,
+				inner_v);
+
+		buffer->Generate();
+		buffer->Bind();
+		buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+		buffer->Reset();
+	}
+
+	void AbstractForm::GenerateShadedFormBuffers (const Size* size,
+			int round_type,
+			float radius,
+			const Color& color,
+			short shadetop,
+			short shadedown,
+			Orientation shadedir,
+			short highlight,
+			GLArrayBuffer* inner_buffer,
+			GLArrayBuffer* outer_buffer,
+			GLArrayBuffer* highlight_buffer)
+	{
+		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
+
+		VerticesSum vert_sum;
+
+		vert_sum = generate_round_vertices(size,
+				default_border_width,
+				round_type,
+				radius,
+				color,
+				shadetop,
+				shadedown,
+				shadedir,
+				inner_v, outer_v);
+
+		if(inner_buffer) {
+			inner_buffer->Generate();
+			inner_buffer->Bind();
+			inner_buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			inner_buffer->Reset();
+		}
+
+		if(outer_buffer) {
+			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+			verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+
+			outer_buffer->Generate();
+			outer_buffer->Bind();
+			outer_buffer->SetData((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip);
+			outer_buffer->Reset();
+		}
+
+		if(highlight_buffer) {
+			Color hcolor = color;
+			hcolor.highlight(hcolor, highlight);
+
+			vert_sum = generate_round_vertices(size,
+							default_border_width,
+							round_type,
+							radius,
+							hcolor,
+							shadetop,
+							shadedown,
+							shadedir,
+							inner_v, outer_v);
+
+			highlight_buffer->Generate();
+			highlight_buffer->Bind();
+			highlight_buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			highlight_buffer->Reset();
+		}
+
+	}
+
 
 	void AbstractForm::DispatchRender(AbstractForm* obj)
 	{

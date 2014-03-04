@@ -31,17 +31,17 @@ namespace BlendInt {
 
 	AbstractContainer::AbstractContainer ()
 	{
-		ContextManager::Instance()->Register(this);
+		ContextManager::instance->Register(this);
 	}
 
 	AbstractContainer::~AbstractContainer ()
 	{
 		if(hover()) {
-			ContextManager::Instance()->RemoveWidgetFromHoverDeque(this);
+			ContextManager::instance->RemoveWidgetFromHoverDeque(this);
 		}
 
 		if(focused()) {
-			ContextManager::Instance()->SetFocusedWidget(0);
+			ContextManager::instance->SetFocusedWidget(0);
 		}
 
 		for(WidgetDeque::iterator it = m_sub_widgets.begin(); it != m_sub_widgets.end(); it++)
@@ -78,7 +78,7 @@ namespace BlendInt {
 	void AbstractContainer::AddSubWidget (AbstractWidget* widget)
 	{
 		if(!widget) return;
-		if(widget == ContextManager::Instance()) return;	// Cannot add the context manager
+		if(widget == ContextManager::instance) return;	// Cannot add the context manager
 
 		AbstractContainer* old_container = 0;
 
@@ -87,9 +87,9 @@ namespace BlendInt {
 
 			if(widget->container() == this) return;	// already contained in this
 
-			if(widget->container() == ContextManager::Instance()) {
+			if(widget->container() == ContextManager::instance) {
 
-				ContextManager::Instance()->Unregister(widget);
+				ContextManager::instance->Unregister(widget);
 
 			} else {
 				old_container = dynamic_cast<AbstractContainer*>(widget->container());
@@ -123,7 +123,7 @@ namespace BlendInt {
 
 				widget->m_container = 0;
 
-				ContextManager::Instance()->Register(widget);
+				ContextManager::instance->Register(widget);
 
 				WidgetDeque::iterator it = std::find(m_sub_widgets.begin(), m_sub_widgets.end(), widget);
 				if(it != m_sub_widgets.end()) {
