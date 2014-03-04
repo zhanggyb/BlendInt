@@ -47,18 +47,6 @@ namespace BlendInt {
 		Init ();
 	}
 
-	ScrollControl::ScrollControl(AbstractWidget* parent)
-	: AbstractButton(parent), m_inner_buffer(0), m_outer_buffer(0)
-	{
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_highlight_buffer.reset(new GLArrayBuffer);
-
-		set_round_type(RoundAll);
-
-		Init ();
-	}
-
 	ScrollControl::~ScrollControl ()
 	{
 	}
@@ -217,41 +205,9 @@ namespace BlendInt {
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 
-		m_control_button.reset(new ScrollControl(this));
+		m_control_button.reset(new ScrollControl);
 
 		set_round_type(RoundAll);
-
-		if (orientation == Vertical) {	// Vertical
-			set_size(16, 400);
-			m_control_button->Resize(16, 100);
-			m_control_button->SetRadius(8.0);
-			set_radius(m_control_button->size().width()/2);
-			set_size(m_control_button->size().width(), 400);
-			set_expand_y(true);
-		} else {
-			set_size(400, 16);
-			m_control_button->Resize(100, 16);
-			m_control_button->SetRadius(8.0);
-			set_radius(m_control_button->size().height());
-			set_size(400, m_control_button->size().height());
-			set_expand_x(true);
-		}
-
-		Init();
-		m_control_button->SetPosition (position().x(), position().y());
-	}
-
-	SliderBar::SliderBar(Orientation orientation, AbstractWidget* parent)
-	: AbstractSlider(orientation, parent), m_inner_buffer(0), m_outer_buffer(0), m_control_button(0)
-	{
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-
-		m_control_button.reset(new ScrollControl(this));
-
-		set_round_type(RoundAll);
-
-		set_control_size(50);
 
 		if (orientation == Vertical) {	// Vertical
 			set_size(16, 400);
@@ -467,34 +423,7 @@ namespace BlendInt {
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 
-		m_scroll_control.reset(new ScrollControl(this));
-
-		SetRoundType(RoundAll);
-		SetRadius(8);
-
-		if (orientation == Vertical) {	// Vertical
-			Resize(16, 400);
-			m_scroll_control->Resize(16, 100);
-			m_scroll_control->SetRadius(8.0);
-			SetExpandY(true);
-		} else {
-			Resize(400, 16);
-			m_scroll_control->Resize(100, 16);
-			m_scroll_control->SetRadius(8.0);
-			SetExpandX(true);
-		}
-
-		m_scroll_control->SetPosition (position().x(), position().y());
-		Update(SliderPropertyValue, 0);
-	}
-
-	ScrollBar::ScrollBar (Orientation orientation, AbstractWidget* parent)
-			: AbstractSlider(orientation, parent), m_scroll_control(0), m_inner_buffer(0), m_outer_buffer(0)
-	{
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-
-		m_scroll_control.reset(new ScrollControl(this));
+		m_scroll_control.reset(new ScrollControl);
 
 		SetRoundType(RoundAll);
 		SetRadius(8);

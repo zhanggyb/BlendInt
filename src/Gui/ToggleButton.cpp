@@ -49,18 +49,6 @@ namespace BlendInt {
 		InitializeOnce(text);
 	}
 
-	ToggleButton::ToggleButton (AbstractWidget* parent)
-			: AbstractButton(parent)
-	{
-		InitializeOnce();
-	}
-
-	ToggleButton::ToggleButton (const String& text, AbstractWidget* parent)
-			: AbstractButton(parent)
-	{
-		InitializeOnce(text);
-	}
-
 	ToggleButton::~ToggleButton ()
 	{
 	}

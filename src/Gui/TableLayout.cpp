@@ -57,7 +57,7 @@ namespace BlendInt {
 	void TableLayout::add_widget (AbstractWidget* widget, int row, int column,
 	        int width, int height)
 	{
-		AddChild(widget);
+		AddSubWidget(widget);
 
 		for (int i = 0; i < width; i++)
 		{
@@ -77,7 +77,7 @@ namespace BlendInt {
 	void TableLayout::add_layout (AbstractLayout* layout, int row, int column,
 	        int width, int height)
 	{
-		AddChild(layout);
+		AddSubWidget(layout);
 
 		for (int i = 0; i < width; i++)
 		{

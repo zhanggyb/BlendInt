@@ -46,15 +46,11 @@ namespace BlendInt {
 
 		Button (const String& text);
 
-		Button (AbstractWidget* parent);
-
-		Button (const String& text, AbstractWidget* parent);
-
 		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
 
-	protected:
-
 		virtual ~Button ();
+
+	protected:
 
 		virtual bool Update (int type, const void* data);
 

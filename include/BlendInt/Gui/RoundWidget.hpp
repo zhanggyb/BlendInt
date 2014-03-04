@@ -40,8 +40,6 @@ namespace BlendInt {
 
 		RoundWidget ();
 
-		RoundWidget (AbstractWidget* parent);
-
 		virtual ~RoundWidget();
 
 		/**

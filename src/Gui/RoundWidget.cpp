@@ -41,13 +41,6 @@ namespace BlendInt {
 
 	}
 
-	RoundWidget::RoundWidget(AbstractWidget* parent)
-	: Widget(parent),
-	  RoundShapeBase()
-	{
-
-	}
-
 	RoundWidget::~RoundWidget()
 	{
 

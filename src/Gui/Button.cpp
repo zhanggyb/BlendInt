@@ -50,18 +50,6 @@ namespace BlendInt {
 		InitOnce(text);
 	}
 
-	Button::Button (AbstractWidget* parent)
-			: AbstractButton(parent)
-	{
-		InitOnce();
-	}
-
-	Button::Button (const String& text, AbstractWidget* parent)
-			: AbstractButton(parent)
-	{
-		InitOnce(text);
-	}
-
 	Button::~Button ()
 	{
 	}

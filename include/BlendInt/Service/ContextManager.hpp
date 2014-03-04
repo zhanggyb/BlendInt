@@ -153,7 +153,7 @@ namespace BlendInt {
 		 */
 		bool RemoveWidget (AbstractWidget* obj);
 
-		void BuildWidgetListAtCursorPoint (const Point& cursor_point, const AbstractWidget* parent);
+		void BuildWidgetListAtCursorPoint (const Point& cursor_point, AbstractWidget* parent);
 
 		map<int, ContextLayer > m_layers;
 

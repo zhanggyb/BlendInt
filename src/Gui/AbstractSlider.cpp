@@ -33,13 +33,6 @@ namespace BlendInt {
 	{
 	}
 
-	AbstractSlider::AbstractSlider(Orientation orientation,
-								   AbstractWidget* parent)
-		: RoundWidget (parent), m_orientation(orientation),
-		  m_value(0), m_minimum(0), m_maximum(100), m_step(5)
-	{
-	}
-
 	AbstractSlider::~AbstractSlider()
 	{
 	

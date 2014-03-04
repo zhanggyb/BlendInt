@@ -36,12 +36,6 @@ namespace BlendInt {
 		InitOnce();
 	}
 
-	TextEntry::TextEntry (AbstractWidget* parent)
-	: RoundWidget(parent), m_start(0), m_length(0), m_cursor_position(0), m_timer(0), m_flicker(true)
-	{
-		InitOnce();
-	}
-
 	TextEntry::~TextEntry ()
 	{
 	}

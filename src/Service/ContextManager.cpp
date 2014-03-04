@@ -33,6 +33,7 @@
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 #include <BlendInt/Service/ContextManager.hpp>
 
 #include "../Intern/ScreenBuffer.hpp"
@@ -46,18 +47,17 @@ namespace BlendInt {
 	ContextLayer::ContextLayer()
 	: refresh(true), widgets(0), buffer(0)
 	{
-
 	}
 
 	ContextLayer::~ContextLayer()
 	{
 		if(buffer) {
-			std::cout << "Delete texture buffer in context layer" << std::endl;
+			DBG_PRINT_MSG("%s", "Delete texture buffer in context layer");
 			delete buffer;
 		}
 
 		if(widgets) {
-			std::cout << "Delete widget set in context layer" << std::endl;
+			DBG_PRINT_MSG("%s", "Delete widget set in context layer");
 
 			/*
 			set<AbstractWidget*>::iterator it;
@@ -162,11 +162,26 @@ namespace BlendInt {
 	{
 		if (!obj) return false;
 
+		if(obj->m_container && obj->m_container != this) {
+
+			AbstractContainer* p = dynamic_cast<AbstractContainer*>(obj->m_container);
+			if(p) {
+				DBG_PRINT_MSG("Reference count of widget %s: %ld", obj->name().c_str(), obj->count());
+				obj->m_count++;
+				p->RemoveSubWidgetOnly(obj);
+				obj->m_count--;
+			}
+
+		}
+
 		if(obj->m_flag[AbstractWidget::WidgetFlagRegistered]) return true;
 
 		AddWidget(obj);
 
 		obj->m_flag.set(AbstractWidget::WidgetFlagRegistered);
+
+		obj->m_container = this;
+		obj->m_flag.set(AbstractWidget::WidgetFlagInContainer);
 
 		m_events->connect(obj->destroyed(), this, &ContextManager::OnDestroyObject);
 
@@ -295,12 +310,12 @@ namespace BlendInt {
 			}
 
 			if (widget_set_p->empty()) {
+				DBG_PRINT_MSG("layer %d is empty, delete it", z);
 				//delete widget_set_p; widget_set_p = 0;
 				delete m_layers[z].widgets; m_layers[z].widgets = 0;
 
 				m_layers[z].buffer->Clear();
 				delete m_layers[z].buffer; m_layers[z].buffer = 0;
-
 				m_layers.erase(z);
 			}
 
@@ -757,9 +772,15 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		for(std::set<AbstractWidget*>::iterator it = widget->m_branches.begin(); it != widget->m_branches.end(); it++)
-		{
-			DispatchDrawEvent(*it);
+		AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
+
+		if(p) {
+
+			for(std::deque<AbstractWidgetPtr>::iterator it = p->m_sub_widgets.begin(); it != p->m_sub_widgets.end(); it++)
+			{
+				DispatchDrawEvent((*it).get());
+			}
+
 		}
 	}
 
@@ -769,27 +790,35 @@ namespace BlendInt {
 		if(!obj) return;
 
 		RemoveWidget(obj);
+
 		obj->m_flag.reset(AbstractWidget::WidgetFlagRegistered);
 		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
 		// TODO: remove this widget and its children if it's in m_cursor_widget_stack
 	}
 
-#ifdef DEBUG
-
 	void ContextManager::BuildWidgetListAtCursorPoint (const Point& cursor_point,
-	        const AbstractWidget* parent)
+	        AbstractWidget* parent)
 	{
 		if (parent) {
-			for (std::set<AbstractWidget*>::iterator it =
-			        parent->m_branches.begin(); it != parent->m_branches.end();
-			        it++) {
-				if ((*it)->contain(cursor_point)) {
-					m_hover_deque->push_back(*it);
-					BuildWidgetListAtCursorPoint(cursor_point, *it);
-					break;	// if break or continue the loop?
+
+			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
+			if(p) {
+
+				for(std::deque<AbstractWidgetPtr>::iterator it = p->m_sub_widgets.begin(); it != p->m_sub_widgets.end(); it++)
+				{
+					if ((*it)->contain(cursor_point)) {
+						m_hover_deque->push_back((*it).get());
+						BuildWidgetListAtCursorPoint(cursor_point, (*it).get());
+						break;	// if break or continue the loop?
+					}
+
 				}
+
+			} else {
+
 			}
+
 		} else {
 			m_hover_deque->clear();
 
@@ -856,6 +885,8 @@ namespace BlendInt {
 			refresh_once = true;
 		}
 	}
+
+#ifdef DEBUG
 
 	void ContextManager::print ()
 	{

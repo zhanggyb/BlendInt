@@ -53,6 +53,8 @@ namespace BlendInt {
 
 	AbstractWidget* AbstractWidget::focused_widget = 0;
 
+	Size AbstractWidget::invisible_size;
+
 	AbstractWidget::AbstractWidget ()
 		: AbstractExtraForm(),
 		  m_z(0),
@@ -61,50 +63,14 @@ namespace BlendInt {
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
-	AbstractWidget::AbstractWidget (AbstractWidget* parent)
-		: m_z(0),
-			m_container(0)
-	{
-		m_events.reset(new Cpp::ConnectionScope);
-
-		if(parent) {
-			parent->m_branches.insert(this);
-			m_container = parent;
-		}
-	}
-
 	AbstractWidget::~AbstractWidget ()
 	{
-		if(m_flag[WidgetFlagContextHoverList]) {
-			ContextManager::Instance()->RemoveWidgetFromHoverDeque(this);
-		}
-
-		if(m_flag[WidgetFlagFocus]) {
-			ContextManager::Instance()->SetFocusedWidget(0);
-		}
-
+		/*
 		if(m_container) {
 			m_container->m_branches.erase(this);
 			m_container = 0;
 		}
-
-		for(std::set<AbstractWidget*>::iterator it = m_branches.begin(); it != m_branches.end(); it++)
-		{
-			(*it)->m_container = 0;
-		}
-
-		/*
-		std::set<AbstractWidget*>::iterator it;
-		while(m_children.size()) {
-			it = m_children.begin();
-			(*it)->m_parent = 0;
-			if((*it)->count() == 0)
-				delete *it;
-			m_children.erase(it);
-		}
 		*/
-
-		m_branches.clear();
 
 		m_destroyed.fire(this);
 	}
@@ -119,51 +85,39 @@ namespace BlendInt {
 		return ContextManager::Instance()->Unregister(this);
 	}
 
-	bool AbstractWidget::AddChild (AbstractWidget* child)
+	/*
+	void AbstractWidget::SetContainer(AbstractWidget* container)
 	{
-		if(child->m_container == this) return true;
+		if(!container) return;
+		if(m_container == container) return;
 
-		if(child->m_container) {
-			child->m_container->m_branches.erase(child);
+		if (container == ContextManager::Instance()) {
+
+			if(m_container) {
+				m_container->RemoveChild(this);
+			}
+
+			ContextManager::Instance()->Register(this);
+
+		} else {
+
+			AbstractContainer* p = dynamic_cast<AbstractContainer*>(container);
+
+			if(p) {
+
+				if(m_container) {
+					m_container->RemoveChild(this);
+				}
+
+				p->AddSubWidget(this);
+
+			} else {
+				DBG_PRINT_MSG("%s is not a container object", container->name().c_str());
+			}
+
 		}
-
-		child->m_container = this;
-		m_branches.insert(child);
-
-		if(child->layer() != layer()) {
-			child->SetLayer(layer());
-		}
-
-		return true;
 	}
-
-	bool AbstractWidget::SetParent(AbstractWidget* parent)
-	{
-		if(m_container == parent) return true;
-
-		if(m_container) {
-			m_container->m_branches.erase(this);
-		}
-
-		m_container = parent;
-		m_container->m_branches.insert(this);
-
-		if(layer() != m_container->layer()) {
-			SetLayer(m_container->layer());
-		}
-
-		return true;
-	}
-
-	bool AbstractWidget::RemoveChild(AbstractWidget* child)
-	{
-		if(child->m_container != this) return false;
-
-		child->m_container = 0;
-		m_branches.erase(child);
-
-		return true;
-	}
+	*/
 
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)
 	{
@@ -190,6 +144,15 @@ namespace BlendInt {
 		if(Update(FormSize, &size)) {
 			set_size(size);
 			fire_property_changed_event(FormSize);
+		}
+	}
+
+	const Size& AbstractWidget::GetSize() const
+	{
+		if(m_flag[WidgetFlagVisibility]) {
+			return size();
+		} else {
+			return invisible_size;
 		}
 	}
 

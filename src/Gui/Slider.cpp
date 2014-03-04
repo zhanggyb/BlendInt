@@ -64,12 +64,12 @@ namespace BlendInt {
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 
+		/*
 		Orientation shadedir = size().width() < size().height() ? Horizontal : Vertical;
 		const Color& color = themes()->scroll.item;
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		/*
 		GenerateShadedFormBuffers(&size(),
 				round_type(),
 				radius(),
@@ -87,12 +87,6 @@ namespace BlendInt {
 
 	SlideButton::SlideButton()
 	:  AbstractButton(), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
-	{
-		InitOnce();
-	}
-
-	SlideButton::SlideButton(AbstractWidget* parent)
-	:  AbstractButton(parent), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{
 		InitOnce();
 	}
@@ -284,7 +278,7 @@ namespace BlendInt {
 	Slider::Slider(Orientation orientation)
 	: AbstractSlider(orientation), m_slide_button(0)
 	{
-		m_slide_button.reset(new SlideButton(this));
+		m_slide_button.reset(new SlideButton);
 
 		// set default size
 		if (orientation == Vertical) {
@@ -311,31 +305,6 @@ namespace BlendInt {
 //			m_slide_button->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
 //					m_slide_button->position().y());
 //		}
-	}
-
-	Slider::Slider(Orientation orientation, AbstractWidget* parent)
-	: AbstractSlider(orientation, parent), m_slide_button(0)
-	{
-		m_slide_button.reset(new SlideButton(this));
-
-		// set default size
-		if (orientation == Vertical) {
-			set_size (18, 200);
-			set_expand_y(true);
-		} else {
-			set_size (200, 18);
-			set_expand_x(true);
-		}
-
-		unsigned int button_size = static_cast<unsigned int>(std::min (size().width(), size().height()));
-
-		m_slide_button->Resize(button_size, button_size);
-
-		m_slide_button->SetRoundType(RoundAll);
-		m_slide_button->SetRadius(button_size / 2.0f);
-
-		m_slide_button->SetPosition (position().x(), position().y());
-//		Update(SliderPropertyValue, 0);
 	}
 
 	Slider::~Slider()

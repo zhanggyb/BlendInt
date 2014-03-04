@@ -46,10 +46,6 @@ namespace BlendInt {
 
 		ToggleButton (const String& text);
 
-		ToggleButton (AbstractWidget* parent);
-
-		ToggleButton (const String& text, AbstractWidget* parent);
-
 		virtual ~ToggleButton ();
 
 	protected:

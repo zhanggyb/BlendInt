@@ -43,12 +43,6 @@ namespace BlendInt {
 		Init();
 	}
 
-	ClockWidget::ClockWidget(AbstractWidget* parent)
-	: Widget (parent), m_angle(0), m_timer(0)
-	{
-		Init();
-	}
-
 	ClockWidget::~ClockWidget ()
 	{
 	}

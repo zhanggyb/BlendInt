@@ -52,13 +52,6 @@ namespace BlendInt {
 		InitOnce();
 	}
 
-	Viewport3D::Viewport3D (AbstractWidget* parent)
-			: Widget(parent), m_default_camera(0), m_cube(0), m_grid(0), m_last_x(0),
-			  m_last_y(0), m_rX(0.0), m_rY(0.0), m_button_down(MouseButtonNone)
-	{
-		InitOnce();
-	}
-
 	Viewport3D::~Viewport3D ()
 	{
 		m_cameras.clear();

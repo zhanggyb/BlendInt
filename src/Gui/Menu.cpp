@@ -56,23 +56,6 @@ namespace BlendInt {
 		ResetHighlightBuffer(20);
 	}
 
-	Menu::Menu (AbstractWidget* parent)
-	: RoundWidget(parent), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
-	{
-
-		m_menubin.reset(new MenuItemBin);
-
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_highlight_buffer.reset(new GLArrayBuffer);
-
-		set_size(20, 20);
-
-		GenerateFormBuffer(&(size()), round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
-
-		ResetHighlightBuffer(20);
-	}
-
 	Menu::~Menu ()
 	{
 	}

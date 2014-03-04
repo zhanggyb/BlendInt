@@ -42,6 +42,7 @@
 
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Service/ContextManager.hpp>
 
 namespace BlendInt {
 
@@ -65,17 +66,15 @@ namespace BlendInt {
 		set_preferred_size(120, 80);
 	}
 
-	Widget::Widget(AbstractWidget* parent)
-	: AbstractWidget(parent)
-	{
-		set_minimal_size(0, 0);
-		set_size(120, 80);
-		set_preferred_size(120, 80);
-	}
-
 	Widget::~Widget()
 	{
+		if(hover()) {
+			ContextManager::Instance()->RemoveWidgetFromHoverDeque(this);
+		}
 
+		if(focused()) {
+			ContextManager::Instance()->SetFocusedWidget(0);
+		}
 	}
 
 	bool Widget::Update (int type, const void* data)

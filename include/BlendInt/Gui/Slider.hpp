@@ -60,8 +60,6 @@ namespace BlendInt {
 
 		SlideButton ();
 
-		SlideButton (AbstractWidget* parent);
-
 		virtual ~SlideButton ();
 
 	protected:

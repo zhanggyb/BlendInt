@@ -44,8 +44,6 @@ namespace BlendInt {
 
 		AbstractButton ();
 
-		AbstractButton (AbstractWidget* parent);
-
 		virtual ~AbstractButton ();
 
 		void set_text (const String& text);

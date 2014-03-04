@@ -46,6 +46,7 @@ OIIO_NAMESPACE_USING
 
 #include <BlendInt/Gui/FontCache.hpp>
 #include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
@@ -397,39 +398,27 @@ namespace BlendInt {
 		}
 	}
 
-	void Interface::DispatchDrawEvent(AbstractWidget* widget)
-	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(widget->position().x(),
-					 widget->position().y(),
-					 widget->z());
-
-		widget->Draw();
-
-		glPopMatrix();
-
-		for(std::set<AbstractWidget*>::iterator it = widget->m_branches.begin(); it != widget->m_branches.end(); it++)
-		{
-			DispatchDrawEvent(*it);
-		}
-	}
-
 	void Interface::BuildWidgetListAtCursorPoint (const Point& cursor_point,
 	        AbstractWidget* parent)
 	{
 		if (parent) {
 			parent->m_flag.set(AbstractWidget::WidgetFlagContextHoverList);
-			for (std::set<AbstractWidget*>::iterator it =
-			        parent->m_branches.begin(); it != parent->m_branches.end();
-			        it++) {
-				if ((*it)->contain(cursor_point)) {
-					ContextManager::context_manager->m_hover_deque->push_back(*it);
-					ContextManager::context_manager->m_hover_deque->back()->CursorEnterEvent(true);
-					BuildWidgetListAtCursorPoint(cursor_point, *it);
-					break;	// if break or continue the loop?
+
+			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
+
+			if(p) {
+				for (std::deque<AbstractWidgetPtr>::iterator it =
+				        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
+				        it++) {
+					if ((*it)->contain(cursor_point)) {
+						ContextManager::context_manager->m_hover_deque->push_back((*it).get());
+						ContextManager::context_manager->m_hover_deque->back()->CursorEnterEvent(true);
+						BuildWidgetListAtCursorPoint(cursor_point, (*it).get());
+						break;	// if break or continue the loop?
+					}
 				}
+			} else {
+
 			}
 		} else {
 			ContextManager::context_manager->m_hover_deque->clear();

@@ -38,8 +38,6 @@ namespace BlendInt {
 
 		ScrollControl ();
 
-		ScrollControl (AbstractWidget* parent);
-
 		virtual ~ScrollControl ();
 
 	protected:
@@ -77,8 +75,6 @@ namespace BlendInt {
 	public:
 
 		SliderBar (Orientation orientation = Horizontal);
-
-		SliderBar (Orientation orientation, AbstractWidget* parent);
 
 		virtual ~SliderBar ();
 
@@ -119,8 +115,6 @@ namespace BlendInt {
 	public:
 
 		ScrollBar (Orientation orientation = Horizontal);
-
-		ScrollBar (Orientation orientation, AbstractWidget* parent);
 
 		virtual ~ScrollBar ();
 

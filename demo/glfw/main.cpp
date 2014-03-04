@@ -117,9 +117,20 @@ int main(int argc, char* argv[])
 //	iv->Register();
 
 //	interface()->SetMainWidget(layout);
+	ContextManager* cm = ContextManager::Instance();
+
+	Button* btn1 = new Button;
+	btn1->set_name("btn1");
+
+	btn1->SetPosition(200, 400);
+
+	cm->Register(btn1);
+
+	cm->print();
 
 	RunLoop (win);
 
+	delete btn1;
 	Interface::Release();
 
 	Terminate();

@@ -41,8 +41,6 @@ namespace BlendInt {
 
 		AbstractSlider(Orientation orientation = Horizontal);
 
-		AbstractSlider(Orientation orientation, AbstractWidget* parent);
-
 		virtual ~AbstractSlider ();
 
 		void set_range (int value1, int value2);

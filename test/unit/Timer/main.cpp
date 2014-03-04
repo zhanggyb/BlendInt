@@ -16,7 +16,6 @@ class AnimatingWidget: public Widget
 {
 public:
 	AnimatingWidget();
-	AnimatingWidget(AbstractWidget* parent);
 
 protected:
 
@@ -41,21 +40,6 @@ AnimatingWidget::AnimatingWidget ()
 
 	set_size(500, 400);
 	set_preferred_size (500, 400);
-	set_maximal_size(500, 400);
-	set_minimal_size(500, 400);
-
-	m_timer->SetInterval(5);
-	m_timer->Start();
-}
-
-AnimatingWidget::AnimatingWidget(AbstractWidget* parent)
-	: Widget(parent), m_angle(0.0), m_timer(0)
-{
-	m_timer = new Timer;
-	events()->connect(m_timer->timeout(), this, &AnimatingWidget::AddAngle);
-
-	set_size(500, 400);
-	set_preferred_size(500, 400);
 	set_maximal_size(500, 400);
 	set_minimal_size(500, 400);
 

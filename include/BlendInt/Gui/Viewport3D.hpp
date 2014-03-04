@@ -49,8 +49,6 @@ namespace BlendInt {
 
 		Viewport3D();
 
-		Viewport3D(AbstractWidget* parent);
-
 		virtual ~Viewport3D ();
 
 		void Zoom (float factor);

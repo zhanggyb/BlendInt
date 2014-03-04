@@ -172,7 +172,7 @@ namespace BlendInt {
 		activate_events();
 		object->activate_events();
 
-		AddChild(object);
+		AddSubWidget(object);
 		LockGeometry(object, true);
 	}
 
@@ -209,7 +209,7 @@ namespace BlendInt {
 		activate_events();
 
 		LockGeometry(object, false);
-		RemoveChild(object);
+		RemoveSubWidget(object);
 	}
 
 	void VerticalLayout::MakeLayout(const Size* size, const Margin* margin, int space)

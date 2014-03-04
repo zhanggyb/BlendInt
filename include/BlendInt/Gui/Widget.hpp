@@ -45,8 +45,6 @@ namespace BlendInt {
 
 		Widget ();
 
-		Widget (AbstractWidget* parent);
-
 		virtual ~Widget();
 
 		static void SetDefaultBorderWidth (float border);

@@ -47,16 +47,6 @@ namespace BlendInt {
 		Init();
 	}
 
-	Label::Label (const String& text, AbstractWidget *parent)
-		: Widget(parent), m_text(text), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
-	{
-		set_expand_x(true);
-
-		set_size(0, 24);	// the same height of a Buttons
-
-		Init();
-	}
-
 	Label::~Label ()
 	{
 

@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
+#include <BlendInt/Service/ContextManager.hpp>
+
 namespace BlendInt {
 
 	AbstractContainer::AbstractContainer ()
@@ -32,6 +34,13 @@ namespace BlendInt {
 
 	AbstractContainer::~AbstractContainer ()
 	{
+		if(hover()) {
+			ContextManager::Instance()->RemoveWidgetFromHoverDeque(this);
+		}
+
+		if(focused()) {
+			ContextManager::Instance()->SetFocusedWidget(0);
+		}
 	}
 
 	void AbstractContainer::SetMargin (const Margin& margin)
@@ -59,8 +68,9 @@ namespace BlendInt {
 	void AbstractContainer::AddSubWidget (AbstractWidget* widget)
 	{
 		if(!widget) return;
-
 		if(widget == ContextManager::Instance()) return;	// Cannot add the context manager
+
+		AbstractContainer* old_container = 0;
 
 		// Remove the widget from the original container
 		if(widget->container()) {
@@ -72,15 +82,7 @@ namespace BlendInt {
 				ContextManager::Instance()->Unregister(widget);
 
 			} else {
-
-				AbstractContainer* origin = dynamic_cast<AbstractContainer*>(widget->container());
-
-				if(origin) {
-					origin->RemoveSubWidget(widget);
-				} else {
-					DBG_PRINT_MSG("%s", "The widget's container is not identified");
-				}
-
+				old_container = dynamic_cast<AbstractContainer*>(widget->container());
 			}
 
 		}
@@ -88,9 +90,14 @@ namespace BlendInt {
 		RefPtr<AbstractWidget> child(widget);
 		m_sub_widgets.push_back(child);
 
+		if(old_container) {
+			old_container->RemoveSubWidgetOnly(widget);
+		} else {
+			DBG_PRINT_MSG("%s", "The widget's old container is not identified");
+		}
+
 		widget->m_container = this;
 		widget->m_flag.set(WidgetFlagInContainer);
-
 	}
 
 	void AbstractContainer::RemoveSubWidget (AbstractWidget* widget)
@@ -117,5 +124,23 @@ namespace BlendInt {
 
 		}
 	}
+
+	void AbstractContainer::RemoveSubWidgetOnly (AbstractWidget* widget)
+	{
+		if(widget) {
+
+			RefPtr<AbstractWidget> child(widget);
+			WidgetDeque::iterator it = std::find(m_sub_widgets.begin(),
+			        m_sub_widgets.end(), child);
+			if (it != m_sub_widgets.end()) {
+				m_sub_widgets.erase(it);
+			} else {
+				DBG_PRINT_MSG("Warning: object %s is not found in container %s",
+				        widget->name().c_str(), name().c_str());
+			}
+
+		}
+	}
+
 
 }

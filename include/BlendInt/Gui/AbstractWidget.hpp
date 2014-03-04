@@ -80,16 +80,6 @@ namespace BlendInt {
 		 */
 		AbstractWidget ();
 
-		/**
-		 * @brief Default constructor
-		 * @param parent
-		 *
-		 * A drawable instance without a parent will be registered in
-		 * a static list -- solo, it's usually a pop-up widget such as
-		 * context menu, message box
-		 */
-		explicit AbstractWidget (AbstractWidget* parent);
-
 		virtual ~AbstractWidget ();
 
 		/**
@@ -120,11 +110,7 @@ namespace BlendInt {
 		 */
 		bool Unregister ();
 
-		bool AddChild (AbstractWidget* child);
-
-		bool SetParent (AbstractWidget* parent);
-
-		bool RemoveChild (AbstractWidget* child);
+		//void SetContainer (AbstractWidget* container);
 
 		/**
 		 * @brief Call Update() and Resize the widget
@@ -138,6 +124,14 @@ namespace BlendInt {
 		void Resize (unsigned int width, unsigned int height);
 
 		void Resize (const Size& size);
+
+		/**
+		 * @brief Get the widget size
+		 * @return
+		 * 	- The size of widget
+		 * 	- (0, 0) if the widget is hiden
+		 */
+		const Size& GetSize () const;
 
 		void SetPosition (int x, int y);
 
@@ -206,6 +200,11 @@ namespace BlendInt {
 		inline bool in_container () const
 		{
 			return m_flag[WidgetFlagInContainer];
+		}
+
+		inline bool hover () const
+		{
+			return m_flag[WidgetFlagContextHoverList];
 		}
 
 		/**
@@ -338,7 +337,9 @@ namespace BlendInt {
 			WidgetFlagContextHoverList,
 
 			/** If the widget need to be refresh in the render loop */
-			WidgetFlagRefresh
+			WidgetFlagRefresh,
+
+			WidgetFlagVisibility
 		};
 
 		/**
@@ -370,7 +371,10 @@ namespace BlendInt {
 
 		AbstractWidget* m_container;
 
-		std::set<AbstractWidget*> m_branches;
+		/**
+		 * The size for hiden widget, always should be (0, 0), use static for performance
+		 */
+		static Size invisible_size;
 
 		static AbstractWidget* focused_widget;
 

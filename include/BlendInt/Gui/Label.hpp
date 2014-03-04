@@ -48,8 +48,6 @@ namespace BlendInt {
 
 		Label (const String& label);
 
-		Label (const String& label, AbstractWidget * parent);
-
 		virtual ~Label ();
 
 		/**

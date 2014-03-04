@@ -32,12 +32,6 @@ namespace BlendInt {
 
 	}
 
-	StackedWidget::StackedWidget(AbstractWidget* parent)
-	: Widget (parent), m_index(0)
-	{
-
-	}
-
 	StackedWidget::~StackedWidget()
 	{
 

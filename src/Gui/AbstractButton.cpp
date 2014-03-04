@@ -44,13 +44,6 @@ namespace BlendInt {
 		FontCache::create(m_font);
 	}
 
-	AbstractButton::AbstractButton (AbstractWidget *parent)
-		: RoundWidget(parent), m_status_down(false), m_checkable(false),
-		  m_status_checked(false), m_status_hover(false), m_length(0)
-	{
-		FontCache::create(m_font);
-	}
-
 	AbstractButton::~AbstractButton ()
 	{
 

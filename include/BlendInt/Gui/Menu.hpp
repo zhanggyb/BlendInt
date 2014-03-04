@@ -48,8 +48,6 @@ namespace BlendInt {
 
 		Menu ();
 
-		Menu (AbstractWidget* parent);
-
 		virtual ~Menu();
 
 		void SetTitle (const String& title);

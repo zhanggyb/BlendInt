@@ -44,8 +44,6 @@ namespace BlendInt {
 
 		ClockWidget();
 
-		ClockWidget(AbstractWidget* parent);
-
 		virtual ~ClockWidget();
 
 		void set_background (const Color& color)

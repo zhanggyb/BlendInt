@@ -65,12 +65,6 @@ namespace BlendInt {
 		InitOnce();
 	}
 
-	ImageView::ImageView (AbstractWidget* parent)
-	: Widget(parent), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
-	{
-		InitOnce();
-	}
-
 	ImageView::~ImageView ()
 	{
 	}

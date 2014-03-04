@@ -38,8 +38,6 @@ namespace BlendInt {
 
 		ImageView ();
 
-		ImageView (AbstractWidget* parent);
-
 		virtual ~ImageView ();
 
 	protected:

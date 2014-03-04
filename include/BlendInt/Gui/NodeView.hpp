@@ -36,8 +36,6 @@ namespace BlendInt {
 
 		NodeView ();
 
-		NodeView (AbstractWidget* parent);
-
 	protected:
 
 		virtual bool Update (int type, const void* data);

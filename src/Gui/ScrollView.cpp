@@ -43,13 +43,6 @@ namespace BlendInt {
 		SetPreferredSize(200, 160);
 	}
 
-	ScrollView::ScrollView(AbstractWidget* parent)
-	: Widget(parent), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
-	{
-		Resize(200, 160);
-		SetPreferredSize(200, 160);
-	}
-
 	void ScrollView::set_viewport(AbstractWidget* viewport)
 	{
 		if(!viewport) return;

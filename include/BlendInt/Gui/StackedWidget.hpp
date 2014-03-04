@@ -41,8 +41,6 @@ namespace BlendInt {
 
 		StackedWidget ();
 
-		StackedWidget (AbstractWidget* parent);
-
 		virtual ~StackedWidget ();
 
 		void Add (Widget* widget);

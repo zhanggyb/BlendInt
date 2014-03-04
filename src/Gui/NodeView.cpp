@@ -30,11 +30,6 @@ namespace BlendInt {
 
 	}
 
-	NodeView::NodeView (AbstractWidget* parent)
-	: Widget(parent)
-	{
-	}
-
 	bool NodeView::Update (int type, const void* data)
 	{
 		return true;

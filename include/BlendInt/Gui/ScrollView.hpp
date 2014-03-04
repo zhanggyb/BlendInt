@@ -42,8 +42,6 @@ namespace BlendInt {
 
 		ScrollView();
 
-		ScrollView(AbstractWidget* parent);
-
 		/**
 		 * @brief set the scrollable orientation
 		 * @param flag
