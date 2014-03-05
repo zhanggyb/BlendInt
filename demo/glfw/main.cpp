@@ -29,7 +29,7 @@
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/TabFrame.hpp>
 #include <BlendInt/Gui/MenuItemBin.hpp>
-#include <BlendInt/Service/StockIcons.hpp>
+#include <BlendInt/Service/StockItems.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/ClockWidget.hpp>
@@ -121,14 +121,15 @@ int main(int argc, char* argv[])
 
 	Button btn1;
 	btn1.set_name("btn1");
-	btn1.SetVisible(true);
-
 	btn1.SetPosition(200, 200);
 
 	Frame frame;
 	frame.set_name("frame");
 	frame.SetPosition(400, 400);
-	frame.SetVisible(true);
+
+	Slider slide;
+	slide.set_name("Slide");
+	slide.SetPosition(100, 400);
 
 	cm->print();
 

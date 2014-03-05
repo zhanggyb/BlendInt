@@ -1,7 +1,7 @@
 #include "MenuTest1.hpp"
 #include <BlendInt/Gui/Menu.hpp>
 #include "InfoWidget.hpp"
-#include <BlendInt/Service/StockIcons.hpp>
+#include <BlendInt/Service/StockItems.hpp>
 
 using namespace BlendInt;
 
@@ -59,7 +59,7 @@ TEST_F(MenuTest1, Click1)
 
 	// TODO: add test code here
     //
-    RefPtr<VertexIcon> icon = StockIcons::instance->menu();
+    RefPtr<VertexIcon> icon = StockItems::instance->icon_menu();
     Menu* menubin = new Menu;
     menubin->SetRoundType(RoundAll);
 

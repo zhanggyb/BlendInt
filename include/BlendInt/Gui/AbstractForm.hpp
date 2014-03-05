@@ -120,8 +120,6 @@ namespace BlendInt {
 
 		virtual bool Update (int type, const void* data) = 0;
 
-		virtual void Draw () = 0;
-
 		/**
 		 * @brief generate vertices for drawing rectangle based on the given size and border width
 		 * @param[in] size
@@ -358,8 +356,6 @@ namespace BlendInt {
 									   GLArrayBuffer* inner_buffer,
 									   GLArrayBuffer* outer_buffer,
 									   GLArrayBuffer* highlight_buffer);
-
-		static void DispatchRender (AbstractForm* obj);
 
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 

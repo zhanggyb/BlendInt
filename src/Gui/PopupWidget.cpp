@@ -80,7 +80,7 @@ namespace BlendInt {
 					 position().y(),
 					 z());
 
-		DispatchRender(&m_shadow);
+		m_shadow.Draw ();
 
 		glPopMatrix();
 	}

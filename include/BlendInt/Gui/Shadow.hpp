@@ -61,11 +61,11 @@ namespace BlendInt {
 
 		float blur_radius () const {return m_blur_rad;}
 
+		virtual void Draw ();
+
 	protected:
 
 		virtual bool Update (int type, const void* data);
-
-		virtual void Draw ();
 
 	private:
 

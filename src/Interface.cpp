@@ -54,7 +54,7 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 #include <BlendInt/Service/ContextManager.hpp>
-#include <BlendInt/Service/StockIcons.hpp>
+#include <BlendInt/Service/StockItems.hpp>
 
 #include "Intern/ScreenBuffer.hpp"
 
@@ -117,7 +117,7 @@ namespace BlendInt {
 			success = false;
 		}
 
-		if (success && StockIcons::Initialize()) {
+		if (success && StockItems::Initialize()) {
 			// do nothing
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Stock Icons");
@@ -137,7 +137,7 @@ namespace BlendInt {
 	void Interface::Release ()
 	{
 		ContextManager::Release();
-		StockIcons::Release();
+		StockItems::Release();
 		ShaderManager::Release();
 		ThemeManager::release();
 		FontCache::releaseAll();
@@ -346,6 +346,14 @@ namespace BlendInt {
 		}
 
 		BuildWidgetListAtCursorPoint(event->position(), widget);
+
+		for (std::deque<AbstractWidget*>::iterator it =
+				cm->m_hover_deque->begin(); it != cm->m_hover_deque->end();
+				it++)
+		{
+			DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
+		}
+
 
 		for (std::deque<AbstractWidget*>::reverse_iterator it =
 				cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend();

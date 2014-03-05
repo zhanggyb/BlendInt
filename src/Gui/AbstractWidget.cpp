@@ -514,6 +514,11 @@ namespace BlendInt {
 		}
 	}
 
+	void AbstractWidget::DispatchRender(AbstractWidget* other)
+	{
+		other->Draw();
+	}
+
 	void AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
 			KeyEvent* event)
 	{

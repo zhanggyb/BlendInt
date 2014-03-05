@@ -25,21 +25,21 @@
 
 #include <iostream>
 
-#include <BlendInt/Service/StockIcons.hpp>
+#include <BlendInt/Service/StockItems.hpp>
 
 namespace BlendInt {
 
-	StockIcons* StockIcons::instance = 0;
+	StockItems* StockItems::instance = 0;
 
-	bool StockIcons::Initialize()
+	bool StockItems::Initialize()
 	{
 		if (!instance)
-			instance = new StockIcons;
+			instance = new StockItems;
 
 		return true;
 	}
 
-	void StockIcons::Release()
+	void StockItems::Release()
 	{
 		if (instance) {
 			delete instance;
@@ -47,21 +47,21 @@ namespace BlendInt {
 		}
 	}
 
-	StockIcons::StockIcons()
+	StockItems::StockItems()
 	{
 		CreateIcons();
 	}
 
-	StockIcons::~StockIcons()
+	StockItems::~StockItems()
 	{
 	}
 
-	void StockIcons::CreateIcons()
+	void StockItems::CreateIcons()
 	{
 		float vec[16][2];
 
-		m_menu.reset(new VertexIcon);
-		m_menu->set_name("Menu Icon");
+		m_icon_menu.reset(new VertexIcon);
+		m_icon_menu->set_name("Menu Icon");
 
 		for(size_t i = 0; i < 6; i++)
 		{
@@ -69,10 +69,10 @@ namespace BlendInt {
 			vec[i][1] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][1];
 		}
 
-		m_menu->load (vec, 6, VertexIcon::menu_tria_face, 2);
+		m_icon_menu->load (vec, 6, VertexIcon::menu_tria_face, 2);
 
-		m_circle.reset(new VertexIcon);
-		m_circle->set_name("Circle Icon");
+		m_icon_circle.reset(new VertexIcon);
+		m_icon_circle->set_name("Circle Icon");
 
 		for(size_t i = 0; i < 16; i++)
 		{
@@ -80,10 +80,10 @@ namespace BlendInt {
 			vec[i][1] = 0.5 * 10 * VertexIcon::scroll_circle_vert[i][1];
 		}
 
-		m_circle->load (vec, 16, VertexIcon::scroll_circle_face, 14);
+		m_icon_circle->load (vec, 16, VertexIcon::scroll_circle_face, 14);
 
-		m_checkbox.reset(new VertexIcon);
-		m_checkbox->set_name("Checkbox Icon");
+		m_icon_check.reset(new VertexIcon);
+		m_icon_check->set_name("Checkbox Icon");
 
 		for(size_t i = 0; i < 6; i++)
 		{
@@ -91,10 +91,10 @@ namespace BlendInt {
 			vec[i][1] = 0.5 * 14 * VertexIcon::check_tria_vert[i][1];
 		}
 
-		m_checkbox->load (vec, 6, VertexIcon::check_tria_face, 4);
+		m_icon_check->load (vec, 6, VertexIcon::check_tria_face, 4);
 
-		m_num.reset(new VertexIcon);
-		m_num->set_name("Number slider Icon");
+		m_icon_num.reset(new VertexIcon);
+		m_icon_num->set_name("Number slider Icon");
 
 		for(size_t i = 0; i < 3; i++)
 		{
@@ -102,7 +102,7 @@ namespace BlendInt {
 			vec[i][1] = 0.5 * 10 * VertexIcon::num_tria_vert[i][1];
 		}
 
-		m_num->load (vec, 3, VertexIcon::num_tria_face, 1);
+		m_icon_num->load (vec, 3, VertexIcon::num_tria_face, 1);
 
 	}
 }

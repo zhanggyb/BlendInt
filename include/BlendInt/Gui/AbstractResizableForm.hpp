@@ -45,6 +45,8 @@ namespace BlendInt {
 
 		void Resize (const Size& size);
 
+		virtual void Draw () = 0;
+
 	};
 
 }

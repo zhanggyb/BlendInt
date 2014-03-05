@@ -285,6 +285,8 @@ namespace BlendInt {
 		 */
 		virtual bool Update (int type, const void* data) = 0;
 
+		virtual void Draw () = 0;
+
 		/**
 		 * @brief just change m_z simply
 		 * @param z
@@ -330,6 +332,8 @@ namespace BlendInt {
 		 * @note should be used in layout only
 		 */
 		static void Resize (AbstractWidget* obj, const Size& size);
+
+		static void DispatchRender (AbstractWidget* obj);
 
 		static void dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event);
 

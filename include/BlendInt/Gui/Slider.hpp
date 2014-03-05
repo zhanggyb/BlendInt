@@ -40,47 +40,15 @@ namespace BlendInt {
 
 		virtual ~SlideSwitch ();
 
-	protected:
-
-		virtual bool Update (int type, const void* data);
-
 		virtual void Draw ();
-
-	private:
-
-		void InitOnce ();
-
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
-	};
-
-	class SlideButton: public AbstractButton
-	{
-	public:
-
-		SlideButton ();
-
-		virtual ~SlideButton ();
 
 	protected:
 
 		virtual bool Update (int type, const void* data);
 
-		virtual void Draw ();
-
-		virtual void MouseMoveEvent (MouseEvent* event);
-
-		virtual void MousePressEvent (MouseEvent* event);
-
-		virtual void MouseReleaseEvent (MouseEvent* event);
-
 	private:
 
 		void InitOnce ();
-
-		Point m_move_start;
-
-		Point m_position_origin;
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
@@ -100,9 +68,7 @@ namespace BlendInt {
 
 		virtual ~Slider ();
 
-		void set_control_size (size_t size);
-
-		void set_control_widget (SlideButton *widget);
+		void SetSwitchSize (size_t size);
 
 	protected:
 
@@ -122,7 +88,7 @@ namespace BlendInt {
 		 */
 		int get_space ();
 
-		RefPtr<SlideButton> m_slide_button;
+		RefPtr<SlideSwitch> m_switch;
 
 	private:
 

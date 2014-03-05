@@ -36,21 +36,21 @@ namespace BlendInt {
 	 *
 	 * MUST initialized in Interface::Initialize()
 	 */
-	class StockIcons
+	class StockItems
 	{
-		DISALLOW_COPY_AND_ASSIGN(StockIcons);
+		DISALLOW_COPY_AND_ASSIGN(StockItems);
 
 	public:
 
-		static StockIcons* instance;
+		static StockItems* instance;
 
-		RefPtr<VertexIcon> menu () const {return m_menu;}
+		RefPtr<VertexIcon> icon_menu () const {return m_icon_menu;}
 
-		RefPtr<VertexIcon> circle () const {return m_circle;}
+		RefPtr<VertexIcon> icon_circle () const {return m_icon_circle;}
 
-		RefPtr<VertexIcon> checkbox() const {return m_checkbox;}
+		RefPtr<VertexIcon> icon_check() const {return m_icon_check;}
 
-		RefPtr<VertexIcon> num () const {return m_num;}
+		RefPtr<VertexIcon> icon_num () const {return m_icon_num;}
 
 	private:
 
@@ -63,12 +63,12 @@ namespace BlendInt {
 		/**
 		 * @brief Default constructor
 		 */
-		StockIcons ();
+		StockItems ();
 
 		/**
 		 * @brief private destructor
 		 */
-		~StockIcons ();
+		~StockItems ();
 
 		/**
 		 * @brief Create default icons
@@ -77,13 +77,13 @@ namespace BlendInt {
 		 */
 		void CreateIcons ();
 
-		RefPtr<VertexIcon> m_menu;
+		RefPtr<VertexIcon> m_icon_menu;
 
-		RefPtr<VertexIcon> m_circle;
+		RefPtr<VertexIcon> m_icon_circle;
 
-		RefPtr<VertexIcon> m_checkbox;
+		RefPtr<VertexIcon> m_icon_check;
 
-		RefPtr<VertexIcon> m_num;
+		RefPtr<VertexIcon> m_icon_num;
 	};
 
 }
