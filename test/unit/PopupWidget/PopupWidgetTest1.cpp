@@ -30,8 +30,6 @@ TEST_F(PopupWidgetTest1, Foo1)
 	
 	popup->SetPosition(200, 200);
 	popup->Resize(200, 400);
-
-    popup->Register();
 	
 	RunLoop(window);
 

@@ -36,8 +36,6 @@ TEST_F(ButtonBoxTest1, Add1)
 	box->Add(button1);
 	box->Add(button2);
 
-    box->Register();
-
 	RunLoop(window);
 
 	Terminate();
@@ -67,8 +65,6 @@ TEST_F(ButtonBoxTest1, Resize1)
 	box->Add(button2);
 
 	box->Resize(200, 40);
-
-    box->Register();
 
 	RunLoop(window);
 

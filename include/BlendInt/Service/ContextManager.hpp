@@ -66,20 +66,16 @@ namespace BlendInt {
 	public:
 
 		friend class Interface;
+		friend class AbstractWidget;
+		friend class AbstractContainer;
 
 		static ContextManager* instance;
 
-		bool Register (AbstractWidget* obj);
-
-		bool Unregister (AbstractWidget* obj);
+		bool AddSubWidget (AbstractWidget* obj);
 
 		size_t index_size () const {return m_index.size();}
 
 		size_t layer_size () const {return m_layers.size();}
-
-		void RemoveWidgetFromHoverDeque (AbstractWidget* widget);
-
-		void SetFocusedWidget (AbstractWidget* widget);
 
 		void RefreshLayer (int layer);
 
@@ -118,6 +114,12 @@ namespace BlendInt {
 		ContextManager ();
 
 		~ContextManager ();
+
+		bool Unregister (AbstractWidget* obj);
+
+		void RemoveWidgetFromHoverDeque (AbstractWidget* widget);
+
+		void SetFocusedWidget (AbstractWidget* widget);
 
 		void ResizeFromInterface (const Size& size);
 

@@ -31,8 +31,6 @@ TEST_F(HLayoutTest1, Mix1)
 	hlayout->Add(widget1);
 	hlayout->Add(vlayout);
 
-    hlayout->Register();
-
 	RunLoop(window);
 
 	Terminate();

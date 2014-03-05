@@ -52,6 +52,8 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
+		void Add (AbstractWidget* widget);
+
 	protected:
 
 		virtual bool Update (int type, const void* data);

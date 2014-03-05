@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <assert.h>
+
 #include <iostream>
 #include <stdlib.h>
 
@@ -58,17 +60,9 @@ namespace BlendInt {
 
 		if (widgets) {
 			DBG_PRINT_MSG("%s", "Delete widget set in context layer");
-
-			/*
-			 set<AbstractWidget*>::iterator it;
-
-			 for(it = widgets->begin(); it != widgets->end(); it++)
-			 {
-			 if((*it)->count() == 0) delete *it;
-			 }
-			 */
-
+			assert(widgets->size() == 0);
 			widgets->clear();
+			delete widgets;
 		}
 	}
 
@@ -124,15 +118,29 @@ namespace BlendInt {
 		set<AbstractWidget*>* widget_set_p = 0;
 
 		for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
-		        layer_iter++) {
+		        layer_iter++)
+		{
 			widget_set_p = layer_iter->second.widgets;
 			for (widget_iter = widget_set_p->begin();
-			        widget_iter != widget_set_p->end(); widget_iter++) {
+			        widget_iter != widget_set_p->end(); widget_iter++)
+			{
 				(*widget_iter)->destroyed().disconnectOne(this,
 				        &ContextManager::OnDestroyObject);
 				//if((*widget_iter)->count() == 0) delete *widget_iter;
 				if ((*widget_iter)->m_flag[AbstractWidget::WidgetFlagManaged]) {
+
+					(*widget_iter)->destroyed().disconnectOne(this,
+					        &ContextManager::OnDestroyObject);
 					delete *widget_iter;
+
+				} else {
+
+					(*widget_iter)->destroyed().disconnectOne(this,
+					        &ContextManager::OnDestroyObject);
+					(*widget_iter)->m_container = 0;
+					(*widget_iter)->m_flag.reset(
+					        AbstractWidget::WidgetFlagInContextManager);
+
 				}
 			}
 
@@ -140,6 +148,7 @@ namespace BlendInt {
 		}
 
 		m_deque.clear();
+
 		if (m_screenbuffer)
 			delete m_screenbuffer;
 
@@ -152,10 +161,9 @@ namespace BlendInt {
 		}
 	}
 
-	bool ContextManager::Register (AbstractWidget* obj)
+	bool ContextManager::AddSubWidget (AbstractWidget* obj)
 	{
-		if (!obj)
-			return false;
+		if (!obj) return false;
 		if (obj->m_flag[AbstractWidget::WidgetFlagInContextManager])
 			return true;
 
@@ -164,11 +172,7 @@ namespace BlendInt {
 			AbstractContainer* p =
 			        dynamic_cast<AbstractContainer*>(obj->m_container);
 			if (p) {
-				DBG_PRINT_MSG("Reference count of widget %s: %ld",
-				        obj->name().c_str(), obj->count());
-				obj->m_count++;
 				p->RemoveSubWidgetOnly(obj);
-				obj->m_count--;
 			}
 
 		}
@@ -191,19 +195,23 @@ namespace BlendInt {
 		if (!obj)
 			return false;
 
-		if (!obj->m_flag[AbstractWidget::WidgetFlagInContextManager])
+		if (!obj->m_flag[AbstractWidget::WidgetFlagInContextManager]) {
+			DBG_PRINT_MSG("Widget %s is not in context manager", obj->name().c_str());
 			return true;
+		}
 
 		if (!RemoveWidget(obj)) {
+			obj->m_container = 0;
 			obj->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);
 			DBG_PRINT_MSG(
-			        "object: %s is not in stored in layer %d in context manager",
+			        "object: %s is not stored in layer %d in context manager",
 			        obj->name().c_str(), obj->z());
+			obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 			return false;
 		}
 
+		obj->m_container = 0;
 		obj->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);
-
 		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
 		return true;
@@ -645,7 +653,7 @@ namespace BlendInt {
 		GLsizei height = size().height();
 
 		// Create and set texture to render to.
-		GLTexture2D* tex = ContextManager::m_main_buffer;
+		GLTexture2D* tex = m_main_buffer;
 		tex->Generate();
 		tex->Bind();
 		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
@@ -804,16 +812,25 @@ namespace BlendInt {
 		}
 	}
 
-	void ContextManager::OnDestroyObject (AbstractWidget* obj)
+	void ContextManager::OnDestroyObject (AbstractWidget* widget)
 	{
-		std::cout << "Get event" << std::endl;
-		if (!obj)
+		if (!widget)
 			return;
 
-		RemoveWidget(obj);
+		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the context manager", widget->name().c_str());
 
-		obj->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);
-		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
+		if(widget->hover()) {
+			RemoveWidgetFromHoverDeque(widget);
+		}
+
+		if(widget->focused()) {
+			SetFocusedWidget(0);
+		}
+
+		RemoveWidget(widget);
+
+		widget->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);
+		widget->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
 		// TODO: remove this widget and its children if it's in m_cursor_widget_stack
 	}

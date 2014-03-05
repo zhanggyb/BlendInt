@@ -57,9 +57,24 @@ namespace BlendInt {
 
 		void SetMargin (int left, int right, int top, int bottom);
 
-		void AddSubWidget (AbstractWidget* widget);
+		bool AddSubWidget (AbstractWidget* widget);
 
-		void RemoveSubWidget (AbstractWidget* widget);
+		bool RemoveSubWidget (AbstractWidget* widget);
+
+		size_t sub_widget_size () const {return m_sub_widgets.size();}
+
+#ifdef DEBUG
+		void print ();
+#endif
+
+	protected:
+
+		void ClearSubWidgets ();
+
+		WidgetDeque& sub_widgets ()
+		{
+			return m_sub_widgets;
+		}
 
 	private:
 

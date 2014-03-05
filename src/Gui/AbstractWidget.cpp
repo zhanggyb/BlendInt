@@ -76,16 +76,6 @@ namespace BlendInt {
 		m_destroyed.fire(this);
 	}
 
-	bool AbstractWidget::Register ()
-	{
-		return ContextManager::instance->Register(this);
-	}
-
-	bool AbstractWidget::Unregister ()
-	{
-		return ContextManager::instance->Unregister(this);
-	}
-
 	/*
 	 void AbstractWidget::SetContainer(AbstractWidget* container)
 	 {
@@ -319,7 +309,7 @@ namespace BlendInt {
 
 			if(Update (WidgetLayer, &z)) {
 				m_z = z;
-				ContextManager::instance->Register(this);
+				ContextManager::instance->AddSubWidget(this);
 				fire_property_changed_event(WidgetLayer);
 			}
 		} else {

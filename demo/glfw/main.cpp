@@ -119,17 +119,11 @@ int main(int argc, char* argv[])
 //	interface()->SetMainWidget(layout);
 	ContextManager* cm = ContextManager::instance;
 
-	Button btn1;
-	btn1.set_name("btn1");
-	btn1.SetPosition(200, 200);
-
 	Frame frame;
 	frame.set_name("frame");
 	frame.SetPosition(400, 400);
 
-	Slider slide;
-	slide.set_name("Slide");
-	slide.SetPosition(100, 400);
+	Widget* widget = manage(new Widget);
 
 	cm->print();
 

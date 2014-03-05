@@ -347,12 +347,14 @@ namespace BlendInt {
 
 		BuildWidgetListAtCursorPoint(event->position(), widget);
 
+		/*
 		for (std::deque<AbstractWidget*>::iterator it =
 				cm->m_hover_deque->begin(); it != cm->m_hover_deque->end();
 				it++)
 		{
 			DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
 		}
+		*/
 
 
 		for (std::deque<AbstractWidget*>::reverse_iterator it =
@@ -376,7 +378,7 @@ namespace BlendInt {
 
 			if(event->accepted()) {
 				cm->SetFocusedWidget(*it);
-				DBG_PRINT_MSG("widget is focused: %s", (*it)->name().c_str());;
+				// DBG_PRINT_MSG("widget is focused: %s", (*it)->name().c_str());;
 				break;
 			}
 		}

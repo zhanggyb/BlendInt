@@ -57,8 +57,6 @@ int main (int argc, char* argv[])
 	tf->SetPosition(200, 200);
     tf->Resize(400, 400);
 
-    tf->Register();
-
     RunLoop(window);
 
     Terminate();

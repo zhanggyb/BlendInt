@@ -65,8 +65,6 @@ int main (int argc, char* argv[])
 
     tf->Resize(400, 400);
 
-    tf->Register();
-
     RunLoop(window);
 
     Terminate();

@@ -47,8 +47,6 @@ TEST_F(VLayoutTest1, Add1)
 	vlayout->Add(widget1);
 	vlayout->Add(hlayout);
 
-    vlayout->Register();
-
 	RunLoop(window);
 
 	Terminate();

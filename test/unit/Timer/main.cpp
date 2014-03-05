@@ -133,8 +133,6 @@ int main (int argc, char* argv[])
 
 	widget->SetPosition(200, 200);
 
-    widget->Register();
-
     RunLoop(window);
 
     Terminate();

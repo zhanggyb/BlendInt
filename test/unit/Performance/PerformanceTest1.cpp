@@ -36,7 +36,6 @@ TEST_F(PerformanceTest1, Layout1)
     for(int i = 0; i < max_y; i++)
     {
         layout[i] = new HLayout;
-        layout[i]->Register();
 
         for(int j = 0; j < max_x; j++)
         {

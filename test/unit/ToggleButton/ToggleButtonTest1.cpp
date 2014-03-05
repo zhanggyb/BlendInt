@@ -28,7 +28,6 @@ TEST_F(ToggleButtonTest1, Foo1)
     // TODO: add test code here
     ToggleButton* btn = new ToggleButton;
     btn->SetPosition(200, 200);
-    btn->Register();
 
     RunLoop(win);
 

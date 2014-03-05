@@ -37,8 +37,6 @@ TEST_F(HLayoutTest1, Add1)
 	hlayout->Add(widget1);
 	hlayout->Add(widget2);
 
-    hlayout->Register();
-
 	RunLoop(window);
 
 	delete hlayout;
@@ -75,8 +73,6 @@ TEST_F(HLayoutTest1, Add2)
 
 	hlayout->Add(widget1);
 	hlayout->Add(widget2);
-
-    hlayout->Register();
 
 	RunLoop(window);
 
@@ -116,8 +112,6 @@ TEST_F(HLayoutTest1, Add3)
 	hlayout->Add(widget1);
 	hlayout->Add(widget2);
 
-    hlayout->Register();
-
 	RunLoop(window);
 
 	delete hlayout;
@@ -152,8 +146,6 @@ TEST_F(HLayoutTest1, Add4)
 
 	hlayout->Add(widget1);
 	hlayout->Add(widget2);
-
-    hlayout->Register();
 
 	RunLoop(window);
 	
@@ -201,8 +193,6 @@ TEST_F(HLayoutTest1, Add5)
 	hlayout->Add(widget3);
 	hlayout->Add(widget4);
 
-    hlayout->Register();
-
 	RunLoop(window);
 
 	delete hlayout;
@@ -246,8 +236,6 @@ TEST_F(HLayoutTest1, Add6)
 	hlayout->Add(widget3);
 	hlayout->Add(widget4);
 
-    hlayout->Register();
-
 	RunLoop(window);
 
 	delete hlayout;
@@ -286,8 +274,6 @@ TEST_F(HLayoutTest1, Add7)
 
 	hlayout->Resize(80, 100);
 
-    hlayout->Register();
-
 	RunLoop(window);
 
 	delete hlayout;
@@ -323,8 +309,6 @@ TEST_F(HLayoutTest1, Resize1)
 
 	hlayout->Resize(400, 200);
 
-    hlayout->Register();
-
 	RunLoop(window);
 
 	delete hlayout;
@@ -356,8 +340,6 @@ TEST_F(HLayoutTest1, Resize2)
 	hlayout->Add(widget2);
 
 	hlayout->Resize(400, 200);
-
-    hlayout->Register();
 
 	RunLoop(window);
 
@@ -397,8 +379,6 @@ TEST_F(HLayoutTest1, Resize3)
 
 	hlayout->Resize(80, 100);
 
-    hlayout->Register();
-
 	RunLoop(window);
 
 	delete hlayout;
@@ -434,8 +414,6 @@ TEST_F(HLayoutTest1, SetMargin1)
 	hlayout->Add(widget2);
 
     hlayout->Resize(400, 200);
-
-    hlayout->Register();
 
     hlayout->SetMargin(20, 20, 20, 20);
 
@@ -475,7 +453,6 @@ TEST_F(HLayoutTest1, SetSpace1)
 
     hlayout->Resize(400, 200);
 
-    hlayout->Register();
     hlayout->SetSpace(10);
 
 	RunLoop(window);

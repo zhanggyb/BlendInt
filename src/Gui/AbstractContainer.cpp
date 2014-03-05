@@ -31,24 +31,30 @@ namespace BlendInt {
 
 	AbstractContainer::AbstractContainer ()
 	{
-		ContextManager::instance->Register(this);
+		ContextManager::instance->AddSubWidget(this);
 	}
 
 	AbstractContainer::~AbstractContainer ()
 	{
-		if(hover()) {
-			ContextManager::instance->RemoveWidgetFromHoverDeque(this);
-		}
-
-		if(focused()) {
-			ContextManager::instance->SetFocusedWidget(0);
-		}
-
 		for(WidgetDeque::iterator it = m_sub_widgets.begin(); it != m_sub_widgets.end(); it++)
 		{
 			// check if need to delete
 			if((*it)->m_flag[AbstractWidget::WidgetFlagManaged]) {
+
+				(*it)->destroyed().disconnectOne(this,
+						&AbstractContainer::OnSubWidgetDestroyed);
 				delete *it;
+
+			} else {
+
+				// Move the sub widget to context manager
+				(*it)->destroyed().disconnectOne(this,
+				        &AbstractContainer::OnSubWidgetDestroyed);
+				(*it)->m_container = 0;
+
+				ContextManager::instance->AddSubWidget(*it);
+				(*it)->m_flag.reset(WidgetFlagInContainer);
+
 			}
 		}
 	}
@@ -75,22 +81,26 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractContainer::AddSubWidget (AbstractWidget* widget)
+	bool AbstractContainer::AddSubWidget (AbstractWidget* widget)
 	{
-		if(!widget) return;
-		if(widget == ContextManager::instance) return;	// Cannot add the context manager
+		if(!widget) return false;
+		if(widget == ContextManager::instance) {
+			DBG_PRINT_MSG("%s", "Cannot add context manager in container");
+			return false;
+		}
 
 		AbstractContainer* old_container = 0;
 
 		// Remove the widget from the original container
 		if(widget->container()) {
 
-			if(widget->container() == this) return;	// already contained in this
+			if(widget->container() == this) {
+				DBG_PRINT_MSG("%s", "The widget is already in this container");
+				return true;
+			}
 
 			if(widget->container() == ContextManager::instance) {
-
 				ContextManager::instance->Unregister(widget);
-
 			} else {
 				old_container = dynamic_cast<AbstractContainer*>(widget->container());
 			}
@@ -101,43 +111,79 @@ namespace BlendInt {
 
 		if(old_container) {
 			old_container->RemoveSubWidgetOnly(widget);
-		} else {
-			DBG_PRINT_MSG("%s", "The widget's old container is not identified");
 		}
 
 		widget->m_container = this;
 		widget->m_flag.set(WidgetFlagInContainer);
 
+		// TODO: set layer and lock the geometry of the sub widget
+
 		events()->connect(widget->destroyed(), this, &AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
 	}
 
-	void AbstractContainer::RemoveSubWidget (AbstractWidget* widget)
+	bool AbstractContainer::RemoveSubWidget (AbstractWidget* widget)
 	{
-		if(widget) {
-			//widget->SetContainer(0);
-			//m_sub_widgets.erase(widget);
+		if (widget) {
 
-			if(widget->container() == this) {
+			if (widget->container() == this) {
 
-				widget->destroyed().disconnectOne(this, &AbstractContainer::OnSubWidgetDestroyed);
-
+				widget->destroyed().disconnectOne(this,
+				        &AbstractContainer::OnSubWidgetDestroyed);
 				widget->m_container = 0;
 
-				ContextManager::instance->Register(widget);
+				ContextManager::instance->AddSubWidget(widget);
 
-				WidgetDeque::iterator it = std::find(m_sub_widgets.begin(), m_sub_widgets.end(), widget);
-				if(it != m_sub_widgets.end()) {
+				WidgetDeque::iterator it = std::find(m_sub_widgets.begin(),
+				        m_sub_widgets.end(), widget);
+
+				if (it != m_sub_widgets.end()) {
 					m_sub_widgets.erase(it);
-
 					widget->m_flag.reset(WidgetFlagInContainer);
-
 				} else {
-					DBG_PRINT_MSG("Warning: object %s is not found in container %s", widget->name().c_str(), name().c_str());
+					DBG_PRINT_MSG(
+					        "Warning: object %s is not found in container %s",
+					        widget->name().c_str(), name().c_str());
+					return false;
 				}
 
+			} else {
+				return false;
 			}
 
+			return true;
+
+		} else {
+			return false;
 		}
+	}
+
+#ifdef DEBUG
+
+	void AbstractContainer::print()
+	{
+		for(WidgetDeque::iterator it = m_sub_widgets.begin(); it != m_sub_widgets.end(); it++)
+		{
+			// check if need to delete
+			DBG_PRINT_MSG("Sub widget %s in %s", (*it)->name().c_str(), name().c_str());
+		}
+	}
+
+#endif
+
+	void AbstractContainer::ClearSubWidgets ()
+	{
+		for(WidgetDeque::iterator it = m_sub_widgets.begin(); it != m_sub_widgets.end(); it++)
+		{
+			(*it)->destroyed().disconnectOne(this, &AbstractContainer::OnSubWidgetDestroyed);
+
+			if((*it)->m_flag[AbstractWidget::WidgetFlagManaged]) {
+				delete *it;
+			}
+		}
+
+		m_sub_widgets.clear();
 	}
 
 	void AbstractContainer::OnSubWidgetDestroyed(AbstractWidget* widget)
@@ -159,7 +205,6 @@ namespace BlendInt {
 	void AbstractContainer::RemoveSubWidgetOnly (AbstractWidget* widget)
 	{
 		if(widget) {
-
 			widget->destroyed().disconnectOne(this, &AbstractContainer::OnSubWidgetDestroyed);
 
 			WidgetDeque::iterator it = std::find(m_sub_widgets.begin(),

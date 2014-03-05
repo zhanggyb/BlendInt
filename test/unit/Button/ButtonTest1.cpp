@@ -43,15 +43,9 @@ TEST_F(ButtonTest1, Foo1)
     bt3->SetPosition(400, 200);
     bt3->set_name("Button 3");
     
-    bt1->Register();
-    bt2->Register();
-    bt3->Register();
-
     hl1->Add(bt1);
     hl1->Add(bt2);
     hl1->Add(bt3);
-
-    hl1->Register();
 
     RunLoop(win);
 

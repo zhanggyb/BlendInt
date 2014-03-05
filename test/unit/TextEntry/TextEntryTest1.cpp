@@ -30,11 +30,8 @@ TEST_F(TextEntryTest1, Foo1)
     TextEntry* lineedit = new TextEntry;
  	lineedit->SetPosition(200, 200);
     
-    lineedit->Register();
-
     Label* label = new Label("Label");
     label->SetPosition(420, 200);
-    label->Register();
 
 	RunLoop(window);
 

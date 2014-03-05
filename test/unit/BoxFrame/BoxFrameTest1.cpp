@@ -40,8 +40,6 @@ TEST_F(BoxFrameTest1, SetLayout1)
 
 	boxframe->SetLayout(hlayout);
 
-    boxframe->Register();
-
 	RunLoop(window);
 
 	Terminate();
@@ -74,8 +72,6 @@ TEST_F(BoxFrameTest1, Move1)
 	boxframe->SetLayout(hlayout);
 
 	boxframe->SetPosition(400, 400);
-
-    boxframe->Register();
 
 	RunLoop(window);
 

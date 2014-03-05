@@ -38,8 +38,6 @@ TEST_F(MenuTest1, Foo1)
     menubin->AddMenuItem("MenuItem4");
     menubin->AddMenuItem("MenuItem5");
 
-    menubin->Register();
-
 	RunLoop(window);
 
 	Terminate();
@@ -73,14 +71,10 @@ TEST_F(MenuTest1, Click1)
     menubin->AddMenuItem(icon, "MenuItem5", "Ctrl + E");
     */
     
-    menubin->Register();
-
 	InfoWidget* info = new InfoWidget;
 	
 	info->SetPosition(600, 200);
 
-    info->Register();
-	
 	Interface::instance->events()->connect(menubin->triggered(), info, &InfoWidget::onShowText);
 
 	RunLoop(window);

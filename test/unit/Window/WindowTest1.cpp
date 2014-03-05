@@ -29,7 +29,6 @@ TEST_F(WindowTest1, Create1)
     // TODO: add test code here
     ClockWidget* m_clock = new ClockWidget;
     m_clock->SetPosition(200, 200);
-    m_clock->Register();
 
     RunLoop (win);
 

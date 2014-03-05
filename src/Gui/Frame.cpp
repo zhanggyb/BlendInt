@@ -60,10 +60,65 @@ namespace BlendInt {
 		// TODO Auto-generated destructor stub
 	}
 
+	void Frame::Add (AbstractWidget* widget)
+	{
+		if(sub_widgets().size() >= 1) {
+			ClearSubWidgets();
+		}
+
+		if (AddSubWidget(widget)) {
+			SetPosition(widget, position().x() + margin().left(),
+			        position().y() + margin().bottom());
+			Resize(widget, size().width() - margin().left() - margin().right(),
+			        size().height() - margin().top() - margin().bottom());
+		}
+	}
 
 	bool Frame::Update (int type, const void* data)
 	{
-		return true;
+		switch (type) {
+
+			case FormSize: {
+				if (sub_widgets().size()) {
+					const Size* size_p = static_cast<const Size*>(data);
+					Resize(sub_widgets().front(),
+					        size_p->width() - margin().left()
+					                - margin().right(),
+					        size_p->height() - margin().top()
+					                - margin().bottom());
+				}
+				return true;
+			}
+
+			case FormPosition: {
+				if (sub_widgets().size()) {
+					const Point* pos_p = static_cast<const Point*>(data);
+					SetPosition(sub_widgets().front(),
+					        pos_p->x() + margin().left(),
+					        pos_p->y() + margin().bottom());
+				}
+				return true;
+			}
+
+			case FrameMargin: {
+
+				if (sub_widgets().size()) {
+					const Margin* margin_p = static_cast<const Margin*>(data);
+					SetPosition(sub_widgets().front(),
+					        position().x() + margin_p->left(),
+					        position().y() + margin_p->bottom());
+					Resize(sub_widgets().front(),
+					        size().width() - margin_p->left()
+					                - margin_p->right(),
+					        size().height() - margin_p->top()
+					                - margin_p->bottom());
+				}
+				return true;
+			}
+
+			default:
+				return true;
+		}
 	}
 
 	void Frame::CursorEnterEvent (bool entered)

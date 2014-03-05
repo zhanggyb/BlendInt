@@ -57,6 +57,13 @@ namespace BlendInt {
 
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
 
+	template<typename T>
+	T* manage (T* obj)
+	{
+		obj->set_manage();
+		return obj;
+	}
+
 	/**
 	 * @brief The base abstract class for widgets
 	 *
@@ -72,6 +79,9 @@ namespace BlendInt {
 		friend class Interface;
 		friend class AbstractContainer;
 
+		template <typename T> friend T* manage (T* obj);
+
+
 		/**
 		 * @brief The default constructor
 		 */
@@ -81,34 +91,6 @@ namespace BlendInt {
 		 * @brief Destructor
 		 */
 		virtual ~AbstractWidget ();
-
-		/**
-		 * @brief Register this widget in context manager
-		 * @return
-		 * 	- true Succeed to register
-		 * 	- false Fail to register because this is locked
-		 *
-		 * Register this widget in context manager so that it can be drawn in window and receive
-		 * device events.
-		 *
-		 * @note An unregistered widget still can be drawn or react device events passed from
-		 * superior object.
-		 */
-		bool Register ();
-
-		/**
-		 * @brief Unregister this widget from context manager
-		 * @return
-		 * 	- true Scceed to unregister
-		 * 	- false This widget is not in context or it's locked
-		 *
-		 * 	Unregister this widget from context manager so that it will not be drawn in window and
-		 * 	do not receive device events.
-		 *
-		 * @note An unregistered widget still can be drawn or react device events passed from
-		 * superior object.
-		 */
-		bool Unregister ();
 
 		/**
 		 * @brief Resize the widget
@@ -184,9 +166,14 @@ namespace BlendInt {
 			return m_flag[WidgetFlagLockGeometry];
 		}
 
-		inline bool registered() const
+		inline bool in_context_manager() const
 		{
 			return m_flag[WidgetFlagInContextManager];
+		}
+
+		inline bool in_container () const
+		{
+			return m_flag[WidgetFlagInContainer];
 		}
 
 		void activate_events ()
@@ -207,11 +194,6 @@ namespace BlendInt {
 		inline bool focused () const
 		{
 			return m_flag[WidgetFlagFocus];
-		}
-
-		inline bool in_container () const
-		{
-			return m_flag[WidgetFlagInContainer];
 		}
 
 		inline bool hover () const
@@ -365,6 +347,11 @@ namespace BlendInt {
 			WidgetFlagManaged
 		};
 
+		void set_manage ()
+		{
+			m_flag.set(WidgetFlagManaged);
+		}
+
 		/**
 		 * @brief Used in Interface class to render the widget to a screenbuffer
 		 * @param tex
@@ -410,7 +397,6 @@ namespace BlendInt {
 		}
 
 #endif
-
 	};
 
 } /* namespace BlendInt */

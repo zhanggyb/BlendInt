@@ -37,8 +37,6 @@
 
 namespace BlendInt {
 
-	class ContextManager;
-
 	/**
 	 * @brief The base class of most BlendInt objects
 	 *
@@ -76,8 +74,6 @@ namespace BlendInt {
 		}
 
 	private:
-
-		friend class ContextManager;
 
 		size_t m_count;
 

@@ -53,18 +53,12 @@ namespace BlendInt {
 		set_size(120, 80);
 		set_preferred_size(120, 80);
 
-		ContextManager::instance->Register(this);
+		ContextManager::instance->AddSubWidget(this);
 	}
 
 	Widget::~Widget()
 	{
-		if(hover()) {
-			ContextManager::instance->RemoveWidgetFromHoverDeque(this);
-		}
 
-		if(focused()) {
-			ContextManager::instance->SetFocusedWidget(0);
-		}
 	}
 
 	bool Widget::Update (int type, const void* data)
