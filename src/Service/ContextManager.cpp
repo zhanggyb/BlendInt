@@ -180,7 +180,6 @@ namespace BlendInt {
 		AddWidget(obj);
 
 		obj->m_flag.set(AbstractWidget::WidgetFlagInContextManager);
-
 		obj->m_container = this;
 		obj->m_flag.reset(AbstractWidget::WidgetFlagInContainer);
 

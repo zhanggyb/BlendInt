@@ -66,49 +66,8 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget ()
 	{
-		/*
-		 if(m_container) {
-		 m_container->m_branches.erase(this);
-		 m_container = 0;
-		 }
-		 */
-
 		m_destroyed.fire(this);
 	}
-
-	/*
-	 void AbstractWidget::SetContainer(AbstractWidget* container)
-	 {
-	 if(!container) return;
-	 if(m_container == container) return;
-
-	 if (container == ContextManager::Instance()) {
-
-	 if(m_container) {
-	 m_container->RemoveChild(this);
-	 }
-
-	 ContextManager::Instance()->Register(this);
-
-	 } else {
-
-	 AbstractContainer* p = dynamic_cast<AbstractContainer*>(container);
-
-	 if(p) {
-
-	 if(m_container) {
-	 m_container->RemoveChild(this);
-	 }
-
-	 p->AddSubWidget(this);
-
-	 } else {
-	 DBG_PRINT_MSG("%s is not a container object", container->name().c_str());
-	 }
-
-	 }
-	 }
-	 */
 
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)
 	{
@@ -312,6 +271,7 @@ namespace BlendInt {
 				ContextManager::instance->AddSubWidget(this);
 				fire_property_changed_event(WidgetLayer);
 			}
+
 		} else {
 			if(Update (WidgetLayer, &z)) {
 				m_z = z;

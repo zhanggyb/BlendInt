@@ -35,11 +35,11 @@ TEST_F(PerformanceTest1, Layout1)
     int y_pos = 5;
     for(int i = 0; i < max_y; i++)
     {
-        layout[i] = new HLayout;
+        layout[i] = manage(new HLayout);
 
         for(int j = 0; j < max_x; j++)
         {
-            btn[j] = new Button;
+            btn[j] = manage(new Button);
             btn[j]->SetPreferredSize(25, btn[j]->size().height());
             layout[i]->Add(btn[j]);
         }

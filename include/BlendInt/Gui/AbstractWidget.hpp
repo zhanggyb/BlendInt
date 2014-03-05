@@ -159,8 +159,6 @@ namespace BlendInt {
 			return m_z;
 		}
 
-		//void reset_z (int z);
-
 		inline bool locked () const
 		{
 			return m_flag[WidgetFlagLockGeometry];
@@ -268,12 +266,6 @@ namespace BlendInt {
 		virtual bool Update (int type, const void* data) = 0;
 
 		virtual void Draw () = 0;
-
-		/**
-		 * @brief just change m_z simply
-		 * @param z
-		 */
-		//void set_z_simple (int z);
 
 		void LockGeometry (AbstractWidget* obj, bool status)
 		{
