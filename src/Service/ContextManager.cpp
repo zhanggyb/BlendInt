@@ -818,14 +818,6 @@ namespace BlendInt {
 
 		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the context manager", widget->name().c_str());
 
-		if(widget->hover()) {
-			RemoveWidgetFromHoverDeque(widget);
-		}
-
-		if(widget->focused()) {
-			SetFocusedWidget(0);
-		}
-
 		RemoveWidget(widget);
 
 		widget->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);

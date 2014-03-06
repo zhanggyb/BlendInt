@@ -37,41 +37,32 @@
 namespace BlendInt {
 
 	ScrollView::ScrollView()
-	: Widget(), m_orientation(Horizontal | Vertical), m_move_status(false), m_viewport(0)
+	: Frame(), m_orientation(Horizontal | Vertical), m_move_status(false)
 	{
-		Resize(200, 160);
-		SetPreferredSize(200, 160);
-	}
-
-	void ScrollView::set_viewport(AbstractWidget* viewport)
-	{
-		if(!viewport) return;
-
-		if(m_viewport) {
-			delete m_viewport;
-		}
-
-		m_viewport = viewport;
-//		Attach (m_viewport);
-		reset_viewport_position();
+		set_size(200, 160);
+		set_preferred_size(200, 160);
 	}
 
 	void ScrollView::reset_viewport_position()
 	{
-		if(m_viewport) {
+		if(!sub_widget_size()) return;
+
+		AbstractWidget* p = sub_widgets().front();
+
+		if(p) {
 			int w = size().width();
 			int h = size().height();
 
-			int x = position().x() + (w - static_cast<int>(m_viewport->size().width())) / 2;
-			int y = position().y() + (h - static_cast<int>(m_viewport->size().height())) / 2;
+			int x = position().x() + (w - static_cast<int>(p->size().width())) / 2;
+			int y = position().y() + (h - static_cast<int>(p->size().height())) / 2;
 
-			m_viewport->SetPosition(x, y);
+			p->SetPosition(x, y);
 		}
 	}
 
 	bool ScrollView::Update (int type, const void* data)
 	{
-		switch(type) {
+		switch (type) {
 
 			case FormPosition: {
 				reset_viewport_position();
@@ -81,7 +72,6 @@ namespace BlendInt {
 			default:
 				return true;
 		}
-
 	}
 
 	void ScrollView::Draw ()
@@ -91,8 +81,6 @@ namespace BlendInt {
 				position().y(),
 				size().width(),
 				size().height());
-
-		if(m_viewport) DispatchRender(m_viewport);
 
 		glDisable(GL_SCISSOR_TEST);
 
@@ -120,22 +108,23 @@ namespace BlendInt {
 #endif
 	}
 
-	void ScrollView::MousePressEvent(MouseEvent* event)
+	void ScrollView::MousePressEvent (MouseEvent* event)
 	{
-		if(contain(event->position())) {
+		if (!sub_widget_size()) {
+			event->ignore(this);
+			return;
+		}
 
-			if(!m_viewport) return;
+		AbstractWidget* p = sub_widgets().front();
 
-			if (event->button() == MouseButtonMiddle) {
+		if (event->button() == MouseButtonMiddle) {
 
-				m_move_status = true;
-				m_move_start_pos.set_x(event->position().x());
-				m_move_start_pos.set_y(event->position().y());
-				m_origin_pos = m_viewport->position();
-			} else {
-				dispatch_mouse_press_event(m_viewport, event);
-			}
-
+			m_move_status = true;
+			m_move_start_pos.set_x(event->position().x());
+			m_move_start_pos.set_y(event->position().y());
+			m_origin_pos = p->position();
+		} else {
+			//dispatch_mouse_press_event(m_viewport, event);
 		}
 	}
 
@@ -143,12 +132,20 @@ namespace BlendInt {
 	{
 		if(m_move_status) m_move_status = false;
 
-		if(!m_viewport) return;
-		dispatch_mouse_release_event(m_viewport, event);
+		if(!sub_widget_size()) {
+			event->ignore(this);
+			return;
+		}
+
+		//AbstractWidget* p = sub_widgets().front();
+
+		//if(!m_viewport) return;
+		//dispatch_mouse_release_event(m_viewport, event);
 	}
 
 	void ScrollView::MouseMoveEvent(MouseEvent* event)
 	{
+		/*
 		if(!m_viewport) return;
 
 		if(m_move_status) {
@@ -214,6 +211,8 @@ namespace BlendInt {
 		if(contain(event->position())) {
 			dispatch_mouse_move_event(m_viewport, event);
 		}
+
+		*/
 	}
 
 }

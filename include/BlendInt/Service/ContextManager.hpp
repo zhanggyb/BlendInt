@@ -117,10 +117,6 @@ namespace BlendInt {
 
 		bool Unregister (AbstractWidget* obj);
 
-		void RemoveWidgetFromHoverDeque (AbstractWidget* widget);
-
-		void SetFocusedWidget (AbstractWidget* widget);
-
 		void ResizeFromInterface (const Size& size);
 
 		void ResizeFromInterface (unsigned int width, unsigned int height);
@@ -153,6 +149,10 @@ namespace BlendInt {
 		 * @return
 		 */
 		bool RemoveWidget (AbstractWidget* obj);
+
+		void RemoveWidgetFromHoverDeque (AbstractWidget* widget);
+
+		void SetFocusedWidget (AbstractWidget* widget);
 
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point, AbstractWidget* parent);
 

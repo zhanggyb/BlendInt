@@ -66,6 +66,16 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget ()
 	{
+		if(hover()) {
+			ContextManager::instance->RemoveWidgetFromHoverDeque(this);
+		}
+
+		if(focused()) {
+			ContextManager::instance->SetFocusedWidget(0);
+		}
+
+
+
 		m_destroyed.fire(this);
 	}
 
@@ -292,6 +302,54 @@ namespace BlendInt {
 		}
 	}
 
+	bool AbstractWidget::Contain(const Point& cursor)
+	{
+		// TODO: code NOT complte
+		if(in_container()) {
+
+			AbstractContainer* p = dynamic_cast<AbstractContainer*>(m_container);
+
+			if(p) {
+				int x = p->position().x() + p->margin().left();
+				int y = p->position().y() + p->margin().bottom();
+				int w = p->size().width() - p->margin().left() - p->margin().right();
+				int h = p->size().height() - p->margin().top() - p->margin().bottom();
+
+				if(
+						(position().x() + size().width()) < x ||
+						(position().y() + size().height()) < y ||
+						(position().x() > (x + w)) ||
+						(position().y() > (y + h))) {
+					return false;
+				} else {
+
+				}
+
+				return true;
+			} else {
+				if(cursor.x() < position().x() ||
+						cursor.y() < position().y() ||
+						cursor.x() > static_cast<int>(position().x() + size().width()) ||
+						cursor.y() > static_cast<int>(position().y() + size().height()))
+				{
+					return false;
+				}
+
+				return true;
+			}
+		} else {
+			if(cursor.x() < position().x() ||
+					cursor.y() < position().y() ||
+					cursor.x() > static_cast<int>(position().x() + size().width()) ||
+					cursor.y() > static_cast<int>(position().y() + size().height()))
+			{
+				return false;
+			}
+
+			return true;
+		}
+	}
+
 	void AbstractWidget::Refresh()
 	{
 		if(!m_flag[WidgetFlagInContextManager])
@@ -380,49 +438,6 @@ namespace BlendInt {
 		fb->Reset();
 		delete fb; fb = 0;
 	}
-
-	//void AbstractWidget::reset_z (int z)
-	//{
-	//if (m_z == z) return;
-
-//		AbstractWidget* root = 0;
-//		Parent* parent = &m_parent;
-//		while (parent->type == ParentForm) {
-//			root = parent->object.form;
-//			parent = &(parent->object.form->m_parent);
-//		}
-//
-//		if (root)
-//			root->set_z_simple(z);
-//		else
-//			set_z_simple(z);
-//
-//		if(root) {
-//			if (root->m_parent.type == ParentContextManager) {
-//					ContextManager::Instance()->Bind(root);
-//			}
-//		} else {
-//			if (m_parent.type == ParentContextManager) {
-//					ContextManager::Instance()->Bind(this);
-//			}
-//		}
-
-	//set_z_simple(z);
-	// m_property_changed.fire(FormPropertyLayer);
-	//}
-
-	//void AbstractWidget::set_z_simple (int z)
-	//{
-	//	m_z = z;
-
-//		std::set<AbstractWidget*>::iterator it;
-//		for (it = m_children.begin(); it != m_children.end(); it++)
-//		{
-//			(*it)->set_z_simple (z);
-//		}
-
-	// TODO: call Update()
-	//}
 
 	void AbstractWidget::SetPosition(AbstractWidget* obj, int x, int y)
 	{

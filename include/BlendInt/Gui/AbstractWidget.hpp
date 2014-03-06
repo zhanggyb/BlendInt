@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ABSTRACTWIDGET_HPP_
-#define _BLENDINT_ABSTRACTWIDGET_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTWIDGET_HPP_
+#define _BLENDINT_GUI_ABSTRACTWIDGET_HPP_
 
 #include <bitset>
 
@@ -58,9 +58,9 @@ namespace BlendInt {
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
 
 	template<typename T>
-	T* manage (T* obj)
+	T* manage (T* obj, bool val = true)
 	{
-		obj->set_manage();
+		obj->set_manage(val);
 		return obj;
 	}
 
@@ -79,8 +79,7 @@ namespace BlendInt {
 		friend class Interface;
 		friend class AbstractContainer;
 
-		template <typename T> friend T* manage (T* obj);
-
+		template <typename T> friend T* manage (T* obj, bool val);
 
 		/**
 		 * @brief The default constructor
@@ -144,6 +143,8 @@ namespace BlendInt {
 		void SetLayer (int z);
 
 		void SetVisible (bool visible);
+
+		bool Contain (const Point& cursor);
 
 		void Refresh ();
 
@@ -339,9 +340,9 @@ namespace BlendInt {
 			WidgetFlagManaged
 		};
 
-		void set_manage ()
+		void set_manage (bool val)
 		{
-			m_flag.set(WidgetFlagManaged);
+			m_flag[WidgetFlagManaged] = val ? 1 : 0;
 		}
 
 		/**
@@ -392,4 +393,4 @@ namespace BlendInt {
 	};
 
 } /* namespace BlendInt */
-#endif /* _BLENDINT_ABSTRACTWIDGET_HPP_ */
+#endif /* _BLENDINT_GUI_ABSTRACTWIDGET_HPP_ */

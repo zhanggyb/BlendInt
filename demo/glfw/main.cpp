@@ -90,11 +90,10 @@ int main(int argc, char* argv[])
 //	btn2->SetPosition(530, 250);
 //	btn2->Register();
 //
-//	Viewport3D* view3d1 = new Viewport3D;
-//	view3d1->set_name("Viewport 3D1");
-//	view3d1->SetPosition(20, 20);
-//	view3d1->Resize(500, 400);
-//	view3d1->Register();
+	Viewport3D* view3d1 = new Viewport3D;
+	view3d1->set_name("Viewport 3D1");
+	view3d1->SetPosition(20, 20);
+	view3d1->Resize(500, 400);
 
 //	Viewport3D* view3d2 = new Viewport3D;
 //	view3d2->set_name("Viewport 3D2");
@@ -117,15 +116,6 @@ int main(int argc, char* argv[])
 //	iv->Register();
 
 //	interface()->SetMainWidget(layout);
-	ContextManager* cm = ContextManager::instance;
-
-	Frame frame;
-	frame.set_name("frame");
-	frame.SetPosition(400, 400);
-
-	Widget* widget = manage(new Widget);
-
-	cm->print();
 
 	RunLoop (win);
 
