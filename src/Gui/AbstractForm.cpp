@@ -1143,7 +1143,19 @@ namespace BlendInt {
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
-		glDrawArrays(mode, 0, buffer->vertices());
+		glDrawArrays(mode, 0, buffer->GetBufferSize()/(2 * sizeof(GLfloat)));
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		buffer->Reset();
+	}
+
+	void AbstractForm::DrawInnerBuffer (const RefPtr<GLArrayBuffer>& buffer, int mode)
+	{
+		buffer->Bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
+		glDrawArrays(mode, 0, buffer->GetBufferSize()/(2 * sizeof(GLfloat)));
 		glDisableClientState(GL_VERTEX_ARRAY);
 
 		buffer->Reset();
@@ -1159,7 +1171,25 @@ namespace BlendInt {
 		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
 		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glDrawArrays(mode, 0, buffer->vertices());
+		glDrawArrays(mode, 0, buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
+
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		buffer->Reset();
+	}
+
+	void AbstractForm::DrawShadedInnerBuffer(const RefPtr<GLArrayBuffer>& buffer, int mode)
+	{
+		buffer->Bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
+
+		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glDrawArrays(mode, 0, buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
 
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
@@ -1175,7 +1205,23 @@ namespace BlendInt {
 		glVertexPointer(2, GL_FLOAT, 0, 0);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glDrawArrays(mode, 0, buffer->vertices());
+			glDrawArrays(mode, 0, buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
+			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
+		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		buffer->Reset();
+	}
+
+	void AbstractForm::DrawOutlineBuffer(const RefPtr<GLArrayBuffer>& buffer, int mode)
+	{
+		buffer->Bind();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, 0);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			glTranslatef(jit[j][0], jit[j][1], 0.0f);
+			glDrawArrays(mode, 0, buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
@@ -1198,7 +1244,7 @@ namespace BlendInt {
 		if (inner_buffer) {
 			inner_buffer->Generate();
 			inner_buffer->Bind();
-			inner_buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			inner_buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
 			inner_buffer->Reset();
 		}
 
@@ -1214,8 +1260,7 @@ namespace BlendInt {
 
 				outer_buffer->Generate();
 				outer_buffer->Bind();
-				outer_buffer->SetData((vert_sum.total * 2 + 2),
-				        sizeof(quad_strip[0]), quad_strip);
+				outer_buffer->SetData((vert_sum.total * 2 + 2) * sizeof(quad_strip[0]), quad_strip);
 				outer_buffer->Reset();
 			}
 
@@ -1226,7 +1271,7 @@ namespace BlendInt {
 
 				emboss_buffer->Generate();
 				emboss_buffer->Bind();
-				emboss_buffer->SetData(vert_sum.half * 2, sizeof(quad_strip[0]),
+				emboss_buffer->SetData(vert_sum.half * 2 * sizeof(quad_strip[0]),
 				        quad_strip);
 				emboss_buffer->Reset();
 			}
@@ -1260,7 +1305,7 @@ namespace BlendInt {
 		if(inner_buffer_p) {
 			inner_buffer_p->Generate();
 			inner_buffer_p->Bind();
-			inner_buffer_p->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			inner_buffer_p->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
 			inner_buffer_p->Reset();
 		}
 
@@ -1272,7 +1317,7 @@ namespace BlendInt {
 
 			outer_buffer_p->Generate();
 			outer_buffer_p->Bind();
-			outer_buffer_p->SetData(vert_sum.total * 2 + 2, sizeof(quad_strip[0]), quad_strip);
+			outer_buffer_p->SetData((vert_sum.total * 2 + 2) * sizeof(quad_strip[0]), quad_strip);
 			outer_buffer_p->Reset();
 		}
 
@@ -1288,7 +1333,7 @@ namespace BlendInt {
 			highlight_buffer_p->Generate();
 			highlight_buffer_p->Bind();
 
-			highlight_buffer_p->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			highlight_buffer_p->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
 			highlight_buffer_p->Reset();
 		}
 	}
@@ -1321,7 +1366,7 @@ namespace BlendInt {
 
 		buffer->Generate();
 		buffer->Bind();
-		buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+		buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
 		buffer->Reset();
 	}
 
@@ -1355,7 +1400,7 @@ namespace BlendInt {
 		if(inner_buffer) {
 			inner_buffer->Generate();
 			inner_buffer->Bind();
-			inner_buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			inner_buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
 			inner_buffer->Reset();
 		}
 
@@ -1365,7 +1410,7 @@ namespace BlendInt {
 
 			outer_buffer->Generate();
 			outer_buffer->Bind();
-			outer_buffer->SetData((vert_sum.total * 2 + 2), sizeof(quad_strip[0]), quad_strip);
+			outer_buffer->SetData((vert_sum.total * 2 + 2) * sizeof(quad_strip[0]), quad_strip);
 			outer_buffer->Reset();
 		}
 
@@ -1385,7 +1430,7 @@ namespace BlendInt {
 
 			highlight_buffer->Generate();
 			highlight_buffer->Bind();
-			highlight_buffer->SetData(vert_sum.total, sizeof(inner_v[0]), inner_v);
+			highlight_buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
 			highlight_buffer->Reset();
 		}
 

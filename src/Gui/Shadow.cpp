@@ -55,13 +55,13 @@ namespace BlendInt {
 	{
 	}
 
-	void Shadow::set_blur_radius(float blur_rad)
+	void Shadow::SetBlurRadius(float blur_rad)
 	{
 		if(blur_rad == m_blur_rad) return;
 
-		Update(ShadowBlurRadius, &blur_rad);
-
-		m_blur_rad = blur_rad;
+		if(Update(ShadowBlurRadius, &blur_rad)) {
+			m_blur_rad = blur_rad;
+		}
 	}
 
 	bool Shadow::Update (int type, const void* data)

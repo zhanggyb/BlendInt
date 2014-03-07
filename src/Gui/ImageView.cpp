@@ -155,7 +155,7 @@ namespace BlendInt {
 		m_vbo.reset(new GLArrayBuffer);
 		m_vbo->Generate();
 		m_vbo->Bind();
-		m_vbo->SetData(4, sizeof(float) * 3, vertices);
+		m_vbo->SetData(4 * sizeof(float) * 3, vertices);
 		m_vbo->Reset();
 
 		m_program.reset(new GLSLProgram);
@@ -186,7 +186,7 @@ namespace BlendInt {
 
 		m_tbo->Generate();
 		m_tbo->Bind();
-		m_tbo->SetData(4, sizeof(GLfloat) * 2, texcoords);
+		m_tbo->SetData(4 * sizeof(GLfloat) * 2, texcoords);
 		m_tbo->Reset();
 
 		Resize(checkImageWidth, checkImageHeight);

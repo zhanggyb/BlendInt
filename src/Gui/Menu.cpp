@@ -205,7 +205,7 @@ namespace BlendInt {
 
 			glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
 			glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
-			glDrawArrays(GL_POLYGON, 0, m_highlight_buffer->vertices());
+			//glDrawArrays(GL_POLYGON, 0, m_highlight_buffer->vertices());
 
 			glDisableClientState(GL_COLOR_ARRAY);
 			glDisableClientState(GL_VERTEX_ARRAY);

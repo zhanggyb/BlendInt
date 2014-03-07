@@ -156,7 +156,7 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 		SetExpandX(true);
 		Resize(90, 20);
-		set_text(text);
+		SetText(text);
 		SetPreferredSize(size());
 	}
 

@@ -46,11 +46,11 @@ namespace BlendInt {
 
 		virtual ~AbstractButton ();
 
-		void set_text (const String& text);
+		void SetText (const String& text);
 
 		const Font& font () const {return m_font;}
 
-		void set_font (const Font& font);
+		void SetFont (const Font& font);
 
 		bool down () const {return m_status_down;}
 
@@ -80,7 +80,17 @@ namespace BlendInt {
 
 		virtual void MouseMoveEvent (MouseEvent* event);
 
-		void set_hover (bool status)
+		inline void set_text (const String& text)
+		{
+			m_text = text;
+		}
+
+		inline void set_font (const Font& font)
+		{
+			m_font = font;
+		}
+
+		inline void set_hover (bool status)
 		{
 			m_status_hover = status;
 		}

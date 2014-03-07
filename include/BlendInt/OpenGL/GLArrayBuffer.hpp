@@ -86,7 +86,9 @@ namespace BlendInt {
 
 		static void Reset ();
 
-		void SetData (int vertices, size_t size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
+		void SetData (GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
+
+		//void SetData (int vertices, size_t size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
 
 		void UpdateData (const GLvoid* data, GLsizeiptr size, GLintptr offset = 0);
 
@@ -103,24 +105,10 @@ namespace BlendInt {
 
 		GLint GetBufferSize ();
 
-		/**
-		 * @brief Get vertex number used in this buffer
-		 * @param size Must be 2, 3, how many float variables for one vertex
-		 * @return
-		 */
-		inline GLint vertices ()
-		{
-			return m_vertices;
-		}
-
 	private:
 
 		GLuint m_id;
-
-		GLint m_vertices;
-
 	};
-
 
 }
 

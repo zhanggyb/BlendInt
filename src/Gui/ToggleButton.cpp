@@ -171,7 +171,7 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 		set_expand_x(true);
 		set_checkable(true);
-		set_text(text);	// this change the button size
+		SetText(text);	// this change the button size
 		set_preferred_size(size());
 
 		GenerateFormBuffer(&size(), round_type(), radius(),

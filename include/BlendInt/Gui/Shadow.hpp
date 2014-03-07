@@ -57,15 +57,20 @@ namespace BlendInt {
 
 		virtual ~Shadow ();
 
-		void set_blur_radius (float blur_rad);
+		void SetBlurRadius (float rad);
 
-		float blur_radius () const {return m_blur_rad;}
+		float blur_rad () const {return m_blur_rad;}
 
 		virtual void Draw ();
 
 	protected:
 
 		virtual bool Update (int type, const void* data);
+
+		inline void set_blur_rad (float rad)
+		{
+			m_blur_rad = rad;
+		}
 
 	private:
 

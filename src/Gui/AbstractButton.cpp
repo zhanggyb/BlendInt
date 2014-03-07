@@ -49,7 +49,7 @@ namespace BlendInt {
 
 	}
 
-	void AbstractButton::set_text (const String& text)
+	void AbstractButton::SetText (const String& text)
 	{
 		if(text.empty()) {
 			Resize (90, 20);
@@ -90,7 +90,7 @@ namespace BlendInt {
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
-	void AbstractButton::set_font (const Font& font)
+	void AbstractButton::SetFont (const Font& font)
 	{
 		bool cal_width = true;
 

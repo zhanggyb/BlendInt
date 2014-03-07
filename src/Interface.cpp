@@ -48,11 +48,12 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
-#include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Window/KeyEvent.hpp>
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/ContextMenuEvent.hpp>
+
+#include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Service/StockItems.hpp>
 

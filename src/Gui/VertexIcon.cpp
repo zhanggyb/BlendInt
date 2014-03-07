@@ -113,7 +113,7 @@ namespace BlendInt {
 	{
 		m_array_buffer->Generate();
 		m_array_buffer->Bind();
-		m_array_buffer->SetData(array_size, sizeof(vertex_array[0]), vertex_array[0]);
+		m_array_buffer->SetData(array_size * sizeof(vertex_array[0]), vertex_array[0]);
 		m_array_buffer->Reset();
 
 		m_index_buffer->Generate();

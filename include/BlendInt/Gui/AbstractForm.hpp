@@ -261,6 +261,8 @@ namespace BlendInt {
 		 */
 		static void DrawInnerBuffer (GLArrayBuffer* buffer, int mode = GL_POLYGON);
 
+		static void DrawInnerBuffer (const RefPtr<GLArrayBuffer>& buffer, int mode = GL_POLYGON);
+
 		/**
 		 * @brief draw shaded GL buffer in Render()
 		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
@@ -275,6 +277,8 @@ namespace BlendInt {
 		 */
 		static void DrawShadedInnerBuffer (GLArrayBuffer* buffer, int mode = GL_POLYGON);
 
+		static void DrawShadedInnerBuffer (const RefPtr<GLArrayBuffer>& buffer, int mode = GL_POLYGON);
+
 		/**
 		 * @brief draw the GL Buffer in Render() with anti-alias
 		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
@@ -288,6 +292,8 @@ namespace BlendInt {
 		 * GL_QUAD_STRIP, and GL_POLYGON.
 		 */
 		static void DrawOutlineBuffer (GLArrayBuffer* buffer, int mode = GL_QUAD_STRIP);
+
+		static void DrawOutlineBuffer (const RefPtr<GLArrayBuffer>& buffer, int mode = GL_QUAD_STRIP);
 
 		/**
 		 * @brief Generate vertex buffer object for drawing a form

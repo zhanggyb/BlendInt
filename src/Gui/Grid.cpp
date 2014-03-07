@@ -137,7 +137,7 @@ namespace BlendInt {
 		m_vb->Generate();
 		m_vb->Bind();
 
-		m_vb->SetData(21 * 21, sizeof(glm::vec2), vertices);
+		m_vb->SetData(21 * 21 * sizeof(glm::vec2), vertices);
 		m_vb->Reset();
 
 		// Create an array of indices into the vertex array that traces both horizontal and vertical lines

@@ -78,7 +78,8 @@ namespace BlendInt {
 				tm->themes()->regular.inner.b(),
 				tm->themes()->regular.inner.a());
 
-		DrawInnerBuffer(m_inner_buffer.get());
+		//DrawInnerBuffer(m_inner_buffer.get());
+		DrawInnerBuffer(m_inner_buffer);
 
 		// draw outline
 		unsigned char tcol[4] = { themes()->regular.outline.r(),
@@ -88,7 +89,8 @@ namespace BlendInt {
 		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
 		glColor4ubv(tcol);
 
-		DrawOutlineBuffer(m_outer_buffer.get());
+		//DrawOutlineBuffer(m_outer_buffer.get());
+		DrawOutlineBuffer(m_outer_buffer);
 	}
 
 	void ComboBox::InitOnce()
