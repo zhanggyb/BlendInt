@@ -50,18 +50,21 @@ namespace BlendInt {
 	{
 		if(round_type() == type) return;
 
-		Update(FormRoundType, &type);
+		if(Update(FormRoundType, &type)) {
+			set_round_type(type);
+			fire_property_changed_event(FormRoundType);
+		}
 
-		set_round_type(type);
 	}
 
 	void RoundWidget::SetRadius(float rad)
 	{
 		if(radius() == rad) return;
 
-		Update(FormRoundRadius, &rad);
-
-		set_radius(rad);
+		if(Update(FormRoundRadius, &rad)) {
+			set_radius(rad);
+			fire_property_changed_event(FormRoundRadius);
+		}
 	}
 
 	void RoundWidget::Draw()

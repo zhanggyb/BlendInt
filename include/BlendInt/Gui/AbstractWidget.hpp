@@ -205,6 +205,11 @@ namespace BlendInt {
 			return m_flag[WidgetFlagVisibility];
 		}
 
+		inline bool managed () const
+		{
+			return m_flag[WidgetFlagManaged];
+		}
+
 		/**
 		 * @brief move this object along x axis
 		 * @param offset_x

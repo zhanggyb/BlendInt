@@ -24,19 +24,17 @@
 #ifndef _BLENDINT_MENUBAR_HPP_
 #define _BLENDINT_MENUBAR_HPP_
 
-#include <BlendInt/Gui/BoxFrame.hpp>
+#include <BlendInt/Gui/Frame.hpp>
 
 namespace BlendInt {
 
-	class MenuBar: public BoxFrame
+	class MenuBar: public Frame
 	{
 		DISALLOW_COPY_AND_ASSIGN(MenuBar);
 
 	public:
 
 		MenuBar ();
-
-		MenuBar (AbstractWidget* parent);
 
 		virtual ~MenuBar ();
 

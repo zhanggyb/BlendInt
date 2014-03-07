@@ -29,10 +29,6 @@ namespace BlendInt {
 	{
 	}
 
-	MenuBar::MenuBar (AbstractWidget* parent)
-	{
-	}
-
 	MenuBar::~MenuBar ()
 	{
 	}

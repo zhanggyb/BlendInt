@@ -39,11 +39,15 @@ namespace BlendInt {
 		for(WidgetDeque::iterator it = m_sub_widgets.begin(); it != m_sub_widgets.end(); it++)
 		{
 			// check if need to delete
-			if((*it)->m_flag[AbstractWidget::WidgetFlagManaged]) {
+			if((*it)->managed()) {
 
 				(*it)->destroyed().disconnectOne(this,
 						&AbstractContainer::OnSubWidgetDestroyed);
-				delete *it;
+
+				// Delete the widget if it's not referenced by any RefPtr
+				if((*it)->count() == 0) {
+					delete *it;
+				}
 
 			} else {
 

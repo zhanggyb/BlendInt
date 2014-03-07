@@ -6,14 +6,15 @@
 
 #include <Cpp/Events.hpp>
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Service/ContextManager.hpp>
-
-#include <BlendInt/Gui/ToggleButton.hpp>
-#include <BlendInt/Gui/VLayout.hpp>
-#include <BlendInt/Gui/HLayout.hpp>
-
 #include <BlendInt/Types.hpp>
+
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
+
 #include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/ClockWidget.hpp>
+#include <BlendInt/Gui/ComboBox.hpp>
+#include <BlendInt/Gui/ToggleButton.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Label.hpp>
 #include <BlendInt/Gui/ScrollWidget.hpp>
 #include <BlendInt/Gui/Slider.hpp>
@@ -27,13 +28,13 @@
 #include <BlendInt/Gui/Menu.hpp>
 #include <BlendInt/Gui/RoundWidget.hpp>
 #include <BlendInt/Gui/ImageView.hpp>
-#include <BlendInt/Gui/TabFrame.hpp>
 #include <BlendInt/Gui/MenuItemBin.hpp>
-#include <BlendInt/Service/StockItems.hpp>
-#include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
-#include <BlendInt/Gui/ClockWidget.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
+
+#include <BlendInt/Service/ContextManager.hpp>
+#include <BlendInt/Service/StockItems.hpp>
 
 #include "Window.hpp"
 
@@ -90,10 +91,10 @@ int main(int argc, char* argv[])
 //	btn2->SetPosition(530, 250);
 //	btn2->Register();
 //
-	Viewport3D* view3d1 = new Viewport3D;
-	view3d1->set_name("Viewport 3D1");
-	view3d1->SetPosition(20, 20);
-	view3d1->Resize(500, 400);
+//	Viewport3D* view3d1 = new Viewport3D;
+//	view3d1->set_name("Viewport 3D1");
+//	view3d1->SetPosition(20, 20);
+//	view3d1->Resize(500, 400);
 
 //	Viewport3D* view3d2 = new Viewport3D;
 //	view3d2->set_name("Viewport 3D2");
@@ -116,6 +117,11 @@ int main(int argc, char* argv[])
 //	iv->Register();
 
 //	interface()->SetMainWidget(layout);
+
+	ComboBox* combo = manage(new ComboBox);
+	combo->set_name("ComboBox");
+	combo->SetPosition(200, 200);
+	combo->Resize (400, 400);
 
 	RunLoop (win);
 

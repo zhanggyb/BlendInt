@@ -39,10 +39,20 @@ namespace BlendInt {
 
 		ComboBox ();
 
-		ComboBox (AbstractWidget* parent);
-
 		virtual ~ComboBox ();
 
+	protected:
+
+		virtual bool Update (int type, const void* data);
+
+		virtual void Draw ();
+
+	private:
+
+		void InitOnce ();
+
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
 	};
 
 }

@@ -113,7 +113,7 @@ namespace BlendInt {
 		if (success && ShaderManager::Initialize()) {
 			// do nothing
 		} else {
-			DBG_PRINT_MSG("%s", "Cannot initialize Shader Manager");
+			DBG_PRINT_MSG("%s", "The Shader Manager is not initialized successfully!");
 			success = false;
 		}
 

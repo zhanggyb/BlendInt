@@ -26,15 +26,83 @@
 namespace BlendInt {
 
 	ComboBox::ComboBox ()
+	: RoundWidget()
 	{
-	}
-
-	ComboBox::ComboBox (AbstractWidget* parent)
-	{
+		InitOnce();
 	}
 
 	ComboBox::~ComboBox ()
 	{
+	}
+
+	bool ComboBox::Update(int type, const void* data)
+	{
+		switch (type) {
+
+			case FormSize: {
+				const Size* size_p = static_cast<const Size*>(data);
+				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+
+				Refresh();
+				return true;
+			}
+
+			case FormRoundType: {
+				const int* type_p = static_cast<const int*>(data);
+				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+
+				Refresh();
+				return true;
+			}
+
+			case FormRoundRadius: {
+				const float* radius_p = static_cast<const float*>(data);
+				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
+
+				Refresh();
+				return true;
+			}
+
+			default:
+				return RoundWidget::Update(type, data);
+		}
+	}
+
+	void ComboBox::Draw()
+	{
+		ThemeManager* tm = ThemeManager::instance();
+
+		// draw inner, simple fill
+		glColor4ub(tm->themes()->regular.inner.r(),
+				tm->themes()->regular.inner.g(),
+				tm->themes()->regular.inner.b(),
+				tm->themes()->regular.inner.a());
+
+		DrawInnerBuffer(m_inner_buffer.get());
+
+		// draw outline
+		unsigned char tcol[4] = { themes()->regular.outline.r(),
+		        themes()->regular.outline.g(),
+		        themes()->regular.outline.b(),
+		        themes()->regular.outline.a()};
+		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
+		glColor4ubv(tcol);
+
+		DrawOutlineBuffer(m_outer_buffer.get());
+	}
+
+	void ComboBox::InitOnce()
+	{
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+
+		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_size(90, 20);
+		set_preferred_size(90, 20);
+
+		GenerateFormBuffer(&size(), round_type(), radius(), m_inner_buffer.get(),
+				m_outer_buffer.get(), 0);
 	}
 
 }

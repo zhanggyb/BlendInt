@@ -40,7 +40,7 @@ namespace BlendInt {
 
 		friend class Interface;
 
-		static ShaderManager* Instance ();
+		static ShaderManager* instance;
 
 		RefPtr<GLSLProgram> text_program () const
 		{
@@ -50,6 +50,11 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> primitive_program () const
 		{
 			return m_primitive_program;
+		}
+
+		RefPtr<GLSLProgram> widget_program () const
+		{
+			return m_widget_program;
 		}
 
 		//bool Find (const GLSLProgram* program);
@@ -97,12 +102,12 @@ namespace BlendInt {
 		GLuint text_vbo_;
 
 		RefPtr<GLSLProgram> m_text_program;
-		//GLSLProgram* m_text_program;
 
 		GLint m_uniform_mvp;
 
 		RefPtr<GLSLProgram> m_primitive_program;
-		//GLSLProgram* m_primitive_program;
+
+		RefPtr<GLSLProgram> m_widget_program;
 
 		static const char* text_vertex_shader;
 
@@ -112,7 +117,9 @@ namespace BlendInt {
 
 		static const char* primitive_fragment_shader;
 
-		static ShaderManager* shader_manager;
+		static const char* widget_vertex_shader;
+
+		static const char* widget_fragment_shader;
 
 	};
 }

@@ -145,4 +145,19 @@ You must quit Keychain Access application in order to use the
 certificate and restart taskgated service by killing the current
 running taskgated process (so before using gdb).
 
+@section sect_opengl_reference Some Good OpenGL Tutorial Site
+
+Here's a list of good opengl tutorial site from which you can learn
+modern opengl programming. Thanks to the authors!
+
+       - http://www.opengl-tutorial.org/
+       - http://nccastaff.bournemouth.ac.uk/jmacey/RobTheBloke/www/opengl_programming.html
+       - http://ogldev.atspace.co.uk/
+       - http://www.arcsynthesis.org/gltut/index.html
+       - http://code.google.com/p/freetype-gl/
+       - http://lazyfoo.net/tutorials/OpenGL/index.php
+       - http://en.wikibooks.org/wiki/OpenGL_Programming
+       - http://www.clockworkcoders.com/oglsl/tutorials.html
+       - http://antongerdelan.net/opengl/index.html
+
 */

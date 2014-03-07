@@ -126,13 +126,12 @@ namespace BlendInt {
 			{
 				(*widget_iter)->destroyed().disconnectOne(this,
 				        &ContextManager::OnDestroyObject);
-				//if((*widget_iter)->count() == 0) delete *widget_iter;
-				if ((*widget_iter)->m_flag[AbstractWidget::WidgetFlagManaged]) {
 
-					(*widget_iter)->destroyed().disconnectOne(this,
-					        &ContextManager::OnDestroyObject);
-					delete *widget_iter;
+				if ((*widget_iter)->managed()) {
 
+					// Delete the widget if it's not referenced by any RefPtr
+					if((*widget_iter)->count() == 0)
+						delete *widget_iter;
 				} else {
 
 					(*widget_iter)->destroyed().disconnectOne(this,

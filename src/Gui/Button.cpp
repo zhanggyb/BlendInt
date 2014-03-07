@@ -139,9 +139,12 @@ namespace BlendInt {
 		m_emboss_buffer.reset(new GLArrayBuffer);
 
 		set_round_type(RoundAll);
-		SetExpandX(true);
-		Resize(90, 20);
-		SetPreferredSize(90, 20);
+		set_expand_x(true);
+		set_size(90, 20);
+		set_preferred_size(90, 20);
+
+		GenerateFormBuffer(&size(), round_type(), radius(), m_inner_buffer.get(),
+				m_outer_buffer.get(), m_emboss_buffer.get());
 	}
 
 	void Button::InitOnce (const String& text)

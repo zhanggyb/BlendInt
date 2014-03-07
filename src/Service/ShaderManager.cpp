@@ -76,36 +76,56 @@ namespace BlendInt {
 			"varying vec3 f_color;"
 			""
 			"void main(void) {"
-			"	gl_FragColor = vec4(f_color.x, f_color.y, f_color.z, 1.0);"
+			"	gl_FragColor = vec4(f_color, 1.0);"
 			"}";
 
-	ShaderManager* ShaderManager::shader_manager = 0;
+	const char* ShaderManager::widget_vertex_shader =
+			"#version 120\n"
+			""
+			"attribute vec3 coord3d;"
+			"attribute vec3 v_color;"
+			"uniform mat4 ModelViewProjectionMatrix;"
+			"varying vec3 f_color;"
+			""
+			"void main(void) {"
+			"	gl_Position = ModelViewProjectionMatrix * vec4(coord3d, 1.0);"
+			"	f_color = v_color;"
+			"}";
+
+	const char* ShaderManager::widget_fragment_shader =
+			"#version 120\n"
+			""
+			"varying vec3 f_color;"
+			""
+			"void main(void) {"
+			"	gl_FragColor = vec4(f_color, 1.0);"
+			"}";
+
+	ShaderManager* ShaderManager::instance = 0;
 
 	bool ShaderManager::Initialize()
 	{
-		if(!shader_manager) {
-			shader_manager = new ShaderManager;
+		bool ret = false;
+
+		if(!instance) {
+			instance = new ShaderManager;
+
+			if(instance) {
+				ret = instance->Setup();
+			} else {
+				ret = false;
+			}
 		}
 
-		return shader_manager->Setup();
+		return ret;
 	}
 
 	void ShaderManager::Release()
 	{
-		if(shader_manager) {
-			delete shader_manager;
-			shader_manager = 0;
+		if(instance) {
+			delete instance;
+			instance = 0;
 		}
-	}
-
-	ShaderManager* ShaderManager::Instance()
-	{
-		if (!shader_manager) {
-			std::cerr << "The Shader Manager is not initialized successfully! Exit" << std::endl;
-			exit (EXIT_FAILURE);
-		}
-
-		return shader_manager;
 	}
 
 	ShaderManager::ShaderManager()
@@ -124,6 +144,11 @@ namespace BlendInt {
 #ifdef DEBUG
 		m_primitive_program->set_name("Primitive GLSLProgram");
 #endif
+
+		m_widget_program.reset(new GLSLProgram);
+#ifdef DEBUG
+		m_widget_program->set_name("Widget GLSLProgram");
+#endif
 	}
 
 	ShaderManager::~ShaderManager()
@@ -140,6 +165,10 @@ namespace BlendInt {
 			return false;
 		}
 
+		if(!m_widget_program->Create()) {
+			return false;
+		}
+
 		m_text_program->AttachShaderPair(text_vertex_shader, text_fragment_shader);
 		if(!m_text_program->Link()) {
 			return false;
@@ -147,6 +176,11 @@ namespace BlendInt {
 
 		m_primitive_program->AttachShaderPair(primitive_vertex_shader, primitive_fragment_shader);
 		if(!m_primitive_program->Link()) {
+			return false;
+		}
+
+		m_widget_program->AttachShaderPair(widget_vertex_shader, widget_fragment_shader);
+		if(!m_widget_program->Link()) {
 			return false;
 		}
 
