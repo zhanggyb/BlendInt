@@ -10,9 +10,8 @@ SYSTEM=`uname -o`
 
 # help info
 #
-function print_help () {
+print_help () {
     cat << EOF
-
 ARGUMENTS for $SCRIPT_FILE:
 
     -h, --help
@@ -29,11 +28,10 @@ ARGUMENTS for $SCRIPT_FILE:
 
     --test
         If build unit test code.
-
 EOF
 }
 
-if [ $SOURCE_DIR == $PWD ]
+if [ "x$SOURCE_DIR" = "x$PWD" ]
 then
     echo "Error: cannot create build files in source directory, exit"
     exit 1
