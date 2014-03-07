@@ -43,6 +43,8 @@
 using namespace BlendInt;
 using namespace std;
 
+namespace BI = BlendInt;
+
 int main(int argc, char* argv[])
 {
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
@@ -117,12 +119,12 @@ int main(int argc, char* argv[])
 
 //	interface()->SetMainWidget(layout);
 
-	ComboBox* combo = manage(new ComboBox);
+	ComboBox* combo = Manage(new ComboBox);
 	combo->set_name("ComboBox");
 	combo->SetPosition(800, 200);
 	combo->Resize (200, 400);
 
-	Slider* slide = manage (new Slider);
+	Slider* slide = Manage (new Slider);
 	slide->set_name("Slider");
 	slide->SetPosition(200, 500);
 

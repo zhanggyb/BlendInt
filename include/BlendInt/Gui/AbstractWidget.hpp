@@ -58,7 +58,7 @@ namespace BlendInt {
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
 
 	template<typename T>
-	T* manage (T* obj, bool val = true)
+	T* Manage (T* obj, bool val = true)
 	{
 		obj->set_manage(val);
 		return obj;
@@ -79,7 +79,7 @@ namespace BlendInt {
 		friend class Interface;
 		friend class AbstractContainer;
 
-		template <typename T> friend T* manage (T* obj, bool val);
+		template <typename T> friend T* Manage (T* obj, bool val);
 
 		/**
 		 * @brief The default constructor

@@ -236,11 +236,11 @@ TEST_F(ContextManagerTest1, DestructorInContainer02)
 	GLFWwindow* win = CreateWindow("ContextManager - DestructorInContainer02");
 
     // TODO: add test code here
-    Widget* w1 = manage(new Widget);
+    Widget* w1 = Manage(new Widget);
     w1->set_name("widget1");
     w1->SetPosition(200, 200);
 
-    Frame* f1 = manage(new Frame);  // now f1 should be deleted automatically
+    Frame* f1 = Manage(new Frame);  // now f1 should be deleted automatically
     f1->set_name("frame1");
     f1->SetPosition(400, 400);
     f1->Add(w1);
