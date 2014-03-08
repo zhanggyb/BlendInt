@@ -21,8 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_SHADOW_HPP_
-#define _BLENDINT_SHADOW_HPP_
+#ifndef _BLENDINT_GUI_SHADOW_HPP_
+#define _BLENDINT_GUI_SHADOW_HPP_
+
+#include <vector>
 
 #include <BlendInt/Types.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
@@ -87,6 +89,8 @@ namespace BlendInt {
 				float step,
 				float vert[WIDGET_SIZE_MAX][2]);
 
+		void GenerateShadowBuffers (const Size* size, float corner_rad, float blue_rad);
+
 		/**
 		 * @brief draw shadow without GL Buffer
 		 * @param radin
@@ -110,10 +114,11 @@ namespace BlendInt {
 		float m_blur_rad;
 
 		//GLArrayBuffer* m_gl_buffer;
+		std::vector<RefPtr<GLArrayBuffer> > m_buffers;
 
 		//std::vector<GLuint> m_ids;
 	};
 
 }
 
-#endif /* _BLENDINT_SHADOW_HPP_ */
+#endif /* _BLENDINT_GUI_SHADOW_HPP_ */

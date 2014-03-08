@@ -26,6 +26,8 @@
 
 #include <BlendInt/Gui/RoundWidget.hpp>
 
+#include <BlendInt/Gui/Shadow.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -53,6 +55,9 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
+
+		Shadow m_shadow;
+
 	};
 
 }

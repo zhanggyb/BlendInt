@@ -43,6 +43,7 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(data);
 				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 
+				m_shadow.Resize(*size_p);
 				Refresh();
 				return true;
 			}
@@ -71,6 +72,8 @@ namespace BlendInt {
 	void ComboBox::Draw()
 	{
 		ThemeManager* tm = ThemeManager::instance();
+
+		m_shadow.Draw();
 
 		// draw inner, simple fill
 		glColor4ub(tm->themes()->regular.inner.r(),
