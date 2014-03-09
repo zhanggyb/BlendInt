@@ -75,7 +75,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Draw () = 0;
+		virtual void Draw (RedrawEvent* event) = 0;
 
 		Cpp::Event<int> m_slider_moved;
 

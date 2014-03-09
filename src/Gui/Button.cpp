@@ -87,7 +87,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Button::Draw ()
+	void Button::Draw (RedrawEvent* event)
 	{
 		ThemeManager* tm = ThemeManager::instance();
 

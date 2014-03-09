@@ -91,7 +91,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollControl::Draw ()
+	void ScrollControl::Draw (RedrawEvent* event)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

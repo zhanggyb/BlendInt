@@ -67,7 +67,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void Widget::Draw()
+	void Widget::Draw(RedrawEvent* event)
 	{
 		float outer_v[4][2];	// vertices for drawing outline
 		float inner_v[4][2];	// vertices for drawing inner

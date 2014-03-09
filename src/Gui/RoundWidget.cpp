@@ -67,7 +67,7 @@ namespace BlendInt {
 		}
 	}
 
-	void RoundWidget::Draw()
+	void RoundWidget::Draw(RedrawEvent* event)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner

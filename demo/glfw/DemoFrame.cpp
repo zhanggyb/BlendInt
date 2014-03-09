@@ -1,7 +1,7 @@
 /*
  * DemoFrame.cpp
  *
- *  Created on: 2013骞�11���16���
+ *  Created on: 2013楠�锟�11锟斤拷锟�16锟斤拷锟�
  *      Author: zhanggyb
  */
 
@@ -116,7 +116,7 @@ bool DemoFrame::Update(int type, const void* data)
 	}
 }
 
-void DemoFrame::Render ()
+void DemoFrame::Draw (RedrawEvent* event)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();

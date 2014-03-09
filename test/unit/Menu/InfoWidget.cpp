@@ -27,9 +27,9 @@ void InfoWidget::onShowText (BlendInt::MenuItem* item)
 	m_text = item->text();
 }
 
-void InfoWidget::Draw ()
+void InfoWidget::Draw (BlendInt::RedrawEvent* event)
 {
-	BlendInt::Widget::Draw();
+	BlendInt::Widget::Draw(event);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();

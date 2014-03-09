@@ -17,7 +17,7 @@ public:
 	
 protected:
 	
-	virtual void Draw ();
+	virtual void Draw (BlendInt::RedrawEvent* event);
 	
 private:
 	

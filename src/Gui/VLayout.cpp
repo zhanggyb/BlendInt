@@ -102,7 +102,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VLayout::Draw ()
+	void VLayout::Draw (RedrawEvent* event)
 	{
 #ifdef DEBUG
 		glLineWidth(1);

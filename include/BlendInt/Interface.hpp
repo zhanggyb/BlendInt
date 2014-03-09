@@ -52,8 +52,6 @@
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Point.hpp>
 
-#include <BlendInt/Window/DisplayEvent.hpp>
-
 #ifdef DEBUG
 #include <BlendInt/Gui/AbstractForm.hpp>
 #endif
@@ -153,6 +151,7 @@ namespace BlendInt {
 		Cpp::Event<unsigned int, unsigned int> m_resized;
 
 		FocusStyle m_focus_style;
+
 	};
 
 }

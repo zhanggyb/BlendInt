@@ -251,7 +251,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Slider::Draw ()
+	void Slider::Draw (RedrawEvent* event)
 	{
 		glColor4ub(themes()->scroll.outline.r(),
 				themes()->scroll.outline.g(),

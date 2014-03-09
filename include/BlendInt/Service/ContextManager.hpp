@@ -29,6 +29,9 @@
 #include <deque>
 
 #include <boost/smart_ptr.hpp>
+
+#include <glm/glm.hpp>
+
 #include <Cpp/Events.hpp>
 
 #include <BlendInt/Core/Point.hpp>
@@ -89,7 +92,7 @@ namespace BlendInt {
 
 		virtual bool Update (int type, const void* data);
 
-		virtual void Draw ();
+		virtual void Draw (RedrawEvent* event);
 
 		virtual void CursorEnterEvent (bool entered);
 
@@ -121,6 +124,8 @@ namespace BlendInt {
 
 		void ResizeFromInterface (unsigned int width, unsigned int height);
 
+		void DrawFromInterface ();
+
 		static bool Initialize ();
 
 		static void Release ();
@@ -131,7 +136,7 @@ namespace BlendInt {
 
 		void PreDrawContext (bool fbo = false);
 
-		void DispatchDrawEvent (AbstractWidget* widget);
+		void DispatchDrawEvent (AbstractWidget* widget, RedrawEvent* event);
 
 		void OnDestroyObject (AbstractWidget* obj);
 
@@ -163,6 +168,10 @@ namespace BlendInt {
 		GLTexture2D* m_main_buffer;
 
 		ScreenBuffer* m_screenbuffer;
+
+		glm::mat4 m_view;
+
+		glm::mat4 m_projection;
 
 		std::deque<GLTexture2D*> m_deque;
 

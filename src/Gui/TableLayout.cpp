@@ -141,7 +141,7 @@ namespace BlendInt {
 
 	}
 
-	void TableLayout::Draw ()
+	void TableLayout::Draw (RedrawEvent* event)
 	{
 		std::vector<AbstractWidget*>::const_iterator it;
 		for (it = m_items.begin(); it != m_items.end(); it++) {

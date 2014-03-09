@@ -35,6 +35,9 @@
 #include <set>
 #include <stdexcept>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <OpenImageIO/imageio.h>
 OIIO_NAMESPACE_USING
 
@@ -407,19 +410,19 @@ namespace BlendInt {
 
 			glEnable(GL_BLEND);
 
-			glViewport(0, 0, width, height);
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
+			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
 
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
+			RedrawEvent event;
+			event.set_pv_matrix(projection * view);
+
+			glViewport(0, 0, width, height);
 
 			glPushMatrix();
 
 			glTranslatef(border, border, 0);
 
-			Draw();
+			Draw(&event);
 
 			glPopMatrix();
 
@@ -481,7 +484,7 @@ namespace BlendInt {
 
 	void AbstractWidget::DispatchRender(AbstractWidget* other)
 	{
-		other->Draw();
+		//other->Draw();
 	}
 
 	void AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
@@ -571,7 +574,7 @@ namespace BlendInt {
 
 			glTranslatef(border, border, 0);
 
-			Draw();
+			//Draw();
 
 			/*
 			 GLubyte pixels[width * height * 4];

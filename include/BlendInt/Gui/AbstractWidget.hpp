@@ -36,6 +36,7 @@
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/KeyEvent.hpp>
 #include <BlendInt/Window/ContextMenuEvent.hpp>
+#include <BlendInt/Window/RedrawEvent.hpp>
 
 #include <BlendInt/Gui/AbstractExtraForm.hpp>
 
@@ -271,7 +272,7 @@ namespace BlendInt {
 		 */
 		virtual bool Update (int type, const void* data) = 0;
 
-		virtual void Draw () = 0;
+		virtual void Draw (RedrawEvent* event) = 0;
 
 		void LockGeometry (AbstractWidget* obj, bool status)
 		{

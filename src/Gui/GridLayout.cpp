@@ -59,7 +59,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void GridLayout::Draw ()
+	void GridLayout::Draw (RedrawEvent* event)
 	{
 	}
 

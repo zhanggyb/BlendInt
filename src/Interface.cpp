@@ -32,6 +32,8 @@
 #endif
 #endif  // __UNIX__
 
+#include <glm/glm.hpp>
+
 #include <OpenImageIO/imageio.h>
 OIIO_NAMESPACE_USING
 
@@ -177,7 +179,7 @@ namespace BlendInt {
 
 	void Interface::Draw ()
 	{
-		ContextManager::instance->Draw();
+		ContextManager::instance->DrawFromInterface();
 	}
 
 	void Interface::SetMainWidget(AbstractWidget* widget)

@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_DISPLAYEVENT_HPP_
-#define _BLENDINT_DISPLAYEVENT_HPP_
+#ifndef _BLENDINT_WINDOW_REDRAWEVENT_HPP_
+#define _BLENDINT_WINDOW_REDRAWEVENT_HPP_
 
 #include <glm/glm.hpp>
 
@@ -30,30 +30,30 @@
 
 namespace BlendInt {
 
-	class DisplayEvent: public DeviceEvent
+	class RedrawEvent: public DeviceEvent
 	{
 	public:
 
-		DisplayEvent ()
+		RedrawEvent ()
 			: DeviceEvent()
 		{}
 
-		~DisplayEvent ()
+		~RedrawEvent ()
 		{}
 		
-		void set_mvp (const glm::mat4& mvp)
+		void set_pv_matrix (const glm::mat4& pv)
 		{
-			m_mvp = mvp;
+			m_pv_matrix = pv;
 		}
 
-		const glm::mat4& mvp () const {return m_mvp;}
+		const glm::mat4& pv_matrix () const {return m_pv_matrix;}
 
 	private:
 
-		glm::mat4 m_mvp;
+		glm::mat4 m_pv_matrix;
 
 	};
 
 }
 
-#endif // _BLENDINT_DISPLAYEVENT_HPP_
+#endif // _BLENDINT_WINDOW_REDRAWEVENT_HPP_

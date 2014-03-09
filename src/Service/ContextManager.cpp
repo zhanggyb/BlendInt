@@ -26,6 +26,8 @@
 #include <iostream>
 #include <stdlib.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <BlendInt/Types.hpp>
 
 #include <BlendInt/Core/Size.hpp>
@@ -33,6 +35,8 @@
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
+
+#include <BlendInt/Window/RedrawEvent.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractContainer.hpp>
@@ -102,6 +106,11 @@ namespace BlendInt {
 		m_hover_deque.reset(new std::deque<AbstractWidget*>);
 
 		m_main_buffer = new GLTexture2D;
+
+		m_view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+
+		// default is 800 x 600
+		m_projection = glm::ortho(0.f, 800.f, 0.f, 600.f, 100.f, -100.f);
 	}
 
 	ContextManager::~ContextManager ()
@@ -222,6 +231,8 @@ namespace BlendInt {
 
 		refresh_once = true;
 		force_refresh_all = true;
+
+		m_projection = glm::ortho(0.f, (float)size.width(), 0.f, (float)size.height(), 100.f, -100.f);
 	}
 
 	void ContextManager::ResizeFromInterface (unsigned int width,
@@ -232,6 +243,8 @@ namespace BlendInt {
 
 		refresh_once = true;
 		force_refresh_all = true;
+
+		m_projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
 	}
 
 	void ContextManager::AddWidget (AbstractWidget* obj)
@@ -377,7 +390,12 @@ namespace BlendInt {
 	{
 	}
 
-	void ContextManager::Draw ()
+	void ContextManager::Draw (RedrawEvent* event)
+	{
+
+	}
+
+	void ContextManager::DrawFromInterface()
 	{
 		m_deque.clear();
 
@@ -608,19 +626,16 @@ namespace BlendInt {
 			glEnable(GL_BLEND);
 
 			glViewport(0, 0, width, height);
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
 
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
+			RedrawEvent event;
+			event.set_pv_matrix(m_projection * m_view);
 
 			set<AbstractWidget*>::iterator widget_iter;
 
 			for (widget_iter = widgets->begin(); widget_iter != widgets->end();
 			        widget_iter++) {
 				//(*set_it)->Draw();
-				DispatchDrawEvent(*widget_iter);
+				DispatchDrawEvent(*widget_iter, &event);
 			}
 
 			// uncomment the code below to test the layer buffer (texture)
@@ -783,7 +798,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 	}
 
-	void ContextManager::DispatchDrawEvent (AbstractWidget* widget)
+	void ContextManager::DispatchDrawEvent (AbstractWidget* widget, RedrawEvent* event)
 	{
 		if (widget->visiable()) {
 			glMatrixMode(GL_MODELVIEW);
@@ -792,7 +807,7 @@ namespace BlendInt {
 			glTranslatef(widget->position().x(), widget->position().y(),
 			        widget->z());
 
-			widget->Draw();
+			widget->Draw(event);
 
 			glPopMatrix();
 		}
@@ -804,7 +819,7 @@ namespace BlendInt {
 			for (std::deque<AbstractWidget*>::iterator it =
 			        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
 			        it++) {
-				DispatchDrawEvent(*it);
+				DispatchDrawEvent(*it, event);
 			}
 
 		}

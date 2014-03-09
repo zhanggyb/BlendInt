@@ -57,7 +57,7 @@ namespace BlendInt {
 
 		virtual bool Update (int type, const void* property);
 
-		virtual void Draw ();
+		virtual void Draw (RedrawEvent* event);
 
 		virtual void AddItem (AbstractWidget* object);
 

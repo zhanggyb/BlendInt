@@ -69,9 +69,9 @@ namespace BlendInt {
 
 	}
 
-	void PopupWidget::Draw ()
+	void PopupWidget::Draw (RedrawEvent* event)
 	{
-		Widget::Draw();
+		Widget::Draw(event);
 
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
