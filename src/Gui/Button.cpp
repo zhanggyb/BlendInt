@@ -32,6 +32,9 @@
 
 #include <iostream>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Service/Theme.hpp>
@@ -89,7 +92,140 @@ namespace BlendInt {
 
 	void Button::Draw (RedrawEvent* event)
 	{
+		RefPtr<GLSLProgram> program = ShaderManager::instance->widget_program();
+		program->Use();
+
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 model = glm::translate(glm::mat4(1.0), pos);
+
+		GLint pos_location = program->GetAttributeLocation("xy");
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(event->pv_matrix() * model));
+		program->SetVertexAttrib1f("z", (float)z());
+
 		ThemeManager* tm = ThemeManager::instance();
+
+		float r, g, b, a;
+
+		// draw inner, simple fill
+		if(down()) {
+			r = tm->themes()->regular.inner_sel.r() / 255.0;
+			g = tm->themes()->regular.inner_sel.g() / 255.0;
+			b = tm->themes()->regular.inner_sel.b() / 255.0;
+			a = tm->themes()->regular.inner_sel.a() / 255.0;
+		} else {
+			if(hover()) {
+				r = tm->themes()->regular.inner.highlight_red() / 255.0;
+				g = tm->themes()->regular.inner.highlight_green() / 255.0;
+				b = tm->themes()->regular.inner.highlight_blue() / 255.0;
+				a = tm->themes()->regular.inner.a() / 255.0;
+			} else {
+				r = tm->themes()->regular.inner.r() / 255.0;
+				g = tm->themes()->regular.inner.g() / 255.0;
+				b = tm->themes()->regular.inner.b() / 255.0;
+				a = tm->themes()->regular.inner.a() / 255.0;
+			}
+		}
+
+		program->SetVertexAttrib4f("color", r, g, b, a);
+
+		glEnableVertexAttribArray(pos_location);
+
+		// Describe our vertices array to OpenGL (it can't guess its format automatically)
+		m_inner_buffer->Bind();
+
+		glVertexAttribPointer(pos_location, // attribute
+				2,            // number of elements per vertex, here (x,y,z)
+				GL_FLOAT,          // the type of each element
+				GL_FALSE,          // take our values as-is
+				0,                 // no extra data between each position
+				0                  // offset of first element
+		);
+
+		/*
+		glEnableVertexAttribArray(m_attribute_v_color);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_colors);
+		glVertexAttribPointer(m_attribute_v_color, // attribute
+				3,            // number of elements per vertex, here (R,G,B)
+				GL_FLOAT,          // the type of each element
+				GL_FALSE,          // take our values as-is
+				0,                 // no extra data between each position
+				0                  // offset of first element
+		);
+		*/
+
+		// Push each element in buffer_vertices to the vertex shader
+		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
+		glDrawArrays(GL_POLYGON, 0, m_inner_buffer->GetBufferSize()/(2 * sizeof(GLfloat)));
+
+		m_inner_buffer->Reset();
+
+		GLfloat outline_color[4] = {themes()->regular.outline.r() / 255.f,
+		        themes()->regular.outline.g() / 255.f,
+		        themes()->regular.outline.b() / 255.f,
+		        (themes()->regular.outline.a() / WIDGET_AA_JITTER) / 255.f
+		};
+
+		program->SetVertexAttrib4fv("color", outline_color);
+
+		glm::vec3 jitter;
+		glm::mat4 jitter_matrix;
+
+		m_outer_buffer->Bind();
+
+		glVertexAttribPointer(pos_location, // attribute
+				2,            // number of elements per vertex, here (x,y)
+				GL_FLOAT,          // the type of each element
+				GL_FALSE,          // take our values as-is
+				0,                 // no extra data between each position
+				0                  // offset of first element
+		);
+
+		glVertexPointer(2, GL_FLOAT, 0, 0);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
+			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(event->pv_matrix() * model * jitter_matrix));
+
+			glDrawArrays(GL_QUAD_STRIP, 0, m_outer_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
+
+			//jitter.x = -jit[j][0]; jitter.y = -jit[j][1]; jitter.z = 0.0f;
+			//jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
+			//program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(event->pv_matrix() * model * jitter_matrix));
+		}
+
+		m_outer_buffer->Reset();
+
+		program->SetVertexAttrib4f("color", 1.0f, 1.0f, 1.0f, 0.02f);
+
+		m_emboss_buffer->Bind();
+
+		glVertexAttribPointer(pos_location, // attribute
+				2,            // number of elements per vertex, here (x,y)
+				GL_FLOAT,          // the type of each element
+				GL_FALSE,          // take our values as-is
+				0,                 // no extra data between each position
+				0                  // offset of first element
+		);
+
+		glVertexPointer(2, GL_FLOAT, 0, 0);
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
+			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(event->pv_matrix() * model * jitter_matrix));
+			glDrawArrays(GL_QUAD_STRIP, 0, m_emboss_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
+		}
+
+		m_emboss_buffer->Reset();
+
+		glDisableVertexAttribArray(pos_location);
+
+		program->Reset();
+
+		event->accept(this);
+		return;
+
+		//ThemeManager* tm = ThemeManager::instance();
 
 		// draw inner, simple fill
 		if(down()) {

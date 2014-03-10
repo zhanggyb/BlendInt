@@ -64,11 +64,12 @@ int main(int argc, char* argv[])
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();
 
-//	Button* btn1 = new Button;
-//	btn1->set_name("Button1");
-//	btn1->SetExpandX(false);
-//	btn1->SetPosition(100, 250);
-//	btn1->Resize(100, 100);
+	Button* btn1 = new Button;
+	btn1->set_name("Button1");
+	btn1->SetRadius(10.0);
+	btn1->SetExpandX(false);
+	btn1->SetPosition(100, 250);
+	btn1->Resize(100, 100);
 
 	//	ToggleButton* toggle1 = new ToggleButton;
 //	toggle1->set_name("ToggleButton1");
@@ -119,10 +120,10 @@ int main(int argc, char* argv[])
 
 //	interface()->SetMainWidget(layout);
 
-	ComboBox* combo = Manage(new ComboBox);
-	combo->set_name("ComboBox");
-	combo->SetPosition(200, 200);
-	combo->Resize(100, 20);
+//	ComboBox* combo = Manage(new ComboBox);
+//	combo->set_name("ComboBox");
+//	combo->SetPosition(200, 200);
+//	combo->Resize(100, 20);
 
 //	Slider* slide = Manage (new Slider);
 //	slide->set_name("Slider");

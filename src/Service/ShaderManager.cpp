@@ -82,23 +82,24 @@ namespace BlendInt {
 	const char* ShaderManager::widget_vertex_shader =
 			"#version 120\n"
 			""
-			"attribute vec3 coord3d;"
-			"attribute vec3 v_color;"
-			"uniform mat4 ModelViewProjectionMatrix;"
-			"varying vec3 f_color;"
+			"attribute vec2 xy;"
+			"attribute float z;"
+			"attribute vec4 color;"
+			"uniform mat4 MVP;"
+			"varying vec4 f_color;"
 			""
 			"void main(void) {"
-			"	gl_Position = ModelViewProjectionMatrix * vec4(coord3d, 1.0);"
-			"	f_color = v_color;"
+			"	gl_Position = MVP * vec4(xy, z, 1.0);"
+			"	f_color = color;"
 			"}";
 
 	const char* ShaderManager::widget_fragment_shader =
 			"#version 120\n"
 			""
-			"varying vec3 f_color;"
+			"varying vec4 f_color;"
 			""
 			"void main(void) {"
-			"	gl_FragColor = vec4(f_color, 1.0);"
+			"	gl_FragColor = f_color;"
 			"}";
 
 	ShaderManager* ShaderManager::instance = 0;

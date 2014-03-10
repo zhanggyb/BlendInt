@@ -180,6 +180,38 @@ namespace BlendInt {
 		 */
 		GLint GetUniformLocation (const char *name);
 
+		void SetVertexAttrib1f (GLuint index, GLfloat v0);
+
+		bool SetVertexAttrib1f (const char* name, GLfloat v0);
+
+		void SetVertexAttrib2f (GLuint index, GLfloat v0, GLfloat v1);
+
+		bool SetVertexAttrib2f (const char* name, GLfloat v0, GLfloat v2);
+
+		void SetVertexAttrib3f (GLuint index, GLfloat v0, GLfloat v1, GLfloat v2);
+
+		bool SetVertexAttrib3f (const char* name, GLfloat v0, GLfloat v1, GLfloat v2);
+
+		void SetVertexAttrib4f (GLuint index, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+
+		bool SetVertexAttrib4f (const char* name, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
+
+		void SetVertexAttrib4fv (GLuint index, const GLfloat* v);
+
+		bool SetVertexAttrib4fv (const char* name, const GLfloat* v);
+
+		bool SetUniform1f (const char* name, GLfloat v0);
+
+		bool SetUniform2f (const char* name, GLfloat v0, GLfloat v1);
+
+		bool SetUniform3f (const char* name, GLfloat v0, GLfloat v2, GLfloat v3);
+
+		bool SetUniform4fv (const char* name, GLsizei count, const GLfloat* value);
+
+		void SetUniformMatrix4fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+
+		bool SetUniformMatrix4fv (const char* name, GLsizei count, GLboolean transpose, const GLfloat *value);
+
 	private:
 
 		GLuint m_id;
