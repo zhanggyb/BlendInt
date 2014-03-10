@@ -40,7 +40,8 @@
 #include <algorithm>
 #include <iterator>
 
-#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/FontCache.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
@@ -308,35 +309,37 @@ namespace BlendInt {
 		*/
 //	}
 
-	void FontCache::Print (const String& string, size_t start)
+	void FontCache::Print (const glm::mat4& mvp, const String& string, size_t start)
 	{
-		Print (string, string.length(), start);
+		Print (mvp, string, string.length(), start);
 	}
 
-	void FontCache::Print (const String& string, size_t length, size_t start)
+	void FontCache::Print (const glm::mat4& mvp, const String& string, size_t length, size_t start)
 	{
-		ShaderManager* sm = ShaderManager::instance;
-		GLfloat black[4] = { 0, 0, 0, 1 };
+		glm::mat4 m = mvp;
+		RefPtr<GLSLProgram> program = ShaderManager::instance->text_program();
 
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		GLfloat black[4] = { 0, 0, 0, 1 };	// font color, customizable later
 
-		glUseProgram(sm->text_program()->id());
+		program->Use();
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_atlas.texture());
-		glUniform1i(sm->text_uniform_tex(), 0);
 
-		glUniform4fv(sm->text_uniform_color(), 1, black);
+		program->SetUniform1i("tex", 0);
+		program->SetUniform4fv("color", 1, black);
 
-		/* Set up the VBO for our vertex data */
-		glEnableVertexAttribArray(sm->text_attribute_coord());
-		glBindBuffer(GL_ARRAY_BUFFER, sm->text_vbo());
-		glVertexAttribPointer(sm->text_attribute_coord(), 4, GL_FLOAT, GL_FALSE, 0, 0);
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(m));
+
+		GLint text_attrib_coord = program->GetAttributeLocation("coord");
+
+		glEnableVertexAttribArray(text_attrib_coord);
+
+		glBindBuffer(GL_ARRAY_BUFFER, ShaderManager::instance->text_vbo());
+		glVertexAttribPointer(text_attrib_coord, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
 		//Vertex2D vertex[6];
 
-		/* Loop through all characters */
 		// TODO: read text in TextureFont map
 		size_t str_length = std::min(string.length(), length);
 
@@ -346,46 +349,35 @@ namespace BlendInt {
 
 		for (size_t i = 0; i < str_length; it++, i++)
 		{
-			/* Draw the character on the screen */
 			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
-			glTranslatef(m_atlas.glyph(*it).advance_x, 0, 0);
+			m = glm::translate(m, glm::vec3(m_atlas.glyph(*it).advance_x, 0, 0));
+
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(m));
 		}
 
-		glDisableVertexAttribArray(sm->text_attribute_coord());
+		glDisableVertexAttribArray(text_attrib_coord);
 
-		glUseProgram(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);	// do not forget unbind buffer
-
-		glPopMatrix();
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		program->Reset();
 	}
 
-	void FontCache::Print (float x, float y, const String& string, size_t start)
+	void FontCache::Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start)
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.0));
 
-		glTranslatef(x, y, 0);
-
-		Print (string, string.length(), start);
-
-		glPopMatrix();
+		Print (translated_mvp, string, string.length(), start);
 	}
 
-	void FontCache::Print (float x, float y, const String& string, size_t length, size_t start)
+	void FontCache::Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start)
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.0));
 
-		glTranslatef(x, y, 0);
-
-		Print (string, length, start);
-
-		glPopMatrix();
+		Print (translated_mvp, string, length, start);
 	}
-
 
 	void FontCache::print (const String& string, size_t length)
 	{
@@ -426,8 +418,9 @@ namespace BlendInt {
 
 		glDisableVertexAttribArray(sm->text_attribute_coord());
 
-		glUseProgram(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);	// do not forget unbind buffer
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glUseProgram(0);
 
 		glPopMatrix();
 	}

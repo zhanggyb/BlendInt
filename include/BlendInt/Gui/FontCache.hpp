@@ -116,13 +116,13 @@ namespace BlendInt {
 
 		void print (float x, float y, const String& string, size_t length);
 
-		void Print (const String& string, size_t start = 0);
+		void Print (const glm::mat4& mvp, const String& string, size_t start = 0);
 
-		void Print (const String& string, size_t length, size_t start = 0);
+		void Print (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0);
 
-		void Print (float x, float y, const String& string, size_t start = 0);
+		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start = 0);
 
-		void Print (float x, float y, const String& string, size_t length, size_t start = 0);
+		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start = 0);
 
 		int get_height ()
 		{

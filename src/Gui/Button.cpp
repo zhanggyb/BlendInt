@@ -111,7 +111,7 @@ namespace BlendInt {
 		program->Use();
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = event->pv_matrix() * glm::translate(glm::mat4(1.0), pos);
+		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
 		GLint pos_location = program->GetAttributeLocation("xy");
 
@@ -187,7 +187,6 @@ namespace BlendInt {
 			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
 			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
-
 			glDrawArrays(GL_QUAD_STRIP, 0, m_outer_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
 		}
 
@@ -218,50 +217,13 @@ namespace BlendInt {
 
 		program->Reset();
 
+		if(text().size()) {
+			FontCache* fc = FontCache::create(font());
+			fc->Print(mvp, origin().x(), origin().y(), text(), valid_text_length(), 0);
+		}
+
 		event->accept(this);
 		return;
-
-		//ThemeManager* tm = ThemeManager::instance();
-
-		// draw inner, simple fill
-		if(down()) {
-			glColor4ub(tm->themes()->regular.inner_sel.r(),
-					   tm->themes()->regular.inner_sel.g(),
-					   tm->themes()->regular.inner_sel.b(),
-					   tm->themes()->regular.inner_sel.a());
-		} else {
-			if(hover()) {
-				glColor4ub(tm->themes()->regular.inner.highlight_red(),
-						   tm->themes()->regular.inner.highlight_green(),
-						   tm->themes()->regular.inner.highlight_blue(),
-						   tm->themes()->regular.inner.a());
-			} else {
-				glColor4ub(tm->themes()->regular.inner.r(),
-						   tm->themes()->regular.inner.g(),
-						   tm->themes()->regular.inner.b(),
-						   tm->themes()->regular.inner.a());
-			}
-		}
-
-		DrawInnerBuffer(m_inner_buffer.get());
-
-		// draw outline
-		unsigned char tcol[4] = { themes()->regular.outline.r(),
-								  themes()->regular.outline.g(),
-								  themes()->regular.outline.b(),
-								  themes()->regular.outline.a()};
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glColor4ubv(tcol);
-
-		DrawOutlineBuffer(m_outer_buffer.get());
-
-		glColor4f(1.0f, 1.0f, 1.0f, 0.02f);
-		DrawOutlineBuffer(m_emboss_buffer.get());
-
-		// Draw text
-		if(text().size()) {
-			FontCache::create(font())->print(origin().x(), origin().y(), text(), valid_text_length());
-		}
 	}
 
 	void Button::InitOnce ()

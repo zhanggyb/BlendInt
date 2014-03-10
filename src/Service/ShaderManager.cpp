@@ -44,10 +44,11 @@ namespace BlendInt {
 	const char* ShaderManager::text_vertex_shader =
 			"#version 120\n"
 			"attribute vec4 coord;"
+			"uniform mat4 MVP;"
 			"varying vec2 texpos;"
 			""
 			"void main(void) {"
-			"  gl_Position = gl_ModelViewProjectionMatrix * vec4(coord.xy, 0, 1);"
+			"  gl_Position = MVP * vec4(coord.xy, 0.0, 1.0);"
 			"  texpos = coord.zw;"
 			"}";
 

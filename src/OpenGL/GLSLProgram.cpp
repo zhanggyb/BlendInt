@@ -552,6 +552,7 @@ namespace BlendInt {
 	}
 
 
+
 	bool GLSLProgram::SetUniform4fv(const char* name, GLsizei count, const GLfloat* value)
 	{
 		GLint uniform_location = GetUniformLocation(name);
@@ -610,6 +611,169 @@ namespace BlendInt {
 			break;
 		}
 #endif
+	}
+
+	void GLSLProgram::SetUniform1i(GLint location, GLint v0)
+	{
+		glUniform1i (location, v0);
+
+#ifdef DEBUG
+		GLenum error = glGetError ();
+		switch (error) {
+
+		case GL_NO_ERROR:
+			break;
+
+		case GL_INVALID_VALUE: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_VALUE error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		case GL_INVALID_OPERATION: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_OPERATION error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		default:
+			break;
+		}
+#endif
+
+	}
+
+	bool GLSLProgram::SetUniform1i(const char* name, GLint v0)
+	{
+		GLint uniform_location = GetUniformLocation(name);
+
+		if(uniform_location < 0) return false;
+
+		glUniform1i (uniform_location, v0);
+
+#ifdef DEBUG
+		GLenum error = glGetError ();
+		switch (error) {
+
+		case GL_NO_ERROR:
+			break;
+
+		case GL_INVALID_VALUE: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_VALUE error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		case GL_INVALID_OPERATION: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_OPERATION error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		default:
+			break;
+		}
+#endif
+
+		return true;
+
+	}
+
+	bool GLSLProgram::SetUniform1f(const char* name, GLfloat v0)
+	{
+		GLint uniform_location = GetUniformLocation(name);
+
+		if(uniform_location < 0) return false;
+
+		glUniform1f (uniform_location, v0);
+
+#ifdef DEBUG
+		GLenum error = glGetError ();
+		switch (error) {
+
+		case GL_NO_ERROR:
+			break;
+
+		case GL_INVALID_VALUE: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_VALUE error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		case GL_INVALID_OPERATION: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_OPERATION error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		default:
+			break;
+		}
+#endif
+
+		return true;
+
+	}
+
+	bool GLSLProgram::SetUniform2f(const char* name, GLfloat v0, GLfloat v1)
+	{
+		GLint uniform_location = GetUniformLocation(name);
+
+		if(uniform_location < 0) return false;
+
+		glUniform2f (uniform_location, v0, v1);
+
+#ifdef DEBUG
+		GLenum error = glGetError ();
+		switch (error) {
+
+		case GL_NO_ERROR:
+			break;
+
+		case GL_INVALID_VALUE: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_VALUE error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		case GL_INVALID_OPERATION: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_OPERATION error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		default:
+			break;
+		}
+#endif
+
+		return true;
+	}
+
+	bool GLSLProgram::SetUniform3f(const char* name, GLfloat v0, GLfloat v1,
+		GLfloat v2)
+	{
+		GLint uniform_location = GetUniformLocation(name);
+
+		if(uniform_location < 0) return false;
+
+		glUniform3f (uniform_location, v0, v1, v2);
+
+#ifdef DEBUG
+		GLenum error = glGetError ();
+		switch (error) {
+
+		case GL_NO_ERROR:
+			break;
+
+		case GL_INVALID_VALUE: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_VALUE error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		case GL_INVALID_OPERATION: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_OPERATION error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		default:
+			break;
+		}
+#endif
+
+		return true;
 	}
 
 	bool GLSLProgram::SetUniformMatrix4fv(const char* name, GLsizei count, GLboolean transpose, const GLfloat* value)

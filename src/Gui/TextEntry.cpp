@@ -71,6 +71,7 @@ namespace BlendInt {
 				text_width = fc->GetTextWidth(m_text, m_length, m_start);
 			}
 
+			Refresh();
 			event->accept(this);
 			return;
 		}
@@ -187,7 +188,7 @@ namespace BlendInt {
 		program->Use();
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = event->pv_matrix() * glm::translate(glm::mat4(1.0), pos);
+		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
 		GLint xy_attrib = program->GetAttributeLocation("xy");
 		GLint color_attrib = program->GetAttributeLocation("color");
@@ -257,34 +258,12 @@ namespace BlendInt {
 
 		program->Reset();
 
-		event->accept(this);
-
-		return;
-		// ThemeManager* tm = ThemeManager::instance();
-
-		/*
-		glColor4ub(tm->themes()->text.inner_sel.r(),
-					tm->themes()->text.inner_sel.g(),
-					tm->themes()->text.inner_sel.b(),
-					tm->themes()->text.inner_sel.a());
-		*/
-
-		DrawShadedInnerBuffer(m_inner_buffer.get());
-
-		// draw outline
-		unsigned char tcol[4] = { themes()->text.outline.r(),
-		        themes()->text.outline.g(),
-		        themes()->text.outline.b(),
-		        themes()->text.outline.a()};
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glColor4ubv(tcol);
-
-		DrawOutlineBuffer(m_outer_buffer.get());
-
 		FontCache* fc = FontCache::create(m_font);
 
-		fc->Print(m_origin.x(), m_origin.y(), m_text, m_length, m_start);
+		fc->Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, m_start);
 
+		// draw a cursor
+		/*
 		unsigned int text_width = fc->GetTextWidth(m_text, m_cursor_position - m_start, m_start);
 
 		if(focused() && m_flicker) {
@@ -292,7 +271,9 @@ namespace BlendInt {
 			glColor4ub(0, 125, 255, 175);
 			glRecti(0, 0, DefaultTextEntryPadding.bottom(), size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
 		}
+		*/
 
+		event->accept(this);
 	}
 
 	void TextEntry::SetText (const String& text)

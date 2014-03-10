@@ -200,11 +200,15 @@ namespace BlendInt {
 
 		bool SetVertexAttrib4fv (const char* name, const GLfloat* v);
 
+		void SetUniform1i (GLint location, GLint v0);
+
+		bool SetUniform1i (const char* name, GLint v0);
+
 		bool SetUniform1f (const char* name, GLfloat v0);
 
 		bool SetUniform2f (const char* name, GLfloat v0, GLfloat v1);
 
-		bool SetUniform3f (const char* name, GLfloat v0, GLfloat v2, GLfloat v3);
+		bool SetUniform3f (const char* name, GLfloat v0, GLfloat v1, GLfloat v2);
 
 		bool SetUniform4fv (const char* name, GLsizei count, const GLfloat* value);
 
