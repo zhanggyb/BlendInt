@@ -21,10 +21,16 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <iostream>
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/FontCache.hpp>
 
-#include <iostream>
+#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 
@@ -175,8 +181,85 @@ namespace BlendInt {
 		}
 	}
 
-	void TextEntry::Draw ()
+	void TextEntry::Draw (RedrawEvent* event)
 	{
+		RefPtr<GLSLProgram> program = ShaderManager::instance->widget_program();
+		program->Use();
+
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = event->pv_matrix() * glm::translate(glm::mat4(1.0), pos);
+
+		GLint xy_attrib = program->GetAttributeLocation("xy");
+		GLint color_attrib = program->GetAttributeLocation("color");
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetVertexAttrib1f("z", (float)z());
+
+		glEnableVertexAttribArray(xy_attrib);
+		glEnableVertexAttribArray(color_attrib);
+
+		m_inner_buffer->Bind();
+
+		glVertexAttribPointer(xy_attrib, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  sizeof(GLfloat) * 6,				 // stride
+							  BUFFER_OFFSET(0)					 // offset of first element
+							  );
+
+		glVertexAttribPointer(color_attrib, // attribute
+							  4,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  sizeof(GLfloat) * 6,				 // stride
+							  BUFFER_OFFSET(2 * sizeof(GLfloat))					 // offset of first element
+							  );
+
+		glDrawArrays(GL_POLYGON, 0, m_inner_buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
+
+		glDisableVertexAttribArray(color_attrib);
+
+		m_inner_buffer->Reset();
+
+		GLfloat outline_color[4] = {themes()->text.outline.r() / 255.f,
+				themes()->text.outline.g() / 255.f,
+				themes()->text.outline.b() / 255.f,
+				(themes()->text.outline.a() / WIDGET_AA_JITTER) / 255.f
+		};
+
+		program->SetVertexAttrib4fv("color", outline_color);
+
+		glm::vec3 jitter;
+		glm::mat4 jitter_matrix;
+
+		m_outer_buffer->Bind();
+
+		glVertexAttribPointer(xy_attrib, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
+
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
+			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
+
+			glDrawArrays(GL_QUAD_STRIP, 0, m_outer_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
+		}
+
+		m_outer_buffer->Reset();
+
+		glDisableVertexAttribArray(xy_attrib);
+
+		program->Reset();
+
+		event->accept(this);
+
+		return;
 		// ThemeManager* tm = ThemeManager::instance();
 
 		/*

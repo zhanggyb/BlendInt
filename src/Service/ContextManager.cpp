@@ -409,8 +409,7 @@ namespace BlendInt {
 			        layer_iter++) {
 				widget_set_p = layer_iter->second.widgets;
 
-				DBG_PRINT_MSG("layer need to be refreshed: %d",
-				        layer_iter->first);
+				//DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
 
 				if (!layer_iter->second.buffer) {
 					layer_iter->second.buffer = new GLTexture2D;
@@ -443,8 +442,7 @@ namespace BlendInt {
 
 				if (layer_iter->second.refresh) {
 
-					DBG_PRINT_MSG("layer need to be refreshed: %d",
-					        layer_iter->first);
+					// DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
 
 					if (!layer_iter->second.buffer) {
 						layer_iter->second.buffer = new GLTexture2D;

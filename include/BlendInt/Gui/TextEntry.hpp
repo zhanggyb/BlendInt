@@ -57,11 +57,11 @@ namespace BlendInt {
 
 		virtual bool Update (int type, const void* data);
 
+		virtual void Draw (RedrawEvent *event);
+
 		virtual void KeyPressEvent (KeyEvent* event);
 
 		virtual void MousePressEvent (MouseEvent* event);
-
-		virtual void Draw ();
 
 	private:
 

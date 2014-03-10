@@ -55,11 +55,9 @@ int main(int argc, char* argv[])
 
 	// Add Code:
 
-//	TextEntry* text = new TextEntry;
-//	text->set_name("TextEntry");
-//	text->SetPosition(200, 200);
-//
-//	text->Register();
+	TextEntry* text = new TextEntry;
+	text->set_name("TextEntry");
+	text->SetPosition(240, 200);
 
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();

@@ -28,6 +28,8 @@
 #include <functional>
 #include <wchar.h>
 
+#include <glm/mat4x4.hpp>
+
 #include <BlendInt/Core/Freetype.hpp>
 #include <BlendInt/Gui/Glyph.hpp>
 #include <BlendInt/Gui/TextureFont.hpp>

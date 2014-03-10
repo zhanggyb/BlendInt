@@ -33,6 +33,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef DEBUG
+#include <BlendInt/Types.hpp>
+#endif
+
 #include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
@@ -172,16 +176,19 @@ namespace BlendInt {
 
 		m_text_program->AttachShaderPair(text_vertex_shader, text_fragment_shader);
 		if(!m_text_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the text program: %d", m_text_program->id());
 			return false;
 		}
 
 		m_primitive_program->AttachShaderPair(primitive_vertex_shader, primitive_fragment_shader);
 		if(!m_primitive_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the primitive program: %d", m_primitive_program->id());
 			return false;
 		}
 
 		m_widget_program->AttachShaderPair(widget_vertex_shader, widget_fragment_shader);
 		if(!m_widget_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the widget program: %d", m_widget_program->id());
 			return false;
 		}
 
@@ -189,7 +196,7 @@ namespace BlendInt {
 		text_uniform_tex_ = m_text_program->GetUniformLocation("tex");
 		text_uniform_color_ = m_text_program->GetUniformLocation("color");
 		if(text_attribute_coord_ == -1 || text_uniform_tex_ == -1 || text_uniform_color_ == -1) {
-			std::cerr << "Error: cannot get attributes and uniforms" << std::endl;
+			DBG_PRINT_MSG("%s", "Error: cannot get attributes and uniforms");
 			return false;
 		}
 

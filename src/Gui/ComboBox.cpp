@@ -41,7 +41,12 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
-				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				GenerateFormBuffer(size_p,
+								   round_type(),
+								   radius(),
+								   m_inner_buffer.get(),
+								   m_outer_buffer.get(),
+								   0);
 
 				m_shadow.Resize(*size_p);
 				Refresh();
@@ -50,7 +55,12 @@ namespace BlendInt {
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(data);
-				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				GenerateFormBuffer(&(size()),
+								   *type_p,
+								   radius(),
+								   m_inner_buffer.get(),
+								   m_outer_buffer.get(),
+								   0);
 
 				Refresh();
 				return true;
@@ -58,7 +68,12 @@ namespace BlendInt {
 
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(data);
-				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				GenerateFormBuffer(&(size()),
+								   round_type(),
+								   *radius_p,
+								   m_inner_buffer.get(),
+								   m_outer_buffer.get(),
+								   0);
 
 				Refresh();
 				return true;
@@ -69,7 +84,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ComboBox::Draw()
+	void ComboBox::Draw(RedrawEvent* event)
 	{
 		ThemeManager* tm = ThemeManager::instance();
 

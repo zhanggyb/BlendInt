@@ -40,6 +40,8 @@
 #include <algorithm>
 #include <iterator>
 
+#include <glm/glm.hpp>
+
 #include <BlendInt/Gui/FontCache.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Types.hpp>
