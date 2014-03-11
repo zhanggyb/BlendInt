@@ -172,7 +172,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Label::Draw ()
+	void Label::Draw (RedrawEvent* event)
 	{
 //		glColor4ub(m_background.r(), m_background.g(),
 //				   m_background.b(), m_background.a());

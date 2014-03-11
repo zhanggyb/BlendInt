@@ -69,7 +69,7 @@ namespace BlendInt {
 	{
 	}
 
-	void ImageView::Draw ()
+	void ImageView::Draw (RedrawEvent* event)
 	{
 		m_program->Use();
 

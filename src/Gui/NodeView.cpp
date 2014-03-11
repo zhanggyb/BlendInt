@@ -35,7 +35,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void NodeView::Draw()
+	void NodeView::Draw(RedrawEvent* event)
 	{
 
 	}

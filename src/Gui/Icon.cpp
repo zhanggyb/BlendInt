@@ -74,23 +74,4 @@ namespace BlendInt {
 		set_size(new_size);
 	}
 
-	void Icon::Draw ()
-	{
-#ifdef DEBUG
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2f(0.0, 0.0);
-		glVertex2f(size().width(), 0.0);
-		glVertex2f(size().width(), size().height());
-		glVertex2f(0.0, size().height());
-		glEnd();
-
-		glDisable(GL_LINE_STIPPLE);
-#endif
-
-	}
-
 }

@@ -52,9 +52,14 @@ namespace BlendInt {
 			return m_primitive_program;
 		}
 
-		RefPtr<GLSLProgram> widget_program () const
+		RefPtr<GLSLProgram> default_widget_program () const
 		{
-			return m_widget_program;
+			return m_default_widget_program;
+		}
+
+		RefPtr<GLSLProgram> default_form_program () const
+		{
+			return m_default_form_program;
 		}
 
 		//bool Find (const GLSLProgram* program);
@@ -107,7 +112,9 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> m_primitive_program;
 
-		RefPtr<GLSLProgram> m_widget_program;
+		RefPtr<GLSLProgram> m_default_widget_program;
+
+		RefPtr<GLSLProgram> m_default_form_program;
 
 		static const char* text_vertex_shader;
 
@@ -117,9 +124,13 @@ namespace BlendInt {
 
 		static const char* primitive_fragment_shader;
 
-		static const char* widget_vertex_shader;
+		static const char* default_widget_vertex_shader;
 
-		static const char* widget_fragment_shader;
+		static const char* default_widget_fragment_shader;
+
+		static const char* default_form_vertex_shader;
+
+		static const char* default_form_fragment_shader;
 
 	};
 }

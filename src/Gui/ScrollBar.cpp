@@ -280,7 +280,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SliderBar::Draw ()
+	void SliderBar::Draw (RedrawEvent* event)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
@@ -496,7 +496,7 @@ namespace BlendInt {
 		        shadedown, shadedir, 0, m_inner_buffer.get(), m_outer_buffer.get(), 0);
 	}
 
-	void ScrollBar::Draw ()
+	void ScrollBar::Draw (RedrawEvent* event)
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();

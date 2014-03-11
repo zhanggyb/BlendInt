@@ -131,7 +131,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Shadow::Draw ()
+	void Shadow::Draw (const glm::mat4& mvp)
 	{
 		//glMatrixMode(GL_MODELVIEW);
 		//glPushMatrix();

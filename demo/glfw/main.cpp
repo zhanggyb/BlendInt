@@ -55,14 +55,14 @@ int main(int argc, char* argv[])
 
 	// Add Code:
 
-	TextEntry* text = new TextEntry;
-	text->set_name("TextEntry");
-	text->SetPosition(240, 200);
+//	TextEntry* text = new TextEntry;
+//	text->set_name("TextEntry");
+//	text->SetPosition(240, 200);
 
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();
 
-	Button* btn1 = new Button;
+	Button* btn1 = Manage(new Button);
 	btn1->set_name("Button1");
 	btn1->SetText("Button1");
 	//btn1->SetRadius(10.0);
@@ -70,14 +70,13 @@ int main(int argc, char* argv[])
 	btn1->SetPosition(100, 250);
 	//btn1->Resize(100, 100);
 
-	//	ToggleButton* toggle1 = new ToggleButton;
-//	toggle1->set_name("ToggleButton1");
-//	toggle1->SetExpandX(false);
-//	toggle1->SetPosition(100, 450);
-//	toggle1->Resize(100, 100);
-//	toggle1->Register();
-//
-//	Button* btn2 = new Button;
+	ToggleButton* toggle1 = new ToggleButton;
+	toggle1->set_name("ToggleButton1");
+	//toggle1->SetExpandX(false);
+	toggle1->SetPosition(100, 450);
+	//toggle1->Resize(100, 100);
+
+	//	Button* btn2 = new Button;
 //	btn2->set_name("Button2");
 //	btn2->SetExpandX(false);
 //	btn2->SetPosition(600, 250);
@@ -119,10 +118,10 @@ int main(int argc, char* argv[])
 
 //	interface()->SetMainWidget(layout);
 
-//	ComboBox* combo = Manage(new ComboBox);
-//	combo->set_name("ComboBox");
-//	combo->SetPosition(200, 200);
-//	combo->Resize(100, 20);
+	ComboBox* combo = Manage(new ComboBox);
+	combo->set_name("ComboBox");
+	combo->SetPosition(200, 200);
+	combo->Resize(100, 20);
 
 //	Slider* slide = Manage (new Slider);
 //	slide->set_name("Slider");

@@ -38,11 +38,11 @@ namespace BlendInt {
 
 		virtual ~RoundForm();
 
+		virtual void Draw (const glm::mat4& mvp);
+
 	protected:
 
 		virtual bool Update (int type, const void* data);
-
-		virtual void Draw ();
 	};
 
 }

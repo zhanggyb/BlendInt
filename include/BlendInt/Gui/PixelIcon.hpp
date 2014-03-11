@@ -58,11 +58,11 @@ namespace BlendInt {
 
 		void display (float x, float y);
 
+		virtual void Draw (const glm::mat4& mvp);
+
 	protected:
 
 		virtual bool Update (int type, const void* data);
-
-		virtual void Draw ();
 
 	private:
 

@@ -32,7 +32,11 @@
 
 #include <iostream>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/VertexIcon.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 #define WIDGET_AA_JITTER 8
 
@@ -128,39 +132,50 @@ namespace BlendInt {
 		return true;
 	}
 
-	void VertexIcon::Draw()
+	void VertexIcon::Draw(const glm::mat4& mvp)
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		program->Use();
 
-		glTranslatef(size().width()/2.0, size().height()/2.0, 0.0);
+		//glm::mat4 icon_mvp = mvp * glm::rotate(glm::mat4(1.0), (glm::mediump_float)90, glm::vec3(0.0, 0.0, 1.0));
+		glm::mat4 icon_mvp = glm::scale(mvp, glm::vec3(1.15, 1.15, 1.15));
+		icon_mvp = glm::translate(icon_mvp, glm::vec3(size().width()/2.f, size().height()/2.f, 0.0));
 
-		if (m_array_buffer && m_index_buffer) {
+		GLint pos_location = program->GetAttributeLocation("xy");
 
-			m_array_buffer->Bind();	// bind ARRAY BUFFER
+		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
+		program->SetVertexAttrib4f("color", r, g, b, a);
 
-			m_index_buffer->Bind();	// bind ELEMENT ARRAY BUFFER
+		glm::vec3 jitter;
+		glm::mat4 jitter_matrix;
 
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(pos_location);
 
-			/* for each AA step */
-			for (int i = 0; i < WIDGET_AA_JITTER; i++) {
-				glTranslatef(jit[i][0], jit[i][1], 0.0f);
-				glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
-							   GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-				glTranslatef(-jit[i][0], -jit[i][1], 0.0f);
-			}
+		m_array_buffer->Bind();	// bind ARRAY BUFFER
+		m_index_buffer->Bind();	// bind ELEMENT ARRAY BUFFER
 
-			glDisableClientState(GL_VERTEX_ARRAY);
+		glVertexAttribPointer(pos_location, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
 
-			m_index_buffer->Reset();
-			m_array_buffer->Reset();
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
+			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(icon_mvp * jitter_matrix));
+			glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
+										   GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 		}
 
-		glPopMatrix();
+		m_index_buffer->Reset();
+		m_array_buffer->Reset();
 
-		//Icon::Draw();
+		glDisableVertexAttribArray(pos_location);
+
+		program->Reset();
 	}
 
 }

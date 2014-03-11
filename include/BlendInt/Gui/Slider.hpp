@@ -40,7 +40,7 @@ namespace BlendInt {
 
 		virtual ~SlideSwitch ();
 
-		virtual void Draw ();
+		virtual void Draw (const glm::mat4& mvp);
 
 	protected:
 

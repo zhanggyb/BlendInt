@@ -219,7 +219,6 @@ namespace BlendInt {
 				float inner[WIDGET_SIZE_MAX][6],
 				float outer[WIDGET_SIZE_MAX][2]);
 
-
 		static void verts_to_quad_strip (
 				const float inner_v[WIDGET_SIZE_MAX][2],
 				const float outer_v[WIDGET_SIZE_MAX][2],

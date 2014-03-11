@@ -184,7 +184,7 @@ namespace BlendInt {
 
 	void TextEntry::Draw (RedrawEvent* event)
 	{
-		RefPtr<GLSLProgram> program = ShaderManager::instance->widget_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());

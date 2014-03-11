@@ -56,14 +56,13 @@ namespace BlendInt {
 	{
 	}
 
+	void PixelIcon::Draw (const glm::mat4& mvp)
+	{
+	}
 
 	bool PixelIcon::Update(int type, const void* data)
 	{
 		return true;
-	}
-
-	void PixelIcon::Draw ()
-	{
 	}
 
 }

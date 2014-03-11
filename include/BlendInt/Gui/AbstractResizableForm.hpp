@@ -21,8 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_FORMBASE_HPP_
-#define _BLENDINT_FORMBASE_HPP_
+#ifndef _BLENDINT_GUI_FORMBASE_HPP_
+#define _BLENDINT_GUI_FORMBASE_HPP_
+
+#include <glm/mat4x4.hpp>
 
 #include <BlendInt/Gui/AbstractForm.hpp>
 
@@ -45,12 +47,9 @@ namespace BlendInt {
 
 		void Resize (const Size& size);
 
-		virtual void Draw () = 0;
-
+		virtual void Draw (const glm::mat4& mvp) = 0;
 	};
 
 }
 
-
-
-#endif /* FORM_HPP_ */
+#endif	// _BLENDINT_GUI_FORMBASE_HPP_

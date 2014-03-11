@@ -130,7 +130,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SlideSwitch::Draw()
+	void SlideSwitch::Draw(const glm::mat4& mvp)
 	{
 		//if(down()) {
 			DrawShadedInnerBuffer(m_inner_buffer.get());
@@ -281,7 +281,7 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		m_switch->Draw();
+		m_switch->Draw(event->pv_matrix());
 
 #ifdef DEBUG
 		glLineWidth(1);

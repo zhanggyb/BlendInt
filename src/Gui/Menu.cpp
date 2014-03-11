@@ -147,7 +147,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Menu::Draw ()
+	void Menu::Draw (RedrawEvent* event)
 	{
 		//RoundWidget::Render();
 		// draw inner, simple fill

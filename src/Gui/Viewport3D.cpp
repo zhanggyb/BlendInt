@@ -225,7 +225,7 @@ namespace BlendInt {
 		        m_default_camera->projection() * m_default_camera->view());
 	}
 
-	void Viewport3D::Draw ()
+	void Viewport3D::Draw (RedrawEvent* event)
 	{
 		// store the current matrices
 		GLdouble proj_matrix[16];

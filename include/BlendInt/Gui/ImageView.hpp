@@ -42,7 +42,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Draw ();
+		virtual void Draw (RedrawEvent* event);
 
 	private:
 

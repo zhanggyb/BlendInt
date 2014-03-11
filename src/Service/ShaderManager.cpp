@@ -84,7 +84,7 @@ namespace BlendInt {
 			"	gl_FragColor = vec4(f_color, 1.0);"
 			"}";
 
-	const char* ShaderManager::widget_vertex_shader =
+	const char* ShaderManager::default_widget_vertex_shader =
 			"#version 120\n"
 			""
 			"attribute vec2 xy;"
@@ -98,7 +98,29 @@ namespace BlendInt {
 			"	f_color = color;"
 			"}";
 
-	const char* ShaderManager::widget_fragment_shader =
+	const char* ShaderManager::default_widget_fragment_shader =
+			"#version 120\n"
+			""
+			"varying vec4 f_color;"
+			""
+			"void main(void) {"
+			"	gl_FragColor = f_color;"
+			"}";
+
+	const char* ShaderManager::default_form_vertex_shader =
+			"#version 120\n"
+			""
+			"attribute vec2 xy;"
+			"attribute vec4 color;"
+			"uniform mat4 MVP;"
+			"varying vec4 f_color;"
+			""
+			"void main(void) {"
+			"	gl_Position = MVP * vec4(xy, 0.0, 1.0);"
+			"	f_color = color;"
+			"}";
+
+	const char* ShaderManager::default_form_fragment_shader =
 			"#version 120\n"
 			""
 			"varying vec4 f_color;"
@@ -151,10 +173,16 @@ namespace BlendInt {
 		m_primitive_program->set_name("Primitive GLSLProgram");
 #endif
 
-		m_widget_program.reset(new GLSLProgram);
+		m_default_widget_program.reset(new GLSLProgram);
 #ifdef DEBUG
-		m_widget_program->set_name("Widget GLSLProgram");
+		m_default_widget_program->set_name("Widget GLSLProgram");
 #endif
+
+		m_default_form_program.reset(new GLSLProgram);
+#ifdef DEBUG
+		m_default_form_program->set_name("Form GLSLProgram");
+#endif
+
 	}
 
 	ShaderManager::~ShaderManager()
@@ -171,7 +199,11 @@ namespace BlendInt {
 			return false;
 		}
 
-		if(!m_widget_program->Create()) {
+		if(!m_default_widget_program->Create()) {
+			return false;
+		}
+
+		if(!m_default_form_program->Create()) {
 			return false;
 		}
 
@@ -187,9 +219,15 @@ namespace BlendInt {
 			return false;
 		}
 
-		m_widget_program->AttachShaderPair(widget_vertex_shader, widget_fragment_shader);
-		if(!m_widget_program->Link()) {
-			DBG_PRINT_MSG("Fail to link the widget program: %d", m_widget_program->id());
+		m_default_widget_program->AttachShaderPair(default_widget_vertex_shader, default_widget_fragment_shader);
+		if(!m_default_widget_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the widget program: %d", m_default_widget_program->id());
+			return false;
+		}
+
+		m_default_form_program->AttachShaderPair(default_form_vertex_shader, default_form_fragment_shader);
+		if(!m_default_form_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the default form program: %d", m_default_form_program->id());
 			return false;
 		}
 

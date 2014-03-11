@@ -63,7 +63,7 @@ namespace BlendInt {
 
 		float blur_rad () const {return m_blur_rad;}
 
-		virtual void Draw ();
+		virtual void Draw (const glm::mat4& mvp);
 
 	protected:
 
