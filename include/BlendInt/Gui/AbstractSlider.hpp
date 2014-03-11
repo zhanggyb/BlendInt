@@ -21,15 +21,49 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BIL_ABSTRACTSLIDER_HPP_
-#define _BIL_ABSTRACTSLIDER_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTSLIDER_HPP_
+#define _BLENDINT_GUI_ABSTRACTSLIDER_HPP_
 
-#include <BlendInt/Gui/RoundWidget.hpp>
 #include <BlendInt/Types.hpp>
 
 #include <Cpp/Events.hpp>
 
+#include <BlendInt/Gui/RoundWidget.hpp>
+#include <BlendInt/Gui/AbstractRoundForm.hpp>
+
 namespace BlendInt {
+
+	class AbstractRoundForm;
+
+	class SlideIcon: public AbstractRoundForm
+	{
+	public:
+
+		SlideIcon ();
+
+		virtual ~SlideIcon ();
+
+		virtual void Draw (const glm::mat4& mvp);
+
+		void set_highlight (bool highlight)
+		{
+			m_highlight = highlight;
+		}
+
+	protected:
+
+		virtual bool Update (int type, const void* data);
+
+	private:
+
+		void InitOnce ();
+
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_highlight_buffer;
+
+		bool m_highlight;
+	};
 
 	/**
 	 * @brief The abstract class for slider widgets
@@ -100,4 +134,4 @@ namespace BlendInt {
 
 }
 
-#endif	// _BIL_ABSTRACTSLIDER_HPP_
+#endif	// _BLENDINT_GUI_ABSTRACTSLIDER_HPP_

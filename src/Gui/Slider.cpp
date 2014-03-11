@@ -35,40 +35,26 @@
 
 #include <BlendInt/Gui/Slider.hpp>
 #include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/StockItems.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 #include <iostream>
 
 namespace BlendInt {
 
-	// -------------------- Slider ---------------------------
-
-	Slider::Slider(Orientation orientation)
-	: AbstractSlider(orientation)
+	Slider::Slider (Orientation orientation) :
+					AbstractSlider(orientation)
 	{
-		m_switch = StockItems::instance->icon_slide();
-
-		// set default size
 		if (orientation == Vertical) {
-			set_size (18, 200);
+			set_size(18, 200);
 			set_expand_y(true);
 		} else {
-			set_size (200, 18);
+			set_size(200, 18);
 			set_expand_x(true);
 		}
 	}
 
 	Slider::~Slider()
 	{
-	}
-
-	void Slider::SetSwitchSize (size_t size)
-	{
-		if(orientation() == Vertical) {	// Vertical
-			m_switch->Resize(m_switch->size().width(), size);
-		} else {
-			m_switch->Resize(size, m_switch->size().height());
-		}
 	}
 
 	bool Slider::Update (int type, const void* data)
@@ -125,7 +111,7 @@ namespace BlendInt {
 		//glm::mat4 rotate = glm::rotate(glm::mat4(1.0), (glm::mediump_float)(M_PI * 1.5), glm::vec3(0.0, 0.0, 1.0));
 		//glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, icon->size().height()/2.f, 0.0));
 
-		m_switch->Draw(mvp);
+		m_switch.Draw(mvp);
 
 		event->accept(this);
 

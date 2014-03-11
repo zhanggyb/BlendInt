@@ -25,13 +25,9 @@
 #define _BLENDINT_SLIDER_HPP_
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-
 #include <BlendInt/Gui/AbstractSlider.hpp>
-#include <BlendInt/Gui/Button.hpp>
 
 namespace BlendInt {
-
-	class SlideIcon;
 
 	/**
 	 * @brief Slider widget
@@ -42,11 +38,7 @@ namespace BlendInt {
 
 		Slider (Orientation orientation = Horizontal);
 
-		Slider (Orientation orientation, AbstractWidget* parent);
-
 		virtual ~Slider ();
-
-		void SetSwitchSize (size_t size);
 
 	protected:
 
@@ -66,13 +58,12 @@ namespace BlendInt {
 		 */
 		int get_space ();
 
-		RefPtr<SlideIcon> m_switch;
-
 	private:
 
 		inline float get_position ()
 		{return value() * get_space() / ((float)maximum() - (float)minimum());}
 
+		SlideIcon m_switch;
 	};
 
 }

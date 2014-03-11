@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 
 	Init();
 
-	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1200, 800);
+	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
 
 	// Add Code:
 
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
 
 	Slider* slide = Manage (new Slider);
 	slide->set_name("Slider");
-	slide->SetPosition(200, 500);
+	slide->SetPosition(200, 200);
 
 	RunLoop (win);
 

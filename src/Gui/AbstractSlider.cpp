@@ -21,11 +21,202 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <OpenGL/OpenGL.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
 #include <algorithm>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/AbstractSlider.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
+
+	SlideIcon::SlideIcon () :
+					AbstractRoundForm(), m_highlight(false)
+	{
+		set_size(14, 14);
+		set_round_type(RoundAll);
+		set_radius(7.0);
+
+		InitOnce();
+	}
+
+	SlideIcon::~SlideIcon ()
+	{
+
+	}
+
+	bool SlideIcon::Update (int type, const void* data)
+	{
+		switch (type) {
+
+			case FormSize: {
+				const Size* size_p = static_cast<const Size*>(data);
+				Orientation shadedir =
+								size_p->width() < size_p->height() ?
+												Horizontal : Vertical;
+				const Color& color = themes()->scroll.item;
+				short shadetop = themes()->scroll.shadetop;
+				short shadedown = themes()->scroll.shadedown;
+
+				GenerateShadedFormBuffers(size_p, round_type(), radius(), color,
+								shadetop, shadedown, shadedir, 5,
+								m_inner_buffer.get(), m_outer_buffer.get(),
+								m_highlight_buffer.get());
+
+				return true;
+			}
+
+			case FormRoundType: {
+				const Size* size_p = &(size());
+				Orientation shadedir =
+								size_p->width() < size_p->height() ?
+												Horizontal : Vertical;
+				const RoundType* round_p = static_cast<const RoundType*>(data);
+				const Color& color = themes()->scroll.item;
+				short shadetop = themes()->scroll.shadetop;
+				short shadedown = themes()->scroll.shadedown;
+
+				GenerateShadedFormBuffers(size_p, *round_p, radius(), color,
+								shadetop, shadedown, shadedir, 5,
+								m_inner_buffer.get(), m_outer_buffer.get(),
+								m_highlight_buffer.get());
+				return true;
+			}
+
+			case FormRoundRadius: {
+				const Size* size_p = &(size());
+				Orientation shadedir =
+								size_p->width() < size_p->height() ?
+												Horizontal : Vertical;
+				const float* radius_p = static_cast<const float*>(data);
+				const Color& color = themes()->scroll.item;
+				short shadetop = themes()->scroll.shadetop;
+				short shadedown = themes()->scroll.shadedown;
+
+				GenerateShadedFormBuffers(size_p, round_type(), *radius_p,
+								color, shadetop, shadedown, shadedir, 5,
+								m_inner_buffer.get(), m_outer_buffer.get(),
+								m_highlight_buffer.get());
+				return true;
+			}
+
+			default:
+				return false;
+		}
+	}
+
+	void SlideIcon::Draw (const glm::mat4& mvp)
+	{
+		RefPtr<GLSLProgram> program =
+						ShaderManager::instance->default_widget_program();
+		program->Use();
+
+		GLint xy_attrib = program->GetAttributeLocation("xy");
+		GLint color_attrib = program->GetAttributeLocation("color");
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+
+		glEnableVertexAttribArray(xy_attrib);
+		glEnableVertexAttribArray(color_attrib);
+
+		if(m_highlight) {
+			m_highlight_buffer->Bind();
+		} else {
+			m_inner_buffer->Bind();
+		}
+
+		glVertexAttribPointer(xy_attrib, // attribute
+						2,			// number of elements per vertex, here (x,y)
+						GL_FLOAT,			 // the type of each element
+						GL_FALSE,			 // take our values as-is
+						sizeof(GLfloat) * 6,				 // stride
+						BUFFER_OFFSET(0)			// offset of first element
+										);
+
+		glVertexAttribPointer(color_attrib, // attribute
+						4,			// number of elements per vertex, here (x,y)
+						GL_FLOAT,			 // the type of each element
+						GL_FALSE,			 // take our values as-is
+						sizeof(GLfloat) * 6,				 // stride
+						BUFFER_OFFSET(2 * sizeof(GLfloat))// offset of first element
+										);
+
+		glDrawArrays(GL_POLYGON, 0,
+						m_inner_buffer->GetBufferSize()
+										/ (6 * sizeof(GLfloat)));
+
+		glDisableVertexAttribArray(color_attrib);
+
+		GLArrayBuffer::Reset();
+
+		GLfloat outline_color[4] = { themes()->scroll.outline.r() / 255.f,
+						themes()->scroll.outline.g() / 255.f,
+						themes()->scroll.outline.b() / 255.f,
+						(themes()->scroll.outline.a() / WIDGET_AA_JITTER)
+										/ 255.f };
+
+		program->SetVertexAttrib4fv("color", outline_color);
+
+		glm::vec3 jitter;
+		glm::mat4 jitter_matrix;
+
+		m_outer_buffer->Bind();
+
+		glVertexAttribPointer(xy_attrib, // attribute
+						2,			// number of elements per vertex, here (x,y)
+						GL_FLOAT,			 // the type of each element
+						GL_FALSE,			 // take our values as-is
+						0,				 // no extra data between each position
+						0					 // offset of first element
+						);
+
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			jitter.x = jit[j][0];
+			jitter.y = jit[j][1];
+			jitter.z = 0.0f;
+			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+							glm::value_ptr(mvp * jitter_matrix));
+
+			glDrawArrays(GL_QUAD_STRIP, 0,
+							m_outer_buffer->GetBufferSize()
+											/ (2 * sizeof(GLfloat)));
+		}
+
+		m_outer_buffer->Reset();
+
+		glDisableVertexAttribArray(xy_attrib);
+
+		program->Reset();
+	}
+
+	void SlideIcon::InitOnce ()
+	{
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_highlight_buffer.reset(new GLArrayBuffer);
+
+		Orientation shadedir =
+						size().width() < size().height() ?
+										Horizontal : Vertical;
+		const Color& color = themes()->scroll.item;
+		short shadetop = themes()->scroll.shadetop;
+		short shadedown = themes()->scroll.shadedown;
+
+		GenerateShadedFormBuffers(&size(), round_type(), radius(), color,
+						shadetop, shadedown, shadedir, 5, m_inner_buffer.get(),
+						m_outer_buffer.get(), m_highlight_buffer.get());
+	}
 
 	AbstractSlider::AbstractSlider(Orientation orientation)
 		: RoundWidget (), m_orientation(orientation),
