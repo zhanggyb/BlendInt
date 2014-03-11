@@ -152,6 +152,10 @@ namespace BlendInt {
 
 		FocusStyle m_focus_style;
 
+		static void GetGLVersion (int *major, int *minor);
+		
+		static void GetGLSLVersion (int *major, int *minor);
+
 	};
 
 }
