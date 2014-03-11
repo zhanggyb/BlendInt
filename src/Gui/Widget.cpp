@@ -35,6 +35,9 @@
 
 #include <iostream>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Types.hpp>
@@ -43,6 +46,7 @@
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ContextManager.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 
@@ -69,6 +73,17 @@ namespace BlendInt {
 
 	void Widget::Draw(RedrawEvent* event)
 	{
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		program->Use();
+
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
+
+		GLint xy_attrib = program->GetAttributeLocation("xy");
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetVertexAttrib1f("z", (float)z());
+
 		float outer_v[4][2];	// vertices for drawing outline
 		float inner_v[4][2];	// vertices for drawing inner
 
@@ -78,23 +93,63 @@ namespace BlendInt {
 
 		verts_to_quad_strip (inner_v, outer_v, 4, quad_strip);
 
-		// draw inner, simple fill
-		glColor4ub(themes()->regular.inner.r(),
-		        themes()->regular.inner.g(),
-		        themes()->regular.inner.b(),
-		        themes()->regular.inner.a());
+		ThemeManager* tm = ThemeManager::instance();
 
-		DrawInnerArray(inner_v, 4);
+		float r, g, b, a;
 
-		// draw outline
-		unsigned char tcol[4] = {themes()->regular.outline.r(),
-		        themes()->regular.outline.g(),
-		        themes()->regular.outline.b(),
-		        themes()->regular.outline.a()};
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glColor4ubv(tcol);
+		r = tm->themes()->regular.inner.r() / 255.f;
+		g = tm->themes()->regular.inner.g() / 255.f;
+		b = tm->themes()->regular.inner.b() / 255.f;
+		a = tm->themes()->regular.inner.a() / 255.f;
 
-		DrawOutlineArray(quad_strip, 4 * 2 + 2);
+		program->SetVertexAttrib4f("color", r, g, b, a);
+
+		glEnableVertexAttribArray(xy_attrib);
+		//glEnableClientState(GL_VERTEX_ARRAY);
+
+		glVertexAttribPointer(xy_attrib, // attribute
+							  2,		// number of elements per vertex, here (x,y)
+							  GL_FLOAT,	// the type of each element
+							  GL_FALSE,	// take our values as-is
+							  0,		// no extra data between each position
+							  inner_v	// the first element
+							  );
+
+		glDrawArrays(GL_POLYGON, 0, 4);
+
+		GLfloat outline_color[4] = {themes()->regular.outline.r() / 255.f,
+									themes()->regular.outline.g() / 255.f,
+									themes()->regular.outline.b() / 255.f,
+									(themes()->regular.outline.a() / WIDGET_AA_JITTER) / 255.f
+		};
+
+		program->SetVertexAttrib4fv("color", outline_color);
+
+
+		glm::vec3 jitter;
+		glm::mat4 jitter_matrix;
+
+		glVertexAttribPointer(xy_attrib, // attribute
+							  2,		// number of elements per vertex, here (x,y)
+							  GL_FLOAT,	// the type of each element
+							  GL_FALSE,	// take our values as-is
+							  0,		// no extra data between each position
+							  quad_strip	// the first element
+							  );
+
+		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
+			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
+			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
+			glDrawArrays(GL_QUAD_STRIP, 0, 4 * 2 + 2);
+		}
+
+		//glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableVertexAttribArray(xy_attrib);
+
+		program->Reset();
+
+		event->accept(this);
 	}
 
 	void Widget::CursorEnterEvent(bool entered)

@@ -62,6 +62,10 @@ int main(int argc, char* argv[])
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();
 
+	Widget* widget = Manage(new Widget);
+	widget->set_name("widget");
+	widget->SetPosition(400, 400);
+
 	Button* btn1 = Manage(new Button);
 	btn1->set_name("Button1");
 	btn1->SetText("Button1");
@@ -70,7 +74,7 @@ int main(int argc, char* argv[])
 	btn1->SetPosition(100, 250);
 	//btn1->Resize(100, 100);
 
-	ToggleButton* toggle1 = new ToggleButton;
+	ToggleButton* toggle1 = Manage(new ToggleButton);
 	toggle1->set_name("ToggleButton1");
 	//toggle1->SetExpandX(false);
 	toggle1->SetPosition(100, 450);
@@ -90,7 +94,7 @@ int main(int argc, char* argv[])
 //	btn2->SetExpandX(false);
 //	btn2->SetPosition(530, 250);
 //	btn2->Register();
-//
+
 //	Viewport3D* view3d1 = new Viewport3D;
 //	view3d1->set_name("Viewport 3D1");
 //	view3d1->SetPosition(20, 20);
@@ -118,10 +122,10 @@ int main(int argc, char* argv[])
 
 //	interface()->SetMainWidget(layout);
 
-	ComboBox* combo = Manage(new ComboBox);
-	combo->set_name("ComboBox");
-	combo->SetPosition(200, 200);
-	combo->Resize(100, 20);
+//	ComboBox* combo = Manage(new ComboBox);
+//	combo->set_name("ComboBox");
+//	combo->SetPosition(200, 200);
+//	combo->Resize(100, 20);
 
 //	Slider* slide = Manage (new Slider);
 //	slide->set_name("Slider");

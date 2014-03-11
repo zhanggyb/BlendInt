@@ -33,6 +33,9 @@
 
 #include <iostream>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 #include <BlendInt/Service/Theme.hpp>
 
@@ -44,10 +47,11 @@ namespace BlendInt {
 			"#version 120\n"
 			"attribute vec3 coord3d;"
 			"attribute vec2 texcoord;"
+			"uniform mat4 MVP;"
 			"varying vec2 f_texcoord;"
 			""
 			"void main(void) {"
-			"	gl_Position = gl_ModelViewProjectionMatrix * vec4(coord3d, 1.0);"
+			"	gl_Position = MVP * vec4(coord3d, 1.0);"
 			"	f_texcoord = texcoord;"
 			"}";
 
@@ -71,12 +75,17 @@ namespace BlendInt {
 
 	void ImageView::Draw (RedrawEvent* event)
 	{
+		glDisable(GL_BLEND);
 		m_program->Use();
 
 		glActiveTexture(GL_TEXTURE0);
 		m_texture->Bind();
 
 		glUniform1i(uniform_texture, 0);
+
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+				glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
+		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 		glEnableVertexAttribArray(attribute_coord3d);
 		m_vbo->Bind();
@@ -111,21 +120,22 @@ namespace BlendInt {
 		m_texture->Reset();
 		m_program->Reset();
 
-#ifdef DEBUG
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-			glVertex2i(0, 0);
-			glVertex2i(size().width(), 0);
-			glVertex2i(size().width(), size().height());
-			glVertex2i(0, size().height());
-		glEnd();
-
-		glDisable(GL_LINE_STIPPLE);
-#endif
+//#ifdef DEBUG
+//		glLineWidth(1);
+//		glEnable(GL_LINE_STIPPLE);
+//
+//		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+//		glLineStipple(1, 0xAAAA);
+//		glBegin(GL_LINE_LOOP);
+//			glVertex2i(0, 0);
+//			glVertex2i(size().width(), 0);
+//			glVertex2i(size().width(), size().height());
+//			glVertex2i(0, size().height());
+//		glEnd();
+//
+//		glDisable(GL_LINE_STIPPLE);
+//#endif
+		glEnable(GL_BLEND);
 	}
 
 	void ImageView::InitOnce ()

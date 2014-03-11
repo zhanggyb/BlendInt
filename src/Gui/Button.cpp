@@ -124,21 +124,21 @@ namespace BlendInt {
 
 		// draw inner, simple fill
 		if(down()) {
-			r = tm->themes()->regular.inner_sel.r() / 255.0;
-			g = tm->themes()->regular.inner_sel.g() / 255.0;
-			b = tm->themes()->regular.inner_sel.b() / 255.0;
-			a = tm->themes()->regular.inner_sel.a() / 255.0;
+			r = tm->themes()->regular.inner_sel.r() / 255.f;
+			g = tm->themes()->regular.inner_sel.g() / 255.f;
+			b = tm->themes()->regular.inner_sel.b() / 255.f;
+			a = tm->themes()->regular.inner_sel.a() / 255.f;
 		} else {
 			if(hover()) {
-				r = tm->themes()->regular.inner.highlight_red() / 255.0;
-				g = tm->themes()->regular.inner.highlight_green() / 255.0;
-				b = tm->themes()->regular.inner.highlight_blue() / 255.0;
-				a = tm->themes()->regular.inner.a() / 255.0;
+				r = tm->themes()->regular.inner.highlight_red() / 255.f;
+				g = tm->themes()->regular.inner.highlight_green() / 255.f;
+				b = tm->themes()->regular.inner.highlight_blue() / 255.f;
+				a = tm->themes()->regular.inner.a() / 255.f;
 			} else {
-				r = tm->themes()->regular.inner.r() / 255.0;
-				g = tm->themes()->regular.inner.g() / 255.0;
-				b = tm->themes()->regular.inner.b() / 255.0;
-				a = tm->themes()->regular.inner.a() / 255.0;
+				r = tm->themes()->regular.inner.r() / 255.f;
+				g = tm->themes()->regular.inner.g() / 255.f;
+				b = tm->themes()->regular.inner.b() / 255.f;
+				a = tm->themes()->regular.inner.a() / 255.f;
 			}
 		}
 
