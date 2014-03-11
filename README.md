@@ -4,27 +4,29 @@
 
 ## What is BlendInt
 
-**BlendInt** (Blender Interface Library in OpenGL) is a C++ library
-for building application with Blender-like style.
+**BlendInt** is a lightweight, open-source GUI library for building
+application with Blender-like style. It's written in C++ and
+highlights include CppEvents based on FastDelegate, a comprehensive
+set of widgets that are easily extensible via inheritance.
 
-This project is for anyone who like Blender and want to build a
-similar GUI application.
+BlendInt is free software distributed under the GNU Library General
+Public License (LGPL) v3.
 
-Features of vertion 0.1 (developing):
+**BlendInt is still under heavy development**
 
-* Event system
-* Widgets:
-  * Buttons:
-        * Push Button
-        * Toggle Button
-        * Checkable Button
-  * Scroll Widget
-  * Label
-  * Slider
-  * Tab Widget
-* Layout
-  * Horizontal Layout
-  * Vertical Layout
+## Features
+
+Like Blender, all widgets in BlendInt are drawing in OpenGL context
+and use the same color schemes and vertex data in Blender
+(http://www.blender.org), application built with BlendInt could be the
+same look as Blender.
+
+Here're some example widgets:
+
+* Widget
+* Button
+* ToggleButton
+* Label
 
 ## Usage
 

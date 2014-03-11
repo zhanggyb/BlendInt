@@ -113,7 +113,7 @@ namespace BlendInt {
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
-		GLint pos_location = program->GetAttributeLocation("xy");
+		GLint xy_attrib = program->GetAttributeLocation("xy");
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float)z());
@@ -144,13 +144,13 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4f("color", r, g, b, a);
 
-		glEnableVertexAttribArray(pos_location);
+		glEnableVertexAttribArray(xy_attrib);
 
 		// Describe our vertices array to OpenGL (it can't guess its format automatically)
 		m_inner_buffer->Bind();
 
-		glVertexAttribPointer(pos_location, // attribute
-							  2,			// number of elements per vertex, here (x,y,z)
+		glVertexAttribPointer(xy_attrib, // attribute
+							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
 							  0,				 // no extra data between each position
@@ -175,7 +175,7 @@ namespace BlendInt {
 
 		m_outer_buffer->Bind();
 
-		glVertexAttribPointer(pos_location, // attribute
+		glVertexAttribPointer(xy_attrib, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -196,7 +196,7 @@ namespace BlendInt {
 
 		m_emboss_buffer->Bind();
 
-		glVertexAttribPointer(pos_location, // attribute
+		glVertexAttribPointer(xy_attrib, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -213,7 +213,7 @@ namespace BlendInt {
 
 		m_emboss_buffer->Reset();
 
-		glDisableVertexAttribArray(pos_location);
+		glDisableVertexAttribArray(xy_attrib);
 
 		program->Reset();
 

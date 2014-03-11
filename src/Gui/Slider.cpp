@@ -30,158 +30,23 @@
 #endif
 #endif  // __UNIX__
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/Slider.hpp>
 #include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Service/StockItems.hpp>
 
 #include <iostream>
 
 namespace BlendInt {
-
-	SlideSwitch::SlideSwitch()
-	: AbstractRoundForm()
-	{
-		set_size(14, 14);
-		set_round_type(RoundAll);
-		set_radius(7.0);
-
-		InitOnce();
-	}
-
-	SlideSwitch::~SlideSwitch()
-	{
-
-	}
-
-	bool SlideSwitch::Update(int type, const void* data)
-	{
-		switch(type)	{
-
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
-				Orientation shadedir = size_p->width() < size_p->height() ? Horizontal : Vertical;
-				const Color& color = themes()->scroll.item;
-				short shadetop = themes()->scroll.shadetop;
-				short shadedown = themes()->scroll.shadedown;
-
-				GenerateShadedFormBuffers(size_p,
-						round_type(),
-						radius(),
-						color,
-						shadetop,
-						shadedown,
-						shadedir,
-						5,
-						m_inner_buffer.get(),
-						m_outer_buffer.get(),
-						m_highlight_buffer.get()
-						);
-
-				return true;
-			}
-
-			case FormRoundType: {
-				const Size* size_p = &(size());
-				Orientation shadedir = size_p->width() < size_p->height() ? Horizontal : Vertical;
-				const RoundType* round_p = static_cast<const RoundType*>(data);
-				const Color& color = themes()->scroll.item;
-				short shadetop = themes()->scroll.shadetop;
-				short shadedown = themes()->scroll.shadedown;
-
-				GenerateShadedFormBuffers(size_p,
-						*round_p,
-						radius(),
-						color,
-						shadetop,
-						shadedown,
-						shadedir,
-						5,
-						m_inner_buffer.get(),
-						m_outer_buffer.get(),
-						m_highlight_buffer.get()
-						);
-				return true;
-			}
-
-			case FormRoundRadius: {
-				const Size* size_p = &(size());
-				Orientation shadedir = size_p->width() < size_p->height() ? Horizontal : Vertical;
-				const float* radius_p = static_cast<const float*>(data);
-				const Color& color = themes()->scroll.item;
-				short shadetop = themes()->scroll.shadetop;
-				short shadedown = themes()->scroll.shadedown;
-
-				GenerateShadedFormBuffers(size_p,
-						round_type(),
-						*radius_p,
-						color,
-						shadetop,
-						shadedown,
-						shadedir,
-						5,
-						m_inner_buffer.get(),
-						m_outer_buffer.get(),
-						m_highlight_buffer.get()
-						);
-				return true;
-			}
-
-			default:
-				return false;
-		}
-	}
-
-	void SlideSwitch::Draw(const glm::mat4& mvp)
-	{
-		//if(down()) {
-			DrawShadedInnerBuffer(m_inner_buffer.get());
-		//} else {
-			//DrawShadedInnerBuffer(m_highlight_buffer.get());
-		//}
-
-		// draw outline
-		unsigned char tcol[4] = { themes()->scroll.outline.r(),
-		        themes()->scroll.outline.g(), themes()->scroll.outline.b(),
-		        themes()->scroll.outline.a() };
-
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glColor4ubv(tcol);
-
-		DrawOutlineBuffer(m_outer_buffer.get());
-
-	}
-
-	void SlideSwitch::InitOnce()
-	{
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_highlight_buffer.reset(new GLArrayBuffer);
-
-
-		Orientation shadedir = size().width() < size().height() ? Horizontal : Vertical;
-		const Color& color = themes()->scroll.item;
-		short shadetop = themes()->scroll.shadetop;
-		short shadedown = themes()->scroll.shadedown;
-
-		GenerateShadedFormBuffers(&size(),
-				round_type(),
-				radius(),
-				color,
-				shadetop,
-				shadedown,
-				shadedir,
-				5,
-				m_inner_buffer.get(),
-				m_outer_buffer.get(),
-				m_highlight_buffer.get()
-				);
-	}
 
 	// -------------------- Slider ---------------------------
 
 	Slider::Slider(Orientation orientation)
 	: AbstractSlider(orientation)
 	{
-		m_switch.reset(new SlideSwitch);
+		m_switch = StockItems::instance->icon_slide();
 
 		// set default size
 		if (orientation == Vertical) {
@@ -217,10 +82,10 @@ namespace BlendInt {
 			}
 
 			case FormSize: {
-				unsigned int button_size = static_cast<unsigned int>(std::min(size().width(),
-						size().height()));
+				//unsigned int button_size = static_cast<unsigned int>(std::min(size().width(),
+				//		size().height()));
 
-				m_switch->Resize(button_size, button_size);
+				//m_switch->Resize(button_size, button_size);
 
 				if(orientation() == Vertical) {
 					//m_slide_button->SetPosition (m_slide_button->position().x(),
@@ -253,6 +118,19 @@ namespace BlendInt {
 
 	void Slider::Draw (RedrawEvent* event)
 	{
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
+
+		//glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.15, 1.15, 1.15));
+		//glm::mat4 rotate = glm::rotate(glm::mat4(1.0), (glm::mediump_float)(M_PI * 1.5), glm::vec3(0.0, 0.0, 1.0));
+		//glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, icon->size().height()/2.f, 0.0));
+
+		m_switch->Draw(mvp);
+
+		event->accept(this);
+
+		return;
+
 		glColor4ub(themes()->scroll.outline.r(),
 				themes()->scroll.outline.g(),
 				themes()->scroll.outline.b(),
@@ -281,7 +159,7 @@ namespace BlendInt {
 
 		glPopMatrix();
 
-		m_switch->Draw(event->pv_matrix());
+		//m_switch->Draw(event->pv_matrix());
 
 #ifdef DEBUG
 		glLineWidth(1);

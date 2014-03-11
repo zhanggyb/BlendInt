@@ -62,22 +62,18 @@ int main(int argc, char* argv[])
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();
 
-	Widget* widget = Manage(new Widget);
-	widget->set_name("widget");
-	widget->SetPosition(400, 400);
-
-	Button* btn1 = Manage(new Button);
-	btn1->set_name("Button1");
-	btn1->SetText("Button1");
+//	Button* btn1 = Manage(new Button);
+//	btn1->set_name("Button1");
+//	btn1->SetText("Button1");
 	//btn1->SetRadius(10.0);
 	//btn1->SetExpandX(false);
-	btn1->SetPosition(100, 250);
+//	btn1->SetPosition(100, 250);
 	//btn1->Resize(100, 100);
 
-	ToggleButton* toggle1 = Manage(new ToggleButton);
-	toggle1->set_name("ToggleButton1");
+//	ToggleButton* toggle1 = Manage(new ToggleButton);
+//	toggle1->set_name("ToggleButton1");
 	//toggle1->SetExpandX(false);
-	toggle1->SetPosition(100, 450);
+//	toggle1->SetPosition(100, 450);
 	//toggle1->Resize(100, 100);
 
 	//	Button* btn2 = new Button;
@@ -127,9 +123,9 @@ int main(int argc, char* argv[])
 //	combo->SetPosition(200, 200);
 //	combo->Resize(100, 20);
 
-//	Slider* slide = Manage (new Slider);
-//	slide->set_name("Slider");
-//	slide->SetPosition(200, 500);
+	Slider* slide = Manage (new Slider);
+	slide->set_name("Slider");
+	slide->SetPosition(200, 500);
 
 	RunLoop (win);
 

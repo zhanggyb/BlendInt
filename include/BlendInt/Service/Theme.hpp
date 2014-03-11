@@ -44,7 +44,6 @@ namespace BlendInt {
 		Color text;				// Text
 		Color text_sel;		// Text Selected
 		bool shaded;			// Is Shaded
-		Orientation shaderdir;	// shader orientation
 		short shadetop;			// Shade Top, -100 - 100
 		short shadedown;	// Shade Down
 		bool alpha_check;

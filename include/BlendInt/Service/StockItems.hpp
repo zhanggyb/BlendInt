@@ -27,9 +27,36 @@
 #include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
 
+#include <BlendInt/Gui/AbstractRoundForm.hpp>
+
 namespace BlendInt {
 
 	class Interface;
+
+	class SlideIcon: public AbstractRoundForm
+	{
+	public:
+
+		SlideIcon ();
+
+		virtual ~SlideIcon ();
+
+		virtual void Draw (const glm::mat4& mvp);
+
+	protected:
+
+		virtual bool Update (int type, const void* data);
+
+	private:
+
+		void InitOnce ();
+
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_highlight_buffer;
+	};
+
+
 
 	/**
 	 * @brief class for Stock Icons
@@ -51,6 +78,8 @@ namespace BlendInt {
 		RefPtr<VertexIcon> icon_check() const {return m_icon_check;}
 
 		RefPtr<VertexIcon> icon_num () const {return m_icon_num;}
+
+		RefPtr<SlideIcon> icon_slide () const {return m_icon_slide;}
 
 	private:
 
@@ -84,6 +113,8 @@ namespace BlendInt {
 		RefPtr<VertexIcon> m_icon_check;
 
 		RefPtr<VertexIcon> m_icon_num;
+
+		RefPtr<SlideIcon> m_icon_slide;
 	};
 
 }

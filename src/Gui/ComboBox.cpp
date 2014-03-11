@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <math.h>
+
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <OpenGL/OpenGL.h>
@@ -177,7 +179,11 @@ namespace BlendInt {
 
 		RefPtr<VertexIcon> icon = StockItems::instance->icon_num();
 
-		icon->Draw(mvp);
+		glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.15, 1.15, 1.15));
+		glm::mat4 rotate = glm::rotate(glm::mat4(1.0), (glm::mediump_float)(M_PI * 1.5), glm::vec3(0.0, 0.0, 1.0));
+		glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, icon->size().height()/2.f, 0.0));
+
+		icon->Draw(mvp * translate * rotate * scale);
 
 		event->accept(this);
 		return;

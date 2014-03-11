@@ -137,10 +137,6 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
 
-		//glm::mat4 icon_mvp = mvp * glm::rotate(glm::mat4(1.0), (glm::mediump_float)90, glm::vec3(0.0, 0.0, 1.0));
-		glm::mat4 icon_mvp = glm::scale(mvp, glm::vec3(1.15, 1.15, 1.15));
-		icon_mvp = glm::translate(icon_mvp, glm::vec3(size().width()/2.f, size().height()/2.f, 0.0));
-
 		GLint pos_location = program->GetAttributeLocation("xy");
 
 		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
@@ -165,7 +161,7 @@ namespace BlendInt {
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
 			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(icon_mvp * jitter_matrix));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
 			glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
 										   GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 		}
