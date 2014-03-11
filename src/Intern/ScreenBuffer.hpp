@@ -26,6 +26,8 @@
 
 #include <vector>
 
+#include <glm/mat4x4.hpp>
+
 #include <BlendInt/Core/Object.hpp>
 #include <BlendInt/Core/Size.hpp>
 

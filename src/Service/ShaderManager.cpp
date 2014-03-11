@@ -41,6 +41,101 @@
 
 namespace BlendInt {
 
+#ifdef __APPLE__
+	const char* ShaderManager::text_vertex_shader =
+			"#version 330\n"
+			"in vec4 coord;"
+			"uniform mat4 MVP;"
+			"out vec2 texpos;"
+			""
+			"void main(void) {"
+			"  gl_Position = MVP * vec4(coord.xy, 0.0, 1.0);"
+			"  texpos = coord.zw;"
+			"}";
+
+	const char* ShaderManager::text_fragment_shader =
+			"#version 330\n"
+			"in vec2 texpos;"
+			"uniform sampler2D tex;"
+			"uniform vec4 color;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"  FragmentColor = vec4(1, 1, 1, texture(tex, texpos).a) * color;"
+			"}";
+
+	const char* ShaderManager::primitive_vertex_shader =
+			"#version 330\n"
+			""
+			"in vec3 coord3d;"
+			"in vec3 v_color;"
+			"uniform mat4 ModelViewProjectionMatrix;"
+			"out vec3 f_color;"
+			""
+			"void main(void) {"
+			"	gl_Position = ModelViewProjectionMatrix * vec4(coord3d, 1.0);"
+			"	f_color = v_color;"
+			"}";
+
+	const char* ShaderManager::primitive_fragment_shader =
+			"#version 330\n"
+			""
+			"in vec3 f_color;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	FragmentColor = vec4(f_color, 1.0);"
+			"}";
+
+	const char* ShaderManager::default_widget_vertex_shader =
+			"#version 330\n"
+			""
+			"in vec2 xy;"
+			"in float z;"
+			"in vec4 color;"
+			"uniform mat4 MVP;"
+			"out vec4 f_color;"
+			""
+			"void main(void) {"
+			"	gl_Position = MVP * vec4(xy, z, 1.0);"
+			"	f_color = color;"
+			"}";
+
+	const char* ShaderManager::default_widget_fragment_shader =
+			"#version 330\n"
+			""
+			"in vec4 f_color;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	FragmentColor = f_color;"
+			"}";
+
+	const char* ShaderManager::default_form_vertex_shader =
+			"#version 330\n"
+			""
+			"in vec2 xy;"
+			"in vec4 color;"
+			"uniform mat4 MVP;"
+			"out vec4 f_color;"
+			""
+			"void main(void) {"
+			"	gl_Position = MVP * vec4(xy, 0.0, 1.0);"
+			"	f_color = color;"
+			"}";
+
+	const char* ShaderManager::default_form_fragment_shader =
+			"#version 330\n"
+			""
+			"in vec4 f_color;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	FragmentColor = f_color;"
+			"}";
+#endif
+
+#ifdef __LINUX__
 	const char* ShaderManager::text_vertex_shader =
 			"#version 120\n"
 			"attribute vec4 coord;"
@@ -128,6 +223,7 @@ namespace BlendInt {
 			"void main(void) {"
 			"	gl_FragColor = f_color;"
 			"}";
+#endif
 
 	ShaderManager* ShaderManager::instance = 0;
 

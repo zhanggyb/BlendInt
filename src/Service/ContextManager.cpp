@@ -357,44 +357,6 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool ContextManager::Update (int type, const void* data)
-	{
-		return false;
-	}
-
-	void ContextManager::CursorEnterEvent (bool entered)
-	{
-	}
-
-	void ContextManager::KeyPressEvent (KeyEvent* event)
-	{
-	}
-
-	void ContextManager::ContextMenuPressEvent (ContextMenuEvent* event)
-	{
-	}
-
-	void ContextManager::ContextMenuReleaseEvent (ContextMenuEvent* event)
-	{
-	}
-
-	void ContextManager::MousePressEvent (MouseEvent* event)
-	{
-	}
-
-	void ContextManager::MouseReleaseEvent (MouseEvent* event)
-	{
-	}
-
-	void ContextManager::MouseMoveEvent (MouseEvent* event)
-	{
-	}
-
-	void ContextManager::Draw (RedrawEvent* event)
-	{
-
-	}
-
 	void ContextManager::DrawFromInterface()
 	{
 		m_deque.clear();
@@ -958,5 +920,45 @@ namespace BlendInt {
 	}
 
 #endif
+
+	// Unused virtual functions
+
+	bool ContextManager::Update (int type, const void* data)
+	{
+		return false;
+	}
+
+	void ContextManager::CursorEnterEvent (bool entered)
+	{
+	}
+
+	void ContextManager::KeyPressEvent (KeyEvent* event)
+	{
+	}
+
+	void ContextManager::ContextMenuPressEvent (ContextMenuEvent* event)
+	{
+	}
+
+	void ContextManager::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	{
+	}
+
+	void ContextManager::MousePressEvent (MouseEvent* event)
+	{
+	}
+
+	void ContextManager::MouseReleaseEvent (MouseEvent* event)
+	{
+	}
+
+	void ContextManager::MouseMoveEvent (MouseEvent* event)
+	{
+	}
+
+	void ContextManager::Draw (RedrawEvent* event)
+	{
+
+	}
 
 }

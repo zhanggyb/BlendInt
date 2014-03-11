@@ -33,12 +33,40 @@
 
 #include <iostream>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include "ScreenBuffer.hpp"
 
 namespace BlendInt {
 
+#ifdef __APPLE__
+	const char* ScreenBuffer::vertex_shader =
+			"#version 330\n"
+			"in vec3 coord3d;"
+			"in vec2 texcoord;"
+			"uniform mat4 MVP;"
+			"out vec2 f_texcoord;"
+			""
+			"void main(void) {"
+			"	gl_Position = MVP * vec4(coord3d, 1.0);"
+			"	f_texcoord = texcoord;"
+			"}";
+
+	const char* ScreenBuffer::fragment_shader =
+			"#version 330\n"
+			"in vec2 f_texcoord;"
+			"uniform sampler2D tex;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	FragmentColor = texture(tex, f_texcoord);"
+			"}";
+#endif
+
+#ifdef __LINUX__
 	const char* ScreenBuffer::vertex_shader =
 			"#version 120\n"
 			"attribute vec3 coord3d;"
@@ -52,11 +80,12 @@ namespace BlendInt {
 
 	const char* ScreenBuffer::fragment_shader =
 			"varying vec2 f_texcoord;"
-			"uniform sampler2D texture;"
+			"uniform sampler2D tex;"
 			""
 			"void main(void) {"
-			"	gl_FragColor = texture2D(texture, f_texcoord);"
+			"	gl_FragColor = texture2D(tex, f_texcoord);"
 			"}";
+#endif
 
 	unsigned int ScreenBuffer::max_widgets_layer_buffer_size = 4;
 
@@ -152,7 +181,7 @@ namespace BlendInt {
 
 			attribute_coord3d = m_program->GetAttributeLocation("coord3d");
 			attribute_texcoord = m_program->GetAttributeLocation("texcoord");
-			uniform_texture = m_program->GetUniformLocation("texture");
+			uniform_texture = m_program->GetUniformLocation("tex");
 
 			if(attribute_texcoord == -1 || attribute_coord3d == -1 || uniform_texture == -1) {
 				std::cerr << "Fail to get attribute" << std::endl;
