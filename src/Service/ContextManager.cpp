@@ -474,7 +474,7 @@ namespace BlendInt {
 		 */
 
 		// ---------
-		m_screenbuffer->Render(instance->m_main_buffer);
+		m_screenbuffer->Render(m_projection * m_view, instance->m_main_buffer);
 	}
 
 #ifdef DEBUG
@@ -697,16 +697,21 @@ namespace BlendInt {
 			PreDrawContext(true);
 
 			glViewport(0, 0, width, height);
+
+			/*
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
 
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
+			*/
+
+			glm::mat4 mvp = m_projection * m_view;
 
 #ifdef DEBUG
 			//DrawTriangle(false);
-			DrawGrid(width, height);
+			//DrawGrid(width, height);
 #endif
 
 			/*
@@ -720,7 +725,7 @@ namespace BlendInt {
 			 */
 			std::deque<GLTexture2D*>::iterator it;
 			for (it = m_deque.begin(); it != m_deque.end(); it++) {
-				m_screenbuffer->Render(*it);
+				m_screenbuffer->Render(mvp, *it);
 			}
 
 		}

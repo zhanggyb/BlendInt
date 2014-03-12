@@ -56,7 +56,7 @@ namespace BlendInt {
 		friend class Interface;
 		friend class ContextManager;
 
-		void Render (GLTexture2D* texture);
+		void Render (const glm::mat4& mvp, GLTexture2D* texture);
 
 		ScreenBuffer ();
 

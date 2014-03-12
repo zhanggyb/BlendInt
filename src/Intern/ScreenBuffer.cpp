@@ -72,9 +72,10 @@ namespace BlendInt {
 			"attribute vec3 coord3d;"
 			"attribute vec2 texcoord;"
 			"varying vec2 f_texcoord;"
+			"uniform mat4 MVP;"
 			""
 			"void main(void) {"
-			"	gl_Position = gl_ModelViewProjectionMatrix * vec4(coord3d, 1.0);"
+			"	gl_Position = MVP * vec4(coord3d, 1.0);"
 			"	f_texcoord = texcoord;"
 			"}";
 
@@ -107,11 +108,13 @@ namespace BlendInt {
 		m_widgets_layer_buffers.clear();
 	}
 
-	void ScreenBuffer::Render(GLTexture2D* texture)
+	void ScreenBuffer::Render(const glm::mat4& mvp, GLTexture2D* texture)
 	{
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 		m_program->Use();
+
+		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 		glActiveTexture(GL_TEXTURE0);
 		texture->Bind();
