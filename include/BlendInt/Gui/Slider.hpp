@@ -56,17 +56,35 @@ namespace BlendInt {
 		 * @brief calculate the space width in which slider can move
 		 * @return
 		 */
-		int get_space ();
+		int GetSpace ();
 
 	private:
 
+		/**
+		 * @brief Check if cursor is on the slide icon
+		 */
+		bool CursorOnSlideIcon (const Point& cursor);
+
+		int GetNewValue (const Point& cursor);
+
+		/**
+		 * @brief
+		 */
 		inline float get_position ()
-		{return value() * get_space() / ((float)maximum() - (float)minimum());}
+		{
+			return value() * GetSpace()
+			                / ((float) maximum() - (float) minimum());
+		}
 
 		SlideIcon m_switch;
 
 		Point m_line_start;	// where start to draw line
 		int m_line_width;
+
+		/**
+		 * @brief If the slide switch is pressed
+		 */
+		bool m_pressed;
 	};
 
 }

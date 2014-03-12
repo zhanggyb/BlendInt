@@ -42,25 +42,25 @@
 namespace BlendInt {
 
 	Slider::Slider (Orientation orientation) :
-					AbstractSlider(orientation), m_line_width(0)
+					AbstractSlider(orientation), m_line_width(0), m_pressed(false)
 	{
-		int switch_radius = std::min(m_switch.size().width(), m_switch.size().height()) / 2;
+		m_switch.Resize(14, 14);
 
 		if (orientation == Vertical) {
 			set_size(18, 200);
 			set_expand_y(true);
 
 			m_line_start.set_x(18 / 2);
-			m_line_start.set_y(switch_radius);
+			m_line_start.set_y(7);
 		} else {
 			set_size(200, 18);
 			set_expand_x(true);
 
-			m_line_start.set_x(switch_radius);
+			m_line_start.set_x(7);
 			m_line_start.set_y(18 / 2);
 		}
 
-		m_line_width = 200 - switch_radius * 2;
+		m_line_width = 200 - 7 * 2;
 
 	}
 
@@ -72,19 +72,15 @@ namespace BlendInt {
 	{
 		switch (type) {
 			case FormPosition: {
-
 				// don't care position
-
-//				const Point* pos = static_cast<const Point*>(data);
-//				m_slide_button->SetPosition(m_slide_button->position().x() + (pos->x() - position().x()),
-//						m_slide_button->position().y() + (pos->y() - position().y()));
 				return true;
 			}
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(data);
 
-				int switch_radius = std::min(m_switch.size().width(), m_switch.size().height()) / 2;
+				int switch_radius = std::min(m_switch.size().width(),
+				                m_switch.size().height()) / 2;
 
 				if (orientation() == Vertical) {
 					m_line_start.set_x(size_p->width() / 2);
@@ -95,28 +91,14 @@ namespace BlendInt {
 					m_line_start.set_y(size_p->height() / 2);
 					m_line_width = size_p->width() - switch_radius * 2;
 				}
-
-				//unsigned int button_size = static_cast<unsigned int>(std::min(size().width(),
-				//		size().height()));
-
-				//m_switch->Resize(button_size, button_size);
-
-				if(orientation() == Vertical) {
-					//m_slide_button->SetPosition (m_slide_button->position().x(),
-							//position().y() + value() * get_space() / (float)(maximum() - minimum()));
-				} else {
-					//m_slide_button->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
-							//m_slide_button->position().y());
-				}
-
 				return true;
 			}
 
 			case SliderPropertyValue: {
 
-				if(orientation() == Vertical) {
+				if (orientation() == Vertical) {
 					//m_slide_button->SetPosition (m_slide_button->position().x(),
-						//	position().y() + value() * get_space() / (float)(maximum() - minimum()));
+					//	position().y() + value() * get_space() / (float)(maximum() - minimum()));
 				} else {
 					//m_slide_button->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
 					//		m_slide_button->position().y());
@@ -173,6 +155,7 @@ namespace BlendInt {
 							  vertices	// the first element
 							  );
 
+		glLineWidth(1.0);
 		glDrawArrays(GL_LINES, 0, 2);
 
 		glDisableVertexAttribArray(xy_attrib);
@@ -185,10 +168,15 @@ namespace BlendInt {
 
 		if (orientation() == Horizontal) {
 			// m_line_start.x() == switch_radius
-			switch_mvp = glm::translate(mvp, glm::vec3(0.0, (float)(m_line_start.y() - m_line_start.x()), 0.0));
+			switch_mvp = glm::translate(mvp,
+			        glm::vec3(get_position(),
+			                (float) (m_line_start.y() - m_line_start.x()),
+			                0.0));
 		} else {
 			// m_line_start.y() == switch_radius
-			switch_mvp = glm::translate(mvp, glm::vec3((float)(m_line_start.x() - m_line_start.y()), 0.0, 0.0));
+			switch_mvp = glm::translate(mvp,
+			        glm::vec3((float) (m_line_start.x() - m_line_start.y()),
+			                get_position(), 0.0));
 		}
 
 		m_switch.Draw(switch_mvp);
@@ -198,120 +186,110 @@ namespace BlendInt {
 
 	void Slider::MouseMoveEvent (MouseEvent* event)
 	{
-		/*
-		if(m_slide_button->down()) {
-			dispatch_mouse_move_event(m_slide_button.get(), event);
+		if(m_pressed) {
 
-			int value = 0;
+			set_value(GetNewValue(event->position()));
 
-			if (orientation() == Vertical) {
-				int ymin = position().y() + m_slide_button->size().height() / 2;
-				int ymax = position().y() + size().height() - m_slide_button->size().height() / 2;
-				if(event->position().y() < ymin ||	event->position().y() > ymax)
-					return;	// if the mouse move too far, don't count the value repeatedly
+			Refresh();
 
-				value = (m_slide_button->position().y() - position().y()) / (float) get_space()
-				        * (maximum() - minimum());
+		} else {
 
+			if(CursorOnSlideIcon(event->position())) {
+				m_switch.set_highlight(true);
+
+				Refresh();
+				event->accept(this);
 			} else {
-				int xmin = position().x() + m_slide_button->size().width() / 2;
-				int xmax = position().x() + size().width() - m_slide_button->size().width() / 2;
-				if(event->position().x() < xmin ||	event->position().x() > xmax)
-					return;	// if the mouse move too far, don't count the value repeatedly
-
-				value = (m_slide_button->position().x() - position().x()) / (float) get_space()
-				        * (maximum() - minimum());
+				m_switch.set_highlight(false);
+				Refresh();
+				event->ignore(this);
 			}
 
-			set_value(value);
-			m_slider_moved.fire(value);
-
-			return;
 		}
-
-		if(contain(event->position())) {
-			dispatch_mouse_move_event(m_slide_button.get(), event);
-		}
-		*/
 	}
 
 	void Slider::MousePressEvent (MouseEvent* event)
 	{
-		/*
-		if(m_slide_button->down()) {
-			dispatch_mouse_press_event(m_slide_button.get(), event);
-			return;
+		if(CursorOnSlideIcon(event->position())) {
+			DBG_PRINT_MSG("%s", "press on icon");
+			m_pressed = true;
+			event->accept(this);
+		} else {
+			event->ignore(this);
 		}
-
-		if(contain(event->position())) {
-			dispatch_mouse_press_event(m_slide_button.get(), event);
-			if(event->accepted()) return;
-
-			// Move to where mouse click
-//			Coord2d inner_pos;
-//			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - padding().left() - m_slider_control->size().width() / 2));
-//			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - padding().bottom() - m_slider_control->size().height() / 2));
-//			int space = get_space();
-//			int value;
-//
-//			if (orientation()) {
-//				value = (maximum() - minimum()) * inner_pos.y() / (double) space;
-//			} else {
-//				value = (maximum() - minimum()) * inner_pos.x() / (double) space;
-//			}
-//			if(value < minimum()) value = minimum();
-//			if(value > maximum()) value = maximum();
-
-//			int space = get_space();
-
-			int val;
-
-			if (orientation() == Vertical) {
-				if(event->position().y() < m_slide_button->position().y())
-					val = value() - step();
-				else
-					val = value() + step();
-			} else {
-				if(event->position().x() < m_slide_button->position().x())
-					val = value() - step();
-				else
-					val = value() + step();
-			}
-			if(val < minimum()) val = minimum();
-			if(val > maximum()) val = maximum();
-
-			set_value(val);
-			m_slider_moved.fire(val);
-		}
-		*/
 	}
 
 	void Slider::MouseReleaseEvent (MouseEvent* event)
 	{
-		/*
-		if(m_slide_button->down()) {
-			dispatch_mouse_release_event(m_slide_button.get(), event);
-			return;
-		}
-		if(contain(event->position())) {
-			if (event->button() == MouseButtonLeft) {
+		m_pressed = false;
 
-			}
-			dispatch_mouse_release_event(m_slide_button.get(), event);
-		}
-		*/
+		Refresh();
+
+		event->accept(this);
 	}
 
-	int Slider::get_space ()
+	int Slider::GetSpace ()
 	{
 		int space = 0;
-		/*
-		if(orientation() == Vertical)	// Vertical
-			space = size().height() - m_slide_button->size().height();
-		else
-			space = size().width() - m_slide_button->size().width();
-	*/
+
+		if(orientation() == Horizontal) {
+			space = size().width() - m_line_start.x() * 2;	// m_line_start.x() is the radius of m_switch
+		} else {
+			space = size().height() - m_line_start.y() * 2;	// m_line_start.y() is the radius of m_switch
+		}
+
 		return space;
+	}
+
+	bool Slider::CursorOnSlideIcon (const Point& cursor)
+	{
+		bool ret = false;
+
+		glm::vec2 icon_center;	// slide switch center position
+
+		if(orientation() == Horizontal) {
+			icon_center.x = position().x() + m_line_start.x() + get_position();
+			icon_center.y = position().y() + m_line_start.y();
+		} else {
+			icon_center.x = position().x() + m_line_start.x();
+			icon_center.y = position().y() + m_line_start.y() + get_position();
+		}
+
+		glm::vec2 cursor_pos (cursor.x(), cursor.y());
+		float distance = glm::distance(icon_center, cursor_pos);
+
+		if(orientation() == Horizontal && distance <= m_line_start.x()) {
+			ret = true;
+		} else if (orientation() == Vertical && distance <= m_line_start.y()) {
+			ret = true;
+		} else {
+			ret = false;
+		}
+
+		return ret;
+	}
+
+	int Slider::GetNewValue (const Point& cursor)
+	{
+		int ret = value();
+
+		int offset = 0;
+		if(orientation() == Horizontal) {
+			offset = cursor.x() - position().x() - m_line_start.x();
+
+		} else {
+			offset = cursor.y() - position().y() - m_line_start.y();
+		}
+
+		if(offset < 0) {
+			ret = minimum();
+		} else if(offset > m_line_width) {
+			ret = maximum();
+		} else {
+			ret = (offset * (maximum() - minimum())) / m_line_width;
+		}
+
+		return ret;
 	}
 
 }

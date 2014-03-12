@@ -151,19 +151,28 @@ namespace BlendInt {
 						BUFFER_OFFSET(2 * sizeof(GLfloat))// offset of first element
 										);
 
-		glDrawArrays(GL_POLYGON, 0,
-						m_inner_buffer->GetBufferSize()
-										/ (6 * sizeof(GLfloat)));
+		if (m_highlight) {
+			glDrawArrays(GL_POLYGON, 0,
+			                m_highlight_buffer->GetBufferSize()
+			                                / (6 * sizeof(GLfloat)));
+
+		} else {
+			glDrawArrays(GL_POLYGON, 0,
+			                m_inner_buffer->GetBufferSize()
+			                                / (6 * sizeof(GLfloat)));
+
+		}
 
 		glDisableVertexAttribArray(color_attrib);
 
 		GLArrayBuffer::Reset();
 
-		GLfloat outline_color[4] = { themes()->scroll.outline.r() / 255.f,
-						themes()->scroll.outline.g() / 255.f,
-						themes()->scroll.outline.b() / 255.f,
-						(themes()->scroll.outline.a() / WIDGET_AA_JITTER)
-										/ 255.f };
+		GLfloat outline_color[4] = {
+						themes()->scroll.outline.r() / 255.f,
+		                themes()->scroll.outline.g() / 255.f,
+		                themes()->scroll.outline.b() / 255.f,
+		                (themes()->scroll.outline.a() / WIDGET_AA_JITTER) / 255.f
+		};
 
 		program->SetVertexAttrib4fv("color", outline_color);
 
@@ -183,7 +192,7 @@ namespace BlendInt {
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			jitter.x = jit[j][0];
 			jitter.y = jit[j][1];
-			jitter.z = 0.0f;
+			//jitter.z = 0.0f;
 			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 							glm::value_ptr(mvp * jitter_matrix));

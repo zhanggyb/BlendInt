@@ -35,16 +35,32 @@ namespace BlendInt {
 
 	class AbstractRoundForm;
 
+	/**
+	 * @brief Slide Icon used in Slider or ScrollBar
+	 */
 	class SlideIcon: public AbstractRoundForm
 	{
 	public:
 
+		/**
+		 * @brief Default constructor
+		 */
 		SlideIcon ();
 
+		/**
+		 * @brief Constructor
+		 */
 		virtual ~SlideIcon ();
 
+		/**
+		 * @brief Draw the icon
+		 */
 		virtual void Draw (const glm::mat4& mvp);
 
+		/**
+		 * @brief Set the highlight status of this icon
+		 * @param[in] highlight The highlight status
+		 */
 		void set_highlight (bool highlight)
 		{
 			m_highlight = highlight;
@@ -67,10 +83,11 @@ namespace BlendInt {
 
 	/**
 	 * @brief The abstract class for slider widgets
+	 *
+	 * The abstract class for Slider, ScrollBar etc.
 	 */
 	class AbstractSlider: public RoundWidget
 	{
-
 	public:
 
 		AbstractSlider(Orientation orientation = Horizontal);
@@ -111,14 +128,6 @@ namespace BlendInt {
 
 		virtual void Draw (RedrawEvent* event) = 0;
 
-		Cpp::Event<int> m_slider_moved;
-
-		Cpp::Event<> m_slider_pressed;
-
-		Cpp::Event<> m_slider_released;
-
-		Cpp::Event<int> m_value_changed;
-
 	private:
 
 		Orientation m_orientation;
@@ -129,6 +138,13 @@ namespace BlendInt {
 		int m_maximum;
 		int m_step;
 
+		Cpp::Event<int> m_slider_moved;
+
+		Cpp::Event<> m_slider_pressed;
+
+		Cpp::Event<> m_slider_released;
+
+		Cpp::Event<int> m_value_changed;
 
 	};
 

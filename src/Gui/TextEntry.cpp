@@ -262,16 +262,50 @@ namespace BlendInt {
 
 		fc->Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, m_start);
 
-		// draw a cursor
-		/*
-		unsigned int text_width = fc->GetTextWidth(m_text, m_cursor_position - m_start, m_start);
+		if(focused()) {			// draw a cursor
 
-		if(focused() && m_flicker) {
-			glTranslatef(text_width + 1, 2, 0);
-			glColor4ub(0, 125, 255, 175);
-			glRecti(0, 0, DefaultTextEntryPadding.bottom(), size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
+			unsigned int text_width = fc->GetTextWidth(m_text,
+			        m_cursor_position - m_start, m_start);
+
+			RefPtr<GLSLProgram> program =
+			        ShaderManager::instance->default_form_program();
+			program->Use();
+
+			GLint xy_attrib = program->GetAttributeLocation("xy");
+
+			glm::vec3 trans(text_width + 1, 2, 0);
+			glm::mat4 text_mvp = glm::translate(mvp, trans);
+
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+			        glm::value_ptr(text_mvp));
+
+			float vertices[2][2] = {
+					{1.f, static_cast<float>(DefaultTextEntryPadding.bottom())},
+					{1.f, static_cast<float>(size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom())
+					}
+			};
+
+			program->SetVertexAttrib4f("color",	0.f, 125 / 255.f, 255 / 255.f, 175 / 255.f);
+
+			glEnableVertexAttribArray(xy_attrib);
+
+			glVertexAttribPointer(xy_attrib, // attribute
+			        2,		// number of elements per vertex, here (x,y)
+			        GL_FLOAT,	// the type of each element
+			        GL_FALSE,	// take our values as-is
+			        0,		// no extra data between each position
+			        vertices	// the first element
+			        );
+
+			glLineWidth(2.0);
+			glDrawArrays(GL_LINES, 0, 2);
+			glLineWidth(1.0);
+
+			glDisableVertexAttribArray(xy_attrib);
+
+			program->Reset();
+
 		}
-		*/
 
 		event->accept(this);
 	}

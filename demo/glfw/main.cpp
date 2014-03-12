@@ -55,9 +55,9 @@ int main(int argc, char* argv[])
 
 	// Add Code:
 
-//	TextEntry* text = new TextEntry;
-//	text->set_name("TextEntry");
-//	text->SetPosition(240, 200);
+	TextEntry* text = Manage(new TextEntry);
+	text->set_name("TextEntry");
+	text->SetPosition(140, 200);
 
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();
@@ -125,7 +125,8 @@ int main(int argc, char* argv[])
 
 	Slider* slide = Manage (new Slider);
 	slide->set_name("Slider");
-	slide->SetPosition(200, 200);
+	slide->SetPosition(200, 400);
+	slide->set_value(20);
 
 	RunLoop (win);
 

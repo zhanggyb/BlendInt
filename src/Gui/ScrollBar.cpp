@@ -318,7 +318,7 @@ namespace BlendInt {
 				}
 
 				set_value (value);
-				m_slider_moved.fire(value);
+				//m_slider_moved.fire(value);
 
 				return;
 			}
@@ -351,13 +351,13 @@ namespace BlendInt {
 				if(inner_pos.y() < space) {
 					value = (maximum() - minimum()) * inner_pos.y() / (double) space;
 					set_value(value);
-					m_slider_moved.fire(value);
+					//m_slider_moved.fire(value);
 				}
 			} else {
 				if(inner_pos.x() < space) {
 					value = (maximum() - minimum()) * inner_pos.x() / (double) space;
 					set_value(value);
-					m_slider_moved.fire(value);
+					//m_slider_moved.fire(value);
 				}
 			}
 		}
@@ -535,7 +535,7 @@ namespace BlendInt {
 				}
 
 				set_value (value);
-				m_slider_moved.fire(value);
+				//m_slider_moved.fire(value);
 
 				return;
 			}
@@ -568,13 +568,13 @@ namespace BlendInt {
 				if(inner_pos.y() < space) {
 					value = (maximum() - minimum()) * inner_pos.y() / (double) space;
 					set_value(value);
-					m_slider_moved.fire(value);
+					//m_slider_moved.fire(value);
 				}
 			} else {
 				if(inner_pos.x() < space) {
 					value = (maximum() - minimum()) * inner_pos.x() / (double) space;
 					set_value(value);
-					m_slider_moved.fire(value);
+					//m_slider_moved.fire(value);
 				}
 			}
 		}
