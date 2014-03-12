@@ -128,6 +128,10 @@ int main(int argc, char* argv[])
 	slide->SetPosition(200, 400);
 	slide->set_value(20);
 
+	Label* label = Manage(new Label("Hello There!"));
+	label->set_name("Label");
+	label->SetPosition(400, 100);
+
 	RunLoop (win);
 
 	Interface::Release();

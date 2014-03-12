@@ -32,6 +32,9 @@
 
 #include <iostream>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/FontCache.hpp>
 #include <BlendInt/Gui/Label.hpp>
 
@@ -194,7 +197,12 @@ namespace BlendInt {
 //		glDisable(GL_LINE_STIPPLE);
 //#endif
 
-		FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
+
+		FontCache::create(m_font)->Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, 0);
+
+		//FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
 	}
 
 	size_t Label::get_valid_text_size()

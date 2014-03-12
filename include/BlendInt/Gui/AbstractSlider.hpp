@@ -128,6 +128,26 @@ namespace BlendInt {
 
 		virtual void Draw (RedrawEvent* event) = 0;
 
+		inline void fire_slider_moved_event (int value)
+		{
+			m_slider_moved.fire(value);
+		}
+
+		inline void fire_slider_pressed ()
+		{
+			m_slider_pressed.fire();
+		}
+
+		inline void fire_slider_released ()
+		{
+			m_slider_released.fire();
+		}
+
+		inline void fire_value_changed_event (int value)
+		{
+			m_value_changed.fire(value);
+		}
+
 	private:
 
 		Orientation m_orientation;

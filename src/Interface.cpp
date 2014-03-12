@@ -368,10 +368,19 @@ namespace BlendInt {
 		*/
 
 
+		// tell the focused widget first
+		if(AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->MouseMoveEvent(event);
+
+			// check the event status
+		}
+
 		for (std::deque<AbstractWidget*>::reverse_iterator it =
 				cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend();
-				it++) {
+				it++)
+		{
 			(*it)->MouseMoveEvent(event);
+			// check the event status
 		}
 
 		if (event->accepted()) {
@@ -398,6 +407,13 @@ namespace BlendInt {
 	void Interface::DispatchMouseReleaseEvent(MouseEvent* event)
 	{
 		ContextManager* cm = ContextManager::instance;
+
+		// tell the focused widget first
+		if(AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->MouseReleaseEvent(event);
+
+			// Check the event status
+		}
 
 		for(std::deque<AbstractWidget*>::reverse_iterator it = cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend(); it++)
 		{

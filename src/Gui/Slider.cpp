@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	Slider::Slider (Orientation orientation) :
-					AbstractSlider(orientation), m_line_width(0), m_pressed(false)
+			AbstractSlider(orientation), m_line_width(0), m_pressed(false)
 	{
 		m_switch.Resize(14, 14);
 
@@ -80,7 +80,7 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(data);
 
 				int switch_radius = std::min(m_switch.size().width(),
-				                m_switch.size().height()) / 2;
+				        m_switch.size().height()) / 2;
 
 				if (orientation() == Vertical) {
 					m_line_start.set_x(size_p->width() / 2);
@@ -188,12 +188,18 @@ namespace BlendInt {
 	{
 		if(m_pressed) {
 
-			set_value(GetNewValue(event->position()));
+			int new_value = value();
 
-			Refresh();
+			// DO not fire if cursor is out of range, otherwise too many events
+			if(GetNewValue(event->position(), &new_value)) {
+				set_value(new_value);
+				fire_slider_moved_event(value());
+				Refresh();
+			}
+
+			event->accept(this);
 
 		} else {
-
 			if(CursorOnSlideIcon(event->position())) {
 				m_switch.set_highlight(true);
 
@@ -204,15 +210,14 @@ namespace BlendInt {
 				Refresh();
 				event->ignore(this);
 			}
-
 		}
 	}
 
 	void Slider::MousePressEvent (MouseEvent* event)
 	{
 		if(CursorOnSlideIcon(event->position())) {
-			DBG_PRINT_MSG("%s", "press on icon");
 			m_pressed = true;
+			fire_slider_pressed();
 			event->accept(this);
 		} else {
 			event->ignore(this);
@@ -221,9 +226,15 @@ namespace BlendInt {
 
 	void Slider::MouseReleaseEvent (MouseEvent* event)
 	{
-		m_pressed = false;
+		if(m_pressed) {
+			m_pressed = false;
 
-		Refresh();
+			if(CursorOnSlideIcon(event->position())) {
+				fire_slider_released();
+			}
+
+			Refresh();
+		}
 
 		event->accept(this);
 	}
@@ -269,9 +280,9 @@ namespace BlendInt {
 		return ret;
 	}
 
-	int Slider::GetNewValue (const Point& cursor)
+	bool Slider::GetNewValue (const Point& cursor, int* vout)
 	{
-		int ret = value();
+		bool ret = false;
 
 		int offset = 0;
 		if(orientation() == Horizontal) {
@@ -282,11 +293,12 @@ namespace BlendInt {
 		}
 
 		if(offset < 0) {
-			ret = minimum();
+			*vout = minimum();
 		} else if(offset > m_line_width) {
-			ret = maximum();
+			*vout = maximum();
 		} else {
-			ret = (offset * (maximum() - minimum())) / m_line_width;
+			*vout = (offset * (maximum() - minimum())) / m_line_width;
+			ret = true;
 		}
 
 		return ret;

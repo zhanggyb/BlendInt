@@ -65,7 +65,15 @@ namespace BlendInt {
 		 */
 		bool CursorOnSlideIcon (const Point& cursor);
 
-		int GetNewValue (const Point& cursor);
+		/**
+		 * @brief Get the new value at the cursor position
+		 * @param[in] cursor The cursor position
+		 * @param[out] vout The new value
+		 * @return
+		 * 	- true if the cursor is in range
+		 * 	- false if the cursor is out of range
+		 */
+		bool GetNewValue (const Point& cursor, int* vout);
 
 		/**
 		 * @brief
