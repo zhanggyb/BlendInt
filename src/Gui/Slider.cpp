@@ -42,15 +42,26 @@
 namespace BlendInt {
 
 	Slider::Slider (Orientation orientation) :
-					AbstractSlider(orientation)
+					AbstractSlider(orientation), m_line_width(0)
 	{
+		int switch_radius = std::min(m_switch.size().width(), m_switch.size().height()) / 2;
+
 		if (orientation == Vertical) {
 			set_size(18, 200);
 			set_expand_y(true);
+
+			m_line_start.set_x(18 / 2);
+			m_line_start.set_y(switch_radius);
 		} else {
 			set_size(200, 18);
 			set_expand_x(true);
+
+			m_line_start.set_x(switch_radius);
+			m_line_start.set_y(18 / 2);
 		}
+
+		m_line_width = 200 - switch_radius * 2;
+
 	}
 
 	Slider::~Slider()
@@ -61,6 +72,9 @@ namespace BlendInt {
 	{
 		switch (type) {
 			case FormPosition: {
+
+				// don't care position
+
 //				const Point* pos = static_cast<const Point*>(data);
 //				m_slide_button->SetPosition(m_slide_button->position().x() + (pos->x() - position().x()),
 //						m_slide_button->position().y() + (pos->y() - position().y()));
@@ -68,6 +82,20 @@ namespace BlendInt {
 			}
 
 			case FormSize: {
+				const Size* size_p = static_cast<const Size*>(data);
+
+				int switch_radius = std::min(m_switch.size().width(), m_switch.size().height()) / 2;
+
+				if (orientation() == Vertical) {
+					m_line_start.set_x(size_p->width() / 2);
+					m_line_start.set_y(switch_radius);
+					m_line_width = size_p->height() - switch_radius * 2;
+				} else {
+					m_line_start.set_x(switch_radius);
+					m_line_start.set_y(size_p->height() / 2);
+					m_line_width = size_p->width() - switch_radius * 2;
+				}
+
 				//unsigned int button_size = static_cast<unsigned int>(std::min(size().width(),
 				//		size().height()));
 
@@ -107,61 +135,65 @@ namespace BlendInt {
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
-		//glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.15, 1.15, 1.15));
-		//glm::mat4 rotate = glm::rotate(glm::mat4(1.0), (glm::mediump_float)(M_PI * 1.5), glm::vec3(0.0, 0.0, 1.0));
-		//glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, icon->size().height()/2.f, 0.0));
+		// ----- draw line
 
-		m_switch.Draw(mvp);
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_form_program();
 
-		event->accept(this);
+		program->Use();
 
-		return;
+		GLint xy_attrib = program->GetAttributeLocation("xy");
 
-		glColor4ub(themes()->scroll.outline.r(),
-				themes()->scroll.outline.g(),
-				themes()->scroll.outline.b(),
-				themes()->scroll.outline.a());
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		int space = 0;
+		float vertices[2][2] = {
+						{static_cast<float>(m_line_start.x()), static_cast<float>(m_line_start.y())},
+						{static_cast<float>(m_line_start.x()), static_cast<float>(m_line_start.y())} };
 
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		if(orientation() == Vertical) {
-			space = size().height();
-			glTranslatef(size().width() / 2.0, 0, 0);
-			glBegin(GL_LINES);
-				glVertex2i(0, 0);
-				glVertex2i(0, space);
-			glEnd();
+		if(orientation() == Horizontal) {
+			vertices[1][0] = vertices[1][0] + m_line_width;
 		} else {
-			space = size().width();
-			glTranslatef(0, size().height() / 2.0 - 0.5, 0);
-			glBegin(GL_LINES);
-				glVertex2i(0, 0);
-				glVertex2i(space, 0);
-			glEnd();
+			vertices[1][1] = vertices[1][1] + m_line_width;
 		}
 
-		glPopMatrix();
+		program->SetVertexAttrib4f(
+						"color",
+						themes()->scroll.outline.r() / 255.f,
+						themes()->scroll.outline.g() / 255.f,
+						themes()->scroll.outline.b() / 255.f,
+						themes()->scroll.outline.a() / 255.f
+						);
 
-		//m_switch->Draw(event->pv_matrix());
+		glEnableVertexAttribArray(xy_attrib);
 
-#ifdef DEBUG
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
+		glVertexAttribPointer(xy_attrib, // attribute
+							  2,		// number of elements per vertex, here (x,y)
+							  GL_FLOAT,	// the type of each element
+							  GL_FALSE,	// take our values as-is
+							  0,		// no extra data between each position
+							  vertices	// the first element
+							  );
 
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-			glVertex2i(0, 0);
-			glVertex2i(size().width(), 0);
-			glVertex2i(size().width(), size().height());
-			glVertex2i(0, size().height());
-		glEnd();
+		glDrawArrays(GL_LINES, 0, 2);
 
-		glDisable(GL_LINE_STIPPLE);
-#endif
+		glDisableVertexAttribArray(xy_attrib);
+
+		program->Reset();
+
+		// ----- end of draw line
+
+		glm::mat4 switch_mvp;
+
+		if (orientation() == Horizontal) {
+			// m_line_start.x() == switch_radius
+			switch_mvp = glm::translate(mvp, glm::vec3(0.0, (float)(m_line_start.y() - m_line_start.x()), 0.0));
+		} else {
+			// m_line_start.y() == switch_radius
+			switch_mvp = glm::translate(mvp, glm::vec3((float)(m_line_start.x() - m_line_start.y()), 0.0, 0.0));
+		}
+
+		m_switch.Draw(switch_mvp);
+
+		event->accept(this);
 	}
 
 	void Slider::MouseMoveEvent (MouseEvent* event)

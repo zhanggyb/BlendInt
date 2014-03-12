@@ -64,6 +64,9 @@ namespace BlendInt {
 		{return value() * get_space() / ((float)maximum() - (float)minimum());}
 
 		SlideIcon m_switch;
+
+		Point m_line_start;	// where start to draw line
+		int m_line_width;
 	};
 
 }
