@@ -153,36 +153,13 @@ namespace BlendInt {
 
 	}
 
-	void AbstractLayout::SetMargin (const Margin& margin)
-	{
-		if(m_margin.equal(margin)) return;
-
-		Update(LayoutPropertyMargin, &margin);
-
-		m_margin = margin;
-	}
-
-	void AbstractLayout::SetMargin (int left, int right, int top, int bottom)
-	{
-		if(m_margin.equal(left, right, top, bottom)) return;
-
-		Margin new_margin (left, right, top, bottom);
-
-		Update (LayoutPropertyMargin, &new_margin);
-
-		m_margin.set_left(left);
-		m_margin.set_right(right);
-		m_margin.set_top(top);
-		m_margin.set_bottom(bottom);
-	}
-
 	void AbstractLayout::SetSpace (int space)
 	{
 		if(m_space == space) return;
 
-		Update (LayoutPropertySpace, &space);
-
-		m_space = space;
+		if (Update (UpdateRequest(Predefined, LayoutPropertySpace, &space))) {
+			m_space = space;
+		}
 	}
 
 	AbstractLayout* AbstractLayout::root_layout ()

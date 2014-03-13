@@ -49,22 +49,27 @@ namespace BlendInt {
 
 	}
 
-	bool PopupWidget::Update(int type, const void* data)
+	bool PopupWidget::Update(const UpdateRequest& request)
 	{
-		Widget::Update(type, data);
-		switch(type) {
+		if(request.id() == Predefined) {
 
-			case FormSize: {
+			switch(request.type()) {
 
-				Size shadow_size = *(static_cast<const Size*>(data));
+				case FormSize: {
 
-				m_shadow.Resize(shadow_size);
+					Size shadow_size = *(static_cast<const Size*>(request.data()));
 
-				return true;
+					m_shadow.Resize(shadow_size);
+
+					return true;
+				}
+
+				default:
+					return Widget::Update(request);
 			}
 
-			default:
-				return Widget::Update(type, data);
+		} else {
+			return false;
 		}
 
 	}

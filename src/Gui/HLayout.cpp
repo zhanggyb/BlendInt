@@ -54,50 +54,57 @@ namespace BlendInt {
 		m_items.clear();
 	}
 
-	bool HLayout::Update (int type, const void* data)
+	bool HLayout::Update (const UpdateRequest& request)
 	{
-		switch (type) {
+		if(request.id() == Predefined) {
 
-			case FormPosition: {
-				const Point* new_pos = static_cast<const Point*>(data);
+			switch (request.type()) {
 
-				for (size_t i = 0; i < m_items.size(); i++)
-				{
-					SetPosition(m_items[i].get(),
-							m_items[i]->position().x() + (new_pos->x() - position().x()),
-							m_items[i]->position().y() + (new_pos->y() - position().y()));
+				case FormPosition: {
+					const Point* new_pos = static_cast<const Point*>(request.data());
+
+					for (size_t i = 0; i < m_items.size(); i++)
+					{
+						SetPosition(m_items[i].get(),
+								m_items[i]->position().x() + (new_pos->x() - position().x()),
+								m_items[i]->position().y() + (new_pos->y() - position().y()));
+					}
+					return true;
 				}
-				return true;
+
+				case FormSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					if(m_items.size())
+						MakeLayout(size_p, &margin(), space());
+
+					return true;
+				}
+
+				case ContainerMargin: {
+					const Margin* margin_p = static_cast<const Margin*>(request.data());
+					if(m_items.size())
+						MakeLayout(&size(), margin_p, space());
+
+					return true;
+				}
+
+				case LayoutPropertySpace: {
+					const int* space_p = static_cast<const int*>(request.data());
+					if(m_items.size())
+						MakeLayout(&size(), &margin(), *space_p);
+
+					return true;
+				}
+
+				default: {
+					return true;
+				}
 			}
 
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
-				if(m_items.size())
-					MakeLayout(size_p, &margin(), space());
-
-				return true;
-			}
-
-			case LayoutPropertyMargin: {
-				const Margin* margin_p = static_cast<const Margin*>(data);
-				if(m_items.size())
-					MakeLayout(&size(), margin_p, space());
-
-				return true;
-			}
-
-			case LayoutPropertySpace: {
-				const int* space_p = static_cast<const int*>(data);
-				if(m_items.size())
-					MakeLayout(&size(), &margin(), *space_p);
-
-				return true;
-			}
-
-			default: {
-				return true;
-			}
+		} else {
+			return false;
 		}
+
 	}
 
 	void HLayout::Draw (RedrawEvent* event)

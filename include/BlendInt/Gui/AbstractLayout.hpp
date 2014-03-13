@@ -77,12 +77,6 @@ namespace BlendInt {
 
 		void set_alignment (int align) {m_alignment = align;}
 
-		const Margin& margin() const {return m_margin;}
-
-		void SetMargin (const Margin& margin);
-
-		void SetMargin (int left, int right, int top, int bottom);
-
 		void SetSpace (int space);
 
 		int space () const {return m_space;}
@@ -123,9 +117,6 @@ namespace BlendInt {
 		int m_alignment;
 
 		int m_space;
-
-		Margin m_margin;
-
 	};
 
 } /* namespace BIL */

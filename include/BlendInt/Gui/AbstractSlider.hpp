@@ -68,7 +68,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool Update (int type, const void* data);
+		virtual bool Update (const UpdateRequest& request);
 
 	private:
 
@@ -94,6 +94,8 @@ namespace BlendInt {
 
 		virtual ~AbstractSlider ();
 
+		void SetValue (int value);
+
 		void set_range (int value1, int value2);
 
 		void set_minimum (int minimum);
@@ -103,8 +105,6 @@ namespace BlendInt {
 		void set_maximum (int maximum);
 
 		int maximum () const {return m_maximum;}
-
-		void set_value (int value);
 
 		int value () const {return m_value;}
 		
@@ -127,6 +127,8 @@ namespace BlendInt {
 	protected:
 
 		virtual void Draw (RedrawEvent* event) = 0;
+
+		void set_value (int value);
 
 		inline void fire_slider_moved_event (int value)
 		{

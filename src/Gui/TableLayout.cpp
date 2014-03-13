@@ -71,7 +71,7 @@ namespace BlendInt {
 
 		LockGeometry(widget, true);
 
-		Update(FormSize, 0);
+		//Update(FormSize, 0);
 	}
 
 	void TableLayout::add_layout (AbstractLayout* layout, int row, int column,
@@ -91,7 +91,7 @@ namespace BlendInt {
 
 		LockGeometry(layout, true);
 
-		Update(FormSize, 0);
+		//Update(FormSize, 0);
 	}
 
 	void TableLayout::Update (int property_type)
@@ -99,46 +99,53 @@ namespace BlendInt {
 		generate_default_layout();
 	}
 
-	bool TableLayout::Update (int type, const void* data)
+	bool TableLayout::Update (const UpdateRequest& request)
 	{
-		switch (type) {
+		if(request.id() == Predefined) {
 
-			case FormPosition: {
-				const Point* new_pos = static_cast<const Point*>(data);
+			switch (request.type()) {
 
-				for (size_t i = 0; i < m_items.size(); i++)
-				{
-					SetPosition(m_items[i],
-							m_items[i]->position().x() + (new_pos->x() - position().x()),
-							m_items[i]->position().y() + (new_pos->y() - position().y()));
+				case FormPosition: {
+					const Point* new_pos = static_cast<const Point*>(request.data());
+
+					for (size_t i = 0; i < m_items.size(); i++)
+					{
+						SetPosition(m_items[i],
+								m_items[i]->position().x() + (new_pos->x() - position().x()),
+								m_items[i]->position().y() + (new_pos->y() - position().y()));
+					}
+
+					return true;
 				}
 
-				return true;
-			}
+				case FormSize: {
 
-			case FormSize: {
+					if (request.data()) {
 
-				if (data) {
+						if (generate_layout(static_cast<const Size*>(request.data()))) return true;
+						else return false;
 
-					if (generate_layout(static_cast<const Size*>(data))) return true;
-					else return false;
+					} else {	// this is called when adding widget or layout
 
-				} else {	// this is called when adding widget or layout
+						if(m_items.size() > static_cast<unsigned int>(m_rows * m_columns))
+							throw std::out_of_range("Exceed the table size");
+						generate_default_layout();
 
-					if(m_items.size() > static_cast<unsigned int>(m_rows * m_columns))
-						throw std::out_of_range("Exceed the table size");
-					generate_default_layout();
+					}
 
+					return true;
 				}
 
-				return true;
+				default: {
+					return true;
+				}
 			}
 
-			default: {
-				return true;
-			}
+
+
+		} else {
+			return false;
 		}
-
 	}
 
 	void TableLayout::Draw (RedrawEvent* event)

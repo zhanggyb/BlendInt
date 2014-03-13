@@ -63,7 +63,7 @@ namespace BlendInt {
 
 		virtual void MouseMoveEvent (MouseEvent* event);
 
-		virtual bool Update (int type, const void* data);
+		virtual bool Update (const UpdateRequest& request);
 
 		virtual void Render ();
 

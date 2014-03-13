@@ -72,47 +72,53 @@ void DemoFrame::FullWindow(unsigned int width, unsigned int height)
 	Resize(width, height);
 }
 
-bool DemoFrame::Update(int type, const void* data)
+bool DemoFrame::Update(const UpdateRequest& request)
 {
-	switch (type) {
+	if(request.id() == Predefined) {
 
-		case FormPosition: {
-			if (m_widget) {
-				const Point* pos_p = static_cast<const Point*>(data);
-				int offset_x = pos_p->x() - position().x();
-				int offset_y = pos_p->y() - position().y();
-				SetPosition(m_widget, m_widget->position().x() + offset_x,
-				        m_widget->position().y() + offset_y);
+		switch (request.type()) {
+
+			case FormPosition: {
+				if (m_widget) {
+					const Point* pos_p = static_cast<const Point*>(request.data());
+					int offset_x = pos_p->x() - position().x();
+					int offset_y = pos_p->y() - position().y();
+					SetPosition(m_widget, m_widget->position().x() + offset_x,
+					        m_widget->position().y() + offset_y);
+				}
+
+				return true;
 			}
 
-			return true;
-		}
-
-		case FormSize: {
-			if (m_widget) {
-				Size size = *(static_cast<const Size*>(data));
-				size.add_width(-(margin().left() + margin().right()));
-				size.add_height(-(margin().top() + margin().bottom()));
-				m_widget->Resize(size);
+			case FormSize: {
+				if (m_widget) {
+					Size size = *(static_cast<const Size*>(request.data()));
+					size.add_width(-(margin().left() + margin().right()));
+					size.add_height(-(margin().top() + margin().bottom()));
+					m_widget->Resize(size);
+				}
+				return true;
 			}
-			return true;
-		}
 
-		case FrameMargin: {
-			if (m_widget) {
-				const Margin* margin_p = static_cast<const Margin*>(data);
-				Size new_size(
-				        size().width() - margin_p->left()
-				                - margin_p->right(),
-				        size().height() - margin_p->top()
-				                - margin_p->bottom());
-				m_widget->Resize(new_size);
+			case ContainerMargin: {
+				if (m_widget) {
+					const Margin* margin_p = static_cast<const Margin*>(request.data());
+					Size new_size(
+					        size().width() - margin_p->left()
+					                - margin_p->right(),
+					        size().height() - margin_p->top()
+					                - margin_p->bottom());
+					m_widget->Resize(new_size);
+				}
+				return true;
 			}
-			return true;
+
+			default:
+				return Frame::Update(request);
 		}
 
-		default:
-			return Frame::Update(type, data);
+	} else {
+		return false;
 	}
 }
 

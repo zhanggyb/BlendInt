@@ -60,74 +60,80 @@ namespace BlendInt {
 	{
 		if(blur_rad == m_blur_rad) return;
 
-		if(Update(ShadowBlurRadius, &blur_rad)) {
+		if(Update(UpdateRequest(Predefined, ShadowBlurRadius, &blur_rad))) {
 			m_blur_rad = blur_rad;
 		}
 	}
 
-	bool Shadow::Update (int type, const void* data)
+	bool Shadow::Update (const UpdateRequest& request)
 	{
-		switch (type) {
+		if (request.id() == Predefined) {
+			switch (request.type()) {
 
-			case FormSize: {
+				case FormSize: {
 
-				const Size* size_p = static_cast<const Size*>(data);
-				GenerateShadowBuffers(size_p, radius(), m_blur_rad);
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					GenerateShadowBuffers(size_p, radius(), m_blur_rad);
 
-				/*
-				Size shadow_size = *(static_cast<const Size*>(data));
+					/*
+					 Size shadow_size = *(static_cast<const Size*>(data));
 
-				int step, totvert;
+					 int step, totvert;
 
-				float inner_v[WIDGET_SIZE_MAX][2];
-				float outer_v[WIDGET_SIZE_MAX][2];
+					 float inner_v[WIDGET_SIZE_MAX][2];
+					 float outer_v[WIDGET_SIZE_MAX][2];
 
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2];
+					 float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2];
 
-				*/
+					 */
 
-				// #define UI_DPI_FAC ((U.pixelsize * (float)U.dpi) / 72.0f)
+					// #define UI_DPI_FAC ((U.pixelsize * (float)U.dpi) / 72.0f)
 //				const float radout = themes()->menu_shadow_width * 1.0;
-
-				/* prevent tooltips to not show round shadow */
+					/* prevent tooltips to not show round shadow */
 //						if (radout > 0.2f * size().height())
 //							shadow_size.add_height(-0.2f * size().height());
 //						else
 //							shadow_size.add_height(-radout);
-				/*
-				totvert = generate_shadow_vertices(&shadow_size, radius(), 0.0f,
-				        inner_v);
-				*/
+					/*
+					 totvert = generate_shadow_vertices(&shadow_size, radius(), 0.0f,
+					 inner_v);
+					 */
 
-				/*
-				m_gl_buffer.Generate((int)m_blur_rad);
-				for (step = 1; step <= (int) m_blur_rad; step++) {
-					generate_shadow_vertices(&shadow_size, radius(), (float) step,
-					        outer_v);
-					verts_to_quad_strip(inner_v, outer_v, totvert, quad_strip);
+					/*
+					 m_gl_buffer.Generate((int)m_blur_rad);
+					 for (step = 1; step <= (int) m_blur_rad; step++) {
+					 generate_shadow_vertices(&shadow_size, radius(), (float) step,
+					 outer_v);
+					 verts_to_quad_strip(inner_v, outer_v, totvert, quad_strip);
 
-					m_gl_buffer.select(step - 1);
-					m_gl_buffer.SetProperty(totvert * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
-					m_gl_buffer.Bind();
-					m_gl_buffer.Upload(quad_strip);
-					m_gl_buffer.Unbind();
+					 m_gl_buffer.select(step - 1);
+					 m_gl_buffer.SetProperty(totvert * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
+					 m_gl_buffer.Bind();
+					 m_gl_buffer.Upload(quad_strip);
+					 m_gl_buffer.Unbind();
+					 }
+					 */
+
+					return true;
 				}
-				*/
 
-				return true;
+				case ShadowBlurRadius: {
+
+					const float* blur_rad =
+					        static_cast<const float*>(request.data());
+
+					GenerateShadowBuffers(&size(), radius(), *blur_rad);
+
+					return true;
+				}
+
+				default:
+					return false;
 			}
 
-			case ShadowBlurRadius: {
-
-				const float* blur_rad = static_cast<const float*>(data);
-
-				GenerateShadowBuffers(&size(), radius(), *blur_rad);
-
-				return true;
-			}
-
-			default:
-				return false;
+		} else {
+			return false;
 		}
 	}
 

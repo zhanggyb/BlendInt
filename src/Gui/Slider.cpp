@@ -68,47 +68,53 @@ namespace BlendInt {
 	{
 	}
 
-	bool Slider::Update (int type, const void* data)
+	bool Slider::Update (const UpdateRequest& request)
 	{
-		switch (type) {
-			case FormPosition: {
-				// don't care position
-				return true;
-			}
+		if(request.id() == Predefined) {
 
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
-
-				int switch_radius = std::min(m_switch.size().width(),
-				        m_switch.size().height()) / 2;
-
-				if (orientation() == Vertical) {
-					m_line_start.set_x(size_p->width() / 2);
-					m_line_start.set_y(switch_radius);
-					m_line_width = size_p->height() - switch_radius * 2;
-				} else {
-					m_line_start.set_x(switch_radius);
-					m_line_start.set_y(size_p->height() / 2);
-					m_line_width = size_p->width() - switch_radius * 2;
-				}
-				return true;
-			}
-
-			case SliderPropertyValue: {
-
-				if (orientation() == Vertical) {
-					//m_slide_button->SetPosition (m_slide_button->position().x(),
-					//	position().y() + value() * get_space() / (float)(maximum() - minimum()));
-				} else {
-					//m_slide_button->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
-					//		m_slide_button->position().y());
+			switch (request.type()) {
+				case FormPosition: {
+					// don't care position change
+					return true;
 				}
 
-				return true;
+				case FormSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					int switch_radius = std::min(m_switch.size().width(),
+					        m_switch.size().height()) / 2;
+
+					if (orientation() == Vertical) {
+						m_line_start.set_x(size_p->width() / 2);
+						m_line_start.set_y(switch_radius);
+						m_line_width = size_p->height() - switch_radius * 2;
+					} else {
+						m_line_start.set_x(switch_radius);
+						m_line_start.set_y(size_p->height() / 2);
+						m_line_width = size_p->width() - switch_radius * 2;
+					}
+					return true;
+				}
+
+				case SliderPropertyValue: {
+
+					if (orientation() == Vertical) {
+						//m_slide_button->SetPosition (m_slide_button->position().x(),
+						//	position().y() + value() * get_space() / (float)(maximum() - minimum()));
+					} else {
+						//m_slide_button->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
+						//		m_slide_button->position().y());
+					}
+
+					return true;
+				}
+
+				default:
+					return true;
 			}
 
-			default:
-				return true;
+		} else {
+			return false;
 		}
 	}
 

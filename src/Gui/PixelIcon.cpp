@@ -60,7 +60,7 @@ namespace BlendInt {
 	{
 	}
 
-	bool PixelIcon::Update(int type, const void* data)
+	bool PixelIcon::Update(const UpdateRequest& request)
 	{
 		return true;
 	}

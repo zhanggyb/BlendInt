@@ -36,6 +36,49 @@ namespace BlendInt {
 	struct WidgetTheme;
 	class Color;
 
+	enum UpdateID
+	{
+		Predefined,
+		Custom
+	};
+
+	class UpdateRequest
+	{
+	public:
+
+		UpdateRequest (UpdateID id, int type, const void* data) :
+				m_id(id), m_type(type), m_data(data)
+		{
+
+		}
+
+		~UpdateRequest ()
+		{
+
+		}
+
+		UpdateID id () const
+		{
+			return m_id;
+		}
+
+		int type () const
+		{
+			return m_type;
+		}
+
+		const void* data () const
+		{
+			return m_data;
+		}
+
+	private:
+
+		UpdateID m_id;
+		int m_type;
+		const void* m_data;
+	};
+
 	/**
 	 * Structure used in calulating vertex buffer for inner and outline
 	 *
@@ -118,7 +161,7 @@ namespace BlendInt {
 			m_size = size;
 		}
 
-		virtual bool Update (int type, const void* data) = 0;
+		virtual bool Update (const UpdateRequest& request) = 0;
 
 		/**
 		 * @brief generate vertices for drawing rectangle based on the given size and border width

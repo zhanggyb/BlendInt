@@ -68,7 +68,7 @@ namespace BlendInt {
 		if (m_margin.equal(margin))
 			return;
 
-		if(Update(FrameMargin, &margin)) {
+		if(Update(UpdateRequest(Predefined, ContainerMargin, &margin))) {
 			m_margin = margin;
 		}
 	}
@@ -80,7 +80,7 @@ namespace BlendInt {
 
 		Margin new_margin(l, r, t, b);
 
-		if(Update(FrameMargin, &new_margin)) {
+		if(Update(UpdateRequest(Predefined, ContainerMargin, &new_margin))) {
 			m_margin = new_margin;
 		}
 	}

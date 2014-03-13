@@ -65,7 +65,7 @@ namespace BlendInt {
 
 	}
 
-	bool Widget::Update (int type, const void* data)
+	bool Widget::Update (const UpdateRequest& request)
 	{
 		// do nothing in this base class
 		return true;

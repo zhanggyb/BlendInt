@@ -820,6 +820,7 @@ RECURSIVE              = YES
 EXCLUDE                = ../demo \
                          ../test \
                          ../Debug \
+                         ../extern \
                          ../README.md
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or

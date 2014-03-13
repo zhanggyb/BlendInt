@@ -60,17 +60,23 @@ namespace BlendInt {
 		}
 	}
 
-	bool ScrollView::Update (int type, const void* data)
+	bool ScrollView::Update (const UpdateRequest& request)
 	{
-		switch (type) {
+		if(request.id() == Predefined) {
 
-			case FormPosition: {
-				reset_viewport_position();
-				return true;
+			switch (request.type()) {
+
+				case FormPosition: {
+					reset_viewport_position();
+					return true;
+				}
+
+				default:
+					return true;
 			}
 
-			default:
-				return true;
+		} else {
+			return false;
 		}
 	}
 

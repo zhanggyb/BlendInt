@@ -50,7 +50,7 @@ namespace BlendInt {
 	{
 		if(round_type() == type) return;
 
-		if(Update(FormRoundType, &type)) {
+		if(Update(UpdateRequest(Predefined, FormRoundType, &type))) {
 			set_round_type(type);
 			fire_property_changed_event(FormRoundType);
 		}
@@ -61,7 +61,7 @@ namespace BlendInt {
 	{
 		if(radius() == rad) return;
 
-		if(Update(FormRoundRadius, &rad)) {
+		if(Update(UpdateRequest(Predefined, FormRoundRadius, &rad))) {
 			set_radius(rad);
 			fire_property_changed_event(FormRoundRadius);
 		}

@@ -119,31 +119,37 @@ namespace BlendInt {
 	{
 	}
 
-	bool Menu::Update(int type, const void* data)
+	bool Menu::Update(const UpdateRequest& request)
 	{
-		switch (type) {
+		if(request.id() == Predefined) {
 
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
-				GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
-				ResetHighlightBuffer(size_p->width());
-				return true;
+			switch (request.type()) {
+
+				case FormSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					ResetHighlightBuffer(size_p->width());
+					return true;
+				}
+
+				case FormRoundType: {
+					const int* type_p = static_cast<const int*>(request.data());
+					GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					return true;
+				}
+
+				case FormRoundRadius: {
+					const float* radius_p = static_cast<const float*>(request.data());
+					GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					return true;
+				}
+
+				default:
+					return RoundWidget::Update(request);
 			}
 
-			case FormRoundType: {
-				const int* type_p = static_cast<const int*>(data);
-				GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
-				return true;
-			}
-
-			case FormRoundRadius: {
-				const float* radius_p = static_cast<const float*>(data);
-				GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
-				return true;
-			}
-
-			default:
-				return RoundWidget::Update(type, data);
+		} else {
+			return false;
 		}
 	}
 

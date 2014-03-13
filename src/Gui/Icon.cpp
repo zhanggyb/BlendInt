@@ -56,7 +56,7 @@ namespace BlendInt {
 		return *this;
 	}
 
-	bool Icon::Update (int type, const void* data)
+	bool Icon::Update (const UpdateRequest& request)
 	{
 		// Do nothing
 		return true;
@@ -70,8 +70,9 @@ namespace BlendInt {
 		new_size.set_width(static_cast<unsigned int>(size().width() * ratio));
 		new_size.set_height(static_cast<unsigned int>(size().height() * ratio));
 
-		Update(FormSize, &new_size);
-		set_size(new_size);
+		if(Update(UpdateRequest(Predefined, FormSize, &new_size))) {
+			set_size(new_size);
+		}
 	}
 
 }

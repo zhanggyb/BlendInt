@@ -133,53 +133,59 @@ namespace BlendInt {
 
 	void TextEntry::MousePressEvent(MouseEvent* event)
 	{
-		std::cout << "pressed" << std::endl;
-
 		if(m_text.size()) {
 			//m_cursor_position = GetCursorPosition(event);
 		}
 
+		Refresh();
 		event->accept(this);
 	}
 
-	bool TextEntry::Update (int type, const void* data)
+	bool TextEntry::Update (const UpdateRequest& request)
 	{
-		switch (type) {
+		if(request.id() == Predefined) {
 
-			case FormRoundRadius: {
-				const float* radius_p = static_cast<const float*>(data);
-				m_origin.set_x(*radius_p + DefaultTextEntryPadding.left());
+			switch (request.type()) {
 
-				return true;
+				case FormRoundRadius: {
+					const float* radius_p = static_cast<const float*>(request.data());
+					m_origin.set_x(*radius_p + DefaultTextEntryPadding.left());
+
+					return true;
+				}
+
+				case FormSize: {
+					//const Size* size_p = static_cast<const Size*>(data);
+					//GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+					const Color& color = themes()->text.inner;
+					short shadetop = themes()->text.shadetop;
+					short shadedown = themes()->text.shadedown;
+
+					GenerateShadedFormBuffers(size_p,
+							round_type(),
+							radius(),
+							color,
+							shadetop,
+							shadedown,
+							Vertical,
+							5,
+							m_inner_buffer.get(),
+							m_outer_buffer.get(),
+							0
+							);
+					return true;
+				}
+
+				default:
+					return RoundWidget::Update(request);
 			}
 
-			case FormSize: {
-				//const Size* size_p = static_cast<const Size*>(data);
-				//GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
-
-				const Size* size_p = static_cast<const Size*>(data);
-				const Color& color = themes()->text.inner;
-				short shadetop = themes()->text.shadetop;
-				short shadedown = themes()->text.shadedown;
-
-				GenerateShadedFormBuffers(size_p,
-						round_type(),
-						radius(),
-						color,
-						shadetop,
-						shadedown,
-						Vertical,
-						5,
-						m_inner_buffer.get(),
-						m_outer_buffer.get(),
-						0
-						);
-				return true;
-			}
-
-			default:
-				return RoundWidget::Update(type, data);
+		} else {
+			return false;
 		}
+
 	}
 
 	void TextEntry::Draw (RedrawEvent* event)

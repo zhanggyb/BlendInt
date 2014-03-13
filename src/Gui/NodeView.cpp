@@ -30,7 +30,7 @@ namespace BlendInt {
 
 	}
 
-	bool NodeView::Update (int type, const void* data)
+	bool NodeView::Update (const UpdateRequest& request)
 	{
 		return true;
 	}

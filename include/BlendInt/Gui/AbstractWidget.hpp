@@ -145,8 +145,6 @@ namespace BlendInt {
 
 		void SetVisible (bool visible);
 
-		bool Contain (const Point& cursor);
-
 		void Refresh ();
 
 		void RenderToFile (const char* filename, unsigned int border = 10);
@@ -270,7 +268,7 @@ namespace BlendInt {
 		 * This virtual function should be implemented in each derived class,
 		 * and should only use the form's property to draw opengl elements once.
 		 */
-		virtual bool Update (int type, const void* data) = 0;
+		virtual bool Update (const UpdateRequest& request) = 0;
 
 		virtual void Draw (RedrawEvent* event) = 0;
 

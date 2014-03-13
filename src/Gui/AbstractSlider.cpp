@@ -55,63 +55,72 @@ namespace BlendInt {
 
 	}
 
-	bool SlideIcon::Update (int type, const void* data)
+	bool SlideIcon::Update (const UpdateRequest& request)
 	{
-		switch (type) {
+		if (request.id() == Predefined) {
 
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
-				Orientation shadedir =
-								size_p->width() < size_p->height() ?
-												Horizontal : Vertical;
-				const Color& color = themes()->scroll.item;
-				short shadetop = themes()->scroll.shadetop;
-				short shadedown = themes()->scroll.shadedown;
+			switch (request.type()) {
 
-				GenerateShadedFormBuffers(size_p, round_type(), radius(), color,
-								shadetop, shadedown, shadedir, 5,
-								m_inner_buffer.get(), m_outer_buffer.get(),
-								m_highlight_buffer.get());
+				case FormSize: {
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					Orientation shadedir =
+					        size_p->width() < size_p->height() ?
+					                Horizontal : Vertical;
+					const Color& color = themes()->scroll.item;
+					short shadetop = themes()->scroll.shadetop;
+					short shadedown = themes()->scroll.shadedown;
 
-				return true;
+					GenerateShadedFormBuffers(size_p, round_type(), radius(),
+					        color, shadetop, shadedown, shadedir, 5,
+					        m_inner_buffer.get(), m_outer_buffer.get(),
+					        m_highlight_buffer.get());
+
+					return true;
+				}
+
+				case FormRoundType: {
+					const Size* size_p = &(size());
+					Orientation shadedir =
+					        size_p->width() < size_p->height() ?
+					                Horizontal : Vertical;
+					const RoundType* round_p =
+					        static_cast<const RoundType*>(request.data());
+					const Color& color = themes()->scroll.item;
+					short shadetop = themes()->scroll.shadetop;
+					short shadedown = themes()->scroll.shadedown;
+
+					GenerateShadedFormBuffers(size_p, *round_p, radius(), color,
+					        shadetop, shadedown, shadedir, 5,
+					        m_inner_buffer.get(), m_outer_buffer.get(),
+					        m_highlight_buffer.get());
+					return true;
+				}
+
+				case FormRoundRadius: {
+					const Size* size_p = &(size());
+					Orientation shadedir =
+					        size_p->width() < size_p->height() ?
+					                Horizontal : Vertical;
+					const float* radius_p =
+					        static_cast<const float*>(request.data());
+					const Color& color = themes()->scroll.item;
+					short shadetop = themes()->scroll.shadetop;
+					short shadedown = themes()->scroll.shadedown;
+
+					GenerateShadedFormBuffers(size_p, round_type(), *radius_p,
+					        color, shadetop, shadedown, shadedir, 5,
+					        m_inner_buffer.get(), m_outer_buffer.get(),
+					        m_highlight_buffer.get());
+					return true;
+				}
+
+				default:
+					return false;
 			}
-
-			case FormRoundType: {
-				const Size* size_p = &(size());
-				Orientation shadedir =
-								size_p->width() < size_p->height() ?
-												Horizontal : Vertical;
-				const RoundType* round_p = static_cast<const RoundType*>(data);
-				const Color& color = themes()->scroll.item;
-				short shadetop = themes()->scroll.shadetop;
-				short shadedown = themes()->scroll.shadedown;
-
-				GenerateShadedFormBuffers(size_p, *round_p, radius(), color,
-								shadetop, shadedown, shadedir, 5,
-								m_inner_buffer.get(), m_outer_buffer.get(),
-								m_highlight_buffer.get());
-				return true;
-			}
-
-			case FormRoundRadius: {
-				const Size* size_p = &(size());
-				Orientation shadedir =
-								size_p->width() < size_p->height() ?
-												Horizontal : Vertical;
-				const float* radius_p = static_cast<const float*>(data);
-				const Color& color = themes()->scroll.item;
-				short shadetop = themes()->scroll.shadetop;
-				short shadedown = themes()->scroll.shadedown;
-
-				GenerateShadedFormBuffers(size_p, round_type(), *radius_p,
-								color, shadetop, shadedown, shadedir, 5,
-								m_inner_buffer.get(), m_outer_buffer.get(),
-								m_highlight_buffer.get());
-				return true;
-			}
-
-			default:
-				return false;
+		} else {
+			// no custom to update
+			return false;
 		}
 	}
 
@@ -236,6 +245,14 @@ namespace BlendInt {
 	AbstractSlider::~AbstractSlider()
 	{
 	
+	}
+
+	void AbstractSlider::SetValue(int value)
+	{
+		if(m_value != value) {
+			m_value = value;
+			m_value_changed.fire(m_value);
+		}
 	}
 
 	void AbstractSlider::set_range (int value1, int value2)

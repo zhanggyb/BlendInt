@@ -930,7 +930,7 @@ namespace BlendInt {
 
 	// Unused virtual functions
 
-	bool ContextManager::Update (int type, const void* data)
+	bool ContextManager::Update (const UpdateRequest& request)
 	{
 		return false;
 	}

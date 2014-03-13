@@ -194,22 +194,27 @@ namespace BlendInt {
 		event->accept(this);
 	}
 
-	bool Viewport3D::Update (int type, const void* data)
+	bool Viewport3D::Update (const UpdateRequest& request)
 	{
-		switch (type) {
-			case FormSize: {
+		if (request.id() == Predefined) {
+			switch (request.type()) {
+				case FormSize: {
 
-				const Size* size_p = static_cast<const Size*>(data);
-				m_default_camera->SetPerspective(m_default_camera->fovy(),
-				        1.f * size_p->width() / size_p->height());
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					m_default_camera->SetPerspective(m_default_camera->fovy(),
+					        1.f * size_p->width() / size_p->height());
 
-				return true;
+					return true;
+				}
+
+				default:
+					return Widget::Update(request);
 			}
 
-			default:
-				return Widget::Update(type, data);
+		} else {
+			return false;
 		}
-
 	}
 
 	void Viewport3D::Render ()

@@ -65,7 +65,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool Update (int type, const void* data);
+		virtual bool Update (const UpdateRequest& request);
 
 	private:
 

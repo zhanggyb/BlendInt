@@ -101,38 +101,44 @@ namespace BlendInt {
 		return m_stack[index];
 	}
 
-	bool StackedWidget::Update (int type, const void* data)
+	bool StackedWidget::Update (const UpdateRequest& request)
 	{
-		switch (type) {
+		if(request.id()) {
 
-			case FormPosition: {
-				const Point* new_pos = static_cast<const Point*>(data);
-				std::vector<Widget*>::iterator it;
+			switch (request.type()) {
 
-				for (it = m_stack.begin(); it != m_stack.end(); it++)
-				{
-					SetPosition(*it,
-							(*it)->position().x() + (new_pos->x() - position().x()),
-							(*it)->position().y() + (new_pos->y() - position().y()));
+				case FormPosition: {
+					const Point* new_pos = static_cast<const Point*>(request.data());
+					std::vector<Widget*>::iterator it;
+
+					for (it = m_stack.begin(); it != m_stack.end(); it++)
+					{
+						SetPosition(*it,
+								(*it)->position().x() + (new_pos->x() - position().x()),
+								(*it)->position().y() + (new_pos->y() - position().y()));
+					}
+
+					return true;
 				}
 
-				return true;
-			}
+				case FormSize: {
+					const Size* new_size = static_cast<const Size*>(request.data());
+					std::vector<Widget*>::iterator it;
 
-			case FormSize: {
-				const Size* new_size = static_cast<const Size*>(data);
-				std::vector<Widget*>::iterator it;
+					for (it = m_stack.begin(); it != m_stack.end(); it++)
+					{
+						Resize((*it), *new_size);
+					}
 
-				for (it = m_stack.begin(); it != m_stack.end(); it++)
-				{
-					Resize((*it), *new_size);
+					return true;
 				}
 
-				return true;
+				default:
+					return true;
 			}
 
-			default:
-				return true;
+		} else {
+			return false;
 		}
 	}
 

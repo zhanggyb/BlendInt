@@ -74,50 +74,54 @@ namespace BlendInt {
 		}
 	}
 
-	bool Frame::Update (int type, const void* data)
+	bool Frame::Update (const UpdateRequest& request)
 	{
-		switch (type) {
+		if(request.id() == Predefined) {
+			switch (request.type()) {
 
-			case FormSize: {
-				if (sub_widgets().size()) {
-					const Size* size_p = static_cast<const Size*>(data);
-					Resize(sub_widgets().front(),
-					        size_p->width() - margin().left()
-					                - margin().right(),
-					        size_p->height() - margin().top()
-					                - margin().bottom());
+				case FormSize: {
+					if (sub_widgets().size()) {
+						const Size* size_p = static_cast<const Size*>(request.data());
+						Resize(sub_widgets().front(),
+						        size_p->width() - margin().left()
+						                - margin().right(),
+						        size_p->height() - margin().top()
+						                - margin().bottom());
+					}
+					return true;
 				}
-				return true;
-			}
 
-			case FormPosition: {
-				if (sub_widgets().size()) {
-					const Point* pos_p = static_cast<const Point*>(data);
-					SetPosition(sub_widgets().front(),
-					        pos_p->x() + margin().left(),
-					        pos_p->y() + margin().bottom());
+				case FormPosition: {
+					if (sub_widgets().size()) {
+						const Point* pos_p = static_cast<const Point*>(request.data());
+						SetPosition(sub_widgets().front(),
+						        pos_p->x() + margin().left(),
+						        pos_p->y() + margin().bottom());
+					}
+					return true;
 				}
-				return true;
-			}
 
-			case FrameMargin: {
+				case ContainerMargin: {
 
-				if (sub_widgets().size()) {
-					const Margin* margin_p = static_cast<const Margin*>(data);
-					SetPosition(sub_widgets().front(),
-					        position().x() + margin_p->left(),
-					        position().y() + margin_p->bottom());
-					Resize(sub_widgets().front(),
-					        size().width() - margin_p->left()
-					                - margin_p->right(),
-					        size().height() - margin_p->top()
-					                - margin_p->bottom());
+					if (sub_widgets().size()) {
+						const Margin* margin_p = static_cast<const Margin*>(request.data());
+						SetPosition(sub_widgets().front(),
+						        position().x() + margin_p->left(),
+						        position().y() + margin_p->bottom());
+						Resize(sub_widgets().front(),
+						        size().width() - margin_p->left()
+						                - margin_p->right(),
+						        size().height() - margin_p->top()
+						                - margin_p->bottom());
+					}
+					return true;
 				}
-				return true;
-			}
 
-			default:
-				return true;
+				default:
+					return true;
+			}
+		} else {
+			return false;
 		}
 	}
 

@@ -51,43 +51,51 @@ namespace BlendInt {
 	{
 	}
 
-	bool ScrollControl::Update (int type, const void* data)
+	bool ScrollControl::Update (const UpdateRequest& request)
 	{
-		switch(type)
-		{
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
-				Orientation shadedir =
-				        size_p->width() < size_p->height() ?
-				                Horizontal : Vertical;
-				const Color& color = themes()->scroll.item;
-				short shadetop = themes()->scroll.shadetop;
-				short shadedown = themes()->scroll.shadedown;
+		if (request.id() == Predefined) {
 
-				GenerateShadedFormBuffers(size_p, round_type(),
-				        radius(), color, shadetop, shadedown, shadedir, 5,
-				        m_inner_buffer.get(), m_outer_buffer.get(), m_highlight_buffer.get());
-				return true;
+			switch (request.type()) {
+				case FormSize: {
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					Orientation shadedir =
+					        size_p->width() < size_p->height() ?
+					                Horizontal : Vertical;
+					const Color& color = themes()->scroll.item;
+					short shadetop = themes()->scroll.shadetop;
+					short shadedown = themes()->scroll.shadedown;
+
+					GenerateShadedFormBuffers(size_p, round_type(), radius(),
+					        color, shadetop, shadedown, shadedir, 5,
+					        m_inner_buffer.get(), m_outer_buffer.get(),
+					        m_highlight_buffer.get());
+					return true;
+				}
+
+				case FormRoundRadius: {
+					const Size* size_p = &(size());
+					Orientation shadedir =
+					        size_p->width() < size_p->height() ?
+					                Horizontal : Vertical;
+					const float* radius_p =
+					        static_cast<const float*>(request.data());
+					const Color& color = themes()->scroll.item;
+					short shadetop = themes()->scroll.shadetop;
+					short shadedown = themes()->scroll.shadedown;
+
+					GenerateShadedFormBuffers(size_p, round_type(), *radius_p,
+					        color, shadetop, shadedown, shadedir, 5,
+					        m_inner_buffer.get(), m_outer_buffer.get(),
+					        m_highlight_buffer.get());
+					return true;
+				}
+
+				default:
+					return false;
 			}
-
-			case FormRoundRadius: {
-				const Size* size_p = &(size());
-				Orientation shadedir =
-				        size_p->width() < size_p->height() ?
-				                Horizontal : Vertical;
-				const float* radius_p = static_cast<const float*>(data);
-				const Color& color = themes()->scroll.item;
-				short shadetop = themes()->scroll.shadetop;
-				short shadedown = themes()->scroll.shadedown;
-
-				GenerateShadedFormBuffers(size_p, round_type(),
-				        *radius_p, color, shadetop, shadedown, shadedir, 5,
-				        m_inner_buffer.get(), m_outer_buffer.get(), m_highlight_buffer.get());
-				return true;
-			}
-
-			default:
-				return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -233,50 +241,56 @@ namespace BlendInt {
 	{
 	}
 
-	bool SliderBar::Update (int type, const void* data)
+	bool SliderBar::Update (const UpdateRequest& request)
 	{
-		switch (type) {
+		if(request.id() == Predefined) {
 
-			case FormPosition: {
-				const Point* pos = static_cast<const Point*>(data);
-				m_control_button->SetPosition(m_control_button->position().x() + (pos->x() - position().x()),
-						m_control_button->position().y() + (pos->y() - position().y()));
-				return true;
+			switch (request.type()) {
+
+				case FormPosition: {
+					const Point* pos = static_cast<const Point*>(request.data());
+					m_control_button->SetPosition(m_control_button->position().x() + (pos->x() - position().x()),
+							m_control_button->position().y() + (pos->y() - position().y()));
+					return true;
+				}
+
+				case FormSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					Orientation shadedir =
+					        size_p->width() < size_p->height() ?
+					                Horizontal : Vertical;
+					const Color& color = themes()->scroll.item;
+					short shadetop = themes()->scroll.shadetop;
+					short shadedown = themes()->scroll.shadedown;
+
+					GenerateShadedFormBuffers(size_p, round_type(),
+					        radius(), color, shadetop, shadedown, shadedir, 5,
+					        m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					return true;
+				}
+
+				case FormRoundRadius: {
+					const Size* size_p = &(size());
+					Orientation shadedir =
+					        size_p->width() < size_p->height() ?
+					                Horizontal : Vertical;
+					const float* radius_p = static_cast<const float*>(request.data());
+					const Color& color = themes()->scroll.item;
+					short shadetop = themes()->scroll.shadetop;
+					short shadedown = themes()->scroll.shadedown;
+
+					GenerateShadedFormBuffers(size_p, round_type(),
+					        *radius_p, color, shadetop, shadedown, shadedir, 5,
+					        m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					return true;
+				}
+
+				default:
+					return true;
 			}
 
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
-				Orientation shadedir =
-				        size_p->width() < size_p->height() ?
-				                Horizontal : Vertical;
-				const Color& color = themes()->scroll.item;
-				short shadetop = themes()->scroll.shadetop;
-				short shadedown = themes()->scroll.shadedown;
-
-				GenerateShadedFormBuffers(size_p, round_type(),
-				        radius(), color, shadetop, shadedown, shadedir, 5,
-				        m_inner_buffer.get(), m_outer_buffer.get(), 0);
-				return true;
-			}
-
-			case FormRoundRadius: {
-				const Size* size_p = &(size());
-				Orientation shadedir =
-				        size_p->width() < size_p->height() ?
-				                Horizontal : Vertical;
-				const float* radius_p = static_cast<const float*>(data);
-				const Color& color = themes()->scroll.item;
-				short shadetop = themes()->scroll.shadetop;
-				short shadedown = themes()->scroll.shadedown;
-
-				GenerateShadedFormBuffers(size_p, round_type(),
-				        *radius_p, color, shadetop, shadedown, shadedir, 5,
-				        m_inner_buffer.get(), m_outer_buffer.get(), 0);
-				return true;
-			}
-
-			default:
-				return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -441,46 +455,52 @@ namespace BlendInt {
 		}
 
 		m_scroll_control->SetPosition (position().x(), position().y());
-		Update(SliderPropertyValue, 0);
+		//Update(SliderPropertyValue, 0);
 	}
 
 	ScrollBar::~ScrollBar ()
 	{
 	}
 
-	bool ScrollBar::Update (int type, const void* data)
+	bool ScrollBar::Update (const UpdateRequest& request)
 	{
-		switch (type) {
+		if(request.id() == Predefined) {
 
-			case FormPosition: {
-				const Point* pos = static_cast<const Point*>(data);
-				m_scroll_control->SetPosition (m_scroll_control->position().x() + (pos->x() - position().x()),
-						m_scroll_control->position().y() + (pos->y() - position().y()));
+			switch (request.type()) {
 
-				return true;
-			}
+				case FormPosition: {
+					const Point* pos = static_cast<const Point*>(request.data());
+					m_scroll_control->SetPosition (m_scroll_control->position().x() + (pos->x() - position().x()),
+							m_scroll_control->position().y() + (pos->y() - position().y()));
 
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
-				update_shape(size_p);
-
-				return true;
-			}
-
-			case SliderPropertyValue: {
-				if(orientation() == Vertical) {	// Vertical is 1
-					m_scroll_control->SetPosition (m_scroll_control->position().x(),
-							position().y() + value() * get_space() / (float)(maximum() - minimum()));
-				} else {	// Horizontal is 0
-					m_scroll_control->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
-							m_scroll_control->position().y());
+					return true;
 				}
 
-				return true;
+				case FormSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					update_shape(size_p);
+
+					return true;
+				}
+
+				case SliderPropertyValue: {
+					if(orientation() == Vertical) {	// Vertical is 1
+						m_scroll_control->SetPosition (m_scroll_control->position().x(),
+								position().y() + value() * get_space() / (float)(maximum() - minimum()));
+					} else {	// Horizontal is 0
+						m_scroll_control->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
+								m_scroll_control->position().y());
+					}
+
+					return true;
+				}
+
+				default:
+					return true;
 			}
 
-			default:
-				return true;
+		} else {
+			return false;
 		}
 	}
 

@@ -126,7 +126,7 @@ namespace BlendInt {
 		m_index_buffer->Reset();
 	}
 
-	bool VertexIcon::Update (int type, const void* data)
+	bool VertexIcon::Update (const UpdateRequest& request)
 	{
 		// TODO: update shape
 		return true;

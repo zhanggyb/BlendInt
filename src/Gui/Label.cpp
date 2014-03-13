@@ -140,38 +140,44 @@ namespace BlendInt {
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
-	bool Label::Update (int type, const void* data)
+	bool Label::Update (const UpdateRequest& request)
 	{
-		switch(type) {
+		if(request.id() == Predefined) {
 
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(data);
+			switch(request.type()) {
 
-				if(size_p->height() < m_text_outline.height()) {
-					m_length = 0;
-				} else {
-					FontCache* fc = FontCache::create(m_font);
-					m_origin.set_y((size_p->height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
-					m_length = get_valid_text_size(size_p);
-				}
+				case FormSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
 
-				if(size_p->width() < m_text_outline.width()) {
-					m_origin.set_x(0);
-				} else {
-					if(m_alignment & AlignLeft) {
-						m_origin.set_x(0);
-					} else if(m_alignment & AlignRight) {
-						m_origin.set_x(size_p->width() - m_text_outline.width());
-					} else if(m_alignment & AlignVerticalCenter) {
-						m_origin.set_x((size_p->width() - m_text_outline.width()) / 2);
+					if(size_p->height() < m_text_outline.height()) {
+						m_length = 0;
+					} else {
+						FontCache* fc = FontCache::create(m_font);
+						m_origin.set_y((size_p->height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+						m_length = get_valid_text_size(size_p);
 					}
+
+					if(size_p->width() < m_text_outline.width()) {
+						m_origin.set_x(0);
+					} else {
+						if(m_alignment & AlignLeft) {
+							m_origin.set_x(0);
+						} else if(m_alignment & AlignRight) {
+							m_origin.set_x(size_p->width() - m_text_outline.width());
+						} else if(m_alignment & AlignVerticalCenter) {
+							m_origin.set_x((size_p->width() - m_text_outline.width()) / 2);
+						}
+					}
+
+					return true;
 				}
 
-				return true;
+				default:
+					return Widget::Update(request);
 			}
 
-			default:
-				return Widget::Update(type, data);
+		} else {
+			return false;
 		}
 	}
 

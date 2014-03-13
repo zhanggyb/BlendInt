@@ -146,10 +146,9 @@ namespace BlendInt {
 		WidgetBorderWidth,
 		FormRoundType,
 		FormRoundRadius,
-		FrameMargin,
+		ContainerMargin,
 		LayoutPropertyAlignment,
 		LayoutPropertySpace,
-		LayoutPropertyMargin,
 		LayoutPropertyItem,
 
 		SliderPropertyOrientation,
