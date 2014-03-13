@@ -32,6 +32,7 @@
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
+#include <BlendInt/Gui/MenuBar.hpp>
 
 #include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Service/StockItems.hpp>
@@ -62,18 +63,18 @@ int main(int argc, char* argv[])
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();
 
-//	Button* btn1 = Manage(new Button);
-//	btn1->set_name("Button1");
-//	btn1->SetText("Button1");
+	//Button* btn1 = Manage(new Button);
+	//btn1->set_name("Button1");
+	//btn1->SetText("Button1");
 	//btn1->SetRadius(10.0);
 	//btn1->SetExpandX(false);
-//	btn1->SetPosition(100, 250);
+	//btn1->SetPosition(100, 250);
 	//btn1->Resize(100, 100);
 
-//	ToggleButton* toggle1 = Manage(new ToggleButton);
-//	toggle1->set_name("ToggleButton1");
+	//ToggleButton* toggle1 = Manage(new ToggleButton);
+	//toggle1->set_name("ToggleButton1");
 	//toggle1->SetExpandX(false);
-//	toggle1->SetPosition(100, 450);
+	//toggle1->SetPosition(100, 450);
 	//toggle1->Resize(100, 100);
 
 	//	Button* btn2 = new Button;
@@ -131,6 +132,11 @@ int main(int argc, char* argv[])
 	Label* label = Manage(new Label("Hello There!"));
 	label->set_name("Label");
 	label->SetPosition(400, 100);
+
+	MenuBar* menubar = Manage(new MenuBar);
+	menubar->set_name("MenuBar");
+	menubar->SetPosition(20, 440);
+	menubar->Resize(600, 20);
 
 	RunLoop (win);
 

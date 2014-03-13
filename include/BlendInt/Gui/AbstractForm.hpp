@@ -163,6 +163,8 @@ namespace BlendInt {
 
 		virtual bool Update (const UpdateRequest& request) = 0;
 
+		static void GenerateFlatRectVertices (const Size& size, float border, float vertices[4][2]);
+
 		/**
 		 * @brief generate vertices for drawing rectangle based on the given size and border width
 		 * @param[in] size

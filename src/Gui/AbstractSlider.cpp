@@ -247,30 +247,38 @@ namespace BlendInt {
 	
 	}
 
-	void AbstractSlider::SetValue(int value)
+	void AbstractSlider::SetValue (int value)
 	{
-		if(m_value != value) {
-			m_value = value;
-			m_value_changed.fire(m_value);
+		if(value == m_value) {
+			return;
+		} else {
+
+			if(value < m_minimum || value > m_maximum)
+				return;
+
+			if(Update(UpdateRequest(Predefined, SliderPropertyValue, &value))) {
+				m_value = value;
+				m_value_changed.fire(m_value);
+			}
 		}
 	}
 
-	void AbstractSlider::set_range (int value1, int value2)
+	void AbstractSlider::SetRange (int value1, int value2)
 	{
 		int minimum = std::min(value1, value2);
 		int maximum = std::max(value1, value2);
 
-		if(m_minimum != minimum) {
+		if (m_minimum != minimum) {
 			m_minimum = minimum;
 			//Update(SliderPropertyMinimum, 0);
 		}
-		if(m_maximum != maximum) {
+		if (m_maximum != maximum) {
 			m_maximum = maximum;
 			//Update(SliderPropertyMaximum, 0);
 		}
 	}
 
-	void AbstractSlider::set_minimum (int minimum)
+	void AbstractSlider::SetMinimum (int minimum)
 	{
 		if(m_minimum == minimum) return;
 
@@ -278,32 +286,12 @@ namespace BlendInt {
 		//Update (SliderPropertyMinimum, 0);
 	}
 
-	void AbstractSlider::set_maximum (int maximum)
+	void AbstractSlider::SetMaximum (int maximum)
 	{
 		if(m_maximum == maximum) return;
 
 		m_maximum = maximum;
 		//Update(SliderPropertyMaximum, 0);
-	}
-
-	void AbstractSlider::set_value (int value)
-	{
-		if(m_value == value) return;
-
-		if(value < m_minimum || value > m_maximum) return;
-
-		m_value = value;
-
-		//Update(SliderPropertyValue, 0);
-	}
-
-	void AbstractSlider::set_step (int step)
-	{
-		if(m_step == step) return;
-
-		m_step = step;
-
-		//Update(SliderPropertyStep, 0);
 	}
 
 	void AbstractSlider::set_orientation (Orientation orientation)

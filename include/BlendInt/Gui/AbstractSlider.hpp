@@ -96,20 +96,18 @@ namespace BlendInt {
 
 		void SetValue (int value);
 
-		void set_range (int value1, int value2);
+		void SetRange (int value1, int value2);
 
-		void set_minimum (int minimum);
-		
+		void SetMinimum (int minimum);
+
+		void SetMaximum (int maximum);
+
 		int minimum () const {return m_minimum;}
-
-		void set_maximum (int maximum);
 
 		int maximum () const {return m_maximum;}
 
 		int value () const {return m_value;}
 		
-		void set_step (int step);
-
 		int step () const {return m_step;}
 
 		void set_orientation (Orientation orientation);
@@ -128,7 +126,17 @@ namespace BlendInt {
 
 		virtual void Draw (RedrawEvent* event) = 0;
 
-		void set_value (int value);
+		inline void set_value (int value)
+		{
+			m_value = value;
+		}
+
+		inline void set_step (int step)
+		{
+			m_step = step;
+		}
+
+
 
 		inline void fire_slider_moved_event (int value)
 		{

@@ -21,14 +21,14 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_MENUBAR_HPP_
-#define _BLENDINT_MENUBAR_HPP_
+#ifndef _BLENDINT_GUI_MENUBAR_HPP_
+#define _BLENDINT_GUI_MENUBAR_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
-	class MenuBar: public Frame
+	class MenuBar: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(MenuBar);
 
@@ -38,8 +38,37 @@ namespace BlendInt {
 
 		virtual ~MenuBar ();
 
+		int space () const
+		{
+			return m_space;
+		}
+
+	protected:
+
+		virtual bool Update (const UpdateRequest& request);
+
+		virtual void Draw (RedrawEvent* event);
+
+		virtual void CursorEnterEvent (bool entered);
+
+		virtual void KeyPressEvent (KeyEvent* event);
+
+		virtual void ContextMenuPressEvent (ContextMenuEvent* event);
+
+		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
+
+		virtual void MousePressEvent (MouseEvent* event);
+
+		virtual void MouseReleaseEvent (MouseEvent* event);
+
+		virtual void MouseMoveEvent (MouseEvent* event);
+
+	private:
+
+		int m_space;
+
 	};
 
 }
 
-#endif /* _BLENDINT_MENUBAR_HPP_ */
+#endif /* _BLENDINT_GUI_MENUBAR_HPP_ */

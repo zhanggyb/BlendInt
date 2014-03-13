@@ -54,8 +54,6 @@ namespace BlendInt {
 
 		bool down () const {return m_status_down;}
 
-		bool hover () const {return m_status_hover;}
-
 		void set_down (bool down) {m_status_down = down;}
 
 		bool checked () const {return m_status_checked;}
@@ -90,11 +88,6 @@ namespace BlendInt {
 			m_font = font;
 		}
 
-		inline void set_hover (bool status)
-		{
-			m_status_hover = status;
-		}
-
 		size_t get_valid_text_size ();
 
 		size_t valid_text_length() const {return m_length;}
@@ -108,9 +101,6 @@ namespace BlendInt {
 		bool m_checkable;
 		
 		bool m_status_checked;
-
-		// if the mouse is hover on the button
-		bool m_status_hover;
 
 		size_t m_length;
 

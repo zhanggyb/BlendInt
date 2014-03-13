@@ -36,10 +36,12 @@
 
 namespace BlendInt {
 
-	AbstractButton::AbstractButton ()
-	: RoundWidget(),
-			m_status_down(false), m_checkable(false),
-	  m_status_checked(false), m_status_hover(false), m_length(0)
+	AbstractButton::AbstractButton () :
+			RoundWidget(),
+			m_status_down(false),
+			m_checkable(false),
+			m_status_checked(false),
+			m_length(0)
 	{
 		FontCache::create(m_font);
 	}
@@ -129,7 +131,7 @@ namespace BlendInt {
 
 	void AbstractButton::CursorEnterEvent(bool entered)
 	{
-		m_status_hover = entered;
+		//m_status_hover = entered;
 
 		if(!entered) {
 			m_status_down = false;

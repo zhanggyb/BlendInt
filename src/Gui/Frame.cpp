@@ -35,6 +35,9 @@
 
 #include <iostream>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Utilities-inl.hpp>
@@ -43,6 +46,7 @@
 
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 
@@ -155,21 +159,49 @@ namespace BlendInt {
 
 	void Frame::Draw (RedrawEvent* event)
 	{
-#ifdef DEBUG
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		program->Use();
 
-		glColor4f(1.0f, 0.0f, 0.0f, 0.45f);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2i(0, 0);
-		glVertex2i(size().width(), 0);
-		glVertex2i(size().width(), size().height());
-		glVertex2i(0, size().height());
-		glEnd();
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
-		glDisable(GL_LINE_STIPPLE);
-#endif
+		GLint xy_attrib = program->GetAttributeLocation("xy");
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetVertexAttrib1f("z", (float)z());
+
+		float vertices[4][2];	// vertices for drawing the frame
+
+		GenerateFlatRectVertices(size(), 0.f, vertices);
+
+		ThemeManager* tm = ThemeManager::instance();
+
+		float r, g, b, a;
+
+		r = tm->themes()->regular.inner.r() / 255.f;
+		g = tm->themes()->regular.inner.g() / 255.f;
+		b = tm->themes()->regular.inner.b() / 255.f;
+		a = tm->themes()->regular.inner.a() / 255.f;
+
+		program->SetVertexAttrib4f("color", r, g, b, a);
+
+		glEnableVertexAttribArray(xy_attrib);
+
+		glVertexAttribPointer(xy_attrib, // attribute
+							  2,		// number of elements per vertex, here (x,y)
+							  GL_FLOAT,	// the type of each element
+							  GL_FALSE,	// take our values as-is
+							  0,		// no extra data between each position
+							  vertices	// the first element
+							  );
+
+		glDrawArrays(GL_POLYGON, 0, 4);
+
+		glDisableVertexAttribArray(xy_attrib);
+
+		program->Reset();
+
+		event->accept(this);
 	}
 
 } /* namespace BlendInt */

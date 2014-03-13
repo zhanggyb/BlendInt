@@ -98,14 +98,6 @@ namespace BlendInt {
 
 				case SliderPropertyValue: {
 
-					if (orientation() == Vertical) {
-						//m_slide_button->SetPosition (m_slide_button->position().x(),
-						//	position().y() + value() * get_space() / (float)(maximum() - minimum()));
-					} else {
-						//m_slide_button->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
-						//		m_slide_button->position().y());
-					}
-
 					return true;
 				}
 

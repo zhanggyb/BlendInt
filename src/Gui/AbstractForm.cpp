@@ -80,6 +80,29 @@ namespace BlendInt {
 
 	}
 
+	void AbstractForm::GenerateFlatRectVertices(const Size& size,
+			float border,
+			float vertices[4][2])
+	{
+		float minx = 0.0 + border;		// U.pixelsize; // boundbox inner
+		float maxx = size.width() - border; 	// U.pixelsize;
+		float miny = 0.0 + border;		// U.pixelsize;
+		float maxy = size.height() - border;		// U.pixelsize;
+
+		vertices[0][0] = minx;
+		vertices[0][1] = miny;
+
+		vertices[1][0] = maxx;
+		vertices[1][1] = miny;
+
+		vertices[2][0] = maxx;
+		vertices[2][1] = maxy;
+
+		vertices[3][0] = minx;
+		vertices[3][1] = maxy;
+	}
+
+
 	void AbstractForm::generate_rect_vertices(const Size* size,
 			float border,
 			float inner_v[4][2],
