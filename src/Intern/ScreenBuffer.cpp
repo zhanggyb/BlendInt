@@ -45,8 +45,8 @@ namespace BlendInt {
 #ifdef __OPENGL_CORE_330__
 	const char* ScreenBuffer::vertex_shader =
 			"#version 330\n"
-			"in vec3 coord3d;"
-			"in vec2 texcoord;"
+			"layout(location = 0) in vec3 coord3d;"
+			"layout(location = 1) in vec2 texcoord;"
 			"uniform mat4 MVP;"
 			"out vec2 f_texcoord;"
 			""
@@ -65,7 +65,7 @@ namespace BlendInt {
 			"	FragmentColor = texture(tex, f_texcoord);"
 			"}";
 
-#else
+#else	// use legacy opengl
 
 	const char* ScreenBuffer::vertex_shader =
 			"#version 120\n"
@@ -92,7 +92,7 @@ namespace BlendInt {
 	unsigned int ScreenBuffer::max_widgets_layer_buffer_size = 4;
 
 	ScreenBuffer::ScreenBuffer()
-	: Object(), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
+	: Object(), m_vao(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
 	{
 		InitOnce();
 	}
@@ -107,11 +107,15 @@ namespace BlendInt {
 		}
 
 		m_widgets_layer_buffers.clear();
+
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	void ScreenBuffer::Render(const glm::mat4& mvp, GLTexture2D* texture)
 	{
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+		glBindVertexArray(m_vao);
 
 		m_program->Use();
 
@@ -122,57 +126,62 @@ namespace BlendInt {
 
 		glUniform1i(uniform_texture, 0);
 
-		glEnableVertexAttribArray(attribute_coord3d);
 		m_vbo->Bind();
+
+		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(
-				attribute_coord3d,
+				0,
 				3,
 				GL_FLOAT,
 				GL_FALSE,
-				0,
-				0
+				sizeof(GLfloat) * 5,
+				BUFFER_OFFSET(0)
 				);
 
-		glEnableVertexAttribArray(attribute_texcoord);
-		m_tbo->Bind();
+		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(
-				attribute_texcoord,
+				1,
 				2,
 				GL_FLOAT,
 				GL_FALSE,
-				0,
-				0
+				sizeof(GLfloat) * 5,
+				BUFFER_OFFSET(3 * sizeof(GLfloat))
 				);
 
-		m_vbo->Bind();
+		glDrawArrays(GL_TRIANGLES, 0, 2 * 3);
 
-		glDrawArrays(GL_POLYGON, 0, 4);
-
-		glDisableVertexAttribArray(attribute_texcoord);
-		glDisableVertexAttribArray(attribute_coord3d);
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
 
 		m_vbo->Reset();
 		texture->Reset();
 		m_program->Reset();
 
+		glBindVertexArray(0);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	void ScreenBuffer::InitOnce()
 	{
-		m_vbo.reset(new GLArrayBuffer);
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
 
+		m_vbo.reset(new GLArrayBuffer);
 		m_vbo->Generate();
 
 		float vertices[] = {
-			0.0, 0.0, 0.0,
-			0.0, 0.0, 0,0,
-			0.0, 0.0, 0.0,
-			0.0, 0.0, 0.0
+			// 1, 2, 3: coordinates	4, 5: UV
+			0.0, 0.0, 0.0,				0.f, 0.f,
+			0.0, 0.0, 0,0,				1.f, 0.f,
+			0.0, 0.0, 0.0,				1.f, 1.f,
+
+			0.0, 0.0, 0.0,				0.f, 0.f,
+			0.0, 0.0, 0,0,				1.f, 1.f,
+			0.0, 0.0, 0.0,				0.f, 1.f,
 		};
 
 		m_vbo->Bind();
-		m_vbo->SetData(4 * sizeof(float) * 3, vertices);
+		m_vbo->SetData(sizeof(vertices), vertices);
 		m_vbo->Reset();
 
 		m_program.reset(new GLSLProgram);
@@ -194,33 +203,27 @@ namespace BlendInt {
 			m_program->Reset();
 		}
 
-		m_tbo.reset(new GLArrayBuffer);
-
-		GLfloat texcoords[] = {
-				0.0, 0.0,
-				1.0, 0.0,
-				1.0, 1.0,
-				0.0, 1.0
-		};
-
-		m_tbo->Generate();
-		m_tbo->Bind();
-		m_tbo->SetData(4 * sizeof(GLfloat) * 2, texcoords);
-		m_tbo->Reset();
+		glBindVertexArray(0);
 	}
 
 	void ScreenBuffer::Resize (float width, float height, float depth)
 	{
 		float vertices[] = {
-			0.0, 0.0, depth,
-			width, 0.0, depth,
-			width, height, depth,
-			0.0, height, depth
+			0.0, 0.0, depth,		0.f, 0.f,
+			width, 0.0, depth,	1.f, 0.f,
+			width, height, depth,1.f, 1.f,
+
+			0.0, 0.0, depth,	0.f, 0.f,
+			width, height, depth,	1.f, 1.f,
+			0.0, height, depth,	0.f, 1.f
 		};
 
+		glBindVertexArray(m_vao);
 		m_vbo->Bind();
-		m_vbo->UpdateData(vertices, 4 * sizeof(float) * 3);
+		m_vbo->UpdateData(vertices, sizeof(vertices));
 		m_vbo->Reset();
+
+		glBindVertexArray(0);
 	}
 
 	void ScreenBuffer::SaveToFile (const char* filename)

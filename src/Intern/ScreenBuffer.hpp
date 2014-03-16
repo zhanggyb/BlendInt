@@ -71,7 +71,8 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> m_program;
 
 		RefPtr<GLArrayBuffer> m_vbo;
-		RefPtr<GLArrayBuffer> m_tbo;	// texture coords
+
+		GLuint m_vao;
 
 		GLint uniform_texture;
 		GLint attribute_coord3d;
