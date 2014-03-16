@@ -24,7 +24,10 @@
 #include <iostream>
 
 #include <BlendInt/Core/Freetype.hpp>
+
+#ifdef USE_FONTCONFIG
 #include <BlendInt/Core/FontConfig.hpp>
+#endif
 
 using namespace std;
 
@@ -47,10 +50,26 @@ namespace BlendInt {
 
 		FT_Error error;
 
+		string filename;
+
+#ifdef USE_FONTCONFIG
 		FontConfig* fontconfig = FontConfig::instance();
+		filename = fontconfig->getFontPath(font);
+#else
+
+#ifdef __APPLE__
+		filename = "/System/Library/Fonts/DroidSans.ttf";
+#else
+
+#ifdef __LINUX__
+		filename = "/usr/share/fonts/TTF/DroidSans.ttf";
+#endif
+
+#endif
+
+#endif
 
 		font_ = font;
-		string filename = fontconfig->getFontPath(font_);
 
 		error = FT_Init_FreeType(&library_);
 		if (error) {

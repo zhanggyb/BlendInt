@@ -40,7 +40,10 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/Interface.hpp>
 
 #include <BlendInt/Core/Size.hpp>
+
+#ifdef USE_FONTCONFIG
 #include <BlendInt/Core/FontConfig.hpp>
+#endif
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
@@ -94,9 +97,11 @@ namespace BlendInt {
 			instance = new Interface();
 		}
 
-		if (!instance)
-		success = false;
+		if (!instance) {
+			success = false;
+		}
 
+#ifdef USE_FONTCONFIG
 		if (success && FontConfig::initialize()) {
 
 			/*
@@ -113,6 +118,7 @@ namespace BlendInt {
 			success = false;
 
 		}
+#endif
 
 		if (success && ThemeManager::initialize()) {
 			// do nothing
@@ -152,7 +158,10 @@ namespace BlendInt {
 		ShaderManager::Release();
 		ThemeManager::release();
 		FontCache::releaseAll();
+
+#ifdef USE_FONTCONFIG
 		FontConfig::release();
+#endif
 
 		if (instance) {
 			delete instance;

@@ -28,11 +28,11 @@
 #include <functional>
 #include <wchar.h>
 
-#include <BlendInt/Freetype.hpp>
-#include <BlendInt/Glyph.hpp>
+#include <BlendInt/Core/Freetype.hpp>
+#include <BlendInt/Gui/Glyph.hpp>
 
-#include <BlendInt/TextureFont.hpp>
-#include <BlendInt/TextureAtlas.hpp>
+#include <BlendInt/Gui/TextureFont.hpp>
+#include <BlendInt/Gui/TextureAtlas.hpp>
 
 using namespace std;
 
@@ -148,11 +148,13 @@ namespace BlendInt {
 			return m_freetype->max_advance();
 		}
 
+		/*
 		Tuple2l getKerning (const wchar_t& left, const wchar_t& right,
 				FT_UInt kern_mode = FT_KERNING_DEFAULT)
 		{
 			return m_freetype->getKerning(left, right, kern_mode);
 		}
+		*/
 
 		const Freetype* fontengine (void) const
 		{

@@ -10,12 +10,14 @@ set(CMAKE_BUILD_TYPE_INIT "Debug")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(OS_LINUX TRUE)
     add_definitions(-D__UNIX__)
     add_definitions(-D__LINUX__)
     add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(OS_WINDOWS TRUE)
     add_definitions(-D__WIN__)
 endif()
 
@@ -48,23 +50,26 @@ if(OPENGL_FOUND)
 endif()
 
 if(APPLE)
+
     include_directories(/usr/local/include/freetype2)
     set(LIBS ${LIBS} freetype)
-else()
+
+elseif(OS_LINUX)
     find_package(Freetype REQUIRED)
     if(FREETYPE_FOUND)
         include_directories(/usr/include/freetype2)
         include_directories(${FREETYPE_INCLUDE_DIRS})
         set(LIBS ${LIBS} ${FREETYPE_LIBRARIES})
     endif()
-endif()
 
-find_package(FontConfig REQUIRED)
-if(FONTCONFIG_FOUND)
-    include_directories(${FONTCONFIG_INCLUDE_DIR})
-    set(LIBS ${LIBS} ${FONTCONFIG_LIBRARY})
+    find_package(FontConfig REQUIRED)
+    if(FONTCONFIG_FOUND)
+        add_definitions(-DUSE_FONTCONFIG)
+        include_directories(${FONTCONFIG_INCLUDE_DIR})
+        set(LIBS ${LIBS} ${FONTCONFIG_LIBRARY})
+    endif()
+
 endif()
-#set(LIBS ${LIBS} fontconfig)
 
 #find_package(GLEW REQUIRED)
 #if(GLEW_FOUND)
