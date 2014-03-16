@@ -56,20 +56,20 @@ int main(int argc, char* argv[])
 
 	// Add Code:
 
-	TextEntry* text = Manage(new TextEntry);
-	text->set_name("TextEntry");
-	text->SetPosition(140, 200);
+	//TextEntry* text = Manage(new TextEntry);
+	//text->set_name("TextEntry");
+	//text->SetPosition(140, 200);
 
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();
 
-	//Button* btn1 = Manage(new Button);
-	//btn1->set_name("Button1");
+	Button* btn1 = Manage(new Button);
+	btn1->set_name("Button1");
 	//btn1->SetText("Button1");
 	//btn1->SetRadius(10.0);
 	//btn1->SetExpandX(false);
-	//btn1->SetPosition(100, 250);
-	//btn1->Resize(100, 100);
+	btn1->SetPosition(100, 250);
+	btn1->Resize(100, 100);
 
 	//ToggleButton* toggle1 = Manage(new ToggleButton);
 	//toggle1->set_name("ToggleButton1");
@@ -129,14 +129,14 @@ int main(int argc, char* argv[])
 	slide->SetPosition(200, 400);
 	slide->SetValue(20);
 
-	Label* label = Manage(new Label("Hello There!"));
-	label->set_name("Label");
-	label->SetPosition(400, 100);
+	//Label* label = Manage(new Label("Hello There!"));
+	//label->set_name("Label");
+	//label->SetPosition(400, 100);
 
-	MenuBar* menubar = Manage(new MenuBar);
-	menubar->set_name("MenuBar");
-	menubar->SetPosition(20, 440);
-	menubar->Resize(600, 20);
+	//MenuBar* menubar = Manage(new MenuBar);
+	//menubar->set_name("MenuBar");
+	//menubar->SetPosition(20, 440);
+	//menubar->Resize(600, 20);
 
 	RunLoop (win);
 

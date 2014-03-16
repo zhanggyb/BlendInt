@@ -58,13 +58,7 @@ namespace BlendInt {
 #else
 
 #ifdef __APPLE__
-		filename = "/System/Library/Fonts/DroidSans.ttf";
-#else
-
-#ifdef __LINUX__
-		filename = "/usr/share/fonts/TTF/DroidSans.ttf";
-#endif
-
+		filename = "/System/Library/Fonts/LucidaGrande.ttc";
 #endif
 
 #endif

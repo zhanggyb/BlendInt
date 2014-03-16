@@ -42,7 +42,7 @@
 
 namespace BlendInt {
 
-#ifdef __APPLE__
+#ifdef __OPENGL_CORE_330__
 	const char* ScreenBuffer::vertex_shader =
 			"#version 330\n"
 			"in vec3 coord3d;"
@@ -64,9 +64,9 @@ namespace BlendInt {
 			"void main(void) {"
 			"	FragmentColor = texture(tex, f_texcoord);"
 			"}";
-#endif
 
-#ifdef __LINUX__
+#else
+
 	const char* ScreenBuffer::vertex_shader =
 			"#version 120\n"
 			"attribute vec3 coord3d;"
@@ -86,6 +86,7 @@ namespace BlendInt {
 			"void main(void) {"
 			"	gl_FragColor = texture2D(tex, f_texcoord);"
 			"}";
+
 #endif
 
 	unsigned int ScreenBuffer::max_widgets_layer_buffer_size = 4;

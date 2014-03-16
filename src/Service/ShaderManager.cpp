@@ -41,7 +41,7 @@
 
 namespace BlendInt {
 
-#ifdef __APPLE__
+#ifdef __OPENGL_CORE_330__
 	const char* ShaderManager::text_vertex_shader =
 			"#version 330\n"
 			"in vec4 coord;"
@@ -133,9 +133,9 @@ namespace BlendInt {
 			"void main(void) {"
 			"	FragmentColor = f_color;"
 			"}";
-#endif
 
-#ifdef __LINUX__
+#else	// Legacy opengl
+
 	const char* ShaderManager::text_vertex_shader =
 			"#version 120\n"
 			"attribute vec4 coord;"
@@ -223,6 +223,7 @@ namespace BlendInt {
 			"void main(void) {"
 			"	gl_FragColor = f_color;"
 			"}";
+
 #endif
 
 	ShaderManager* ShaderManager::instance = 0;

@@ -43,7 +43,8 @@
 
 namespace BlendInt {
 
-#ifdef __APPLE__
+#ifdef __OPENGL_CORE_330__
+
 	const char* ImageView::vertex_shader =
 			"#version 330\n"
 			"in vec3 coord3d;"
@@ -64,11 +65,10 @@ namespace BlendInt {
 			"void main(void) {"
 			"	FragmentColor = texture(tex, f_texcoord);"
 			"}";
-#endif
 
-#ifdef __LINUX__
-	const char* ImageView::vertex_shader =
-			"#version 120\n"
+#else	// legacy opengl
+
+	const char* ImageView::vertex_shader = "#version 120\n"
 			"attribute vec3 coord3d;"
 			"attribute vec2 texcoord;"
 			"uniform mat4 MVP;"
@@ -79,13 +79,13 @@ namespace BlendInt {
 			"	f_texcoord = texcoord;"
 			"}";
 
-	const char* ImageView::fragment_shader =
-			"varying vec2 f_texcoord;"
+	const char* ImageView::fragment_shader = "varying vec2 f_texcoord;"
 			"uniform sampler2D tex;"
 			""
 			"void main(void) {"
 			"	gl_FragColor = texture2D(tex, f_texcoord);"
 			"}";
+
 #endif
 
 	ImageView::ImageView ()
