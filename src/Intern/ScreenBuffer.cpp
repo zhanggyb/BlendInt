@@ -23,7 +23,7 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <gl.h>
+#include <gl3.h>
 #include <glext.h>
 #else
 #include <GL/gl.h>
