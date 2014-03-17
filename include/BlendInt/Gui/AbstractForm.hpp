@@ -21,8 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_ABSTRACTFORM_HPP_
-#define _BLENDINT_ABSTRACTFORM_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTFORM_HPP_
+#define _BLENDINT_GUI_ABSTRACTFORM_HPP_
+
+#include <vector>
 
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
@@ -163,7 +165,9 @@ namespace BlendInt {
 
 		virtual bool Update (const UpdateRequest& request) = 0;
 
-		static void GenerateFlatRectVertices (const Size& size, float border, float vertices[4][2]);
+		static void GenerateFlatRectVertices (const Size& size, float border, float vertices[6][2]);
+
+		static void GenerateFlatRectVertices (const Size& size, float border, std::vector<GLfloat>* vertices);
 
 		/**
 		 * @brief generate vertices for drawing rectangle based on the given size and border width

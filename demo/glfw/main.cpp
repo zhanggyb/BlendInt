@@ -138,6 +138,10 @@ int main(int argc, char* argv[])
 	//menubar->SetPosition(20, 440);
 	//menubar->Resize(600, 20);
 
+	Frame* frame = Manage(new Frame);
+	frame->set_name("Frame");
+	frame->SetPosition(200, 200);
+
 	RunLoop (win);
 
 	Interface::Release();

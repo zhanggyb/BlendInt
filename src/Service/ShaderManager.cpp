@@ -90,7 +90,7 @@ namespace BlendInt {
 	const char* ShaderManager::default_widget_vertex_shader =
 			"#version 330\n"
 			""
-			"in vec2 xy;"
+			"layout(location=0) in vec2 xy;"
 			"in float z;"
 			"in vec4 color;"
 			"uniform mat4 MVP;"

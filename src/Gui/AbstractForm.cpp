@@ -82,26 +82,62 @@ namespace BlendInt {
 
 	void AbstractForm::GenerateFlatRectVertices(const Size& size,
 			float border,
-			float vertices[4][2])
+			float vertices[6][2])
 	{
 		float minx = 0.0 + border;		// U.pixelsize; // boundbox inner
 		float maxx = size.width() - border; 	// U.pixelsize;
 		float miny = 0.0 + border;		// U.pixelsize;
 		float maxy = size.height() - border;		// U.pixelsize;
 
-		vertices[0][0] = minx;
-		vertices[0][1] = miny;
+		vertices[0][0] = (maxx - minx) / 2.f;
+		vertices[0][1] = (maxy - miny) / 2.f;
 
-		vertices[1][0] = maxx;
+		vertices[1][0] = minx;
 		vertices[1][1] = miny;
 
 		vertices[2][0] = maxx;
-		vertices[2][1] = maxy;
+		vertices[2][1] = miny;
 
-		vertices[3][0] = minx;
+		vertices[3][0] = maxx;
 		vertices[3][1] = maxy;
+
+		vertices[4][0] = minx;
+		vertices[4][1] = maxy;
+
+		vertices[5][0] = minx;
+		vertices[5][1] = miny;
 	}
 
+	void AbstractForm::GenerateFlatRectVertices(const Size& size,
+			float border,
+			std::vector<GLfloat>* vertices)
+	{
+		float minx = 0.0 + border;		// U.pixelsize; // boundbox inner
+		float maxx = size.width() - border; 	// U.pixelsize;
+		float miny = 0.0 + border;		// U.pixelsize;
+		float maxy = size.height() - border;		// U.pixelsize;
+
+		if(vertices->size() != 6 * 2)
+			vertices->resize(6 * 2);
+
+		(*vertices)[0] = (maxx - minx) / 2.f;
+		(*vertices)[1] = (maxy - miny) / 2.f;
+
+		(*vertices)[2] = minx;
+		(*vertices)[3] = miny;
+
+		(*vertices)[4] = maxx;
+		(*vertices)[5] = miny;
+
+		(*vertices)[6] = maxx;
+		(*vertices)[7] = maxy;
+
+		(*vertices)[8] = minx;
+		(*vertices)[9] = maxy;
+
+		(*vertices)[10] = minx;
+		(*vertices)[11] = miny;
+	}
 
 	void AbstractForm::generate_rect_vertices(const Size* size,
 			float border,
