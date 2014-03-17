@@ -142,6 +142,10 @@ int main(int argc, char* argv[])
 	frame->set_name("Frame");
 	frame->SetPosition(200, 200);
 
+	Widget * widget = Manage(new Widget);
+	widget->set_name("Widget");
+	widget->SetPosition(400, 200);
+
 	RunLoop (win);
 
 	Interface::Release();

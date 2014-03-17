@@ -42,82 +42,51 @@ namespace BlendInt {
 	float AbstractForm::default_border_width = 1.0f;
 
 	const float AbstractForm::cornervec[WIDGET_CURVE_RESOLU][2] = {
-		{0.0, 0.0}, {0.195, 0.02}, {0.383, 0.067},
-		{0.55, 0.169}, {0.707, 0.293}, {0.831, 0.45},
-		{0.924, 0.617}, {0.98, 0.805}, {1.0, 1.0}
-	};
+					{ 0.0, 0.0 }, { 0.195, 0.02 }, { 0.383, 0.067 }, { 0.55,
+									0.169 }, { 0.707, 0.293 }, { 0.831, 0.45 },
+					{ 0.924, 0.617 }, { 0.98, 0.805 }, { 1.0, 1.0 } };
 
 	const float AbstractForm::jit[WIDGET_AA_JITTER][2] = {
-			{ 0.468813, -0.481430}, {-0.155755, -0.352820},
-			{ 0.219306, -0.238501}, {-0.393286, -0.110949},
-			{-0.024699,  0.013908}, { 0.343805,  0.147431},
-			{-0.272855,  0.269918}, { 0.095909,  0.388710}
-	};
+					{ 0.468813, -0.481430 }, { -0.155755, -0.352820 }, {
+									0.219306, -0.238501 }, { -0.393286,
+									-0.110949 }, { -0.024699, 0.013908 }, {
+									0.343805, 0.147431 },
+					{ -0.272855, 0.269918 }, { 0.095909, 0.388710 } };
 
-
-	void AbstractForm::SetDefaultBorderWidth(float border)
+	void AbstractForm::SetDefaultBorderWidth (float border)
 	{
 		default_border_width = border;
 	}
 
-	float AbstractForm::DefaultBorderWidth()
+	float AbstractForm::DefaultBorderWidth ()
 	{
 		return default_border_width;
 	}
 
-	AbstractForm::AbstractForm()
-	: Object()
+	AbstractForm::AbstractForm () :
+					Object()
 	{
 	}
 
-	AbstractForm::AbstractForm(const AbstractForm& orig)
+	AbstractForm::AbstractForm (const AbstractForm& orig)
 	{
 		m_size = orig.size();
 	}
 
-	AbstractForm::~AbstractForm()
+	AbstractForm::~AbstractForm ()
 	{
 
 	}
 
-	void AbstractForm::GenerateFlatRectVertices(const Size& size,
-			float border,
-			float vertices[6][2])
+	void AbstractForm::GenerateFlatRectVertices (const Size& size, float border,
+					std::vector<GLfloat>* vertices)
 	{
 		float minx = 0.0 + border;		// U.pixelsize; // boundbox inner
 		float maxx = size.width() - border; 	// U.pixelsize;
 		float miny = 0.0 + border;		// U.pixelsize;
 		float maxy = size.height() - border;		// U.pixelsize;
 
-		vertices[0][0] = (maxx - minx) / 2.f;
-		vertices[0][1] = (maxy - miny) / 2.f;
-
-		vertices[1][0] = minx;
-		vertices[1][1] = miny;
-
-		vertices[2][0] = maxx;
-		vertices[2][1] = miny;
-
-		vertices[3][0] = maxx;
-		vertices[3][1] = maxy;
-
-		vertices[4][0] = minx;
-		vertices[4][1] = maxy;
-
-		vertices[5][0] = minx;
-		vertices[5][1] = miny;
-	}
-
-	void AbstractForm::GenerateFlatRectVertices(const Size& size,
-			float border,
-			std::vector<GLfloat>* vertices)
-	{
-		float minx = 0.0 + border;		// U.pixelsize; // boundbox inner
-		float maxx = size.width() - border; 	// U.pixelsize;
-		float miny = 0.0 + border;		// U.pixelsize;
-		float maxy = size.height() - border;		// U.pixelsize;
-
-		if(vertices->size() != 6 * 2)
+		if (vertices->size() != 6 * 2)
 			vertices->resize(6 * 2);
 
 		(*vertices)[0] = (maxx - minx) / 2.f;
@@ -139,10 +108,255 @@ namespace BlendInt {
 		(*vertices)[11] = miny;
 	}
 
-	void AbstractForm::generate_rect_vertices(const Size* size,
-			float border,
-			float inner_v[4][2],
-			float outer_v[4][2])
+	void AbstractForm::GenerateRectVertices (const Size& size, float border,
+					std::vector<GLfloat>* inner, std::vector<GLfloat>* outer)
+	{
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size.width();
+		float maxy = size.height();
+
+		float minxi = minx + border;		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - border; 	// U.pixelsize;
+		float minyi = miny + border;		// U.pixelsize;
+		float maxyi = maxy - border;		// U.pixelsize;
+
+		if (inner) {
+
+			if (inner->size() != 6 * 2)
+				inner->resize(6 * 2);
+
+			(*inner)[0] = (maxxi - minxi) / 2.f;
+			(*inner)[1] = (maxyi - minyi) / 2.f;
+
+			(*inner)[2] = minxi;
+			(*inner)[3] = minyi;
+
+			(*inner)[4] = maxxi;
+			(*inner)[5] = minyi;
+
+			(*inner)[6] = maxxi;
+			(*inner)[7] = maxyi;
+
+			(*inner)[8] = minxi;
+			(*inner)[9] = maxyi;
+
+			(*inner)[10] = minxi;
+			(*inner)[11] = minyi;
+
+		}
+
+		if (outer) {
+
+			if (outer->size() != 4 * 2)
+				outer->resize(4 * 2);
+
+			(*outer)[0] = minx;
+			(*outer)[1] = miny;
+
+			(*outer)[2] = maxx;
+			(*outer)[3] = miny;
+
+			(*outer)[4] = maxx;
+			(*outer)[5] = maxy;
+
+			(*outer)[6] = minx;
+			(*outer)[7] = maxy;
+		}
+	}
+
+	VerticesSum AbstractForm::GenerateRoundVertices (const Size& size,
+					float border, int round_type, float radius,
+					std::vector<GLfloat>* inner, std::vector<GLfloat>* outer)
+	{
+		float rad = radius;
+		float radi = rad - border;
+
+		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0;
+		float miny = 0.0;
+		float maxx = size.width();
+		float maxy = size.height();
+
+		float minxi = minx + border;		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - border; 	// U.pixelsize;
+		float minyi = miny + border;		// U.pixelsize;
+		float maxyi = maxy - border;		// U.pixelsize;
+
+		VerticesSum sum;
+
+		int count = 0;
+
+		int minsize = 0;
+		const int hnum =
+						((round_type & (RoundTopLeft | RoundTopRight))
+										== (RoundTopLeft | RoundTopRight)
+										|| (round_type
+														& (RoundBottomRight
+																		| RoundBottomLeft))
+														== (RoundBottomRight
+																		| RoundBottomLeft)) ?
+										1 : 2;
+		const int vnum =
+						((round_type & (RoundTopLeft | RoundBottomLeft))
+										== (RoundTopLeft | RoundBottomLeft)
+										|| (round_type
+														& (RoundTopRight
+																		| RoundBottomRight))
+														== (RoundTopRight
+																		| RoundBottomRight)) ?
+										1 : 2;
+
+		unsigned int corner = round_type & RoundAll;
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+		size_t outline_size = 4 - count + count * WIDGET_CURVE_RESOLU;
+
+		minsize = std::min(size.width() * hnum, size.height() * vnum);
+
+		if (2.0f * radius > minsize)
+			rad = 0.5f * minsize;
+
+		if (2.0f * (radi + 1.0f) > minsize)
+			radi = 0.5f * minsize - border;	// U.pixelsize;
+
+		// mult
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			veci[i][0] = radi * cornervec[i][0];
+			veci[i][1] = radi * cornervec[i][1];
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		if (inner) {
+			inner->resize((outline_size + 2) * 2);
+
+			(*inner)[0] = (maxxi - minxi) / 2.f;
+			(*inner)[1] = (maxyi - minyi) / 2.f;
+
+			count = 1;
+
+			// corner left-bottom
+			if (round_type & RoundBottomLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner)[count * 2] = minxi + veci[i][1];
+					(*inner)[count * 2 + 1] = minyi + radi - veci[i][0];
+				}
+			} else {
+				(*inner)[count * 2] = minxi;
+				(*inner)[count * 2 + 1] = minyi;
+				count++;
+			}
+
+			// corner right-bottom
+			if (round_type & RoundBottomRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner)[count * 2] = maxxi - radi + veci[i][0];
+					(*inner)[count * 2 + 1] = minyi + veci[i][1];
+				}
+			} else {
+				(*inner)[count * 2] = maxxi;
+				(*inner)[count * 2 + 1] = minyi;
+				count++;
+			}
+
+			// corner right-top
+			if (round_type & RoundTopRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner)[count * 2] = maxxi - veci[i][1];
+					(*inner)[count * 2 + 1] = maxyi - radi + veci[i][0];
+				}
+			} else {
+				(*inner)[count * 2] = maxxi;
+				(*inner)[count * 2 + 1] = maxyi;
+				count++;
+			}
+
+			// corner left-top
+			if (round_type & RoundTopLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*inner)[count * 2] = minxi + radi - veci[i][0];
+					(*inner)[count * 2 + 1] = maxyi - veci[i][1];
+				}
+
+			} else {
+				(*inner)[count * 2] = minxi;
+				(*inner)[count * 2 + 1] = maxyi;
+				count++;
+			}
+
+			(*inner)[count * 2] = (*inner)[2];
+			(*inner)[count * 2 + 1] = (*inner)[3];
+		}
+
+		if (outer) {
+			outer->resize(outline_size * 2);
+
+			count = 0;
+
+			// corner left-bottom
+			if (round_type & RoundBottomLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*outer)[count * 2] = minx + vec[i][1];
+					(*outer)[count * 2 + 1] = miny + rad - vec[i][0];
+				}
+			} else {
+				(*outer)[count * 2] = minx;
+				(*outer)[count * 2 + 1] = miny;
+				count++;
+			}
+
+			// corner right-bottom
+			if (round_type & RoundBottomRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*outer)[count * 2] = maxx - rad + vec[i][0];
+					(*outer)[count * 2 + 1] = miny + vec[i][1];
+				}
+			} else {
+				(*outer)[count * 2] = maxx;
+				(*outer)[count * 2 + 1] = miny;
+				count++;
+			}
+
+			sum.half = count;
+
+			// corner right-top
+			if (round_type & RoundTopRight) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*outer)[count * 2] = maxx - vec[i][1];
+					(*outer)[count * 2 + 1] = maxy - rad + vec[i][0];
+				}
+			} else {
+				(*outer)[count * 2] = maxx;
+				(*outer)[count * 2 + 1] = maxy;
+				count++;
+			}
+
+			// corner left-top
+			if (round_type & RoundTopLeft) {
+				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+					(*outer)[count * 2] = minx + rad - vec[i][0];
+					(*outer)[count * 2 + 1] = maxy - vec[i][1];
+				}
+			} else {
+				(*outer)[count * 2] = minx;
+				(*outer)[count * 2 + 1] = maxy;
+				count++;
+			}
+
+		}
+
+		assert(count <= WIDGET_SIZE_MAX);
+
+		sum.total = count;
+		return sum;
+	}
+
+	void AbstractForm::generate_rect_vertices (const Size* size, float border,
+					float inner_v[4][2], float outer_v[4][2])
 	{
 		float minx = 0.0;
 		float miny = 0.0;
@@ -175,12 +389,10 @@ namespace BlendInt {
 		outer_v[3][1] = maxy;
 	}
 
-	VerticesSum AbstractForm::generate_round_vertices(const Size* size,
-			float border,
-			int round_type,
-			float radius,
-			float inner_v[WIDGET_SIZE_MAX][2],
-			float outer_v[WIDGET_SIZE_MAX][2])
+	VerticesSum AbstractForm::generate_round_vertices (const Size* size,
+					float border, int round_type, float radius,
+					float inner_v[WIDGET_SIZE_MAX][2],
+					float outer_v[WIDGET_SIZE_MAX][2])
 	{
 		float rad = radius;
 		float radi = rad - border;
@@ -202,13 +414,26 @@ namespace BlendInt {
 		int count = 0;
 
 		int minsize = 0;
-		const int hnum = ((round_type & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight) ||
-		                  (round_type & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)) ? 1 : 2;
-		const int vnum = ((round_type & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft) ||
-		                  (round_type & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)) ? 1 : 2;
+		const int hnum =
+						((round_type & (RoundTopLeft | RoundTopRight))
+										== (RoundTopLeft | RoundTopRight)
+										|| (round_type
+														& (RoundBottomRight
+																		| RoundBottomLeft))
+														== (RoundBottomRight
+																		| RoundBottomLeft)) ?
+										1 : 2;
+		const int vnum =
+						((round_type & (RoundTopLeft | RoundBottomLeft))
+										== (RoundTopLeft | RoundBottomLeft)
+										|| (round_type
+														& (RoundTopRight
+																		| RoundBottomRight))
+														== (RoundTopRight
+																		| RoundBottomRight)) ?
+										1 : 2;
 
-		minsize = std::min(size->width() * hnum,
-		                 size->height() * vnum);
+		minsize = std::min(size->width() * hnum, size->height() * vnum);
 
 		if (2.0f * radius > minsize)
 			rad = 0.5f * minsize;
@@ -233,7 +458,7 @@ namespace BlendInt {
 				outer_v[count][0] = minx + vec[i][1];
 				outer_v[count][1] = miny + rad - vec[i][0];
 			}
-		}	else {
+		} else {
 			inner_v[count][0] = minxi;
 			inner_v[count][1] = minyi;
 
@@ -251,7 +476,7 @@ namespace BlendInt {
 				outer_v[count][0] = maxx - rad + vec[i][0];
 				outer_v[count][1] = miny + vec[i][1];
 			}
-		}	else {
+		} else {
 			inner_v[count][0] = maxxi;
 			inner_v[count][1] = minyi;
 
@@ -271,7 +496,7 @@ namespace BlendInt {
 				outer_v[count][0] = maxx - vec[i][1];
 				outer_v[count][1] = maxy - rad + vec[i][0];
 			}
-		}	else {
+		} else {
 			inner_v[count][0] = maxxi;
 			inner_v[count][1] = maxyi;
 
@@ -290,7 +515,7 @@ namespace BlendInt {
 				outer_v[count][1] = maxy - vec[i][1];
 			}
 
-		}	else {
+		} else {
 			inner_v[count][0] = minxi;
 			inner_v[count][1] = maxyi;
 
@@ -306,12 +531,9 @@ namespace BlendInt {
 	}
 
 	VerticesSum AbstractForm::generate_round_vertices (const Size* size,
-			float border,
-			int round_type,
-			float radius,
-			const WidgetTheme* theme,
-			Orientation shadedir,
-			float inner[WIDGET_SIZE_MAX][6])
+					float border, int round_type, float radius,
+					const WidgetTheme* theme, Orientation shadedir,
+					float inner[WIDGET_SIZE_MAX][6])
 	{
 		float rad = radius;
 		float radi = rad - border;
@@ -329,17 +551,30 @@ namespace BlendInt {
 		VerticesSum sum;
 		int count = 0;
 		int minsize = 0;
-		const int hnum = ((round_type & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight) ||
-		                  (round_type & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)) ? 1 : 2;
-		const int vnum = ((round_type & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft) ||
-		                  (round_type & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)) ? 1 : 2;
+		const int hnum =
+						((round_type & (RoundTopLeft | RoundTopRight))
+										== (RoundTopLeft | RoundTopRight)
+										|| (round_type
+														& (RoundBottomRight
+																		| RoundBottomLeft))
+														== (RoundBottomRight
+																		| RoundBottomLeft)) ?
+										1 : 2;
+		const int vnum =
+						((round_type & (RoundTopLeft | RoundBottomLeft))
+										== (RoundTopLeft | RoundBottomLeft)
+										|| (round_type
+														& (RoundTopRight
+																		| RoundBottomRight))
+														== (RoundTopRight
+																		| RoundBottomRight)) ?
+										1 : 2;
 
 		Color color_top = theme->inner + theme->shadetop;
 		Color color_down = theme->inner + theme->shadedown;
 		Color shaded_color;
 
-		minsize = std::min(size->width() * hnum,
-		                 size->height() * vnum);
+		minsize = std::min(size->width() * hnum, size->height() * vnum);
 
 		if (2.0f * radius > minsize)
 			rad = 0.5f * minsize;
@@ -360,9 +595,11 @@ namespace BlendInt {
 				inner[count][1] = minyi + radi - veci[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
@@ -393,16 +630,18 @@ namespace BlendInt {
 				inner[count][1] = minyi + veci[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 			inner[count][0] = maxxi;
 			inner[count][1] = minyi;
 
@@ -428,9 +667,11 @@ namespace BlendInt {
 				inner[count][1] = maxyi - radi + veci[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
@@ -438,7 +679,7 @@ namespace BlendInt {
 				inner[count][5] = shaded_color[3] / 255.0;
 
 			}
-		}	else {
+		} else {
 			inner[count][0] = maxxi;
 			inner[count][1] = maxyi;
 
@@ -462,16 +703,18 @@ namespace BlendInt {
 				inner[count][1] = maxyi - veci[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 
 			inner[count][0] = minxi;
 			inner[count][1] = maxyi;
@@ -495,15 +738,11 @@ namespace BlendInt {
 		return sum;
 	}
 
-
 	VerticesSum AbstractForm::generate_round_vertices (const Size* size,
-			float border,
-			int round_type,
-			float radius,
-			const WidgetTheme* theme,
-			Orientation shadedir,
-			float inner[WIDGET_SIZE_MAX][6],
-			float outer[WIDGET_SIZE_MAX][2])
+					float border, int round_type, float radius,
+					const WidgetTheme* theme, Orientation shadedir,
+					float inner[WIDGET_SIZE_MAX][6],
+					float outer[WIDGET_SIZE_MAX][2])
 	{
 		float rad = radius;
 		float radi = rad - border;
@@ -526,17 +765,30 @@ namespace BlendInt {
 		VerticesSum sum;
 		int count = 0;
 		int minsize = 0;
-		const int hnum = ((round_type & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight) ||
-		                  (round_type & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)) ? 1 : 2;
-		const int vnum = ((round_type & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft) ||
-		                  (round_type & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)) ? 1 : 2;
+		const int hnum =
+						((round_type & (RoundTopLeft | RoundTopRight))
+										== (RoundTopLeft | RoundTopRight)
+										|| (round_type
+														& (RoundBottomRight
+																		| RoundBottomLeft))
+														== (RoundBottomRight
+																		| RoundBottomLeft)) ?
+										1 : 2;
+		const int vnum =
+						((round_type & (RoundTopLeft | RoundBottomLeft))
+										== (RoundTopLeft | RoundBottomLeft)
+										|| (round_type
+														& (RoundTopRight
+																		| RoundBottomRight))
+														== (RoundTopRight
+																		| RoundBottomRight)) ?
+										1 : 2;
 
 		Color color_top = theme->inner + theme->shadetop;
 		Color color_down = theme->inner + theme->shadedown;
 		Color shaded_color;
 
-		minsize = std::min(size->width() * hnum,
-		                 size->height() * vnum);
+		minsize = std::min(size->width() * hnum, size->height() * vnum);
 
 		if (2.0f * radius > minsize)
 			rad = 0.5f * minsize;
@@ -562,9 +814,11 @@ namespace BlendInt {
 				outer[count][1] = miny + rad - vec[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
@@ -601,16 +855,18 @@ namespace BlendInt {
 				outer[count][1] = miny + vec[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 			inner[count][0] = maxxi;
 			inner[count][1] = minyi;
 
@@ -642,9 +898,11 @@ namespace BlendInt {
 				outer[count][1] = maxy - rad + vec[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
@@ -652,7 +910,7 @@ namespace BlendInt {
 				inner[count][5] = shaded_color[3] / 255.0;
 
 			}
-		}	else {
+		} else {
 			inner[count][0] = maxxi;
 			inner[count][1] = maxyi;
 
@@ -682,16 +940,18 @@ namespace BlendInt {
 				outer[count][1] = maxy - vec[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 
 			inner[count][0] = minxi;
 			inner[count][1] = maxyi;
@@ -719,14 +979,9 @@ namespace BlendInt {
 	}
 
 	VerticesSum AbstractForm::generate_round_vertices (const Size* size,
-			float border,
-			int round_type,
-			float radius,
-			const Color& color,
-			short shadetop,
-			short shadedown,
-			Orientation shadedir,
-			float inner[WIDGET_SIZE_MAX][6])
+					float border, int round_type, float radius,
+					const Color& color, short shadetop, short shadedown,
+					Orientation shadedir, float inner[WIDGET_SIZE_MAX][6])
 	{
 		float rad = radius;
 		float radi = rad - border;
@@ -744,17 +999,30 @@ namespace BlendInt {
 		VerticesSum sum;
 		int count = 0;
 		int minsize = 0;
-		const int hnum = ((round_type & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight) ||
-		                  (round_type & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)) ? 1 : 2;
-		const int vnum = ((round_type & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft) ||
-		                  (round_type & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)) ? 1 : 2;
+		const int hnum =
+						((round_type & (RoundTopLeft | RoundTopRight))
+										== (RoundTopLeft | RoundTopRight)
+										|| (round_type
+														& (RoundBottomRight
+																		| RoundBottomLeft))
+														== (RoundBottomRight
+																		| RoundBottomLeft)) ?
+										1 : 2;
+		const int vnum =
+						((round_type & (RoundTopLeft | RoundBottomLeft))
+										== (RoundTopLeft | RoundBottomLeft)
+										|| (round_type
+														& (RoundTopRight
+																		| RoundBottomRight))
+														== (RoundTopRight
+																		| RoundBottomRight)) ?
+										1 : 2;
 
 		Color color_top = color + shadetop;
 		Color color_down = color + shadedown;
 		Color shaded_color;
 
-		minsize = std::min(size->width() * hnum,
-		                 size->height() * vnum);
+		minsize = std::min(size->width() * hnum, size->height() * vnum);
 
 		if (2.0f * radius > minsize)
 			rad = 0.5f * minsize;
@@ -775,16 +1043,18 @@ namespace BlendInt {
 				inner[count][1] = minyi + radi - veci[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 			inner[count][0] = minxi;
 			inner[count][1] = minyi;
 
@@ -808,16 +1078,18 @@ namespace BlendInt {
 				inner[count][1] = minyi + veci[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 			inner[count][0] = maxxi;
 			inner[count][1] = minyi;
 
@@ -843,16 +1115,18 @@ namespace BlendInt {
 				inner[count][1] = maxyi - radi + veci[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 			inner[count][0] = maxxi;
 			inner[count][1] = maxyi;
 
@@ -876,16 +1150,18 @@ namespace BlendInt {
 				inner[count][1] = maxyi - veci[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 
 			inner[count][0] = minxi;
 			inner[count][1] = maxyi;
@@ -909,17 +1185,11 @@ namespace BlendInt {
 		return sum;
 	}
 
-
 	VerticesSum AbstractForm::generate_round_vertices (const Size* size,
-			float border,
-			int round_type,
-			float radius,
-			const Color& color,
-			short shadetop,
-			short shadedown,
-			Orientation shadedir,
-			float inner[WIDGET_SIZE_MAX][6],
-			float outer[WIDGET_SIZE_MAX][2])
+					float border, int round_type, float radius,
+					const Color& color, short shadetop, short shadedown,
+					Orientation shadedir, float inner[WIDGET_SIZE_MAX][6],
+					float outer[WIDGET_SIZE_MAX][2])
 	{
 		float rad = radius;
 		float radi = rad - border;
@@ -942,17 +1212,30 @@ namespace BlendInt {
 		VerticesSum sum;
 		int count = 0;
 		int minsize = 0;
-		const int hnum = ((round_type & (RoundTopLeft | RoundTopRight)) == (RoundTopLeft | RoundTopRight) ||
-		                  (round_type & (RoundBottomRight | RoundBottomLeft)) == (RoundBottomRight | RoundBottomLeft)) ? 1 : 2;
-		const int vnum = ((round_type & (RoundTopLeft | RoundBottomLeft)) == (RoundTopLeft | RoundBottomLeft) ||
-		                  (round_type & (RoundTopRight | RoundBottomRight)) == (RoundTopRight | RoundBottomRight)) ? 1 : 2;
+		const int hnum =
+						((round_type & (RoundTopLeft | RoundTopRight))
+										== (RoundTopLeft | RoundTopRight)
+										|| (round_type
+														& (RoundBottomRight
+																		| RoundBottomLeft))
+														== (RoundBottomRight
+																		| RoundBottomLeft)) ?
+										1 : 2;
+		const int vnum =
+						((round_type & (RoundTopLeft | RoundBottomLeft))
+										== (RoundTopLeft | RoundBottomLeft)
+										|| (round_type
+														& (RoundTopRight
+																		| RoundBottomRight))
+														== (RoundTopRight
+																		| RoundBottomRight)) ?
+										1 : 2;
 
 		Color color_top = color + shadetop;
 		Color color_down = color + shadedown;
 		Color shaded_color;
 
-		minsize = std::min(size->width() * hnum,
-		                 size->height() * vnum);
+		minsize = std::min(size->width() * hnum, size->height() * vnum);
 
 		if (2.0f * radius > minsize)
 			rad = 0.5f * minsize;
@@ -978,16 +1261,18 @@ namespace BlendInt {
 				outer[count][1] = miny + rad - vec[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 			inner[count][0] = minxi;
 			inner[count][1] = minyi;
 
@@ -1017,16 +1302,18 @@ namespace BlendInt {
 				outer[count][1] = miny + vec[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 			inner[count][0] = maxxi;
 			inner[count][1] = minyi;
 
@@ -1058,16 +1345,18 @@ namespace BlendInt {
 				outer[count][1] = maxy - rad + vec[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 			inner[count][0] = maxxi;
 			inner[count][1] = maxyi;
 
@@ -1097,16 +1386,18 @@ namespace BlendInt {
 				outer[count][1] = maxy - vec[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, facyi * (inner[count][1] - minyi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, facxi * (inner[count][0] - minxi));
+					shaded_color = make_shade_color(color_top, color_down,
+									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
 				inner[count][3] = shaded_color[1] / 255.0;
 				inner[count][4] = shaded_color[2] / 255.0;
 				inner[count][5] = shaded_color[3] / 255.0;
 			}
-		}	else {
+		} else {
 
 			inner[count][0] = minxi;
 			inner[count][1] = maxyi;
@@ -1133,11 +1424,10 @@ namespace BlendInt {
 		return sum;
 	}
 
-
-	void AbstractForm::verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][2],
-			const float outer_v[WIDGET_SIZE_MAX][2],
-			const int totvert,
-			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
+	void AbstractForm::verts_to_quad_strip (
+					const float inner_v[WIDGET_SIZE_MAX][2],
+					const float outer_v[WIDGET_SIZE_MAX][2], const int totvert,
+					float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
 	{
 		int i = 0;
 		for (; i < totvert; i++) {
@@ -1148,10 +1438,10 @@ namespace BlendInt {
 		copy_v2_v2(quad_strip[i * 2 + 1], inner_v[0]);
 	}
 
-	void AbstractForm::verts_to_quad_strip(const float inner_v[WIDGET_SIZE_MAX][6],
-			const float outer_v[WIDGET_SIZE_MAX][2],
-			const int totvert,
-			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
+	void AbstractForm::verts_to_quad_strip (
+					const float inner_v[WIDGET_SIZE_MAX][6],
+					const float outer_v[WIDGET_SIZE_MAX][2], const int totvert,
+					float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
 	{
 		int i;
 		for (i = 0; i < totvert; i++) {
@@ -1163,9 +1453,8 @@ namespace BlendInt {
 	}
 
 	void AbstractForm::verts_to_quad_strip_open (
-			const float outer_v[WIDGET_SIZE_MAX][2],
-			const int totvert,
-			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
+					const float outer_v[WIDGET_SIZE_MAX][2], const int totvert,
+					float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
 	{
 		for (int i = 0; i < totvert; i++) {
 			quad_strip[i * 2][0] = outer_v[i][0];
@@ -1175,7 +1464,8 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractForm::DrawOutlineArray(const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num)
+	void AbstractForm::DrawOutlineArray (
+					const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num)
 	{
 		glEnableClientState(GL_VERTEX_ARRAY);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
@@ -1187,7 +1477,8 @@ namespace BlendInt {
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
-	void AbstractForm::DrawInnerArray(const float inner_v[WIDGET_SIZE_MAX][2], int num)
+	void AbstractForm::DrawInnerArray (const float inner_v[WIDGET_SIZE_MAX][2],
+					int num)
 	{
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, inner_v);
@@ -1202,25 +1493,26 @@ namespace BlendInt {
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
-		glDrawArrays(mode, 0, buffer->GetBufferSize()/(2 * sizeof(GLfloat)));
+		glDrawArrays(mode, 0, buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
 		glDisableClientState(GL_VERTEX_ARRAY);
 
 		buffer->Reset();
 	}
 
-	void AbstractForm::DrawInnerBuffer (const RefPtr<GLArrayBuffer>& buffer, int mode)
+	void AbstractForm::DrawInnerBuffer (const RefPtr<GLArrayBuffer>& buffer,
+					int mode)
 	{
 		buffer->Bind();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
-		glDrawArrays(mode, 0, buffer->GetBufferSize()/(2 * sizeof(GLfloat)));
+		glDrawArrays(mode, 0, buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
 		glDisableClientState(GL_VERTEX_ARRAY);
 
 		buffer->Reset();
 	}
 
-	void AbstractForm::DrawShadedInnerBuffer(GLArrayBuffer* buffer, int mode)
+	void AbstractForm::DrawShadedInnerBuffer (GLArrayBuffer* buffer, int mode)
 	{
 		buffer->Bind();
 
@@ -1228,7 +1520,8 @@ namespace BlendInt {
 		glEnableClientState(GL_COLOR_ARRAY);
 
 		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6,
+						BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glDrawArrays(mode, 0, buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
 
@@ -1238,7 +1531,8 @@ namespace BlendInt {
 		buffer->Reset();
 	}
 
-	void AbstractForm::DrawShadedInnerBuffer(const RefPtr<GLArrayBuffer>& buffer, int mode)
+	void AbstractForm::DrawShadedInnerBuffer (
+					const RefPtr<GLArrayBuffer>& buffer, int mode)
 	{
 		buffer->Bind();
 
@@ -1246,7 +1540,8 @@ namespace BlendInt {
 		glEnableClientState(GL_COLOR_ARRAY);
 
 		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6,
+						BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glDrawArrays(mode, 0, buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
 
@@ -1256,7 +1551,7 @@ namespace BlendInt {
 		buffer->Reset();
 	}
 
-	void AbstractForm::DrawOutlineBuffer(GLArrayBuffer* buffer, int mode)
+	void AbstractForm::DrawOutlineBuffer (GLArrayBuffer* buffer, int mode)
 	{
 		buffer->Bind();
 
@@ -1264,7 +1559,8 @@ namespace BlendInt {
 		glVertexPointer(2, GL_FLOAT, 0, 0);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glDrawArrays(mode, 0, buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
+			glDrawArrays(mode, 0,
+							buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
@@ -1272,7 +1568,8 @@ namespace BlendInt {
 		buffer->Reset();
 	}
 
-	void AbstractForm::DrawOutlineBuffer(const RefPtr<GLArrayBuffer>& buffer, int mode)
+	void AbstractForm::DrawOutlineBuffer (const RefPtr<GLArrayBuffer>& buffer,
+					int mode)
 	{
 		buffer->Bind();
 
@@ -1280,7 +1577,8 @@ namespace BlendInt {
 		glVertexPointer(2, GL_FLOAT, 0, 0);
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glDrawArrays(mode, 0, buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
+			glDrawArrays(mode, 0,
+							buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
 			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
 		}
 		glDisableClientState(GL_VERTEX_ARRAY);
@@ -1289,8 +1587,8 @@ namespace BlendInt {
 	}
 
 	void AbstractForm::GenerateFormBuffer (const Size* size, int round_type,
-	        float radius, GLArrayBuffer* inner_buffer,
-	        GLArrayBuffer* outer_buffer, GLArrayBuffer* emboss_buffer)
+					float radius, GLArrayBuffer* inner_buffer,
+					GLArrayBuffer* outer_buffer, GLArrayBuffer* emboss_buffer)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
@@ -1298,7 +1596,7 @@ namespace BlendInt {
 		VerticesSum vert_sum;
 
 		vert_sum = generate_round_vertices(size, default_border_width,
-		        round_type, radius, inner_v, outer_v);
+						round_type, radius, inner_v, outer_v);
 
 		if (inner_buffer) {
 			inner_buffer->Generate();
@@ -1315,11 +1613,14 @@ namespace BlendInt {
 			if (outer_buffer) {
 
 				verts_to_quad_strip(inner_v, outer_v, vert_sum.total,
-				        quad_strip);
+								quad_strip);
 
 				outer_buffer->Generate();
 				outer_buffer->Bind();
-				outer_buffer->SetData((vert_sum.total * 2 + 2) * sizeof(quad_strip[0]), quad_strip);
+				outer_buffer->SetData(
+								(vert_sum.total * 2 + 2)
+												* sizeof(quad_strip[0]),
+								quad_strip);
 				outer_buffer->Reset();
 			}
 
@@ -1330,8 +1631,9 @@ namespace BlendInt {
 
 				emboss_buffer->Generate();
 				emboss_buffer->Bind();
-				emboss_buffer->SetData(vert_sum.half * 2 * sizeof(quad_strip[0]),
-				        quad_strip);
+				emboss_buffer->SetData(
+								vert_sum.half * 2 * sizeof(quad_strip[0]),
+								quad_strip);
 				emboss_buffer->Reset();
 			}
 
@@ -1339,32 +1641,25 @@ namespace BlendInt {
 	}
 
 	void AbstractForm::GenerateShadedFormBuffers (const Size* size,
-								   int round_type,
-								   float radius,
-								   const WidgetTheme* theme,
-								   Orientation shadedir,
-								   short highlight,
-								   GLArrayBuffer* inner_buffer_p,
-								   GLArrayBuffer* outer_buffer_p,
-								   GLArrayBuffer* highlight_buffer_p)
+					int round_type, float radius, const WidgetTheme* theme,
+					Orientation shadedir, short highlight,
+					GLArrayBuffer* inner_buffer_p,
+					GLArrayBuffer* outer_buffer_p,
+					GLArrayBuffer* highlight_buffer_p)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 
 		VerticesSum vert_sum;
 
-		vert_sum = generate_round_vertices(size,
-				default_border_width,
-				round_type,
-				radius,
-				theme,
-				shadedir,
-				inner_v, outer_v);
+		vert_sum = generate_round_vertices(size, default_border_width,
+						round_type, radius, theme, shadedir, inner_v, outer_v);
 
-		if(inner_buffer_p) {
+		if (inner_buffer_p) {
 			inner_buffer_p->Generate();
 			inner_buffer_p->Bind();
-			inner_buffer_p->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
+			inner_buffer_p->SetData(vert_sum.total * sizeof(inner_v[0]),
+							inner_v);
 			inner_buffer_p->Reset();
 		}
 
@@ -1376,7 +1671,9 @@ namespace BlendInt {
 
 			outer_buffer_p->Generate();
 			outer_buffer_p->Bind();
-			outer_buffer_p->SetData((vert_sum.total * 2 + 2) * sizeof(quad_strip[0]), quad_strip);
+			outer_buffer_p->SetData(
+							(vert_sum.total * 2 + 2) * sizeof(quad_strip[0]),
+							quad_strip);
 			outer_buffer_p->Reset();
 		}
 
@@ -1386,110 +1683,122 @@ namespace BlendInt {
 			hcolor.highlight(hcolor, highlight);
 
 			vert_sum = generate_round_vertices(size, default_border_width,
-			        round_type, radius, hcolor, theme->shadetop,
-			        theme->shadedown, shadedir, inner_v, outer_v);
+							round_type, radius, hcolor, theme->shadetop,
+							theme->shadedown, shadedir, inner_v, outer_v);
 
 			highlight_buffer_p->Generate();
 			highlight_buffer_p->Bind();
 
-			highlight_buffer_p->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
+			highlight_buffer_p->SetData(vert_sum.total * sizeof(inner_v[0]),
+							inner_v);
 			highlight_buffer_p->Reset();
 		}
 	}
 
-	void AbstractForm::GenerateShadedFormBuffer (const Size* size,
-			float border,
-			int round_type,
-			float radius,
-			const Color& color,
-			short shadetop,
-			short shadedown,
-			Orientation shadedir,
-			GLArrayBuffer* buffer)
+	void AbstractForm::GenerateShadedFormBuffer (const Size* size, float border,
+					int round_type, float radius, const Color& color,
+					short shadetop, short shadedown, Orientation shadedir,
+					GLArrayBuffer* buffer)
 	{
-		if(!buffer) return;
+		if (!buffer)
+			return;
 
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 
 		VerticesSum vert_sum;
 
-		vert_sum = generate_round_vertices(size,
-				border,
-				round_type,
-				radius,
-				color,
-				shadetop,
-				shadedown,
-				shadedir,
-				inner_v);
+		vert_sum = generate_round_vertices(size, border, round_type, radius,
+						color, shadetop, shadedown, shadedir, inner_v);
 
 		buffer->Generate();
 		buffer->Bind();
 		buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
 		buffer->Reset();
 	}
+	
+	void AbstractForm::GenerateTriangleStripVertices (
+					const std::vector<GLfloat>& inner,
+					const std::vector<GLfloat>& outer,
+					const size_t totvert,
+					std::vector<GLfloat>* strip)
+	{
+		// TODO: check inner and outer size
+		// TODO: check totvert < outer.size()
+
+		if (strip) {
+
+			if (strip->size() != (totvert * 2 * 2 + 4)) {
+				strip->resize(totvert * 2 * 2 + 4);
+			}
+
+			size_t count = 0;
+			for (int i = 0, j = 0; count < totvert * 2; count++) {
+				if (count % 2 == 0) {
+					(*strip)[count * 2] = inner[2 + i];
+					(*strip)[count * 2 + 1] = inner[2 + i + 1];
+					i += 2;
+				} else {
+					(*strip)[count * 2] = outer[j];
+					(*strip)[count * 2 + 1] = outer[j + 1];
+					j += 2;
+				}
+			}
+
+			(*strip)[count * 2] = inner[2];
+			(*strip)[count * 2 + 1] = inner[3];
+			(*strip)[count * 2 + 2] = outer[0];
+			(*strip)[count * 2 + 3] = outer[1];
+
+		}
+	}
 
 	void AbstractForm::GenerateShadedFormBuffers (const Size* size,
-			int round_type,
-			float radius,
-			const Color& color,
-			short shadetop,
-			short shadedown,
-			Orientation shadedir,
-			short highlight,
-			GLArrayBuffer* inner_buffer,
-			GLArrayBuffer* outer_buffer,
-			GLArrayBuffer* highlight_buffer)
+					int round_type, float radius, const Color& color,
+					short shadetop, short shadedown, Orientation shadedir,
+					short highlight, GLArrayBuffer* inner_buffer,
+					GLArrayBuffer* outer_buffer,
+					GLArrayBuffer* highlight_buffer)
 	{
 		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
 
 		VerticesSum vert_sum;
 
-		vert_sum = generate_round_vertices(size,
-				default_border_width,
-				round_type,
-				radius,
-				color,
-				shadetop,
-				shadedown,
-				shadedir,
-				inner_v, outer_v);
+		vert_sum = generate_round_vertices(size, default_border_width,
+						round_type, radius, color, shadetop, shadedown,
+						shadedir, inner_v, outer_v);
 
-		if(inner_buffer) {
+		if (inner_buffer) {
 			inner_buffer->Generate();
 			inner_buffer->Bind();
 			inner_buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
 			inner_buffer->Reset();
 		}
 
-		if(outer_buffer) {
+		if (outer_buffer) {
 			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
-			verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+			verts_to_quad_strip(inner_v, outer_v, vert_sum.total, quad_strip);
 
 			outer_buffer->Generate();
 			outer_buffer->Bind();
-			outer_buffer->SetData((vert_sum.total * 2 + 2) * sizeof(quad_strip[0]), quad_strip);
+			outer_buffer->SetData(
+							(vert_sum.total * 2 + 2) * sizeof(quad_strip[0]),
+							quad_strip);
 			outer_buffer->Reset();
 		}
 
-		if(highlight_buffer) {
+		if (highlight_buffer) {
 			Color hcolor = color;
 			hcolor.highlight(hcolor, highlight);
 
-			vert_sum = generate_round_vertices(size,
-							default_border_width,
-							round_type,
-							radius,
-							hcolor,
-							shadetop,
-							shadedown,
-							shadedir,
-							inner_v, outer_v);
+			vert_sum = generate_round_vertices(size, default_border_width,
+							round_type, radius, hcolor, shadetop, shadedown,
+							shadedir, inner_v, outer_v);
 
 			highlight_buffer->Generate();
 			highlight_buffer->Bind();
-			highlight_buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
+			highlight_buffer->SetData(vert_sum.total * sizeof(inner_v[0]),
+							inner_v);
 			highlight_buffer->Reset();
 		}
 

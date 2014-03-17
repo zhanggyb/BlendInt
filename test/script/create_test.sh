@@ -55,7 +55,7 @@ EOF
 
 #include <gtest/gtest.h>
 #include <Common/Window.hpp>
-#include <BlendInt/Object.hpp>
+#include <BlendInt/Core/Object.hpp>
 
 class $1Test1: public testing::Test
 {

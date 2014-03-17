@@ -91,8 +91,8 @@ namespace BlendInt {
 		: total(0), half(0)
 		{ }
 
-		int total;	/**< total number of vertices for widget */
-		int half;	/**< halfway vertices number */
+		size_t total;	/**< total number of vertices for widget */
+		size_t half;	/**< halfway vertices number */
 	};
 
 	/**
@@ -135,6 +135,19 @@ namespace BlendInt {
 
 		static float DefaultBorderWidth ();
 
+		static VerticesSum GenerateRoundVertices (const Size& size,
+				float border,
+				int round_type,
+				float radius,
+				std::vector<GLfloat>* inner,
+				std::vector<GLfloat>* outer);
+
+		static void GenerateTriangleStripVertices (
+						const std::vector<GLfloat>& inner,
+						const std::vector<GLfloat>& outer,
+						const size_t totvert,
+						std::vector<GLfloat>* strip);
+
 	protected:
 
 		/**
@@ -165,9 +178,9 @@ namespace BlendInt {
 
 		virtual bool Update (const UpdateRequest& request) = 0;
 
-		static void GenerateFlatRectVertices (const Size& size, float border, float vertices[6][2]);
-
 		static void GenerateFlatRectVertices (const Size& size, float border, std::vector<GLfloat>* vertices);
+
+		static void GenerateRectVertices (const Size& size, float border, std::vector<GLfloat>* inner, std::vector<GLfloat>* outer);
 
 		/**
 		 * @brief generate vertices for drawing rectangle based on the given size and border width
