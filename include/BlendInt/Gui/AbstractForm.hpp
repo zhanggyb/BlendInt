@@ -135,12 +135,44 @@ namespace BlendInt {
 
 		static float DefaultBorderWidth ();
 
-		static VerticesSum GenerateRoundVertices (const Size& size,
-				float border,
-				int round_type,
-				float radius,
-				std::vector<GLfloat>* inner,
-				std::vector<GLfloat>* outer);
+		static void GenerateFlatRectVertices (
+						const Size& size,
+						float border,
+						std::vector<GLfloat>* vertices);
+
+		static void GenerateRectVertices (const Size& size,
+						float border,
+						std::vector<GLfloat>* inner,
+						std::vector<GLfloat>* outer);
+
+		/**
+		 * @brief Generate round vertices for inner and outline of a form
+		 * @param[in] size The size of the form
+		 * @param[in] border The width of the outline
+		 * @param[in] round_type Round type, MUST be one or bit operation of the values in RoundType
+		 * @param[in] radius The round radius
+		 * @param[out] inner The inner vertices in std::vector
+		 * @param[out] outer The outline vertices in std::vector
+		 */
+		static VerticesSum GenerateRoundVertices (
+						const Size& size,
+						float border,
+						int round_type,
+						float radius,
+						std::vector<GLfloat>* inner,
+						std::vector<GLfloat>* outer);
+
+		static VerticesSum GenerateRoundVertices (
+						const Size& size,
+						float border,
+						int round_type,
+						float radius,
+						const Color& color,
+						short shadetop,
+						short shadedown,
+						Orientation shadedir,
+						std::vector<GLfloat>* inner,
+						std::vector<GLfloat>* outer);
 
 		static void GenerateTriangleStripVertices (
 						const std::vector<GLfloat>& inner,
@@ -177,10 +209,6 @@ namespace BlendInt {
 		}
 
 		virtual bool Update (const UpdateRequest& request) = 0;
-
-		static void GenerateFlatRectVertices (const Size& size, float border, std::vector<GLfloat>* vertices);
-
-		static void GenerateRectVertices (const Size& size, float border, std::vector<GLfloat>* inner, std::vector<GLfloat>* outer);
 
 		/**
 		 * @brief generate vertices for drawing rectangle based on the given size and border width
