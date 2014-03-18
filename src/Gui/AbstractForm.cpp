@@ -25,12 +25,16 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
 #endif  // __UNIX__
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/AbstractForm.hpp>
 
@@ -1512,6 +1516,95 @@ namespace BlendInt {
 		buffer->Reset();
 	}
 
+	void AbstractForm::DrawTriangleFan(const GLint attrib, GLArrayBuffer* buffer)
+	{
+		glEnableVertexAttribArray(attrib);
+
+		// Describe our vertices array to OpenGL (it can't guess its format automatically)
+		buffer->Bind();
+
+		glVertexAttribPointer(attrib, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
+
+		// Push each element in buffer_vertices to the vertex shader
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						buffer->GetBufferSize()
+										/ (2 * sizeof(GLfloat)));
+
+		buffer->Reset();
+		glDisableVertexAttribArray(attrib);
+	}
+
+	void AbstractForm::DrawShadedTriangleFan(const GLint coord, const GLint color, GLArrayBuffer* buffer)
+	{
+		glEnableVertexAttribArray(coord);
+		glEnableVertexAttribArray(color);
+
+		buffer->Bind();
+
+		glVertexAttribPointer(coord, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  sizeof(GLfloat) * 6,				 // stride
+							  BUFFER_OFFSET(0)					 // offset of first element
+							  );
+
+		glVertexAttribPointer(color, // attribute
+							  4,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  sizeof(GLfloat) * 6,				 // stride
+							  BUFFER_OFFSET(2 * sizeof(GLfloat))					 // offset of first element
+							  );
+
+		glDrawArrays(GL_TRIANGLE_FAN, 0, buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
+
+		buffer->Reset();
+
+		glDisableVertexAttribArray(color);
+		glDisableVertexAttribArray(coord);
+	}
+
+	void AbstractForm::DrawTriangleStrip (
+					const RefPtr<GLSLProgram>& program,
+					const glm::mat4& mvp,
+					const GLint attrib,
+					GLArrayBuffer* buffer)
+	{
+		glEnableVertexAttribArray(attrib);
+
+		glm::mat4 jitter_matrix;
+
+		buffer->Bind();
+
+		glVertexAttribPointer(attrib, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
+
+		for (Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++) {
+			jitter_matrix = glm::translate(glm::mat4(1.0),
+							glm::vec3((*it), 0.f));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+							glm::value_ptr(mvp * jitter_matrix));
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+							buffer->GetBufferSize()
+											/ (2 * sizeof(GLfloat)));
+		}
+
+		buffer->Reset();
+		glDisableVertexAttribArray(attrib);
+	}
+
 	void AbstractForm::DrawInnerBuffer (const RefPtr<GLArrayBuffer>& buffer,
 					int mode)
 	{
@@ -1650,61 +1743,6 @@ namespace BlendInt {
 				emboss_buffer->Reset();
 			}
 
-		}
-	}
-
-	void AbstractForm::GenerateShadedFormBuffers (const Size* size,
-					int round_type, float radius, const WidgetTheme* theme,
-					Orientation shadedir, short highlight,
-					GLArrayBuffer* inner_buffer_p,
-					GLArrayBuffer* outer_buffer_p,
-					GLArrayBuffer* highlight_buffer_p)
-	{
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-		float inner_v[WIDGET_SIZE_MAX][6];	// vertices for drawing inner
-
-		VerticesSum vert_sum;
-
-		vert_sum = generate_round_vertices(size, default_border_width,
-						round_type, radius, theme, shadedir, inner_v, outer_v);
-
-		if (inner_buffer_p) {
-			inner_buffer_p->Generate();
-			inner_buffer_p->Bind();
-			inner_buffer_p->SetData(vert_sum.total * sizeof(inner_v[0]),
-							inner_v);
-			inner_buffer_p->Reset();
-		}
-
-		if (outer_buffer_p) {
-
-			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; // + 2 because the last pair is wrapped
-
-			verts_to_quad_strip(inner_v, outer_v, vert_sum.total, quad_strip);
-
-			outer_buffer_p->Generate();
-			outer_buffer_p->Bind();
-			outer_buffer_p->SetData(
-							(vert_sum.total * 2 + 2) * sizeof(quad_strip[0]),
-							quad_strip);
-			outer_buffer_p->Reset();
-		}
-
-		if (highlight_buffer_p) {
-
-			Color hcolor = theme->item;
-			hcolor.highlight(hcolor, highlight);
-
-			vert_sum = generate_round_vertices(size, default_border_width,
-							round_type, radius, hcolor, theme->shadetop,
-							theme->shadedown, shadedir, inner_v, outer_v);
-
-			highlight_buffer_p->Generate();
-			highlight_buffer_p->Bind();
-
-			highlight_buffer_p->SetData(vert_sum.total * sizeof(inner_v[0]),
-							inner_v);
-			highlight_buffer_p->Reset();
 		}
 	}
 

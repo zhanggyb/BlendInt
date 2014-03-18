@@ -41,19 +41,20 @@
 namespace BlendInt {
 
 	ToggleButton::ToggleButton ()
-			: AbstractButton()
+			: AbstractButton(), m_vao(0)
 	{
 		InitializeOnce();
 	}
 
 	ToggleButton::ToggleButton (const String& text)
-			: AbstractButton()
+			: AbstractButton(), m_vao(0)
 	{
 		InitializeOnce(text);
 	}
 
 	ToggleButton::~ToggleButton ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool ToggleButton::Update(const UpdateRequest& request)
@@ -64,30 +65,45 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					GenerateFormBuffer(size_p, round_type(), radius(),
-					        m_inner_buffer.get(), m_outer_buffer.get(),
-					        m_emboss_buffer.get());
-
+					glBindVertexArray(m_vao);
+					GenerateFormBuffer(
+									*size_p,
+									round_type(),
+									radius(),
+									m_inner_buffer.get(),
+									m_outer_buffer.get(),
+									m_emboss_buffer.get());
+					glBindVertexArray(0);
 					Refresh();
 					return true;
 				}
 
 				case FormRoundType: {
 					const int* type_p = static_cast<const int*>(request.data());
-					GenerateFormBuffer(&(size()), *type_p, radius(),
-					        m_inner_buffer.get(), m_outer_buffer.get(),
-					        m_emboss_buffer.get());
-
+					glBindVertexArray(m_vao);
+					GenerateFormBuffer(
+									size(),
+									*type_p,
+									radius(),
+									m_inner_buffer.get(),
+									m_outer_buffer.get(),
+									m_emboss_buffer.get());
+					glBindVertexArray(0);
 					Refresh();
 					return true;
 				}
 
 				case FormRoundRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
-					GenerateFormBuffer(&(size()), round_type(), *radius_p,
-					        m_inner_buffer.get(), m_outer_buffer.get(),
-					        m_emboss_buffer.get());
-
+					glBindVertexArray(m_vao);
+					GenerateFormBuffer(
+									size(),
+									round_type(),
+									*radius_p,
+									m_inner_buffer.get(),
+									m_outer_buffer.get(),
+									m_emboss_buffer.get());
+					glBindVertexArray(0);
 					Refresh();
 					return true;
 				}
@@ -104,13 +120,13 @@ namespace BlendInt {
 
 	void ToggleButton::Draw (RedrawEvent* event)
 	{
+		glBindVertexArray(m_vao);
+
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
-
-		GLint pos_location = program->GetAttributeLocation("xy");
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float)z());
@@ -147,23 +163,7 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4f("color", r, g, b, a);
 
-		glEnableVertexAttribArray(pos_location);
-
-		// Describe our vertices array to OpenGL (it can't guess its format automatically)
-		m_inner_buffer->Bind();
-
-		glVertexAttribPointer(pos_location, // attribute
-							  2,			// number of elements per vertex, here (x,y,z)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
-
-		// Push each element in buffer_vertices to the vertex shader
-		glDrawArrays(GL_POLYGON, 0, m_inner_buffer->GetBufferSize()/(2 * sizeof(GLfloat)));
-
-		m_inner_buffer->Reset();
+		DrawTriangleFan(0, m_inner_buffer.get());
 
 		GLfloat outline_color[4] = {themes()->regular.outline.r() / 255.f,
 									themes()->regular.outline.g() / 255.f,
@@ -173,52 +173,15 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4fv("color", outline_color);
 
-		glm::vec3 jitter;
-		glm::mat4 jitter_matrix;
-
-		m_outer_buffer->Bind();
-
-		glVertexAttribPointer(pos_location, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
-
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
-			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
-			glDrawArrays(GL_QUAD_STRIP, 0, m_outer_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
-		}
-
-		m_outer_buffer->Reset();
+		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
 
 		program->SetVertexAttrib4f("color", 1.0f, 1.0f, 1.0f, 0.02f);
 
-		m_emboss_buffer->Bind();
-
-		glVertexAttribPointer(pos_location, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
-
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
-			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
-			glDrawArrays(GL_QUAD_STRIP, 0, m_emboss_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
-		}
-
-		m_emboss_buffer->Reset();
-
-		glDisableVertexAttribArray(pos_location);
+		DrawTriangleStrip(program, mvp, 0, m_emboss_buffer.get());
 
 		program->Reset();
+
+		glBindVertexArray(0);
 
 		if(text().size()) {
 			FontCache* fc = FontCache::create(font());
@@ -230,6 +193,9 @@ namespace BlendInt {
 
 	void ToggleButton::InitializeOnce ()
 	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 		m_emboss_buffer.reset(new GLArrayBuffer);
@@ -240,13 +206,22 @@ namespace BlendInt {
 		set_size(90, 20);
 		set_preferred_size(90, 20);
 
-		GenerateFormBuffer(&size(), round_type(), radius(),
-		        m_inner_buffer.get(), m_outer_buffer.get(),
-		        m_emboss_buffer.get());
+		GenerateFormBuffer(
+						size(),
+						round_type(),
+						radius(),
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						m_emboss_buffer.get());
+
+		glBindVertexArray(0);
 	}
 
 	void ToggleButton::InitializeOnce (const String& text)
 	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 		m_emboss_buffer.reset(new GLArrayBuffer);
@@ -257,9 +232,15 @@ namespace BlendInt {
 		SetText(text);	// this change the button size
 		set_preferred_size(size());
 
-		GenerateFormBuffer(&size(), round_type(), radius(),
-		        m_inner_buffer.get(), m_outer_buffer.get(),
-		        m_emboss_buffer.get());
+		GenerateFormBuffer(
+						size(),
+						round_type(),
+						radius(),
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						m_emboss_buffer.get());
+
+		glBindVertexArray(0);
 	}
 
 }

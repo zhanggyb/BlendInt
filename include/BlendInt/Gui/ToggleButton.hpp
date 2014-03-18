@@ -60,6 +60,8 @@ namespace BlendInt {
 
 		void InitializeOnce (const String& text);
 
+		GLuint m_vao;
+
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 		RefPtr<GLArrayBuffer> m_emboss_buffer;

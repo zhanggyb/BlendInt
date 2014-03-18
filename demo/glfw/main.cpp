@@ -71,10 +71,10 @@ int main(int argc, char* argv[])
 	btn1->SetPosition(100, 250);
 //	btn1->Resize(100, 100);
 
-	//ToggleButton* toggle1 = Manage(new ToggleButton);
-	//toggle1->set_name("ToggleButton1");
+	ToggleButton* toggle1 = Manage(new ToggleButton);
+	toggle1->set_name("ToggleButton1");
 	//toggle1->SetExpandX(false);
-	//toggle1->SetPosition(100, 450);
+	toggle1->SetPosition(100, 450);
 	//toggle1->Resize(100, 100);
 
 	//	Button* btn2 = new Button;

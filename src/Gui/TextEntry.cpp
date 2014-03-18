@@ -207,32 +207,7 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float)z());
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-
-		m_inner_buffer->Bind();
-
-		glVertexAttribPointer(0, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  sizeof(GLfloat) * 6,				 // stride
-							  BUFFER_OFFSET(0)					 // offset of first element
-							  );
-
-		glVertexAttribPointer(1, // attribute
-							  4,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  sizeof(GLfloat) * 6,				 // stride
-							  BUFFER_OFFSET(2 * sizeof(GLfloat))					 // offset of first element
-							  );
-
-		glDrawArrays(GL_TRIANGLE_FAN, 0, m_inner_buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
-
-		glDisableVertexAttribArray(1);
-
-		m_inner_buffer->Reset();
+		DrawShadedTriangleFan(0, 1, m_inner_buffer.get());
 
 		GLfloat outline_color[4] = {
 						themes()->text.outline.r() / 255.f,
@@ -243,31 +218,7 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4fv("color", outline_color);
 
-		glm::mat4 jitter_matrix;
-
-		m_outer_buffer->Bind();
-
-		glVertexAttribPointer(0, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
-
-		for (Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++) {
-			jitter_matrix = glm::translate(glm::mat4(1.0),
-							glm::vec3((*it), 0.f));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-							glm::value_ptr(mvp * jitter_matrix));
-			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							m_outer_buffer->GetBufferSize()
-											/ (2 * sizeof(GLfloat)));
-		}
-
-		m_outer_buffer->Reset();
-
-		glDisableVertexAttribArray(0);
+		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
 
 		program->Reset();
 

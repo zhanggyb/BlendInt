@@ -27,12 +27,15 @@
 #include <vector>
 
 #include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
 
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Types.hpp>
 
 #include <BlendInt/Core/Object.hpp>
+
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 namespace BlendInt {
@@ -385,6 +388,12 @@ namespace BlendInt {
 		 */
 		static void DrawInnerArray (const float inner_v[WIDGET_SIZE_MAX][2], int num);
 
+		static void DrawTriangleFan (const GLint attrib, GLArrayBuffer* buffer);
+
+		static void DrawShadedTriangleFan (const GLint coord, const GLint color, GLArrayBuffer* buffer);
+
+		static void DrawTriangleStrip (const RefPtr<GLSLProgram>& program, const glm::mat4& mvp, const GLint attrib, GLArrayBuffer* buffer);
+
 		/**
 		 * @brief draw the GL Buffer in Render()
 		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
@@ -448,16 +457,6 @@ namespace BlendInt {
 				GLArrayBuffer* inner_buffer,
 				GLArrayBuffer* outer_buffer,
 				GLArrayBuffer* emboss_buffer);
-
-		static void GenerateShadedFormBuffers (const Size* size,
-									   int round_type,
-									   float radius,
-									   const WidgetTheme* theme,
-									   Orientation shadedir,
-									   short highlight,
-									   GLArrayBuffer* inner_buffer_p,
-									   GLArrayBuffer* outer_buffer_p,
-									   GLArrayBuffer* highlight_buffer_p);
 
 		static void GenerateShadedFormBuffer (const Size* size,
 									   float border,
