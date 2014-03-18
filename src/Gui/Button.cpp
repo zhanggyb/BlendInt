@@ -208,7 +208,6 @@ namespace BlendInt {
 
 		m_outer_buffer->Reset();
 
-		/*
 		program->SetVertexAttrib4f("color", 1.0f, 1.0f, 1.0f, 0.02f);
 
 		m_emboss_buffer->Bind();
@@ -232,7 +231,6 @@ namespace BlendInt {
 		}
 
 		m_emboss_buffer->Reset();
-		*/
 
 		glDisableVertexAttribArray(0);
 

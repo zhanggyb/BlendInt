@@ -66,10 +66,10 @@ int main(int argc, char* argv[])
 	Button* btn1 = Manage(new Button);
 	btn1->set_name("Button1");
 	//btn1->SetText("Button1");
-	btn1->SetRadius(5.0);
+//	btn1->SetRadius(5.0);
 	//btn1->SetExpandX(false);
 	btn1->SetPosition(100, 250);
-	btn1->Resize(100, 100);
+//	btn1->Resize(100, 100);
 
 	//ToggleButton* toggle1 = Manage(new ToggleButton);
 	//toggle1->set_name("ToggleButton1");

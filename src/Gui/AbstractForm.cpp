@@ -1778,6 +1778,32 @@ namespace BlendInt {
 		}
 	}
 	
+	void AbstractForm::GenerateOpenTriangleStripVertices (
+					const std::vector<GLfloat>& outer,
+					const size_t totvert,
+					std::vector<GLfloat>* strip)
+	{
+		if (strip) {
+
+			if(totvert > outer.size() / 2) {
+				DBG_PRINT_MSG("Attempt to process %ld vertices, but maximum is %ld", totvert, outer.size()/2);
+				return;
+			}
+
+			if (strip->size() != (totvert * 2 + 2) * 2) {
+				strip->resize((totvert * 2 + 2) * 2);
+			}
+
+			size_t count = 0;
+			for (int i = 0; count < (totvert * 4); i += 2, count += 4) {
+				(*strip)[count + 0] = outer[i];
+				(*strip)[count + 1] = outer[i + 1];
+				(*strip)[count + 2] = outer[i];
+				(*strip)[count + 3] = outer[i + 1] - 1.f;
+			}
+		}
+	}
+
 	VerticesSum AbstractForm::GenerateRoundVertices (
 					const Size& size,
 					float border,
@@ -2138,7 +2164,7 @@ namespace BlendInt {
 			if (emboss_buffer) {
 
 				//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
-				GenerateTriangleStripVertices(inner, outer, vert_sum.half, &strip);
+				GenerateOpenTriangleStripVertices(outer, vert_sum.half, &strip);
 
 				emboss_buffer->Generate();
 				emboss_buffer->Bind();

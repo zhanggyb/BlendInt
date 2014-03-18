@@ -206,6 +206,11 @@ namespace BlendInt {
 						const size_t totvert,
 						std::vector<GLfloat>* strip);
 
+		static void GenerateOpenTriangleStripVertices (
+						const std::vector<GLfloat>& outer,
+						const size_t totvert,
+						std::vector<GLfloat>* strip);
+
 		/**
 		 * @brief Generate vertex buffer object for drawing a form
 		 * @param[in] size The size of the form

@@ -300,3 +300,24 @@ TEST_F(AbstractFormTest1, GenerateTriangleStripVertices05)
 
     ASSERT_TRUE(sum.total == 36 && inner.size() == 228 && outer.size() == 72 && strip.size() == 148);
 }
+
+/**
+ * test AbstractForm::GenerateRectVertices() method
+ *
+ * Expected result:
+ */
+TEST_F(AbstractFormTest1, GenerateOpenTriangleStripVertices01)
+{
+    std::vector<GLfloat> inner;
+    std::vector<GLfloat> outer;
+    VerticesSum sum;
+    Color color;
+
+    sum = AbstractForm::GenerateRoundVertices (Size(100, 100), 1.f, RoundAll, 5.f, color, 5, -5, Vertical, &inner, &outer);
+
+    std::vector<GLfloat> strip;
+
+    AbstractForm::GenerateOpenTriangleStripVertices(outer, sum.half, &strip);
+
+    ASSERT_TRUE(sum.half == 18 && strip.size() == 76);
+}
