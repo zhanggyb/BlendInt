@@ -116,6 +116,7 @@ namespace BlendInt {
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
 		// ----- draw line
+		/*
 
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_form_program();
 
@@ -159,6 +160,7 @@ namespace BlendInt {
 		glDisableVertexAttribArray(xy_attrib);
 
 		program->Reset();
+		*/
 
 		// ----- end of draw line
 

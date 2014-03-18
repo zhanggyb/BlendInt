@@ -53,6 +53,8 @@ namespace BlendInt {
 									0.343805, 0.147431 },
 					{ -0.272855, 0.269918 }, { 0.095909, 0.388710 } };
 
+	const Jitter AbstractForm::kJit;
+
 	void AbstractForm::SetDefaultBorderWidth (float border)
 	{
 		default_border_width = border;
@@ -2155,7 +2157,6 @@ namespace BlendInt {
 					short shadetop,
 					short shadedown,
 					Orientation shadedir,
-					short highlight,
 					GLArrayBuffer* inner_buffer,
 					GLArrayBuffer* outer_buffer)
 	{

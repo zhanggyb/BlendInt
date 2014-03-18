@@ -125,17 +125,17 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, sum.total + 2);
 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * strip.size(), &strip[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * strip.size(), &strip[0],
+						GL_STATIC_DRAW);
 
-		GLfloat outline_color[4] = {themes()->regular.outline.r() / 255.f,
-									themes()->regular.outline.g() / 255.f,
-									themes()->regular.outline.b() / 255.f,
-									(themes()->regular.outline.a() / WIDGET_AA_JITTER) / 255.f
-		};
+		GLfloat outline_color[4] = { themes()->regular.outline.r() / 255.f,
+						themes()->regular.outline.g() / 255.f,
+						themes()->regular.outline.b() / 255.f,
+						(themes()->regular.outline.a() / WIDGET_AA_JITTER)
+										/ 255.f };
 
 		program->SetVertexAttrib4fv("color", outline_color);
 
-		glm::vec3 jitter;
 		glm::mat4 jitter_matrix;
 
 		glVertexAttribPointer(0, // attribute
@@ -146,12 +146,21 @@ namespace BlendInt {
 							  BUFFER_OFFSET(0)	// the first element
 							  );
 
+		for(Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++)
+		{
+			jitter_matrix = glm::translate(glm::mat4(1.0), glm::vec3((*it), 0.f));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, sum.total * 2 + 2);
+		}
+
+		/*
 		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
 			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
 			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, sum.total * 2 + 2);
 		}
+		*/
 
 		glDisableVertexAttribArray(0);
 

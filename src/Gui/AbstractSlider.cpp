@@ -52,7 +52,7 @@ namespace BlendInt {
 
 	SlideIcon::~SlideIcon ()
 	{
-
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool SlideIcon::Update (const UpdateRequest& request)
@@ -71,11 +71,18 @@ namespace BlendInt {
 					short shadetop = themes()->scroll.shadetop;
 					short shadedown = themes()->scroll.shadedown;
 
-					GenerateShadedFormBuffers(size_p, round_type(), radius(),
-					        color, shadetop, shadedown, shadedir, 5,
-					        m_inner_buffer.get(), m_outer_buffer.get(),
-					        m_highlight_buffer.get());
-
+					glBindVertexArray(m_vao);
+					GenerateShadedFormBuffers(
+									*size_p,
+									round_type(),
+									radius(),
+									color,
+									shadetop,
+									shadedown,
+									shadedir,
+									m_inner_buffer.get(),
+									m_outer_buffer.get());
+					glBindVertexArray(0);
 					return true;
 				}
 
@@ -90,10 +97,18 @@ namespace BlendInt {
 					short shadetop = themes()->scroll.shadetop;
 					short shadedown = themes()->scroll.shadedown;
 
-					GenerateShadedFormBuffers(size_p, *round_p, radius(), color,
-					        shadetop, shadedown, shadedir, 5,
-					        m_inner_buffer.get(), m_outer_buffer.get(),
-					        m_highlight_buffer.get());
+					glBindVertexArray(m_vao);
+					GenerateShadedFormBuffers(
+									*size_p,
+									*round_p,
+									radius(),
+									color,
+									shadetop,
+									shadedown,
+									shadedir,
+									m_inner_buffer.get(),
+									m_outer_buffer.get());
+					glBindVertexArray(0);
 					return true;
 				}
 
@@ -108,10 +123,18 @@ namespace BlendInt {
 					short shadetop = themes()->scroll.shadetop;
 					short shadedown = themes()->scroll.shadedown;
 
-					GenerateShadedFormBuffers(size_p, round_type(), *radius_p,
-					        color, shadetop, shadedown, shadedir, 5,
-					        m_inner_buffer.get(), m_outer_buffer.get(),
-					        m_highlight_buffer.get());
+					glBindVertexArray(m_vao);
+					GenerateShadedFormBuffers(
+									*size_p,
+									round_type(),
+									*radius_p,
+									color,
+									shadetop,
+									shadedown,
+									shadedir,
+									m_inner_buffer.get(),
+									m_outer_buffer.get());
+					glBindVertexArray(0);
 					return true;
 				}
 
@@ -126,25 +149,26 @@ namespace BlendInt {
 
 	void SlideIcon::Draw (const glm::mat4& mvp)
 	{
-		RefPtr<GLSLProgram> program =
-						ShaderManager::instance->default_widget_program();
-		program->Use();
+		glBindVertexArray(m_vao);
 
-		GLint xy_attrib = program->GetAttributeLocation("xy");
-		GLint color_attrib = program->GetAttributeLocation("color");
+		RefPtr<GLSLProgram> program =
+						ShaderManager::instance->default_form_program();
+		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		glEnableVertexAttribArray(xy_attrib);
-		glEnableVertexAttribArray(color_attrib);
-
 		if(m_highlight) {
-			m_highlight_buffer->Bind();
+			program->SetUniform1i("gamma", 15);
 		} else {
-			m_inner_buffer->Bind();
+			program->SetUniform1i("gamma", 0);
 		}
 
-		glVertexAttribPointer(xy_attrib, // attribute
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
+		m_inner_buffer->Bind();
+
+		glVertexAttribPointer(0, // attribute
 						2,			// number of elements per vertex, here (x,y)
 						GL_FLOAT,			 // the type of each element
 						GL_FALSE,			 // take our values as-is
@@ -152,7 +176,7 @@ namespace BlendInt {
 						BUFFER_OFFSET(0)			// offset of first element
 										);
 
-		glVertexAttribPointer(color_attrib, // attribute
+		glVertexAttribPointer(1, // attribute
 						4,			// number of elements per vertex, here (x,y)
 						GL_FLOAT,			 // the type of each element
 						GL_FALSE,			 // take our values as-is
@@ -160,19 +184,11 @@ namespace BlendInt {
 						BUFFER_OFFSET(2 * sizeof(GLfloat))// offset of first element
 										);
 
-		if (m_highlight) {
-			glDrawArrays(GL_POLYGON, 0,
-			                m_highlight_buffer->GetBufferSize()
-			                                / (6 * sizeof(GLfloat)));
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						m_inner_buffer->GetBufferSize()
+						/ (6 * sizeof(GLfloat)));
 
-		} else {
-			glDrawArrays(GL_POLYGON, 0,
-			                m_inner_buffer->GetBufferSize()
-			                                / (6 * sizeof(GLfloat)));
-
-		}
-
-		glDisableVertexAttribArray(color_attrib);
+		glDisableVertexAttribArray(1);
 
 		GLArrayBuffer::Reset();
 
@@ -184,13 +200,13 @@ namespace BlendInt {
 		};
 
 		program->SetVertexAttrib4fv("color", outline_color);
+		program->SetUniform1i("gamma", 0);
 
-		glm::vec3 jitter;
 		glm::mat4 jitter_matrix;
 
 		m_outer_buffer->Bind();
 
-		glVertexAttribPointer(xy_attrib, // attribute
+		glVertexAttribPointer(0, // attribute
 						2,			// number of elements per vertex, here (x,y)
 						GL_FLOAT,			 // the type of each element
 						GL_FALSE,			 // take our values as-is
@@ -198,31 +214,32 @@ namespace BlendInt {
 						0					 // offset of first element
 						);
 
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			jitter.x = jit[j][0];
-			jitter.y = jit[j][1];
-			//jitter.z = 0.0f;
-			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
+		for (Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++) {
+			jitter_matrix = glm::translate(glm::mat4(1.0),
+							glm::vec3((*it), 0.f));
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 							glm::value_ptr(mvp * jitter_matrix));
-
-			glDrawArrays(GL_QUAD_STRIP, 0,
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							m_outer_buffer->GetBufferSize()
 											/ (2 * sizeof(GLfloat)));
 		}
 
 		m_outer_buffer->Reset();
 
-		glDisableVertexAttribArray(xy_attrib);
+		glDisableVertexAttribArray(0);
 
 		program->Reset();
+
+		glBindVertexArray(0);
 	}
 
 	void SlideIcon::InitOnce ()
 	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
-		m_highlight_buffer.reset(new GLArrayBuffer);
 
 		Orientation shadedir =
 						size().width() < size().height() ?
@@ -231,9 +248,18 @@ namespace BlendInt {
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		GenerateShadedFormBuffers(&size(), round_type(), radius(), color,
-						shadetop, shadedown, shadedir, 5, m_inner_buffer.get(),
-						m_outer_buffer.get(), m_highlight_buffer.get());
+		GenerateShadedFormBuffers(
+						size(),
+						round_type(),
+						radius(),
+						color,
+						shadetop,
+						shadedown,
+						shadedir,
+						m_inner_buffer.get(),
+						m_outer_buffer.get());
+
+		glBindVertexArray(0);
 	}
 
 	AbstractSlider::AbstractSlider(Orientation orientation)

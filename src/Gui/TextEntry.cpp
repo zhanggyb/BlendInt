@@ -178,7 +178,6 @@ namespace BlendInt {
 							shadetop,
 							shadedown,
 							Vertical,
-							5,
 							m_inner_buffer.get(),
 							m_outer_buffer.get());
 					glBindVertexArray(0);
@@ -244,7 +243,6 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4fv("color", outline_color);
 
-		glm::vec3 jitter;
 		glm::mat4 jitter_matrix;
 
 		m_outer_buffer->Bind();
@@ -257,12 +255,14 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
-			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
-
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, m_outer_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
+		for (Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++) {
+			jitter_matrix = glm::translate(glm::mat4(1.0),
+							glm::vec3((*it), 0.f));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+							glm::value_ptr(mvp * jitter_matrix));
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+							m_outer_buffer->GetBufferSize()
+											/ (2 * sizeof(GLfloat)));
 		}
 
 		m_outer_buffer->Reset();
@@ -401,7 +401,6 @@ namespace BlendInt {
 				shadetop,
 				shadedown,
 				Vertical,
-				5,
 				m_inner_buffer.get(),
 				m_outer_buffer.get()
 				);
