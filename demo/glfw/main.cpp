@@ -126,7 +126,8 @@ int main(int argc, char* argv[])
 
 	Slider* slide = Manage (new Slider);
 	slide->set_name("Slider");
-	slide->SetPosition(200, 400);
+	slide->SetPosition(400, 100);
+//	slide->SetOrientation(Vertical);
 	slide->SetValue(20);
 
 	//Label* label = Manage(new Label("Hello There!"));

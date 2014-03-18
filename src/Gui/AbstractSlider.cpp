@@ -296,14 +296,14 @@ namespace BlendInt {
 		//Update(SliderPropertyMaximum, 0);
 	}
 
-	void AbstractSlider::set_orientation (Orientation orientation)
+	void AbstractSlider::SetOrientation (Orientation orientation)
 	{
-		if (m_orientation == orientation)
-			return;
+		if(m_orientation == orientation) return;
 
-		m_orientation = orientation;
-
-		//Update(SliderPropertyOrientation, 0);
+		if(Update(UpdateRequest(Predefined, SliderPropertyOrientation, &orientation))) {
+			m_orientation = orientation;
+			//fire_property_changed_event(FormPosition);
+		}
 	}
 
 }

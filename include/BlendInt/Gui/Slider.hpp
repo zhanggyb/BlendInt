@@ -60,6 +60,8 @@ namespace BlendInt {
 
 	private:
 
+		void InitOnce ();
+
 		/**
 		 * @brief Check if cursor is on the slide icon
 		 */
@@ -83,6 +85,10 @@ namespace BlendInt {
 			return value() * GetSpace()
 			                / ((float) maximum() - (float) minimum());
 		}
+
+		GLuint m_vao;
+
+		RefPtr<GLArrayBuffer> m_line;
 
 		SlideIcon m_switch;
 

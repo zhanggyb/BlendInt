@@ -103,6 +103,8 @@ namespace BlendInt {
 
 		void SetMaximum (int maximum);
 
+		void SetOrientation (Orientation orientation);
+
 		int minimum () const {return m_minimum;}
 
 		int maximum () const {return m_maximum;}
@@ -110,8 +112,6 @@ namespace BlendInt {
 		int value () const {return m_value;}
 		
 		int step () const {return m_step;}
-
-		void set_orientation (Orientation orientation);
 
 		Orientation orientation () const {return m_orientation;}
 
@@ -137,7 +137,10 @@ namespace BlendInt {
 			m_step = step;
 		}
 
-
+		inline void set_orientation (Orientation orientation)
+		{
+			m_orientation = orientation;
+		}
 
 		inline void fire_slider_moved_event (int value)
 		{

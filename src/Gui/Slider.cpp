@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	Slider::Slider (Orientation orientation) :
-			AbstractSlider(orientation), m_line_width(0), m_pressed(false)
+			AbstractSlider(orientation), m_vao(0), m_line_width(0), m_pressed(false)
 	{
 		m_switch.Resize(14, 14);
 
@@ -62,10 +62,12 @@ namespace BlendInt {
 
 		m_line_width = 200 - 7 * 2;
 
+		InitOnce();
 	}
 
 	Slider::~Slider()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool Slider::Update (const UpdateRequest& request)
@@ -101,6 +103,28 @@ namespace BlendInt {
 					return true;
 				}
 
+				case SliderPropertyOrientation: {
+					const Orientation* orient_p = static_cast<const Orientation*>(request.data());
+					glBindVertexArray(m_vao);
+					m_line->Bind();
+
+					GLfloat* buf_p = (GLfloat*)m_line->Map(GL_READ_WRITE);
+					if(*orient_p == Horizontal) {
+						*(buf_p + 2) = *(buf_p + 2) + m_line_width;
+						*(buf_p + 3) = static_cast<float>(m_line_start.y());
+					} else {
+						*(buf_p + 2) = static_cast<float>(m_line_start.x());
+						*(buf_p + 3) = *(buf_p + 3) + m_line_width;
+					}
+					m_line->Unmap();
+
+					m_line->Reset();
+					glBindVertexArray(0);
+					Refresh();
+
+					return true;
+				}
+
 				default:
 					return true;
 			}
@@ -116,25 +140,13 @@ namespace BlendInt {
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
 		// ----- draw line
-		/*
 
+		glBindVertexArray(m_vao);
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_form_program();
 
 		program->Use();
 
-		GLint xy_attrib = program->GetAttributeLocation("xy");
-
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		float vertices[2][2] = {
-						{static_cast<float>(m_line_start.x()), static_cast<float>(m_line_start.y())},
-						{static_cast<float>(m_line_start.x()), static_cast<float>(m_line_start.y())} };
-
-		if(orientation() == Horizontal) {
-			vertices[1][0] = vertices[1][0] + m_line_width;
-		} else {
-			vertices[1][1] = vertices[1][1] + m_line_width;
-		}
 
 		program->SetVertexAttrib4f(
 						"color",
@@ -144,23 +156,27 @@ namespace BlendInt {
 						themes()->scroll.outline.a() / 255.f
 						);
 
-		glEnableVertexAttribArray(xy_attrib);
+		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(xy_attrib, // attribute
+		m_line->Bind();
+		glVertexAttribPointer(0, // attribute
 							  2,		// number of elements per vertex, here (x,y)
 							  GL_FLOAT,	// the type of each element
 							  GL_FALSE,	// take our values as-is
 							  0,		// no extra data between each position
-							  vertices	// the first element
+							  BUFFER_OFFSET(0)	// the first element
 							  );
 
 		glLineWidth(1.0);
 		glDrawArrays(GL_LINES, 0, 2);
 
-		glDisableVertexAttribArray(xy_attrib);
+		m_line->Reset();
+
+		glDisableVertexAttribArray(0);
 
 		program->Reset();
-		*/
+
+		glBindVertexArray(0);
 
 		// ----- end of draw line
 
@@ -237,6 +253,35 @@ namespace BlendInt {
 		}
 
 		event->accept(this);
+	}
+
+	void Slider::InitOnce ()
+	{
+		glGenVertexArrays(1, &m_vao);
+
+		glBindVertexArray(m_vao);
+
+		m_line.reset(new GLArrayBuffer);
+		m_line->Generate();
+		m_line->Bind();
+
+		GLfloat vertices[] = {
+					static_cast<float>(m_line_start.x()), static_cast<float>(m_line_start.y()),
+					static_cast<float>(m_line_start.x()), static_cast<float>(m_line_start.y())
+		};
+
+		if(orientation() == Horizontal) {
+			vertices[2] = vertices[2] + m_line_width;
+		} else {
+			vertices[3] = vertices[3] + m_line_width;
+		}
+
+		m_line->SetData (sizeof(vertices), vertices);
+
+		m_line->Reset();
+
+		glBindVertexArray(0);
+
 	}
 
 	int Slider::GetSpace ()
