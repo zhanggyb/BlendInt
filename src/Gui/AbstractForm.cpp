@@ -1742,12 +1742,12 @@ namespace BlendInt {
 				return;
 			}
 
-			int stride = 0;	// stride in inner
+			int step = 0;	// stride in inner
 
 			if(inner.size() >= (outer.size() * 3 + 6 * 2)) {
-				stride = 6;
+				step = 6;
 			} else if (inner.size() >= (outer.size() + 2 * 2)) {
-				stride = 2;
+				step = 2;
 			} else {
 				DBG_PRINT_MSG("Not enough inner vertices: %ld", inner.size());
 				return;
@@ -1760,9 +1760,9 @@ namespace BlendInt {
 			size_t count = 0;
 			for (int i = 0, j = 0; count < totvert * 2; count++) {
 				if (count % 2 == 0) {
-					(*strip)[count * 2] = inner[stride + i];
-					(*strip)[count * 2 + 1] = inner[stride + i + 1];
-					i += stride;
+					(*strip)[count * 2] = inner[step + i];
+					(*strip)[count * 2 + 1] = inner[step + i + 1];
+					i += step;
 				} else {
 					(*strip)[count * 2] = outer[j];
 					(*strip)[count * 2 + 1] = outer[j + 1];
@@ -1770,8 +1770,8 @@ namespace BlendInt {
 				}
 			}
 
-			(*strip)[count * 2] = inner[2];
-			(*strip)[count * 2 + 1] = inner[3];
+			(*strip)[count * 2] = inner[step + 0];
+			(*strip)[count * 2 + 1] = inner[step + 1];
 			(*strip)[count * 2 + 2] = outer[0];
 			(*strip)[count * 2 + 3] = outer[1];
 

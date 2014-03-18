@@ -63,25 +63,18 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p =
-					        static_cast<const Size*>(request.data());
+									static_cast<const Size*>(request.data());
 					Orientation shadedir =
-					        size_p->width() < size_p->height() ?
-					                Horizontal : Vertical;
+									size_p->width() < size_p->height() ?
+													Horizontal : Vertical;
 					const Color& color = themes()->scroll.item;
 					short shadetop = themes()->scroll.shadetop;
 					short shadedown = themes()->scroll.shadedown;
 
 					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(
-									*size_p,
-									round_type(),
-									radius(),
-									color,
-									shadetop,
-									shadedown,
-									shadedir,
-									m_inner_buffer.get(),
-									m_outer_buffer.get());
+					GenerateShadedFormBuffers(*size_p, round_type(), radius(),
+									color, shadetop, shadedown, shadedir,
+									m_inner_buffer.get(), m_outer_buffer.get());
 					glBindVertexArray(0);
 					return true;
 				}
@@ -89,25 +82,18 @@ namespace BlendInt {
 				case FormRoundType: {
 					const Size* size_p = &(size());
 					Orientation shadedir =
-					        size_p->width() < size_p->height() ?
-					                Horizontal : Vertical;
+									size_p->width() < size_p->height() ?
+													Horizontal : Vertical;
 					const RoundType* round_p =
-					        static_cast<const RoundType*>(request.data());
+									static_cast<const RoundType*>(request.data());
 					const Color& color = themes()->scroll.item;
 					short shadetop = themes()->scroll.shadetop;
 					short shadedown = themes()->scroll.shadedown;
 
 					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(
-									*size_p,
-									*round_p,
-									radius(),
-									color,
-									shadetop,
-									shadedown,
-									shadedir,
-									m_inner_buffer.get(),
-									m_outer_buffer.get());
+					GenerateShadedFormBuffers(*size_p, *round_p, radius(),
+									color, shadetop, shadedown, shadedir,
+									m_inner_buffer.get(), m_outer_buffer.get());
 					glBindVertexArray(0);
 					return true;
 				}
@@ -115,25 +101,18 @@ namespace BlendInt {
 				case FormRoundRadius: {
 					const Size* size_p = &(size());
 					Orientation shadedir =
-					        size_p->width() < size_p->height() ?
-					                Horizontal : Vertical;
+									size_p->width() < size_p->height() ?
+													Horizontal : Vertical;
 					const float* radius_p =
-					        static_cast<const float*>(request.data());
+									static_cast<const float*>(request.data());
 					const Color& color = themes()->scroll.item;
 					short shadetop = themes()->scroll.shadetop;
 					short shadedown = themes()->scroll.shadedown;
 
 					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(
-									*size_p,
-									round_type(),
-									*radius_p,
-									color,
-									shadetop,
-									shadedown,
-									shadedir,
-									m_inner_buffer.get(),
-									m_outer_buffer.get());
+					GenerateShadedFormBuffers(*size_p, round_type(), *radius_p,
+									color, shadetop, shadedown, shadedir,
+									m_inner_buffer.get(), m_outer_buffer.get());
 					glBindVertexArray(0);
 					return true;
 				}
@@ -157,7 +136,7 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		if(m_highlight) {
+		if (m_highlight) {
 			program->SetUniform1i("gamma", 15);
 		} else {
 			program->SetUniform1i("gamma", 0);
@@ -186,18 +165,17 @@ namespace BlendInt {
 
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						m_inner_buffer->GetBufferSize()
-						/ (6 * sizeof(GLfloat)));
+										/ (6 * sizeof(GLfloat)));
 
 		glDisableVertexAttribArray(1);
 
 		GLArrayBuffer::Reset();
 
-		GLfloat outline_color[4] = {
-						themes()->scroll.outline.r() / 255.f,
-		                themes()->scroll.outline.g() / 255.f,
-		                themes()->scroll.outline.b() / 255.f,
-		                (themes()->scroll.outline.a() / WIDGET_AA_JITTER) / 255.f
-		};
+		GLfloat outline_color[4] = { themes()->scroll.outline.r() / 255.f,
+						themes()->scroll.outline.g() / 255.f,
+						themes()->scroll.outline.b() / 255.f,
+						(themes()->scroll.outline.a() / WIDGET_AA_JITTER)
+										/ 255.f };
 
 		program->SetVertexAttrib4fv("color", outline_color);
 		program->SetUniform1i("gamma", 0);
@@ -219,6 +197,7 @@ namespace BlendInt {
 							glm::vec3((*it), 0.f));
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 							glm::value_ptr(mvp * jitter_matrix));
+
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							m_outer_buffer->GetBufferSize()
 											/ (2 * sizeof(GLfloat)));
@@ -248,41 +227,36 @@ namespace BlendInt {
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		GenerateShadedFormBuffers(
-						size(),
-						round_type(),
-						radius(),
-						color,
-						shadetop,
-						shadedown,
-						shadedir,
-						m_inner_buffer.get(),
+		GenerateShadedFormBuffers(size(), round_type(), radius(), color,
+						shadetop, shadedown, shadedir, m_inner_buffer.get(),
 						m_outer_buffer.get());
 
 		glBindVertexArray(0);
 	}
 
-	AbstractSlider::AbstractSlider(Orientation orientation)
-		: RoundWidget (), m_orientation(orientation),
-		  m_value(0), m_minimum(0), m_maximum(100), m_step(5)
+	AbstractSlider::AbstractSlider (Orientation orientation) :
+					RoundWidget(), m_orientation(orientation), m_value(0), m_minimum(
+									0), m_maximum(100), m_step(5)
 	{
 	}
 
-	AbstractSlider::~AbstractSlider()
+	AbstractSlider::~AbstractSlider ()
 	{
+
+	}
 	
-	}
-
 	void AbstractSlider::SetValue (int value)
 	{
-		if(value == m_value) {
+		if (value == m_value) {
 			return;
 		} else {
 
-			if(value < m_minimum || value > m_maximum)
+			if (value < m_minimum || value > m_maximum)
 				return;
 
-			if(Update(UpdateRequest(Predefined, SliderPropertyValue, &value))) {
+			if (Update(
+							UpdateRequest(Predefined, SliderPropertyValue,
+											&value))) {
 				m_value = value;
 				m_value_changed.fire(m_value);
 			}
@@ -306,7 +280,8 @@ namespace BlendInt {
 
 	void AbstractSlider::SetMinimum (int minimum)
 	{
-		if(m_minimum == minimum) return;
+		if (m_minimum == minimum)
+			return;
 
 		m_minimum = minimum;
 		//Update (SliderPropertyMinimum, 0);
@@ -314,7 +289,8 @@ namespace BlendInt {
 
 	void AbstractSlider::SetMaximum (int maximum)
 	{
-		if(m_maximum == maximum) return;
+		if (m_maximum == maximum)
+			return;
 
 		m_maximum = maximum;
 		//Update(SliderPropertyMaximum, 0);
@@ -322,7 +298,8 @@ namespace BlendInt {
 
 	void AbstractSlider::set_orientation (Orientation orientation)
 	{
-		if(m_orientation == orientation) return;
+		if (m_orientation == orientation)
+			return;
 
 		m_orientation = orientation;
 
