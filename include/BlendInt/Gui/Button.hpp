@@ -65,6 +65,8 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 		RefPtr<GLArrayBuffer> m_emboss_buffer;
+
+		GLuint m_vao;
 	};
 
 }

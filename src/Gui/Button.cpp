@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	Button::Button ()
-		: AbstractButton()
+		: AbstractButton(), m_vao(0)
 	{
 		InitOnce();
 	}
@@ -55,6 +55,7 @@ namespace BlendInt {
 
 	Button::~Button ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool Button::Update(const UpdateRequest& request)
@@ -64,39 +65,42 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
-				GenerateFormBuffer(size_p,
+				glBindVertexArray(m_vao);
+				GenerateFormBuffer(*size_p,
 								   round_type(),
 								   radius(),
 								   m_inner_buffer.get(),
 								   m_outer_buffer.get(),
 								   m_emboss_buffer.get());
-
+				glBindVertexArray(0);
 				Refresh();
 				return true;
 			}
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(request.data());
-				GenerateFormBuffer(&(size()),
+				glBindVertexArray(m_vao);
+				GenerateFormBuffer(size(),
 								   *type_p,
 								   radius(),
 								   m_inner_buffer.get(),
 								   m_outer_buffer.get(),
 								   m_emboss_buffer.get());
-
+				glBindVertexArray(0);
 				Refresh();
 				return true;
 			}
 
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(request.data());
-				GenerateFormBuffer(&(size()),
+				glBindVertexArray(m_vao);
+				GenerateFormBuffer(size(),
 								   round_type(),
 								   *radius_p,
 								   m_inner_buffer.get(),
 								   m_outer_buffer.get(),
 								   m_emboss_buffer.get());
-
+				glBindVertexArray(0);
 				Refresh();
 				return true;
 			}
@@ -112,13 +116,13 @@ namespace BlendInt {
 
 	void Button::Draw (RedrawEvent* event)
 	{
+		glBindVertexArray(m_vao);
+
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
-
-		GLint xy_attrib = program->GetAttributeLocation("xy");
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float)z());
@@ -149,12 +153,12 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4f("color", r, g, b, a);
 
-		glEnableVertexAttribArray(xy_attrib);
+		glEnableVertexAttribArray(0);
 
 		// Describe our vertices array to OpenGL (it can't guess its format automatically)
 		m_inner_buffer->Bind();
 
-		glVertexAttribPointer(xy_attrib, // attribute
+		glVertexAttribPointer(0, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -163,7 +167,7 @@ namespace BlendInt {
 							  );
 
 		// Push each element in buffer_vertices to the vertex shader
-		glDrawArrays(GL_POLYGON, 0, m_inner_buffer->GetBufferSize()/(2 * sizeof(GLfloat)));
+		glDrawArrays(GL_TRIANGLE_FAN, 0, m_inner_buffer->GetBufferSize()/(2 * sizeof(GLfloat)));
 
 		m_inner_buffer->Reset();
 
@@ -180,7 +184,7 @@ namespace BlendInt {
 
 		m_outer_buffer->Bind();
 
-		glVertexAttribPointer(xy_attrib, // attribute
+		glVertexAttribPointer(0, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -192,7 +196,7 @@ namespace BlendInt {
 			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
 			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
-			glDrawArrays(GL_QUAD_STRIP, 0, m_outer_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, m_outer_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
 		}
 
 		m_outer_buffer->Reset();
@@ -201,7 +205,7 @@ namespace BlendInt {
 
 		m_emboss_buffer->Bind();
 
-		glVertexAttribPointer(xy_attrib, // attribute
+		glVertexAttribPointer(0, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -213,12 +217,12 @@ namespace BlendInt {
 			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
 			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
-			glDrawArrays(GL_QUAD_STRIP, 0, m_emboss_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, m_emboss_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
 		}
 
 		m_emboss_buffer->Reset();
 
-		glDisableVertexAttribArray(xy_attrib);
+		glDisableVertexAttribArray(0);
 
 		program->Reset();
 
@@ -227,11 +231,15 @@ namespace BlendInt {
 			fc->Print(mvp, origin().x(), origin().y(), text(), valid_text_length(), 0);
 		}
 
+		glBindVertexArray(0);
 		event->accept(this);
 	}
 
 	void Button::InitOnce ()
 	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 		m_emboss_buffer.reset(new GLArrayBuffer);
@@ -241,12 +249,22 @@ namespace BlendInt {
 		set_size(90, 20);
 		set_preferred_size(90, 20);
 
-		GenerateFormBuffer(&size(), round_type(), radius(), m_inner_buffer.get(),
-						   m_outer_buffer.get(), m_emboss_buffer.get());
+		GenerateFormBuffer(
+						size(),
+						round_type(),
+						radius(),
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						m_emboss_buffer.get());
+
+		glBindVertexArray(0);
 	}
 
 	void Button::InitOnce (const String& text)
 	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 		m_emboss_buffer.reset(new GLArrayBuffer);
@@ -256,6 +274,8 @@ namespace BlendInt {
 		Resize(90, 20);
 		SetText(text);
 		SetPreferredSize(size());
+
+		glBindVertexArray(0);
 	}
 
 }

@@ -1741,10 +1741,11 @@ namespace BlendInt {
 			}
 
 			int stride = 0;	// stride in inner
-			if(inner.size() >= (outer.size() + 2 * 2)) {
-				stride = 2;
-			} else if(inner.size() >= (outer.size() * 3 + 6 * 2)) {
+
+			if(inner.size() >= (outer.size() * 3 + 6 * 2)) {
 				stride = 6;
+			} else if (inner.size() >= (outer.size() + 2 * 2)) {
+				stride = 2;
 			} else {
 				DBG_PRINT_MSG("Not enough inner vertices: %ld", inner.size());
 				return;
@@ -2093,6 +2094,99 @@ namespace BlendInt {
 		sum.total = count;
 		return sum;
 	}
+
+	void AbstractForm::GenerateFormBuffer (
+					const Size& size,
+					int round_type,
+					float radius,
+					GLArrayBuffer* inner_buffer,
+					GLArrayBuffer* outer_buffer,
+					GLArrayBuffer* emboss_buffer)
+	{
+		std::vector<GLfloat> inner;
+		std::vector<GLfloat> outer;
+
+		VerticesSum vert_sum;
+
+		vert_sum = GenerateRoundVertices(size, default_border_width, round_type, radius, &inner, &outer);
+
+		if (inner_buffer) {
+			inner_buffer->Generate();
+			inner_buffer->Bind();
+			inner_buffer->SetData(sizeof(GLfloat) * inner.size(), &inner[0]);
+			inner_buffer->Reset();
+		}
+
+		// the quad strip for outline
+		if (outer_buffer || emboss_buffer) {
+
+			std::vector<GLfloat> strip;
+
+			if (outer_buffer) {
+
+				GenerateTriangleStripVertices(inner, outer, vert_sum.total, &strip);
+
+				outer_buffer->Generate();
+				outer_buffer->Bind();
+				outer_buffer->SetData(sizeof(GLfloat) * strip.size(),
+								&strip[0]);
+				outer_buffer->Reset();
+			}
+
+			if (emboss_buffer) {
+
+				//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+				GenerateTriangleStripVertices(inner, outer, vert_sum.half, &strip);
+
+				emboss_buffer->Generate();
+				emboss_buffer->Bind();
+				emboss_buffer->SetData(sizeof(GLfloat) * strip.size(),
+								&strip[0]);
+				emboss_buffer->Reset();
+			}
+		}
+	}
+
+	void AbstractForm::GenerateShadedFormBuffers (
+					const Size& size,
+					int round_type,
+					float radius,
+					const Color& color,
+					short shadetop,
+					short shadedown,
+					Orientation shadedir,
+					short highlight,
+					GLArrayBuffer* inner_buffer,
+					GLArrayBuffer* outer_buffer)
+	{
+		std::vector<GLfloat> inner;
+		std::vector<GLfloat> outer;
+
+		VerticesSum vert_sum;
+
+		vert_sum = GenerateRoundVertices(size, default_border_width, round_type, radius, color, shadetop, shadedown, shadedir, &inner, &outer);
+
+		if (inner_buffer) {
+			inner_buffer->Generate();
+			inner_buffer->Bind();
+			inner_buffer->SetData(sizeof(GLfloat) * inner.size(), &inner[0]);
+			inner_buffer->Reset();
+		}
+
+		if (outer_buffer) {
+			std::vector<GLfloat> strip;
+
+			GenerateTriangleStripVertices(inner, outer, vert_sum.total, &strip);
+
+			outer_buffer->Generate();
+			outer_buffer->Bind();
+			outer_buffer->SetData(
+							sizeof(GLfloat) * strip.size(),
+							&strip[0]);
+			outer_buffer->Reset();
+		}
+	}
+
 
 	void AbstractForm::GenerateShadedFormBuffers (const Size* size,
 					int round_type, float radius, const Color& color,

@@ -56,9 +56,9 @@ int main(int argc, char* argv[])
 
 	// Add Code:
 
-	//TextEntry* text = Manage(new TextEntry);
-	//text->set_name("TextEntry");
-	//text->SetPosition(140, 200);
+	TextEntry* text = Manage(new TextEntry);
+	text->set_name("TextEntry");
+	text->SetPosition(240, 200);
 
 //	HorizontalLayout* layout = new HorizontalLayout;
 //	layout->Register();
@@ -138,13 +138,13 @@ int main(int argc, char* argv[])
 	//menubar->SetPosition(20, 440);
 	//menubar->Resize(600, 20);
 
-	Frame* frame = Manage(new Frame);
-	frame->set_name("Frame");
-	frame->SetPosition(200, 200);
-
-	Widget * widget = Manage(new Widget);
-	widget->set_name("Widget");
-	widget->SetPosition(400, 200);
+//	Frame* frame = Manage(new Frame);
+//	frame->set_name("Frame");
+//	frame->SetPosition(200, 200);
+//
+//	Widget * widget = Manage(new Widget);
+//	widget->set_name("Widget");
+//	widget->SetPosition(400, 200);
 
 	RunLoop (win);
 

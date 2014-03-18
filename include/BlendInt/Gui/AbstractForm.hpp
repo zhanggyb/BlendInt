@@ -180,6 +180,22 @@ namespace BlendInt {
 						const size_t totvert,
 						std::vector<GLfloat>* strip);
 
+		/**
+		 * @brief Generate vertex buffer object for drawing a form
+		 * @param[in] size The size of the form
+		 * @param[in] round_type The round type
+		 * @param[in] radius The radius of the round corner
+		 * @param[out] inner_buffer Buffer object for drawing the inner
+		 * @param[out] outer_buffer Buffer object for drawing the outer
+		 * @param[out] emboss_buffer Buffer object for drawing the emboss
+		 */
+		static void GenerateFormBuffer (const Size& size,
+				int round_type,
+				float radius,
+				GLArrayBuffer* inner_buffer,
+				GLArrayBuffer* outer_buffer,
+				GLArrayBuffer* emboss_buffer);
+
 	protected:
 
 		/**
@@ -419,6 +435,37 @@ namespace BlendInt {
 									   short shadedown,
 									   Orientation shadedir,
 									   GLArrayBuffer* buffer);
+
+		/**
+		 * @brief generate buffer with shaded color
+		 * @param[in] size
+		 * @param[in] border
+		 * @param[in] round_type
+		 * @param[in] radius
+		 * @param[in] color
+		 * @param[in] shadetop
+		 * @param[in] shadedown
+		 * @param[in] shadedir
+		 * @param[in] highlight
+		 * @param[out] buffer
+		 *
+		 * This function calculate the output GLBuffers with shaded color
+		 *
+		 * If highlight > 0, 3 buffers will be generated, if not, 2 buffers generated:
+		 *	- buffer index 0: used for inner
+		 *	- buffer index 1: used for outline
+		 *	- buffer index 2: used for inner highlight
+		 */
+		static void GenerateShadedFormBuffers (const Size& size,
+									   int round_type,
+									   float radius,
+									   const Color& color,
+									   short shadetop,
+									   short shadedown,
+									   Orientation shadedir,
+									   short highlight,
+									   GLArrayBuffer* inner_buffer,
+									   GLArrayBuffer* outer_buffer);
 
 		/**
 		 * @brief generate buffer with shaded color

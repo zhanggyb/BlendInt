@@ -37,13 +37,20 @@ namespace BlendInt {
 	Margin TextEntry::DefaultTextEntryPadding = Margin(2, 2, 2, 2);
 
 	TextEntry::TextEntry ()
-	: RoundWidget(), m_start(0), m_length(0), m_cursor_position(0), m_timer(0), m_flicker(true)
+	: RoundWidget(),
+	  m_vao(0),
+	  m_start(0),
+	  m_length(0),
+	  m_cursor_position(0),
+	  m_timer(0),
+	  m_flicker(true)
 	{
 		InitOnce();
 	}
 
 	TextEntry::~TextEntry ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	void TextEntry::KeyPressEvent (KeyEvent* event)
@@ -163,7 +170,8 @@ namespace BlendInt {
 					short shadetop = themes()->text.shadetop;
 					short shadedown = themes()->text.shadedown;
 
-					GenerateShadedFormBuffers(size_p,
+					glBindVertexArray(m_vao);
+					GenerateShadedFormBuffers(*size_p,
 							round_type(),
 							radius(),
 							color,
@@ -172,9 +180,8 @@ namespace BlendInt {
 							Vertical,
 							5,
 							m_inner_buffer.get(),
-							m_outer_buffer.get(),
-							0
-							);
+							m_outer_buffer.get());
+					glBindVertexArray(0);
 					return true;
 				}
 
@@ -190,24 +197,23 @@ namespace BlendInt {
 
 	void TextEntry::Draw (RedrawEvent* event)
 	{
+		glBindVertexArray(m_vao);
+
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
-		GLint xy_attrib = program->GetAttributeLocation("xy");
-		GLint color_attrib = program->GetAttributeLocation("color");
-
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float)z());
 
-		glEnableVertexAttribArray(xy_attrib);
-		glEnableVertexAttribArray(color_attrib);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 
 		m_inner_buffer->Bind();
 
-		glVertexAttribPointer(xy_attrib, // attribute
+		glVertexAttribPointer(0, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -215,7 +221,7 @@ namespace BlendInt {
 							  BUFFER_OFFSET(0)					 // offset of first element
 							  );
 
-		glVertexAttribPointer(color_attrib, // attribute
+		glVertexAttribPointer(1, // attribute
 							  4,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -223,16 +229,17 @@ namespace BlendInt {
 							  BUFFER_OFFSET(2 * sizeof(GLfloat))					 // offset of first element
 							  );
 
-		glDrawArrays(GL_POLYGON, 0, m_inner_buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
+		glDrawArrays(GL_TRIANGLE_FAN, 0, m_inner_buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
 
-		glDisableVertexAttribArray(color_attrib);
+		glDisableVertexAttribArray(1);
 
 		m_inner_buffer->Reset();
 
-		GLfloat outline_color[4] = {themes()->text.outline.r() / 255.f,
-				themes()->text.outline.g() / 255.f,
-				themes()->text.outline.b() / 255.f,
-				(themes()->text.outline.a() / WIDGET_AA_JITTER) / 255.f
+		GLfloat outline_color[4] = {
+						themes()->text.outline.r() / 255.f,
+						themes()->text.outline.g() / 255.f,
+						themes()->text.outline.b() / 255.f,
+						(themes()->text.outline.a() / WIDGET_AA_JITTER) / 255.f
 		};
 
 		program->SetVertexAttrib4fv("color", outline_color);
@@ -242,7 +249,7 @@ namespace BlendInt {
 
 		m_outer_buffer->Bind();
 
-		glVertexAttribPointer(xy_attrib, // attribute
+		glVertexAttribPointer(0, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -255,14 +262,16 @@ namespace BlendInt {
 			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
 
-			glDrawArrays(GL_QUAD_STRIP, 0, m_outer_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, m_outer_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
 		}
 
 		m_outer_buffer->Reset();
 
-		glDisableVertexAttribArray(xy_attrib);
+		glDisableVertexAttribArray(0);
 
 		program->Reset();
+
+		glBindVertexArray(0);
 
 		FontCache* fc = FontCache::create(m_font);
 
@@ -270,6 +279,7 @@ namespace BlendInt {
 
 		if(focused()) {			// draw a cursor
 
+			/*
 			unsigned int text_width = fc->GetTextWidth(m_text,
 			        m_cursor_position - m_start, m_start);
 
@@ -310,6 +320,7 @@ namespace BlendInt {
 			glDisableVertexAttribArray(xy_attrib);
 
 			program->Reset();
+			*/
 
 		}
 
@@ -367,20 +378,23 @@ namespace BlendInt {
 
 	void TextEntry::InitOnce ()
 	{
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
+		FontCache* fc = FontCache::create(m_font);
 
 		set_expand_x(true);
 		set_size (120, 24);	// the same height of a button
 		set_radius(0.0);
 
-		FontCache* fc = FontCache::create(m_font);
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
 
 		const Color& color = themes()->text.inner;
 		short shadetop = themes()->text.shadetop;
 		short shadedown = themes()->text.shadedown;
 
-		GenerateShadedFormBuffers(&size(),
+		GenerateShadedFormBuffers(size(),
 				round_type(),
 				radius(),
 				color,
@@ -389,9 +403,10 @@ namespace BlendInt {
 				Vertical,
 				5,
 				m_inner_buffer.get(),
-				m_outer_buffer.get(),
-				0
+				m_outer_buffer.get()
 				);
+
+		glBindVertexArray(0);
 
 		m_origin.set_x(DefaultTextEntryPadding.left());
 		m_origin.set_y((size().height() - fc->get_height()) / 2

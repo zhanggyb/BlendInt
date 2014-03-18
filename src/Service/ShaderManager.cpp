@@ -105,12 +105,12 @@ namespace BlendInt {
 			"#version 330\n"
 			""
 			"in vec4 f_color;"
-			"uniform int shade = 0;"
+			"uniform int gamma = 0;"
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
-			"	vec4 shade_color = vec4(vec3(min(max(-1.0, shade/255.0), 1.0)), 0.0);"
-			"	FragmentColor = f_color + shade_color;"
+			"	vec4 color_calib = vec4(vec3(min(max(-1.0, gamma/255.0), 1.0)), 0.0);"
+			"	FragmentColor = f_color + color_calib;"
 			"}";
 
 	const char* ShaderManager::default_form_vertex_shader =

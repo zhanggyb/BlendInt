@@ -82,6 +82,8 @@ namespace BlendInt {
 
 		void AdjustVisibleTextLength ();
 
+		GLuint m_vao;
+
 		Font m_font;
 
 		String m_text;
