@@ -164,6 +164,8 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4f("color", r, g, b, a);
 
+		glEnableVertexAttribArray(0);
+
 		DrawTriangleFan(0, m_inner_buffer.get());
 
 		GLfloat outline_color[4] = {themes()->regular.outline.r() / 255.f,
@@ -179,6 +181,8 @@ namespace BlendInt {
 		program->SetVertexAttrib4f("color", 1.0f, 1.0f, 1.0f, 0.02f);
 
 		DrawTriangleStrip(program, mvp, 0, m_emboss_buffer.get());
+
+		glDisableVertexAttribArray(0);
 
 		program->Reset();
 

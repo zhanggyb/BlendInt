@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 	ToggleButton* toggle1 = Manage(new ToggleButton);
 	toggle1->set_name("ToggleButton1");
 	//toggle1->SetExpandX(false);
-	toggle1->SetPosition(100, 450);
+	toggle1->SetPosition(100, 350);
 	//toggle1->Resize(100, 100);
 
 	//	Button* btn2 = new Button;
@@ -134,10 +134,10 @@ int main(int argc, char* argv[])
 	//label->set_name("Label");
 	//label->SetPosition(400, 100);
 
-	//MenuBar* menubar = Manage(new MenuBar);
-	//menubar->set_name("MenuBar");
-	//menubar->SetPosition(20, 440);
-	//menubar->Resize(600, 20);
+	MenuBar* menubar = Manage(new MenuBar);
+	menubar->set_name("MenuBar");
+	menubar->SetPosition(20, 440);
+	menubar->Resize(600, 20);
 
 //	Frame* frame = Manage(new Frame);
 //	frame->set_name("Frame");

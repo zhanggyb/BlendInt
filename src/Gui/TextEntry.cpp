@@ -201,7 +201,6 @@ namespace BlendInt {
 		} else {
 			return false;
 		}
-
 	}
 
 	void TextEntry::Draw (RedrawEvent* event)
@@ -217,6 +216,9 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float)z());
 
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
 		DrawShadedTriangleFan(0, 1, m_inner_buffer.get());
 
 		GLfloat outline_color[4] = {
@@ -226,11 +228,15 @@ namespace BlendInt {
 						(themes()->text.outline.a() / WIDGET_AA_JITTER) / 255.f
 		};
 
+		glDisableVertexAttribArray(1);
+
 		program->SetVertexAttrib4fv("color", outline_color);
 
 		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
 
 		program->Reset();
+
+		glDisableVertexAttribArray(0);
 
 		glBindVertexArray(0);
 

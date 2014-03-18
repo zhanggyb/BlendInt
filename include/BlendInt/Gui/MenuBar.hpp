@@ -65,7 +65,13 @@ namespace BlendInt {
 
 	private:
 
+		void InitOnce ();
+
+		GLuint m_vao;
+
 		int m_space;
+
+		RefPtr<GLArrayBuffer> m_buffer;
 
 	};
 

@@ -1518,9 +1518,6 @@ namespace BlendInt {
 
 	void AbstractForm::DrawTriangleFan(const GLint attrib, GLArrayBuffer* buffer)
 	{
-		glEnableVertexAttribArray(attrib);
-
-		// Describe our vertices array to OpenGL (it can't guess its format automatically)
 		buffer->Bind();
 
 		glVertexAttribPointer(attrib, // attribute
@@ -1531,20 +1528,15 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
-		// Push each element in buffer_vertices to the vertex shader
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						buffer->GetBufferSize()
 										/ (2 * sizeof(GLfloat)));
 
 		buffer->Reset();
-		glDisableVertexAttribArray(attrib);
 	}
 
 	void AbstractForm::DrawShadedTriangleFan(const GLint coord, const GLint color, GLArrayBuffer* buffer)
 	{
-		glEnableVertexAttribArray(coord);
-		glEnableVertexAttribArray(color);
-
 		buffer->Bind();
 
 		glVertexAttribPointer(coord, // attribute
@@ -1566,9 +1558,6 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
 
 		buffer->Reset();
-
-		glDisableVertexAttribArray(color);
-		glDisableVertexAttribArray(coord);
 	}
 
 	void AbstractForm::DrawTriangleStrip (
@@ -1577,8 +1566,6 @@ namespace BlendInt {
 					const GLint attrib,
 					GLArrayBuffer* buffer)
 	{
-		glEnableVertexAttribArray(attrib);
-
 		glm::mat4 jitter_matrix;
 
 		buffer->Bind();
@@ -1602,7 +1589,6 @@ namespace BlendInt {
 		}
 
 		buffer->Reset();
-		glDisableVertexAttribArray(attrib);
 	}
 
 	void AbstractForm::DrawInnerBuffer (const RefPtr<GLArrayBuffer>& buffer,
@@ -2177,7 +2163,9 @@ namespace BlendInt {
 		vert_sum = GenerateRoundVertices(size, default_border_width, round_type, radius, &inner, &outer);
 
 		if (inner_buffer) {
-			inner_buffer->Generate();
+			if(!inner_buffer->IsBuffer()) {
+				inner_buffer->Generate();
+			}
 			inner_buffer->Bind();
 			inner_buffer->SetData(sizeof(GLfloat) * inner.size(), &inner[0]);
 			inner_buffer->Reset();
@@ -2192,7 +2180,9 @@ namespace BlendInt {
 
 				GenerateTriangleStripVertices(inner, outer, vert_sum.total, &strip);
 
-				outer_buffer->Generate();
+				if(!outer_buffer->IsBuffer()) {
+					outer_buffer->Generate();
+				}
 				outer_buffer->Bind();
 				outer_buffer->SetData(sizeof(GLfloat) * strip.size(),
 								&strip[0]);
@@ -2204,7 +2194,9 @@ namespace BlendInt {
 				//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
 				GenerateOpenTriangleStripVertices(outer, vert_sum.half, &strip);
 
-				emboss_buffer->Generate();
+				if(!emboss_buffer->IsBuffer()) {
+					emboss_buffer->Generate();
+				}
 				emboss_buffer->Bind();
 				emboss_buffer->SetData(sizeof(GLfloat) * strip.size(),
 								&strip[0]);
@@ -2232,7 +2224,9 @@ namespace BlendInt {
 		vert_sum = GenerateRoundVertices(size, default_border_width, round_type, radius, color, shadetop, shadedown, shadedir, &inner, &outer);
 
 		if (inner_buffer) {
-			inner_buffer->Generate();
+			if(!inner_buffer->IsBuffer()) {
+				inner_buffer->Generate();
+			}
 			inner_buffer->Bind();
 			inner_buffer->SetData(sizeof(GLfloat) * inner.size(), &inner[0]);
 			inner_buffer->Reset();
@@ -2243,7 +2237,9 @@ namespace BlendInt {
 
 			GenerateTriangleStripVertices(inner, outer, vert_sum.total, &strip);
 
-			outer_buffer->Generate();
+			if(!outer_buffer->IsBuffer()) {
+				outer_buffer->Generate();
+			}
 			outer_buffer->Bind();
 			outer_buffer->SetData(
 							sizeof(GLfloat) * strip.size(),

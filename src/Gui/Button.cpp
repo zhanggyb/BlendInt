@@ -156,6 +156,8 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4f("color", r, g, b, a);
 
+		glEnableVertexAttribArray(0);
+
 		DrawTriangleFan(0, m_inner_buffer.get());
 
 		GLfloat outline_color[4] = {
@@ -173,6 +175,7 @@ namespace BlendInt {
 
 		DrawTriangleStrip(program, mvp, 0, m_emboss_buffer.get());
 
+		glDisableVertexAttribArray(0);
 		program->Reset();
 
 		glBindVertexArray(0);

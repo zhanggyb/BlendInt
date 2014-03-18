@@ -42,33 +42,64 @@
 namespace BlendInt {
 
 	MenuBar::MenuBar ()
-	: AbstractContainer(), m_space(2)
+	: AbstractContainer(), m_vao(0), m_space(2)
 	{
 		set_expand_x(true);
 		set_expand_y(false);
 
 		set_size(200, 20);
 		set_preferred_size(200, 20);
+
+		InitOnce();
 	}
 
 	MenuBar::~MenuBar ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool MenuBar::Update (const UpdateRequest& request)
 	{
-		return true;
+		if(request.id() == Predefined) {
+
+			switch (request.type()) {
+
+			case FormSize: {
+
+				const Size* size_p = static_cast<const Size*>(request.data());
+
+				glBindVertexArray(m_vao);
+
+				std::vector<GLfloat> vertices(12);
+
+				GenerateFlatRectVertices(*size_p, 0.f, &vertices);
+
+				m_buffer->Bind();
+				m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+				m_buffer->Reset();
+
+				glBindVertexArray(0);
+
+				return true;
+			}
+
+			case FormPosition: {
+				return true;
+			}
+
+			default:
+
+				return false;
+			}
+
+		} else {
+			return true;
+		}
 	}
 
 	void MenuBar::Draw (RedrawEvent* event)
 	{
-		GLuint vao;
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-
-		GLuint vbo;
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
@@ -78,11 +109,6 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float)z());
-
-		std::vector<GLfloat> vertices(12);
-
-		GenerateFlatRectVertices(size(), 0.f, &vertices);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
 		ThemeManager* tm = ThemeManager::instance();
 
@@ -97,27 +123,15 @@ namespace BlendInt {
 
 		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(
-						0, // attribute
-						2,		// number of elements per vertex, here (x,y)
-						GL_FLOAT,	// the type of each element
-						GL_FALSE,	// take our values as-is
-						0,		// no extra data between each position
-						BUFFER_OFFSET(0)	// the first element
-		);
-
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		DrawTriangleFan(0, m_buffer.get());
 
 		glDisableVertexAttribArray(0);
 
 		program->Reset();
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		m_buffer->Reset();
 
 		glBindVertexArray(0);
-
-		glDeleteBuffers(1, &vbo);
-		glDeleteVertexArrays(1, &vao);
 
 		event->accept(this);
 	}
@@ -148,6 +162,25 @@ namespace BlendInt {
 
 	void MenuBar::MouseMoveEvent (MouseEvent* event)
 	{
+	}
+
+	void MenuBar::InitOnce()
+	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		std::vector<GLfloat> vertices(12);
+
+		GenerateFlatRectVertices(size(), 0.f, &vertices);
+
+		m_buffer.reset(new GLArrayBuffer);
+		m_buffer->Generate();
+
+		m_buffer->Bind();
+		m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		m_buffer->Reset();
+
+		glBindVertexArray(0);
 	}
 
 }
