@@ -1733,21 +1733,33 @@ namespace BlendInt {
 					const size_t totvert,
 					std::vector<GLfloat>* strip)
 	{
-		// TODO: check inner and outer size
-		// TODO: check totvert < outer.size()
-
 		if (strip) {
 
-			if (strip->size() != (totvert * 2 * 2 + 4)) {
-				strip->resize(totvert * 2 * 2 + 4);
+			if(totvert > outer.size() / 2) {
+				DBG_PRINT_MSG("Attempt to process %ld vertices, but maximum is %ld", totvert, outer.size()/2);
+				return;
+			}
+
+			int stride = 0;	// stride in inner
+			if(inner.size() >= (outer.size() + 2 * 2)) {
+				stride = 2;
+			} else if(inner.size() >= (outer.size() * 3 + 6 * 2)) {
+				stride = 6;
+			} else {
+				DBG_PRINT_MSG("Not enough inner vertices: %ld", inner.size());
+				return;
+			}
+
+			if (strip->size() != (totvert * 2 + 2) * 2) {
+				strip->resize((totvert * 2 + 2) * 2);
 			}
 
 			size_t count = 0;
 			for (int i = 0, j = 0; count < totvert * 2; count++) {
 				if (count % 2 == 0) {
-					(*strip)[count * 2] = inner[2 + i];
-					(*strip)[count * 2 + 1] = inner[2 + i + 1];
-					i += 2;
+					(*strip)[count * 2] = inner[stride + i];
+					(*strip)[count * 2 + 1] = inner[stride + i + 1];
+					i += stride;
 				} else {
 					(*strip)[count * 2] = outer[j];
 					(*strip)[count * 2 + 1] = outer[j + 1];
@@ -1859,12 +1871,12 @@ namespace BlendInt {
 				shaded_color = make_shade_color(color_top, color_down,
 								facxi * ((*inner)[0] - minxi));
 			}
-			inner[count][2] = shaded_color[0] / 255.f;
-			inner[count][3] = shaded_color[1] / 255.f;
-			inner[count][4] = shaded_color[2] / 255.f;
-			inner[count][5] = shaded_color[3] / 255.f;
+			(*inner)[2] = shaded_color[0] / 255.f;
+			(*inner)[3] = shaded_color[1] / 255.f;
+			(*inner)[4] = shaded_color[2] / 255.f;
+			(*inner)[5] = shaded_color[3] / 255.f;
 
-			count = 0;
+			count = 1;
 
 			// corner left-bottom
 			if (round_type & RoundBottomLeft) {
@@ -1874,10 +1886,10 @@ namespace BlendInt {
 
 					if (shadedir == Vertical) {
 						shaded_color = make_shade_color(color_top, color_down,
-										facyi * (inner[count][1] - minyi));
+										facyi * ((*inner)[count * 6 + 1] - minyi));
 					} else {
 						shaded_color = make_shade_color(color_top, color_down,
-										facxi * (inner[count][0] - minxi));
+										facxi * ((*inner)[count * 6 + 0] - minxi));
 					}
 
 					(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
@@ -1910,10 +1922,10 @@ namespace BlendInt {
 
 					if (shadedir == Vertical) {
 						shaded_color = make_shade_color(color_top, color_down,
-										facyi * (inner[count][1] - minyi));
+										facyi * ((*inner)[count * 6 + 1] - minyi));
 					} else {
 						shaded_color = make_shade_color(color_top, color_down,
-										facxi * (inner[count][0] - minxi));
+										facxi * ((*inner)[count * 6 + 0] - minxi));
 					}
 					(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
 					(*inner)[count * 6 + 3] = shaded_color[1] / 255.f;
@@ -1945,10 +1957,10 @@ namespace BlendInt {
 
 					if (shadedir == Vertical) {
 						shaded_color = make_shade_color(color_top, color_down,
-										facyi * (inner[count][1] - minyi));
+										facyi * ((*inner)[count * 6 + 1] - minyi));
 					} else {
 						shaded_color = make_shade_color(color_top, color_down,
-										facxi * (inner[count][0] - minxi));
+										facxi * ((*inner)[count * 6 + 0] - minxi));
 					}
 					(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
 					(*inner)[count * 6 + 3] = shaded_color[1] / 255.f;
@@ -1980,10 +1992,10 @@ namespace BlendInt {
 
 					if (shadedir == Vertical) {
 						shaded_color = make_shade_color(color_top, color_down,
-										facyi * (inner[count][1] - minyi));
+										facyi * ((*inner)[count * 6 + 1] - minyi));
 					} else {
 						shaded_color = make_shade_color(color_top, color_down,
-										facxi * (inner[count][0] - minxi));
+										facxi * ((*inner)[count * 6 + 0] - minxi));
 					}
 					(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
 					(*inner)[count * 6 + 3] = shaded_color[1] / 255.f;
@@ -2028,24 +2040,24 @@ namespace BlendInt {
 			// corner left-bottom
 			if (round_type & RoundBottomLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					(*outer)[count + 0] = minx + vec[i][1];
-					(*outer)[count + 1] = miny + rad - vec[i][0];
+					(*outer)[count * 2 + 0] = minx + vec[i][1];
+					(*outer)[count * 2 + 1] = miny + rad - vec[i][0];
 				}
 			} else {
-				(*outer)[count + 0] = minx;
-				(*outer)[count + 1] = miny;
+				(*outer)[count * 2 + 0] = minx;
+				(*outer)[count * 2 + 1] = miny;
 				count++;
 			}
 
 			// corner right-bottom
 			if (round_type & RoundBottomRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					(*outer)[count + 0] = maxx - rad + vec[i][0];
-					(*outer)[count + 1] = miny + vec[i][1];
+					(*outer)[count * 2 + 0] = maxx - rad + vec[i][0];
+					(*outer)[count * 2 + 1] = miny + vec[i][1];
 				}
 			} else {
-				(*outer)[count + 0] = maxx;
-				(*outer)[count + 1] = miny;
+				(*outer)[count * 2 + 0] = maxx;
+				(*outer)[count * 2 + 1] = miny;
 				count++;
 			}
 
@@ -2054,24 +2066,24 @@ namespace BlendInt {
 			// corner right-top
 			if (round_type & RoundTopRight) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					(*outer)[count + 0] = maxx - vec[i][1];
-					(*outer)[count + 1] = maxy - rad + vec[i][0];
+					(*outer)[count * 2 + 0] = maxx - vec[i][1];
+					(*outer)[count * 2 + 1] = maxy - rad + vec[i][0];
 				}
 			} else {
-				(*outer)[count + 0] = maxx;
-				(*outer)[count + 1] = maxy;
+				(*outer)[count * 2 + 0] = maxx;
+				(*outer)[count * 2 + 1] = maxy;
 				count++;
 			}
 
 			// corner left-top
 			if (round_type & RoundTopLeft) {
 				for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-					(*outer)[count + 0] = minx + rad - vec[i][0];
-					(*outer)[count + 1] = maxy - vec[i][1];
+					(*outer)[count * 2 + 0] = minx + rad - vec[i][0];
+					(*outer)[count * 2 + 1] = maxy - vec[i][1];
 				}
 			} else {
-				(*outer)[count + 0] = minx;
-				(*outer)[count + 1] = maxy;
+				(*outer)[count * 2 + 0] = minx;
+				(*outer)[count * 2 + 1] = maxy;
 				count++;
 			}
 		}
