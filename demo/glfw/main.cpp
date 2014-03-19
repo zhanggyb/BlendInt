@@ -52,45 +52,7 @@ int main(int argc, char* argv[])
 
 	Init();
 
-	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
-
-	// Add Code:
-
-	TextEntry* text = Manage(new TextEntry);
-	text->set_name("TextEntry");
-	text->SetPosition(240, 200);
-
-//	HorizontalLayout* layout = new HorizontalLayout;
-//	layout->Register();
-
-	Button* btn1 = Manage(new Button);
-	btn1->set_name("Button1");
-	//btn1->SetText("Button1");
-//	btn1->SetRadius(5.0);
-	//btn1->SetExpandX(false);
-	btn1->SetPosition(100, 250);
-//	btn1->Resize(100, 100);
-
-	ToggleButton* toggle1 = Manage(new ToggleButton);
-	toggle1->set_name("ToggleButton1");
-	//toggle1->SetExpandX(false);
-	toggle1->SetPosition(100, 350);
-	//toggle1->Resize(100, 100);
-
-	//	Button* btn2 = new Button;
-//	btn2->set_name("Button2");
-//	btn2->SetExpandX(false);
-//	btn2->SetPosition(600, 250);
-//	btn2->Resize(100, 100);
-//	btn2->SetLayer(1);
-//	btn2->Register();
-
-
-//	Button* btn2 = new Button;
-//	btn2->set_name("Button2");
-//	btn2->SetExpandX(false);
-//	btn2->SetPosition(530, 250);
-//	btn2->Register();
+	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 640);
 
 //	Viewport3D* view3d1 = new Viewport3D;
 //	view3d1->set_name("Viewport 3D1");
@@ -119,33 +81,55 @@ int main(int argc, char* argv[])
 
 //	interface()->SetMainWidget(layout);
 
-//	ComboBox* combo = Manage(new ComboBox);
-//	combo->set_name("ComboBox");
-//	combo->SetPosition(200, 200);
-//	combo->Resize(100, 20);
+	MenuBar* menubar = Manage(new MenuBar);
+	menubar->set_name("MenuBar");
+	menubar->SetPosition(20, 600);
+	menubar->Resize(600, 20);
+
+	ScrollBar* scrollbar = Manage(new ScrollBar);
+
+	scrollbar->set_name("ScrollBar");
+	scrollbar->SetPosition(20, 560);
+
+	TextEntry* text = Manage(new TextEntry);
+	text->set_name("TextEntry");
+	text->SetPosition(500, 560);
+
+	Button* btn1 = Manage(new Button);
+	btn1->set_name("Button1");
+	btn1->SetPosition(530, 520);
+
+	ToggleButton* toggle1 = Manage(new ToggleButton);
+	toggle1->set_name("ToggleButton1");
+	toggle1->SetPosition(530, 480);
+
+	ComboBox* combo = Manage(new ComboBox);
+	combo->set_name("ComboBox");
+	combo->SetPosition(530, 440);
 
 	Slider* slide = Manage (new Slider);
 	slide->set_name("Slider");
-	slide->SetPosition(400, 100);
-//	slide->SetOrientation(Vertical);
+	slide->SetPosition(20, 520);
 	slide->SetValue(20);
+
+	Viewport3D* view3d = Manage(new Viewport3D);
+	view3d->set_name("View3D");
+	view3d->Resize(400, 400);
+	view3d->SetPosition(20, 100);
+
+	Widget * widget = Manage(new Widget);
+	widget->set_name("Widget");
+	widget->Resize(180, 180);
+	widget->SetPosition(440, 280);
+
+	Frame* frame = Manage(new Frame);
+	frame->set_name("Frame");
+	frame->Resize(180, 180);
+	frame->SetPosition(440, 80);
 
 	//Label* label = Manage(new Label("Hello There!"));
 	//label->set_name("Label");
 	//label->SetPosition(400, 100);
-
-	MenuBar* menubar = Manage(new MenuBar);
-	menubar->set_name("MenuBar");
-	menubar->SetPosition(20, 440);
-	menubar->Resize(600, 20);
-
-//	Frame* frame = Manage(new Frame);
-//	frame->set_name("Frame");
-//	frame->SetPosition(200, 200);
-//
-//	Widget * widget = Manage(new Widget);
-//	widget->set_name("Widget");
-//	widget->SetPosition(400, 200);
 
 	RunLoop (win);
 

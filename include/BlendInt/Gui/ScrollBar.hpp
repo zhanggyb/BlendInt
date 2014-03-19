@@ -32,122 +32,110 @@
 namespace BlendInt {
 
 	/**
-	 * The controller in the scrollbar
+	 * @brief Slide Icon used in Slider or ScrollBar
 	 */
-	class ScrollControl: public AbstractButton
+	class ScrollBarSlot: public AbstractRoundForm
 	{
 	public:
-
-		ScrollControl ();
-
-		virtual ~ScrollControl ();
-
-	protected:
-
-		virtual bool Update (const UpdateRequest& request);
-
-		virtual void Draw (RedrawEvent* event);
-
-		virtual void MouseMoveEvent (MouseEvent* event);
-
-		virtual void MousePressEvent (MouseEvent* event);
-
-		virtual void MouseReleaseEvent (MouseEvent* event);
-
-	private:
-
-		void Init ();
-
-		Point m_move_start;
-
-		Point m_position_origin;
-
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
-		RefPtr<GLArrayBuffer> m_highlight_buffer;
-	};
-
-	/**
-	 * @brief A slider used in ScrollBar with a dark background
-	 */
-	class SliderBar: public AbstractSlider
-	{
-		DISALLOW_COPY_AND_ASSIGN(SliderBar);
-
-	public:
-
-		SliderBar (Orientation orientation = Horizontal);
-
-		virtual ~SliderBar ();
-
-	protected:
-
-		virtual bool Update (const UpdateRequest& request);
-
-		virtual void Draw (RedrawEvent* event);
-
-		virtual void MouseMoveEvent (MouseEvent* event);
-
-		virtual void MousePressEvent (MouseEvent* event);
-
-		virtual void MouseReleaseEvent (MouseEvent* event);
-
-	private:
 
 		/**
-		 * @brief calculate and return the space width in which scroll control can move
-		 * @return
+		 * @brief Default constructor
 		 */
-		int GetSpace ();
+		ScrollBarSlot ();
 
-		void Init ();
+		/**
+		 * @brief Constructor
+		 */
+		virtual ~ScrollBarSlot ();
 
-		void set_control_size (size_t size);
+		/**
+		 * @brief Draw the icon
+		 */
+		virtual void Draw (const glm::mat4& mvp);
+
+	protected:
+
+		virtual bool Update (const UpdateRequest& request);
+
+	private:
+
+		void InitOnce ();
+
+		GLuint m_vao;
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
-
-		RefPtr<ScrollControl> m_control_button;
+		RefPtr<GLArrayBuffer> m_outline_buffer;
 	};
+
 
 	class ScrollBar: public AbstractSlider
 	{
-		DISALLOW_COPY_AND_ASSIGN(ScrollBar);
+		public:
 
-	public:
+			ScrollBar (Orientation orientation = Horizontal);
 
-		ScrollBar (Orientation orientation = Horizontal);
+			virtual ~ScrollBar ();
 
-		virtual ~ScrollBar ();
+		protected:
 
-	protected:
+			virtual bool Update (const UpdateRequest& request);
 
-		virtual bool Update (const UpdateRequest& request);
+			virtual void Draw (RedrawEvent* event);
 
-		virtual void Draw (RedrawEvent* event);
+			virtual void MouseMoveEvent (MouseEvent* event);
 
-		virtual void MouseMoveEvent (MouseEvent* event);
+			virtual void MousePressEvent (MouseEvent* event);
 
-		virtual void MousePressEvent (MouseEvent* event);
+			virtual void MouseReleaseEvent (MouseEvent* event);
 
-		virtual void MouseReleaseEvent (MouseEvent* event);
+			/**
+			 * @brief calculate the space width in which slider can move
+			 * @return
+			 */
+			int GetSpace ();
 
-	private:
+		private:
 
-		void update_shape (const Size* size);
+			void InitOnce ();
 
-		/**
-		 * @brief calculate and return the space width in which scroll control can move
-		 * @return
-		 */
-		int get_space ();
+			/**
+			 * @brief Check if cursor is on the slide icon
+			 */
+			bool CursorOnSlideIcon (const Point& cursor);
 
-		RefPtr<ScrollControl> m_scroll_control;
+			/**
+			 * @brief Get the new value at the cursor position
+			 * @param[in] cursor The cursor position
+			 * @param[out] vout The new value
+			 * @return
+			 * 	- true if the cursor is in range
+			 * 	- false if the cursor is out of range
+			 */
+			bool GetNewValue (const Point& cursor, int* vout);
 
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+			/**
+			 * @brief
+			 */
+			inline float get_position ()
+			{
+				return value() * GetSpace()
+				                / ((float) maximum() - (float) minimum());
+			}
+
+			SlideIcon m_bar;
+
+			ScrollBarSlot m_slot;
+
+			Point m_line_start;	// where start to draw line
+			int m_line_width;
+
+			/**
+			 * @brief If the slide switch is pressed
+			 */
+			bool m_pressed;
+
 	};
 
 }
 
-#endif /* _BIL_SCROLLBAR_HPP_ */
+#endif /* _BLENDINT_GUI_SCROLLBAR_HPP_ */

@@ -67,13 +67,13 @@ namespace BlendInt {
 	const char* ShaderManager::primitive_vertex_shader =
 			"#version 330\n"
 			""
-			"in vec3 coord3d;"
-			"in vec3 v_color;"
-			"uniform mat4 ModelViewProjectionMatrix;"
+			"layout(location = 0) in vec3 coord3d;"
+			"layout(location = 1) in vec3 v_color;"
+			"uniform mat4 MVP;"
 			"out vec3 f_color;"
 			""
 			"void main(void) {"
-			"	gl_Position = ModelViewProjectionMatrix * vec4(coord3d, 1.0);"
+			"	gl_Position = MVP * vec4(coord3d, 1.0);"
 			"	f_color = v_color;"
 			"}";
 
@@ -340,7 +340,7 @@ namespace BlendInt {
 			return false;
 		}
 
-		m_uniform_mvp = m_primitive_program->GetUniformLocation("ModelViewProjectionMatrix");
+		m_uniform_mvp = m_primitive_program->GetUniformLocation("MVP");
 		if(m_uniform_mvp == -1) {
 			return false;
 		}

@@ -233,69 +233,23 @@ namespace BlendInt {
 	void Viewport3D::Draw (RedrawEvent* event)
 	{
 		// store the current matrices
-		GLdouble proj_matrix[16];
-		GLdouble model_matrix[16];
-
-		glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
-		glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
-
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_SCISSOR_TEST);
 		glScissor(position().x(), position().y(), size().width(),
 		        size().height());
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		//glOrtho(0.f, (float) size().width(), 0.f, (float) size().height(), 100.f, -100.f);
-		//glOrtho(0.f, 8.0f, 0.f, 6.0f, 100.f, -100.f);
-
-		//gluPerspective(45.0f,(GLfloat)size().width()/(GLfloat)size().height(),0.1f,100.0f);
-		//gluLookAt (5.0f, 5.0f, 7.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
 		glViewport(position().x(), position().y(), size().width(),
 		        size().height());
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-
 		//-------------------------------------------------------------------------------------------------------
 
 		Render();
 
 		//-------------------------------------------------------------------------------------------------------
-
 		glDisable(GL_SCISSOR_TEST);
 		glDisable(GL_DEPTH_TEST);
 
-		// set back the previous matrices and viewport
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixd(proj_matrix);
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixd(model_matrix);
-
 		glViewport(0, 0, Interface::instance->size().width(),
 		        Interface::instance->size().height());
-
-#ifdef DEBUG
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-		if (focused()) {
-			glColor4f(1.0f, 1.0f, 0.0f, 0.75f);
-		} else {
-			glColor4f(1.0f, 1.0f, 1.0f, 0.75f);
-		}
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2i(0, 0);
-		glVertex2i(size().width(), 0);
-		glVertex2i(size().width(), size().height());
-		glVertex2i(0, size().height());
-		glEnd();
-
-		glDisable(GL_LINE_STIPPLE);
-#endif
 	}
 
 	void Viewport3D::InitOnce ()

@@ -43,13 +43,14 @@
 namespace BlendInt {
 
 	ComboBox::ComboBox ()
-	: RoundWidget()
+	: RoundWidget(), m_vao(0)
 	{
 		InitOnce();
 	}
 
 	ComboBox::~ComboBox ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool ComboBox::Update(const UpdateRequest& request)
@@ -59,7 +60,7 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					GenerateFormBuffer(size_p,
+					GenerateFormBuffer(*size_p,
 									   round_type(),
 									   radius(),
 									   m_inner_buffer.get(),
@@ -73,12 +74,13 @@ namespace BlendInt {
 
 				case FormRoundType: {
 					const int* type_p = static_cast<const int*>(request.data());
-					GenerateFormBuffer(&(size()),
-									   *type_p,
-									   radius(),
-									   m_inner_buffer.get(),
-									   m_outer_buffer.get(),
-									   0);
+					GenerateFormBuffer(
+									size(),
+									*type_p,
+									radius(),
+									m_inner_buffer.get(),
+									m_outer_buffer.get(),
+									0);
 
 					Refresh();
 					return true;
@@ -86,12 +88,13 @@ namespace BlendInt {
 
 				case FormRoundRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
-					GenerateFormBuffer(&(size()),
-									   round_type(),
-									   *radius_p,
-									   m_inner_buffer.get(),
-									   m_outer_buffer.get(),
-									   0);
+					GenerateFormBuffer(
+									size(),
+									round_type(),
+									*radius_p,
+									m_inner_buffer.get(),
+									m_outer_buffer.get(),
+									0);
 
 					Refresh();
 					return true;
@@ -108,13 +111,13 @@ namespace BlendInt {
 
 	void ComboBox::Draw(RedrawEvent* event)
 	{
+		glBindVertexArray(m_vao);
+
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
-
-		GLint xy_attrib = program->GetAttributeLocation("xy");
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float)z());
@@ -130,23 +133,9 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4f("color", r, g, b, a);
 
-		glEnableVertexAttribArray(xy_attrib);
+		glEnableVertexAttribArray(0);
 
-		// Describe our vertices array to OpenGL (it can't guess its format automatically)
-		m_inner_buffer->Bind();
-
-		glVertexAttribPointer(xy_attrib, // attribute
-							  2,			// number of elements per vertex, here (x,y,z)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
-
-		// Push each element in buffer_vertices to the vertex shader
-		glDrawArrays(GL_POLYGON, 0, m_inner_buffer->GetBufferSize()/(2 * sizeof(GLfloat)));
-
-		m_inner_buffer->Reset();
+		DrawTriangleFan(0, m_inner_buffer.get());
 
 		GLfloat outline_color[4] = {themes()->regular.outline.r() / 255.f,
 									themes()->regular.outline.g() / 255.f,
@@ -156,31 +145,12 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4fv("color", outline_color);
 
-		glm::vec3 jitter;
-		glm::mat4 jitter_matrix;
+		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
 
-		m_outer_buffer->Bind();
-
-		glVertexAttribPointer(xy_attrib, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
-
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
-			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
-			glDrawArrays(GL_QUAD_STRIP, 0, m_outer_buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
-		}
-
-		m_outer_buffer->Reset();
-
-		glDisableVertexAttribArray(xy_attrib);
+		glDisableVertexAttribArray(0);
 
 		program->Reset();
+		glBindVertexArray(0);
 
 		RefPtr<VertexIcon> icon = StockItems::instance->icon_num();
 
@@ -196,6 +166,9 @@ namespace BlendInt {
 
 	void ComboBox::InitOnce()
 	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 
@@ -204,8 +177,15 @@ namespace BlendInt {
 		set_size(90, 20);
 		set_preferred_size(90, 20);
 
-		GenerateFormBuffer(&size(), round_type(), radius(), m_inner_buffer.get(),
-				m_outer_buffer.get(), 0);
+		GenerateFormBuffer(
+						size(),
+						round_type(),
+						radius(),
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						0);
+
+		glBindVertexArray(0);
 	}
 
 }

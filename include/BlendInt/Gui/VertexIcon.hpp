@@ -72,6 +72,7 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_array_buffer;
 		RefPtr<GLElementArrayBuffer> m_index_buffer;
 
+		GLuint m_vao;
 	};
 }
 

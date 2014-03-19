@@ -23,71 +23,100 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
 #endif  // __UNIX__
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/ScrollBar.hpp>
 #include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 
-	ScrollControl::ScrollControl ()
-	: AbstractButton(), m_inner_buffer(0), m_outer_buffer(0)
+	ScrollBarSlot::ScrollBarSlot () :
+					AbstractRoundForm()
 	{
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_highlight_buffer.reset(new GLArrayBuffer);
-
+		set_size(14, 14);
 		set_round_type(RoundAll);
+		set_radius(7.0);
 
-		Init ();
+		InitOnce();
 	}
 
-	ScrollControl::~ScrollControl ()
+	ScrollBarSlot::~ScrollBarSlot ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool ScrollControl::Update (const UpdateRequest& request)
+	bool ScrollBarSlot::Update (const UpdateRequest& request)
 	{
 		if (request.id() == Predefined) {
 
 			switch (request.type()) {
+
 				case FormSize: {
 					const Size* size_p =
-					        static_cast<const Size*>(request.data());
+									static_cast<const Size*>(request.data());
 					Orientation shadedir =
-					        size_p->width() < size_p->height() ?
-					                Horizontal : Vertical;
-					const Color& color = themes()->scroll.item;
+									size_p->width() < size_p->height() ?
+													Horizontal : Vertical;
+					const Color& color = themes()->scroll.outline;
 					short shadetop = themes()->scroll.shadetop;
 					short shadedown = themes()->scroll.shadedown;
 
-					GenerateShadedFormBuffers(size_p, round_type(), radius(),
-					        color, shadetop, shadedown, shadedir, 5,
-					        m_inner_buffer.get(), m_outer_buffer.get(),
-					        m_highlight_buffer.get());
+					glBindVertexArray(m_vao);
+					GenerateShadedFormBuffers(*size_p, round_type(), radius(),
+									color, shadetop, shadedown, shadedir,
+									m_inner_buffer.get(),
+									m_outline_buffer.get());
+					glBindVertexArray(0);
+					return true;
+				}
+
+				case FormRoundType: {
+					const Size* size_p = &(size());
+					Orientation shadedir =
+									size_p->width() < size_p->height() ?
+													Horizontal : Vertical;
+					const RoundType* round_p =
+									static_cast<const RoundType*>(request.data());
+					const Color& color = themes()->scroll.outline;
+					short shadetop = themes()->scroll.shadetop;
+					short shadedown = themes()->scroll.shadedown;
+
+					glBindVertexArray(m_vao);
+					GenerateShadedFormBuffers(*size_p, *round_p, radius(),
+									color, shadetop, shadedown, shadedir,
+									m_inner_buffer.get(),
+									m_outline_buffer.get());
+					glBindVertexArray(0);
 					return true;
 				}
 
 				case FormRoundRadius: {
 					const Size* size_p = &(size());
 					Orientation shadedir =
-					        size_p->width() < size_p->height() ?
-					                Horizontal : Vertical;
+									size_p->width() < size_p->height() ?
+													Horizontal : Vertical;
 					const float* radius_p =
-					        static_cast<const float*>(request.data());
-					const Color& color = themes()->scroll.item;
+									static_cast<const float*>(request.data());
+					const Color& color = themes()->scroll.outline;
 					short shadetop = themes()->scroll.shadetop;
 					short shadedown = themes()->scroll.shadedown;
 
-					GenerateShadedFormBuffers(size_p, round_type(), *radius_p,
-					        color, shadetop, shadedown, shadedir, 5,
-					        m_inner_buffer.get(), m_outer_buffer.get(),
-					        m_highlight_buffer.get());
+					glBindVertexArray(m_vao);
+					GenerateShadedFormBuffers(*size_p, round_type(), *radius_p,
+									color, shadetop, shadedown, shadedir,
+									m_inner_buffer.get(),
+									m_outline_buffer.get());
+					glBindVertexArray(0);
 					return true;
 				}
 
@@ -95,367 +124,90 @@ namespace BlendInt {
 					return false;
 			}
 		} else {
+			// no custom to update
 			return false;
 		}
 	}
 
-	void ScrollControl::Draw (RedrawEvent* event)
+	void ScrollBarSlot::Draw (const glm::mat4& mvp)
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		glBindVertexArray(m_vao);
 
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
+		RefPtr<GLSLProgram> program =
+						ShaderManager::instance->default_form_program();
+		program->Use();
 
-		if(down()) {
-			DrawShadedInnerBuffer(m_inner_buffer.get());
-		} else {
-			DrawShadedInnerBuffer(m_highlight_buffer.get());
-		}
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		// draw outline
-		unsigned char tcol[4] = { themes()->scroll.outline.r(),
-		        themes()->scroll.outline.g(),
-		        themes()->scroll.outline.b(),
-		        themes()->scroll.outline.a()};
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glColor4ubv(tcol);
+		DrawShadedTriangleFan(0, 1, m_inner_buffer.get());
 
-		DrawOutlineBuffer(m_outer_buffer.get());
+		glDisableVertexAttribArray(1);
 
-		glPopMatrix();
+		GLfloat outline_color[4] = { themes()->scroll.outline.r() / 255.f,
+						themes()->scroll.outline.g() / 255.f,
+						themes()->scroll.outline.b() / 255.f,
+						(themes()->scroll.outline.a() / WIDGET_AA_JITTER)
+										/ 255.f };
+
+		program->SetVertexAttrib4fv("color", outline_color);
+
+		DrawTriangleStrip(program, mvp, 0, m_outline_buffer.get());
+
+		glDisableVertexAttribArray(0);
+
+		program->Reset();
+
+		glBindVertexArray(0);
 	}
 
-	void ScrollControl::MouseMoveEvent (MouseEvent* event)
+	void ScrollBarSlot::InitOnce ()
 	{
-		// if no parent scrollbar, don't react to mouse move
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
 
-		ScrollBar* parent_obj = dynamic_cast<ScrollBar*>(container());
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outline_buffer.reset(new GLArrayBuffer);
 
-		if(!parent_obj) return;
-
-		if(down()) {
-
-			if(parent_obj->orientation() == Horizontal) {
-
-				SetPosition(m_position_origin.x() + event->position().x() - m_move_start.x(), position().y());
-
-				if(position().x() < (parent_obj->position().x()))
-				{
-					SetPosition(parent_obj->position().x(), position().y());
-				}
-				if(position().x() >
-						(int)(parent_obj->position().x() + parent_obj->size().width() - size().width()))
-				{
-					SetPosition(parent_obj->position().x() + parent_obj->size().width() - size().width(), position().y());
-				}
-			}
-
-			if(parent_obj->orientation() == Vertical) {
-				SetPosition(position().x(), m_position_origin.y() + event->position().y() - m_move_start.y());
-				if(position().y() < (parent_obj->position().y())) {
-
-					SetPosition(position().x(), parent_obj->position().y());
-				}
-				if(position().y() > (int)(parent_obj->position().y() + parent_obj->size().height() - size().height())) {
-
-					SetPosition(position().x(), parent_obj->position().y() + parent_obj->size().height() - size().height());
-
-				}
-			}
-
-			event->accept(this);
-			return;
-		}
-	}
-
-	void ScrollControl::MousePressEvent (MouseEvent* event)
-	{
-		if(contain(event->position())) {
-			if (event->button() == MouseButtonLeft) {
-				set_down(true);
-				m_move_start.set_x(event->position().x());
-				m_move_start.set_y(event->position().y());
-				m_position_origin = position();
-				event->accept(this);
-			}
-		}
-	}
-
-	void ScrollControl::MouseReleaseEvent (MouseEvent* event)
-	{
-		if (event->button() == MouseButtonLeft) {
-
-		}
-		set_down(false);
-	}
-
-	void ScrollControl::Init ()
-	{
-		const Size* size_p = &(size());
 		Orientation shadedir =
-		        size_p->width() < size_p->height() ? Horizontal : Vertical;
-		const Color& color = themes()->scroll.item;
+						size().width() < size().height() ?
+										Horizontal : Vertical;
+		const Color& color = themes()->scroll.inner;
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
 
-		GenerateShadedFormBuffers(size_p, round_type(), radius(),
-		        color, shadetop, shadedown, shadedir, 5, m_inner_buffer.get(), m_outer_buffer.get(), m_highlight_buffer.get());
+		GenerateShadedFormBuffers(size(), round_type(), radius(), color,
+						shadetop, shadedown, shadedir, m_inner_buffer.get(),
+						m_outline_buffer.get());
+
+		glBindVertexArray(0);
 	}
 
-	// ---------------------------- SliderBar -------------------------------
-
-	SliderBar::SliderBar(Orientation orientation)
-	: AbstractSlider(orientation), m_inner_buffer(0), m_outer_buffer(0), m_control_button(0)
+	ScrollBar::ScrollBar (Orientation orientation) :
+					AbstractSlider(orientation), m_line_width(0), m_pressed(
+									false)
 	{
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
+		m_bar.Resize(14, 14);
 
-		m_control_button.reset(new ScrollControl);
-
-		set_round_type(RoundAll);
-
-		if (orientation == Vertical) {	// Vertical
-			set_size(16, 400);
-			m_control_button->Resize(16, 100);
-			m_control_button->SetRadius(8.0);
-			set_radius(m_control_button->size().width()/2);
-			set_size(m_control_button->size().width(), 400);
+		if (orientation == Vertical) {
+			set_size(18, 200);
 			set_expand_y(true);
+
+			m_line_start.set_x(18 / 2);
+			m_line_start.set_y(7);
 		} else {
-			set_size(400, 16);
-			m_control_button->Resize(100, 16);
-			m_control_button->SetRadius(8.0);
-			set_radius(m_control_button->size().height());
-			set_size(400, m_control_button->size().height());
+			set_size(200, 18);
 			set_expand_x(true);
+
+			m_line_start.set_x(7);
+			m_line_start.set_y(18 / 2);
 		}
 
-		Init();
-		m_control_button->SetPosition (position().x(), position().y());
-	}
+		m_line_width = 200 - 7 * 2;
 
-	SliderBar::~SliderBar()
-	{
-	}
-
-	bool SliderBar::Update (const UpdateRequest& request)
-	{
-		if(request.id() == Predefined) {
-
-			switch (request.type()) {
-
-				case FormPosition: {
-					const Point* pos = static_cast<const Point*>(request.data());
-					m_control_button->SetPosition(m_control_button->position().x() + (pos->x() - position().x()),
-							m_control_button->position().y() + (pos->y() - position().y()));
-					return true;
-				}
-
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					Orientation shadedir =
-					        size_p->width() < size_p->height() ?
-					                Horizontal : Vertical;
-					const Color& color = themes()->scroll.item;
-					short shadetop = themes()->scroll.shadetop;
-					short shadedown = themes()->scroll.shadedown;
-
-					GenerateShadedFormBuffers(size_p, round_type(),
-					        radius(), color, shadetop, shadedown, shadedir, 5,
-					        m_inner_buffer.get(), m_outer_buffer.get(), 0);
-					return true;
-				}
-
-				case FormRoundRadius: {
-					const Size* size_p = &(size());
-					Orientation shadedir =
-					        size_p->width() < size_p->height() ?
-					                Horizontal : Vertical;
-					const float* radius_p = static_cast<const float*>(request.data());
-					const Color& color = themes()->scroll.item;
-					short shadetop = themes()->scroll.shadetop;
-					short shadedown = themes()->scroll.shadedown;
-
-					GenerateShadedFormBuffers(size_p, round_type(),
-					        *radius_p, color, shadetop, shadedown, shadedir, 5,
-					        m_inner_buffer.get(), m_outer_buffer.get(), 0);
-					return true;
-				}
-
-				default:
-					return true;
-			}
-
-		} else {
-			return false;
-		}
-	}
-
-	void SliderBar::Draw (RedrawEvent* event)
-	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(), position().y(), z());
-
-		DrawShadedInnerBuffer(m_inner_buffer.get());
-
-		// draw outline
-		unsigned char tcol[4] = { themes()->scroll.outline.r(),
-		        themes()->scroll.outline.g(),
-		        themes()->scroll.outline.b(),
-		        themes()->scroll.outline.a()};
-
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glColor4ubv(tcol);
-
-		DrawOutlineBuffer(m_outer_buffer.get());
-
-		glPopMatrix();
-
-		DispatchRender(m_control_button.get());
-	}
-
-	void SliderBar::MouseMoveEvent (MouseEvent* event)
-	{
-		if(m_control_button->down()) {
-				dispatch_mouse_move_event(m_control_button.get(), event);
-
-				int value = 0;
-				if(orientation() == Vertical) {
-					value = (m_control_button->position().y() - position().y()) / (float)GetSpace() * (maximum() - minimum());
-				} else {
-					value = (m_control_button->position().x() - position().x()) / (float)GetSpace() * (maximum() - minimum());
-				}
-
-				set_value (value);
-				//m_slider_moved.fire(value);
-
-				return;
-			}
-
-		if(contain(event->position())) {
-			dispatch_mouse_move_event(m_control_button.get(), event);
-		}
-	}
-
-	void SliderBar::MousePressEvent (MouseEvent* event)
-	{
-		if(m_control_button->down()) {
-			dispatch_mouse_press_event(m_control_button.get(), event);
-			return;
-		}
-
-		if(contain(event->position())) {
-			dispatch_mouse_press_event(m_control_button.get(), event);
-			if(event->accepted()) return;
-
-			Point inner_pos;
-			inner_pos.set_x(event->position().x() - position().x() - m_control_button->size().width() / 2);
-			inner_pos.set_y(event->position().y() - position().y() - m_control_button->size().height() / 2);
-//			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - padding().left() - m_control_button->size().width() / 2));
-//			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - padding().bottom() - m_control_button->size().height() / 2));
-			int space = GetSpace();
-			int value;
-
-			if (orientation() == Vertical) {
-				if(inner_pos.y() < space) {
-					value = (maximum() - minimum()) * inner_pos.y() / (double) space;
-					set_value(value);
-					//m_slider_moved.fire(value);
-				}
-			} else {
-				if(inner_pos.x() < space) {
-					value = (maximum() - minimum()) * inner_pos.x() / (double) space;
-					set_value(value);
-					//m_slider_moved.fire(value);
-				}
-			}
-		}
-
-	}
-
-	void SliderBar::MouseReleaseEvent (MouseEvent* event)
-	{
-		if(m_control_button->down()) {
-				dispatch_mouse_release_event(m_control_button.get(), event);
-				return;
-		}
-
-		if(contain(event->position())) {
-			if (event->button() == MouseButtonLeft) {
-
-			}
-			dispatch_mouse_release_event(m_control_button.get(), event);
-		}
-	}
-
-
-	void SliderBar::set_control_size (size_t size)
-	{
-		if(orientation() == Vertical) {	// Vertical
-			m_control_button->Resize(m_control_button->size().width(), static_cast<unsigned int>(size));
-		} else {
-			m_control_button->Resize(static_cast<unsigned int>(size), m_control_button->size().height());
-		}
-	}
-
-	void SliderBar::Init ()
-	{
-		const Size* size_p = &(size());
-		Orientation shadedir =
-		        size_p->width() < size_p->height() ? Horizontal : Vertical;
-
-		Color color = themes()->scroll.inner;
-		short shadetop = themes()->scroll.shadetop;
-		short shadedown = themes()->scroll.shadedown;
-
-		GenerateShadedFormBuffers(size_p, round_type(), radius(),
-		        color, shadetop, shadedown, shadedir, 0, m_inner_buffer.get(), m_outer_buffer.get(), 0);
-	}
-
-	int SliderBar::GetSpace ()
-	{
-		int space = 0;
-
-		if(orientation() == Vertical)
-			space = size().height() - m_control_button->size().height();
-		else	// Horizontal is 0
-			space = size().width() - m_control_button->size().width();
-
-		return space;
-	}
-
-	// ---------------------------- ScrollBar -------------------------------
-
-	ScrollBar::ScrollBar (Orientation orientation)
-			: AbstractSlider(orientation), m_scroll_control(0), m_inner_buffer(0), m_outer_buffer(0)
-	{
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-
-		m_scroll_control.reset(new ScrollControl);
-
-		SetRoundType(RoundAll);
-		SetRadius(8);
-
-		if (orientation == Vertical) {	// Vertical
-			Resize(16, 400);
-			m_scroll_control->Resize(16, 100);
-			m_scroll_control->SetRadius(8.0);
-			SetExpandY(true);
-		} else {
-			Resize(400, 16);
-			m_scroll_control->Resize(100, 16);
-			m_scroll_control->SetRadius(8.0);
-			SetExpandX(true);
-		}
-
-		m_scroll_control->SetPosition (position().x(), position().y());
-		//Update(SliderPropertyValue, 0);
+		InitOnce();
 	}
 
 	ScrollBar::~ScrollBar ()
@@ -464,33 +216,45 @@ namespace BlendInt {
 
 	bool ScrollBar::Update (const UpdateRequest& request)
 	{
-		if(request.id() == Predefined) {
+		if (request.id() == Predefined) {
 
 			switch (request.type()) {
-
 				case FormPosition: {
-					const Point* pos = static_cast<const Point*>(request.data());
-					m_scroll_control->SetPosition (m_scroll_control->position().x() + (pos->x() - position().x()),
-							m_scroll_control->position().y() + (pos->y() - position().y()));
-
+					// don't care position change
 					return true;
 				}
 
 				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					update_shape(size_p);
+					const Size* size_p =
+									static_cast<const Size*>(request.data());
 
+					int switch_radius = std::min(m_bar.size().width(),
+									m_bar.size().height()) / 2;
+
+					if (orientation() == Vertical) {
+						m_line_start.set_x(size_p->width() / 2);
+						m_line_start.set_y(switch_radius);
+						m_line_width = size_p->height() - switch_radius * 2;
+					} else {
+						m_line_start.set_x(switch_radius);
+						m_line_start.set_y(size_p->height() / 2);
+						m_line_width = size_p->width() - switch_radius * 2;
+					}
 					return true;
 				}
 
 				case SliderPropertyValue: {
-					if(orientation() == Vertical) {	// Vertical is 1
-						m_scroll_control->SetPosition (m_scroll_control->position().x(),
-								position().y() + value() * get_space() / (float)(maximum() - minimum()));
-					} else {	// Horizontal is 0
-						m_scroll_control->SetPosition (position().x() + value() * get_space() / (float)(maximum() - minimum()),
-								m_scroll_control->position().y());
-					}
+
+					return true;
+				}
+
+				case SliderPropertyOrientation: {
+					//const Orientation* orient_p =
+						//			static_cast<const Orientation*>(request.data());
+
+					// TODO:
+
+					//Refresh();
 
 					return true;
 				}
@@ -504,128 +268,160 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollBar::update_shape(const Size* size)
-	{
-		Orientation shadedir = orientation() == Horizontal ? Horizontal : Vertical;
-
-		Color color = themes()->scroll.inner;
-		short shadetop = themes()->scroll.shadetop;
-		short shadedown = themes()->scroll.shadedown;
-
-		GenerateShadedFormBuffers(size, round_type(), radius(), color, shadetop,
-		        shadedown, shadedir, 0, m_inner_buffer.get(), m_outer_buffer.get(), 0);
-	}
-
 	void ScrollBar::Draw (RedrawEvent* event)
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
-		glTranslatef(position().x(), position().y(), z());
+		m_slot.Draw(mvp);
 
-		DrawShadedInnerBuffer(m_inner_buffer.get());
+		glm::mat4 switch_mvp;
 
-		// draw outline
-		unsigned char tcol[4] = { themes()->scroll.outline.r(),
-		        themes()->scroll.outline.g(),
-		        themes()->scroll.outline.b(),
-		        themes()->scroll.outline.a()};
+		if (orientation() == Horizontal) {
+			// m_line_start.x() == switch_radius
+			switch_mvp = glm::translate(mvp,
+							glm::vec3(get_position(),
+											(float) (m_line_start.y()
+															- m_line_start.x()),
+											0.0));
+		} else {
+			// m_line_start.y() == switch_radius
+			switch_mvp = glm::translate(mvp,
+							glm::vec3(
+											(float) (m_line_start.x()
+															- m_line_start.y()),
+											get_position(), 0.0));
+		}
 
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
+		m_bar.Draw(switch_mvp);
 
-		glColor4ubv(tcol);
-
-		DrawOutlineBuffer(m_outer_buffer.get());
-
-		glPopMatrix();
-
-		DispatchRender(m_scroll_control.get());
+		event->accept(this);
 	}
 
 	void ScrollBar::MouseMoveEvent (MouseEvent* event)
 	{
-		if(m_scroll_control->down()) {
-				dispatch_mouse_move_event(m_scroll_control.get(), event);
+		if (m_pressed) {
 
-				int value = 0;
-				if(orientation() == Vertical) {
-					value = (m_scroll_control->position().y() - position().y()) / (float)get_space() * (maximum() - minimum());
-				} else {
-					value = (m_scroll_control->position().x() - position().x()) / (float)get_space() * (maximum() - minimum());
-				}
+			int new_value = value();
 
-				set_value (value);
-				//m_slider_moved.fire(value);
-
-				return;
+			// DO not fire if cursor is out of range, otherwise too many events
+			if (GetNewValue(event->position(), &new_value)) {
+				set_value(new_value);
+				fire_slider_moved_event(value());
+				Refresh();
 			}
 
-		if(contain(event->position())) {
-			dispatch_mouse_move_event(m_scroll_control.get(), event);
+			event->accept(this);
+
+		} else {
+			if (CursorOnSlideIcon(event->position())) {
+				m_bar.set_highlight(true);
+
+				Refresh();
+				event->accept(this);
+			} else {
+				m_bar.set_highlight(false);
+				Refresh();
+				event->ignore(this);
+			}
 		}
 	}
 
 	void ScrollBar::MousePressEvent (MouseEvent* event)
 	{
-		if(m_scroll_control->down()) {
-			dispatch_mouse_press_event(m_scroll_control.get(), event);
-			return;
+		if (CursorOnSlideIcon(event->position())) {
+			m_pressed = true;
+			fire_slider_pressed();
+			event->accept(this);
+		} else {
+			event->ignore(this);
 		}
-
-		if(contain(event->position())) {
-			dispatch_mouse_press_event(m_scroll_control.get(), event);
-			if(event->accepted()) return;
-
-			Point inner_pos;
-			inner_pos.set_x(event->position().x() - position().x() - m_scroll_control->size().width() / 2);
-			inner_pos.set_y(event->position().y() - position().y() - m_scroll_control->size().height() / 2);
-//			inner_pos.set_x(static_cast<double>(event->position().x() - m_pos.x() - padding().left() - m_scroll_control->size().width() / 2));
-//			inner_pos.set_y(static_cast<double>(event->position().y() - m_pos.y() - padding().bottom() - m_scroll_control->size().height() / 2));
-			int space = get_space();
-			int value;
-
-			if (orientation() == Vertical) {
-				if(inner_pos.y() < space) {
-					value = (maximum() - minimum()) * inner_pos.y() / (double) space;
-					set_value(value);
-					//m_slider_moved.fire(value);
-				}
-			} else {
-				if(inner_pos.x() < space) {
-					value = (maximum() - minimum()) * inner_pos.x() / (double) space;
-					set_value(value);
-					//m_slider_moved.fire(value);
-				}
-			}
-		}
-
 	}
 
 	void ScrollBar::MouseReleaseEvent (MouseEvent* event)
 	{
-		if(m_scroll_control->down()) {
-				dispatch_mouse_release_event(m_scroll_control.get(), event);
-				return;
-		}
+		if (m_pressed) {
+			m_pressed = false;
 
-		if(contain(event->position())) {
-			if (event->button() == MouseButtonLeft) {
-
+			if (CursorOnSlideIcon(event->position())) {
+				fire_slider_released();
 			}
-			dispatch_mouse_release_event(m_scroll_control.get(), event);
+
+			Refresh();
 		}
+
+		event->accept(this);
 	}
 
-	int ScrollBar::get_space ()
+	void ScrollBar::InitOnce ()
+	{
+		m_slot.Resize(m_line_width, m_slot.size().height());
+	}
+
+	int ScrollBar::GetSpace ()
 	{
 		int space = 0;
 
-		if(orientation() == Vertical)
-			space = size().height() - m_scroll_control->size().height();
-		else	// Horizontal is 0
-			space = size().width() - m_scroll_control->size().width();
+		if (orientation() == Horizontal) {
+			space = size().width() - m_line_start.x() * 2;// m_line_start.x() is the radius of m_switch
+		} else {
+			space = size().height() - m_line_start.y() * 2;	// m_line_start.y() is the radius of m_switch
+		}
 
 		return space;
+	}
+
+	bool ScrollBar::CursorOnSlideIcon (const Point& cursor)
+	{
+		bool ret = false;
+
+		glm::vec2 icon_center;	// slide switch center position
+
+		if (orientation() == Horizontal) {
+			icon_center.x = position().x() + m_line_start.x() + get_position();
+			icon_center.y = position().y() + m_line_start.y();
+		} else {
+			icon_center.x = position().x() + m_line_start.x();
+			icon_center.y = position().y() + m_line_start.y() + get_position();
+		}
+
+		glm::vec2 cursor_pos(cursor.x(), cursor.y());
+		float distance = glm::distance(icon_center, cursor_pos);
+
+		if (orientation() == Horizontal && distance <= m_line_start.x()) {
+			ret = true;
+		} else if (orientation() == Vertical && distance <= m_line_start.y()) {
+			ret = true;
+		} else {
+			ret = false;
+		}
+
+		return ret;
+	}
+
+	bool ScrollBar::GetNewValue (const Point& cursor, int* vout)
+	{
+		bool ret = false;
+
+		int offset = 0;
+		if (orientation() == Horizontal) {
+			offset = cursor.x() - position().x() - m_line_start.x();
+
+		} else {
+			offset = cursor.y() - position().y() - m_line_start.y();
+		}
+
+		if (offset < 0) {
+			*vout = minimum();
+		} else if (offset > m_line_width) {
+			*vout = maximum();
+		} else {
+			*vout = (offset * (maximum() - minimum())) / m_line_width;
+			ret = true;
+		}
+
+		return ret;
 	}
 
 }

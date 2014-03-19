@@ -38,26 +38,33 @@
 namespace BlendInt {
 
 	const char* Grid::vertex_shader =
-			"attribute vec2 coord2d;"
-			"uniform mat4 ModelViewProjectionMatrix;"
-			// TODO: define grid color
-			"varying vec3 f_color;"
-			""
-			"void main(void) {"
-			"		f_color = vec3(0.35, 0.35, 0.35);"
-			""
-			"	gl_Position = ModelViewProjectionMatrix * vec4(coord2d, 0, 1);"
-			"}";
+					"#version 330\n"
+					"layout(location = 0) in vec2 coord2d;"
+					"uniform mat4 MVP;"
+					"out vec3 f_color;"
+					""
+					"void main(void) {"
+					"	f_color = vec3(0.35, 0.35, 0.35);"
+					""
+					"	gl_Position = MVP * vec4(coord2d, 0.0, 1.0);"
+					"}";
 
 	const char* Grid::fragment_shader =
-			"varying vec3 f_color;"
-			""
-			"void main(void) {"
-			"	gl_FragColor = vec4(f_color, 0.6);"
-			"}";
+					"#version 330\n"
+					"in vec3 f_color;"
+					"out vec4 FragmentColor;"
+					""
+					"void main(void) {"
+					"	FragmentColor = vec4(f_color, 0.6);"
+					"}";
 
 	Grid::Grid ()
-	: AbstractPrimitive(), m_size(10), m_step(10), m_vb(0), m_ib(0),
+	: AbstractPrimitive(),
+	  m_vao(0),
+	  m_size(10),
+	  m_step(10),
+	  m_vb(0),
+	  m_ib(0),
 	  m_uniform_mvp(0)
 	{
 		InitOnce();
@@ -79,15 +86,17 @@ namespace BlendInt {
 	{
 		if(program()) {
 
+			glBindVertexArray(m_vao);
+
 			program()->Use();
 
-			glUniformMatrix4fv(m_uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
+			program()->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 			/* Draw the grid using the indices to our vertices using our vertex buffer objects */
-			glEnableVertexAttribArray(m_attribute_coord2d);
+			glEnableVertexAttribArray(0);
 
 			m_vb->Bind();
-			glVertexAttribPointer(m_attribute_coord2d, 2, GL_FLOAT, GL_FALSE, 0, 0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 			/* Push each element in buffer_vertices to the vertex shader */
 			m_ib->Bind();
@@ -95,35 +104,33 @@ namespace BlendInt {
 			glDrawElements(GL_LINES, 20 * 21 * 4,
 			        GL_UNSIGNED_SHORT, 0);
 
-			glDisableVertexAttribArray(m_attribute_coord2d);
+			glDisableVertexAttribArray(0);
 
 			m_ib->Reset();
 			m_vb->Reset();
 
 			program()->Reset();
+
+			glBindVertexArray(0);
 		}
 	}
 
 	Grid::~Grid ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	void Grid::InitOnce()
 	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
 		RefPtr<GLSLProgram> prog(new GLSLProgram);
 		prog->Create();
 		prog->AttachShaderPair(vertex_shader, fragment_shader);
 		prog->Link();
 
 		set_program(prog);
-
-		program()->Use();
-
-		m_attribute_coord2d = program()->GetAttributeLocation("coord2d");
-		m_uniform_mvp = program()->GetUniformLocation("ModelViewProjectionMatrix");
-		assert((m_attribute_coord2d != -1) && (m_uniform_mvp != -1));
-
-		program()->Reset();
 
 		glm::vec2 vertices[21][21];
 		for (int i = 0; i < 21; i++) {
@@ -165,7 +172,10 @@ namespace BlendInt {
 		m_ib->SetData(20 * 21 * 4, sizeof(GLushort), indices);
 		m_ib->Reset();
 
+		glBindVertexArray(0);
+
 		Update ();
+
 	}
 
 }

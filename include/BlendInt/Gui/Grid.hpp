@@ -48,13 +48,14 @@ namespace BlendInt {
 
 		void InitOnce ();
 
+		GLuint m_vao;
+
 		int m_size;
 		int m_step;
 
 		RefPtr<GLArrayBuffer> m_vb;	// vertex buffer
 		RefPtr<GLElementArrayBuffer> m_ib;	// index buffer
 
-		GLint m_attribute_coord2d;
 		GLint m_uniform_mvp;
 
 		static const char* vertex_shader;

@@ -53,6 +53,8 @@ namespace BlendInt {
 
 		void InitOnce ();
 
+		GLuint m_vao;
+
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 

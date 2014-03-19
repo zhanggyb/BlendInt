@@ -100,21 +100,25 @@ namespace BlendInt {
 	};
 
 	VertexIcon::VertexIcon ()
-		: Icon(), m_array_buffer(0), m_index_buffer(0)
+		: Icon(), m_array_buffer(0), m_index_buffer(0), m_vao(0)
 	{
 		set_size(16, 16);
 		m_array_buffer.reset(new GLArrayBuffer);
-
 		m_index_buffer.reset(new GLElementArrayBuffer);
+
+		glGenVertexArrays(1, &m_vao);
 	}
 
 	VertexIcon::~VertexIcon ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	void VertexIcon::load (const float (*vertex_array)[2], size_t array_size,
 						   const unsigned int (*vertex_indices)[3], size_t indeces_size)
 	{
+		glBindVertexArray(m_vao);
+
 		m_array_buffer->Generate();
 		m_array_buffer->Bind();
 		m_array_buffer->SetData(array_size * sizeof(vertex_array[0]), vertex_array[0]);
@@ -124,6 +128,8 @@ namespace BlendInt {
 		m_index_buffer->Bind();
 		m_index_buffer->SetData(indeces_size, sizeof(vertex_indices[0]), vertex_indices[0]);
 		m_index_buffer->Reset();
+
+		glBindVertexArray(0);
 	}
 
 	bool VertexIcon::Update (const UpdateRequest& request)
@@ -134,6 +140,8 @@ namespace BlendInt {
 
 	void VertexIcon::Draw(const glm::mat4& mvp)
 	{
+		glBindVertexArray(m_vao);
+
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
 
@@ -172,6 +180,8 @@ namespace BlendInt {
 		glDisableVertexAttribArray(pos_location);
 
 		program->Reset();
+
+		glBindVertexArray(0);
 	}
 
 }

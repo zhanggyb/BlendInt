@@ -32,10 +32,12 @@
 
 namespace BlendInt {
 
-	Cube::Cube()
-	: AbstractPrimitive(), m_vbo_cube_vertices(0),
-	m_vbo_cube_colors(0), m_ibo_cube_elements(0),
-	m_attribute_coord3d (0), m_attribute_v_color(0), m_uniform_mvp(0)
+	Cube::Cube ()
+	: AbstractPrimitive(),
+	  m_vao(0),
+	  m_vbo_cube_vertices(0),
+	  m_vbo_cube_colors(0),
+	  m_ibo_cube_elements(0)
 	{
 		InitOnce();
 	}
@@ -43,15 +45,16 @@ namespace BlendInt {
 	void Cube::Render (const glm::mat4& mvp)
 	{
 		if (program()) {
+			glBindVertexArray(m_vao);
 
 			program()->Use();
 
-			glUniformMatrix4fv(m_uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
+			program()->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-			glEnableVertexAttribArray(m_attribute_coord3d);
+			glEnableVertexAttribArray(0);
 			// Describe our vertices array to OpenGL (it can't guess its format automatically)
 			glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_vertices);
-			glVertexAttribPointer(m_attribute_coord3d, // attribute
+			glVertexAttribPointer(0, // attribute
 			        3,            // number of elements per vertex, here (x,y,z)
 			        GL_FLOAT,          // the type of each element
 			        GL_FALSE,          // take our values as-is
@@ -59,9 +62,9 @@ namespace BlendInt {
 			        0                  // offset of first element
 			        );
 
-			glEnableVertexAttribArray(m_attribute_v_color);
+			glEnableVertexAttribArray(1);
 			glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_colors);
-			glVertexAttribPointer(m_attribute_v_color, // attribute
+			glVertexAttribPointer(1, // attribute
 			        3,            // number of elements per vertex, here (R,G,B)
 			        GL_FLOAT,          // the type of each element
 			        GL_FALSE,          // take our values as-is
@@ -78,13 +81,15 @@ namespace BlendInt {
 			glDrawElements(GL_TRIANGLES, size / sizeof(GLushort),
 			        GL_UNSIGNED_SHORT, 0);
 
-			glDisableVertexAttribArray(m_attribute_v_color);
-			glDisableVertexAttribArray(m_attribute_coord3d);
-
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(0);
+
 			program()->Reset();
+
+			glBindVertexArray(0);
 
 		} else {
 			std::cout << "program is not valid" << std::endl;
@@ -93,6 +98,9 @@ namespace BlendInt {
 
 	int Cube::InitOnce()
 	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
 		GLfloat cube_vertices[] = {
 				// front
 				-1.0, -1.0,  1.0,
@@ -152,17 +160,12 @@ namespace BlendInt {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo_cube_elements);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
 
-		set_program(ShaderManager::instance->primitive_program());
-		program()->Use();
-
-		m_attribute_coord3d = program()->GetAttributeLocation("coord3d");
-		m_attribute_v_color = program()->GetAttributeLocation("v_color");
-		m_uniform_mvp = program()->GetUniformLocation("ModelViewProjectionMatrix");
-
-		program()->Reset();
-
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glBindVertexArray(0);
+
+		set_program(ShaderManager::instance->primitive_program());
 
 		return 1;
 	}
@@ -172,6 +175,7 @@ namespace BlendInt {
 		glDeleteBuffers(1, &m_vbo_cube_vertices);
 		glDeleteBuffers(1, &m_vbo_cube_colors);
 		glDeleteBuffers(1, &m_ibo_cube_elements);
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 }
