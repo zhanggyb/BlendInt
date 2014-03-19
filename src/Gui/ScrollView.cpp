@@ -23,7 +23,8 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -89,29 +90,6 @@ namespace BlendInt {
 				size().height());
 
 		glDisable(GL_SCISSOR_TEST);
-
-#ifdef DEBUG
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(), position().y(), z());
-
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2i(0, 0);
-		glVertex2i(size().width(), 0);
-		glVertex2i(size().width(), size().height());
-		glVertex2i(0, size().height());
-		glEnd();
-
-		glDisable(GL_LINE_STIPPLE);
-
-		glPopMatrix();
-#endif
 	}
 
 	void ScrollView::MousePressEvent (MouseEvent* event)

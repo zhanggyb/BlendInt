@@ -23,7 +23,8 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -158,11 +159,11 @@ namespace BlendInt {
 		{
 			expfac = sqrt(step / m_blur_rad);
 			(*it)->Bind();
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
-			glDrawArrays(GL_QUAD_STRIP, 0, (*it)->GetBufferSize() / (2 * sizeof(GLfloat)));
-			glDisableClientState(GL_VERTEX_ARRAY);
+//			glVertexPointer(2, GL_FLOAT, 0, 0);
+//			glEnableClientState(GL_VERTEX_ARRAY);
+//			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
+//			glDrawArrays(GL_QUAD_STRIP, 0, (*it)->GetBufferSize() / (2 * sizeof(GLfloat)));
+//			glDisableClientState(GL_VERTEX_ARRAY);
 			(*it)->Reset();
 
 			step++;
@@ -398,7 +399,7 @@ namespace BlendInt {
 		// alphastep = 3.0f * btheme->tui.menu_shadow_fac / radout;
 		alphastep = 3.0f * themes()->menu_shadow_fac / radout;
 
-		glEnableClientState(GL_VERTEX_ARRAY);
+//		glEnableClientState(GL_VERTEX_ARRAY);
 
 		for (step = 1; step <= (int)radout; step++) {
 			float expfac = sqrt(step / radout);
@@ -409,17 +410,17 @@ namespace BlendInt {
 //#ifdef DEBUG
 //			glColor4f(0.9f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
 //#else
-			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
+//			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
 //#endif
 
 			//widget_verts_to_quad_strip(&wtb, totvert, quad_strip);
 			verts_to_quad_strip(inner_v, outer_v, totvert, quad_strip);
 
-			glVertexPointer(2, GL_FLOAT, 0, quad_strip);
-			glDrawArrays(GL_QUAD_STRIP, 0, totvert * 2); /* add + 2 for getting a complete soft rect. Now it skips top edge to allow transparent menus */
+//			glVertexPointer(2, GL_FLOAT, 0, quad_strip);
+//			glDrawArrays(GL_QUAD_STRIP, 0, totvert * 2); /* add + 2 for getting a complete soft rect. Now it skips top edge to allow transparent menus */
 		}
 
-		glDisableClientState(GL_VERTEX_ARRAY);
+//		glDisableClientState(GL_VERTEX_ARRAY);
 
 	}
 

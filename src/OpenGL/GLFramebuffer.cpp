@@ -23,13 +23,13 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <gl.h>
-#include <glext.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
+#include <GL/glext.h>
 #endif
 #endif  // __UNIX__
-#include <vector>
 
 #include <iostream>
 
@@ -137,7 +137,7 @@ namespace BlendInt {
 				"the value of GL_TEXTURE_FIXED_SAMPLE_LOCATIONS is not GL_TRUE for all attached textures" << std::endl;
 				break;
 
-			case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS_EXT:
+			case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
 				std::cerr << "Any framebuffer attachment is layered, and any populated attachment is not layered, "
 				"or if all populated color attachments are not from textures of the same target" << std::endl;
 				break;

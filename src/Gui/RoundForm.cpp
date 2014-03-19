@@ -36,7 +36,7 @@ namespace BlendInt {
 
 	}
 
-	bool RoundForm::Update (int type, const void* data)
+	bool RoundForm::Update (const UpdateRequest& request)
 	{
 		return true;
 	}

@@ -155,6 +155,7 @@ namespace BlendInt {
 
 	void Menu::Draw (RedrawEvent* event)
 	{
+		/*
 		//RoundWidget::Render();
 		// draw inner, simple fill
 		glColor4ub(themes()->menu.inner.r(),
@@ -175,7 +176,6 @@ namespace BlendInt {
 
 		FontCache* fc = FontCache::create(Font("Sans"));
 
-		/* Draw nomal menu item */
 		int h = 0;
 		glTranslatef(0.0, size().height() - radius(), 0.0);
 
@@ -193,7 +193,6 @@ namespace BlendInt {
 			fc->print(120, 5, (*it)->shortcut());
 		}
 
-		/* draw highlight menu item */
 		if(m_highlight) {
 			glPopMatrix();
 			glPushMatrix();
@@ -227,6 +226,7 @@ namespace BlendInt {
 			fc->print(120, 5, item->shortcut());
 
 		}
+		*/
 	}
 
 	void Menu::ResetHighlightBuffer (unsigned int width)

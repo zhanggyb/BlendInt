@@ -23,6 +23,17 @@
 
 #include <math.h>
 #include <assert.h>
+
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
 #include <iostream>
 
 // vec3, vec4, ivec4, mat4

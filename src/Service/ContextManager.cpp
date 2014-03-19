@@ -21,10 +21,20 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <stdlib.h>
 #include <assert.h>
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
 #include <iostream>
-#include <stdlib.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -483,53 +493,6 @@ namespace BlendInt {
 
 	void ContextManager::DrawGrid (int width, int height)
 	{
-		// Draw grid for debug
-		const int small_step = 20;
-		const int big_step = 100;
-
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-		glColor4f(1.0f, 1.0f, 1.0f, 0.1f);
-		glLineStipple(1, 0xAAAA);
-
-		for (int num = 1; num < width; num++) {
-			int step = num * small_step;
-			glBegin(GL_LINES);
-			glVertex2i(0, step);
-			glVertex2i(width, step);
-			glEnd();
-
-		}
-
-		for (int num = 1; num < height; num++) {
-			int step = num * small_step;
-			glBegin(GL_LINES);
-			glVertex2i(step, 0);
-			glVertex2i(step, height);
-			glEnd();
-		}
-
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		glLineStipple(1, 0xAAAA);
-
-		for (int num = 1; num < width; num++) {
-			int step = num * big_step;
-			glBegin(GL_LINES);
-			glVertex2i(0, step);
-			glVertex2i(width, step);
-			glEnd();
-		}
-
-		for (int num = 1; num < height; num++) {
-			int step = num * big_step;
-			glBegin(GL_LINES);
-			glVertex2i(step, 0);
-			glVertex2i(step, height);
-			glEnd();
-		}
-
-		glDisable(GL_LINE_STIPPLE);
 	}
 
 #endif
@@ -768,15 +731,7 @@ namespace BlendInt {
 	void ContextManager::DispatchDrawEvent (AbstractWidget* widget, RedrawEvent* event)
 	{
 		if (widget->visiable()) {
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-
-			glTranslatef(widget->position().x(), widget->position().y(),
-			        widget->z());
-
 			widget->Draw(event);
-
-			glPopMatrix();
 		}
 
 		AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);

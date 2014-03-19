@@ -370,13 +370,13 @@ namespace BlendInt {
 
 			glViewport(0, 0, width, height);
 
-			glPushMatrix();
+			//glPushMatrix();
 
-			glTranslatef(border, border, 0);
+			//glTranslatef(border, border, 0);
 
 			Draw(&event);
 
-			glPopMatrix();
+			//glPopMatrix();
 
 			// ---------------------------------------------
 			tex->WriteToFile(filename);
@@ -515,6 +515,8 @@ namespace BlendInt {
 			glEnable(GL_BLEND);
 
 			glViewport(0, 0, width, height);
+
+			/*
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glOrtho(0.f, (float) width, 0.f, (float) height, 100.f, -100.f);
@@ -525,6 +527,7 @@ namespace BlendInt {
 			glPushMatrix();
 
 			glTranslatef(border, border, 0);
+			*/
 
 			//Draw();
 
@@ -546,7 +549,7 @@ namespace BlendInt {
 			tex->CopySubimage(0, position().x(), position().y(), 0, 0, width, height);
 			tex->Reset();
 
-			glPopMatrix();
+			//glPopMatrix();
 
 			result = true;
 		}

@@ -78,16 +78,16 @@ namespace BlendInt {
 	{
 		Widget::Draw(event);
 
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
-
-		m_shadow.Draw (event->pv_matrix());
-
-		glPopMatrix();
+//		glMatrixMode(GL_MODELVIEW);
+//		glPushMatrix();
+//
+//		glTranslatef(position().x(),
+//					 position().y(),
+//					 z());
+//
+//		m_shadow.Draw (event->pv_matrix());
+//
+//		glPopMatrix();
 	}
 
 

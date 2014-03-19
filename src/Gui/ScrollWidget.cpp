@@ -59,27 +59,27 @@ namespace BlendInt {
 
 	void ScrollWidget::Draw (RedrawEvent* event)
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
+//		glMatrixMode(GL_MODELVIEW);
+//		glPushMatrix();
+//
+//		glTranslatef(position().x(),
+//					 position().y(),
+//					 z());
 
 		glEnable (GL_SCISSOR_TEST);
 		glScissor (100, 100, 1000, 1000);
 
-		glColor4f(0.2f, 0.05f, 0.2f, 0.2f);
-		glBegin(GL_POLYGON);
-			glVertex2d(50,50);
-			glVertex2d(1200,50);
-			glVertex2d(1200,1200);
-			glVertex2d(50,1200);
-		glEnd();
+//		glColor4f(0.2f, 0.05f, 0.2f, 0.2f);
+//		glBegin(GL_POLYGON);
+//			glVertex2d(50,50);
+//			glVertex2d(1200,50);
+//			glVertex2d(1200,1200);
+//			glVertex2d(50,1200);
+//		glEnd();
 
 		glDisable(GL_SCISSOR_TEST);
-
-		glPopMatrix();
+//
+//		glPopMatrix();
 	}
 
 }

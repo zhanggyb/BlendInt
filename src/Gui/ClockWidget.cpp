@@ -49,24 +49,24 @@ namespace BlendInt {
 
 	void ClockWidget::Draw(RedrawEvent* event)
 	{
-		int radius = std::min(size().width(), size().height()) / 2;
-
-		glColor4ub(m_background.red(), m_background.green(), m_background.blue(), m_background.alpha());
-		DrawCircle(size().width() / 2, size().height() / 2, radius, true);
-
-		glTranslatef(size().width() / 2, size().height() / 2, 0.0);
-		glRotatef(-m_angle, 0, 0, 1);
-
-		glEnable(GL_LINE_SMOOTH);
-
-		glLineWidth(2);
-		glColor3ub(255, 0, 0);
-		glBegin(GL_LINES);
-		glVertex2i(-5, 0);
-		glVertex2i(radius - 5, 0);
-		glEnd();
-
-		glDisable(GL_LINE_SMOOTH);
+//		int radius = std::min(size().width(), size().height()) / 2;
+//
+//		glColor4ub(m_background.red(), m_background.green(), m_background.blue(), m_background.alpha());
+//		DrawCircle(size().width() / 2, size().height() / 2, radius, true);
+//
+//		glTranslatef(size().width() / 2, size().height() / 2, 0.0);
+//		glRotatef(-m_angle, 0, 0, 1);
+//
+//		glEnable(GL_LINE_SMOOTH);
+//
+//		glLineWidth(2);
+//		glColor3ub(255, 0, 0);
+//		glBegin(GL_LINES);
+//		glVertex2i(-5, 0);
+//		glVertex2i(radius - 5, 0);
+//		glEnd();
+//
+//		glDisable(GL_LINE_SMOOTH);
 	}
 
 	void ClockWidget::UpdateClockHands()
@@ -82,20 +82,20 @@ namespace BlendInt {
 	void ClockWidget::DrawArc (float x, float y, float start_angle,
 	        float end_angle, float delta_angle, float radius, bool fill)
 	{
-		if (fill) {
-			glBegin(GL_TRIANGLE_FAN);
-		} else {
-			glBegin(GL_LINE_STRIP);
-		}
-
-		float vx, vy;
-
-		for (float i = start_angle; i <= end_angle; i += delta_angle) {
-			vx = x + radius * cos(i);
-			vy = y + radius * sin(i);
-			glVertex2d(vx, vy);
-		}
-		glEnd();
+//		if (fill) {
+//			glBegin(GL_TRIANGLE_FAN);
+//		} else {
+//			glBegin(GL_LINE_STRIP);
+//		}
+//
+//		float vx, vy;
+//
+//		for (float i = start_angle; i <= end_angle; i += delta_angle) {
+//			vx = x + radius * cos(i);
+//			vy = y + radius * sin(i);
+//			glVertex2d(vx, vy);
+//		}
+//		glEnd();
 	}
 
 	void ClockWidget::DrawCircle (float x, float y, float radius, bool fill)
@@ -107,21 +107,21 @@ namespace BlendInt {
 	void ClockWidget::DrawPie (float x, float y, float start_angle,
 	        float end_angle, float delta_angle, float radius, bool fill)
 	{
-		DrawArc(x, y, start_angle, end_angle, delta_angle, radius, fill);
-		if (fill) {
-			glBegin(GL_TRIANGLE_FAN);
-		} else {
-			glBegin(GL_LINES);
-		}
-		glVertex2d(x, y);
-		glVertex2d(x + radius * cos(start_angle),
-		        y + radius * sin(start_angle));
-		if (!fill) {
-			glVertex2d(x, y);
-		}
-		glVertex2d(x + radius * cos(end_angle), y + radius * sin(end_angle));
-
-		glEnd();
+//		DrawArc(x, y, start_angle, end_angle, delta_angle, radius, fill);
+//		if (fill) {
+//			glBegin(GL_TRIANGLE_FAN);
+//		} else {
+//			glBegin(GL_LINES);
+//		}
+//		glVertex2d(x, y);
+//		glVertex2d(x + radius * cos(start_angle),
+//		        y + radius * sin(start_angle));
+//		if (!fill) {
+//			glVertex2d(x, y);
+//		}
+//		glVertex2d(x + radius * cos(end_angle), y + radius * sin(end_angle));
+//
+//		glEnd();
 	}
 
 	void ClockWidget::Init ()

@@ -156,30 +156,6 @@ namespace BlendInt {
 				DispatchRender(*it);
 			}
 		}
-
-#ifdef DEBUG
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(position().x(),
-					 position().y(),
-					 z());
-		glLineWidth(1);
-		glEnable(GL_LINE_STIPPLE);
-
-		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-			glVertex2i(0, 0);
-			glVertex2i(size().width(), 0);
-			glVertex2i(size().width(), size().height());
-			glVertex2i(0, size().height());
-		glEnd();
-
-		glDisable(GL_LINE_STIPPLE);
-
-		glPopMatrix();
-#endif
 	}
 
 	void TableLayout::AddItem(AbstractWidget* object)

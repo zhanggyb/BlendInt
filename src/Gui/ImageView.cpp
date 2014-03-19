@@ -23,8 +23,8 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <gl.h>
-#include <glext.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -136,7 +136,7 @@ namespace BlendInt {
 
 		m_vbo->Bind();
 
-		glDrawArrays(GL_POLYGON, 0, 4);
+		//glDrawArrays(GL_POLYGON, 0, 4);
 
 		glDisableVertexAttribArray(attribute_texcoord);
 		glDisableVertexAttribArray(attribute_coord3d);

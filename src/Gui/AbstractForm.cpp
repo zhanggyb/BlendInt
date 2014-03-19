@@ -1481,41 +1481,6 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractForm::DrawOutlineArray (
-					const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num)
-	{
-		glEnableClientState(GL_VERTEX_ARRAY);
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glVertexPointer(2, GL_FLOAT, 0, quad_strip);
-			glDrawArrays(GL_QUAD_STRIP, 0, num);
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
-	}
-
-	void AbstractForm::DrawInnerArray (const float inner_v[WIDGET_SIZE_MAX][2],
-					int num)
-	{
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, inner_v);
-
-		glDrawArrays(GL_POLYGON, 0, num);
-		glDisableClientState(GL_VERTEX_ARRAY);
-	}
-
-	void AbstractForm::DrawInnerBuffer (GLArrayBuffer* buffer, int mode)
-	{
-		buffer->Bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
-		glDrawArrays(mode, 0, buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-		buffer->Reset();
-	}
-
 	void AbstractForm::DrawTriangleFan(const GLint attrib, GLArrayBuffer* buffer)
 	{
 		buffer->Bind();
@@ -1587,93 +1552,6 @@ namespace BlendInt {
 							buffer->GetBufferSize()
 											/ (2 * sizeof(GLfloat)));
 		}
-
-		buffer->Reset();
-	}
-
-	void AbstractForm::DrawInnerBuffer (const RefPtr<GLArrayBuffer>& buffer,
-					int mode)
-	{
-		buffer->Bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, BUFFER_OFFSET(0));
-		glDrawArrays(mode, 0, buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-		buffer->Reset();
-	}
-
-	void AbstractForm::DrawShadedInnerBuffer (GLArrayBuffer* buffer, int mode)
-	{
-		buffer->Bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-
-		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6,
-						BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glDrawArrays(mode, 0, buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
-
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-		buffer->Reset();
-	}
-
-	void AbstractForm::DrawShadedInnerBuffer (
-					const RefPtr<GLArrayBuffer>& buffer, int mode)
-	{
-		buffer->Bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-
-		glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6,
-						BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glDrawArrays(mode, 0, buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
-
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-		buffer->Reset();
-	}
-
-	void AbstractForm::DrawOutlineBuffer (GLArrayBuffer* buffer, int mode)
-	{
-		buffer->Bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, 0);
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glDrawArrays(mode, 0,
-							buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
-
-		buffer->Reset();
-	}
-
-	void AbstractForm::DrawOutlineBuffer (const RefPtr<GLArrayBuffer>& buffer,
-					int mode)
-	{
-		buffer->Bind();
-
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, 0);
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			glTranslatef(jit[j][0], jit[j][1], 0.0f);
-			glDrawArrays(mode, 0,
-							buffer->GetBufferSize() / (2 * sizeof(GLfloat)));
-			glTranslatef(-jit[j][0], -jit[j][1], 0.0f);
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
 
 		buffer->Reset();
 	}

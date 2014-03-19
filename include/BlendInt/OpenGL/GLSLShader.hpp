@@ -24,11 +24,15 @@
 #ifndef _BLENDINT_SHADER_HPP_
 #define _BLENDINT_SHADER_HPP_
 
+#ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/gl.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
+#include <GL/glext.h>
 #endif
+#endif  // __UNIX__
 
 #include <string>
 

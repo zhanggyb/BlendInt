@@ -23,7 +23,8 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -384,8 +385,8 @@ namespace BlendInt {
 		ShaderManager* sm = ShaderManager::instance;
 		GLfloat black[4] = { 0, 0, 0, 1 };
 
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		//glMatrixMode(GL_MODELVIEW);
+		//glPushMatrix();
 
 		glUseProgram(sm->text_program()->id());
 
@@ -413,7 +414,7 @@ namespace BlendInt {
 			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
-			glTranslatef(m_atlas.glyph(*it).advance_x, 0, 0);
+			//glTranslatef(m_atlas.glyph(*it).advance_x, 0, 0);
 		}
 
 		glDisableVertexAttribArray(sm->text_attribute_coord());
@@ -422,7 +423,7 @@ namespace BlendInt {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glUseProgram(0);
 
-		glPopMatrix();
+		//glPopMatrix();
 	}
 
 	void FontCache::print (const String& string)
@@ -432,26 +433,26 @@ namespace BlendInt {
 
 	void FontCache::print (float x, float y, const String& string)
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		//glMatrixMode(GL_MODELVIEW);
+		//glPushMatrix();
 
-		glTranslatef(x, y, 0);
+		//glTranslatef(x, y, 0);
 
 		print (string, string.length());
 
-		glPopMatrix();
+		//glPopMatrix();
 	}
 
 	void FontCache::print (float x, float y, const String& string, size_t length)
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
+		//glMatrixMode(GL_MODELVIEW);
+		//glPushMatrix();
 
-		glTranslatef(x, y, 0);
+		//glTranslatef(x, y, 0);
 
 		print (string, length);
 
-		glPopMatrix();
+		//glPopMatrix();
 	}
 
 	Rect FontCache::get_text_outline (const String& string)

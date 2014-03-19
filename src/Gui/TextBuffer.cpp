@@ -23,7 +23,8 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -146,25 +147,25 @@ namespace BlendInt {
 		//glDisable(GL_LIGHTING);
 		//glDisable(GL_DEPTH_TEST);
 
-		glColor4ub(foreground_.r(), foreground_.g(), foreground_.b(),
-		        foreground_.a());
-
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-
-		glTranslatef(origin_.x(), origin_.y() - fontcache_->get_descender(),
-		        0);
+//		glColor4ub(foreground_.r(), foreground_.g(), foreground_.b(),
+//		        foreground_.a());
+//
+//		glMatrixMode(GL_MODELVIEW);
+//		glPushMatrix();
+//
+//		glTranslatef(origin_.x(), origin_.y() - fontcache_->get_descender(),
+//		        0);
 
 		int line = 0;
 		String::const_iterator it;
 		for (it = text_.begin(); it != text_.end(); it++) {
 			if (*it == '\n') {
 				line++;
-				glLoadIdentity();
-				glTranslatef(origin_.x(),
-				        origin_.y()
-				                - line_spacing_ * fontcache_->get_height()
-				                        * line, 0);
+//				glLoadIdentity();
+//				glTranslatef(origin_.x(),
+//				        origin_.y()
+//				                - line_spacing_ * fontcache_->get_height()
+//				                        * line, 0);
 				continue;
 			}
 
@@ -177,7 +178,7 @@ namespace BlendInt {
 			 */
 		}
 
-		glPopMatrix();
+//		glPopMatrix();
 	}
 
 	void TextBuffer::clear (void)

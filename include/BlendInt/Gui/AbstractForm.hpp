@@ -24,6 +24,16 @@
 #ifndef _BLENDINT_GUI_ABSTRACTFORM_HPP_
 #define _BLENDINT_GUI_ABSTRACTFORM_HPP_
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
 #include <vector>
 
 #include <glm/vec2.hpp>
@@ -383,64 +393,11 @@ namespace BlendInt {
 		 */
 		static void DrawOutlineArray (const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num);
 
-		/**
-		 * @brief draw vertices without buffer
-		 */
-		static void DrawInnerArray (const float inner_v[WIDGET_SIZE_MAX][2], int num);
-
 		static void DrawTriangleFan (const GLint attrib, GLArrayBuffer* buffer);
 
 		static void DrawShadedTriangleFan (const GLint coord, const GLint color, GLArrayBuffer* buffer);
 
 		static void DrawTriangleStrip (const RefPtr<GLSLProgram>& program, const glm::mat4& mvp, const GLint attrib, GLArrayBuffer* buffer);
-
-		/**
-		 * @brief draw the GL Buffer in Render()
-		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
-		 * @param mode the primitive or primitives mode defined in gl.h,
-		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
-		 *
-		 * draw the buffer of index in Render(), the parameter mode is
-		 * the enumeration type of primitive or primitives defined in
-		 * gl.h: GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
-		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
-		 * GL_QUAD_STRIP, and GL_POLYGON.
-		 */
-		static void DrawInnerBuffer (GLArrayBuffer* buffer, int mode = GL_POLYGON);
-
-		static void DrawInnerBuffer (const RefPtr<GLArrayBuffer>& buffer, int mode = GL_POLYGON);
-
-		/**
-		 * @brief draw shaded GL buffer in Render()
-		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
-		 * @param mode the primitive or primitives mode defined in gl.h,
-		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
-		 *
-		 * draw the buffer of index in Render(), the parameter mode is
-		 * the enumeration type of primitive or primitives defined in
-		 * gl.h: GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
-		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
-		 * GL_QUAD_STRIP, and GL_POLYGON.
-		 */
-		static void DrawShadedInnerBuffer (GLArrayBuffer* buffer, int mode = GL_POLYGON);
-
-		static void DrawShadedInnerBuffer (const RefPtr<GLArrayBuffer>& buffer, int mode = GL_POLYGON);
-
-		/**
-		 * @brief draw the GL Buffer in Render() with anti-alias
-		 * @param key the key to identify gl buffer to draw, @sa GLBuffer
-		 * @param mode the primitive or primitives mode defined in gl.h,
-		 * e.g. GL_QUAD_STRIP, or GL_POLYGON.
-		 *
-		 * draw the buffer of index in Render(), the parameter mode is
-		 * the enumeration type of primitive or primitives defined in
-		 * gl.h: GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP,
-		 * GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS,
-		 * GL_QUAD_STRIP, and GL_POLYGON.
-		 */
-		static void DrawOutlineBuffer (GLArrayBuffer* buffer, int mode = GL_QUAD_STRIP);
-
-		static void DrawOutlineBuffer (const RefPtr<GLArrayBuffer>& buffer, int mode = GL_QUAD_STRIP);
 
 		/**
 		 * @brief Generate vertex buffer object for drawing a form

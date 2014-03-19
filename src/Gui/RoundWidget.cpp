@@ -23,7 +23,8 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -69,38 +70,38 @@ namespace BlendInt {
 
 	void RoundWidget::Draw(RedrawEvent* event)
 	{
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
+	//	float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
+		//float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
 
-		VerticesSum vert_sum;
+		//VerticesSum vert_sum;
 
-		vert_sum = generate_vertices(&(size()), DefaultBorderWidth(), inner_v, outer_v);
+		//vert_sum = generate_vertices(&(size()), DefaultBorderWidth(), inner_v, outer_v);
 
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+		//float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
 
-		verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
+		//verts_to_quad_strip (inner_v, outer_v, vert_sum.total, quad_strip);
 
 		// draw inner, simple fill
-		glColor4ub(themes()->regular.inner.r(),
-		        themes()->regular.inner.g(),
-		        themes()->regular.inner.b(),
-		        themes()->regular.inner.a());
+//		glColor4ub(themes()->regular.inner.r(),
+//		        themes()->regular.inner.g(),
+//		        themes()->regular.inner.b(),
+//		        themes()->regular.inner.a());
 
-		DrawInnerArray(inner_v, vert_sum.total);
+		//DrawInnerArray(inner_v, vert_sum.total);
 
 //		draw_gl_buffer(m_inner_buffer.get());
 
 		// draw outline
-		unsigned char tcol[4] = { themes()->regular.outline.r(),
-		        themes()->regular.outline.g(),
-		        themes()->regular.outline.b(),
-		        themes()->regular.outline.a()};
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glColor4ubv(tcol);
+//		unsigned char tcol[4] = { themes()->regular.outline.r(),
+//		        themes()->regular.outline.g(),
+//		        themes()->regular.outline.b(),
+//		        themes()->regular.outline.a()};
+//		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
+//		glColor4ubv(tcol);
 
 //		draw_gl_buffer_anti_alias(m_outer_buffer.get());
 
-		DrawOutlineArray(quad_strip, vert_sum.total * 2 + 2);
+		//DrawOutlineArray(quad_strip, vert_sum.total * 2 + 2);
 	}
 
 }
