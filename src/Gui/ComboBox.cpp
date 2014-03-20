@@ -46,6 +46,11 @@ namespace BlendInt {
 	ComboBox::ComboBox ()
 	: RoundWidget(), m_vao(0)
 	{
+		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_size(90, 20);
+		set_preferred_size(90, 20);
+
 		InitOnce();
 	}
 
@@ -61,20 +66,21 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
+					glBindVertexArray(m_vao);
 					GenerateFormBuffer(*size_p,
 									   round_type(),
 									   radius(),
 									   m_inner_buffer.get(),
 									   m_outer_buffer.get(),
 									   0);
-
-					m_shadow.Resize(*size_p);
+					glBindVertexArray(0);
 					Refresh();
 					return true;
 				}
 
 				case FormRoundType: {
 					const int* type_p = static_cast<const int*>(request.data());
+					glBindVertexArray(m_vao);
 					GenerateFormBuffer(
 									size(),
 									*type_p,
@@ -82,13 +88,14 @@ namespace BlendInt {
 									m_inner_buffer.get(),
 									m_outer_buffer.get(),
 									0);
-
+					glBindVertexArray(0);
 					Refresh();
 					return true;
 				}
 
 				case FormRoundRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
+					glBindVertexArray(m_vao);
 					GenerateFormBuffer(
 									size(),
 									round_type(),
@@ -96,7 +103,7 @@ namespace BlendInt {
 									m_inner_buffer.get(),
 									m_outer_buffer.get(),
 									0);
-
+					glBindVertexArray(0);
 					Refresh();
 					return true;
 				}
@@ -112,39 +119,38 @@ namespace BlendInt {
 
 	void ComboBox::Draw(RedrawEvent* event)
 	{
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
+
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
-
-		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float)z());
 
 		ThemeManager* tm = ThemeManager::instance();
 
-		float r, g, b, a;
+		glm::vec4 color;
 
-		r = tm->themes()->regular.inner.r() / 255.f;
-		g = tm->themes()->regular.inner.g() / 255.f;
-		b = tm->themes()->regular.inner.b() / 255.f;
-		a = tm->themes()->regular.inner.a() / 255.f;
+		color.r = tm->themes()->regular.inner.r() / 255.f;
+		color.g = tm->themes()->regular.inner.g() / 255.f;
+		color.b = tm->themes()->regular.inner.b() / 255.f;
+		color.a = tm->themes()->regular.inner.a() / 255.f;
 
-		program->SetVertexAttrib4f("color", r, g, b, a);
+		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
 
 		glEnableVertexAttribArray(0);
 
 		DrawTriangleFan(0, m_inner_buffer.get());
 
-		GLfloat outline_color[4] = {themes()->regular.outline.r() / 255.f,
-									themes()->regular.outline.g() / 255.f,
-									themes()->regular.outline.b() / 255.f,
-									(themes()->regular.outline.a() / WIDGET_AA_JITTER) / 255.f
-		};
+		color.r = tm->themes()->regular.outline.r() / 255.f;
+		color.g = tm->themes()->regular.outline.g() / 255.f;
+		color.b = tm->themes()->regular.outline.b() / 255.f;
+		color.a = tm->themes()->regular.outline.a() / WIDGET_AA_JITTER / 255.f;
 
-		program->SetVertexAttrib4fv("color", outline_color);
+		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
 
 		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
 
@@ -172,11 +178,6 @@ namespace BlendInt {
 
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
-
-		set_round_type(RoundAll);
-		set_expand_x(true);
-		set_size(90, 20);
-		set_preferred_size(90, 20);
 
 		GenerateFormBuffer(
 						size(),

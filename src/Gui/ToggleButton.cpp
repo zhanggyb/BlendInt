@@ -134,52 +134,48 @@ namespace BlendInt {
 
 		ThemeManager* tm = ThemeManager::instance();
 
-		float r, g, b, a;
+		glm::vec4 color;
 
 		if (hover()) {
 			if(checked()) {
-				r = tm->themes()->regular.inner_sel.highlight_red() / 255.f;
-				g = tm->themes()->regular.inner_sel.highlight_green() / 255.f;
-				b = tm->themes()->regular.inner_sel.highlight_blue() / 255.f;
-				a = tm->themes()->regular.inner_sel.a() / 255.f;
+				color.r = tm->themes()->regular.inner_sel.highlight_red() / 255.f;
+				color.g = tm->themes()->regular.inner_sel.highlight_green() / 255.f;
+				color.b = tm->themes()->regular.inner_sel.highlight_blue() / 255.f;
+				color.a = tm->themes()->regular.inner_sel.a() / 255.f;
 			} else {
-				r = tm->themes()->regular.inner.highlight_red() / 255.f;
-				g = tm->themes()->regular.inner.highlight_green() / 255.f;
-				b = tm->themes()->regular.inner.highlight_blue() / 255.f;
-				a = tm->themes()->regular.inner.a() / 255.f;
+				color.r = tm->themes()->regular.inner.highlight_red() / 255.f;
+				color.g = tm->themes()->regular.inner.highlight_green() / 255.f;
+				color.b = tm->themes()->regular.inner.highlight_blue() / 255.f;
+				color.a = tm->themes()->regular.inner.a() / 255.f;
 			}
 		} else {
 			if (checked()) {
-				r = tm->themes()->regular.inner_sel.r() / 255.f;
-				g = tm->themes()->regular.inner_sel.g() / 255.f;
-				b = tm->themes()->regular.inner_sel.b() / 255.f;
-				a = tm->themes()->regular.inner_sel.a() / 255.f;
+				color.r = tm->themes()->regular.inner_sel.r() / 255.f;
+				color.g = tm->themes()->regular.inner_sel.g() / 255.f;
+				color.b = tm->themes()->regular.inner_sel.b() / 255.f;
+				color.a = tm->themes()->regular.inner_sel.a() / 255.f;
 			} else {
-				r = tm->themes()->regular.inner.r() / 255.f;
-				g = tm->themes()->regular.inner.g() / 255.f;
-				b = tm->themes()->regular.inner.b() / 255.f;
-				a = tm->themes()->regular.inner.a() / 255.f;
+				color.r = tm->themes()->regular.inner.r() / 255.f;
+				color.g = tm->themes()->regular.inner.g() / 255.f;
+				color.b = tm->themes()->regular.inner.b() / 255.f;
+				color.a = tm->themes()->regular.inner.a() / 255.f;
 			}
 		}
 
-		program->SetVertexAttrib4f("color", r, g, b, a);
+		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
 
 		glEnableVertexAttribArray(0);
 
 		DrawTriangleFan(0, m_inner_buffer.get());
 
-		GLfloat outline_color[4] = {themes()->regular.outline.r() / 255.f,
-									themes()->regular.outline.g() / 255.f,
-									themes()->regular.outline.b() / 255.f,
-									(themes()->regular.outline.a() / WIDGET_AA_JITTER) / 255.f
-		};
-
-		program->SetVertexAttrib4fv("color", outline_color);
-
+		color.r = themes()->regular.outline.r() / 255.f;
+		color.g = themes()->regular.outline.g() / 255.f;
+		color.b = themes()->regular.outline.b() / 255.f;
+		color.a = themes()->regular.outline.a() / WIDGET_AA_JITTER / 255.f;
+		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
 		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
 
 		program->SetVertexAttrib4f("color", 1.0f, 1.0f, 1.0f, 0.02f);
-
 		DrawTriangleStrip(program, mvp, 0, m_emboss_buffer.get());
 
 		glDisableVertexAttribArray(0);

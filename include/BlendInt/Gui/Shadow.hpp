@@ -76,6 +76,8 @@ namespace BlendInt {
 
 	private:
 
+		void InitOnce ();
+
 		/**
 		 * @brief generate shadow vertices
 		 * @param[in] size
@@ -91,11 +93,7 @@ namespace BlendInt {
 
 		void GenerateShadowBuffers (const Size* size, float corner_rad, float blue_rad);
 
-		/**
-		 * @brief draw shadow without GL Buffer
-		 * @param radin
-		 */
-		void draw (const float radin);
+		GLuint m_vao;
 
 		int m_offset_x;
 

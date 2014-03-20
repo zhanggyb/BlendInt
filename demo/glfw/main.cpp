@@ -120,12 +120,12 @@ int main(int argc, char* argv[])
 	Widget * widget = Manage(new Widget);
 	widget->set_name("Widget");
 	widget->Resize(180, 180);
-	widget->SetPosition(440, 280);
+	widget->SetPosition(440, 240);
 
 	Frame* frame = Manage(new Frame);
 	frame->set_name("Frame");
 	frame->Resize(180, 180);
-	frame->SetPosition(440, 80);
+	frame->SetPosition(440, 40);
 
 	//Label* label = Manage(new Label("Hello There!"));
 	//label->set_name("Label");

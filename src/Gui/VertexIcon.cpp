@@ -143,23 +143,20 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_form_program();
 		program->Use();
-
-		GLint pos_location = program->GetAttributeLocation("xy");
 
 		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
 		program->SetVertexAttrib4f("color", r, g, b, a);
 
-		glm::vec3 jitter;
 		glm::mat4 jitter_matrix;
 
-		glEnableVertexAttribArray(pos_location);
+		glEnableVertexAttribArray(0);
 
 		m_array_buffer->Bind();	// bind ARRAY BUFFER
 		m_index_buffer->Bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(pos_location, // attribute
+		glVertexAttribPointer(0, // attribute
 							  2,			// number of elements per vertex, here (x,y)
 							  GL_FLOAT,			 // the type of each element
 							  GL_FALSE,			 // take our values as-is
@@ -167,18 +164,20 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
-			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
+		for(Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++)
+		{
+			jitter_matrix = glm::translate(glm::mat4(1.0),
+							glm::vec3((*it), 0.f));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+							glm::value_ptr(mvp * jitter_matrix));
 			glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
-										   GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+							GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 		}
 
 		m_index_buffer->Reset();
 		m_array_buffer->Reset();
 
-		glDisableVertexAttribArray(pos_location);
+		glDisableVertexAttribArray(0);
 
 		program->Reset();
 

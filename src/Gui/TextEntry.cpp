@@ -221,22 +221,19 @@ namespace BlendInt {
 
 		DrawShadedTriangleFan(0, 1, m_inner_buffer.get());
 
-		GLfloat outline_color[4] = {
-						themes()->text.outline.r() / 255.f,
-						themes()->text.outline.g() / 255.f,
-						themes()->text.outline.b() / 255.f,
-						(themes()->text.outline.a() / WIDGET_AA_JITTER) / 255.f
-		};
-
 		glDisableVertexAttribArray(1);
 
-		program->SetVertexAttrib4fv("color", outline_color);
-
+		glm::vec4 color;
+		color.r = themes()->text.outline.r() / 255.f;
+		color.g = themes()->text.outline.g() / 255.f;
+		color.b = themes()->text.outline.b() / 255.f;
+		color.a = themes()->text.outline.a() / WIDGET_AA_JITTER / 255.f;
+		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
 		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
 
-		program->Reset();
-
 		glDisableVertexAttribArray(0);
+
+		program->Reset();
 
 		glBindVertexArray(0);
 

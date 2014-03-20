@@ -489,8 +489,6 @@ namespace BlendInt {
 
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 
-		static const float jit[WIDGET_AA_JITTER][2];
-
 	private:
 
 		static float default_border_width;

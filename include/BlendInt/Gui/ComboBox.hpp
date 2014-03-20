@@ -57,9 +57,6 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
-
-		Shadow m_shadow;
-
 	};
 
 }

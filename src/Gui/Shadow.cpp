@@ -31,37 +31,47 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/Gui/Shadow.hpp>
-#include <BlendInt/Service/Theme.hpp>
-
 #include <math.h>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <iostream>
+
+#include <BlendInt/Gui/Shadow.hpp>
+#include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 
 	Shadow::Shadow()
 	: AbstractRoundForm(),
+	  m_vao(0),
 	  m_offset_x(0),
 	  m_offset_y(0),
 //	  m_direction(ShadowAll),
 	  m_blur_rad(12.0)
 	{
+		set_size(90, 20);
 		set_round_type(RoundAll);
 		set_radius(5.0);
 //		m_offset_x = 5;
 //		m_offset_y = -5;
+
+		InitOnce ();
 	}
 
 	Shadow::~Shadow()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void Shadow::SetBlurRadius(float blur_rad)
+	void Shadow::SetBlurRadius (float blur_rad)
 	{
-		if(blur_rad == m_blur_rad) return;
+		if (blur_rad == m_blur_rad)
+			return;
 
-		if(Update(UpdateRequest(Predefined, ShadowBlurRadius, &blur_rad))) {
+		if (Update(UpdateRequest(Predefined, ShadowBlurRadius, &blur_rad))) {
 			m_blur_rad = blur_rad;
 		}
 	}
@@ -75,47 +85,10 @@ namespace BlendInt {
 
 					const Size* size_p =
 					        static_cast<const Size*>(request.data());
+					glBindVertexArray(m_vao);
 					GenerateShadowBuffers(size_p, radius(), m_blur_rad);
 
-					/*
-					 Size shadow_size = *(static_cast<const Size*>(data));
-
-					 int step, totvert;
-
-					 float inner_v[WIDGET_SIZE_MAX][2];
-					 float outer_v[WIDGET_SIZE_MAX][2];
-
-					 float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2];
-
-					 */
-
-					// #define UI_DPI_FAC ((U.pixelsize * (float)U.dpi) / 72.0f)
-//				const float radout = themes()->menu_shadow_width * 1.0;
-					/* prevent tooltips to not show round shadow */
-//						if (radout > 0.2f * size().height())
-//							shadow_size.add_height(-0.2f * size().height());
-//						else
-//							shadow_size.add_height(-radout);
-					/*
-					 totvert = generate_shadow_vertices(&shadow_size, radius(), 0.0f,
-					 inner_v);
-					 */
-
-					/*
-					 m_gl_buffer.Generate((int)m_blur_rad);
-					 for (step = 1; step <= (int) m_blur_rad; step++) {
-					 generate_shadow_vertices(&shadow_size, radius(), (float) step,
-					 outer_v);
-					 verts_to_quad_strip(inner_v, outer_v, totvert, quad_strip);
-
-					 m_gl_buffer.select(step - 1);
-					 m_gl_buffer.SetProperty(totvert * 2 + 2, sizeof(quad_strip[0]), GL_STATIC_DRAW);
-					 m_gl_buffer.Bind();
-					 m_gl_buffer.Upload(quad_strip);
-					 m_gl_buffer.Unbind();
-					 }
-					 */
-
+					glBindVertexArray(0);
 					return true;
 				}
 
@@ -124,7 +97,9 @@ namespace BlendInt {
 					const float* blur_rad =
 					        static_cast<const float*>(request.data());
 
+					glBindVertexArray(m_vao);
 					GenerateShadowBuffers(&size(), radius(), *blur_rad);
+					glBindVertexArray(0);
 
 					return true;
 				}
@@ -140,10 +115,17 @@ namespace BlendInt {
 
 	void Shadow::Draw (const glm::mat4& mvp)
 	{
-		//glMatrixMode(GL_MODELVIEW);
-		//glPushMatrix();
+		glBindVertexArray(m_vao);
 
-		//glTranslatef(m_offset_x, m_offset_y, 0.0);
+		RefPtr<GLSLProgram> program =
+						ShaderManager::instance->default_form_program();
+		program->Use();
+
+		glm::mat4 offset = glm::translate(glm::mat4(1.0),
+						glm::vec3(m_offset_x, m_offset_y, 0.f));
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+						glm::value_ptr(mvp * offset));
 
 		float alphastep;
 		int step = 1;
@@ -155,36 +137,42 @@ namespace BlendInt {
 
 		float expfac = 0.0;
 
-		for(std::vector<RefPtr<GLArrayBuffer> >::iterator it = m_buffers.begin(); it != m_buffers.end(); it++)
-		{
+		glEnableVertexAttribArray(0);
+
+		for (std::vector<RefPtr<GLArrayBuffer> >::iterator it =
+						m_buffers.begin(); it != m_buffers.end(); it++) {
 			expfac = sqrt(step / m_blur_rad);
 			(*it)->Bind();
-//			glVertexPointer(2, GL_FLOAT, 0, 0);
-//			glEnableClientState(GL_VERTEX_ARRAY);
-//			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
-//			glDrawArrays(GL_QUAD_STRIP, 0, (*it)->GetBufferSize() / (2 * sizeof(GLfloat)));
-//			glDisableClientState(GL_VERTEX_ARRAY);
-			(*it)->Reset();
 
+			glVertexAttribPointer(0, // attribute
+							2,		// number of elements per vertex, here (x,y)
+							GL_FLOAT,			 // the type of each element
+							GL_FALSE,			 // take our values as-is
+							0,			// no extra data between each position
+							0					 // offset of first element
+							);
+
+			program->SetVertexAttrib4f("color", 0.0f, 0.0f, 0.0f,
+							alphastep * (1.0f - expfac));
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+							(*it)->GetBufferSize() / (2 * sizeof(GLfloat)));
+			(*it)->Reset();
 			step++;
 		}
 
-		/*
-		for (step = 1; step <= (int)m_blur_rad; step++) {
-			expfac = sqrt(step / m_blur_rad);
+		glDisableVertexAttribArray(0);
+		program->Reset();
+		glBindVertexArray(0);
+	}
 
-			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
-			m_gl_buffer.select(step - 1);
-			m_gl_buffer.Bind();
-			glVertexPointer(2, GL_FLOAT, 0, 0);
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glDrawArrays(GL_QUAD_STRIP, 0, m_gl_buffer.Vertices());
-			glDisableClientState(GL_VERTEX_ARRAY);
-			m_gl_buffer.Unbind();
-		}
-		 */
+	void Shadow::InitOnce ()
+	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
 
-		//glPopMatrix();
+		GenerateShadowBuffers(&size(), radius(), m_blur_rad);
+
+		glBindVertexArray(0);
 	}
 
 	int Shadow::generate_shadow_vertices (
@@ -325,7 +313,6 @@ namespace BlendInt {
 		return tot;
 	}
 
-
 	void Shadow::GenerateShadowBuffers(const Size* size, float corner_rad, float blur_rad)
 	{
 		Size shadow_size = *size;
@@ -364,64 +351,6 @@ namespace BlendInt {
 
 			m_buffers.push_back(buffer);
 		}
-	}
-
-	void Shadow::draw(const float radin)
-	{
-		float alphastep;
-		int step, totvert;
-
-		float inner_v[WIDGET_SIZE_MAX][2];
-		float outer_v[WIDGET_SIZE_MAX][2];
-
-		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2];
-
-		// #define UI_DPI_FAC ((U.pixelsize * (float)U.dpi) / 72.0f)
-		const float radout = themes()->menu_shadow_width * 1.0;
-
-		Size shadow_size = size();
-
-		/* disabled shadow */
-		if (radout == 0.0f)
-			return;
-
-		/* prevent tooltips to not show round shadow */
-		if (radout > 0.2f * size().height())
-			shadow_size.add_height(-0.2f * size().height());
-		else
-			shadow_size.add_height(-radout);
-
-		/* inner part */
-		//totvert = round_box_shadow_edges(wtb.inner_v, &rect1, radin, roundboxalign & (UI_CNR_BOTTOM_RIGHT | UI_CNR_BOTTOM_LEFT), 0.0f);
-		totvert = generate_shadow_vertices(&shadow_size, radin, 0.0f, inner_v);
-
-		/* we draw a number of increasing size alpha quad strips */
-		// alphastep = 3.0f * btheme->tui.menu_shadow_fac / radout;
-		alphastep = 3.0f * themes()->menu_shadow_fac / radout;
-
-//		glEnableClientState(GL_VERTEX_ARRAY);
-
-		for (step = 1; step <= (int)radout; step++) {
-			float expfac = sqrt(step / radout);
-
-			//round_box_shadow_edges(wtb.outer_v, &rect1, radin, UI_CNR_ALL, (float)step);
-			generate_shadow_vertices(&shadow_size, radin, (float)step, outer_v);
-
-//#ifdef DEBUG
-//			glColor4f(0.9f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
-//#else
-//			glColor4f(0.0f, 0.0f, 0.0f, alphastep * (1.0f - expfac));
-//#endif
-
-			//widget_verts_to_quad_strip(&wtb, totvert, quad_strip);
-			verts_to_quad_strip(inner_v, outer_v, totvert, quad_strip);
-
-//			glVertexPointer(2, GL_FLOAT, 0, quad_strip);
-//			glDrawArrays(GL_QUAD_STRIP, 0, totvert * 2); /* add + 2 for getting a complete soft rect. Now it skips top edge to allow transparent menus */
-		}
-
-//		glDisableClientState(GL_VERTEX_ARRAY);
-
 	}
 
 }
