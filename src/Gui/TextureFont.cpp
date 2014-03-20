@@ -46,9 +46,78 @@ namespace BlendInt {
 
 	TextureFont::~TextureFont()
 	{
-		if(glIsTexture(texture_)) {
-			glDeleteTextures(1, &texture_);
+		glDeleteTextures(1, &texture_);
+	}
+
+	void TextureFont::Load (Freetype& freetype, wchar_t charcode)
+	{
+		if(!freetype.valid()) return;
+
+		if(!texture_) {
+			glGenTextures(1, &texture_);
 		}
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_);
+
+		/* We require 1 byte alignment when uploading texture data */
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		/* Clamping to edges is important to prevent artifacts when scaling */
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		/* Linear filtering usually looks best for text */
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		if (freetype.loadCharacter(charcode, FT_LOAD_RENDER)) {
+
+			FT_GlyphSlot g = freetype.getFontFace()->glyph;
+
+			/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+
+			/* Calculate the vertex and texture coordinates */
+			glyph_.bitmap_left = g->bitmap_left;
+			glyph_.bitmap_top = g->bitmap_top;
+			glyph_.bitmap_width = g->bitmap.width;
+			glyph_.bitmap_height = g->bitmap.rows;
+			glyph_.advance_x = g->advance.x >> 6;
+			glyph_.advance_y = g->advance.y >> 6;
+
+			glyph_.vertexes[0].x = glyph_.bitmap_left;
+			glyph_.vertexes[0].y = glyph_.bitmap_top;
+			glyph_.vertexes[0].s = 0;
+			glyph_.vertexes[0].t = 0;
+
+			glyph_.vertexes[1].x = glyph_.bitmap_left + glyph_.bitmap_width;
+			glyph_.vertexes[1].y = glyph_.bitmap_top;
+			glyph_.vertexes[1].s = 1;
+			glyph_.vertexes[1].t = 0;
+
+			glyph_.vertexes[2].x = glyph_.bitmap_left;
+			glyph_.vertexes[2].y = glyph_.bitmap_top - glyph_.bitmap_height;
+			glyph_.vertexes[2].s = 0;
+			glyph_.vertexes[2].t = 1;
+
+			glyph_.vertexes[3].x = glyph_.bitmap_left + glyph_.bitmap_width;
+			glyph_.vertexes[3].y = glyph_.bitmap_top;
+			glyph_.vertexes[3].s = 1;
+			glyph_.vertexes[3].t = 0;
+
+			glyph_.vertexes[4].x = glyph_.bitmap_left;
+			glyph_.vertexes[4].y = glyph_.bitmap_top - glyph_.bitmap_height;
+			glyph_.vertexes[4].s = 0;
+			glyph_.vertexes[4].t = 1;
+
+			glyph_.vertexes[5].x = glyph_.bitmap_left + glyph_.bitmap_width;
+			glyph_.vertexes[5].y = glyph_.bitmap_top - glyph_.bitmap_height;
+			glyph_.vertexes[5].s = 1;
+			glyph_.vertexes[5].t = 1;
+		}
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void TextureFont::generate(Freetype* freetype, wchar_t charcode)
@@ -159,6 +228,8 @@ namespace BlendInt {
 								<< std::endl;
 #endif
 		}
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 }
