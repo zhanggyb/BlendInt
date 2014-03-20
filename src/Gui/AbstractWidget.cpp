@@ -313,6 +313,89 @@ namespace BlendInt {
 		ContextManager::instance->RefreshLayer(m_z);
 	}
 
+	void AbstractWidget::RenderToTexture (size_t border, GLTexture2D* texture)
+	{
+		if(!texture) return;
+
+		GLsizei width = size().width() + border * 2;
+		GLsizei height = size().height() + border * 2;
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = texture;
+		if(!tex->id())
+			tex->Generate();
+
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(width, height, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_TEXTURE_2D, tex->id(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+				width, height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, rb);
+
+		if(GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			glClearColor(0.0, 0.0, 0.0, 0.0);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+			glEnable(GL_BLEND);
+
+			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
+			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(border, border, 0.0));
+
+			RedrawEvent event;
+			event.set_pv_matrix(projection * view * offset);
+
+			glViewport(0, 0, width, height);
+
+			Draw(&event);
+
+			glViewport(0,
+					0,
+					ContextManager::instance->size().width(),
+					ContextManager::instance->size().height());
+		}
+
+		fb->Reset();
+
+		tex->Reset();
+		delete tex; tex = 0;
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb; fb = 0;
+	}
+
+
 	void AbstractWidget::RenderToFile(const char* filename, unsigned int border)
 	{
 		GLsizei width = size().width() + border * 2;
@@ -364,19 +447,19 @@ namespace BlendInt {
 
 			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
 			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
+			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(border, border, 0.0));
 
 			RedrawEvent event;
-			event.set_pv_matrix(projection * view);
+			event.set_pv_matrix(projection * view * offset);
 
 			glViewport(0, 0, width, height);
 
-			//glPushMatrix();
-
-			//glTranslatef(border, border, 0);
-
 			Draw(&event);
 
-			//glPopMatrix();
+			glViewport(0,
+					0,
+					ContextManager::instance->size().width(),
+					ContextManager::instance->size().height());
 
 			// ---------------------------------------------
 			tex->WriteToFile(filename);

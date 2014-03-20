@@ -777,6 +777,41 @@ namespace BlendInt {
 		return true;
 	}
 
+	bool GLSLProgram::SetUniform4f(const char* name, GLfloat v0, GLfloat v1,
+		GLfloat v2, GLfloat v3)
+	{
+		GLint uniform_location = GetUniformLocation(name);
+
+		if(uniform_location < 0) return false;
+
+		glUniform4f (uniform_location, v0, v1, v2, v3);
+
+#ifdef DEBUG
+		GLenum error = glGetError ();
+		switch (error) {
+
+		case GL_NO_ERROR:
+			break;
+
+		case GL_INVALID_VALUE: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_VALUE error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		case GL_INVALID_OPERATION: {
+			DBG_PRINT_MSG("%s", "Get GL_INVALID_OPERATION error, check the OpenGL glUniform manual");
+			break;
+		}
+
+		default:
+			break;
+		}
+#endif
+
+		return true;
+	}
+
+
 	bool GLSLProgram::SetUniformMatrix4fv(const char* name, GLsizei count, GLboolean transpose, const GLfloat* value)
 	{
 		GLint uniform_location = GetUniformLocation(name);

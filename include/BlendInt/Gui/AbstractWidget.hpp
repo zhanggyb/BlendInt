@@ -147,6 +147,8 @@ namespace BlendInt {
 
 		void Refresh ();
 
+		void RenderToTexture (size_t border, GLTexture2D* texture);
+
 		void RenderToFile (const char* filename, unsigned int border = 10);
 
 		const int& layer () const

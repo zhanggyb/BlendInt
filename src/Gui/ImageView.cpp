@@ -47,8 +47,8 @@ namespace BlendInt {
 
 	const char* ImageView::vertex_shader =
 			"#version 330\n"
-			"in vec3 coord3d;"
-			"in vec2 texcoord;"
+			"layout(location = 0) in vec3 coord3d;"
+			"layout(location = 1) in vec2 texcoord;"
 			"uniform mat4 MVP;"
 			"out vec2 f_texcoord;"
 			""
@@ -58,6 +58,7 @@ namespace BlendInt {
 			"}";
 
 	const char* ImageView::fragment_shader =
+					"#version 330\n"
 			"in vec2 f_texcoord;"
 			"uniform sampler2D tex;"
 			"out vec4 FragmentColor;"
@@ -89,33 +90,35 @@ namespace BlendInt {
 #endif
 
 	ImageView::ImageView ()
-	: Widget(), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
+	: Widget(), m_vao(0)
 	{
 		InitOnce();
 	}
 
 	ImageView::~ImageView ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	void ImageView::Draw (RedrawEvent* event)
 	{
-		glDisable(GL_BLEND);
+		glBindVertexArray(m_vao);
+
 		m_program->Use();
 
 		glActiveTexture(GL_TEXTURE0);
 		m_texture->Bind();
 
-		glUniform1i(uniform_texture, 0);
+		m_program->SetUniform1i("tex", 0);
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-				glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
+		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		glEnableVertexAttribArray(attribute_coord3d);
+		glEnableVertexAttribArray(0);
 		m_vbo->Bind();
 		glVertexAttribPointer(
-				attribute_coord3d,
+				0,
 				3,
 				GL_FLOAT,
 				GL_FALSE,
@@ -123,10 +126,10 @@ namespace BlendInt {
 				0
 				);
 
-		glEnableVertexAttribArray(attribute_texcoord);
+		glEnableVertexAttribArray(1);
 		m_tbo->Bind();
 		glVertexAttribPointer(
-				attribute_texcoord,
+				1,
 				2,
 				GL_FLOAT,
 				GL_FALSE,
@@ -136,38 +139,26 @@ namespace BlendInt {
 
 		m_vbo->Bind();
 
-		//glDrawArrays(GL_POLYGON, 0, 4);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		glDisableVertexAttribArray(attribute_texcoord);
-		glDisableVertexAttribArray(attribute_coord3d);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(0);
 
 		m_vbo->Reset();
 		m_texture->Reset();
 		m_program->Reset();
 
-//#ifdef DEBUG
-//		glLineWidth(1);
-//		glEnable(GL_LINE_STIPPLE);
-//
-//		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-//		glLineStipple(1, 0xAAAA);
-//		glBegin(GL_LINE_LOOP);
-//			glVertex2i(0, 0);
-//			glVertex2i(size().width(), 0);
-//			glVertex2i(size().width(), size().height());
-//			glVertex2i(0, size().height());
-//		glEnd();
-//
-//		glDisable(GL_LINE_STIPPLE);
-//#endif
-		glEnable(GL_BLEND);
+		glBindVertexArray(0);
 	}
 
 	void ImageView::InitOnce ()
 	{
-//		glShadeModel(GL_FLAT);
 		makeCheckImage();
-//		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		set_size(checkImageWidth, checkImageHeight);
+
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
 
 		m_texture.reset(new GLTexture2D);
 		m_texture->Generate();
@@ -175,14 +166,20 @@ namespace BlendInt {
 		m_texture->SetWrapMode(GL_REPEAT, GL_REPEAT);
 		m_texture->SetMinFilter(GL_LINEAR);
 		m_texture->SetMagFilter(GL_LINEAR);
-
 		m_texture->SetImage(checkImageWidth, checkImageHeight, _checkImage);
-
 		m_texture->Reset();
 
-		float vertices[] = {
+		m_program.reset(new GLSLProgram);
+		m_program->Create();
+		m_program->AttachShaderPair(vertex_shader, fragment_shader);
+		m_program->Link();
+
+		GLfloat vertices[] = {
 			0.0, 0.0, 0.0,
 			checkImageWidth, 0.0, 0.0,
+			checkImageWidth, checkImageHeight, 0.0,
+
+			0.0, 0.0, 0.0,
 			checkImageWidth, checkImageHeight, 0.0,
 			0.0, checkImageHeight, 0.0
 		};
@@ -190,29 +187,15 @@ namespace BlendInt {
 		m_vbo.reset(new GLArrayBuffer);
 		m_vbo->Generate();
 		m_vbo->Bind();
-		m_vbo->SetData(4 * sizeof(float) * 3, vertices);
+		m_vbo->SetData(sizeof(vertices), vertices);
 		m_vbo->Reset();
-
-		m_program.reset(new GLSLProgram);
-
-		m_program->Create();
-		m_program->AttachShaderPair(vertex_shader, fragment_shader);
-
-		if(m_program->Link()) {
-			m_program->Use();
-			attribute_coord3d = m_program->GetAttributeLocation("coord3d");
-			attribute_texcoord = m_program->GetAttributeLocation("texcoord");
-			uniform_texture = m_program->GetUniformLocation("tex");
-
-			if(attribute_texcoord == -1 || attribute_coord3d == -1 || uniform_texture == -1) {
-				std::cerr << "Fail to get attribute" << std::endl;
-			}
-		}
-		m_program->Reset();
 
 		GLfloat texcoords[] = {
 				0.0, 0.0,
 				1.0, 0.0,
+				1.0, 1.0,
+
+				0.0, 0.0,
 				1.0, 1.0,
 				0.0, 1.0
 		};
@@ -221,10 +204,10 @@ namespace BlendInt {
 
 		m_tbo->Generate();
 		m_tbo->Bind();
-		m_tbo->SetData(4 * sizeof(GLfloat) * 2, texcoords);
+		m_tbo->SetData(sizeof(texcoords), texcoords);
 		m_tbo->Reset();
 
-		Resize(checkImageWidth, checkImageHeight);
+		glBindVertexArray(0);
 	}
 
 	void ImageView::makeCheckImage ()
@@ -236,7 +219,8 @@ namespace BlendInt {
 				_checkImage[i][j][0] = (GLubyte) c;
 				_checkImage[i][j][1] = (GLubyte) c;
 				_checkImage[i][j][2] = (GLubyte) c;
-				_checkImage[i][j][3] = (GLubyte) c;
+				//_checkImage[i][j][3] = (GLubyte) c;
+				_checkImage[i][j][3] = 255;
 			}
 		}
 	}
