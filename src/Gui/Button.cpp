@@ -184,17 +184,17 @@ namespace BlendInt {
 
 	void Button::InitOnce ()
 	{
+		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_size(90, 20);
+		set_preferred_size(90, 20);
+
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 		m_emboss_buffer.reset(new GLArrayBuffer);
-
-		set_round_type(RoundAll);
-		set_expand_x(true);
-		set_size(90, 20);
-		set_preferred_size(90, 20);
 
 		GenerateFormBuffer(
 						size(),

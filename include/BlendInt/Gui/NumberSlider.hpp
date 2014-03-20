@@ -34,11 +34,24 @@ namespace BlendInt {
 
 	public:
 
-		NumberSlider ();
-
-		NumberSlider (AbstractWidget* parent);
+		NumberSlider (Orientation orientation = Horizontal);
 
 		virtual ~NumberSlider ();
+
+	protected:
+
+		virtual bool Update (const UpdateRequest& request);
+
+		virtual void Draw (RedrawEvent* event);
+
+	private:
+
+		void InitOnce ();
+
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
+
+		GLuint m_vao;
 	};
 }
 

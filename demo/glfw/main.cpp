@@ -33,6 +33,7 @@
 #include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
 #include <BlendInt/Gui/MenuBar.hpp>
+#include <BlendInt/Gui/NumberSlider.hpp>
 
 #include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Service/StockItems.hpp>
@@ -126,6 +127,10 @@ int main(int argc, char* argv[])
 	frame->set_name("Frame");
 	frame->Resize(180, 180);
 	frame->SetPosition(440, 40);
+
+	NumberSlider* num_slider = Manage(new NumberSlider);
+	num_slider->set_name("NumberSlider");
+	num_slider->SetPosition(20, 60);
 
 	//Label* label = Manage(new Label("Hello There!"));
 	//label->set_name("Label");

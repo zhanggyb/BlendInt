@@ -31,43 +31,6 @@
 
 namespace BlendInt {
 
-	/**
-	 * @brief Slide Icon used in Slider or ScrollBar
-	 */
-	class ScrollBarSlot: public AbstractRoundForm
-	{
-	public:
-
-		/**
-		 * @brief Default constructor
-		 */
-		ScrollBarSlot ();
-
-		/**
-		 * @brief Constructor
-		 */
-		virtual ~ScrollBarSlot ();
-
-		/**
-		 * @brief Draw the icon
-		 */
-		virtual void Draw (const glm::mat4& mvp);
-
-	protected:
-
-		virtual bool Update (const UpdateRequest& request);
-
-	private:
-
-		void InitOnce ();
-
-		GLuint m_vao;
-
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outline_buffer;
-	};
-
-
 	class ScrollBar: public AbstractSlider
 	{
 		public:
@@ -124,7 +87,9 @@ namespace BlendInt {
 
 			SlideIcon m_bar;
 
-			ScrollBarSlot m_slot;
+			GLuint m_vao;
+			RefPtr<GLArrayBuffer> m_slot_inner_buffer;
+			RefPtr<GLArrayBuffer> m_slot_outline_buffer;
 
 			Point m_line_start;	// where start to draw line
 			int m_line_width;

@@ -40,154 +40,11 @@
 
 namespace BlendInt {
 
-	ScrollBarSlot::ScrollBarSlot () :
-					AbstractRoundForm()
-	{
-		set_size(14, 14);
-		set_round_type(RoundAll);
-		set_radius(7.0);
-
-		InitOnce();
-	}
-
-	ScrollBarSlot::~ScrollBarSlot ()
-	{
-		glDeleteVertexArrays(1, &m_vao);
-	}
-
-	bool ScrollBarSlot::Update (const UpdateRequest& request)
-	{
-		if (request.id() == Predefined) {
-
-			switch (request.type()) {
-
-				case FormSize: {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					Orientation shadedir =
-									size_p->width() < size_p->height() ?
-													Horizontal : Vertical;
-					const Color& color = themes()->scroll.outline;
-					short shadetop = themes()->scroll.shadetop;
-					short shadedown = themes()->scroll.shadedown;
-
-					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(*size_p, round_type(), radius(),
-									color, shadetop, shadedown, shadedir,
-									m_inner_buffer.get(),
-									m_outline_buffer.get());
-					glBindVertexArray(0);
-					return true;
-				}
-
-				case FormRoundType: {
-					const Size* size_p = &(size());
-					Orientation shadedir =
-									size_p->width() < size_p->height() ?
-													Horizontal : Vertical;
-					const RoundType* round_p =
-									static_cast<const RoundType*>(request.data());
-					const Color& color = themes()->scroll.outline;
-					short shadetop = themes()->scroll.shadetop;
-					short shadedown = themes()->scroll.shadedown;
-
-					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(*size_p, *round_p, radius(),
-									color, shadetop, shadedown, shadedir,
-									m_inner_buffer.get(),
-									m_outline_buffer.get());
-					glBindVertexArray(0);
-					return true;
-				}
-
-				case FormRoundRadius: {
-					const Size* size_p = &(size());
-					Orientation shadedir =
-									size_p->width() < size_p->height() ?
-													Horizontal : Vertical;
-					const float* radius_p =
-									static_cast<const float*>(request.data());
-					const Color& color = themes()->scroll.outline;
-					short shadetop = themes()->scroll.shadetop;
-					short shadedown = themes()->scroll.shadedown;
-
-					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(*size_p, round_type(), *radius_p,
-									color, shadetop, shadedown, shadedir,
-									m_inner_buffer.get(),
-									m_outline_buffer.get());
-					glBindVertexArray(0);
-					return true;
-				}
-
-				default:
-					return false;
-			}
-		} else {
-			// no custom to update
-			return false;
-		}
-	}
-
-	void ScrollBarSlot::Draw (const glm::mat4& mvp)
-	{
-		glBindVertexArray(m_vao);
-
-		RefPtr<GLSLProgram> program =
-						ShaderManager::instance->default_form_program();
-		program->Use();
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-
-		DrawShadedTriangleFan(0, 1, m_inner_buffer.get());
-
-		glDisableVertexAttribArray(1);
-
-		GLfloat outline_color[4] = { themes()->scroll.outline.r() / 255.f,
-						themes()->scroll.outline.g() / 255.f,
-						themes()->scroll.outline.b() / 255.f,
-						(themes()->scroll.outline.a() / WIDGET_AA_JITTER)
-										/ 255.f };
-
-		program->SetVertexAttrib4fv("color", outline_color);
-
-		DrawTriangleStrip(program, mvp, 0, m_outline_buffer.get());
-
-		glDisableVertexAttribArray(0);
-
-		program->Reset();
-
-		glBindVertexArray(0);
-	}
-
-	void ScrollBarSlot::InitOnce ()
-	{
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outline_buffer.reset(new GLArrayBuffer);
-
-		Orientation shadedir =
-						size().width() < size().height() ?
-										Horizontal : Vertical;
-		const Color& color = themes()->scroll.inner;
-		short shadetop = themes()->scroll.shadetop;
-		short shadedown = themes()->scroll.shadedown;
-
-		GenerateShadedFormBuffers(size(), round_type(), radius(), color,
-						shadetop, shadedown, shadedir, m_inner_buffer.get(),
-						m_outline_buffer.get());
-
-		glBindVertexArray(0);
-	}
-
-	ScrollBar::ScrollBar (Orientation orientation) :
-					AbstractSlider(orientation), m_line_width(0), m_pressed(
-									false)
+	ScrollBar::ScrollBar (Orientation orientation)
+	: AbstractSlider(orientation),
+	  m_vao(0),
+	  m_line_width(0),
+	  m_pressed(false)
 	{
 		m_bar.Resize(14, 14);
 
@@ -212,6 +69,7 @@ namespace BlendInt {
 
 	ScrollBar::~ScrollBar ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool ScrollBar::Update (const UpdateRequest& request)
@@ -231,15 +89,40 @@ namespace BlendInt {
 					int switch_radius = std::min(m_bar.size().width(),
 									m_bar.size().height()) / 2;
 
+					float slot_radius;
+					Orientation slot_orient;
 					if (orientation() == Vertical) {
 						m_line_start.set_x(size_p->width() / 2);
 						m_line_start.set_y(switch_radius);
 						m_line_width = size_p->height() - switch_radius * 2;
+						slot_radius = m_bar.size().width() / 2.f;
+						slot_orient = Horizontal;
 					} else {
 						m_line_start.set_x(switch_radius);
 						m_line_start.set_y(size_p->height() / 2);
 						m_line_width = size_p->width() - switch_radius * 2;
+						slot_radius = m_bar.size().height() / 2.f;
+						slot_orient = Vertical;
 					}
+
+					const Color& color = themes()->scroll.outline;
+					short shadetop = themes()->scroll.shadetop;
+					short shadedown = themes()->scroll.shadedown;
+
+					glBindVertexArray(m_vao);
+					GenerateShadedFormBuffers(
+									*size_p,
+									RoundAll,
+									slot_radius,
+									color,
+									shadetop,
+									shadedown,
+									slot_orient,
+									m_slot_inner_buffer.get(),
+									m_slot_outline_buffer.get());
+					glBindVertexArray(0);
+
+
 					return true;
 				}
 
@@ -274,27 +157,72 @@ namespace BlendInt {
 						(float) z());
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
-		m_slot.Draw(mvp);
-
-		glm::mat4 switch_mvp;
+		glm::mat4 local_mvp;
 
 		if (orientation() == Horizontal) {
 			// m_line_start.x() == switch_radius
-			switch_mvp = glm::translate(mvp,
+			local_mvp = glm::translate(mvp,
+							glm::vec3(0.f,
+											(float) (m_line_start.y()
+															- m_line_start.x()),
+											0.f));
+		} else {
+			// m_line_start.y() == switch_radius
+			local_mvp = glm::translate(mvp,
+							glm::vec3(
+											(float) (m_line_start.x()
+															- m_line_start.y()),
+											0.f, 0.f));
+		}
+
+		glBindVertexArray(m_vao);
+
+		RefPtr<GLSLProgram> program =
+						ShaderManager::instance->default_form_program();
+		program->Use();
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local_mvp));
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
+		DrawShadedTriangleFan(0, 1, m_slot_inner_buffer.get());
+
+		glDisableVertexAttribArray(1);
+
+		glm::vec4 color;
+		color.r = themes()->scroll.outline.r() / 255.f;
+		color.g = themes()->scroll.outline.g() / 255.f;
+		color.b = themes()->scroll.outline.b() / 255.f;
+		color.a = themes()->scroll.outline.a() / WIDGET_AA_JITTER /255.f;
+
+		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
+
+		DrawTriangleStrip(program, local_mvp, 0, m_slot_outline_buffer.get());
+
+		glDisableVertexAttribArray(0);
+
+		program->Reset();
+
+		glBindVertexArray(0);
+
+		if (orientation() == Horizontal) {
+			// m_line_start.x() == switch_radius
+			local_mvp = glm::translate(mvp,
 							glm::vec3(get_position(),
 											(float) (m_line_start.y()
 															- m_line_start.x()),
 											0.0));
 		} else {
 			// m_line_start.y() == switch_radius
-			switch_mvp = glm::translate(mvp,
+			local_mvp = glm::translate(mvp,
 							glm::vec3(
 											(float) (m_line_start.x()
 															- m_line_start.y()),
 											get_position(), 0.0));
 		}
 
-		m_bar.Draw(switch_mvp);
+		m_bar.Draw(local_mvp);
 
 		event->accept(this);
 	}
@@ -356,7 +284,42 @@ namespace BlendInt {
 
 	void ScrollBar::InitOnce ()
 	{
-		m_slot.Resize(m_line_width, m_slot.size().height());
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		m_slot_inner_buffer.reset(new GLArrayBuffer);
+		m_slot_outline_buffer.reset(new GLArrayBuffer);
+
+		Size slot_size = m_bar.size();
+		float slot_radius;
+		Orientation slot_orient;
+		if(orientation() == Horizontal) {
+			slot_size.set_width(size().width());
+			slot_radius = m_bar.size().height() / 2.f;
+			slot_orient = Vertical;
+		} else {
+			slot_size.set_height(size().height());
+			slot_radius = m_bar.size().width() / 2.f;
+			slot_orient = Horizontal;
+		}
+
+		const Color& color = themes()->scroll.inner;
+		short shadetop = themes()->scroll.shadetop;
+		short shadedown = themes()->scroll.shadedown;
+
+		GenerateShadedFormBuffers(
+						slot_size,
+						RoundAll,
+						slot_radius,
+						color,
+						shadetop,
+						shadedown,
+						slot_orient,
+						m_slot_inner_buffer.get(),
+						m_slot_outline_buffer.get()
+						);
+
+		glBindVertexArray(0);
 	}
 
 	int ScrollBar::GetSpace ()
