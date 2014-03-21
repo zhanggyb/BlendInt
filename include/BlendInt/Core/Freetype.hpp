@@ -54,7 +54,7 @@ namespace BlendInt {
 		 * @param dpi
 		 * @return
 		 */
-		bool open (const Font& font = Font("Sans"),
+		bool Open (const Font& font = Font("Sans"),
 					unsigned int dpi = 96);
 
 		/**
@@ -62,7 +62,7 @@ namespace BlendInt {
 		 * @param filename File path name
 		 * @param size Font size
 		 */
-		bool open (const std::string& filename,
+		bool Open (const std::string& filename,
 					unsigned int size = 9,
 					unsigned int dpi = 96);
 
@@ -73,10 +73,10 @@ namespace BlendInt {
 		 * @param index The index of the face withing the font. Default is 0
 		 * @param size Font size
 		 */
-		bool open (const FT_Byte* buffer, FT_Long bufsize, FT_Long index = 0,
+		bool Open (const FT_Byte* buffer, FT_Long bufsize, FT_Long index = 0,
 				unsigned int size = 9, unsigned int dpi = 96);
 
-		void close ();
+		void Close ();
 
 		/**
 		 * @brief destructor
@@ -86,7 +86,7 @@ namespace BlendInt {
 		 */
 		virtual ~Freetype ();
 
-		bool valid ()
+		bool valid () const
 		{
 			return valid_;
 		}
@@ -118,10 +118,7 @@ namespace BlendInt {
 			return max_advance_;
 		}
 
-		const FT_Face& getFontFace (void) const
-		{
-			return face_;
-		}
+		FT_GlyphSlot GetGlyphSlot () const;
 
 		const FT_Stroker& getStroker (void) const
 		{
@@ -166,7 +163,7 @@ namespace BlendInt {
 		 * anti-aliased bitmap immediately. This can avoid calling
 		 * renderGlyph()
 		 */
-		bool loadCharacter (FT_ULong charcode, FT_Int32 load_flags);
+		bool LoadCharacter (FT_ULong charcode, FT_Int32 load_flags);
 
 		bool setLcdFilter (FT_LcdFilter filter);
 
@@ -175,11 +172,6 @@ namespace BlendInt {
 //		Tuple2l getKerning (const wchar_t& left,
 //						  const wchar_t& right,
 //						  FT_UInt kern_mode = FT_KERNING_DEFAULT);
-
-		const Font& font () const
-		{
-			return font_;
-		}
 
 		unsigned int dpi () const
 		{
@@ -191,12 +183,15 @@ namespace BlendInt {
 			dpi_ = dpi;
 		}
 
+		const FT_Face& face () const
+		{
+			return face_;
+		}
+
 	private:
 
 		bool getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
 				FT_UInt kern_mode, FT_Vector *akerning);
-
-	private:
 
 		FT_Library library_; /**< Freetype Library */
 
@@ -219,8 +214,6 @@ namespace BlendInt {
 
 		/** Max horizontal advance */
 		int max_advance_;
-
-		Font font_;
 
 		unsigned int dpi_;
 

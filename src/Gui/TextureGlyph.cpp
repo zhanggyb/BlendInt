@@ -74,14 +74,23 @@ namespace BlendInt {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		if (freetype.loadCharacter(charcode, FT_LOAD_RENDER)) {
+		if (freetype.LoadCharacter(charcode, FT_LOAD_RENDER)) {
 
-			FT_GlyphSlot g = freetype.getFontFace()->glyph;
+			FT_GlyphSlot g = freetype.face()->glyph;
 
 			/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */
 			//glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
 			// GL_ALPHA is not valid in GL 3.2 core
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, g->bitmap.width, g->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+			glTexImage2D(
+							GL_TEXTURE_2D,
+							0,
+							GL_R8,
+							g->bitmap.width,
+							g->bitmap.rows,
+							0,
+							GL_RED,
+							GL_UNSIGNED_BYTE,
+							g->bitmap.buffer);
 
 			/* Calculate the vertex and texture coordinates */
 			glyph_.bitmap_left = g->bitmap_left;
@@ -187,9 +196,9 @@ namespace BlendInt {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		if (freetype->loadCharacter(charcode, FT_LOAD_RENDER)) {
+		if (freetype->LoadCharacter(charcode, FT_LOAD_RENDER)) {
 
-			FT_GlyphSlot g = freetype->getFontFace()->glyph;
+			FT_GlyphSlot g = freetype->face()->glyph;
 
 			/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);

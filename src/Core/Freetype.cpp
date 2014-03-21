@@ -42,28 +42,26 @@ namespace BlendInt {
 
 	}
 
-	bool Freetype::open (const Font& font,
+	bool Freetype::Open (const Font& font,
 						   unsigned int dpi)
 	{
 		// make sure close opened resources
-		close();
+		Close();
 
 		FT_Error error;
 
-		string filename;
+		string filepath;
 
 #ifdef USE_FONTCONFIG
 		FontConfig* fontconfig = FontConfig::instance();
-		filename = fontconfig->getFontPath(font);
+		filepath = fontconfig->getFontPath(font);
 #else
 
 #ifdef __APPLE__
-		filename = "/System/Library/Fonts/LucidaGrande.ttc";
+		filepath = "/System/Library/Fonts/LucidaGrande.ttc";
 #endif
 
 #endif
-
-		font_ = font;
 
 		error = FT_Init_FreeType(&library_);
 		if (error) {
@@ -71,15 +69,15 @@ namespace BlendInt {
 			return false;
 		}
 
-		error = FT_New_Face(library_, filename.c_str(), 0, &face_);
+		error = FT_New_Face(library_, filepath.c_str(), 0, &face_);
 		if (error == FT_Err_Unknown_File_Format) {
-			cerr << "Unknown font file format: " << filename << endl;
-			close();
+			cerr << "Unknown font file format: " << filepath << endl;
+			Close();
 			return false;
 		}
 		if (error) {
-			cerr << "Fail to generate a new Font Face from: " << filename << endl;
-			close ();
+			cerr << "Fail to generate a new Font Face from: " << filepath << endl;
+			Close ();
 			return false;
 		}
 
@@ -87,7 +85,7 @@ namespace BlendInt {
 
 		error = FT_Select_Charmap(face_, FT_ENCODING_UNICODE);
 		if (error) {
-			cerr << "Cannot set the unicode character map: " << filename
+			cerr << "Cannot set the unicode character map: " << filepath
 			        << endl;
 		} else {
 			unicode_ = true;
@@ -98,38 +96,33 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool Freetype::open (const std::string& filename,
+	bool Freetype::Open (const std::string& filename,
 							unsigned int size,
 							unsigned int dpi)
 	{
 		// make sure close opened resources
-		close();
+		Close();
 
 		FT_Error error;
 
 		error = FT_Init_FreeType(&library_);
 		if (error) {
 			cerr << "Cannot initialize FreeType library" << endl;
-			close ();
+			Close ();
 			return false;
 		}
 
 		error = FT_New_Face(library_, filename.c_str(), 0, &face_);
 		if (error == FT_Err_Unknown_File_Format) {
 			cerr << "Unknown font file format: " << " " << filename << endl;
-			close ();
+			Close ();
 			return false;
 		}
 		if (error) {
 			cerr << "Fail to generate a new Font Face" << endl;
-			close ();
+			Close ();
 			return false;
 		}
-
-		font_.family = face_->family_name;
-		font_.size = size;
-		font_.italic = (face_->style_flags & FT_STYLE_FLAG_ITALIC) ? true : false;
-		font_.bold = (face_->style_flags & FT_STYLE_FLAG_BOLD) ? true : false;
 
 		valid_ = true;          // now treat it success
 
@@ -145,35 +138,30 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool Freetype::open (const FT_Byte* buffer,
+	bool Freetype::Open (const FT_Byte* buffer,
 							FT_Long bufsize,
 							FT_Long index,
 							unsigned int size,
 							unsigned int dpi)
 	{
 		// make sure close opened resources
-		close();
+		Close();
 
 		FT_Error error;
 
 		error = FT_Init_FreeType(&library_);
 		if (error) {
 			cerr << "Cannot initialize FreeType library" << endl;
-			close ();
+			Close ();
 			return false;
 		}
 
 		error = FT_New_Memory_Face(library_, buffer, bufsize, index, &face_);
 		if (error) {
 			cerr << "Fail to generate a new Font Face from memory" << endl;
-			close ();
+			Close ();
 			return false;
 		}
-
-		font_.family = face_->family_name;
-		font_.size = size;
-		font_.italic = (face_->style_flags & FT_STYLE_FLAG_ITALIC) ? true : false;
-		font_.bold = (face_->style_flags & FT_STYLE_FLAG_BOLD) ? true : false;
 
 		valid_ = true;          // now treat it success
 
@@ -188,7 +176,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void Freetype::close ()
+	void Freetype::Close ()
 	{
 		if (stroker_) {
 			FT_Stroker_Done(stroker_);
@@ -211,7 +199,7 @@ namespace BlendInt {
 
 	Freetype::~Freetype ()
 	{
-		close();
+		Close();
 	}
 
 
@@ -263,12 +251,11 @@ namespace BlendInt {
 
 	bool Freetype::setCharSize (unsigned int size, unsigned int dpi)
 	{
-		FT_Error error;
-
 		if (!valid_)
 			return false;
 
-		font_.size = size; dpi_ = dpi;
+		FT_Error error;
+		dpi_ = dpi;
 
 		// size_t hres = 64;
 
@@ -278,7 +265,7 @@ namespace BlendInt {
 		//in terms of 1/64ths of pixels.  Thus, to make a font
 		//h pixels high, we need to request a size of h*64.
 		//(h << 6 is just a prettier way of writting h*64)
-		error = FT_Set_Char_Size(face_, (long) (font_.size << 6), 0, dpi_, 0);
+		error = FT_Set_Char_Size(face_, (long) (size << 6), 0, dpi_, 0);
 		if (error) {
 			cerr << "The current font don't support the size, " << size
 			        << " and dpi " << dpi_ << endl;
@@ -315,7 +302,7 @@ namespace BlendInt {
 		return (FT_Get_Char_Index(face_, charcode));
 	}
 
-	bool Freetype::loadCharacter (FT_ULong charcode, FT_Int32 load_flags)
+	bool Freetype::LoadCharacter (FT_ULong charcode, FT_Int32 load_flags)
 	{
 		if (!valid_)
 			return false;
@@ -345,6 +332,14 @@ namespace BlendInt {
 		}
 
 		return true;
+	}
+
+	FT_GlyphSlot Freetype::GetGlyphSlot () const
+	{
+		if(!valid_)
+			return 0;
+
+		return face_->glyph;
 	}
 
 	bool Freetype::getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
@@ -422,4 +417,3 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
-

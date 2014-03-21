@@ -133,7 +133,7 @@ namespace BlendInt {
 				glDeleteTextures(1, &texture_);
 		}
 
-		FT_GlyphSlot g = freetype->getFontFace()->glyph;
+		FT_GlyphSlot g = freetype->face()->glyph;
 
 		int roww = 0;
 		int rowh = 0;
@@ -142,7 +142,7 @@ namespace BlendInt {
 
 		/* Find minimum size for a texture holding all visible ASCII characters */
 		for (wchar_t i = starting_charcode_; i < (starting_charcode_ + stride_ - 1); i++) {
-			if (!freetype->loadCharacter(i, FT_LOAD_RENDER)) {
+			if (!freetype->LoadCharacter(i, FT_LOAD_RENDER)) {
 				fprintf(stderr, "Loading character %c failed!\n", i);
 				continue;
 			}
@@ -185,7 +185,7 @@ namespace BlendInt {
 		rowh = 0;
 
 		for (wchar_t i = starting_charcode_; i < (starting_charcode_ + stride_ - 1); i++) {
-			if (!freetype->loadCharacter(i, FT_LOAD_RENDER)) {
+			if (!freetype->LoadCharacter(i, FT_LOAD_RENDER)) {
 				fprintf(stderr, "Loading character %c failed!\n", i);
 				continue;
 			}
@@ -249,7 +249,7 @@ namespace BlendInt {
 		fprintf(stdout, "Generated %u characters with a %u x %u (%u kb) texture atlas: ",
 				stride_, width_, height_, width_ * height_ / 1024);
 
-		std::cerr << ConvertFromString(freetype->font().family) << " with size: "<< freetype->font().size << " and dpi: " << freetype->dpi() << std::endl;
+		//std::cerr << ConvertFromString(freetype->font().family) << " with size: "<< freetype->font().size << " and dpi: " << freetype->dpi() << std::endl;
 #endif
 	}
 

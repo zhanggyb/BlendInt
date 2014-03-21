@@ -163,7 +163,7 @@ namespace BlendInt {
 			: m_freetype(NULL)
 	{
 		m_freetype = new Freetype;
-		m_freetype->open(font, dpi);
+		m_freetype->Open(font, dpi);
 
 		if(!setup()) {
 			throw std::runtime_error("Fail to setup FontCache");

@@ -59,9 +59,9 @@ TEST_F(TextureFontTest1, Foo1)
 
     Freetype ft;
 #ifdef __APPLE__
-    ft.open("/System/Library/Fonts/xxx.ttf");
+    ft.Open("/System/Library/Fonts/xxx.ttf");
 #else
-    ft.open("/home/zhanggyb/.fonts/m/msyh.ttf", 72, 96);
+    ft.Open("/home/zhanggyb/.fonts/m/msyh.ttf", 72, 96);
 #endif
 
     if(!ft.valid()) {
@@ -166,7 +166,7 @@ TEST_F(TextureFontTest1, Foo1)
 #endif  // __APPLE__
     }
 
-    ft.close();
+    ft.Close();
     Interface::Release();
 
     Terminate();

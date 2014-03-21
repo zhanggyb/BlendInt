@@ -40,7 +40,6 @@ namespace BlendInt {
 	 */
 	class TextureGlyph
 	{
-
 	public:
 
 		TextureGlyph ();

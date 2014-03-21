@@ -51,6 +51,12 @@ namespace BlendInt {
 		}
 	};
 
+	struct KeyInfo {
+		String file;
+		unsigned int size;
+		unsigned int dpi;
+	};
+
 	/**
 	 * @brief Class in charge of caching fonts
 	 */
