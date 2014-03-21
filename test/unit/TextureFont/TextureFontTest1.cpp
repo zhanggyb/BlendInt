@@ -61,7 +61,7 @@ TEST_F(TextureFontTest1, Foo1)
 #ifdef __APPLE__
     ft.open("/System/Library/Fonts/xxx.ttf");
 #else
-    ft.open("/usr/share/fonts/TTF/DejaVuSans.ttf", 36, 96);
+    ft.open("/home/zhanggyb/.fonts/m/msyh.ttf", 72, 96);
 #endif
 
     if(!ft.valid()) {
@@ -79,7 +79,7 @@ TEST_F(TextureFontTest1, Foo1)
 
     glGenBuffers(1, &vbo);
 
-    font.Load(ft, L'A');
+    font.Load(ft, L'舞');
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 

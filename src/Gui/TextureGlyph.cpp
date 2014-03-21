@@ -92,34 +92,35 @@ namespace BlendInt {
 			glyph_.advance_y = g->advance.y >> 6;
 
 			glyph_.vertexes[0].x = glyph_.bitmap_left;
-			glyph_.vertexes[0].y = glyph_.bitmap_top;
+			glyph_.vertexes[0].y = glyph_.bitmap_top - glyph_.bitmap_height;
 			glyph_.vertexes[0].s = 0;
-			glyph_.vertexes[0].t = 0;
+			glyph_.vertexes[0].t = 1;
 
 			glyph_.vertexes[1].x = glyph_.bitmap_left + glyph_.bitmap_width;
-			glyph_.vertexes[1].y = glyph_.bitmap_top;
+			glyph_.vertexes[1].y = glyph_.bitmap_top - glyph_.bitmap_height;
 			glyph_.vertexes[1].s = 1;
-			glyph_.vertexes[1].t = 0;
+			glyph_.vertexes[1].t = 1;
 
-			glyph_.vertexes[2].x = glyph_.bitmap_left;
-			glyph_.vertexes[2].y = glyph_.bitmap_top - glyph_.bitmap_height;
-			glyph_.vertexes[2].s = 0;
-			glyph_.vertexes[2].t = 1;
+			glyph_.vertexes[2].x = glyph_.bitmap_left + glyph_.bitmap_width;
+			glyph_.vertexes[2].y = glyph_.bitmap_top;
+			glyph_.vertexes[2].s = 1;
+			glyph_.vertexes[2].t = 0;
 
-			glyph_.vertexes[3].x = glyph_.bitmap_left + glyph_.bitmap_width;
-			glyph_.vertexes[3].y = glyph_.bitmap_top;
-			glyph_.vertexes[3].s = 1;
-			glyph_.vertexes[3].t = 0;
+			glyph_.vertexes[3].x = glyph_.bitmap_left;
+			glyph_.vertexes[3].y = glyph_.bitmap_top - glyph_.bitmap_height;
+			glyph_.vertexes[3].s = 0;
+			glyph_.vertexes[3].t = 1;
 
-			glyph_.vertexes[4].x = glyph_.bitmap_left;
-			glyph_.vertexes[4].y = glyph_.bitmap_top - glyph_.bitmap_height;
-			glyph_.vertexes[4].s = 0;
-			glyph_.vertexes[4].t = 1;
+			glyph_.vertexes[4].x = glyph_.bitmap_left + glyph_.bitmap_width;
+			glyph_.vertexes[4].y = glyph_.bitmap_top;
+			glyph_.vertexes[4].s = 1;
+			glyph_.vertexes[4].t = 0;
 
-			glyph_.vertexes[5].x = glyph_.bitmap_left + glyph_.bitmap_width;
-			glyph_.vertexes[5].y = glyph_.bitmap_top - glyph_.bitmap_height;
-			glyph_.vertexes[5].s = 1;
-			glyph_.vertexes[5].t = 1;
+			glyph_.vertexes[5].x = glyph_.bitmap_left;
+			glyph_.vertexes[5].y = glyph_.bitmap_top;
+			glyph_.vertexes[5].s = 0;
+			glyph_.vertexes[5].t = 0;
+
 		}
 
 		glBindTexture(GL_TEXTURE_2D, 0);

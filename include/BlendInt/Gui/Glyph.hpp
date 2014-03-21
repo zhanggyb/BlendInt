@@ -40,12 +40,13 @@
 
 namespace BlendInt {
 
-		struct Vertex2D {
-			GLfloat x;
-			GLfloat y;
-			GLfloat s;
-			GLfloat t;
-		};
+	struct Vertex2D
+	{
+		GLfloat x;
+		GLfloat y;
+		GLfloat s;
+		GLfloat t;
+	};
 
 	struct Glyph
 	{
