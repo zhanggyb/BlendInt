@@ -34,22 +34,22 @@
 #include <cwchar>
 #include <iostream>
 
-#include <BlendInt/Gui/TextureFont.hpp>
+#include <BlendInt/Gui/TextureGlyph.hpp>
 
 namespace BlendInt {
 
-	TextureFont::TextureFont()
+	TextureGlyph::TextureGlyph()
 	: texture_(0)
 	{
 
 	}
 
-	TextureFont::~TextureFont()
+	TextureGlyph::~TextureGlyph()
 	{
 		glDeleteTextures(1, &texture_);
 	}
 
-	void TextureFont::Load (Freetype& freetype, wchar_t charcode)
+	void TextureGlyph::Load (Freetype& freetype, wchar_t charcode)
 	{
 		if(!freetype.valid()) return;
 
@@ -120,7 +120,7 @@ namespace BlendInt {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void TextureFont::generate(Freetype* freetype, wchar_t charcode)
+	void TextureGlyph::generate(Freetype* freetype, wchar_t charcode)
 	{
 		if(!freetype || !freetype->valid()) return;
 

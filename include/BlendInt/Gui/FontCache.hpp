@@ -32,7 +32,7 @@
 
 #include <BlendInt/Core/Freetype.hpp>
 #include <BlendInt/Gui/Glyph.hpp>
-#include <BlendInt/Gui/TextureFont.hpp>
+#include <BlendInt/Gui/TextureGlyph.hpp>
 #include <BlendInt/Gui/TextureAtlas.hpp>
 
 using namespace std;
@@ -221,7 +221,7 @@ namespace BlendInt {
 
 		TextureAtlas m_atlas;
 
-		map<wchar_t, TextureFont*> m_texture_fonts;
+		map<wchar_t, TextureGlyph*> m_texture_fonts;
 
 		static unsigned int maxCaches;
 

@@ -222,7 +222,7 @@ namespace BlendInt {
 
 		TextureAtlas m_atlas;
 
-		map<wchar_t, TextureFont*> m_texture_fonts;
+		map<wchar_t, TextureGlyph*> m_texture_fonts;
 
 		static unsigned int maxCaches;
 
