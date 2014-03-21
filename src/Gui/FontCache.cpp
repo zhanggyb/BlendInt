@@ -174,7 +174,7 @@ namespace BlendInt {
 	{
 		if (m_freetype) {
 
-			map<wchar_t, TextureFont*>::iterator it;
+			map<wchar_t, TextureGlyph*>::iterator it;
 			for (it = m_texture_fonts.begin(); it != m_texture_fonts.end();
 			        it++) {
 				if (it->second) {
@@ -205,7 +205,7 @@ namespace BlendInt {
 			return m_atlas.glyph(charcode);
 		}
 
-		map<wchar_t, TextureFont*>::iterator it;
+		map<wchar_t, TextureGlyph*>::iterator it;
 		it = m_texture_fonts.find(charcode);
 
 		// if the glyph is not found and need to be created
@@ -213,7 +213,7 @@ namespace BlendInt {
 
 			if (create) {
 
-				TextureFont* new_font = new TextureFont;
+				TextureGlyph* new_font = new TextureGlyph;
 				new_font->generate(m_freetype, charcode);
 				m_texture_fonts[charcode] = new_font;
 

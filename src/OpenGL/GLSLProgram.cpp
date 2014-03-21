@@ -591,54 +591,54 @@ namespace BlendInt {
 	{
 		glUniformMatrix4fv (location, count, transpose, value);
 
-#ifdef DEBUG
-		GLenum error = glGetError ();
-		switch (error) {
-
-		case GL_NO_ERROR:
-			break;
-
-		case GL_INVALID_VALUE: {
-			DBG_PRINT_MSG("%s", "Get GL_INVALID_VALUE error, check the OpenGL glUniform manual");
-			break;
-		}
-
-		case GL_INVALID_OPERATION: {
-			DBG_PRINT_MSG("%s", "Get GL_INVALID_OPERATION error, check the OpenGL glUniform manual");
-			break;
-		}
-
-		default:
-			break;
-		}
-#endif
+//#ifdef DEBUG
+//		GLenum error = glGetError ();
+//		switch (error) {
+//
+//		case GL_NO_ERROR:
+//			break;
+//
+//		case GL_INVALID_VALUE: {
+//			DBG_PRINT_MSG("%s", "Get GL_INVALID_VALUE error, check the OpenGL glUniform manual");
+//			break;
+//		}
+//
+//		case GL_INVALID_OPERATION: {
+//			DBG_PRINT_MSG("%s", "Get GL_INVALID_OPERATION error, check the OpenGL glUniform manual");
+//			break;
+//		}
+//
+//		default:
+//			break;
+//		}
+//#endif
 	}
 
 	void GLSLProgram::SetUniform1i(GLint location, GLint v0)
 	{
 		glUniform1i (location, v0);
 
-#ifdef DEBUG
-		GLenum error = glGetError ();
-		switch (error) {
-
-		case GL_NO_ERROR:
-			break;
-
-		case GL_INVALID_VALUE: {
-			DBG_PRINT_MSG("%s", "Get GL_INVALID_VALUE error, check the OpenGL glUniform manual");
-			break;
-		}
-
-		case GL_INVALID_OPERATION: {
-			DBG_PRINT_MSG("%s", "Get GL_INVALID_OPERATION error, check the OpenGL glUniform manual");
-			break;
-		}
-
-		default:
-			break;
-		}
-#endif
+//#ifdef DEBUG
+//		GLenum error = glGetError ();
+//		switch (error) {
+//
+//		case GL_NO_ERROR:
+//			break;
+//
+//		case GL_INVALID_VALUE: {
+//			DBG_PRINT_MSG("%s", "Get GL_INVALID_VALUE error, check the OpenGL glUniform manual");
+//			break;
+//		}
+//
+//		case GL_INVALID_OPERATION: {
+//			DBG_PRINT_MSG("%s", "Get GL_INVALID_OPERATION error, check the OpenGL glUniform manual");
+//			break;
+//		}
+//
+//		default:
+//			break;
+//		}
+//#endif
 
 	}
 
@@ -776,6 +776,13 @@ namespace BlendInt {
 
 		return true;
 	}
+
+	void GLSLProgram::SetUniform4f(GLint location, GLfloat v0, GLfloat v1,
+		GLfloat v2, GLfloat v3)
+	{
+		glUniform4f (location, v0, v1, v2, v3);
+	}
+
 
 	bool GLSLProgram::SetUniform4f(const char* name, GLfloat v0, GLfloat v1,
 		GLfloat v2, GLfloat v3)

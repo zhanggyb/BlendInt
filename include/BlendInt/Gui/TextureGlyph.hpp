@@ -21,40 +21,55 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_TEXTUREFONT_HPP_
-#define _BLENDINT_TEXTUREFONT_HPP_
+#ifndef _BLENDINT_GUI_TEXTUREFONT_HPP_
+#define _BLENDINT_GUI_TEXTUREFONT_HPP_
 
 #include <BlendInt/Core/Freetype.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/Gui/Glyph.hpp>
+
+#ifdef DEBUG
+#define WIDTH 72
+#define HEIGHT 72
+#endif
 
 namespace BlendInt {
 
 	/**
 	 * @brief A class to generate texture for single character with Freetype
 	 */
-	class TextureFont
+	class TextureGlyph
 	{
 
 	public:
 
-		TextureFont ();
+		TextureGlyph ();
 
-		~TextureFont ();
+		~TextureGlyph ();
+
+		void Load (Freetype& freetype, wchar_t charcode);
 
 		void generate (Freetype* freetype, wchar_t charcode);
 
-		const Glyph& glyph () const {
+		const Glyph& glyph () const
+		{
 			return glyph_;
 		}
 
-		const GLuint& texture () const {
+		const GLuint& texture () const
+		{
 			return texture_;
 		}
 
-		unsigned int width () const {return static_cast<unsigned int>(glyph_.bitmap_width);}
+		unsigned int width () const
+		{
+			return static_cast<unsigned int>(glyph_.bitmap_width);
+		}
 
-		unsigned int height () const {return static_cast<unsigned int>(glyph_.bitmap_height);}
+		unsigned int height () const
+		{
+			return static_cast<unsigned int>(glyph_.bitmap_height);
+		}
 
 	private:
 
@@ -68,6 +83,14 @@ namespace BlendInt {
 		GLuint texture_;
 
 		Glyph glyph_;
+
+#ifdef DEBUG
+		void draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y);
+
+		void show_image (FT_Bitmap* bitmap);
+
+		static unsigned char image[HEIGHT][WIDTH];
+#endif
 	};
 }
 
