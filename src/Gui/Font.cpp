@@ -97,12 +97,6 @@ namespace BlendInt {
 			return false;
 		}
 
-		/*
-		std::cout << src.family << " " << src.size << " " << (src.bold ? "bold":"normal") << " " << (src.italic? "italic":"normal")
-				<< " < "
-				<< dist.family << " " << dist.size << " " << (dist.bold ? "bold":"normal") << " " << (dist.italic? "italic":"normal")
-				<< std::endl;
-		*/
 		return false;
 	}
 

@@ -46,7 +46,7 @@ namespace BlendInt {
 #ifdef __OPENGL_CORE_330__
 	const char* ShaderManager::text_vertex_shader =
 			"#version 330\n"
-			"in vec4 coord;"
+			"layout(location = 0) in vec4 coord;"
 			"uniform mat4 MVP;"
 			"out vec2 texpos;"
 			""
@@ -59,11 +59,12 @@ namespace BlendInt {
 			"#version 330\n"
 			"in vec2 texpos;"
 			"uniform sampler2D tex;"
-			"uniform vec4 color;"
+			"uniform vec4 color = vec4(0.f, 0.f, 0.f, 1.f);"
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
-			"  FragmentColor = vec4(1, 1, 1, texture(tex, texpos).a) * color;"
+			"	float alpha = texture(tex, texpos).r;"	// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
+			"	FragmentColor = vec4(color.rgb, color.a * alpha);"
 			"}";
 
 	const char* ShaderManager::primitive_vertex_shader =
@@ -260,11 +261,7 @@ namespace BlendInt {
 	}
 
 	ShaderManager::ShaderManager()
-	: text_attribute_coord_(-1),
-	text_uniform_tex_(-1),
-	text_uniform_color_(-1),
-	text_vbo_(0),
-	m_uniform_mvp(0)
+	: m_uniform_mvp(0)
 	{
 		m_text_program.reset(new GLSLProgram);
 #ifdef DEBUG
@@ -290,7 +287,6 @@ namespace BlendInt {
 
 	ShaderManager::~ShaderManager()
 	{
-		glDeleteBuffers(1, &text_vbo_);
 	}
 
 	bool ShaderManager::Setup ()
@@ -334,31 +330,10 @@ namespace BlendInt {
 			return false;
 		}
 
-		text_attribute_coord_ = m_text_program->GetAttributeLocation("coord");
-		text_uniform_tex_ = m_text_program->GetUniformLocation("tex");
-		text_uniform_color_ = m_text_program->GetUniformLocation("color");
-		if(text_attribute_coord_ == -1 || text_uniform_tex_ == -1 || text_uniform_color_ == -1) {
-			DBG_PRINT_MSG("%s", "Error: cannot get attributes and uniforms");
-			return false;
-		}
-
 		m_uniform_mvp = m_primitive_program->GetUniformLocation("MVP");
 		if(m_uniform_mvp == -1) {
 			return false;
 		}
-
-		// Create the vertex buffer object
-		if(glIsBuffer(text_vbo_)) {
-			glDeleteBuffers(1, &text_vbo_);
-		}
-
-		glGenBuffers(1, &text_vbo_);
-		/*
-		if(!glIsBuffer(text_vbo_)) {
-			std::cerr << "Error: cannot generate buffer object for text" << std::endl;
-			return false;
-		}
-		*/
 
 		return true;
 	}

@@ -165,7 +165,7 @@ namespace BlendInt {
 		glBindTexture(GL_TEXTURE_2D, texture_);
 		glUniform1i(uniform_tex_, 0);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width_, height_, 0, GL_ALPHA, GL_UNSIGNED_BYTE, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width_, height_, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
 
 		/* We require 1 byte alignment when uploading texture data */
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -196,7 +196,7 @@ namespace BlendInt {
 				ox = 0;
 			}
 
-			glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, g->bitmap.width, g->bitmap.rows, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, g->bitmap.width, g->bitmap.rows, GL_RED, GL_UNSIGNED_BYTE, g->bitmap.buffer);
 
 			int offset = i - starting_charcode_;
 			(glyph_array_ + offset )->advance_x = g->advance.x >> 6;
@@ -246,7 +246,7 @@ namespace BlendInt {
 		}
 
 #ifdef DEBUG
-		fprintf(stdout, "Generated %u characters with a %u x %u (%u kb) texture atlas: ",
+		fprintf(stdout, "Generated %u characters with a %u x %u (%u kb) texture atlas: \n",
 				stride_, width_, height_, width_ * height_ / 1024);
 
 		//std::cerr << ConvertFromString(freetype->font().family) << " with size: "<< freetype->font().size << " and dpi: " << freetype->dpi() << std::endl;

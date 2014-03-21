@@ -98,6 +98,7 @@ int main(int argc, char* argv[])
 
 	Button* btn1 = Manage(new Button);
 	btn1->set_name("Button1");
+	btn1->SetText("Hello");
 	btn1->SetPosition(530, 520);
 
 	ToggleButton* toggle1 = Manage(new ToggleButton);

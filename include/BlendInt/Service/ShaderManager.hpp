@@ -64,29 +64,9 @@ namespace BlendInt {
 
 		//bool Find (const GLSLProgram* program);
 
-		const GLint& text_attribute_coord ()
-		{
-			return text_attribute_coord_;
-		}
-
-		const GLint& text_uniform_tex ()
-		{
-			return text_uniform_tex_;
-		}
-
-		const GLint& text_uniform_color ()
-		{
-			return text_uniform_color_;
-		}
-
 		const GLint& uniform_mvp ()
 		{
 			return m_uniform_mvp;
-		}
-
-		const GLuint& text_vbo ()
-		{
-			return text_vbo_;
 		}
 
 	private:
@@ -100,11 +80,6 @@ namespace BlendInt {
 		~ShaderManager ();
 
 		bool Setup ();
-
-		GLint text_attribute_coord_;
-		GLint text_uniform_tex_;
-		GLint text_uniform_color_;
-		GLuint text_vbo_;
 
 		RefPtr<GLSLProgram> m_text_program;
 

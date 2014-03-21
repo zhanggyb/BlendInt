@@ -51,11 +51,14 @@ namespace BlendInt {
 		}
 	};
 
-	struct KeyInfo {
+	struct FontFaceKey {
 		String file;
 		unsigned int size;
 		unsigned int dpi;
 	};
+
+	extern bool operator < (const FontFaceKey& src, const FontFaceKey& dist);
+	extern bool operator == (const FontFaceKey& src, const FontFaceKey& dist);
 
 	/**
 	 * @brief Class in charge of caching fonts
@@ -76,7 +79,7 @@ namespace BlendInt {
 
 		static FontCache* getCache (const Font& font = Font("Sans"), unsigned int dpi = 96);
 
-		static bool release (const Font& font = Font("Sans"));
+		static bool release (const Font& font = Font("Sans"), unsigned int dpi = 96);
 
 		static void releaseAll ();
 
@@ -223,6 +226,10 @@ namespace BlendInt {
 
 		const Glyph& query (wchar_t charcode, bool create = true);
 
+		GLuint m_vao;
+
+		GLuint m_vbo;
+
 		Freetype* m_freetype;
 
 		TextureAtlas m_atlas;
@@ -231,8 +238,8 @@ namespace BlendInt {
 
 		static unsigned int maxCaches;
 
-		static map<Font, FontCache*> cacheDB;
-		static map<Font, unsigned long> cacheCountDB;
+		static map<FontFaceKey, FontCache*> cacheDB;
+		static map<FontFaceKey, unsigned long> cacheCountDB;
 
 		// the following are disabled
 
