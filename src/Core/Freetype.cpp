@@ -21,15 +21,13 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <iostream>
+#include <BlendInt/Types.hpp>
 
 #include <BlendInt/Core/Freetype.hpp>
 
 #ifdef USE_FONTCONFIG
 #include <BlendInt/Core/FontConfig.hpp>
 #endif
-
-using namespace std;
 
 namespace BlendInt {
 
@@ -42,6 +40,7 @@ namespace BlendInt {
 
 	}
 
+	/*
 	bool Freetype::Open (const Font& font,
 						   unsigned int dpi)
 	{
@@ -95,6 +94,7 @@ namespace BlendInt {
 
 		return true;
 	}
+	*/
 
 	bool Freetype::Open (const std::string& filename,
 							unsigned int size,
@@ -107,19 +107,19 @@ namespace BlendInt {
 
 		error = FT_Init_FreeType(&library_);
 		if (error) {
-			cerr << "Cannot initialize FreeType library" << endl;
+			DBG_PRINT_MSG("%s", "Cannot initialize FreeType library");
 			Close ();
 			return false;
 		}
 
 		error = FT_New_Face(library_, filename.c_str(), 0, &face_);
 		if (error == FT_Err_Unknown_File_Format) {
-			cerr << "Unknown font file format: " << " " << filename << endl;
+			DBG_PRINT_MSG("Unknown font file format: %s", filename.c_str());
 			Close ();
 			return false;
 		}
 		if (error) {
-			cerr << "Fail to generate a new Font Face" << endl;
+			DBG_PRINT_MSG("%s", "Fail to generate a new Font Face");
 			Close ();
 			return false;
 		}
@@ -128,8 +128,7 @@ namespace BlendInt {
 
 		error = FT_Select_Charmap(face_, FT_ENCODING_UNICODE);
 		if (error) {
-			cerr << "Cannot set the unicode character map: " << filename
-			        << endl;
+			DBG_PRINT_MSG("%s", "Cannot set the unicode character map");
 		} else {
 			unicode_ = true;
 		}
@@ -151,14 +150,14 @@ namespace BlendInt {
 
 		error = FT_Init_FreeType(&library_);
 		if (error) {
-			cerr << "Cannot initialize FreeType library" << endl;
+			DBG_PRINT_MSG("%s", "Cannot initialize FreeType library");
 			Close ();
 			return false;
 		}
 
 		error = FT_New_Memory_Face(library_, buffer, bufsize, index, &face_);
 		if (error) {
-			cerr << "Fail to generate a new Font Face from memory" << endl;
+			DBG_PRINT_MSG("%s", "Fail to generate a new Font Face from memory");
 			Close ();
 			return false;
 		}
@@ -167,7 +166,7 @@ namespace BlendInt {
 
 		error = FT_Select_Charmap(face_, FT_ENCODING_UNICODE);
 		if (error) {
-			cerr << "Cannot set the unicode character map" << endl;
+			DBG_PRINT_MSG("%s", "Cannot set the unicode character map");
 		} else {
 			unicode_ = true;
 		}
@@ -267,8 +266,8 @@ namespace BlendInt {
 		//(h << 6 is just a prettier way of writting h*64)
 		error = FT_Set_Char_Size(face_, (long) (size << 6), 0, dpi_, 0);
 		if (error) {
-			cerr << "The current font don't support the size, " << size
-			        << " and dpi " << dpi_ << endl;
+			DBG_PRINT_MSG("The current font don't support the size, %ud and dpi %ud", size
+					,dpi_);
 			return false;
 		}
 
@@ -287,7 +286,7 @@ namespace BlendInt {
 
 		error = FT_Set_Pixel_Sizes (face_, width, height);
 		if (error) {
-			cerr << "Fail to set pixel sizes" << endl;
+			DBG_PRINT_MSG("%s", "Fail to set pixel sizes");
 			return false;
 		}
 
@@ -311,7 +310,7 @@ namespace BlendInt {
 
 		error = FT_Load_Char(face_, charcode, load_flags);
 		if (error) {
-			cerr << "Fail to load Character" << endl;
+			DBG_PRINT_MSG("%s", "Fail to load Character");
 			return false;
 		}
 
@@ -327,7 +326,7 @@ namespace BlendInt {
 		error = FT_Render_Glyph(face_->glyph, // glyph slot
 		        render_mode);
 		if (error) {
-			cerr << "Fail to Render glyph" << endl;
+			DBG_PRINT_MSG("%s", "Fail to Render glyph");
 			return false;
 		}
 
@@ -352,7 +351,7 @@ namespace BlendInt {
 		error = FT_Get_Kerning(face_, left_glyph, right_glyph, kern_mode,
 		        akerning);
 		if (error) {
-			cerr << "Fail to get kerning" << endl;
+			DBG_PRINT_MSG("%s", "Fail to get kerning");
 			return false;
 		}
 
@@ -393,7 +392,7 @@ namespace BlendInt {
 		error = FT_Library_SetLcdFilter(library_, filter);
 
 		if (error) {
-			cerr << "Fail to set lcd filter" << endl;
+			DBG_PRINT_MSG("%s", "Fail to set lcd filter");
 			return false;
 		}
 
@@ -409,7 +408,7 @@ namespace BlendInt {
 
 		error = FT_Library_SetLcdFilterWeights(library_, weights);
 		if (error) {
-			cerr << "Fail to set lcd filter weights" << endl;
+			DBG_PRINT_MSG("%s", "Fail to set lcd filter weights");
 			return false;
 		}
 

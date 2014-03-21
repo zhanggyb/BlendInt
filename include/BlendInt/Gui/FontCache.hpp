@@ -27,10 +27,12 @@
 #include <map>
 #include <functional>
 #include <wchar.h>
+#include <string>
 
 #include <glm/mat4x4.hpp>
 
 #include <BlendInt/Core/Freetype.hpp>
+#include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/Glyph.hpp>
 #include <BlendInt/Gui/TextureGlyph.hpp>
 #include <BlendInt/Gui/TextureAtlas.hpp>
@@ -39,7 +41,6 @@ using namespace std;
 
 namespace BlendInt {
 
-	struct Font;
 	class String;
 
 	template<class T>
@@ -52,7 +53,7 @@ namespace BlendInt {
 	};
 
 	struct FontFaceKey {
-		String file;
+		std::string file;
 		unsigned int size;
 		unsigned int dpi;
 	};

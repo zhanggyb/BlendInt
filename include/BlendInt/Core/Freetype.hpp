@@ -32,8 +32,6 @@
 #include FT_STROKER_H
 
 #include <BlendInt/Core/Rect.hpp>
-#include <BlendInt/Gui/Glyph.hpp>
-#include <BlendInt/Gui/Font.hpp>
 
 using namespace std;
 
@@ -54,8 +52,10 @@ namespace BlendInt {
 		 * @param dpi
 		 * @return
 		 */
+		/*
 		bool Open (const Font& font = Font("Sans"),
 					unsigned int dpi = 96);
+					*/
 
 		/**
 		 * @brief open font file
