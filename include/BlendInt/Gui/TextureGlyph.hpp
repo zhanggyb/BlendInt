@@ -28,6 +28,11 @@
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/Gui/Glyph.hpp>
 
+#ifdef DEBUG
+#define WIDTH 72
+#define HEIGHT 72
+#endif
+
 namespace BlendInt {
 
 	/**
@@ -78,6 +83,14 @@ namespace BlendInt {
 		GLuint texture_;
 
 		Glyph glyph_;
+
+#ifdef DEBUG
+		void draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y);
+
+		void show_image (FT_Bitmap* bitmap);
+
+		static unsigned char image[HEIGHT][WIDTH];
+#endif
 	};
 }
 

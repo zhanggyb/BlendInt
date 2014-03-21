@@ -38,6 +38,8 @@
 
 namespace BlendInt {
 
+	unsigned char TextureGlyph::image[HEIGHT][WIDTH];
+
 	TextureGlyph::TextureGlyph()
 	: texture_(0)
 	{
@@ -59,6 +61,7 @@ namespace BlendInt {
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		/* We require 1 byte alignment when uploading texture data */
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -76,7 +79,9 @@ namespace BlendInt {
 			FT_GlyphSlot g = freetype.getFontFace()->glyph;
 
 			/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+			//glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+			// GL_ALPHA is not valid in GL 3.2 core
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, g->bitmap.width, g->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, g->bitmap.buffer);
 
 			/* Calculate the vertex and texture coordinates */
 			glyph_.bitmap_left = g->bitmap_left;
@@ -119,6 +124,44 @@ namespace BlendInt {
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+
+#ifdef DEBUG
+	void TextureGlyph::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
+	{
+	    FT_Int i, j, p, q;
+	    FT_Int x_max = x + bitmap->width;
+	    FT_Int y_max = y + bitmap->rows;
+
+	    for(i = x, p = 0; i < x_max; i++, p++)
+	    {
+	    	if(i >= WIDTH) break;
+
+	        for(j = y, q = 0; j < y_max; j++, q++)
+	        {
+	            if (j >= HEIGHT) break;
+
+	            image[j][i] |= bitmap->buffer[q * bitmap->width + p];
+	        }
+	    }
+	}
+
+	void TextureGlyph::show_image (FT_Bitmap* bitmap)
+	{
+	    int  i, j;
+
+	    int w = std::min (bitmap->width, WIDTH);
+	    int h = std::min(bitmap->rows, HEIGHT);
+
+	    for ( i = 0; i < h; i++ )
+	    {
+	        for ( j = 0; j < w; j++ )
+	            putchar( image[i][j] == 0 ? ' '
+	                     : image[i][j] < 128 ? '+'
+	                     : '*' );
+	        putchar( '\n' );
+	    }
+	}
+#endif
 
 	void TextureGlyph::generate(Freetype* freetype, wchar_t charcode)
 	{

@@ -25,12 +25,12 @@ static const char* text_fragment_shader =
 		"#version 330\n"
 		"in vec2 texpos;"
 		"uniform sampler2D tex;"
+		"uniform vec4 color = vec4(0.f, 0.f, 0.f, 1.f);"
 		"out vec4 FragmentColor;"
 		""
 		"void main(void) {"
-		//"	vec4 color = vec4(0.f, 0.f, 0.f, 1.f);"
-		"  FragmentColor = texture(tex, texpos);"
-		//"  FragmentColor = vec4(1, 1, 1, texture(tex, texpos).a) * color;"
+		"	float alpha = texture(tex, texpos).r;"	// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
+		"	FragmentColor = vec4(color.rgb, color.a * alpha);"
 		"}";
 
 TextureFontTest1::TextureFontTest1()
@@ -61,7 +61,7 @@ TEST_F(TextureFontTest1, Foo1)
 #ifdef __APPLE__
     ft.open("/System/Library/Fonts/xxx.ttf");
 #else
-    ft.open("/usr/share/fonts/TTF/DejaVuSans.ttf", 72, 96);
+    ft.open("/usr/share/fonts/TTF/DejaVuSans.ttf", 36, 96);
 #endif
 
     if(!ft.valid()) {
@@ -98,8 +98,8 @@ TEST_F(TextureFontTest1, Foo1)
 	GLint text_attribute_coord_ = program.GetAttributeLocation("coord");
 	GLint text_uniform_tex_ = program.GetUniformLocation("tex");
 	GLint text_uniform_mvp = program.GetUniformLocation("MVP");
-	//GLint text_uniform_color_ = program.GetUniformLocation("color");
-	if(text_attribute_coord_ == -1 || text_uniform_tex_ == -1 || text_uniform_mvp == -1) {
+	GLint text_uniform_color_ = program.GetUniformLocation("color");
+	if(text_attribute_coord_ == -1 || text_uniform_tex_ == -1 || text_uniform_mvp == -1 || text_uniform_color_ == -1) {
 		DBG_PRINT_MSG("%s", "Error: cannot get attributes and uniforms");
 	}
 	program.Reset();
@@ -128,6 +128,7 @@ TEST_F(TextureFontTest1, Foo1)
 
     	program.SetUniformMatrix4fv(text_uniform_mvp, 1, GL_FALSE, glm::value_ptr(projection * view * model));
 		program.SetUniform1i(text_uniform_tex_, 0);
+		program.SetUniform4f(text_uniform_color_, 1.f, 0.1f, 0.1f, 1.0f);
 
 		glEnableVertexAttribArray(0);
 
