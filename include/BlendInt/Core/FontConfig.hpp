@@ -26,12 +26,10 @@
 
 #include <map>
 #include <string>
-#include <iostream>
 
 #include <fontconfig/fontconfig.h>
 
 #include <BlendInt/Core/Freetype.hpp>
-#include <BlendInt/Gui/Font.hpp>
 
 using namespace std;
 
@@ -71,8 +69,6 @@ namespace BlendInt {
 		 */
 		bool loadDefaultFontToMem (const string& family = string("Sans"));
 
-		bool loadFont (const Font& font);
-
 		/**
 		 * @brief get font path
 		 * @param family
@@ -82,8 +78,6 @@ namespace BlendInt {
 		 */
 		string getFontPath (const string& family, float size = 9, bool bold =
 		        false, bool italic = false);
-
-		string getFontPath (const Font& font);
 
 #ifdef DEBUG
 	public:

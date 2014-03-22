@@ -108,13 +108,11 @@ namespace BlendInt {
 		char iconfile[256];	// FILE_MAXFILE length
 		float icon_alpha;
 
+		/** Font DPI */
+		unsigned int dpi;
+
 		/* Axis Colors */
 		Color xaxis, yaxis, zaxis;
-	};
-
-	struct FontStyle {
-		FontStyle();
-		Font regular;
 	};
 
 	class ThemeManager
@@ -128,11 +126,6 @@ namespace BlendInt {
 		const Themes* themes () const
 		{
 			return &m_themes;
-		}
-
-		const FontStyle* fontStyle () const
-		{
-			return &m_fonts;
 		}
 
 #ifdef DEBUG
@@ -161,8 +154,6 @@ namespace BlendInt {
 		~ThemeManager ();
 
 		Themes m_themes;
-
-		FontStyle m_fonts;
 
 		static ThemeManager* theme_manager;
 

@@ -31,6 +31,8 @@
 
 #include <glm/mat4x4.hpp>
 
+#include <BlendInt/Core/String.hpp>
+
 #include <BlendInt/Core/Object.hpp>
 #include <BlendInt/Core/Freetype.hpp>
 #include <BlendInt/Gui/Glyph.hpp>
@@ -40,8 +42,6 @@
 using namespace std;
 
 namespace BlendInt {
-
-	class String;
 
 	template<class T>
 	struct greater_second: std::binary_function<T, T, bool>

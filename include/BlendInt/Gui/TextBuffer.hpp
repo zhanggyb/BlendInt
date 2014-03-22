@@ -32,7 +32,7 @@
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/Point.hpp>
 
-#include <BlendInt/Gui/FontCache.hpp>
+#include <BlendInt/Gui/Font.hpp>
 
 using namespace std;
 

@@ -220,7 +220,7 @@ namespace BlendInt {
 		error = FT_Load_Glyph(face_, glyph_index, load_flags);
 
 		if (error) {
-			cerr << "Fail to load glyph" << endl;
+			DBG_PRINT_MSG("%s", "Fail to load glyph");
 			return false;
 		}
 

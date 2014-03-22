@@ -147,6 +147,24 @@ namespace BlendInt {
 			success = false;
 		}
 
+#ifdef USE_FONTCONFIG
+
+#ifdef __APPLE__
+
+		// Create a default font
+		FontCache::Create("Sans-Serif", 9, 96, false, false);
+
+#endif
+
+#ifdef __LINUX__
+
+		// Create a default font
+		FontCache::Create("Sans", 9, 96, false, false);
+
+#endif
+
+#endif
+
 		return success;
 	}
 

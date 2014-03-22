@@ -21,7 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <iostream>
 #include <fstream>
 #include <algorithm>
 
@@ -150,10 +149,7 @@ namespace BlendInt {
 		FcPattern *match = FcFontMatch(0, pattern, &result);
 		FcPatternDestroy(pattern);
 
-		if (!match) {
-			// TODO: return default font
-			return getFontPath(Font("Sans"));
-		} else {
+		if (match) {
 			FcValue value;
 			FcResult result = FcPatternGet(match, FC_FILE, 0, &value);
 			if (result) {
@@ -161,50 +157,9 @@ namespace BlendInt {
 			} else {
 				file = (char*) (value.u.s);
 			}
-		}
-
-		FcPatternDestroy(match);
-
-		return file;
-	}
-
-	string FontConfig::getFontPath (const Font& font)
-	{
-		string file;
-
-		string family = ConvertFromString(font.family);
-
-		int weight = font.bold ? FC_WEIGHT_BOLD : FC_WEIGHT_REGULAR;
-		int slant = font.italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN;
-
-		FcPattern *pattern = FcPatternCreate();
-		FcPatternAddDouble(pattern, FC_SIZE, font.size);
-		FcPatternAddInteger(pattern, FC_WEIGHT, weight);
-		FcPatternAddInteger(pattern, FC_SLANT, slant);
-		FcPatternAddString(pattern, FC_FAMILY,
-		        (FcChar8*) family.c_str());
-		FcConfigSubstitute(0, pattern, FcMatchPattern);
-		FcDefaultSubstitute(pattern);
-
-		FcResult result;
-		FcPattern *match = FcFontMatch(0, pattern, &result);
-
-		FcPatternDestroy(pattern);
-
-		if (!match) {
-
-			// TODO: return default font
-			std::cerr << "Error: no default font found" << std::endl;
-			exit(EXIT_FAILURE);
-
 		} else {
-			FcValue value;
-			FcResult result = FcPatternGet(match, FC_FILE, 0, &value);
-			if (result) {
-				// print error
-			} else {
-				file = (char*) (value.u.s);
-			}
+			// TODO: if no file found, return the default font file
+			fprintf(stderr, "ERROR: font %s is not found\n", family.c_str());
 		}
 
 		FcPatternDestroy(match);

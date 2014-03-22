@@ -339,7 +339,7 @@ namespace BlendInt {
 		map<FontFileInfo, unsigned long>::const_iterator it;
 		cout << endl;
 		for (it = cacheCountDB.begin(); it != cacheCountDB.end(); it++) {
-			cout << ConvertFromString(it->first.file) << " of " << it->first.size
+			cout << it->first.file << " of " << it->first.size
 			        << " is used: " << it->second << endl;
 		}
 	}

@@ -39,15 +39,25 @@ namespace BlendInt {
 	{
 	public:
 
-		Font (const std::string& family = std::string("Sans"), unsigned int size = 9,
-		        bool bold = false, bool italic = false);
+#ifdef USE_FONTCONFIG
 
-		/*
-		Font (const std::string& family,
-				unsigned int size = 9,
-        bool bold = false,
-        bool italic = false);
-		*/
+#ifdef __LINUX__
+
+		Font (const std::string& m_name = std::string("Sans"), unsigned int m_size = 9,
+		        bool m_bold = false, bool m_italic = false);
+
+#endif
+
+#ifdef __APPLE__
+		Font (const std::string& family = std::string("Sans-Serif"), unsigned int size = 9,
+		        bool bold = false, bool italic = false);
+#endif
+
+#else
+
+
+
+#endif
 
 		Font (const char* family, unsigned int size = 9, bool bold = false, bool italic = false);
 
@@ -55,25 +65,21 @@ namespace BlendInt {
 
 		Font& operator = (const Font& orig);
 
-		void Print (const glm::mat4& mvp, const String& string, size_t start = 0)
-		{
-			m_cache->Print(mvp, string, start);
-		}
+		void SetName (const std::string& name);
 
-		void Print (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0)
-		{
-			m_cache->Print(mvp, string, length, start);
-		}
+		void SetSize (unsigned int size);
 
-		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start = 0)
-		{
-			m_cache->Print(mvp, x, y, string, start);
-		}
+		void SetBold (bool bold);
 
-		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start = 0)
-		{
-			m_cache->Print(mvp, x, y, string, length, start);
-		}
+		void SetItalic (bool italic);
+
+		void Print (const glm::mat4& mvp, const String& string, size_t start = 0);
+
+		void Print (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0);
+
+		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start = 0);
+
+		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start = 0);
 
 		int get_height () const
 		{
@@ -110,21 +116,43 @@ namespace BlendInt {
 			return m_cache->get_text_height();
 		}
 
+		bool bold () const
+		{
+			return m_bold;
+		}
+
+		bool italic () const
+		{
+			return m_italic;
+		}
+
+		const std::string& name () const
+		{
+			return m_name;
+		}
+
+		unsigned int size () const
+		{
+			return m_size;
+		}
+
+	private:
+
 		/**
 		 * @brief the font family, e.g. "Droid Sans"
 		 *
 		 * @note Currently cannot support non-English family
 		 */
-		String family;
+		std::string m_name;
 
 		/** font size */
-		unsigned int size;
+		unsigned int m_size;
 
 		/** whether text is bold */
-		bool bold;
+		bool m_bold;
 
 		/** whether text is italic */
-		bool italic;
+		bool m_italic;
 
 		RefPtr<FontCache> m_cache;
 	};

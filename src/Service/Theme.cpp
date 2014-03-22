@@ -225,6 +225,8 @@ namespace BlendInt {
 			theme_manager->m_themes.menu_shadow_fac = 0.5f;
 			theme_manager->m_themes.menu_shadow_width = 12;
 
+			theme_manager->m_themes.dpi = 96;
+
 			theme_manager->m_themes.xaxis = 0xFF0000FF;
 			theme_manager->m_themes.yaxis = 0x00FF00FF;
 			theme_manager->m_themes.zaxis = 0x0000FFFF;
@@ -262,12 +264,6 @@ namespace BlendInt {
 			        false), pad(0)
 	{
 
-	}
-
-	FontStyle::FontStyle ()
-	{
-		// TODO: init fonts in fontconfig
-		regular = Font("Droid Sans", 9);
 	}
 
 	ThemeManager::ThemeManager ()
