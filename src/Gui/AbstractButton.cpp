@@ -44,7 +44,6 @@ namespace BlendInt {
 			m_status_checked(false),
 			m_length(0)
 	{
-		FontCache::create(m_font);
 	}
 
 	AbstractButton::~AbstractButton ()
@@ -62,9 +61,8 @@ namespace BlendInt {
 		bool cal_width = true;
 
 		m_text = text;
-		FontCache* fc = FontCache::create(m_font);
 
-		m_text_outline = fc->get_text_outline(m_text);
+		m_text_outline = m_font.get_text_outline(m_text);
 
 		m_length = m_text.length();
 
@@ -88,7 +86,7 @@ namespace BlendInt {
 		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
 		m_origin.set_x((size().width() - m_text_outline.width()) / 2);
 
-		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
@@ -98,9 +96,8 @@ namespace BlendInt {
 		bool cal_width = true;
 
 		m_font = font;
-		FontCache* fc =	FontCache::create(m_font);
 
-		m_text_outline = fc->get_text_outline(m_text);
+		m_text_outline = m_font.get_text_outline(m_text);
 
 		m_length = m_text.length();
 
@@ -125,7 +122,7 @@ namespace BlendInt {
 
 		m_origin.set_x((size().width() - m_text_outline.width()) / 2);
 
-		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
@@ -180,11 +177,11 @@ namespace BlendInt {
 
 		size_t str_len = m_text.length();
 
-		width = FontCache::create(m_font)->GetTextWidth(m_text, str_len);
+		width = m_font.GetTextWidth(m_text, str_len);
 
 		if(width > size().width()) {
 			while(str_len > 0) {
-				width = FontCache::create(m_font)->GetTextWidth(m_text, str_len);
+				width = m_font.GetTextWidth(m_text, str_len);
 				if(width < size().width()) break;
 				str_len--;
 			}

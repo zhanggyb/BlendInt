@@ -68,7 +68,6 @@ namespace BlendInt {
 
 	void TextBuffer::setFont (const Font& font)
 	{
-		FontCache::create(font);
 	}
 
 	void TextBuffer::append (const String& text)

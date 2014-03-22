@@ -59,7 +59,7 @@ TEST_F(TextureFontTest1, Foo1)
 
     Freetype ft;
 #ifdef __APPLE__
-    ft.Open("/System/Library/Fonts/xxx.ttf");
+    ft.Open("/System/Library/Fonts/STHeiti Medium.ttc", 72, 96);
 #else
     ft.Open("/home/zhanggyb/.fonts/m/msyh.ttf", 72, 96);
 #endif

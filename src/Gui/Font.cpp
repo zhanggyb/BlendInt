@@ -30,9 +30,10 @@
 
 namespace BlendInt {
 
-	Font::Font (const String& family, unsigned int size, bool bold, bool italic)
+	Font::Font (const std::string& family, unsigned int size, bool bold, bool italic)
 			: family(family), size(size), bold(bold), italic(italic)
 	{
+		m_cache = FontCache::Create(family, size, 96, bold, italic);
 	}
 
 	/*
@@ -42,15 +43,10 @@ namespace BlendInt {
 	}
 	*/
 
-	Font::Font (const wchar_t* family, unsigned int size, bool bold,
-	        bool italic)
-		: family(family), size(size), bold(bold), italic(italic)
-	{
-	}
-
 	Font::Font (const char* family, unsigned int size, bool bold, bool italic)
 		: family(family), size(size), bold(bold), italic(italic)
 	{
+		m_cache = FontCache::Create(family, size, 96, bold, italic);
 	}
 
 	Font::Font (const Font& orig)
@@ -59,6 +55,8 @@ namespace BlendInt {
 		size = orig.size;
 		bold = orig.bold;
 		italic = orig.italic;
+
+		m_cache = orig.m_cache;
 	}
 
 	Font& Font::operator = (const Font& orig)
@@ -68,48 +66,9 @@ namespace BlendInt {
 		bold = orig.bold;
 		italic = orig.italic;
 
+		m_cache = orig.m_cache;
+
 		return *this;
-	}
-
-	bool operator < (const Font& src, const Font& dist)
-	{
-		if(src.family < dist.family) {
-			return true;
-		} else if(src.family > dist.family) {
-			return false;
-		}
-
-		if(src.size < dist.size) {
-			return true;
-		} else if(src.size > dist.size) {
-			return false;
-		}
-
-		if(src.bold < dist.bold) {
-			return true;
-		} else if(src.bold > dist.bold) {
-			return false;
-		}
-
-		if(src.italic < dist.italic) {
-			return true;
-		} else if (src.italic > dist.italic) {
-			return false;
-		}
-
-		return false;
-	}
-
-	bool operator == (const Font& src, const Font& dist)
-	{
-		if (wcscmp(src.family.c_str(), dist.family.c_str()) == 0) {
-			return true;
-		}
-
-		return (src.family == dist.family &&
-				src.size == dist.size &&
-				src.bold == dist.bold &&
-				src.italic == dist.italic);
 	}
 
 }

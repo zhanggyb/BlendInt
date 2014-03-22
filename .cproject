@@ -232,6 +232,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.165985159" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
+									<listOptionValue builtIn="false" value="USE_FONTCONFIG"/>
 									<listOptionValue builtIn="false" value="__APPLE__"/>
 									<listOptionValue builtIn="false" value="__UNIX__"/>
 								</option>
@@ -244,16 +245,6 @@
 								<option id="gnu.c.compiler.option.debugging.level.1905201643" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1105817608" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
-						</toolChain>
-					</folderInfo>
-					<folderInfo id="cdt.managedbuild.config.gnu.so.debug.2140748179.144891928.1582550795" name="/" resourcePath="extern/glm">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base.1908997259" name="MacOSX GCC" superClass="cdt.managedbuild.toolchain.gnu.macosx.base" unusedChildren="">
-							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.base.215942680" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base.2012220846"/>
-							<tool id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.168531319" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.1169008438"/>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.macosx.base.1122251498" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base.957996907"/>
-							<tool id="cdt.managedbuild.tool.gnu.archiver.macosx.base.1845947024" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base.1201363781"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.202194306" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.129274260"/>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1645934357" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1935757471"/>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>

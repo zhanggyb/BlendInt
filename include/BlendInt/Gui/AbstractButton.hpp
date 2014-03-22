@@ -48,7 +48,7 @@ namespace BlendInt {
 
 		void SetText (const String& text);
 
-		const Font& font () const {return m_font;}
+		Font& font () {return m_font;}
 
 		void SetFont (const Font& font);
 

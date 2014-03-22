@@ -37,7 +37,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/TextEntry.hpp>
-#include <BlendInt/Gui/FontCache.hpp>
 
 #include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Service/Theme.hpp>
@@ -71,8 +70,7 @@ namespace BlendInt {
 			m_cursor_position += event->text().length();
 			m_length += event->text().length();
 
-			FontCache* fc = FontCache::create(m_font);
-			unsigned text_width = fc->GetTextWidth(m_text, m_length, m_start);
+			unsigned text_width = m_font.GetTextWidth(m_text, m_length, m_start);
 
 			unsigned int valid_width = size().width() - DefaultTextEntryPadding.left() - DefaultTextEntryPadding.right();
 
@@ -81,11 +79,11 @@ namespace BlendInt {
 				m_start += event->text().length();
 			}
 
-			text_width = fc->GetTextWidth(m_text, m_length, m_start);
+			text_width = m_font.GetTextWidth(m_text, m_length, m_start);
 			while (text_width > valid_width) {
 				m_length--;
 				m_start++;
-				text_width = fc->GetTextWidth(m_text, m_length, m_start);
+				text_width = m_font.GetTextWidth(m_text, m_length, m_start);
 			}
 
 			Refresh();
@@ -237,9 +235,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		FontCache* fc = FontCache::create(m_font);
-
-		fc->Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, m_start);
+		m_font.Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, m_start);
 
 		if(focused()) {			// draw a cursor
 
@@ -296,9 +292,8 @@ namespace BlendInt {
 		bool cal_width = true;
 
 		m_text = text;
-		FontCache* fc = FontCache::create(m_font);
 
-		m_text_outline = fc->get_text_outline(m_text);
+		m_text_outline = m_font.get_text_outline(m_text);
 
 		m_length = m_text.length();
 
@@ -322,7 +317,7 @@ namespace BlendInt {
 		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
 		m_origin.set_x(2);
 
-		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
@@ -330,20 +325,17 @@ namespace BlendInt {
 	void TextEntry::SetFont (const Font& font)
 	{
 		m_font = font;
-		FontCache* fc =	FontCache::create(m_font);
 
-		m_text_outline = fc->get_text_outline(m_text);
+		m_text_outline = m_font.get_text_outline(m_text);
 
 		AdjustVisibleTextLength();
 
 		m_origin.set_x(DefaultTextEntryPadding.left());
-		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 	}
 
 	void TextEntry::InitOnce ()
 	{
-		FontCache* fc = FontCache::create(m_font);
-
 		set_expand_x(true);
 		set_size (120, 24);	// the same height of a button
 		set_radius(0.0);
@@ -372,8 +364,8 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		m_origin.set_x(DefaultTextEntryPadding.left());
-		m_origin.set_y((size().height() - fc->get_height()) / 2
-		                + std::abs(fc->get_descender()));
+		m_origin.set_y((size().height() - m_font.get_height()) / 2
+		                + std::abs(m_font.get_descender()));
 
 		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
 		set_preferred_size(size());
@@ -402,15 +394,13 @@ namespace BlendInt {
 	size_t TextEntry::GetValidTextSize ()
 	{
 		size_t width = 0;
-		FontCache* fc = FontCache::create(m_font);
-
 		size_t str_len = m_text.length();
 
-		width = fc->GetTextWidth(m_text, str_len);
+		width = m_font.GetTextWidth(m_text, str_len);
 
 		if(width > size().width()) {
 			while(str_len > 0) {
-				width = fc->GetTextWidth(m_text, str_len);
+				width = m_font.GetTextWidth(m_text, str_len);
 				if(width < size().width()) break;
 				str_len--;
 			}
@@ -422,9 +412,7 @@ namespace BlendInt {
 	void TextEntry::GetVisibleTextPlace (size_t* start, size_t* length)
 	{
 		size_t str_len = m_text.length();
-		FontCache* fc = FontCache::create(m_font);
-
-		size_t width = fc->GetTextWidth(m_text, str_len);
+		size_t width = m_font.GetTextWidth(m_text, str_len);
 
 		if(width < size().width() - 4) {
 			*start = 0;
@@ -432,7 +420,7 @@ namespace BlendInt {
 		} else {
 			while(str_len > 0) {
 				str_len--;
-				width = fc->GetTextWidth(m_text, str_len);
+				width = m_font.GetTextWidth(m_text, str_len);
 				if(width < size().width() - 4) break;
 			}
 
@@ -444,16 +432,15 @@ namespace BlendInt {
 
 	void TextEntry::AdjustVisibleTextLength ()
 	{
-		FontCache* fc = FontCache::create(m_font);
-		unsigned text_width = fc->GetTextWidth(m_text, m_length, m_start);
+		unsigned text_width = m_font.GetTextWidth(m_text, m_length, m_start);
 		unsigned int valid_width = size().width() - DefaultTextEntryPadding.left() - DefaultTextEntryPadding.right();
 
 		if(text_width > valid_width) {
 			m_length--;
-			text_width = fc->GetTextWidth(m_text, m_length, m_start);
+			text_width = m_font.GetTextWidth(m_text, m_length, m_start);
 			while ((text_width > valid_width) && (m_length > 0)) {
 				m_length--;
-				text_width = fc->GetTextWidth(m_text, m_length, m_start);
+				text_width = m_font.GetTextWidth(m_text, m_length, m_start);
 			}
 		}
 	}
@@ -461,8 +448,7 @@ namespace BlendInt {
 
 	int TextEntry::GetCursorPosition (const MouseEvent* event)
 	{
-		FontCache* fc = FontCache::create(m_font);
-		int text_width = fc->GetTextWidth(m_text, m_length, m_start);
+		int text_width = m_font.GetTextWidth(m_text, m_length, m_start);
 		int click_width = event->position().x() - position().x() - DefaultTextEntryPadding.left();
 
 		if(click_width < 0 ||
@@ -472,16 +458,16 @@ namespace BlendInt {
 
 		int cursor_offset = 1;
 
-		text_width = fc->GetTextWidth(m_text, cursor_offset, m_start);
+		text_width = m_font.GetTextWidth(m_text, cursor_offset, m_start);
 		if(text_width > click_width) {
 			cursor_offset--;
 		} else {
 			cursor_offset++;
-			text_width = fc->GetTextWidth(m_text, cursor_offset, m_start);
+			text_width = m_font.GetTextWidth(m_text, cursor_offset, m_start);
 			while((text_width < click_width) &&
 				  (cursor_offset <= static_cast<int>(m_length))) {
 				cursor_offset++;
-				text_width = fc->GetTextWidth(m_text, cursor_offset, m_start);
+				text_width = m_font.GetTextWidth(m_text, cursor_offset, m_start);
 			}
 		}
 

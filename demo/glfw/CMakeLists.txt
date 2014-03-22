@@ -13,7 +13,7 @@ list(APPEND glfw_demo_SRC ${headfiles})
 add_executable(glfw_demo ${glfw_demo_SRC})
 
 if(NOT WITH_BUILTIN_GLFW3)
-    if(APPLE)
+    if(OS_APPLE)
         set(LIBS ${LIBS} glfw3)
     else()
         set(LIBS ${LIBS} glfw)

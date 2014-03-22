@@ -185,8 +185,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		if(text().size()) {
-			FontCache* fc = FontCache::create(font());
-			fc->Print(mvp, origin().x(), origin().y(), text(), valid_text_length(), 0);
+			font().Print(mvp, origin().x(), origin().y(), text(), valid_text_length(), 0);
 		}
 
 		event->accept(this);

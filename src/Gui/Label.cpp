@@ -36,7 +36,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/FontCache.hpp>
 #include <BlendInt/Gui/Label.hpp>
 
 namespace BlendInt {
@@ -61,9 +60,8 @@ namespace BlendInt {
 		bool cal_width = true;
 
 		m_text = label;
-		FontCache* fc = FontCache::create(m_font);
 
-		m_text_outline = fc->get_text_outline(m_text);
+		m_text_outline = m_font.get_text_outline(m_text);
 
 		m_length = m_text.length();
 
@@ -93,7 +91,7 @@ namespace BlendInt {
 			m_origin.set_x((size().width() - m_text_outline.width()) / 2);
 		}
 
-		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
@@ -103,9 +101,8 @@ namespace BlendInt {
 		bool cal_width = true;
 
 		m_font = font;
-		FontCache* fc =	FontCache::create(m_font);
 
-		m_text_outline = fc->get_text_outline(m_text);
+		m_text_outline = m_font.get_text_outline(m_text);
 
 		m_length = m_text.length();
 
@@ -136,7 +133,7 @@ namespace BlendInt {
 			m_origin.set_x((size().width() - m_text_outline.width()) / 2);
 		}
 
-		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
@@ -153,8 +150,7 @@ namespace BlendInt {
 					if(size_p->height() < m_text_outline.height()) {
 						m_length = 0;
 					} else {
-						FontCache* fc = FontCache::create(m_font);
-						m_origin.set_y((size_p->height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+						m_origin.set_y((size_p->height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 						m_length = get_valid_text_size(size_p);
 					}
 
@@ -207,7 +203,7 @@ namespace BlendInt {
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
-		FontCache::create(m_font)->Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, 0);
+		m_font.Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, 0);
 
 		//FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
 	}
@@ -218,11 +214,11 @@ namespace BlendInt {
 
 		size_t str_len = m_text.length();
 
-		width = FontCache::create(m_font)->GetTextWidth(m_text, str_len);
+		width = m_font.GetTextWidth(m_text, str_len);
 
 		if(width > size().width()) {
 			while(str_len > 0) {
-				width = FontCache::create(m_font)->GetTextWidth(m_text, str_len);
+				width = m_font.GetTextWidth(m_text, str_len);
 				if(width < size().width()) break;
 				str_len--;
 			}
@@ -237,11 +233,11 @@ namespace BlendInt {
 
 		size_t str_len = m_text.length();
 
-		width = FontCache::create(m_font)->GetTextWidth(m_text, str_len);
+		width = m_font.GetTextWidth(m_text, str_len);
 
 		if(width > size->width()) {
 			while(str_len > 0) {
-				width = FontCache::create(m_font)->GetTextWidth(m_text, str_len);
+				width = m_font.GetTextWidth(m_text, str_len);
 				if(width < size->width()) break;
 				str_len--;
 			}
@@ -254,9 +250,7 @@ namespace BlendInt {
 	{
 		bool cal_width = true;
 
-		FontCache* fc = FontCache::create(m_font);
-
-		m_text_outline = fc->get_text_outline(m_text);
+		m_text_outline = m_font.get_text_outline(m_text);
 
 		m_length = m_text.length();
 
@@ -278,7 +272,7 @@ namespace BlendInt {
 		}
 
 		m_origin.set_x(0);
-		m_origin.set_y((size().height() - fc->get_height()) / 2 + std::abs(fc->get_descender()));
+		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
 		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
 		set_preferred_size(size());

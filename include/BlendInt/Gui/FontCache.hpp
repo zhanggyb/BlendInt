@@ -31,8 +31,8 @@
 
 #include <glm/mat4x4.hpp>
 
+#include <BlendInt/Core/Object.hpp>
 #include <BlendInt/Core/Freetype.hpp>
-#include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/Glyph.hpp>
 #include <BlendInt/Gui/TextureGlyph.hpp>
 #include <BlendInt/Gui/TextureAtlas.hpp>
@@ -52,19 +52,21 @@ namespace BlendInt {
 		}
 	};
 
-	struct FontFaceKey {
-		std::string file;
-		unsigned int size;
-		unsigned int dpi;
+	struct FontFileInfo {
+		std::string file;	/** The path to the font file */
+		unsigned int size;	/** Character size want to be loaded */
+		unsigned int dpi;	/** The DPI used in Freetype setting */
+		bool bold;			/** Search bold font file */
+		bool italic;		/** Search itatlic font file */
 	};
 
-	extern bool operator < (const FontFaceKey& src, const FontFaceKey& dist);
-	extern bool operator == (const FontFaceKey& src, const FontFaceKey& dist);
+	extern bool operator < (const FontFileInfo& src, const FontFileInfo& dist);
+	extern bool operator == (const FontFileInfo& src, const FontFileInfo& dist);
 
 	/**
 	 * @brief Class in charge of caching fonts
 	 */
-	class FontCache
+	class FontCache: public Object
 	{
 	public:
 		// static member functions
@@ -75,12 +77,16 @@ namespace BlendInt {
 		 * @param force if true, remove unused cache and create one
 		 * @return cache object created, NULL for failure
 		 */
-		static FontCache* create (const Font& font = Font("Sans"),
-				unsigned int dpi = 96, bool force = true);
+		//static FontCache* create (const Font& font = Font("Sans"),
+				//unsigned int dpi = 96, bool force = true);
 
-		static FontCache* getCache (const Font& font = Font("Sans"), unsigned int dpi = 96);
+		static RefPtr<FontCache> Create (const std::string& file, unsigned int size, unsigned int dpi, bool bold, bool italic, bool force = true);
 
-		static bool release (const Font& font = Font("Sans"), unsigned int dpi = 96);
+		//static FontCache* getCache (const Font& font = Font("Sans"), unsigned int dpi = 96);
+
+		//static bool release (const Font& font = Font("Sans"), unsigned int dpi = 96);
+
+		static bool Release (const FontFileInfo& key);
 
 		static void releaseAll ();
 
@@ -112,51 +118,32 @@ namespace BlendInt {
 
 		//unsigned int queryHeight (wchar_t charcode, bool create = true);
 
-		void print (const String& string);
+		void Print (const glm::mat4& mvp, const String& string, size_t start);
 
-		/**
-		 * @brief Print the string with the given string length
-		 * @param string
-		 * @param length
-		 * @param restore If restore position after print
-		 */
-		void print (const String& string, size_t length);
+		void Print (const glm::mat4& mvp, const String& string, size_t length, size_t start);
 
-		void print (float x, float y, const String& string);
+		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start);
 
-		void print (float x, float y, const String& string, size_t length);
-
-		void Print (const glm::mat4& mvp, const String& string, size_t start = 0);
-
-		void Print (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0);
-
-		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start = 0);
-
-		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start = 0);
+		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start);
 
 		int get_height ()
 		{
-			if(!m_freetype) return 0;
-			
-			return m_freetype->height();
+			return m_freetype.height();
 		}
 
 		int get_ascender ()
 		{
-			if(m_freetype == NULL) return 0;
-			return m_freetype->ascender();
+			return m_freetype.ascender();
 		}
 
 		int get_descender ()
 		{
-			if(m_freetype == NULL) return 0;
-			return m_freetype->descender();
+			return m_freetype.descender();
 		}
 
 		int get_max_advance ()
 		{
-			if(m_freetype == NULL) return 0;
-			return m_freetype->max_advance();
+			return m_freetype.max_advance();
 		}
 
 //		Tuple2l getKerning (const wchar_t& left, const wchar_t& right,
@@ -165,16 +152,14 @@ namespace BlendInt {
 //			return m_freetype->getKerning(left, right, kern_mode);
 //		}
 
-		const Freetype* fontengine (void) const
+		const Freetype* fontengine () const
 		{
-			return m_freetype;
+			return &m_freetype;
 		}
 
 		void set_dpi (unsigned int dpi)
 		{
-			if(m_freetype) {
-				m_freetype->set_dpi (dpi);
-			}
+			m_freetype.set_dpi (dpi);
 		}
 
 		/**
@@ -201,21 +186,17 @@ namespace BlendInt {
 
 	private:
 
-		/**
-		 * @brief Initialize glyph database
-		 * @return true for success, false for failure
-         *
-         * @warning Do not simply initialize all characer in ascii
-         * cause Render error. I dont't know why this happens
-		 */
-		bool setup ();
+		friend class Font;
+		template <typename T> friend class RefPtr;
 
 		/**
 		 * @brief Default constructor
 		 * @param font Font type
 		 * @param dpi the DPI to be used
 		 */
-		FontCache (const Font& font, unsigned int dpi = 96);
+		//FontCache (const Font& font, unsigned int dpi = 96);
+
+		FontCache (const FontFileInfo& info, unsigned int dpi = 96);
 
 		/**
 		 * @brief private destructor
@@ -225,13 +206,22 @@ namespace BlendInt {
 		 */
 		~FontCache ();
 
+		/**
+		 * @brief Initialize glyph database
+		 * @return true for success, false for failure
+         *
+         * @warning Do not simply initialize all characer in ascii
+         * cause Render error. I dont't know why this happens
+		 */
+		bool setup ();
+
 		const Glyph& query (wchar_t charcode, bool create = true);
 
 		GLuint m_vao;
 
 		GLuint m_vbo;
 
-		Freetype* m_freetype;
+		Freetype m_freetype;
 
 		TextureAtlas m_atlas;
 
@@ -239,8 +229,8 @@ namespace BlendInt {
 
 		static unsigned int maxCaches;
 
-		static map<FontFaceKey, FontCache*> cacheDB;
-		static map<FontFaceKey, unsigned long> cacheCountDB;
+		static map<FontFileInfo, RefPtr<FontCache> > cacheDB;
+		static map<FontFileInfo, unsigned long> cacheCountDB;
 
 		// the following are disabled
 

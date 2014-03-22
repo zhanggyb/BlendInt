@@ -58,10 +58,10 @@ namespace BlendInt {
 
 	unsigned int FontCache::maxCaches = 32;
 
-	map<FontFaceKey, FontCache*> FontCache::cacheDB;
-	map<FontFaceKey, unsigned long> FontCache::cacheCountDB;
+	map<FontFileInfo, RefPtr<FontCache> > FontCache::cacheDB;
+	map<FontFileInfo, unsigned long> FontCache::cacheCountDB;
 
-	bool operator < (const FontFaceKey& src, const FontFaceKey& dist)
+	bool operator < (const FontFileInfo& src, const FontFileInfo& dist)
 	{
 		if(src.file < dist.file) {
 			return true;
@@ -81,20 +81,36 @@ namespace BlendInt {
 			return false;
 		}
 
+		if(src.bold < dist.bold) {
+			return true;
+		} else if (src.bold > dist.bold) {
+			return false;
+		}
+
+		if(src.italic < dist.italic) {
+			return true;
+		} else if (src.italic > dist.italic) {
+			return false;
+		}
+
 		return false;
 	}
 
-	bool operator == (const FontFaceKey& src, const FontFaceKey& dist)
+	bool operator == (const FontFileInfo& src, const FontFileInfo& dist)
 	{
+		// use memcmp?
 		return (src.file == dist.file &&
 				src.size == dist.size &&
-				src.dpi == dist.dpi);
+				src.dpi == dist.dpi &&
+				src.bold == dist.bold &&
+				src.italic == dist.italic);
 	}
 
+	/*
 	FontCache* FontCache::create (const Font& font, unsigned int dpi,
 	        bool force)
 	{
-		FontFaceKey key;
+		FontFileInfo key;
 
 #ifdef USE_FONTCONFIG
 		FontConfig* fontconfig = FontConfig::instance();
@@ -110,7 +126,7 @@ namespace BlendInt {
 		key.dpi = dpi;
 
 		// Don't repeatedly create, cause memory leak
-		map<FontFaceKey, FontCache*>::const_iterator it;
+		map<FontFileInfo, FontCache*>::const_iterator it;
 		it = cacheDB.find(key);
 
 		if (it != cacheDB.end()) {
@@ -127,12 +143,12 @@ namespace BlendInt {
 				return NULL;
 
 			// Remove mostly unused cache
-			typedef std::pair<FontFaceKey, unsigned long> data_t;
+			typedef std::pair<FontFileInfo, unsigned long> data_t;
 			typedef std::priority_queue<data_t, std::deque<data_t>,
 			        greater_second<data_t> > queue_t;
 			queue_t q(cacheCountDB.begin(), cacheCountDB.end());
 
-			FontFaceKey font_of_cache = q.top().first;
+			FontFileInfo font_of_cache = q.top().first;
 			//wcout << "Remove " << q.top().first.family << " from cache DB."
 			//        << std::endl;
 
@@ -149,10 +165,73 @@ namespace BlendInt {
 
 		return cache;
 	}
+	*/
 
+	RefPtr<FontCache> FontCache::Create (const std::string& file, unsigned int size, unsigned int dpi, bool bold, bool italic,
+	        bool force)
+	{
+		FontFileInfo key;
+
+#ifdef USE_FONTCONFIG
+		FontConfig* fontconfig = FontConfig::instance();
+		key.file = fontconfig->getFontPath(file, size, bold, italic);
+#else
+
+#ifdef __APPLE__
+		key.file = font.family;
+#endif
+
+#endif
+		key.size = size;
+		key.dpi = dpi;
+		key.bold = bold;
+		key.italic = italic;
+
+		// Don't repeatedly create, cause memory leak
+		map<FontFileInfo, RefPtr<FontCache> >::const_iterator it;
+		it = cacheDB.find(key);
+
+		if (it != cacheDB.end()) {
+			unsigned long count = cacheCountDB[key];
+			cacheCountDB[key] = count + 1;
+
+			it->second->set_dpi(dpi);
+			return it->second;
+		}
+
+		if (cacheDB.size() >= maxCaches) {
+
+			//if (!force)
+				//return NULL;
+
+			// Remove mostly unused cache
+			typedef std::pair<FontFileInfo, unsigned long> data_t;
+			typedef std::priority_queue<data_t, std::deque<data_t>,
+			        greater_second<data_t> > queue_t;
+			queue_t q(cacheCountDB.begin(), cacheCountDB.end());
+
+			FontFileInfo font_of_cache = q.top().first;
+			//wcout << "Remove " << q.top().first.family << " from cache DB."
+			//        << std::endl;
+
+			// delete cacheDB[font_of_cache];
+			cacheDB.erase(font_of_cache);
+			cacheCountDB.erase(font_of_cache);
+		}
+
+		RefPtr<FontCache> cache(new FontCache(key, dpi));
+
+		cacheDB[key] = cache;
+		unsigned long count = cacheCountDB[key];
+		cacheCountDB[key] = count + 1;
+
+		return cache;
+	}
+
+	/*
 	FontCache* FontCache::getCache (const Font& font, unsigned int dpi)
 	{
-		FontFaceKey key;
+		FontFileInfo key;
 
 #ifdef USE_FONTCONFIG
 		FontConfig* fontconfig = FontConfig::instance();
@@ -168,7 +247,7 @@ namespace BlendInt {
 		key.dpi = dpi;
 
 
-		map<FontFaceKey, unsigned long>::const_iterator it;
+		map<FontFileInfo, unsigned long>::const_iterator it;
 		it = cacheCountDB.find(key);
 
 		if (it == cacheCountDB.end()) {
@@ -180,10 +259,12 @@ namespace BlendInt {
 			return cacheDB[key];
 		}
 	}
+	*/
 
+	/*
 	bool FontCache::release (const Font& font, unsigned int dpi)
 	{
-		FontFaceKey key;
+		FontFileInfo key;
 
 #ifdef USE_FONTCONFIG
 		FontConfig* fontconfig = FontConfig::instance();
@@ -198,7 +279,7 @@ namespace BlendInt {
 		key.size = font.size;
 		key.dpi = dpi;
 
-		map<FontFaceKey, FontCache*>::iterator it;
+		map<FontFileInfo, FontCache*>::iterator it;
 		it = cacheDB.find(key);
 
 		if (it == cacheDB.end())
@@ -215,14 +296,39 @@ namespace BlendInt {
 
 		return true;
 	}
+	*/
+
+	bool FontCache::Release (const FontFileInfo& key)
+	{
+		map<FontFileInfo, RefPtr<FontCache> >::iterator it;
+		it = cacheDB.find(key);
+
+		if (it == cacheDB.end())
+			return false;
+
+		/*
+		FontCache* cache = it->second;
+		if (cache != NULL) {
+			delete cache;
+		}
+		*/
+
+		// now erase the key-value
+		cacheDB.erase(it);
+		cacheCountDB.erase(key);
+
+		return true;
+	}
 
 	void FontCache::releaseAll (void)
 	{
-		map<FontFaceKey, FontCache*>::iterator it;
+		/*
+		map<FontFileInfo, RefPtr<FontCache> >::iterator it;
 
 		for (it = cacheDB.begin(); it != cacheDB.end(); it++) {
 			delete it->second;
 		}
+		*/
 		cacheDB.clear();
 		cacheCountDB.clear();
 	}
@@ -230,7 +336,7 @@ namespace BlendInt {
 #ifdef DEBUG
 	void FontCache::list (void)
 	{
-		map<FontFaceKey, unsigned long>::const_iterator it;
+		map<FontFileInfo, unsigned long>::const_iterator it;
 		cout << endl;
 		for (it = cacheCountDB.begin(); it != cacheCountDB.end(); it++) {
 			cout << ConvertFromString(it->first.file) << " of " << it->first.size
@@ -239,8 +345,9 @@ namespace BlendInt {
 	}
 #endif
 
+	/*
 	FontCache::FontCache (const Font& font, unsigned int dpi)
-			: m_vao(0), m_freetype(0)
+			: Object(), m_vao(0), m_freetype(0)
 	{
 		std::string filepath;
 
@@ -259,33 +366,78 @@ namespace BlendInt {
 		m_freetype->Open(filepath, font.size, dpi);
 
 		if(!setup()) {
-			throw std::runtime_error("Fail to setup FontCache");
+			DBG_PRINT_MSG("%s", "Fail to setup FontCache");
 		}
 	}
 
+	FontCache::FontCache (const FontFileInfo& key, unsigned int dpi)
+			: Object(), m_vao(0), m_freetype(0)
+	{
+		std::string filepath;
+
+#ifdef USE_FONTCONFIG
+		FontConfig* fontconfig = FontConfig::instance();
+		filepath = fontconfig->getFontPath(key.file, key.size, key.bold, key.italic);
+#else
+
+#ifdef __APPLE__
+		filepath = font.family;
+#endif
+
+#endif
+
+		m_freetype = new Freetype;
+		m_freetype->Open(filepath, key.size, dpi);
+
+		if(!setup()) {
+			DBG_PRINT_MSG("%s", "Fail to setup FontCache");
+		}
+	}
+	*/
+
+	FontCache::FontCache (const FontFileInfo& key, unsigned int dpi)
+			: Object(), m_vao(0)
+	{
+		std::string filepath;
+
+#ifdef USE_FONTCONFIG
+		FontConfig* fontconfig = FontConfig::instance();
+		filepath = fontconfig->getFontPath(key.file, key.size, key.bold, key.italic);
+#else
+
+#ifdef __APPLE__
+		filepath = font.family;
+#endif
+
+#endif
+
+		m_freetype.Open(filepath, key.size, dpi);
+
+		if(!setup()) {
+			DBG_PRINT_MSG("%s", "Fail to setup FontCache");
+		}
+	}
+
+
 	FontCache::~FontCache ()
 	{
-		if (m_freetype) {
-
-			map<wchar_t, TextureGlyph*>::iterator it;
-			for (it = m_texture_fonts.begin(); it != m_texture_fonts.end();
-			        it++) {
-				if (it->second) {
-					delete it->second;
-					it->second = 0;
-				}
+		map<wchar_t, TextureGlyph*>::iterator it;
+		for (it = m_texture_fonts.begin(); it != m_texture_fonts.end(); it++) {
+			if (it->second) {
+				delete it->second;
+				it->second = 0;
 			}
-			m_texture_fonts.clear();
-
-			delete m_freetype;
 		}
+		m_texture_fonts.clear();
+
+		m_freetype.Close();
 
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool FontCache::setup (void)
 	{
-		if (!m_freetype->valid()) {
+		if (!m_freetype.valid()) {
 			return false;
 		}
 
@@ -295,7 +447,7 @@ namespace BlendInt {
 		glGenBuffers(1, &m_vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-		m_atlas.generate(m_freetype, 32, 96);
+		m_atlas.generate(&m_freetype, 32, 96);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -317,7 +469,7 @@ namespace BlendInt {
 			if (create) {
 
 				TextureGlyph* new_font = new TextureGlyph;
-				new_font->generate(m_freetype, charcode);
+				new_font->generate(&m_freetype, charcode);
 				m_texture_fonts[charcode] = new_font;
 
 			} else {
@@ -483,7 +635,7 @@ namespace BlendInt {
 
 	Rect FontCache::get_text_outline (const String& string)
 	{
-		if(!m_freetype->valid()) {
+		if(!m_freetype.valid()) {
 			return Rect();
 		}
 		String::const_iterator it;
@@ -508,7 +660,7 @@ namespace BlendInt {
 	{
 		unsigned int width = 0;
 
-		if(!m_freetype->valid()) {
+		if(!m_freetype.valid()) {
 			return width;
 		}
 
