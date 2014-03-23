@@ -47,15 +47,12 @@ namespace BlendInt {
 		Freetype ();
 
 		/**
-		 * @brief open a font family
-		 * @param font
-		 * @param dpi
-		 * @return
+		 * @brief destructor
+		 *
+		 * @warning Do not delete gFontService before any FontType
+		 * object destructed
 		 */
-		/*
-		bool Open (const Font& font = Font("Sans"),
-					unsigned int dpi = 96);
-					*/
+		virtual ~Freetype ();
 
 		/**
 		 * @brief open font file
@@ -78,65 +75,52 @@ namespace BlendInt {
 
 		void Close ();
 
-		/**
-		 * @brief destructor
-		 *
-		 * @warning Do not delete gFontService before any FontType
-		 * object destructed
-		 */
-		virtual ~Freetype ();
-
 		bool valid () const
 		{
-			return valid_;
+			return m_valid;
 		}
 
 		bool isUseKerning (void);
 
 		int height () const
 		{
-			if(!valid_) return 0;
-
-			return height_;
+			return m_valid ? m_height : 0;
 		}
 
 		int ascender () const
 		{
-			if(!valid_) return 0.0;
-			return ascender_;
+			return m_valid ? m_ascender : 0;
 		}
 
 		int descender () const
 		{
-			if(!valid_) return 0.0;
-			return descender_;
+			return m_valid ? m_descender : 0;
 		}
 
 		int max_advance () const
 		{
-			if(!valid_) return 0.0;
-			return max_advance_;
+			return m_valid ? m_max_advance : 0;
 		}
 
 		FT_GlyphSlot GetGlyphSlot () const;
 
-		const FT_Stroker& getStroker (void) const
+		const FT_Stroker& stroker () const
 		{
-			return stroker_;
+			return m_stroker;
 		}
 
 		//bool setFontSize (unsigned int size, unsigned int dpi = 96);
 
-		bool setCharSize (unsigned int size, unsigned int dpi = 96);
+		bool SetCharSize (unsigned int size, unsigned int dpi = 96);
 
-		bool setPixelSize (unsigned int width, unsigned int height);
+		bool SetPixelSize (unsigned int width, unsigned int height);
 
 		/**
 		 * @brief Get the glyph index of a given character code
 		 * @param charcode The character code
 		 * @return The glyph index. 0 means 'undefined character code'
 		 */
-		FT_UInt getCharIndex (const FT_ULong charcode);
+		FT_UInt GetCharIndex (const FT_ULong charcode);
 
 		/**
 		 * @brief Load a single glyph into the glyph slot of a face object
@@ -144,13 +128,13 @@ namespace BlendInt {
 		 * @param load_flags A flag indicating what to load for this glyph
 		 * @return true for success, false for error
 		 */
-		bool loadGlyph (FT_UInt glyph_index, FT_Int32 load_flags =
+		bool LoadGlyph (FT_UInt glyph_index, FT_Int32 load_flags =
 				FT_LOAD_DEFAULT);
 
 		/**
 		 * Call this member function after loadGlyph()
 		 */
-		bool renderGlyph (FT_Render_Mode render_mode = FT_RENDER_MODE_NORMAL);
+		bool RenderGlyph (FT_Render_Mode render_mode = FT_RENDER_MODE_NORMAL);
 
 		/**
 		 * @brief Load a single glyph into the glyph slot of a face object
@@ -165,9 +149,11 @@ namespace BlendInt {
 		 */
 		bool LoadCharacter (FT_ULong charcode, FT_Int32 load_flags);
 
-		bool setLcdFilter (FT_LcdFilter filter);
+		bool SetLcdFilter (FT_LcdFilter filter);
 
-		bool setLcdFilterWeights (unsigned char* weights);
+		bool SetLcdFilterWeights (unsigned char* weights);
+
+		FT_Vector GetKerning (FT_UInt left, FT_UInt right, FT_UInt mode = FT_KERNING_DEFAULT);
 
 //		Tuple2l getKerning (const wchar_t& left,
 //						  const wchar_t& right,
@@ -175,17 +161,17 @@ namespace BlendInt {
 
 		unsigned int dpi () const
 		{
-			return dpi_;
+			return m_dpi;
 		}
 
 		void set_dpi (unsigned int dpi)
 		{
-			dpi_ = dpi;
+			m_dpi = dpi;
 		}
 
 		const FT_Face& face () const
 		{
-			return face_;
+			return m_face;
 		}
 
 	private:
@@ -193,29 +179,29 @@ namespace BlendInt {
 		bool getKerning (FT_UInt left_glyph, FT_UInt right_glyph,
 				FT_UInt kern_mode, FT_Vector *akerning);
 
-		FT_Library library_; /**< Freetype Library */
+		FT_Library m_library; /**< Freetype Library */
 
-		FT_Face face_; /**< freetype2 face */
+		FT_Face m_face; /**< freetype2 face */
 
-		FT_Stroker stroker_; /**< Font stroker */
+		FT_Stroker m_stroker; /**< Font stroker */
 
-		bool valid_; /**< if the font face is valid */
+		bool m_valid; /**< if the font face is valid */
 
-		bool unicode_; /**< if has unicode charmap */
+		bool m_unicode; /**< if has unicode charmap */
 
 		/** used to compute a default line spacing */
-		int height_;
+		int m_height;
 
 		/**/
-		int ascender_;
+		int m_ascender;
 
 		/**/
-		int descender_;
+		int m_descender;
 
 		/** Max horizontal advance */
-		int max_advance_;
+		int m_max_advance;
 
-		unsigned int dpi_;
+		unsigned int m_dpi;
 
 		Freetype (const Freetype& orig);
 

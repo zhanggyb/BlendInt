@@ -447,7 +447,7 @@ namespace BlendInt {
 		glGenBuffers(1, &m_vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-		m_atlas.generate(&m_freetype, 32, 96);
+		m_atlas.Generate(&m_freetype, 32, 96);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -456,7 +456,7 @@ namespace BlendInt {
 
 	const Glyph& FontCache::query (wchar_t charcode, bool create)
 	{
-		if (m_atlas.contains(charcode)) {
+		if (m_atlas.Contain(charcode)) {
 			return m_atlas.glyph(charcode);
 		}
 
@@ -564,74 +564,6 @@ namespace BlendInt {
 		return texture_fonts_[charcode]->height();
 		*/
 //	}
-
-	void FontCache::Print (const glm::mat4& mvp, const String& string, size_t start)
-	{
-		Print (mvp, string, string.length(), start);
-	}
-
-	void FontCache::Print (const glm::mat4& mvp, const String& string, size_t length, size_t start)
-	{
-		glBindVertexArray(m_vao);
-		glm::mat4 m = mvp;
-		RefPtr<GLSLProgram> program = ShaderManager::instance->text_program();
-
-		program->Use();
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_atlas.texture());
-
-		program->SetUniform1i("tex", 0);
-		program->SetUniform4f("color", 0.f, 0.f, 0.f, 1.f);
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(m));
-
-		glEnableVertexAttribArray(0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-		//Vertex2D vertex[6];
-
-		// TODO: read text in TextureFont map
-		size_t str_length = std::min(string.length(), length);
-
-		// TODO: support left->right, and right->left text
-		String::const_iterator it = string.begin();
-		std::advance(it, start);
-
-		for (size_t i = 0; i < str_length; it++, i++)
-		{
-			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-
-			m = glm::translate(m, glm::vec3(m_atlas.glyph(*it).advance_x, 0, 0));
-
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(m));
-		}
-
-		glDisableVertexAttribArray(0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		program->Reset();
-		glBindVertexArray(0);
-	}
-
-	void FontCache::Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start)
-	{
-		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.0));
-
-		Print (translated_mvp, string, string.length(), start);
-	}
-
-	void FontCache::Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start)
-	{
-		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.0));
-
-		Print (translated_mvp, string, length, start);
-	}
 
 	Rect FontCache::get_text_outline (const String& string)
 	{

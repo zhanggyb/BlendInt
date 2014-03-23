@@ -111,20 +111,11 @@ namespace BlendInt {
 		 */
 		//Glyph* query (wchar_t charcode, bool create = true);
 
-
 		//const GLuint queryTexture (wchar_t charcode, bool create = true);
 
 		//unsigned int queryWidth (wchar_t charcode, bool create = true);
 
 		//unsigned int queryHeight (wchar_t charcode, bool create = true);
-
-		void Print (const glm::mat4& mvp, const String& string, size_t start);
-
-		void Print (const glm::mat4& mvp, const String& string, size_t length, size_t start);
-
-		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start);
-
-		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start);
 
 		int get_height ()
 		{

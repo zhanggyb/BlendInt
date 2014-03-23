@@ -28,6 +28,7 @@
 
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/String.hpp>
+#include <BlendInt/Core/Color.hpp>
 
 #include <BlendInt/Gui/FontCache.hpp>
 
@@ -43,8 +44,8 @@ namespace BlendInt {
 
 #ifdef __LINUX__
 
-		Font (const std::string& m_name = std::string("Sans"), unsigned int m_size = 9,
-		        bool m_bold = false, bool m_italic = false);
+		Font (const std::string& name = std::string("Sans"), unsigned int size = 9,
+		        bool bold = false, bool italic = false);
 
 #endif
 
@@ -54,8 +55,6 @@ namespace BlendInt {
 #endif
 
 #else
-
-
 
 #endif
 
@@ -136,6 +135,16 @@ namespace BlendInt {
 			return m_size;
 		}
 
+		void set_color (const Color& color)
+		{
+			m_color = color;
+		}
+
+		const Color& color () const
+		{
+			return m_color;
+		}
+
 	private:
 
 		/**
@@ -153,6 +162,8 @@ namespace BlendInt {
 
 		/** whether text is italic */
 		bool m_italic;
+
+		Color m_color;
 
 		RefPtr<FontCache> m_cache;
 	};

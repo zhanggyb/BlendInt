@@ -59,7 +59,7 @@ namespace BlendInt {
 			"#version 330\n"
 			"in vec2 texpos;"
 			"uniform sampler2D tex;"
-			"uniform vec4 color = vec4(0.f, 0.f, 0.f, 1.f);"
+			"uniform vec4 color;"
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"

@@ -44,13 +44,15 @@
 namespace BlendInt {
 
 	Font::Font (const std::string& name, unsigned int size, bool bold, bool italic)
-			: m_name(name), m_size(size), m_bold(bold), m_italic(italic)
+			: m_name(name), m_size(size), m_bold(bold), m_italic(italic),
+			  m_color(0x000000FF)
 	{
 		m_cache = FontCache::Create(name, size, themes()->dpi, bold, italic);
 	}
 
 	Font::Font (const char* name, unsigned int size, bool bold, bool italic)
-		: m_name(name), m_size(size), m_bold(bold), m_italic(italic)
+		: m_name(name), m_size(size), m_bold(bold), m_italic(italic),
+		  m_color(0x000000FF)
 	{
 		m_cache = FontCache::Create(name, size, themes()->dpi, bold, italic);
 	}
@@ -62,6 +64,8 @@ namespace BlendInt {
 		m_bold = orig.m_bold;
 		m_italic = orig.m_italic;
 
+		m_color = orig.m_color;
+
 		m_cache = orig.m_cache;
 	}
 
@@ -71,6 +75,8 @@ namespace BlendInt {
 		m_size = orig.m_size;
 		m_bold = orig.m_bold;
 		m_italic = orig.m_italic;
+
+		m_color = orig.m_color;
 
 		m_cache = orig.m_cache;
 
@@ -120,7 +126,9 @@ namespace BlendInt {
 		glBindTexture(GL_TEXTURE_2D, m_cache->m_atlas.texture());
 
 		program->SetUniform1i("tex", 0);
-		program->SetUniform4f("color", 0.f, 0.f, 0.f, 1.f);
+		program->SetUniform4f("color", m_color.r() / 255.f,
+				m_color.g() / 255.f, m_color.b() / 255.f,
+				m_color.a() / 255.f);
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(m));
 
@@ -145,7 +153,6 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
 			m = glm::translate(m, glm::vec3(m_cache->m_atlas.glyph(*it).advance_x, 0, 0));
-
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(m));
 		}
 

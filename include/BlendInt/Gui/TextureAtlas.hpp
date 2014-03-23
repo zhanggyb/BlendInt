@@ -45,21 +45,17 @@ namespace BlendInt {
 
 		~TextureAtlas ();
 
-		void initialize ();
+		void Generate (Freetype* freetype, wchar_t start, int size);
 
-		void generate (Freetype* freetype, wchar_t start, int size);
-
-		bool contains (wchar_t charcode);
-
-		void render_text(const wchar_t* text, float x, float y, float sx, float sy);
+		bool Contain (wchar_t charcode);
 
 		const Glyph& glyph (wchar_t charcode) const;
 
-		const GLuint& texture () const {return texture_;}
+		const GLuint& texture () const {return m_texture;}
 
-		unsigned int width() const {return width_;}
+		unsigned int width() const {return m_width;}
 
-		unsigned int height() const {return height_;}
+		unsigned int height() const {return m_height;}
 
 	private:
 
@@ -73,32 +69,23 @@ namespace BlendInt {
 		/**
 		 * Texture ID
 		 */
-		GLuint texture_;		// texture object
+		GLuint m_texture;		// texture object
 
-		RefPtr<GLSLProgram> m_program;
-
-		GLint uniform_tex_;
-
-		GLint attribute_coord_;
-		GLint uniform_color_;
-
-		GLuint vbo_;
-
-		unsigned int width_;				// width of texture in pixels
-		unsigned int height_;			// height of texture in pixels
+		unsigned int m_width;				// width of texture in pixels
+		unsigned int m_height;			// height of texture in pixels
 
 		/**
 		 * The character from which to generate the texture atlas
 		 */
-		wchar_t starting_charcode_;
+		wchar_t m_starting_charcode;
 
 		/**
 		 * the size of how many sequent characters are in this atlas
 		 * from starting_charcode_
 		 */
-		int stride_;
+		int m_stride;
 
-		Glyph *glyph_array_;
+		Glyph *m_glyph_array;
 
 		static const char* vs_shader;
 		static const char* fs_shader;

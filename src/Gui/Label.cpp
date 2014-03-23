@@ -180,32 +180,10 @@ namespace BlendInt {
 
 	void Label::Draw (RedrawEvent* event)
 	{
-//		glColor4ub(m_background.r(), m_background.g(),
-//				   m_background.b(), m_background.a());
-//		glRectf(0.0, 0.0, size().width(), size().height());
-
-//#ifdef DEBUG
-//		glLineWidth(1);
-//		glEnable(GL_LINE_STIPPLE);
-//
-//		glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
-//		glLineStipple(1, 0xAAAA);
-//		glBegin(GL_LINE_LOOP);
-//			glVertex2i(0, 0);
-//			glVertex2i(size().width(), 0);
-//			glVertex2i(size().width(), size().height());
-//			glVertex2i(0, size().height());
-//		glEnd();
-//
-//		glDisable(GL_LINE_STIPPLE);
-//#endif
-
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
 		m_font.Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, 0);
-
-		//FontCache::create(m_font)->print(m_origin.x(), m_origin.y(), m_text, m_length);
 	}
 
 	size_t Label::get_valid_text_size()
