@@ -26,13 +26,25 @@ TEST_F(LabelTest1, Foo1)
     GLFWwindow* win = CreateWindow("Label - Foo1", 640, 480);
 
     // TODO: add test code here
-	//Font my_font ("sans-serif", 24, true);
+	Font my_font ("Source Code Pro", 24);
+	Font my_shadow_font ("Source Code Pro", 24);
 
-	Label* label = Manage (new Label("Hello, World!"));
-	label->set_name("Label");
-	//label->SetFont(my_font);
+	my_shadow_font.set_shadow(true);
+
+	Label* label1 = Manage (new Label("Hello, World1!"));
+	label1->set_name("Label1");
+	label1->Resize(200, 50);
+	label1->SetFont(my_font);
+	label1->SetForegroundColor(Color(0xF0B0E0EF));
+	label1->SetPosition(200, 200);
+
+	Label* label2 = Manage (new Label("Hello, World2!"));
+	label2->set_name("Label2");
+	label2->Resize(200, 50);
+	label2->SetFont(my_shadow_font);
 	// label->SetForegroundColor(Color(0xFF00001F));
-	label->SetPosition(200, 200);
+	label2->SetPosition(200, 100);
+
 
     RunLoop(win);
 

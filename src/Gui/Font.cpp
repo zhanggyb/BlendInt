@@ -44,14 +44,22 @@
 namespace BlendInt {
 
 	Font::Font (const std::string& name, unsigned int size, bool bold, bool italic)
-			: m_name(name), m_size(size), m_bold(bold), m_italic(italic),
+			: m_name(name),
+			  m_size(size),
+			  m_bold(bold),
+			  m_italic(italic),
+			  m_shadow(false),
 			  m_color(0x000000FF)
 	{
 		m_cache = FontCache::Create(name, size, themes()->dpi, bold, italic);
 	}
 
 	Font::Font (const char* name, unsigned int size, bool bold, bool italic)
-		: m_name(name), m_size(size), m_bold(bold), m_italic(italic),
+		: m_name(name),
+		  m_size(size),
+		  m_bold(bold),
+		  m_italic(italic),
+		  m_shadow(false),
 		  m_color(0x000000FF)
 	{
 		m_cache = FontCache::Create(name, size, themes()->dpi, bold, italic);
@@ -63,7 +71,7 @@ namespace BlendInt {
 		m_size = orig.m_size;
 		m_bold = orig.m_bold;
 		m_italic = orig.m_italic;
-
+		m_shadow = orig.m_shadow;
 		m_color = orig.m_color;
 
 		m_cache = orig.m_cache;
@@ -75,7 +83,7 @@ namespace BlendInt {
 		m_size = orig.m_size;
 		m_bold = orig.m_bold;
 		m_italic = orig.m_italic;
-
+		m_shadow = orig.m_shadow;
 		m_color = orig.m_color;
 
 		m_cache = orig.m_cache;
@@ -116,8 +124,10 @@ namespace BlendInt {
 	void Font::Print (const glm::mat4& mvp, const String& string,
 	        size_t length, size_t start)
 	{
+		if(length == 0)	return;
+
 		glBindVertexArray(m_cache->m_vao);
-		glm::mat4 m = mvp;
+		glm::mat4 glyph_pos = mvp;
 		RefPtr<GLSLProgram> program = ShaderManager::instance->text_program();
 
 		program->Use();
@@ -126,11 +136,6 @@ namespace BlendInt {
 		glBindTexture(GL_TEXTURE_2D, m_cache->m_atlas.texture());
 
 		program->SetUniform1i("tex", 0);
-		program->SetUniform4f("color", m_color.r() / 255.f,
-				m_color.g() / 255.f, m_color.b() / 255.f,
-				m_color.a() / 255.f);
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(m));
 
 		glEnableVertexAttribArray(0);
 
@@ -143,17 +148,52 @@ namespace BlendInt {
 		size_t str_length = std::min(string.length(), length);
 
 		// TODO: support left->right, and right->left text
-		String::const_iterator it = string.begin();
-		std::advance(it, start);
+		String::const_iterator it;
 
+		if(m_shadow) {
+
+			// TODO: define a curve to get a offset x, y to draw a good shadow
+			glm::mat4 shadow_offset = glm::translate(glm::mat4(1.0), glm::vec3(1.5f, -1.5f, 0.f));
+			glyph_pos = glyph_pos * shadow_offset;
+
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+			program->SetUniform4f("color",
+					m_color.r() / 255.f,
+					m_color.g() / 255.f,
+					m_color.b() / 255.f,
+					0.175f);
+
+			it = string.begin();
+			std::advance(it, start);
+			for (size_t i = 0; i < str_length; it++, i++)
+			{
+				//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_cache->m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				glyph_pos = glm::translate(glyph_pos, glm::vec3(m_cache->m_atlas.glyph(*it).advance_x, 0, 0));
+				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+			}
+
+			// restore mvp
+			glyph_pos = mvp;
+		}
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+		program->SetUniform4f("color", m_color.r() / 255.f,
+				m_color.g() / 255.f, m_color.b() / 255.f,
+				m_color.a() / 255.f);
+
+		it = string.begin();
+		std::advance(it, start);
 		for (size_t i = 0; i < str_length; it++, i++)
 		{
 			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_cache->m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
-			m = glm::translate(m, glm::vec3(m_cache->m_atlas.glyph(*it).advance_x, 0, 0));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(m));
+			glyph_pos = glm::translate(glyph_pos, glm::vec3(m_cache->m_atlas.glyph(*it).advance_x, 0, 0));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
 		}
 
 		glDisableVertexAttribArray(0);

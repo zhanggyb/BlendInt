@@ -135,6 +135,16 @@ namespace BlendInt {
 			return m_size;
 		}
 
+		bool shadow () const
+		{
+			return m_shadow;
+		}
+
+		void set_shadow (bool shadow)
+		{
+			m_shadow = shadow;
+		}
+
 		void set_color (const Color& color)
 		{
 			m_color = color;
@@ -157,11 +167,16 @@ namespace BlendInt {
 		/** font size */
 		unsigned int m_size;
 
+		// TODO: use std::bitset layer
+
 		/** whether text is bold */
 		bool m_bold;
 
 		/** whether text is italic */
 		bool m_italic;
+
+		/** If use shadow */
+		bool m_shadow;
 
 		Color m_color;
 
