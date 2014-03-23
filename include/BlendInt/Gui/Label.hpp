@@ -66,10 +66,7 @@ namespace BlendInt {
 		 */
 		void SetFont (const Font& font);
 
-		void set_foreground (const Color& fg)
-		{
-			m_foreground = fg;
-		}
+		void SetForegroundColor (const Color& fg);
 
 		void set_background (const Color& color = Color(0x00000000))
 		{
@@ -84,7 +81,7 @@ namespace BlendInt {
 
 	private:
 
-		void Init ();
+		void InitOnce ();
 
 		/**
 		 * @brief get the valid text size to print
@@ -118,8 +115,6 @@ namespace BlendInt {
 		Font m_font;
 
 		int m_alignment;
-
-		Color m_foreground;
 
 		/** Background color, default: transparent */
 		Color m_background;

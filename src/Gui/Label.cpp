@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		set_size(0, 24);	// the same height of a Buttons
 
-		Init();
+		InitOnce();
 	}
 
 	Label::~Label ()
@@ -138,6 +138,11 @@ namespace BlendInt {
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
+	void Label::SetForegroundColor (const Color& fg)
+	{
+		m_font.set_color(fg);
+	}
+
 	bool Label::Update (const UpdateRequest& request)
 	{
 		if(request.id() == Predefined) {
@@ -224,7 +229,7 @@ namespace BlendInt {
 		return str_len;
 	}
 
-	void Label::Init ()
+	void Label::InitOnce ()
 	{
 		bool cal_width = true;
 
@@ -257,3 +262,4 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
+
