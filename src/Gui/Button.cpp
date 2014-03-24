@@ -61,7 +61,7 @@ namespace BlendInt {
 
 	bool Button::Update(const UpdateRequest& request)
 	{
-		if(request.id() == Predefined) {
+		if(request.source() == Predefined) {
 			switch (request.type()) {
 
 			case FormSize: {

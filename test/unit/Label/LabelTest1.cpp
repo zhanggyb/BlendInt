@@ -35,14 +35,15 @@ TEST_F(LabelTest1, Foo1)
 	label1->set_name("Label1");
 	label1->Resize(200, 50);
 	label1->SetFont(my_font);
-	label1->SetForegroundColor(Color(0xF0B0E0EF));
+	label1->set_foreground_color(Color(0xF0B0E0EF));
+	label1->set_background_color(Color(0x101010A0));
 	label1->SetPosition(200, 200);
 
 	Label* label2 = Manage (new Label("Hello, World2!"));
 	label2->set_name("Label2");
 	label2->Resize(200, 50);
 	label2->SetFont(my_shadow_font);
-	// label->SetForegroundColor(Color(0xFF00001F));
+	label2->set_background_color(Color(0xAF60E0BF));
 	label2->SetPosition(200, 100);
 
 

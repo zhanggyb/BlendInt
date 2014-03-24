@@ -21,49 +21,61 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_POPUPWIDGET_HPP_
-#define _BLENDINT_POPUPWIDGET_HPP_
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <glext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
 
-#include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/Shadow.hpp>
-#include <BlendInt/Gui/VertexIcon.hpp>
+#include <math.h>
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
+#include <BlendInt/Gui/PopupFrame.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special widget which is constructed in higher layer for
-	 * popup menus, tooltips
-	 *
-	 * @note a popupwidget cannot be bound to another form in different layer,
-	 * trying to do this will raise an exception.
-	 *
-	 * To layout a popupwidget with others, use a @ref LadderWidget to pack it.
-	 *
-	 * @sa LadderWidget
-	 *
-	 * @ingroup widgets
-	 */
-	class PopupWidget: public Widget
+	PopupFrame::PopupFrame()
+	: Frame()
 	{
-		DISALLOW_COPY_AND_ASSIGN(PopupWidget);
+		//SetLayer(1);	// TODO: define layer in enumeration
+	}
 
-	public:
+	PopupFrame::~PopupFrame()
+	{
 
-		PopupWidget ();
+	}
 
-		virtual ~PopupWidget();
+	bool PopupFrame::Update (const UpdateRequest& request)
+	{
+		if (request.source() == Predefined) {
 
-	protected:
+			switch (request.type()) {
 
-		virtual bool Update (const UpdateRequest& request);
+				case FormSize: {
+					return true;
+				}
 
-		virtual void Draw (RedrawEvent* event);
+				default:
+					return Frame::Update(request);
+			}
 
-	private:
+		} else {
+			return false;
+		}
 
-		Shadow m_shadow;
-	};
+	}
+
+	void PopupFrame::Draw (RedrawEvent* event)
+	{
+		Frame::Draw(event);
+	}
+
 
 }
-
-#endif /* _BLENDINT_POPUPWIDGET_HPP_ */

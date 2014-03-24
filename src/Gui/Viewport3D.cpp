@@ -195,7 +195,7 @@ namespace BlendInt {
 
 	bool Viewport3D::Update (const UpdateRequest& request)
 	{
-		if (request.id() == Predefined) {
+		if (request.source() == Predefined) {
 			switch (request.type()) {
 				case FormSize: {
 

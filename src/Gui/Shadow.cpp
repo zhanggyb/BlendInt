@@ -78,15 +78,15 @@ namespace BlendInt {
 
 	bool Shadow::Update (const UpdateRequest& request)
 	{
-		if (request.id() == Predefined) {
+		if (request.source() == Predefined) {
 			switch (request.type()) {
 
 				case FormSize: {
 
 					const Size* size_p =
-					        static_cast<const Size*>(request.data());
+									static_cast<const Size*>(request.data());
 					glBindVertexArray(m_vao);
-					GenerateShadowBuffers(size_p, radius(), m_blur_rad);
+					GenerateShadowBuffers(*size_p, radius(), m_blur_rad);
 
 					glBindVertexArray(0);
 					return true;
@@ -95,10 +95,10 @@ namespace BlendInt {
 				case ShadowBlurRadius: {
 
 					const float* blur_rad =
-					        static_cast<const float*>(request.data());
+									static_cast<const float*>(request.data());
 
 					glBindVertexArray(m_vao);
-					GenerateShadowBuffers(&size(), radius(), *blur_rad);
+					GenerateShadowBuffers(size(), radius(), *blur_rad);
 					glBindVertexArray(0);
 
 					return true;
@@ -170,7 +170,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
-		GenerateShadowBuffers(&size(), radius(), m_blur_rad);
+		GenerateShadowBuffers(size(), radius(), m_blur_rad);
 
 		glBindVertexArray(0);
 	}
@@ -313,9 +313,9 @@ namespace BlendInt {
 		return tot;
 	}
 
-	void Shadow::GenerateShadowBuffers(const Size* size, float corner_rad, float blur_rad)
+	void Shadow::GenerateShadowBuffers(const Size& size, float corner_rad, float blur_rad)
 	{
-		Size shadow_size = *size;
+		Size shadow_size = size;
 
 		float inner_v[WIDGET_SIZE_MAX][2];
 		float outer_v[WIDGET_SIZE_MAX][2];
@@ -325,8 +325,8 @@ namespace BlendInt {
 		const float radout = themes()->menu_shadow_width * 1.0;
 
 		/* prevent tooltips to not show round shadow */
-		if (radout > 0.2f * size->height())
-			shadow_size.add_height(-0.2f * size->height());
+		if (radout > 0.2f * size.height())
+			shadow_size.add_height(-0.2f * size.height());
 		else
 			shadow_size.add_height(-radout);
 

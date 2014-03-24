@@ -74,7 +74,7 @@ namespace BlendInt {
 
 	bool ScrollBar::Update (const UpdateRequest& request)
 	{
-		if (request.id() == Predefined) {
+		if (request.source() == Predefined) {
 
 			switch (request.type()) {
 				case FormPosition: {

@@ -1,5 +1,6 @@
 #include "PopupWidgetTest1.hpp"
-#include <BlendInt/Gui/PopupWidget.hpp>
+#include <BlendInt/Gui/PopupFrame.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 using namespace BlendInt;
 
@@ -22,14 +23,18 @@ PopupWidgetTest1::~PopupWidgetTest1()
 TEST_F(PopupWidgetTest1, Foo1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("PopupWidget - Foo1");
+	GLFWwindow* window = CreateWindow("PopupWidget - Foo1", 640, 480);
 
 	// TODO: add test code here
 
-	PopupWidget* popup = new PopupWidget;
+	PopupFrame* popup = Manage(new PopupFrame);
 	
-	popup->SetPosition(200, 200);
-	popup->Resize(200, 400);
+	Widget* widget = Manage(new Widget);
+
+	popup->Add(widget);
+
+	popup->SetPosition(100, 100);
+	popup->Resize(200, 200);
 	
 	RunLoop(window);
 

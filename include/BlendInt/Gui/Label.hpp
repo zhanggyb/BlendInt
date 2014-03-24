@@ -26,10 +26,12 @@
 
 #include <string>
 
+#include <BlendInt/Types.hpp>
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/String.hpp>
-#include <BlendInt/Types.hpp>
+
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Font.hpp>
@@ -56,7 +58,7 @@ namespace BlendInt {
 		 *
 		 * call this function will reset the size and preferred size of this object
 		 */
-		void SetText (const String& label);
+		void SetText (const String& text);
 
 		/**
 		 * @brief set the text font
@@ -66,11 +68,14 @@ namespace BlendInt {
 		 */
 		void SetFont (const Font& font);
 
-		void SetForegroundColor (const Color& fg);
-
-		void set_background (const Color& color = Color(0x00000000))
+		void set_foreground_color (const Color& fg)
 		{
-			m_background = color;
+			m_font.set_color(fg);
+		}
+
+		void set_background_color (const Color& color)
+		{
+			m_background_color = color;
 		}
 
 	protected:
@@ -87,13 +92,13 @@ namespace BlendInt {
 		 * @brief get the valid text size to print
 		 * @return how many characters to print
 		 */
-		size_t get_valid_text_size ();
+		size_t GetValidTextSize ();
 
 		/**
 		 * @brief get the valid text size to print
 		 * @return how many characters to print
 		 */
-		size_t get_valid_text_size (const Size* size);
+		size_t GetValidTextSize (const Size* size);
 
 		/**
 		 * @brief the text of the label
@@ -117,12 +122,16 @@ namespace BlendInt {
 		Font m_font;
 
 		/** Background color, default: transparent */
-		Color m_background;
+		Color m_background_color;
 
 		/**
 		 * @brief Box in which hold the text
 		 */
 		Rect m_text_outline;
+
+		GLuint m_vao;
+
+		RefPtr<GLArrayBuffer> m_rect;
 	};
 
 } /* namespace BlendInt */

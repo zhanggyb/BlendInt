@@ -91,7 +91,7 @@ namespace BlendInt {
 				float step,
 				float vert[WIDGET_SIZE_MAX][2]);
 
-		void GenerateShadowBuffers (const Size* size, float corner_rad, float blue_rad);
+		void GenerateShadowBuffers (const Size& size, float corner_rad, float blue_rad);
 
 		GLuint m_vao;
 

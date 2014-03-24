@@ -60,7 +60,7 @@ namespace BlendInt {
 
 	bool VLayout::Update (const UpdateRequest& request)
 	{
-		if(request.id() == Predefined) {
+		if(request.source() == Predefined) {
 
 			switch (request.type()) {
 

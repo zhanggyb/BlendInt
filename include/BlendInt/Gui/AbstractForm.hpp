@@ -53,7 +53,7 @@ namespace BlendInt {
 	struct WidgetTheme;
 	class Color;
 
-	enum UpdateID
+	enum UpdateSource
 	{
 		Predefined,
 		Custom
@@ -87,8 +87,8 @@ namespace BlendInt {
 	{
 	public:
 
-		UpdateRequest (UpdateID id, int type, const void* data) :
-				m_id(id), m_type(type), m_data(data)
+		UpdateRequest (UpdateSource source, int type, const void* data) :
+				m_source(source), m_type(type), m_data(data)
 		{
 
 		}
@@ -98,9 +98,9 @@ namespace BlendInt {
 
 		}
 
-		UpdateID id () const
+		UpdateSource source () const
 		{
-			return m_id;
+			return m_source;
 		}
 
 		int type () const
@@ -115,7 +115,7 @@ namespace BlendInt {
 
 	private:
 
-		UpdateID m_id;
+		UpdateSource m_source;
 		int m_type;
 		const void* m_data;
 	};

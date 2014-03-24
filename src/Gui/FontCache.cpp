@@ -572,7 +572,6 @@ namespace BlendInt {
 		}
 		String::const_iterator it;
 		// String::const_iterator next;
-		// Tuple2l kerning;
 		int xmin = 0;
 		int ymin = 0;
 		int xmax = 0;

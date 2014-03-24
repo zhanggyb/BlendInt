@@ -69,6 +69,19 @@ namespace BlendInt {
 
 	protected:
 
+		void set_margin (const Margin& margin)
+		{
+			m_margin = margin;
+		}
+
+		void set_margin (int left, int right, int top, int bottom)
+		{
+			m_margin.set_left(left);
+			m_margin.set_right(right);
+			m_margin.set_top(top);
+			m_margin.set_bottom(bottom);
+		}
+
 		void ClearSubWidgets ();
 
 		WidgetDeque& sub_widgets ()

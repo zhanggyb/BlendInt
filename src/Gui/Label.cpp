@@ -31,17 +31,21 @@
 #endif
 #endif  // __UNIX__
 
-#include <iostream>
-
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Label.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 
 	Label::Label (const String& text)
-		: Widget(), m_text(text), m_length(0), m_alignment(AlignLeft), m_background(0x00000000)
+		: Widget(),
+		  m_text(text),
+		  m_length(0),
+		  m_alignment(AlignLeft),
+		  m_background_color(0x00000000),
+		  m_vao(0)
 	{
 		set_expand_x(true);
 
@@ -52,14 +56,14 @@ namespace BlendInt {
 
 	Label::~Label ()
 	{
-
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void Label::SetText (const String& label)
+	void Label::SetText (const String& text)
 	{
 		bool cal_width = true;
 
-		m_text = label;
+		m_text = text;
 
 		m_text_outline = m_font.get_text_outline(m_text);
 
@@ -78,7 +82,7 @@ namespace BlendInt {
 			if(expand_x()) {
 				Resize(this, m_text_outline.width(), size().height());
 			} else {
-				if(cal_width) m_length = get_valid_text_size();
+				if(cal_width) m_length = GetValidTextSize();
 			}
 		}
 
@@ -119,7 +123,7 @@ namespace BlendInt {
 			if(expand_x()) {
 				Resize(this, m_text_outline.width(), size().height());
 			} else {
-				if(cal_width) m_length = get_valid_text_size();
+				if(cal_width) m_length = GetValidTextSize();
 			}
 		}
 
@@ -138,14 +142,9 @@ namespace BlendInt {
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
-	void Label::SetForegroundColor (const Color& fg)
-	{
-		m_font.set_color(fg);
-	}
-
 	bool Label::Update (const UpdateRequest& request)
 	{
-		if(request.id() == Predefined) {
+		if(request.source() == Predefined) {
 
 			switch(request.type()) {
 
@@ -156,7 +155,7 @@ namespace BlendInt {
 						m_length = 0;
 					} else {
 						m_origin.set_y((size_p->height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
-						m_length = get_valid_text_size(size_p);
+						m_length = GetValidTextSize(size_p);
 					}
 
 					if(size_p->width() < m_text_outline.width()) {
@@ -171,6 +170,23 @@ namespace BlendInt {
 						}
 					}
 
+					glBindVertexArray(m_vao);
+
+					m_rect->Bind();
+
+					std::vector<GLfloat> vertices(12);
+					GenerateFlatRectVertices(*size_p, 0.f, &vertices);
+
+					m_rect->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+
+					m_rect->Reset();
+
+					glBindVertexArray(0);
+
+					return true;
+				}
+
+				case FormPreferredSize: {
 					return true;
 				}
 
@@ -188,10 +204,44 @@ namespace BlendInt {
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
 
+		glBindVertexArray(m_vao);
+
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		program->Use();
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetVertexAttrib1f("z", (float)z());
+		program->SetVertexAttrib4f("color",
+						m_background_color.r() / 255.f,
+						m_background_color.g() / 255.f,
+						m_background_color.b() / 255.f,
+						m_background_color.a() / 255.f);
+
+		m_rect->Bind();
+		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader
+
+		glVertexAttribPointer(
+						0, // attribute
+						2,		// number of elements per vertex, here (x,y)
+						GL_FLOAT,	// the type of each element
+						GL_FALSE,	// take our values as-is
+						0,		// no extra data between each position
+						BUFFER_OFFSET(0)	// the first element
+		);
+
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+		glDisableVertexAttribArray(0);
+
+		m_rect->Reset();
+
+		program->Reset();
+		glBindVertexArray(0);
+
 		m_font.Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, 0);
 	}
 
-	size_t Label::get_valid_text_size()
+	size_t Label::GetValidTextSize()
 	{
 		size_t width = 0;
 
@@ -210,7 +260,7 @@ namespace BlendInt {
 		return str_len;
 	}
 
-	size_t Label::get_valid_text_size(const Size* size)
+	size_t Label::GetValidTextSize(const Size* size)
 	{
 		size_t width = 0;
 
@@ -250,7 +300,7 @@ namespace BlendInt {
 			if(expand_x()) {
 				set_size(m_text_outline.width(), size().height());
 			} else {
-				if(cal_width) m_length = get_valid_text_size();
+				if(cal_width) m_length = GetValidTextSize();
 			}
 		}
 
@@ -259,6 +309,22 @@ namespace BlendInt {
 
 		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
 		set_preferred_size(size());
+
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		m_rect.reset(new GLArrayBuffer);
+		m_rect->Generate();
+		m_rect->Bind();
+
+		std::vector<GLfloat> vertices(12);
+		GenerateFlatRectVertices(size(), 0.f, &vertices);
+
+		m_rect->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+
+		m_rect->Reset();
+
+		glBindVertexArray(0);
 	}
 
 } /* namespace BlendInt */

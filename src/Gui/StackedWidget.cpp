@@ -103,7 +103,7 @@ namespace BlendInt {
 
 	bool StackedWidget::Update (const UpdateRequest& request)
 	{
-		if(request.id()) {
+		if(request.source()) {
 
 			switch (request.type()) {
 

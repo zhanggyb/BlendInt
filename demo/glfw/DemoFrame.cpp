@@ -74,7 +74,7 @@ void DemoFrame::FullWindow(unsigned int width, unsigned int height)
 
 bool DemoFrame::Update(const UpdateRequest& request)
 {
-	if(request.id() == Predefined) {
+	if(request.source() == Predefined) {
 
 		switch (request.type()) {
 

@@ -58,7 +58,7 @@ namespace BlendInt {
 
 	bool SlideIcon::Update (const UpdateRequest& request)
 	{
-		if (request.id() == Predefined) {
+		if (request.source() == Predefined) {
 
 			switch (request.type()) {
 
