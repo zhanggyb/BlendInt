@@ -21,47 +21,41 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_WINDOW_REDRAWEVENT_HPP_
-#define _BLENDINT_WINDOW_REDRAWEVENT_HPP_
+#ifndef _BLENDINT_GUI_MENUBUTTON_HPP_
+#define _BLENDINT_GUI_MENUBUTTON_HPP_
 
-#include <glm/glm.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
-#include <BlendInt/Window/DeviceEvent.hpp>
+#include <BlendInt/Gui/AbstractButton.hpp>
 
 namespace BlendInt {
 
-	class RedrawEvent: public DeviceEvent
+	/**
+	 * @brief A special button used in MenuBar only
+	 */
+	class MenuButton: public AbstractButton
 	{
 	public:
 
-		RedrawEvent ()
-			: DeviceEvent()
-		{}
+		MenuButton (const String& text);
 
-		~RedrawEvent ()
-		{}
-		
-		void set_projection_matrix (const glm::mat4& matrix)
-		{
-			m_projection_matrix = matrix;
-		}
+		virtual ~MenuButton ();
 
-		void set_view_matrix (const glm::mat4& matrix)
-		{
-			m_view_matrix = matrix;
-		}
+	protected:
 
-		const glm::mat4& view_matrix () const {return m_view_matrix;}
+		virtual bool Update (const UpdateRequest& request);
 
-		const glm::mat4& projection_matrix () const {return m_projection_matrix;}
+		virtual void Draw (RedrawEvent* event);
 
 	private:
 
-		glm::mat4 m_projection_matrix;
-		glm::mat4 m_view_matrix;
+		void InitOnce ();
 
+		GLuint m_vao;
+
+		RefPtr<GLArrayBuffer> m_inner;
 	};
 
-}
+} /* namespace BlendInt */
 
-#endif // _BLENDINT_WINDOW_REDRAWEVENT_HPP_
+#endif /* _BLENDINT_GUI_MENUBUTTON_HPP_ */

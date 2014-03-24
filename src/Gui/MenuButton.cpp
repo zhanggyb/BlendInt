@@ -15,7 +15,7 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.  If not, see
+ * License along with BlendInt.	 If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -29,29 +29,30 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
-#endif  // __UNIX__
+#endif	// __UNIX__
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/NumberSlider.hpp>
+#include <BlendInt/Gui/MenuButton.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
-#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
-
-	NumberSlider::NumberSlider (Orientation orientation)
-	: AbstractSlider(orientation), m_vao(0)
+	
+	MenuButton::MenuButton (const String& text)
+	: AbstractButton(), m_vao(0)
 	{
-		InitOnce ();
-	}
+		set_text(text);
 
-	NumberSlider::~NumberSlider ()
+		InitOnce();
+	}
+	
+	MenuButton::~MenuButton ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	bool NumberSlider::Update (const UpdateRequest& request)
+	bool MenuButton::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 			switch (request.type()) {
@@ -59,13 +60,12 @@ namespace BlendInt {
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
 				glBindVertexArray(m_vao);
-				GenerateFormBuffer(
-								*size_p,
-								round_type(),
-								radius(),
-								m_inner_buffer.get(),
-								m_outer_buffer.get(),
-								0);
+				GenerateFormBuffer(*size_p,
+								   round_type(),
+								   radius(),
+								   m_inner.get(),
+								   0,
+								   0);
 				glBindVertexArray(0);
 				Refresh();
 				return true;
@@ -77,8 +77,8 @@ namespace BlendInt {
 				GenerateFormBuffer(size(),
 								   *type_p,
 								   radius(),
-								   m_inner_buffer.get(),
-								   m_outer_buffer.get(),
+								   m_inner.get(),
+								   0,
 								   0);
 				glBindVertexArray(0);
 				Refresh();
@@ -91,8 +91,8 @@ namespace BlendInt {
 				GenerateFormBuffer(size(),
 								   round_type(),
 								   *radius_p,
-								   m_inner_buffer.get(),
-								   m_outer_buffer.get(),
+								   m_inner.get(),
+								   0,
 								   0);
 				glBindVertexArray(0);
 				Refresh();
@@ -100,7 +100,7 @@ namespace BlendInt {
 			}
 
 			default:
-				return AbstractSlider::Update(request);
+				return AbstractButton::Update(request);
 			}
 
 		} else {
@@ -108,72 +108,72 @@ namespace BlendInt {
 		}
 	}
 	
-	void NumberSlider::Draw (RedrawEvent* event)
+	void MenuButton::Draw (RedrawEvent* event)
 	{
-		glBindVertexArray(m_vao);
-
-		RefPtr<GLSLProgram> program =
-						ShaderManager::instance->default_widget_program();
-		program->Use();
-
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
 		glm::mat4 mvp = glm::translate(event->projection_matrix() * event->view_matrix(), pos);
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib1f("z", (float) z());
+		if (hover()) {
+			glBindVertexArray(m_vao);
 
-		ThemeManager* tm = ThemeManager::instance();
+			RefPtr<GLSLProgram> program =
+							ShaderManager::instance->default_widget_program();
+			program->Use();
 
-		glm::vec4 color;
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+							glm::value_ptr(mvp));
+			program->SetVertexAttrib1f("z", (float) z());
 
-		color.r = tm->themes()->number_slider.inner_sel.r() / 255.f;
-		color.g = tm->themes()->number_slider.inner_sel.g() / 255.f;
-		color.b = tm->themes()->number_slider.inner_sel.b() / 255.f;
-		color.a = tm->themes()->number_slider.inner_sel.a() / 255.f;
+			ThemeManager* tm = ThemeManager::instance();
 
-		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
+			glm::vec4 color(tm->themes()->menu_item.inner_sel.r() / 255.f,
+							tm->themes()->menu_item.inner_sel.g() / 255.f,
+							tm->themes()->menu_item.inner_sel.b() / 255.f,
+							tm->themes()->menu_item.inner_sel.a()
+											/ WIDGET_AA_JITTER / 255.f);
 
-		glEnableVertexAttribArray(0);
+			program->SetVertexAttrib4fv("color", glm::value_ptr(color));
 
-		DrawTriangleFan(0, m_inner_buffer.get());
+			glEnableVertexAttribArray(0);
 
-		color.r = themes()->number_slider.outline.r() / 255.f;
-		color.g = themes()->number_slider.outline.g() / 255.f;
-		color.b = themes()->number_slider.outline.b() / 255.f;
-		color.a = themes()->number_slider.outline.a() / WIDGET_AA_JITTER / 255.f;
-		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
-		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
+			DrawTriangleFan(program, mvp, 0, m_inner.get());
 
-		glDisableVertexAttribArray(0);
-		program->Reset();
+			glDisableVertexAttribArray(0);
+			program->Reset();
 
-		glBindVertexArray(0);
+			glBindVertexArray(0);
+		}
+
+		if (text().size()) {
+			font().Print(mvp, origin().x(), origin().y(), text(),
+							valid_text_length(), 0);
+		}
+
 		event->accept(this);
 	}
-
-	void NumberSlider::InitOnce()
+	
+	void MenuButton::InitOnce ()
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);
-		set_radius(10.f);
-		set_size(90, 20);
+		set_size(40, 20);
 		set_preferred_size(90, 20);
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
+		m_inner.reset(new GLArrayBuffer);
 
 		GenerateFormBuffer(
 						size(),
 						round_type(),
 						radius(),
-						m_inner_buffer.get(),
-						m_outer_buffer.get(),
+						m_inner.get(),
+						0,
 						0);
 
 		glBindVertexArray(0);
 	}
-}
+
+} /* namespace BlendInt */

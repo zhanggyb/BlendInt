@@ -1499,6 +1499,34 @@ namespace BlendInt {
 		buffer->Reset();
 	}
 
+	void AbstractForm::DrawTriangleFan(const RefPtr<GLSLProgram>& program, const glm::mat4& mvp, const GLint attrib, GLArrayBuffer* buffer)
+	{
+		glm::mat4 jitter_matrix;
+
+		buffer->Bind();
+
+		glVertexAttribPointer(attrib, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
+
+		for (Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++) {
+			jitter_matrix = glm::translate(glm::mat4(1.0),
+							glm::vec3((*it), 0.f));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+							glm::value_ptr(mvp * jitter_matrix));
+			glDrawArrays(GL_TRIANGLE_FAN, 0,
+							buffer->GetBufferSize()
+											/ (2 * sizeof(GLfloat)));
+		}
+
+		buffer->Reset();
+	}
+
+
 	void AbstractForm::DrawShadedTriangleFan(const GLint coord, const GLint color, GLArrayBuffer* buffer)
 	{
 		buffer->Bind();

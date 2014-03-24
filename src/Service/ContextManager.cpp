@@ -553,7 +553,9 @@ namespace BlendInt {
 			glViewport(0, 0, width, height);
 
 			RedrawEvent event;
-			event.set_pv_matrix(m_projection * m_view);
+
+			event.set_projection_matrix(m_projection);
+			event.set_view_matrix(m_view);
 
 			set<AbstractWidget*>::iterator widget_iter;
 

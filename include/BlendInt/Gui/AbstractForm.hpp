@@ -395,6 +395,9 @@ namespace BlendInt {
 
 		static void DrawTriangleFan (const GLint attrib, GLArrayBuffer* buffer);
 
+		static void DrawTriangleFan (const RefPtr<GLSLProgram>& program, const glm::mat4& mvp, const GLint attrib, GLArrayBuffer* buffer
+						);
+
 		static void DrawShadedTriangleFan (const GLint coord, const GLint color, GLArrayBuffer* buffer);
 
 		static void DrawTriangleStrip (const RefPtr<GLSLProgram>& program, const glm::mat4& mvp, const GLint attrib, GLArrayBuffer* buffer);

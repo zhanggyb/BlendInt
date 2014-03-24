@@ -138,7 +138,7 @@ namespace BlendInt {
 	void Slider::Draw (RedrawEvent* event)
 	{
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event->pv_matrix(), pos);
+		glm::mat4 mvp = glm::translate(event->projection_matrix() * event->view_matrix(), pos);
 
 		// ----- draw line
 

@@ -371,7 +371,8 @@ namespace BlendInt {
 			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(border, border, 0.0));
 
 			RedrawEvent event;
-			event.set_pv_matrix(projection * view * offset);
+			event.set_projection_matrix(projection);
+			event.set_view_matrix(view * offset);
 
 			glViewport(0, 0, width, height);
 
@@ -450,7 +451,8 @@ namespace BlendInt {
 			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(border, border, 0.0));
 
 			RedrawEvent event;
-			event.set_pv_matrix(projection * view * offset);
+			event.set_projection_matrix(projection);
+			event.set_view_matrix(view * offset);
 
 			glViewport(0, 0, width, height);
 
