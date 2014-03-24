@@ -174,7 +174,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		if(text().size()) {
-			font().Print(mvp, origin().x(), origin().y(), text(), valid_text_length(), 0);
+			font().Print(mvp, origin().x(), origin().y(), text(), text_length(), 0);
 		}
 		event->accept(this);
 	}
@@ -206,19 +206,41 @@ namespace BlendInt {
 
 	void Button::InitOnce (const String& text)
 	{
+		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_size(90, 20);
+		set_preferred_size(90, 20);
+		set_text(text);
+
+		bool cal_width = true;
+		set_text_outline(font().get_text_outline(text));
+
+		set_text_length(text.length());
+
+		if(size().height() < text_outline().height()) {
+			if(expand_y()) {
+				set_size(size().width(), text_outline().height());
+			} else {
+				set_text_length(0);
+				cal_width = false;
+			}
+		}
+
+		if(size().width() < text_outline().width()) {
+			if(expand_x()) {
+				set_size(text_outline().width(), size().height());
+			} else {
+				if(cal_width) set_text_length(GetValidTextSize());
+			}
+		}
+
+		set_origin(0, (size().height() - font().get_height()) / 2 + std::abs(font().get_descender()));
+
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
-
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 		m_emboss_buffer.reset(new GLArrayBuffer);
-
-		set_round_type(RoundAll);
-		SetExpandX(true);
-		Resize(90, 20);
-		SetText(text);
-		SetPreferredSize(size());
-
 		glBindVertexArray(0);
 	}
 

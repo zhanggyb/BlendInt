@@ -64,6 +64,8 @@ namespace BlendInt {
 
 		const String& text () const {return m_text;}
 
+		size_t text_length () const {return m_text_length;}
+
 		Cpp::EventRef<> clicked() {return m_clicked;}
 
 		Cpp::EventRef<bool> toggled() {return m_toggled;}
@@ -88,9 +90,33 @@ namespace BlendInt {
 			m_font = font;
 		}
 
-		size_t get_valid_text_size ();
+		void set_text_outline (const Rect& outline)
+		{
+			m_text_outline = outline;
+		}
 
-		size_t valid_text_length() const {return m_length;}
+		const Rect& text_outline () const
+		{
+			return m_text_outline;
+		}
+
+		void set_origin (const Point& origin)
+		{
+			m_origin = origin;
+		}
+
+		void set_origin (int x, int y)
+		{
+			m_origin.set_x(x);
+			m_origin.set_y(y);
+		}
+
+		void set_text_length (size_t length)
+		{
+			m_text_length = length;
+		}
+
+		size_t GetValidTextSize ();
 
 		const Point& origin () const {return m_origin;}
 
@@ -102,7 +128,7 @@ namespace BlendInt {
 		
 		bool m_status_checked;
 
-		size_t m_length;
+		size_t m_text_length;	// How many text to be printed, depends on the button size
 
 		Point m_origin;
 

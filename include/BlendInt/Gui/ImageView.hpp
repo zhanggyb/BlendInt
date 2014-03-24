@@ -28,6 +28,7 @@
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
+#include <BlendInt/Gui/CheckerBoard.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
@@ -61,6 +62,8 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> m_program;
 		RefPtr<GLArrayBuffer> m_vbo;
 		RefPtr<GLArrayBuffer> m_tbo;	// texture coords
+
+		RefPtr<CheckerBoard> m_checkerboard;
 
 		static const char* vertex_shader;
 		static const char* fragment_shader;

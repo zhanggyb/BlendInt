@@ -307,23 +307,17 @@ namespace BlendInt {
 		m_origin.set_x(0);
 		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
-		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
 		set_preferred_size(size());
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
-
 		m_rect.reset(new GLArrayBuffer);
 		m_rect->Generate();
 		m_rect->Bind();
-
 		std::vector<GLfloat> vertices(12);
 		GenerateFlatRectVertices(size(), 0.f, &vertices);
-
 		m_rect->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-
 		m_rect->Reset();
-
 		glBindVertexArray(0);
 	}
 

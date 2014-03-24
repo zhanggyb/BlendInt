@@ -42,7 +42,7 @@ namespace BlendInt {
 			m_status_down(false),
 			m_checkable(false),
 			m_status_checked(false),
-			m_length(0)
+			m_text_length(0)
 	{
 	}
 
@@ -64,13 +64,13 @@ namespace BlendInt {
 
 		m_text_outline = m_font.get_text_outline(m_text);
 
-		m_length = m_text.length();
+		m_text_length = m_text.length();
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
 				Resize(this, size().width(), m_text_outline.height());
 			} else {
-				m_length = 0;
+				m_text_length = 0;
 				cal_width = false;
 			}
 		}
@@ -79,7 +79,7 @@ namespace BlendInt {
 			if(expand_x()) {
 				Resize(this, m_text_outline.width(), size().height());
 			} else {
-				if(cal_width) m_length = get_valid_text_size();
+				if(cal_width) m_text_length = GetValidTextSize();
 			}
 		}
 
@@ -99,13 +99,13 @@ namespace BlendInt {
 
 		m_text_outline = m_font.get_text_outline(m_text);
 
-		m_length = m_text.length();
+		m_text_length = m_text.length();
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
 				Resize(this, size().width(), m_text_outline.height());
 			} else {
-				m_length = 0;
+				m_text_length = 0;
 				cal_width = false;
 			}
 		}
@@ -114,7 +114,7 @@ namespace BlendInt {
 			if(expand_x()) {
 				Resize(this, m_text_outline.width(), size().height());
 			} else {
-				if(cal_width) m_length = get_valid_text_size();
+				if(cal_width) m_text_length = GetValidTextSize();
 			}
 		}
 
@@ -171,7 +171,7 @@ namespace BlendInt {
 		*/
 	}
 
-	size_t AbstractButton::get_valid_text_size()
+	size_t AbstractButton::GetValidTextSize()
 	{
 		size_t width = 0;
 

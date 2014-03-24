@@ -68,6 +68,11 @@ namespace BlendInt {
 		 */
 		void SetFont (const Font& font);
 
+		const Font& font () const
+		{
+			return m_font;
+		}
+
 		void set_foreground_color (const Color& fg)
 		{
 			m_font.set_color(fg);

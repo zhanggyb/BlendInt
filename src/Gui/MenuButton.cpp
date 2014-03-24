@@ -147,7 +147,7 @@ namespace BlendInt {
 
 		if (text().size()) {
 			font().Print(mvp, origin().x(), origin().y(), text(),
-							valid_text_length(), 0);
+							text_length(), 0);
 		}
 
 		event->accept(this);
