@@ -54,6 +54,9 @@
 
 #include "../Intern/ScreenBuffer.hpp"
 
+using std::map;
+using std::set;
+
 namespace BlendInt {
 
 	ContextLayer::ContextLayer ()
@@ -348,9 +351,11 @@ namespace BlendInt {
 				delete m_layers[z].widgets;
 				m_layers[z].widgets = 0;
 
-				m_layers[z].buffer->Clear();
-				delete m_layers[z].buffer;
-				m_layers[z].buffer = 0;
+				if(m_layers[z].buffer) {
+					m_layers[z].buffer->Clear();
+					delete m_layers[z].buffer;
+					m_layers[z].buffer = 0;
+				}
 				m_layers.erase(z);
 			}
 
@@ -386,8 +391,9 @@ namespace BlendInt {
 					layer_iter->second.buffer->Generate();
 				}
 
-				OffScreenRenderToTexture(layer_iter->first, widget_set_p,
-				        layer_iter->second.buffer);
+				OffScreenRenderToTexture(layer_iter->first,
+										 widget_set_p,
+										 layer_iter->second.buffer);
 				m_deque.push_back(layer_iter->second.buffer);
 
 				count++;
@@ -418,8 +424,9 @@ namespace BlendInt {
 						layer_iter->second.buffer = new GLTexture2D;
 						layer_iter->second.buffer->Generate();
 					}
-					OffScreenRenderToTexture(layer_iter->first, widget_set_p,
-					        layer_iter->second.buffer);
+					OffScreenRenderToTexture(layer_iter->first,
+											 widget_set_p,
+											 layer_iter->second.buffer);
 
 				} else {
 
@@ -482,7 +489,8 @@ namespace BlendInt {
 		 */
 
 		// ---------
-		m_screenbuffer->Render(m_redraw_event.projection_matrix() * m_redraw_event.view_matrix(), instance->m_main_buffer);
+		m_screenbuffer->Render(m_redraw_event.projection_matrix() * m_redraw_event.view_matrix(),
+							   instance->m_main_buffer);
 	}
 
 #ifdef DEBUG
@@ -494,7 +502,8 @@ namespace BlendInt {
 #endif
 
 	void ContextManager::OffScreenRenderToTexture (int layer,
-	        std::set<AbstractWidget*>* widgets, GLTexture2D* texture)
+												   std::set<AbstractWidget*>* widgets,
+												   GLTexture2D* texture)
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -536,13 +545,15 @@ namespace BlendInt {
 			glClearColor(0.0, 0.0, 0.0, 0.00);
 
 			glClearDepth(1.0);
-			glClear(
-			        GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
-			                | GL_STENCIL_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT |
+					GL_DEPTH_BUFFER_BIT |
+					GL_STENCIL_BUFFER_BIT);
 
 			// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE,
-			        GL_ONE_MINUS_SRC_ALPHA);
+			glBlendFuncSeparate(GL_SRC_ALPHA,
+								GL_ONE_MINUS_SRC_ALPHA,
+								GL_ONE,
+								GL_ONE_MINUS_SRC_ALPHA);
 
 			glEnable(GL_BLEND);
 
@@ -753,6 +764,13 @@ namespace BlendInt {
 		widget->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
 		// TODO: remove this widget and its children if it's in m_cursor_widget_stack
+	}
+	
+	int ContextManager::GetMaxLayer () const
+	{
+		map<int, ContextLayer>::const_reverse_iterator rit = m_layers.rbegin();
+
+		return rit->first;
 	}
 
 	void ContextManager::BuildWidgetListAtCursorPoint (

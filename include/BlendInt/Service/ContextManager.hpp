@@ -39,9 +39,6 @@
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
 
-using std::map;
-using std::set;
-
 namespace BlendInt {
 
 	class Interface;
@@ -56,7 +53,7 @@ namespace BlendInt {
 
 		bool refresh;
 
-		set<AbstractWidget*>* widgets;
+		std::set<AbstractWidget*>* widgets;
 
 		GLTexture2D* buffer;
 	};
@@ -79,6 +76,8 @@ namespace BlendInt {
 		size_t index_size () const {return m_index.size();}
 
 		size_t layer_size () const {return m_layers.size();}
+
+		int GetMaxLayer () const;
 
 		void RefreshLayer (int layer);
 
@@ -161,9 +160,9 @@ namespace BlendInt {
 
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point, AbstractWidget* parent);
 
-		map<int, ContextLayer > m_layers;
+		std::map<int, ContextLayer> m_layers;
 
-		map<AbstractWidget*, int> m_index;
+		std::map<AbstractWidget*, int> m_index;
 
 		GLTexture2D* m_main_buffer;
 
