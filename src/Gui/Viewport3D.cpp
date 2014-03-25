@@ -229,7 +229,7 @@ namespace BlendInt {
 		        m_default_camera->projection() * m_default_camera->view());
 	}
 
-	void Viewport3D::Draw (RedrawEvent* event)
+	ResponseType Viewport3D::Draw (const RedrawEvent& event)
 	{
 		// store the current matrices
 		glEnable(GL_DEPTH_TEST);
@@ -249,6 +249,8 @@ namespace BlendInt {
 
 		glViewport(0, 0, Interface::instance->size().width(),
 		        Interface::instance->size().height());
+
+		return Accept;
 	}
 
 	void Viewport3D::InitOnce ()

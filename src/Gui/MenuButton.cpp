@@ -108,11 +108,11 @@ namespace BlendInt {
 		}
 	}
 	
-	void MenuButton::Draw (RedrawEvent* event)
+	ResponseType MenuButton::Draw (const RedrawEvent& event)
 	{
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
-		glm::mat4 mvp = glm::translate(event->projection_matrix() * event->view_matrix(), pos);
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		if (hover()) {
 			glBindVertexArray(m_vao);
@@ -150,7 +150,7 @@ namespace BlendInt {
 							text_length(), 0);
 		}
 
-		event->accept(this);
+		return Accept;
 	}
 	
 	void MenuButton::InitOnce ()

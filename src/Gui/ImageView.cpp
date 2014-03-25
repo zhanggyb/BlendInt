@@ -100,10 +100,10 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ImageView::Draw (RedrawEvent* event)
+	ResponseType ImageView::Draw (const RedrawEvent& event)
 	{
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event->projection_matrix() * event->view_matrix(), pos);
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		m_checkerboard->Draw(mvp);
 
@@ -151,6 +151,8 @@ namespace BlendInt {
 		m_program->Reset();
 
 		glBindVertexArray(0);
+
+		return Accept;
 	}
 
 	void ImageView::InitOnce ()

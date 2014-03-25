@@ -47,7 +47,7 @@ namespace BlendInt {
 	{
 	}
 
-	void ClockWidget::Draw(RedrawEvent* event)
+	ResponseType ClockWidget::Draw(const RedrawEvent& event)
 	{
 //		int radius = std::min(size().width(), size().height()) / 2;
 //
@@ -67,6 +67,7 @@ namespace BlendInt {
 //		glEnd();
 //
 //		glDisable(GL_LINE_SMOOTH);
+		return Ignore;
 	}
 
 	void ClockWidget::UpdateClockHands()

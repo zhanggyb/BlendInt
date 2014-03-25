@@ -113,7 +113,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Button::Draw (RedrawEvent* event)
+	ResponseType Button::Draw (const RedrawEvent& event)
 	{
 		glBindVertexArray(m_vao);
 
@@ -123,7 +123,7 @@ namespace BlendInt {
 
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
-		glm::mat4 mvp = glm::translate(event->projection_matrix() * event->view_matrix(), pos);
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float) z());
@@ -176,7 +176,8 @@ namespace BlendInt {
 		if(text().size()) {
 			font().Print(mvp, origin().x(), origin().y(), text(), text_length(), 0);
 		}
-		event->accept(this);
+
+		return Accept;
 	}
 
 	void Button::InitOnce ()

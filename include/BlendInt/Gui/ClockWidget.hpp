@@ -55,7 +55,7 @@ namespace BlendInt {
 
 //		virtual void Update (int type, const void* data);
 
-		virtual void Draw (RedrawEvent* event);
+		virtual ResponseType Draw (const RedrawEvent& event);
 
 	private:
 

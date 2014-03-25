@@ -48,7 +48,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Draw (RedrawEvent* event);
+		virtual ResponseType Draw (const RedrawEvent& event);
 
 	private:
 

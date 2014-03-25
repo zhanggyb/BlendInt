@@ -135,10 +135,10 @@ namespace BlendInt {
 		}
 	}
 
-	void Slider::Draw (RedrawEvent* event)
+	ResponseType Slider::Draw (const RedrawEvent& event)
 	{
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event->projection_matrix() * event->view_matrix(), pos);
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		// ----- draw line
 
@@ -198,7 +198,7 @@ namespace BlendInt {
 
 		m_switch.Draw(switch_mvp);
 
-		event->accept(this);
+		return Accept;
 	}
 
 	void Slider::MouseMoveEvent (MouseEvent* event)

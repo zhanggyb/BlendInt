@@ -199,10 +199,10 @@ namespace BlendInt {
 		}
 	}
 
-	void Label::Draw (RedrawEvent* event)
+	ResponseType Label::Draw (const RedrawEvent& event)
 	{
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event->projection_matrix() * event->view_matrix(), pos);
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		glBindVertexArray(m_vao);
 
@@ -239,6 +239,8 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		m_font.Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, 0);
+
+		return Accept;
 	}
 
 	size_t Label::GetValidTextSize()

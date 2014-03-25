@@ -69,7 +69,7 @@ namespace BlendInt {
 
 	private:
 
-		virtual void Draw (RedrawEvent* event);
+		virtual ResponseType Draw (const RedrawEvent& event);
 
 		void InitOnce ();
 

@@ -68,7 +68,7 @@ namespace BlendInt {
 		}
 	}
 
-	void RoundWidget::Draw(RedrawEvent* event)
+	ResponseType RoundWidget::Draw(const RedrawEvent& event)
 	{
 	//	float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
 		//float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
@@ -102,6 +102,8 @@ namespace BlendInt {
 //		draw_gl_buffer_anti_alias(m_outer_buffer.get());
 
 		//DrawOutlineArray(quad_strip, vert_sum.total * 2 + 2);
+
+		return Accept;
 	}
 
 }

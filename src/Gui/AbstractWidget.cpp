@@ -376,7 +376,7 @@ namespace BlendInt {
 
 			glViewport(0, 0, width, height);
 
-			Draw(&event);
+			Draw(event);
 
 			glViewport(0,
 					0,
@@ -456,7 +456,7 @@ namespace BlendInt {
 
 			glViewport(0, 0, width, height);
 
-			Draw(&event);
+			Draw(event);
 
 			glViewport(0,
 					0,

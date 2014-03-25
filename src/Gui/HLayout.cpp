@@ -107,9 +107,9 @@ namespace BlendInt {
 
 	}
 
-	void HLayout::Draw (RedrawEvent* event)
+	ResponseType HLayout::Draw (const RedrawEvent& event)
 	{
-
+		return Ignore;
 	}
 
 	void HLayout::AddItem (AbstractWidget* object)

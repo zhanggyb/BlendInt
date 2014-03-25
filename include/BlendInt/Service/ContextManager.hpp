@@ -92,7 +92,7 @@ namespace BlendInt {
 
 		virtual bool Update (const UpdateRequest& request);
 
-		virtual void Draw (RedrawEvent* event);
+		virtual ResponseType Draw (const RedrawEvent& event);
 
 		virtual void CursorEnterEvent (bool entered);
 
@@ -136,7 +136,7 @@ namespace BlendInt {
 
 		void PreDrawContext (bool fbo = false);
 
-		void DispatchDrawEvent (AbstractWidget* widget, RedrawEvent* event);
+		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
 
 		void OnDestroyObject (AbstractWidget* obj);
 
@@ -169,9 +169,7 @@ namespace BlendInt {
 
 		ScreenBuffer* m_screenbuffer;
 
-		glm::mat4 m_view;
-
-		glm::mat4 m_projection;
+		RedrawEvent m_redraw_event;
 
 		std::deque<GLTexture2D*> m_deque;
 

@@ -57,7 +57,7 @@ namespace BlendInt {
 		// add_child(widget);
 	}
 
-	void ScrollWidget::Draw (RedrawEvent* event)
+	ResponseType ScrollWidget::Draw (const RedrawEvent& event)
 	{
 //		glMatrixMode(GL_MODELVIEW);
 //		glPushMatrix();
@@ -80,6 +80,8 @@ namespace BlendInt {
 		glDisable(GL_SCISSOR_TEST);
 //
 //		glPopMatrix();
+
+		return Accept;
 	}
 
 }

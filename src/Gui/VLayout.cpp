@@ -109,8 +109,9 @@ namespace BlendInt {
 		}
 	}
 
-	void VLayout::Draw (RedrawEvent* event)
+	ResponseType VLayout::Draw (const RedrawEvent& event)
 	{
+		return Accept;
 	}
 
 	void VLayout::AddItem (AbstractWidget* object)

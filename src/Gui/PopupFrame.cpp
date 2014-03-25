@@ -72,9 +72,9 @@ namespace BlendInt {
 
 	}
 
-	void PopupFrame::Draw (RedrawEvent* event)
+	ResponseType PopupFrame::Draw (const RedrawEvent& event)
 	{
-		Frame::Draw(event);
+		return Frame::Draw(event);
 	}
 
 

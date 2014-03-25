@@ -54,10 +54,6 @@
 
 #include "../Intern/ScreenBuffer.hpp"
 
-using std::cout;
-using std::cerr;
-using std::endl;
-
 namespace BlendInt {
 
 	ContextLayer::ContextLayer ()
@@ -117,10 +113,10 @@ namespace BlendInt {
 
 		m_main_buffer = new GLTexture2D;
 
-		m_view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+		m_redraw_event.set_view_matrix(glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f)));
 
 		// default is 800 x 600
-		m_projection = glm::ortho(0.f, 800.f, 0.f, 600.f, 100.f, -100.f);
+		m_redraw_event.set_projection_matrix(glm::ortho(0.f, 800.f, 0.f, 600.f, 100.f, -100.f));
 	}
 
 	ContextManager::~ContextManager ()
@@ -242,7 +238,7 @@ namespace BlendInt {
 		refresh_once = true;
 		force_refresh_all = true;
 
-		m_projection = glm::ortho(0.f, (float)size.width(), 0.f, (float)size.height(), 100.f, -100.f);
+		m_redraw_event.set_projection_matrix(glm::ortho(0.f, (float)size.width(), 0.f, (float)size.height(), 100.f, -100.f));
 	}
 
 	void ContextManager::ResizeFromInterface (unsigned int width,
@@ -254,7 +250,7 @@ namespace BlendInt {
 		refresh_once = true;
 		force_refresh_all = true;
 
-		m_projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
+		m_redraw_event.set_projection_matrix(glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f));
 	}
 
 	void ContextManager::AddWidget (AbstractWidget* obj)
@@ -486,7 +482,7 @@ namespace BlendInt {
 		 */
 
 		// ---------
-		m_screenbuffer->Render(m_projection * m_view, instance->m_main_buffer);
+		m_screenbuffer->Render(m_redraw_event.projection_matrix() * m_redraw_event.view_matrix(), instance->m_main_buffer);
 	}
 
 #ifdef DEBUG
@@ -552,17 +548,12 @@ namespace BlendInt {
 
 			glViewport(0, 0, width, height);
 
-			RedrawEvent event;
-
-			event.set_projection_matrix(m_projection);
-			event.set_view_matrix(m_view);
-
 			set<AbstractWidget*>::iterator widget_iter;
 
 			for (widget_iter = widgets->begin(); widget_iter != widgets->end();
 			        widget_iter++) {
 				//(*set_it)->Draw();
-				DispatchDrawEvent(*widget_iter, &event);
+				DispatchDrawEvent(*widget_iter, m_redraw_event);
 			}
 
 			// uncomment the code below to test the layer buffer (texture)
@@ -674,7 +665,7 @@ namespace BlendInt {
 			glLoadIdentity();
 			*/
 
-			glm::mat4 mvp = m_projection * m_view;
+			glm::mat4 mvp = m_redraw_event.projection_matrix() * m_redraw_event.view_matrix();
 
 #ifdef DEBUG
 			//DrawTriangle(false);
@@ -730,7 +721,7 @@ namespace BlendInt {
 		glEnable(GL_BLEND);
 	}
 
-	void ContextManager::DispatchDrawEvent (AbstractWidget* widget, RedrawEvent* event)
+	void ContextManager::DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event)
 	{
 		if (widget->visiable()) {
 			widget->Draw(event);
@@ -920,9 +911,9 @@ namespace BlendInt {
 	{
 	}
 
-	void ContextManager::Draw (RedrawEvent* event)
+	ResponseType ContextManager::Draw (const RedrawEvent& event)
 	{
-
+		return Ignore;
 	}
 
 }

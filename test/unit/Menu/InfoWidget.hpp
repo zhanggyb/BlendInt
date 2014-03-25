@@ -5,6 +5,8 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/MenuItem.hpp>
 
+namespace BI=BlendInt;
+
 class InfoWidget: public BlendInt::Widget
 {
 public:
@@ -17,7 +19,7 @@ public:
 	
 protected:
 	
-	virtual void Draw (BlendInt::RedrawEvent* event);
+	virtual BI::ResponseType Draw (const BI::RedrawEvent& event);
 	
 private:
 	

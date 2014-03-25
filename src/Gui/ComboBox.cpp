@@ -117,10 +117,10 @@ namespace BlendInt {
 		}
 	}
 
-	void ComboBox::Draw(RedrawEvent* event)
+	ResponseType ComboBox::Draw(const RedrawEvent& event)
 	{
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event->projection_matrix() * event->view_matrix(), pos);
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		glBindVertexArray(m_vao);
 
@@ -167,8 +167,7 @@ namespace BlendInt {
 
 		icon->Draw(mvp * translate * rotate * scale);
 
-		event->accept(this);
-		return;
+		return Accept;
 	}
 
 	void ComboBox::InitOnce()

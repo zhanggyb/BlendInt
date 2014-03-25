@@ -142,11 +142,13 @@ namespace BlendInt {
 		}
 	}
 
-	void StackedWidget::Draw (RedrawEvent* event)
+	ResponseType StackedWidget::Draw (const RedrawEvent& event)
 	{
-		if(m_stack.size() == 0) return;
+		if(m_stack.size() == 0) return Ignore;
 
 		DispatchRender(m_stack[m_index]);
+
+		return Accept;
 	}
 
 }

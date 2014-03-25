@@ -81,7 +81,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollView::Draw (RedrawEvent* event)
+	ResponseType ScrollView::Draw (const RedrawEvent& event)
 	{
 		glEnable (GL_SCISSOR_TEST);
 		glScissor (position().x(),

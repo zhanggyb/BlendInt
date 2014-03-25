@@ -272,7 +272,7 @@ namespace BlendInt {
 		 */
 		virtual bool Update (const UpdateRequest& request) = 0;
 
-		virtual void Draw (RedrawEvent* event) = 0;
+		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
 		void LockGeometry (AbstractWidget* obj, bool status)
 		{

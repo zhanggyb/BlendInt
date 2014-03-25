@@ -125,7 +125,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Draw (RedrawEvent* event) = 0;
+		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
 		inline void set_value (int value)
 		{

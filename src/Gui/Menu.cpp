@@ -153,7 +153,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Menu::Draw (RedrawEvent* event)
+	ResponseType Menu::Draw (const RedrawEvent& event)
 	{
 		/*
 		//RoundWidget::Render();
@@ -227,6 +227,8 @@ namespace BlendInt {
 
 		}
 		*/
+
+		return Accept;
 	}
 
 	void Menu::ResetHighlightBuffer (unsigned int width)

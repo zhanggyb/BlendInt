@@ -148,7 +148,7 @@ namespace BlendInt {
 		}
 	}
 
-	void TableLayout::Draw (RedrawEvent* event)
+	ResponseType TableLayout::Draw (const RedrawEvent& event)
 	{
 		std::vector<AbstractWidget*>::const_iterator it;
 		for (it = m_items.begin(); it != m_items.end(); it++) {
@@ -156,6 +156,8 @@ namespace BlendInt {
 				DispatchRender(*it);
 			}
 		}
+
+		return Accept;
 	}
 
 	void TableLayout::AddItem(AbstractWidget* object)
