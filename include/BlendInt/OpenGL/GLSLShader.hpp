@@ -58,7 +58,7 @@ namespace BlendInt {
 
 		void Create (GLenum shaderType);
 
-		void SetSource (const char* source);
+		void Load (const char* source);
 
 		bool Compile ();
 
@@ -70,9 +70,9 @@ namespace BlendInt {
 		 * Must be one of: GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER,
 		 *       GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER
 		 */
-		static GLuint Load (const std::string& filename, GLenum type);
+		static GLuint Create (const std::string& filename, GLenum type);
 
-		static GLuint Load (const char* buf, GLenum type);
+		static GLuint Create (const char* buf, GLenum type);
 
 		GLuint id () const
 		{

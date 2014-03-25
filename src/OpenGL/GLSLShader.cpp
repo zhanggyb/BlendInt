@@ -55,7 +55,7 @@ namespace BlendInt {
 		m_id = glCreateShader(shaderType);
 	}
 
-	void GLSLShader::SetSource(const char* source)
+	void GLSLShader::Load(const char* source)
 	{
 		glShaderSource(m_id, 1, &source, 0);
 	}
@@ -105,7 +105,7 @@ namespace BlendInt {
 		return status == GL_TRUE ? true : false;
 	}
 
-	GLuint GLSLShader::Load (const std::string& filename, GLenum type)
+	GLuint GLSLShader::Create (const std::string& filename, GLenum type)
 	{
 		GLuint shader = 0;
 
@@ -119,7 +119,7 @@ namespace BlendInt {
 		return shader;
 	}
 
-	GLuint GLSLShader::Load (const char* buf, GLenum type)
+	GLuint GLSLShader::Create (const char* buf, GLenum type)
 	{
 		GLuint shader = 0;
 

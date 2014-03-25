@@ -78,7 +78,7 @@ namespace BlendInt {
 	void GLSLProgram::AttachShader (const std::string& filename, GLenum type)
 	{
 		if (glIsProgram(m_id)) {
-			GLuint shader = GLSLShader::Load(filename, type);
+			GLuint shader = GLSLShader::Create(filename, type);
 			glAttachShader(m_id, shader);
 		}
 	}
@@ -86,7 +86,7 @@ namespace BlendInt {
 	void GLSLProgram::AttachShader (const char* buf, GLenum type)
 	{
 		if (glIsProgram(m_id)) {
-			GLuint shader = GLSLShader::Load(buf, type);
+			GLuint shader = GLSLShader::Create(buf, type);
 			glAttachShader(m_id, shader);
 		}
 	}

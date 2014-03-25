@@ -277,24 +277,21 @@ namespace BlendInt {
 		if(m_z == z) return;
 
 		if(m_flag[WidgetFlagInContextManager]) {
-			ContextManager::instance->Unregister(this);
-
 			if(Update (UpdateRequest(Predefined, WidgetLayer, &z))) {
+				ContextManager::instance->Unregister(this);
 				m_z = z;
 				ContextManager::instance->AddSubWidget(this);
 				fire_property_changed_event(WidgetLayer);
 			}
-
 		} else {
 			if(Update (UpdateRequest(Predefined, WidgetLayer, &z))) {
 				m_z = z;
 				fire_property_changed_event(WidgetLayer);
 			}
 		}
-
 	}
 
-	void AbstractWidget::SetVisible(bool visible)
+	void AbstractWidget::SetVisible (bool visible)
 	{
 		if(m_flag[WidgetFlagVisibility] == visible)
 		return;

@@ -73,9 +73,15 @@ namespace BlendInt {
 
 		bool AddSubWidget (AbstractWidget* obj);
 
-		size_t index_size () const {return m_index.size();}
+		size_t index_size () const
+		{
+			return m_index.size();
+		}
 
-		size_t layer_size () const {return m_layers.size();}
+		size_t layer_size () const
+		{
+			return m_layers.size();
+		}
 
 		int GetMaxLayer () const;
 

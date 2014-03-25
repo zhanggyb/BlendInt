@@ -32,7 +32,134 @@ namespace BlendInt {
 	class Interface;
 
 	/**
-	 * @pre-defined shaders
+	 * @brief A class which provide pre-defined shaders
+	 *
+	 * The ShaderManager class works as a service in BlendInt and
+	 * provide simple pre-defined shaders for widgets. There's only
+	 * one instance of this class and can be accessed by:
+	 *
+	 * @code
+	 * #include <BlendInt/Service/ShaderManager.hpp>
+	 *
+	 * ShaderManager::instance
+	 * @endcode
+	 *
+	 * The instance can not be deleted.
+	 *
+	 * There're some pre-defined shader which is used in widgets
+	 *
+	 * - Vertex shader for text:
+	 * @code
+	 * "#version 330\n"
+	 * "layout(location = 0) in vec4 coord;"
+	 * "uniform mat4 MVP;"
+	 * "out vec2 texpos;"
+	 * ""
+	 * "void main(void) {"
+	 * "  gl_Position = MVP * vec4(coord.xy, 0.0, 1.0);"
+	 * "  texpos = coord.zw;"
+	 * "}";
+	 * @endcode
+	 *
+	 * - Fragment shader for text:
+	 * @code
+	 * "#version 330\n"
+	 * "in vec2 texpos;"
+	 * "uniform sampler2D tex;"
+	 * "uniform vec4 color;"
+	 * "out vec4 FragmentColor;"
+	 * ""
+	 * "void main(void) {"
+	 * "	float alpha = texture(tex, texpos).r;"	// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
+	 * "	FragmentColor = vec4(color.rgb, color.a * alpha);"
+	 * "}";
+	 * @endcode
+	 *
+	 * - Vertex shader for primitives in Viewport3D:
+	 * @code
+	 * "#version 330\n"
+	 * ""
+	 * "layout(location = 0) in vec3 coord3d;"
+	 * "layout(location = 1) in vec3 v_color;"
+	 * "uniform mat4 MVP;"
+	 * "out vec3 f_color;"
+	 * ""
+	 * "void main(void) {"
+	 * "	gl_Position = MVP * vec4(coord3d, 1.0);"
+	 * "	f_color = v_color;"
+	 * "}";
+	 * @endcode
+	 *
+	 * - Fragment shader for primitives in Viewport3D:
+	 * @code
+	 * "#version 330\n"
+	 * ""
+	 * "in vec3 f_color;"
+	 * "out vec4 FragmentColor;"
+	 * ""
+	 * "void main(void) {"
+	 * "	FragmentColor = vec4(f_color, 1.0);"
+	 * "}";
+	 * @encode
+	 *
+	 * - Vertex shader for widgets:
+	 * @code
+	 * "#version 330\n"
+	 * ""
+	 * "layout(location=0) in vec2 xy;"
+	 * "layout(location=1) in vec4 color;"
+	 * "in float z;"
+	 * "uniform mat4 MVP;"
+	 * "out vec4 f_color;"
+	 * ""
+	 * "void main(void) {"
+	 * "	gl_Position = MVP * vec4(xy, z, 1.0);"
+	 * "	f_color = color;"
+	 * "}";
+	 * @endcode
+	 *
+	 * - Fragment shader for widgets:
+	 * @code
+	 * "#version 330\n"
+	 * ""
+	 * "in vec4 f_color;"
+	 * "uniform int gamma = 0;"
+	 * "out vec4 FragmentColor;"
+	 * ""
+	 * "void main(void) {"
+	 * "	vec4 color_calib = vec4(vec3(min(max(-1.0, gamma/255.0), 1.0)), 0.0);"
+	 * "	FragmentColor = f_color + color_calib;"
+	 * "}";
+	 * @endcode
+	 *
+	 * - Vertex shader for 2D forms:
+	 * @code
+	 * "#version 330\n"
+	 * ""
+	 * "layout(location = 0) in vec2 xy;"
+	 * "layout(location = 1) in vec4 color;"
+	 * "uniform mat4 MVP;"
+	 * "out vec4 f_color;"
+	 * ""
+	 * "void main(void) {"
+	 * "	gl_Position = MVP * vec4(xy, 0.0, 1.0);"
+	 * "	f_color = color;"
+	 * "}";
+	 * @endcode
+	 *
+	 * - Fragment shader for 2D forms:
+	 * @code
+	 * "#version 330\n"
+	 * ""
+	 * "in vec4 f_color;"
+	 * "uniform int gamma = 0;"
+	 * "out vec4 FragmentColor;"
+	 * ""
+	 * "void main(void) {"
+	 * "	vec4 color_calib = vec4(vec3(min(max(-1.0, gamma/255.0), 1.0)), 0.0);"
+	 * "	FragmentColor = f_color + color_calib;"
+	 * "}";
+	 * @endcode
 	 */
 	class ShaderManager
 	{
@@ -64,11 +191,6 @@ namespace BlendInt {
 
 		//bool Find (const GLSLProgram* program);
 
-		const GLint& uniform_mvp ()
-		{
-			return m_uniform_mvp;
-		}
-
 	private:
 
 		static bool Initialize ();
@@ -82,8 +204,6 @@ namespace BlendInt {
 		bool Setup ();
 
 		RefPtr<GLSLProgram> m_text_program;
-
-		GLint m_uniform_mvp;
 
 		RefPtr<GLSLProgram> m_primitive_program;
 
@@ -106,7 +226,6 @@ namespace BlendInt {
 		static const char* default_form_vertex_shader;
 
 		static const char* default_form_fragment_shader;
-
 	};
 }
 

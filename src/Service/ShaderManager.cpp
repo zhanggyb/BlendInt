@@ -261,7 +261,6 @@ namespace BlendInt {
 	}
 
 	ShaderManager::ShaderManager()
-	: m_uniform_mvp(0)
 	{
 		m_text_program.reset(new GLSLProgram);
 #ifdef DEBUG
@@ -306,32 +305,31 @@ namespace BlendInt {
 			return false;
 		}
 
-		m_text_program->AttachShaderPair(text_vertex_shader, text_fragment_shader);
+		m_text_program->AttachShader(text_vertex_shader, GL_VERTEX_SHADER);
+		m_text_program->AttachShader(text_fragment_shader, GL_FRAGMENT_SHADER);
 		if(!m_text_program->Link()) {
 			DBG_PRINT_MSG("Fail to link the text program: %d", m_text_program->id());
 			return false;
 		}
 
-		m_primitive_program->AttachShaderPair(primitive_vertex_shader, primitive_fragment_shader);
+		m_primitive_program->AttachShader(primitive_vertex_shader, GL_VERTEX_SHADER);
+		m_primitive_program->AttachShader(primitive_fragment_shader, GL_FRAGMENT_SHADER);
 		if(!m_primitive_program->Link()) {
 			DBG_PRINT_MSG("Fail to link the primitive program: %d", m_primitive_program->id());
 			return false;
 		}
 
-		m_default_widget_program->AttachShaderPair(default_widget_vertex_shader, default_widget_fragment_shader);
+		m_default_widget_program->AttachShader(default_widget_vertex_shader, GL_VERTEX_SHADER);
+		m_default_widget_program->AttachShader(default_widget_fragment_shader, GL_FRAGMENT_SHADER);
 		if(!m_default_widget_program->Link()) {
 			DBG_PRINT_MSG("Fail to link the widget program: %d", m_default_widget_program->id());
 			return false;
 		}
 
-		m_default_form_program->AttachShaderPair(default_form_vertex_shader, default_form_fragment_shader);
+		m_default_form_program->AttachShader(default_form_vertex_shader, GL_VERTEX_SHADER);
+		m_default_form_program->AttachShader(default_form_fragment_shader, GL_FRAGMENT_SHADER);
 		if(!m_default_form_program->Link()) {
 			DBG_PRINT_MSG("Fail to link the default form program: %d", m_default_form_program->id());
-			return false;
-		}
-
-		m_uniform_mvp = m_primitive_program->GetUniformLocation("MVP");
-		if(m_uniform_mvp == -1) {
 			return false;
 		}
 

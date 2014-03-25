@@ -67,12 +67,15 @@ namespace BlendInt {
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
 					glBindVertexArray(m_vao);
-					GenerateFormBuffer(*size_p,
-									   round_type(),
-									   radius(),
-									   m_inner_buffer.get(),
-									   m_outer_buffer.get(),
-									   0);
+					GenerateShadedFormBuffers(*size_p,
+									round_type(),
+									radius(),
+									themes()->menu.inner,
+									themes()->menu.shadetop,
+									themes()->menu.shadedown,
+									Vertical,
+									m_inner_buffer.get(),
+									m_outer_buffer.get());
 					glBindVertexArray(0);
 					Refresh();
 					return true;
@@ -81,13 +84,15 @@ namespace BlendInt {
 				case FormRoundType: {
 					const int* type_p = static_cast<const int*>(request.data());
 					glBindVertexArray(m_vao);
-					GenerateFormBuffer(
-									size(),
+					GenerateShadedFormBuffers(size(),
 									*type_p,
 									radius(),
+									themes()->menu.inner,
+									themes()->menu.shadetop,
+									themes()->menu.shadedown,
+									Vertical,
 									m_inner_buffer.get(),
-									m_outer_buffer.get(),
-									0);
+									m_outer_buffer.get());
 					glBindVertexArray(0);
 					Refresh();
 					return true;
@@ -96,13 +101,15 @@ namespace BlendInt {
 				case FormRoundRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
 					glBindVertexArray(m_vao);
-					GenerateFormBuffer(
-									size(),
+					GenerateShadedFormBuffers(size(),
 									round_type(),
 									*radius_p,
+									themes()->menu.inner,
+									themes()->menu.shadetop,
+									themes()->menu.shadedown,
+									Vertical,
 									m_inner_buffer.get(),
-									m_outer_buffer.get(),
-									0);
+									m_outer_buffer.get());
 					glBindVertexArray(0);
 					Refresh();
 					return true;
@@ -119,8 +126,10 @@ namespace BlendInt {
 
 	ResponseType ComboBox::Draw(const RedrawEvent& event)
 	{
-		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(
+						event.projection_matrix() * event.view_matrix(), pos);
 
 		glBindVertexArray(m_vao);
 
@@ -130,25 +139,20 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float)z());
 
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
+		DrawShadedTriangleFan(0, 1, m_inner_buffer.get());
+
+		glDisableVertexAttribArray(1);
+
 		ThemeManager* tm = ThemeManager::instance();
 
 		glm::vec4 color;
-
-		color.r = tm->themes()->regular.inner.r() / 255.f;
-		color.g = tm->themes()->regular.inner.g() / 255.f;
-		color.b = tm->themes()->regular.inner.b() / 255.f;
-		color.a = tm->themes()->regular.inner.a() / 255.f;
-
-		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
-
-		glEnableVertexAttribArray(0);
-
-		DrawTriangleFan(0, m_inner_buffer.get());
-
-		color.r = tm->themes()->regular.outline.r() / 255.f;
-		color.g = tm->themes()->regular.outline.g() / 255.f;
-		color.b = tm->themes()->regular.outline.b() / 255.f;
-		color.a = tm->themes()->regular.outline.a() / WIDGET_AA_JITTER / 255.f;
+		color.r = tm->themes()->menu.outline.r() / 255.f;
+		color.g = tm->themes()->menu.outline.g() / 255.f;
+		color.b = tm->themes()->menu.outline.b() / 255.f;
+		color.a = tm->themes()->menu.outline.a() / WIDGET_AA_JITTER / 255.f;
 
 		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
 
@@ -178,13 +182,15 @@ namespace BlendInt {
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 
-		GenerateFormBuffer(
-						size(),
+		GenerateShadedFormBuffers(size(),
 						round_type(),
 						radius(),
+						themes()->menu.inner,
+						themes()->menu.shadetop,
+						themes()->menu.shadedown,
+						Vertical,
 						m_inner_buffer.get(),
-						m_outer_buffer.get(),
-						0);
+						m_outer_buffer.get());
 
 		glBindVertexArray(0);
 	}

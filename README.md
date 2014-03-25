@@ -68,7 +68,7 @@ int main (int argc, char* argv[])
 
 BlendInt make use of the modern OpenGL technology, to run your
 application linked with BlendInt, you must have a graphics card which
-supports OpenGL 3.1.
+supports OpenGL 3.3 or newer.
 
 To build BlendInt, make sure the following libraries are installed:
 
@@ -76,6 +76,15 @@ To build BlendInt, make sure the following libraries are installed:
 * OpenGL header and libraries, in Linux, Mesa 9.2 or newer
 * OpenImageIO 1.1+
 * boost
+* freetype
+* fontconfig (recommanded)
+
+The source code is verified to be built in:
+
+* Mac OS X 10.9 (Mavericks)
+* ArchLinux
+* Ubuntu 13.10
+* Fedora 20
 
 ## Installation
 
