@@ -266,36 +266,19 @@ namespace BlendInt {
 	    int rh = size.width() % cell_size;
 	    int rv = size.height() % cell_size;
 
-	    fprintf(stdout, "rh: %d\n", rh);
-	    fprintf(stdout, "rv: %d\n", rv);
-
 	    size_t hnum = size.width() / cell_size + (rh > 0 ? 2 : 1);
 	    size_t vnum = size.height() / cell_size + (rv > 0 ? 2 : 1);
 
 	    size_t light_num = 0;
 	    size_t dark_num = 0;
 
-	    for(size_t i = 0; i < (vnum - 1); i++)
-	    {
-	        if(i % 2 == 0)
-	            light_num += (hnum - 1) / 2 + 1;
-	        else
-	            light_num += (hnum - 1) / 2;
+	    size_t temp = (hnum - 1) * (vnum - 1);
+	    if(temp % 2 == 1) {
+	    	light_num = temp / 2 + 1;
+	    } else {
+	    	light_num = temp / 2;
 	    }
-
-	    for(size_t i = 0; i < (vnum - 1); i++)
-	    {
-	        if(i % 2 == 0)
-	            dark_num += (hnum - 1) / 2;
-	        else
-	            dark_num += (hnum - 1) / 2 + 1;
-	    }
-
-	    fprintf(stdout, "light num: %ld\n", light_num);
-	    fprintf(stdout, "dark num: %ld\n", dark_num);
-
-	    fprintf(stdout, "h: %ld\n", hnum);
-	    fprintf(stdout, "v: %ld\n", vnum);
+	    dark_num = temp - light_num;
 
 	    vertices->resize(hnum * vnum * 2);
 	    light_indices->resize(light_num * 2 * 3);
@@ -359,27 +342,27 @@ namespace BlendInt {
 	        }
 	    }
 
-#ifdef DEBUG
-		printf("v size: %ld\n", vertices->size());
-		for(size_t i = 0; i < vertices->size(); i += 2)
-		{
-			printf("%f %f\n", (*vertices)[i], (*vertices)[i+1]);
-		}
-
-	    printf("light i size: %ld\n", light_indices->size());
-
-	    for(size_t i = 0; i < light_indices->size(); i += 3)
-	    {
-	        printf("%d %d %d\n", (*light_indices)[i], (*light_indices)[i+1], (*light_indices)[i + 2]);
-	    }
-
-	    printf("dark i size: %ld\n", dark_indices->size());
-
-	    for(size_t i = 0; i < dark_indices->size(); i += 3)
-	    {
-	        printf("%d %d %d\n", (*dark_indices)[i], (*dark_indices)[i+1], (*dark_indices)[i + 2]);
-	    }
-#endif
+//#ifdef DEBUG
+//		printf("v size: %ld\n", vertices->size());
+//		for(size_t i = 0; i < vertices->size(); i += 2)
+//		{
+//			printf("%f %f\n", (*vertices)[i], (*vertices)[i+1]);
+//		}
+//
+//	    printf("light i size: %ld\n", light_indices->size());
+//
+//	    for(size_t i = 0; i < light_indices->size(); i += 3)
+//	    {
+//	        printf("%d %d %d\n", (*light_indices)[i], (*light_indices)[i+1], (*light_indices)[i + 2]);
+//	    }
+//
+//	    printf("dark i size: %ld\n", dark_indices->size());
+//
+//	    for(size_t i = 0; i < dark_indices->size(); i += 3)
+//	    {
+//	        printf("%d %d %d\n", (*dark_indices)[i], (*dark_indices)[i+1], (*dark_indices)[i + 2]);
+//	    }
+//#endif
 
 	}
 

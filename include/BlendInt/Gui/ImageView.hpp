@@ -49,13 +49,6 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		void makeCheckImage ();
-
-		static const int checkImageWidth = 512;
-		static const int checkImageHeight = 512;
-
-		GLubyte _checkImage[checkImageHeight][checkImageWidth][4];
-
 		GLuint m_vao;
 
 		RefPtr<GLTexture2D> m_texture;

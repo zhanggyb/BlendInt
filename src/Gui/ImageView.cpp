@@ -107,7 +107,6 @@ namespace BlendInt {
 
 		m_checkerboard->Draw(mvp);
 
-		/*
 		glBindVertexArray(m_vao);
 
 		m_program->Use();
@@ -115,55 +114,46 @@ namespace BlendInt {
 		glActiveTexture(GL_TEXTURE0);
 		m_texture->Bind();
 
-		m_program->SetUniform1i("tex", 0);
-		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		if (m_texture->GetWidth() > 0) {
+			m_program->SetUniform1i("tex", 0);
+			m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+			        glm::value_ptr(mvp));
 
-		glEnableVertexAttribArray(0);
-		m_vbo->Bind();
-		glVertexAttribPointer(
-				0,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				0
-				);
+			glEnableVertexAttribArray(0);
+			m_vbo->Bind();
+			glVertexAttribPointer(0, 3,
+			GL_FLOAT,
+			GL_FALSE, 0, 0);
 
-		glEnableVertexAttribArray(1);
-		m_tbo->Bind();
-		glVertexAttribPointer(
-				1,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				0
-				);
+			glEnableVertexAttribArray(1);
+			m_tbo->Bind();
+			glVertexAttribPointer(1, 2,
+			GL_FLOAT,
+			GL_FALSE, 0, 0);
 
-		m_vbo->Bind();
+			m_vbo->Bind();
 
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(0);
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(0);
 
-		m_vbo->Reset();
-		m_texture->Reset();
+			m_vbo->Reset();
+			m_texture->Reset();
+		}
 		m_program->Reset();
 
 		glBindVertexArray(0);
-	*/
 
 		return Accept;
 	}
 
 	void ImageView::InitOnce ()
 	{
-		makeCheckImage();
+		set_size(400, 300);
+		set_preferred_size(400, 300);
 
-		set_size(checkImageWidth, checkImageHeight);
-
-		m_checkerboard.reset(new CheckerBoard(150));
+		m_checkerboard.reset(new CheckerBoard(20));
 		m_checkerboard->Resize(size());
 
 		glGenVertexArrays(1, &m_vao);
@@ -175,7 +165,7 @@ namespace BlendInt {
 		m_texture->SetWrapMode(GL_REPEAT, GL_REPEAT);
 		m_texture->SetMinFilter(GL_LINEAR);
 		m_texture->SetMagFilter(GL_LINEAR);
-		m_texture->SetImage(checkImageWidth, checkImageHeight, _checkImage);
+		//m_texture->SetImage(0, 0, 0);
 		m_texture->Reset();
 
 		m_program.reset(new GLSLProgram);
@@ -185,12 +175,12 @@ namespace BlendInt {
 
 		GLfloat vertices[] = {
 			0.0, 0.0, 0.0,
-			checkImageWidth, 0.0, 0.0,
-			checkImageWidth, checkImageHeight, 0.0,
+			400.f, 0.0, 0.0,
+			400.f, 300.f, 0.0,
 
 			0.0, 0.0, 0.0,
-			checkImageWidth, checkImageHeight, 0.0,
-			0.0, checkImageHeight, 0.0
+			400.f, 300.f, 0.0,
+			0.0, 300.f, 0.0
 		};
 
 		m_vbo.reset(new GLArrayBuffer);
@@ -217,21 +207,6 @@ namespace BlendInt {
 		m_tbo->Reset();
 
 		glBindVertexArray(0);
-	}
-
-	void ImageView::makeCheckImage ()
-	{
-		int i, j, c;
-		for (i = 0; i < checkImageHeight; i++) {
-			for (j = 0; j < checkImageWidth; j++) {
-				c = (((i & 0x8) == 0) ^ (((j & 0x8) == 0))) * (255);
-				_checkImage[i][j][0] = (GLubyte) c;
-				_checkImage[i][j][1] = (GLubyte) c;
-				_checkImage[i][j][2] = (GLubyte) c;
-				//_checkImage[i][j][3] = (GLubyte) c;
-				_checkImage[i][j][3] = 255;
-			}
-		}
 	}
 
 }

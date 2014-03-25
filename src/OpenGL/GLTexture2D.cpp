@@ -162,6 +162,28 @@ namespace BlendInt {
 		SetParameter(GL_TEXTURE_WRAP_T, mode);
 	}
 
+	GLint GLTexture2D::GetWidth () const
+	{
+		GLint width = 0;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+		  	m_level,
+		  	GL_TEXTURE_WIDTH,
+		  	&width);
+
+		return width;
+	}
+
+	GLint GLTexture2D::GetHeight () const
+	{
+		GLint height = 0;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+		  	m_level,
+		  	GL_TEXTURE_HEIGHT,
+		  	&height);
+
+		return height;
+	}
+
 	bool GLTexture2D::WriteToFile (const std::string& filename)
 	{
 		//if(!m_flag[2]) return false;
@@ -227,3 +249,4 @@ namespace BlendInt {
 	}
 
 }
+
