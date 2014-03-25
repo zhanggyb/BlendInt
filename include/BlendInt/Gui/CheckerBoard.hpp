@@ -31,11 +31,16 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief CheckerBoard form
+	 *
+	 * A form show a gray checkerboard: light: #999999, dark: #666666
+	 */
 	class CheckerBoard: public AbstractResizableForm
 	{
 	public:
 
-		CheckerBoard ();
+		explicit CheckerBoard (size_t cell_size);
 
 		virtual ~CheckerBoard ();
 
@@ -47,6 +52,20 @@ namespace BlendInt {
 
 		virtual void Draw (const glm::mat4& mvp);
 
+	protected:
+
+		static void GenerateCheckerVertices (const Size& size,
+						size_t cell_size,
+						std::vector<GLfloat>* vertices,
+						std::vector<GLuint>* light_indices,
+						std::vector<GLuint>* dark_indices);
+
+
+		static void GenerateCheckerVertices (size_t num,
+						size_t cell_size,
+						std::vector<GLfloat>* vertex,
+						std::vector<GLuint>* index);
+
 	private:
 
 		void InitOnce ();
@@ -54,7 +73,9 @@ namespace BlendInt {
 		GLuint m_vao;
 
 		RefPtr<GLArrayBuffer> m_vbo;
-		RefPtr<GLElementArrayBuffer> m_ibo;
+		RefPtr<GLElementArrayBuffer> m_light_ibo;
+		RefPtr<GLElementArrayBuffer> m_dark_ibo;
+
 
 		size_t m_cell_size;
 	};

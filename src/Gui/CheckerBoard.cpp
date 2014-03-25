@@ -36,18 +36,19 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Gui/CheckerBoard.hpp>
 
 #include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 
-	CheckerBoard::CheckerBoard()
+	CheckerBoard::CheckerBoard(size_t cell_size)
 	: AbstractResizableForm(),
 	  m_vao(0),
-	  m_cell_size(100)
+	  m_cell_size(cell_size)
 	{
-		set_size(800, 600);	// TODO: use the default size in Interface
+		set_size(0, 0);	// TODO: use the default size in Interface
 		InitOnce();
 	}
 
@@ -56,14 +57,79 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void CheckerBoard::SetCellSize (size_t size)
+	void CheckerBoard::SetCellSize (size_t cell_size)
 	{
-		if(size == 0) return;
+		if(cell_size == 0) return;
+
+		m_cell_size = cell_size;
+
+		std::vector<GLfloat> vertices;
+		std::vector<unsigned int> light_indices;
+		std::vector<unsigned int> dark_indices;
+
+		GenerateCheckerVertices(size(), m_cell_size, &vertices, &light_indices, &dark_indices);
+
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		m_vbo->Bind();
+		m_vbo->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		m_vbo->Reset();
+
+		m_light_ibo->Bind();
+		m_light_ibo->SetData(light_indices.size() / 3, 3 * sizeof(GLuint), &light_indices[0]);
+		m_light_ibo->Reset();
+
+		m_dark_ibo->Bind();
+		m_dark_ibo->SetData(light_indices.size() / 3, 3 * sizeof(GLuint), &dark_indices[0]);
+		m_dark_ibo->Reset();
+
+		glBindVertexArray(0);
 	}
 	
 	bool CheckerBoard::Update (const UpdateRequest& request)
 	{
-		return true;
+		if (request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case FormSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					std::vector<GLfloat> vertices;
+					std::vector<unsigned int> light_indices;
+					std::vector<unsigned int> dark_indices;
+
+					GenerateCheckerVertices(*size_p, m_cell_size, &vertices, &light_indices, &dark_indices);
+
+					glGenVertexArrays(1, &m_vao);
+					glBindVertexArray(m_vao);
+
+					m_vbo->Bind();
+					m_vbo->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+					m_vbo->Reset();
+
+					m_light_ibo->Bind();
+					m_light_ibo->SetData(light_indices.size() / 3, 3 * sizeof(GLuint), &light_indices[0]);
+					m_light_ibo->Reset();
+
+					m_dark_ibo->Bind();
+					m_dark_ibo->SetData(light_indices.size() / 3, 3 * sizeof(GLuint), &dark_indices[0]);
+					m_dark_ibo->Reset();
+
+					glBindVertexArray(0);
+
+					return true;
+				}
+
+				default:
+					return true;
+			}
+
+		} else {
+			return false;
+		}
 	}
 	
 	void CheckerBoard::Draw (const glm::mat4& mvp)
@@ -76,13 +142,17 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
-		program->SetVertexAttrib4f("color", r, g, b, a);
+		Color color(0x999999FF);
+		program->SetVertexAttrib4f("color",
+						color.r()/255.f,
+						color.g()/255.f,
+						color.b()/255.f,
+						1.0);
 
 		glEnableVertexAttribArray(0);
 
 		m_vbo->Bind();	// bind ARRAY BUFFER
-		m_ibo->Bind();	// bind ELEMENT ARRAY BUFFER
+		m_light_ibo->Bind();	// bind ELEMENT ARRAY BUFFER
 
 		glVertexAttribPointer(0, // attribute
 							  2,			// number of elements per vertex, here (x,y)
@@ -92,11 +162,32 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
-		glDrawElements(GL_TRIANGLES, m_ibo->vertices() * 3,
+		glDrawElements(GL_TRIANGLES, m_light_ibo->vertices() * 3,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
+		color = 0x666666FF;
+
+		program->SetVertexAttrib4f("color",
+						color.r()/255.f,
+						color.g()/255.f,
+						color.b()/255.f,
+						1.0);
+
+		m_dark_ibo->Bind();	// bind ELEMENT ARRAY BUFFER
+
+		glVertexAttribPointer(0, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
+
+		glDrawElements(GL_TRIANGLES, m_dark_ibo->vertices() * 3,
+						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		m_dark_ibo->Reset();
 		m_vbo->Reset();
-		m_ibo->Reset();
 
 		glDisableVertexAttribArray(0);
 
@@ -104,53 +195,46 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 	}
-
-	void CheckerBoard::InitOnce()
+	
+	void CheckerBoard::GenerateCheckerVertices (size_t num,
+					size_t cell_size,
+					std::vector<GLfloat>* vertices,
+					std::vector<GLuint>* indices)
 	{
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-
-		m_vbo.reset(new GLArrayBuffer);
-		m_ibo.reset(new GLElementArrayBuffer);
-
-		size_t num = std::max(size().width(), size().height());
-		num = num / m_cell_size + 1;
-
-		std::vector<GLfloat> vertices;
-		std::vector<unsigned int> indices;
-
-		vertices.resize(num * num * 2);
-		indices.resize((num - 1) * (num - 1) * 3 * 2);
+		vertices->resize(num * num * 2);
+		indices->resize((num - 1) * (num - 1) * 3 * 2);
 
 		for(size_t i = 0; i < num; i++)
 		{
 			for(size_t j = 0; j < num; j++)
 			{
-				vertices[(i * num + j) * 2 + 0] = static_cast<float>(j * m_cell_size);
-				vertices[(i * num + j) * 2 + 1] = static_cast<float>(i * m_cell_size);
+				(*vertices)[(i * num + j) * 2 + 0] = static_cast<float>(j * cell_size);
+				(*vertices)[(i * num + j) * 2 + 1] = static_cast<float>(i * cell_size);
 			}
 		}
 
+		/*
 #ifdef DEBUG
-		printf("v size: %ld\n", vertices.size());
-		for(size_t i = 0; i < vertices.size(); i += 2)
+		printf("v size: %ld\n", vertices->size());
+		for(size_t i = 0; i < vertices->size(); i += 2)
 		{
-			printf("%f %f\n", vertices[i], vertices[i+1]);
+			printf("%f %f\n", (*vertices)[i], (*vertices)[i+1]);
 		}
 #endif
+		*/
 
 		size_t row = 0;
 		size_t pos = 0;
-		for(size_t i = 0; i < indices.size() / 3; i++)
+		for(size_t i = 0; i < indices->size() / 3; i++)
 		{
 			if(i % 2 == 0) {
-				indices[i * 3 + 0] = row * num + pos;
-				indices[i * 3 + 1] = row * num + pos + 1;
-				indices[i * 3 + 2] = (row + 1) * num + pos + 1;
+				(*indices)[i * 3 + 0] = row * num + pos;
+				(*indices)[i * 3 + 1] = row * num + pos + 1;
+				(*indices)[i * 3 + 2] = (row + 1) * num + pos + 1;
 			} else {
-				indices[i * 3 + 0] = row * num + pos;
-				indices[i * 3 + 1] = (row + 1) * num + pos + 1;
-				indices[i * 3 + 2] = (row + 1) * num + pos;
+				(*indices)[i * 3 + 0] = row * num + pos;
+				(*indices)[i * 3 + 1] = (row + 1) * num + pos + 1;
+				(*indices)[i * 3 + 2] = (row + 1) * num + pos;
 				pos++;
 			}
 
@@ -160,24 +244,169 @@ namespace BlendInt {
 			}
 		}
 
+		/*
 #ifdef DEBUG
-		printf("i size: %ld\n", indices.size());
+		printf("i size: %ld\n", indices->size());
 
-		for(size_t i = 0; i < indices.size(); i += 3)
+		for(size_t i = 0; i < indices->size(); i += 3)
 		{
-			printf("%d %d %d\n", indices[i], indices[i+1], indices[i + 2]);
+			printf("%d %d %d\n", (*indices)[i], (*indices)[i+1], (*indices)[i + 2]);
 		}
 #endif
+		 */
+
+	}
+	
+	void CheckerBoard::GenerateCheckerVertices (const Size& size,
+					size_t cell_size,
+					std::vector<GLfloat>* vertices,
+					std::vector<GLuint>* light_indices,
+					std::vector<GLuint>* dark_indices)
+	{
+	    int rh = size.width() % cell_size;
+	    int rv = size.height() % cell_size;
+
+	    fprintf(stdout, "rh: %d\n", rh);
+	    fprintf(stdout, "rv: %d\n", rv);
+
+	    size_t hnum = size.width() / cell_size + (rh > 0 ? 2 : 1);
+	    size_t vnum = size.height() / cell_size + (rv > 0 ? 2 : 1);
+
+	    size_t light_num = 0;
+	    size_t dark_num = 0;
+
+	    for(size_t i = 0; i < (vnum - 1); i++)
+	    {
+	        if(i % 2 == 0)
+	            light_num += (hnum - 1) / 2 + 1;
+	        else
+	            light_num += (hnum - 1) / 2;
+	    }
+
+	    for(size_t i = 0; i < (vnum - 1); i++)
+	    {
+	        if(i % 2 == 0)
+	            dark_num += (hnum - 1) / 2;
+	        else
+	            dark_num += (hnum - 1) / 2 + 1;
+	    }
+
+	    fprintf(stdout, "light num: %ld\n", light_num);
+	    fprintf(stdout, "dark num: %ld\n", dark_num);
+
+	    fprintf(stdout, "h: %ld\n", hnum);
+	    fprintf(stdout, "v: %ld\n", vnum);
+
+	    vertices->resize(hnum * vnum * 2);
+	    light_indices->resize(light_num * 2 * 3);
+	    dark_indices->resize(dark_num * 2 * 3);
+
+	    size_t x = 0, y = 0;
+	    for(size_t i = 0; i < vnum; i++)
+	    {
+	        for(size_t j = 0; j < hnum; j++)
+	        {
+	            x = j * cell_size;
+	            y = i * cell_size;
+
+	            x = x > size.width() ? size.width() : x;
+	            y = y > size.height() ? size.height() : y;
+
+	            (*vertices)[(i * hnum + j) * 2 + 0] = static_cast<float>(x);
+	            (*vertices)[(i * hnum + j) * 2 + 1] = static_cast<float>(y);
+	        }
+	    }
+
+	    size_t row = 0;
+	    size_t pos = 0;
+	    for(size_t i = 0; i < light_indices->size() / 3; i++)
+	    {
+	        if(i % 2 == 0) {
+	            (*light_indices)[i * 3 + 0] = row * hnum + pos;
+	            (*light_indices)[i * 3 + 1] = row * hnum + pos + 1;
+	            (*light_indices)[i * 3 + 2] = (row + 1) * hnum + pos + 1;
+	        } else {
+	            (*light_indices)[i * 3 + 0] = row * hnum + pos;
+	            (*light_indices)[i * 3 + 1] = (row + 1) * hnum + pos + 1;
+	            (*light_indices)[i * 3 + 2] = (row + 1) * hnum + pos;
+	            pos += 2;
+	        }
+
+	        if(pos >= (hnum - 1)) {
+	            row++;
+	            pos = (row % 2 == 0) ? 0 : 1;
+	        }
+	    }
+
+	    row = 0;
+	    pos = 1;
+	    for(size_t i = 0; i < dark_indices->size() / 3; i++)
+	    {
+	        if(i % 2 == 0) {
+	            (*dark_indices)[i * 3 + 0] = row * hnum + pos;
+	            (*dark_indices)[i * 3 + 1] = row * hnum + pos + 1;
+	            (*dark_indices)[i * 3 + 2] = (row + 1) * hnum + pos + 1;
+	        } else {
+	            (*dark_indices)[i * 3 + 0] = row * hnum + pos;
+	            (*dark_indices)[i * 3 + 1] = (row + 1) * hnum + pos + 1;
+	            (*dark_indices)[i * 3 + 2] = (row + 1) * hnum + pos;
+	            pos += 2;
+	        }
+
+	        if(pos >= (hnum - 1)) {
+	            row++;
+	            pos = (row % 2 == 0) ? 1 : 0;
+	        }
+	    }
+
+#ifdef DEBUG
+		printf("v size: %ld\n", vertices->size());
+		for(size_t i = 0; i < vertices->size(); i += 2)
+		{
+			printf("%f %f\n", (*vertices)[i], (*vertices)[i+1]);
+		}
+
+	    printf("light i size: %ld\n", light_indices->size());
+
+	    for(size_t i = 0; i < light_indices->size(); i += 3)
+	    {
+	        printf("%d %d %d\n", (*light_indices)[i], (*light_indices)[i+1], (*light_indices)[i + 2]);
+	    }
+
+	    printf("dark i size: %ld\n", dark_indices->size());
+
+	    for(size_t i = 0; i < dark_indices->size(); i += 3)
+	    {
+	        printf("%d %d %d\n", (*dark_indices)[i], (*dark_indices)[i+1], (*dark_indices)[i + 2]);
+	    }
+#endif
+
+	}
+
+	void CheckerBoard::InitOnce()
+	{
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		m_vbo.reset(new GLArrayBuffer);
+		m_light_ibo.reset(new GLElementArrayBuffer);
+		m_dark_ibo.reset(new GLElementArrayBuffer);
 
 		m_vbo->Generate();
 		m_vbo->Bind();
-		m_vbo->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		m_vbo->SetData(0, 0);
 		m_vbo->Reset();
 
-		m_ibo->Generate();
-		m_ibo->Bind();
-		m_ibo->SetData(indices.size() / 3, 3 * sizeof(GLuint), &indices[0]);
-		m_ibo->Reset();
+		m_light_ibo->Generate();
+		m_light_ibo->Bind();
+		m_light_ibo->SetData(0, 0, 0);
+		m_light_ibo->Reset();
+
+		m_dark_ibo->Generate();
+		m_dark_ibo->Bind();
+		m_dark_ibo->SetData(0, 0, 0);
+		m_dark_ibo->Reset();
+
 
 		glBindVertexArray(0);
 	}

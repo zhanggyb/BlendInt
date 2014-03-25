@@ -107,6 +107,7 @@ namespace BlendInt {
 
 		m_checkerboard->Draw(mvp);
 
+		/*
 		glBindVertexArray(m_vao);
 
 		m_program->Use();
@@ -151,6 +152,7 @@ namespace BlendInt {
 		m_program->Reset();
 
 		glBindVertexArray(0);
+	*/
 
 		return Accept;
 	}
@@ -161,8 +163,8 @@ namespace BlendInt {
 
 		set_size(checkImageWidth, checkImageHeight);
 
-		m_checkerboard.reset(new CheckerBoard);
-		m_checkerboard->Resize(checkImageWidth, checkImageHeight);
+		m_checkerboard.reset(new CheckerBoard(150));
+		m_checkerboard->Resize(size());
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
