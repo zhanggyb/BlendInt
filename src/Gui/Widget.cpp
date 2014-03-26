@@ -175,33 +175,39 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Widget::CursorEnterEvent(bool entered)
+	ResponseType Widget::CursorEnterEvent(bool entered)
 	{
-
+		return Accept;
 	}
 
-	void Widget::KeyPressEvent (KeyEvent* event)
+	ResponseType Widget::KeyPressEvent (const KeyEvent& event)
 	{
+		return Accept;
 	}
 
-	void Widget::ContextMenuPressEvent (ContextMenuEvent* event)
+	ResponseType Widget::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
+		return Accept;
 	}
 
-	void Widget::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	ResponseType Widget::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
+		return Accept;
 	}
 
-	void Widget::MousePressEvent (MouseEvent* event)
+	ResponseType Widget::MousePressEvent (const MouseEvent& event)
 	{
+		return Accept;
 	}
 
-	void Widget::MouseReleaseEvent (MouseEvent* event)
+	ResponseType Widget::MouseReleaseEvent (const MouseEvent& event)
 	{
+		return Accept;
 	}
 
-	void Widget::MouseMoveEvent (MouseEvent* event)
+	ResponseType Widget::MouseMoveEvent (const MouseEvent& event)
 	{
+		return Accept;
 	}
 
 }

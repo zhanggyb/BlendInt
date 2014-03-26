@@ -136,32 +136,39 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void MenuBar::CursorEnterEvent (bool entered)
+	ResponseType MenuBar::CursorEnterEvent (bool entered)
 	{
+		return IgnoreAndContinue;
 	}
 
-	void MenuBar::KeyPressEvent (KeyEvent* event)
+	ResponseType MenuBar::KeyPressEvent (const KeyEvent& event)
 	{
+		return IgnoreAndContinue;
 	}
 
-	void MenuBar::ContextMenuPressEvent (ContextMenuEvent* event)
+	ResponseType MenuBar::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
+		return IgnoreAndContinue;
 	}
 
-	void MenuBar::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	ResponseType MenuBar::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
+		return IgnoreAndContinue;
 	}
 
-	void MenuBar::MousePressEvent (MouseEvent* event)
+	ResponseType MenuBar::MousePressEvent (const MouseEvent& event)
 	{
+		return IgnoreAndContinue;
 	}
 
-	void MenuBar::MouseReleaseEvent (MouseEvent* event)
+	ResponseType MenuBar::MouseReleaseEvent (const MouseEvent& event)
 	{
+		return IgnoreAndContinue;
 	}
 
-	void MenuBar::MouseMoveEvent (MouseEvent* event)
+	ResponseType MenuBar::MouseMoveEvent (const MouseEvent& event)
 	{
+		return IgnoreAndContinue;
 	}
 
 	void MenuBar::InitOnce()

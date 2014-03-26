@@ -127,7 +127,7 @@ namespace BlendInt {
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
-	void AbstractButton::CursorEnterEvent(bool entered)
+	ResponseType AbstractButton::CursorEnterEvent(bool entered)
 	{
 		//m_status_hover = entered;
 
@@ -136,9 +136,10 @@ namespace BlendInt {
 		}
 
 		Refresh();
+		return Accept;
 	}
 
-	void AbstractButton::MousePressEvent (MouseEvent* event)
+	ResponseType AbstractButton::MousePressEvent (const MouseEvent& event)
 	{
 		if (m_checkable) {
 			m_status_checked = !m_status_checked;
@@ -150,18 +151,19 @@ namespace BlendInt {
 		}
 
 		Refresh();
-		event->accept(this);
+		return Accept;
 	}
 
-	void AbstractButton::MouseReleaseEvent(MouseEvent* event)
+	ResponseType AbstractButton::MouseReleaseEvent(const MouseEvent& event)
 	{
 		m_status_down = false;
 
 		Refresh();
-		event->accept(this);
+
+		return Accept;
 	}
 
-	void AbstractButton::MouseMoveEvent (MouseEvent* event)
+	ResponseType AbstractButton::MouseMoveEvent (const MouseEvent& event)
 	{
 		/*
 		if (m_status_down) {
@@ -169,6 +171,7 @@ namespace BlendInt {
 			return;
 		}
 		*/
+		return Accept;
 	}
 
 	size_t AbstractButton::GetValidTextSize()

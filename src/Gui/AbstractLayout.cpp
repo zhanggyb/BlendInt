@@ -118,39 +118,39 @@ namespace BlendInt {
 	}
 	*/
 
-	void AbstractLayout::CursorEnterEvent (bool entered)
+	ResponseType AbstractLayout::CursorEnterEvent (bool entered)
 	{
-
+		return IgnoreAndContinue;
 	}
 
-	void AbstractLayout::KeyPressEvent (KeyEvent* event)
+	ResponseType AbstractLayout::KeyPressEvent (const KeyEvent& event)
 	{
-
+		return IgnoreAndContinue;
 	}
 
-	void AbstractLayout::ContextMenuPressEvent (ContextMenuEvent* event)
+	ResponseType AbstractLayout::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-
+		return IgnoreAndContinue;
 	}
 
-	void AbstractLayout::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	ResponseType AbstractLayout::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
-
+		return IgnoreAndContinue;
 	}
 
-	void AbstractLayout::MousePressEvent(MouseEvent* event)
+	ResponseType AbstractLayout::MousePressEvent(const MouseEvent& event)
 	{
-
+		return IgnoreAndContinue;
 	}
 
-	void AbstractLayout::MouseReleaseEvent(MouseEvent* event)
+	ResponseType AbstractLayout::MouseReleaseEvent(const MouseEvent& event)
 	{
-
+		return IgnoreAndContinue;
 	}
 
-	void AbstractLayout::MouseMoveEvent(MouseEvent* event)
+	ResponseType AbstractLayout::MouseMoveEvent(const MouseEvent& event)
 	{
-
+		return IgnoreAndContinue;
 	}
 
 	void AbstractLayout::SetSpace (int space)

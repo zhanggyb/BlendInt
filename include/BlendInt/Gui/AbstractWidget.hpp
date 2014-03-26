@@ -247,19 +247,19 @@ namespace BlendInt {
 
 	protected:	// member functions
 
-		virtual void CursorEnterEvent (bool entered) = 0;
+		virtual ResponseType CursorEnterEvent (bool entered) = 0;
 
-		virtual void KeyPressEvent (KeyEvent* event) = 0;
+		virtual ResponseType KeyPressEvent (const KeyEvent& event) = 0;
 
-		virtual void ContextMenuPressEvent (ContextMenuEvent* event) = 0;
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event) = 0;
 
-		virtual void ContextMenuReleaseEvent (ContextMenuEvent* event) = 0;
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event) = 0;
 
-		virtual void MousePressEvent (MouseEvent* event) = 0;
+		virtual ResponseType MousePressEvent (const MouseEvent& event) = 0;
 
-		virtual void MouseReleaseEvent (MouseEvent* event) = 0;
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event) = 0;
 
-		virtual void MouseMoveEvent (MouseEvent* event) = 0;
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
 
 		/**
 		 * @brief Update opengl data (usually the GL buffer) for Render
@@ -316,13 +316,13 @@ namespace BlendInt {
 
 		static void DispatchRender (AbstractWidget* obj);
 
-		static void dispatch_key_press_event (AbstractWidget* obj, KeyEvent* event);
+		static ResponseType dispatch_key_press_event (AbstractWidget* obj, const KeyEvent& event);
 
-		static void dispatch_mouse_move_event (AbstractWidget* obj, MouseEvent* event);
+		static ResponseType dispatch_mouse_move_event (AbstractWidget* obj, const MouseEvent& event);
 
-		static void dispatch_mouse_press_event (AbstractWidget* obj, MouseEvent* event);
+		static ResponseType dispatch_mouse_press_event (AbstractWidget* obj, const MouseEvent& event);
 
-		static void dispatch_mouse_release_event (AbstractWidget* obj, MouseEvent* event);
+		static ResponseType dispatch_mouse_release_event (AbstractWidget* obj, const MouseEvent& event);
 
 	private:
 

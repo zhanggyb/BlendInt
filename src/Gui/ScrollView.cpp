@@ -90,44 +90,48 @@ namespace BlendInt {
 				size().height());
 
 		glDisable(GL_SCISSOR_TEST);
+
+		return Accept;
 	}
 
-	void ScrollView::MousePressEvent (MouseEvent* event)
+	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)
 	{
 		if (!sub_widget_size()) {
-			event->ignore(this);
-			return;
+			return Ignore;
 		}
 
 		AbstractWidget* p = sub_widgets().front();
 
-		if (event->button() == MouseButtonMiddle) {
+		if (event.button() == MouseButtonMiddle) {
 
 			m_move_status = true;
-			m_move_start_pos.set_x(event->position().x());
-			m_move_start_pos.set_y(event->position().y());
+			m_move_start_pos.set_x(event.position().x());
+			m_move_start_pos.set_y(event.position().y());
 			m_origin_pos = p->position();
 		} else {
 			//dispatch_mouse_press_event(m_viewport, event);
 		}
+
+		return Accept;
 	}
 
-	void ScrollView::MouseReleaseEvent(MouseEvent* event)
+	ResponseType ScrollView::MouseReleaseEvent(const MouseEvent& event)
 	{
 		if(m_move_status) m_move_status = false;
 
 		if(!sub_widget_size()) {
-			event->ignore(this);
-			return;
+			return Ignore;
 		}
 
 		//AbstractWidget* p = sub_widgets().front();
 
 		//if(!m_viewport) return;
 		//dispatch_mouse_release_event(m_viewport, event);
+
+		return Accept;
 	}
 
-	void ScrollView::MouseMoveEvent(MouseEvent* event)
+	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
 		/*
 		if(!m_viewport) return;
@@ -197,6 +201,8 @@ namespace BlendInt {
 		}
 
 		*/
+
+		return Accept;
 	}
 
 }

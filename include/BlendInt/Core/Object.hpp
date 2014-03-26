@@ -56,6 +56,10 @@ namespace BlendInt {
 
 		virtual ~Object ();
 
+		Object (const Object& orig);
+
+		Object& operator = (const Object& orig);
+
 		inline void set_name (const char* name)
 		{
 			m_name = name;

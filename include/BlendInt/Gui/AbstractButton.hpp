@@ -72,13 +72,13 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void CursorEnterEvent (bool entered);
+		virtual ResponseType CursorEnterEvent (bool entered);
 
-		virtual void MousePressEvent (MouseEvent* event);
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
-		virtual void MouseReleaseEvent (MouseEvent* event);
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
-		virtual void MouseMoveEvent (MouseEvent* event);
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		inline void set_text (const String& text)
 		{

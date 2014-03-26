@@ -521,28 +521,28 @@ namespace BlendInt {
 		//other->Draw();
 	}
 
-	void AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
-			KeyEvent* event)
+	ResponseType AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
+			const KeyEvent& event)
 	{
-		obj->KeyPressEvent(event);
+		return obj->KeyPressEvent(event);
 	}
 
-	void AbstractWidget::dispatch_mouse_move_event (AbstractWidget* obj,
-			MouseEvent* event)
+	ResponseType AbstractWidget::dispatch_mouse_move_event (AbstractWidget* obj,
+			const MouseEvent& event)
 	{
-		obj->MouseMoveEvent(event);
+		return obj->MouseMoveEvent(event);
 	}
 
-	void AbstractWidget::dispatch_mouse_press_event (AbstractWidget* obj,
-			MouseEvent* event)
+	ResponseType AbstractWidget::dispatch_mouse_press_event (AbstractWidget* obj,
+			const MouseEvent& event)
 	{
-		obj->MousePressEvent(event);
+		return obj->MousePressEvent(event);
 	}
 
-	void AbstractWidget::dispatch_mouse_release_event (AbstractWidget* obj,
-			MouseEvent* event)
+	ResponseType AbstractWidget::dispatch_mouse_release_event (AbstractWidget* obj,
+			const MouseEvent& event)
 	{
-		obj->MouseReleaseEvent(event);
+		return obj->MouseReleaseEvent(event);
 	}
 
 	bool AbstractWidget::CompositeToScreenBuffer (GLTexture2D* tex,

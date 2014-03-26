@@ -130,32 +130,39 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::CursorEnterEvent (bool entered)
+	ResponseType Frame::CursorEnterEvent (bool entered)
 	{
+		return Accept;
 	}
 
-	void Frame::KeyPressEvent (KeyEvent* event)
+	ResponseType Frame::KeyPressEvent (const KeyEvent& event)
 	{
+		return Accept;
 	}
 
-	void Frame::ContextMenuPressEvent (ContextMenuEvent* event)
+	ResponseType Frame::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
+		return Accept;
 	}
 
-	void Frame::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	ResponseType Frame::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
+		return Accept;
 	}
 
-	void Frame::MousePressEvent (MouseEvent* event)
+	ResponseType Frame::MousePressEvent (const MouseEvent& event)
 	{
+		return Accept;
 	}
 
-	void Frame::MouseReleaseEvent (MouseEvent* event)
+	ResponseType Frame::MouseReleaseEvent (const MouseEvent& event)
 	{
+		return Accept;
 	}
 
-	void Frame::MouseMoveEvent (MouseEvent* event)
+	ResponseType Frame::MouseMoveEvent (const MouseEvent& event)
 	{
+		return Accept;
 	}
 
 	ResponseType Frame::Draw (const RedrawEvent& event)

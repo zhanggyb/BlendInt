@@ -201,59 +201,61 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Slider::MouseMoveEvent (MouseEvent* event)
+	ResponseType Slider::MouseMoveEvent (const MouseEvent& event)
 	{
 		if(m_pressed) {
 
 			int new_value = value();
 
 			// DO not fire if cursor is out of range, otherwise too many events
-			if(GetNewValue(event->position(), &new_value)) {
+			if(GetNewValue(event.position(), &new_value)) {
 				set_value(new_value);
 				fire_slider_moved_event(value());
 				Refresh();
 			}
 
-			event->accept(this);
+			return Accept;
 
 		} else {
-			if(CursorOnSlideIcon(event->position())) {
+			if(CursorOnSlideIcon(event.position())) {
 				m_switch.set_highlight(true);
 
 				Refresh();
-				event->accept(this);
+
+				return Accept;
 			} else {
 				m_switch.set_highlight(false);
 				Refresh();
-				event->ignore(this);
+				return Ignore;
 			}
 		}
 	}
 
-	void Slider::MousePressEvent (MouseEvent* event)
+	ResponseType Slider::MousePressEvent (const MouseEvent& event)
 	{
-		if(CursorOnSlideIcon(event->position())) {
+		if(CursorOnSlideIcon(event.position())) {
 			m_pressed = true;
 			fire_slider_pressed();
-			event->accept(this);
+
+			return Accept;
 		} else {
-			event->ignore(this);
+			return Ignore;
 		}
 	}
 
-	void Slider::MouseReleaseEvent (MouseEvent* event)
+	ResponseType Slider::MouseReleaseEvent (const MouseEvent& event)
 	{
 		if(m_pressed) {
 			m_pressed = false;
 
-			if(CursorOnSlideIcon(event->position())) {
+			if(CursorOnSlideIcon(event.position())) {
 				fire_slider_released();
 			}
 
 			Refresh();
 		}
 
-		event->accept(this);
+		return Accept;
 	}
 
 	void Slider::InitOnce ()

@@ -87,9 +87,9 @@ namespace BlendInt {
 
 		void Draw ();
 
-		void DispatchKeyEvent (KeyEvent* event);
+		void DispatchKeyEvent (const KeyEvent& event);
 
-		void DispatchMouseEvent (MouseEvent* event);
+		void DispatchMouseEvent (const MouseEvent& event);
 
 		const Size& size () const;
 
@@ -133,11 +133,11 @@ namespace BlendInt {
 
 		void RenderToImage ();
 
-		void DispatchCursorMoveEvent (MouseEvent* event);
+		void DispatchCursorMoveEvent (const MouseEvent& event);
 
-		void DispatchMousePressEvent (MouseEvent* event);
+		void DispatchMousePressEvent (const MouseEvent& event);
 
-		void DispatchMouseReleaseEvent (MouseEvent* event);
+		void DispatchMouseReleaseEvent (const MouseEvent& event);
 
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point,
 		        AbstractWidget* parent);

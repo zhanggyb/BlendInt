@@ -138,30 +138,46 @@ void DemoFrame::reset_time()
 	m_timer->SetInterval(2000);
 }
 
-void DemoFrame::KeyPressEvent(KeyEvent* event) {
+ResponseType DemoFrame::KeyPressEvent(const KeyEvent& event)
+{
 	if(m_widget)
-		dispatch_key_press_event(m_widget, event);
+		return dispatch_key_press_event(m_widget, event);
+
+	return IgnoreAndContinue;
 }
 
-void DemoFrame::ContextMenuPressEvent(ContextMenuEvent* event) {
+ResponseType DemoFrame::ContextMenuPressEvent(const ContextMenuEvent& event)
+{
+	return IgnoreAndContinue;
 }
 
-void DemoFrame::ContextMenuReleaseEvent(ContextMenuEvent* event) {
+ResponseType DemoFrame::ContextMenuReleaseEvent(const ContextMenuEvent& event)
+{
+	return IgnoreAndContinue;
 }
 
-void DemoFrame::MousePressEvent(MouseEvent* event) {
+ResponseType DemoFrame::MousePressEvent(const MouseEvent& event)
+{
 	if(m_widget)
-		dispatch_mouse_press_event(m_widget, event);
+		return dispatch_mouse_press_event(m_widget, event);
+
+	return IgnoreAndContinue;
 }
 
-void DemoFrame::MouseReleaseEvent(MouseEvent* event) {
+ResponseType DemoFrame::MouseReleaseEvent(const MouseEvent& event)
+{
 	if(m_widget)
-		dispatch_mouse_release_event(m_widget, event);
+		return dispatch_mouse_release_event(m_widget, event);
+
+	return IgnoreAndContinue;
 }
 
-void DemoFrame::MouseMoveEvent(MouseEvent* event) {
+ResponseType DemoFrame::MouseMoveEvent(const MouseEvent& event)
+{
 	if(m_widget)
-		dispatch_mouse_move_event(m_widget, event);
+		return dispatch_mouse_move_event(m_widget, event);
+
+	return IgnoreAndContinue;
 }
 
 void DemoFrame::stop_time()

@@ -47,14 +47,14 @@ namespace BlendInt {
 		global_key_event.set_modifiers(mods);
         global_key_event.clear_text();
 
-		Interface::instance->DispatchKeyEvent(&global_key_event);
+		Interface::instance->DispatchKeyEvent(global_key_event);
 	}
 
 	static void CbChar(GLFWwindow* window, unsigned int character)
 	{
 		global_key_event.set_text(character);
 
-		Interface::instance->DispatchKeyEvent(&global_key_event);
+		Interface::instance->DispatchKeyEvent(global_key_event);
 	}
 
 	static void CbMouseButton(GLFWwindow* window, int button, int action,
@@ -96,7 +96,7 @@ namespace BlendInt {
 		global_mouse_event.set_action(mouse_action);
 		global_mouse_event.set_modifiers(mods);
 
-		Interface::instance->DispatchMouseEvent(&global_mouse_event);
+		Interface::instance->DispatchMouseEvent(global_mouse_event);
 	}
 
 	static void CbCursorPos(GLFWwindow* window, double xpos, double ypos)
@@ -105,7 +105,7 @@ namespace BlendInt {
         global_mouse_event.set_button(MouseButtonNone);
 		global_mouse_event.set_position(static_cast<int>(xpos), Interface::instance->size().height() - static_cast<int>(ypos));
 
-		Interface::instance->DispatchMouseEvent(&global_mouse_event);
+		Interface::instance->DispatchMouseEvent(global_mouse_event);
 	}
 
 	void Init ()

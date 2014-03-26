@@ -83,40 +83,41 @@ namespace BlendInt {
 		Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
 	}
 
-	void Menu::MouseMoveEvent(MouseEvent* event)
+	ResponseType Menu::MouseMoveEvent(const MouseEvent& event)
 	{
-		if(!contain(event->position())) {
+		if(!contain(event.position())) {
 			m_highlight = 0;
-			return;
+			return Accept;
 		}
 
 		if(!m_menubin->size()) {
 			m_highlight = 0;
-			return;
+			return Accept;
 		}
 
-		m_highlight = GetHighlightNo(static_cast<int>(event->position().y()));
+		m_highlight = GetHighlightNo(static_cast<int>(event.position().y()));
 
-		event->accept(this);
+		return Accept;
 	}
 
-	void Menu::MousePressEvent (MouseEvent* event)
+	ResponseType Menu::MousePressEvent (const MouseEvent& event)
 	{
-		if(!contain(event->position())) {
-			return;
+		if(!contain(event.position())) {
+			return Ignore;
 		}
 
 		if(!m_menubin->size()) {
-			return;
+			return Accept;
 		}
-
-		event->accept(this);
 
 		m_triggered.fire(m_menubin->GetMenuItem(m_highlight - 1));
+
+		return Accept;
 	}
 
-	void Menu::MouseReleaseEvent (MouseEvent* event)
+	ResponseType Menu::MouseReleaseEvent (const MouseEvent& event)
 	{
+		return Accept;
 	}
 
 	bool Menu::Update(const UpdateRequest& request)

@@ -59,9 +59,9 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
-		virtual void KeyPressEvent (KeyEvent* event);
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
-		virtual void MousePressEvent (MouseEvent* event);
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
 	private:
 

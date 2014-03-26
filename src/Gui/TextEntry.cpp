@@ -62,21 +62,21 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void TextEntry::KeyPressEvent (KeyEvent* event)
+	ResponseType TextEntry::KeyPressEvent (const KeyEvent& event)
 	{
-		if(event->text().size()) {
+		if(event.text().size()) {
 
-			m_text.insert(m_cursor_position, event->text());
-			m_cursor_position += event->text().length();
-			m_length += event->text().length();
+			m_text.insert(m_cursor_position, event.text());
+			m_cursor_position += event.text().length();
+			m_length += event.text().length();
 
 			unsigned text_width = m_font.GetTextWidth(m_text, m_length, m_start);
 
 			unsigned int valid_width = size().width() - DefaultTextEntryPadding.left() - DefaultTextEntryPadding.right();
 
 			if(text_width > valid_width) {
-				m_length -= event->text().length();
-				m_start += event->text().length();
+				m_length -= event.text().length();
+				m_start += event.text().length();
 			}
 
 			text_width = m_font.GetTextWidth(m_text, m_length, m_start);
@@ -87,11 +87,10 @@ namespace BlendInt {
 			}
 
 			Refresh();
-			event->accept(this);
-			return;
+			return Accept;
 		}
 
-		switch(event->key()) {
+		switch(event.key()) {
 
 			case Key_Backspace: {
 				break;
@@ -143,17 +142,18 @@ namespace BlendInt {
 				break;
 		}
 
-		event->accept(this);
+		return Accept;
 	}
 
-	void TextEntry::MousePressEvent(MouseEvent* event)
+	ResponseType TextEntry::MousePressEvent(const MouseEvent& event)
 	{
 		if(m_text.size()) {
 			//m_cursor_position = GetCursorPosition(event);
 		}
 
 		Refresh();
-		event->accept(this);
+
+		return Accept;
 	}
 
 	bool TextEntry::Update (const UpdateRequest& request)

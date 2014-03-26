@@ -36,17 +36,17 @@ protected:
 
 	virtual void Draw (RedrawEvent* event);
 
-	virtual void KeyPressEvent (KeyEvent* event);
+	virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
-	virtual void ContextMenuPressEvent (ContextMenuEvent* event);
+	virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
 
-	virtual void ContextMenuReleaseEvent (ContextMenuEvent* event);
+	virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
-	virtual void MousePressEvent (MouseEvent* event);
+	virtual ResponseType MousePressEvent (const MouseEvent& event);
 
-	virtual void MouseReleaseEvent (MouseEvent* event);
+	virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
-	virtual void MouseMoveEvent (MouseEvent* event);
+	virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 private:
 

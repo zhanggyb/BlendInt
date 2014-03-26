@@ -901,32 +901,39 @@ namespace BlendInt {
 		return false;
 	}
 
-	void ContextManager::CursorEnterEvent (bool entered)
+	ResponseType ContextManager::CursorEnterEvent (bool entered)
 	{
+		return Ignore;
 	}
 
-	void ContextManager::KeyPressEvent (KeyEvent* event)
+	ResponseType ContextManager::KeyPressEvent (const KeyEvent& event)
 	{
+		return Ignore;
 	}
 
-	void ContextManager::ContextMenuPressEvent (ContextMenuEvent* event)
+	ResponseType ContextManager::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
+		return Ignore;
 	}
 
-	void ContextManager::ContextMenuReleaseEvent (ContextMenuEvent* event)
+	ResponseType ContextManager::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
+		return Ignore;
 	}
 
-	void ContextManager::MousePressEvent (MouseEvent* event)
+	ResponseType ContextManager::MousePressEvent (const MouseEvent& event)
 	{
+		return Ignore;
 	}
 
-	void ContextManager::MouseReleaseEvent (MouseEvent* event)
+	ResponseType ContextManager::MouseReleaseEvent (const MouseEvent& event)
 	{
+		return Ignore;
 	}
 
-	void ContextManager::MouseMoveEvent (MouseEvent* event)
+	ResponseType ContextManager::MouseMoveEvent (const MouseEvent& event)
 	{
+		return Ignore;
 	}
 
 	ResponseType ContextManager::Draw (const RedrawEvent& event)

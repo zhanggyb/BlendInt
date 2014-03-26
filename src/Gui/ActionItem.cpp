@@ -21,34 +21,49 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINTLADDERWIDGET_HPP_
-#define _BLENDINTLADDERWIDGET_HPP_
-
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/ActionItem.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief a LadderWidget holds a widget in different layer (z axis)
-	 *
-	 * The LadderWidget draws and reacts nothing, but pass the events
-	 * to the viewport widget in different layer.
-	 *
-	 * After setting the viewport widget in different layer, the
-	 * LadderWidget reset its size to the same of the viewport
-	 */
-	class LadderWidget: public Frame
+	RefPtr<ActionItem> ActionItem::Create ()
 	{
-		DISALLOW_COPY_AND_ASSIGN(LadderWidget);
+		RefPtr<ActionItem> item(new ActionItem);
 
-	public:
+		return item;
+	}
+	
+	RefPtr<ActionItem> ActionItem::Create (const RefPtr<Icon>& icon,
+					const std::string& text)
+	{
+		RefPtr<ActionItem> item(new ActionItem(icon, text));
 
-		LadderWidget();
+		return item;
+	}
+	
+	RefPtr<ActionItem> ActionItem::Create (const std::string& text)
+	{
+		RefPtr<ActionItem> item(new ActionItem(text));
 
-		LadderWidget(AbstractWidget* parent);
+		return item;
+	}
+	
+	ActionItem::ActionItem ()
+	{
+	}
 
-	};
+	ActionItem::ActionItem (const RefPtr<Icon>& icon, const std::string& text)
+	: m_icon(icon), m_text(text)
+	{
+	}
+	
+	ActionItem::ActionItem (const std::string& text)
+	: m_text(text)
+	{
+	}
+
+	ActionItem::~ActionItem ()
+	{
+	}
 
 }
 
-#endif /* _BLENDINTLADDERWIDGET_HPP_ */

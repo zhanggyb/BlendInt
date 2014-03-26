@@ -56,10 +56,10 @@ namespace BlendInt {
 		m_cameras.clear();
 	}
 
-	void Viewport3D::KeyPressEvent (KeyEvent* event)
+	ResponseType Viewport3D::KeyPressEvent (const KeyEvent& event)
 	{
-		if (event->action() == KeyPress) {
-			switch (event->key()) {
+		if (event.action() == KeyPress) {
+			switch (event.key()) {
 				case Key_KP_Decimal: {
 					// setup camera
 					glm::vec3 pos = glm::vec3(5.f);
@@ -75,11 +75,11 @@ namespace BlendInt {
 				default:
 					break;
 			}
-		} else if (event->action() == KeyRelease
+		} else if (event.action() == KeyRelease
 		        && m_button_down == MouseButtonMiddle) {
 
 			// currently does nothing
-			switch (event->key()) {
+			switch (event.key()) {
 				case Key_LeftShift:
 				case Key_RightShift:
 					break;
@@ -93,29 +93,30 @@ namespace BlendInt {
 			}
 
 		}
-		event->accept(this);
+
+		return Accept;
 	}
 
-	void Viewport3D::MousePressEvent (MouseEvent* event)
+	ResponseType Viewport3D::MousePressEvent (const MouseEvent& event)
 	{
-		m_button_down = event->button();
+		m_button_down = event.button();
 
-		m_last_x = event->position().x();
-		m_last_y = event->position().y();
+		m_last_x = event.position().x();
+		m_last_y = event.position().y();
 
 		if (m_button_down == MouseButtonMiddle) {
 
-			if (event->modifiers() == ModifierNone) {
+			if (event.modifiers() == ModifierNone) {
 
 				m_default_camera->SaveCurrentPosition();
 				m_default_camera->SaveCurrentCenter();
 
-			} else if (event->modifiers() == ModifierShift) {
+			} else if (event.modifiers() == ModifierShift) {
 
 				m_default_camera->SaveCurrentPosition();
 				m_default_camera->SaveCurrentCenter();
 
-			} else if (event->modifiers() == ModifierControl) {
+			} else if (event.modifiers() == ModifierControl) {
 
 				m_default_camera->SaveCurrentPosition();
 
@@ -139,16 +140,17 @@ namespace BlendInt {
 
 		}
 
-		event->accept(this);
+		return Accept;
 	}
 
-	void Viewport3D::MouseReleaseEvent (MouseEvent* event)
+	ResponseType Viewport3D::MouseReleaseEvent (const MouseEvent& event)
 	{
 		m_button_down = MouseButtonNone;
-		event->accept(this);
+
+		return Accept;
 	}
 
-	void Viewport3D::MouseMoveEvent (MouseEvent* event)
+	ResponseType Viewport3D::MouseMoveEvent (const MouseEvent& event)
 	{
 		switch (m_button_down) {
 			case MouseButtonLeft: {
@@ -157,23 +159,23 @@ namespace BlendInt {
 
 			case MouseButtonMiddle: {
 
-				if (event->modifiers() == ModifierShift) {
+				if (event.modifiers() == ModifierShift) {
 
 					float dx = static_cast<float>(m_last_x
-					        - event->position().x());
+					        - event.position().x());
 					float dy = static_cast<float>(m_last_y
-					        - event->position().y());
+					        - event.position().y());
 					m_default_camera->Pan(dx, dy);
 
-				} else if (event->modifiers() == ModifierControl) {
+				} else if (event.modifiers() == ModifierControl) {
 
-					m_default_camera->Zoom(m_last_y - event->position().y());
+					m_default_camera->Zoom(m_last_y - event.position().y());
 
-				} else if (event->modifiers() == ModifierNone) {
+				} else if (event.modifiers() == ModifierNone) {
 					float dx = static_cast<float>(m_last_x
-					        - event->position().x());
+					        - event.position().x());
 					float dy = static_cast<float>(m_last_y
-					        - event->position().y());
+					        - event.position().y());
 					m_default_camera->Orbit(dx, dy);
 				}
 
@@ -190,7 +192,7 @@ namespace BlendInt {
 				break;
 		}
 
-		event->accept(this);
+		return Accept;
 	}
 
 	bool Viewport3D::Update (const UpdateRequest& request)

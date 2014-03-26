@@ -21,34 +21,28 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINTLADDERWIDGET_HPP_
-#define _BLENDINTLADDERWIDGET_HPP_
+#ifndef _BLENDINT_GUI_TOOLBOX_HPP_
+#define _BLENDINT_GUI_TOOLBOX_HPP_
 
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief a LadderWidget holds a widget in different layer (z axis)
-	 *
-	 * The LadderWidget draws and reacts nothing, but pass the events
-	 * to the viewport widget in different layer.
-	 *
-	 * After setting the viewport widget in different layer, the
-	 * LadderWidget reset its size to the same of the viewport
-	 */
-	class LadderWidget: public Frame
+	class ToolBox: public Widget
 	{
-		DISALLOW_COPY_AND_ASSIGN(LadderWidget);
-
 	public:
 
-		LadderWidget();
+		ToolBox();
 
-		LadderWidget(AbstractWidget* parent);
+		virtual ~ToolBox();
 
+	protected:
+
+
+
+	private:
 	};
 
 }
 
-#endif /* _BLENDINTLADDERWIDGET_HPP_ */
+#endif /* _BLENDINT_GUI_TOOLBOX_HPP_ */
