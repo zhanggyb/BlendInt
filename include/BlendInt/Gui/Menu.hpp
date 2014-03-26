@@ -30,8 +30,7 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/RoundWidget.hpp>
-#include <BlendInt/Gui/MenuItemBin.hpp>
-#include <BlendInt/Gui/Icon.hpp>
+#include <BlendInt/Gui/ActionItem.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -52,13 +51,15 @@ namespace BlendInt {
 
 		void SetTitle (const String& title);
 
-		void AddMenuItem (const String& text);
+		void AddActionItem (const String& text);
 
-		void AddMenuItem (Icon* icon, const String& text);
+		void AddActionItem (const RefPtr<Icon>& icon, const String& text);
 
-		void AddMenuItem (Icon* icon, const String& text, const String& shortcut);
+		void AddActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
 
-		Cpp::EventRef<MenuItem*> triggered () {return m_triggered;}
+		void AddActionItem (const RefPtr<ActionItem>& item);
+
+		//Cpp::EventRef<ActionItem*> triggered () {return m_triggered;}
 
 		static int DefaultMenuItemHeight;
 
@@ -80,6 +81,8 @@ namespace BlendInt {
 
 		unsigned int GetHighlightNo (int y);
 
+		String m_title;
+
 		/**
 		 * @brief The highlight item in Menu
 		 *
@@ -88,13 +91,13 @@ namespace BlendInt {
 		 */
 		unsigned int m_highlight;	// the highlight item index
 
-		boost::scoped_ptr<MenuItemBin> m_menubin;
-
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 		RefPtr<GLArrayBuffer> m_highlight_buffer;
 
-		Cpp::Event<MenuItem*> m_triggered;
+		std::list<RefPtr<ActionItem> > m_list;
+
+		//Cpp::Event<ActionItem*> m_triggered;
 	};
 
 }

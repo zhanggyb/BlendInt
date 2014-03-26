@@ -43,8 +43,6 @@ namespace BlendInt {
 	Menu::Menu ()
 	: RoundWidget(), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{
-		m_menubin.reset(new MenuItemBin);
-
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 		m_highlight_buffer.reset(new GLArrayBuffer);
@@ -62,25 +60,39 @@ namespace BlendInt {
 
 	void Menu::SetTitle(const String& title)
 	{
-		m_menubin->set_title(title);
+		m_title = title;
 	}
 
-	void Menu::AddMenuItem(const String& text)
+	void Menu::AddActionItem(const String& text)
 	{
-		m_menubin->Add(text);
-		Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
+		RefPtr<ActionItem> item = ActionItem::Create(text);
+
+		m_list.push_back(item);
+
+		// Resize
+		//Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
 	}
 
-	void Menu::AddMenuItem(Icon* icon, const String& text)
+	void Menu::AddActionItem(const RefPtr<Icon>& icon, const String& text)
 	{
-		m_menubin->Add(icon, text);
-		Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
+		RefPtr<ActionItem> item = ActionItem::Create(icon, text);
+
+		m_list.push_back(item);
+
+		//Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
 	}
 
-	void Menu::AddMenuItem(Icon* icon, const String& text, const String& shortcut)
+	void Menu::AddActionItem(const RefPtr<Icon>& icon, const String& text, const String& shortcut)
 	{
-		m_menubin->Add(icon, text, shortcut);
-		Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
+		RefPtr<ActionItem> item = ActionItem::Create(icon, text, shortcut);
+		m_list.push_back(item);
+
+		//Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
+	}
+
+	void Menu::AddActionItem(const RefPtr<ActionItem>& item)
+	{
+		m_list.push_back(item);
 	}
 
 	ResponseType Menu::MouseMoveEvent(const MouseEvent& event)
@@ -90,10 +102,12 @@ namespace BlendInt {
 			return Accept;
 		}
 
+		/*
 		if(!m_menubin->size()) {
 			m_highlight = 0;
 			return Accept;
 		}
+		*/
 
 		m_highlight = GetHighlightNo(static_cast<int>(event.position().y()));
 
@@ -106,11 +120,13 @@ namespace BlendInt {
 			return Ignore;
 		}
 
+		/*
 		if(!m_menubin->size()) {
 			return Accept;
 		}
 
 		m_triggered.fire(m_menubin->GetMenuItem(m_highlight - 1));
+		*/
 
 		return Accept;
 	}
@@ -263,7 +279,8 @@ namespace BlendInt {
 			return 0;
 		}
 
-		return (h - radius()) / (size().height() / m_menubin->size()) + 1;
+		//return (h - radius()) / (size().height() / m_menubin->size()) + 1;
+		return 0;
 	}
 
 }

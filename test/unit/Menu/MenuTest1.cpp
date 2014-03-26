@@ -32,11 +32,11 @@ TEST_F(MenuTest1, Foo1)
 
     menubin->SetPosition(200, 200);
 
-    menubin->AddMenuItem("MenuItem1");
-    menubin->AddMenuItem("MenuItem2");
-    menubin->AddMenuItem("MenuItem3");
-    menubin->AddMenuItem("MenuItem4");
-    menubin->AddMenuItem("MenuItem5");
+    menubin->AddActionItem("MenuItem1");
+    menubin->AddActionItem("MenuItem2");
+    menubin->AddActionItem("MenuItem3");
+    menubin->AddActionItem("MenuItem4");
+    menubin->AddActionItem("MenuItem5");
 
 	RunLoop(window);
 
@@ -75,7 +75,7 @@ TEST_F(MenuTest1, Click1)
 	
 	info->SetPosition(600, 200);
 
-	Interface::instance->events()->connect(menubin->triggered(), info, &InfoWidget::onShowText);
+	//Interface::instance->events()->connect(menubin->triggered(), info, &InfoWidget::onShowText);
 
 	RunLoop(window);
 

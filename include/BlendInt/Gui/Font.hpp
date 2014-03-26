@@ -100,7 +100,7 @@ namespace BlendInt {
 			return m_cache->m_freetype.max_advance();
 		}
 
-		Rect get_text_outline (const String& string)
+		Rect get_text_outline (const String& string) const
 		{
 			return m_cache->get_text_outline(string);
 		}

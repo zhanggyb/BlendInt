@@ -27,6 +27,11 @@
 #include <list>
 
 #include <BlendInt/Core/Object.hpp>
+#include <BlendInt/Core/Size.hpp>
+#include <BlendInt/Core/Margin.hpp>
+#include <BlendInt/Core/String.hpp>
+
+#include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/Icon.hpp>
 
 namespace BlendInt {
@@ -40,15 +45,19 @@ namespace BlendInt {
 
 		static RefPtr<ActionItem> Create ();
 
-		static RefPtr<ActionItem> Create (const RefPtr<Icon>& icon, const std::string& text);
+		static RefPtr<ActionItem> Create (const String& text);
 
-		static RefPtr<ActionItem> Create (const std::string& text);
+		static RefPtr<ActionItem> Create (const RefPtr<Icon>& icon, const String& text);
+
+		static RefPtr<ActionItem> Create (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
 
 		ActionItem ();
 
-		ActionItem (const RefPtr<Icon>& icon, const std::string& text);
+		explicit ActionItem (const String& text);
 
-		ActionItem (const std::string& text);
+		ActionItem (const RefPtr<Icon>& icon, const String& text);
+
+		ActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
 
 		virtual ~ActionItem ();
 
@@ -57,26 +66,55 @@ namespace BlendInt {
 			return m_icon;
 		}
 		
+		/**
+		 * @brief Add one sub item
+		 * @param[in] item A sub item
+		 * @param[in] check If need to check whether the item already exist
+		 */
+		void AddSubItem (const RefPtr<ActionItem>& item, bool check = false);
+
+		/**
+		 * @brief Get size if icon and text alighed horizontally
+		 */
+		Size GetHSize (const Font& font, const Margin& margin, int space);
+
 		void set_icon (const RefPtr<Icon>& icon)
 		{
 			m_icon = icon;
 		}
 		
-		const std::string& text () const
+		const String& text () const
 		{
 			return m_text;
 		}
 		
-		void set_text (const std::string& text)
+		void set_text (const String& text)
 		{
 			m_text = text;
+		}
+
+		const String& shortcut () const
+		{
+			return m_shortcut;
+		}
+
+		void set_shortcut (const String& shortcut)
+		{
+			m_shortcut = shortcut;
+		}
+
+		const std::list<RefPtr<ActionItem> >& list () const
+		{
+			return m_list;
 		}
 
 	private:
 
 		RefPtr<Icon> m_icon;
 
-		std::string m_text;
+		String m_text;
+
+		String m_shortcut;
 
 		std::list<RefPtr<ActionItem> > m_list;
 	};

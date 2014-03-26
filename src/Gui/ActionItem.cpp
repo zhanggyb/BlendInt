@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <algorithm>
+
 #include <BlendInt/Gui/ActionItem.hpp>
 
 namespace BlendInt {
@@ -32,17 +34,25 @@ namespace BlendInt {
 		return item;
 	}
 	
+	RefPtr<ActionItem> ActionItem::Create (const String& text)
+	{
+		RefPtr<ActionItem> item(new ActionItem(text));
+
+		return item;
+	}
+
 	RefPtr<ActionItem> ActionItem::Create (const RefPtr<Icon>& icon,
-					const std::string& text)
+					const String& text)
 	{
 		RefPtr<ActionItem> item(new ActionItem(icon, text));
 
 		return item;
 	}
-	
-	RefPtr<ActionItem> ActionItem::Create (const std::string& text)
+
+	RefPtr<ActionItem> ActionItem::Create (const RefPtr<Icon>& icon,
+					const String& text, const String& shortcut)
 	{
-		RefPtr<ActionItem> item(new ActionItem(text));
+		RefPtr<ActionItem> item(new ActionItem(icon, text, shortcut));
 
 		return item;
 	}
@@ -51,18 +61,68 @@ namespace BlendInt {
 	{
 	}
 
-	ActionItem::ActionItem (const RefPtr<Icon>& icon, const std::string& text)
+	ActionItem::ActionItem (const String& text)
+	: m_text(text)
+	{
+	}
+
+	ActionItem::ActionItem (const RefPtr<Icon>& icon, const String& text)
 	: m_icon(icon), m_text(text)
 	{
 	}
-	
-	ActionItem::ActionItem (const std::string& text)
-	: m_text(text)
+
+	ActionItem::ActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut)
+	: m_icon(icon), m_text(text), m_shortcut(shortcut)
 	{
 	}
 
 	ActionItem::~ActionItem ()
 	{
+		m_list.clear();
+	}
+	
+	void ActionItem::AddSubItem (const RefPtr<ActionItem>& item, bool check)
+	{
+		// TODO: check item is this one
+
+		if(check) {
+			std::list<RefPtr<ActionItem> >::iterator it;
+			it = std::find (m_list.begin(), m_list.end(), item);
+			if(it != m_list.end()) {
+				DBG_PRINT_MSG("Item %s already in sub list", item->name().c_str());
+				return;
+			}
+		}
+
+		m_list.push_back(item);
+	}
+	
+	Size ActionItem::GetHSize (const Font& font, const Margin& margin, int space)
+	{
+		Size size;
+
+		Rect text_outline = font.get_text_outline(m_text);
+
+		size.add_width(margin.left() + margin.right());
+		if(m_icon) {
+			size.add_width(m_icon->size().width());
+			size.set_height(m_icon->size().height());
+		}
+		size.add_width(space);
+		size.add_width(text_outline.width());
+
+		size.set_height(std::max(size.height(), text_outline.height()));
+
+		text_outline = font.get_text_outline(m_shortcut);
+
+		size.add_width(space);
+		size.add_width(text_outline.width());
+
+		size.set_height(std::max(size.height(), text_outline.height()));
+
+		size.add_height(margin.top() + margin.bottom());
+
+		return size;
 	}
 
 }
