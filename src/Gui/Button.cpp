@@ -115,15 +115,15 @@ namespace BlendInt {
 
 	ResponseType Button::Draw (const RedrawEvent& event)
 	{
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =
 						ShaderManager::instance->default_widget_program();
 		program->Use();
-
-		glm::vec3 pos((float) position().x(), (float) position().y(),
-						(float) z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib1f("z", (float) z());

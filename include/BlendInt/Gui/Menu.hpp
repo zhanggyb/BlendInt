@@ -77,9 +77,13 @@ namespace BlendInt {
 
 	private:
 
+		void InitOnce ();
+
 		void ResetHighlightBuffer (unsigned int width);
 
 		unsigned int GetHighlightNo (int y);
+
+		GLuint m_vao;
 
 		String m_title;
 

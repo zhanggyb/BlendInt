@@ -402,21 +402,14 @@ namespace BlendInt {
 
 		static void DrawTriangleStrip (const RefPtr<GLSLProgram>& program, const glm::mat4& mvp, const GLint attrib, GLArrayBuffer* buffer);
 
-		/**
-		 * @brief Generate vertex buffer object for drawing a form
-		 * @param[in] size The size of the form
-		 * @param[in] round_type The round type
-		 * @param[in] radius The radius of the round corner
-		 * @param[out] inner_buffer Buffer object for drawing the inner
-		 * @param[out] outer_buffer Buffer object for drawing the outer
-		 * @param[out] emboss_buffer Buffer object for drawing the emboss
-		 */
+		/*
 		static void GenerateFormBuffer (const Size* size,
 				int round_type,
 				float radius,
 				GLArrayBuffer* inner_buffer,
 				GLArrayBuffer* outer_buffer,
 				GLArrayBuffer* emboss_buffer);
+		*/
 
 		static void GenerateShadedFormBuffer (const Size* size,
 									   float border,

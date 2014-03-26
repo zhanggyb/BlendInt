@@ -1583,6 +1583,7 @@ namespace BlendInt {
 		buffer->Reset();
 	}
 
+	/*
 	void AbstractForm::GenerateFormBuffer (const Size* size, int round_type,
 					float radius, GLArrayBuffer* inner_buffer,
 					GLArrayBuffer* outer_buffer, GLArrayBuffer* emboss_buffer)
@@ -1605,7 +1606,7 @@ namespace BlendInt {
 		// the quad strip for outline
 		if (outer_buffer || emboss_buffer) {
 
-			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; /* + 2 because the last pair is wrapped */
+			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; // + 2 because the last pair is wrapped
 
 			if (outer_buffer) {
 
@@ -1623,7 +1624,7 @@ namespace BlendInt {
 
 			if (emboss_buffer) {
 
-				//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; /* only for emboss */
+				//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; // only for emboss
 				verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
 
 				emboss_buffer->Generate();
@@ -1636,6 +1637,7 @@ namespace BlendInt {
 
 		}
 	}
+	*/
 
 	void AbstractForm::GenerateShadedFormBuffer (const Size* size, float border,
 					int round_type, float radius, const Color& color,

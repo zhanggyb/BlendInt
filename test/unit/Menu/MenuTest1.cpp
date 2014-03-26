@@ -24,19 +24,20 @@ MenuTest1::~MenuTest1()
 TEST_F(MenuTest1, Foo1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("Menu - Foo1");
+	GLFWwindow* window = CreateWindow("Menu - Foo1", 640, 480);
 
 	// TODO: add test code here
-    Menu* menubin = new Menu;
-    menubin->SetRoundType(RoundAll);
+    Menu* menu = Manage(new Menu);
+    menu->SetRoundType(RoundAll);
 
-    menubin->SetPosition(200, 200);
+    menu->SetPosition(200, 200);
+	menu->Resize (200, 200);
 
-    menubin->AddActionItem("MenuItem1");
-    menubin->AddActionItem("MenuItem2");
-    menubin->AddActionItem("MenuItem3");
-    menubin->AddActionItem("MenuItem4");
-    menubin->AddActionItem("MenuItem5");
+    menu->AddActionItem("MenuItem1");
+    menu->AddActionItem("MenuItem2");
+    menu->AddActionItem("MenuItem3");
+    menu->AddActionItem("MenuItem4");
+    menu->AddActionItem("MenuItem5");
 
 	RunLoop(window);
 
@@ -50,6 +51,7 @@ TEST_F(MenuTest1, Foo1)
  *
  * Expected result: 
  */
+/*
 TEST_F(MenuTest1, Click1)
 {
 	Init ();
@@ -63,13 +65,11 @@ TEST_F(MenuTest1, Click1)
 
     menubin->SetPosition(200, 200);
 
-    /*
     menubin->AddMenuItem(icon, "MenuItem1", "Ctrl + A");
     menubin->AddMenuItem(icon, "MenuItem2", "Ctrl + B");
     menubin->AddMenuItem(icon, "MenuItem3", "Ctrl + C");
     menubin->AddMenuItem(icon, "MenuItem4", "Ctrl + D");
     menubin->AddMenuItem(icon, "MenuItem5", "Ctrl + E");
-    */
     
 	InfoWidget* info = new InfoWidget;
 	
@@ -83,3 +83,4 @@ TEST_F(MenuTest1, Click1)
 
 	ASSERT_TRUE(true);
 }
+*/

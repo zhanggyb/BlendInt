@@ -23,18 +23,21 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
-#endif  // __UNIX__
+#endif	// __UNIX__
 
-#include <iostream>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Menu.hpp>
 #include <BlendInt/Gui/FontCache.hpp>
 #include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 
@@ -43,19 +46,15 @@ namespace BlendInt {
 	Menu::Menu ()
 	: RoundWidget(), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_highlight_buffer.reset(new GLArrayBuffer);
+		set_size (20, 20);
+		set_preferred_size(20, 20);
 
-		set_size(20, 20);
-
-		GenerateFormBuffer(&(size()), round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
-
-		ResetHighlightBuffer(20);
+		InitOnce();
 	}
 
 	Menu::~Menu ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	void Menu::SetTitle(const String& title)
@@ -144,20 +143,20 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					GenerateFormBuffer(*size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 					ResetHighlightBuffer(size_p->width());
 					return true;
 				}
 
 				case FormRoundType: {
 					const int* type_p = static_cast<const int*>(request.data());
-					GenerateFormBuffer(&(size()), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					GenerateFormBuffer(size(), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 					return true;
 				}
 
 				case FormRoundRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
-					GenerateFormBuffer(&(size()), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					GenerateFormBuffer(size(), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
 					return true;
 				}
 
@@ -172,6 +171,45 @@ namespace BlendInt {
 
 	ResponseType Menu::Draw (const RedrawEvent& event)
 	{
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		glBindVertexArray(m_vao);
+
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+
+		program->Use();
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetVertexAttrib1f("z", (float) z());
+
+		program->SetVertexAttrib4f("color",
+				themes()->menu.inner.r()/255.f,
+				themes()->menu.inner.g()/255.f,
+				themes()->menu.inner.b()/255.f,
+				themes()->menu.inner.a()/255.f
+				);
+
+		glEnableVertexAttribArray(0);
+
+		DrawTriangleFan(0, m_inner_buffer.get());
+
+		program->SetVertexAttrib4f("color",
+				themes()->menu.outline.r()/255.f,
+				themes()->menu.outline.g()/255.f,
+				themes()->menu.outline.b()/255.f,
+				themes()->menu.outline.a() / WIDGET_AA_JITTER /255.f
+				);
+
+		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
+
+		glDisableVertexAttribArray(0);
+
+		program->Reset();
+
+		glBindVertexArray(0);
+
 		/*
 		//RoundWidget::Render();
 		// draw inner, simple fill
@@ -279,8 +317,24 @@ namespace BlendInt {
 			return 0;
 		}
 
-		//return (h - radius()) / (size().height() / m_menubin->size()) + 1;
-		return 0;
+		return (h - radius()) / (size().height() / m_list.size()) + 1;
+	}
+
+	void Menu::InitOnce ()
+	{
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_highlight_buffer.reset(new GLArrayBuffer);
+
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		GenerateFormBuffer(size(), round_type(), radius(),
+		        m_inner_buffer.get(), m_outer_buffer.get(), 0);
+
+		ResetHighlightBuffer(20);
+
+		glBindVertexArray(0);
 	}
 
 }
