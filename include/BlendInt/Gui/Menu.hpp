@@ -29,6 +29,7 @@
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
+#include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/RoundWidget.hpp>
 #include <BlendInt/Gui/ActionItem.hpp>
 
@@ -94,6 +95,8 @@ namespace BlendInt {
 		 * 	- n: the n'th item in the Menu
 		 */
 		unsigned int m_highlight;	// the highlight item index
+
+		Font m_font;
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;

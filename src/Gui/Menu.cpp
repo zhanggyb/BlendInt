@@ -66,31 +66,40 @@ namespace BlendInt {
 	{
 		RefPtr<ActionItem> item = ActionItem::Create(text);
 
-		m_list.push_back(item);
-
-		// Resize
-		//Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
+		AddActionItem(item);
 	}
 
 	void Menu::AddActionItem(const RefPtr<Icon>& icon, const String& text)
 	{
 		RefPtr<ActionItem> item = ActionItem::Create(icon, text);
 
-		m_list.push_back(item);
-
-		//Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
+		AddActionItem(item);
 	}
 
 	void Menu::AddActionItem(const RefPtr<Icon>& icon, const String& text, const String& shortcut)
 	{
 		RefPtr<ActionItem> item = ActionItem::Create(icon, text, shortcut);
-		m_list.push_back(item);
 
-		//Resize(200, DefaultMenuItemHeight * m_menubin->size() + radius() * 2);
+		AddActionItem(item);
 	}
 
 	void Menu::AddActionItem(const RefPtr<ActionItem>& item)
 	{
+		Margin margin(2, 2, 1, 1);
+		int space = 2;
+		Size item_size = item->GetHSize(m_font, margin, space);
+
+		DBG_PRINT_MSG("menu item size: %u, %u", item_size.width(), item_size.height());
+
+		if(m_list.size()) {
+			set_preferred_size(std::max(size().width(), static_cast<unsigned int>(radius() * 2) + item_size.width()),
+					size().height() + item_size.height());
+		} else {
+			set_preferred_size(radius() * 2 + item_size.width(),
+					radius() * 2 + item_size.height());
+		}
+		Resize(preferred_size());
+
 		m_list.push_back(item);
 	}
 
@@ -171,6 +180,8 @@ namespace BlendInt {
 
 	ResponseType Menu::Draw (const RedrawEvent& event)
 	{
+		using std::list;
+
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
@@ -210,25 +221,18 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
+		float h = size().height() - radius();
+		Margin margin(2, 2, 1, 1);
+		glm::mat4 translated_mat;;
+
+		for(list<RefPtr<ActionItem> >::iterator it = m_list.begin(); it != m_list.end(); it++)
+		{
+			h = h - (*it)->GetHSize(m_font, margin, 2).height();
+			translated_mat = glm::translate(glm::mat4(1.0), glm::vec3(0.f, h, 0.f));
+			m_font.Print(mvp * translated_mat, (*it)->text());
+		}
+
 		/*
-		//RoundWidget::Render();
-		// draw inner, simple fill
-		glColor4ub(themes()->menu.inner.r(),
-		        themes()->menu.inner.g(),
-		        themes()->menu.inner.b(),
-		        themes()->menu.inner.a());
-		DrawInnerBuffer(m_inner_buffer.get());
-
-		// draw outline
-		unsigned char tcol[4] = { themes()->menu.outline.r(),
-		        themes()->menu.outline.g(),
-		        themes()->menu.outline.b(),
-		        themes()->menu.outline.a()};
-		tcol[3] = tcol[3] / WIDGET_AA_JITTER;
-		glColor4ubv(tcol);
-
-		DrawOutlineBuffer(m_outer_buffer.get());
-
 		FontCache* fc = FontCache::create(Font("Sans"));
 
 		int h = 0;
@@ -289,15 +293,6 @@ namespace BlendInt {
 	void Menu::ResetHighlightBuffer (unsigned int width)
 	{
 		Size size(width, DefaultMenuItemHeight);
-
-//		GenerateShadedFormBuffer (&size,
-//				DefaultBorderWidth(),
-//				RoundNone,
-//				0.0,
-//				&(themes()->menu_item),
-//				Vertical,
-//				m_highlight_buffer.get());
-
 		GenerateShadedFormBuffer (&size,
 				DefaultBorderWidth(),
 				RoundNone,

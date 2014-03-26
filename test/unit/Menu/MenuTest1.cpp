@@ -31,13 +31,13 @@ TEST_F(MenuTest1, Foo1)
     menu->SetRoundType(RoundAll);
 
     menu->SetPosition(200, 200);
-	menu->Resize (200, 200);
+		//menu->Resize (200, 200);
 
     menu->AddActionItem("MenuItem1");
     menu->AddActionItem("MenuItem2");
     menu->AddActionItem("MenuItem3");
     menu->AddActionItem("MenuItem4");
-    menu->AddActionItem("MenuItem5");
+    //menu->AddActionItem("MenuItem5");
 
 	RunLoop(window);
 
