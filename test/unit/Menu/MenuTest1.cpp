@@ -33,10 +33,10 @@ TEST_F(MenuTest1, Foo1)
     menu->SetPosition(200, 200);
 		//menu->Resize (200, 200);
 
-    menu->AddActionItem("MenuItem1");
-    menu->AddActionItem("MenuItem2");
-    menu->AddActionItem("MenuItem3");
-    menu->AddActionItem("MenuItem4");
+    menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    menu->AddActionItem("MenuItem2", "Ctrl + 1");
+    menu->AddActionItem("MenuItem3", "Ctrl + 1");
+    menu->AddActionItem("MenuItem4", "Ctrl + 1");
     //menu->AddActionItem("MenuItem5");
 
 	RunLoop(window);

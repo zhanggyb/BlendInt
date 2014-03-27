@@ -47,6 +47,8 @@ namespace BlendInt {
 
 		static RefPtr<ActionItem> Create (const String& text);
 
+		static RefPtr<ActionItem> Create (const String& text, const String& shortcut);
+
 		static RefPtr<ActionItem> Create (const RefPtr<Icon>& icon, const String& text);
 
 		static RefPtr<ActionItem> Create (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
@@ -54,6 +56,8 @@ namespace BlendInt {
 		ActionItem ();
 
 		explicit ActionItem (const String& text);
+
+		ActionItem (const String& text, const String& shortcut);
 
 		ActionItem (const RefPtr<Icon>& icon, const String& text);
 

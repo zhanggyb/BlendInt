@@ -130,7 +130,6 @@ namespace BlendInt {
 	ResponseType AbstractButton::CursorEnterEvent(bool entered)
 	{
 		//m_status_hover = entered;
-
 		if(!entered) {
 			m_status_down = false;
 		}

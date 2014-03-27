@@ -304,8 +304,8 @@ namespace BlendInt {
 
 	void AbstractWidget::Refresh()
 	{
-		if(!m_flag[WidgetFlagInContextManager])
-		return;
+		//if(!m_flag[WidgetFlagInContextManager])
+		//return;
 
 		ContextManager::instance->RefreshLayer(m_z);
 	}

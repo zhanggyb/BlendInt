@@ -47,8 +47,9 @@ namespace BlendInt {
 		set_expand_x(true);
 		set_expand_y(false);
 
-		set_size(200, 20);
-		set_preferred_size(200, 20);
+		set_margin(2, 2, 1, 1);
+		set_size(200, 22);
+		set_preferred_size(200, 22);
 
 		InitOnce();
 	}
@@ -170,6 +171,15 @@ namespace BlendInt {
 	{
 		return IgnoreAndContinue;
 	}
+	
+	void MenuBar::AddMenu (const String& text)
+	{
+		MenuButton* button = Manage (new MenuButton(text));
+
+		SetPosition(button, GetLastPosition(), position().y() + margin().bottom());
+
+		AddSubWidget(button);
+	}
 
 	void MenuBar::InitOnce()
 	{
@@ -189,5 +199,32 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 	}
+	
+	MenuButton* MenuBar::GetMenuButton (size_t index)
+	{
+		MenuButton* button = 0;
 
+		if(index < sub_widgets().size()) {
+			button = dynamic_cast<MenuButton*>(sub_widgets()[index]);
+		}
+
+		return button;
+	}
+
+	int MenuBar::GetLastPosition ()
+	{
+		int pos = position().x() + margin().left();
+
+		if(sub_widgets().size()) {
+			pos -= m_space;
+
+			for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+			{
+				pos += m_space;
+				pos = pos + (*it)->size().width();
+			}
+		}
+		return pos;
+	}
 }
+

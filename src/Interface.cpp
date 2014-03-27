@@ -360,22 +360,18 @@ namespace BlendInt {
 		ContextManager* cm = ContextManager::instance;
 		ResponseType response;
 
-		// build a stack contians the mouse cursor
-		if (cm->m_hover_deque->size()) {
+		// search which widget in stack contains the cursor
+		while (cm->m_hover_deque->size()) {
 
-			// search which widget in stack contains the cursor
-			while (cm->m_hover_deque->size()) {
-
-				if (cm->m_hover_deque->back()->contain(event.position())) {
-					widget = cm->m_hover_deque->back();
-					break;
-				} else {
-					cm->m_hover_deque->back()->CursorEnterEvent(false);
-					cm->m_hover_deque->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
-				}
-
-				cm->m_hover_deque->pop_back();
+			if (cm->m_hover_deque->back()->contain(event.position())) {
+				widget = cm->m_hover_deque->back();
+				break;
+			} else {
+				cm->m_hover_deque->back()->CursorEnterEvent(false);
+				cm->m_hover_deque->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
 			}
+
+			cm->m_hover_deque->pop_back();
 		}
 
 		BuildWidgetListAtCursorPoint(event.position(), widget);
@@ -388,7 +384,6 @@ namespace BlendInt {
 			DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
 		}
 		*/
-
 
 		// tell the focused widget first
 		if(AbstractWidget::focused_widget) {
@@ -403,11 +398,11 @@ namespace BlendInt {
 		{
 			response = (*it)->MouseMoveEvent(event);
 			// check the event status
+			if (response == Accept) {
+				// TODO: do sth
+			}
 		}
 
-		if (response == Accept) {
-			// TODO: do sth
-		}
 	}
 
 	void Interface::DispatchMousePressEvent(const MouseEvent& event)
@@ -447,27 +442,25 @@ namespace BlendInt {
 		}
 	}
 
-	void Interface::BuildWidgetListAtCursorPoint (const Point& cursor_point,
+	void Interface::BuildWidgetListAtCursorPoint (const Point& cursor,
 			AbstractWidget* parent)
 	{
 		if (parent) {
 			parent->m_flag.set(AbstractWidget::WidgetFlagContextHoverList);
 
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
-
 			if(p) {
-				for (std::deque<AbstractWidget*>::iterator it =
+				for (WidgetDeque::iterator it =
 						p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
 						it++) {
-					if ((*it)->contain(cursor_point)) {
+					if ((*it)->contain(cursor)) {
 						ContextManager::instance->m_hover_deque->push_back(*it);
 						ContextManager::instance->m_hover_deque->back()->CursorEnterEvent(true);
-						BuildWidgetListAtCursorPoint(cursor_point, *it);
+						BuildWidgetListAtCursorPoint(cursor, *it);
 						break;	// if break or continue the loop?
 					}
 				}
 			} else {
-
 			}
 		} else {
 			ContextManager::instance->m_hover_deque->clear();
@@ -478,15 +471,16 @@ namespace BlendInt {
 
 			bool stop = false;
 
-			for (map_it = ContextManager::instance->m_layers.rbegin(); map_it != ContextManager::instance->m_layers.rend();
-					map_it++) {
+			for (map_it = ContextManager::instance->m_layers.rbegin();
+							map_it != ContextManager::instance->m_layers.rend();
+							map_it++) {
 				set_p = map_it->second.widgets;
 				for (set_it = set_p->begin(); set_it != set_p->end();
 						set_it++) {
-					if ((*set_it)->contain(cursor_point)) {
+					if ((*set_it)->contain(cursor)) {
 						ContextManager::instance->m_hover_deque->push_back(*set_it);
 						ContextManager::instance->m_hover_deque->back()->CursorEnterEvent(true);
-						BuildWidgetListAtCursorPoint(cursor_point, *set_it);
+						BuildWidgetListAtCursorPoint(cursor, *set_it);
 						stop = true;
 					}
 

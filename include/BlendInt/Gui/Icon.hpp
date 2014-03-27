@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_ICON_HPP_
 #define _BLENDINT_ICON_HPP_
 
+#include <glm/mat4x4.hpp>
 #include <BlendInt/Gui/AbstractResizableForm.hpp>
 
 namespace BlendInt {
@@ -34,8 +35,6 @@ namespace BlendInt {
 	{
 	public:
 
-		friend class StockItems;
-
 		Icon ();
 
 		Icon (const Icon& orig);
@@ -45,6 +44,8 @@ namespace BlendInt {
 		Icon& operator = (const Icon& orig);
 
 		void Scale (float ratio);
+
+		virtual void Draw (const glm::mat4& mvp, int x, int y, const Size& restrict_size) = 0;
 
 	protected:
 

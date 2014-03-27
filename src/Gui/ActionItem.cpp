@@ -41,6 +41,13 @@ namespace BlendInt {
 		return item;
 	}
 
+	RefPtr<ActionItem> ActionItem::Create (const String& text, const String& shortcut)
+	{
+		RefPtr<ActionItem> item(new ActionItem(text, shortcut));
+
+		return item;
+	}
+
 	RefPtr<ActionItem> ActionItem::Create (const RefPtr<Icon>& icon,
 					const String& text)
 	{
@@ -63,6 +70,11 @@ namespace BlendInt {
 
 	ActionItem::ActionItem (const String& text)
 	: m_text(text)
+	{
+	}
+
+	ActionItem::ActionItem (const String& text, const String& shortcut)
+	: m_text(text), m_shortcut(shortcut)
 	{
 	}
 

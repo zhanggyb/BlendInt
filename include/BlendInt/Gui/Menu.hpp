@@ -54,11 +54,17 @@ namespace BlendInt {
 
 		void AddActionItem (const String& text);
 
+		void AddActionItem (const String& text, const String& shortcut);
+
 		void AddActionItem (const RefPtr<Icon>& icon, const String& text);
 
 		void AddActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
 
 		void AddActionItem (const RefPtr<ActionItem>& item);
+
+		void RemoveActionItem (size_t index);
+
+		void RemoveActionItem (const RefPtr<ActionItem>& item);
 
 		//Cpp::EventRef<ActionItem*> triggered () {return m_triggered;}
 

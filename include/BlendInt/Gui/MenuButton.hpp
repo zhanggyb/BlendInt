@@ -47,9 +47,11 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType CursorEnterEvent (bool entered);
+
 	private:
 
-		void InitOnce ();
+		void InitOnce (const String& text);
 
 		GLuint m_vao;
 

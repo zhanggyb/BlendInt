@@ -69,6 +69,13 @@ namespace BlendInt {
 		AddActionItem(item);
 	}
 
+	void Menu::AddActionItem(const String& text, const String& shortcut)
+	{
+		RefPtr<ActionItem> item = ActionItem::Create(text, shortcut);
+
+		AddActionItem(item);
+	}
+
 	void Menu::AddActionItem(const RefPtr<Icon>& icon, const String& text)
 	{
 		RefPtr<ActionItem> item = ActionItem::Create(icon, text);
@@ -223,13 +230,18 @@ namespace BlendInt {
 
 		float h = size().height() - radius();
 		Margin margin(2, 2, 1, 1);
-		glm::mat4 translated_mat;;
 
 		for(list<RefPtr<ActionItem> >::iterator it = m_list.begin(); it != m_list.end(); it++)
 		{
-			h = h - (*it)->GetHSize(m_font, margin, 2).height();
-			translated_mat = glm::translate(glm::mat4(1.0), glm::vec3(0.f, h, 0.f));
-			m_font.Print(mvp * translated_mat, (*it)->text());
+			//h = h - (*it)->GetHSize(m_font, margin, 2).height();
+
+			h = h - DefaultMenuItemHeight;
+
+			if((*it)->icon()) {
+				(*it)->icon()->Draw(mvp, 8, h, Size(16, 16));
+			}
+			m_font.Print(mvp, 16, h, (*it)->text());
+			m_font.Print(mvp, 81, h, (*it)->shortcut());
 		}
 
 		/*
@@ -302,6 +314,14 @@ namespace BlendInt {
 				themes()->menu_item.shadedown,
 				Vertical,
 				m_highlight_buffer.get());
+	}
+	
+	void Menu::RemoveActionItem (size_t index)
+	{
+	}
+	
+	void Menu::RemoveActionItem (const RefPtr<ActionItem>& item)
+	{
 	}
 
 	unsigned int Menu::GetHighlightNo(int y)

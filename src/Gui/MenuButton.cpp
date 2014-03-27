@@ -42,9 +42,7 @@ namespace BlendInt {
 	MenuButton::MenuButton (const String& text)
 	: AbstractButton(), m_vao(0)
 	{
-		set_text(text);
-
-		InitOnce();
+		InitOnce(text);
 	}
 	
 	MenuButton::~MenuButton ()
@@ -145,20 +143,51 @@ namespace BlendInt {
 			glBindVertexArray(0);
 		}
 
-		if (text().size()) {
-			font().Print(mvp, origin().x(), origin().y(), text(),
-							text_length(), 0);
-		}
+		font().Print(mvp, origin().x(), origin().y(), text(),
+						text_length(), 0);
 
 		return Accept;
 	}
 	
-	void MenuButton::InitOnce ()
+	ResponseType MenuButton::CursorEnterEvent (bool entered)
+	{
+		Refresh();
+		return Accept;
+	}
+
+	void MenuButton::InitOnce (const String& text)
 	{
 		set_round_type(RoundAll);
-		set_expand_x(true);
-		set_size(40, 20);
-		set_preferred_size(90, 20);
+		set_expand_x(false);
+		set_expand_y(false);
+		set_text(text);
+
+		bool cal_width = true;
+		set_text_outline(font().get_text_outline(text));
+
+		set_size(text_outline().width() + 4, 20);
+		set_preferred_size(text_outline().width() + 4, 20);
+
+		set_text_length(text.length());
+
+		if(size().height() < text_outline().height()) {
+			if(expand_y()) {
+				set_size(size().width(), text_outline().height());
+			} else {
+				set_text_length(0);
+				cal_width = false;
+			}
+		}
+
+		if(size().width() < text_outline().width()) {
+			if(expand_x()) {
+				set_size(text_outline().width(), size().height());
+			} else {
+				if(cal_width) set_text_length(GetValidTextSize());
+			}
+		}
+
+		set_origin(0, (size().height() - font().get_height()) / 2 + std::abs(font().get_descender()));
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);

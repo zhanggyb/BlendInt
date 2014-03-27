@@ -115,7 +115,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void VertexIcon::load (const float (*vertex_array)[2], size_t array_size,
+	void VertexIcon::Load (const float (*vertex_array)[2], size_t array_size,
 						   const unsigned int (*vertex_indices)[3], size_t indeces_size)
 	{
 		glBindVertexArray(m_vao);
@@ -164,9 +164,10 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
+		glm::mat4 norm(1.0);
 		for(Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++)
 		{
-			jitter_matrix = glm::translate(glm::mat4(1.0),
+			jitter_matrix = glm::translate(norm,
 							glm::vec3((*it), 0.f));
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 							glm::value_ptr(mvp * jitter_matrix));
@@ -184,4 +185,63 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 
+	void VertexIcon::Draw (const glm::mat4& mvp, int x, int y,
+					const Size& restrict_size)
+	{
+		glBindVertexArray(m_vao);
+
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_form_program();
+		program->Use();
+
+		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
+		program->SetVertexAttrib4f("color", r, g, b, a);
+
+		float scale_w = 1.0;
+		if(restrict_size.width() > size().width()) {
+			scale_w = static_cast<float>(size().width()) / restrict_size.width();
+		}
+
+		float scale_h = 1.0;
+		if(restrict_size.height() > size().height()) {
+			scale_h = static_cast<float>(size().height()) / restrict_size.height();
+		}
+
+		glm::mat4 local_mvp = mvp * glm::translate(glm::mat4(1.0), glm::vec3(x, y, 0.f)) * glm::scale(glm::mat4(1.0), glm::vec3(scale_w, scale_h, 0.f));
+		glm::mat4 jitter_matrix;
+
+		glEnableVertexAttribArray(0);
+
+		m_array_buffer->Bind();	// bind ARRAY BUFFER
+		m_index_buffer->Bind();	// bind ELEMENT ARRAY BUFFER
+
+		glVertexAttribPointer(0, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
+
+		glm::mat4 norm(1.0);
+		for(Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++)
+		{
+			jitter_matrix = glm::translate(norm,
+							glm::vec3((*it), 0.f));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+							glm::value_ptr(local_mvp * jitter_matrix));
+			glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
+							GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+		}
+
+		m_index_buffer->Reset();
+		m_array_buffer->Reset();
+
+		glDisableVertexAttribArray(0);
+
+		program->Reset();
+
+		glBindVertexArray(0);
+	}
+
 }
+

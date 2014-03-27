@@ -25,6 +25,7 @@
 #define _BLENDINT_GUI_MENUBAR_HPP_
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/MenuButton.hpp>
 
 namespace BlendInt {
 
@@ -32,11 +33,16 @@ namespace BlendInt {
 	{
 		DISALLOW_COPY_AND_ASSIGN(MenuBar);
 
+
 	public:
 
 		MenuBar ();
 
 		virtual ~MenuBar ();
+
+		void AddMenu (const String& text);
+
+		MenuButton* GetMenuButton (size_t index);
 
 		int space () const
 		{
@@ -66,6 +72,8 @@ namespace BlendInt {
 	private:
 
 		void InitOnce ();
+
+		int GetLastPosition ();
 
 		GLuint m_vao;
 

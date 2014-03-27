@@ -73,7 +73,7 @@ namespace BlendInt {
 			vec[i][1] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][1];
 		}
 
-		m_icon_menu->load(vec, 6, VertexIcon::menu_tria_face, 2);
+		m_icon_menu->Load(vec, 6, VertexIcon::menu_tria_face, 2);
 
 		m_icon_circle.reset(new VertexIcon);
 		m_icon_circle->set_name("Circle Icon");
@@ -83,7 +83,7 @@ namespace BlendInt {
 			vec[i][1] = 0.5 * 10 * VertexIcon::scroll_circle_vert[i][1];
 		}
 
-		m_icon_circle->load(vec, 16, VertexIcon::scroll_circle_face, 14);
+		m_icon_circle->Load(vec, 16, VertexIcon::scroll_circle_face, 14);
 
 		m_icon_check.reset(new VertexIcon);
 		m_icon_check->set_name("Checkbox Icon");
@@ -93,7 +93,7 @@ namespace BlendInt {
 			vec[i][1] = 0.5 * 14 * VertexIcon::check_tria_vert[i][1];
 		}
 
-		m_icon_check->load(vec, 6, VertexIcon::check_tria_face, 4);
+		m_icon_check->Load(vec, 6, VertexIcon::check_tria_face, 4);
 
 		m_icon_num.reset(new VertexIcon);
 		m_icon_num->set_name("Number slider Icon");
@@ -103,6 +103,6 @@ namespace BlendInt {
 			vec[i][1] = 0.5 * 10 * VertexIcon::num_tria_vert[i][1];
 		}
 
-		m_icon_num->load(vec, 3, VertexIcon::num_tria_face, 1);
+		m_icon_num->Load(vec, 3, VertexIcon::num_tria_face, 1);
 	}
 }

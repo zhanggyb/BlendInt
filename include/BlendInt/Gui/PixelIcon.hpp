@@ -60,6 +60,8 @@ namespace BlendInt {
 
 		virtual void Draw (const glm::mat4& mvp);
 
+		virtual void Draw (const glm::mat4& mvp, int x, int y, const Size& restrict_size);
+
 	protected:
 
 		virtual bool Update (const UpdateRequest& request);
