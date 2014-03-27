@@ -42,14 +42,11 @@ namespace BlendInt {
 			"#version 330\n"
 			""
 			"layout(location=0) in vec2 xy;"
-			"layout(location=1) in vec4 color;"
 			"in float z;"
 			"uniform mat4 MVP;"
-			"out vec4 g_color;"
 			""
 			"void main(void) {"
 			"	gl_Position = MVP * vec4(xy, z, 1.0);"
-			"	g_color = color;"
 			"}";
 
 	const char* ToolBar::geometry_shader =
@@ -57,17 +54,13 @@ namespace BlendInt {
 			""
 			"layout (triangles) in;"
 			"layout (triangle_strip, max_vertices = 3) out;"
-			"in vec4 g_color[];"
-			"out vec4 f_color;"
 			""
 			"void main()"
 			"{"
-			"	int n;"
-			"	for(n = 0; n < gl_in.length(); n++)"
+			"	for(int n = 0; n < gl_in.length(); n++)"
 			"	{"
-			"		gl_Position = gl_in[0].gl_Position;"
+			"		gl_Position = gl_in[n].gl_Position;"
 			"		EmitVertex();"
-			"		f_color = g_color[n];"
 			"	}"
 			"	EndPrimitive();"
 			"}";
@@ -75,13 +68,10 @@ namespace BlendInt {
 	const char* ToolBar::fragment_shader =
 			"#version 330\n"
 			""
-			"in vec4 f_color;"
-			"uniform int gamma = 0;"
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
-			"	vec4 color_calib = vec4(vec3(min(max(-1.0, gamma/255.0), 1.0)), 0.0);"
-			"	FragmentColor = f_color + color_calib;"
+			"	FragmentColor = vec4(0.25, 0.1, 0.2, 0.6);"
 			"}";
 
 	ToolBar::ToolBar ()
@@ -121,9 +111,6 @@ namespace BlendInt {
 
 		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		m_program->SetVertexAttrib1f("z", (float) z());
-
-		glm::vec4 color(0.5, 0.2, 0.2, 0.6);
-		m_program->SetVertexAttrib4fv("color", glm::value_ptr(color));
 
 		glEnableVertexAttribArray(0);
 
@@ -195,8 +182,9 @@ namespace BlendInt {
 		m_program.reset(new GLSLProgram);
 		m_program->Create();
 		m_program->Use();
-		m_program->AttachShaderPair(vertex_shader, fragment_shader);
+		m_program->AttachShader(vertex_shader, GL_VERTEX_SHADER);
 		m_program->AttachShader(geometry_shader, GL_GEOMETRY_SHADER);
+		m_program->AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
 		m_program->Link();
 		m_program->Reset();
 
@@ -219,7 +207,7 @@ namespace BlendInt {
 		vert[2] = 250.f;
 		vert[3] = 50.f;
 		vert[4] = 150.f;
-		vert[5] = 150.f;
+		vert[5] = 200.f;
 
 		buffer->Bind();
 		buffer->SetData(sizeof(GLfloat) * vert.size(), &vert[0]);
