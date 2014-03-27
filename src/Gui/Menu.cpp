@@ -100,10 +100,10 @@ namespace BlendInt {
 
 		if(m_list.size()) {
 			set_preferred_size(std::max(size().width(), static_cast<unsigned int>(radius() * 2) + item_size.width()),
-					size().height() + item_size.height());
+					size().height() + DefaultMenuItemHeight);
 		} else {
 			set_preferred_size(radius() * 2 + item_size.width(),
-					radius() * 2 + item_size.height());
+					radius() * 2 + DefaultMenuItemHeight);
 		}
 		Resize(preferred_size());
 
@@ -126,7 +126,7 @@ namespace BlendInt {
 
 		m_highlight = GetHighlightNo(static_cast<int>(event.position().y()));
 
-		return Accept;
+		return AcceptAndBreak;
 	}
 
 	ResponseType Menu::MousePressEvent (const MouseEvent& event)

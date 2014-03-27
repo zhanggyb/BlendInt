@@ -21,32 +21,24 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_MENUBAR_HPP_
-#define _BLENDINT_GUI_MENUBAR_HPP_
+#ifndef _BLENDINT_GUI_TOOLBAR_HPP_
+#define _BLENDINT_GUI_TOOLBAR_HPP_
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
-#include <BlendInt/Gui/MenuButton.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLSLProgram.hpp>
 
 namespace BlendInt {
 
-	class MenuBar: public AbstractContainer
+	class ToolBar: public AbstractContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(MenuBar);
+		DISALLOW_COPY_AND_ASSIGN(ToolBar);
 
 	public:
 
-		MenuBar ();
+		ToolBar ();
 
-		virtual ~MenuBar ();
-
-		void AddMenu (const String& text);
-
-		MenuButton* GetMenuButton (size_t index);
-
-		int space () const
-		{
-			return m_space;
-		}
+		virtual ~ToolBar ();
 
 	protected:
 
@@ -72,16 +64,22 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		int GetLastPosition ();
+		/**
+		 * Create a single triangle
+		 */
+		void GenerateSingleTriangle (GLArrayBuffer* buffer);
 
 		GLuint m_vao;
 
-		int m_space;
-
 		RefPtr<GLArrayBuffer> m_buffer;
 
+		RefPtr<GLSLProgram> m_program;
+
+		static const char* vertex_shader;
+		static const char* fragment_shader;
+		static const char* geometry_shader;
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_MENUBAR_HPP_ */
+#endif /* _BLENDINT_GUI_TOOLBAR_HPP_ */

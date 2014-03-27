@@ -44,6 +44,7 @@ TEST_F(MenuBarTest1, Foo1)
     button = menubar->GetMenuButton(2);
     if(button) button->set_name("Help Button");
 
+    menubar->SetPosition(200, 100);
 
     RunLoop(win);
 

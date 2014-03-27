@@ -389,6 +389,8 @@ namespace BlendInt {
 		if(AbstractWidget::focused_widget) {
 			response = AbstractWidget::focused_widget->MouseMoveEvent(event);
 
+			if(response == AcceptAndBreak)
+				return;
 			// check the event status
 		}
 

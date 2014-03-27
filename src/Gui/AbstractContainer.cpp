@@ -223,5 +223,13 @@ namespace BlendInt {
 		}
 	}
 
+	void AbstractContainer::MoveSubWidgetsPosition (int offset_x, int offset_y)
+	{
+		for (WidgetDeque::iterator it = m_sub_widgets.begin();
+						it != m_sub_widgets.end(); it++) {
+			SetPosition(*it, (*it)->position().x() + offset_x,
+							(*it)->position().y() + offset_y);
+		}
+	}
 
 }

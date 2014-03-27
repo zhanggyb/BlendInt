@@ -69,6 +69,8 @@ namespace BlendInt {
 
 	protected:
 
+		void MoveSubWidgetsPosition (int offset_x, int offset_y);
+
 		void set_margin (const Margin& margin)
 		{
 			m_margin = margin;
