@@ -1480,7 +1480,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractForm::DrawTriangleFan(const GLint attrib, GLArrayBuffer* buffer)
+	void AbstractForm::DrawTriangleFan(const GLint attrib, const GLArrayBuffer* buffer)
 	{
 		buffer->Bind();
 

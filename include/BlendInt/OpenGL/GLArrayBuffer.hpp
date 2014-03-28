@@ -82,7 +82,7 @@ namespace BlendInt {
 
 		bool IsBuffer ();
 
-		void Bind ();
+		void Bind () const;
 
 		static void Reset ();
 
@@ -103,7 +103,7 @@ namespace BlendInt {
 
 		GLenum GetUsage ();
 
-		GLint GetBufferSize ();
+		GLint GetBufferSize () const;
 
 	private:
 

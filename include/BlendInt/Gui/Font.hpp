@@ -72,13 +72,21 @@ namespace BlendInt {
 
 		void SetItalic (bool italic);
 
-		void Print (const glm::mat4& mvp, const String& string, size_t start = 0);
+		int Print (const glm::mat4& mvp, const String& string, size_t start = 0);
 
-		void Print (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0);
+		/**
+		 * @brief Print the text
+		 * @param mvp
+		 * @param string
+		 * @param length
+		 * @param start
+		 * @return The pixel width of the text
+		 */
+		int Print (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0);
 
-		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start = 0);
+		int Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start = 0);
 
-		void Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start = 0);
+		int Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start = 0);
 
 		int get_height () const
 		{

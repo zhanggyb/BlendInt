@@ -41,7 +41,9 @@
 
 namespace BlendInt {
 
-	int Menu::DefaultMenuItemHeight = 20;
+	int Menu::DefaultMenuItemHeight = 16;
+	int Menu::DefaultIconSpace = 4;
+	int Menu::DefaultShortcutSpace = 20;
 
 	Menu::Menu ()
 	: RoundWidget(), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
@@ -92,17 +94,17 @@ namespace BlendInt {
 
 	void Menu::AddActionItem(const RefPtr<ActionItem>& item)
 	{
-		Margin margin(2, 2, 1, 1);
-		int space = 2;
-		Size item_size = item->GetHSize(m_font, margin, space);
+		unsigned int width = 0;
 
-		DBG_PRINT_MSG("menu item size: %u, %u", item_size.width(), item_size.height());
+		width = item->GetTextLength(m_font);
+
+		width += 16 + DefaultIconSpace + DefaultShortcutSpace;
 
 		if(m_list.size()) {
-			set_preferred_size(std::max(size().width(), static_cast<unsigned int>(radius() * 2) + item_size.width()),
+			set_preferred_size(std::max(size().width(), static_cast<unsigned int>(radius() * 2) + width),
 					size().height() + DefaultMenuItemHeight);
 		} else {
-			set_preferred_size(radius() * 2 + item_size.width(),
+			set_preferred_size(radius() * 2 + width,
 					radius() * 2 + DefaultMenuItemHeight);
 		}
 		Resize(preferred_size());
@@ -112,20 +114,30 @@ namespace BlendInt {
 
 	ResponseType Menu::MouseMoveEvent(const MouseEvent& event)
 	{
+		unsigned int orig = m_highlight;
+
 		if(!contain(event.position())) {
 			m_highlight = 0;
+
+			if(orig != m_highlight) {
+				Refresh();
+			}
 			return Accept;
 		}
 
-		/*
-		if(!m_menubin->size()) {
+		if(!m_list.size()) {
 			m_highlight = 0;
+			if(orig != m_highlight) {
+				Refresh();
+			}
 			return Accept;
 		}
-		*/
 
 		m_highlight = GetHighlightNo(static_cast<int>(event.position().y()));
 
+		if(orig != m_highlight) {
+			Refresh();
+		}
 		return AcceptAndBreak;
 	}
 
@@ -200,13 +212,12 @@ namespace BlendInt {
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
+		program->SetUniform1i("AA", 0);
 		program->SetVertexAttrib4f("Color",
 				themes()->menu.inner.r()/255.f,
 				themes()->menu.inner.g()/255.f,
 				themes()->menu.inner.b()/255.f,
-				themes()->menu.inner.a()/255.f
-				);
+				themes()->menu.inner.a()/255.f);
 
 		glEnableVertexAttribArray(0);
 
@@ -218,8 +229,22 @@ namespace BlendInt {
 				themes()->menu.outline.b()/255.f,
 				themes()->menu.outline.a() / 255.f
 				);
+		program->SetUniform1i("AA", 1);
 
 		DrawTriangleStrip(0, m_outer_buffer.get());
+
+		if(m_highlight) {
+			program->SetUniform1i("AA", 0);
+
+			glEnableVertexAttribArray(1);
+
+			glm::mat4 h_mvp = glm::translate(mvp, glm::vec3(0.f, size().height() - radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight), 0.f));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(h_mvp));
+
+			DrawShadedTriangleFan(0, 1, m_highlight_buffer.get());
+
+			glDisableVertexAttribArray(1);
+		}
 
 		glDisableVertexAttribArray(0);
 
@@ -228,75 +253,18 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		float h = size().height() - radius();
-		Margin margin(2, 2, 1, 1);
 
+		int advance = 0;
 		for(list<RefPtr<ActionItem> >::iterator it = m_list.begin(); it != m_list.end(); it++)
 		{
-			//h = h - (*it)->GetHSize(m_font, margin, 2).height();
-
 			h = h - DefaultMenuItemHeight;
 
 			if((*it)->icon()) {
-				(*it)->icon()->Draw(mvp, 8, h, Size(16, 16));
+				(*it)->icon()->Draw(mvp, 8, h + 8, 16, 16);
 			}
-			m_font.Print(mvp, 16, h, (*it)->text());
-			m_font.Print(mvp, 81, h, (*it)->shortcut());
+			advance = m_font.Print(mvp, 16 + DefaultIconSpace, h - m_font.get_descender(), (*it)->text());
+			m_font.Print(mvp, 16 + DefaultIconSpace + advance + DefaultShortcutSpace, h - m_font.get_descender(), (*it)->shortcut());
 		}
-
-		/*
-		FontCache* fc = FontCache::create(Font("Sans"));
-
-		int h = 0;
-		glTranslatef(0.0, size().height() - radius(), 0.0);
-
-		glColor4ub(225, 225, 225, 255);
-
-		for (std::list<MenuItem*>::iterator it = m_menubin->list().begin(); it != m_menubin->list().end(); it++) {
-			h = - DefaultMenuItemHeight;
-			glTranslatef(0.0, h, 0.0);
-			//DispatchRender(*it);
-			//glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
-			if((*it)->icon()) {
-				//DispatchRender ((*it)->icon());
-			}
-			fc->print(5 + 16, 5, (*it)->text());
-			fc->print(120, 5, (*it)->shortcut());
-		}
-
-		if(m_highlight) {
-			glPopMatrix();
-			glPushMatrix();
-			glTranslatef(position().x(),
-						 position().y() + size().height() - radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight),
-						 z());
-
-//			glColor4ub(0, 0, 225, 25);
-//			glRectf(0.0, 0.0, 200, DefaultMenuItemHeight);
-
-			m_highlight_buffer->Bind();
-
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glEnableClientState(GL_COLOR_ARRAY);
-
-			glVertexPointer(2, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-			glColorPointer(4, GL_FLOAT, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
-			//glDrawArrays(GL_POLYGON, 0, m_highlight_buffer->vertices());
-
-			glDisableClientState(GL_COLOR_ARRAY);
-			glDisableClientState(GL_VERTEX_ARRAY);
-
-			m_highlight_buffer->Reset();
-
-			MenuItem* item = m_menubin->GetMenuItem(m_highlight - 1);
-
-			if(item->icon()) {
-				//DispatchRender (item->icon());
-			}
-			fc->print(5 + 16, 5, item->text());
-			fc->print(120, 5, item->shortcut());
-
-		}
-		*/
 
 		return Accept;
 	}

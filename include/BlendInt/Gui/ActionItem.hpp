@@ -82,6 +82,8 @@ namespace BlendInt {
 		 */
 		Size GetHSize (const Font& font, const Margin& margin, int space);
 
+		unsigned int GetTextLength (const Font& font);
+
 		void set_icon (const RefPtr<Icon>& icon)
 		{
 			m_icon = icon;

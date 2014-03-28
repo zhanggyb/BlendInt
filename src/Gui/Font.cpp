@@ -116,15 +116,17 @@ namespace BlendInt {
 	}
 
 
-	void Font::Print (const glm::mat4& mvp, const String& string, size_t start)
+	int Font::Print (const glm::mat4& mvp, const String& string, size_t start)
 	{
-		Print (mvp, string, string.length(), start);
+		return Print (mvp, string, string.length(), start);
 	}
 
-	void Font::Print (const glm::mat4& mvp, const String& string,
+	int Font::Print (const glm::mat4& mvp, const String& string,
 	        size_t length, size_t start)
 	{
-		if(length == 0)	return;
+		if(length == 0)	return 0;
+
+		int advance = 0;	// the return value
 
 		glBindVertexArray(m_cache->m_vao);
 		glm::mat4 glyph_pos = mvp;
@@ -186,14 +188,18 @@ namespace BlendInt {
 
 		it = string.begin();
 		std::advance(it, start);
+		int temp = 0;
 		for (size_t i = 0; i < str_length; it++, i++)
 		{
+			temp = m_cache->m_atlas.glyph(*it).advance_x;
+
 			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_cache->m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
-			glyph_pos = glm::translate(glyph_pos, glm::vec3(m_cache->m_atlas.glyph(*it).advance_x, 0, 0));
+			glyph_pos = glm::translate(glyph_pos, glm::vec3(temp, 0, 0));
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+			advance += temp;
 		}
 
 		glDisableVertexAttribArray(0);
@@ -202,22 +208,24 @@ namespace BlendInt {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		program->Reset();
 		glBindVertexArray(0);
+
+		return advance;
 	}
 
-	void Font::Print (const glm::mat4& mvp, float x, float y, const String& string,
+	int Font::Print (const glm::mat4& mvp, float x, float y, const String& string,
 	        size_t start)
 	{
 		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.0));
 
-		Print (translated_mvp, string, string.length(), start);
+		return Print (translated_mvp, string, string.length(), start);
 	}
 
-	void Font::Print (const glm::mat4& mvp, float x, float y, const String& string,
+	int Font::Print (const glm::mat4& mvp, float x, float y, const String& string,
 	        size_t length, size_t start)
 	{
 		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.0));
 
-		Print (translated_mvp, string, length, start);
+		return Print (translated_mvp, string, length, start);
 	}
 
 }

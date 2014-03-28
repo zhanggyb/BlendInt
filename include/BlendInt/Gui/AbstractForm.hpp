@@ -393,7 +393,7 @@ namespace BlendInt {
 		 */
 		static void DrawOutlineArray (const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num);
 
-		static void DrawTriangleFan (const GLint attrib, GLArrayBuffer* buffer);
+		static void DrawTriangleFan (const GLint attrib, const GLArrayBuffer* buffer);
 
 		static void DrawTriangleFan (const RefPtr<GLSLProgram>& program, const glm::mat4& mvp, const GLint attrib, GLArrayBuffer* buffer
 						);

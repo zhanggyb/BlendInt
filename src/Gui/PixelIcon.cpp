@@ -61,7 +61,7 @@ namespace BlendInt {
 	}
 	
 	void PixelIcon::Draw (const glm::mat4& mvp, int x, int y,
-					const Size& restrict_size)
+			unsigned int restrict_width, unsigned int restrict_height)
 	{
 	}
 

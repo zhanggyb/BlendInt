@@ -147,7 +147,7 @@ namespace BlendInt {
 		return glUnmapBuffer(GL_ARRAY_BUFFER);
 	}
 
-	void GLArrayBuffer::Bind()
+	void GLArrayBuffer::Bind() const
 	{
 		if(m_id) {
 			glBindBuffer(GL_ARRAY_BUFFER, m_id);
@@ -170,7 +170,7 @@ namespace BlendInt {
 		return usage;
 	}
 
-	GLint GLArrayBuffer::GetBufferSize ()
+	GLint GLArrayBuffer::GetBufferSize () const
 	{
 		GLint buffer_size = 0;
 		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &buffer_size);

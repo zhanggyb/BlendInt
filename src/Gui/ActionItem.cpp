@@ -137,5 +137,24 @@ namespace BlendInt {
 		return size;
 	}
 
+	unsigned int ActionItem::GetTextLength (const Font& font)
+	{
+		unsigned int length = 0;
+
+		Rect text_outline = font.get_text_outline(m_text);
+
+		if(m_icon) {
+			length += m_icon->size().width();
+		}
+
+		length += text_outline.width();
+
+		text_outline = font.get_text_outline(m_shortcut);
+
+		length += text_outline.width();
+
+		return length;
+	}
+
 }
 

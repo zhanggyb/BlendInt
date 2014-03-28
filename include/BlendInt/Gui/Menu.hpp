@@ -68,8 +68,6 @@ namespace BlendInt {
 
 		//Cpp::EventRef<ActionItem*> triggered () {return m_triggered;}
 
-		static int DefaultMenuItemHeight;
-
 	protected:
 
 		virtual bool Update (const UpdateRequest& request);
@@ -111,6 +109,12 @@ namespace BlendInt {
 		std::list<RefPtr<ActionItem> > m_list;
 
 		//Cpp::Event<ActionItem*> m_triggered;
+		static int DefaultMenuItemHeight;
+
+		static int DefaultIconSpace;
+
+		static int DefaultShortcutSpace;
+
 	};
 
 }

@@ -181,7 +181,7 @@ namespace BlendInt {
 	}
 
 	void VertexIcon::Draw (const glm::mat4& mvp, int x, int y,
-					const Size& restrict_size)
+			unsigned int restrict_width, unsigned int restrict_height)
 	{
 		glBindVertexArray(m_vao);
 
@@ -189,13 +189,13 @@ namespace BlendInt {
 		program->Use();
 
 		float scale_w = 1.0;
-		if(restrict_size.width() > size().width()) {
-			scale_w = static_cast<float>(size().width()) / restrict_size.width();
+		if(restrict_width > size().width()) {
+			scale_w = static_cast<float>(size().width()) / restrict_width;
 		}
 
 		float scale_h = 1.0;
-		if(restrict_size.height() > size().height()) {
-			scale_h = static_cast<float>(size().height()) / restrict_size.height();
+		if(restrict_height > size().height()) {
+			scale_h = static_cast<float>(size().height()) / restrict_height;
 		}
 
 		glm::mat4 local_mvp = mvp
