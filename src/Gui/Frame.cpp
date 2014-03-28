@@ -175,7 +175,7 @@ namespace BlendInt {
 		glGenBuffers(1, &vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
 		program->Use();
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());

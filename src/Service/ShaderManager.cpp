@@ -102,7 +102,7 @@ namespace BlendInt {
 			"	VertexColor = Color;"
 			"}";
 
-	const char* ShaderManager::default_widget_geometry_shader =
+	const char* ShaderManager::default_widget_triangle_geometry_shader =
 			"#version 330\n"
 			""
 			"layout (triangles) in;"
@@ -155,6 +155,61 @@ namespace BlendInt {
 			"	}"
 			""
 			"}";
+
+	const char* ShaderManager::default_widget_line_geometry_shader =
+			"#version 330\n"
+			""
+			"layout (lines) in;"
+			"layout (line_strip, max_vertices = 16) out;"
+			"in vec4 VertexColor[];"
+			"uniform bool AA = false;"
+			"uniform mat4 MVP;"
+			"out vec4 PreFragColor;"
+			""
+			"const vec2 AA_JITTER[8] = vec2[8]("
+			"	vec2(0.468813, -0.481430),"
+			"	vec2(-0.155755, -0.352820),"
+			"	vec2(0.219306, -0.238501),"
+			"	vec2(-0.393286,-0.110949),"
+			"	vec2(-0.024699, 0.013908),"
+			"	vec2(0.343805, 0.147431),"
+			"	vec2(-0.272855, 0.269918),"
+			"	vec2(0.095909, 0.388710));"
+			""
+			"void main()"
+			"{"
+			"	vec4 vertex;"
+			""
+			"	if(AA) {"
+			"		mat4 trans_matrix = mat4(1.0);"
+			"		vec4 col_calib;"
+			"		for(int jit = 0; jit < 8; jit++) {"
+			"			trans_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
+			"			for(int n = 0; n < gl_in.length(); n++)"
+			"			{"
+			"				vertex = MVP * trans_matrix * gl_in[n].gl_Position;"
+			"				col_calib = VertexColor[n];"
+			"				col_calib.a = col_calib.a/8;"
+			"				PreFragColor = col_calib;"
+			"				gl_Position = vertex;"
+			"				EmitVertex();"
+			"			}"
+			"			EndPrimitive();"
+			"		}"
+			"		return;"
+			"	} else {"
+			"		for(int n = 0; n < gl_in.length(); n++) {"
+			"			vertex = MVP * gl_in[n].gl_Position;"
+			"			PreFragColor = VertexColor[n];"
+			"			gl_Position = vertex;"
+			"			EmitVertex();"
+			"		}"
+			"		EndPrimitive();"
+			"		return;"
+			"	}"
+			""
+			"}";
+
 
 	const char* ShaderManager::default_widget_fragment_shader =
 			"#version 330\n"
@@ -305,9 +360,14 @@ namespace BlendInt {
 		m_primitive_program->set_name("Primitive GLSLProgram");
 #endif
 
-		m_default_widget_program.reset(new GLSLProgram);
+		m_default_triangle_program.reset(new GLSLProgram);
 #ifdef DEBUG
-		m_default_widget_program->set_name("Widget GLSLProgram");
+		m_default_triangle_program->set_name("Triangle GLSLProgram");
+#endif
+
+		m_default_line_program.reset(new GLSLProgram);
+#ifdef DEBUG
+		m_default_line_program->set_name("Line GLSLProgram");
 #endif
 
 	}
@@ -325,7 +385,11 @@ namespace BlendInt {
 			return false;
 		}
 
-		if(!m_default_widget_program->Create()) {
+		if(!m_default_triangle_program->Create()) {
+			return false;
+		}
+
+		if(!m_default_line_program->Create()) {
 			return false;
 		}
 
@@ -343,13 +407,22 @@ namespace BlendInt {
 			return false;
 		}
 
-		m_default_widget_program->AttachShader(default_widget_vertex_shader, GL_VERTEX_SHADER);
-		m_default_widget_program->AttachShader(default_widget_geometry_shader, GL_GEOMETRY_SHADER);
-		m_default_widget_program->AttachShader(default_widget_fragment_shader, GL_FRAGMENT_SHADER);
-		if(!m_default_widget_program->Link()) {
-			DBG_PRINT_MSG("Fail to link the widget program: %d", m_default_widget_program->id());
+		m_default_triangle_program->AttachShader(default_widget_vertex_shader, GL_VERTEX_SHADER);
+		m_default_triangle_program->AttachShader(default_widget_triangle_geometry_shader, GL_GEOMETRY_SHADER);
+		m_default_triangle_program->AttachShader(default_widget_fragment_shader, GL_FRAGMENT_SHADER);
+		if(!m_default_triangle_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the widget program: %d", m_default_triangle_program->id());
 			return false;
 		}
+
+		m_default_line_program->AttachShader(default_widget_vertex_shader, GL_VERTEX_SHADER);
+		m_default_line_program->AttachShader(default_widget_line_geometry_shader, GL_GEOMETRY_SHADER);
+		m_default_line_program->AttachShader(default_widget_fragment_shader, GL_FRAGMENT_SHADER);
+		if(!m_default_line_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the widget program: %d", m_default_line_program->id());
+			return false;
+		}
+
 
 		return true;
 	}

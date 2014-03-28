@@ -21,9 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_IMAGE_HPP_
-#define _BLENDINT_IMAGE_HPP_
+#ifndef _BLENDINT_CORE_IMAGE_HPP_
+#define _BLENDINT_CORE_IMAGE_HPP_
 
+#include <BlendInt/Core/Object.hpp>
 #include <BlendInt/Core/String.hpp>
 #include <vector>
 
@@ -40,15 +41,17 @@ namespace BlendInt {
 
 		~Image ();
 
-		bool read (const String& filename);
+		bool Read (const String& filename);
 
-		bool save ();
+		bool Save ();
 
-		void close ();
+		void Close ();
 
 		const unsigned char* pixels () const {return &m_pixels[0];}
 
 	private:
+
+		String m_filename;
 
 		std::vector<unsigned char> m_pixels;
 

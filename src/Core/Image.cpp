@@ -39,7 +39,7 @@ namespace BlendInt {
 
 	}
 
-	bool Image::read (const String& filename)
+	bool Image::Read (const String& filename)
 	{
 		ImageInput *in = ImageInput::open (ConvertFromString(filename));
 

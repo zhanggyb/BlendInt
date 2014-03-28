@@ -143,7 +143,7 @@ namespace BlendInt {
 		// ----- draw line
 
 		glBindVertexArray(m_vao);
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_line_program();
 
 		program->Use();
 

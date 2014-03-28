@@ -113,7 +113,7 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =
-						ShaderManager::instance->default_widget_program();
+						ShaderManager::instance->default_triangle_program();
 		program->Use();
 
 		glm::vec3 pos((float) position().x(), (float) position().y(),

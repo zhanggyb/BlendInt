@@ -133,12 +133,12 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
 		program->SetUniform1i("AA", 0);
+		program->SetUniform1i("Gamma", 0);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);

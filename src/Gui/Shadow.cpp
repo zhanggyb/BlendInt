@@ -118,7 +118,7 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =
-						ShaderManager::instance->default_widget_program();
+						ShaderManager::instance->default_triangle_program();
 		program->Use();
 
 		glm::mat4 offset = glm::translate(glm::mat4(1.0),

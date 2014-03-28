@@ -46,7 +46,9 @@ namespace BlendInt {
 	 *
 	 * The instance can not be deleted.
 	 *
-	 * There're some pre-defined shader which is used in widgets
+	 * There're some pre-defined shader progra ms which are used in
+	 * pre-defined widgets, you can also use these in your custom
+	 * subclasses.
 	 *
 	 * - Vertex shader for text:
 	 * @code
@@ -104,61 +106,18 @@ namespace BlendInt {
 	 *
 	 * - Vertex shader for widgets:
 	 * @code
-	 * "#version 330\n"
-	 * ""
-	 * "layout(location=0) in vec2 xy;"
-	 * "layout(location=1) in vec4 color;"
-	 * "in float z;"
-	 * "uniform mat4 MVP;"
-	 * "out vec4 f_color;"
-	 * ""
-	 * "void main(void) {"
-	 * "	gl_Position = MVP * vec4(xy, z, 1.0);"
-	 * "	f_color = color;"
-	 * "}";
+	 * @endcode
+	 *
+	 * - Geometry shader for drawing triangles in widgets:
+	 * @code
+	 * @endcode
+	 *
+	 * - Geometry shader for drawing lines in widgets:
+	 * @code
 	 * @endcode
 	 *
 	 * - Fragment shader for widgets:
 	 * @code
-	 * "#version 330\n"
-	 * ""
-	 * "in vec4 f_color;"
-	 * "uniform int gamma = 0;"
-	 * "out vec4 FragmentColor;"
-	 * ""
-	 * "void main(void) {"
-	 * "	vec4 color_calib = vec4(vec3(min(max(-1.0, gamma/255.0), 1.0)), 0.0);"
-	 * "	FragmentColor = f_color + color_calib;"
-	 * "}";
-	 * @endcode
-	 *
-	 * - Vertex shader for 2D forms:
-	 * @code
-	 * "#version 330\n"
-	 * ""
-	 * "layout(location = 0) in vec2 xy;"
-	 * "layout(location = 1) in vec4 color;"
-	 * "uniform mat4 MVP;"
-	 * "out vec4 f_color;"
-	 * ""
-	 * "void main(void) {"
-	 * "	gl_Position = MVP * vec4(xy, 0.0, 1.0);"
-	 * "	f_color = color;"
-	 * "}";
-	 * @endcode
-	 *
-	 * - Fragment shader for 2D forms:
-	 * @code
-	 * "#version 330\n"
-	 * ""
-	 * "in vec4 f_color;"
-	 * "uniform int gamma = 0;"
-	 * "out vec4 FragmentColor;"
-	 * ""
-	 * "void main(void) {"
-	 * "	vec4 color_calib = vec4(vec3(min(max(-1.0, gamma/255.0), 1.0)), 0.0);"
-	 * "	FragmentColor = f_color + color_calib;"
-	 * "}";
 	 * @endcode
 	 */
 	class ShaderManager
@@ -179,9 +138,14 @@ namespace BlendInt {
 			return m_primitive_program;
 		}
 
-		RefPtr<GLSLProgram> default_widget_program () const
+		RefPtr<GLSLProgram> default_triangle_program () const
 		{
-			return m_default_widget_program;
+			return m_default_triangle_program;
+		}
+
+		RefPtr<GLSLProgram> default_line_program () const
+		{
+			return m_default_line_program;
 		}
 
 	private:
@@ -200,7 +164,9 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> m_primitive_program;
 
-		RefPtr<GLSLProgram> m_default_widget_program;
+		RefPtr<GLSLProgram> m_default_triangle_program;
+
+		RefPtr<GLSLProgram> m_default_line_program;
 
 		static const char* text_vertex_shader;
 
@@ -212,7 +178,9 @@ namespace BlendInt {
 
 		static const char* default_widget_vertex_shader;
 
-		static const char* default_widget_geometry_shader;
+		static const char* default_widget_triangle_geometry_shader;
+
+		static const char* default_widget_line_geometry_shader;
 
 		static const char* default_widget_fragment_shader;
 	};

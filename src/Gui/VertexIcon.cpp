@@ -143,7 +143,7 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
 		program->Use();
 
 		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
@@ -185,7 +185,7 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
 		program->Use();
 
 		float scale_w = 1.0;
@@ -198,7 +198,10 @@ namespace BlendInt {
 			scale_h = static_cast<float>(size().height()) / restrict_size.height();
 		}
 
-		glm::mat4 local_mvp = mvp * glm::translate(glm::mat4(1.0), glm::vec3(x, y, 0.f)) * glm::scale(glm::mat4(1.0), glm::vec3(scale_w, scale_h, 0.f));
+		glm::mat4 local_mvp = mvp
+						* glm::translate(glm::mat4(1.0), glm::vec3(x, y, 0.f))
+						* glm::scale(glm::mat4(1.0),
+										glm::vec3(scale_w, scale_h, 0.f));
 
 		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local_mvp));

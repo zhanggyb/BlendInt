@@ -195,7 +195,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
 
 		program->Use();
 
