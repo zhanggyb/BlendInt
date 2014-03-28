@@ -65,7 +65,7 @@ namespace BlendInt {
 			Jitter ()
 				: std::vector<glm::vec2>()
 			{
-				resize(WIDGET_AA_JITTER);
+				resize(8);
 
 				this->operator [](0) = glm::vec2(0.468813, -0.481430);
 				this->operator [](1) = glm::vec2(-0.155755, -0.352820);
@@ -400,7 +400,7 @@ namespace BlendInt {
 
 		static void DrawShadedTriangleFan (const GLint coord, const GLint color, GLArrayBuffer* buffer);
 
-		static void DrawTriangleStrip (const RefPtr<GLSLProgram>& program, const glm::mat4& mvp, const GLint attrib, GLArrayBuffer* buffer);
+		static void DrawTriangleStrip (const GLint attrib, GLArrayBuffer* buffer);
 
 		/*
 		static void GenerateFormBuffer (const Size* size,

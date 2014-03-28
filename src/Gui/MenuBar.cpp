@@ -113,7 +113,6 @@ namespace BlendInt {
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib1f("z", (float)z());
 
 		ThemeManager* tm = ThemeManager::instance();
 
@@ -124,7 +123,8 @@ namespace BlendInt {
 		b = tm->themes()->regular.inner.b() / 255.f;
 		a = tm->themes()->regular.inner.a() / 255.f;
 
-		program->SetVertexAttrib4f("color", r, g, b, a);
+		program->SetVertexAttrib4f("Color", r, g, b, a);
+		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);
 

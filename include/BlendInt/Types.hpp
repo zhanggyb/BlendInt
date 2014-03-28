@@ -53,7 +53,7 @@
 #define DBG_PRINT_MSG(fmt, args...) ((void)0)
 #endif
 
-#define WIDGET_AA_JITTER 8
+//#define WIDGET_AA_JITTER 8
 
 /* max as used by round_box__edges */
 #define WIDGET_CURVE_RESOLU 9

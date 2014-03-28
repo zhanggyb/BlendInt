@@ -94,7 +94,6 @@ namespace BlendInt {
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib1f("z", (float)z());
 
 		ThemeManager* tm = ThemeManager::instance();
 
@@ -105,7 +104,8 @@ namespace BlendInt {
 		b = tm->themes()->regular.inner.b() / 255.f;
 		a = tm->themes()->regular.inner.a() / 255.f;
 
-		program->SetVertexAttrib4f("color", r, g, b, a);
+		program->SetVertexAttrib4f("Color", r, g, b, a);
+		program->SetUniform1i("AA", 0);
 
 		GLuint vbo[2];
 		glGenBuffers(2, vbo);
@@ -131,12 +131,10 @@ namespace BlendInt {
 		GLfloat outline_color[4] = { themes()->regular.outline.r() / 255.f,
 						themes()->regular.outline.g() / 255.f,
 						themes()->regular.outline.b() / 255.f,
-						(themes()->regular.outline.a() / WIDGET_AA_JITTER)
-										/ 255.f };
+						themes()->regular.outline.a() / 255.f };
 
-		program->SetVertexAttrib4fv("color", outline_color);
-
-		glm::mat4 jitter_matrix;
+		program->SetVertexAttrib4fv("Color", outline_color);
+		program->SetUniform1i("AA", 0);
 
 		glVertexAttribPointer(0, // attribute
 							  2,		// number of elements per vertex, here (x,y)
@@ -146,21 +144,7 @@ namespace BlendInt {
 							  BUFFER_OFFSET(0)	// the first element
 							  );
 
-		for(Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++)
-		{
-			jitter_matrix = glm::translate(glm::mat4(1.0), glm::vec3((*it), 0.f));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, sum.total * 2 + 2);
-		}
-
-		/*
-		for (int j = 0; j < WIDGET_AA_JITTER; j++) {
-			jitter.x = jit[j][0]; jitter.y = jit[j][1]; jitter.z = 0.0f;
-			jitter_matrix = glm::translate(glm::mat4(1.0), jitter);
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp * jitter_matrix));
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, sum.total * 2 + 2);
-		}
-		*/
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, sum.total * 2 + 2);
 
 		glDisableVertexAttribArray(0);
 

@@ -178,11 +178,12 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =
-						ShaderManager::instance->default_form_program();
+						ShaderManager::instance->default_widget_program();
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local_mvp));
 
+		program->SetUniform1i("AA", 0);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 
@@ -194,11 +195,12 @@ namespace BlendInt {
 		color.r = themes()->scroll.outline.r() / 255.f;
 		color.g = themes()->scroll.outline.g() / 255.f;
 		color.b = themes()->scroll.outline.b() / 255.f;
-		color.a = themes()->scroll.outline.a() / WIDGET_AA_JITTER /255.f;
+		color.a = themes()->scroll.outline.a() / 255.f;
 
-		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetUniform1i("AA", 1);
 
-		DrawTriangleStrip(program, local_mvp, 0, m_slot_outline_buffer.get());
+		DrawTriangleStrip(0, m_slot_outline_buffer.get());
 
 		glDisableVertexAttribArray(0);
 

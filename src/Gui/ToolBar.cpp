@@ -35,6 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/ToolBar.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 
@@ -149,8 +150,8 @@ namespace BlendInt {
 		m_program->Use();
 
 		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		m_program->SetVertexAttrib1f("z", (float) z());
-		m_program->SetVertexAttrib4f("color", 1.f, 0.5f, 0.f, 1.f);
+		m_program->SetUniform1i("AA", 1);
+		m_program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, 1.f);
 
 		glEnableVertexAttribArray(0);
 
@@ -224,6 +225,8 @@ namespace BlendInt {
 		set_preferred_size(400, 400);
 		set_size(400, 400);
 		m_buffer.reset(new GLArrayBuffer);
+
+		/*
 		m_program.reset(new GLSLProgram);
 		m_program->Create();
 		m_program->Use();
@@ -232,13 +235,15 @@ namespace BlendInt {
 		m_program->AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
 		m_program->Link();
 		m_program->Reset();
+		*/
+		m_program = ShaderManager::instance->default_widget_program();
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 		m_buffer->Generate();
 
 		//GenerateSingleTriangle(m_buffer.get());
-		GenerateFormBuffer(size(), RoundAll, 10.0, 0, m_buffer.get(), 0);
+		GenerateFormBuffer(size(), RoundAll, 5.0, 0, m_buffer.get(), 0);
 
 		glBindVertexArray(0);
 	}

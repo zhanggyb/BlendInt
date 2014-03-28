@@ -210,12 +210,12 @@ namespace BlendInt {
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib1f("z", (float)z());
-		program->SetVertexAttrib4f("color",
+		program->SetVertexAttrib4f("Color",
 						m_background_color.r() / 255.f,
 						m_background_color.g() / 255.f,
 						m_background_color.b() / 255.f,
 						m_background_color.a() / 255.f);
+		program->SetUniform1i("AA", 0);
 
 		m_rect->Bind();
 		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader

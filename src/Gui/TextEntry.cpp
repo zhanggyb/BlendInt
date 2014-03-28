@@ -212,7 +212,8 @@ namespace BlendInt {
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib1f("z", (float)z());
+
+		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -225,9 +226,11 @@ namespace BlendInt {
 		color.r = themes()->text.outline.r() / 255.f;
 		color.g = themes()->text.outline.g() / 255.f;
 		color.b = themes()->text.outline.b() / 255.f;
-		color.a = themes()->text.outline.a() / WIDGET_AA_JITTER / 255.f;
-		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
-		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
+		color.a = themes()->text.outline.a() / 255.f;
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetUniform1i("AA", 1);
+
+		DrawTriangleStrip(0, m_outer_buffer.get());
 
 		glDisableVertexAttribArray(0);
 

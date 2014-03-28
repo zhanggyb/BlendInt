@@ -126,7 +126,7 @@ namespace BlendInt {
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib1f("z", (float) z());
+		program->SetUniform1i("AA", 0);
 
 		ThemeManager* tm = ThemeManager::instance();
 
@@ -152,7 +152,7 @@ namespace BlendInt {
 			}
 		}
 
-		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 
 		glEnableVertexAttribArray(0);
 
@@ -161,12 +161,16 @@ namespace BlendInt {
 		color.r = themes()->regular.outline.r() / 255.f;
 		color.g = themes()->regular.outline.g() / 255.f;
 		color.b = themes()->regular.outline.b() / 255.f;
-		color.a = themes()->regular.outline.a() / WIDGET_AA_JITTER / 255.f;
-		program->SetVertexAttrib4fv("color", glm::value_ptr(color));
-		DrawTriangleStrip(program, mvp, 0, m_outer_buffer.get());
+		color.a = themes()->regular.outline.a() / 255.f;
 
-		program->SetVertexAttrib4f("color", 1.0f, 1.0f, 1.0f, 0.02f);
-		DrawTriangleStrip(program, mvp, 0, m_emboss_buffer.get());
+		program->SetUniform1i("AA", 1);
+
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+
+		DrawTriangleStrip(0, m_outer_buffer.get());
+
+		program->SetVertexAttrib4f("Color", 1.0f, 1.0f, 1.0f, 0.02f);
+		DrawTriangleStrip(0, m_emboss_buffer.get());
 
 		glDisableVertexAttribArray(0);
 		program->Reset();

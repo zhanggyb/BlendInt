@@ -221,6 +221,8 @@ namespace BlendInt {
 
 		static const char* default_widget_vertex_shader;
 
+		static const char* default_widget_geometry_shader;
+
 		static const char* default_widget_fragment_shader;
 
 		static const char* default_form_vertex_shader;

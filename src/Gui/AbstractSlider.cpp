@@ -132,16 +132,18 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =
-						ShaderManager::instance->default_form_program();
+						ShaderManager::instance->default_widget_program();
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 		if (m_highlight) {
-			program->SetUniform1i("gamma", 15);
+			program->SetUniform1i("Gamma", 15);
 		} else {
-			program->SetUniform1i("gamma", 0);
+			program->SetUniform1i("Gamma", 0);
 		}
+
+		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -175,13 +177,11 @@ namespace BlendInt {
 		GLfloat outline_color[4] = { themes()->scroll.outline.r() / 255.f,
 						themes()->scroll.outline.g() / 255.f,
 						themes()->scroll.outline.b() / 255.f,
-						(themes()->scroll.outline.a() / WIDGET_AA_JITTER)
-										/ 255.f };
+						themes()->scroll.outline.a() / 255.f };
 
-		program->SetVertexAttrib4fv("color", outline_color);
-		program->SetUniform1i("gamma", 0);
-
-		glm::mat4 jitter_matrix;
+		program->SetVertexAttrib4fv("Color", outline_color);
+		program->SetUniform1i("Gamma", 0);
+		program->SetUniform1i("AA", 1);
 
 		m_outer_buffer->Bind();
 
@@ -193,16 +193,9 @@ namespace BlendInt {
 						0					 // offset of first element
 						);
 
-		for (Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++) {
-			jitter_matrix = glm::translate(glm::mat4(1.0),
-							glm::vec3((*it), 0.f));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-							glm::value_ptr(mvp * jitter_matrix));
-
-			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							m_outer_buffer->GetBufferSize()
-											/ (2 * sizeof(GLfloat)));
-		}
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
+						m_outer_buffer->GetBufferSize()
+						/ (2 * sizeof(GLfloat)));
 
 		m_outer_buffer->Reset();
 

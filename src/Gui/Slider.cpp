@@ -143,19 +143,21 @@ namespace BlendInt {
 		// ----- draw line
 
 		glBindVertexArray(m_vao);
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_form_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 		program->SetVertexAttrib4f(
-						"color",
+						"Color",
 						themes()->scroll.outline.r() / 255.f,
 						themes()->scroll.outline.g() / 255.f,
 						themes()->scroll.outline.b() / 255.f,
 						themes()->scroll.outline.a() / 255.f
 						);
+
+		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);
 
