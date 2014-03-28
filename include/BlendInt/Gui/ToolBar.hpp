@@ -71,7 +71,8 @@ namespace BlendInt {
 
 		GLuint m_vao;
 
-		RefPtr<GLArrayBuffer> m_buffer;
+		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> m_outer;
 
 		RefPtr<GLSLProgram> m_program;
 

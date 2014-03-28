@@ -136,14 +136,16 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_form_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetUniform1i("AA", 0);
+		program->SetUniform1i("Gamma", 0);
 
 		Color color(0x999999FF);
-		program->SetVertexAttrib4f("color",
+		program->SetVertexAttrib4f("Color",
 						color.r()/255.f,
 						color.g()/255.f,
 						color.b()/255.f,
@@ -167,7 +169,7 @@ namespace BlendInt {
 
 		color = 0x666666FF;
 
-		program->SetVertexAttrib4f("color",
+		program->SetVertexAttrib4f("Color",
 						color.r()/255.f,
 						color.g()/255.f,
 						color.b()/255.f,

@@ -118,7 +118,7 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =
-						ShaderManager::instance->default_form_program();
+						ShaderManager::instance->default_widget_program();
 		program->Use();
 
 		glm::mat4 offset = glm::translate(glm::mat4(1.0),
@@ -126,6 +126,8 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 						glm::value_ptr(mvp * offset));
+		program->SetUniform1i("AA", 0);
+		program->SetUniform1i("Gamma", 0);
 
 		float alphastep;
 		int step = 1;
@@ -152,7 +154,7 @@ namespace BlendInt {
 							0					 // offset of first element
 							);
 
-			program->SetVertexAttrib4f("color", 0.0f, 0.0f, 0.0f,
+			program->SetVertexAttrib4f("Color", 0.0f, 0.0f, 0.0f,
 							alphastep * (1.0f - expfac));
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							(*it)->GetBufferSize() / (2 * sizeof(GLfloat)));

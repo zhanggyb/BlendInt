@@ -167,36 +167,11 @@ namespace BlendInt {
 			"void main(void) {"
 			"	vec4 color_calib = vec4(0.0);"
 			"	if(AA) {"
-			"		vec4 color_calib = vec4(vec3(min(max(-1.0, Gamma/255.0/8.0), 1.0)), 0.0);"
+			"		color_calib = vec4(vec3(min(max(-1.0, Gamma/255.0/8.0), 1.0)), 0.0);"
 			"	} else {"
-			"		vec4 color_calib = vec4(vec3(min(max(-1.0, Gamma/255.0), 1.0)), 0.0);"
+			"		color_calib = vec4(vec3(min(max(-1.0, Gamma/255.0), 1.0)), 0.0);"
 			"	}"
 			"	FragmentColor = PreFragColor + color_calib;"
-			"}";
-
-	const char* ShaderManager::default_form_vertex_shader =
-			"#version 330\n"
-			""
-			"layout(location = 0) in vec2 xy;"
-			"layout(location = 1) in vec4 color;"
-			"uniform mat4 MVP;"
-			"out vec4 f_color;"
-			""
-			"void main(void) {"
-			"	gl_Position = MVP * vec4(xy, 0.0, 1.0);"
-			"	f_color = color;"
-			"}";
-
-	const char* ShaderManager::default_form_fragment_shader =
-			"#version 330\n"
-			""
-			"in vec4 f_color;"
-			"uniform int gamma = 0;"
-			"out vec4 FragmentColor;"
-			""
-			"void main(void) {"
-			"	vec4 color_calib = vec4(vec3(min(max(-1.0, gamma/255.0), 1.0)), 0.0);"
-			"	FragmentColor = f_color + color_calib;"
 			"}";
 
 #else	// Legacy opengl
@@ -335,11 +310,6 @@ namespace BlendInt {
 		m_default_widget_program->set_name("Widget GLSLProgram");
 #endif
 
-		m_default_form_program.reset(new GLSLProgram);
-#ifdef DEBUG
-		m_default_form_program->set_name("Form GLSLProgram");
-#endif
-
 	}
 
 	ShaderManager::~ShaderManager()
@@ -356,10 +326,6 @@ namespace BlendInt {
 		}
 
 		if(!m_default_widget_program->Create()) {
-			return false;
-		}
-
-		if(!m_default_form_program->Create()) {
 			return false;
 		}
 
@@ -382,13 +348,6 @@ namespace BlendInt {
 		m_default_widget_program->AttachShader(default_widget_fragment_shader, GL_FRAGMENT_SHADER);
 		if(!m_default_widget_program->Link()) {
 			DBG_PRINT_MSG("Fail to link the widget program: %d", m_default_widget_program->id());
-			return false;
-		}
-
-		m_default_form_program->AttachShader(default_form_vertex_shader, GL_VERTEX_SHADER);
-		m_default_form_program->AttachShader(default_form_fragment_shader, GL_FRAGMENT_SHADER);
-		if(!m_default_form_program->Link()) {
-			DBG_PRINT_MSG("Fail to link the default form program: %d", m_default_form_program->id());
 			return false;
 		}
 

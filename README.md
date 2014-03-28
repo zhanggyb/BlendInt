@@ -5,9 +5,10 @@
 ## What is BlendInt
 
 **BlendInt** is a lightweight, open-source GUI library for building
-application with Blender-like style. It's written in C++ and
-highlights include CppEvents based on FastDelegate, a comprehensive
-set of widgets that are easily extensible via inheritance.
+application with Blender-like style (http://www.blender.org). It's
+written in C++ and make use of the modern OpenGL technology, and
+provides a comprehensive set of widgets that are easily extensible via
+inheritance.
 
 BlendInt is free software distributed under the GNU Library General
 Public License (LGPL) v3.
@@ -16,10 +17,21 @@ Public License (LGPL) v3.
 
 ## Features
 
-Like Blender, all widgets in BlendInt are drawing in OpenGL context
-and use the same color schemes and vertex data in Blender
-(http://www.blender.org), application built with BlendInt could be the
-same look as Blender.
+Like Blender, all widgets in BlendInt are drawn in OpenGL context and
+use the same color schemes. But BlendInt is not a copy of Blender
+interface code, it's totally rewritten and improved with some new
+technologies:
+- It's OOP designed and written by C++, every widget is now a C++
+  object, you can use the pre-defined Button, Slider, Menu, etc or
+  subclass one of them and customize it easily.
+- It use CppEvent (http://code.google.com/p/cpp-events/) to provide a
+  fast Event/Delegate (signal/slot) mechanism.
+- It's based on new OpenGL API (3.3) because the legacy OpenGL APIs
+  were removed.
+- It just need a OpenGL Context, so theoretically you can integrate it
+  in any other OpenGL Window or GUI toolkit, for example, Glut, GLFW,
+  Qt, Gtk, Cocoa. Currently BlendInt use GLFW to display and manage a
+  OpenGL context.
 
 Here're some example widgets:
 
@@ -79,7 +91,7 @@ To build BlendInt, make sure the following libraries are installed:
 * freetype
 * fontconfig (recommanded)
 
-The source code is verified to be built in:
+The source code is verified to be built and workable on:
 
 * Mac OS X 10.9 (Mavericks)
 * ArchLinux

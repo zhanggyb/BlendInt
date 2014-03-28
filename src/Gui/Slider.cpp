@@ -158,6 +158,7 @@ namespace BlendInt {
 						);
 
 		program->SetUniform1i("AA", 0);
+		program->SetUniform1i("Gamma", 0);
 
 		glEnableVertexAttribArray(0);
 

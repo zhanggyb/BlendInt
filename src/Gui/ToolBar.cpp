@@ -40,79 +40,88 @@
 namespace BlendInt {
 
 	const char* ToolBar::vertex_shader =
-			"#version 330\n"
-			""
-			"layout(location = 0) in vec2 xy;"
-			"layout(location = 1) in vec4 color;"
-			"in float z;"
-			"uniform mat4 MVP;"
-			"out vec4 g_color;"
-			""
-			"void main(void) {"
-			"	gl_Position = vec4(xy, z, 1.0);"
-			"	g_color = color;"
-			"}";
+					"#version 330\n"
+					""
+					"layout(location=0) in vec2 Coord2D;"
+					"layout(location=1) in vec4 Color;"
+					"out vec4 VertexColor;"
+					""
+					"void main(void) {"
+					"	gl_Position = vec4(Coord2D, 0.0, 1.0);"
+					"	VertexColor = Color;"
+					"}";
 
 	const char* ToolBar::geometry_shader =
-			"#version 330\n"
-			""
-			"layout (triangles) in;"
-			"layout (triangle_strip, max_vertices = 24) out;"
-			"uniform mat4 MVP;"
-			"in vec4 g_color[];"
-			"out vec4 f_color;"
-			""
-			"const vec2 AA_JITTER[8] = vec2[8]("
-			"	vec2(0.468813, -0.481430),"
-			"	vec2(-0.155755, -0.352820),"
-			"	vec2(0.219306, -0.238501),"
-			"	vec2(-0.393286,-0.110949),"
-			"	vec2(-0.024699, 0.013908),"
-			"	vec2(0.343805, 0.147431),"
-			"	vec2(-0.272855, 0.269918),"
-			"	vec2(0.095909, 0.388710));"
-			""
-			"void main()"
-			"{"
-			"	vec4 vertex;"
-			"	mat4 trans_matrix = mat4(1.0);"
-			"	vec4 col_calib;"
-			""
-			"	for(int jit = 0; jit < 8; jit++) {"
-			"		trans_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
-			"		for(int n = 0; n < gl_in.length(); n++)"
-			"		{"
-			"			vertex = MVP * trans_matrix * gl_in[n].gl_Position;"
-			"			col_calib = g_color[n];"
-			"			col_calib.a = col_calib.a/8;"
-			"			f_color = col_calib;"
-			"			gl_Position = vertex;"
-			"			EmitVertex();"
-			"		}"
-			"		EndPrimitive();"
-			"	}"
-			""
-			//"	trans_matrix[3] = vec4(20.0, 20.0, 0.0, 1.0);"
-			//"	for(int n = 0; n < gl_in.length(); n++)"
-			//"	{"
-			//"		vertex = MVP * trans_matrix * gl_in[n].gl_Position;"
-			//"		f_color = vec4(0.3, 0.1, 0.4, 0.5);"
-			//"		gl_Position = vertex;"
-			//"		EmitVertex();"
-			//"	}"
-			//"	EndPrimitive();"
-			"}";
+					"#version 330\n"
+					""
+					"layout (triangles) in;"
+					"layout (triangle_strip, max_vertices = 24) out;"
+					"in vec4 VertexColor[];"
+					"uniform bool AA = false;"
+					"uniform mat4 MVP;"
+					"out vec4 PreFragColor;"
+					""
+					"const vec2 AA_JITTER[8] = vec2[8]("
+					"	vec2(0.468813, -0.481430),"
+					"	vec2(-0.155755, -0.352820),"
+					"	vec2(0.219306, -0.238501),"
+					"	vec2(-0.393286,-0.110949),"
+					"	vec2(-0.024699, 0.013908),"
+					"	vec2(0.343805, 0.147431),"
+					"	vec2(-0.272855, 0.269918),"
+					"	vec2(0.095909, 0.388710));"
+					""
+					"void main()"
+					"{"
+					"	vec4 vertex;"
+					""
+					"	if(AA) {"
+					"		mat4 trans_matrix = mat4(1.0);"
+					"		vec4 col_calib;"
+					"		for(int jit = 0; jit < 8; jit++) {"
+					"			trans_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
+					"			for(int n = 0; n < gl_in.length(); n++)"
+					"			{"
+					"				vertex = MVP * trans_matrix * gl_in[n].gl_Position;"
+					"				col_calib = VertexColor[n];"
+					"				col_calib.a = col_calib.a/8;"
+					"				PreFragColor = col_calib;"
+					"				gl_Position = vertex;"
+					"				EmitVertex();"
+					"			}"
+					"			EndPrimitive();"
+					"		}"
+					"		return;"
+					"	} else {"
+					"		for(int n = 0; n < gl_in.length(); n++) {"
+					"			vertex = MVP * gl_in[n].gl_Position;"
+					"			PreFragColor = VertexColor[n];"
+					"			gl_Position = vertex;"
+					"			EmitVertex();"
+					"		}"
+					"		EndPrimitive();"
+					"		return;"
+					"	}"
+					""
+					"}";
 
 	const char* ToolBar::fragment_shader =
-			"#version 330\n"
-			""
-			"in vec4 f_color;"
-			"out vec4 FragmentColor;"
-			""
-			"void main(void) {"
-			"	FragmentColor = f_color;"
-			//"	FragmentColor = vec4(0.0, 0.0, 0.0, 0.125);"
-			"}";
+					"#version 330\n"
+					""
+					"in vec4 PreFragColor;"
+					"uniform bool AA = false;"
+					"uniform int Gamma = 0;"
+					"out vec4 FragmentColor;"
+					""
+					"void main(void) {"
+					"	vec4 color_calib = vec4(0.0);"
+					"	if(AA) {"
+					"		color_calib = vec4(vec3(min(max(-1.0, Gamma/255.0/8.0), 1.0)), 0.0);"
+					"	} else {"
+					"		color_calib = vec4(vec3(min(max(-1.0, Gamma/255.0), 1.0)), 0.0);"
+					"	}"
+					"	FragmentColor = PreFragColor + color_calib;"
+					"}";
 
 	ToolBar::ToolBar ()
 	{
@@ -150,12 +159,34 @@ namespace BlendInt {
 		m_program->Use();
 
 		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		m_program->SetUniform1i("AA", 1);
-		m_program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, 1.f);
+		m_program->SetUniform1i("AA", 0);
+		m_program->SetVertexAttrib4f("Color", 0.2f, 0.4f, 0.3f, 1.f);
+
+		m_program->SetUniform1i("Gamma", 20);
 
 		glEnableVertexAttribArray(0);
 
-		m_buffer->Bind();
+		m_inner->Bind();
+
+		glVertexAttribPointer(0, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
+
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+							m_inner->GetBufferSize()
+											/ (2 * sizeof(GLfloat)));
+
+		m_inner->Reset();
+
+		m_program->SetUniform1i("AA", 1);
+		m_program->SetUniform1i("Gamma", 0);
+		m_program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, 1.f);
+
+		m_outer->Bind();
 
 		glVertexAttribPointer(0, // attribute
 							  2,			// number of elements per vertex, here (x,y)
@@ -171,9 +202,9 @@ namespace BlendInt {
 											/ (2 * sizeof(GLfloat)));
 		*/
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							m_buffer->GetBufferSize()
+							m_outer->GetBufferSize()
 											/ (2 * sizeof(GLfloat)));
-		m_buffer->Reset();
+		m_outer->Reset();
 
 		glDisableVertexAttribArray(0);
 
@@ -222,11 +253,11 @@ namespace BlendInt {
 
 	void ToolBar::InitOnce ()
 	{
-		set_preferred_size(400, 400);
-		set_size(400, 400);
-		m_buffer.reset(new GLArrayBuffer);
+		set_preferred_size(200, 200);
+		set_size(200, 200);
+		m_inner.reset(new GLArrayBuffer);
+		m_outer.reset(new GLArrayBuffer);
 
-		/*
 		m_program.reset(new GLSLProgram);
 		m_program->Create();
 		m_program->Use();
@@ -235,15 +266,16 @@ namespace BlendInt {
 		m_program->AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
 		m_program->Link();
 		m_program->Reset();
-		*/
-		m_program = ShaderManager::instance->default_widget_program();
+
+		//m_program = ShaderManager::instance->default_widget_program();
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
-		m_buffer->Generate();
+		m_inner->Generate();
+		m_outer->Generate();
 
 		//GenerateSingleTriangle(m_buffer.get());
-		GenerateFormBuffer(size(), RoundAll, 5.0, 0, m_buffer.get(), 0);
+		GenerateFormBuffer(size(), RoundAll, 5.0, m_inner.get(), m_outer.get(), 0);
 
 		glBindVertexArray(0);
 	}

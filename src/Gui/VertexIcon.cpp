@@ -143,13 +143,16 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_form_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
 
 		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
-		program->SetVertexAttrib4f("color", r, g, b, a);
 
-		glm::mat4 jitter_matrix;
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+						glm::value_ptr(mvp));
+		program->SetVertexAttrib4f("Color", r, g, b, a);
+		program->SetUniform1i("AA", 1);
+		program->SetUniform1i("Gamma", 0);
 
 		glEnableVertexAttribArray(0);
 
@@ -164,16 +167,8 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
-		glm::mat4 norm(1.0);
-		for(Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++)
-		{
-			jitter_matrix = glm::translate(norm,
-							glm::vec3((*it), 0.f));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-							glm::value_ptr(mvp * jitter_matrix));
-			glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
-							GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-		}
+		glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
+						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		m_index_buffer->Reset();
 		m_array_buffer->Reset();
@@ -190,11 +185,8 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_form_program();
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_widget_program();
 		program->Use();
-
-		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
-		program->SetVertexAttrib4f("color", r, g, b, a);
 
 		float scale_w = 1.0;
 		if(restrict_size.width() > size().width()) {
@@ -207,7 +199,12 @@ namespace BlendInt {
 		}
 
 		glm::mat4 local_mvp = mvp * glm::translate(glm::mat4(1.0), glm::vec3(x, y, 0.f)) * glm::scale(glm::mat4(1.0), glm::vec3(scale_w, scale_h, 0.f));
-		glm::mat4 jitter_matrix;
+
+		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local_mvp));
+		program->SetVertexAttrib4f("Color", r, g, b, a);
+		program->SetUniform1i("AA", 1);
+		program->SetUniform1i("Gamma", 0);
 
 		glEnableVertexAttribArray(0);
 
@@ -222,16 +219,8 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
-		glm::mat4 norm(1.0);
-		for(Jitter::const_iterator it = kJit.begin(); it != kJit.end(); it++)
-		{
-			jitter_matrix = glm::translate(norm,
-							glm::vec3((*it), 0.f));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-							glm::value_ptr(local_mvp * jitter_matrix));
-			glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
-							GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-		}
+		glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
+						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 
 		m_index_buffer->Reset();
 		m_array_buffer->Reset();
