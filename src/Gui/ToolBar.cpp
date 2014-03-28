@@ -41,12 +41,15 @@ namespace BlendInt {
 	const char* ToolBar::vertex_shader =
 			"#version 330\n"
 			""
-			"layout(location=0) in vec2 xy;"
+			"layout(location = 0) in vec2 xy;"
+			"layout(location = 1) in vec4 color;"
 			"in float z;"
 			"uniform mat4 MVP;"
+			"out vec4 g_color;"
 			""
 			"void main(void) {"
 			"	gl_Position = vec4(xy, z, 1.0);"
+			"	g_color = color;"
 			"}";
 
 	const char* ToolBar::geometry_shader =
@@ -55,6 +58,7 @@ namespace BlendInt {
 			"layout (triangles) in;"
 			"layout (triangle_strip, max_vertices = 24) out;"
 			"uniform mat4 MVP;"
+			"in vec4 g_color[];"
 			"out vec4 f_color;"
 			""
 			"const vec2 AA_JITTER[8] = vec2[8]("
@@ -71,13 +75,16 @@ namespace BlendInt {
 			"{"
 			"	vec4 vertex;"
 			"	mat4 trans_matrix = mat4(1.0);"
+			"	vec4 col_calib;"
 			""
 			"	for(int jit = 0; jit < 8; jit++) {"
 			"		trans_matrix[3] = vec4(AA_JITTER[jit], 0.0, 1.0);"
 			"		for(int n = 0; n < gl_in.length(); n++)"
 			"		{"
 			"			vertex = MVP * trans_matrix * gl_in[n].gl_Position;"
-			"			f_color = vec4(0.4, 0.1, 0.2, 0.5);"
+			"			col_calib = g_color[n];"
+			"			col_calib.a = col_calib.a/8;"
+			"			f_color = col_calib;"
 			"			gl_Position = vertex;"
 			"			EmitVertex();"
 			"		}"
@@ -102,8 +109,8 @@ namespace BlendInt {
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
-			//"	FragmentColor = vec4(f_color.rgb, 1.0);"
-			"	FragmentColor = vec4(0.3, 0.1, 0.4, 0.125);"
+			"	FragmentColor = f_color;"
+			//"	FragmentColor = vec4(0.0, 0.0, 0.0, 0.125);"
 			"}";
 
 	ToolBar::ToolBar ()
@@ -143,6 +150,7 @@ namespace BlendInt {
 
 		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		m_program->SetVertexAttrib1f("z", (float) z());
+		m_program->SetVertexAttrib4f("color", 1.f, 0.5f, 0.f, 1.f);
 
 		glEnableVertexAttribArray(0);
 
@@ -156,7 +164,12 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
+		/*
 		glDrawArrays(GL_TRIANGLES, 0,
+							m_buffer->GetBufferSize()
+											/ (2 * sizeof(GLfloat)));
+		*/
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							m_buffer->GetBufferSize()
 											/ (2 * sizeof(GLfloat)));
 		m_buffer->Reset();
@@ -224,7 +237,9 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 		m_buffer->Generate();
 
-		GenerateSingleTriangle(m_buffer.get());
+		//GenerateSingleTriangle(m_buffer.get());
+		GenerateFormBuffer(size(), RoundAll, 10.0, 0, m_buffer.get(), 0);
+
 		glBindVertexArray(0);
 	}
 
