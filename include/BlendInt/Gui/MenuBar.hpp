@@ -70,6 +70,8 @@ namespace BlendInt {
 
 	private:
 
+		void OnClicked ();
+
 		void InitOnce ();
 
 		int GetLastPosition ();

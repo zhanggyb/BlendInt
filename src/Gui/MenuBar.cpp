@@ -183,6 +183,8 @@ namespace BlendInt {
 		SetPosition(button, GetLastPosition(), position().y() + margin().bottom());
 
 		AddSubWidget(button);
+
+		events()->connect(button->clicked(), this, &MenuBar::OnClicked);
 	}
 
 	void MenuBar::InitOnce()
@@ -213,6 +215,11 @@ namespace BlendInt {
 		}
 
 		return button;
+	}
+	
+	void MenuBar::OnClicked ()
+	{
+		DBG_PRINT_MSG("%s", "button clicked");
 	}
 
 	int MenuBar::GetLastPosition ()
