@@ -25,12 +25,14 @@
 #define _BLENDINT_GUI_ABSTRACTWIDGET_HPP_
 
 #include <bitset>
+#include <stack>
 
 #include <boost/smart_ptr.hpp>
 
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
+#include <BlendInt/Core/Rect.hpp>
 
 #include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/Window/MouseEvent.hpp>
@@ -51,7 +53,6 @@ namespace BlendInt {
 
 	class ContextManager;
 	class AbstractWidget;
-	class Rect;
 	class GLTexture2D;
 
 	struct WidgetTheme;
@@ -291,6 +292,8 @@ namespace BlendInt {
 				m_property_changed.fire(this, type);
 		}
 
+		void StackScissorTestRect (const Rect& area);
+
 		static void SetPosition (AbstractWidget* obj, int x, int y);
 
 		static void SetPosition (AbstractWidget* obj, const Point& pos);
@@ -386,6 +389,8 @@ namespace BlendInt {
 		static Size invisible_size;
 
 		static AbstractWidget* focused_widget;
+
+		static std::stack<Rect> scissor_test_stack;
 
 #ifdef DEBUG
 	public:
