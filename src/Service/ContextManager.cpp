@@ -737,21 +737,29 @@ namespace BlendInt {
 		if (widget->visiable()) {
 			widget->Draw(event);
 
-			if(AbstractWidget::scissor_test_stack.size()) {
-				glEnable (GL_SCISSOR_TEST);
-				glScissor (AbstractWidget::scissor_test_stack.top().x(),
-						AbstractWidget::scissor_test_stack.top().y(),
-						AbstractWidget::scissor_test_stack.top().width(),
-						AbstractWidget::scissor_test_stack.top().height());
-			}
-
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
 			if (p) {
 
-				for (std::deque<AbstractWidget*>::iterator it =
-				        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
-				        it++) {
-					DispatchDrawEvent(*it, event);
+				if(AbstractWidget::scissor_test_stack.size()) {
+
+					for (std::deque<AbstractWidget*>::iterator it =
+					        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
+					        it++) {
+						glEnable (GL_SCISSOR_TEST);
+						glScissor (AbstractWidget::scissor_test_stack.top().x(),
+								AbstractWidget::scissor_test_stack.top().y(),
+								AbstractWidget::scissor_test_stack.top().width(),
+								AbstractWidget::scissor_test_stack.top().height());
+						DispatchDrawEvent(*it, event);
+					}
+
+				} else {
+					for (std::deque<AbstractWidget*>::iterator it =
+					        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
+					        it++) {
+						DispatchDrawEvent(*it, event);
+					}
+
 				}
 
 			}

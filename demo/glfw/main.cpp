@@ -16,7 +16,6 @@
 #include <BlendInt/Gui/ToggleButton.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/Label.hpp>
-#include <BlendInt/Gui/ScrollWidget.hpp>
 #include <BlendInt/Gui/Slider.hpp>
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>

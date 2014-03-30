@@ -415,9 +415,12 @@ namespace BlendInt {
 		for(std::deque<AbstractWidget*>::reverse_iterator it = cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend(); it++)
 		{
 			response = (*it)->MousePressEvent(event);
+			DBG_PRINT_MSG("mouse press: %s", (*it)->name().c_str());
 
-			if(response == Accept) {
+			if(it == cm->m_hover_deque->rbegin())
 				cm->SetFocusedWidget(*it);
+
+			if(response == AcceptAndBreak) {
 				// DBG_PRINT_MSG("widget is focused: %s", (*it)->name().c_str());;
 				break;
 			}
@@ -440,7 +443,7 @@ namespace BlendInt {
 		{
 			response = (*it)->MouseReleaseEvent(event);
 
-			if(response == Accept) break;
+			if(response == AcceptAndBreak) break;
 		}
 	}
 

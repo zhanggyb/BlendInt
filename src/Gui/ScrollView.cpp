@@ -32,16 +32,26 @@
 #endif  // __UNIX__
 
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/ScrollView.hpp>
 
 namespace BlendInt {
 
 	ScrollView::ScrollView()
-	: Frame(), m_orientation(Horizontal | Vertical), m_move_status(false)
+	: AbstractContainer(), m_orientation(Horizontal | Vertical), m_move_status(false)
 	{
 		set_size(200, 160);
 		set_preferred_size(200, 160);
+
+		m_checkerboard.reset(new CheckerBoard(20));
+		m_checkerboard->Resize(size());
+	}
+
+	ScrollView::~ScrollView ()
+	{
+
 	}
 
 	void ScrollView::reset_viewport_position()
@@ -67,6 +77,15 @@ namespace BlendInt {
 
 			switch (request.type()) {
 
+				case FormSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					m_checkerboard->Resize(*size_p);
+
+					return true;
+				}
+
 				case FormPosition: {
 					reset_viewport_position();
 					return true;
@@ -83,15 +102,18 @@ namespace BlendInt {
 
 	ResponseType ScrollView::Draw (const RedrawEvent& event)
 	{
-		glEnable (GL_SCISSOR_TEST);
-		glScissor (position().x(),
-				position().y(),
-				size().width(),
-				size().height());
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
-		glDisable(GL_SCISSOR_TEST);
+		m_checkerboard->Draw(mvp);
 
-		return Accept;
+		StackScissorTestRect(
+		        Rect(position().x() + margin().left(),
+		                position().y() + margin().bottom(),
+		                size().width() - margin().left() - margin().right(),
+		                size().height() - margin().top() - margin().bottom()));
+
+		return AcceptAndContinue;
 	}
 
 	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)
@@ -103,7 +125,6 @@ namespace BlendInt {
 		AbstractWidget* p = sub_widgets().front();
 
 		if (event.button() == MouseButtonMiddle) {
-
 			m_move_status = true;
 			m_move_start_pos.set_x(event.position().x());
 			m_move_start_pos.set_y(event.position().y());
@@ -131,8 +152,105 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	void ScrollView::SetViewport (AbstractWidget* widget)
+	{
+		if(sub_widgets().size() >= 1) {
+			ClearSubWidgets();
+		}
+
+		if (AddSubWidget(widget)) {
+			// set preferred size
+			SetPosition(widget, position().x() + margin().left(),
+			        position().y() + margin().bottom());
+		}
+	}
+
+	ResponseType ScrollView::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType ScrollView::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ScrollView::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ScrollView::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
+		if(sub_widget_size()) {
+
+			if(m_move_status) {
+
+				int w = size().width();
+				int h = size().height();
+
+				if (m_orientation & Horizontal) {
+
+					if (w < static_cast<int>(sub_widgets().front()->size().width())) {
+						int x_min = position().x() - (sub_widgets().front()->size().width() - w);
+						int x_max = position().x();
+						if (x_min > x_max)
+							x_min = x_max;
+
+						SetPosition(sub_widgets().front(), m_origin_pos.x() + event.position().x() - m_move_start_pos.x(),
+								sub_widgets().front()->position().y());
+
+						if (sub_widgets().front()->position().x() < x_min) {
+							SetPosition(sub_widgets().front(), x_min, sub_widgets().front()->position().y());
+						}
+
+						if (sub_widgets().front()->position().x() > x_max) {
+							SetPosition(sub_widgets().front(), x_max, sub_widgets().front()->position().y());
+						}
+
+					}
+				}
+
+				if (m_orientation & Vertical) {
+
+					if (h < static_cast<int>(sub_widgets().front()->size().height())) {
+						int y_min = position().y() - (sub_widgets().front()->size().height() - h);
+						int y_max = position().y();
+
+						if (y_min > y_max)
+							y_min = y_max;
+
+						SetPosition(sub_widgets().front(), sub_widgets().front()->position().x(), m_origin_pos.y() + event.position().y() - m_move_start_pos.y());
+
+						if (sub_widgets().front()->position().y() < y_min) {
+
+							SetPosition(sub_widgets().front(), sub_widgets().front()->position().x(),
+							        y_min);
+						}
+
+						if (sub_widgets().front()->position().y() > y_max) {
+							SetPosition(sub_widgets().front(), sub_widgets().front()->position().x(),
+							        y_max);
+						}
+					}
+				}
+
+				Refresh();
+				return Accept;
+			}
+
+
+		} else {
+			return Ignore;
+		}
+
 		/*
 		if(!m_viewport) return;
 
@@ -206,3 +324,4 @@ namespace BlendInt {
 	}
 
 }
+

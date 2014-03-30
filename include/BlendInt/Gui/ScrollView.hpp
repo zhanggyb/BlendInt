@@ -24,7 +24,8 @@
 #ifndef _BLENDINT_GUI_SCROLLVIEW_HPP_
 #define _BLENDINT_GUI_SCROLLVIEW_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/CheckerBoard.hpp>
 
 namespace BlendInt {
 
@@ -34,7 +35,7 @@ namespace BlendInt {
 	 * The sub widget is named as a viewport and it's usually larger than
 	 * the ScrollView
 	 */
-	class ScrollView: public Frame
+	class ScrollView: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScrollView);
 
@@ -43,6 +44,8 @@ namespace BlendInt {
 		ScrollView();
 
 		virtual ~ScrollView ();
+
+		void SetViewport (AbstractWidget* widget);
 
 		/**
 		 * @brief set the scrollable orientation
@@ -64,6 +67,14 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
@@ -71,6 +82,8 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
+
+		RefPtr<CheckerBoard> m_checkerboard;
 
 		int m_orientation;
 
