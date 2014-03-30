@@ -411,17 +411,19 @@ namespace BlendInt {
 	{
 		ContextManager* cm = ContextManager::instance;
 		ResponseType response;
+		bool focus_set = false;
 
 		for(std::deque<AbstractWidget*>::reverse_iterator it = cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend(); it++)
 		{
 			response = (*it)->MousePressEvent(event);
 			DBG_PRINT_MSG("mouse press: %s", (*it)->name().c_str());
 
-			if(it == cm->m_hover_deque->rbegin())
+			if((!focus_set) && (response == Accept)) {
 				cm->SetFocusedWidget(*it);
+				focus_set = true;
+			}
 
 			if(response == AcceptAndBreak) {
-				// DBG_PRINT_MSG("widget is focused: %s", (*it)->name().c_str());;
 				break;
 			}
 		}

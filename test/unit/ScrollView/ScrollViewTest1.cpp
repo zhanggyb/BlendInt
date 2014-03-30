@@ -1,6 +1,6 @@
 #include "ScrollViewTest1.hpp"
 #include <BlendInt/Gui/ScrollView.hpp>
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/ToolBar.hpp>
 
 using namespace BlendInt;
 
@@ -33,11 +33,13 @@ TEST_F(ScrollViewTest1, Foo1)
 	scrollview->SetPosition(100, 100);
 	scrollview->Resize(500, 500);
 	
-	Widget* widget = Manage (new Widget);
-	widget->set_name("Widget");
-	widget->Resize(400, 400);
+	ToolBar* toolbar = Manage (new ToolBar);
+	toolbar->set_name("ToolBar");
+	toolbar->Resize(400, 400);
 	
-	scrollview->SetViewport (widget);
+	scrollview->SetViewport (toolbar);
+
+	DBG_PRINT_MSG ("percentages: %d, %d", scrollview->GetHPercentage(), scrollview->GetVPercentage());
 
     RunLoop(win);
 

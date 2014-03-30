@@ -54,21 +54,85 @@ namespace BlendInt {
 
 	}
 
-	void ScrollView::reset_viewport_position()
+	void ScrollView::SetViewport (AbstractWidget* widget)
+	{
+		if(sub_widgets().size() >= 1) {
+			ClearSubWidgets();
+		}
+
+		if (AddSubWidget(widget)) {
+			AbstractWidget* p = sub_widgets().front();
+			if(p) {
+				int w = size().width() - margin().left() - margin().right();
+				int h = size().height() - margin().top() - margin().bottom();
+
+				int x = position().x() + margin().left() + (w - static_cast<int>(p->size().width())) / 2;
+				int y = position().y() + margin().bottom() + (h - static_cast<int>(p->size().height())) / 2;
+
+				SetPosition(p, x, y);
+			}
+		}
+	}
+
+	void ScrollView::ResetViewportPosition()
 	{
 		if(!sub_widget_size()) return;
 
 		AbstractWidget* p = sub_widgets().front();
 
 		if(p) {
-			int w = size().width();
-			int h = size().height();
+			int w = size().width() - margin().left() - margin().right();
+			int h = size().height() - margin().top() - margin().bottom();
 
-			int x = position().x() + (w - static_cast<int>(p->size().width())) / 2;
-			int y = position().y() + (h - static_cast<int>(p->size().height())) / 2;
+			int x = position().x() + margin().left() + (w - static_cast<int>(p->size().width())) / 2;
+			int y = position().y() + margin().bottom() + (h - static_cast<int>(p->size().height())) / 2;
 
-			p->SetPosition(x, y);
+			SetPosition(p, x, y);
 		}
+	}
+
+	int BlendInt::ScrollView::GetHPercentage ()
+	{
+		int percentage = 0;
+
+		if(sub_widget_size()) {
+			AbstractWidget* p = sub_widgets().front();
+
+			unsigned int w = size().width() - margin().left() - margin().right();
+
+			if (p->size().width() <= w) {
+				percentage = 100;
+			} else {
+				percentage = w * 100 / p->size().width();
+			}
+
+		} else {
+
+		}
+
+		return percentage;
+	}
+
+	int BlendInt::ScrollView::GetVPercentage ()
+	{
+		int percentage = 0;
+
+		if(sub_widget_size()) {
+			AbstractWidget* p = sub_widgets().front();
+
+			unsigned int h = size().height() - margin().top() - margin().bottom();
+
+			if (p->size().height() <= h) {
+				percentage = 100;
+			} else {
+				percentage = h * 100 / p->size().height();
+			}
+
+		} else {
+
+		}
+
+		return percentage;
 	}
 
 	bool ScrollView::Update (const UpdateRequest& request)
@@ -87,7 +151,7 @@ namespace BlendInt {
 				}
 
 				case FormPosition: {
-					reset_viewport_position();
+					ResetViewportPosition();
 					return true;
 				}
 
@@ -138,7 +202,10 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MouseReleaseEvent(const MouseEvent& event)
 	{
-		if(m_move_status) m_move_status = false;
+		if(m_move_status) {
+			m_move_status = false;
+			Refresh();
+		}
 
 		if(!sub_widget_size()) {
 			return Ignore;
@@ -150,19 +217,6 @@ namespace BlendInt {
 		//dispatch_mouse_release_event(m_viewport, event);
 
 		return Accept;
-	}
-
-	void ScrollView::SetViewport (AbstractWidget* widget)
-	{
-		if(sub_widgets().size() >= 1) {
-			ClearSubWidgets();
-		}
-
-		if (AddSubWidget(widget)) {
-			// set preferred size
-			SetPosition(widget, position().x() + margin().left(),
-			        position().y() + margin().bottom());
-		}
 	}
 
 	ResponseType ScrollView::CursorEnterEvent (bool entered)
@@ -193,26 +247,34 @@ namespace BlendInt {
 
 			if(m_move_status) {
 
-				int w = size().width();
-				int h = size().height();
+				AbstractWidget* p = sub_widgets().front();
+
+				SetPosition(p,
+				        m_origin_pos.x() + event.position().x()
+				                - m_move_start_pos.x(),
+				        m_origin_pos.y() + event.position().y()
+				                - m_move_start_pos.y());
+				/*
+				int w = size().width() - margin().left() - margin().right();
+				int h = size().height() - margin().top() - margin().bottom();
 
 				if (m_orientation & Horizontal) {
 
-					if (w < static_cast<int>(sub_widgets().front()->size().width())) {
-						int x_min = position().x() - (sub_widgets().front()->size().width() - w);
+					if (w < static_cast<int>(p->size().width())) {
+						int x_min = position().x() - (p->size().width() - w);
 						int x_max = position().x();
 						if (x_min > x_max)
 							x_min = x_max;
 
-						SetPosition(sub_widgets().front(), m_origin_pos.x() + event.position().x() - m_move_start_pos.x(),
-								sub_widgets().front()->position().y());
+						SetPosition(p, m_origin_pos.x() + event.position().x() - m_move_start_pos.x(),
+								p->position().y());
 
-						if (sub_widgets().front()->position().x() < x_min) {
-							SetPosition(sub_widgets().front(), x_min, sub_widgets().front()->position().y());
+						if (p->position().x() < x_min) {
+							SetPosition(p, x_min, p->position().y());
 						}
 
-						if (sub_widgets().front()->position().x() > x_max) {
-							SetPosition(sub_widgets().front(), x_max, sub_widgets().front()->position().y());
+						if (p->position().x() > x_max) {
+							SetPosition(p, x_max, p->position().y());
 						}
 
 					}
@@ -220,27 +282,28 @@ namespace BlendInt {
 
 				if (m_orientation & Vertical) {
 
-					if (h < static_cast<int>(sub_widgets().front()->size().height())) {
-						int y_min = position().y() - (sub_widgets().front()->size().height() - h);
+					if (h < static_cast<int>(p->size().height())) {
+						int y_min = position().y() - (p->size().height() - h);
 						int y_max = position().y();
 
 						if (y_min > y_max)
 							y_min = y_max;
 
-						SetPosition(sub_widgets().front(), sub_widgets().front()->position().x(), m_origin_pos.y() + event.position().y() - m_move_start_pos.y());
+						SetPosition(p, p->position().x(), m_origin_pos.y() + event.position().y() - m_move_start_pos.y());
 
-						if (sub_widgets().front()->position().y() < y_min) {
+						if (p->position().y() < y_min) {
 
-							SetPosition(sub_widgets().front(), sub_widgets().front()->position().x(),
+							SetPosition(p, p->position().x(),
 							        y_min);
 						}
 
-						if (sub_widgets().front()->position().y() > y_max) {
-							SetPosition(sub_widgets().front(), sub_widgets().front()->position().x(),
+						if (p->position().y() > y_max) {
+							SetPosition(p, p->position().x(),
 							        y_max);
 						}
 					}
 				}
+				*/
 
 				Refresh();
 				return Accept;
@@ -251,77 +314,7 @@ namespace BlendInt {
 			return Ignore;
 		}
 
-		/*
-		if(!m_viewport) return;
-
-		if(m_move_status) {
-
-			int w = size().width();
-			int h = size().height();
-
-			if (m_orientation & Horizontal) {
-
-				if (w < static_cast<int>(m_viewport->size().width())) {
-					int x_min = position().x() - (m_viewport->size().width() - w);
-					int x_max = position().x();
-					if (x_min > x_max)
-						x_min = x_max;
-
-					m_viewport->SetPosition(
-					        m_origin_pos.x() + event->position().x()
-					                - m_move_start_pos.x(),
-					        m_viewport->position().y());
-
-					if (m_viewport->position().x() < x_min) {
-						m_viewport->SetPosition(x_min,
-						        m_viewport->position().y());
-					}
-
-					if (m_viewport->position().x() > x_max) {
-						m_viewport->SetPosition(x_max,
-						        m_viewport->position().y());
-					}
-
-				}
-			}
-
-			if (m_orientation & Vertical) {
-
-				if (h < static_cast<int>(m_viewport->size().height())) {
-					int y_min = position().y() - (m_viewport->size().height() - h);
-					int y_max = position().y();
-
-					if (y_min > y_max)
-						y_min = y_max;
-
-					m_viewport->SetPosition(m_viewport->position().x(),
-					        m_origin_pos.y() + event->position().y()
-					                - m_move_start_pos.y());
-
-
-					if (m_viewport->position().y() < y_min) {
-						m_viewport->SetPosition(m_viewport->position().x(),
-						        y_min);
-					}
-
-					if (m_viewport->position().y() > y_max) {
-						m_viewport->SetPosition(m_viewport->position().x(),
-						        y_max);
-					}
-				}
-			}
-
-			return;
-		}
-
-		if(contain(event->position())) {
-			dispatch_mouse_move_event(m_viewport, event);
-		}
-
-		*/
-
 		return Accept;
 	}
 
 }
-

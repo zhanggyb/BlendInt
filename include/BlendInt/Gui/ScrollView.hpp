@@ -59,7 +59,11 @@ namespace BlendInt {
 		/**
 		 * @brief reset the viewport position to center of scroll area (counting padding)
 		 */
-		void reset_viewport_position ();
+		void ResetViewportPosition ();
+
+		int GetHPercentage ();
+
+		int GetVPercentage ();
 
 	protected:
 
