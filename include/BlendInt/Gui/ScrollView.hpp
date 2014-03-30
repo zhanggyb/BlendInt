@@ -65,6 +65,8 @@ namespace BlendInt {
 
 		int GetVPercentage ();
 
+		void MoveViewport (int x, int y);
+
 	protected:
 
 		virtual bool Update (const UpdateRequest& request);

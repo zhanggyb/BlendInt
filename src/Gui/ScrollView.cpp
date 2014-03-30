@@ -241,6 +241,19 @@ namespace BlendInt {
 		return Ignore;
 	}
 
+	void ScrollView::MoveViewport(int x, int y)
+	{
+		if(sub_widget_size()) {
+
+			if(x != 0 || y != 0) {
+				AbstractWidget* p = sub_widgets().front();
+				SetPosition(p, p->position().x() + x, p->position().y() + y);
+
+				Refresh();
+			}
+		}
+	}
+
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
 		if(sub_widget_size()) {
