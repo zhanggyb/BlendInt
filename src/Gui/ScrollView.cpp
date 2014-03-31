@@ -44,6 +44,7 @@ namespace BlendInt {
 	{
 		set_size(200, 160);
 		set_preferred_size(200, 160);
+		set_scissor_test(true);
 
 		m_checkerboard.reset(new CheckerBoard(20));
 		m_checkerboard->Resize(size());

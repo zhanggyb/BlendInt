@@ -275,6 +275,11 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
+		void set_scissor_test (bool status)
+		{
+			m_flag[WidgetFlagScissorTest] = status ? 1 : 0;
+		}
+
 		void LockGeometry (AbstractWidget* obj, bool status)
 		{
 			obj->m_flag[WidgetFlagLockGeometry] = status ? 1 : 0;
@@ -344,7 +349,10 @@ namespace BlendInt {
 
 			WidgetFlagVisibility,
 
-			WidgetFlagManaged
+			WidgetFlagManaged,
+
+			/** If enable scissor test when drawing this the subwidgets, this flag is only workable for container */
+			WidgetFlagScissorTest
 		};
 
 		void set_manage (bool val)

@@ -39,13 +39,15 @@ TEST_F(ScrollViewTest1, Foo1)
 	
 	scrollview->SetViewport (toolbar);
 
+	toolbar->move(50, 10);
+
 	DBG_PRINT_MSG ("percentages: %d, %d", scrollview->GetHPercentage(), scrollview->GetVPercentage());
 
-    RunLoop(win);
+	RunLoop(win);
 
-    Interface::Release();
+	Interface::Release();
 
-    Terminate();
+	Terminate();
 
 	ASSERT_TRUE(true);
 }

@@ -740,17 +740,15 @@ namespace BlendInt {
 		if (widget->visiable()) {
 			widget->Draw(event);
 
-			ScrollView* scrollview = dynamic_cast<ScrollView*>(widget);
-
-			if(scrollview) {
-				scissor_status.Push(scrollview->position().x() + scrollview->margin().left(),
-						scrollview->position().y() + scrollview->margin().right(),
-						scrollview->size().width() - scrollview->margin().left() - scrollview->margin().right(),
-						scrollview->size().height() - scrollview->margin().top() - scrollview->margin().bottom());
-			}
-
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
 			if (p) {
+
+				if(p->m_flag[AbstractWidget::WidgetFlagScissorTest]) {
+					scissor_status.Push(p->position().x() + p->margin().left(),
+							p->position().y() + p->margin().right(),
+							p->size().width() - p->margin().left() - p->margin().right(),
+							p->size().height() - p->margin().top() - p->margin().bottom());
+				}
 
 				if(scissor_status.valid()) {
 					scissor_status.Enable();
@@ -768,11 +766,12 @@ namespace BlendInt {
 						DispatchDrawEvent(*it, event);
 					}
 				}
-			}
 
-			if(scrollview) {
-				scissor_status.Pop();
-				scissor_status.Disable();
+				if(p->m_flag[AbstractWidget::WidgetFlagScissorTest]) {
+					scissor_status.Pop();
+					scissor_status.Disable();
+				}
+
 			}
 
 		}
