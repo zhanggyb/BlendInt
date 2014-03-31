@@ -50,6 +50,7 @@
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Service/ContextManager.hpp>
 
 #include "../Intern/ScreenBuffer.hpp"
@@ -84,6 +85,8 @@ namespace BlendInt {
 	bool ContextManager::refresh_once = false;
 
 	bool ContextManager::force_refresh_all = true;
+
+	ScissorStatus ContextManager::scissor_status;
 
 	bool ContextManager::Initialize ()
 	{
@@ -737,19 +740,24 @@ namespace BlendInt {
 		if (widget->visiable()) {
 			widget->Draw(event);
 
+			ScrollView* scrollview = dynamic_cast<ScrollView*>(widget);
+
+			if(scrollview) {
+				scissor_status.Push(scrollview->position().x() + scrollview->margin().left(),
+						scrollview->position().y() + scrollview->margin().right(),
+						scrollview->size().width() - scrollview->margin().left() - scrollview->margin().right(),
+						scrollview->size().height() - scrollview->margin().top() - scrollview->margin().bottom());
+			}
+
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
 			if (p) {
 
-				if(AbstractWidget::scissor_test_stack.size()) {
+				if(scissor_status.valid()) {
+					scissor_status.Enable();
 
 					for (std::deque<AbstractWidget*>::iterator it =
 					        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
 					        it++) {
-						glEnable (GL_SCISSOR_TEST);
-						glScissor (AbstractWidget::scissor_test_stack.top().x(),
-								AbstractWidget::scissor_test_stack.top().y(),
-								AbstractWidget::scissor_test_stack.top().width(),
-								AbstractWidget::scissor_test_stack.top().height());
 						DispatchDrawEvent(*it, event);
 					}
 
@@ -759,16 +767,12 @@ namespace BlendInt {
 					        it++) {
 						DispatchDrawEvent(*it, event);
 					}
-
 				}
-
 			}
 
-			if(AbstractWidget::scissor_test_stack.size()) {
-				AbstractWidget::scissor_test_stack.pop();
-
-				if(AbstractWidget::scissor_test_stack.empty())
-					glDisable(GL_SCISSOR_TEST);
+			if(scrollview) {
+				scissor_status.Pop();
+				scissor_status.Disable();
 			}
 
 		}

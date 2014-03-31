@@ -37,6 +37,8 @@
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
 
+#include <BlendInt/OpenGL/ScissorStatus.hpp>
+
 #include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
@@ -182,6 +184,8 @@ namespace BlendInt {
 		 * @brief The widget stack to contain the current mouse cursor
 		 */
 		boost::scoped_ptr<std::deque<AbstractWidget*> > m_hover_deque;
+
+		static ScissorStatus scissor_status;
 
 		static bool refresh_once;
 

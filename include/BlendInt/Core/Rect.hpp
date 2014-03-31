@@ -60,6 +60,21 @@ namespace BlendInt {
 			m_height = size.height();
 		}
 
+		Rect (const Rect& orig)
+		: m_x(orig.m_x), m_y(orig.m_y), m_width(orig.m_width), m_height(orig.m_height)
+		{
+		}
+
+		Rect& operator = (const Rect& orig)
+		{
+			m_x = orig.m_x;
+			m_y = orig.m_y;
+			m_width = orig.m_width;
+			m_height = orig.m_height;
+
+			return *this;
+		}
+
 		bool contains (const Point& point)
 		{
 			int diff_x = point.x() - m_x;

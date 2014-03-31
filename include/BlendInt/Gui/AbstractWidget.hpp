@@ -292,8 +292,6 @@ namespace BlendInt {
 				m_property_changed.fire(this, type);
 		}
 
-		void StackScissorTestRect (const Rect& area);
-
 		static void SetPosition (AbstractWidget* obj, int x, int y);
 
 		static void SetPosition (AbstractWidget* obj, const Point& pos);
@@ -389,8 +387,6 @@ namespace BlendInt {
 		static Size invisible_size;
 
 		static AbstractWidget* focused_widget;
-
-		static std::stack<Rect> scissor_test_stack;
 
 #ifdef DEBUG
 	public:

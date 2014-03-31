@@ -58,8 +58,6 @@ namespace BlendInt {
 
 	Size AbstractWidget::invisible_size;
 
-	std::stack<Rect> AbstractWidget::scissor_test_stack;
-
 	AbstractWidget::AbstractWidget ()
 	: AbstractExtraForm(),
 	m_z(0),
@@ -311,12 +309,6 @@ namespace BlendInt {
 
 		ContextManager::instance->RefreshLayer(m_z);
 	}
-
-	void AbstractWidget::StackScissorTestRect(const Rect& area)
-	{
-			scissor_test_stack.push(area);
-	}
-
 
 	void AbstractWidget::RenderToTexture (size_t border, GLTexture2D* texture)
 	{

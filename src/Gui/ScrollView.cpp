@@ -171,12 +171,6 @@ namespace BlendInt {
 
 		m_checkerboard->Draw(mvp);
 
-		StackScissorTestRect(
-		        Rect(position().x() + margin().left(),
-		                position().y() + margin().bottom(),
-		                size().width() - margin().left() - margin().right(),
-		                size().height() - margin().top() - margin().bottom()));
-
 		return AcceptAndContinue;
 	}
 
