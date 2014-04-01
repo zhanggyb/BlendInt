@@ -46,23 +46,28 @@ namespace BlendInt {
 	  m_line_width(0),
 	  m_pressed(false)
 	{
-		m_bar.Resize(14, 14);
-
 		if (orientation == Vertical) {
+			m_bar.Resize(14, 14);
+
 			set_size(18, 200);
 			set_expand_y(true);
 
 			m_line_start.set_x(18 / 2);
 			m_line_start.set_y(7);
+
+			m_line_width = 200 - m_bar.size().width();
+
 		} else {
+			m_bar.Resize(14, 14);
+
 			set_size(200, 18);
 			set_expand_x(true);
 
 			m_line_start.set_x(7);
 			m_line_start.set_y(18 / 2);
-		}
 
-		m_line_width = 200 - 7 * 2;
+			m_line_width = 200 - m_bar.size().height();
+		}
 
 		InitOnce();
 	}
@@ -106,8 +111,13 @@ namespace BlendInt {
 					}
 
 					const Color& color = themes()->scroll.outline;
+
 					short shadetop = themes()->scroll.shadetop;
 					short shadedown = themes()->scroll.shadedown;
+					if(orientation() == Vertical) {
+						shadetop = themes()->scroll.shadedown;
+						shadedown = themes()->scroll.shadetop;
+					}
 
 					glBindVertexArray(m_vao);
 					GenerateShadedFormBuffers(
@@ -311,6 +321,10 @@ namespace BlendInt {
 		const Color& color = themes()->scroll.inner;
 		short shadetop = themes()->scroll.shadetop;
 		short shadedown = themes()->scroll.shadedown;
+		if(orientation() == Vertical) {
+			shadetop = themes()->scroll.shadedown;
+			shadedown = themes()->scroll.shadetop;
+		}
 
 		GenerateShadedFormBuffers(
 						slot_size,
@@ -332,9 +346,9 @@ namespace BlendInt {
 		int space = 0;
 
 		if (orientation() == Horizontal) {
-			space = size().width() - m_line_start.x() * 2;// m_line_start.x() is the radius of m_switch
+			space = size().width() - m_bar.size().width();// m_line_start.x() is the radius of m_switch
 		} else {
-			space = size().height() - m_line_start.y() * 2;	// m_line_start.y() is the radius of m_switch
+			space = size().height() - m_bar.size().height();	// m_line_start.y() is the radius of m_switch
 		}
 
 		return space;

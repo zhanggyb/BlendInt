@@ -39,6 +39,27 @@ namespace BlendInt {
 
 	}
 
+	bool Image::Read (const char* filename)
+	{
+		ImageInput *in = ImageInput::open (filename);
+
+		if (! in)
+			return false;
+
+		const ImageSpec &spec = in->spec();
+
+		m_width = spec.width;
+		m_height = spec.height;
+		m_channels = spec.nchannels;
+		m_pixels.resize (m_width * m_height * m_channels);
+		in->read_image (TypeDesc::UINT8, &m_pixels[0]);
+		in->close ();
+
+		delete in;
+
+		return true;
+	}
+
 	bool Image::Read (const String& filename)
 	{
 		ImageInput *in = ImageInput::open (ConvertFromString(filename));

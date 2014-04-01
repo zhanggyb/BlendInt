@@ -33,13 +33,15 @@ namespace BlendInt {
 	/**
 	 * @brief Image class focused on I/O and direct pixel access and manipulation
 	 */
-	class Image
+	class Image: public Object
 	{
 	public:
 
 		Image ();
 
 		~Image ();
+
+		bool Read (const char* filename);
 
 		bool Read (const String& filename);
 
@@ -48,16 +50,31 @@ namespace BlendInt {
 		void Close ();
 
 		const unsigned char* pixels () const {return &m_pixels[0];}
+		
+		int height () const
+		{
+			return m_height;
+		}
+		
+		int width () const
+		{
+			return m_width;
+		}
+
+		int channels () const
+		{
+			return m_channels;
+		}
 
 	private:
 
 		String m_filename;
 
-		std::vector<unsigned char> m_pixels;
-
 		int m_width;
 		int m_height;
 		int m_channels;
+
+		std::vector<unsigned char> m_pixels;
 	};
 }
 

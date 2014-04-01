@@ -31,6 +31,8 @@ TEST_F(ImageViewTest1, Foo1)
     view->set_name("ImageView");
     view->SetPosition(20, 20);
 
+    view->Open("demo.png");
+
     RunLoop(win);
 
     Interface::Release();

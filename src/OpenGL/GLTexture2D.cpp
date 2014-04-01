@@ -148,8 +148,8 @@ namespace BlendInt {
 
 	void GLTexture2D::SetWrapMode (GLint s_mode, GLint t_mode)
 	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, s_mode);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, t_mode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, s_mode);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, t_mode);
 	}
 
 	void GLTexture2D::SetWrapModeS (GLint mode)

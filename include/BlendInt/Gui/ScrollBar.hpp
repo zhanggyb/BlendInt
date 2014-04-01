@@ -91,7 +91,7 @@ namespace BlendInt {
 			RefPtr<GLArrayBuffer> m_slot_inner_buffer;
 			RefPtr<GLArrayBuffer> m_slot_outline_buffer;
 
-			Point m_line_start;	// where start to draw line
+			Point m_line_start;	// where start to draw scroll slider
 			int m_line_width;
 
 			/**

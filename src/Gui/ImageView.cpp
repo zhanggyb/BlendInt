@@ -121,15 +121,21 @@ namespace BlendInt {
 
 			glEnableVertexAttribArray(0);
 			m_vbo->Bind();
-			glVertexAttribPointer(0, 3,
-			GL_FLOAT,
-			GL_FALSE, 0, 0);
+			glVertexAttribPointer(0,
+							3,
+							GL_FLOAT,
+							GL_FALSE,
+							0,
+							BUFFER_OFFSET(0));
 
 			glEnableVertexAttribArray(1);
 			m_tbo->Bind();
-			glVertexAttribPointer(1, 2,
-			GL_FLOAT,
-			GL_FALSE, 0, 0);
+			glVertexAttribPointer(1,
+							2,
+							GL_FLOAT,
+							GL_FALSE,
+							0,
+							BUFFER_OFFSET(0));
 
 			m_vbo->Bind();
 
@@ -147,6 +153,46 @@ namespace BlendInt {
 
 		return Accept;
 	}
+	
+	void ImageView::Open (const char* filename)
+	{
+		RefPtr<Image> image(new Image);
+
+		if(image->Read(filename)) {
+
+			// TODO: check image channels
+
+			//glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+			m_texture->Bind();
+			m_texture->SetImage(image->width(), image->height(), image->pixels());
+			m_texture->Reset();
+
+			set_preferred_size(image->width(), image->height());
+			set_size(image->width(), image->height());
+			m_checkerboard->Resize(size());
+
+			GLfloat w = static_cast<GLfloat>(size().width());
+			GLfloat h = static_cast<GLfloat>(size().height());
+
+			GLfloat vertices[] = {
+				0.0, 0.0, 0.0,
+				w, 0.0, 0.0,
+				w, h, 0.0,
+
+				0.0, 0.0, 0.0,
+				w, h, 0.0,
+				0.0, h, 0.0,
+			};
+
+			m_vbo->Bind();
+			m_vbo->SetData(sizeof(vertices), vertices);
+			m_vbo->Reset();
+		}
+	}
+	
+	void ImageView::Open (const RefPtr<Image> image)
+	{
+	}
 
 	void ImageView::InitOnce ()
 	{
@@ -162,7 +208,7 @@ namespace BlendInt {
 		m_texture.reset(new GLTexture2D);
 		m_texture->Generate();
 		m_texture->Bind();
-		m_texture->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		m_texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		m_texture->SetMinFilter(GL_LINEAR);
 		m_texture->SetMagFilter(GL_LINEAR);
 		//m_texture->SetImage(0, 0, 0);

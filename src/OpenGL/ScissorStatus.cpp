@@ -56,7 +56,37 @@ namespace BlendInt {
 	void ScissorStatus::Push (int x, int y, unsigned int w,
 	        unsigned int h)
 	{
-		m_area_stack.push(Rect(x, y, w, h));
+		int xmax = x + w;
+		int ymax = y + h;
+
+		int top_xmax = xmax;
+		int top_ymax = ymax;
+		int new_x = x;
+		int new_y = y;
+
+		if(m_area_stack.size()) {
+			new_x = std::max(x, m_area_stack.top().x());
+			new_y = std::max(y, m_area_stack.top().y());
+			top_xmax = m_area_stack.top().x() + m_area_stack.top().width();
+			top_ymax = m_area_stack.top().y() + m_area_stack.top().height();
+		}
+
+		int new_width = std::min(xmax, top_xmax) - new_x;
+		int new_height = std::min(ymax, top_ymax) - new_y;
+
+		if(new_width < 0)
+			new_width = 0;
+
+		if(new_height < 0)
+			new_height = 0;
+
+		Rect right_rect;
+		right_rect.set_x(new_x);
+		right_rect.set_y(new_y);
+		right_rect.set_width(new_width);
+		right_rect.set_height(new_height);
+
+		m_area_stack.push(right_rect);
 	}
 
 	void ScissorStatus::Enable ()

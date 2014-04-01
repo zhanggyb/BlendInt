@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_IMAGEVIEW_HPP_
 #define _BLENDINT_IMAGEVIEW_HPP_
 
+#include <BlendInt/Core/Image.hpp>
+
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
@@ -40,6 +42,10 @@ namespace BlendInt {
 		ImageView ();
 
 		virtual ~ImageView ();
+
+		void Open (const char* filename);
+
+		void Open (const RefPtr<Image> image);
 
 	protected:
 
@@ -60,7 +66,6 @@ namespace BlendInt {
 
 		static const char* vertex_shader;
 		static const char* fragment_shader;
-
 	};
 }
 
