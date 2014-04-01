@@ -26,11 +26,13 @@
 
 namespace BlendInt {
 
+	/*
 	Glyph::Glyph ()
 	: bitmap_width(0), bitmap_height(0), bitmap_left(0), bitmap_top(0),
 	  advance_x (0), advance_y(0), texture_offset_x(0), texture_offset_y(0)
 	{
-		memset(vertexes, 6 * sizeof(Vertex2D), 0);
+		memset(vertexes, 4 * sizeof(GlyphVertex), 0);
 	}
+	*/
 
 } // namespace BlendInt

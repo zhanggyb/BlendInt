@@ -447,7 +447,7 @@ namespace BlendInt {
 		glGenBuffers(1, &m_vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-		m_atlas.Generate(&m_freetype, 32, 96);
+		m_atlas.Generate(m_freetype, 32, 96);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
@@ -469,7 +469,7 @@ namespace BlendInt {
 			if (create) {
 
 				TextureGlyph* new_font = new TextureGlyph;
-				new_font->generate(&m_freetype, charcode);
+				new_font->Load(m_freetype, charcode);
 				m_texture_fonts[charcode] = new_font;
 
 			} else {

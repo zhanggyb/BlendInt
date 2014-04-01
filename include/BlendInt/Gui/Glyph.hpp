@@ -40,17 +40,17 @@
 
 namespace BlendInt {
 
-	struct Vertex2D
+	struct GlyphVertex
 	{
-		GLfloat x;
-		GLfloat y;
-		GLfloat s;
-		GLfloat t;
+		GLfloat x;	// coord x
+		GLfloat y;	// coord y
+		GLfloat s;	// texture coord u
+		GLfloat t;	// texture coord v
 	};
 
 	struct Glyph
 	{
-		Glyph ();
+		// Glyph ();
 
 		float bitmap_width;
 		float bitmap_height;
@@ -64,7 +64,7 @@ namespace BlendInt {
 		float texture_offset_x;
 		float texture_offset_y;
 
-		Vertex2D vertexes[6];
+		GlyphVertex vertexes[4];
 	};
 
 } /* namespace BlendInt */

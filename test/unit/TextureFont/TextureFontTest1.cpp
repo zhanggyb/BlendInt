@@ -83,7 +83,7 @@ TEST_F(TextureFontTest1, Foo1)
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(font.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4, &(font.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -143,7 +143,7 @@ TEST_F(TextureFontTest1, Foo1)
 				BUFFER_OFFSET(0)
 				);
 
-		glDrawArrays(GL_TRIANGLES, 0, 2 * 3);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 

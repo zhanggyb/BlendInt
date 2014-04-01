@@ -251,7 +251,7 @@ namespace BlendInt {
 		return (FT_Get_Char_Index(m_face, charcode));
 	}
 
-	bool Freetype::LoadCharacter (FT_ULong charcode, FT_Int32 load_flags)
+	bool Freetype::LoadCharacter (FT_ULong charcode, FT_Int32 load_flags) const
 	{
 		if (!m_valid)
 			return false;

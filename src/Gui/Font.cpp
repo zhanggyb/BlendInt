@@ -170,8 +170,8 @@ namespace BlendInt {
 			for (size_t i = 0; i < str_length; it++, i++)
 			{
 				//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
-				glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_cache->m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
-				glDrawArrays(GL_TRIANGLES, 0, 6);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4, &(m_cache->m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 				glyph_pos = glm::translate(glyph_pos, glm::vec3(m_cache->m_atlas.glyph(*it).advance_x, 0, 0));
 				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
@@ -194,8 +194,8 @@ namespace BlendInt {
 			temp = m_cache->m_atlas.glyph(*it).advance_x;
 
 			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2D) * 6, &(m_cache->m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4, &(m_cache->m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			glyph_pos = glm::translate(glyph_pos, glm::vec3(temp, 0, 0));
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));

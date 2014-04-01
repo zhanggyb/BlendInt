@@ -81,9 +81,9 @@ namespace BlendInt {
 		}
 	}
 
-	void TextureAtlas::Generate (Freetype* freetype, wchar_t start, int size)
+	void TextureAtlas::Generate (const Freetype& freetype, wchar_t start, int size)
 	{
-		if(!freetype->valid()) return;
+		if(!freetype.valid()) return;
 
 		if(size <= 0) return;
 
@@ -100,7 +100,7 @@ namespace BlendInt {
 				glDeleteTextures(1, &m_texture);
 		}
 
-		FT_GlyphSlot g = freetype->face()->glyph;
+		FT_GlyphSlot g = freetype.face()->glyph;
 
 		int roww = 0;
 		int rowh = 0;
@@ -109,7 +109,7 @@ namespace BlendInt {
 
 		/* Find minimum size for a texture holding all visible ASCII characters */
 		for (wchar_t i = m_starting_charcode; i < (m_starting_charcode + m_stride - 1); i++) {
-			if (!freetype->LoadCharacter(i, FT_LOAD_RENDER)) {
+			if (!freetype.LoadCharacter(i, FT_LOAD_RENDER)) {
 				fprintf(stderr, "Loading character %c failed!\n", i);
 				continue;
 			}
@@ -151,7 +151,7 @@ namespace BlendInt {
 		rowh = 0;
 
 		for (wchar_t i = m_starting_charcode; i < (m_starting_charcode + m_stride - 1); i++) {
-			if (!freetype->LoadCharacter(i, FT_LOAD_RENDER)) {
+			if (!freetype.LoadCharacter(i, FT_LOAD_RENDER)) {
 				fprintf(stderr, "Loading character %c failed!\n", i);
 				continue;
 			}
@@ -187,25 +187,15 @@ namespace BlendInt {
 			(m_glyph_array + offset)->vertexes[1].s = (m_glyph_array + offset)->texture_offset_x + (m_glyph_array + offset)->bitmap_width / m_width;
 			(m_glyph_array + offset)->vertexes[1].t = (m_glyph_array + offset)->texture_offset_y + (m_glyph_array + offset)->bitmap_height / m_height;
 
-			(m_glyph_array + offset)->vertexes[2].x = (m_glyph_array + offset)->bitmap_left + (m_glyph_array + offset)->bitmap_width;
+			(m_glyph_array + offset)->vertexes[2].x = (m_glyph_array + offset)->bitmap_left;
 			(m_glyph_array + offset)->vertexes[2].y = (m_glyph_array + offset)->bitmap_top;
-			(m_glyph_array + offset)->vertexes[2].s = (m_glyph_array + offset)->texture_offset_x + (m_glyph_array + offset)->bitmap_width / m_width;
+			(m_glyph_array + offset)->vertexes[2].s = (m_glyph_array + offset)->texture_offset_x;
 			(m_glyph_array + offset)->vertexes[2].t = (m_glyph_array + offset)->texture_offset_y;
 
-			(m_glyph_array + offset)->vertexes[3].x = (m_glyph_array + offset)->bitmap_left;
-			(m_glyph_array + offset)->vertexes[3].y = (m_glyph_array + offset)->bitmap_top - (m_glyph_array + offset)->bitmap_height;
-			(m_glyph_array + offset)->vertexes[3].s = (m_glyph_array + offset)->texture_offset_x;
-			(m_glyph_array + offset)->vertexes[3].t = (m_glyph_array + offset)->texture_offset_y + (m_glyph_array + offset)->bitmap_height / m_height;
-
-			(m_glyph_array + offset)->vertexes[4].x = (m_glyph_array + offset)->bitmap_left + (m_glyph_array + offset)->bitmap_width;
-			(m_glyph_array + offset)->vertexes[4].y = (m_glyph_array + offset)->bitmap_top;
-			(m_glyph_array + offset)->vertexes[4].s = (m_glyph_array + offset)->texture_offset_x + (m_glyph_array + offset)->bitmap_width / m_width;
-			(m_glyph_array + offset)->vertexes[4].t = (m_glyph_array + offset)->texture_offset_y;
-
-			(m_glyph_array + offset)->vertexes[5].x = (m_glyph_array + offset)->bitmap_left;
-			(m_glyph_array + offset)->vertexes[5].y = (m_glyph_array + offset)->bitmap_top;
-			(m_glyph_array + offset)->vertexes[5].s = (m_glyph_array + offset)->texture_offset_x;
-			(m_glyph_array + offset)->vertexes[5].t = (m_glyph_array + offset)->texture_offset_y;
+			(m_glyph_array + offset)->vertexes[3].x = (m_glyph_array + offset)->bitmap_left + (m_glyph_array + offset)->bitmap_width;
+			(m_glyph_array + offset)->vertexes[3].y = (m_glyph_array + offset)->bitmap_top;
+			(m_glyph_array + offset)->vertexes[3].s = (m_glyph_array + offset)->texture_offset_x + (m_glyph_array + offset)->bitmap_width / m_width;
+			(m_glyph_array + offset)->vertexes[3].t = (m_glyph_array + offset)->texture_offset_y;
 
 			rowh = std::max(rowh, g->bitmap.rows);
 			ox += g->bitmap.width + 1;

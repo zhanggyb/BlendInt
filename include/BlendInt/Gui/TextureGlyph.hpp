@@ -46,42 +46,35 @@ namespace BlendInt {
 
 		~TextureGlyph ();
 
-		void Load (Freetype& freetype, wchar_t charcode);
+		void Load (const Freetype& freetype, wchar_t charcode);
 
 		void generate (Freetype* freetype, wchar_t charcode);
 
 		const Glyph& glyph () const
 		{
-			return glyph_;
+			return m_glyph;
 		}
 
 		const GLuint& texture () const
 		{
-			return texture_;
+			return m_texture;
 		}
 
 		unsigned int width () const
 		{
-			return static_cast<unsigned int>(glyph_.bitmap_width);
+			return static_cast<unsigned int>(m_glyph.bitmap_width);
 		}
 
 		unsigned int height () const
 		{
-			return static_cast<unsigned int>(glyph_.bitmap_height);
+			return static_cast<unsigned int>(m_glyph.bitmap_height);
 		}
 
 	private:
 
-		struct Vertex {
-			GLfloat x;
-			GLfloat y;
-			GLfloat s;
-			GLfloat t;
-		};
+		GLuint m_texture;
 
-		GLuint texture_;
-
-		Glyph glyph_;
+		Glyph m_glyph;
 
 #ifdef DEBUG
 		void draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y);

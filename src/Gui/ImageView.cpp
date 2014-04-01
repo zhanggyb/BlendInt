@@ -159,25 +159,20 @@ namespace BlendInt {
 		RefPtr<Image> image(new Image);
 
 		if(image->Read(filename)) {
-
-			// TODO: check image channels
-
-			//glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 			m_texture->Bind();
-
 			switch(image->channels()) {
-
 				case 3:
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
 					m_texture->SetImage(0, GL_RGB, image->width(), image->height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image->pixels());
 					break;
 
 				case 4:
+					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 					m_texture->SetImage(0, GL_RGBA, image->width(), image->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels());
 					break;
 
 				default:
 					break;
-
 			}
 
 			m_texture->Reset();

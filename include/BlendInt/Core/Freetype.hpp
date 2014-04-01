@@ -147,7 +147,7 @@ namespace BlendInt {
 		 * anti-aliased bitmap immediately. This can avoid calling
 		 * renderGlyph()
 		 */
-		bool LoadCharacter (FT_ULong charcode, FT_Int32 load_flags);
+		bool LoadCharacter (FT_ULong charcode, FT_Int32 load_flags) const;
 
 		bool SetLcdFilter (FT_LcdFilter filter);
 

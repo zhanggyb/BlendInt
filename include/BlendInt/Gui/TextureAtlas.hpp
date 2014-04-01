@@ -45,7 +45,7 @@ namespace BlendInt {
 
 		~TextureAtlas ();
 
-		void Generate (Freetype* freetype, wchar_t start, int size);
+		void Generate (const Freetype& freetype, wchar_t start, int size);
 
 		bool Contain (wchar_t charcode);
 
