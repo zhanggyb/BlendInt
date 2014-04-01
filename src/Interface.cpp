@@ -289,7 +289,7 @@ namespace BlendInt {
 		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
 		tex->SetMinFilter(GL_NEAREST);
 		tex->SetMagFilter(GL_NEAREST);
-		tex->SetImage(width, height, 0);
+		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
 		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
 		GLFramebuffer* fb = new GLFramebuffer;

@@ -164,7 +164,22 @@ namespace BlendInt {
 
 			//glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 			m_texture->Bind();
-			m_texture->SetImage(image->width(), image->height(), image->pixels());
+
+			switch(image->channels()) {
+
+				case 3:
+					m_texture->SetImage(0, GL_RGB, image->width(), image->height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image->pixels());
+					break;
+
+				case 4:
+					m_texture->SetImage(0, GL_RGBA, image->width(), image->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels());
+					break;
+
+				default:
+					break;
+
+			}
+
 			m_texture->Reset();
 
 			set_preferred_size(image->width(), image->height());
@@ -236,13 +251,13 @@ namespace BlendInt {
 		m_vbo->Reset();
 
 		GLfloat texcoords[] = {
-				0.0, 0.0,
+				0.0, 1.0,
+				1.0, 1.0,
 				1.0, 0.0,
-				1.0, 1.0,
 
-				0.0, 0.0,
-				1.0, 1.0,
-				0.0, 1.0
+				0.0, 1.0,
+				1.0, 0.0,
+				0.0, 0.0
 		};
 
 		m_tbo.reset(new GLArrayBuffer);

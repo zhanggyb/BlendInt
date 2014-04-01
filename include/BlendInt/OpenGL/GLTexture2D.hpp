@@ -49,8 +49,6 @@ namespace BlendInt {
 
 		GLTexture2D();
 
-		GLTexture2D(GLsizei width, GLsizei height);
-
 		~GLTexture2D();
 
 		inline GLuint id() const {return m_id;}
@@ -158,19 +156,13 @@ namespace BlendInt {
 		 */
 		void SetMaxLevel (GLint level);
 
-		void SetParameter (GLenum name, GLint value);
+		GLint GetWidth (GLint level = 0) const;
 
-		void SetParameter (GLenum name, GLfloat value);
+		GLint GetHeight (GLint level = 0) const;
 
-		GLint GetWidth () const;
-
-		GLint GetHeight () const;
-
-		void SetImage (GLsizei width, GLsizei height, const GLvoid* data);
+		void SetImage (GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
 
 		void CopySubimage (GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
-
-		GLint level () const {return m_level;}
 
 		static void Reset ();
 
@@ -179,84 +171,29 @@ namespace BlendInt {
 		 * @param path
 		 * @return
 		 */
-		bool WriteToFile (const std::string& path);
-
-#ifdef DEBUG
-		static void MakeCheckImage (unsigned char image[512][512][4]);
-#endif
+		bool WriteToFile (const std::string& path, GLint level = 0, GLenum format = GL_RGBA, GLenum type = GL_UNSIGNED_BYTE);
 
 		void Clear();
 
+		static GLuint GetTextureBinding ();
+
+	protected:
+
+		inline void set_parameter (GLenum name, GLint value);
+
+		inline void set_parameter (GLenum name, GLfloat value);
+
+		inline void get_parameter (GLenum pname, GLfloat* params);
+
+		inline void get_parameter (GLenum pname, GLint* params);
+
+		inline void get_level_parameter (GLint level, GLenum pname, GLfloat* params);
+
+		inline void get_level_parameter (GLint level, GLenum pname, GLint* params);
+
 	private:
 
-
 		GLuint m_id;
-
-		GLsizei m_width;
-		GLsizei m_height;
-
-		/**
-		 * @brief The level-of-detail number
-		 *
-		 * Level 0 is the base image level. Level n is the nth mipmap reduction image.
-		 *
-		 * Default is 0.
-		 */
-		GLint m_level;
-
-		/**
-		 * @brief The number of color components in the texture
-		 *
-		 * Default is GL_RGBA8.
-		 */
-		GLint m_internal_format;
-
-		/**
-		 * @brief The format of the pixel data
-		 *
-		 * The following symbolic values are accepted:
-		 * 	- GL_RED
-		 * 	- GL_RG
-		 * 	- GL_RGB
-		 * 	- GL_BGR
-		 * 	- GL_RGBA
-		 * 	- GL_BGRA
-		 *
-		 * Default is GL_RGBA.
-		 *
-		 * This member variable is used in glTexImage2D() in SetData().
-		 */
-		GLenum m_format;
-
-		/**
-		 * @brief The data type of the pixel data
-		 *
-		 * The following symbolic values are accepted:
-		 * 	- GL_UNSIGNED_BYTE
-		 * 	- GL_BYTE
-		 * 	- GL_UNSIGNED_SHORT
-		 * 	- GL_SHORT
-		 * 	- GL_UNSIGNED_INT
-		 * 	- GL_INT
-		 * 	- GL_FLOAT
-		 * 	- GL_UNSIGNED_BYTE_3_3_2
-		 * 	- GL_UNSIGNED_BYTE_2_3_3_REV
-		 * 	- GL_UNSIGNED_SHORT_5_6_5
-		 * 	- GL_UNSIGNED_SHORT_5_6_5_REV
-		 * 	- GL_UNSIGNED_SHORT_4_4_4_4
-		 * 	- GL_UNSIGNED_SHORT_4_4_4_4_REV
-		 * 	- GL_UNSIGNED_SHORT_5_5_5_1
-		 * 	- GL_UNSIGNED_SHORT_1_5_5_5_REV
-		 * 	- GL_UNSIGNED_INT_8_8_8_8
-		 * 	- GL_UNSIGNED_INT_8_8_8_8_REV
-		 * 	- GL_UNSIGNED_INT_10_10_10_2
-		 * 	- GL_UNSIGNED_INT_2_10_10_10_REV
-		 *
-		 * Default is GL_UNSIGNED_BYTE
-		 *
-		 * This member variable is used in glTexImage2D() in SetData().
-		 */
-		GLenum m_type;
 	};
 
 }

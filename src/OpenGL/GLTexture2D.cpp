@@ -37,32 +37,14 @@
 #include <OpenImageIO/imageio.h>
 OIIO_NAMESPACE_USING
 
+#include <BlendInt/Types.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 namespace BlendInt {
 
 	GLTexture2D::GLTexture2D ()
 	: Object(),
-	  m_id(0),
-	  m_width(512),
-	  m_height(512),
-	  m_level(0),
-	  m_internal_format(GL_RGBA8),
-	  m_format(GL_RGBA),
-	  m_type(GL_UNSIGNED_BYTE)
-	{
-
-	}
-
-	GLTexture2D::GLTexture2D (GLsizei width, GLsizei height)
-	: Object(),
-	  m_id(0),
-	  m_width(width),
-	  m_height(height),
-	  m_level(0),
-	  m_internal_format(GL_RGBA8),
-	  m_format(GL_RGBA),
-	  m_type(GL_UNSIGNED_BYTE)
+	  m_id(0)
 	{
 
 	}
@@ -92,12 +74,6 @@ namespace BlendInt {
 		}
 	}
 
-	void GLTexture2D::SetSize (GLsizei width, GLsizei height)
-	{
-		m_width = width;
-		m_height = height;
-	}
-
 	GLint GLTexture2D::GetBaseLevel()
 	{
 		return 0;
@@ -108,22 +84,12 @@ namespace BlendInt {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, level);
 	}
 
-	void GLTexture2D::SetParameter (GLenum name, GLint value)
+	void GLTexture2D::SetImage (GLint level, GLint internalFormat, GLsizei width,
+					GLsizei height, GLint border, GLenum format, GLenum type,
+					const GLvoid* data)
 	{
-		glTexParameteri(GL_TEXTURE_2D, name, value);
-	}
-
-	void GLTexture2D::SetParameter (GLenum name, GLfloat value)
-	{
-		glTexParameterf(GL_TEXTURE_2D, name, value);
-	}
-
-	void GLTexture2D::SetImage (GLsizei width, GLsizei height, const GLvoid* data)
-	{
-		m_width = width;
-		m_height = height;
-		glTexImage2D(GL_TEXTURE_2D, m_level, m_internal_format, m_width,
-				m_height, 0, m_format, m_type, data);
+		glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width,
+				height, 0, format, type, data);
 	}
 
 	void GLTexture2D::CopySubimage(GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
@@ -138,12 +104,12 @@ namespace BlendInt {
 
 	void GLTexture2D::SetMinFilter (GLint filter)
 	{
-		SetParameter(GL_TEXTURE_MIN_FILTER, filter);
+		set_parameter(GL_TEXTURE_MIN_FILTER, filter);
 	}
 
 	void GLTexture2D::SetMagFilter (GLint filter)
 	{
-		SetParameter(GL_TEXTURE_MAG_FILTER, filter);
+		set_parameter(GL_TEXTURE_MAG_FILTER, filter);
 	}
 
 	void GLTexture2D::SetWrapMode (GLint s_mode, GLint t_mode)
@@ -154,37 +120,37 @@ namespace BlendInt {
 
 	void GLTexture2D::SetWrapModeS (GLint mode)
 	{
-		SetParameter(GL_TEXTURE_WRAP_S, mode);
+		set_parameter(GL_TEXTURE_WRAP_S, mode);
 	}
 
 	void GLTexture2D::SetWrapModeT (GLint mode)
 	{
-		SetParameter(GL_TEXTURE_WRAP_T, mode);
+		set_parameter(GL_TEXTURE_WRAP_T, mode);
 	}
 
-	GLint GLTexture2D::GetWidth () const
+	GLint GLTexture2D::GetWidth (GLint level) const
 	{
 		GLint width = 0;
 		glGetTexLevelParameteriv(GL_TEXTURE_2D,
-		  	m_level,
+		  	level,
 		  	GL_TEXTURE_WIDTH,
 		  	&width);
 
 		return width;
 	}
 
-	GLint GLTexture2D::GetHeight () const
+	GLint GLTexture2D::GetHeight (GLint level) const
 	{
 		GLint height = 0;
 		glGetTexLevelParameteriv(GL_TEXTURE_2D,
-		  	m_level,
+		  	level,
 		  	GL_TEXTURE_HEIGHT,
 		  	&height);
 
 		return height;
 	}
 
-	bool GLTexture2D::WriteToFile (const std::string& filename)
+	bool GLTexture2D::WriteToFile (const std::string& filename, GLint level, GLenum format, GLenum type)
 	{
 		//if(!m_flag[2]) return false;
 
@@ -205,16 +171,21 @@ namespace BlendInt {
 
 		}
 
-		// demo code
-		unsigned char pixels[m_width * m_height * 4];
+		GLint width = 0, height = 0;
 
-		glGetTexImage (GL_TEXTURE_2D, m_level, m_format, m_type, pixels);
+		get_level_parameter(level, GL_TEXTURE_WIDTH, &width);
+		get_level_parameter(level, GL_TEXTURE_HEIGHT, &height);
+
+		// demo code
+		unsigned char pixels[width * height * 4];
+
+		glGetTexImage (GL_TEXTURE_2D, level, format, type, pixels);
 
 		ImageOutput* out = ImageOutput::create(filename);
 		if(!out)
 			return false;
 
-		ImageSpec spec (m_width, m_height, 4, TypeDesc::UINT8);
+		ImageSpec spec (width, height, 4, TypeDesc::UINT8);
 		out->open(filename, spec);
 		out->write_image(TypeDesc::UINT8, pixels);
 		out->close();
@@ -222,22 +193,6 @@ namespace BlendInt {
 
 		return true;
 	}
-
-#ifdef DEBUG
-	void GLTexture2D::MakeCheckImage(unsigned char image[512][512][4])
-	{
-		int i, j, c;
-		for (i = 0; i < 512; i++) {
-			for (j = 0; j < 512; j++) {
-				c = (((i & 0x8) == 0) ^ (((j & 0x8) == 0))) * 255;
-				image[i][j][0] = (GLubyte) c;
-				image[i][j][1] = (GLubyte) c;
-				image[i][j][2] = (GLubyte) c;
-				image[i][j][3] = (GLubyte) c;
-			}
-		}
-	}
-#endif
 
 	void GLTexture2D::Clear ()
 	{
@@ -248,5 +203,43 @@ namespace BlendInt {
 		m_id = 0;
 	}
 
-}
+	GLuint GLTexture2D::GetTextureBinding()
+	{
+		GLint tex = 0;
 
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &tex);
+
+		return static_cast<GLuint>(tex);
+	}
+
+	inline void GLTexture2D::set_parameter (GLenum name, GLint value)
+	{
+		glTexParameteri(GL_TEXTURE_2D, name, value);
+	}
+
+	inline void GLTexture2D::set_parameter (GLenum name, GLfloat value)
+	{
+		glTexParameterf(GL_TEXTURE_2D, name, value);
+	}
+
+	inline void GLTexture2D::get_parameter(GLenum pname, GLfloat* params)
+	{
+		glGetTexParameterfv(GL_TEXTURE_2D, pname, params);
+	}
+
+	inline void GLTexture2D::get_parameter(GLenum pname, GLint* params)
+	{	
+		glGetTexParameteriv(GL_TEXTURE_2D, pname, params);
+	}
+
+	inline void GLTexture2D::get_level_parameter(GLint level, GLenum pname, GLfloat* params)
+	{	
+		glGetTexLevelParameterfv(GL_TEXTURE_2D, level, pname, params);
+	}
+
+	inline void GLTexture2D::get_level_parameter(GLint level, GLenum pname, GLint* params)
+	{	
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, level, pname, params);
+	}
+
+}
