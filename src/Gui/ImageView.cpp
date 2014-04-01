@@ -47,24 +47,24 @@ namespace BlendInt {
 
 	const char* ImageView::vertex_shader =
 			"#version 330\n"
-			"layout(location = 0) in vec3 coord3d;"
-			"layout(location = 1) in vec2 texcoord;"
+			"layout(location = 0) in vec2 Coord2D;"
+			"layout(location = 1) in vec2 UVCoord;"
 			"uniform mat4 MVP;"
 			"out vec2 f_texcoord;"
 			""
 			"void main(void) {"
-			"	gl_Position = MVP * vec4(coord3d, 1.0);"
-			"	f_texcoord = texcoord;"
+			"	gl_Position = MVP * vec4(Coord2D, 0.0, 1.0);"
+			"	f_texcoord = UVCoord;"
 			"}";
 
 	const char* ImageView::fragment_shader =
-					"#version 330\n"
+			"#version 330\n"
 			"in vec2 f_texcoord;"
-			"uniform sampler2D tex;"
+			"uniform sampler2D TexID;"
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
-			"	FragmentColor = texture(tex, f_texcoord);"
+			"	FragmentColor = texture(TexID, f_texcoord);"
 			"}";
 
 #else	// legacy opengl
@@ -115,14 +115,14 @@ namespace BlendInt {
 		m_texture->Bind();
 
 		if (m_texture->GetWidth() > 0) {
-			m_program->SetUniform1i("tex", 0);
+			m_program->SetUniform1i("TexID", 0);
 			m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 			        glm::value_ptr(mvp));
 
 			glEnableVertexAttribArray(0);
 			m_vbo->Bind();
 			glVertexAttribPointer(0,
-							3,
+							2,
 							GL_FLOAT,
 							GL_FALSE,
 							0,
@@ -139,7 +139,7 @@ namespace BlendInt {
 
 			m_vbo->Bind();
 
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			glDisableVertexAttribArray(1);
 			glDisableVertexAttribArray(0);
@@ -190,13 +190,10 @@ namespace BlendInt {
 			GLfloat h = static_cast<GLfloat>(size().height());
 
 			GLfloat vertices[] = {
-				0.0, 0.0, 0.0,
-				w, 0.0, 0.0,
-				w, h, 0.0,
-
-				0.0, 0.0, 0.0,
-				w, h, 0.0,
-				0.0, h, 0.0,
+				0.0, 0.0,
+				w, 0.0,
+				0.0, h,
+				w, h
 			};
 
 			m_vbo->Bind();
@@ -226,7 +223,6 @@ namespace BlendInt {
 		m_texture->SetWrapMode(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		m_texture->SetMinFilter(GL_LINEAR);
 		m_texture->SetMagFilter(GL_LINEAR);
-		//m_texture->SetImage(0, 0, 0);
 		m_texture->Reset();
 
 		m_program.reset(new GLSLProgram);
@@ -235,13 +231,10 @@ namespace BlendInt {
 		m_program->Link();
 
 		GLfloat vertices[] = {
-			0.0, 0.0, 0.0,
-			400.f, 0.0, 0.0,
-			400.f, 300.f, 0.0,
-
-			0.0, 0.0, 0.0,
-			400.f, 300.f, 0.0,
-			0.0, 300.f, 0.0
+			0.0, 0.0,
+			400.f, 0.0,
+			0.0, 300.f,
+			400.f, 300.f,
 		};
 
 		m_vbo.reset(new GLArrayBuffer);
@@ -250,21 +243,18 @@ namespace BlendInt {
 		m_vbo->SetData(sizeof(vertices), vertices);
 		m_vbo->Reset();
 
-		GLfloat texcoords[] = {
+		GLfloat uv[] = {
 				0.0, 1.0,
 				1.0, 1.0,
-				1.0, 0.0,
-
-				0.0, 1.0,
-				1.0, 0.0,
-				0.0, 0.0
+				0.0, 0.0,
+				1.0, 0.0
 		};
 
 		m_tbo.reset(new GLArrayBuffer);
 
 		m_tbo->Generate();
 		m_tbo->Bind();
-		m_tbo->SetData(sizeof(texcoords), texcoords);
+		m_tbo->SetData(sizeof(uv), uv);
 		m_tbo->Reset();
 
 		glBindVertexArray(0);

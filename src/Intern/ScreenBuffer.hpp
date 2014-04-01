@@ -40,11 +40,6 @@ namespace BlendInt {
 	class Interface;
 	class ContextManager;
 
-	struct WidgetsLayerBuffer {
-		int layer;
-		GLTexture2D* texture_buffer;
-	};
-
 	/**
 	 * @brief A special class used in Interface only to work as a screen buffer
 	 *
@@ -64,21 +59,16 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		void Resize (float width, float height, float depth = 0.0);
+		void Resize (GLfloat width, GLfloat height);
 
 		void SaveToFile (const char* filename);
 
 		RefPtr<GLSLProgram> m_program;
 
-		RefPtr<GLArrayBuffer> m_vbo;
+		RefPtr<GLArrayBuffer> m_vbo;	// array buffer to store vertex
+		RefPtr<GLArrayBuffer> m_tbo;	// array buffer to store uv
 
 		GLuint m_vao;
-
-		GLint uniform_texture;
-		GLint attribute_coord3d;
-		GLint attribute_texcoord;
-
-		std::vector<WidgetsLayerBuffer> m_widgets_layer_buffers;
 
 		static unsigned int max_widgets_layer_buffer_size;
 

@@ -31,7 +31,7 @@ TEST_F(ImageViewTest1, Foo1)
     view->set_name("ImageView");
     view->SetPosition(20, 20);
 
-    view->Open("rendering.jpg");
+    view->Open("test.jpeg");
 
     RunLoop(win);
 

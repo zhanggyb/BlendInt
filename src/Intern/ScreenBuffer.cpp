@@ -45,24 +45,24 @@ namespace BlendInt {
 #ifdef __OPENGL_CORE_330__
 	const char* ScreenBuffer::vertex_shader =
 			"#version 330\n"
-			"layout(location = 0) in vec3 coord3d;"
-			"layout(location = 1) in vec2 texcoord;"
+			"layout(location = 0) in vec2 Coord2D;"
+			"layout(location = 1) in vec2 UVCoord;"
 			"uniform mat4 MVP;"
 			"out vec2 f_texcoord;"
 			""
 			"void main(void) {"
-			"	gl_Position = MVP * vec4(coord3d, 1.0);"
-			"	f_texcoord = texcoord;"
+			"	gl_Position = MVP * vec4(Coord2D, 0.0, 1.0);"
+			"	f_texcoord = UVCoord;"
 			"}";
 
 	const char* ScreenBuffer::fragment_shader =
 			"#version 330\n"
 			"in vec2 f_texcoord;"
-			"uniform sampler2D tex;"
+			"uniform sampler2D TexID;"
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
-			"	FragmentColor = texture(tex, f_texcoord);"
+			"	FragmentColor = texture(TexID, f_texcoord);"
 			"}";
 
 #else	// use legacy opengl
@@ -92,22 +92,13 @@ namespace BlendInt {
 	unsigned int ScreenBuffer::max_widgets_layer_buffer_size = 4;
 
 	ScreenBuffer::ScreenBuffer()
-	: Object(), m_vao(0), uniform_texture(-1), attribute_coord3d(-1), attribute_texcoord(-1)
+	: Object(), m_vao(0)
 	{
 		InitOnce();
 	}
 
 	ScreenBuffer::~ScreenBuffer()
 	{
-		for(std::vector<WidgetsLayerBuffer>::iterator it = m_widgets_layer_buffers.begin(); it != m_widgets_layer_buffers.end(); it++)
-		{
-			(*it).texture_buffer->Clear();
-			delete (*it).texture_buffer;
-			(*it).texture_buffer = 0;
-		}
-
-		m_widgets_layer_buffers.clear();
-
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
@@ -124,34 +115,36 @@ namespace BlendInt {
 		glActiveTexture(GL_TEXTURE0);
 		texture->Bind();
 
-		glUniform1i(uniform_texture, 0);
-
-		m_vbo->Bind();
+		m_program->SetUniform1i("TexID", 0);
 
 		glEnableVertexAttribArray(0);
+		m_vbo->Bind();
+
 		glVertexAttribPointer(
 				0,
-				3,
+				2,
 				GL_FLOAT,
 				GL_FALSE,
-				sizeof(GLfloat) * 5,
+				0,
 				BUFFER_OFFSET(0)
 				);
 
 		glEnableVertexAttribArray(1);
+		m_tbo->Bind();
 		glVertexAttribPointer(
 				1,
 				2,
 				GL_FLOAT,
 				GL_FALSE,
-				sizeof(GLfloat) * 5,
-				BUFFER_OFFSET(3 * sizeof(GLfloat))
+				0,
+				BUFFER_OFFSET(0)
 				);
 
-		glDrawArrays(GL_TRIANGLES, 0, 2 * 3);
+		m_vbo->Bind();
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(0);
 
 		m_vbo->Reset();
 		texture->Reset();
@@ -169,53 +162,45 @@ namespace BlendInt {
 		m_vbo.reset(new GLArrayBuffer);
 		m_vbo->Generate();
 
-		float vertices[] = {
-			// 1, 2, 3: coordinates	4, 5: UV
-			0.0, 0.0, 0.0,				0.f, 0.f,
-			0.0, 0.0, 0,0,				1.f, 0.f,
-			0.0, 0.0, 0.0,				1.f, 1.f,
-
-			0.0, 0.0, 0.0,				0.f, 0.f,
-			0.0, 0.0, 0,0,				1.f, 1.f,
-			0.0, 0.0, 0.0,				0.f, 1.f,
+		GLfloat vertices[] = {
+			0.0, 0.0,
+			0.0, 0.0,
+			0.0, 0.0,
+			0.0, 0.0
 		};
 
 		m_vbo->Bind();
 		m_vbo->SetData(sizeof(vertices), vertices);
 		m_vbo->Reset();
 
+		GLfloat uv[] = {
+			0.0, 1.0,
+			1.0, 1.0,
+			0.0, 0.0,
+			1.0, 0.0
+		};
+
+		m_tbo.reset(new GLArrayBuffer);
+		m_tbo->Generate();
+		m_tbo->Bind();
+		m_tbo->SetData(sizeof(uv), uv);
+		m_tbo->Reset();
+
 		m_program.reset(new GLSLProgram);
 
 		m_program->Create();
 		m_program->AttachShaderPair(vertex_shader, fragment_shader);
-
-		if(m_program->Link()) {
-			m_program->Use();
-
-			attribute_coord3d = m_program->GetAttributeLocation("coord3d");
-			attribute_texcoord = m_program->GetAttributeLocation("texcoord");
-			uniform_texture = m_program->GetUniformLocation("tex");
-
-			if(attribute_texcoord == -1 || attribute_coord3d == -1 || uniform_texture == -1) {
-				std::cerr << "Fail to get attribute" << std::endl;
-			}
-
-			m_program->Reset();
-		}
-
+		m_program->Link();
 		glBindVertexArray(0);
 	}
 
-	void ScreenBuffer::Resize (float width, float height, float depth)
+	void ScreenBuffer::Resize (GLfloat width, GLfloat height)
 	{
-		float vertices[] = {
-			0.0, 0.0, depth,		0.f, 0.f,
-			width, 0.0, depth,	1.f, 0.f,
-			width, height, depth,1.f, 1.f,
-
-			0.0, 0.0, depth,	0.f, 0.f,
-			width, height, depth,	1.f, 1.f,
-			0.0, height, depth,	0.f, 1.f
+		GLfloat vertices[] = {
+			0.f, 0.f,
+			width, 0.f,
+			0.f, height,
+			width, height
 		};
 
 		glBindVertexArray(m_vao);
