@@ -116,14 +116,13 @@ namespace BlendInt {
 
 		ThemeManager* tm = ThemeManager::instance();
 
-		float r, g, b, a;
+		glm::vec4 color;
+		color.r = themes()->regular.inner.r() / 255.f;
+		color.g = themes()->regular.inner.g() / 255.f;
+		color.b = themes()->regular.inner.b() / 255.f;
+		color.a = themes()->regular.inner.a() / 255.f;
 
-		r = tm->themes()->regular.inner.r() / 255.f;
-		g = tm->themes()->regular.inner.g() / 255.f;
-		b = tm->themes()->regular.inner.b() / 255.f;
-		a = tm->themes()->regular.inner.a() / 255.f;
-
-		program->SetVertexAttrib4f("Color", r, g, b, a);
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);

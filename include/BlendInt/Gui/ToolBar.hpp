@@ -42,6 +42,10 @@ namespace BlendInt {
 
 		virtual ~ToolBar ();
 
+		void AddButton (ToolButton* button);
+
+		void AddButton (const RefPtr<ActionItem>& action);
+
 	protected:
 
 		virtual bool Update (const UpdateRequest& request);
@@ -66,7 +70,14 @@ namespace BlendInt {
 
 		void InitOnce ();
 
+		int GetLastPosition ();
+
 		GLuint m_vao;
+
+		/**
+		 * space between tool buttons
+		 */
+		int m_space;
 
 		RefPtr<GLArrayBuffer> m_inner;
 		RefPtr<GLArrayBuffer> m_outer;

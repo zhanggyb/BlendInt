@@ -42,6 +42,14 @@ namespace BlendInt {
 
 		virtual ~ToolButton();
 
+		void SetActionItem (const String& text);
+
+		void SetActionItem (const String& text, const String& shortcut);
+
+		void SetActionItem (const RefPtr<Icon>& icon, const String& text);
+
+		void SetActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
+
 		void SetActionItem (const RefPtr<ActionItem>& item);
 
 	protected:

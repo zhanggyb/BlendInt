@@ -36,10 +36,12 @@
 
 #include <BlendInt/Gui/ToolBar.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 
 	ToolBar::ToolBar ()
+	: m_vao(0), m_space(4)
 	{
 		InitOnce();
 	}
@@ -54,6 +56,18 @@ namespace BlendInt {
 		if(request.source() == Predefined) {
 
 			switch (request.type()) {
+
+				case FormPosition: {
+
+					const Point* pos_p = static_cast<const Point*>(request.data());
+
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					MoveSubWidgetsPosition(x, y);
+
+					return true;
+				}
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
@@ -84,11 +98,16 @@ namespace BlendInt {
 
 		program->Use();
 
+		glm::vec4 color;
+		color.r = themes()->regular.inner.r() / 255.f;
+		color.g = themes()->regular.inner.g() / 255.f;
+		color.b = themes()->regular.inner.b() / 255.f;
+		color.a = themes()->regular.inner.a() / 255.f;
+
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4f("Color", 0.2f, 0.4f, 0.3f, 1.f);
-
-		program->SetUniform1i("Gamma", 20);
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetUniform1i("Gamma", 0);
 
 		glEnableVertexAttribArray(0);
 
@@ -172,10 +191,31 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	void ToolBar::AddButton (ToolButton* button)
+	{
+		int x = GetLastPosition();
+		Resize(button, 24, 24);
+		SetPosition(button, x, position().y() + margin().bottom());
+		AddSubWidget(button);
+	}
+
+	void ToolBar::AddButton (const RefPtr<ActionItem>& action)
+	{
+		ToolButton* button = Manage(new ToolButton);
+
+		int x = GetLastPosition();
+		Resize(button, 24, 24);
+		SetPosition(button, x, position().y() + margin().bottom());
+
+		AddSubWidget(button);
+	}
+
 	void ToolBar::InitOnce ()
 	{
 		set_preferred_size(200, 32);
 		set_size(200, 32);
+
+		set_margin(4, 4, 4, 4);
 
 		set_expand_x(true);
 		set_expand_y(false);
@@ -191,6 +231,18 @@ namespace BlendInt {
 		GenerateFormBuffer(size(), RoundNone, 0.0, m_inner.get(), m_outer.get(), 0);
 
 		glBindVertexArray(0);
+	}
+
+	int ToolBar::GetLastPosition ()
+	{
+		int x = position().x() + margin().left();
+
+		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		{
+			x += (*it)->size().width() + m_space;
+		}
+
+		return x;
 	}
 
 }
