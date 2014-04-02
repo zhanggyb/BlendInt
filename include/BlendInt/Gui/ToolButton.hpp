@@ -21,46 +21,32 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TOOLBAR_HPP_
-#define _BLENDINT_GUI_TOOLBAR_HPP_
+#ifndef _BLENDINT_GUI_TOOLBUTTON_HPP_
+#define _BLENDINT_GUI_TOOLBUTTON_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/OpenGL/GLSLProgram.hpp>
-
-#include <BlendInt/Gui/AbstractContainer.hpp>
-#include <BlendInt/Gui/ToolButton.hpp>
+#include <BlendInt/Gui/ActionItem.hpp>
+#include <BlendInt/Gui/AbstractButton.hpp>
 
 namespace BlendInt {
 
-	class ToolBar: public AbstractContainer
+	/**
+	 * @brief A special button usually used in ToolBar
+	 */
+	class ToolButton: public AbstractButton
 	{
-		DISALLOW_COPY_AND_ASSIGN(ToolBar);
+		DISALLOW_COPY_AND_ASSIGN(ToolButton);
 
 	public:
 
-		ToolBar ();
+		ToolButton ();
 
-		virtual ~ToolBar ();
+		virtual ~ToolButton();
+
+		void SetActionItem (const RefPtr<ActionItem>& item);
 
 	protected:
 
-		virtual bool Update (const UpdateRequest& request);
-
 		virtual ResponseType Draw (const RedrawEvent& event);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
 
@@ -68,10 +54,12 @@ namespace BlendInt {
 
 		GLuint m_vao;
 
+		RefPtr<ActionItem> m_action;
+
 		RefPtr<GLArrayBuffer> m_inner;
+
 		RefPtr<GLArrayBuffer> m_outer;
 	};
-
 }
 
-#endif /* _BLENDINT_GUI_TOOLBAR_HPP_ */
+#endif /* _BLENDINT_GUI_TOOLBUTTON_HPP_ */

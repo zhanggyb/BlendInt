@@ -24,55 +24,34 @@
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <gl3.h>
-#include <gl3ext.h>
+#include <glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
-#endif	// __UNIX__
+#endif  // __UNIX__
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/ToolBar.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
+
+#include <BlendInt/Gui/ToolButton.hpp>
 
 namespace BlendInt {
 
-	ToolBar::ToolBar ()
+	ToolButton::ToolButton ()
+	: m_vao(0)
 	{
 		InitOnce();
 	}
 
-	ToolBar::~ToolBar ()
+	ToolButton::~ToolButton ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool ToolBar::Update (const UpdateRequest& request)
-	{
-		if(request.source() == Predefined) {
-
-			switch (request.type()) {
-
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					GenerateFormBuffer(*size_p, RoundAll, 5.0, m_inner.get(), m_outer.get(), 0);
-
-					return true;
-				}
-
-				default:
-					return true;
-			}
-
-		} else {
-			return false;
-		}
-	}
-
-	ResponseType ToolBar::Draw (const RedrawEvent& event)
+	ResponseType ToolButton::Draw (const RedrawEvent& event)
 	{
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
@@ -86,9 +65,19 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4f("Color", 0.2f, 0.4f, 0.3f, 1.f);
 
-		program->SetUniform1i("Gamma", 20);
+		if(down()) {
+			program->SetVertexAttrib4f("Color", 0.2f, 0.2f, 0.2f, 1.f);
+			program->SetUniform1i("Gamma", 0);
+		} else {
+			program->SetVertexAttrib4f("Color", 0.2f, 0.4f, 0.3f, 1.f);
+
+			if(hover()) {
+				program->SetUniform1i("Gamma", 20);
+			} else {
+				program->SetUniform1i("Gamma", 0);
+			}
+		}
 
 		glEnableVertexAttribArray(0);
 
@@ -132,53 +121,18 @@ namespace BlendInt {
 		program->Reset();
 
 		glBindVertexArray(0);
+
 		return Accept;
 	}
-
-	ResponseType ToolBar::CursorEnterEvent (bool entered)
+	
+	void ToolButton::SetActionItem (const RefPtr<ActionItem>& item)
 	{
-		return Accept;
 	}
 
-	ResponseType ToolBar::KeyPressEvent (const KeyEvent& event)
+	void ToolButton::InitOnce ()
 	{
-		return Accept;
-	}
-
-	ResponseType ToolBar::ContextMenuPressEvent (
-					const ContextMenuEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType ToolBar::ContextMenuReleaseEvent (
-					const ContextMenuEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType ToolBar::MousePressEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType ToolBar::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType ToolBar::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	void ToolBar::InitOnce ()
-	{
-		set_preferred_size(200, 32);
-		set_size(200, 32);
-
-		set_expand_x(true);
-		set_expand_y(false);
+		set_preferred_size(24, 24);
+		set_size(24, 24);
 
 		m_inner.reset(new GLArrayBuffer);
 		m_outer.reset(new GLArrayBuffer);
@@ -188,9 +142,10 @@ namespace BlendInt {
 		m_inner->Generate();
 		m_outer->Generate();
 
-		GenerateFormBuffer(size(), RoundNone, 0.0, m_inner.get(), m_outer.get(), 0);
+		GenerateFormBuffer(size(), RoundAll, 5.0, m_inner.get(), m_outer.get(), 0);
 
 		glBindVertexArray(0);
 	}
 
 }
+

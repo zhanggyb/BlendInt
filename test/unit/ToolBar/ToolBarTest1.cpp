@@ -26,9 +26,13 @@ TEST_F(ToolBarTest1, Foo1)
     GLFWwindow* win = CreateWindow("ToolBar - Foo1", 640, 480);
 
     // TODO: add test code here
-    ToolBar* toolbar = Manage (new ToolBar);
-    toolbar->set_name("ToolBar");
-    toolbar->SetPosition(100, 100);
+    //ToolBar* toolbar = Manage (new ToolBar);
+    //toolbar->set_name("ToolBar");
+    //toolbar->SetPosition(100, 100);
+
+    ToolButton* btn = Manage (new ToolButton);
+    btn->set_name("ToolButton");
+    btn->SetPosition(200, 200);
 
     RunLoop(win);
 
