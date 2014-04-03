@@ -23,15 +23,13 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
 #endif
 #endif  // __UNIX__
-
-#include <algorithm>
-#include <iostream>
 
 #include <BlendInt/Gui/HLayout.hpp>
 
@@ -45,13 +43,6 @@ namespace BlendInt {
 
 	HLayout::~HLayout ()
 	{
-		/*
-		for(std::vector<AbstractWidget*>::iterator it = m_items.begin(); it != m_items.end(); it++)
-		{
-			Destroy(*it);
-		}
-		*/
-		m_items.clear();
 	}
 
 	bool HLayout::Update (const UpdateRequest& request)
@@ -62,19 +53,16 @@ namespace BlendInt {
 
 				case FormPosition: {
 					const Point* new_pos = static_cast<const Point*>(request.data());
+					int x = new_pos->x() - position().x();
+					int y = new_pos->y() - position().y();
 
-					for (size_t i = 0; i < m_items.size(); i++)
-					{
-						SetPosition(m_items[i].get(),
-								m_items[i]->position().x() + (new_pos->x() - position().x()),
-								m_items[i]->position().y() + (new_pos->y() - position().y()));
-					}
+					MoveSubWidgetsPosition(x, y);
 					return true;
 				}
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					if(m_items.size())
+					if(sub_widget_size())
 						MakeLayout(size_p, &margin(), space());
 
 					return true;
@@ -82,17 +70,15 @@ namespace BlendInt {
 
 				case ContainerMargin: {
 					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					if(m_items.size())
+					if(sub_widget_size())
 						MakeLayout(&size(), margin_p, space());
-
 					return true;
 				}
 
 				case LayoutPropertySpace: {
 					const int* space_p = static_cast<const int*>(request.data());
-					if(m_items.size())
+					if(sub_widget_size())
 						MakeLayout(&size(), &margin(), *space_p);
-
 					return true;
 				}
 
@@ -109,7 +95,7 @@ namespace BlendInt {
 
 	ResponseType HLayout::Draw (const RedrawEvent& event)
 	{
-		return Ignore;
+		return IgnoreAndContinue;
 	}
 
 	void HLayout::AddItem (AbstractWidget* object)
@@ -125,7 +111,7 @@ namespace BlendInt {
 
 		unsigned int h_plus = margin().top() + margin().bottom();
 
-		if (m_items.size() == 0) {
+		if (sub_widget_size() == 0) {
 			min_size.add_width(object->minimal_size().width());
 			prefer_size.add_width(object->preferred_size().width());
 		} else {
@@ -146,14 +132,13 @@ namespace BlendInt {
 			current_size.set_height(prefer_size.height());
 		}
 
-		RefPtr<AbstractWidget> obj(object);
-		m_items.push_back(obj);
-
 		SetPreferredSize(prefer_size);
 		SetMinimalSize(min_size);
 
 		if(object->expand_x()) m_expandable_items.insert(object);
 		else m_fixed_items.insert(object);
+
+		AddSubWidget(object);
 
 		if( !(current_size == size()) )
 			Resize(this, current_size);
@@ -162,25 +147,14 @@ namespace BlendInt {
 
 		activate_events();
 		object->activate_events();
-
-		AddSubWidget(object);
 		LockGeometry(object, true);
 	}
 
 	void HLayout::RemoveItem (AbstractWidget* object)
 	{
 		deactivate_events();
-		RefPtr<AbstractWidget> obj(object);
 
-		std::vector<AbstractWidgetPtr>::iterator it;
-		for(it = m_items.begin(); it != m_items.end();)
-		{
-			if ((*it) == obj) {
-				it = m_items.erase(it);
-			} else {
-				it++;
-			}
-		}
+		if(!RemoveSubWidget(object)) return;
 
 		if(object->expand_x())
 				m_expandable_items.erase(object);
@@ -219,12 +193,13 @@ namespace BlendInt {
 
 	void HLayout::DistributeWithPreferredWidth(const Margin* margin, int space)
 	{
-		for(std::vector<AbstractWidgetPtr>::iterator it = m_items.begin(); it != m_items.end(); it++)
+		int x = position().x() + margin->left();
+
+		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
 		{
-			Resize((*it).get(), (*it)->preferred_size().width(), (*it)->size().height());
+			Resize((*it), (*it)->preferred_size().width(), (*it)->size().height());
 		}
 
-		int x = position().x() + margin->left();
 		Distribute(space, x);
 	}
 
@@ -235,10 +210,12 @@ namespace BlendInt {
 		unsigned int current_width = size->width();
 		unsigned int margin_plus = margin->left() + margin->right();
 
-		std::vector<AbstractWidgetPtr>::iterator it;
+		WidgetDeque::iterator it;
 		AbstractWidget* child = 0;
 
-		bool change_expd_items = (current_width - margin_plus) >= (min_expd_width + fixed_width + (m_items.size() - 1) * space);
+		bool change_expd_items = (current_width - margin_plus)
+						>= (min_expd_width + fixed_width
+										+ (sub_widget_size() - 1) * space);
 
 		if(change_expd_items) {
 
@@ -246,11 +223,11 @@ namespace BlendInt {
 			if (m_expandable_items.size()) {
 
 				unsigned int average_expd_width = current_width - margin_plus
-				        - fixed_width - (m_items.size() - 1) * space;
+				        - fixed_width - (sub_widget_size() - 1) * space;
 				average_expd_width = average_expd_width / m_expandable_items.size();
 
-				for (it = m_items.begin(); it != m_items.end(); it++) {
-					child = (*it).get();
+				for (it = sub_widgets().begin(); it != sub_widgets().end(); it++) {
+					child = *it;
 
 					if (m_expandable_items.count(child)) {
 						Resize(child, average_expd_width, child->size().height());
@@ -270,12 +247,12 @@ namespace BlendInt {
 				unsigned int width_plus = 0;
 
 				unsigned int total_fixed_width = current_width - margin_plus
-				        - min_expd_width - (m_items.size() - 1) * space;
+				        - min_expd_width - (sub_widget_size() - 1) * space;
 				unsigned int average_fixed_width = total_fixed_width / m_fixed_items.size();
 
-				for (it = m_items.begin(); it != m_items.end(); it++) {
+				for (it = sub_widgets().begin(); it != sub_widgets().end(); it++) {
 
-					child = (*it).get();
+					child = *it;
 
 					if (m_expandable_items.count(child)) {
 						Resize(child, child->minimal_size().width(),
@@ -311,19 +288,19 @@ namespace BlendInt {
 		unsigned int current_width = size->width();
 		unsigned int margin_plus = margin->left() + margin->right();
 
-		std::vector<AbstractWidgetPtr>::iterator it;
+		WidgetDeque::iterator it;
 		AbstractWidget* child = 0;
 
 		if(m_expandable_items.size()) {
 
 			unsigned int max_expd_width = GetAllMaximalExpandableWidth();
 			unsigned int total_expd_width = current_width - margin_plus
-			        - fixed_width - (m_items.size() - 1) * space;
+			        - fixed_width - (sub_widget_size() - 1) * space;
 			unsigned int average_expd_width = total_expd_width / m_expandable_items.size();
 
 			bool change_expd_items = (current_width - margin_plus)
 			        <= (max_expd_width + fixed_width
-			                + (m_items.size() - 1) * space);
+			                + (sub_widget_size() - 1) * space);
 
 			if(change_expd_items) {
 
@@ -331,8 +308,8 @@ namespace BlendInt {
 				unsigned int width_plus = 0;
 				int x = position().x() + margin->left();
 
-				for (it = m_items.begin(); it != m_items.end(); it++) {
-					child = (*it).get();
+				for (it = sub_widgets().begin(); it != sub_widgets().end(); it++) {
+					child = *it;
 					if(m_expandable_items.count(child)) {
 						if(average_expd_width > child->maximal_size().width()) {
 							width_plus = width_plus + average_expd_width - child->maximal_size().width();
@@ -354,12 +331,12 @@ namespace BlendInt {
 				int x = position().x() + margin->left();
 
 				x = x + (current_width - margin_plus - max_expd_width - fixed_width
-		                - (m_items.size() - 1) * space) / 2;
+		                - (sub_widget_size() - 1) * space) / 2;
 
 				// resize all with the max size
-				for(it = m_items.begin(); it != m_items.end(); it++)
+				for(it = sub_widgets().begin(); it != sub_widgets().end(); it++)
 				{
-					child = (*it).get();
+					child = *it;
 
 					if (m_expandable_items.count(child)) {
 						Resize(child, child->maximal_size().width(), child->size().height());
@@ -379,9 +356,9 @@ namespace BlendInt {
 			x = x + (current_width - margin_plus - fixed_width - (m_fixed_items.size() - 1) * space) / 2;
 
 			// resize all with preferred width
-			for(it = m_items.begin(); it != m_items.end(); it++)
+			for(it = sub_widgets().begin(); it != sub_widgets().end(); it++)
 			{
-				child = (*it).get();
+				child = *it;
 				Resize(child, child->preferred_size().width(),
 					        child->size().height());
 			}
@@ -394,11 +371,11 @@ namespace BlendInt {
 	void HLayout::Distribute(int space, int start)
 	{
 		start -= space;	// subtract one space to make sure no space if only 1 child in layout
-		for(std::vector<AbstractWidgetPtr>::iterator it = m_items.begin(); it != m_items.end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
 		{
 			start += space;
 
-			SetPosition((*it).get(), start, (*it)->position().y());
+			SetPosition(*it, start, (*it)->position().y());
 			start += (*it)->size().width();
 		}
 	}
@@ -409,11 +386,11 @@ namespace BlendInt {
 
 		unsigned int h = size->height() - margin->top() - margin->bottom();
 
-		std::vector<AbstractWidgetPtr>::iterator it;
+		WidgetDeque::iterator it;
 		AbstractWidget* child = 0;
-		for(it = m_items.begin(); it != m_items.end(); it++)
+		for(it = sub_widgets().begin(); it != sub_widgets().end(); it++)
 		{
-			child = (*it).get();
+			child = *it;
 
 			if (child->expand_y() ||
 					(child->size().height() > h)) {
@@ -538,7 +515,7 @@ namespace BlendInt {
 		Size preferred_size_out;
 
 		AbstractWidget* child;
-		std::vector<AbstractWidgetPtr>::iterator it;
+		WidgetDeque::iterator it;
 
 		if(count_margin) {
 			size_out.set_width(margin().left());
@@ -546,9 +523,9 @@ namespace BlendInt {
 			preferred_size_out.set_width(margin().left());
 		}
 
-		for(it = m_items.begin(); it != m_items.end(); it++)
+		for(it = sub_widgets().begin(); it != sub_widgets().end(); it++)
 		{
-			child = (*it).get();
+			child = *it;
 			size_out.add_width(child->size().width());
 			size_out.set_height(std::max(size_out.height(),
 					child->size().height()));
@@ -572,10 +549,10 @@ namespace BlendInt {
 		}
 
 		if(count_space) {
-			if(m_items.size()) {
-				size_out.add_width((m_items.size() - 1) * space());
-				min_size_out.add_width((m_items.size() - 1) * space());
-				preferred_size_out.add_width((m_items.size() - 1) * space());
+			if(sub_widget_size()) {
+				size_out.add_width((sub_widget_size() - 1) * space());
+				min_size_out.add_width((sub_widget_size() - 1) * space());
+				preferred_size_out.add_width((sub_widget_size() - 1) * space());
 			}
 		}
 

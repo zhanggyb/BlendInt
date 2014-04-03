@@ -28,24 +28,26 @@ VLayoutTest1::~VLayoutTest1() {
 TEST_F(VLayoutTest1, Add1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("Vertical Layout Test");
+	GLFWwindow* window = CreateWindow("Vertical Layout Test", 640, 480);
 
 	// add test code here
 
 	VLayout* vlayout = new VLayout;
 
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 	Widget* widget3 = new Widget;
 
 	HLayout* hlayout = new HLayout;
-	hlayout->Add(widget2);
-	hlayout->Add(widget3);
+	hlayout->Add(Manage(widget2));
+	hlayout->Add(Manage(widget3));
 
-	vlayout->Add(widget1);
-	vlayout->Add(hlayout);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(hlayout));
+
+	Manage(vlayout);
 
 	RunLoop(window);
 

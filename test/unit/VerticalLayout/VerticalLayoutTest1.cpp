@@ -24,18 +24,18 @@ VLayoutTest1::~VLayoutTest1()
 TEST_F(VLayoutTest1, Add1)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add1");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add1", 640, 480);
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
 	widget1->SetExpand(false);
 	Widget* widget2 = new Widget;
 	widget1->SetExpand(false);
 
-	vlayout->Add(widget1);
-	vlayout->Add(widget2);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
 
 	RunLoop(window);
 
@@ -56,10 +56,10 @@ TEST_F(VLayoutTest1, Add1)
 TEST_F(VLayoutTest1, Add2)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add2");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add2", 640, 480);
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 400);
 
 #ifdef DEBUG
@@ -71,8 +71,8 @@ TEST_F(VLayoutTest1, Add2)
 	Widget* widget2 = new Widget;
 	widget2->SetExpand(true);
 
-	vlayout->Add(widget1);
-	vlayout->Add(widget2);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
 
 	RunLoop(window);
 
@@ -93,10 +93,10 @@ TEST_F(VLayoutTest1, Add2)
 TEST_F(VLayoutTest1, Add3)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add3");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add3", 640, 480);
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 400);
 
 #ifdef DEBUG
@@ -109,8 +109,8 @@ TEST_F(VLayoutTest1, Add3)
 	Widget* widget2 = new Widget;
 	widget2->SetExpand(true);
 
-	vlayout->Add(widget1);
-	vlayout->Add(widget2);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
 
 	RunLoop(window);
 
@@ -129,10 +129,10 @@ TEST_F(VLayoutTest1, Add3)
 TEST_F(VLayoutTest1, Add4)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add4");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add4", 640, 480);
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 400);
 
 	Widget* widget1 = new Widget;
@@ -144,8 +144,8 @@ TEST_F(VLayoutTest1, Add4)
     widget2->SetPreferredSize(widget2->preferred_size().width(), 40);
     widget2->SetMaximalSize(widget2->maximal_size().width(), 80);
 
-	vlayout->Add(widget1);
-	vlayout->Add(widget2);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
 
 	RunLoop(window);
 
@@ -164,10 +164,10 @@ TEST_F(VLayoutTest1, Add4)
 TEST_F(VLayoutTest1, Add5)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add5");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add5", 640, 480);
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 600);
 
 	Widget* widget1 = new Widget;
@@ -188,10 +188,10 @@ TEST_F(VLayoutTest1, Add5)
     //widget4->SetMaximalSize(widget1->preferred_size().width(), 70);
 	widget4->Resize(widget4->size().width(), 40);
 	
-    vlayout->Add(widget1);
-	vlayout->Add(widget2);
-	vlayout->Add(widget3);
-	vlayout->Add(widget4);
+    vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
+	vlayout->Add(Manage(widget3));
+	vlayout->Add(Manage(widget4));
 
 	RunLoop(window);
 
@@ -210,10 +210,10 @@ TEST_F(VLayoutTest1, Add5)
 TEST_F(VLayoutTest1, Add6)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add6");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add6", 640, 480);
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 	vlayout->Resize(100, 50);
 
 #ifdef DEBUG
@@ -231,10 +231,10 @@ TEST_F(VLayoutTest1, Add6)
 	Widget* widget4 = new Widget;
 	widget4->SetExpandY(true);
 	
-    vlayout->Add(widget1);
-	vlayout->Add(widget2);
-	vlayout->Add(widget3);
-	vlayout->Add(widget4);
+    vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
+	vlayout->Add(Manage(widget3));
+	vlayout->Add(Manage(widget4));
 
 	RunLoop(window);
 
@@ -253,10 +253,10 @@ TEST_F(VLayoutTest1, Add6)
 TEST_F(VLayoutTest1, Add7)
 {
 	Init ();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add7");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add7", 640, 480);
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
 	//widget1->SetExpandX(true);
@@ -267,10 +267,10 @@ TEST_F(VLayoutTest1, Add7)
     widget3->SetMinimalSize(20, widget3->minimal_size().height());
 	Widget* widget4 = new Widget;
 
-	vlayout->Add(widget1);
-	vlayout->Add(widget2);
-	vlayout->Add(widget3);
-	vlayout->Add(widget4);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
+	vlayout->Add(Manage(widget3));
+	vlayout->Add(Manage(widget4));
 
 	vlayout->Resize(100, 80);
 
@@ -292,20 +292,20 @@ TEST_F(VLayoutTest1, Add7)
 TEST_F(VLayoutTest1, Resize1)
 {
 	Init();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - Resize1");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - Resize1", 640, 480);
 
 	// add test code here
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
 	widget1->SetExpand(true);
 	Widget* widget2 = new Widget;
 	widget2->SetExpand(true);
 
-	vlayout->Add(widget1);
-	vlayout->Add(widget2);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
 
 	vlayout->Resize(200, 400);
 
@@ -326,18 +326,18 @@ TEST_F(VLayoutTest1, Resize1)
 TEST_F(VLayoutTest1, Resize2)
 {
 	Init();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - Resize2");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - Resize2", 640, 480);
 
 	// add test code here
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->Add(widget1);
-	vlayout->Add(widget2);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
 
 	vlayout->Resize(200, 400);
 
@@ -358,12 +358,12 @@ TEST_F(VLayoutTest1, Resize2)
 TEST_F(VLayoutTest1, Resize3)
 {
 	Init();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - Resize3");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - Resize3", 640, 480);
 
 	// add test code here
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
@@ -372,10 +372,10 @@ TEST_F(VLayoutTest1, Resize3)
     widget3->SetMinimalSize(20, widget3->minimal_size().height());
 	Widget* widget4 = new Widget;
 
-	vlayout->Add(widget1);
-	vlayout->Add(widget2);
-	vlayout->Add(widget3);
-	vlayout->Add(widget4);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
+	vlayout->Add(Manage(widget3));
+	vlayout->Add(Manage(widget4));
 
 	vlayout->Resize(100, 80);
 
@@ -396,12 +396,12 @@ TEST_F(VLayoutTest1, Resize3)
 TEST_F(VLayoutTest1, SetMargin1)
 {
 	Init();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - SetMargin1");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - SetMargin1", 640, 480);
 
 	// add test code here
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
     widget1->SetExpand(true);
@@ -410,8 +410,8 @@ TEST_F(VLayoutTest1, SetMargin1)
     widget2->SetExpand(true);
     widget2->Resize(100, 80);
 
-	vlayout->Add(widget1);
-	vlayout->Add(widget2);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
 
     vlayout->Resize(200, 400);
 
@@ -434,12 +434,12 @@ TEST_F(VLayoutTest1, SetMargin1)
 TEST_F(VLayoutTest1, SetSpace1)
 {
 	Init();
-	GLFWwindow* window = CreateWindow("VLayoutTest1 - SetSpace1");
+	GLFWwindow* window = CreateWindow("VLayoutTest1 - SetSpace1", 640, 480);
 
 	// add test code here
 
 	VLayout* vlayout = new VLayout;
-	vlayout->SetPosition(200, 200);
+	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
     widget1->SetExpand(true);
@@ -448,8 +448,8 @@ TEST_F(VLayoutTest1, SetSpace1)
     widget2->SetExpand(true);
     widget2->Resize(100, 80);
 
-	vlayout->Add(widget1);
-	vlayout->Add(widget2);
+	vlayout->Add(Manage(widget1));
+	vlayout->Add(Manage(widget2));
 
     vlayout->Resize(200, 400);
 
