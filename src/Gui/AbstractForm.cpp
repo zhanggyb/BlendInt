@@ -1556,8 +1556,6 @@ namespace BlendInt {
 					const GLint attrib,
 					GLArrayBuffer* buffer)
 	{
-		glm::mat4 jitter_matrix;
-
 		buffer->Bind();
 
 		glVertexAttribPointer(attrib, // attribute
@@ -1574,62 +1572,6 @@ namespace BlendInt {
 
 		buffer->Reset();
 	}
-
-	/*
-	void AbstractForm::GenerateFormBuffer (const Size* size, int round_type,
-					float radius, GLArrayBuffer* inner_buffer,
-					GLArrayBuffer* outer_buffer, GLArrayBuffer* emboss_buffer)
-	{
-		float outer_v[WIDGET_SIZE_MAX][2];	// vertices for drawing outline
-		float inner_v[WIDGET_SIZE_MAX][2];	// vertices for drawing inner
-
-		VerticesSum vert_sum;
-
-		vert_sum = generate_round_vertices(size, default_border_width,
-						round_type, radius, inner_v, outer_v);
-
-		if (inner_buffer) {
-			inner_buffer->Generate();
-			inner_buffer->Bind();
-			inner_buffer->SetData(vert_sum.total * sizeof(inner_v[0]), inner_v);
-			inner_buffer->Reset();
-		}
-
-		// the quad strip for outline
-		if (outer_buffer || emboss_buffer) {
-
-			float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]; // + 2 because the last pair is wrapped
-
-			if (outer_buffer) {
-
-				verts_to_quad_strip(inner_v, outer_v, vert_sum.total,
-								quad_strip);
-
-				outer_buffer->Generate();
-				outer_buffer->Bind();
-				outer_buffer->SetData(
-								(vert_sum.total * 2 + 2)
-												* sizeof(quad_strip[0]),
-								quad_strip);
-				outer_buffer->Reset();
-			}
-
-			if (emboss_buffer) {
-
-				//float quad_strip_emboss[WIDGET_SIZE_MAX * 2][2]; // only for emboss
-				verts_to_quad_strip_open(outer_v, vert_sum.half, quad_strip);
-
-				emboss_buffer->Generate();
-				emboss_buffer->Bind();
-				emboss_buffer->SetData(
-								vert_sum.half * 2 * sizeof(quad_strip[0]),
-								quad_strip);
-				emboss_buffer->Reset();
-			}
-
-		}
-	}
-	*/
 
 	void AbstractForm::GenerateShadedFormBuffer (const Size* size, float border,
 					int round_type, float radius, const Color& color,

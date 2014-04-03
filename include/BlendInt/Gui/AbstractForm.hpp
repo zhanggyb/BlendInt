@@ -402,15 +402,6 @@ namespace BlendInt {
 
 		static void DrawTriangleStrip (const GLint attrib, GLArrayBuffer* buffer);
 
-		/*
-		static void GenerateFormBuffer (const Size* size,
-				int round_type,
-				float radius,
-				GLArrayBuffer* inner_buffer,
-				GLArrayBuffer* outer_buffer,
-				GLArrayBuffer* emboss_buffer);
-		*/
-
 		static void GenerateShadedFormBuffer (const Size* size,
 									   float border,
 									   int round_type,

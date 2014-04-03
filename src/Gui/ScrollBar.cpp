@@ -49,10 +49,10 @@ namespace BlendInt {
 		if (orientation == Vertical) {
 			m_bar.Resize(14, 32);
 
-			set_size(18, 200);
+			set_size(14, 200);
 			set_expand_y(true);
 
-			m_line_start.set_x(18 / 2);
+			m_line_start.set_x(14 / 2);
 			m_line_start.set_y(7);
 
 			m_line_width = 200 - m_bar.size().width();
@@ -60,11 +60,11 @@ namespace BlendInt {
 		} else {
 			m_bar.Resize(32, 14);
 
-			set_size(200, 18);
+			set_size(200, 14);
 			set_expand_x(true);
 
 			m_line_start.set_x(7);
-			m_line_start.set_y(18 / 2);
+			m_line_start.set_y(14 / 2);
 
 			m_line_width = 200 - m_bar.size().height();
 		}
@@ -110,8 +110,7 @@ namespace BlendInt {
 						slot_orient = Vertical;
 					}
 
-					const Color& color = themes()->scroll.outline;
-
+					const Color& color = themes()->scroll.inner;
 					short shadetop = themes()->scroll.shadetop;
 					short shadedown = themes()->scroll.shadedown;
 					if(orientation() == Vertical) {
@@ -119,7 +118,6 @@ namespace BlendInt {
 						shadedown = themes()->scroll.shadetop;
 					}
 
-					glBindVertexArray(m_vao);
 					GenerateShadedFormBuffers(
 									*size_p,
 									RoundAll,
@@ -130,8 +128,6 @@ namespace BlendInt {
 									slot_orient,
 									m_slot_inner_buffer.get(),
 									m_slot_outline_buffer.get());
-					glBindVertexArray(0);
-
 
 					return true;
 				}

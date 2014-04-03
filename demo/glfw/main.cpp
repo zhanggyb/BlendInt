@@ -33,6 +33,7 @@
 #include <BlendInt/Gui/Viewport3D.hpp>
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/NumberSlider.hpp>
+#include <BlendInt/Gui/ScrollArea.hpp>
 
 #include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Service/StockItems.hpp>
@@ -81,6 +82,7 @@ int main(int argc, char* argv[])
 
 //	interface()->SetMainWidget(layout);
 
+	/*
 	MenuBar* menubar = Manage(new MenuBar);
 	menubar->set_name("MenuBar");
 	menubar->SetPosition(20, 600);
@@ -132,10 +134,11 @@ int main(int argc, char* argv[])
 	NumberSlider* num_slider = Manage(new NumberSlider);
 	num_slider->set_name("NumberSlider");
 	num_slider->SetPosition(20, 60);
+	*/
 
-	//Label* label = Manage(new Label("Hello There!"));
-	//label->set_name("Label");
-	//label->SetPosition(400, 100);
+	ScrollArea* area = Manage(new ScrollArea);
+	area->set_name("ScrollArea");
+	area->SetPosition(100, 100);
 
 	RunLoop (win);
 
