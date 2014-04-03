@@ -21,6 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <BlendInt/Gui/CVImageView.hpp>
+
+#ifdef __USE_OPENCV__
+
 #ifdef __UNIX__
 #ifdef __APPLE__
 #include <gl3.h>
@@ -34,13 +38,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/ImageView.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 namespace BlendInt {
 
-#ifdef __OPENGL_CORE_330__
-
-	const char* ImageView::vertex_shader =
+	const char* CVImageView::vertex_shader =
 			"#version 330\n"
 			"layout(location = 0) in vec2 Coord2D;"
 			"layout(location = 1) in vec2 UVCoord;"
@@ -52,7 +54,7 @@ namespace BlendInt {
 			"	f_texcoord = UVCoord;"
 			"}";
 
-	const char* ImageView::fragment_shader =
+	const char* CVImageView::fragment_shader =
 			"#version 330\n"
 			"in vec2 f_texcoord;"
 			"uniform sampler2D TexID;"
@@ -62,65 +64,47 @@ namespace BlendInt {
 			"	FragmentColor = texture(TexID, f_texcoord);"
 			"}";
 
-#else	// legacy opengl
-
-	const char* ImageView::vertex_shader = "#version 120\n"
-			"attribute vec3 coord3d;"
-			"attribute vec2 texcoord;"
-			"uniform mat4 MVP;"
-			"varying vec2 f_texcoord;"
-			""
-			"void main(void) {"
-			"	gl_Position = MVP * vec4(coord3d, 1.0);"
-			"	f_texcoord = texcoord;"
-			"}";
-
-	const char* ImageView::fragment_shader = "varying vec2 f_texcoord;"
-			"uniform sampler2D tex;"
-			""
-			"void main(void) {"
-			"	gl_FragColor = texture2D(tex, f_texcoord);"
-			"}";
-
-#endif
-
-	ImageView::ImageView ()
-	: Widget(), m_vao(0)
+	CVImageView::CVImageView ()
+	: m_vao(0)
 	{
 		InitOnce();
 	}
 
-	ImageView::~ImageView ()
+	CVImageView::~CVImageView ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ImageView::Open (const char* filename)
+	void CVImageView::Open (const char* filename)
 	{
-		RefPtr<Image> image(new Image);
+		m_image = cv::imread(filename);
 
-		if(image->Read(filename)) {
+		if(m_image.data) {
+
 			m_texture->Bind();
+			switch (m_image.channels()) {
 
-			switch(image->channels()) {
 				case 3:
+					DBG_PRINT_MSG("width: %d, height: %d, channels: %d", m_image.cols, m_image.rows, 3);
+
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					m_texture->SetImage(0, GL_RGB, image->width(), image->height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image->pixels());
+					m_texture->SetImage(0, GL_RGB, m_image.cols, m_image.rows,
+									0, GL_BGR, GL_UNSIGNED_BYTE, m_image.data);
 					break;
 
 				case 4:
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					m_texture->SetImage(0, GL_RGBA, image->width(), image->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels());
+					m_texture->SetImage(0, GL_RGBA, m_image.cols, m_image.rows,
+									0, GL_BGRA, GL_UNSIGNED_BYTE, m_image.data);
 					break;
 
 				default:
 					break;
 			}
-
 			m_texture->Reset();
 
-			set_preferred_size(image->width(), image->height());
-			set_size(image->width(), image->height());
+			set_preferred_size(m_image.cols, m_image.rows);
+			set_size(preferred_size());
 			m_checkerboard->Resize(size());
 
 			GLfloat w = static_cast<GLfloat>(size().width());
@@ -136,14 +120,16 @@ namespace BlendInt {
 			m_vbo->Bind();
 			m_vbo->SetData(sizeof(vertices), vertices);
 			m_vbo->Reset();
+
 		}
 	}
 
-	void ImageView::Load (const RefPtr<Image>& image)
+	void CVImageView::Load (const cv::Mat& image)
 	{
+
 	}
 
-	ResponseType ImageView::Draw (const RedrawEvent& event)
+	ResponseType CVImageView::Draw (const RedrawEvent& event)
 	{
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
@@ -196,8 +182,8 @@ namespace BlendInt {
 
 		return Accept;
 	}
-	
-	void ImageView::InitOnce ()
+
+	void CVImageView::InitOnce ()
 	{
 		set_size(400, 300);
 		set_preferred_size(400, 300);
@@ -252,3 +238,5 @@ namespace BlendInt {
 	}
 
 }
+
+#endif	// __USE_OPENCV__

@@ -21,10 +21,13 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_IMAGEVIEW_HPP_
-#define _BLENDINT_IMAGEVIEW_HPP_
+#ifndef _BLENDINT_GUI_CVIMAGEVIEW_HPP_
+#define _BLENDINT_GUI_CVIMAGEVIEW_HPP_
 
-#include <BlendInt/Core/Image.hpp>
+// generate makefile with cmake -DENABLE_OPENCV to activate
+#ifdef __USE_OPENCV__
+
+#include <opencv2/core/core.hpp>
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
@@ -35,17 +38,17 @@
 
 namespace BlendInt {
 
-	class ImageView: public Widget
+	class CVImageView: public Widget
 	{
 	public:
 
-		ImageView ();
+		CVImageView ();
 
-		virtual ~ImageView ();
+		virtual ~CVImageView ();
 
 		void Open (const char* filename);
 
-		void Load (const RefPtr<Image>& image);
+		void Load (const cv::Mat& image);
 
 	protected:
 
@@ -64,10 +67,14 @@ namespace BlendInt {
 
 		RefPtr<CheckerBoard> m_checkerboard;
 
+		cv::Mat m_image;
+
 		static const char* vertex_shader;
 		static const char* fragment_shader;
 	};
 
 }
 
-#endif /* _BIL_IMAGEVIEW_HPP_ */
+#endif	// __USE_OPENCV__
+
+#endif /* _BLENDINT_GUI_CVIMAGEVIEW_HPP_ */

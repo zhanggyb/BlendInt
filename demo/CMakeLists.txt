@@ -3,6 +3,9 @@
 
 if(WITH_GLFW3_DEMO)
     add_subdirectory(glfw)
+    if(ENABLE_OPENCV)
+    add_subdirectory(imgproc)
+    endif()
 endif()
 
 if(WITH_QT5_DEMO)

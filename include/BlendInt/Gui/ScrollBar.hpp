@@ -79,7 +79,7 @@ namespace BlendInt {
 			/**
 			 * @brief
 			 */
-			inline float get_position ()
+			inline float get_slide_position ()
 			{
 				return value() * GetSpace()
 				                / ((float) maximum() - (float) minimum());

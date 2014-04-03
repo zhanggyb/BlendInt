@@ -47,7 +47,7 @@ namespace BlendInt {
 	  m_pressed(false)
 	{
 		if (orientation == Vertical) {
-			m_bar.Resize(14, 14);
+			m_bar.Resize(14, 32);
 
 			set_size(18, 200);
 			set_expand_y(true);
@@ -58,7 +58,7 @@ namespace BlendInt {
 			m_line_width = 200 - m_bar.size().width();
 
 		} else {
-			m_bar.Resize(14, 14);
+			m_bar.Resize(32, 14);
 
 			set_size(200, 18);
 			set_expand_x(true);
@@ -221,7 +221,7 @@ namespace BlendInt {
 		if (orientation() == Horizontal) {
 			// m_line_start.x() == switch_radius
 			local_mvp = glm::translate(mvp,
-							glm::vec3(get_position(),
+							glm::vec3(get_slide_position(),
 											(float) (m_line_start.y()
 															- m_line_start.x()),
 											0.0));
@@ -231,7 +231,7 @@ namespace BlendInt {
 							glm::vec3(
 											(float) (m_line_start.x()
 															- m_line_start.y()),
-											get_position(), 0.0));
+											get_slide_position(), 0.0));
 		}
 
 		m_bar.Draw(local_mvp);
@@ -356,30 +356,85 @@ namespace BlendInt {
 
 	bool ScrollBar::CursorOnSlideIcon (const Point& cursor)
 	{
-		bool ret = false;
+		int slide_pos = static_cast<int>(get_slide_position());
 
-		glm::vec2 icon_center;	// slide switch center position
+		int xmin, ymin, xmax, ymax;
 
-		if (orientation() == Horizontal) {
-			icon_center.x = position().x() + m_line_start.x() + get_position();
-			icon_center.y = position().y() + m_line_start.y();
+		if(orientation() == Horizontal) {
+			xmin = position().x() + slide_pos;
+			ymin = position().y() + (size().height() - m_bar.size().height()) / 2;
+			xmax = xmin + m_bar.size().width();
+			ymax = ymin + m_bar.size().height();
 		} else {
-			icon_center.x = position().x() + m_line_start.x();
-			icon_center.y = position().y() + m_line_start.y() + get_position();
+			xmin = position().x() + (size().width() - m_bar.size().width()) / 2;
+			ymin = position().y() + slide_pos;
+			xmax = xmin + m_bar.size().width();
+			ymax = ymin + m_bar.size().height();
 		}
 
+		if(cursor.x() < xmin ||
+			cursor.y() < ymin ||
+			cursor.x() > xmax ||
+			cursor.y() > ymax)
+		{
+			return false;
+		}
+
+		glm::vec2 center;
 		glm::vec2 cursor_pos(cursor.x(), cursor.y());
-		float distance = glm::distance(icon_center, cursor_pos);
+		float distance = 0.f;
 
-		if (orientation() == Horizontal && distance <= m_line_start.x()) {
-			ret = true;
-		} else if (orientation() == Vertical && distance <= m_line_start.y()) {
-			ret = true;
+		if(orientation() == Horizontal) {
+
+			if(cursor.x() < (xmin + m_bar.radius())) {
+
+				center.x = xmin + m_bar.radius();
+				center.y = (ymax - ymin) / 2 + ymin;
+
+				distance = glm::distance(center, cursor_pos);
+
+				return distance <= m_bar.radius() ? true : false;
+
+			} else if (cursor.x() > (xmax - m_bar.radius())) {
+
+				center.x = xmax - m_bar.radius();
+				center.y = (ymax - ymin) / 2 + ymin;
+
+				distance = glm::distance(center, cursor_pos);
+
+				return distance <= m_bar.radius() ? true : false;
+
+			} else {
+				return true;
+			}
+
 		} else {
-			ret = false;
+
+			if(cursor.y() < (ymin + m_bar.radius())) {
+
+				center.x = (xmax - xmin) / 2 + xmin;
+				center.y = ymin + m_bar.radius();
+
+				distance = glm::distance(center, cursor_pos);
+
+				return distance <= m_bar.radius() ? true : false;
+
+			} else if (cursor.y() > (ymax - m_bar.radius())) {
+
+				center.x = (xmax - xmin) / 2 + xmin;
+				center.y = ymax - m_bar.radius();
+
+				distance = glm::distance(center, cursor_pos);
+
+				return distance <= m_bar.radius() ? true : false;
+
+			} else {
+				return true;
+			}
+
 		}
 
-		return ret;
+		return false;
 	}
 
 	bool ScrollBar::GetNewValue (const Point& cursor, int* vout)

@@ -114,8 +114,6 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		ThemeManager* tm = ThemeManager::instance();
-
 		glm::vec4 color;
 		color.r = themes()->regular.inner.r() / 255.f;
 		color.g = themes()->regular.inner.g() / 255.f;
