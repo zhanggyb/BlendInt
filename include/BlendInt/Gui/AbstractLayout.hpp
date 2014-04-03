@@ -87,8 +87,6 @@ namespace BlendInt {
 
 		void set_space (int space) {m_space = space;}
 
-		virtual void initialize () {}
-
 		virtual ResponseType CursorEnterEvent (bool entered);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);

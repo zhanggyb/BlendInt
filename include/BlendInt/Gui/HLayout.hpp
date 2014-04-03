@@ -60,6 +60,11 @@ namespace BlendInt {
 
 		virtual void RemoveItem (AbstractWidget* object);
 
+		/**
+		 * @brief Count how many widgets are expandable along x
+		 */
+		unsigned int CountHExpandableNumber ();
+
 	private:
 
 		/**
@@ -116,16 +121,6 @@ namespace BlendInt {
 		 * @param[out] prefer the layout preferred size
 		 */
 		void GetSizeHint (bool count_margin, bool count_space, Size* size, Size* min, Size* prefer);
-
-		/**
-		 * @brief set of horizontally expandable items
-		 */
-		std::set<AbstractWidget*> m_expandable_items;
-
-		/**
-		 * @brief set of horizontally fixed items (along x)
-		 */
-		std::set<AbstractWidget*> m_fixed_items;
 
 	};
 

@@ -52,6 +52,11 @@ namespace BlendInt {
 
 		virtual void RemoveItem (AbstractWidget* object);
 
+		/**
+		 * @brief Count how many widgets are expandable along x
+		 */
+		unsigned int CountVExpandableNumber ();
+
 	private:
 
 		void MakeLayout (const Size* size, const Margin* margin, int space);
@@ -109,16 +114,6 @@ namespace BlendInt {
 				Size* size,
 				Size* min,
 				Size* prefer);
-
-		/**
-		 * @brief set of vertically expandable items
-		 */
-		std::set<AbstractWidget*> m_expandable_items;
-
-		/**
-		 * @brief set of vertically fixed items (along y)
-		 */
-		std::set<AbstractWidget*> m_fixed_items;
 	};
 
 }

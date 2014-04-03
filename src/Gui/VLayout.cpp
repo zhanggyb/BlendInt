@@ -134,9 +134,6 @@ namespace BlendInt {
 		SetPreferredSize(prefer_size);
 		SetMinimalSize(min_size);
 
-		if(object->expand_y()) m_expandable_items.insert(object);
-		else m_fixed_items.insert(object);
-
 		AddSubWidget(object);
 
 		if(! (current_size == size()))
@@ -155,11 +152,6 @@ namespace BlendInt {
 		deactivate_events();
 
 		if(!RemoveSubWidget(object)) return;
-
-		if(object->expand_y())
-				m_expandable_items.erase(object);
-		else
-			m_fixed_items.erase(object);
 
 		Size new_preferred_size;
 		Size new_minimal_size;
@@ -215,18 +207,19 @@ namespace BlendInt {
 		bool change_expd_items = (current_height - margin_plus) >=
 						(min_expd_height + fixed_height + (sub_widget_size() - 1) * space);
 
+		unsigned int exp_num = CountVExpandableNumber();
 
 		if(change_expd_items) {
 
-			if (m_expandable_items.size()) {
+			if (exp_num) {
 				unsigned int average_expd_height = current_height - margin_plus
 				        - fixed_height - (sub_widget_size() - 1) * space;
-				average_expd_height = average_expd_height / m_expandable_items.size();
+				average_expd_height = average_expd_height / exp_num;
 
 				for (it = sub_widgets().begin(); it != sub_widgets().end(); it++) {
 					child = *it;
 
-					if (m_expandable_items.count(child)) {
+					if (child->expand_y()) {
 						Resize(child, child->size().width(), average_expd_height);
 					} else {
 						Resize(child, child->size().width(),
@@ -237,19 +230,21 @@ namespace BlendInt {
 
 		} else {
 
-			if (m_fixed_items.size()) {
+			unsigned int fixed_num = sub_widget_size() - exp_num;
+
+			if (fixed_num) {
 
 				std::list<AbstractWidget*> unminimized_items;
 				unsigned int height_plus = 0;
 
 				unsigned int total_fixed_height = current_height - margin_plus
 				        - min_expd_height - (sub_widget_size() - 1) * space;
-				unsigned int average_fixed_height = total_fixed_height / m_fixed_items.size();
+				unsigned int average_fixed_height = total_fixed_height / fixed_num;
 
 				for (it = sub_widgets().begin(); it != sub_widgets().end(); it++) {
 					child = *it;
 
-					if (m_expandable_items.count(child)) {
+					if (child->expand_y()) {
 						Resize(child, child->size().width(),
 						        child->minimal_size().height());
 					} else {
@@ -286,11 +281,13 @@ namespace BlendInt {
 		WidgetDeque::iterator it;
 		AbstractWidget* child = 0;
 
-		if(m_expandable_items.size()) {
+		unsigned int exp_num = CountVExpandableNumber();
+
+		if(exp_num) {
 
 			unsigned int max_expd_height = GetAllMaximalExpandableHeight();
 			unsigned int total_expd_height = current_height - margin_plus - fixed_height - (sub_widget_size() - 1) * space;
-			unsigned int average_expd_height = total_expd_height / m_expandable_items.size();
+			unsigned int average_expd_height = total_expd_height / exp_num;
 
 			bool change_expd_items = (current_height - margin_plus) <= (max_expd_height + fixed_height
 					+ (sub_widget_size() - 1) * space);
@@ -302,7 +299,7 @@ namespace BlendInt {
 
 				for (it = sub_widgets().begin(); it != sub_widgets().end(); it++) {
 					child = *it;
-					if(m_expandable_items.count(child)) {
+					if(child->expand_y()) {
 						if(average_expd_height > child->maximal_size().height()) {
 							height_plus = height_plus + average_expd_height - child->maximal_size().height();
 							Resize(child, child->size().width(), child->maximal_size().height());
@@ -329,7 +326,7 @@ namespace BlendInt {
 				{
 					child = *it;
 
-					if (m_expandable_items.count(child)) {
+					if (child->expand_y()) {
 						Resize(child, child->size().width(), child->maximal_size().height());
 					} else {
 						Resize(child, child->size().width(), child->preferred_size().height());
@@ -343,7 +340,7 @@ namespace BlendInt {
 			int y = position().y() + size->height() - margin->top();
 
 			// if no expandable items, center all items
-			y = y - (current_height - margin_plus - fixed_height - (m_fixed_items.size() - 1) * space) / 2;
+			y = y - (current_height - margin_plus - fixed_height - (sub_widget_size() - exp_num - 1) * space) / 2;
 
 			// resize all with preferred width
 			for(it = sub_widgets().begin(); it != sub_widgets().end(); it++)
@@ -460,9 +457,10 @@ namespace BlendInt {
 	{
 		unsigned int height = 0;
 
-		for(std::set<AbstractWidget*>::iterator it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
 		{
-			height += (*it)->minimal_size().height();
+			if((*it)->expand_y())
+				height += (*it)->minimal_size().height();
 		}
 
 		return height;
@@ -472,9 +470,10 @@ namespace BlendInt {
 	{
 		unsigned int height = 0;
 
-		for(std::set<AbstractWidget*>::iterator it = m_expandable_items.begin(); it != m_expandable_items.end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
 		{
-			height += (*it)->maximal_size().height();
+			if((*it)->expand_y())
+				height += (*it)->maximal_size().height();
 		}
 
 		return height;
@@ -484,12 +483,27 @@ namespace BlendInt {
 	{
 		unsigned int height = 0;
 
-		for(std::set<AbstractWidget*>::iterator it = m_fixed_items.begin(); it != m_fixed_items.end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
 		{
-			height += (*it)->size().height();
+			if(!(*it)->expand_y())
+				height += (*it)->size().height();
 		}
 
 		return height;
+	}
+	
+	unsigned int VLayout::CountVExpandableNumber ()
+	{
+		unsigned int num = 0;
+
+		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		{
+			if((*it)->expand_y()) {
+				num++;
+			}
+		}
+
+		return num;
 	}
 
 	void VLayout::GetSizeHint (bool count_margin,

@@ -41,6 +41,8 @@ namespace BlendInt {
 
 		virtual ~TableLayout ();
 
+		void Add (AbstractWidget* widget, int row, int column, int width = 1, int height = 1);
+
 		void add_widget (AbstractWidget* widget, int row, int column, int width = 1, int height = 1);
 
 		void add_layout (AbstractLayout* layout, int row, int column, int width = 1, int height = 1);
@@ -59,11 +61,18 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
-		virtual void AddItem (AbstractWidget* object);
+		virtual void AddItem (AbstractWidget* widget);
 
-		virtual void RemoveItem (AbstractWidget* object);
+		virtual void RemoveItem (AbstractWidget* widget);
+
+		void CountExpandableNumber (unsigned int* cols, unsigned int* rows);
 
 	private:
+
+		/**
+		 * @brief scan, distribute and align the items
+		 */
+		void MakeLayout (const Size* size, const Margin* margin, int space);
 
 		bool generate_layout (const Size* size);
 

@@ -42,16 +42,10 @@ namespace BlendInt {
 	TableLayout::TableLayout (int rows, int columns)
 			: AbstractLayout(), m_rows(rows), m_columns(columns)
 	{
-		m_items.resize(rows * columns, 0);
 	}
 
 	TableLayout::~TableLayout ()
 	{
-		for(std::vector<AbstractWidget*>::iterator it = m_items.begin(); it != m_items.end(); it++)
-		{
-			delete *it;
-		}
-		m_items.clear();
 	}
 
 	void TableLayout::add_widget (AbstractWidget* widget, int row, int column,
@@ -108,31 +102,35 @@ namespace BlendInt {
 				case FormPosition: {
 					const Point* new_pos = static_cast<const Point*>(request.data());
 
-					for (size_t i = 0; i < m_items.size(); i++)
-					{
-						SetPosition(m_items[i],
-								m_items[i]->position().x() + (new_pos->x() - position().x()),
-								m_items[i]->position().y() + (new_pos->y() - position().y()));
-					}
+					int x = new_pos->x() - position().x();
+					int y = new_pos->y() - position().y();
+
+					MoveSubWidgetsPosition(x, y);
 
 					return true;
 				}
 
 				case FormSize: {
 
-					if (request.data()) {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					if(sub_widget_size())
+						MakeLayout(size_p, &margin(), space());
 
-						if (generate_layout(static_cast<const Size*>(request.data()))) return true;
-						else return false;
+					return true;
 
-					} else {	// this is called when adding widget or layout
+				}
 
-						if(m_items.size() > static_cast<unsigned int>(m_rows * m_columns))
-							throw std::out_of_range("Exceed the table size");
-						generate_default_layout();
+				case ContainerMargin: {
+					const Margin* margin_p = static_cast<const Margin*>(request.data());
+					if(sub_widget_size())
+						MakeLayout(&size(), margin_p, space());
+					return true;
+				}
 
-					}
-
+				case LayoutPropertySpace: {
+					const int* space_p = static_cast<const int*>(request.data());
+					if(sub_widget_size())
+						MakeLayout(&size(), &margin(), *space_p);
 					return true;
 				}
 
@@ -150,19 +148,56 @@ namespace BlendInt {
 
 	ResponseType TableLayout::Draw (const RedrawEvent& event)
 	{
-		std::vector<AbstractWidget*>::const_iterator it;
-		for (it = m_items.begin(); it != m_items.end(); it++) {
-			if(*it) {
-				DispatchRender(*it);
-			}
-		}
-
-		return Accept;
+		return IgnoreAndContinue;
 	}
 
-	void TableLayout::AddItem(AbstractWidget* object)
+	void TableLayout::AddItem(AbstractWidget* widget)
 	{
+		// don't fire events when adding a widget into a layout
+		widget->deactivate_events();
+		deactivate_events();
 
+		Size min_size = minimal_size();
+		Size prefer_size = preferred_size();
+		Size current_size = size();
+		// TODO: count max size
+
+		unsigned int w_plus = margin().left() + margin().right();
+		unsigned int h_plus = margin().top() + margin().bottom();
+
+		if (sub_widget_size() == 0) {
+			min_size.add_width(widget->minimal_size().width());
+			min_size.add_height(widget->minimal_size().height());
+			prefer_size.add_width(widget->preferred_size().width());
+			prefer_size.add_height(widget->preferred_size().height());
+		} else {
+			min_size.add_width(widget->minimal_size().width() + space());
+			prefer_size.add_width(widget->preferred_size().width() + space());
+
+
+		}
+
+		if (current_size.width() < prefer_size.width()) {
+			current_size.set_width(prefer_size.width());
+		}
+		if (current_size.height() < prefer_size.height()) {
+			current_size.set_height(prefer_size.height());
+		}
+
+		SetPreferredSize(prefer_size);
+		SetMinimalSize(min_size);
+
+		AddSubWidget(widget);
+
+		if( !(current_size == size()) )
+			Resize(this, current_size);
+		else
+			MakeLayout(&current_size, &margin(), space());
+
+		activate_events();
+		widget->activate_events();
+
+		LockGeometry(widget, true);
 	}
 
 	void TableLayout::RemoveItem(AbstractWidget* object)
@@ -453,6 +488,23 @@ namespace BlendInt {
 		}
 
 		return minimal_width;
+	}
+	
+	void TableLayout::MakeLayout (const Size* size, const Margin* margin,
+					int space)
+	{
+	}
+	
+	void TableLayout::CountExpandableNumber (unsigned int* cols,
+					unsigned int* rows)
+	{
+		unsigned int col_num = 0;
+		unsigned int row_num = 0;
+
+		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		{
+
+		}
 	}
 
 	unsigned int TableLayout::minimal_row_height(int row)
