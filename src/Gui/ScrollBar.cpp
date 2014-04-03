@@ -91,23 +91,24 @@ namespace BlendInt {
 					const Size* size_p =
 									static_cast<const Size*>(request.data());
 
-					int switch_radius = std::min(m_bar.size().width(),
-									m_bar.size().height()) / 2;
+					int radius = std::min(size_p->width(),
+									size_p->height()) / 2;
 
-					float slot_radius;
 					Orientation slot_orient;
 					if (orientation() == Vertical) {
 						m_line_start.set_x(size_p->width() / 2);
-						m_line_start.set_y(switch_radius);
-						m_line_width = size_p->height() - switch_radius * 2;
-						slot_radius = m_bar.size().width() / 2.f;
+						m_line_start.set_y(radius);
+						m_line_width = size_p->height() - radius * 2;
 						slot_orient = Horizontal;
+						m_bar.Resize(radius * 2, m_bar.size().height());
+						m_bar.SetRadius(radius);
 					} else {
-						m_line_start.set_x(switch_radius);
+						m_line_start.set_x(radius);
 						m_line_start.set_y(size_p->height() / 2);
-						m_line_width = size_p->width() - switch_radius * 2;
-						slot_radius = m_bar.size().height() / 2.f;
+						m_line_width = size_p->width() - radius * 2;
 						slot_orient = Vertical;
+						m_bar.Resize(m_bar.size().width(), radius * 2);
+						m_bar.SetRadius(radius);
 					}
 
 					const Color& color = themes()->scroll.inner;
@@ -121,7 +122,7 @@ namespace BlendInt {
 					GenerateShadedFormBuffers(
 									*size_p,
 									RoundAll,
-									slot_radius,
+									radius,
 									color,
 									shadetop,
 									shadedown,

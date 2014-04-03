@@ -249,8 +249,11 @@ namespace BlendInt {
 				return;
 
 			if (Update(
-							UpdateRequest(Predefined, SliderPropertyValue,
-											&value))) {
+					   UpdateRequest(
+									 Predefined,
+									 SliderPropertyValue,
+									 &value)))
+			{
 				m_value = value;
 				m_value_changed.fire(m_value);
 			}
