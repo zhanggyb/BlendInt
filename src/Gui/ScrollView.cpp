@@ -42,6 +42,7 @@ namespace BlendInt {
 	ScrollView::ScrollView()
 	: AbstractContainer(), m_orientation(Horizontal | Vertical), m_move_status(false)
 	{
+		set_margin(0, 0, 0, 0);
 		set_size(200, 160);
 		set_preferred_size(200, 160);
 		set_scissor_test(true);

@@ -39,6 +39,11 @@ namespace BlendInt {
 
 			virtual ~ScrollBar ();
 
+			/**
+			 * @brief Set the how many percentage of area the slide covers
+			 */
+			void SetPercentage (int value);
+
 		protected:
 
 			virtual bool Update (const UpdateRequest& request);
@@ -85,14 +90,15 @@ namespace BlendInt {
 				                / ((float) maximum() - (float) minimum());
 			}
 
-			SlideIcon m_bar;
+			SlideIcon m_slide;
 
 			GLuint m_vao;
 			RefPtr<GLArrayBuffer> m_slot_inner_buffer;
 			RefPtr<GLArrayBuffer> m_slot_outline_buffer;
 
-			Point m_line_start;	// where start to draw scroll slider
-			int m_line_width;
+			Point m_cursor_origin;
+
+			int m_last_value;
 
 			/**
 			 * @brief If the slide switch is pressed

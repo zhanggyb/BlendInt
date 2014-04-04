@@ -738,6 +738,16 @@ namespace BlendInt {
 	void ContextManager::DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event)
 	{
 		if (widget->visiable()) {
+
+			/*
+			DBG_PRINT_MSG("draw widget: %s at %d, %d, size: %u, %u",
+							widget->name().c_str(),
+							widget->position().x(),
+							widget->position().y(),
+							widget->size().width(),
+							widget->size().height());
+			*/
+
 			widget->Draw(event);
 
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);

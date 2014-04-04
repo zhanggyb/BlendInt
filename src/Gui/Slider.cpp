@@ -43,25 +43,17 @@
 namespace BlendInt {
 
 	Slider::Slider (Orientation orientation) :
-			AbstractSlider(orientation), m_vao(0), m_line_width(0), m_pressed(false)
+			AbstractSlider(orientation), m_vao(0), m_last_value(0), m_pressed(false)
 	{
-		m_switch.Resize(14, 14);
+		m_slide.Resize(14, 14);
 
 		if (orientation == Vertical) {
 			set_size(18, 200);
 			set_expand_y(true);
-
-			m_line_start.set_x(18 / 2);
-			m_line_start.set_y(7);
 		} else {
 			set_size(200, 18);
 			set_expand_x(true);
-
-			m_line_start.set_x(7);
-			m_line_start.set_y(18 / 2);
 		}
-
-		m_line_width = 200 - 7 * 2;
 
 		InitOnce();
 	}
@@ -82,20 +74,13 @@ namespace BlendInt {
 				}
 
 				case FormSize: {
+					/*
 					const Size* size_p = static_cast<const Size*>(request.data());
 
-					int switch_radius = std::min(m_switch.size().width(),
-					        m_switch.size().height()) / 2;
+					int switch_radius = std::min(m_slide.size().width(),
+					        m_slide.size().height()) / 2;
+					*/
 
-					if (orientation() == Vertical) {
-						m_line_start.set_x(size_p->width() / 2);
-						m_line_start.set_y(switch_radius);
-						m_line_width = size_p->height() - switch_radius * 2;
-					} else {
-						m_line_start.set_x(switch_radius);
-						m_line_start.set_y(size_p->height() / 2);
-						m_line_width = size_p->width() - switch_radius * 2;
-					}
 					return true;
 				}
 
@@ -111,11 +96,15 @@ namespace BlendInt {
 
 					GLfloat* buf_p = (GLfloat*)m_line->Map(GL_READ_WRITE);
 					if(*orient_p == Horizontal) {
-						*(buf_p + 2) = *(buf_p + 2) + m_line_width;
-						*(buf_p + 3) = static_cast<float>(m_line_start.y());
+						*(buf_p + 0) = m_slide.size().width() / 2;
+						*(buf_p + 1) = size().height() / 2;
+						*(buf_p + 2) = size().width() - m_slide.size().width() / 2;
+						*(buf_p + 3) = *(buf_p + 0);
 					} else {
-						*(buf_p + 2) = static_cast<float>(m_line_start.x());
-						*(buf_p + 3) = *(buf_p + 3) + m_line_width;
+						*(buf_p + 0) = size().width() / 2;
+						*(buf_p + 1) = m_slide.size().height() / 2;
+						*(buf_p + 2) = *(buf_p + 0);
+						*(buf_p + 3) = size().height() - m_slide.size().height() / 2;
 					}
 					m_line->Unmap();
 
@@ -190,16 +179,16 @@ namespace BlendInt {
 			// m_line_start.x() == switch_radius
 			switch_mvp = glm::translate(mvp,
 			        glm::vec3(get_position(),
-			                (float) (m_line_start.y() - m_line_start.x()),
-			                0.0));
+			        			size().height() / 2 - m_slide.size().height() / 2,
+			        			0.f));
 		} else {
 			// m_line_start.y() == switch_radius
 			switch_mvp = glm::translate(mvp,
-			        glm::vec3((float) (m_line_start.x() - m_line_start.y()),
+			        glm::vec3(size().width() / 2 - m_slide.size().width() / 2,
 			                get_position(), 0.0));
 		}
 
-		m_switch.Draw(switch_mvp);
+		m_slide.Draw(switch_mvp);
 
 		return Accept;
 	}
@@ -221,13 +210,13 @@ namespace BlendInt {
 
 		} else {
 			if(CursorOnSlideIcon(event.position())) {
-				m_switch.set_highlight(true);
+				m_slide.set_highlight(true);
 
 				Refresh();
 
 				return Accept;
 			} else {
-				m_switch.set_highlight(false);
+				m_slide.set_highlight(false);
 				Refresh();
 				return Ignore;
 			}
@@ -238,6 +227,8 @@ namespace BlendInt {
 	{
 		if(CursorOnSlideIcon(event.position())) {
 			m_pressed = true;
+			m_last_value = value();
+			m_last_cursor = event.position();
 			fire_slider_pressed();
 
 			return Accept;
@@ -271,15 +262,18 @@ namespace BlendInt {
 		m_line->Generate();
 		m_line->Bind();
 
-		GLfloat vertices[] = {
-					static_cast<float>(m_line_start.x()), static_cast<float>(m_line_start.y()),
-					static_cast<float>(m_line_start.x()), static_cast<float>(m_line_start.y())
-		};
+		GLfloat vertices[4];
 
 		if(orientation() == Horizontal) {
-			vertices[2] = vertices[2] + m_line_width;
+			vertices[0] = m_slide.size().width() / 2;
+			vertices[1] = size().height() / 2;
+			vertices[2] = size().width() - m_slide.size().width() / 2;
+			vertices[3] = vertices[1];
 		} else {
-			vertices[3] = vertices[3] + m_line_width;
+			vertices[0] = size().width() / 2;
+			vertices[1] = m_slide.size().height() / 2;
+			vertices[2] = vertices[0];
+			vertices[3] = size().height() - m_slide.size().height() / 2;
 		}
 
 		m_line->SetData (sizeof(vertices), vertices);
@@ -295,9 +289,9 @@ namespace BlendInt {
 		int space = 0;
 
 		if(orientation() == Horizontal) {
-			space = size().width() - m_line_start.x() * 2;	// m_line_start.x() is the radius of m_switch
+			space = size().width() - m_slide.size().width();	// m_line_start.x() is the radius of m_switch
 		} else {
-			space = size().height() - m_line_start.y() * 2;	// m_line_start.y() is the radius of m_switch
+			space = size().height() - m_slide.size().height();	// m_line_start.y() is the radius of m_switch
 		}
 
 		return space;
@@ -309,20 +303,24 @@ namespace BlendInt {
 
 		glm::vec2 icon_center;	// slide switch center position
 
+		int radius = 0;
+
 		if(orientation() == Horizontal) {
-			icon_center.x = position().x() + m_line_start.x() + get_position();
-			icon_center.y = position().y() + m_line_start.y();
+			radius = m_slide.size().width() / 2;
+			icon_center.x = position().x() + radius + get_position();
+			icon_center.y = position().y() + size().height() / 2;
 		} else {
-			icon_center.x = position().x() + m_line_start.x();
-			icon_center.y = position().y() + m_line_start.y() + get_position();
+			radius = m_slide.size().height() / 2;
+			icon_center.x = position().x() + size().width() / 2;
+			icon_center.y = position().y() + radius + get_position();
 		}
 
 		glm::vec2 cursor_pos (cursor.x(), cursor.y());
 		float distance = glm::distance(icon_center, cursor_pos);
 
-		if(orientation() == Horizontal && distance <= m_line_start.x()) {
+		if(orientation() == Horizontal && distance <= radius) {
 			ret = true;
-		} else if (orientation() == Vertical && distance <= m_line_start.y()) {
+		} else if (orientation() == Vertical && distance <= radius) {
 			ret = true;
 		} else {
 			ret = false;
@@ -336,19 +334,26 @@ namespace BlendInt {
 		bool ret = false;
 
 		int offset = 0;
+		int move_space = GetSpace();
+
+		if(move_space == 0)
+			return false;
+
 		if(orientation() == Horizontal) {
-			offset = cursor.x() - position().x() - m_line_start.x();
+			offset = cursor.x() - m_last_cursor.x();
 
 		} else {
-			offset = cursor.y() - position().y() - m_line_start.y();
+			offset = cursor.y() - m_last_cursor.y();
 		}
 
-		if(offset < 0) {
-			*vout = minimum();
-		} else if(offset > m_line_width) {
+		int val = m_last_value + (offset * (maximum() - minimum())) / move_space;
+
+		if(val > maximum()) {
 			*vout = maximum();
+		} else if(val < minimum()) {
+			*vout = minimum();
 		} else {
-			*vout = (offset * (maximum() - minimum())) / m_line_width;
+			*vout = val;
 			ret = true;
 		}
 

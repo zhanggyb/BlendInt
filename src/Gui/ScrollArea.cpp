@@ -35,6 +35,30 @@ namespace BlendInt {
 	{
 	}
 
+	void ScrollArea::SetViewport(AbstractWidget* widget)
+	{
+		if(!widget) return;
+
+		if(m_view) {
+
+			m_view->SetViewport(widget);
+
+			if(widget->size().width() <= size().width()) {
+				m_hbar->SetVisible(false);
+			} else {
+				m_hbar->SetVisible(true);
+			}
+
+			if(widget->size().height() <= size().height()) {
+				m_vbar->SetVisible(false);
+			} else {
+				m_hbar->SetVisible(true);
+			}
+
+			AdjustGeometries();
+		}
+	}
+
 	ResponseType ScrollArea::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
@@ -102,6 +126,7 @@ namespace BlendInt {
 
 	void ScrollArea::InitOnce ()
 	{
+		set_margin(0, 0, 0, 0);
 		set_preferred_size(400, 300);
 		set_size(400, 300);
 
@@ -127,6 +152,40 @@ namespace BlendInt {
 		Resize (m_hbar, w - rw, m_hbar->size().height());
 		Resize (m_vbar, m_vbar->size().width(), h - bh);
 		Resize (m_view, w - rw, h - bh);
+	}
+	
+	void ScrollArea::AdjustGeometries ()
+	{
+		int x = position().x() + margin().left();
+		int y = position().y() + margin().bottom();
+		unsigned int w = size().width() - margin().left() - margin().right();
+		unsigned int h = size().height() - margin().top() - margin().bottom();
+		int bh = 0;
+		int rw = 0;
+
+		if(m_hbar->visiable()) {
+			bh = m_hbar->size().height();
+		}
+
+		if(m_vbar->visiable()) {
+			rw = m_vbar->size().width();
+		}
+
+		SetPosition(m_view, x, y + bh);
+		Resize (m_view, w - rw, h - bh);
+		m_view->ResetViewportPosition();
+
+		if(m_hbar->visiable()) {
+			SetPosition(m_hbar, x, y);
+			Resize (m_hbar, w - rw, m_hbar->size().height());
+			m_hbar->SetPercentage(m_view->GetHPercentage());
+		}
+
+		if(m_vbar->visiable()) {
+			SetPosition(m_vbar, x + w - rw, y + bh);
+			Resize (m_vbar, m_vbar->size().width(), h - bh);
+			m_vbar->SetPercentage(m_view->GetVPercentage());
+		}
 	}
 
 }

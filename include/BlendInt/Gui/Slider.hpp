@@ -90,10 +90,11 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> m_line;
 
-		SlideIcon m_switch;
+		SlideIcon m_slide;
 
-		Point m_line_start;	// where start to draw line
-		int m_line_width;
+		Point m_last_cursor;	// used for mouse move
+
+		int m_last_value;
 
 		/**
 		 * @brief If the slide switch is pressed

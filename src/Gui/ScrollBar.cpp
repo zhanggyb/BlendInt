@@ -43,30 +43,19 @@ namespace BlendInt {
 	ScrollBar::ScrollBar (Orientation orientation)
 	: AbstractSlider(orientation),
 	  m_vao(0),
-	  m_line_width(0),
+	  m_last_value(0),
 	  m_pressed(false)
 	{
 		if (orientation == Vertical) {
-			m_bar.Resize(14, 32);
+			m_slide.Resize(14, 32);
 
 			set_size(14, 200);
 			set_expand_y(true);
-
-			m_line_start.set_x(14 / 2);
-			m_line_start.set_y(7);
-
-			m_line_width = 200 - m_bar.size().width();
-
 		} else {
-			m_bar.Resize(32, 14);
+			m_slide.Resize(32, 14);
 
 			set_size(200, 14);
 			set_expand_x(true);
-
-			m_line_start.set_x(7);
-			m_line_start.set_y(14 / 2);
-
-			m_line_width = 200 - m_bar.size().height();
 		}
 
 		InitOnce();
@@ -75,6 +64,35 @@ namespace BlendInt {
 	ScrollBar::~ScrollBar ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	void ScrollBar::SetPercentage (int percentage)
+	{
+		if (percentage < 0 || percentage > 100) return;
+
+		if(orientation() == Horizontal) {
+
+			unsigned int w = percentage * size().width() / 100;
+
+			if(w < m_slide.size().width())
+				w = m_slide.size().width();
+
+			m_slide.Resize(w, m_slide.size().height());
+
+			Refresh();
+
+		} else {
+
+			unsigned int h = percentage * size().height() / 100;
+
+			if(h < m_slide.size().height())
+				h = m_slide.size().height();
+
+			m_slide.Resize(m_slide.size().width(), h);
+
+			Refresh();
+
+		}
 	}
 
 	bool ScrollBar::Update (const UpdateRequest& request)
@@ -96,19 +114,13 @@ namespace BlendInt {
 
 					Orientation slot_orient;
 					if (orientation() == Vertical) {
-						m_line_start.set_x(size_p->width() / 2);
-						m_line_start.set_y(radius);
-						m_line_width = size_p->height() - radius * 2;
 						slot_orient = Horizontal;
-						m_bar.Resize(radius * 2, m_bar.size().height());
-						m_bar.SetRadius(radius);
+						m_slide.Resize(radius * 2, m_slide.size().height());
+						m_slide.SetRadius(radius);
 					} else {
-						m_line_start.set_x(radius);
-						m_line_start.set_y(size_p->height() / 2);
-						m_line_width = size_p->width() - radius * 2;
 						slot_orient = Vertical;
-						m_bar.Resize(m_bar.size().width(), radius * 2);
-						m_bar.SetRadius(radius);
+						m_slide.Resize(m_slide.size().width(), radius * 2);
+						m_slide.SetRadius(radius);
 					}
 
 					const Color& color = themes()->scroll.inner;
@@ -166,29 +178,13 @@ namespace BlendInt {
 
 		glm::mat4 local_mvp;
 
-		if (orientation() == Horizontal) {
-			// m_line_start.x() == switch_radius
-			local_mvp = glm::translate(mvp,
-							glm::vec3(0.f,
-											(float) (m_line_start.y()
-															- m_line_start.x()),
-											0.f));
-		} else {
-			// m_line_start.y() == switch_radius
-			local_mvp = glm::translate(mvp,
-							glm::vec3(
-											(float) (m_line_start.x()
-															- m_line_start.y()),
-											0.f, 0.f));
-		}
-
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =
 						ShaderManager::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local_mvp));
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 		program->SetUniform1i("AA", 0);
 		glEnableVertexAttribArray(0);
@@ -216,22 +212,16 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		if (orientation() == Horizontal) {
-			// m_line_start.x() == switch_radius
+			// m_slide_origin.x() == switch_radius
 			local_mvp = glm::translate(mvp,
-							glm::vec3(get_slide_position(),
-											(float) (m_line_start.y()
-															- m_line_start.x()),
-											0.0));
+							glm::vec3(get_slide_position(), 0.f, 0.f));
 		} else {
-			// m_line_start.y() == switch_radius
+			// m_slide_origin.y() == switch_radius
 			local_mvp = glm::translate(mvp,
-							glm::vec3(
-											(float) (m_line_start.x()
-															- m_line_start.y()),
-											get_slide_position(), 0.0));
+							glm::vec3(0.f, get_slide_position(), 0.0));
 		}
 
-		m_bar.Draw(local_mvp);
+		m_slide.Draw(local_mvp);
 
 		return Accept;
 	}
@@ -253,13 +243,13 @@ namespace BlendInt {
 
 		} else {
 			if (CursorOnSlideIcon(event.position())) {
-				m_bar.set_highlight(true);
+				m_slide.set_highlight(true);
 
 				Refresh();
 
 				return Accept;
 			} else {
-				m_bar.set_highlight(false);
+				m_slide.set_highlight(false);
 				Refresh();
 
 				return Accept;
@@ -270,6 +260,9 @@ namespace BlendInt {
 	ResponseType ScrollBar::MousePressEvent (const MouseEvent& event)
 	{
 		if (CursorOnSlideIcon(event.position())) {
+
+			m_cursor_origin = event.position();
+			m_last_value = value();
 			m_pressed = true;
 			fire_slider_pressed();
 
@@ -302,16 +295,16 @@ namespace BlendInt {
 		m_slot_inner_buffer.reset(new GLArrayBuffer);
 		m_slot_outline_buffer.reset(new GLArrayBuffer);
 
-		Size slot_size = m_bar.size();
+		Size slot_size = m_slide.size();
 		float slot_radius;
 		Orientation slot_orient;
 		if(orientation() == Horizontal) {
 			slot_size.set_width(size().width());
-			slot_radius = m_bar.size().height() / 2.f;
+			slot_radius = m_slide.size().height() / 2.f;
 			slot_orient = Vertical;
 		} else {
 			slot_size.set_height(size().height());
-			slot_radius = m_bar.size().width() / 2.f;
+			slot_radius = m_slide.size().width() / 2.f;
 			slot_orient = Horizontal;
 		}
 
@@ -343,9 +336,9 @@ namespace BlendInt {
 		int space = 0;
 
 		if (orientation() == Horizontal) {
-			space = size().width() - m_bar.size().width();// m_line_start.x() is the radius of m_switch
+			space = size().width() - m_slide.size().width();
 		} else {
-			space = size().height() - m_bar.size().height();	// m_line_start.y() is the radius of m_switch
+			space = size().height() - m_slide.size().height();
 		}
 
 		return space;
@@ -359,14 +352,14 @@ namespace BlendInt {
 
 		if(orientation() == Horizontal) {
 			xmin = position().x() + slide_pos;
-			ymin = position().y() + (size().height() - m_bar.size().height()) / 2;
-			xmax = xmin + m_bar.size().width();
-			ymax = ymin + m_bar.size().height();
+			ymin = position().y() + (size().height() - m_slide.size().height()) / 2;
+			xmax = xmin + m_slide.size().width();
+			ymax = ymin + m_slide.size().height();
 		} else {
-			xmin = position().x() + (size().width() - m_bar.size().width()) / 2;
+			xmin = position().x() + (size().width() - m_slide.size().width()) / 2;
 			ymin = position().y() + slide_pos;
-			xmax = xmin + m_bar.size().width();
-			ymax = ymin + m_bar.size().height();
+			xmax = xmin + m_slide.size().width();
+			ymax = ymin + m_slide.size().height();
 		}
 
 		if(cursor.x() < xmin ||
@@ -383,23 +376,23 @@ namespace BlendInt {
 
 		if(orientation() == Horizontal) {
 
-			if(cursor.x() < (xmin + m_bar.radius())) {
+			if(cursor.x() < (xmin + m_slide.radius())) {
 
-				center.x = xmin + m_bar.radius();
+				center.x = xmin + m_slide.radius();
 				center.y = (ymax - ymin) / 2 + ymin;
 
 				distance = glm::distance(center, cursor_pos);
 
-				return distance <= m_bar.radius() ? true : false;
+				return distance <= m_slide.radius() ? true : false;
 
-			} else if (cursor.x() > (xmax - m_bar.radius())) {
+			} else if (cursor.x() > (xmax - m_slide.radius())) {
 
-				center.x = xmax - m_bar.radius();
+				center.x = xmax - m_slide.radius();
 				center.y = (ymax - ymin) / 2 + ymin;
 
 				distance = glm::distance(center, cursor_pos);
 
-				return distance <= m_bar.radius() ? true : false;
+				return distance <= m_slide.radius() ? true : false;
 
 			} else {
 				return true;
@@ -407,23 +400,23 @@ namespace BlendInt {
 
 		} else {
 
-			if(cursor.y() < (ymin + m_bar.radius())) {
+			if(cursor.y() < (ymin + m_slide.radius())) {
 
 				center.x = (xmax - xmin) / 2 + xmin;
-				center.y = ymin + m_bar.radius();
+				center.y = ymin + m_slide.radius();
 
 				distance = glm::distance(center, cursor_pos);
 
-				return distance <= m_bar.radius() ? true : false;
+				return distance <= m_slide.radius() ? true : false;
 
-			} else if (cursor.y() > (ymax - m_bar.radius())) {
+			} else if (cursor.y() > (ymax - m_slide.radius())) {
 
 				center.x = (xmax - xmin) / 2 + xmin;
-				center.y = ymax - m_bar.radius();
+				center.y = ymax - m_slide.radius();
 
 				distance = glm::distance(center, cursor_pos);
 
-				return distance <= m_bar.radius() ? true : false;
+				return distance <= m_slide.radius() ? true : false;
 
 			} else {
 				return true;
@@ -439,19 +432,25 @@ namespace BlendInt {
 		bool ret = false;
 
 		int offset = 0;
-		if (orientation() == Horizontal) {
-			offset = cursor.x() - position().x() - m_line_start.x();
+		int move_space = GetSpace();
 
+		if(move_space == 0)
+			return false;
+
+		if (orientation() == Horizontal) {
+			offset = cursor.x() - m_cursor_origin.x();
 		} else {
-			offset = cursor.y() - position().y() - m_line_start.y();
+			offset = cursor.y() - m_cursor_origin.y();
 		}
 
-		if (offset < 0) {
-			*vout = minimum();
-		} else if (offset > m_line_width) {
+		int val = m_last_value + (offset * (maximum() - minimum())) / move_space;
+
+		if(val > maximum()) {
 			*vout = maximum();
+		} else if(val < minimum()) {
+			*vout = minimum();
 		} else {
-			*vout = (offset * (maximum() - minimum())) / m_line_width;
+			*vout = val;
 			ret = true;
 		}
 

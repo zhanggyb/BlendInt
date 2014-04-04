@@ -100,7 +100,6 @@ TEST_F(ScrollBarTest1, Resize01)
 	ASSERT_TRUE(true);
 }
 
-
 /**
  * test Foo() method
  *
@@ -121,6 +120,36 @@ TEST_F(ScrollBarTest1, SetValue01)
     	bar->SetPosition(200, 200);
 
     	bar->SetValue(50);
+
+    RunLoop(win);
+
+    Interface::Release();
+
+    Terminate();
+
+	ASSERT_TRUE(true);
+}
+
+/**
+ * test Foo() method
+ *
+ * Expected result:
+ */
+TEST_F(ScrollBarTest1, SetPercentage01)
+{
+	Init ();
+
+    GLFWwindow* win = CreateWindow("ScrollBar - SetPercentage01", 640, 480);
+
+    // TODO: add test code here
+
+    ScrollBar* bar = Manage(new ScrollBar(Horizontal));
+
+    bar->set_name("ScrollBar");
+
+    bar->SetPosition(200, 200);
+
+    bar->SetPercentage(50);
 
     RunLoop(win);
 

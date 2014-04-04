@@ -34,6 +34,7 @@
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/NumberSlider.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
+#include <BlendInt/Gui/ToolButton.hpp>
 
 #include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Service/StockItems.hpp>
@@ -136,9 +137,24 @@ int main(int argc, char* argv[])
 	num_slider->SetPosition(20, 60);
 	*/
 
+	Widget* btn = new Widget;
+	btn->set_name("ToolButton");
+	btn->Resize(300, 400);
+
 	ScrollArea* area = Manage(new ScrollArea);
 	area->set_name("ScrollArea");
 	area->SetPosition(100, 100);
+	area->SetViewport(Manage(btn));
+
+//	Slider* slide = Manage (new Slider);
+//	slide->set_name("Slider");
+//	slide->SetPosition(20, 520);
+//	slide->SetValue(20);
+
+//	ScrollBar* scrollbar = Manage(new ScrollBar);
+//	scrollbar->set_name("ScrollBar");
+//	scrollbar->SetPosition(200, 200);
+//	scrollbar->SetPercentage(100);
 
 	RunLoop (win);
 

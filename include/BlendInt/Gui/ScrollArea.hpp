@@ -41,6 +41,8 @@ namespace BlendInt {
 
 		virtual ~ScrollArea ();
 
+		void SetViewport (AbstractWidget* widget);
+
 	protected:
 
 		virtual ResponseType CursorEnterEvent (bool entered);
@@ -64,6 +66,8 @@ namespace BlendInt {
 	private:
 
 		void InitOnce ();
+
+		void AdjustGeometries ();
 
 		ScrollView* m_view;
 
