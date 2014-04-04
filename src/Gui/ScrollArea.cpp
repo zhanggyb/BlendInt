@@ -152,6 +152,9 @@ namespace BlendInt {
 		Resize (m_hbar, w - rw, m_hbar->size().height());
 		Resize (m_vbar, m_vbar->size().width(), h - bh);
 		Resize (m_view, w - rw, h - bh);
+
+		events()->connect(m_hbar->slider_moved(), this, &ScrollArea::OnHorizontalScroll);
+		events()->connect(m_vbar->slider_moved(), this, &ScrollArea::OnVerticalScroll);
 	}
 	
 	void ScrollArea::AdjustGeometries ()
@@ -186,6 +189,17 @@ namespace BlendInt {
 			Resize (m_vbar, m_vbar->size().width(), h - bh);
 			m_vbar->SetPercentage(m_view->GetVPercentage());
 		}
+	}
+
+	void ScrollArea::OnHorizontalScroll(int value)
+	{
+		DBG_PRINT_MSG("value: %d", value);
+	}
+
+	void ScrollArea::OnVerticalScroll(int value)
+	{
+		DBG_PRINT_MSG("value: %d", value);
+
 	}
 
 }

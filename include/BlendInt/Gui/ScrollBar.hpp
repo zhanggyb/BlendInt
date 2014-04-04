@@ -42,7 +42,9 @@ namespace BlendInt {
 			/**
 			 * @brief Set the how many percentage of area the slide covers
 			 */
-			void SetPercentage (int value);
+			void SetPercentage (int percentage);
+
+			int GetPercentage () const;
 
 		protected:
 

@@ -95,6 +95,19 @@ namespace BlendInt {
 		}
 	}
 
+	int ScrollBar::GetPercentage () const
+	{
+		int percentage = 0;
+
+		if(orientation() == Horizontal) {
+			percentage = m_slide.size().width() * 100 / size().width();
+		} else {
+			percentage = m_slide.size().height() * 100 / size().height();
+		}
+
+		return percentage;
+	}
+
 	bool ScrollBar::Update (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {

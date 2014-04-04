@@ -65,6 +65,10 @@ namespace BlendInt {
 
 	private:
 
+		void OnHorizontalScroll (int value);
+
+		void OnVerticalScroll (int value);
+
 		void InitOnce ();
 
 		void AdjustGeometries ();
