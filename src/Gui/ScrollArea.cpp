@@ -52,7 +52,7 @@ namespace BlendInt {
 			if(widget->size().height() <= size().height()) {
 				m_vbar->SetVisible(false);
 			} else {
-				m_hbar->SetVisible(true);
+				m_vbar->SetVisible(true);
 			}
 
 			AdjustGeometries();
@@ -138,6 +138,9 @@ namespace BlendInt {
 		AddSubWidget(m_hbar);
 		AddSubWidget(m_vbar);
 
+		m_hbar->SetVisible(false);
+		m_vbar->SetVisible(false);
+
 		int x = position().x() + margin().left();
 		int y = position().y() + margin().bottom();
 		unsigned int w = size().width() - margin().left() - margin().right();
@@ -147,11 +150,11 @@ namespace BlendInt {
 
 		SetPosition(m_hbar, x, y);
 		SetPosition(m_vbar, x + w - rw, y + bh);
-		SetPosition(m_view, x, y + bh);
+		SetPosition(m_view, x, y);
 
 		Resize (m_hbar, w - rw, m_hbar->size().height());
 		Resize (m_vbar, m_vbar->size().width(), h - bh);
-		Resize (m_view, w - rw, h - bh);
+		Resize (m_view, w, h);
 
 		events()->connect(m_hbar->slider_moved(), this, &ScrollArea::OnHorizontalScroll);
 		events()->connect(m_vbar->slider_moved(), this, &ScrollArea::OnVerticalScroll);

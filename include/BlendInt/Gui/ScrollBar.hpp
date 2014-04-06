@@ -31,6 +31,11 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief ScrollBar
+	 *
+	 * Usually used in ScrollArea
+	 */
 	class ScrollBar: public AbstractSlider
 	{
 		public:
@@ -86,11 +91,7 @@ namespace BlendInt {
 			/**
 			 * @brief
 			 */
-			inline float get_slide_position ()
-			{
-				return value() * GetSpace()
-				                / ((float) maximum() - (float) minimum());
-			}
+			int GetSlidePosition ();
 
 			SlideIcon m_slide;
 

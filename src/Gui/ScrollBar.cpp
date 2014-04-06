@@ -46,16 +46,16 @@ namespace BlendInt {
 	  m_last_value(0),
 	  m_pressed(false)
 	{
-		if (orientation == Vertical) {
-			m_slide.Resize(14, 32);
-
-			set_size(14, 200);
-			set_expand_y(true);
-		} else {
+		if (orientation == Horizontal) {
 			m_slide.Resize(32, 14);
-
+			set_preferred_size(200, 14);
 			set_size(200, 14);
 			set_expand_x(true);
+		} else {
+			m_slide.Resize(14, 32);
+			set_preferred_size(14, 200);
+			set_size(14, 200);
+			set_expand_y(true);
 		}
 
 		InitOnce();
@@ -225,13 +225,11 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		if (orientation() == Horizontal) {
-			// m_slide_origin.x() == switch_radius
 			local_mvp = glm::translate(mvp,
-							glm::vec3(get_slide_position(), 0.f, 0.f));
+							glm::vec3(GetSlidePosition(), 0.f, 0.f));
 		} else {
-			// m_slide_origin.y() == switch_radius
 			local_mvp = glm::translate(mvp,
-							glm::vec3(0.f, get_slide_position(), 0.0));
+							glm::vec3(0.f, GetSlidePosition(), 0.f));
 		}
 
 		m_slide.Draw(local_mvp);
@@ -357,9 +355,23 @@ namespace BlendInt {
 		return space;
 	}
 
+	int ScrollBar::GetSlidePosition ()
+	{
+		int pos = 0;
+
+		if(orientation() == Horizontal) {
+			pos = value () * (size().width() - m_slide.size().width()) / (maximum() - minimum());
+		} else {
+			pos = value () * (size().height() - m_slide.size().height()) / (maximum() - minimum());
+			pos = size().height() - m_slide.size().height() - pos;
+		}
+
+		return pos;
+	}
+
 	bool ScrollBar::CursorOnSlideIcon (const Point& cursor)
 	{
-		int slide_pos = static_cast<int>(get_slide_position());
+		int slide_pos = GetSlidePosition();
 
 		int xmin, ymin, xmax, ymax;
 
@@ -453,7 +465,7 @@ namespace BlendInt {
 		if (orientation() == Horizontal) {
 			offset = cursor.x() - m_cursor_origin.x();
 		} else {
-			offset = cursor.y() - m_cursor_origin.y();
+			offset = m_cursor_origin.y() - cursor.y();
 		}
 
 		int val = m_last_value + (offset * (maximum() - minimum())) / move_space;
