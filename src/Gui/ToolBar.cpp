@@ -72,7 +72,7 @@ namespace BlendInt {
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
 
-					GenerateFormBuffer(*size_p, RoundAll, 5.0, m_inner.get(), m_outer.get(), 0);
+					GenerateFormBuffer(*size_p, RoundNone, 0.0, m_inner.get(), m_outer.get(), 0);
 
 					return true;
 				}

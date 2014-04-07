@@ -35,21 +35,22 @@ namespace BlendInt {
 	{
 	}
 
-	void ScrollArea::SetViewport(AbstractWidget* widget)
+	void ScrollArea::SetViewport (AbstractWidget* widget)
 	{
-		if(!widget) return;
+		if (!widget)
+			return;
 
-		if(m_view) {
+		if (m_view) {
 
 			m_view->SetViewport(widget);
 
-			if(widget->size().width() <= size().width()) {
+			if (widget->size().width() <= size().width()) {
 				m_hbar->SetVisible(false);
 			} else {
 				m_hbar->SetVisible(true);
 			}
 
-			if(widget->size().height() <= size().height()) {
+			if (widget->size().height() <= size().height()) {
 				m_vbar->SetVisible(false);
 			} else {
 				m_vbar->SetVisible(true);
@@ -129,6 +130,8 @@ namespace BlendInt {
 		set_margin(0, 0, 0, 0);
 		set_preferred_size(400, 300);
 		set_size(400, 300);
+		set_expand_x(true);
+		set_expand_y(true);
 
 		m_view = Manage(new ScrollView);
 		m_hbar = Manage(new ScrollBar(Horizontal));
@@ -200,12 +203,23 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollArea::OnHorizontalScroll(int value)
+	void ScrollArea::OnHorizontalScroll (int value)
 	{
+		AbstractWidget* p = m_view->viewport();
+		if (p) {
+			m_view->SetReletivePosition(value - p->size().width(),
+			        p->position().y() - m_view->position().y());
+		}
 	}
 
-	void ScrollArea::OnVerticalScroll(int value)
+	void ScrollArea::OnVerticalScroll (int value)
 	{
+		AbstractWidget* p = m_view->viewport();
+		if (p) {
+			m_view->SetReletivePosition(
+			        p->position().x() - m_view->position().x(),
+			        value - p->size().height());
+		}
 	}
 
 }

@@ -250,6 +250,17 @@ namespace BlendInt {
 		}
 	}
 
+	void ScrollView::SetReletivePosition (int x, int y)
+	{
+		if(sub_widget_size()) {
+			AbstractWidget* p = sub_widgets().front();
+
+			SetPosition(p, position().x() + x, position().y() + y);
+
+			Refresh();
+		}
+	}
+
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
 		if(sub_widget_size()) {

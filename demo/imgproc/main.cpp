@@ -9,8 +9,12 @@
 #include <BlendInt/Types.hpp>
 
 #include <BlendInt/Gui/CVImageView.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/MenuBar.hpp>
+#include <BlendInt/Gui/ToolBar.hpp>
 
 #include "Window.hpp"
+#include "MainLayout.hpp"
 
 using namespace BlendInt;
 using namespace std;
@@ -25,10 +29,9 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 800, 600);
 
-	CVImageView* img = Manage(new CVImageView);
-	img->set_name("CVImageView");
-	img->SetPosition(100, 100);
-	img->Open("rendering.jpg");
+	MainLayout* main_layout = Manage(new MainLayout);
+
+	main_layout->Resize(800, 600);
 
 	RunLoop (win);
 

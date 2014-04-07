@@ -245,6 +245,8 @@ namespace BlendInt {
 		force_refresh_all = true;
 
 		m_redraw_event.set_projection_matrix(glm::ortho(0.f, (float)size.width(), 0.f, (float)size.height(), 100.f, -100.f));
+
+		fire_property_changed_event(FormSize);
 	}
 
 	void ContextManager::ResizeFromInterface (unsigned int width,
@@ -257,6 +259,8 @@ namespace BlendInt {
 		force_refresh_all = true;
 
 		m_redraw_event.set_projection_matrix(glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f));
+
+		fire_property_changed_event(FormSize);
 	}
 
 	void ContextManager::AddWidget (AbstractWidget* obj)

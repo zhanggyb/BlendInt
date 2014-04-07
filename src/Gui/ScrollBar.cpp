@@ -498,8 +498,6 @@ namespace BlendInt {
 
 		int val = m_last_value + (offset * (maximum() - minimum())) / move_space;
 
-		DBG_PRINT_MSG("value: %d", val);
-
 		if(val > maximum()) {
 			*vout = maximum();
 		} else if(val < minimum()) {
