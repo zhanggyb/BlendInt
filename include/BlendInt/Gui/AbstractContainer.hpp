@@ -86,7 +86,7 @@ namespace BlendInt {
 
 		void ClearSubWidgets ();
 
-		WidgetDeque& sub_widgets ()
+		WidgetDeque sub_widgets () const
 		{
 			return m_sub_widgets;
 		}

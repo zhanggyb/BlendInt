@@ -280,8 +280,10 @@ namespace BlendInt {
 		if (m_minimum == minimum)
 			return;
 
-		m_minimum = minimum;
-		//Update (SliderPropertyMinimum, 0);
+		if(Update(UpdateRequest(Predefined, SliderPropertyMinimum, &minimum))) {
+			m_minimum = minimum;
+			fire_property_changed_event(SliderPropertyMinimum);
+		}
 	}
 
 	void AbstractSlider::SetMaximum (int maximum)
@@ -289,8 +291,10 @@ namespace BlendInt {
 		if (m_maximum == maximum)
 			return;
 
-		m_maximum = maximum;
-		//Update(SliderPropertyMaximum, 0);
+		if(Update(UpdateRequest(Predefined, SliderPropertyMaximum, &maximum))) {
+			m_maximum = maximum;
+			fire_property_changed_event(SliderPropertyMaximum);
+		}
 	}
 
 	void AbstractSlider::SetOrientation (Orientation orientation)

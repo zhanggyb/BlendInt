@@ -159,3 +159,32 @@ TEST_F(ScrollBarTest1, SetPercentage01)
 
 	ASSERT_TRUE(true);
 }
+
+/**
+ * test Foo() method
+ *
+ * Expected result:
+ */
+TEST_F(ScrollBarTest1, SetMinimum01)
+{
+	Init ();
+
+    GLFWwindow* win = CreateWindow("ScrollBar - SetMinimum01", 640, 480);
+
+    // TODO: add test code here
+
+    ScrollBar* bar = Manage(new ScrollBar(Horizontal));
+
+    bar->set_name("ScrollBar");
+
+    bar->SetPosition(200, 200);
+    bar->SetMinimum(20);
+
+    RunLoop(win);
+
+    Interface::Release();
+
+    Terminate();
+
+	ASSERT_TRUE(true);
+}

@@ -184,25 +184,28 @@ namespace BlendInt {
 		if(m_hbar->visiable()) {
 			SetPosition(m_hbar, x, y);
 			Resize (m_hbar, w - rw, m_hbar->size().height());
-			m_hbar->SetPercentage(m_view->GetHPercentage());
+			int percent = m_view->GetHPercentage();
+			m_hbar->SetMaximum(m_view->viewport()->size().width());
+			m_hbar->SetMinimum(m_view->size().width());
+			m_hbar->SetPercentage(percent);
 		}
 
 		if(m_vbar->visiable()) {
 			SetPosition(m_vbar, x + w - rw, y + bh);
 			Resize (m_vbar, m_vbar->size().width(), h - bh);
-			m_vbar->SetPercentage(m_view->GetVPercentage());
+			int percent = m_view->GetVPercentage();
+			m_vbar->SetMaximum(m_view->viewport()->size().height());
+			m_vbar->SetMinimum(m_view->size().height());
+			m_vbar->SetPercentage(percent);
 		}
 	}
 
 	void ScrollArea::OnHorizontalScroll(int value)
 	{
-		DBG_PRINT_MSG("value: %d", value);
 	}
 
 	void ScrollArea::OnVerticalScroll(int value)
 	{
-		DBG_PRINT_MSG("value: %d", value);
-
 	}
 
 }

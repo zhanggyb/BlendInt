@@ -89,6 +89,34 @@ namespace BlendInt {
 					return true;
 				}
 
+				case SliderPropertyMinimum: {
+
+					const int* min_p = static_cast<const int*>(request.data());
+
+					if(*min_p >= maximum())
+						return false;
+
+					if(value() < *min_p) {
+						set_value(*min_p);
+					}
+
+					return true;
+				}
+
+				case SliderPropertyMaximum: {
+
+					const int* max_p = static_cast<const int*>(request.data());
+
+					if(*max_p <= minimum())
+						return false;
+
+					if(value() > *max_p) {
+						set_value(*max_p);
+					}
+
+					return true;
+				}
+
 				case SliderPropertyOrientation: {
 					const Orientation* orient_p = static_cast<const Orientation*>(request.data());
 					glBindVertexArray(m_vao);

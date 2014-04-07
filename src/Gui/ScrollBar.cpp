@@ -163,6 +163,34 @@ namespace BlendInt {
 					return true;
 				}
 
+				case SliderPropertyMinimum: {
+
+					const int* min_p = static_cast<const int*>(request.data());
+
+					if(*min_p >= maximum())
+						return false;
+
+					if(value() < *min_p) {
+						set_value(*min_p);
+					}
+
+					return true;
+				}
+
+				case SliderPropertyMaximum: {
+
+					const int* max_p = static_cast<const int*>(request.data());
+
+					if(*max_p <= minimum())
+						return false;
+
+					if(value() > *max_p) {
+						set_value(*max_p);
+					}
+
+					return true;
+				}
+
 				case SliderPropertyOrientation: {
 					//const Orientation* orient_p =
 						//			static_cast<const Orientation*>(request.data());
@@ -360,9 +388,9 @@ namespace BlendInt {
 		int pos = 0;
 
 		if(orientation() == Horizontal) {
-			pos = value () * (size().width() - m_slide.size().width()) / (maximum() - minimum());
+			pos = (value () - minimum()) * (size().width() - m_slide.size().width()) / (maximum() - minimum());
 		} else {
-			pos = value () * (size().height() - m_slide.size().height()) / (maximum() - minimum());
+			pos = (value () - minimum()) * (size().height() - m_slide.size().height()) / (maximum() - minimum());
 			pos = size().height() - m_slide.size().height() - pos;
 		}
 
@@ -469,6 +497,8 @@ namespace BlendInt {
 		}
 
 		int val = m_last_value + (offset * (maximum() - minimum())) / move_space;
+
+		DBG_PRINT_MSG("value: %d", val);
 
 		if(val > maximum()) {
 			*vout = maximum();
