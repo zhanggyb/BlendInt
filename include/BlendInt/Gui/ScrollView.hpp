@@ -96,8 +96,6 @@ namespace BlendInt {
 
 	private:
 
-		RefPtr<CheckerBoard> m_checkerboard;
-
 		int m_orientation;
 
 		/**

@@ -72,8 +72,17 @@ namespace BlendInt {
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
 
-					GenerateFormBuffer(*size_p, RoundNone, 0.0, m_inner.get(), m_outer.get(), 0);
+					glBindVertexArray(m_vao);
 
+					std::vector<GLfloat> vertices(12);
+
+					GenerateFlatRectVertices(*size_p, 0.f, &vertices);
+
+					m_inner->Bind();
+					m_inner->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+					m_inner->Reset();
+
+					glBindVertexArray(0);
 					return true;
 				}
 
@@ -130,21 +139,6 @@ namespace BlendInt {
 		program->SetUniform1i("AA", 1);
 		program->SetUniform1i("Gamma", 0);
 		program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, 1.f);
-
-		m_outer->Bind();
-
-		glVertexAttribPointer(0, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
-
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							m_outer->GetBufferSize()
-											/ (2 * sizeof(GLfloat)));
-		m_outer->Reset();
 
 		glDisableVertexAttribArray(0);
 
@@ -215,20 +209,24 @@ namespace BlendInt {
 		set_preferred_size(200, 32);
 		set_size(200, 32);
 
-		set_margin(4, 4, 4, 4);
+		set_margin(4, 4, 4, 4);	// the same as MenuBar
 
 		set_expand_x(true);
 		set_expand_y(false);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_outer.reset(new GLArrayBuffer);
-
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
-		m_inner->Generate();
-		m_outer->Generate();
 
-		GenerateFormBuffer(size(), RoundNone, 0.0, m_inner.get(), m_outer.get(), 0);
+		std::vector<GLfloat> vertices(12);
+
+		GenerateFlatRectVertices(size(), 0.f, &vertices);
+
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+
+		m_inner->Bind();
+		m_inner->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		m_inner->Reset();
 
 		glBindVertexArray(0);
 	}

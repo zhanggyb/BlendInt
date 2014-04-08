@@ -71,7 +71,7 @@ namespace BlendInt {
 
 		size_t GetValidTextSize ();
 
-		int GetCursorPosition (const MouseEvent* event);
+		int GetCursorPosition (const MouseEvent& event);
 
 		/**
 		 * @brief Get the index and length of the text to show
@@ -104,12 +104,9 @@ namespace BlendInt {
 		 */
 		Rect m_text_outline;
 
-		RefPtr<Timer> m_timer;
-
-		bool m_flicker;
-
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_cursor_buffer;
 
 		static Margin DefaultTextEntryPadding;
 	};

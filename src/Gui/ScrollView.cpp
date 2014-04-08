@@ -46,9 +46,6 @@ namespace BlendInt {
 		set_size(200, 160);
 		set_preferred_size(200, 160);
 		set_scissor_test(true);
-
-		m_checkerboard.reset(new CheckerBoard(20));
-		m_checkerboard->Resize(size());
 	}
 
 	ScrollView::~ScrollView ()
@@ -145,10 +142,6 @@ namespace BlendInt {
 
 				case FormSize: {
 
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					m_checkerboard->Resize(*size_p);
-
 					return true;
 				}
 
@@ -170,8 +163,6 @@ namespace BlendInt {
 	{
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
-		m_checkerboard->Draw(mvp);
 
 		return AcceptAndContinue;
 	}

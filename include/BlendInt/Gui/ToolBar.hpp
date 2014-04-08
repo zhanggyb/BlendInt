@@ -80,7 +80,6 @@ namespace BlendInt {
 		int m_space;
 
 		RefPtr<GLArrayBuffer> m_inner;
-		RefPtr<GLArrayBuffer> m_outer;
 	};
 
 }

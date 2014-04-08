@@ -601,7 +601,7 @@ namespace BlendInt {
 
 		for (; (it != string.end()) && (i < length); it++, i++)
 		{
-			width = query(*it).advance_x + width;
+			width += query(*it).advance_x;
 		}
 
 		return width;

@@ -50,9 +50,7 @@ namespace BlendInt {
 	  m_vao(0),
 	  m_start(0),
 	  m_length(0),
-	  m_cursor_position(0),
-	  m_timer(0),
-	  m_flicker(true)
+	  m_cursor_position(0)
 	{
 		InitOnce();
 	}
@@ -70,9 +68,11 @@ namespace BlendInt {
 			m_cursor_position += event.text().length();
 			m_length += event.text().length();
 
-			unsigned text_width = m_font.GetTextWidth(m_text, m_length, m_start);
-
-			unsigned int valid_width = size().width() - DefaultTextEntryPadding.left() - DefaultTextEntryPadding.right();
+			unsigned int text_width = m_font.GetTextWidth(m_text, m_length,
+							m_start);
+			unsigned int valid_width = size().width()
+							- DefaultTextEntryPadding.left()
+							- DefaultTextEntryPadding.right();
 
 			if(text_width > valid_width) {
 				m_length -= event.text().length();
@@ -148,11 +148,13 @@ namespace BlendInt {
 	ResponseType TextEntry::MousePressEvent(const MouseEvent& event)
 	{
 		if(m_text.size()) {
-			//m_cursor_position = GetCursorPosition(event);
+			int new_pos = GetCursorPosition(event);
+
+			if(m_cursor_position != new_pos) {
+				m_cursor_position = new_pos;
+				Refresh();
+			}
 		}
-
-		Refresh();
-
 		return Accept;
 	}
 
@@ -170,9 +172,6 @@ namespace BlendInt {
 				}
 
 				case FormSize: {
-					//const Size* size_p = static_cast<const Size*>(data);
-					//GenerateFormBuffer(size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
-
 					const Size* size_p = static_cast<const Size*>(request.data());
 					const Color& color = themes()->text.inner;
 					short shadetop = themes()->text.shadetop;
@@ -188,6 +187,18 @@ namespace BlendInt {
 							Vertical,
 							m_inner_buffer.get(),
 							m_outer_buffer.get());
+
+					std::vector<GLfloat> cursor_vertices(4);
+
+					cursor_vertices[0] = 1.f;
+					cursor_vertices[1] = static_cast<float>(DefaultTextEntryPadding.bottom());
+					cursor_vertices[2] = 1.f;
+					cursor_vertices[3] = static_cast<float>(size_p->height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
+
+					m_cursor_buffer->Bind();
+					m_cursor_buffer->SetData(4 * sizeof(GLfloat), &cursor_vertices[0]);
+					m_cursor_buffer->Reset();
+
 					glBindVertexArray(0);
 					return true;
 				}
@@ -212,7 +223,6 @@ namespace BlendInt {
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
 		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);
@@ -242,49 +252,36 @@ namespace BlendInt {
 
 		if(focused()) {			// draw a cursor
 
-			/*
-			unsigned int text_width = fc->GetTextWidth(m_text,
-			        m_cursor_position - m_start, m_start);
+			glBindVertexArray(m_vao);
 
-			RefPtr<GLSLProgram> program =
-			        ShaderManager::instance->default_form_program();
-			program->Use();
-
-			GLint xy_attrib = program->GetAttributeLocation("xy");
-
-			glm::vec3 trans(text_width + 1, 2, 0);
+			unsigned int text_width = m_font.GetTextWidth(m_text,
+						        m_cursor_position - m_start, m_start);
+			glm::vec3 trans(text_width + 1, 1, 0);
 			glm::mat4 text_mvp = glm::translate(mvp, trans);
 
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-			        glm::value_ptr(text_mvp));
 
-			float vertices[2][2] = {
-					{1.f, static_cast<float>(DefaultTextEntryPadding.bottom())},
-					{1.f, static_cast<float>(size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom())
-					}
-			};
+			program = ShaderManager::instance->default_line_program();	// Now switch to line program
+			program->Use();
 
-			program->SetVertexAttrib4f("color",	0.f, 125 / 255.f, 255 / 255.f, 175 / 255.f);
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(text_mvp));
+			program->SetUniform1i("AA", 0);
+			program->SetVertexAttrib4f("Color",	0.f, 55 / 255.f, 1.f, 175 / 255.f);
 
-			glEnableVertexAttribArray(xy_attrib);
+			glEnableVertexAttribArray(0);
 
-			glVertexAttribPointer(xy_attrib, // attribute
-			        2,		// number of elements per vertex, here (x,y)
-			        GL_FLOAT,	// the type of each element
-			        GL_FALSE,	// take our values as-is
-			        0,		// no extra data between each position
-			        vertices	// the first element
-			        );
+			m_cursor_buffer->Bind();
 
-			glLineWidth(2.0);
+			glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
 			glDrawArrays(GL_LINES, 0, 2);
-			glLineWidth(1.0);
 
-			glDisableVertexAttribArray(xy_attrib);
+			m_cursor_buffer->Reset();
+
+			glDisableVertexAttribArray(0);
 
 			program->Reset();
-			*/
 
+			glBindVertexArray(0);
 		}
 
 		return Accept;
@@ -342,12 +339,19 @@ namespace BlendInt {
 		set_expand_x(true);
 		set_size (120, 24);	// the same height of a button
 		set_radius(0.0);
+		set_preferred_size(size());
+		set_minimal_size(
+		        DefaultTextEntryPadding.left()
+		                + DefaultTextEntryPadding.right(),
+		        DefaultTextEntryPadding.top()
+		                + DefaultTextEntryPadding.bottom());
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
+		m_cursor_buffer.reset(new GLArrayBuffer);
 
 		const Color& color = themes()->text.inner;
 		short shadetop = themes()->text.shadetop;
@@ -364,6 +368,18 @@ namespace BlendInt {
 				m_outer_buffer.get()
 				);
 
+		std::vector<GLfloat> cursor_vertices(4);
+
+		cursor_vertices[0] = 1.f;
+		cursor_vertices[1] = static_cast<float>(DefaultTextEntryPadding.bottom());
+		cursor_vertices[2] = 1.f;
+		cursor_vertices[3] = static_cast<float>(size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
+
+		m_cursor_buffer->Generate();
+		m_cursor_buffer->Bind();
+		m_cursor_buffer->SetData(4 * sizeof(GLfloat), &cursor_vertices[0]);
+		m_cursor_buffer->Reset();
+
 		glBindVertexArray(0);
 
 		m_origin.set_x(DefaultTextEntryPadding.left());
@@ -371,27 +387,8 @@ namespace BlendInt {
 		                + std::abs(m_font.get_descender()));
 
 		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
-		set_preferred_size(size());
-		set_minimal_size(
-		        DefaultTextEntryPadding.left()
-		                + DefaultTextEntryPadding.right(),
-		        DefaultTextEntryPadding.top()
-		                + DefaultTextEntryPadding.bottom());
-
 		// set where start display the cursor
-		m_origin.set_x(m_origin.x() + static_cast<int>(radius()));
-
-		// and set timer
-		m_timer.reset(new Timer);
-		m_timer->SetInterval(500);	// 100 ms
-		events()->connect(m_timer->timeout(), this, &TextEntry::OnReverseCursor);
-
-		m_timer->Start();
-	}
-
-	void TextEntry::OnReverseCursor()
-	{
-		m_flicker = m_flicker ? false: true;
+		//m_origin.set_x(m_origin.x() + static_cast<int>(radius()));
 	}
 
 	size_t TextEntry::GetValidTextSize ()
@@ -417,14 +414,14 @@ namespace BlendInt {
 		size_t str_len = m_text.length();
 		size_t width = m_font.GetTextWidth(m_text, str_len);
 
-		if(width < size().width() - 4) {
+		if(width < (size().width() - 4)) {
 			*start = 0;
 			*length = str_len;
 		} else {
 			while(str_len > 0) {
 				str_len--;
 				width = m_font.GetTextWidth(m_text, str_len);
-				if(width < size().width() - 4) break;
+				if(width < (size().width() - 4)) break;
 			}
 
 			*start = m_text.length() - str_len;
@@ -435,8 +432,11 @@ namespace BlendInt {
 
 	void TextEntry::AdjustVisibleTextLength ()
 	{
-		unsigned text_width = m_font.GetTextWidth(m_text, m_length, m_start);
-		unsigned int valid_width = size().width() - DefaultTextEntryPadding.left() - DefaultTextEntryPadding.right();
+		unsigned int text_width = m_font.GetTextWidth(m_text, m_length,
+						m_start);
+		unsigned int valid_width = size().width()
+						- DefaultTextEntryPadding.left()
+						- DefaultTextEntryPadding.right();
 
 		if(text_width > valid_width) {
 			m_length--;
@@ -449,10 +449,11 @@ namespace BlendInt {
 	}
 
 
-	int TextEntry::GetCursorPosition (const MouseEvent* event)
+	int TextEntry::GetCursorPosition (const MouseEvent& event)
 	{
 		int text_width = m_font.GetTextWidth(m_text, m_length, m_start);
-		int click_width = event->position().x() - position().x() - DefaultTextEntryPadding.left();
+		int click_width = event.position().x() - position().x()
+						- DefaultTextEntryPadding.left();
 
 		if(click_width < 0 ||
 		   click_width > static_cast<int>(size().width() - DefaultTextEntryPadding.right())) {
@@ -478,3 +479,4 @@ namespace BlendInt {
 	}
 
 }
+
