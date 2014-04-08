@@ -114,6 +114,8 @@ namespace BlendInt {
 	ContextManager::ContextManager ()
 			: AbstractWidget(), m_main_buffer(0), m_screenbuffer(0)
 	{
+		activate_events();
+
 		m_screenbuffer = new ScreenBuffer;
 		m_hover_deque.reset(new std::deque<AbstractWidget*>);
 

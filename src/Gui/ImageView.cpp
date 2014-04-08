@@ -136,11 +136,37 @@ namespace BlendInt {
 			m_vbo->Bind();
 			m_vbo->SetData(sizeof(vertices), vertices);
 			m_vbo->Reset();
+
+			m_checkerboard->Resize(image->width(), image->height());
 		}
 	}
 
 	void ImageView::Load (const RefPtr<Image>& image)
 	{
+	}
+
+	bool ImageView::Update (const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case FormSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					m_checkerboard->Resize(*size_p);
+
+					return true;
+				}
+
+				default:
+					return true;
+			}
+
+		} else {
+			return false;
+		}
 	}
 
 	ResponseType ImageView::Draw (const RedrawEvent& event)
@@ -201,6 +227,8 @@ namespace BlendInt {
 	{
 		set_size(400, 300);
 		set_preferred_size(400, 300);
+		set_expand_x(true);
+		set_expand_y(true);
 
 		m_checkerboard.reset(new CheckerBoard(20));
 		m_checkerboard->Resize(size());
