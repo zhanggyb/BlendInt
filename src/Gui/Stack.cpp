@@ -40,6 +40,7 @@ namespace BlendInt {
 	void Stack::Add (AbstractWidget* widget)
 	{
 		if(AppendSubWidget(widget)) {
+			// TODO: lock widget's geometry
 			Resize(widget, size());
 			SetPosition(widget, position());
 		}
@@ -60,6 +61,17 @@ namespace BlendInt {
 
 	void Stack::SetIndex (size_t index)
 	{
+		size_t size = sub_widget_size();
+
+		if(index > (size - 1)) return;
+
+		if(size) {
+			sub_widgets()->at(m_index)->SetVisible(false);
+
+			m_index = index;
+			sub_widgets()->at(m_index)->SetVisible(true);
+		}
+
 		if(index > (sub_widget_size() - 1)) return;
 
 		m_index = index;
@@ -74,6 +86,16 @@ namespace BlendInt {
 	{
 
 		return 0;
+	}
+
+	void Stack::HideSubWidget(size_t index)
+	{
+		size_t size = sub_widget_size();
+
+		if(size && index < (size - 1)) {
+			AbstractWidget* p = sub_widgets()->at(index);
+			p->SetVisible(false);
+		}
 	}
 
 	bool Stack::Update (const UpdateRequest& request)
@@ -116,6 +138,41 @@ namespace BlendInt {
 	ResponseType Stack::Draw (const RedrawEvent& event)
 	{
 		return IgnoreAndContinue;
+	}
+
+	ResponseType Stack::CursorEnterEvent(bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::KeyPressEvent(const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::ContextMenuPressEvent(const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::ContextMenuReleaseEvent(const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::MousePressEvent(const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::MouseReleaseEvent(const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)
+	{
+		return Ignore;
 	}
 
 }

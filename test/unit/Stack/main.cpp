@@ -1,61 +1,15 @@
 /*
- * Unit test for StackedWidget
+ * Unit test for TextEntry
  */
 
-#include <Common/Window.hpp>
-
-#include <BlendInt/Gui/Stack.hpp>
-#include <BlendInt/Gui/ClockWidget.hpp>
-
-// #include <gtest/gtest.h>
-#include <boost/smart_ptr.hpp>
-
-// The fixture for testing class Foo.
-
-using namespace BlendInt;
-
-/*
-class StackedWidgetTest: public testing::Test
-{
-
-protected:
-
-	StackedWidgetTest () {
-
-	}
-
-	virtual ~StackedWidgetTest () {
-
-	}
-
-	virtual void SetUp () {
-		// Code here
-	}
-
-	virtual void TearDown () {
-
-	}
-
-};
-
-TEST_F(StackedWidgetTest, CheckStackedWidget1)
-{
-}
-*/
+#include <gtest/gtest.h>
+#include <BlendInt/Interface.hpp>
 
 int main (int argc, char* argv[])
 {
     BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-    Init ();
+    testing::InitGoogleTest(&argc, argv);
 
-    GLFWwindow* window = CreateWindow("Timer Test");
-
-    // add test code here
-
-    RunLoop(window);
-
-    Terminate();
-	
-	//return RUN_ALL_TESTS(); return 0;
+	return RUN_ALL_TESTS();
 }

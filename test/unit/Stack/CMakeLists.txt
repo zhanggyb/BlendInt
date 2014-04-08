@@ -3,8 +3,8 @@
 
 file(GLOB test_SRC "*.cpp")
 
-add_executable(testStackedWidget ${test_SRC})
+add_executable(testStack ${test_SRC})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-target_link_libraries(testStackedWidget BlendInt Common ${LIBS})
+target_link_libraries(testStack BlendInt Common ${LIBS})
 

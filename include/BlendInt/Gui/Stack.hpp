@@ -55,6 +55,8 @@ namespace BlendInt {
 
 	protected:
 
+		void HideSubWidget (size_t index);
+
 		virtual bool Update (const UpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
