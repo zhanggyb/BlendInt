@@ -51,7 +51,7 @@ namespace BlendInt {
 	void TableLayout::add_widget (AbstractWidget* widget, int row, int column,
 	        int width, int height)
 	{
-		AddSubWidget(widget);
+		AppendSubWidget(widget);
 
 		for (int i = 0; i < width; i++)
 		{
@@ -71,7 +71,7 @@ namespace BlendInt {
 	void TableLayout::add_layout (AbstractLayout* layout, int row, int column,
 	        int width, int height)
 	{
-		AddSubWidget(layout);
+		AppendSubWidget(layout);
 
 		for (int i = 0; i < width; i++)
 		{
@@ -105,7 +105,7 @@ namespace BlendInt {
 					int x = new_pos->x() - position().x();
 					int y = new_pos->y() - position().y();
 
-					MoveSubWidgetsPosition(x, y);
+					MoveSubWidgets(x, y);
 
 					return true;
 				}
@@ -187,7 +187,7 @@ namespace BlendInt {
 		SetPreferredSize(prefer_size);
 		SetMinimalSize(min_size);
 
-		AddSubWidget(widget);
+		AppendSubWidget(widget);
 
 		if( !(current_size == size()) )
 			Resize(this, current_size);

@@ -21,41 +21,37 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_STACKEDWIDGET_HPP_
-#define _BLENDINT_STACKEDWIDGET_HPP_
+#ifndef _BLENDINT_GUI_STACKEDWIDGET_HPP_
+#define _BLENDINT_GUI_STACKEDWIDGET_HPP_
 
-#include <vector>
-
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief class for stacked widgets
 	 */
-	class StackedWidget: public Widget
+	class Stack: public AbstractContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(StackedWidget);
+		DISALLOW_COPY_AND_ASSIGN(Stack);
 
 	public:
 
-		StackedWidget ();
+		Stack ();
 
-		virtual ~StackedWidget ();
+		virtual ~Stack ();
 
-		void Add (Widget* widget);
+		void Add (AbstractWidget* widget);
 
-		void Insert (size_t index, Widget* widget);
+		void Insert (size_t index, AbstractWidget* widget);
 
-		void Remove (Widget* widget);
-
-		size_t count () const {return m_stack.size();}
+		void Remove (AbstractWidget* widget);
 
 		void SetIndex (size_t index);
 
-		Widget* GetActiveWidget () const;
+		AbstractWidget* GetActiveWidget () const;
 
-		Widget* GetWidget (size_t index);
+		AbstractWidget* GetWidget (size_t index);
 
 	protected:
 
@@ -63,9 +59,21 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
-	private:
+		virtual ResponseType CursorEnterEvent (bool entered);
 
-		std::vector<Widget*> m_stack;
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+	private:
 
 		size_t m_index;
 
@@ -73,4 +81,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_STACKEDWIDGET_HPP_ */
+#endif /* _BLENDINT_GUI_STACKEDWIDGET_HPP_ */

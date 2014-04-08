@@ -3,7 +3,7 @@
 
 add_subdirectory(ClockWidget)
 add_subdirectory(Layout)
-add_subdirectory(StackedWidget)
+add_subdirectory(Stack)
 add_subdirectory(Timer)
 add_subdirectory(Viewport3D)
 add_subdirectory(HorizontalLayout)

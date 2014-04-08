@@ -4,7 +4,7 @@
 
 #include <Common/Window.hpp>
 
-#include <BlendInt/Gui/StackedWidget.hpp>
+#include <BlendInt/Gui/Stack.hpp>
 #include <BlendInt/Gui/ClockWidget.hpp>
 
 // #include <gtest/gtest.h>
@@ -52,18 +52,6 @@ int main (int argc, char* argv[])
     GLFWwindow* window = CreateWindow("Timer Test");
 
     // add test code here
-
-	StackedWidget* tf = new StackedWidget;
-
-	tf->SetPosition(200, 200);
-
-    ClockWidget* clock1 = new ClockWidget;
-    ClockWidget* clock2 = new ClockWidget;
-
-    tf->Add(clock1);
-    tf->Add(clock2);
-
-    tf->Resize(400, 400);
 
     RunLoop(window);
 

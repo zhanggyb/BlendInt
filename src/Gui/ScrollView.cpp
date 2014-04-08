@@ -59,7 +59,7 @@ namespace BlendInt {
 			ClearSubWidgets();
 		}
 
-		if (AddSubWidget(widget)) {
+		if (AppendSubWidget(widget)) {
 			AbstractWidget* p = sub_widgets()->front();
 			if(p) {
 				int w = size().width() - margin().left() - margin().right();

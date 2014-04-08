@@ -64,7 +64,7 @@ namespace BlendInt {
 					int x = pos_p->x() - position().x();
 					int y = pos_p->y() - position().y();
 
-					MoveSubWidgetsPosition(x, y);
+					MoveSubWidgets(x, y);
 
 					return true;
 				}
@@ -190,7 +190,7 @@ namespace BlendInt {
 		int x = GetLastPosition();
 		Resize(widget, widget->preferred_size().width(), 24);
 		SetPosition(widget, x, position().y() + margin().bottom());
-		AddSubWidget(widget);
+		AppendSubWidget(widget);
 	}
 
 	void ToolBar::AddButton (const RefPtr<ActionItem>& action)
@@ -201,7 +201,7 @@ namespace BlendInt {
 		Resize(button, 24, 24);
 		SetPosition(button, x, position().y() + margin().bottom());
 
-		AddSubWidget(button);
+		AppendSubWidget(button);
 	}
 
 	void ToolBar::InitOnce ()

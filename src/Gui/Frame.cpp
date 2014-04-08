@@ -71,7 +71,7 @@ namespace BlendInt {
 			ClearSubWidgets();
 		}
 
-		if (AddSubWidget(widget)) {
+		if (AppendSubWidget(widget)) {
 			SetPosition(widget, position().x() + margin().left(),
 			        position().y() + margin().bottom());
 			Resize(widget, size().width() - margin().left() - margin().right(),

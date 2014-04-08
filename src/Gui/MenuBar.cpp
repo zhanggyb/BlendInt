@@ -87,7 +87,7 @@ namespace BlendInt {
 			case FormPosition: {
 
 				const Point* pos_p = static_cast<const Point*>(request.data());
-				MoveSubWidgetsPosition(pos_p->x() - position().x(), pos_p->y() - position().y());
+				MoveSubWidgets(pos_p->x() - position().x(), pos_p->y() - position().y());
 
 				return true;
 			}
@@ -179,7 +179,7 @@ namespace BlendInt {
 
 		SetPosition(button, GetLastPosition(), position().y() + margin().bottom());
 
-		AddSubWidget(button);
+		AppendSubWidget(button);
 
 		events()->connect(button->clicked(), this, &MenuBar::OnClicked);
 	}

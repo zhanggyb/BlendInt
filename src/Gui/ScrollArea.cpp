@@ -107,7 +107,7 @@ namespace BlendInt {
 					const Point* pos_p = static_cast<const Point*>(request.data());
 					int x = pos_p->x() - position().x();
 					int y = pos_p->y() - position().y();
-					MoveSubWidgetsPosition(x, y);
+					MoveSubWidgets(x, y);
 					return true;
 				}
 
@@ -146,9 +146,9 @@ namespace BlendInt {
 		m_hbar = Manage(new ScrollBar(Horizontal));
 		m_vbar = Manage(new ScrollBar(Vertical));
 
-		AddSubWidget(m_view);
-		AddSubWidget(m_hbar);
-		AddSubWidget(m_vbar);
+		AppendSubWidget(m_view);
+		AppendSubWidget(m_hbar);
+		AppendSubWidget(m_vbar);
 
 		m_hbar->SetVisible(false);
 		m_vbar->SetVisible(false);

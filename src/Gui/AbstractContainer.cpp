@@ -86,7 +86,17 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractContainer::AddSubWidget (AbstractWidget* widget)
+	bool AbstractContainer::FindSubWidget (AbstractWidget* widget)
+	{
+		WidgetDeque::iterator it = std::find(m_sub_widgets->begin(), m_sub_widgets->end(), widget);
+
+		if(it != m_sub_widgets->end())
+			return true;
+		else
+			return false;
+	}
+
+	bool AbstractContainer::AppendSubWidget (AbstractWidget* widget)
 	{
 		if(!widget) return false;
 		if(widget == ContextManager::instance) {
@@ -224,7 +234,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractContainer::MoveSubWidgetsPosition (int offset_x, int offset_y)
+	void AbstractContainer::MoveSubWidgets (int offset_x, int offset_y)
 	{
 		for (WidgetDeque::iterator it = m_sub_widgets->begin();
 						it != m_sub_widgets->end(); it++) {

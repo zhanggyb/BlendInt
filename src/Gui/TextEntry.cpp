@@ -189,7 +189,10 @@ namespace BlendInt {
 
 					m_cursor_buffer->Bind();
 					GLfloat* buf_p = (GLfloat*)m_cursor_buffer->Map(GL_READ_WRITE);
-					*(buf_p + 3) = static_cast<float>(size_p->height()
+					*(buf_p + 5) = static_cast<float>(size_p->height()
+									- DefaultTextEntryPadding.top()
+									- DefaultTextEntryPadding.bottom());
+					*(buf_p + 7) = static_cast<float>(size_p->height()
 									- DefaultTextEntryPadding.top()
 									- DefaultTextEntryPadding.bottom());
 					m_cursor_buffer->Unmap();
@@ -254,7 +257,7 @@ namespace BlendInt {
 
 			glBindVertexArray(m_vao);
 
-			program = ShaderManager::instance->default_line_program();	// Now switch to line program
+			//program = ShaderManager::instance->default_line_program();	// Now switch to line program
 			program->Use();
 
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(text_mvp));
@@ -267,7 +270,7 @@ namespace BlendInt {
 
 			glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-			glDrawArrays(GL_LINES, 0, 2);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			m_cursor_buffer->Reset();
 
@@ -362,16 +365,23 @@ namespace BlendInt {
 				m_outer_buffer.get()
 				);
 
-		std::vector<GLfloat> cursor_vertices(4);
+		std::vector<GLfloat> cursor_vertices(8);
 
 		cursor_vertices[0] = 1.f;
 		cursor_vertices[1] = static_cast<float>(DefaultTextEntryPadding.bottom());
-		cursor_vertices[2] = 1.f;
-		cursor_vertices[3] = static_cast<float>(size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
+
+		cursor_vertices[2] = 3.f;
+		cursor_vertices[3] = static_cast<float>(DefaultTextEntryPadding.bottom());
+
+		cursor_vertices[4] = 1.f;
+		cursor_vertices[5] = static_cast<float>(size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
+
+		cursor_vertices[6] = 3.f;
+		cursor_vertices[7] = static_cast<float>(size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
 
 		m_cursor_buffer->Generate();
 		m_cursor_buffer->Bind();
-		m_cursor_buffer->SetData(4 * sizeof(GLfloat), &cursor_vertices[0]);
+		m_cursor_buffer->SetData(8 * sizeof(GLfloat), &cursor_vertices[0]);
 		m_cursor_buffer->Reset();
 
 		glBindVertexArray(0);

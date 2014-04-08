@@ -58,9 +58,7 @@ namespace BlendInt {
 
 		void SetMargin (int left, int right, int top, int bottom);
 
-		bool AddSubWidget (AbstractWidget* widget);
-
-		bool RemoveSubWidget (AbstractWidget* widget);
+		bool FindSubWidget (AbstractWidget* widget);
 
 		size_t sub_widget_size () const {return m_sub_widgets->size();}
 
@@ -70,7 +68,13 @@ namespace BlendInt {
 
 	protected:
 
-		void MoveSubWidgetsPosition (int offset_x, int offset_y);
+		bool AppendSubWidget (AbstractWidget* widget);
+
+		bool InsertSubWidget (size_t index, AbstractWidget* widget);
+
+		bool RemoveSubWidget (AbstractWidget* widget);
+
+		void MoveSubWidgets (int offset_x, int offset_y);
 
 		void set_margin (const Margin& margin)
 		{

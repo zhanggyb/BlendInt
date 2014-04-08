@@ -56,7 +56,7 @@ namespace BlendInt {
 					int x = new_pos->x() - position().x();
 					int y = new_pos->y() - position().y();
 
-					MoveSubWidgetsPosition(x, y);
+					MoveSubWidgets(x, y);
 					return true;
 				}
 
@@ -134,7 +134,7 @@ namespace BlendInt {
 		SetPreferredSize(prefer_size);
 		SetMinimalSize(min_size);
 
-		AddSubWidget(object);
+		AppendSubWidget(object);
 
 		if(! (current_size == size()))
 			Resize(this, current_size);	// call make_layout() through this function
