@@ -119,9 +119,8 @@ namespace BlendInt {
 
 				case SliderPropertyOrientation: {
 					const Orientation* orient_p = static_cast<const Orientation*>(request.data());
-					glBindVertexArray(m_vao);
-					m_line->Bind();
 
+					m_line->Bind();
 					GLfloat* buf_p = (GLfloat*)m_line->Map(GL_READ_WRITE);
 					if(*orient_p == Horizontal) {
 						*(buf_p + 0) = m_slide.size().width() / 2;
@@ -135,9 +134,8 @@ namespace BlendInt {
 						*(buf_p + 3) = size().height() - m_slide.size().height() / 2;
 					}
 					m_line->Unmap();
-
 					m_line->Reset();
-					glBindVertexArray(0);
+
 					Refresh();
 
 					return true;
