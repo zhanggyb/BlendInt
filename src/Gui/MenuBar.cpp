@@ -207,8 +207,8 @@ namespace BlendInt {
 	{
 		MenuButton* button = 0;
 
-		if(index < sub_widgets().size()) {
-			button = dynamic_cast<MenuButton*>(sub_widgets()[index]);
+		if(index < sub_widgets()->size()) {
+			button = dynamic_cast<MenuButton*>(sub_widgets()->at(index));
 		}
 
 		return button;
@@ -223,10 +223,10 @@ namespace BlendInt {
 	{
 		int pos = position().x() + margin().left();
 
-		if(sub_widgets().size()) {
+		if(sub_widgets()->size()) {
 			pos -= m_space;
 
-			for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				pos += m_space;
 				pos = pos + (*it)->size().width();

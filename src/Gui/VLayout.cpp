@@ -186,7 +186,7 @@ namespace BlendInt {
 	{
 		int y = position().y() + size->height() - margin->top();
 
-		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			Resize(*it, (*it)->size().width(), (*it)->preferred_size().height());
 		}
@@ -216,7 +216,7 @@ namespace BlendInt {
 				        - fixed_height - (sub_widget_size() - 1) * space;
 				average_expd_height = average_expd_height / exp_num;
 
-				for (it = sub_widgets().begin(); it != sub_widgets().end(); it++) {
+				for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
 					child = *it;
 
 					if (child->expand_y()) {
@@ -241,7 +241,7 @@ namespace BlendInt {
 				        - min_expd_height - (sub_widget_size() - 1) * space;
 				unsigned int average_fixed_height = total_fixed_height / fixed_num;
 
-				for (it = sub_widgets().begin(); it != sub_widgets().end(); it++) {
+				for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
 					child = *it;
 
 					if (child->expand_y()) {
@@ -297,7 +297,7 @@ namespace BlendInt {
 				unsigned int height_plus = 0;
 				int y = position().y() + size->height() - margin->top();
 
-				for (it = sub_widgets().begin(); it != sub_widgets().end(); it++) {
+				for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
 					child = *it;
 					if(child->expand_y()) {
 						if(average_expd_height > child->maximal_size().height()) {
@@ -322,7 +322,7 @@ namespace BlendInt {
 		                - (sub_widget_size() - 1) * space) / 2;
 
 				// resize all with the max size
-				for(it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+				for(it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 				{
 					child = *it;
 
@@ -343,7 +343,7 @@ namespace BlendInt {
 			y = y - (current_height - margin_plus - fixed_height - (sub_widget_size() - exp_num - 1) * space) / 2;
 
 			// resize all with preferred width
-			for(it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+			for(it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				child = *it;
 				Resize(child, child->preferred_size().width(),
@@ -358,7 +358,7 @@ namespace BlendInt {
 	void VLayout::Distribute(int space, int start)
 	{
 		start += space;	// add one space to make sure no space if only 1 child in layout
-		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			start -= space;
 
@@ -375,7 +375,7 @@ namespace BlendInt {
 
 		WidgetDeque::iterator it;
 		AbstractWidget* child = 0;
-		for(it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		for(it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			child = *it;
 
@@ -457,7 +457,7 @@ namespace BlendInt {
 	{
 		unsigned int height = 0;
 
-		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->expand_y())
 				height += (*it)->minimal_size().height();
@@ -470,7 +470,7 @@ namespace BlendInt {
 	{
 		unsigned int height = 0;
 
-		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->expand_y())
 				height += (*it)->maximal_size().height();
@@ -483,7 +483,7 @@ namespace BlendInt {
 	{
 		unsigned int height = 0;
 
-		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if(!(*it)->expand_y())
 				height += (*it)->size().height();
@@ -496,7 +496,7 @@ namespace BlendInt {
 	{
 		unsigned int num = 0;
 
-		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->expand_y()) {
 				num++;
@@ -525,7 +525,7 @@ namespace BlendInt {
 			preferred_size_out.set_height(margin().top());
 		}
 
-		for(it = sub_widgets().rbegin(); it != sub_widgets().rend(); it++)
+		for(it = sub_widgets()->rbegin(); it != sub_widgets()->rend(); it++)
 		{
 			child = *it;
 

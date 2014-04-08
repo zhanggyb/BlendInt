@@ -768,14 +768,14 @@ namespace BlendInt {
 					scissor_status.Enable();
 
 					for (std::deque<AbstractWidget*>::iterator it =
-					        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
+					        p->m_sub_widgets->begin(); it != p->m_sub_widgets->end();
 					        it++) {
 						DispatchDrawEvent(*it, event);
 					}
 
 				} else {
 					for (std::deque<AbstractWidget*>::iterator it =
-					        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
+					        p->m_sub_widgets->begin(); it != p->m_sub_widgets->end();
 					        it++) {
 						DispatchDrawEvent(*it, event);
 					}
@@ -822,7 +822,7 @@ namespace BlendInt {
 			if (p) {
 
 				for (std::deque<AbstractWidget*>::iterator it =
-				        p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
+				        p->m_sub_widgets->begin(); it != p->m_sub_widgets->end();
 				        it++) {
 					if ((*it)->contain(cursor_point)) {
 						m_hover_deque->push_back(*it);

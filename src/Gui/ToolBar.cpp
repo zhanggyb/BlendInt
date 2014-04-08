@@ -191,12 +191,12 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void ToolBar::AddButton (ToolButton* button)
+	void ToolBar::Add (AbstractWidget* widget)
 	{
 		int x = GetLastPosition();
-		Resize(button, 24, 24);
-		SetPosition(button, x, position().y() + margin().bottom());
-		AddSubWidget(button);
+		Resize(widget, widget->preferred_size().width(), 24);
+		SetPosition(widget, x, position().y() + margin().bottom());
+		AddSubWidget(widget);
 	}
 
 	void ToolBar::AddButton (const RefPtr<ActionItem>& action)
@@ -237,7 +237,7 @@ namespace BlendInt {
 	{
 		int x = position().x() + margin().left();
 
-		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			x += (*it)->size().width() + m_space;
 		}

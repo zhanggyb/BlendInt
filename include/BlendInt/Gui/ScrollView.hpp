@@ -71,7 +71,7 @@ namespace BlendInt {
 
 		AbstractWidget* viewport () const
 		{
-			return sub_widgets().size() > 0 ? sub_widgets().front() : 0;
+			return sub_widgets()->size() > 0 ? sub_widgets()->front() : 0;
 		}
 
 	protected:

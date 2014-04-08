@@ -501,7 +501,7 @@ namespace BlendInt {
 		unsigned int col_num = 0;
 		unsigned int row_num = 0;
 
-		for(WidgetDeque::iterator it = sub_widgets().begin(); it != sub_widgets().end(); it++)
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 
 		}

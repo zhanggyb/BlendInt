@@ -42,7 +42,7 @@ namespace BlendInt {
 
 		virtual ~ToolBar ();
 
-		void AddButton (ToolButton* button);
+		void Add (AbstractWidget* widget);
 
 		void AddButton (const RefPtr<ActionItem>& action);
 

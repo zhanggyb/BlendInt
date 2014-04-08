@@ -56,7 +56,7 @@ namespace BlendInt {
 				m_vbar->SetVisible(true);
 			}
 
-			AdjustGeometries();
+			AdjustGeometries(size());
 		}
 	}
 
@@ -108,6 +108,15 @@ namespace BlendInt {
 					int x = pos_p->x() - position().x();
 					int y = pos_p->y() - position().y();
 					MoveSubWidgetsPosition(x, y);
+					return true;
+				}
+
+				case FormSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					AdjustGeometries(*size_p);
+
 					return true;
 				}
 
@@ -163,12 +172,12 @@ namespace BlendInt {
 		events()->connect(m_vbar->slider_moved(), this, &ScrollArea::OnVerticalScroll);
 	}
 	
-	void ScrollArea::AdjustGeometries ()
+	void ScrollArea::AdjustGeometries (const Size& size)
 	{
 		int x = position().x() + margin().left();
 		int y = position().y() + margin().bottom();
-		unsigned int w = size().width() - margin().left() - margin().right();
-		unsigned int h = size().height() - margin().top() - margin().bottom();
+		unsigned int w = size.width() - margin().left() - margin().right();
+		unsigned int h = size.height() - margin().top() - margin().bottom();
 		int bh = 0;
 		int rw = 0;
 

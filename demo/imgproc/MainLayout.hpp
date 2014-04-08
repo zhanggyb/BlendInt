@@ -11,6 +11,9 @@
 #include <BlendInt/Gui/ToolBar.hpp>
 #include <BlendInt/Gui/CVImageView.hpp>
 
+#include <BlendInt/Gui/TextEntry.hpp>
+#include <BlendInt/Gui/ToolButton.hpp>
+
 namespace BI = BlendInt;
 
 class MainLayout: public BI::VLayout
@@ -30,6 +33,9 @@ private:
 	BI::MenuBar* m_menubar;
 	BI::ToolBar* m_toolbar;
 	BI::CVImageView* m_imgview;
+
+	BI::TextEntry* m_input;
+	BI::ToolButton* m_open;
 
 };
 

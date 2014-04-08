@@ -25,6 +25,7 @@
 #define _BLENDINT_CONTAINER_HPP_
 
 #include <deque>
+#include <boost/smart_ptr.hpp>
 
 #include <BlendInt/Core/Margin.hpp>
 
@@ -61,7 +62,7 @@ namespace BlendInt {
 
 		bool RemoveSubWidget (AbstractWidget* widget);
 
-		size_t sub_widget_size () const {return m_sub_widgets.size();}
+		size_t sub_widget_size () const {return m_sub_widgets->size();}
 
 #ifdef DEBUG
 		void print ();
@@ -86,9 +87,9 @@ namespace BlendInt {
 
 		void ClearSubWidgets ();
 
-		WidgetDeque sub_widgets () const
+		WidgetDeque* sub_widgets () const
 		{
-			return m_sub_widgets;
+			return m_sub_widgets.get();
 		}
 
 	private:
@@ -105,7 +106,7 @@ namespace BlendInt {
 		/**
 		 * @brief Sub widgets which build a tree to accept render and device events
 		 */
-		WidgetDeque m_sub_widgets;
+		boost::scoped_ptr<WidgetDeque> m_sub_widgets;
 	};
 
 }

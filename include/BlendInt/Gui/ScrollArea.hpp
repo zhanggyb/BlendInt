@@ -71,7 +71,7 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		void AdjustGeometries ();
+		void AdjustGeometries (const Size& size);
 
 		ScrollView* m_view;
 

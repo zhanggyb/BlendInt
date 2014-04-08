@@ -31,12 +31,13 @@ namespace BlendInt {
 
 	AbstractContainer::AbstractContainer ()
 	{
+		m_sub_widgets.reset(new WidgetDeque);
 		ContextManager::instance->AddSubWidget(this);
 	}
 
 	AbstractContainer::~AbstractContainer ()
 	{
-		for(WidgetDeque::iterator it = m_sub_widgets.begin(); it != m_sub_widgets.end(); it++)
+		for(WidgetDeque::iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
 		{
 			// check if need to delete
 			if((*it)->managed()) {
@@ -111,7 +112,7 @@ namespace BlendInt {
 
 		}
 
-		m_sub_widgets.push_back(widget);
+		m_sub_widgets->push_back(widget);
 
 		if(old_container) {
 			old_container->RemoveSubWidgetOnly(widget);
@@ -139,11 +140,11 @@ namespace BlendInt {
 
 				ContextManager::instance->AddSubWidget(widget);
 
-				WidgetDeque::iterator it = std::find(m_sub_widgets.begin(),
-				        m_sub_widgets.end(), widget);
+				WidgetDeque::iterator it = std::find(m_sub_widgets->begin(),
+				        m_sub_widgets->end(), widget);
 
-				if (it != m_sub_widgets.end()) {
-					m_sub_widgets.erase(it);
+				if (it != m_sub_widgets->end()) {
+					m_sub_widgets->erase(it);
 					widget->m_flag.reset(WidgetFlagInContainer);
 				} else {
 					DBG_PRINT_MSG(
@@ -167,7 +168,7 @@ namespace BlendInt {
 
 	void AbstractContainer::print()
 	{
-		for(WidgetDeque::iterator it = m_sub_widgets.begin(); it != m_sub_widgets.end(); it++)
+		for(WidgetDeque::iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
 		{
 			// check if need to delete
 			DBG_PRINT_MSG("Sub widget %s in %s", (*it)->name().c_str(), name().c_str());
@@ -178,7 +179,7 @@ namespace BlendInt {
 
 	void AbstractContainer::ClearSubWidgets ()
 	{
-		for(WidgetDeque::iterator it = m_sub_widgets.begin(); it != m_sub_widgets.end(); it++)
+		for(WidgetDeque::iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
 		{
 			(*it)->destroyed().disconnectOne(this, &AbstractContainer::OnSubWidgetDestroyed);
 
@@ -187,17 +188,17 @@ namespace BlendInt {
 			}
 		}
 
-		m_sub_widgets.clear();
+		m_sub_widgets->clear();
 	}
 
 	void AbstractContainer::OnSubWidgetDestroyed(AbstractWidget* widget)
 	{
 		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the container %s", widget->name().c_str(), name().c_str());
 
-		WidgetDeque::iterator it = std::find(m_sub_widgets.begin(),
-		        m_sub_widgets.end(), widget);
-		if (it != m_sub_widgets.end()) {
-			m_sub_widgets.erase(it);
+		WidgetDeque::iterator it = std::find(m_sub_widgets->begin(),
+		        m_sub_widgets->end(), widget);
+		if (it != m_sub_widgets->end()) {
+			m_sub_widgets->erase(it);
 		} else {
 			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
 			        widget->name().c_str(), name().c_str());
@@ -211,10 +212,10 @@ namespace BlendInt {
 		if(widget) {
 			widget->destroyed().disconnectOne(this, &AbstractContainer::OnSubWidgetDestroyed);
 
-			WidgetDeque::iterator it = std::find(m_sub_widgets.begin(),
-			        m_sub_widgets.end(), widget);
-			if (it != m_sub_widgets.end()) {
-				m_sub_widgets.erase(it);
+			WidgetDeque::iterator it = std::find(m_sub_widgets->begin(),
+			        m_sub_widgets->end(), widget);
+			if (it != m_sub_widgets->end()) {
+				m_sub_widgets->erase(it);
 			} else {
 				DBG_PRINT_MSG("Warning: object %s is not found in container %s",
 				        widget->name().c_str(), name().c_str());
@@ -225,8 +226,8 @@ namespace BlendInt {
 
 	void AbstractContainer::MoveSubWidgetsPosition (int offset_x, int offset_y)
 	{
-		for (WidgetDeque::iterator it = m_sub_widgets.begin();
-						it != m_sub_widgets.end(); it++) {
+		for (WidgetDeque::iterator it = m_sub_widgets->begin();
+						it != m_sub_widgets->end(); it++) {
 			SetPosition(*it, (*it)->position().x() + offset_x,
 							(*it)->position().y() + offset_y);
 		}

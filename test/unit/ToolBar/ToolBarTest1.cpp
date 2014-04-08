@@ -39,9 +39,9 @@ TEST_F(ToolBarTest1, Foo1)
     ToolButton* btn3 = Manage (new ToolButton);
     btn3->set_name("ToolButton3");
 
-	toolbar->AddButton(btn1);
-	toolbar->AddButton(btn2);
-	toolbar->AddButton(btn3);
+	toolbar->Add(btn1);
+	toolbar->Add(btn2);
+	toolbar->Add(btn3);
 
     toolbar->SetPosition(100, 100);
 

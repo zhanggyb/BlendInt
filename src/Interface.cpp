@@ -458,7 +458,7 @@ namespace BlendInt {
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
 			if(p) {
 				for (WidgetDeque::iterator it =
-						p->m_sub_widgets.begin(); it != p->m_sub_widgets.end();
+						p->m_sub_widgets->begin(); it != p->m_sub_widgets->end();
 						it++) {
 					if ((*it)->contain(cursor)) {
 						ContextManager::instance->m_hover_deque->push_back(*it);
