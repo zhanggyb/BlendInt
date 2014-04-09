@@ -77,8 +77,6 @@ namespace BlendInt {
 			ContextManager::instance->SetFocusedWidget(0);
 		}
 
-
-
 		m_destroyed.fire(this);
 	}
 
@@ -294,7 +292,7 @@ namespace BlendInt {
 	void AbstractWidget::SetVisible (bool visible)
 	{
 		if(m_flag[WidgetFlagVisibility] == visible)
-		return;
+			return;
 
 		if(Update (UpdateRequest(Predefined, WidgetVisibility, &visible))) {
 			m_flag[WidgetFlagVisibility] = visible ? 1 : 0;

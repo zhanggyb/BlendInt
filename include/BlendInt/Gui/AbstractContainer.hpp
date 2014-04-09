@@ -76,6 +76,10 @@ namespace BlendInt {
 
 		void MoveSubWidgets (int offset_x, int offset_y);
 
+		void ResizeSubWidgets (const Size& size);
+
+		void ResizeSubWidgets (unsigned int w, unsigned int h);
+
 		void set_margin (const Margin& margin)
 		{
 			m_margin = margin;

@@ -24,10 +24,11 @@ ButtonTest1::~ButtonTest1()
 TEST_F(ButtonTest1, Foo1)
 {
     Init();
-    GLFWwindow* win = CreateWindow("Button Test - Foo1");
+    GLFWwindow* win = CreateWindow("Button Test - Foo1", 640, 480);
 
     Button* bt1 = Manage (new Button);
     bt1->SetPosition(200, 200);
+    bt1->SetText("Hello");
     bt1->set_name("Button 1");
 
     RunLoop(win);

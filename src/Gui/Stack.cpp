@@ -29,7 +29,8 @@ namespace BlendInt {
 	Stack::Stack()
 	: AbstractContainer(), m_index(0)
 	{
-
+		set_preferred_size(400, 300);
+		set_size(400, 300);
 	}
 
 	Stack::~Stack()
@@ -41,22 +42,37 @@ namespace BlendInt {
 	{
 		if(AppendSubWidget(widget)) {
 			// TODO: lock widget's geometry
-			Resize(widget, size());
-			SetPosition(widget, position());
+
+			unsigned int w = size().width() - margin().left() - margin().right();
+			unsigned int h = size().height() - margin().top() - margin().bottom();
+
+			Resize(widget, w, h);
+			SetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+
+			if((sub_widget_size() - 1) != m_index) {
+				widget->SetVisible(false);
+			}
 		}
 	}
 
 	void Stack::Insert (size_t index, AbstractWidget* widget)
 	{
-		// TODO: insert
+		if(InsertSubWidget(index, widget)) {
+			// TODO: lock widget's geometry
 
-		Resize(widget, size());
-		SetPosition(widget, position());
+			unsigned int w = size().width() - margin().left() - margin().right();
+			unsigned int h = size().height() - margin().top() - margin().bottom();
+
+			Resize(widget, w, h);
+			SetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+		}
 	}
 
 	void Stack::Remove (AbstractWidget* widget)
 	{
-
+		if(RemoveSubWidget(widget)) {
+			m_index--;
+		}
 	}
 
 	void Stack::SetIndex (size_t index)
@@ -71,10 +87,6 @@ namespace BlendInt {
 			m_index = index;
 			sub_widgets()->at(m_index)->SetVisible(true);
 		}
-
-		if(index > (sub_widget_size() - 1)) return;
-
-		m_index = index;
 	}
 
 	AbstractWidget* Stack::GetActiveWidget () const
@@ -100,7 +112,7 @@ namespace BlendInt {
 
 	bool Stack::Update (const UpdateRequest& request)
 	{
-		if(request.source()) {
+		if(request.source() == Predefined) {
 
 			switch (request.type()) {
 
@@ -118,10 +130,22 @@ namespace BlendInt {
 				case FormSize: {
 					const Size* new_size = static_cast<const Size*>(request.data());
 
-					for (WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-					{
-						Resize((*it), *new_size);
-					}
+					unsigned int w = new_size->width() - margin().left() - margin().right();
+					unsigned int h = new_size->height() - margin().top() - margin().bottom();
+
+					ResizeSubWidgets(w, h);
+
+					return true;
+				}
+
+				case ContainerMargin: {
+
+					const Margin* margin_p = static_cast<const Margin*>(request.data());
+
+					unsigned int w = size().width() - margin_p->left() - margin_p->right();
+					unsigned int h = size().height() - margin_p->top() - margin_p->bottom();
+
+					ResizeSubWidgets(w, h);
 
 					return true;
 				}
@@ -172,7 +196,7 @@ namespace BlendInt {
 
 	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)
 	{
-		return Ignore;
+		return IgnoreAndContinue;
 	}
 
 }

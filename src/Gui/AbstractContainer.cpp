@@ -138,6 +138,55 @@ namespace BlendInt {
 		return true;
 	}
 
+	bool AbstractContainer::InsertSubWidget (size_t index, AbstractWidget* widget)
+	{
+		if(!widget) return false;
+		if(widget == ContextManager::instance) {
+			DBG_PRINT_MSG("%s", "Cannot add context manager in container");
+			return false;
+		}
+		if(index > (m_sub_widgets->size() - 1)) {
+			DBG_PRINT_MSG("Out of range: index %ld is not valid", index);
+			return false;
+		}
+
+		AbstractContainer* old_container = 0;
+
+		// Remove the widget from the original container
+		if(widget->container()) {
+
+			if(widget->container() == this) {
+				DBG_PRINT_MSG("%s", "The widget is already in this container");
+				return true;
+			}
+
+			if(widget->container() == ContextManager::instance) {
+				ContextManager::instance->Unregister(widget);
+			} else {
+				old_container = dynamic_cast<AbstractContainer*>(widget->container());
+			}
+
+		}
+
+		WidgetDeque::iterator it = m_sub_widgets->begin();
+		std::advance(it, index);
+		m_sub_widgets->insert(it, widget);
+
+		if(old_container) {
+			old_container->RemoveSubWidgetOnly(widget);
+		}
+
+		widget->m_container = this;
+		widget->m_flag.set(WidgetFlagInContainer);
+
+		// TODO: set layer and lock the geometry of the sub widget
+
+		events()->connect(widget->destroyed(), this, &AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+
 	bool AbstractContainer::RemoveSubWidget (AbstractWidget* widget)
 	{
 		if (widget) {
@@ -193,7 +242,7 @@ namespace BlendInt {
 		{
 			(*it)->destroyed().disconnectOne(this, &AbstractContainer::OnSubWidgetDestroyed);
 
-			if((*it)->m_flag[AbstractWidget::WidgetFlagManaged]) {
+			if((*it)->managed() && (*it)->count() == 0) {
 				delete *it;
 			}
 		}
@@ -240,6 +289,22 @@ namespace BlendInt {
 						it != m_sub_widgets->end(); it++) {
 			SetPosition(*it, (*it)->position().x() + offset_x,
 							(*it)->position().y() + offset_y);
+		}
+	}
+
+	void AbstractContainer::ResizeSubWidgets(const Size& size)
+	{
+		for (WidgetDeque::iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
+		{
+			Resize((*it), size);
+		}
+	}
+
+	void AbstractContainer::ResizeSubWidgets(unsigned int w, unsigned int h)
+	{
+		for (WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			Resize((*it), w, h);
 		}
 	}
 
