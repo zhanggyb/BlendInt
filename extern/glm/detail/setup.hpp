@@ -38,7 +38,7 @@
 #define GLM_VERSION_MAJOR			0
 #define GLM_VERSION_MINOR			9
 #define GLM_VERSION_PATCH			5
-#define GLM_VERSION_REVISION		2
+#define GLM_VERSION_REVISION		3
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Platform
@@ -211,6 +211,9 @@
 
 // CUDA
 #elif defined(__CUDACC__)
+#	if !defined(CUDA_VERSION) && !defined(GLM_FORCE_CUDA)
+#		include <cuda.h>  // make sure version is defined since nvcc does not define it itself! 
+#	endif
 #	if CUDA_VERSION < 3000
 #		error "GLM requires CUDA 3.0 or higher"
 #	else
@@ -550,9 +553,8 @@
 #define GLM_ARCH_PURE		0x0000
 #define GLM_ARCH_SSE2		0x0001
 #define GLM_ARCH_SSE3		0x0002// | GLM_ARCH_SSE2
-#define GLM_ARCH_SSE4		0x0004// | GLM_ARCH_SSE3 | GLM_ARCH_SSE2
-#define GLM_ARCH_AVX		0x0008// | GLM_ARCH_SSE4 | GLM_ARCH_SSE3 | GLM_ARCH_SSE2
-#define GLM_ARCH_AVX2		0x0010// | GLM_ARCH_AVX | GLM_ARCH_SSE4 | GLM_ARCH_SSE3 | GLM_ARCH_SSE2
+#define GLM_ARCH_AVX		0x0008// | GLM_ARCH_SSE3 | GLM_ARCH_SSE2
+#define GLM_ARCH_AVX2		0x0010// | GLM_ARCH_AVX | GLM_ARCH_SSE3 | GLM_ARCH_SSE2
 
 #if(defined(GLM_FORCE_PURE))
 #	define GLM_ARCH GLM_ARCH_PURE
@@ -560,51 +562,32 @@
 #	define GLM_ARCH (GLM_ARCH_AVX2 | GLM_ARCH_AVX | GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
 #elif(defined(GLM_FORCE_AVX))
 #	define GLM_ARCH (GLM_ARCH_AVX | GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
-#elif(defined(GLM_FORCE_SSE4))
-#	define GLM_ARCH (GLM_ARCH_SSE4 | GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
 #elif(defined(GLM_FORCE_SSE3))
 #	define GLM_ARCH (GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
 #elif(defined(GLM_FORCE_SSE2))
 #	define GLM_ARCH (GLM_ARCH_SSE2)
-#elif((GLM_COMPILER & GLM_COMPILER_VC) && (defined(_M_IX86) || defined(_M_X64)))
-#	if(GLM_PLATFORM == GLM_PLATFORM_WINCE)
-#		define GLM_ARCH GLM_ARCH_PURE
-#	elif(defined(_M_CEE_PURE))
-#		define GLM_ARCH GLM_ARCH_PURE
-/* TODO: Explore auto detection of instruction set support
-#	elif(defined(_M_IX86_FP))
-#		if(_M_IX86_FP >= 3)
-#			define GLM_ARCH (GLM_ARCH_AVX | GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
-#		elif(_M_IX86_FP >= 2)
-#			define GLM_ARCH (GLM_ARCH_SSE2)
-#		else
-#			define GLM_ARCH GLM_ARCH_PURE
-#		endif
-*/
-#	elif(GLM_COMPILER >= GLM_COMPILER_VC11)
+#elif(GLM_COMPILER & GLM_COMPILER_VC)
+#	if _M_IX86_FP == 2 && defined(__AVX__)
 #		define GLM_ARCH (GLM_ARCH_AVX | GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
-#	elif(GLM_COMPILER >= GLM_COMPILER_VC10)
-#		if(_MSC_FULL_VER >= 160031118) //160031118: VC2010 SP1 beta full version
-#			define GLM_ARCH (GLM_ARCH_AVX | GLM_ARCH_SSE3 | GLM_ARCH_SSE2)//GLM_ARCH_AVX (Require SP1)
-#		else
-#			define GLM_ARCH (GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
-#		endif
-#	elif(GLM_COMPILER >= GLM_COMPILER_VC9) 
-#		define GLM_ARCH (GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
-#	elif(GLM_COMPILER >= GLM_COMPILER_VC8)
-#		define GLM_ARCH GLM_ARCH_SSE2
+#	elif _M_IX86_FP == 2
+#		define GLM_ARCH (GLM_ARCH_SSE2)
 #	else
-#		define GLM_ARCH GLM_ARCH_PURE
+#		define GLM_ARCH (GLM_ARCH_PURE)
 #	endif
 #elif((GLM_PLATFORM & GLM_PLATFORM_APPLE) && (GLM_COMPILER & GLM_COMPILER_GCC))
 #	define GLM_ARCH GLM_ARCH_PURE
 #elif(((GLM_COMPILER & GLM_COMPILER_GCC) && (defined(__i386__) || defined(__x86_64__))) || (GLM_COMPILER & GLM_COMPILER_LLVM_GCC))
-#	define GLM_ARCH (GLM_ARCH_PURE \
-| (defined(__AVX2__) ? GLM_ARCH_AVX2 : 0) \
-| (defined(__AVX__) ? GLM_ARCH_AVX : 0) \
-| (defined(__SSE4__) ? GLM_ARCH_SSE4 : 0) \
-| (defined(__SSE3__) ? GLM_ARCH_SSE3 : 0) \
-| (defined(__SSE2__) ? GLM_ARCH_SSE2 : 0))
+#	if defined(__AVX2__) 
+#		define GLM_ARCH (GLM_ARCH_AVX2 | GLM_ARCH_AVX | GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
+#	elif defined(__AVX__)
+#		define GLM_ARCH (GLM_ARCH_AVX | GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
+#	elif defined(__SSE3__)
+#		define GLM_ARCH (GLM_ARCH_SSE3 | GLM_ARCH_SSE2)
+#	elif defined(__SSE2__)
+#		define GLM_ARCH (GLM_ARCH_SSE2)
+#	else
+#		define GLM_ARCH (GLM_ARCH_PURE)
+#	endif
 #else
 #	define GLM_ARCH GLM_ARCH_PURE
 #endif

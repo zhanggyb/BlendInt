@@ -41,16 +41,21 @@ namespace detail
 	template <typename T, precision P>
 	struct compute_dot<detail::tvec1, T, P>
 	{
-		static T call(detail::tvec1<T, P> const & x, detail::tvec1<T, P> const & y)
+		GLM_FUNC_QUALIFIER static T call(detail::tvec1<T, P> const & x, detail::tvec1<T, P> const & y)
 		{
-			return detail::tvec1<T, P>(x * y).x;
+#			ifdef __CUDACC__ // Wordaround for a CUDA compiler bug up to CUDA6
+				detail::tvec1<T, P> tmp(x * y);
+				return tmp.x;
+#			else
+				return detail::tvec1<T, P>(x * y).x;
+#			endif
 		}
 	};
 
 	template <typename T, precision P>
 	struct compute_dot<detail::tvec2, T, P>
 	{
-		static T call(detail::tvec2<T, P> const & x, detail::tvec2<T, P> const & y)
+		GLM_FUNC_QUALIFIER static T call(detail::tvec2<T, P> const & x, detail::tvec2<T, P> const & y)
 		{
 			detail::tvec2<T, P> tmp(x * y);
 			return tmp.x + tmp.y;
@@ -60,7 +65,7 @@ namespace detail
 	template <typename T, precision P>
 	struct compute_dot<detail::tvec3, T, P>
 	{
-		static T call(detail::tvec3<T, P> const & x, detail::tvec3<T, P> const & y)
+		GLM_FUNC_QUALIFIER static T call(detail::tvec3<T, P> const & x, detail::tvec3<T, P> const & y)
 		{
 			detail::tvec3<T, P> tmp(x * y);
 			return tmp.x + tmp.y + tmp.z;
@@ -70,7 +75,7 @@ namespace detail
 	template <typename T, precision P>
 	struct compute_dot<detail::tvec4, T, P>
 	{
-		static T call(detail::tvec4<T, P> const & x, detail::tvec4<T, P> const & y)
+		GLM_FUNC_QUALIFIER static T call(detail::tvec4<T, P> const & x, detail::tvec4<T, P> const & y)
 		{
 			detail::tvec4<T, P> tmp(x * y);
 			return (tmp.x + tmp.y) + (tmp.z + tmp.w);
