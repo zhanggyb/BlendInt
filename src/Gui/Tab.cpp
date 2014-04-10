@@ -21,14 +21,14 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/TabButton.hpp>
 
 #include <BlendInt/Gui/Tab.hpp>
 
 namespace BlendInt {
 
 	Tab::Tab ()
-	: m_title_height(20), m_stack(0)
+	: m_title_height(12), m_stack(0)
 	{
 		set_preferred_size(400, 300);
 		set_size(400, 300);
@@ -44,7 +44,7 @@ namespace BlendInt {
 
 	void Tab::Add (const String& title, AbstractWidget* widget)
 	{
-		Button* btn = Manage(new Button);
+		TabButton* btn = Manage(new TabButton);
 		btn->SetText(title);
 
 		AppendSubWidget(btn);

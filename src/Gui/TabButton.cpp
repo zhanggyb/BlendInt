@@ -45,8 +45,8 @@ namespace BlendInt {
 	TabButton::TabButton ()
 	: AbstractButton(), m_vao(0)
 	{
-		set_size(80, 20);
-		set_preferred_size(80, 20);
+		set_size(80, 12);
+		set_preferred_size(80, 12);
 
 		InitOnce();
 	}
@@ -73,7 +73,7 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					glBindVertexArray(m_vao);
+					/*
 					GenerateFormBuffer(*size_p,
 									   RoundNone,
 									   0.f,
@@ -81,6 +81,9 @@ namespace BlendInt {
 									   m_outer_buffer.get(),
 									   0);
 					glBindVertexArray(0);
+					*/
+					GenerateBuffers(*size_p, m_inner_buffer.get(), m_outer_buffer.get());
+
 					Refresh();
 					return true;
 				}
@@ -114,23 +117,16 @@ namespace BlendInt {
 		glm::vec4 color;
 
 		// draw inner, simple fill
-		if(down()) {
+		if (down()) {
 			color.r = tm->themes()->regular.inner_sel.r() / 255.f;
 			color.g = tm->themes()->regular.inner_sel.g() / 255.f;
 			color.b = tm->themes()->regular.inner_sel.b() / 255.f;
 			color.a = tm->themes()->regular.inner_sel.a() / 255.f;
 		} else {
-			if(hover()) {
-				color.r = tm->themes()->regular.inner.highlight_red() / 255.f;
-				color.g = tm->themes()->regular.inner.highlight_green() / 255.f;
-				color.b = tm->themes()->regular.inner.highlight_blue() / 255.f;
-				color.a = tm->themes()->regular.inner.a() / 255.f;
-			} else {
-				color.r = tm->themes()->regular.inner.r() / 255.f;
-				color.g = tm->themes()->regular.inner.g() / 255.f;
-				color.b = tm->themes()->regular.inner.b() / 255.f;
-				color.a = tm->themes()->regular.inner.a() / 255.f;
-			}
+			color.r = tm->themes()->regular.inner.r() / 255.f;
+			color.g = tm->themes()->regular.inner.g() / 255.f;
+			color.b = tm->themes()->regular.inner.b() / 255.f;
+			color.a = tm->themes()->regular.inner.a() / 255.f;
 		}
 
 		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
@@ -138,6 +134,7 @@ namespace BlendInt {
 		glEnableVertexAttribArray(0);
 
 		//DrawTriangleFan(0, m_inner_buffer.get());
+		DrawTriangleStrip(0, m_inner_buffer.get());
 
 		color.r = themes()->regular.outline.r() / 255.f;
 		color.g = themes()->regular.outline.g() / 255.f;
@@ -179,7 +176,7 @@ namespace BlendInt {
 						m_outer_buffer.get(),
 						0);
 						*/
-		GenerateBuffers(size(), 0, m_outer_buffer.get());
+		GenerateBuffers(size(), m_inner_buffer.get(), m_outer_buffer.get());
 
 		glBindVertexArray(0);
 	}
@@ -198,47 +195,80 @@ namespace BlendInt {
 		if((!inner) && (!outer))
 			return;
 
-		int hh = size.height() / 2;
-		int hw = 10;
+		int amp = size.height() / 2;
+		int shift_x = 5;
 
-		int stride = size.width() - 2 * hw;
+		if(inner) {
 
-		if(outer) {
+			if(inner->size() != 2 * 11 * 2)
+				inner->resize(2 * 11 * 2);
 
-			if(outer->size() != 2 * 11 * 2)
-				outer->resize(2 * 11 * 2);
-
-			for(int i = 0; i <= 10; i++)
+			size_t count = 0;
+			for(int i = 0; i <= 10; i++, count += 4)
 			{
-				(*outer)[4 * i + 0] = i;
-				(*outer)[4 * i + 1] = hh * sin((i - hw) / (2 * M_PI)) + hh;
-				(*outer)[4 * i + 2] = i;
-				(*outer)[4 * i + 3] = (*outer)[4 * i + 1] - border;
-
-				DBG_PRINT_MSG("x: %f, y: %f -- x: %f, y: %f",
-								(*outer)[4 * i + 0],
-								(*outer)[4 * i + 1],
-								(*outer)[4 * i + 2],
-								(*outer)[4 * i + 3]);
+				(*inner)[count + 0] = i;
+				(*inner)[count + 1] = sin_curve(i, amp, -shift_x, -border);
+				(*inner)[count + 2] = size.width() - i;
+				(*inner)[count + 3] = (*inner)[count + 1];
 			}
 
 		}
+
+		if(outer) {
+
+			if(outer->size() != 2 * 11 * 2 * 2)
+				outer->resize(2 * 11 * 2 * 2);
+
+			size_t count = 0;
+			for(int i = 0; i <= 10; i++, count += 4)
+			{
+				(*outer)[count + 0] = i;
+				(*outer)[count + 1] = sin_curve(i, amp, -shift_x, 0.0);
+				(*outer)[count + 2] = i;
+				(*outer)[count + 3] = (*outer)[count + 1] - border;
+			}
+
+			for(int i = 0; i <= 10; i++, count += 4)
+			{
+				(*outer)[count + 0] = size.width() - (*outer)[4 * (10 - i) + 0];
+				(*outer)[count + 1] = (*outer)[4 * (10 - i) + 1];
+				(*outer)[count + 2] = size.width() - (*outer)[4 * (10 - i) + 2];
+				(*outer)[count + 3] = (*outer)[4 * (10 - i) + 3];
+			}
+		}
+	}
+	
+	inline double TabButton::sin_curve (double x, double amplitude,
+					double shift_x, double shift_y)
+	{
+		return amplitude * sin((x + shift_x) / M_PI) + amplitude + shift_y;
 	}
 
 	void TabButton::GenerateBuffers (const Size& size, GLArrayBuffer* inner_buffer,
 					GLArrayBuffer* outer_buffer)
 	{
-		std::vector<GLfloat> vertices;
+		std::vector<GLfloat> inner_vertices;
+		std::vector<GLfloat> outer_vertices;
 
-		GenerateVertices(size, 1.f, 0, &vertices);
+		GenerateVertices(size, 1.f, &inner_vertices, &outer_vertices);
+
+		if(inner_buffer) {
+			if(!inner_buffer->IsBuffer()) {
+				inner_buffer->Generate();
+			}
+			inner_buffer->Bind();
+			inner_buffer->SetData(sizeof(GLfloat) * inner_vertices.size(),
+							&inner_vertices[0]);
+			inner_buffer->Reset();
+		}
 
 		if(outer_buffer) {
 			if(!outer_buffer->IsBuffer()) {
 				outer_buffer->Generate();
 			}
 			outer_buffer->Bind();
-			outer_buffer->SetData(sizeof(GLfloat) * vertices.size(),
-							&vertices[0]);
+			outer_buffer->SetData(sizeof(GLfloat) * outer_vertices.size(),
+							&outer_vertices[0]);
 			outer_buffer->Reset();
 		}
 
