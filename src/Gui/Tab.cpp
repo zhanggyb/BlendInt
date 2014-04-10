@@ -166,6 +166,8 @@ namespace BlendInt {
 		m_stack = Manage(new TabStack);
 		m_stack->SetMargin(4, 4, 4, 4);
 		AppendSubWidget(m_stack);
+
+		events()->connect(m_group.button_index_toggled(), this, &Tab::OnButtonToggled);
 	}
 
 	Tab::~Tab ()
@@ -178,14 +180,14 @@ namespace BlendInt {
 		btn->SetText(title);
 
 		AppendSubWidget(btn);
-		m_buttons.push_back(btn);
+		m_group.Add(btn);
 
 		m_stack->Add(widget);
 
 		AdjustGeometries();
 
-		if(m_buttons.size() == 1) {
-			btn->SetDown(true);
+		if(m_group.size() == 1) {
+			btn->SetChecked(true);
 		}
 	}
 
@@ -257,6 +259,12 @@ namespace BlendInt {
 	{
 		return IgnoreAndContinue;
 	}
+	
+	void Tab::OnButtonToggled (int index, bool toggled)
+	{
+		m_stack->SetIndex(index);
+		Refresh();
+	}
 
 	void Tab::AdjustGeometries()
 	{
@@ -269,7 +277,7 @@ namespace BlendInt {
 		unsigned int h = size().height() - margin().top() - margin().bottom();
 
 		unsigned int temp = 0;
-		for(std::deque<AbstractButton*>::iterator it = m_buttons.begin(); it != m_buttons.end(); it++)
+		for(std::deque<AbstractButton*>::iterator it = m_group.deque()->begin(); it != m_group.deque()->end(); it++)
 		{
 			SetPosition((*it), x + temp, btn_y);
 			Resize((*it), (*it)->size().width(), m_title_height);

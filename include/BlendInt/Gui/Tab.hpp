@@ -31,6 +31,7 @@
 #include <BlendInt/Gui/Stack.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 #include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/ButtonGroup.hpp>
 
 namespace BlendInt {
 
@@ -97,11 +98,13 @@ namespace BlendInt {
 
 	private:
 
+		void OnButtonToggled (int index, bool toggled);
+
 		void AdjustGeometries ();
 
 		unsigned int m_title_height;
 
-		std::deque<AbstractButton*> m_buttons;
+		ButtonGroup m_group;
 
 		TabStack* m_stack;
 	};

@@ -54,6 +54,10 @@ namespace BlendInt {
 
 		void SetDown (bool down);
 
+		void SetCheckable (bool checkabel);
+
+		void SetChecked (bool checked);
+
 		bool down () const {return m_status_down;}
 
 		bool checked () const {return m_status_checked;}
@@ -67,6 +71,8 @@ namespace BlendInt {
 		Cpp::EventRef<> clicked() {return m_clicked;}
 
 		Cpp::EventRef<bool> toggled() {return m_toggled;}
+
+		bool pressed () const {return m_pressed;}
 
 	protected:
 
@@ -135,6 +141,8 @@ namespace BlendInt {
 		bool m_checkable;
 		
 		bool m_status_checked;
+
+		bool m_pressed;
 
 		size_t m_text_length;	// How many text to be printed, depends on the button size
 

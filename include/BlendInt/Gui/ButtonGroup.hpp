@@ -34,6 +34,11 @@
 
 namespace BlendInt {
 
+	enum ButtonGroupMode {
+		SingleSelection,
+		MultipleSelection
+	};
+
 	class ButtonGroup: public Object
 	{
 	public:
@@ -42,13 +47,65 @@ namespace BlendInt {
 
 		~ButtonGroup ();
 
+		void Add (AbstractButton* button);
+
+		void Remove (AbstractButton* button);
+
+		Cpp::EventRef<AbstractButton*> button_clicked() {return m_button_clicked;}
+
+		Cpp::EventRef<int> button_index_clicked() {return m_button_index_clicked;}
+
+		Cpp::EventRef<AbstractButton*> button_pressed() {return m_button_pressed;}
+
+		Cpp::EventRef<int> button_index_pressed() {return m_button_index_pressed;}
+
+		Cpp::EventRef<AbstractButton*> button_released() {return m_button_released;}
+
+		Cpp::EventRef<int> button_index_released() {return m_button_index_released;}
+
+		Cpp::EventRef<AbstractButton*, bool> button_toggled() {return m_button_toggled;}
+
+		Cpp::EventRef<int, bool> button_index_toggled() {return m_button_index_toggled;}
+
+		size_t size () const {return m_group.size();}
+
+		std::deque<AbstractButton*>* deque ()
+		{
+			return &m_group;
+		}
+
 	private:
+
+		void OnButtonClicked ();
+
+		void OnButtonToggled (bool toggled);
+
+		void OnButtonDestroyed (AbstractWidget* button);
+
+		std::deque<AbstractButton*> m_group;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
 		AbstractButton* m_last_active;
 
-		std::deque<AbstractButton*> m_group;
+		ButtonGroupMode m_mode;
+
+		Cpp::Event<AbstractButton*> m_button_clicked;
+
+		Cpp::Event<int> m_button_index_clicked;
+
+		Cpp::Event<AbstractButton*> m_button_pressed;
+
+		Cpp::Event<int> m_button_index_pressed;
+
+		Cpp::Event<AbstractButton*> m_button_released;
+
+		Cpp::Event<int> m_button_index_released;
+
+		Cpp::Event<AbstractButton*, bool> m_button_toggled;
+
+		Cpp::Event<int, bool> m_button_index_toggled;
+
 	};
 
 }

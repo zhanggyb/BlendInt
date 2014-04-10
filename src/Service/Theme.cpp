@@ -179,7 +179,7 @@ namespace BlendInt {
 
 			// Tab
 			theme_manager->m_themes.tab.outline = 0xBFBFBFFF;
-			theme_manager->m_themes.tab.item = 0x6F6F6FFF;
+			theme_manager->m_themes.tab.item = 0x4F4F4FFF;
 			theme_manager->m_themes.tab.inner = 0x999999FF;
 			theme_manager->m_themes.tab.inner_sel = 0x999999FF;
 			theme_manager->m_themes.tab.text = 0x000000FF;

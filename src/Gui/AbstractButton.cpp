@@ -42,6 +42,7 @@ namespace BlendInt {
 			m_status_down(false),
 			m_checkable(false),
 			m_status_checked(false),
+			m_pressed(false),
 			m_text_length(0)
 	{
 	}
@@ -140,10 +141,11 @@ namespace BlendInt {
 
 	ResponseType AbstractButton::MousePressEvent (const MouseEvent& event)
 	{
+		m_pressed = true;
+
 		if (m_checkable) {
 			m_status_checked = !m_status_checked;
 			m_toggled.fire(m_status_checked);
-
 		} else {
 			m_status_down = true;
 			m_clicked.fire();
@@ -155,6 +157,8 @@ namespace BlendInt {
 
 	ResponseType AbstractButton::MouseReleaseEvent(const MouseEvent& event)
 	{
+		m_pressed = false;
+
 		m_status_down = false;
 
 		Refresh();
@@ -176,9 +180,39 @@ namespace BlendInt {
 	void AbstractButton::SetDown (bool down)
 	{
 		if(m_checkable) {
+			if(m_status_checked != down)
+				Refresh();
+
 			m_status_checked = down;
 		} else {
+
+			if(m_status_down != down)
+				Refresh();
+
 			m_status_down = down;
+		}
+	}
+
+	void AbstractButton::SetCheckable (bool checkable)
+	{
+		if(!checkable) {
+			m_status_checked = false;
+		}
+
+		m_checkable = checkable;
+	}
+
+	void AbstractButton::SetChecked (bool checked)
+	{
+		if(m_checkable) {
+
+			if(m_status_checked == checked)
+				return;
+
+			m_status_checked = checked;
+			Refresh();
+
+			m_toggled.fire(m_status_checked);
 		}
 	}
 
@@ -202,3 +236,4 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
+

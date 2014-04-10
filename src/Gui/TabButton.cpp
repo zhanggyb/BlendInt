@@ -111,11 +111,12 @@ namespace BlendInt {
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
 
 		ThemeManager* tm = ThemeManager::instance();
 
 		glm::vec4 color;
+
+		glEnableVertexAttribArray(0);
 
 		// draw inner, simple fill
 		if (checked()) {
@@ -123,30 +124,47 @@ namespace BlendInt {
 			color.g = tm->themes()->tab.inner_sel.g() / 255.f;
 			color.b = tm->themes()->tab.inner_sel.b() / 255.f;
 			color.a = tm->themes()->tab.inner_sel.a() / 255.f;
+			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+			program->SetUniform1i("AA", 0);
+			DrawTriangleStrip(0, m_inner_buffer.get());
 		} else {
 			color.r = tm->themes()->tab.item.r() / 255.f;
 			color.g = tm->themes()->tab.item.g() / 255.f;
 			color.b = tm->themes()->tab.item.b() / 255.f;
 			color.a = tm->themes()->tab.item.a() / 255.f;
+			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+			program->SetUniform1i("AA", 1);
+
+			m_inner_buffer->Bind();
+
+			glVertexAttribPointer(0, // attribute
+								  2,			// number of elements per vertex, here (x,y)
+								  GL_FLOAT,			 // the type of each element
+								  GL_FALSE,			 // take our values as-is
+								  0,				 // no extra data between each position
+								  0					 // offset of first element
+								  );
+
+			// Skip the bottom triangle strip for better appearance
+			glDrawArrays(GL_TRIANGLE_STRIP, 4,
+							m_inner_buffer->GetBufferSize()
+												/ (2 * sizeof(GLfloat)) - 4);
+
+			m_inner_buffer->Reset();
 		}
 
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		if (checked()) {
+			color.r = themes()->tab.outline.r() / 255.f;
+			color.g = themes()->tab.outline.g() / 255.f;
+			color.b = themes()->tab.outline.b() / 255.f;
+			color.a = themes()->tab.outline.a() / 255.f;
 
-		glEnableVertexAttribArray(0);
+			program->SetUniform1i("AA", 1);
 
-		//DrawTriangleFan(0, m_inner_buffer.get());
-		DrawTriangleStrip(0, m_inner_buffer.get());
+			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 
-		color.r = themes()->tab.outline.r() / 255.f;
-		color.g = themes()->tab.outline.g() / 255.f;
-		color.b = themes()->tab.outline.b() / 255.f;
-		color.a = themes()->tab.outline.a() / 255.f;
-
-		program->SetUniform1i("AA", 1);
-
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
-
-		DrawTriangleStrip(0, m_outer_buffer.get());
+			DrawTriangleStrip(0, m_outer_buffer.get());
+		}
 
 		glDisableVertexAttribArray(0);
 		program->Reset();
