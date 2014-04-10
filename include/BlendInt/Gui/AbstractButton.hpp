@@ -52,15 +52,13 @@ namespace BlendInt {
 
 		void SetFont (const Font& font);
 
-		bool down () const {return m_status_down;}
+		void SetDown (bool down);
 
-		void set_down (bool down) {m_status_down = down;}
+		bool down () const {return m_status_down;}
 
 		bool checked () const {return m_status_checked;}
 
 		bool checkable () const {return m_checkable;}
-
-		void set_checkable (bool checkable) {m_checkable = checkable;}
 
 		const String& text () const {return m_text;}
 
@@ -79,6 +77,16 @@ namespace BlendInt {
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+		void set_down (bool down)
+		{
+			m_status_down = down;
+		}
+
+		void set_checkable (bool checkable)
+		{
+			m_checkable = checkable;
+		}
 
 		inline void set_text (const String& text)
 		{

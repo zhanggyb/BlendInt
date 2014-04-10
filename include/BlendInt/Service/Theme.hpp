@@ -89,6 +89,7 @@ namespace BlendInt {
 		WidgetTheme pulldown;
 		WidgetTheme menu_back;
 		WidgetTheme menu_item;
+		WidgetTheme tab;
 		WidgetTheme tooltip;
 		WidgetTheme box;
 		WidgetTheme scroll;

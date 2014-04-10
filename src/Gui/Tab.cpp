@@ -21,11 +21,141 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif	// __UNIX__
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/Gui/TabButton.hpp>
 
 #include <BlendInt/Gui/Tab.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
+
+	TabStack::TabStack ()
+	: Stack(), m_vao(0)
+	{
+		set_expand_x(true);
+		set_expand_y(true);
+		InitOnce();
+	}
+
+	TabStack::~TabStack ()
+	{
+		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	bool TabStack::Update (const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch(request.type()) {
+
+				case FormSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					GenerateFormBuffer(
+									*size_p,
+									RoundNone,
+									0.f,
+									m_inner.get(),
+									m_outer.get(),
+									0);
+
+					return Stack::Update(request);
+				}
+
+				default:
+					return Stack::Update(request);
+
+			}
+
+		} else {
+			return false;
+		}
+	}
+
+	ResponseType TabStack::Draw (const RedrawEvent& event)
+	{
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		glBindVertexArray(m_vao);
+
+		RefPtr<GLSLProgram> program =
+						ShaderManager::instance->default_triangle_program();
+		program->Use();
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetUniform1i("AA", 0);
+
+		ThemeManager* tm = ThemeManager::instance();
+
+		glm::vec4 color;
+		color.r = tm->themes()->tab.inner.r() / 255.f;
+		color.g = tm->themes()->tab.inner.g() / 255.f;
+		color.b = tm->themes()->tab.inner.b() / 255.f;
+		color.a = tm->themes()->tab.inner.a() / 255.f;
+
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+
+		glEnableVertexAttribArray(0);
+
+		//DrawTriangleFan(0, m_inner_buffer.get());
+		DrawTriangleStrip(0, m_inner.get());
+
+		color.r = themes()->tab.outline.r() / 255.f;
+		color.g = themes()->tab.outline.g() / 255.f;
+		color.b = themes()->tab.outline.b() / 255.f;
+		color.a = themes()->tab.outline.a() / 255.f;
+
+		program->SetUniform1i("AA", 1);
+
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+
+		DrawTriangleStrip(0, m_outer.get());
+
+		glDisableVertexAttribArray(0);
+		program->Reset();
+
+		glBindVertexArray(0);
+
+		return Accept;
+	}
+
+	void TabStack::InitOnce ()
+	{
+		m_inner.reset(new GLArrayBuffer);
+		m_outer.reset(new GLArrayBuffer);
+
+		glGenVertexArrays(1, &m_vao);
+
+		glBindVertexArray(m_vao);
+
+		GenerateFormBuffer(
+						size(),
+						RoundNone,
+						0.f,
+						m_inner.get(),
+						m_outer.get(),
+						0);
+
+		glBindVertexArray(0);
+	}
+
+	// ------------------------
 
 	Tab::Tab ()
 	: m_title_height(12), m_stack(0)
@@ -33,8 +163,8 @@ namespace BlendInt {
 		set_preferred_size(400, 300);
 		set_size(400, 300);
 
-		m_stack = Manage(new Stack);
-		m_stack->SetMargin(0, 0, 0, 0);
+		m_stack = Manage(new TabStack);
+		m_stack->SetMargin(4, 4, 4, 4);
 		AppendSubWidget(m_stack);
 	}
 
@@ -53,6 +183,10 @@ namespace BlendInt {
 		m_stack->Add(widget);
 
 		AdjustGeometries();
+
+		if(m_buttons.size() == 1) {
+			btn->SetDown(true);
+		}
 	}
 
 	bool Tab::Update (const UpdateRequest& request)

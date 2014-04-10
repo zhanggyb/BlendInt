@@ -172,6 +172,15 @@ namespace BlendInt {
 		*/
 		return Accept;
 	}
+	
+	void AbstractButton::SetDown (bool down)
+	{
+		if(m_checkable) {
+			m_status_checked = down;
+		} else {
+			m_status_down = down;
+		}
+	}
 
 	size_t AbstractButton::GetValidTextSize()
 	{

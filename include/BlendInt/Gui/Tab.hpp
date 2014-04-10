@@ -29,8 +29,39 @@
 #include <BlendInt/Gui/AbstractContainer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/Stack.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/VLayout.hpp>
 
 namespace BlendInt {
+
+	/**
+	 * @brief A special stack used in Tab and share theme with TabButton
+	 */
+	class TabStack: public Stack
+	{
+		DISALLOW_COPY_AND_ASSIGN(TabStack);
+
+	public:
+
+		TabStack ();
+
+		virtual ~TabStack ();
+
+	protected:
+
+		virtual bool Update (const UpdateRequest& request);
+
+		virtual ResponseType Draw (const RedrawEvent& event);
+
+	private:
+
+		void InitOnce ();
+
+		GLuint m_vao;
+
+		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> m_outer;
+	};
 
 	class Tab: public AbstractContainer
 	{
@@ -72,7 +103,7 @@ namespace BlendInt {
 
 		std::deque<AbstractButton*> m_buttons;
 
-		Stack* m_stack;
+		TabStack* m_stack;
 	};
 
 }

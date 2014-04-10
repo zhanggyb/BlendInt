@@ -222,9 +222,9 @@ namespace BlendInt {
 			"void main(void) {"
 			"	vec4 color_calib = vec4(0.0);"
 			"	if(AA) {"
-			"		color_calib = vec4(vec3(min(max(-1.0, Gamma/255.0/8.0), 1.0)), 0.0);"
+			"		color_calib = vec4(vec3(clamp(Gamma/255.0/8.0, -1.0, 1.0)), 0.0);"
 			"	} else {"
-			"		color_calib = vec4(vec3(min(max(-1.0, Gamma/255.0), 1.0)), 0.0);"
+			"		color_calib = vec4(vec3(clamp(Gamma/255.0, -1.0, 1.0)), 0.0);"
 			"	}"
 			"	FragmentColor = PreFragColor + color_calib;"
 			"}";

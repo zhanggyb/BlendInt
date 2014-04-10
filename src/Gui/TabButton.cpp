@@ -47,6 +47,7 @@ namespace BlendInt {
 	{
 		set_size(80, 12);
 		set_preferred_size(80, 12);
+		set_checkable(true);
 
 		InitOnce();
 	}
@@ -117,16 +118,16 @@ namespace BlendInt {
 		glm::vec4 color;
 
 		// draw inner, simple fill
-		if (down()) {
-			color.r = tm->themes()->regular.inner_sel.r() / 255.f;
-			color.g = tm->themes()->regular.inner_sel.g() / 255.f;
-			color.b = tm->themes()->regular.inner_sel.b() / 255.f;
-			color.a = tm->themes()->regular.inner_sel.a() / 255.f;
+		if (checked()) {
+			color.r = tm->themes()->tab.inner_sel.r() / 255.f;
+			color.g = tm->themes()->tab.inner_sel.g() / 255.f;
+			color.b = tm->themes()->tab.inner_sel.b() / 255.f;
+			color.a = tm->themes()->tab.inner_sel.a() / 255.f;
 		} else {
-			color.r = tm->themes()->regular.inner.r() / 255.f;
-			color.g = tm->themes()->regular.inner.g() / 255.f;
-			color.b = tm->themes()->regular.inner.b() / 255.f;
-			color.a = tm->themes()->regular.inner.a() / 255.f;
+			color.r = tm->themes()->tab.item.r() / 255.f;
+			color.g = tm->themes()->tab.item.g() / 255.f;
+			color.b = tm->themes()->tab.item.b() / 255.f;
+			color.a = tm->themes()->tab.item.a() / 255.f;
 		}
 
 		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
@@ -136,10 +137,10 @@ namespace BlendInt {
 		//DrawTriangleFan(0, m_inner_buffer.get());
 		DrawTriangleStrip(0, m_inner_buffer.get());
 
-		color.r = themes()->regular.outline.r() / 255.f;
-		color.g = themes()->regular.outline.g() / 255.f;
-		color.b = themes()->regular.outline.b() / 255.f;
-		color.a = themes()->regular.outline.a() / 255.f;
+		color.r = themes()->tab.outline.r() / 255.f;
+		color.g = themes()->tab.outline.g() / 255.f;
+		color.b = themes()->tab.outline.b() / 255.f;
+		color.a = themes()->tab.outline.a() / 255.f;
 
 		program->SetUniform1i("AA", 1);
 
@@ -177,7 +178,6 @@ namespace BlendInt {
 						0);
 						*/
 		GenerateBuffers(size(), m_inner_buffer.get(), m_outer_buffer.get());
-
 		glBindVertexArray(0);
 	}
 

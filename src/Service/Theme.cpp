@@ -166,14 +166,6 @@ namespace BlendInt {
 			theme_manager->m_themes.menu_back.text = 0xA0A0A0FF;
 			theme_manager->m_themes.menu_back.text_sel = 0xFFFFFFFF;
 
-			// Tooltip
-			theme_manager->m_themes.tooltip.outline = 0x000000FF;
-			theme_manager->m_themes.tooltip.item = 0x646464FF;
-			theme_manager->m_themes.tooltip.inner = 0x191919E6;
-			theme_manager->m_themes.tooltip.inner_sel = 0x2D2D2DE6;
-			theme_manager->m_themes.tooltip.text = 0xA0A0A0FF;
-			theme_manager->m_themes.tooltip.text_sel = 0xFFFFFFFF;
-
 			// Menu Item
 			theme_manager->m_themes.menu_item.outline = 0x000000FF;
 			theme_manager->m_themes.menu_item.item = 0xACACAC80;
@@ -184,6 +176,22 @@ namespace BlendInt {
 			theme_manager->m_themes.menu_item.shaded = true;
 			theme_manager->m_themes.menu_item.shadetop = 38;
 			theme_manager->m_themes.menu_item.shadedown = 0;
+
+			// Tab
+			theme_manager->m_themes.tab.outline = 0xBFBFBFFF;
+			theme_manager->m_themes.tab.item = 0x6F6F6FFF;
+			theme_manager->m_themes.tab.inner = 0x999999FF;
+			theme_manager->m_themes.tab.inner_sel = 0x999999FF;
+			theme_manager->m_themes.tab.text = 0x000000FF;
+			theme_manager->m_themes.tab.text_sel = 0xFFFFFFFF;
+
+			// Tooltip
+			theme_manager->m_themes.tooltip.outline = 0x000000FF;
+			theme_manager->m_themes.tooltip.item = 0x646464FF;
+			theme_manager->m_themes.tooltip.inner = 0x191919E6;
+			theme_manager->m_themes.tooltip.inner_sel = 0x2D2D2DE6;
+			theme_manager->m_themes.tooltip.text = 0xA0A0A0FF;
+			theme_manager->m_themes.tooltip.text_sel = 0xFFFFFFFF;
 
 			// Scroll Bar
 			theme_manager->m_themes.scroll.outline = 0x323232FF;
