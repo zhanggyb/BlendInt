@@ -21,48 +21,30 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_CHECKBUTTON_HPP_
-#define _BLENDINT_CHECKBUTTON_HPP_
+#ifndef _BLENDINT_GUI_TABBUTTON_HPP_
+#define _BLENDINT_GUI_TABBUTTON_HPP_
 
+#include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
-#include <BlendInt/Gui/RoundShapeBase.hpp>
 
 namespace BlendInt {
 
-	class String;
-
-	/**
-	 * @brief Toggle Button
-	 *
-	 * @ingroup widgets
-	 */
-	class ToggleButton: public AbstractButton, public RoundShapeBase
+	class TabButton: public AbstractButton
 	{
-		DISALLOW_COPY_AND_ASSIGN(ToggleButton);
+		DISALLOW_COPY_AND_ASSIGN(TabButton);
 
 	public:
 
-		ToggleButton ();
+		TabButton ();
 
-		ToggleButton (const String& text);
+		TabButton (const String& text);
 
-		virtual ~ToggleButton ();
+		virtual ~TabButton ();
 
-		/**
-		 * @brief set round type
-		 * @param type
-		 *
-		 * Hide the same function in RoundBoxBase to call Update
-		 */
-		void SetRoundType (int type);
-
-		/**
-		 * @brief set round radius
-		 * @param radius
-		 * Hide the same function in RoundBoxBase to call Update
-		 */
-		void SetRadius (float radius);
+		void GenerateVertices (const Size& size, float border,
+						std::vector<GLfloat>* inner,
+						std::vector<GLfloat>* outer);
 
 	protected:
 
@@ -72,18 +54,21 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeOnce ();
+		void InitOnce ();
 
-		void InitializeOnce (const String& text);
+		void InitOnce (const String& text);
+
+		void GenerateBuffers (const Size& size,
+						GLArrayBuffer* inner_buffer,
+						GLArrayBuffer* outer_buffer);
 
 		GLuint m_vao;
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
-		RefPtr<GLArrayBuffer> m_emboss_buffer;
 
 	};
 
 }
 
-#endif /* _BIL_CHECKBUTTON_HPP_ */
+#endif /* _BLENDINT_GUI_TABBUTTON_HPP_ */

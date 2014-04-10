@@ -364,7 +364,7 @@ namespace BlendInt {
 		while (cm->m_hover_deque->size()) {
 
 			if (cm->m_hover_deque->back()->visiable() &&
-							cm->m_hover_deque->back()->contain(event.position())) {
+							cm->m_hover_deque->back()->Contain(event.position())) {
 				widget = cm->m_hover_deque->back();
 				break;
 			} else {
@@ -461,7 +461,7 @@ namespace BlendInt {
 				for (WidgetDeque::iterator it =
 						p->m_sub_widgets->begin(); it != p->m_sub_widgets->end();
 						it++) {
-					if ((*it)->visiable() && (*it)->contain(cursor)) {
+					if ((*it)->visiable() && (*it)->Contain(cursor)) {
 						ContextManager::instance->m_hover_deque->push_back(*it);
 						ContextManager::instance->m_hover_deque->back()->CursorEnterEvent(true);
 						BuildWidgetListAtCursorPoint(cursor, *it);
@@ -485,7 +485,7 @@ namespace BlendInt {
 				set_p = map_it->second.widgets;
 				for (set_it = set_p->begin(); set_it != set_p->end();
 						set_it++) {
-					if ((*set_it)->visiable() && (*set_it)->contain(cursor)) {
+					if ((*set_it)->visiable() && (*set_it)->Contain(cursor)) {
 						ContextManager::instance->m_hover_deque->push_back(*set_it);
 						ContextManager::instance->m_hover_deque->back()->CursorEnterEvent(true);
 						BuildWidgetListAtCursorPoint(cursor, *set_it);

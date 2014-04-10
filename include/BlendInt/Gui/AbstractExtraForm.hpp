@@ -74,19 +74,34 @@ namespace BlendInt {
 			return m_maximal_size;
 		}
 
-		void SetExpandX (bool expand) {m_expand_x = expand;}
+		void SetExpandX (bool expand)
+		{
+			m_expand_x = expand;
+		}
 
-		bool expand_x () const {return m_expand_x;}
+		bool expand_x () const
+		{
+			return m_expand_x;
+		}
 
-		void SetExpandY (bool expand) {m_expand_y = expand;}
+		void SetExpandY (bool expand)
+		{
+			m_expand_y = expand;
+		}
 
-		bool expand_y () const {return m_expand_y;}
+		bool expand_y () const
+		{
+			return m_expand_y;
+		}
 
-		void SetExpand (bool expand) {m_expand_x = expand; m_expand_y = expand;}
+		void SetExpand (bool expand)
+		{
+			m_expand_x = expand; m_expand_y = expand;
+		}
 
-		bool contain (const Point& point);
+		virtual bool Contain (const Point& point) const;
 
-		bool contain (int x, int y);
+		virtual bool Contain (int x, int y) const;
 
 	protected:
 

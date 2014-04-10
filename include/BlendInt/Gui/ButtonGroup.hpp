@@ -21,59 +21,36 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_MENUBUTTON_HPP_
-#define _BLENDINT_GUI_MENUBUTTON_HPP_
+#ifndef _BLENDINT_GUI_BUTTONGROUP_HPP_
+#define _BLENDINT_GUI_BUTTONGROUP_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <boost/smart_ptr.hpp>
+
+#include <Cpp/Events.hpp>
+
+#include <BlendInt/Core/Object.hpp>
 
 #include <BlendInt/Gui/AbstractButton.hpp>
-#include <BlendInt/Gui/RoundShapeBase.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special button used in MenuBar only
-	 */
-	class MenuButton: public AbstractButton, public RoundShapeBase
+	class ButtonGroup: public Object
 	{
 	public:
 
-		MenuButton (const String& text);
+		ButtonGroup ();
 
-		virtual ~MenuButton ();
-
-		/**
-		 * @brief set round type
-		 * @param type
-		 *
-		 * Hide the same function in RoundBoxBase to call Update
-		 */
-		void SetRoundType (int type);
-
-		/**
-		 * @brief set round radius
-		 * @param radius
-		 * Hide the same function in RoundBoxBase to call Update
-		 */
-		void SetRadius (float radius);
-
-	protected:
-
-		virtual bool Update (const UpdateRequest& request);
-
-		virtual ResponseType Draw (const RedrawEvent& event);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
+		~ButtonGroup ();
 
 	private:
 
-		void InitOnce (const String& text);
+		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
-		GLuint m_vao;
+		AbstractButton* m_last_active;
 
-		RefPtr<GLArrayBuffer> m_inner;
+		std::deque<AbstractButton*> m_group;
 	};
 
-} /* namespace BlendInt */
+}
 
-#endif /* _BLENDINT_GUI_MENUBUTTON_HPP_ */
+#endif /* _BLENDINT_GUI_BUTTONGROUP_HPP_ */

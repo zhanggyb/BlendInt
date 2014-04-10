@@ -49,7 +49,7 @@ namespace BlendInt {
 
 	}
 
-	bool AbstractExtraForm::contain (const Point& point)
+	bool AbstractExtraForm::Contain (const Point& point) const
 	{
 		if(point.x() < m_position.x() ||
 				point.y() < m_position.y() ||
@@ -62,7 +62,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractExtraForm::contain (int x, int y)
+	bool AbstractExtraForm::Contain (int x, int y) const
 	{
 		if(x < m_position.x() ||
 				y < m_position.y() ||

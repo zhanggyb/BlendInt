@@ -60,7 +60,10 @@ namespace BlendInt {
 
 		bool FindSubWidget (AbstractWidget* widget);
 
-		size_t sub_widget_size () const {return m_sub_widgets->size();}
+		size_t sub_widget_size () const
+		{
+			return m_sub_widgets->size();
+		}
 
 #ifdef DEBUG
 		void print ();

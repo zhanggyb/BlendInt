@@ -15,11 +15,13 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.	 If not, see
+ * License along with BlendInt.  If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
+
+#include <math.h>
 
 #ifdef __UNIX__
 #ifdef __APPLE__
@@ -34,99 +36,57 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/TabButton.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 
-	Button::Button ()
-		: AbstractButton(), RoundShapeBase(), m_vao(0)
+	TabButton::TabButton ()
+	: AbstractButton(), m_vao(0)
 	{
+		set_size(80, 20);
+		set_preferred_size(80, 20);
+
 		InitOnce();
 	}
 
-	Button::Button (const String& text)
-		: AbstractButton(), RoundShapeBase()
+	TabButton::TabButton (const String& text)
+	: AbstractButton(), m_vao(0)
 	{
+		set_size(80, 20);
+		set_preferred_size(80, 20);
+
 		InitOnce(text);
 	}
 
-	Button::~Button ()
+	BlendInt::TabButton::~TabButton ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void Button::SetRoundType(int type)
-	{
-		if(round_type() == type) return;
-
-		if(Update(UpdateRequest(Predefined, FormRoundType, &type))) {
-			set_round_type(type);
-			fire_property_changed_event(FormRoundType);
-		}
-
-	}
-
-	void Button::SetRadius(float rad)
-	{
-		if(radius() == rad) return;
-
-		if(Update(UpdateRequest(Predefined, FormRoundRadius, &rad))) {
-			set_radius(rad);
-			fire_property_changed_event(FormRoundRadius);
-		}
-	}
-
-	bool Button::Update(const UpdateRequest& request)
+	bool TabButton::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
-			switch (request.type()) {
 
-			case FormSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				glBindVertexArray(m_vao);
-				GenerateFormBuffer(*size_p,
-								   round_type(),
-								   radius(),
-								   m_inner_buffer.get(),
-								   m_outer_buffer.get(),
-								   m_emboss_buffer.get());
-				glBindVertexArray(0);
-				Refresh();
-				return true;
-			}
+			switch(request.type()) {
 
-			case FormRoundType: {
-				const int* type_p = static_cast<const int*>(request.data());
-				glBindVertexArray(m_vao);
-				GenerateFormBuffer(size(),
-								   *type_p,
-								   radius(),
-								   m_inner_buffer.get(),
-								   m_outer_buffer.get(),
-								   m_emboss_buffer.get());
-				glBindVertexArray(0);
-				Refresh();
-				return true;
-			}
+				case FormSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					glBindVertexArray(m_vao);
+					GenerateFormBuffer(*size_p,
+									   RoundNone,
+									   0.f,
+									   m_inner_buffer.get(),
+									   m_outer_buffer.get(),
+									   0);
+					glBindVertexArray(0);
+					Refresh();
+					return true;
+				}
 
-			case FormRoundRadius: {
-				const float* radius_p = static_cast<const float*>(request.data());
-				glBindVertexArray(m_vao);
-				GenerateFormBuffer(size(),
-								   round_type(),
-								   *radius_p,
-								   m_inner_buffer.get(),
-								   m_outer_buffer.get(),
-								   m_emboss_buffer.get());
-				glBindVertexArray(0);
-				Refresh();
-				return true;
-			}
-
-			default:
-				return AbstractButton::Update(request);
+				default:
+					return true;
 			}
 
 		} else {
@@ -134,7 +94,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Button::Draw (const RedrawEvent& event)
+	ResponseType TabButton::Draw (const RedrawEvent& event)
 	{
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
@@ -177,7 +137,7 @@ namespace BlendInt {
 
 		glEnableVertexAttribArray(0);
 
-		DrawTriangleFan(0, m_inner_buffer.get());
+		//DrawTriangleFan(0, m_inner_buffer.get());
 
 		color.r = themes()->regular.outline.r() / 255.f;
 		color.g = themes()->regular.outline.g() / 255.f;
@@ -189,9 +149,6 @@ namespace BlendInt {
 		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 
 		DrawTriangleStrip(0, m_outer_buffer.get());
-
-		program->SetVertexAttrib4f("Color", 1.0f, 1.0f, 1.0f, 0.02f);
-		DrawTriangleStrip(0, m_emboss_buffer.get());
 
 		glDisableVertexAttribArray(0);
 		program->Reset();
@@ -205,69 +162,86 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Button::InitOnce ()
+	void TabButton::InitOnce()
 	{
-		set_round_type(RoundAll);
-		set_expand_x(true);
-		set_size(90, 20);
-		set_preferred_size(90, 20);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_emboss_buffer.reset(new GLArrayBuffer);
-
+		/*
 		GenerateFormBuffer(
 						size(),
-						round_type(),
-						radius(),
+						RoundNone,
+						0.f,
 						m_inner_buffer.get(),
 						m_outer_buffer.get(),
-						m_emboss_buffer.get());
+						0);
+						*/
+		GenerateBuffers(size(), 0, m_outer_buffer.get());
 
 		glBindVertexArray(0);
 	}
 
-	void Button::InitOnce (const String& text)
+	void TabButton::InitOnce(const String& text)
 	{
-		set_round_type(RoundAll);
-		set_expand_x(true);
-		set_size(90, 20);
-		set_preferred_size(90, 20);
-		set_text(text);
-
-		bool cal_width = true;
-		set_text_outline(font().get_text_outline(text));
-
-		set_text_length(text.length());
-
-		if(size().height() < text_outline().height()) {
-			if(expand_y()) {
-				set_size(size().width(), text_outline().height());
-			} else {
-				set_text_length(0);
-				cal_width = false;
-			}
-		}
-
-		if(size().width() < text_outline().width()) {
-			if(expand_x()) {
-				set_size(text_outline().width(), size().height());
-			} else {
-				if(cal_width) set_text_length(GetValidTextSize());
-			}
-		}
-
-		set_origin(0, (size().height() - font().get_height()) / 2 + std::abs(font().get_descender()));
-
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_emboss_buffer.reset(new GLArrayBuffer);
+
 		glBindVertexArray(0);
+	}
+	
+	void TabButton::GenerateVertices (const Size& size, float border,
+					std::vector<GLfloat>* inner, std::vector<GLfloat>* outer)
+	{
+		if((!inner) && (!outer))
+			return;
+
+		int hh = size.height() / 2;
+		int hw = 10;
+
+		int stride = size.width() - 2 * hw;
+
+		if(outer) {
+
+			if(outer->size() != 2 * 11 * 2)
+				outer->resize(2 * 11 * 2);
+
+			for(int i = 0; i <= 10; i++)
+			{
+				(*outer)[4 * i + 0] = i;
+				(*outer)[4 * i + 1] = hh * sin((i - hw) / (2 * M_PI)) + hh;
+				(*outer)[4 * i + 2] = i;
+				(*outer)[4 * i + 3] = (*outer)[4 * i + 1] - border;
+
+				DBG_PRINT_MSG("x: %f, y: %f -- x: %f, y: %f",
+								(*outer)[4 * i + 0],
+								(*outer)[4 * i + 1],
+								(*outer)[4 * i + 2],
+								(*outer)[4 * i + 3]);
+			}
+
+		}
+	}
+
+	void TabButton::GenerateBuffers (const Size& size, GLArrayBuffer* inner_buffer,
+					GLArrayBuffer* outer_buffer)
+	{
+		std::vector<GLfloat> vertices;
+
+		GenerateVertices(size, 1.f, 0, &vertices);
+
+		if(outer_buffer) {
+			if(!outer_buffer->IsBuffer()) {
+				outer_buffer->Generate();
+			}
+			outer_buffer->Bind();
+			outer_buffer->SetData(sizeof(GLfloat) * vertices.size(),
+							&vertices[0]);
+			outer_buffer->Reset();
+		}
+
 	}
 
 }

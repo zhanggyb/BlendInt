@@ -116,7 +116,7 @@ namespace BlendInt {
 	{
 		unsigned int orig = m_highlight;
 
-		if(!contain(event.position())) {
+		if(!Contain(event.position())) {
 			m_highlight = 0;
 
 			if(orig != m_highlight) {
@@ -143,7 +143,7 @@ namespace BlendInt {
 
 	ResponseType Menu::MousePressEvent (const MouseEvent& event)
 	{
-		if(!contain(event.position())) {
+		if(!Contain(event.position())) {
 			return Ignore;
 		}
 

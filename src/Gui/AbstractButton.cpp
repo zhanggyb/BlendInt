@@ -38,7 +38,7 @@
 namespace BlendInt {
 
 	AbstractButton::AbstractButton () :
-			RoundWidget(),
+			Widget(),
 			m_status_down(false),
 			m_checkable(false),
 			m_status_checked(false),

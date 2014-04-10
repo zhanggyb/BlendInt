@@ -826,7 +826,7 @@ namespace BlendInt {
 				for (std::deque<AbstractWidget*>::iterator it =
 				        p->m_sub_widgets->begin(); it != p->m_sub_widgets->end();
 				        it++) {
-					if ((*it)->visiable() && (*it)->contain(cursor_point)) {
+					if ((*it)->visiable() && (*it)->Contain(cursor_point)) {
 						m_hover_deque->push_back(*it);
 						BuildWidgetListAtCursorPoint(cursor_point, *it);
 						break;	// if break or continue the loop?
@@ -852,7 +852,7 @@ namespace BlendInt {
 				widget_set_p = layer_riter->second.widgets;
 				for (widget_iter = widget_set_p->begin();
 				        widget_iter != widget_set_p->end(); widget_iter++) {
-					if ((*widget_iter)->visiable() && (*widget_iter)->contain(cursor_point)) {
+					if ((*widget_iter)->visiable() && (*widget_iter)->Contain(cursor_point)) {
 						m_hover_deque->push_back(*widget_iter);
 						BuildWidgetListAtCursorPoint(cursor_point,
 						        *widget_iter);
