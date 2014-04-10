@@ -95,7 +95,7 @@ namespace BlendInt {
 	void ButtonGroup::OnButtonToggled (bool toggled)
 	{
 		if(m_mode == SingleSelection && m_last_active) {
-			m_last_active->SetChecked(false);
+			m_last_active->set_checked(false);
 		}
 
 		int i = 0;
@@ -109,10 +109,10 @@ namespace BlendInt {
 		}
 
 		if(m_mode == SingleSelection) {
-			m_last_active->SetChecked(true);
+			m_last_active->set_checked(true);
 			toggled = true;
 		} else {
-			m_last_active->SetChecked(toggled);
+			m_last_active->set_checked(toggled);
 		}
 
 		DBG_PRINT_MSG("Button %s toggled: %d", m_last_active->name().c_str(), toggled? 1 : 0);

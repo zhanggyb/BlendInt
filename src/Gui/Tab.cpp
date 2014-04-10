@@ -158,7 +158,7 @@ namespace BlendInt {
 	// ------------------------
 
 	Tab::Tab ()
-	: m_title_height(12), m_stack(0)
+	: m_title_height(14), m_stack(0)
 	{
 		set_preferred_size(400, 300);
 		set_size(400, 300);

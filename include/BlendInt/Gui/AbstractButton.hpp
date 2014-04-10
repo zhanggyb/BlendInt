@@ -32,15 +32,17 @@
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/TextBuffer.hpp>
 
-using namespace std;
-
 namespace BlendInt {
+
+	class ButtonGroup;
 
 	class AbstractButton: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractButton);
 
 	public:
+
+		friend class ButtonGroup;
 
 		AbstractButton ();
 
@@ -92,6 +94,11 @@ namespace BlendInt {
 		void set_checkable (bool checkable)
 		{
 			m_checkable = checkable;
+		}
+
+		void set_checked (bool checked)
+		{
+			m_status_checked = checked;
 		}
 
 		inline void set_text (const String& text)
