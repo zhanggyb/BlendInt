@@ -137,6 +137,7 @@ int main(int argc, char* argv[])
 	num_slider->SetPosition(20, 60);
 	*/
 
+	/*
 	Widget* widget = new Widget;
 	widget->set_name("ToolButton");
 	widget->Resize(300, 400);
@@ -145,6 +146,7 @@ int main(int argc, char* argv[])
 	area->set_name("ScrollArea");
 	area->SetPosition(100, 100);
 	area->SetViewport(Manage(widget));
+	*/
 
 //	Slider* slide = Manage (new Slider);
 //	slide->set_name("Slider");
@@ -155,6 +157,31 @@ int main(int argc, char* argv[])
 //	scrollbar->set_name("ScrollBar");
 //	scrollbar->SetPosition(200, 200);
 //	scrollbar->SetPercentage(100);
+
+	HLayout* hlayout = Manage(new HLayout);
+	hlayout->set_name("HLayout");
+
+	Button* btn1 = Manage(new Button);
+	btn1->set_name("Button1");
+
+	Button* btn2 = Manage(new Button);
+	btn2->set_name("Button2");
+
+	Button* btn3 = Manage(new Button);
+	btn3->set_name("Button3");
+
+	hlayout->Add(btn1);
+	hlayout->Add(btn2);
+	hlayout->Add(btn3);
+
+	AbstractWidgetIterator* it = hlayout->GetIter();
+
+	for(hlayout->First(it); !hlayout->Last(it); it->next())
+	{
+		DBG_PRINT_MSG("button in hlayout: %s", (*it)->name().c_str());
+	}
+
+	hlayout->ReleaseIter(it);
 
 	RunLoop (win);
 

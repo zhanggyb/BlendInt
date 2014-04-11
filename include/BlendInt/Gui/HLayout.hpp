@@ -30,8 +30,71 @@
 #include <BlendInt/Core/RefPtr.hpp>
 
 #include <BlendInt/Gui/AbstractLayout.hpp>
+#include <BlendInt/Gui/AbstractWidgetIterator.hpp>
 
 namespace BlendInt {
+
+	class HLayoutIterator: public AbstractWidgetIterator
+	{
+	public:
+
+		HLayoutIterator ()
+		{
+
+		}
+
+		HLayoutIterator (const HLayoutIterator& orig)
+		{
+			m_it = orig.m_it;
+		}
+
+		virtual ~HLayoutIterator ()
+		{
+
+		}
+
+		void set_it (const WidgetDeque::iterator it)
+		{
+			m_it = it;
+		}
+
+		HLayoutIterator& operator = (const HLayoutIterator& orig)
+		{
+			m_it = orig.m_it;
+
+			return *this;
+		}
+
+		virtual AbstractWidget& operator *() const
+		{
+			return *(*m_it);
+		}
+
+		virtual AbstractWidget* operator -> () const
+		{
+			return *m_it;
+		}
+
+		HLayoutIterator& operator++ ()
+		{
+			++m_it;
+			return *this;
+		}
+
+		HLayoutIterator operator++ (int)
+		{
+			m_it++;
+
+			return *this;
+		}
+
+		virtual void next ()
+		{
+			++m_it;
+		}
+
+		WidgetDeque::iterator m_it;
+	};
 
 	class HLayout: public AbstractLayout
 	{
@@ -42,6 +105,34 @@ namespace BlendInt {
 		HLayout(int align = AlignHorizontalCenter);
 
 		virtual ~HLayout ();
+
+		// ------------------ Demo
+
+		AbstractWidgetIterator* GetIter ()
+		{
+			HLayoutIterator* it = new HLayoutIterator;
+
+			return it;
+		}
+
+		void First (AbstractWidgetIterator* it)
+		{
+			dynamic_cast<HLayoutIterator*>(it)->set_it(sub_widgets()->begin());
+		}
+
+		bool Last (const AbstractWidgetIterator* it)
+		{
+			const HLayoutIterator * hit = dynamic_cast<const HLayoutIterator*>(it);
+
+			return hit->m_it == sub_widgets()->end();
+		}
+
+		void ReleaseIter (AbstractWidgetIterator* it)
+		{
+			delete it;
+		}
+
+		// ---------------------------- End of Demo
 
 	protected:
 
