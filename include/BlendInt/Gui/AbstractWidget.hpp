@@ -52,8 +52,8 @@ using std::map;
 namespace BlendInt {
 
 	class ContextManager;
-	class AbstractWidget;
 	class GLTexture2D;
+	class AbstractContainerExt;
 
 	struct WidgetTheme;
 

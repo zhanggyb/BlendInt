@@ -88,7 +88,7 @@ namespace BlendInt {
 			return *this;
 		}
 
-		virtual void next ()
+		virtual void Next ()
 		{
 			++m_it;
 		}
@@ -105,34 +105,6 @@ namespace BlendInt {
 		HLayout(int align = AlignHorizontalCenter);
 
 		virtual ~HLayout ();
-
-		// ------------------ Demo
-
-		AbstractWidgetIterator* GetIter ()
-		{
-			HLayoutIterator* it = new HLayoutIterator;
-
-			return it;
-		}
-
-		void First (AbstractWidgetIterator* it)
-		{
-			dynamic_cast<HLayoutIterator*>(it)->set_it(sub_widgets()->begin());
-		}
-
-		bool Last (const AbstractWidgetIterator* it)
-		{
-			const HLayoutIterator * hit = dynamic_cast<const HLayoutIterator*>(it);
-
-			return hit->m_it == sub_widgets()->end();
-		}
-
-		void ReleaseIter (AbstractWidgetIterator* it)
-		{
-			delete it;
-		}
-
-		// ---------------------------- End of Demo
 
 	protected:
 

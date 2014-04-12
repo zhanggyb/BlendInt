@@ -31,6 +31,7 @@
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
 //#include <BlendInt/Service/ContextManager.hpp>
+#include <BlendInt/Gui/AbstractWidgetIterator.hpp>
 
 namespace BlendInt {
 
@@ -38,6 +39,34 @@ namespace BlendInt {
 
 	class ContextManager;
 	class Interface;
+
+	class AbstractContainerExt: public AbstractWidget
+	{
+		DISALLOW_COPY_AND_ASSIGN(AbstractContainerExt);
+
+	public:
+
+		AbstractContainerExt ()
+		{
+
+		}
+
+		virtual ~AbstractContainerExt ()
+		{
+
+		}
+
+	protected:
+
+		virtual bool AddSubWidget (AbstractWidget* widget) = 0;
+
+		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
+
+		virtual AbstractWidgetIterator* First (const DeviceEvent& event) = 0;
+
+		virtual bool End (const DeviceEvent& event, AbstractWidgetIterator* iter) = 0;
+
+	};
 
 	/**
 	 * @brief Base class for widgets which contain other widgets

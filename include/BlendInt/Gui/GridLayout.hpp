@@ -53,7 +53,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Draw (RedrawEvent* event);
+		virtual ResponseType Draw (const RedrawEvent& event);
 
 		virtual void add_single_widget(AbstractWidget* widget);
 	};

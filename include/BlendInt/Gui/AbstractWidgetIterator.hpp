@@ -43,12 +43,9 @@ namespace BlendInt {
 		{
 		}
 
-		virtual AbstractWidget& operator *() const = 0;
-
 		virtual AbstractWidget* operator -> () const = 0;
 
-		virtual void next () = 0;
-
+		virtual void Next () = 0;
 	};
 
 }

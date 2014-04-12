@@ -59,8 +59,9 @@ namespace BlendInt {
 		return true;
 	}
 
-	void GridLayout::Draw (RedrawEvent* event)
+	ResponseType GridLayout::Draw (const RedrawEvent& event)
 	{
+		return Ignore;
 	}
 
 	void GridLayout::add_single_widget(AbstractWidget* widget)

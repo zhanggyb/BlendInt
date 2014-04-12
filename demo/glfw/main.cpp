@@ -174,15 +174,6 @@ int main(int argc, char* argv[])
 	hlayout->Add(btn2);
 	hlayout->Add(btn3);
 
-	AbstractWidgetIterator* it = hlayout->GetIter();
-
-	for(hlayout->First(it); !hlayout->Last(it); it->next())
-	{
-		DBG_PRINT_MSG("button in hlayout: %s", (*it)->name().c_str());
-	}
-
-	hlayout->ReleaseIter(it);
-
 	RunLoop (win);
 
 	Interface::Release();
