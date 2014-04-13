@@ -36,11 +36,12 @@
 namespace BlendInt {
 
 	typedef std::deque<AbstractWidget*> WidgetDeque;
+	typedef std::deque<AbstractWidgetExt*> WidgetDequeExt;
 
 	class ContextManager;
 	class Interface;
 
-	class AbstractContainerExt: public AbstractWidget
+	class AbstractContainerExt: public AbstractWidgetExt
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractContainerExt);
 
@@ -58,9 +59,30 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool AddSubWidget (AbstractWidget* widget) = 0;
+		virtual bool AddSubWidget (AbstractWidgetExt* widget) = 0;
 
-		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
+		virtual bool RemoveSubWidget (AbstractWidgetExt* widget) = 0;
+
+		static bool RemoveSubWidget (AbstractContainerExt* container, AbstractWidgetExt* sub)
+		{
+			return container->RemoveSubWidget(sub);
+		}
+
+		static bool AddSubWidget (AbstractContainerExt* container, AbstractWidgetExt* sub)
+		{
+			return container->AddSubWidget(sub);
+		}
+
+		static void SetContainer (AbstractWidgetExt* widget, AbstractContainerExt* container)
+		{
+			if(container) {
+				widget->m_container = container;
+				widget->m_flag.set(WidgetFlagInContainerExt);
+			} else {
+				widget->m_container = 0;
+				widget->m_flag.reset(WidgetFlagInContainerExt);
+			}
+		}
 
 		virtual AbstractWidgetIterator* First (const DeviceEvent& event) = 0;
 

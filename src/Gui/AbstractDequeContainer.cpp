@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <assert.h>
+
 #include <BlendInt/Gui/AbstractDequeContainer.hpp>
 
 namespace BlendInt {
@@ -29,12 +31,12 @@ namespace BlendInt {
 
 	AbstractDequeContainer::AbstractDequeContainer ()
 	{
-		m_sub_widgets.reset(new WidgetDeque);
+		m_sub_widgets.reset(new WidgetDequeExt);
 	}
 
 	AbstractDequeContainer::~AbstractDequeContainer ()
 	{
-		for(WidgetDeque::iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
+		for(WidgetDequeExt::iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
 		{
 			// check if need to delete
 			if((*it)->managed()) {
@@ -61,22 +63,62 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractDequeContainer::AddSubWidget (AbstractWidget* widget)
+	bool AbstractDequeContainer::AddSubWidget (AbstractWidgetExt* widget)
 	{
 		if(!widget) return false;
+
+		if(widget->container()) {
+
+			if(widget->container() == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s", widget->name().c_str(), widget->container()->name().c_str());
+				return true;
+			} else {
+				// Set widget's container to 0
+				AbstractContainerExt::RemoveSubWidget(widget->container(), widget);
+			}
+
+		}
+
+		m_sub_widgets->push_back(widget);
+
+		SetContainer(widget, this);
+
+		// TODO: set layer and lock the geometry of the sub widget
+
+		events()->connect(widget->destroyed(), this, &AbstractDequeContainer::OnSubWidgetDestroyed);
+
+		return true;
+
 
 		return true;
 	}
 
-	bool AbstractDequeContainer::RemoveSubWidget (AbstractWidget* widget)
+	bool AbstractDequeContainer::RemoveSubWidget (AbstractWidgetExt* widget)
 	{
-		if (widget) {
+		if(!widget) return false;
+
+		assert(widget->container() == this);
+
+		widget->destroyed().disconnectOne(this,
+				&AbstractDequeContainer::OnSubWidgetDestroyed);
+
+		WidgetDequeExt::iterator it = std::find(m_sub_widgets->begin(),
+				m_sub_widgets->end(), widget);
+
+		if (it != m_sub_widgets->end()) {
+			m_sub_widgets->erase(it);
+
+			SetContainer(widget, 0);
 
 			return true;
 
 		} else {
+
+			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
+					widget->name().c_str(), name().c_str());
 			return false;
 		}
+
 	}
 
 	AbstractWidgetIterator* AbstractDequeContainer::First (
@@ -98,8 +140,20 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractDequeContainer::OnSubWidgetDestroyed (AbstractWidget* widget)
+	void AbstractDequeContainer::OnSubWidgetDestroyed (AbstractWidgetExt* widget)
 	{
+		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the container %s", widget->name().c_str(), name().c_str());
+
+		WidgetDequeExt::iterator it = std::find(m_sub_widgets->begin(),
+		        m_sub_widgets->end(), widget);
+		if (it != m_sub_widgets->end()) {
+			m_sub_widgets->erase(it);
+		} else {
+			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
+			        widget->name().c_str(), name().c_str());
+		}
+
+		widget->destroyed().disconnectOne(this, &AbstractDequeContainer::OnSubWidgetDestroyed);
 	}
 
 }

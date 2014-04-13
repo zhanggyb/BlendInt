@@ -34,68 +34,6 @@
 
 namespace BlendInt {
 
-	class HLayoutIterator: public AbstractWidgetIterator
-	{
-	public:
-
-		HLayoutIterator ()
-		{
-
-		}
-
-		HLayoutIterator (const HLayoutIterator& orig)
-		{
-			m_it = orig.m_it;
-		}
-
-		virtual ~HLayoutIterator ()
-		{
-
-		}
-
-		void set_it (const WidgetDeque::iterator it)
-		{
-			m_it = it;
-		}
-
-		HLayoutIterator& operator = (const HLayoutIterator& orig)
-		{
-			m_it = orig.m_it;
-
-			return *this;
-		}
-
-		virtual AbstractWidget& operator *() const
-		{
-			return *(*m_it);
-		}
-
-		virtual AbstractWidget* operator -> () const
-		{
-			return *m_it;
-		}
-
-		HLayoutIterator& operator++ ()
-		{
-			++m_it;
-			return *this;
-		}
-
-		HLayoutIterator operator++ (int)
-		{
-			m_it++;
-
-			return *this;
-		}
-
-		virtual void Next ()
-		{
-			++m_it;
-		}
-
-		WidgetDeque::iterator m_it;
-	};
-
 	class HLayout: public AbstractLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(HLayout);

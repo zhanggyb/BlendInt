@@ -50,7 +50,7 @@ namespace BlendInt {
 
 		}
 
-		void set_it (const WidgetDeque::iterator it)
+		void set_it (const WidgetDequeExt::iterator it)
 		{
 			m_it = it;
 		}
@@ -62,12 +62,12 @@ namespace BlendInt {
 			return *this;
 		}
 
-		virtual AbstractWidget& operator *() const
+		virtual AbstractWidgetExt& operator *() const
 		{
 			return *(*m_it);
 		}
 
-		virtual AbstractWidget* operator -> () const
+		virtual AbstractWidgetExt* operator -> () const
 		{
 			return *m_it;
 		}
@@ -90,7 +90,7 @@ namespace BlendInt {
 			++m_it;
 		}
 
-		WidgetDeque::iterator m_it;
+		WidgetDequeExt::iterator m_it;
 	};
 
 	class AbstractDequeContainer: public AbstractContainerExt
@@ -103,9 +103,9 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool AddSubWidget (AbstractWidget* widget);
+		virtual bool AddSubWidget (AbstractWidgetExt* widget);
 
-		virtual bool RemoveSubWidget (AbstractWidget* widget);
+		virtual bool RemoveSubWidget (AbstractWidgetExt* widget);
 
 		virtual AbstractWidgetIterator* First (const DeviceEvent& event);
 
@@ -113,12 +113,12 @@ namespace BlendInt {
 
 	private:
 
-		void OnSubWidgetDestroyed (AbstractWidget* widget);
+		void OnSubWidgetDestroyed (AbstractWidgetExt* widget);
 
 		/**
 		 * @brief Sub widgets which build a tree to accept render and device events
 		 */
-		boost::scoped_ptr<WidgetDeque> m_sub_widgets;
+		boost::scoped_ptr<WidgetDequeExt> m_sub_widgets;
 
 		static DequeIterator default_iterator;
 	};

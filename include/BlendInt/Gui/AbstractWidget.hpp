@@ -66,6 +66,337 @@ namespace BlendInt {
 		return obj;
 	}
 
+	// ----------------------------------------------------
+
+	/**
+	 * @brief The base abstract class for widgets
+	 *
+	 * @ingroup gui
+	 */
+	class AbstractWidgetExt: public AbstractExtraForm
+	{
+		DISALLOW_COPY_AND_ASSIGN(AbstractWidgetExt);
+
+	public:
+
+		friend class ContextManager;
+		friend class Interface;
+		friend class AbstractContainerExt;
+
+		template <typename T> friend T* Manage (T* obj, bool val);
+
+		/**
+		 * @brief The default constructor
+		 */
+		AbstractWidgetExt ();
+
+		/**
+		 * @brief Destructor
+		 */
+		virtual ~AbstractWidgetExt ();
+
+		/**
+		 * @brief Resize the widget
+		 * @param[in] width The new width of the widget
+		 * @param[in] height The new height of the widget
+		 *
+		 * Call Update() to check the parameters, if valid, resize the
+		 * widget.
+		 */
+		void Resize (unsigned int width, unsigned int height);
+
+		/**
+		 * @brief Resize the widget
+		 * @param[in] size The new size of the widget
+		 *
+		 * Call Update() to check the parameters, if valid, resize the
+		 * widget.
+		 */
+		void Resize (const Size& size);
+
+		void SetPosition (int x, int y);
+
+		void SetPosition (const Point& pos);
+
+		void SetPreferredSize (unsigned int widt, unsigned int height);
+
+		void SetPreferredSize (const Size& size);
+
+		void SetMinimalSize (unsigned int width, unsigned int height);
+
+		void SetMinimalSize (const Size& size);
+
+		void SetMaximalSize (unsigned int width, unsigned int height);
+
+		void SetMaximalSize (const Size& size);
+
+		void SetLayer (int z);
+
+		void SetVisible (bool visible);
+
+		void Refresh ();
+
+		void RenderToTexture (size_t border, GLTexture2D* texture);
+
+		void RenderToFile (const char* filename, unsigned int border = 10);
+
+		const int& layer () const
+		{
+			return m_z;
+		}
+
+		const int& z () const
+		{
+			return m_z;
+		}
+
+		inline bool locked () const
+		{
+			return m_flag[WidgetFlagLockGeometryExt];
+		}
+
+		inline bool in_context_manager() const
+		{
+			return m_flag[WidgetFlagInContextManagerExt];
+		}
+
+		inline bool in_container () const
+		{
+			return m_flag[WidgetFlagInContainerExt];
+		}
+
+		void activate_events ()
+		{
+			m_flag.set(WidgetFlagFireEventsExt);
+		}
+
+		void deactivate_events ()
+		{
+			m_flag.reset(WidgetFlagFireEventsExt);
+		}
+
+		bool fire_events () const
+		{
+			return m_flag[WidgetFlagFireEventsExt];
+		}
+
+		inline bool focused () const
+		{
+			return m_flag[WidgetFlagFocusExt];
+		}
+
+		inline bool hover () const
+		{
+			return m_flag[WidgetFlagContextHoverListExt];
+		}
+
+		inline bool visiable () const
+		{
+			return m_flag[WidgetFlagVisibilityExt];
+		}
+
+		inline bool managed () const
+		{
+			return m_flag[WidgetFlagManagedExt];
+		}
+
+		/**
+		 * @brief move this object along x axis
+		 * @param offset_x
+		 */
+		inline void move_x (int offset_x)
+		{
+			SetPosition(position().x() + offset_x, position().y());
+		}
+
+		/**
+		 * @brief move this object along y axis
+		 * @param offset_y
+		 */
+		inline void move_y (int offset_y)
+		{
+			SetPosition(position().x(), position().y() + offset_y);
+		}
+
+		/**
+		 * @brief move this object
+		 * @param offset_x
+		 * @param offset_y
+		 */
+		inline void move (int offset_x, int offset_y)
+		{
+			SetPosition(position().x() + offset_x, position().y() + offset_y);
+		}
+
+		Cpp::EventRef<AbstractWidgetExt*, int> property_changed() {return m_property_changed;}
+
+		Cpp::EventRef<AbstractWidgetExt*> destroyed () {return m_destroyed;}
+
+		AbstractContainerExt* container() const {return m_container;}
+
+	protected:	// member functions
+
+		virtual ResponseType CursorEnterEvent (bool entered) = 0;
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event) = 0;
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event) = 0;
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event) = 0;
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event) = 0;
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event) = 0;
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
+
+		/**
+		 * @brief Update opengl data (usually the GL buffer) for Render
+		 * @param[in] type the enumeration defined by each form class, e.g.
+		 * FormPropertySize
+		 * @param[in] data the pointer to the new property data
+		 *
+		 * This virtual function should be implemented in each derived class,
+		 * and should only use the form's property to draw opengl elements once.
+		 */
+		virtual bool Update (const UpdateRequest& request) = 0;
+
+		virtual ResponseType Draw (const RedrawEvent& event) = 0;
+
+		void set_scissor_test (bool status)
+		{
+			m_flag[WidgetFlagScissorTestExt] = status ? 1 : 0;
+		}
+
+		void LockGeometry (AbstractWidgetExt* obj, bool status)
+		{
+			obj->m_flag[WidgetFlagLockGeometryExt] = status ? 1 : 0;
+		}
+
+		Cpp::ConnectionScope* events() const {return m_events.get();}
+
+		/**
+		 * @brief fire event to inform the property of this object is changed
+		 * @param[in] type the property type, defined in FormPropertyType
+		 */
+		inline void fire_property_changed_event (int type)
+		{
+			if (m_flag[WidgetFlagFireEventsExt])
+				m_property_changed.fire(this, type);
+		}
+
+		static void SetPosition (AbstractWidgetExt* obj, int x, int y);
+
+		static void SetPosition (AbstractWidgetExt* obj, const Point& pos);
+
+		/**
+		 * @brief resize other object's size
+		 * @param obj
+		 * @param w
+		 * @param h
+		 *
+		 * @note should be used in layout only
+		 */
+		static void Resize (AbstractWidgetExt* obj, unsigned int w, unsigned int h);
+
+		/**
+		 * @brief resize other object's size
+		 * @param obj
+		 * @param size
+		 *
+		 * @note should be used in layout only
+		 */
+		static void Resize (AbstractWidgetExt* obj, const Size& size);
+
+		static void DispatchRender (AbstractWidgetExt* obj);
+
+		static ResponseType dispatch_key_press_event (AbstractWidgetExt* obj, const KeyEvent& event);
+
+		static ResponseType dispatch_mouse_move_event (AbstractWidgetExt* obj, const MouseEvent& event);
+
+		static ResponseType dispatch_mouse_press_event (AbstractWidgetExt* obj, const MouseEvent& event);
+
+		static ResponseType dispatch_mouse_release_event (AbstractWidgetExt* obj, const MouseEvent& event);
+
+	private:
+
+		enum WidgetFlagIndexExt {
+			WidgetFlagLockGeometryExt = 0,
+			WidgetFlagFireEventsExt,
+			WidgetFlagInContextManagerExt,
+			WidgetFlagFocusExt,
+
+			/** If this widget is in container */
+			WidgetFlagInContainerExt,
+
+			/** If this widget is in cursor hover list in ContextManager */
+			WidgetFlagContextHoverListExt,
+
+			/** If the widget need to be refresh in the render loop */
+			WidgetFlagRefreshExt,
+
+			WidgetFlagVisibilityExt,
+
+			WidgetFlagManagedExt,
+
+			/** If enable scissor test when drawing this the subwidgets, this flag is only workable for container */
+			WidgetFlagScissorTestExt
+		};
+
+		void set_manage (bool val)
+		{
+			m_flag[WidgetFlagManagedExt] = val ? 1 : 0;
+		}
+
+		/**
+		 * @brief Used in Interface class to render the widget to a screenbuffer
+		 * @param tex
+		 * @param border
+		 */
+		bool CompositeToScreenBuffer (GLTexture2D* tex, unsigned int border = 0);
+
+		/**
+		 * @brief the depth(layer) of the widget
+		 */
+		int m_z;
+
+		/**
+		 * @brief The bit flag of this widget
+		 *
+		 * - bit 0: lock geometry
+		 * - bit 1: fire events
+		 * - bit 2: registered in context manager
+		 */
+		std::bitset<32> m_flag;
+
+		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
+
+		Cpp::Event<AbstractWidgetExt*, int> m_property_changed;
+
+		Cpp::Event<AbstractWidgetExt*> m_destroyed;
+
+		AbstractContainerExt* m_container;
+
+		/**
+		 * The size for hiden widget, always should be (0, 0), use static for performance
+		 */
+		static Size invisible_size;
+
+		static AbstractWidgetExt* focused_widget;
+
+#ifdef DEBUG
+	public:
+
+		inline void lock (bool status)
+		{
+			m_flag[0] = status ? 1 : 0;
+		}
+
+#endif
+	};
+
+	// ----------------------------------------------------
+
 	/**
 	 * @brief The base abstract class for widgets
 	 *
