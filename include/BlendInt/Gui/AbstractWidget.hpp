@@ -52,6 +52,7 @@ using std::map;
 namespace BlendInt {
 
 	class ContextManager;
+	class Context;
 	class GLTexture2D;
 	class AbstractContainerExt;
 
@@ -79,7 +80,7 @@ namespace BlendInt {
 
 	public:
 
-		friend class ContextManager;
+		friend class Context;
 		friend class Interface;
 		friend class AbstractContainerExt;
 

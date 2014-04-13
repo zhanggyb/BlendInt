@@ -30,6 +30,7 @@ namespace BlendInt {
 	DequeIterator AbstractDequeContainer::default_iterator;
 
 	AbstractDequeContainer::AbstractDequeContainer ()
+	: AbstractContainerExt()
 	{
 		m_sub_widgets.reset(new WidgetDequeExt);
 	}
@@ -88,9 +89,6 @@ namespace BlendInt {
 		events()->connect(widget->destroyed(), this, &AbstractDequeContainer::OnSubWidgetDestroyed);
 
 		return true;
-
-
-		return true;
 	}
 
 	bool AbstractDequeContainer::RemoveSubWidget (AbstractWidgetExt* widget)
@@ -144,16 +142,7 @@ namespace BlendInt {
 	{
 		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the container %s", widget->name().c_str(), name().c_str());
 
-		WidgetDequeExt::iterator it = std::find(m_sub_widgets->begin(),
-		        m_sub_widgets->end(), widget);
-		if (it != m_sub_widgets->end()) {
-			m_sub_widgets->erase(it);
-		} else {
-			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
-			        widget->name().c_str(), name().c_str());
-		}
-
-		widget->destroyed().disconnectOne(this, &AbstractDequeContainer::OnSubWidgetDestroyed);
+		RemoveSubWidget(widget);
 	}
 
 }

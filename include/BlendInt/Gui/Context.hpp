@@ -38,11 +38,9 @@ namespace BlendInt {
 		ContextLayerExt ();
 		~ContextLayerExt ();
 
-		bool refresh;
-
-		std::set<AbstractWidgetExt*>* widgets;
-
-		GLTexture2D* buffer;
+		bool refresh;	/** If refresh this layer */
+		std::set<AbstractWidgetExt*>* widgets;	/** A set to store sub widgets in this layer */
+		GLTexture2D* buffer;	/** The OpenGL Texture as a buffer for display */
 	};
 
 	/**
@@ -62,6 +60,20 @@ namespace BlendInt {
 		Context ();
 
 		virtual ~Context ();
+
+		size_t index_size () const
+		{
+			return m_index.size();
+		}
+
+		size_t layer_size () const
+		{
+			return m_layers.size();
+		}
+
+		int GetMaxLayer () const;
+
+		void RefreshLayer (int layer);
 
 	protected:
 
@@ -93,9 +105,15 @@ namespace BlendInt {
 
 	private:
 
+		void OnSubWidgetDestroyed (AbstractWidgetExt* widget);
+
 		std::map<int, ContextLayerExt> m_layers;
 
 		std::map<AbstractWidgetExt*, int> m_index;
+
+		static bool refresh_once;
+
+		static bool force_refresh_all;
 
 	};
 
