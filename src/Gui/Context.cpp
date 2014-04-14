@@ -31,6 +31,9 @@
 #endif
 #endif  // __UNIX__
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
@@ -38,8 +41,6 @@
 #include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Service/ShaderManager.hpp>
-
-#include "../Intern/ScreenBuffer.hpp"
 
 namespace BlendInt
 {
@@ -71,7 +72,7 @@ namespace BlendInt
 	ScissorStatus Context::scissor_status;
 
 	Context::Context ()
-	: AbstractContainerExt(), m_main_buffer(0), m_screenbuffer(0), m_vao(0)
+	: AbstractContainerExt(), m_main_buffer(0), m_vao(0)
 	{
 		set_size(640, 480);
 
@@ -121,10 +122,6 @@ namespace BlendInt
 
 		m_deque.clear();
 
-		if (m_screenbuffer) {
-			delete m_screenbuffer;
-		}
-
 		m_layers.clear();
 		m_index.clear();
 
@@ -144,7 +141,24 @@ namespace BlendInt
 
 				case FormSize: {
 
-					// Nothing to do but accept
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					GLfloat vertices[] = {
+						0.f, 0.f,
+						static_cast<GLfloat>(size_p->width()), 0.f,
+						0.f, static_cast<GLfloat>(size_p->height()),
+						static_cast<GLfloat>(size_p->width()), static_cast<GLfloat>(size_p->height())
+					};
+
+					glBindVertexArray(m_vao);
+					m_vbo->Bind();
+					m_vbo->UpdateData(vertices, sizeof(vertices));
+					m_vbo->Reset();
+
+					glBindVertexArray(0);
+
+					// TODO: redraw
+
 					return true;
 				}
 
@@ -165,70 +179,9 @@ namespace BlendInt
 
 	ResponseType Context::Draw (const RedrawEvent& event)
 	{
-		glClearColor(0.125, 0.25, 0.45, 1.00);
-
-		glClearDepth(1.0);
-		glClear(GL_COLOR_BUFFER_BIT |
-						GL_DEPTH_BUFFER_BIT |
-						GL_STENCIL_BUFFER_BIT);
-
-		/*
-		glm::vec3 pos((float) position().x(), (float) position().y(),
-						(float) z());
+		glm::vec3 pos(position().x(), position().y(), z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
-
-		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-		glBindVertexArray(m_vao);
-
-		m_program->Use();
-
-		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		glActiveTexture(GL_TEXTURE0);
-		m_main_buffer->Bind();
-
-		m_program->SetUniform1i("TexID", 0);
-
-		glEnableVertexAttribArray(0);
-		m_vbo->Bind();
-
-		glVertexAttribPointer(
-				0,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				BUFFER_OFFSET(0)
-				);
-
-		glEnableVertexAttribArray(1);
-		m_tbo->Bind();
-		glVertexAttribPointer(
-				1,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				BUFFER_OFFSET(0)
-				);
-
-		m_vbo->Bind();
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(0);
-
-		m_vbo->Reset();
-		m_main_buffer->Reset();
-		m_program->Reset();
-
-		glBindVertexArray(0);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		*/
-
-		/*
 		m_deque.clear();
 
 		if (force_refresh_all) {
@@ -248,7 +201,7 @@ namespace BlendInt
 					layer_iter->second.buffer->Generate();
 				}
 
-				OffScreenRenderToTexture(event,
+				RenderLayer(event,
 								layer_iter->first,
 								widget_set_p,
 								layer_iter->second.buffer);
@@ -259,7 +212,7 @@ namespace BlendInt
 				layer_iter->second.refresh = false;
 			}
 
-			RenderToScreenBuffer(event);
+			RenderMainBuffer(event);
 
 			refresh_once = false;
 			force_refresh_all = false;
@@ -282,7 +235,7 @@ namespace BlendInt
 						layer_iter->second.buffer = new GLTexture2D;
 						layer_iter->second.buffer->Generate();
 					}
-					OffScreenRenderToTexture(event,
+					RenderLayer(event,
 									layer_iter->first,
 									widget_set_p,
 									layer_iter->second.buffer);
@@ -293,14 +246,14 @@ namespace BlendInt
 						layer_iter->second.buffer = new GLTexture2D;
 						layer_iter->second.buffer->Generate();
 
-						OffScreenRenderToTexture(event,
+						RenderLayer(event,
 										layer_iter->first,
 										widget_set_p,
 										layer_iter->second.buffer);
 					} else if (layer_iter->second.buffer->id() == 0) {
 						layer_iter->second.buffer->Generate();
 
-						OffScreenRenderToTexture(event,
+						RenderLayer(event,
 										layer_iter->first,
 										widget_set_p,
 										layer_iter->second.buffer);
@@ -313,15 +266,13 @@ namespace BlendInt
 				layer_iter->second.refresh = false;
 			}
 
-			RenderToScreenBuffer(event);
+			RenderMainBuffer(event);
 
 			refresh_once = false;
 		}
 
-		m_screenbuffer->Render(event.projection_matrix() * event.view_matrix(),
-							   m_main_buffer);
+		DrawMainBuffer(mvp);
 
-		*/
 		return Accept;
 	}
 
@@ -461,7 +412,6 @@ namespace BlendInt
 	{
 		m_program = ShaderManager::instance->default_context_program();
 
-		m_screenbuffer = new ScreenBuffer;
 		m_hover_deque.reset(new std::deque<AbstractWidgetExt*>);
 
 		m_main_buffer = new GLTexture2D;
@@ -475,9 +425,9 @@ namespace BlendInt
 
 		GLfloat vertices [] = {
 				0.f, 0.f,
-				size().width(), 0.f,
-				0.f, size().height(),
-				size().width(), size().height()
+				static_cast<GLfloat>(size().width()), 0.f,
+				0.f, static_cast<GLfloat>(size().height()),
+				static_cast<GLfloat>(size().width()), static_cast<GLfloat>(size().height())
 		};
 
 		m_vbo->Bind();
@@ -498,6 +448,58 @@ namespace BlendInt
 		m_tbo->Reset();
 
 		glBindVertexArray(0);
+	}
+
+	void Context::DrawMainBuffer (const glm::mat4& mvp)
+	{
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+		glBindVertexArray(m_vao);
+
+		m_program->Use();
+
+		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+
+		glActiveTexture(GL_TEXTURE0);
+		m_main_buffer->Bind();
+
+		m_program->SetUniform1i("TexID", 0);
+
+		glEnableVertexAttribArray(0);
+		m_vbo->Bind();
+
+		glVertexAttribPointer(
+				0,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				BUFFER_OFFSET(0)
+				);
+
+		glEnableVertexAttribArray(1);
+		m_tbo->Bind();
+		glVertexAttribPointer(
+				1,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				BUFFER_OFFSET(0)
+				);
+
+		m_vbo->Bind();
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(0);
+
+		m_vbo->Reset();
+		m_main_buffer->Reset();
+		m_program->Reset();
+
+		glBindVertexArray(0);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	RefPtr<AbstractContainerIterator> Context::First (const DeviceEvent& event)
@@ -533,7 +535,7 @@ namespace BlendInt
 		}
 	}
 	
-	void Context::OffScreenRenderToTexture (const RedrawEvent& event,
+	void Context::RenderLayer (const RedrawEvent& event,
 					int layer,
 					std::set<AbstractWidgetExt*>* widgets,
 					GLTexture2D* texture)
@@ -622,7 +624,7 @@ namespace BlendInt
 
 	}
 	
-	void Context::RenderToScreenBuffer (const RedrawEvent& event)
+	void Context::RenderMainBuffer (const RedrawEvent& event)
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -674,9 +676,60 @@ namespace BlendInt
 			//DrawGrid(width, height);
 #endif
 
+			GLTexture2D* texture = 0;
 			std::deque<GLTexture2D*>::iterator it;
 			for (it = m_deque.begin(); it != m_deque.end(); it++) {
-				m_screenbuffer->Render(mvp, *it);
+
+				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+				glBindVertexArray(m_vao);
+
+				m_program->Use();
+
+				m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+
+				glActiveTexture(GL_TEXTURE0);
+				texture = *it;
+				texture->Bind();
+
+				m_program->SetUniform1i("TexID", 0);
+
+				glEnableVertexAttribArray(0);
+				m_vbo->Bind();
+
+				glVertexAttribPointer(
+						0,
+						2,
+						GL_FLOAT,
+						GL_FALSE,
+						0,
+						BUFFER_OFFSET(0)
+						);
+
+				glEnableVertexAttribArray(1);
+				m_tbo->Bind();
+				glVertexAttribPointer(
+						1,
+						2,
+						GL_FLOAT,
+						GL_FALSE,
+						0,
+						BUFFER_OFFSET(0)
+						);
+
+				m_vbo->Bind();
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+				glDisableVertexAttribArray(1);
+				glDisableVertexAttribArray(0);
+
+				m_vbo->Reset();
+				texture->Reset();
+				m_program->Reset();
+
+				glBindVertexArray(0);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 			}
 
 		}
@@ -787,3 +840,4 @@ namespace BlendInt
 	}
 
 }
+

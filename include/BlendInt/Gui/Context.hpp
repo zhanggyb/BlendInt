@@ -41,8 +41,6 @@
 
 namespace BlendInt {
 
-	class ScreenBuffer;
-
 	struct ContextLayerExt {
 
 		ContextLayerExt ();
@@ -126,11 +124,14 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		void OffScreenRenderToTexture (const RedrawEvent& event, int layer,
-						std::set<AbstractWidgetExt*>* widgets,
-						GLTexture2D* texture);
+		void DrawMainBuffer (const glm::mat4& mvp);
 
-		void RenderToScreenBuffer (const RedrawEvent& event);
+		void RenderLayer (const RedrawEvent& event,
+				int layer,
+				std::set<AbstractWidgetExt*>* widgets,
+				GLTexture2D* texture);
+
+		void RenderMainBuffer (const RedrawEvent& event);
 
 		void PreDrawContext (bool fbo = false);
 
@@ -150,8 +151,6 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_tbo;
 
 		GLuint m_vao;
-
-		ScreenBuffer* m_screenbuffer;
 
 		boost::scoped_ptr<std::deque<AbstractWidgetExt*> > m_hover_deque;
 
