@@ -37,6 +37,8 @@
 
 #include <BlendInt/Gui/Context.hpp>
 
+#include <BlendInt/Service/ShaderManager.hpp>
+
 #include "../Intern/ScreenBuffer.hpp"
 
 namespace BlendInt
@@ -72,6 +74,8 @@ namespace BlendInt
 	: AbstractContainerExt(), m_main_buffer(0), m_screenbuffer(0)
 	{
 		set_size(640, 480);
+
+		m_program = ShaderManager::instance->default_context_program();
 
 		m_screenbuffer = new ScreenBuffer;
 		m_hover_deque.reset(new std::deque<AbstractWidgetExt*>);
@@ -164,6 +168,14 @@ namespace BlendInt
 
 	ResponseType Context::Draw (const RedrawEvent& event)
 	{
+		glClearColor(0.125, 0.25, 0.45, 1.00);
+
+		glClearDepth(1.0);
+		glClear(GL_COLOR_BUFFER_BIT |
+						GL_DEPTH_BUFFER_BIT |
+						GL_STENCIL_BUFFER_BIT);
+
+		/*
 		m_deque.clear();
 
 		if (force_refresh_all) {
@@ -256,6 +268,7 @@ namespace BlendInt
 		m_screenbuffer->Render(event.projection_matrix() * event.view_matrix(),
 							   m_main_buffer);
 
+		*/
 		return Accept;
 	}
 
@@ -466,7 +479,7 @@ namespace BlendInt
 
 			fb->Bind();
 
-			glClearColor(0.0, 0.0, 0.0, 0.00);
+			glClearColor(0.0, 0.0, 0.0, 0.0);
 
 			glClearDepth(1.0);
 			glClear(GL_COLOR_BUFFER_BIT |
@@ -554,6 +567,8 @@ namespace BlendInt
 
 			PreDrawContext(true);
 
+			DBG_PRINT_MSG("viewport size: %u, %u", width, height);
+
 			glViewport(0, 0, width, height);
 
 			glm::mat4 mvp = event.projection_matrix() * event.view_matrix();
@@ -586,9 +601,9 @@ namespace BlendInt
 		glClearColor(0.447, 0.447, 0.447, 1.00);
 
 		glClearDepth(1.0);
-		glClear(
-		        GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
-		                | GL_STENCIL_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT |
+						GL_DEPTH_BUFFER_BIT |
+						GL_STENCIL_BUFFER_BIT);
 
 		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
 

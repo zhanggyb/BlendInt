@@ -148,6 +148,11 @@ namespace BlendInt {
 			return m_default_line_program;
 		}
 
+		RefPtr<GLSLProgram> default_context_program () const
+		{
+			return m_default_context_program;
+		}
+
 	private:
 
 		static bool Initialize ();
@@ -168,6 +173,8 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> m_default_line_program;
 
+		RefPtr<GLSLProgram> m_default_context_program;
+
 		static const char* text_vertex_shader;
 
 		static const char* text_fragment_shader;
@@ -183,6 +190,10 @@ namespace BlendInt {
 		static const char* default_widget_line_geometry_shader;
 
 		static const char* default_widget_fragment_shader;
+
+		static const char* default_context_vertex_shader;
+
+		static const char* default_context_fragment_shader;
 	};
 }
 

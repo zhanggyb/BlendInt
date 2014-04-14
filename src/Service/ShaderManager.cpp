@@ -229,6 +229,28 @@ namespace BlendInt {
 			"	FragmentColor = PreFragColor + color_calib;"
 			"}";
 
+	const char* ShaderManager::default_context_vertex_shader =
+			"#version 330\n"
+			"layout(location = 0) in vec2 Coord2D;"
+			"layout(location = 1) in vec2 UVCoord;"
+			"uniform mat4 MVP;"
+			"out vec2 f_texcoord;"
+			""
+			"void main(void) {"
+			"	gl_Position = MVP * vec4(Coord2D, 0.0, 1.0);"
+			"	f_texcoord = UVCoord;"
+			"}";
+
+	const char* ShaderManager::default_context_fragment_shader =
+			"#version 330\n"
+			"in vec2 f_texcoord;"
+			"uniform sampler2D TexID;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	FragmentColor = texture(TexID, f_texcoord);"
+			"}";
+
 #else	// Legacy opengl
 
 	const char* ShaderManager::text_vertex_shader =
@@ -370,6 +392,11 @@ namespace BlendInt {
 		m_default_line_program->set_name("Line GLSLProgram");
 #endif
 
+		m_default_context_program.reset(new GLSLProgram);
+#ifdef DEBUG
+		m_default_context_program->set_name("Context Program");
+#endif
+
 	}
 
 	ShaderManager::~ShaderManager()
@@ -390,6 +417,10 @@ namespace BlendInt {
 		}
 
 		if(!m_default_line_program->Create()) {
+			return false;
+		}
+
+		if(!m_default_context_program->Create()) {
 			return false;
 		}
 
@@ -423,6 +454,12 @@ namespace BlendInt {
 			return false;
 		}
 
+		m_default_context_program->AttachShader(default_context_vertex_shader, GL_VERTEX_SHADER);
+		m_default_context_program->AttachShader(default_context_fragment_shader, GL_FRAGMENT_SHADER);
+		if(!m_default_context_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the context program: %d", m_default_context_program->id());
+			return false;
+		}
 
 		return true;
 	}

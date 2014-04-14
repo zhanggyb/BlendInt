@@ -146,6 +146,8 @@ namespace BlendInt {
 
 		boost::scoped_ptr<std::deque<AbstractWidgetExt*> > m_hover_deque;
 
+		RefPtr<GLSLProgram> m_program;
+
 		static ScissorStatus scissor_status;
 
 		static bool refresh_once;
