@@ -58,6 +58,9 @@
 
 #include <Cpp/Events.hpp>
 
+#include <BlendInt/Window/RedrawEvent.hpp>
+#include <BlendInt/Gui/Context.hpp>
+
 #define BLENDINT_EVENTS_INIT_ONCE_IN_MAIN Cpp::Events::ProcessInit processInit
 
 namespace BlendInt {
@@ -65,10 +68,7 @@ namespace BlendInt {
 	class AbstractWidget;
 	class KeyEvent;
 	class MouseEvent;
-
-	class GLTexture2D;
-
-	class ScreenBuffer;
+	class Context;
 
 	/**
 	 * @brief The main entry for this library
@@ -87,6 +87,8 @@ namespace BlendInt {
 
 		void Draw ();
 
+		void DrawContext (Context* context, const RedrawEvent& event);
+
 		void DispatchKeyEvent (const KeyEvent& event);
 
 		void DispatchMouseEvent (const MouseEvent& event);
@@ -98,10 +100,14 @@ namespace BlendInt {
 		 */
 		void Resize (const Size& size);
 
+		void ResizeContext (Context* context, const Size& size);
+
 		/**
 		 * @brief Resize the interface
 		 */
 		void Resize (unsigned int width, unsigned int height);
+
+		void ResizeContext (Context* context, unsigned int width, unsigned int height);
 
 		void SetMainWidget (AbstractWidget* widget);
 

@@ -29,6 +29,28 @@
 
 namespace BlendInt {
 
+	void AbstractContainerExt::SetMargin (const Margin& margin)
+	{
+		if (m_margin.equal(margin))
+			return;
+
+		if(Update(UpdateRequest(Predefined, ContainerMargin, &margin))) {
+			m_margin = margin;
+		}
+	}
+
+	void AbstractContainerExt::SetMargin (int left, int right, int top, int bottom)
+	{
+		if (m_margin.equal(left, right, top, bottom))
+			return;
+
+		Margin new_margin(left, right, top, bottom);
+
+		if(Update(UpdateRequest(Predefined, ContainerMargin, &new_margin))) {
+			m_margin = new_margin;
+		}
+	}
+
 	AbstractContainer::AbstractContainer ()
 	{
 		m_sub_widgets.reset(new WidgetDeque);

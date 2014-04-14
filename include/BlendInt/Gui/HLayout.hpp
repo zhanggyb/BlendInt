@@ -30,7 +30,6 @@
 #include <BlendInt/Core/RefPtr.hpp>
 
 #include <BlendInt/Gui/AbstractLayout.hpp>
-#include <BlendInt/Gui/AbstractWidgetIterator.hpp>
 
 namespace BlendInt {
 

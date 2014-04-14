@@ -206,14 +206,33 @@ namespace BlendInt {
 		ContextManager::instance->ResizeFromInterface(size);
 	}
 
+	void Interface::ResizeContext(Context* context, const Size& size)
+	{
+		context->Resize(size);
+	}
+
 	void Interface::Resize (unsigned int width, unsigned int height)
 	{
 		ContextManager::instance->ResizeFromInterface(width, height);
 	}
 
+	void Interface::ResizeContext(Context* context, unsigned int width, unsigned int height)
+	{
+		context->Resize(width, height);
+	}
+
 	void Interface::Draw ()
 	{
 		ContextManager::instance->DrawFromInterface();
+	}
+
+	void Interface::DrawContext (Context* context, const RedrawEvent& event)
+	{
+		ResponseType response = context->Draw(event);
+
+		if(response == Accept) {
+			// DO nothing;
+		}
 	}
 
 	void Interface::SetMainWidget(AbstractWidget* widget)
@@ -537,4 +556,3 @@ namespace BlendInt {
 	}
 
 }
-

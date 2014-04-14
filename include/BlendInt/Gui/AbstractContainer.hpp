@@ -31,7 +31,6 @@
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
 //#include <BlendInt/Service/ContextManager.hpp>
-#include <BlendInt/Gui/AbstractWidgetIterator.hpp>
 
 namespace BlendInt {
 
@@ -40,6 +39,28 @@ namespace BlendInt {
 
 	class ContextManager;
 	class Interface;
+	class Context;
+
+	/**
+	 * @brief A virtual iterator to be instanced for widgets in container
+	 */
+	class AbstractContainerIterator: public Object
+	{
+	public:
+
+		AbstractContainerIterator()
+		: Object()
+		{
+		}
+
+		virtual ~AbstractContainerIterator ()
+		{
+		}
+
+		virtual AbstractWidgetExt* GetWidget () const = 0;
+
+		virtual void Next () = 0;
+	};
 
 	class AbstractContainerExt: public AbstractWidgetExt
 	{
@@ -57,7 +78,15 @@ namespace BlendInt {
 
 		}
 
+		const Margin& margin () const {return m_margin;}
+
+		void SetMargin (const Margin& margin);
+
+		void SetMargin (int left, int right, int top, int bottom);
+
 	protected:
+
+		friend class Context;
 
 		virtual bool AddSubWidget (AbstractWidgetExt* widget) = 0;
 
@@ -84,9 +113,13 @@ namespace BlendInt {
 			}
 		}
 
-		virtual AbstractWidgetIterator* First (const DeviceEvent& event) = 0;
+		virtual RefPtr<AbstractContainerIterator> First (const DeviceEvent& event) = 0;
 
-		virtual bool End (const DeviceEvent& event, AbstractWidgetIterator* iter) = 0;
+		virtual bool End (const DeviceEvent& event, AbstractContainerIterator* iter) = 0;
+
+	private:
+
+		Margin m_margin;
 
 	};
 

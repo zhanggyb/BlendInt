@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <Cpp/Events.hpp>
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Types.hpp>
@@ -38,6 +40,7 @@
 
 #include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Service/StockItems.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 #include "Window.hpp"
 
@@ -54,7 +57,7 @@ int main(int argc, char* argv[])
 
 	Init();
 
-	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 640);
+	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
 
 //	Viewport3D* view3d1 = new Viewport3D;
 //	view3d1->set_name("Viewport 3D1");
@@ -158,6 +161,8 @@ int main(int argc, char* argv[])
 //	scrollbar->SetPosition(200, 200);
 //	scrollbar->SetPercentage(100);
 
+	/*
+
 	HLayout* hlayout = Manage(new HLayout);
 	hlayout->set_name("HLayout");
 
@@ -173,10 +178,38 @@ int main(int argc, char* argv[])
 	hlayout->Add(btn1);
 	hlayout->Add(btn2);
 	hlayout->Add(btn3);
+	*/
 
-	RunLoop (win);
+	//RunLoop (win);
+
+	RedrawEvent event;
+
+	event.set_view_matrix(glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f)));
+	// default is 800 x 600
+	event.set_projection_matrix(glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
+
+	Context* context = new Context;
+	Interface::instance->ResizeContext(context, 640, 480);
+
+	/* Loop until the user closes the window */
+	while (!glfwWindowShouldClose(win)) {
+		/* Render here */
+		Interface::instance->DrawContext(context, event);
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(win);
+
+		/* Poll for and process events */
+#ifdef __APPLE__
+        glfwPollEvents();
+#else
+        glfwWaitEvents();
+#endif  // __APPLE__
+	}
 
 	Interface::Release();
+
+	delete context;
 
 	Terminate();
 

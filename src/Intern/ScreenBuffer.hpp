@@ -39,6 +39,7 @@ namespace BlendInt {
 
 	class Interface;
 	class ContextManager;
+	class Context;
 
 	/**
 	 * @brief A special class used in Interface only to work as a screen buffer
@@ -50,6 +51,7 @@ namespace BlendInt {
 
 		friend class Interface;
 		friend class ContextManager;
+		friend class Context;
 
 		void Render (const glm::mat4& mvp, GLTexture2D* texture);
 

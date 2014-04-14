@@ -21,7 +21,23 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+#include <BlendInt/OpenGL/GLRenderbuffer.hpp>
+
 #include <BlendInt/Gui/Context.hpp>
+
+#include "../Intern/ScreenBuffer.hpp"
 
 namespace BlendInt
 {
@@ -46,20 +62,100 @@ namespace BlendInt
 		}
 	}
 
+	bool Context::refresh_once = false;
+
+	bool Context::force_refresh_all = true;
+
+	ScissorStatus Context::scissor_status;
+
 	Context::Context ()
-	: AbstractContainerExt()
+	: AbstractContainerExt(), m_main_buffer(0), m_screenbuffer(0)
 	{
+		set_size(640, 480);
+
+		m_screenbuffer = new ScreenBuffer;
+		m_hover_deque.reset(new std::deque<AbstractWidgetExt*>);
+
+		m_main_buffer = new GLTexture2D;
 	}
 
 	Context::~Context ()
 	{
+		if (AbstractWidgetExt::focused_widget) {
+			AbstractWidgetExt::focused_widget->m_flag.reset(
+			        AbstractWidgetExt::WidgetFlagFocusExt);
+			AbstractWidgetExt::focused_widget = 0;
+		}
+
+		std::map<int, ContextLayerExt>::iterator layer_iter;
+		std::set<AbstractWidgetExt*>::iterator widget_iter;
+		std::set<AbstractWidgetExt*>* widget_set_p = 0;
+
+		for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
+		        layer_iter++)
+		{
+			widget_set_p = layer_iter->second.widgets;
+			for (widget_iter = widget_set_p->begin();
+			        widget_iter != widget_set_p->end(); widget_iter++)
+			{
+				(*widget_iter)->destroyed().disconnectOne(this,
+				        &Context::OnSubWidgetDestroyed);
+
+				if ((*widget_iter)->managed()) {
+
+					// Delete the widget if it's not referenced by any RefPtr
+					if((*widget_iter)->count() == 0)
+						delete *widget_iter;
+				} else {
+
+					(*widget_iter)->destroyed().disconnectOne(this,
+					        &Context::OnSubWidgetDestroyed);
+					(*widget_iter)->m_container = 0;
+					//(*widget_iter)->m_flag.reset(
+					   //     AbstractWidget::WidgetFlagInContextManager);
+
+				}
+			}
+
+			widget_set_p->clear();
+		}
+
+		m_deque.clear();
+
+		if (m_screenbuffer) {
+			delete m_screenbuffer;
+		}
+
+		m_layers.clear();
+		m_index.clear();
+
+		if (m_main_buffer) {
+			m_main_buffer->Clear();
+			delete m_main_buffer;
+		}
 	}
 
 	bool Context::Update (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 
-			return true;
+			switch(request.type()) {
+
+				case FormSize: {
+
+					// Nothing to do but accept
+					return true;
+				}
+
+				case FormPosition: {
+					// Nothing to do but accept
+					return true;
+				}
+
+				default:
+					return false;
+			}
+
 		} else {
 
 			return false;
@@ -68,6 +164,98 @@ namespace BlendInt
 
 	ResponseType Context::Draw (const RedrawEvent& event)
 	{
+		m_deque.clear();
+
+		if (force_refresh_all) {
+
+			std::map<int, ContextLayerExt>::iterator layer_iter;
+			unsigned int count = 0;
+			std::set<AbstractWidgetExt*>* widget_set_p = 0;
+
+			for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
+			        layer_iter++) {
+				widget_set_p = layer_iter->second.widgets;
+
+				DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
+
+				if (!layer_iter->second.buffer) {
+					layer_iter->second.buffer = new GLTexture2D;
+					layer_iter->second.buffer->Generate();
+				}
+
+				OffScreenRenderToTexture(event,
+								layer_iter->first,
+								widget_set_p,
+								layer_iter->second.buffer);
+				m_deque.push_back(layer_iter->second.buffer);
+
+				count++;
+
+				layer_iter->second.refresh = false;
+			}
+
+			RenderToScreenBuffer(event);
+
+			refresh_once = false;
+			force_refresh_all = false;
+
+		} else if (refresh_once) {
+
+			std::map<int, ContextLayerExt>::iterator layer_iter;
+			unsigned int count = 0;
+			std::set<AbstractWidgetExt*>* widget_set_p = 0;
+
+			for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
+			        layer_iter++) {
+				widget_set_p = layer_iter->second.widgets;
+
+				if (layer_iter->second.refresh) {
+
+					// DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
+
+					if (!layer_iter->second.buffer) {
+						layer_iter->second.buffer = new GLTexture2D;
+						layer_iter->second.buffer->Generate();
+					}
+					OffScreenRenderToTexture(event,
+									layer_iter->first,
+									widget_set_p,
+									layer_iter->second.buffer);
+
+				} else {
+
+					if (!layer_iter->second.buffer) {
+						layer_iter->second.buffer = new GLTexture2D;
+						layer_iter->second.buffer->Generate();
+
+						OffScreenRenderToTexture(event,
+										layer_iter->first,
+										widget_set_p,
+										layer_iter->second.buffer);
+					} else if (layer_iter->second.buffer->id() == 0) {
+						layer_iter->second.buffer->Generate();
+
+						OffScreenRenderToTexture(event,
+										layer_iter->first,
+										widget_set_p,
+										layer_iter->second.buffer);
+					}
+				}
+
+				count++;
+
+				m_deque.push_back(layer_iter->second.buffer);
+				layer_iter->second.refresh = false;
+			}
+
+			RenderToScreenBuffer(event);
+
+			refresh_once = false;
+		}
+
+		m_screenbuffer->Render(event.projection_matrix() * event.view_matrix(),
+							   m_main_buffer);
+
 		return Accept;
 	}
 
@@ -203,13 +391,15 @@ namespace BlendInt
 		return true;
 	}
 
-	AbstractWidgetIterator* Context::First (const DeviceEvent& event)
+	RefPtr<AbstractContainerIterator> Context::First (const DeviceEvent& event)
 	{
 		// A Context object only interacts with Interface
-		return 0;
+		RefPtr<AbstractContainerIterator> ret;
+
+		return ret;
 	}
 
-	bool Context::End (const DeviceEvent& event, AbstractWidgetIterator* iter)
+	bool Context::End (const DeviceEvent& event, AbstractContainerIterator* iter)
 	{
 		// A Context object only interacts with Interface
 		return false;
@@ -232,6 +422,247 @@ namespace BlendInt
 			m_layers[layer].refresh = true;
 			refresh_once = true;
 		}
+	}
+	
+	void Context::OffScreenRenderToTexture (const RedrawEvent& event,
+					int layer,
+					std::set<AbstractWidgetExt*>* widgets,
+					GLTexture2D* texture)
+	{
+		GLsizei width = size().width();
+		GLsizei height = size().height();
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = texture;
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		GL_TEXTURE_2D, tex->id(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width,
+		        height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_RENDERBUFFER, rb);
+
+		if (GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			glClearColor(0.0, 0.0, 0.0, 0.00);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT |
+					GL_DEPTH_BUFFER_BIT |
+					GL_STENCIL_BUFFER_BIT);
+
+			// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+			glBlendFuncSeparate(GL_SRC_ALPHA,
+								GL_ONE_MINUS_SRC_ALPHA,
+								GL_ONE,
+								GL_ONE_MINUS_SRC_ALPHA);
+
+			glEnable(GL_BLEND);
+
+			glViewport(0, 0, width, height);
+
+			std::set<AbstractWidgetExt*>::iterator widget_iter;
+
+			for (widget_iter = widgets->begin(); widget_iter != widgets->end();
+			        widget_iter++) {
+				//(*set_it)->Draw();
+				DispatchDrawEvent(*widget_iter, event);
+			}
+
+			// uncomment the code below to test the layer buffer (texture)
+			/*
+			 std::string str("layer");
+			 char buf[4];
+			 sprintf(buf, "%d", layer);
+			 str = str + buf + ".png";
+			 tex->WriteToFile(str);
+			 */
+		}
+
+		fb->Reset();
+		tex->Reset();
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb;
+		fb = 0;
+
+	}
+	
+	void Context::RenderToScreenBuffer (const RedrawEvent& event)
+	{
+		GLsizei width = size().width();
+		GLsizei height = size().height();
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = m_main_buffer;
+		tex->Generate();
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex->id(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width,
+		        height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+		GL_RENDERBUFFER, rb);
+
+		if (GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			PreDrawContext(true);
+
+			glViewport(0, 0, width, height);
+
+			glm::mat4 mvp = event.projection_matrix() * event.view_matrix();
+
+#ifdef DEBUG
+			//DrawTriangle(false);
+			//DrawGrid(width, height);
+#endif
+
+			std::deque<GLTexture2D*>::iterator it;
+			for (it = m_deque.begin(); it != m_deque.end(); it++) {
+				m_screenbuffer->Render(mvp, *it);
+			}
+
+		}
+
+		fb->Reset();
+		tex->Reset();
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb;
+		fb = 0;
+	}
+	
+	void Context::PreDrawContext (bool fbo)
+	{
+		glClearColor(0.447, 0.447, 0.447, 1.00);
+
+		glClearDepth(1.0);
+		glClear(
+		        GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
+		                | GL_STENCIL_BUFFER_BIT);
+
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+
+		if (fbo) {
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE,
+			        GL_ONE_MINUS_SRC_ALPHA);
+		} else {
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+
+		glEnable(GL_BLEND);
+	}
+	
+	void Context::DispatchDrawEvent (AbstractWidgetExt* widget,
+					const RedrawEvent& event)
+	{
+		if (widget->visiable()) {
+
+			/*
+			DBG_PRINT_MSG("draw widget: %s at %d, %d, size: %u, %u",
+							widget->name().c_str(),
+							widget->position().x(),
+							widget->position().y(),
+							widget->size().width(),
+							widget->size().height());
+			*/
+
+			widget->Draw(event);
+
+			AbstractContainerExt* p = dynamic_cast<AbstractContainerExt*>(widget);
+			if (p) {
+
+				if(p->m_flag[AbstractWidgetExt::WidgetFlagScissorTestExt]) {
+					scissor_status.Push(p->position().x() + p->margin().left(),
+							p->position().y() + p->margin().right(),
+							p->size().width() - p->margin().left() - p->margin().right(),
+							p->size().height() - p->margin().top() - p->margin().bottom());
+				}
+
+				if(scissor_status.valid()) {
+					scissor_status.Enable();
+
+					for (RefPtr<AbstractContainerIterator> it =
+					        p->First(event); !(p->End(event, it.get()));
+					        it->Next()) {
+						DispatchDrawEvent(it->GetWidget(), event);
+					}
+
+				} else {
+					for (RefPtr<AbstractContainerIterator> it =
+									p->First(event); !(p->End(event, it.get()));
+					        it->Next()) {
+						DispatchDrawEvent(it->GetWidget(), event);
+					}
+				}
+
+				if(p->m_flag[AbstractWidgetExt::WidgetFlagScissorTestExt]) {
+					scissor_status.Pop();
+					scissor_status.Disable();
+				}
+
+			}
+
+		}
+	}
+	
+	bool Context::Add (AbstractWidgetExt* widget)
+	{
+		return AddSubWidget(widget);
+	}
+	
+	bool Context::Remove (AbstractWidgetExt* widget)
+	{
+		return RemoveSubWidget(widget);
 	}
 
 	void Context::OnSubWidgetDestroyed (AbstractWidgetExt* widget)

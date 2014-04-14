@@ -25,7 +25,13 @@
 #define _BLENDINT_GUI_CONTEXT_HPP_
 
 #include <map>
+#include <deque>
 #include <set>
+
+#include <BlendInt/Core/Point.hpp>
+#include <BlendInt/Core/Size.hpp>
+
+#include <BlendInt/OpenGL/ScissorStatus.hpp>
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/Interface.hpp>
@@ -33,14 +39,21 @@
 
 namespace BlendInt {
 
+	class ScreenBuffer;
+
 	struct ContextLayerExt {
 
 		ContextLayerExt ();
 		~ContextLayerExt ();
 
-		bool refresh;	/** If refresh this layer */
-		std::set<AbstractWidgetExt*>* widgets;	/** A set to store sub widgets in this layer */
-		GLTexture2D* buffer;	/** The OpenGL Texture as a buffer for display */
+		/** If refresh this layer */
+		bool refresh;
+
+		/** A set to store sub widgets in this layer */
+		std::set<AbstractWidgetExt*>* widgets;
+
+		/** The OpenGL Texture as a buffer for display */
+		GLTexture2D* buffer;
 	};
 
 	/**
@@ -75,6 +88,10 @@ namespace BlendInt {
 
 		void RefreshLayer (int layer);
 
+		bool Add (AbstractWidgetExt* widget);
+
+		bool Remove (AbstractWidgetExt* widget);
+
 	protected:
 
 		virtual bool Update (const UpdateRequest& request);
@@ -99,11 +116,21 @@ namespace BlendInt {
 
 		virtual bool RemoveSubWidget (AbstractWidgetExt* widget);
 
-		virtual AbstractWidgetIterator* First (const DeviceEvent& event);
+		virtual RefPtr<AbstractContainerIterator> First (const DeviceEvent& event);
 
-		virtual bool End (const DeviceEvent& event, AbstractWidgetIterator* iter);
+		virtual bool End (const DeviceEvent& event, AbstractContainerIterator* iter);
 
 	private:
+
+		void OffScreenRenderToTexture (const RedrawEvent& event, int layer,
+						std::set<AbstractWidgetExt*>* widgets,
+						GLTexture2D* texture);
+
+		void RenderToScreenBuffer (const RedrawEvent& event);
+
+		void PreDrawContext (bool fbo = false);
+
+		void DispatchDrawEvent (AbstractWidgetExt* widget, const RedrawEvent& event);
 
 		void OnSubWidgetDestroyed (AbstractWidgetExt* widget);
 
@@ -111,10 +138,19 @@ namespace BlendInt {
 
 		std::map<AbstractWidgetExt*, int> m_index;
 
+		std::deque<GLTexture2D*> m_deque;
+
+		GLTexture2D* m_main_buffer;
+
+		ScreenBuffer* m_screenbuffer;
+
+		boost::scoped_ptr<std::deque<AbstractWidgetExt*> > m_hover_deque;
+
+		static ScissorStatus scissor_status;
+
 		static bool refresh_once;
 
 		static bool force_refresh_all;
-
 	};
 
 }
