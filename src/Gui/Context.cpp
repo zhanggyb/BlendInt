@@ -71,16 +71,11 @@ namespace BlendInt
 	ScissorStatus Context::scissor_status;
 
 	Context::Context ()
-	: AbstractContainerExt(), m_main_buffer(0), m_screenbuffer(0)
+	: AbstractContainerExt(), m_main_buffer(0), m_screenbuffer(0), m_vao(0)
 	{
 		set_size(640, 480);
 
-		m_program = ShaderManager::instance->default_context_program();
-
-		m_screenbuffer = new ScreenBuffer;
-		m_hover_deque.reset(new std::deque<AbstractWidgetExt*>);
-
-		m_main_buffer = new GLTexture2D;
+		InitOnce();
 	}
 
 	Context::~Context ()
@@ -137,6 +132,8 @@ namespace BlendInt
 			m_main_buffer->Clear();
 			delete m_main_buffer;
 		}
+
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool Context::Update (const UpdateRequest& request)
@@ -174,6 +171,62 @@ namespace BlendInt
 		glClear(GL_COLOR_BUFFER_BIT |
 						GL_DEPTH_BUFFER_BIT |
 						GL_STENCIL_BUFFER_BIT);
+
+		/*
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+		glBindVertexArray(m_vao);
+
+		m_program->Use();
+
+		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+
+		glActiveTexture(GL_TEXTURE0);
+		m_main_buffer->Bind();
+
+		m_program->SetUniform1i("TexID", 0);
+
+		glEnableVertexAttribArray(0);
+		m_vbo->Bind();
+
+		glVertexAttribPointer(
+				0,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				BUFFER_OFFSET(0)
+				);
+
+		glEnableVertexAttribArray(1);
+		m_tbo->Bind();
+		glVertexAttribPointer(
+				1,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				BUFFER_OFFSET(0)
+				);
+
+		m_vbo->Bind();
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(0);
+
+		m_vbo->Reset();
+		m_main_buffer->Reset();
+		m_program->Reset();
+
+		glBindVertexArray(0);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		*/
 
 		/*
 		m_deque.clear();
@@ -402,6 +455,49 @@ namespace BlendInt
 		}
 
 		return true;
+	}
+
+	void Context::InitOnce ()
+	{
+		m_program = ShaderManager::instance->default_context_program();
+
+		m_screenbuffer = new ScreenBuffer;
+		m_hover_deque.reset(new std::deque<AbstractWidgetExt*>);
+
+		m_main_buffer = new GLTexture2D;
+
+		glGenVertexArrays(1, &m_vao);
+
+		glBindVertexArray(m_vao);
+
+		m_vbo.reset(new GLArrayBuffer);
+		m_vbo->Generate();
+
+		GLfloat vertices [] = {
+				0.f, 0.f,
+				size().width(), 0.f,
+				0.f, size().height(),
+				size().width(), size().height()
+		};
+
+		m_vbo->Bind();
+		m_vbo->SetData(sizeof(vertices), vertices);
+		m_vbo->Reset();
+
+		GLfloat uv[] = {
+			0.0, 1.0,
+			1.0, 1.0,
+			0.0, 0.0,
+			1.0, 0.0
+		};
+
+		m_tbo.reset(new GLArrayBuffer);
+		m_tbo->Generate();
+		m_tbo->Bind();
+		m_tbo->SetData(sizeof(uv), uv);
+		m_tbo->Reset();
+
+		glBindVertexArray(0);
 	}
 
 	RefPtr<AbstractContainerIterator> Context::First (const DeviceEvent& event)

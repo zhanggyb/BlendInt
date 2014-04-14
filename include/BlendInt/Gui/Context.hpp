@@ -37,6 +37,8 @@
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+
 namespace BlendInt {
 
 	class ScreenBuffer;
@@ -122,6 +124,8 @@ namespace BlendInt {
 
 	private:
 
+		void InitOnce ();
+
 		void OffScreenRenderToTexture (const RedrawEvent& event, int layer,
 						std::set<AbstractWidgetExt*>* widgets,
 						GLTexture2D* texture);
@@ -141,6 +145,11 @@ namespace BlendInt {
 		std::deque<GLTexture2D*> m_deque;
 
 		GLTexture2D* m_main_buffer;
+
+		RefPtr<GLArrayBuffer> m_vbo;
+		RefPtr<GLArrayBuffer> m_tbo;
+
+		GLuint m_vao;
 
 		ScreenBuffer* m_screenbuffer;
 
