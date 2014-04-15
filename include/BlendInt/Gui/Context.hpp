@@ -137,6 +137,10 @@ namespace BlendInt {
 
 		void DispatchDrawEvent (AbstractWidgetExt* widget, const RedrawEvent& event);
 
+		void BuildCursorHoverList (const MouseEvent& event, AbstractWidgetExt* parent);
+
+		void SetFocusedWidget (AbstractWidgetExt* widget);
+
 		void OnSubWidgetDestroyed (AbstractWidgetExt* widget);
 
 		std::map<int, ContextLayerExt> m_layers;

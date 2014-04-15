@@ -187,13 +187,21 @@ namespace BlendInt {
 	}
 
 	Interface::Interface ()
-	: m_focus_style(FocusOnClick)
+	: m_focus_style(FocusOnClick), m_current_context(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	Interface::~Interface ()
 	{
+		if(m_current_context) {
+
+			if(m_current_context->managed() &&
+							(m_current_context->count() == 0)) {
+				m_current_context->destroyed().disconnectOne(this, &Interface::OnContextDestroyed);
+				delete m_current_context;
+			}
+		}
 	}
 
 	const Size& Interface::size () const
@@ -203,7 +211,10 @@ namespace BlendInt {
 
 	void Interface::Resize (const Size& size)
 	{
-		ContextManager::instance->ResizeFromInterface(size);
+		//ContextManager::instance->ResizeFromInterface(size);
+		if(m_current_context) {
+			m_current_context->Resize(size);
+		}
 	}
 
 	void Interface::ResizeContext(Context* context, const Size& size)
@@ -213,7 +224,10 @@ namespace BlendInt {
 
 	void Interface::Resize (unsigned int width, unsigned int height)
 	{
-		ContextManager::instance->ResizeFromInterface(width, height);
+		//ContextManager::instance->ResizeFromInterface(width, height);
+		if(m_current_context) {
+			m_current_context->Resize(width, height);
+		}
 	}
 
 	void Interface::ResizeContext(Context* context, unsigned int width, unsigned int height)
@@ -224,6 +238,13 @@ namespace BlendInt {
 	void Interface::Draw ()
 	{
 		ContextManager::instance->DrawFromInterface();
+	}
+
+	void Interface::Draw (const RedrawEvent& event)
+	{
+		if(m_current_context) {
+			m_current_context->Draw(event);
+		}
 	}
 
 	void Interface::DrawContext (Context* context, const RedrawEvent& event)
@@ -239,8 +260,42 @@ namespace BlendInt {
 	{
 	}
 
+	void Interface::DispatchKeyEvent (Context* context, const KeyEvent& event)
+	{
+		if(AbstractWidgetExt::focused_widget) {
+			switch (event.action()) {
+
+				case KeyPress: {
+#ifdef DEBUG
+					if(event.key() == Key_F6 && event.text().empty()) {
+						//DrawToOffScreen();
+						//RenderToImage();
+					}
+#endif
+					AbstractWidgetExt::focused_widget->KeyPressEvent(event);
+					break;
+				}
+
+				case KeyRelease: {
+					// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
+					//cm->m_focus->KeyReleaseEvent(event);
+					break;
+				}
+
+				case KeyRepeat: {
+					// item->KeyRepeatEvent(&event);
+					break;
+				}
+
+				default:
+				break;
+			}
+		}
+	}
+
 	void Interface::DispatchKeyEvent (const KeyEvent& event)
 	{
+		/*
 		if(AbstractWidget::focused_widget) {
 			switch (event.action()) {
 
@@ -270,9 +325,13 @@ namespace BlendInt {
 				break;
 			}
 		}
+		*/
+		if(m_current_context) {
+			DispatchKeyEvent(m_current_context, event);
+		}
 	}
 
-	void Interface::DispatchMouseEvent (const MouseEvent& event)
+	void Interface::DispatchMouseEvent (Context* context, const MouseEvent& event)
 	{
 		switch (event.action()) {
 
@@ -293,6 +352,37 @@ namespace BlendInt {
 
 			default:
 			break;
+		}
+	}
+
+
+	void Interface::DispatchMouseEvent (const MouseEvent& event)
+	{
+		/*
+		switch (event.action()) {
+
+			case MouseMove: {
+				DispatchCursorMoveEvent(event);
+				return;
+			}
+
+			case MousePress: {
+				DispatchMousePressEvent(event);
+				return;
+			}
+
+			case MouseRelease: {
+				DispatchMouseReleaseEvent(event);
+				return;
+			}
+
+			default:
+			break;
+		}
+		*/
+
+		if(m_current_context) {
+			DispatchMouseEvent(m_current_context, event);
 		}
 	}
 
@@ -526,6 +616,116 @@ namespace BlendInt {
 		if((verstr == NULL) || (sscanf(verstr, "%d.%d", major, minor) != 2)) {
 			*major = *minor = 0;
 			fprintf(stderr, "Invalid GL_VERSION format!!!\n");
+		}
+	}
+
+	void Interface::DispatchCursorMoveEvent(Context* context, const MouseEvent& event)
+	{
+		AbstractWidgetExt* widget = 0;
+		ResponseType response;
+
+		// search which widget in stack contains the cursor
+		while (context->m_hover_deque->size()) {
+
+			if (context->m_hover_deque->back()->visiable() &&
+							context->m_hover_deque->back()->Contain(event.position())) {
+				widget = context->m_hover_deque->back();
+				break;
+			} else {
+				context->m_hover_deque->back()->CursorEnterEvent(false);
+				context->m_hover_deque->back()->m_flag.reset(AbstractWidgetExt::WidgetFlagContextHoverListExt);
+			}
+
+			context->m_hover_deque->pop_back();
+		}
+
+		context->BuildCursorHoverList(event, widget);
+
+		/*
+		for (std::deque<AbstractWidget*>::iterator it =
+				cm->m_hover_deque->begin(); it != cm->m_hover_deque->end();
+				it++)
+		{
+			DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
+		}
+		*/
+
+		// tell the focused widget first
+		if(AbstractWidgetExt::focused_widget) {
+			response = AbstractWidgetExt::focused_widget->MouseMoveEvent(event);
+
+			if(response == AcceptAndBreak)
+				return;
+			// check the event status
+		}
+
+		for (std::deque<AbstractWidgetExt*>::reverse_iterator it =
+				context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend();
+				it++)
+		{
+			response = (*it)->MouseMoveEvent(event);
+			// check the event status
+			if (response == Accept) {
+				// TODO: do sth
+			}
+		}
+	}
+
+	void Interface::DispatchMousePressEvent(Context* context, const MouseEvent& event)
+	{
+		ResponseType response;
+		bool focus_set = false;
+
+		for(std::deque<AbstractWidgetExt*>::reverse_iterator it = context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend(); it++)
+		{
+			response = (*it)->MousePressEvent(event);
+			//DBG_PRINT_MSG("mouse press: %s", (*it)->name().c_str());
+
+			if((!focus_set) && (response == Accept)) {
+				context->SetFocusedWidget(*it);
+				focus_set = true;
+			}
+
+			if(response == AcceptAndBreak) {
+				break;
+			}
+		}
+	}
+
+	void Interface::DispatchMouseReleaseEvent(Context* context, const MouseEvent& event)
+	{
+		ResponseType response;
+
+		// tell the focused widget first
+		if(AbstractWidgetExt::focused_widget) {
+			response = AbstractWidgetExt::focused_widget->MouseReleaseEvent(event);
+
+			// Check the event status
+		}
+
+		for(std::deque<AbstractWidgetExt*>::reverse_iterator it = context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend(); it++)
+		{
+			response = (*it)->MouseReleaseEvent(event);
+
+			if(response == AcceptAndBreak) break;
+		}
+	}
+
+	void Interface::SetCurrentContext(Context* context)
+	{
+		if(m_current_context) {
+			m_current_context->destroyed().disconnectOne(this, &Interface::OnContextDestroyed);
+		}
+
+		m_current_context = context;
+		m_events->connect(m_current_context->destroyed(), this, &Interface::OnContextDestroyed);
+	}
+
+	void Interface::OnContextDestroyed(AbstractWidgetExt* context)
+	{
+		if(context == m_current_context) {
+			m_current_context->destroyed().disconnectOne(this, &Interface::OnContextDestroyed);
+			m_current_context = 0;
 		}
 	}
 

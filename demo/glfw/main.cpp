@@ -44,8 +44,6 @@
 
 #include "Window.hpp"
 
-#include "DemoFrame.hpp"
-
 using namespace BlendInt;
 using namespace std;
 
@@ -188,52 +186,14 @@ int main(int argc, char* argv[])
 	// default is 800 x 600
 	event.set_projection_matrix(glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
 
-	Context* context = new Context;
-	Interface::instance->ResizeContext(context, 640, 480);
+	Context* context = Manage(new Context);
+	Interface::instance->SetCurrentContext(context);
 
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(win)) {
+	Interface::instance->Resize(640, 480);
 
-		/*
-		float ratio;
-		int width, height;
-		glfwGetFramebufferSize(win, &width, &height);
-		ratio = width / (float) height;
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-		glBegin(GL_TRIANGLES);
-		glColor3f(1.f, 0.f, 0.f);
-		glVertex3f(-0.6f, -0.4f, 0.f);
-		glColor3f(0.f, 1.f, 0.f);
-		glVertex3f(0.6f, -0.4f, 0.f);
-		glColor3f(0.f, 0.f, 1.f);
-		glVertex3f(0.f, 0.6f, 0.f);
-		glEnd();
-		*/
-
-		/* Render here */
-		Interface::instance->DrawContext(context, event);
-
-		/* Swap front and back buffers */
-		glfwSwapBuffers(win);
-
-		/* Poll for and process events */
-#ifdef __APPLE__
-        glfwPollEvents();
-#else
-        glfwWaitEvents();
-#endif  // __APPLE__
-	}
+	RunLoop(win, event);
 
 	Interface::Release();
-
-	delete context;
 
 	Terminate();
 

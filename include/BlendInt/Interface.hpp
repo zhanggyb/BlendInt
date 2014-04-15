@@ -61,6 +61,8 @@
 #include <BlendInt/Window/RedrawEvent.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
+#include <BlendInt/Gui/AbstractWidget.hpp>
+
 #define BLENDINT_EVENTS_INIT_ONCE_IN_MAIN Cpp::Events::ProcessInit processInit
 
 namespace BlendInt {
@@ -87,9 +89,15 @@ namespace BlendInt {
 
 		void Draw ();
 
+		void Draw (const RedrawEvent& event);
+
 		void DrawContext (Context* context, const RedrawEvent& event);
 
+		void DispatchKeyEvent (Context* context, const KeyEvent& event);
+
 		void DispatchKeyEvent (const KeyEvent& event);
+
+		void DispatchMouseEvent (Context* context, const MouseEvent& event);
 
 		void DispatchMouseEvent (const MouseEvent& event);
 
@@ -110,6 +118,8 @@ namespace BlendInt {
 		void ResizeContext (Context* context, unsigned int width, unsigned int height);
 
 		void SetMainWidget (AbstractWidget* widget);
+
+		void SetCurrentContext (Context* context);
 
 		Cpp::EventRef<unsigned int, unsigned int> resized ()
 		{
@@ -139,6 +149,12 @@ namespace BlendInt {
 
 		void RenderToImage ();
 
+		void DispatchCursorMoveEvent (Context *context, const MouseEvent& event);
+
+		void DispatchMousePressEvent (Context *context, const MouseEvent& event);
+
+		void DispatchMouseReleaseEvent (Context *context, const MouseEvent& event);
+
 		void DispatchCursorMoveEvent (const MouseEvent& event);
 
 		void DispatchMousePressEvent (const MouseEvent& event);
@@ -147,6 +163,8 @@ namespace BlendInt {
 
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point,
 		        AbstractWidget* parent);
+
+		void OnContextDestroyed (AbstractWidgetExt* context);
 
 		//AbstractWidget* m_main;
 
@@ -161,6 +179,8 @@ namespace BlendInt {
 		static void GetGLVersion (int *major, int *minor);
 		
 		static void GetGLSLVersion (int *major, int *minor);
+
+		Context* m_current_context;
 
 	};
 

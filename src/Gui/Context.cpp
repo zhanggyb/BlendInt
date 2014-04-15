@@ -158,6 +158,7 @@ namespace BlendInt
 					glBindVertexArray(0);
 
 					// TODO: redraw
+					force_refresh_all = true;
 
 					return true;
 				}
@@ -452,6 +453,8 @@ namespace BlendInt
 
 	void Context::DrawMainBuffer (const glm::mat4& mvp)
 	{
+		glViewport(0, 0, size().width(), size().height());
+
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 		glBindVertexArray(m_vao);
@@ -621,7 +624,6 @@ namespace BlendInt
 		fb->Reset();
 		delete fb;
 		fb = 0;
-
 	}
 	
 	void Context::RenderMainBuffer (const RedrawEvent& event)
@@ -828,12 +830,77 @@ namespace BlendInt
 	{
 		return RemoveSubWidget(widget);
 	}
+	
+	void Context::BuildCursorHoverList (const MouseEvent& event, AbstractWidgetExt* parent)
+	{
+		if (parent) {
+			parent->m_flag.set(AbstractWidgetExt::WidgetFlagContextHoverListExt);
+
+			AbstractContainerExt* p = dynamic_cast<AbstractContainerExt*>(parent);
+			if(p) {
+				for (RefPtr<AbstractContainerIterator> it =
+						p->First(event); !(p->End(event, it.get())); it->Next()) {
+					if (it->GetWidget()->visiable() && it->GetWidget()->Contain(event.position())) {
+						m_hover_deque->push_back(it->GetWidget());
+						m_hover_deque->back()->CursorEnterEvent(true);
+						BuildCursorHoverList(event, it->GetWidget());
+						break;	// if break or continue the loop?
+					}
+				}
+			} else {
+			}
+		} else {
+			m_hover_deque->clear();
+
+			std::map<int, ContextLayerExt>::reverse_iterator map_it;
+			std::set<AbstractWidgetExt*>::iterator set_it;
+			std::set<AbstractWidgetExt*>* set_p = 0;
+
+			bool stop = false;
+
+			for (map_it = m_layers.rbegin();
+							map_it != m_layers.rend();
+							map_it++) {
+				set_p = map_it->second.widgets;
+				for (set_it = set_p->begin(); set_it != set_p->end();
+						set_it++) {
+					if ((*set_it)->visiable() && (*set_it)->Contain(event.position())) {
+						m_hover_deque->push_back(*set_it);
+						m_hover_deque->back()->CursorEnterEvent(true);
+						BuildCursorHoverList(event, *set_it);
+						stop = true;
+					}
+
+					if (stop)
+					break;
+				}
+				if (stop)
+				break;
+			}
+		}
+	}
+	
+	void Context::SetFocusedWidget (AbstractWidgetExt* widget)
+	{
+		if (AbstractWidgetExt::focused_widget) {
+			AbstractWidgetExt::focused_widget->m_flag.reset(
+			        AbstractWidgetExt::WidgetFlagFocusExt);
+		}
+
+		AbstractWidgetExt::focused_widget = widget;
+		if (AbstractWidgetExt::focused_widget) {
+			AbstractWidgetExt::focused_widget->m_flag.set(
+			        AbstractWidgetExt::WidgetFlagFocusExt);
+		}
+	}
 
 	void Context::OnSubWidgetDestroyed (AbstractWidgetExt* widget)
 	{
 		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the context manager", widget->name().c_str());
 
 		RemoveSubWidget(widget);
+
+		// TODO: if in hover list, remove
 
 		//widget->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);
 		//widget->destroyed().disconnectOne(this, &Context::OnSubWidgetDestroyed);
