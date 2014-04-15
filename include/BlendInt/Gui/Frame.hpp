@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_FRAME_HPP_
-#define _BLENDINT_FRAME_HPP_
+#ifndef _BLENDINT_GUI_FRAME_HPP_
+#define _BLENDINT_GUI_FRAME_HPP_
 
 /**
  * @defgroup widgets Widgets
@@ -77,4 +77,5 @@ namespace BlendInt {
 	};
 
 } /* namespace BlendInt */
-#endif /* _BLENDINT_FRAME_HPP_ */
+
+#endif /* _BLENDINT_GUI_FRAME_HPP_ */

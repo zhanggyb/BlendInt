@@ -27,7 +27,7 @@
 
 namespace BlendInt {
 
-	RefPtr<DequeIterator> AbstractDequeContainer::default_iterator(new DequeIterator);
+	DequeIterator AbstractDequeContainer::default_iterator;
 
 	AbstractDequeContainer::AbstractDequeContainer ()
 	: AbstractContainer()
@@ -98,20 +98,19 @@ namespace BlendInt {
 		}
 	}
 
-	RefPtr<AbstractContainerIterator> AbstractDequeContainer::First (
+	AbstractContainerIterator* AbstractDequeContainer::First (
         const DeviceEvent& event)
 	{
-		default_iterator->set_it(m_sub_widgets->begin());
-		return default_iterator;
+		default_iterator.m_it = m_sub_widgets->begin();
+		return &default_iterator;
 	}
 
 	bool AbstractDequeContainer::End (const DeviceEvent& event,
         AbstractContainerIterator* iter)
 	{
 		DequeIterator* it = dynamic_cast<DequeIterator*>(iter);
-		//if(it && (*it) == m_sub_widgets->end())
 		if(it){
-			return true;
+			return it->m_it == m_sub_widgets->end();
 		} else {
 			return false;
 		}
