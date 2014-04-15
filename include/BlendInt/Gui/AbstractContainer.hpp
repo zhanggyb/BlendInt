@@ -45,11 +45,12 @@ namespace BlendInt {
 	/**
 	 * @brief A virtual iterator to be instanced for widgets in container
 	 */
-	class AbstractContainerIterator
+	class AbstractContainerIterator: public Object
 	{
 	public:
 
 		AbstractContainerIterator()
+		: Object()
 		{
 		}
 
@@ -59,8 +60,14 @@ namespace BlendInt {
 
 		virtual AbstractWidget* GetWidget () const = 0;
 
+		virtual void First () = 0;
+
 		virtual void Next () = 0;
+
+		virtual bool End () = 0;
 	};
+
+	typedef RefPtr<AbstractContainerIterator> IteratorPtr;
 
 	class AbstractContainer: public AbstractWidget
 	{
@@ -107,9 +114,7 @@ namespace BlendInt {
 			widget->m_container = container;
 		}
 
-		virtual AbstractContainerIterator* First (const DeviceEvent& event) = 0;
-
-		virtual bool End (const DeviceEvent& event, AbstractContainerIterator* iter) = 0;
+		virtual IteratorPtr CreateIterator () = 0;
 
 		void set_margin (const Margin& margin)
 		{

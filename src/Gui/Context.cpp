@@ -621,15 +621,10 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	AbstractContainerIterator* Context::First (const DeviceEvent& event)
+	IteratorPtr Context::CreateIterator ()
 	{
-		return 0;
-	}
-
-	bool Context::End (const DeviceEvent& event, AbstractContainerIterator* iter)
-	{
-		// A Context object only interacts with Interface
-		return false;
+		IteratorPtr ret;
+		return ret;
 	}
 
 	int Context::GetMaxLayer () const
@@ -905,19 +900,18 @@ namespace BlendInt
 							p->size().height() - p->margin().top() - p->margin().bottom());
 				}
 
+				IteratorPtr it = p->CreateIterator();
+
 				if(scissor_status.valid()) {
 					scissor_status.Enable();
 
-					for (AbstractContainerIterator* it =
-					        p->First(event); !(p->End(event, it));
-					        it->Next()) {
+					for (it->First(); !it->End(); it->Next()) {
 						DispatchDrawEvent(it->GetWidget(), event);
 					}
 
 				} else {
-					for (AbstractContainerIterator* it =
-									p->First(event); !(p->End(event, it));
-					        it->Next()) {
+
+					for (it->First(); !it->End(); it->Next()) {
 						DispatchDrawEvent(it->GetWidget(), event);
 					}
 				}
@@ -949,8 +943,10 @@ namespace BlendInt
 
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
 			if(p) {
-				for (AbstractContainerIterator* it =
-						p->First(event); !(p->End(event, it)); it->Next()) {
+
+				IteratorPtr it = p->CreateIterator();
+
+				for (it->First(); !it->End(); it->Next()) {
 					if (it->GetWidget()->visiable() && it->GetWidget()->Contain(event.position())) {
 						m_hover_deque->push_back(it->GetWidget());
 						m_hover_deque->back()->CursorEnterEvent(true);

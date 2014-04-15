@@ -126,9 +126,7 @@ namespace BlendInt {
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
 
-		virtual AbstractContainerIterator* First (const DeviceEvent& event);
-
-		virtual bool End (const DeviceEvent& event, AbstractContainerIterator* iter);
+		virtual IteratorPtr CreateIterator ();
 
 	private:
 

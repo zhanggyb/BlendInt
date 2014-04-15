@@ -88,7 +88,7 @@ TEST_F(ContextTest1, AddSubWidget02)
 
     Frame* f1 = new Frame;
     f1->set_name("frame1");
-    f1->SetPosition(400, 400);
+    f1->SetPosition(240, 320);
     f1->Add(w2);
 
     context->Add(w1);
@@ -147,7 +147,7 @@ TEST_F(ContextTest1, AddSubWidget03)
 
     Frame* f1 = new Frame;
     f1->set_name("frame1");
-    f1->SetPosition(400, 400);
+    f1->SetPosition(240, 320);
     f1->Add(w2);
 
     context->Add(w2);
@@ -206,7 +206,8 @@ TEST_F(ContextTest1, DestructorInContainer01)
 
     Frame* f1 = new Frame;
     f1->set_name("frame1");
-    f1->SetPosition(400, 400);
+    f1->SetPosition(240, 320);
+
     f1->Add(w1);
 
     context->Add(f1);
