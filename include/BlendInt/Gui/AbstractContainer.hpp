@@ -114,7 +114,7 @@ namespace BlendInt {
 			widget->m_container = container;
 		}
 
-		virtual IteratorPtr CreateIterator () = 0;
+		virtual IteratorPtr CreateIterator (const DeviceEvent& event) = 0;
 
 		void set_margin (const Margin& margin)
 		{

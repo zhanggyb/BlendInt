@@ -193,7 +193,7 @@ namespace BlendInt {
 		m_sub_widgets->clear();
 	}
 
-	IteratorPtr AbstractDequeContainer::CreateIterator ()
+	IteratorPtr AbstractDequeContainer::CreateIterator (const DeviceEvent& event)
 	{
 		RefPtr<DequeIterator> ret(new DequeIterator(m_sub_widgets.get()));
 

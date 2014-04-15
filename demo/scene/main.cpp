@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
 	Context* context = Manage(new Context);
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
+	Interface::instance->Resize(800, 600);
 
 	MainLayout* main_layout = Manage(new MainLayout);
 

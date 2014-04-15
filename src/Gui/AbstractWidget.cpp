@@ -513,7 +513,7 @@ namespace BlendInt {
 		AbstractContainer* container = m_container;
 
 		if(container == 0) {
-			return 0;
+			return dynamic_cast<Context*>(this);
 		} else {
 
 			while(container->container()) {

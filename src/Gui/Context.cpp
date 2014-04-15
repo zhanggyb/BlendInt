@@ -178,8 +178,8 @@ namespace BlendInt
 				}
 
 				case FormPosition: {
-					// Nothing to do but accept
-					return true;
+					// always at (0, 0)
+					return false;
 				}
 
 				default:
@@ -621,7 +621,7 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	IteratorPtr Context::CreateIterator ()
+	IteratorPtr Context::CreateIterator (const DeviceEvent& event)
 	{
 		IteratorPtr ret;
 		return ret;
@@ -900,7 +900,7 @@ namespace BlendInt
 							p->size().height() - p->margin().top() - p->margin().bottom());
 				}
 
-				IteratorPtr it = p->CreateIterator();
+				IteratorPtr it = p->CreateIterator(event);
 
 				if(scissor_status.valid()) {
 					scissor_status.Enable();
@@ -944,7 +944,7 @@ namespace BlendInt
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
 			if(p) {
 
-				IteratorPtr it = p->CreateIterator();
+				IteratorPtr it = p->CreateIterator(event);
 
 				for (it->First(); !it->End(); it->Next()) {
 					if (it->GetWidget()->visiable() && it->GetWidget()->Contain(event.position())) {

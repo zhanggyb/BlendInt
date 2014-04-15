@@ -180,6 +180,7 @@ int main(int argc, char* argv[])
 
 	//RunLoop (win);
 
+	/*
 	Context* context = Manage(new Context);
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
@@ -197,6 +198,27 @@ int main(int argc, char* argv[])
 	context->Add(frame);
 
 	context->Add(btn1);
+	*/
+
+	Context* context = Manage (new Context);
+	context->set_name("Context");
+	Interface::instance->SetCurrentContext(context);
+
+	// TODO: add test code here
+	Widget* w1 = Manage(new Widget);
+	w1->set_name("widget1");
+	w1->SetPosition(100, 100);
+
+	Frame* f1 = Manage(new Frame);  // now f1 should be deleted automatically
+	f1->set_name("frame1");
+	f1->SetPosition(240, 320);
+	f1->Add(w1);
+
+	context->Add(f1);
+
+#ifdef DEBUG
+	context->PrintLayers();
+#endif
 
 	RunLoop(win);
 

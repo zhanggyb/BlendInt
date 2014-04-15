@@ -191,48 +191,48 @@ TEST_F(ContextTest1, AddSubWidget03)
  */
 TEST_F(ContextTest1, DestructorInContainer01)
 {
-    Init();
+	Init();
 
 	GLFWwindow* win = CreateWindow("ContextManager - DestructorInContainer01", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
-    Interface::instance->SetCurrentContext(context);
+	context->set_name("Context");
+	Interface::instance->SetCurrentContext(context);
 
-    // TODO: add test code here
-    Widget* w1 = new Widget;
-    w1->set_name("widget1");
-    w1->SetPosition(200, 200);
+	// TODO: add test code here
+	Widget* w1 = new Widget;
+	w1->set_name("widget1");
+	w1->SetPosition(200, 200);
 
-    Frame* f1 = new Frame;
-    f1->set_name("frame1");
-    f1->SetPosition(240, 320);
+	Frame* f1 = new Frame;
+	f1->set_name("frame1");
+	f1->SetPosition(240, 320);
 
-    f1->Add(w1);
+	f1->Add(w1);
 
-    context->Add(f1);
+	context->Add(f1);
 
-    delete f1;
-    context->Add(w1);
-    // now w1 should be in context manager as it's not marked as managed
+	delete f1;
+	context->Add(w1);
+	// now w1 should be in context manager as it's not marked as managed
 
 #ifdef DEBUG
-    context->PrintLayers();
+	context->PrintLayers();
 #endif
 
-    size_t cm_size = context->index_size();
+	size_t cm_size = context->index_size();
 
-    bool result = (
-            (cm_size == 1) &&
-            (w1->container() == context)
-            );
+	bool result = (
+			(cm_size == 1) &&
+			(w1->container() == context)
+	);
 
-    RunLoop(win);
+	RunLoop(win);
 
-    delete w1;
-    Interface::Release();
+	delete w1;
+	Interface::Release();
 
-    Terminate();
+	Terminate();
 
 	ASSERT_TRUE(result);
 }
@@ -244,41 +244,43 @@ TEST_F(ContextTest1, DestructorInContainer01)
  */
 TEST_F(ContextTest1, DestructorInContainer02)
 {
-    Init();
+	Init();
 
-	GLFWwindow* win = CreateWindow("ContextManager - DestructorInContainer02");
+	GLFWwindow* win = CreateWindow("ContextManager - DestructorInContainer02", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
-    Interface::instance->SetCurrentContext(context);
+	context->set_name("Context");
+	Interface::instance->SetCurrentContext(context);
 
-    // TODO: add test code here
-    Widget* w1 = Manage(new Widget);
-    w1->set_name("widget1");
-    w1->SetPosition(200, 200);
+	// TODO: add test code here
+	Widget* w1 = Manage(new Widget);
+	w1->set_name("widget1");
+	w1->SetPosition(100, 100);
 
-    Frame* f1 = Manage(new Frame);  // now f1 should be deleted automatically
-    f1->set_name("frame1");
-    f1->SetPosition(400, 400);
-    f1->Add(w1);
+	Frame* f1 = Manage(new Frame);  // now f1 should be deleted automatically
+	f1->set_name("frame1");
+	f1->SetPosition(240, 320);
+	f1->Add(w1);
+
+	context->Add(f1);
 
 #ifdef DEBUG
-    context->PrintLayers();
+	context->PrintLayers();
 #endif
 
-    size_t cm_size = context->index_size();
+	size_t cm_size = context->index_size();
 
-    bool result = (
-            (cm_size == 1) &&
-            (w1->container() == f1) &&
-            (f1->container() == context)
-            );
+	bool result = (
+			(cm_size == 1) &&
+			(w1->container() == f1) &&
+			(f1->container() == context)
+	);
 
-    RunLoop(win);
+	RunLoop(win);
 
-    Interface::Release();
+	Interface::Release();
 
-    Terminate();
+	Terminate();
 
 	ASSERT_TRUE(result);
 }
