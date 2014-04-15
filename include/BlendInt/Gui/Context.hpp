@@ -96,6 +96,10 @@ namespace BlendInt {
 
 		void RemoveWidgetFromHoverList (AbstractWidget* widget);
 
+#ifdef DEBUG
+		void PrintLayers ();
+#endif
+
 	protected:
 
 		void Draw ();

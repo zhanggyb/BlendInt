@@ -26,6 +26,10 @@ TEST_F(ButtonGroupTest1, Foo1)
 
     GLFWwindow* win = CreateWindow("ButtonGroup - Foo1", 640, 480);
 
+	Context* context = Manage(new Context);
+	context->set_name("Context");
+	Interface::instance->SetCurrentContext(context);
+
     // TODO: add test code here
     TabButton* btn1 = Manage(new TabButton);
     btn1->set_name("TabButton1");
@@ -41,6 +45,10 @@ TEST_F(ButtonGroupTest1, Foo1)
     btngroup.Add(btn1);
     btngroup.Add(btn2);
     btngroup.Add(btn3);
+
+    context->Add(btn1);
+    context->Add(btn2);
+    context->Add(btn3);
 
     RunLoop(win);
 

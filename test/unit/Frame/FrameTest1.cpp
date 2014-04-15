@@ -27,6 +27,10 @@ TEST_F(FrameTest1, Foo1)
 
     GLFWwindow* win = CreateWindow("Frame - Foo1", 640, 480);
 
+	Context* context = Manage(new Context);
+	context->set_name("Context");
+	Interface::instance->SetCurrentContext(context);
+
     // TODO: add test code here
     Frame* frame = Manage (new Frame);
     frame->set_name("Frame");
@@ -40,6 +44,9 @@ TEST_F(FrameTest1, Foo1)
     Button* ref_btn = Manage (new Button);
     ref_btn->set_name("Ref Button");
     ref_btn->SetPosition(400, 200);
+
+    context->Add(frame);
+    context->Add(ref_btn);
 
     RunLoop(win);
 

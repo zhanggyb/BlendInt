@@ -103,7 +103,7 @@ namespace BlendInt {
 	{
         global_mouse_event.set_action(MouseMove);
         global_mouse_event.set_button(MouseButtonNone);
-		global_mouse_event.set_position(static_cast<int>(xpos), Interface::instance->size().height() - static_cast<int>(ypos));
+		global_mouse_event.set_position(static_cast<int>(xpos), Interface::instance->GetCurrentContextHeight() - static_cast<int>(ypos));
 
 		Interface::instance->DispatchMouseEvent(global_mouse_event);
 	}
@@ -120,7 +120,8 @@ namespace BlendInt {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-        // glfwWindowHint (GLFW_REFRESH_RATE, 1);
+        //glfwWindowHint(GLFW_REFRESH_RATE, 1);
+
 	}
 
 	GLFWwindow* CreateWindow (const char* name, int width, int height)
@@ -161,7 +162,7 @@ namespace BlendInt {
             if(callback) {
                 (*callback)(param);
             }
-		
+
 			/* Swap front and back buffers */
 			glfwSwapBuffers(window);
 		
@@ -186,7 +187,7 @@ namespace BlendInt {
 	bool CheckAllocatedObjects ()
 	{
 #ifdef DEBUG
-        using namespace std;
+		using namespace std;
 
 		unsigned int mapsize = Object::GetMapSize();
 

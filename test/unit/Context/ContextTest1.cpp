@@ -1,18 +1,18 @@
-#include "ContextManagerTest1.hpp"
-#include <BlendInt/Service/ContextManager.hpp>
-#include <BlendInt/Gui/Widget.hpp>
+#include "ContextTest1.hpp"
 #include <Common/Window.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Interface.hpp>
 
 using namespace BlendInt;
 
-ContextManagerTest1::ContextManagerTest1()
+ContextTest1::ContextTest1()
 : testing::Test()
 {
 	// TODO: add constructor code
 }
 
-ContextManagerTest1::~ContextManagerTest1()
+ContextTest1::~ContextTest1()
 {
 	// TODO: add destructor code
 }
@@ -22,11 +22,15 @@ ContextManagerTest1::~ContextManagerTest1()
  *
  * Expected result: 
  */
-TEST_F(ContextManagerTest1, AddSubWidget01)
+TEST_F(ContextTest1, AddSubWidget01)
 {
     Init();
 
-	GLFWwindow* win = CreateWindow("ContextManager - AddSubWidget01");
+	GLFWwindow* win = CreateWindow("ContextManager - AddSubWidget01", 640, 480);
+
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
     Widget* w1 = new Widget;
@@ -37,14 +41,20 @@ TEST_F(ContextManagerTest1, AddSubWidget01)
     w2->set_name("widget2");
     w2->SetPosition(400, 200);
 
-    ContextManager::instance->print();
+    context->Add(w1);
+    context->Add(w2);
+
+#ifdef DEBUG
+    context->PrintLayers();
+#endif
     
-    size_t index_size = ContextManager::instance->index_size();
+    size_t index_size = context->index_size();
 
     RunLoop(win);
 
     delete w1;
     delete w2;
+
     Interface::Release();
 
     Terminate();
@@ -57,11 +67,15 @@ TEST_F(ContextManagerTest1, AddSubWidget01)
  *
  * Expected result: 
  */
-TEST_F(ContextManagerTest1, AddSubWidget02)
+TEST_F(ContextTest1, AddSubWidget02)
 {
     Init();
 
-	GLFWwindow* win = CreateWindow("ContextManager - AddSubWidget02");
+	GLFWwindow* win = CreateWindow("ContextManager - AddSubWidget02", 640, 480);
+
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
     Widget* w1 = new Widget;
@@ -77,26 +91,21 @@ TEST_F(ContextManagerTest1, AddSubWidget02)
     f1->SetPosition(400, 400);
     f1->Add(w2);
 
-#ifdef DEBUG
-    ContextManager::instance->print();
-#endif
-
-    size_t cm_size = ContextManager::instance->index_size();
+    context->Add(w1);
+    context->Add(f1);
 
 #ifdef DEBUG
-    f1->print();
+    context->PrintLayers();
 #endif
+
+    size_t cm_size = context->index_size();
 
     size_t fm_size = f1->sub_widget_size ();
 
     bool result = (
             (cm_size == 2) &&
             (fm_size == 1) &&
-            (w1->in_context_manager()) &&
-            (!w1->in_container()) &&
-            (w2->in_container()) &&
-            (!w2->in_context_manager()) &&
-            (w1->container() == ContextManager::instance) &&
+            (w1->container() == context) &&
             (w2->container() == f1)
             );
 
@@ -117,11 +126,15 @@ TEST_F(ContextManagerTest1, AddSubWidget02)
  *
  * Expected result: 
  */
-TEST_F(ContextManagerTest1, AddSubWidget03)
+TEST_F(ContextTest1, AddSubWidget03)
 {
     Init();
 
-	GLFWwindow* win = CreateWindow("ContextManager - AddSubWidget03");
+	GLFWwindow* win = CreateWindow("ContextManager - AddSubWidget03", 640, 480);
+
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
     Widget* w1 = new Widget;
@@ -137,32 +150,25 @@ TEST_F(ContextManagerTest1, AddSubWidget03)
     f1->SetPosition(400, 400);
     f1->Add(w2);
 
-    ContextManager::instance->AddSubWidget(w2);
+    context->Add(w2);
+    context->Add(f1);
 
     w2->SetPosition(400, 200);
 
     f1->Add(w1);
 
 #ifdef DEBUG
-    ContextManager::instance->print();
+    context->PrintLayers();
 #endif
 
-    size_t cm_size = ContextManager::instance->index_size();
-
-#ifdef DEBUG
-    f1->print();
-#endif
+    size_t cm_size = context->index_size();
 
     size_t fm_size = f1->sub_widget_size ();
 
     bool result = (
             (cm_size == 2) &&
             (fm_size == 1) &&
-            (w2->in_context_manager()) &&
-            (!w2->in_container()) &&
-            (w1->in_container()) &&
-            (!w1->in_context_manager()) &&
-            (w2->container() == ContextManager::instance) &&
+            (w2->container() == context) &&
             (w1->container() == f1)
             );
 
@@ -183,11 +189,15 @@ TEST_F(ContextManagerTest1, AddSubWidget03)
  *
  * Expected result: 
  */
-TEST_F(ContextManagerTest1, DestructorInContainer01)
+TEST_F(ContextTest1, DestructorInContainer01)
 {
     Init();
 
-	GLFWwindow* win = CreateWindow("ContextManager - DestructorInContainer01");
+	GLFWwindow* win = CreateWindow("ContextManager - DestructorInContainer01", 640, 480);
+
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
     Widget* w1 = new Widget;
@@ -199,19 +209,21 @@ TEST_F(ContextManagerTest1, DestructorInContainer01)
     f1->SetPosition(400, 400);
     f1->Add(w1);
 
-    delete f1;  // now w1 should be in context manager as it's not marked as managed
+    context->Add(f1);
+
+    delete f1;
+    context->Add(w1);
+    // now w1 should be in context manager as it's not marked as managed
 
 #ifdef DEBUG
-    ContextManager::instance->print();
+    context->PrintLayers();
 #endif
 
-    size_t cm_size = ContextManager::instance->index_size();
+    size_t cm_size = context->index_size();
 
     bool result = (
             (cm_size == 1) &&
-            (!w1->in_container()) &&
-            (w1->in_context_manager()) &&
-            (w1->container() == ContextManager::instance)
+            (w1->container() == context)
             );
 
     RunLoop(win);
@@ -229,11 +241,15 @@ TEST_F(ContextManagerTest1, DestructorInContainer01)
  *
  * Expected result: 
  */
-TEST_F(ContextManagerTest1, DestructorInContainer02)
+TEST_F(ContextTest1, DestructorInContainer02)
 {
     Init();
 
 	GLFWwindow* win = CreateWindow("ContextManager - DestructorInContainer02");
+
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
     Widget* w1 = Manage(new Widget);
@@ -246,19 +262,15 @@ TEST_F(ContextManagerTest1, DestructorInContainer02)
     f1->Add(w1);
 
 #ifdef DEBUG
-    ContextManager::instance->print();
+    context->PrintLayers();
 #endif
 
-    size_t cm_size = ContextManager::instance->index_size();
+    size_t cm_size = context->index_size();
 
     bool result = (
             (cm_size == 1) &&
-            (w1->in_container()) &&
-            (!w1->in_context_manager()) &&
             (w1->container() == f1) &&
-            (f1->in_context_manager()) &&
-            (!f1->in_container()) &&
-            (f1->container() == ContextManager::instance)
+            (f1->container() == context)
             );
 
     RunLoop(win);
@@ -275,7 +287,7 @@ TEST_F(ContextManagerTest1, DestructorInContainer02)
  *
  * Expected result: 
  */
-TEST_F(ContextManagerTest1, Layer1)
+TEST_F(ContextTest1, Layer1)
 {
     /*
     Init();
@@ -309,7 +321,7 @@ TEST_F(ContextManagerTest1, Layer1)
  *
  * Expected result: 
  */
-TEST_F(ContextManagerTest1, Layer2)
+TEST_F(ContextTest1, Layer2)
 {
     /*
     Init();

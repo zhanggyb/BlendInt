@@ -25,17 +25,23 @@ WidgetTest1::~WidgetTest1()
 TEST_F(WidgetTest1, Add1)
 {
     Init();
-    GLFWwindow* win = CreateWindow("WidgetTest1 -- Show1");
+    GLFWwindow* win = CreateWindow("WidgetTest1 -- Show1", 640, 480);
 
 	// TODO: add test code here
+    Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
     
     Widget* widget1 = new Widget;
     widget1->set_name("widget1");
     widget1->SetPosition(200, 200);
 
+    context->Add(widget1);
+
     RunLoop(win);
 
     delete widget1;
+
     Interface::Release();
 
     Terminate();

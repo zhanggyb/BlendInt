@@ -29,9 +29,15 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 800, 600);
 
+	Context* context = Manage(new Context);
+	context->set_name("Context");
+	Interface::instance->SetCurrentContext(context);
+
 	MainLayout* main_layout = Manage(new MainLayout);
 
 	main_layout->Resize(800, 600);
+
+	context->Add(main_layout);
 
 	RunLoop (win);
 

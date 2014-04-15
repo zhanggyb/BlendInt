@@ -48,19 +48,13 @@
 
 #include <boost/smart_ptr.hpp>
 
+#include <Cpp/Events.hpp>
+
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Point.hpp>
 
-#ifdef DEBUG
-#include <BlendInt/Gui/AbstractForm.hpp>
-#endif
-
-#include <Cpp/Events.hpp>
-
-#include <BlendInt/Window/RedrawEvent.hpp>
 #include <BlendInt/Gui/Context.hpp>
-
 #include <BlendInt/Gui/AbstractWidget.hpp>
 
 #define BLENDINT_EVENTS_INIT_ONCE_IN_MAIN Cpp::Events::ProcessInit processInit

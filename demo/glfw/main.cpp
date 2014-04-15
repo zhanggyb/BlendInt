@@ -186,11 +186,17 @@ int main(int argc, char* argv[])
 
 	Interface::instance->Resize(640, 480);
 
-	Button* btn1 = Manage(new Button);
-	btn1->set_name("Button1");
-	btn1->SetPosition(200, 200);
+//	Button* btn1 = Manage(new Button);
+//	btn1->set_name("Button1");
+//	btn1->SetPosition(200, 200);
 
-	context->Add(btn1);
+	Frame* frame = Manage (new Frame);
+	frame->set_name("Frame");
+	frame->SetPosition(100, 100);
+
+	context->Add(frame);
+
+	//context->Add(btn1);
 
 	RunLoop(win);
 

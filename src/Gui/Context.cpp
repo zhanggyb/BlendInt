@@ -1023,6 +1023,34 @@ namespace BlendInt
 		}
 	}
 
+#ifdef DEBUG
+
+	void Context::PrintLayers ()
+	{
+		std::map<int, ContextLayer>::iterator layer_iter;
+		std::set<AbstractWidget*>::iterator widget_iter;
+
+		std::set<AbstractWidget*>* widget_set_p;
+		std::cout << std::endl;
+
+		std::cerr << "size of index map:" << m_index.size() << std::endl;
+		std::cerr << "size of layer map:" << m_layers.size() << std::endl;
+
+		for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
+		        layer_iter++) {
+			std::cerr << "Layer: " << layer_iter->first << std::endl;
+			widget_set_p = layer_iter->second.widgets;
+			for (widget_iter = widget_set_p->begin();
+			        widget_iter != widget_set_p->end(); widget_iter++) {
+				std::cerr << (*widget_iter)->name() << " ";
+			}
+			std::cerr << std::endl;
+		}
+	}
+
+#endif
+
+
 	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{
 		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the context manager", widget->name().c_str());

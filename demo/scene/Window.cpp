@@ -103,7 +103,7 @@ namespace BlendInt {
 	{
         global_mouse_event.set_action(MouseMove);
         global_mouse_event.set_button(MouseButtonNone);
-		global_mouse_event.set_position(static_cast<int>(xpos), Interface::instance->size().height() - static_cast<int>(ypos));
+		global_mouse_event.set_position(static_cast<int>(xpos), Interface::instance->GetCurrentContextHeight() - static_cast<int>(ypos));
 
 		Interface::instance->DispatchMouseEvent(global_mouse_event);
 	}

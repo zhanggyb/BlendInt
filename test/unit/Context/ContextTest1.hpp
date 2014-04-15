@@ -1,15 +1,15 @@
-#ifndef _CONTEXTMANAGERTEST1_HPP_
-#define _CONTEXTMANAGERTEST1_HPP_
+#ifndef _ContextTest1_HPP_
+#define _ContextTest1_HPP_
 
 #include <gtest/gtest.h>
 
 #include <BlendInt/Core/Object.hpp>
 
-class ContextManagerTest1: public testing::Test
+class ContextTest1: public testing::Test
 {
 public:
-	ContextManagerTest1 ();
-	virtual ~ContextManagerTest1 ();
+	ContextTest1 ();
+	virtual ~ContextTest1 ();
 
 protected:
 
@@ -28,4 +28,4 @@ protected:
 	}
 };
 
-#endif  // _CONTEXTMANAGERTEST1_HPP_
+#endif  // _ContextTest1_HPP_
