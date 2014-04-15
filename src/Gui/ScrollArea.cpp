@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	ScrollArea::ScrollArea ()
-	: m_view(0), m_hbar(0), m_vbar(0)
+	: AbstractDequeContainer(), m_view(0), m_hbar(0), m_vbar(0)
 	{
 		InitOnce();
 	}

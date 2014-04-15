@@ -50,7 +50,7 @@ namespace BlendInt {
 		bool refresh;
 
 		/** A set to store sub widgets in this layer */
-		std::set<AbstractWidgetExt*>* widgets;
+		std::set<AbstractWidget*>* widgets;
 
 		/** The OpenGL Texture as a buffer for display */
 		GLTexture2D* buffer;
@@ -62,7 +62,7 @@ namespace BlendInt {
 	 * Context is a special container which holds and manage all widgets in a OpenGL window.
 	 * There should be at least on Context object to work with Interface to show and dispatch events.
 	 */
-	class Context: public AbstractContainerExt
+	class Context: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Context);
 
@@ -88,11 +88,13 @@ namespace BlendInt {
 
 		void RefreshLayer (int layer);
 
-		bool Add (AbstractWidgetExt* widget);
+		bool Add (AbstractWidget* widget);
 
-		bool Remove (AbstractWidgetExt* widget);
+		bool Remove (AbstractWidget* widget);
 
 	protected:
+
+		void Draw ();
 
 		virtual bool Update (const UpdateRequest& request);
 
@@ -112,9 +114,9 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual bool AddSubWidget (AbstractWidgetExt* widget);
+		virtual bool AddSubWidget (AbstractWidget* widget);
 
-		virtual bool RemoveSubWidget (AbstractWidgetExt* widget);
+		virtual bool RemoveSubWidget (AbstractWidget* widget);
 
 		virtual RefPtr<AbstractContainerIterator> First (const DeviceEvent& event);
 
@@ -128,24 +130,24 @@ namespace BlendInt {
 
 		void RenderLayer (const RedrawEvent& event,
 				int layer,
-				std::set<AbstractWidgetExt*>* widgets,
+				std::set<AbstractWidget*>* widgets,
 				GLTexture2D* texture);
 
 		void RenderMainBuffer (const RedrawEvent& event);
 
 		void PreDrawContext (bool fbo = false);
 
-		void DispatchDrawEvent (AbstractWidgetExt* widget, const RedrawEvent& event);
+		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
 
-		void BuildCursorHoverList (const MouseEvent& event, AbstractWidgetExt* parent);
+		void BuildCursorHoverList (const MouseEvent& event, AbstractWidget* parent);
 
-		void SetFocusedWidget (AbstractWidgetExt* widget);
+		void SetFocusedWidget (AbstractWidget* widget);
 
-		void OnSubWidgetDestroyed (AbstractWidgetExt* widget);
+		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
 		std::map<int, ContextLayerExt> m_layers;
 
-		std::map<AbstractWidgetExt*, int> m_index;
+		std::map<AbstractWidget*, int> m_index;
 
 		std::deque<GLTexture2D*> m_deque;
 
@@ -156,7 +158,9 @@ namespace BlendInt {
 
 		GLuint m_vao;
 
-		boost::scoped_ptr<std::deque<AbstractWidgetExt*> > m_hover_deque;
+		RedrawEvent m_redraw_event;
+
+		boost::scoped_ptr<std::deque<AbstractWidget*> > m_hover_deque;
 
 		RefPtr<GLSLProgram> m_program;
 

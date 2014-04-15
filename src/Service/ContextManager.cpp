@@ -185,6 +185,7 @@ namespace BlendInt {
 
 	bool ContextManager::AddSubWidget (AbstractWidget* obj)
 	{
+		/*
 		if (!obj) return false;
 		if (obj->m_flag[AbstractWidget::WidgetFlagInContextManager])
 			return true;
@@ -207,6 +208,7 @@ namespace BlendInt {
 
 		m_events->connect(obj->destroyed(), this,
 		        &ContextManager::OnDestroyObject);
+		*/
 
 		return true;
 	}
@@ -743,16 +745,8 @@ namespace BlendInt {
 
 	void ContextManager::DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event)
 	{
+		/*
 		if (widget->visiable()) {
-
-			/*
-			DBG_PRINT_MSG("draw widget: %s at %d, %d, size: %u, %u",
-							widget->name().c_str(),
-							widget->position().x(),
-							widget->position().y(),
-							widget->size().width(),
-							widget->size().height());
-			*/
 
 			widget->Draw(event);
 
@@ -791,6 +785,7 @@ namespace BlendInt {
 			}
 
 		}
+		*/
 	}
 
 	void ContextManager::OnDestroyObject (AbstractWidget* widget)
@@ -818,6 +813,7 @@ namespace BlendInt {
 	void ContextManager::BuildWidgetListAtCursorPoint (
 	        const Point& cursor_point, AbstractWidget* parent)
 	{
+		/*
 		if (parent) {
 
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
@@ -866,6 +862,7 @@ namespace BlendInt {
 					break;
 			}
 		}
+		*/
 	}
 
 	void ContextManager::RemoveWidgetFromHoverDeque (AbstractWidget* widget)

@@ -32,7 +32,7 @@
 
 #include <vector>
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractDequeContainer.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -43,7 +43,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup layouts
 	 */
-	class AbstractLayout: public AbstractContainer
+	class AbstractLayout: public AbstractDequeContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractLayout);
 

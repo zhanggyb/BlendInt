@@ -52,7 +52,7 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-			: AbstractContainer()
+			: AbstractDequeContainer()
 	{
 		set_minimal_size(margin().left() + margin().right(),
 		        margin().top() + margin().bottom());

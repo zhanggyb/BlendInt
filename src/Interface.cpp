@@ -237,7 +237,11 @@ namespace BlendInt {
 
 	void Interface::Draw ()
 	{
-		ContextManager::instance->DrawFromInterface();
+//		ContextManager::instance->DrawFromInterface();
+
+		if(m_current_context) {
+			m_current_context->Draw();
+		}
 	}
 
 	void Interface::Draw (const RedrawEvent& event)
@@ -256,13 +260,9 @@ namespace BlendInt {
 		}
 	}
 
-	void Interface::SetMainWidget(AbstractWidget* widget)
-	{
-	}
-
 	void Interface::DispatchKeyEvent (Context* context, const KeyEvent& event)
 	{
-		if(AbstractWidgetExt::focused_widget) {
+		if(AbstractWidget::focused_widget) {
 			switch (event.action()) {
 
 				case KeyPress: {
@@ -272,7 +272,7 @@ namespace BlendInt {
 						//RenderToImage();
 					}
 #endif
-					AbstractWidgetExt::focused_widget->KeyPressEvent(event);
+					AbstractWidget::focused_widget->KeyPressEvent(event);
 					break;
 				}
 
@@ -562,6 +562,7 @@ namespace BlendInt {
 	void Interface::BuildWidgetListAtCursorPoint (const Point& cursor,
 			AbstractWidget* parent)
 	{
+		/*
 		if (parent) {
 			parent->m_flag.set(AbstractWidget::WidgetFlagContextHoverList);
 
@@ -608,6 +609,7 @@ namespace BlendInt {
 				break;
 			}
 		}
+		*/
 	}
 
 	void Interface::GetGLVersion (int *major, int *minor)
@@ -621,7 +623,7 @@ namespace BlendInt {
 
 	void Interface::DispatchCursorMoveEvent(Context* context, const MouseEvent& event)
 	{
-		AbstractWidgetExt* widget = 0;
+		AbstractWidget* widget = 0;
 		ResponseType response;
 
 		// search which widget in stack contains the cursor
@@ -633,7 +635,7 @@ namespace BlendInt {
 				break;
 			} else {
 				context->m_hover_deque->back()->CursorEnterEvent(false);
-				context->m_hover_deque->back()->m_flag.reset(AbstractWidgetExt::WidgetFlagContextHoverListExt);
+				context->m_hover_deque->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
 			}
 
 			context->m_hover_deque->pop_back();
@@ -651,15 +653,15 @@ namespace BlendInt {
 		*/
 
 		// tell the focused widget first
-		if(AbstractWidgetExt::focused_widget) {
-			response = AbstractWidgetExt::focused_widget->MouseMoveEvent(event);
+		if(AbstractWidget::focused_widget) {
+			response = AbstractWidget::focused_widget->MouseMoveEvent(event);
 
 			if(response == AcceptAndBreak)
 				return;
 			// check the event status
 		}
 
-		for (std::deque<AbstractWidgetExt*>::reverse_iterator it =
+		for (std::deque<AbstractWidget*>::reverse_iterator it =
 				context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend();
 				it++)
 		{
@@ -676,7 +678,7 @@ namespace BlendInt {
 		ResponseType response;
 		bool focus_set = false;
 
-		for(std::deque<AbstractWidgetExt*>::reverse_iterator it = context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend(); it++)
+		for(std::deque<AbstractWidget*>::reverse_iterator it = context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend(); it++)
 		{
 			response = (*it)->MousePressEvent(event);
 			//DBG_PRINT_MSG("mouse press: %s", (*it)->name().c_str());
@@ -697,13 +699,13 @@ namespace BlendInt {
 		ResponseType response;
 
 		// tell the focused widget first
-		if(AbstractWidgetExt::focused_widget) {
-			response = AbstractWidgetExt::focused_widget->MouseReleaseEvent(event);
+		if(AbstractWidget::focused_widget) {
+			response = AbstractWidget::focused_widget->MouseReleaseEvent(event);
 
 			// Check the event status
 		}
 
-		for(std::deque<AbstractWidgetExt*>::reverse_iterator it = context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend(); it++)
+		for(std::deque<AbstractWidget*>::reverse_iterator it = context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend(); it++)
 		{
 			response = (*it)->MouseReleaseEvent(event);
 
@@ -721,12 +723,34 @@ namespace BlendInt {
 		m_events->connect(m_current_context->destroyed(), this, &Interface::OnContextDestroyed);
 	}
 
-	void Interface::OnContextDestroyed(AbstractWidgetExt* context)
+	void Interface::OnContextDestroyed(AbstractWidget* context)
 	{
 		if(context == m_current_context) {
 			m_current_context->destroyed().disconnectOne(this, &Interface::OnContextDestroyed);
 			m_current_context = 0;
 		}
+	}
+
+	unsigned int Interface::GetCurrentContextWidth() const
+	{
+		unsigned int w = 0;
+
+		if(m_current_context) {
+			w = m_current_context->size().width();
+		}
+
+		return w;
+	}
+
+	unsigned int Interface::GetCurrentContextHeight() const
+	{
+		unsigned int h = 0;
+
+		if(m_current_context) {
+			h = m_current_context->size().height();
+		}
+
+		return h;
 	}
 
 	void Interface::GetGLSLVersion (int *major, int *minor)

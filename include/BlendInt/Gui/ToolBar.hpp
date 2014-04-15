@@ -27,12 +27,12 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractDequeContainer.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
 
 namespace BlendInt {
 
-	class ToolBar: public AbstractContainer
+	class ToolBar: public AbstractDequeContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(ToolBar);
 

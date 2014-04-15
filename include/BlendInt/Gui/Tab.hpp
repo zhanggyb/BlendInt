@@ -26,7 +26,7 @@
 
 #include <BlendInt/Core/String.hpp>
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractDequeContainer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/Stack.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
@@ -64,7 +64,7 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_outer;
 	};
 
-	class Tab: public AbstractContainer
+	class Tab: public AbstractDequeContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Tab);
 

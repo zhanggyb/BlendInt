@@ -30,52 +30,31 @@ namespace BlendInt {
 	RefPtr<DequeIterator> AbstractDequeContainer::default_iterator(new DequeIterator);
 
 	AbstractDequeContainer::AbstractDequeContainer ()
-	: AbstractContainerExt()
+	: AbstractContainer()
 	{
-		m_sub_widgets.reset(new WidgetDequeExt);
+		m_sub_widgets.reset(new WidgetDeque);
 	}
 
 	AbstractDequeContainer::~AbstractDequeContainer ()
 	{
-		for(WidgetDequeExt::iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
-		{
-			// check if need to delete
-			if((*it)->managed()) {
-
-				(*it)->destroyed().disconnectOne(this,
-						&AbstractDequeContainer::OnSubWidgetDestroyed);
-
-				// Delete the widget if it's not referenced by any RefPtr
-				if((*it)->count() == 0) {
-					delete *it;
-				}
-
-			} else {
-
-				// Move the sub widget to context manager
-				(*it)->destroyed().disconnectOne(this,
-				        &AbstractDequeContainer::OnSubWidgetDestroyed);
-				//(*it)->m_container = 0;
-
-				//ContextManager::instance->AddSubWidget(*it);
-				//(*it)->m_flag.reset(WidgetFlagInContainer);
-
-			}
-		}
+		ClearSubWidgets();
 	}
 
-	bool AbstractDequeContainer::AddSubWidget (AbstractWidgetExt* widget)
+	bool AbstractDequeContainer::AddSubWidget (AbstractWidget* widget)
 	{
-		if(!widget) return false;
+		if (!widget)
+			return false;
 
-		if(widget->container()) {
+		if (widget->container()) {
 
-			if(widget->container() == this) {
-				DBG_PRINT_MSG("Widget %s is already in container %s", widget->name().c_str(), widget->container()->name().c_str());
+			if (widget->container() == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name().c_str(),
+								widget->container()->name().c_str());
 				return true;
 			} else {
 				// Set widget's container to 0
-				AbstractContainerExt::RemoveSubWidget(widget->container(), widget);
+				AbstractContainer::RemoveSubWidget(widget->container(), widget);
 			}
 
 		}
@@ -86,22 +65,23 @@ namespace BlendInt {
 
 		// TODO: set layer and lock the geometry of the sub widget
 
-		events()->connect(widget->destroyed(), this, &AbstractDequeContainer::OnSubWidgetDestroyed);
+		events()->connect(widget->destroyed(), this,
+						&AbstractDequeContainer::OnSubWidgetDestroyed);
 
 		return true;
 	}
 
-	bool AbstractDequeContainer::RemoveSubWidget (AbstractWidgetExt* widget)
+	bool AbstractDequeContainer::RemoveSubWidget (AbstractWidget* widget)
 	{
 		if(!widget) return false;
 
 		assert(widget->container() == this);
 
 		widget->destroyed().disconnectOne(this,
-				&AbstractDequeContainer::OnSubWidgetDestroyed);
+						&AbstractDequeContainer::OnSubWidgetDestroyed);
 
-		WidgetDequeExt::iterator it = std::find(m_sub_widgets->begin(),
-				m_sub_widgets->end(), widget);
+		WidgetDeque::iterator it = std::find(m_sub_widgets->begin(),
+						m_sub_widgets->end(), widget);
 
 		if (it != m_sub_widgets->end()) {
 			m_sub_widgets->erase(it);
@@ -113,10 +93,9 @@ namespace BlendInt {
 		} else {
 
 			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
-					widget->name().c_str(), name().c_str());
+							widget->name().c_str(), name().c_str());
 			return false;
 		}
-
 	}
 
 	RefPtr<AbstractContainerIterator> AbstractDequeContainer::First (
@@ -137,10 +116,106 @@ namespace BlendInt {
 			return false;
 		}
 	}
-
-	void AbstractDequeContainer::OnSubWidgetDestroyed (AbstractWidgetExt* widget)
+	
+	bool AbstractDequeContainer::FindSubWidget (AbstractWidget* widget)
 	{
-		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the container %s", widget->name().c_str(), name().c_str());
+		WidgetDeque::iterator it = std::find(m_sub_widgets->begin(), m_sub_widgets->end(), widget);
+
+		if(it != m_sub_widgets->end())
+			return true;
+		else
+			return false;
+	}
+	
+	bool AbstractDequeContainer::AppendSubWidget (AbstractWidget* widget)
+	{
+		return AddSubWidget(widget);
+	}
+	
+	bool AbstractDequeContainer::InsertSubWidget (size_t index,
+					AbstractWidget* widget)
+	{
+		if(!widget) return false;
+
+		if(index > (m_sub_widgets->size() - 1)) {
+			DBG_PRINT_MSG("Out of range: index %ld is not valid", index);
+			return false;
+		}
+
+		if (widget->container()) {
+
+			if (widget->container() == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name().c_str(),
+								widget->container()->name().c_str());
+				return true;
+			} else {
+				// Set widget's container to 0
+				AbstractContainer::RemoveSubWidget(widget->container(), widget);
+			}
+
+		}
+
+		WidgetDeque::iterator it = m_sub_widgets->begin();
+		std::advance(it, index);
+		m_sub_widgets->insert(it, widget);
+
+		SetContainer(widget, this);
+
+		// TODO: set layer and lock the geometry of the sub widget
+
+		events()->connect(widget->destroyed(), this,
+						&AbstractDequeContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+	
+	void AbstractDequeContainer::MoveSubWidgets (int offset_x, int offset_y)
+	{
+		for (WidgetDeque::iterator it = m_sub_widgets->begin();
+						it != m_sub_widgets->end(); it++) {
+			SetPosition(*it, (*it)->position().x() + offset_x,
+							(*it)->position().y() + offset_y);
+		}
+	}
+	
+	void AbstractDequeContainer::ResizeSubWidgets (const Size& size)
+	{
+		for (WidgetDeque::iterator it = m_sub_widgets->begin();
+						it != m_sub_widgets->end(); it++) {
+			Resize((*it), size);
+		}
+	}
+	
+	void AbstractDequeContainer::ResizeSubWidgets (unsigned int w,
+					unsigned int h)
+	{
+		for (WidgetDeque::iterator it = sub_widgets()->begin();
+						it != sub_widgets()->end(); it++) {
+			Resize((*it), w, h);
+		}
+	}
+	
+	void AbstractDequeContainer::ClearSubWidgets ()
+	{
+		for (WidgetDeque::iterator it = m_sub_widgets->begin();
+						it != m_sub_widgets->end(); it++)
+		{
+			(*it)->destroyed().disconnectOne(this,
+							&AbstractDequeContainer::OnSubWidgetDestroyed);
+
+			if ((*it)->managed() && (*it)->count() == 0) {
+				delete *it;
+			}
+		}
+
+		m_sub_widgets->clear();
+	}
+
+	void AbstractDequeContainer::OnSubWidgetDestroyed (AbstractWidget* widget)
+	{
+		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the container %s",
+						widget->name().c_str(), name().c_str());
 
 		RemoveSubWidget(widget);
 	}

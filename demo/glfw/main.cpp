@@ -180,18 +180,18 @@ int main(int argc, char* argv[])
 
 	//RunLoop (win);
 
-	RedrawEvent event;
-
-	event.set_view_matrix(glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f)));
-	// default is 800 x 600
-	event.set_projection_matrix(glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
-
 	Context* context = Manage(new Context);
 	Interface::instance->SetCurrentContext(context);
 
 	Interface::instance->Resize(640, 480);
 
-	RunLoop(win, event);
+	Button* btn1 = Manage(new Button);
+	btn1->set_name("Button1");
+	btn1->SetPosition(200, 200);
+
+	context->Add(btn1);
+
+	RunLoop(win);
 
 	Interface::Release();
 

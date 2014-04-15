@@ -24,6 +24,8 @@
 #ifndef _BLENDINT_CONTAINER_HPP_
 #define _BLENDINT_CONTAINER_HPP_
 
+#include <assert.h>
+
 #include <deque>
 #include <boost/smart_ptr.hpp>
 
@@ -35,7 +37,6 @@
 namespace BlendInt {
 
 	typedef std::deque<AbstractWidget*> WidgetDeque;
-	typedef std::deque<AbstractWidgetExt*> WidgetDequeExt;
 
 	class ContextManager;
 	class Interface;
@@ -57,23 +58,23 @@ namespace BlendInt {
 		{
 		}
 
-		virtual AbstractWidgetExt* GetWidget () const = 0;
+		virtual AbstractWidget* GetWidget () const = 0;
 
 		virtual void Next () = 0;
 	};
 
-	class AbstractContainerExt: public AbstractWidgetExt
+	class AbstractContainer: public AbstractWidget
 	{
-		DISALLOW_COPY_AND_ASSIGN(AbstractContainerExt);
+		DISALLOW_COPY_AND_ASSIGN(AbstractContainer);
 
 	public:
 
-		AbstractContainerExt ()
+		AbstractContainer ()
 		{
 
 		}
 
-		virtual ~AbstractContainerExt ()
+		virtual ~AbstractContainer ()
 		{
 
 		}
@@ -88,84 +89,36 @@ namespace BlendInt {
 
 		friend class Context;
 
-		virtual bool AddSubWidget (AbstractWidgetExt* widget) = 0;
+		virtual bool AddSubWidget (AbstractWidget* widget) = 0;
 
-		virtual bool RemoveSubWidget (AbstractWidgetExt* widget) = 0;
+		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
 
-		static bool RemoveSubWidget (AbstractContainerExt* container, AbstractWidgetExt* sub)
+		static bool RemoveSubWidget (AbstractContainer* container, AbstractWidget* sub)
 		{
 			return container->RemoveSubWidget(sub);
 		}
 
-		static bool AddSubWidget (AbstractContainerExt* container, AbstractWidgetExt* sub)
+		static bool AddSubWidget (AbstractContainer* container, AbstractWidget* sub)
 		{
 			return container->AddSubWidget(sub);
 		}
 
-		static void SetContainer (AbstractWidgetExt* widget, AbstractContainerExt* container)
+		static void SetContainer (AbstractWidget* widget, AbstractContainer* container)
 		{
+			assert(widget->container() == 0);
+
 			if(container) {
 				widget->m_container = container;
-				widget->m_flag.set(WidgetFlagInContainerExt);
+				widget->m_flag.set(WidgetFlagInContainer);
 			} else {
 				widget->m_container = 0;
-				widget->m_flag.reset(WidgetFlagInContainerExt);
+				widget->m_flag.reset(WidgetFlagInContainer);
 			}
 		}
 
 		virtual RefPtr<AbstractContainerIterator> First (const DeviceEvent& event) = 0;
 
 		virtual bool End (const DeviceEvent& event, AbstractContainerIterator* iter) = 0;
-
-	private:
-
-		Margin m_margin;
-
-	};
-
-	/**
-	 * @brief Base class for widgets which contain other widgets
-	 */
-	class AbstractContainer: public AbstractWidget
-	{
-		DISALLOW_COPY_AND_ASSIGN(AbstractContainer);
-
-	public:
-
-		AbstractContainer();
-
-		virtual ~AbstractContainer ();
-
-		const Margin& margin () const {return m_margin;}
-
-		void SetMargin (const Margin& margin);
-
-		void SetMargin (int left, int right, int top, int bottom);
-
-		bool FindSubWidget (AbstractWidget* widget);
-
-		size_t sub_widget_size () const
-		{
-			return m_sub_widgets->size();
-		}
-
-#ifdef DEBUG
-		void print ();
-#endif
-
-	protected:
-
-		bool AppendSubWidget (AbstractWidget* widget);
-
-		bool InsertSubWidget (size_t index, AbstractWidget* widget);
-
-		bool RemoveSubWidget (AbstractWidget* widget);
-
-		void MoveSubWidgets (int offset_x, int offset_y);
-
-		void ResizeSubWidgets (const Size& size);
-
-		void ResizeSubWidgets (unsigned int w, unsigned int h);
 
 		void set_margin (const Margin& margin)
 		{
@@ -180,28 +133,10 @@ namespace BlendInt {
 			m_margin.set_bottom(bottom);
 		}
 
-		void ClearSubWidgets ();
-
-		WidgetDeque* sub_widgets () const
-		{
-			return m_sub_widgets.get();
-		}
-
 	private:
-
-		friend class ContextManager;
-		friend class Interface;
-
-		void OnSubWidgetDestroyed (AbstractWidget* widget);
-
-		void RemoveSubWidgetOnly (AbstractWidget* widget);
 
 		Margin m_margin;
 
-		/**
-		 * @brief Sub widgets which build a tree to accept render and device events
-		 */
-		boost::scoped_ptr<WidgetDeque> m_sub_widgets;
 	};
 
 }

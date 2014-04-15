@@ -103,6 +103,10 @@ namespace BlendInt {
 
 		const Size& size () const;
 
+		unsigned int GetCurrentContextWidth () const;
+
+		unsigned int GetCurrentContextHeight () const;
+
 		/**
 		 * @brief Resize the interface
 		 */
@@ -116,8 +120,6 @@ namespace BlendInt {
 		void Resize (unsigned int width, unsigned int height);
 
 		void ResizeContext (Context* context, unsigned int width, unsigned int height);
-
-		void SetMainWidget (AbstractWidget* widget);
 
 		void SetCurrentContext (Context* context);
 
@@ -164,7 +166,7 @@ namespace BlendInt {
 		void BuildWidgetListAtCursorPoint (const Point& cursor_point,
 		        AbstractWidget* parent);
 
-		void OnContextDestroyed (AbstractWidgetExt* context);
+		void OnContextDestroyed (AbstractWidget* context);
 
 		//AbstractWidget* m_main;
 
@@ -181,7 +183,6 @@ namespace BlendInt {
 		static void GetGLSLVersion (int *major, int *minor);
 
 		Context* m_current_context;
-
 	};
 
 }

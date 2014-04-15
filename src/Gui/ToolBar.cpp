@@ -41,7 +41,7 @@
 namespace BlendInt {
 
 	ToolBar::ToolBar ()
-	: m_vao(0), m_space(4)
+	: AbstractDequeContainer(), m_vao(0), m_space(4)
 	{
 		InitOnce();
 	}

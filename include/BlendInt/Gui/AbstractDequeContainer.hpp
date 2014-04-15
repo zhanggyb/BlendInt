@@ -50,7 +50,7 @@ namespace BlendInt {
 
 		}
 
-		void set_it (const WidgetDequeExt::iterator it)
+		void set_it (const WidgetDeque::iterator it)
 		{
 			m_it = it;
 		}
@@ -62,7 +62,7 @@ namespace BlendInt {
 			return *this;
 		}
 
-		virtual AbstractWidgetExt* GetWidget () const
+		virtual AbstractWidget* GetWidget () const
 		{
 			return *m_it;
 		}
@@ -72,10 +72,10 @@ namespace BlendInt {
 			++m_it;
 		}
 
-		WidgetDequeExt::iterator m_it;
+		WidgetDeque::iterator m_it;
 	};
 
-	class AbstractDequeContainer: public AbstractContainerExt
+	class AbstractDequeContainer: public AbstractContainer
 	{
 	public:
 
@@ -83,24 +83,48 @@ namespace BlendInt {
 
 		virtual ~AbstractDequeContainer ();
 
+		bool FindSubWidget (AbstractWidget* widget);
+
+		size_t sub_widget_size () const
+		{
+			return m_sub_widgets->size();
+		}
+
 	protected:
 
-		virtual bool AddSubWidget (AbstractWidgetExt* widget);
+		virtual bool AddSubWidget (AbstractWidget* widget);
 
-		virtual bool RemoveSubWidget (AbstractWidgetExt* widget);
+		virtual bool RemoveSubWidget (AbstractWidget* widget);
 
 		virtual RefPtr<AbstractContainerIterator> First (const DeviceEvent& event);
 
 		virtual bool End (const DeviceEvent& event, AbstractContainerIterator* iter);
 
+		bool AppendSubWidget (AbstractWidget* widget);
+
+		bool InsertSubWidget (size_t index, AbstractWidget* widget);
+
+		void MoveSubWidgets (int offset_x, int offset_y);
+
+		void ResizeSubWidgets (const Size& size);
+
+		void ResizeSubWidgets (unsigned int w, unsigned int h);
+
+		void ClearSubWidgets ();
+
+		WidgetDeque* sub_widgets () const
+		{
+			return m_sub_widgets.get();
+		}
+
 	private:
 
-		void OnSubWidgetDestroyed (AbstractWidgetExt* widget);
+		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
 		/**
 		 * @brief Sub widgets which build a tree to accept render and device events
 		 */
-		boost::scoped_ptr<WidgetDequeExt> m_sub_widgets;
+		boost::scoped_ptr<WidgetDeque> m_sub_widgets;
 
 		static RefPtr<DequeIterator> default_iterator;
 	};

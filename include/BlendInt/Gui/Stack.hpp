@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_STACKEDWIDGET_HPP_
 #define _BLENDINT_GUI_STACKEDWIDGET_HPP_
 
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractDequeContainer.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief class for stacked widgets
 	 */
-	class Stack: public AbstractContainer
+	class Stack: public AbstractDequeContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Stack);
 

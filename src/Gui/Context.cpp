@@ -72,24 +72,29 @@ namespace BlendInt
 	ScissorStatus Context::scissor_status;
 
 	Context::Context ()
-	: AbstractContainerExt(), m_main_buffer(0), m_vao(0)
+	: AbstractContainer(), m_main_buffer(0), m_vao(0)
 	{
 		set_size(640, 480);
+
+		m_redraw_event.set_view_matrix(glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f)));
+
+		// default is 640 x 480
+		m_redraw_event.set_projection_matrix(glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
 
 		InitOnce();
 	}
 
 	Context::~Context ()
 	{
-		if (AbstractWidgetExt::focused_widget) {
-			AbstractWidgetExt::focused_widget->m_flag.reset(
-			        AbstractWidgetExt::WidgetFlagFocusExt);
-			AbstractWidgetExt::focused_widget = 0;
+		if (AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->m_flag.reset(
+			        AbstractWidget::WidgetFlagFocus);
+			AbstractWidget::focused_widget = 0;
 		}
 
 		std::map<int, ContextLayerExt>::iterator layer_iter;
-		std::set<AbstractWidgetExt*>::iterator widget_iter;
-		std::set<AbstractWidgetExt*>* widget_set_p = 0;
+		std::set<AbstractWidget*>::iterator widget_iter;
+		std::set<AbstractWidget*>* widget_set_p = 0;
 
 		for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
 		        layer_iter++)
@@ -133,6 +138,11 @@ namespace BlendInt
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
+	void Context::Draw ()
+	{
+		Draw (m_redraw_event);
+	}
+
 	bool Context::Update (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
@@ -156,6 +166,8 @@ namespace BlendInt
 					m_vbo->Reset();
 
 					glBindVertexArray(0);
+
+					m_redraw_event.set_projection_matrix(glm::ortho(0.f, static_cast<float>(size_p->width()), 0.f, static_cast<float>(size_p->height()), 100.f, -100.f));
 
 					// TODO: redraw
 					force_refresh_all = true;
@@ -189,7 +201,7 @@ namespace BlendInt
 
 			std::map<int, ContextLayerExt>::iterator layer_iter;
 			unsigned int count = 0;
-			std::set<AbstractWidgetExt*>* widget_set_p = 0;
+			std::set<AbstractWidget*>* widget_set_p = 0;
 
 			for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
 			        layer_iter++) {
@@ -222,7 +234,7 @@ namespace BlendInt
 
 			std::map<int, ContextLayerExt>::iterator layer_iter;
 			unsigned int count = 0;
-			std::set<AbstractWidgetExt*>* widget_set_p = 0;
+			std::set<AbstractWidget*>* widget_set_p = 0;
 
 			for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
 			        layer_iter++) {
@@ -279,12 +291,24 @@ namespace BlendInt
 
 	ResponseType Context::CursorEnterEvent (bool entered)
 	{
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
-		return Accept;
+		if(AbstractWidget::focused_widget) {
+#ifdef DEBUG
+			if(event.key() == Key_F6 && event.text().empty()) {
+				//DrawToOffScreen();
+				//RenderToImage();
+			}
+#endif
+			AbstractWidget::focused_widget->KeyPressEvent(event);
+
+			return Accept;
+		} else {
+			return Ignore;
+		}
 	}
 
 	ResponseType Context::ContextMenuPressEvent (const ContextMenuEvent& event)
@@ -300,20 +324,106 @@ namespace BlendInt
 
 	ResponseType Context::MousePressEvent (const MouseEvent& event)
 	{
+		ResponseType response;
+		bool focus_set = false;
+
+		for(std::deque<AbstractWidget*>::reverse_iterator it = m_hover_deque->rbegin();
+						it != m_hover_deque->rend(); it++)
+		{
+			response = (*it)->MousePressEvent(event);
+			//DBG_PRINT_MSG("mouse press: %s", (*it)->name().c_str());
+
+			if((!focus_set) && (response == Accept)) {
+				SetFocusedWidget(*it);
+				focus_set = true;
+			}
+
+			if(response == AcceptAndBreak) {
+				break;
+			}
+		}
+
 		return Accept;
 	}
 
 	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
 	{
+		ResponseType response;
+
+		// tell the focused widget first
+		if(AbstractWidget::focused_widget) {
+			response = AbstractWidget::focused_widget->MouseReleaseEvent(event);
+
+			// Check the event status
+		}
+
+		for(std::deque<AbstractWidget*>::reverse_iterator it = m_hover_deque->rbegin();
+						it != m_hover_deque->rend(); it++)
+		{
+			response = (*it)->MouseReleaseEvent(event);
+
+			if(response == AcceptAndBreak) break;
+		}
+
 		return Accept;
 	}
 
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
 	{
+		AbstractWidget* widget = 0;
+		ResponseType response;
+
+		// search which widget in stack contains the cursor
+		while (m_hover_deque->size()) {
+
+			if (m_hover_deque->back()->visiable() &&
+							m_hover_deque->back()->Contain(event.position())) {
+				widget = m_hover_deque->back();
+				break;
+			} else {
+				m_hover_deque->back()->CursorEnterEvent(false);
+				m_hover_deque->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
+			}
+
+			m_hover_deque->pop_back();
+		}
+
+		BuildCursorHoverList(event, widget);
+
+		/*
+		for (std::deque<AbstractWidgetExt*>::iterator it =
+				m_hover_deque->begin(); it != m_hover_deque->end();
+				it++)
+		{
+			DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
+		}
+		*/
+
+		// tell the focused widget first
+		if(AbstractWidget::focused_widget) {
+			response = AbstractWidget::focused_widget->MouseMoveEvent(event);
+
+			if(response == AcceptAndBreak)
+				return Accept;
+			// check the event status
+		}
+
+		for (std::deque<AbstractWidget*>::reverse_iterator it =
+						m_hover_deque->rbegin();
+						it != m_hover_deque->rend();
+				it++)
+		{
+			response = (*it)->MouseMoveEvent(event);
+			// check the event status
+			if (response == Accept) {
+				// TODO: do sth
+			}
+		}
+
 		return Accept;
 	}
 
-	bool Context::AddSubWidget (AbstractWidgetExt* widget)
+	bool Context::AddSubWidget (AbstractWidget* widget)
 	{
 		if(!widget)
 			return false;
@@ -327,7 +437,7 @@ namespace BlendInt
 				return true;
 			} else {
 				// Set widget's container to 0
-				AbstractContainerExt::RemoveSubWidget(widget->container(),
+				AbstractContainer::RemoveSubWidget(widget->container(),
 				        widget);
 			}
 		}
@@ -337,7 +447,7 @@ namespace BlendInt
 		if (layer_iter != m_layers.end()) {
 			layer_iter->second.widgets->insert(widget);
 		} else {
-			std::set<AbstractWidgetExt*>* new_widget_set_p = new std::set<AbstractWidgetExt*>;
+			std::set<AbstractWidget*>* new_widget_set_p = new std::set<AbstractWidget*>;
 			new_widget_set_p->insert(widget);
 			m_layers[widget->z()].widgets = new_widget_set_p;
 
@@ -353,7 +463,7 @@ namespace BlendInt
 		return true;
 	}
 
-	bool Context::RemoveSubWidget (AbstractWidgetExt* widget)
+	bool Context::RemoveSubWidget (AbstractWidget* widget)
 	{
 		if(!widget) return false;
 
@@ -362,12 +472,12 @@ namespace BlendInt
 		widget->destroyed().disconnectOne(this,
 				&Context::OnSubWidgetDestroyed);
 
-		if (AbstractWidgetExt::focused_widget == widget) {
-			widget->m_flag.reset(AbstractWidgetExt::WidgetFlagFocusExt);
-			AbstractWidgetExt::focused_widget = 0;
+		if (AbstractWidget::focused_widget == widget) {
+			widget->m_flag.reset(AbstractWidget::WidgetFlagFocus);
+			AbstractWidget::focused_widget = 0;
 		}
 
-		map<AbstractWidgetExt*, int>::iterator index_iter;
+		map<AbstractWidget*, int>::iterator index_iter;
 
 		index_iter = m_index.find(widget);
 
@@ -375,8 +485,8 @@ namespace BlendInt
 
 			int z = index_iter->second;
 
-			std::set<AbstractWidgetExt*>* widget_set_p = m_layers[z].widgets;
-			std::set<AbstractWidgetExt*>::iterator widget_iter = widget_set_p->find(widget);
+			std::set<AbstractWidget*>* widget_set_p = m_layers[z].widgets;
+			std::set<AbstractWidget*>::iterator widget_iter = widget_set_p->find(widget);
 			if (widget_iter != widget_set_p->end()) {
 				widget_set_p->erase(widget_iter);
 			} else {
@@ -413,7 +523,7 @@ namespace BlendInt
 	{
 		m_program = ShaderManager::instance->default_context_program();
 
-		m_hover_deque.reset(new std::deque<AbstractWidgetExt*>);
+		m_hover_deque.reset(new std::deque<AbstractWidget*>);
 
 		m_main_buffer = new GLTexture2D;
 
@@ -540,7 +650,7 @@ namespace BlendInt
 	
 	void Context::RenderLayer (const RedrawEvent& event,
 					int layer,
-					std::set<AbstractWidgetExt*>* widgets,
+					std::set<AbstractWidget*>* widgets,
 					GLTexture2D* texture)
 	{
 		GLsizei width = size().width();
@@ -597,7 +707,7 @@ namespace BlendInt
 
 			glViewport(0, 0, width, height);
 
-			std::set<AbstractWidgetExt*>::iterator widget_iter;
+			std::set<AbstractWidget*>::iterator widget_iter;
 
 			for (widget_iter = widgets->begin(); widget_iter != widgets->end();
 			        widget_iter++) {
@@ -768,7 +878,7 @@ namespace BlendInt
 		glEnable(GL_BLEND);
 	}
 	
-	void Context::DispatchDrawEvent (AbstractWidgetExt* widget,
+	void Context::DispatchDrawEvent (AbstractWidget* widget,
 					const RedrawEvent& event)
 	{
 		if (widget->visiable()) {
@@ -784,10 +894,10 @@ namespace BlendInt
 
 			widget->Draw(event);
 
-			AbstractContainerExt* p = dynamic_cast<AbstractContainerExt*>(widget);
+			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
 			if (p) {
 
-				if(p->m_flag[AbstractWidgetExt::WidgetFlagScissorTestExt]) {
+				if(p->m_flag[AbstractWidget::WidgetFlagScissorTest]) {
 					scissor_status.Push(p->position().x() + p->margin().left(),
 							p->position().y() + p->margin().right(),
 							p->size().width() - p->margin().left() - p->margin().right(),
@@ -811,7 +921,7 @@ namespace BlendInt
 					}
 				}
 
-				if(p->m_flag[AbstractWidgetExt::WidgetFlagScissorTestExt]) {
+				if(p->m_flag[AbstractWidget::WidgetFlagScissorTest]) {
 					scissor_status.Pop();
 					scissor_status.Disable();
 				}
@@ -821,22 +931,22 @@ namespace BlendInt
 		}
 	}
 	
-	bool Context::Add (AbstractWidgetExt* widget)
+	bool Context::Add (AbstractWidget* widget)
 	{
 		return AddSubWidget(widget);
 	}
 	
-	bool Context::Remove (AbstractWidgetExt* widget)
+	bool Context::Remove (AbstractWidget* widget)
 	{
 		return RemoveSubWidget(widget);
 	}
 	
-	void Context::BuildCursorHoverList (const MouseEvent& event, AbstractWidgetExt* parent)
+	void Context::BuildCursorHoverList (const MouseEvent& event, AbstractWidget* parent)
 	{
 		if (parent) {
-			parent->m_flag.set(AbstractWidgetExt::WidgetFlagContextHoverListExt);
+			parent->m_flag.set(AbstractWidget::WidgetFlagContextHoverList);
 
-			AbstractContainerExt* p = dynamic_cast<AbstractContainerExt*>(parent);
+			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
 			if(p) {
 				for (RefPtr<AbstractContainerIterator> it =
 						p->First(event); !(p->End(event, it.get())); it->Next()) {
@@ -853,8 +963,8 @@ namespace BlendInt
 			m_hover_deque->clear();
 
 			std::map<int, ContextLayerExt>::reverse_iterator map_it;
-			std::set<AbstractWidgetExt*>::iterator set_it;
-			std::set<AbstractWidgetExt*>* set_p = 0;
+			std::set<AbstractWidget*>::iterator set_it;
+			std::set<AbstractWidget*>* set_p = 0;
 
 			bool stop = false;
 
@@ -880,21 +990,21 @@ namespace BlendInt
 		}
 	}
 	
-	void Context::SetFocusedWidget (AbstractWidgetExt* widget)
+	void Context::SetFocusedWidget (AbstractWidget* widget)
 	{
-		if (AbstractWidgetExt::focused_widget) {
-			AbstractWidgetExt::focused_widget->m_flag.reset(
-			        AbstractWidgetExt::WidgetFlagFocusExt);
+		if (AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->m_flag.reset(
+			        AbstractWidget::WidgetFlagFocus);
 		}
 
-		AbstractWidgetExt::focused_widget = widget;
-		if (AbstractWidgetExt::focused_widget) {
-			AbstractWidgetExt::focused_widget->m_flag.set(
-			        AbstractWidgetExt::WidgetFlagFocusExt);
+		AbstractWidget::focused_widget = widget;
+		if (AbstractWidget::focused_widget) {
+			AbstractWidget::focused_widget->m_flag.set(
+			        AbstractWidget::WidgetFlagFocus);
 		}
 	}
 
-	void Context::OnSubWidgetDestroyed (AbstractWidgetExt* widget)
+	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{
 		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the context manager", widget->name().c_str());
 

@@ -152,12 +152,12 @@ namespace BlendInt {
 		return window;
 	}
 
-	void RunLoop (GLFWwindow* window, const RedrawEvent& event, RenderCallback callback, void* param)
+	void RunLoop (GLFWwindow* window, RenderCallback callback, void* param)
 	{
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window)) {
 			/* Render here */
-			Interface::instance->Draw(event);
+			Interface::instance->Draw();
 
             if(callback) {
                 (*callback)(param);

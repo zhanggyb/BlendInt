@@ -27,7 +27,7 @@
 namespace BlendInt {
 
 	Stack::Stack()
-	: AbstractContainer(), m_index(0)
+	: AbstractDequeContainer(), m_index(0)
 	{
 		set_preferred_size(400, 300);
 		set_size(400, 300);

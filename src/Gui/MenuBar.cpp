@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	MenuBar::MenuBar ()
-	: AbstractContainer(), m_vao(0), m_space(2)
+	: AbstractDequeContainer(), m_vao(0), m_space(2)
 	{
 		set_expand_x(true);
 		set_expand_y(false);

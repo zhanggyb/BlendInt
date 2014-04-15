@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	AbstractLayout::AbstractLayout ()
-			: AbstractContainer(),
+			: AbstractDequeContainer(),
 			  m_alignment(0),
 			  m_space(1)
 	{
