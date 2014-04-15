@@ -40,6 +40,7 @@
 #include <BlendInt/OpenGL/ScissorStatus.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -47,18 +48,6 @@ namespace BlendInt {
 	class AbstractWidget;
 	class GLTexture2D;
 	class ScreenBuffer;
-
-	struct ContextLayer {
-
-		ContextLayer ();
-		~ContextLayer ();
-
-		bool refresh;
-
-		std::set<AbstractWidget*>* widgets;
-
-		GLTexture2D* buffer;
-	};
 
 	/**
 	 * @brief Class to hold and manage widget objects for Render

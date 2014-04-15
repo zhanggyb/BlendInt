@@ -105,15 +105,7 @@ namespace BlendInt {
 
 		static void SetContainer (AbstractWidget* widget, AbstractContainer* container)
 		{
-			assert(widget->container() == 0);
-
-			if(container) {
-				widget->m_container = container;
-				widget->m_flag.set(WidgetFlagInContainer);
-			} else {
-				widget->m_container = 0;
-				widget->m_flag.reset(WidgetFlagInContainer);
-			}
+			widget->m_container = container;
 		}
 
 		virtual RefPtr<AbstractContainerIterator> First (const DeviceEvent& event) = 0;

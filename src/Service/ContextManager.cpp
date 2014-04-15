@@ -60,26 +60,6 @@ using std::set;
 
 namespace BlendInt {
 
-	ContextLayer::ContextLayer ()
-			: refresh(true), widgets(0), buffer(0)
-	{
-	}
-
-	ContextLayer::~ContextLayer ()
-	{
-		if (buffer) {
-			DBG_PRINT_MSG("%s", "Delete texture buffer in context layer");
-			delete buffer;
-		}
-
-		if (widgets) {
-			DBG_PRINT_MSG("%s", "Delete widget set in context layer");
-			assert(widgets->size() == 0);
-			widgets->clear();
-			delete widgets;
-		}
-	}
-
 	ContextManager* ContextManager::instance = 0;
 
 	bool ContextManager::refresh_once = false;
@@ -160,8 +140,6 @@ namespace BlendInt {
 					(*widget_iter)->destroyed().disconnectOne(this,
 					        &ContextManager::OnDestroyObject);
 					(*widget_iter)->m_container = 0;
-					(*widget_iter)->m_flag.reset(
-					        AbstractWidget::WidgetFlagInContextManager);
 
 				}
 			}
@@ -218,14 +196,9 @@ namespace BlendInt {
 		if (!obj)
 			return false;
 
-		if (!obj->m_flag[AbstractWidget::WidgetFlagInContextManager]) {
-			DBG_PRINT_MSG("Widget %s is not in context manager", obj->name().c_str());
-			return true;
-		}
 
 		if (!RemoveWidget(obj)) {
 			obj->m_container = 0;
-			obj->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);
 			DBG_PRINT_MSG(
 			        "object: %s is not stored in layer %d in context manager",
 			        obj->name().c_str(), obj->z());
@@ -234,7 +207,6 @@ namespace BlendInt {
 		}
 
 		obj->m_container = 0;
-		obj->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);
 		obj->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
 		return true;
@@ -797,7 +769,6 @@ namespace BlendInt {
 
 		RemoveWidget(widget);
 
-		widget->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);
 		widget->destroyed().disconnectOne(this, &ContextManager::OnDestroyObject);
 
 		// TODO: remove this widget and its children if it's in m_cursor_widget_stack

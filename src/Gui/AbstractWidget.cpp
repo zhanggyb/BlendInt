@@ -69,12 +69,14 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget ()
 	{
-		if(hover()) {
-			// ContextManager::instance->RemoveWidgetFromHoverDeque(this);
+		Context* context = GetContext();
+
+		if(hover() && context) {
+			context->RemoveWidgetFromHoverList(this);
 		}
 
-		if(focused()) {
-			//ContextManager::instance->SetFocusedWidget(0);
+		if(focused() && context) {
+			context->SetFocusedWidget(0);
 		}
 
 		m_destroyed.fire(this);
@@ -238,18 +240,18 @@ namespace BlendInt {
 
 		if(m_z == z) return;
 
-		if(m_flag[WidgetFlagInContextManager]) {
-			if(Update (UpdateRequest(Predefined, WidgetLayer, &z))) {
-				//ContextManager::instance->Unregister(this);
+		if(Update (UpdateRequest(Predefined, WidgetLayer, &z))) {
+
+			Context* context = GetContext();
+			if(context) {
+				context->Remove(this);
 				m_z = z;
-				//ContextManager::instance->AddSubWidget(this);
-				fire_property_changed_event(WidgetLayer);
-			}
-		} else {
-			if(Update (UpdateRequest(Predefined, WidgetLayer, &z))) {
+				context->Add(this);
+			} else {
 				m_z = z;
-				fire_property_changed_event(WidgetLayer);
 			}
+
+			fire_property_changed_event(WidgetLayer);
 		}
 	}
 
@@ -266,10 +268,9 @@ namespace BlendInt {
 
 	void AbstractWidget::Refresh()
 	{
-		//if(!m_flag[WidgetFlagInContextManager])
-		//return;
-
-		ContextManager::instance->RefreshLayer(m_z);
+		if(Context* context = GetContext()) {
+			context->RefreshLayer(z());
+		}
 	}
 
 	void AbstractWidget::RenderToTexture (size_t border, GLTexture2D* texture)
@@ -505,6 +506,23 @@ namespace BlendInt {
 			const MouseEvent& event)
 	{
 		return obj->MouseReleaseEvent(event);
+	}
+
+	Context* AbstractWidget::GetContext()
+	{
+		AbstractContainer* container = m_container;
+
+		if(container == 0) {
+			return 0;
+		} else {
+
+			while(container->container()) {
+				container = container->container();
+			}
+
+		}
+
+		return dynamic_cast<Context*>(container);
 	}
 
 	bool AbstractWidget::CompositeToScreenBuffer (GLTexture2D* tex,

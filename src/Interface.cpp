@@ -336,22 +336,25 @@ namespace BlendInt {
 		switch (event.action()) {
 
 			case MouseMove: {
-				DispatchCursorMoveEvent(event);
+				//DispatchCursorMoveEvent(event);
+				context->MouseMoveEvent(event);
 				return;
 			}
 
 			case MousePress: {
-				DispatchMousePressEvent(event);
+				//DispatchMousePressEvent(event);
+				context->MousePressEvent(event);
 				return;
 			}
 
 			case MouseRelease: {
-				DispatchMouseReleaseEvent(event);
+				//DispatchMouseReleaseEvent(event);
+				context->MouseReleaseEvent(event);
 				return;
 			}
 
 			default:
-			break;
+				break;
 		}
 	}
 

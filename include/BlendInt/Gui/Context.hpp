@@ -41,10 +41,10 @@
 
 namespace BlendInt {
 
-	struct ContextLayerExt {
+	struct ContextLayer {
 
-		ContextLayerExt ();
-		~ContextLayerExt ();
+		ContextLayer ();
+		~ContextLayer ();
 
 		/** If refresh this layer */
 		bool refresh;
@@ -91,6 +91,10 @@ namespace BlendInt {
 		bool Add (AbstractWidget* widget);
 
 		bool Remove (AbstractWidget* widget);
+
+		void SetFocusedWidget (AbstractWidget* widget);
+
+		void RemoveWidgetFromHoverList (AbstractWidget* widget);
 
 	protected:
 
@@ -141,11 +145,9 @@ namespace BlendInt {
 
 		void BuildCursorHoverList (const MouseEvent& event, AbstractWidget* parent);
 
-		void SetFocusedWidget (AbstractWidget* widget);
-
 		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
-		std::map<int, ContextLayerExt> m_layers;
+		std::map<int, ContextLayer> m_layers;
 
 		std::map<AbstractWidget*, int> m_index;
 

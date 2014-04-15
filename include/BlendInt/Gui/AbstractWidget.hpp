@@ -136,11 +136,11 @@ namespace BlendInt {
 
 		void SetVisible (bool visible);
 
-		void Refresh ();
-
 		void RenderToTexture (size_t border, GLTexture2D* texture);
 
 		void RenderToFile (const char* filename, unsigned int border = 10);
+
+		void Refresh ();
 
 		const int& layer () const
 		{
@@ -155,16 +155,6 @@ namespace BlendInt {
 		inline bool locked () const
 		{
 			return m_flag[WidgetFlagLockGeometry];
-		}
-
-		inline bool in_context_manager() const
-		{
-			return m_flag[WidgetFlagInContextManager];
-		}
-
-		inline bool in_container () const
-		{
-			return m_flag[WidgetFlagInContainer];
 		}
 
 		void activate_events ()
@@ -265,6 +255,8 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
+		Context* GetContext ();
+
 		void set_scissor_test (bool status)
 		{
 			m_flag[WidgetFlagScissorTest] = status ? 1 : 0;
@@ -325,11 +317,7 @@ namespace BlendInt {
 		enum WidgetFlagIndexExt {
 			WidgetFlagLockGeometry = 0,
 			WidgetFlagFireEvents,
-			WidgetFlagInContextManager,
 			WidgetFlagFocus,
-
-			/** If this widget is in container */
-			WidgetFlagInContainer,
 
 			/** If this widget is in cursor hover list in ContextManager */
 			WidgetFlagContextHoverList,

@@ -181,6 +181,7 @@ int main(int argc, char* argv[])
 	//RunLoop (win);
 
 	Context* context = Manage(new Context);
+	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
 	Interface::instance->Resize(640, 480);

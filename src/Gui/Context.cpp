@@ -45,12 +45,12 @@
 namespace BlendInt
 {
 
-	ContextLayerExt::ContextLayerExt ()
+	ContextLayer::ContextLayer ()
 			: refresh(true), widgets(0), buffer(0)
 	{
 	}
 
-	ContextLayerExt::~ContextLayerExt ()
+	ContextLayer::~ContextLayer ()
 	{
 		if (buffer) {
 			DBG_PRINT_MSG("%s", "Delete texture buffer in context layer");
@@ -92,7 +92,7 @@ namespace BlendInt
 			AbstractWidget::focused_widget = 0;
 		}
 
-		std::map<int, ContextLayerExt>::iterator layer_iter;
+		std::map<int, ContextLayer>::iterator layer_iter;
 		std::set<AbstractWidget*>::iterator widget_iter;
 		std::set<AbstractWidget*>* widget_set_p = 0;
 
@@ -116,9 +116,6 @@ namespace BlendInt
 					(*widget_iter)->destroyed().disconnectOne(this,
 					        &Context::OnSubWidgetDestroyed);
 					(*widget_iter)->m_container = 0;
-					//(*widget_iter)->m_flag.reset(
-					   //     AbstractWidget::WidgetFlagInContextManager);
-
 				}
 			}
 
@@ -167,7 +164,12 @@ namespace BlendInt
 
 					glBindVertexArray(0);
 
-					m_redraw_event.set_projection_matrix(glm::ortho(0.f, static_cast<float>(size_p->width()), 0.f, static_cast<float>(size_p->height()), 100.f, -100.f));
+					m_redraw_event.set_projection_matrix(
+									glm::ortho(0.f,
+													static_cast<float>(size_p->width()),
+													0.f,
+													static_cast<float>(size_p->height()),
+													100.f, -100.f));
 
 					// TODO: redraw
 					force_refresh_all = true;
@@ -199,7 +201,7 @@ namespace BlendInt
 
 		if (force_refresh_all) {
 
-			std::map<int, ContextLayerExt>::iterator layer_iter;
+			std::map<int, ContextLayer>::iterator layer_iter;
 			unsigned int count = 0;
 			std::set<AbstractWidget*>* widget_set_p = 0;
 
@@ -232,7 +234,7 @@ namespace BlendInt
 
 		} else if (refresh_once) {
 
-			std::map<int, ContextLayerExt>::iterator layer_iter;
+			std::map<int, ContextLayer>::iterator layer_iter;
 			unsigned int count = 0;
 			std::set<AbstractWidget*>* widget_set_p = 0;
 
@@ -391,7 +393,7 @@ namespace BlendInt
 		BuildCursorHoverList(event, widget);
 
 		/*
-		for (std::deque<AbstractWidgetExt*>::iterator it =
+		for (std::deque<AbstractWidget*>::iterator it =
 				m_hover_deque->begin(); it != m_hover_deque->end();
 				it++)
 		{
@@ -442,7 +444,7 @@ namespace BlendInt
 			}
 		}
 
-		map<int, ContextLayerExt>::iterator layer_iter;
+		map<int, ContextLayer>::iterator layer_iter;
 		layer_iter = m_layers.find(widget->z());
 		if (layer_iter != m_layers.end()) {
 			layer_iter->second.widgets->insert(widget);
@@ -457,6 +459,8 @@ namespace BlendInt
 		}
 
 		m_index[widget] = widget->z();
+
+		SetContainer(widget, this);
 
 		events()->connect(widget->destroyed(), this, &Context::OnSubWidgetDestroyed);
 
@@ -509,6 +513,8 @@ namespace BlendInt
 			}
 
 			m_index.erase(widget);
+
+			SetContainer(widget, 0);
 
 		} else {
 			DBG_PRINT_MSG("Error: object %s is not recorded in map",
@@ -631,14 +637,14 @@ namespace BlendInt
 
 	int Context::GetMaxLayer () const
 	{
-		map<int, ContextLayerExt>::const_reverse_iterator rit = m_layers.rbegin();
+		map<int, ContextLayer>::const_reverse_iterator rit = m_layers.rbegin();
 
 		return rit->first;
 	}
 
 	void Context::RefreshLayer (int layer)
 	{
-		map<int, ContextLayerExt>::iterator layer_iter;
+		map<int, ContextLayer>::iterator layer_iter;
 
 		layer_iter = m_layers.find(layer);
 
@@ -776,8 +782,6 @@ namespace BlendInt
 			fb->Bind();
 
 			PreDrawContext(true);
-
-			DBG_PRINT_MSG("viewport size: %u, %u", width, height);
 
 			glViewport(0, 0, width, height);
 
@@ -962,7 +966,7 @@ namespace BlendInt
 		} else {
 			m_hover_deque->clear();
 
-			std::map<int, ContextLayerExt>::reverse_iterator map_it;
+			std::map<int, ContextLayer>::reverse_iterator map_it;
 			std::set<AbstractWidget*>::iterator set_it;
 			std::set<AbstractWidget*>* set_p = 0;
 
@@ -1004,17 +1008,26 @@ namespace BlendInt
 		}
 	}
 
+	void Context::RemoveWidgetFromHoverList (AbstractWidget* widget)
+	{
+		while (m_hover_deque->size()) {
+			m_hover_deque->back()->m_flag.reset(
+			        AbstractWidget::WidgetFlagContextHoverList);
+
+			if (m_hover_deque->back() == widget) {
+				m_hover_deque->pop_back();
+				break;
+			}
+
+			m_hover_deque->pop_back();
+		}
+	}
+
 	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{
 		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the context manager", widget->name().c_str());
 
 		RemoveSubWidget(widget);
-
-		// TODO: if in hover list, remove
-
-		//widget->m_flag.reset(AbstractWidget::WidgetFlagInContextManager);
-		//widget->destroyed().disconnectOne(this, &Context::OnSubWidgetDestroyed);
 	}
 
 }
-
