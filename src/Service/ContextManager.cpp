@@ -110,11 +110,13 @@ namespace BlendInt {
 	ContextManager::~ContextManager ()
 	{
 		// set focus widget to 0
+		/*
 		if (AbstractWidget::focused_widget) {
 			AbstractWidget::focused_widget->m_flag.reset(
 			        AbstractWidget::WidgetFlagFocus);
 			AbstractWidget::focused_widget = 0;
 		}
+		*/
 
 		map<int, ContextLayer>::iterator layer_iter;
 		set<AbstractWidget*>::iterator widget_iter;
@@ -305,10 +307,12 @@ namespace BlendInt {
 		if (!obj)
 			return false;
 
+		/*
 		if (AbstractWidget::focused_widget == obj) {
 			obj->m_flag.reset(AbstractWidget::WidgetFlagFocus);
 			AbstractWidget::focused_widget = 0;
 		}
+		*/
 
 		map<AbstractWidget*, int>::iterator index_iter;
 
@@ -780,6 +784,11 @@ namespace BlendInt {
 
 		return rit->first;
 	}
+	
+	ResponseType ContextManager::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
 
 	void ContextManager::BuildWidgetListAtCursorPoint (
 	        const Point& cursor_point, AbstractWidget* parent)
@@ -853,6 +862,7 @@ namespace BlendInt {
 
 	void ContextManager::SetFocusedWidget (AbstractWidget* widget)
 	{
+		/*
 		if (AbstractWidget::focused_widget) {
 			AbstractWidget::focused_widget->m_flag.reset(
 			        AbstractWidget::WidgetFlagFocus);
@@ -863,6 +873,7 @@ namespace BlendInt {
 			AbstractWidget::focused_widget->m_flag.set(
 			        AbstractWidget::WidgetFlagFocus);
 		}
+		*/
 	}
 
 	void ContextManager::RefreshLayer (int layer)

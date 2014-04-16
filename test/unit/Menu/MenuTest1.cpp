@@ -45,6 +45,9 @@ TEST_F(MenuTest1, Foo1)
 
 	context->Add(menu);
 
+	context->SetFocusedWidget(menu);
+	context->SetFocusedWidget(0);
+
 	RunLoop(window);
 
 	Terminate();

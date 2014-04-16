@@ -228,6 +228,8 @@ namespace BlendInt {
 
 	protected:	// member functions
 
+		virtual ResponseType FocusEvent (bool focus) = 0;
+
 		virtual ResponseType CursorEnterEvent (bool entered) = 0;
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event) = 0;
@@ -366,8 +368,6 @@ namespace BlendInt {
 		Cpp::Event<AbstractWidget*> m_destroyed;
 
 		AbstractContainer* m_container;
-
-		static AbstractWidget* focused_widget;
 
 #ifdef DEBUG
 	public:

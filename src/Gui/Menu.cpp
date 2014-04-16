@@ -290,6 +290,13 @@ namespace BlendInt {
 	void Menu::RemoveActionItem (const RefPtr<ActionItem>& item)
 	{
 	}
+	
+	ResponseType Menu::FocusEvent (bool focus)
+	{
+		DBG_PRINT_MSG("focus %s", focus ? "on" : "off");
+
+		return Ignore;
+	}
 
 	unsigned int Menu::GetHighlightNo(int y)
 	{

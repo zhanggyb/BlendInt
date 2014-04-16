@@ -108,6 +108,8 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType FocusEvent (bool focus);
+
 		virtual ResponseType CursorEnterEvent (bool entered);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
@@ -167,6 +169,13 @@ namespace BlendInt {
 		boost::scoped_ptr<std::deque<AbstractWidget*> > m_hover_deque;
 
 		RefPtr<GLSLProgram> m_program;
+
+		/**
+		 * @brief Focused widget
+		 *
+		 * There's one focused widget in each context to access key and button events
+		 */
+		AbstractWidget* m_focused_widget;
 
 		static ScissorStatus scissor_status;
 

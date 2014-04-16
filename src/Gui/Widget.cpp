@@ -188,6 +188,11 @@ namespace BlendInt {
 	{
 		return Accept;
 	}
+	
+	ResponseType Widget::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
 
 	ResponseType Widget::MouseMoveEvent (const MouseEvent& event)
 	{

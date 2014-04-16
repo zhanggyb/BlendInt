@@ -72,7 +72,7 @@ namespace BlendInt
 	ScissorStatus Context::scissor_status;
 
 	Context::Context ()
-	: AbstractContainer(), m_main_buffer(0), m_vao(0)
+	: AbstractContainer(), m_main_buffer(0), m_vao(0), m_focused_widget(0)
 	{
 		set_size(640, 480);
 
@@ -91,10 +91,8 @@ namespace BlendInt
 
 	Context::~Context ()
 	{
-		if (AbstractWidget::focused_widget) {
-			AbstractWidget::focused_widget->m_flag.reset(
-			        AbstractWidget::WidgetFlagFocus);
-			AbstractWidget::focused_widget = 0;
+		if(m_focused_widget) {
+			SetFocusedWidget(0);
 		}
 
 		std::map<int, ContextLayer>::iterator layer_iter;
@@ -296,14 +294,14 @@ namespace BlendInt
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
-		if(AbstractWidget::focused_widget) {
+		if(m_focused_widget) {
 #ifdef DEBUG
 			if(event.key() == Key_F6 && event.text().empty()) {
 				//DrawToOffScreen();
 				//RenderToImage();
 			}
 #endif
-			AbstractWidget::focused_widget->KeyPressEvent(event);
+			m_focused_widget->KeyPressEvent(event);
 
 			return Accept;
 		} else {
@@ -327,19 +325,23 @@ namespace BlendInt
 		ResponseType response;
 		bool focus_set = false;
 
-		for(std::deque<AbstractWidget*>::reverse_iterator it = m_hover_deque->rbegin();
-						it != m_hover_deque->rend(); it++)
-		{
-			response = (*it)->MousePressEvent(event);
-			//DBG_PRINT_MSG("mouse press: %s", (*it)->name().c_str());
+		if(m_hover_deque->size() == 0) {
+			SetFocusedWidget(0);
+		} else {
+			for (std::deque<AbstractWidget*>::reverse_iterator it =
+							m_hover_deque->rbegin();
+							it != m_hover_deque->rend(); it++) {
+				response = (*it)->MousePressEvent(event);
+				//DBG_PRINT_MSG("mouse press: %s", (*it)->name().c_str());
 
-			if((!focus_set) && (response == Accept)) {
-				SetFocusedWidget(*it);
-				focus_set = true;
-			}
+				if ((!focus_set) && (response == Accept)) {
+					SetFocusedWidget(*it);
+					focus_set = true;
+				}
 
-			if(response == AcceptAndBreak) {
-				break;
+				if (response == AcceptAndBreak) {
+					break;
+				}
 			}
 		}
 
@@ -351,8 +353,8 @@ namespace BlendInt
 		ResponseType response;
 
 		// tell the focused widget first
-		if(AbstractWidget::focused_widget) {
-			response = AbstractWidget::focused_widget->MouseReleaseEvent(event);
+		if(m_focused_widget) {
+			response = m_focused_widget->MouseReleaseEvent(event);
 
 			// Check the event status
 		}
@@ -400,8 +402,8 @@ namespace BlendInt
 		*/
 
 		// tell the focused widget first
-		if(AbstractWidget::focused_widget) {
-			response = AbstractWidget::focused_widget->MouseMoveEvent(event);
+		if(m_focused_widget) {
+			response = m_focused_widget->MouseMoveEvent(event);
 
 			if(response == AcceptAndBreak)
 				return Accept;
@@ -474,9 +476,12 @@ namespace BlendInt
 		widget->destroyed().disconnectOne(this,
 				&Context::OnSubWidgetDestroyed);
 
-		if (AbstractWidget::focused_widget == widget) {
-			widget->m_flag.reset(AbstractWidget::WidgetFlagFocus);
-			AbstractWidget::focused_widget = 0;
+		if(widget->hover()) {
+			RemoveWidgetFromHoverList(this);
+		}
+
+		if(widget == m_focused_widget) {
+			SetFocusedWidget(0);
 		}
 
 		map<AbstractWidget*, int>::iterator index_iter;
@@ -983,15 +988,21 @@ namespace BlendInt
 	
 	void Context::SetFocusedWidget (AbstractWidget* widget)
 	{
-		if (AbstractWidget::focused_widget) {
-			AbstractWidget::focused_widget->m_flag.reset(
-			        AbstractWidget::WidgetFlagFocus);
+		if(m_focused_widget == widget) {
+			return;
 		}
 
-		AbstractWidget::focused_widget = widget;
-		if (AbstractWidget::focused_widget) {
-			AbstractWidget::focused_widget->m_flag.set(
+		if (m_focused_widget) {
+			m_focused_widget->m_flag.reset(
 			        AbstractWidget::WidgetFlagFocus);
+			m_focused_widget->FocusEvent(false);
+		}
+
+		m_focused_widget = widget;
+		if (m_focused_widget) {
+			m_focused_widget->m_flag.set(
+			        AbstractWidget::WidgetFlagFocus);
+			m_focused_widget->FocusEvent(true);
 		}
 	}
 
@@ -1036,7 +1047,11 @@ namespace BlendInt
 	}
 
 #endif
-
+	
+	ResponseType Context::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
 
 	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{

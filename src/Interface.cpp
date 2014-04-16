@@ -262,34 +262,32 @@ namespace BlendInt {
 
 	void Interface::DispatchKeyEvent (Context* context, const KeyEvent& event)
 	{
-		if(AbstractWidget::focused_widget) {
-			switch (event.action()) {
+		switch (event.action()) {
 
-				case KeyPress: {
+			case KeyPress: {
 #ifdef DEBUG
-					if(event.key() == Key_F6 && event.text().empty()) {
-						//DrawToOffScreen();
-						//RenderToImage();
-					}
+				if(event.key() == Key_F6 && event.text().empty()) {
+					//DrawToOffScreen();
+					//RenderToImage();
+				}
 #endif
-					AbstractWidget::focused_widget->KeyPressEvent(event);
-					break;
-				}
-
-				case KeyRelease: {
-					// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
-					//cm->m_focus->KeyReleaseEvent(event);
-					break;
-				}
-
-				case KeyRepeat: {
-					// item->KeyRepeatEvent(&event);
-					break;
-				}
-
-				default:
+				context->KeyPressEvent(event);
 				break;
 			}
+
+			case KeyRelease: {
+				// item->KeyReleaseEvent(dynamic_cast<BlendInt::KeyEvent*>(event));
+				//cm->m_focus->KeyReleaseEvent(event);
+				break;
+			}
+
+			case KeyRepeat: {
+				// item->KeyRepeatEvent(&event);
+				break;
+			}
+
+			default:
+			break;
 		}
 	}
 
@@ -361,29 +359,6 @@ namespace BlendInt {
 
 	void Interface::DispatchMouseEvent (const MouseEvent& event)
 	{
-		/*
-		switch (event.action()) {
-
-			case MouseMove: {
-				DispatchCursorMoveEvent(event);
-				return;
-			}
-
-			case MousePress: {
-				DispatchMousePressEvent(event);
-				return;
-			}
-
-			case MouseRelease: {
-				DispatchMouseReleaseEvent(event);
-				return;
-			}
-
-			default:
-			break;
-		}
-		*/
-
 		if(m_current_context) {
 			DispatchMouseEvent(m_current_context, event);
 		}
@@ -466,253 +441,12 @@ namespace BlendInt {
 		//Draw();
 	}
 
-	void Interface::DispatchCursorMoveEvent (const MouseEvent& event)
-	{
-		AbstractWidget* widget = 0;
-		ContextManager* cm = ContextManager::instance;
-		ResponseType response;
-
-		// search which widget in stack contains the cursor
-		while (cm->m_hover_deque->size()) {
-
-			if (cm->m_hover_deque->back()->visiable() &&
-							cm->m_hover_deque->back()->Contain(event.position())) {
-				widget = cm->m_hover_deque->back();
-				break;
-			} else {
-				cm->m_hover_deque->back()->CursorEnterEvent(false);
-				cm->m_hover_deque->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
-			}
-
-			cm->m_hover_deque->pop_back();
-		}
-
-		BuildWidgetListAtCursorPoint(event.position(), widget);
-
-		/*
-		for (std::deque<AbstractWidget*>::iterator it =
-				cm->m_hover_deque->begin(); it != cm->m_hover_deque->end();
-				it++)
-		{
-			DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
-		}
-		*/
-
-		// tell the focused widget first
-		if(AbstractWidget::focused_widget) {
-			response = AbstractWidget::focused_widget->MouseMoveEvent(event);
-
-			if(response == AcceptAndBreak)
-				return;
-			// check the event status
-		}
-
-		for (std::deque<AbstractWidget*>::reverse_iterator it =
-				cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend();
-				it++)
-		{
-			response = (*it)->MouseMoveEvent(event);
-			// check the event status
-			if (response == Accept) {
-				// TODO: do sth
-			}
-		}
-
-	}
-
-	void Interface::DispatchMousePressEvent(const MouseEvent& event)
-	{
-		ContextManager* cm = ContextManager::instance;
-		ResponseType response;
-		bool focus_set = false;
-
-		for(std::deque<AbstractWidget*>::reverse_iterator it = cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend(); it++)
-		{
-			response = (*it)->MousePressEvent(event);
-			//DBG_PRINT_MSG("mouse press: %s", (*it)->name().c_str());
-
-			if((!focus_set) && (response == Accept)) {
-				cm->SetFocusedWidget(*it);
-				focus_set = true;
-			}
-
-			if(response == AcceptAndBreak) {
-				break;
-			}
-		}
-	}
-
-	void Interface::DispatchMouseReleaseEvent(const MouseEvent& event)
-	{
-		ContextManager* cm = ContextManager::instance;
-		ResponseType response;
-
-		// tell the focused widget first
-		if(AbstractWidget::focused_widget) {
-			response = AbstractWidget::focused_widget->MouseReleaseEvent(event);
-
-			// Check the event status
-		}
-
-		for(std::deque<AbstractWidget*>::reverse_iterator it = cm->m_hover_deque->rbegin(); it != cm->m_hover_deque->rend(); it++)
-		{
-			response = (*it)->MouseReleaseEvent(event);
-
-			if(response == AcceptAndBreak) break;
-		}
-	}
-
-	void Interface::BuildWidgetListAtCursorPoint (const Point& cursor,
-			AbstractWidget* parent)
-	{
-		/*
-		if (parent) {
-			parent->m_flag.set(AbstractWidget::WidgetFlagContextHoverList);
-
-			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
-			if(p) {
-				for (WidgetDeque::iterator it =
-						p->m_sub_widgets->begin(); it != p->m_sub_widgets->end();
-						it++) {
-					if ((*it)->visiable() && (*it)->Contain(cursor)) {
-						ContextManager::instance->m_hover_deque->push_back(*it);
-						ContextManager::instance->m_hover_deque->back()->CursorEnterEvent(true);
-						BuildWidgetListAtCursorPoint(cursor, *it);
-						break;	// if break or continue the loop?
-					}
-				}
-			} else {
-			}
-		} else {
-			ContextManager::instance->m_hover_deque->clear();
-
-			map<int, ContextLayer>::reverse_iterator map_it;
-			set<AbstractWidget*>::iterator set_it;
-			set<AbstractWidget*>* set_p = 0;
-
-			bool stop = false;
-
-			for (map_it = ContextManager::instance->m_layers.rbegin();
-							map_it != ContextManager::instance->m_layers.rend();
-							map_it++) {
-				set_p = map_it->second.widgets;
-				for (set_it = set_p->begin(); set_it != set_p->end();
-						set_it++) {
-					if ((*set_it)->visiable() && (*set_it)->Contain(cursor)) {
-						ContextManager::instance->m_hover_deque->push_back(*set_it);
-						ContextManager::instance->m_hover_deque->back()->CursorEnterEvent(true);
-						BuildWidgetListAtCursorPoint(cursor, *set_it);
-						stop = true;
-					}
-
-					if (stop)
-					break;
-				}
-				if (stop)
-				break;
-			}
-		}
-		*/
-	}
-
 	void Interface::GetGLVersion (int *major, int *minor)
 	{
 		const char* verstr = (const char*) glGetString(GL_VERSION);
 		if((verstr == NULL) || (sscanf(verstr, "%d.%d", major, minor) != 2)) {
 			*major = *minor = 0;
 			fprintf(stderr, "Invalid GL_VERSION format!!!\n");
-		}
-	}
-
-	void Interface::DispatchCursorMoveEvent(Context* context, const MouseEvent& event)
-	{
-		AbstractWidget* widget = 0;
-		ResponseType response;
-
-		// search which widget in stack contains the cursor
-		while (context->m_hover_deque->size()) {
-
-			if (context->m_hover_deque->back()->visiable() &&
-							context->m_hover_deque->back()->Contain(event.position())) {
-				widget = context->m_hover_deque->back();
-				break;
-			} else {
-				context->m_hover_deque->back()->CursorEnterEvent(false);
-				context->m_hover_deque->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
-			}
-
-			context->m_hover_deque->pop_back();
-		}
-
-		context->BuildCursorHoverList(event, widget);
-
-		/*
-		for (std::deque<AbstractWidget*>::iterator it =
-				cm->m_hover_deque->begin(); it != cm->m_hover_deque->end();
-				it++)
-		{
-			DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
-		}
-		*/
-
-		// tell the focused widget first
-		if(AbstractWidget::focused_widget) {
-			response = AbstractWidget::focused_widget->MouseMoveEvent(event);
-
-			if(response == AcceptAndBreak)
-				return;
-			// check the event status
-		}
-
-		for (std::deque<AbstractWidget*>::reverse_iterator it =
-				context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend();
-				it++)
-		{
-			response = (*it)->MouseMoveEvent(event);
-			// check the event status
-			if (response == Accept) {
-				// TODO: do sth
-			}
-		}
-	}
-
-	void Interface::DispatchMousePressEvent(Context* context, const MouseEvent& event)
-	{
-		ResponseType response;
-		bool focus_set = false;
-
-		for(std::deque<AbstractWidget*>::reverse_iterator it = context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend(); it++)
-		{
-			response = (*it)->MousePressEvent(event);
-			//DBG_PRINT_MSG("mouse press: %s", (*it)->name().c_str());
-
-			if((!focus_set) && (response == Accept)) {
-				context->SetFocusedWidget(*it);
-				focus_set = true;
-			}
-
-			if(response == AcceptAndBreak) {
-				break;
-			}
-		}
-	}
-
-	void Interface::DispatchMouseReleaseEvent(Context* context, const MouseEvent& event)
-	{
-		ResponseType response;
-
-		// tell the focused widget first
-		if(AbstractWidget::focused_widget) {
-			response = AbstractWidget::focused_widget->MouseReleaseEvent(event);
-
-			// Check the event status
-		}
-
-		for(std::deque<AbstractWidget*>::reverse_iterator it = context->m_hover_deque->rbegin(); it != context->m_hover_deque->rend(); it++)
-		{
-			response = (*it)->MouseReleaseEvent(event);
-
-			if(response == AcceptAndBreak) break;
 		}
 	}
 

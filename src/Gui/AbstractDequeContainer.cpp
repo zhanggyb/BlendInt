@@ -200,6 +200,11 @@ namespace BlendInt {
 
 		return ret;
 	}
+	
+	ResponseType AbstractDequeContainer::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
 
 	void AbstractDequeContainer::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{

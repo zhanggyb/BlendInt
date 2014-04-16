@@ -94,6 +94,11 @@ namespace BlendInt {
 
 		return ret;
 	}
+	
+	ResponseType AbstractSingleContainer::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
 
 	void AbstractSingleContainer::OnSubWidgetDestroyed(AbstractWidget* widget)
 	{

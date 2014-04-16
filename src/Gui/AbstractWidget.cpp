@@ -56,8 +56,6 @@ namespace BlendInt {
 
 	// --------------------------------------------------------------------
 
-	AbstractWidget* AbstractWidget::focused_widget = 0;
-
 	AbstractWidget::AbstractWidget ()
 	: AbstractExtraForm(),
 	m_z(0),
@@ -69,16 +67,6 @@ namespace BlendInt {
 
 	AbstractWidget::~AbstractWidget ()
 	{
-		Context* context = GetContext();
-
-		if(hover() && context) {
-			context->RemoveWidgetFromHoverList(this);
-		}
-
-		if(focused() && context) {
-			context->SetFocusedWidget(0);
-		}
-
 		m_destroyed.fire(this);
 	}
 

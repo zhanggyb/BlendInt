@@ -145,21 +145,6 @@ namespace BlendInt {
 
 		void RenderToImage ();
 
-		void DispatchCursorMoveEvent (Context *context, const MouseEvent& event);
-
-		void DispatchMousePressEvent (Context *context, const MouseEvent& event);
-
-		void DispatchMouseReleaseEvent (Context *context, const MouseEvent& event);
-
-		void DispatchCursorMoveEvent (const MouseEvent& event);
-
-		void DispatchMousePressEvent (const MouseEvent& event);
-
-		void DispatchMouseReleaseEvent (const MouseEvent& event);
-
-		void BuildWidgetListAtCursorPoint (const Point& cursor_point,
-		        AbstractWidget* parent);
-
 		void OnContextDestroyed (AbstractWidget* context);
 
 		//AbstractWidget* m_main;

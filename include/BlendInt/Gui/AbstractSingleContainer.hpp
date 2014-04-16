@@ -49,6 +49,8 @@ namespace BlendInt {
 
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
 
+		virtual ResponseType FocusEvent (bool focus);
+
 		AbstractWidget* sub_widget () const
 		{
 			return m_sub_widget;

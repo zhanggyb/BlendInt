@@ -74,6 +74,8 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType FocusEvent (bool focus);
+
 		virtual ResponseType MouseMoveEvent(const MouseEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
