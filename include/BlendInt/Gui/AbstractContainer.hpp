@@ -99,6 +99,8 @@ namespace BlendInt {
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
 
+		virtual IteratorPtr CreateIterator (const DeviceEvent& event) = 0;
+
 		static bool RemoveSubWidget (AbstractContainer* container, AbstractWidget* sub)
 		{
 			return container->RemoveSubWidget(sub);
@@ -113,8 +115,6 @@ namespace BlendInt {
 		{
 			widget->m_container = container;
 		}
-
-		virtual IteratorPtr CreateIterator (const DeviceEvent& event) = 0;
 
 		void set_margin (const Margin& margin)
 		{

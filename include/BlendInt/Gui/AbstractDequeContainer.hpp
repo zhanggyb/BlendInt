@@ -61,11 +61,6 @@ namespace BlendInt {
 			return *this;
 		}
 
-		void set_iterator (const WidgetDeque::iterator& it)
-		{
-			m_it = it;
-		}
-
 		virtual AbstractWidget* GetWidget () const
 		{
 			return *m_it;
@@ -92,6 +87,9 @@ namespace BlendInt {
 		WidgetDeque::iterator m_it;
 	};
 
+	/**
+	 * @brief A container holds sub widgets with std::deque
+	 */
 	class AbstractDequeContainer: public AbstractContainer
 	{
 	public:

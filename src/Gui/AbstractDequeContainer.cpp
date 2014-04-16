@@ -184,8 +184,9 @@ namespace BlendInt {
 		{
 			(*it)->destroyed().disconnectOne(this,
 							&AbstractDequeContainer::OnSubWidgetDestroyed);
+			AbstractContainer::SetContainer(*it, 0);
 
-			if ((*it)->managed() && (*it)->count() == 0) {
+			if ((*it)->managed() && ((*it)->count() == 0)) {
 				delete *it;
 			}
 		}

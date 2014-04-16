@@ -28,6 +28,10 @@ TEST_F(TabTest1, Foo1)
     GLFWwindow* win = CreateWindow("Tab - Foo1", 640, 480);
 
     // TODO: add test code here
+    Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
+
     Tab* tab = Manage (new Tab);
     tab->set_name("Tab");
     tab->SetPosition(100, 100);
@@ -45,6 +49,8 @@ TEST_F(TabTest1, Foo1)
     tab->Resize(400, 300);
 
     tab->Add("Label", label);
+
+    context->Add(tab);
 
     RunLoop(win);
 

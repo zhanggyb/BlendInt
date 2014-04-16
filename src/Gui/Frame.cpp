@@ -52,7 +52,7 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-			: AbstractDequeContainer()
+			: AbstractSingleContainer()
 	{
 		set_minimal_size(margin().left() + margin().right(),
 		        margin().top() + margin().bottom());
@@ -67,11 +67,7 @@ namespace BlendInt {
 
 	void Frame::Add (AbstractWidget* widget)
 	{
-		if(sub_widgets()->size() >= 1) {
-			ClearSubWidgets();
-		}
-
-		if (AppendSubWidget(widget)) {
+		if (AddSubWidget(widget)) {
 			SetPosition(widget, position().x() + margin().left(),
 			        position().y() + margin().bottom());
 			Resize(widget, size().width() - margin().left() - margin().right(),
@@ -85,9 +81,9 @@ namespace BlendInt {
 			switch (request.type()) {
 
 				case FormSize: {
-					if (sub_widgets()->size()) {
+					if (sub_widget()) {
 						const Size* size_p = static_cast<const Size*>(request.data());
-						Resize(sub_widgets()->front(),
+						Resize(sub_widget(),
 						        size_p->width() - margin().left()
 						                - margin().right(),
 						        size_p->height() - margin().top()
@@ -97,9 +93,9 @@ namespace BlendInt {
 				}
 
 				case FormPosition: {
-					if (sub_widgets()->size()) {
+					if (sub_widget()) {
 						const Point* pos_p = static_cast<const Point*>(request.data());
-						SetPosition(sub_widgets()->front(),
+						SetPosition(sub_widget(),
 						        pos_p->x() + margin().left(),
 						        pos_p->y() + margin().bottom());
 					}
@@ -108,12 +104,12 @@ namespace BlendInt {
 
 				case ContainerMargin: {
 
-					if (sub_widgets()->size()) {
+					if (sub_widget()) {
 						const Margin* margin_p = static_cast<const Margin*>(request.data());
-						SetPosition(sub_widgets()->front(),
+						SetPosition(sub_widget(),
 						        position().x() + margin_p->left(),
 						        position().y() + margin_p->bottom());
-						Resize(sub_widgets()->front(),
+						Resize(sub_widget(),
 						        size().width() - margin_p->left()
 						                - margin_p->right(),
 						        size().height() - margin_p->top()

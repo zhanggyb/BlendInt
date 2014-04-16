@@ -76,10 +76,15 @@ namespace BlendInt
 	{
 		set_size(640, 480);
 
-		m_redraw_event.set_view_matrix(glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f)));
-
+		m_redraw_event.set_view_matrix(
+						glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
+										glm::vec3(0.f, 0.f, 0.f),
+										glm::vec3(0.f, 1.f, 0.f)));
 		// default is 640 x 480
-		m_redraw_event.set_projection_matrix(glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
+		m_redraw_event.set_projection_matrix(
+						glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
+		m_hover_deque.reset(new std::deque<AbstractWidget*>);
+		m_main_buffer = new GLTexture2D;
 
 		InitOnce();
 	}
@@ -105,17 +110,10 @@ namespace BlendInt
 			{
 				(*widget_iter)->destroyed().disconnectOne(this,
 				        &Context::OnSubWidgetDestroyed);
+				(*widget_iter)->m_container = 0;
 
-				if ((*widget_iter)->managed()) {
-
-					// Delete the widget if it's not referenced by any RefPtr
-					if((*widget_iter)->count() == 0)
-						delete *widget_iter;
-				} else {
-
-					(*widget_iter)->destroyed().disconnectOne(this,
-					        &Context::OnSubWidgetDestroyed);
-					(*widget_iter)->m_container = 0;
+				if ((*widget_iter)->managed() && ((*widget_iter)->count() == 0)) {
+					delete *widget_iter;
 				}
 			}
 
@@ -528,10 +526,6 @@ namespace BlendInt
 	void Context::InitOnce ()
 	{
 		m_program = ShaderManager::instance->default_context_program();
-
-		m_hover_deque.reset(new std::deque<AbstractWidget*>);
-
-		m_main_buffer = new GLTexture2D;
 
 		glGenVertexArrays(1, &m_vao);
 

@@ -30,7 +30,7 @@
  * @ingroup gui
  */
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/AbstractSingleContainer.hpp>
 
 namespace BlendInt {
 
@@ -42,7 +42,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Frame: public AbstractDequeContainer
+	class Frame: public AbstractSingleContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Frame);
 

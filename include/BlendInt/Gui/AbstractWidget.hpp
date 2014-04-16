@@ -367,11 +367,6 @@ namespace BlendInt {
 
 		AbstractContainer* m_container;
 
-		/**
-		 * The size for hiden widget, always should be (0, 0), use static for performance
-		 */
-		static Size invisible_size;
-
 		static AbstractWidget* focused_widget;
 
 #ifdef DEBUG
