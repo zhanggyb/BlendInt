@@ -2,8 +2,6 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <Common/Window.hpp>
 
-#include <BlendInt/Service/ContextManager.hpp>
-
 using namespace BlendInt;
 
 WidgetTest1::WidgetTest1()

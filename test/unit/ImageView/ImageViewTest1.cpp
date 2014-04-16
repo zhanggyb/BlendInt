@@ -25,11 +25,18 @@ TEST_F(ImageViewTest1, Foo1)
 
     GLFWwindow* win = CreateWindow("ImageView - Foo1", 640, 640);
 
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
+	Interface::instance->Resize(640, 640);
+
     // TODO: add test code here
 
     ImageView* view = Manage(new ImageView);
     view->set_name("ImageView");
     view->SetPosition(20, 20);
+
+	context->Add(view);
 
     view->Open("test.png");
 

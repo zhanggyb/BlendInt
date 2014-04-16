@@ -25,8 +25,6 @@
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
 
-#include <BlendInt/Service/ContextManager.hpp>
-
 namespace BlendInt {
 
 

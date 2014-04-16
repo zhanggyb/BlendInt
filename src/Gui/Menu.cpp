@@ -143,10 +143,6 @@ namespace BlendInt {
 
 	ResponseType Menu::MousePressEvent (const MouseEvent& event)
 	{
-		if(!Contain(event.position())) {
-			return Ignore;
-		}
-
 		/*
 		if(!m_menubin->size()) {
 			return Accept;
@@ -154,6 +150,11 @@ namespace BlendInt {
 
 		m_triggered.fire(m_menubin->GetMenuItem(m_highlight - 1));
 		*/
+		if(m_highlight > 0) {
+
+			ActionItem* item = m_list[m_highlight - 1].get();
+			m_triggered.fire(item);
+		}
 
 		return Accept;
 	}
@@ -199,7 +200,7 @@ namespace BlendInt {
 
 	ResponseType Menu::Draw (const RedrawEvent& event)
 	{
-		using std::list;
+		using std::deque;
 
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
@@ -255,7 +256,7 @@ namespace BlendInt {
 		float h = size().height() - radius();
 
 		int advance = 0;
-		for(list<RefPtr<ActionItem> >::iterator it = m_list.begin(); it != m_list.end(); it++)
+		for(deque<RefPtr<ActionItem> >::iterator it = m_list.begin(); it != m_list.end(); it++)
 		{
 			h = h - DefaultMenuItemHeight;
 

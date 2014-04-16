@@ -58,10 +58,7 @@ OIIO_NAMESPACE_USING
 
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
-#include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Service/StockItems.hpp>
-
-#include "Intern/ScreenBuffer.hpp"
 
 namespace BlendInt {
 
@@ -140,13 +137,6 @@ namespace BlendInt {
 			success = false;
 		}
 
-		if (success && ContextManager::Initialize()) {
-
-		} else {
-			DBG_PRINT_MSG("%s", "Cannot initialize Context Manager");
-			success = false;
-		}
-
 #ifdef USE_FONTCONFIG
 
 #ifdef __APPLE__
@@ -170,7 +160,6 @@ namespace BlendInt {
 
 	void Interface::Release ()
 	{
-		ContextManager::Release();
 		StockItems::Release();
 		ShaderManager::Release();
 		ThemeManager::release();
@@ -206,12 +195,13 @@ namespace BlendInt {
 
 	const Size& Interface::size () const
 	{
-		return ContextManager::instance->size();
+        if(m_current_context) {
+            return m_current_context->size();
+        }
 	}
 
 	void Interface::Resize (const Size& size)
 	{
-		//ContextManager::instance->ResizeFromInterface(size);
 		if(m_current_context) {
 			m_current_context->Resize(size);
 		}
@@ -224,7 +214,6 @@ namespace BlendInt {
 
 	void Interface::Resize (unsigned int width, unsigned int height)
 	{
-		//ContextManager::instance->ResizeFromInterface(width, height);
 		if(m_current_context) {
 			m_current_context->Resize(width, height);
 		}
@@ -237,7 +226,6 @@ namespace BlendInt {
 
 	void Interface::Draw ()
 	{
-//		ContextManager::instance->DrawFromInterface();
 
 		if(m_current_context) {
 			m_current_context->Draw();
@@ -366,8 +354,10 @@ namespace BlendInt {
 
 	void Interface::RenderToImage()
 	{
-		GLsizei width = ContextManager::instance->size().width();
-		GLsizei height = ContextManager::instance->size().height();
+        if(!m_current_context) return;
+
+		GLsizei width = m_current_context->size().width();
+		GLsizei height = m_current_context->size().height();
 
 		// Create and set texture to render to.
 		GLTexture2D* tex = new GLTexture2D;

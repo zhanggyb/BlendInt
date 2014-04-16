@@ -32,13 +32,11 @@
 #include <BlendInt/Core/Margin.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
-//#include <BlendInt/Service/ContextManager.hpp>
 
 namespace BlendInt {
 
 	typedef std::deque<AbstractWidget*> WidgetDeque;
 
-	class ContextManager;
 	class Interface;
 	class Context;
 

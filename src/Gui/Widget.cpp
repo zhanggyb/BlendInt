@@ -46,7 +46,6 @@
 
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
@@ -57,8 +56,6 @@ namespace BlendInt {
 		set_minimal_size(0, 0);
 		set_size(120, 80);
 		set_preferred_size(120, 80);
-
-		ContextManager::instance->AddSubWidget(this);
 	}
 
 	Widget::~Widget()

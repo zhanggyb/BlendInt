@@ -51,7 +51,6 @@ using std::map;
 
 namespace BlendInt {
 
-	class ContextManager;
 	class Context;
 	class GLTexture2D;
 	class AbstractContainer;
@@ -83,7 +82,6 @@ namespace BlendInt {
 		friend class Context;
 		friend class Interface;
 		friend class AbstractContainer;
-		friend class ContextManager;
 
 		template <typename T> friend T* Manage (T* obj, bool val);
 
@@ -321,7 +319,7 @@ namespace BlendInt {
 			WidgetFlagFireEvents,
 			WidgetFlagFocus,
 
-			/** If this widget is in cursor hover list in ContextManager */
+			/** If this widget is in cursor hover list in Context */
 			WidgetFlagContextHoverList,
 
 			/** If the widget need to be refresh in the render loop */

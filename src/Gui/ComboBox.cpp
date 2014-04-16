@@ -196,11 +196,14 @@ namespace BlendInt {
 		if(context) {
 			if(m_menu->container()) {
 				context->Remove(m_menu.get());
+				SetRoundType(RoundAll);
 			} else {
 				int max_layer = context->GetMaxLayer();
 				m_menu->SetLayer(max_layer + 1);
 				m_menu->SetPosition(position().x(), position().y() + size().height());
 				context->Add(m_menu.get());
+				SetRoundType(RoundBottomLeft | RoundBottomRight);
+				//context->SetFocusedWidget(m_menu.get());	// FIXME: no use, context will reset to this combobox.
 			}
 		}
 
@@ -254,7 +257,17 @@ namespace BlendInt {
 		m_menu->AddActionItem("MenuItem4", "Ctrl + 1");
 		m_menu->AddActionItem("MenuItem5");
 
+		events()->connect(m_menu->triggered(), this, &ComboBox::OnMenuActionTriggered);
+	}
 
+	void ComboBox::OnMenuActionTriggered (ActionItem* item)
+	{
+		Context* context = GetContext();
+
+		context->Remove(m_menu.get());
+		SetRoundType(RoundAll);
+
+		Refresh();
 	}
 
 }

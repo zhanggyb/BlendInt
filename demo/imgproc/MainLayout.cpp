@@ -2,7 +2,6 @@
  * Main Layout
  */
 
-#include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Core/String.hpp>
 
@@ -12,8 +11,6 @@ MainLayout::MainLayout ()
 	: m_menubar(0), m_toolbar(0), m_imgview(0)
 {
 	InitOnce();
-
-	events()->connect(BI::ContextManager::instance->property_changed(), this, &MainLayout::OnResize);
 }
 
 MainLayout::~MainLayout ()
@@ -64,5 +61,5 @@ void MainLayout::OnOpenClick()
 
 void MainLayout::OnResize (AbstractWidget* context, int type)
 {
-	Resize(BI::ContextManager::instance->size());
+	Resize(context->size());
 }

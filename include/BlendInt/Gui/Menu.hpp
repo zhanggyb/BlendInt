@@ -66,7 +66,7 @@ namespace BlendInt {
 
 		void RemoveActionItem (const RefPtr<ActionItem>& item);
 
-		//Cpp::EventRef<ActionItem*> triggered () {return m_triggered;}
+		Cpp::EventRef<ActionItem*> triggered() {return m_triggered;}
 
 	protected:
 
@@ -108,7 +108,11 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 		RefPtr<GLArrayBuffer> m_highlight_buffer;
 
-		std::list<RefPtr<ActionItem> > m_list;
+		std::deque<RefPtr<ActionItem> > m_list;
+
+		Cpp::Event<ActionItem*> m_hovered;
+
+		Cpp::Event<ActionItem*> m_triggered;
 
 		//Cpp::Event<ActionItem*> m_triggered;
 		static int DefaultMenuItemHeight;

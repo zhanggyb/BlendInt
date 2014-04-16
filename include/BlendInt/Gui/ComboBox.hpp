@@ -58,6 +58,8 @@ namespace BlendInt {
 
 	private:
 
+		void OnMenuActionTriggered (ActionItem* item);
+
 		void InitOnce ();
 
 		GLuint m_vao;

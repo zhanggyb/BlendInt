@@ -38,7 +38,6 @@
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
 
-#include <BlendInt/Service/ContextManager.hpp>
 #include <BlendInt/Service/StockItems.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
