@@ -134,6 +134,10 @@ endif()
 if(WITH_BUILTIN_GLFW3)
     add_subdirectory(extern/glfw)
     include_directories(extern/glfw/include)
+
+    if(OS_LINUX)
+        set(LIBS ${LIBS} Xcursor)   # Xcursor missing in latest glfw3
+    endif()
 endif()
 
 # include GLM

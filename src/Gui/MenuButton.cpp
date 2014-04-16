@@ -35,6 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/MenuButton.hpp>
+#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
@@ -175,6 +176,38 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	ResponseType MenuButton::MousePressEvent (const MouseEvent& event)
+	{
+		Context* context = GetContext();
+		if(context && m_menu) {
+			if(m_menu->container()) {
+				context->Remove(m_menu.get());
+				SetRoundType(RoundAll);
+			} else {
+				int max_layer = context->GetMaxLayer();
+				m_menu->SetLayer(max_layer + 1);
+				m_menu->SetPosition(position().x(), position().y() + size().height());
+				context->Add(m_menu.get());
+				SetRoundType(RoundBottomLeft | RoundBottomRight);
+				//context->SetFocusedWidget(m_menu.get());	// FIXME: no use, context will reset to this combobox.
+			}
+
+			Refresh();
+		}
+
+		return Accept;
+	}
+
+	ResponseType MenuButton::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Accept;
+	}
+
+	void MenuButton::SetMenu (const RefPtr<Menu>& menu)
+	{
+		m_menu = menu;
+	}
+
 	void MenuButton::InitOnce (const String& text)
 	{
 		set_round_type(RoundAll);
@@ -226,3 +259,4 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
+

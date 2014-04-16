@@ -205,9 +205,10 @@ namespace BlendInt {
 				SetRoundType(RoundBottomLeft | RoundBottomRight);
 				//context->SetFocusedWidget(m_menu.get());	// FIXME: no use, context will reset to this combobox.
 			}
+
+			Refresh();
 		}
 
-		Refresh();
 		return Accept;
 	}
 	

@@ -1,5 +1,6 @@
 #include "MenuButtonTest1.hpp"
 #include <BlendInt/Gui/MenuButton.hpp>
+#include <BlendInt/Service/StockItems.hpp>
 
 using namespace BlendInt;
 
@@ -26,10 +27,28 @@ TEST_F(MenuButtonTest1, Foo1)
     GLFWwindow* win = CreateWindow("MenuButton - Foo1", 640, 480);
 
     // TODO: add test code here
+    Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
 
     MenuButton* button = Manage(new MenuButton("File"));
-
     button->SetPosition(200, 200);
+
+    RefPtr<Menu> menu(new Menu);
+
+    menu->SetRoundType(RoundTopLeft | RoundTopRight);
+    //m_menu->SetPosition(200, 200);
+    //menu->Resize (200, 200);
+
+    menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    menu->AddActionItem("MenuItem2", "Ctrl + 1");
+		menu->AddActionItem("MenuItem3", "Ctrl + 1");
+		menu->AddActionItem("MenuItem4", "Ctrl + 1");
+		menu->AddActionItem("MenuItem5");
+
+		button->SetMenu(menu);
+
+    context->Add(button);
 
     RunLoop(win);
 

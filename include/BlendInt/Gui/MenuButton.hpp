@@ -29,6 +29,8 @@
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/RoundShapeBase.hpp>
 
+#include <BlendInt/Gui/Menu.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -57,6 +59,8 @@ namespace BlendInt {
 		 */
 		void SetRadius (float radius);
 
+		void SetMenu (const RefPtr<Menu>& menu);
+
 	protected:
 
 		virtual bool Update (const UpdateRequest& request);
@@ -65,6 +69,10 @@ namespace BlendInt {
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
 	private:
 
 		void InitOnce (const String& text);
@@ -72,6 +80,8 @@ namespace BlendInt {
 		GLuint m_vao;
 
 		RefPtr<GLArrayBuffer> m_inner;
+
+		RefPtr<Menu> m_menu;
 	};
 
 } /* namespace BlendInt */
