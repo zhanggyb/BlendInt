@@ -67,6 +67,90 @@ namespace BlendInt {
 		virtual bool End () = 0;
 	};
 
+
+	class SingleIterator: public AbstractContainerIterator
+	{
+	public:
+
+		SingleIterator (AbstractWidget* widget);
+
+		SingleIterator (const SingleIterator& orig);
+
+		virtual ~SingleIterator ();
+
+		SingleIterator& operator = (const SingleIterator& orig);
+
+		virtual AbstractWidget* GetWidget () const;
+
+		virtual void First ();
+
+		virtual void Next ();
+
+		virtual bool End ();
+
+	private:
+
+		AbstractWidget* m_widget;
+		bool m_once;
+	};
+
+
+	class DequeIterator: public AbstractContainerIterator
+	{
+	public:
+
+		DequeIterator (WidgetDeque* deque)
+		: AbstractContainerIterator(), m_deque_ptr(deque)
+		{
+			m_it = deque->begin();
+		}
+
+		DequeIterator (const DequeIterator& orig)
+		: AbstractContainerIterator(), m_deque_ptr(0)
+		{
+			m_deque_ptr = orig.m_deque_ptr;
+			m_it = orig.m_it;
+		}
+
+		virtual ~DequeIterator ()
+		{
+
+		}
+
+		DequeIterator& operator = (const DequeIterator& orig)
+		{
+			m_deque_ptr = orig.m_deque_ptr;
+			m_it = orig.m_it;
+
+			return *this;
+		}
+
+		virtual AbstractWidget* GetWidget () const
+		{
+			return *m_it;
+		}
+
+		virtual void First ()
+		{
+			m_it = m_deque_ptr->begin();
+		}
+
+		virtual void Next ()
+		{
+			++m_it;
+		}
+
+		virtual bool End ()
+		{
+			return m_it == m_deque_ptr->end();
+		}
+
+	private:
+
+		WidgetDeque* m_deque_ptr;
+		WidgetDeque::iterator m_it;
+	};
+
 	typedef RefPtr<AbstractContainerIterator> IteratorPtr;
 
 	class AbstractContainer: public AbstractWidget

@@ -28,32 +28,6 @@
 
 namespace BlendInt {
 
-	class SingleIterator: public AbstractContainerIterator
-	{
-	public:
-
-		SingleIterator (AbstractWidget* widget);
-
-		SingleIterator (const SingleIterator& orig);
-
-		virtual ~SingleIterator ();
-
-		SingleIterator& operator = (const SingleIterator& orig);
-
-		virtual AbstractWidget* GetWidget () const;
-
-		virtual void First ();
-
-		virtual void Next ();
-
-		virtual bool End ();
-
-	private:
-
-		AbstractWidget* m_widget;
-		bool m_once;
-	};
-
 	/**
 	 * @brief A container hold only 1 sub widget
 	 */

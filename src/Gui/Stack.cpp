@@ -91,13 +91,20 @@ namespace BlendInt {
 
 	AbstractWidget* Stack::GetActiveWidget () const
 	{
-		return 0;
+		if(sub_widget_size()) {
+			return sub_widgets()->at(m_index);
+		} else {
+			return 0;
+		}
 	}
 
 	AbstractWidget* Stack::GetWidget (size_t index)
 	{
+		size_t size = sub_widget_size();
 
-		return 0;
+		if(index > (size - 1)) return 0;
+
+		return sub_widgets()->at(index);
 	}
 
 	void Stack::HideSubWidget(size_t index)
@@ -192,6 +199,13 @@ namespace BlendInt {
 	ResponseType Stack::MouseReleaseEvent(const MouseEvent& event)
 	{
 		return Ignore;
+	}
+	
+	IteratorPtr Stack::CreateIterator (const DeviceEvent& event)
+	{
+		RefPtr<SingleIterator> ret (new SingleIterator(sub_widgets()->at(m_index)));
+
+		return ret;
 	}
 
 	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)

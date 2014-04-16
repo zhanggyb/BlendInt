@@ -29,6 +29,54 @@
 
 namespace BlendInt {
 
+
+	SingleIterator::SingleIterator (AbstractWidget* widget)
+	: AbstractContainerIterator(), m_widget(widget), m_once(true)
+	{
+	}
+
+	SingleIterator::SingleIterator (const SingleIterator& orig)
+	: AbstractContainerIterator(), m_widget(0), m_once(true)
+	{
+		m_widget = orig.m_widget;
+		m_once = orig.m_once;
+	}
+
+	SingleIterator::~SingleIterator ()
+	{
+	}
+
+	SingleIterator& SingleIterator::operator = (const SingleIterator& orig)
+	{
+		m_widget = orig.m_widget;
+		m_once = orig.m_once;
+		return *this;
+	}
+
+	AbstractWidget* SingleIterator::GetWidget () const
+	{
+		return m_once ? m_widget : 0;
+	}
+
+	void SingleIterator::First ()
+	{
+		m_once = true;
+	}
+
+	void SingleIterator::Next ()
+	{
+		m_once = false;
+	}
+
+	bool SingleIterator::End ()
+	{
+		if(m_widget == 0) {
+			return true;
+		} else {
+			return !m_once;
+		}
+	}
+
 	void AbstractContainer::SetMargin (const Margin& margin)
 	{
 		if (m_margin.equal(margin))

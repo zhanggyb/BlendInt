@@ -27,6 +27,7 @@
 #include <BlendInt/Gui/RoundWidget.hpp>
 
 #include <BlendInt/Gui/Shadow.hpp>
+#include <BlendInt/Gui/Menu.hpp>
 
 namespace BlendInt {
 
@@ -49,6 +50,12 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
 	private:
 
 		void InitOnce ();
@@ -57,6 +64,10 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
+
+		bool m_status_down;
+
+		RefPtr<Menu> m_menu;
 	};
 
 }

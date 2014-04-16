@@ -41,10 +41,12 @@
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/StockItems.hpp>
 
+#include <BlendInt/Gui/Context.hpp>
+
 namespace BlendInt {
 
 	ComboBox::ComboBox ()
-	: RoundWidget(), m_vao(0)
+	: RoundWidget(), m_vao(0), m_status_down(false)
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);
@@ -138,7 +140,16 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
-		program->SetUniform1i("Gamma", 0);
+
+		if(m_status_down) {
+			program->SetUniform1i("Gamma", 20);
+		} else {
+			if(hover()) {
+				program->SetUniform1i("Gamma", 15);
+			} else {
+				program->SetUniform1i("Gamma", 0);
+			}
+		}
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -157,6 +168,7 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 		program->SetUniform1i("AA", 1);
+		program->SetUniform1i("Gamma", 0);
 
 		DrawTriangleStrip(0, m_outer_buffer.get());
 
@@ -173,6 +185,40 @@ namespace BlendInt {
 
 		icon->Draw(mvp * translate * rotate * scale);
 
+		return Accept;
+	}
+	
+	ResponseType ComboBox::MousePressEvent (const MouseEvent& event)
+	{
+		m_status_down = true;
+
+		Context* context = GetContext();
+		if(context) {
+			if(m_menu->container()) {
+				context->Remove(m_menu.get());
+			} else {
+				int max_layer = context->GetMaxLayer();
+				m_menu->SetLayer(max_layer + 1);
+				m_menu->SetPosition(position().x(), position().y() + size().height());
+				context->Add(m_menu.get());
+			}
+		}
+
+		Refresh();
+		return Accept;
+	}
+	
+	ResponseType ComboBox::MouseReleaseEvent (const MouseEvent& event)
+	{
+		m_status_down = false;
+
+		Refresh();
+		return Accept;
+	}
+	
+	ResponseType ComboBox::CursorEnterEvent (bool entered)
+	{
+		Refresh();
 		return Accept;
 	}
 
@@ -195,6 +241,20 @@ namespace BlendInt {
 						m_outer_buffer.get());
 
 		glBindVertexArray(0);
+
+		m_menu.reset(new Menu);
+
+		m_menu->SetRoundType(RoundTopLeft | RoundTopRight);
+		//m_menu->SetPosition(200, 200);
+		//menu->Resize (200, 200);
+
+		m_menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+		m_menu->AddActionItem("MenuItem2", "Ctrl + 1");
+		m_menu->AddActionItem("MenuItem3", "Ctrl + 1");
+		m_menu->AddActionItem("MenuItem4", "Ctrl + 1");
+		m_menu->AddActionItem("MenuItem5");
+
+
 	}
 
 }

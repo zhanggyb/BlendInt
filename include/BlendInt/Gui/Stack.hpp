@@ -57,6 +57,8 @@ namespace BlendInt {
 
 		void HideSubWidget (size_t index);
 
+		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
+
 		virtual bool Update (const UpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
