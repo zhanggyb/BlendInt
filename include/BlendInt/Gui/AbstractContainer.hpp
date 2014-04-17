@@ -155,6 +155,9 @@ namespace BlendInt {
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractContainer);
 
+		friend class Context;
+		friend class RefreshDelegate;
+
 	public:
 
 		AbstractContainer ()
@@ -175,13 +178,19 @@ namespace BlendInt {
 
 	protected:
 
-		friend class Context;
-
 		virtual bool AddSubWidget (AbstractWidget* widget) = 0;
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
 
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event) = 0;
+
+		void ResizeSubWidget (AbstractWidget* sub, unsigned int x, unsigned int y);
+
+		void ResizeSubWidget (AbstractWidget* sub, const Size& size);
+
+		void SetSubWidgetPosition (AbstractWidget* sub, int x, int y);
+
+		void SetSubWidgetPosition (AbstractWidget* sub, const Point& pos);
 
 		static bool RemoveSubWidget (AbstractContainer* container, AbstractWidget* sub)
 		{

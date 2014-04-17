@@ -160,13 +160,13 @@ namespace BlendInt {
 		int bh = m_hbar->size().height();
 		int rw = m_vbar->size().width();
 
-		SetPosition(m_hbar, x, y);
-		SetPosition(m_vbar, x + w - rw, y + bh);
-		SetPosition(m_view, x, y);
+		SetSubWidgetPosition(m_hbar, x, y);
+		SetSubWidgetPosition(m_vbar, x + w - rw, y + bh);
+		SetSubWidgetPosition(m_view, x, y);
 
-		Resize (m_hbar, w - rw, m_hbar->size().height());
-		Resize (m_vbar, m_vbar->size().width(), h - bh);
-		Resize (m_view, w, h);
+		ResizeSubWidget (m_hbar, w - rw, m_hbar->size().height());
+		ResizeSubWidget (m_vbar, m_vbar->size().width(), h - bh);
+		ResizeSubWidget (m_view, w, h);
 
 		events()->connect(m_hbar->slider_moved(), this, &ScrollArea::OnHorizontalScroll);
 		events()->connect(m_vbar->slider_moved(), this, &ScrollArea::OnVerticalScroll);
@@ -189,13 +189,13 @@ namespace BlendInt {
 			rw = m_vbar->size().width();
 		}
 
-		SetPosition(m_view, x, y + bh);
-		Resize (m_view, w - rw, h - bh);
+		SetSubWidgetPosition(m_view, x, y + bh);
+		ResizeSubWidget (m_view, w - rw, h - bh);
 		m_view->ResetViewportPosition();
 
 		if(m_hbar->visiable()) {
-			SetPosition(m_hbar, x, y);
-			Resize (m_hbar, w - rw, m_hbar->size().height());
+			SetSubWidgetPosition(m_hbar, x, y);
+			ResizeSubWidget (m_hbar, w - rw, m_hbar->size().height());
 			int percent = m_view->GetHPercentage();
 			m_hbar->SetMaximum(m_view->viewport()->size().width());
 			m_hbar->SetMinimum(m_view->size().width());
@@ -203,8 +203,8 @@ namespace BlendInt {
 		}
 
 		if(m_vbar->visiable()) {
-			SetPosition(m_vbar, x + w - rw, y + bh);
-			Resize (m_vbar, m_vbar->size().width(), h - bh);
+			SetSubWidgetPosition(m_vbar, x + w - rw, y + bh);
+			ResizeSubWidget (m_vbar, m_vbar->size().width(), h - bh);
 			int percent = m_view->GetVPercentage();
 			m_vbar->SetMaximum(m_view->viewport()->size().height());
 			m_vbar->SetMinimum(m_view->size().height());

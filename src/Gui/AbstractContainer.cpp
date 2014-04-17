@@ -96,5 +96,41 @@ namespace BlendInt {
 			m_margin = new_margin;
 		}
 	}
+	
+	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
+					unsigned int width, unsigned int height)
+	{
+		if(!sub || sub->container() != this) return;
+
+		GeometryDelegate delegate(sub);
+		delegate.Resize(width, height);
+	}
+	
+	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
+					const Size& size)
+	{
+		if(!sub || sub->container() != this) return;
+
+		GeometryDelegate delegate(sub);
+		delegate.Resize(size);
+	}
+	
+	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub, int x,
+					int y)
+	{
+		if(!sub || sub->container() != this) return;
+
+		GeometryDelegate delegate(sub);
+		delegate.SetPosition(x, y);
+	}
+	
+	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub,
+					const Point& pos)
+	{
+		if(!sub || sub->container() != this) return;
+
+		GeometryDelegate delegate(sub);
+		delegate.SetPosition(pos);
+	}
 
 }

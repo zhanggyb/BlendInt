@@ -51,7 +51,71 @@ OIIO_NAMESPACE_USING
 
 namespace BlendInt {
 
-	using namespace std;
+	GeometryDelegate::GeometryDelegate (AbstractWidget* widget)
+	: m_widget(widget)
+	{
+
+	}
+
+	GeometryDelegate::~GeometryDelegate ()
+	{
+	}
+
+	void GeometryDelegate::Resize (const Size& size)
+	{
+		if(m_widget->size() == size) return;
+
+		if(m_widget->Update(UpdateRequest(Predefined, FormSize, &size))) {
+			m_widget->set_size(size);
+		}
+	}
+
+	void GeometryDelegate::Resize (unsigned int width, unsigned int height)
+	{
+		if(m_widget->size().width() == width &&
+						m_widget->size().height() == height)
+			return;
+
+		Size new_size (width, height);
+
+		if(m_widget->Update(UpdateRequest(Predefined, FormSize, &new_size))) {
+			m_widget->set_size(width, height);
+		}
+	}
+
+	void GeometryDelegate::SetPosition (int x, int y)
+	{
+		if(m_widget->position().x() == x && m_widget->position().y() == y) return;
+
+		Point new_pos (x, y);
+
+		if(m_widget->Update(UpdateRequest(Predefined, FormPosition, &new_pos))) {
+			m_widget->set_position(x, y);
+		}
+	}
+
+	void GeometryDelegate::SetPosition (const Point& position)
+	{
+		if(m_widget->position() == position) return;
+
+		if(m_widget->Update(UpdateRequest(Predefined, FormPosition, &position))) {
+			m_widget->set_position(position);
+		}
+	}
+
+	RefreshDelegate::RefreshDelegate (AbstractContainer* container)
+	: m_container(container)
+	{
+	}
+
+	RefreshDelegate::~RefreshDelegate ()
+	{
+	}
+
+	bool RefreshDelegate::RequestRefresh (AbstractWidget* widget)
+	{
+		return m_container->Update(UpdateRequest(Predefined, ContextRefresh, widget));
+	}
 
 	// --------------------------------------------------------------------
 
@@ -253,11 +317,21 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::Refresh()
+	bool AbstractWidget::Refresh()
 	{
+		/*
 		if(Context* context = GetContext()) {
 			context->RefreshLayer(z());
 		}
+		*/
+		bool ret = false;
+
+		if(m_container) {
+			RefreshDelegate delegate(m_container);
+			ret = delegate.RequestRefresh(this);
+		}
+
+		return ret;
 	}
 
 	void AbstractWidget::RenderToTexture (size_t border, GLTexture2D* texture)
@@ -426,6 +500,7 @@ namespace BlendInt {
 		delete fb; fb = 0;
 	}
 
+	/*
 	void AbstractWidget::SetPosition(AbstractWidget* obj, int x, int y)
 	{
 		if(obj->position().x() == x && obj->position().y() == y) return;
@@ -465,6 +540,7 @@ namespace BlendInt {
 			obj->set_size(size);
 		}
 	}
+	*/
 
 	void AbstractWidget::DispatchRender(AbstractWidget* other)
 	{

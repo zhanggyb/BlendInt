@@ -53,6 +53,7 @@ namespace BlendInt {
 
 	class Context;
 	class GLTexture2D;
+	class AbstractWidget;
 	class AbstractContainer;
 
 	struct WidgetTheme;
@@ -65,6 +66,47 @@ namespace BlendInt {
 		obj->set_manage(val);
 		return obj;
 	}
+
+	class GeometryDelegate
+	{
+	private:
+		friend class AbstractContainer;
+
+		explicit GeometryDelegate(AbstractWidget* widget);
+
+		~GeometryDelegate ();
+
+		void set_widget (AbstractWidget* widget)
+		{
+			m_widget = widget;
+		}
+
+		void Resize (const Size& size);
+
+		void Resize (unsigned int width, unsigned int height);
+
+		void SetPosition (int x, int y);
+
+		void SetPosition (const Point& position);
+
+		AbstractWidget* m_widget;
+	};
+
+	class RefreshDelegate
+	{
+	private:
+		friend class AbstractWidget;
+
+		explicit RefreshDelegate (AbstractContainer* container);
+
+		~RefreshDelegate ();
+
+		void set_container (AbstractContainer* container);
+
+		bool RequestRefresh (AbstractWidget* widget);
+
+		AbstractContainer* m_container;
+	};
 
 	// ----------------------------------------------------
 
@@ -80,8 +122,8 @@ namespace BlendInt {
 	public:
 
 		friend class Context;
-		friend class Interface;
 		friend class AbstractContainer;
+		friend class GeometryDelegate;
 
 		template <typename T> friend T* Manage (T* obj, bool val);
 
@@ -138,7 +180,7 @@ namespace BlendInt {
 
 		void RenderToFile (const char* filename, unsigned int border = 10);
 
-		void Refresh ();
+		bool Refresh ();
 
 		const int& layer () const
 		{
@@ -279,9 +321,11 @@ namespace BlendInt {
 				m_property_changed.fire(this, type);
 		}
 
+		/*
 		static void SetPosition (AbstractWidget* obj, int x, int y);
 
 		static void SetPosition (AbstractWidget* obj, const Point& pos);
+		*/
 
 		/**
 		 * @brief resize other object's size
@@ -291,7 +335,7 @@ namespace BlendInt {
 		 *
 		 * @note should be used in layout only
 		 */
-		static void Resize (AbstractWidget* obj, unsigned int w, unsigned int h);
+		//static void Resize (AbstractWidget* obj, unsigned int w, unsigned int h);
 
 		/**
 		 * @brief resize other object's size
@@ -300,7 +344,7 @@ namespace BlendInt {
 		 *
 		 * @note should be used in layout only
 		 */
-		static void Resize (AbstractWidget* obj, const Size& size);
+		//static void Resize (AbstractWidget* obj, const Size& size);
 
 		static void DispatchRender (AbstractWidget* obj);
 

@@ -68,9 +68,9 @@ namespace BlendInt {
 	void Frame::Add (AbstractWidget* widget)
 	{
 		if (AddSubWidget(widget)) {
-			SetPosition(widget, position().x() + margin().left(),
+			SetSubWidgetPosition(widget, position().x() + margin().left(),
 			        position().y() + margin().bottom());
-			Resize(widget, size().width() - margin().left() - margin().right(),
+			ResizeSubWidget(widget, size().width() - margin().left() - margin().right(),
 			        size().height() - margin().top() - margin().bottom());
 		}
 	}
@@ -83,7 +83,7 @@ namespace BlendInt {
 				case FormSize: {
 					if (sub_widget()) {
 						const Size* size_p = static_cast<const Size*>(request.data());
-						Resize(sub_widget(),
+						ResizeSubWidget(sub_widget(),
 						        size_p->width() - margin().left()
 						                - margin().right(),
 						        size_p->height() - margin().top()
@@ -95,7 +95,7 @@ namespace BlendInt {
 				case FormPosition: {
 					if (sub_widget()) {
 						const Point* pos_p = static_cast<const Point*>(request.data());
-						SetPosition(sub_widget(),
+						SetSubWidgetPosition(sub_widget(),
 						        pos_p->x() + margin().left(),
 						        pos_p->y() + margin().bottom());
 					}
@@ -106,16 +106,21 @@ namespace BlendInt {
 
 					if (sub_widget()) {
 						const Margin* margin_p = static_cast<const Margin*>(request.data());
-						SetPosition(sub_widget(),
+						SetSubWidgetPosition(sub_widget(),
 						        position().x() + margin_p->left(),
 						        position().y() + margin_p->bottom());
-						Resize(sub_widget(),
+						ResizeSubWidget(sub_widget(),
 						        size().width() - margin_p->left()
 						                - margin_p->right(),
 						        size().height() - margin_p->top()
 						                - margin_p->bottom());
 					}
 					return true;
+				}
+
+				case ContextRefresh: {
+
+					return Refresh();
 				}
 
 				default:

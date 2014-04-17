@@ -177,7 +177,7 @@ namespace BlendInt {
 	{
 		MenuButton* button = Manage (new MenuButton(text));
 
-		SetPosition(button, GetLastPosition(), position().y() + margin().bottom());
+		SetSubWidgetPosition(button, GetLastPosition(), position().y() + margin().bottom());
 
 		AppendSubWidget(button);
 

@@ -174,6 +174,7 @@ namespace BlendInt {
 					const Size* size_p = static_cast<const Size*>(request.data());
 					GenerateFormBuffer(*size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 					ResetHighlightBuffer(size_p->width());
+					m_shadow->Resize(*size_p);
 					return true;
 				}
 
@@ -205,6 +206,9 @@ namespace BlendInt {
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		if(m_shadow)
+			m_shadow->Draw(mvp);
 
 		glBindVertexArray(m_vao);
 
@@ -325,6 +329,9 @@ namespace BlendInt {
 		ResetHighlightBuffer(20);
 
 		glBindVertexArray(0);
+
+		m_shadow.reset(new Shadow);
+		m_shadow->Resize(size());
 	}
 
 }

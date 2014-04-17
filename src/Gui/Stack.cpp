@@ -46,8 +46,8 @@ namespace BlendInt {
 			unsigned int w = size().width() - margin().left() - margin().right();
 			unsigned int h = size().height() - margin().top() - margin().bottom();
 
-			Resize(widget, w, h);
-			SetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+			ResizeSubWidget(widget, w, h);
+			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
 
 			if((sub_widget_size() - 1) != m_index) {
 				widget->SetVisible(false);
@@ -63,8 +63,8 @@ namespace BlendInt {
 			unsigned int w = size().width() - margin().left() - margin().right();
 			unsigned int h = size().height() - margin().top() - margin().bottom();
 
-			Resize(widget, w, h);
-			SetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+			ResizeSubWidget(widget, w, h);
+			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
 		}
 	}
 
@@ -155,6 +155,12 @@ namespace BlendInt {
 					ResizeSubWidgets(w, h);
 
 					return true;
+				}
+
+				case ContextRefresh: {
+
+					return Refresh();
+
 				}
 
 				default:

@@ -168,6 +168,8 @@ namespace BlendInt {
 		SliderPropertyMaximum,
 		SliderPropertyStep,
 
+		ContextRefresh,
+
 		FormPropertyLast
 	};
 

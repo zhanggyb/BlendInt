@@ -162,8 +162,8 @@ namespace BlendInt {
 		Size current_size = size();
 		// TODO: count max size
 
-		unsigned int w_plus = margin().left() + margin().right();
-		unsigned int h_plus = margin().top() + margin().bottom();
+		//unsigned int w_plus = margin().left() + margin().right();
+		//unsigned int h_plus = margin().top() + margin().bottom();
 
 		if (sub_widget_size() == 0) {
 			min_size.add_width(widget->minimal_size().width());
@@ -190,7 +190,7 @@ namespace BlendInt {
 		AppendSubWidget(widget);
 
 		if( !(current_size == size()) )
-			Resize(this, current_size);
+			Resize(current_size);
 		else
 			MakeLayout(&current_size, &margin(), space());
 
@@ -341,23 +341,23 @@ namespace BlendInt {
 				child = m_items[i * m_columns + j];
 				if(!child) continue;
 
-				SetPosition(child, x, y);
+				SetSubWidgetPosition(child, x, y);
 
 				if(child->expand_y()) {
-					Resize(child, child->size().width(), row_height[i]);
+					ResizeSubWidget(child, child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					Resize(child, column_width[j], child->size().height());
+					ResizeSubWidget(child, column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-					SetPosition(child, child->position().x(),
+					SetSubWidgetPosition(child, child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-					SetPosition(child, child->position().x(),
+					SetSubWidgetPosition(child, child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-					SetPosition(child, child->position().x(),
+					SetSubWidgetPosition(child, child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();
@@ -409,23 +409,23 @@ namespace BlendInt {
 				child = m_items[i * m_columns + j];
 				if(!child) continue;
 
-				SetPosition(child, x, y);
+				SetSubWidgetPosition(child, x, y);
 
 				if(child->expand_y()) {
-					Resize(child, child->size().width(), row_height[i]);
+					ResizeSubWidget(child, child->size().width(), row_height[i]);
 				}
 				if (child->expand_x()) {
-					Resize(child, column_width[j], child->size().height());
+					ResizeSubWidget(child, column_width[j], child->size().height());
 				}
 
 				if (alignment() & AlignTop) {
-					SetPosition(child, child->position().x(),
+					SetSubWidgetPosition(child, child->position().x(),
 						        child->position().y() + row_height[i] - child->size().height());
 				} else if (alignment() & AlignBottom) {
-					SetPosition(child, child->position().x(),
+					SetSubWidgetPosition(child, child->position().x(),
 								child->position().y());
 				} else if (alignment() & AlignHorizontalCenter) {
-					SetPosition(child, child->position().x(),
+					SetSubWidgetPosition(child, child->position().x(),
 								child->position().y() + (row_height[i] - child->size().height()) / 2);
 				}
 				x = x + column_width[j] + space();
@@ -498,8 +498,8 @@ namespace BlendInt {
 	void TableLayout::CountExpandableNumber (unsigned int* cols,
 					unsigned int* rows)
 	{
-		unsigned int col_num = 0;
-		unsigned int row_num = 0;
+		//unsigned int col_num = 0;
+		//unsigned int row_num = 0;
 
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{

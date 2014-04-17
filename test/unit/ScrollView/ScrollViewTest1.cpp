@@ -28,6 +28,10 @@ TEST_F(ScrollViewTest1, Foo1)
 
     // TODO: add test code here
 
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
+
 	ScrollView* scrollview = Manage(new ScrollView);
 	scrollview->set_name("ScrollView");
 	scrollview->SetPosition(100, 100);
@@ -42,6 +46,8 @@ TEST_F(ScrollViewTest1, Foo1)
 	toolbar->move(50, 10);
 
 	DBG_PRINT_MSG ("percentages: %d, %d", scrollview->GetHPercentage(), scrollview->GetVPercentage());
+
+	context->Add(scrollview);
 
 	RunLoop(win);
 
@@ -65,6 +71,10 @@ TEST_F(ScrollViewTest1, Nest1)
 
     // TODO: add test code here
 
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
+
 	ScrollView* scrollview1 = Manage(new ScrollView);
 	scrollview1->set_name("ScrollView1");
 	scrollview1->SetPosition(100, 100);
@@ -84,6 +94,8 @@ TEST_F(ScrollViewTest1, Nest1)
 	scrollview2->SetViewport(scrollview1);
 
 	toolbar->move(50, 10);
+
+	context->Add(scrollview1);
 
 	RunLoop(win);
 

@@ -69,7 +69,7 @@ namespace BlendInt {
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
-				Resize(this, size().width(), m_text_outline.height());
+				Resize(size().width(), m_text_outline.height());
 			} else {
 				m_text_length = 0;
 				cal_width = false;
@@ -78,7 +78,7 @@ namespace BlendInt {
 
 		if(size().width() < m_text_outline.width()) {
 			if(expand_x()) {
-				Resize(this, m_text_outline.width(), size().height());
+				Resize(m_text_outline.width(), size().height());
 			} else {
 				if(cal_width) m_text_length = GetValidTextSize();
 			}
@@ -104,7 +104,7 @@ namespace BlendInt {
 
 		if(size().height() < m_text_outline.height()) {
 			if(expand_y()) {
-				Resize(this, size().width(), m_text_outline.height());
+				Resize(size().width(), m_text_outline.height());
 			} else {
 				m_text_length = 0;
 				cal_width = false;
@@ -113,7 +113,7 @@ namespace BlendInt {
 
 		if(size().width() < m_text_outline.width()) {
 			if(expand_x()) {
-				Resize(this, m_text_outline.width(), size().height());
+				Resize(m_text_outline.width(), size().height());
 			} else {
 				if(cal_width) m_text_length = GetValidTextSize();
 			}
@@ -134,6 +134,8 @@ namespace BlendInt {
 		if(!entered) {
 			m_status_down = false;
 		}
+
+		DBG_PRINT_MSG("%s", "cursor on");
 
 		Refresh();
 		return Accept;

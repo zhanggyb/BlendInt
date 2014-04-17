@@ -137,7 +137,7 @@ namespace BlendInt {
 		AppendSubWidget(object);
 
 		if(! (current_size == size()))
-			Resize(this, current_size);	// call make_layout() through this function
+			Resize(current_size);	// call make_layout() through this function
 		else
 			MakeLayout(&current_size, &margin(), space());
 
@@ -188,7 +188,7 @@ namespace BlendInt {
 
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
-			Resize(*it, (*it)->size().width(), (*it)->preferred_size().height());
+			ResizeSubWidget(*it, (*it)->size().width(), (*it)->preferred_size().height());
 		}
 
 		Distribute(space, y);
@@ -220,9 +220,9 @@ namespace BlendInt {
 					child = *it;
 
 					if (child->expand_y()) {
-						Resize(child, child->size().width(), average_expd_height);
+						ResizeSubWidget(child, child->size().width(), average_expd_height);
 					} else {
-						Resize(child, child->size().width(),
+						ResizeSubWidget(child, child->size().width(),
 						        child->preferred_size().height());
 					}
 				}
@@ -245,17 +245,17 @@ namespace BlendInt {
 					child = *it;
 
 					if (child->expand_y()) {
-						Resize(child, child->size().width(),
+						ResizeSubWidget(child, child->size().width(),
 						        child->minimal_size().height());
 					} else {
 
 						if (average_fixed_height < child->minimal_size().height()) {
 							height_plus = height_plus + child->minimal_size().height() - average_fixed_height;
-							Resize(child, child->size().width(),
+							ResizeSubWidget(child, child->size().width(),
 							        child->minimal_size().height());
 						} else {
 							unminimized_items.push_back(child);
-							Resize(child, child->size().width(), average_fixed_height);
+							ResizeSubWidget(child, child->size().width(), average_fixed_height);
 						}
 
 					}
@@ -302,10 +302,10 @@ namespace BlendInt {
 					if(child->expand_y()) {
 						if(average_expd_height > child->maximal_size().height()) {
 							height_plus = height_plus + average_expd_height - child->maximal_size().height();
-							Resize(child, child->size().width(), child->maximal_size().height());
+							ResizeSubWidget(child, child->size().width(), child->maximal_size().height());
 						} else {
 							unmaximized_list.push_back(child);
-							Resize(child, child->size().width(), average_expd_height);
+							ResizeSubWidget(child, child->size().width(), average_expd_height);
 						}
 					}
 				}
@@ -327,9 +327,9 @@ namespace BlendInt {
 					child = *it;
 
 					if (child->expand_y()) {
-						Resize(child, child->size().width(), child->maximal_size().height());
+						ResizeSubWidget(child, child->size().width(), child->maximal_size().height());
 					} else {
-						Resize(child, child->size().width(), child->preferred_size().height());
+						ResizeSubWidget(child, child->size().width(), child->preferred_size().height());
 					}
 				}
 
@@ -346,7 +346,7 @@ namespace BlendInt {
 			for(it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				child = *it;
-				Resize(child, child->preferred_size().width(),
+				ResizeSubWidget(child, child->preferred_size().width(),
 					        child->size().height());
 			}
 
@@ -363,7 +363,7 @@ namespace BlendInt {
 			start -= space;
 
 			start -= (*it)->size().height();
-			SetPosition(*it, (*it)->position().x(), start);
+			SetSubWidgetPosition(*it, (*it)->position().x(), start);
 		}
 	}
 
@@ -381,16 +381,16 @@ namespace BlendInt {
 
 			if (child->expand_x() ||
 					(child->size().width() > w)) {
-				Resize(child, w, child->size().height());
-				SetPosition(child, x, child->position().y());
+				ResizeSubWidget(child, w, child->size().height());
+				SetSubWidgetPosition(child, x, child->position().y());
 			} else {
 
 				if (alignment() & AlignLeft) {
-					SetPosition(child, x, child->position().y());
+					SetSubWidgetPosition(child, x, child->position().y());
 				} else if (alignment() & AlignRight) {
-					SetPosition(child, x + (w - child->size().width()), child->position().y());
+					SetSubWidgetPosition(child, x + (w - child->size().width()), child->position().y());
 				} else if (alignment() & AlignVerticalCenter) {
-					SetPosition(child, x + (w - child->size().width()) / 2, child->position().y());
+					SetSubWidgetPosition(child, x + (w - child->size().width()) / 2, child->position().y());
 				}
 
 			}
@@ -409,11 +409,11 @@ namespace BlendInt {
 		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
 		{
 			if ((average_height_plus + (*it)->size().height()) > (*it)->maximal_size().height()) {
-				Resize(*it, (*it)->size().width(), (*it)->maximal_size().height());
+				ResizeSubWidget(*it, (*it)->size().width(), (*it)->maximal_size().height());
 				remainder = remainder + average_height_plus + (*it)->size().height() - (*it)->maximal_size().height();
 				it = item_list_p->erase(it);
 			} else {
-				Resize(*it, (*it)->size().width(), (*it)->size().height() + average_height_plus);
+				ResizeSubWidget(*it, (*it)->size().width(), (*it)->size().height() + average_height_plus);
 			}
 		}
 
@@ -437,11 +437,11 @@ namespace BlendInt {
 		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
 		{
 			if (((*it)->size().height() - average_height_plus) < (*it)->minimal_size().height()) {
-				Resize(*it, (*it)->size().width(), (*it)->minimal_size().height());
+				ResizeSubWidget(*it, (*it)->size().width(), (*it)->minimal_size().height());
 				remainder = remainder + (*it)->minimal_size().height() - ((*it)->size().height() - average_height_plus);
 				it = item_list_p->erase(it);
 			} else {
-				Resize(*it, (*it)->size().width(), (*it)->size().height() - average_height_plus);
+				ResizeSubWidget(*it, (*it)->size().width(), (*it)->size().height() - average_height_plus);
 			}
 		}
 

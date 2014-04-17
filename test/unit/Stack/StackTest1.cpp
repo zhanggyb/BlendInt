@@ -27,6 +27,10 @@ TEST_F(StackTest1, Foo1)
 	GLFWwindow* window = CreateWindow("Stack - Foo1", 640, 480);
 
 	// TODO: add test code here
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
+
 //	Label* label1 = Manage (new Label("Label1"));
 //	label1->set_name("Labe1");
 //	label1->SetFont(Font("Droid Sans Mono", 24));
@@ -59,6 +63,8 @@ TEST_F(StackTest1, Foo1)
 	stack->SetPosition(200, 200);
 	stack->Resize(200, 200);
 	stack->SetIndex(0);
+
+	context->Add(stack);
 
 	RunLoop(window);
 

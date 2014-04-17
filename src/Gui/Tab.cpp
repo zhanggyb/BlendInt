@@ -279,13 +279,13 @@ namespace BlendInt {
 		unsigned int temp = 0;
 		for(std::deque<AbstractButton*>::iterator it = m_group.deque()->begin(); it != m_group.deque()->end(); it++)
 		{
-			SetPosition((*it), x + temp, btn_y);
-			Resize((*it), (*it)->size().width(), m_title_height);
+			SetSubWidgetPosition((*it), x + temp, btn_y);
+			ResizeSubWidget((*it), (*it)->size().width(), m_title_height);
 			temp += (*it)->size().width();
 		}
 
-		SetPosition(m_stack, x, y);
-		Resize(m_stack, w, h - m_title_height);
+		SetSubWidgetPosition(m_stack, x, y);
+		ResizeSubWidget(m_stack, w, h - m_title_height);
 	}
 
 }

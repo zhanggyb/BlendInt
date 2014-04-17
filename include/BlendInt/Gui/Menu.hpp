@@ -30,6 +30,7 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/Font.hpp>
+#include <BlendInt/Gui/Shadow.hpp>
 #include <BlendInt/Gui/RoundWidget.hpp>
 #include <BlendInt/Gui/ActionItem.hpp>
 
@@ -107,6 +108,8 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 		RefPtr<GLArrayBuffer> m_highlight_buffer;
+
+		RefPtr<Shadow> m_shadow;
 
 		std::deque<RefPtr<ActionItem> > m_list;
 

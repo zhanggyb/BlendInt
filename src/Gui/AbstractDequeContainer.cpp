@@ -155,7 +155,7 @@ namespace BlendInt {
 	{
 		for (WidgetDeque::iterator it = m_sub_widgets->begin();
 						it != m_sub_widgets->end(); it++) {
-			SetPosition(*it, (*it)->position().x() + offset_x,
+			SetSubWidgetPosition(*it, (*it)->position().x() + offset_x,
 							(*it)->position().y() + offset_y);
 		}
 	}
@@ -164,7 +164,7 @@ namespace BlendInt {
 	{
 		for (WidgetDeque::iterator it = m_sub_widgets->begin();
 						it != m_sub_widgets->end(); it++) {
-			Resize((*it), size);
+			ResizeSubWidget((*it), size);
 		}
 	}
 	
@@ -173,7 +173,7 @@ namespace BlendInt {
 	{
 		for (WidgetDeque::iterator it = sub_widgets()->begin();
 						it != sub_widgets()->end(); it++) {
-			Resize((*it), w, h);
+			ResizeSubWidget((*it), w, h);
 		}
 	}
 	

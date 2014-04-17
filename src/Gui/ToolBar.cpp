@@ -188,8 +188,8 @@ namespace BlendInt {
 	void ToolBar::Add (AbstractWidget* widget)
 	{
 		int x = GetLastPosition();
-		Resize(widget, widget->preferred_size().width(), 24);
-		SetPosition(widget, x, position().y() + margin().bottom());
+		ResizeSubWidget(widget, widget->preferred_size().width(), 24);
+		SetSubWidgetPosition(widget, x, position().y() + margin().bottom());
 		AppendSubWidget(widget);
 	}
 
@@ -198,8 +198,8 @@ namespace BlendInt {
 		ToolButton* button = Manage(new ToolButton);
 
 		int x = GetLastPosition();
-		Resize(button, 24, 24);
-		SetPosition(button, x, position().y() + margin().bottom());
+		ResizeSubWidget(button, 24, 24);
+		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
 
 		AppendSubWidget(button);
 	}

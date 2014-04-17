@@ -37,16 +37,15 @@ TEST_F(FrameTest1, Foo1)
     frame->SetMargin(10, 10, 10, 10);
     frame->SetPosition(200, 200);
 
-    MenuButton* button = Manage (new MenuButton("Menu"));
-    button->set_name("MenuButton");
-    frame->Add(button);
-
     Button* ref_btn = Manage (new Button);
     ref_btn->set_name("Ref Button");
     ref_btn->SetPosition(400, 200);
 
+    frame->Add(ref_btn);
+
+    DBG_PRINT_MSG("frame layer: %d", frame->z());
+
     context->Add(frame);
-    context->Add(ref_btn);
 
     RunLoop(win);
 

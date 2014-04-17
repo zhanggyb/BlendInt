@@ -178,6 +178,17 @@ namespace BlendInt
 					return false;
 				}
 
+				case ContextRefresh: {
+
+					const AbstractWidget* widget_p = static_cast<const AbstractWidget*>(request.data());
+
+					DBG_PRINT_MSG("refresh layer: %d", widget_p->z());
+
+					RefreshLayer(widget_p->z());
+
+					return true;
+				}
+
 				default:
 					return false;
 			}

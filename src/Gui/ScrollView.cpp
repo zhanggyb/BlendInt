@@ -68,7 +68,7 @@ namespace BlendInt {
 				int x = position().x() + margin().left() + (w - static_cast<int>(p->size().width())) / 2;
 				int y = position().y() + margin().bottom() + (h - static_cast<int>(p->size().height())) / 2;
 
-				SetPosition(p, x, y);
+				SetSubWidgetPosition(p, x, y);
 			}
 		}
 	}
@@ -86,7 +86,7 @@ namespace BlendInt {
 			int x = position().x() + margin().left() + (w - static_cast<int>(p->size().width())) / 2;
 			int y = position().y() + margin().bottom() + (h - static_cast<int>(p->size().height())) / 2;
 
-			SetPosition(p, x, y);
+			SetSubWidgetPosition(p, x, y);
 		}
 	}
 
@@ -161,8 +161,8 @@ namespace BlendInt {
 
 	ResponseType ScrollView::Draw (const RedrawEvent& event)
 	{
-		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+		//glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		return AcceptAndContinue;
 	}
@@ -234,7 +234,7 @@ namespace BlendInt {
 
 			if(x != 0 || y != 0) {
 				AbstractWidget* p = sub_widgets()->front();
-				SetPosition(p, p->position().x() + x, p->position().y() + y);
+				SetSubWidgetPosition(p, p->position().x() + x, p->position().y() + y);
 
 				Refresh();
 			}
@@ -246,7 +246,7 @@ namespace BlendInt {
 		if(sub_widget_size()) {
 			AbstractWidget* p = sub_widgets()->front();
 
-			SetPosition(p, position().x() + x, position().y() + y);
+			SetSubWidgetPosition(p, position().x() + x, position().y() + y);
 
 			Refresh();
 		}
@@ -260,7 +260,7 @@ namespace BlendInt {
 
 				AbstractWidget* p = sub_widgets()->front();
 
-				SetPosition(p,
+				SetSubWidgetPosition(p,
 				        m_origin_pos.x() + event.position().x()
 				                - m_move_start_pos.x(),
 				        m_origin_pos.y() + event.position().y()
