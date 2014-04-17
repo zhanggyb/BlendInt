@@ -233,24 +233,23 @@ namespace BlendInt {
 
 	ResponseType Viewport3D::Draw (const RedrawEvent& event)
 	{
-		// store the current matrices
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(position().x(), position().y(), size().width(),
-		        size().height());
+        GLint vp[4];
+        glGetIntegerv(GL_VIEWPORT, vp);
 
-		glViewport(position().x(), position().y(), size().width(),
-		        size().height());
-		//-------------------------------------------------------------------------------------------------------
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(position().x(), position().y(), size().width(),
+                size().height());
 
-		Render();
+        glViewport(position().x(), position().y(), size().width(),
+                size().height());
+        // --------------------------------------------------------------------------------
+        Render();
+        // --------------------------------------------------------------------------------
+        glDisable(GL_SCISSOR_TEST);
+        glDisable(GL_DEPTH_TEST);
 
-		//-------------------------------------------------------------------------------------------------------
-		glDisable(GL_SCISSOR_TEST);
-		glDisable(GL_DEPTH_TEST);
-
-		glViewport(0, 0, Interface::instance->size().width(),
-		        Interface::instance->size().height());
+        glViewport(vp[0], vp[1], vp[2], vp[3]);
 
 		return Accept;
 	}

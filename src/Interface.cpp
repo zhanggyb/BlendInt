@@ -193,13 +193,6 @@ namespace BlendInt {
 		}
 	}
 
-	const Size& Interface::size () const
-	{
-        if(m_current_context) {
-            return m_current_context->size();
-        }
-	}
-
 	void Interface::Resize (const Size& size)
 	{
 		if(m_current_context) {

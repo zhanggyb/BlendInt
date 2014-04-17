@@ -395,14 +395,13 @@ namespace BlendInt {
 			event.set_projection_matrix(projection);
 			event.set_view_matrix(view * offset);
 
+            GLint vp[4];
+            glGetIntegerv(GL_VIEWPORT, vp);
 			glViewport(0, 0, width, height);
 
 			Draw(event);
 
-			glViewport(0,
-					0,
-					Interface::instance->GetCurrentContextWidth(),
-					Interface::instance->GetCurrentContextHeight());
+			glViewport(vp[0], vp[1], vp[2], vp[3]);
 		}
 
 		fb->Reset();
@@ -475,14 +474,14 @@ namespace BlendInt {
 			event.set_projection_matrix(projection);
 			event.set_view_matrix(view * offset);
 
+            GLint vp[4];
+            glGetIntegerv(GL_VIEWPORT, vp);
+
 			glViewport(0, 0, width, height);
 
 			Draw(event);
 
-			glViewport(0,
-					0,
-					Interface::instance->GetCurrentContextWidth(),
-					Interface::instance->GetCurrentContextHeight());
+			glViewport(vp[0], vp[1], vp[2], vp[3]);
 
 			// ---------------------------------------------
 			tex->WriteToFile(filename);
