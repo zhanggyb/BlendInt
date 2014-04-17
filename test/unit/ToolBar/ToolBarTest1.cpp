@@ -26,6 +26,10 @@ TEST_F(ToolBarTest1, Foo1)
     GLFWwindow* win = CreateWindow("ToolBar - Foo1", 640, 480);
 
     // TODO: add test code here
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
+	
     ToolBar* toolbar = Manage (new ToolBar);
     toolbar->set_name("ToolBar");
 
@@ -44,6 +48,8 @@ TEST_F(ToolBarTest1, Foo1)
 	toolbar->Add(btn3);
 
     toolbar->SetPosition(100, 100);
+
+	context->Add(toolbar);
 
     RunLoop(win);
 

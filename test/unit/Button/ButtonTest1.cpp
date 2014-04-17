@@ -30,7 +30,7 @@ TEST_F(ButtonTest1, Foo1)
     context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
-    Button* bt1 = Manage (new Button);
+    Button* bt1 = new Button;
     bt1->SetPosition(200, 200);
     bt1->SetText("Hello");
     bt1->set_name("Button 1");
@@ -38,6 +38,8 @@ TEST_F(ButtonTest1, Foo1)
     context->Add(bt1);
 
     RunLoop(win);
+
+	delete bt1;
 
     Interface::Release();
 

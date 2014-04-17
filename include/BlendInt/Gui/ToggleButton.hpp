@@ -72,9 +72,9 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeOnce ();
+		void InitOnce ();
 
-		void InitializeOnce (const String& text);
+		void InitOnce (const String& text);
 
 		GLuint m_vao;
 

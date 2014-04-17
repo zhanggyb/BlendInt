@@ -52,6 +52,8 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType CursorEnterEvent (bool entered);
+
 		inline double sin_curve (double x, double amplitude, double shift_x, double shift_y);
 
 	private:

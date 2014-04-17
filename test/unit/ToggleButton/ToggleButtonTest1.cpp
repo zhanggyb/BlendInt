@@ -23,15 +23,19 @@ ToggleButtonTest1::~ToggleButtonTest1()
 TEST_F(ToggleButtonTest1, Foo1)
 {
 	Init ();
-	GLFWwindow* win = CreateWindow("ToggleButton - Foo1");
+	GLFWwindow* win = CreateWindow("ToggleButton - Foo1", 640, 480);
 
     // TODO: add test code here
-    ToggleButton* btn = new ToggleButton;
+	Context* context = Manage (new Context);
+	context->set_name("Context");
+	Interface::instance->SetCurrentContext(context);
+	
+    ToggleButton* btn = Manage(new ToggleButton);
     btn->SetPosition(200, 200);
 
-    RunLoop(win);
+	context->Add(btn);
 
-    delete btn;
+    RunLoop(win);
 
     Interface::Release();
 

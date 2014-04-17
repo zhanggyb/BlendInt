@@ -86,6 +86,10 @@ namespace BlendInt {
 					return true;
 				}
 
+				case ContextRefresh: {
+					return Refresh();
+				}
+
 				default:
 					return true;
 			}
@@ -188,20 +192,20 @@ namespace BlendInt {
 	void ToolBar::Add (AbstractWidget* widget)
 	{
 		int x = GetLastPosition();
+		AppendSubWidget(widget);
 		ResizeSubWidget(widget, widget->preferred_size().width(), 24);
 		SetSubWidgetPosition(widget, x, position().y() + margin().bottom());
-		AppendSubWidget(widget);
 	}
 
 	void ToolBar::AddButton (const RefPtr<ActionItem>& action)
 	{
 		ToolButton* button = Manage(new ToolButton);
 
+		AppendSubWidget(button);
+
 		int x = GetLastPosition();
 		ResizeSubWidget(button, 24, 24);
 		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
-
-		AppendSubWidget(button);
 	}
 
 	void ToolBar::InitOnce ()

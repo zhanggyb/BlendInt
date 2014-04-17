@@ -44,13 +44,13 @@ namespace BlendInt {
 	ToggleButton::ToggleButton ()
 			: AbstractButton(), RoundShapeBase(), m_vao(0)
 	{
-		InitializeOnce();
+		InitOnce();
 	}
 
 	ToggleButton::ToggleButton (const String& text)
 			: AbstractButton(), RoundShapeBase(), m_vao(0)
 	{
-		InitializeOnce(text);
+		InitOnce(text);
 	}
 
 	ToggleButton::~ToggleButton ()
@@ -215,7 +215,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void ToggleButton::InitializeOnce ()
+	void ToggleButton::InitOnce ()
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);
@@ -238,7 +238,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 
-	void ToggleButton::InitializeOnce (const String& text)
+	void ToggleButton::InitOnce (const String& text)
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);

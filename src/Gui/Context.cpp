@@ -182,7 +182,7 @@ namespace BlendInt
 
 					const AbstractWidget* widget_p = static_cast<const AbstractWidget*>(request.data());
 
-					DBG_PRINT_MSG("refresh layer: %d", widget_p->z());
+					DBG_PRINT_MSG("widget %s call refresh: %d", widget_p->name().c_str(), widget_p->z());
 
 					RefreshLayer(widget_p->z());
 

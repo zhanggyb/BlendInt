@@ -92,6 +92,10 @@ namespace BlendInt {
 				return true;
 			}
 
+			case ContextRefresh: {
+				return Refresh();
+			}
+
 			default:
 
 				return false;
@@ -177,9 +181,10 @@ namespace BlendInt {
 	{
 		MenuButton* button = Manage (new MenuButton(text));
 
-		SetSubWidgetPosition(button, GetLastPosition(), position().y() + margin().bottom());
+		int x = GetLastPosition();
 
 		AppendSubWidget(button);
+		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
 
 		events()->connect(button->clicked(), this, &MenuBar::OnClicked);
 	}

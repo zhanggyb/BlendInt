@@ -178,6 +178,11 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	ResponseType TabButton::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
 	void TabButton::InitOnce()
 	{
 		m_inner_buffer.reset(new GLArrayBuffer);
