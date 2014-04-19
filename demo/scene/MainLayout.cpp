@@ -4,6 +4,8 @@
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Core/String.hpp>
+#include <BlendInt/Gui/Menu.hpp>
+#include <BlendInt/Service/StockItems.hpp>
 
 #include "MainLayout.hpp"
 
@@ -20,6 +22,8 @@ MainLayout::~MainLayout ()
 
 void MainLayout::InitOnce ()
 {
+	using namespace BI;
+
 	set_margin(0, 0, 0, 0);
 
 	m_menubar = Manage(new BI::MenuBar);
@@ -36,8 +40,18 @@ void MainLayout::InitOnce ()
 	m_open->set_name("ToolButton");
 #endif
 
-	m_menubar->AddMenu("File");
-	m_menubar->AddMenu("Edit");
+    RefPtr<Menu> file_menu(new Menu);
+    file_menu->set_name("Menu");
+
+    file_menu->SetRoundType(RoundBottomLeft | RoundBottomRight);
+    file_menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    file_menu->AddActionItem("MenuItem2", "Ctrl + 1");
+    file_menu->AddActionItem("MenuItem3", "Ctrl + 1");
+    file_menu->AddActionItem("MenuItem4", "Ctrl + 1");
+    file_menu->AddActionItem("MenuItem5");
+
+	m_menubar->AddMenuButton("File", file_menu);
+	// m_menubar->AddMenuButton("Edit");
 
 	m_toolbar->Add(m_input);
 	m_toolbar->Add(m_open);

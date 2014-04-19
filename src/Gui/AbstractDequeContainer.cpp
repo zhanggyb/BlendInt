@@ -51,7 +51,7 @@ namespace BlendInt {
 				DBG_PRINT_MSG("Widget %s is already in container %s",
 								widget->name().c_str(),
 								widget->container()->name().c_str());
-				return true;
+				return false;
 			} else {
 				// Set widget's container to 0
 				AbstractContainer::RemoveSubWidget(widget->container(), widget);
@@ -129,7 +129,7 @@ namespace BlendInt {
 				DBG_PRINT_MSG("Widget %s is already in container %s",
 								widget->name().c_str(),
 								widget->container()->name().c_str());
-				return true;
+				return false;
 			} else {
 				// Set widget's container to 0
 				AbstractContainer::RemoveSubWidget(widget->container(), widget);

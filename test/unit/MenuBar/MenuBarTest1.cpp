@@ -34,9 +34,6 @@ TEST_F(MenuBarTest1, Foo1)
     MenuBar* menubar = Manage(new MenuBar);
     menubar->set_name("MenuBar");
     menubar->SetPosition(100, 100);
-    menubar->AddMenu("File");
-    menubar->AddMenu("Edit");
-    menubar->AddMenu("Help");
 
     RefPtr<Menu> menu(new Menu);
     menu->set_name("Menu");
@@ -51,25 +48,10 @@ TEST_F(MenuBarTest1, Foo1)
     menu->AddActionItem("MenuItem4", "Ctrl + 1");
     menu->AddActionItem("MenuItem5");
 
-    MenuButton* button = 0;
-    button = menubar->GetMenuButton(0);
-    if(button) {
-		button->set_name("File Button");
-	    button->SetMenu(menu);
-	}
+    menubar->AddMenuButton("File", menu);
+    menubar->AddMenuButton("Edit", menu);
+    menubar->AddMenuButton("Help", menu);
 
-    button = menubar->GetMenuButton(1);
-    if(button) {
-		button->set_name("Edit Button");
-	    button->SetMenu(menu);
-	}
-
-    button = menubar->GetMenuButton(2);
-    if(button) {
-		button->set_name("Help Button");
-	    button->SetMenu(menu);
-	}
-	
     menubar->SetPosition(200, 400);
 	context->Add(menubar);
 

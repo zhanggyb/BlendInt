@@ -176,10 +176,36 @@ namespace BlendInt {
 	{
 		return IgnoreAndContinue;
 	}
-	
-	void MenuBar::AddMenu (const String& text)
+
+	void MenuBar::AddMenuButton (MenuButton* button)
+	{
+		if(!button) return;
+
+		int x = GetLastPosition();
+
+		if(AppendSubWidget(button)) {
+			SetSubWidgetPosition(button, x, position().y() + margin().bottom());
+			events()->connect(button->clicked(), this, &MenuBar::OnClicked);
+		}
+	}
+
+	void MenuBar::AddMenuButton (MenuButton* button, const RefPtr<Menu>& menu)
+	{
+		if(!button) return;
+
+		int x = GetLastPosition();
+
+		if(AppendSubWidget(button)) {
+			button->SetMenu(menu);
+			SetSubWidgetPosition(button, x, position().y() + margin().bottom());
+			events()->connect(button->clicked(), this, &MenuBar::OnClicked);
+		}
+	}
+
+	void MenuBar::AddMenuButton (const String& text, const RefPtr<Menu>& menu)
 	{
 		MenuButton* button = Manage (new MenuButton(text));
+		button->SetMenu(menu);
 
 		int x = GetLastPosition();
 
@@ -187,6 +213,33 @@ namespace BlendInt {
 		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
 
 		events()->connect(button->clicked(), this, &MenuBar::OnClicked);
+	}
+
+	void MenuBar::SetMenu (size_t index, const RefPtr<Menu>& menu)
+	{
+		MenuButton* button = GetMenuButton(index);
+
+		if(button) {
+			button->SetMenu(menu);
+		}
+	}
+
+	void MenuBar::SetMenu (MenuButton* button, const RefPtr<Menu>& menu)
+	{
+		if(!button || button->container() != this) return;
+
+		button->SetMenu(menu);
+	}
+
+	MenuButton* MenuBar::GetMenuButton (size_t index)
+	{
+		MenuButton* button = 0;
+
+		if(index < sub_widget_size()) {
+			button = dynamic_cast<MenuButton*>(sub_widgets()->at(index));
+		}
+
+		return button;
 	}
 
 	void MenuBar::InitOnce()
@@ -206,17 +259,6 @@ namespace BlendInt {
 		m_buffer->Reset();
 
 		glBindVertexArray(0);
-	}
-	
-	MenuButton* MenuBar::GetMenuButton (size_t index)
-	{
-		MenuButton* button = 0;
-
-		if(index < sub_widgets()->size()) {
-			button = dynamic_cast<MenuButton*>(sub_widgets()->at(index));
-		}
-
-		return button;
 	}
 	
 	void MenuBar::OnClicked ()
