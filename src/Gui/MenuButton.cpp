@@ -188,10 +188,18 @@ namespace BlendInt {
 				return Accept;
 			} else {
 				int max_layer = context->GetMaxLayer();
-				m_menu->SetLayer(max_layer + 1);
-				m_menu->SetPosition(position().x(), position().y() + size().height());
+				m_menu->SetLayer(max_layer + 1);	// show menu in the top layer
+
+				int y = position().y();
+				y = y - m_menu->size().height();
+
+				if(y < 0) {
+					y = 0;
+				}
+
+				m_menu->SetPosition(position().x(), y);
 				context->Add(m_menu.get());
-				SetRoundType(RoundBottomLeft | RoundBottomRight);
+				SetRoundType(RoundTopLeft | RoundTopRight);
 				context->SetFocusedWidget(m_menu.get());
 
 				Refresh();

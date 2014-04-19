@@ -74,6 +74,16 @@ namespace BlendInt {
 
 		virtual ~Context ();
 
+		bool Add (AbstractWidget* widget);
+
+		bool Remove (AbstractWidget* widget);
+
+		void SetFocusedWidget (AbstractWidget* widget);
+
+		void RefreshLayer (int layer);
+
+		int GetMaxLayer () const;
+
 		size_t index_size () const
 		{
 			return m_index.size();
@@ -84,23 +94,28 @@ namespace BlendInt {
 			return m_layers.size();
 		}
 
-		int GetMaxLayer () const;
+		AbstractWidget* focused_widget () const
+		{
+			return m_focused_widget;
+		}
 
-		void RefreshLayer (int layer);
+		/**
+		 * @brief Set the cursor
+		 */
+		virtual void SetCursor (void* cursor);
 
-		bool Add (AbstractWidget* widget);
+		/**
+		 * @brief Reset the cursor to the default pointer
+		 */
+		virtual void ResetCursor ();
 
-		bool Remove (AbstractWidget* widget);
-
-		void SetFocusedWidget (AbstractWidget* widget);
+		virtual void* GetCursor () const;
 
 #ifdef DEBUG
 		void PrintLayers ();
 #endif
 
 	protected:
-
-		void Draw ();
 
 		virtual bool Update (const UpdateRequest& request);
 

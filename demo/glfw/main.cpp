@@ -41,6 +41,7 @@
 #include <BlendInt/Service/StockItems.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
+#include "GLFWContext.hpp"
 #include "Window.hpp"
 
 using namespace BlendInt;
@@ -199,7 +200,7 @@ int main(int argc, char* argv[])
 	context->Add(btn1);
 	*/
 
-	Context* context = Manage (new Context);
+	GLFWContext* context = Manage (new GLFWContext);
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 

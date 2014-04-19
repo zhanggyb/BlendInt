@@ -64,10 +64,17 @@ int main (int argc, char* argv[])
 
     BI::Interface::Initialize();
 
+    // Create a root container called Context too in BlendInt
+    Context* context = Manage(new Context);
+    BI::Instance::instance->SetCurrentContext(context);
+
     // Create a button
     Button* btn = BI::Manage(new Button);
     btn->SetText("Hello World!");
     btn->SetPosition(200, 200); 
+
+    // Add widgets to the context
+    context->Add(btn);
 
     // In the event-Render loop
     BI::Interface::instance->Draw();
@@ -103,7 +110,26 @@ The source code is verified to be built and workable on:
 
 ## Contributing
 
-## Running the Tests
+## Running the Demos or Tests
+
+To build and run the demos and unit tests, build source code with
+additional cmake options:
+
+```shell
+$ cmake <source dir> -DWITH_UNIT_TEST=TRUE -DWITH_GLFW3_DEMO=TRUE
+```
+
+To run glfw3 demo:
+
+```shell
+$ ./bin/glfw_demo
+```
+
+To run the unit tests:
+
+```shell
+$ ./bin/test<class name>
+```
 
 ## Credits
 

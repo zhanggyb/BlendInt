@@ -131,9 +131,67 @@ namespace BlendInt
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void Context::Draw ()
+	bool Context::Add (AbstractWidget* widget)
 	{
-		Draw (m_redraw_event);
+		return AddSubWidget(widget);
+	}
+
+	bool Context::Remove (AbstractWidget* widget)
+	{
+		return RemoveSubWidget(widget);
+	}
+
+	int Context::GetMaxLayer () const
+	{
+		map<int, ContextLayer>::const_reverse_iterator rit = m_layers.rbegin();
+
+		return rit->first;
+	}
+
+	void Context::RefreshLayer (int layer)
+	{
+		map<int, ContextLayer>::iterator layer_iter;
+
+		layer_iter = m_layers.find(layer);
+
+		if (layer_iter != m_layers.end()) {
+			m_layers[layer].refresh = true;
+			refresh_once = true;
+		}
+	}
+
+	void Context::SetFocusedWidget (AbstractWidget* widget)
+	{
+		if(m_focused_widget == widget) {
+			return;
+		}
+
+		if (m_focused_widget) {
+			m_focused_widget->m_flag.reset(
+			        AbstractWidget::WidgetFlagFocus);
+			m_focused_widget->FocusEvent(false);
+		}
+
+		m_focused_widget = widget;
+		if (m_focused_widget) {
+			m_focused_widget->m_flag.set(
+			        AbstractWidget::WidgetFlagFocus);
+			m_focused_widget->FocusEvent(true);
+		}
+	}
+
+	void Context::SetCursor (void* cursor)
+	{
+	}
+
+	void Context::ResetCursor ()
+	{
+
+	}
+
+	void* Context::GetCursor () const
+	{
+		return 0;
 	}
 
 	bool Context::Update (const UpdateRequest& request)
@@ -363,7 +421,6 @@ namespace BlendInt
 			if(focus_set_manually) {
 
 				if(original_focused) {
-					DBG_PRINT_MSG("original focused widget: %s", original_focused->name().c_str());
 					original_focused->m_flag.reset(
 							AbstractWidget::WidgetFlagFocus);
 					original_focused->FocusEvent(false);
@@ -561,6 +618,17 @@ namespace BlendInt
 		return true;
 	}
 
+	ResponseType Context::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	IteratorPtr Context::CreateIterator (const DeviceEvent& event)
+	{
+		IteratorPtr ret;
+		return ret;
+	}
+
 	void Context::InitOnce ()
 	{
 		m_program = ShaderManager::instance->default_context_program();
@@ -653,31 +721,6 @@ namespace BlendInt
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	IteratorPtr Context::CreateIterator (const DeviceEvent& event)
-	{
-		IteratorPtr ret;
-		return ret;
-	}
-
-	int Context::GetMaxLayer () const
-	{
-		map<int, ContextLayer>::const_reverse_iterator rit = m_layers.rbegin();
-
-		return rit->first;
-	}
-
-	void Context::RefreshLayer (int layer)
-	{
-		map<int, ContextLayer>::iterator layer_iter;
-
-		layer_iter = m_layers.find(layer);
-
-		if (layer_iter != m_layers.end()) {
-			m_layers[layer].refresh = true;
-			refresh_once = true;
-		}
-	}
-	
 	void Context::RenderLayer (const RedrawEvent& event,
 					int layer,
 					std::set<AbstractWidget*>* widgets,
@@ -958,16 +1001,6 @@ namespace BlendInt
 		}
 	}
 	
-	bool Context::Add (AbstractWidget* widget)
-	{
-		return AddSubWidget(widget);
-	}
-	
-	bool Context::Remove (AbstractWidget* widget)
-	{
-		return RemoveSubWidget(widget);
-	}
-	
 	void Context::BuildCursorHoverList (const MouseEvent& event, AbstractWidget* parent)
 	{
 		if (parent) {
@@ -1018,26 +1051,6 @@ namespace BlendInt
 			}
 		}
 	}
-	
-	void Context::SetFocusedWidget (AbstractWidget* widget)
-	{
-		if(m_focused_widget == widget) {
-			return;
-		}
-
-		if (m_focused_widget) {
-			m_focused_widget->m_flag.reset(
-			        AbstractWidget::WidgetFlagFocus);
-			m_focused_widget->FocusEvent(false);
-		}
-
-		m_focused_widget = widget;
-		if (m_focused_widget) {
-			m_focused_widget->m_flag.set(
-			        AbstractWidget::WidgetFlagFocus);
-			m_focused_widget->FocusEvent(true);
-		}
-	}
 
 	void Context::RemoveWidgetFromHoverList (AbstractWidget* widget)
 	{
@@ -1080,11 +1093,6 @@ namespace BlendInt
 	}
 
 #endif
-	
-	ResponseType Context::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
 
 	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{
