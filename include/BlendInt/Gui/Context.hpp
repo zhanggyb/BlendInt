@@ -94,8 +94,6 @@ namespace BlendInt {
 
 		void SetFocusedWidget (AbstractWidget* widget);
 
-		void RemoveWidgetFromHoverList (AbstractWidget* widget);
-
 #ifdef DEBUG
 		void PrintLayers ();
 #endif
@@ -131,6 +129,8 @@ namespace BlendInt {
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
 
 	private:
+
+		void RemoveWidgetFromHoverList (AbstractWidget* widget);
 
 		void InitOnce ();
 

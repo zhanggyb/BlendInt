@@ -183,16 +183,20 @@ namespace BlendInt {
 			if(m_menu->container()) {
 				context->Remove(m_menu.get());
 				SetRoundType(RoundAll);
+
+				Refresh();
+				return Accept;
 			} else {
 				int max_layer = context->GetMaxLayer();
 				m_menu->SetLayer(max_layer + 1);
 				m_menu->SetPosition(position().x(), position().y() + size().height());
 				context->Add(m_menu.get());
 				SetRoundType(RoundBottomLeft | RoundBottomRight);
-				//context->SetFocusedWidget(m_menu.get());	// FIXME: no use, context will reset to this combobox.
-			}
+				context->SetFocusedWidget(m_menu.get());
 
-			Refresh();
+				Refresh();
+				return Ignore;	// Return Ignore as the focused widget is the popup menu
+			}
 		}
 
 		return Accept;

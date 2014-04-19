@@ -32,9 +32,11 @@ TEST_F(MenuButtonTest1, Foo1)
     Interface::instance->SetCurrentContext(context);
 
     MenuButton* button = Manage(new MenuButton("File"));
+    button->set_name("MenuButton");
     button->SetPosition(200, 200);
 
     RefPtr<Menu> menu(new Menu);
+    menu->set_name("Menu");
 
     menu->SetRoundType(RoundTopLeft | RoundTopRight);
     //m_menu->SetPosition(200, 200);
@@ -42,11 +44,11 @@ TEST_F(MenuButtonTest1, Foo1)
 
     menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
     menu->AddActionItem("MenuItem2", "Ctrl + 1");
-		menu->AddActionItem("MenuItem3", "Ctrl + 1");
-		menu->AddActionItem("MenuItem4", "Ctrl + 1");
-		menu->AddActionItem("MenuItem5");
+    menu->AddActionItem("MenuItem3", "Ctrl + 1");
+    menu->AddActionItem("MenuItem4", "Ctrl + 1");
+    menu->AddActionItem("MenuItem5");
 
-		button->SetMenu(menu);
+    button->SetMenu(menu);
 
     context->Add(button);
 

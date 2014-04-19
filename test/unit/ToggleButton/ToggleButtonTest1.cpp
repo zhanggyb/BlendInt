@@ -30,10 +30,16 @@ TEST_F(ToggleButtonTest1, Foo1)
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 	
-    ToggleButton* btn = Manage(new ToggleButton);
-    btn->SetPosition(200, 200);
+    ToggleButton* btn1 = Manage(new ToggleButton);
+    btn1->set_name("ToggleButton");
+    btn1->SetPosition(160, 200);
 
-	context->Add(btn);
+    ToggleButton* btn2 = Manage(new ToggleButton);
+    btn2->set_name("ToggleButton");
+    btn2->SetPosition(300, 200);
+
+	context->Add(btn1);
+	context->Add(btn2);
 
     RunLoop(win);
 

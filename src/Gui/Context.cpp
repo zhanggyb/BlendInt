@@ -181,9 +181,7 @@ namespace BlendInt
 				case ContextRefresh: {
 
 					const AbstractWidget* widget_p = static_cast<const AbstractWidget*>(request.data());
-
-					DBG_PRINT_MSG("widget %s call refresh: %d", widget_p->name().c_str(), widget_p->z());
-
+					// DBG_PRINT_MSG("widget %s call refresh: %d", widget_p->name().c_str(), widget_p->z());
 					RefreshLayer(widget_p->z());
 
 					return true;
@@ -333,27 +331,51 @@ namespace BlendInt
 
 	ResponseType Context::MousePressEvent (const MouseEvent& event)
 	{
-		ResponseType response;
-		bool focus_set = false;
-
 		if(m_hover_deque->size() == 0) {
 			SetFocusedWidget(0);
 		} else {
+			ResponseType response;
+			AbstractWidget* original_focused = m_focused_widget;
+			AbstractWidget* widget_pressed = 0;
+			bool focus_set_manually = false;
+
+			m_focused_widget = 0;
 			for (std::deque<AbstractWidget*>::reverse_iterator it =
 							m_hover_deque->rbegin();
 							it != m_hover_deque->rend(); it++) {
-				response = (*it)->MousePressEvent(event);
-				//DBG_PRINT_MSG("mouse press: %s", (*it)->name().c_str());
 
-				if ((!focus_set) && (response == Accept)) {
-					SetFocusedWidget(*it);
-					focus_set = true;
+				response = (*it)->MousePressEvent(event);
+
+				if(m_focused_widget && (original_focused != m_focused_widget)) {
+					focus_set_manually = true;
 				}
 
-				if (response == AcceptAndBreak) {
+				if ( response == Accept || response == AcceptAndBreak) {
+					widget_pressed = *it;
 					break;
 				}
+
+				if (response == AcceptAndContinue) {
+					widget_pressed = *it;
+				}
 			}
+
+			if(focus_set_manually) {
+
+				if(original_focused) {
+					DBG_PRINT_MSG("original focused widget: %s", original_focused->name().c_str());
+					original_focused->m_flag.reset(
+							AbstractWidget::WidgetFlagFocus);
+					original_focused->FocusEvent(false);
+				}
+
+			} else {
+
+				m_focused_widget = original_focused;
+				SetFocusedWidget(widget_pressed);
+
+			}
+
 		}
 
 		return Accept;
