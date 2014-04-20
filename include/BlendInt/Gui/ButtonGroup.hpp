@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_GUI_BUTTONGROUP_HPP_
 #define _BLENDINT_GUI_BUTTONGROUP_HPP_
 
+#include <vector>
 #include <boost/smart_ptr.hpp>
 
 #include <Cpp/Events.hpp>
@@ -69,7 +70,7 @@ namespace BlendInt {
 
 		size_t size () const {return m_group.size();}
 
-		std::deque<AbstractButton*>* deque ()
+		std::vector<AbstractButton*>* buttons ()
 		{
 			return &m_group;
 		}
@@ -82,7 +83,7 @@ namespace BlendInt {
 
 		void OnButtonDestroyed (AbstractWidget* button);
 
-		std::deque<AbstractButton*> m_group;
+		std::vector<AbstractButton*> m_group;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 

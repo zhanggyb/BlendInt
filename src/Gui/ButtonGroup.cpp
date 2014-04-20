@@ -41,7 +41,7 @@ namespace BlendInt {
 	{
 		if(!button) return;
 
-		std::deque<AbstractButton*>::iterator it = std::find(m_group.begin(), m_group.end(), button);
+		std::vector<AbstractButton*>::iterator it = std::find(m_group.begin(), m_group.end(), button);
 		if(it != m_group.end()) {
 			DBG_PRINT_MSG("Button %s already in button group.", button->name().c_str());
 			return;
@@ -58,7 +58,7 @@ namespace BlendInt {
 	{
 		if(!button) return;
 
-		std::deque<AbstractButton*>::iterator it = std::find(m_group.begin(), m_group.end(), button);
+		std::vector<AbstractButton*>::iterator it = std::find(m_group.begin(), m_group.end(), button);
 		if(it == m_group.end()) {
 			DBG_PRINT_MSG("Button %s is not in button group.", button->name().c_str());
 			return;
@@ -79,7 +79,7 @@ namespace BlendInt {
 		}
 
 		int i = 0;
-		for(std::deque<AbstractButton*>::iterator it = m_group.begin(); it != m_group.end(); it++)
+		for(std::vector<AbstractButton*>::iterator it = m_group.begin(); it != m_group.end(); it++)
 		{
 			m_last_active = *it;
 			if(m_last_active->pressed()) {
@@ -99,7 +99,7 @@ namespace BlendInt {
 		}
 
 		int i = 0;
-		for(std::deque<AbstractButton*>::iterator it = m_group.begin(); it != m_group.end(); it++)
+		for(std::vector<AbstractButton*>::iterator it = m_group.begin(); it != m_group.end(); it++)
 		{
 			m_last_active = *it;
 			if(m_last_active->pressed()) {

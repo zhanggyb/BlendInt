@@ -283,7 +283,7 @@ namespace BlendInt {
 		unsigned int h = size().height() - margin().top() - margin().bottom();
 
 		unsigned int temp = 0;
-		for(std::deque<AbstractButton*>::iterator it = m_group.deque()->begin(); it != m_group.deque()->end(); it++)
+		for(std::vector<AbstractButton*>::iterator it = m_group.buttons()->begin(); it != m_group.buttons()->end(); it++)
 		{
 			SetSubWidgetPosition((*it), x + temp, btn_y);
 			ResizeSubWidget((*it), (*it)->size().width(), m_title_height);
