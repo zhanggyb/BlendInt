@@ -286,6 +286,7 @@ namespace BlendInt {
 			original_active->SetRoundType(RoundAll);
 
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
+			menu->property_changed().disconnectAll();
 		}
 
 		if(m_active_button) {
@@ -308,6 +309,7 @@ namespace BlendInt {
 			context->SetFocusedWidget(menu.get());
 
 			events()->connect(menu->triggered(), this, &MenuBar::OnMenuItemTriggered);
+			events()->connect(menu->property_changed(), this, &MenuBar::OnMenuHide);
 		}
 	}
 
@@ -317,15 +319,39 @@ namespace BlendInt {
 
 		if(m_active_button) {
 			if(RefPtr<Menu> menu = m_active_button->menu()) {
+				menu->property_changed().disconnectOne(this, &MenuBar::OnMenuHide);
+				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
+
 				Context* context = GetContext();
 				context->Remove(menu.get());
 				m_active_button->SetRoundType(RoundAll);
-
-				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 			}
 
 			m_active_button = 0;
 		}
+	}
+
+	void MenuBar::OnMenuHide(AbstractWidget* widget, int type)
+	{
+		DBG_PRINT_MSG("%s", "hello");
+		Menu* menu = dynamic_cast<Menu*>(widget);
+		if(menu) {
+			menu->property_changed().disconnectOne(this, &MenuBar::OnMenuHide);
+			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
+
+			DBG_PRINT_MSG("menu at layer: %d", menu->z());
+
+			if(type == WidgetVisibility) {
+				Context* context = GetContext();
+				context->Remove(menu);
+			}
+		}
+
+		if(m_active_button) {
+			m_active_button->SetRoundType(RoundAll);
+			m_active_button = 0;
+		}
+
 	}
 
 	int MenuBar::GetLastPosition ()

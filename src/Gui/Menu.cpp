@@ -51,6 +51,8 @@ namespace BlendInt {
 		set_size (20, 20);
 		set_preferred_size(20, 20);
 
+		activate_events();
+
 		InitOnce();
 	}
 
@@ -299,6 +301,14 @@ namespace BlendInt {
 	ResponseType Menu::FocusEvent (bool focus)
 	{
 		DBG_PRINT_MSG("focus %s", focus ? "on" : "off");
+
+		if(focus) {
+			SetVisible(true);
+		} else {
+			SetVisible(false);
+		}
+
+		Refresh();
 
 		return Ignore;
 	}

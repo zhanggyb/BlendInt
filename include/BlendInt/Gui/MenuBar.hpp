@@ -82,6 +82,8 @@ namespace BlendInt {
 
 		void OnMenuItemTriggered (ActionItem* item);
 
+		void OnMenuHide (AbstractWidget* widget, int type);
+
 		void InitOnce ();
 
 		int GetLastPosition ();

@@ -569,8 +569,8 @@ namespace BlendInt
 			RemoveWidgetFromHoverList(this);
 		}
 
-		if(widget == m_focused_widget) {
-			SetFocusedWidget(0);
+		if(widget->focused() && widget == m_focused_widget) {
+			m_focused_widget = 0;
 		}
 
 		map<AbstractWidget*, int>::iterator index_iter;
@@ -1095,59 +1095,7 @@ namespace BlendInt
 
 	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{
-		if(!widget) return;
-		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the context manager", widget->name().c_str());
-
-		assert(widget->container() == this);
-
-		widget->destroyed().disconnectOne(this,
-				&Context::OnSubWidgetDestroyed);
-
-		if(widget->hover()) {
-			RemoveWidgetFromHoverList(this);
-		}
-
-		if(widget->focused() && widget == m_focused_widget) {
-			m_focused_widget = 0;
-		}
-
-		map<AbstractWidget*, int>::iterator index_iter;
-
-		index_iter = m_index.find(widget);
-
-		if (index_iter != m_index.end()) {
-
-			int z = index_iter->second;
-
-			std::set<AbstractWidget*>* widget_set_p = m_layers[z].widgets;
-			std::set<AbstractWidget*>::iterator widget_iter = widget_set_p->find(widget);
-			if (widget_iter != widget_set_p->end()) {
-				widget_set_p->erase(widget_iter);
-			} else {
-				DBG_PRINT_MSG("Error: object %s is not recorded in set",
-						widget->name().c_str());
-			}
-
-			if (widget_set_p->empty()) {
-				DBG_PRINT_MSG("layer %d is empty, delete it", z);
-				delete m_layers[z].widgets;
-				m_layers[z].widgets = 0;
-
-				if(m_layers[z].buffer) {
-					m_layers[z].buffer->Clear();
-					delete m_layers[z].buffer;
-					m_layers[z].buffer = 0;
-				}
-				m_layers.erase(z);
-			}
-
-			m_index.erase(widget);
-			SetContainer(widget, 0);
-
-		} else {
-			DBG_PRINT_MSG("Error: object %s is not recorded in map",
-					widget->name().c_str());
-		}
+		RemoveSubWidget(widget);
 	}
 
 }
