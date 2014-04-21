@@ -165,6 +165,8 @@ namespace BlendInt {
 		}
 
 		Refresh();
+
+		m_pressed.fire();
 		return Accept;
 	}
 
@@ -182,9 +184,6 @@ namespace BlendInt {
 			}
 		}
 
-		m_status.reset(ButtonPressed);
-		m_status.reset(ButtonDown);
-
 		Refresh();
 
 		switch (fire_event) {
@@ -193,13 +192,11 @@ namespace BlendInt {
 				break;
 
 			case 1:
-				DBG_PRINT_MSG("%s", "fire clicked event");
 				m_clicked.fire();
 				break;
 
 			case 2: {
 				if(m_status[ButtonChecked] != m_status[ButtonCheckedOrigin]) {
-					DBG_PRINT_MSG("file toggle event: %s", m_status[ButtonChecked] ? "on" : "off");
 					m_toggled.fire(m_status[ButtonChecked]);
 				}
 				break;
@@ -208,6 +205,11 @@ namespace BlendInt {
 			default:
 				break;
 		}
+
+		m_status.reset(ButtonPressed);
+		m_status.reset(ButtonDown);
+
+		m_released.fire();
 
 		return Accept;
 	}

@@ -78,7 +78,9 @@ namespace BlendInt {
 
 	private:
 
-		void OnClicked ();
+		void OnMenuButtonClicked ();
+
+		void OnMenuItemTriggered (ActionItem* item);
 
 		void InitOnce ();
 
@@ -87,6 +89,8 @@ namespace BlendInt {
 		GLuint m_vao;
 
 		int m_space;
+
+		MenuButton* m_active_button;
 
 		RefPtr<GLArrayBuffer> m_buffer;
 

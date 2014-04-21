@@ -148,51 +148,6 @@ namespace BlendInt {
 
 		return Accept;
 	}
-	
-	ResponseType MenuButton::CursorEnterEvent (bool entered)
-	{
-		Refresh();
-		return Accept;
-	}
-
-	ResponseType MenuButton::MousePressEvent (const MouseEvent& event)
-	{
-		Context* context = GetContext();
-		if(context && m_menu) {
-			if(m_menu->container()) {
-				context->Remove(m_menu.get());
-				SetRoundType(RoundAll);
-
-				Refresh();
-				return Accept;
-			} else {
-				int max_layer = context->GetMaxLayer();
-				m_menu->SetLayer(max_layer + 1);	// show menu in the top layer
-
-				int y = position().y();
-				y = y - m_menu->size().height();
-
-				if(y < 0) {
-					y = 0;
-				}
-
-				m_menu->SetPosition(position().x(), y);
-				context->Add(m_menu.get());
-				SetRoundType(RoundTopLeft | RoundTopRight);
-				context->SetFocusedWidget(m_menu.get());
-
-				Refresh();
-				return Ignore;	// Return Ignore as the focused widget is the popup menu
-			}
-		}
-
-		return Accept;
-	}
-
-	ResponseType MenuButton::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
 
 	void MenuButton::SetMenu (const RefPtr<Menu>& menu)
 	{

@@ -168,6 +168,16 @@ namespace BlendInt {
 		Rect m_text_outline;
 
 		/**
+		 * @brief press event
+		 */
+		Cpp::Event<> m_pressed;
+
+		/**
+		 * @brief release event
+		 */
+		Cpp::Event<> m_released;
+
+		/**
 		 * @brief click event
 		 *
 		 * Mouse press and release in the button causes a clicked event.

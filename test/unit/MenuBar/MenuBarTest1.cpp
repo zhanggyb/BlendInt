@@ -69,7 +69,6 @@ TEST_F(MenuBarTest1, Foo1)
     menu3->AddActionItem("MenuItem3", "Ctrl + 1");
     menu3->AddActionItem("MenuItem4", "Ctrl + 1");
 
-
     menubar->AddMenuButton("File", menu1);
     menubar->AddMenuButton("Edit", menu2);
     menubar->AddMenuButton("Help", menu3);

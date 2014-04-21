@@ -45,17 +45,13 @@ namespace BlendInt {
 
 		void SetMenu (const RefPtr<Menu>& menu);
 
+		RefPtr<Menu> menu () const {return m_menu;}
+
 	protected:
 
 		virtual bool Update (const UpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 	private:
 

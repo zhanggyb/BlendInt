@@ -35,6 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/MenuBar.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
@@ -42,7 +43,7 @@
 namespace BlendInt {
 
 	MenuBar::MenuBar ()
-	: AbstractDequeContainer(), m_vao(0), m_space(2)
+	: AbstractDequeContainer(), m_vao(0), m_space(2), m_active_button(0)
 	{
 		set_expand_x(true);
 		set_expand_y(false);
@@ -185,7 +186,7 @@ namespace BlendInt {
 
 		if(AppendSubWidget(button)) {
 			SetSubWidgetPosition(button, x, position().y() + margin().bottom());
-			events()->connect(button->clicked(), this, &MenuBar::OnClicked);
+			events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 		}
 	}
 
@@ -198,13 +199,16 @@ namespace BlendInt {
 		if(AppendSubWidget(button)) {
 			button->SetMenu(menu);
 			SetSubWidgetPosition(button, x, position().y() + margin().bottom());
-			events()->connect(button->clicked(), this, &MenuBar::OnClicked);
+			events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 		}
 	}
 
 	void MenuBar::AddMenuButton (const String& text, const RefPtr<Menu>& menu)
 	{
 		MenuButton* button = Manage (new MenuButton(text));
+#ifdef DEBUG
+		button->set_name(ConvertFromString(text));
+#endif
 		button->SetMenu(menu);
 
 		int x = GetLastPosition();
@@ -212,7 +216,7 @@ namespace BlendInt {
 		AppendSubWidget(button);
 		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
 
-		events()->connect(button->clicked(), this, &MenuBar::OnClicked);
+		events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 	}
 
 	void MenuBar::SetMenu (size_t index, const RefPtr<Menu>& menu)
@@ -261,9 +265,67 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
-	void MenuBar::OnClicked ()
+	void MenuBar::OnMenuButtonClicked ()
 	{
-		DBG_PRINT_MSG("%s", "button clicked");
+		MenuButton* original_active = m_active_button;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			MenuButton* menubutton = dynamic_cast<MenuButton*>(*it);
+			if(menubutton) {
+				if(menubutton->focused()) {
+					m_active_button = menubutton;
+				}
+			}
+		}
+
+		if(original_active) {	// If menu shows in context
+			RefPtr<Menu> menu = original_active->menu();
+			Context* context = GetContext();
+			context->Remove(menu.get());
+			original_active->SetRoundType(RoundAll);
+
+			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
+		}
+
+		if(m_active_button) {
+			Context* context = GetContext();
+
+			int max_layer = context->GetMaxLayer();
+			RefPtr<Menu> menu = m_active_button->menu();
+			menu->SetLayer(max_layer + 1);	// show menu in the top layer
+
+			int y = m_active_button->position().y();
+			y = y - menu->size().height();
+
+			if(y < 0) {
+				y = 0;
+			}
+
+			menu->SetPosition(m_active_button->position().x(), y);
+			context->Add(menu.get());
+			m_active_button->SetRoundType(RoundTopLeft | RoundTopRight);
+			context->SetFocusedWidget(menu.get());
+
+			events()->connect(menu->triggered(), this, &MenuBar::OnMenuItemTriggered);
+		}
+	}
+
+	void MenuBar::OnMenuItemTriggered(ActionItem* item)
+	{
+		DBG_PRINT_MSG("menu item clicked: %s", ConvertFromString(item->text()).c_str());
+
+		if(m_active_button) {
+			if(RefPtr<Menu> menu = m_active_button->menu()) {
+				Context* context = GetContext();
+				context->Remove(menu.get());
+				m_active_button->SetRoundType(RoundAll);
+
+				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
+			}
+
+			m_active_button = 0;
+		}
 	}
 
 	int MenuBar::GetLastPosition ()

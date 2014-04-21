@@ -82,7 +82,7 @@ namespace BlendInt {
 		for(std::vector<AbstractButton*>::iterator it = m_group.begin(); it != m_group.end(); it++)
 		{
 			m_last_active = *it;
-			if(m_last_active->pressed()) {
+			if(m_last_active->focused()) {
 				break;
 			}
 			i++;
@@ -94,6 +94,8 @@ namespace BlendInt {
 	
 	void ButtonGroup::OnButtonToggled (bool toggled)
 	{
+		AbstractButton* original_active_button = m_last_active;
+
 		if(m_mode == SingleSelection && m_last_active) {
 			m_last_active->set_checked(false);
 		}
@@ -102,7 +104,7 @@ namespace BlendInt {
 		for(std::vector<AbstractButton*>::iterator it = m_group.begin(); it != m_group.end(); it++)
 		{
 			m_last_active = *it;
-			if(m_last_active->pressed()) {
+			if(m_last_active->focused()) {
 				break;
 			}
 			i++;
@@ -115,7 +117,7 @@ namespace BlendInt {
 			m_last_active->set_checked(toggled);
 		}
 
-		DBG_PRINT_MSG("Button %s toggled: %d", m_last_active->name().c_str(), toggled? 1 : 0);
+		if(original_active_button == m_last_active) return;	// Do not fire events repeatedly
 
 		m_button_toggled.fire(m_last_active, toggled);
 		m_button_index_toggled.fire(i, toggled);
