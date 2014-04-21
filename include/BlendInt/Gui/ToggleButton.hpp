@@ -25,8 +25,7 @@
 #define _BLENDINT_CHECKBUTTON_HPP_
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Gui/AbstractButton.hpp>
-#include <BlendInt/Gui/RoundShapeBase.hpp>
+#include <BlendInt/Gui/AbstractRoundButton.hpp>
 
 namespace BlendInt {
 
@@ -37,7 +36,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class ToggleButton: public AbstractButton, public RoundShapeBase
+	class ToggleButton: public AbstractRoundButton
 	{
 		DISALLOW_COPY_AND_ASSIGN(ToggleButton);
 
@@ -48,21 +47,6 @@ namespace BlendInt {
 		ToggleButton (const String& text);
 
 		virtual ~ToggleButton ();
-
-		/**
-		 * @brief set round type
-		 * @param type
-		 *
-		 * Hide the same function in RoundBoxBase to call Update
-		 */
-		void SetRoundType (int type);
-
-		/**
-		 * @brief set round radius
-		 * @param radius
-		 * Hide the same function in RoundBoxBase to call Update
-		 */
-		void SetRadius (float radius);
 
 	protected:
 

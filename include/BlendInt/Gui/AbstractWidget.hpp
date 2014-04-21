@@ -358,7 +358,7 @@ namespace BlendInt {
 
 	private:
 
-		enum WidgetFlagIndexExt {
+		enum WidgetFlagIndex {
 			WidgetFlagLockGeometry = 0,
 			WidgetFlagFireEvents,
 			WidgetFlagFocus,

@@ -39,10 +39,6 @@ namespace BlendInt {
 
 	AbstractButton::AbstractButton () :
 			Widget(),
-			m_status_down(false),
-			m_checkable(false),
-			m_status_checked(false),
-			m_pressed(false),
 			m_text_length(0)
 	{
 	}
@@ -130,20 +126,42 @@ namespace BlendInt {
 
 	ResponseType AbstractButton::CursorEnterEvent(bool entered)
 	{
-		Refresh();
+		if(entered) {
+
+			if(m_status[ButtonPressed]) {
+				m_status[ButtonDown] = 1;
+
+				if(m_status[ButtonCheckable]) {
+					m_status[ButtonChecked] = !m_status[ButtonChecked];
+				}
+			}
+
+			Refresh();
+		} else {
+
+			if(m_status[ButtonPressed]) {
+				m_status[ButtonDown] = 0;
+
+				if(m_status[ButtonCheckable]) {
+					m_status[ButtonChecked] = !m_status[ButtonChecked];
+				}
+
+			}
+
+			Refresh();
+		}
+
 		return Accept;
 	}
 
 	ResponseType AbstractButton::MousePressEvent (const MouseEvent& event)
 	{
-		m_pressed = true;
+		m_status.set(ButtonPressed);
+		m_status.set(ButtonDown);
 
-		if (m_checkable) {
-			m_status_checked = !m_status_checked;
-			m_toggled.fire(m_status_checked);
-		} else {
-			m_status_down = true;
-			m_clicked.fire();
+		if(m_status[ButtonCheckable]) {
+			m_status[ButtonCheckedOrigin] = m_status[ButtonChecked];
+			m_status[ButtonChecked] = !m_status[ButtonChecked];
 		}
 
 		Refresh();
@@ -152,11 +170,44 @@ namespace BlendInt {
 
 	ResponseType AbstractButton::MouseReleaseEvent(const MouseEvent& event)
 	{
-		m_pressed = false;
+		int fire_event = 0;	// 0: no event, 1: click event, 2: toggled event
 
-		m_status_down = false;
+		if(m_status[ButtonCheckable]) {
+			if(m_status[ButtonPressed]) {
+				fire_event = 2;
+			}
+		} else {
+			if(m_status[ButtonPressed] && m_status[ButtonDown]) {
+				fire_event = 1;
+			}
+		}
+
+		m_status.reset(ButtonPressed);
+		m_status.reset(ButtonDown);
 
 		Refresh();
+
+		switch (fire_event) {
+
+			case 0:
+				break;
+
+			case 1:
+				DBG_PRINT_MSG("%s", "fire clicked event");
+				m_clicked.fire();
+				break;
+
+			case 2: {
+				if(m_status[ButtonChecked] != m_status[ButtonCheckedOrigin]) {
+					DBG_PRINT_MSG("file toggle event: %s", m_status[ButtonChecked] ? "on" : "off");
+					m_toggled.fire(m_status[ButtonChecked]);
+				}
+				break;
+			}
+
+			default:
+				break;
+		}
 
 		return Accept;
 	}
@@ -164,7 +215,7 @@ namespace BlendInt {
 	ResponseType AbstractButton::MouseMoveEvent (const MouseEvent& event)
 	{
 		/*
-		if (m_status_down) {
+		if (m_status[ButtonDown]) {
 			event->accept(this);
 			return;
 		}
@@ -174,40 +225,40 @@ namespace BlendInt {
 	
 	void AbstractButton::SetDown (bool down)
 	{
-		if(m_checkable) {
-			if(m_status_checked != down)
+		if(m_status[ButtonCheckable]) {
+			if(m_status[ButtonChecked] != down)
 				Refresh();
 
-			m_status_checked = down;
+			m_status[ButtonChecked] = down ? 1 : 0;
 		} else {
 
-			if(m_status_down != down)
+			if(m_status[ButtonDown] != down)
 				Refresh();
 
-			m_status_down = down;
+			m_status[ButtonDown] = down ? 1 : 0;
 		}
 	}
 
 	void AbstractButton::SetCheckable (bool checkable)
 	{
 		if(!checkable) {
-			m_status_checked = false;
+			m_status[ButtonChecked] = false;
 		}
 
-		m_checkable = checkable;
+		m_status[ButtonCheckable] = checkable ? 1 : 0;
 	}
 
 	void AbstractButton::SetChecked (bool checked)
 	{
-		if(m_checkable) {
+		if(m_status[ButtonCheckable]) {
 
-			if(m_status_checked == checked)
+			if(m_status[ButtonChecked] == checked)
 				return;
 
-			m_status_checked = checked;
+			m_status[ButtonChecked] = checked ? 1 : 0;
 			Refresh();
 
-			m_toggled.fire(m_status_checked);
+			m_toggled.fire(m_status[ButtonChecked]);
 		}
 	}
 

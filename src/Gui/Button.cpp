@@ -41,13 +41,13 @@
 namespace BlendInt {
 
 	Button::Button ()
-		: AbstractButton(), RoundShapeBase(), m_vao(0)
+		: AbstractRoundButton(), m_vao(0)
 	{
 		InitOnce();
 	}
 
 	Button::Button (const String& text)
-		: AbstractButton(), RoundShapeBase()
+		: AbstractRoundButton(), m_vao(0)
 	{
 		InitOnce(text);
 	}
@@ -55,27 +55,6 @@ namespace BlendInt {
 	Button::~Button ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
-	}
-
-	void Button::SetRoundType(int type)
-	{
-		if(round_type() == type) return;
-
-		if(Update(UpdateRequest(Predefined, FormRoundType, &type))) {
-			set_round_type(type);
-			fire_property_changed_event(FormRoundType);
-		}
-
-	}
-
-	void Button::SetRadius(float rad)
-	{
-		if(radius() == rad) return;
-
-		if(Update(UpdateRequest(Predefined, FormRoundRadius, &rad))) {
-			set_radius(rad);
-			fire_property_changed_event(FormRoundRadius);
-		}
 	}
 
 	bool Button::Update(const UpdateRequest& request)

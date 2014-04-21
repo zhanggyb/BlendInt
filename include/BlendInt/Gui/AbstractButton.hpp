@@ -60,11 +60,11 @@ namespace BlendInt {
 
 		void SetChecked (bool checked);
 
-		bool down () const {return m_status_down;}
+		bool down () const {return m_status[ButtonDown];}
 
-		bool checked () const {return m_status_checked;}
+		bool checked () const {return m_status[ButtonChecked];}
 
-		bool checkable () const {return m_checkable;}
+		bool checkable () const {return m_status[ButtonCheckable];}
 
 		const String& text () const {return m_text;}
 
@@ -74,7 +74,7 @@ namespace BlendInt {
 
 		Cpp::EventRef<bool> toggled() {return m_toggled;}
 
-		bool pressed () const {return m_pressed;}
+		bool pressed () const {return m_status[ButtonPressed];}
 
 	protected:
 
@@ -88,17 +88,17 @@ namespace BlendInt {
 
 		void set_down (bool down)
 		{
-			m_status_down = down;
+			m_status[ButtonDown] = down ? 1 : 0;
 		}
 
 		void set_checkable (bool checkable)
 		{
-			m_checkable = checkable;
+			m_status[ButtonCheckable] = checkable ? 1 : 0;
 		}
 
 		void set_checked (bool checked)
 		{
-			m_status_checked = checked;
+			m_status[ButtonChecked] = checked ? 1 : 0;
 		}
 
 		inline void set_text (const String& text)
@@ -143,13 +143,15 @@ namespace BlendInt {
 
 	private:
 
-		bool m_status_down;
+		enum ButtonStatusIndex {
+			ButtonPressed = 0,
+			ButtonDown,
+			ButtonCheckable,
+			ButtonChecked,
+			ButtonCheckedOrigin
+		};
 
-		bool m_checkable;
-		
-		bool m_status_checked;
-
-		bool m_pressed;
+		std::bitset<8> m_status;
 
 		size_t m_text_length;	// How many text to be printed, depends on the button size
 
@@ -165,6 +167,11 @@ namespace BlendInt {
 		 */
 		Rect m_text_outline;
 
+		/**
+		 * @brief click event
+		 *
+		 * Mouse press and release in the button causes a clicked event.
+		 */
 		Cpp::Event<> m_clicked;
 
 		Cpp::Event<bool> m_toggled;

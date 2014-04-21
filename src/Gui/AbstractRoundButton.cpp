@@ -21,53 +21,37 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_MENUBUTTON_HPP_
-#define _BLENDINT_GUI_MENUBUTTON_HPP_
-
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-
 #include <BlendInt/Gui/AbstractRoundButton.hpp>
-
-#include <BlendInt/Gui/Menu.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief A special button used in MenuBar only
-	 */
-	class MenuButton: public AbstractRoundButton
+	AbstractRoundButton::AbstractRoundButton ()
+	: AbstractButton()
 	{
-	public:
+	}
 
-		MenuButton (const String& text);
+	AbstractRoundButton::~AbstractRoundButton ()
+	{
+	}
 
-		virtual ~MenuButton ();
+	void AbstractRoundButton::SetRoundType (int type)
+	{
+		if(round_type() == type) return;
 
-		void SetMenu (const RefPtr<Menu>& menu);
+		if(Update(UpdateRequest(Predefined, FormRoundType, &type))) {
+			set_round_type(type);
+			fire_property_changed_event(FormRoundType);
+		}
+	}
 
-	protected:
+	void AbstractRoundButton::SetRadius (float rad)
+	{
+		if(radius() == rad) return;
 
-		virtual bool Update (const UpdateRequest& request);
+		if(Update(UpdateRequest(Predefined, FormRoundRadius, &rad))) {
+			set_radius(rad);
+			fire_property_changed_event(FormRoundRadius);
+		}
+	}
 
-		virtual ResponseType Draw (const RedrawEvent& event);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-	private:
-
-		void InitOnce (const String& text);
-
-		GLuint m_vao;
-
-		RefPtr<GLArrayBuffer> m_inner;
-
-		RefPtr<Menu> m_menu;
-	};
-
-} /* namespace BlendInt */
-
-#endif /* _BLENDINT_GUI_MENUBUTTON_HPP_ */
+}

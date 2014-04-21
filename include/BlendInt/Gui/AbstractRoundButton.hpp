@@ -21,53 +21,47 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_MENUBUTTON_HPP_
-#define _BLENDINT_GUI_MENUBUTTON_HPP_
+#ifndef _BLENDINT_GUI_ABSTRACTROUNDBUTTON_HPP_
+#define _BLENDINT_GUI_ABSTRACTROUNDBUTTON_HPP_
 
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-
-#include <BlendInt/Gui/AbstractRoundButton.hpp>
-
-#include <BlendInt/Gui/Menu.hpp>
+#include <BlendInt/Gui/AbstractButton.hpp>
+#include <BlendInt/Gui/RoundShapeBase.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief A special button used in MenuBar only
+	 * @brief The most common button class
+	 *
+	 * @ingroup widgets
 	 */
-	class MenuButton: public AbstractRoundButton
+	class AbstractRoundButton: public AbstractButton, public RoundShapeBase
 	{
+		DISALLOW_COPY_AND_ASSIGN(AbstractRoundButton);
+
 	public:
 
-		MenuButton (const String& text);
+		AbstractRoundButton ();
 
-		virtual ~MenuButton ();
+		virtual ~AbstractRoundButton ();
 
-		void SetMenu (const RefPtr<Menu>& menu);
+		/**
+		 * @brief set round type
+		 * @param type
+		 *
+		 * Hide the same function in RoundBoxBase to call Update
+		 */
+		void SetRoundType (int type);
 
-	protected:
-
-		virtual bool Update (const UpdateRequest& request);
-
-		virtual ResponseType Draw (const RedrawEvent& event);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-	private:
-
-		void InitOnce (const String& text);
-
-		GLuint m_vao;
-
-		RefPtr<GLArrayBuffer> m_inner;
-
-		RefPtr<Menu> m_menu;
+		/**
+		 * @brief set round radius
+		 * @param radius
+		 * Hide the same function in RoundBoxBase to call Update
+		 */
+		void SetRadius (float radius);
 	};
 
-} /* namespace BlendInt */
+}
 
-#endif /* _BLENDINT_GUI_MENUBUTTON_HPP_ */
+
+
+#endif /* _BLENDINT_GUI_ABSTRACTROUNDBUTTON_HPP_ */

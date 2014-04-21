@@ -26,9 +26,8 @@
 
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Gui/AbstractButton.hpp>
+#include <BlendInt/Gui/AbstractRoundButton.hpp>
 #include <BlendInt/Gui/RoundShapeBase.hpp>
-
 
 namespace BlendInt {
 
@@ -37,7 +36,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Button: public AbstractButton, public RoundShapeBase
+	class Button: public AbstractRoundButton
 	{
 		DISALLOW_COPY_AND_ASSIGN(Button);
 
@@ -47,24 +46,7 @@ namespace BlendInt {
 
 		Button (const String& text);
 
-		// Button (const Icon& icon, const wstring& text, Widget* parent = NULL);
-
 		virtual ~Button ();
-
-		/**
-		 * @brief set round type
-		 * @param type
-		 *
-		 * Hide the same function in RoundBoxBase to call Update
-		 */
-		void SetRoundType (int type);
-
-		/**
-		 * @brief set round radius
-		 * @param radius
-		 * Hide the same function in RoundBoxBase to call Update
-		 */
-		void SetRadius (float radius);
 
 	protected:
 
