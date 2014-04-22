@@ -156,62 +156,71 @@ namespace BlendInt {
 
 	ResponseType AbstractButton::MousePressEvent (const MouseEvent& event)
 	{
-		m_status.set(ButtonPressed);
-		m_status.set(ButtonDown);
+		if (event.button() == MouseButtonLeft) {
+			m_status.set(ButtonPressed);
+			m_status.set(ButtonDown);
 
-		if(m_status[ButtonCheckable]) {
-			m_status[ButtonCheckedOrigin] = m_status[ButtonChecked];
-			m_status[ButtonChecked] = !m_status[ButtonChecked];
+			if (m_status[ButtonCheckable]) {
+				m_status[ButtonCheckedOrigin] = m_status[ButtonChecked];
+				m_status[ButtonChecked] = !m_status[ButtonChecked];
+			}
+
+			Refresh();
+
+			m_pressed.fire();
+			return Accept;
 		}
 
-		Refresh();
-
-		m_pressed.fire();
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType AbstractButton::MouseReleaseEvent(const MouseEvent& event)
 	{
-		int fire_event = 0;	// 0: no event, 1: click event, 2: toggled event
+		if (event.button() == MouseButtonLeft) {
+			int fire_event = 0;	// 0: no event, 1: click event, 2: toggled event
 
-		if(m_status[ButtonCheckable]) {
-			if(m_status[ButtonPressed]) {
-				fire_event = 2;
-			}
-		} else {
-			if(m_status[ButtonPressed] && m_status[ButtonDown]) {
-				fire_event = 1;
-			}
-		}
-
-		Refresh();
-
-		switch (fire_event) {
-
-			case 0:
-				break;
-
-			case 1:
-				m_clicked.fire();
-				break;
-
-			case 2: {
-				if(m_status[ButtonChecked] != m_status[ButtonCheckedOrigin]) {
-					m_toggled.fire(m_status[ButtonChecked]);
+			if (m_status[ButtonCheckable]) {
+				if (m_status[ButtonPressed]) {
+					fire_event = 2;
 				}
-				break;
+			} else {
+				if (m_status[ButtonPressed] && m_status[ButtonDown]) {
+					fire_event = 1;
+				}
 			}
 
-			default:
-				break;
+			Refresh();
+
+			switch (fire_event) {
+
+				case 0:
+					break;
+
+				case 1:
+					m_clicked.fire();
+					break;
+
+				case 2: {
+					if (m_status[ButtonChecked]
+									!= m_status[ButtonCheckedOrigin]) {
+						m_toggled.fire(m_status[ButtonChecked]);
+					}
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			m_status.reset(ButtonPressed);
+			m_status.reset(ButtonDown);
+
+			m_released.fire();
+
+			return Accept;
 		}
 
-		m_status.reset(ButtonPressed);
-		m_status.reset(ButtonDown);
-
-		m_released.fire();
-
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType AbstractButton::MouseMoveEvent (const MouseEvent& event)

@@ -25,7 +25,6 @@
 #include <BlendInt/Gui/ScrollBar.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
 #include <BlendInt/Gui/ScrollView.hpp>
-#include <BlendInt/Gui/PopupFrame.hpp>
 #include <BlendInt/Gui/Menu.hpp>
 #include <BlendInt/Gui/RoundWidget.hpp>
 #include <BlendInt/Gui/ImageView.hpp>

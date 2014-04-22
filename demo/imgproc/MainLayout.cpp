@@ -53,7 +53,7 @@ void MainLayout::InitOnce ()
     file_menu->AddActionItem("MenuItem4", "Ctrl + 1");
     file_menu->AddActionItem("MenuItem5");
 
-	m_menubar->AddMenuButton("File", file_menu);
+	m_menubar->AddMenu("File", file_menu);
 	//m_menubar->AddMenuButton("Edit");
 
 	m_toolbar->Resize(m_toolbar->size().width(), 24);

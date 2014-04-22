@@ -40,7 +40,7 @@
 namespace BlendInt {
 
 	ScrollView::ScrollView()
-	: AbstractDequeContainer(), m_orientation(Horizontal | Vertical), m_move_status(false)
+	: AbstractSingleContainer(), m_orientation(Horizontal | Vertical), m_move_status(false)
 	{
 		set_margin(0, 0, 0, 0);
 		set_size(200, 160);
@@ -55,29 +55,19 @@ namespace BlendInt {
 
 	void ScrollView::SetViewport (AbstractWidget* widget)
 	{
-		if(sub_widgets()->size() >= 1) {
-			ClearSubWidgets();
-		}
-
-		if (AppendSubWidget(widget)) {
-			AbstractWidget* p = sub_widgets()->front();
-			if(p) {
-				int w = size().width() - margin().left() - margin().right();
-				int h = size().height() - margin().top() - margin().bottom();
-
-				int x = position().x() + margin().left() + (w - static_cast<int>(p->size().width())) / 2;
-				int y = position().y() + margin().bottom() + (h - static_cast<int>(p->size().height())) / 2;
-
-				SetSubWidgetPosition(p, x, y);
-			}
+		if (AddSubWidget(widget)) {
+			SetSubWidgetPosition(widget, position().x() + margin().left(),
+			        position().y() + margin().bottom());
+			ResizeSubWidget(widget, size().width() - margin().left() - margin().right(),
+			        size().height() - margin().top() - margin().bottom());
 		}
 	}
 
 	void ScrollView::ResetViewportPosition()
 	{
-		if(!sub_widget_size()) return;
+		if(!sub_widget()) return;
 
-		AbstractWidget* p = sub_widgets()->front();
+		AbstractWidget* p = sub_widget();
 
 		if(p) {
 			int w = size().width() - margin().left() - margin().right();
@@ -94,8 +84,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(sub_widget_size()) {
-			AbstractWidget* p = sub_widgets()->front();
+		if(sub_widget()) {
+			AbstractWidget* p = sub_widget();
 
 			unsigned int w = size().width() - margin().left() - margin().right();
 
@@ -116,8 +106,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(sub_widget_size()) {
-			AbstractWidget* p = sub_widgets()->front();
+		if(sub_widget()) {
+			AbstractWidget* p = sub_widget();
 
 			unsigned int h = size().height() - margin().top() - margin().bottom();
 
@@ -174,11 +164,11 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)
 	{
-		if (!sub_widget_size()) {
+		if (!sub_widget()) {
 			return Ignore;
 		}
 
-		AbstractWidget* p = sub_widgets()->front();
+		AbstractWidget* p = sub_widget();
 
 		if (event.button() == MouseButtonMiddle) {
 			m_move_status = true;
@@ -199,7 +189,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(!sub_widget_size()) {
+		if(!sub_widget()) {
 			return Ignore;
 		}
 
@@ -235,10 +225,10 @@ namespace BlendInt {
 
 	void ScrollView::MoveViewport(int x, int y)
 	{
-		if(sub_widget_size()) {
+		if(sub_widget()) {
 
 			if(x != 0 || y != 0) {
-				AbstractWidget* p = sub_widgets()->front();
+				AbstractWidget* p = sub_widget();
 				SetSubWidgetPosition(p, p->position().x() + x, p->position().y() + y);
 
 				Refresh();
@@ -248,8 +238,8 @@ namespace BlendInt {
 
 	void ScrollView::SetReletivePosition (int x, int y)
 	{
-		if(sub_widget_size()) {
-			AbstractWidget* p = sub_widgets()->front();
+		if(sub_widget()) {
+			AbstractWidget* p = sub_widget();
 
 			SetSubWidgetPosition(p, position().x() + x, position().y() + y);
 
@@ -259,11 +249,11 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
-		if(sub_widget_size()) {
+		if(sub_widget()) {
 
 			if(m_move_status) {
 
-				AbstractWidget* p = sub_widgets()->front();
+				AbstractWidget* p = sub_widget();
 
 				SetSubWidgetPosition(p,
 				        m_origin_pos.x() + event.position().x()

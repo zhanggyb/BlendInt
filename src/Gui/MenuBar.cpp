@@ -178,6 +178,39 @@ namespace BlendInt {
 		return IgnoreAndContinue;
 	}
 
+	void MenuBar::AddMenu (const RefPtr<Menu>& menu)
+	{
+		MenuButton* button = Manage (new MenuButton(menu->title()));
+
+#ifdef DEBUG
+		button->set_name(ConvertFromString(menu->title()));
+#endif
+		button->SetMenu(menu);
+
+		int x = GetLastPosition();
+
+		AppendSubWidget(button);
+		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
+
+		events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
+	}
+
+	void MenuBar::AddMenu (const String& text, const RefPtr<Menu>& menu)
+	{
+		MenuButton* button = Manage (new MenuButton(text));
+#ifdef DEBUG
+		button->set_name(ConvertFromString(text));
+#endif
+		button->SetMenu(menu);
+
+		int x = GetLastPosition();
+
+		AppendSubWidget(button);
+		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
+
+		events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
+	}
+
 	void MenuBar::AddMenuButton (MenuButton* button)
 	{
 		if(!button) return;
@@ -201,22 +234,6 @@ namespace BlendInt {
 			SetSubWidgetPosition(button, x, position().y() + margin().bottom());
 			events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 		}
-	}
-
-	void MenuBar::AddMenuButton (const String& text, const RefPtr<Menu>& menu)
-	{
-		MenuButton* button = Manage (new MenuButton(text));
-#ifdef DEBUG
-		button->set_name(ConvertFromString(text));
-#endif
-		button->SetMenu(menu);
-
-		int x = GetLastPosition();
-
-		AppendSubWidget(button);
-		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
-
-		events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 	}
 
 	void MenuBar::SetMenu (size_t index, const RefPtr<Menu>& menu)

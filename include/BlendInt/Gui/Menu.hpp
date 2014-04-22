@@ -67,6 +67,11 @@ namespace BlendInt {
 
 		void RemoveActionItem (const RefPtr<ActionItem>& item);
 
+		const String& title () const
+		{
+			return m_title;
+		}
+
 		Cpp::EventRef<ActionItem*> triggered() {return m_triggered;}
 
 	protected:

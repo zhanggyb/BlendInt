@@ -39,9 +39,11 @@ namespace BlendInt {
 
 		virtual ~MenuBar ();
 
-		void AddMenuButton (MenuButton* button);
+		void AddMenu (const RefPtr<Menu>& menu);
 
-		void AddMenuButton (const String& text, const RefPtr<Menu>& menu);
+		void AddMenu (const String& text, const RefPtr<Menu>& menu);
+
+		void AddMenuButton (MenuButton* button);
 
 		void AddMenuButton (MenuButton* button, const RefPtr<Menu>& menu);
 

@@ -24,8 +24,7 @@
 #ifndef _BLENDINT_GUI_SCROLLVIEW_HPP_
 #define _BLENDINT_GUI_SCROLLVIEW_HPP_
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
-#include <BlendInt/Gui/CheckerBoard.hpp>
+#include <BlendInt/Gui/AbstractSingleContainer.hpp>
 
 namespace BlendInt {
 
@@ -35,7 +34,7 @@ namespace BlendInt {
 	 * The sub widget is named as a viewport and it's usually larger than
 	 * the ScrollView
 	 */
-	class ScrollView: public AbstractDequeContainer
+	class ScrollView: public AbstractSingleContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(ScrollView);
 
@@ -71,7 +70,7 @@ namespace BlendInt {
 
 		AbstractWidget* viewport () const
 		{
-			return sub_widgets()->size() > 0 ? sub_widgets()->front() : 0;
+			return sub_widget();
 		}
 
 	protected:

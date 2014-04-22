@@ -81,6 +81,11 @@ namespace BlendInt {
 		 */
 		int m_space;
 
+		/** Used for middle mouse move */
+		bool m_move_status;
+		int m_original_x;
+		int m_start_x;
+
 		RefPtr<GLArrayBuffer> m_inner;
 	};
 

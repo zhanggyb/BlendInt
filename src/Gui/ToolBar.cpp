@@ -41,7 +41,12 @@
 namespace BlendInt {
 
 	ToolBar::ToolBar ()
-	: AbstractDequeContainer(), m_vao(0), m_space(4)
+	: AbstractDequeContainer(),
+	  m_vao(0),
+	  m_space(4),
+	  m_move_status(false),
+	  m_original_x(0),
+	  m_start_x(0)
 	{
 		set_preferred_size(200, 32);
 		set_size(200, 32);
@@ -50,6 +55,8 @@ namespace BlendInt {
 
 		set_expand_x(true);
 		set_expand_y(false);
+
+		set_scissor_test(true);
 
 		InitOnce();
 	}
@@ -195,16 +202,40 @@ namespace BlendInt {
 
 	ResponseType ToolBar::MousePressEvent (const MouseEvent& event)
 	{
+		if(event.button() == MouseButtonMiddle) {
+			if(sub_widget_size()) {
+				m_move_status = true;
+				m_start_x = event.position().x();
+				m_original_x = sub_widgets()->front()->position().x();
+			}
+		}
+
 		return Accept;
 	}
 
 	ResponseType ToolBar::MouseReleaseEvent (const MouseEvent& event)
 	{
+		if(m_move_status) {
+			m_move_status = false;
+			Refresh();
+		}
 		return Accept;
 	}
 
 	ResponseType ToolBar::MouseMoveEvent (const MouseEvent& event)
 	{
+		if(m_move_status) {
+			//MoveSubWidgets(event.position().x() - m_start_x, 0);
+
+			int x = m_original_x;
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			{
+				SetSubWidgetPosition(*it, x + event.position().x() - m_start_x, (*it)->position().y());
+				x += (*it)->size().width() + m_space;
+			}
+
+			Refresh();
+		}
 		return Accept;
 	}
 
