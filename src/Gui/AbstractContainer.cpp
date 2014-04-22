@@ -112,7 +112,7 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		GeometryDelegate delegate(sub);
+		SubWidgetProxy delegate(sub);
 		delegate.Resize(width, height);
 	}
 	
@@ -121,7 +121,7 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		GeometryDelegate delegate(sub);
+		SubWidgetProxy delegate(sub);
 		delegate.Resize(size);
 	}
 	
@@ -130,7 +130,7 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		GeometryDelegate delegate(sub);
+		SubWidgetProxy delegate(sub);
 		delegate.SetPosition(x, y);
 	}
 	
@@ -139,7 +139,7 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		GeometryDelegate delegate(sub);
+		SubWidgetProxy delegate(sub);
 		delegate.SetPosition(pos);
 	}
 

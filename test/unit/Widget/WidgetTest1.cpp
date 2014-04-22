@@ -36,6 +36,9 @@ TEST_F(WidgetTest1, Add1)
 
     context->Add(widget1);
 
+    widget1->Resize(200, 200);
+    widget1->SetPosition(100, 100);
+
     RunLoop(win);
 
     delete widget1;

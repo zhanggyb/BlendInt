@@ -51,17 +51,17 @@ OIIO_NAMESPACE_USING
 
 namespace BlendInt {
 
-	GeometryDelegate::GeometryDelegate (AbstractWidget* widget)
+	SubWidgetProxy::SubWidgetProxy (AbstractWidget* widget)
 	: m_widget(widget)
 	{
 
 	}
 
-	GeometryDelegate::~GeometryDelegate ()
+	SubWidgetProxy::~SubWidgetProxy ()
 	{
 	}
 
-	void GeometryDelegate::Resize (const Size& size)
+	void SubWidgetProxy::Resize (const Size& size)
 	{
 		if(m_widget->size() == size) return;
 
@@ -73,7 +73,7 @@ namespace BlendInt {
 		}
 	}
 
-	void GeometryDelegate::Resize (unsigned int width, unsigned int height)
+	void SubWidgetProxy::Resize (unsigned int width, unsigned int height)
 	{
 		if(m_widget->size().width() == width &&
 						m_widget->size().height() == height)
@@ -88,7 +88,7 @@ namespace BlendInt {
 		}
 	}
 
-	void GeometryDelegate::SetPosition (int x, int y)
+	void SubWidgetProxy::SetPosition (int x, int y)
 	{
 		if(m_widget->position().x() == x && m_widget->position().y() == y) return;
 
@@ -101,7 +101,7 @@ namespace BlendInt {
 		}
 	}
 
-	void GeometryDelegate::SetPosition (const Point& position)
+	void SubWidgetProxy::SetPosition (const Point& position)
 	{
 		if(m_widget->position() == position) return;
 		UpdateRequest request(Predefined, FormPosition, &position);
@@ -112,25 +112,55 @@ namespace BlendInt {
 		}
 	}
 
-	RefreshDelegate::RefreshDelegate (AbstractContainer* container)
+	ContainerProxy::ContainerProxy (AbstractContainer* container)
 	: m_container(container)
 	{
 	}
 
-	RefreshDelegate::~RefreshDelegate ()
+	ContainerProxy::~ContainerProxy ()
 	{
 	}
 
-	bool RefreshDelegate::RequestRefresh (AbstractWidget* widget)
+	bool ContainerProxy::RequestRefreshTest (AbstractWidget* widget)
 	{
-		UpdateRequest request(Predefined, ContextRefresh, widget);
+		UpdateRequest request(Predefined, WidgetRefresh, widget);
+		return m_container->UpdateTest(request);
+	}
 
-		if(m_container->UpdateTest(request)) {
-			m_container->Update(request);
-			return true;
-		} else {
-			return false;
-		}
+	void ContainerProxy::RequestRefresh (AbstractWidget* widget)
+	{
+		UpdateRequest request(Predefined, WidgetRefresh, widget);
+		m_container->Update(request);
+	}
+
+	bool ContainerProxy::SubwidgetPositionUpdateTest(AbstractWidget* widget, const Point& pos)
+	{
+		SubWidgetPositionData data = {widget, &pos};
+		UpdateRequest request (Predefined, SubWidgetPosition, &data);
+
+		return m_container->UpdateTest(request);
+	}
+
+	bool ContainerProxy::SubWidgetSizeUpdateTest(AbstractWidget* widget, const Size& size)
+	{
+		SubWidgetSizeData data = {widget, &size};
+		UpdateRequest request (Predefined, SubWidgetSize, &data);
+
+		return m_container->UpdateTest(request);
+	}
+
+	void ContainerProxy::SubWidgetPositionUpdate(AbstractWidget* widget, const Point& pos)
+	{
+		SubWidgetPositionData data = {widget, &pos};
+		UpdateRequest request (Predefined, SubWidgetPosition, &data);
+		m_container->Update(request);
+	}
+
+	void ContainerProxy::SubWidgetSizeUpdate(AbstractWidget* widget, const Size& size)
+	{
+		SubWidgetSizeData data = {widget, &size};
+		UpdateRequest request (Predefined, SubWidgetSize, &data);
+		m_container->Update (request);
 	}
 
 	// --------------------------------------------------------------------
@@ -160,9 +190,10 @@ namespace BlendInt {
 		UpdateRequest request(Predefined, FormSize, &new_size);
 
 		// TODO: ask for container
-		if(UpdateTest(request)) {
+		if(ResizeTestInContainer(new_size) && UpdateTest(request)) {
 			Update(request);
 			set_size(width, height);
+			ResizeUpdateInContainer(new_size);
 			fire_property_changed_event(FormSize);
 		}
 	}
@@ -176,9 +207,10 @@ namespace BlendInt {
 
 		UpdateRequest request(Predefined, FormSize, &size);
 
-		if(UpdateTest(request)) {
+		if(ResizeTestInContainer(size) && UpdateTest(request)) {
 			Update(request);
 			set_size(size);
+			ResizeUpdateInContainer(size);
 			fire_property_changed_event(FormSize);
 		}
 	}
@@ -193,9 +225,10 @@ namespace BlendInt {
 		Point new_pos (x, y);
 		UpdateRequest request(Predefined, FormPosition, &new_pos);
 
-		if(UpdateTest(request)) {
+		if(PositionTestInContainer(new_pos) && UpdateTest(request)) {
 			Update(request);
 			set_position(x, y);
+			PositionUpdateInContainer(new_pos);
 			fire_property_changed_event(FormPosition);
 		}
 	}
@@ -209,9 +242,10 @@ namespace BlendInt {
 
 		UpdateRequest request(Predefined, FormPosition, &pos);
 
-		if(UpdateTest(request)) {
+		if(PositionTestInContainer(pos) && UpdateTest(request)) {
 			Update(request);
 			set_position(pos);
+			PositionUpdateInContainer(pos);
 			fire_property_changed_event(FormPosition);
 		}
 	}
@@ -362,21 +396,11 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractWidget::Refresh()
+	void AbstractWidget::Refresh()
 	{
-		/*
-		if(Context* context = GetContext()) {
-			context->RefreshLayer(z());
+		if(RefreshTestInContainer()) {
+			RefreshInContainer();
 		}
-		*/
-		bool ret = false;
-
-		if(m_container) {
-			RefreshDelegate delegate(m_container);
-			ret = delegate.RequestRefresh(this);
-		}
-
-		return ret;
 	}
 
 	void AbstractWidget::RenderToTexture (size_t border, GLTexture2D* texture)
@@ -615,6 +639,45 @@ namespace BlendInt {
 		return obj->MouseReleaseEvent(event);
 	}
 
+	bool AbstractWidget::ResizeTestInContainer (const Size& size)
+	{
+		if(m_container) {
+			ContainerProxy test(m_container);
+
+			return test.SubWidgetSizeUpdateTest(this, size);
+		} else {
+			return true;
+		}
+	}
+
+	bool AbstractWidget::PositionTestInContainer(const Point& point)
+	{
+		if(m_container) {
+
+			ContainerProxy test(m_container);
+			return test.SubwidgetPositionUpdateTest(this, point);
+
+		} else {
+			return true;
+		}
+	}
+
+	void AbstractWidget::ResizeUpdateInContainer(const Size& size)
+	{
+		if(m_container) {
+			ContainerProxy proxy(m_container);
+			proxy.SubWidgetSizeUpdate(this, size);
+		}
+	}
+
+	void AbstractWidget::PositionUpdateInContainer(const Point& pos)
+	{
+		if(m_container) {
+			ContainerProxy proxy(m_container);
+			proxy.SubWidgetPositionUpdate(this, pos);
+		}
+	}
+
 	Context* AbstractWidget::GetContext()
 	{
 		AbstractContainer* container = m_container;
@@ -630,6 +693,26 @@ namespace BlendInt {
 		}
 
 		return dynamic_cast<Context*>(container);
+	}
+
+	bool AbstractWidget::RefreshTestInContainer()
+	{
+		bool ret = false;
+
+		if(m_container) {
+			ContainerProxy proxy(m_container);
+			ret = proxy.RequestRefreshTest(this);
+		}
+
+		return ret;
+	}
+
+	void AbstractWidget::RefreshInContainer()
+	{
+		if(m_container) {
+			ContainerProxy proxy(m_container);
+			proxy.RequestRefresh(this);
+		}
 	}
 
 	bool AbstractWidget::CompositeToScreenBuffer (GLTexture2D* tex,
@@ -736,4 +819,3 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
-

@@ -93,7 +93,7 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContextRefresh: {
+			case WidgetRefresh: {
 				Refresh();
 			}
 

@@ -67,14 +67,26 @@ namespace BlendInt {
 		return obj;
 	}
 
-	class GeometryDelegate
+	struct SubWidgetSizeData
+	{
+		AbstractWidget* sub_widget;
+		const Size* size;
+	};
+
+	struct SubWidgetPositionData
+	{
+		AbstractWidget* sub_widget;
+		const Point* position;
+	};
+
+	class SubWidgetProxy
 	{
 	private:
 		friend class AbstractContainer;
 
-		explicit GeometryDelegate(AbstractWidget* widget);
+		explicit SubWidgetProxy(AbstractWidget* widget);
 
-		~GeometryDelegate ();
+		~SubWidgetProxy ();
 
 		void set_widget (AbstractWidget* widget)
 		{
@@ -92,18 +104,31 @@ namespace BlendInt {
 		AbstractWidget* m_widget;
 	};
 
-	class RefreshDelegate
+	class ContainerProxy
 	{
 	private:
 		friend class AbstractWidget;
 
-		explicit RefreshDelegate (AbstractContainer* container);
+		explicit ContainerProxy (AbstractContainer* container);
 
-		~RefreshDelegate ();
+		~ContainerProxy ();
 
-		void set_container (AbstractContainer* container);
+		void set_container (AbstractContainer* container)
+		{
+			m_container = container;
+		}
 
-		bool RequestRefresh (AbstractWidget* widget);
+		bool RequestRefreshTest (AbstractWidget* widget);
+
+		void RequestRefresh (AbstractWidget* widget);
+
+		bool SubwidgetPositionUpdateTest (AbstractWidget* widget, const Point& pos);
+
+		bool SubWidgetSizeUpdateTest (AbstractWidget* widget, const Size& size);
+
+		void SubWidgetPositionUpdate (AbstractWidget* widget, const Point& pos);
+
+		void SubWidgetSizeUpdate (AbstractWidget* widget, const Size& size);
 
 		AbstractContainer* m_container;
 	};
@@ -123,7 +148,7 @@ namespace BlendInt {
 
 		friend class Context;
 		friend class AbstractContainer;
-		friend class GeometryDelegate;
+		friend class SubWidgetProxy;
 
 		template <typename T> friend T* Manage (T* obj, bool val);
 
@@ -180,7 +205,7 @@ namespace BlendInt {
 
 		void RenderToFile (const char* filename, unsigned int border = 10);
 
-		bool Refresh ();
+		void Refresh ();
 
 		const int& layer () const
 		{
@@ -266,7 +291,7 @@ namespace BlendInt {
 
 		AbstractContainer* container() const {return m_container;}
 
-	protected:	// member functions
+	protected:
 
 		virtual ResponseType FocusEvent (bool focus) = 0;
 
@@ -298,6 +323,18 @@ namespace BlendInt {
 		virtual void Update (const UpdateRequest& request) = 0;
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
+
+		bool RefreshTestInContainer ();
+
+		void RefreshInContainer ();
+
+		bool ResizeTestInContainer (const Size& size);
+
+		bool PositionTestInContainer (const Point& point);
+
+		void ResizeUpdateInContainer (const Size& size);
+
+		void PositionUpdateInContainer (const Point& point);
 
 		Context* GetContext ();
 

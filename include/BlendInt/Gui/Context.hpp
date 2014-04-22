@@ -117,6 +117,8 @@ namespace BlendInt {
 
 	protected:
 
+		virtual bool UpdateTest (const UpdateRequest& request);
+
 		virtual void Update (const UpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);

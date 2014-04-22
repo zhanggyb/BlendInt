@@ -168,7 +168,10 @@ namespace BlendInt {
 		SliderPropertyMaximum,
 		SliderPropertyStep,
 
-		ContextRefresh,
+		WidgetRefresh,
+
+		SubWidgetPosition,
+		SubWidgetSize,
 
 		FormPropertyLast
 	};

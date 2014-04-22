@@ -194,6 +194,39 @@ namespace BlendInt
 		return 0;
 	}
 
+	bool Context::UpdateTest(const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case SubWidgetSize: {
+
+					const SubWidgetSizeData* data = static_cast<const SubWidgetSizeData*>(request.data());
+
+					DBG_PRINT_MSG("widget %s ask for resize", data->sub_widget->name().c_str());
+
+					return true;
+				}
+
+				case SubWidgetPosition: {
+
+					const SubWidgetPositionData* data = static_cast<const SubWidgetPositionData*>(request.data());
+
+					DBG_PRINT_MSG("widget %s ask for position", data->sub_widget->name().c_str());
+
+					return true;
+				}
+
+				default:
+					return true;
+			}
+
+		} else {
+			return false;
+		}
+	}
+
 	void Context::Update (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
@@ -235,7 +268,7 @@ namespace BlendInt
 					break;
 				}
 
-				case ContextRefresh: {
+				case WidgetRefresh: {
 
 					const AbstractWidget* widget_p = static_cast<const AbstractWidget*>(request.data());
 					// DBG_PRINT_MSG("widget %s call refresh: %d", widget_p->name().c_str(), widget_p->z());
