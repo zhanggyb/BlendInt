@@ -63,10 +63,14 @@ namespace BlendInt {
 
 	}
 
-	bool Widget::Update (const UpdateRequest& request)
+	bool Widget::UpdateTest (const UpdateRequest& request)
+	{
+		return true;
+	}
+
+	void Widget::Update (const UpdateRequest& request)
 	{
 		// do nothing in this base class
-		return true;
 	}
 
 	ResponseType Widget::Draw(const RedrawEvent& event)

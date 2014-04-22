@@ -40,18 +40,16 @@ namespace BlendInt {
 	{
 		if(round_type() == type) return;
 
-		if(Update (UpdateRequest(Predefined, FormRoundType, &type))) {
-			set_round_type(type);
-		}
+		Update (UpdateRequest(Predefined, FormRoundType, &type));
+		set_round_type(type);
 	}
 
 	void AbstractRoundForm::SetRadius(float rad)
 	{
 		if(radius() == rad) return;
 
-		if(Update(UpdateRequest(Predefined, FormRoundRadius, &rad))) {
-			set_radius(rad);
-		}
+		Update(UpdateRequest(Predefined, FormRoundRadius, &rad));
+		set_radius(rad);
 	}
 
 

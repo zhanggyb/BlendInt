@@ -60,7 +60,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool MenuBar::Update (const UpdateRequest& request)
+	void MenuBar::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -82,7 +82,7 @@ namespace BlendInt {
 
 				glBindVertexArray(0);
 
-				return true;
+				break;
 			}
 
 			case FormPosition: {
@@ -90,20 +90,16 @@ namespace BlendInt {
 				const Point* pos_p = static_cast<const Point*>(request.data());
 				MoveSubWidgets(pos_p->x() - position().x(), pos_p->y() - position().y());
 
-				return true;
+				break;
 			}
 
 			case ContextRefresh: {
-				return Refresh();
+				Refresh();
 			}
 
 			default:
-
-				return false;
+				break;
 			}
-
-		} else {
-			return true;
 		}
 	}
 

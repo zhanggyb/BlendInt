@@ -65,9 +65,9 @@ namespace BlendInt {
 	{
 	}
 
-	bool PixelIcon::Update(const UpdateRequest& request)
+	void PixelIcon::Update(const UpdateRequest& request)
 	{
-		return true;
+
 	}
 
 }

@@ -124,7 +124,7 @@ namespace BlendInt {
 		return percentage;
 	}
 
-	bool ScrollView::Update (const UpdateRequest& request)
+	void ScrollView::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -132,25 +132,24 @@ namespace BlendInt {
 
 				case FormSize: {
 
-					return true;
+					break;
 				}
 
 				case FormPosition: {
 					ResetViewportPosition();
-					return true;
+					break;
 				}
 
 				case ContextRefresh: {
 
-					return Refresh();
+					Refresh();
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
 
-		} else {
-			return false;
 		}
 	}
 

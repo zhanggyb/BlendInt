@@ -54,7 +54,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool ToolButton::Update (const UpdateRequest& request)
+	void ToolButton::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -66,16 +66,14 @@ namespace BlendInt {
 
 					GenerateFormBuffer(*size_p, RoundAll, 5.0, m_inner.get(), m_outer.get(), 0);
 
-					return true;
+					break;
 				}
 
 				default:
-					return true;
+					break;
 
 			}
 
-		} else {
-			return false;
 		}
 	}
 

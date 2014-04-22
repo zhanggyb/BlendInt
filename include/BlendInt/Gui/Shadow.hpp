@@ -67,7 +67,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool Update (const UpdateRequest& request);
+		virtual void Update (const UpdateRequest& request);
 
 		inline void set_blur_rad (float rad)
 		{

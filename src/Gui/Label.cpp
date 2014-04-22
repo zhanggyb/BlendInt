@@ -142,7 +142,7 @@ namespace BlendInt {
 		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
-	bool Label::Update (const UpdateRequest& request)
+	void Label::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -183,19 +183,17 @@ namespace BlendInt {
 
 					glBindVertexArray(0);
 
-					return true;
+					break;
 				}
 
 				case FormPreferredSize: {
-					return true;
+					break;
 				}
 
 				default:
-					return Widget::Update(request);
+					Widget::Update(request);
 			}
 
-		} else {
-			return false;
 		}
 	}
 

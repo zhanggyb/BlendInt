@@ -56,7 +56,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool SlideIcon::Update (const UpdateRequest& request)
+	void SlideIcon::Update (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 
@@ -77,7 +77,7 @@ namespace BlendInt {
 									color, shadetop, shadedown, shadedir,
 									m_inner_buffer.get(), m_outer_buffer.get());
 					glBindVertexArray(0);
-					return true;
+					break;
 				}
 
 				case FormRoundType: {
@@ -96,7 +96,7 @@ namespace BlendInt {
 									color, shadetop, shadedown, shadedir,
 									m_inner_buffer.get(), m_outer_buffer.get());
 					glBindVertexArray(0);
-					return true;
+					break;
 				}
 
 				case FormRoundRadius: {
@@ -115,15 +115,12 @@ namespace BlendInt {
 									color, shadetop, shadedown, shadedir,
 									m_inner_buffer.get(), m_outer_buffer.get());
 					glBindVertexArray(0);
-					return true;
+					break;
 				}
 
 				default:
-					return false;
+					break;
 			}
-		} else {
-			// no custom to update
-			return false;
 		}
 	}
 
@@ -243,20 +240,18 @@ namespace BlendInt {
 	{
 		if (value == m_value) {
 			return;
-		} else {
+		}
 
-			if (value < m_minimum || value > m_maximum)
-				return;
+		if (value < m_minimum || value > m_maximum)
+			return;
 
-			if (Update(
-					   UpdateRequest(
-									 Predefined,
-									 SliderPropertyValue,
-									 &value)))
-			{
-				m_value = value;
-				m_value_changed.fire(m_value);
-			}
+		UpdateRequest request(Predefined, SliderPropertyValue, &value);
+
+		if (UpdateTest(request))
+		{
+			Update(request);
+			m_value = value;
+			m_value_changed.fire(m_value);
 		}
 	}
 
@@ -280,7 +275,9 @@ namespace BlendInt {
 		if (m_minimum == minimum)
 			return;
 
-		if(Update(UpdateRequest(Predefined, SliderPropertyMinimum, &minimum))) {
+		UpdateRequest request(Predefined, SliderPropertyMinimum, &minimum);
+		if(UpdateTest(request)) {
+			Update(request);
 			m_minimum = minimum;
 			fire_property_changed_event(SliderPropertyMinimum);
 		}
@@ -291,7 +288,10 @@ namespace BlendInt {
 		if (m_maximum == maximum)
 			return;
 
-		if(Update(UpdateRequest(Predefined, SliderPropertyMaximum, &maximum))) {
+		UpdateRequest request(Predefined, SliderPropertyMaximum, &maximum);
+
+		if(UpdateTest(request)) {
+			Update(request);
 			m_maximum = maximum;
 			fire_property_changed_event(SliderPropertyMaximum);
 		}
@@ -301,7 +301,10 @@ namespace BlendInt {
 	{
 		if(m_orientation == orientation) return;
 
-		if(Update(UpdateRequest(Predefined, SliderPropertyOrientation, &orientation))) {
+		UpdateRequest request(Predefined, SliderPropertyOrientation, &orientation);
+
+		if(UpdateTest(request)) {
+			Update(request);
 			m_orientation = orientation;
 			//fire_property_changed_event(FormPosition);
 		}

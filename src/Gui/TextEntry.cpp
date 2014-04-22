@@ -158,7 +158,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	bool TextEntry::Update (const UpdateRequest& request)
+	void TextEntry::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -168,7 +168,7 @@ namespace BlendInt {
 					const float* radius_p = static_cast<const float*>(request.data());
 					m_origin.set_x(*radius_p + DefaultTextEntryPadding.left());
 
-					return true;
+					break;
 				}
 
 				case FormSize: {
@@ -199,15 +199,13 @@ namespace BlendInt {
 					m_cursor_buffer->Reset();
 
 					Refresh();
-					return true;
+					break;
 				}
 
 				default:
-					return RoundWidget::Update(request);
+					RoundWidget::Update(request);
 			}
 
-		} else {
-			return false;
 		}
 	}
 

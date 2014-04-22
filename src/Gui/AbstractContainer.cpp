@@ -75,12 +75,20 @@ namespace BlendInt {
 		}
 	}
 
+	bool AbstractContainer::UpdateTest (const UpdateRequest& request)
+	{
+		return true;
+	}
+
 	void AbstractContainer::SetMargin (const Margin& margin)
 	{
 		if (m_margin.equal(margin))
 			return;
 
-		if(Update(UpdateRequest(Predefined, ContainerMargin, &margin))) {
+		UpdateRequest request (Predefined, ContainerMargin, &margin);
+
+		if(UpdateTest(request)) {
+			Update(request);
 			m_margin = margin;
 		}
 	}
@@ -91,8 +99,10 @@ namespace BlendInt {
 			return;
 
 		Margin new_margin(left, right, top, bottom);
+		UpdateRequest request (Predefined, ContainerMargin, &new_margin);
 
-		if(Update(UpdateRequest(Predefined, ContainerMargin, &new_margin))) {
+		if(UpdateTest(request)) {
+			Update(request);
 			m_margin = new_margin;
 		}
 	}

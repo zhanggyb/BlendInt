@@ -45,7 +45,7 @@ namespace BlendInt {
 	{
 	}
 
-	bool VLayout::Update (const UpdateRequest& request)
+	void VLayout::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -57,7 +57,7 @@ namespace BlendInt {
 					int y = new_pos->y() - position().y();
 
 					MoveSubWidgets(x, y);
-					return true;
+					break;
 				}
 
 				case FormSize: {
@@ -65,34 +65,33 @@ namespace BlendInt {
 					if(sub_widget_size())
 						MakeLayout(size_p, &margin(), space());
 
-					return true;
+					break;
 				}
 
 				case ContainerMargin: {
 					const Margin* margin_p = static_cast<const Margin*>(request.data());
 					if(sub_widget_size())
 						MakeLayout(&size(), margin_p, space());
-					return true;
+					break;
 				}
 
 				case LayoutPropertySpace: {
 					const int* space_p = static_cast<const int*>(request.data());
 					if(sub_widget_size())
 						MakeLayout(&size(), &margin(), *space_p);
-					return true;
+					break;
 				}
 
 				case ContextRefresh: {
-					return Refresh();
+					Refresh();
+					break;
 				}
 
 				default: {
-					return true;
+					break;
 				}
 			}
 
-		} else {
-			return false;
 		}
 	}
 

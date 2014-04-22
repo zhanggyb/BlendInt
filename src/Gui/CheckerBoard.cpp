@@ -87,7 +87,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
-	bool CheckerBoard::Update (const UpdateRequest& request)
+	void CheckerBoard::Update (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 
@@ -120,15 +120,13 @@ namespace BlendInt {
 
 					glBindVertexArray(0);
 
-					return true;
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
 
-		} else {
-			return false;
 		}
 	}
 	

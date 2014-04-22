@@ -51,7 +51,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	bool NumberSlider::Update (const UpdateRequest& request)
+	void NumberSlider::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 			switch (request.type()) {
@@ -68,7 +68,7 @@ namespace BlendInt {
 								0);
 				glBindVertexArray(0);
 				Refresh();
-				return true;
+				break;
 			}
 
 			case FormRoundType: {
@@ -82,7 +82,7 @@ namespace BlendInt {
 								   0);
 				glBindVertexArray(0);
 				Refresh();
-				return true;
+				break;
 			}
 
 			case FormRoundRadius: {
@@ -96,15 +96,13 @@ namespace BlendInt {
 								   0);
 				glBindVertexArray(0);
 				Refresh();
-				return true;
+				break;
 			}
 
 			default:
-				return AbstractSlider::Update(request);
+				AbstractSlider::Update(request);
 			}
 
-		} else {
-			return false;
 		}
 	}
 	

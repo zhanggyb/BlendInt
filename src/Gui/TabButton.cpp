@@ -66,7 +66,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool TabButton::Update (const UpdateRequest& request)
+	void TabButton::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -86,15 +86,13 @@ namespace BlendInt {
 					GenerateBuffers(*size_p, m_inner_buffer.get(), m_outer_buffer.get());
 
 					Refresh();
-					return true;
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
 
-		} else {
-			return false;
 		}
 	}
 

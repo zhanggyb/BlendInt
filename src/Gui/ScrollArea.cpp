@@ -97,7 +97,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	bool ScrollArea::Update (const UpdateRequest& request)
+	void ScrollArea::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -108,7 +108,7 @@ namespace BlendInt {
 					int x = pos_p->x() - position().x();
 					int y = pos_p->y() - position().y();
 					MoveSubWidgets(x, y);
-					return true;
+					break;
 				}
 
 				case FormSize: {
@@ -117,20 +117,19 @@ namespace BlendInt {
 
 					AdjustGeometries(*size_p);
 
-					return true;
+					break;
 				}
 
 				case ContextRefresh: {
 
-					return Refresh();
+					Refresh();
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
 
-		} else {
-			return false;
 		}
 	}
 

@@ -31,18 +31,16 @@ namespace BlendInt {
 
 		Size new_size (width, height);
 
-		if(Update(UpdateRequest(Predefined, FormSize, &new_size))) {
-			set_size(width, height);
-		}
+		Update(UpdateRequest(Predefined, FormSize, &new_size));
+		set_size(width, height);
 	}
 
 	void AbstractResizableForm::Resize (const Size& size)
 	{
 		if(AbstractResizableForm::size() == size) return;
 
-		if(Update(UpdateRequest(Predefined, FormSize, &size))) {
-			set_size(size);
-		}
+		Update(UpdateRequest(Predefined, FormSize, &size));
+		set_size(size);
 	}
 
 }

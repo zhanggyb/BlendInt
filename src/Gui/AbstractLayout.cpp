@@ -157,7 +157,10 @@ namespace BlendInt {
 	{
 		if(m_space == space) return;
 
-		if (Update (UpdateRequest(Predefined, LayoutPropertySpace, &space))) {
+		UpdateRequest request(Predefined, LayoutPropertySpace, &space);
+
+		if(UpdateTest(request)) {
+			Update(request);
 			m_space = space;
 		}
 	}

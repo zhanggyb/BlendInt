@@ -30,9 +30,8 @@ namespace BlendInt {
 
 	}
 
-	bool NodeView::Update (const UpdateRequest& request)
+	void NodeView::Update (const UpdateRequest& request)
 	{
-		return true;
 	}
 
 	ResponseType NodeView::Draw(const RedrawEvent& event)

@@ -66,7 +66,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool ToolBar::Update (const UpdateRequest& request)
+	void ToolBar::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -81,7 +81,7 @@ namespace BlendInt {
 
 					MoveSubWidgets(x, y);
 
-					return true;
+					break;
 				}
 
 				case FormSize: {
@@ -101,7 +101,7 @@ namespace BlendInt {
 
 					RealignSubWidgets(*size_p, margin(), m_space);
 
-					return true;
+					break;
 				}
 
 				case ContainerMargin: {
@@ -109,19 +109,18 @@ namespace BlendInt {
 
 					RealignSubWidgets(size(), *margin_p, m_space);
 
-					return true;
+					break;
 				}
 
 				case ContextRefresh: {
-					return Refresh();
+					Refresh();
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
 
-		} else {
-			return false;
 		}
 	}
 

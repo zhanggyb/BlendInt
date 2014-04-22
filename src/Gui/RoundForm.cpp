@@ -36,9 +36,8 @@ namespace BlendInt {
 
 	}
 
-	bool RoundForm::Update (const UpdateRequest& request)
+	void RoundForm::Update (const UpdateRequest& request)
 	{
-		return true;
 	}
 
 	void RoundForm::Draw(const glm::mat4& mvp)

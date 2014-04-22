@@ -284,6 +284,8 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
 
+		virtual bool UpdateTest (const UpdateRequest& request) = 0;
+
 		/**
 		 * @brief Update opengl data (usually the GL buffer) for Render
 		 * @param[in] type the enumeration defined by each form class, e.g.
@@ -293,7 +295,7 @@ namespace BlendInt {
 		 * This virtual function should be implemented in each derived class,
 		 * and should only use the form's property to draw opengl elements once.
 		 */
-		virtual bool Update (const UpdateRequest& request) = 0;
+		virtual void Update (const UpdateRequest& request) = 0;
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 

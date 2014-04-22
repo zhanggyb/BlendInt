@@ -57,7 +57,7 @@ namespace BlendInt {
 
 		virtual void Update (int property_type);
 
-		virtual bool Update (const UpdateRequest& request);
+		virtual void Update (const UpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

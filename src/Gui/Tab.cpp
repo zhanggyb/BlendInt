@@ -55,7 +55,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool TabStack::Update (const UpdateRequest& request)
+	void TabStack::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -73,16 +73,16 @@ namespace BlendInt {
 									m_outer.get(),
 									0);
 
-					return Stack::Update(request);
+					Stack::Update(request);
+					break;
 				}
 
-				default:
-					return Stack::Update(request);
-
+				default: {
+					Stack::Update(request);
+					break;
+				}
 			}
 
-		} else {
-			return false;
 		}
 	}
 
@@ -191,7 +191,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool Tab::Update (const UpdateRequest& request)
+	void Tab::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -204,25 +204,23 @@ namespace BlendInt {
 					int y = pos_p->y() - position().y();
 
 					MoveSubWidgets(x, y);
-					return true;
+					break;
 				}
 
 				case FormSize: {
-					return true;
+					break;
 				}
 
 				case ContextRefresh: {
 
-					return Refresh();
-
+					Refresh();
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
 
-		} else {
-			return false;
 		}
 	}
 

@@ -194,7 +194,7 @@ namespace BlendInt
 		return 0;
 	}
 
-	bool Context::Update (const UpdateRequest& request)
+	void Context::Update (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 
@@ -227,13 +227,12 @@ namespace BlendInt
 
 					// TODO: redraw
 					force_refresh_all = true;
-
-					return true;
+					break;
 				}
 
 				case FormPosition: {
 					// always at (0, 0)
-					return false;
+					break;
 				}
 
 				case ContextRefresh: {
@@ -241,17 +240,13 @@ namespace BlendInt
 					const AbstractWidget* widget_p = static_cast<const AbstractWidget*>(request.data());
 					// DBG_PRINT_MSG("widget %s call refresh: %d", widget_p->name().c_str(), widget_p->z());
 					RefreshLayer(widget_p->z());
-
-					return true;
+					break;
 				}
 
 				default:
-					return false;
+					break;;
 			}
 
-		} else {
-
-			return false;
 		}
 	}
 

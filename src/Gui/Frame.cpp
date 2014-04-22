@@ -75,7 +75,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool Frame::Update (const UpdateRequest& request)
+	void Frame::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 			switch (request.type()) {
@@ -89,7 +89,7 @@ namespace BlendInt {
 						        size_p->height() - margin().top()
 						                - margin().bottom());
 					}
-					return true;
+					break;
 				}
 
 				case FormPosition: {
@@ -99,7 +99,7 @@ namespace BlendInt {
 						        pos_p->x() + margin().left(),
 						        pos_p->y() + margin().bottom());
 					}
-					return true;
+					break;
 				}
 
 				case ContainerMargin: {
@@ -115,19 +115,17 @@ namespace BlendInt {
 						        size().height() - margin_p->top()
 						                - margin_p->bottom());
 					}
-					return true;
+					break;
 				}
 
 				case ContextRefresh: {
-
-					return Refresh();
+					Refresh();
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
-		} else {
-			return false;
 		}
 	}
 

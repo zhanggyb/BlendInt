@@ -130,7 +130,7 @@ namespace BlendInt {
 
 	}
 
-	bool CVImageView::Update (const UpdateRequest& request)
+	void CVImageView::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -142,15 +142,13 @@ namespace BlendInt {
 
 					m_checkerboard->Resize(*size_p);
 
-					return true;
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
 
-		} else {
-			return false;
 		}
 	}
 

@@ -58,7 +58,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool ToggleButton::Update(const UpdateRequest& request)
+	void ToggleButton::Update(const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -76,7 +76,7 @@ namespace BlendInt {
 									m_emboss_buffer.get());
 					glBindVertexArray(0);
 					Refresh();
-					return true;
+					break;
 				}
 
 				case FormRoundType: {
@@ -91,7 +91,7 @@ namespace BlendInt {
 									m_emboss_buffer.get());
 					glBindVertexArray(0);
 					Refresh();
-					return true;
+					break;
 				}
 
 				case FormRoundRadius: {
@@ -106,17 +106,14 @@ namespace BlendInt {
 									m_emboss_buffer.get());
 					glBindVertexArray(0);
 					Refresh();
-					return true;
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
 
-		} else {
-			return false;
 		}
-
 	}
 
 	ResponseType ToggleButton::Draw (const RedrawEvent& event)

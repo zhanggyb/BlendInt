@@ -61,7 +61,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool ComboBox::Update(const UpdateRequest& request)
+	void ComboBox::Update(const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 			switch (request.type()) {
@@ -80,7 +80,7 @@ namespace BlendInt {
 									m_outer_buffer.get());
 					glBindVertexArray(0);
 					Refresh();
-					return true;
+					break;
 				}
 
 				case FormRoundType: {
@@ -97,7 +97,7 @@ namespace BlendInt {
 									m_outer_buffer.get());
 					glBindVertexArray(0);
 					Refresh();
-					return true;
+					break;
 				}
 
 				case FormRoundRadius: {
@@ -114,15 +114,13 @@ namespace BlendInt {
 									m_outer_buffer.get());
 					glBindVertexArray(0);
 					Refresh();
-					return true;
+					break;
 				}
 
 				default:
-					return RoundWidget::Update(request);
+					RoundWidget::Update(request);
 			}
 
-		} else {
-			return false;
 		}
 	}
 

@@ -117,7 +117,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool Stack::Update (const UpdateRequest& request)
+	void Stack::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -131,7 +131,7 @@ namespace BlendInt {
 
 					MoveSubWidgets(x, y);
 
-					return true;
+					break;
 				}
 
 				case FormSize: {
@@ -142,7 +142,7 @@ namespace BlendInt {
 
 					ResizeSubWidgets(w, h);
 
-					return true;
+					break;
 				}
 
 				case ContainerMargin: {
@@ -154,21 +154,19 @@ namespace BlendInt {
 
 					ResizeSubWidgets(w, h);
 
-					return true;
+					break;
 				}
 
 				case ContextRefresh: {
 
-					return Refresh();
-
+					Refresh();
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
 
-		} else {
-			return false;
 		}
 	}
 

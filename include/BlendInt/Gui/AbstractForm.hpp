@@ -87,7 +87,7 @@ namespace BlendInt {
 	{
 	public:
 
-		UpdateRequest (UpdateSource source, int type, const void* data) :
+		UpdateRequest (int source, int type, const void* data) :
 				m_source(source), m_type(type), m_data(data)
 		{
 
@@ -98,7 +98,7 @@ namespace BlendInt {
 
 		}
 
-		UpdateSource source () const
+		int source () const
 		{
 			return m_source;
 		}
@@ -115,7 +115,7 @@ namespace BlendInt {
 
 	private:
 
-		UpdateSource m_source;
+		int m_source;
 		int m_type;
 		const void* m_data;
 	};
@@ -270,7 +270,7 @@ namespace BlendInt {
 			m_size = size;
 		}
 
-		virtual bool Update (const UpdateRequest& request) = 0;
+		virtual void Update (const UpdateRequest& request) = 0;
 
 		/**
 		 * @brief generate vertices for drawing rectangle based on the given size and border width

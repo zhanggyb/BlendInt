@@ -195,7 +195,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	bool Viewport3D::Update (const UpdateRequest& request)
+	void Viewport3D::Update (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 			switch (request.type()) {
@@ -206,15 +206,13 @@ namespace BlendInt {
 					m_default_camera->SetPerspective(m_default_camera->fovy(),
 					        1.f * size_p->width() / size_p->height());
 
-					return true;
+					break;
 				}
 
 				default:
-					return Widget::Update(request);
+					Widget::Update(request);
 			}
 
-		} else {
-			return false;
 		}
 	}
 

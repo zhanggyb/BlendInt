@@ -65,7 +65,10 @@ namespace BlendInt {
 	{
 		if(m_widget->size() == size) return;
 
-		if(m_widget->Update(UpdateRequest(Predefined, FormSize, &size))) {
+		UpdateRequest request(Predefined, FormSize, &size);
+
+		if(m_widget->UpdateTest(request)) {
+			m_widget->Update(request);
 			m_widget->set_size(size);
 		}
 	}
@@ -77,8 +80,10 @@ namespace BlendInt {
 			return;
 
 		Size new_size (width, height);
+		UpdateRequest request(Predefined, FormSize, &new_size);
 
-		if(m_widget->Update(UpdateRequest(Predefined, FormSize, &new_size))) {
+		if(m_widget->UpdateTest(request)) {
+			m_widget->Update(request);
 			m_widget->set_size(width, height);
 		}
 	}
@@ -88,8 +93,10 @@ namespace BlendInt {
 		if(m_widget->position().x() == x && m_widget->position().y() == y) return;
 
 		Point new_pos (x, y);
+		UpdateRequest request(Predefined, FormPosition, &new_pos);
 
-		if(m_widget->Update(UpdateRequest(Predefined, FormPosition, &new_pos))) {
+		if(m_widget->UpdateTest(request)) {
+			m_widget->Update(request);
 			m_widget->set_position(x, y);
 		}
 	}
@@ -97,8 +104,10 @@ namespace BlendInt {
 	void GeometryDelegate::SetPosition (const Point& position)
 	{
 		if(m_widget->position() == position) return;
+		UpdateRequest request(Predefined, FormPosition, &position);
 
-		if(m_widget->Update(UpdateRequest(Predefined, FormPosition, &position))) {
+		if(m_widget->UpdateTest(request)) {
+			m_widget->Update(request);
 			m_widget->set_position(position);
 		}
 	}
@@ -114,7 +123,14 @@ namespace BlendInt {
 
 	bool RefreshDelegate::RequestRefresh (AbstractWidget* widget)
 	{
-		return m_container->Update(UpdateRequest(Predefined, ContextRefresh, widget));
+		UpdateRequest request(Predefined, ContextRefresh, widget);
+
+		if(m_container->UpdateTest(request)) {
+			m_container->Update(request);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -141,8 +157,11 @@ namespace BlendInt {
 		if(size().width() == width && size().height() == height) return;
 
 		Size new_size (width, height);
+		UpdateRequest request(Predefined, FormSize, &new_size);
 
-		if(Update(UpdateRequest(Predefined, FormSize, &new_size))) {
+		// TODO: ask for container
+		if(UpdateTest(request)) {
+			Update(request);
 			set_size(width, height);
 			fire_property_changed_event(FormSize);
 		}
@@ -155,7 +174,10 @@ namespace BlendInt {
 
 		if(AbstractWidget::size() == size) return;
 
-		if(Update(UpdateRequest(Predefined, FormSize, &size))) {
+		UpdateRequest request(Predefined, FormSize, &size);
+
+		if(UpdateTest(request)) {
+			Update(request);
 			set_size(size);
 			fire_property_changed_event(FormSize);
 		}
@@ -169,8 +191,10 @@ namespace BlendInt {
 		if(position().x() == x && position().y() == y) return;
 
 		Point new_pos (x, y);
+		UpdateRequest request(Predefined, FormPosition, &new_pos);
 
-		if(Update(UpdateRequest(Predefined, FormPosition, &new_pos))) {
+		if(UpdateTest(request)) {
+			Update(request);
 			set_position(x, y);
 			fire_property_changed_event(FormPosition);
 		}
@@ -183,7 +207,10 @@ namespace BlendInt {
 
 		if(position() == pos) return;
 
-		if(Update(UpdateRequest(Predefined, FormPosition, &pos))) {
+		UpdateRequest request(Predefined, FormPosition, &pos);
+
+		if(UpdateTest(request)) {
+			Update(request);
 			set_position(pos);
 			fire_property_changed_event(FormPosition);
 		}
@@ -201,8 +228,10 @@ namespace BlendInt {
 		if(preferred_size().width() == width && preferred_size().height() == height) return;
 
 		Size new_pref_size(width, height);
+		UpdateRequest request(Predefined, FormPreferredSize, &new_pref_size);
 
-		if(Update(UpdateRequest(Predefined, FormPreferredSize, &new_pref_size))) {
+		if(UpdateTest(request)) {
+			Update(request);
 			set_preferred_size(width, height);
 			fire_property_changed_event(FormPreferredSize);
 		}
@@ -217,8 +246,10 @@ namespace BlendInt {
 		return;
 
 		if(preferred_size() == size) return;
+		UpdateRequest request(Predefined, FormPreferredSize, &size);
 
-		if(Update(UpdateRequest(Predefined, FormPreferredSize, &size))) {
+		if(UpdateTest(request)) {
+			Update(request);
 			set_preferred_size(size);
 			fire_property_changed_event(FormPreferredSize);
 		}
@@ -233,8 +264,10 @@ namespace BlendInt {
 		if(minimal_size().width() == width && minimal_size().height() == height) return;
 
 		Size new_min_size(width, height);
+		UpdateRequest request (Predefined, FormMinimalSize, &new_min_size);
 
-		if(Update(UpdateRequest(Predefined, FormMinimalSize, &new_min_size))) {
+		if(UpdateTest(request)) {
+			Update(request);
 			set_minimal_size(width, height);
 			fire_property_changed_event(FormMinimalSize);
 		}
@@ -247,8 +280,10 @@ namespace BlendInt {
 		return;
 
 		if (minimal_size() == size) return;
+		UpdateRequest request (Predefined, FormMinimalSize, &size);
 
-		if(Update(UpdateRequest(Predefined, FormMinimalSize, &size))) {
+		if(UpdateTest(request)) {
+			Update(request);
 			set_minimal_size(size);
 			fire_property_changed_event(FormMinimalSize);
 		}
@@ -263,8 +298,10 @@ namespace BlendInt {
 		if(maximal_size().width() == width && maximal_size().height() == height) return;
 
 		Size new_max_size (width, height);
+		UpdateRequest request(Predefined, FormMaximalSize, &new_max_size);
 
-		if(Update(UpdateRequest(Predefined, FormMaximalSize, &new_max_size))) {
+		if(UpdateTest(request)) {
+			Update(request);
 			set_maximal_size(new_max_size);
 			fire_property_changed_event(FormMaximalSize);
 		}
@@ -277,8 +314,10 @@ namespace BlendInt {
 		return;
 
 		if(maximal_size() == size) return;
+		UpdateRequest request(Predefined, FormMaximalSize, &size);
 
-		if(Update(UpdateRequest(Predefined, FormMaximalSize, &size))) {
+		if(UpdateTest(request)) {
+			Update(request);
 			set_maximal_size(size);
 			fire_property_changed_event(FormMaximalSize);
 		}
@@ -291,7 +330,10 @@ namespace BlendInt {
 
 		if(m_z == z) return;
 
-		if(Update (UpdateRequest(Predefined, WidgetLayer, &z))) {
+		UpdateRequest request(Predefined, WidgetLayer, &z);
+
+		if(UpdateTest (request)) {
+			Update(request);
 
 			Context* context = GetContext();
 			if(context) {
@@ -311,7 +353,10 @@ namespace BlendInt {
 		if(m_flag[WidgetFlagVisibility] == visible)
 			return;
 
-		if(Update (UpdateRequest(Predefined, WidgetVisibility, &visible))) {
+		UpdateRequest request(Predefined, WidgetVisibility, &visible);
+
+		if(UpdateTest (request)) {
+			Update(request);
 			m_flag[WidgetFlagVisibility] = visible ? 1 : 0;
 			fire_property_changed_event(WidgetVisibility);
 		}

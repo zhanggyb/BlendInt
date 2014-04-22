@@ -71,12 +71,12 @@ namespace BlendInt {
 		if (blur_rad == m_blur_rad)
 			return;
 
-		if (Update(UpdateRequest(Predefined, ShadowBlurRadius, &blur_rad))) {
-			m_blur_rad = blur_rad;
-		}
+		Update(UpdateRequest(Predefined, ShadowBlurRadius, &blur_rad));
+
+		m_blur_rad = blur_rad;
 	}
 
-	bool Shadow::Update (const UpdateRequest& request)
+	void Shadow::Update (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 			switch (request.type()) {
@@ -89,7 +89,7 @@ namespace BlendInt {
 					GenerateShadowBuffers(*size_p, radius(), m_blur_rad);
 
 					glBindVertexArray(0);
-					return true;
+					break;
 				}
 
 				case ShadowBlurRadius: {
@@ -100,16 +100,13 @@ namespace BlendInt {
 					glBindVertexArray(m_vao);
 					GenerateShadowBuffers(size(), radius(), *blur_rad);
 					glBindVertexArray(0);
-
-					return true;
+					break;
 				}
 
 				default:
-					return false;
+					break;
 			}
 
-		} else {
-			return false;
 		}
 	}
 

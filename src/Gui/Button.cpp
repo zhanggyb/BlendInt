@@ -57,7 +57,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool Button::Update(const UpdateRequest& request)
+	void Button::Update(const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 			switch (request.type()) {
@@ -73,7 +73,7 @@ namespace BlendInt {
 								   m_emboss_buffer.get());
 				glBindVertexArray(0);
 				Refresh();
-				return true;
+				break;
 			}
 
 			case FormRoundType: {
@@ -87,7 +87,7 @@ namespace BlendInt {
 								   m_emboss_buffer.get());
 				glBindVertexArray(0);
 				Refresh();
-				return true;
+				break;
 			}
 
 			case FormRoundRadius: {
@@ -101,15 +101,13 @@ namespace BlendInt {
 								   m_emboss_buffer.get());
 				glBindVertexArray(0);
 				Refresh();
-				return true;
+				break;
 			}
 
 			default:
-				return AbstractButton::Update(request);
+				AbstractButton::Update(request);
 			}
 
-		} else {
-			return false;
 		}
 	}
 

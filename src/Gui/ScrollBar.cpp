@@ -108,14 +108,49 @@ namespace BlendInt {
 		return percentage;
 	}
 
-	bool ScrollBar::Update (const UpdateRequest& request)
+	bool ScrollBar::UpdateTest (const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case SliderPropertyMinimum: {
+
+					const int* min_p = static_cast<const int*>(request.data());
+
+					if(*min_p >= maximum())
+						return false;
+
+					return true;
+				}
+
+				case SliderPropertyMaximum: {
+
+					const int* max_p = static_cast<const int*>(request.data());
+
+					if(*max_p <= minimum())
+						return false;
+
+					return true;
+				}
+
+				default:
+					return AbstractSlider::UpdateTest(request);
+			}
+
+		} else {
+			return false;
+		}
+	}
+
+	void ScrollBar::Update (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 
 			switch (request.type()) {
 				case FormPosition: {
 					// don't care position change
-					return true;
+					break;
 				}
 
 				case FormSize: {
@@ -155,40 +190,34 @@ namespace BlendInt {
 									m_slot_inner_buffer.get(),
 									m_slot_outline_buffer.get());
 
-					return true;
+					break;
 				}
 
 				case SliderPropertyValue: {
 
-					return true;
+					break;
 				}
 
 				case SliderPropertyMinimum: {
 
 					const int* min_p = static_cast<const int*>(request.data());
 
-					if(*min_p >= maximum())
-						return false;
-
 					if(value() < *min_p) {
 						set_value(*min_p);
 					}
 
-					return true;
+					break;
 				}
 
 				case SliderPropertyMaximum: {
 
 					const int* max_p = static_cast<const int*>(request.data());
 
-					if(*max_p <= minimum())
-						return false;
-
 					if(value() > *max_p) {
 						set_value(*max_p);
 					}
 
-					return true;
+					break;
 				}
 
 				case SliderPropertyOrientation: {
@@ -199,15 +228,13 @@ namespace BlendInt {
 
 					//Refresh();
 
-					return true;
+					break;
 				}
 
 				default:
-					return true;
+					break;
 			}
 
-		} else {
-			return false;
 		}
 	}
 

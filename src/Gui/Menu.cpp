@@ -166,7 +166,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	bool Menu::Update(const UpdateRequest& request)
+	void Menu::Update(const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -177,27 +177,25 @@ namespace BlendInt {
 					GenerateFormBuffer(*size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 					ResetHighlightBuffer(size_p->width());
 					m_shadow->Resize(*size_p);
-					return true;
+					break;
 				}
 
 				case FormRoundType: {
 					const int* type_p = static_cast<const int*>(request.data());
 					GenerateFormBuffer(size(), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
-					return true;
+					break;
 				}
 
 				case FormRoundRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
 					GenerateFormBuffer(size(), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
-					return true;
+					break;
 				}
 
 				default:
-					return RoundWidget::Update(request);
+					RoundWidget::Update(request);
 			}
 
-		} else {
-			return false;
 		}
 	}
 

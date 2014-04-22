@@ -51,7 +51,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	bool MenuButton::Update (const UpdateRequest& request)
+	void MenuButton::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 			switch (request.type()) {
@@ -67,7 +67,7 @@ namespace BlendInt {
 								   0);
 				glBindVertexArray(0);
 				Refresh();
-				return true;
+				break;
 			}
 
 			case FormRoundType: {
@@ -81,7 +81,7 @@ namespace BlendInt {
 								   0);
 				glBindVertexArray(0);
 				Refresh();
-				return true;
+				break;
 			}
 
 			case FormRoundRadius: {
@@ -95,15 +95,13 @@ namespace BlendInt {
 								   0);
 				glBindVertexArray(0);
 				Refresh();
-				return true;
+				break;
 			}
 
 			default:
-				return AbstractButton::Update(request);
+				AbstractButton::Update(request);
 			}
 
-		} else {
-			return false;
 		}
 	}
 	
