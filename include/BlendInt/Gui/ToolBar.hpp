@@ -70,6 +70,8 @@ namespace BlendInt {
 
 		void InitOnce ();
 
+		void RealignSubWidgets (const Size& size, const Margin& margin, int space);
+
 		int GetLastPosition ();
 
 		GLuint m_vao;

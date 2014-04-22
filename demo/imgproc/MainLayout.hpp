@@ -11,6 +11,7 @@
 #include <BlendInt/Gui/ToolBar.hpp>
 #include <BlendInt/Gui/CVImageView.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
+#include <BlendInt/Gui/ComboBox.hpp>
 
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
@@ -39,6 +40,7 @@ private:
 	BI::ScrollArea* m_area;
 
 	BI::TextEntry* m_input;
+	BI::ComboBox* m_combo;
 	BI::ToolButton* m_open;
 
 };

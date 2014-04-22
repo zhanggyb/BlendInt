@@ -43,6 +43,14 @@ namespace BlendInt {
 	ToolBar::ToolBar ()
 	: AbstractDequeContainer(), m_vao(0), m_space(4)
 	{
+		set_preferred_size(200, 32);
+		set_size(200, 32);
+
+		set_margin(4, 4, 4, 4);	// the same as MenuBar
+
+		set_expand_x(true);
+		set_expand_y(false);
+
 		InitOnce();
 	}
 
@@ -83,6 +91,17 @@ namespace BlendInt {
 					m_inner->Reset();
 
 					glBindVertexArray(0);
+
+					RealignSubWidgets(*size_p, margin(), m_space);
+
+					return true;
+				}
+
+				case ContainerMargin: {
+					const Margin* margin_p = static_cast<const Margin*>(request.data());
+
+					RealignSubWidgets(size(), *margin_p, m_space);
+
 					return true;
 				}
 
@@ -192,32 +211,28 @@ namespace BlendInt {
 	void ToolBar::Add (AbstractWidget* widget)
 	{
 		int x = GetLastPosition();
+		int h = size().height() - margin().top() - margin().bottom();
+
 		AppendSubWidget(widget);
-		ResizeSubWidget(widget, widget->preferred_size().width(), 24);
+
+		ResizeSubWidget(widget, widget->preferred_size().width(), h);
 		SetSubWidgetPosition(widget, x, position().y() + margin().bottom());
 	}
 
 	void ToolBar::AddButton (const RefPtr<ActionItem>& action)
 	{
 		ToolButton* button = Manage(new ToolButton);
+		int x = GetLastPosition();
+		int h = size().height() - margin().top() - margin().bottom();
 
 		AppendSubWidget(button);
 
-		int x = GetLastPosition();
-		ResizeSubWidget(button, 24, 24);
+		ResizeSubWidget(button, button->preferred_size().width(), h);
 		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
 	}
 
 	void ToolBar::InitOnce ()
 	{
-		set_preferred_size(200, 32);
-		set_size(200, 32);
-
-		set_margin(4, 4, 4, 4);	// the same as MenuBar
-
-		set_expand_x(true);
-		set_expand_y(false);
-
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
@@ -233,6 +248,27 @@ namespace BlendInt {
 		m_inner->Reset();
 
 		glBindVertexArray(0);
+	}
+	
+	void ToolBar::RealignSubWidgets (const Size& size, const Margin& margin,
+					int space)
+	{
+		int x = position().x();
+		int y = position().y();
+		int h = size.height() - margin.top() - margin.bottom();
+
+		if(h < 0) {
+			DBG_PRINT_MSG("Error: the geometry for sub widget is not valid, height: %d", h);
+		}
+
+		x += margin.left();
+		y += margin.bottom();
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			SetSubWidgetPosition(*it, x, y);
+			ResizeSubWidget(*it, (*it)->size().width(), h);
+			x += (*it)->size().width() + space;
+		}
 	}
 
 	int ToolBar::GetLastPosition ()

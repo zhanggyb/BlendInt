@@ -43,12 +43,40 @@ namespace BlendInt {
 	ToolButton::ToolButton ()
 	: m_vao(0)
 	{
+		set_preferred_size(24, 24);
+		set_size(24, 24);
+
 		InitOnce();
 	}
 
 	ToolButton::~ToolButton ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	bool ToolButton::Update (const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case FormSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					GenerateFormBuffer(*size_p, RoundAll, 5.0, m_inner.get(), m_outer.get(), 0);
+
+					return true;
+				}
+
+				default:
+					return true;
+
+			}
+
+		} else {
+			return false;
+		}
 	}
 
 	ResponseType ToolButton::Draw (const RedrawEvent& event)
@@ -161,9 +189,6 @@ namespace BlendInt {
 
 	void ToolButton::InitOnce ()
 	{
-		set_preferred_size(24, 24);
-		set_size(24, 24);
-
 		m_inner.reset(new GLArrayBuffer);
 		m_outer.reset(new GLArrayBuffer);
 

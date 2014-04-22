@@ -120,6 +120,11 @@ namespace BlendInt {
 					return true;
 				}
 
+				case ContextRefresh: {
+
+					return Refresh();
+				}
+
 				default:
 					return true;
 			}
