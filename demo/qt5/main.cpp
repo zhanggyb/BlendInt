@@ -4,42 +4,72 @@
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QScreen>
+#include <QMouseEvent>
 
 #include <QtCore/qmath.h>
 
-class TriangleWindow : public OpenGLWindow
+#include <BlendInt/Interface.hpp>
+#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/Viewport3D.hpp>
+
+#include <BlendInt/Window/KeyEvent.hpp>
+#include <BlendInt/Window/MouseEvent.hpp>
+
+namespace BI = BlendInt;
+
+static BI::KeyEvent kKeyEvent;
+static BI::MouseEvent kMouseEvent;
+
+class DemoWindow : public OpenGLWindow
 {
 public:
-    TriangleWindow();
+
+	DemoWindow();
+
+	virtual ~DemoWindow ();
 
     void initialize();
     void render();
 
+protected:
+
+    virtual void mousePressEvent(QMouseEvent* ev);
+
+    virtual void mouseMoveEvent (QMouseEvent* ev);
+
+    virtual void mouseReleaseEvent (QMouseEvent* ev);
+
 private:
+
     GLuint loadShader(GLenum type, const char *source);
 
-    GLuint m_posAttr;
-    GLuint m_colAttr;
-    GLuint m_matrixUniform;
-
-    QOpenGLShaderProgram *m_program;
-    int m_frame;
+    BI::Context* m_context;
 };
 
-TriangleWindow::TriangleWindow()
-    : m_program(0)
-    , m_frame(0)
+DemoWindow::DemoWindow()
+: OpenGLWindow(), m_context(0)
 {
+}
+
+DemoWindow::~DemoWindow()
+{
+	BI::Interface::Release();
 }
 
 int main(int argc, char **argv)
 {
+	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
+
     QGuiApplication app(argc, argv);
 
     QSurfaceFormat format;
+    format.setMajorVersion(3);
+    format.setMinorVersion(3);
+    format.setProfile(QSurfaceFormat::CoreProfile);
     format.setSamples(16);
 
-    TriangleWindow window;
+    DemoWindow window;
     window.setFormat(format);
     window.resize(640, 480);
     window.show();
@@ -49,23 +79,7 @@ int main(int argc, char **argv)
     return app.exec();
 }
 
-static const char *vertexShaderSource =
-    "attribute highp vec4 posAttr;\n"
-    "attribute lowp vec4 colAttr;\n"
-    "varying lowp vec4 col;\n"
-    "uniform highp mat4 matrix;\n"
-    "void main() {\n"
-    "   col = colAttr;\n"
-    "   gl_Position = matrix * posAttr;\n"
-    "}\n";
-
-static const char *fragmentShaderSource =
-    "varying lowp vec4 col;\n"
-    "void main() {\n"
-    "   gl_FragColor = col;\n"
-    "}\n";
-
-GLuint TriangleWindow::loadShader(GLenum type, const char *source)
+GLuint DemoWindow::loadShader(GLenum type, const char *source)
 {
     GLuint shader = glCreateShader(type);
     glShaderSource(shader, 1, &source, 0);
@@ -73,57 +87,108 @@ GLuint TriangleWindow::loadShader(GLenum type, const char *source)
     return shader;
 }
 
-void TriangleWindow::initialize()
+void DemoWindow::initialize()
 {
-    m_program = new QOpenGLShaderProgram(this);
-    m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexShaderSource);
-    m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentShaderSource);
-    m_program->link();
-    m_posAttr = m_program->attributeLocation("posAttr");
-    m_colAttr = m_program->attributeLocation("colAttr");
-    m_matrixUniform = m_program->uniformLocation("matrix");
+	/* initialize BlendInt after OpenGL content is created */
+	if (!BI::Interface::Initialize()) {
+		exit(-1);
+	}
+
+	BI::Interface::instance->Resize(640, 480);
+
+	m_context = Manage (new BI::Context);
+	m_context->set_name("Context");
+	BI::Interface::instance->SetCurrentContext(m_context);
+	m_context->Resize(640, 480);
+
+	BI::Viewport3D* view3d = Manage(new BI::Viewport3D);
+	view3d->set_name("Viewport3D");
+	view3d->Resize(630, 445);
+	view3d->SetPosition(5, 30);
+
+	BI::Button* button = Manage(new BI::Button);
+	button->set_name("Button");
+	button->SetPosition(545, 5);
+
+	m_context->Add(view3d);
+	m_context->Add(button);
+
 }
 
-void TriangleWindow::render()
+void DemoWindow::render()
 {
-    const qreal retinaScale = devicePixelRatio();
-    glViewport(0, 0, width() * retinaScale, height() * retinaScale);
+	BI::Interface::instance->Draw();
+}
 
-    glClear(GL_COLOR_BUFFER_BIT);
+void DemoWindow::mouseMoveEvent(QMouseEvent* ev)
+{
+	kMouseEvent.set_action(BI::MouseMove);
+	kMouseEvent.set_button(BI::MouseButtonNone);
+	kMouseEvent.set_position(ev->pos().x(), BI::Interface::instance->GetCurrentContextHeight() - ev->pos().y());
 
-    m_program->bind();
+	BI::Interface::instance->DispatchMouseEvent(kMouseEvent);
+}
 
-    QMatrix4x4 matrix;
-    matrix.perspective(60, 4.0/3.0, 0.1, 100.0);
-    matrix.translate(0, 0, -2);
-    matrix.rotate(100.0f * m_frame / screen()->refreshRate(), 0, 1, 0);
+void DemoWindow::mousePressEvent(QMouseEvent* ev)
+{
+	BI::MouseAction mouse_action = BI::MousePress;
 
-    m_program->setUniformValue(m_matrixUniform, matrix);
+	BI::MouseButton mouse_button = BI::MouseButtonNone;
 
-    GLfloat vertices[] = {
-        0.0f, 0.707f,
-        -0.5f, -0.5f,
-        0.5f, -0.5f
-    };
+	switch(ev->button()) {
 
-    GLfloat colors[] = {
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f
-    };
+		case Qt::LeftButton:
+			mouse_button = BI::MouseButtonLeft;
+			break;
 
-    glVertexAttribPointer(m_posAttr, 2, GL_FLOAT, GL_FALSE, 0, vertices);
-    glVertexAttribPointer(m_colAttr, 3, GL_FLOAT, GL_FALSE, 0, colors);
+		case Qt::RightButton:
+			mouse_button = BI::MouseButtonRight;
+			break;
 
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
+		case Qt::MiddleButton:
+			mouse_button = BI::MouseButtonMiddle;
+			break;
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+		default:
+			break;
 
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(0);
+	}
 
-    m_program->release();
+	kMouseEvent.set_button(mouse_button);
+	kMouseEvent.set_action(mouse_action);
+	kMouseEvent.set_modifiers(BI::ModifierNone);
 
-    ++m_frame;
+	BI::Interface::instance->DispatchMouseEvent(kMouseEvent);
+}
+
+void DemoWindow::mouseReleaseEvent(QMouseEvent* ev)
+{
+	BI::MouseAction mouse_action = BI::MouseRelease;
+
+	BI::MouseButton mouse_button = BI::MouseButtonNone;
+
+	switch(ev->button()) {
+
+		case Qt::LeftButton:
+			mouse_button = BI::MouseButtonLeft;
+			break;
+
+		case Qt::RightButton:
+			mouse_button = BI::MouseButtonRight;
+			break;
+
+		case Qt::MiddleButton:
+			mouse_button = BI::MouseButtonMiddle;
+			break;
+
+		default:
+			break;
+
+	}
+
+	kMouseEvent.set_button(mouse_button);
+	kMouseEvent.set_action(mouse_action);
+	kMouseEvent.set_modifiers(BI::ModifierNone);
+
+	BI::Interface::instance->DispatchMouseEvent(kMouseEvent);
 }
