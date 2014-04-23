@@ -202,19 +202,46 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
+	context->set_max_tex_buffer_cache_size(2);
 
-	// TODO: add test code here
 	Widget* w1 = Manage(new Widget);
 	w1->set_name("widget1");
 	w1->SetPosition(100, 100);
     context->Add(w1);
 
-	Frame* f1 = Manage(new Frame);  // now f1 should be deleted automatically
-	f1->set_name("frame1");
-	f1->SetPosition(240, 320);
-	//f1->Add(w1);
+    Widget* w2 = Manage(new Widget);
+    w2->set_name("widget2");
+    w2->SetPosition(150, 150);
+    w2->SetLayer(1);
+    context->Add(w2);
 
-	context->Add(f1);
+    Widget* w3 = Manage(new Widget);
+    w3->set_name("widget3");
+    w3->SetPosition(200, 200);
+    w3->SetLayer(2);
+    context->Add(w3);
+
+    Widget* w4 = Manage(new Widget);
+    w4->set_name("widget4");
+    w4->SetPosition(250, 250);
+    w4->SetLayer(3);
+    context->Add(w4);
+
+    delete w4;
+    delete w3;
+    delete w2;
+
+    Widget* w5 = Manage(new Widget);
+    w5->set_name("widget5");
+    w5->SetPosition(300, 300);
+    w5->SetLayer(4);
+    context->Add(w5);
+
+    Widget* w6 = Manage(new Widget);
+    w6->set_name("widget6");
+    w6->SetPosition(350, 350);
+    w6->SetLayer(5);
+    context->Add(w6);
 
 #ifdef DEBUG
 	context->PrintLayers();

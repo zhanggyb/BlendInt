@@ -53,7 +53,7 @@ namespace BlendInt {
 		std::set<AbstractWidget*>* widgets;
 
 		/** The OpenGL Texture as a buffer for display */
-		GLTexture2D* buffer;
+		RefPtr<GLTexture2D> tex_buf_ptr;
 	};
 
 	/**
@@ -114,6 +114,16 @@ namespace BlendInt {
 #ifdef DEBUG
 		void PrintLayers ();
 #endif
+
+		void set_max_tex_buffer_cache_size (unsigned int size)
+		{
+			m_max_tex_buffer_cache_size = size;
+		}
+
+		unsigned int max_tex_buffer_cache_size () const
+		{
+			return m_max_tex_buffer_cache_size;
+		}
 
 	protected:
 
@@ -194,11 +204,18 @@ namespace BlendInt {
 		 */
 		AbstractWidget* m_focused_widget;
 
-		static ScissorStatus scissor_status;
+		/**
+		 * @brief A stack to store unused texture buffer
+		 */
+		std::stack<RefPtr<GLTexture2D> > m_tex_buffer_cache;
 
-		static bool refresh_once;
+		unsigned int m_max_tex_buffer_cache_size;
 
-		static bool force_refresh_all;
+		ScissorStatus scissor_status;
+
+		bool refresh_once;
+
+		bool force_refresh_all;
 	};
 
 }

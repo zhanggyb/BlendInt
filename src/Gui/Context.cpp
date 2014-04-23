@@ -46,17 +46,12 @@ namespace BlendInt
 {
 
 	ContextLayer::ContextLayer ()
-			: refresh(true), widgets(0), buffer(0)
+			: refresh(true), widgets(0)
 	{
 	}
 
 	ContextLayer::~ContextLayer ()
 	{
-		if (buffer) {
-			DBG_PRINT_MSG("%s", "Delete texture buffer in context layer");
-			delete buffer;
-		}
-
 		if (widgets) {
 			DBG_PRINT_MSG("%s", "Delete widget set in context layer");
 			assert(widgets->size() == 0);
@@ -65,14 +60,14 @@ namespace BlendInt
 		}
 	}
 
-	bool Context::refresh_once = false;
-
-	bool Context::force_refresh_all = true;
-
-	ScissorStatus Context::scissor_status;
-
 	Context::Context ()
-	: AbstractContainer(), m_main_buffer(0), m_vao(0), m_focused_widget(0)
+	: AbstractContainer(),
+	  m_main_buffer(0),
+	  m_vao(0),
+	  m_focused_widget(0),
+	  m_max_tex_buffer_cache_size(6),
+	  refresh_once(false),
+	  force_refresh_all(true)
 	{
 		set_size(640, 480);
 
@@ -84,7 +79,11 @@ namespace BlendInt
 		m_redraw_event.set_projection_matrix(
 						glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
 		m_hover_deque.reset(new std::deque<AbstractWidget*>);
+
 		m_main_buffer = new GLTexture2D;
+#ifdef DEBUG
+		m_main_buffer->set_name("Main Buffer");
+#endif
 
 		InitOnce();
 	}
@@ -293,28 +292,18 @@ namespace BlendInt
 		if (force_refresh_all) {
 
 			std::map<int, ContextLayer>::iterator layer_iter;
-			unsigned int count = 0;
 			std::set<AbstractWidget*>* widget_set_p = 0;
 
 			for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
 			        layer_iter++) {
 				widget_set_p = layer_iter->second.widgets;
 
-				DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
-
-				if (!layer_iter->second.buffer) {
-					layer_iter->second.buffer = new GLTexture2D;
-					layer_iter->second.buffer->Generate();
-				}
-
+				//DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
 				RenderLayer(event,
 								layer_iter->first,
 								widget_set_p,
-								layer_iter->second.buffer);
-				m_deque.push_back(layer_iter->second.buffer);
-
-				count++;
-
+								layer_iter->second.tex_buf_ptr.get());
+				m_deque.push_back(layer_iter->second.tex_buf_ptr.get());
 				layer_iter->second.refresh = false;
 			}
 
@@ -326,7 +315,6 @@ namespace BlendInt
 		} else if (refresh_once) {
 
 			std::map<int, ContextLayer>::iterator layer_iter;
-			unsigned int count = 0;
 			std::set<AbstractWidget*>* widget_set_p = 0;
 
 			for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
@@ -336,39 +324,13 @@ namespace BlendInt
 				if (layer_iter->second.refresh) {
 
 					// DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
-
-					if (!layer_iter->second.buffer) {
-						layer_iter->second.buffer = new GLTexture2D;
-						layer_iter->second.buffer->Generate();
-					}
 					RenderLayer(event,
 									layer_iter->first,
 									widget_set_p,
-									layer_iter->second.buffer);
+									layer_iter->second.tex_buf_ptr.get());
 
-				} else {
-
-					if (!layer_iter->second.buffer) {
-						layer_iter->second.buffer = new GLTexture2D;
-						layer_iter->second.buffer->Generate();
-
-						RenderLayer(event,
-										layer_iter->first,
-										widget_set_p,
-										layer_iter->second.buffer);
-					} else if (layer_iter->second.buffer->id() == 0) {
-						layer_iter->second.buffer->Generate();
-
-						RenderLayer(event,
-										layer_iter->first,
-										widget_set_p,
-										layer_iter->second.buffer);
-					}
 				}
-
-				count++;
-
-				m_deque.push_back(layer_iter->second.buffer);
+				m_deque.push_back(layer_iter->second.tex_buf_ptr.get());
 				layer_iter->second.refresh = false;
 			}
 
@@ -573,6 +535,21 @@ namespace BlendInt
 
 			// Refresh this layer in the render loop
 			m_layers[widget->z()].refresh = true;
+
+			if(m_tex_buffer_cache.size()) {
+				m_layers[widget->z()].tex_buf_ptr = m_tex_buffer_cache.top();
+				m_tex_buffer_cache.pop();
+			} else {
+				m_layers[widget->z()].tex_buf_ptr.reset(new GLTexture2D);
+				m_layers[widget->z()].tex_buf_ptr->Generate();
+			}
+
+#ifdef DEBUG
+			char name[32];
+			sprintf(name, "layer %d buffer", widget->z());
+			m_layers[widget->z()].tex_buf_ptr->set_name(name);
+#endif
+
 			refresh_once = true;
 		}
 
@@ -619,16 +596,22 @@ namespace BlendInt
 			}
 
 			if (widget_set_p->empty()) {
+
 				DBG_PRINT_MSG("layer %d is empty, delete it", z);
-				//delete widget_set_p; widget_set_p = 0;
 				delete m_layers[z].widgets;
 				m_layers[z].widgets = 0;
 
-				if(m_layers[z].buffer) {
-					m_layers[z].buffer->Clear();
-					delete m_layers[z].buffer;
-					m_layers[z].buffer = 0;
+				if(m_tex_buffer_cache.size() < m_max_tex_buffer_cache_size) {
+					m_tex_buffer_cache.push(m_layers[z].tex_buf_ptr);
 				}
+
+				/*
+				if(m_layers[z].tex_buf_ptr) {
+					m_layers[z].tex_buf_ptr->Clear();
+					delete m_layers[z].tex_buf_ptr;
+					m_layers[z].tex_buf_ptr = 0;
+				}
+				*/
 				m_layers.erase(z);
 			}
 
