@@ -217,11 +217,6 @@ namespace BlendInt {
 			return m_z;
 		}
 
-		inline bool locked () const
-		{
-			return m_flag[WidgetFlagLockGeometry];
-		}
-
 		void activate_events ()
 		{
 			m_flag.set(WidgetFlagFireEvents);
@@ -343,11 +338,6 @@ namespace BlendInt {
 			m_flag[WidgetFlagScissorTest] = status ? 1 : 0;
 		}
 
-		void LockGeometry (AbstractWidget* obj, bool status)
-		{
-			obj->m_flag[WidgetFlagLockGeometry] = status ? 1 : 0;
-		}
-
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 
 		/**
@@ -398,8 +388,7 @@ namespace BlendInt {
 	private:
 
 		enum WidgetFlagIndex {
-			WidgetFlagLockGeometry = 0,
-			WidgetFlagFireEvents,
+			WidgetFlagFireEvents = 0,
 			WidgetFlagFocus,
 
 			/** If this widget is in cursor hover list in Context */
@@ -450,15 +439,6 @@ namespace BlendInt {
 
 		AbstractContainer* m_container;
 
-#ifdef DEBUG
-	public:
-
-		inline void lock (bool status)
-		{
-			m_flag[0] = status ? 1 : 0;
-		}
-
-#endif
 	};
 
 } /* namespace BlendInt */

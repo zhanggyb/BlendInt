@@ -63,8 +63,6 @@ namespace BlendInt {
 			m_items[m_columns * (row + i) + column] = widget;
 		}
 
-		LockGeometry(widget, true);
-
 		//Update(FormSize, 0);
 	}
 
@@ -82,8 +80,6 @@ namespace BlendInt {
 		{
 			m_items[m_columns * (row + i) + column] = layout;
 		}
-
-		LockGeometry(layout, true);
 
 		//Update(FormSize, 0);
 	}
@@ -192,8 +188,6 @@ namespace BlendInt {
 
 		activate_events();
 		widget->activate_events();
-
-		LockGeometry(widget, true);
 	}
 
 	void TableLayout::RemoveItem(AbstractWidget* object)

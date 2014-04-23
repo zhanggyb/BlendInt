@@ -72,10 +72,6 @@ TEST_F(HLayoutTest1, Add2)
 	hlayout->SetPosition(100, 100);
 	hlayout->Resize(400, 200);
 
-#ifdef DEBUG
-	hlayout->lock(true);
-#endif
-
 	Widget* widget1 = new Widget;
 	widget1->SetExpand(true);
 	Widget* widget2 = new Widget;
@@ -114,10 +110,6 @@ TEST_F(HLayoutTest1, Add3)
 	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(100, 100);
 	hlayout->Resize(400, 200);
-
-#ifdef DEBUG
-	hlayout->lock(true);
-#endif
 
 	Widget* widget1 = new Widget;
 	widget1->SetExpandX(false);
@@ -249,10 +241,6 @@ TEST_F(HLayoutTest1, Add6)
 	HLayout* hlayout = new HLayout;
 	hlayout->SetPosition(100, 100);
 	hlayout->Resize(50, 200);
-
-#ifdef DEBUG
-	hlayout->lock(true);
-#endif
 
 	Widget* widget1 = new Widget;
 	widget1->SetExpandX(true);

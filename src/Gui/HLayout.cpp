@@ -147,7 +147,6 @@ namespace BlendInt {
 
 		activate_events();
 		object->activate_events();
-		LockGeometry(object, true);
 	}
 
 	void HLayout::RemoveItem (AbstractWidget* object)
@@ -168,7 +167,6 @@ namespace BlendInt {
 
 		activate_events();
 
-		LockGeometry(object, false);
 		RemoveSubWidget(object);
 	}
 

@@ -181,9 +181,6 @@ namespace BlendInt {
 
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)
 	{
-		// If the object is managed by a layout, disallow position setting
-		if(locked()) return;
-
 		if(size().width() == width && size().height() == height) return;
 
 		Size new_size (width, height);
@@ -200,9 +197,6 @@ namespace BlendInt {
 
 	void AbstractWidget::Resize (const Size& size)
 	{
-		// If the object is managed by a layout, disallow position setting
-		if(locked()) return;
-
 		if(AbstractWidget::size() == size) return;
 
 		UpdateRequest request(Predefined, FormSize, &size);
@@ -217,9 +211,6 @@ namespace BlendInt {
 
 	void AbstractWidget::SetPosition (int x, int y)
 	{
-		// If the object is managed by a layout, disallow position setting
-		if(locked()) return;
-
 		if(position().x() == x && position().y() == y) return;
 
 		Point new_pos (x, y);
@@ -235,9 +226,6 @@ namespace BlendInt {
 
 	void AbstractWidget::SetPosition (const Point& pos)
 	{
-		// If the object is managed by a layout, disallow position setting
-		if(locked()) return;
-
 		if(position() == pos) return;
 
 		UpdateRequest request(Predefined, FormPosition, &pos);
@@ -359,9 +347,6 @@ namespace BlendInt {
 
 	void AbstractWidget::SetLayer (int z)
 	{
-		// If the object is managed by a layout, disallow position setting
-		if(locked()) return;
-
 		if(m_z == z) return;
 
 		UpdateRequest request(Predefined, WidgetLayer, &z);
