@@ -1,4 +1,5 @@
 #include "openglwindow.h"
+#include "Qt5Context.hpp"
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QMatrix4x4>
@@ -9,7 +10,6 @@
 #include <QtCore/qmath.h>
 
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
 
@@ -30,9 +30,12 @@ public:
 	virtual ~DemoWindow ();
 
     void initialize();
+
     void render();
 
 protected:
+
+    virtual void resizeEvent (QResizeEvent* ev);
 
     virtual void mousePressEvent(QMouseEvent* ev);
 
@@ -44,7 +47,7 @@ private:
 
     GLuint loadShader(GLenum type, const char *source);
 
-    BI::Context* m_context;
+    Qt5Context* m_context;
 };
 
 DemoWindow::DemoWindow()
@@ -96,7 +99,7 @@ void DemoWindow::initialize()
 
 	BI::Interface::instance->Resize(640, 480);
 
-	m_context = Manage (new BI::Context);
+	m_context = Manage (new Qt5Context);
 	m_context->set_name("Context");
 	BI::Interface::instance->SetCurrentContext(m_context);
 	m_context->Resize(640, 480);
@@ -120,6 +123,14 @@ void DemoWindow::render()
 	BI::Interface::instance->Draw();
 }
 
+void DemoWindow::resizeEvent(QResizeEvent* ev)
+{
+	if(BI::Interface::instance) {
+		BI::Interface::instance->Resize(ev->size().width(), ev->size().height());
+		ev->accept();
+	}
+}
+
 void DemoWindow::mouseMoveEvent(QMouseEvent* ev)
 {
 	kMouseEvent.set_action(BI::MouseMove);
@@ -127,6 +138,7 @@ void DemoWindow::mouseMoveEvent(QMouseEvent* ev)
 	kMouseEvent.set_position(ev->pos().x(), BI::Interface::instance->GetCurrentContextHeight() - ev->pos().y());
 
 	BI::Interface::instance->DispatchMouseEvent(kMouseEvent);
+	ev->accept();
 }
 
 void DemoWindow::mousePressEvent(QMouseEvent* ev)
@@ -159,6 +171,7 @@ void DemoWindow::mousePressEvent(QMouseEvent* ev)
 	kMouseEvent.set_modifiers(BI::ModifierNone);
 
 	BI::Interface::instance->DispatchMouseEvent(kMouseEvent);
+	ev->accept();
 }
 
 void DemoWindow::mouseReleaseEvent(QMouseEvent* ev)
@@ -191,4 +204,5 @@ void DemoWindow::mouseReleaseEvent(QMouseEvent* ev)
 	kMouseEvent.set_modifiers(BI::ModifierNone);
 
 	BI::Interface::instance->DispatchMouseEvent(kMouseEvent);
+	ev->accept();
 }

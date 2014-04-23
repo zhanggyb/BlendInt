@@ -21,36 +21,22 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FRAME_HPP_
-#define _BLENDINT_GUI_FRAME_HPP_
+#ifndef _BLENDINT_GUI_SPLITTER_HPP_
+#define _BLENDINT_GUI_SPLITTER_HPP_
 
-/**
- * @defgroup widgets Widgets
- *
- * @ingroup gui
- */
-
-#include <BlendInt/Gui/AbstractSingleContainer.hpp>
+#include <BlendInt/Gui/AbstractDequeContainer.hpp>
 
 namespace BlendInt {
 
-	struct WidgetTheme;
-	class Color;
-
-	/**
-	 * @brief A widget usually contains other Form or widget in a box with padding
-	 *
-	 * @ingroup widgets
-	 */
-	class Frame: public AbstractSingleContainer
+	class Splitter: public AbstractDequeContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(Frame);
+		DISALLOW_COPY_AND_ASSIGN(Splitter);
 
 	public:
 
-		Frame ();
+		Splitter (Orientation orientation = Horizontal);
 
-		virtual ~Frame ();
+		virtual ~Splitter ();
 
 		void Add (AbstractWidget* widget);
 
@@ -64,22 +50,18 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
+	private:
 
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+		void AlighSubWidgets ();
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		unsigned int GetAverageRoom (Orientation orientation);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		Orientation m_orientation;
 
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		int m_space;
 
 	};
+}
 
-} /* namespace BlendInt */
 
-#endif /* _BLENDINT_GUI_FRAME_HPP_ */
+#endif /* _BLENDINT_GUI_SPLITTER_HPP_ */

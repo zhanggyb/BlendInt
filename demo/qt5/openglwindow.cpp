@@ -20,6 +20,7 @@ OpenGLWindow::~OpenGLWindow()
 {
     delete m_device;
 }
+
 void OpenGLWindow::render(QPainter *painter)
 {
     Q_UNUSED(painter);

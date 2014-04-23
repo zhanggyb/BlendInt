@@ -18,5 +18,4 @@ public:
 
 };
 
-
 #endif /* GLFWCONTEXT_HPP_ */

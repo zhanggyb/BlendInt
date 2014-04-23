@@ -158,6 +158,28 @@ namespace BlendInt {
 	{
 		return Accept;
 	}
+	
+	bool Frame::UpdateTest (const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case SubWidgetSize:
+					return false;	// DO not allow sub widget geometry reset outside
+
+				case SubWidgetPosition:
+					return false;
+
+				default:
+					return AbstractSingleContainer::UpdateTest(request);
+
+			}
+
+		} else {
+			return false;
+		}
+	}
 
 	ResponseType Frame::MouseMoveEvent (const MouseEvent& event)
 	{
