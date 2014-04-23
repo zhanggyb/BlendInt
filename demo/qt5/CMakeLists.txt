@@ -18,8 +18,8 @@ file(GLOB headerfiles "*.h")
 list(APPEND qt5_demo_SRC ${headfiles})
 
 # Be sure to add ui files
-file(GLOB uifiles "*.ui")
-list(APPEND qt5_demo_SRC ${uifiles})
+#file(GLOB uifiles "*.ui")
+#list(APPEND qt5_demo_SRC ${uifiles})
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -27,7 +27,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-qt5_wrap_ui(ui_mainwindow.h mainwindow.ui)
+#qt5_wrap_ui(ui_mainwindow.h mainwindow.ui)
 
 #qt5_generate_moc(mainwindow.h moc_mainwindow.cpp)
 #qt5_generate_moc(glwindow.h moc_glwindow.cpp)

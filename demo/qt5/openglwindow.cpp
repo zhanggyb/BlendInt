@@ -20,7 +20,6 @@ OpenGLWindow::~OpenGLWindow()
 {
     delete m_device;
 }
-
 void OpenGLWindow::render(QPainter *painter)
 {
     Q_UNUSED(painter);
@@ -28,20 +27,19 @@ void OpenGLWindow::render(QPainter *painter)
 
 void OpenGLWindow::initialize()
 {
-
 }
 
 void OpenGLWindow::render()
 {
     if (!m_device)
-           m_device = new QOpenGLPaintDevice;
+        m_device = new QOpenGLPaintDevice;
 
-       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-       m_device->setSize(size());
+    m_device->setSize(size());
 
-       QPainter painter(m_device);
-       render(&painter);
+    QPainter painter(m_device);
+    render(&painter);
 }
 
 void OpenGLWindow::renderLater()
@@ -56,6 +54,7 @@ bool OpenGLWindow::event(QEvent *event)
 {
     switch (event->type()) {
     case QEvent::UpdateRequest:
+        m_update_pending = false;
         renderNow();
         return true;
     default:
@@ -71,20 +70,10 @@ void OpenGLWindow::exposeEvent(QExposeEvent *event)
         renderNow();
 }
 
-void OpenGLWindow::resizeEvent(QResizeEvent *event)
-{
-    Q_UNUSED(event);
-
-    if (isExposed())
-        renderNow();
-}
-
 void OpenGLWindow::renderNow()
 {
     if (!isExposed())
         return;
-
-    m_update_pending = false;
 
     bool needsInitialize = false;
 
