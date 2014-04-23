@@ -43,29 +43,16 @@ namespace BlendInt {
 	
 	void Splitter::Add (AbstractWidget* widget)
 	{
-		unsigned int room = GetAverageRoom(m_orientation);
-
-		if(m_orientation == Horizontal) {
-
-			unsigned int height = size().height() - margin().top() - margin().bottom();
-
-			if(AddSubWidget(widget)) {
-				ResizeSubWidget(widget, room, height);
-			}
-
-		} else {
-
-			unsigned int width = size().width() - margin().left() - margin().right();
-
-			if(AddSubWidget(widget)) {
-				ResizeSubWidget(widget, width, room);
-			}
-
+		if(AddSubWidget(widget)) {
+			AlignSubWidgets(m_orientation, size(), margin(), m_space);
 		}
 	}
 
 	void Splitter::Remove (AbstractWidget* widget)
 	{
+		if(RemoveSubWidget(widget)) {
+			AlignSubWidgets(m_orientation, size(), margin(), m_space);
+		}
 	}
 
 	bool Splitter::UpdateTest (const UpdateRequest& request)
@@ -97,6 +84,10 @@ namespace BlendInt {
 			switch(request.type()) {
 
 				case FormSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+					AlignSubWidgets(m_orientation,*size_p, margin(), m_space);
+
 					break;
 				}
 
@@ -109,6 +100,11 @@ namespace BlendInt {
 
 					MoveSubWidgets(x, y);
 
+					break;
+				}
+
+				case WidgetRefresh: {
+					Refresh();
 					break;
 				}
 
@@ -125,24 +121,88 @@ namespace BlendInt {
 		return IgnoreAndContinue;
 	}
 	
-	void Splitter::AlighSubWidgets ()
+	void Splitter::AlignSubWidgets (Orientation orienation, const Size& size, const Margin& margin, int space)
 	{
+		unsigned int room = GetAverageRoom(orienation, size, margin, space);
+		int x = position().x() + margin.left();
+
+		if(orienation == Horizontal) {
+
+			int y = position().y() + margin.bottom();
+			unsigned int h = size.height() - margin.top() - margin.bottom();
+
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			{
+				ResizeSubWidget(*it, room, h);
+				SetSubWidgetPosition(*it, x, y);
+				x = x + room + space;
+			}
+
+		} else {
+
+			int y = position().y() + size.height() - margin.top();
+			unsigned int w = size.width() - margin.left() - margin.right();
+
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			{
+				ResizeSubWidget(*it, w, room);
+				SetSubWidgetPosition(*it, x, y);
+				y = y - room - space;
+			}
+
+		}
 	}
 
-	unsigned int Splitter::GetAverageRoom (Orientation orientation)
+	ResponseType Splitter::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType Splitter::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Splitter::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Splitter::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Splitter::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Splitter::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Splitter::MouseMoveEvent (const MouseEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
+
+	unsigned int Splitter::GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin, int space)
 	{
 		unsigned int room = 0;
 
 		if(orientation == Horizontal) {
-			room = size().width() - margin().left() - margin().right();
+			room = size.width() - margin.left() - margin.right();
 			if(sub_widget_size()) {
-				room = room - (m_space * (sub_widget_size() - 1));
+				room = room - (space * (sub_widget_size() - 1));
 				room = room / sub_widget_size();
 			}
 		} else {
-			room = size().height() - margin().top() - margin().bottom();
+			room = size.height() - margin.top() - margin.bottom();
 			if(sub_widget_size()) {
-				room = room - (m_space * (sub_widget_size() - 1));
+				room = room - (space * (sub_widget_size() - 1));
 				room = room / sub_widget_size();
 			}
 		}

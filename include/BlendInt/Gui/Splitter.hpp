@@ -50,11 +50,25 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
 	private:
 
-		void AlighSubWidgets ();
+		void AlignSubWidgets (Orientation orientation, const Size& size, const Margin& margin, int space);
 
-		unsigned int GetAverageRoom (Orientation orientation);
+		unsigned int GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin, int space);
 
 		Orientation m_orientation;
 
