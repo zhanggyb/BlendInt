@@ -52,6 +52,8 @@ namespace BlendInt {
 
 		virtual void Update (const UpdateRequest& request);
 
+		virtual void BroadcastUpdate (const UpdateRequest& request);
+
 		virtual ResponseType Draw (const RedrawEvent& event);
 
 		virtual ResponseType FocusEvent (bool focus);

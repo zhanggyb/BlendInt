@@ -201,18 +201,16 @@ namespace BlendInt
 
 				case SubWidgetSize: {
 
-					const SubWidgetSizeData* data = static_cast<const SubWidgetSizeData*>(request.data());
-
-					DBG_PRINT_MSG("widget %s ask for resize", data->sub_widget->name().c_str());
+					//const SubWidgetSizeData* data = static_cast<const SubWidgetSizeData*>(request.data());
+					//DBG_PRINT_MSG("widget %s ask for resize", data->sub_widget->name().c_str());
 
 					return true;
 				}
 
 				case SubWidgetPosition: {
 
-					const SubWidgetPositionData* data = static_cast<const SubWidgetPositionData*>(request.data());
-
-					DBG_PRINT_MSG("widget %s ask for position", data->sub_widget->name().c_str());
+					//const SubWidgetPositionData* data = static_cast<const SubWidgetPositionData*>(request.data());
+					//DBG_PRINT_MSG("widget %s ask for position", data->sub_widget->name().c_str());
 
 					return true;
 				}
@@ -279,6 +277,27 @@ namespace BlendInt
 					break;;
 			}
 
+		}
+	}
+
+	void Context::BroadcastUpdate(const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case FormSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					m_resized.fire(*size_p);
+					break;
+				}
+
+				default:
+					AbstractContainer::BroadcastUpdate(request);
+
+			}
 		}
 	}
 

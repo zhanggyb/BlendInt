@@ -8,13 +8,8 @@
 #include <BlendInt/Interface.hpp>
 #include <BlendInt/Types.hpp>
 
-#include <BlendInt/Gui/CVImageView.hpp>
-#include <BlendInt/Gui/VLayout.hpp>
-#include <BlendInt/Gui/MenuBar.hpp>
-#include <BlendInt/Gui/ToolBar.hpp>
-
 #include "Window.hpp"
-#include "MainLayout.hpp"
+#include "GLFWContext.hpp"
 
 using namespace BlendInt;
 using namespace std;
@@ -27,19 +22,15 @@ int main(int argc, char* argv[])
 
 	Init();
 
-	GLFWwindow* win = CreateWindow("GLFW3 Demo", 800, 600);
+	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
 
-	Context* context = Manage(new Context);
-	context->set_name("Context");
+	GLFWContext* context = Manage(new GLFWContext);
+#ifdef DEBUG
+	context->set_name("GLFWContext");
+#endif
 	Interface::instance->SetCurrentContext(context);
 
-	Interface::instance->Resize(800, 600);
-
-	MainLayout* main_layout = Manage(new MainLayout);
-
-	main_layout->Resize(800, 600);
-
-	context->Add(main_layout);
+	//Interface::instance->Resize(800, 600);
 
 	RunLoop (win);
 

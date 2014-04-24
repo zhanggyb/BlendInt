@@ -183,21 +183,27 @@ namespace BlendInt {
 	{
 		if(size().width() == width && size().height() == height) return;
 
+		bool broadcast = false;
+
 		Size new_size (width, height);
 		UpdateRequest request(Predefined, FormSize, &new_size);
 
-		// TODO: ask for container
 		if(ResizeTestInContainer(new_size) && UpdateTest(request)) {
 			Update(request);
 			set_size(width, height);
 			ResizeUpdateInContainer(new_size);
-			fire_property_changed_event(FormSize);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
 	void AbstractWidget::Resize (const Size& size)
 	{
 		if(AbstractWidget::size() == size) return;
+		bool broadcast = false;
 
 		UpdateRequest request(Predefined, FormSize, &size);
 
@@ -205,13 +211,18 @@ namespace BlendInt {
 			Update(request);
 			set_size(size);
 			ResizeUpdateInContainer(size);
-			fire_property_changed_event(FormSize);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
 	void AbstractWidget::SetPosition (int x, int y)
 	{
 		if(position().x() == x && position().y() == y) return;
+		bool broadcast = false;
 
 		Point new_pos (x, y);
 		UpdateRequest request(Predefined, FormPosition, &new_pos);
@@ -220,13 +231,18 @@ namespace BlendInt {
 			Update(request);
 			set_position(x, y);
 			PositionUpdateInContainer(new_pos);
-			fire_property_changed_event(FormPosition);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
 	void AbstractWidget::SetPosition (const Point& pos)
 	{
 		if(position() == pos) return;
+		bool broadcast = false;
 
 		UpdateRequest request(Predefined, FormPosition, &pos);
 
@@ -234,7 +250,11 @@ namespace BlendInt {
 			Update(request);
 			set_position(pos);
 			PositionUpdateInContainer(pos);
-			fire_property_changed_event(FormPosition);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
@@ -247,6 +267,8 @@ namespace BlendInt {
 				height > maximal_size().height())
 		return;
 
+		bool broadcast = false;
+
 		if(preferred_size().width() == width && preferred_size().height() == height) return;
 
 		Size new_pref_size(width, height);
@@ -255,7 +277,11 @@ namespace BlendInt {
 		if(UpdateTest(request)) {
 			Update(request);
 			set_preferred_size(width, height);
-			fire_property_changed_event(FormPreferredSize);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
@@ -268,12 +294,18 @@ namespace BlendInt {
 		return;
 
 		if(preferred_size() == size) return;
+		bool broadcast = false;
+
 		UpdateRequest request(Predefined, FormPreferredSize, &size);
 
 		if(UpdateTest(request)) {
 			Update(request);
 			set_preferred_size(size);
-			fire_property_changed_event(FormPreferredSize);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
@@ -284,6 +316,7 @@ namespace BlendInt {
 		return;
 
 		if(minimal_size().width() == width && minimal_size().height() == height) return;
+		bool broadcast = false;
 
 		Size new_min_size(width, height);
 		UpdateRequest request (Predefined, FormMinimalSize, &new_min_size);
@@ -291,7 +324,11 @@ namespace BlendInt {
 		if(UpdateTest(request)) {
 			Update(request);
 			set_minimal_size(width, height);
-			fire_property_changed_event(FormMinimalSize);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
@@ -302,12 +339,18 @@ namespace BlendInt {
 		return;
 
 		if (minimal_size() == size) return;
+		bool broadcast = false;
+
 		UpdateRequest request (Predefined, FormMinimalSize, &size);
 
 		if(UpdateTest(request)) {
 			Update(request);
 			set_minimal_size(size);
-			fire_property_changed_event(FormMinimalSize);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
@@ -318,6 +361,7 @@ namespace BlendInt {
 		return;
 
 		if(maximal_size().width() == width && maximal_size().height() == height) return;
+		bool broadcast = false;
 
 		Size new_max_size (width, height);
 		UpdateRequest request(Predefined, FormMaximalSize, &new_max_size);
@@ -325,7 +369,11 @@ namespace BlendInt {
 		if(UpdateTest(request)) {
 			Update(request);
 			set_maximal_size(new_max_size);
-			fire_property_changed_event(FormMaximalSize);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
@@ -336,18 +384,25 @@ namespace BlendInt {
 		return;
 
 		if(maximal_size() == size) return;
+		bool broadcast = false;
+
 		UpdateRequest request(Predefined, FormMaximalSize, &size);
 
 		if(UpdateTest(request)) {
 			Update(request);
 			set_maximal_size(size);
-			fire_property_changed_event(FormMaximalSize);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
 	void AbstractWidget::SetLayer (int z)
 	{
 		if(m_z == z) return;
+		bool broadcast = false;
 
 		UpdateRequest request(Predefined, WidgetLayer, &z);
 
@@ -363,7 +418,11 @@ namespace BlendInt {
 				m_z = z;
 			}
 
-			fire_property_changed_event(WidgetLayer);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
@@ -371,13 +430,18 @@ namespace BlendInt {
 	{
 		if(m_flag[WidgetFlagVisibility] == visible)
 			return;
+		bool broadcast = false;
 
 		UpdateRequest request(Predefined, WidgetVisibility, &visible);
 
 		if(UpdateTest (request)) {
 			Update(request);
 			m_flag[WidgetFlagVisibility] = visible ? 1 : 0;
-			fire_property_changed_event(WidgetVisibility);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 

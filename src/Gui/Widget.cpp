@@ -73,6 +73,11 @@ namespace BlendInt {
 		// do nothing in this base class
 	}
 
+	void Widget::BroadcastUpdate(const UpdateRequest& request)
+	{
+		// do nothing
+	}
+
 	ResponseType Widget::Draw(const RedrawEvent& event)
 	{
 		std::vector<GLfloat> inner;

@@ -80,6 +80,11 @@ namespace BlendInt {
 		return true;
 	}
 
+	void AbstractContainer::BroadcastUpdate(const UpdateRequest& request)
+	{
+		// do nothing
+	}
+
 	void AbstractContainer::SetMargin (const Margin& margin)
 	{
 		if (m_margin.equal(margin))

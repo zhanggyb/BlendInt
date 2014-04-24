@@ -103,19 +103,6 @@ void DemoWindow::initialize()
 	m_context->set_name("Context");
 	BI::Interface::instance->SetCurrentContext(m_context);
 	m_context->Resize(640, 480);
-
-	BI::Viewport3D* view3d = Manage(new BI::Viewport3D);
-	view3d->set_name("Viewport3D");
-	view3d->Resize(630, 445);
-	view3d->SetPosition(5, 30);
-
-	BI::Button* button = Manage(new BI::Button);
-	button->set_name("Button");
-	button->SetPosition(545, 5);
-
-	m_context->Add(view3d);
-	m_context->Add(button);
-
 }
 
 void DemoWindow::render()

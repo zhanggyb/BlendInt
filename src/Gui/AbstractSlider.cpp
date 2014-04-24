@@ -275,11 +275,17 @@ namespace BlendInt {
 		if (m_minimum == minimum)
 			return;
 
+		bool broadcast = false;
+
 		UpdateRequest request(Predefined, SliderPropertyMinimum, &minimum);
 		if(UpdateTest(request)) {
 			Update(request);
 			m_minimum = minimum;
-			fire_property_changed_event(SliderPropertyMinimum);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
@@ -287,26 +293,36 @@ namespace BlendInt {
 	{
 		if (m_maximum == maximum)
 			return;
+		bool broadcast = false;
 
 		UpdateRequest request(Predefined, SliderPropertyMaximum, &maximum);
 
 		if(UpdateTest(request)) {
 			Update(request);
 			m_maximum = maximum;
-			fire_property_changed_event(SliderPropertyMaximum);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
 	void AbstractSlider::SetOrientation (Orientation orientation)
 	{
 		if(m_orientation == orientation) return;
+		bool broadcast = false;
 
 		UpdateRequest request(Predefined, SliderPropertyOrientation, &orientation);
 
 		if(UpdateTest(request)) {
 			Update(request);
 			m_orientation = orientation;
-			//fire_property_changed_event(FormPosition);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 

@@ -9,6 +9,8 @@
 #include <QGuiApplication>
 #include <QtGui/QWindow>
 
+#include "MainLayout.hpp"
+
 namespace BI=BlendInt;
 
 class Qt5Context: public BI::Context
@@ -22,8 +24,11 @@ public:
 
 private:
 
+	void OnResizeLayout (const BI::Size& size);
+
 	Qt::CursorShape m_cursor;
 
+	MainLayout* m_layout;
 };
 
 #endif /* QT5CONTEXT_HPP_ */

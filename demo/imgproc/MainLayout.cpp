@@ -11,6 +11,8 @@
 MainLayout::MainLayout ()
 	: m_menubar(0), m_toolbar(0), m_imgview(0)
 {
+	set_margin(4, 4, 4, 4);
+	set_space(4);
 	InitOnce();
 }
 
@@ -22,7 +24,6 @@ MainLayout::~MainLayout ()
 void MainLayout::InitOnce ()
 {
 	using namespace BI;
-	set_margin(0, 0, 0, 0);
 
 	m_menubar = Manage(new BI::MenuBar);
 	m_toolbar = Manage(new BI::ToolBar);

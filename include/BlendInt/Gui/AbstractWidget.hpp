@@ -280,8 +280,6 @@ namespace BlendInt {
 			SetPosition(position().x() + offset_x, position().y() + offset_y);
 		}
 
-		Cpp::EventRef<AbstractWidget*, int> property_changed() {return m_property_changed;}
-
 		Cpp::EventRef<AbstractWidget*> destroyed () {return m_destroyed;}
 
 		AbstractContainer* container() const {return m_container;}
@@ -317,6 +315,8 @@ namespace BlendInt {
 		 */
 		virtual void Update (const UpdateRequest& request) = 0;
 
+		virtual void BroadcastUpdate (const UpdateRequest& request) = 0;
+
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
 		bool RefreshTestInContainer ();
@@ -339,16 +339,6 @@ namespace BlendInt {
 		}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
-
-		/**
-		 * @brief fire event to inform the property of this object is changed
-		 * @param[in] type the property type, defined in FormPropertyType
-		 */
-		inline void fire_property_changed_event (int type)
-		{
-			if (m_flag[WidgetFlagFireEvents])
-				m_property_changed.fire(this, type);
-		}
 
 		/*
 		static void SetPosition (AbstractWidget* obj, int x, int y);
@@ -432,8 +422,6 @@ namespace BlendInt {
 		std::bitset<32> m_flag;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
-
-		Cpp::Event<AbstractWidget*, int> m_property_changed;
 
 		Cpp::Event<AbstractWidget*> m_destroyed;
 

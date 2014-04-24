@@ -111,6 +111,11 @@ namespace BlendInt {
 
 		virtual void* GetCursor () const;
 
+		Cpp::EventRef<const Size&> resized ()
+		{
+			return m_resized;
+		}
+
 #ifdef DEBUG
 		void PrintLayers ();
 #endif
@@ -130,6 +135,8 @@ namespace BlendInt {
 		virtual bool UpdateTest (const UpdateRequest& request);
 
 		virtual void Update (const UpdateRequest& request);
+
+		virtual void BroadcastUpdate (const UpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -216,6 +223,8 @@ namespace BlendInt {
 		bool refresh_once;
 
 		bool force_refresh_all;
+
+		Cpp::Event<const Size&> m_resized;
 	};
 
 }

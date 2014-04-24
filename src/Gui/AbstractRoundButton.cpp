@@ -37,26 +37,36 @@ namespace BlendInt {
 	void AbstractRoundButton::SetRoundType (int type)
 	{
 		if(round_type() == type) return;
+		bool broadcast = false;
 
 		UpdateRequest request(Predefined, FormRoundType, &type);
 
 		if(UpdateTest(request)) {
 			Update(request);
 			set_round_type(type);
-			fire_property_changed_event(FormRoundType);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 
 	void AbstractRoundButton::SetRadius (float rad)
 	{
 		if(radius() == rad) return;
+		bool broadcast = false;
 
 		UpdateRequest request(Predefined, FormRoundRadius, &rad);
 
 		if(UpdateTest(request)) {
 			Update(request);
 			set_radius(rad);
-			fire_property_changed_event(FormRoundRadius);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
 		}
 	}
 

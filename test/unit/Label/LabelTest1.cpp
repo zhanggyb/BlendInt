@@ -26,6 +26,12 @@ TEST_F(LabelTest1, Foo1)
     GLFWwindow* win = CreateWindow("Label - Foo1", 640, 480);
 
     // TODO: add test code here
+	Context* context = Manage(new Context);
+#ifdef DEBUG
+	context->set_name("Context");
+#endif
+	Interface::instance->SetCurrentContext(context);
+
 	Font my_font ("Source Code Pro", 24);
 	Font my_shadow_font ("Source Code Pro", 24);
 
@@ -46,6 +52,8 @@ TEST_F(LabelTest1, Foo1)
 	label2->set_background_color(Color(0xAF60E0BF));
 	label2->SetPosition(200, 100);
 
+	context->Add(label1);
+	context->Add(label2);
 
     RunLoop(win);
 
