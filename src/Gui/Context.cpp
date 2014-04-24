@@ -142,14 +142,14 @@ namespace BlendInt
 
 	int Context::GetMaxLayer () const
 	{
-		map<int, ContextLayer>::const_reverse_iterator rit = m_layers.rbegin();
+		std::map<int, ContextLayer>::const_reverse_iterator rit = m_layers.rbegin();
 
 		return rit->first;
 	}
 
 	void Context::RefreshLayer (int layer)
 	{
-		map<int, ContextLayer>::iterator layer_iter;
+		std::map<int, ContextLayer>::iterator layer_iter;
 
 		layer_iter = m_layers.find(layer);
 
@@ -543,7 +543,7 @@ namespace BlendInt
 			}
 		}
 
-		map<int, ContextLayer>::iterator layer_iter;
+		std::map<int, ContextLayer>::iterator layer_iter;
 		layer_iter = m_layers.find(widget->z());
 		if (layer_iter != m_layers.end()) {
 			layer_iter->second.widgets->insert(widget);
@@ -597,7 +597,7 @@ namespace BlendInt
 			m_focused_widget = 0;
 		}
 
-		map<AbstractWidget*, int>::iterator index_iter;
+		std::map<AbstractWidget*, int>::iterator index_iter;
 
 		index_iter = m_index.find(widget);
 

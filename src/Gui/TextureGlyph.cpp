@@ -38,7 +38,9 @@
 
 namespace BlendInt {
 
+#ifdef DEBUG
 	unsigned char TextureGlyph::image[HEIGHT][WIDTH];
+#endif
 
 	TextureGlyph::TextureGlyph()
 	: m_texture(0)

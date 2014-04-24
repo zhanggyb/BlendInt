@@ -35,9 +35,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef DEBUG
 #include <BlendInt/Types.hpp>
-#endif
 
 #include <BlendInt/Service/ShaderManager.hpp>
 

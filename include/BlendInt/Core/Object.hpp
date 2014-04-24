@@ -79,6 +79,8 @@ namespace BlendInt {
 
 	private:
 
+		template <typename T> friend class RefPtr;
+
 		size_t m_count;
 
 		std::string m_name;
@@ -109,8 +111,6 @@ namespace BlendInt {
 		}
 
 	private:
-
-		template <typename T> friend class RefPtr;
 
 		inline bool register_in_map ();
 

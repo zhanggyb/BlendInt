@@ -14,7 +14,7 @@
 #include <BlendInt/Gui/ToolBar.hpp>
 
 #include "Window.hpp"
-#include "MainLayout.hpp"
+#include "GLFWContext.hpp"
 
 using namespace BlendInt;
 using namespace std;
@@ -29,16 +29,12 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 800, 600);
 
-	Context* context = Manage(new Context);
+	GLFWContext* context = Manage(new GLFWContext);
+#ifdef DEBUG
 	context->set_name("Context");
+#endif
 	Interface::instance->SetCurrentContext(context);
 	Interface::instance->Resize(800, 600);
-
-	MainLayout* main_layout = Manage(new MainLayout);
-
-	main_layout->Resize(800, 600);
-
-	context->Add(main_layout);
 
 	RunLoop (win);
 
