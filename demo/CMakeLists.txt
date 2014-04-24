@@ -4,6 +4,7 @@
 if(WITH_GLFW3_DEMO)
     add_subdirectory(glfw)
     add_subdirectory(scene)
+    add_subdirectory(texteditor)
     if(ENABLE_OPENCV)
     add_subdirectory(imgproc)
     endif()

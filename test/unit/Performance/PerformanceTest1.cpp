@@ -23,7 +23,7 @@ PerformanceTest1::~PerformanceTest1()
 TEST_F(PerformanceTest1, Layout1)
 {
     Init();
-    GLFWwindow* win = CreateWindow("Button Test - Foo1");
+    GLFWwindow* win = CreateWindow("Button Test - Foo1", 1280, 800);
 
 	// TODO: add test code here
 	Context* context = Manage(new Context);
@@ -31,6 +31,7 @@ TEST_F(PerformanceTest1, Layout1)
 	context->set_name("Context");
 #endif
 	Interface::instance->SetCurrentContext(context);
+	Interface::instance->Resize(1280, 800);
 
     int max_x = 50;
     int max_y = 20;

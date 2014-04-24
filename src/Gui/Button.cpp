@@ -244,6 +244,15 @@ namespace BlendInt {
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
 		m_emboss_buffer.reset(new GLArrayBuffer);
+
+		GenerateFormBuffer(
+						size(),
+						round_type(),
+						radius(),
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						m_emboss_buffer.get());
+
 		glBindVertexArray(0);
 	}
 

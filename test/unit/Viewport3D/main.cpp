@@ -50,16 +50,24 @@ int main (int argc, char* argv[])
 
     Init ();
 
-    GLFWwindow* window = CreateWindow("Timer Test");
+    GLFWwindow* window = CreateWindow("Timer Test", 640, 480);
+	Context* context = Manage(new Context);
+#ifdef DEBUG
+	context->set_name("Context");
+#endif
+	Interface::instance->SetCurrentContext(context);
+
 
     // add test code here
     Viewport3D* view = new Viewport3D;
 
-    view->Resize(800, 600);
-    view->SetPosition(100, 100);
+    view->Resize(600, 440);
+    view->SetPosition(20, 20);
 
     Button* button = new Button("OK");
     button->SetPosition(1000, 400);
+
+    context->Add(view);
 
     RunLoop(window);
 
