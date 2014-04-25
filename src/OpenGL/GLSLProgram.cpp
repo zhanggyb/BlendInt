@@ -69,13 +69,13 @@ namespace BlendInt {
 		AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
 	}
 
-	void GLSLProgram::AttachShaderPair(const std::string& vertex_shader, const std::string& fragment_shader)
+	void GLSLProgram::LoadShaderPairFile(const std::string& vertex_shader, const std::string& fragment_shader)
 	{
-		AttachShader(vertex_shader, GL_VERTEX_SHADER);
-		AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
+		LoadShaderFile(vertex_shader, GL_VERTEX_SHADER);
+		LoadShaderFile(fragment_shader, GL_FRAGMENT_SHADER);
 	}
 
-	void GLSLProgram::AttachShader (const std::string& filename, GLenum type)
+	void GLSLProgram::LoadShaderFile (const std::string& filename, GLenum type)
 	{
 		if (glIsProgram(m_id)) {
 			GLuint shader = GLSLShader::Create(filename, type);

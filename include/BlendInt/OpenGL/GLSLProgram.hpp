@@ -100,7 +100,7 @@ namespace BlendInt {
 		 *
 		 * The param type is defined in manual of glCreateShader
 		 */
-		void AttachShader (const std::string& filename, GLenum type);
+		void LoadShaderFile (const std::string& filename, GLenum type);
 
 		void AttachShader (const GLSLShader& shader);
 
@@ -117,7 +117,7 @@ namespace BlendInt {
 		 * @param vertex_shader File name of the vertex shader
 		 * @param fragment_shader File name of the fragment shader
 		 */
-		void AttachShaderPair (const std::string& vertex_shader, const std::string& fragment_shader);
+		void LoadShaderPairFile (const std::string& vertex_shader, const std::string& fragment_shader);
 
 		/**
 		 * @brief Link the program
