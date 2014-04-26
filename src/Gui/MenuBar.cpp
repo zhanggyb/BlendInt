@@ -185,8 +185,21 @@ namespace BlendInt {
 
 		int x = GetLastPosition();
 
+		unsigned h = size().height() - margin().top() - margin().bottom();
+		h = std::max(h, button->size().height());
+		unsigned int w = -m_space;
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			w += (*it)->size().width() + m_space;
+		}
+		w += margin().left() + margin().right() + button->size().width();
+
 		AppendSubWidget(button);
 		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
+
+		h = h + margin().top() + margin().bottom();
+		Resize(w, h);
+		SetPreferredSize(w, h);
 
 		events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 	}
@@ -201,8 +214,21 @@ namespace BlendInt {
 
 		int x = GetLastPosition();
 
+		unsigned h = size().height() - margin().top() - margin().bottom();
+		h = std::max(h, button->size().height());
+		unsigned int w = -m_space;
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			w += (*it)->size().width() + m_space;
+		}
+		w += margin().left() + margin().right() + button->size().width();
+
 		AppendSubWidget(button);
 		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
+
+		h = h + margin().top() + margin().bottom();
+		Resize(w, h);
+		SetPreferredSize(w, h);
 
 		events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 	}
@@ -214,7 +240,22 @@ namespace BlendInt {
 		int x = GetLastPosition();
 
 		if(AppendSubWidget(button)) {
+
+			unsigned h = size().height() - margin().top() - margin().bottom();
+			h = std::max(h, button->size().height());
+			unsigned int w = -m_space;
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			{
+				w += (*it)->size().width() + m_space;
+			}
+			w += margin().left() + margin().right();
+
 			SetSubWidgetPosition(button, x, position().y() + margin().bottom());
+
+			h = h + margin().top() + margin().bottom();
+			Resize(w, h);
+			SetPreferredSize(w, h);
+
 			events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 		}
 	}
@@ -227,7 +268,22 @@ namespace BlendInt {
 
 		if(AppendSubWidget(button)) {
 			button->SetMenu(menu);
+
+			unsigned h = size().height() - margin().top() - margin().bottom();
+			h = std::max(h, button->size().height());
+			unsigned int w = -m_space;
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			{
+				w += (*it)->size().width() + m_space;
+			}
+			w += margin().left() + margin().right();
+
 			SetSubWidgetPosition(button, x, position().y() + margin().bottom());
+
+			h = h + margin().top() + margin().bottom();
+			Resize(w, h);
+			SetPreferredSize(w, h);
+
 			events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 		}
 	}

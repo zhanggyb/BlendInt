@@ -52,6 +52,16 @@ namespace BlendInt {
 	  m_length(0),
 	  m_cursor_position(0)
 	{
+		set_expand_x(true);
+		set_size (240, 20);	// the same height of a button
+		set_radius(0.0);
+		set_preferred_size(size());
+		set_minimal_size(
+		        DefaultTextEntryPadding.left()
+		                + DefaultTextEntryPadding.right(),
+		        DefaultTextEntryPadding.top()
+		                + DefaultTextEntryPadding.bottom());
+
 		InitOnce();
 	}
 
@@ -331,16 +341,6 @@ namespace BlendInt {
 
 	void TextEntry::InitOnce ()
 	{
-		set_expand_x(true);
-		set_size (120, 24);	// the same height of a button
-		set_radius(0.0);
-		set_preferred_size(size());
-		set_minimal_size(
-		        DefaultTextEntryPadding.left()
-		                + DefaultTextEntryPadding.right(),
-		        DefaultTextEntryPadding.top()
-		                + DefaultTextEntryPadding.bottom());
-
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 

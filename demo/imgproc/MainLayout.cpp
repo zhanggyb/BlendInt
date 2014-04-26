@@ -56,17 +56,20 @@ void MainLayout::InitOnce ()
 
 	m_menubar->AddMenu("File", file_menu);
 	//m_menubar->AddMenuButton("Edit");
+	
+	DBG_PRINT_MSG("menubar size: %u, %u", m_menubar->size().width(), m_menubar->size().height());
 
 	m_toolbar->Resize(m_toolbar->size().width(), 24);
 	m_toolbar->SetPreferredSize(m_toolbar->preferred_size().width(), 24);
 	m_toolbar->SetMargin(2, 2, 2, 2);
+	m_toolbar->Add(m_menubar);
 	m_toolbar->Add(m_input);
 	m_toolbar->Add(m_combo);
 	m_toolbar->Add(m_open);
 
 	m_area->SetViewport(m_imgview);
 
-	Add(m_menubar);
+	//Add(m_menubar);
 	Add(m_area);
 	Add(m_toolbar);
 
