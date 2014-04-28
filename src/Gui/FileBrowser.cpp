@@ -69,7 +69,7 @@ namespace BlendInt {
 		file_layout->Add(m_file_entry);
 		file_layout->Add(m_cancel);
 
-		m_list = Manage(new ListView);
+		m_list = Manage(new DirList);
 
 		m_layout->Add(dir_layout);
 		m_layout->Add(file_layout);
