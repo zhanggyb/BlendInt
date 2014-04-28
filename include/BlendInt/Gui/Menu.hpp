@@ -90,7 +90,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		void InitializeMenu ();
 
 		void ResetHighlightBuffer (unsigned int width);
 

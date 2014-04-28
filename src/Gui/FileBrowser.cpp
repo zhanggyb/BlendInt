@@ -69,11 +69,14 @@ namespace BlendInt {
 		file_layout->Add(m_file_entry);
 		file_layout->Add(m_cancel);
 
+		ScrollArea* area = Manage(new ScrollArea);
+
 		m_list = Manage(new DirList);
+		area->SetViewport(m_list);
 
 		m_layout->Add(dir_layout);
 		m_layout->Add(file_layout);
-		m_layout->Add(m_list);
+		m_layout->Add(area);
 
 		Add(m_layout);
 	}

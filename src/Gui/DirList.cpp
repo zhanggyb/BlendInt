@@ -21,8 +21,6 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <boost/filesystem.hpp>
-
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
@@ -39,7 +37,6 @@ namespace BlendInt {
 		set_expand_x(true);
 		set_expand_y(true);
 
-		m_path = getenv("PWD");
 		glGenVertexArrays(1, &m_vao);
 		InitializeFileListOnce();
 	}
@@ -57,9 +54,63 @@ namespace BlendInt {
 
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+		glm::mat4 mvp = glm::translate(
+						event.projection_matrix() * event.view_matrix(), pos);
+
+		unsigned int i = 0;
 
 		int h = size().height();
+		glm::mat4 local_mvp;
+
+		h -= m_font.get_height();
+		local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
+
+		glBindVertexArray(m_vao);
+		program->Use();
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+						glm::value_ptr(local_mvp));
+		program->SetUniform1i("AA", 0);
+		if(i == m_index) {
+			program->SetVertexAttrib4f("Color", 0.475f,
+							0.475f, 0.475f, 0.75f);
+		} else {
+			program->SetVertexAttrib4f("Color", 0.375f,
+							0.375f, 0.375f, 0.75f);
+		}
+		glEnableVertexAttribArray(0);
+		DrawTriangleStrip(0, m_row.get());
+		glDisableVertexAttribArray(0);
+		program->Reset();
+		glBindVertexArray(0);
+
+		m_font.Print(mvp, 0, h - m_font.get_descender(),
+							".");
+		i++;
+
+		h -= m_font.get_height();
+		local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
+
+		glBindVertexArray(m_vao);
+		program->Use();
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+						glm::value_ptr(local_mvp));
+		program->SetUniform1i("AA", 0);
+		if(i == m_index) {
+			program->SetVertexAttrib4f("Color", 0.475f,
+							0.475f, 0.475f, 0.75f);
+		} else {
+			program->SetVertexAttrib4f("Color", 0.325f,
+							0.325f, 0.325f, 0.75f);
+		}
+		glEnableVertexAttribArray(0);
+		DrawTriangleStrip(0, m_row.get());
+		glDisableVertexAttribArray(0);
+		program->Reset();
+		glBindVertexArray(0);
+
+		m_font.Print(mvp, 0, h - m_font.get_descender(),
+							"..");
+		i++;
 
 		fs::path p(m_path);
 
@@ -73,12 +124,11 @@ namespace BlendInt {
 
 				} else if (fs::is_directory(p)) {
 
-					glm::mat4 local_mvp;
-
 					bool dark = false;
 
 					fs::directory_iterator end_it;
 					fs::directory_iterator it(p);
+
 					while (it != end_it) {
 
 						h -= m_font.get_height();
@@ -92,12 +142,17 @@ namespace BlendInt {
 										glm::value_ptr(local_mvp));
 						program->SetUniform1i("AA", 0);
 
-						if (dark) {
-							program->SetVertexAttrib4f("Color", 0.325f, 0.325f,
-											0.325f, 0.75f);
+						if(i == m_index) {
+							program->SetVertexAttrib4f("Color", 0.475f,
+											0.475f, 0.475f, 0.75f);
 						} else {
-							program->SetVertexAttrib4f("Color", 0.375f, 0.375f,
-											0.375f, 0.75f);
+							if (dark) {
+								program->SetVertexAttrib4f("Color", 0.325f,
+												0.325f, 0.325f, 0.75f);
+							} else {
+								program->SetVertexAttrib4f("Color", 0.375f,
+												0.375f, 0.375f, 0.75f);
+							}
 						}
 
 						glEnableVertexAttribArray(0);
@@ -115,6 +170,7 @@ namespace BlendInt {
 						dark = !dark;
 
 						it++;
+						i++;
 					}
 				}
 			}
@@ -125,20 +181,81 @@ namespace BlendInt {
 		return Accept;
 	}
 	
+	ResponseType DirList::MousePressEvent (const MouseEvent& event)
+	{
+		namespace fs = boost::filesystem;
+
+		unsigned int index;
+		bool valid = GetHighlightIndex(event.position().y(), &index);
+
+		if(valid) {
+			DBG_PRINT_MSG("index: %u", index);
+
+			m_index = index;
+
+			if(m_index == 1){	// ".." pressed
+				fs::path parent = m_path.parent_path();
+
+				if(fs::is_directory(parent)) {
+					m_path = parent;
+				}
+			}
+
+			if (m_index >= 2) {
+
+				unsigned int i = 2;
+				try {
+					if (fs::exists(m_path)) {
+
+						if (fs::is_directory(m_path)) {
+
+							fs::directory_iterator it(m_path);
+							fs::directory_iterator it_end;
+							while (it != it_end) {
+								if (i == m_index)
+									break;
+								i++;
+								it++;
+							}
+
+							if (fs::is_directory(it->path())) {
+								m_path = it->path();
+							}
+
+						}
+					}
+				} catch (const fs::filesystem_error& ex) {
+					std::cerr << ex.what() << std::endl;
+				}
+			}
+
+			Refresh();
+		}
+
+		return Accept;
+	}
+	
+	ResponseType DirList::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Accept;
+	}
+
 	void DirList::InitializeFileListOnce ()
 	{
 		// Set size:
 		namespace fs = boost::filesystem;
 
-		fs::path p(m_path);
+		std::string home = getenv("PWD");
+
+		m_path = fs::path(home);
 
 		try {
-			if (fs::exists(p)) {
+			if (fs::exists(m_path)) {
 
-				if (fs::is_directory(p)) {
+				if (fs::is_directory(m_path)) {
 
 					int count = 0;
-					fs::directory_iterator it(p);
+					fs::directory_iterator it(m_path);
 					fs::directory_iterator it_end;
 					while (it != it_end) {
 						count++;
@@ -178,6 +295,50 @@ namespace BlendInt {
 		m_row->Reset();
 
 		glBindVertexArray(0);
+	}
+
+	bool DirList::GetHighlightIndex(int y, unsigned int* index)
+	{
+		namespace fs = boost::filesystem;
+		bool ret = false;
+
+		int h = position().y() + size().height() - y;
+
+		unsigned int count = 0;
+		try {
+			if (fs::exists(m_path)) {
+
+				if (fs::is_directory(m_path)) {
+
+					fs::directory_iterator it(m_path);
+					fs::directory_iterator it_end;
+					while (it != it_end) {
+						count++;
+						it++;
+					}
+
+				} else {
+					count = 1;
+				}
+
+			}
+		} catch (const fs::filesystem_error& ex) {
+			std::cerr << ex.what() << std::endl;
+		}
+
+		count += 2;	// for "." and ".."
+		unsigned int out = 0;
+		unsigned cell_height = m_font.get_height();
+		out = h / cell_height;
+
+		if (out >= count) {
+			out = 0;
+		} else {
+			ret = true;
+		}
+
+		*index = out;
+		return ret;
 	}
 
 }

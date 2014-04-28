@@ -53,7 +53,7 @@ namespace BlendInt {
 
 		activate_events();
 
-		InitOnce();
+		InitializeMenu();
 	}
 
 	Menu::~Menu ()
@@ -322,7 +322,7 @@ namespace BlendInt {
 		return (h - radius()) / (size().height() / m_list.size()) + 1;
 	}
 
-	void Menu::InitOnce ()
+	void Menu::InitializeMenu ()
 	{
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);

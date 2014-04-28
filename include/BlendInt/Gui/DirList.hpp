@@ -25,6 +25,7 @@
 #define _BLENDINT_GUI_FILELIST_HPP_
 
 #include <string>
+#include <boost/filesystem.hpp>
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Font.hpp>
@@ -49,17 +50,25 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
 	private:
+
+		bool GetHighlightIndex (int y, unsigned int* index);
 
 		void InitializeFileListOnce ();
 
 		GLuint m_vao;
 
-		std::string m_path;
+		boost::filesystem::path m_path;
 
 		Font m_font;
 
 		RefPtr<GLArrayBuffer> m_row;
+
+		unsigned int m_index;	// Highlight index
 	};
 
 }
