@@ -54,53 +54,12 @@ namespace BlendInt {
 	public:
 
 		DeviceEvent ()
-		: m_accepted(false), m_ignored(false), m_object(0)
 		{
 		}
 
 		~DeviceEvent ()
 		{}
 
-		void accept (AbstractWidget* object)
-		{
-			m_accepted = true;
-			m_object = object;
-		}
-
-		/**
-		 * @brief ignore the current event loop
-		 */
-		void ignore (AbstractWidget* object)
-		{
-			m_ignored = true;
-			m_object = object;
-		}
-
-		bool accepted () const
-		{
-			return m_accepted;
-		}
-
-		bool ignored () const
-		{
-			return m_ignored;
-		}
-
-		AbstractWidget* object ()
-		{
-			return m_object;
-		}
-
-	protected:
-
-		bool m_accepted;
-
-		bool m_ignored;
-
-		/**
-		 * @brief Drawable object who react to this event
-		 */
-		AbstractWidget* m_object;
 	};
 
 } /* namespace BlendInt */

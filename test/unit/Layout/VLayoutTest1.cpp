@@ -31,23 +31,28 @@ TEST_F(VLayoutTest1, Add1)
 	GLFWwindow* window = CreateWindow("Vertical Layout Test", 640, 480);
 
 	// add test code here
+	Context* context = Manage(new Context);
+#ifdef DEBUG
+	context->set_name("Context");
+#endif
+	Interface::instance->SetCurrentContext(context);
 
-	VLayout* vlayout = new VLayout;
+	VLayout* vlayout = Manage(new VLayout);
 
 	vlayout->SetPosition(100, 100);
 
-	Widget* widget1 = new Widget;
-	Widget* widget2 = new Widget;
-	Widget* widget3 = new Widget;
+	Widget* widget1 = Manage(new Widget);
+	Widget* widget2 = Manage(new Widget);
+	Widget* widget3 = Manage(new Widget);
 
-	HLayout* hlayout = new HLayout;
-	hlayout->Add(Manage(widget2));
-	hlayout->Add(Manage(widget3));
+	HLayout* hlayout = Manage(new HLayout);
+	hlayout->Add(widget2);
+	hlayout->Add(widget3);
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(hlayout));
+	vlayout->Add(widget1);
+	vlayout->Add(hlayout);
 
-	Manage(vlayout);
+	context->Add(vlayout);
 
 	RunLoop(window);
 

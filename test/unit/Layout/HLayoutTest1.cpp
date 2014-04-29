@@ -16,22 +16,27 @@ TEST_F(HLayoutTest1, Mix1)
 	GLFWwindow* window = CreateWindow("Mix Layout Test 1", 640, 480);
 
 	// add test code here
+	Context* context = Manage(new Context);
+#ifdef DEBUG
+	context->set_name("Context");
+#endif
+	Interface::instance->SetCurrentContext(context);
 
-	HLayout* hlayout = new HLayout;
+	HLayout* hlayout = Manage(new HLayout);
 	hlayout->SetPosition(100, 100);
 
-	Widget* widget1 = new Widget;
-	Widget* widget2 = new Widget;
-	Widget* widget3 = new Widget;
+	Widget* widget1 = Manage(new Widget);
+	Widget* widget2 = Manage(new Widget);
+	Widget* widget3 = Manage(new Widget);
 
-	VLayout* vlayout = new VLayout;
-	vlayout->Add(Manage(widget2));
-	vlayout->Add(Manage(widget3));
+	VLayout* vlayout = Manage(new VLayout);
+	vlayout->Add(widget2);
+	vlayout->Add(widget3);
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(vlayout));
+	hlayout->Add(widget1);
+	hlayout->Add(vlayout);
 
-	Manage(hlayout);
+	context->Add(hlayout);
 
 	RunLoop(window);
 

@@ -79,6 +79,14 @@ namespace BlendInt {
 		m_layout->Add(area);
 
 		Add(m_layout);
+
+		int x = position().x() + margin().left();
+		int y = position().y() + margin().right();
+		unsigned int w = size().width() - horizontal_margins();
+		unsigned int h = size().height() - vertical_margins();
+
+		SetSubWidgetPosition(m_layout, x, y);
+		ResizeSubWidget(m_layout, w, h);
 	}
 
 }

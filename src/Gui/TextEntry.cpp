@@ -70,6 +70,14 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
+	void TextEntry::Clear ()
+	{
+		m_text.clear();
+		m_cursor_position = 0;
+		m_start = 0;
+		m_length = 0;
+	}
+
 	ResponseType TextEntry::KeyPressEvent (const KeyEvent& event)
 	{
 		if(event.text().size()) {
@@ -104,62 +112,25 @@ namespace BlendInt {
 			switch (event.key()) {
 
 				case Key_Backspace: {
-					if (m_text.size() && m_cursor_position > 0) {
-						m_text.erase(m_cursor_position - 1, 1);
-						m_cursor_position--;
-						RecountVisibleText();
-						Refresh();
-					}
+					DisposeBackspacePress();
 					break;
 				}
 
 				case Key_Delete: {
 
-					if (m_text.size() && (m_cursor_position < m_text.length())) {
-						m_text.erase(m_cursor_position, 1);
-
-						RecountVisibleTextLenth();
-
-						DBG_PRINT_MSG("length: %lu", m_length);
-
-						Refresh();
-					}
-
+					DisposeDeletePress();
 					break;
 				}
 
 				case Key_Left: {
 
-					if (m_text.size() && m_cursor_position > 0) {
-						m_cursor_position--;
-
-						if (m_cursor_position < m_start) {
-							m_start = m_cursor_position;
-							m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
-						}
-
-						Refresh();
-					}
-
+					DisposeLeftPress();
 					break;
 				}
 
 				case Key_Right: {
 
-					if (m_text.size() && m_cursor_position < m_text.length()) {
-						m_cursor_position++;
-
-						if (m_cursor_position > (m_start + m_length))
-							m_start++;
-
-						//m_length = GetVisibleTextLength(m_text, m_start);
-
-						//DBG_PRINT_MSG("length: %lu, start: %lu, cursor: %lu",
-						//				m_length, m_start, m_cursor_position);
-
-						Refresh();
-					}
-
+					DisposeRightPress();
 					break;
 				}
 
@@ -360,7 +331,7 @@ namespace BlendInt {
 
 		m_text_outline = m_font.get_text_outline(m_text);
 
-		m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
+		//m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
 
 		m_origin.set_x(DefaultTextEntryPadding.left());
 		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
@@ -438,46 +409,120 @@ namespace BlendInt {
 		return str_len;
 	}
 	
-	void TextEntry::RecountVisibleText ()
+	void TextEntry::DisposeBackspacePress ()
 	{
-		size_t text_width = 0;
-		size_t valid_width = size().width()
-						- DefaultTextEntryPadding.left()
-						- DefaultTextEntryPadding.right();
+		if (m_text.size() && m_cursor_position > 0) {
 
-		size_t len = m_text.length();
-		while(len > 0)
-		{
-			text_width = m_font.GetReversedTextWidth(m_text, len, 0);
-			if(text_width < valid_width) {
-				break;
-			}
-			len--;
-		}
+			size_t valid_width = size().width()
+							- DefaultTextEntryPadding.left()
+							- DefaultTextEntryPadding.right();
 
-		m_length = len;
-		m_start = m_text.length() - m_length;
-	}
+			m_text.erase(m_cursor_position - 1, 1);
+			m_cursor_position--;
 
-	void TextEntry::RecountVisibleTextLenth()
-	{
-		size_t text_width = 0;
-		size_t valid_width = size().width()
-						- DefaultTextEntryPadding.left()
-						- DefaultTextEntryPadding.right();
-
-		size_t len = 0;
-		while(len < (m_text.length() - m_start))
-		{
-			text_width = m_font.GetTextWidth(m_text, len, m_start);
-			if(text_width > valid_width) {
+			size_t text_width = 0;
+			size_t len = m_text.length();
+			while(len > 0)
+			{
+				text_width = m_font.GetReversedTextWidth(m_text, len, 0);
+				if(text_width < valid_width) {
+					break;
+				}
 				len--;
-				break;
 			}
-			len++;
+
+			m_length = len;
+			m_start = m_text.length() - m_length;
+
+			Refresh();
+		}
+	}
+	
+	void TextEntry::DisposeDeletePress ()
+	{
+		if (m_text.size() && (m_cursor_position < m_text.length())) {
+
+			size_t valid_width = size().width()
+							- DefaultTextEntryPadding.left()
+							- DefaultTextEntryPadding.right();
+
+			m_text.erase(m_cursor_position, 1);
+
+			size_t text_width = 0;
+
+			size_t len = 0;
+			while(len < (m_text.length() - m_start))
+			{
+				text_width = m_font.GetTextWidth(m_text, len, m_start);
+				if(text_width > valid_width) {
+					len--;
+					break;
+				}
+				len++;
+			}
+
+			m_length = len;
+
+			Refresh();
+		}
+	}
+	
+	void TextEntry::DisposeLeftPress ()
+	{
+		if (m_text.size() && m_cursor_position > 0) {
+
+			size_t valid_width = size().width()
+								- DefaultTextEntryPadding.left()
+								- DefaultTextEntryPadding.right();
+
+			m_cursor_position--;
+
+			if (m_cursor_position < m_start) {
+				m_start = m_cursor_position;
+
+				size_t text_width = m_font.GetTextWidth(m_text, m_length,
+								m_start);
+
+				if(text_width < valid_width && m_length < (m_text.length() - m_start)) {
+					m_length++;
+					text_width = m_font.GetTextWidth(m_text, m_length, m_start);
+					while(text_width < valid_width && m_length < (m_text.length() - m_start)) {
+						m_length++;
+						text_width = m_font.GetTextWidth(m_text, m_length, m_start);
+					}
+				}
+
+				if(text_width > valid_width && m_length > 0) {
+					m_length--;
+					text_width = m_font.GetTextWidth(m_text, m_length, m_start);
+					while ((text_width > valid_width) && (m_length > 0)) {
+						m_length--;
+						text_width = m_font.GetTextWidth(m_text, m_length, m_start);
+					}
+				}
+
+			}
+
+			Refresh();
 		}
 
-		m_length = len;
+	}
+	
+	void TextEntry::DisposeRightPress ()
+	{
+		if (m_text.size() && m_cursor_position < m_text.length()) {
+			m_cursor_position++;
+
+			if (m_cursor_position > (m_start + m_length))
+				m_start++;
+
+			//m_length = GetVisibleTextLength(m_text, m_start);
+
+			//DBG_PRINT_MSG("length: %lu, start: %lu, cursor: %lu",
+			//				m_length, m_start, m_cursor_position);
+
+			Refresh();
+		}
 	}
 
 	void TextEntry::GetVisibleTextPlace (size_t* start, size_t* length)
@@ -500,37 +545,6 @@ namespace BlendInt {
 		}
 	}
 	
-	size_t TextEntry::GetVisibleTextLengthInCursorMove (const String& text, size_t start)
-	{
-		size_t length = m_length;
-
-		size_t text_width = m_font.GetTextWidth(text, length,
-						start);
-		size_t valid_width = size().width()
-						- DefaultTextEntryPadding.left()
-						- DefaultTextEntryPadding.right();
-
-		if(text_width < valid_width && length < (text.length() - start)) {
-			length++;
-			text_width = m_font.GetTextWidth(text, length, start);
-			while(text_width < valid_width && length < (text.length() - start)) {
-				length++;
-				text_width = m_font.GetTextWidth(text, length, start);
-			}
-		}
-
-		if(text_width > valid_width && length > 0) {
-			length--;
-			text_width = m_font.GetTextWidth(text, length, start);
-			while ((text_width > valid_width) && (length > 0)) {
-				length--;
-				text_width = m_font.GetTextWidth(text, length, start);
-			}
-		}
-
-		return length;
-	}
-
 	int TextEntry::GetCursorPosition (const MouseEvent& event)
 	{
 		int text_width = m_font.GetTextWidth(m_text, m_length, m_start);

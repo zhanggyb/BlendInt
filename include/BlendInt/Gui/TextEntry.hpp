@@ -47,6 +47,11 @@ namespace BlendInt {
 
 		virtual ~TextEntry();
 
+		/**
+		 * @brief Clear the text
+		 */
+		void Clear ();
+
 		void SetText (const String& text);
 
 		void SetFont (const Font& font);
@@ -69,13 +74,15 @@ namespace BlendInt {
 
 		void InitializeTextEntry ();
 
+		void DisposeBackspacePress ();
+
+		void DisposeDeletePress ();
+
+		void DisposeLeftPress ();
+
+		void DisposeRightPress ();
+
 		size_t GetValidTextSize ();
-
-		size_t GetVisibleTextLengthInCursorMove (const String& text, size_t start);
-
-		void RecountVisibleText ();
-
-		void RecountVisibleTextLenth();
 
 		int GetCursorPosition (const MouseEvent& event);
 
