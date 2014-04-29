@@ -7,12 +7,12 @@ using namespace BlendInt;
 TextEntryTest1::TextEntryTest1()
 : testing::Test()
 {
-	// TODO: add constructor code
+
 }
 
 TextEntryTest1::~TextEntryTest1()
 {
-	// TODO: add destructor code
+
 }
 
 /**
@@ -25,13 +25,18 @@ TEST_F(TextEntryTest1, Foo1)
 	Init ();
 	GLFWwindow* window = CreateWindow("TextEntry - Foo1", 640, 480);
 
-	// TODO: add test code here
+	Context* context = Manage (new Context);
+    context->set_name("Context");
+    Interface::instance->SetCurrentContext(context);
 
     TextEntry* lineedit = Manage(new TextEntry);
  	lineedit->SetPosition(200, 200);
     
     Label* label = Manage(new Label("Label"));
     label->SetPosition(420, 200);
+
+    context->Add(lineedit);
+    context->Add(label);
 
 	RunLoop(window);
 

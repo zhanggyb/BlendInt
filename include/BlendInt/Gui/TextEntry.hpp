@@ -59,17 +59,23 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType FocusEvent (bool focus);
+
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
 	private:
 
-		void InitOnce ();
-
-		void OnReverseCursor ();
+		void InitializeTextEntry ();
 
 		size_t GetValidTextSize ();
+
+		size_t GetVisibleTextLengthInCursorMove (const String& text, size_t start);
+
+		void RecountVisibleText ();
+
+		void RecountVisibleTextLenth();
 
 		int GetCursorPosition (const MouseEvent& event);
 
@@ -80,8 +86,6 @@ namespace BlendInt {
 		 */
 		void GetVisibleTextPlace (size_t* start, size_t* length);
 
-		void AdjustVisibleTextLength ();
-
 		GLuint m_vao;
 
 		Font m_font;
@@ -90,9 +94,9 @@ namespace BlendInt {
 
 		size_t m_start;	// where start print the text
 
-		size_t m_length;
+		size_t m_length;	// the text length inside this widget
 
-		int m_cursor_position;
+		size_t m_cursor_position;
 
 		/**
 		 * @brief The position to print text

@@ -170,6 +170,8 @@ namespace BlendInt {
 
 		void DrawMainBuffer (const glm::mat4& mvp);
 
+		void DrawLayers (const glm::mat4& mvp);
+
 		void RenderLayer (const RedrawEvent& event,
 				int layer,
 				std::set<AbstractWidget*>* widgets,
@@ -225,6 +227,8 @@ namespace BlendInt {
 		bool force_refresh_all;
 
 		Cpp::Event<const Size&> m_resized;
+
+		static const unsigned int minimal_composite_layer_number = 3;
 	};
 
 }

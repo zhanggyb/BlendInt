@@ -195,7 +195,7 @@ namespace BlendInt {
 
 		SetSubWidgetPosition(m_view, x, y + bh);
 		ResizeSubWidget (m_view, w - rw, h - bh);
-		m_view->ResetViewportPosition();
+		m_view->CentralizeViewport();
 
 		if(m_hbar->visiable()) {
 			SetSubWidgetPosition(m_hbar, x, y);

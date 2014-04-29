@@ -7,12 +7,12 @@ using namespace BlendInt;
 ScrollViewTest1::ScrollViewTest1()
 : testing::Test()
 {
-	// TODO: add constructor code
+
 }
 
 ScrollViewTest1::~ScrollViewTest1()
 {
-	// TODO: add destructor code
+
 }
 
 /**
@@ -24,9 +24,7 @@ TEST_F(ScrollViewTest1, Foo1)
 {
 	Init ();
 
-    GLFWwindow* win = CreateWindow("ScrollView - Foo1", 640, 640);
-
-    // TODO: add test code here
+    GLFWwindow* win = CreateWindow("ScrollView - Foo1", 640, 480);
 
 	Context* context = Manage (new Context);
     context->set_name("Context");
@@ -34,16 +32,15 @@ TEST_F(ScrollViewTest1, Foo1)
 
 	ScrollView* scrollview = Manage(new ScrollView);
 	scrollview->set_name("ScrollView");
-	scrollview->SetPosition(100, 100);
-	scrollview->Resize(500, 500);
+	scrollview->SetPosition(50, 50);
+	scrollview->Resize(500, 400);
 	
-	ToolBar* toolbar = Manage (new ToolBar);
-	toolbar->set_name("ToolBar");
-	toolbar->Resize(400, 400);
-	
-	scrollview->SetViewport (toolbar);
+	ToolButton* btn = Manage(new ToolButton);
+	btn->set_name("ToolButton");
+	btn->Resize(200, 200);
 
-	toolbar->move(50, 10);
+	scrollview->SetViewport(btn);
+	scrollview->CentralizeViewport();
 
 	DBG_PRINT_MSG ("percentages: %d, %d", scrollview->GetHPercentage(), scrollview->GetVPercentage());
 
@@ -69,15 +66,14 @@ TEST_F(ScrollViewTest1, Nest1)
 
     GLFWwindow* win = CreateWindow("ScrollView - Foo1", 640, 640);
 
-    // TODO: add test code here
-
 	Context* context = Manage (new Context);
     context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
+    context->Resize(640, 640);
 
 	ScrollView* scrollview1 = Manage(new ScrollView);
 	scrollview1->set_name("ScrollView1");
-	scrollview1->SetPosition(100, 100);
+	scrollview1->SetPosition(50, 50);
 	scrollview1->Resize(400, 400);
 
 	ScrollView* scrollview2 = Manage(new ScrollView);
@@ -85,17 +81,17 @@ TEST_F(ScrollViewTest1, Nest1)
 	scrollview2->SetPosition(100, 100);
 	scrollview2->Resize(500, 500);
 
-	ToolBar* toolbar = Manage (new ToolBar);
-	toolbar->set_name("ToolBar");
-	toolbar->Resize(400, 400);
+	ToolButton* btn = Manage (new ToolButton);
+	btn->set_name("ToolButton");
+	btn->Resize(400, 400);
 
-	scrollview1->SetViewport (toolbar);
+	scrollview1->SetViewport (btn);
 
 	scrollview2->SetViewport(scrollview1);
 
-	toolbar->move(50, 10);
+	btn->move(50, 10);
 
-	context->Add(scrollview1);
+	context->Add(scrollview2);
 
 	RunLoop(win);
 

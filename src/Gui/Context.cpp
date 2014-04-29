@@ -326,7 +326,9 @@ namespace BlendInt
 				layer_iter->second.refresh = false;
 			}
 
-			RenderMainBuffer(event);
+			//if(m_deque.size() >= minimal_composite_layer_number) {
+				RenderMainBuffer(event);
+			//}
 
 			refresh_once = false;
 			force_refresh_all = false;
@@ -353,12 +355,18 @@ namespace BlendInt
 				layer_iter->second.refresh = false;
 			}
 
-			RenderMainBuffer(event);
+			//if(m_deque.size() >= minimal_composite_layer_number) {
+				RenderMainBuffer(event);
+			//}
 
 			refresh_once = false;
 		}
 
-		DrawMainBuffer(mvp);
+		//if(m_deque.size() >= minimal_composite_layer_number) {
+			DrawMainBuffer(mvp);
+		//} else {
+		//	DrawLayers(mvp);
+		//}
 
 		return Accept;
 	}
@@ -748,6 +756,62 @@ namespace BlendInt
 
 		glBindVertexArray(0);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
+	void Context::DrawLayers (const glm::mat4& mvp)
+	{
+		glViewport(0, 0, size().width(), size().height());
+
+		glClearColor(0.447, 0.447, 0.447, 1.00);
+		glClearDepth(1.0);
+
+		glClear(GL_COLOR_BUFFER_BIT |
+						GL_DEPTH_BUFFER_BIT |
+						GL_STENCIL_BUFFER_BIT);
+
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+
+		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		//glEnable(GL_BLEND);
+
+		glBindVertexArray(m_vao);
+
+		m_program->Use();
+
+		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+
+		glActiveTexture(GL_TEXTURE0);
+
+		m_program->SetUniform1i("TexID", 0);
+		for(std::deque<GLTexture2D*>::iterator it = m_deque.begin(); it != m_deque.end(); it++)
+		{
+			(*it)->Bind();
+
+			glEnableVertexAttribArray(0);
+			m_vbo->Bind();
+
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+			glEnableVertexAttribArray(1);
+			m_tbo->Bind();
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+			m_vbo->Bind();
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(0);
+
+			m_vbo->Reset();
+
+			(*it)->Reset();
+		}
+
+		m_program->Reset();
+
+		glBindVertexArray(0);
 	}
 
 	void Context::RenderLayer (const RedrawEvent& event,

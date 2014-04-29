@@ -224,6 +224,16 @@ namespace BlendInt {
 			m_margin.set_bottom(bottom);
 		}
 
+		inline unsigned int horizontal_margins ()
+		{
+			return m_margin.left() + m_margin.right();
+		}
+
+		unsigned int vertical_margins ()
+		{
+			return m_margin.top() + m_margin.bottom();
+		}
+
 	private:
 
 		Margin m_margin;

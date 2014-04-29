@@ -108,4 +108,13 @@ namespace BlendInt {
 		RemoveSubWidget(widget);
 	}
 
+	void AbstractSingleContainer::MoveSubWidget (int offset_x, int offset_y)
+	{
+		if(m_sub_widget) {
+			SetSubWidgetPosition(m_sub_widget,
+							m_sub_widget->position().x() + offset_x,
+							m_sub_widget->position().y() + offset_y);
+		}
+	}
+
 }

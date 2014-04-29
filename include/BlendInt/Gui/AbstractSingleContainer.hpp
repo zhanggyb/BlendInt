@@ -51,6 +51,8 @@ namespace BlendInt {
 
 		virtual ResponseType FocusEvent (bool focus);
 
+		void MoveSubWidget (int offset_x, int offset_y);
+
 		AbstractWidget* sub_widget () const
 		{
 			return m_sub_widget;

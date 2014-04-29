@@ -113,14 +113,14 @@ namespace BlendInt {
 			return m_cache->get_text_outline(string);
 		}
 
-		unsigned int GetTextWidth (const String& string, size_t length, size_t start = 0)
+		size_t GetTextWidth (const String& string, size_t length, size_t start = 0)
 		{
 			return m_cache->GetTextWidth(string, length, start);
 		}
 
-		unsigned int get_text_height () const
+		size_t GetReversedTextWidth (const String& string, size_t length, size_t start = 0)
 		{
-			return m_cache->get_text_height();
+			return m_cache->GetReverseTextWidth(string, length, start);
 		}
 
 		bool bold () const

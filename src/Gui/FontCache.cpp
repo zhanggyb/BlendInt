@@ -587,26 +587,51 @@ namespace BlendInt {
 		return Rect(Point(xmin, ymin), Point(xmax, ymax));
 	}
 
-	unsigned int FontCache::GetTextWidth (const String& string, size_t length, size_t start)
+	size_t FontCache::GetTextWidth (const String& string, size_t length, size_t start)
 	{
-		unsigned int width = 0;
+		size_t width = 0;
 
 		if(!m_freetype.valid()) {
 			return width;
 		}
 
+		assert(start <= string.length());
+
 		String::const_iterator it = string.begin();
 		std::advance(it, start);
 		size_t i = 0;
 
-		for (; (it != string.end()) && (i < length); it++, i++)
-		{
+		while(it != string.end() && (i < length)) {
 			width += query(*it).advance_x;
+			it++;
+			i++;
 		}
 
 		return width;
 	}
 
+	size_t FontCache::GetReverseTextWidth (const String& string, size_t length, size_t start)
+	{
+		size_t width = 0;
+
+		if(!m_freetype.valid()) {
+			return width;
+		}
+
+		assert(start <= string.length());
+
+		String::const_reverse_iterator it = string.rbegin();
+		std::advance(it, start);
+		size_t i = 0;
+
+		while (it != string.rend() && (i < length)) {
+			width += query(*it).advance_x;
+			it++;
+			i++;
+		}
+
+		return width;
+	}
 
 #ifdef DEBUG
 	void FontCache::printcount (void)

@@ -56,28 +56,35 @@ namespace BlendInt {
 	void ScrollView::SetViewport (AbstractWidget* widget)
 	{
 		if (AddSubWidget(widget)) {
-			SetSubWidgetPosition(widget, position().x() + margin().left(),
-			        position().y() + margin().bottom());
-			ResizeSubWidget(widget, size().width() - margin().left() - margin().right(),
-			        size().height() - margin().top() - margin().bottom());
+			int x = position().x() + margin().left();
+			int y = position().y() + margin().bottom();
+
+			y = y + size().height() - vertical_margins() - widget->size().height();
+
+			SetSubWidgetPosition(widget, x, y);
+			/*
+			ResizeSubWidget(widget,
+							size().width() - horizontal_margins(),
+							size().height() - vertical_margins());
+			*/
 		}
 	}
 
-	void ScrollView::ResetViewportPosition()
+	void ScrollView::CentralizeViewport()
 	{
 		if(!sub_widget()) return;
 
 		AbstractWidget* p = sub_widget();
 
-		if(p) {
-			int w = size().width() - margin().left() - margin().right();
-			int h = size().height() - margin().top() - margin().bottom();
+		int w = size().width() - horizontal_margins();
+		int h = size().height() - vertical_margins();
 
-			int x = position().x() + margin().left() + (w - static_cast<int>(p->size().width())) / 2;
-			int y = position().y() + margin().bottom() + (h - static_cast<int>(p->size().height())) / 2;
+		int x = position().x() + margin().left();
+		x += (w - static_cast<int>(p->size().width())) / 2;
+		int y = position().y() + margin().bottom();
+		y += (h - static_cast<int>(p->size().height())) / 2;
 
-			SetSubWidgetPosition(p, x, y);
-		}
+		SetSubWidgetPosition(p, x, y);
 	}
 
 	int BlendInt::ScrollView::GetHPercentage ()
@@ -87,15 +94,13 @@ namespace BlendInt {
 		if(sub_widget()) {
 			AbstractWidget* p = sub_widget();
 
-			unsigned int w = size().width() - margin().left() - margin().right();
+			unsigned int w = size().width() - horizontal_margins();
 
 			if (p->size().width() <= w) {
 				percentage = 100;
 			} else {
 				percentage = w * 100 / p->size().width();
 			}
-
-		} else {
 
 		}
 
@@ -109,15 +114,13 @@ namespace BlendInt {
 		if(sub_widget()) {
 			AbstractWidget* p = sub_widget();
 
-			unsigned int h = size().height() - margin().top() - margin().bottom();
+			unsigned int h = size().height() - vertical_margins();
 
 			if (p->size().height() <= h) {
 				percentage = 100;
 			} else {
 				percentage = h * 100 / p->size().height();
 			}
-
-		} else {
 
 		}
 
@@ -136,7 +139,15 @@ namespace BlendInt {
 				}
 
 				case FormPosition: {
-					ResetViewportPosition();
+
+					if(sub_widget()) {
+						const Point* pos_p = static_cast<const Point*>(request.data());
+						int x = pos_p->x() - position().x();
+						int y = pos_p->y() - position().y();
+
+						MoveSubWidget(x, y);
+					}
+
 					break;
 				}
 

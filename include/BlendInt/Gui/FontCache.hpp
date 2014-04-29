@@ -167,9 +167,9 @@ namespace BlendInt {
 		 * @param start The index where start to calculate the width
 		 * @return
 		 */
-		unsigned int GetTextWidth (const String& string, size_t length, size_t start = 0);
+		size_t GetTextWidth (const String& string, size_t length, size_t start = 0);
 
-		unsigned int get_text_height ();
+		size_t GetReverseTextWidth (const String& string, size_t length, size_t start = 0);
 
 #ifdef DEBUG
 		void printcount ();

@@ -61,13 +61,11 @@ int main(int argc, char* argv[])
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
-	DirList* fl = Manage(new DirList);
-	fl->set_name("FileList");
-	context->Add(fl);
+	TextEntry* input = Manage(new TextEntry);
+	input->set_name("TextEntry");
+	input->SetPosition(200, 200);
 
-	fl->SetPosition(200, 100);
-
-	std::cout << fl->size().width() << "," << fl->size().height() << std::endl;
+	context->Add(input);
 
 	RunLoop(win);
 
