@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 	path_entry->SetRoundType(RoundAll);
 	//m_path_entry->SetPreferredSize(65536, m_path_entry->preferred_size().height());
 	Button* btn_open = Manage(new Button);
-	//btn_open->SetExpandX(false);
+	btn_open->SetExpandX(false);
 	//m_open->SetText("Open");
 
 	HLayout* dir_layout = Manage(new HLayout);
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
 	TextEntry* file_entry = Manage(new TextEntry);
 	file_entry->SetRoundType(RoundAll);
 	Button* btn_cancel = Manage(new Button);
-	//btn_cancel->SetExpandX(false);
+	btn_cancel->SetExpandX(false);
 	//m_cancel->SetText("Cancel");
 
 	HLayout* file_layout = Manage(new HLayout);

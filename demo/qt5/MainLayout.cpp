@@ -5,6 +5,7 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Service/StockItems.hpp>
+#include <BlendInt/Gui/HLayout.hpp>
 
 #include "MainLayout.hpp"
 
@@ -33,8 +34,17 @@ void MainLayout::InitOnce ()
 
 	m_button = Manage(new BI::Button);
 	m_button->set_name("Button");
-	m_button->SetPosition(545, 5);
+	m_button->SetExpandX(false);
+	
+	m_space = Manage(new BI::SpaceArea);
+	m_space->set_name("SpaceArea");
+	m_space->SetExpandX(true);
+	m_space->Resize(200, 10);
+	
+	HLayout* button_layout = Manage(new HLayout);
+	button_layout->Add(m_space);
+	button_layout->Add(m_button);
 
 	Add(m_view3d);
-	Add(m_button);
+	Add(button_layout);
 }

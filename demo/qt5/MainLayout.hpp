@@ -9,6 +9,7 @@
 
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
+#include <BlendInt/Gui/SpaceArea.hpp>
 
 namespace BI = BlendInt;
 
@@ -26,6 +27,7 @@ private:
 
 	BI::Viewport3D* m_view3d;
 	BI::Button* m_button;
+	BI::SpaceArea* m_space;
 };
 
 #endif

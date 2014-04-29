@@ -138,6 +138,10 @@ namespace BlendInt {
 		SetPreferredSize(prefer_size);
 		SetMinimalSize(min_size);
 
+		if(object->expand_x()) {
+			set_expand_x(true);
+		}
+
 		AppendSubWidget(object);
 
 		if( !(current_size == size()) )
@@ -162,6 +166,15 @@ namespace BlendInt {
 
 		SetMinimalSize(new_minimal_size);
 		SetPreferredSize(new_preferred_size);
+
+		set_expand_x(false);
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->expand_x()) {
+				set_expand_x(true);
+				break;
+			}
+		}
 
 		MakeLayout(&size(), &margin(), space());
 
