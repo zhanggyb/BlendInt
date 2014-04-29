@@ -26,7 +26,8 @@ private:
 	void InitOnce ();
 
 	BI::Viewport3D* m_view3d;
-	BI::Button* m_button;
+	BI::Button* m_ok;
+	BI::Button* m_cancel;
 	BI::SpaceArea* m_space;
 };
 

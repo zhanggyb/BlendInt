@@ -25,14 +25,30 @@
 
 namespace BlendInt {
 
-	SpaceArea::SpaceArea ()
+	SpaceArea::SpaceArea (int orientation)
 	: Widget()
 	{
-		set_preferred_size(100, 10);
+		set_preferred_size(5, 5);
+		set_size(20, 20);
+
+		SetOrientation(orientation);
 	}
 
 	SpaceArea::~SpaceArea ()
 	{
+	}
+
+	void SpaceArea::SetOrientation (int orientation)
+	{
+		if(orientation & Horizontal) {
+			set_expand_x(true);
+			set_preferred_size(100, preferred_size().height());
+		}
+
+		if(orientation & Vertical) {
+			set_expand_y(true);
+			set_preferred_size(preferred_size().width(), 100);
+		}
 	}
 
 	ResponseType SpaceArea::Draw (const RedrawEvent& event)

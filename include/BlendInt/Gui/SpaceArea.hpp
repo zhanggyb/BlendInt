@@ -34,9 +34,11 @@ namespace BlendInt {
 
 	public:
 
-		SpaceArea ();
+		SpaceArea (int orientation);
 
 		virtual ~SpaceArea ();
+
+		void SetOrientation (int orientation);
 
 	protected:
 

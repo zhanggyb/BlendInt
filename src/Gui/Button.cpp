@@ -43,13 +43,13 @@ namespace BlendInt {
 	Button::Button ()
 		: AbstractRoundButton(), m_vao(0)
 	{
-		InitOnce();
+		InitializeButton();
 	}
 
 	Button::Button (const String& text)
 		: AbstractRoundButton(), m_vao(0)
 	{
-		InitOnce(text);
+		InitializeButton(text);
 	}
 
 	Button::~Button ()
@@ -182,7 +182,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Button::InitOnce ()
+	void Button::InitializeButton ()
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);
@@ -207,7 +207,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 
-	void Button::InitOnce (const String& text)
+	void Button::InitializeButton (const String& text)
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);
@@ -237,7 +237,8 @@ namespace BlendInt {
 			}
 		}
 
-		set_origin(0, (size().height() - font().get_height()) / 2 + std::abs(font().get_descender()));
+		set_origin((size().width() - text_outline().width()) / 2,
+				(size().height() - font().get_height()) / 2 + std::abs(font().get_descender()));
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);

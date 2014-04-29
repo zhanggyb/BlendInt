@@ -56,9 +56,9 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		void InitializeButton ();
 
-		void InitOnce (const String& text);
+		void InitializeButton (const String& text);
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
