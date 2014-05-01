@@ -595,7 +595,7 @@ namespace BlendInt {
 			return width;
 		}
 
-		assert(start <= string.length());
+		assert(start <= string.length() && length <= string.length());
 
 		String::const_iterator it = string.begin();
 		std::advance(it, start);
@@ -618,7 +618,7 @@ namespace BlendInt {
 			return width;
 		}
 
-		assert(start <= string.length());
+		assert(start <= string.length() && length <= string.length());
 
 		String::const_reverse_iterator it = string.rbegin();
 		std::advance(it, start);

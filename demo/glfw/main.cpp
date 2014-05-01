@@ -61,47 +61,12 @@ int main(int argc, char* argv[])
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
-	VLayout* vlayout = Manage(new VLayout);
+	TextEntry* input = Manage(new TextEntry);
+	input->set_name("Textentry");
 
-	vlayout->SetPosition(20, 20);
+	input->SetPosition(200, 200);
 
-	TextEntry* path_entry = Manage(new TextEntry);
-	path_entry->SetRoundType(RoundAll);
-	//m_path_entry->SetPreferredSize(65536, m_path_entry->preferred_size().height());
-	Button* btn_open = Manage(new Button);
-	btn_open->SetExpandX(false);
-	//m_open->SetText("Open");
-
-	HLayout* dir_layout = Manage(new HLayout);
-	dir_layout->SetMargin(0, 0, 0, 0);
-	dir_layout->Add(path_entry);
-	dir_layout->Add(btn_open);
-
-	DBG_PRINT_MSG("dir layout is expandable: %s", dir_layout->expand_x() ? "true" : "false");
-
-	TextEntry* file_entry = Manage(new TextEntry);
-	file_entry->SetRoundType(RoundAll);
-	Button* btn_cancel = Manage(new Button);
-	btn_cancel->SetExpandX(false);
-	//m_cancel->SetText("Cancel");
-
-	HLayout* file_layout = Manage(new HLayout);
-	file_layout->SetMargin(0, 0, 0, 0);
-	file_layout->Add(file_entry);
-	file_layout->Add(btn_cancel);
-
-	Widget* widget = Manage(new Widget);
-	widget->SetExpand(true);
-
-	vlayout->Add(dir_layout);
-	vlayout->Add(file_layout);
-	vlayout->Add(widget);
-
-	context->Add(vlayout);
-
-	vlayout->Resize(400, 400);
-
-	DBG_PRINT_MSG("dir layout size: %u, %u", dir_layout->size().width(), dir_layout->size().height());
+	context->Add(input);
 
 	RunLoop(win);
 

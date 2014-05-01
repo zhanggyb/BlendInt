@@ -246,12 +246,6 @@ namespace BlendInt {
 		switch (event.action()) {
 
 			case KeyPress: {
-#ifdef DEBUG
-				if(event.key() == Key_F6 && event.text().empty()) {
-					//DrawToOffScreen();
-					//RenderToImage();
-				}
-#endif
 				context->KeyPressEvent(event);
 				break;
 			}

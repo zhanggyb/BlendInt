@@ -222,7 +222,13 @@ namespace BlendInt {
 	{
 		int offset = charcode - m_starting_charcode;
 		if(offset < 0 || offset >= m_stride) {
-			throw std::out_of_range("Charcode not in atlas\n");
+
+			//throw std::out_of_range("Charcode not in atlas\n");
+
+			// for unknown character, just display '?'
+			charcode = '?';
+			offset = charcode - m_starting_charcode;
+
 		}
 		if(!m_glyph_array) {
 			throw std::runtime_error("No glyph allocated in this atlas\n");

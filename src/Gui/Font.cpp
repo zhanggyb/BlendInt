@@ -144,8 +144,6 @@ namespace BlendInt {
 		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-		//Vertex2D vertex[6];
-
 		// TODO: read text in TextureFont map
 		size_t str_length = std::min(string.length(), length);
 
@@ -167,14 +165,16 @@ namespace BlendInt {
 
 			it = string.begin();
 			std::advance(it, start);
-			for (size_t i = 0; i < str_length; it++, i++)
-			{
-				//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4, &(m_cache->m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+			for (size_t i = 0; i < str_length; it++, i++) {
+				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
+				        &(m_cache->m_atlas.glyph(*it).vertexes[0]),
+				        GL_DYNAMIC_DRAW);
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-				glyph_pos = glm::translate(glyph_pos, glm::vec3(m_cache->m_atlas.glyph(*it).advance_x, 0, 0));
-				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+				glyph_pos = glm::translate(glyph_pos,
+				        glm::vec3(m_cache->m_atlas.glyph(*it).advance_x, 0, 0));
+				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+				        glm::value_ptr(glyph_pos));
 			}
 
 			// restore mvp
@@ -189,16 +189,17 @@ namespace BlendInt {
 		it = string.begin();
 		std::advance(it, start);
 		int temp = 0;
-		for (size_t i = 0; i < str_length; it++, i++)
-		{
+		for (size_t i = 0; i < str_length; it++, i++) {
 			temp = m_cache->m_atlas.glyph(*it).advance_x;
 
-			//memncpy (&vertex[0], &(atlas_.glyph(*it).vertexes[0]), sizeof(Vertex2D)*6);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4, &(m_cache->m_atlas.glyph(*it).vertexes[0]), GL_DYNAMIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
+			        &(m_cache->m_atlas.glyph(*it).vertexes[0]),
+			        GL_DYNAMIC_DRAW);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			glyph_pos = glm::translate(glyph_pos, glm::vec3(temp, 0, 0));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+			        glm::value_ptr(glyph_pos));
 			advance += temp;
 		}
 

@@ -98,7 +98,10 @@ namespace BlendInt {
 
 		void set_text (const String& text) {m_text = text;}
 
-		void set_text (unsigned int character) {m_text.clear(); m_text.push_back(character);}
+		void set_text (unsigned int character) {
+			m_text.clear();
+			m_text.push_back(character);
+		}
 
 		void clear_text () {m_text.clear();}
 

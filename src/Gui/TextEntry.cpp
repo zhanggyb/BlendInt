@@ -80,8 +80,7 @@ namespace BlendInt {
 
 	ResponseType TextEntry::KeyPressEvent (const KeyEvent& event)
 	{
-		if(event.text().size()) {
-
+		if(!event.text().empty()) {
 			m_text.insert(m_cursor_position, event.text());
 			m_cursor_position += event.text().length();
 			m_length += event.text().length();
@@ -117,19 +116,16 @@ namespace BlendInt {
 				}
 
 				case Key_Delete: {
-
 					DisposeDeletePress();
 					break;
 				}
 
 				case Key_Left: {
-
 					DisposeLeftPress();
 					break;
 				}
 
 				case Key_Right: {
-
 					DisposeRightPress();
 					break;
 				}

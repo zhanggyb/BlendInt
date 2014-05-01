@@ -52,6 +52,13 @@ namespace BlendInt {
 
 	static void CbChar(GLFWwindow* window, unsigned int character)
 	{
+#ifdef __APPLE__
+		// glfw3 in Mac OS will call this function if press some unprintalbe keys such as Left, Right, Up, Down
+			if(character > 255) {
+				DBG_PRINT_MSG("unprintable character in Mac: %u", character);
+				return;
+			}
+#endif
 		global_key_event.set_text(character);
 
 		Interface::instance->DispatchKeyEvent(global_key_event);

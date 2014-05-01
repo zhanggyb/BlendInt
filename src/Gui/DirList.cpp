@@ -189,8 +189,6 @@ namespace BlendInt {
 		bool valid = GetHighlightIndex(event.position().y(), &index);
 
 		if(valid) {
-			DBG_PRINT_MSG("index: %u", index);
-
 			m_index = index;
 
 			if(m_index == 1){	// ".." pressed
