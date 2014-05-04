@@ -101,6 +101,7 @@ endif()
 include_directories(${BlendInt_SOURCE_DIR}/include)
 include_directories(${BlendInt_SOURCE_DIR}/include/BlendInt)
 include_directories(${BlendInt_SOURCE_DIR}/extern/CppEvents/src)
+include_directories(${BlendInt_SOURCE_DIR}/extern/rapidxml)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR
         CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")

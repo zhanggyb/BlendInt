@@ -27,9 +27,6 @@
 
 #include <BlendInt/Service/Theme.hpp>
 
-#include <rapidxml/rapidxml.hpp>
-#include <rapidxml/rapidxml_utils.hpp>
-
 namespace BlendInt {
 
 	Theme* Theme::instance = 0;
@@ -65,22 +62,6 @@ namespace BlendInt {
 	{
 	}
 
-	WidgetStateTheme::WidgetStateTheme ()
-			: inner_anim(0x73BE4CFF), inner_anim_sel(0x5AA633FF), inner_key(
-			        0xF0EB64FF), inner_key_sel(0xD7D34BFF), inner_driven(
-			        0xB400FFFF), inner_driven_sel(0x9900E6FF), blend(0.5), pad(
-			        0.5)
-	{
-
-	}
-
-	PanelTheme::PanelTheme ()
-			: header(0x00000019), back(0x72727280), show_header(false), show_back(
-			        false), pad(0)
-	{
-
-	}
-
 	Theme::Theme ()
 	: m_dpi(96),
 	  m_menu_shadow_fac(0.5),
@@ -96,39 +77,26 @@ namespace BlendInt {
 
 		bool ret = false;
 
-		rapidxml::file<> fdoc(filepath.c_str());
-		//std::cout << fdoc.data() << std::endl;
-		xml_document<> doc;
+		try {
+			rapidxml::file<> fdoc(filepath.c_str());
+			xml_document<> doc;
+			doc.parse<0>(fdoc.data());
 
-		doc.parse<0>(fdoc.data());
-		std::cout << doc.name() << std::endl;
+			// get the root node
+			xml_node<>* root = doc.last_node("Theme");
 
-		std::string root_name = "Theme";
-
-		// get root node
-		xml_node<>* root = doc.first_node();
-
-		if(root_name == root->name()) {
-			std::cout << root->name() << std::endl;
-
-			for(rapidxml::xml_node<>* node = root->first_node();
-							node != NULL;
-							node = node->next_sibling())
-			{
-				std::cout << node->name() << std::endl;
-
-				for(rapidxml::xml_attribute<>* attrib = node->first_attribute();
-								attrib != NULL;
-								attrib = attrib->next_attribute())
-				{
-					std::cout << attrib->name() << " = " << attrib->value() << std::endl;
+			if (root) {
+				xml_node<>* ui_node = root->last_node("ThemeUserInterface");
+				if(ui_node) {
+					ParseUINode(ui_node);
 				}
+
+			} else {
+				std::cerr << "<Theme> should be the only root node in theme file: " << filepath << std::endl;
 			}
-
-			ret = true;
-
+		} catch (std::exception& ex) {
+			std::cerr << "Error: " << ex.what() << std::endl;
 		}
-
 
 
 		return ret;
@@ -307,14 +275,6 @@ namespace BlendInt {
 		m_list_item.text = 0x000000FF;
 		m_list_item.text_sel = 0x000000FF;
 
-		// State
-		m_state.inner_anim = 0x73BE4CFF;
-		m_state.inner_anim_sel = 0x5AA633FF;
-		m_state.inner_key = 0xF0EB64FF;
-		m_state.inner_key_sel = 0xD7D34BFF;
-		m_state.inner_driven = 0xB400FFFF;
-		m_state.inner_driven_sel = 0x9900E6FF;
-
 		//_theme.panel.header = RGBAf();
 		//_theme.panel.back = RGBAf();
 		m_menu_shadow_fac = 0.5f;
@@ -325,6 +285,31 @@ namespace BlendInt {
 		xaxis = 0xFF0000FF;
 		yaxis = 0x00FF00FF;
 		zaxis = 0x0000FFFF;
+	}
+
+	void Theme::ParseUINode (const rapidxml::xml_node<>* node)
+	{
+		std::cout << node->name() << std::endl;
+
+		for (rapidxml::xml_node<>* sub = node->first_node();
+				sub != 0; sub = sub->next_sibling())
+		{
+			ParseWidgetColorNode(sub);
+		}
+	}
+
+	void Theme::ParseWidgetColorNode (const rapidxml::xml_node<>* node)
+	{
+		rapidxml::xml_node<>* widget_color_node = node->last_node("ThemeWidgetColors");
+
+		if (widget_color_node) {
+			for (rapidxml::xml_attribute<>* attrib =
+			        widget_color_node->first_attribute(); attrib != NULL;
+			        attrib = attrib->next_attribute()) {
+				std::cout << attrib->name() << " = " << attrib->value()
+				        << std::endl;
+			}
+		}
 	}
 
 } /* namespace BlendInt */

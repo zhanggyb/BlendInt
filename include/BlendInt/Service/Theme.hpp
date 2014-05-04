@@ -24,6 +24,9 @@
 #ifndef _BLENDINT_THEME_HPP_
 #define _BLENDINT_THEME_HPP_
 
+#include <rapidxml.hpp>
+#include <rapidxml_utils.hpp>
+
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Types.hpp>
@@ -47,35 +50,6 @@ namespace BlendInt {
 		short shadetop;			// Shade Top, -100 - 100
 		short shadedown;	// Shade Down
 		bool alpha_check;
-	};
-
-	struct WidgetStateTheme
-	{
-		WidgetStateTheme();
-
-		Color inner_anim;	// Animated
-		Color inner_anim_sel;	// Animated Selected
-		Color inner_key;	// Keyframe
-		Color inner_key_sel;	// Keyframe Selected
-		Color inner_driven;	// Driven
-		Color inner_driven_sel;	// Driven Selected
-		float blend;
-		float pad;
-	};
-
-	struct PanelTheme
-	{
-		PanelTheme ();
-
-		Color header;
-		Color back;
-		bool show_header;
-		bool show_back;
-		int pad;
-	};
-
-	struct Themes
-	{
 	};
 
 	class Theme
@@ -140,12 +114,7 @@ namespace BlendInt {
 		{
 			return m_option;
 		}
-		
-		const PanelTheme& panel () const
-		{
-			return m_panel;
-		}
-		
+
 		const WidgetTheme& progress () const
 		{
 			return m_progress;
@@ -169,11 +138,6 @@ namespace BlendInt {
 		const WidgetTheme& scroll () const
 		{
 			return m_scroll;
-		}
-		
-		const WidgetStateTheme& state () const
-		{
-			return m_state;
 		}
 		
 		const WidgetTheme& tab () const
@@ -242,6 +206,10 @@ namespace BlendInt {
 		 */
 		~Theme ();
 
+		void ParseUINode (const rapidxml::xml_node<>* node);
+
+		void ParseWidgetColorNode (const rapidxml::xml_node<>* node);
+
 		/* Interface Elements (buttons, menus, icons) */
 		WidgetTheme m_regular;
 		WidgetTheme m_tool;
@@ -261,10 +229,6 @@ namespace BlendInt {
 		WidgetTheme m_scroll;
 		WidgetTheme m_progress;
 		WidgetTheme m_list_item;
-
-		WidgetStateTheme m_state;
-
-		PanelTheme m_panel; /* depricated, but we keep it for do_versions (2.66.1) */
 
 		/** Font DPI */
 		unsigned int m_dpi;
