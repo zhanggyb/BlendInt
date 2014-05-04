@@ -289,7 +289,57 @@ namespace BlendInt {
 
 	void Theme::ParseUINode (const rapidxml::xml_node<>* node)
 	{
-		std::cout << node->name() << std::endl;
+		unsigned int tmp = 0;
+
+		for (rapidxml::xml_attribute<>* attrib =
+				node->first_attribute(); attrib != NULL;
+		        attrib = attrib->next_attribute())
+		{
+			if(strcmp("menu_shadow_fac", attrib->name()) == 0) {
+
+				if(sscanf(attrib->value(), "%f", &m_menu_shadow_fac) == 0) {
+					DBG_PRINT_MSG("%s", "Fail to get menu shadow fac");
+				} else {
+					DBG_PRINT_MSG("menu shadow fac: %f", m_menu_shadow_fac);
+				}
+
+			} else if(strcmp("menu_shadow_width", attrib->name()) == 0) {
+
+				if(sscanf(attrib->value(), "%hd", &m_menu_shadow_width) == 0) {
+					DBG_PRINT_MSG("%s", "Fail to get menu shadow width");
+				} else {
+					DBG_PRINT_MSG("menu shadow width: %hd", m_menu_shadow_width);
+				}
+
+			} else if(strcmp("axis_x", attrib->name()) == 0) {
+
+				if(sscanf(attrib->value(), "#%x", &tmp) == 0) {
+					DBG_PRINT_MSG("%s", "Fail to get axis x color");
+				} else {
+					DBG_PRINT_MSG("axis x color: %x", tmp);
+					xaxis = tmp;
+				}
+
+			} else if(strcmp("axis_y", attrib->name()) == 0) {
+
+				if(sscanf(attrib->value(), "#%x", &tmp) == 0) {
+					DBG_PRINT_MSG("%s", "Fail to get axis y color");
+				} else {
+					DBG_PRINT_MSG("axis y color: %x", tmp);
+					yaxis = tmp;
+				}
+
+			} else if(strcmp("axis_z", attrib->name()) == 0) {
+
+				if(sscanf(attrib->value(), "#%x", &tmp) == 0) {
+					DBG_PRINT_MSG("%s", "Fail to get axis z color");
+				} else {
+					DBG_PRINT_MSG("axis z color: %x", tmp);
+					zaxis = tmp;
+				}
+
+			}
+		}
 
 		for (rapidxml::xml_node<>* sub = node->first_node();
 				sub != 0; sub = sub->next_sibling())
@@ -300,14 +350,101 @@ namespace BlendInt {
 
 	void Theme::ParseWidgetColorNode (const rapidxml::xml_node<>* node)
 	{
-		rapidxml::xml_node<>* widget_color_node = node->last_node("ThemeWidgetColors");
+		WidgetTheme* p = 0;
+		if (strcmp("wcol_regular", node->name()) == 0) {
+			p = &m_regular;
+		} else if (strcmp("wcol_tool", node->name()) == 0) {
+			p = &m_tool;
+		}
+
+		if (p == 0)
+			return;
+
+		rapidxml::xml_node<>* widget_color_node = node->last_node(
+		        "ThemeWidgetColors");
+		unsigned int tmp = 0;
 
 		if (widget_color_node) {
 			for (rapidxml::xml_attribute<>* attrib =
 			        widget_color_node->first_attribute(); attrib != NULL;
 			        attrib = attrib->next_attribute()) {
-				std::cout << attrib->name() << " = " << attrib->value()
-				        << std::endl;
+
+				if (strcmp("outline", attrib->name()) == 0) {
+
+					if (sscanf(attrib->value(), "#%x", &tmp) == 0) {
+						DBG_PRINT_MSG("%s", "Fail to get outline color");
+						p->outline = tmp;
+					} else {
+						DBG_PRINT_MSG("outline color: %x", tmp);
+					}
+
+				} else if (strcmp("inner", attrib->name()) == 0) {
+
+					if (sscanf(attrib->value(), "#%x", &tmp) == 0) {
+						DBG_PRINT_MSG("%s", "Fail to get inner color");
+					} else {
+						DBG_PRINT_MSG("inner color: %x", tmp);
+					}
+
+				} else if (strcmp("inner_sel", attrib->name()) == 0) {
+
+					if (sscanf(attrib->value(), "#%x", &tmp) == 0) {
+						DBG_PRINT_MSG("%s", "Fail to get inner_sel color");
+					} else {
+						DBG_PRINT_MSG("inner_sel color: %x", tmp);
+					}
+
+				} else if (strcmp("item", attrib->name()) == 0) {
+
+					if (sscanf(attrib->value(), "#%x", &tmp) == 0) {
+						DBG_PRINT_MSG("%s", "Fail to get item color");
+					} else {
+						DBG_PRINT_MSG("item color: %x", tmp);
+					}
+
+				} else if (strcmp("text", attrib->name()) == 0) {
+
+					if (sscanf(attrib->value(), "#%x", &tmp) == 0) {
+						DBG_PRINT_MSG("%s", "Fail to get text color");
+					} else {
+						DBG_PRINT_MSG("text color: %x", tmp);
+					}
+
+				} else if (strcmp("text_sel", attrib->name()) == 0) {
+
+					if (sscanf(attrib->value(), "#%x", &tmp) == 0) {
+						DBG_PRINT_MSG("%s", "Fail to get text_sel color");
+					} else {
+						DBG_PRINT_MSG("text_sel color: %x", tmp);
+					}
+
+				} else if (strcmp("show_shaded", attrib->name()) == 0) {
+
+					if (strcmp(attrib->value(), "TRUE") == 0) {
+						DBG_PRINT_MSG("show_shaded: %s", attrib->value());
+					} else {
+						DBG_PRINT_MSG("show_shaded: %s", "FALSE");
+					}
+
+				} else if (strcmp("shadetop", attrib->name()) == 0) {
+
+					short v;
+					if (sscanf(attrib->value(), "%hd", &v) == 0) {
+						DBG_PRINT_MSG("%s", "Fail to get shadetop");
+					} else {
+						DBG_PRINT_MSG("shadetop: %hd", v);
+					}
+
+				} else if (strcmp("shadedown", attrib->name()) == 0) {
+
+					short v;
+					if (sscanf(attrib->value(), "%hd", &v) == 0) {
+						DBG_PRINT_MSG("%s", "Fail to get shadedown");
+					} else {
+						DBG_PRINT_MSG("shadedown color: %hd", v);
+					}
+
+				}
 			}
 		}
 	}
