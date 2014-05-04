@@ -51,7 +51,12 @@ namespace BlendInt {
 			  m_shadow(false),
 			  m_color(0x000000FF)
 	{
-		m_cache = FontCache::Create(name, size, themes()->dpi, bold, italic);
+		m_cache = FontCache::Create(
+						name,
+						size,
+						Theme::instance->dpi(),
+						bold,
+						italic);
 	}
 
 	Font::Font (const char* name, unsigned int size, bool bold, bool italic)
@@ -62,7 +67,7 @@ namespace BlendInt {
 		  m_shadow(false),
 		  m_color(0x000000FF)
 	{
-		m_cache = FontCache::Create(name, size, themes()->dpi, bold, italic);
+		m_cache = FontCache::Create(name, size, Theme::instance->dpi(), bold, italic);
 	}
 
 	Font::Font (const Font& orig)
@@ -94,25 +99,25 @@ namespace BlendInt {
 	void Font::SetName (const std::string& name)
 	{
 		m_name = name;
-		m_cache = FontCache::Create(m_name, m_size, themes()->dpi, m_bold, m_italic);
+		m_cache = FontCache::Create(m_name, m_size, Theme::instance->dpi(), m_bold, m_italic);
 	}
 
 	void Font::SetSize (unsigned int size)
 	{
 		m_size = size;
-		m_cache = FontCache::Create(m_name, m_size, themes()->dpi, m_bold, m_italic);
+		m_cache = FontCache::Create(m_name, m_size, Theme::instance->dpi(), m_bold, m_italic);
 	}
 
 	void Font::SetBold (bool bold)
 	{
 		m_bold = bold;
-		m_cache = FontCache::Create(m_name, m_size, themes()->dpi, m_bold, m_italic);
+		m_cache = FontCache::Create(m_name, m_size, Theme::instance->dpi(), m_bold, m_italic);
 	}
 
 	void Font::SetItalic (bool italic)
 	{
 		m_italic = italic;
-		m_cache = FontCache::Create(m_name, m_size, themes()->dpi, m_bold, m_italic);
+		m_cache = FontCache::Create(m_name, m_size, Theme::instance->dpi(), m_bold, m_italic);
 	}
 
 
@@ -149,37 +154,6 @@ namespace BlendInt {
 
 		// TODO: support left->right, and right->left text
 		String::const_iterator it;
-
-		if(m_shadow) {
-
-			// TODO: define a curve to get a offset x, y to draw a good shadow
-			glm::mat4 shadow_offset = glm::translate(glm::mat4(1.0), glm::vec3(1.5f, -1.5f, 0.f));
-			glyph_pos = glyph_pos * shadow_offset;
-
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
-			program->SetUniform4f("color",
-					m_color.r() / 255.f,
-					m_color.g() / 255.f,
-					m_color.b() / 255.f,
-					0.175f);
-
-			it = string.begin();
-			std::advance(it, start);
-			for (size_t i = 0; i < str_length; it++, i++) {
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-				        &(m_cache->m_atlas.glyph(*it).vertexes[0]),
-				        GL_DYNAMIC_DRAW);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-				glyph_pos = glm::translate(glyph_pos,
-				        glm::vec3(m_cache->m_atlas.glyph(*it).advance_x, 0, 0));
-				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-				        glm::value_ptr(glyph_pos));
-			}
-
-			// restore mvp
-			glyph_pos = mvp;
-		}
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
 		program->SetUniform4f("color", m_color.r() / 255.f,

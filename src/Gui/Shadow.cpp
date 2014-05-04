@@ -132,7 +132,7 @@ namespace BlendInt {
 		// #define UI_DPI_FAC ((U.pixelsize * (float)U.dpi) / 72.0f)
 //		const float radout = themes()->menu_shadow_width * 1.0;
 //		alphastep = 3.0f * themes()->menu_shadow_fac / radout;
-		alphastep = 3.0f * themes()->menu_shadow_fac / m_blur_rad;
+		alphastep = 3.0f * Theme::instance->menu_shadow_fac() / m_blur_rad;
 
 		float expfac = 0.0;
 
@@ -321,7 +321,7 @@ namespace BlendInt {
 
 		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2];
 
-		const float radout = themes()->menu_shadow_width * 1.0;
+		const float radout = Theme::instance->menu_shadow_width() * 1.0;
 
 		/* prevent tooltips to not show round shadow */
 		if (radout > 0.2f * size.height())

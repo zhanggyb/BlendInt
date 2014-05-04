@@ -30,7 +30,7 @@ private:
 	GLuint m_vbo;
 
     BI::TextureGlyph m_glyph;
-    BI::GLSLProgram m_program;
+    BI::RefPtr<BI::GLSLProgram> m_program;
 
 };
 

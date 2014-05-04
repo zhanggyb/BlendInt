@@ -101,14 +101,14 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		ThemeManager* tm = ThemeManager::instance();
+		Theme* tm = Theme::instance;
 
 		float r, g, b, a;
 
-		r = tm->themes()->regular.inner.r() / 255.f;
-		g = tm->themes()->regular.inner.g() / 255.f;
-		b = tm->themes()->regular.inner.b() / 255.f;
-		a = tm->themes()->regular.inner.a() / 255.f;
+		r = tm->regular().inner.r() / 255.f;
+		g = tm->regular().inner.g() / 255.f;
+		b = tm->regular().inner.b() / 255.f;
+		a = tm->regular().inner.a() / 255.f;
 
 		program->SetVertexAttrib4f("Color", r, g, b, a);
 		program->SetUniform1i("AA", 0);
@@ -134,10 +134,10 @@ namespace BlendInt {
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * strip.size(), &strip[0],
 						GL_STATIC_DRAW);
 
-		GLfloat outline_color[4] = { themes()->regular.outline.r() / 255.f,
-						themes()->regular.outline.g() / 255.f,
-						themes()->regular.outline.b() / 255.f,
-						themes()->regular.outline.a() / 255.f };
+		GLfloat outline_color[4] = { tm->regular().outline.r() / 255.f,
+						tm->regular().outline.g() / 255.f,
+						tm->regular().outline.b() / 255.f,
+						tm->regular().outline.a() / 255.f };
 
 		program->SetVertexAttrib4fv("Color", outline_color);
 		program->SetUniform1i("AA", 0);

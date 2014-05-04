@@ -219,20 +219,20 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
 		program->SetVertexAttrib4f("Color",
-				themes()->menu.inner.r()/255.f,
-				themes()->menu.inner.g()/255.f,
-				themes()->menu.inner.b()/255.f,
-				themes()->menu.inner.a()/255.f);
+				Theme::instance->menu().inner.r()/255.f,
+				Theme::instance->menu().inner.g()/255.f,
+				Theme::instance->menu().inner.b()/255.f,
+				Theme::instance->menu().inner.a()/255.f);
 
 		glEnableVertexAttribArray(0);
 
 		DrawTriangleFan(0, m_inner_buffer.get());
 
 		program->SetVertexAttrib4f("Color",
-				themes()->menu.outline.r()/255.f,
-				themes()->menu.outline.g()/255.f,
-				themes()->menu.outline.b()/255.f,
-				themes()->menu.outline.a() / 255.f
+				Theme::instance->menu().outline.r()/255.f,
+				Theme::instance->menu().outline.g()/255.f,
+				Theme::instance->menu().outline.b()/255.f,
+				Theme::instance->menu().outline.a() / 255.f
 				);
 		program->SetUniform1i("AA", 1);
 
@@ -281,9 +281,9 @@ namespace BlendInt {
 				DefaultBorderWidth(),
 				RoundNone,
 				0.0,
-				themes()->menu_item.inner_sel,
-				themes()->menu_item.shadetop,
-				themes()->menu_item.shadedown,
+				Theme::instance->menu_item().inner_sel,
+				Theme::instance->menu_item().shadetop,
+				Theme::instance->menu_item().shadedown,
 				Vertical,
 				m_highlight_buffer.get());
 	}

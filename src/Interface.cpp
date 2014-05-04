@@ -116,7 +116,7 @@ namespace BlendInt {
 		}
 #endif
 
-		if (success && ThemeManager::initialize()) {
+		if (success && Theme::Initialize()) {
 			// do nothing
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Themes");
@@ -162,7 +162,7 @@ namespace BlendInt {
 	{
 		StockItems::Release();
 		ShaderManager::Release();
-		ThemeManager::release();
+		Theme::Release();
 		FontCache::releaseAll();
 
 #ifdef USE_FONTCONFIG

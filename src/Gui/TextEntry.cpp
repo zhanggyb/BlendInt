@@ -171,9 +171,9 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					const Color& color = themes()->text.inner;
-					short shadetop = themes()->text.shadetop;
-					short shadedown = themes()->text.shadedown;
+					const Color& color = Theme::instance->text().inner;
+					short shadetop = Theme::instance->text().shadetop;
+					short shadedown = Theme::instance->text().shadedown;
 
 					GenerateShadedFormBuffers(*size_p,
 							round_type(),
@@ -228,10 +228,10 @@ namespace BlendInt {
 		glDisableVertexAttribArray(1);
 
 		glm::vec4 color;
-		color.r = themes()->text.outline.r() / 255.f;
-		color.g = themes()->text.outline.g() / 255.f;
-		color.b = themes()->text.outline.b() / 255.f;
-		color.a = themes()->text.outline.a() / 255.f;
+		color.r = Theme::instance->text().outline.r() / 255.f;
+		color.g = Theme::instance->text().outline.g() / 255.f;
+		color.b = Theme::instance->text().outline.b() / 255.f;
+		color.a = Theme::instance->text().outline.a() / 255.f;
 		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 		program->SetUniform1i("AA", 1);
 
@@ -342,9 +342,9 @@ namespace BlendInt {
 		m_outer_buffer.reset(new GLArrayBuffer);
 		m_cursor_buffer.reset(new GLArrayBuffer);
 
-		const Color& color = themes()->text.inner;
-		short shadetop = themes()->text.shadetop;
-		short shadedown = themes()->text.shadedown;
+		const Color& color = Theme::instance->text().inner;
+		short shadetop = Theme::instance->text().shadetop;
+		short shadedown = Theme::instance->text().shadedown;
 
 		GenerateShadedFormBuffers(size(),
 				round_type(),

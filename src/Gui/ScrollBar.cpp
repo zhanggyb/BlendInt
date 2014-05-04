@@ -171,12 +171,12 @@ namespace BlendInt {
 						m_slide.SetRadius(radius);
 					}
 
-					const Color& color = themes()->scroll.inner;
-					short shadetop = themes()->scroll.shadetop;
-					short shadedown = themes()->scroll.shadedown;
+					const Color& color = Theme::instance->scroll().inner;
+					short shadetop = Theme::instance->scroll().shadetop;
+					short shadedown = Theme::instance->scroll().shadedown;
 					if(orientation() == Vertical) {
-						shadetop = themes()->scroll.shadedown;
-						shadedown = themes()->scroll.shadetop;
+						shadetop = Theme::instance->scroll().shadedown;
+						shadedown = Theme::instance->scroll().shadetop;
 					}
 
 					GenerateShadedFormBuffers(
@@ -263,10 +263,10 @@ namespace BlendInt {
 		glDisableVertexAttribArray(1);
 
 		glm::vec4 color;
-		color.r = themes()->scroll.outline.r() / 255.f;
-		color.g = themes()->scroll.outline.g() / 255.f;
-		color.b = themes()->scroll.outline.b() / 255.f;
-		color.a = themes()->scroll.outline.a() / 255.f;
+		color.r = Theme::instance->scroll().outline.r() / 255.f;
+		color.g = Theme::instance->scroll().outline.g() / 255.f;
+		color.b = Theme::instance->scroll().outline.b() / 255.f;
+		color.a = Theme::instance->scroll().outline.a() / 255.f;
 
 		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 		program->SetUniform1i("AA", 1);
@@ -374,12 +374,12 @@ namespace BlendInt {
 			slot_orient = Horizontal;
 		}
 
-		const Color& color = themes()->scroll.inner;
-		short shadetop = themes()->scroll.shadetop;
-		short shadedown = themes()->scroll.shadedown;
+		const Color& color = Theme::instance->scroll().inner;
+		short shadetop = Theme::instance->scroll().shadetop;
+		short shadedown = Theme::instance->scroll().shadedown;
 		if(orientation() == Vertical) {
-			shadetop = themes()->scroll.shadedown;
-			shadedown = themes()->scroll.shadetop;
+			shadetop = Theme::instance->scroll().shadedown;
+			shadedown = Theme::instance->scroll().shadetop;
 		}
 
 		GenerateShadedFormBuffers(

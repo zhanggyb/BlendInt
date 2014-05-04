@@ -31,7 +31,7 @@
 namespace BlendInt {
 
 	class Interface;
-	class ThemeManager;
+	class Theme;
 
 	struct WidgetTheme
 	{
@@ -76,75 +76,153 @@ namespace BlendInt {
 
 	struct Themes
 	{
-		/* Interface Elements (buttons, menus, icons) */
-		WidgetTheme regular;
-		WidgetTheme tool;
-		WidgetTheme text;
-		WidgetTheme radio_button;
-		WidgetTheme option;
-		WidgetTheme toggle;
-		WidgetTheme number_field;
-		WidgetTheme number_slider;
-		WidgetTheme menu;
-		WidgetTheme pulldown;
-		WidgetTheme menu_back;
-		WidgetTheme menu_item;
-		WidgetTheme tab;
-		WidgetTheme tooltip;
-		WidgetTheme box;
-		WidgetTheme scroll;
-		WidgetTheme progress;
-		WidgetTheme list_item;
-
-		WidgetStateTheme state;
-
-		PanelTheme panel; /* depricated, but we keep it for do_versions (2.66.1) */
-
-		/* fac: 0 - 1 for blend factor, width in pixels */
-		float menu_shadow_fac;
-		short menu_shadow_width;
-
-		short pad;
-
-		char iconfile[256];	// FILE_MAXFILE length
-		float icon_alpha;
-
-		/** Font DPI */
-		unsigned int dpi;
-
-		/* Axis Colors */
-		Color xaxis, yaxis, zaxis;
 	};
 
-	class ThemeManager
+	class Theme
 	{
+		DISALLOW_COPY_AND_ASSIGN(Theme);
+
 	public:
+
+		static Theme* instance;
+
+		const WidgetTheme& box () const
+		{
+			return m_box;
+		}
+		
+		unsigned int dpi () const
+		{
+			return m_dpi;
+		}
+		
+		const WidgetTheme& list_item () const
+		{
+			return m_list_item;
+		}
+		
+		const WidgetTheme& menu () const
+		{
+			return m_menu;
+		}
+		
+		const WidgetTheme& menu_back () const
+		{
+			return m_menu_back;
+		}
+		
+		const WidgetTheme& menu_item () const
+		{
+			return m_menu_item;
+		}
+		
+		const WidgetTheme& number_field () const
+		{
+			return m_number_field;
+		}
+		
+		const WidgetTheme& number_slider () const
+		{
+			return m_number_slider;
+		}
+		
+		const WidgetTheme& option () const
+		{
+			return m_option;
+		}
+		
+		const PanelTheme& panel () const
+		{
+			return m_panel;
+		}
+		
+		const WidgetTheme& progress () const
+		{
+			return m_progress;
+		}
+		
+		const WidgetTheme& pulldown () const
+		{
+			return m_pulldown;
+		}
+		
+		const WidgetTheme& radio_button () const
+		{
+			return m_radio_button;
+		}
+		
+		const WidgetTheme& regular () const
+		{
+			return m_regular;
+		}
+		
+		const WidgetTheme& scroll () const
+		{
+			return m_scroll;
+		}
+		
+		const WidgetStateTheme& state () const
+		{
+			return m_state;
+		}
+		
+		const WidgetTheme& tab () const
+		{
+			return m_tab;
+		}
+		
+		const WidgetTheme& text () const
+		{
+			return m_text;
+		}
+		
+		const WidgetTheme& toggle () const
+		{
+			return m_toggle;
+		}
+		
+		const WidgetTheme& tool () const
+		{
+			return m_tool;
+		}
+		
+		const WidgetTheme& tooltip () const
+		{
+			return m_tooltip;
+		}
+		
+		float menu_shadow_fac1 () const
+		{
+			return m_menu_shadow_fac;
+		}
+		
+		short menu_shadow_width1 () const
+		{
+			return m_menu_shadow_width;
+		}
+		
+		float menu_shadow_fac () const
+		{
+			return m_menu_shadow_fac;
+		}
+		
+		short menu_shadow_width () const
+		{
+			return m_menu_shadow_width;
+		}
+
+	private:
 
 		friend class Interface;
 
-		static ThemeManager* instance ();
+		static bool Initialize ();
 
-		const Themes* themes () const
-		{
-			return &m_themes;
-		}
-
-#ifdef DEBUG
-	public:
-#else
-	private:
-#endif
-
-		static bool initialize ();
-
-		static void release ();
-
-	private:
+		static void Release ();
 
 		/**
 		 * @brief Default constructor
 		 */
-		ThemeManager ();
+		Theme ();
 
 		/**
 		 * @brief Private destructor
@@ -152,22 +230,49 @@ namespace BlendInt {
 		 * Move destructor to private to disallow simply delete
 		 * use release() instead
 		 */
-		~ThemeManager ();
+		~Theme ();
 
-		Themes m_themes;
+		void Reset ();
 
-		static ThemeManager* theme_manager;
+		/* Interface Elements (buttons, menus, icons) */
+		WidgetTheme m_regular;
+		WidgetTheme m_tool;
+		WidgetTheme m_text;
+		WidgetTheme m_radio_button;
+		WidgetTheme m_option;
+		WidgetTheme m_toggle;
+		WidgetTheme m_number_field;
+		WidgetTheme m_number_slider;
+		WidgetTheme m_menu;
+		WidgetTheme m_pulldown;
+		WidgetTheme m_menu_back;
+		WidgetTheme m_menu_item;
+		WidgetTheme m_tab;
+		WidgetTheme m_tooltip;
+		WidgetTheme m_box;
+		WidgetTheme m_scroll;
+		WidgetTheme m_progress;
+		WidgetTheme m_list_item;
 
-		ThemeManager (const ThemeManager& orig);
+		WidgetStateTheme m_state;
 
-		ThemeManager& operator = (const ThemeManager& orig);
+		PanelTheme m_panel; /* depricated, but we keep it for do_versions (2.66.1) */
 
+		/* fac: 0 - 1 for blend factor, width in pixels */
+		float m_menu_shadow_fac;
+		short m_menu_shadow_width;
+
+		//short pad;
+
+		//char iconfile[256];	// FILE_MAXFILE length
+		//float icon_alpha;
+
+		/** Font DPI */
+		unsigned int m_dpi;
+
+		/* Axis Colors */
+		Color xaxis, yaxis, zaxis;
 	};
-
-	inline const Themes* themes ()
-	{
-		return ThemeManager::instance()->themes();
-	}
 
 } /* namespace BlendInt */
 #endif /* THEME_H_ */

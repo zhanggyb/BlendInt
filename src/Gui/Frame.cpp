@@ -209,14 +209,14 @@ namespace BlendInt {
 		GenerateFlatRectVertices(size(), 0.f, &vertices);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
-		ThemeManager* tm = ThemeManager::instance();
+		Theme* tm = Theme::instance;
 
 		float r, g, b, a;
 
-		r = tm->themes()->regular.inner.r() / 255.f;
-		g = tm->themes()->regular.inner.g() / 255.f;
-		b = tm->themes()->regular.inner.b() / 255.f;
-		a = tm->themes()->regular.inner.a() / 255.f;
+		r = tm->regular().inner.r() / 255.f;
+		g = tm->regular().inner.g() / 255.f;
+		b = tm->regular().inner.b() / 255.f;
+		a = tm->regular().inner.a() / 255.f;
 
 		program->SetVertexAttrib4f("Color", r, g, b, a);
 		program->SetUniform1i("AA", 0);

@@ -68,9 +68,9 @@ namespace BlendInt {
 					Orientation shadedir =
 									size_p->width() < size_p->height() ?
 													Horizontal : Vertical;
-					const Color& color = themes()->scroll.item;
-					short shadetop = themes()->scroll.shadetop;
-					short shadedown = themes()->scroll.shadedown;
+					const Color& color = Theme::instance->scroll().item;
+					short shadetop = Theme::instance->scroll().shadetop;
+					short shadedown = Theme::instance->scroll().shadedown;
 
 					glBindVertexArray(m_vao);
 					GenerateShadedFormBuffers(*size_p, round_type(), radius(),
@@ -87,9 +87,9 @@ namespace BlendInt {
 													Horizontal : Vertical;
 					const RoundType* round_p =
 									static_cast<const RoundType*>(request.data());
-					const Color& color = themes()->scroll.item;
-					short shadetop = themes()->scroll.shadetop;
-					short shadedown = themes()->scroll.shadedown;
+					const Color& color = Theme::instance->scroll().item;
+					short shadetop = Theme::instance->scroll().shadetop;
+					short shadedown = Theme::instance->scroll().shadedown;
 
 					glBindVertexArray(m_vao);
 					GenerateShadedFormBuffers(*size_p, *round_p, radius(),
@@ -106,9 +106,9 @@ namespace BlendInt {
 													Horizontal : Vertical;
 					const float* radius_p =
 									static_cast<const float*>(request.data());
-					const Color& color = themes()->scroll.item;
-					short shadetop = themes()->scroll.shadetop;
-					short shadedown = themes()->scroll.shadedown;
+					const Color& color = Theme::instance->scroll().item;
+					short shadetop = Theme::instance->scroll().shadetop;
+					short shadedown = Theme::instance->scroll().shadedown;
 
 					glBindVertexArray(m_vao);
 					GenerateShadedFormBuffers(*size_p, round_type(), *radius_p,
@@ -171,10 +171,11 @@ namespace BlendInt {
 
 		GLArrayBuffer::Reset();
 
-		GLfloat outline_color[4] = { themes()->scroll.outline.r() / 255.f,
-						themes()->scroll.outline.g() / 255.f,
-						themes()->scroll.outline.b() / 255.f,
-						themes()->scroll.outline.a() / 255.f };
+		GLfloat outline_color[4] = {
+						Theme::instance->scroll().outline.r() / 255.f,
+						Theme::instance->scroll().outline.g() / 255.f,
+						Theme::instance->scroll().outline.b() / 255.f,
+						Theme::instance->scroll().outline.a() / 255.f };
 
 		program->SetVertexAttrib4fv("Color", outline_color);
 		program->SetUniform1i("Gamma", 0);
@@ -214,9 +215,9 @@ namespace BlendInt {
 		Orientation shadedir =
 						size().width() < size().height() ?
 										Horizontal : Vertical;
-		const Color& color = themes()->scroll.item;
-		short shadetop = themes()->scroll.shadetop;
-		short shadedown = themes()->scroll.shadedown;
+		const Color& color = Theme::instance->scroll().item;
+		short shadetop = Theme::instance->scroll().shadetop;
+		short shadedown = Theme::instance->scroll().shadedown;
 
 		GenerateShadedFormBuffers(size(), round_type(), radius(), color,
 						shadetop, shadedown, shadedir, m_inner_buffer.get(),

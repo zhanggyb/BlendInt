@@ -86,9 +86,6 @@ namespace BlendInt {
 		int m_stride;
 
 		Glyph *m_glyph_array;
-
-		static const char* vs_shader;
-		static const char* fs_shader;
 	};
 
 }

@@ -72,9 +72,9 @@ namespace BlendInt {
 					GenerateShadedFormBuffers(*size_p,
 									round_type(),
 									radius(),
-									themes()->menu.inner,
-									themes()->menu.shadetop,
-									themes()->menu.shadedown,
+									Theme::instance->menu().inner,
+									Theme::instance->menu().shadetop,
+									Theme::instance->menu().shadedown,
 									Vertical,
 									m_inner_buffer.get(),
 									m_outer_buffer.get());
@@ -89,9 +89,9 @@ namespace BlendInt {
 					GenerateShadedFormBuffers(size(),
 									*type_p,
 									radius(),
-									themes()->menu.inner,
-									themes()->menu.shadetop,
-									themes()->menu.shadedown,
+									Theme::instance->menu().inner,
+									Theme::instance->menu().shadetop,
+									Theme::instance->menu().shadedown,
 									Vertical,
 									m_inner_buffer.get(),
 									m_outer_buffer.get());
@@ -106,9 +106,9 @@ namespace BlendInt {
 					GenerateShadedFormBuffers(size(),
 									round_type(),
 									*radius_p,
-									themes()->menu.inner,
-									themes()->menu.shadetop,
-									themes()->menu.shadedown,
+									Theme::instance->menu().inner,
+									Theme::instance->menu().shadetop,
+									Theme::instance->menu().shadedown,
 									Vertical,
 									m_inner_buffer.get(),
 									m_outer_buffer.get());
@@ -156,13 +156,13 @@ namespace BlendInt {
 
 		glDisableVertexAttribArray(1);
 
-		ThemeManager* tm = ThemeManager::instance();
+		Theme* tm = Theme::instance;
 
 		glm::vec4 color;
-		color.r = tm->themes()->menu.outline.r() / 255.f;
-		color.g = tm->themes()->menu.outline.g() / 255.f;
-		color.b = tm->themes()->menu.outline.b() / 255.f;
-		color.a = tm->themes()->menu.outline.a() / 255.f;
+		color.r = tm->menu().outline.r() / 255.f;
+		color.g = tm->menu().outline.g() / 255.f;
+		color.b = tm->menu().outline.b() / 255.f;
+		color.a = tm->menu().outline.a() / 255.f;
 
 		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 		program->SetUniform1i("AA", 1);
@@ -235,9 +235,9 @@ namespace BlendInt {
 		GenerateShadedFormBuffers(size(),
 						round_type(),
 						radius(),
-						themes()->menu.inner,
-						themes()->menu.shadetop,
-						themes()->menu.shadedown,
+						Theme::instance->menu().inner,
+						Theme::instance->menu().shadetop,
+						Theme::instance->menu().shadedown,
 						Vertical,
 						m_inner_buffer.get(),
 						m_outer_buffer.get());

@@ -45,25 +45,6 @@
 
 namespace BlendInt {
 
-	const char* TextureAtlas::vs_shader =
-			"attribute vec4 coord;"
-			"varying vec2 texpos;"
-			""
-			"void main(void) {"
-			"  gl_Position = gl_ModelViewProjectionMatrix * vec4(coord.xy, 0, 1);"
-			"  texpos = coord.zw;"
-			"}";
-
-	const char* TextureAtlas::fs_shader =
-			"varying vec2 texpos;"
-			"uniform sampler2D tex;"
-			"uniform vec4 color;"
-			""
-			"void main(void) {"
-			"  gl_FragColor = vec4(1, 1, 1, texture2D(tex, texpos).a) * color;"
-			"}";
-
-
 	TextureAtlas::TextureAtlas ()
 			: m_texture(0), m_width(0), m_height(0), m_starting_charcode(0), m_stride(0),
 			  m_glyph_array(0)
@@ -104,8 +85,8 @@ namespace BlendInt {
 
 		int roww = 0;
 		int rowh = 0;
-		 m_width = 0;
-		 m_height = 0;
+		m_width = 0;
+		m_height = 0;
 
 		/* Find minimum size for a texture holding all visible ASCII characters */
 		for (wchar_t i = m_starting_charcode; i < (m_starting_charcode + m_stride - 1); i++) {

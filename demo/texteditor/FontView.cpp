@@ -8,6 +8,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Core/Freetype.hpp>
+#include <BlendInt/Service/ShaderManager.hpp>
 
 /*
 
@@ -133,6 +134,8 @@ FontView::FontView ()
     glBindVertexArray(m_vao);
     glGenBuffers(1, &m_vbo);
     glBindVertexArray(0);
+
+    m_program = BI::ShaderManager::instance->text_program();
 }
 
 FontView::~FontView ()
@@ -153,13 +156,14 @@ void FontView::LoadCharacter ()
     	DBG_PRINT_MSG("%s", "fail to load font");
     }
 
-    m_glyph.Load(ft, L'A');
+    m_glyph.Load(ft, L'@');
 
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(BI::GlyphVertex) * 4, &(m_glyph.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    /*
     m_program.Create();
     //m_program.AttachShaderPair(text_vertex_shader, text_fragment_shader);
     //m_program.LoadShaderPairFile("vert.glsl", "frag.glsl");
@@ -169,6 +173,7 @@ void FontView::LoadCharacter ()
     if(!m_program.Link()) {
     	DBG_PRINT_MSG("%s", "Fail to link program");
     }
+    */
 
     glBindVertexArray(0);
 }
@@ -181,15 +186,15 @@ BI::ResponseType FontView::Draw (const BI::RedrawEvent& event)
 
 	glBindVertexArray(m_vao);
 
-	m_program.Use();
+	m_program->Use();
 
 	glActiveTexture(GL_TEXTURE0);
 
 	glBindTexture(GL_TEXTURE_2D, m_glyph.texture());
 
-	m_program.SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-	m_program.SetUniform1i("tex", 0);
-	m_program.SetUniform4f("color", 0.25f, 0.25f, 0.25f, 1.0f);
+	m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+	m_program->SetUniform1i("tex", 0);
+	m_program->SetUniform4f("color", 0.25f, 0.25f, 0.25f, 1.0f);
 
 	glEnableVertexAttribArray(0);
 
@@ -209,7 +214,7 @@ BI::ResponseType FontView::Draw (const BI::RedrawEvent& event)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glDisableVertexAttribArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	m_program.Reset();
+	m_program->Reset();
 	glBindVertexArray(0);
 
 	return BI::Accept;

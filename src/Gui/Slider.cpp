@@ -193,10 +193,10 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4f(
 						"Color",
-						themes()->scroll.outline.r() / 255.f,
-						themes()->scroll.outline.g() / 255.f,
-						themes()->scroll.outline.b() / 255.f,
-						themes()->scroll.outline.a() / 255.f
+						Theme::instance->scroll().outline.r() / 255.f,
+						Theme::instance->scroll().outline.g() / 255.f,
+						Theme::instance->scroll().outline.b() / 255.f,
+						Theme::instance->scroll().outline.a() / 255.f
 						);
 
 		program->SetUniform1i("AA", 0);

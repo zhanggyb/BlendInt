@@ -74,17 +74,14 @@ TEST_F(TextureFontTest1, Foo1)
     GLuint vbo;
 
     glGenVertexArrays(1, &vao);
-
     glBindVertexArray(vao);
 
     glGenBuffers(1, &vbo);
 
-    font.Load(ft, L'舞');
+    font.Load(ft, L'A');
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
     glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4, &(font.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
-
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     GLSLProgram program;
@@ -93,16 +90,6 @@ TEST_F(TextureFontTest1, Foo1)
     if(!program.Link()) {
     	DBG_PRINT_MSG("%s", "Fail to link program");
     }
-
-    program.Use();
-	GLint text_attribute_coord_ = program.GetAttributeLocation("coord");
-	GLint text_uniform_tex_ = program.GetUniformLocation("tex");
-	GLint text_uniform_mvp = program.GetUniformLocation("MVP");
-	GLint text_uniform_color_ = program.GetUniformLocation("color");
-	if(text_attribute_coord_ == -1 || text_uniform_tex_ == -1 || text_uniform_mvp == -1 || text_uniform_color_ == -1) {
-		DBG_PRINT_MSG("%s", "Error: cannot get attributes and uniforms");
-	}
-	program.Reset();
 
     glBindVertexArray(0);
 
@@ -123,12 +110,11 @@ TEST_F(TextureFontTest1, Foo1)
     	program.Use();
 
     	glActiveTexture(GL_TEXTURE0);
-
     	glBindTexture(GL_TEXTURE_2D, font.texture());
 
-    	program.SetUniformMatrix4fv(text_uniform_mvp, 1, GL_FALSE, glm::value_ptr(projection * view * model));
-		program.SetUniform1i(text_uniform_tex_, 0);
-		program.SetUniform4f(text_uniform_color_, 1.f, 0.1f, 0.1f, 1.0f);
+    	program.SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(projection * view * model));
+		program.SetUniform1i("tex", 0);
+		program.SetUniform4f("color", 1.f, 0.1f, 0.1f, 1.0f);
 
 		glEnableVertexAttribArray(0);
 
@@ -146,11 +132,9 @@ TEST_F(TextureFontTest1, Foo1)
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 		glDisableVertexAttribArray(0);
 
     	glBindTexture(GL_TEXTURE_2D, 0);
-
     	program.Reset();
 
     	glBindVertexArray(0);

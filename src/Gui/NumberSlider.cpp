@@ -120,14 +120,14 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		ThemeManager* tm = ThemeManager::instance();
+		Theme* tm = Theme::instance;
 
 		glm::vec4 color;
 
-		color.r = tm->themes()->number_slider.inner_sel.r() / 255.f;
-		color.g = tm->themes()->number_slider.inner_sel.g() / 255.f;
-		color.b = tm->themes()->number_slider.inner_sel.b() / 255.f;
-		color.a = tm->themes()->number_slider.inner_sel.a() / 255.f;
+		color.r = tm->number_slider().inner_sel.r() / 255.f;
+		color.g = tm->number_slider().inner_sel.g() / 255.f;
+		color.b = tm->number_slider().inner_sel.b() / 255.f;
+		color.a = tm->number_slider().inner_sel.a() / 255.f;
 
 		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 		program->SetUniform1i("AA", 0);
@@ -136,10 +136,10 @@ namespace BlendInt {
 
 		DrawTriangleFan(0, m_inner_buffer.get());
 
-		color.r = themes()->number_slider.outline.r() / 255.f;
-		color.g = themes()->number_slider.outline.g() / 255.f;
-		color.b = themes()->number_slider.outline.b() / 255.f;
-		color.a = themes()->number_slider.outline.a() / 255.f;
+		color.r = tm->number_slider().outline.r() / 255.f;
+		color.g = tm->number_slider().outline.g() / 255.f;
+		color.b = tm->number_slider().outline.b() / 255.f;
+		color.a = tm->number_slider().outline.a() / 255.f;
 		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 		program->SetUniform1i("AA", 1);
 

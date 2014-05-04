@@ -128,33 +128,33 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		ThemeManager* tm = ThemeManager::instance();
+		Theme* tm = Theme::instance;
 
 		glm::vec4 color;
 
 		if (hover()) {
 			if(checked()) {
-				color.r = tm->themes()->regular.inner_sel.highlight_red() / 255.f;
-				color.g = tm->themes()->regular.inner_sel.highlight_green() / 255.f;
-				color.b = tm->themes()->regular.inner_sel.highlight_blue() / 255.f;
-				color.a = tm->themes()->regular.inner_sel.a() / 255.f;
+				color.r = tm->regular().inner_sel.highlight_red() / 255.f;
+				color.g = tm->regular().inner_sel.highlight_green() / 255.f;
+				color.b = tm->regular().inner_sel.highlight_blue() / 255.f;
+				color.a = tm->regular().inner_sel.a() / 255.f;
 			} else {
-				color.r = tm->themes()->regular.inner.highlight_red() / 255.f;
-				color.g = tm->themes()->regular.inner.highlight_green() / 255.f;
-				color.b = tm->themes()->regular.inner.highlight_blue() / 255.f;
-				color.a = tm->themes()->regular.inner.a() / 255.f;
+				color.r = tm->regular().inner.highlight_red() / 255.f;
+				color.g = tm->regular().inner.highlight_green() / 255.f;
+				color.b = tm->regular().inner.highlight_blue() / 255.f;
+				color.a = tm->regular().inner.a() / 255.f;
 			}
 		} else {
 			if (checked()) {
-				color.r = tm->themes()->regular.inner_sel.r() / 255.f;
-				color.g = tm->themes()->regular.inner_sel.g() / 255.f;
-				color.b = tm->themes()->regular.inner_sel.b() / 255.f;
-				color.a = tm->themes()->regular.inner_sel.a() / 255.f;
+				color.r = tm->regular().inner_sel.r() / 255.f;
+				color.g = tm->regular().inner_sel.g() / 255.f;
+				color.b = tm->regular().inner_sel.b() / 255.f;
+				color.a = tm->regular().inner_sel.a() / 255.f;
 			} else {
-				color.r = tm->themes()->regular.inner.r() / 255.f;
-				color.g = tm->themes()->regular.inner.g() / 255.f;
-				color.b = tm->themes()->regular.inner.b() / 255.f;
-				color.a = tm->themes()->regular.inner.a() / 255.f;
+				color.r = tm->regular().inner.r() / 255.f;
+				color.g = tm->regular().inner.g() / 255.f;
+				color.b = tm->regular().inner.b() / 255.f;
+				color.a = tm->regular().inner.a() / 255.f;
 			}
 		}
 
@@ -165,10 +165,10 @@ namespace BlendInt {
 
 		DrawTriangleFan(0, m_inner_buffer.get());
 
-		color.r = themes()->regular.outline.r() / 255.f;
-		color.g = themes()->regular.outline.g() / 255.f;
-		color.b = themes()->regular.outline.b() / 255.f;
-		color.a = themes()->regular.outline.a() / 255.f;
+		color.r = tm->regular().outline.r() / 255.f;
+		color.g = tm->regular().outline.g() / 255.f;
+		color.b = tm->regular().outline.b() / 255.f;
+		color.a = tm->regular().outline.a() / 255.f;
 
 		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 		program->SetUniform1i("AA", 1);

@@ -121,12 +121,12 @@ namespace BlendInt {
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 							glm::value_ptr(mvp));
 
-			ThemeManager* tm = ThemeManager::instance();
+			Theme* tm = Theme::instance;
 
-			glm::vec4 color(tm->themes()->menu_item.inner_sel.r() / 255.f,
-							tm->themes()->menu_item.inner_sel.g() / 255.f,
-							tm->themes()->menu_item.inner_sel.b() / 255.f,
-							tm->themes()->menu_item.inner_sel.a() / 255.f);
+			glm::vec4 color(tm->menu_item().inner_sel.r() / 255.f,
+							tm->menu_item().inner_sel.g() / 255.f,
+							tm->menu_item().inner_sel.b() / 255.f,
+							tm->menu_item().inner_sel.a() / 255.f);
 
 			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 			program->SetUniform1i("AA", 1);

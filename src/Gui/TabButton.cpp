@@ -110,7 +110,7 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		ThemeManager* tm = ThemeManager::instance();
+		Theme* tm = Theme::instance;
 
 		glm::vec4 color;
 
@@ -118,18 +118,18 @@ namespace BlendInt {
 
 		// draw inner, simple fill
 		if (checked()) {
-			color.r = tm->themes()->tab.inner_sel.r() / 255.f;
-			color.g = tm->themes()->tab.inner_sel.g() / 255.f;
-			color.b = tm->themes()->tab.inner_sel.b() / 255.f;
-			color.a = tm->themes()->tab.inner_sel.a() / 255.f;
+			color.r = tm->tab().inner_sel.r() / 255.f;
+			color.g = tm->tab().inner_sel.g() / 255.f;
+			color.b = tm->tab().inner_sel.b() / 255.f;
+			color.a = tm->tab().inner_sel.a() / 255.f;
 			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 			program->SetUniform1i("AA", 0);
 			DrawTriangleStrip(0, m_inner_buffer.get());
 		} else {
-			color.r = tm->themes()->tab.item.r() / 255.f;
-			color.g = tm->themes()->tab.item.g() / 255.f;
-			color.b = tm->themes()->tab.item.b() / 255.f;
-			color.a = tm->themes()->tab.item.a() / 255.f;
+			color.r = tm->tab().item.r() / 255.f;
+			color.g = tm->tab().item.g() / 255.f;
+			color.b = tm->tab().item.b() / 255.f;
+			color.a = tm->tab().item.a() / 255.f;
 			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 			program->SetUniform1i("AA", 1);
 
@@ -152,10 +152,10 @@ namespace BlendInt {
 		}
 
 		if (checked()) {
-			color.r = themes()->tab.outline.r() / 255.f;
-			color.g = themes()->tab.outline.g() / 255.f;
-			color.b = themes()->tab.outline.b() / 255.f;
-			color.a = themes()->tab.outline.a() / 255.f;
+			color.r = Theme::instance->tab().outline.r() / 255.f;
+			color.g = Theme::instance->tab().outline.g() / 255.f;
+			color.b = Theme::instance->tab().outline.b() / 255.f;
+			color.a = Theme::instance->tab().outline.a() / 255.f;
 
 			program->SetUniform1i("AA", 1);
 
