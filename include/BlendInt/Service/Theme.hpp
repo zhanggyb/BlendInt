@@ -86,6 +86,16 @@ namespace BlendInt {
 
 		static Theme* instance;
 
+		/**
+		 * @brief Load theme from an existing xml file
+		 */
+		bool Load (const std::string& filepath);
+
+		/**
+		 * @brief Reset to the default setting
+		 */
+		void Reset ();
+
 		const WidgetTheme& box () const
 		{
 			return m_box;
@@ -232,8 +242,6 @@ namespace BlendInt {
 		 */
 		~Theme ();
 
-		void Reset ();
-
 		/* Interface Elements (buttons, menus, icons) */
 		WidgetTheme m_regular;
 		WidgetTheme m_tool;
@@ -258,6 +266,9 @@ namespace BlendInt {
 
 		PanelTheme m_panel; /* depricated, but we keep it for do_versions (2.66.1) */
 
+		/** Font DPI */
+		unsigned int m_dpi;
+
 		/* fac: 0 - 1 for blend factor, width in pixels */
 		float m_menu_shadow_fac;
 		short m_menu_shadow_width;
@@ -266,9 +277,6 @@ namespace BlendInt {
 
 		//char iconfile[256];	// FILE_MAXFILE length
 		//float icon_alpha;
-
-		/** Font DPI */
-		unsigned int m_dpi;
 
 		/* Axis Colors */
 		Color xaxis, yaxis, zaxis;

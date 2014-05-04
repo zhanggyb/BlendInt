@@ -27,6 +27,9 @@
 
 #include <BlendInt/Service/Theme.hpp>
 
+#include <rapidxml/rapidxml.hpp>
+#include <rapidxml/rapidxml_utils.hpp>
+
 namespace BlendInt {
 
 	Theme* Theme::instance = 0;
@@ -85,6 +88,50 @@ namespace BlendInt {
 	{
 		// TODO Auto-generated constructor stub
 
+	}
+	
+	bool Theme::Load (const std::string& filepath)
+	{
+		using namespace rapidxml;
+
+		bool ret = false;
+
+		rapidxml::file<> fdoc(filepath.c_str());
+		//std::cout << fdoc.data() << std::endl;
+		xml_document<> doc;
+
+		doc.parse<0>(fdoc.data());
+		std::cout << doc.name() << std::endl;
+
+		std::string root_name = "Theme";
+
+		// get root node
+		xml_node<>* root = doc.first_node();
+
+		if(root_name == root->name()) {
+			std::cout << root->name() << std::endl;
+
+			for(rapidxml::xml_node<>* node = root->first_node();
+							node != NULL;
+							node = node->next_sibling())
+			{
+				std::cout << node->name() << std::endl;
+
+				for(rapidxml::xml_attribute<>* attrib = node->first_attribute();
+								attrib != NULL;
+								attrib = attrib->next_attribute())
+				{
+					std::cout << attrib->name() << " = " << attrib->value() << std::endl;
+				}
+			}
+
+			ret = true;
+
+		}
+
+
+
+		return ret;
 	}
 
 	Theme::~Theme ()
