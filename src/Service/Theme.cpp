@@ -25,6 +25,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <rapidxml_print.hpp>
 #include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
@@ -90,7 +91,7 @@ namespace BlendInt {
 				if(ui_node) {
 					ParseUINode(ui_node);
 				}
-
+				ret = true;
 			} else {
 				std::cerr << "<Theme> should be the only root node in theme file: " << filepath << std::endl;
 			}
@@ -98,6 +99,123 @@ namespace BlendInt {
 			std::cerr << "Error: " << ex.what() << std::endl;
 		}
 
+		return ret;
+	}
+
+	bool Theme::Save (const std::string& filepath)
+	{
+		using namespace rapidxml;
+
+		bool ret = false;
+		char buf[16];
+
+		xml_document<> doc;
+		xml_node<>* root = doc.allocate_node(node_pi, doc.allocate_string("xml version='1.0' encoding='utf-8'"));
+		doc.append_node(root);
+
+		xml_node<>* node = doc.allocate_node(node_element, "Theme", "BlendInt");
+		doc.append_node(node);
+
+		xml_node<>* ui_node = doc.allocate_node(node_element, "ThemeUserInterface");
+
+		char* value = 0;
+
+		snprintf(buf, 16, "%u", m_dpi);
+		value = doc.allocate_string(buf);
+		xml_attribute<>* attr = doc.allocate_attribute("dpi", value);
+		ui_node->append_attribute(attr);
+
+		snprintf(buf, 16, "%g", m_menu_shadow_fac);
+		//xml_attribute<>* attr = doc.allocate_attribute("menu_shadow_fac", buf);
+		value = doc.allocate_string(buf);
+		attr = doc.allocate_attribute("menu_shadow_fac", value);
+		ui_node->append_attribute(attr);
+
+		snprintf(buf, 16, "%hd", m_menu_shadow_width);
+		value = doc.allocate_string(buf);
+		attr = doc.allocate_attribute("menu_shadow_width", value);
+		ui_node->append_attribute(attr);
+
+		snprintf(buf, 16, "#%02X%02X%02X%02X", m_xaxis.r(), m_xaxis.g(), m_xaxis.b(), m_xaxis.a());
+		value = doc.allocate_string(buf);
+		attr = doc.allocate_attribute("axis_x", value);
+		ui_node->append_attribute(attr);
+
+		snprintf(buf, 16, "#%02X%02X%02X%02X", m_yaxis.r(), m_yaxis.g(), m_yaxis.b(), m_yaxis.a());
+		value = doc.allocate_string(buf);
+		attr = doc.allocate_attribute("axis_y", value);
+		ui_node->append_attribute(attr);
+
+		snprintf(buf, 16, "#%02X%02X%02X%02X", m_zaxis.r(), m_zaxis.g(), m_zaxis.b(), m_zaxis.a());
+		value = doc.allocate_string(buf);
+		attr = doc.allocate_attribute("axis_z", value);
+		ui_node->append_attribute(attr);
+
+		node->append_node(ui_node);
+
+		xml_node<>* widget_color_node = AllocateWidgetThemeNode(doc, "wcol_regular", m_regular);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tool", m_tool);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_text", m_text);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_radio_button", m_radio_button);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_option", m_option);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_toggle", m_toggle);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_number_field", m_number_field);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_number_slider", m_number_slider);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu", m_menu);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_pulldown", m_pulldown);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu_back", m_menu_back);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_menu_item", m_menu_item);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tab", m_tab);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_tooltip", m_tooltip);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_box", m_box);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_scroll", m_scroll);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_progress", m_progress);
+		ui_node->append_node(widget_color_node);
+
+		widget_color_node = AllocateWidgetThemeNode(doc, "wcol_list_item", m_list_item);
+		ui_node->append_node(widget_color_node);
+
+		//std::cout << doc << std::endl;
+
+		std::ofstream out(filepath.c_str());
+		try {
+			out << doc;
+			ret = true;
+		} catch (const std::exception& ex) {
+			std::cerr << "Error: " << ex.what() << std::endl;
+		}
 
 		return ret;
 	}
@@ -282,9 +400,9 @@ namespace BlendInt {
 
 		m_dpi = 96;
 
-		xaxis = 0xFF0000FF;
-		yaxis = 0x00FF00FF;
-		zaxis = 0x0000FFFF;
+		m_xaxis = 0xFF0000FF;
+		m_yaxis = 0x00FF00FF;
+		m_zaxis = 0x0000FFFF;
 	}
 
 	void Theme::ParseUINode (const rapidxml::xml_node<>* node)
@@ -317,7 +435,7 @@ namespace BlendInt {
 					DBG_PRINT_MSG("%s", "Fail to get axis x color");
 				} else {
 					DBG_PRINT_MSG("axis x color: %x", tmp);
-					xaxis = tmp;
+					m_xaxis = tmp;
 				}
 
 			} else if(strcmp("axis_y", attrib->name()) == 0) {
@@ -326,7 +444,7 @@ namespace BlendInt {
 					DBG_PRINT_MSG("%s", "Fail to get axis y color");
 				} else {
 					DBG_PRINT_MSG("axis y color: %x", tmp);
-					yaxis = tmp;
+					m_yaxis = tmp;
 				}
 
 			} else if(strcmp("axis_z", attrib->name()) == 0) {
@@ -335,7 +453,7 @@ namespace BlendInt {
 					DBG_PRINT_MSG("%s", "Fail to get axis z color");
 				} else {
 					DBG_PRINT_MSG("axis z color: %x", tmp);
-					zaxis = tmp;
+					m_zaxis = tmp;
 				}
 
 			}
@@ -447,6 +565,82 @@ namespace BlendInt {
 				}
 			}
 		}
+	}
+	
+	rapidxml::xml_node<>* Theme::AllocateWidgetThemeNode (rapidxml::xml_document<>& doc,
+					const char* name,
+					const WidgetTheme& wtheme)
+	{
+		using namespace rapidxml;
+		char buf[16];
+		char* value = 0;
+
+		xml_node<>* widget_color_node = doc.allocate_node(node_element, name);
+		xml_node<>* colors_node = doc.allocate_node(node_element, "ThemeWidgetColors");
+
+		snprintf(buf, 16, "#%02X%02X%02X%02X",
+						wtheme.outline.r(),
+						wtheme.outline.g(),
+						wtheme.outline.b(),
+						wtheme.outline.a());
+		value = doc.allocate_string(buf);
+		colors_node->append_attribute(doc.allocate_attribute("outline", value));
+
+		snprintf(buf, 16, "#%02X%02X%02X%02X",
+						wtheme.inner.r(),
+						wtheme.inner.g(),
+						wtheme.inner.b(),
+						wtheme.inner.a());
+		value = doc.allocate_string(buf);
+		colors_node->append_attribute(doc.allocate_attribute("inner", value));
+
+		snprintf(buf, 16, "#%02X%02X%02X%02X",
+						wtheme.inner_sel.r(),
+						wtheme.inner_sel.g(),
+						wtheme.inner_sel.b(),
+						wtheme.inner_sel.a());
+		value = doc.allocate_string(buf);
+		colors_node->append_attribute(doc.allocate_attribute("inner_sel", value));
+
+		snprintf(buf, 16, "#%02X%02X%02X%02X",
+						wtheme.item.r(),
+						wtheme.item.g(),
+						wtheme.item.b(),
+						wtheme.item.a());
+		value = doc.allocate_string(buf);
+		colors_node->append_attribute(doc.allocate_attribute("item", value));
+
+		snprintf(buf, 16, "#%02X%02X%02X%02X",
+						wtheme.text.r(),
+						wtheme.text.g(),
+						wtheme.text.b(),
+						wtheme.text.a());
+		value = doc.allocate_string(buf);
+		colors_node->append_attribute(doc.allocate_attribute("text", value));
+
+		snprintf(buf, 16, "#%02X%02X%02X%02X",
+						wtheme.text_sel.r(),
+						wtheme.text_sel.g(),
+						wtheme.text_sel.b(),
+						wtheme.text_sel.a());
+		value = doc.allocate_string(buf);
+		colors_node->append_attribute(doc.allocate_attribute("text_sel", value));
+
+		snprintf(buf, 16, "%s", wtheme.shaded ? "TRUE" : "FALSE");
+		value = doc.allocate_string(buf);
+		colors_node->append_attribute(doc.allocate_attribute("show_shaded", value));
+
+		snprintf(buf, 16, "%hd", wtheme.shadetop);
+		value = doc.allocate_string(buf);
+		colors_node->append_attribute(doc.allocate_attribute("shadetop", value));
+
+		snprintf(buf, 16, "%hd", wtheme.shadedown);
+		value = doc.allocate_string(buf);
+		colors_node->append_attribute(doc.allocate_attribute("shadedown", value));
+
+		widget_color_node->append_node(colors_node);
+
+		return widget_color_node;
 	}
 
 } /* namespace BlendInt */

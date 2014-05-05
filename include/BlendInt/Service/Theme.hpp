@@ -66,6 +66,11 @@ namespace BlendInt {
 		bool Load (const std::string& filepath);
 
 		/**
+		 * @brief Export and save the config into an xml file
+		 */
+		bool Save (const std::string& filepath);
+
+		/**
 		 * @brief Reset to the default setting
 		 */
 		void Reset ();
@@ -210,6 +215,8 @@ namespace BlendInt {
 
 		void ParseWidgetColorNode (const rapidxml::xml_node<>* node);
 
+		rapidxml::xml_node<>* AllocateWidgetThemeNode (rapidxml::xml_document<>& doc, const char* name, const WidgetTheme& wtheme);
+
 		/* Interface Elements (buttons, menus, icons) */
 		WidgetTheme m_regular;
 		WidgetTheme m_tool;
@@ -243,7 +250,7 @@ namespace BlendInt {
 		//float icon_alpha;
 
 		/* Axis Colors */
-		Color xaxis, yaxis, zaxis;
+		Color m_xaxis, m_yaxis, m_zaxis;
 	};
 
 } /* namespace BlendInt */
