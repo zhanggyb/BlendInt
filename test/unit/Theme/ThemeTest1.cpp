@@ -44,7 +44,6 @@ TEST_F(ThemeTest1, Save1)
  *
  * Expected result: 
  */
-/*
 TEST_F(ThemeTest1, Load1)
 {
 	Init ();
@@ -63,4 +62,3 @@ TEST_F(ThemeTest1, Load1)
 
 	ASSERT_TRUE(true);
 }
-*/
