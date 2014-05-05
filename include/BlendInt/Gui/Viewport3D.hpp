@@ -55,6 +55,8 @@ namespace BlendInt {
 
 	protected:
 
+		virtual ResponseType CursorEnterEvent (bool entered);
+
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);

@@ -179,18 +179,26 @@ namespace BlendInt
 		}
 	}
 
-	void Context::SetCursor (void* cursor)
+	void Context::SetCursor (int cursor_type)
 	{
+		// TODO: overwrite this
 	}
 
-	void Context::ResetCursor ()
+	int Context::GetCursor () const
 	{
-
+		// TODO: overwrite this
+		return ArrowCursor;
 	}
 
-	void* Context::GetCursor () const
+	void Context::PushCursor (int cursor_type)
 	{
-		return 0;
+		// TODO: overwrite this
+	}
+
+	int Context::PopCursor ()
+	{
+		// TODO:: overwrite this
+		return ArrowCursor;
 	}
 
 	bool Context::UpdateTest(const UpdateRequest& request)
@@ -1186,7 +1194,7 @@ namespace BlendInt
 	}
 
 #endif
-
+	
 	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{
 		RemoveSubWidget(widget);

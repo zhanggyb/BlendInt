@@ -1,4 +1,4 @@
-#include "openglwindow.h"
+#include "OpenGLWindow.hpp"
 #include "Qt5Context.hpp"
 
 #include <QtGui/QGuiApplication>
@@ -99,7 +99,7 @@ void DemoWindow::initialize()
 
 	BI::Interface::instance->Resize(640, 480);
 
-	m_context = Manage (new Qt5Context);
+	m_context = Manage (new Qt5Context(this));
 	m_context->set_name("Context");
 	BI::Interface::instance->SetCurrentContext(m_context);
 	m_context->Resize(640, 480);

@@ -56,6 +56,21 @@ namespace BlendInt {
 		m_cameras.clear();
 	}
 
+	ResponseType Viewport3D::CursorEnterEvent (bool entered)
+	{
+		Context* context = GetContext();
+		if(!context) return Ignore;
+
+		if(entered) {
+			context->PushCursor(context->GetCursor());
+			context->SetCursor(CrossCursor);
+		} else {
+			context->SetCursor(context->PopCursor());
+		}
+
+		return Accept;
+	}
+
 	ResponseType Viewport3D::KeyPressEvent (const KeyEvent& event)
 	{
 		if (event.action() == KeyPress) {
@@ -275,4 +290,3 @@ namespace BlendInt {
 	}
 
 }
-

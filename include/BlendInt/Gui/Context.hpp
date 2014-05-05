@@ -102,14 +102,13 @@ namespace BlendInt {
 		/**
 		 * @brief Set the cursor
 		 */
-		virtual void SetCursor (void* cursor);
+		virtual void SetCursor (int cursor_type);
 
-		/**
-		 * @brief Reset the cursor to the default pointer
-		 */
-		virtual void ResetCursor ();
+		virtual int GetCursor () const;
 
-		virtual void* GetCursor () const;
+		virtual void PushCursor (int cursor_type);
+
+		virtual int PopCursor ();
 
 		Cpp::EventRef<const Size&> resized ()
 		{
