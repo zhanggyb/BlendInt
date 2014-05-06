@@ -34,20 +34,9 @@ namespace BlendInt {
 
 		explicit SingleLayout (AbstractContainer* container);
 
-		explicit SingleLayout (AbstractContainer* container, AbstractWidget* sub_widget);
-
-		void set_sub_widget (AbstractWidget* sub_widget)
-		{
-			m_sub_widget = sub_widget;
-		}
-
 		~SingleLayout ();
 
-		void Fill ();
-
-	private:
-
-		AbstractWidget* m_sub_widget;
+		void Fill (AbstractWidget* widget);
 
 	};
 

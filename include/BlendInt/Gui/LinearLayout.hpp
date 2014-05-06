@@ -34,8 +34,6 @@ namespace BlendInt {
 	{
 	public:
 
-		explicit LinearLayout (AbstractContainer* container);
-
 		LinearLayout (AbstractContainer* container,
 						Orientation orientation = Horizontal,
 						int alignment = AlignCenter,
@@ -45,7 +43,10 @@ namespace BlendInt {
 
 		void Fill (const WidgetDeque* sub_widgets);
 
-		void Fill (const Point& start, const WidgetDeque* sub_widgets);
+		void set_orientation (Orientation orientation)
+		{
+			m_orientation = orientation;
+		}
 
 		void set_alignment (int alignment)
 		{
@@ -59,13 +60,13 @@ namespace BlendInt {
 
 	protected:
 
-		void DistributeHorizontally (const Point& start, const WidgetDeque* sub_widgets);
+		void DistributeHorizontally (const WidgetDeque* sub_widgets);
 
-		void DistributeVertically (const Point& start, const WidgetDeque* sub_widgets);
+		void DistributeVertically (const WidgetDeque* sub_widgets);
 
-		void AlignHorizontally (const Point& start, const WidgetDeque* sub_widgets);
+		void AlignHorizontally (const WidgetDeque* sub_widgets);
 
-		void AlignVertically (const Point& start, const WidgetDeque* sub_widgets);
+		void AlignVertically (const WidgetDeque* sub_widgets);
 
 	private:
 

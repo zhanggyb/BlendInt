@@ -31,50 +31,41 @@
 #endif
 #endif  // __UNIX__
 
-#include <assert.h>
-#include <algorithm>
-
-#include <iostream>
-
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Types.hpp>
-#include <BlendInt/Core/Color.hpp>
-#include <BlendInt/Utilities-inl.hpp>
+#include <BlendInt/Gui/Expander.hpp>
 
-#include <BlendInt/Gui/Frame.hpp>
-
-#include <BlendInt/Interface.hpp>
+#include <BlendInt/Gui/LinearLayout.hpp>
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
-#include <BlendInt/Gui/SingleLayout.hpp>
-
 namespace BlendInt {
 
-	Frame::Frame ()
-			: AbstractSingleContainer()
+	Expander::Expander ()
 	{
-		set_size(120, 80);
+		set_size(400, 400);
 	}
 
-	Frame::~Frame ()
+	Expander::~Expander ()
 	{
-		// TODO Auto-generated destructor stub
 	}
 
-	void Frame::Add (AbstractWidget* widget)
+	void Expander::Add (AbstractWidget* widget)
 	{
 		if (AddSubWidget(widget)) {
 
-			SingleLayout layout(this);
-			layout.Fill(widget);
+			LinearLayout layout(this);
+			layout.Fill(sub_widgets());
 
 		}
 	}
 
-	bool Frame::UpdateTest (const UpdateRequest& request)
+	void Expander::Remove (AbstractWidget* widget)
+	{
+	}
+
+	bool Expander::UpdateTest (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -87,7 +78,7 @@ namespace BlendInt {
 					return false;
 
 				default:
-					return AbstractSingleContainer::UpdateTest(request);
+					return AbstractDequeContainer::UpdateTest(request);
 
 			}
 
@@ -96,41 +87,41 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::Update (const UpdateRequest& request)
+	void Expander::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 			switch (request.type()) {
 
 				case FormSize: {
-					if (sub_widget()) {
+					if (sub_widget_size()) {
 						const Size* size_p = static_cast<const Size*>(request.data());
 						set_size(*size_p);
-						SingleLayout layout (this);
-						layout.Fill(sub_widget());
+						LinearLayout layout (this);
+						layout.Fill(sub_widgets());
 					}
 					break;
 				}
 
 				case FormPosition: {
-					if (sub_widget()) {
+					if (sub_widget_size()) {
 						const Point* pos_p = static_cast<const Point*>(request.data());
-						SetSubWidgetPosition(sub_widget(),
-						        pos_p->x() + margin().left(),
-						        pos_p->y() + margin().bottom());
+
+						int x = pos_p->x() - position().x();
+						int y = pos_p->y() - position().y();
+
+						MoveSubWidgets(x, y);
 					}
 					break;
 				}
 
 				case ContainerMargin: {
 
-					if (sub_widget()) {
-						const Margin* margin_p = static_cast<const Margin*>(request.data());
-						set_margin(*margin_p);
+					const Margin* margin_p = static_cast<const Margin*>(request.data());
+					set_margin(*margin_p);
 
-						if(sub_widget()) {
-							SingleLayout layout(this);
-							layout.Fill(sub_widget());
-						}
+					if (sub_widget_size()) {
+						LinearLayout layout(this);
+						layout.Fill(sub_widgets());
 					}
 					break;
 				}
@@ -146,42 +137,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Frame::CursorEnterEvent (bool entered)
-	{
-		return Accept;
-	}
-
-	ResponseType Frame::KeyPressEvent (const KeyEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType Frame::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType Frame::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType Frame::MousePressEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType Frame::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-	
-	ResponseType Frame::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType Frame::Draw (const RedrawEvent& event)
+	ResponseType Expander::Draw (const RedrawEvent& event)
 	{
 		GLuint vao;
 		glGenVertexArrays(1, &vao);
@@ -204,16 +160,7 @@ namespace BlendInt {
 		GenerateFlatRectVertices(size(), 0.f, &vertices);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
-		Theme* tm = Theme::instance;
-
-		float r, g, b, a;
-
-		r = tm->regular().inner.r() / 255.f;
-		g = tm->regular().inner.g() / 255.f;
-		b = tm->regular().inner.b() / 255.f;
-		a = tm->regular().inner.a() / 255.f;
-
-		program->SetVertexAttrib4f("Color", r, g, b, a);
+		program->SetVertexAttrib4f("Color", 0.85f, 0.85f, 0.85f, 0.75f);
 		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader
@@ -240,8 +187,44 @@ namespace BlendInt {
 		glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &vao);
 
-		return Accept;
+		return IgnoreAndContinue;
 	}
 
-} /* namespace BlendInt */
+	ResponseType Expander::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
 
+	ResponseType Expander::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Expander::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Expander::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Expander::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Expander::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Expander::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+}

@@ -26,13 +26,7 @@
 namespace BlendInt {
 
 	SingleLayout::SingleLayout(AbstractContainer* container)
-	: LayoutBase(container), m_sub_widget(0)
-	{
-
-	}
-
-	SingleLayout::SingleLayout(AbstractContainer* container, AbstractWidget* sub_widget)
-	: LayoutBase(container), m_sub_widget(sub_widget)
+	: LayoutBase(container)
 	{
 
 	}
@@ -42,7 +36,7 @@ namespace BlendInt {
 
 	}
 
-	void SingleLayout::Fill ()
+	void SingleLayout::Fill (AbstractWidget* widget)
 	{
 		int x = container()->position().x() + container()->margin().left();
 		int y = container()->position().y() + container()->margin().bottom();
@@ -54,17 +48,17 @@ namespace BlendInt {
 						- container()->margin().top()
 						- container()->margin().bottom();
 
-		Resize(m_sub_widget, w, h);
-		SetPosition(m_sub_widget, x, y);
+		Resize(widget, w, h);
+		SetPosition(widget, x, y);
 
-		if (m_sub_widget->size().width() < w) {
-			SetPosition(m_sub_widget,
-							x + (w - m_sub_widget->size().width()) / 2, y);
+		if (widget->size().width() < w) {
+			SetPosition(widget,
+							x + (w - widget->size().width()) / 2, y);
 		}
 
-		if (m_sub_widget->size().height() < h) {
-			SetPosition(m_sub_widget, x,
-							y + (h - m_sub_widget->size().height() / 2));
+		if (widget->size().height() < h) {
+			SetPosition(widget, x,
+							y + (h - widget->size().height() / 2));
 		}
 	}
 

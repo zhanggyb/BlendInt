@@ -25,14 +25,6 @@
 
 namespace BlendInt {
 
-	LinearLayout::LinearLayout (AbstractContainer* container)
-	: LayoutBase(container),
-	  m_orientation(Horizontal),
-	  m_alignment(AlignCenter),
-	  m_space(2)
-	{
-	}
-
 	LinearLayout::LinearLayout (AbstractContainer* container,
 					Orientation orientation, int alignment, int space)
 	: LayoutBase(container),
@@ -48,50 +40,36 @@ namespace BlendInt {
 
 	void LinearLayout::Fill (const WidgetDeque* sub_widgets)
 	{
-		Point pos;
-
-		pos.set_x(container()->position().x() + container()->margin().left());
-		pos.set_y(container()->position().y() + container()->margin().bottom());
-
 		if(m_orientation == Horizontal) {
-			DistributeHorizontally(pos, sub_widgets);
-			AlignHorizontally(pos, sub_widgets);
+			DistributeHorizontally(sub_widgets);
+			AlignHorizontally(sub_widgets);
 		} else {
-			DistributeVertically(pos, sub_widgets);
-			AlignVertically(pos, sub_widgets);
+			DistributeVertically(sub_widgets);
+			AlignVertically(sub_widgets);
 		}
 	}
 	
-	void LinearLayout::Fill (const Point& start, const WidgetDeque* sub_widgets)
+	void LinearLayout::DistributeHorizontally (const WidgetDeque* sub_widgets)
 	{
-		if(m_orientation == Horizontal) {
-			DistributeHorizontally(start, sub_widgets);
-			AlignHorizontally(start, sub_widgets);
-		} else {
-			DistributeVertically(start, sub_widgets);
-			AlignVertically(start, sub_widgets);
-		}
-	}
-
-	void LinearLayout::DistributeHorizontally (const Point& start, const WidgetDeque* sub_widgets)
-	{
-		int x = start.x();
+		int x = container()->position().x() + container()->margin().left();
 
 		unsigned int width = container()->size().width()
 						- container()->margin().left()
 						- container()->margin().right();
+		AbstractWidget* widget = 0;
 
 		if (sub_widgets->size()) {
-			int average_width = (width - (sub_widgets->size() * m_space))
+			int average_width = (width - ((sub_widgets->size() - 1)* m_space))
 							/ sub_widgets->size();
 
 			if (average_width > 0) {
 
 				for (WidgetDeque::const_iterator it = sub_widgets->begin();
 								it != sub_widgets->end(); it++) {
-					Resize(*it, average_width, (*it)->size().height());
-					SetPosition(*it, x, (*it)->position().y());
-					x += (*it)->size().width() + m_space;
+					widget = *it;
+					Resize(widget, average_width, widget->size().height());
+					SetPosition(widget, x, widget->position().y());
+					x += average_width + m_space;
 				}
 
 			} else {
@@ -99,20 +77,16 @@ namespace BlendInt {
 				// TODO: set invisiable
 
 			}
-
 		}
-
-
 	}
 	
-	void LinearLayout::DistributeVertically (const Point& start,
-					const WidgetDeque* sub_widgets)
+	void LinearLayout::DistributeVertically (const WidgetDeque* sub_widgets)
 	{
 	}
 
-	void LinearLayout::AlignHorizontally (const Point& start, const WidgetDeque* sub_widgets)
+	void LinearLayout::AlignHorizontally (const WidgetDeque* sub_widgets)
 	{
-		int y = start.y();
+		int y = container()->position().y() + container()->margin().bottom();
 
 		unsigned int height = container()->size().height() - container()->margin().top() - container()->margin().bottom();
 
@@ -141,8 +115,7 @@ namespace BlendInt {
 		}
 	}
 	
-	void LinearLayout::AlignVertically (const Point& start,
-					const WidgetDeque* sub_widgets)
+	void LinearLayout::AlignVertically (const WidgetDeque* sub_widgets)
 	{
 	}
 
