@@ -55,7 +55,7 @@ namespace BlendInt {
 	{
 		if (AddSubWidget(widget)) {
 
-			LinearLayout layout(this);
+			LinearLayout layout(this, Vertical);
 			layout.Fill(sub_widgets());
 
 		}
@@ -96,7 +96,7 @@ namespace BlendInt {
 					if (sub_widget_size()) {
 						const Size* size_p = static_cast<const Size*>(request.data());
 						set_size(*size_p);
-						LinearLayout layout (this);
+						LinearLayout layout (this, Vertical);
 						layout.Fill(sub_widgets());
 					}
 					break;
@@ -120,7 +120,7 @@ namespace BlendInt {
 					set_margin(*margin_p);
 
 					if (sub_widget_size()) {
-						LinearLayout layout(this);
+						LinearLayout layout(this, Vertical);
 						layout.Fill(sub_widgets());
 					}
 					break;
