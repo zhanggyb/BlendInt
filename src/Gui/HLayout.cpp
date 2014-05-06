@@ -103,6 +103,7 @@ namespace BlendInt {
 
 	void HLayout::AddItem (AbstractWidget* object)
 	{
+		/*
 		// don't fire events when adding a widget into a layout
 		object->deactivate_events();
 		deactivate_events();
@@ -151,6 +152,7 @@ namespace BlendInt {
 
 		activate_events();
 		object->activate_events();
+		*/
 	}
 
 	void HLayout::RemoveItem (AbstractWidget* object)
@@ -164,8 +166,8 @@ namespace BlendInt {
 
 		GetSizeHint(true, true, 0, &new_minimal_size, &new_preferred_size);
 
-		SetMinimalSize(new_minimal_size);
-		SetPreferredSize(new_preferred_size);
+		//SetMinimalSize(new_minimal_size);
+		//SetPreferredSize(new_preferred_size);
 
 		set_expand_x(false);
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
@@ -186,6 +188,7 @@ namespace BlendInt {
 	void HLayout::MakeLayout (const Size* size, const Margin* margin,
 	        int space)
 	{
+		/*
 		if (size->width() == preferred_size().width()) {
 			DistributeWithPreferredWidth(margin, space);			// layout along x with preferred size
 		} else if (size->width() < preferred_size().width()) {
@@ -195,6 +198,7 @@ namespace BlendInt {
 		}
 
 		Align (size, margin);
+		*/
 	}
 
 	void HLayout::DistributeWithPreferredWidth(const Margin* margin, int space)
@@ -203,7 +207,7 @@ namespace BlendInt {
 
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
-			ResizeSubWidget((*it), (*it)->preferred_size().width(), (*it)->size().height());
+			//ResizeSubWidget((*it), (*it)->preferred_size().width(), (*it)->size().height());
 		}
 
 		Distribute(space, x);
@@ -211,6 +215,7 @@ namespace BlendInt {
 
 	void HLayout::DistributeWithSmallWidth(const Size* size, const Margin* margin, int space)
 	{
+		/*
 		unsigned int min_expd_width = GetAllMinimalExpandableWidth();
 		unsigned int fixed_width = GetAllFixedWidth();
 		unsigned int current_width = size->width();
@@ -290,10 +295,13 @@ namespace BlendInt {
 
 		int x = position().x() + margin->left();	// the x position of each child widget, update in each for loop
 		Distribute(space, x);
+
+		*/
 	}
 
 	void HLayout::DistributeWithLargeWidth(const Size* size, const Margin* margin, int space)
 	{
+		/*
 		unsigned int fixed_width = GetAllFixedWidth();
 		unsigned int current_width = size->width();
 		unsigned int margin_plus = margin->left() + margin->right();
@@ -376,7 +384,7 @@ namespace BlendInt {
 
 			Distribute(space, x);
 		}
-
+	*/
 	}
 
 	void HLayout::Distribute(int space, int start)
@@ -434,6 +442,7 @@ namespace BlendInt {
 
 		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
 		{
+			/*
 			if ((average_width_plus + (*it)->size().width()) > (*it)->maximal_size().width()) {
 				ResizeSubWidget(*it, (*it)->maximal_size().width(), (*it)->size().height());
 				remainder = remainder + average_width_plus + (*it)->size().width() - (*it)->maximal_size().width();
@@ -441,6 +450,7 @@ namespace BlendInt {
 			} else {
 				ResizeSubWidget(*it, (*it)->size().width() + average_width_plus, (*it)->size().height());
 			}
+			*/
 		}
 
 		if(remainder != 0) {
@@ -462,6 +472,7 @@ namespace BlendInt {
 
 		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
 		{
+			/*
 			if (((*it)->size().width() - average_width_plus) < (*it)->minimal_size().width()) {
 				ResizeSubWidget(*it, (*it)->minimal_size().width(), (*it)->size().height());
 				remainder = remainder + (*it)->minimal_size().width() - ((*it)->size().width() - average_width_plus);
@@ -469,6 +480,7 @@ namespace BlendInt {
 			} else {
 				ResizeSubWidget(*it, (*it)->size().width() - average_width_plus, (*it)->size().height());
 			}
+			*/
 		}
 
 		if(remainder != 0) {
@@ -483,11 +495,13 @@ namespace BlendInt {
 	{
 		unsigned int width = 0;
 
+		/*
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->expand_x())
 				width += (*it)->minimal_size().width();
 		}
+		*/
 
 		return width;
 	}
@@ -496,11 +510,13 @@ namespace BlendInt {
 	{
 		unsigned int width = 0;
 
+		/*
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->expand_x())
 				width += (*it)->maximal_size().width();
 		}
+		*/
 
 		return width;
 	}
@@ -538,6 +554,7 @@ namespace BlendInt {
 										  Size* min,
 										  Size* preferred)
 	{
+		/*
 		Size size_out;
 		Size min_size_out;
 		Size preferred_size_out;
@@ -587,6 +604,7 @@ namespace BlendInt {
 		if(size) *size = size_out;
 		if(min) *min = min_size_out;
 		if(preferred) *preferred = preferred_size_out;
+		*/
 	}
 
 }

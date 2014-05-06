@@ -56,10 +56,7 @@ namespace BlendInt {
 	Frame::Frame ()
 			: AbstractSingleContainer()
 	{
-		set_minimal_size(margin().left() + margin().right(),
-		        margin().top() + margin().bottom());
 		set_size(120, 80);
-		set_preferred_size(120, 80);
 	}
 
 	Frame::~Frame ()

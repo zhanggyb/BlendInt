@@ -127,7 +127,6 @@ static const char* text_fragment_shader =
 FontView::FontView ()
 : m_vao(0), m_vbo(0)
 {
-	set_preferred_size(200, 200);
 	set_size(200, 200);
 
 	glGenVertexArrays(1, &m_vao);

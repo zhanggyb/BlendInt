@@ -163,7 +163,6 @@ namespace BlendInt {
 		set_text_outline(font().get_text_outline(text));
 
 		set_size(text_outline().width() + 4, 20);
-		set_preferred_size(text_outline().width() + 4, 20);
 
 		set_text_length(text.length());
 

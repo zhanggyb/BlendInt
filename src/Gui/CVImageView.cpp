@@ -103,8 +103,7 @@ namespace BlendInt {
 			}
 			m_texture->Reset();
 
-			set_preferred_size(m_image.cols, m_image.rows);
-			set_size(preferred_size());
+			set_size(m_image.cols, m_image.rows);
 			m_checkerboard->Resize(size());
 
 			GLfloat w = static_cast<GLfloat>(size().width());
@@ -209,7 +208,6 @@ namespace BlendInt {
 	void CVImageView::InitOnce ()
 	{
 		set_size(400, 300);
-		set_preferred_size(400, 300);
 		set_expand_x(true);
 		set_expand_y(true);
 

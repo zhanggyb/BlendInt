@@ -159,7 +159,6 @@ namespace BlendInt {
 		set_expand_x(true);
 		set_radius(10.f);
 		set_size(90, 20);
-		set_preferred_size(90, 20);
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);

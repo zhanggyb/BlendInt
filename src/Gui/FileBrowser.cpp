@@ -29,7 +29,6 @@ namespace BlendInt {
 	FileBrowser::FileBrowser ()
 	: m_layout(0), m_path_entry(0)
 	{
-		set_preferred_size(500, 400);
 		set_size(500, 400);
 		set_margin(2, 2, 2, 2);
 

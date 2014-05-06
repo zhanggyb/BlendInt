@@ -25,48 +25,11 @@
 
 namespace BlendInt {
 
-	AbstractLayoutExt::AbstractLayoutExt (AbstractContainer* container)
-	: m_container(container)
-	{
-	}
-
-	AbstractLayoutExt::~AbstractLayoutExt ()
-	{
-	}
-
-	void AbstractLayoutExt::SetPosition (AbstractWidget* widget, int x,
-					int y)
-	{
-		m_container->SetSubWidgetPosition(widget, x, y);
-	}
-	
-	void AbstractLayoutExt::SetPosition (AbstractWidget* widget,
-					const Point& pos)
-	{
-		m_container->SetSubWidgetPosition(widget, pos);
-	}
-
-	void AbstractLayoutExt::Resize (AbstractWidget* widget,
-					unsigned int width, unsigned int height)
-	{
-		m_container->ResizeSubWidget(widget, width, height);
-	}
-
-	void AbstractLayoutExt::Resize (AbstractWidget* widget, const Size& size)
-	{
-		m_container->ResizeSubWidget(widget, size);
-	}
-
-	// -----------------------------------
-
 	AbstractLayout::AbstractLayout ()
 			: AbstractDequeContainer(),
 			  m_alignment(0),
 			  m_space(1)
 	{
-		set_preferred_size(margin().left() + margin().right(), margin().top() + margin().bottom());
-		set_minimal_size(margin().left() + margin().right(), margin().top() + margin().bottom());
-		set_size(preferred_size());
 	}
 
 	AbstractLayout::~AbstractLayout ()
@@ -78,13 +41,13 @@ namespace BlendInt {
 	{
 //		if(subordinates()->count(obj)) return;
 
-		Size pre_preferred_size = preferred_size();
+		//Size pre_preferred_size = preferred_size();
 
 		AddItem (obj);
 
-		if(! (pre_preferred_size == preferred_size())) {
+		//if(! (pre_preferred_size == preferred_size())) {
 			// fire events
-		}
+		//}
 
 		// if minimal size changed
 		// fire events

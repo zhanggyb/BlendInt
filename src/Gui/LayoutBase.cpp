@@ -21,36 +21,48 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SINGLELAYOUT_HPP_
-#define _BLENDINT_GUI_SINGLELAYOUT_HPP_
-
 #include <BlendInt/Gui/LayoutBase.hpp>
+
+#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
 
-	class SingleLayout: public LayoutBase
+	LayoutBase::LayoutBase (AbstractContainer* container)
+	: m_container(container)
 	{
-	public:
-
-		explicit SingleLayout (AbstractContainer* container);
-
-		explicit SingleLayout (AbstractContainer* container, AbstractWidget* sub_widget);
-
-		void set_sub_widget (AbstractWidget* sub_widget)
-		{
-			m_sub_widget = sub_widget;
+#ifdef DEBUG
+		if(!container) {
+			DBG_PRINT_MSG("Critical Error: %s", "no container assigned");
 		}
+#endif
+	}
 
-		~SingleLayout ();
+	LayoutBase::~LayoutBase ()
+	{
+	}
 
-		void Fill ();
+	void LayoutBase::SetPosition (AbstractWidget* widget, int x,
+					int y)
+	{
+		m_container->SetSubWidgetPosition(widget, x, y);
+	}
 
-	private:
+	void LayoutBase::SetPosition (AbstractWidget* widget,
+					const Point& pos)
+	{
+		m_container->SetSubWidgetPosition(widget, pos);
+	}
 
-		AbstractWidget* m_sub_widget;
+	void LayoutBase::Resize (AbstractWidget* widget,
+					unsigned int width, unsigned int height)
+	{
+		m_container->ResizeSubWidget(widget, width, height);
+	}
 
-	};
+	void LayoutBase::Resize (AbstractWidget* widget, const Size& size)
+	{
+		m_container->ResizeSubWidget(widget, size);
+	}
 
 }
-
-#endif /* _BLENDINT_GUI_SINGLELAYOUT_HPP_ */

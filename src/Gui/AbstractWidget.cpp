@@ -166,9 +166,9 @@ namespace BlendInt {
 	// --------------------------------------------------------------------
 
 	AbstractWidget::AbstractWidget ()
-	: AbstractExtraForm(),
-	m_z(0),
-	m_container(0)
+	: AbstractForm(),
+	  m_z(0),
+	  m_container(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
 		m_flag.set(WidgetFlagVisibility);
@@ -263,147 +263,6 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetPreferredSize(unsigned int width, unsigned int height)
-	{
-		// check the param first
-		if (width < minimal_size().width() ||
-				height < minimal_size().height() ||
-				width > maximal_size().width() ||
-				height > maximal_size().height())
-		return;
-
-		bool broadcast = false;
-
-		if(preferred_size().width() == width && preferred_size().height() == height) return;
-
-		Size new_pref_size(width, height);
-		UpdateRequest request(Predefined, FormPreferredSize, &new_pref_size);
-
-		if(UpdateTest(request)) {
-			Update(request);
-			set_preferred_size(width, height);
-			broadcast = true;
-		}
-
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
-	}
-
-	void AbstractWidget::SetPreferredSize(const Size& size)
-	{
-		if (size.width() < minimal_size().width() ||
-				size.height() < minimal_size().height()||
-				size.width() > maximal_size().width() ||
-				size.height() > maximal_size().height())
-		return;
-
-		if(preferred_size() == size) return;
-		bool broadcast = false;
-
-		UpdateRequest request(Predefined, FormPreferredSize, &size);
-
-		if(UpdateTest(request)) {
-			Update(request);
-			set_preferred_size(size);
-			broadcast = true;
-		}
-
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
-	}
-
-	void AbstractWidget::SetMinimalSize(unsigned int width, unsigned int height)
-	{
-		if(width > preferred_size().width() ||
-				height > preferred_size().height())
-		return;
-
-		if(minimal_size().width() == width && minimal_size().height() == height) return;
-		bool broadcast = false;
-
-		Size new_min_size(width, height);
-		UpdateRequest request (Predefined, FormMinimalSize, &new_min_size);
-
-		if(UpdateTest(request)) {
-			Update(request);
-			set_minimal_size(width, height);
-			broadcast = true;
-		}
-
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
-	}
-
-	void AbstractWidget::SetMinimalSize(const Size& size)
-	{
-		if(size.width() > preferred_size().width() ||
-				size.height() > preferred_size().height())
-		return;
-
-		if (minimal_size() == size) return;
-		bool broadcast = false;
-
-		UpdateRequest request (Predefined, FormMinimalSize, &size);
-
-		if(UpdateTest(request)) {
-			Update(request);
-			set_minimal_size(size);
-			broadcast = true;
-		}
-
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
-	}
-
-	void AbstractWidget::SetMaximalSize(unsigned int width, unsigned int height)
-	{
-		if(width < preferred_size().width() ||
-				height < preferred_size().height())
-		return;
-
-		if(maximal_size().width() == width && maximal_size().height() == height) return;
-		bool broadcast = false;
-
-		Size new_max_size (width, height);
-		UpdateRequest request(Predefined, FormMaximalSize, &new_max_size);
-
-		if(UpdateTest(request)) {
-			Update(request);
-			set_maximal_size(new_max_size);
-			broadcast = true;
-		}
-
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
-	}
-
-	void AbstractWidget::SetMaximalSize(const Size& size)
-	{
-		if(size.width() < preferred_size().width() ||
-				size.height() < preferred_size().height())
-		return;
-
-		if(maximal_size() == size) return;
-		bool broadcast = false;
-
-		UpdateRequest request(Predefined, FormMaximalSize, &size);
-
-		if(UpdateTest(request)) {
-			Update(request);
-			set_maximal_size(size);
-			broadcast = true;
-		}
-
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
-	}
-
 	void AbstractWidget::SetLayer (int z)
 	{
 		if(m_z == z) return;
@@ -448,6 +307,76 @@ namespace BlendInt {
 		if(broadcast) {
 			BroadcastUpdate(request);
 		}
+	}
+
+	void AbstractWidget::SetExpandX(bool expand)
+	{
+		if(m_flag[WidgetFlagExpandX] == expand)
+			return;
+		bool broadcast = false;
+
+		UpdateRequest request(Predefined, WidgetExpandX, &expand);
+
+		if(UpdateTest (request)) {
+			Update(request);
+			m_flag[WidgetFlagExpandX] = expand ? 1 : 0;
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
+		}
+	}
+
+	void AbstractWidget::SetExpandY(bool expand)
+	{
+		if(m_flag[WidgetFlagExpandY] == expand)
+			return;
+		bool broadcast = false;
+
+		UpdateRequest request(Predefined, WidgetExpandY, &expand);
+
+		if(UpdateTest (request)) {
+			Update(request);
+			m_flag[WidgetFlagExpandY] = expand ? 1 : 0;
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
+		}
+	}
+
+	void AbstractWidget::SetExpand(bool expand)
+	{
+		SetExpandX(expand);
+		SetExpandY(expand);
+	}
+
+	bool AbstractWidget::Contain(const Point& point) const
+	{
+		if(point.x() < m_position.x() ||
+				point.y() < m_position.y() ||
+				point.x() > static_cast<int>(m_position.x() + size().width()) ||
+				point.y() > static_cast<int>(m_position.y() + size().height()))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool AbstractWidget::Contain(int x, int y) const
+	{
+		if(x < m_position.x() ||
+				y < m_position.y() ||
+				x > static_cast<int>(m_position.x() + size().width()) ||
+				y > static_cast<int>(m_position.y() + size().height()))
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	void AbstractWidget::Refresh()
@@ -621,48 +550,6 @@ namespace BlendInt {
 		fb->Reset();
 		delete fb; fb = 0;
 	}
-
-	/*
-	void AbstractWidget::SetPosition(AbstractWidget* obj, int x, int y)
-	{
-		if(obj->position().x() == x && obj->position().y() == y) return;
-
-		Point new_pos (x, y);
-
-		if(obj->Update(UpdateRequest(Predefined, FormPosition, &new_pos))) {
-			obj->set_position(x, y);
-		}
-	}
-
-	void AbstractWidget::SetPosition(AbstractWidget* obj, const Point& pos)
-	{
-		if(obj->position() == pos) return;
-
-		if(obj->Update(UpdateRequest(Predefined, FormPosition, &pos))) {
-			obj->set_position(pos);
-		}
-	}
-
-	void AbstractWidget::Resize (AbstractWidget* obj, unsigned int width, unsigned int height)
-	{
-		if(obj->size().width() == width && obj->size().height() == height) return;
-
-		Size new_size (width, height);
-
-		if(obj->Update(UpdateRequest(Predefined, FormSize, &new_size))) {
-			obj->set_size(width, height);
-		}
-	}
-
-	void AbstractWidget::Resize (AbstractWidget* obj, const Size& size)
-	{
-		if(obj->size() == size) return;
-
-		if(obj->Update(UpdateRequest(Predefined, FormSize, &size))) {
-			obj->set_size(size);
-		}
-	}
-	*/
 
 	void AbstractWidget::DispatchRender(AbstractWidget* other)
 	{

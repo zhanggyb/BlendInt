@@ -48,7 +48,7 @@ namespace BlendInt {
 	  m_original_x(0),
 	  m_start_x(0)
 	{
-		set_preferred_size(200, 32);
+		//set_preferred_size(200, 32);
 		set_size(200, 32);
 
 		set_margin(4, 4, 4, 4);	// the same as MenuBar
@@ -245,7 +245,7 @@ namespace BlendInt {
 
 		AppendSubWidget(widget);
 
-		ResizeSubWidget(widget, widget->preferred_size().width(), h);
+		ResizeSubWidget(widget, widget->size().width(), h);
 		SetSubWidgetPosition(widget, x, position().y() + margin().bottom());
 	}
 
@@ -257,7 +257,7 @@ namespace BlendInt {
 
 		AppendSubWidget(button);
 
-		ResizeSubWidget(button, button->preferred_size().width(), h);
+		ResizeSubWidget(button, button->size().width(), h);
 		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
 	}
 

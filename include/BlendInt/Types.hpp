@@ -154,6 +154,8 @@ namespace BlendInt {
 		FormMaximalSize,
 		WidgetLayer,
 		WidgetVisibility,
+		WidgetExpandX,
+		WidgetExpandY,
 		WidgetBorderWidth,
 		FormRoundType,
 		FormRoundRadius,

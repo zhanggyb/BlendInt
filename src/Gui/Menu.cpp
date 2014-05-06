@@ -49,7 +49,6 @@ namespace BlendInt {
 	: RoundWidget(), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{
 		set_size (20, 20);
-		set_preferred_size(20, 20);
 
 		activate_events();
 
@@ -99,17 +98,19 @@ namespace BlendInt {
 		unsigned int width = 0;
 
 		width = item->GetTextLength(m_font);
-
 		width += 16 + DefaultIconSpace + DefaultShortcutSpace;
 
+		Size s;
+
 		if(m_list.size()) {
-			set_preferred_size(std::max(size().width(), static_cast<unsigned int>(radius() * 2) + width),
-					size().height() + DefaultMenuItemHeight);
+			s.set_width(std::max(size().width(), static_cast<unsigned int>(radius() * 2) + width));
+			s.set_height(size().height() + DefaultMenuItemHeight);
 		} else {
-			set_preferred_size(radius() * 2 + width,
-					radius() * 2 + DefaultMenuItemHeight);
+			s.set_width((int)radius() * 2 + width);
+			s.set_height((int)radius() * 2 + DefaultMenuItemHeight);
 		}
-		Resize(preferred_size());
+
+		Resize(s);
 
 		m_list.push_back(item);
 	}

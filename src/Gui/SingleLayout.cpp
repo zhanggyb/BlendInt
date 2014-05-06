@@ -26,13 +26,13 @@
 namespace BlendInt {
 
 	SingleLayout::SingleLayout(AbstractContainer* container)
-	: AbstractLayoutExt(container), m_sub_widget(0)
+	: LayoutBase(container), m_sub_widget(0)
 	{
 
 	}
 
 	SingleLayout::SingleLayout(AbstractContainer* container, AbstractWidget* sub_widget)
-	: AbstractLayoutExt(container), m_sub_widget(sub_widget)
+	: LayoutBase(container), m_sub_widget(sub_widget)
 	{
 
 	}

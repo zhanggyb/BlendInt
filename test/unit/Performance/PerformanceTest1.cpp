@@ -46,7 +46,7 @@ TEST_F(PerformanceTest1, Layout1)
         for(int j = 0; j < max_x; j++)
         {
             btn[j] = Manage(new Button);
-            btn[j]->SetPreferredSize(25, btn[j]->size().height());
+            //btn[j]->SetPreferredSize(25, btn[j]->size().height());
             layout[i]->Add(btn[j]);
         }
     

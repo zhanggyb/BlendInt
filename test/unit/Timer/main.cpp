@@ -39,9 +39,6 @@ AnimatingWidget::AnimatingWidget ()
 	events()->connect(m_timer->timeout(), this, &AnimatingWidget::AddAngle);
 
 	set_size(500, 400);
-	set_preferred_size (500, 400);
-	set_maximal_size(500, 400);
-	set_minimal_size(500, 400);
 
 	m_timer->SetInterval(5);
 	m_timer->Start();

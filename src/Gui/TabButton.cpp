@@ -46,7 +46,6 @@ namespace BlendInt {
 	: AbstractButton(), m_vao(0)
 	{
 		set_size(80, 12);
-		set_preferred_size(80, 12);
 		set_checkable(true);
 
 		InitOnce();
@@ -56,7 +55,6 @@ namespace BlendInt {
 	: AbstractButton(), m_vao(0)
 	{
 		set_size(80, 20);
-		set_preferred_size(80, 20);
 
 		InitOnce(text);
 	}

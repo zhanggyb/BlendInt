@@ -102,6 +102,7 @@ namespace BlendInt {
 
 	void VLayout::AddItem (AbstractWidget* object)
 	{
+		/*
 		// don't fire events when adding a widget into a layout
 		object->deactivate_events();
 		deactivate_events();
@@ -149,6 +150,7 @@ namespace BlendInt {
 
 		activate_events();
 		object->activate_events();
+		*/
 	}
 
 	void VLayout::RemoveItem(AbstractWidget * object)
@@ -162,8 +164,8 @@ namespace BlendInt {
 
 		GetSizeHint(true, true, 0, &new_minimal_size, &new_preferred_size);
 
-		SetMinimalSize(new_minimal_size);
-		SetPreferredSize(new_preferred_size);
+		//SetMinimalSize(new_minimal_size);
+		//SetPreferredSize(new_preferred_size);
 
 		set_expand_y(false);
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
@@ -183,6 +185,7 @@ namespace BlendInt {
 
 	void VLayout::MakeLayout(const Size* size, const Margin* margin, int space)
 	{
+		/*
 		if (size->height() == preferred_size().height()) {
 			DistributeWithPreferredHeight(size, margin, space);			// layout along y with preferred size
 		} else if (size->height() < preferred_size().height()) {
@@ -192,10 +195,12 @@ namespace BlendInt {
 		}
 
 		Align(size, margin);
+		*/
 	}
 
 	void VLayout::DistributeWithPreferredHeight(const Size* size, const Margin* margin, int space)
 	{
+		/*
 		int y = position().y() + size->height() - margin->top();
 
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
@@ -204,10 +209,12 @@ namespace BlendInt {
 		}
 
 		Distribute(space, y);
+		*/
 	}
 
 	void VLayout::DistributeWithSmallHeight(const Size* size, const Margin* margin, int space)
 	{
+		/*
 		unsigned int min_expd_height = GetAllMinimalExpandableHeight();
 		unsigned int fixed_height = GetAllFixedHeight();
 		unsigned int current_height = size->height();
@@ -282,10 +289,12 @@ namespace BlendInt {
 
 		int y = position().y() + size->height() - margin->top();
 		Distribute(space, y);
+		*/
 	}
 
 	void VLayout::DistributeWithLargeHeight(const Size* size, const Margin* margin, int space)
 	{
+		/*
 		unsigned int fixed_height = GetAllFixedHeight();
 		unsigned int current_height = size->height();
 		unsigned int margin_plus = margin->top() + margin->bottom();
@@ -364,7 +373,7 @@ namespace BlendInt {
 
 			Distribute(space, y);
 		}
-
+	*/
 	}
 
 	void VLayout::Distribute(int space, int start)
@@ -420,6 +429,7 @@ namespace BlendInt {
 
 		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
 		{
+			/*
 			if ((average_height_plus + (*it)->size().height()) > (*it)->maximal_size().height()) {
 				ResizeSubWidget(*it, (*it)->size().width(), (*it)->maximal_size().height());
 				remainder = remainder + average_height_plus + (*it)->size().height() - (*it)->maximal_size().height();
@@ -427,6 +437,7 @@ namespace BlendInt {
 			} else {
 				ResizeSubWidget(*it, (*it)->size().width(), (*it)->size().height() + average_height_plus);
 			}
+			*/
 		}
 
 		if(remainder != 0) {
@@ -448,6 +459,7 @@ namespace BlendInt {
 
 		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
 		{
+			/*
 			if (((*it)->size().height() - average_height_plus) < (*it)->minimal_size().height()) {
 				ResizeSubWidget(*it, (*it)->size().width(), (*it)->minimal_size().height());
 				remainder = remainder + (*it)->minimal_size().height() - ((*it)->size().height() - average_height_plus);
@@ -455,6 +467,7 @@ namespace BlendInt {
 			} else {
 				ResizeSubWidget(*it, (*it)->size().width(), (*it)->size().height() - average_height_plus);
 			}
+			*/
 		}
 
 		if(remainder != 0) {
@@ -469,11 +482,13 @@ namespace BlendInt {
 	{
 		unsigned int height = 0;
 
+		/*
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->expand_y())
 				height += (*it)->minimal_size().height();
 		}
+		*/
 
 		return height;
 	}
@@ -482,11 +497,13 @@ namespace BlendInt {
 	{
 		unsigned int height = 0;
 
+		/*
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->expand_y())
 				height += (*it)->maximal_size().height();
 		}
+		*/
 
 		return height;
 	}
@@ -524,6 +541,7 @@ namespace BlendInt {
 										Size* min,
 										Size* preferred)
 	{
+		/*
 		Size size_out;
 		Size min_size_out;
 		Size preferred_size_out;
@@ -573,6 +591,7 @@ namespace BlendInt {
 		if(size) *size = size_out;
 		if(min) *min = min_size_out;
 		if(preferred) *preferred = preferred_size_out;
+		*/
 	}
 
 }

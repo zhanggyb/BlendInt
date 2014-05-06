@@ -119,7 +119,7 @@ namespace BlendInt {
 
 			m_texture->Reset();
 
-			set_preferred_size(image->width(), image->height());
+			//set_preferred_size(image->width(), image->height());
 			set_size(image->width(), image->height());
 			m_checkerboard->Resize(size());
 
@@ -224,7 +224,7 @@ namespace BlendInt {
 	void ImageView::InitOnce ()
 	{
 		set_size(400, 300);
-		set_preferred_size(400, 300);
+		//set_preferred_size(400, 300);
 		set_expand_x(true);
 		set_expand_y(true);
 

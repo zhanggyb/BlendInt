@@ -24,11 +24,13 @@
 #ifndef _BLENDINT_LINEARLAYOUT_HPP_
 #define _BLENDINT_LINEARLAYOUT_HPP_
 
-#include <BlendInt/Gui/AbstractLayout.hpp>
+#include <BlendInt/Types.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/LayoutBase.hpp>
 
 namespace BlendInt {
 
-	class LinearLayout: public AbstractLayoutExt
+	class LinearLayout: public LayoutBase
 	{
 	public:
 
@@ -39,14 +41,11 @@ namespace BlendInt {
 						int alignment = AlignCenter,
 						int space = 2);
 
-		virtual ~LinearLayout ();
-
-		/**
-		 * Not use
-		 */
-		virtual void Fill ();
+		~LinearLayout ();
 
 		void Fill (const WidgetDeque* sub_widgets);
+
+		void Fill (const Point& start, const WidgetDeque* sub_widgets);
 
 		void set_alignment (int alignment)
 		{
@@ -60,9 +59,13 @@ namespace BlendInt {
 
 	protected:
 
-		void Distribute (const WidgetDeque* sub_widgets);
+		void DistributeHorizontally (const Point& start, const WidgetDeque* sub_widgets);
 
-		void Align (const WidgetDeque* sub_widgets);
+		void DistributeVertically (const Point& start, const WidgetDeque* sub_widgets);
+
+		void AlignHorizontally (const Point& start, const WidgetDeque* sub_widgets);
+
+		void AlignVertically (const Point& start, const WidgetDeque* sub_widgets);
 
 	private:
 

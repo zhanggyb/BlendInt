@@ -40,7 +40,7 @@
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 #include <BlendInt/Window/RedrawEvent.hpp>
 
-#include <BlendInt/Gui/AbstractExtraForm.hpp>
+#include <BlendInt/Gui/AbstractForm.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -140,7 +140,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup gui
 	 */
-	class AbstractWidget: public AbstractExtraForm
+	class AbstractWidget: public AbstractForm
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractWidget);
 
@@ -161,6 +161,11 @@ namespace BlendInt {
 		 * @brief Destructor
 		 */
 		virtual ~AbstractWidget ();
+
+		const Point& position () const
+		{
+			return m_position;
+		}
 
 		virtual Size GetPreferredSize () const;
 
@@ -187,21 +192,29 @@ namespace BlendInt {
 
 		void SetPosition (const Point& pos);
 
-		void SetPreferredSize (unsigned int widt, unsigned int height);
-
-		void SetPreferredSize (const Size& size);
-
-		void SetMinimalSize (unsigned int width, unsigned int height);
-
-		void SetMinimalSize (const Size& size);
-
-		void SetMaximalSize (unsigned int width, unsigned int height);
-
-		void SetMaximalSize (const Size& size);
-
 		void SetLayer (int z);
 
 		void SetVisible (bool visible);
+
+		void SetExpandX (bool expand);
+
+		bool expand_x () const
+		{
+			return m_flag[WidgetFlagExpandX];
+		}
+
+		void SetExpandY (bool expand);
+
+		bool expand_y () const
+		{
+			return m_flag[WidgetFlagExpandY];
+		}
+
+		void SetExpand (bool expand);
+
+		virtual bool Contain (const Point& point) const;
+
+		virtual bool Contain (int x, int y) const;
 
 		void RenderToTexture (size_t border, GLTexture2D* texture);
 
@@ -288,6 +301,42 @@ namespace BlendInt {
 
 	protected:
 
+		/**
+		 * @brief preset the form's position
+		 * @param x
+		 * @param y
+		 *
+		 * @note this function should be called only in the constructor of subclass
+		 * to set the position without through Update() for performance.
+		 */
+		void set_position (int x, int y)
+		{
+			m_position.set_x(x);
+			m_position.set_y(y);
+		}
+
+		/**
+		 * @brief preset the form's position
+		 * @param pos
+		 *
+		 * @note this function should be called only in the constructor of subclass
+		 * to set the position without through Update() for performance.
+		 */
+		void set_position (const Point& pos)
+		{
+			m_position = pos;
+		}
+
+		void set_expand_x (bool expand)
+		{
+			m_flag[WidgetFlagExpandX] = expand ? 1 : 0;
+		}
+
+		void set_expand_y (bool expand)
+		{
+			m_flag[WidgetFlagExpandY] = expand ? 1 : 0;
+		}
+
 		virtual ResponseType FocusEvent (bool focus) = 0;
 
 		virtual ResponseType CursorEnterEvent (bool entered) = 0;
@@ -342,31 +391,6 @@ namespace BlendInt {
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 
-		/*
-		static void SetPosition (AbstractWidget* obj, int x, int y);
-
-		static void SetPosition (AbstractWidget* obj, const Point& pos);
-		*/
-
-		/**
-		 * @brief resize other object's size
-		 * @param obj
-		 * @param w
-		 * @param h
-		 *
-		 * @note should be used in layout only
-		 */
-		//static void Resize (AbstractWidget* obj, unsigned int w, unsigned int h);
-
-		/**
-		 * @brief resize other object's size
-		 * @param obj
-		 * @param size
-		 *
-		 * @note should be used in layout only
-		 */
-		//static void Resize (AbstractWidget* obj, const Size& size);
-
 		static void DispatchRender (AbstractWidget* obj);
 
 		static ResponseType dispatch_key_press_event (AbstractWidget* obj, const KeyEvent& event);
@@ -391,6 +415,10 @@ namespace BlendInt {
 
 			WidgetFlagVisibility,
 
+			WidgetFlagExpandX,
+
+			WidgetFlagExpandY,
+
 			WidgetFlagManaged,
 
 			/** If enable scissor test when drawing this the subwidgets, this flag is only workable for container */
@@ -408,6 +436,8 @@ namespace BlendInt {
 		 * @param border
 		 */
 		bool CompositeToScreenBuffer (GLTexture2D* tex, unsigned int border = 0);
+
+		Point m_position;
 
 		/**
 		 * @brief the depth(layer) of the widget

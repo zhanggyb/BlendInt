@@ -97,7 +97,7 @@ namespace BlendInt {
 
 		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
-		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
+		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void Label::SetFont (const Font& font)
@@ -139,7 +139,7 @@ namespace BlendInt {
 
 		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
-		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
+		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void Label::Update (const UpdateRequest& request)
@@ -306,8 +306,6 @@ namespace BlendInt {
 
 		m_origin.set_x(0);
 		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
-
-		set_preferred_size(size());
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);

@@ -145,6 +145,7 @@ namespace BlendInt {
 
 	void TableLayout::AddItem(AbstractWidget* widget)
 	{
+		/*
 		// don't fire events when adding a widget into a layout
 		widget->deactivate_events();
 		deactivate_events();
@@ -188,6 +189,7 @@ namespace BlendInt {
 
 		activate_events();
 		widget->activate_events();
+		*/
 	}
 
 	void TableLayout::RemoveItem(AbstractWidget* object)
@@ -197,9 +199,11 @@ namespace BlendInt {
 
 	bool TableLayout::generate_layout(const Size* new_size)
 	{
+		/*
 		if(new_size->width() < minimal_size().width() ||
 				new_size->height() < minimal_size().height())
 			return false;
+			*/
 
 		unsigned int total_width = 0;
 		unsigned int total_height = 0;
@@ -467,6 +471,8 @@ namespace BlendInt {
 	unsigned int TableLayout::minimal_column_width(int column)
 	{
 		unsigned int minimal_width = 0;	// the return value
+
+		/*
 		AbstractWidget* child = 0;
 
 		for (int j = 0; j < m_columns; j++)
@@ -476,6 +482,7 @@ namespace BlendInt {
 				minimal_width = std::max(minimal_width, child->minimal_size().width());
 			}
 		}
+		*/
 
 		return minimal_width;
 	}
@@ -500,6 +507,8 @@ namespace BlendInt {
 	unsigned int TableLayout::minimal_row_height(int row)
 	{
 		unsigned int minimal_height = 0;	// the return value
+
+		/*
 		AbstractWidget* child = 0;
 
 		for (int j = 0; j < m_columns; j++)
@@ -509,6 +518,7 @@ namespace BlendInt {
 				minimal_height = std::max(minimal_height, child->minimal_size().height());
 			}
 		}
+		*/
 
 		return minimal_height;
 

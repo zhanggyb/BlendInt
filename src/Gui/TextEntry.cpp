@@ -55,12 +55,6 @@ namespace BlendInt {
 		set_expand_x(true);
 		set_size (120, 20);	// the same height of a button
 		set_radius(0.0);
-		set_preferred_size(240, 20);
-		set_minimal_size(
-		        DefaultTextEntryPadding.left()
-		                + DefaultTextEntryPadding.right(),
-		        DefaultTextEntryPadding.top()
-		                + DefaultTextEntryPadding.bottom());
 
 		InitializeTextEntry();
 	}
@@ -318,7 +312,7 @@ namespace BlendInt {
 
 		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
-		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
+		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void TextEntry::SetFont (const Font& font)

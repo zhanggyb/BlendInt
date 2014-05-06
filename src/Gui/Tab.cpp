@@ -160,7 +160,6 @@ namespace BlendInt {
 	Tab::Tab ()
 	: AbstractDequeContainer(), m_title_height(14), m_stack(0)
 	{
-		set_preferred_size(400, 300);
 		set_size(400, 300);
 
 		m_stack = Manage(new TabStack);

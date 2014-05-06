@@ -30,7 +30,6 @@ namespace BlendInt {
 	  m_orientation(orientation),
 	  m_space(2)
 	{
-		set_preferred_size(400, 400);
 		set_size(400, 400);
 		set_expand_x(true);
 		set_expand_y(true);

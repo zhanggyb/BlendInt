@@ -85,7 +85,7 @@ namespace BlendInt {
 
 		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
-		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
+		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
 	void AbstractButton::SetFont (const Font& font)
@@ -121,7 +121,7 @@ namespace BlendInt {
 
 		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
 
-		SetPreferredSize(m_text_outline.width(), m_text_outline.height());
+		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
 	ResponseType AbstractButton::CursorEnterEvent(bool entered)

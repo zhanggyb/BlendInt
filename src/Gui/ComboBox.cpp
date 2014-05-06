@@ -51,7 +51,6 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 		set_expand_x(true);
 		set_size(90, 20);
-		set_preferred_size(90, 20);
 
 		InitOnce();
 	}

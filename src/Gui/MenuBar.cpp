@@ -50,7 +50,7 @@ namespace BlendInt {
 
 		set_margin(2, 2, 1, 1);
 		set_size(200, 22);
-		set_preferred_size(200, 22);
+		//set_preferred_size(200, 22);
 
 		InitOnce();
 	}
@@ -199,7 +199,7 @@ namespace BlendInt {
 
 		h = h + margin().top() + margin().bottom();
 		Resize(w, h);
-		SetPreferredSize(w, h);
+		//SetPreferredSize(w, h);
 
 		events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 	}
@@ -228,7 +228,7 @@ namespace BlendInt {
 
 		h = h + margin().top() + margin().bottom();
 		Resize(w, h);
-		SetPreferredSize(w, h);
+		//SetPreferredSize(w, h);
 
 		events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 	}
@@ -254,7 +254,7 @@ namespace BlendInt {
 
 			h = h + margin().top() + margin().bottom();
 			Resize(w, h);
-			SetPreferredSize(w, h);
+			//SetPreferredSize(w, h);
 
 			events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 		}
@@ -282,7 +282,7 @@ namespace BlendInt {
 
 			h = h + margin().top() + margin().bottom();
 			Resize(w, h);
-			SetPreferredSize(w, h);
+			//SetPreferredSize(w, h);
 
 			events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
 		}

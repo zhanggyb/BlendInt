@@ -21,36 +21,42 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SINGLELAYOUT_HPP_
-#define _BLENDINT_GUI_SINGLELAYOUT_HPP_
+#ifndef _BLENDINT_GUI_LAYOUTBASE_HPP_
+#define _BLENDINT_GUI_LAYOUTBASE_HPP_
 
-#include <BlendInt/Gui/LayoutBase.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
-	class SingleLayout: public LayoutBase
+	class LayoutBase
 	{
 	public:
 
-		explicit SingleLayout (AbstractContainer* container);
+		explicit LayoutBase (AbstractContainer* container);
 
-		explicit SingleLayout (AbstractContainer* container, AbstractWidget* sub_widget);
+		~LayoutBase ();
 
-		void set_sub_widget (AbstractWidget* sub_widget)
+		AbstractContainer* container () const
 		{
-			m_sub_widget = sub_widget;
+			return m_container;
 		}
 
-		~SingleLayout ();
+	protected:
 
-		void Fill ();
+		void SetPosition (AbstractWidget* widget, int x, int y);
+
+		void SetPosition (AbstractWidget* widget, const Point& pos);
+
+		void Resize (AbstractWidget* widget, unsigned int width, unsigned int height);
+
+		void Resize (AbstractWidget* widget, const Size& size);
 
 	private:
 
-		AbstractWidget* m_sub_widget;
-
+		AbstractContainer* m_container;
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_SINGLELAYOUT_HPP_ */
+#endif /* _BLENDINT_GUI_LAYOUTBASE_HPP_ */

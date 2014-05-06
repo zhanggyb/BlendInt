@@ -53,9 +53,7 @@ namespace BlendInt {
 	Widget::Widget()
 	: AbstractWidget()
 	{
-		set_minimal_size(0, 0);
 		set_size(120, 80);
-		set_preferred_size(120, 80);
 	}
 
 	Widget::~Widget()

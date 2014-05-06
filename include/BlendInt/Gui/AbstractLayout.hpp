@@ -38,36 +38,6 @@
 
 namespace BlendInt {
 
-	class AbstractLayoutExt
-	{
-	public:
-
-		explicit AbstractLayoutExt (AbstractContainer* container);
-
-		virtual ~AbstractLayoutExt ();
-
-		virtual void Fill () = 0;
-
-		AbstractContainer* container () const
-		{
-			return m_container;
-		}
-
-	protected:
-
-		void SetPosition (AbstractWidget* widget, int x, int y);
-
-		void SetPosition (AbstractWidget* widget, const Point& pos);
-
-		void Resize (AbstractWidget* widget, unsigned int width, unsigned int height);
-
-		void Resize (AbstractWidget* widget, const Size& size);
-
-	private:
-
-		AbstractContainer* m_container;
-	};
-
 	/**
 	 * @brief Abstract layout class
 	 *

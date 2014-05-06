@@ -141,7 +141,6 @@ namespace BlendInt {
 	void ScrollArea::InitOnce ()
 	{
 		set_margin(0, 0, 0, 0);
-		set_preferred_size(400, 300);
 		set_size(400, 300);
 		set_expand_x(true);
 		set_expand_y(true);

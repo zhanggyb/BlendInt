@@ -27,7 +27,6 @@ namespace BlendInt {
 
 	ListView::ListView ()
 	{
-		set_preferred_size(400, 300);
 		set_size(400, 300);
 		set_expand_x(true);
 		set_expand_y(true);

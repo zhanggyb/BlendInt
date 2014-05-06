@@ -44,7 +44,6 @@ namespace BlendInt {
 	{
 		set_margin(0, 0, 0, 0);
 		set_size(200, 160);
-		set_preferred_size(200, 160);
 		set_scissor_test(true);
 	}
 

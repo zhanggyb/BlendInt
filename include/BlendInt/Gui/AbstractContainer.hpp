@@ -39,7 +39,7 @@ namespace BlendInt {
 
 	class Interface;
 	class Context;
-	class AbstractLayoutExt;
+	class LayoutBase;
 
 	/**
 	 * @brief A virtual iterator to be instanced for widgets in container
@@ -158,7 +158,7 @@ namespace BlendInt {
 
 		friend class Context;
 		friend class ContainerProxy;
-		friend class AbstractLayoutExt;
+		friend class LayoutBase;
 
 	public:
 

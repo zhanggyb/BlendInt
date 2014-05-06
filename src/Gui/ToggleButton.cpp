@@ -197,7 +197,6 @@ namespace BlendInt {
 		set_expand_x(true);
 		set_checkable(true);
 		set_size(90, 20);
-		set_preferred_size(90, 20);
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
@@ -219,7 +218,6 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 		set_expand_x(true);
 		set_checkable(true);
-		set_preferred_size(size());
 		set_text(text);
 
 		bool cal_width = true;
