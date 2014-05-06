@@ -39,7 +39,7 @@ namespace BlendInt {
 
 	public:
 
-		HLayout(int align = AlignHorizontalCenter);
+		explicit HLayout(int align = AlignHorizontalCenter);
 
 		virtual ~HLayout ();
 

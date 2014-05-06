@@ -25,6 +25,40 @@
 
 namespace BlendInt {
 
+	AbstractLayoutExt::AbstractLayoutExt (AbstractContainer* container)
+	: m_container(container)
+	{
+	}
+
+	AbstractLayoutExt::~AbstractLayoutExt ()
+	{
+	}
+
+	void AbstractLayoutExt::SetPosition (AbstractWidget* widget, int x,
+					int y)
+	{
+		m_container->SetSubWidgetPosition(widget, x, y);
+	}
+	
+	void AbstractLayoutExt::SetPosition (AbstractWidget* widget,
+					const Point& pos)
+	{
+		m_container->SetSubWidgetPosition(widget, pos);
+	}
+
+	void AbstractLayoutExt::Resize (AbstractWidget* widget,
+					unsigned int width, unsigned int height)
+	{
+		m_container->ResizeSubWidget(widget, width, height);
+	}
+
+	void AbstractLayoutExt::Resize (AbstractWidget* widget, const Size& size)
+	{
+		m_container->ResizeSubWidget(widget, size);
+	}
+
+	// -----------------------------------
+
 	AbstractLayout::AbstractLayout ()
 			: AbstractDequeContainer(),
 			  m_alignment(0),

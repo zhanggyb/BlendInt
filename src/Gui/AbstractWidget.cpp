@@ -179,6 +179,11 @@ namespace BlendInt {
 		m_destroyed.fire(this);
 	}
 
+	Size AbstractWidget::GetPreferredSize() const
+	{
+		return Size(200, 200);
+	}
+
 	void AbstractWidget::Resize (unsigned int width, unsigned int height)
 	{
 		if(size().width() == width && size().height() == height) return;

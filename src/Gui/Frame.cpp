@@ -49,6 +49,8 @@
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
+#include <BlendInt/Gui/SingleLayout.hpp>
+
 namespace BlendInt {
 
 	Frame::Frame ()
@@ -68,10 +70,32 @@ namespace BlendInt {
 	void Frame::Add (AbstractWidget* widget)
 	{
 		if (AddSubWidget(widget)) {
-			SetSubWidgetPosition(widget, position().x() + margin().left(),
-			        position().y() + margin().bottom());
-			ResizeSubWidget(widget, size().width() - margin().left() - margin().right(),
-			        size().height() - margin().top() - margin().bottom());
+
+			SingleLayout layout(this, widget);
+			layout.Fill();
+
+		}
+	}
+
+	bool Frame::UpdateTest (const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case SubWidgetSize:
+					return false;	// DO not allow sub widget geometry reset outside
+
+				case SubWidgetPosition:
+					return false;
+
+				default:
+					return AbstractSingleContainer::UpdateTest(request);
+
+			}
+
+		} else {
+			return false;
 		}
 	}
 
@@ -83,11 +107,9 @@ namespace BlendInt {
 				case FormSize: {
 					if (sub_widget()) {
 						const Size* size_p = static_cast<const Size*>(request.data());
-						ResizeSubWidget(sub_widget(),
-						        size_p->width() - margin().left()
-						                - margin().right(),
-						        size_p->height() - margin().top()
-						                - margin().bottom());
+						set_size(*size_p);
+						SingleLayout layout (this, sub_widget());
+						layout.Fill();
 					}
 					break;
 				}
@@ -106,14 +128,12 @@ namespace BlendInt {
 
 					if (sub_widget()) {
 						const Margin* margin_p = static_cast<const Margin*>(request.data());
-						SetSubWidgetPosition(sub_widget(),
-						        position().x() + margin_p->left(),
-						        position().y() + margin_p->bottom());
-						ResizeSubWidget(sub_widget(),
-						        size().width() - margin_p->left()
-						                - margin_p->right(),
-						        size().height() - margin_p->top()
-						                - margin_p->bottom());
+						set_margin(*margin_p);
+
+						if(sub_widget()) {
+							SingleLayout layout(this, sub_widget());
+							layout.Fill();
+						}
 					}
 					break;
 				}
@@ -159,28 +179,6 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	bool Frame::UpdateTest (const UpdateRequest& request)
-	{
-		if(request.source() == Predefined) {
-
-			switch (request.type()) {
-
-				case SubWidgetSize:
-					return false;	// DO not allow sub widget geometry reset outside
-
-				case SubWidgetPosition:
-					return false;
-
-				default:
-					return AbstractSingleContainer::UpdateTest(request);
-
-			}
-
-		} else {
-			return false;
-		}
-	}
-
 	ResponseType Frame::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Accept;

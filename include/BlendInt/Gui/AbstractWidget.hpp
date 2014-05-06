@@ -162,6 +162,8 @@ namespace BlendInt {
 		 */
 		virtual ~AbstractWidget ();
 
+		virtual Size GetPreferredSize () const;
+
 		/**
 		 * @brief Resize the widget
 		 * @param[in] width The new width of the widget
