@@ -49,8 +49,6 @@
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
-#include <BlendInt/Gui/SingleLayout.hpp>
-
 namespace BlendInt {
 
 	Frame::Frame ()
@@ -68,9 +66,15 @@ namespace BlendInt {
 	{
 		if (AddSubWidget(widget)) {
 
-			SingleLayout layout(this);
-			layout.Fill(widget);
+			int x = position().x() + margin().left();
+			int y = position().y() + margin().bottom();
 
+			unsigned int w = size().width() - margin().left()
+							- margin().right();
+			unsigned int h = size().height() - margin().top()
+							- margin().bottom();
+
+			FillSubWidget(x, y, w, h);
 		}
 	}
 
@@ -105,8 +109,7 @@ namespace BlendInt {
 					if (sub_widget()) {
 						const Size* size_p = static_cast<const Size*>(request.data());
 						set_size(*size_p);
-						SingleLayout layout (this);
-						layout.Fill(sub_widget());
+						FillSubWidget (position(), *size_p, margin());
 					}
 					break;
 				}
@@ -127,10 +130,7 @@ namespace BlendInt {
 						const Margin* margin_p = static_cast<const Margin*>(request.data());
 						set_margin(*margin_p);
 
-						if(sub_widget()) {
-							SingleLayout layout(this);
-							layout.Fill(sub_widget());
-						}
+						FillSubWidget(position(), size(), *margin_p);
 					}
 					break;
 				}

@@ -71,6 +71,12 @@ namespace BlendInt {
 
 		void ClearSubWidgets ();
 
+		void FillSubWidgetsAveragely (const Point& pos, const Size& out_size, const Margin& margin, Orientation orientation, int alignment, int space);
+
+		void FillSubWidgetsAveragely (const Point& pos, const Size& size, Orientation orientation, int alignment, int space);
+
+		void FillSubWidgetsAveragely (int x, int y, unsigned int width, unsigned int height, Orientation orientation, int alignment, int space);
+
 		WidgetDeque* sub_widgets () const
 		{
 			return m_sub_widgets.get();
@@ -79,6 +85,14 @@ namespace BlendInt {
 	private:
 
 		void OnSubWidgetDestroyed (AbstractWidget* widget);
+
+		void DistributeHorizontally (int x, unsigned int width, int space);
+
+		void DistributeVertically (int y, unsigned int height, int space);
+
+		void AlignHorizontally (int y, unsigned int height, int alignment);
+
+		void AlignVertically (int x, unsigned int width, int alignment);
 
 		/**
 		 * @brief Sub widgets which build a tree to accept render and device events

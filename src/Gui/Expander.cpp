@@ -36,7 +36,6 @@
 
 #include <BlendInt/Gui/Expander.hpp>
 
-#include <BlendInt/Gui/LinearLayout.hpp>
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
@@ -55,8 +54,7 @@ namespace BlendInt {
 	{
 		if (AddSubWidget(widget)) {
 
-			LinearLayout layout(this, Vertical);
-			layout.Fill(sub_widgets());
+			FillSubWidgetsAveragely(position(), size(), margin(), Vertical, AlignCenter, 2);
 
 		}
 	}
@@ -96,8 +94,7 @@ namespace BlendInt {
 					if (sub_widget_size()) {
 						const Size* size_p = static_cast<const Size*>(request.data());
 						set_size(*size_p);
-						LinearLayout layout (this, Vertical);
-						layout.Fill(sub_widgets());
+						FillSubWidgetsAveragely(position(), *size_p, margin(), Vertical, AlignCenter, 2);
 					}
 					break;
 				}
@@ -119,10 +116,8 @@ namespace BlendInt {
 					const Margin* margin_p = static_cast<const Margin*>(request.data());
 					set_margin(*margin_p);
 
-					if (sub_widget_size()) {
-						LinearLayout layout(this, Vertical);
-						layout.Fill(sub_widgets());
-					}
+					FillSubWidgetsAveragely(position(), size(), *margin_p, Vertical, AlignCenter, 2);
+
 					break;
 				}
 

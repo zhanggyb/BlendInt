@@ -214,4 +214,160 @@ namespace BlendInt {
 		RemoveSubWidget(widget);
 	}
 
+	void AbstractDequeContainer::FillSubWidgetsAveragely (const Point& pos,
+					const Size& out_size, const Margin& margin,
+					Orientation orientation, int alignment, int space)
+	{
+		if(m_sub_widgets->empty()) return;
+
+		int x = pos.x() + margin.left();
+		int y = 0;
+		unsigned int width = out_size.width() - margin.left() - margin.right();
+		unsigned int height = out_size.height() - margin.top() - margin.bottom();
+
+		if(orientation == Horizontal) {
+			y = pos.y() + margin.bottom();
+			DistributeHorizontally(x, width, space);
+			AlignHorizontally(y, height, alignment);
+		} else {
+			y = pos.y() + out_size.height() - margin.top();
+			DistributeVertically(y, height, space);
+			AlignVertically(x, width, alignment);
+		}
+	}
+
+	void AbstractDequeContainer::FillSubWidgetsAveragely (const Point& pos, const Size& size,
+					Orientation orientation, int alignment, int space)
+	{
+		if(m_sub_widgets->empty()) return;
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(pos.x(), size.width(), space);
+			AlignHorizontally(pos.y(), size.height(), alignment);
+		} else {
+			DistributeVertically(pos.y() + size.height(), size.height(), space);
+			AlignVertically(pos.x(), size.width(), alignment);
+		}
+	}
+
+	void AbstractDequeContainer::FillSubWidgetsAveragely (int x, int y,
+					unsigned int width, unsigned int height,
+					Orientation orientation, int alignment, int space)
+	{
+		if(m_sub_widgets->empty()) return;
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(x, width, space);
+			AlignHorizontally(y, height, alignment);
+		} else {
+			DistributeVertically(y + height, height, space);
+			AlignVertically(x, width, alignment);
+		}
+	}
+
+	void AbstractDequeContainer::DistributeHorizontally (int x, unsigned int width, int space)
+	{
+		AbstractWidget* widget = 0;
+
+		if (m_sub_widgets->size()) {
+			int average_width = (width - ((m_sub_widgets->size() - 1)* space))
+							/ m_sub_widgets->size();
+
+			if (average_width > 0) {
+
+				for (WidgetDeque::const_iterator it = m_sub_widgets->begin();
+								it != m_sub_widgets->end(); it++) {
+					widget = *it;
+					ResizeSubWidget(widget, average_width, widget->size().height());
+					SetSubWidgetPosition(widget, x, widget->position().y());
+					x += average_width + space;
+				}
+
+			} else {
+
+				// TODO: set invisiable
+
+			}
+		}
+	}
+
+	void AbstractDequeContainer::DistributeVertically (int y, unsigned int height, int space)
+	{
+		AbstractWidget* widget = 0;
+
+		if (m_sub_widgets->size()) {
+			int average_height = (height - ((m_sub_widgets->size() - 1)* space))
+							/ m_sub_widgets->size();
+
+			if (average_height > 0) {
+
+				for (WidgetDeque::const_iterator it = m_sub_widgets->begin();
+								it != m_sub_widgets->end(); it++) {
+					widget = *it;
+					ResizeSubWidget(widget, widget->size().width(), average_height);
+					y -= average_height;
+					SetSubWidgetPosition(widget, widget->position().x(), y);
+					y -= space;
+				}
+
+			} else {
+
+				// TODO: set invisiable
+
+			}
+		}
+	}
+
+	void AbstractDequeContainer::AlignHorizontally (int y, unsigned int height, int alignment)
+	{
+		AbstractWidget* widget = 0;
+
+		for(WidgetDeque::const_iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
+		{
+			widget = *it;
+
+			if(widget->expand_y()) {
+				ResizeSubWidget(widget, widget->size().width(), height);
+				SetSubWidgetPosition(widget, widget->position().x(), y);
+			} else {
+
+				if (alignment & AlignTop) {
+					SetSubWidgetPosition(widget, widget->position().x(),
+					        y + (height - widget->size().height()));
+				} else if (alignment & AlignBottom) {
+					SetSubWidgetPosition(widget, widget->position().x(), y);
+				} else if (alignment & AlignHorizontalCenter) {
+					SetSubWidgetPosition(widget, widget->position().x(),
+					        y + (height - widget->size().height()) / 2);
+				}
+
+			}
+		}
+	}
+
+	void AbstractDequeContainer::AlignVertically (int x, unsigned int width, int alignment)
+	{
+		AbstractWidget* widget = 0;
+		for(WidgetDeque::const_iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
+		{
+			widget = *it;
+
+			if (widget->expand_x()) {
+				ResizeSubWidget(widget, width, widget->size().height());
+				SetSubWidgetPosition(widget, x, widget->position().y());
+			} else {
+
+				if (alignment & AlignLeft) {
+					SetSubWidgetPosition(widget, x, widget->position().y());
+				} else if (alignment & AlignRight) {
+					SetSubWidgetPosition(widget, x + (width - widget->size().width()), widget->position().y());
+				} else if (alignment & AlignVerticalCenter) {
+					SetSubWidgetPosition(widget, x + (width - widget->size().width()) / 2, widget->position().y());
+				}
+
+			}
+		}
+	}
+
 }
+

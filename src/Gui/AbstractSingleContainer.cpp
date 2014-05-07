@@ -45,6 +45,57 @@ namespace BlendInt {
 			m_sub_widget = 0;
 		}
 	}
+
+	void AbstractSingleContainer::FillSubWidget (const Point& pos, const Size& out_size, const Margin& margin)
+	{
+		if (m_sub_widget) {
+			int x = pos.x() + margin.left();
+			int y = pos.y() + margin.bottom();
+
+			unsigned int w = out_size.width() - margin.left()
+							- margin.right();
+			unsigned int h = out_size.height() - margin.top()
+							- margin.bottom();
+
+			FillSubWidget(x, y, w, h);
+		}
+	}
+
+	void AbstractSingleContainer::FillSubWidget (const Point& pos, const Size& size)
+	{
+		if (m_sub_widget) {
+			ResizeSubWidget(m_sub_widget, size.width(), size.height());
+			SetSubWidgetPosition(m_sub_widget, pos.x(), pos.y());
+
+			if (m_sub_widget->size().width() < size.width()) {
+				SetSubWidgetPosition(m_sub_widget,
+								pos.x() + (size.width() - m_sub_widget->size().width()) / 2, pos.y());
+			}
+
+			if (m_sub_widget->size().height() < size.height()) {
+				SetSubWidgetPosition(m_sub_widget, pos.x(),
+								pos.y() + (size.height() - m_sub_widget->size().height() / 2));
+			}
+		}
+	}
+
+	void AbstractSingleContainer::FillSubWidget (int x, int y, unsigned int w, unsigned int h)
+	{
+		if (m_sub_widget) {
+			ResizeSubWidget(m_sub_widget, w, h);
+			SetSubWidgetPosition(m_sub_widget, x, y);
+
+			if (m_sub_widget->size().width() < w) {
+				SetSubWidgetPosition(m_sub_widget,
+								x + (w - m_sub_widget->size().width()) / 2, y);
+			}
+
+			if (m_sub_widget->size().height() < h) {
+				SetSubWidgetPosition(m_sub_widget, x,
+								y + (h - m_sub_widget->size().height() / 2));
+			}
+		}
+	}
 	
 	bool AbstractSingleContainer::AddSubWidget (AbstractWidget* widget)
 	{

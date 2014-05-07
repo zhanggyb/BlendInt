@@ -43,6 +43,15 @@ namespace BlendInt {
 
 	protected:
 
+		/**
+		 * @brief Fill the sub widget in this container
+		 */
+		void FillSubWidget (const Point& pos, const Size& out_size, const Margin& margin);
+
+		void FillSubWidget (const Point& pos, const Size& size);
+
+		void FillSubWidget (int x, int y, unsigned w, unsigned h);
+
 		virtual bool AddSubWidget (AbstractWidget* widget);
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
