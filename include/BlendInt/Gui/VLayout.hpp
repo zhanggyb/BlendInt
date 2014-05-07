@@ -50,8 +50,14 @@ namespace BlendInt {
 
 	private:
 
+		void Align ();
+
 		WidgetDeque m_widgets;
+
+		int m_alignment;
 	};
+
+	// ------------------------------------
 
 	class VLayout: public AbstractLayout
 	{

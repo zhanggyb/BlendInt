@@ -48,6 +48,8 @@ namespace BlendInt {
 
 		virtual ~Button ();
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void Update (const UpdateRequest& request);

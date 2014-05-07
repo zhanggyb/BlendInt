@@ -57,6 +57,11 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
+	Size Button::GetPreferredSize () const
+	{
+		return Size(90, 20);
+	}
+
 	void Button::Update(const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {

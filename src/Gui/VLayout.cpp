@@ -37,7 +37,8 @@
 namespace BlendInt {
 
 	VLayoutExt::VLayoutExt (Context* context)
-	: AbstractLayoutExt(context)
+	: AbstractLayoutExt(context),
+	  m_alignment(AlignCenter)
 	{
 
 	}
@@ -74,15 +75,81 @@ namespace BlendInt {
 
 	void VLayoutExt::Fill ()
 	{
+		if(m_widgets.empty()) return;
+
 		int x = context()->margin().left();
 		int y = context()->size().height() - context()->margin().top();
 
 		unsigned int width = context()->size().width() - context()->margin().left() - context()->margin().right();
-		//unsigned int height = context()->size().height() - context()->margin().top() - context()->margin().bottom();
+		unsigned int height = context()->size().height() - context()->margin().top() - context()->margin().bottom();
 
 		Size preferred_size;
 		AbstractWidget* widget = 0;
 
+		std::set<AbstractWidget*> y_unexpandable_widgets;
+
+		for(WidgetDeque::iterator it = m_widgets.begin(); it != m_widgets.end(); it++)
+		{
+			widget = *it;
+			if(!widget->expand_y()) {
+				y_unexpandable_widgets.insert(widget);
+			}
+		}
+
+		if(y_unexpandable_widgets.empty()) {	// all expandable along y
+
+			unsigned int average_height = height / m_widgets.size();
+			for(WidgetDeque::iterator it = m_widgets.begin(); it != m_widgets.end(); it++)
+			{
+				widget = *it;
+				y -= average_height;
+				widget->SetPosition(widget->position().x(), y);
+				widget->Resize(widget->size().width(), average_height);
+				y -= 2;	// space
+			}
+
+		} else {
+
+			unsigned int total_fixed_height = 0;
+
+			for(std::set<AbstractWidget*>::iterator it = y_unexpandable_widgets.begin(); it != y_unexpandable_widgets.end(); it++)
+			{
+				widget = *it;
+				preferred_size = widget->GetPreferredSize();
+				total_fixed_height += preferred_size.height();
+			}
+
+			if(total_fixed_height < height) {
+
+				unsigned int tmp;
+
+				unsigned int averate_expand_height = 0;
+				if(y_unexpandable_widgets.size() < m_widgets.size()) {
+					averate_expand_height = (height - total_fixed_height) / (m_widgets.size() - y_unexpandable_widgets.size());
+				}
+
+				for(WidgetDeque::iterator it = m_widgets.begin(); it != m_widgets.end(); it++)
+				{
+					widget = *it;
+					if(!widget->expand_y()) {
+						tmp = widget->GetPreferredSize().height();
+						y -= tmp;
+						widget->SetPosition(widget->position().x(), y);
+						widget->Resize(widget->size().width(), tmp);
+						y -= 2; // space
+					} else {
+						y -= averate_expand_height;
+						widget->SetPosition(widget->position().x(), y);
+						widget->Resize(widget->size().width(), averate_expand_height);
+						y -= 2;	// space
+					}
+				}
+
+			}
+
+		}
+
+		/*
 		for(WidgetDeque::iterator it = m_widgets.begin(); it != m_widgets.end(); it++)
 		{
 			widget = *it;
@@ -92,7 +159,40 @@ namespace BlendInt {
 			widget->Resize(width, preferred_size.height());
 			y -= 2;	// space
 		}
+		*/
+		Align();
 	}
+
+	void VLayoutExt::Align ()
+	{
+		int x = context()->margin().left();
+		int y = context()->size().height() - context()->margin().top();
+
+		unsigned int width = context()->size().width() - context()->margin().left() - context()->margin().right();
+		unsigned int height = context()->size().height() - context()->margin().top() - context()->margin().bottom();
+
+		AbstractWidget* widget = 0;
+		for(WidgetDeque::iterator it = m_widgets.begin(); it != m_widgets.end(); it++)
+		{
+			widget = *it;
+
+			if (widget->expand_x()) {
+				widget->Resize(width, widget->size().height());
+				widget->SetPosition(x, widget->position().y());
+			} else {
+
+				if (m_alignment & AlignLeft) {
+					widget->SetPosition(x, widget->position().y());
+				} else if (m_alignment & AlignRight) {
+					widget->SetPosition(x + (width - widget->size().width()), widget->position().y());
+				} else if (m_alignment & AlignVerticalCenter) {
+					widget->SetPosition(x + (width - widget->size().width()) / 2, widget->position().y());
+				}
+
+			}
+		}
+	}
+
 
 	// -------------------------------------------------
 
