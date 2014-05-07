@@ -261,6 +261,11 @@ namespace BlendInt {
 		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
 	}
 
+	Size ToolBar::GetPreferredSize ()
+	{
+		return Size (200, 32);
+	}
+
 	void ToolBar::InitOnce ()
 	{
 		glGenVertexArrays(1, &m_vao);

@@ -304,6 +304,11 @@ namespace BlendInt {
 		button->SetMenu(menu);
 	}
 
+	Size MenuBar::GetPreferredSize ()
+	{
+		return Size(200, 22);
+	}
+
 	MenuButton* MenuBar::GetMenuButton (size_t index)
 	{
 		MenuButton* button = 0;
@@ -439,4 +444,3 @@ namespace BlendInt {
 		return pos;
 	}
 }
-

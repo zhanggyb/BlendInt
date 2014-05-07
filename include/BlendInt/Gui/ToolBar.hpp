@@ -46,6 +46,8 @@ namespace BlendInt {
 
 		void AddButton (const RefPtr<ActionItem>& action);
 
+		virtual Size GetPreferredSize ();
+
 	protected:
 
 		virtual void Update (const UpdateRequest& request);

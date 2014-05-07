@@ -51,6 +51,8 @@ namespace BlendInt {
 
 		void SetMenu (MenuButton* button, const RefPtr<Menu>& menu);
 
+		virtual Size GetPreferredSize ();
+
 		MenuButton* GetMenuButton (size_t index);
 
 		int space () const

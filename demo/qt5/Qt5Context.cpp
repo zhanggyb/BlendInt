@@ -6,12 +6,30 @@
 #include <QtGui/QCursor>
 
 Qt5Context::Qt5Context (QWindow* window)
-: BI::Context (), m_layout(0),
-  m_qt_window(window), m_current_cursor(BI::ArrowCursor)
+: BI::Context (), m_qt_window(window), m_current_cursor(BI::ArrowCursor),
+  m_view3d(0), m_ok(0)
 {
-	m_layout = Manage (new MainLayout);
-	m_layout->Resize(size());
-	Add(m_layout);
+	m_layout.reset(new BI::VLayoutExt(this));
+
+	if(m_layout) {
+		DBG_PRINT_MSG("%s", "layout valid");
+	}
+
+	m_view3d = Manage(new BI::Viewport3D);
+	m_view3d->set_name("Viewport3D");
+	m_view3d->Resize(630, 445);
+	m_view3d->SetPosition(5, 30);
+
+	m_ok = Manage(new BI::Button("OK"));
+	m_ok->set_name("OK");
+	m_ok->SetExpandX(false);
+
+	Add(m_view3d);
+	Add(m_ok);
+
+	m_layout->Add(m_view3d);
+	m_layout->Add(m_ok);
+	m_layout->Fill();
 
 	events()->connect(resized(), this , &Qt5Context::OnResizeLayout);
 }
@@ -85,5 +103,6 @@ int Qt5Context::PopCursor ()
 
 void Qt5Context::OnResizeLayout(const BI::Size& size)
 {
-	m_layout->Resize(size);
+	//m_layout->Resize(size);
+	m_layout->Fill();
 }

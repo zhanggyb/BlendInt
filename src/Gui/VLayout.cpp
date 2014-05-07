@@ -32,8 +32,69 @@
 #endif  // __UNIX__
 
 #include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
+
+	VLayoutExt::VLayoutExt (Context* context)
+	: AbstractLayoutExt(context)
+	{
+
+	}
+
+	VLayoutExt::~VLayoutExt ()
+	{
+	}
+
+	bool VLayoutExt::AddLayoutItem(AbstractWidget* widget)
+	{
+		if(!widget) return false;
+
+		WidgetDeque::iterator it = std::find(m_widgets.begin(), m_widgets.end(), widget);
+		if(it == m_widgets.end()) {
+			m_widgets.push_back(widget);
+			return true;
+		}
+
+		return false;
+	}
+
+	bool VLayoutExt::RemoveLayoutItem(AbstractWidget* widget)
+	{
+		if(!widget) return false;
+
+		WidgetDeque::iterator it = std::find(m_widgets.begin(), m_widgets.end(), widget);
+		if(it != m_widgets.end()) {
+			m_widgets.erase(it);
+			return true;
+		}
+
+		return false;
+	}
+
+	void VLayoutExt::Fill ()
+	{
+		int x = context()->margin().left();
+		int y = context()->size().height() - context()->margin().top();
+
+		unsigned int width = context()->size().width() - context()->margin().left() - context()->margin().right();
+		//unsigned int height = context()->size().height() - context()->margin().top() - context()->margin().bottom();
+
+		Size preferred_size;
+		AbstractWidget* widget = 0;
+
+		for(WidgetDeque::iterator it = m_widgets.begin(); it != m_widgets.end(); it++)
+		{
+			widget = *it;
+			preferred_size = widget->GetPreferredSize();
+			y -= preferred_size.height();
+			widget->SetPosition(x, y);
+			widget->Resize(width, preferred_size.height());
+			y -= 2;	// space
+		}
+	}
+
+	// -------------------------------------------------
 
 	VLayout::VLayout (int align)
 			: AbstractLayout()

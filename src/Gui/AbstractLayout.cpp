@@ -25,6 +25,42 @@
 
 namespace BlendInt {
 
+	AbstractLayoutExt::AbstractLayoutExt (Context* context)
+	: m_context(context)
+	{
+		m_events.reset(new Cpp::ConnectionScope);
+#ifdef DEBUG
+		if(!context) {
+			DBG_PRINT_MSG("%s", "Critical Error: context MUST be assigned in layout");
+		}
+#endif
+	}
+
+	AbstractLayoutExt::~AbstractLayoutExt ()
+	{
+	}
+
+	void AbstractLayoutExt::Add (AbstractWidget* widget)
+	{
+		if(AddLayoutItem(widget)) {
+			m_events->connect(widget->destroyed(), this, &AbstractLayoutExt::OnItemDestroyed);
+		}
+	}
+
+	void AbstractLayoutExt::Remove (AbstractWidget* widget)
+	{
+		if(RemoveLayoutItem(widget)) {
+			widget->destroyed().disconnectOne(this, &AbstractLayoutExt::OnItemDestroyed);
+		}
+	}
+
+	void AbstractLayoutExt::OnItemDestroyed (AbstractWidget* widget)
+	{
+		Remove(widget);
+	}
+
+	// ---------------------------------
+
 	AbstractLayout::AbstractLayout ()
 			: AbstractDequeContainer(),
 			  m_alignment(0),

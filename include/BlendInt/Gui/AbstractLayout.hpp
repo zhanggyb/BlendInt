@@ -30,13 +30,50 @@
  * @ingroup gui
  */
 
-#include <vector>
+#include <boost/smart_ptr.hpp>
 
 #include <BlendInt/Gui/AbstractDequeContainer.hpp>
 
 #include <Cpp/Events.hpp>
 
 namespace BlendInt {
+
+	/**
+	 * @brief The basic class for layouts used in context.
+	 */
+	class AbstractLayoutExt: public Object
+	{
+	public:
+
+		AbstractLayoutExt(Context* context);
+
+		virtual ~AbstractLayoutExt ();
+
+		void Add (AbstractWidget* widget);
+
+		void Remove (AbstractWidget* widget);
+
+		virtual void Fill () = 0;
+
+	protected:
+
+		virtual bool AddLayoutItem (AbstractWidget* widget) = 0;
+
+		virtual bool RemoveLayoutItem (AbstractWidget* widget) = 0;
+
+		Context* context () const
+		{
+			return m_context;
+		}
+
+	private:
+
+		void OnItemDestroyed (AbstractWidget* widget);
+
+		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
+
+		Context* m_context;
+	};
 
 	/**
 	 * @brief Abstract layout class

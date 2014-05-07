@@ -9,7 +9,9 @@
 #include <QGuiApplication>
 #include <QtGui/QWindow>
 
-#include "MainLayout.hpp"
+#include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/Viewport3D.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 namespace BI=BlendInt;
 
@@ -33,13 +35,15 @@ private:
 
 	void OnResizeLayout (const BI::Size& size);
 
-	MainLayout* m_layout;
-
 	QWindow* m_qt_window;
 
 	BI::CursorShape m_current_cursor;
 
 	std::stack<int> m_cursor_stack;
+	BI::RefPtr<BI::VLayoutExt> m_layout;
+	BI::Viewport3D* m_view3d;
+	BI::Button* m_ok;
+
 };
 
 #endif /* QT5CONTEXT_HPP_ */

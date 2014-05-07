@@ -71,11 +71,16 @@ namespace BlendInt {
 
 		void ClearSubWidgets ();
 
-		void FillSubWidgetsAveragely (const Point& pos, const Size& out_size, const Margin& margin, Orientation orientation, int alignment, int space);
+		void FillSubWidgetsAveragely (const Point& pos, const Size& out_size,
+						const Margin& margin, Orientation orientation,
+						int alignment, int space);
 
-		void FillSubWidgetsAveragely (const Point& pos, const Size& size, Orientation orientation, int alignment, int space);
+		void FillSubWidgetsAveragely (const Point& pos, const Size& size,
+						Orientation orientation, int alignment, int space);
 
-		void FillSubWidgetsAveragely (int x, int y, unsigned int width, unsigned int height, Orientation orientation, int alignment, int space);
+		void FillSubWidgetsAveragely (int x, int y, unsigned int width,
+						unsigned int height, Orientation orientation,
+						int alignment, int space);
 
 		WidgetDeque* sub_widgets () const
 		{

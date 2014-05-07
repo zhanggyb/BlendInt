@@ -32,6 +32,27 @@
 
 namespace BlendInt {
 
+	class VLayoutExt: public AbstractLayoutExt
+	{
+	public:
+
+		VLayoutExt (Context* context);
+
+		~VLayoutExt ();
+
+		virtual void Fill ();
+
+	protected:
+
+		virtual bool AddLayoutItem (AbstractWidget* widget);
+
+		virtual bool RemoveLayoutItem (AbstractWidget* widget);
+
+	private:
+
+		WidgetDeque m_widgets;
+	};
+
 	class VLayout: public AbstractLayout
 	{
 		DISALLOW_COPY_AND_ASSIGN(VLayout);
