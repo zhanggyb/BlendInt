@@ -58,6 +58,54 @@ namespace BlendInt {
 		 * Hide the same function in RoundBoxBase to call Update
 		 */
 		void SetRadius (float radius);
+
+		virtual Size GetPreferredSize () const;
+
+		void SetText (const String& text);
+
+		void SetFont (const Font& font);
+
+		const String& text () const {return m_text;}
+
+		size_t text_length () const {return m_text_length;}
+
+		const Font& font () const {return m_font;}
+
+	protected:
+
+		void UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, const Font& font);
+
+		inline void set_text (const String& text)
+		{
+			m_text = text;
+		}
+
+		inline void set_font (const Font& font)
+		{
+			m_font = font;
+		}
+
+		void set_text_length (size_t length)
+		{
+			m_text_length = length;
+		}
+
+		void set_pen (int x, int y)
+		{
+			m_font.set_pen(x, y);
+		}
+
+		size_t GetValidTextSize ();
+
+	private:
+
+		size_t m_text_length;	// How many text to be printed, depends on the button size
+
+		// TextBuffer text_;
+		String m_text;
+
+		Font m_font;
+
 	};
 
 }

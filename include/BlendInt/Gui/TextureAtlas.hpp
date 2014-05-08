@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		void Generate (const Freetype& freetype, wchar_t start, int size);
 
-		bool Contain (wchar_t charcode);
+		bool Contain (wchar_t charcode) const;
 
 		const Glyph& glyph (wchar_t charcode) const;
 

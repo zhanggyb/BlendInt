@@ -55,7 +55,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce (const String& text);
+		void InitializeMenuButton (const String& text);
 
 		GLuint m_vao;
 

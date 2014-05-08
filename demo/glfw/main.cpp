@@ -66,6 +66,13 @@ int main(int argc, char* argv[])
 
 	input->SetPosition(200, 200);
 
+	Button* btn = Manage(new Button("Hello"));
+
+	btn->SetPosition(100, 100);
+	//btn->Resize(200, 20);
+
+	context->Add(btn);
+
 	context->Add(input);
 
 	RunLoop(win);

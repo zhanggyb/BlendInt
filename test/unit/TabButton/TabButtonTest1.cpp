@@ -32,7 +32,7 @@ TEST_F(TabButtonTest1, Foo1)
 
     std::vector<GLfloat> vert;
 
-    btn->GenerateVertices(btn->size(), 1.f, 0, &vert);
+    btn->GenerateTabButtonVertices(btn->size(), 1.f, 0, &vert);
 
     RunLoop(win);
 

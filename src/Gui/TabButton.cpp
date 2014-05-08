@@ -43,25 +43,34 @@
 namespace BlendInt {
 
 	TabButton::TabButton ()
-	: AbstractButton(), m_vao(0)
+	: AbstractButton(), m_vao(0), m_text_length(0)
 	{
-		set_size(80, 12);
+		set_size(80, 14);
 		set_checkable(true);
 
-		InitOnce();
+		InitializeTabButton();
 	}
 
 	TabButton::TabButton (const String& text)
-	: AbstractButton(), m_vao(0)
+	: AbstractButton(), m_vao(0), m_text_length(0)
 	{
-		set_size(80, 20);
+		set_size(80, 14);
+		set_checkable(true);
 
-		InitOnce(text);
+		InitializeTabButton(text);
 	}
 
 	BlendInt::TabButton::~TabButton ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	void TabButton::SetText (const String& text)
+	{
+	}
+
+	void TabButton::SetFont (const Font& font)
+	{
 	}
 
 	void TabButton::Update (const UpdateRequest& request)
@@ -81,7 +90,7 @@ namespace BlendInt {
 									   0);
 					glBindVertexArray(0);
 					*/
-					GenerateBuffers(*size_p, m_inner_buffer.get(), m_outer_buffer.get());
+					GenerateTabButtonBuffers(*size_p, m_inner_buffer.get(), m_outer_buffer.get());
 
 					Refresh();
 					break;
@@ -167,8 +176,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		if(text().size()) {
-			font().Print(mvp, origin().x(), origin().y(), text(), text_length(), 0);
+		if(m_text.size()) {
+			m_font.PrintExt(mvp, text(), text_length(), 0);
 		}
 
 		return Accept;
@@ -179,7 +188,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void TabButton::InitOnce()
+	void TabButton::InitializeTabButton()
 	{
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
@@ -196,11 +205,11 @@ namespace BlendInt {
 						m_outer_buffer.get(),
 						0);
 						*/
-		GenerateBuffers(size(), m_inner_buffer.get(), m_outer_buffer.get());
+		GenerateTabButtonBuffers(size(), m_inner_buffer.get(), m_outer_buffer.get());
 		glBindVertexArray(0);
 	}
 
-	void TabButton::InitOnce(const String& text)
+	void TabButton::InitializeTabButton(const String& text)
 	{
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
@@ -208,7 +217,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
-	void TabButton::GenerateVertices (const Size& size, float border,
+	void TabButton::GenerateTabButtonVertices (const Size& size, float border,
 					std::vector<GLfloat>* inner, std::vector<GLfloat>* outer)
 	{
 		if((!inner) && (!outer))
@@ -262,14 +271,19 @@ namespace BlendInt {
 	{
 		return amplitude * sin((x + shift_x) / M_PI) + amplitude + shift_y;
 	}
+	
+	Size TabButton::GetPreferredSize () const
+	{
+		return Size(80, 14);
+	}
 
-	void TabButton::GenerateBuffers (const Size& size, GLArrayBuffer* inner_buffer,
+	void TabButton::GenerateTabButtonBuffers (const Size& size, GLArrayBuffer* inner_buffer,
 					GLArrayBuffer* outer_buffer)
 	{
 		std::vector<GLfloat> inner_vertices;
 		std::vector<GLfloat> outer_vertices;
 
-		GenerateVertices(size, 1.f, &inner_vertices, &outer_vertices);
+		GenerateTabButtonVertices(size, 1.f, &inner_vertices, &outer_vertices);
 
 		if(inner_buffer) {
 			if(!inner_buffer->IsBuffer()) {

@@ -72,7 +72,11 @@ namespace BlendInt {
 
 		void SetItalic (bool italic);
 
-		int Print (const glm::mat4& mvp, const String& string, size_t start = 0);
+		int PrintExt (const glm::mat4& mvp, const String& string, size_t start = 0) const;
+
+		int Print (const glm::mat4& mvp, const String& string, size_t start = 0) const;
+
+		int PrintExt (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0) const;
 
 		/**
 		 * @brief Print the text
@@ -82,11 +86,11 @@ namespace BlendInt {
 		 * @param start
 		 * @return The pixel width of the text
 		 */
-		int Print (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0);
+		int Print (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0) const;
 
-		int Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start = 0);
+		int Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start = 0) const;
 
-		int Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start = 0);
+		int Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start = 0) const;
 
 		int get_height () const
 		{
@@ -108,12 +112,12 @@ namespace BlendInt {
 			return m_cache->m_freetype.max_advance();
 		}
 
-		Rect get_text_outline (const String& string) const
+		Rect GetTextOutline (const String& string) const
 		{
-			return m_cache->get_text_outline(string);
+			return m_cache->GetTextOutline(string);
 		}
 
-		size_t GetTextWidth (const String& string, size_t length, size_t start = 0)
+		size_t GetTextWidth (const String& string, size_t length, size_t start = 0) const
 		{
 			return m_cache->GetTextWidth(string, length, start);
 		}
@@ -163,7 +167,25 @@ namespace BlendInt {
 			return m_color;
 		}
 
+		void set_pen (const Point& pos)
+		{
+			m_pen = pos;
+		}
+
+		void set_pen (int x, int y)
+		{
+			m_pen.set_x(x);
+			m_pen.set_y(y);
+		}
+
+		const Point& pen () const
+		{
+			return m_pen;
+		}
+
 	private:
+
+		Point m_pen;
 
 		/**
 		 * @brief the font family, e.g. "Droid Sans"

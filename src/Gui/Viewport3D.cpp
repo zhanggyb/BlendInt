@@ -266,6 +266,11 @@ namespace BlendInt {
 
 		return Accept;
 	}
+	
+	Size Viewport3D::GetPreferredSize () const
+	{
+		return Size(2560, 2560);
+	}
 
 	void Viewport3D::InitOnce ()
 	{

@@ -190,7 +190,7 @@ namespace BlendInt {
 #endif
 	}
 
-	bool TextureAtlas::Contain(wchar_t charcode)
+	bool TextureAtlas::Contain(wchar_t charcode) const
 	{
 		int offset = charcode - m_starting_charcode;
 

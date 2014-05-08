@@ -28,9 +28,9 @@
 
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/TextBuffer.hpp>
+#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Core/Margin.hpp>
 
 namespace BlendInt {
 
@@ -48,12 +48,6 @@ namespace BlendInt {
 
 		virtual ~AbstractButton ();
 
-		void SetText (const String& text);
-
-		Font& font () {return m_font;}
-
-		void SetFont (const Font& font);
-
 		void SetDown (bool down);
 
 		void SetCheckable (bool checkabel);
@@ -66,15 +60,16 @@ namespace BlendInt {
 
 		bool checkable () const {return m_status[ButtonCheckable];}
 
-		const String& text () const {return m_text;}
-
-		size_t text_length () const {return m_text_length;}
-
 		Cpp::EventRef<> clicked() {return m_clicked;}
 
 		Cpp::EventRef<bool> toggled() {return m_toggled;}
 
 		bool pressed () const {return m_status[ButtonPressed];}
+
+		static const Margin& DefaultButtonPadding ()
+		{
+			return default_button_padding;
+		}
 
 	protected:
 
@@ -101,46 +96,6 @@ namespace BlendInt {
 			m_status[ButtonChecked] = checked ? 1 : 0;
 		}
 
-		inline void set_text (const String& text)
-		{
-			m_text = text;
-		}
-
-		inline void set_font (const Font& font)
-		{
-			m_font = font;
-		}
-
-		void set_text_outline (const Rect& outline)
-		{
-			m_text_outline = outline;
-		}
-
-		const Rect& text_outline () const
-		{
-			return m_text_outline;
-		}
-
-		void set_origin (const Point& origin)
-		{
-			m_origin = origin;
-		}
-
-		void set_origin (int x, int y)
-		{
-			m_origin.set_x(x);
-			m_origin.set_y(y);
-		}
-
-		void set_text_length (size_t length)
-		{
-			m_text_length = length;
-		}
-
-		size_t GetValidTextSize ();
-
-		const Point& origin () const {return m_origin;}
-
 	private:
 
 		enum ButtonStatusIndex {
@@ -152,20 +107,6 @@ namespace BlendInt {
 		};
 
 		std::bitset<8> m_status;
-
-		size_t m_text_length;	// How many text to be printed, depends on the button size
-
-		Point m_origin;
-
-		// TextBuffer text_;
-		String m_text;
-
-		Font m_font;
-
-		/**
-		 * @brief Box in which hold the text
-		 */
-		Rect m_text_outline;
 
 		/**
 		 * @brief press event
@@ -185,6 +126,9 @@ namespace BlendInt {
 		Cpp::Event<> m_clicked;
 
 		Cpp::Event<bool> m_toggled;
+
+		static Margin default_button_padding;
+
 	};
 
 } /* namespace BIL */

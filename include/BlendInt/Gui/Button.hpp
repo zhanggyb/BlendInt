@@ -27,7 +27,6 @@
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/AbstractRoundButton.hpp>
-#include <BlendInt/Gui/RoundShapeBase.hpp>
 
 namespace BlendInt {
 
@@ -47,8 +46,6 @@ namespace BlendInt {
 		Button (const String& text);
 
 		virtual ~Button ();
-
-		virtual Size GetPreferredSize () const;
 
 	protected:
 

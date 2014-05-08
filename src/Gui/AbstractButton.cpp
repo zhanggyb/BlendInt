@@ -37,91 +37,16 @@
 
 namespace BlendInt {
 
+	Margin AbstractButton::default_button_padding = Margin(2, 2, 2, 2);
+
 	AbstractButton::AbstractButton () :
-			Widget(),
-			m_text_length(0)
+			Widget()
 	{
 	}
 
 	AbstractButton::~AbstractButton ()
 	{
 
-	}
-
-	void AbstractButton::SetText (const String& text)
-	{
-		if(text.empty()) {
-			Resize (90, 20);
-			return;
-		}
-
-		bool cal_width = true;
-
-		m_text = text;
-
-		m_text_outline = m_font.get_text_outline(m_text);
-
-		m_text_length = m_text.length();
-
-		if(size().height() < m_text_outline.height()) {
-			if(expand_y()) {
-				Resize(size().width(), m_text_outline.height());
-			} else {
-				m_text_length = 0;
-				cal_width = false;
-			}
-		}
-
-		if(size().width() < m_text_outline.width()) {
-			if(expand_x()) {
-				Resize(m_text_outline.width(), size().height());
-			} else {
-				if(cal_width) m_text_length = GetValidTextSize();
-			}
-		}
-
-		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
-		m_origin.set_x((size().width() - m_text_outline.width()) / 2);
-
-		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
-
-		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
-	}
-
-	void AbstractButton::SetFont (const Font& font)
-	{
-		bool cal_width = true;
-
-		m_font = font;
-
-		m_text_outline = m_font.get_text_outline(m_text);
-
-		m_text_length = m_text.length();
-
-		if(size().height() < m_text_outline.height()) {
-			if(expand_y()) {
-				Resize(size().width(), m_text_outline.height());
-			} else {
-				m_text_length = 0;
-				cal_width = false;
-			}
-		}
-
-		if(size().width() < m_text_outline.width()) {
-			if(expand_x()) {
-				Resize(m_text_outline.width(), size().height());
-			} else {
-				if(cal_width) m_text_length = GetValidTextSize();
-			}
-		}
-
-		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
-
-		m_origin.set_x((size().width() - m_text_outline.width()) / 2);
-
-		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
-
-		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
 
 	ResponseType AbstractButton::CursorEnterEvent(bool entered)
@@ -273,24 +198,4 @@ namespace BlendInt {
 		}
 	}
 
-	size_t AbstractButton::GetValidTextSize()
-	{
-		size_t width = 0;
-
-		size_t str_len = m_text.length();
-
-		width = m_font.GetTextWidth(m_text, str_len);
-
-		if(width > size().width()) {
-			while(str_len > 0) {
-				width = m_font.GetTextWidth(m_text, str_len);
-				if(width < size().width()) break;
-				str_len--;
-			}
-		}
-
-		return str_len;
-	}
-
 } /* namespace BlendInt */
-

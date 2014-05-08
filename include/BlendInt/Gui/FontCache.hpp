@@ -158,7 +158,7 @@ namespace BlendInt {
 		 * @param string
 		 * @return
 		 */
-		Rect get_text_outline (const String& string);
+		Rect GetTextOutline (const String& string);
 
 		/**
 		 * @brief Get the text width contains the given text with the length

@@ -44,13 +44,13 @@ namespace BlendInt {
 	ToggleButton::ToggleButton ()
 			: AbstractRoundButton(), m_vao(0)
 	{
-		InitOnce();
+		InitializeToggleButton();
 	}
 
 	ToggleButton::ToggleButton (const String& text)
 			: AbstractRoundButton(), m_vao(0)
 	{
-		InitOnce(text);
+		InitializeToggleButton(text);
 	}
 
 	ToggleButton::~ToggleButton ()
@@ -66,6 +66,7 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
+					UpdateTextPosition(*size_p, round_type(), radius(), text(), font());
 					glBindVertexArray(m_vao);
 					GenerateFormBuffer(
 									*size_p,
@@ -81,6 +82,7 @@ namespace BlendInt {
 
 				case FormRoundType: {
 					const int* type_p = static_cast<const int*>(request.data());
+					UpdateTextPosition(size(), *type_p, radius(), text(), font());
 					glBindVertexArray(m_vao);
 					GenerateFormBuffer(
 									size(),
@@ -96,6 +98,7 @@ namespace BlendInt {
 
 				case FormRoundRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
+					UpdateTextPosition(size(), round_type(), *radius_p, text(), font());
 					glBindVertexArray(m_vao);
 					GenerateFormBuffer(
 									size(),
@@ -185,18 +188,22 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		if(text().size()) {
-			font().Print(mvp, origin().x(), origin().y(), text(), text_length(), 0);
+			font().PrintExt(mvp, text(), text_length(), 0);
 		}
 
 		return Accept;
 	}
 
-	void ToggleButton::InitOnce ()
+	void ToggleButton::InitializeToggleButton ()
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);
 		set_checkable(true);
-		set_size(90, 20);
+
+		unsigned int h = font().get_height();
+
+		set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
+						h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
@@ -213,36 +220,31 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 
-	void ToggleButton::InitOnce (const String& text)
+	void ToggleButton::InitializeToggleButton (const String& text)
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);
 		set_checkable(true);
 		set_text(text);
 
-		bool cal_width = true;
-		set_text_outline(font().get_text_outline(text));
+		unsigned int h = font().get_height();
 
-		set_text_length(text.length());
+		if(text.empty()) {
+			set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
+							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+		} else {
+			set_text_length(text.length());
+			Rect text_outline = font().GetTextOutline(text);
 
-		if(size().height() < text_outline().height()) {
-			if(expand_y()) {
-				set_size(size().width(), text_outline().height());
-			} else {
-				set_text_length(0);
-				cal_width = false;
-			}
+			unsigned int width = text_outline.width() + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
+			unsigned int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
+
+			set_size(width, height);
+
+			set_pen((width - text_outline.width()) / 2,
+							(height - font().get_height()) / 2
+											+ std::abs(font().get_descender()));
 		}
-
-		if(size().width() < text_outline().width()) {
-			if(expand_x()) {
-				set_size(text_outline().width(), size().height());
-			} else {
-				if(cal_width) set_text_length(GetValidTextSize());
-			}
-		}
-
-		set_origin(0, (size().height() - font().get_height()) / 2 + std::abs(font().get_descender()));
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);

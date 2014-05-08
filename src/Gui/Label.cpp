@@ -65,7 +65,7 @@ namespace BlendInt {
 
 		m_text = text;
 
-		m_text_outline = m_font.get_text_outline(m_text);
+		m_text_outline = m_font.GetTextOutline(m_text);
 
 		m_length = m_text.length();
 
@@ -106,7 +106,7 @@ namespace BlendInt {
 
 		m_font = font;
 
-		m_text_outline = m_font.get_text_outline(m_text);
+		m_text_outline = m_font.GetTextOutline(m_text);
 
 		m_length = m_text.length();
 
@@ -283,7 +283,7 @@ namespace BlendInt {
 	{
 		bool cal_width = true;
 
-		m_text_outline = m_font.get_text_outline(m_text);
+		m_text_outline = m_font.GetTextOutline(m_text);
 
 		m_length = m_text.length();
 

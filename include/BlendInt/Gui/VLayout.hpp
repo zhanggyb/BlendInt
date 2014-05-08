@@ -36,7 +36,7 @@ namespace BlendInt {
 	{
 	public:
 
-		VLayoutExt (Context* context);
+		VLayoutExt (Context* context, int alignment = AlignCenter, int space = 2);
 
 		~VLayoutExt ();
 
@@ -50,11 +50,15 @@ namespace BlendInt {
 
 	private:
 
+		void Distribute ();
+
 		void Align ();
 
 		WidgetDeque m_widgets;
 
 		int m_alignment;
+
+		int m_space;
 	};
 
 	// ------------------------------------

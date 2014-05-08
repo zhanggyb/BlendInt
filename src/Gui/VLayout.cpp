@@ -36,9 +36,10 @@
 
 namespace BlendInt {
 
-	VLayoutExt::VLayoutExt (Context* context)
+	VLayoutExt::VLayoutExt (Context* context, int alignment, int space)
 	: AbstractLayoutExt(context),
-	  m_alignment(AlignCenter)
+	  m_alignment(alignment),
+	  m_space(space)
 	{
 
 	}
@@ -77,6 +78,13 @@ namespace BlendInt {
 	{
 		if(m_widgets.empty()) return;
 
+		Distribute();
+
+		Align();
+	}
+
+	void VLayoutExt::Distribute()
+	{
 		int x = context()->margin().left();
 		int y = context()->size().height() - context()->margin().top();
 
@@ -105,7 +113,7 @@ namespace BlendInt {
 				y -= average_height;
 				widget->SetPosition(widget->position().x(), y);
 				widget->Resize(widget->size().width(), average_height);
-				y -= 2;	// space
+				y -= m_space;	// space
 			}
 
 		} else {
@@ -136,31 +144,18 @@ namespace BlendInt {
 						y -= tmp;
 						widget->SetPosition(widget->position().x(), y);
 						widget->Resize(widget->size().width(), tmp);
-						y -= 2; // space
+						y -= m_space; // space
 					} else {
 						y -= averate_expand_height;
 						widget->SetPosition(widget->position().x(), y);
 						widget->Resize(widget->size().width(), averate_expand_height);
-						y -= 2;	// space
+						y -= m_space;	// space
 					}
 				}
 
 			}
 
 		}
-
-		/*
-		for(WidgetDeque::iterator it = m_widgets.begin(); it != m_widgets.end(); it++)
-		{
-			widget = *it;
-			preferred_size = widget->GetPreferredSize();
-			y -= preferred_size.height();
-			widget->SetPosition(x, y);
-			widget->Resize(width, preferred_size.height());
-			y -= 2;	// space
-		}
-		*/
-		Align();
 	}
 
 	void VLayoutExt::Align ()

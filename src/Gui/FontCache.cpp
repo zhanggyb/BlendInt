@@ -565,11 +565,12 @@ namespace BlendInt {
 		*/
 //	}
 
-	Rect FontCache::get_text_outline (const String& string)
+	Rect FontCache::GetTextOutline (const String& string)
 	{
 		if(!m_freetype.valid()) {
 			return Rect();
 		}
+
 		String::const_iterator it;
 		// String::const_iterator next;
 		int xmin = 0;

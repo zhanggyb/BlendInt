@@ -120,14 +120,79 @@ namespace BlendInt {
 		m_cache = FontCache::Create(m_name, m_size, Theme::instance->dpi(), m_bold, m_italic);
 	}
 
+	int Font::PrintExt (const glm::mat4& mvp, const String& string, size_t start) const
+	{
+		return PrintExt (mvp, string, string.length(), start);
+	}
 
-	int Font::Print (const glm::mat4& mvp, const String& string, size_t start)
+	int Font::Print (const glm::mat4& mvp, const String& string, size_t start) const
 	{
 		return Print (mvp, string, string.length(), start);
 	}
 
+	int Font::PrintExt (const glm::mat4& mvp, const String& string,
+	        size_t length, size_t start) const
+	{
+		if(length == 0)	return 0;
+
+		int advance = 0;	// the return value
+
+		glBindVertexArray(m_cache->m_vao);
+		glm::mat4 glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
+		RefPtr<GLSLProgram> program = ShaderManager::instance->text_program();
+
+		program->Use();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_cache->m_atlas.texture());
+
+		program->SetUniform1i("tex", 0);
+
+		glEnableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		// TODO: read text in TextureFont map
+		size_t str_length = std::min(string.length(), length);
+
+		// TODO: support left->right, and right->left text
+		String::const_iterator it;
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+		program->SetUniform4f("color", m_color.r() / 255.f,
+				m_color.g() / 255.f, m_color.b() / 255.f,
+				m_color.a() / 255.f);
+
+		it = string.begin();
+		std::advance(it, start);
+		int temp = 0;
+		for (size_t i = 0; i < str_length; it++, i++) {
+			temp = m_cache->m_atlas.glyph(*it).advance_x;
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
+			        &(m_cache->m_atlas.glyph(*it).vertexes[0]),
+			        GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+			glyph_pos = glm::translate(glyph_pos, glm::vec3(temp, 0, 0));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+			        glm::value_ptr(glyph_pos));
+			advance += temp;
+		}
+
+		glDisableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		program->Reset();
+		glBindVertexArray(0);
+
+		return advance;
+	}
+
 	int Font::Print (const glm::mat4& mvp, const String& string,
-	        size_t length, size_t start)
+	        size_t length, size_t start) const
 	{
 		if(length == 0)	return 0;
 
@@ -188,7 +253,7 @@ namespace BlendInt {
 	}
 
 	int Font::Print (const glm::mat4& mvp, float x, float y, const String& string,
-	        size_t start)
+	        size_t start) const
 	{
 		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.0));
 
@@ -196,7 +261,7 @@ namespace BlendInt {
 	}
 
 	int Font::Print (const glm::mat4& mvp, float x, float y, const String& string,
-	        size_t length, size_t start)
+	        size_t length, size_t start) const
 	{
 		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.0));
 

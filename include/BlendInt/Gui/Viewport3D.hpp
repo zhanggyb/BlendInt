@@ -53,6 +53,8 @@ namespace BlendInt {
 
 		void Zoom (float factor);
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual ResponseType CursorEnterEvent (bool entered);
