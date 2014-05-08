@@ -30,7 +30,7 @@ TEST_F(HLayoutTest1, Add1)
     context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -68,7 +68,7 @@ TEST_F(HLayoutTest1, Add2)
     context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 	hlayout->Resize(400, 200);
 
@@ -107,7 +107,7 @@ TEST_F(HLayoutTest1, Add3)
     context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 	hlayout->Resize(400, 200);
 
@@ -145,7 +145,7 @@ TEST_F(HLayoutTest1, Add4)
     context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 	hlayout->Resize(400, 200);
 
@@ -186,7 +186,7 @@ TEST_F(HLayoutTest1, Add5)
     context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 	hlayout->Resize(600, 200);
 
@@ -238,7 +238,7 @@ TEST_F(HLayoutTest1, Add6)
     context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 	hlayout->Resize(50, 200);
 
@@ -283,7 +283,7 @@ TEST_F(HLayoutTest1, Add7)
     context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -330,7 +330,7 @@ TEST_F(HLayoutTest1, Resize1)
 
 	// add test code here
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -370,7 +370,7 @@ TEST_F(HLayoutTest1, Resize2)
 
 	// add test code here
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -408,7 +408,7 @@ TEST_F(HLayoutTest1, Resize3)
 
 	// add test code here
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -452,7 +452,7 @@ TEST_F(HLayoutTest1, SetMargin1)
 
 	// add test code here
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -496,7 +496,7 @@ TEST_F(HLayoutTest1, SetSpace1)
 
 	// add test code here
 
-	HLayout* hlayout = new HLayout;
+	HBox* hlayout = new HBox;
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;

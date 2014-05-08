@@ -71,7 +71,7 @@ namespace BlendInt {
 
 		void ClearSubWidgets ();
 
-		void FillSubWidgetsAveragely (const Point& pos, const Size& out_size,
+		void FillSubWidgetsAveragely (const Point& out_pos, const Size& out_size,
 						const Margin& margin, Orientation orientation,
 						int alignment, int space);
 

@@ -29,25 +29,68 @@
 
 #include <BlendInt/Core/RefPtr.hpp>
 
-#include <BlendInt/Gui/AbstractLayout.hpp>
+#include <BlendInt/Gui/AbstractDequeContainer.hpp>
 
 namespace BlendInt {
 
-	class HLayout: public AbstractLayout
+	class HBox: public AbstractDequeContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(HLayout);
+		DISALLOW_COPY_AND_ASSIGN(HBox);
 
 	public:
 
-		explicit HLayout(int align = AlignHorizontalCenter);
+		HBox(int align = AlignHorizontalCenter, int space = 4);
 
-		virtual ~HLayout ();
+		virtual ~HBox ();
+
+		bool Add (AbstractWidget* obj);
+
+		/**
+		 * @brief remove the object from layout
+		 * @param widget
+		 * @return
+		 *
+		 * @warning: after removing from layout, the drawable object will bind to nothing, it must be deleted manually
+		 */
+		bool Remove (AbstractWidget* object);
+
+		int alignment () const
+		{
+			return m_alignment;
+		}
+
+		void SetAlignment (int align);
+
+		void SetSpace (int space);
+
+		int space () const
+		{
+			return m_space;
+		}
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
+
+		virtual bool UpdateTest (const UpdateRequest& request);
 
 		virtual void Update (const UpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		/**
 		 * @brief Add a Widget object into this layout
@@ -70,12 +113,12 @@ namespace BlendInt {
 		/**
 		 * @brief scan, distribute and align the items
 		 */
-		void MakeLayout (const Size* size, const Margin* margin, int space);
+		void FillSubWidgetsInHBox (const Size& size, const Margin& margin, int space);
 
 		/**
 		 * @brief distribute horizontally with preferred size
 		 */
-		void DistributeWithPreferredWidth (const Margin* margin, int space);
+		void DistributeWithPreferredWidth (int x, int space, const std::deque<Size>* list);
 
 		/**
 		 * @brief distribute horizontally with small size
@@ -121,6 +164,10 @@ namespace BlendInt {
 		 * @param[out] prefer the layout preferred size
 		 */
 		void GetSizeHint (bool count_margin, bool count_space, Size* size, Size* min, Size* prefer);
+
+		int m_alignment;
+
+		int m_space;
 
 	};
 

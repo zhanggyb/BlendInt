@@ -52,7 +52,7 @@ namespace BlendInt {
 		m_open->SetExpandX(false);
 		//m_open->SetText("Open");
 
-		HLayout* dir_layout = Manage(new HLayout);
+		HBox* dir_layout = Manage(new HBox);
 		dir_layout->SetMargin(0, 0, 0, 0);
 		dir_layout->Add(m_path_entry);
 		dir_layout->Add(m_open);
@@ -63,7 +63,7 @@ namespace BlendInt {
 		m_cancel->SetExpandX(false);
 		//m_cancel->SetText("Cancel");
 
-		HLayout* file_layout = Manage(new HLayout);
+		HBox* file_layout = Manage(new HBox);
 		file_layout->SetMargin(0, 0, 0, 0);
 		file_layout->Add(m_file_entry);
 		file_layout->Add(m_cancel);

@@ -45,7 +45,7 @@ TEST_F(VLayoutTest1, Add1)
 	Widget* widget2 = Manage(new Widget);
 	Widget* widget3 = Manage(new Widget);
 
-	HLayout* hlayout = Manage(new HLayout);
+	HBox* hlayout = Manage(new HBox);
 	hlayout->Add(widget2);
 	hlayout->Add(widget3);
 

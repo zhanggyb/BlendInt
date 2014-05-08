@@ -22,7 +22,7 @@ TEST_F(HLayoutTest1, Mix1)
 #endif
 	Interface::instance->SetCurrentContext(context);
 
-	HLayout* hlayout = Manage(new HLayout);
+	HBox* hlayout = Manage(new HBox);
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = Manage(new Widget);

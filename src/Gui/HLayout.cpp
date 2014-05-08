@@ -35,17 +35,105 @@
 
 namespace BlendInt {
 
-	HLayout::HLayout (int align)
-			: AbstractLayout()
+	HBox::HBox (int align, int space)
+	: AbstractDequeContainer(), m_alignment(align), m_space(space)
 	{
-		set_alignment(align);
+		set_size (200, 200);
 	}
 
-	HLayout::~HLayout ()
+	HBox::~HBox ()
 	{
 	}
 
-	void HLayout::Update (const UpdateRequest& request)
+	bool HBox::Add (AbstractWidget* obj)
+	{
+		bool ret = false;
+
+		if(AddSubWidget(obj)) {
+
+			FillSubWidgetsAveragely(position(), size(), margin(), Horizontal, m_alignment, m_space);
+
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	bool HBox::Remove (AbstractWidget* object)
+	{
+		bool ret = false;
+
+		if(RemoveSubWidget(object)) {
+
+			FillSubWidgetsAveragely(position(), size(), margin(), Horizontal, m_alignment, m_space);
+
+			ret = true;
+
+		}
+
+		return ret;
+	}
+
+	void HBox::SetAlignment (int align)
+	{
+	}
+
+	void HBox::SetSpace (int space)
+	{
+	}
+
+	Size BlendInt::HBox::GetPreferredSize () const
+	{
+		Size preferred_size;
+
+		if(sub_widget_size() == 0) {
+			preferred_size.set_width(200);
+			preferred_size.set_height(200);
+		} else {
+
+			AbstractWidget* widget = 0;
+			Size tmp_size;
+
+			preferred_size.set_width(-m_space);
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			{
+				widget = *it;
+				tmp_size = widget->GetPreferredSize();
+
+				preferred_size.add_width(tmp_size.width() + m_space);
+				preferred_size.set_height(std::max(preferred_size.height(), tmp_size.height()));
+			}
+
+			preferred_size.add_width(margin().left() + margin().right());
+			preferred_size.add_height(margin().top() + margin().bottom());
+		}
+
+		return preferred_size;
+	}
+
+	bool HBox::UpdateTest (const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case SubWidgetSize:
+					return false;	// DO not allow sub widget geometry reset outside
+
+				case SubWidgetPosition:
+					return false;
+
+				default:
+					return AbstractDequeContainer::UpdateTest(request);
+
+			}
+
+		} else {
+			return false;
+		}
+	}
+
+	void HBox::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -63,23 +151,23 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					if(sub_widget_size())
-						MakeLayout(size_p, &margin(), space());
+					//if(sub_widget_size())
+						//FillSubWidgetsInHBox(size_p, &margin(), space());
 
 					break;
 				}
 
 				case ContainerMargin: {
 					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					if(sub_widget_size())
-						MakeLayout(&size(), margin_p, space());
+					//if(sub_widget_size())
+						//FillSubWidgetsInHBox(&size(), margin_p, space());
 					break;
 				}
 
 				case LayoutPropertySpace: {
 					const int* space_p = static_cast<const int*>(request.data());
-					if(sub_widget_size())
-						MakeLayout(&size(), &margin(), *space_p);
+					//if(sub_widget_size())
+						//FillSubWidgetsInHBox(&size(), &margin(), *space_p);
 					break;
 				}
 
@@ -96,12 +184,49 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType HLayout::Draw (const RedrawEvent& event)
+	ResponseType HBox::Draw (const RedrawEvent& event)
 	{
 		return IgnoreAndContinue;
 	}
 
-	void HLayout::AddItem (AbstractWidget* object)
+	ResponseType HBox::CursorEnterEvent (bool entered)
+	{
+		return IgnoreAndContinue;
+	}
+
+	ResponseType HBox::KeyPressEvent (const KeyEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
+
+	ResponseType HBox::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
+
+	ResponseType HBox::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
+
+	ResponseType HBox::MousePressEvent (const MouseEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
+
+	ResponseType HBox::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
+
+	ResponseType HBox::MouseMoveEvent (const MouseEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
+
+	void HBox::AddItem (AbstractWidget* object)
 	{
 		/*
 		// don't fire events when adding a widget into a layout
@@ -155,7 +280,7 @@ namespace BlendInt {
 		*/
 	}
 
-	void HLayout::RemoveItem (AbstractWidget* object)
+	void HBox::RemoveItem (AbstractWidget* object)
 	{
 		deactivate_events();
 
@@ -178,16 +303,40 @@ namespace BlendInt {
 			}
 		}
 
-		MakeLayout(&size(), &margin(), space());
+		//FillSubWidgetsInHBox(&size(), &margin(), space());
 
 		activate_events();
 
 		RemoveSubWidget(object);
 	}
 
-	void HLayout::MakeLayout (const Size* size, const Margin* margin,
+	void HBox::FillSubWidgetsInHBox (const Size& size, const Margin& margin,
 	        int space)
 	{
+		std::deque<Size> size_list;
+		unsigned int max_preferred_width = 0;
+
+		unsigned int width = size.width() - margin.left() - margin.right();
+		unsigned int height = size.height() - margin.top() - margin.bottom();
+
+		Size tmp;
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			tmp = (*it)->GetPreferredSize();
+			size_list.push_back(tmp);
+			max_preferred_width += tmp.width();
+		}
+
+		unsigned int preferred_space_width = max_preferred_width + (sub_widget_size() - 1) * m_space;
+
+		if(preferred_space_width == width) {
+			//DistributeWithPreferredWidth(margin, space);
+		} else if(preferred_space_width < width) {
+			//
+		} else {
+
+		}
+
 		/*
 		if (size->width() == preferred_size().width()) {
 			DistributeWithPreferredWidth(margin, space);			// layout along x with preferred size
@@ -201,19 +350,23 @@ namespace BlendInt {
 		*/
 	}
 
-	void HLayout::DistributeWithPreferredWidth(const Margin* margin, int space)
+	void HBox::DistributeWithPreferredWidth(int x, int space, const std::deque<Size>* list)
 	{
-		int x = position().x() + margin->left();
+		std::deque<Size>::const_iterator s_it;
+		WidgetDeque::iterator it;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(s_it = list->begin(), it = sub_widgets()->begin(); it != sub_widgets()->end(); s_it++, it++)
 		{
 			//ResizeSubWidget((*it), (*it)->preferred_size().width(), (*it)->size().height());
+			ResizeSubWidget((*it), s_it->width(), (*it)->size().height());
+			SetSubWidgetPosition(*it, x, (*it)->position().y());
+			x += s_it->width() + space;
 		}
 
 		Distribute(space, x);
 	}
 
-	void HLayout::DistributeWithSmallWidth(const Size* size, const Margin* margin, int space)
+	void HBox::DistributeWithSmallWidth(const Size* size, const Margin* margin, int space)
 	{
 		/*
 		unsigned int min_expd_width = GetAllMinimalExpandableWidth();
@@ -299,7 +452,7 @@ namespace BlendInt {
 		*/
 	}
 
-	void HLayout::DistributeWithLargeWidth(const Size* size, const Margin* margin, int space)
+	void HBox::DistributeWithLargeWidth(const Size* size, const Margin* margin, int space)
 	{
 		/*
 		unsigned int fixed_width = GetAllFixedWidth();
@@ -387,7 +540,7 @@ namespace BlendInt {
 	*/
 	}
 
-	void HLayout::Distribute(int space, int start)
+	void HBox::Distribute(int space, int start)
 	{
 		start -= space;	// subtract one space to make sure no space if only 1 child in layout
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
@@ -399,7 +552,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HLayout::Align(const Size* size, const Margin* margin)
+	void HBox::Align(const Size* size, const Margin* margin)
 	{
 		int y = position().y() + margin->bottom();
 
@@ -431,7 +584,7 @@ namespace BlendInt {
 		}
 	}
 
-	unsigned int HLayout::AdjustExpandableWidth(std::list<AbstractWidget*>* item_list_p, unsigned int width_plus)
+	unsigned int HBox::AdjustExpandableWidth(std::list<AbstractWidget*>* item_list_p, unsigned int width_plus)
 	{
 		if(!item_list_p) return width_plus;
 		if(item_list_p->size() == 0) return width_plus;
@@ -461,7 +614,7 @@ namespace BlendInt {
 		return remainder;
 	}
 
-	unsigned int HLayout::AdjustMinimalWidth(std::list<AbstractWidget*>* item_list_p, unsigned int width_plus)
+	unsigned int HBox::AdjustMinimalWidth(std::list<AbstractWidget*>* item_list_p, unsigned int width_plus)
 	{
 		if(!item_list_p) return width_plus;
 		if(item_list_p->size() == 0) return width_plus;
@@ -491,7 +644,7 @@ namespace BlendInt {
 		return remainder;
 	}
 
-	unsigned int HLayout::GetAllMinimalExpandableWidth()
+	unsigned int HBox::GetAllMinimalExpandableWidth()
 	{
 		unsigned int width = 0;
 
@@ -506,7 +659,7 @@ namespace BlendInt {
 		return width;
 	}
 
-	unsigned int HLayout::GetAllMaximalExpandableWidth()
+	unsigned int HBox::GetAllMaximalExpandableWidth()
 	{
 		unsigned int width = 0;
 
@@ -521,7 +674,7 @@ namespace BlendInt {
 		return width;
 	}
 
-	unsigned int HLayout::GetAllFixedWidth()
+	unsigned int HBox::GetAllFixedWidth()
 	{
 		unsigned int width = 0;
 
@@ -534,7 +687,7 @@ namespace BlendInt {
 		return width;
 	}
 	
-	unsigned int HLayout::CountHExpandableNumber ()
+	unsigned int HBox::CountHExpandableNumber ()
 	{
 		unsigned int num = 0;
 
@@ -548,7 +701,7 @@ namespace BlendInt {
 		return num;
 	}
 
-	void HLayout::GetSizeHint (bool count_margin,
+	void HBox::GetSizeHint (bool count_margin,
 										  bool count_space,
 										  Size* size,
 										  Size* min,
@@ -608,4 +761,3 @@ namespace BlendInt {
 	}
 
 }
-

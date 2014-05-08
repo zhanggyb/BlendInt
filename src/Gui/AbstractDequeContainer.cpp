@@ -214,23 +214,23 @@ namespace BlendInt {
 		RemoveSubWidget(widget);
 	}
 
-	void AbstractDequeContainer::FillSubWidgetsAveragely (const Point& pos,
+	void AbstractDequeContainer::FillSubWidgetsAveragely (const Point& out_pos,
 					const Size& out_size, const Margin& margin,
 					Orientation orientation, int alignment, int space)
 	{
 		if(m_sub_widgets->empty()) return;
 
-		int x = pos.x() + margin.left();
+		int x = out_pos.x() + margin.left();
 		int y = 0;
 		unsigned int width = out_size.width() - margin.left() - margin.right();
 		unsigned int height = out_size.height() - margin.top() - margin.bottom();
 
 		if(orientation == Horizontal) {
-			y = pos.y() + margin.bottom();
+			y = out_pos.y() + margin.bottom();
 			DistributeHorizontally(x, width, space);
 			AlignHorizontally(y, height, alignment);
 		} else {
-			y = pos.y() + out_size.height() - margin.top();
+			y = out_pos.y() + out_size.height() - margin.top();
 			DistributeVertically(y, height, space);
 			AlignVertically(x, width, alignment);
 		}
