@@ -123,12 +123,12 @@ namespace BlendInt {
 		/**
 		 * @brief distribute horizontally with small size
 		 */
-		void DistributeWithSmallWidth (const Size* size, const Margin* margin, int space);
+		void DistributeWithSmallWidth (int x, int space, const std::deque<Size>* list);
 
 		/**
 		 * @brief distribute horizontally with large size
 		 */
-		void DistributeWithLargeWidth (const Size* size, const Margin* margin, int space);
+		void DistributeWithLargeWidth (int x, int space, const std::deque<Size>* list);
 
 		void Distribute (int space, int start = 0);
 

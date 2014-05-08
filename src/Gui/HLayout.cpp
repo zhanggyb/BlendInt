@@ -31,6 +31,7 @@
 #endif
 #endif  // __UNIX__
 
+#include <boost/smart_ptr.hpp>
 #include <BlendInt/Gui/HLayout.hpp>
 
 namespace BlendInt {
@@ -87,8 +88,10 @@ namespace BlendInt {
 		Size preferred_size;
 
 		if(sub_widget_size() == 0) {
+
 			preferred_size.set_width(200);
 			preferred_size.set_height(200);
+
 		} else {
 
 			AbstractWidget* widget = 0;
@@ -98,10 +101,13 @@ namespace BlendInt {
 			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
-				tmp_size = widget->GetPreferredSize();
 
-				preferred_size.add_width(tmp_size.width() + m_space);
-				preferred_size.set_height(std::max(preferred_size.height(), tmp_size.height()));
+				if(widget->visiable()) {
+					tmp_size = widget->GetPreferredSize();
+
+					preferred_size.add_width(tmp_size.width() + m_space);
+					preferred_size.set_height(std::max(preferred_size.height(), tmp_size.height()));
+				}
 			}
 
 			preferred_size.add_width(margin().left() + margin().right());
@@ -313,8 +319,10 @@ namespace BlendInt {
 	void HBox::FillSubWidgetsInHBox (const Size& size, const Margin& margin,
 	        int space)
 	{
-		std::deque<Size> size_list;
-		unsigned int max_preferred_width = 0;
+		boost::scoped_ptr<std::deque<Size> > visible_preferred_sizes(new std::deque<Size>);
+
+		unsigned int visible_preferred_width_sum = 0;
+		int visible_num = 0;
 
 		unsigned int width = size.width() - margin.left() - margin.right();
 		unsigned int height = size.height() - margin.top() - margin.bottom();
@@ -322,51 +330,49 @@ namespace BlendInt {
 		Size tmp;
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
-			tmp = (*it)->GetPreferredSize();
-			size_list.push_back(tmp);
-			max_preferred_width += tmp.width();
+			if ((*it)->visiable()) {
+				tmp = (*it)->GetPreferredSize();
+				visible_preferred_sizes->push_back(tmp);
+				visible_preferred_width_sum += tmp.width();
+				visible_num++;
+			}
 		}
 
-		unsigned int preferred_space_width = max_preferred_width + (sub_widget_size() - 1) * m_space;
+		if(visible_num == 0) return;
+
+		unsigned int preferred_space_width =  visible_preferred_width_sum + (visible_num - 1) * m_space;
 
 		if(preferred_space_width == width) {
-			//DistributeWithPreferredWidth(margin, space);
+			DistributeWithPreferredWidth(position().x(), space, visible_preferred_sizes.get());
 		} else if(preferred_space_width < width) {
-			//
+			DistributeWithSmallWidth(position().x(), space, visible_preferred_sizes.get());
 		} else {
-
+			DistributeWithLargeWidth(position().x(), space, visible_preferred_sizes.get());
 		}
 
-		/*
-		if (size->width() == preferred_size().width()) {
-			DistributeWithPreferredWidth(margin, space);			// layout along x with preferred size
-		} else if (size->width() < preferred_size().width()) {
-			DistributeWithSmallWidth(size, margin, space);			// layout along x with small size
-		} else {
-			DistributeWithLargeWidth(size, margin, space);			// layout along x with large size
-		}
-
-		Align (size, margin);
-		*/
+		//Align (size, margin);
 	}
 
-	void HBox::DistributeWithPreferredWidth(int x, int space, const std::deque<Size>* list)
+	void HBox::DistributeWithPreferredWidth(int x, int space, const std::deque<Size>* size_deque)
 	{
-		std::deque<Size>::const_iterator s_it;
-		WidgetDeque::iterator it;
+		std::deque<Size>::const_iterator size_it = size_deque->begin();
+		WidgetDeque::iterator widget_it = sub_widgets()->begin();
 
-		for(s_it = list->begin(), it = sub_widgets()->begin(); it != sub_widgets()->end(); s_it++, it++)
-		{
-			//ResizeSubWidget((*it), (*it)->preferred_size().width(), (*it)->size().height());
-			ResizeSubWidget((*it), s_it->width(), (*it)->size().height());
-			SetSubWidgetPosition(*it, x, (*it)->position().y());
-			x += s_it->width() + space;
+		while (widget_it != sub_widgets()->end()) {
+
+			if((*widget_it)->visiable()) {
+
+				ResizeSubWidget((*widget_it), size_it->width(), (*widget_it)->size().height());
+				SetSubWidgetPosition(*widget_it, x, (*widget_it)->position().y());
+				x += size_it->width() + space;
+
+				size_it++;
+			}
+
 		}
-
-		Distribute(space, x);
 	}
 
-	void HBox::DistributeWithSmallWidth(const Size* size, const Margin* margin, int space)
+	void HBox::DistributeWithSmallWidth(int x, int space, const std::deque<Size>* list)
 	{
 		/*
 		unsigned int min_expd_width = GetAllMinimalExpandableWidth();
@@ -452,7 +458,7 @@ namespace BlendInt {
 		*/
 	}
 
-	void HBox::DistributeWithLargeWidth(const Size* size, const Margin* margin, int space)
+	void HBox::DistributeWithLargeWidth(int x, int space, const std::deque<Size>* list)
 	{
 		/*
 		unsigned int fixed_width = GetAllFixedWidth();
