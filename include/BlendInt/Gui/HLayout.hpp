@@ -43,7 +43,7 @@ namespace BlendInt {
 
 		virtual ~HBox ();
 
-		bool Add (AbstractWidget* obj);
+		bool Add (AbstractWidget* widget);
 
 		/**
 		 * @brief remove the object from layout
@@ -52,7 +52,7 @@ namespace BlendInt {
 		 *
 		 * @warning: after removing from layout, the drawable object will bind to nothing, it must be deleted manually
 		 */
-		bool Remove (AbstractWidget* object);
+		bool Remove (AbstractWidget* widget);
 
 		int alignment () const
 		{
@@ -113,12 +113,34 @@ namespace BlendInt {
 		/**
 		 * @brief scan, distribute and align the items
 		 */
-		void FillSubWidgetsInHBox (const Size& size, const Margin& margin, int space);
+		void FillSubWidgetsInHBox (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+
+		void FillSubWidgetsInHBox (const Point& pos, const Size& size, int space);
+
+		void FillSubWidgetsProportionally (int x, int y, unsigned int width, unsigned int height, int space);
 
 		/**
 		 * @brief distribute horizontally with preferred size
 		 */
-		void DistributeWithPreferredWidth (int x, int space, const std::deque<Size>* list);
+		void DistributeWithPreferredWidth (int x, int space,
+						const std::deque<Size>* expandable_prefers,
+						const std::deque<Size>* unexpandable_prefers);
+
+		void DistributeWithSmallWidth (int x,
+						unsigned int width,
+						int space,
+						const std::deque<Size>* expandable_prefers,
+						unsigned int expandable_prefer_sum,
+						const std::deque<Size>* unexpandable_prefers,
+						unsigned int unexpandable_prefer_sum);
+
+		void DistributeWithLargeWidth (int x,
+						unsigned int width,
+						int space,
+						const std::deque<Size>* expandable_prefers,
+						unsigned int expandable_prefer_sum,
+						const std::deque<Size>* unexpandable_prefers,
+						unsigned int unexpandable_prefer_sum);
 
 		/**
 		 * @brief distribute horizontally with small size
@@ -131,6 +153,8 @@ namespace BlendInt {
 		void DistributeWithLargeWidth (int x, int space, const std::deque<Size>* list);
 
 		void Distribute (int space, int start = 0);
+
+		void Align (int y, unsigned int height);
 
 		/**
 		 * @brief align horizontally

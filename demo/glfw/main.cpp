@@ -61,19 +61,25 @@ int main(int argc, char* argv[])
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
-	TextEntry* input = Manage(new TextEntry);
-	input->set_name("Textentry");
+	HBox* hbox = Manage(new HBox);
+	hbox->set_name("HBox");
+	hbox->SetPosition(100, 100);
+	hbox->Resize(400, 100);
 
-	input->SetPosition(200, 200);
+	MenuButton* menubtn = Manage(new MenuButton("Menu"));
+	menubtn->SetPosition(100, 50);
 
-	Button* btn = Manage(new Button("Hello"));
+	Button* btn1 = Manage(new Button);
+	btn1->SetPosition(100, 200);
 
-	btn->SetPosition(100, 100);
-	//btn->Resize(200, 20);
+	Button* btn2 = Manage(new Button);
+	btn2->SetPosition(100, 100);
 
-	context->Add(btn);
+	context->Add(hbox);
 
-	context->Add(input);
+	hbox->Add(menubtn);
+	hbox->Add(btn1);
+	hbox->Add(btn2);
 
 	RunLoop(win);
 
