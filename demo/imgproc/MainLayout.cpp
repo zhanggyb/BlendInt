@@ -12,7 +12,6 @@ MainLayout::MainLayout ()
 	: m_menubar(0), m_toolbar(0), m_imgview(0)
 {
 	set_margin(4, 4, 4, 4);
-	set_space(4);
 	InitOnce();
 }
 

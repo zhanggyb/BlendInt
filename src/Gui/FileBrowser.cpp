@@ -41,7 +41,7 @@ namespace BlendInt {
 
 	void FileBrowser::InitializeFileBrowser ()
 	{
-		m_layout = Manage(new VLayout);
+		m_layout = Manage(new VBox);
 		m_layout->SetMargin(2, 2, 2, 2);
 		m_layout->SetSpace(4);
 

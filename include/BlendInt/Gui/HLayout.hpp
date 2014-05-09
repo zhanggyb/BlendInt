@@ -92,22 +92,6 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		/**
-		 * @brief Add a Widget object into this layout
-		 * @param object
-		 *
-		 * Change and lock the object geometry, and put this widget into HorizontalLayout
-		 *
-		 */
-		virtual void AddItem (AbstractWidget* object);
-
-		virtual void RemoveItem (AbstractWidget* object);
-
-		/**
-		 * @brief Count how many widgets are expandable along x
-		 */
-		unsigned int CountHExpandableNumber ();
-
 	private:
 
 		/**
@@ -142,52 +126,7 @@ namespace BlendInt {
 						const std::deque<Size>* unexpandable_prefers,
 						unsigned int unexpandable_prefer_sum);
 
-		/**
-		 * @brief distribute horizontally with small size
-		 */
-		void DistributeWithSmallWidth (int x, int space, const std::deque<Size>* list);
-
-		/**
-		 * @brief distribute horizontally with large size
-		 */
-		void DistributeWithLargeWidth (int x, int space, const std::deque<Size>* list);
-
-		void Distribute (int space, int start = 0);
-
 		void Align (int y, unsigned int height);
-
-		/**
-		 * @brief align horizontally
-		 */
-		void Align (const Size* size, const Margin* margin);
-
-		unsigned int AdjustExpandableWidth (std::list<AbstractWidget*>* item_list_p, unsigned int width_plus);
-
-		unsigned int AdjustMinimalWidth (std::list<AbstractWidget*>* item_list_p, unsigned int width_plus);
-
-		/**
-		 * @brief calculate and return the minimal width of the expandable items
-		 * @return
-		 */
-		unsigned int GetAllMinimalExpandableWidth ();
-
-		unsigned int GetAllMaximalExpandableWidth ();
-
-		/**
-		 * @brief calculate and return the width of fixed items
-		 * @return
-		 */
-		unsigned int GetAllFixedWidth ();
-
-		/**
-		 * @brief scan the children and get the total size hint
-		 * @param[in] if count margin
-		 * @param[in] if count space
-		 * @param[out] size the layout size
-		 * @param[out] min the layout minimal size
-		 * @param[out] prefer the layout preferred size
-		 */
-		void GetSizeHint (bool count_margin, bool count_space, Size* size, Size* min, Size* prefer);
 
 		int m_alignment;
 

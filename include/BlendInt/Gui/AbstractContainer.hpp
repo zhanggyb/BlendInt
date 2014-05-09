@@ -182,7 +182,7 @@ namespace BlendInt {
 
 		virtual void BroadcastUpdate (const UpdateRequest& request);
 
-		virtual bool AddSubWidget (AbstractWidget* widget) = 0;
+		//virtual bool AddSubWidget (AbstractWidget* widget) = 0;
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
 
@@ -201,10 +201,12 @@ namespace BlendInt {
 			return container->RemoveSubWidget(sub);
 		}
 
+		/*
 		static bool AddSubWidget (AbstractContainer* container, AbstractWidget* sub)
 		{
 			return container->AddSubWidget(sub);
 		}
+		*/
 
 		static void SetContainer (AbstractWidget* widget, AbstractContainer* container)
 		{

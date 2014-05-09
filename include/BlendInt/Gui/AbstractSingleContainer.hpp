@@ -52,7 +52,7 @@ namespace BlendInt {
 
 		void FillSubWidget (int x, int y, unsigned w, unsigned h);
 
-		virtual bool AddSubWidget (AbstractWidget* widget);
+		bool SetSubWidget (AbstractWidget* widget);
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
 

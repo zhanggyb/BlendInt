@@ -29,7 +29,7 @@ TEST_F(HLayoutTest1, Mix1)
 	Widget* widget2 = Manage(new Widget);
 	Widget* widget3 = Manage(new Widget);
 
-	VLayout* vlayout = Manage(new VLayout);
+	VBox* vlayout = Manage(new VBox);
 	vlayout->Add(widget2);
 	vlayout->Add(widget3);
 

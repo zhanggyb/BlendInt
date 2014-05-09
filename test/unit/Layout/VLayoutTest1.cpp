@@ -37,7 +37,7 @@ TEST_F(VLayoutTest1, Add1)
 #endif
 	Interface::instance->SetCurrentContext(context);
 
-	VLayout* vlayout = Manage(new VLayout);
+	VBox* vlayout = Manage(new VBox);
 
 	vlayout->SetPosition(100, 100);
 

@@ -97,7 +97,7 @@ namespace BlendInt {
 		}
 	}
 	
-	bool AbstractSingleContainer::AddSubWidget (AbstractWidget* widget)
+	bool AbstractSingleContainer::SetSubWidget (AbstractWidget* widget)
 	{
 		if(!widget)
 			return false;

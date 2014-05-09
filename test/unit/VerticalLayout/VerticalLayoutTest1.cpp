@@ -26,7 +26,7 @@ TEST_F(VLayoutTest1, Add1)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add1", 640, 480);
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -58,7 +58,7 @@ TEST_F(VLayoutTest1, Add2)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add2", 640, 480);
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 400);
 
@@ -91,7 +91,7 @@ TEST_F(VLayoutTest1, Add3)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add3", 640, 480);
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 400);
 
@@ -123,7 +123,7 @@ TEST_F(VLayoutTest1, Add4)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add4", 640, 480);
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 400);
 
@@ -158,7 +158,7 @@ TEST_F(VLayoutTest1, Add5)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add5", 640, 480);
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 600);
 
@@ -204,7 +204,7 @@ TEST_F(VLayoutTest1, Add6)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add6", 640, 480);
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 	vlayout->Resize(100, 50);
 
@@ -243,7 +243,7 @@ TEST_F(VLayoutTest1, Add7)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add7", 640, 480);
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -284,7 +284,7 @@ TEST_F(VLayoutTest1, Resize1)
 
 	// add test code here
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -318,7 +318,7 @@ TEST_F(VLayoutTest1, Resize2)
 
 	// add test code here
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -350,7 +350,7 @@ TEST_F(VLayoutTest1, Resize3)
 
 	// add test code here
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -388,7 +388,7 @@ TEST_F(VLayoutTest1, SetMargin1)
 
 	// add test code here
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
@@ -426,7 +426,7 @@ TEST_F(VLayoutTest1, SetSpace1)
 
 	// add test code here
 
-	VLayout* vlayout = new VLayout;
+	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;

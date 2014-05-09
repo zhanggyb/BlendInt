@@ -61,10 +61,10 @@ int main(int argc, char* argv[])
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
-	HBox* hbox = Manage(new HBox);
+	VBox* hbox = Manage(new VBox);
 	hbox->set_name("HBox");
 	hbox->SetPosition(100, 100);
-	hbox->Resize(400, 100);
+	hbox->Resize(50, 100);
 
 	MenuButton* menubtn = Manage(new MenuButton("Menu"));
 	menubtn->SetPosition(100, 50);

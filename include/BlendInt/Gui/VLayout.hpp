@@ -63,88 +63,99 @@ namespace BlendInt {
 
 	// ------------------------------------
 
-	class VLayout: public AbstractLayout
+	class VBox: public AbstractDequeContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(VLayout);
+		DISALLOW_COPY_AND_ASSIGN(VBox);
 
 	public:
 
-		VLayout(int align = AlignVerticalCenter);
+		VBox(int align = AlignVerticalCenter, int space = 4);
 
-		virtual ~VLayout ();
+		virtual ~VBox ();
+
+		bool Add (AbstractWidget* widget);
+
+		bool Remove (AbstractWidget* widget);
+
+		int alignment () const
+		{
+			return m_alignment;
+		}
+
+		void SetAlignment (int align);
+
+		void SetSpace (int space);
+
+		int space () const
+		{
+			return m_space;
+		}
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
+
+		virtual bool UpdateTest (const UpdateRequest& request);
 
 		virtual void Update (const UpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
-		virtual void AddItem (AbstractWidget* object);
+		virtual ResponseType CursorEnterEvent (bool entered);
 
-		virtual void RemoveItem (AbstractWidget* object);
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
-		/**
-		 * @brief Count how many widgets are expandable along x
-		 */
-		unsigned int CountVExpandableNumber ();
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
 
-		void MakeLayout (const Size* size, const Margin* margin, int space);
+		/**
+		 * @brief scan, distribute and align the items
+		 */
+		void FillSubWidgetsInVBox (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+
+		void FillSubWidgetsInVBox (const Point& pos, const Size& size, int space);
+
+		void FillSubWidgetsProportionally (int x, int y, unsigned int width, unsigned int height, int space);
 
 		/**
-		 * @brief distribute vertically with preferred size
+		 * @brief distribute horizontally with preferred size
 		 */
-		void DistributeWithPreferredHeight (const Size* size, const Margin* margin, int space);
+		void DistributeWithPreferredHeight (int y,
+						unsigned int height,
+						int space,
+						const std::deque<Size>* expandable_prefers,
+						const std::deque<Size>* unexpandable_prefers);
 
-		/**
-		 * @brief distribute vertically with small size
-		 */
-		void DistributeWithSmallHeight (const Size* size, const Margin* margin, int space);
+		void DistributeWithSmallHeight (int y,
+						unsigned int height,
+						int space,
+						const std::deque<Size>* expandable_prefers,
+						unsigned int expandable_prefer_sum,
+						const std::deque<Size>* unexpandable_prefers,
+						unsigned int unexpandable_prefer_sum);
 
-		/**
-		 * @brief distribute vertically with large size
-		 */
-		void DistributeWithLargeHeight (const Size* size, const Margin* margin, int space);
+		void DistributeWithLargeHeight (int y,
+						unsigned int height,
+						int space,
+						const std::deque<Size>* expandable_prefers,
+						unsigned int expandable_prefer_sum,
+						const std::deque<Size>* unexpandable_prefers,
+						unsigned int unexpandable_prefer_sum);
 
-		void Distribute (int space, int start = 0);
+		void Align (int x, unsigned int width);
 
-		/**
-		 * @brief align vertically
-		 */
-		void Align (const Size* size, const Margin* margin);
+		int m_alignment;
 
-		unsigned int AdjustExpandableHeight (std::list<AbstractWidget*>* item_list_p, unsigned int height_plus);
-
-		unsigned int AdjustMinimalHeight (std::list<AbstractWidget*>* item_list_p, unsigned int height_plus);
-
-		/**
-		 * @brief calculate and return the minimal height of the expandable items
-		 * @return
-		 */
-		unsigned int GetAllMinimalExpandableHeight ();
-
-		unsigned int GetAllMaximalExpandableHeight ();
-
-		/**
-		 * @brief calculate and return the height of fixed items
-		 * @return
-		 */
-		unsigned int GetAllFixedHeight ();
-
-		/**
-		 * @brief scan the children and get the total size hint
-		 * @param count_margin if count margin
-		 * @param count_space if count space
-		 * @param size the current size of this layout
-		 * @param min the minimal size of this layout
-		 * @param prefer the preferred size of this layout
-		 */
-		void GetSizeHint (bool count_margin,
-				bool count_space,
-				Size* size,
-				Size* min,
-				Size* prefer);
+		int m_space;
 	};
 
 }

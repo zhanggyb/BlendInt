@@ -52,7 +52,7 @@ namespace BlendInt {
 
 		void InitializeFileBrowser ();
 
-		VLayout* m_layout;
+		VBox* m_layout;
 
 		TextEntry* m_path_entry;
 		TextEntry* m_file_entry;

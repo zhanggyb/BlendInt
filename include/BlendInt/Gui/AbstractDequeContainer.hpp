@@ -51,7 +51,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool AddSubWidget (AbstractWidget* widget);
+		bool AddSubWidget (AbstractWidget* widget);
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
 
@@ -78,6 +78,11 @@ namespace BlendInt {
 		void FillSubWidgetsAveragely (const Point& pos, const Size& size,
 						Orientation orientation, int alignment, int space);
 
+		/**
+		 * @brief Fill in the container with average size
+		 * @param[in] x the left position
+		 * @param[in] y the bottom position
+		 */
 		void FillSubWidgetsAveragely (int x, int y, unsigned int width,
 						unsigned int height, Orientation orientation,
 						int alignment, int space);

@@ -191,17 +191,110 @@ namespace BlendInt {
 
 	// -------------------------------------------------
 
-	VLayout::VLayout (int align)
-			: AbstractLayout()
+	VBox::VBox (int align, int space)
+	: AbstractDequeContainer(), m_alignment(align), m_space(space)
 	{
-		set_alignment(align);
+		set_size (200, 200);
 	}
 
-	VLayout::~VLayout ()
+	VBox::~VBox ()
 	{
 	}
 
-	void VLayout::Update (const UpdateRequest& request)
+	bool VBox::Add (AbstractWidget* widget)
+	{
+		bool ret = false;
+
+		if(AddSubWidget(widget)) {
+
+			FillSubWidgetsInVBox(position(), size(), margin(), m_space);
+
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	bool VBox::Remove (AbstractWidget* widget)
+	{
+		bool ret = false;
+
+		if(RemoveSubWidget(widget)) {
+
+			FillSubWidgetsInVBox(position(), size(), margin(), m_space);
+
+			ret = true;
+
+		}
+
+		return ret;
+	}
+
+	void VBox::SetAlignment (int align)
+	{
+	}
+
+	void VBox::SetSpace (int space)
+	{
+	}
+
+	Size BlendInt::VBox::GetPreferredSize () const
+	{
+		Size preferred_size;
+
+		if(sub_widget_size() == 0) {
+
+			preferred_size.set_width(200);
+			preferred_size.set_height(200);
+
+		} else {
+
+			AbstractWidget* widget = 0;
+			Size tmp_size;
+
+			preferred_size.set_height(-m_space);
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			{
+				widget = *it;
+
+				if(widget->visiable()) {
+					tmp_size = widget->GetPreferredSize();
+
+					preferred_size.set_width(std::max(preferred_size.width(), tmp_size.width()));
+					preferred_size.add_height(tmp_size.height() + m_space);
+				}
+			}
+
+			preferred_size.add_width(margin().left() + margin().right());
+			preferred_size.add_height(margin().top() + margin().bottom());
+		}
+
+		return preferred_size;
+	}
+
+	bool VBox::UpdateTest (const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case SubWidgetSize:
+					return false;	// DO not allow sub widget geometry reset outside
+
+				case SubWidgetPosition:
+					return false;
+
+				default:
+					return AbstractDequeContainer::UpdateTest(request);
+
+			}
+
+		} else {
+			return false;
+		}
+	}
+
+	void VBox::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -218,23 +311,19 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					if(sub_widget_size())
-						MakeLayout(size_p, &margin(), space());
-
+					FillSubWidgetsInVBox(position(), *size_p, margin(), m_space);
 					break;
 				}
 
 				case ContainerMargin: {
 					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					if(sub_widget_size())
-						MakeLayout(&size(), margin_p, space());
+					FillSubWidgetsInVBox(position(), size(), *margin_p, m_space);
 					break;
 				}
 
 				case LayoutPropertySpace: {
 					const int* space_p = static_cast<const int*>(request.data());
-					if(sub_widget_size())
-						MakeLayout(&size(), &margin(), *space_p);
+					FillSubWidgetsInVBox(position(), size(), margin(), *space_p);
 					break;
 				}
 
@@ -251,503 +340,302 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType VLayout::Draw (const RedrawEvent& event)
+	ResponseType VBox::Draw (const RedrawEvent& event)
 	{
 		return IgnoreAndContinue;
 	}
 
-	void VLayout::AddItem (AbstractWidget* object)
+	ResponseType VBox::CursorEnterEvent (bool entered)
 	{
-		/*
-		// don't fire events when adding a widget into a layout
-		object->deactivate_events();
-		deactivate_events();
-
-		Size min_size = minimal_size();
-		Size prefer_size = preferred_size();
-		Size current_size = size();
-
-		unsigned int w_plus = margin().left() + margin().right();
-
-		if (sub_widget_size() == 0) {
-			min_size.add_height(object->minimal_size().height());
-			prefer_size.add_height(object->preferred_size().height());
-		} else {
-			min_size.add_height(object->minimal_size().height() + space());
-			prefer_size.add_height(object->preferred_size().height() + space());
-		}
-
-		min_size.set_width(
-		        std::max(min_size.width(), object->minimal_size().width() + w_plus));
-		prefer_size.set_width(
-		        std::max(prefer_size.width(),
-		                object->preferred_size().width() + w_plus));
-
-		if (current_size.width() < prefer_size.width()) {
-			current_size.set_width(prefer_size.width());
-		}
-		if (current_size.height() < prefer_size.height()) {
-			current_size.set_height(prefer_size.height());
-		}
-
-		SetPreferredSize(prefer_size);
-		SetMinimalSize(min_size);
-
-		if(object->expand_y()) {
-			set_expand_y(true);
-		}
-
-		AppendSubWidget(object);
-
-		if(! (current_size == size()))
-			Resize(current_size);	// call make_layout() through this function
-		else
-			MakeLayout(&current_size, &margin(), space());
-
-		activate_events();
-		object->activate_events();
-		*/
+		return IgnoreAndContinue;
 	}
 
-	void VLayout::RemoveItem(AbstractWidget * object)
+	ResponseType VBox::KeyPressEvent (const KeyEvent& event)
 	{
-		deactivate_events();
+		return IgnoreAndContinue;
+	}
 
-		if(!RemoveSubWidget(object)) return;
+	ResponseType VBox::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
 
-		Size new_preferred_size;
-		Size new_minimal_size;
+	ResponseType VBox::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
 
-		GetSizeHint(true, true, 0, &new_minimal_size, &new_preferred_size);
+	ResponseType VBox::MousePressEvent (const MouseEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
 
-		//SetMinimalSize(new_minimal_size);
-		//SetPreferredSize(new_preferred_size);
+	ResponseType VBox::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
 
-		set_expand_y(false);
+	ResponseType VBox::MouseMoveEvent (const MouseEvent& event)
+	{
+		return IgnoreAndContinue;
+	}
+
+	void VBox::FillSubWidgetsInVBox (const Point& out_pos, const Size& out_size, const Margin& margin,
+	        int space)
+	{
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		unsigned int width = out_size.width() - margin.left() - margin.right();
+		unsigned int height = out_size.height() - margin.top() - margin.bottom();
+
+		FillSubWidgetsProportionally(x, y, width, height, space);
+	}
+
+	void VBox::FillSubWidgetsInVBox (const Point& pos, const Size& size, int space)
+	{
+		FillSubWidgetsProportionally(pos.x(), pos.y(), size.width(), size.height(), space);
+	}
+
+	void VBox::FillSubWidgetsProportionally (int x, int y, unsigned int width,
+					unsigned int height, int space)
+	{
+		boost::scoped_ptr<std::deque<Size> > expandable_prefers(new std::deque<Size>);
+		boost::scoped_ptr<std::deque<Size> > unexpandable_prefers(new std::deque<Size>);
+
+		unsigned int expandable_prefer_sum = 0;	// the width sum of the expandable widgets' size
+		unsigned int unexpandable_prefer_sum = 0;	// the width sum of the unexpandable widgets' size
+
+		Size tmp_size;
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
-			if((*it)->expand_y()) {
-				set_expand_y(true);
-				break;
+			if ((*it)->visiable()) {
+				tmp_size = (*it)->GetPreferredSize();
+
+				if((*it)->expand_y()) {
+					expandable_prefers->push_back(tmp_size);
+					expandable_prefer_sum += tmp_size.height();
+				} else {
+					unexpandable_prefers->push_back(tmp_size);
+					unexpandable_prefer_sum += tmp_size.height();
+				}
 			}
 		}
 
-		MakeLayout(&size(), &margin(), space());
+		if((expandable_prefers->size() + unexpandable_prefers->size()) == 0) return;	// do nothing if all sub widgets are invisible
 
-		activate_events();
+		unsigned int total_space = ((expandable_prefers->size() + unexpandable_prefers->size()) - 1) * space;
 
-		RemoveSubWidget(object);
-	}
+		unsigned int total_preferred_height = expandable_prefer_sum
+						+ unexpandable_prefer_sum
+						+ total_space;
 
-	void VLayout::MakeLayout(const Size* size, const Margin* margin, int space)
-	{
-		/*
-		if (size->height() == preferred_size().height()) {
-			DistributeWithPreferredHeight(size, margin, space);			// layout along y with preferred size
-		} else if (size->height() < preferred_size().height()) {
-			DistributeWithSmallHeight(size, margin, space);			// layout along y with small size
+		if (total_preferred_height == height) {
+			DistributeWithPreferredHeight(y, height, space,
+							expandable_prefers.get(),
+							unexpandable_prefers.get());
+		} else if (total_preferred_height < height) {
+			DistributeWithLargeHeight(y, height, space, expandable_prefers.get(),
+							expandable_prefer_sum, unexpandable_prefers.get(),
+							unexpandable_prefer_sum);
 		} else {
-			DistributeWithLargeHeight(size, margin, space);			// layout along y with large size
+			DistributeWithSmallHeight(y, height, space, expandable_prefers.get(),
+							expandable_prefer_sum, unexpandable_prefers.get(),
+							unexpandable_prefer_sum);
 		}
 
-		Align(size, margin);
-		*/
+		Align(y, height);
 	}
 
-	void VLayout::DistributeWithPreferredHeight(const Size* size, const Margin* margin, int space)
+	void VBox::DistributeWithPreferredHeight (int y,
+					unsigned int height,
+					int space,
+					const std::deque<Size>* expandable_prefers,
+					const std::deque<Size>* unexpandable_prefers)
 	{
-		/*
-		int y = position().y() + size->height() - margin->top();
+		std::deque<Size>::const_iterator exp_it = expandable_prefers->begin();
+		std::deque<Size>::const_iterator unexp_it = unexpandable_prefers->begin();
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-		{
-			ResizeSubWidget(*it, (*it)->size().width(), (*it)->preferred_size().height());
+		WidgetDeque::iterator widget_it = sub_widgets()->begin();
+		AbstractWidget* widget = 0;
+
+		y = y + height;
+		while (widget_it != sub_widgets()->end()) {
+
+			widget = *widget_it;
+
+			if(widget->visiable()) {
+
+				if(widget->expand_x()) {
+					ResizeSubWidget(widget, widget->size().width(), exp_it->height());
+					SetSubWidgetPosition(widget, widget->position().x(), y);
+					exp_it++;
+				} else {
+					ResizeSubWidget(widget, widget->size().width(), unexp_it->height());
+					SetSubWidgetPosition(widget, widget->position().x(), y);
+					unexp_it++;
+				}
+
+				y -= widget->size().height() + space;
+			}
+
+			widget_it++;
 		}
-
-		Distribute(space, y);
-		*/
 	}
 
-	void VLayout::DistributeWithSmallHeight(const Size* size, const Margin* margin, int space)
+	void VBox::DistributeWithSmallHeight (int y,
+					unsigned int height,
+					int space,
+					const std::deque<Size>* expandable_prefers,
+					unsigned int expandable_prefer_sum,
+					const std::deque<Size>* unexpandable_prefers,
+					unsigned int unexpandable_prefer_sum)
 	{
-		/*
-		unsigned int min_expd_height = GetAllMinimalExpandableHeight();
-		unsigned int fixed_height = GetAllFixedHeight();
-		unsigned int current_height = size->height();
-		unsigned int margin_plus = margin->top() + margin->bottom();
+		int widgets_height = height - (expandable_prefers->size() + unexpandable_prefers->size() - 1) * space;
 
-		WidgetDeque::iterator it;
-		AbstractWidget* child = 0;
-
-		bool change_expd_items = (current_height - margin_plus) >=
-						(min_expd_height + fixed_height + (sub_widget_size() - 1) * space);
-
-		unsigned int exp_num = CountVExpandableNumber();
-
-		if(change_expd_items) {
-
-			if (exp_num) {
-				unsigned int average_expd_height = current_height - margin_plus
-				        - fixed_height - (sub_widget_size() - 1) * space;
-				average_expd_height = average_expd_height / exp_num;
-
-				for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
-					child = *it;
-
-					if (child->expand_y()) {
-						ResizeSubWidget(child, child->size().width(), average_expd_height);
-					} else {
-						ResizeSubWidget(child, child->size().width(),
-						        child->preferred_size().height());
-					}
-				}
-			}
-
-		} else {
-
-			unsigned int fixed_num = sub_widget_size() - exp_num;
-
-			if (fixed_num) {
-
-				std::list<AbstractWidget*> unminimized_items;
-				unsigned int height_plus = 0;
-
-				unsigned int total_fixed_height = current_height - margin_plus
-				        - min_expd_height - (sub_widget_size() - 1) * space;
-				unsigned int average_fixed_height = total_fixed_height / fixed_num;
-
-				for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
-					child = *it;
-
-					if (child->expand_y()) {
-						ResizeSubWidget(child, child->size().width(),
-						        child->minimal_size().height());
-					} else {
-
-						if (average_fixed_height < child->minimal_size().height()) {
-							height_plus = height_plus + child->minimal_size().height() - average_fixed_height;
-							ResizeSubWidget(child, child->size().width(),
-							        child->minimal_size().height());
-						} else {
-							unminimized_items.push_back(child);
-							ResizeSubWidget(child, child->size().width(), average_fixed_height);
-						}
-
-					}
-
-				}
-				if(height_plus > 0) {
-					AdjustMinimalHeight(&unminimized_items, height_plus);
-				}
-			}
-
-		}
-
-		int y = position().y() + size->height() - margin->top();
-		Distribute(space, y);
-		*/
-	}
-
-	void VLayout::DistributeWithLargeHeight(const Size* size, const Margin* margin, int space)
-	{
-		/*
-		unsigned int fixed_height = GetAllFixedHeight();
-		unsigned int current_height = size->height();
-		unsigned int margin_plus = margin->top() + margin->bottom();
-
-		WidgetDeque::iterator it;
-		AbstractWidget* child = 0;
-
-		unsigned int exp_num = CountVExpandableNumber();
-
-		if(exp_num) {
-
-			unsigned int max_expd_height = GetAllMaximalExpandableHeight();
-			unsigned int total_expd_height = current_height - margin_plus - fixed_height - (sub_widget_size() - 1) * space;
-			unsigned int average_expd_height = total_expd_height / exp_num;
-
-			bool change_expd_items = (current_height - margin_plus) <= (max_expd_height + fixed_height
-					+ (sub_widget_size() - 1) * space);
-
-			if(change_expd_items) {
-				std::list<AbstractWidget*> unmaximized_list;
-				unsigned int height_plus = 0;
-				int y = position().y() + size->height() - margin->top();
-
-				for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
-					child = *it;
-					if(child->expand_y()) {
-						if(average_expd_height > child->maximal_size().height()) {
-							height_plus = height_plus + average_expd_height - child->maximal_size().height();
-							ResizeSubWidget(child, child->size().width(), child->maximal_size().height());
-						} else {
-							unmaximized_list.push_back(child);
-							ResizeSubWidget(child, child->size().width(), average_expd_height);
-						}
-					}
-				}
-
-				if(height_plus > 0) {	// check the last item
-					AdjustExpandableHeight(&unmaximized_list, height_plus);
-				}
-
-				Distribute(space, y);
-			} else {
-				int y = position().x() + size->height() - margin->top();
-
-				y = y - (current_height - margin_plus - max_expd_height - fixed_height
-		                - (sub_widget_size() - 1) * space) / 2;
-
-				// resize all with the max size
-				for(it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-				{
-					child = *it;
-
-					if (child->expand_y()) {
-						ResizeSubWidget(child, child->size().width(), child->maximal_size().height());
-					} else {
-						ResizeSubWidget(child, child->size().width(), child->preferred_size().height());
-					}
-				}
-
-				Distribute(space, y);
-			}
-
-		} else {
-			int y = position().y() + size->height() - margin->top();
-
-			// if no expandable items, center all items
-			y = y - (current_height - margin_plus - fixed_height - (sub_widget_size() - exp_num - 1) * space) / 2;
-
-			// resize all with preferred width
-			for(it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		if(widgets_height <= 0) {
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
-				child = *it;
-				ResizeSubWidget(child, child->preferred_size().width(),
-					        child->size().height());
+				(*it)->Resize((*it)->size().height(), 0);
+			}
+			return;
+		}
+
+		unsigned int reference_height;
+		std::deque<Size>::const_iterator exp_it = expandable_prefers->begin();
+		std::deque<Size>::const_iterator unexp_it = unexpandable_prefers->begin();
+		WidgetDeque::iterator it = sub_widgets()->begin();
+		AbstractWidget* widget = 0;
+
+		y = y + height;
+		if(widgets_height <= unexpandable_prefer_sum) {
+			reference_height = widgets_height;
+
+			while (it != sub_widgets()->end()) {
+
+				widget = (*it);
+
+				if(widget->visiable()) {
+
+					if (widget->expand_y()) {
+						ResizeSubWidget(widget, widget->size().width(), 0);
+						SetSubWidgetPosition(widget, widget->position().x(), y);
+						exp_it++;
+					} else {
+						ResizeSubWidget(widget,
+										widget->size().width(),
+										reference_height * unexp_it->height()
+														/ unexpandable_prefer_sum
+										);
+						SetSubWidgetPosition(widget, widget->position().x(), y);
+						unexp_it++;
+					}
+
+					y -= widget->size().height() + space;
+				}
+
+				it++;
 			}
 
-			Distribute(space, y);
+		} else {
+			reference_height = widgets_height - unexpandable_prefer_sum;
+
+			while (it != sub_widgets()->end()) {
+
+				widget = (*it);
+
+				if(widget->visiable()) {
+
+					if (widget->expand_y()) {
+						ResizeSubWidget(widget,
+										widget->size().width(),
+										reference_height * exp_it->height()
+														/ expandable_prefer_sum);
+						SetSubWidgetPosition(widget, widget->position().x(), y);
+						exp_it++;
+					} else {
+						ResizeSubWidget(widget, widget->size().width(), unexp_it->height());
+						SetSubWidgetPosition(widget, widget->position().x(), y);
+						unexp_it++;
+					}
+
+					y -= widget->size().height() + space;
+				}
+
+				it++;
+			}
+
 		}
-	*/
 	}
 
-	void VLayout::Distribute(int space, int start)
+	void VBox::DistributeWithLargeHeight (int y,
+					unsigned int height,
+					int space,
+					const std::deque<Size>* expandable_prefers,
+					unsigned int expandable_prefer_sum,
+					const std::deque<Size>* unexpandable_prefers,
+					unsigned int unexpandable_prefer_sum)
 	{
-		start += space;	// add one space to make sure no space if only 1 child in layout
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-		{
-			start -= space;
+		unsigned int widgets_height = height - (expandable_prefers->size() + unexpandable_prefers->size() - 1) * space;
 
-			start -= (*it)->size().height();
-			SetSubWidgetPosition(*it, (*it)->position().x(), start);
+		unsigned int expandable_height = widgets_height - unexpandable_prefer_sum;
+
+		std::deque<Size>::const_iterator exp_it = expandable_prefers->begin();
+		std::deque<Size>::const_iterator unexp_it = unexpandable_prefers->begin();
+
+		WidgetDeque::iterator it = sub_widgets()->begin();
+
+		y = y + height;
+		AbstractWidget* widget = 0;
+		while (it != sub_widgets()->end()) {
+
+			widget = (*it);
+
+			if(widget->visiable()) {
+
+				if (widget->expand_y()) {
+					ResizeSubWidget(widget,
+									widget->size().width(),
+									expandable_height * exp_it->height()
+													/ expandable_prefer_sum);
+					SetSubWidgetPosition(widget, widget->position().x(), y);
+					exp_it++;
+				} else {
+					ResizeSubWidget(widget, widget->size().width(), unexp_it->height());
+					SetSubWidgetPosition(widget, widget->position().x(), y);
+					unexp_it++;
+				}
+
+				y -= widget->size().height() + space;
+			}
+
+			it++;
 		}
 	}
 
-	void VLayout::Align(const Size* size, const Margin* margin)
+	void VBox::Align(int x, unsigned int width)
 	{
-		int x = position().x() + margin->left();
-
-		unsigned int w = size->width() - margin->left() - margin->right();
-
 		WidgetDeque::iterator it;
-		AbstractWidget* child = 0;
+		AbstractWidget* widget = 0;
 		for(it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
-			child = *it;
+			widget = *it;
 
-			if (child->expand_x() ||
-					(child->size().width() > w)) {
-				ResizeSubWidget(child, w, child->size().height());
-				SetSubWidgetPosition(child, x, child->position().y());
+			if (widget->expand_x() ||
+					(widget->size().width() > width)) {
+				ResizeSubWidget(widget, width, widget->size().height());
+				SetSubWidgetPosition(widget, x, widget->position().y());
 			} else {
 
 				if (alignment() & AlignLeft) {
-					SetSubWidgetPosition(child, x, child->position().y());
+					SetSubWidgetPosition(widget, x, widget->position().y());
 				} else if (alignment() & AlignRight) {
-					SetSubWidgetPosition(child, x + (w - child->size().width()), child->position().y());
+					SetSubWidgetPosition(widget, x + (width - widget->size().width()), widget->position().y());
 				} else if (alignment() & AlignVerticalCenter) {
-					SetSubWidgetPosition(child, x + (w - child->size().width()) / 2, child->position().y());
+					SetSubWidgetPosition(widget, x + (width - widget->size().width()) / 2, widget->position().y());
 				}
 
 			}
 		}
-	}
-
-	unsigned int VLayout::AdjustExpandableHeight(std::list<AbstractWidget*>* item_list_p, unsigned int height_plus)
-	{
-		if(!item_list_p) return height_plus;
-		if(item_list_p->size() == 0) return height_plus;
-
-		unsigned int remainder = 0;
-		std::list<AbstractWidget*>::iterator it;
-		unsigned int average_height_plus = height_plus / item_list_p->size();
-
-		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
-		{
-			/*
-			if ((average_height_plus + (*it)->size().height()) > (*it)->maximal_size().height()) {
-				ResizeSubWidget(*it, (*it)->size().width(), (*it)->maximal_size().height());
-				remainder = remainder + average_height_plus + (*it)->size().height() - (*it)->maximal_size().height();
-				it = item_list_p->erase(it);
-			} else {
-				ResizeSubWidget(*it, (*it)->size().width(), (*it)->size().height() + average_height_plus);
-			}
-			*/
-		}
-
-		if(remainder != 0) {
-			// TODO: do not use iteration procedure
-			remainder = AdjustExpandableHeight(item_list_p, remainder);
-		}
-
-		return remainder;
-	}
-
-	unsigned int VLayout::AdjustMinimalHeight(std::list<AbstractWidget*>* item_list_p, unsigned int height_plus)
-	{
-		if(!item_list_p) return height_plus;
-		if(item_list_p->size() == 0) return height_plus;
-
-		unsigned int remainder = 0;
-		std::list<AbstractWidget*>::iterator it;
-		unsigned int average_height_plus = height_plus / item_list_p->size();
-
-		for(it = item_list_p->begin(); it != item_list_p->end(); it++)
-		{
-			/*
-			if (((*it)->size().height() - average_height_plus) < (*it)->minimal_size().height()) {
-				ResizeSubWidget(*it, (*it)->size().width(), (*it)->minimal_size().height());
-				remainder = remainder + (*it)->minimal_size().height() - ((*it)->size().height() - average_height_plus);
-				it = item_list_p->erase(it);
-			} else {
-				ResizeSubWidget(*it, (*it)->size().width(), (*it)->size().height() - average_height_plus);
-			}
-			*/
-		}
-
-		if(remainder != 0) {
-			// TODO: do not use iteration procedure
-			remainder = AdjustMinimalHeight(item_list_p, remainder);
-		}
-
-		return remainder;
-	}
-
-	unsigned int VLayout::GetAllMinimalExpandableHeight()
-	{
-		unsigned int height = 0;
-
-		/*
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-		{
-			if((*it)->expand_y())
-				height += (*it)->minimal_size().height();
-		}
-		*/
-
-		return height;
-	}
-
-	unsigned int VLayout::GetAllMaximalExpandableHeight()
-	{
-		unsigned int height = 0;
-
-		/*
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-		{
-			if((*it)->expand_y())
-				height += (*it)->maximal_size().height();
-		}
-		*/
-
-		return height;
-	}
-
-	unsigned int VLayout::GetAllFixedHeight()
-	{
-		unsigned int height = 0;
-
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-		{
-			if(!(*it)->expand_y())
-				height += (*it)->size().height();
-		}
-
-		return height;
-	}
-	
-	unsigned int VLayout::CountVExpandableNumber ()
-	{
-		unsigned int num = 0;
-
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-		{
-			if((*it)->expand_y()) {
-				num++;
-			}
-		}
-
-		return num;
-	}
-
-	void VLayout::GetSizeHint (bool count_margin,
-										bool count_space,
-										Size* size,
-										Size* min,
-										Size* preferred)
-	{
-		/*
-		Size size_out;
-		Size min_size_out;
-		Size preferred_size_out;
-
-		AbstractWidget* child;
-		WidgetDeque::reverse_iterator it;
-
-		if(count_margin) {
-			size_out.set_height(margin().top());
-			min_size_out.set_height(margin().top());
-			preferred_size_out.set_height(margin().top());
-		}
-
-		for(it = sub_widgets()->rbegin(); it != sub_widgets()->rend(); it++)
-		{
-			child = *it;
-
-			size_out.set_width(std::max(size_out.width(), child->size().width()));
-			size_out.add_height(child->size().height());
-
-			min_size_out.set_width(std::max(min_size_out.width(), child->minimal_size().width()));
-			min_size_out.add_height(child->minimal_size().height());
-
-			preferred_size_out.set_width(std::max(preferred_size_out.width(), child->preferred_size().width()));
-			preferred_size_out.add_height(child->preferred_size().height());
-		}
-
-		if(count_margin) {
-			size_out.add_height(margin().bottom());
-			size_out.add_width(margin().left() + margin().right());
-
-			min_size_out.add_height(margin().bottom());
-			min_size_out.add_width(margin().left() + margin().right());
-
-			preferred_size_out.add_height(margin().bottom());
-			preferred_size_out.add_width(margin().left() + margin().right());
-		}
-
-		if(count_space) {
-			if(sub_widget_size()) {
-				size_out.add_height((sub_widget_size() - 1) * space());
-				min_size_out.add_height((sub_widget_size() - 1) * space());
-				preferred_size_out.add_height((sub_widget_size() - 1) * space());
-			}
-		}
-
-		if(size) *size = size_out;
-		if(min) *min = min_size_out;
-		if(preferred) *preferred = preferred_size_out;
-		*/
 	}
 
 }

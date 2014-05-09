@@ -64,7 +64,7 @@ namespace BlendInt {
 
 	void Frame::Add (AbstractWidget* widget)
 	{
-		if (AddSubWidget(widget)) {
+		if (SetSubWidget(widget)) {
 
 			int x = position().x() + margin().left();
 			int y = position().y() + margin().bottom();

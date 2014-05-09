@@ -221,16 +221,14 @@ namespace BlendInt {
 		if(m_sub_widgets->empty()) return;
 
 		int x = out_pos.x() + margin.left();
-		int y = 0;
+		int y = out_pos.y() + margin.bottom();
 		unsigned int width = out_size.width() - margin.left() - margin.right();
 		unsigned int height = out_size.height() - margin.top() - margin.bottom();
 
 		if(orientation == Horizontal) {
-			y = out_pos.y() + margin.bottom();
 			DistributeHorizontally(x, width, space);
 			AlignHorizontally(y, height, alignment);
 		} else {
-			y = out_pos.y() + out_size.height() - margin.top();
 			DistributeVertically(y, height, space);
 			AlignVertically(x, width, alignment);
 		}
@@ -245,7 +243,7 @@ namespace BlendInt {
 			DistributeHorizontally(pos.x(), size.width(), space);
 			AlignHorizontally(pos.y(), size.height(), alignment);
 		} else {
-			DistributeVertically(pos.y() + size.height(), size.height(), space);
+			DistributeVertically(pos.y(), size.height(), space);
 			AlignVertically(pos.x(), size.width(), alignment);
 		}
 	}
@@ -260,7 +258,7 @@ namespace BlendInt {
 			DistributeHorizontally(x, width, space);
 			AlignHorizontally(y, height, alignment);
 		} else {
-			DistributeVertically(y + height, height, space);
+			DistributeVertically(y, height, space);
 			AlignVertically(x, width, alignment);
 		}
 	}
@@ -295,6 +293,7 @@ namespace BlendInt {
 	{
 		AbstractWidget* widget = 0;
 
+		y = y + height;
 		if (m_sub_widgets->size()) {
 			int average_height = (height - ((m_sub_widgets->size() - 1)* space))
 							/ m_sub_widgets->size();

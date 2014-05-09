@@ -54,7 +54,7 @@ namespace BlendInt {
 
 	void ScrollView::SetViewport (AbstractWidget* widget)
 	{
-		if (AddSubWidget(widget)) {
+		if (SetSubWidget(widget)) {
 			int x = position().x() + margin().left();
 			int y = position().y() + margin().bottom();
 
