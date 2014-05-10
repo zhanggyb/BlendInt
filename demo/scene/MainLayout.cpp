@@ -25,6 +25,7 @@ void MainLayout::InitOnce ()
 	using namespace BI;
 
 	set_margin(0, 0, 0, 0);
+	set_space(1);
 
 	m_menubar = Manage(new BI::MenuBar);
 	m_toolbar = Manage(new BI::ToolBar);

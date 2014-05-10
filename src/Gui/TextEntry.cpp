@@ -43,7 +43,7 @@
 
 namespace BlendInt {
 
-	Margin TextEntry::DefaultTextEntryPadding = Margin(2, 2, 2, 2);
+	Margin TextEntry::default_textentry_padding = Margin(2, 2, 2, 2);
 
 	TextEntry::TextEntry ()
 	: RoundWidget(),
@@ -64,12 +64,94 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
+	void TextEntry::SetText (const String& text)
+	{
+		bool cal_width = true;
+
+		m_text = text;
+
+		m_text_outline = m_font.GetTextOutline(m_text);
+
+		m_length = m_text.length();
+
+		if(size().height() < m_text_outline.height()) {
+			if(expand_y()) {
+				Resize(size().width(), m_text_outline.height());
+			} else {
+				m_length = 0;
+				cal_width = false;
+			}
+		}
+
+		if(size().width() < m_text_outline.width()) {
+			if(expand_x()) {
+				Resize(m_text_outline.width(), size().height());
+			} else {
+				if(cal_width) m_length = GetValidTextSize();
+			}
+		}
+
+		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
+		m_origin.set_x(2);
+
+		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
+
+		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
+	}
+
+	void TextEntry::SetFont (const Font& font)
+	{
+		m_font = font;
+
+		m_text_outline = m_font.GetTextOutline(m_text);
+
+		//m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
+
+		m_origin.set_x(default_textentry_padding.left());
+		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
+	}
+
 	void TextEntry::Clear ()
 	{
 		m_text.clear();
 		m_cursor_position = 0;
 		m_start = 0;
 		m_length = 0;
+	}
+
+	Size TextEntry::GetPreferredSize () const
+	{
+		Size preferred_size;
+
+		int radius_plus = 0;
+
+		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
+			radius_plus += radius();
+		}
+
+		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
+			radius_plus += radius();
+		}
+
+		int max_font_height = m_font.get_height();
+
+		preferred_size.set_height(max_font_height + default_textentry_padding.top() + default_textentry_padding.bottom());	// top padding: 2, bottom padding: 2
+
+		if (text().empty()) {
+			preferred_size.set_width(
+							max_font_height + default_textentry_padding.left()
+											+ default_textentry_padding.right()
+											+ radius_plus);
+		} else {
+			size_t width = m_font.GetTextWidth(text(), text().length());
+			preferred_size.set_width(
+							static_cast<unsigned int>(width)
+											+ default_textentry_padding.left()
+											+ default_textentry_padding.right()
+											+ radius_plus);	// left padding: 2, right padding: 2
+		}
+
+		return preferred_size;
 	}
 
 	ResponseType TextEntry::KeyPressEvent (const KeyEvent& event)
@@ -82,8 +164,8 @@ namespace BlendInt {
 			unsigned int text_width = m_font.GetTextWidth(m_text, m_length,
 							m_start);
 			unsigned int valid_width = size().width()
-							- DefaultTextEntryPadding.left()
-							- DefaultTextEntryPadding.right();
+							- default_textentry_padding.left()
+							- default_textentry_padding.right();
 
 			if(text_width > valid_width) {
 				m_start++;
@@ -158,7 +240,7 @@ namespace BlendInt {
 
 				case FormRoundRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
-					m_origin.set_x(*radius_p + DefaultTextEntryPadding.left());
+					m_origin.set_x(*radius_p + default_textentry_padding.left());
 
 					break;
 				}
@@ -182,11 +264,11 @@ namespace BlendInt {
 					m_cursor_buffer->Bind();
 					GLfloat* buf_p = (GLfloat*)m_cursor_buffer->Map(GL_READ_WRITE);
 					*(buf_p + 5) = static_cast<float>(size_p->height()
-									- DefaultTextEntryPadding.top()
-									- DefaultTextEntryPadding.bottom());
+									- default_textentry_padding.top()
+									- default_textentry_padding.bottom());
 					*(buf_p + 7) = static_cast<float>(size_p->height()
-									- DefaultTextEntryPadding.top()
-									- DefaultTextEntryPadding.bottom());
+									- default_textentry_padding.top()
+									- default_textentry_padding.bottom());
 					m_cursor_buffer->Unmap();
 					m_cursor_buffer->Reset();
 
@@ -280,53 +362,6 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void TextEntry::SetText (const String& text)
-	{
-		bool cal_width = true;
-
-		m_text = text;
-
-		m_text_outline = m_font.GetTextOutline(m_text);
-
-		m_length = m_text.length();
-
-		if(size().height() < m_text_outline.height()) {
-			if(expand_y()) {
-				Resize(size().width(), m_text_outline.height());
-			} else {
-				m_length = 0;
-				cal_width = false;
-			}
-		}
-
-		if(size().width() < m_text_outline.width()) {
-			if(expand_x()) {
-				Resize(m_text_outline.width(), size().height());
-			} else {
-				if(cal_width) m_length = GetValidTextSize();
-			}
-		}
-
-		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
-		m_origin.set_x(2);
-
-		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
-
-		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
-	}
-
-	void TextEntry::SetFont (const Font& font)
-	{
-		m_font = font;
-
-		m_text_outline = m_font.GetTextOutline(m_text);
-
-		//m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
-
-		m_origin.set_x(DefaultTextEntryPadding.left());
-		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
-	}
-
 	void TextEntry::InitializeTextEntry ()
 	{
 		glGenVertexArrays(1, &m_vao);
@@ -354,16 +389,16 @@ namespace BlendInt {
 		std::vector<GLfloat> cursor_vertices(8);
 
 		cursor_vertices[0] = 1.f;
-		cursor_vertices[1] = static_cast<float>(DefaultTextEntryPadding.bottom());
+		cursor_vertices[1] = static_cast<float>(default_textentry_padding.bottom());
 
 		cursor_vertices[2] = 3.f;
-		cursor_vertices[3] = static_cast<float>(DefaultTextEntryPadding.bottom());
+		cursor_vertices[3] = static_cast<float>(default_textentry_padding.bottom());
 
 		cursor_vertices[4] = 1.f;
-		cursor_vertices[5] = static_cast<float>(size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
+		cursor_vertices[5] = static_cast<float>(size().height() - default_textentry_padding.top() - default_textentry_padding.bottom());
 
 		cursor_vertices[6] = 3.f;
-		cursor_vertices[7] = static_cast<float>(size().height() - DefaultTextEntryPadding.top() - DefaultTextEntryPadding.bottom());
+		cursor_vertices[7] = static_cast<float>(size().height() - default_textentry_padding.top() - default_textentry_padding.bottom());
 
 		m_cursor_buffer->Generate();
 		m_cursor_buffer->Bind();
@@ -372,7 +407,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		m_origin.set_x(DefaultTextEntryPadding.left());
+		m_origin.set_x(default_textentry_padding.left());
 		m_origin.set_y((size().height() - m_font.get_height()) / 2
 		                + std::abs(m_font.get_descender()));
 
@@ -404,8 +439,8 @@ namespace BlendInt {
 		if (m_text.size() && m_cursor_position > 0) {
 
 			size_t valid_width = size().width()
-							- DefaultTextEntryPadding.left()
-							- DefaultTextEntryPadding.right();
+							- default_textentry_padding.left()
+							- default_textentry_padding.right();
 
 			m_text.erase(m_cursor_position - 1, 1);
 			m_cursor_position--;
@@ -433,8 +468,8 @@ namespace BlendInt {
 		if (m_text.size() && (m_cursor_position < m_text.length())) {
 
 			size_t valid_width = size().width()
-							- DefaultTextEntryPadding.left()
-							- DefaultTextEntryPadding.right();
+							- default_textentry_padding.left()
+							- default_textentry_padding.right();
 
 			m_text.erase(m_cursor_position, 1);
 
@@ -462,8 +497,8 @@ namespace BlendInt {
 		if (m_text.size() && m_cursor_position > 0) {
 
 			size_t valid_width = size().width()
-								- DefaultTextEntryPadding.left()
-								- DefaultTextEntryPadding.right();
+								- default_textentry_padding.left()
+								- default_textentry_padding.right();
 
 			m_cursor_position--;
 
@@ -539,10 +574,10 @@ namespace BlendInt {
 	{
 		int text_width = m_font.GetTextWidth(m_text, m_length, m_start);
 		int click_width = event.position().x() - position().x()
-						- DefaultTextEntryPadding.left();
+						- default_textentry_padding.left();
 
 		if(click_width < 0 ||
-		   click_width > static_cast<int>(size().width() - DefaultTextEntryPadding.right())) {
+		   click_width > static_cast<int>(size().width() - default_textentry_padding.right())) {
 			return m_cursor_position;
 		}
 

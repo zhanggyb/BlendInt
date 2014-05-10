@@ -123,13 +123,6 @@ namespace BlendInt {
 					break;
 				}
 
-				case LayoutPropertySpace: {
-					const int* space_p = static_cast<const int*>(request.data());
-					if(sub_widget_size())
-						MakeLayout(&size(), &margin(), *space_p);
-					break;
-				}
-
 				default: {
 					break;
 				}

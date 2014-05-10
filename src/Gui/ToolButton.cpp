@@ -185,6 +185,11 @@ namespace BlendInt {
 		m_action = item;
 	}
 
+	Size ToolButton::GetPreferredSize() const
+	{
+		return Size(24, 24);
+	}
+
 	void ToolButton::InitOnce ()
 	{
 		m_inner.reset(new GLArrayBuffer);

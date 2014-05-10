@@ -188,6 +188,7 @@ namespace BlendInt {
 
 	void AbstractLayout::SetSpace (int space)
 	{
+		/*
 		if(m_space == space) return;
 
 		UpdateRequest request(Predefined, LayoutPropertySpace, &space);
@@ -196,6 +197,7 @@ namespace BlendInt {
 			Update(request);
 			m_space = space;
 		}
+		*/
 	}
 
 	AbstractLayout* AbstractLayout::root_layout ()

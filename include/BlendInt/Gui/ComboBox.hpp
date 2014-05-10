@@ -44,6 +44,8 @@ namespace BlendInt {
 
 		virtual ~ComboBox ();
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void Update (const UpdateRequest& request);
@@ -69,7 +71,14 @@ namespace BlendInt {
 
 		bool m_status_down;
 
+		Font m_font;
+
+		String m_text;
+
 		RefPtr<Menu> m_menu;
+
+		static Margin default_combobox_padding;
+
 	};
 
 }

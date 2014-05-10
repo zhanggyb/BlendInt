@@ -80,13 +80,23 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		void set_alignment (int align)
+		{
+			m_alignment = align;
+		}
+
+		void set_space (int space)
+		{
+			m_space = space;
+		}
+
 	private:
 
-		void FillSubWidgetsInVBox (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+		void FillSubWidgetsInVBox (const Point& out_pos, const Size& out_size, const Margin& margin, int alignment, int space);
 
-		void FillSubWidgetsInVBox (const Point& pos, const Size& size, int space);
+		void FillSubWidgetsInVBox (const Point& pos, const Size& size, int alignment, int space);
 
-		void FillSubWidgetsProportionally (int x, int y, unsigned int width, unsigned int height, int space);
+		void FillSubWidgetsProportionally (int x, int y, unsigned int width, unsigned int height, int alignment, int space);
 
 		/**
 		 * @brief distribute horizontally with preferred size
@@ -113,7 +123,7 @@ namespace BlendInt {
 						const std::deque<Size>* unexpandable_prefers,
 						unsigned int unexpandable_prefer_sum);
 
-		void Align (int x, unsigned int width);
+		void Align (int x, unsigned int width, int alignment);
 
 		int m_alignment;
 

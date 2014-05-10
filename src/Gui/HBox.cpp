@@ -52,7 +52,7 @@ namespace BlendInt {
 
 		if(AddSubWidget(widget)) {
 
-			FillSubWidgetsInHBox(position(), size(), margin(), m_space);
+			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
 
 			ret = true;
 		}
@@ -66,7 +66,7 @@ namespace BlendInt {
 
 		if(RemoveSubWidget(widget)) {
 
-			FillSubWidgetsInHBox(position(), size(), margin(), m_space);
+			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
 
 			ret = true;
 
@@ -77,10 +77,18 @@ namespace BlendInt {
 
 	void HBox::SetAlignment (int align)
 	{
+		if(m_alignment == align) return;
+
+		m_alignment = align;
+		FillSubWidgetsInHBox(position(), size(), margin(), align, m_space);
 	}
 
 	void HBox::SetSpace (int space)
 	{
+		if(m_space == space) return;
+
+		m_space = space;
+		FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
 	}
 
 	Size BlendInt::HBox::GetPreferredSize () const
@@ -155,19 +163,13 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					FillSubWidgetsInHBox(position(), *size_p, margin(), m_space);
+					FillSubWidgetsInHBox(position(), *size_p, margin(), m_alignment, m_space);
 					break;
 				}
 
 				case ContainerMargin: {
 					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					FillSubWidgetsInHBox(position(), size(), *margin_p, m_space);
-					break;
-				}
-
-				case LayoutPropertySpace: {
-					const int* space_p = static_cast<const int*>(request.data());
-					FillSubWidgetsInHBox(position(), size(), margin(), *space_p);
+					FillSubWidgetsInHBox(position(), size(), *margin_p, m_alignment, m_space);
 					break;
 				}
 
@@ -227,7 +229,7 @@ namespace BlendInt {
 	}
 
 	void HBox::FillSubWidgetsInHBox (const Point& out_pos, const Size& out_size, const Margin& margin,
-	        int space)
+	        int alignment, int space)
 	{
 
 		int x = out_pos.x() + margin.left();
@@ -235,16 +237,16 @@ namespace BlendInt {
 		unsigned int width = out_size.width() - margin.left() - margin.right();
 		unsigned int height = out_size.height() - margin.top() - margin.bottom();
 
-		FillSubWidgetsProportionally(x, y, width, height, space);
+		FillSubWidgetsProportionally(x, y, width, height, alignment, space);
 	}
 
-	void HBox::FillSubWidgetsInHBox (const Point& pos, const Size& size, int space)
+	void HBox::FillSubWidgetsInHBox (const Point& pos, const Size& size, int alignment, int space)
 	{
-		FillSubWidgetsProportionally(pos.x(), pos.y(), size.width(), size.height(), space);
+		FillSubWidgetsProportionally(pos.x(), pos.y(), size.width(), size.height(), alignment, space);
 	}
 
 	void HBox::FillSubWidgetsProportionally (int x, int y, unsigned int width,
-					unsigned int height, int space)
+					unsigned int height, int alignment, int space)
 	{
 		boost::scoped_ptr<std::deque<Size> > expandable_prefers(new std::deque<Size>);
 		boost::scoped_ptr<std::deque<Size> > unexpandable_prefers(new std::deque<Size>);
@@ -290,7 +292,7 @@ namespace BlendInt {
 							unexpandable_prefer_sum);
 		}
 
-		Align(y, height);
+		Align(y, height, alignment);
 	}
 
 	void HBox::DistributeWithPreferredWidth (int x, int space,
@@ -453,7 +455,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HBox::Align(int y, unsigned int height)
+	void HBox::Align(int y, unsigned int height, int alignment)
 	{
 		WidgetDeque::iterator it;
 		AbstractWidget* widget = 0;
@@ -461,18 +463,17 @@ namespace BlendInt {
 		{
 			widget = *it;
 
-			if (widget->expand_y() ||
-					(widget->size().height() > height)) {
+			if (widget->expand_y()) {
 				ResizeSubWidget(widget, widget->size().width(), height);
 				SetSubWidgetPosition(widget, widget->position().x(), y);
 			} else {
 
-				if (alignment() & AlignTop) {
+				if (alignment & AlignTop) {
 					SetSubWidgetPosition(widget, widget->position().x(),
 					        y + (height - widget->size().height()));
-				} else if (alignment() & AlignBottom) {
+				} else if (alignment & AlignBottom) {
 					SetSubWidgetPosition(widget, widget->position().x(), y);
-				} else if (alignment() & AlignHorizontalCenter) {
+				} else if (alignment & AlignHorizontalCenter) {
 					SetSubWidgetPosition(widget, widget->position().x(),
 					        y + (height - widget->size().height()) / 2);
 				}

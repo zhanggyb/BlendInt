@@ -160,8 +160,6 @@ namespace BlendInt {
 		FormRoundType,
 		FormRoundRadius,
 		ContainerMargin,
-		LayoutPropertyAlignment,
-		LayoutPropertySpace,
 		LayoutPropertyItem,
 
 		SliderPropertyOrientation,

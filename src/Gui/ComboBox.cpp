@@ -45,12 +45,21 @@
 
 namespace BlendInt {
 
+	Margin ComboBox::default_combobox_padding = Margin(2, 2, 2, 2);
+
 	ComboBox::ComboBox ()
 	: RoundWidget(), m_vao(0), m_status_down(false)
 	{
 		set_round_type(RoundAll);
 		set_expand_x(true);
-		set_size(90, 20);
+
+		unsigned int h = m_font.get_height();
+
+		set_size(
+		        h + radius() * 2 + default_combobox_padding.left()
+		                + default_combobox_padding.right(),
+		        h + default_combobox_padding.top()
+		                + default_combobox_padding.bottom());
 
 		InitOnce();
 	}
@@ -58,6 +67,41 @@ namespace BlendInt {
 	ComboBox::~ComboBox ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	Size ComboBox::GetPreferredSize () const
+	{
+		Size preferred_size;
+
+		int radius_plus = 0;
+
+		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
+			radius_plus += radius();
+		}
+
+		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
+			radius_plus += radius();
+		}
+
+		int max_font_height = m_font.get_height();
+
+		preferred_size.set_height(max_font_height + default_combobox_padding.top() + default_combobox_padding.bottom());	// top padding: 2, bottom padding: 2
+
+		if (m_text.empty()) {
+			preferred_size.set_width(
+							max_font_height + default_combobox_padding.left()
+											+ default_combobox_padding.right()
+											+ radius_plus);
+		} else {
+			size_t width = m_font.GetTextWidth(m_text, m_text.length());
+			preferred_size.set_width(
+							static_cast<unsigned int>(width)
+											+ default_combobox_padding.left()
+											+ default_combobox_padding.right()
+											+ radius_plus);	// left padding: 2, right padding: 2
+		}
+
+		return preferred_size;
 	}
 
 	void ComboBox::Update(const UpdateRequest& request)

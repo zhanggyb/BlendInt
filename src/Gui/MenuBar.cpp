@@ -304,9 +304,47 @@ namespace BlendInt {
 		button->SetMenu(menu);
 	}
 
-	Size MenuBar::GetPreferredSize ()
+	Size MenuBar::GetPreferredSize () const
 	{
-		return Size(200, 22);
+		Size preferred_size;
+
+		if(sub_widget_size() == 0) {
+
+			Font font;	// Get default font height
+			preferred_size.set_width(200);
+
+			int max_font_height = font.get_height();
+
+			preferred_size.set_height(
+			        max_font_height
+			                + AbstractButton::DefaultButtonPadding().top()
+			                + AbstractButton::DefaultButtonPadding().bottom());	// top padding: 2, bottom padding: 2
+
+			preferred_size.add_height(margin().top() + margin().bottom());
+
+		} else {
+
+			AbstractWidget* widget = 0;
+			Size tmp_size;
+
+			preferred_size.set_width(-m_space);
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			{
+				widget = *it;
+
+				if(widget->visiable()) {
+					tmp_size = widget->GetPreferredSize();
+
+					preferred_size.add_width(tmp_size.width() + m_space);
+					preferred_size.set_height(std::max(preferred_size.height(), tmp_size.height()));
+				}
+			}
+
+			preferred_size.add_width(margin().left() + margin().right());
+			preferred_size.add_height(margin().top() + margin().bottom());
+		}
+
+		return preferred_size;
 	}
 
 	MenuButton* MenuBar::GetMenuButton (size_t index)

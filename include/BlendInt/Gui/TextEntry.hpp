@@ -58,6 +58,8 @@ namespace BlendInt {
 
 		const String& text () const {return m_text;}
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void Update (const UpdateRequest& request);
@@ -119,7 +121,7 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 		RefPtr<GLArrayBuffer> m_cursor_buffer;
 
-		static Margin DefaultTextEntryPadding;
+		static Margin default_textentry_padding;
 	};
 
 }
