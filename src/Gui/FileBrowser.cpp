@@ -22,7 +22,7 @@
  */
 
 #include <BlendInt/Gui/FileBrowser.hpp>
-#include <BlendInt/Gui/HLayout.hpp>
+#include <BlendInt/Gui/HBox.hpp>
 
 namespace BlendInt {
 

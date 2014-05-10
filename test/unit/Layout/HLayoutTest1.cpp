@@ -1,8 +1,8 @@
 #include "HLayoutTest1.hpp"
 
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Gui/HLayout.hpp>
-#include <BlendInt/Gui/VLayout.hpp>
+#include <BlendInt/Gui/HBox.hpp>
+#include <BlendInt/Gui/VBox.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 #include <boost/smart_ptr.hpp>
