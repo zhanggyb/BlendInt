@@ -245,61 +245,70 @@ namespace BlendInt {
 	void VBox::FillSubWidgetsProportionally (int x, int y, unsigned int width,
 					unsigned int height, int alignment, int space)
 	{
-		boost::scoped_ptr<std::deque<Size> > expandable_prefers(new std::deque<Size>);
-		boost::scoped_ptr<std::deque<Size> > unexpandable_prefers(new std::deque<Size>);
+		boost::scoped_ptr<std::deque<unsigned int> > expandable_preferred_heights(new std::deque<unsigned int>);
+		boost::scoped_ptr<std::deque<unsigned int> > unexpandable_preferred_heights(new std::deque<unsigned int>);
+		boost::scoped_ptr<std::deque<unsigned int> > unexpandable_preferred_widths(new std::deque<unsigned int>);
 
-		unsigned int expandable_prefer_sum = 0;	// the height sum of the expandable widgets' size
-		unsigned int unexpandable_prefer_sum = 0;	// the height sum of the unexpandable widgets' size
 
+		unsigned int expandable_preferred_height_sum = 0;	// the height sum of the expandable widgets' size
+		unsigned int unexpandable_preferred_height_sum = 0;	// the height sum of the unexpandable widgets' size
+
+		AbstractWidget* widget = 0;
 		Size tmp_size;
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
-			if ((*it)->visiable()) {
-				tmp_size = (*it)->GetPreferredSize();
+			widget = *it;
+			if (widget->visiable()) {
+				tmp_size = widget->GetPreferredSize();
 
-				if((*it)->expand_y()) {
-					expandable_prefers->push_back(tmp_size);
-					expandable_prefer_sum += tmp_size.height();
+				if(widget->expand_y()) {
+					expandable_preferred_height_sum += tmp_size.height();
+					expandable_preferred_heights->push_back(tmp_size.height());
 				} else {
-					unexpandable_prefers->push_back(tmp_size);
-					unexpandable_prefer_sum += tmp_size.height();
+					unexpandable_preferred_height_sum += tmp_size.height();
+					unexpandable_preferred_heights->push_back(tmp_size.height());
 				}
+
+				if(!widget->expand_x()) {
+					unexpandable_preferred_widths->push_back(tmp_size.width());
+				}
+
 			}
 		}
 
-		if((expandable_prefers->size() + unexpandable_prefers->size()) == 0) return;	// do nothing if all sub widgets are invisible
+		if((expandable_preferred_heights->size() + unexpandable_preferred_heights->size()) == 0) return;	// do nothing if all sub widgets are invisible
 
-		unsigned int total_space = ((expandable_prefers->size() + unexpandable_prefers->size()) - 1) * space;
+		unsigned int total_space = ((expandable_preferred_heights->size() + unexpandable_preferred_heights->size()) - 1) * space;
 
-		unsigned int total_preferred_height = expandable_prefer_sum
-						+ unexpandable_prefer_sum
+		unsigned int total_preferred_height = expandable_preferred_height_sum
+						+ unexpandable_preferred_height_sum
 						+ total_space;
 
 		if (total_preferred_height == height) {
 			DistributeWithPreferredHeight(y, height, space,
-							expandable_prefers.get(),
-							unexpandable_prefers.get());
+					expandable_preferred_heights.get(),
+					unexpandable_preferred_heights.get());
 		} else if (total_preferred_height < height) {
-			DistributeWithLargeHeight(y, height, space, expandable_prefers.get(),
-							expandable_prefer_sum, unexpandable_prefers.get(),
-							unexpandable_prefer_sum);
+			DistributeWithLargeHeight(y, height, space, expandable_preferred_heights.get(),
+							expandable_preferred_height_sum, unexpandable_preferred_heights.get(),
+							unexpandable_preferred_height_sum);
 		} else {
-			DistributeWithSmallHeight(y, height, space, expandable_prefers.get(),
-							expandable_prefer_sum, unexpandable_prefers.get(),
-							unexpandable_prefer_sum);
+			DistributeWithSmallHeight(y, height, space, expandable_preferred_heights.get(),
+							expandable_preferred_height_sum, unexpandable_preferred_heights.get(),
+							unexpandable_preferred_height_sum);
 		}
 
-		Align(x, width, alignment);
+		Align(x, width, alignment, unexpandable_preferred_widths.get());
 	}
 
 	void VBox::DistributeWithPreferredHeight (int y,
 					unsigned int height,
 					int space,
-					const std::deque<Size>* expandable_prefers,
-					const std::deque<Size>* unexpandable_prefers)
+					const std::deque<unsigned int>* expandable_preferred_heights,
+					const std::deque<unsigned int>* unexpandable_preferred_heights)
 	{
-		std::deque<Size>::const_iterator exp_it = expandable_prefers->begin();
-		std::deque<Size>::const_iterator unexp_it = unexpandable_prefers->begin();
+		std::deque<unsigned int>::const_iterator exp_it = expandable_preferred_heights->begin();
+		std::deque<unsigned int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
 		WidgetDeque::iterator widget_it = sub_widgets()->begin();
 		AbstractWidget* widget = 0;
@@ -312,12 +321,12 @@ namespace BlendInt {
 			if(widget->visiable()) {
 
 				if(widget->expand_y()) {
-					ResizeSubWidget(widget, widget->size().width(), exp_it->height());
+					ResizeSubWidget(widget, widget->size().width(), (*exp_it));
 					y = y - widget->size().height();
 					SetSubWidgetPosition(widget, widget->position().x(), y);
 					exp_it++;
 				} else {
-					ResizeSubWidget(widget, widget->size().width(), unexp_it->height());
+					ResizeSubWidget(widget, widget->size().width(), (*unexp_it));
 					y = y - widget->size().height();
 					SetSubWidgetPosition(widget, widget->position().x(), y);
 					unexp_it++;
@@ -333,12 +342,12 @@ namespace BlendInt {
 	void VBox::DistributeWithSmallHeight (int y,
 					unsigned int height,
 					int space,
-					const std::deque<Size>* expandable_prefers,
+					const std::deque<unsigned int>* expandable_preferred_heights,
 					unsigned int expandable_prefer_sum,
-					const std::deque<Size>* unexpandable_prefers,
+					const std::deque<unsigned int>* unexpandable_preferred_heights,
 					unsigned int unexpandable_prefer_sum)
 	{
-		int widgets_height = height - (expandable_prefers->size() + unexpandable_prefers->size() - 1) * space;
+		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
 
 		if(widgets_height <= 0) {
 			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
@@ -349,8 +358,8 @@ namespace BlendInt {
 		}
 
 		unsigned int reference_height;
-		std::deque<Size>::const_iterator exp_it = expandable_prefers->begin();
-		std::deque<Size>::const_iterator unexp_it = unexpandable_prefers->begin();
+		std::deque<unsigned int>::const_iterator exp_it = expandable_preferred_heights->begin();
+		std::deque<unsigned int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 		WidgetDeque::iterator it = sub_widgets()->begin();
 		AbstractWidget* widget = 0;
 
@@ -372,7 +381,7 @@ namespace BlendInt {
 					} else {
 						ResizeSubWidget(widget,
 										widget->size().width(),
-										reference_height * unexp_it->height()
+										reference_height * (*unexp_it)
 														/ unexpandable_prefer_sum
 										);
 						y = y - widget->size().height();
@@ -398,13 +407,13 @@ namespace BlendInt {
 					if (widget->expand_y()) {
 						ResizeSubWidget(widget,
 										widget->size().width(),
-										reference_height * exp_it->height()
+										reference_height * (*exp_it)
 														/ expandable_prefer_sum);
 						y = y - widget->size().height();
 						SetSubWidgetPosition(widget, widget->position().x(), y);
 						exp_it++;
 					} else {
-						ResizeSubWidget(widget, widget->size().width(), unexp_it->height());
+						ResizeSubWidget(widget, widget->size().width(), (*unexp_it));
 						y = y - widget->size().height();
 						SetSubWidgetPosition(widget, widget->position().x(), y);
 						unexp_it++;
@@ -422,17 +431,17 @@ namespace BlendInt {
 	void VBox::DistributeWithLargeHeight (int y,
 					unsigned int height,
 					int space,
-					const std::deque<Size>* expandable_prefers,
+					const std::deque<unsigned int>* expandable_preferred_heights,
 					unsigned int expandable_prefer_sum,
-					const std::deque<Size>* unexpandable_prefers,
+					const std::deque<unsigned int>* unexpandable_preferred_heights,
 					unsigned int unexpandable_prefer_sum)
 	{
-		unsigned int widgets_height = height - (expandable_prefers->size() + unexpandable_prefers->size() - 1) * space;
+		unsigned int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
 
 		unsigned int expandable_height = widgets_height - unexpandable_prefer_sum;
 
-		std::deque<Size>::const_iterator exp_it = expandable_prefers->begin();
-		std::deque<Size>::const_iterator unexp_it = unexpandable_prefers->begin();
+		std::deque<unsigned int>::const_iterator exp_it = expandable_preferred_heights->begin();
+		std::deque<unsigned int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
 		WidgetDeque::iterator it = sub_widgets()->begin();
 
@@ -447,13 +456,13 @@ namespace BlendInt {
 				if (widget->expand_y()) {
 					ResizeSubWidget(widget,
 									widget->size().width(),
-									expandable_height * exp_it->height()
+									expandable_height * (*exp_it)
 													/ expandable_prefer_sum);
 					y = y - widget->size().height();
 					SetSubWidgetPosition(widget, widget->position().x(), y);
 					exp_it++;
 				} else {
-					ResizeSubWidget(widget, widget->size().width(), unexp_it->height());
+					ResizeSubWidget(widget, widget->size().width(), (*unexp_it));
 					y = y - widget->size().height();
 					SetSubWidgetPosition(widget, widget->position().x(), y);
 					unexp_it++;
@@ -466,26 +475,46 @@ namespace BlendInt {
 		}
 	}
 
-	void VBox::Align(int x, unsigned int width, int alignment)
+	void VBox::Align (int x, unsigned int width, int alignment,
+	        const std::deque<unsigned int>* unexpandable_preferred_widths)
 	{
+		std::deque<unsigned int>::const_iterator unexp_it =
+				unexpandable_preferred_widths->begin();
 		WidgetDeque::iterator it;
 		AbstractWidget* widget = 0;
-		for(it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-		{
+		for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
 			widget = *it;
 
 			if (widget->expand_x()) {
+
 				ResizeSubWidget(widget, width, widget->size().height());
 				SetSubWidgetPosition(widget, x, widget->position().y());
+
 			} else {
 
-				if (alignment & AlignLeft) {
+				if ((*unexp_it) >= width) {
+					ResizeSubWidget(widget, width, widget->size().height());
 					SetSubWidgetPosition(widget, x, widget->position().y());
-				} else if (alignment & AlignRight) {
-					SetSubWidgetPosition(widget, x + (width - widget->size().width()), widget->position().y());
-				} else if (alignment & AlignVerticalCenter) {
-					SetSubWidgetPosition(widget, x + (width - widget->size().width()) / 2, widget->position().y());
+				} else {
+
+					ResizeSubWidget(widget, (*unexp_it),
+					        widget->size().height());
+
+					if (alignment & AlignLeft) {
+						SetSubWidgetPosition(widget, x, widget->position().y());
+					} else if (alignment & AlignRight) {
+						SetSubWidgetPosition(widget,
+						        x + (width - widget->size().width()),
+						        widget->position().y());
+					} else if (alignment & AlignVerticalCenter) {
+						SetSubWidgetPosition(widget,
+						        x + (width - widget->size().width()) / 2,
+						        widget->position().y());
+					}
+
 				}
+
+				unexp_it++;
 
 			}
 		}

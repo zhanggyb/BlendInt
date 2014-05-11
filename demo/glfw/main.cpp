@@ -64,15 +64,18 @@ int main(int argc, char* argv[])
 	HBox* hbox = Manage(new HBox);
 	hbox->set_name("HBox");
 	hbox->SetPosition(100, 100);
-	hbox->Resize(200, 50);
+	hbox->Resize(200, 100);
 
 	MenuButton* menubtn1 = Manage(new MenuButton("Menu"));
+	menubtn1->set_name("MenuButton");
 	menubtn1->SetPosition(100, 50);
 
 	Button* btn1 = Manage(new Button);
+	btn1->set_name("Button1");
 	btn1->SetPosition(100, 200);
 
 	Button* btn2 = Manage(new Button);
+	btn2->set_name("Button2");
 	btn2->SetPosition(100, 100);
 
 	context->Add(hbox);

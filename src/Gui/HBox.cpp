@@ -248,59 +248,67 @@ namespace BlendInt {
 	void HBox::FillSubWidgetsProportionally (int x, int y, unsigned int width,
 					unsigned int height, int alignment, int space)
 	{
-		boost::scoped_ptr<std::deque<Size> > expandable_prefers(new std::deque<Size>);
-		boost::scoped_ptr<std::deque<Size> > unexpandable_prefers(new std::deque<Size>);
+		boost::scoped_ptr<std::deque<unsigned int> > expandable_preferred_widths(new std::deque<unsigned int>);
+		boost::scoped_ptr<std::deque<unsigned int> > unexpandable_preferred_widths(new std::deque<unsigned int>);
+		boost::scoped_ptr<std::deque<unsigned int> > unexpandable_preferred_heights(new std::deque<unsigned int>);
 
-		unsigned int expandable_prefer_sum = 0;	// the width sum of the expandable widgets' size
-		unsigned int unexpandable_prefer_sum = 0;	// the width sum of the unexpandable widgets' size
+		unsigned int expandable_preferred_width_sum = 0;	// the width sum of the expandable widgets' size
+		unsigned int unexpandable_preferred_width_sum = 0;	// the width sum of the unexpandable widgets' size
 
+		AbstractWidget* widget = 0;
 		Size tmp_size;
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
-			if ((*it)->visiable()) {
-				tmp_size = (*it)->GetPreferredSize();
+			widget = *it;
+			if (widget->visiable()) {
+				tmp_size = widget->GetPreferredSize();
 
-				if((*it)->expand_x()) {
-					expandable_prefers->push_back(tmp_size);
-					expandable_prefer_sum += tmp_size.width();
+				if(widget->expand_x()) {
+					expandable_preferred_width_sum += tmp_size.width();
+					expandable_preferred_widths->push_back(tmp_size.width());
 				} else {
-					unexpandable_prefers->push_back(tmp_size);
-					unexpandable_prefer_sum += tmp_size.width();
+					unexpandable_preferred_width_sum += tmp_size.width();
+					unexpandable_preferred_widths->push_back(tmp_size.width());
 				}
+
+				if(!widget->expand_y()) {
+					unexpandable_preferred_heights->push_back(tmp_size.height());
+				}
+
 			}
 		}
 
-		if((expandable_prefers->size() + unexpandable_prefers->size()) == 0) return;	// do nothing if all sub widgets are invisible
+		if((expandable_preferred_widths->size() + unexpandable_preferred_widths->size()) == 0) return;	// do nothing if all sub widgets are invisible
 
-		unsigned int total_space = ((expandable_prefers->size() + unexpandable_prefers->size()) - 1) * space;
+		unsigned int total_space = ((expandable_preferred_widths->size() + unexpandable_preferred_widths->size()) - 1) * space;
 
-		unsigned int total_preferred_width = expandable_prefer_sum
-						+ unexpandable_prefer_sum
+		unsigned int total_preferred_width = expandable_preferred_width_sum
+						+ unexpandable_preferred_width_sum
 						+ total_space;
 
 		if (total_preferred_width == width) {
 			DistributeWithPreferredWidth(x, space,
-							expandable_prefers.get(),
-							unexpandable_prefers.get());
+							expandable_preferred_widths.get(),
+							unexpandable_preferred_widths.get());
 		} else if (total_preferred_width < width) {
-			DistributeWithLargeWidth(x, width, space, expandable_prefers.get(),
-							expandable_prefer_sum, unexpandable_prefers.get(),
-							unexpandable_prefer_sum);
+			DistributeWithLargeWidth(x, width, space, expandable_preferred_widths.get(),
+							expandable_preferred_width_sum, unexpandable_preferred_widths.get(),
+							unexpandable_preferred_width_sum);
 		} else {
-			DistributeWithSmallWidth(x, width, space, expandable_prefers.get(),
-							expandable_prefer_sum, unexpandable_prefers.get(),
-							unexpandable_prefer_sum);
+			DistributeWithSmallWidth(x, width, space, expandable_preferred_widths.get(),
+							expandable_preferred_width_sum, unexpandable_preferred_widths.get(),
+							unexpandable_preferred_width_sum);
 		}
 
-		Align(y, height, alignment);
+		Align(y, height, alignment, unexpandable_preferred_heights.get());
 	}
 
 	void HBox::DistributeWithPreferredWidth (int x, int space,
-					const std::deque<Size>* expandable_prefers,
-					const std::deque<Size>* unexpandable_prefers)
+					const std::deque<unsigned int>* expandable_preferred_widths,
+					const std::deque<unsigned int>* unexpandable_preferred_widths)
 	{
-		std::deque<Size>::const_iterator exp_it = expandable_prefers->begin();
-		std::deque<Size>::const_iterator unexp_it = unexpandable_prefers->begin();
+		std::deque<unsigned int>::const_iterator exp_it = expandable_preferred_widths->begin();
+		std::deque<unsigned int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
 
 		WidgetDeque::iterator widget_it = sub_widgets()->begin();
 		AbstractWidget* widget = 0;
@@ -312,11 +320,11 @@ namespace BlendInt {
 			if(widget->visiable()) {
 
 				if(widget->expand_x()) {
-					ResizeSubWidget(widget, exp_it->width(), widget->size().height());
+					ResizeSubWidget(widget, *exp_it, widget->size().height());
 					SetSubWidgetPosition(widget, x, widget->position().y());
 					exp_it++;
 				} else {
-					ResizeSubWidget(widget, unexp_it->width(), widget->size().height());
+					ResizeSubWidget(widget, *unexp_it, widget->size().height());
 					SetSubWidgetPosition(widget, x, widget->position().y());
 					unexp_it++;
 				}
@@ -331,12 +339,12 @@ namespace BlendInt {
 	void HBox::DistributeWithSmallWidth (int x,
 					unsigned int width,
 					int space,
-					const std::deque<Size>* expandable_prefers,
+					const std::deque<unsigned int>* expandable_preferred_widths,
 					unsigned int expandable_prefer_sum,
-					const std::deque<Size>* unexpandable_prefers,
+					const std::deque<unsigned int>* unexpandable_preferred_widths,
 					unsigned int unexpandable_prefer_sum)
 	{
-		int widgets_width = width - (expandable_prefers->size() + unexpandable_prefers->size() - 1) * space;
+		int widgets_width = width - (expandable_preferred_widths->size() + unexpandable_preferred_widths->size() - 1) * space;
 
 		if(widgets_width <= 0) {
 			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
@@ -347,8 +355,8 @@ namespace BlendInt {
 		}
 
 		unsigned int reference_width;
-		std::deque<Size>::const_iterator exp_it = expandable_prefers->begin();
-		std::deque<Size>::const_iterator unexp_it = unexpandable_prefers->begin();
+		std::deque<unsigned int>::const_iterator exp_it = expandable_preferred_widths->begin();
+		std::deque<unsigned int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
 		WidgetDeque::iterator it = sub_widgets()->begin();
 		AbstractWidget* widget = 0;
 
@@ -367,7 +375,7 @@ namespace BlendInt {
 						exp_it++;
 					} else {
 						ResizeSubWidget(widget,
-										reference_width * unexp_it->width()
+										reference_width * (*unexp_it)
 														/ unexpandable_prefer_sum,
 										widget->size().height());
 						SetSubWidgetPosition(widget, x, widget->position().y());
@@ -391,13 +399,13 @@ namespace BlendInt {
 
 					if (widget->expand_x()) {
 						ResizeSubWidget(widget,
-										reference_width * exp_it->width()
+										reference_width * (*exp_it)
 														/ expandable_prefer_sum,
 										widget->size().height());
 						SetSubWidgetPosition(widget, x, widget->position().y());
 						exp_it++;
 					} else {
-						ResizeSubWidget(widget, unexp_it->width(), widget->size().height());
+						ResizeSubWidget(widget, (*unexp_it), widget->size().height());
 						SetSubWidgetPosition(widget, x, widget->position().y());
 						unexp_it++;
 					}
@@ -414,17 +422,17 @@ namespace BlendInt {
 	void HBox::DistributeWithLargeWidth (int x,
 					unsigned int width,
 					int space,
-					const std::deque<Size>* expandable_prefers,
+					const std::deque<unsigned int>* expandable_preferred_widths,
 					unsigned int expandable_prefer_sum,
-					const std::deque<Size>* unexpandable_prefers,
+					const std::deque<unsigned int>* unexpandable_preferred_widths,
 					unsigned int unexpandable_prefer_sum)
 	{
-		unsigned int widgets_width = width - (expandable_prefers->size() + unexpandable_prefers->size() - 1) * space;
+		unsigned int widgets_width = width - (expandable_preferred_widths->size() + unexpandable_preferred_widths->size() - 1) * space;
 
 		unsigned int expandable_width = widgets_width - unexpandable_prefer_sum;
 
-		std::deque<Size>::const_iterator exp_it = expandable_prefers->begin();
-		std::deque<Size>::const_iterator unexp_it = unexpandable_prefers->begin();
+		std::deque<unsigned int>::const_iterator exp_it = expandable_preferred_widths->begin();
+		std::deque<unsigned int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
 
 		WidgetDeque::iterator it = sub_widgets()->begin();
 
@@ -437,13 +445,13 @@ namespace BlendInt {
 
 				if (widget->expand_x()) {
 					ResizeSubWidget(widget,
-									expandable_width * exp_it->width()
+									expandable_width * (*exp_it)
 													/ expandable_prefer_sum,
 									widget->size().height());
 					SetSubWidgetPosition(widget, x, widget->position().y());
 					exp_it++;
 				} else {
-					ResizeSubWidget(widget, unexp_it->width(), widget->size().height());
+					ResizeSubWidget(widget, (*unexp_it), widget->size().height());
 					SetSubWidgetPosition(widget, x, widget->position().y());
 					unexp_it++;
 				}
@@ -455,29 +463,42 @@ namespace BlendInt {
 		}
 	}
 
-	void HBox::Align(int y, unsigned int height, int alignment)
+	void HBox::Align (int y, unsigned int height, int alignment, const std::deque<unsigned int>* unexpandable_preferred_heights)
 	{
+		std::deque<unsigned int>::const_iterator unexp_it =
+		        unexpandable_preferred_heights->begin();
 		WidgetDeque::iterator it;
 		AbstractWidget* widget = 0;
-		for(it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-		{
+		for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
 			widget = *it;
 
 			if (widget->expand_y()) {
+
 				ResizeSubWidget(widget, widget->size().width(), height);
 				SetSubWidgetPosition(widget, widget->position().x(), y);
+
 			} else {
 
-				if (alignment & AlignTop) {
-					SetSubWidgetPosition(widget, widget->position().x(),
-					        y + (height - widget->size().height()));
-				} else if (alignment & AlignBottom) {
+				if ((*unexp_it) >= height) {
+					ResizeSubWidget(widget, widget->size().width(), height);
 					SetSubWidgetPosition(widget, widget->position().x(), y);
-				} else if (alignment & AlignHorizontalCenter) {
-					SetSubWidgetPosition(widget, widget->position().x(),
-					        y + (height - widget->size().height()) / 2);
+				} else {
+
+					ResizeSubWidget(widget, widget->size().width(),
+					        (*unexp_it));
+
+					if (alignment & AlignTop) {
+						SetSubWidgetPosition(widget, widget->position().x(),
+						        y + (height - widget->size().height()));
+					} else if (alignment & AlignBottom) {
+						SetSubWidgetPosition(widget, widget->position().x(), y);
+					} else if (alignment & AlignHorizontalCenter) {
+						SetSubWidgetPosition(widget, widget->position().x(),
+						        y + (height - widget->size().height()) / 2);
+					}
 				}
 
+				unexp_it++;
 			}
 		}
 	}

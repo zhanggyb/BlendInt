@@ -103,26 +103,26 @@ namespace BlendInt {
 		 */
 		void DistributeWithPreferredWidth (int x,
 				int space,
-		        const std::deque<Size>* expandable_prefers,
-		        const std::deque<Size>* unexpandable_prefers);
+		        const std::deque<unsigned int>* expandable_preferred_widths,
+		        const std::deque<unsigned int>* unexpandable_preferred_widths);
 
 		void DistributeWithSmallWidth (int x,
 						unsigned int width,
 						int space,
-						const std::deque<Size>* expandable_prefers,
+						const std::deque<unsigned int>* expandable_preferred_widths,
 						unsigned int expandable_prefer_sum,
-						const std::deque<Size>* unexpandable_prefers,
+						const std::deque<unsigned int>* unexpandable_preferred_widths,
 						unsigned int unexpandable_prefer_sum);
 
 		void DistributeWithLargeWidth (int x,
 						unsigned int width,
 						int space,
-						const std::deque<Size>* expandable_prefers,
+						const std::deque<unsigned int>* expandable_preferred_widths,
 						unsigned int expandable_prefer_sum,
-						const std::deque<Size>* unexpandable_prefers,
+						const std::deque<unsigned int>* unexpandable_preferred_widths,
 						unsigned int unexpandable_prefer_sum);
 
-		void Align (int y, unsigned int height, int alignment);
+		void Align (int y, unsigned int height, int alignment, const std::deque<unsigned int>* unexpandable_preferred_heights);
 
 		int m_alignment;
 
