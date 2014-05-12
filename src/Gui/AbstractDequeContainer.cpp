@@ -40,7 +40,36 @@ namespace BlendInt {
 		ClearSubWidgets();
 	}
 
-	bool AbstractDequeContainer::AddSubWidget (AbstractWidget* widget)
+	bool AbstractDequeContainer::PushFrontSubWidget (AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->container()) {
+
+			if (widget->container() == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name().c_str(),
+								widget->container()->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				AbstractContainer::RemoveSubWidget(widget->container(), widget);
+			}
+
+		}
+
+		m_sub_widgets->push_front(widget);
+
+		SetContainer(widget, this);
+
+		events()->connect(widget->destroyed(), this,
+						&AbstractDequeContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractDequeContainer::PushBackSubWidget (AbstractWidget* widget)
 	{
 		if (!widget)
 			return false;
@@ -62,8 +91,6 @@ namespace BlendInt {
 		m_sub_widgets->push_back(widget);
 
 		SetContainer(widget, this);
-
-		// TODO: set layer and lock the geometry of the sub widget
 
 		events()->connect(widget->destroyed(), this,
 						&AbstractDequeContainer::OnSubWidgetDestroyed);
@@ -106,11 +133,6 @@ namespace BlendInt {
 			return true;
 		else
 			return false;
-	}
-	
-	bool AbstractDequeContainer::AppendSubWidget (AbstractWidget* widget)
-	{
-		return AddSubWidget(widget);
 	}
 	
 	bool AbstractDequeContainer::InsertSubWidget (size_t index,

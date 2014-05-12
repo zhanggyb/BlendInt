@@ -194,7 +194,7 @@ namespace BlendInt {
 		}
 		w += margin().left() + margin().right() + button->size().width();
 
-		AppendSubWidget(button);
+		PushBackSubWidget(button);
 		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
 
 		h = h + margin().top() + margin().bottom();
@@ -223,7 +223,7 @@ namespace BlendInt {
 		}
 		w += margin().left() + margin().right() + button->size().width();
 
-		AppendSubWidget(button);
+		PushBackSubWidget(button);
 		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
 
 		h = h + margin().top() + margin().bottom();
@@ -239,7 +239,7 @@ namespace BlendInt {
 
 		int x = GetLastPosition();
 
-		if(AppendSubWidget(button)) {
+		if(PushBackSubWidget(button)) {
 
 			unsigned h = size().height() - margin().top() - margin().bottom();
 			h = std::max(h, button->size().height());
@@ -266,7 +266,7 @@ namespace BlendInt {
 
 		int x = GetLastPosition();
 
-		if(AppendSubWidget(button)) {
+		if(PushBackSubWidget(button)) {
 			button->SetMenu(menu);
 
 			unsigned h = size().height() - margin().top() - margin().bottom();

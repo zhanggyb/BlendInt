@@ -50,7 +50,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		if(AddSubWidget(widget)) {
+		if(PushBackSubWidget(widget)) {
 
 			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
 
@@ -231,7 +231,6 @@ namespace BlendInt {
 	void HBox::FillSubWidgetsInHBox (const Point& out_pos, const Size& out_size, const Margin& margin,
 	        int alignment, int space)
 	{
-
 		int x = out_pos.x() + margin.left();
 		int y = out_pos.y() + margin.bottom();
 		unsigned int width = out_size.width() - margin.left() - margin.right();

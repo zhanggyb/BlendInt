@@ -149,9 +149,9 @@ namespace BlendInt {
 		m_hbar = Manage(new ScrollBar(Horizontal));
 		m_vbar = Manage(new ScrollBar(Vertical));
 
-		AppendSubWidget(m_view);
-		AppendSubWidget(m_hbar);
-		AppendSubWidget(m_vbar);
+		PushBackSubWidget(m_view);
+		PushBackSubWidget(m_hbar);
+		PushBackSubWidget(m_vbar);
 
 		m_hbar->SetVisible(false);
 		m_vbar->SetVisible(false);

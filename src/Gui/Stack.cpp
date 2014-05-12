@@ -40,7 +40,7 @@ namespace BlendInt {
 
 	void Stack::Add (AbstractWidget* widget)
 	{
-		if(AppendSubWidget(widget)) {
+		if(PushBackSubWidget(widget)) {
 			// TODO: lock widget's geometry
 
 			unsigned int w = size().width() - margin().left() - margin().right();

@@ -78,11 +78,19 @@ int main(int argc, char* argv[])
 	btn2->set_name("Button2");
 	btn2->SetPosition(100, 100);
 
+	TextEntry* text = Manage(new TextEntry);
+	text->set_name("TextEntry");
+
+	ToolButton* toolbtn = Manage(new ToolButton);
+	toolbtn->set_name("ToolButton");
+
 	context->Add(hbox);
 
 	hbox->Add(menubtn1);
 	hbox->Add(btn1);
 	hbox->Add(btn2);
+	hbox->Add(text);
+	hbox->Add(toolbtn);
 
 	VBox* vbox = Manage(new VBox);
 	vbox->set_name("VBox");
@@ -103,11 +111,6 @@ int main(int argc, char* argv[])
 	vbox->Add(menubtn2);
 	vbox->Add(btn3);
 	vbox->Add(btn4);
-
-	DBG_PRINT_MSG("vbox geometry: %d %d %u %u", vbox->position().x(), vbox->position().y(), vbox->size().width(), vbox->size().height());
-	DBG_PRINT_MSG("menubtn2 geometry: %d %d %u %u", menubtn2->position().x(), menubtn2->position().y(), menubtn2->size().width(), menubtn2->size().height());
-	DBG_PRINT_MSG("btn3 geometry: %d %d %u %u", btn3->position().x(), btn3->position().y(), btn3->size().width(), btn3->size().height());
-	DBG_PRINT_MSG("btn4 geometry: %d %d %u %u", btn4->position().x(), btn4->position().y(), btn4->size().width(), btn4->size().height());
 
 	RunLoop(win);
 

@@ -51,17 +51,17 @@ namespace BlendInt {
 
 	protected:
 
-		bool AddSubWidget (AbstractWidget* widget);
+		bool PushFrontSubWidget (AbstractWidget* widget);
+
+		bool InsertSubWidget (size_t index, AbstractWidget* widget);
+
+		bool PushBackSubWidget (AbstractWidget* widget);
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
 
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
 
 		virtual ResponseType FocusEvent (bool focus);
-
-		bool AppendSubWidget (AbstractWidget* widget);
-
-		bool InsertSubWidget (size_t index, AbstractWidget* widget);
 
 		void MoveSubWidgets (int offset_x, int offset_y);
 

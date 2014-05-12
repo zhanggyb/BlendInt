@@ -32,6 +32,7 @@ TEST_F(ToolBarTest1, Foo1)
 	
     ToolBar* toolbar = Manage (new ToolBar);
     toolbar->set_name("ToolBar");
+    toolbar->SetPosition(100, 100);
 
     ToolButton* btn1 = Manage (new ToolButton);
     btn1->set_name("ToolButton1");
@@ -67,7 +68,7 @@ TEST_F(ToolBarTest1, Foo1)
 	toolbar->Add(btn7);
 	toolbar->Add(btn8);
 
-    toolbar->SetPosition(100, 100);
+    //toolbar->SetPosition(100, 100);
 
 	context->Add(toolbar);
 

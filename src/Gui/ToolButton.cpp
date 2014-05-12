@@ -43,7 +43,6 @@ namespace BlendInt {
 	ToolButton::ToolButton ()
 	: m_vao(0)
 	{
-		//set_preferred_size(24, 24);
 		set_size(24, 24);
 
 		InitOnce();

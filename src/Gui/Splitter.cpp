@@ -42,7 +42,7 @@ namespace BlendInt {
 	
 	void Splitter::Add (AbstractWidget* widget)
 	{
-		if(AddSubWidget(widget)) {
+		if(PushBackSubWidget(widget)) {
 			AlignSubWidgets(m_orientation, size(), margin(), m_space);
 		}
 	}

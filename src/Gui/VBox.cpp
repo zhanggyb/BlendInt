@@ -50,7 +50,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		if(AddSubWidget(widget)) {
+		if(PushBackSubWidget(widget)) {
 
 			FillSubWidgetsInVBox(position(), size(), margin(), m_alignment, m_space);
 

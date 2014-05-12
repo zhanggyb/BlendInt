@@ -52,7 +52,7 @@ namespace BlendInt {
 
 	void Expander::Add (AbstractWidget* widget)
 	{
-		if (AddSubWidget(widget)) {
+		if (PushBackSubWidget(widget)) {
 
 			FillSubWidgetsAveragely(position(), size(), margin(), Vertical, AlignCenter, 2);
 

@@ -70,11 +70,15 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		void InitializeToolBar ();
+
+		void FillSubWidgets (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+
+		void FillSubWidgets (int x, int y, unsigned int width, unsigned int height, int space);
 
 		void RealignSubWidgets (const Size& size, const Margin& margin, int space);
 
-		int GetLastPosition ();
+		int GetLastPosition () const;
 
 		GLuint m_vao;
 
@@ -85,7 +89,7 @@ namespace BlendInt {
 
 		/** Used for middle mouse move */
 		bool m_move_status;
-		int m_original_x;
+		int m_last_x;
 		int m_start_x;
 
 		RefPtr<GLArrayBuffer> m_inner;

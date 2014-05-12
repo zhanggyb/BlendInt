@@ -164,7 +164,7 @@ namespace BlendInt {
 
 		m_stack = Manage(new TabStack);
 		m_stack->SetMargin(4, 4, 4, 4);
-		AppendSubWidget(m_stack);
+		PushBackSubWidget(m_stack);
 
 		events()->connect(m_group.button_index_toggled(), this, &Tab::OnButtonToggled);
 	}
@@ -178,7 +178,7 @@ namespace BlendInt {
 		TabButton* btn = Manage(new TabButton);
 		btn->SetText(title);
 
-		AppendSubWidget(btn);
+		PushBackSubWidget(btn);
 		m_group.Add(btn);
 
 		m_stack->Add(widget);
