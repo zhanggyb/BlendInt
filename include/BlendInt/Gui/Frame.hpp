@@ -52,9 +52,9 @@ namespace BlendInt {
 
 		virtual ~Frame ();
 
-		void Add (AbstractWidget* widget);
+		bool Setup (AbstractWidget* widget);
 
-		void Remove (AbstractWidget* widget);
+		bool Remove (AbstractWidget* widget);
 
 	protected:
 

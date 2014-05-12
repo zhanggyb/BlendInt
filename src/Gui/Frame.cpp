@@ -54,7 +54,7 @@ namespace BlendInt {
 	Frame::Frame ()
 			: AbstractSingleContainer()
 	{
-		set_size(120, 80);
+		set_size(400, 400);
 	}
 
 	Frame::~Frame ()
@@ -62,8 +62,10 @@ namespace BlendInt {
 		// TODO Auto-generated destructor stub
 	}
 
-	void Frame::Add (AbstractWidget* widget)
+	bool Frame::Setup (AbstractWidget* widget)
 	{
+		bool ret = false;
+
 		if (SetSubWidget(widget)) {
 
 			int x = position().x() + margin().left();
@@ -75,7 +77,23 @@ namespace BlendInt {
 							- margin().bottom();
 
 			FillSubWidget(x, y, w, h);
+
+			ret = true;
 		}
+
+		return ret;
+	}
+
+	bool Frame::Remove (AbstractWidget* widget)
+	{
+		bool ret = false;
+
+		if(RemoveSubWidget(widget)) {
+
+			ret = true;
+		}
+
+		return ret;
 	}
 
 	bool Frame::UpdateTest (const UpdateRequest& request)
@@ -175,7 +193,7 @@ namespace BlendInt {
 	{
 		return Accept;
 	}
-	
+
 	ResponseType Frame::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Accept;
@@ -244,4 +262,3 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
-

@@ -41,6 +41,8 @@ namespace BlendInt {
 
 		virtual ~AbstractSingleContainer ();
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		/**

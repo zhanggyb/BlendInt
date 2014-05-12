@@ -41,7 +41,7 @@ TEST_F(FrameTest1, Foo1)
     ref_btn->set_name("Ref Button");
     ref_btn->SetPosition(400, 200);
 
-    frame->Add(ref_btn);
+    frame->Setup(ref_btn);
 
     DBG_PRINT_MSG("frame layer: %d", frame->z());
     frame->SetMargin(10, 10, 4, 4);

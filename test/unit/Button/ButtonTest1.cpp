@@ -1,7 +1,6 @@
 #include "ButtonTest1.hpp"
 #include <BlendInt/Gui/Button.hpp>
 #include <Common/Window.hpp>
-#include <BlendInt/Gui/HLayout.hpp>
 
 using namespace BlendInt;
 

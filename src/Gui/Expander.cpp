@@ -36,31 +36,87 @@
 
 #include <BlendInt/Gui/Expander.hpp>
 
+#include <BlendInt/Gui/ToggleButton.hpp>
+#include <BlendInt/Gui/Frame.hpp>
+
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 
 	Expander::Expander ()
+	: m_expand_button(0), m_frame(0), m_space (4)
 	{
-		set_size(400, 400);
+		m_expand_button = Manage(new ToggleButton);
+		m_frame = Manage(new Frame);
+		m_frame->SetExpand(true);
+
+		PushBackSubWidget(m_expand_button);
+		PushBackSubWidget(m_frame);
+
+		int x = position().x();
+		int y = position().y();
+		unsigned int width = 0;
+		unsigned int height = 0;
+
+		Size sub_prefer = m_expand_button->GetPreferredSize();
+		width = std::max(width, sub_prefer.width());
+		height += sub_prefer.height();
+
+		ResizeSubWidget(m_expand_button, width, sub_prefer.height());
+		y -= sub_prefer.height();
+		SetSubWidgetPosition(m_expand_button, x, y);
+
+		height += m_space;
+		y -= m_space;
+
+		sub_prefer = m_frame->GetPreferredSize();
+		width = std::max(width, sub_prefer.width());
+		height += sub_prefer.height();
+
+		ResizeSubWidget(m_expand_button, width, sub_prefer.height());
+		y -= sub_prefer.height();
+		SetSubWidgetPosition(m_expand_button, x, y);
+
+		width = width + margin().left() + margin().right();
+		height = height + margin().top() + margin().bottom();
+
+		set_size(width, height);
 	}
 
 	Expander::~Expander ()
 	{
 	}
 
-	void Expander::Add (AbstractWidget* widget)
+	bool Expander::Setup (AbstractWidget* widget)
 	{
-		if (PushBackSubWidget(widget)) {
+		bool ret = false;
 
-			FillSubWidgetsAveragely(position(), size(), margin(), Vertical, AlignCenter, 2);
-
+		if(m_frame->Setup(widget)) {
+			ret = true;
 		}
+
+		return ret;
 	}
 
-	void Expander::Remove (AbstractWidget* widget)
+	Size Expander::GetPreferredSize() const
 	{
+		Size prefer;
+
+		Size sub_prefer = m_expand_button->GetPreferredSize();
+		prefer.set_width(std::max(prefer.width(), sub_prefer.width()));
+		prefer.add_height(sub_prefer.height());
+
+		prefer.add_height(m_space);
+
+		sub_prefer = m_frame->GetPreferredSize();
+		prefer.set_width(std::max(prefer.width(), sub_prefer.width()));
+		prefer.add_height(sub_prefer.height());
+
+		prefer.add_width(margin().left() + margin().right());
+		prefer.add_height(margin().top() + margin().bottom());
+
+		return prefer;
 	}
 
 	bool Expander::UpdateTest (const UpdateRequest& request)
@@ -93,8 +149,7 @@ namespace BlendInt {
 				case FormSize: {
 					if (sub_widget_size()) {
 						const Size* size_p = static_cast<const Size*>(request.data());
-						set_size(*size_p);
-						FillSubWidgetsAveragely(position(), *size_p, margin(), Vertical, AlignCenter, 2);
+						FillWithPreferredHeight(position(), *size_p, margin(), m_space);
 					}
 					break;
 				}
@@ -115,8 +170,7 @@ namespace BlendInt {
 
 					const Margin* margin_p = static_cast<const Margin*>(request.data());
 					set_margin(*margin_p);
-
-					FillSubWidgetsAveragely(position(), size(), *margin_p, Vertical, AlignCenter, 2);
+					FillWithPreferredHeight(position(), size(), *margin_p, m_space);
 
 					break;
 				}
@@ -220,6 +274,56 @@ namespace BlendInt {
 	ResponseType Expander::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
+	}
+	
+	void Expander::FillWithPreferredHeight (const Point& out_pos,
+					const Size& out_size, const Margin& margin, int space)
+	{
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		unsigned int width = out_size.width() - margin.left() - margin.right();
+		unsigned int height = out_size.height() - margin.top() - margin.bottom();
+
+		FillWithPreferredHeight(x, y, width, height, space);
+	}
+	
+	void Expander::FillWithPreferredHeight (int x, int y, unsigned int width,
+					unsigned int height, int space)
+	{
+		y = y + height;
+
+		Size prefer;
+
+		unsigned int button_preferred_height = 0;
+		unsigned int sum = 0;
+
+		prefer = m_expand_button->GetPreferredSize();
+		button_preferred_height = prefer.height();
+		sum += prefer.height();
+
+		prefer = m_frame->GetPreferredSize();
+		sum += prefer.height();
+
+		if(button_preferred_height < (height - space)) {
+			y = y - button_preferred_height;
+			ResizeSubWidget(m_expand_button, width, button_preferred_height);
+			SetSubWidgetPosition(m_expand_button, x, y);
+
+			y -= space;
+
+			ResizeSubWidget(m_frame, width, height - button_preferred_height - space);
+			y = y - (height - button_preferred_height - space);
+			SetSubWidgetPosition(m_frame, x, y);
+		} else {
+			y = y - (height - space);
+			ResizeSubWidget(m_expand_button, width, height - space);
+			SetSubWidgetPosition(m_expand_button, x, y);
+
+			y -= space;
+			ResizeSubWidget(m_frame, width, 0);
+			SetSubWidgetPosition(m_frame, x, y);
+		}
+
 	}
 
 }

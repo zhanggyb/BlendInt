@@ -45,7 +45,6 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/OpenGL/GLFramebuffer.hpp>
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
-#include <BlendInt/Gui/AbstractLayout.hpp>
 
 #include <BlendInt/Interface.hpp>
 

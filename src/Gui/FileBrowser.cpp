@@ -77,7 +77,7 @@ namespace BlendInt {
 		m_layout->Add(file_layout);
 		m_layout->Add(area);
 
-		Add(m_layout);
+		Setup(m_layout);
 
 		int x = position().x() + margin().left();
 		int y = position().y() + margin().right();

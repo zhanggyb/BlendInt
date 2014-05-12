@@ -132,7 +132,7 @@ namespace BlendInt
 
 	bool Context::Add (AbstractWidget* widget)
 	{
-		return AddSubWidget(widget);
+		return InsertSubWidget(widget);
 	}
 
 	bool Context::Remove (AbstractWidget* widget)
@@ -540,7 +540,7 @@ namespace BlendInt
 		return Accept;
 	}
 
-	bool Context::AddSubWidget (AbstractWidget* widget)
+	bool Context::InsertSubWidget (AbstractWidget* widget)
 	{
 		if(!widget)
 			return false;
@@ -558,6 +558,8 @@ namespace BlendInt
 				        widget);
 			}
 		}
+
+		// TODO: the widget new added may be under the cursor
 
 		std::map<int, ContextLayer>::iterator layer_iter;
 		layer_iter = m_layers.find(widget->z());

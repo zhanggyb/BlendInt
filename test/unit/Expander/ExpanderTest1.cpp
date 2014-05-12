@@ -36,12 +36,8 @@ TEST_F(ExpanderTest1, Foo1)
 	
 	Button* btn1 = Manage(new Button);
 	btn1->set_name("Button1");
-	
-	Button* btn2 = Manage(new Button);
-	btn2->set_name("Button2");
-	
-	expander->Add(btn1);
-	expander->Add(btn2);
+
+	expander->Setup(btn1);
 	
 	context->Add(expander);
 

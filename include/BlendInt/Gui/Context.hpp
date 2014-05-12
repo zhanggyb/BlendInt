@@ -155,7 +155,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual bool AddSubWidget (AbstractWidget* widget);
+		virtual bool InsertSubWidget (AbstractWidget* widget);
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
 

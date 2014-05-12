@@ -66,6 +66,7 @@ namespace BlendInt {
 
 	Theme::Theme ()
 	: m_dpi(96),
+	  m_pixel(1.0),
 	  m_menu_shadow_fac(0.5),
 	  m_menu_shadow_width(12)
 	{
@@ -110,8 +111,8 @@ namespace BlendInt {
 				ret = true;
 			} else {
 				std::cerr
-								<< "<Theme> should be the only root node in theme file: "
-								<< filepath << std::endl;
+				<< "<Theme> should be the only root node in theme file: "
+				<< filepath << std::endl;
 			}
 		} catch (std::exception& ex) {
 			std::cerr << "Error: " << ex.what() << std::endl;
@@ -161,6 +162,11 @@ namespace BlendInt {
 		snprintf(buf, 16, "%u", m_dpi);
 		value = doc.allocate_string(buf);
 		xml_attribute<>* attr = doc.allocate_attribute("dpi", value);
+		ui_node->append_attribute(attr);
+
+		snprintf(buf, 16, "%f", m_pixel);
+		value = doc.allocate_string(buf);
+		attr = doc.allocate_attribute("pixel", value);
 		ui_node->append_attribute(attr);
 
 		snprintf(buf, 16, "%g", m_menu_shadow_fac);
@@ -435,6 +441,9 @@ namespace BlendInt {
 
 		m_dpi = 96;
 
+		// TODO: check if retina in Mac OS
+		m_pixel = 1.0;
+
 		m_xaxis = 0xFF0000FF;
 		m_yaxis = 0x00FF00FF;
 		m_zaxis = 0x0000FFFF;
@@ -452,6 +461,12 @@ namespace BlendInt {
 
 				if(sscanf(attrib->value(), "%u", &tmp) == 1) {
 					m_dpi = tmp;
+				}
+
+			} else if(strcmp("pixel", attrib->name()) == 0) {
+
+				if(sscanf(attrib->value(), "%f", &tmp) == 1) {
+					m_pixel = tmp;
 				}
 
 			} else if(strcmp("menu_shadow_fac", attrib->name()) == 0) {

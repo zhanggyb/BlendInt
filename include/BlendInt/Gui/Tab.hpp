@@ -29,8 +29,6 @@
 #include <BlendInt/Gui/AbstractDequeContainer.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/Stack.hpp>
-#include <BlendInt/Gui/HLayout.hpp>
-#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/ButtonGroup.hpp>
 
 namespace BlendInt {

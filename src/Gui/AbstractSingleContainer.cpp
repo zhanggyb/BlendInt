@@ -46,6 +46,22 @@ namespace BlendInt {
 		}
 	}
 
+	Size AbstractSingleContainer::GetPreferredSize () const
+	{
+		Size preferred_size;
+
+		if(sub_widget()) {
+			preferred_size = sub_widget()->GetPreferredSize();
+			preferred_size.add_width(margin().left() + margin().right());
+			preferred_size.add_height(margin().top() + margin().bottom());
+		} else {
+			preferred_size.set_width(400);
+			preferred_size.set_height(400);
+		}
+
+		return preferred_size;
+	}
+
 	void AbstractSingleContainer::FillSubWidget (const Point& pos, const Size& out_size, const Margin& margin)
 	{
 		if (m_sub_widget) {

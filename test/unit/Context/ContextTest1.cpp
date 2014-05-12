@@ -89,7 +89,7 @@ TEST_F(ContextTest1, AddSubWidget02)
     Frame* f1 = new Frame;
     f1->set_name("frame1");
     f1->SetPosition(240, 320);
-    f1->Add(w2);
+    f1->Setup(w2);
 
     context->Add(w1);
     context->Add(f1);
@@ -145,14 +145,14 @@ TEST_F(ContextTest1, AddSubWidget03)
     Frame* f1 = new Frame;
     f1->set_name("frame1");
     f1->SetPosition(240, 320);
-    f1->Add(w2);
+    f1->Setup(w2);
 
     context->Add(w2);
     context->Add(f1);
 
     w2->SetPosition(400, 200);
 
-    f1->Add(w1);
+    f1->Setup(w1);
 
 #ifdef DEBUG
     context->PrintLayers();
@@ -202,7 +202,7 @@ TEST_F(ContextTest1, DestructorInContainer01)
 	f1->set_name("frame1");
 	f1->SetPosition(240, 320);
 
-	f1->Add(w1);
+	f1->Setup(w1);
 
 	context->Add(f1);
 
@@ -255,7 +255,7 @@ TEST_F(ContextTest1, DestructorInContainer02)
 	Frame* f1 = Manage(new Frame);  // now f1 should be deleted automatically
 	f1->set_name("frame1");
 	f1->SetPosition(240, 320);
-	f1->Add(w1);
+	f1->Setup(w1);
 
 	context->Add(f1);
 

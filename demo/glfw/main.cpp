@@ -21,7 +21,6 @@
 #include <BlendInt/Gui/Slider.hpp>
 #include <BlendInt/Gui/Frame.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
-#include <BlendInt/Gui/TableLayout.hpp>
 #include <BlendInt/Gui/ScrollBar.hpp>
 #include <BlendInt/Gui/VertexIcon.hpp>
 #include <BlendInt/Gui/ScrollView.hpp>

@@ -249,7 +249,6 @@ namespace BlendInt {
 		boost::scoped_ptr<std::deque<unsigned int> > unexpandable_preferred_heights(new std::deque<unsigned int>);
 		boost::scoped_ptr<std::deque<unsigned int> > unexpandable_preferred_widths(new std::deque<unsigned int>);
 
-
 		unsigned int expandable_preferred_height_sum = 0;	// the height sum of the expandable widgets' size
 		unsigned int unexpandable_preferred_height_sum = 0;	// the height sum of the unexpandable widgets' size
 

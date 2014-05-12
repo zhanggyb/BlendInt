@@ -28,6 +28,9 @@
 
 namespace BlendInt {
 
+	class ToggleButton;
+	class Frame;
+
 	class Expander: public AbstractDequeContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Expander);
@@ -38,9 +41,9 @@ namespace BlendInt {
 
 		virtual ~Expander ();
 
-		void Add (AbstractWidget* widget);
+		bool Setup (AbstractWidget* widget);
 
-		void Remove (AbstractWidget* widget);
+		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -64,6 +67,16 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+	protected:
+
+		void FillWithPreferredHeight (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+
+		void FillWithPreferredHeight (int x, int y, unsigned int width, unsigned int height, int space);
+
+		ToggleButton* m_expand_button;
+		Frame* m_frame;
+
+		int m_space;
 	};
 
 }

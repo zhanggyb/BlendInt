@@ -85,6 +85,11 @@ namespace BlendInt {
 			return m_dpi;
 		}
 		
+		float pixel () const
+		{
+			return m_pixel;
+		}
+
 		const WidgetTheme& list_item () const
 		{
 			return m_list_item;
@@ -239,6 +244,9 @@ namespace BlendInt {
 
 		/** Font DPI */
 		unsigned int m_dpi;
+
+		/** How many pixels for 1 border */
+		float m_pixel;
 
 		/* fac: 0 - 1 for blend factor, width in pixels */
 		float m_menu_shadow_fac;

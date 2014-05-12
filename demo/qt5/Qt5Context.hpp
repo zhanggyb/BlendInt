@@ -9,9 +9,10 @@
 #include <QGuiApplication>
 #include <QtGui/QWindow>
 
-#include <BlendInt/Gui/VLayout.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
 #include <BlendInt/Gui/Button.hpp>
+
+#include "MainLayout.hpp"
 
 namespace BI=BlendInt;
 
@@ -40,10 +41,8 @@ private:
 	BI::CursorShape m_current_cursor;
 
 	std::stack<int> m_cursor_stack;
-	BI::RefPtr<BI::VLayoutExt> m_layout;
-	BI::Viewport3D* m_view3d;
-	BI::Button* m_ok;
 
+	MainLayout* m_layout;
 };
 
 #endif /* QT5CONTEXT_HPP_ */
