@@ -44,10 +44,230 @@
 
 namespace BlendInt {
 
+	ExpandButton::ExpandButton()
+	: AbstractRoundButton(), m_vao(0)
+	{
+		InitializeExpandButton();
+	}
+
+	ExpandButton::ExpandButton (const String& text)
+	: AbstractRoundButton(), m_vao(0)
+	{
+		InitializeExpandButton(text);
+	}
+
+	ExpandButton::~ExpandButton ()
+	{
+		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	void ExpandButton::InitializeExpandButton ()
+	{
+		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_checkable(true);
+
+		unsigned int h = font().get_height();
+
+		set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
+						h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		GenerateFormBuffer(
+						size(),
+						round_type(),
+						radius(),
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						0);
+		glBindVertexArray(0);
+	}
+
+	void ExpandButton::Update (const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case FormSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					UpdateTextPosition(*size_p, round_type(), radius(), text(), font());
+					glBindVertexArray(m_vao);
+					GenerateFormBuffer(
+									*size_p,
+									round_type(),
+									radius(),
+									m_inner_buffer.get(),
+									m_outer_buffer.get(),
+									0);
+					glBindVertexArray(0);
+					Refresh();
+					break;
+				}
+
+				case FormRoundType: {
+					const int* type_p = static_cast<const int*>(request.data());
+					UpdateTextPosition(size(), *type_p, radius(), text(), font());
+					glBindVertexArray(m_vao);
+					GenerateFormBuffer(
+									size(),
+									*type_p,
+									radius(),
+									m_inner_buffer.get(),
+									m_outer_buffer.get(),
+									0);
+					glBindVertexArray(0);
+					Refresh();
+					break;
+				}
+
+				case FormRoundRadius: {
+					const float* radius_p = static_cast<const float*>(request.data());
+					UpdateTextPosition(size(), round_type(), *radius_p, text(), font());
+					glBindVertexArray(m_vao);
+					GenerateFormBuffer(
+									size(),
+									round_type(),
+									*radius_p,
+									m_inner_buffer.get(),
+									m_outer_buffer.get(),
+									0);
+					glBindVertexArray(0);
+					Refresh();
+					break;
+				}
+
+				default:
+					break;
+			}
+
+		}
+	}
+
+	ResponseType ExpandButton::Draw (const RedrawEvent& event)
+	{
+		glBindVertexArray(m_vao);
+
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
+		program->Use();
+
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+
+		Theme* tm = Theme::instance;
+
+		glm::vec4 color;
+
+		if (hover()) {
+			if(checked()) {
+				color.r = tm->regular().inner_sel.highlight_red() / 255.f;
+				color.g = tm->regular().inner_sel.highlight_green() / 255.f;
+				color.b = tm->regular().inner_sel.highlight_blue() / 255.f;
+				color.a = tm->regular().inner_sel.a() / 255.f;
+			} else {
+				color.r = tm->regular().inner.highlight_red() / 255.f;
+				color.g = tm->regular().inner.highlight_green() / 255.f;
+				color.b = tm->regular().inner.highlight_blue() / 255.f;
+				color.a = tm->regular().inner.a() / 255.f;
+			}
+		} else {
+			if (checked()) {
+				color.r = tm->regular().inner_sel.r() / 255.f;
+				color.g = tm->regular().inner_sel.g() / 255.f;
+				color.b = tm->regular().inner_sel.b() / 255.f;
+				color.a = tm->regular().inner_sel.a() / 255.f;
+			} else {
+				color.r = tm->regular().inner.r() / 255.f;
+				color.g = tm->regular().inner.g() / 255.f;
+				color.b = tm->regular().inner.b() / 255.f;
+				color.a = tm->regular().inner.a() / 255.f;
+			}
+		}
+
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetUniform1i("AA", 0);
+
+		glEnableVertexAttribArray(0);
+
+		DrawTriangleFan(0, m_inner_buffer.get());
+
+		color.r = tm->regular().outline.r() / 255.f;
+		color.g = tm->regular().outline.g() / 255.f;
+		color.b = tm->regular().outline.b() / 255.f;
+		color.a = tm->regular().outline.a() / 255.f;
+
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetUniform1i("AA", 1);
+
+		DrawTriangleStrip(0, m_outer_buffer.get());
+
+		glDisableVertexAttribArray(0);
+
+		program->Reset();
+
+		glBindVertexArray(0);
+
+		if(text().size()) {
+			font().PrintExt(mvp, text(), text_length(), 0);
+		}
+
+		return Accept;
+	}
+
+	void ExpandButton::InitializeExpandButton (const String& text)
+	{
+		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_checkable(true);
+		set_text(text);
+
+		unsigned int h = font().get_height();
+
+		if(text.empty()) {
+			set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
+							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+		} else {
+			set_text_length(text.length());
+			Rect text_outline = font().GetTextOutline(text);
+
+			unsigned int width = text_outline.width() + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
+			unsigned int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
+
+			set_size(width, height);
+
+			set_pen((width - text_outline.width()) / 2,
+							(height - font().get_height()) / 2
+											+ std::abs(font().get_descender()));
+		}
+
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+
+		GenerateFormBuffer(
+						size(),
+						round_type(),
+						radius(),
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						0);
+
+		glBindVertexArray(0);
+	}
+
+	// ----------------------
+
 	Expander::Expander ()
 	: m_expand_button(0), m_frame(0), m_space (4)
 	{
-		m_expand_button = Manage(new ToggleButton);
+		m_expand_button = Manage(new ExpandButton);
 		m_frame = Manage(new Frame);
 		m_frame->SetExpand(true);
 

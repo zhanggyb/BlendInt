@@ -24,12 +24,46 @@
 #ifndef _BLENDINT_GUI_EXPANDER_HPP_
 #define _BLENDINT_GUI_EXPANDER_HPP_
 
+#include <BlendInt/Gui/AbstractRoundButton.hpp>
 #include <BlendInt/Gui/AbstractDequeContainer.hpp>
 
 namespace BlendInt {
 
 	class ToggleButton;
 	class Frame;
+
+	class ExpandButton: public AbstractRoundButton
+	{
+		DISALLOW_COPY_AND_ASSIGN(ExpandButton);
+
+	public:
+
+		ExpandButton ();
+
+		ExpandButton (const String& text);
+
+		virtual ~ExpandButton ();
+
+	protected:
+
+		virtual void Update (const UpdateRequest& request);
+
+		virtual ResponseType Draw (const RedrawEvent& event);
+
+	private:
+
+		void InitializeExpandButton ();
+
+		void InitializeExpandButton (const String& text);
+
+		GLuint m_vao;
+
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
+
+	};
+
+	// --------------------------
 
 	class Expander: public AbstractDequeContainer
 	{
@@ -73,7 +107,7 @@ namespace BlendInt {
 
 		void FillWithPreferredHeight (int x, int y, unsigned int width, unsigned int height, int space);
 
-		ToggleButton* m_expand_button;
+		ExpandButton* m_expand_button;
 		Frame* m_frame;
 
 		int m_space;
