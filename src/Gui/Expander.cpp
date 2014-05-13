@@ -61,31 +61,6 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ExpandButton::InitializeExpandButton ()
-	{
-		set_round_type(RoundAll);
-		set_expand_x(true);
-		set_checkable(true);
-
-		unsigned int h = font().get_height();
-
-		set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
-						h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
-
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		GenerateFormBuffer(
-						size(),
-						round_type(),
-						radius(),
-						m_inner_buffer.get(),
-						m_outer_buffer.get(),
-						0);
-		glBindVertexArray(0);
-	}
-
 	void ExpandButton::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
@@ -219,6 +194,31 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	void ExpandButton::InitializeExpandButton ()
+	{
+		set_round_type(RoundAll);
+		set_expand_x(true);
+		set_checkable(true);
+
+		unsigned int h = font().get_height();
+
+		set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
+						h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		GenerateFormBuffer(
+						size(),
+						round_type(),
+						radius(),
+						m_inner_buffer.get(),
+						m_outer_buffer.get(),
+						0);
+		glBindVertexArray(0);
+	}
+
 	void ExpandButton::InitializeExpandButton (const String& text)
 	{
 		set_round_type(RoundAll);
@@ -265,13 +265,13 @@ namespace BlendInt {
 	// ----------------------
 
 	Expander::Expander ()
-	: m_expand_button(0), m_frame(0), m_space (4)
+	: m_title_button(0), m_frame(0), m_space (4), m_frame_height(0)
 	{
-		m_expand_button = Manage(new ExpandButton);
+		m_title_button = Manage(new ExpandButton);
 		m_frame = Manage(new Frame);
 		m_frame->SetExpand(true);
 
-		PushBackSubWidget(m_expand_button);
+		PushBackSubWidget(m_title_button);
 		PushBackSubWidget(m_frame);
 
 		int x = position().x();
@@ -279,13 +279,13 @@ namespace BlendInt {
 		unsigned int width = 0;
 		unsigned int height = 0;
 
-		Size sub_prefer = m_expand_button->GetPreferredSize();
+		Size sub_prefer = m_title_button->GetPreferredSize();
 		width = std::max(width, sub_prefer.width());
 		height += sub_prefer.height();
 
-		ResizeSubWidget(m_expand_button, width, sub_prefer.height());
+		ResizeSubWidget(m_title_button, width, sub_prefer.height());
 		y -= sub_prefer.height();
-		SetSubWidgetPosition(m_expand_button, x, y);
+		SetSubWidgetPosition(m_title_button, x, y);
 
 		height += m_space;
 		y -= m_space;
@@ -294,14 +294,62 @@ namespace BlendInt {
 		width = std::max(width, sub_prefer.width());
 		height += sub_prefer.height();
 
-		ResizeSubWidget(m_expand_button, width, sub_prefer.height());
+		ResizeSubWidget(m_title_button, width, sub_prefer.height());
 		y -= sub_prefer.height();
-		SetSubWidgetPosition(m_expand_button, x, y);
+		SetSubWidgetPosition(m_title_button, x, y);
 
 		width = width + margin().left() + margin().right();
 		height = height + margin().top() + margin().bottom();
 
 		set_size(width, height);
+
+		m_frame_height = m_frame->size().height();
+
+		events()->connect(m_title_button->toggled(), this, &Expander::OnToggled);
+	}
+
+	Expander::Expander (const String& title)
+	: m_title_button(0), m_frame(0), m_space (4), m_frame_height(0)
+	{
+		m_title_button = Manage(new ExpandButton(title));
+		m_frame = Manage(new Frame);
+		m_frame->SetExpand(true);
+
+		PushBackSubWidget(m_title_button);
+		PushBackSubWidget(m_frame);
+
+		int x = position().x();
+		int y = position().y();
+		unsigned int width = 0;
+		unsigned int height = 0;
+
+		Size sub_prefer = m_title_button->GetPreferredSize();
+		width = std::max(width, sub_prefer.width());
+		height += sub_prefer.height();
+
+		ResizeSubWidget(m_title_button, width, sub_prefer.height());
+		y -= sub_prefer.height();
+		SetSubWidgetPosition(m_title_button, x, y);
+
+		height += m_space;
+		y -= m_space;
+
+		sub_prefer = m_frame->GetPreferredSize();
+		width = std::max(width, sub_prefer.width());
+		height += sub_prefer.height();
+
+		ResizeSubWidget(m_title_button, width, sub_prefer.height());
+		y -= sub_prefer.height();
+		SetSubWidgetPosition(m_title_button, x, y);
+
+		width = width + margin().left() + margin().right();
+		height = height + margin().top() + margin().bottom();
+
+		set_size(width, height);
+
+		m_frame_height = m_frame->size().height();
+
+		events()->connect(m_title_button->toggled(), this, &Expander::OnToggled);
 	}
 
 	Expander::~Expander ()
@@ -323,7 +371,7 @@ namespace BlendInt {
 	{
 		Size prefer;
 
-		Size sub_prefer = m_expand_button->GetPreferredSize();
+		Size sub_prefer = m_title_button->GetPreferredSize();
 		prefer.set_width(std::max(prefer.width(), sub_prefer.width()));
 		prefer.add_height(sub_prefer.height());
 
@@ -501,10 +549,11 @@ namespace BlendInt {
 	{
 		int x = out_pos.x() + margin.left();
 		int y = out_pos.y() + margin.bottom();
-		unsigned int width = out_size.width() - margin.left() - margin.right();
-		unsigned int height = out_size.height() - margin.top() - margin.bottom();
+		int width = out_size.width() - margin.left() - margin.right();
+		int height = out_size.height() - margin.top() - margin.bottom();
 
-		FillWithPreferredHeight(x, y, width, height, space);
+		if(width >= 0 && height >= space)
+			FillWithPreferredHeight(x, y, width, height, space);
 	}
 	
 	void Expander::FillWithPreferredHeight (int x, int y, unsigned int width,
@@ -517,33 +566,72 @@ namespace BlendInt {
 		unsigned int button_preferred_height = 0;
 		unsigned int sum = 0;
 
-		prefer = m_expand_button->GetPreferredSize();
+		prefer = m_title_button->GetPreferredSize();
 		button_preferred_height = prefer.height();
 		sum += prefer.height();
 
-		prefer = m_frame->GetPreferredSize();
-		sum += prefer.height();
+		if (m_frame->visiable()) {
+			prefer = m_frame->GetPreferredSize();
+			sum += prefer.height();
 
-		if(button_preferred_height < (height - space)) {
-			y = y - button_preferred_height;
-			ResizeSubWidget(m_expand_button, width, button_preferred_height);
-			SetSubWidgetPosition(m_expand_button, x, y);
+			if (button_preferred_height < (height - space)) {
+				y = y - button_preferred_height;
+				ResizeSubWidget(m_title_button, width,
+								button_preferred_height);
+				SetSubWidgetPosition(m_title_button, x, y);
 
-			y -= space;
+				y -= space;
 
-			ResizeSubWidget(m_frame, width, height - button_preferred_height - space);
-			y = y - (height - button_preferred_height - space);
-			SetSubWidgetPosition(m_frame, x, y);
+				ResizeSubWidget(m_frame, width,
+								height - button_preferred_height - space);
+				y = y - (height - button_preferred_height - space);
+				SetSubWidgetPosition(m_frame, x, y);
+			} else {
+				y = y - (height - space);
+				ResizeSubWidget(m_title_button, width, height - space);
+				SetSubWidgetPosition(m_title_button, x, y);
+
+				y -= space;
+				ResizeSubWidget(m_frame, width, 0);
+				SetSubWidgetPosition(m_frame, x, y);
+			}
 		} else {
-			y = y - (height - space);
-			ResizeSubWidget(m_expand_button, width, height - space);
-			SetSubWidgetPosition(m_expand_button, x, y);
+			y = y - height;
+			ResizeSubWidget(m_title_button, width, height);
+			SetSubWidgetPosition(m_title_button, x, y);
+		}
+	}
+	
+	void Expander::SetTitle (const String& text)
+	{
+		m_title_button->SetText(text);
+	}
 
-			y -= space;
-			ResizeSubWidget(m_frame, width, 0);
-			SetSubWidgetPosition(m_frame, x, y);
+	void Expander::OnToggled (bool toggle)
+	{
+		if(toggle) {
+			int x = position().x();
+			int y = position().y() + size().height();
+			m_frame->SetVisible(false);
+			m_frame_height = m_frame->size().height();
+			Resize(size().width(), m_title_button->size().height() + margin().top() + margin().bottom());
+			y = y - size().height();
+			SetPosition(x, y);
+		} else {
+			int x = position().x();
+			int y = position().y() + size().height();
+
+			m_frame->SetVisible(true);
+
+			Resize(size().width(),
+							m_title_button->size().height() + m_space
+											+ m_frame_height + margin().top()
+											+ margin().bottom());
+			y = y - size().height();
+			SetPosition(x, y);
 		}
 
+		Refresh();
 	}
 
 }

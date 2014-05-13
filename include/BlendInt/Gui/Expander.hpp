@@ -73,9 +73,18 @@ namespace BlendInt {
 
 		Expander ();
 
+		Expander (const String& title);
+
 		virtual ~Expander ();
 
 		bool Setup (AbstractWidget* widget);
+
+		void SetTitle (const String& text);
+
+		const String& title () const
+		{
+			return m_title_button->text();
+		}
 
 		virtual Size GetPreferredSize () const;
 
@@ -107,10 +116,14 @@ namespace BlendInt {
 
 		void FillWithPreferredHeight (int x, int y, unsigned int width, unsigned int height, int space);
 
-		ExpandButton* m_expand_button;
+		void OnToggled (bool toggle);
+
+		ExpandButton* m_title_button;
 		Frame* m_frame;
 
 		int m_space;
+
+		unsigned int m_frame_height;
 	};
 
 }
