@@ -164,7 +164,7 @@ namespace BlendInt {
 		xml_attribute<>* attr = doc.allocate_attribute("dpi", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "%f", m_pixel);
+		snprintf(buf, 16, "%g", m_pixel);
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("pixel", value);
 		ui_node->append_attribute(attr);
@@ -465,14 +465,14 @@ namespace BlendInt {
 
 			} else if(strcmp("pixel", attrib->name()) == 0) {
 
-				if(sscanf(attrib->value(), "%f", &tmp) == 1) {
-					m_pixel = tmp;
+				float v = 0.f;
+				if(sscanf(attrib->value(), "%f", &v) == 1) {
+					m_pixel = v;
 				}
 
 			} else if(strcmp("menu_shadow_fac", attrib->name()) == 0) {
 
 				float v = 0.f;
-
 				if(sscanf(attrib->value(), "%f", &v) == 1) {
 					m_menu_shadow_fac = v;
 				}

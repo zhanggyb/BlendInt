@@ -1,5 +1,6 @@
 #include "FreetypeTest1.hpp"
 #include <BlendInt/Core/Freetype.hpp>
+#include <BlendInt/Gui/Glyph.hpp>
 
 using namespace BlendInt;
 
@@ -23,19 +24,26 @@ TEST_F(FreetypeTest1, Open01) {
 
 	Freetype test;
 
-	test.Open("/usr/share/fonts/TTF/DejaVuSans.ttf", 12, 96);
+	//test.Open("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12, 96);
+	test.Open("/home/zhanggyb/.fonts/s/STKaiti.ttf", 12, 96);
+
+	fprintf(stdout, "height: %d, max advance: %d\n", test.height(), test.max_advance());
+
+	fprintf(stdout, "sizeof Glyph: %ld, size of GlyphExt: %ld\n", sizeof(Glyph), sizeof(GlyphExt));
 
 	ASSERT_TRUE(test.valid());
 }
 
+/*
 TEST_F(FreetypeTest1, Kerning02) {
 
 	Freetype test;
 
-	test.Open("/usr/share/fonts/TTF/Vera.ttf", 12, 96);
+	test.Open("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12, 96);
 
-	if(test.isUseKerning()) {
+	if(test.IsUseKerning()) {
 
+		fprintf(stdout, "font is using kerning\n");
 		FT_UInt left;
 		FT_UInt right;
 		FT_Vector kerning = {0, 0};
@@ -60,3 +68,4 @@ TEST_F(FreetypeTest1, Kerning02) {
 
 	ASSERT_TRUE(test.valid());
 }
+*/

@@ -80,7 +80,7 @@ namespace BlendInt {
 			return m_valid;
 		}
 
-		bool isUseKerning (void);
+		bool IsUseKerning (void);
 
 		int height () const
 		{

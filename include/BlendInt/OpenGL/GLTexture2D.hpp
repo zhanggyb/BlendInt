@@ -57,8 +57,6 @@ namespace BlendInt {
 
 		void Bind ();
 
-		void SetSize (GLsizei width, GLsizei height);
-
 		/**
 		 * @brief Get the index of the lowest defined mipmap level
 		 * @return Index of the level
@@ -161,6 +159,8 @@ namespace BlendInt {
 		GLint GetHeight (GLint level = 0) const;
 
 		void SetImage (GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
+
+		void SetSubImage (GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* data);
 
 		void CopySubimage (GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 

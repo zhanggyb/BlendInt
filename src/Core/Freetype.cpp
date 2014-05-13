@@ -152,7 +152,7 @@ namespace BlendInt {
 	}
 
 
-	bool Freetype::isUseKerning (void)
+	bool Freetype::IsUseKerning (void)
 	{
 		if(!m_valid)
 			return false;

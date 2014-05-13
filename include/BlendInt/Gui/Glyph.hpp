@@ -61,10 +61,25 @@ namespace BlendInt {
 		float advance_x;
 		float advance_y;
 
-		float texture_offset_x;
-		float texture_offset_y;
+		//float texture_offset_x;
+		//float texture_offset_y;
 
 		GlyphVertex vertexes[4];
+	};
+
+	struct GlyphExt
+	{
+		int bitmap_width;
+		int bitmap_height;
+
+		int bitmap_left;
+		int bitmap_top;
+
+		int advance_x;
+		int advance_y;
+
+		GLuint texture;
+		GlyphVertex vertices[4];
 	};
 
 } /* namespace BlendInt */

@@ -148,14 +148,14 @@ void FontView::LoadCharacter ()
 #ifdef __APPLE__
     ft.Open("/System/Library/Fonts/STHeiti Medium.ttc", 72, 180);
 #else
-    ft.Open("/home/zhanggyb/.fonts/m/msyh.ttf", 72, 180);
+    ft.Open("/home/zhanggyb/.fonts/s/STKaiti.ttf", 72, 180);
 #endif
 
     if(!ft.valid()) {
     	DBG_PRINT_MSG("%s", "fail to load font");
     }
 
-    m_glyph.Load(ft, L'@');
+    m_glyph.Load(ft, L'佛');
 
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -193,7 +193,7 @@ BI::ResponseType FontView::Draw (const BI::RedrawEvent& event)
 
 	m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 	m_program->SetUniform1i("tex", 0);
-	m_program->SetUniform4f("color", 0.25f, 0.25f, 0.25f, 1.0f);
+	m_program->SetUniform4f("color", 0.f, 0.f, 0.f, 1.0f);
 
 	glEnableVertexAttribArray(0);
 
