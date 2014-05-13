@@ -204,7 +204,7 @@ namespace BlendInt {
          * @warning Do not simply initialize all characer in ascii
          * cause Render error. I dont't know why this happens
 		 */
-		bool setup ();
+		bool Setup ();
 
 		const Glyph& query (wchar_t charcode, bool create = true);
 

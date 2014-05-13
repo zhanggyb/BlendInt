@@ -100,14 +100,11 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		if(!glIsTexture(m_texture)) return ret;
-
 		GLint tex_width = 0;
 		GLint tex_height = 0;
 		int x = m_last_x + m_cell_x + m_space;
 		int y = m_last_y + m_cell_y + m_space;
 
-		glBindTexture(GL_TEXTURE_2D, m_texture);
 		glGetTexLevelParameteriv(GL_TEXTURE_2D,
 						0,
 						GL_TEXTURE_WIDTH,
@@ -143,8 +140,6 @@ namespace BlendInt {
 			}
 		}
 
-		glBindTexture(GL_TEXTURE_2D, 0);
-
 		return ret;
 	}
 
@@ -157,7 +152,6 @@ namespace BlendInt {
 		int x = m_last_x + m_cell_x + m_space;
 		int y = m_last_y + m_cell_y + m_space;
 
-		glBindTexture(GL_TEXTURE_2D, m_texture);
 		glGetTexLevelParameteriv(GL_TEXTURE_2D,
 						0,
 						GL_TEXTURE_WIDTH,
@@ -166,13 +160,36 @@ namespace BlendInt {
 						0,
 						GL_TEXTURE_HEIGHT,
 						&tex_height);
-		glBindTexture(GL_TEXTURE_2D, 0);
 
 		if(x <= tex_width || y <= tex_height) {
 			ret = false;
 		}
 
 		return ret;
+	}
+
+	GLint TextureAtlasExt::GetWidth (int level) const
+	{
+		GLint width = 0;
+
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+						level,
+						GL_TEXTURE_WIDTH,
+						&width);
+
+		return width;
+	}
+
+	GLint TextureAtlasExt::GetHeight (int level) const
+	{
+		GLint height = 0;
+
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+						level,
+						GL_TEXTURE_WIDTH,
+						&height);
+
+		return height;
 	}
 
 	int TextureAtlasExt::GetMaxNumber() const
@@ -182,7 +199,6 @@ namespace BlendInt {
 		GLint tex_width = 0;
 		GLint tex_height = 0;
 
-		glBindTexture(GL_TEXTURE_2D, m_texture);
 		glGetTexLevelParameteriv(GL_TEXTURE_2D,
 						0,
 						GL_TEXTURE_WIDTH,
@@ -191,7 +207,6 @@ namespace BlendInt {
 						0,
 						GL_TEXTURE_HEIGHT,
 						&tex_height);
-		glBindTexture(GL_TEXTURE_2D, 0);
 
 		int h = (tex_width - m_space) / (m_cell_x + m_space);
 		int v = (tex_height - m_space) / (m_cell_y - m_space);
@@ -201,10 +216,20 @@ namespace BlendInt {
 		return num;
 	}
 
+	void TextureAtlasExt::Bind ()
+	{
+		glBindTexture(GL_TEXTURE_2D, m_texture);
+	}
+
 	void TextureAtlasExt::Clear ()
 	{
 		glDeleteTextures(1, &m_texture);
 		m_texture = 0;
+	}
+
+	void TextureAtlasExt::Reset ()
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	// --------------------------------

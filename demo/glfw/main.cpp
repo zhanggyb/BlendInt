@@ -63,8 +63,10 @@ int main(int argc, char* argv[])
 	TextureAtlasExt atlas;
 	atlas.Generate(64, 64, 20, 20, 1);
 
+	atlas.Bind();
 	int num = atlas.GetMaxNumber();
 	std::cout << "max num: " << num << std::endl;
+	atlas.Reset();
 
 	atlas.Clear();
 

@@ -413,7 +413,7 @@ namespace BlendInt {
 
 		m_freetype.Open(filepath, key.size, dpi);
 
-		if(!setup()) {
+		if(!Setup()) {
 			DBG_PRINT_MSG("%s", "Fail to setup FontCache");
 		}
 	}
@@ -435,7 +435,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	bool FontCache::setup (void)
+	bool FontCache::Setup (void)
 	{
 		if (!m_freetype.valid()) {
 			return false;

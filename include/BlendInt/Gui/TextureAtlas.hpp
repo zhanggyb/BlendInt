@@ -43,13 +43,26 @@ namespace BlendInt {
 
 		void Generate (int width, int height, int cell_x, int cell_y, int space = 1);
 
+		void Bind ();
+
 		bool Push (int width, int rows, unsigned char* buf);
 
 		bool IsFull () const;
 
 		int GetMaxNumber () const;
 
+		GLint GetWidth (int level = 0) const;
+
+		GLint GetHeight (int level = 0) const;
+
 		void Clear ();
+
+		static void Reset ();
+
+		GLuint texture () const
+		{
+			return m_texture;
+		}
 
 	private:
 
