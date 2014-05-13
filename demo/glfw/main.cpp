@@ -60,56 +60,13 @@ int main(int argc, char* argv[])
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
-	HBox* hbox = Manage(new HBox);
-	hbox->set_name("HBox");
-	hbox->SetPosition(100, 100);
-	hbox->Resize(200, 100);
+	TextureAtlasExt atlas;
+	atlas.Generate(64, 64, 20, 20, 1);
 
-	MenuButton* menubtn1 = Manage(new MenuButton("Menu"));
-	menubtn1->set_name("MenuButton");
-	menubtn1->SetPosition(100, 50);
+	int num = atlas.GetMaxNumber();
+	std::cout << "max num: " << num << std::endl;
 
-	Button* btn1 = Manage(new Button);
-	btn1->set_name("Button1");
-	btn1->SetPosition(100, 200);
-
-	Button* btn2 = Manage(new Button);
-	btn2->set_name("Button2");
-	btn2->SetPosition(100, 100);
-
-	TextEntry* text = Manage(new TextEntry);
-	text->set_name("TextEntry");
-
-	ToolButton* toolbtn = Manage(new ToolButton);
-	toolbtn->set_name("ToolButton");
-
-	context->Add(hbox);
-
-	hbox->Add(menubtn1);
-	hbox->Add(btn1);
-	hbox->Add(btn2);
-	hbox->Add(text);
-	hbox->Add(toolbtn);
-
-	VBox* vbox = Manage(new VBox);
-	vbox->set_name("VBox");
-	vbox->SetPosition(200, 200);
-	vbox->Resize(50, 100);
-
-	MenuButton* menubtn2 = Manage(new MenuButton("Menu"));
-	menubtn2->SetPosition(100, 50);
-
-	Button* btn3 = Manage(new Button);
-	btn3->SetPosition(100, 200);
-
-	Button* btn4 = Manage(new Button);
-	btn4->SetPosition(100, 100);
-
-	context->Add(vbox);
-
-	vbox->Add(menubtn2);
-	vbox->Add(btn3);
-	vbox->Add(btn4);
+	atlas.Clear();
 
 	RunLoop(win);
 

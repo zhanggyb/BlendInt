@@ -8,8 +8,6 @@
 #include "EditorContext.hpp"
 #include "Window.hpp"
 
-#include <BlendInt/Gui/TextureAtlas.hpp>
-
 using namespace BlendInt;
 using namespace std;
 
@@ -26,23 +24,6 @@ int main(int argc, char* argv[])
 	EditorContext* context = Manage (new EditorContext);
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
-
-	TextureAtlasExt atlas;
-	atlas.Generate(64, 64, 20, 20, 1);
-	atlas.Push(1);
-	atlas.Push(2);
-	atlas.Push(3);
-	atlas.Push(4);
-	atlas.Push(5);
-	atlas.Push(6);
-	atlas.Push(7);
-	atlas.Push(8);
-	atlas.Push(9);
-	atlas.Push(10);
-	atlas.Clear();
-
-	int num = atlas.GetMaxNumber();
-	std::cout << "max num: " << num << std::endl;
 
 	RunLoop(win);
 

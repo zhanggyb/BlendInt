@@ -94,34 +94,56 @@ namespace BlendInt {
 
 		m_last_x = m_space;
 		m_last_y = m_space;
-
-		m_width = width;
-		m_height = height;
 	}
 	
-	bool TextureAtlasExt::Push(int ch)
+	bool TextureAtlasExt::Push(int width, int rows, unsigned char* buf)
 	{
 		bool ret = false;
 
+		if(!glIsTexture(m_texture)) return ret;
+
+		GLint tex_width = 0;
+		GLint tex_height = 0;
 		int x = m_last_x + m_cell_x + m_space;
 		int y = m_last_y + m_cell_y + m_space;
 
-		if(x <= m_width && y <= m_height) {
+		glBindTexture(GL_TEXTURE_2D, m_texture);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+						0,
+						GL_TEXTURE_WIDTH,
+						&tex_width);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+						0,
+						GL_TEXTURE_HEIGHT,
+						&tex_height);
+
+
+		if(x <= tex_width && y <= tex_height) {
 			ret = true;
 		}
 
 		if(ret) {
 
-			// TODO: upload image at last (x, y)
-			fprintf(stdout, "push at (%d, %d)\n", m_last_x, m_last_y);
+			if(width >= m_cell_x || rows >= m_cell_y) {
+				ret = false;
+			} else {
 
-			m_last_x = x;
-			if((m_last_x + m_cell_x + m_space) > m_width) {
-				m_last_x = m_space;
-				m_last_y = y;
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+				glTexSubImage2D(GL_TEXTURE_2D, 0, m_last_x, m_last_y, width, rows, GL_RED, GL_UNSIGNED_BYTE, buf);
+
+				// TODO: upload image at last (x, y)
+				fprintf(stdout, "push at (%d, %d)\n", m_last_x, m_last_y);
+
+				m_last_x = x;
+				if((m_last_x + m_cell_x + m_space) > tex_width) {
+					m_last_x = m_space;
+					m_last_y = y;
+				}
+
 			}
-
 		}
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		return ret;
 	}
@@ -130,10 +152,23 @@ namespace BlendInt {
 	{
 		bool ret = true;
 
+		GLint tex_width = 0;
+		GLint tex_height = 0;
 		int x = m_last_x + m_cell_x + m_space;
 		int y = m_last_y + m_cell_y + m_space;
 
-		if(x <= m_width || y <= m_height) {
+		glBindTexture(GL_TEXTURE_2D, m_texture);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+						0,
+						GL_TEXTURE_WIDTH,
+						&tex_width);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+						0,
+						GL_TEXTURE_HEIGHT,
+						&tex_height);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		if(x <= tex_width || y <= tex_height) {
 			ret = false;
 		}
 
@@ -144,8 +179,22 @@ namespace BlendInt {
 	{
 		int num = 0;
 
-		int h = (m_width - m_space) / (m_cell_x + m_space);
-		int v = (m_height - m_space) / (m_cell_y - m_space);
+		GLint tex_width = 0;
+		GLint tex_height = 0;
+
+		glBindTexture(GL_TEXTURE_2D, m_texture);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+						0,
+						GL_TEXTURE_WIDTH,
+						&tex_width);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+						0,
+						GL_TEXTURE_HEIGHT,
+						&tex_height);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		int h = (tex_width - m_space) / (m_cell_x + m_space);
+		int v = (tex_height - m_space) / (m_cell_y - m_space);
 
 		num = h * v;
 

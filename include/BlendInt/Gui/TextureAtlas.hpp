@@ -43,7 +43,7 @@ namespace BlendInt {
 
 		void Generate (int width, int height, int cell_x, int cell_y, int space = 1);
 
-		bool Push (int ch);
+		bool Push (int width, int rows, unsigned char* buf);
 
 		bool IsFull () const;
 
@@ -62,9 +62,6 @@ namespace BlendInt {
 
 		int m_last_x;
 		int m_last_y;
-
-		int m_width;
-		int m_height;
 	};
 
 	// ---------------------------------------------------------------
