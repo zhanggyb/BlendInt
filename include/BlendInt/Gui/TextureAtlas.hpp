@@ -73,8 +73,8 @@ namespace BlendInt {
 
 		int m_space;
 
-		int m_last_x;
-		int m_last_y;
+		int m_xoffset;
+		int m_yoffset;
 	};
 
 	// ---------------------------------------------------------------

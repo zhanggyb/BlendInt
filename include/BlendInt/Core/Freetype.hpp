@@ -104,11 +104,6 @@ namespace BlendInt {
 
 		FT_GlyphSlot GetGlyphSlot () const;
 
-		const FT_Stroker& stroker () const
-		{
-			return m_stroker;
-		}
-
 		//bool setFontSize (unsigned int size, unsigned int dpi = 96);
 
 		bool SetCharSize (unsigned int size, unsigned int dpi = 96);
@@ -183,8 +178,6 @@ namespace BlendInt {
 
 		FT_Face m_face; /**< freetype2 face */
 
-		FT_Stroker m_stroker; /**< Font stroker */
-
 		bool m_valid; /**< if the font face is valid */
 
 		bool m_unicode; /**< if has unicode charmap */
@@ -206,6 +199,133 @@ namespace BlendInt {
 		Freetype (const Freetype& orig);
 
 		Freetype& operator = (const Freetype& orig);
+	};
+
+	// --------------------------------------
+
+	class FTLibrary
+	{
+	public:
+
+		FTLibrary ();
+
+		~FTLibrary ();
+
+		bool Initialize ();
+
+		bool SetLcdFilter (FT_LcdFilter filter);
+
+		bool SetLcdFilterWeights (unsigned char* weights);
+
+		bool GetVersion (FT_Int* major, FT_Int* minor, FT_Int* patch);
+
+		bool Done ();
+
+		const FT_Library& library () const
+		{
+			return m_library;
+		}
+
+	private:
+
+		FT_Library m_library;
+	};
+
+	class FTFace
+	{
+	public:
+
+		FTFace ();
+
+		~FTFace ();
+
+		bool New (const FTLibrary& lib, const char* filepathname, FT_Long face_index = 0);
+
+		bool New (const FTLibrary& lib, const FT_Byte* mem, FT_Long size, FT_Long face_index = 0);
+
+		bool HasKerning ();
+
+		/**
+		 * @brief Check whether any of the patented opcodes are used.
+		 * @return
+		 * 	- true This is a TrueType font that uses one of the patented opcodes
+		 * 	- false otherwise
+		 *
+		 * Parse all bytecode instructions of a TrueType font file to
+		 * check whether any of the patented opcodes are used. This is
+		 * only useful if you want to be able to use the unpatented
+		 * hinter with fonts that do not use these opcodes.
+		 *
+		 * Note that this function parses all glyph instructions in
+		 * the font file, which may be slow.
+		 */
+		bool CheckTrueTypePatents ();
+
+		bool SetCharSize (FT_F26Dot6 width, FT_F26Dot6 height, FT_UInt h_res, FT_UInt v_res);
+
+		FT_UInt GetCharIndex (FT_ULong charcode);
+
+		bool LoadGlyph (FT_UInt glyph_index, FT_Int32 load_flags);
+
+		bool RenderGlyph (FT_GlyphSlot slot, FT_Render_Mode render_mode);
+
+		bool LoadChar (FT_ULong char_code, FT_Int32 load_flags);
+
+		bool GetKerning (FT_UInt left_glyph, FT_UInt right_glyph, FT_UInt kern_mode, FT_Vector* akerning);
+
+		bool Done ();
+
+		const FT_Face& face () const
+		{
+			return m_face;
+		}
+
+	private:
+
+		FT_Face m_face;
+	};
+
+	class FTStroker
+	{
+	public:
+
+		FTStroker();
+
+		~FTStroker ();
+
+		bool New (const FTLibrary& lib);
+
+		void Set(FT_Fixed radius, FT_Stroker_LineCap line_cap, FT_Stroker_LineJoin line_join, FT_Fixed miter_limit);
+
+		bool GlyphStroke (FT_Glyph* pglyph, FT_Bool destroy);
+
+		bool Done ();
+
+		const FT_Stroker& stroker () const
+		{
+			return m_stroker;
+		}
+
+	private:
+
+		FT_Stroker m_stroker;
+	};
+
+	class FTOutline
+	{
+	public:
+
+		FTOutline ();
+
+		~FTOutline ();
+
+		bool New (const FTLibrary& lib, FT_UInt numPoints, FT_Int numContours);
+
+		bool Done (const FTLibrary& lib);
+
+	private:
+
+		FT_Outline m_outline;
 	};
 
 } /* namespace BlendInt */

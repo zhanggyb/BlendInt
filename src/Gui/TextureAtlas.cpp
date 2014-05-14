@@ -52,8 +52,8 @@ namespace BlendInt {
 	  m_cell_x(0),
 	  m_cell_y(0),
 	  m_space(0),
-	  m_last_x(0),
-	  m_last_y(0)
+	  m_xoffset(0),
+	  m_yoffset(0)
 	{
 	}
 
@@ -92,8 +92,8 @@ namespace BlendInt {
 		m_cell_y = cell_y;
 		m_space = space;
 
-		m_last_x = m_space;
-		m_last_y = m_space;
+		m_xoffset = m_space;
+		m_yoffset = m_space;
 	}
 	
 	bool TextureAtlasExt::Push(int width, int rows, unsigned char* buf)
@@ -102,8 +102,8 @@ namespace BlendInt {
 
 		GLint tex_width = 0;
 		GLint tex_height = 0;
-		int x = m_last_x + m_cell_x + m_space;
-		int y = m_last_y + m_cell_y + m_space;
+		int x = m_xoffset + m_cell_x + m_space;
+		int y = m_yoffset + m_cell_y + m_space;
 
 		glGetTexLevelParameteriv(GL_TEXTURE_2D,
 						0,
@@ -125,16 +125,14 @@ namespace BlendInt {
 				ret = false;
 			} else {
 
+				//DBG_PRINT_MSG("push character at: %d, %d, width: %d, rows: %d", m_xoffset, m_yoffset, width, rows);
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-				glTexSubImage2D(GL_TEXTURE_2D, 0, m_last_x, m_last_y, width, rows, GL_RED, GL_UNSIGNED_BYTE, buf);
+				glTexSubImage2D(GL_TEXTURE_2D, 0, m_xoffset, m_yoffset, width, rows, GL_RED, GL_UNSIGNED_BYTE, buf);
 
-				// TODO: upload image at last (x, y)
-				fprintf(stdout, "push at (%d, %d)\n", m_last_x, m_last_y);
-
-				m_last_x = x;
-				if((m_last_x + m_cell_x + m_space) > tex_width) {
-					m_last_x = m_space;
-					m_last_y = y;
+				m_xoffset = x;
+				if((m_xoffset + m_cell_x + m_space) > tex_width) {
+					m_xoffset = m_space;
+					m_yoffset = y;
 				}
 
 			}
@@ -149,8 +147,8 @@ namespace BlendInt {
 
 		GLint tex_width = 0;
 		GLint tex_height = 0;
-		int x = m_last_x + m_cell_x + m_space;
-		int y = m_last_y + m_cell_y + m_space;
+		int x = m_xoffset + m_cell_x + m_space;
+		int y = m_yoffset + m_cell_y + m_space;
 
 		glGetTexLevelParameteriv(GL_TEXTURE_2D,
 						0,

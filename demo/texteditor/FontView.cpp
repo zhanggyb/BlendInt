@@ -146,9 +146,9 @@ void FontView::LoadCharacter ()
 {
     BI::Freetype ft;
 #ifdef __APPLE__
-    ft.Open("/System/Library/Fonts/STHeiti Medium.ttc", 72, 180);
+    ft.Open("/System/Library/Fonts/STHeiti Medium.ttc", 72, 120);
 #else
-    ft.Open("/home/zhanggyb/.fonts/s/STKaiti.ttf", 72, 180);
+    ft.Open("/home/zhanggyb/.fonts/m/msyh.ttf", 72, 120);
 #endif
 
     if(!ft.valid()) {

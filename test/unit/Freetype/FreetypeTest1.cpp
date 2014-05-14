@@ -15,11 +15,32 @@ FreetypeTest1::~FreetypeTest1()
 	// TODO: add destructor code
 }
 
+TEST_F(FreetypeTest1, Library1)
+{
+	FTLibrary lib;
+	FTFace face;
+	FTStroker stroker;
+
+	lib.Initialize();
+	lib.SetLcdFilter(FT_LCD_FILTER_DEFAULT);
+
+	face.New(lib, "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
+
+	stroker.New(lib);
+
+	stroker.Done();
+	face.Done();
+	lib.Done();
+
+	ASSERT_TRUE(true);
+}
+
 /**
  * test Foo() method
  *
  * Expected result: 
  */
+/*
 TEST_F(FreetypeTest1, Open01) {
 
 	Freetype test;
@@ -33,6 +54,7 @@ TEST_F(FreetypeTest1, Open01) {
 
 	ASSERT_TRUE(test.valid());
 }
+*/
 
 /*
 TEST_F(FreetypeTest1, Kerning02) {

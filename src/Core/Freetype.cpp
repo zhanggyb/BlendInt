@@ -34,7 +34,6 @@ namespace BlendInt {
 	Freetype::Freetype()
 	: m_library(0),
 	  m_face(0),
-	  m_stroker(0),
 	  m_valid(false),
 	  m_unicode(false),
 	  m_height(0),
@@ -127,11 +126,6 @@ namespace BlendInt {
 
 	void Freetype::Close ()
 	{
-		if (m_stroker) {
-			FT_Stroker_Done(m_stroker);
-			m_stroker = 0;
-		}
-
 		if (m_face) {
 			FT_Done_Face(m_face);
 			m_face = 0;
@@ -380,6 +374,328 @@ namespace BlendInt {
 		}
 
 		return true;
+	}
+
+	// -------------------------------
+
+	FTLibrary::FTLibrary()
+	: m_library(0)
+	{
+
+	}
+
+	FTLibrary::~FTLibrary()
+	{
+		if(m_library) {
+			FT_Error err = FT_Done_FreeType(m_library);
+			if(err) {
+				// TODO: print error message
+			}
+		}
+	}
+
+	bool FTLibrary::Initialize()
+	{
+		FT_Error err = 0;
+
+		if(m_library) {
+			err = FT_Done_FreeType(m_library);
+			if(err) {
+				DBG_PRINT_MSG("%s", "Fail to destroy FreeType library");
+			}
+		}
+
+		err = FT_Init_FreeType(&m_library);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to initialize FreeType library");
+		}
+
+		return (err == 0);
+	}
+	
+	bool FTLibrary::SetLcdFilter (FT_LcdFilter filter)
+	{
+		FT_Error err = FT_Library_SetLcdFilter(m_library, filter);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to set FreeType Lcd Filter");
+		}
+
+		return (err == 0);
+	}
+	
+	bool FTLibrary::SetLcdFilterWeights (unsigned char* weights)
+	{
+		FT_Error err = FT_Library_SetLcdFilterWeights(m_library, weights);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to set FreeType Lcd Filter Weights");
+		}
+
+		return (err == 0);
+	}
+	
+	bool FTLibrary::GetVersion (FT_Int* major, FT_Int* minor, FT_Int* patch)
+	{
+		if(m_library) {
+			FT_Library_Version(m_library, major, minor, patch);
+			return true;
+		}
+
+		return false;
+	}
+
+	bool FTLibrary::Done()
+	{
+		FT_Error err = FT_Done_FreeType(m_library);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to destroy FreeType library");
+		}
+		m_library = 0;
+
+		return (err == 0);
+	}
+
+	FTFace::FTFace ()
+	: m_face(0)
+	{
+
+	}
+
+	FTFace::~FTFace()
+	{
+		if(m_face) {
+			FT_Error err = FT_Done_Face(m_face);
+			if(err) {
+				// TODO: print error message
+			}
+
+		}
+	}
+
+	bool FTFace::New(const FTLibrary& lib, const char* filepathname, FT_Long face_index)
+	{
+		FT_Error err = 0;
+
+		if(m_face) {
+			err = FT_Done_Face(m_face);
+			if(err) {
+				DBG_PRINT_MSG("%s", "Fail to destroy FreeType face");
+			}
+		}
+
+		err = FT_New_Face(lib.library(), filepathname, face_index, &m_face);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to create FreeType face");
+		}
+
+		return (err == 0);
+	}
+
+	bool FTFace::New (const FTLibrary& lib, const FT_Byte* mem, FT_Long size, FT_Long face_index)
+	{
+		FT_Error err = 0;
+
+		if(m_face) {
+			err = FT_Done_Face(m_face);
+			if(err) {
+				DBG_PRINT_MSG("%s", "Fail to destroy FreeType face");
+			}
+		}
+
+		err = FT_New_Memory_Face(lib.library(), mem, size, face_index, &m_face);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to create FreeType face");
+		}
+
+		return (err == 0);
+	}
+	
+	bool FTFace::HasKerning()
+	{
+		if(m_face) {
+			return m_face->face_flags & FT_FACE_FLAG_KERNING;
+		} else {
+			return false;
+		}
+	}
+
+	bool FTFace::CheckTrueTypePatents ()
+	{
+		FT_Bool ret = FT_Face_CheckTrueTypePatents(m_face);
+
+		return ret;
+	}
+	
+	bool FTFace::SetCharSize (FT_F26Dot6 width, FT_F26Dot6 height,
+					FT_UInt h_res, FT_UInt v_res)
+	{
+		FT_Error err = 0;
+		err = FT_Set_Char_Size(m_face, width, height, h_res, v_res);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to set character size");
+		}
+
+		return (err == 0);
+	}
+	
+	bool FTFace::LoadChar (FT_ULong char_code, FT_Int32 load_flags)
+	{
+		FT_Error err = 0;
+		err = FT_Load_Char(m_face, char_code, load_flags);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to load character");
+		}
+
+		return (err == 0);
+	}
+	
+	FT_UInt FTFace::GetCharIndex (FT_ULong charcode)
+	{
+		FT_UInt index = FT_Get_Char_Index(m_face, charcode);
+
+		return index;
+	}
+	
+	bool FTFace::LoadGlyph (FT_UInt glyph_index, FT_Int32 load_flags)
+	{
+		FT_Error err = 0;
+
+		err = FT_Load_Glyph(m_face, glyph_index, load_flags);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to load glyph");
+		}
+
+		return (err == 0);
+	}
+	
+	bool FTFace::RenderGlyph (FT_GlyphSlot slot, FT_Render_Mode render_mode)
+	{
+		FT_Error err = 0;
+
+		err = FT_Render_Glyph(slot, render_mode);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to render glyph");
+		}
+
+		return (err == 0);
+	}
+	
+	bool FTFace::GetKerning (FT_UInt left_glyph, FT_UInt right_glyph,
+					FT_UInt kern_mode, FT_Vector* akerning)
+	{
+		FT_Error err = 0;
+
+		err = FT_Get_Kerning(m_face, left_glyph, right_glyph, kern_mode, akerning);
+		if(err) {
+			DBG_PRINT_MSG("Fail to get kerning between: %d, %d", left_glyph, right_glyph);
+		}
+
+		return (err == 0);
+	}
+
+	bool FTFace::Done ()
+	{
+		FT_Error err = 0;
+
+		err = FT_Done_Face(m_face);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to destroy FreeType face");
+		}
+		m_face = 0;
+
+		return (err == 0);
+	}
+
+	FTStroker::FTStroker()
+	: m_stroker(0)
+	{
+
+	}
+
+	FTStroker::~FTStroker ()
+	{
+		if(m_stroker) {
+			FT_Stroker_Done(m_stroker);
+		}
+	}
+
+	bool FTStroker::New (const FTLibrary& lib)
+	{
+		FT_Error err = 0;
+
+		if(m_stroker) {
+			FT_Stroker_Done(m_stroker);
+			m_stroker = 0;
+		}
+
+		err = FT_Stroker_New(lib.library(), &m_stroker);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to create FreeType stroker");
+		}
+
+		return (err == 0);
+	}
+	
+	void FTStroker::Set (FT_Fixed radius, FT_Stroker_LineCap line_cap,
+					FT_Stroker_LineJoin line_join, FT_Fixed miter_limit)
+	{
+		FT_Stroker_Set(m_stroker, radius, line_cap, line_join, miter_limit);
+	}
+	
+	bool FTStroker::GlyphStroke (FT_Glyph* pglyph, FT_Bool destroy)
+	{
+		FT_Error err = 0;
+
+		err = FT_Glyph_Stroke(pglyph, m_stroker, destroy);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to stroke a given outline glyph");
+		}
+
+		return (err == 0);
+	}
+
+	bool FTStroker::Done()
+	{
+		FT_Error err = 0;
+
+		if(m_stroker) {
+			FT_Stroker_Done(m_stroker);
+			m_stroker = 0;
+		}
+
+		return (err == 0);
+	}
+
+	FTOutline::FTOutline()
+	{
+
+	}
+
+	FTOutline::~FTOutline()
+	{
+
+	}
+
+	bool FTOutline::New(const FTLibrary& lib, FT_UInt numPoints, FT_Int numContours)
+	{
+		FT_Error err = 0;
+
+		err = FT_Outline_New(lib.library(), numPoints, numContours, &m_outline);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to create a new FreeType outline");
+		}
+		return (err == 0);
+	}
+
+	bool FTOutline::Done (const FTLibrary& lib)
+	{
+		FT_Error err = 0;
+
+		err = FT_Outline_Done(lib.library(), &m_outline);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to destroy FreeType outline");
+		}
+
+		return (err == 0);
 	}
 
 } /* namespace BlendInt */

@@ -15,6 +15,8 @@
 
 #include "TexAtlasViewer.hpp"
 
+#include <BlendInt/Core/Freetype.hpp>
+
 const char* TexAtlasViewer::vertex_shader =
 		"#version 330\n"
 		"layout(location = 0) in vec2 Coord2D;"
@@ -40,7 +42,7 @@ const char* TexAtlasViewer::fragment_shader =
 TexAtlasViewer::TexAtlasViewer()
 	: BI::Widget(), m_vao(0)
 {
-	set_size(400, 300);
+	set_size(256, 256);
 	set_expand_x(true);
 	set_expand_y(true);
 	
@@ -53,13 +55,37 @@ TexAtlasViewer::TexAtlasViewer()
 	m_program->AttachShaderPair(vertex_shader, fragment_shader);
 	m_program->Link();
 
-	m_atlas.Generate(200, 200, 20, 20);
+	BI::FTLibrary ft_lib;
+	BI::FTFace ft_face;
+
+	ft_lib.Initialize();
+	ft_face.New(ft_lib, "/usr/share/fonts/truetype/droid/DroidSans.ttf");
+	ft_face.SetCharSize(12 << 6, 0, 96, 0);
+
+	int cell_x = ft_face.face()->size->metrics.max_advance >> 6;
+	int cell_y = ft_face.face()->size->metrics.height >> 6;
+
+	DBG_PRINT_MSG("cell_x: %d, cell_y: %d", cell_x, cell_y);
+
+	m_atlas.Generate(256, 256, cell_x, cell_y, 2);
+	FT_GlyphSlot g = ft_face.face()->glyph;
+	m_atlas.Bind();
+
+	for(char i = 0; i < 127; i++) {
+		if(ft_face.LoadChar(i, FT_LOAD_RENDER)) {
+			m_atlas.Push(g->bitmap.width, g->bitmap.rows, g->bitmap.buffer);
+		}
+	}
+
+	m_atlas.Reset();
+	ft_face.Done();
+	ft_lib.Done();
 
 	GLfloat vertices[] = {
 		0.0, 0.0,
-		400.f, 0.0,
-		0.0, 300.f,
-		400.f, 300.f,
+		256.f, 0.0,
+		0.0, 256.f,
+		256.f, 256.f,
 	};
 
 	m_vbo.reset(new BI::GLArrayBuffer);
