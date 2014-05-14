@@ -67,15 +67,22 @@ TexAtlasViewer::TexAtlasViewer()
 
 	DBG_PRINT_MSG("cell_x: %d, cell_y: %d", cell_x, cell_y);
 
-	m_atlas.Generate(256, 256, cell_x, cell_y, 2);
+	m_atlas.Generate(256, 256, cell_x, cell_y, 10);
 	FT_GlyphSlot g = ft_face.face()->glyph;
 	m_atlas.Bind();
 
-	for(char i = 0; i < 127; i++) {
+	for(char i = 33; i < 127; i++) {
 		if(ft_face.LoadChar(i, FT_LOAD_RENDER)) {
 			m_atlas.Push(g->bitmap.width, g->bitmap.rows, g->bitmap.buffer);
 		}
 	}
+
+	if(ft_face.LoadChar('a', FT_LOAD_RENDER)) {
+		m_atlas.Update(0, g->bitmap.width, g->bitmap.rows, g->bitmap.buffer);
+		m_atlas.Update(1, 0, g->bitmap.width, g->bitmap.rows, g->bitmap.buffer);
+	}
+
+	DBG_PRINT_MSG("last index: %d", m_atlas.GetLastIndex());
 
 	m_atlas.Reset();
 	ft_face.Done();

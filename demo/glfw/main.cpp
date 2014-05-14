@@ -11,6 +11,7 @@
 #include <BlendInt/Types.hpp>
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
+#include <BlendInt/OpenGL/TextureAtlas2D.hpp>
 
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Gui/ClockWidget.hpp>
@@ -60,7 +61,7 @@ int main(int argc, char* argv[])
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
-	TextureAtlasExt atlas;
+	TextureAtlas2D atlas;
 	atlas.Generate(64, 64, 20, 20, 1);
 
 	atlas.Bind();

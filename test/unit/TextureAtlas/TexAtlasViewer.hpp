@@ -2,7 +2,7 @@
 #define _TEXATLAS_VIEWER_HPP_
 
 #include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/TextureAtlas.hpp>
+#include <BlendInt/OpenGL/TextureAtlas2D.hpp>
 
 namespace BI = BlendInt;
 
@@ -24,7 +24,7 @@ private:
 	
 	GLuint m_vao;
 	
-	BI::TextureAtlasExt m_atlas;
+	BI::TextureAtlas2D m_atlas;
 
 	BI::RefPtr<BI::GLSLProgram> m_program;
 	BI::RefPtr<BI::GLArrayBuffer> m_vbo;

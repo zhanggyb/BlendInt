@@ -33,52 +33,6 @@
 
 namespace BlendInt {
 
-	class TextureAtlasExt: public Object
-	{
-	public:
-
-		TextureAtlasExt ();
-
-		virtual ~TextureAtlasExt ();
-
-		void Generate (int width, int height, int cell_x, int cell_y, int space = 1);
-
-		void Bind ();
-
-		bool Push (int width, int rows, unsigned char* buf);
-
-		bool IsFull () const;
-
-		int GetMaxNumber () const;
-
-		GLint GetWidth (int level = 0) const;
-
-		GLint GetHeight (int level = 0) const;
-
-		void Clear ();
-
-		static void Reset ();
-
-		GLuint texture () const
-		{
-			return m_texture;
-		}
-
-	private:
-
-		GLuint m_texture;
-
-		int m_cell_x;
-		int m_cell_y;
-
-		int m_space;
-
-		int m_xoffset;
-		int m_yoffset;
-	};
-
-	// ---------------------------------------------------------------
-
 	/**
 	 * A texture atlas is basically a big texture which contains many
 	 * small images that are packed together.
