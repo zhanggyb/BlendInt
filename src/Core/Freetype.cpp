@@ -378,6 +378,36 @@ namespace BlendInt {
 
 	// -------------------------------
 
+	FTGlyph::FTGlyph ()
+	: m_glyph(0)
+	{
+
+	}
+
+	FTGlyph::~FTGlyph ()
+	{
+		Done();
+	}
+
+	FTGlyph& FTGlyph::operator =(const FT_Glyph orig)
+	{
+		if(m_glyph) {
+			FT_Done_Glyph(m_glyph);
+			m_glyph = 0;
+		}
+		m_glyph = orig;
+
+		return *this;
+	}
+
+	void FTGlyph::Done ()
+	{
+		if(m_glyph) {
+			FT_Done_Glyph(m_glyph);
+			m_glyph = 0;
+		}
+	}
+
 	FTLibrary::FTLibrary()
 	: m_library(0)
 	{

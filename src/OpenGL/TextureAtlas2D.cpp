@@ -64,7 +64,18 @@ namespace BlendInt {
 		glGenTextures(1, &m_texture);
 		glBindTexture(GL_TEXTURE_2D, m_texture);
 
+#ifdef DEBUG
+#ifdef __APPLE__
+		// The Texture showed in testTextureAtlas is not clear in Mac OS, try to initialize this
+		// TODO: these 2 lines just for test, remove later
+		std::vector<unsigned char> blank(width * height, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
+#else	// __APPLE__
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+#endif
+#else	// DEBUG
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+#endif
 
 		// We require 1 byte alignment when uploading texture data
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -87,7 +98,7 @@ namespace BlendInt {
 		m_yoffset = m_space;
 	}
 
-	bool TextureAtlas2D::Push(int bitmap_width, int bitmap_rows, unsigned char* bitmap_buf)
+	bool TextureAtlas2D::Push(int bitmap_width, int bitmap_rows, unsigned char* bitmap_buf, bool clear)
 	{
 		bool ret = false;
 
@@ -118,6 +129,12 @@ namespace BlendInt {
 
 				//DBG_PRINT_MSG("push character at: %d, %d, width: %d, rows: %d", m_xoffset, m_yoffset, width, rows);
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+				if(clear) {
+					std::vector<unsigned char> blank(m_cell_width * m_cell_height, 0);
+					glTexSubImage2D(GL_TEXTURE_2D, 0, m_xoffset, m_yoffset, m_cell_width, m_cell_height, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
+				}
+
 				glTexSubImage2D(GL_TEXTURE_2D, 0, m_xoffset, m_yoffset, bitmap_width, bitmap_rows, GL_RED, GL_UNSIGNED_BYTE, bitmap_buf);
 
 				m_xoffset = x;
@@ -132,7 +149,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	bool TextureAtlas2D::Update (int index, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buf)
+	bool TextureAtlas2D::Update (int index, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buf, bool clear)
 	{
 		GLint tex_width = 0;
 		GLint tex_height = 0;
@@ -169,15 +186,18 @@ namespace BlendInt {
 
 		//DBG_PRINT_MSG("Update character at: %d, %d, width: %d, rows: %d", x, y, bitmap_width, bitmap_rows);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		std::vector<unsigned char> blank(m_cell_width * m_cell_height, 0);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, m_cell_width, m_cell_height, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
+
+		if(clear) {
+			std::vector<unsigned char> blank(m_cell_width * m_cell_height, 0);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, m_cell_width, m_cell_height, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
+		}
 
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, bitmap_width, bitmap_rows, GL_RED, GL_UNSIGNED_BYTE, bitmap_buf);
 
 		return true;
 	}
 
-	bool TextureAtlas2D::Update (int column_index, int row_index, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buf)
+	bool TextureAtlas2D::Update (int column_index, int row_index, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buf, bool clear)
 	{
 		GLint tex_width = 0;
 		GLint tex_height = 0;
@@ -210,8 +230,10 @@ namespace BlendInt {
 		//DBG_PRINT_MSG("Update character at: %d, %d, width: %d, rows: %d", x, y, bitmap_width, bitmap_rows);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		std::vector<unsigned char> blank(m_cell_width * m_cell_height, 0);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, m_cell_width, m_cell_height, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
+		if(clear) {
+			std::vector<unsigned char> blank(m_cell_width * m_cell_height, 0);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, m_cell_width, m_cell_height, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
+		}
 
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, bitmap_width, bitmap_rows, GL_RED, GL_UNSIGNED_BYTE, bitmap_buf);
 

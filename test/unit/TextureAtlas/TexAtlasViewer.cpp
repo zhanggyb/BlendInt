@@ -36,7 +36,8 @@ const char* TexAtlasViewer::fragment_shader =
 		"out vec4 FragmentColor;"
 		""
 		"void main(void) {"
-		"	FragmentColor = texture(TexID, f_texcoord);"
+		"	vec4 color = vec4(1.f, 1.f, 1.f, 1.f);"
+		"	FragmentColor = vec4(color.rgb, texture(TexID, f_texcoord).r);"
 		"}";
 
 TexAtlasViewer::TexAtlasViewer()
@@ -59,7 +60,12 @@ TexAtlasViewer::TexAtlasViewer()
 	BI::FTFace ft_face;
 
 	ft_lib.Initialize();
+#ifdef __APPLE__
+	ft_face.New(ft_lib, "/System/Library/Fonts/LucidaGrande.ttc");
+#else
 	ft_face.New(ft_lib, "/usr/share/fonts/truetype/droid/DroidSans.ttf");
+#endif
+	ft_lib.SetLcdFilter(FT_LCD_FILTER_DEFAULT);
 	ft_face.SetCharSize(12 << 6, 0, 96, 0);
 
 	int cell_x = ft_face.face()->size->metrics.max_advance >> 6;
@@ -78,8 +84,8 @@ TexAtlasViewer::TexAtlasViewer()
 	}
 
 	if(ft_face.LoadChar('a', FT_LOAD_RENDER)) {
-		m_atlas.Update(0, g->bitmap.width, g->bitmap.rows, g->bitmap.buffer);
-		m_atlas.Update(1, 0, g->bitmap.width, g->bitmap.rows, g->bitmap.buffer);
+		m_atlas.Update(0, g->bitmap.width, g->bitmap.rows, g->bitmap.buffer, true);
+		m_atlas.Update(1, 0, g->bitmap.width, g->bitmap.rows, g->bitmap.buffer, true);
 	}
 
 	DBG_PRINT_MSG("last index: %d", m_atlas.GetLastIndex());

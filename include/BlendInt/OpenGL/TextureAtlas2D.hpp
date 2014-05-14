@@ -40,11 +40,11 @@ namespace BlendInt {
 
 		void Bind ();
 
-		bool Push (int bitmap_width, int bitmap_rows, unsigned char* bitmap_buffer);
+		bool Push (int bitmap_width, int bitmap_rows, unsigned char* bitmap_buffer, bool clear = false);
 
-		bool Update (int index, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buffer);
+		bool Update (int index, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buffer, bool clear = false);
 
-		bool Update (int hindex, int yindex, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buffer);
+		bool Update (int hindex, int yindex, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buffer, bool clear = false);
 
 		bool IsFull () const;
 

@@ -203,6 +203,23 @@ namespace BlendInt {
 
 	// --------------------------------------
 
+	class FTGlyph
+	{
+	public:
+
+		FTGlyph ();
+
+		~FTGlyph ();
+
+		FTGlyph& operator = (const FT_Glyph orig);
+
+		void Done ();
+
+	private:
+
+		FT_Glyph m_glyph;
+	};
+
 	class FTLibrary
 	{
 	public:
