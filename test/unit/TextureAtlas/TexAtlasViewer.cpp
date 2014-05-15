@@ -36,7 +36,7 @@ const char* TexAtlasViewer::fragment_shader =
 		"out vec4 FragmentColor;"
 		""
 		"void main(void) {"
-		"	vec4 color = vec4(1.f, 1.f, 1.f, 1.f);"
+		"	vec4 color = vec4(0.9f, 0.9f, 0.9f, 1.f);"
 		"	FragmentColor = vec4(color.rgb, texture(TexID, f_texcoord).r);"
 		"}";
 
@@ -66,17 +66,22 @@ TexAtlasViewer::TexAtlasViewer()
 	ft_face.New(ft_lib, "/usr/share/fonts/truetype/droid/DroidSans.ttf");
 #endif
 	ft_lib.SetLcdFilter(FT_LCD_FILTER_DEFAULT);
-	ft_face.SetCharSize(12 << 6, 0, 96, 0);
+	ft_face.SetCharSize(72 << 6, 0, 96, 0);
 
 	int cell_x = ft_face.face()->size->metrics.max_advance >> 6;
-	int cell_y = ft_face.face()->size->metrics.height >> 6;
+	int cell_y = (ft_face.face()->size->metrics.ascender - ft_face.face()->size->metrics.descender) >> 6;
 
-	DBG_PRINT_MSG("cell_x: %d, cell_y: %d", cell_x, cell_y);
+	DBG_PRINT_MSG("max advance: %d, height: %d", cell_x, cell_y);
 
 	m_atlas.Generate(256, 256, cell_x, cell_y, 10);
-	FT_GlyphSlot g = ft_face.face()->glyph;
+	FT_GlyphSlot slot = ft_face.face()->glyph;
 	m_atlas.Bind();
 
+	FT_Int32 flags = 0;
+	flags |= FT_LOAD_NO_BITMAP;
+	flags |= FT_LOAD_FORCE_AUTOHINT;
+
+	/*
 	for(char i = 33; i < 127; i++) {
 		if(ft_face.LoadChar(i, FT_LOAD_RENDER)) {
 			m_atlas.Push(g->bitmap.width, g->bitmap.rows, g->bitmap.buffer);
@@ -86,6 +91,68 @@ TexAtlasViewer::TexAtlasViewer()
 	if(ft_face.LoadChar('a', FT_LOAD_RENDER)) {
 		m_atlas.Update(0, g->bitmap.width, g->bitmap.rows, g->bitmap.buffer, true);
 		m_atlas.Update(1, 0, g->bitmap.width, g->bitmap.rows, g->bitmap.buffer, true);
+	}
+	*/
+
+	FT_UInt glyph_index = ft_face.GetCharIndex('A');
+	FT_Glyph ft_glyph;
+    FT_BitmapGlyph ft_bitmap_glyph;
+    FT_Matrix matrix = {
+        (int)((1.0)		 * 0x10000L),
+        (int)((0.12)      * 0x10000L),
+        (int)((0.0)      * 0x10000L),
+        (int)((1.0)      * 0x10000L)};
+
+	if(ft_face.LoadGlyph(glyph_index, flags)) {
+
+		// DO sth for outline
+
+		BI::FTStroker ft_stroker;
+		if(ft_stroker.New(ft_lib)) {
+			ft_stroker.Set((int)(0.5 * 64), FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
+
+			FT_Error err = FT_Get_Glyph (ft_face.face()->glyph, &ft_glyph);
+			if(err) {
+				DBG_PRINT_MSG("%s", "Fail to get glyph");
+			} else {
+				//err = FT_Glyph_StrokeBorder(&ft_glyph, ft_stroker.stroker(), 0, 1);
+				err = FT_Glyph_Stroke( &ft_glyph, ft_stroker.stroker(), 1 );
+				//err = FT_Glyph_StrokeBorder(&ft_glyph, ft_stroker.stroker(), 1, 1);
+				if(err) {
+					DBG_PRINT_MSG("%s", "Fail to strokeborder");
+				} else {
+
+					err = FT_Glyph_Transform(ft_glyph, &matrix, 0);
+					if(err) {
+						DBG_PRINT_MSG("%s", "Fail to transform glyph");
+ 					} else {
+ 						err = FT_Glyph_To_Bitmap(&ft_glyph, FT_RENDER_MODE_NORMAL, 0, 1);
+ 						if(err) {
+ 							DBG_PRINT_MSG("%s", "Fail to glyph to bitmap");
+ 						} else {
+ 				            ft_bitmap_glyph = (FT_BitmapGlyph) ft_glyph;
+ 						}
+ 					}
+
+				}
+			}
+		}
+
+		ft_stroker.Done();
+		// end of outline
+
+		if(ft_face.LoadGlyph(glyph_index, FT_LOAD_RENDER | FT_LOAD_NO_HINTING)) {
+			DBG_PRINT_MSG("top: %d, left: %d, width: %d, height: %d",
+							slot->bitmap_top, slot->bitmap_left,
+							slot->bitmap.width, slot->bitmap.rows);
+			m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
+			DBG_PRINT_MSG("top: %d, left: %d, width: %d, height: %d",
+							ft_bitmap_glyph->top, ft_bitmap_glyph->left,
+							ft_bitmap_glyph->bitmap.width, ft_bitmap_glyph->bitmap.rows);
+			m_atlas.Push(ft_bitmap_glyph->bitmap.width, ft_bitmap_glyph->bitmap.rows, ft_bitmap_glyph->bitmap.buffer);
+		}
+
+		FT_Done_Glyph(ft_glyph);
 	}
 
 	DBG_PRINT_MSG("last index: %d", m_atlas.GetLastIndex());

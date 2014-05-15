@@ -400,6 +400,46 @@ namespace BlendInt {
 		return *this;
 	}
 
+	bool FTGlyph::GetGlyph(const FTFace& face)
+	{
+		if(m_glyph) {
+			FT_Done_Glyph(m_glyph);
+			m_glyph = 0;
+		}
+
+		FT_Error err = FT_Get_Glyph(face.face()->glyph, &m_glyph);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to get glyph");
+		}
+
+		return (err == 0);
+	}
+
+	bool FTGlyph::Transform(FT_Matrix * matrix, FT_Vector* delta)
+	{
+		FT_Error err = FT_Glyph_Transform(m_glyph, matrix, delta);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to transform glyph");
+		}
+
+		return (err == 0);
+	}
+
+	bool FTGlyph::ToBitmap(FT_Render_Mode render_mode, FT_Vector* origin, FT_Bool destroy)
+	{
+		if(m_glyph) {
+
+			FT_Error err = FT_Glyph_To_Bitmap(&m_glyph, render_mode, origin, destroy);
+			if(err) {
+				DBG_PRINT_MSG("%s", "Fail to convert glyph object to a bitmap");
+			}
+
+			return (err == 0);
+		} else {
+			return false;
+		}
+	}
+
 	void FTGlyph::Done ()
 	{
 		if(m_glyph) {
@@ -671,13 +711,25 @@ namespace BlendInt {
 		FT_Stroker_Set(m_stroker, radius, line_cap, line_join, miter_limit);
 	}
 	
-	bool FTStroker::GlyphStroke (FT_Glyph* pglyph, FT_Bool destroy)
+	bool FTStroker::GlyphStroke (FTGlyph& glyph, FT_Bool destroy)
 	{
 		FT_Error err = 0;
 
-		err = FT_Glyph_Stroke(pglyph, m_stroker, destroy);
+		err = FT_Glyph_Stroke(&(glyph.glyph()), m_stroker, destroy);
 		if(err) {
-			DBG_PRINT_MSG("%s", "Fail to stroke a given outline glyph");
+			DBG_PRINT_MSG("%s", "Fail to stroke the glyph");
+		}
+
+		return (err == 0);
+	}
+
+	bool FTStroker::GlyphStrokeBorder(FTGlyph& glyph, FT_Bool inside, FT_Bool destroy)
+	{
+		FT_Error err = 0;
+
+		err = FT_Glyph_StrokeBorder(&(glyph.glyph()), m_stroker, inside, destroy);
+		if(err) {
+			DBG_PRINT_MSG("%s", "Fail to stroke the border of a glyph");
 		}
 
 		return (err == 0);

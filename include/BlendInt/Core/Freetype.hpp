@@ -203,23 +203,6 @@ namespace BlendInt {
 
 	// --------------------------------------
 
-	class FTGlyph
-	{
-	public:
-
-		FTGlyph ();
-
-		~FTGlyph ();
-
-		FTGlyph& operator = (const FT_Glyph orig);
-
-		void Done ();
-
-	private:
-
-		FT_Glyph m_glyph;
-	};
-
 	class FTLibrary
 	{
 	public:
@@ -302,6 +285,34 @@ namespace BlendInt {
 		FT_Face m_face;
 	};
 
+	class FTGlyph
+	{
+	public:
+
+		FTGlyph ();
+
+		~FTGlyph ();
+
+		FTGlyph& operator = (const FT_Glyph orig);
+
+		bool GetGlyph (const FTFace& face);
+
+		bool Transform (FT_Matrix* matrix, FT_Vector* delta);
+
+		bool ToBitmap (FT_Render_Mode render_mode, FT_Vector* origin = 0, FT_Bool destroy = 1);
+
+		void Done ();
+
+		FT_Glyph& glyph ()
+		{
+			return m_glyph;
+		}
+
+	private:
+
+		FT_Glyph m_glyph;
+	};
+
 	class FTStroker
 	{
 	public:
@@ -314,7 +325,9 @@ namespace BlendInt {
 
 		void Set(FT_Fixed radius, FT_Stroker_LineCap line_cap, FT_Stroker_LineJoin line_join, FT_Fixed miter_limit);
 
-		bool GlyphStroke (FT_Glyph* pglyph, FT_Bool destroy);
+		bool GlyphStroke (FTGlyph& glyph, FT_Bool destroy = 1);
+
+		bool GlyphStrokeBorder (FTGlyph& glyph, FT_Bool inside = 1, FT_Bool destroy = 1);
 
 		bool Done ();
 
