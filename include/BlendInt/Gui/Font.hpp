@@ -48,7 +48,7 @@ namespace BlendInt {
 #endif
 
 #ifdef __APPLE__
-		Font (const std::string& family = std::string("Sans-Serif"),
+		FontExt (const std::string& family = std::string("Sans-Serif"),
 						unsigned int size = 9,
 						int flag = 0,
 						int dpi = 96);

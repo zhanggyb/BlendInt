@@ -288,7 +288,7 @@ namespace BlendInt {
 
 					glyph.vertices[3].x = slot->bitmap_left + slot->bitmap.width;
 					glyph.vertices[3].y = slot->bitmap_top;
-					glyph.vertices[3].s = ox + slot->bitmap.rows / 512.f;
+					glyph.vertices[3].s = ox + slot->bitmap.width / 512.f;
 					glyph.vertices[3].t = oy;
 
 					glyph.texture_atlas = m_last;
@@ -344,7 +344,7 @@ namespace BlendInt {
 
 				if (m_ft_face.LoadChar(char_code + i, FT_LOAD_RENDER)) {
 
-					DBG_PRINT_MSG("push %c into atlas", char_code + i);
+					//DBG_PRINT_MSG("push %c into atlas", char_code + i);
 					ox = atlas->xoffset() / 512.f;
 					oy = atlas->yoffset() / 512.f;
 
@@ -374,7 +374,7 @@ namespace BlendInt {
 
 						m_preset[i].vertices[3].x = slot->bitmap_left + slot->bitmap.width;
 						m_preset[i].vertices[3].y = slot->bitmap_top;
-						m_preset[i].vertices[3].s = ox + slot->bitmap.rows / 512.f;
+						m_preset[i].vertices[3].s = ox + slot->bitmap.width / 512.f;
 						m_preset[i].vertices[3].t = oy;
 
 						m_preset[i].texture_atlas = atlas;
