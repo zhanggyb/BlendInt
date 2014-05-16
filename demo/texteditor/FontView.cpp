@@ -125,25 +125,28 @@ static const char* text_fragment_shader =
 */
 
 FontView::FontView ()
-: m_vao(0), m_vbo(0)
+//: m_vao(0), m_vbo(0)
 {
 	set_size(200, 200);
 
+	/*
 	glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
     glGenBuffers(1, &m_vbo);
     glBindVertexArray(0);
 
     m_program = BI::ShaderManager::instance->text_program();
+    */
 }
 
 FontView::~FontView ()
 {
-	glDeleteVertexArrays(1, &m_vao);
+	//glDeleteVertexArrays(1, &m_vao);
 }
 
 void FontView::LoadCharacter ()
 {
+	/*
     BI::Freetype ft;
 #ifdef __APPLE__
     ft.Open("/System/Library/Fonts/STHeiti Medium.ttc", 72, 120);
@@ -159,8 +162,9 @@ void FontView::LoadCharacter ()
 
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(BI::GlyphVertex) * 4, &(m_glyph.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 4, &(m_glyph.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+	*/
 
     /*
     m_program.Create();
@@ -174,7 +178,7 @@ void FontView::LoadCharacter ()
     }
     */
 
-    glBindVertexArray(0);
+	// glBindVertexArray(0);
 }
 
 BI::ResponseType FontView::Draw (const BI::RedrawEvent& event)
@@ -183,6 +187,10 @@ BI::ResponseType FontView::Draw (const BI::RedrawEvent& event)
 					(float) z());
 	glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
+	int advance = m_font.Print(mvp, L"Hello There!", 12);
+	DBG_PRINT_MSG("advance: %d", advance);
+
+	/*
 	glBindVertexArray(m_vao);
 
 	m_program->Use();
@@ -215,6 +223,7 @@ BI::ResponseType FontView::Draw (const BI::RedrawEvent& event)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	m_program->Reset();
 	glBindVertexArray(0);
+	*/
 
 	return BI::Accept;
 }

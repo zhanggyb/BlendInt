@@ -69,6 +69,21 @@ namespace BlendInt {
 			return m_texture;
 		}
 
+		int xoffset () const
+		{
+			return m_xoffset;
+		}
+
+		int yoffset () const
+		{
+			return m_yoffset;
+		}
+
+		int space () const
+		{
+			return m_space;
+		}
+
 	private:
 
 		GLuint m_texture;

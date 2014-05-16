@@ -164,6 +164,7 @@ namespace BlendInt {
 		ShaderManager::Release();
 		Theme::Release();
 		FontCache::releaseAll();
+		FontCacheExt::ReleaseAll();
 
 #ifdef USE_FONTCONFIG
 		FontConfig::release();

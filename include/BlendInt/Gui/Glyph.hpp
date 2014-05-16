@@ -38,6 +38,10 @@
 #endif
 #endif  // __UNIX__
 
+#include <glm/vec4.hpp>
+
+#include <BlendInt/OpenGL/TextureAtlas2D.hpp>
+
 namespace BlendInt {
 
 	struct GlyphVertex
@@ -67,8 +71,49 @@ namespace BlendInt {
 		GlyphVertex vertexes[4];
 	};
 
-	struct GlyphExt
+	class GlyphExt
 	{
+	public:
+
+		GlyphExt ()
+		: bitmap_width(0),
+		  bitmap_height(0),
+		  bitmap_left(0),
+		  bitmap_top(0),
+		  advance_x(0),
+		  advance_y(0)
+		{
+		}
+
+		GlyphExt (const GlyphExt& orig)
+		: bitmap_width(orig.bitmap_width),
+		  bitmap_height(orig.bitmap_height),
+		  bitmap_left(orig.bitmap_left),
+		  bitmap_top(orig.bitmap_top),
+		  advance_x(orig.advance_x),
+		  advance_y(orig.advance_y),
+		  texture_atlas(orig.texture_atlas)
+		{
+		}
+
+		~GlyphExt ()
+		{
+
+		}
+
+		GlyphExt& operator= (const GlyphExt& orig)
+		{
+			bitmap_width = orig.bitmap_width;
+			bitmap_height = orig.bitmap_height;
+			bitmap_left = orig.bitmap_left;
+			bitmap_top = orig.bitmap_top;
+			advance_x = orig.advance_x;
+			advance_y = orig.advance_y;
+			texture_atlas = orig.texture_atlas;
+
+			return *this;
+		}
+
 		int bitmap_width;
 		int bitmap_height;
 
@@ -78,8 +123,9 @@ namespace BlendInt {
 		int advance_x;
 		int advance_y;
 
-		GLuint texture;
 		GlyphVertex vertices[4];
+
+		RefPtr<TextureAtlas2D> texture_atlas;
 	};
 
 } /* namespace BlendInt */

@@ -46,6 +46,8 @@
 
 #ifdef USE_FONTCONFIG
 #include <BlendInt/Core/FontConfig.hpp>
+#else
+#include <boost/filesystem.hpp>
 #endif
 
 #include <BlendInt/Gui/FontCache.hpp>
@@ -60,6 +62,8 @@ namespace BlendInt {
 
 	map<FontFileInfo, RefPtr<FontCache> > FontCache::cacheDB;
 	map<FontFileInfo, unsigned long> FontCache::cacheCountDB;
+
+	map<FontData, RefPtr<FontCacheExt> > FontCacheExt::cache_db;
 
 	bool operator < (const FontFileInfo& src, const FontFileInfo& dist)
 	{
@@ -105,6 +109,307 @@ namespace BlendInt {
 				src.bold == dist.bold &&
 				src.italic == dist.italic);
 	}
+
+	bool operator < (const FontData& src, const FontData& dist)
+	{
+		if(src.name < dist.name) {
+			return true;
+		} else if(src.name > dist.name) {
+			return false;
+		}
+
+		if(src.size < dist.size) {
+			return true;
+		} else if(src.size > dist.size) {
+			return false;
+		}
+
+		if(src.dpi < dist.dpi) {
+			return true;
+		} else if(src.dpi > dist.dpi) {
+			return false;
+		}
+
+		if(src.flag < dist.flag) {
+			return true;
+		} else if (src.flag > dist.flag) {
+			return false;
+		}
+
+		return false;
+	}
+
+	bool operator == (const FontData& src, const FontData& dist)
+	{
+		// use memcmp?
+		return (src.name == dist.name &&
+				src.size == dist.size &&
+				src.dpi == dist.dpi &&
+				src.flag == dist.flag);
+	}
+
+	RefPtr<FontCacheExt> FontCacheExt::Create (const FontData& data)
+	{
+		// Don't repeatedly create
+		map<FontData, RefPtr<FontCacheExt> >::const_iterator it;
+		it = cache_db.find(data);
+
+		if (it != cache_db.end()) {
+			return it->second;
+		}
+
+		RefPtr<FontCacheExt> cache(new FontCacheExt(data));
+		cache->set_name(data.name);
+		cache->Initialize(32, 95);
+		cache_db[data] = cache;
+
+		return cache;
+	}
+
+	bool FontCacheExt::Release (const FontData& data)
+	{
+		map<FontData, RefPtr<FontCacheExt> >::iterator it;
+		it = cache_db.find(data);
+
+		if (it == cache_db.end())
+			return false;
+
+		cache_db.erase(it);
+		return true;
+	}
+
+	void FontCacheExt::ReleaseAll ()
+	{
+		cache_db.clear();
+	}
+
+	FontCacheExt::FontCacheExt(const FontData& data)
+	: m_vao(0), m_vbo(0), m_start(32), m_size(95)
+	{
+#ifdef USE_FONTCONFIG
+		FontConfig* fontconfig = FontConfig::instance();
+		bool bold = data.flag & FontStyleBold;
+		bool italic = data.flag & FontStyleItalic;
+
+		std::string filepath = fontconfig->getFontPath(data.name, data.size, bold, italic);
+		if(filepath.empty()) {
+
+			DBG_PRINT_MSG("Warning: the font family: %s does not exist", data.name.c_str());
+
+#ifdef __LINUX__
+			filepath = fontconfig->getFontPath("Sans", data.size, bold, italic);
+#else
+#ifdef __APPLE__
+			filepath = fontconfig->getFontPath("Sans-Serif", data.size, bold, italic);
+#endif
+#endif
+			assert(!filepath.empty());
+		} else {
+			DBG_PRINT_MSG("filepath: %s", filepath.c_str());
+		}
+#else
+
+#endif
+
+		if(m_ft_lib.Initialize()) {
+			m_ft_lib.SetLcdFilter(FT_LCD_FILTER_DEFAULT);
+			if(m_ft_face.New(m_ft_lib, filepath.data())) {
+				m_ft_face.SetCharSize(data.size << 6, 0, data.dpi, 0);
+			}
+		}
+
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		glGenBuffers(1, &m_vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	
+	const GlyphExt* FontCacheExt::Query (wchar_t charcode, bool create)
+	{
+		int index = charcode - m_start;
+
+		if(index >= 0 && index < m_size) {
+			return &m_preset[index];
+		}
+
+		if(m_extension.count(charcode) == 0) {
+
+			m_last->Bind();
+			if(m_last->IsFull()) {
+
+				m_last->Reset();
+
+				int cell_x = m_ft_face.face()->size->metrics.max_advance >> 6;
+				int cell_y = (m_ft_face.face()->size->metrics.ascender - m_ft_face.face()->size->metrics.descender) >> 6;
+
+				m_last.reset(new TextureAtlas2D);
+
+				m_last->Generate(512, 512, cell_x, cell_y);
+				m_last->Bind();
+
+			}
+
+			if (m_ft_face.LoadChar(charcode, FT_LOAD_RENDER)) {
+
+				float ox = m_last->xoffset() / 512.f;
+				float oy = m_last->yoffset() / 512.f;
+				FT_GlyphSlot slot = m_ft_face.face()->glyph;
+
+				if (m_last->Push(slot->bitmap.width, slot->bitmap.rows,
+									slot->bitmap.buffer)) {
+
+					GlyphExt glyph;
+
+					glyph.bitmap_width = slot->bitmap.width;
+					glyph.bitmap_height = slot->bitmap.rows;
+					glyph.bitmap_left = slot->bitmap_left;
+					glyph.bitmap_top = slot->bitmap_top;
+					glyph.advance_x = slot->advance.x >> 6;
+					glyph.advance_y = slot->advance.y >> 6;
+
+					glyph.vertices[0].x = slot->bitmap_left;
+					glyph.vertices[0].y = slot->bitmap_top	- slot->bitmap.rows;
+					glyph.vertices[0].s = ox;
+					glyph.vertices[0].t = oy + slot->bitmap.rows / 512.f;
+
+					glyph.vertices[1].x = slot->bitmap_left + slot->bitmap.width;
+					glyph.vertices[1].y = slot->bitmap_top	- slot->bitmap.rows;
+					glyph.vertices[1].s = ox + slot->bitmap.width / 512.f;
+					glyph.vertices[1].t = oy + slot->bitmap.rows / 512.f;
+
+					glyph.vertices[2].x = slot->bitmap_left;
+					glyph.vertices[2].y = slot->bitmap_top;
+					glyph.vertices[2].s = ox;
+					glyph.vertices[2].t = oy;
+
+					glyph.vertices[3].x = slot->bitmap_left + slot->bitmap.width;
+					glyph.vertices[3].y = slot->bitmap_top;
+					glyph.vertices[3].s = ox + slot->bitmap.rows / 512.f;
+					glyph.vertices[3].t = oy;
+
+					glyph.texture_atlas = m_last;
+				}
+			}
+
+			m_last->Reset();
+		}
+
+		return &m_extension[charcode];
+	}
+
+	FontCacheExt::~FontCacheExt()
+	{
+		m_extension.clear();
+		m_preset.clear();
+
+		glDeleteBuffers(1, &m_vbo);
+		glDeleteVertexArrays(1, &m_vao);
+
+		m_ft_face.Done();
+		m_ft_lib.Done();
+	}
+
+	void FontCacheExt::Initialize(wchar_t char_code, int size)
+	{
+		m_preset.clear();
+		m_start = char_code;
+		m_size = size;
+		m_preset.resize(size);
+
+		int cell_x = m_ft_face.face()->size->metrics.max_advance >> 6;
+		int cell_y = (m_ft_face.face()->size->metrics.ascender - m_ft_face.face()->size->metrics.descender) >> 6;
+
+		// if outline, add large the cell size;
+
+		FT_GlyphSlot slot = m_ft_face.face()->glyph;
+
+		GLfloat ox = 0.f;
+		GLfloat oy = 0.f;
+
+		RefPtr<TextureAtlas2D> atlas;
+		int i = 0;
+
+		while (i < size) {
+
+			atlas.reset(new TextureAtlas2D);
+			m_last = atlas;
+			atlas->Generate(512, 512, cell_x, cell_y);
+			atlas->Bind();
+
+			while (i < size) {
+
+				if (m_ft_face.LoadChar(char_code + i, FT_LOAD_RENDER)) {
+
+					DBG_PRINT_MSG("push %c into atlas", char_code + i);
+					ox = atlas->xoffset() / 512.f;
+					oy = atlas->yoffset() / 512.f;
+
+					if (atlas->Push(slot->bitmap.width, slot->bitmap.rows,
+									slot->bitmap.buffer)) {
+						m_preset[i].bitmap_width = slot->bitmap.width;
+						m_preset[i].bitmap_height = slot->bitmap.rows;
+						m_preset[i].bitmap_left = slot->bitmap_left;
+						m_preset[i].bitmap_top = slot->bitmap_top;
+						m_preset[i].advance_x = slot->advance.x >> 6;
+						m_preset[i].advance_y = slot->advance.y >> 6;
+
+						m_preset[i].vertices[0].x = slot->bitmap_left;
+						m_preset[i].vertices[0].y = slot->bitmap_top	- slot->bitmap.rows;
+						m_preset[i].vertices[0].s = ox;
+						m_preset[i].vertices[0].t = oy + slot->bitmap.rows / 512.f;
+
+						m_preset[i].vertices[1].x = slot->bitmap_left + slot->bitmap.width;
+						m_preset[i].vertices[1].y = slot->bitmap_top	- slot->bitmap.rows;
+						m_preset[i].vertices[1].s = ox + slot->bitmap.width / 512.f;
+						m_preset[i].vertices[1].t = oy + slot->bitmap.rows / 512.f;
+
+						m_preset[i].vertices[2].x = slot->bitmap_left;
+						m_preset[i].vertices[2].y = slot->bitmap_top;
+						m_preset[i].vertices[2].s = ox;
+						m_preset[i].vertices[2].t = oy;
+
+						m_preset[i].vertices[3].x = slot->bitmap_left + slot->bitmap.width;
+						m_preset[i].vertices[3].y = slot->bitmap_top;
+						m_preset[i].vertices[3].s = ox + slot->bitmap.rows / 512.f;
+						m_preset[i].vertices[3].t = oy;
+
+						m_preset[i].texture_atlas = atlas;
+
+						i++;
+					} else {
+
+						DBG_PRINT_MSG("%s", "one texture is full, create a new one");
+						break;
+					}
+				} else {
+					// skip char_code + i
+					i++;
+				}
+
+
+			}
+
+			atlas->Reset();
+
+		}
+
+	}
+
+#ifdef DEBUG
+	void FontCacheExt::list (void)
+	{
+		map<FontData, RefPtr<FontCacheExt> >::const_iterator it;
+		for (it = cache_db.begin(); it != cache_db.end(); it++) {
+			cout << it->second->name() << endl;
+		}
+	}
+#endif
+
+	// ---------------------------------------------------
 
 	/*
 	FontCache* FontCache::create (const Font& font, unsigned int dpi,
@@ -432,6 +737,8 @@ namespace BlendInt {
 
 		m_freetype.Close();
 
+		glDeleteBuffers(1, &m_vbo);
+
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
@@ -642,4 +949,3 @@ namespace BlendInt {
 #endif
 
 } /* namespace BlendInt */
-

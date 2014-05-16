@@ -41,7 +41,7 @@ const char* TexAtlasViewer::fragment_shader =
 		"}";
 
 TexAtlasViewer::TexAtlasViewer()
-	: BI::Widget(), m_vao(0)
+	: BI::Widget()//, m_vao(0)
 {
 	set_size(256, 256);
 	set_expand_x(true);

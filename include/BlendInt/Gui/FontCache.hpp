@@ -52,6 +52,53 @@ namespace BlendInt {
 		}
 	};
 
+	enum FontStyleFlag {
+		FontStyleBold = 0x0,
+		FontStyleItalic = 0x1 << 1,
+		FontStyleOutline = 0x1 << 2,
+		FontStyleShadow = 0x1 << 3
+	};
+
+	struct FontData {
+
+		FontData ()
+		: size(9),
+		  flag(0),
+		  dpi(72)
+		{
+
+		}
+
+		~FontData ()
+		{
+
+		}
+
+		FontData (const FontData& orig)
+		: name(orig.name),
+		  size(orig.size),
+		  flag(orig.flag),
+		  dpi(orig.dpi)
+		{
+
+		}
+
+		FontData& operator = (const FontData& orig)
+		{
+			name = orig.name;
+			size = orig.size;
+			flag = orig.flag;
+			dpi = orig.dpi;
+
+			return *this;
+		}
+
+		std::string name;	/** The font name or filepath to the font file */
+		unsigned int size;	/** Character size want to be loaded */
+		unsigned int flag;	/** The font style flag, see FontStyleFlag */
+		unsigned int dpi;	/** The DPI used in Freetype setting */
+	};
+
 	struct FontFileInfo {
 		std::string file;	/** The path to the font file */
 		unsigned int size;	/** Character size want to be loaded */
@@ -62,6 +109,57 @@ namespace BlendInt {
 
 	extern bool operator < (const FontFileInfo& src, const FontFileInfo& dist);
 	extern bool operator == (const FontFileInfo& src, const FontFileInfo& dist);
+
+	extern bool operator < (const FontData& src, const FontData& dist);
+	extern bool operator == (const FontData& src, const FontData& dist);
+
+	class FontCacheExt: public Object
+	{
+	public:
+
+		static RefPtr<FontCacheExt> Create (const FontData& data);
+
+		static bool Release (const FontData& data);
+
+		static void ReleaseAll ();
+
+		void Initialize (wchar_t char_code = 32, int size = 95);
+
+#ifdef DEBUG
+		static void list ();
+#endif
+
+		const GlyphExt* Query (wchar_t charcode, bool create = true);
+
+	private:
+
+		friend class FontExt;
+		template <typename T> friend class RefPtr;
+
+		FontCacheExt (const FontData& data);
+
+		~FontCacheExt ();
+
+		GLuint m_vao;
+
+		GLuint m_vbo;
+
+		wchar_t m_start;
+		int m_size;
+
+		std::vector<GlyphExt> m_preset;
+
+		std::map<wchar_t, GlyphExt> m_extension;
+
+		RefPtr<TextureAtlas2D> m_last;
+
+		FTLibrary m_ft_lib;
+		FTFace m_ft_face;
+
+		static map<FontData, RefPtr<FontCacheExt> > cache_db;
+	};
+
+	// -----------------------------------------------------
 
 	/**
 	 * @brief Class in charge of caching fonts

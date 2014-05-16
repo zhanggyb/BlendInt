@@ -41,7 +41,137 @@
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
+#define SETBIT(x,y) (x |= y)
+#define CLRBIT(x,y) (x &= ~y)
+
 namespace BlendInt {
+
+	FontExt::FontExt (const std::string& name, unsigned int size, int flag, int dpi)
+	{
+		m_data.name = name;
+		m_data.size = size;
+		m_data.flag = flag;
+		m_data.dpi = dpi;
+
+		m_cache = FontCacheExt::Create(m_data);
+	}
+
+	FontExt::FontExt (const FontExt& orig)
+	: m_data(orig.m_data),
+	  m_pen(orig.m_pen),
+	  m_color(orig.m_color)
+	{
+		m_cache = orig.m_cache;
+	}
+
+	FontExt& FontExt::operator = (const FontExt& orig)
+	{
+		m_data = orig.m_data;
+		m_pen = orig.m_pen;
+		m_color = orig.m_color;
+		m_cache = orig.m_cache;
+
+		return *this;
+	}
+
+	void FontExt::SetName (const std::string& name)
+	{
+		m_data.name = name;
+		m_cache = FontCacheExt::Create(m_data);
+	}
+
+	void FontExt::SetSize (unsigned int size)
+	{
+		m_data.size = size;
+		m_cache = FontCacheExt::Create(m_data);
+	}
+
+	void FontExt::SetBold (bool bold)
+	{
+		if(bold) {
+			SETBIT(m_data.flag, FontStyleBold);
+		} else {
+			CLRBIT(m_data.flag, FontStyleBold);
+		}
+
+		m_cache = FontCacheExt::Create(m_data);
+	}
+
+	void FontExt::SetItalic (bool italic)
+	{
+		if(italic) {
+			SETBIT(m_data.flag, FontStyleItalic);
+		} else {
+			CLRBIT(m_data.flag, FontStyleItalic);
+		}
+
+		m_cache = FontCacheExt::Create(m_data);
+	}
+
+	int FontExt::Print (const glm::mat4& mvp, const std::wstring& string,
+					size_t length, size_t start) const
+	{
+		if(length == 0)	return 0;
+
+		int advance = 0;	// the return value
+
+		glBindVertexArray(m_cache->m_vao);
+		glm::mat4 glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
+		RefPtr<GLSLProgram> program = ShaderManager::instance->text_program();
+
+		program->Use();
+
+		glActiveTexture(GL_TEXTURE0);
+
+		program->SetUniform1i("tex", 0);
+
+		glEnableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		size_t str_length = std::min(string.length(), length);
+
+		// TODO: support left->right, and right->left text
+		std::wstring::const_iterator it;
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+		program->SetUniform4f("color", m_color.r() / 255.f,
+				m_color.g() / 255.f, m_color.b() / 255.f,
+				m_color.a() / 255.f);
+
+		it = string.begin();
+		std::advance(it, start);
+
+		const GlyphExt* glyph_ref = 0;
+		for (size_t i = 0; i < str_length; it++, i++) {
+
+			glyph_ref = m_cache->Query(*it);
+			glBindTexture(GL_TEXTURE_2D, glyph_ref->texture_atlas->texture());
+
+			advance += glyph_ref->advance_x;
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
+							&(glyph_ref->vertices[0]),
+							GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+			glyph_pos = glm::translate(glyph_pos, glm::vec3(glyph_ref->advance_x, 0, 0));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+			        glm::value_ptr(glyph_pos));
+		}
+
+		glDisableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		program->Reset();
+		glBindVertexArray(0);
+
+		return advance;
+	}
+
+	// -----------------------------------------
 
 	Font::Font (const std::string& name, unsigned int size, bool bold, bool italic)
 			: m_name(name),

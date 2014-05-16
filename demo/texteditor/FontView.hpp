@@ -7,6 +7,7 @@
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/TextureGlyph.hpp>
+#include <BlendInt/Gui/Font.hpp>
 
 namespace BI = BlendInt;
 
@@ -26,11 +27,14 @@ protected:
 
 private:
 
+	/*
 	GLuint m_vao;
 	GLuint m_vbo;
 
     BI::TextureGlyph m_glyph;
     BI::RefPtr<BI::GLSLProgram> m_program;
+	*/
+	BI::FontExt m_font;
 
 };
 

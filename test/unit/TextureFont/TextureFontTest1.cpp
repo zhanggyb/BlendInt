@@ -81,7 +81,7 @@ TEST_F(TextureFontTest1, Foo1)
     font.Load(ft, L'A');
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4, &(font.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 4, &(font.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     GLSLProgram program;

@@ -153,7 +153,8 @@ namespace BlendInt {
 			FcValue value;
 			FcResult result = FcPatternGet(match, FC_FILE, 0, &value);
 			if (result) {
-				// print error
+				// print erro
+				fprintf(stderr, "ERROR: Fail to match font file");
 			} else {
 				file = (char*) (value.u.s);
 			}

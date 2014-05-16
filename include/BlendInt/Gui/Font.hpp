@@ -36,6 +36,56 @@ using namespace std;
 
 namespace BlendInt {
 
+	class FontExt
+	{
+	public:
+
+#ifdef __LINUX__
+		FontExt (const std::string& name = std::string("Sans"),
+						unsigned int size = 9,
+						int flag = 0,
+						int dpi = 96);
+#endif
+
+#ifdef __APPLE__
+		Font (const std::string& family = std::string("Sans-Serif"),
+						unsigned int size = 9,
+						int flag = 0,
+						int dpi = 96);
+#endif
+
+		FontExt (const FontExt& orig);
+
+		~FontExt ()
+		{
+
+		}
+
+		FontExt& operator = (const FontExt& orig);
+
+		void SetName (const std::string& name);
+
+		void SetSize (unsigned int size);
+
+		void SetBold (bool bold);
+
+		void SetItalic (bool italic);
+
+		int Print (const glm::mat4& mvp, const std::wstring& string, size_t length, size_t start = 0) const;
+
+	private:
+
+		FontData m_data;
+
+		Point m_pen;
+
+		Color m_color;	// for foreground
+
+		// Color m_background	// for shadow
+
+		RefPtr<FontCacheExt> m_cache;
+	};
+
 	class Font
 	{
 	public:
