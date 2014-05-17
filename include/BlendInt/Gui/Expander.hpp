@@ -81,7 +81,7 @@ namespace BlendInt {
 
 		void SetTitle (const String& text);
 
-		const std::wstring* GetTitle () const;
+		const String* GetTitle () const;
 
 		virtual Size GetPreferredSize () const;
 

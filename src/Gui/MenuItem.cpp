@@ -59,10 +59,6 @@ namespace BlendInt {
 
 	MenuItem::~MenuItem()
 	{
-#ifdef DEBUG
-		std::wcout << "Delete MenuItem: " << m_text << std::endl;
-#endif
-
 		if(m_sub) {
 			m_sub->m_parent = 0;
 			delete m_sub;

@@ -607,7 +607,7 @@ namespace BlendInt {
 		m_title_button->SetText(text);
 	}
 
-	const std::wstring* Expander::GetTitle () const
+	const String* Expander::GetTitle () const
 	{
 		if(m_title_button) {
 			return &m_title_button->text();

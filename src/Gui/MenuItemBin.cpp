@@ -51,9 +51,6 @@ namespace BlendInt {
 
 	MenuItemBin::~MenuItemBin ()
 	{
-#ifdef DEBUG
-		std::wcout << "Delete MenuBin: " << m_title << std::endl;
-#endif
 		std::list<MenuItem*>::iterator it;
 		for(it = m_list.begin(); it != m_list.end(); it++)
 		{
@@ -155,7 +152,7 @@ namespace BlendInt {
 		std::list<MenuItem*>::iterator it;
 		for(it = m_list.begin(); it != m_list.end(); it++)
 		{
-			std::wcout << "MenuBin Item Text: " << (*it)->text() << std::endl;
+			DBG_PRINT_MSG("MenuBin Item Text: %s", (*it)->text().data());
 			if((*it)->m_sub) {
 				(*it)->m_sub->print_menu_items();
 			}

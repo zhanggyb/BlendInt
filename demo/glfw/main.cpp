@@ -61,15 +61,10 @@ int main(int argc, char* argv[])
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
-	TextureAtlas2D atlas;
-	atlas.Generate(64, 64, 20, 20, 1);
+	String str("12345");
+	std::string out = ConvertFromString(str);
 
-	atlas.Bind();
-	int num = atlas.GetMaxNumber();
-	std::cout << "max num: " << num << std::endl;
-	atlas.Reset();
-
-	atlas.Clear();
+	std::cout << out << std::endl;
 
 	RunLoop(win);
 

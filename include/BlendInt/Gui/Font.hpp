@@ -89,13 +89,13 @@ namespace BlendInt {
 
 		int Print (const glm::mat4& mvp, float x, float y, const std::string& string, size_t length, size_t start) const;
 
-		int Print (const glm::mat4& mvp, const std::wstring& string, size_t start = 0) const;
+		int Print (const glm::mat4& mvp, const String& string, size_t start = 0) const;
 
-		int Print (const glm::mat4& mvp, const std::wstring& string, size_t length, size_t start) const;
+		int Print (const glm::mat4& mvp, const String& string, size_t length, size_t start) const;
 
-		int Print (const glm::mat4& mvp, float x, float y, const std::wstring& string, size_t start = 0) const;
+		int Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start = 0) const;
 
-		int Print (const glm::mat4& mvp, float x, float y, const std::wstring& string, size_t length, size_t start) const;
+		int Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start) const;
 
 		int GetHeight () const
 		{
@@ -117,23 +117,23 @@ namespace BlendInt {
 			return m_cache->m_ft_face.face()->size->metrics.max_advance >> 6;
 		}
 
-		Rect GetTextOutline (const std::wstring& string) const;
+		Rect GetTextOutline (const String& string) const;
 
 		size_t GetTextWidth (const std::string& string, size_t start = 0) const;
 
 		size_t GetTextWidth (const std::string& string, size_t length, size_t start) const;
 
-		size_t GetTextWidth (const std::wstring& string, size_t start = 0) const;
+		size_t GetTextWidth (const String& string, size_t start = 0) const;
 
-		size_t GetTextWidth (const std::wstring& string, size_t length, size_t start) const;
+		size_t GetTextWidth (const String& string, size_t length, size_t start) const;
 
 		size_t GetReversedTextWidth (const std::string& string, size_t start = 0) const;
 
 		size_t GetReversedTextWidth (const std::string& string, size_t length, size_t start) const;
 
-		size_t GetReversedTextWidth (const std::wstring& string, size_t start = 0) const;
+		size_t GetReversedTextWidth (const String& string, size_t start = 0) const;
 
-		size_t GetReversedTextWidth (const std::wstring& string, size_t length, size_t start) const;
+		size_t GetReversedTextWidth (const String& string, size_t length, size_t start) const;
 
 		void set_pen (const Point& pen)
 		{

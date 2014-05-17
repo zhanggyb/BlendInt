@@ -25,43 +25,32 @@
 #define _BLENDINT_STRING_HPP_
 
 #include <string>
+#include <stdint.h>
 #include <cwchar>
 
 namespace BlendInt {
 
 	class String;
 
-	extern std::string ConvertFromString (const String& src);
+#if __cplusplus <= 199711L
 
-	class String: public std::wstring
+	class String: public std::basic_string<uint32_t>
 	{
 	public:
 
-		String ()
-				: std::wstring()
-		{
-		}
+		String ();
 
 		String (const char* str);
 
-		String (const wchar_t* str)
-				: std::wstring(str)
-		{
-		}
+		String (const wchar_t* str);
 
 		String (const char* str, size_t n);
 
-		String (const wchar_t* str, size_t n)
-				: std::wstring(str, n)
-		{
-		}
+		String (const wchar_t* str, size_t n);
 
 		String (const std::string& str);
 
-		String (const std::wstring& str)
-				: std::wstring(str)
-		{
-		}
+		String (const std::wstring& str);
 
 		String (const String& orig)
 		{
@@ -70,9 +59,25 @@ namespace BlendInt {
 
 		String& operator = (const char* str);
 
+		String& operator = (const wchar_t* str);
+
 		String& operator = (const std::string& str);
 
+		String& operator = (const std::wstring& str);
+
 	};
+
+#else	// C++ 11
+
+	class String: public std::u32string
+	{
+
+	};
+
+#endif
+
+	extern std::string ConvertFromString (const String& src);
+
 }
 
 #endif /* _BIL_STRING_HPP_ */

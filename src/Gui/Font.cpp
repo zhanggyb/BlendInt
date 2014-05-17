@@ -192,13 +192,13 @@ namespace BlendInt {
 		return Print(translated_mvp, string, length, start);
 	}
 
-	int Font::Print (const glm::mat4& mvp, const std::wstring& string,
+	int Font::Print (const glm::mat4& mvp, const String& string,
 	        size_t start) const
 	{
 		return Print(mvp, string, string.length(), start);
 	}
 
-	int Font::Print (const glm::mat4& mvp, const std::wstring& string,
+	int Font::Print (const glm::mat4& mvp, const String& string,
 					size_t length, size_t start) const
 	{
 		if(length == 0)	return 0;
@@ -223,7 +223,7 @@ namespace BlendInt {
 		size_t str_length = std::min(string.length(), length);
 
 		// TODO: support left->right, and right->left text
-		std::wstring::const_iterator it;
+		String::const_iterator it;
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
 		program->SetUniform4f("color", m_color.r() / 255.f,
@@ -261,20 +261,20 @@ namespace BlendInt {
 		return advance;
 	}
 
-	int Font::Print(const glm::mat4& mvp, float x, float y, const std::wstring& string, size_t start) const
+	int Font::Print(const glm::mat4& mvp, float x, float y, const String& string, size_t start) const
 	{
 		return Print(mvp, x, y, string, string.length(), start);
 	}
 
-	int Font::Print(const glm::mat4& mvp, float x, float y, const std::wstring& string, size_t length, size_t start) const
+	int Font::Print(const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start) const
 	{
 		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.f));
 		return Print(translated_mvp, string, length, start);
 	}
 
-	Rect Font::GetTextOutline (const std::wstring& string) const
+	Rect Font::GetTextOutline (const String& string) const
 	{
-		std::wstring::const_iterator it;
+		String::const_iterator it;
 
 		int xmin = 0;
 		int ymin = 0;
@@ -328,14 +328,14 @@ namespace BlendInt {
 		return width;
 	}
 
-	size_t Font::GetTextWidth (const std::wstring& string,
+	size_t Font::GetTextWidth (const String& string,
 	        size_t start) const
 	{
 		size_t width = 0;
 
 		assert(start < string.length());
 
-		std::wstring::const_iterator it = string.begin();
+		String::const_iterator it = string.begin();
 		std::advance(it, start);
 
 		while(it != string.end()) {
@@ -346,14 +346,14 @@ namespace BlendInt {
 		return width;
 	}
 
-	size_t Font::GetTextWidth (const std::wstring& string, size_t length,
+	size_t Font::GetTextWidth (const String& string, size_t length,
 	        size_t start) const
 	{
 		size_t width = 0;
 
 		assert(start < string.length() && length <= string.length());
 
-		std::wstring::const_iterator it = string.begin();
+		String::const_iterator it = string.begin();
 		std::advance(it, start);
 		size_t i = 0;
 
@@ -404,14 +404,14 @@ namespace BlendInt {
 		return width;
 	}
 
-	size_t Font::GetReversedTextWidth (const std::wstring& string,
+	size_t Font::GetReversedTextWidth (const String& string,
 	        size_t start) const
 	{
 		size_t width = 0;
 
 		assert(start < string.length());
 
-		std::wstring::const_reverse_iterator it = string.rbegin();
+		String::const_reverse_iterator it = string.rbegin();
 		std::advance(it, start);
 
 		while (it != string.rend()) {
@@ -422,14 +422,14 @@ namespace BlendInt {
 		return width;
 	}
 
-	size_t Font::GetReversedTextWidth (const std::wstring& string,
+	size_t Font::GetReversedTextWidth (const String& string,
 	        size_t length, size_t start) const
 	{
 		size_t width = 0;
 
 		assert(start < string.length() && length <= string.length());
 
-		std::wstring::const_reverse_iterator it = string.rbegin();
+		String::const_reverse_iterator it = string.rbegin();
 		std::advance(it, start);
 		size_t i = 0;
 

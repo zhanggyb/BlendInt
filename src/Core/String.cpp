@@ -21,38 +21,103 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <BlendInt/Types.hpp>
 #include <BlendInt/Core/String.hpp>
 
 namespace BlendInt {
 
-	String::String (const char* str)
+#if __cplusplus <= 199711L
+
+	String::String ()
+	: std::basic_string<uint32_t>()
 	{
-		for (const char* c = str; *c != '\0'; c++) {
-			push_back(static_cast<wchar_t>(*c));
+
+	}
+
+	String::String (const char* str)
+	: std::basic_string<uint32_t>()
+	{
+		size_t len = strlen(str);
+		DBG_PRINT_MSG("strlen: %ld", len);
+
+		resize(len);
+
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = *(str + i);
+		}
+	}
+
+	String::String (const wchar_t* str)
+	: std::basic_string<uint32_t>()
+	{
+		size_t len = wcslen(str);
+		resize(len);
+
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = *(str + i);
 		}
 	}
 
 	String::String (const char* str, size_t n)
+	: std::basic_string<uint32_t>()
 	{
-		for (size_t i = 0; str[i] != '\0' && i < n; i++) {
-			push_back(static_cast<wchar_t>(str[i]));
+		size_t len = strlen(str);
+		len = std::min(len, n);
+
+		resize(len);
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = *(str + i);
 		}
 	}
 
 	String::String (const std::string& str)
+	: std::basic_string<uint32_t>()
 	{
-		for (std::string::const_iterator it = str.begin(); it != str.end();
-		        it++) {
-			push_back(static_cast<wchar_t>(*it));
+		size_t len = str.length();
+		resize(len);
+
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = str[i];
+		}
+	}
+
+	String::String (const std::wstring& str)
+	: std::basic_string<uint32_t>()
+	{
+		size_t len = str.length();
+		resize(len);
+
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = str[i];
 		}
 	}
 
 	String& String::operator = (const char* str)
 	{
-		clear();
+		size_t len = strlen(str);
+		resize(len);
 
-		for (const char* c = str; *c != '\0'; c++) {
-			push_back(static_cast<wchar_t>(*c));
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = *(str + i);
+		}
+
+		return *this;
+	}
+
+	String& String::operator = (const wchar_t* str)
+	{
+		size_t len = wcslen(str);
+		resize(len);
+
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = *(str + i);
 		}
 
 		return *this;
@@ -60,11 +125,25 @@ namespace BlendInt {
 
 	String& String::operator = (const std::string& str)
 	{
-		clear();
+		size_t len = str.length();
+		resize(len);
 
-		for (std::string::const_iterator it = str.begin(); it != str.end();
-		        it++) {
-			push_back(static_cast<wchar_t>(*it));
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = str[i];
+		}
+
+		return *this;
+	}
+
+	String& String::operator = (const std::wstring& str)
+	{
+		size_t len = str.length();
+		resize(len);
+
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = str[i];
 		}
 
 		return *this;
@@ -73,11 +152,19 @@ namespace BlendInt {
 	std::string ConvertFromString (const String& src)
 	{
 		std::string str;
-		for (String::const_iterator it = src.begin(); it != src.end(); it++)
+
+		size_t len = src.length();
+		str.resize(len);
+
+		for(size_t i = 0; i < len; i++)
 		{
-			str.push_back(static_cast<char>(*it));
+			str[i] = src[i];
 		}
 		return str;
 	}
+
+#else	// C++ 11
+
+#endif
 
 }

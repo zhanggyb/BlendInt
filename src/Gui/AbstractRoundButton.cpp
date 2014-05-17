@@ -122,7 +122,7 @@ namespace BlendInt {
 		UpdateTextPosition(size(), round_type(), radius(), m_text, font);
 	}
 	
-	void AbstractRoundButton::UpdateTextPosition (const Size& size, int round_type, float radius, const std::wstring& text, const Font& font)
+	void AbstractRoundButton::UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, const Font& font)
 	{
 		// If size changed, we need to update the text length for printing too.
 		bool cal_width = true;
