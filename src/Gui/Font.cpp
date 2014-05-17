@@ -146,7 +146,7 @@ namespace BlendInt {
 		const GlyphExt* glyph_ref = 0;
 		for (size_t i = 0; i < str_length; it++, i++) {
 
-			glyph_ref = m_cache->Query(*it);
+			glyph_ref = m_cache->Query(m_data, *it);
 			glBindTexture(GL_TEXTURE_2D, glyph_ref->texture_atlas->texture());
 
 			advance += glyph_ref->advance_x;

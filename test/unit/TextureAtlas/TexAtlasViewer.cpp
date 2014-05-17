@@ -94,7 +94,7 @@ TexAtlasViewer::TexAtlasViewer()
 	}
 	*/
 
-	FT_UInt glyph_index = ft_face.GetCharIndex('A');
+	FT_UInt glyph_index = ft_face.GetCharIndex(31);
 	FT_Glyph ft_glyph;
     FT_BitmapGlyph ft_bitmap_glyph;
     FT_Matrix matrix = {

@@ -83,6 +83,7 @@ namespace BlendInt {
 		  advance_x(0),
 		  advance_y(0)
 		{
+			memset(vertices, 0, sizeof(GlyphVertex) * 4);
 		}
 
 		GlyphExt (const GlyphExt& orig)
@@ -94,6 +95,7 @@ namespace BlendInt {
 		  advance_y(orig.advance_y),
 		  texture_atlas(orig.texture_atlas)
 		{
+			memcpy (vertices, orig.vertices, sizeof(GlyphVertex) * 4);
 		}
 
 		~GlyphExt ()
@@ -110,6 +112,8 @@ namespace BlendInt {
 			advance_x = orig.advance_x;
 			advance_y = orig.advance_y;
 			texture_atlas = orig.texture_atlas;
+
+			memcpy (vertices, orig.vertices, sizeof(GlyphVertex) * 4);
 
 			return *this;
 		}

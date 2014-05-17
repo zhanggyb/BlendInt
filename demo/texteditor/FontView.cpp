@@ -129,6 +129,9 @@ FontView::FontView ()
 {
 	set_size(200, 200);
 
+	m_font.SetSize(32);
+	//m_font.SetName("STHeiti");
+
 	/*
 	glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);

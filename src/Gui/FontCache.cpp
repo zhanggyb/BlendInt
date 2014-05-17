@@ -160,7 +160,7 @@ namespace BlendInt {
 
 		RefPtr<FontCacheExt> cache(new FontCacheExt(data));
 		cache->set_name(data.name);
-		cache->Initialize(32, 95);
+		cache->Initialize(data, 32, 95);
 		cache_db[data] = cache;
 
 		return cache;
@@ -228,7 +228,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
-	const GlyphExt* FontCacheExt::Query (wchar_t charcode, bool create)
+	const GlyphExt* FontCacheExt::Query (const FontData& font_data, wchar_t charcode, bool create)
 	{
 		int index = charcode - m_start;
 
@@ -236,7 +236,13 @@ namespace BlendInt {
 			return &m_preset[index];
 		}
 
-		if(m_extension.count(charcode) == 0) {
+		if(m_extension.count(charcode)) {
+
+			return &m_extension[charcode];
+
+		} else {
+
+			const GlyphExt* ret = 0;
 
 			m_last->Bind();
 			if(m_last->IsFull()) {
@@ -253,52 +259,58 @@ namespace BlendInt {
 
 			}
 
-			if (m_ft_face.LoadChar(charcode, FT_LOAD_RENDER)) {
+			if (!m_ft_face.LoadChar(charcode, FT_LOAD_RENDER)) {
+				m_ft_face.LoadChar(31, FT_LOAD_RENDER);
+			}
 
-				float ox = m_last->xoffset() / 512.f;
-				float oy = m_last->yoffset() / 512.f;
-				FT_GlyphSlot slot = m_ft_face.face()->glyph;
+			float ox = m_last->xoffset() / 512.f;
+			float oy = m_last->yoffset() / 512.f;
+			FT_GlyphSlot slot = m_ft_face.face()->glyph;
 
-				if (m_last->Push(slot->bitmap.width, slot->bitmap.rows,
-									slot->bitmap.buffer)) {
+			if (m_last->Push(slot->bitmap.width, slot->bitmap.rows,
+					slot->bitmap.buffer)) {
 
-					GlyphExt glyph;
+				GlyphExt glyph;
 
-					glyph.bitmap_width = slot->bitmap.width;
-					glyph.bitmap_height = slot->bitmap.rows;
-					glyph.bitmap_left = slot->bitmap_left;
-					glyph.bitmap_top = slot->bitmap_top;
-					glyph.advance_x = slot->advance.x >> 6;
-					glyph.advance_y = slot->advance.y >> 6;
+				glyph.bitmap_width = slot->bitmap.width;
+				glyph.bitmap_height = slot->bitmap.rows;
+				glyph.bitmap_left = slot->bitmap_left;
+				glyph.bitmap_top = slot->bitmap_top;
+				glyph.advance_x = slot->advance.x >> 6;
+				glyph.advance_y = slot->advance.y >> 6;
 
-					glyph.vertices[0].x = slot->bitmap_left;
-					glyph.vertices[0].y = slot->bitmap_top	- slot->bitmap.rows;
-					glyph.vertices[0].s = ox;
-					glyph.vertices[0].t = oy + slot->bitmap.rows / 512.f;
+				glyph.vertices[0].x = slot->bitmap_left;
+				glyph.vertices[0].y = slot->bitmap_top	- slot->bitmap.rows;
+				glyph.vertices[0].s = ox;
+				glyph.vertices[0].t = oy + slot->bitmap.rows / 512.f;
 
-					glyph.vertices[1].x = slot->bitmap_left + slot->bitmap.width;
-					glyph.vertices[1].y = slot->bitmap_top	- slot->bitmap.rows;
-					glyph.vertices[1].s = ox + slot->bitmap.width / 512.f;
-					glyph.vertices[1].t = oy + slot->bitmap.rows / 512.f;
+				glyph.vertices[1].x = slot->bitmap_left + slot->bitmap.width;
+				glyph.vertices[1].y = slot->bitmap_top	- slot->bitmap.rows;
+				glyph.vertices[1].s = ox + slot->bitmap.width / 512.f;
+				glyph.vertices[1].t = oy + slot->bitmap.rows / 512.f;
 
-					glyph.vertices[2].x = slot->bitmap_left;
-					glyph.vertices[2].y = slot->bitmap_top;
-					glyph.vertices[2].s = ox;
-					glyph.vertices[2].t = oy;
+				glyph.vertices[2].x = slot->bitmap_left;
+				glyph.vertices[2].y = slot->bitmap_top;
+				glyph.vertices[2].s = ox;
+				glyph.vertices[2].t = oy;
 
-					glyph.vertices[3].x = slot->bitmap_left + slot->bitmap.width;
-					glyph.vertices[3].y = slot->bitmap_top;
-					glyph.vertices[3].s = ox + slot->bitmap.width / 512.f;
-					glyph.vertices[3].t = oy;
+				glyph.vertices[3].x = slot->bitmap_left + slot->bitmap.width;
+				glyph.vertices[3].y = slot->bitmap_top;
+				glyph.vertices[3].s = ox + slot->bitmap.width / 512.f;
+				glyph.vertices[3].t = oy;
 
-					glyph.texture_atlas = m_last;
-				}
+				glyph.texture_atlas = m_last;
+
+				m_extension[charcode] = glyph;
+
+				ret = &m_extension[charcode];
 			}
 
 			m_last->Reset();
-		}
 
-		return &m_extension[charcode];
+			return ret;
+
+		}
 	}
 
 	FontCacheExt::~FontCacheExt()
@@ -313,7 +325,7 @@ namespace BlendInt {
 		m_ft_lib.Done();
 	}
 
-	void FontCacheExt::Initialize(wchar_t char_code, int size)
+	void FontCacheExt::Initialize(const FontData& font_data, wchar_t char_code, int size)
 	{
 		m_preset.clear();
 		m_start = char_code;

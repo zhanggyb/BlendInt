@@ -123,13 +123,13 @@ namespace BlendInt {
 
 		static void ReleaseAll ();
 
-		void Initialize (wchar_t char_code = 32, int size = 95);
+		void Initialize (const FontData& font_data, wchar_t char_code = 32, int size = 95);
 
 #ifdef DEBUG
 		static void list ();
 #endif
 
-		const GlyphExt* Query (wchar_t charcode, bool create = true);
+		const GlyphExt* Query (const FontData& font_data, wchar_t charcode, bool create = true);
 
 	private:
 
