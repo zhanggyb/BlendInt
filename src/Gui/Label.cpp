@@ -95,7 +95,7 @@ namespace BlendInt {
 			m_origin.set_x((size().width() - m_text_outline.width()) / 2);
 		}
 
-		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
+		m_origin.set_y((size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
 
 		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
@@ -137,7 +137,7 @@ namespace BlendInt {
 			m_origin.set_x((size().width() - m_text_outline.width()) / 2);
 		}
 
-		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
+		m_origin.set_y((size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
 
 		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
@@ -154,7 +154,7 @@ namespace BlendInt {
 					if(size_p->height() < m_text_outline.height()) {
 						m_length = 0;
 					} else {
-						m_origin.set_y((size_p->height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
+						m_origin.set_y((size_p->height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
 						m_length = GetValidTextSize(size_p);
 					}
 
@@ -305,7 +305,7 @@ namespace BlendInt {
 		}
 
 		m_origin.set_x(0);
-		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
+		m_origin.set_y((size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);

@@ -268,8 +268,8 @@ namespace BlendInt {
 			if((*it)->icon()) {
 				(*it)->icon()->Draw(mvp, 8, h + 8, 16, 16);
 			}
-			advance = m_font.Print(mvp, 16 + DefaultIconSpace, h - m_font.get_descender(), (*it)->text());
-			m_font.Print(mvp, 16 + DefaultIconSpace + advance + DefaultShortcutSpace, h - m_font.get_descender(), (*it)->shortcut());
+			advance = m_font.Print(mvp, 16 + DefaultIconSpace, h - m_font.GetDescender(), (*it)->text());
+			m_font.Print(mvp, 16 + DefaultIconSpace + advance + DefaultShortcutSpace, h - m_font.GetDescender(), (*it)->shortcut());
 		}
 
 		return Accept;

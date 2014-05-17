@@ -65,7 +65,7 @@ namespace BlendInt {
 
 		void SetFont (const Font& font);
 
-		const String& text () const {return m_text;}
+		const std::wstring& text () const {return m_text;}
 
 		size_t text_length () const {return m_text_length;}
 
@@ -73,7 +73,7 @@ namespace BlendInt {
 
 	protected:
 
-		void UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, const Font& font);
+		void UpdateTextPosition (const Size& size, int round_type, float radius, const std::wstring& text, const Font& font);
 
 		inline void set_text (const String& text)
 		{
@@ -102,7 +102,7 @@ namespace BlendInt {
 		size_t m_text_length;	// How many text to be printed, depends on the button size
 
 		// TextBuffer text_;
-		String m_text;
+		std::wstring m_text;
 
 		Font m_font;
 

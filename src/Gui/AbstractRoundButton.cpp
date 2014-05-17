@@ -85,7 +85,7 @@ namespace BlendInt {
 			radius_plus += radius();
 		}
 
-		int max_font_height = font().get_height();
+		int max_font_height = font().GetHeight();
 
 		preferred_size.set_height(max_font_height + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());	// top padding: 2, bottom padding: 2
 
@@ -95,7 +95,7 @@ namespace BlendInt {
 											+ DefaultButtonPadding().right()
 											+ radius_plus);
 		} else {
-			size_t width = font().GetTextWidth(text(), text().length());
+			size_t width = font().GetTextWidth(text());
 			preferred_size.set_width(
 							static_cast<unsigned int>(width)
 											+ DefaultButtonPadding().left()
@@ -122,7 +122,7 @@ namespace BlendInt {
 		UpdateTextPosition(size(), round_type(), radius(), m_text, font);
 	}
 	
-	void AbstractRoundButton::UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, const Font& font)
+	void AbstractRoundButton::UpdateTextPosition (const Size& size, int round_type, float radius, const std::wstring& text, const Font& font)
 	{
 		// If size changed, we need to update the text length for printing too.
 		bool cal_width = true;
@@ -159,8 +159,8 @@ namespace BlendInt {
 		}
 
 		set_pen((size.width() - text_outline.width()) / 2,
-						(size.height() - font.get_height()) / 2
-										+ std::abs(font.get_descender()));
+						(size.height() - font.GetHeight()) / 2
+										+ std::abs(font.GetDescender()));
 	}
 
 	size_t AbstractRoundButton::GetValidTextSize()
@@ -168,13 +168,13 @@ namespace BlendInt {
 		size_t width = 0;
 		size_t str_len = m_text.length();
 
-		width = m_font.GetTextWidth(m_text, str_len);
+		width = m_font.GetTextWidth(m_text, str_len, 0);
 
 		unsigned int text_width_space = size().width() - DefaultButtonPadding().left() - DefaultButtonPadding().right();
 
 		if(width > text_width_space) {
 			while(str_len > 0) {
-				width = m_font.GetTextWidth(m_text, str_len);
+				width = m_font.GetTextWidth(m_text, str_len, 0);
 				if(width < text_width_space) break;
 				str_len--;
 			}

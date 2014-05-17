@@ -35,8 +35,6 @@ TEST_F(LabelTest1, Foo1)
 	Font my_font ("Source Code Pro", 24);
 	Font my_shadow_font ("Source Code Pro", 24);
 
-	my_shadow_font.set_shadow(true);
-
 	Label* label1 = Manage (new Label("Hello, World1!"));
 	label1->set_name("Label1");
 	label1->Resize(200, 50);

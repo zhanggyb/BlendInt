@@ -46,17 +46,19 @@
 
 namespace BlendInt {
 
-	FontExt::FontExt (const std::string& name, unsigned int size, int flag, int dpi)
+	Font::Font (const std::string& name, unsigned int size, int flag, int dpi)
 	{
 		m_data.name = name;
 		m_data.size = size;
 		m_data.flag = flag;
 		m_data.dpi = dpi;
 
+		m_color = 0x000000FF;
+
 		m_cache = FontCacheExt::Create(m_data);
 	}
 
-	FontExt::FontExt (const FontExt& orig)
+	Font::Font (const Font& orig)
 	: m_data(orig.m_data),
 	  m_pen(orig.m_pen),
 	  m_color(orig.m_color)
@@ -64,7 +66,7 @@ namespace BlendInt {
 		m_cache = orig.m_cache;
 	}
 
-	FontExt& FontExt::operator = (const FontExt& orig)
+	Font& Font::operator = (const Font& orig)
 	{
 		m_data = orig.m_data;
 		m_pen = orig.m_pen;
@@ -74,19 +76,19 @@ namespace BlendInt {
 		return *this;
 	}
 
-	void FontExt::SetName (const std::string& name)
+	void Font::SetName (const std::string& name)
 	{
 		m_data.name = name;
 		m_cache = FontCacheExt::Create(m_data);
 	}
 
-	void FontExt::SetSize (unsigned int size)
+	void Font::SetSize (unsigned int size)
 	{
 		m_data.size = size;
 		m_cache = FontCacheExt::Create(m_data);
 	}
 
-	void FontExt::SetBold (bool bold)
+	void Font::SetBold (bool bold)
 	{
 		if(bold) {
 			SETBIT(m_data.flag, FontStyleBold);
@@ -97,7 +99,7 @@ namespace BlendInt {
 		m_cache = FontCacheExt::Create(m_data);
 	}
 
-	void FontExt::SetItalic (bool italic)
+	void Font::SetItalic (bool italic)
 	{
 		if(italic) {
 			SETBIT(m_data.flag, FontStyleItalic);
@@ -108,7 +110,95 @@ namespace BlendInt {
 		m_cache = FontCacheExt::Create(m_data);
 	}
 
-	int FontExt::Print (const glm::mat4& mvp, const std::wstring& string,
+	int Font::Print (const glm::mat4& mvp, const std::string& string,
+	        size_t start) const
+	{
+		return Print(mvp, string, string.length(), start);
+	}
+
+	int Font::Print (const glm::mat4& mvp, const std::string& string, size_t length,
+	        size_t start) const
+	{
+		if(length == 0)	return 0;
+
+		int advance = 0;	// the return value
+
+		glBindVertexArray(m_cache->m_vao);
+		glm::mat4 glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
+		RefPtr<GLSLProgram> program = ShaderManager::instance->text_program();
+
+		program->Use();
+
+		glActiveTexture(GL_TEXTURE0);
+
+		program->SetUniform1i("tex", 0);
+
+		glEnableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		size_t str_length = std::min(string.length(), length);
+
+		// TODO: support left->right, and right->left text
+		std::string::const_iterator it;
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+		program->SetUniform4f("color", m_color.r() / 255.f,
+				m_color.g() / 255.f, m_color.b() / 255.f,
+				m_color.a() / 255.f);
+
+		it = string.begin();
+		std::advance(it, start);
+
+		const GlyphExt* glyph_ref = 0;
+		for (size_t i = 0; i < str_length; it++, i++) {
+
+			glyph_ref = m_cache->Query(m_data, *it);
+			glBindTexture(GL_TEXTURE_2D, glyph_ref->texture_atlas->texture());
+
+			advance += glyph_ref->advance_x;
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
+							&(glyph_ref->vertices[0]),
+							GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+			glyph_pos = glm::translate(glyph_pos, glm::vec3(glyph_ref->advance_x, 0, 0));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+			        glm::value_ptr(glyph_pos));
+		}
+
+		glDisableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		program->Reset();
+		glBindVertexArray(0);
+
+		return advance;
+	}
+
+	int Font::Print (const glm::mat4& mvp, float x, float y,
+	        const std::string& string, size_t start) const
+	{
+		return Print(mvp, x, y, string, string.length(), start);
+	}
+
+	int Font::Print (const glm::mat4& mvp, float x, float y,
+	        const std::string& string, size_t length, size_t start) const
+	{
+		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.f));
+		return Print(translated_mvp, string, length, start);
+	}
+
+	int Font::Print (const glm::mat4& mvp, const std::wstring& string,
+	        size_t start) const
+	{
+		return Print(mvp, string, string.length(), start);
+	}
+
+	int Font::Print (const glm::mat4& mvp, const std::wstring& string,
 					size_t length, size_t start) const
 	{
 		if(length == 0)	return 0;
@@ -171,232 +261,185 @@ namespace BlendInt {
 		return advance;
 	}
 
-	// -----------------------------------------
-
-	Font::Font (const std::string& name, unsigned int size, bool bold, bool italic)
-			: m_name(name),
-			  m_size(size),
-			  m_bold(bold),
-			  m_italic(italic),
-			  m_shadow(false),
-			  m_color(0x000000FF)
+	int Font::Print(const glm::mat4& mvp, float x, float y, const std::wstring& string, size_t start) const
 	{
-		m_cache = FontCache::Create(
-						name,
-						size,
-						Theme::instance->dpi(),
-						bold,
-						italic);
+		return Print(mvp, x, y, string, string.length(), start);
 	}
 
-	Font::Font (const char* name, unsigned int size, bool bold, bool italic)
-		: m_name(name),
-		  m_size(size),
-		  m_bold(bold),
-		  m_italic(italic),
-		  m_shadow(false),
-		  m_color(0x000000FF)
+	int Font::Print(const glm::mat4& mvp, float x, float y, const std::wstring& string, size_t length, size_t start) const
 	{
-		m_cache = FontCache::Create(name, size, Theme::instance->dpi(), bold, italic);
+		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.f));
+		return Print(translated_mvp, string, length, start);
 	}
 
-	Font::Font (const Font& orig)
+	Rect Font::GetTextOutline (const std::wstring& string) const
 	{
-		m_name = orig.m_name;
-		m_size = orig.m_size;
-		m_bold = orig.m_bold;
-		m_italic = orig.m_italic;
-		m_shadow = orig.m_shadow;
-		m_color = orig.m_color;
+		std::wstring::const_iterator it;
 
-		m_cache = orig.m_cache;
-	}
+		int xmin = 0;
+		int ymin = 0;
+		int xmax = 0;
+		int ymax = 0;
 
-	Font& Font::operator = (const Font& orig)
-	{
-		m_name = orig.m_name;
-		m_size = orig.m_size;
-		m_bold = orig.m_bold;
-		m_italic = orig.m_italic;
-		m_shadow = orig.m_shadow;
-		m_color = orig.m_color;
-
-		m_cache = orig.m_cache;
-
-		return *this;
-	}
-
-	void Font::SetName (const std::string& name)
-	{
-		m_name = name;
-		m_cache = FontCache::Create(m_name, m_size, Theme::instance->dpi(), m_bold, m_italic);
-	}
-
-	void Font::SetSize (unsigned int size)
-	{
-		m_size = size;
-		m_cache = FontCache::Create(m_name, m_size, Theme::instance->dpi(), m_bold, m_italic);
-	}
-
-	void Font::SetBold (bool bold)
-	{
-		m_bold = bold;
-		m_cache = FontCache::Create(m_name, m_size, Theme::instance->dpi(), m_bold, m_italic);
-	}
-
-	void Font::SetItalic (bool italic)
-	{
-		m_italic = italic;
-		m_cache = FontCache::Create(m_name, m_size, Theme::instance->dpi(), m_bold, m_italic);
-	}
-
-	int Font::PrintExt (const glm::mat4& mvp, const String& string, size_t start) const
-	{
-		return PrintExt (mvp, string, string.length(), start);
-	}
-
-	int Font::Print (const glm::mat4& mvp, const String& string, size_t start) const
-	{
-		return Print (mvp, string, string.length(), start);
-	}
-
-	int Font::PrintExt (const glm::mat4& mvp, const String& string,
-	        size_t length, size_t start) const
-	{
-		if(length == 0)	return 0;
-
-		int advance = 0;	// the return value
-
-		glBindVertexArray(m_cache->m_vao);
-		glm::mat4 glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
-		RefPtr<GLSLProgram> program = ShaderManager::instance->text_program();
-
-		program->Use();
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_cache->m_atlas.texture());
-
-		program->SetUniform1i("tex", 0);
-
-		glEnableVertexAttribArray(0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-		// TODO: read text in TextureFont map
-		size_t str_length = std::min(string.length(), length);
-
-		// TODO: support left->right, and right->left text
-		String::const_iterator it;
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
-		program->SetUniform4f("color", m_color.r() / 255.f,
-				m_color.g() / 255.f, m_color.b() / 255.f,
-				m_color.a() / 255.f);
-
-		it = string.begin();
-		std::advance(it, start);
-		int temp = 0;
-		for (size_t i = 0; i < str_length; it++, i++) {
-			temp = m_cache->m_atlas.glyph(*it).advance_x;
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-			        &(m_cache->m_atlas.glyph(*it).vertexes[0]),
-			        GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			glyph_pos = glm::translate(glyph_pos, glm::vec3(temp, 0, 0));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-			        glm::value_ptr(glyph_pos));
-			advance += temp;
+		for (it = string.begin(); it != string.end(); it++)
+		{
+			xmax = m_cache->Query(m_data, *it)->advance_x + xmax;
+			ymin = std::min(static_cast<int>(m_cache->Query(m_data, *it)->bitmap_top - m_cache->Query(m_data, *it)->bitmap_height), ymin);
+			ymax = std::max(static_cast<int>(m_cache->Query(m_data, *it)->bitmap_top), ymax);
 		}
 
-		glDisableVertexAttribArray(0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		program->Reset();
-		glBindVertexArray(0);
-
-		return advance;
+		return Rect(Point(xmin, ymin), Point(xmax, ymax));
 	}
 
-	int Font::Print (const glm::mat4& mvp, const String& string,
-	        size_t length, size_t start) const
+	size_t Font::GetTextWidth (const std::string& string, size_t start) const
 	{
-		if(length == 0)	return 0;
+		size_t width = 0;
 
-		int advance = 0;	// the return value
+		assert(start < string.length());
 
-		glBindVertexArray(m_cache->m_vao);
-		glm::mat4 glyph_pos = mvp;
-		RefPtr<GLSLProgram> program = ShaderManager::instance->text_program();
-
-		program->Use();
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_cache->m_atlas.texture());
-
-		program->SetUniform1i("tex", 0);
-
-		glEnableVertexAttribArray(0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-		// TODO: read text in TextureFont map
-		size_t str_length = std::min(string.length(), length);
-
-		// TODO: support left->right, and right->left text
-		String::const_iterator it;
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
-		program->SetUniform4f("color", m_color.r() / 255.f,
-				m_color.g() / 255.f, m_color.b() / 255.f,
-				m_color.a() / 255.f);
-
-		it = string.begin();
+		std::string::const_iterator it = string.begin();
 		std::advance(it, start);
-		int temp = 0;
-		for (size_t i = 0; i < str_length; it++, i++) {
-			temp = m_cache->m_atlas.glyph(*it).advance_x;
 
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-			        &(m_cache->m_atlas.glyph(*it).vertexes[0]),
-			        GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			glyph_pos = glm::translate(glyph_pos, glm::vec3(temp, 0, 0));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-			        glm::value_ptr(glyph_pos));
-			advance += temp;
+		while(it != string.end()) {
+			width += m_cache->Query(m_data, *it)->advance_x;
+			it++;
 		}
 
-		glDisableVertexAttribArray(0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		program->Reset();
-		glBindVertexArray(0);
-
-		return advance;
+		return width;
 	}
 
-	int Font::Print (const glm::mat4& mvp, float x, float y, const String& string,
+	size_t Font::GetTextWidth (const std::string& string, size_t length,
 	        size_t start) const
 	{
-		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.0));
+		size_t width = 0;
 
-		return Print (translated_mvp, string, string.length(), start);
+		assert(start < string.length() && length <= string.length());
+
+		std::string::const_iterator it = string.begin();
+		std::advance(it, start);
+		size_t i = 0;
+
+		while(it != string.end() && (i < length)) {
+			width += m_cache->Query(m_data, *it)->advance_x;
+			it++;
+			i++;
+		}
+
+		return width;
 	}
 
-	int Font::Print (const glm::mat4& mvp, float x, float y, const String& string,
+	size_t Font::GetTextWidth (const std::wstring& string,
+	        size_t start) const
+	{
+		size_t width = 0;
+
+		assert(start < string.length());
+
+		std::wstring::const_iterator it = string.begin();
+		std::advance(it, start);
+
+		while(it != string.end()) {
+			width += m_cache->Query(m_data, *it)->advance_x;
+			it++;
+		}
+
+		return width;
+	}
+
+	size_t Font::GetTextWidth (const std::wstring& string, size_t length,
+	        size_t start) const
+	{
+		size_t width = 0;
+
+		assert(start < string.length() && length <= string.length());
+
+		std::wstring::const_iterator it = string.begin();
+		std::advance(it, start);
+		size_t i = 0;
+
+		while(it != string.end() && (i < length)) {
+			width += m_cache->Query(m_data, *it)->advance_x;
+			it++;
+			i++;
+		}
+
+		return width;
+	}
+
+	size_t Font::GetReversedTextWidth (const std::string& string,
+	        size_t start) const
+	{
+		size_t width = 0;
+
+		assert(start < string.length());
+
+		std::string::const_reverse_iterator it = string.rbegin();
+		std::advance(it, start);
+
+		while (it != string.rend()) {
+			width += m_cache->Query(m_data, *it)->advance_x;
+			it++;
+		}
+
+		return width;
+	}
+
+	size_t Font::GetReversedTextWidth (const std::string& string,
 	        size_t length, size_t start) const
 	{
-		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.0));
+		size_t width = 0;
 
-		return Print (translated_mvp, string, length, start);
+		assert(start < string.length() && length <= string.length());
+
+		std::string::const_reverse_iterator it = string.rbegin();
+		std::advance(it, start);
+		size_t i = 0;
+
+		while (it != string.rend() && (i < length)) {
+			width += m_cache->Query(m_data, *it)->advance_x;
+			it++;
+			i++;
+		}
+
+		return width;
+	}
+
+	size_t Font::GetReversedTextWidth (const std::wstring& string,
+	        size_t start) const
+	{
+		size_t width = 0;
+
+		assert(start < string.length());
+
+		std::wstring::const_reverse_iterator it = string.rbegin();
+		std::advance(it, start);
+
+		while (it != string.rend()) {
+			width += m_cache->Query(m_data, *it)->advance_x;
+			it++;
+		}
+
+		return width;
+	}
+
+	size_t Font::GetReversedTextWidth (const std::wstring& string,
+	        size_t length, size_t start) const
+	{
+		size_t width = 0;
+
+		assert(start < string.length() && length <= string.length());
+
+		std::wstring::const_reverse_iterator it = string.rbegin();
+		std::advance(it, start);
+		size_t i = 0;
+
+		while (it != string.rend() && (i < length)) {
+			width += m_cache->Query(m_data, *it)->advance_x;
+			it++;
+			i++;
+		}
+
+		return width;
 	}
 
 }
-

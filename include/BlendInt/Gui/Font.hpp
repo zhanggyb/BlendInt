@@ -36,32 +36,32 @@ using namespace std;
 
 namespace BlendInt {
 
-	class FontExt
+	class Font
 	{
 	public:
 
 #ifdef __LINUX__
-		FontExt (const std::string& name = std::string("Sans"),
+		Font (const std::string& name = std::string("Sans"),
 						unsigned int size = 9,
 						int flag = 0,
 						int dpi = 96);
 #endif
 
 #ifdef __APPLE__
-		FontExt (const std::string& family = std::string("Sans-Serif"),
+		Font (const std::string& family = std::string("Sans-Serif"),
 						unsigned int size = 9,
 						int flag = 0,
 						int dpi = 96);
 #endif
 
-		FontExt (const FontExt& orig);
+		Font (const Font& orig);
 
-		~FontExt ()
+		~Font ()
 		{
 
 		}
 
-		FontExt& operator = (const FontExt& orig);
+		Font& operator = (const Font& orig);
 
 		void SetName (const std::string& name);
 
@@ -69,9 +69,97 @@ namespace BlendInt {
 
 		void SetBold (bool bold);
 
+		bool IsBold () const
+		{
+			return m_data.flag & FontStyleBold;
+		}
+
 		void SetItalic (bool italic);
 
-		int Print (const glm::mat4& mvp, const std::wstring& string, size_t length, size_t start = 0) const;
+		bool IsItalic () const
+		{
+			return m_data.flag & FontStyleItalic;
+		}
+
+		int Print (const glm::mat4& mvp, const std::string& string, size_t start = 0) const;
+
+		int Print (const glm::mat4& mvp, const std::string& string, size_t length, size_t start) const;
+
+		int Print (const glm::mat4& mvp, float x, float y, const std::string& string, size_t start = 0) const;
+
+		int Print (const glm::mat4& mvp, float x, float y, const std::string& string, size_t length, size_t start) const;
+
+		int Print (const glm::mat4& mvp, const std::wstring& string, size_t start = 0) const;
+
+		int Print (const glm::mat4& mvp, const std::wstring& string, size_t length, size_t start) const;
+
+		int Print (const glm::mat4& mvp, float x, float y, const std::wstring& string, size_t start = 0) const;
+
+		int Print (const glm::mat4& mvp, float x, float y, const std::wstring& string, size_t length, size_t start) const;
+
+		int GetHeight () const
+		{
+			return m_cache->m_ft_face.face()->size->metrics.height >> 6;
+		}
+
+		int GetAscender () const
+		{
+			return m_cache->m_ft_face.face()->size->metrics.ascender >> 6;
+		}
+
+		int GetDescender () const
+		{
+			return m_cache->m_ft_face.face()->size->metrics.descender >> 6;
+		}
+
+		int GetMaxAdvance () const
+		{
+			return m_cache->m_ft_face.face()->size->metrics.max_advance >> 6;
+		}
+
+		Rect GetTextOutline (const std::wstring& string) const;
+
+		size_t GetTextWidth (const std::string& string, size_t start = 0) const;
+
+		size_t GetTextWidth (const std::string& string, size_t length, size_t start) const;
+
+		size_t GetTextWidth (const std::wstring& string, size_t start = 0) const;
+
+		size_t GetTextWidth (const std::wstring& string, size_t length, size_t start) const;
+
+		size_t GetReversedTextWidth (const std::string& string, size_t start = 0) const;
+
+		size_t GetReversedTextWidth (const std::string& string, size_t length, size_t start) const;
+
+		size_t GetReversedTextWidth (const std::wstring& string, size_t start = 0) const;
+
+		size_t GetReversedTextWidth (const std::wstring& string, size_t length, size_t start) const;
+
+		void set_pen (const Point& pen)
+		{
+			m_pen = pen;
+		}
+
+		void set_pen (int x, int y)
+		{
+			m_pen.set_x(x);
+			m_pen.set_y(y);
+		}
+
+		const Point& pen () const
+		{
+			return m_pen;
+		}
+
+		void set_color (const Color& color)
+		{
+			m_color = color;
+		}
+
+		const Color& color () const
+		{
+			return m_color;
+		}
 
 	private:
 
@@ -86,182 +174,6 @@ namespace BlendInt {
 		RefPtr<FontCacheExt> m_cache;
 	};
 
-	class Font
-	{
-	public:
-
-#ifdef USE_FONTCONFIG
-
-#ifdef __LINUX__
-
-		Font (const std::string& name = std::string("Sans"), unsigned int size = 9,
-		        bool bold = false, bool italic = false);
-
-#endif
-
-#ifdef __APPLE__
-		Font (const std::string& family = std::string("Sans-Serif"), unsigned int size = 9,
-		        bool bold = false, bool italic = false);
-#endif
-
-#else
-
-#endif
-
-		Font (const char* family, unsigned int size = 9, bool bold = false, bool italic = false);
-
-		Font (const Font& orig);
-
-		Font& operator = (const Font& orig);
-
-		void SetName (const std::string& name);
-
-		void SetSize (unsigned int size);
-
-		void SetBold (bool bold);
-
-		void SetItalic (bool italic);
-
-		int PrintExt (const glm::mat4& mvp, const String& string, size_t start = 0) const;
-
-		int Print (const glm::mat4& mvp, const String& string, size_t start = 0) const;
-
-		int PrintExt (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0) const;
-
-		/**
-		 * @brief Print the text
-		 * @param mvp
-		 * @param string
-		 * @param length
-		 * @param start
-		 * @return The pixel width of the text
-		 */
-		int Print (const glm::mat4& mvp, const String& string, size_t length, size_t start = 0) const;
-
-		int Print (const glm::mat4& mvp, float x, float y, const String& string, size_t start = 0) const;
-
-		int Print (const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start = 0) const;
-
-		int get_height () const
-		{
-			return m_cache->m_freetype.height();
-		}
-
-		int get_ascender () const
-		{
-			return m_cache->m_freetype.ascender();
-		}
-
-		int get_descender () const
-		{
-			return m_cache->m_freetype.descender();
-		}
-
-		int get_max_advance () const
-		{
-			return m_cache->m_freetype.max_advance();
-		}
-
-		Rect GetTextOutline (const String& string) const
-		{
-			return m_cache->GetTextOutline(string);
-		}
-
-		size_t GetTextWidth (const String& string, size_t length, size_t start = 0) const
-		{
-			return m_cache->GetTextWidth(string, length, start);
-		}
-
-		size_t GetReversedTextWidth (const String& string, size_t length, size_t start = 0)
-		{
-			return m_cache->GetReverseTextWidth(string, length, start);
-		}
-
-		bool bold () const
-		{
-			return m_bold;
-		}
-
-		bool italic () const
-		{
-			return m_italic;
-		}
-
-		const std::string& name () const
-		{
-			return m_name;
-		}
-
-		unsigned int size () const
-		{
-			return m_size;
-		}
-
-		bool shadow () const
-		{
-			return m_shadow;
-		}
-
-		void set_shadow (bool shadow)
-		{
-			m_shadow = shadow;
-		}
-
-		void set_color (const Color& color)
-		{
-			m_color = color;
-		}
-
-		const Color& color () const
-		{
-			return m_color;
-		}
-
-		void set_pen (const Point& pos)
-		{
-			m_pen = pos;
-		}
-
-		void set_pen (int x, int y)
-		{
-			m_pen.set_x(x);
-			m_pen.set_y(y);
-		}
-
-		const Point& pen () const
-		{
-			return m_pen;
-		}
-
-	private:
-
-		Point m_pen;
-
-		/**
-		 * @brief the font family, e.g. "Droid Sans"
-		 *
-		 * @note Currently cannot support non-English family
-		 */
-		std::string m_name;
-
-		/** font size */
-		unsigned int m_size;
-
-		// TODO: use std::bitset layer
-
-		/** whether text is bold */
-		bool m_bold;
-
-		/** whether text is italic */
-		bool m_italic;
-
-		/** If use shadow */
-		bool m_shadow;
-
-		Color m_color;
-
-		RefPtr<FontCache> m_cache;
-	};
 
 } /* namespace BlendInt */
 #endif /* FONT_H_ */

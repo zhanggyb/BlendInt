@@ -121,7 +121,7 @@ namespace BlendInt {
 			Font font;	// Get default font height
 			preferred_size.set_width(200);
 
-			int max_font_height = font.get_height();
+			int max_font_height = font.GetHeight();
 
 			preferred_size.set_height(
 			        max_font_height

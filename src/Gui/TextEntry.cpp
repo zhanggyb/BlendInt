@@ -94,7 +94,7 @@ namespace BlendInt {
 		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
 		m_origin.set_x(2);
 
-		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
+		m_origin.set_y((size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
 
 		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
 	}
@@ -108,7 +108,7 @@ namespace BlendInt {
 		//m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
 
 		m_origin.set_x(default_textentry_padding.left());
-		m_origin.set_y((size().height() - m_font.get_height()) / 2 + std::abs(m_font.get_descender()));
+		m_origin.set_y((size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
 	}
 
 	void TextEntry::Clear ()
@@ -133,7 +133,7 @@ namespace BlendInt {
 			radius_plus += radius();
 		}
 
-		int max_font_height = m_font.get_height();
+		int max_font_height = m_font.GetHeight();
 
 		preferred_size.set_height(max_font_height + default_textentry_padding.top() + default_textentry_padding.bottom());	// top padding: 2, bottom padding: 2
 
@@ -408,8 +408,8 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		m_origin.set_x(default_textentry_padding.left());
-		m_origin.set_y((size().height() - m_font.get_height()) / 2
-		                + std::abs(m_font.get_descender()));
+		m_origin.set_y((size().height() - m_font.GetHeight()) / 2
+		                + std::abs(m_font.GetDescender()));
 
 		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
 		// set where start display the cursor

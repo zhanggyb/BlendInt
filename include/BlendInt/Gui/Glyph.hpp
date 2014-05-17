@@ -65,9 +65,6 @@ namespace BlendInt {
 		float advance_x;
 		float advance_y;
 
-		//float texture_offset_x;
-		//float texture_offset_y;
-
 		GlyphVertex vertexes[4];
 	};
 

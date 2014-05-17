@@ -177,7 +177,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		if(m_text.size()) {
-			m_font.PrintExt(mvp, text(), text_length(), 0);
+			m_font.Print(mvp, text(), text_length(), 0);
 		}
 
 		return Accept;

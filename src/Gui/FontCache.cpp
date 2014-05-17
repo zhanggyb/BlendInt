@@ -183,6 +183,11 @@ namespace BlendInt {
 		cache_db.clear();
 	}
 
+	size_t FontCacheExt::GetCacheSize ()
+	{
+		return cache_db.size();
+	}
+
 	FontCacheExt::FontCacheExt(const FontData& data)
 	: m_vao(0), m_vbo(0), m_start(32), m_size(95)
 	{

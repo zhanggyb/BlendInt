@@ -34,7 +34,7 @@ private:
     BI::TextureGlyph m_glyph;
     BI::RefPtr<BI::GLSLProgram> m_program;
 	*/
-	BI::FontExt m_font;
+	BI::Font m_font;
 
 };
 

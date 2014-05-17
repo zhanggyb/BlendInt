@@ -62,7 +62,7 @@ namespace BlendInt {
 		int h = size().height();
 		glm::mat4 local_mvp;
 
-		h -= m_font.get_height();
+		h -= m_font.GetHeight();
 		local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
 
 		glBindVertexArray(m_vao);
@@ -83,11 +83,10 @@ namespace BlendInt {
 		program->Reset();
 		glBindVertexArray(0);
 
-		m_font.Print(mvp, 0, h - m_font.get_descender(),
-							".");
+		m_font.Print(mvp, 0, h - m_font.GetDescender(),	L".");
 		i++;
 
-		h -= m_font.get_height();
+		h -= m_font.GetHeight();
 		local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
 
 		glBindVertexArray(m_vao);
@@ -108,8 +107,7 @@ namespace BlendInt {
 		program->Reset();
 		glBindVertexArray(0);
 
-		m_font.Print(mvp, 0, h - m_font.get_descender(),
-							"..");
+		m_font.Print(mvp, 0, h - m_font.GetDescender(), L"..");
 		i++;
 
 		fs::path p(m_path);
@@ -119,7 +117,7 @@ namespace BlendInt {
 
 				if (fs::is_regular_file(p)) {
 
-					m_font.Print(mvp, 0, h - m_font.get_descender(),
+					m_font.Print(mvp, 0, h - m_font.GetDescender(),
 									p.native());
 
 				} else if (fs::is_directory(p)) {
@@ -131,7 +129,7 @@ namespace BlendInt {
 
 					while (it != end_it) {
 
-						h -= m_font.get_height();
+						h -= m_font.GetHeight();
 
 						local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
 						glBindVertexArray(m_vao);
@@ -165,7 +163,7 @@ namespace BlendInt {
 
 						glBindVertexArray(0);
 
-						m_font.Print(mvp, 0, h - m_font.get_descender(),
+						m_font.Print(mvp, 0, h - m_font.GetDescender(),
 										it->path().native());
 						dark = !dark;
 
@@ -260,7 +258,7 @@ namespace BlendInt {
 						it++;
 					}
 
-					int h = m_font.get_height();
+					int h = m_font.GetHeight();
 
 					unsigned total = std::max(300, count * h);
 
@@ -282,8 +280,8 @@ namespace BlendInt {
 		GLfloat verts[] = {
 						0.f, 0.f,
 						(GLfloat)size().width(), 0.f,
-						0.f, (GLfloat)m_font.get_height(),
-						(GLfloat)size().width(), (GLfloat)m_font.get_height()
+						0.f, (GLfloat)m_font.GetHeight(),
+						(GLfloat)size().width(), (GLfloat)m_font.GetHeight()
 		};
 
 		m_row.reset(new GLArrayBuffer);
@@ -326,7 +324,7 @@ namespace BlendInt {
 
 		count += 2;	// for "." and ".."
 		unsigned int out = 0;
-		unsigned cell_height = m_font.get_height();
+		unsigned cell_height = m_font.GetHeight();
 		out = h / cell_height;
 
 		if (out >= count) {

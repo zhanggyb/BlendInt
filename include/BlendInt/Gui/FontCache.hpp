@@ -123,7 +123,7 @@ namespace BlendInt {
 
 		static void ReleaseAll ();
 
-		void Initialize (const FontData& font_data, wchar_t char_code = 32, int size = 95);
+		static size_t GetCacheSize ();
 
 #ifdef DEBUG
 		static void list ();
@@ -133,12 +133,14 @@ namespace BlendInt {
 
 	private:
 
-		friend class FontExt;
+		friend class Font;
 		template <typename T> friend class RefPtr;
 
 		FontCacheExt (const FontData& data);
 
 		~FontCacheExt ();
+
+		void Initialize (const FontData& font_data, wchar_t char_code = 32, int size = 95);
 
 		GLuint m_vao;
 

@@ -188,7 +188,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		if(text().size()) {
-			font().PrintExt(mvp, text(), text_length(), 0);
+			font().Print(mvp, text(), text_length(), 0);
 		}
 
 		return Accept;
@@ -200,7 +200,7 @@ namespace BlendInt {
 		set_expand_x(true);
 		set_checkable(true);
 
-		unsigned int h = font().get_height();
+		unsigned int h = font().GetHeight();
 
 		set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
 						h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
@@ -227,7 +227,7 @@ namespace BlendInt {
 		set_checkable(true);
 		set_text(text);
 
-		unsigned int h = font().get_height();
+		unsigned int h = font().GetHeight();
 
 		if(text.empty()) {
 			set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
@@ -242,8 +242,8 @@ namespace BlendInt {
 			set_size(width, height);
 
 			set_pen((width - text_outline.width()) / 2,
-							(height - font().get_height()) / 2
-											+ std::abs(font().get_descender()));
+							(height - font().GetHeight()) / 2
+											+ std::abs(font().GetDescender()));
 		}
 
 		glGenVertexArrays(1, &m_vao);
