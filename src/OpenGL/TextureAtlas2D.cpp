@@ -100,8 +100,6 @@ namespace BlendInt {
 
 	bool TextureAtlas2D::Push(int bitmap_width, int bitmap_rows, unsigned char* bitmap_buf, bool clear)
 	{
-		bool ret = false;
-
 		GLint tex_width = 0;
 		GLint tex_height = 0;
 		int x = m_xoffset + m_cell_width + m_space;
@@ -116,37 +114,25 @@ namespace BlendInt {
 						GL_TEXTURE_HEIGHT,
 						&tex_height);
 
-
-		if(x <= tex_width && y <= tex_height) {
-			ret = true;
+		if(x > tex_width || y > tex_height) {
+			return false;
 		}
 
-		if(ret) {
-
-			if(bitmap_width >= m_cell_width || bitmap_rows >= m_cell_height) {
-				ret = false;
-			} else {
-
-				//DBG_PRINT_MSG("push character at: %d, %d, width: %d, rows: %d", m_xoffset, m_yoffset, width, rows);
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-				if(clear) {
-					std::vector<unsigned char> blank(m_cell_width * m_cell_height, 0);
-					glTexSubImage2D(GL_TEXTURE_2D, 0, m_xoffset, m_yoffset, m_cell_width, m_cell_height, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
-				}
-
-				glTexSubImage2D(GL_TEXTURE_2D, 0, m_xoffset, m_yoffset, bitmap_width, bitmap_rows, GL_RED, GL_UNSIGNED_BYTE, bitmap_buf);
-
-				m_xoffset = x;
-				if((m_xoffset + m_cell_width + m_space) > tex_width) {
-					m_xoffset = m_space;
-					m_yoffset = y;
-				}
-
-			}
+		if(bitmap_width > m_cell_width || bitmap_rows > m_cell_height) {
+			return false;
 		}
 
-		return ret;
+		//DBG_PRINT_MSG("push character at: %d, %d, width: %d, rows: %d", m_xoffset, m_yoffset, width, rows);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		if(clear) {
+			std::vector<unsigned char> blank(m_cell_width * m_cell_height, 0);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, m_xoffset, m_yoffset, m_cell_width, m_cell_height, GL_RED, GL_UNSIGNED_BYTE, &blank[0]);
+		}
+
+		glTexSubImage2D(GL_TEXTURE_2D, 0, m_xoffset, m_yoffset, bitmap_width, bitmap_rows, GL_RED, GL_UNSIGNED_BYTE, bitmap_buf);
+
+		return true;
 	}
 
 	bool TextureAtlas2D::Update (int index, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buf, bool clear)
@@ -266,6 +252,48 @@ namespace BlendInt {
 		return ret;
 	}
 
+	void TextureAtlas2D::MoveToFirst ()
+	{
+		m_xoffset = m_space;
+		m_yoffset = m_space;
+	}
+
+	bool TextureAtlas2D::MoveNext ()
+	{
+		GLint tex_width = 0;
+		GLint tex_height = 0;
+		int x = m_xoffset;
+		int y = m_yoffset;
+
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+						0,
+						GL_TEXTURE_WIDTH,
+						&tex_width);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D,
+						0,
+						GL_TEXTURE_HEIGHT,
+						&tex_height);
+
+		if((x + m_cell_width + m_space) > tex_width || (y + m_cell_height + m_space) > tex_height) {
+			return false;
+		}
+
+		x += m_cell_width + m_space;
+		if((x + m_cell_width + m_space) > tex_width) {
+			x = m_space;
+			y = m_yoffset + m_cell_height + m_space;
+		}
+
+		m_xoffset = x;
+		m_yoffset = y;
+
+		if((x + m_cell_height + m_space) <= tex_width && (y + m_cell_height + m_space) <= tex_height) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	GLint TextureAtlas2D::GetWidth (int level) const
 	{
 		GLint width = 0;
@@ -318,7 +346,7 @@ namespace BlendInt {
 		return rows;
 	}
 
-	int TextureAtlas2D::GetLastIndex() const
+	int TextureAtlas2D::GetCurrentIndex() const
 	{
 		int index = 0;
 
@@ -380,4 +408,3 @@ namespace BlendInt {
 	}
 
 }
-

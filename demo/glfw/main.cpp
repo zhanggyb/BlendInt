@@ -62,7 +62,10 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 
 	String str("12345");
-	std::string out = ConvertFromString(str);
+
+	String other(str);
+
+	std::string out = ConvertFromString(other);
 
 	std::cout << out << std::endl;
 

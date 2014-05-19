@@ -301,6 +301,11 @@ namespace BlendInt {
 
 		bool ToBitmap (FT_Render_Mode render_mode, FT_Vector* origin = 0, FT_Bool destroy = 1);
 
+		FT_BitmapGlyph GetBitmapGlyph () const
+		{
+			return (FT_BitmapGlyph)(m_glyph);
+		}
+
 		void Done ();
 
 		FT_Glyph& glyph ()

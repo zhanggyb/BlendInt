@@ -52,10 +52,7 @@ namespace BlendInt {
 
 		String (const std::wstring& str);
 
-		String (const String& orig)
-		{
-			assign(orig);
-		}
+		String (const String& orig);
 
 		String& operator = (const char* str);
 
@@ -65,12 +62,15 @@ namespace BlendInt {
 
 		String& operator = (const std::wstring& str);
 
+		String& operator = (const String& orig);
+
 	};
 
 #else	// C++ 11
 
 	class String: public std::u32string
 	{
+	public:
 
 	};
 

@@ -55,40 +55,45 @@ namespace BlendInt {
 	enum FontStyleFlag {
 		FontStyleBold = 0x0,
 		FontStyleItalic = 0x1 << 1,
-		FontStyleOutline = 0x1 << 2,
-		FontStyleShadow = 0x1 << 3
+		FontStyleOutline = 0x1 << 2
 	};
 
-	struct FontData {
+	/**
+	 * @brief Basic structure to identify a font file and texture atlas
+	 */
+	struct FontTypeBase {
 
-		FontData ()
+		FontTypeBase ()
 		: size(9),
 		  flag(0),
-		  dpi(72)
+		  dpi(72),
+		  thickness(0.5f)
 		{
 
 		}
 
-		~FontData ()
+		~FontTypeBase ()
 		{
 
 		}
 
-		FontData (const FontData& orig)
+		FontTypeBase (const FontTypeBase& orig)
 		: name(orig.name),
 		  size(orig.size),
 		  flag(orig.flag),
-		  dpi(orig.dpi)
+		  dpi(orig.dpi),
+		  thickness(orig.thickness)
 		{
 
 		}
 
-		FontData& operator = (const FontData& orig)
+		FontTypeBase& operator = (const FontTypeBase& orig)
 		{
 			name = orig.name;
 			size = orig.size;
 			flag = orig.flag;
 			dpi = orig.dpi;
+			thickness = orig.thickness;
 
 			return *this;
 		}
@@ -97,6 +102,7 @@ namespace BlendInt {
 		unsigned int size;	/** Character size want to be loaded */
 		unsigned int flag;	/** The font style flag, see FontStyleFlag */
 		unsigned int dpi;	/** The DPI used in Freetype setting */
+		float thickness;	/** The thickness of outline */
 	};
 
 	struct FontFileInfo {
@@ -110,37 +116,47 @@ namespace BlendInt {
 	extern bool operator < (const FontFileInfo& src, const FontFileInfo& dist);
 	extern bool operator == (const FontFileInfo& src, const FontFileInfo& dist);
 
-	extern bool operator < (const FontData& src, const FontData& dist);
-	extern bool operator == (const FontData& src, const FontData& dist);
+	extern bool operator < (const FontTypeBase& src, const FontTypeBase& dist);
+	extern bool operator == (const FontTypeBase& src, const FontTypeBase& dist);
 
 	class FontCacheExt: public Object
 	{
 	public:
 
-		static RefPtr<FontCacheExt> Create (const FontData& data);
+		static RefPtr<FontCacheExt> Create (const FontTypeBase& data);
 
-		static bool Release (const FontData& data);
+		static bool Release (const FontTypeBase& data);
 
 		static void ReleaseAll ();
 
 		static size_t GetCacheSize ();
 
+		static void SetDefaultTextureSize (int width, int height);
+
+		static int GetDefaultTextureWidth ();
+
+		static int GetDefaultTextureHeight ();
+
 #ifdef DEBUG
 		static void list ();
 #endif
 
-		const GlyphExt* Query (const FontData& font_data, wchar_t charcode, bool create = true);
+		const GlyphExt* Query (const FontTypeBase& font_data, wchar_t charcode, bool create = true);
 
 	private:
 
 		friend class Font;
 		template <typename T> friend class RefPtr;
 
-		FontCacheExt (const FontData& data);
+		FontCacheExt (const FontTypeBase& data);
 
 		~FontCacheExt ();
 
-		void Initialize (const FontData& font_data, wchar_t char_code = 32, int size = 95);
+		void Initialize (const FontTypeBase& font_data, wchar_t char_code = 32, int size = 95);
+
+		void SetGlyphData (GlyphExt& glyph, FT_GlyphSlot slot, const RefPtr<TextureAtlas2D>& atlas);
+
+		void SetGlyphData (GlyphExt& glyph, FT_GlyphSlot slot, FT_BitmapGlyph bitmap_glyph, const RefPtr<TextureAtlas2D>& atlas);
 
 		GLuint m_vao;
 
@@ -158,7 +174,10 @@ namespace BlendInt {
 		FTLibrary m_ft_lib;
 		FTFace m_ft_face;
 
-		static map<FontData, RefPtr<FontCacheExt> > cache_db;
+		static map<FontTypeBase, RefPtr<FontCacheExt> > cache_db;
+
+		static int default_texture_width;
+		static int default_texture_height;
 	};
 
 	// -----------------------------------------------------

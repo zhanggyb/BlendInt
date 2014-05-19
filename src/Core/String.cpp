@@ -38,8 +38,6 @@ namespace BlendInt {
 	: std::basic_string<uint32_t>()
 	{
 		size_t len = strlen(str);
-		DBG_PRINT_MSG("strlen: %ld", len);
-
 		resize(len);
 
 		for(size_t i = 0; i < len; i++)
@@ -97,6 +95,14 @@ namespace BlendInt {
 		}
 	}
 
+	String::String (const String& orig)
+	{
+		size_t len = orig.length();
+		resize(len);
+
+		memcpy (&at(0), orig.data(), sizeof(uint32_t) * (len + 1));
+	}
+
 	String& String::operator = (const char* str)
 	{
 		size_t len = strlen(str);
@@ -145,6 +151,16 @@ namespace BlendInt {
 		{
 			at(i) = str[i];
 		}
+
+		return *this;
+	}
+
+	String& String::operator = (const String& orig)
+	{
+		size_t len = orig.length();
+		resize(len);
+
+		memcpy (&at(0), orig.data(), sizeof(uint32_t) * (len + 1));
 
 		return *this;
 	}

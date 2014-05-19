@@ -163,7 +163,7 @@ namespace BlendInt {
 
 	private:
 
-		FontData m_data;
+		FontTypeBase m_data;
 
 		Point m_pen;
 

@@ -129,7 +129,7 @@ FontView::FontView ()
 {
 	set_size(200, 200);
 
-	m_font.SetSize(32);
+	m_font.SetSize(36);
 	//m_font.SetName("STHeiti");
 
 	/*
@@ -190,7 +190,7 @@ BI::ResponseType FontView::Draw (const BI::RedrawEvent& event)
 					(float) z());
 	glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
-	int advance = m_font.Print(mvp, L"小欧欧爱爸爸妈妈");
+	int advance = m_font.Print(mvp, L"A仁B义C礼D智E信F");
 	DBG_PRINT_MSG("advance: %d", advance);
 
 	/*

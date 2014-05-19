@@ -43,7 +43,7 @@ const char* TexAtlasViewer::fragment_shader =
 TexAtlasViewer::TexAtlasViewer()
 	: BI::Widget()//, m_vao(0)
 {
-	set_size(256, 256);
+	set_size(384, 384);
 	set_expand_x(true);
 	set_expand_y(true);
 	
@@ -63,17 +63,15 @@ TexAtlasViewer::TexAtlasViewer()
 #ifdef __APPLE__
 	ft_face.New(ft_lib, "/System/Library/Fonts/LucidaGrande.ttc");
 #else
-	ft_face.New(ft_lib, "/usr/share/fonts/truetype/droid/DroidSans.ttf");
+	ft_face.New(ft_lib, "/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf");
 #endif
 	ft_lib.SetLcdFilter(FT_LCD_FILTER_DEFAULT);
-	ft_face.SetCharSize(72 << 6, 0, 96, 0);
+	ft_face.SetCharSize(12 << 6, 0, 96, 0);
 
 	int cell_x = ft_face.face()->size->metrics.max_advance >> 6;
 	int cell_y = (ft_face.face()->size->metrics.ascender - ft_face.face()->size->metrics.descender) >> 6;
 
-	DBG_PRINT_MSG("max advance: %d, height: %d", cell_x, cell_y);
-
-	m_atlas.Generate(256, 256, cell_x, cell_y, 10);
+	m_atlas.Generate(384, 384, cell_x, cell_y, 1);
 	FT_GlyphSlot slot = ft_face.face()->glyph;
 	m_atlas.Bind();
 
@@ -81,19 +79,48 @@ TexAtlasViewer::TexAtlasViewer()
 	flags |= FT_LOAD_NO_BITMAP;
 	flags |= FT_LOAD_FORCE_AUTOHINT;
 
-	/*
 	for(char i = 33; i < 127; i++) {
 		if(ft_face.LoadChar(i, FT_LOAD_RENDER)) {
-			m_atlas.Push(g->bitmap.width, g->bitmap.rows, g->bitmap.buffer);
+			m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
+
+			if(!m_atlas.MoveNext()) {
+				DBG_PRINT_MSG("%s", "atlas full");
+				break;
+			}
+
+			DBG_PRINT_MSG("offset: %d, %d", m_atlas.xoffset(), m_atlas.yoffset());
+
 		}
 	}
 
+	ft_face.LoadChar(L'仁', FT_LOAD_RENDER);
+	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
+	m_atlas.MoveNext();
+
+	ft_face.LoadChar(L'义', FT_LOAD_RENDER);
+	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
+	m_atlas.MoveNext();
+
+	ft_face.LoadChar(L'礼', FT_LOAD_RENDER);
+	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
+	m_atlas.MoveNext();
+
+	ft_face.LoadChar(L'智', FT_LOAD_RENDER);
+	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
+	m_atlas.MoveNext();
+
+	ft_face.LoadChar(L'信', FT_LOAD_RENDER);
+	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
+	m_atlas.MoveNext();
+
+	/*
 	if(ft_face.LoadChar('a', FT_LOAD_RENDER)) {
 		m_atlas.Update(0, g->bitmap.width, g->bitmap.rows, g->bitmap.buffer, true);
 		m_atlas.Update(1, 0, g->bitmap.width, g->bitmap.rows, g->bitmap.buffer, true);
 	}
 	*/
 
+	/*
 	FT_UInt glyph_index = ft_face.GetCharIndex(31);
 	FT_Glyph ft_glyph;
     FT_BitmapGlyph ft_bitmap_glyph;
@@ -146,6 +173,7 @@ TexAtlasViewer::TexAtlasViewer()
 							slot->bitmap_top, slot->bitmap_left,
 							slot->bitmap.width, slot->bitmap.rows);
 			m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
+			m_atlas.MoveNext();
 			DBG_PRINT_MSG("top: %d, left: %d, width: %d, height: %d",
 							ft_bitmap_glyph->top, ft_bitmap_glyph->left,
 							ft_bitmap_glyph->bitmap.width, ft_bitmap_glyph->bitmap.rows);
@@ -154,8 +182,9 @@ TexAtlasViewer::TexAtlasViewer()
 
 		FT_Done_Glyph(ft_glyph);
 	}
+	 */
 
-	DBG_PRINT_MSG("last index: %d", m_atlas.GetLastIndex());
+	DBG_PRINT_MSG("last index: %d", m_atlas.GetCurrentIndex());
 
 	m_atlas.Reset();
 	ft_face.Done();
@@ -163,9 +192,9 @@ TexAtlasViewer::TexAtlasViewer()
 
 	GLfloat vertices[] = {
 		0.0, 0.0,
-		256.f, 0.0,
-		0.0, 256.f,
-		256.f, 256.f,
+		384.f, 0.0,
+		0.0, 384.f,
+		384.f, 384.f,
 	};
 
 	m_vbo.reset(new BI::GLArrayBuffer);

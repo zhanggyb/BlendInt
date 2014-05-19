@@ -48,7 +48,11 @@ namespace BlendInt {
 
 		bool IsFull () const;
 
-		int GetLastIndex () const;
+		void MoveToFirst ();
+
+		bool MoveNext ();
+
+		int GetCurrentIndex () const;
 
 		int GetMaxNumber () const;
 
@@ -82,6 +86,16 @@ namespace BlendInt {
 		int space () const
 		{
 			return m_space;
+		}
+
+		int cell_width () const
+		{
+			return m_cell_width;
+		}
+
+		int cell_height () const
+		{
+			return m_cell_height;
 		}
 
 	private:
