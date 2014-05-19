@@ -141,7 +141,7 @@ namespace BlendInt {
 		static void list ();
 #endif
 
-		const GlyphExt* Query (const FontTypeBase& font_data, wchar_t charcode, bool create = true);
+		const GlyphExt* Query (const FontTypeBase& font_data, uint32_t charcode, bool create = true);
 
 	private:
 
@@ -152,7 +152,7 @@ namespace BlendInt {
 
 		~FontCacheExt ();
 
-		void Initialize (const FontTypeBase& font_data, wchar_t char_code = 32, int size = 95);
+		void Initialize (const FontTypeBase& font_data, uint32_t char_code = 32, int size = 95);
 
 		void SetGlyphData (GlyphExt& glyph, FT_GlyphSlot slot, const RefPtr<TextureAtlas2D>& atlas);
 
@@ -162,12 +162,12 @@ namespace BlendInt {
 
 		GLuint m_vbo;
 
-		wchar_t m_start;
+		uint32_t m_start;
 		int m_size;
 
 		std::vector<GlyphExt> m_preset;
 
-		std::map<wchar_t, GlyphExt> m_extension;
+		std::map<uint32_t, GlyphExt> m_extension;
 
 		RefPtr<TextureAtlas2D> m_last;
 

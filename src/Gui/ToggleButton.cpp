@@ -66,7 +66,7 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					UpdateTextPosition(*size_p, round_type(), radius(), text(), font());
+					UpdateTextPosition(*size_p, round_type(), radius(), text());
 					glBindVertexArray(m_vao);
 					GenerateFormBuffer(
 									*size_p,
@@ -82,7 +82,7 @@ namespace BlendInt {
 
 				case FormRoundType: {
 					const int* type_p = static_cast<const int*>(request.data());
-					UpdateTextPosition(size(), *type_p, radius(), text(), font());
+					UpdateTextPosition(size(), *type_p, radius(), text());
 					glBindVertexArray(m_vao);
 					GenerateFormBuffer(
 									size(),
@@ -98,7 +98,7 @@ namespace BlendInt {
 
 				case FormRoundRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
-					UpdateTextPosition(size(), round_type(), *radius_p, text(), font());
+					UpdateTextPosition(size(), round_type(), *radius_p, text());
 					glBindVertexArray(m_vao);
 					GenerateFormBuffer(
 									size(),

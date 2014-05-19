@@ -73,7 +73,9 @@ namespace BlendInt {
 
 	protected:
 
-		void UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, const Font& font);
+		void UpdateTextPosition (const Size& size, int round_type, float radius, const String& text);
+
+		size_t UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, Font& font);
 
 		inline void set_text (const String& text)
 		{
@@ -95,7 +97,7 @@ namespace BlendInt {
 			m_font.set_pen(x, y);
 		}
 
-		size_t GetValidTextSize ();
+		size_t GetValidTextSize (const Size& size, const String& text, const Font& font);
 
 	private:
 

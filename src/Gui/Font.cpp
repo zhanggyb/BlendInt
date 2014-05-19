@@ -47,6 +47,9 @@
 namespace BlendInt {
 
 	Font::Font (const std::string& name, unsigned int size, int flag, int dpi)
+	: m_shadow(false),
+	  m_shadow_offset_x(1.5f),
+	  m_shadow_offset_y(-1.5f)
 	{
 		m_data.name = name;
 		m_data.size = size;
@@ -61,8 +64,12 @@ namespace BlendInt {
 	Font::Font (const Font& orig)
 	: m_data(orig.m_data),
 	  m_pen(orig.m_pen),
-	  m_color(orig.m_color)
+	  m_color(orig.m_color),
+	  m_shadow(false),
+	  m_shadow_offset_x(1.5f),
+	  m_shadow_offset_y(-1.5f)
 	{
+
 		m_cache = orig.m_cache;
 	}
 
@@ -71,6 +78,11 @@ namespace BlendInt {
 		m_data = orig.m_data;
 		m_pen = orig.m_pen;
 		m_color = orig.m_color;
+		m_cache = orig.m_cache;
+		m_shadow = orig.m_shadow;
+		m_shadow_offset_x = orig.m_shadow_offset_x;
+		m_shadow_offset_y = orig.m_shadow_offset_y;
+
 		m_cache = orig.m_cache;
 
 		return *this;
@@ -110,6 +122,24 @@ namespace BlendInt {
 		m_cache = FontCacheExt::Create(m_data);
 	}
 
+	void Font::SetOutline(bool outline)
+	{
+		if(outline) {
+			SETBIT(m_data.flag, FontStyleOutline);
+		} else {
+			CLRBIT(m_data.flag, FontStyleOutline);
+		}
+
+		m_cache = FontCacheExt::Create(m_data);
+	}
+
+	void Font::SetShadow(bool shadow, float offset_x, float offset_y)
+	{
+		m_shadow = shadow;
+		m_shadow_offset_x = offset_x;
+		m_shadow_offset_y = offset_y;
+	}
+
 	int Font::Print (const glm::mat4& mvp, const std::string& string,
 	        size_t start) const
 	{
@@ -142,6 +172,43 @@ namespace BlendInt {
 
 		// TODO: support left->right, and right->left text
 		std::string::const_iterator it;
+		const GlyphExt* glyph_p = 0;
+
+		if(m_shadow) {
+
+			// TODO: define a curve to get a offset x, y to draw a good shadow
+			glm::mat4 shadow_offset = glm::translate(glm::mat4(1.0), glm::vec3(m_shadow_offset_x, m_shadow_offset_y, 0.f));
+			glyph_pos = glyph_pos * shadow_offset;
+
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+			program->SetUniform4f("color",
+					m_color.r() / 255.f / 4,
+					m_color.g() / 255.f / 4,
+					m_color.b() / 255.f / 4,
+					m_color.a() / 255.f / 4);
+
+			it = string.begin();
+			std::advance(it, start);
+			for (size_t i = 0; i < str_length; it++, i++) {
+				glyph_p = m_cache->Query(m_data, *it);
+				glBindTexture(GL_TEXTURE_2D, glyph_p->texture_atlas->texture());
+
+				advance += glyph_p->advance_x;
+				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
+								&(glyph_p->vertices[0]),
+								GL_DYNAMIC_DRAW);
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+				glyph_pos = glm::translate(glyph_pos,
+								glm::vec3(glyph_p->advance_x,
+												0, 0));
+				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+								glm::value_ptr(glyph_pos));
+			}
+
+			// restore mvp
+			glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
+		}
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
 		program->SetUniform4f("color", m_color.r() / 255.f,
@@ -151,20 +218,19 @@ namespace BlendInt {
 		it = string.begin();
 		std::advance(it, start);
 
-		const GlyphExt* glyph_ref = 0;
 		for (size_t i = 0; i < str_length; it++, i++) {
 
-			glyph_ref = m_cache->Query(m_data, *it);
-			glBindTexture(GL_TEXTURE_2D, glyph_ref->texture_atlas->texture());
+			glyph_p = m_cache->Query(m_data, *it);
+			glBindTexture(GL_TEXTURE_2D, glyph_p->texture_atlas->texture());
 
-			advance += glyph_ref->advance_x;
+			advance += glyph_p->advance_x;
 
 			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-							&(glyph_ref->vertices[0]),
+							&(glyph_p->vertices[0]),
 							GL_DYNAMIC_DRAW);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-			glyph_pos = glm::translate(glyph_pos, glm::vec3(glyph_ref->advance_x, 0, 0));
+			glyph_pos = glm::translate(glyph_pos, glm::vec3(glyph_p->advance_x, 0, 0));
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 			        glm::value_ptr(glyph_pos));
 		}
@@ -224,6 +290,43 @@ namespace BlendInt {
 
 		// TODO: support left->right, and right->left text
 		String::const_iterator it;
+		const GlyphExt* glyph_p = 0;
+
+		if(m_shadow) {
+
+			// TODO: define a curve to get a offset x, y to draw a good shadow
+			glm::mat4 shadow_offset = glm::translate(glm::mat4(1.0), glm::vec3(m_shadow_offset_x, m_shadow_offset_y, 0.f));
+			glyph_pos = glyph_pos * shadow_offset;
+
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
+			program->SetUniform4f("color",
+					m_color.r() / 255.f / 4,
+					m_color.g() / 255.f / 4,
+					m_color.b() / 255.f / 4,
+					m_color.a() / 255.f / 4);
+
+			it = string.begin();
+			std::advance(it, start);
+			for (size_t i = 0; i < str_length; it++, i++) {
+				glyph_p = m_cache->Query(m_data, *it);
+				glBindTexture(GL_TEXTURE_2D, glyph_p->texture_atlas->texture());
+
+				advance += glyph_p->advance_x;
+				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
+								&(glyph_p->vertices[0]),
+								GL_DYNAMIC_DRAW);
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+				glyph_pos = glm::translate(glyph_pos,
+								glm::vec3(glyph_p->advance_x,
+												0, 0));
+				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+								glm::value_ptr(glyph_pos));
+			}
+
+			// restore mvp
+			glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
+		}
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
 		program->SetUniform4f("color", m_color.r() / 255.f,
@@ -233,20 +336,19 @@ namespace BlendInt {
 		it = string.begin();
 		std::advance(it, start);
 
-		const GlyphExt* glyph_ref = 0;
 		for (size_t i = 0; i < str_length; it++, i++) {
 
-			glyph_ref = m_cache->Query(m_data, *it);
-			glBindTexture(GL_TEXTURE_2D, glyph_ref->texture_atlas->texture());
+			glyph_p = m_cache->Query(m_data, *it);
+			glBindTexture(GL_TEXTURE_2D, glyph_p->texture_atlas->texture());
 
-			advance += glyph_ref->advance_x;
+			advance += glyph_p->advance_x;
 
 			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-							&(glyph_ref->vertices[0]),
+							&(glyph_p->vertices[0]),
 							GL_DYNAMIC_DRAW);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-			glyph_pos = glm::translate(glyph_pos, glm::vec3(glyph_ref->advance_x, 0, 0));
+			glyph_pos = glm::translate(glyph_pos, glm::vec3(glyph_p->advance_x, 0, 0));
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 			        glm::value_ptr(glyph_pos));
 		}
@@ -274,18 +376,19 @@ namespace BlendInt {
 
 	Rect Font::GetTextOutline (const String& string) const
 	{
-		String::const_iterator it;
-
 		int xmin = 0;
 		int ymin = 0;
 		int xmax = 0;
 		int ymax = 0;
 
-		for (it = string.begin(); it != string.end(); it++)
+		const GlyphExt* glyph_p = 0;
+
+		for (String::const_iterator it = string.begin(); it != string.end(); it++)
 		{
-			xmax = m_cache->Query(m_data, *it)->advance_x + xmax;
-			ymin = std::min(static_cast<int>(m_cache->Query(m_data, *it)->bitmap_top - m_cache->Query(m_data, *it)->bitmap_height), ymin);
-			ymax = std::max(static_cast<int>(m_cache->Query(m_data, *it)->bitmap_top), ymax);
+			glyph_p = m_cache->Query(m_data, *it);
+			xmax += glyph_p->advance_x;
+			ymin = std::min(static_cast<int>(glyph_p->bitmap_top - glyph_p->bitmap_height), ymin);
+			ymax = std::max(static_cast<int>(glyph_p->bitmap_top), ymax);
 		}
 
 		return Rect(Point(xmin, ymin), Point(xmax, ymax));

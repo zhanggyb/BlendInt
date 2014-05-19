@@ -81,6 +81,17 @@ namespace BlendInt {
 			return m_data.flag & FontStyleItalic;
 		}
 
+		void SetOutline (bool outline);
+
+		bool IsOutline () const
+		{
+			return m_data.flag & FontStyleOutline;
+		}
+
+		void SetOutlineThickness (float thickness);
+
+		void SetShadow (bool shadow, float offset_x = 1.5f, float offset_y = -1.5f);
+
 		int Print (const glm::mat4& mvp, const std::string& string, size_t start = 0) const;
 
 		int Print (const glm::mat4& mvp, const std::string& string, size_t length, size_t start) const;
@@ -168,6 +179,11 @@ namespace BlendInt {
 		Point m_pen;
 
 		Color m_color;	// for foreground
+
+		bool m_shadow;
+
+		float m_shadow_offset_x;
+		float m_shadow_offset_y;
 
 		// Color m_background	// for shadow
 

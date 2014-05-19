@@ -259,7 +259,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
-	const GlyphExt* FontCacheExt::Query (const FontTypeBase& font_data, wchar_t charcode, bool create)
+	const GlyphExt* FontCacheExt::Query (const FontTypeBase& font_data, uint32_t charcode, bool create)
 	{
 		int index = charcode - m_start;
 
@@ -284,32 +284,63 @@ namespace BlendInt {
 			m_last->Bind();
 		}
 
-		m_ft_face.LoadChar(charcode, FT_LOAD_RENDER);
-
 		FT_GlyphSlot slot = m_ft_face.face()->glyph;
+		FT_UInt glyph_index = m_ft_face.GetCharIndex(charcode);
 
-		if (m_last->Push(slot->bitmap.width, slot->bitmap.rows,
-						slot->bitmap.buffer)) {
+		if(m_ft_face.LoadGlyph(glyph_index, FT_LOAD_NO_BITMAP | FT_LOAD_FORCE_AUTOHINT)) {
 
-			GlyphExt glyph;
-			SetGlyphData(glyph, slot, m_last);
+			if(font_data.flag & FontStyleOutline) {
 
-			m_extension[charcode] = glyph;
+				FTStroker ft_stroker;
+				ft_stroker.New(m_ft_lib);
+				ft_stroker.Set((int)(font_data.thickness * 64), FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
+				FTGlyph glyph;
+				glyph.GetGlyph(m_ft_face);
+				ft_stroker.GlyphStroke(glyph);
+				glyph.ToBitmap(FT_RENDER_MODE_NORMAL);
+				FT_BitmapGlyph bitmap_glyph = glyph.GetBitmapGlyph();
 
-			ret = &m_extension[charcode];
+				if(m_last->Push(bitmap_glyph->bitmap.width, bitmap_glyph->bitmap.rows, bitmap_glyph->bitmap.buffer)) {
+					GlyphExt glyph;
+					SetGlyphData(glyph, slot, bitmap_glyph, m_last);
+					m_extension[charcode] = glyph;
+					ret = &m_extension[charcode];
+				} else {
+					DBG_PRINT_MSG("%s", "Fail to push character into texture atlas, maybe the texture size is too small");
+					exit(EXIT_FAILURE);
+				}
+
+				glyph.Done();
+				ft_stroker.Done();
+
+			} else {
+
+				m_ft_face.LoadGlyph(glyph_index, FT_LOAD_RENDER | FT_LOAD_NO_HINTING);
+
+				if(m_last->Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer)) {
+					GlyphExt glyph;
+					SetGlyphData(glyph, slot, m_last);
+					m_extension[charcode] = glyph;
+					ret = &m_extension[charcode];
+				} else {
+					DBG_PRINT_MSG("%s", "Fail to push character into texture atlas, maybe the texture size is too small");
+					exit(EXIT_FAILURE);
+				}
+
+			}
+
+			if(!m_last->MoveNext()) {
+				DBG_PRINT_MSG("%s", "one texture is full, create a new one");
+				m_last->Reset();
+
+				m_last.reset(new TextureAtlas2D);
+				m_last->Generate(default_texture_width, default_texture_height, cell_x, cell_y);
+				m_last->Bind();
+			}
+
 		} else {
-			DBG_PRINT_MSG("%s", "Fail to push character into texture atlas, maybe the texture is too small");
+			DBG_PRINT_MSG("%s", "Fail to initialize character into texture atlas");
 			exit(EXIT_FAILURE);
-		}
-
-		if(!m_last->MoveNext()) {
-			DBG_PRINT_MSG("%s", "one texture is full, create a new one");
-			m_last->Reset();
-
-			m_last.reset(new TextureAtlas2D);
-			m_last->Generate(default_texture_width, default_texture_height, cell_x, cell_y);
-		} else {
-			m_last->Reset();
 		}
 
 		return ret;
@@ -327,7 +358,7 @@ namespace BlendInt {
 		m_ft_lib.Done();
 	}
 
-	void FontCacheExt::Initialize (const FontTypeBase& font_data, wchar_t char_code, int size)
+	void FontCacheExt::Initialize (const FontTypeBase& font_data, uint32_t char_code, int size)
 	{
 		m_preset.clear();
 		m_start = char_code;
@@ -341,6 +372,9 @@ namespace BlendInt {
 
 		FT_GlyphSlot slot = m_ft_face.face()->glyph;
 		FT_UInt glyph_index = 0;
+		FTStroker ft_stroker;
+		FTGlyph glyph;
+		FT_BitmapGlyph bitmap_glyph = 0;
 
 		int i = 0;
 
@@ -354,35 +388,36 @@ namespace BlendInt {
 
 			if(m_ft_face.LoadGlyph(glyph_index, FT_LOAD_NO_BITMAP | FT_LOAD_FORCE_AUTOHINT)) {
 
-				/*
-					FTStroker ft_stroker;
+				if(font_data.flag & FontStyleOutline) {
+
 					ft_stroker.New(m_ft_lib);
-					ft_stroker.Set((int)(0.5 * 64), FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
-					FTGlyph glyph;
+					ft_stroker.Set((int)(font_data.thickness * 64), FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
 					glyph.GetGlyph(m_ft_face);
 					ft_stroker.GlyphStroke(glyph);
 					glyph.ToBitmap(FT_RENDER_MODE_NORMAL);
-					FT_BitmapGlyph bitmap_glyph = glyph.GetBitmapGlyph();
+					bitmap_glyph = glyph.GetBitmapGlyph();
 
-					if(atlas->Push(bitmap_glyph->bitmap.width, bitmap_glyph->bitmap.rows, bitmap_glyph->bitmap.buffer)) {
-						SetGlyphData(m_preset[i], slot, bitmap_glyph, ox, oy, atlas);
-						i++;
-						glyph.Done();
-						ft_stroker.Done();
+					if(m_last->Push(bitmap_glyph->bitmap.width, bitmap_glyph->bitmap.rows, bitmap_glyph->bitmap.buffer)) {
+						SetGlyphData(m_preset[i], slot, bitmap_glyph, m_last);
 					} else {
-						DBG_PRINT_MSG("%s", "one texture is full, create a new one");
-						glyph.Done();
-						ft_stroker.Done();
-						break;
+						DBG_PRINT_MSG("%s", "Fail to push character into texture atlas, maybe the texture size is too small");
+						exit(EXIT_FAILURE);
 					}
-				 */
-				m_ft_face.LoadGlyph(glyph_index, FT_LOAD_RENDER | FT_LOAD_NO_HINTING);
 
-				if(m_last->Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer)) {
-					SetGlyphData(m_preset[i], slot, m_last);
+					glyph.Done();
+					ft_stroker.Done();
+
 				} else {
-					DBG_PRINT_MSG("%s", "Fail to push character into texture atlas, maybe the texture size is too small");
-					exit(EXIT_FAILURE);
+
+					m_ft_face.LoadGlyph(glyph_index, FT_LOAD_RENDER | FT_LOAD_NO_HINTING);
+
+					if(m_last->Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer)) {
+						SetGlyphData(m_preset[i], slot, m_last);
+					} else {
+						DBG_PRINT_MSG("%s", "Fail to push character into texture atlas, maybe the texture size is too small");
+						exit(EXIT_FAILURE);
+					}
+
 				}
 
 				if(!m_last->MoveNext()) {

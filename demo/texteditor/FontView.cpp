@@ -129,8 +129,14 @@ FontView::FontView ()
 {
 	set_size(200, 200);
 
-	m_font.SetSize(36);
+	m_font.SetSize(16);
+	m_font.SetOutline(true);
+	m_font.set_color(BI::Color(0x223365DD));
 	//m_font.SetName("STHeiti");
+	m_font.SetShadow(true);
+
+	size_t size = BI::FontCacheExt::GetCacheSize ();
+	DBG_PRINT_MSG("cache size: %ld", size);
 
 	/*
 	glGenVertexArrays(1, &m_vao);
@@ -191,6 +197,7 @@ BI::ResponseType FontView::Draw (const BI::RedrawEvent& event)
 	glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 	int advance = m_font.Print(mvp, L"A仁B义C礼D智E信F");
+	//int advance = m_font.Print(mvp, L"ABC");
 	DBG_PRINT_MSG("advance: %d", advance);
 
 	/*

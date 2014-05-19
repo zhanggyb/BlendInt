@@ -83,27 +83,21 @@ namespace BlendInt {
 			m_background_color = color;
 		}
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void Update (const UpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		size_t UpdateTextPosition (const Size& size, const String& text, Font& font);
+
+		size_t GetValidTextSize (const Size& size, const String& text, const Font& font);
+
 	private:
 
-		void InitOnce ();
-
-		/**
-		 * @brief get the valid text size to print
-		 * @return how many characters to print
-		 */
-		size_t GetValidTextSize ();
-
-		/**
-		 * @brief get the valid text size to print
-		 * @return how many characters to print
-		 */
-		size_t GetValidTextSize (const Size* size);
+		void InitLabel (const String& text);
 
 		/**
 		 * @brief the text of the label
@@ -113,26 +107,14 @@ namespace BlendInt {
 		String m_text;
 
 		/**
-		 * @brief the position to print text
-		 */
-		Point m_origin;
-
-		/**
 		 * @brief the text string length to be printed
 		 */
-		size_t m_length;
-
-		int m_alignment;
+		size_t m_text_length;
 
 		Font m_font;
 
 		/** Background color, default: transparent */
 		Color m_background_color;
-
-		/**
-		 * @brief Box in which hold the text
-		 */
-		Rect m_text_outline;
 
 		GLuint m_vao;
 

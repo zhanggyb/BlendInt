@@ -42,16 +42,11 @@ namespace BlendInt {
 	Label::Label (const String& text)
 		: Widget(),
 		  m_text(text),
-		  m_length(0),
-		  m_alignment(AlignLeft),
+		  m_text_length(0),
 		  m_background_color(0x00000000),
 		  m_vao(0)
 	{
-		set_expand_x(true);
-
-		set_size(0, 24);	// the same height of a Buttons
-
-		InitOnce();
+		InitLabel(text);
 	}
 
 	Label::~Label ()
@@ -61,85 +56,14 @@ namespace BlendInt {
 
 	void Label::SetText (const String& text)
 	{
-		bool cal_width = true;
-
 		m_text = text;
-
-		m_text_outline = m_font.GetTextOutline(m_text);
-
-		m_length = m_text.length();
-
-		if(size().height() < m_text_outline.height()) {
-			if(expand_y()) {
-				Resize(size().width(), m_text_outline.height());
-			} else {
-				m_length = 0;
-				cal_width = false;
-			}
-		}
-
-		if(size().width() < m_text_outline.width()) {
-			if(expand_x()) {
-				Resize(m_text_outline.width(), size().height());
-			} else {
-				if(cal_width) m_length = GetValidTextSize();
-			}
-		}
-
-		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
-		if(m_alignment & AlignLeft) {
-			m_origin.set_x(0);
-		} else if(m_alignment & AlignRight) {
-			m_origin.set_x(size().width() - m_text_outline.width());
-		} else if(m_alignment & AlignVerticalCenter) {
-			m_origin.set_x((size().width() - m_text_outline.width()) / 2);
-		}
-
-		m_origin.set_y((size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
-
-		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
+		m_text_length = UpdateTextPosition(size(), text, m_font);
 	}
 
 	void Label::SetFont (const Font& font)
 	{
-		bool cal_width = true;
-
 		m_font = font;
-
-		m_text_outline = m_font.GetTextOutline(m_text);
-
-		m_length = m_text.length();
-
-		if(size().height() < m_text_outline.height()) {
-			if(expand_y()) {
-				Resize(size().width(), m_text_outline.height());
-			} else {
-				m_length = 0;
-				cal_width = false;
-			}
-		}
-
-		if(size().width() < m_text_outline.width()) {
-			if(expand_x()) {
-				Resize(m_text_outline.width(), size().height());
-			} else {
-				if(cal_width) m_length = GetValidTextSize();
-			}
-		}
-
-		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
-
-		if(m_alignment & AlignLeft) {
-			m_origin.set_x(0);
-		} else if(m_alignment & AlignRight) {
-			m_origin.set_x(size().width() - m_text_outline.width());
-		} else if(m_alignment & AlignVerticalCenter) {
-			m_origin.set_x((size().width() - m_text_outline.width()) / 2);
-		}
-
-		m_origin.set_y((size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
-
-		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
+		m_text_length = UpdateTextPosition(size(), m_text, m_font);
 	}
 
 	void Label::Update (const UpdateRequest& request)
@@ -150,28 +74,9 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-
-					if(size_p->height() < m_text_outline.height()) {
-						m_length = 0;
-					} else {
-						m_origin.set_y((size_p->height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
-						m_length = GetValidTextSize(size_p);
-					}
-
-					if(size_p->width() < m_text_outline.width()) {
-						m_origin.set_x(0);
-					} else {
-						if(m_alignment & AlignLeft) {
-							m_origin.set_x(0);
-						} else if(m_alignment & AlignRight) {
-							m_origin.set_x(size_p->width() - m_text_outline.width());
-						} else if(m_alignment & AlignVerticalCenter) {
-							m_origin.set_x((size_p->width() - m_text_outline.width()) / 2);
-						}
-					}
+					m_text_length = UpdateTextPosition(*size_p, m_text, m_font);
 
 					glBindVertexArray(m_vao);
-
 					m_rect->Bind();
 
 					std::vector<GLfloat> vertices(12);
@@ -183,10 +88,6 @@ namespace BlendInt {
 
 					glBindVertexArray(0);
 
-					break;
-				}
-
-				case FormPreferredSize: {
 					break;
 				}
 
@@ -236,76 +137,114 @@ namespace BlendInt {
 		program->Reset();
 		glBindVertexArray(0);
 
-		m_font.Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, 0);
+		if(m_text.length()) {
+			m_font.Print(mvp, m_text, m_text_length, 0);
+		}
 
 		return Accept;
 	}
 
-	size_t Label::GetValidTextSize()
+	size_t Label::UpdateTextPosition(const Size& size, const String& text, Font& font)
 	{
-		size_t width = 0;
+		size_t str_len = 0;
 
-		size_t str_len = m_text.length();
-
-		width = m_font.GetTextWidth(m_text, str_len);
-
-		if(width > size().width()) {
-			while(str_len > 0) {
-				width = m_font.GetTextWidth(m_text, str_len);
-				if(width < size().width()) break;
-				str_len--;
-			}
-		}
-
-		return str_len;
-	}
-
-	size_t Label::GetValidTextSize(const Size* size)
-	{
-		size_t width = 0;
-
-		size_t str_len = m_text.length();
-
-		width = m_font.GetTextWidth(m_text, str_len);
-
-		if(width > size->width()) {
-			while(str_len > 0) {
-				width = m_font.GetTextWidth(m_text, str_len);
-				if(width < size->width()) break;
-				str_len--;
-			}
-		}
-
-		return str_len;
-	}
-
-	void Label::InitOnce ()
-	{
+		// If size changed, we need to update the text length for printing too.
 		bool cal_width = true;
 
-		m_text_outline = m_font.GetTextOutline(m_text);
+		int width = size.width() - 2 - 2;
+		int height = size.height() - 2 - 2;
 
-		m_length = m_text.length();
+		if(width <= 0 || height <= 0) {
+			return 0;
+		}
 
-		if(size().height() < m_text_outline.height()) {
-			if(expand_y()) {
-				set_size(size().width(), m_text_outline.height());
+		if(text.length() == 0) {
+			return 0;
+		}
+
+		Rect text_outline = font.GetTextOutline(text);
+
+		if(static_cast<unsigned int>(height) < text_outline.height()) {
+			str_len = 0;
+			cal_width = false;
+		}
+
+		if(cal_width) {
+			if(static_cast<unsigned int>(width) < text_outline.width()) {
+				str_len = GetValidTextSize(size, text, font);
 			} else {
-				m_length = 0;
-				cal_width = false;
+				str_len = text.length();
 			}
 		}
 
-		if(size().width() < m_text_outline.width()) {
-			if(expand_x()) {
-				set_size(m_text_outline.width(), size().height());
-			} else {
-				if(cal_width) m_length = GetValidTextSize();
+		font.set_pen((size.width() - text_outline.width()) / 2,
+						(size.height() - font.GetHeight()) / 2
+										+ std::abs(font.GetDescender()));
+		return str_len;
+	}
+
+	size_t Label::GetValidTextSize(const Size& size, const String& text, const Font& font)
+	{
+		size_t width = 0;
+		size_t str_len = text.length();
+
+		width = font.GetTextWidth(text, str_len, 0);
+
+		unsigned int text_width_space = size.width() - 2 - 2;
+
+		if(width > text_width_space) {
+			while(str_len > 0) {
+				width = font.GetTextWidth(text, str_len, 0);
+				if(width < text_width_space) break;
+				str_len--;
 			}
 		}
 
-		m_origin.set_x(0);
-		m_origin.set_y((size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
+		return str_len;
+	}
+	
+	Size Label::GetPreferredSize () const
+	{
+		Size preferred_size;
+
+		int max_font_height = font().GetHeight();
+
+		preferred_size.set_height(max_font_height + 2 + 2);	// top padding: 2, bottom padding: 2
+
+		if (m_text.empty()) {
+			preferred_size.set_width(
+							max_font_height + 2 + 2);
+		} else {
+			size_t width = font().GetTextWidth(m_text);
+			preferred_size.set_width(
+							static_cast<unsigned int>(width)
+											+ 2 + 2);	// left padding: 2, right padding: 2
+		}
+
+		return preferred_size;
+	}
+
+	void Label::InitLabel (const String& text)
+	{
+		set_expand_x(true);
+		m_text = text;
+
+		unsigned int h = m_font.GetHeight();
+
+		if(text.empty()) {
+			set_size (h + 2 + 2,
+							h + 2 + 2);
+		} else {
+			m_text_length = text.length();
+			Rect text_outline = m_font.GetTextOutline(text);
+
+			unsigned int width = text_outline.width() + 2 + 2;
+			unsigned int height = h + 2 + 2;
+			set_size(width, height);
+			m_font.set_pen((width - text_outline.width()) / 2,
+							(height - m_font.GetHeight()) / 2 +
+											std::abs(m_font.GetDescender()));
+		}
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
