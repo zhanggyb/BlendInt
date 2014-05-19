@@ -85,15 +85,6 @@ namespace BlendInt {
 
 	FontConfig::~FontConfig ()
 	{
-		FontIter it;
-		for (it = _fonts.begin(); it != _fonts.end(); it++) {
-			delete (*it).second;
-		}
-		_fonts.clear();
-
-		// clear the namedb but no need to delete the objects again
-		_namedb.clear();
-
 		if (_defaultFontBuf) {
 			delete[] _defaultFontBuf;
 			_defaultFontBuf = NULL;
@@ -171,11 +162,6 @@ namespace BlendInt {
 	bool FontConfig::loadFontFile (const string& file)
 	{
 		if (file.empty())
-			return false;
-
-		// check if we already load this font
-		FontIter it = _fonts.find(file);
-		if (it != _fonts.end())
 			return false;
 
 		// check if the path is valid

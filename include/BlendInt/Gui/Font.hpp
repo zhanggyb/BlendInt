@@ -187,7 +187,7 @@ namespace BlendInt {
 
 		// Color m_background	// for shadow
 
-		RefPtr<FontCacheExt> m_cache;
+		RefPtr<FontCache> m_cache;
 	};
 
 

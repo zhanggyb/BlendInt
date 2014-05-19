@@ -58,57 +58,7 @@ using namespace std;
 
 namespace BlendInt {
 
-	unsigned int FontCache::maxCaches = 32;
-
-	map<FontFileInfo, RefPtr<FontCache> > FontCache::cacheDB;
-	map<FontFileInfo, unsigned long> FontCache::cacheCountDB;
-
-	map<FontTypeBase, RefPtr<FontCacheExt> > FontCacheExt::cache_db;
-
-	bool operator < (const FontFileInfo& src, const FontFileInfo& dist)
-	{
-		if(src.file < dist.file) {
-			return true;
-		} else if(src.file > dist.file) {
-			return false;
-		}
-
-		if(src.size < dist.size) {
-			return true;
-		} else if(src.size > dist.size) {
-			return false;
-		}
-
-		if(src.dpi < dist.dpi) {
-			return true;
-		} else if(src.dpi > dist.dpi) {
-			return false;
-		}
-
-		if(src.bold < dist.bold) {
-			return true;
-		} else if (src.bold > dist.bold) {
-			return false;
-		}
-
-		if(src.italic < dist.italic) {
-			return true;
-		} else if (src.italic > dist.italic) {
-			return false;
-		}
-
-		return false;
-	}
-
-	bool operator == (const FontFileInfo& src, const FontFileInfo& dist)
-	{
-		// use memcmp?
-		return (src.file == dist.file &&
-				src.size == dist.size &&
-				src.dpi == dist.dpi &&
-				src.bold == dist.bold &&
-				src.italic == dist.italic);
-	}
+	map<FontTypeBase, RefPtr<FontCache> > FontCache::cache_db;
 
 	bool operator < (const FontTypeBase& src, const FontTypeBase& dist)
 	{
@@ -155,20 +105,20 @@ namespace BlendInt {
 				src.thickness == dist.thickness);
 	}
 
-	int FontCacheExt::default_texture_width = 512;
-	int FontCacheExt::default_texture_height = 512;
+	int FontCache::default_texture_width = 512;
+	int FontCache::default_texture_height = 512;
 
-	RefPtr<FontCacheExt> FontCacheExt::Create (const FontTypeBase& data)
+	RefPtr<FontCache> FontCache::Create (const FontTypeBase& data)
 	{
 		// Don't repeatedly create
-		map<FontTypeBase, RefPtr<FontCacheExt> >::const_iterator it;
+		map<FontTypeBase, RefPtr<FontCache> >::const_iterator it;
 		it = cache_db.find(data);
 
 		if (it != cache_db.end()) {
 			return it->second;
 		}
 
-		RefPtr<FontCacheExt> cache(new FontCacheExt(data));
+		RefPtr<FontCache> cache(new FontCache(data));
 		cache->set_name(data.name);
 		cache->Initialize(data, 32, 95);
 		cache_db[data] = cache;
@@ -176,9 +126,9 @@ namespace BlendInt {
 		return cache;
 	}
 
-	bool FontCacheExt::Release (const FontTypeBase& data)
+	bool FontCache::Release (const FontTypeBase& data)
 	{
-		map<FontTypeBase, RefPtr<FontCacheExt> >::iterator it;
+		map<FontTypeBase, RefPtr<FontCache> >::iterator it;
 		it = cache_db.find(data);
 
 		if (it == cache_db.end())
@@ -188,33 +138,33 @@ namespace BlendInt {
 		return true;
 	}
 
-	void FontCacheExt::ReleaseAll ()
+	void FontCache::ReleaseAll ()
 	{
 		cache_db.clear();
 	}
 
-	size_t FontCacheExt::GetCacheSize ()
+	size_t FontCache::GetCacheSize ()
 	{
 		return cache_db.size();
 	}
 
-	void FontCacheExt::SetDefaultTextureSize (int width, int height)
+	void FontCache::SetDefaultTextureSize (int width, int height)
 	{
 		default_texture_width = width;
 		default_texture_height = height;
 	}
 
-	int FontCacheExt::GetDefaultTextureWidth ()
+	int FontCache::GetDefaultTextureWidth ()
 	{
 		return default_texture_width;
 	}
 
-	int FontCacheExt::GetDefaultTextureHeight ()
+	int FontCache::GetDefaultTextureHeight ()
 	{
 		return default_texture_height;
 	}
 
-	FontCacheExt::FontCacheExt(const FontTypeBase& data)
+	FontCache::FontCache(const FontTypeBase& data)
 	: m_vao(0), m_vbo(0), m_start(32), m_size(95)
 	{
 #ifdef USE_FONTCONFIG
@@ -259,7 +209,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
-	const GlyphExt* FontCacheExt::Query (const FontTypeBase& font_data, uint32_t charcode, bool create)
+	const GlyphExt* FontCache::Query (const FontTypeBase& font_data, uint32_t charcode, bool create)
 	{
 		int index = charcode - m_start;
 
@@ -346,7 +296,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	FontCacheExt::~FontCacheExt()
+	FontCache::~FontCache()
 	{
 		m_extension.clear();
 		m_preset.clear();
@@ -358,7 +308,7 @@ namespace BlendInt {
 		m_ft_lib.Done();
 	}
 
-	void FontCacheExt::Initialize (const FontTypeBase& font_data, uint32_t char_code, int size)
+	void FontCache::Initialize (const FontTypeBase& font_data, uint32_t char_code, int size)
 	{
 		m_preset.clear();
 		m_start = char_code;
@@ -441,7 +391,7 @@ namespace BlendInt {
 
 	}
 
-	void FontCacheExt::SetGlyphData(GlyphExt& glyph, FT_GlyphSlot slot, const RefPtr<TextureAtlas2D>& atlas)
+	void FontCache::SetGlyphData(GlyphExt& glyph, FT_GlyphSlot slot, const RefPtr<TextureAtlas2D>& atlas)
 	{
 		float ox = atlas->xoffset() / (float)default_texture_width;
 		float oy = atlas->yoffset() / (float)default_texture_height;
@@ -476,7 +426,7 @@ namespace BlendInt {
 		glyph.texture_atlas = atlas;
 	}
 
-	void FontCacheExt::SetGlyphData (GlyphExt& glyph, FT_GlyphSlot slot,
+	void FontCache::SetGlyphData (GlyphExt& glyph, FT_GlyphSlot slot,
 					FT_BitmapGlyph bitmap_glyph, const RefPtr<TextureAtlas2D>& atlas)
 	{
 		float ox = atlas->xoffset() / (float)default_texture_width;
@@ -514,551 +464,12 @@ namespace BlendInt {
 	}
 
 #ifdef DEBUG
-	void FontCacheExt::list (void)
+	void FontCache::list (void)
 	{
-		map<FontTypeBase, RefPtr<FontCacheExt> >::const_iterator it;
+		map<FontTypeBase, RefPtr<FontCache> >::const_iterator it;
 		for (it = cache_db.begin(); it != cache_db.end(); it++) {
 			cout << it->second->name() << endl;
 		}
-	}
-#endif
-
-	// ---------------------------------------------------
-
-	/*
-	FontCache* FontCache::create (const Font& font, unsigned int dpi,
-	        bool force)
-	{
-		FontFileInfo key;
-
-#ifdef USE_FONTCONFIG
-		FontConfig* fontconfig = FontConfig::instance();
-		key.file = fontconfig->getFontPath(font);
-#else
-
-#ifdef __APPLE__
-		key.file = font.family;
-#endif
-
-#endif
-		key.size = font.size;
-		key.dpi = dpi;
-
-		// Don't repeatedly create, cause memory leak
-		map<FontFileInfo, FontCache*>::const_iterator it;
-		it = cacheDB.find(key);
-
-		if (it != cacheDB.end()) {
-			unsigned long count = cacheCountDB[key];
-			cacheCountDB[key] = count + 1;
-
-			it->second->set_dpi(dpi);
-			return it->second;
-		}
-
-		if (cacheDB.size() >= maxCaches) {
-
-			if (!force)
-				return NULL;
-
-			// Remove mostly unused cache
-			typedef std::pair<FontFileInfo, unsigned long> data_t;
-			typedef std::priority_queue<data_t, std::deque<data_t>,
-			        greater_second<data_t> > queue_t;
-			queue_t q(cacheCountDB.begin(), cacheCountDB.end());
-
-			FontFileInfo font_of_cache = q.top().first;
-			//wcout << "Remove " << q.top().first.family << " from cache DB."
-			//        << std::endl;
-
-			delete cacheDB[font_of_cache];
-			cacheDB.erase(font_of_cache);
-			cacheCountDB.erase(font_of_cache);
-		}
-
-		FontCache * cache = new FontCache(font, dpi);
-
-		cacheDB[key] = cache;
-		unsigned long count = cacheCountDB[key];
-		cacheCountDB[key] = count + 1;
-
-		return cache;
-	}
-	*/
-
-	RefPtr<FontCache> FontCache::Create (const std::string& file, unsigned int size, unsigned int dpi, bool bold, bool italic,
-	        bool force)
-	{
-		FontFileInfo key;
-
-#ifdef USE_FONTCONFIG
-		FontConfig* fontconfig = FontConfig::instance();
-		key.file = fontconfig->getFontPath(file, size, bold, italic);
-#else
-
-#ifdef __APPLE__
-		key.file = font.family;
-#endif
-
-#endif
-		key.size = size;
-		key.dpi = dpi;
-		key.bold = bold;
-		key.italic = italic;
-
-		// Don't repeatedly create, cause memory leak
-		map<FontFileInfo, RefPtr<FontCache> >::const_iterator it;
-		it = cacheDB.find(key);
-
-		if (it != cacheDB.end()) {
-			unsigned long count = cacheCountDB[key];
-			cacheCountDB[key] = count + 1;
-
-			it->second->set_dpi(dpi);
-			return it->second;
-		}
-
-		if (cacheDB.size() >= maxCaches) {
-
-			//if (!force)
-				//return NULL;
-
-			// Remove mostly unused cache
-			typedef std::pair<FontFileInfo, unsigned long> data_t;
-			typedef std::priority_queue<data_t, std::deque<data_t>,
-			        greater_second<data_t> > queue_t;
-			queue_t q(cacheCountDB.begin(), cacheCountDB.end());
-
-			FontFileInfo font_of_cache = q.top().first;
-			//wcout << "Remove " << q.top().first.family << " from cache DB."
-			//        << std::endl;
-
-			// delete cacheDB[font_of_cache];
-			cacheDB.erase(font_of_cache);
-			cacheCountDB.erase(font_of_cache);
-		}
-
-		RefPtr<FontCache> cache(new FontCache(key, dpi));
-
-		cacheDB[key] = cache;
-		unsigned long count = cacheCountDB[key];
-		cacheCountDB[key] = count + 1;
-
-		return cache;
-	}
-
-	/*
-	FontCache* FontCache::getCache (const Font& font, unsigned int dpi)
-	{
-		FontFileInfo key;
-
-#ifdef USE_FONTCONFIG
-		FontConfig* fontconfig = FontConfig::instance();
-		key.file = fontconfig->getFontPath(font);
-#else
-
-#ifdef __APPLE__
-		key.file = font.family;
-#endif
-
-#endif
-		key.size = font.size;
-		key.dpi = dpi;
-
-
-		map<FontFileInfo, unsigned long>::const_iterator it;
-		it = cacheCountDB.find(key);
-
-		if (it == cacheCountDB.end()) {
-			return NULL;
-		} else {
-			unsigned long count = cacheCountDB[key];
-			cacheCountDB[key] = count + 1;
-			cacheDB[key]->set_dpi(dpi);
-			return cacheDB[key];
-		}
-	}
-	*/
-
-	/*
-	bool FontCache::release (const Font& font, unsigned int dpi)
-	{
-		FontFileInfo key;
-
-#ifdef USE_FONTCONFIG
-		FontConfig* fontconfig = FontConfig::instance();
-		key.file = fontconfig->getFontPath(font);
-#else
-
-#ifdef __APPLE__
-		key.file = font.family;
-#endif
-
-#endif
-		key.size = font.size;
-		key.dpi = dpi;
-
-		map<FontFileInfo, FontCache*>::iterator it;
-		it = cacheDB.find(key);
-
-		if (it == cacheDB.end())
-			return false;
-
-		FontCache* cache = it->second;
-		if (cache != NULL) {
-			delete cache;
-		}
-
-		// now erase the key-value
-		cacheDB.erase(it);
-		cacheCountDB.erase(key);
-
-		return true;
-	}
-	*/
-
-	bool FontCache::Release (const FontFileInfo& key)
-	{
-		map<FontFileInfo, RefPtr<FontCache> >::iterator it;
-		it = cacheDB.find(key);
-
-		if (it == cacheDB.end())
-			return false;
-
-		/*
-		FontCache* cache = it->second;
-		if (cache != NULL) {
-			delete cache;
-		}
-		*/
-
-		// now erase the key-value
-		cacheDB.erase(it);
-		cacheCountDB.erase(key);
-
-		return true;
-	}
-
-	void FontCache::releaseAll (void)
-	{
-		/*
-		map<FontFileInfo, RefPtr<FontCache> >::iterator it;
-
-		for (it = cacheDB.begin(); it != cacheDB.end(); it++) {
-			delete it->second;
-		}
-		*/
-		cacheDB.clear();
-		cacheCountDB.clear();
-	}
-
-#ifdef DEBUG
-	void FontCache::list (void)
-	{
-		map<FontFileInfo, unsigned long>::const_iterator it;
-		cout << endl;
-		for (it = cacheCountDB.begin(); it != cacheCountDB.end(); it++) {
-			cout << it->first.file << " of " << it->first.size
-			        << " is used: " << it->second << endl;
-		}
-	}
-#endif
-
-	/*
-	FontCache::FontCache (const Font& font, unsigned int dpi)
-			: Object(), m_vao(0), m_freetype(0)
-	{
-		std::string filepath;
-
-#ifdef USE_FONTCONFIG
-		FontConfig* fontconfig = FontConfig::instance();
-		filepath = fontconfig->getFontPath(font);
-#else
-
-#ifdef __APPLE__
-		filepath = font.family;
-#endif
-
-#endif
-
-		m_freetype = new Freetype;
-		m_freetype->Open(filepath, font.size, dpi);
-
-		if(!setup()) {
-			DBG_PRINT_MSG("%s", "Fail to setup FontCache");
-		}
-	}
-
-	FontCache::FontCache (const FontFileInfo& key, unsigned int dpi)
-			: Object(), m_vao(0), m_freetype(0)
-	{
-		std::string filepath;
-
-#ifdef USE_FONTCONFIG
-		FontConfig* fontconfig = FontConfig::instance();
-		filepath = fontconfig->getFontPath(key.file, key.size, key.bold, key.italic);
-#else
-
-#ifdef __APPLE__
-		filepath = font.family;
-#endif
-
-#endif
-
-		m_freetype = new Freetype;
-		m_freetype->Open(filepath, key.size, dpi);
-
-		if(!setup()) {
-			DBG_PRINT_MSG("%s", "Fail to setup FontCache");
-		}
-	}
-	*/
-
-	FontCache::FontCache (const FontFileInfo& key, unsigned int dpi)
-			: Object(), m_vao(0)
-	{
-		std::string filepath;
-
-#ifdef USE_FONTCONFIG
-		FontConfig* fontconfig = FontConfig::instance();
-		filepath = fontconfig->getFontPath(key.file, key.size, key.bold, key.italic);
-#else
-
-#ifdef __APPLE__
-		filepath = font.family;
-#endif
-
-#endif
-
-		m_freetype.Open(filepath, key.size, dpi);
-
-		if(!Setup()) {
-			DBG_PRINT_MSG("%s", "Fail to setup FontCache");
-		}
-	}
-
-
-	FontCache::~FontCache ()
-	{
-		map<wchar_t, TextureGlyph*>::iterator it;
-		for (it = m_texture_fonts.begin(); it != m_texture_fonts.end(); it++) {
-			if (it->second) {
-				delete it->second;
-				it->second = 0;
-			}
-		}
-		m_texture_fonts.clear();
-
-		m_freetype.Close();
-
-		glDeleteBuffers(1, &m_vbo);
-
-		glDeleteVertexArrays(1, &m_vao);
-	}
-
-	bool FontCache::Setup (void)
-	{
-		if (!m_freetype.valid()) {
-			return false;
-		}
-
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-
-		glGenBuffers(1, &m_vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-
-		m_atlas.Generate(m_freetype, 32, 96);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
-		return true;
-	}
-
-	const Glyph& FontCache::query (wchar_t charcode, bool create)
-	{
-		if (m_atlas.Contain(charcode)) {
-			return m_atlas.glyph(charcode);
-		}
-
-		map<wchar_t, TextureGlyph*>::iterator it;
-		it = m_texture_fonts.find(charcode);
-
-		// if the glyph is not found and need to be created
-		if (it == m_texture_fonts.end()) {
-
-			if (create) {
-
-				TextureGlyph* new_font = new TextureGlyph;
-				new_font->Load(m_freetype, charcode);
-				m_texture_fonts[charcode] = new_font;
-
-			} else {
-				// TODO: return an default font glyph to show unknown character
-			}
-		}
-
-		return m_texture_fonts[charcode]->glyph();
-
-	}
-
-//	const GLuint FontCache::queryTexture (wchar_t charcode, bool create)
-//	{
-		//if (atlas_.contains(charcode)) {
-//			return atlas_.texture();
-		//}
-
-		/*
-		map<wchar_t, TextureFont*>::iterator it;
-		it = texture_fonts_.find(charcode);
-
-		// if the glyph is not found and need to be created
-		if (it == texture_fonts_.end()) {
-
-			if (create) {
-
-				TextureFont* new_font = new TextureFont;
-				new_font->generate(fontengine_, charcode);
-				texture_fonts_[charcode] = new_font;
-
-			} else {
-				// TODO: return an default font glyph to show unknown character
-			}
-		}
-
-		return texture_fonts_[charcode]->texture();
-		*/
-//	}
-
-//	unsigned int FontCache::queryWidth (wchar_t charcode, bool create)
-//	{
-		//if (atlas_.contains(charcode)) {
-//			return atlas_.width();
-		//}
-
-		/*
-		map<wchar_t, TextureFont*>::iterator it;
-		it = texture_fonts_.find(charcode);
-
-		// if the glyph is not found and need to be created
-		if (it == texture_fonts_.end()) {
-
-			if (create) {
-
-				TextureFont* new_font = new TextureFont;
-				new_font->generate(fontengine_, charcode);
-				texture_fonts_[charcode] = new_font;
-
-			} else {
-				// TODO: return an default font glyph to show unknown character
-			}
-		}
-
-		return texture_fonts_[charcode]->width();
-		*/
-//	}
-
-//	unsigned int FontCache::queryHeight (wchar_t charcode, bool create)
-//	{
-//		if (atlas_.contains(charcode)) {
-//			return atlas_.height();
-//		}
-
-		/*
-		map<wchar_t, TextureFont*>::iterator it;
-		it = texture_fonts_.find(charcode);
-
-		// if the glyph is not found and need to be created
-		if (it == texture_fonts_.end()) {
-
-			if (create) {
-
-				TextureFont* new_font = new TextureFont;
-				new_font->generate(fontengine_, charcode);
-				texture_fonts_[charcode] = new_font;
-
-			} else {
-				// TODO: return an default font glyph to show unknown character
-			}
-		}
-
-		return texture_fonts_[charcode]->height();
-		*/
-//	}
-
-	Rect FontCache::GetTextOutline (const String& string)
-	{
-		if(!m_freetype.valid()) {
-			return Rect();
-		}
-
-		String::const_iterator it;
-		// String::const_iterator next;
-		int xmin = 0;
-		int ymin = 0;
-		int xmax = 0;
-		int ymax = 0;
-
-		for (it = string.begin(); it != string.end(); it++)
-		{
-			xmax = query(*it).advance_x + xmax;
-			ymin = std::min(static_cast<int>(query(*it).bitmap_top - query(*it).bitmap_height), ymin);
-			ymax = std::max(static_cast<int>(query(*it).bitmap_top), ymax);
-		}
-
-		return Rect(Point(xmin, ymin), Point(xmax, ymax));
-	}
-
-	size_t FontCache::GetTextWidth (const String& string, size_t length, size_t start)
-	{
-		size_t width = 0;
-
-		if(!m_freetype.valid()) {
-			return width;
-		}
-
-		assert(start <= string.length() && length <= string.length());
-
-		String::const_iterator it = string.begin();
-		std::advance(it, start);
-		size_t i = 0;
-
-		while(it != string.end() && (i < length)) {
-			width += query(*it).advance_x;
-			it++;
-			i++;
-		}
-
-		return width;
-	}
-
-	size_t FontCache::GetReverseTextWidth (const String& string, size_t length, size_t start)
-	{
-		size_t width = 0;
-
-		if(!m_freetype.valid()) {
-			return width;
-		}
-
-		assert(start <= string.length() && length <= string.length());
-
-		String::const_reverse_iterator it = string.rbegin();
-		std::advance(it, start);
-		size_t i = 0;
-
-		while (it != string.rend() && (i < length)) {
-			width += query(*it).advance_x;
-			it++;
-			i++;
-		}
-
-		return width;
-	}
-
-#ifdef DEBUG
-	void FontCache::printcount (void)
-	{
-		//std::cout << "fonts in texture_fonts_: " << texture_fonts_.size() << std::endl;
 	}
 #endif
 

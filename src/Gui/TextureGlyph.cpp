@@ -53,17 +53,13 @@ namespace BlendInt {
 		glDeleteTextures(1, &m_texture);
 	}
 
-	void TextureGlyph::Load (const Freetype& freetype, wchar_t charcode)
+	void TextureGlyph::Load (const FTFace& font_face, uint32_t charcode)
 	{
-		if(!freetype.valid()) return;
-
 		if(!m_texture) {
 			glGenTextures(1, &m_texture);
 		}
 
-		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_texture);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		/* We require 1 byte alignment when uploading texture data */
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -76,9 +72,9 @@ namespace BlendInt {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		if (freetype.LoadCharacter(charcode, FT_LOAD_RENDER)) {
+		if (font_face.LoadChar(charcode, FT_LOAD_RENDER)) {
 
-			FT_GlyphSlot g = freetype.face()->glyph;
+			FT_GlyphSlot g = font_face.face()->glyph;
 
 			/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */
 			//glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
@@ -126,6 +122,7 @@ namespace BlendInt {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+
 #ifdef DEBUG
 	void TextureGlyph::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
 	{
@@ -163,106 +160,5 @@ namespace BlendInt {
 	    }
 	}
 #endif
-
-	void TextureGlyph::generate(Freetype* freetype, wchar_t charcode)
-	{
-		if(!freetype || !freetype->valid()) return;
-
-		if(glIsTexture(m_texture)) {
-			glDeleteTextures(1, &m_texture);
-		}
-
-		glActiveTexture(GL_TEXTURE0);
-		glGenTextures(1, &m_texture);
-		glBindTexture(GL_TEXTURE_2D, m_texture);
-
-		/* We require 1 byte alignment when uploading texture data */
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-		/* Clamping to edges is important to prevent artifacts when scaling */
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-		/* Linear filtering usually looks best for text */
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		if (freetype->LoadCharacter(charcode, FT_LOAD_RENDER)) {
-
-			FT_GlyphSlot g = freetype->face()->glyph;
-
-			/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
-
-			/* Calculate the vertex and texture coordinates */
-			m_glyph.bitmap_left = g->bitmap_left;
-			m_glyph.bitmap_top = g->bitmap_top;
-			m_glyph.bitmap_width = g->bitmap.width;
-			m_glyph.bitmap_height = g->bitmap.rows;
-			m_glyph.advance_x = g->advance.x >> 6;
-			m_glyph.advance_y = g->advance.y >> 6;
-
-			m_glyph.vertexes[0].x = m_glyph.bitmap_left;
-			m_glyph.vertexes[0].y = m_glyph.bitmap_top - m_glyph.bitmap_height;
-			m_glyph.vertexes[0].s = 0;
-			m_glyph.vertexes[0].t = 1;
-
-			m_glyph.vertexes[1].x = m_glyph.bitmap_left + m_glyph.bitmap_width;
-			m_glyph.vertexes[1].y = m_glyph.bitmap_top - m_glyph.bitmap_height;
-			m_glyph.vertexes[1].s = 1;
-			m_glyph.vertexes[1].t = 1;
-
-			m_glyph.vertexes[2].x = m_glyph.bitmap_left;
-			m_glyph.vertexes[2].y = m_glyph.bitmap_top;
-			m_glyph.vertexes[2].s = 0;
-			m_glyph.vertexes[2].t = 0;
-
-			m_glyph.vertexes[3].x = m_glyph.bitmap_left + m_glyph.bitmap_width;
-			m_glyph.vertexes[3].y = m_glyph.bitmap_top;
-			m_glyph.vertexes[3].s = 1;
-			m_glyph.vertexes[3].t = 0;
-#ifdef DEBUG
-			std::cout << "Metrics: " << std::endl
-								<< "		left: " << m_glyph.bitmap_left << std::endl
-								<< "		top: " << m_glyph.bitmap_top << std::endl
-								<< "		width: " << m_glyph.bitmap_width << std::endl
-								<< "		height: " << m_glyph.bitmap_height << std::endl
-								<< "and Glyph Metrics: " << std::endl
-								<< "		width: " << (g->metrics.width >> 6) << std::endl
-								<< "		height: " << (g->metrics.height >> 6) << std::endl
-								<< "		horiBearingX: " << (g->metrics.horiBearingX >> 6) << std::endl
-								<< "		horiBearingY: " << (g->metrics.horiBearingY >> 6) << std::endl
-								<< "		horiAdvance: " << (g->metrics.horiAdvance >> 6) << std::endl
-								<< "Vertexes: " << std::endl
-								<< "		vertex[0].x: " << m_glyph.vertexes[0].x << std::endl
-								<< "		vertex[0].y: " << m_glyph.vertexes[0].y << std::endl
-								<< "		vertex[0].s: " << m_glyph.vertexes[0].s << std::endl
-								<< "		vertex[0].t: " << m_glyph.vertexes[0].t << std::endl
-								<< "		vertex[1].x: " << m_glyph.vertexes[1].x << std::endl
-								<< "		vertex[1].y: " << m_glyph.vertexes[1].y << std::endl
-								<< "		vertex[1].s: " << m_glyph.vertexes[1].s << std::endl
-								<< "		vertex[1].t: " << m_glyph.vertexes[1].t << std::endl
-								<< "		vertex[2].x: " << m_glyph.vertexes[2].x << std::endl
-								<< "		vertex[2].y: " << m_glyph.vertexes[2].y << std::endl
-								<< "		vertex[2].s: " << m_glyph.vertexes[2].s << std::endl
-								<< "		vertex[2].t: " << m_glyph.vertexes[2].t << std::endl
-								<< "		vertex[3].x: " << m_glyph.vertexes[3].x << std::endl
-								<< "		vertex[3].y: " << m_glyph.vertexes[3].y << std::endl
-								<< "		vertex[3].s: " << m_glyph.vertexes[3].s << std::endl
-								<< "		vertex[3].t: " << m_glyph.vertexes[3].t << std::endl
-								<< "		vertex[4].x: " << m_glyph.vertexes[4].x << std::endl
-								<< "		vertex[4].y: " << m_glyph.vertexes[4].y << std::endl
-								<< "		vertex[4].s: " << m_glyph.vertexes[4].s << std::endl
-								<< "		vertex[4].t: " << m_glyph.vertexes[4].t << std::endl
-								<< "		vertex[5].x: " << m_glyph.vertexes[5].x << std::endl
-								<< "		vertex[5].y: " << m_glyph.vertexes[5].y << std::endl
-								<< "		vertex[5].s: " << m_glyph.vertexes[5].s << std::endl
-								<< "		vertex[5].t: " << m_glyph.vertexes[5].t << std::endl
-								<< std::endl;
-#endif
-		}
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
 
 }

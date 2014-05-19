@@ -29,12 +29,7 @@
 
 #include <fontconfig/fontconfig.h>
 
-#include <BlendInt/Core/Freetype.hpp>
-
 using namespace std;
-
-typedef map<string, BlendInt::Freetype*> FontList;
-typedef FontList::const_iterator FontIter;
 
 namespace BlendInt {
 
@@ -128,11 +123,6 @@ namespace BlendInt {
 		 * @brief The real object to provide font config service
 		 */
 		static FontConfig* service;
-
-		// container for fonts
-		FontList _fonts;
-
-		map<string, Freetype*> _namedb;
 
 		/** a buffer in memory for the default font file */
 		unsigned char* _defaultFontBuf;

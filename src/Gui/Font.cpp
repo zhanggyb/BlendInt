@@ -58,7 +58,7 @@ namespace BlendInt {
 
 		m_color = 0x000000FF;
 
-		m_cache = FontCacheExt::Create(m_data);
+		m_cache = FontCache::Create(m_data);
 	}
 
 	Font::Font (const Font& orig)
@@ -91,13 +91,13 @@ namespace BlendInt {
 	void Font::SetName (const std::string& name)
 	{
 		m_data.name = name;
-		m_cache = FontCacheExt::Create(m_data);
+		m_cache = FontCache::Create(m_data);
 	}
 
 	void Font::SetSize (unsigned int size)
 	{
 		m_data.size = size;
-		m_cache = FontCacheExt::Create(m_data);
+		m_cache = FontCache::Create(m_data);
 	}
 
 	void Font::SetBold (bool bold)
@@ -108,7 +108,7 @@ namespace BlendInt {
 			CLRBIT(m_data.flag, FontStyleBold);
 		}
 
-		m_cache = FontCacheExt::Create(m_data);
+		m_cache = FontCache::Create(m_data);
 	}
 
 	void Font::SetItalic (bool italic)
@@ -119,7 +119,7 @@ namespace BlendInt {
 			CLRBIT(m_data.flag, FontStyleItalic);
 		}
 
-		m_cache = FontCacheExt::Create(m_data);
+		m_cache = FontCache::Create(m_data);
 	}
 
 	void Font::SetOutline(bool outline)
@@ -130,7 +130,7 @@ namespace BlendInt {
 			CLRBIT(m_data.flag, FontStyleOutline);
 		}
 
-		m_cache = FontCacheExt::Create(m_data);
+		m_cache = FontCache::Create(m_data);
 	}
 
 	void Font::SetShadow(bool shadow, float offset_x, float offset_y)

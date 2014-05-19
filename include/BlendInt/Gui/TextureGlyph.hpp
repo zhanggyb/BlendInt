@@ -46,9 +46,7 @@ namespace BlendInt {
 
 		~TextureGlyph ();
 
-		void Load (const Freetype& freetype, wchar_t charcode);
-
-		void generate (Freetype* freetype, wchar_t charcode);
+		void Load (const FTFace& font_face, uint32_t charcode);
 
 		const Glyph& glyph () const
 		{

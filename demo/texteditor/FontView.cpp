@@ -135,7 +135,7 @@ FontView::FontView ()
 	//m_font.SetName("STHeiti");
 	m_font.SetShadow(true);
 
-	size_t size = BI::FontCacheExt::GetCacheSize ();
+	size_t size = BI::FontCache::GetCacheSize ();
 	DBG_PRINT_MSG("cache size: %ld", size);
 
 	/*

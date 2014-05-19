@@ -142,14 +142,14 @@ namespace BlendInt {
 #ifdef __APPLE__
 
 		// Create a default font
-		FontCache::Create("Sans-Serif", 9, 96, false, false);
+		//FontCache::Create("Sans-Serif", 9, 96, false, false);
 
 #endif
 
 #ifdef __LINUX__
 
 		// Create a default font
-		FontCache::Create("Sans", 9, 96, false, false);
+		//FontCache::Create("Sans", 9, 96, false, false);
 
 #endif
 
@@ -163,8 +163,7 @@ namespace BlendInt {
 		StockItems::Release();
 		ShaderManager::Release();
 		Theme::Release();
-		FontCache::releaseAll();
-		FontCacheExt::ReleaseAll();
+		FontCache::ReleaseAll();
 
 #ifdef USE_FONTCONFIG
 		FontConfig::release();

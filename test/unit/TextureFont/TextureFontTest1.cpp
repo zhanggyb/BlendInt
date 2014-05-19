@@ -57,16 +57,18 @@ TEST_F(TextureFontTest1, Foo1)
 
     // TODO: add test code here
 
-    Freetype ft;
+    FTLibrary ft_lib;
+    FTFace ft_face;
+
+    ft_lib.Initialize();
+
 #ifdef __APPLE__
-    ft.Open("/System/Library/Fonts/STHeiti Medium.ttc", 72, 96);
+    ft_face.New(ft_lib, "/System/Library/Fonts/STHeiti Medium.ttc");
 #else
-    ft.Open("/home/zhanggyb/.fonts/m/msyh.ttf", 72, 96);
+    ft_face.New(ft_lib, "/home/zhanggyb/.fonts/m/msyh.ttf");
 #endif
 
-    if(!ft.valid()) {
-    	DBG_PRINT_MSG("%s", "fail to load font");
-    }
+    ft_face.SetCharSize(72 << 6, 0, 96, 0);
 
     TextureGlyph font;
 
@@ -78,7 +80,7 @@ TEST_F(TextureFontTest1, Foo1)
 
     glGenBuffers(1, &vbo);
 
-    font.Load(ft, L'A');
+    font.Load(ft_face, L'A');
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * 4, &(font.glyph().vertexes[0]), GL_DYNAMIC_DRAW);
@@ -150,7 +152,8 @@ TEST_F(TextureFontTest1, Foo1)
 #endif  // __APPLE__
     }
 
-    ft.Close();
+    ft_face.Done();
+    ft_lib.Done();
     Interface::Release();
 
     Terminate();
