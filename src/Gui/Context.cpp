@@ -1092,13 +1092,13 @@ namespace BlendInt
 				if(scissor_status.valid()) {
 					scissor_status.Enable();
 
-					for (it->First(); !it->End(); it->Next()) {
+					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
 						DispatchDrawEvent(it->GetWidget(), event);
 					}
 
 				} else {
 
-					for (it->First(); !it->End(); it->Next()) {
+					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
 						DispatchDrawEvent(it->GetWidget(), event);
 					}
 				}
@@ -1123,7 +1123,7 @@ namespace BlendInt
 
 				IteratorPtr it = p->CreateIterator(event);
 
-				for (it->First(); !it->End(); it->Next()) {
+				for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
 					if (it->GetWidget()->visiable() && it->GetWidget()->Contain(event.position())) {
 						m_hover_deque->push_back(it->GetWidget());
 						m_hover_deque->back()->CursorEnterEvent(true);

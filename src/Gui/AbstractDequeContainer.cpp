@@ -112,13 +112,9 @@ namespace BlendInt {
 
 		if (it != m_sub_widgets->end()) {
 			m_sub_widgets->erase(it);
-
 			SetContainer(widget, 0);
-
 			return true;
-
 		} else {
-
 			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
 							widget->name().c_str(), name().c_str());
 			return false;
@@ -206,7 +202,7 @@ namespace BlendInt {
 		{
 			(*it)->destroyed().disconnectOne(this,
 							&AbstractDequeContainer::OnSubWidgetDestroyed);
-			AbstractContainer::SetContainer(*it, 0);
+			SetContainer(*it, 0);
 
 			if ((*it)->managed() && ((*it)->count() == 0)) {
 				delete *it;
@@ -218,9 +214,9 @@ namespace BlendInt {
 
 	IteratorPtr AbstractDequeContainer::CreateIterator (const DeviceEvent& event)
 	{
-		RefPtr<DequeIterator> ret(new DequeIterator(m_sub_widgets.get()));
+		RefPtr<DequeIterator> iterator(new DequeIterator(m_sub_widgets.get()));
 
-		return ret;
+		return iterator;
 	}
 	
 	ResponseType AbstractDequeContainer::FocusEvent (bool focus)

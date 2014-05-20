@@ -56,17 +56,17 @@ namespace BlendInt {
 		return m_once ? m_widget : 0;
 	}
 
-	void SingleIterator::First ()
+	void SingleIterator::GoToFirst ()
 	{
 		m_once = true;
 	}
 
-	void SingleIterator::Next ()
+	void SingleIterator::GoNext ()
 	{
 		m_once = false;
 	}
 
-	bool SingleIterator::End ()
+	bool SingleIterator::IsEnd ()
 	{
 		if(m_widget == 0) {
 			return true;

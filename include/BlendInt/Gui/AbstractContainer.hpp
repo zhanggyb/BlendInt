@@ -58,13 +58,12 @@ namespace BlendInt {
 
 		virtual AbstractWidget* GetWidget () const = 0;
 
-		virtual void First () = 0;
+		virtual void GoToFirst () = 0;
 
-		virtual void Next () = 0;
+		virtual void GoNext () = 0;
 
-		virtual bool End () = 0;
+		virtual bool IsEnd () = 0;
 	};
-
 
 	class SingleIterator: public AbstractContainerIterator
 	{
@@ -80,18 +79,17 @@ namespace BlendInt {
 
 		virtual AbstractWidget* GetWidget () const;
 
-		virtual void First ();
+		virtual void GoToFirst ();
 
-		virtual void Next ();
+		virtual void GoNext ();
 
-		virtual bool End ();
+		virtual bool IsEnd ();
 
 	private:
 
 		AbstractWidget* m_widget;
 		bool m_once;
 	};
-
 
 	class DequeIterator: public AbstractContainerIterator
 	{
@@ -104,10 +102,10 @@ namespace BlendInt {
 		}
 
 		DequeIterator (const DequeIterator& orig)
-		: AbstractContainerIterator(), m_deque_ptr(0)
+		: AbstractContainerIterator(),
+		  m_deque_ptr(orig.m_deque_ptr),
+		  m_it(orig.m_it)
 		{
-			m_deque_ptr = orig.m_deque_ptr;
-			m_it = orig.m_it;
 		}
 
 		virtual ~DequeIterator ()
@@ -128,17 +126,17 @@ namespace BlendInt {
 			return *m_it;
 		}
 
-		virtual void First ()
+		virtual void GoToFirst ()
 		{
 			m_it = m_deque_ptr->begin();
 		}
 
-		virtual void Next ()
+		virtual void GoNext ()
 		{
 			++m_it;
 		}
 
-		virtual bool End ()
+		virtual bool IsEnd ()
 		{
 			return m_it == m_deque_ptr->end();
 		}

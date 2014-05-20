@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 	ToolButton* tbtn0 = Manage(new ToolButton);
 	tbtn0->set_name("ToolButton0");
 	tbtn0->SetLayer(0);
-	tbtn0->SetPosition(200, 200);
+	tbtn0->SetPosition(50, 50);
 	tbtn0->Resize(200, 200);
 
 	ToolButton* tbtn1 = Manage(new ToolButton);
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 	ToolButton* tbtn2 = Manage(new ToolButton);
 	tbtn2->set_name("ToolButton2");
 	tbtn2->SetLayer(2);
-	tbtn2->SetPosition(300, 300);
+	tbtn2->SetPosition(350, 100);
 	tbtn2->Resize(100, 100);
 
 	context->Add(tbtn0);
