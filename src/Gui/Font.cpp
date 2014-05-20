@@ -122,13 +122,14 @@ namespace BlendInt {
 		m_cache = FontCache::Create(m_data);
 	}
 
-	void Font::SetOutline(bool outline)
+	void Font::SetOutline(bool outline, float thickness)
 	{
 		if(outline) {
 			SETBIT(m_data.flag, FontStyleOutline);
 		} else {
 			CLRBIT(m_data.flag, FontStyleOutline);
 		}
+		m_data.thickness = thickness;
 
 		m_cache = FontCache::Create(m_data);
 	}

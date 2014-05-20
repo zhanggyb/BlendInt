@@ -739,7 +739,6 @@ namespace BlendInt
 		m_main_buffer->Bind();
 
 		m_program->SetUniform1i("TexID", 0);
-		m_program->SetUniform1i("Blur", 0);
 
 		glEnableVertexAttribArray(0);
 		m_vbo->Bind();
@@ -1013,19 +1012,10 @@ namespace BlendInt
 
 			m_vbo->Bind();
 
-			m_deque.front()->Bind();
-			//m_deque.front()->WriteToFile("layer1.png");
-			m_program->SetUniform1i("Blur", 0);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			m_deque.pop_front();
-
 			for (std::deque<GLTexture2D*>::iterator it = m_deque.begin(); it != m_deque.end(); it++) {
 				(*it)->Bind();
 				//(*it)->WriteToFile("layer2.png");
-				m_program->SetUniform1i("Blur", 1);
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-				//m_program->SetUniform1i("Blur", 0);
-				//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			}
 
 			GLTexture2D::Reset();

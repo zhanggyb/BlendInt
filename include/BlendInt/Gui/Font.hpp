@@ -81,7 +81,7 @@ namespace BlendInt {
 			return m_data.flag & FontStyleItalic;
 		}
 
-		void SetOutline (bool outline);
+		void SetOutline (bool outline, float thickness = 0.5f);
 
 		bool IsOutline () const
 		{
