@@ -31,6 +31,7 @@
 #endif
 #endif  // __UNIX__
 
+#include <BlendInt/Types.hpp>
 #include <vector>
 
 #include <BlendInt/OpenGL/TextureAtlas2D.hpp>
@@ -115,10 +116,14 @@ namespace BlendInt {
 						&tex_height);
 
 		if(x > tex_width || y > tex_height) {
+			DBG_PRINT_MSG("%s", "Not enough space to push a new sub texture");
 			return false;
 		}
 
-		if(bitmap_width > m_cell_width || bitmap_rows > m_cell_height) {
+		if((bitmap_width > m_cell_width) || (bitmap_rows > m_cell_height)) {
+			DBG_PRINT_MSG("%s", "Bitmap size is large than a cell size");
+			DBG_PRINT_MSG("bitmap width: %d, bitmap height: %d, cell width: %d, cell_height: %d", bitmap_width,
+							bitmap_rows, m_cell_width, m_cell_height);
 			return false;
 		}
 

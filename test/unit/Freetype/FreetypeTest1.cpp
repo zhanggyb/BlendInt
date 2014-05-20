@@ -24,7 +24,31 @@ TEST_F(FreetypeTest1, Library1)
 	lib.Initialize();
 	lib.SetLcdFilter(FT_LCD_FILTER_DEFAULT);
 
-	face.New(lib, "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
+	face.New(lib, "/usr/share/fonts/truetype/droid/DroidSansMono.ttf");
+	face.SetCharSize(24 << 6, 0, 96, 0);
+
+	FT_GlyphSlot slot = face.face()->glyph;
+
+	for(int i = 33; i < 127; i++) {
+		face.LoadChar(i, FT_LOAD_RENDER);
+
+		DBG_PRINT_MSG("bitmap left: %d,"
+						"bitmap top: %d,"
+						"bitmap width: %d,"
+						"bitmap height: %d,"
+						"advance x: %ld",
+						slot->bitmap_left,
+						slot->bitmap_top,
+						slot->bitmap.width,
+						slot->bitmap.rows,
+						slot->advance.x >> 6);
+
+	}
+
+	DBG_PRINT_MSG("max advance: %ld, max height: %ld or %ld",
+					face.face()->size->metrics.max_advance >> 6,
+					(face.face()->size->metrics.ascender >> 6) - (face.face()->size->metrics.descender >> 6),
+					face.face()->size->metrics.height >> 6);
 
 	stroker.New(lib);
 

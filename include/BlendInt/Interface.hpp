@@ -117,11 +117,6 @@ namespace BlendInt {
 
 		void SetCurrentContext (Context* context);
 
-		Cpp::EventRef<unsigned int, unsigned int> resized ()
-		{
-			return m_resized;
-		}
-
 		Cpp::ConnectionScope* events () const
 		{
 			return m_events.get();
@@ -147,13 +142,7 @@ namespace BlendInt {
 
 		void OnContextDestroyed (AbstractWidget* context);
 
-		//AbstractWidget* m_main;
-
-		Point m_cursor;
-
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
-
-		Cpp::Event<unsigned int, unsigned int> m_resized;
 
 		FocusStyle m_focus_style;
 

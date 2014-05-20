@@ -32,7 +32,7 @@ TEST_F(LabelTest1, Foo1)
 #endif
 	Interface::instance->SetCurrentContext(context);
 
-	Font my_font ("Source Code Pro", 24);
+	Font my_font ("Droid Sans Mono", 24);
 	Font my_shadow_font ("Source Code Pro", 24);
 	my_shadow_font.SetShadow(true, 2.5f, -2.f);
 

@@ -223,7 +223,10 @@ namespace BlendInt {
 
 		const GlyphExt* ret = 0;
 		int cell_x = m_ft_face.face()->size->metrics.max_advance >> 6;
-		int cell_y = (m_ft_face.face()->size->metrics.ascender - m_ft_face.face()->size->metrics.descender) >> 6;
+		int cell_y = std::max (
+						(m_ft_face.face()->size->metrics.ascender -
+										m_ft_face.face()->size->metrics.descender) >> 6,
+						m_ft_face.face()->size->metrics.height >> 6);
 
 		m_last->Bind();
 		if(m_last->IsFull()) {
@@ -316,7 +319,10 @@ namespace BlendInt {
 		m_preset.resize(size);
 
 		int cell_x = m_ft_face.face()->size->metrics.max_advance >> 6;
-		int cell_y = (m_ft_face.face()->size->metrics.ascender - m_ft_face.face()->size->metrics.descender) >> 6;
+		int cell_y = std::max (
+						(m_ft_face.face()->size->metrics.ascender -
+										m_ft_face.face()->size->metrics.descender) >> 6,
+						m_ft_face.face()->size->metrics.height >> 6);
 
 		// if outline, add large the cell size;
 
@@ -359,7 +365,7 @@ namespace BlendInt {
 
 				} else {
 
-					m_ft_face.LoadGlyph(glyph_index, FT_LOAD_RENDER | FT_LOAD_NO_HINTING);
+					m_ft_face.LoadGlyph(glyph_index, FT_LOAD_RENDER);
 
 					if(m_last->Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer)) {
 						SetGlyphData(m_preset[i], slot, m_last);

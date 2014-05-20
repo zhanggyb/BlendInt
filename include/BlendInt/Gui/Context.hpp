@@ -165,7 +165,7 @@ namespace BlendInt {
 
 		void RemoveWidgetFromHoverList (AbstractWidget* widget);
 
-		void InitOnce ();
+		void InitializeContext ();
 
 		void DrawMainBuffer (const glm::mat4& mvp);
 

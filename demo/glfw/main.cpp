@@ -61,13 +61,27 @@ int main(int argc, char* argv[])
 	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
-	String str("12345");
+	ToolButton* tbtn0 = Manage(new ToolButton);
+	tbtn0->set_name("ToolButton0");
+	tbtn0->SetLayer(0);
+	tbtn0->SetPosition(200, 200);
+	tbtn0->Resize(200, 200);
 
-	String other(str);
+	ToolButton* tbtn1 = Manage(new ToolButton);
+	tbtn1->set_name("ToolButton1");
+	tbtn1->SetLayer(1);
+	tbtn1->SetPosition(250, 250);
+	tbtn1->Resize(150, 150);
 
-	std::string out = ConvertFromString(other);
+	ToolButton* tbtn2 = Manage(new ToolButton);
+	tbtn2->set_name("ToolButton2");
+	tbtn2->SetLayer(2);
+	tbtn2->SetPosition(300, 300);
+	tbtn2->Resize(100, 100);
 
-	std::cout << out << std::endl;
+	context->Add(tbtn0);
+	context->Add(tbtn1);
+	context->Add(tbtn2);
 
 	RunLoop(win);
 

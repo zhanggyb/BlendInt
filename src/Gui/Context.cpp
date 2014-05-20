@@ -85,7 +85,7 @@ namespace BlendInt
 		m_main_buffer->set_name("Main Buffer");
 #endif
 
-		InitOnce();
+		InitializeContext();
 	}
 
 	Context::~Context ()
@@ -676,7 +676,7 @@ namespace BlendInt
 		return ret;
 	}
 
-	void Context::InitOnce ()
+	void Context::InitializeContext ()
 	{
 		m_program = ShaderManager::instance->default_context_program();
 
@@ -716,9 +716,18 @@ namespace BlendInt
 
 	void Context::DrawMainBuffer (const glm::mat4& mvp)
 	{
-		glViewport(0, 0, size().width(), size().height());
+		glClearColor(0.447, 0.447, 0.447, 1.00);
+
+		glClearDepth(1.0);
+		glClear(GL_COLOR_BUFFER_BIT |
+						GL_DEPTH_BUFFER_BIT |
+						GL_STENCIL_BUFFER_BIT);
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
 
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+
+		glViewport(0, 0, size().width(), size().height());
 
 		glBindVertexArray(m_vao);
 
@@ -730,6 +739,7 @@ namespace BlendInt
 		m_main_buffer->Bind();
 
 		m_program->SetUniform1i("TexID", 0);
+		m_program->SetUniform1i("Blur", 0);
 
 		glEnableVertexAttribArray(0);
 		m_vbo->Bind();
@@ -951,7 +961,16 @@ namespace BlendInt
 
 			fb->Bind();
 
-			PreDrawContext(true);
+			glClearColor(0.0, 0.0, 0.0, 0.0);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT |
+							GL_DEPTH_BUFFER_BIT |
+							GL_STENCIL_BUFFER_BIT);
+			// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
+
+			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
 
 			glViewport(0, 0, width, height);
 
@@ -962,61 +981,61 @@ namespace BlendInt
 			//DrawGrid(width, height);
 #endif
 
-			GLTexture2D* texture = 0;
-			std::deque<GLTexture2D*>::iterator it;
-			for (it = m_deque.begin(); it != m_deque.end(); it++) {
+			glBindVertexArray(m_vao);
+			m_program->Use();
+			glActiveTexture(GL_TEXTURE0);
+			m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			m_program->SetUniform1i("TexID", 0);
 
-				glBindVertexArray(m_vao);
+			glEnableVertexAttribArray(0);
+			m_vbo->Bind();
 
-				m_program->Use();
+			glVertexAttribPointer(
+					0,
+					2,
+					GL_FLOAT,
+					GL_FALSE,
+					0,
+					BUFFER_OFFSET(0)
+					);
 
-				m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+			glEnableVertexAttribArray(1);
+			m_tbo->Bind();
+			glVertexAttribPointer(
+					1,
+					2,
+					GL_FLOAT,
+					GL_FALSE,
+					0,
+					BUFFER_OFFSET(0)
+					);
 
-				glActiveTexture(GL_TEXTURE0);
-				texture = *it;
-				texture->Bind();
+			m_vbo->Bind();
 
-				m_program->SetUniform1i("TexID", 0);
+			m_deque.front()->Bind();
+			//m_deque.front()->WriteToFile("layer1.png");
+			m_program->SetUniform1i("Blur", 0);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			m_deque.pop_front();
 
-				glEnableVertexAttribArray(0);
-				m_vbo->Bind();
-
-				glVertexAttribPointer(
-						0,
-						2,
-						GL_FLOAT,
-						GL_FALSE,
-						0,
-						BUFFER_OFFSET(0)
-						);
-
-				glEnableVertexAttribArray(1);
-				m_tbo->Bind();
-				glVertexAttribPointer(
-						1,
-						2,
-						GL_FLOAT,
-						GL_FALSE,
-						0,
-						BUFFER_OFFSET(0)
-						);
-
-				m_vbo->Bind();
+			for (std::deque<GLTexture2D*>::iterator it = m_deque.begin(); it != m_deque.end(); it++) {
+				(*it)->Bind();
+				//(*it)->WriteToFile("layer2.png");
+				m_program->SetUniform1i("Blur", 1);
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-				glDisableVertexAttribArray(1);
-				glDisableVertexAttribArray(0);
-
-				m_vbo->Reset();
-				texture->Reset();
-				m_program->Reset();
-
-				glBindVertexArray(0);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+				//m_program->SetUniform1i("Blur", 0);
+				//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			}
+
+			GLTexture2D::Reset();
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(0);
+
+			GLArrayBuffer::Reset();
+			m_program->Reset();
+			glBindVertexArray(0);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		}
 
@@ -1033,7 +1052,7 @@ namespace BlendInt
 	
 	void Context::PreDrawContext (bool fbo)
 	{
-		glClearColor(0.447, 0.447, 0.447, 1.00);
+		glClearColor(0.447, 0.447, 0.447, 0.00);
 
 		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT |
