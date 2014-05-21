@@ -125,6 +125,36 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
+	bool HBox::IsExpandX () const
+	{
+		bool expand = false;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->IsExpandX()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
+
+	bool HBox::IsExpandY () const
+	{
+		bool expand = false;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->IsExpandY()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
+
 	bool HBox::UpdateTest (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
@@ -262,7 +292,7 @@ namespace BlendInt {
 			if (widget->visiable()) {
 				tmp_size = widget->GetPreferredSize();
 
-				if(widget->expand_x()) {
+				if(widget->IsExpandX()) {
 					expandable_preferred_width_sum += tmp_size.width();
 					expandable_preferred_widths->push_back(tmp_size.width());
 				} else {
@@ -270,7 +300,7 @@ namespace BlendInt {
 					unexpandable_preferred_widths->push_back(tmp_size.width());
 				}
 
-				if(!widget->expand_y()) {
+				if(!widget->IsExpandY()) {
 					unexpandable_preferred_heights->push_back(tmp_size.height());
 				}
 
@@ -318,7 +348,7 @@ namespace BlendInt {
 
 			if(widget->visiable()) {
 
-				if(widget->expand_x()) {
+				if(widget->IsExpandX()) {
 					ResizeSubWidget(widget, *exp_it, widget->size().height());
 					SetSubWidgetPosition(widget, x, widget->position().y());
 					exp_it++;
@@ -368,7 +398,7 @@ namespace BlendInt {
 
 				if(widget->visiable()) {
 
-					if (widget->expand_x()) {
+					if (widget->IsExpandX()) {
 						ResizeSubWidget(widget, 0, widget->size().height());
 						SetSubWidgetPosition(widget, x, widget->position().y());
 						exp_it++;
@@ -396,7 +426,7 @@ namespace BlendInt {
 
 				if(widget->visiable()) {
 
-					if (widget->expand_x()) {
+					if (widget->IsExpandX()) {
 						ResizeSubWidget(widget,
 										reference_width * (*exp_it)
 														/ expandable_prefer_sum,
@@ -442,7 +472,7 @@ namespace BlendInt {
 
 			if(widget->visiable()) {
 
-				if (widget->expand_x()) {
+				if (widget->IsExpandX()) {
 					ResizeSubWidget(widget,
 									expandable_width * (*exp_it)
 													/ expandable_prefer_sum,
@@ -471,7 +501,7 @@ namespace BlendInt {
 		for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
 			widget = *it;
 
-			if (widget->expand_y()) {
+			if (widget->IsExpandY()) {
 
 				ResizeSubWidget(widget, widget->size().width(), height);
 				SetSubWidgetPosition(widget, widget->position().x(), y);

@@ -46,6 +46,10 @@ namespace BlendInt {
 
 		virtual ~TabStack ();
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 	protected:
 
 		virtual void Update (const UpdateRequest& request);

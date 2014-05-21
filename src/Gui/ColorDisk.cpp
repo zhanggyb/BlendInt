@@ -21,40 +21,18 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SPACEAREA_HPP_
-#define _BLENDINT_GUI_SPACEAREA_HPP_
-
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/ColorDisk.hpp>
 
 namespace BlendInt {
 
-	class SpaceArea: public Widget
+	ColorDisk::ColorDisk()
+	: Widget()
 	{
-		DISALLOW_COPY_AND_ASSIGN(SpaceArea);
-
-	public:
-
-		SpaceArea (Orientation orientation);
-
-		virtual ~SpaceArea ();
-
-		void SetOrientation (Orientation orientation);
-
-		virtual Size GetPreferredSize () const;
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
-
-	protected:
-
-		virtual ResponseType Draw (const RedrawEvent& event);
-
-		Orientation m_orientation;
-
-	};
+		set_size(160, 160);
+	}
+	
+	ColorDisk::~ColorDisk ()
+	{
+	}
 
 }
-
-
-#endif /* _BLENDINT_GUI_SPACEAREA_HPP_ */

@@ -55,6 +55,10 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 	protected:
 
 		virtual ResponseType CursorEnterEvent (bool entered);

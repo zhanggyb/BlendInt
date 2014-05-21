@@ -145,6 +145,16 @@ namespace BlendInt {
 	{
 	}
 
+	bool ImageView::IsExpandX() const
+	{
+		return true;
+	}
+
+	bool ImageView::IsExpandY() const
+	{
+		return true;
+	}
+
 	void ImageView::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
@@ -225,8 +235,6 @@ namespace BlendInt {
 	{
 		set_size(400, 300);
 		//set_preferred_size(400, 300);
-		set_expand_x(true);
-		set_expand_y(true);
 
 		m_checkerboard.reset(new CheckerBoard(20));
 		m_checkerboard->Resize(size());

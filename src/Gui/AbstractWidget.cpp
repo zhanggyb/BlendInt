@@ -308,50 +308,6 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetExpandX(bool expand)
-	{
-		if(m_flag[WidgetFlagExpandX] == expand)
-			return;
-		bool broadcast = false;
-
-		UpdateRequest request(Predefined, WidgetExpandX, &expand);
-
-		if(UpdateTest (request)) {
-			Update(request);
-			m_flag[WidgetFlagExpandX] = expand ? 1 : 0;
-			broadcast = true;
-		}
-
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
-	}
-
-	void AbstractWidget::SetExpandY(bool expand)
-	{
-		if(m_flag[WidgetFlagExpandY] == expand)
-			return;
-		bool broadcast = false;
-
-		UpdateRequest request(Predefined, WidgetExpandY, &expand);
-
-		if(UpdateTest (request)) {
-			Update(request);
-			m_flag[WidgetFlagExpandY] = expand ? 1 : 0;
-			broadcast = true;
-		}
-
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
-	}
-
-	void AbstractWidget::SetExpand(bool expand)
-	{
-		SetExpandX(expand);
-		SetExpandY(expand);
-	}
-
 	bool AbstractWidget::Contain(const Point& point) const
 	{
 		if(point.x() < m_position.x() ||

@@ -343,7 +343,7 @@ namespace BlendInt {
 		{
 			widget = *it;
 
-			if(widget->expand_y()) {
+			if(widget->IsExpandY()) {
 				ResizeSubWidget(widget, widget->size().width(), height);
 				SetSubWidgetPosition(widget, widget->position().x(), y);
 			} else {
@@ -369,7 +369,7 @@ namespace BlendInt {
 		{
 			widget = *it;
 
-			if (widget->expand_x()) {
+			if (widget->IsExpandX()) {
 				ResizeSubWidget(widget, width, widget->size().height());
 				SetSubWidgetPosition(widget, x, widget->position().y());
 			} else {

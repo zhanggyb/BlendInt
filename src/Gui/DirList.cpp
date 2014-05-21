@@ -34,9 +34,6 @@ namespace BlendInt {
 	DirList::DirList ()
 	: m_vao(0)
 	{
-		set_expand_x(true);
-		set_expand_y(true);
-
 		glGenVertexArrays(1, &m_vao);
 		InitializeFileListOnce();
 	}
@@ -46,6 +43,16 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
+	bool DirList::IsExpandX() const
+	{
+		return true;
+	}
+
+	bool DirList::IsExpandY() const
+	{
+		return true;
+	}
+
 	ResponseType DirList::Draw (const RedrawEvent& event)
 	{
 		namespace fs = boost::filesystem;

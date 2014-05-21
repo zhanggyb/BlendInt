@@ -130,19 +130,19 @@ namespace BlendInt {
 
 		Rect GetTextOutline (const String& string) const;
 
-		size_t GetTextWidth (const std::string& string, size_t start = 0) const;
+		size_t GetTextWidth (const std::string& string) const;
 
 		size_t GetTextWidth (const std::string& string, size_t length, size_t start) const;
 
-		size_t GetTextWidth (const String& string, size_t start = 0) const;
+		size_t GetTextWidth (const String& string) const;
 
 		size_t GetTextWidth (const String& string, size_t length, size_t start) const;
 
-		size_t GetReversedTextWidth (const std::string& string, size_t start = 0) const;
+		size_t GetReversedTextWidth (const std::string& string) const;
 
 		size_t GetReversedTextWidth (const std::string& string, size_t length, size_t start) const;
 
-		size_t GetReversedTextWidth (const String& string, size_t start = 0) const;
+		size_t GetReversedTextWidth (const String& string) const;
 
 		size_t GetReversedTextWidth (const String& string, size_t length, size_t start) const;
 

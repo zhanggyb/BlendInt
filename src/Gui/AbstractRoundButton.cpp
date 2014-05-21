@@ -22,6 +22,7 @@
  */
 
 #include <BlendInt/Gui/AbstractRoundButton.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 
@@ -105,6 +106,13 @@ namespace BlendInt {
 
 		return preferred_size;
 	}
+
+	/*
+	bool AbstractRoundButton::IsExpandX () const
+	{
+		return true;
+	}
+	*/
 
 	void AbstractRoundButton::SetText (const String& text)
 	{

@@ -31,8 +31,6 @@ namespace BlendInt {
 	  m_space(2)
 	{
 		set_size(400, 400);
-		set_expand_x(true);
-		set_expand_y(true);
 	}
 
 	Splitter::~Splitter ()
@@ -52,6 +50,16 @@ namespace BlendInt {
 		if(RemoveSubWidget(widget)) {
 			AlignSubWidgets(m_orientation, size(), margin(), m_space);
 		}
+	}
+
+	bool Splitter::IsExpandX() const
+	{
+		return true;
+	}
+
+	bool Splitter::IsExpandY() const
+	{
+		return true;
 	}
 
 	bool Splitter::UpdateTest (const UpdateRequest& request)

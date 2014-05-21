@@ -53,8 +53,6 @@ namespace BlendInt {
 
 		set_margin(4, 4, 4, 4);	// the same as MenuBar
 
-		set_expand_x(true);
-		set_expand_y(false);
 		set_scissor_test(true);
 
 		InitializeToolBar();
@@ -73,7 +71,7 @@ namespace BlendInt {
 
 		if(PushBackSubWidget(widget)) {
 			SetSubWidgetPosition(widget, x, y);
-			if(widget->expand_y()) {
+			if(widget->IsExpandY()) {
 				ResizeSubWidget(widget, widget->size().width(), h);
 			} else {
 
@@ -97,7 +95,7 @@ namespace BlendInt {
 
 		if(PushBackSubWidget(button)) {
 			SetSubWidgetPosition(button, x, y);
-			if(button->expand_y()) {
+			if(button->IsExpandY()) {
 				ResizeSubWidget(button, button->size().width(), h);
 			} else {
 
@@ -151,6 +149,11 @@ namespace BlendInt {
 		}
 
 		return preferred_size;
+	}
+
+	bool ToolBar::IsExpandX() const
+	{
+		return true;
 	}
 
 	void ToolBar::Update (const UpdateRequest& request)
@@ -460,7 +463,7 @@ namespace BlendInt {
 			widget = *it;
 			SetSubWidgetPosition(widget, x, y);
 
-			if(widget->expand_y()) {
+			if(widget->IsExpandY()) {
 				ResizeSubWidget(widget, widget->size().width(), height);
 			} else {
 

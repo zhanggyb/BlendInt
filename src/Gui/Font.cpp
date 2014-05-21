@@ -395,14 +395,11 @@ namespace BlendInt {
 		return Rect(Point(xmin, ymin), Point(xmax, ymax));
 	}
 
-	size_t Font::GetTextWidth (const std::string& string, size_t start) const
+	size_t Font::GetTextWidth (const std::string& string) const
 	{
 		size_t width = 0;
 
-		assert(start < string.length());
-
 		std::string::const_iterator it = string.begin();
-		std::advance(it, start);
 
 		while(it != string.end()) {
 			width += m_cache->Query(m_data, *it)->advance_x;
@@ -432,15 +429,11 @@ namespace BlendInt {
 		return width;
 	}
 
-	size_t Font::GetTextWidth (const String& string,
-	        size_t start) const
+	size_t Font::GetTextWidth (const String& string) const
 	{
 		size_t width = 0;
 
-		assert(start < string.length());
-
 		String::const_iterator it = string.begin();
-		std::advance(it, start);
 
 		while(it != string.end()) {
 			width += m_cache->Query(m_data, *it)->advance_x;
@@ -470,15 +463,11 @@ namespace BlendInt {
 		return width;
 	}
 
-	size_t Font::GetReversedTextWidth (const std::string& string,
-	        size_t start) const
+	size_t Font::GetReversedTextWidth (const std::string& string) const
 	{
 		size_t width = 0;
 
-		assert(start < string.length());
-
 		std::string::const_reverse_iterator it = string.rbegin();
-		std::advance(it, start);
 
 		while (it != string.rend()) {
 			width += m_cache->Query(m_data, *it)->advance_x;
@@ -508,15 +497,11 @@ namespace BlendInt {
 		return width;
 	}
 
-	size_t Font::GetReversedTextWidth (const String& string,
-	        size_t start) const
+	size_t Font::GetReversedTextWidth (const String& string) const
 	{
 		size_t width = 0;
 
-		assert(start < string.length());
-
 		String::const_reverse_iterator it = string.rbegin();
-		std::advance(it, start);
 
 		while (it != string.rend()) {
 			width += m_cache->Query(m_data, *it)->advance_x;

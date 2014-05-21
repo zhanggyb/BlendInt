@@ -196,21 +196,15 @@ namespace BlendInt {
 
 		void SetVisible (bool visible);
 
-		void SetExpandX (bool expand);
-
-		bool expand_x () const
+		virtual bool IsExpandX () const
 		{
-			return m_flag[WidgetFlagExpandX];
+			return false;
 		}
 
-		void SetExpandY (bool expand);
-
-		bool expand_y () const
+		virtual bool IsExpandY () const
 		{
-			return m_flag[WidgetFlagExpandY];
+			return false;
 		}
-
-		void SetExpand (bool expand);
 
 		virtual bool Contain (const Point& point) const;
 
@@ -327,16 +321,6 @@ namespace BlendInt {
 			m_position = pos;
 		}
 
-		void set_expand_x (bool expand)
-		{
-			m_flag[WidgetFlagExpandX] = expand ? 1 : 0;
-		}
-
-		void set_expand_y (bool expand)
-		{
-			m_flag[WidgetFlagExpandY] = expand ? 1 : 0;
-		}
-
 		virtual ResponseType FocusEvent (bool focus) = 0;
 
 		virtual ResponseType CursorEnterEvent (bool entered) = 0;
@@ -414,10 +398,6 @@ namespace BlendInt {
 			WidgetFlagRefresh,
 
 			WidgetFlagVisibility,
-
-			WidgetFlagExpandX,
-
-			WidgetFlagExpandY,
 
 			WidgetFlagManaged,
 

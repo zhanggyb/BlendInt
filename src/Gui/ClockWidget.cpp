@@ -130,8 +130,6 @@ namespace BlendInt {
 		m_background.set_color(45, 45, 45, 235);
 		set_size(200, 200);
 		//set_preferred_size(200, 200);
-		set_expand_x(true);
-		set_expand_y(true);
 
 		m_timer.reset(new Timer);
 		m_timer->SetInterval(1000);

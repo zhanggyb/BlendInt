@@ -60,6 +60,16 @@ namespace BlendInt {
 		}
 	}
 
+	bool ScrollArea::IsExpandX() const
+	{
+		return true;
+	}
+
+	bool ScrollArea::IsExpandY() const
+	{
+		return true;
+	}
+
 	ResponseType ScrollArea::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
@@ -142,8 +152,6 @@ namespace BlendInt {
 	{
 		set_margin(0, 0, 0, 0);
 		set_size(400, 300);
-		set_expand_x(true);
-		set_expand_y(true);
 
 		m_view = Manage(new ScrollView);
 		m_hbar = Manage(new ScrollBar(Horizontal));

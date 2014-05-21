@@ -45,14 +45,22 @@ namespace BlendInt {
 	TabStack::TabStack ()
 	: Stack(), m_vao(0)
 	{
-		set_expand_x(true);
-		set_expand_y(true);
 		InitOnce();
 	}
 
 	TabStack::~TabStack ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	bool TabStack::IsExpandX() const
+	{
+		return true;
+	}
+
+	bool TabStack::IsExpandY() const
+	{
+		return true;
 	}
 
 	void TabStack::Update (const UpdateRequest& request)

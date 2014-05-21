@@ -38,6 +38,8 @@ namespace BlendInt {
 
 		virtual ~NumberSlider ();
 
+		virtual bool IsExpandX () const;
+
 	protected:
 
 		virtual void Update (const UpdateRequest& request);

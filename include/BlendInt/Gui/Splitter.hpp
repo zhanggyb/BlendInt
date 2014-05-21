@@ -42,6 +42,10 @@ namespace BlendInt {
 
 		void Remove (AbstractWidget* widget);
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 	protected:
 
 		virtual bool UpdateTest (const UpdateRequest& request);

@@ -272,11 +272,18 @@ namespace BlendInt {
 		return Size(2560, 2560);
 	}
 
+	bool Viewport3D::IsExpandX() const
+	{
+		return true;
+	}
+
+	bool Viewport3D::IsExpandY() const
+	{
+		return true;
+	}
+
 	void Viewport3D::InitOnce ()
 	{
-		set_expand_x(true);
-		set_expand_y(true);
-
 		m_default_camera.reset(new NavigationCamera);
 
 		// setup camera

@@ -188,12 +188,15 @@ namespace BlendInt {
 	void Button::InitializeButton ()
 	{
 		set_round_type(RoundAll);
-		set_expand_x(true);
 
+		int padding_left = DefaultButtonPadding().left() * Theme::instance->pixel();
+		int padding_right = DefaultButtonPadding().right() * Theme::instance->pixel();
+		int padding_top = DefaultButtonPadding().top() * Theme::instance->pixel();
+		int padding_bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
 		unsigned int h = font().GetHeight();
 
-		set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
-						h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+		set_size(h + radius() * 2 * Theme::instance->pixel() + padding_left + padding_right,
+						h + padding_top + padding_bottom);
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
@@ -216,20 +219,25 @@ namespace BlendInt {
 	void Button::InitializeButton (const String& text)
 	{
 		set_round_type(RoundAll);
-		set_expand_x(true);
 		set_text(text);
 
+		int padding_left = DefaultButtonPadding().left() * Theme::instance->pixel();
+		int padding_right = DefaultButtonPadding().right() * Theme::instance->pixel();
+		int padding_top = DefaultButtonPadding().top() * Theme::instance->pixel();
+		int padding_bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
 		unsigned int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
-							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+			set_size(h + radius() * 2 * Theme::instance->pixel() + padding_left + padding_right,
+							h + padding_top + padding_bottom);
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			unsigned int width = text_outline.width() + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
-			unsigned int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
+			unsigned int width = text_outline.width()
+							+ radius() * 2 * Theme::instance->pixel()
+							+ padding_left + padding_right;
+			unsigned int height = h + padding_top + padding_bottom;
 
 			set_size(width, height);
 

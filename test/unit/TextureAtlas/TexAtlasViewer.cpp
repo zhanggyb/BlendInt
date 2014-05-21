@@ -44,8 +44,6 @@ TexAtlasViewer::TexAtlasViewer()
 	: BI::Widget()//, m_vao(0)
 {
 	set_size(384, 384);
-	set_expand_x(true);
-	set_expand_y(true);
 	
 	glGenVertexArrays(1, &m_vao);
 	

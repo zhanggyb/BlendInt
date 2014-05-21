@@ -53,6 +53,8 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		virtual bool IsExpandX () const;
+
 		MenuButton* GetMenuButton (size_t index);
 
 		int space () const

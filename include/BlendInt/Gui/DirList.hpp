@@ -46,6 +46,10 @@ namespace BlendInt {
 
 		virtual ~DirList ();
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 	protected:
 
 		virtual ResponseType Draw (const RedrawEvent& event);

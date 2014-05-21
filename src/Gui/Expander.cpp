@@ -197,7 +197,6 @@ namespace BlendInt {
 	void ExpandButton::InitializeExpandButton ()
 	{
 		set_round_type(RoundAll);
-		set_expand_x(true);
 		set_checkable(true);
 
 		unsigned int h = font().GetHeight();
@@ -222,7 +221,6 @@ namespace BlendInt {
 	void ExpandButton::InitializeExpandButton (const String& text)
 	{
 		set_round_type(RoundAll);
-		set_expand_x(true);
 		set_checkable(true);
 		set_text(text);
 
@@ -269,7 +267,6 @@ namespace BlendInt {
 	{
 		m_title_button = Manage(new ExpandButton);
 		m_frame = Manage(new Frame);
-		m_frame->SetExpand(true);
 
 		PushBackSubWidget(m_title_button);
 		PushBackSubWidget(m_frame);
@@ -313,7 +310,6 @@ namespace BlendInt {
 	{
 		m_title_button = Manage(new ExpandButton(title));
 		m_frame = Manage(new Frame);
-		m_frame->SetExpand(true);
 
 		PushBackSubWidget(m_title_button);
 		PushBackSubWidget(m_frame);
@@ -385,6 +381,36 @@ namespace BlendInt {
 		prefer.add_height(margin().top() + margin().bottom());
 
 		return prefer;
+	}
+
+	bool Expander::IsExpandX () const
+	{
+		bool expand = false;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->IsExpandX()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
+
+	bool Expander::IsExpandY () const
+	{
+		bool expand = false;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->IsExpandY()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
 	}
 
 	bool Expander::UpdateTest (const UpdateRequest& request)

@@ -58,6 +58,10 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 	protected:
 
 		virtual bool UpdateTest (const UpdateRequest& request);

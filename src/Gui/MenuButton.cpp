@@ -159,8 +159,6 @@ namespace BlendInt {
 	void MenuButton::InitializeMenuButton (const String& text)
 	{
 		set_round_type(RoundAll);
-		set_expand_x(false);
-		set_expand_y(false);
 		set_text(text);
 
 		unsigned int h = font().GetHeight();

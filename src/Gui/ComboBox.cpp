@@ -51,7 +51,6 @@ namespace BlendInt {
 	: RoundWidget(), m_vao(0), m_status_down(false)
 	{
 		set_round_type(RoundAll);
-		set_expand_x(true);
 
 		unsigned int h = m_font.GetHeight();
 
@@ -93,7 +92,7 @@ namespace BlendInt {
 											+ default_combobox_padding.right()
 											+ radius_plus);
 		} else {
-			size_t width = m_font.GetTextWidth(m_text, m_text.length());
+			size_t width = m_font.GetTextWidth(m_text);
 			preferred_size.set_width(
 							static_cast<unsigned int>(width)
 											+ default_combobox_padding.left()
@@ -102,6 +101,11 @@ namespace BlendInt {
 		}
 
 		return preferred_size;
+	}
+
+	bool ComboBox::IsExpandX() const
+	{
+		return true;
 	}
 
 	void ComboBox::Update(const UpdateRequest& request)

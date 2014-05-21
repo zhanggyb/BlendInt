@@ -129,6 +129,16 @@ namespace BlendInt {
 
 	}
 
+	bool CVImageView::IsExpandX() const
+	{
+		return true;
+	}
+
+	bool CVImageView::IsExpandY() const
+	{
+		return true;
+	}
+
 	void CVImageView::Update (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
@@ -208,8 +218,6 @@ namespace BlendInt {
 	void CVImageView::InitOnce ()
 	{
 		set_size(400, 300);
-		set_expand_x(true);
-		set_expand_y(true);
 
 		m_checkerboard.reset(new CheckerBoard(20));
 		m_checkerboard->Resize(size());

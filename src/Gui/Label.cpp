@@ -224,9 +224,13 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
+	bool Label::IsExpandX() const
+	{
+		return true;
+	}
+
 	void Label::InitLabel (const String& text)
 	{
-		set_expand_x(true);
 		m_text = text;
 
 		unsigned int h = m_font.GetHeight();

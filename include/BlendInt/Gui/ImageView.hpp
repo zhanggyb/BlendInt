@@ -47,6 +47,10 @@ namespace BlendInt {
 
 		void Load (const RefPtr<Image>& image);
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 	protected:
 
 		virtual void Update (const UpdateRequest& request);

@@ -31,7 +31,6 @@ void MainLayout::InitOnce ()
 
 	m_ok = Manage(new BI::Button("OK"));
 	m_ok->set_name("OK");
-	m_ok->SetExpandX(false);
 
 	Add(m_view3d);
 	Add(m_ok);

@@ -25,29 +25,49 @@
 
 namespace BlendInt {
 
-	SpaceArea::SpaceArea (int orientation)
-	: Widget()
+	SpaceArea::SpaceArea (Orientation orientation)
+	: Widget(), m_orientation(orientation)
 	{
-		//set_preferred_size(5, 5);
 		set_size(20, 20);
-
-		SetOrientation(orientation);
 	}
 
 	SpaceArea::~SpaceArea ()
 	{
 	}
 
-	void SpaceArea::SetOrientation (int orientation)
+	void SpaceArea::SetOrientation (Orientation orientation)
 	{
-		if(orientation & Horizontal) {
-			set_expand_x(true);
-			//set_preferred_size(100, preferred_size().height());
+		m_orientation = orientation;
+	}
+
+	Size SpaceArea::GetPreferredSize() const
+	{
+		Size preferred_size(1, 1);
+
+		if(m_orientation == Horizontal) {
+			preferred_size.set_width(100);
+		} else {
+			preferred_size.set_height(100);
 		}
 
-		if(orientation & Vertical) {
-			set_expand_y(true);
-			//set_preferred_size(preferred_size().width(), 100);
+		return preferred_size;
+	}
+
+	bool SpaceArea::IsExpandX() const
+	{
+		if(m_orientation == Horizontal) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	bool SpaceArea::IsExpandY() const
+	{
+		if(m_orientation == Vertical) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 

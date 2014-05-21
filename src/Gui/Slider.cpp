@@ -49,10 +49,8 @@ namespace BlendInt {
 
 		if (orientation == Vertical) {
 			set_size(18, 200);
-			set_expand_y(true);
 		} else {
 			set_size(200, 18);
-			set_expand_x(true);
 		}
 
 		InitOnce();
@@ -61,6 +59,24 @@ namespace BlendInt {
 	Slider::~Slider()
 	{
 		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	bool Slider::IsExpandX() const
+	{
+		if (orientation() == Horizontal) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	bool Slider::IsExpandY() const
+	{
+		if(orientation() == Vertical) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	bool Slider::UpdateTest (const UpdateRequest& request)

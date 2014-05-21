@@ -51,6 +51,10 @@ namespace BlendInt {
 
 			int GetPercentage () const;
 
+			virtual bool IsExpandX () const;
+
+			virtual bool IsExpandY () const;
+
 		protected:
 
 			virtual bool UpdateTest (const UpdateRequest& request);

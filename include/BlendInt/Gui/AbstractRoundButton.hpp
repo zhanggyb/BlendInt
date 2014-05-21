@@ -61,6 +61,8 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		//virtual bool IsExpandX () const;
+
 		void SetText (const String& text);
 
 		void SetFont (const Font& font);

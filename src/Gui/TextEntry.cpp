@@ -52,10 +52,6 @@ namespace BlendInt {
 	  m_length(0),
 	  m_cursor_position(0)
 	{
-		set_expand_x(true);
-		set_size (120, 20);	// the same height of a button
-		set_radius(0.0);
-
 		InitializeTextEntry();
 	}
 
@@ -75,7 +71,7 @@ namespace BlendInt {
 		m_length = m_text.length();
 
 		if(size().height() < m_text_outline.height()) {
-			if(expand_y()) {
+			if(IsExpandY()) {
 				Resize(size().width(), m_text_outline.height());
 			} else {
 				m_length = 0;
@@ -84,7 +80,7 @@ namespace BlendInt {
 		}
 
 		if(size().width() < m_text_outline.width()) {
-			if(expand_x()) {
+			if(IsExpandX()) {
 				Resize(m_text_outline.width(), size().height());
 			} else {
 				if(cal_width) m_length = GetValidTextSize();
@@ -143,7 +139,7 @@ namespace BlendInt {
 											+ default_textentry_padding.right()
 											+ radius_plus);
 		} else {
-			size_t width = m_font.GetTextWidth(text(), text().length());
+			size_t width = m_font.GetTextWidth(text());
 			preferred_size.set_width(
 							static_cast<unsigned int>(width)
 											+ default_textentry_padding.left()
@@ -152,6 +148,11 @@ namespace BlendInt {
 		}
 
 		return preferred_size;
+	}
+
+	bool TextEntry::IsExpandX () const
+	{
+		return true;
 	}
 
 	ResponseType TextEntry::KeyPressEvent (const KeyEvent& event)
@@ -364,6 +365,11 @@ namespace BlendInt {
 
 	void TextEntry::InitializeTextEntry ()
 	{
+		unsigned int h = m_font.GetHeight();
+
+		set_size(h + radius() * 2 + default_textentry_padding.left() + default_textentry_padding.right(),
+						h + default_textentry_padding.top() + default_textentry_padding.bottom());
+
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
@@ -421,11 +427,11 @@ namespace BlendInt {
 		size_t width = 0;
 		size_t str_len = m_text.length();
 
-		width = m_font.GetTextWidth(m_text, str_len);
+		width = m_font.GetTextWidth(m_text, str_len, 0);
 
 		if(width > size().width()) {
 			while(str_len > 0) {
-				width = m_font.GetTextWidth(m_text, str_len);
+				width = m_font.GetTextWidth(m_text, str_len, 0);
 				if(width < size().width()) break;
 				str_len--;
 			}
@@ -549,11 +555,11 @@ namespace BlendInt {
 			Refresh();
 		}
 	}
-
+	
 	void TextEntry::GetVisibleTextPlace (size_t* start, size_t* length)
 	{
 		size_t str_len = m_text.length();
-		size_t width = m_font.GetTextWidth(m_text, str_len);
+		size_t width = m_font.GetTextWidth(m_text, str_len, 0);
 
 		if(width < (size().width() - 4)) {
 			*start = 0;
@@ -561,7 +567,7 @@ namespace BlendInt {
 		} else {
 			while(str_len > 0) {
 				str_len--;
-				width = m_font.GetTextWidth(m_text, str_len);
+				width = m_font.GetTextWidth(m_text, str_len, 0);
 				if(width < (size().width() - 4)) break;
 			}
 

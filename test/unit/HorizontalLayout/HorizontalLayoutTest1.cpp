@@ -34,9 +34,7 @@ TEST_F(HLayoutTest1, Add1)
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
-	widget1->SetExpand(false);
 	Widget* widget2 = new Widget;
-	widget1->SetExpand(false);
 
 	hlayout->Add(Manage(widget1));
 	hlayout->Add(Manage(widget2));
@@ -73,9 +71,7 @@ TEST_F(HLayoutTest1, Add2)
 	hlayout->Resize(400, 200);
 
 	Widget* widget1 = new Widget;
-	widget1->SetExpand(true);
 	Widget* widget2 = new Widget;
-	widget2->SetExpand(true);
 
 	hlayout->Add(Manage(widget1));
 	hlayout->Add(Manage(widget2));
@@ -112,10 +108,7 @@ TEST_F(HLayoutTest1, Add3)
 	hlayout->Resize(400, 200);
 
 	Widget* widget1 = new Widget;
-	widget1->SetExpandX(false);
-	widget1->SetExpandY(true);
 	Widget* widget2 = new Widget;
-	widget2->SetExpand(true);
 
 	hlayout->Add(Manage(widget1));
 	hlayout->Add(Manage(widget2));
@@ -150,11 +143,9 @@ TEST_F(HLayoutTest1, Add4)
 	hlayout->Resize(400, 200);
 
 	Widget* widget1 = new Widget;
-	widget1->SetExpandX(true);
     //widget1->SetPreferredSize(40, widget1->preferred_size().height());
     //widget1->SetMaximalSize(80, widget1->maximal_size().height());
 	Widget* widget2 = new Widget;
-	widget2->SetExpandX(true);
     //widget2->SetPreferredSize(40, widget2->preferred_size().height());
     //widget2->SetMaximalSize(80, widget2->maximal_size().height());
 
@@ -191,15 +182,12 @@ TEST_F(HLayoutTest1, Add5)
 	hlayout->Resize(600, 200);
 
 	Widget* widget1 = new Widget;
-	widget1->SetExpandX(true);
     //widget1->SetPreferredSize(40, widget1->preferred_size().height());
     //widget1->SetMaximalSize(80, widget1->maximal_size().height());
 	Widget* widget2 = new Widget;
-	widget2->SetExpandX(true);
     //widget2->SetPreferredSize(40, widget2->preferred_size().height());
     //widget2->SetMaximalSize(80, widget2->maximal_size().height());
 	Widget* widget3 = new Widget;
-	widget3->SetExpandX(true);
     //widget3->SetPreferredSize(40, widget3->preferred_size().height());
     //widget3->SetMaximalSize(60, widget3->maximal_size().height());
 	Widget* widget4 = new Widget;
@@ -243,7 +231,6 @@ TEST_F(HLayoutTest1, Add6)
 	hlayout->Resize(50, 200);
 
 	Widget* widget1 = new Widget;
-	widget1->SetExpandX(true);
     //widget1->SetPreferredSize(40, widget1->preferred_size().height());
     //widget1->SetMaximalSize(80, widget1->maximal_size().height());
 	Widget* widget2 = new Widget;
@@ -251,7 +238,6 @@ TEST_F(HLayoutTest1, Add6)
 	Widget* widget3 = new Widget;
     //widget3->SetMinimalSize(20, widget3->minimal_size().height());
 	Widget* widget4 = new Widget;
-	widget4->SetExpandX(true);
 	
     hlayout->Add(Manage(widget1));
 	hlayout->Add(Manage(widget2));
@@ -334,9 +320,7 @@ TEST_F(HLayoutTest1, Resize1)
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
-	widget1->SetExpand(true);
 	Widget* widget2 = new Widget;
-	widget2->SetExpand(true);
 
 	hlayout->Add(Manage(widget1));
 	hlayout->Add(Manage(widget2));
@@ -456,10 +440,8 @@ TEST_F(HLayoutTest1, SetMargin1)
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
-    widget1->SetExpand(true);
     widget1->Resize(100, 80);
 	Widget* widget2 = new Widget;
-    widget2->SetExpand(true);
     widget2->Resize(100, 80);
 
 	hlayout->Add(Manage(widget1));
@@ -500,10 +482,8 @@ TEST_F(HLayoutTest1, SetSpace1)
 	hlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
-    widget1->SetExpand(true);
     widget1->Resize(100, 80);
 	Widget* widget2 = new Widget;
-    widget2->SetExpand(true);
     widget2->Resize(100, 80);
 
 	hlayout->Add(Manage(widget1));

@@ -45,9 +45,6 @@ namespace BlendInt {
 	MenuBar::MenuBar ()
 	: AbstractDequeContainer(), m_vao(0), m_space(2), m_active_button(0)
 	{
-		set_expand_x(true);
-		set_expand_y(false);
-
 		set_margin(2, 2, 1, 1);
 		set_size(200, 22);
 		//set_preferred_size(200, 22);
@@ -345,6 +342,11 @@ namespace BlendInt {
 		}
 
 		return preferred_size;
+	}
+
+	bool MenuBar::IsExpandX() const
+	{
+		return true;
 	}
 
 	MenuButton* MenuBar::GetMenuButton (size_t index)

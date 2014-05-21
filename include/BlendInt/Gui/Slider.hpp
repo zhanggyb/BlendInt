@@ -40,6 +40,10 @@ namespace BlendInt {
 
 		virtual ~Slider ();
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 	protected:
 
 		virtual bool UpdateTest (const UpdateRequest& request);

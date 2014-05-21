@@ -197,7 +197,6 @@ namespace BlendInt {
 	void ToggleButton::InitializeToggleButton ()
 	{
 		set_round_type(RoundAll);
-		set_expand_x(true);
 		set_checkable(true);
 
 		unsigned int h = font().GetHeight();
@@ -223,7 +222,6 @@ namespace BlendInt {
 	void ToggleButton::InitializeToggleButton (const String& text)
 	{
 		set_round_type(RoundAll);
-		set_expand_x(true);
 		set_checkable(true);
 		set_text(text);
 

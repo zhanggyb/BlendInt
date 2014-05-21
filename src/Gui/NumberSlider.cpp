@@ -50,6 +50,11 @@ namespace BlendInt {
 	{
 		glDeleteVertexArrays(1, &m_vao);
 	}
+
+	bool NumberSlider::IsExpandX() const
+	{
+		return true;
+	}
 	
 	void NumberSlider::Update (const UpdateRequest& request)
 	{
@@ -156,7 +161,6 @@ namespace BlendInt {
 	void NumberSlider::InitOnce()
 	{
 		set_round_type(RoundAll);
-		set_expand_x(true);
 		set_radius(10.f);
 		set_size(90, 20);
 

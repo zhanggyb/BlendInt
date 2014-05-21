@@ -115,6 +115,16 @@ namespace BlendInt {
 
 		void ClearSubWidgets ();
 
+		size_t sub_widget_size () const
+		{
+			return m_sub_widgets->size();
+		}
+
+		AbstractWidget* sub_widget (size_t index) const
+		{
+			return m_sub_widgets->at(index);
+		}
+
 		WidgetVector* sub_widgets () const
 		{
 			return m_sub_widgets.get();
