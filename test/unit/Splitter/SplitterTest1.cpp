@@ -31,6 +31,11 @@ TEST_F(SplitterTest1, Foo1)
     context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
+    SplitterHandle* split_handle = Manage(new SplitterHandle(Vertical));
+    split_handle->SetPosition(200, 200);
+    context->Add(split_handle);
+
+    /*
 	Splitter* splitter = Manage(new Splitter);
 #ifdef DEBUG
 	splitter->set_name("Splitter");
@@ -46,6 +51,7 @@ TEST_F(SplitterTest1, Foo1)
 	splitter->Resize(400, 200);
 	
 	context->Add(splitter);
+	*/
 
     RunLoop(win);
 

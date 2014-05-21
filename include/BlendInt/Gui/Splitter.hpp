@@ -25,8 +25,55 @@
 #define _BLENDINT_GUI_SPLITTER_HPP_
 
 #include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
+
+	class SplitterHandle: public Widget
+	{
+		DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
+
+	public:
+
+		SplitterHandle (Orientation orientation);
+
+		virtual ~SplitterHandle ();
+
+		virtual Size GetPreferredSize () const;
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+	protected:
+
+		virtual ResponseType Draw (const RedrawEvent& event);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+	private:
+
+		Orientation m_orientation;
+
+		GLuint m_vao;
+
+		bool m_highlight;
+
+		RefPtr<GLArrayBuffer> m_buffer;
+
+		Point m_last;
+
+		Point m_cursor;
+
+		bool m_pressed;
+
+	};
 
 	class Splitter: public AbstractDequeContainer
 	{

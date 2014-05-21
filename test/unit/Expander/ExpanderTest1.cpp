@@ -33,15 +33,18 @@ TEST_F(ExpanderTest1, Foo1)
 	Expander* expander = Manage(new Expander("Hello"));
 	expander->set_name("Expander");
 	expander->SetPosition(200, 200);
-	
+	//expander->Resize(200, 200);
+
+	context->Add(expander);
+
+	/*
 	Button* btn1 = Manage(new Button);
 	btn1->set_name("Button1");
 
 	expander->Setup(btn1);
-	
-	context->Add(expander);
 
 	expander->Resize(200, 200);
+	*/
 
     RunLoop(win);
 

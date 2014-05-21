@@ -107,6 +107,8 @@ namespace BlendInt {
 
 		bool SetSubWidget (size_t index, AbstractWidget* widget);
 
+		virtual ResponseType FocusEvent (bool focus);
+
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
 
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event);

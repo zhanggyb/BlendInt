@@ -72,6 +72,11 @@ namespace BlendInt {
 		return true;
 	}
 
+	ResponseType AbstractVectorContainer::FocusEvent(bool focus)
+	{
+		return Ignore;
+	}
+
 	bool AbstractVectorContainer::RemoveSubWidget(AbstractWidget* widget)
 	{
 		if(!widget) return false;

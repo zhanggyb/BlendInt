@@ -326,7 +326,7 @@ namespace BlendInt
 				widget_set_p = layer_iter->second.widgets;
 
 				//DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
-				RenderLayer(event,
+				RenderToLayerBuffer(event,
 								layer_iter->first,
 								widget_set_p,
 								layer_iter->second.tex_buf_ptr.get());
@@ -335,7 +335,7 @@ namespace BlendInt
 			}
 
 			//if(m_deque.size() >= minimal_composite_layer_number) {
-				RenderMainBuffer(event);
+				RenderToMainBuffer(event);
 			//}
 
 			refresh_once = false;
@@ -353,7 +353,7 @@ namespace BlendInt
 				if (layer_iter->second.refresh) {
 
 					// DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
-					RenderLayer(event,
+					RenderToLayerBuffer(event,
 									layer_iter->first,
 									widget_set_p,
 									layer_iter->second.tex_buf_ptr.get());
@@ -364,7 +364,7 @@ namespace BlendInt
 			}
 
 			//if(m_deque.size() >= minimal_composite_layer_number) {
-				RenderMainBuffer(event);
+				RenderToMainBuffer(event);
 			//}
 
 			refresh_once = false;
@@ -833,7 +833,7 @@ namespace BlendInt
 		glBindVertexArray(0);
 	}
 
-	void Context::RenderLayer (const RedrawEvent& event,
+	void Context::RenderToLayerBuffer (const RedrawEvent& event,
 					int layer,
 					std::set<AbstractWidget*>* widgets,
 					GLTexture2D* texture)
@@ -921,7 +921,7 @@ namespace BlendInt
 		fb = 0;
 	}
 	
-	void Context::RenderMainBuffer (const RedrawEvent& event)
+	void Context::RenderToMainBuffer (const RedrawEvent& event)
 	{
 		GLsizei width = size().width();
 		GLsizei height = size().height();
@@ -983,39 +983,28 @@ namespace BlendInt
 			glBindVertexArray(m_vao);
 			m_program->Use();
 			glActiveTexture(GL_TEXTURE0);
-			m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 			m_program->SetUniform1i("TexID", 0);
 
 			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+
 			m_vbo->Bind();
 
-			glVertexAttribPointer(
-					0,
-					2,
-					GL_FLOAT,
-					GL_FALSE,
-					0,
-					BUFFER_OFFSET(0)
-					);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-			glEnableVertexAttribArray(1);
 			m_tbo->Bind();
-			glVertexAttribPointer(
-					1,
-					2,
-					GL_FLOAT,
-					GL_FALSE,
-					0,
-					BUFFER_OFFSET(0)
-					);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 			m_vbo->Bind();
 
 			for (std::deque<GLTexture2D*>::iterator it = m_deque.begin(); it != m_deque.end(); it++) {
+				m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 				(*it)->Bind();
 				//(*it)->WriteToFile("layer2.png");
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+				mvp = glm::translate(mvp, glm::vec3(0.0, 0.0, 10.0));
 			}
 
 			GLTexture2D::Reset();

@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_EXPANDER_HPP_
 
 #include <BlendInt/Gui/AbstractRoundButton.hpp>
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/AbstractVectorContainer.hpp>
 
 namespace BlendInt {
 
@@ -65,7 +65,10 @@ namespace BlendInt {
 
 	// --------------------------
 
-	class Expander: public AbstractDequeContainer
+	/**
+	 * @brief Expander
+	 */
+	class Expander: public AbstractVectorContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Expander);
 
@@ -81,7 +84,7 @@ namespace BlendInt {
 
 		void SetTitle (const String& text);
 
-		const String* GetTitle () const;
+		const String& GetTitle () const;
 
 		virtual Size GetPreferredSize () const;
 
@@ -118,9 +121,6 @@ namespace BlendInt {
 		void FillWithPreferredHeight (int x, int y, unsigned int width, unsigned int height, int space);
 
 		void OnToggled (bool toggle);
-
-		ExpandButton* m_title_button;
-		Frame* m_frame;
 
 		int m_space;
 

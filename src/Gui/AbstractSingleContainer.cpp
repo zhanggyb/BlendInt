@@ -55,8 +55,8 @@ namespace BlendInt {
 			preferred_size.add_width(margin().left() + margin().right());
 			preferred_size.add_height(margin().top() + margin().bottom());
 		} else {
-			preferred_size.set_width(400);
-			preferred_size.set_height(400);
+			preferred_size.set_width(200);
+			preferred_size.set_height(200);
 		}
 
 		return preferred_size;
