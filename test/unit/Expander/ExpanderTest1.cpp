@@ -37,14 +37,12 @@ TEST_F(ExpanderTest1, Foo1)
 
 	context->Add(expander);
 
-	/*
-	Button* btn1 = Manage(new Button);
+	Button* btn1 = Manage(new Button("Click me"));
 	btn1->set_name("Button1");
 
 	expander->Setup(btn1);
 
 	expander->Resize(200, 200);
-	*/
 
     RunLoop(win);
 

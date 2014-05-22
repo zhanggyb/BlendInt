@@ -47,7 +47,7 @@
 #include <stdio.h>
 #define DBG_PRINT_MSG(fmt, args...) \
 	do { \
-		fprintf(stderr, "%s:%d:%s(): "fmt"\n", FILE_BASE_NAME, __LINE__, __FUNCTION__, args); \
+		fprintf(stderr, "%s:%d:%s(): " fmt "\n", FILE_BASE_NAME, __LINE__, __FUNCTION__, args); \
 	} while (0)
 #else
 #define DBG_PRINT_MSG(fmt, args...) ((void)0)

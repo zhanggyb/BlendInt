@@ -95,6 +95,77 @@ namespace BlendInt {
 		}
 	}
 
+#else	// C++ 11
+
+	String::String ()
+	: std::u32string()
+	{
+
+	}
+
+	String::String (const char* str)
+	: std::u32string()
+	{
+		size_t len = strlen(str);
+		resize(len);
+
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = *(str + i);
+		}
+	}
+
+	String::String (const wchar_t* str)
+	: std::u32string()
+	{
+		size_t len = wcslen(str);
+		resize(len);
+
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = *(str + i);
+		}
+	}
+
+	String::String (const char* str, size_t n)
+	: std::u32string()
+	{
+		size_t len = strlen(str);
+		len = std::min(len, n);
+
+		resize(len);
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = *(str + i);
+		}
+	}
+
+	String::String (const std::string& str)
+	: std::u32string()
+	{
+		size_t len = str.length();
+		resize(len);
+
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = str[i];
+		}
+	}
+
+	String::String (const std::wstring& str)
+	: std::u32string()
+	{
+		size_t len = str.length();
+		resize(len);
+
+		for(size_t i = 0; i < len; i++)
+		{
+			at(i) = str[i];
+		}
+	}
+
+#endif
+
 	String::String (const String& orig)
 	{
 		size_t len = orig.length();
@@ -178,9 +249,5 @@ namespace BlendInt {
 		}
 		return str;
 	}
-
-#else	// C++ 11
-
-#endif
 
 }
