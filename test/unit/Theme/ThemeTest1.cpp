@@ -27,7 +27,6 @@ TEST_F(ThemeTest1, Save1)
 
 	// TODO: add test code here
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	Theme::instance->Save("theme.xml");
@@ -51,7 +50,6 @@ TEST_F(ThemeTest1, Load1)
 
 	// TODO: add test code here
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	Theme::instance->Load("theme.xml");

@@ -42,16 +42,18 @@ void MainLayout::InitOnce ()
 #endif
 
     RefPtr<Menu> file_menu(new Menu);
-    file_menu->set_name("Menu");
+    DBG_SET_NAME(file_menu, "Menu");
 
+    /*
     file_menu->SetRoundType(RoundBottomLeft | RoundBottomRight);
     file_menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
     file_menu->AddActionItem("MenuItem2", "Ctrl + 1");
     file_menu->AddActionItem("MenuItem3", "Ctrl + 1");
     file_menu->AddActionItem("MenuItem4", "Ctrl + 1");
     file_menu->AddActionItem("MenuItem5");
+    */
 
-	m_menubar->AddMenu("File", file_menu);
+	m_menubar->AddMenu(String("File"), file_menu);
 	// m_menubar->AddMenuButton("Edit");
 
 	m_toolbar->Add(m_input);

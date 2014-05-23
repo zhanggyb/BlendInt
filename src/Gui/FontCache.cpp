@@ -119,7 +119,9 @@ namespace BlendInt {
 		}
 
 		RefPtr<FontCache> cache(new FontCache(data));
+#ifdef DEBUG
 		cache->set_name(data.name);
+#endif
 		cache->Initialize(data, 32, 95);
 		cache_db[data] = cache;
 

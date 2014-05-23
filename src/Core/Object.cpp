@@ -31,13 +31,6 @@
 
 namespace BlendInt {
 
-	RefPtr<Object> Object::Create (const char* name)
-	{
-		RefPtr<Object> ret(new Object);
-		ret->m_name = name;
-		return ret;
-	}
-
 	Object::Object()
 	: m_count(0)
 #ifdef DEBUG

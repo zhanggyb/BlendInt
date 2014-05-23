@@ -26,7 +26,6 @@ TEST_F(ComboBoxTest1, Foo1)
     GLFWwindow* win = CreateWindow("ComboBox - Foo1", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     ComboBox* combo = Manage(new ComboBox);

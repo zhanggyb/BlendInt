@@ -28,12 +28,10 @@ TEST_F(ScrollAreaTest1, Foo1)
     // TODO: add test code here
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     ScrollArea* area = Manage(new ScrollArea);
 
-    area->set_name("ScrollArea");
     area->SetPosition(20, 20);
     area->Resize(500, 400);
 

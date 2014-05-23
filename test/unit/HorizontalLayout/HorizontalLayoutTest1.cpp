@@ -27,7 +27,7 @@ TEST_F(HLayoutTest1, Add1)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add1", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
+	DBG_SET_NAME(context, "Context");
     Interface::instance->SetCurrentContext(context);
 
 	HBox* hlayout = new HBox;
@@ -63,7 +63,6 @@ TEST_F(HLayoutTest1, Add2)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add2", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	HBox* hlayout = new HBox;
@@ -100,7 +99,6 @@ TEST_F(HLayoutTest1, Add3)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add3", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	HBox* hlayout = new HBox;
@@ -135,7 +133,6 @@ TEST_F(HLayoutTest1, Add4)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add4", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	HBox* hlayout = new HBox;
@@ -174,7 +171,6 @@ TEST_F(HLayoutTest1, Add5)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add5", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	HBox* hlayout = new HBox;
@@ -223,7 +219,6 @@ TEST_F(HLayoutTest1, Add6)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add6", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	HBox* hlayout = new HBox;
@@ -266,7 +261,6 @@ TEST_F(HLayoutTest1, Add7)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add7", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	HBox* hlayout = new HBox;
@@ -311,7 +305,6 @@ TEST_F(HLayoutTest1, Resize1)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Resize1", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	// add test code here
@@ -349,7 +342,6 @@ TEST_F(HLayoutTest1, Resize2)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Resize2", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	// add test code here
@@ -387,7 +379,6 @@ TEST_F(HLayoutTest1, Resize3)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Resize3", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	// add test code here
@@ -431,7 +422,6 @@ TEST_F(HLayoutTest1, SetMargin1)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - SetMargin1", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	// add test code here
@@ -473,7 +463,6 @@ TEST_F(HLayoutTest1, SetSpace1)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - SetSpace1", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	// add test code here

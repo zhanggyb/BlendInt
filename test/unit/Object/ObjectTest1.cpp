@@ -28,7 +28,7 @@ ObjectTest1::~ObjectTest1()
  */
 TEST_F(ObjectTest1, RefPtr1)
 {
-    RefPtr<Object> obj1 = Object::Create("obj1");
+    RefPtr<Object> obj1(new Object);
 
     RefPtr<Object> obj2;
 
@@ -47,9 +47,9 @@ TEST_F(ObjectTest1, RefPtr1)
  */
 TEST_F(ObjectTest1, RefPtr2)
 {
-    RefPtr<Object> obj1 = Object::Create("obj1");
+    RefPtr<Object> obj1(new Object);
 
-    RefPtr<Object> obj2 = Object::Create("obj2");
+    RefPtr<Object> obj2(new Object);
 
     obj2 = obj1;
 
@@ -64,9 +64,11 @@ TEST_F(ObjectTest1, RefPtr2)
 TEST_F(ObjectTest1, RefPtr3)
 {
     std::list< RefPtr<Object> > test_list;
+    RefPtr<Object> obj1(new Object);
+    RefPtr<Object> obj2(new Object);
 
-    test_list.push_back(Object::Create("obj1"));
-    test_list.push_back(Object::Create("obj2"));
+    test_list.push_back(obj1);
+    test_list.push_back(obj2);
 
     test_list.clear();
 	
@@ -79,10 +81,13 @@ TEST_F(ObjectTest1, RefPtr3)
 TEST_F(ObjectTest1, RefPtr4)
 {
     std::set< RefPtr<Object> > test_set;
+    RefPtr<Object> obj1(new Object);
+    RefPtr<Object> obj2(new Object);
+    RefPtr<Object> obj3(new Object);
 
-    test_set.insert(Object::Create("obj1"));
-    test_set.insert(Object::Create("obj2"));
-    test_set.insert(Object::Create("obj3"));
+    test_set.insert(obj1);
+    test_set.insert(obj2);
+    test_set.insert(obj3);
 
     test_set.clear();
 	
@@ -94,9 +99,7 @@ TEST_F(ObjectTest1, RefPtr4)
  */
 TEST_F(ObjectTest1, RefPtr5)
 {
-    RefPtr<Object> obj;
-
-    obj = Object::Create("Object");
+    RefPtr<Object> obj (new Object);
 
     obj.destroy();
 	
@@ -108,8 +111,8 @@ TEST_F(ObjectTest1, RefPtr5)
  */
 TEST_F(ObjectTest1, RefPtr6)
 {
-    RefPtr<Object> obj1 = Object::Create("obj1");
-    RefPtr<Object> obj2 = Object::Create("obj2");
+    RefPtr<Object> obj1(new Object);
+    RefPtr<Object> obj2(new Object);
 
     std::set< RefPtr<Object> > test_set;
 
@@ -133,7 +136,6 @@ TEST_F(ObjectTest1, RefPtr7)
     RefPtr<WidgetSim> widget;
 
 	widget.reset(new WidgetSim);
-	widget->set_name("Widget");
 
 	RefPtr<Object> obj = RefPtr<Object>::cast_dynamic(widget);
 

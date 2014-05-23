@@ -58,23 +58,16 @@ namespace BlendInt {
 		m_buffer->Generate();
 		m_buffer->Bind();
 
-		std::vector<GLfloat> vertices(4);
+		std::vector<GLfloat> vertices(4, 0);
 
 		if(orientation == Horizontal) {
-			vertices[0] = 0.f;
-			vertices[1] = 0.f;
 			vertices[2] = 200.f;
-			vertices[3] = 0.f;
 
 		} else {
-			vertices[0] = 0.f;
-			vertices[1] = 0.f;
-
-			vertices[2] = 0.f;
 			vertices[3] = 200.f;
 		}
 
-		m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+		m_buffer->SetData(sizeof(GLfloat) * 4, &vertices[0], GL_STATIC_DRAW);
 		m_buffer->Reset();
 
 		glBindVertexArray(0);
@@ -116,6 +109,39 @@ namespace BlendInt {
 		}
 	}
 
+	void SplitterHandle::Update (const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case FormSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					std::vector<GLfloat> vertices(4, 0);
+
+					if(m_orientation == Horizontal) {
+						vertices[2] = size_p->width();
+
+					} else {
+						vertices[3] = size_p->height();
+					}
+
+					m_buffer->Bind();
+					m_buffer->SetData(sizeof(GLfloat) * 4, &vertices[0], GL_STATIC_DRAW);
+					m_buffer->Reset();
+
+					break;
+				}
+
+				default:
+					break;
+			}
+
+		}
+	}
+
 	ResponseType SplitterHandle::Draw (const RedrawEvent& event)
 	{
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
@@ -147,24 +173,42 @@ namespace BlendInt {
 						BUFFER_OFFSET(0)	// the first element
 		);
 
-		for(int i = 0; i < 3; i++) {
-			if(m_orientation == Horizontal) {
+		if(m_orientation == Horizontal) {
+
+			for(int i = 0; i < 3; i++) {
 				local = glm::translate(mvp, glm::vec3(0.f, i + 1, 0.f));
-			} else {
+
+				if((i % 2) == 0) {
+					color.r = 0.4; color.g = 0.4; color.b = 0.4; color.a = 0.9;
+				} else {
+					color.r = 0.2; color.g = 0.2; color.b = 0.2; color.a = 1.0;
+				}
+
+				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local));
+				program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+				glDrawArrays(GL_LINES, 0, 2);
+
+			}
+
+		} else {
+
+			for(int i = 0; i < 3; i++) {
 				local = glm::translate(mvp, glm::vec3(i + 1, 0.f, 0.f));
-			}
 
-			if((i % 2) == 0) {
-				color.r = 0.4; color.g = 0.4; color.b = 0.4; color.a = 0.9;
-			} else {
-				color.r = 0.2; color.g = 0.2; color.b = 0.2; color.a = 1.0;
-			}
+				if((i % 2) == 0) {
+					color.r = 0.4; color.g = 0.4; color.b = 0.4; color.a = 0.9;
+				} else {
+					color.r = 0.2; color.g = 0.2; color.b = 0.2; color.a = 1.0;
+				}
 
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local));
-			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
-			glDrawArrays(GL_LINES, 0, 2);
+				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local));
+				program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+				glDrawArrays(GL_LINES, 0, 2);
+
+			}
 
 		}
+
 		m_buffer->Reset();
 
 		glDisableVertexAttribArray(0);
@@ -210,12 +254,13 @@ namespace BlendInt {
 
 			if(m_orientation == Horizontal) {
 
-				SetPosition(m_last.x(), m_last.y() + event.position().y() - m_cursor.y());
+				int offset = event.position().y() - m_cursor.y();
+				SetPosition(m_last.x(), m_last.y() + offset);
 
 			} else {
 
-				SetPosition(m_last.x() + event.position().x() - m_cursor.x(), m_last.y());
-
+				int offset = event.position().x() - m_cursor.x();
+				SetPosition(m_last.x() + offset, m_last.y());
 			}
 
 			Refresh();
@@ -239,7 +284,22 @@ namespace BlendInt {
 	
 	void Splitter::Add (AbstractWidget* widget)
 	{
-		if(PushBackSubWidget(widget)) {
+		if(widget && widget->container() != this) {
+
+			if(sub_widget_size()== 0) {
+				PushBackSubWidget(widget);
+			} else {
+				SplitterHandle* handle = 0;
+				if(m_orientation == Horizontal) {
+					handle = Manage(new SplitterHandle(Vertical));
+				} else {
+					handle = Manage(new SplitterHandle(Horizontal));
+				}
+
+				PushBackSubWidget(handle);
+				PushBackSubWidget(widget);
+			}
+
 			AlignSubWidgets(m_orientation, size(), margin(), m_space);
 		}
 	}
@@ -249,6 +309,51 @@ namespace BlendInt {
 		if(RemoveSubWidget(widget)) {
 			AlignSubWidgets(m_orientation, size(), margin(), m_space);
 		}
+	}
+
+	Size Splitter::GetPreferredSize() const
+	{
+		Size preferred_size;
+
+		if(sub_widget_size() == 0) {
+			preferred_size.set_width(400);
+			preferred_size.set_height(400);
+		} else {
+			AbstractWidget* widget = 0;
+			Size tmp;
+
+			if (m_orientation == Horizontal) {
+				preferred_size.set_width(-m_space);
+				for (WidgetDeque::iterator it = sub_widgets()->begin();
+								it != sub_widgets()->end(); it++) {
+					widget = *it;
+					if (widget->visiable()) {
+						tmp = widget->GetPreferredSize();
+						preferred_size.add_width(tmp.width() + m_space);
+						preferred_size.set_height(
+										std::max(preferred_size.height(),
+														tmp.height()));
+					}
+				}
+			} else {
+				preferred_size.set_height(-m_space);
+				for(WidgetDeque::iterator it = sub_widgets()->begin();
+								it != sub_widgets()->end(); it++) {
+					widget = *it;
+					if(widget->visiable()) {
+						tmp = widget->GetPreferredSize();
+						preferred_size.add_height(tmp.height() + m_space);
+						preferred_size.set_width(
+										std::max(preferred_size.width(), tmp.width()));
+					}
+				}
+			}
+
+			preferred_size.add_width(margin().left() + margin().right());
+			preferred_size.add_height(margin().top() + margin().bottom());
+		}
+
+		return preferred_size;
 	}
 
 	bool Splitter::IsExpandX() const
@@ -261,6 +366,59 @@ namespace BlendInt {
 		return true;
 	}
 
+
+	int Splitter::GetWidgetIndex (AbstractWidget* widget) const
+	{
+		int index = 0;
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end();)
+		{
+			if(*it == widget) break;
+
+			index++;
+			it += 2;
+		}
+
+		return index;
+	}
+
+	int Splitter::GetHandleIndex (SplitterHandle* handle) const
+	{
+		int index = 0;
+		for(WidgetDeque::iterator it = (sub_widgets()->begin() + 1); it != sub_widgets()->end();)
+		{
+			if(*it == handle) break;
+
+			index++;
+			it += 2;
+		}
+
+		return index;
+	}
+
+	AbstractWidget* Splitter::GetWidget (int index) const
+	{
+		int max = (sub_widget_size() + 1) / 2;
+		if(max == 0) return 0;
+
+		index = index * 2;
+
+		return sub_widgets()->at(index);
+	}
+
+	SplitterHandle* Splitter::GetHandle (int index) const
+	{
+		return 0;
+	}
+
+	int Splitter::GetWidgetCount () const
+	{
+		return 0;
+	}
+
+	void Splitter::MoveHandle (int index, int x, int y)
+	{
+	}
+
 	bool Splitter::UpdateTest (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
@@ -270,8 +428,15 @@ namespace BlendInt {
 				case SubWidgetSize:
 					return false;	// DO not allow sub widget geometry reset outside
 
-				case SubWidgetPosition:
+				case SubWidgetPosition: {
+
+					const SplitterHandle* handle = static_cast<const SplitterHandle*>(request.data());
+					if(handle) {
+						return true;
+					}
+
 					return false;
+				}
 
 				default:
 					return AbstractDequeContainer::UpdateTest(request);
@@ -337,11 +502,19 @@ namespace BlendInt {
 			int y = position().y() + margin.bottom();
 			unsigned int h = size.height() - margin.top() - margin.bottom();
 
+			int i = 0;
 			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
-				ResizeSubWidget(*it, room, h);
-				SetSubWidgetPosition(*it, x, y);
-				x = x + room + space;
+				if(i % 2 == 0) {
+					ResizeSubWidget(*it, room, h);
+					SetSubWidgetPosition(*it, x, y);
+					x = x + room + space;
+				} else {
+					ResizeSubWidget(*it, 3, h);
+					SetSubWidgetPosition(*it, x, y);
+					x = x + 3 + space;
+				}
+				i++;
 			}
 
 		} else {
@@ -349,11 +522,20 @@ namespace BlendInt {
 			int y = position().y() + size.height() - margin.top();
 			unsigned int w = size.width() - margin.left() - margin.right();
 
+			int i = 0;
 			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
-				ResizeSubWidget(*it, w, room);
-				SetSubWidgetPosition(*it, x, y);
-				y = y - room - space;
+				if(i % 2 == 0) {
+					ResizeSubWidget(*it, w, room);
+					SetSubWidgetPosition(*it, x, y);
+					y = y - room - space;
+				} else {
+					ResizeSubWidget(*it, w, 3);
+					SetSubWidgetPosition(*it, x, y);
+					y = y - 3 - space;
+				}
+
+				i++;
 			}
 
 		}
@@ -394,23 +576,20 @@ namespace BlendInt {
 	{
 		return IgnoreAndContinue;
 	}
-
+	
 	unsigned int Splitter::GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin, int space)
 	{
 		unsigned int room = 0;
 
 		if(orientation == Horizontal) {
 			room = size.width() - margin.left() - margin.right();
-			if(sub_widget_size()) {
-				room = room - (space * (sub_widget_size() - 1));
-				room = room / sub_widget_size();
-			}
 		} else {
 			room = size.height() - margin.top() - margin.bottom();
-			if(sub_widget_size()) {
-				room = room - (space * (sub_widget_size() - 1));
-				room = room / sub_widget_size();
-			}
+		}
+
+		if(sub_widget_size() > 1) {
+			room = room - (space * (sub_widget_size() - 1)) - 3 * (sub_widget_size() - 1) / 2;
+			room = room / ((sub_widget_size() + 1) / 2);
 		}
 
 		return room;

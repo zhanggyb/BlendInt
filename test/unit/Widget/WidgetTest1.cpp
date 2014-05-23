@@ -27,11 +27,9 @@ TEST_F(WidgetTest1, Add1)
 
 	// TODO: add test code here
     Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
     
     Widget* widget1 = new Widget;
-    widget1->set_name("widget1");
     widget1->SetPosition(200, 200);
 
     context->Add(widget1);

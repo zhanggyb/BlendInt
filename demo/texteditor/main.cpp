@@ -22,7 +22,6 @@ int main(int argc, char* argv[])
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
 
 	EditorContext* context = Manage (new EditorContext);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
 	RunLoop(win);

@@ -26,7 +26,6 @@ TEST_F(ColorDiskTest1, Foo1)
     GLFWwindow* win = CreateWindow("ColorDisk - Foo1", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     ColorDisk* disk = Manage(new ColorDisk);

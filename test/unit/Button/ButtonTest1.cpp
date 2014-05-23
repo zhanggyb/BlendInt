@@ -26,17 +26,14 @@ TEST_F(ButtonTest1, Foo1)
     GLFWwindow* win = CreateWindow("Button Test - Foo1", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     Button* bt1 = new Button;
     bt1->SetPosition(100, 200);
-    bt1->SetText("Button1");
-    bt1->set_name("Button 1");
+    bt1->SetText(String("Button1"));
 
     Button* bt2 = new Button("Button2");
     bt2->SetPosition(240, 200);
-    bt2->set_name("Button 2");
 
     context->Add(bt1);
     context->Add(bt2);

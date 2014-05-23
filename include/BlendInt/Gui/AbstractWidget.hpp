@@ -44,10 +44,7 @@
 
 #include <Cpp/Events.hpp>
 
-#ifdef DEBUG
-#include <map>
-using std::map;
-#endif
+#include <BlendInt/Gui/Shadow.hpp>
 
 namespace BlendInt {
 
@@ -410,13 +407,6 @@ namespace BlendInt {
 			m_flag[WidgetFlagManaged] = val ? 1 : 0;
 		}
 
-		/**
-		 * @brief Used in Interface class to render the widget to a screenbuffer
-		 * @param tex
-		 * @param border
-		 */
-		bool CompositeToScreenBuffer (GLTexture2D* tex, unsigned int border = 0);
-
 		Point m_position;
 
 		/**
@@ -438,6 +428,8 @@ namespace BlendInt {
 		Cpp::Event<AbstractWidget*> m_destroyed;
 
 		AbstractContainer* m_container;
+
+		RefPtr<Shadow> m_shadow;
 
 	};
 

@@ -29,16 +29,13 @@ TEST_F(ContextTest1, AddSubWidget01)
 	GLFWwindow* win = CreateWindow("ContextManager - AddSubWidget01", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
     Widget* w1 = new Widget;
-    w1->set_name("widget1");
     w1->SetPosition(200, 200);
 
     Widget* w2 = new Widget;
-    w2->set_name("widget2");
     w2->SetPosition(400, 200);
 
     context->Add(w1);
@@ -74,20 +71,16 @@ TEST_F(ContextTest1, AddSubWidget02)
 	GLFWwindow* win = CreateWindow("ContextManager - AddSubWidget02", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
     Widget* w1 = new Widget;
-    w1->set_name("widget1");
     w1->SetPosition(200, 200);
 
     Widget* w2 = new Widget;
-    w2->set_name("widget2");
     w2->SetPosition(400, 200);
 
     Frame* f1 = new Frame;
-    f1->set_name("frame1");
     f1->SetPosition(240, 320);
     f1->Setup(w2);
 
@@ -130,20 +123,16 @@ TEST_F(ContextTest1, AddSubWidget03)
 	GLFWwindow* win = CreateWindow("ContextManager - AddSubWidget03", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
     Widget* w1 = new Widget;
-    w1->set_name("widget1");
     w1->SetPosition(200, 200);
 
     Widget* w2 = new Widget;
-    w2->set_name("widget2");
     w2->SetPosition(400, 200);
 
     Frame* f1 = new Frame;
-    f1->set_name("frame1");
     f1->SetPosition(240, 320);
     f1->Setup(w2);
 
@@ -190,16 +179,13 @@ TEST_F(ContextTest1, DestructorInContainer01)
 	GLFWwindow* win = CreateWindow("ContextManager - DestructorInContainer01", 640, 480);
 
 	Context* context = Manage (new Context);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
 	// TODO: add test code here
 	Widget* w1 = new Widget;
-	w1->set_name("widget1");
 	w1->SetPosition(200, 200);
 
 	Frame* f1 = new Frame;
-	f1->set_name("frame1");
 	f1->SetPosition(240, 320);
 
 	f1->Setup(w1);
@@ -243,17 +229,14 @@ TEST_F(ContextTest1, DestructorInContainer02)
 	GLFWwindow* win = CreateWindow("ContextManager - DestructorInContainer02", 640, 480);
 
 	Context* context = Manage (new Context);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
 	// TODO: add test code here
 	Widget* w1 = Manage(new Widget);
-	w1->set_name("widget1");
 	w1->SetPosition(100, 100);
 	context->Add(w1);
 
 	Frame* f1 = Manage(new Frame);  // now f1 should be deleted automatically
-	f1->set_name("frame1");
 	f1->SetPosition(240, 320);
 	f1->Setup(w1);
 
@@ -292,17 +275,14 @@ TEST_F(ContextTest1, Layer1)
     GLFWwindow* win = CreateWindow("ContextManager - Layer1", 640, 480);
 
 	Context* context = Manage (new Context);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
     Widget* w1 = Manage(new Widget);
-    w1->set_name("widget1");
     w1->SetPosition(200, 200);
     context->Add(w1);
         
     Widget* w2 = Manage(new Widget);
-    w2->set_name("widget2");
     w2->SetPosition(400, 200);
     context->Add(w2);
     w2->SetLayer(1);
@@ -339,23 +319,19 @@ TEST_F(ContextTest1, Layer2)
     GLFWwindow* win = CreateWindow("ContextManager - Layer2", 640, 480);
 
 	Context* context = Manage (new Context);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
     Widget* w1 = new Widget;
-    w1->set_name("widget1");
     w1->SetPosition(200, 200);
     context->Add(w1);
 
     Widget* w2 = new Widget;
-    w2->set_name("widget2");
     w2->SetPosition(400, 200);
     w2->SetLayer(1);
     context->Add(w2);
 
     Widget* w3 = new Widget;
-    w3->set_name("widget3");
     w3->SetLayer(2);
     context->Add(w3);
 
@@ -396,29 +372,24 @@ TEST_F(ContextTest1, Layer3)
     GLFWwindow* win = CreateWindow("ContextManager - Layer3", 640, 480);
 
 	Context* context = Manage (new Context);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 	context->set_max_tex_buffer_cache_size(2);
 
 	Widget* w1 = Manage(new Widget);
-	w1->set_name("widget1");
 	w1->SetPosition(100, 100);
 	context->Add(w1);
 
 	Widget* w2 = Manage(new Widget);
-	w2->set_name("widget2");
 	w2->SetPosition(150, 150);
 	w2->SetLayer(1);
 	context->Add(w2);
 
 	Widget* w3 = Manage(new Widget);
-	w3->set_name("widget3");
 	w3->SetPosition(200, 200);
 	w3->SetLayer(2);
 	context->Add(w3);
 
 	Widget* w4 = Manage(new Widget);
-	w4->set_name("widget4");
 	w4->SetPosition(250, 250);
 	w4->SetLayer(3);
 	context->Add(w4);
@@ -428,13 +399,11 @@ TEST_F(ContextTest1, Layer3)
 	delete w2;
 
 	Widget* w5 = Manage(new Widget);
-	w5->set_name("widget5");
 	w5->SetPosition(300, 300);
 	w5->SetLayer(4);
 	context->Add(w5);
 
 	Widget* w6 = Manage(new Widget);
-	w6->set_name("widget6");
 	w6->SetPosition(350, 350);
 	w6->SetLayer(5);
 	context->Add(w6);

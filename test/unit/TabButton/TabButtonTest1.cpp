@@ -27,12 +27,11 @@ TEST_F(TabButtonTest1, Foo1)
 
     // TODO: add test code here
     TabButton* btn = Manage(new TabButton);
-    btn->set_name("TabButton");
     btn->SetPosition(200, 200);
 
-    std::vector<GLfloat> vert;
+    //std::vector<GLfloat> vert;
 
-    btn->GenerateTabButtonVertices(btn->size(), 1.f, 0, &vert);
+    //btn->GenerateTabButtonVertices(btn->size(), 1.f, 0, &vert);
 
     RunLoop(win);
 

@@ -28,12 +28,9 @@ TEST_F(ScrollBarTest1, Foo1)
     // TODO: add test code here
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     ScrollBar* bar = Manage(new ScrollBar);
-
-    bar->set_name("ScrollBar");
 
     bar->SetPosition(200, 200);
 
@@ -62,12 +59,9 @@ TEST_F(ScrollBarTest1, Show2)
     // TODO: add test code here
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     ScrollBar* bar = Manage(new ScrollBar(Vertical));
-
-    bar->set_name("ScrollBar");
 
     bar->SetPosition(200, 200);
 
@@ -94,14 +88,11 @@ TEST_F(ScrollBarTest1, Resize01)
     GLFWwindow* win = CreateWindow("ScrollBar - Foo1", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
 
     ScrollBar* bar = Manage(new ScrollBar(Horizontal));
-
-    bar->set_name("ScrollBar");
 
     bar->SetPosition(200, 200);
 
@@ -130,14 +121,12 @@ TEST_F(ScrollBarTest1, SetValue01)
     GLFWwindow* win = CreateWindow("ScrollBar - Foo1", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
 
     ScrollBar* bar = Manage(new ScrollBar(Horizontal));
 
-    bar->set_name("ScrollBar");
     bar->SetPosition(200, 200);
     bar->SetValue(50);
 
@@ -164,14 +153,11 @@ TEST_F(ScrollBarTest1, SetPercentage01)
     GLFWwindow* win = CreateWindow("ScrollBar - SetPercentage01", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
 
     ScrollBar* bar = Manage(new ScrollBar(Horizontal));
-
-    bar->set_name("ScrollBar");
 
     bar->SetPosition(200, 200);
 
@@ -202,12 +188,9 @@ TEST_F(ScrollBarTest1, SetMinimum01)
     // TODO: add test code here
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     ScrollBar* bar = Manage(new ScrollBar(Horizontal));
-
-    bar->set_name("ScrollBar");
 
     bar->SetPosition(200, 200);
     bar->SetMinimum(20);

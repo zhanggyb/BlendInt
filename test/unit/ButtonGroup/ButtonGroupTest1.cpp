@@ -29,7 +29,6 @@ TEST_F(ButtonGroupTest1, ToggleGroup1)
     GLFWwindow* win = CreateWindow("ButtonGroup - ToggleGroup1", 640, 480);
 
 	Context* context = Manage(new Context);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
@@ -46,14 +45,11 @@ TEST_F(ButtonGroupTest1, ToggleGroup1)
     */
 
 	ToggleButton* btn1 = Manage(new ToggleButton);
-	btn1->set_name("ToggleButton1");
 	btn1->SetPosition(100, 100);
 	//btn1->SetDown(true);
 	ToggleButton* btn2 = Manage(new ToggleButton);
-	btn2->set_name("ToggleButton2");
 	btn2->SetPosition(190, 100);
 	ToggleButton* btn3 = Manage(new ToggleButton);
-	btn3->set_name("ToggleButton3");
 	btn3->SetPosition(280, 100);
 
     ButtonGroup btngroup;
@@ -81,7 +77,6 @@ TEST_F(ButtonGroupTest1, MenuGroup1)
     GLFWwindow* win = CreateWindow("ButtonGroup - MenuGroup1", 640, 480);
 
 	Context* context = Manage(new Context);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
     // TODO: add test code here
@@ -98,14 +93,11 @@ TEST_F(ButtonGroupTest1, MenuGroup1)
     */
 
 	MenuButton* btn1 = Manage(new MenuButton("Menu1"));
-	btn1->set_name("MenuButton1");
 	btn1->SetPosition(100, 100);
 	//btn1->SetDown(true);
 	MenuButton* btn2 = Manage(new MenuButton("Menu2"));
-	btn2->set_name("MenuButton2");
 	btn2->SetPosition(190, 100);
 	MenuButton* btn3 = Manage(new MenuButton("Menu3"));
-	btn3->set_name("MenuButton3");
 	btn3->SetPosition(280, 100);
 
     ButtonGroup btngroup;

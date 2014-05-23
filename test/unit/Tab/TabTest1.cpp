@@ -29,26 +29,22 @@ TEST_F(TabTest1, Foo1)
 
     // TODO: add test code here
     Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     Tab* tab = Manage (new Tab);
-    tab->set_name("Tab");
     tab->SetPosition(100, 100);
 
     Label* label = Manage(new Label("Test in Stack"));
-    label->set_name("Label");
     label->SetFont(Font("Doird Sans Mono", 24));
     label->set_background_color(Color(0x4F0F7F8F));
 
     Button* btn = Manage (new Button);
-    btn->set_name("Button");
     btn->SetRoundType(RoundNone);
 
-    tab->Add("Title1", btn);
+    tab->Add(String("Title1"), btn);
     tab->Resize(400, 300);
 
-    tab->Add("Label", label);
+    tab->Add(String("Label"), label);
 
     context->Add(tab);
 

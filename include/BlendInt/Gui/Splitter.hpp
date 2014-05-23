@@ -47,6 +47,8 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void Update (const UpdateRequest& request);
+
 		virtual ResponseType Draw (const RedrawEvent& event);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
@@ -88,6 +90,20 @@ namespace BlendInt {
 		void Add (AbstractWidget* widget);
 
 		void Remove (AbstractWidget* widget);
+
+		int GetWidgetIndex (AbstractWidget* widget) const;
+
+		int GetHandleIndex (SplitterHandle* handle) const;
+
+		AbstractWidget* GetWidget (int index) const;
+
+		SplitterHandle* GetHandle (int index) const;
+
+		int GetWidgetCount () const;
+
+		void MoveHandle (int index, int x, int y);
+
+		virtual Size GetPreferredSize () const;
 
 		virtual bool IsExpandX () const;
 

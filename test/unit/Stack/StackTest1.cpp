@@ -28,7 +28,7 @@ TEST_F(StackTest1, Foo1)
 
 	// TODO: add test code here
 	Context* context = Manage (new Context);
-    context->set_name("Context");
+	DBG_SET_NAME(context, "Context");
     Interface::instance->SetCurrentContext(context);
 
 //	Label* label1 = Manage (new Label("Label1"));
@@ -45,17 +45,17 @@ TEST_F(StackTest1, Foo1)
 //	label3->set_background_color(Color(0x00FF008F));
 
 	Button* label1 = Manage (new Button("Label1"));
-	label1->set_name("Button1");
+	DBG_SET_NAME(label1, "Button1");
 	label1->SetFont(Font("Droid Sans Mono", 24));
 	Button* label2 = Manage (new Button("Label2"));
-	label2->set_name("Button2");
+	DBG_SET_NAME(label2, "Button2");
 	label2->SetFont(Font("Droid Sans Mono", 24));
 	Button* label3 = Manage (new Button("Label3"));
-	label3->set_name("Button3");
+	DBG_SET_NAME(label3, "Button3");
 	label3->SetFont(Font("Droid Sans Mono", 24));
 
 	Stack* stack = Manage (new Stack);
-	stack->set_name("Stack");
+	DBG_SET_NAME(stack, "Stack");
 	stack->Add(label1);
 	stack->Add(label2);
 	stack->Add(label3);

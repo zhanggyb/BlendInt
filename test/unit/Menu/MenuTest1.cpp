@@ -27,7 +27,6 @@ TEST_F(MenuTest1, Foo1)
 	GLFWwindow* window = CreateWindow("Menu - Foo1", 640, 480);
 
 	Context* context = Manage(new Context);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
 	// TODO: add test code here
@@ -37,11 +36,11 @@ TEST_F(MenuTest1, Foo1)
 	menu->SetPosition(200, 200);
 	//menu->Resize (200, 200);
 
-	menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
-	menu->AddActionItem("MenuItem2", "Ctrl + 1");
-	menu->AddActionItem("MenuItem3", "Ctrl + 1");
-	menu->AddActionItem("MenuItem4", "Ctrl + 1");
-	menu->AddActionItem("MenuItem5");
+//	menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+//	menu->AddActionItem("MenuItem2", "Ctrl + 1");
+//	menu->AddActionItem("MenuItem3", "Ctrl + 1");
+//	menu->AddActionItem("MenuItem4", "Ctrl + 1");
+//	menu->AddActionItem("MenuItem5");
 
 	context->Add(menu);
 

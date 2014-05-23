@@ -53,6 +53,15 @@
 #define DBG_PRINT_MSG(fmt, args...) ((void)0)
 #endif
 
+#ifdef DEBUG
+#define DBG_SET_NAME(obj, str) \
+	do {\
+		obj->set_name(str); \
+	} while (0)
+#else
+#define DBG_SET_NAME(obj, str) ((void)0)
+#endif
+
 //#define WIDGET_AA_JITTER 8
 
 /* max as used by round_box__edges */

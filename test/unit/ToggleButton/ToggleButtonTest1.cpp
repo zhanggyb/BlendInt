@@ -27,15 +27,12 @@ TEST_F(ToggleButtonTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 	
     ToggleButton* btn1 = Manage(new ToggleButton("Check1"));
-    btn1->set_name("ToggleButton");
     btn1->SetPosition(160, 200);
 
     ToggleButton* btn2 = Manage(new ToggleButton("Check2 alsdkjflasjdf"));
-    btn2->set_name("ToggleButton");
     btn2->SetPosition(300, 200);
 
 	context->Add(btn1);

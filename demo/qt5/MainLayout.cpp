@@ -25,12 +25,12 @@ void MainLayout::InitOnce ()
 	using namespace BI;
 
 	m_view3d = Manage(new BI::Viewport3D);
-	m_view3d->set_name("Viewport3D");
+	DBG_SET_NAME(m_view3d, "Viewport3D");
 	m_view3d->Resize(630, 445);
 	m_view3d->SetPosition(5, 30);
 
 	m_ok = Manage(new BI::Button("OK"));
-	m_ok->set_name("OK");
+	DBG_SET_NAME(m_ok, "OK");
 
 	Add(m_view3d);
 	Add(m_ok);

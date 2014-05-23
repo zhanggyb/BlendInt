@@ -58,23 +58,19 @@ int main(int argc, char* argv[])
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
 
 	GLFWContext* context = Manage (new GLFWContext);
-	context->set_name("Context");
 	Interface::instance->SetCurrentContext(context);
 
 	ToolButton* tbtn0 = Manage(new ToolButton);
-	tbtn0->set_name("ToolButton0");
 	tbtn0->SetLayer(0);
 	tbtn0->SetPosition(50, 50);
 	tbtn0->Resize(200, 200);
 
 	ToolButton* tbtn1 = Manage(new ToolButton);
-	tbtn1->set_name("ToolButton1");
 	tbtn1->SetLayer(1);
 	tbtn1->SetPosition(250, 250);
 	tbtn1->Resize(150, 150);
 
 	ToolButton* tbtn2 = Manage(new ToolButton);
-	tbtn2->set_name("ToolButton2");
 	tbtn2->SetLayer(2);
 	tbtn2->SetPosition(350, 100);
 	tbtn2->Resize(100, 100);
@@ -82,6 +78,12 @@ int main(int argc, char* argv[])
 	context->Add(tbtn0);
 	context->Add(tbtn1);
 	context->Add(tbtn2);
+
+	fprintf(stdout, "size of AbstractWidget: %ld\n", sizeof(AbstractWidget));
+
+	fprintf(stdout, "Sizeof object: %ld\n", sizeof(Object));
+
+	fprintf(stdout, "sizeof event: %ld\n", sizeof(Cpp::Event<AbstractWidget*>));
 
 	RunLoop(win);
 

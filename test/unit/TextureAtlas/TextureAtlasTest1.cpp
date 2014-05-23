@@ -68,11 +68,9 @@ TEST_F(TextureAtlasTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	TexAtlasViewer* view = Manage(new TexAtlasViewer);
-	view->set_name("TexAtlasViewer");
 	view->SetPosition(20, 20);
 	
 	context->Add(view);

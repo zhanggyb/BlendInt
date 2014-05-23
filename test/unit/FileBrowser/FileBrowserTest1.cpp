@@ -27,11 +27,9 @@ TEST_F(FileBrowserTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
 	FileBrowser* fb = Manage(new FileBrowser);
-	fb->set_name("FileBrowser");
 	fb->SetPosition(50, 50);
 	
 	context->Add(fb);

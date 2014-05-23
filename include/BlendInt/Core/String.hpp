@@ -30,8 +30,6 @@
 
 namespace BlendInt {
 
-	class String;
-
 #if __cplusplus <= 199711L
 
 	class String: public std::basic_string<uint32_t>

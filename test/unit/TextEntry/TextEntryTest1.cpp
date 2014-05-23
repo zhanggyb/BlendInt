@@ -26,7 +26,6 @@ TEST_F(TextEntryTest1, Foo1)
 	GLFWwindow* window = CreateWindow("TextEntry - Foo1", 640, 480);
 
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
     TextEntry* lineedit = Manage(new TextEntry);

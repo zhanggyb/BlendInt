@@ -28,10 +28,8 @@
 
 #ifdef DEBUG
 #include <map>
-#endif	// DEBUG
-
 #include <string>
-#include <stdexcept>
+#endif	// DEBUG
 
 #include <BlendInt/Core/RefPtr.hpp>
 
@@ -50,8 +48,6 @@ namespace BlendInt {
 	{
 	public:
 
-		static RefPtr<Object> Create (const char* name = 0);
-
 		Object ();
 
 		virtual ~Object ();
@@ -59,18 +55,6 @@ namespace BlendInt {
 		Object (const Object& orig);
 
 		Object& operator = (const Object& orig);
-
-		inline void set_name (const char* name)
-		{
-			m_name = name;
-		}
-
-		inline void set_name (const std::string& name)
-		{
-			m_name = name;
-		}
-
-		const std::string& name () const {return m_name;}
 
 		inline size_t count ()
 		{
@@ -82,8 +66,6 @@ namespace BlendInt {
 		template <typename T> friend class RefPtr;
 
 		size_t m_count;
-
-		std::string m_name;
 
 #ifdef DEBUG
 	public:
@@ -110,11 +92,25 @@ namespace BlendInt {
 			obj_map.clear();
 		}
 
+		inline void set_name (const char* name)
+		{
+			m_name = name;
+		}
+
+		inline void set_name (const std::string& name)
+		{
+			m_name = name;
+		}
+
+		const std::string& name () const {return m_name;}
+
 	private:
 
 		inline bool register_in_map ();
 
 		inline bool unregister_from_map ();
+
+		std::string m_name;
 
 		uint64_t m_id; /** A unique ID for object */
 

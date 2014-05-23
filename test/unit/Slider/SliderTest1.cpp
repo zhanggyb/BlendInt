@@ -27,11 +27,9 @@ TEST_F(SliderTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 	
     Slider* slider = Manage(new Slider);
-    slider->set_name("Slider");
     slider->SetPosition(200, 200);
 
 	context->Add(slider);

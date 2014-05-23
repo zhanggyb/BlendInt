@@ -27,37 +27,27 @@ TEST_F(ToolBarTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 	
     ToolBar* toolbar = Manage (new ToolBar);
-    toolbar->set_name("ToolBar");
     toolbar->SetPosition(100, 100);
 
     ToolButton* btn1 = Manage (new ToolButton);
-    btn1->set_name("ToolButton1");
     //btn->SetPosition(200, 200);
 
     ToolButton* btn2 = Manage (new ToolButton);
-    btn2->set_name("ToolButton2");
 
     ToolButton* btn3 = Manage (new ToolButton);
-    btn3->set_name("ToolButton3");
 
     ToolButton* btn4 = Manage (new ToolButton);
-    btn4->set_name("ToolButton4");
 
     ToolButton* btn5 = Manage (new ToolButton);
-    btn5->set_name("ToolButton5");
 
     ToolButton* btn6 = Manage (new ToolButton);
-    btn6->set_name("ToolButton6");
 
     ToolButton* btn7 = Manage (new ToolButton);
-    btn7->set_name("ToolButton7");
 
     ToolButton* btn8 = Manage (new ToolButton);
-    btn8->set_name("ToolButton8");
 
 	toolbar->Add(btn1);
 	toolbar->Add(btn2);

@@ -28,14 +28,8 @@ TEST_F(SplitterTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage (new Context);
-    context->set_name("Context");
     Interface::instance->SetCurrentContext(context);
 
-    SplitterHandle* split_handle = Manage(new SplitterHandle(Vertical));
-    split_handle->SetPosition(200, 200);
-    context->Add(split_handle);
-
-    /*
 	Splitter* splitter = Manage(new Splitter);
 #ifdef DEBUG
 	splitter->set_name("Splitter");
@@ -44,14 +38,15 @@ TEST_F(SplitterTest1, Foo1)
 	
 	Button* btn1 = Manage(new Button);
 	Button* btn2 = Manage(new Button);
+	Button* btn3 = Manage(new Button);
 	
 	splitter->Add(btn1);
 	splitter->Add(btn2);
+	splitter->Add(btn3);
 	
 	splitter->Resize(400, 200);
 	
 	context->Add(splitter);
-	*/
 
     RunLoop(win);
 
