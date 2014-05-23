@@ -25,6 +25,7 @@
 #define _BLENDINT_ABSTRACTBUTTON_HPP_
 
 #include <string>
+#include <bitset>
 
 #include <Cpp/Events.hpp>
 
@@ -103,7 +104,7 @@ namespace BlendInt {
 			ButtonDown,
 			ButtonCheckable,
 			ButtonChecked,
-			ButtonCheckedOrigin
+			ButtonLastChecked
 		};
 
 		std::bitset<8> m_status;

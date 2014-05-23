@@ -37,12 +37,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Types.hpp>
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
-
-#define SETBIT(x,y) (x |= y)
-#define CLRBIT(x,y) (x &= ~y)
 
 namespace BlendInt {
 

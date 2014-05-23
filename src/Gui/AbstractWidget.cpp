@@ -167,10 +167,13 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget ()
 	: AbstractForm(),
 	  m_z(0),
+	  m_flags(0),
+	  m_radius_ext(0),
 	  m_container(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
-		m_flag.set(WidgetFlagVisibility);
+
+		SETBIT(m_flags, WidgetFlagVisibility);
 	}
 
 	AbstractWidget::~AbstractWidget ()
@@ -291,7 +294,7 @@ namespace BlendInt {
 
 	void AbstractWidget::SetVisible (bool visible)
 	{
-		if(m_flag[WidgetFlagVisibility] == visible)
+		if(this->visiable() == visible)
 			return;
 		bool broadcast = false;
 
@@ -299,7 +302,7 @@ namespace BlendInt {
 
 		if(UpdateTest (request)) {
 			Update(request);
-			m_flag[WidgetFlagVisibility] = visible ? 1 : 0;
+			set_visible(visible);
 			broadcast = true;
 		}
 

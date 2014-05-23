@@ -166,15 +166,13 @@ namespace BlendInt
 		}
 
 		if (m_focused_widget) {
-			m_focused_widget->m_flag.reset(
-			        AbstractWidget::WidgetFlagFocus);
+			m_focused_widget->set_focus(false);
 			m_focused_widget->FocusEvent(false);
 		}
 
 		m_focused_widget = widget;
 		if (m_focused_widget) {
-			m_focused_widget->m_flag.set(
-			        AbstractWidget::WidgetFlagFocus);
+			m_focused_widget->set_focus(true);
 			m_focused_widget->FocusEvent(true);
 		}
 	}
@@ -446,8 +444,7 @@ namespace BlendInt
 			if(focus_set_manually) {
 
 				if(original_focused) {
-					original_focused->m_flag.reset(
-							AbstractWidget::WidgetFlagFocus);
+					original_focused->set_focus(false);
 					original_focused->FocusEvent(false);
 				}
 
@@ -499,7 +496,7 @@ namespace BlendInt
 				break;
 			} else {
 				m_hover_deque->back()->CursorEnterEvent(false);
-				m_hover_deque->back()->m_flag.reset(AbstractWidget::WidgetFlagContextHoverList);
+				m_hover_deque->back()->set_hover(false);
 			}
 
 			m_hover_deque->pop_back();
@@ -1069,7 +1066,7 @@ namespace BlendInt
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
 			if (p) {
 
-				if(p->m_flag[AbstractWidget::WidgetFlagScissorTest]) {
+				if(p->scissor_test()) {
 					scissor_status.Push(p->position().x() + p->margin().left(),
 							p->position().y() + p->margin().right(),
 							p->size().width() - p->margin().left() - p->margin().right(),
@@ -1092,7 +1089,7 @@ namespace BlendInt
 					}
 				}
 
-				if(p->m_flag[AbstractWidget::WidgetFlagScissorTest]) {
+				if(p->scissor_test()) {
 					scissor_status.Pop();
 					scissor_status.Disable();
 				}
@@ -1105,7 +1102,7 @@ namespace BlendInt
 	void Context::BuildCursorHoverList (const MouseEvent& event, AbstractWidget* parent)
 	{
 		if (parent) {
-			parent->m_flag.set(AbstractWidget::WidgetFlagContextHoverList);
+			parent->set_hover(true);
 
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
 			if(p) {
@@ -1156,8 +1153,7 @@ namespace BlendInt
 	void Context::RemoveWidgetFromHoverList (AbstractWidget* widget)
 	{
 		while (m_hover_deque->size()) {
-			m_hover_deque->back()->m_flag.reset(
-			        AbstractWidget::WidgetFlagContextHoverList);
+			m_hover_deque->back()->set_hover(false);
 
 			if (m_hover_deque->back() == widget) {
 				m_hover_deque->pop_back();

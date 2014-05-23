@@ -62,6 +62,9 @@
 #define DBG_SET_NAME(obj, str) ((void)0)
 #endif
 
+#define SETBIT(x,y) (x |= y)
+#define CLRBIT(x,y) (x &= ~y)
+
 //#define WIDGET_AA_JITTER 8
 
 /* max as used by round_box__edges */

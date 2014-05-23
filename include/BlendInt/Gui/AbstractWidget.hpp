@@ -24,7 +24,6 @@
 #ifndef _BLENDINT_GUI_ABSTRACTWIDGET_HPP_
 #define _BLENDINT_GUI_ABSTRACTWIDGET_HPP_
 
-#include <bitset>
 #include <stack>
 
 #include <boost/smart_ptr.hpp>
@@ -225,37 +224,42 @@ namespace BlendInt {
 
 		void activate_events ()
 		{
-			m_flag.set(WidgetFlagFireEvents);
+			SETBIT(m_flags, WidgetFlagFireEvents);
 		}
 
 		void deactivate_events ()
 		{
-			m_flag.reset(WidgetFlagFireEvents);
+			CLRBIT(m_flags, WidgetFlagFireEvents);
 		}
 
 		bool fire_events () const
 		{
-			return m_flag[WidgetFlagFireEvents];
+			return m_flags & WidgetFlagFireEvents;
 		}
 
 		inline bool focused () const
 		{
-			return m_flag[WidgetFlagFocus];
+			return m_flags & WidgetFlagFocus;
 		}
 
 		inline bool hover () const
 		{
-			return m_flag[WidgetFlagContextHoverList];
+			return m_flags & WidgetFlagHover;
 		}
 
 		inline bool visiable () const
 		{
-			return m_flag[WidgetFlagVisibility];
+			return m_flags & WidgetFlagVisibility;
+		}
+
+		inline bool scissor_test () const
+		{
+			return m_flags & WidgetFlagScissorTest;
 		}
 
 		inline bool managed () const
 		{
-			return m_flag[WidgetFlagManaged];
+			return m_flags & WidgetFlagManaged;
 		}
 
 		/**
@@ -365,9 +369,40 @@ namespace BlendInt {
 
 		Context* GetContext ();
 
+		void set_focus (bool focus)
+		{
+			if(focus) {
+				SETBIT(m_flags, WidgetFlagFocus);
+			} else {
+				CLRBIT(m_flags, WidgetFlagFocus);
+			}
+		}
+
+		void set_hover (bool hover)
+		{
+			if(hover) {
+				SETBIT(m_flags, WidgetFlagHover);
+			} else {
+				CLRBIT(m_flags, WidgetFlagHover);
+			}
+		}
+
+		void set_visible (bool visiable)
+		{
+			if(visiable) {
+				SETBIT(m_flags, WidgetFlagVisibility);
+			} else {
+				CLRBIT(m_flags, WidgetFlagVisibility);
+			}
+		}
+
 		void set_scissor_test (bool status)
 		{
-			m_flag[WidgetFlagScissorTest] = status ? 1 : 0;
+			if(status) {
+				SETBIT(m_flags, WidgetFlagScissorTest);
+			} else {
+				CLRBIT(m_flags, WidgetFlagScissorTest);
+			}
 		}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
@@ -385,26 +420,28 @@ namespace BlendInt {
 	private:
 
 		enum WidgetFlagIndex {
-			WidgetFlagFireEvents = 0,
-			WidgetFlagFocus,
+			WidgetFlagManaged = (1 << 0),
+
+			WidgetFlagFireEvents = (1 << 1),
+
+			WidgetFlagFocus = (1 << 2),
 
 			/** If this widget is in cursor hover list in Context */
-			WidgetFlagContextHoverList,
+			WidgetFlagHover = (1 << 3),
 
-			/** If the widget need to be refresh in the render loop */
-			WidgetFlagRefresh,
-
-			WidgetFlagVisibility,
-
-			WidgetFlagManaged,
+			WidgetFlagVisibility = (1 << 4),
 
 			/** If enable scissor test when drawing this the subwidgets, this flag is only workable for container */
-			WidgetFlagScissorTest
+			WidgetFlagScissorTest = (1 << 5)
 		};
 
 		void set_manage (bool val)
 		{
-			m_flag[WidgetFlagManaged] = val ? 1 : 0;
+			if(val) {
+				SETBIT(m_flags, WidgetFlagManaged);
+			} else {
+				CLRBIT(m_flags, WidgetFlagManaged);
+			}
 		}
 
 		Point m_position;
@@ -414,14 +451,9 @@ namespace BlendInt {
 		 */
 		int m_z;
 
-		/**
-		 * @brief The bit flag of this widget
-		 *
-		 * - bit 0: lock geometry
-		 * - bit 1: fire events
-		 * - bit 2: registered in context manager
-		 */
-		std::bitset<32> m_flag;
+		unsigned int m_flags;
+
+		int m_radius_ext;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 

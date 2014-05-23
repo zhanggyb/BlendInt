@@ -86,7 +86,7 @@ namespace BlendInt {
 			m_status.set(ButtonDown);
 
 			if (m_status[ButtonCheckable]) {
-				m_status[ButtonCheckedOrigin] = m_status[ButtonChecked];
+				m_status[ButtonLastChecked] = m_status[ButtonChecked];
 				m_status[ButtonChecked] = !m_status[ButtonChecked];
 			}
 
@@ -127,7 +127,7 @@ namespace BlendInt {
 
 				case 2: {
 					if (m_status[ButtonChecked]
-									!= m_status[ButtonCheckedOrigin]) {
+									!= m_status[ButtonLastChecked]) {
 						m_toggled.fire(m_status[ButtonChecked]);
 					}
 					break;
