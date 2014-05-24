@@ -26,7 +26,7 @@
 
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Gui/AbstractRoundButton.hpp>
+#include <BlendInt/Gui/AbstractButton.hpp>
 
 namespace BlendInt {
 
@@ -35,7 +35,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Button: public AbstractRoundButton
+	class Button: public AbstractButton
 	{
 		DISALLOW_COPY_AND_ASSIGN(Button);
 

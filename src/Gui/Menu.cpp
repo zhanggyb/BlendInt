@@ -46,7 +46,7 @@ namespace BlendInt {
 	int Menu::DefaultShortcutSpace = 20;
 
 	Menu::Menu ()
-	: RoundWidget(), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
+	: Widget(), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{
 		set_size (20, 20);
 
@@ -194,7 +194,7 @@ namespace BlendInt {
 				}
 
 				default:
-					RoundWidget::Update(request);
+					Widget::Update(request);
 			}
 
 		}

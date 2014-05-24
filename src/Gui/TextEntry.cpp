@@ -46,7 +46,7 @@ namespace BlendInt {
 	Margin TextEntry::default_textentry_padding = Margin(2, 2, 2, 2);
 
 	TextEntry::TextEntry ()
-	: RoundWidget(),
+	: Widget(),
 	  m_vao(0),
 	  m_start(0),
 	  m_length(0),
@@ -278,7 +278,7 @@ namespace BlendInt {
 				}
 
 				default:
-					RoundWidget::Update(request);
+					Widget::Update(request);
 			}
 
 		}
@@ -419,7 +419,7 @@ namespace BlendInt {
 
 		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
 		// set where start display the cursor
-		//m_origin.set_x(m_origin.x() + static_cast<int>(radius()));
+		//m_origin.set_x(m_origin.x() + static_cast<int>(radius_ext()));
 	}
 
 	size_t TextEntry::GetValidTextSize ()

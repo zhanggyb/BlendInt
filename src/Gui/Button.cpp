@@ -41,13 +41,13 @@
 namespace BlendInt {
 
 	Button::Button ()
-		: AbstractRoundButton(), m_vao(0)
+		: AbstractButton(), m_vao(0)
 	{
 		InitializeButton();
 	}
 
 	Button::Button (const String& text)
-		: AbstractRoundButton(), m_vao(0)
+		: AbstractButton(), m_vao(0)
 	{
 		InitializeButton(text);
 	}

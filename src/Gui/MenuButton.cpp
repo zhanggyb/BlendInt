@@ -36,12 +36,14 @@
 
 #include <BlendInt/Gui/MenuButton.hpp>
 #include <BlendInt/Gui/Context.hpp>
+
+#include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
 	
 	MenuButton::MenuButton (const String& text)
-	: AbstractRoundButton(), m_vao(0)
+	: AbstractButton(), m_vao(0)
 	{
 		InitializeMenuButton(text);
 	}

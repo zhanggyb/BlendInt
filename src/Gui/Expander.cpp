@@ -45,13 +45,13 @@
 namespace BlendInt {
 
 	ExpandButton::ExpandButton()
-	: AbstractRoundButton(), m_vao(0)
+	: AbstractButton(), m_vao(0)
 	{
 		InitializeExpandButton();
 	}
 
 	ExpandButton::ExpandButton (const String& text)
-	: AbstractRoundButton(), m_vao(0)
+	: AbstractButton(), m_vao(0)
 	{
 		InitializeExpandButton(text);
 	}

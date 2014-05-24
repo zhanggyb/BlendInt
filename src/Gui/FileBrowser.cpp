@@ -48,7 +48,7 @@ namespace BlendInt {
 		m_path_entry = Manage(new TextEntry);
 		m_path_entry->SetRoundType(RoundAll);
 		//m_path_entry->SetPreferredSize(65536, m_path_entry->preferred_size().height());
-		m_open = Manage(new Button("Open"));
+		m_open = Manage(new Button(String("Open")));
 
 		HBox* dir_layout = Manage(new HBox);
 		dir_layout->SetMargin(0, 0, 0, 0);
@@ -57,7 +57,7 @@ namespace BlendInt {
 
 		m_file_entry = Manage(new TextEntry);
 		m_file_entry->SetRoundType(RoundAll);
-		m_cancel = Manage(new Button("Cancel"));
+		m_cancel = Manage(new Button(String("Cancel")));
 
 		HBox* file_layout = Manage(new HBox);
 		file_layout->SetMargin(0, 0, 0, 0);

@@ -26,7 +26,7 @@
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
-#include <BlendInt/Gui/AbstractRoundButton.hpp>
+#include <BlendInt/Gui/AbstractButton.hpp>
 
 #include <BlendInt/Gui/Menu.hpp>
 
@@ -35,7 +35,7 @@ namespace BlendInt {
 	/**
 	 * @brief A special button used in MenuBar only
 	 */
-	class MenuButton: public AbstractRoundButton
+	class MenuButton: public AbstractButton
 	{
 	public:
 

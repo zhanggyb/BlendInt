@@ -28,7 +28,7 @@
 
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Gui/RoundWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 
 namespace BlendInt {
@@ -87,7 +87,7 @@ namespace BlendInt {
 	 *
 	 * The abstract class for Slider, ScrollBar etc.
 	 */
-	class AbstractSlider: public RoundWidget
+	class AbstractSlider: public Widget
 	{
 	public:
 

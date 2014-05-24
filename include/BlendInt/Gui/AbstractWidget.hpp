@@ -188,6 +188,10 @@ namespace BlendInt {
 
 		void SetPosition (const Point& pos);
 
+		void SetRoundType (int type);
+
+		void SetRadius (int radius);
+
 		void SetLayer (int z);
 
 		void SetVisible (bool visible);
@@ -260,6 +264,16 @@ namespace BlendInt {
 		inline bool managed () const
 		{
 			return m_flags & WidgetFlagManaged;
+		}
+
+		int round_type () const
+		{
+			return m_flags & 0x0F;
+		}
+
+		int radius () const
+		{
+			return m_radius;
 		}
 
 		/**
@@ -405,6 +419,16 @@ namespace BlendInt {
 			}
 		}
 
+		void set_round_type (int type)
+		{
+			m_flags = (m_flags & 0xFFF0) + (type & 0x0F);
+		}
+
+		void set_radius (int radius)
+		{
+			m_radius = radius;
+		}
+
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 
 		static void DispatchRender (AbstractWidget* obj);
@@ -420,19 +444,28 @@ namespace BlendInt {
 	private:
 
 		enum WidgetFlagIndex {
-			WidgetFlagManaged = (1 << 0),
+			WidgetFlagRoundTopLeft = (1 << 0),
 
-			WidgetFlagFireEvents = (1 << 1),
+			WidgetFlagRoundTopRight = (1 << 1),
 
-			WidgetFlagFocus = (1 << 2),
+			WidgetFlagRoundBottomRight = (1 << 2),
+
+			WidgetFlagRoundBottomLeft = (1 << 3),
+
+			WidgetFlagManaged = (1 << 4),
+
+			WidgetFlagFireEvents = (1 << 5),
+
+			WidgetFlagFocus = (1 << 6),
 
 			/** If this widget is in cursor hover list in Context */
-			WidgetFlagHover = (1 << 3),
+			WidgetFlagHover = (1 << 7),
 
-			WidgetFlagVisibility = (1 << 4),
+			WidgetFlagVisibility = (1 << 8),
 
 			/** If enable scissor test when drawing this the subwidgets, this flag is only workable for container */
-			WidgetFlagScissorTest = (1 << 5)
+			WidgetFlagScissorTest = (1 << 9),
+
 		};
 
 		void set_manage (bool val)
@@ -453,7 +486,7 @@ namespace BlendInt {
 
 		unsigned int m_flags;
 
-		int m_radius_ext;
+		int m_radius;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 

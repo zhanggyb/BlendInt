@@ -24,9 +24,8 @@
 #ifndef _BLENDINT_COMBOBOX_HPP_
 #define _BLENDINT_COMBOBOX_HPP_
 
-#include <BlendInt/Gui/RoundWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
-#include <BlendInt/Gui/Shadow.hpp>
 #include <BlendInt/Gui/Menu.hpp>
 
 namespace BlendInt {
@@ -34,7 +33,7 @@ namespace BlendInt {
 	/**
 	 * @brief A combined button and popup list.
 	 */
-	class ComboBox: public RoundWidget
+	class ComboBox: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(ComboBox);
 

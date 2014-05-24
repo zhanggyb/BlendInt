@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_EXPANDER_HPP_
 #define _BLENDINT_GUI_EXPANDER_HPP_
 
-#include <BlendInt/Gui/AbstractRoundButton.hpp>
+#include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/AbstractVectorContainer.hpp>
 
 namespace BlendInt {
@@ -32,7 +32,7 @@ namespace BlendInt {
 	class ToggleButton;
 	class Frame;
 
-	class ExpandButton: public AbstractRoundButton
+	class ExpandButton: public AbstractButton
 	{
 		DISALLOW_COPY_AND_ASSIGN(ExpandButton);
 

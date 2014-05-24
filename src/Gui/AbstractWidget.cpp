@@ -168,7 +168,7 @@ namespace BlendInt {
 	: AbstractForm(),
 	  m_z(0),
 	  m_flags(0),
-	  m_radius_ext(0),
+	  m_radius(5),
 	  m_container(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
@@ -257,6 +257,42 @@ namespace BlendInt {
 			Update(request);
 			set_position(pos);
 			PositionUpdateInContainer(pos);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
+		}
+	}
+
+	void AbstractWidget::SetRoundType(int type)
+	{
+		if(round_type() == type) return;
+		bool broadcast = false;
+
+		UpdateRequest request(Predefined, FormRoundType, &type);
+
+		if(UpdateTest(request)) {
+			Update(request);
+			set_round_type(type);
+			broadcast = true;
+		}
+
+		if(broadcast) {
+			BroadcastUpdate(request);
+		}
+	}
+
+	void AbstractWidget::SetRadius(int radius)
+	{
+		if(m_radius == radius) return;
+		bool broadcast = false;
+
+		UpdateRequest request(Predefined, FormRoundRadius, &radius);
+
+		if(UpdateTest(request)) {
+			Update(request);
+			m_radius = radius;
 			broadcast = true;
 		}
 

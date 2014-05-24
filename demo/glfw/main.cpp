@@ -26,7 +26,6 @@
 #include <BlendInt/Gui/VertexIcon.hpp>
 #include <BlendInt/Gui/ScrollView.hpp>
 #include <BlendInt/Gui/Menu.hpp>
-#include <BlendInt/Gui/RoundWidget.hpp>
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/MenuItemBin.hpp>
 #include <BlendInt/Gui/TextEntry.hpp>
@@ -84,6 +83,12 @@ int main(int argc, char* argv[])
 	fprintf(stdout, "Sizeof object: %ld\n", sizeof(Object));
 
 	fprintf(stdout, "sizeof event: %ld\n", sizeof(Cpp::Event<AbstractWidget*>));
+
+	tbtn0->SetRoundType(RoundTopLeft | RoundTopRight | RoundBottomLeft);
+
+	ToggleButton* t = Manage(new ToggleButton);
+	t->SetPosition(100, 400);
+	context->Add(t);
 
 	RunLoop(win);
 

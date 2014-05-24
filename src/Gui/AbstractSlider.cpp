@@ -37,6 +37,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/AbstractSlider.hpp>
+#include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
 namespace BlendInt {
@@ -227,7 +228,7 @@ namespace BlendInt {
 	}
 
 	AbstractSlider::AbstractSlider (Orientation orientation) :
-					RoundWidget(), m_orientation(orientation), m_value(0), m_minimum(
+					Widget(), m_orientation(orientation), m_value(0), m_minimum(
 									0), m_maximum(100), m_step(5)
 	{
 	}

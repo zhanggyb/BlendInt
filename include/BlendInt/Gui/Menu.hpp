@@ -31,7 +31,7 @@
 
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/Shadow.hpp>
-#include <BlendInt/Gui/RoundWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/ActionItem.hpp>
 
 #include <Cpp/Events.hpp>
@@ -41,7 +41,7 @@ namespace BlendInt {
 	/**
 	 * @brief A widget contains and handles a menu
 	 */
-	class Menu: public RoundWidget
+	class Menu: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Menu);
 

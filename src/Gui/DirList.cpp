@@ -90,7 +90,7 @@ namespace BlendInt {
 		program->Reset();
 		glBindVertexArray(0);
 
-		m_font.Print(mvp, 0, h - m_font.GetDescender(),	L".");
+		m_font.Print(mvp, 0, h - m_font.GetDescender(),	String("."));
 		i++;
 
 		h -= m_font.GetHeight();
@@ -114,7 +114,7 @@ namespace BlendInt {
 		program->Reset();
 		glBindVertexArray(0);
 
-		m_font.Print(mvp, 0, h - m_font.GetDescender(), L"..");
+		m_font.Print(mvp, 0, h - m_font.GetDescender(), String(".."));
 		i++;
 
 		fs::path p(m_path);

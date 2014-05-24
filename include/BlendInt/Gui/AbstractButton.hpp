@@ -67,6 +67,18 @@ namespace BlendInt {
 
 		bool pressed () const {return m_status[ButtonPressed];}
 
+		virtual Size GetPreferredSize () const;
+
+		void SetText (const String& text);
+
+		void SetFont (const Font& font);
+
+		const String& text () const {return m_text;}
+
+		size_t text_length () const {return m_text_length;}
+
+		const Font& font () const {return m_font;}
+
 		static const Margin& DefaultButtonPadding ()
 		{
 			return default_button_padding;
@@ -97,6 +109,32 @@ namespace BlendInt {
 			m_status[ButtonChecked] = checked ? 1 : 0;
 		}
 
+		void UpdateTextPosition (const Size& size, int round_type, float radius, const String& text);
+
+		size_t UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, Font& font);
+
+		inline void set_text (const String& text)
+		{
+			m_text = text;
+		}
+
+		inline void set_font (const Font& font)
+		{
+			m_font = font;
+		}
+
+		void set_text_length (size_t length)
+		{
+			m_text_length = length;
+		}
+
+		void set_pen (int x, int y)
+		{
+			m_font.set_pen(x, y);
+		}
+
+		size_t GetValidTextSize (const Size& size, const String& text, const Font& font);
+
 	private:
 
 		enum ButtonStatusIndex {
@@ -108,6 +146,13 @@ namespace BlendInt {
 		};
 
 		std::bitset<8> m_status;
+
+		size_t m_text_length;	// How many text to be printed, depends on the button size
+
+		// TextBuffer text_;
+		String m_text;
+
+		Font m_font;
 
 		/**
 		 * @brief press event

@@ -161,7 +161,7 @@ namespace BlendInt {
 	void NumberSlider::InitOnce()
 	{
 		set_round_type(RoundAll);
-		set_radius(10.f);
+		set_radius(10);
 		set_size(90, 20);
 
 		glGenVertexArrays(1, &m_vao);

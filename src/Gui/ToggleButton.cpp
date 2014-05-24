@@ -42,13 +42,13 @@
 namespace BlendInt {
 
 	ToggleButton::ToggleButton ()
-			: AbstractRoundButton(), m_vao(0)
+			: AbstractButton(), m_vao(0)
 	{
 		InitializeToggleButton();
 	}
 
 	ToggleButton::ToggleButton (const String& text)
-			: AbstractRoundButton(), m_vao(0)
+			: AbstractButton(), m_vao(0)
 	{
 		InitializeToggleButton(text);
 	}

@@ -26,7 +26,9 @@
 namespace BlendInt {
 
 	AbstractRoundForm::AbstractRoundForm()
-	: AbstractResizableForm(), RoundShapeBase()
+	: AbstractResizableForm(),
+	  m_round_type(RoundNone),
+	  m_radius(5)
 	{
 
 	}
@@ -44,7 +46,7 @@ namespace BlendInt {
 		set_round_type(type);
 	}
 
-	void AbstractRoundForm::SetRadius(float rad)
+	void AbstractRoundForm::SetRadius(int rad)
 	{
 		if(radius() == rad) return;
 

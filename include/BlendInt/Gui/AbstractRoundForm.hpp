@@ -25,11 +25,10 @@
 #define _BLENDINT_ABSTRACTROUNDFORM_HPP_
 
 #include <BlendInt/Gui/AbstractResizableForm.hpp>
-#include <BlendInt/Gui/RoundShapeBase.hpp>
 
 namespace BlendInt {
 
-	class AbstractRoundForm: public AbstractResizableForm, public RoundShapeBase
+	class AbstractRoundForm: public AbstractResizableForm
 	{
 	public:
 
@@ -39,7 +38,29 @@ namespace BlendInt {
 
 		void SetRoundType (int type);
 
-		void SetRadius (float radius);
+		void SetRadius (int radius);
+
+		int round_type () const {return m_round_type;}
+
+		int radius () const {return m_radius;}
+
+	protected:
+
+		inline void set_round_type (int type)
+		{
+			m_round_type = type;
+		}
+
+		inline void set_radius (int radius)
+		{
+			m_radius = radius;
+		}
+
+	private:
+
+		int m_round_type;
+
+		int m_radius;
 	};
 
 }

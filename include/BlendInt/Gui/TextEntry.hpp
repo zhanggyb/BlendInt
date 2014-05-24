@@ -32,12 +32,12 @@
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
-#include <BlendInt/Gui/RoundWidget.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Gui/Font.hpp>
 
 namespace BlendInt {
 
-	class TextEntry: public RoundWidget
+	class TextEntry: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(TextEntry);
 

@@ -48,7 +48,7 @@ namespace BlendInt {
 	Margin ComboBox::default_combobox_padding = Margin(2, 2, 2, 2);
 
 	ComboBox::ComboBox ()
-	: RoundWidget(), m_vao(0), m_status_down(false)
+	: Widget(), m_vao(0), m_status_down(false)
 	{
 		set_round_type(RoundAll);
 
@@ -165,7 +165,7 @@ namespace BlendInt {
 				}
 
 				default:
-					RoundWidget::Update(request);
+					Widget::Update(request);
 			}
 
 		}
@@ -297,11 +297,13 @@ namespace BlendInt {
 		//m_menu->SetPosition(200, 200);
 		//menu->Resize (200, 200);
 
+		/*
 		m_menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
 		m_menu->AddActionItem("MenuItem2", "Ctrl + 1");
 		m_menu->AddActionItem("MenuItem3", "Ctrl + 1");
 		m_menu->AddActionItem("MenuItem4", "Ctrl + 1");
 		m_menu->AddActionItem("MenuItem5");
+		*/
 
 		events()->connect(m_menu->triggered(), this, &ComboBox::OnMenuActionTriggered);
 	}

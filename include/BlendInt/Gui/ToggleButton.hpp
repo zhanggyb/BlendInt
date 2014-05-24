@@ -25,7 +25,7 @@
 #define _BLENDINT_CHECKBUTTON_HPP_
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Gui/AbstractRoundButton.hpp>
+#include <BlendInt/Gui/AbstractButton.hpp>
 
 namespace BlendInt {
 
@@ -36,7 +36,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class ToggleButton: public AbstractRoundButton
+	class ToggleButton: public AbstractButton
 	{
 		DISALLOW_COPY_AND_ASSIGN(ToggleButton);
 
