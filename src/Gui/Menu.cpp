@@ -103,11 +103,11 @@ namespace BlendInt {
 		Size s;
 
 		if(m_list.size()) {
-			s.set_width(std::max(size().width(), static_cast<unsigned int>(radius() * 2) + width));
+			s.set_width(std::max(size().width(), static_cast<unsigned int>(round_corner_radius() * 2) + width));
 			s.set_height(size().height() + DefaultMenuItemHeight);
 		} else {
-			s.set_width((int)radius() * 2 + width);
-			s.set_height((int)radius() * 2 + DefaultMenuItemHeight);
+			s.set_width((int)round_corner_radius() * 2 + width);
+			s.set_height((int)round_corner_radius() * 2 + DefaultMenuItemHeight);
 		}
 
 		Resize(s);
@@ -167,7 +167,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Menu::Update(const UpdateRequest& request)
+	void Menu::UpdateGeometry(const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -175,7 +175,7 @@ namespace BlendInt {
 
 				case FormSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
-					GenerateFormBuffer(*size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					GenerateFormBuffer(*size_p, round_corner_type(), round_corner_radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 					ResetHighlightBuffer(size_p->width());
 					m_shadow->Resize(*size_p);
 					break;
@@ -183,18 +183,18 @@ namespace BlendInt {
 
 				case FormRoundType: {
 					const int* type_p = static_cast<const int*>(request.data());
-					GenerateFormBuffer(size(), *type_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					GenerateFormBuffer(size(), *type_p, round_corner_radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
 					break;
 				}
 
 				case FormRoundRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
-					GenerateFormBuffer(size(), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
+					GenerateFormBuffer(size(), round_corner_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
 					break;
 				}
 
 				default:
-					Widget::Update(request);
+					Widget::UpdateGeometry(request);
 			}
 
 		}
@@ -244,7 +244,7 @@ namespace BlendInt {
 
 			glEnableVertexAttribArray(1);
 
-			glm::mat4 h_mvp = glm::translate(mvp, glm::vec3(0.f, size().height() - radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight), 0.f));
+			glm::mat4 h_mvp = glm::translate(mvp, glm::vec3(0.f, size().height() - round_corner_radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight), 0.f));
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(h_mvp));
 
 			DrawShadedTriangleFan(0, 1, m_highlight_buffer.get());
@@ -258,7 +258,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		float h = size().height() - radius();
+		float h = size().height() - round_corner_radius();
 
 		int advance = 0;
 		for(deque<RefPtr<ActionItem> >::iterator it = m_list.begin(); it != m_list.end(); it++)
@@ -316,11 +316,11 @@ namespace BlendInt {
 	{
 		int h = position().y() + size().height() - y;
 
-		if(h < radius() || h > (size().height() - radius())) {
+		if(h < round_corner_radius() || h > (size().height() - round_corner_radius())) {
 			return 0;
 		}
 
-		return (h - radius()) / (size().height() / m_list.size()) + 1;
+		return (h - round_corner_radius()) / (size().height() / m_list.size()) + 1;
 	}
 
 	void Menu::InitializeMenu ()
@@ -332,7 +332,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
-		GenerateFormBuffer(size(), round_type(), radius(),
+		GenerateFormBuffer(size(), round_corner_type(), round_corner_radius(),
 		        m_inner_buffer.get(), m_outer_buffer.get(), 0);
 
 		ResetHighlightBuffer(20);

@@ -156,7 +156,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToolBar::Update (const UpdateRequest& request)
+	void ToolBar::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

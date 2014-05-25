@@ -126,7 +126,7 @@ namespace BlendInt {
 		return percentage;
 	}
 
-	void ScrollView::Update (const UpdateRequest& request)
+	void ScrollView::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

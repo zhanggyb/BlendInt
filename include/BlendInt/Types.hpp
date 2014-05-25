@@ -145,7 +145,7 @@ namespace BlendInt {
 	 * |      		|
 	 * 8------4
 	 */
-	enum RoundType {
+	enum RoundCornerType {
 		RoundNone = 0,
 		RoundTopLeft = (1 << 0),
 		RoundTopRight = (1 << 1),
@@ -157,6 +157,12 @@ namespace BlendInt {
 		UI_RB_ALPHA = RoundAll + 1
 	};
 
+	enum WidgetGeometryType {
+		WidgetPosition,
+		WidgetSize,
+		WidgetRoundCornerType,
+		WidgetRoundCornerRadius
+	};
 
 	enum FormPropertyType {
 		FormSize,
@@ -166,9 +172,6 @@ namespace BlendInt {
 		FormMaximalSize,
 		WidgetLayer,
 		WidgetVisibility,
-		WidgetExpandX,
-		WidgetExpandY,
-		WidgetBorderWidth,
 		FormRoundType,
 		FormRoundRadius,
 		ContainerMargin,

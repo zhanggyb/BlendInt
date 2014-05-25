@@ -56,7 +56,7 @@ namespace BlendInt {
 		return true;
 	}
 	
-	void NumberSlider::Update (const UpdateRequest& request)
+	void NumberSlider::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 			switch (request.type()) {
@@ -66,8 +66,8 @@ namespace BlendInt {
 				glBindVertexArray(m_vao);
 				GenerateFormBuffer(
 								*size_p,
-								round_type(),
-								radius(),
+								round_corner_type(),
+								round_corner_radius(),
 								m_inner_buffer.get(),
 								m_outer_buffer.get(),
 								0);
@@ -81,7 +81,7 @@ namespace BlendInt {
 				glBindVertexArray(m_vao);
 				GenerateFormBuffer(size(),
 								   *type_p,
-								   radius(),
+								   round_corner_radius(),
 								   m_inner_buffer.get(),
 								   m_outer_buffer.get(),
 								   0);
@@ -94,7 +94,7 @@ namespace BlendInt {
 				const float* radius_p = static_cast<const float*>(request.data());
 				glBindVertexArray(m_vao);
 				GenerateFormBuffer(size(),
-								   round_type(),
+								   round_corner_type(),
 								   *radius_p,
 								   m_inner_buffer.get(),
 								   m_outer_buffer.get(),
@@ -105,7 +105,7 @@ namespace BlendInt {
 			}
 
 			default:
-				AbstractSlider::Update(request);
+				AbstractSlider::UpdateGeometry(request);
 			}
 
 		}
@@ -160,8 +160,8 @@ namespace BlendInt {
 
 	void NumberSlider::InitOnce()
 	{
-		set_round_type(RoundAll);
-		set_radius(10);
+		set_round_corner_type(RoundAll);
+		set_round_corner_radius(10);
 		set_size(90, 20);
 
 		glGenVertexArrays(1, &m_vao);
@@ -172,8 +172,8 @@ namespace BlendInt {
 
 		GenerateFormBuffer(
 						size(),
-						round_type(),
-						radius(),
+						round_corner_type(),
+						round_corner_radius(),
 						m_inner_buffer.get(),
 						m_outer_buffer.get(),
 						0);

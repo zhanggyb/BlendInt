@@ -199,7 +199,7 @@ namespace BlendInt
 		return ArrowCursor;
 	}
 
-	bool Context::UpdateTest(const UpdateRequest& request)
+	bool Context::UpdateGeometryTest(const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -230,7 +230,7 @@ namespace BlendInt
 		}
 	}
 
-	void Context::Update (const UpdateRequest& request)
+	void Context::UpdateGeometry (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 

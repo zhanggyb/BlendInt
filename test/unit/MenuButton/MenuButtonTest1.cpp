@@ -35,7 +35,7 @@ TEST_F(MenuButtonTest1, Foo1)
 
     RefPtr<Menu> menu(new Menu);
 
-    menu->SetRoundType(RoundTopLeft | RoundTopRight);
+    menu->SetRoundCornerType(RoundTopLeft | RoundTopRight);
     //m_menu->SetPosition(200, 200);
     //menu->Resize (200, 200);
 

@@ -73,7 +73,7 @@ namespace BlendInt {
 	{
 	}
 
-	void TabButton::Update (const UpdateRequest& request)
+	void TabButton::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

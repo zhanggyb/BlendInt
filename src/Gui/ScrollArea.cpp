@@ -107,7 +107,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void ScrollArea::Update (const UpdateRequest& request)
+	void ScrollArea::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

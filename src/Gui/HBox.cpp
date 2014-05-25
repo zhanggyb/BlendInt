@@ -155,7 +155,7 @@ namespace BlendInt {
 		return expand;
 	}
 
-	bool HBox::UpdateTest (const UpdateRequest& request)
+	bool HBox::UpdateGeometryTest (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -168,7 +168,7 @@ namespace BlendInt {
 					return false;
 
 				default:
-					return AbstractDequeContainer::UpdateTest(request);
+					return AbstractDequeContainer::UpdateGeometryTest(request);
 
 			}
 
@@ -177,7 +177,7 @@ namespace BlendInt {
 		}
 	}
 
-	void HBox::Update (const UpdateRequest& request)
+	void HBox::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

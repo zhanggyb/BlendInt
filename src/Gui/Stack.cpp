@@ -117,7 +117,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::Update (const UpdateRequest& request)
+	void Stack::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

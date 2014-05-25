@@ -35,7 +35,7 @@ TEST_F(MenuBarTest1, AddMenu1)
 
     RefPtr<Menu> menu1(new Menu);
 
-    menu1->SetRoundType(RoundBottomLeft | RoundBottomRight);
+    menu1->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
     //m_menu->SetPosition(200, 200);
     //menu->Resize (200, 200);
 
@@ -48,7 +48,7 @@ TEST_F(MenuBarTest1, AddMenu1)
 
     RefPtr<Menu> menu2(new Menu);
 
-    menu2->SetRoundType(RoundBottomLeft | RoundBottomRight);
+    menu2->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
 
     /*
     menu2->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
@@ -59,7 +59,7 @@ TEST_F(MenuBarTest1, AddMenu1)
 
     RefPtr<Menu> menu3(new Menu);
 
-    menu3->SetRoundType(RoundBottomLeft | RoundBottomRight);
+    menu3->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
     //m_menu->SetPosition(200, 200);
     //menu->Resize (200, 200);
 

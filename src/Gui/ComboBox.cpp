@@ -50,12 +50,12 @@ namespace BlendInt {
 	ComboBox::ComboBox ()
 	: Widget(), m_vao(0), m_status_down(false)
 	{
-		set_round_type(RoundAll);
+		set_round_corner_type(RoundAll);
 
 		unsigned int h = m_font.GetHeight();
 
 		set_size(
-		        h + radius() * 2 + default_combobox_padding.left()
+		        h + round_corner_radius() * 2 + default_combobox_padding.left()
 		                + default_combobox_padding.right(),
 		        h + default_combobox_padding.top()
 		                + default_combobox_padding.bottom());
@@ -74,12 +74,12 @@ namespace BlendInt {
 
 		int radius_plus = 0;
 
-		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
-			radius_plus += radius();
+		if((round_corner_type() & RoundTopLeft) || (round_corner_type() & RoundBottomLeft)) {
+			radius_plus += round_corner_radius();
 		}
 
-		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
-			radius_plus += radius();
+		if((round_corner_type() & RoundTopRight) || (round_corner_type() & RoundBottomRight)) {
+			radius_plus += round_corner_radius();
 		}
 
 		int max_font_height = m_font.GetHeight();
@@ -108,7 +108,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ComboBox::Update(const UpdateRequest& request)
+	void ComboBox::UpdateGeometry(const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 			switch (request.type()) {
@@ -117,8 +117,8 @@ namespace BlendInt {
 					const Size* size_p = static_cast<const Size*>(request.data());
 					glBindVertexArray(m_vao);
 					GenerateShadedFormBuffers(*size_p,
-									round_type(),
-									radius(),
+									round_corner_type(),
+									round_corner_radius(),
 									Theme::instance->menu().inner,
 									Theme::instance->menu().shadetop,
 									Theme::instance->menu().shadedown,
@@ -135,7 +135,7 @@ namespace BlendInt {
 					glBindVertexArray(m_vao);
 					GenerateShadedFormBuffers(size(),
 									*type_p,
-									radius(),
+									round_corner_radius(),
 									Theme::instance->menu().inner,
 									Theme::instance->menu().shadetop,
 									Theme::instance->menu().shadedown,
@@ -151,7 +151,7 @@ namespace BlendInt {
 					const float* radius_p = static_cast<const float*>(request.data());
 					glBindVertexArray(m_vao);
 					GenerateShadedFormBuffers(size(),
-									round_type(),
+									round_corner_type(),
 									*radius_p,
 									Theme::instance->menu().inner,
 									Theme::instance->menu().shadetop,
@@ -165,7 +165,7 @@ namespace BlendInt {
 				}
 
 				default:
-					Widget::Update(request);
+					Widget::UpdateGeometry(request);
 			}
 
 		}
@@ -241,13 +241,13 @@ namespace BlendInt {
 		if(context) {
 			if(m_menu->container()) {
 				context->Remove(m_menu.get());
-				SetRoundType(RoundAll);
+				SetRoundCornerType(RoundAll);
 			} else {
 				int max_layer = context->GetMaxLayer();
 				m_menu->SetLayer(max_layer + 1);
 				m_menu->SetPosition(position().x(), position().y() + size().height());
 				context->Add(m_menu.get());
-				SetRoundType(RoundBottomLeft | RoundBottomRight);
+				SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
 				//context->SetFocusedWidget(m_menu.get());	// FIXME: no use, context will reset to this combobox.
 			}
 
@@ -280,8 +280,8 @@ namespace BlendInt {
 		m_outer_buffer.reset(new GLArrayBuffer);
 
 		GenerateShadedFormBuffers(size(),
-						round_type(),
-						radius(),
+						round_corner_type(),
+						round_corner_radius(),
 						Theme::instance->menu().inner,
 						Theme::instance->menu().shadetop,
 						Theme::instance->menu().shadedown,
@@ -293,7 +293,7 @@ namespace BlendInt {
 
 		m_menu.reset(new Menu);
 
-		m_menu->SetRoundType(RoundTopLeft | RoundTopRight);
+		m_menu->SetRoundCornerType(RoundTopLeft | RoundTopRight);
 		//m_menu->SetPosition(200, 200);
 		//menu->Resize (200, 200);
 
@@ -313,7 +313,7 @@ namespace BlendInt {
 		Context* context = GetContext();
 
 		context->Remove(m_menu.get());
-		SetRoundType(RoundAll);
+		SetRoundCornerType(RoundAll);
 
 		Refresh();
 	}

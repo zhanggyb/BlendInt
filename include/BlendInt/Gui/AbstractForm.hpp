@@ -270,8 +270,6 @@ namespace BlendInt {
 			m_size = size;
 		}
 
-		virtual void Update (const UpdateRequest& request) = 0;
-
 		/**
 		 * @brief generate vertices for drawing rectangle based on the given size and border width
 		 * @param[in] size

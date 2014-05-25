@@ -188,9 +188,9 @@ namespace BlendInt {
 
 		void SetPosition (const Point& pos);
 
-		void SetRoundType (int type);
+		void SetRoundCornerType (int type);
 
-		void SetRadius (int radius);
+		void SetRoundCornerRadius (int radius);
 
 		void SetLayer (int z);
 
@@ -266,14 +266,14 @@ namespace BlendInt {
 			return m_flags & WidgetFlagManaged;
 		}
 
-		int round_type () const
+		int round_corner_type () const
 		{
 			return m_flags & 0x0F;
 		}
 
-		int radius () const
+		int round_corner_radius () const
 		{
-			return m_radius;
+			return m_round_corner_radius;
 		}
 
 		/**
@@ -352,7 +352,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
 
-		virtual bool UpdateTest (const UpdateRequest& request) = 0;
+		virtual bool UpdateGeometryTest (const UpdateRequest& request) = 0;
 
 		/**
 		 * @brief Update opengl data (usually the GL buffer) for Render
@@ -363,7 +363,7 @@ namespace BlendInt {
 		 * This virtual function should be implemented in each derived class,
 		 * and should only use the form's property to draw opengl elements once.
 		 */
-		virtual void Update (const UpdateRequest& request) = 0;
+		virtual void UpdateGeometry (const UpdateRequest& request) = 0;
 
 		virtual void BroadcastUpdate (const UpdateRequest& request) = 0;
 
@@ -419,14 +419,14 @@ namespace BlendInt {
 			}
 		}
 
-		void set_round_type (int type)
+		void set_round_corner_type (int type)
 		{
 			m_flags = (m_flags & 0xFFF0) + (type & 0x0F);
 		}
 
-		void set_radius (int radius)
+		void set_round_corner_radius (int radius)
 		{
-			m_radius = radius;
+			m_round_corner_radius = radius;
 		}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
@@ -486,7 +486,7 @@ namespace BlendInt {
 
 		unsigned int m_flags;
 
-		int m_radius;
+		int m_round_corner_radius;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 

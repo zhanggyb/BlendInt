@@ -48,6 +48,11 @@ namespace BlendInt {
 		void Resize (const Size& size);
 
 		virtual void Draw (const glm::mat4& mvp) = 0;
+
+	protected:
+
+		virtual void Update (const UpdateRequest& request) = 0;
+
 	};
 
 }

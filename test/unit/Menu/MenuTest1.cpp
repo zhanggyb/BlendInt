@@ -31,7 +31,7 @@ TEST_F(MenuTest1, Foo1)
 
 	// TODO: add test code here
 	Menu* menu = Manage(new Menu);
-	menu->SetRoundType(RoundAll);
+	menu->SetRoundCornerType(RoundAll);
 
 	menu->SetPosition(200, 200);
 	//menu->Resize (200, 200);

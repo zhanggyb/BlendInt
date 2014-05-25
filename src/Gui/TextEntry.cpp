@@ -121,12 +121,12 @@ namespace BlendInt {
 
 		int radius_plus = 0;
 
-		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
-			radius_plus += radius();
+		if((round_corner_type() & RoundTopLeft) || (round_corner_type() & RoundBottomLeft)) {
+			radius_plus += round_corner_radius();
 		}
 
-		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
-			radius_plus += radius();
+		if((round_corner_type() & RoundTopRight) || (round_corner_type() & RoundBottomRight)) {
+			radius_plus += round_corner_radius();
 		}
 
 		int max_font_height = m_font.GetHeight();
@@ -233,7 +233,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void TextEntry::Update (const UpdateRequest& request)
+	void TextEntry::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -253,8 +253,8 @@ namespace BlendInt {
 					short shadedown = Theme::instance->text().shadedown;
 
 					GenerateShadedFormBuffers(*size_p,
-							round_type(),
-							radius(),
+							round_corner_type(),
+							round_corner_radius(),
 							color,
 							shadetop,
 							shadedown,
@@ -278,7 +278,7 @@ namespace BlendInt {
 				}
 
 				default:
-					Widget::Update(request);
+					Widget::UpdateGeometry(request);
 			}
 
 		}
@@ -367,7 +367,7 @@ namespace BlendInt {
 	{
 		unsigned int h = m_font.GetHeight();
 
-		set_size(h + radius() * 2 + default_textentry_padding.left() + default_textentry_padding.right(),
+		set_size(h + round_corner_radius() * 2 + default_textentry_padding.left() + default_textentry_padding.right(),
 						h + default_textentry_padding.top() + default_textentry_padding.bottom());
 
 		glGenVertexArrays(1, &m_vao);
@@ -382,8 +382,8 @@ namespace BlendInt {
 		short shadedown = Theme::instance->text().shadedown;
 
 		GenerateShadedFormBuffers(size(),
-				round_type(),
-				radius(),
+				round_corner_type(),
+				round_corner_radius(),
 				color,
 				shadetop,
 				shadedown,

@@ -125,7 +125,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool ScrollBar::UpdateTest (const UpdateRequest& request)
+	bool ScrollBar::UpdateGeometryTest (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -152,7 +152,7 @@ namespace BlendInt {
 				}
 
 				default:
-					return AbstractSlider::UpdateTest(request);
+					return AbstractSlider::UpdateGeometryTest(request);
 			}
 
 		} else {
@@ -160,7 +160,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollBar::Update (const UpdateRequest& request)
+	void ScrollBar::UpdateGeometry (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 

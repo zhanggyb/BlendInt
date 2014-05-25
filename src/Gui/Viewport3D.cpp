@@ -210,7 +210,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Viewport3D::Update (const UpdateRequest& request)
+	void Viewport3D::UpdateGeometry (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 			switch (request.type()) {
@@ -225,7 +225,7 @@ namespace BlendInt {
 				}
 
 				default:
-					Widget::Update(request);
+					Widget::UpdateGeometry(request);
 			}
 
 		}

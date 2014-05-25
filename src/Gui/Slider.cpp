@@ -79,7 +79,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool Slider::UpdateTest (const UpdateRequest& request)
+	bool Slider::UpdateGeometryTest (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -106,7 +106,7 @@ namespace BlendInt {
 				}
 
 				default: {
-					return AbstractSlider::UpdateTest(request);
+					return AbstractSlider::UpdateGeometryTest(request);
 				}
 
 			}
@@ -115,7 +115,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Slider::Update (const UpdateRequest& request)
+	void Slider::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

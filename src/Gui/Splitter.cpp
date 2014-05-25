@@ -109,7 +109,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SplitterHandle::Update (const UpdateRequest& request)
+	void SplitterHandle::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -419,7 +419,7 @@ namespace BlendInt {
 	{
 	}
 
-	bool Splitter::UpdateTest (const UpdateRequest& request)
+	bool Splitter::UpdateGeometryTest (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -439,7 +439,7 @@ namespace BlendInt {
 				}
 
 				default:
-					return AbstractDequeContainer::UpdateTest(request);
+					return AbstractDequeContainer::UpdateGeometryTest(request);
 
 			}
 
@@ -448,7 +448,7 @@ namespace BlendInt {
 		}
 	}
 	
-	void Splitter::Update (const UpdateRequest& request)
+	void Splitter::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

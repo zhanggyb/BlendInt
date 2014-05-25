@@ -48,9 +48,9 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool UpdateTest (const UpdateRequest& request);
+		virtual bool UpdateGeometryTest (const UpdateRequest& request);
 
-		virtual void Update (const UpdateRequest& request);
+		virtual void UpdateGeometry (const UpdateRequest& request);
 
 		virtual void BroadcastUpdate (const UpdateRequest& request);
 
@@ -82,7 +82,7 @@ namespace BlendInt {
 		 */
 		inline VerticesSum generate_vertices (const Size* size, float border, float inner_v[WIDGET_SIZE_MAX][2], float outer_v[WIDGET_SIZE_MAX][2])
 		{
-			return generate_round_vertices(size, border, round_type(), radius(), inner_v, outer_v);
+			return generate_round_vertices(size, border, round_corner_type(), round_corner_radius(), inner_v, outer_v);
 		}
 
 		/**
@@ -104,8 +104,8 @@ namespace BlendInt {
 		{
 			return generate_round_vertices (size,
 					border,
-					round_type(),
-					radius(),
+					round_corner_type(),
+					round_corner_radius(),
 					theme,
 					shadedir,
 					inner,
@@ -134,8 +134,8 @@ namespace BlendInt {
 		{
 			return generate_round_vertices (size,
 					border,
-					round_type(),
-					radius(),
+					round_corner_type(),
+					round_corner_radius(),
 					color,
 					shadetop,
 					shadedown,

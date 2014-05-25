@@ -53,18 +53,18 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void MenuButton::Update (const UpdateRequest& request)
+	void MenuButton::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 			switch (request.type()) {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
-				UpdateTextPosition(*size_p, round_type(), radius(), text());
+				UpdateTextPosition(*size_p, round_corner_type(), round_corner_radius(), text());
 				glBindVertexArray(m_vao);
 				GenerateFormBuffer(*size_p,
-								   round_type(),
-								   radius(),
+								   round_corner_type(),
+								   round_corner_radius(),
 								   m_inner.get(),
 								   0,
 								   0);
@@ -75,11 +75,11 @@ namespace BlendInt {
 
 			case FormRoundType: {
 				const int* type_p = static_cast<const int*>(request.data());
-				UpdateTextPosition(size(), *type_p, radius(), text());
+				UpdateTextPosition(size(), *type_p, round_corner_radius(), text());
 				glBindVertexArray(m_vao);
 				GenerateFormBuffer(size(),
 								   *type_p,
-								   radius(),
+								   round_corner_radius(),
 								   m_inner.get(),
 								   0,
 								   0);
@@ -90,10 +90,10 @@ namespace BlendInt {
 
 			case FormRoundRadius: {
 				const float* radius_p = static_cast<const float*>(request.data());
-				UpdateTextPosition(size(), round_type(), *radius_p, text());
+				UpdateTextPosition(size(), round_corner_type(), *radius_p, text());
 				glBindVertexArray(m_vao);
 				GenerateFormBuffer(size(),
-								   round_type(),
+								   round_corner_type(),
 								   *radius_p,
 								   m_inner.get(),
 								   0,
@@ -104,7 +104,7 @@ namespace BlendInt {
 			}
 
 			default:
-				AbstractButton::Update(request);
+				AbstractButton::UpdateGeometry(request);
 			}
 
 		}
@@ -160,19 +160,19 @@ namespace BlendInt {
 
 	void MenuButton::InitializeMenuButton (const String& text)
 	{
-		set_round_type(RoundAll);
+		set_round_corner_type(RoundAll);
 		set_text(text);
 
 		unsigned int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
+			set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
 							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			unsigned int width = text_outline.width() + radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
+			unsigned int width = text_outline.width() + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
 			unsigned int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
 
 			set_size(width, height);
@@ -189,8 +189,8 @@ namespace BlendInt {
 
 		GenerateFormBuffer(
 						size(),
-						round_type(),
-						radius(),
+						round_corner_type(),
+						round_corner_radius(),
 						m_inner.get(),
 						0,
 						0);

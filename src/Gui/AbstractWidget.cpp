@@ -66,8 +66,8 @@ namespace BlendInt {
 
 		UpdateRequest request(Predefined, FormSize, &size);
 
-		if(m_widget->UpdateTest(request)) {
-			m_widget->Update(request);
+		if(m_widget->UpdateGeometryTest(request)) {
+			m_widget->UpdateGeometry(request);
 			m_widget->set_size(size);
 		}
 	}
@@ -81,8 +81,8 @@ namespace BlendInt {
 		Size new_size (width, height);
 		UpdateRequest request(Predefined, FormSize, &new_size);
 
-		if(m_widget->UpdateTest(request)) {
-			m_widget->Update(request);
+		if(m_widget->UpdateGeometryTest(request)) {
+			m_widget->UpdateGeometry(request);
 			m_widget->set_size(width, height);
 		}
 	}
@@ -94,8 +94,8 @@ namespace BlendInt {
 		Point new_pos (x, y);
 		UpdateRequest request(Predefined, FormPosition, &new_pos);
 
-		if(m_widget->UpdateTest(request)) {
-			m_widget->Update(request);
+		if(m_widget->UpdateGeometryTest(request)) {
+			m_widget->UpdateGeometry(request);
 			m_widget->set_position(x, y);
 		}
 	}
@@ -105,8 +105,8 @@ namespace BlendInt {
 		if(m_widget->position() == position) return;
 		UpdateRequest request(Predefined, FormPosition, &position);
 
-		if(m_widget->UpdateTest(request)) {
-			m_widget->Update(request);
+		if(m_widget->UpdateGeometryTest(request)) {
+			m_widget->UpdateGeometry(request);
 			m_widget->set_position(position);
 		}
 	}
@@ -123,13 +123,13 @@ namespace BlendInt {
 	bool ContainerProxy::RequestRefreshTest (AbstractWidget* widget)
 	{
 		UpdateRequest request(Predefined, WidgetRefresh, widget);
-		return m_container->UpdateTest(request);
+		return m_container->UpdateGeometryTest(request);
 	}
 
 	void ContainerProxy::RequestRefresh (AbstractWidget* widget)
 	{
 		UpdateRequest request(Predefined, WidgetRefresh, widget);
-		m_container->Update(request);
+		m_container->UpdateGeometry(request);
 	}
 
 	bool ContainerProxy::SubwidgetPositionUpdateTest(AbstractWidget* widget, const Point& pos)
@@ -137,7 +137,7 @@ namespace BlendInt {
 		SubWidgetPositionData data = {widget, &pos};
 		UpdateRequest request (Predefined, SubWidgetPosition, &data);
 
-		return m_container->UpdateTest(request);
+		return m_container->UpdateGeometryTest(request);
 	}
 
 	bool ContainerProxy::SubWidgetSizeUpdateTest(AbstractWidget* widget, const Size& size)
@@ -145,21 +145,21 @@ namespace BlendInt {
 		SubWidgetSizeData data = {widget, &size};
 		UpdateRequest request (Predefined, SubWidgetSize, &data);
 
-		return m_container->UpdateTest(request);
+		return m_container->UpdateGeometryTest(request);
 	}
 
 	void ContainerProxy::SubWidgetPositionUpdate(AbstractWidget* widget, const Point& pos)
 	{
 		SubWidgetPositionData data = {widget, &pos};
 		UpdateRequest request (Predefined, SubWidgetPosition, &data);
-		m_container->Update(request);
+		m_container->UpdateGeometry(request);
 	}
 
 	void ContainerProxy::SubWidgetSizeUpdate(AbstractWidget* widget, const Size& size)
 	{
 		SubWidgetSizeData data = {widget, &size};
 		UpdateRequest request (Predefined, SubWidgetSize, &data);
-		m_container->Update (request);
+		m_container->UpdateGeometry (request);
 	}
 
 	// --------------------------------------------------------------------
@@ -168,7 +168,7 @@ namespace BlendInt {
 	: AbstractForm(),
 	  m_z(0),
 	  m_flags(0),
-	  m_radius(5),
+	  m_round_corner_radius(5),
 	  m_container(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
@@ -195,8 +195,8 @@ namespace BlendInt {
 		Size new_size (width, height);
 		UpdateRequest request(Predefined, FormSize, &new_size);
 
-		if(ResizeTestInContainer(new_size) && UpdateTest(request)) {
-			Update(request);
+		if(ResizeTestInContainer(new_size) && UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
 			set_size(width, height);
 			ResizeUpdateInContainer(new_size);
 			broadcast = true;
@@ -214,8 +214,8 @@ namespace BlendInt {
 
 		UpdateRequest request(Predefined, FormSize, &size);
 
-		if(ResizeTestInContainer(size) && UpdateTest(request)) {
-			Update(request);
+		if(ResizeTestInContainer(size) && UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
 			set_size(size);
 			ResizeUpdateInContainer(size);
 			broadcast = true;
@@ -234,8 +234,8 @@ namespace BlendInt {
 		Point new_pos (x, y);
 		UpdateRequest request(Predefined, FormPosition, &new_pos);
 
-		if(PositionTestInContainer(new_pos) && UpdateTest(request)) {
-			Update(request);
+		if(PositionTestInContainer(new_pos) && UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
 			set_position(x, y);
 			PositionUpdateInContainer(new_pos);
 			broadcast = true;
@@ -253,8 +253,8 @@ namespace BlendInt {
 
 		UpdateRequest request(Predefined, FormPosition, &pos);
 
-		if(PositionTestInContainer(pos) && UpdateTest(request)) {
-			Update(request);
+		if(PositionTestInContainer(pos) && UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
 			set_position(pos);
 			PositionUpdateInContainer(pos);
 			broadcast = true;
@@ -265,16 +265,16 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetRoundType(int type)
+	void AbstractWidget::SetRoundCornerType(int type)
 	{
-		if(round_type() == type) return;
+		if(round_corner_type() == type) return;
 		bool broadcast = false;
 
 		UpdateRequest request(Predefined, FormRoundType, &type);
 
-		if(UpdateTest(request)) {
-			Update(request);
-			set_round_type(type);
+		if(UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
+			set_round_corner_type(type);
 			broadcast = true;
 		}
 
@@ -283,16 +283,16 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetRadius(int radius)
+	void AbstractWidget::SetRoundCornerRadius(int radius)
 	{
-		if(m_radius == radius) return;
+		if(m_round_corner_radius == radius) return;
 		bool broadcast = false;
 
 		UpdateRequest request(Predefined, FormRoundRadius, &radius);
 
-		if(UpdateTest(request)) {
-			Update(request);
-			m_radius = radius;
+		if(UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
+			m_round_corner_radius = radius;
 			broadcast = true;
 		}
 
@@ -308,8 +308,8 @@ namespace BlendInt {
 
 		UpdateRequest request(Predefined, WidgetLayer, &z);
 
-		if(UpdateTest (request)) {
-			Update(request);
+		if(UpdateGeometryTest (request)) {
+			UpdateGeometry(request);
 
 			Context* context = GetContext();
 			if(context) {
@@ -336,8 +336,8 @@ namespace BlendInt {
 
 		UpdateRequest request(Predefined, WidgetVisibility, &visible);
 
-		if(UpdateTest (request)) {
-			Update(request);
+		if(UpdateGeometryTest (request)) {
+			UpdateGeometry(request);
 			set_visible(visible);
 			broadcast = true;
 		}

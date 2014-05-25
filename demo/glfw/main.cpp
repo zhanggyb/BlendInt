@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 
 	fprintf(stdout, "sizeof event: %ld\n", sizeof(Cpp::Event<AbstractWidget*>));
 
-	tbtn0->SetRoundType(RoundTopLeft | RoundTopRight | RoundBottomLeft);
+	tbtn0->SetRoundCornerType(RoundTopLeft | RoundTopRight | RoundBottomLeft);
 
 	ToggleButton* t = Manage(new ToggleButton);
 	t->SetPosition(100, 400);

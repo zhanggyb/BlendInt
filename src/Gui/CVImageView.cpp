@@ -139,7 +139,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void CVImageView::Update (const UpdateRequest& request)
+	void CVImageView::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

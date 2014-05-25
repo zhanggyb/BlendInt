@@ -75,7 +75,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractContainer::UpdateTest (const UpdateRequest& request)
+	bool AbstractContainer::UpdateGeometryTest (const UpdateRequest& request)
 	{
 		return true;
 	}
@@ -92,8 +92,8 @@ namespace BlendInt {
 
 		UpdateRequest request (Predefined, ContainerMargin, &margin);
 
-		if(UpdateTest(request)) {
-			Update(request);
+		if(UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
 			m_margin = margin;
 		}
 	}
@@ -106,8 +106,8 @@ namespace BlendInt {
 		Margin new_margin(left, right, top, bottom);
 		UpdateRequest request (Predefined, ContainerMargin, &new_margin);
 
-		if(UpdateTest(request)) {
-			Update(request);
+		if(UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
 			m_margin = new_margin;
 		}
 	}

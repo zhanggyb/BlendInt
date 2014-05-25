@@ -63,7 +63,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void TabStack::Update (const UpdateRequest& request)
+	void TabStack::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -81,12 +81,12 @@ namespace BlendInt {
 									m_outer.get(),
 									0);
 
-					Stack::Update(request);
+					Stack::UpdateGeometry(request);
 					break;
 				}
 
 				default: {
-					Stack::Update(request);
+					Stack::UpdateGeometry(request);
 					break;
 				}
 			}
@@ -198,7 +198,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Tab::Update (const UpdateRequest& request)
+	void Tab::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

@@ -155,7 +155,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ImageView::Update (const UpdateRequest& request)
+	void ImageView::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 

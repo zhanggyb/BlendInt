@@ -176,7 +176,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool UpdateTest (const UpdateRequest& request);
+		virtual bool UpdateGeometryTest (const UpdateRequest& request);
 
 		virtual void BroadcastUpdate (const UpdateRequest& request);
 

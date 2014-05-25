@@ -86,8 +86,8 @@ namespace BlendInt {
 					Orientation shadedir =
 									size_p->width() < size_p->height() ?
 													Horizontal : Vertical;
-					const RoundType* round_p =
-									static_cast<const RoundType*>(request.data());
+					const RoundCornerType* round_p =
+									static_cast<const RoundCornerType*>(request.data());
 					const Color& color = Theme::instance->scroll().item;
 					short shadetop = Theme::instance->scroll().shadetop;
 					short shadedown = Theme::instance->scroll().shadedown;
@@ -249,9 +249,9 @@ namespace BlendInt {
 
 		UpdateRequest request(Predefined, SliderPropertyValue, &value);
 
-		if (UpdateTest(request))
+		if (UpdateGeometryTest(request))
 		{
-			Update(request);
+			UpdateGeometry(request);
 			m_value = value;
 			m_value_changed.fire(m_value);
 		}
@@ -280,8 +280,8 @@ namespace BlendInt {
 		bool broadcast = false;
 
 		UpdateRequest request(Predefined, SliderPropertyMinimum, &minimum);
-		if(UpdateTest(request)) {
-			Update(request);
+		if(UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
 			m_minimum = minimum;
 			broadcast = true;
 		}
@@ -299,8 +299,8 @@ namespace BlendInt {
 
 		UpdateRequest request(Predefined, SliderPropertyMaximum, &maximum);
 
-		if(UpdateTest(request)) {
-			Update(request);
+		if(UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
 			m_maximum = maximum;
 			broadcast = true;
 		}
@@ -317,8 +317,8 @@ namespace BlendInt {
 
 		UpdateRequest request(Predefined, SliderPropertyOrientation, &orientation);
 
-		if(UpdateTest(request)) {
-			Update(request);
+		if(UpdateGeometryTest(request)) {
+			UpdateGeometry(request);
 			m_orientation = orientation;
 			broadcast = true;
 		}

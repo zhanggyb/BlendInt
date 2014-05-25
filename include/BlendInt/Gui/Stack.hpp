@@ -59,7 +59,7 @@ namespace BlendInt {
 
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
 
-		virtual void Update (const UpdateRequest& request);
+		virtual void UpdateGeometry (const UpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

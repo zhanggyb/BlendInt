@@ -96,7 +96,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	bool Frame::UpdateTest (const UpdateRequest& request)
+	bool Frame::UpdateGeometryTest (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 
@@ -109,7 +109,7 @@ namespace BlendInt {
 					return false;
 
 				default:
-					return AbstractSingleContainer::UpdateTest(request);
+					return AbstractSingleContainer::UpdateGeometryTest(request);
 
 			}
 
@@ -118,7 +118,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::Update (const UpdateRequest& request)
+	void Frame::UpdateGeometry (const UpdateRequest& request)
 	{
 		if(request.source() == Predefined) {
 			switch (request.type()) {
