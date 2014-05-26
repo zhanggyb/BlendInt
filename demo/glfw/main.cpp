@@ -35,6 +35,7 @@
 #include <BlendInt/Gui/NumberSlider.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
+#include <BlendInt/Gui/SpaceArea.hpp>
 
 #include <BlendInt/Service/StockItems.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -59,36 +60,11 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	ToolButton* tbtn0 = Manage(new ToolButton);
-	tbtn0->SetLayer(0);
-	tbtn0->SetPosition(50, 50);
-	tbtn0->Resize(200, 200);
+	SpaceArea* sp = Manage(new SpaceArea(Horizontal));
+	sp->SetPosition(100, 100);
+	sp->Resize(200, 200);
 
-	ToolButton* tbtn1 = Manage(new ToolButton);
-	tbtn1->SetLayer(1);
-	tbtn1->SetPosition(250, 250);
-	tbtn1->Resize(150, 150);
-
-	ToolButton* tbtn2 = Manage(new ToolButton);
-	tbtn2->SetLayer(2);
-	tbtn2->SetPosition(350, 100);
-	tbtn2->Resize(100, 100);
-
-	context->Add(tbtn0);
-	context->Add(tbtn1);
-	context->Add(tbtn2);
-
-	fprintf(stdout, "size of AbstractWidget: %ld\n", sizeof(AbstractWidget));
-
-	fprintf(stdout, "Sizeof object: %ld\n", sizeof(Object));
-
-	fprintf(stdout, "sizeof event: %ld\n", sizeof(Cpp::Event<AbstractWidget*>));
-
-	tbtn0->SetRoundCornerType(RoundTopLeft | RoundTopRight | RoundBottomLeft);
-
-	ToggleButton* t = Manage(new ToggleButton);
-	t->SetPosition(100, 400);
-	context->Add(t);
+	context->Add(sp);
 
 	RunLoop(win);
 

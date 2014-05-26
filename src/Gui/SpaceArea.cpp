@@ -23,12 +23,28 @@
 
 #include <BlendInt/Gui/SpaceArea.hpp>
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif	// __UNIX__
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 namespace BlendInt {
 
 	SpaceArea::SpaceArea (Orientation orientation)
 	: Widget(), m_orientation(orientation)
 	{
 		set_size(20, 20);
+
+		m_shadow.reset(new Shadow);
+		m_shadow->Resize(20, 20);
 	}
 
 	SpaceArea::~SpaceArea ()
@@ -71,8 +87,33 @@ namespace BlendInt {
 		}
 	}
 
+	void SpaceArea::UpdateGeometry(const UpdateRequest& request)
+	{
+		if(request.source() == Predefined) {
+
+			switch (request.type()) {
+
+				case FormSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					m_shadow->Resize(*size_p);
+					break;
+				}
+
+				default:
+					Widget::UpdateGeometry(request);
+			}
+
+		}
+	}
 	ResponseType SpaceArea::Draw (const RedrawEvent& event)
 	{
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		if(m_shadow)
+			m_shadow->Draw(mvp);
+
 		return Ignore;
 	}
 

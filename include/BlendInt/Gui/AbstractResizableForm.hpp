@@ -51,7 +51,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Update (const UpdateRequest& request) = 0;
+		virtual void UpdateGeometry (const UpdateRequest& request) = 0;
 
 	};
 

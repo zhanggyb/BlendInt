@@ -57,7 +57,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void SlideIcon::Update (const UpdateRequest& request)
+	void SlideIcon::UpdateGeometry (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 

@@ -42,7 +42,7 @@ namespace BlendInt {
 	{
 		if(round_type() == type) return;
 
-		Update (UpdateRequest(Predefined, FormRoundType, &type));
+		UpdateGeometry (UpdateRequest(Predefined, FormRoundType, &type));
 		set_round_type(type);
 	}
 
@@ -50,7 +50,7 @@ namespace BlendInt {
 	{
 		if(radius() == rad) return;
 
-		Update(UpdateRequest(Predefined, FormRoundRadius, &rad));
+		UpdateGeometry(UpdateRequest(Predefined, FormRoundRadius, &rad));
 		set_radius(rad);
 	}
 

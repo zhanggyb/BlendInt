@@ -31,7 +31,7 @@ namespace BlendInt {
 
 		Size new_size (width, height);
 
-		Update(UpdateRequest(Predefined, FormSize, &new_size));
+		UpdateGeometry(UpdateRequest(Predefined, FormSize, &new_size));
 		set_size(width, height);
 	}
 
@@ -39,7 +39,7 @@ namespace BlendInt {
 	{
 		if(AbstractResizableForm::size() == size) return;
 
-		Update(UpdateRequest(Predefined, FormSize, &size));
+		UpdateGeometry(UpdateRequest(Predefined, FormSize, &size));
 		set_size(size);
 	}
 

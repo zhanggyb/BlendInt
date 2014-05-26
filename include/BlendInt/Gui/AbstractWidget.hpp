@@ -129,6 +129,43 @@ namespace BlendInt {
 		AbstractContainer* m_container;
 	};
 
+	class UpdateRequestExt
+	{
+	public:
+
+		UpdateRequestExt (AbstractWidget* source, int type, const void* data) :
+				m_source(source), m_type(type), m_data(data)
+		{
+
+		}
+
+		~UpdateRequestExt ()
+		{
+
+		}
+
+		AbstractWidget* source () const
+		{
+			return m_source;
+		}
+
+		int type () const
+		{
+			return m_type;
+		}
+
+		const void* data () const
+		{
+			return m_data;
+		}
+
+	private:
+
+		AbstractWidget* m_source;
+		int m_type;
+		const void* m_data;
+	};
+
 	// ----------------------------------------------------
 
 	/**
@@ -274,6 +311,11 @@ namespace BlendInt {
 		int round_corner_radius () const
 		{
 			return m_round_corner_radius;
+		}
+
+		bool drop_shadow () const
+		{
+			return m_flags & WidgetFlagDropShadow;
 		}
 
 		/**
@@ -429,6 +471,15 @@ namespace BlendInt {
 			m_round_corner_radius = radius;
 		}
 
+		void set_drop_shadow (bool shadow)
+		{
+			if(shadow) {
+				SETBIT(m_flags, WidgetFlagDropShadow);
+			} else {
+				CLRBIT(m_flags, WidgetFlagDropShadow);
+			}
+		}
+
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 
 		static void DispatchRender (AbstractWidget* obj);
@@ -465,6 +516,8 @@ namespace BlendInt {
 
 			/** If enable scissor test when drawing this the subwidgets, this flag is only workable for container */
 			WidgetFlagScissorTest = (1 << 9),
+
+			WidgetFlagDropShadow = (1 << 10)
 
 		};
 

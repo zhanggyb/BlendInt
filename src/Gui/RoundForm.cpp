@@ -36,7 +36,7 @@ namespace BlendInt {
 
 	}
 
-	void RoundForm::Update (const UpdateRequest& request)
+	void RoundForm::UpdateGeometry (const UpdateRequest& request)
 	{
 	}
 

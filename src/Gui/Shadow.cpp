@@ -71,12 +71,12 @@ namespace BlendInt {
 		if (blur_rad == m_blur_rad)
 			return;
 
-		Update(UpdateRequest(Predefined, ShadowBlurRadius, &blur_rad));
+		UpdateGeometry(UpdateRequest(Predefined, ShadowBlurRadius, &blur_rad));
 
 		m_blur_rad = blur_rad;
 	}
 
-	void Shadow::Update (const UpdateRequest& request)
+	void Shadow::UpdateGeometry (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 			switch (request.type()) {
@@ -321,7 +321,8 @@ namespace BlendInt {
 
 		float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2];
 
-		const float radout = Theme::instance->menu_shadow_width() * 1.0;
+		//const float radout = Theme::instance->menu_shadow_width() * 1.0;
+		const float radout = 16.0;
 
 		/* prevent tooltips to not show round shadow */
 		if (radout > 0.2f * size.height())

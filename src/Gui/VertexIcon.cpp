@@ -133,7 +133,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 
-	void VertexIcon::Update (const UpdateRequest& request)
+	void VertexIcon::UpdateGeometry (const UpdateRequest& request)
 	{
 		// TODO: update shape
 		return;

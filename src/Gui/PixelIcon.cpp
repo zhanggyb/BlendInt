@@ -65,7 +65,7 @@ namespace BlendInt {
 	{
 	}
 
-	void PixelIcon::Update(const UpdateRequest& request)
+	void PixelIcon::UpdateGeometry(const UpdateRequest& request)
 	{
 
 	}

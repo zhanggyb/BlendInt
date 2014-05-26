@@ -64,7 +64,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void Update (const UpdateRequest& request);
+		virtual void UpdateGeometry (const UpdateRequest& request);
 
 	private:
 

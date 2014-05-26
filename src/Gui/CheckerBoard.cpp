@@ -87,7 +87,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 	
-	void CheckerBoard::Update (const UpdateRequest& request)
+	void CheckerBoard::UpdateGeometry (const UpdateRequest& request)
 	{
 		if (request.source() == Predefined) {
 
