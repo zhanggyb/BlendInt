@@ -109,37 +109,35 @@ namespace BlendInt {
 		}
 	}
 
-	void SplitterHandle::UpdateGeometry (const UpdateRequest& request)
+	void SplitterHandle::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
+			case WidgetSize: {
 
-				case FormSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
 
-					const Size* size_p = static_cast<const Size*>(request.data());
+				std::vector<GLfloat> vertices(4, 0);
 
-					std::vector<GLfloat> vertices(4, 0);
+				if (m_orientation == Horizontal) {
+					vertices[2] = size_p->width();
 
-					if(m_orientation == Horizontal) {
-						vertices[2] = size_p->width();
-
-					} else {
-						vertices[3] = size_p->height();
-					}
-
-					m_buffer->Bind();
-					m_buffer->SetData(sizeof(GLfloat) * 4, &vertices[0], GL_STATIC_DRAW);
-					m_buffer->Reset();
-
-					break;
+				} else {
+					vertices[3] = size_p->height();
 				}
 
-				default:
-					break;
+				m_buffer->Bind();
+				m_buffer->SetData(sizeof(GLfloat) * 4, &vertices[0],
+								GL_STATIC_DRAW);
+				m_buffer->Reset();
+
+				break;
 			}
 
+			default:
+				break;
 		}
+
 	}
 
 	ResponseType SplitterHandle::Draw (const RedrawEvent& event)
@@ -419,19 +417,38 @@ namespace BlendInt {
 	{
 	}
 
-	bool Splitter::UpdateGeometryTest (const UpdateRequest& request)
+	void Splitter::UpdateContainer(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch(request.type()) {
 
-			switch (request.type()) {
 
-				case SubWidgetSize:
-					return false;	// DO not allow sub widget geometry reset outside
+			case WidgetRefresh: {
+				Refresh();
+				break;
+			}
 
-				case SubWidgetPosition: {
+			default:
+				break;
+		}
+	}
 
-					const SplitterHandle* handle = static_cast<const SplitterHandle*>(request.data());
-					if(handle) {
+	bool Splitter::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		if(request.source() == this) {
+
+			return AbstractDequeContainer::UpdateGeometryTest(request);
+
+		} else {	// called by sub widget
+
+			switch(request.type()) {
+				case WidgetSize:
+					return false;
+
+				case WidgetPosition: {
+
+					const SplitterHandle* handle =
+									static_cast<const SplitterHandle*>(request.data());
+					if (handle) {
 						return true;
 					}
 
@@ -439,50 +456,37 @@ namespace BlendInt {
 				}
 
 				default:
-					return AbstractDequeContainer::UpdateGeometryTest(request);
-
+					return false;
 			}
-
-		} else {
-			return false;
 		}
 	}
 	
-	void Splitter::UpdateGeometry (const UpdateRequest& request)
+	void Splitter::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch(request.type()) {
+			case WidgetSize: {
 
-				case FormSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				AlignSubWidgets(m_orientation, *size_p, margin(), m_space);
 
-					const Size* size_p = static_cast<const Size*>(request.data());
-					AlignSubWidgets(m_orientation,*size_p, margin(), m_space);
-
-					break;
-				}
-
-				case FormPosition: {
-
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetRefresh: {
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-
+				break;
 			}
+
+			case WidgetPosition: {
+
+				const Point* pos_p = static_cast<const Point*>(request.data());
+
+				int x = pos_p->x() - position().x();
+				int y = pos_p->y() - position().y();
+
+				MoveSubWidgets(x, y);
+
+				break;
+			}
+
+			default:
+				break;
 
 		}
 	}

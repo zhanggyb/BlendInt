@@ -59,70 +59,67 @@ namespace BlendInt {
 
 	void SlideIcon::UpdateGeometry (const UpdateRequest& request)
 	{
-		if (request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
+			case FormSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				Orientation shadedir =
+								size_p->width() < size_p->height() ?
+												Horizontal : Vertical;
+				const Color& color = Theme::instance->scroll().item;
+				short shadetop = Theme::instance->scroll().shadetop;
+				short shadedown = Theme::instance->scroll().shadedown;
 
-				case FormSize: {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					Orientation shadedir =
-									size_p->width() < size_p->height() ?
-													Horizontal : Vertical;
-					const Color& color = Theme::instance->scroll().item;
-					short shadetop = Theme::instance->scroll().shadetop;
-					short shadedown = Theme::instance->scroll().shadedown;
-
-					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(*size_p, round_type(), radius(),
-									color, shadetop, shadedown, shadedir,
-									m_inner_buffer.get(), m_outer_buffer.get());
-					glBindVertexArray(0);
-					break;
-				}
-
-				case FormRoundType: {
-					const Size* size_p = &(size());
-					Orientation shadedir =
-									size_p->width() < size_p->height() ?
-													Horizontal : Vertical;
-					const RoundCornerType* round_p =
-									static_cast<const RoundCornerType*>(request.data());
-					const Color& color = Theme::instance->scroll().item;
-					short shadetop = Theme::instance->scroll().shadetop;
-					short shadedown = Theme::instance->scroll().shadedown;
-
-					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(*size_p, *round_p, radius(),
-									color, shadetop, shadedown, shadedir,
-									m_inner_buffer.get(), m_outer_buffer.get());
-					glBindVertexArray(0);
-					break;
-				}
-
-				case FormRoundRadius: {
-					const Size* size_p = &(size());
-					Orientation shadedir =
-									size_p->width() < size_p->height() ?
-													Horizontal : Vertical;
-					const float* radius_p =
-									static_cast<const float*>(request.data());
-					const Color& color = Theme::instance->scroll().item;
-					short shadetop = Theme::instance->scroll().shadetop;
-					short shadedown = Theme::instance->scroll().shadedown;
-
-					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(*size_p, round_type(), *radius_p,
-									color, shadetop, shadedown, shadedir,
-									m_inner_buffer.get(), m_outer_buffer.get());
-					glBindVertexArray(0);
-					break;
-				}
-
-				default:
-					break;
+				glBindVertexArray(m_vao);
+				GenerateShadedFormBuffers(*size_p, round_type(), radius(),
+								color, shadetop, shadedown, shadedir,
+								m_inner_buffer.get(), m_outer_buffer.get());
+				glBindVertexArray(0);
+				break;
 			}
+
+			case FormRoundType: {
+				const Size* size_p = &(size());
+				Orientation shadedir =
+								size_p->width() < size_p->height() ?
+												Horizontal : Vertical;
+				const RoundCornerType* round_p =
+								static_cast<const RoundCornerType*>(request.data());
+				const Color& color = Theme::instance->scroll().item;
+				short shadetop = Theme::instance->scroll().shadetop;
+				short shadedown = Theme::instance->scroll().shadedown;
+
+				glBindVertexArray(m_vao);
+				GenerateShadedFormBuffers(*size_p, *round_p, radius(), color,
+								shadetop, shadedown, shadedir,
+								m_inner_buffer.get(), m_outer_buffer.get());
+				glBindVertexArray(0);
+				break;
+			}
+
+			case FormRoundRadius: {
+				const Size* size_p = &(size());
+				Orientation shadedir =
+								size_p->width() < size_p->height() ?
+												Horizontal : Vertical;
+				const float* radius_p =
+								static_cast<const float*>(request.data());
+				const Color& color = Theme::instance->scroll().item;
+				short shadetop = Theme::instance->scroll().shadetop;
+				short shadedown = Theme::instance->scroll().shadedown;
+
+				glBindVertexArray(m_vao);
+				GenerateShadedFormBuffers(*size_p, round_type(), *radius_p,
+								color, shadetop, shadedown, shadedir,
+								m_inner_buffer.get(), m_outer_buffer.get());
+				glBindVertexArray(0);
+				break;
+			}
+
+			default:
+				break;
 		}
+
 	}
 
 	void SlideIcon::Draw (const glm::mat4& mvp)
@@ -247,14 +244,11 @@ namespace BlendInt {
 		if (value < m_minimum || value > m_maximum)
 			return;
 
-		UpdateRequest request(Predefined, SliderPropertyValue, &value);
+		WidgetUpdateRequest request(this, SliderPropertyValue, &value);
 
-		if (UpdateGeometryTest(request))
-		{
-			UpdateGeometry(request);
-			m_value = value;
-			m_value_changed.fire(m_value);
-		}
+		UpdateSlider(request);
+		m_value = value;
+		m_value_changed.fire(m_value);
 	}
 
 	void AbstractSlider::SetRange (int value1, int value2)
@@ -279,16 +273,10 @@ namespace BlendInt {
 
 		bool broadcast = false;
 
-		UpdateRequest request(Predefined, SliderPropertyMinimum, &minimum);
-		if(UpdateGeometryTest(request)) {
-			UpdateGeometry(request);
-			m_minimum = minimum;
-			broadcast = true;
-		}
-
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
+		WidgetUpdateRequest request(this, SliderPropertyMinimum, &minimum);
+		UpdateSlider(request);
+		m_minimum = minimum;
+		broadcast = true;
 	}
 
 	void AbstractSlider::SetMaximum (int maximum)
@@ -297,17 +285,12 @@ namespace BlendInt {
 			return;
 		bool broadcast = false;
 
-		UpdateRequest request(Predefined, SliderPropertyMaximum, &maximum);
+		WidgetUpdateRequest request(this, SliderPropertyMaximum, &maximum);
 
-		if(UpdateGeometryTest(request)) {
-			UpdateGeometry(request);
-			m_maximum = maximum;
-			broadcast = true;
-		}
+		UpdateSlider(request);
+		m_maximum = maximum;
+		broadcast = true;
 
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
 	}
 
 	void AbstractSlider::SetOrientation (Orientation orientation)
@@ -315,17 +298,12 @@ namespace BlendInt {
 		if(m_orientation == orientation) return;
 		bool broadcast = false;
 
-		UpdateRequest request(Predefined, SliderPropertyOrientation, &orientation);
+		WidgetUpdateRequest request(this, SliderPropertyOrientation, &orientation);
 
-		if(UpdateGeometryTest(request)) {
-			UpdateGeometry(request);
-			m_orientation = orientation;
-			broadcast = true;
-		}
+		UpdateSlider(request);
+		m_orientation = orientation;
+		broadcast = true;
 
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
 	}
 
 }

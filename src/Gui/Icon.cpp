@@ -70,7 +70,7 @@ namespace BlendInt {
 		new_size.set_width(static_cast<unsigned int>(size().width() * ratio));
 		new_size.set_height(static_cast<unsigned int>(size().height() * ratio));
 
-		UpdateGeometry(UpdateRequest(Predefined, FormSize, &new_size));
+		UpdateGeometry(UpdateRequest(FormSize, &new_size));
 		set_size(new_size);
 	}
 

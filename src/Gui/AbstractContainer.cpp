@@ -75,12 +75,12 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractContainer::UpdateGeometryTest (const UpdateRequest& request)
+	bool AbstractContainer::UpdateGeometryTest (const WidgetUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void AbstractContainer::BroadcastUpdate(const UpdateRequest& request)
+	void AbstractContainer::BroadcastUpdate(const WidgetUpdateRequest& request)
 	{
 		// do nothing
 	}
@@ -90,12 +90,10 @@ namespace BlendInt {
 		if (m_margin.equal(margin))
 			return;
 
-		UpdateRequest request (Predefined, ContainerMargin, &margin);
+		WidgetUpdateRequest request (this, ContainerMargin, &margin);
 
-		if(UpdateGeometryTest(request)) {
-			UpdateGeometry(request);
-			m_margin = margin;
-		}
+		UpdateContainer(request);
+		m_margin = margin;
 	}
 
 	void AbstractContainer::SetMargin (int left, int right, int top, int bottom)
@@ -104,12 +102,10 @@ namespace BlendInt {
 			return;
 
 		Margin new_margin(left, right, top, bottom);
-		UpdateRequest request (Predefined, ContainerMargin, &new_margin);
+		WidgetUpdateRequest request (this, ContainerMargin, &new_margin);
 
-		if(UpdateGeometryTest(request)) {
-			UpdateGeometry(request);
-			m_margin = new_margin;
-		}
+		UpdateContainer(request);
+		m_margin = new_margin;
 	}
 	
 	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
@@ -118,7 +114,7 @@ namespace BlendInt {
 		if(!sub || sub->container() != this) return;
 
 		SubWidgetProxy delegate(sub);
-		delegate.Resize(width, height);
+		delegate.Resize(this, width, height);
 	}
 	
 	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
@@ -127,7 +123,7 @@ namespace BlendInt {
 		if(!sub || sub->container() != this) return;
 
 		SubWidgetProxy delegate(sub);
-		delegate.Resize(size);
+		delegate.Resize(this, size);
 	}
 	
 	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub, int x,
@@ -136,7 +132,7 @@ namespace BlendInt {
 		if(!sub || sub->container() != this) return;
 
 		SubWidgetProxy delegate(sub);
-		delegate.SetPosition(x, y);
+		delegate.SetPosition(this, x, y);
 	}
 	
 	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub,
@@ -145,7 +141,7 @@ namespace BlendInt {
 		if(!sub || sub->container() != this) return;
 
 		SubWidgetProxy delegate(sub);
-		delegate.SetPosition(pos);
+		delegate.SetPosition(this, pos);
 	}
 
 }

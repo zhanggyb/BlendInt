@@ -107,40 +107,48 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void ScrollArea::UpdateGeometry (const UpdateRequest& request)
+	void ScrollArea::UpdateContainer(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch(request.type()) {
 
-			switch(request.type()) {
+			case WidgetRefresh: {
 
-				case FormPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-					MoveSubWidgets(x, y);
-					break;
-				}
-
-				case FormSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					AdjustGeometries(*size_p);
-
-					break;
-				}
-
-				case WidgetRefresh: {
-
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
+				Refresh();
+				break;
 			}
 
+			default:
+				break;
 		}
+
+	}
+
+	void ScrollArea::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+
+		switch (request.type()) {
+
+			case WidgetPosition: {
+				const Point* pos_p = static_cast<const Point*>(request.data());
+				int x = pos_p->x() - position().x();
+				int y = pos_p->y() - position().y();
+				MoveSubWidgets(x, y);
+				break;
+			}
+
+			case WidgetSize: {
+
+				const Size* size_p = static_cast<const Size*>(request.data());
+
+				AdjustGeometries(*size_p);
+
+				break;
+			}
+
+			default:
+				break;
+		}
+
 	}
 
 	ResponseType ScrollArea::Draw (const RedrawEvent& event)

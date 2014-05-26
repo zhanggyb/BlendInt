@@ -63,7 +63,9 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual void UpdateGeometry (const UpdateRequest& request);
+		virtual void UpdateContainer (const WidgetUpdateRequest& request);
+
+		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

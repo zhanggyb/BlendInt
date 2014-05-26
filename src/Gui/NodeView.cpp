@@ -30,7 +30,7 @@ namespace BlendInt {
 
 	}
 
-	void NodeView::UpdateGeometry (const UpdateRequest& request)
+	void NodeView::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
 	}
 

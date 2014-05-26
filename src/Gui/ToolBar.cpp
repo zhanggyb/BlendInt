@@ -156,79 +156,85 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToolBar::UpdateGeometry (const UpdateRequest& request)
+	void ToolBar::UpdateContainer(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch(request.type()) {
 
-			switch (request.type()) {
+			case ContainerMargin: {
+				const Margin* margin_p = static_cast<const Margin*>(request.data());
 
-				case FormPosition: {
-
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					MoveSubWidgets(x, y);
-
-					break;
+				int x = position().x() + margin_p->left();
+				if(sub_widget_size()) {
+					x = sub_widgets()->front()->position().x();
 				}
 
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
+				int y = position().y() + margin_p->bottom();
+				unsigned int w = size().width() - margin_p->left() - margin_p->right();
+				unsigned int h = size().height() - margin_p->top() - margin_p->bottom();
 
-					glBindVertexArray(m_vao);
+				FillSubWidgets(x, y, w, h, m_space);
 
-					std::vector<GLfloat> vertices(12);
-
-					GenerateFlatRectVertices(*size_p, 0.f, &vertices);
-
-					m_inner->Bind();
-					m_inner->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-					m_inner->Reset();
-
-					glBindVertexArray(0);
-
-					int x = position().x() + margin().left();
-					if(sub_widget_size()) {
-						x = sub_widgets()->front()->position().x();
-					}
-
-					int y = position().y() + margin().bottom();
-					unsigned int w = size_p->width() - margin().left() - margin().right();
-					unsigned int h = size_p->height() - margin().top() - margin().bottom();
-
-					FillSubWidgets(x, y, w, h, m_space);
-
-					break;
-				}
-
-				case ContainerMargin: {
-					const Margin* margin_p = static_cast<const Margin*>(request.data());
-
-					int x = position().x() + margin_p->left();
-					if(sub_widget_size()) {
-						x = sub_widgets()->front()->position().x();
-					}
-
-					int y = position().y() + margin_p->bottom();
-					unsigned int w = size().width() - margin_p->left() - margin_p->right();
-					unsigned int h = size().height() - margin_p->top() - margin_p->bottom();
-
-					FillSubWidgets(x, y, w, h, m_space);
-
-					break;
-				}
-
-				case WidgetRefresh: {
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
+				break;
 			}
 
+			case WidgetRefresh: {
+				Refresh();
+				break;
+			}
+
+		}
+	}
+
+	void ToolBar::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		switch (request.type()) {
+
+			case WidgetPosition: {
+
+				const Point* pos_p = static_cast<const Point*>(request.data());
+
+				int x = pos_p->x() - position().x();
+				int y = pos_p->y() - position().y();
+
+				MoveSubWidgets(x, y);
+
+				break;
+			}
+
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+
+				glBindVertexArray(m_vao);
+
+				std::vector<GLfloat> vertices(12);
+
+				GenerateFlatRectVertices(*size_p, 0.f, &vertices);
+
+				m_inner->Bind();
+				m_inner->SetData(sizeof(GLfloat) * vertices.size(),
+								&vertices[0]);
+				m_inner->Reset();
+
+				glBindVertexArray(0);
+
+				int x = position().x() + margin().left();
+				if (sub_widget_size()) {
+					x = sub_widgets()->front()->position().x();
+				}
+
+				int y = position().y() + margin().bottom();
+				unsigned int w = size_p->width() - margin().left()
+								- margin().right();
+				unsigned int h = size_p->height() - margin().top()
+								- margin().bottom();
+
+				FillSubWidgets(x, y, w, h, m_space);
+
+				break;
+			}
+
+			default:
+				break;
 		}
 	}
 

@@ -42,10 +42,6 @@ namespace BlendInt {
 		ShadowAll = (ShadowLeft | ShadowRight | ShadowTop | ShadowBottom)
 	};
 
-	enum ShadowPropertyType {
-		ShadowBlurRadius = FormPropertyLast + 1
-	};
-
 	/**
 	 * @brief Shadow form
 	 */

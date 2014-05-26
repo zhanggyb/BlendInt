@@ -56,49 +56,37 @@ namespace BlendInt {
 		return true;
 	}
 	
-	void NumberSlider::UpdateGeometry (const UpdateRequest& request)
+	void NumberSlider::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
-			switch (request.type()) {
+		switch (request.type()) {
 
-			case FormSize: {
+			case WidgetSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
 				glBindVertexArray(m_vao);
-				GenerateFormBuffer(
-								*size_p,
-								round_corner_type(),
-								round_corner_radius(),
-								m_inner_buffer.get(),
-								m_outer_buffer.get(),
-								0);
+				GenerateFormBuffer(*size_p, round_corner_type(),
+								round_corner_radius(), m_inner_buffer.get(),
+								m_outer_buffer.get(), 0);
 				glBindVertexArray(0);
 				Refresh();
 				break;
 			}
 
-			case FormRoundType: {
+			case WidgetRoundCornerType: {
 				const int* type_p = static_cast<const int*>(request.data());
 				glBindVertexArray(m_vao);
-				GenerateFormBuffer(size(),
-								   *type_p,
-								   round_corner_radius(),
-								   m_inner_buffer.get(),
-								   m_outer_buffer.get(),
-								   0);
+				GenerateFormBuffer(size(), *type_p, round_corner_radius(),
+								m_inner_buffer.get(), m_outer_buffer.get(), 0);
 				glBindVertexArray(0);
 				Refresh();
 				break;
 			}
 
-			case FormRoundRadius: {
-				const float* radius_p = static_cast<const float*>(request.data());
+			case WidgetRoundCornerRadius: {
+				const float* radius_p =
+								static_cast<const float*>(request.data());
 				glBindVertexArray(m_vao);
-				GenerateFormBuffer(size(),
-								   round_corner_type(),
-								   *radius_p,
-								   m_inner_buffer.get(),
-								   m_outer_buffer.get(),
-								   0);
+				GenerateFormBuffer(size(), round_corner_type(), *radius_p,
+								m_inner_buffer.get(), m_outer_buffer.get(), 0);
 				glBindVertexArray(0);
 				Refresh();
 				break;
@@ -106,9 +94,8 @@ namespace BlendInt {
 
 			default:
 				AbstractSlider::UpdateGeometry(request);
-			}
-
 		}
+
 	}
 	
 	ResponseType NumberSlider::Draw (const RedrawEvent& event)

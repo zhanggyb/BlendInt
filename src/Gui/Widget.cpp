@@ -61,17 +61,17 @@ namespace BlendInt {
 
 	}
 
-	bool Widget::UpdateGeometryTest (const UpdateRequest& request)
+	bool Widget::UpdateGeometryTest (const WidgetUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void Widget::UpdateGeometry (const UpdateRequest& request)
+	void Widget::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
 		// do nothing in this base class
 	}
 
-	void Widget::BroadcastUpdate(const UpdateRequest& request)
+	void Widget::BroadcastUpdate(const WidgetUpdateRequest& request)
 	{
 		// do nothing
 	}

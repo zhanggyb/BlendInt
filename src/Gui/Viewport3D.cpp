@@ -210,25 +210,22 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Viewport3D::UpdateGeometry (const UpdateRequest& request)
+	void Viewport3D::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if (request.source() == Predefined) {
-			switch (request.type()) {
-				case FormSize: {
+		switch (request.type()) {
+			case WidgetSize: {
 
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-					m_default_camera->SetPerspective(m_default_camera->fovy(),
-					        1.f * size_p->width() / size_p->height());
+				const Size* size_p = static_cast<const Size*>(request.data());
+				m_default_camera->SetPerspective(m_default_camera->fovy(),
+								1.f * size_p->width() / size_p->height());
 
-					break;
-				}
-
-				default:
-					Widget::UpdateGeometry(request);
+				break;
 			}
 
+			default:
+				Widget::UpdateGeometry(request);
 		}
+
 	}
 
 	void Viewport3D::Render ()

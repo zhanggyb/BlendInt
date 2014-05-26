@@ -53,27 +53,26 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ToolButton::UpdateGeometry (const UpdateRequest& request)
+	void ToolButton::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
 
-			switch (request.type()) {
+		switch (request.type()) {
 
-				case FormSize: {
+			case WidgetSize: {
 
-					const Size* size_p = static_cast<const Size*>(request.data());
+				const Size* size_p = static_cast<const Size*>(request.data());
 
-					GenerateFormBuffer(*size_p, RoundAll, 5.0, m_inner.get(), m_outer.get(), 0);
+				GenerateFormBuffer(*size_p, RoundAll, 5.0, m_inner.get(),
+								m_outer.get(), 0);
 
-					break;
-				}
-
-				default:
-					break;
-
+				break;
 			}
 
+			default:
+				break;
+
 		}
+
 	}
 
 	ResponseType ToolButton::Draw (const RedrawEvent& event)

@@ -79,117 +79,122 @@ namespace BlendInt {
 		}
 	}
 
-	bool Slider::UpdateGeometryTest (const UpdateRequest& request)
+	bool Slider::UpdateGeometryTest (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
 
-			switch (request.type()) {
+		switch (request.type()) {
 
-				case SliderPropertyMinimum: {
+			case SliderPropertyMinimum: {
 
-					const int* min_p = static_cast<const int*>(request.data());
+				const int* min_p = static_cast<const int*>(request.data());
 
-					if(*min_p >= maximum())
-						return false;
+				if (*min_p >= maximum())
+					return false;
 
-					return true;
-				}
-
-				case SliderPropertyMaximum: {
-
-					const int* max_p = static_cast<const int*>(request.data());
-
-					if(*max_p <= minimum())
-						return false;
-
-					return true;
-				}
-
-				default: {
-					return AbstractSlider::UpdateGeometryTest(request);
-				}
-
+				return true;
 			}
-		} else {
-			return false;
+
+			case SliderPropertyMaximum: {
+
+				const int* max_p = static_cast<const int*>(request.data());
+
+				if (*max_p <= minimum())
+					return false;
+
+				return true;
+			}
+
+			default: {
+				return AbstractSlider::UpdateGeometryTest(request);
+			}
+
 		}
+
 	}
 
-	void Slider::UpdateGeometry (const UpdateRequest& request)
+	void Slider::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
 
-			switch (request.type()) {
-				case FormPosition: {
-					// don't care position change
-					break;
-				}
-
-				case FormSize: {
-					/*
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					int switch_radius = std::min(m_slide.size().width(),
-					        m_slide.size().height()) / 2;
-					*/
-
-					break;
-				}
-
-				case SliderPropertyValue: {
-
-					break;
-				}
-
-				case SliderPropertyMinimum: {
-
-					const int* min_p = static_cast<const int*>(request.data());
-
-					if(value() < *min_p) {
-						set_value(*min_p);
-					}
-					break;
-				}
-
-				case SliderPropertyMaximum: {
-
-					const int* max_p = static_cast<const int*>(request.data());
-
-					if(value() > *max_p) {
-						set_value(*max_p);
-					}
-
-					break;
-				}
-
-				case SliderPropertyOrientation: {
-					const Orientation* orient_p = static_cast<const Orientation*>(request.data());
-
-					m_line->Bind();
-					GLfloat* buf_p = (GLfloat*)m_line->Map(GL_READ_WRITE);
-					if(*orient_p == Horizontal) {
-						*(buf_p + 0) = m_slide.size().width() / 2;
-						*(buf_p + 1) = size().height() / 2;
-						*(buf_p + 2) = size().width() - m_slide.size().width() / 2;
-						*(buf_p + 3) = *(buf_p + 0);
-					} else {
-						*(buf_p + 0) = size().width() / 2;
-						*(buf_p + 1) = m_slide.size().height() / 2;
-						*(buf_p + 2) = *(buf_p + 0);
-						*(buf_p + 3) = size().height() - m_slide.size().height() / 2;
-					}
-					m_line->Unmap();
-					m_line->Reset();
-
-					Refresh();
-
-					break;
-				}
-
-				default:
-					break;
+		switch (request.type()) {
+			case WidgetPosition: {
+				// don't care position change
+				break;
 			}
 
+			case WidgetSize: {
+				/*
+				 const Size* size_p = static_cast<const Size*>(request.data());
+
+				 int switch_radius = std::min(m_slide.size().width(),
+				 m_slide.size().height()) / 2;
+				 */
+
+				break;
+			}
+			default:
+				break;
+		}
+
+	}
+
+	void Slider::UpdateSlider(const WidgetUpdateRequest& request)
+	{
+		switch(request.type()) {
+
+			case SliderPropertyValue: {
+
+				break;
+			}
+
+			case SliderPropertyMinimum: {
+
+				const int* min_p = static_cast<const int*>(request.data());
+
+				if (value() < *min_p) {
+					set_value(*min_p);
+				}
+				break;
+			}
+
+			case SliderPropertyMaximum: {
+
+				const int* max_p = static_cast<const int*>(request.data());
+
+				if (value() > *max_p) {
+					set_value(*max_p);
+				}
+
+				break;
+			}
+
+			case SliderPropertyOrientation: {
+				const Orientation* orient_p =
+								static_cast<const Orientation*>(request.data());
+
+				m_line->Bind();
+				GLfloat* buf_p = (GLfloat*) m_line->Map(GL_READ_WRITE);
+				if (*orient_p == Horizontal) {
+					*(buf_p + 0) = m_slide.size().width() / 2;
+					*(buf_p + 1) = size().height() / 2;
+					*(buf_p + 2) = size().width() - m_slide.size().width() / 2;
+					*(buf_p + 3) = *(buf_p + 0);
+				} else {
+					*(buf_p + 0) = size().width() / 2;
+					*(buf_p + 1) = m_slide.size().height() / 2;
+					*(buf_p + 2) = *(buf_p + 0);
+					*(buf_p + 3) = size().height()
+									- m_slide.size().height() / 2;
+				}
+				m_line->Unmap();
+				m_line->Reset();
+
+				Refresh();
+
+				break;
+			}
+
+			default:
+				break;
 		}
 	}
 

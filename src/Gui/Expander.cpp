@@ -61,65 +61,52 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ExpandButton::UpdateGeometry (const UpdateRequest& request)
+	void ExpandButton::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
-
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					UpdateTextPosition(*size_p, round_corner_type(), round_corner_radius(), text());
-					glBindVertexArray(m_vao);
-					GenerateFormBuffer(
-									*size_p,
-									round_corner_type(),
-									round_corner_radius(),
-									m_inner_buffer.get(),
-									m_outer_buffer.get(),
-									0);
-					glBindVertexArray(0);
-					Refresh();
-					break;
-				}
-
-				case FormRoundType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					UpdateTextPosition(size(), *type_p, round_corner_radius(), text());
-					glBindVertexArray(m_vao);
-					GenerateFormBuffer(
-									size(),
-									*type_p,
-									round_corner_radius(),
-									m_inner_buffer.get(),
-									m_outer_buffer.get(),
-									0);
-					glBindVertexArray(0);
-					Refresh();
-					break;
-				}
-
-				case FormRoundRadius: {
-					const float* radius_p = static_cast<const float*>(request.data());
-					UpdateTextPosition(size(), round_corner_type(), *radius_p, text());
-					glBindVertexArray(m_vao);
-					GenerateFormBuffer(
-									size(),
-									round_corner_type(),
-									*radius_p,
-									m_inner_buffer.get(),
-									m_outer_buffer.get(),
-									0);
-					glBindVertexArray(0);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				UpdateTextPosition(*size_p, round_corner_type(),
+								round_corner_radius(), text());
+				glBindVertexArray(m_vao);
+				GenerateFormBuffer(*size_p, round_corner_type(),
+								round_corner_radius(), m_inner_buffer.get(),
+								m_outer_buffer.get(), 0);
+				glBindVertexArray(0);
+				Refresh();
+				break;
 			}
 
+			case WidgetRoundCornerType: {
+				const int* type_p = static_cast<const int*>(request.data());
+				UpdateTextPosition(size(), *type_p, round_corner_radius(),
+								text());
+				glBindVertexArray(m_vao);
+				GenerateFormBuffer(size(), *type_p, round_corner_radius(),
+								m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				glBindVertexArray(0);
+				Refresh();
+				break;
+			}
+
+			case WidgetRoundCornerRadius: {
+				const float* radius_p =
+								static_cast<const float*>(request.data());
+				UpdateTextPosition(size(), round_corner_type(), *radius_p,
+								text());
+				glBindVertexArray(m_vao);
+				GenerateFormBuffer(size(), round_corner_type(), *radius_p,
+								m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				glBindVertexArray(0);
+				Refresh();
+				break;
+			}
+
+			default:
+				break;
 		}
+
 	}
 
 	ResponseType ExpandButton::Draw (const RedrawEvent& event)
@@ -391,71 +378,83 @@ namespace BlendInt {
 		return expand;
 	}
 
-	bool Expander::UpdateGeometryTest (const UpdateRequest& request)
+	void Expander::UpdateContainer(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
 
-				case SubWidgetSize:
-					return false;	// DO not allow sub widget geometry reset outside
+			case ContainerMargin: {
 
-				case SubWidgetPosition:
+				const Margin* margin_p = static_cast<const Margin*>(request.data());
+				set_margin(*margin_p);
+				FillWithPreferredHeight(position(), size(), *margin_p, m_space);
+
+				break;
+			}
+
+			case WidgetRefresh: {
+				Refresh();
+				break;
+			}
+
+			default:
+				break;
+		}
+
+	}
+
+	bool Expander::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		if(request.source() == this) {
+
+			return AbstractVectorContainer::UpdateGeometryTest(request);
+
+		} else {	// called by sub widget
+
+			switch(request.type()) {
+				case WidgetSize:
+					return false;
+
+				case WidgetPosition:
 					return false;
 
 				default:
-					return AbstractVectorContainer::UpdateGeometryTest(request);
-
+					return false;
 			}
-
-		} else {
-			return false;
 		}
 	}
 
-	void Expander::UpdateGeometry (const UpdateRequest& request)
+	void Expander::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
-			switch (request.type()) {
+		switch (request.type()) {
 
-				case FormSize: {
-					if (sub_widget_size()) {
-						const Size* size_p = static_cast<const Size*>(request.data());
-						FillWithPreferredHeight(position(), *size_p, margin(), m_space);
-					}
-					break;
+			case WidgetSize: {
+				if (sub_widget_size()) {
+					const Size* size_p =
+									static_cast<const Size*>(request.data());
+					FillWithPreferredHeight(position(), *size_p, margin(),
+									m_space);
 				}
-
-				case FormPosition: {
-					if (sub_widget_size()) {
-						const Point* pos_p = static_cast<const Point*>(request.data());
-
-						int x = pos_p->x() - position().x();
-						int y = pos_p->y() - position().y();
-
-						MoveSubWidgets(x, y);
-					}
-					break;
-				}
-
-				case ContainerMargin: {
-
-					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					set_margin(*margin_p);
-					FillWithPreferredHeight(position(), size(), *margin_p, m_space);
-
-					break;
-				}
-
-				case WidgetRefresh: {
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
+				break;
 			}
+
+			case WidgetPosition: {
+				if (sub_widget_size()) {
+					const Point* pos_p =
+									static_cast<const Point*>(request.data());
+
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					MoveSubWidgets(x, y);
+				}
+				break;
+			}
+
+			default:
+				break;
 		}
+
 	}
 
 	ResponseType Expander::Draw (const RedrawEvent& event)

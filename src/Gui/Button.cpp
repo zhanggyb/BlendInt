@@ -57,51 +57,45 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void Button::UpdateGeometry(const UpdateRequest& request)
+	void Button::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
-			switch (request.type()) {
+		switch (request.type()) {
 
-			case FormSize: {
+			case WidgetSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
-				UpdateTextPosition(*size_p, round_corner_type(), round_corner_radius(), text());
+				UpdateTextPosition(*size_p, round_corner_type(),
+								round_corner_radius(), text());
 				glBindVertexArray(m_vao);
-				GenerateFormBuffer(*size_p,
-								   round_corner_type(),
-								   round_corner_radius(),
-								   m_inner_buffer.get(),
-								   m_outer_buffer.get(),
-								   m_emboss_buffer.get());
+				GenerateFormBuffer(*size_p, round_corner_type(),
+								round_corner_radius(), m_inner_buffer.get(),
+								m_outer_buffer.get(), m_emboss_buffer.get());
 				glBindVertexArray(0);
 				Refresh();
 				break;
 			}
 
-			case FormRoundType: {
+			case WidgetRoundCornerType: {
 				const int* type_p = static_cast<const int*>(request.data());
-				UpdateTextPosition(size(), *type_p, round_corner_radius(), text());
+				UpdateTextPosition(size(), *type_p, round_corner_radius(),
+								text());
 				glBindVertexArray(m_vao);
-				GenerateFormBuffer(size(),
-								   *type_p,
-								   round_corner_radius(),
-								   m_inner_buffer.get(),
-								   m_outer_buffer.get(),
-								   m_emboss_buffer.get());
+				GenerateFormBuffer(size(), *type_p, round_corner_radius(),
+								m_inner_buffer.get(), m_outer_buffer.get(),
+								m_emboss_buffer.get());
 				glBindVertexArray(0);
 				Refresh();
 				break;
 			}
 
-			case FormRoundRadius: {
-				const float* radius_p = static_cast<const float*>(request.data());
-				UpdateTextPosition(size(), round_corner_type(), *radius_p, text());
+			case WidgetRoundCornerRadius: {
+				const float* radius_p =
+								static_cast<const float*>(request.data());
+				UpdateTextPosition(size(), round_corner_type(), *radius_p,
+								text());
 				glBindVertexArray(m_vao);
-				GenerateFormBuffer(size(),
-								   round_corner_type(),
-								   *radius_p,
-								   m_inner_buffer.get(),
-								   m_outer_buffer.get(),
-								   m_emboss_buffer.get());
+				GenerateFormBuffer(size(), round_corner_type(), *radius_p,
+								m_inner_buffer.get(), m_outer_buffer.get(),
+								m_emboss_buffer.get());
 				glBindVertexArray(0);
 				Refresh();
 				break;
@@ -109,9 +103,8 @@ namespace BlendInt {
 
 			default:
 				AbstractButton::UpdateGeometry(request);
-			}
-
 		}
+
 	}
 
 	ResponseType Button::Draw (const RedrawEvent& event)

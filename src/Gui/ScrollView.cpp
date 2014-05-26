@@ -126,40 +126,46 @@ namespace BlendInt {
 		return percentage;
 	}
 
-	void ScrollView::UpdateGeometry (const UpdateRequest& request)
+	void ScrollView::UpdateContainer(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
+			case WidgetRefresh: {
 
-				case FormSize: {
-
-					break;
-				}
-
-				case FormPosition: {
-
-					if(sub_widget()) {
-						const Point* pos_p = static_cast<const Point*>(request.data());
-						int x = pos_p->x() - position().x();
-						int y = pos_p->y() - position().y();
-
-						MoveSubWidget(x, y);
-					}
-
-					break;
-				}
-
-				case WidgetRefresh: {
-
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
+				Refresh();
+				break;
 			}
 
+			default:
+				break;
+		}
+
+	}
+
+	void ScrollView::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		switch (request.type()) {
+
+			case WidgetSize: {
+
+				break;
+			}
+
+			case WidgetPosition: {
+
+				if(sub_widget()) {
+					const Point* pos_p = static_cast<const Point*>(request.data());
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					MoveSubWidget(x, y);
+				}
+
+				break;
+			}
+
+			default:
+				break;
 		}
 	}
 

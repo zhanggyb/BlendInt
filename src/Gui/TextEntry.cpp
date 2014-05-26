@@ -233,55 +233,48 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void TextEntry::UpdateGeometry (const UpdateRequest& request)
+	void TextEntry::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
+			case WidgetRoundCornerRadius: {
+				const float* radius_p =
+								static_cast<const float*>(request.data());
+				m_origin.set_x(*radius_p + default_textentry_padding.left());
 
-				case FormRoundRadius: {
-					const float* radius_p = static_cast<const float*>(request.data());
-					m_origin.set_x(*radius_p + default_textentry_padding.left());
-
-					break;
-				}
-
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					const Color& color = Theme::instance->text().inner;
-					short shadetop = Theme::instance->text().shadetop;
-					short shadedown = Theme::instance->text().shadedown;
-
-					GenerateShadedFormBuffers(*size_p,
-							round_corner_type(),
-							round_corner_radius(),
-							color,
-							shadetop,
-							shadedown,
-							Vertical,
-							m_inner_buffer.get(),
-							m_outer_buffer.get());
-
-					m_cursor_buffer->Bind();
-					GLfloat* buf_p = (GLfloat*)m_cursor_buffer->Map(GL_READ_WRITE);
-					*(buf_p + 5) = static_cast<float>(size_p->height()
-									- default_textentry_padding.top()
-									- default_textentry_padding.bottom());
-					*(buf_p + 7) = static_cast<float>(size_p->height()
-									- default_textentry_padding.top()
-									- default_textentry_padding.bottom());
-					m_cursor_buffer->Unmap();
-					m_cursor_buffer->Reset();
-
-					Refresh();
-					break;
-				}
-
-				default:
-					Widget::UpdateGeometry(request);
+				break;
 			}
 
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				const Color& color = Theme::instance->text().inner;
+				short shadetop = Theme::instance->text().shadetop;
+				short shadedown = Theme::instance->text().shadedown;
+
+				GenerateShadedFormBuffers(*size_p, round_corner_type(),
+								round_corner_radius(), color, shadetop,
+								shadedown, Vertical, m_inner_buffer.get(),
+								m_outer_buffer.get());
+
+				m_cursor_buffer->Bind();
+				GLfloat* buf_p = (GLfloat*) m_cursor_buffer->Map(GL_READ_WRITE);
+				*(buf_p + 5) = static_cast<float>(size_p->height()
+								- default_textentry_padding.top()
+								- default_textentry_padding.bottom());
+				*(buf_p + 7) = static_cast<float>(size_p->height()
+								- default_textentry_padding.top()
+								- default_textentry_padding.bottom());
+				m_cursor_buffer->Unmap();
+				m_cursor_buffer->Reset();
+
+				Refresh();
+				break;
+			}
+
+			default:
+				Widget::UpdateGeometry(request);
 		}
+
 	}
 
 	ResponseType TextEntry::Draw (const RedrawEvent& event)

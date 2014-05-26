@@ -53,12 +53,6 @@ namespace BlendInt {
 	struct WidgetTheme;
 	class Color;
 
-	enum UpdateSource
-	{
-		Predefined,
-		Custom
-	};
-
 	class Jitter: public std::vector<glm::vec2>
 	{
 		public:
@@ -87,8 +81,8 @@ namespace BlendInt {
 	{
 	public:
 
-		UpdateRequest (int source, int type, const void* data) :
-				m_source(source), m_type(type), m_data(data)
+		UpdateRequest (int type, const void* data) :
+						m_type(type), m_data(data)
 		{
 
 		}
@@ -96,11 +90,6 @@ namespace BlendInt {
 		~UpdateRequest ()
 		{
 
-		}
-
-		int source () const
-		{
-			return m_source;
 		}
 
 		int type () const
@@ -115,7 +104,8 @@ namespace BlendInt {
 
 	private:
 
-		int m_source;
+		UpdateRequest();
+
 		int m_type;
 		const void* m_data;
 	};

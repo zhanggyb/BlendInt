@@ -66,36 +66,34 @@ namespace BlendInt {
 		m_text_length = UpdateTextPosition(size(), m_text, m_font);
 	}
 
-	void Label::UpdateGeometry (const UpdateRequest& request)
+	void Label::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch(request.type()) {
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				m_text_length = UpdateTextPosition(*size_p, m_text, m_font);
 
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					m_text_length = UpdateTextPosition(*size_p, m_text, m_font);
+				glBindVertexArray(m_vao);
+				m_rect->Bind();
 
-					glBindVertexArray(m_vao);
-					m_rect->Bind();
+				std::vector<GLfloat> vertices(12);
+				GenerateFlatRectVertices(*size_p, 0.f, &vertices);
 
-					std::vector<GLfloat> vertices(12);
-					GenerateFlatRectVertices(*size_p, 0.f, &vertices);
+				m_rect->SetData(sizeof(GLfloat) * vertices.size(),
+								&vertices[0]);
 
-					m_rect->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+				m_rect->Reset();
 
-					m_rect->Reset();
+				glBindVertexArray(0);
 
-					glBindVertexArray(0);
-
-					break;
-				}
-
-				default:
-					Widget::UpdateGeometry(request);
+				break;
 			}
 
+			default:
+				Widget::UpdateGeometry(request);
 		}
+
 	}
 
 	ResponseType Label::Draw (const RedrawEvent& event)

@@ -96,72 +96,83 @@ namespace BlendInt {
 		return ret;
 	}
 
-	bool Frame::UpdateGeometryTest (const UpdateRequest& request)
+	void Frame::UpdateContainer (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch(request.type()) {
 
-			switch (request.type()) {
+			case ContainerMargin: {
 
-				case SubWidgetSize:
-					return false;	// DO not allow sub widget geometry reset outside
+				if (sub_widget()) {
+					const Margin* margin_p =
+									static_cast<const Margin*>(request.data());
+					set_margin(*margin_p);
 
-				case SubWidgetPosition:
-					return false;
-
-				default:
-					return AbstractSingleContainer::UpdateGeometryTest(request);
-
+					FillSubWidget(position(), size(), *margin_p);
+				}
+				break;
 			}
 
-		} else {
-			return false;
+			case WidgetRefresh: {
+				Refresh();
+				break;
+			}
+
+			default:
+				break;
+
 		}
 	}
 
-	void Frame::UpdateGeometry (const UpdateRequest& request)
+	bool Frame::UpdateGeometryTest (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
-			switch (request.type()) {
+		if(request.source() == this) {
 
-				case FormSize: {
-					if (sub_widget()) {
-						const Size* size_p = static_cast<const Size*>(request.data());
-						set_size(*size_p);
-						FillSubWidget (position(), *size_p, margin());
-					}
-					break;
-				}
+			return AbstractSingleContainer::UpdateGeometryTest(request);
 
-				case FormPosition: {
-					if (sub_widget()) {
-						const Point* pos_p = static_cast<const Point*>(request.data());
-						SetSubWidgetPosition(sub_widget(),
-						        pos_p->x() + margin().left(),
-						        pos_p->y() + margin().bottom());
-					}
-					break;
-				}
+		} else {	// called by sub widget
 
-				case ContainerMargin: {
+			switch(request.type()) {
+				case WidgetSize:
+					return false;
 
-					if (sub_widget()) {
-						const Margin* margin_p = static_cast<const Margin*>(request.data());
-						set_margin(*margin_p);
-
-						FillSubWidget(position(), size(), *margin_p);
-					}
-					break;
-				}
-
-				case WidgetRefresh: {
-					Refresh();
-					break;
-				}
+				case WidgetPosition:
+					return false;
 
 				default:
-					break;
+					return false;
 			}
 		}
+	}
+
+	void Frame::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		switch (request.type()) {
+
+			case WidgetSize: {
+				if (sub_widget()) {
+					const Size* size_p =
+									static_cast<const Size*>(request.data());
+					set_size(*size_p);
+					FillSubWidget(position(), *size_p, margin());
+				}
+				break;
+			}
+
+			case WidgetPosition: {
+				if (sub_widget()) {
+					const Point* pos_p =
+									static_cast<const Point*>(request.data());
+					SetSubWidgetPosition(sub_widget(),
+									pos_p->x() + margin().left(),
+									pos_p->y() + margin().bottom());
+				}
+				break;
+			}
+
+			default:
+				break;
+		}
+
 	}
 
 	ResponseType Frame::CursorEnterEvent (bool entered)

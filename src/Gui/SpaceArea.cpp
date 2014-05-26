@@ -87,24 +87,22 @@ namespace BlendInt {
 		}
 	}
 
-	void SpaceArea::UpdateGeometry(const UpdateRequest& request)
+	void SpaceArea::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
-
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					m_shadow->Resize(*size_p);
-					break;
-				}
-
-				default:
-					Widget::UpdateGeometry(request);
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				m_shadow->Resize(*size_p);
+				break;
 			}
 
+			default:
+				Widget::UpdateGeometry(request);
 		}
+
 	}
+
 	ResponseType SpaceArea::Draw (const RedrawEvent& event)
 	{
 		glm::vec3 pos((float) position().x(), (float) position().y(),

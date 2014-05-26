@@ -35,6 +35,14 @@ namespace BlendInt {
 
 	class AbstractRoundForm;
 
+	enum SliderRequestType {
+		SliderPropertyOrientation,
+		SliderPropertyValue,
+		SliderPropertyMinimum,
+		SliderPropertyMaximum,
+		SliderPropertyStep,
+	};
+
 	/**
 	 * @brief Slide Icon used in Slider or ScrollBar
 	 */
@@ -124,6 +132,8 @@ namespace BlendInt {
 		Cpp::EventRef<int> value_changed () {return m_value_changed;}
 
 	protected:
+
+		virtual void UpdateSlider (const WidgetUpdateRequest& request) = 0;
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 

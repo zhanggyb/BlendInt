@@ -73,34 +73,32 @@ namespace BlendInt {
 	{
 	}
 
-	void TabButton::UpdateGeometry (const UpdateRequest& request)
+	void TabButton::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch(request.type()) {
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				/*
+				 GenerateFormBuffer(*size_p,
+				 RoundNone,
+				 0.f,
+				 m_inner_buffer.get(),
+				 m_outer_buffer.get(),
+				 0);
+				 glBindVertexArray(0);
+				 */
+				GenerateTabButtonBuffers(*size_p, m_inner_buffer.get(),
+								m_outer_buffer.get());
 
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					/*
-					GenerateFormBuffer(*size_p,
-									   RoundNone,
-									   0.f,
-									   m_inner_buffer.get(),
-									   m_outer_buffer.get(),
-									   0);
-					glBindVertexArray(0);
-					*/
-					GenerateTabButtonBuffers(*size_p, m_inner_buffer.get(), m_outer_buffer.get());
-
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
+				Refresh();
+				break;
 			}
 
+			default:
+				break;
 		}
+
 	}
 
 	ResponseType TabButton::Draw (const RedrawEvent& event)

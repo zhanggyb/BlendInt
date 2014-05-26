@@ -167,37 +167,39 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Menu::UpdateGeometry(const UpdateRequest& request)
+	void Menu::UpdateGeometry(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
-
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					GenerateFormBuffer(*size_p, round_corner_type(), round_corner_radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
-					ResetHighlightBuffer(size_p->width());
-					m_shadow->Resize(*size_p);
-					break;
-				}
-
-				case FormRoundType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					GenerateFormBuffer(size(), *type_p, round_corner_radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
-					break;
-				}
-
-				case FormRoundRadius: {
-					const float* radius_p = static_cast<const float*>(request.data());
-					GenerateFormBuffer(size(), round_corner_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
-					break;
-				}
-
-				default:
-					Widget::UpdateGeometry(request);
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				GenerateFormBuffer(*size_p, round_corner_type(),
+								round_corner_radius(), m_inner_buffer.get(),
+								m_outer_buffer.get(), 0);
+				ResetHighlightBuffer(size_p->width());
+				m_shadow->Resize(*size_p);
+				break;
 			}
 
+			case WidgetRoundCornerType: {
+				const int* type_p = static_cast<const int*>(request.data());
+				GenerateFormBuffer(size(), *type_p, round_corner_radius(),
+								m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				break;
+			}
+
+			case WidgetRoundCornerRadius: {
+				const float* radius_p =
+								static_cast<const float*>(request.data());
+				GenerateFormBuffer(size(), round_corner_type(), *radius_p,
+								m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				break;
+			}
+
+			default:
+				Widget::UpdateGeometry(request);
 		}
+
 	}
 
 	ResponseType Menu::Draw (const RedrawEvent& event)

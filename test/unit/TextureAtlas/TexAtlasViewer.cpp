@@ -225,11 +225,9 @@ TexAtlasViewer::~TexAtlasViewer()
 
 void TexAtlasViewer::Update(const BI::UpdateRequest& request)
 {
-	if(request.source() == BI::Predefined) {
-
 		switch (request.type()) {
 
-			case BI::FormSize: {
+			case BI::WidgetSize: {
 
 				//const Size* size_p = static_cast<const Size*>(request.data());
 
@@ -240,7 +238,6 @@ void TexAtlasViewer::Update(const BI::UpdateRequest& request)
 				break;
 		}
 
-	}
 }
 
 BI::ResponseType TexAtlasViewer::Draw (const BI::RedrawEvent& event)

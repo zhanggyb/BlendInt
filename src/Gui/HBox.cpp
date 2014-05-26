@@ -155,64 +155,68 @@ namespace BlendInt {
 		return expand;
 	}
 
-	bool HBox::UpdateGeometryTest (const UpdateRequest& request)
+	void HBox::UpdateContainer(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch(request.type()) {
 
-			switch (request.type()) {
-
-				case SubWidgetSize:
-					return false;	// DO not allow sub widget geometry reset outside
-
-				case SubWidgetPosition:
-					return false;
-
-				default:
-					return AbstractDequeContainer::UpdateGeometryTest(request);
-
+			case ContainerMargin: {
+				const Margin* margin_p = static_cast<const Margin*>(request.data());
+				FillSubWidgetsInHBox(position(), size(), *margin_p, m_alignment, m_space);
+				break;
 			}
 
-		} else {
-			return false;
+			case WidgetRefresh: {
+				Refresh();
+				break;
+			}
+
+			default:
+				break;
 		}
 	}
 
-	void HBox::UpdateGeometry (const UpdateRequest& request)
+	bool HBox::UpdateGeometryTest (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		if(request.source() == this) {
 
-			switch (request.type()) {
+			return AbstractDequeContainer::UpdateGeometryTest(request);
 
-				case FormPosition: {
-					const Point* new_pos = static_cast<const Point*>(request.data());
-					int x = new_pos->x() - position().x();
-					int y = new_pos->y() - position().y();
-					MoveSubWidgets(x, y);
-					break;
-				}
+		} else {	// called by sub widget
 
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					FillSubWidgetsInHBox(position(), *size_p, margin(), m_alignment, m_space);
-					break;
-				}
+			switch(request.type()) {
+				case WidgetSize:
+					return false;
 
-				case ContainerMargin: {
-					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					FillSubWidgetsInHBox(position(), size(), *margin_p, m_alignment, m_space);
-					break;
-				}
+				case WidgetPosition:
+					return false;
 
-				case WidgetRefresh: {
-					Refresh();
-					break;
-				}
+				default:
+					return false;
+			}
+		}
+	}
 
-				default: {
-					break;
-				}
+	void HBox::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		switch (request.type()) {
+
+			case WidgetPosition: {
+				const Point* new_pos = static_cast<const Point*>(request.data());
+				int x = new_pos->x() - position().x();
+				int y = new_pos->y() - position().y();
+				MoveSubWidgets(x, y);
+				break;
 			}
 
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				FillSubWidgetsInHBox(position(), *size_p, margin(), m_alignment, m_space);
+				break;
+			}
+
+			default: {
+				break;
+			}
 		}
 	}
 

@@ -54,6 +54,20 @@ namespace BlendInt {
 
 	struct WidgetTheme;
 
+	enum WidgetGeometryType {
+		WidgetPosition,
+		WidgetSize,
+		WidgetRoundCornerType,
+		WidgetRoundCornerRadius,
+		WidgetLayer,
+		WidgetVisibility
+	};
+
+	enum ContainerRequestType {
+		ContainerMargin,
+		WidgetRefresh
+	};
+
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
 
 	template<typename T>
@@ -63,18 +77,35 @@ namespace BlendInt {
 		return obj;
 	}
 
-	struct SubWidgetSizeData
+	class WidgetUpdateRequest: public UpdateRequest
 	{
-		AbstractWidget* sub_widget;
-		const Size* size;
+	public:
+
+		WidgetUpdateRequest (AbstractWidget* source, int type, const void* data)
+	: UpdateRequest(type, data), m_source(source)
+		{
+		}
+
+		~WidgetUpdateRequest ()
+		{
+
+		}
+
+		AbstractWidget* source () const
+		{
+			return m_source;
+		}
+
+	private:
+
+		WidgetUpdateRequest();
+
+		AbstractWidget* m_source;
 	};
 
-	struct SubWidgetPositionData
-	{
-		AbstractWidget* sub_widget;
-		const Point* position;
-	};
-
+	/**
+	 * @brief Proxy class to be used in container to set its sub widget property
+	 */
 	class SubWidgetProxy
 	{
 	private:
@@ -89,17 +120,20 @@ namespace BlendInt {
 			m_widget = widget;
 		}
 
-		void Resize (const Size& size);
+		void Resize (AbstractWidget* source, const Size& size);
 
-		void Resize (unsigned int width, unsigned int height);
+		void Resize (AbstractWidget* source, unsigned int width, unsigned int height);
 
-		void SetPosition (int x, int y);
+		void SetPosition (AbstractWidget* source, int x, int y);
 
-		void SetPosition (const Point& position);
+		void SetPosition (AbstractWidget* source, const Point& position);
 
 		AbstractWidget* m_widget;
 	};
 
+	/**
+	 * @brief Proxy class to be used in sub widget to set its container property
+	 */
 	class ContainerProxy
 	{
 	private:
@@ -114,56 +148,17 @@ namespace BlendInt {
 			m_container = container;
 		}
 
-		bool RequestRefreshTest (AbstractWidget* widget);
+		void RequestRefresh (AbstractWidget* source);
 
-		void RequestRefresh (AbstractWidget* widget);
+		bool SubwidgetPositionUpdateTest (AbstractWidget* source, const Point& pos);
 
-		bool SubwidgetPositionUpdateTest (AbstractWidget* widget, const Point& pos);
+		bool SubWidgetSizeUpdateTest (AbstractWidget* source, const Size& size);
 
-		bool SubWidgetSizeUpdateTest (AbstractWidget* widget, const Size& size);
+		void SubWidgetPositionUpdate (AbstractWidget* source, const Point& pos);
 
-		void SubWidgetPositionUpdate (AbstractWidget* widget, const Point& pos);
-
-		void SubWidgetSizeUpdate (AbstractWidget* widget, const Size& size);
+		void SubWidgetSizeUpdate (AbstractWidget* source, const Size& size);
 
 		AbstractContainer* m_container;
-	};
-
-	class UpdateRequestExt
-	{
-	public:
-
-		UpdateRequestExt (AbstractWidget* source, int type, const void* data) :
-				m_source(source), m_type(type), m_data(data)
-		{
-
-		}
-
-		~UpdateRequestExt ()
-		{
-
-		}
-
-		AbstractWidget* source () const
-		{
-			return m_source;
-		}
-
-		int type () const
-		{
-			return m_type;
-		}
-
-		const void* data () const
-		{
-			return m_data;
-		}
-
-	private:
-
-		AbstractWidget* m_source;
-		int m_type;
-		const void* m_data;
 	};
 
 	// ----------------------------------------------------
@@ -394,7 +389,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
 
-		virtual bool UpdateGeometryTest (const UpdateRequest& request) = 0;
+		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request) = 0;
 
 		/**
 		 * @brief Update opengl data (usually the GL buffer) for Render
@@ -405,15 +400,11 @@ namespace BlendInt {
 		 * This virtual function should be implemented in each derived class,
 		 * and should only use the form's property to draw opengl elements once.
 		 */
-		virtual void UpdateGeometry (const UpdateRequest& request) = 0;
+		virtual void UpdateGeometry (const WidgetUpdateRequest& request) = 0;
 
-		virtual void BroadcastUpdate (const UpdateRequest& request) = 0;
+		virtual void BroadcastUpdate (const WidgetUpdateRequest& request) = 0;
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
-
-		bool RefreshTestInContainer ();
-
-		void RefreshInContainer ();
 
 		bool ResizeTestInContainer (const Size& size);
 

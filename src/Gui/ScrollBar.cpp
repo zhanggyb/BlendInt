@@ -125,133 +125,129 @@ namespace BlendInt {
 		}
 	}
 
-	bool ScrollBar::UpdateGeometryTest (const UpdateRequest& request)
+	bool ScrollBar::UpdateGeometryTest (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
+			case SliderPropertyMinimum: {
 
-				case SliderPropertyMinimum: {
+				const int* min_p = static_cast<const int*>(request.data());
 
-					const int* min_p = static_cast<const int*>(request.data());
+				if (*min_p >= maximum())
+					return false;
 
-					if(*min_p >= maximum())
-						return false;
-
-					return true;
-				}
-
-				case SliderPropertyMaximum: {
-
-					const int* max_p = static_cast<const int*>(request.data());
-
-					if(*max_p <= minimum())
-						return false;
-
-					return true;
-				}
-
-				default:
-					return AbstractSlider::UpdateGeometryTest(request);
+				return true;
 			}
 
-		} else {
-			return false;
+			case SliderPropertyMaximum: {
+
+				const int* max_p = static_cast<const int*>(request.data());
+
+				if (*max_p <= minimum())
+					return false;
+
+				return true;
+			}
+
+			default:
+				return AbstractSlider::UpdateGeometryTest(request);
 		}
+
+
 	}
 
-	void ScrollBar::UpdateGeometry (const UpdateRequest& request)
+	void ScrollBar::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if (request.source() == Predefined) {
 
-			switch (request.type()) {
-				case FormPosition: {
-					// don't care position change
-					break;
-				}
-
-				case FormSize: {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-
-					int radius = std::min(size_p->width(),
-									size_p->height()) / 2;
-
-					Orientation slot_orient;
-					if (orientation() == Vertical) {
-						slot_orient = Horizontal;
-						m_slide.Resize(radius * 2, m_slide.size().height());
-						m_slide.SetRadius(radius);
-					} else {
-						slot_orient = Vertical;
-						m_slide.Resize(m_slide.size().width(), radius * 2);
-						m_slide.SetRadius(radius);
-					}
-
-					const Color& color = Theme::instance->scroll().inner;
-					short shadetop = Theme::instance->scroll().shadetop;
-					short shadedown = Theme::instance->scroll().shadedown;
-					if(orientation() == Vertical) {
-						shadetop = Theme::instance->scroll().shadedown;
-						shadedown = Theme::instance->scroll().shadetop;
-					}
-
-					GenerateShadedFormBuffers(
-									*size_p,
-									RoundAll,
-									radius,
-									color,
-									shadetop,
-									shadedown,
-									slot_orient,
-									m_slot_inner_buffer.get(),
-									m_slot_outline_buffer.get());
-
-					break;
-				}
-
-				case SliderPropertyValue: {
-
-					break;
-				}
-
-				case SliderPropertyMinimum: {
-
-					const int* min_p = static_cast<const int*>(request.data());
-
-					if(value() < *min_p) {
-						set_value(*min_p);
-					}
-
-					break;
-				}
-
-				case SliderPropertyMaximum: {
-
-					const int* max_p = static_cast<const int*>(request.data());
-
-					if(value() > *max_p) {
-						set_value(*max_p);
-					}
-
-					break;
-				}
-
-				case SliderPropertyOrientation: {
-					//const Orientation* orient_p =
-						//			static_cast<const Orientation*>(request.data());
-
-					// TODO:
-
-					//Refresh();
-
-					break;
-				}
-
-				default:
-					break;
+		switch (request.type()) {
+			case WidgetPosition: {
+				// don't care position change
+				break;
 			}
 
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+
+				int radius = std::min(size_p->width(), size_p->height()) / 2;
+
+				Orientation slot_orient;
+				if (orientation() == Vertical) {
+					slot_orient = Horizontal;
+					m_slide.Resize(radius * 2, m_slide.size().height());
+					m_slide.SetRadius(radius);
+				} else {
+					slot_orient = Vertical;
+					m_slide.Resize(m_slide.size().width(), radius * 2);
+					m_slide.SetRadius(radius);
+				}
+
+				const Color& color = Theme::instance->scroll().inner;
+				short shadetop = Theme::instance->scroll().shadetop;
+				short shadedown = Theme::instance->scroll().shadedown;
+				if (orientation() == Vertical) {
+					shadetop = Theme::instance->scroll().shadedown;
+					shadedown = Theme::instance->scroll().shadetop;
+				}
+
+				GenerateShadedFormBuffers(*size_p, RoundAll, radius, color,
+								shadetop, shadedown, slot_orient,
+								m_slot_inner_buffer.get(),
+								m_slot_outline_buffer.get());
+
+				break;
+			}
+
+			default:
+				break;
+		}
+
+	}
+
+	void ScrollBar::UpdateSlider(const WidgetUpdateRequest& request)
+	{
+		switch(request.type()) {
+
+
+			case SliderPropertyValue: {
+
+				break;
+			}
+
+			case SliderPropertyMinimum: {
+
+				const int* min_p = static_cast<const int*>(request.data());
+
+				if (value() < *min_p) {
+					set_value(*min_p);
+				}
+
+				break;
+			}
+
+			case SliderPropertyMaximum: {
+
+				const int* max_p = static_cast<const int*>(request.data());
+
+				if (value() > *max_p) {
+					set_value(*max_p);
+				}
+
+				break;
+			}
+
+			case SliderPropertyOrientation: {
+				//const Orientation* orient_p =
+				//			static_cast<const Orientation*>(request.data());
+
+				// TODO:
+
+				//Refresh();
+
+				break;
+			}
+
+			default:
+				break;
 		}
 	}
 

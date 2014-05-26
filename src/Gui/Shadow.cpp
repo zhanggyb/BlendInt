@@ -71,43 +71,42 @@ namespace BlendInt {
 		if (blur_rad == m_blur_rad)
 			return;
 
-		UpdateGeometry(UpdateRequest(Predefined, ShadowBlurRadius, &blur_rad));
+		//UpdateGeometry(UpdateRequest(ShadowBlurRadius, &blur_rad));
 
 		m_blur_rad = blur_rad;
 	}
 
 	void Shadow::UpdateGeometry (const UpdateRequest& request)
 	{
-		if (request.source() == Predefined) {
-			switch (request.type()) {
+		switch (request.type()) {
 
-				case FormSize: {
+			case FormSize: {
 
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					glBindVertexArray(m_vao);
-					GenerateShadowBuffers(*size_p, radius(), m_blur_rad);
+				const Size* size_p = static_cast<const Size*>(request.data());
+				glBindVertexArray(m_vao);
+				GenerateShadowBuffers(*size_p, radius(), m_blur_rad);
 
-					glBindVertexArray(0);
-					break;
-				}
-
-				case ShadowBlurRadius: {
-
-					const float* blur_rad =
-									static_cast<const float*>(request.data());
-
-					glBindVertexArray(m_vao);
-					GenerateShadowBuffers(size(), radius(), *blur_rad);
-					glBindVertexArray(0);
-					break;
-				}
-
-				default:
-					break;
+				glBindVertexArray(0);
+				break;
 			}
 
+			/*
+			case ShadowBlurRadius: {
+
+				const float* blur_rad =
+								static_cast<const float*>(request.data());
+
+				glBindVertexArray(m_vao);
+				GenerateShadowBuffers(size(), radius(), *blur_rad);
+				glBindVertexArray(0);
+				break;
+			}
+			*/
+
+			default:
+				break;
 		}
+
 	}
 
 	void Shadow::Draw (const glm::mat4& mvp)

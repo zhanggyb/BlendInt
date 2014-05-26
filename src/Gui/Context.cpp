@@ -199,111 +199,83 @@ namespace BlendInt
 		return ArrowCursor;
 	}
 
-	bool Context::UpdateGeometryTest(const UpdateRequest& request)
+	void Context::UpdateContainer(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
-
-			switch (request.type()) {
-
-				case SubWidgetSize: {
-
-					//const SubWidgetSizeData* data = static_cast<const SubWidgetSizeData*>(request.data());
-					//DBG_PRINT_MSG("widget %s ask for resize", data->sub_widget->name().c_str());
-
-					return true;
-				}
-
-				case SubWidgetPosition: {
-
-					//const SubWidgetPositionData* data = static_cast<const SubWidgetPositionData*>(request.data());
-					//DBG_PRINT_MSG("widget %s ask for position", data->sub_widget->name().c_str());
-
-					return true;
-				}
-
-				default:
-					return true;
+		switch(request.type()) {
+			case WidgetRefresh: {
+				RefreshLayer(request.source()->z());
+				break;
 			}
 
-		} else {
-			return false;
+			default:
+				break;
 		}
 	}
 
-	void Context::UpdateGeometry (const UpdateRequest& request)
+	bool Context::UpdateGeometryTest(const WidgetUpdateRequest& request)
 	{
-		if (request.source() == Predefined) {
+		return true;
+	}
 
-			switch(request.type()) {
+	void Context::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		switch (request.type()) {
 
-				case FormSize: {
+			case WidgetSize: {
 
-					const Size* size_p = static_cast<const Size*>(request.data());
+				const Size* size_p = static_cast<const Size*>(request.data());
 
-					GLfloat vertices[] = {
-						0.f, 0.f,
-						static_cast<GLfloat>(size_p->width()), 0.f,
-						0.f, static_cast<GLfloat>(size_p->height()),
-						static_cast<GLfloat>(size_p->width()), static_cast<GLfloat>(size_p->height())
-					};
+				GLfloat vertices[] = { 0.f, 0.f,
+								static_cast<GLfloat>(size_p->width()), 0.f, 0.f,
+								static_cast<GLfloat>(size_p->height()),
+								static_cast<GLfloat>(size_p->width()),
+								static_cast<GLfloat>(size_p->height()) };
 
-					glBindVertexArray(m_vao);
-					m_vbo->Bind();
-					m_vbo->UpdateData(vertices, sizeof(vertices));
-					m_vbo->Reset();
+				glBindVertexArray(m_vao);
+				m_vbo->Bind();
+				m_vbo->UpdateData(vertices, sizeof(vertices));
+				m_vbo->Reset();
 
-					glBindVertexArray(0);
+				glBindVertexArray(0);
 
-					m_redraw_event.set_projection_matrix(
-									glm::ortho(0.f,
-													static_cast<float>(size_p->width()),
-													0.f,
-													static_cast<float>(size_p->height()),
-													100.f, -100.f));
+				m_redraw_event.set_projection_matrix(
+								glm::ortho(0.f,
+												static_cast<float>(size_p->width()),
+												0.f,
+												static_cast<float>(size_p->height()),
+												100.f, -100.f));
 
-					// TODO: redraw
-					force_refresh_all = true;
-					break;
-				}
-
-				case FormPosition: {
-					// always at (0, 0)
-					break;
-				}
-
-				case WidgetRefresh: {
-
-					const AbstractWidget* widget_p = static_cast<const AbstractWidget*>(request.data());
-					// DBG_PRINT_MSG("widget %s call refresh: %d", widget_p->name().c_str(), widget_p->z());
-					RefreshLayer(widget_p->z());
-					break;
-				}
-
-				default:
-					break;;
+				// TODO: redraw
+				force_refresh_all = true;
+				break;
 			}
 
+			case WidgetPosition: {
+				// always at (0, 0)
+				break;
+			}
+
+			default:
+				break;
+				;
 		}
 	}
 
-	void Context::BroadcastUpdate(const UpdateRequest& request)
+	void Context::BroadcastUpdate(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
+			case FormSize: {
 
-				case FormSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
 
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					m_resized.fire(*size_p);
-					break;
-				}
-
-				default:
-					AbstractContainer::BroadcastUpdate(request);
-
+				m_resized.fire(*size_p);
+				break;
 			}
+
+			default:
+				AbstractContainer::BroadcastUpdate(request);
+
 		}
 	}
 

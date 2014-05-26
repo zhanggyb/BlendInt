@@ -176,9 +176,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool UpdateGeometryTest (const UpdateRequest& request);
+		virtual void UpdateContainer (const WidgetUpdateRequest& request) = 0;
 
-		virtual void BroadcastUpdate (const UpdateRequest& request);
+		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+
+		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
 
 		//virtual bool AddSubWidget (AbstractWidget* widget) = 0;
 

@@ -117,57 +117,68 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::UpdateGeometry (const UpdateRequest& request)
+	void Stack::UpdateContainer (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
+			case ContainerMargin: {
 
-				case FormPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
+				const Margin* margin_p =
+								static_cast<const Margin*>(request.data());
 
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
+				unsigned int w = size().width() - margin_p->left()
+								- margin_p->right();
+				unsigned int h = size().height() - margin_p->top()
+								- margin_p->bottom();
 
-					MoveSubWidgets(x, y);
+				ResizeSubWidgets(w, h);
 
-					break;
-				}
-
-				case FormSize: {
-					const Size* new_size = static_cast<const Size*>(request.data());
-
-					unsigned int w = new_size->width() - margin().left() - margin().right();
-					unsigned int h = new_size->height() - margin().top() - margin().bottom();
-
-					ResizeSubWidgets(w, h);
-
-					break;
-				}
-
-				case ContainerMargin: {
-
-					const Margin* margin_p = static_cast<const Margin*>(request.data());
-
-					unsigned int w = size().width() - margin_p->left() - margin_p->right();
-					unsigned int h = size().height() - margin_p->top() - margin_p->bottom();
-
-					ResizeSubWidgets(w, h);
-
-					break;
-				}
-
-				case WidgetRefresh: {
-
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
+				break;
 			}
 
+			case WidgetRefresh: {
+
+				Refresh();
+				break;
+			}
+
+			default:
+				break;
 		}
+	}
+
+	void Stack::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		switch (request.type()) {
+
+			case WidgetPosition: {
+				const Point* pos_p = static_cast<const Point*>(request.data());
+
+				int x = pos_p->x() - position().x();
+				int y = pos_p->y() - position().y();
+
+				MoveSubWidgets(x, y);
+
+				break;
+			}
+
+			case WidgetSize: {
+				const Size* new_size = static_cast<const Size*>(request.data());
+
+				unsigned int w = new_size->width() - margin().left()
+								- margin().right();
+				unsigned int h = new_size->height() - margin().top()
+								- margin().bottom();
+
+				ResizeSubWidgets(w, h);
+
+				break;
+			}
+
+			default:
+				break;
+		}
+
 	}
 
 	ResponseType Stack::Draw (const RedrawEvent& event)

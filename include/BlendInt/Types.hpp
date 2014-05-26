@@ -157,25 +157,12 @@ namespace BlendInt {
 		UI_RB_ALPHA = RoundAll + 1
 	};
 
-	enum WidgetGeometryType {
-		WidgetPosition,
-		WidgetSize,
-		WidgetRoundCornerType,
-		WidgetRoundCornerRadius
-	};
-
+	/*
 	enum FormPropertyType {
 		FormSize,
 		FormPosition,
-		FormPreferredSize,
-		FormMinimalSize,
-		FormMaximalSize,
 		WidgetLayer,
 		WidgetVisibility,
-		FormRoundType,
-		FormRoundRadius,
-		ContainerMargin,
-		LayoutPropertyItem,
 
 		SliderPropertyOrientation,
 		SliderPropertyValue,
@@ -183,13 +170,9 @@ namespace BlendInt {
 		SliderPropertyMaximum,
 		SliderPropertyStep,
 
-		WidgetRefresh,
-
-		SubWidgetPosition,
-		SubWidgetSize,
-
 		FormPropertyLast
 	};
+	*/
 
 	enum CursorShape {
 		ArrowCursor = 0,	//	The standard arrow cursor.

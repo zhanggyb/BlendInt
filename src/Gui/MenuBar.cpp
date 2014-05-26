@@ -57,13 +57,25 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void MenuBar::UpdateGeometry (const UpdateRequest& request)
+	void MenuBar::UpdateContainer(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch(request.type()) {
 
-			switch (request.type()) {
+			case WidgetRefresh: {
+				Refresh();
+				break;
+			}
 
-			case FormSize: {
+			default:
+				break;
+		}
+	}
+
+	void MenuBar::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		switch (request.type()) {
+
+			case WidgetSize: {
 
 				const Size* size_p = static_cast<const Size*>(request.data());
 
@@ -74,7 +86,8 @@ namespace BlendInt {
 				GenerateFlatRectVertices(*size_p, 0.f, &vertices);
 
 				m_buffer->Bind();
-				m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+				m_buffer->SetData(sizeof(GLfloat) * vertices.size(),
+								&vertices[0]);
 				m_buffer->Reset();
 
 				glBindVertexArray(0);
@@ -82,22 +95,19 @@ namespace BlendInt {
 				break;
 			}
 
-			case FormPosition: {
+			case WidgetPosition: {
 
 				const Point* pos_p = static_cast<const Point*>(request.data());
-				MoveSubWidgets(pos_p->x() - position().x(), pos_p->y() - position().y());
+				MoveSubWidgets(pos_p->x() - position().x(),
+								pos_p->y() - position().y());
 
 				break;
-			}
-
-			case WidgetRefresh: {
-				Refresh();
 			}
 
 			default:
 				break;
-			}
 		}
+
 	}
 
 	ResponseType MenuBar::Draw (const RedrawEvent& event)

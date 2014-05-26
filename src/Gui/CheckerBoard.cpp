@@ -89,45 +89,45 @@ namespace BlendInt {
 	
 	void CheckerBoard::UpdateGeometry (const UpdateRequest& request)
 	{
-		if (request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
+			case FormSize: {
 
-				case FormSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
 
-					const Size* size_p = static_cast<const Size*>(request.data());
+				std::vector<GLfloat> vertices;
+				std::vector<unsigned int> light_indices;
+				std::vector<unsigned int> dark_indices;
 
-					std::vector<GLfloat> vertices;
-					std::vector<unsigned int> light_indices;
-					std::vector<unsigned int> dark_indices;
+				GenerateCheckerVertices(*size_p, m_cell_size, &vertices,
+								&light_indices, &dark_indices);
 
-					GenerateCheckerVertices(*size_p, m_cell_size, &vertices, &light_indices, &dark_indices);
+				glGenVertexArrays(1, &m_vao);
+				glBindVertexArray(m_vao);
 
-					glGenVertexArrays(1, &m_vao);
-					glBindVertexArray(m_vao);
+				m_vbo->Bind();
+				m_vbo->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+				m_vbo->Reset();
 
-					m_vbo->Bind();
-					m_vbo->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-					m_vbo->Reset();
+				m_light_ibo->Bind();
+				m_light_ibo->SetData(light_indices.size() / 3,
+								3 * sizeof(GLuint), &light_indices[0]);
+				m_light_ibo->Reset();
 
-					m_light_ibo->Bind();
-					m_light_ibo->SetData(light_indices.size() / 3, 3 * sizeof(GLuint), &light_indices[0]);
-					m_light_ibo->Reset();
+				m_dark_ibo->Bind();
+				m_dark_ibo->SetData(light_indices.size() / 3,
+								3 * sizeof(GLuint), &dark_indices[0]);
+				m_dark_ibo->Reset();
 
-					m_dark_ibo->Bind();
-					m_dark_ibo->SetData(light_indices.size() / 3, 3 * sizeof(GLuint), &dark_indices[0]);
-					m_dark_ibo->Reset();
+				glBindVertexArray(0);
 
-					glBindVertexArray(0);
-
-					break;
-				}
-
-				default:
-					break;
+				break;
 			}
 
+			default:
+				break;
 		}
+
 	}
 	
 	void CheckerBoard::Draw (const glm::mat4& mvp)

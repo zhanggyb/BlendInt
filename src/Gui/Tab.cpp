@@ -63,13 +63,11 @@ namespace BlendInt {
 		return true;
 	}
 
-	void TabStack::UpdateGeometry (const UpdateRequest& request)
+	void TabStack::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
-
 			switch(request.type()) {
 
-				case FormSize: {
+				case WidgetSize: {
 
 					const Size* size_p = static_cast<const Size*>(request.data());
 
@@ -91,7 +89,6 @@ namespace BlendInt {
 				}
 			}
 
-		}
 	}
 
 	ResponseType TabStack::Draw (const RedrawEvent& event)
@@ -198,36 +195,41 @@ namespace BlendInt {
 		}
 	}
 
-	void Tab::UpdateGeometry (const UpdateRequest& request)
+	void Tab::UpdateContainer (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch(request.type()) {
+			case WidgetRefresh: {
 
-			switch (request.type()) {
-
-				case FormPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					MoveSubWidgets(x, y);
-					break;
-				}
-
-				case FormSize: {
-					break;
-				}
-
-				case WidgetRefresh: {
-
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
+				Refresh();
+				break;
 			}
 
+			default:
+				break;
+		}
+
+	}
+
+	void Tab::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		switch (request.type()) {
+
+			case WidgetPosition: {
+				const Point* pos_p = static_cast<const Point*>(request.data());
+
+				int x = pos_p->x() - position().x();
+				int y = pos_p->y() - position().y();
+
+				MoveSubWidgets(x, y);
+				break;
+			}
+
+			case WidgetSize: {
+				break;
+			}
+
+			default:
+				break;
 		}
 	}
 

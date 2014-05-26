@@ -139,26 +139,23 @@ namespace BlendInt {
 		return true;
 	}
 
-	void CVImageView::UpdateGeometry (const UpdateRequest& request)
+	void CVImageView::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
+		switch (request.type()) {
 
-			switch (request.type()) {
+			case WidgetSize: {
 
-				case FormSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
 
-					const Size* size_p = static_cast<const Size*>(request.data());
+				m_checkerboard->Resize(*size_p);
 
-					m_checkerboard->Resize(*size_p);
-
-					break;
-				}
-
-				default:
-					break;
+				break;
 			}
 
+			default:
+				break;
 		}
+
 	}
 
 	ResponseType CVImageView::Draw (const RedrawEvent& event)

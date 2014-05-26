@@ -58,13 +58,12 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ToggleButton::UpdateGeometry(const UpdateRequest& request)
+	void ToggleButton::UpdateGeometry(const WidgetUpdateRequest& request)
 	{
-		if(request.source() == Predefined) {
 
 			switch (request.type()) {
 
-				case FormSize: {
+				case WidgetSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
 					UpdateTextPosition(*size_p, round_corner_type(), round_corner_radius(), text());
 					glBindVertexArray(m_vao);
@@ -80,7 +79,7 @@ namespace BlendInt {
 					break;
 				}
 
-				case FormRoundType: {
+				case WidgetRoundCornerType: {
 					const int* type_p = static_cast<const int*>(request.data());
 					UpdateTextPosition(size(), *type_p, round_corner_radius(), text());
 					glBindVertexArray(m_vao);
@@ -96,7 +95,7 @@ namespace BlendInt {
 					break;
 				}
 
-				case FormRoundRadius: {
+				case WidgetRoundCornerRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
 					UpdateTextPosition(size(), round_corner_type(), *radius_p, text());
 					glBindVertexArray(m_vao);
@@ -116,7 +115,6 @@ namespace BlendInt {
 					break;
 			}
 
-		}
 	}
 
 	ResponseType ToggleButton::Draw (const RedrawEvent& event)

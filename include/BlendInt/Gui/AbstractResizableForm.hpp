@@ -30,6 +30,12 @@
 
 namespace BlendInt {
 
+	enum FormRequestType {
+		FormSize,
+		FormRoundType,
+		FormRoundRadius
+	};
+
 	/**
 	 * @brief a simple form class inherit from AbstractForm and provide Resize function
 	 */

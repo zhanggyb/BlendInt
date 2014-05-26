@@ -108,67 +108,56 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ComboBox::UpdateGeometry(const UpdateRequest& request)
+	void ComboBox::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if (request.source() == Predefined) {
-			switch (request.type()) {
+		switch (request.type()) {
 
-				case FormSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(*size_p,
-									round_corner_type(),
-									round_corner_radius(),
-									Theme::instance->menu().inner,
-									Theme::instance->menu().shadetop,
-									Theme::instance->menu().shadedown,
-									Vertical,
-									m_inner_buffer.get(),
-									m_outer_buffer.get());
-					glBindVertexArray(0);
-					Refresh();
-					break;
-				}
-
-				case FormRoundType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(size(),
-									*type_p,
-									round_corner_radius(),
-									Theme::instance->menu().inner,
-									Theme::instance->menu().shadetop,
-									Theme::instance->menu().shadedown,
-									Vertical,
-									m_inner_buffer.get(),
-									m_outer_buffer.get());
-					glBindVertexArray(0);
-					Refresh();
-					break;
-				}
-
-				case FormRoundRadius: {
-					const float* radius_p = static_cast<const float*>(request.data());
-					glBindVertexArray(m_vao);
-					GenerateShadedFormBuffers(size(),
-									round_corner_type(),
-									*radius_p,
-									Theme::instance->menu().inner,
-									Theme::instance->menu().shadetop,
-									Theme::instance->menu().shadedown,
-									Vertical,
-									m_inner_buffer.get(),
-									m_outer_buffer.get());
-					glBindVertexArray(0);
-					Refresh();
-					break;
-				}
-
-				default:
-					Widget::UpdateGeometry(request);
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				glBindVertexArray(m_vao);
+				GenerateShadedFormBuffers(*size_p, round_corner_type(),
+								round_corner_radius(),
+								Theme::instance->menu().inner,
+								Theme::instance->menu().shadetop,
+								Theme::instance->menu().shadedown, Vertical,
+								m_inner_buffer.get(), m_outer_buffer.get());
+				glBindVertexArray(0);
+				Refresh();
+				break;
 			}
 
+			case WidgetRoundCornerType: {
+				const int* type_p = static_cast<const int*>(request.data());
+				glBindVertexArray(m_vao);
+				GenerateShadedFormBuffers(size(), *type_p,
+								round_corner_radius(),
+								Theme::instance->menu().inner,
+								Theme::instance->menu().shadetop,
+								Theme::instance->menu().shadedown, Vertical,
+								m_inner_buffer.get(), m_outer_buffer.get());
+				glBindVertexArray(0);
+				Refresh();
+				break;
+			}
+
+			case WidgetRoundCornerRadius: {
+				const float* radius_p =
+								static_cast<const float*>(request.data());
+				glBindVertexArray(m_vao);
+				GenerateShadedFormBuffers(size(), round_corner_type(),
+								*radius_p, Theme::instance->menu().inner,
+								Theme::instance->menu().shadetop,
+								Theme::instance->menu().shadedown, Vertical,
+								m_inner_buffer.get(), m_outer_buffer.get());
+				glBindVertexArray(0);
+				Refresh();
+				break;
+			}
+
+			default:
+				Widget::UpdateGeometry(request);
 		}
+
 	}
 
 	ResponseType ComboBox::Draw(const RedrawEvent& event)
