@@ -42,9 +42,7 @@ namespace BlendInt {
 	: Widget(), m_orientation(orientation)
 	{
 		set_size(20, 20);
-
-		m_shadow.reset(new Shadow);
-		m_shadow->Resize(20, 20);
+		set_drop_shadow(true);
 	}
 
 	SpaceArea::~SpaceArea ()
@@ -91,12 +89,6 @@ namespace BlendInt {
 	{
 		switch (request.type()) {
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				m_shadow->Resize(*size_p);
-				break;
-			}
-
 			default:
 				Widget::UpdateGeometry(request);
 		}
@@ -105,13 +97,6 @@ namespace BlendInt {
 
 	ResponseType SpaceArea::Draw (const RedrawEvent& event)
 	{
-		glm::vec3 pos((float) position().x(), (float) position().y(),
-						(float) z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
-		if(m_shadow)
-			m_shadow->Draw(mvp);
-
 		return Ignore;
 	}
 

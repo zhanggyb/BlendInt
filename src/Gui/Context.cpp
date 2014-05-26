@@ -202,7 +202,7 @@ namespace BlendInt
 	void Context::UpdateContainer(const WidgetUpdateRequest& request)
 	{
 		switch(request.type()) {
-			case WidgetRefresh: {
+			case ContainerRefresh: {
 				RefreshLayer(request.source()->z());
 				break;
 			}
@@ -219,45 +219,70 @@ namespace BlendInt
 
 	void Context::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.source() == this) {
 
-			case WidgetSize: {
+			switch (request.type()) {
 
-				const Size* size_p = static_cast<const Size*>(request.data());
+				case WidgetSize: {
 
-				GLfloat vertices[] = { 0.f, 0.f,
-								static_cast<GLfloat>(size_p->width()), 0.f, 0.f,
-								static_cast<GLfloat>(size_p->height()),
-								static_cast<GLfloat>(size_p->width()),
-								static_cast<GLfloat>(size_p->height()) };
+					const Size* size_p = static_cast<const Size*>(request.data());
 
-				glBindVertexArray(m_vao);
-				m_vbo->Bind();
-				m_vbo->UpdateData(vertices, sizeof(vertices));
-				m_vbo->Reset();
+					GLfloat vertices[] = { 0.f, 0.f,
+									static_cast<GLfloat>(size_p->width()), 0.f, 0.f,
+									static_cast<GLfloat>(size_p->height()),
+									static_cast<GLfloat>(size_p->width()),
+									static_cast<GLfloat>(size_p->height()) };
 
-				glBindVertexArray(0);
+					glBindVertexArray(m_vao);
+					m_vbo->Bind();
+					m_vbo->UpdateData(vertices, sizeof(vertices));
+					m_vbo->Reset();
 
-				m_redraw_event.set_projection_matrix(
-								glm::ortho(0.f,
-												static_cast<float>(size_p->width()),
-												0.f,
-												static_cast<float>(size_p->height()),
-												100.f, -100.f));
+					glBindVertexArray(0);
 
-				// TODO: redraw
-				force_refresh_all = true;
-				break;
+					m_redraw_event.set_projection_matrix(
+									glm::ortho(0.f,
+													static_cast<float>(size_p->width()),
+													0.f,
+													static_cast<float>(size_p->height()),
+													100.f, -100.f));
+
+					// TODO: redraw
+					force_refresh_all = true;
+					break;
+				}
+
+				case WidgetPosition: {
+					// always at (0, 0)
+					break;
+				}
+
+				default:
+					break;
+					;
 			}
 
-			case WidgetPosition: {
-				// always at (0, 0)
-				break;
-			}
+		} else {
 
-			default:
-				break;
-				;
+			switch(request.type()) {
+
+				case WidgetPosition:
+					break;
+
+				case WidgetSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					if(request.source()->drop_shadow() && request.source()->m_shadow) {
+						request.source()->m_shadow->Resize(size_p->width(), size_p->height());
+					}
+
+					break;
+				}
+
+				default:
+					break;
+
+			}
 		}
 	}
 
@@ -557,6 +582,15 @@ namespace BlendInt
 #endif
 
 			refresh_once = true;
+		}
+
+		// set shadow
+		if(widget->drop_shadow()) {
+			if(!widget->m_shadow) {
+				widget->m_shadow.reset(new Shadow);
+			}
+
+			widget->m_shadow->Resize(widget->size());
 		}
 
 		m_index[widget] = widget->z();
@@ -1024,14 +1058,9 @@ namespace BlendInt
 	{
 		if (widget->visiable()) {
 
-			/*
-			DBG_PRINT_MSG("draw widget: %s at %d, %d, size: %u, %u",
-							widget->name().c_str(),
-							widget->position().x(),
-							widget->position().y(),
-							widget->size().width(),
-							widget->size().height());
-			*/
+			if(widget->drop_shadow() && widget->m_shadow) {
+				widget->m_shadow->DrawAt(event.projection_matrix() * event.view_matrix(), widget->position());
+			}
 
 			widget->Draw(event);
 

@@ -65,7 +65,7 @@ namespace BlendInt {
 
 	enum ContainerRequestType {
 		ContainerMargin,
-		WidgetRefresh
+		ContainerRefresh
 	};
 
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;

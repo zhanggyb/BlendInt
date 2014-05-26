@@ -122,7 +122,7 @@ namespace BlendInt {
 
 	void ContainerProxy::RequestRefresh (AbstractWidget* source)
 	{
-		WidgetUpdateRequest request(source, WidgetRefresh, 0);
+		WidgetUpdateRequest request(source, ContainerRefresh, 0);
 		m_container->UpdateContainer(request);
 	}
 

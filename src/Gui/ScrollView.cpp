@@ -130,7 +130,7 @@ namespace BlendInt {
 	{
 		switch (request.type()) {
 
-			case WidgetRefresh: {
+			case ContainerRefresh: {
 
 				Refresh();
 				break;

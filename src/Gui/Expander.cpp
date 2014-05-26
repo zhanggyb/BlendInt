@@ -392,7 +392,7 @@ namespace BlendInt {
 				break;
 			}
 
-			case WidgetRefresh: {
+			case ContainerRefresh: {
 				Refresh();
 				break;
 			}

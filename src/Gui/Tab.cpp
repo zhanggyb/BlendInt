@@ -198,7 +198,7 @@ namespace BlendInt {
 	void Tab::UpdateContainer (const WidgetUpdateRequest& request)
 	{
 		switch(request.type()) {
-			case WidgetRefresh: {
+			case ContainerRefresh: {
 
 				Refresh();
 				break;

@@ -67,8 +67,8 @@ namespace BlendInt {
 	Theme::Theme ()
 	: m_dpi(96),
 	  m_pixel(1.0),
-	  m_menu_shadow_fac(0.5),
-	  m_menu_shadow_width(12)
+	  m_shadow_fac(0.5),
+	  m_shadow_width(12)
 	{
 		// TODO Auto-generated constructor stub
 
@@ -169,12 +169,12 @@ namespace BlendInt {
 		attr = doc.allocate_attribute("pixel", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "%g", m_menu_shadow_fac);
+		snprintf(buf, 16, "%g", m_shadow_fac);
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("menu_shadow_fac", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "%hd", m_menu_shadow_width);
+		snprintf(buf, 16, "%hd", m_shadow_width);
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("menu_shadow_width", value);
 		ui_node->append_attribute(attr);
@@ -436,8 +436,8 @@ namespace BlendInt {
 
 		//_theme.panel.header = RGBAf();
 		//_theme.panel.back = RGBAf();
-		m_menu_shadow_fac = 0.5f;
-		m_menu_shadow_width = 12;
+		m_shadow_fac = 0.5f;
+		m_shadow_width = 12;
 
 		m_dpi = 96;
 
@@ -474,7 +474,7 @@ namespace BlendInt {
 
 				float v = 0.f;
 				if(sscanf(attrib->value(), "%f", &v) == 1) {
-					m_menu_shadow_fac = v;
+					m_shadow_fac = v;
 				}
 
 			} else if(strcmp("menu_shadow_width", attrib->name()) == 0) {
@@ -482,7 +482,7 @@ namespace BlendInt {
 				short w = 0;
 
 				if(sscanf(attrib->value(), "%hd", &w) == 1) {
-					m_menu_shadow_width = w;
+					m_shadow_width = w;
 				}
 
 			} else if(strcmp("axis_x", attrib->name()) == 0) {

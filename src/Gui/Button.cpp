@@ -43,12 +43,14 @@ namespace BlendInt {
 	Button::Button ()
 		: AbstractButton(), m_vao(0)
 	{
+		set_drop_shadow(true);
 		InitializeButton();
 	}
 
 	Button::Button (const String& text)
 		: AbstractButton(), m_vao(0)
 	{
+		set_drop_shadow(true);
 		InitializeButton(text);
 	}
 

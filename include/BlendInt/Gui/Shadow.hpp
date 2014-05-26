@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_SHADOW_HPP_
 #define _BLENDINT_GUI_SHADOW_HPP_
 
-#include <vector>
+#include <deque>
 
 #include <BlendInt/Types.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
@@ -60,6 +60,10 @@ namespace BlendInt {
 		float blur_rad () const {return m_blur_rad;}
 
 		virtual void Draw (const glm::mat4& mvp);
+
+		void DrawAt (const glm::mat4& mvp, int x, int y);
+
+		void DrawAt (const glm::mat4& mvp, const Point& pos);
 
 	protected:
 
@@ -108,7 +112,7 @@ namespace BlendInt {
 		float m_blur_rad;
 
 		//GLArrayBuffer* m_gl_buffer;
-		std::vector<RefPtr<GLArrayBuffer> > m_buffers;
+		std::deque<RefPtr<GLArrayBuffer> > m_buffers;
 
 		//std::vector<GLuint> m_ids;
 	};

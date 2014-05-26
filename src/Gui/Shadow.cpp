@@ -83,6 +83,7 @@ namespace BlendInt {
 			case FormSize: {
 
 				const Size* size_p = static_cast<const Size*>(request.data());
+
 				glBindVertexArray(m_vao);
 				GenerateShadowBuffers(*size_p, radius(), m_blur_rad);
 
@@ -131,13 +132,13 @@ namespace BlendInt {
 		// #define UI_DPI_FAC ((U.pixelsize * (float)U.dpi) / 72.0f)
 //		const float radout = themes()->menu_shadow_width * 1.0;
 //		alphastep = 3.0f * themes()->menu_shadow_fac / radout;
-		alphastep = 3.0f * Theme::instance->menu_shadow_fac() / m_blur_rad;
+		alphastep = 2.0f * Theme::instance->shadow_fac() / m_blur_rad;
 
 		float expfac = 0.0;
 
 		glEnableVertexAttribArray(0);
 
-		for (std::vector<RefPtr<GLArrayBuffer> >::iterator it =
+		for (std::deque<RefPtr<GLArrayBuffer> >::iterator it =
 						m_buffers.begin(); it != m_buffers.end(); it++) {
 			expfac = sqrt(step / m_blur_rad);
 			(*it)->Bind();
@@ -161,6 +162,18 @@ namespace BlendInt {
 		glDisableVertexAttribArray(0);
 		program->Reset();
 		glBindVertexArray(0);
+	}
+
+	void Shadow::DrawAt(const glm::mat4& mvp, int x, int y)
+	{
+		glm::mat4 transed_mvp = glm::translate(mvp, glm::vec3(x, y, 0.f));
+		Draw(transed_mvp);
+	}
+
+	void Shadow::DrawAt(const glm::mat4& mvp, const Point& pos)
+	{
+		glm::mat4 transed_mvp = glm::translate(mvp, glm::vec3(pos.x(), pos.y(), 0.f));
+		Draw(transed_mvp);
 	}
 
 	void Shadow::InitOnce ()

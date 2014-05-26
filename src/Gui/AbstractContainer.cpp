@@ -143,5 +143,10 @@ namespace BlendInt {
 		SubWidgetProxy delegate(sub);
 		delegate.SetPosition(this, pos);
 	}
+	
+	void AbstractContainer::RemoveShadow (AbstractWidget* widget)
+	{
+		widget->m_shadow.destroy();
+	}
 
 }

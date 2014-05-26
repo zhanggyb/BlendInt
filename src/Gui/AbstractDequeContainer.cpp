@@ -61,6 +61,7 @@ namespace BlendInt {
 
 		m_sub_widgets->push_front(widget);
 
+		RemoveShadow(widget);
 		SetContainer(widget, this);
 
 		events()->connect(widget->destroyed(), this,
@@ -90,6 +91,7 @@ namespace BlendInt {
 
 		m_sub_widgets->push_back(widget);
 
+		RemoveShadow(widget);
 		SetContainer(widget, this);
 
 		events()->connect(widget->destroyed(), this,
@@ -159,9 +161,8 @@ namespace BlendInt {
 		std::advance(it, index);
 		m_sub_widgets->insert(it, widget);
 
+		RemoveShadow(widget);
 		SetContainer(widget, this);
-
-		// TODO: set layer and lock the geometry of the sub widget
 
 		events()->connect(widget->destroyed(), this,
 						&AbstractDequeContainer::OnSubWidgetDestroyed);

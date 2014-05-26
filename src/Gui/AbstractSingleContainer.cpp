@@ -131,6 +131,8 @@ namespace BlendInt {
 		}
 
 		m_sub_widget = widget;
+
+		RemoveShadow(widget);
 		SetContainer(widget, this);
 
 		events()->connect(widget->destroyed(), this,

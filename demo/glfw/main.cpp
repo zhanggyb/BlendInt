@@ -60,11 +60,19 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	SpaceArea* sp = Manage(new SpaceArea(Horizontal));
-	sp->SetPosition(100, 100);
-	sp->Resize(200, 200);
+	Button* btn = Manage(new Button(String("Hello")));
+	btn->SetPosition(100, 100);
+	btn->Resize(200, 32);
 
-	context->Add(sp);
+	Button* btn2 = Manage(new Button(String("Button2")));
+
+	Frame* frame = Manage(new Frame);
+	frame->SetPosition(300, 200);
+	frame->Setup(btn2);
+	frame->Resize(200, 40);
+
+	context->Add(btn);
+	context->Add(frame);
 
 	RunLoop(win);
 

@@ -24,7 +24,6 @@
 #ifndef _BLENDINT_GUI_SPACEAREA_HPP_
 #define _BLENDINT_GUI_SPACEAREA_HPP_
 
-#include <BlendInt/Gui/Shadow.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
@@ -54,9 +53,6 @@ namespace BlendInt {
 		virtual ResponseType Draw (const RedrawEvent& event);
 
 		Orientation m_orientation;
-
-		RefPtr<Shadow> m_shadow;
-
 	};
 
 }

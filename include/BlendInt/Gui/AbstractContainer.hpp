@@ -213,6 +213,8 @@ namespace BlendInt {
 			widget->m_container = container;
 		}
 
+		static void RemoveShadow (AbstractWidget* widget);
+
 		void set_margin (const Margin& margin)
 		{
 			m_margin = margin;

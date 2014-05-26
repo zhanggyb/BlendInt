@@ -177,22 +177,22 @@ namespace BlendInt {
 		
 		float menu_shadow_fac1 () const
 		{
-			return m_menu_shadow_fac;
+			return m_shadow_fac;
 		}
 		
 		short menu_shadow_width1 () const
 		{
-			return m_menu_shadow_width;
+			return m_shadow_width;
 		}
 		
-		float menu_shadow_fac () const
+		float shadow_fac () const
 		{
-			return m_menu_shadow_fac;
+			return m_shadow_fac;
 		}
 		
-		short menu_shadow_width () const
+		short shadow_width () const
 		{
-			return m_menu_shadow_width;
+			return m_shadow_width;
 		}
 
 	private:
@@ -249,8 +249,8 @@ namespace BlendInt {
 		float m_pixel;
 
 		/* fac: 0 - 1 for blend factor, width in pixels */
-		float m_menu_shadow_fac;
-		short m_menu_shadow_width;
+		float m_shadow_fac;
+		short m_shadow_width;
 
 		//short pad;
 
