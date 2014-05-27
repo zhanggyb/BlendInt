@@ -49,9 +49,7 @@ namespace BlendInt {
 	: Widget(), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
 	{
 		set_size (20, 20);
-
-		activate_events();
-
+		set_drop_shadow(true);
 		InitializeMenu();
 	}
 
@@ -177,7 +175,6 @@ namespace BlendInt {
 								round_corner_radius(), m_inner_buffer.get(),
 								m_outer_buffer.get(), 0);
 				ResetHighlightBuffer(size_p->width());
-				m_shadow->Resize(*size_p);
 				break;
 			}
 
@@ -209,9 +206,6 @@ namespace BlendInt {
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
-		if(m_shadow)
-			m_shadow->Draw(mvp);
 
 		glBindVertexArray(m_vao);
 
@@ -340,9 +334,6 @@ namespace BlendInt {
 		ResetHighlightBuffer(20);
 
 		glBindVertexArray(0);
-
-		m_shadow.reset(new Shadow);
-		m_shadow->Resize(size());
 	}
 
 }

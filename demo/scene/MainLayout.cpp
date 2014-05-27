@@ -44,14 +44,12 @@ void MainLayout::InitOnce ()
     RefPtr<Menu> file_menu(new Menu);
     DBG_SET_NAME(file_menu, "Menu");
 
-    /*
-    file_menu->SetRoundType(RoundBottomLeft | RoundBottomRight);
-    file_menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
-    file_menu->AddActionItem("MenuItem2", "Ctrl + 1");
-    file_menu->AddActionItem("MenuItem3", "Ctrl + 1");
-    file_menu->AddActionItem("MenuItem4", "Ctrl + 1");
-    file_menu->AddActionItem("MenuItem5");
-    */
+    //file_menu->SetRoundType(RoundBottomLeft | RoundBottomRight);
+    file_menu->AddActionItem(StockItems::instance->icon_check(), String("MenuItem1"), String("Ctrl + 1"));
+    file_menu->AddActionItem(String("MenuItem2"), String("Ctrl + 1"));
+    file_menu->AddActionItem(String("MenuItem3"), String("Ctrl + 1"));
+    file_menu->AddActionItem(String("MenuItem4"), String("Ctrl + 1"));
+    file_menu->AddActionItem(String("MenuItem5"));
 
 	m_menubar->AddMenu(String("File"), file_menu);
 	// m_menubar->AddMenuButton("Edit");

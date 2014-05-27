@@ -114,8 +114,6 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 		RefPtr<GLArrayBuffer> m_highlight_buffer;
 
-		RefPtr<Shadow> m_shadow;
-
 		std::deque<RefPtr<ActionItem> > m_list;
 
 		Cpp::Event<ActionItem*> m_hovered;

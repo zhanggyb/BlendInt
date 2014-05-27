@@ -160,6 +160,17 @@ namespace BlendInt {
 
 	void Interface::Release ()
 	{
+		while(Context::context_set.size()) {
+			std::set<Context*>::iterator it = Context::context_set.begin();
+
+			if((*it)->managed() && ((*it)->count() == 0)) {
+				DBG_PRINT_MSG("%s", "Delete context");
+				delete (*it);	// this will erase the context from the set
+			} else {
+				Context::context_set.erase(it);
+			}
+		}
+
 		StockItems::Release();
 		ShaderManager::Release();
 		Theme::Release();
@@ -183,14 +194,15 @@ namespace BlendInt {
 
 	Interface::~Interface ()
 	{
+		/*
 		if(m_current_context) {
-
 			if(m_current_context->managed() &&
 							(m_current_context->count() == 0)) {
 				m_current_context->destroyed().disconnectOne(this, &Interface::OnContextDestroyed);
 				delete m_current_context;
 			}
 		}
+		*/
 	}
 
 	void Interface::Resize (const Size& size)
@@ -430,17 +442,17 @@ namespace BlendInt {
 	void Interface::SetCurrentContext(Context* context)
 	{
 		if(m_current_context) {
-			m_current_context->destroyed().disconnectOne(this, &Interface::OnContextDestroyed);
+			m_current_context->destroyed().disconnectOne(this, &Interface::OnCurrentContextDestroyed);
 		}
 
 		m_current_context = context;
-		m_events->connect(m_current_context->destroyed(), this, &Interface::OnContextDestroyed);
+		m_events->connect(m_current_context->destroyed(), this, &Interface::OnCurrentContextDestroyed);
 	}
 
-	void Interface::OnContextDestroyed(AbstractWidget* context)
+	void Interface::OnCurrentContextDestroyed(AbstractWidget* context)
 	{
 		if(context == m_current_context) {
-			m_current_context->destroyed().disconnectOne(this, &Interface::OnContextDestroyed);
+			m_current_context->destroyed().disconnectOne(this, &Interface::OnCurrentContextDestroyed);
 			m_current_context = 0;
 		}
 	}

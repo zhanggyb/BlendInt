@@ -21,6 +21,9 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* win = CreateWindow("Theme Editor Demo", 640, 480);
 
+	Context* context = Manage(new Context);
+	Interface::instance->SetCurrentContext(context);
+
 	RunLoop(win);
 
 	Interface::Release();

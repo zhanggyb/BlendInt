@@ -140,7 +140,7 @@ namespace BlendInt {
 
 		void RenderToImage ();
 
-		void OnContextDestroyed (AbstractWidget* context);
+		void OnCurrentContextDestroyed (AbstractWidget* context);
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 

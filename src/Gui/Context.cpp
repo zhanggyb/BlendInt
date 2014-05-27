@@ -45,6 +45,8 @@
 namespace BlendInt
 {
 
+	std::set<Context*> Context::context_set;
+
 	ContextLayer::ContextLayer ()
 			: refresh(true), widgets(0)
 	{
@@ -86,6 +88,8 @@ namespace BlendInt
 #endif
 
 		InitializeContext();
+
+		context_set.insert(this);
 	}
 
 	Context::~Context ()
@@ -128,6 +132,8 @@ namespace BlendInt
 		}
 
 		glDeleteVertexArrays(1, &m_vao);
+
+		context_set.erase(this);
 	}
 
 	bool Context::Add (AbstractWidget* widget)
@@ -288,18 +294,21 @@ namespace BlendInt
 
 	void Context::BroadcastUpdate(const WidgetUpdateRequest& request)
 	{
-		switch (request.type()) {
 
-			case FormSize: {
+		if(request.source() == this) {
 
-				const Size* size_p = static_cast<const Size*>(request.data());
+			switch (request.type()) {
 
-				m_resized.fire(*size_p);
-				break;
+				case WidgetSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					m_resized.fire(*size_p);
+					break;
+				}
+
+				default:
+					AbstractContainer::BroadcastUpdate(request);
+
 			}
-
-			default:
-				AbstractContainer::BroadcastUpdate(request);
 
 		}
 	}

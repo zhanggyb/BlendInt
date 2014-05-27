@@ -38,9 +38,9 @@ namespace BlendInt {
 
 		String ();
 
-		explicit String (const char* str);
+		String (const char* str);
 
-		explicit String (const wchar_t* str);
+		String (const wchar_t* str);
 
 		String (const char* str, size_t n);
 

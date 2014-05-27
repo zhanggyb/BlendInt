@@ -228,6 +228,8 @@ namespace BlendInt {
 		bool force_refresh_all;
 
 		Cpp::Event<const Size&> m_resized;
+
+		static std::set<Context*> context_set;
 	};
 
 }
