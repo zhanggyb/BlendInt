@@ -34,11 +34,17 @@ namespace BlendInt {
 
 	public:
 
-		SpaceArea (Orientation orientation);
+		SpaceArea ();
 
 		virtual ~SpaceArea ();
 
-		void SetOrientation (Orientation orientation);
+		void AttachWidget (AbstractWidget* widget);
+
+		void SetExpandX (bool expand);
+
+		void SetExpandY (bool expand);
+
+		void SetExpand (bool expand_x, bool expand_y);
 
 		virtual Size GetPreferredSize () const;
 
@@ -52,7 +58,15 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
-		Orientation m_orientation;
+	private:
+
+		void OnWidgetDestroyed (AbstractWidget* widget);
+
+		bool m_expand_x;
+
+		bool m_expand_y;
+
+		AbstractWidget* m_widget_attached;
 	};
 
 }

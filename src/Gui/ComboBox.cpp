@@ -55,10 +55,8 @@ namespace BlendInt {
 		unsigned int h = m_font.GetHeight();
 
 		set_size(
-		        h + round_corner_radius() * 2 + default_combobox_padding.left()
-		                + default_combobox_padding.right(),
-		        h + default_combobox_padding.top()
-		                + default_combobox_padding.bottom());
+		        h + round_corner_radius() * 2 + default_combobox_padding.hsum() + 100,
+		        h + default_combobox_padding.vsum());
 
 		InitOnce();
 	}
@@ -84,19 +82,17 @@ namespace BlendInt {
 
 		int max_font_height = m_font.GetHeight();
 
-		preferred_size.set_height(max_font_height + default_combobox_padding.top() + default_combobox_padding.bottom());	// top padding: 2, bottom padding: 2
+		preferred_size.set_height(max_font_height + default_combobox_padding.vsum());	// top padding: 2, bottom padding: 2
 
 		if (m_text.empty()) {
 			preferred_size.set_width(
-							max_font_height + default_combobox_padding.left()
-											+ default_combobox_padding.right()
-											+ radius_plus);
+							max_font_height + default_combobox_padding.hsum()
+											+ radius_plus + 100);
 		} else {
 			size_t width = m_font.GetTextWidth(m_text);
 			preferred_size.set_width(
 							static_cast<unsigned int>(width)
-											+ default_combobox_padding.left()
-											+ default_combobox_padding.right()
+											+ default_combobox_padding.hsum()
 											+ radius_plus);	// left padding: 2, right padding: 2
 		}
 
@@ -286,13 +282,11 @@ namespace BlendInt {
 		//m_menu->SetPosition(200, 200);
 		//menu->Resize (200, 200);
 
-		/*
 		m_menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
 		m_menu->AddActionItem("MenuItem2", "Ctrl + 1");
 		m_menu->AddActionItem("MenuItem3", "Ctrl + 1");
 		m_menu->AddActionItem("MenuItem4", "Ctrl + 1");
 		m_menu->AddActionItem("MenuItem5");
-		*/
 
 		events()->connect(m_menu->triggered(), this, &ComboBox::OnMenuActionTriggered);
 	}

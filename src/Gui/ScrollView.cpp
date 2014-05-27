@@ -58,7 +58,7 @@ namespace BlendInt {
 			int x = position().x() + margin().left();
 			int y = position().y() + margin().bottom();
 
-			y = y + size().height() - vertical_margins() - widget->size().height();
+			y = y + size().height() - margin().vsum() - widget->size().height();
 
 			SetSubWidgetPosition(widget, x, y);
 			/*
@@ -75,8 +75,8 @@ namespace BlendInt {
 
 		AbstractWidget* p = sub_widget();
 
-		int w = size().width() - horizontal_margins();
-		int h = size().height() - vertical_margins();
+		int w = size().width() - margin().hsum();
+		int h = size().height() - margin().vsum();
 
 		int x = position().x() + margin().left();
 		x += (w - static_cast<int>(p->size().width())) / 2;
@@ -93,7 +93,7 @@ namespace BlendInt {
 		if(sub_widget()) {
 			AbstractWidget* p = sub_widget();
 
-			unsigned int w = size().width() - horizontal_margins();
+			unsigned int w = size().width() - margin().hsum();
 
 			if (p->size().width() <= w) {
 				percentage = 100;
@@ -113,7 +113,7 @@ namespace BlendInt {
 		if(sub_widget()) {
 			AbstractWidget* p = sub_widget();
 
-			unsigned int h = size().height() - vertical_margins();
+			unsigned int h = size().height() - margin().vsum();
 
 			if (p->size().height() <= h) {
 				percentage = 100;

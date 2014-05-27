@@ -5,11 +5,11 @@
 #include <Common/Window.hpp>
 #include <BlendInt/Core/Object.hpp>
 
-class ColorDiskTest1: public testing::Test
+class ColorWheelTest1: public testing::Test
 {
 public:
-	ColorDiskTest1 ();
-	virtual ~ColorDiskTest1 ();
+	ColorWheelTest1 ();
+	virtual ~ColorWheelTest1 ();
 
 protected:
 

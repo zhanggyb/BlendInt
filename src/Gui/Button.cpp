@@ -184,14 +184,14 @@ namespace BlendInt {
 	{
 		set_round_corner_type(RoundAll);
 
-		int padding_left = DefaultButtonPadding().left() * Theme::instance->pixel();
-		int padding_right = DefaultButtonPadding().right() * Theme::instance->pixel();
-		int padding_top = DefaultButtonPadding().top() * Theme::instance->pixel();
-		int padding_bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
+		int left = DefaultButtonPadding().left() * Theme::instance->pixel();
+		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
+		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
+		int bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
 		unsigned int h = font().GetHeight();
 
-		set_size(h + round_corner_radius() * 2 * Theme::instance->pixel() + padding_left + padding_right,
-						h + padding_top + padding_bottom);
+		set_size(h + round_corner_radius() * 2 * Theme::instance->pixel() + left + right,
+						h + top + bottom);
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
@@ -216,23 +216,23 @@ namespace BlendInt {
 		set_round_corner_type(RoundAll);
 		set_text(text);
 
-		int padding_left = DefaultButtonPadding().left() * Theme::instance->pixel();
-		int padding_right = DefaultButtonPadding().right() * Theme::instance->pixel();
-		int padding_top = DefaultButtonPadding().top() * Theme::instance->pixel();
-		int padding_bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
+		int left = DefaultButtonPadding().left() * Theme::instance->pixel();
+		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
+		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
+		int bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
 		unsigned int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_corner_radius() * 2 * Theme::instance->pixel() + padding_left + padding_right,
-							h + padding_top + padding_bottom);
+			set_size(h + round_corner_radius() * 2 * Theme::instance->pixel() + left + right,
+							h + top + bottom);
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
 			unsigned int width = text_outline.width()
 							+ round_corner_radius() * 2 * Theme::instance->pixel()
-							+ padding_left + padding_right;
-			unsigned int height = h + padding_top + padding_bottom;
+							+ left + right;
+			unsigned int height = h + top + bottom;
 
 			set_size(width, height);
 

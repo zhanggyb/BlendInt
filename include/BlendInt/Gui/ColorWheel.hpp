@@ -21,25 +21,35 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_COLORDISK_HPP_
-#define _BLENDINT_GUI_COLORDISK_HPP_
+#ifndef _BLENDINT_GUI_COLORWHEEL_HPP_
+#define _BLENDINT_GUI_COLORWHEEL_HPP_
+
+#include <vector>
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class ColorDisk: public Widget
+	class ColorWheel: public Widget
 	{
-		DISALLOW_COPY_AND_ASSIGN(ColorDisk);
+		DISALLOW_COPY_AND_ASSIGN(ColorWheel);
 
 	public:
 
-		ColorDisk ();
+		ColorWheel ();
 
-		virtual ~ColorDisk ();
+		virtual ~ColorWheel ();
+
+	protected:
+
+		virtual ResponseType Draw (const RedrawEvent& event);
+
+		void GenerateWheelVertices (int radius, std::vector<GLfloat>* vertices);
 
 	private:
+
+		GLuint m_vao;
 
 		RefPtr<GLArrayBuffer> m_outline;
 		RefPtr<GLArrayBuffer> m_inner;
@@ -48,4 +58,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_GUI_COLORDISK_HPP_ */
+#endif /* _BLENDINT_GUI_COLORWHEEL_HPP_ */

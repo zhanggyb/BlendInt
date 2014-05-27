@@ -38,66 +38,113 @@
 
 namespace BlendInt {
 
-	SpaceArea::SpaceArea (Orientation orientation)
-	: Widget(), m_orientation(orientation)
+	SpaceArea::SpaceArea ()
+	: Widget(),
+	  m_expand_x(false),
+	  m_expand_y(false),
+	  m_widget_attached(0)
 	{
-		set_size(20, 20);
-		set_drop_shadow(true);
+		set_size(1, 1);
 	}
 
 	SpaceArea::~SpaceArea ()
 	{
 	}
 
-	void SpaceArea::SetOrientation (Orientation orientation)
+	void SpaceArea::AttachWidget (AbstractWidget* widget)
 	{
-		m_orientation = orientation;
+		if(m_widget_attached) {
+			m_widget_attached->destroyed().disconnectOne(this, &SpaceArea::OnWidgetDestroyed);
+		}
+
+		m_widget_attached = widget;
+		if(m_widget_attached) {
+			events()->connect(m_widget_attached->destroyed(), this, &SpaceArea::OnWidgetDestroyed);
+
+			m_expand_x = m_widget_attached->IsExpandX();
+			m_expand_y = m_widget_attached->IsExpandY();
+		}
 	}
 
 	Size SpaceArea::GetPreferredSize() const
 	{
-		Size preferred_size(1, 1);
-
-		if(m_orientation == Horizontal) {
-			preferred_size.set_width(100);
-		} else {
-			preferred_size.set_height(100);
+		if(m_widget_attached) {
+			return m_widget_attached->GetPreferredSize();
 		}
+
+		Size preferred_size(1, 1);
 
 		return preferred_size;
 	}
 
+	void SpaceArea::SetExpandX (bool expand)
+	{
+		if(!m_widget_attached) {
+			m_expand_x = expand;
+		}
+	}
+
+	void SpaceArea::SetExpandY (bool expand)
+	{
+		if(!m_widget_attached) {
+			m_expand_y = expand;
+		}
+	}
+
+	void SpaceArea::SetExpand (bool expand_x, bool expand_y)
+	{
+		if(!m_widget_attached) {
+			m_expand_x = expand_x;
+			m_expand_y = expand_y;
+		}
+	}
+
 	bool SpaceArea::IsExpandX() const
 	{
-		if(m_orientation == Horizontal) {
-			return true;
-		} else {
-			return false;
-		}
+		return m_expand_x;
 	}
 
 	bool SpaceArea::IsExpandY() const
 	{
-		if(m_orientation == Vertical) {
-			return true;
-		} else {
-			return false;
-		}
+		return m_expand_y;
 	}
 
 	void SpaceArea::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(m_widget_attached) {
 
-			default:
-				Widget::UpdateGeometry(request);
+			switch(request.type()) {	// don't care the source
+
+				case WidgetPosition: {
+					const Point* pos_p = static_cast<const Point*>(request.data());
+					m_widget_attached->SetPosition(*pos_p);
+					break;
+				}
+
+				case WidgetSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					m_widget_attached->Resize(*size_p);
+					break;
+				}
+
+				default:
+					break;
+			}
+
 		}
-
 	}
-
+	
 	ResponseType SpaceArea::Draw (const RedrawEvent& event)
 	{
 		return Ignore;
+	}
+	
+	void SpaceArea::OnWidgetDestroyed (AbstractWidget* widget)
+	{
+		if(m_widget_attached == widget) {
+			widget->destroyed().disconnectOne(this, &SpaceArea::OnWidgetDestroyed);
+			m_widget_attached = 0;
+		}
 	}
 
 }
