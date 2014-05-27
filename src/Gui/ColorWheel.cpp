@@ -87,14 +87,32 @@ namespace BlendInt {
 
 		Theme* tm = Theme::instance;
 
-		glm::vec4 color(0.8, 0.2, 0.2, 1.0);
-
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
-
 		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 
-		DrawTriangleFan(0, m_inner.get());
+		m_inner->Bind();
 
+		glVertexAttribPointer(0, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  sizeof(GLfloat) * 6,				 // stride
+							  BUFFER_OFFSET(0)					 // offset of first element
+							  );
+
+		glVertexAttribPointer(1, // attribute
+							  4,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  sizeof(GLfloat) * 6,				 // stride
+							  BUFFER_OFFSET(2 * sizeof(GLfloat))					 // offset of first element
+							  );
+
+		glDrawArrays(GL_TRIANGLE_FAN, 0, m_inner->GetBufferSize() / (6 * sizeof(GLfloat)));
+
+		m_inner->Reset();
+
+		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
 		program->Reset();
 
@@ -107,23 +125,107 @@ namespace BlendInt {
 	{
 		if(!vertices) return;
 
-		vertices->resize(72 * 2 + 2);
+		vertices->resize(72 * 6 + 6 + 6);
 
 		double rad = 0.0;
 		float x = 0.f;
 		float y = 0.f;
 
+		// 0 1 2 3 4 5
+		// x y r g b a
+
+		// the center point
 		(*vertices)[0] = 0.f;
 		(*vertices)[1] = 0.f;
-		for(int i = 0; i < 72; i++) {
-			rad = radius * i * 5 * M_PI / 180.0;
+		(*vertices)[2] = 1.f;
+		(*vertices)[3] = 1.f;
+		(*vertices)[4] = 1.f;
+		(*vertices)[5] = 1.f;
 
-			x = cos(rad);
-			y = sin(rad);
+		int i = 0;
+		for(int j = -30; j < 330; j = j + 5) {
+			rad = j * M_PI / 180.0;
 
-			(*vertices)[(i + 1) * 2] = x;
-			(*vertices)[(i + 1) * 2 + 1] = y;
+			x = radius * cos(rad);
+			y = radius * sin(rad);
+
+			(*vertices)[(i + 1) * 6 + 0] = x;
+			(*vertices)[(i + 1) * 6 + 1] = y;
+
+			if(j == -30) {
+				(*vertices)[(i + 1) * 6 + 2] = 1.f;
+				(*vertices)[(i + 1) * 6 + 3] = 0.f;
+				(*vertices)[(i + 1) * 6 + 4] = 1.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else if (j < 30) {
+				(*vertices)[(i + 1) * 6 + 2] = (30 - j) / 60.f;
+				(*vertices)[(i + 1) * 6 + 3] = 0.f;
+				(*vertices)[(i + 1) * 6 + 4] = 1.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else if (j == 30) {
+				(*vertices)[(i + 1) * 6 + 2] = 0.f;
+				(*vertices)[(i + 1) * 6 + 3] = 0.f;
+				(*vertices)[(i + 1) * 6 + 4] = 1.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else if (j < 90) {
+				(*vertices)[(i + 1) * 6 + 2] = 0.f;
+				(*vertices)[(i + 1) * 6 + 3] = 1.f - (90 - j) / 60.f;
+				(*vertices)[(i + 1) * 6 + 4] = 1.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else if (j == 90) {
+				(*vertices)[(i + 1) * 6 + 2] = 0.f;
+				(*vertices)[(i + 1) * 6 + 3] = 1.f;
+				(*vertices)[(i + 1) * 6 + 4] = 1.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else if (j < 150) {
+				(*vertices)[(i + 1) * 6 + 2] = 0.f;
+				(*vertices)[(i + 1) * 6 + 3] = 1.f;
+				(*vertices)[(i + 1) * 6 + 4] = (150 - j) / 60.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else if (j == 150) {
+				(*vertices)[(i + 1) * 6 + 2] = 0.f;
+				(*vertices)[(i + 1) * 6 + 3] = 1.f;
+				(*vertices)[(i + 1) * 6 + 4] = 0.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else if (j < 210) {
+				(*vertices)[(i + 1) * 6 + 2] = 1.f - (210 - j) / 60.f;
+				(*vertices)[(i + 1) * 6 + 3] = 1.f;
+				(*vertices)[(i + 1) * 6 + 4] = 0.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else if (j == 210) {
+				(*vertices)[(i + 1) * 6 + 2] = 1.f;
+				(*vertices)[(i + 1) * 6 + 3] = 1.f;
+				(*vertices)[(i + 1) * 6 + 4] = 0.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else if (j < 270) {
+				(*vertices)[(i + 1) * 6 + 2] = 1.f;
+				(*vertices)[(i + 1) * 6 + 3] = (270 - j) / 60.f;
+				(*vertices)[(i + 1) * 6 + 4] = 0.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else if (j == 270) {
+				(*vertices)[(i + 1) * 6 + 2] = 1.f;
+				(*vertices)[(i + 1) * 6 + 3] = 0.f;
+				(*vertices)[(i + 1) * 6 + 4] = 0.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			} else {
+				(*vertices)[(i + 1) * 6 + 2] = 1.f;
+				(*vertices)[(i + 1) * 6 + 3] = 0.f;
+				(*vertices)[(i + 1) * 6 + 4] = 1.f - (330 - j) / 60.f;
+				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			}
+			i++;
 		}
+
+		rad = 330 * M_PI / 180.0;
+		x = radius * cos(rad);
+		y = radius * sin(rad);
+
+		(*vertices)[(i + 1) * 6 + 0] = x;
+		(*vertices)[(i + 1) * 6 + 1] = y;
+		(*vertices)[(i + 1) * 6 + 2] = 1.f;
+		(*vertices)[(i + 1) * 6 + 3] = 0.f;
+		(*vertices)[(i + 1) * 6 + 4] = 1.f;
+		(*vertices)[(i + 1) * 6 + 5] = 1.f;
 	}
 
 }
