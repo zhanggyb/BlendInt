@@ -26,14 +26,19 @@ TEST_F(VLayoutTest1, Add1)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add1", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
+	vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
+
+	context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -55,6 +60,8 @@ TEST_F(VLayoutTest1, Add2)
 {
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add2", 640, 480);
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
 
 	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
@@ -63,8 +70,10 @@ TEST_F(VLayoutTest1, Add2)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
+	vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
+
+	context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -87,6 +96,9 @@ TEST_F(VLayoutTest1, Add3)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add3", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 400);
@@ -94,8 +106,10 @@ TEST_F(VLayoutTest1, Add3)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
+	vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
+
+	context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -116,6 +130,9 @@ TEST_F(VLayoutTest1, Add4)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add4", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 400);
@@ -127,8 +144,10 @@ TEST_F(VLayoutTest1, Add4)
     //widget2->SetPreferredSize(widget2->preferred_size().width(), 40);
     //widget2->SetMaximalSize(widget2->maximal_size().width(), 80);
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
+	vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
+
+	context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -149,6 +168,9 @@ TEST_F(VLayoutTest1, Add5)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add5", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 	vlayout->Resize(200, 600);
@@ -168,10 +190,12 @@ TEST_F(VLayoutTest1, Add5)
     //widget4->SetMaximalSize(widget1->preferred_size().width(), 70);
 	widget4->Resize(widget4->size().width(), 40);
 	
-    vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
-	vlayout->Add(Manage(widget3));
-	vlayout->Add(Manage(widget4));
+    vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
+	vlayout->PushBack(Manage(widget3));
+	vlayout->PushBack(Manage(widget4));
+
+	context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -192,6 +216,9 @@ TEST_F(VLayoutTest1, Add6)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add6", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 	vlayout->Resize(100, 50);
@@ -205,10 +232,12 @@ TEST_F(VLayoutTest1, Add6)
     //widget3->SetMinimalSize(widget3->minimal_size().height(), 20);
 	Widget* widget4 = new Widget;
 	
-    vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
-	vlayout->Add(Manage(widget3));
-	vlayout->Add(Manage(widget4));
+    vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
+	vlayout->PushBack(Manage(widget3));
+	vlayout->PushBack(Manage(widget4));
+
+	context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -229,6 +258,9 @@ TEST_F(VLayoutTest1, Add7)
 	Init ();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Add7", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	VBox* vlayout = new VBox;
 	vlayout->SetPosition(100, 100);
 
@@ -241,12 +273,14 @@ TEST_F(VLayoutTest1, Add7)
     //widget3->SetMinimalSize(20, widget3->minimal_size().height());
 	Widget* widget4 = new Widget;
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
-	vlayout->Add(Manage(widget3));
-	vlayout->Add(Manage(widget4));
+	vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
+	vlayout->PushBack(Manage(widget3));
+	vlayout->PushBack(Manage(widget4));
 
 	vlayout->Resize(100, 80);
+
+	context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -268,6 +302,9 @@ TEST_F(VLayoutTest1, Resize1)
 	Init();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Resize1", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	// add test code here
 
 	VBox* vlayout = new VBox;
@@ -276,10 +313,12 @@ TEST_F(VLayoutTest1, Resize1)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
+	vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
 
 	vlayout->Resize(200, 400);
+
+	context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -300,6 +339,9 @@ TEST_F(VLayoutTest1, Resize2)
 	Init();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Resize2", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	// add test code here
 
 	VBox* vlayout = new VBox;
@@ -308,10 +350,12 @@ TEST_F(VLayoutTest1, Resize2)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
+	vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
 
 	vlayout->Resize(200, 400);
+
+	context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -332,6 +376,9 @@ TEST_F(VLayoutTest1, Resize3)
 	Init();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - Resize3", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	// add test code here
 
 	VBox* vlayout = new VBox;
@@ -344,12 +391,14 @@ TEST_F(VLayoutTest1, Resize3)
     //widget3->SetMinimalSize(20, widget3->minimal_size().height());
 	Widget* widget4 = new Widget;
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
-	vlayout->Add(Manage(widget3));
-	vlayout->Add(Manage(widget4));
+	vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
+	vlayout->PushBack(Manage(widget3));
+	vlayout->PushBack(Manage(widget4));
 
 	vlayout->Resize(100, 80);
+
+	context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -370,6 +419,9 @@ TEST_F(VLayoutTest1, SetMargin1)
 	Init();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - SetMargin1", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	// add test code here
 
 	VBox* vlayout = new VBox;
@@ -380,12 +432,14 @@ TEST_F(VLayoutTest1, SetMargin1)
 	Widget* widget2 = new Widget;
     widget2->Resize(100, 80);
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
+	vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
 
     vlayout->Resize(200, 400);
 
     vlayout->SetMargin(20, 20, 20, 20);
+
+    context->Add(vlayout);
 
 	RunLoop(window);
 
@@ -406,6 +460,9 @@ TEST_F(VLayoutTest1, SetSpace1)
 	Init();
 	GLFWwindow* window = CreateWindow("VLayoutTest1 - SetSpace1", 640, 480);
 
+	Context* context = Manage(new Context);
+    Interface::instance->SetCurrentContext(context);
+
 	// add test code here
 
 	VBox* vlayout = new VBox;
@@ -416,12 +473,14 @@ TEST_F(VLayoutTest1, SetSpace1)
 	Widget* widget2 = new Widget;
     widget2->Resize(100, 80);
 
-	vlayout->Add(Manage(widget1));
-	vlayout->Add(Manage(widget2));
+	vlayout->PushBack(Manage(widget1));
+	vlayout->PushBack(Manage(widget2));
 
     vlayout->Resize(200, 400);
 
     vlayout->SetSpace(10);
+
+    context->Add(vlayout);
 
 	RunLoop(window);
 

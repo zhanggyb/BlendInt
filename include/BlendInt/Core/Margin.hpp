@@ -71,6 +71,16 @@ namespace BlendInt {
 
 		void set_bottom (int bottom) {m_bottom = bottom;}
 
+		int hsum () const
+		{
+			return m_left + m_right;
+		}
+
+		int vsum () const
+		{
+			return m_top + m_bottom;
+		}
+
 		bool equal (int left, int right, int top, int bottom)
 		{
 			return (m_left == left &&

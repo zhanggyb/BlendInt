@@ -182,8 +182,6 @@ namespace BlendInt {
 
 		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
 
-		//virtual bool AddSubWidget (AbstractWidget* widget) = 0;
-
 		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
 
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event) = 0;

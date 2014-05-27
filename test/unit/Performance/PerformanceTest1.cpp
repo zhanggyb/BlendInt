@@ -47,7 +47,7 @@ TEST_F(PerformanceTest1, Layout1)
         {
             btn[j] = Manage(new Button);
             //btn[j]->SetPreferredSize(25, btn[j]->size().height());
-            layout[i]->Add(btn[j]);
+            layout[i]->PushBack(btn[j]);
         }
     
         layout[i]->SetPosition(x_pos, y_pos);

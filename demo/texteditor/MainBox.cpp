@@ -50,8 +50,8 @@ void MainBox::InitOnce ()
 
 	m_toolbar->Add(m_open);
 
-	Add(m_menubar);
-	Add(m_toolbar);
+	PushBack(m_menubar);
+	PushBack(m_toolbar);
 
 	events()->connect(m_open->clicked(), this, &MainBox::OnOpenClick);
 }

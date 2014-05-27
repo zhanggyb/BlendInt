@@ -46,6 +46,24 @@ namespace BlendInt {
 		}
 	}
 
+	bool AbstractSingleContainer::IsExpandX () const
+	{
+		if(m_sub_widget) {
+			return m_sub_widget->IsExpandX();
+		} else {
+			return false;
+		}
+	}
+
+	bool AbstractSingleContainer::IsExpandY () const
+	{
+		if(m_sub_widget) {
+			return m_sub_widget->IsExpandY();
+		} else {
+			return false;
+		}
+	}
+
 	Size AbstractSingleContainer::GetPreferredSize () const
 	{
 		Size preferred_size;

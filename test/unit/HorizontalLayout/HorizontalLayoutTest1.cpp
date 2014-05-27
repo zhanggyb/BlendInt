@@ -27,7 +27,6 @@ TEST_F(HLayoutTest1, Add1)
 	GLFWwindow* window = CreateWindow("HLayoutTest1 - Add1", 640, 480);
 
 	Context* context = Manage (new Context);
-	DBG_SET_NAME(context, "Context");
     Interface::instance->SetCurrentContext(context);
 
 	HBox* hlayout = new HBox;
@@ -36,8 +35,8 @@ TEST_F(HLayoutTest1, Add1)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
+	hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
 
 	context->Add(hlayout);
 
@@ -72,8 +71,8 @@ TEST_F(HLayoutTest1, Add2)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
+	hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
 
 	context->Add(hlayout);
 
@@ -108,8 +107,8 @@ TEST_F(HLayoutTest1, Add3)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
+	hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
 
 	context->Add(hlayout);
 
@@ -146,8 +145,8 @@ TEST_F(HLayoutTest1, Add4)
     //widget2->SetPreferredSize(40, widget2->preferred_size().height());
     //widget2->SetMaximalSize(80, widget2->maximal_size().height());
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
+	hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
 
 	context->Add(hlayout);
 
@@ -192,10 +191,10 @@ TEST_F(HLayoutTest1, Add5)
     //widget4->SetMaximalSize(70, widget4->maximal_size().height());
 	widget4->Resize(40, widget4->size().height());
 	
-    hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
-	hlayout->Add(Manage(widget3));
-	hlayout->Add(Manage(widget4));
+    hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
+	hlayout->PushBack(Manage(widget3));
+	hlayout->PushBack(Manage(widget4));
 
 	context->Add(hlayout);
 
@@ -234,10 +233,10 @@ TEST_F(HLayoutTest1, Add6)
     //widget3->SetMinimalSize(20, widget3->minimal_size().height());
 	Widget* widget4 = new Widget;
 	
-    hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
-	hlayout->Add(Manage(widget3));
-	hlayout->Add(Manage(widget4));
+    hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
+	hlayout->PushBack(Manage(widget3));
+	hlayout->PushBack(Manage(widget4));
 
 	context->Add(hlayout);
 
@@ -275,10 +274,10 @@ TEST_F(HLayoutTest1, Add7)
     //widget3->SetMinimalSize(20, widget3->minimal_size().height());
 	Widget* widget4 = new Widget;
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
-	hlayout->Add(Manage(widget3));
-	hlayout->Add(Manage(widget4));
+	hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
+	hlayout->PushBack(Manage(widget3));
+	hlayout->PushBack(Manage(widget4));
 
 	hlayout->Resize(80, 100);
 
@@ -315,8 +314,8 @@ TEST_F(HLayoutTest1, Resize1)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
+	hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
 
 	hlayout->Resize(400, 200);
 
@@ -352,8 +351,8 @@ TEST_F(HLayoutTest1, Resize2)
 	Widget* widget1 = new Widget;
 	Widget* widget2 = new Widget;
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
+	hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
 
 	hlayout->Resize(400, 200);
 
@@ -393,10 +392,10 @@ TEST_F(HLayoutTest1, Resize3)
     //widget3->SetMinimalSize(20, widget3->minimal_size().height());
 	Widget* widget4 = new Widget;
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
-	hlayout->Add(Manage(widget3));
-	hlayout->Add(Manage(widget4));
+	hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
+	hlayout->PushBack(Manage(widget3));
+	hlayout->PushBack(Manage(widget4));
 
 	hlayout->Resize(80, 100);
 
@@ -434,8 +433,8 @@ TEST_F(HLayoutTest1, SetMargin1)
 	Widget* widget2 = new Widget;
     widget2->Resize(100, 80);
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
+	hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
 
     hlayout->Resize(400, 200);
 
@@ -475,8 +474,8 @@ TEST_F(HLayoutTest1, SetSpace1)
 	Widget* widget2 = new Widget;
     widget2->Resize(100, 80);
 
-	hlayout->Add(Manage(widget1));
-	hlayout->Add(Manage(widget2));
+	hlayout->PushBack(Manage(widget1));
+	hlayout->PushBack(Manage(widget2));
 
     hlayout->Resize(400, 200);
 

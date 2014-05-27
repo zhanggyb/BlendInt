@@ -47,13 +47,13 @@ namespace BlendInt {
 
 		m_path_entry = Manage(new TextEntry);
 		m_path_entry->SetRoundCornerType(RoundAll);
-		//m_path_entry->SetPreferredSize(65536, m_path_entry->preferred_size().height());
+
 		m_open = Manage(new Button(String("Open")));
 
 		HBox* dir_layout = Manage(new HBox);
 		dir_layout->SetMargin(0, 0, 0, 0);
-		dir_layout->Add(m_path_entry);
-		dir_layout->Add(m_open);
+		dir_layout->PushBack(m_path_entry);
+		dir_layout->PushBack(m_open);
 
 		m_file_entry = Manage(new TextEntry);
 		m_file_entry->SetRoundCornerType(RoundAll);
@@ -61,27 +61,19 @@ namespace BlendInt {
 
 		HBox* file_layout = Manage(new HBox);
 		file_layout->SetMargin(0, 0, 0, 0);
-		file_layout->Add(m_file_entry);
-		file_layout->Add(m_cancel);
+		file_layout->PushBack(m_file_entry);
+		file_layout->PushBack(m_cancel);
 
 		ScrollArea* area = Manage(new ScrollArea);
 
 		m_list = Manage(new DirList);
 		area->SetViewport(m_list);
 
-		m_layout->Add(dir_layout);
-		m_layout->Add(file_layout);
-		m_layout->Add(area);
+		m_layout->PushBack(dir_layout);
+		m_layout->PushBack(file_layout);
+		m_layout->PushBack(area);
 
 		Setup(m_layout);
-
-		int x = position().x() + margin().left();
-		int y = position().y() + margin().right();
-		unsigned int w = size().width() - horizontal_margins();
-		unsigned int h = size().height() - vertical_margins();
-
-		SetSubWidgetPosition(m_layout, x, y);
-		ResizeSubWidget(m_layout, w, h);
 	}
 
 }

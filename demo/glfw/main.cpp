@@ -60,19 +60,30 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	Button* btn = Manage(new Button(String("Hello")));
-	btn->SetPosition(100, 100);
-	btn->Resize(200, 32);
+	VBox* layout = Manage(new VBox);
+	layout->SetMargin(2, 2, 2, 2);
+	layout->SetSpace(4);
 
-	Button* btn2 = Manage(new Button(String("Button2")));
+	TextEntry* path_entry = Manage(new TextEntry);
+	path_entry->SetRoundCornerType (RoundAll);
 
-	Frame* frame = Manage(new Frame);
-	frame->SetPosition(300, 200);
-	frame->Setup(btn2);
-	frame->Resize(200, 40);
+	Button* open = Manage(new Button(String(L"Open")));
+	HBox* dir_layout = Manage(new HBox);
+	dir_layout->PushBack(path_entry);
+	dir_layout->PushBack(open);
 
-	context->Add(btn);
-	context->Add(frame);
+	TextEntry* file_entry = Manage(new TextEntry);
+	file_entry->SetRoundCornerType (RoundAll);
+	Button* cancel = Manage(new Button(L"Cancel"));
+	HBox* file_layout = Manage(new HBox);
+	file_layout->PushBack(file_entry);
+	file_layout->PushBack(cancel);
+
+	layout->PushBack(dir_layout);
+	layout->PushBack(file_layout);
+
+	layout->SetPosition(100, 100);
+	context->Add(layout);
 
 	RunLoop(win);
 

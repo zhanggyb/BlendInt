@@ -461,8 +461,6 @@ namespace BlendInt {
 	void ToolBar::FillSubWidgets (int x, int y, unsigned int width,
 					unsigned int height, int space)
 	{
-		DBG_PRINT_MSG("widget position: %d %d %u %u", x, y, width, height);
-
 		AbstractWidget* widget = 0;
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{

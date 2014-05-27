@@ -131,19 +131,17 @@ namespace BlendInt {
 
 		int max_font_height = m_font.GetHeight();
 
-		preferred_size.set_height(max_font_height + default_textentry_padding.top() + default_textentry_padding.bottom());	// top padding: 2, bottom padding: 2
+		preferred_size.set_height(max_font_height + default_textentry_padding.vsum());	// top padding: 2, bottom padding: 2
 
 		if (text().empty()) {
 			preferred_size.set_width(
-							max_font_height + default_textentry_padding.left()
-											+ default_textentry_padding.right()
-											+ radius_plus);
+							max_font_height + default_textentry_padding.hsum()
+											+ radius_plus + 120);
 		} else {
 			size_t width = m_font.GetTextWidth(text());
 			preferred_size.set_width(
 							static_cast<unsigned int>(width)
-											+ default_textentry_padding.left()
-											+ default_textentry_padding.right()
+											+ default_textentry_padding.hsum()
 											+ radius_plus);	// left padding: 2, right padding: 2
 		}
 
@@ -165,8 +163,7 @@ namespace BlendInt {
 			unsigned int text_width = m_font.GetTextWidth(m_text, m_length,
 							m_start);
 			unsigned int valid_width = size().width()
-							- default_textentry_padding.left()
-							- default_textentry_padding.right();
+							- default_textentry_padding.hsum();
 
 			if(text_width > valid_width) {
 				m_start++;
@@ -259,11 +256,9 @@ namespace BlendInt {
 				m_cursor_buffer->Bind();
 				GLfloat* buf_p = (GLfloat*) m_cursor_buffer->Map(GL_READ_WRITE);
 				*(buf_p + 5) = static_cast<float>(size_p->height()
-								- default_textentry_padding.top()
-								- default_textentry_padding.bottom());
+								- default_textentry_padding.vsum());
 				*(buf_p + 7) = static_cast<float>(size_p->height()
-								- default_textentry_padding.top()
-								- default_textentry_padding.bottom());
+								- default_textentry_padding.vsum());
 				m_cursor_buffer->Unmap();
 				m_cursor_buffer->Reset();
 
@@ -360,8 +355,8 @@ namespace BlendInt {
 	{
 		unsigned int h = m_font.GetHeight();
 
-		set_size(h + round_corner_radius() * 2 + default_textentry_padding.left() + default_textentry_padding.right(),
-						h + default_textentry_padding.top() + default_textentry_padding.bottom());
+		set_size(h + round_corner_radius() * 2 + default_textentry_padding.hsum() + 120,
+						h + default_textentry_padding.vsum());
 
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
@@ -394,10 +389,10 @@ namespace BlendInt {
 		cursor_vertices[3] = static_cast<float>(default_textentry_padding.bottom());
 
 		cursor_vertices[4] = 1.f;
-		cursor_vertices[5] = static_cast<float>(size().height() - default_textentry_padding.top() - default_textentry_padding.bottom());
+		cursor_vertices[5] = static_cast<float>(size().height() - default_textentry_padding.vsum());
 
 		cursor_vertices[6] = 3.f;
-		cursor_vertices[7] = static_cast<float>(size().height() - default_textentry_padding.top() - default_textentry_padding.bottom());
+		cursor_vertices[7] = static_cast<float>(size().height() - default_textentry_padding.vsum());
 
 		m_cursor_buffer->Generate();
 		m_cursor_buffer->Bind();
@@ -438,8 +433,7 @@ namespace BlendInt {
 		if (m_text.size() && m_cursor_position > 0) {
 
 			size_t valid_width = size().width()
-							- default_textentry_padding.left()
-							- default_textentry_padding.right();
+							- default_textentry_padding.hsum();
 
 			m_text.erase(m_cursor_position - 1, 1);
 			m_cursor_position--;
@@ -467,8 +461,7 @@ namespace BlendInt {
 		if (m_text.size() && (m_cursor_position < m_text.length())) {
 
 			size_t valid_width = size().width()
-							- default_textentry_padding.left()
-							- default_textentry_padding.right();
+							- default_textentry_padding.hsum();
 
 			m_text.erase(m_cursor_position, 1);
 

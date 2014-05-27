@@ -38,7 +38,7 @@ namespace BlendInt {
 
 		virtual ~HBox ();
 
-		bool Add (AbstractWidget* widget);
+		bool PushBack (AbstractWidget* widget);
 
 		bool Remove (AbstractWidget* widget);
 

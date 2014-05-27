@@ -71,8 +71,8 @@ void MainLayout::InitOnce ()
 	m_area->SetViewport(m_imgview);
 
 	//Add(m_menubar);
-	Add(m_area);
-	Add(m_toolbar);
+	PushBack(m_area);
+	PushBack(m_toolbar);
 
 	events()->connect(m_open->clicked(), this, &MainLayout::OnOpenClick);
 }

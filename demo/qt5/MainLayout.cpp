@@ -32,8 +32,8 @@ void MainLayout::InitOnce ()
 	m_ok = Manage(new BI::Button("OK"));
 	DBG_SET_NAME(m_ok, "OK");
 
-	Add(m_view3d);
-	Add(m_ok);
+	PushBack(m_view3d);
+	PushBack(m_ok);
 }
 
 void MainLayout::OnOpenClick()

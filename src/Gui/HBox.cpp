@@ -46,33 +46,24 @@ namespace BlendInt {
 	{
 	}
 
-	bool HBox::Add (AbstractWidget* widget)
+	bool HBox::PushBack (AbstractWidget* widget)
 	{
-		bool ret = false;
-
 		if(PushBackSubWidget(widget)) {
-
 			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
-
-			ret = true;
+			return true;
 		}
 
-		return ret;
+		return false;
 	}
 
 	bool HBox::Remove (AbstractWidget* widget)
 	{
-		bool ret = false;
-
 		if(RemoveSubWidget(widget)) {
-
 			FillSubWidgetsInHBox(position(), size(), margin(), m_alignment, m_space);
-
-			ret = true;
-
+			return true;
 		}
 
-		return ret;
+		return false;
 	}
 
 	void HBox::SetAlignment (int align)
@@ -181,6 +172,10 @@ namespace BlendInt {
 
 			return AbstractDequeContainer::UpdateGeometryTest(request);
 
+		} else if (request.source() == container()) {
+
+			return true;
+
 		} else {	// called by sub widget
 
 			switch(request.type()) {
@@ -198,25 +193,29 @@ namespace BlendInt {
 
 	void HBox::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.source() == this || request.source() == container()) {
 
-			case WidgetPosition: {
-				const Point* new_pos = static_cast<const Point*>(request.data());
-				int x = new_pos->x() - position().x();
-				int y = new_pos->y() - position().y();
-				MoveSubWidgets(x, y);
-				break;
+			switch (request.type()) {
+
+				case WidgetPosition: {
+					const Point* new_pos = static_cast<const Point*>(request.data());
+					int x = new_pos->x() - position().x();
+					int y = new_pos->y() - position().y();
+					MoveSubWidgets(x, y);
+					break;
+				}
+
+				case WidgetSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					FillSubWidgetsInHBox(position(), *size_p, margin(), m_alignment, m_space);
+					break;
+				}
+
+				default: {
+					break;
+				}
 			}
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				FillSubWidgetsInHBox(position(), *size_p, margin(), m_alignment, m_space);
-				break;
-			}
-
-			default: {
-				break;
-			}
 		}
 	}
 

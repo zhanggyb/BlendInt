@@ -71,10 +71,8 @@ namespace BlendInt {
 			int x = position().x() + margin().left();
 			int y = position().y() + margin().bottom();
 
-			unsigned int w = size().width() - margin().left()
-							- margin().right();
-			unsigned int h = size().height() - margin().top()
-							- margin().bottom();
+			unsigned int w = size().width() - horizontal_margins();
+			unsigned int h = size().height() - vertical_margins();
 
 			FillSubWidget(x, y, w, h);
 
@@ -129,6 +127,10 @@ namespace BlendInt {
 
 			return AbstractSingleContainer::UpdateGeometryTest(request);
 
+		} else if (request.source() == container()) {
+
+			return true;
+
 		} else {	// called by sub widget
 
 			switch(request.type()) {
@@ -146,33 +148,36 @@ namespace BlendInt {
 
 	void Frame::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.source() == this) {
 
-			case WidgetSize: {
-				if (sub_widget()) {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					set_size(*size_p);
-					FillSubWidget(position(), *size_p, margin());
+			switch (request.type()) {
+
+				case WidgetSize: {
+					if (sub_widget()) {
+						const Size* size_p =
+										static_cast<const Size*>(request.data());
+						set_size(*size_p);
+						FillSubWidget(position(), *size_p, margin());
+					}
+					break;
 				}
-				break;
+
+				case WidgetPosition: {
+					if (sub_widget()) {
+						const Point* pos_p =
+										static_cast<const Point*>(request.data());
+						SetSubWidgetPosition(sub_widget(),
+										pos_p->x() + margin().left(),
+										pos_p->y() + margin().bottom());
+					}
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetPosition: {
-				if (sub_widget()) {
-					const Point* pos_p =
-									static_cast<const Point*>(request.data());
-					SetSubWidgetPosition(sub_widget(),
-									pos_p->x() + margin().left(),
-									pos_p->y() + margin().bottom());
-				}
-				break;
-			}
-
-			default:
-				break;
 		}
-
 	}
 
 	ResponseType Frame::CursorEnterEvent (bool entered)

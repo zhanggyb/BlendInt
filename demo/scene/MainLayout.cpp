@@ -57,10 +57,10 @@ void MainLayout::InitOnce ()
 	m_toolbar->Add(m_input);
 	m_toolbar->Add(m_open);
 
-	Add(m_menubar);
-	Add(m_toolbar);
+	PushBack(m_menubar);
+	PushBack(m_toolbar);
 
-    Add(m_scene);
+    PushBack(m_scene);
 
 	events()->connect(m_open->clicked(), this, &MainLayout::OnOpenClick);
 }

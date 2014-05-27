@@ -33,15 +33,16 @@ TEST_F(FrameTest1, Foo1)
     // TODO: add test code here
     Frame* frame = Manage (new Frame);
     //frame->SetMargin(10, 10, 10, 10);
-    frame->SetPosition(200, 200);
+    frame->SetPosition(100, 100);
 
     Button* ref_btn = Manage (new Button);
-    ref_btn->SetPosition(400, 200);
+    ref_btn->SetPosition(200, 200);
 
     frame->Setup(ref_btn);
 
     DBG_PRINT_MSG("frame layer: %d", frame->z());
     frame->SetMargin(10, 10, 4, 4);
+    frame->Resize(200, 200);
 
     context->Add(frame);
 
