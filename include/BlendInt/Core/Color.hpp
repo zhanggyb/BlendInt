@@ -49,7 +49,7 @@ namespace BlendInt {
 	 * @param[in] factor must be within 0.0 ~ 1.0
 	 * @return
 	 */
-	extern Color make_shade_color (const Color& color1, const Color& color2, float factor);
+	extern Color make_shaded_color (const Color& color1, const Color& color2, float factor);
 
 	class Color
 	{

@@ -76,7 +76,13 @@ namespace BlendInt {
 	{
 		glDeleteVertexArrays(1, &m_vao);
 	}
-	
+
+	Size ColorWheel::GetPreferredSize () const
+	{
+		// TODO: check theme.pixel
+		return Size(160, 160);
+	}
+
 	ResponseType ColorWheel::Draw (const RedrawEvent& event)
 	{
 		glm::vec3 pos((float) (position().x() + size().width() / 2), (float) (position().y() + size().height() / 2),
@@ -243,7 +249,7 @@ namespace BlendInt {
 
 		}
 	}
-
+	
 	void ColorWheel::GenerateWheelVertices (int radius,
 					std::vector<GLfloat>& inner_vertices,
 					std::vector<GLfloat>& outer_vertices)

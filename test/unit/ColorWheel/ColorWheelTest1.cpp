@@ -31,7 +31,7 @@ TEST_F(ColorWheelTest1, Foo1)
     ColorWheel* wheel = Manage(new ColorWheel);
 
     wheel->SetPosition(100, 100);
-    //wheel->Resize(200, 200);
+    wheel->Resize(250, 250);
 
     context->Add(wheel);
 

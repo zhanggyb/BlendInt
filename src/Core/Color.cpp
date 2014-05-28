@@ -39,7 +39,7 @@ namespace BlendInt {
 		return color;
 	}
 
-	Color make_shade_color (const Color& color1, const Color& color2, float factor)
+	Color make_shaded_color (const Color& color1, const Color& color2, float factor)
 	{
 		unsigned char faci = float_to_uchar (factor);
 		unsigned char facm = 255 - faci;

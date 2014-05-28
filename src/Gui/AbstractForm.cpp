@@ -611,10 +611,10 @@ namespace BlendInt {
 				inner[count][1] = minyi + radi - veci[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -627,9 +627,9 @@ namespace BlendInt {
 			inner[count][1] = minyi;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -646,10 +646,10 @@ namespace BlendInt {
 				inner[count][1] = minyi + veci[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -662,9 +662,9 @@ namespace BlendInt {
 			inner[count][1] = minyi;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -683,10 +683,10 @@ namespace BlendInt {
 				inner[count][1] = maxyi - radi + veci[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -700,9 +700,9 @@ namespace BlendInt {
 			inner[count][1] = maxyi;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -719,10 +719,10 @@ namespace BlendInt {
 				inner[count][1] = maxyi - veci[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -736,9 +736,9 @@ namespace BlendInt {
 			inner[count][1] = maxyi;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -830,10 +830,10 @@ namespace BlendInt {
 				outer[count][1] = miny + rad - vec[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -849,9 +849,9 @@ namespace BlendInt {
 			outer[count][1] = miny;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -871,10 +871,10 @@ namespace BlendInt {
 				outer[count][1] = miny + vec[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -890,9 +890,9 @@ namespace BlendInt {
 			outer[count][1] = miny;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -914,10 +914,10 @@ namespace BlendInt {
 				outer[count][1] = maxy - rad + vec[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -934,9 +934,9 @@ namespace BlendInt {
 			outer[count][1] = maxy;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -956,10 +956,10 @@ namespace BlendInt {
 				outer[count][1] = maxy - vec[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -976,9 +976,9 @@ namespace BlendInt {
 			outer[count][1] = maxy;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -1059,10 +1059,10 @@ namespace BlendInt {
 				inner[count][1] = minyi + radi - veci[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -1075,9 +1075,9 @@ namespace BlendInt {
 			inner[count][1] = minyi;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -1094,10 +1094,10 @@ namespace BlendInt {
 				inner[count][1] = minyi + veci[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -1110,9 +1110,9 @@ namespace BlendInt {
 			inner[count][1] = minyi;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -1131,10 +1131,10 @@ namespace BlendInt {
 				inner[count][1] = maxyi - radi + veci[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -1147,9 +1147,9 @@ namespace BlendInt {
 			inner[count][1] = maxyi;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -1166,10 +1166,10 @@ namespace BlendInt {
 				inner[count][1] = maxyi - veci[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -1183,9 +1183,9 @@ namespace BlendInt {
 			inner[count][1] = maxyi;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -1277,10 +1277,10 @@ namespace BlendInt {
 				outer[count][1] = miny + rad - vec[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -1296,9 +1296,9 @@ namespace BlendInt {
 			outer[count][1] = miny;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -1318,10 +1318,10 @@ namespace BlendInt {
 				outer[count][1] = miny + vec[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -1337,9 +1337,9 @@ namespace BlendInt {
 			outer[count][1] = miny;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -1361,10 +1361,10 @@ namespace BlendInt {
 				outer[count][1] = maxy - rad + vec[i][0];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -1380,9 +1380,9 @@ namespace BlendInt {
 			outer[count][1] = maxy;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -1402,10 +1402,10 @@ namespace BlendInt {
 				outer[count][1] = maxy - vec[i][1];
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facyi * (inner[count][1] - minyi));
 				} else {
-					shaded_color = make_shade_color(color_top, color_down,
+					shaded_color = make_shaded_color(color_top, color_down,
 									facxi * (inner[count][0] - minxi));
 				}
 				inner[count][2] = shaded_color[0] / 255.0;
@@ -1422,9 +1422,9 @@ namespace BlendInt {
 			outer[count][1] = maxy;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down, 1.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 			} else {
-				shaded_color = make_shade_color(color_top, color_down, 0.0f);
+				shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 			}
 			inner[count][2] = shaded_color[0] / 255.0;
 			inner[count][3] = shaded_color[1] / 255.0;
@@ -1759,10 +1759,10 @@ namespace BlendInt {
 			(*inner)[1] = (maxyi - minyi) / 2.f;
 
 			if (shadedir == Vertical) {
-				shaded_color = make_shade_color(color_top, color_down,
+				shaded_color = make_shaded_color(color_top, color_down,
 								facyi * ((*inner)[1] - minyi));
 			} else {
-				shaded_color = make_shade_color(color_top, color_down,
+				shaded_color = make_shaded_color(color_top, color_down,
 								facxi * ((*inner)[0] - minxi));
 			}
 			(*inner)[2] = shaded_color[0] / 255.f;
@@ -1779,10 +1779,10 @@ namespace BlendInt {
 					(*inner)[count * 6 + 1] = minyi + radi - veci[i][0];
 
 					if (shadedir == Vertical) {
-						shaded_color = make_shade_color(color_top, color_down,
+						shaded_color = make_shaded_color(color_top, color_down,
 										facyi * ((*inner)[count * 6 + 1] - minyi));
 					} else {
-						shaded_color = make_shade_color(color_top, color_down,
+						shaded_color = make_shaded_color(color_top, color_down,
 										facxi * ((*inner)[count * 6 + 0] - minxi));
 					}
 
@@ -1796,9 +1796,9 @@ namespace BlendInt {
 				(*inner)[count * 6 + 1] = minyi;
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, 0.0f);
+					shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, 0.0f);
+					shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 				}
 				(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
 				(*inner)[count * 6 + 3] = shaded_color[1] / 255.f;
@@ -1815,10 +1815,10 @@ namespace BlendInt {
 					(*inner)[count * 6 + 1] = minyi + veci[i][1];
 
 					if (shadedir == Vertical) {
-						shaded_color = make_shade_color(color_top, color_down,
+						shaded_color = make_shaded_color(color_top, color_down,
 										facyi * ((*inner)[count * 6 + 1] - minyi));
 					} else {
-						shaded_color = make_shade_color(color_top, color_down,
+						shaded_color = make_shaded_color(color_top, color_down,
 										facxi * ((*inner)[count * 6 + 0] - minxi));
 					}
 					(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
@@ -1831,9 +1831,9 @@ namespace BlendInt {
 				(*inner)[count * 6 + 1] = minyi;
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, 0.0f);
+					shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, 1.0f);
+					shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 				}
 				(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
 				(*inner)[count * 6 + 3] = shaded_color[1] / 255.f;
@@ -1850,10 +1850,10 @@ namespace BlendInt {
 					(*inner)[count * 6 + 1] = maxyi - radi + veci[i][0];
 
 					if (shadedir == Vertical) {
-						shaded_color = make_shade_color(color_top, color_down,
+						shaded_color = make_shaded_color(color_top, color_down,
 										facyi * ((*inner)[count * 6 + 1] - minyi));
 					} else {
-						shaded_color = make_shade_color(color_top, color_down,
+						shaded_color = make_shaded_color(color_top, color_down,
 										facxi * ((*inner)[count * 6 + 0] - minxi));
 					}
 					(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
@@ -1866,9 +1866,9 @@ namespace BlendInt {
 				(*inner)[count * 6 + 1] = maxyi;
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, 1.0f);
+					shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, 1.0f);
+					shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 				}
 				(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
 				(*inner)[count * 6 + 3] = shaded_color[1] / 255.f;
@@ -1885,10 +1885,10 @@ namespace BlendInt {
 					(*inner)[count * 6 + 1] = maxyi - veci[i][1];
 
 					if (shadedir == Vertical) {
-						shaded_color = make_shade_color(color_top, color_down,
+						shaded_color = make_shaded_color(color_top, color_down,
 										facyi * ((*inner)[count * 6 + 1] - minyi));
 					} else {
-						shaded_color = make_shade_color(color_top, color_down,
+						shaded_color = make_shaded_color(color_top, color_down,
 										facxi * ((*inner)[count * 6 + 0] - minxi));
 					}
 					(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
@@ -1902,9 +1902,9 @@ namespace BlendInt {
 				(*inner)[count * 6 + 1] = maxyi;
 
 				if (shadedir == Vertical) {
-					shaded_color = make_shade_color(color_top, color_down, 1.0f);
+					shaded_color = make_shaded_color(color_top, color_down, 1.0f);
 				} else {
-					shaded_color = make_shade_color(color_top, color_down, 0.0f);
+					shaded_color = make_shaded_color(color_top, color_down, 0.0f);
 				}
 				(*inner)[count * 6 + 2] = shaded_color[0] / 255.f;
 				(*inner)[count * 6 + 3] = shaded_color[1] / 255.f;

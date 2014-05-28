@@ -41,6 +41,8 @@ namespace BlendInt {
 
 		virtual ~ColorWheel ();
 
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void UpdateGeometry (const WidgetUpdateRequest& request);

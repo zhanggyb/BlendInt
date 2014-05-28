@@ -60,30 +60,10 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	VBox* layout = Manage(new VBox);
-	layout->SetMargin(2, 2, 2, 2);
-	layout->SetSpace(4);
+	NumberSlider* sl = Manage(new NumberSlider);
+	sl->SetPosition(100, 100);
 
-	TextEntry* path_entry = Manage(new TextEntry);
-	path_entry->SetRoundCornerType (RoundAll);
-
-	Button* open = Manage(new Button(String(L"Open")));
-	HBox* dir_layout = Manage(new HBox);
-	dir_layout->PushBack(path_entry);
-	dir_layout->PushBack(open);
-
-	TextEntry* file_entry = Manage(new TextEntry);
-	file_entry->SetRoundCornerType (RoundAll);
-	Button* cancel = Manage(new Button(L"Cancel"));
-	HBox* file_layout = Manage(new HBox);
-	file_layout->PushBack(file_entry);
-	file_layout->PushBack(cancel);
-
-	layout->PushBack(dir_layout);
-	layout->PushBack(file_layout);
-
-	layout->SetPosition(100, 100);
-	context->Add(layout);
+	context->Add(sl);
 
 	RunLoop(win);
 

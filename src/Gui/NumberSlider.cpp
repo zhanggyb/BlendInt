@@ -56,6 +56,11 @@ namespace BlendInt {
 		return true;
 	}
 	
+	void NumberSlider::UpdateSlider(const WidgetUpdateRequest& request)
+	{
+
+	}
+
 	void NumberSlider::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
 		switch (request.type()) {
