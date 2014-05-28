@@ -28,11 +28,12 @@ TEST_F(ColorWheelTest1, Foo1)
 	Context* context = Manage (new Context);
     Interface::instance->SetCurrentContext(context);
 
-    ColorWheel* disk = Manage(new ColorWheel);
+    ColorWheel* wheel = Manage(new ColorWheel);
 
-    disk->SetPosition(200, 200);
+    wheel->SetPosition(100, 100);
+    //wheel->Resize(200, 200);
 
-    context->Add(disk);
+    context->Add(wheel);
 
     RunLoop(win);
 

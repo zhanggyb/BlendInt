@@ -51,16 +51,23 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
-		std::vector<GLfloat> vertices;
+		std::vector<GLfloat> inner_vertices;
+		std::vector<GLfloat> outer_vertices;
 
-		GenerateWheelVertices(80, &vertices);
+		GenerateWheelVertices(80, inner_vertices, outer_vertices);
 
 		m_inner.reset(new GLArrayBuffer);
 		m_inner->Generate();
 
 		m_inner->Bind();
-		m_inner->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+		m_inner->SetData(sizeof(GLfloat) * inner_vertices.size(), &inner_vertices[0], GL_STATIC_DRAW);
 		m_inner->Reset();
+
+		m_outline.reset(new GLArrayBuffer);
+		m_outline->Generate();
+		m_outline->Bind();
+		m_outline->SetData(sizeof(GLfloat) * outer_vertices.size(), &outer_vertices[0], GL_STATIC_DRAW);
+		m_outline->Reset();
 
 		glBindVertexArray(0);
 	}
@@ -72,8 +79,9 @@ namespace BlendInt {
 	
 	ResponseType ColorWheel::Draw (const RedrawEvent& event)
 	{
-		glm::vec3 pos((float) position().x(), (float) position().y(),
+		glm::vec3 pos((float) (position().x() + size().width() / 2), (float) (position().y() + size().height() / 2),
 						(float) z());
+
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		glBindVertexArray(m_vao);
@@ -113,6 +121,31 @@ namespace BlendInt {
 		m_inner->Reset();
 
 		glDisableVertexAttribArray(1);
+
+		glm::vec4 color;
+		color.r = tm->regular().outline.r() / 255.f;
+		color.g = tm->regular().outline.g() / 255.f;
+		color.b = tm->regular().outline.b() / 255.f;
+		color.a = tm->regular().outline.a() / 255.f;
+
+		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetUniform1i("AA", 1);
+
+		m_outline->Bind();
+
+		glVertexAttribPointer(0, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
+						m_outline->GetBufferSize()
+						/ (2 * sizeof(GLfloat)));
+		m_outline->Reset();
+
 		glDisableVertexAttribArray(0);
 		program->Reset();
 
@@ -121,111 +154,223 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	void ColorWheel::GenerateWheelVertices (int radius, std::vector<GLfloat>* vertices)
+	void ColorWheel::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(!vertices) return;
+		switch(request.type()) {
 
-		vertices->resize(72 * 6 + 6 + 6);
+			case WidgetSize: {
+
+				const Size* size_p = static_cast<const Size*>(request.data());
+
+				int radius = std::min(size_p->width(), size_p->height()) / 2;
+
+				m_inner->Bind();
+
+				GLfloat* ptr = (GLfloat*) m_inner->Map(GL_READ_WRITE);
+
+				double rad = 0.0;
+				float x1 = 0.f;
+				float y1 = 0.f;
+
+				ptr = ptr + 6;
+				int i = 1;
+				for(int angle = -30; angle < 330; angle = angle + 5)
+				{
+					rad = angle * M_PI / 180.0;
+
+					x1 = (radius - 1) * cos(rad);
+					y1 = (radius - 1) * sin(rad);
+
+					*(ptr) = x1;
+					*(ptr + 1) = y1;
+					ptr += 6;
+					i++;
+				}
+
+				rad = 330 * M_PI / 180.0;
+				x1 = (radius - 1) * cos(rad);
+				y1 = (radius - 1) * sin(rad);
+
+				*(ptr) = x1;
+				*(ptr + 1) = y1;
+
+				m_inner->Unmap();
+				m_inner->Reset();
+
+				m_outline->Bind();
+
+				ptr = (GLfloat*) m_outline->Map(GL_READ_WRITE);
+				float x2 = 0.f;
+				float y2 = 0.f;
+
+				i = 0;
+				for(int angle = -30; angle < 330; angle = angle + 5)
+				{
+					rad = angle * M_PI / 180.0;
+
+					x1 = (radius - 1) * cos(rad);
+					y1 = (radius - 1) * sin(rad);
+					x2 = radius * cos(rad);
+					y2 = radius * sin(rad);
+
+					*(ptr + 0) = x1;
+					*(ptr + 1) = y1;
+					*(ptr + 2) = x2;
+					*(ptr + 3) = y2;
+					ptr += 4;
+					i++;
+				}
+
+				rad = 330 * M_PI / 180.0;
+				x1 = (radius - 1) * cos(rad);
+				y1 = (radius - 1) * sin(rad);
+				x2 = radius * cos(rad);
+				y2 = radius * sin(rad);
+
+				*(ptr + 0) = x1;
+				*(ptr + 1) = y1;
+				*(ptr + 2) = x2;
+				*(ptr + 3) = y2;
+
+				m_outline->Unmap();
+				m_outline->Reset();
+
+				break;
+			}
+
+			default:
+				break;
+
+		}
+	}
+
+	void ColorWheel::GenerateWheelVertices (int radius,
+					std::vector<GLfloat>& inner_vertices,
+					std::vector<GLfloat>& outer_vertices)
+	{
+		if(inner_vertices.size() != (72 * 6 + 6 + 6))
+			inner_vertices.resize(72 * 6 + 6 + 6);
+
+		if(outer_vertices.size() != (72 * 4 + 4))
+			outer_vertices.resize(72 * 4 + 4);
 
 		double rad = 0.0;
-		float x = 0.f;
-		float y = 0.f;
+		float x1 = 0.f;
+		float y1 = 0.f;
+		float x2 = 0.f;
+		float y2 = 0.f;
 
 		// 0 1 2 3 4 5
 		// x y r g b a
 
 		// the center point
-		(*vertices)[0] = 0.f;
-		(*vertices)[1] = 0.f;
-		(*vertices)[2] = 1.f;
-		(*vertices)[3] = 1.f;
-		(*vertices)[4] = 1.f;
-		(*vertices)[5] = 1.f;
+		inner_vertices[0] = 0.f;
+		inner_vertices[1] = 0.f;
+		inner_vertices[2] = 1.f;
+		inner_vertices[3] = 1.f;
+		inner_vertices[4] = 1.f;
+		inner_vertices[5] = 1.f;
 
-		int i = 0;
-		for(int j = -30; j < 330; j = j + 5) {
-			rad = j * M_PI / 180.0;
+		int i = 1;
+		int j = 0;
+		for(int angle = -30; angle < 330; angle = angle + 5) {
+			rad = angle * M_PI / 180.0;
 
-			x = radius * cos(rad);
-			y = radius * sin(rad);
+			x1 = (radius - 1) * cos(rad);
+			y1 = (radius - 1) * sin(rad);
+			x2 = radius * cos(rad);
+			y2 = radius * sin(rad);
 
-			(*vertices)[(i + 1) * 6 + 0] = x;
-			(*vertices)[(i + 1) * 6 + 1] = y;
+			inner_vertices[i * 6 + 0] = x1;
+			inner_vertices[i * 6 + 1] = y1;
 
-			if(j == -30) {
-				(*vertices)[(i + 1) * 6 + 2] = 1.f;
-				(*vertices)[(i + 1) * 6 + 3] = 0.f;
-				(*vertices)[(i + 1) * 6 + 4] = 1.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
-			} else if (j < 30) {
-				(*vertices)[(i + 1) * 6 + 2] = (30 - j) / 60.f;
-				(*vertices)[(i + 1) * 6 + 3] = 0.f;
-				(*vertices)[(i + 1) * 6 + 4] = 1.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
-			} else if (j == 30) {
-				(*vertices)[(i + 1) * 6 + 2] = 0.f;
-				(*vertices)[(i + 1) * 6 + 3] = 0.f;
-				(*vertices)[(i + 1) * 6 + 4] = 1.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
-			} else if (j < 90) {
-				(*vertices)[(i + 1) * 6 + 2] = 0.f;
-				(*vertices)[(i + 1) * 6 + 3] = 1.f - (90 - j) / 60.f;
-				(*vertices)[(i + 1) * 6 + 4] = 1.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
-			} else if (j == 90) {
-				(*vertices)[(i + 1) * 6 + 2] = 0.f;
-				(*vertices)[(i + 1) * 6 + 3] = 1.f;
-				(*vertices)[(i + 1) * 6 + 4] = 1.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
-			} else if (j < 150) {
-				(*vertices)[(i + 1) * 6 + 2] = 0.f;
-				(*vertices)[(i + 1) * 6 + 3] = 1.f;
-				(*vertices)[(i + 1) * 6 + 4] = (150 - j) / 60.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
-			} else if (j == 150) {
-				(*vertices)[(i + 1) * 6 + 2] = 0.f;
-				(*vertices)[(i + 1) * 6 + 3] = 1.f;
-				(*vertices)[(i + 1) * 6 + 4] = 0.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
-			} else if (j < 210) {
-				(*vertices)[(i + 1) * 6 + 2] = 1.f - (210 - j) / 60.f;
-				(*vertices)[(i + 1) * 6 + 3] = 1.f;
-				(*vertices)[(i + 1) * 6 + 4] = 0.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
-			} else if (j == 210) {
-				(*vertices)[(i + 1) * 6 + 2] = 1.f;
-				(*vertices)[(i + 1) * 6 + 3] = 1.f;
-				(*vertices)[(i + 1) * 6 + 4] = 0.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
-			} else if (j < 270) {
-				(*vertices)[(i + 1) * 6 + 2] = 1.f;
-				(*vertices)[(i + 1) * 6 + 3] = (270 - j) / 60.f;
-				(*vertices)[(i + 1) * 6 + 4] = 0.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
-			} else if (j == 270) {
-				(*vertices)[(i + 1) * 6 + 2] = 1.f;
-				(*vertices)[(i + 1) * 6 + 3] = 0.f;
-				(*vertices)[(i + 1) * 6 + 4] = 0.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+			outer_vertices[j * 4 + 0] = x1;
+			outer_vertices[j * 4 + 1] = y1;
+			outer_vertices[j * 4 + 2] = x2;
+			outer_vertices[j * 4 + 3] = y2;
+
+			if(angle == -30) {
+				inner_vertices[i * 6 + 2] = 1.f;
+				inner_vertices[i * 6 + 3] = 0.f;
+				inner_vertices[i * 6 + 4] = 1.f;
+				inner_vertices[i * 6 + 5] = 1.f;
+			} else if (angle < 30) {
+				inner_vertices[i * 6 + 2] = (30 - angle) / 60.f;
+				inner_vertices[i * 6 + 3] = 0.f;
+				inner_vertices[i * 6 + 4] = 1.f;
+				inner_vertices[i * 6 + 5] = 1.f;
+			} else if (angle == 30) {
+				inner_vertices[i * 6 + 2] = 0.f;
+				inner_vertices[i * 6 + 3] = 0.f;
+				inner_vertices[i * 6 + 4] = 1.f;
+				inner_vertices[i * 6 + 5] = 1.f;
+			} else if (angle < 90) {
+				inner_vertices[i * 6 + 2] = 0.f;
+				inner_vertices[i * 6 + 3] = 1.f - (90 - angle) / 60.f;
+				inner_vertices[i * 6 + 4] = 1.f;
+				inner_vertices[i * 6 + 5] = 1.f;
+			} else if (angle == 90) {
+				inner_vertices[i * 6 + 2] = 0.f;
+				inner_vertices[i * 6 + 3] = 1.f;
+				inner_vertices[i * 6 + 4] = 1.f;
+				inner_vertices[i * 6 + 5] = 1.f;
+			} else if (angle < 150) {
+				inner_vertices[i * 6 + 2] = 0.f;
+				inner_vertices[i * 6 + 3] = 1.f;
+				inner_vertices[i * 6 + 4] = (150 - angle) / 60.f;
+				inner_vertices[i * 6 + 5] = 1.f;
+			} else if (angle == 150) {
+				inner_vertices[i * 6 + 2] = 0.f;
+				inner_vertices[i * 6 + 3] = 1.f;
+				inner_vertices[i * 6 + 4] = 0.f;
+				inner_vertices[i * 6 + 5] = 1.f;
+			} else if (angle < 210) {
+				inner_vertices[i * 6 + 2] = 1.f - (210 - angle) / 60.f;
+				inner_vertices[i * 6 + 3] = 1.f;
+				inner_vertices[i * 6 + 4] = 0.f;
+				inner_vertices[i * 6 + 5] = 1.f;
+			} else if (angle == 210) {
+				inner_vertices[i * 6 + 2] = 1.f;
+				inner_vertices[i * 6 + 3] = 1.f;
+				inner_vertices[i * 6 + 4] = 0.f;
+				inner_vertices[i * 6 + 5] = 1.f;
+			} else if (angle < 270) {
+				inner_vertices[i * 6 + 2] = 1.f;
+				inner_vertices[i * 6 + 3] = (270 - angle) / 60.f;
+				inner_vertices[i * 6 + 4] = 0.f;
+				inner_vertices[i * 6 + 5] = 1.f;
+			} else if (angle == 270) {
+				inner_vertices[i * 6 + 2] = 1.f;
+				inner_vertices[i * 6 + 3] = 0.f;
+				inner_vertices[i * 6 + 4] = 0.f;
+				inner_vertices[i * 6 + 5] = 1.f;
 			} else {
-				(*vertices)[(i + 1) * 6 + 2] = 1.f;
-				(*vertices)[(i + 1) * 6 + 3] = 0.f;
-				(*vertices)[(i + 1) * 6 + 4] = 1.f - (330 - j) / 60.f;
-				(*vertices)[(i + 1) * 6 + 5] = 1.f;
+				inner_vertices[i * 6 + 2] = 1.f;
+				inner_vertices[i * 6 + 3] = 0.f;
+				inner_vertices[i * 6 + 4] = 1.f - (330 - angle) / 60.f;
+				inner_vertices[i * 6 + 5] = 1.f;
 			}
-			i++;
+			i++; j++;
 		}
 
 		rad = 330 * M_PI / 180.0;
-		x = radius * cos(rad);
-		y = radius * sin(rad);
+		x1 = (radius - 1) * cos(rad);
+		y1 = (radius - 1) * sin(rad);
+		x2 = radius * cos(rad);
+		y2 = radius * sin(rad);
 
-		(*vertices)[(i + 1) * 6 + 0] = x;
-		(*vertices)[(i + 1) * 6 + 1] = y;
-		(*vertices)[(i + 1) * 6 + 2] = 1.f;
-		(*vertices)[(i + 1) * 6 + 3] = 0.f;
-		(*vertices)[(i + 1) * 6 + 4] = 1.f;
-		(*vertices)[(i + 1) * 6 + 5] = 1.f;
+		inner_vertices[i * 6 + 0] = x1;
+		inner_vertices[i * 6 + 1] = y1;
+
+		outer_vertices[j * 4 + 0] = x1;
+		outer_vertices[j * 4 + 1] = y1;
+		outer_vertices[j * 4 + 2] = x2;
+		outer_vertices[j * 4 + 3] = y2;
+
+		inner_vertices[i * 6 + 2] = 1.f;
+		inner_vertices[i * 6 + 3] = 0.f;
+		inner_vertices[i * 6 + 4] = 1.f;
+		inner_vertices[i * 6 + 5] = 1.f;
 	}
 
 }

@@ -43,9 +43,13 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+
 		virtual ResponseType Draw (const RedrawEvent& event);
 
-		void GenerateWheelVertices (int radius, std::vector<GLfloat>* vertices);
+		void GenerateWheelVertices (int radius,
+						std::vector<GLfloat>& inner_vertices,
+						std::vector<GLfloat>& outer_vertices);
 
 	private:
 
