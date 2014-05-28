@@ -46,6 +46,8 @@ namespace BlendInt {
 
 	extern ColorExt operator + (const ColorExt& orig, short shade);
 
+	extern ColorExt operator + (const ColorExt& color1, const ColorExt& color2);
+
 	/**
 	 * @brief make a shader color between 2 given colors
 	 * @param[in] color1
@@ -122,8 +124,10 @@ namespace BlendInt {
 
 		uint32_t rgba () const
 		{
-			return (m_color_v[0] << 24) & (m_color_v[1] << 16) &
-				(m_color_v[2] << 8) & m_color_v[3];
+			return (m_color_v[0] << 24) |
+					(m_color_v[1] << 16) |
+					(m_color_v[2] << 8) |
+					m_color_v[3];
 		}
 
 		unsigned char red () const
@@ -215,8 +219,6 @@ namespace BlendInt {
 		 */
 		unsigned char m_color_v[4];
 	};
-
-#include <stdio.h>
 
 	class ColorExt
 	{

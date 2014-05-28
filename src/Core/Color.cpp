@@ -39,6 +39,28 @@ namespace BlendInt {
 		return color;
 	}
 
+	ColorExt operator + (const ColorExt& orig, short shade)
+	{
+		ColorExt color;
+		color.set_red(orig.r() + shade);
+		color.set_green(orig.g() + shade);
+		color.set_blue(orig.b() + shade);
+		color.set_alpha(orig.a());
+
+		return color;
+	}
+
+	ColorExt operator + (const ColorExt& color1, const ColorExt& color2)
+	{
+		ColorExt color;
+		color.set_red(color1.r() + color2.r());
+		color.set_green(color1.g() + color2.g());
+		color.set_blue(color1.b() + color2.b());
+		color.set_alpha(color1.a() + color2.a());
+
+		return color;
+	}
+
 	Color make_shaded_color (const Color& color1, const Color& color2, float factor)
 	{
 		unsigned char faci = float_to_uchar (factor);
@@ -49,6 +71,21 @@ namespace BlendInt {
 		shaded_color.set_green((faci * color1.g() + facm * color2.g()) >> 8);
 		shaded_color.set_blue((faci * color1.b() + facm * color2.b()) >> 8);
 		shaded_color.set_alpha((faci * color1.a() + facm * color2.a()) >> 8);
+
+		return shaded_color;
+	}
+
+	ColorExt MakeShadedColor (const ColorExt& color1, const ColorExt& color2, float fact)
+	{
+		ColorExt shaded_color;
+
+		float faci = glm::clamp(fact - 0.5f / 255.f, 0.f, 1.f);
+		float facm = 1.f - fact;
+
+		shaded_color.set_red(faci * color1.r() + facm * color2.r());
+		shaded_color.set_green(faci * color1.g() + facm * color2.g());
+		shaded_color.set_blue(faci * color1.b() + facm * color2.b());
+		shaded_color.set_alpha(faci * color1.a() + facm * color2.a());
 
 		return shaded_color;
 	}
