@@ -136,4 +136,130 @@ namespace BlendInt {
 		m_color_v[1] = m_color_v[1] >= max ? 255 : (m_color_v[1] + value);
 		m_color_v[2] = m_color_v[2] >= max ? 255 : (m_color_v[2] + value);
 	}
+
+	ColorExt::ColorExt ()
+	{
+		m_value[0] = 1.f;
+		m_value[1] = 1.f;
+		m_value[2] = 1.f;
+		m_value[3] = 1.f;
+	}
+
+	ColorExt::ColorExt (uint32_t color)
+	{
+		SetValue(color);
+	}
+
+	ColorExt::ColorExt (unsigned char r, unsigned char g, unsigned char b,
+	        unsigned char a)
+	{
+		SetValue(r, g, b, a);
+	}
+
+	ColorExt::ColorExt (float r, float g, float b, float a)
+	{
+		SetValue(r, g, b, a);
+	}
+
+	ColorExt::ColorExt (const ColorExt& orig)
+	{
+		m_value[0] = orig.m_value[0];
+		m_value[1] = orig.m_value[1];
+		m_value[2] = orig.m_value[2];
+		m_value[3] = orig.m_value[3];
+	}
+
+	ColorExt& ColorExt::operator = (const ColorExt& orig)
+	{
+		m_value[0] = orig.m_value[0];
+		m_value[1] = orig.m_value[1];
+		m_value[2] = orig.m_value[2];
+		m_value[3] = orig.m_value[3];
+		return *this;
+	}
+
+	ColorExt& ColorExt::operator = (uint32_t color)
+	{
+		SetValue(color);
+		return *this;
+	}
+
+	ColorExt::~ColorExt ()
+	{
+	}
+
+	void ColorExt::Highlight (const ColorExt& orig, short value)
+	{
+		m_value[0] = glm::clamp(orig.m_value[0] + value / 255.f, 0.f, 1.f);
+		m_value[1] = glm::clamp(orig.m_value[1] + value / 255.f, 0.f, 1.f);
+		m_value[2] = glm::clamp(orig.m_value[2] + value / 255.f, 0.f, 1.f);
+		m_value[3] = orig.a();
+	}
+
+	void ColorExt::Highlight (uint32_t color, short value)
+	{
+		SetValue(color);
+		m_value[0] = glm::clamp(m_value[0] + value / 255.f, 0.f, 1.f);
+		m_value[1] = glm::clamp(m_value[1] + value / 255.f, 0.f, 1.f);;
+		m_value[2] = glm::clamp(m_value[2] + value / 255.f, 0.f, 1.f);;
+	}
+
+	void ColorExt::SetValue (float r, float g, float b, float a)
+	{
+		m_value[0] = glm::clamp(r, 0.f, 1.f);
+		m_value[1] = glm::clamp(g, 0.f, 1.f);
+		m_value[2] = glm::clamp(b, 0.f, 1.f);
+		m_value[3] = glm::clamp(a, 0.f, 1.f);
+	}
+
+	void ColorExt::SetValue (unsigned char color[4])
+	{
+		m_value[0] = color[0] / 255.f;
+		m_value[1] = color[1] / 255.f;
+		m_value[2] = color[2] / 255.f;
+		m_value[3] = color[3] / 255.f;
+	}
+
+	void ColorExt::SetValue (float color[4])
+	{
+		m_value[0] = color[0];
+		m_value[1] = color[1];
+		m_value[2] = color[2];
+		m_value[3] = color[3];
+	}
+
+	void ColorExt::SetValue (uint32_t color)
+	{
+		if (color > 0xFFFFFF) {
+			m_value[3] = (color & 0xFF) / 255.f;
+			m_value[2] = ((color >> 8) & 0xFF) / 255.f;
+			m_value[1] = ((color >> 16) & 0xFF) / 255.f;
+			m_value[0] = ((color >> 24) & 0xFF) / 255.f;
+		} else if (color > 0xFFFF) {
+			m_value[3] = (color & 0xFF) / 255.f;
+			m_value[2] = ((color >> 8) & 0xFF) / 255.f;
+			m_value[1] = ((color >> 16) & 0xFF) / 255.f;
+			m_value[0] = 0.f;	// 0x00
+		} else if (color > 0xFF) {
+			m_value[3] = (color & 0xFF) / 255.f;
+			m_value[2] = ((color >> 8) & 0xFF) / 255.f;
+			m_value[1] = 0.f;
+			m_value[0] = 0.f;
+		} else {
+			m_value[3] = (color & 0xFF) / 255.f;
+			m_value[2] = 0.f;
+			m_value[1] = 0.f;
+			m_value[0] = 0.f;
+		}
+	}
+
+	void ColorExt::SetValue (unsigned char r, unsigned char g,
+	        unsigned char b, unsigned char a)
+	{
+		m_value[0] = r / 255.f;
+		m_value[1] = g / 255.f;
+		m_value[2] = b / 255.f;
+		m_value[3] = a / 255.f;
+	}
+
 }

@@ -25,12 +25,14 @@
 #define _BLENDINT_COLOR_HPP_
 
 #include <stdint.h>
+#include <glm/glm.hpp>
 
 #include <BlendInt/Utilities-inl.hpp>
 
 namespace BlendInt {
 
 	class Color;
+	class ColorExt;
 
 	/**
 	 * @brief add r,g,b with a given value
@@ -42,6 +44,8 @@ namespace BlendInt {
 	 */
 	extern Color operator + (const Color& orig, short shade);
 
+	extern ColorExt operator + (const ColorExt& orig, short shade);
+
 	/**
 	 * @brief make a shader color between 2 given colors
 	 * @param[in] color1
@@ -50,6 +54,8 @@ namespace BlendInt {
 	 * @return
 	 */
 	extern Color make_shaded_color (const Color& color1, const Color& color2, float factor);
+
+	extern ColorExt MakeShadedColor (const ColorExt& color1, const ColorExt& color2, float fact);
 
 	class Color
 	{
@@ -208,6 +214,120 @@ namespace BlendInt {
 		 * [3]: alpha
 		 */
 		unsigned char m_color_v[4];
+	};
+
+#include <stdio.h>
+
+	class ColorExt
+	{
+	public:
+
+		ColorExt ();
+
+		explicit ColorExt (uint32_t color);
+
+		ColorExt (unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+
+		ColorExt(float r, float g, float b, float a);
+
+		ColorExt (const ColorExt& orig);
+
+		ColorExt& operator = (const ColorExt& orig);
+
+		ColorExt& operator = (uint32_t color);
+
+		~ColorExt ();
+
+		void Highlight (const ColorExt& orig, short value = 15);
+
+		void Highlight (uint32_t color, short value = 15);
+
+		void SetValue (float r, float g, float b, float a);
+
+		void SetValue (unsigned char color[4]);
+
+		void SetValue (float color[4]);
+
+		void SetValue (uint32_t color);
+
+		void SetValue (unsigned char r,
+				unsigned char g,
+				unsigned char b,
+				unsigned char a = 0xFF);
+
+		uint32_t rgba () const
+		{
+			return ((int)(m_value[0] * 255) << 24) |
+					((int)(m_value[1] * 255) << 16) |
+					((int)(m_value[2] * 255) << 8) |
+					(int)(m_value[3] * 255);
+		}
+
+		float red () const
+		{
+			return m_value[0];
+		}
+
+		float r () const
+		{
+			return m_value[0];
+		}
+
+		void set_red (float red)
+		{
+			m_value[0] = glm::clamp(red, 0.f, 1.f);
+		}
+
+		float green () const
+		{
+			return m_value[1];
+		}
+
+		float g () const
+		{
+			return m_value[1];
+		}
+
+		void set_green (float green)
+		{
+			m_value[1] = glm::clamp(green, 0.f, 1.f);
+		}
+
+		float blue () const
+		{
+			return m_value[2];
+		}
+
+		float b () const
+		{
+			return m_value[2];
+		}
+
+		void set_blue (float blue)
+		{
+			m_value[2] = glm::clamp(blue, 0.f, 1.f);
+		}
+
+		float alpha () const
+		{
+			return m_value[3];
+		}
+
+		float a () const
+		{
+			return m_value[3];
+		}
+
+		void set_alpha (float alpha)
+		{
+			m_value[3] = glm::clamp(alpha, 0.f, 1.f);
+		}
+
+		const float* data () const {return m_value;}
+
+	private:
+
+		float m_value[4];
 	};
 
 	/*
