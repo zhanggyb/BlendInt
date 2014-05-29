@@ -264,39 +264,30 @@ namespace BlendInt {
 		if (m_minimum == minimum)
 			return;
 
-		bool broadcast = false;
-
 		WidgetUpdateRequest request(this, SliderPropertyMinimum, &minimum);
 		UpdateSlider(request);
 		m_minimum = minimum;
-		broadcast = true;
 	}
 
 	void AbstractSlider::SetMaximum (int maximum)
 	{
 		if (m_maximum == maximum)
 			return;
-		bool broadcast = false;
 
 		WidgetUpdateRequest request(this, SliderPropertyMaximum, &maximum);
 
 		UpdateSlider(request);
 		m_maximum = maximum;
-		broadcast = true;
-
 	}
 
 	void AbstractSlider::SetOrientation (Orientation orientation)
 	{
 		if(m_orientation == orientation) return;
-		bool broadcast = false;
 
 		WidgetUpdateRequest request(this, SliderPropertyOrientation, &orientation);
 
 		UpdateSlider(request);
 		m_orientation = orientation;
-		broadcast = true;
-
 	}
 
 }

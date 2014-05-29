@@ -143,11 +143,7 @@ namespace BlendInt {
 		program->SetUniform1i("Gamma", 0);
 
 		Color color(0x999999FF);
-		program->SetVertexAttrib4f("Color",
-						color.r()/255.f,
-						color.g()/255.f,
-						color.b()/255.f,
-						1.0);
+		program->SetVertexAttrib4fv("Color", color.data());
 
 		glEnableVertexAttribArray(0);
 
@@ -167,11 +163,7 @@ namespace BlendInt {
 
 		color = 0x666666FF;
 
-		program->SetVertexAttrib4f("Color",
-						color.r()/255.f,
-						color.g()/255.f,
-						color.b()/255.f,
-						1.0);
+		program->SetVertexAttrib4fv("Color", color.data());
 
 		m_dark_ibo->Bind();	// bind ELEMENT ARRAY BUFFER
 

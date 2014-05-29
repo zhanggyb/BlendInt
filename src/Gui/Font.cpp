@@ -181,10 +181,10 @@ namespace BlendInt {
 
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
 			program->SetUniform4f("color",
-					m_color.r() / 255.f / 4,
-					m_color.g() / 255.f / 4,
-					m_color.b() / 255.f / 4,
-					m_color.a() / 255.f / 4);
+					m_color.r() / 4,
+					m_color.g() / 4,
+					m_color.b() / 4,
+					m_color.a() / 4);
 
 			it = string.begin();
 			std::advance(it, start);
@@ -210,9 +210,7 @@ namespace BlendInt {
 		}
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
-		program->SetUniform4f("color", m_color.r() / 255.f,
-				m_color.g() / 255.f, m_color.b() / 255.f,
-				m_color.a() / 255.f);
+		program->SetUniform4fv("color", 1, m_color.data());
 
 		it = string.begin();
 		std::advance(it, start);

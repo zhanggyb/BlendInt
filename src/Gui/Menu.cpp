@@ -215,22 +215,13 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4f("Color",
-				Theme::instance->menu().inner.r()/255.f,
-				Theme::instance->menu().inner.g()/255.f,
-				Theme::instance->menu().inner.b()/255.f,
-				Theme::instance->menu().inner.a()/255.f);
+		program->SetVertexAttrib4fv("Color", Theme::instance->menu().inner.data());
 
 		glEnableVertexAttribArray(0);
 
 		DrawTriangleFan(0, m_inner_buffer.get());
 
-		program->SetVertexAttrib4f("Color",
-				Theme::instance->menu().outline.r()/255.f,
-				Theme::instance->menu().outline.g()/255.f,
-				Theme::instance->menu().outline.b()/255.f,
-				Theme::instance->menu().outline.a() / 255.f
-				);
+		program->SetVertexAttrib4fv("Color", Theme::instance->menu().outline.data());
 		program->SetUniform1i("AA", 1);
 
 		DrawTriangleStrip(0, m_outer_buffer.get());

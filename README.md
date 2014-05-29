@@ -28,12 +28,12 @@ technologies:
 - It's OOP designed and written by C++, every widget is now a C++
   object, you can use the pre-defined Button, Slider, Menu, etc or
   subclass one of them and customize it easily.
-- It use [CppEvent](http://code.google.com/p/cpp-events/) to provide a
-  fast Event/Delegate (signal/slot) mechanism.
-- It just need a OpenGL Context, so theoretically you can integrate it
-  in any other OpenGL Window or GUI toolkit, for example, Glut, GLFW,
-  Qt, Gtk, Cocoa. Currently BlendInt use GLFW to display and manage a
-  OpenGL context.
+- It uses [CppEvent](http://code.google.com/p/cpp-events/) to provide
+  a fast Event/Delegate (signal/slot) mechanism.
+- It just needs an OpenGL Context, so theoretically you can integrate
+  it in any other OpenGL Window or GUI toolkit, for example, Glut,
+  GLFW, Qt, Gtk, Cocoa. Currently BlendInt uses GLFW3 to display and
+  manage OpenGL context for some demos and unit tests.
 
 Here're some example widgets:
 
@@ -44,8 +44,9 @@ Here're some example widgets:
 
 ## Usage
 
-Use **BlendInt** is as simple as any C++ object-oriented GUI toolkit
-like Qt, gtkmm.
+Useing **BlendInt** is as simple as any C++ object-oriented GUI
+toolkit like Qt, gtkmm. Of course, you must create an OpenGL window
+first.
 
 For example, create a button with BlendInt:
 
@@ -77,7 +78,7 @@ int main (int argc, char* argv[])
     // Add widgets to the context
     context->Add(btn);
 
-    // In the event-Render loop
+    // In the event-render loop
     BI::Interface::instance->Draw();
 
     // Ready to close application
@@ -91,7 +92,8 @@ BlendInt make use of the modern OpenGL technology, to run your
 application linked with BlendInt, you must have a graphics card which
 supports OpenGL 3.3 or newer.
 
-To build BlendInt, make sure the following libraries are installed:
+To build BlendInt, make sure the following development tools and
+libraries are installed:
 
 * cmake 2.8.11 or newer
 * OpenGL header and libraries, in Linux, Mesa 9.2 or newer
@@ -104,7 +106,7 @@ The source code is verified to be built and workable on:
 
 * Mac OS X 10.9 (Mavericks)
 * ArchLinux
-* Ubuntu 13.10
+* Ubuntu 13.10, 14.04(LTS)
 * Fedora 20
 
 ## Installation
@@ -136,10 +138,17 @@ $ ./bin/test<class name>
 
 ## License
 
-Most BlendInt (Blender Interface Library in OpenGL) source code is
-released under the LGPL v3 License. See the bundled LICENSE file for
-details.
-
-BlendInt use [CppEvents](http://code.google.com/p/cpp-events/) for
-sending/receiving events between objects, it's released under MIT
-License, developed by Nickolas V. Pohilets (pohil...@gmail.com).
+* Most BlendInt (Blender Interface Library in OpenGL) source code is
+  released under the LGPL v3 License. See the bundled LICENSE file for
+  details.
+* BlendInt use [CppEvents](http://code.google.com/p/cpp-events/) for
+  sending/receiving events between objects, it's released under MIT
+  License, developed by Nickolas V. Pohilets (pohil...@gmail.com).
+* GLFW3 - used in some demos and unit tests, released under
+  zlib/libpng license.
+* glm - a header only C++ mathematics library for graphics software
+  based on the OpenGL Shading Language (GLSL) specification and
+  released under the MIT license.
+* rapidxml - The author of RapidXml is Marcin Kalicinski, use of this
+  software is granted under one of the following two licenses: boost
+  software license or MIT license.
