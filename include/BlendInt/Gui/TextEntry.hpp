@@ -109,16 +109,6 @@ namespace BlendInt {
 
 		size_t m_cursor_position;
 
-		/**
-		 * @brief The position to print text
-		 */
-		Point m_origin;
-
-		/**
-		 * @brief Box in which hold the text
-		 */
-		Rect m_text_outline;
-
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 		RefPtr<GLArrayBuffer> m_cursor_buffer;

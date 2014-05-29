@@ -66,45 +66,35 @@ namespace BlendInt {
 
 		m_text = text;
 
-		m_text_outline = m_font.GetTextOutline(m_text);
+		Rect text_outline = m_font.GetTextOutline(m_text);
 
 		m_length = m_text.length();
 
-		if(size().height() < m_text_outline.height()) {
-			if(IsExpandY()) {
-				Resize(size().width(), m_text_outline.height());
-			} else {
-				m_length = 0;
-				cal_width = false;
+		if(size().height() < text_outline.height()) {
+			m_length = 0;
+			cal_width = false;
+		}
+
+		if(cal_width) {
+			if(size().width() < text_outline.width()) {
+				m_length = GetValidTextSize();
 			}
 		}
 
-		if(size().width() < m_text_outline.width()) {
-			if(IsExpandX()) {
-				Resize(m_text_outline.width(), size().height());
-			} else {
-				if(cal_width) m_length = GetValidTextSize();
-			}
-		}
-
-		// FIXME: the alignment and origin was set in Resize -> Update, reset here?
-		m_origin.set_x(2);
-
-		m_origin.set_y((size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
-
-		//SetPreferredSize(m_text_outline.width(), m_text_outline.height());
+		m_font.set_pen(2,
+				(size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
 	}
 
 	void TextEntry::SetFont (const Font& font)
 	{
 		m_font = font;
 
-		m_text_outline = m_font.GetTextOutline(m_text);
+		Rect text_outline = m_font.GetTextOutline(m_text);
 
 		//m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
 
-		m_origin.set_x(default_textentry_padding.left());
-		m_origin.set_y((size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
+		m_font.set_pen(default_textentry_padding.left(),
+				(size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
 	}
 
 	void TextEntry::Clear ()
@@ -237,7 +227,7 @@ namespace BlendInt {
 			case WidgetRoundCornerRadius: {
 				const float* radius_p =
 								static_cast<const float*>(request.data());
-				m_origin.set_x(*radius_p + default_textentry_padding.left());
+				m_font.set_pen(*radius_p + default_textentry_padding.left(), m_font.pen().y());
 
 				break;
 			}
@@ -304,7 +294,7 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		m_font.Print(mvp, m_origin.x(), m_origin.y(), m_text, m_length, m_start);
+		m_font.Print(mvp, m_text, m_length, m_start);
 
 		if(focused()) {			// draw a cursor
 			unsigned int cursor_pos = m_font.GetTextWidth(m_text,
@@ -397,13 +387,9 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		m_origin.set_x(default_textentry_padding.left());
-		m_origin.set_y((size().height() - m_font.GetHeight()) / 2
+		m_font.set_pen(default_textentry_padding.left(),
+				(size().height() - m_font.GetHeight()) / 2
 		                + std::abs(m_font.GetDescender()));
-
-		// set_preferred_size(m_text_outline.width(), m_text_outline.height());
-		// set where start display the cursor
-		//m_origin.set_x(m_origin.x() + static_cast<int>(radius_ext()));
 	}
 
 	size_t TextEntry::GetValidTextSize ()

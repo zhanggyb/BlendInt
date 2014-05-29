@@ -407,9 +407,6 @@ namespace BlendInt {
 	        size_t start) const
 	{
 		size_t width = 0;
-
-		assert(start < string.length() && length <= string.length());
-
 		std::string::const_iterator it = string.begin();
 		std::advance(it, start);
 		size_t i = 0;
@@ -441,9 +438,6 @@ namespace BlendInt {
 	        size_t start) const
 	{
 		size_t width = 0;
-
-		assert(start < string.length() && length <= string.length());
-
 		String::const_iterator it = string.begin();
 		std::advance(it, start);
 		size_t i = 0;
@@ -475,9 +469,6 @@ namespace BlendInt {
 	        size_t length, size_t start) const
 	{
 		size_t width = 0;
-
-		assert(start < string.length() && length <= string.length());
-
 		std::string::const_reverse_iterator it = string.rbegin();
 		std::advance(it, start);
 		size_t i = 0;
@@ -509,9 +500,6 @@ namespace BlendInt {
 	        size_t length, size_t start) const
 	{
 		size_t width = 0;
-
-		assert(start < string.length() && length <= string.length());
-
 		String::const_reverse_iterator it = string.rbegin();
 		std::advance(it, start);
 		size_t i = 0;

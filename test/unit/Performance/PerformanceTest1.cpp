@@ -51,6 +51,7 @@ TEST_F(PerformanceTest1, Layout1)
         }
     
         layout[i]->SetPosition(x_pos, y_pos);
+		layout[i]->Resize(layout[i]->GetPreferredSize());
 
         y_pos += 40;
 

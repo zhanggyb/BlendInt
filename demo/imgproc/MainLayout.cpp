@@ -33,27 +33,23 @@ void MainLayout::InitOnce ()
 	m_combo = Manage(new BI::ComboBox);
 	m_open = Manage(new BI::ToolButton);
 
-#ifdef DEBUG
-	m_menubar->set_name("MenuBar");
-	m_toolbar->set_name("ToolBar");
-	m_imgview->set_name("CVImageView");
-	m_area->set_name("ScrollArea");
-	m_input->set_name("TextEntry");
-	m_combo->set_name("ComboBox");
-	m_open->set_name("ToolButton");
-#endif
+	DBG_SET_NAME(m_menubar, "MenuBar");
+	DBG_SET_NAME(m_toolbar, "ToolBar");
+	DBG_SET_NAME(m_imgview, "CVImageView");
+	DBG_SET_NAME(m_area, "ScrollArea");
+	DBG_SET_NAME(m_input, "TextEntry");
+	DBG_SET_NAME(m_combo, "ComboBox");
+	DBG_SET_NAME(m_open, "ToolButton");
 
     RefPtr<Menu> file_menu(new Menu);
     DBG_SET_NAME(file_menu, "Menu");
 
-    /*
-    file_menu->SetRoundType(RoundBottomLeft | RoundBottomRight);
+    file_menu->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
     file_menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
     file_menu->AddActionItem("MenuItem2", "Ctrl + 1");
     file_menu->AddActionItem("MenuItem3", "Ctrl + 1");
     file_menu->AddActionItem("MenuItem4", "Ctrl + 1");
     file_menu->AddActionItem("MenuItem5");
-    */
 
 	m_menubar->AddMenu(String("File"), file_menu);
 	//m_menubar->AddMenuButton("Edit");
