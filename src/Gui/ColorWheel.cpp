@@ -128,13 +128,9 @@ namespace BlendInt {
 
 		glDisableVertexAttribArray(1);
 
-		glm::vec4 color;
-		color.r = tm->regular().outline.r() / 255.f;
-		color.g = tm->regular().outline.g() / 255.f;
-		color.b = tm->regular().outline.b() / 255.f;
-		color.a = tm->regular().outline.a() / 255.f;
+		Color color = tm->regular().outline;
 
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
 
 		m_outline->Bind();

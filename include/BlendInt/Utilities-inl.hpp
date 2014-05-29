@@ -35,7 +35,7 @@ namespace BlendInt {
 	 * otherwize return value
 	 */
 	template <typename T>
-	inline T correct_in_scope (T value, T min, T max)
+	inline T clamp (T value, T min, T max)
 	{
 		return ((value) < (min) ?
 				(min) : ((value) > (max) ?

@@ -123,47 +123,32 @@ namespace BlendInt {
 
 		Theme* tm = Theme::instance;
 
-		glm::vec4 color;
+		Color color;
 
 		if (hover()) {
 			if(checked()) {
-				color.r = tm->regular().inner_sel.highlight_red() / 255.f;
-				color.g = tm->regular().inner_sel.highlight_green() / 255.f;
-				color.b = tm->regular().inner_sel.highlight_blue() / 255.f;
-				color.a = tm->regular().inner_sel.a() / 255.f;
+				color = tm->regular().inner_sel + 15;
 			} else {
-				color.r = tm->regular().inner.highlight_red() / 255.f;
-				color.g = tm->regular().inner.highlight_green() / 255.f;
-				color.b = tm->regular().inner.highlight_blue() / 255.f;
-				color.a = tm->regular().inner.a() / 255.f;
+				color = tm->regular().inner + 15;
 			}
 		} else {
 			if (checked()) {
-				color.r = tm->regular().inner_sel.r() / 255.f;
-				color.g = tm->regular().inner_sel.g() / 255.f;
-				color.b = tm->regular().inner_sel.b() / 255.f;
-				color.a = tm->regular().inner_sel.a() / 255.f;
+				color = tm->regular().inner_sel;
 			} else {
-				color.r = tm->regular().inner.r() / 255.f;
-				color.g = tm->regular().inner.g() / 255.f;
-				color.b = tm->regular().inner.b() / 255.f;
-				color.a = tm->regular().inner.a() / 255.f;
+				color = tm->regular().inner;
 			}
 		}
 
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);
 
 		DrawTriangleFan(0, m_inner_buffer.get());
 
-		color.r = tm->regular().outline.r() / 255.f;
-		color.g = tm->regular().outline.g() / 255.f;
-		color.b = tm->regular().outline.b() / 255.f;
-		color.a = tm->regular().outline.a() / 255.f;
+		color = tm->regular().outline;
 
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
 
 		DrawTriangleStrip(0, m_outer_buffer.get());

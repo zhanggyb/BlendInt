@@ -127,7 +127,7 @@ namespace BlendInt {
 
 	void ClockWidget::Init ()
 	{
-		m_background.set_color(45, 45, 45, 235);
+		//m_background.SetValue(45, 45, 45, 235);
 		set_size(200, 200);
 		//set_preferred_size(200, 200);
 

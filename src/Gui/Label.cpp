@@ -107,11 +107,7 @@ namespace BlendInt {
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib4f("Color",
-						m_background_color.r() / 255.f,
-						m_background_color.g() / 255.f,
-						m_background_color.b() / 255.f,
-						m_background_color.a() / 255.f);
+		program->SetVertexAttrib4fv("Color", m_background_color.data());
 		program->SetUniform1i("AA", 0);
 
 		m_rect->Bind();

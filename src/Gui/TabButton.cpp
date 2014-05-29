@@ -117,25 +117,19 @@ namespace BlendInt {
 
 		Theme* tm = Theme::instance;
 
-		glm::vec4 color;
+		Color color;
 
 		glEnableVertexAttribArray(0);
 
 		// draw inner, simple fill
 		if (checked()) {
-			color.r = tm->tab().inner_sel.r() / 255.f;
-			color.g = tm->tab().inner_sel.g() / 255.f;
-			color.b = tm->tab().inner_sel.b() / 255.f;
-			color.a = tm->tab().inner_sel.a() / 255.f;
-			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+			color = tm->tab().inner_sel;
+			program->SetVertexAttrib4fv("Color", color.data());
 			program->SetUniform1i("AA", 0);
 			DrawTriangleStrip(0, m_inner_buffer.get());
 		} else {
-			color.r = tm->tab().item.r() / 255.f;
-			color.g = tm->tab().item.g() / 255.f;
-			color.b = tm->tab().item.b() / 255.f;
-			color.a = tm->tab().item.a() / 255.f;
-			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+			color = tm->tab().item;
+			program->SetVertexAttrib4fv("Color", color.data());
 			program->SetUniform1i("AA", 1);
 
 			m_inner_buffer->Bind();
@@ -157,14 +151,11 @@ namespace BlendInt {
 		}
 
 		if (checked()) {
-			color.r = Theme::instance->tab().outline.r() / 255.f;
-			color.g = Theme::instance->tab().outline.g() / 255.f;
-			color.b = Theme::instance->tab().outline.b() / 255.f;
-			color.a = Theme::instance->tab().outline.a() / 255.f;
+			color = Theme::instance->tab().outline;
 
 			program->SetUniform1i("AA", 1);
 
-			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+			program->SetVertexAttrib4fv("Color", color.data());
 
 			DrawTriangleStrip(0, m_outer_buffer.get());
 		}

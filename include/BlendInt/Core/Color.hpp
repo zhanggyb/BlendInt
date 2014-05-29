@@ -32,230 +32,125 @@
 namespace BlendInt {
 
 	class Color;
-	class ColorExt;
 
-	/**
-	 * @brief add r,g,b with a given value
-	 * @param orig
-	 * @param shade
-	 * @return a new Color
-	 *
-	 * This function mostly used to calculate a shaded color in Widget drawing
-	 */
 	extern Color operator + (const Color& orig, short shade);
 
-	extern ColorExt operator + (const ColorExt& orig, short shade);
+	extern Color operator + (const Color& color1, const Color& color2);
 
-	extern ColorExt operator + (const ColorExt& color1, const ColorExt& color2);
-
-	/**
-	 * @brief make a shader color between 2 given colors
-	 * @param[in] color1
-	 * @param[in] color2
-	 * @param[in] factor must be within 0.0 ~ 1.0
-	 * @return
-	 */
-	extern Color make_shaded_color (const Color& color1, const Color& color2, float factor);
-
-	extern ColorExt MakeShadedColor (const ColorExt& color1, const ColorExt& color2, float fact);
+	extern Color MakeShadedColor (const Color& color1, const Color& color2, float fact);
 
 	class Color
 	{
 	public:
 
-		Color ();
+		Color ()
+		{
+			m_value[0] = 1.f;
+			m_value[1] = 1.f;
+			m_value[2] = 1.f;
+			m_value[3] = 1.f;
+		}
 
 		explicit Color (uint32_t color)
 		{
-			set_color (color);
+			set_value(color);
 		}
 
-		Color (unsigned char r, unsigned char g, unsigned char b,
-			   unsigned char a)
+		Color (unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 		{
-			set_color (r, g, b, a);
+			set_value(r, g, b, a);
 		}
 
-		Color (const Color& orig);
+		Color(float r, float g, float b, float a)
+		{
+			set_value(r, g, b, a);
+		}
 
-		Color& operator = (const Color& orig);
+		Color (const Color& orig)
+		{
+			m_value[0] = orig.m_value[0];
+			m_value[1] = orig.m_value[1];
+			m_value[2] = orig.m_value[2];
+			m_value[3] = orig.m_value[3];
+		}
+
+		Color& operator = (const Color& orig)
+		{
+			m_value[0] = orig.m_value[0];
+			m_value[1] = orig.m_value[1];
+			m_value[2] = orig.m_value[2];
+			m_value[3] = orig.m_value[3];
+			return *this;
+		}
 
 		Color& operator = (uint32_t color)
 		{
-			set_color (color);
+			set_value(color);
 			return *this;
 		}
 
 		~Color ()
 		{}
 
-		void highlight (const Color& orig, unsigned char value = 15);
-
-		void highlight (uint32_t color, unsigned char value = 15);
-
-		unsigned char highlight_red () const
+		void set_value (float r, float g, float b, float a)
 		{
-			return m_color_v[0] >= 240 ? 255 : (m_color_v[0] + 15);
+			m_value[0] = glm::clamp(r, 0.f, 1.f);
+			m_value[1] = glm::clamp(g, 0.f, 1.f);
+			m_value[2] = glm::clamp(b, 0.f, 1.f);
+			m_value[3] = glm::clamp(a, 0.f, 1.f);
 		}
 
-		unsigned char highlight_green () const
+		void set_value (unsigned char color[4])
 		{
-			return m_color_v[1] >= 240 ? 255 : (m_color_v[1] + 15);
+			m_value[0] = color[0] / 255.f;
+			m_value[1] = color[1] / 255.f;
+			m_value[2] = color[2] / 255.f;
+			m_value[3] = color[3] / 255.f;
 		}
 
-		unsigned char highlight_blue () const
+		void set_value (float color[4])
 		{
-			return m_color_v[2] >= 240 ? 255 : (m_color_v[2] + 15);
+			m_value[0] = glm::clamp(color[0], 0.f, 1.f);
+			m_value[1] = glm::clamp(color[1], 0.f, 1.f);
+			m_value[2] = glm::clamp(color[2], 0.f, 1.f);
+			m_value[3] = glm::clamp(color[3], 0.f, 1.f);
 		}
 
-		void set_color (unsigned char color[4]);
-
-		void set_color (uint32_t color);
-
-		void set_color (unsigned char r,
-						unsigned char g,
-						unsigned char b,
-						unsigned char a = 0xFF);
-
-		unsigned char operator [] (int index) const
+		void set_value (uint32_t color)
 		{
-			return m_color_v[index];
+			if (color > 0xFFFFFF) {
+				m_value[3] = (color & 0xFF) / 255.f;
+				m_value[2] = ((color >> 8) & 0xFF) / 255.f;
+				m_value[1] = ((color >> 16) & 0xFF) / 255.f;
+				m_value[0] = ((color >> 24) & 0xFF) / 255.f;
+			} else if (color > 0xFFFF) {
+				m_value[3] = (color & 0xFF) / 255.f;
+				m_value[2] = ((color >> 8) & 0xFF) / 255.f;
+				m_value[1] = ((color >> 16) & 0xFF) / 255.f;
+				m_value[0] = 0.f;	// 0x00
+			} else if (color > 0xFF) {
+				m_value[3] = (color & 0xFF) / 255.f;
+				m_value[2] = ((color >> 8) & 0xFF) / 255.f;
+				m_value[1] = 0.f;
+				m_value[0] = 0.f;
+			} else {
+				m_value[3] = (color & 0xFF) / 255.f;
+				m_value[2] = 0.f;
+				m_value[1] = 0.f;
+				m_value[0] = 0.f;
+			}
 		}
 
-		uint32_t rgba () const
-		{
-			return (m_color_v[0] << 24) |
-					(m_color_v[1] << 16) |
-					(m_color_v[2] << 8) |
-					m_color_v[3];
-		}
-
-		unsigned char red () const
-		{
-			return m_color_v[0];
-		}
-
-		unsigned char r () const
-		{
-			return m_color_v[0];
-		}
-
-		void set_red (unsigned char r)
-		{
-			m_color_v[0] = correct_in_scope(r,
-									static_cast<unsigned char>(0),
-									static_cast<unsigned char>(255));
-		}
-
-		unsigned char green () const
-		{
-			return m_color_v[1];
-		}
-
-		unsigned char g () const
-		{
-			return m_color_v[1];
-		}
-
-		void set_green (unsigned char g)
-		{
-			m_color_v[1] = correct_in_scope(g,
-									  static_cast<unsigned char>(0),
-									  static_cast<unsigned char>(255));
-		}
-
-		unsigned char blue () const
-		{
-			return m_color_v[2];
-		}
-
-		unsigned char b () const
-		{
-			return m_color_v[2];
-		}
-
-		void set_blue (unsigned char b)
-		{
-			m_color_v[2] = correct_in_scope(b,
-									 static_cast<unsigned char>(0),
-									 static_cast<unsigned char>(255));
-		}
-
-		unsigned char alpha () const
-		{
-			return m_color_v[3];
-		}
-
-		unsigned char a () const
-		{
-			return m_color_v[3];
-		}
-
-		void set_alpha (unsigned char a)
-		{
-			m_color_v[3] = correct_in_scope(a,
-									  static_cast<unsigned char>(0),
-									  static_cast<unsigned char>(255));
-		}
-
-		void add (short shade)
-		{
-			set_red(m_color_v[0] + shade);
-			set_green(m_color_v[1] + shade);
-			set_blue(m_color_v[2] + shade);
-		}
-
-		const unsigned char* data () const {return m_color_v;}
-
-	private:
-
-		/**
-		 * @brief Array to store color data
-		 *
-		 * [0]: red
-		 * [1]: green
-		 * [2]: blue
-		 * [3]: alpha
-		 */
-		unsigned char m_color_v[4];
-	};
-
-	class ColorExt
-	{
-	public:
-
-		ColorExt ();
-
-		explicit ColorExt (uint32_t color);
-
-		ColorExt (unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-
-		ColorExt(float r, float g, float b, float a);
-
-		ColorExt (const ColorExt& orig);
-
-		ColorExt& operator = (const ColorExt& orig);
-
-		ColorExt& operator = (uint32_t color);
-
-		~ColorExt ();
-
-		void Highlight (const ColorExt& orig, short value = 15);
-
-		void Highlight (uint32_t color, short value = 15);
-
-		void SetValue (float r, float g, float b, float a);
-
-		void SetValue (unsigned char color[4]);
-
-		void SetValue (float color[4]);
-
-		void SetValue (uint32_t color);
-
-		void SetValue (unsigned char r,
+		void set_value (unsigned char r,
 				unsigned char g,
 				unsigned char b,
-				unsigned char a = 0xFF);
+				unsigned char a = 0xFF)
+		{
+			m_value[0] = r / 255.f;
+			m_value[1] = g / 255.f;
+			m_value[2] = b / 255.f;
+			m_value[3] = a / 255.f;
+		}
 
 		uint32_t rgba () const
 		{
@@ -263,6 +158,11 @@ namespace BlendInt {
 					((int)(m_value[1] * 255) << 16) |
 					((int)(m_value[2] * 255) << 8) |
 					(int)(m_value[3] * 255);
+		}
+
+		unsigned char uchar_red () const
+		{
+			return (unsigned char)(m_value[0] * 255);
 		}
 
 		float red () const
@@ -280,6 +180,16 @@ namespace BlendInt {
 			m_value[0] = glm::clamp(red, 0.f, 1.f);
 		}
 
+		void set_red (unsigned char red)
+		{
+			m_value[0] = red / 255.f;
+		}
+
+		unsigned char uchar_green () const
+		{
+			return (unsigned char)(m_value[1] * 255);
+		}
+
 		float green () const
 		{
 			return m_value[1];
@@ -293,6 +203,16 @@ namespace BlendInt {
 		void set_green (float green)
 		{
 			m_value[1] = glm::clamp(green, 0.f, 1.f);
+		}
+
+		void set_green (unsigned char green)
+		{
+			m_value[1] = green / 255.f;
+		}
+
+		unsigned char uchar_blue () const
+		{
+			return (unsigned char)(m_value[2] * 255);
 		}
 
 		float blue () const
@@ -310,6 +230,16 @@ namespace BlendInt {
 			m_value[2] = glm::clamp(blue, 0.f, 1.f);
 		}
 
+		void set_blue (unsigned char blue)
+		{
+			m_value[2] = blue / 255.f;
+		}
+
+		unsigned char uchar_alpha () const
+		{
+			return (unsigned char)(m_value[3] * 255);
+		}
+
 		float alpha () const
 		{
 			return m_value[3];
@@ -323,6 +253,11 @@ namespace BlendInt {
 		void set_alpha (float alpha)
 		{
 			m_value[3] = glm::clamp(alpha, 0.f, 1.f);
+		}
+
+		void set_alpha (unsigned char alpha)
+		{
+			m_value[3] = alpha / 255.f;
 		}
 
 		const float* data () const {return m_value;}

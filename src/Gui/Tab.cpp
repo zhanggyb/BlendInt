@@ -108,27 +108,20 @@ namespace BlendInt {
 
 		Theme* tm = Theme::instance;
 
-		glm::vec4 color;
-		color.r = tm->tab().inner.r() / 255.f;
-		color.g = tm->tab().inner.g() / 255.f;
-		color.b = tm->tab().inner.b() / 255.f;
-		color.a = tm->tab().inner.a() / 255.f;
+		Color color = tm->tab().inner;
 
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetVertexAttrib4fv("Color", color.data());
 
 		glEnableVertexAttribArray(0);
 
 		//DrawTriangleFan(0, m_inner_buffer.get());
 		DrawTriangleStrip(0, m_inner.get());
 
-		color.r = tm->tab().outline.r() / 255.f;
-		color.g = tm->tab().outline.g() / 255.f;
-		color.b = tm->tab().outline.b() / 255.f;
-		color.a = tm->tab().outline.a() / 255.f;
+		color = tm->tab().outline;
 
 		program->SetUniform1i("AA", 1);
 
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetVertexAttrib4fv("Color", color.data());
 
 		DrawTriangleStrip(0, m_outer.get());
 

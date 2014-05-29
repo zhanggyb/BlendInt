@@ -168,14 +168,7 @@ namespace BlendInt {
 		glDisableVertexAttribArray(1);
 
 		GLArrayBuffer::Reset();
-
-		GLfloat outline_color[4] = {
-						Theme::instance->scroll().outline.r() / 255.f,
-						Theme::instance->scroll().outline.g() / 255.f,
-						Theme::instance->scroll().outline.b() / 255.f,
-						Theme::instance->scroll().outline.a() / 255.f };
-
-		program->SetVertexAttrib4fv("Color", outline_color);
+		program->SetVertexAttrib4fv("Color", Theme::instance->scroll().outline.data());
 		program->SetUniform1i("Gamma", 0);
 		program->SetUniform1i("AA", 1);
 

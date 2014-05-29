@@ -190,13 +190,10 @@ namespace BlendInt {
 
 		Theme* tm = Theme::instance;
 
-		glm::vec4 color;
-		color.r = tm->menu().outline.r() / 255.f;
-		color.g = tm->menu().outline.g() / 255.f;
-		color.b = tm->menu().outline.b() / 255.f;
-		color.a = tm->menu().outline.a() / 255.f;
+		Color color;
+		color = tm->menu().outline;
 
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
 		program->SetUniform1i("Gamma", 0);
 

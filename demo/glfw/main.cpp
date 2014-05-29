@@ -65,6 +65,12 @@ int main(int argc, char* argv[])
 
 	context->Add(sl);
 
+	Color color(0.25f, 4.25f, 0.8f, 1.f);
+
+	DBG_PRINT_MSG("0x%X, 0x%X, 0x%X, 0x%X", color.uchar_red(), color.uchar_green(), color.uchar_blue(), color.uchar_alpha());
+	DBG_PRINT_MSG("0x%X", color.rgba());
+	DBG_PRINT_MSG("%f, %f, %f, %f", color.r(), color.g(), color.b(), color.a());
+
 	RunLoop(win);
 
 	Interface::Release();

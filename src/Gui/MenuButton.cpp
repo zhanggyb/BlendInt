@@ -118,12 +118,9 @@ namespace BlendInt {
 
 			Theme* tm = Theme::instance;
 
-			glm::vec4 color(tm->menu_item().inner_sel.r() / 255.f,
-							tm->menu_item().inner_sel.g() / 255.f,
-							tm->menu_item().inner_sel.b() / 255.f,
-							tm->menu_item().inner_sel.a() / 255.f);
+			Color color = tm->menu_item().inner_sel;
 
-			program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+			program->SetVertexAttrib4fv("Color", color.data());
 			program->SetUniform1i("AA", 1);
 
 			glEnableVertexAttribArray(0);

@@ -158,7 +158,6 @@ namespace BlendInt {
 
 	void ScrollBar::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-
 		switch (request.type()) {
 			case WidgetPosition: {
 				// don't care position change
@@ -206,7 +205,6 @@ namespace BlendInt {
 	void ScrollBar::UpdateSlider(const WidgetUpdateRequest& request)
 	{
 		switch(request.type()) {
-
 
 			case SliderPropertyValue: {
 
@@ -275,13 +273,9 @@ namespace BlendInt {
 
 		glDisableVertexAttribArray(1);
 
-		glm::vec4 color;
-		color.r = Theme::instance->scroll().outline.r() / 255.f;
-		color.g = Theme::instance->scroll().outline.g() / 255.f;
-		color.b = Theme::instance->scroll().outline.b() / 255.f;
-		color.a = Theme::instance->scroll().outline.a() / 255.f;
+		Color color = Theme::instance->scroll().outline;
 
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
 
 		DrawTriangleStrip(0, m_slot_outline_buffer.get());

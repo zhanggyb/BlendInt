@@ -292,12 +292,8 @@ namespace BlendInt {
 
 		glDisableVertexAttribArray(1);
 
-		glm::vec4 color;
-		color.r = Theme::instance->text().outline.r() / 255.f;
-		color.g = Theme::instance->text().outline.g() / 255.f;
-		color.b = Theme::instance->text().outline.b() / 255.f;
-		color.a = Theme::instance->text().outline.a() / 255.f;
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		Color color = Theme::instance->text().outline;
+		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
 
 		DrawTriangleStrip(0, m_outer_buffer.get());

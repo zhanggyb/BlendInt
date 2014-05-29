@@ -250,15 +250,11 @@ namespace BlendInt {
 
 		program->Use();
 
-		glm::vec4 color;
-		color.r = Theme::instance->regular().inner.r() / 255.f;
-		color.g = Theme::instance->regular().inner.g() / 255.f;
-		color.b = Theme::instance->regular().inner.b() / 255.f;
-		color.a = Theme::instance->regular().inner.a() / 255.f;
+		Color color = Theme::instance->regular().inner;
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("Gamma", 0);
 
 		glEnableVertexAttribArray(0);

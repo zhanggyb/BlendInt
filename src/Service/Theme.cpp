@@ -179,17 +179,17 @@ namespace BlendInt {
 		attr = doc.allocate_attribute("menu_shadow_width", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "#%02X%02X%02X%02X", m_xaxis.r(), m_xaxis.g(), m_xaxis.b(), m_xaxis.a());
+		snprintf(buf, 16, "#%02X%02X%02X%02X", m_xaxis.uchar_red(), m_xaxis.uchar_green(), m_xaxis.uchar_blue(), m_xaxis.uchar_alpha());
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("axis_x", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "#%02X%02X%02X%02X", m_yaxis.r(), m_yaxis.g(), m_yaxis.b(), m_yaxis.a());
+		snprintf(buf, 16, "#%02X%02X%02X%02X", m_yaxis.uchar_red(), m_yaxis.uchar_green(), m_yaxis.uchar_blue(), m_yaxis.uchar_alpha());
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("axis_y", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "#%02X%02X%02X%02X", m_zaxis.r(), m_zaxis.g(), m_zaxis.b(), m_zaxis.a());
+		snprintf(buf, 16, "#%02X%02X%02X%02X", m_zaxis.uchar_red(), m_zaxis.uchar_green(), m_zaxis.uchar_blue(), m_zaxis.uchar_alpha());
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("axis_z", value);
 		ui_node->append_attribute(attr);
@@ -649,50 +649,50 @@ namespace BlendInt {
 		xml_node<>* colors_node = doc.allocate_node(node_element, "ThemeWidgetColors");
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.outline.r(),
-						wtheme.outline.g(),
-						wtheme.outline.b(),
-						wtheme.outline.a());
+						wtheme.outline.uchar_red(),
+						wtheme.outline.uchar_green(),
+						wtheme.outline.uchar_blue(),
+						wtheme.outline.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("outline", value));
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.inner.r(),
-						wtheme.inner.g(),
-						wtheme.inner.b(),
-						wtheme.inner.a());
+						wtheme.inner.uchar_red(),
+						wtheme.inner.uchar_green(),
+						wtheme.inner.uchar_blue(),
+						wtheme.inner.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("inner", value));
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.inner_sel.r(),
-						wtheme.inner_sel.g(),
-						wtheme.inner_sel.b(),
-						wtheme.inner_sel.a());
+						wtheme.inner_sel.uchar_red(),
+						wtheme.inner_sel.uchar_green(),
+						wtheme.inner_sel.uchar_blue(),
+						wtheme.inner_sel.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("inner_sel", value));
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.item.r(),
-						wtheme.item.g(),
-						wtheme.item.b(),
-						wtheme.item.a());
+						wtheme.item.uchar_red(),
+						wtheme.item.uchar_green(),
+						wtheme.item.uchar_blue(),
+						wtheme.item.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("item", value));
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.text.r(),
-						wtheme.text.g(),
-						wtheme.text.b(),
-						wtheme.text.a());
+						wtheme.text.uchar_red(),
+						wtheme.text.uchar_green(),
+						wtheme.text.uchar_blue(),
+						wtheme.text.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("text", value));
 
 		snprintf(buf, 16, "#%02X%02X%02X%02X",
-						wtheme.text_sel.r(),
-						wtheme.text_sel.g(),
-						wtheme.text_sel.b(),
-						wtheme.text_sel.a());
+						wtheme.text_sel.uchar_red(),
+						wtheme.text_sel.uchar_green(),
+						wtheme.text_sel.uchar_blue(),
+						wtheme.text_sel.uchar_alpha());
 		value = doc.allocate_string(buf);
 		colors_node->append_attribute(doc.allocate_attribute("text_sel", value));
 

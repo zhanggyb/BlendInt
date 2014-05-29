@@ -212,13 +212,8 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		program->SetVertexAttrib4f(
-						"Color",
-						Theme::instance->scroll().outline.r() / 255.f,
-						Theme::instance->scroll().outline.g() / 255.f,
-						Theme::instance->scroll().outline.b() / 255.f,
-						Theme::instance->scroll().outline.a() / 255.f
-						);
+		program->SetVertexAttrib4fv("Color",
+						Theme::instance->scroll().outline.data());
 
 		program->SetUniform1i("AA", 0);
 		program->SetUniform1i("Gamma", 0);
