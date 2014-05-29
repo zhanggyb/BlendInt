@@ -304,14 +304,12 @@ namespace BlendInt {
 
 	bool Expander::Setup (AbstractWidget* widget)
 	{
-		bool ret = false;
-
 		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
 		if(frame->Setup(widget)) {
-			ret = true;
+			return true;
 		}
 
-		return ret;
+		return false;
 	}
 
 	Size Expander::GetPreferredSize() const
@@ -414,25 +412,21 @@ namespace BlendInt {
 		switch (request.type()) {
 
 			case WidgetSize: {
-				if (sub_widget_size()) {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					FillWithPreferredHeight(position(), *size_p, margin(),
-									m_space);
-				}
+				const Size* size_p =
+								static_cast<const Size*>(request.data());
+				FillWithPreferredHeight(position(), *size_p, margin(),
+								m_space);
 				break;
 			}
 
 			case WidgetPosition: {
-				if (sub_widget_size()) {
-					const Point* pos_p =
-									static_cast<const Point*>(request.data());
+				const Point* pos_p =
+								static_cast<const Point*>(request.data());
 
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
+				int x = pos_p->x() - position().x();
+				int y = pos_p->y() - position().y();
 
-					MoveSubWidgets(x, y);
-				}
+				MoveSubWidgets(x, y);
 				break;
 			}
 

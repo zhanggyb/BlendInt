@@ -148,7 +148,7 @@ namespace BlendInt {
 
 	void Frame::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == this) {
+		if(request.source() == this || request.source() == container()) {
 
 			switch (request.type()) {
 
