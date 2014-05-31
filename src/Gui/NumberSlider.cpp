@@ -40,8 +40,10 @@
 
 namespace BlendInt {
 
+	Margin NumberSlider::default_numberslider_padding(2, 2, 2, 2);
+
 	NumberSlider::NumberSlider (Orientation orientation)
-	: AbstractSlider(orientation), m_vao(0)
+	: AbstractSlider<float>(orientation), m_vao(0)
 	{
 		InitOnce ();
 	}
@@ -51,11 +53,46 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
+	void NumberSlider::SetTitle (const String& title)
+	{
+		m_title = title;
+		Rect text_outline = m_font.GetTextOutline(m_title);
+
+		m_font.set_pen(round_corner_radius(),
+				(size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
+	}
+
 	bool NumberSlider::IsExpandX() const
 	{
 		return true;
 	}
-	
+
+	Size NumberSlider::GetPreferredSize () const
+	{
+		Size preferred_size;
+
+		int radius_plus = 0;
+
+		if((round_corner_type() & RoundTopLeft) || (round_corner_type() & RoundBottomLeft)) {
+			radius_plus += round_corner_radius();
+		}
+
+		if((round_corner_type() & RoundTopRight) || (round_corner_type() & RoundBottomRight)) {
+			radius_plus += round_corner_radius();
+		}
+
+		int max_font_height = m_font.GetHeight();
+
+		preferred_size.set_height(
+		        max_font_height + default_numberslider_padding.vsum());	// top padding: 2, bottom padding: 2
+
+		preferred_size.set_width(
+		        max_font_height + default_numberslider_padding.hsum()
+		                + radius_plus + 100);
+
+		return preferred_size;
+	}
+
 	void NumberSlider::UpdateSlider(const WidgetUpdateRequest& request)
 	{
 
@@ -98,7 +135,7 @@ namespace BlendInt {
 			}
 
 			default:
-				AbstractSlider::UpdateGeometry(request);
+				AbstractSlider<float>::UpdateGeometry(request);
 		}
 
 	}
@@ -116,28 +153,22 @@ namespace BlendInt {
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		Theme* tm = Theme::instance;
-
-		Color color = tm->number_slider().inner_sel;
-
+		Color color = Theme::instance->number_slider().inner_sel;
 		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 0);
-
 		glEnableVertexAttribArray(0);
-
 		DrawTriangleFan(0, m_inner_buffer.get());
-
-		color = tm->number_slider().outline;
+		color = Theme::instance->number_slider().outline;
 		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
-
 		DrawTriangleStrip(0, m_outer_buffer.get());
-
 		glDisableVertexAttribArray(0);
 		program->Reset();
-
 		glBindVertexArray(0);
+
+		if(m_title.size()) {
+			m_font.Print(mvp, m_title);
+		}
 
 		return Accept;
 	}

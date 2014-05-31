@@ -77,6 +77,16 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
+	bool ColorWheel::IsExpandX () const
+	{
+		return true;
+	}
+
+	bool ColorWheel::IsExpandY () const
+	{
+		return true;
+	}
+
 	Size ColorWheel::GetPreferredSize () const
 	{
 		// TODO: check theme.pixel

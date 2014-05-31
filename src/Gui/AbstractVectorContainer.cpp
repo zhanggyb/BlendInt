@@ -113,24 +113,35 @@ namespace BlendInt {
 
 	void AbstractVectorContainer::MoveSubWidgets (int offset_x, int offset_y)
 	{
+		AbstractWidget* widget = 0;
 		for (WidgetVector::iterator it = m_sub_widgets->begin();
-						it != m_sub_widgets->end(); it++) {
-			SetSubWidgetPosition(*it, (*it)->position().x() + offset_x,
-							(*it)->position().y() + offset_y);
+						it != m_sub_widgets->end(); it++)
+		{
+			widget = *it;
+
+			if(widget) {
+				SetSubWidgetPosition(widget, widget->position().x() + offset_x,
+						widget->position().y() + offset_y);
+			}
 		}
 	}
 
 	void AbstractVectorContainer::ClearSubWidgets ()
 	{
+		AbstractWidget* widget = 0;
 		for (WidgetVector::iterator it = m_sub_widgets->begin();
 						it != m_sub_widgets->end(); it++)
 		{
-			(*it)->destroyed().disconnectOne(this,
-							&AbstractVectorContainer::OnSubWidgetDestroyed);
-			SetContainer(*it, 0);
+			widget = *it;
 
-			if ((*it)->managed() && ((*it)->count() == 0)) {
-				delete *it;
+			if(widget) {
+				widget->destroyed().disconnectOne(this,
+								&AbstractVectorContainer::OnSubWidgetDestroyed);
+				SetContainer(widget, 0);
+
+				if (widget->managed() && (widget->count() == 0)) {
+					delete widget;
+				}
 			}
 		}
 

@@ -32,7 +32,7 @@ namespace BlendInt {
 	/**
 	 * @brief Slider widget
 	 */
-	class Slider: public AbstractSlider
+	class Slider: public AbstractSlider<int>
 	{
 	public:
 
@@ -43,6 +43,8 @@ namespace BlendInt {
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
 

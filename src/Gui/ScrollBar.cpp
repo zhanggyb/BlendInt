@@ -41,7 +41,7 @@
 namespace BlendInt {
 
 	ScrollBar::ScrollBar (Orientation orientation)
-	: AbstractSlider(orientation),
+	: AbstractSlider<int>(orientation),
 	  m_vao(0),
 	  m_last_value(0),
 	  m_pressed(false)
@@ -150,7 +150,7 @@ namespace BlendInt {
 			}
 
 			default:
-				return AbstractSlider::UpdateGeometryTest(request);
+				return AbstractSlider<int>::UpdateGeometryTest(request);
 		}
 
 

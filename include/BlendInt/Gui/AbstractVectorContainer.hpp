@@ -77,8 +77,7 @@ namespace BlendInt {
 		{
 			do {
 				m_it++;
-				if(m_it != m_vector_ptr->end() && (*m_it)) break;
-			} while (m_it != m_vector_ptr->end());
+			} while (m_it != m_vector_ptr->end() && ((*m_it) == 0));
 		}
 
 		virtual bool IsEnd ()

@@ -35,7 +35,6 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Menu.hpp>
-#include <BlendInt/Gui/FontCache.hpp>
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 

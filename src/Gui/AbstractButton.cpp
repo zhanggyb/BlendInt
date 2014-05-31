@@ -64,22 +64,20 @@ namespace BlendInt {
 			radius_plus += round_corner_radius();
 		}
 
-		int max_font_height = font().GetHeight();
+		int max_font_height = m_font.GetHeight();
 
-		preferred_size.set_height(max_font_height + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());	// top padding: 2, bottom padding: 2
+		preferred_size.set_height(
+		        max_font_height + DefaultButtonPadding().vsum());// top padding: 2, bottom padding: 2
 
 		if (text().empty()) {
 			preferred_size.set_width(
-							max_font_height + DefaultButtonPadding().left()
-											+ DefaultButtonPadding().right()
-											+ radius_plus);
+			        max_font_height + DefaultButtonPadding().hsum()
+			                + radius_plus);
 		} else {
 			size_t width = font().GetTextWidth(text());
 			preferred_size.set_width(
-							static_cast<unsigned int>(width)
-											+ DefaultButtonPadding().left()
-											+ DefaultButtonPadding().right()
-											+ radius_plus);	// left padding: 2, right padding: 2
+			        static_cast<unsigned int>(width)
+			                + DefaultButtonPadding().hsum() + radius_plus);	// left padding: 2, right padding: 2
 		}
 
 		return preferred_size;
@@ -119,8 +117,8 @@ namespace BlendInt {
 			radius_plus += radius;
 		}
 
-		int width = size.width() - DefaultButtonPadding().left() - DefaultButtonPadding().right() - radius_plus;
-		int height = size.height() - DefaultButtonPadding().top() - DefaultButtonPadding().bottom();
+		int width = size.width() - DefaultButtonPadding().hsum() - radius_plus;
+		int height = size.height() - DefaultButtonPadding().vsum();
 
 		if(width <= 0 || height <= 0) {
 			return 0;

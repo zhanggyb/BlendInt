@@ -43,7 +43,7 @@
 namespace BlendInt {
 
 	Slider::Slider (Orientation orientation) :
-			AbstractSlider(orientation), m_vao(0), m_last_value(0), m_pressed(false)
+			AbstractSlider<int>(orientation), m_vao(0), m_last_value(0), m_pressed(false)
 	{
 		m_slide.Resize(14, 14);
 
@@ -79,6 +79,21 @@ namespace BlendInt {
 		}
 	}
 
+	Size Slider::GetPreferredSize() const
+	{
+		Size prefer;
+
+		if(orientation() == Horizontal) {
+			prefer.set_width(200);
+			prefer.set_height(18);
+		} else {
+			prefer.set_width(18);
+			prefer.set_height(200);
+		}
+
+		return prefer;
+	}
+
 	bool Slider::UpdateGeometryTest (const WidgetUpdateRequest& request)
 	{
 
@@ -105,7 +120,7 @@ namespace BlendInt {
 			}
 
 			default: {
-				return AbstractSlider::UpdateGeometryTest(request);
+				return AbstractSlider<int>::UpdateGeometryTest(request);
 			}
 
 		}

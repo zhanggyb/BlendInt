@@ -36,6 +36,7 @@
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/SpaceArea.hpp>
+#include <BlendInt/Gui/ColorSelector.hpp>
 
 #include <BlendInt/Service/StockItems.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -60,13 +61,18 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	TextEntry* text = Manage(new TextEntry);
-	text->SetPosition(200, 200);
+	ColorSelector* selector = Manage(new ColorSelector);
+	selector->SetPosition(100, 100);
+	selector->Resize(selector->GetPreferredSize());
 
-	context->Add(text);
+	NumberSlider* ns = Manage(new NumberSlider);
+	ns->SetPosition(200, 40);
+	ns->Resize (200, 20);
+	ns->SetTitle(L"Hello");
 
-	//text->SetText(String("Hello World!"));
+	context->Add(selector);
 
+	context->Add(ns);
 	RunLoop(win);
 
 	Interface::Release();

@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	ScrollArea::ScrollArea ()
-	: AbstractDequeContainer(), m_view(0), m_hbar(0), m_vbar(0)
+	: AbstractVectorContainer(4), m_view(0), m_hbar(0), m_vbar(0)
 	{
 		InitOnce();
 	}
@@ -165,12 +165,12 @@ namespace BlendInt {
 		m_hbar = Manage(new ScrollBar(Horizontal));
 		m_vbar = Manage(new ScrollBar(Vertical));
 
-		PushBackSubWidget(m_view);
-		PushBackSubWidget(m_hbar);
-		PushBackSubWidget(m_vbar);
+		SetSubWidget(0, m_view);
+		SetSubWidget(1, m_hbar);
+		SetSubWidget(2, m_vbar);
 
-		m_hbar->SetVisible(false);
-		m_vbar->SetVisible(false);
+		//m_hbar->SetVisible(false);
+		//m_vbar->SetVisible(false);
 
 		int x = position().x() + margin().left();
 		int y = position().y() + margin().bottom();

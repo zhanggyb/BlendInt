@@ -36,7 +36,7 @@ namespace BlendInt {
 	 *
 	 * Usually used in ScrollArea
 	 */
-	class ScrollBar: public AbstractSlider
+	class ScrollBar: public AbstractSlider<int>
 	{
 		public:
 

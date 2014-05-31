@@ -90,46 +90,42 @@ namespace BlendInt {
 		bool m_highlight;
 	};
 
-	/**
-	 * @brief The abstract class for slider widgets
-	 *
-	 * The abstract class for Slider, ScrollBar etc.
-	 */
+	template<typename T>
 	class AbstractSlider: public Widget
 	{
 	public:
 
-		AbstractSlider(Orientation orientation = Horizontal);
+		AbstractSlider (Orientation orientation = Horizontal);
 
 		virtual ~AbstractSlider ();
 
-		void SetValue (int value);
+		void SetValue (T value);
 
-		void SetRange (int value1, int value2);
+		void SetRange (T value1, T value2);
 
-		void SetMinimum (int minimum);
+		void SetMinimum (T minimum);
 
-		void SetMaximum (int maximum);
+		void SetMaximum (T maximum);
 
 		void SetOrientation (Orientation orientation);
 
-		int minimum () const {return m_minimum;}
+		T minimum () const {return m_minimum;}
 
-		int maximum () const {return m_maximum;}
+		T maximum () const {return m_maximum;}
 
-		int value () const {return m_value;}
-		
-		int step () const {return m_step;}
+		T value () const {return m_value;}
+
+		T step () const {return m_step;}
 
 		Orientation orientation () const {return m_orientation;}
 
-		Cpp::EventRef<int> slider_moved () {return m_slider_moved;}
+		Cpp::EventRef<T> slider_moved () {return m_slider_moved;}
 
 		Cpp::EventRef<> slider_pressed () {return m_slider_pressed;}
 
 		Cpp::EventRef<> slider_released () {return m_slider_released;}
 
-		Cpp::EventRef<int> value_changed () {return m_value_changed;}
+		Cpp::EventRef<T> value_changed () {return m_value_changed;}
 
 	protected:
 
@@ -137,37 +133,37 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
-		inline void set_value (int value)
+		void set_value (T value)
 		{
 			m_value = value;
 		}
 
-		inline void set_step (int step)
+		void set_step (T step)
 		{
 			m_step = step;
 		}
 
-		inline void set_orientation (Orientation orientation)
+		void set_orientation (Orientation orientation)
 		{
 			m_orientation = orientation;
 		}
 
-		inline void fire_slider_moved_event (int value)
+		void fire_slider_moved_event (T value)
 		{
 			m_slider_moved.fire(value);
 		}
 
-		inline void fire_slider_pressed ()
+		void fire_slider_pressed ()
 		{
 			m_slider_pressed.fire();
 		}
 
-		inline void fire_slider_released ()
+		void fire_slider_released ()
 		{
 			m_slider_released.fire();
 		}
 
-		inline void fire_value_changed_event (int value)
+		void fire_value_changed_event (T value)
 		{
 			m_value_changed.fire(value);
 		}
@@ -176,21 +172,104 @@ namespace BlendInt {
 
 		Orientation m_orientation;
 
-		int m_value;
+		T m_value;
 
-		int m_minimum;
-		int m_maximum;
-		int m_step;
+		T m_minimum;
+		T m_maximum;
+		T m_step;
 
-		Cpp::Event<int> m_slider_moved;
+		Cpp::Event<T> m_slider_moved;
 
 		Cpp::Event<> m_slider_pressed;
 
 		Cpp::Event<> m_slider_released;
 
-		Cpp::Event<int> m_value_changed;
+		Cpp::Event<T> m_value_changed;
 
 	};
+
+	template <typename T>
+	AbstractSlider<T>::AbstractSlider (Orientation orientation)
+	: Widget(),
+	  m_orientation(orientation),
+	  m_value(T(0)),
+	  m_minimum(T(0)),
+	  m_maximum(T(100)),
+	  m_step(T(5))
+	{
+	}
+
+	template <typename T>
+	AbstractSlider<T>::~AbstractSlider ()
+	{
+	}
+
+	template <typename T>
+	void AbstractSlider<T>::SetValue (T value)
+	{
+		if (value == m_value) {
+			return;
+		}
+
+		if (value < m_minimum || value > m_maximum)
+			return;
+
+		WidgetUpdateRequest request(this, SliderPropertyValue, &value);
+
+		UpdateSlider(request);
+		m_value = value;
+		m_value_changed.fire(m_value);
+	}
+
+	template <typename T>
+	void AbstractSlider<T>::SetRange (T value1, T value2)
+	{
+		int minimum = std::min(value1, value2);
+		int maximum = std::max(value1, value2);
+
+		if (m_minimum != minimum) {
+			m_minimum = minimum;
+			//Update(SliderPropertyMinimum, 0);
+		}
+		if (m_maximum != maximum) {
+			m_maximum = maximum;
+			//Update(SliderPropertyMaximum, 0);
+		}
+	}
+
+	template <typename T>
+	void AbstractSlider<T>::SetMinimum (T minimum)
+	{
+		if (m_minimum == minimum)
+			return;
+
+		WidgetUpdateRequest request(this, SliderPropertyMinimum, &minimum);
+		UpdateSlider(request);
+		m_minimum = minimum;
+	}
+
+	template <typename T>
+	void AbstractSlider<T>::SetMaximum (T maximum)
+	{
+		if (m_maximum == maximum)
+			return;
+
+		WidgetUpdateRequest request(this, SliderPropertyMaximum, &maximum);
+
+		UpdateSlider(request);
+		m_maximum = maximum;
+	}
+
+	template <typename T>
+	void AbstractSlider<T>::SetOrientation (Orientation orientation)
+	{
+		if(m_orientation == orientation) return;
+
+		WidgetUpdateRequest request(this, SliderPropertyOrientation, &orientation);
+
+		UpdateSlider(request);
+		m_orientation = orientation;
+	}
 
 }
 
