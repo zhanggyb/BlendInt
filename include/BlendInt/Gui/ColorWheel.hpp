@@ -27,6 +27,7 @@
 #include <vector>
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/Gui/Dot.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
@@ -63,6 +64,8 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> m_outline;
 		RefPtr<GLArrayBuffer> m_inner;
+
+		Dot m_slide_icon;
 
 	};
 

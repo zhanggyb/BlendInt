@@ -48,6 +48,8 @@ namespace BlendInt {
 	{
 		set_size(160, 160);
 
+		m_slide_icon.Resize(3);
+
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
@@ -95,64 +97,34 @@ namespace BlendInt {
 
 	ResponseType ColorWheel::Draw (const RedrawEvent& event)
 	{
-		glm::vec3 pos((float) (position().x() + size().width() / 2), (float) (position().y() + size().height() / 2),
-						(float) z());
+		glm::vec3 pos((float) (position().x() + size().width() / 2),
+		        (float) (position().y() + size().height() / 2), (float) z());
 
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		glBindVertexArray(m_vao);
-
 		RefPtr<GLSLProgram> program =
 						ShaderManager::instance->default_triangle_program();
 		program->Use();
-
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
-
-		Theme* tm = Theme::instance;
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 
 		m_inner->Bind();
-
-		glVertexAttribPointer(0, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  sizeof(GLfloat) * 6,				 // stride
-							  BUFFER_OFFSET(0)					 // offset of first element
-							  );
-
-		glVertexAttribPointer(1, // attribute
-							  4,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  sizeof(GLfloat) * 6,				 // stride
-							  BUFFER_OFFSET(2 * sizeof(GLfloat))					 // offset of first element
-							  );
-
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 4,	GL_FLOAT, GL_FALSE,	sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 		glDrawArrays(GL_TRIANGLE_FAN, 0, m_inner->GetBufferSize() / (6 * sizeof(GLfloat)));
-
 		m_inner->Reset();
 
 		glDisableVertexAttribArray(1);
 
-		Color color = tm->regular().outline;
-
+		Color color = Theme::instance->regular().outline;
 		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
-
 		m_outline->Bind();
-
-		glVertexAttribPointer(0, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
-
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 						m_outline->GetBufferSize()
 						/ (2 * sizeof(GLfloat)));
@@ -160,8 +132,13 @@ namespace BlendInt {
 
 		glDisableVertexAttribArray(0);
 		program->Reset();
-
 		glBindVertexArray(0);
+
+		glm::mat4 icon_mvp;
+
+		icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
+
+		m_slide_icon.Draw(icon_mvp);
 
 		return Accept;
 	}

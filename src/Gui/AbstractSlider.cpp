@@ -49,7 +49,7 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 		set_radius(7.0);
 
-		InitOnce();
+		InitializeSliderIcon();
 	}
 
 	SlideIcon::~SlideIcon ()
@@ -195,7 +195,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 
-	void SlideIcon::InitOnce ()
+	void SlideIcon::InitializeSliderIcon ()
 	{
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);

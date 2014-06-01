@@ -71,19 +71,21 @@ namespace BlendInt {
 
 	private:
 
+		enum SubWidgetIndex {
+			ScrollViewIndex,
+			HScrollBarIndex,
+			VScrollBarIndex,
+			CornerWidgetIndex
+		};
+
 		void OnHorizontalScroll (int value);
 
 		void OnVerticalScroll (int value);
 
-		void InitOnce ();
+		void InitializeScrollArea ();
 
 		void AdjustGeometries (const Size& size);
 
-		ScrollView* m_view;
-
-		ScrollBar* m_hbar;
-
-		ScrollBar* m_vbar;
 	};
 }
 

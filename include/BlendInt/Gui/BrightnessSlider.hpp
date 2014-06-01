@@ -21,28 +21,27 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_NUMBERSLIDER_HPP_
-#define _BLENDINT_GUI_NUMBERSLIDER_HPP_
+#ifndef _BLENDINT_GUI_BRIGHTNESSSLIDER_HPP_
+#define _BLENDINT_GUI_BRIGHTNESSSLIDER_HPP_
 
-#include <BlendInt/Core/Margin.hpp>
-#include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/AbstractSlider.hpp>
+#include <BlendInt/Gui/Dot.hpp>
 
 namespace BlendInt {
 
-	class NumberSlider: public AbstractSlider<float>
+	class BrightnessSlider: public AbstractSlider<int>
 	{
-		DISALLOW_COPY_AND_ASSIGN(NumberSlider);
+		DISALLOW_COPY_AND_ASSIGN(BrightnessSlider);
 
 	public:
 
-		NumberSlider (Orientation orientation = Horizontal);
+		BrightnessSlider (Orientation orientation = Horizontal);
 
-		virtual ~NumberSlider ();
-
-		void SetTitle (const String& title);
+		virtual ~BrightnessSlider ();
 
 		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
 
@@ -56,19 +55,17 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		void InitializeBrightnessSlider ();
+
+		GLuint m_vao;
 
 		RefPtr<GLArrayBuffer> m_inner;
 		RefPtr<GLArrayBuffer> m_outer;
 
-		GLuint m_vao;
+		Dot m_dot;
 
-		Font m_font;
-
-		String m_title;
-
-		static Margin default_numberslider_padding;
 	};
+
 }
 
-#endif /* _BLENDINT_GUI_NUMBERSLIDER_HPP_ */
+#endif /* _BLENDINT_GUI_BRIGHTNESSSLIDER_HPP_ */

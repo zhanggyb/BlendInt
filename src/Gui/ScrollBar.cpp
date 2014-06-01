@@ -48,11 +48,9 @@ namespace BlendInt {
 	{
 		if (orientation == Horizontal) {
 			m_slide.Resize(32, 14);
-			//set_preferred_size(200, 14);
 			set_size(200, 14);
 		} else {
 			m_slide.Resize(14, 32);
-			//set_preferred_size(14, 200);
 			set_size(14, 200);
 		}
 
@@ -152,8 +150,6 @@ namespace BlendInt {
 			default:
 				return AbstractSlider<int>::UpdateGeometryTest(request);
 		}
-
-
 	}
 
 	void ScrollBar::UpdateGeometry (const WidgetUpdateRequest& request)

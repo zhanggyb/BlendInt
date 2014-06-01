@@ -45,7 +45,7 @@ namespace BlendInt {
 	Slider::Slider (Orientation orientation) :
 			AbstractSlider<int>(orientation), m_vao(0), m_last_value(0), m_pressed(false)
 	{
-		m_slide.Resize(14, 14);
+		m_slide_icon.Resize(14, 14);
 
 		if (orientation == Vertical) {
 			set_size(18, 200);
@@ -189,16 +189,16 @@ namespace BlendInt {
 				m_line->Bind();
 				GLfloat* buf_p = (GLfloat*) m_line->Map(GL_READ_WRITE);
 				if (*orient_p == Horizontal) {
-					*(buf_p + 0) = m_slide.size().width() / 2;
+					*(buf_p + 0) = m_slide_icon.size().width() / 2;
 					*(buf_p + 1) = size().height() / 2;
-					*(buf_p + 2) = size().width() - m_slide.size().width() / 2;
+					*(buf_p + 2) = size().width() - m_slide_icon.size().width() / 2;
 					*(buf_p + 3) = *(buf_p + 0);
 				} else {
 					*(buf_p + 0) = size().width() / 2;
-					*(buf_p + 1) = m_slide.size().height() / 2;
+					*(buf_p + 1) = m_slide_icon.size().height() / 2;
 					*(buf_p + 2) = *(buf_p + 0);
 					*(buf_p + 3) = size().height()
-									- m_slide.size().height() / 2;
+									- m_slide_icon.size().height() / 2;
 				}
 				m_line->Unmap();
 				m_line->Reset();
@@ -222,37 +222,22 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_line_program();
-
 		program->Use();
-
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
 		program->SetVertexAttrib4fv("Color",
 						Theme::instance->scroll().outline.data());
-
 		program->SetUniform1i("AA", 0);
 		program->SetUniform1i("Gamma", 0);
 
 		glEnableVertexAttribArray(0);
-
 		m_line->Bind();
-		glVertexAttribPointer(0, // attribute
-							  2,		// number of elements per vertex, here (x,y)
-							  GL_FLOAT,	// the type of each element
-							  GL_FALSE,	// take our values as-is
-							  0,		// no extra data between each position
-							  BUFFER_OFFSET(0)	// the first element
-							  );
-
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE,	0,	BUFFER_OFFSET(0));
 		glLineWidth(1.0);
 		glDrawArrays(GL_LINES, 0, 2);
-
 		m_line->Reset();
 
 		glDisableVertexAttribArray(0);
-
 		program->Reset();
-
 		glBindVertexArray(0);
 
 		// ----- end of draw line
@@ -263,16 +248,16 @@ namespace BlendInt {
 			// m_line_start.x() == switch_radius
 			switch_mvp = glm::translate(mvp,
 			        glm::vec3(get_position(),
-			        			size().height() / 2 - m_slide.size().height() / 2,
+			        			size().height() / 2 - m_slide_icon.size().height() / 2,
 			        			0.f));
 		} else {
 			// m_line_start.y() == switch_radius
 			switch_mvp = glm::translate(mvp,
-			        glm::vec3(size().width() / 2 - m_slide.size().width() / 2,
+			        glm::vec3(size().width() / 2 - m_slide_icon.size().width() / 2,
 			                get_position(), 0.0));
 		}
 
-		m_slide.Draw(switch_mvp);
+		m_slide_icon.Draw(switch_mvp);
 
 		return Accept;
 	}
@@ -294,13 +279,13 @@ namespace BlendInt {
 
 		} else {
 			if(CursorOnSlideIcon(event.position())) {
-				m_slide.set_highlight(true);
+				m_slide_icon.set_highlight(true);
 
 				Refresh();
 
 				return Accept;
 			} else {
-				m_slide.set_highlight(false);
+				m_slide_icon.set_highlight(false);
 				Refresh();
 				return Ignore;
 			}
@@ -349,15 +334,15 @@ namespace BlendInt {
 		GLfloat vertices[4];
 
 		if(orientation() == Horizontal) {
-			vertices[0] = m_slide.size().width() / 2;
+			vertices[0] = m_slide_icon.size().width() / 2;
 			vertices[1] = size().height() / 2;
-			vertices[2] = size().width() - m_slide.size().width() / 2;
+			vertices[2] = size().width() - m_slide_icon.size().width() / 2;
 			vertices[3] = vertices[1];
 		} else {
 			vertices[0] = size().width() / 2;
-			vertices[1] = m_slide.size().height() / 2;
+			vertices[1] = m_slide_icon.size().height() / 2;
 			vertices[2] = vertices[0];
-			vertices[3] = size().height() - m_slide.size().height() / 2;
+			vertices[3] = size().height() - m_slide_icon.size().height() / 2;
 		}
 
 		m_line->SetData (sizeof(vertices), vertices);
@@ -373,9 +358,9 @@ namespace BlendInt {
 		int space = 0;
 
 		if(orientation() == Horizontal) {
-			space = size().width() - m_slide.size().width();	// m_line_start.x() is the radius of m_switch
+			space = size().width() - m_slide_icon.size().width();	// m_line_start.x() is the radius of m_switch
 		} else {
-			space = size().height() - m_slide.size().height();	// m_line_start.y() is the radius of m_switch
+			space = size().height() - m_slide_icon.size().height();	// m_line_start.y() is the radius of m_switch
 		}
 
 		return space;
@@ -390,11 +375,11 @@ namespace BlendInt {
 		int radius = 0;
 
 		if(orientation() == Horizontal) {
-			radius = m_slide.size().width() / 2;
+			radius = m_slide_icon.size().width() / 2;
 			icon_center.x = position().x() + radius + get_position();
 			icon_center.y = position().y() + size().height() / 2;
 		} else {
-			radius = m_slide.size().height() / 2;
+			radius = m_slide_icon.size().height() / 2;
 			icon_center.x = position().x() + size().width() / 2;
 			icon_center.y = position().y() + radius + get_position();
 		}

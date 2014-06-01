@@ -100,7 +100,7 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> m_line;
 
-		SlideIcon m_slide;
+		SlideIcon m_slide_icon;
 
 		Point m_last_cursor;	// used for mouse move
 

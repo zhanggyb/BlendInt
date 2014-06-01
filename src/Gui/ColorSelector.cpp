@@ -39,7 +39,7 @@
 #include <BlendInt/Gui/VBox.hpp>
 #include <BlendInt/Gui/ColorWheel.hpp>
 #include <BlendInt/Gui/NumberSlider.hpp>
-#include <BlendInt/Gui/Slider.hpp>
+#include <BlendInt/Gui/BrightnessSlider.hpp>
 
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
@@ -78,10 +78,10 @@ namespace BlendInt {
 
 		HBox* hbox1 = Manage(new HBox);
 		ColorWheel* colorwheel = Manage(new ColorWheel);
-		Slider* alpha_slider = Manage(new Slider(Vertical));
+		BrightnessSlider* br_slider = Manage(new BrightnessSlider(Vertical));
 
 		hbox1->PushBack(colorwheel);
-		hbox1->PushBack(alpha_slider);
+		hbox1->PushBack(br_slider);
 
 		NumberSlider* red_slider = Manage(new NumberSlider);
 		NumberSlider* green_slider = Manage(new NumberSlider);

@@ -80,7 +80,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		void InitializeSliderIcon ();
 
 		GLuint m_vao;
 

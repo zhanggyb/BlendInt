@@ -26,9 +26,9 @@
 namespace BlendInt {
 
 	ScrollArea::ScrollArea ()
-	: AbstractVectorContainer(4), m_view(0), m_hbar(0), m_vbar(0)
+	: AbstractVectorContainer(4)
 	{
-		InitOnce();
+		InitializeScrollArea();
 	}
 
 	ScrollArea::~ScrollArea ()
@@ -40,24 +40,22 @@ namespace BlendInt {
 		if (!widget)
 			return;
 
-		if (m_view) {
+		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+		view->SetViewport(widget);
 
-			m_view->SetViewport(widget);
-
-			if (widget->size().width() <= size().width()) {
-				m_hbar->SetVisible(false);
-			} else {
-				m_hbar->SetVisible(true);
-			}
-
-			if (widget->size().height() <= size().height()) {
-				m_vbar->SetVisible(false);
-			} else {
-				m_vbar->SetVisible(true);
-			}
-
-			AdjustGeometries(size());
+		if (widget->size().width() <= size().width()) {
+			sub_widget(HScrollBarIndex)->SetVisible(false);
+		} else {
+			sub_widget(HScrollBarIndex)->SetVisible(true);
 		}
+
+		if (widget->size().height() <= size().height()) {
+			sub_widget(VScrollBarIndex)->SetVisible(false);
+		} else {
+			sub_widget(VScrollBarIndex)->SetVisible(true);
+		}
+
+		AdjustGeometries(size());
 	}
 
 	bool ScrollArea::IsExpandX() const
@@ -156,18 +154,18 @@ namespace BlendInt {
 		return IgnoreAndContinue;
 	}
 
-	void ScrollArea::InitOnce ()
+	void ScrollArea::InitializeScrollArea ()
 	{
 		set_margin(0, 0, 0, 0);
 		set_size(400, 300);
 
-		m_view = Manage(new ScrollView);
-		m_hbar = Manage(new ScrollBar(Horizontal));
-		m_vbar = Manage(new ScrollBar(Vertical));
+		ScrollView* view = Manage(new ScrollView);
+		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
+		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
 
-		SetSubWidget(0, m_view);
-		SetSubWidget(1, m_hbar);
-		SetSubWidget(2, m_vbar);
+		SetSubWidget(0, view);
+		SetSubWidget(1, hbar);
+		SetSubWidget(2, vbar);
 
 		//m_hbar->SetVisible(false);
 		//m_vbar->SetVisible(false);
@@ -176,19 +174,19 @@ namespace BlendInt {
 		int y = position().y() + margin().bottom();
 		unsigned int w = size().width() - margin().left() - margin().right();
 		unsigned int h = size().height() - margin().top() - margin().bottom();
-		int bh = m_hbar->size().height();
-		int rw = m_vbar->size().width();
+		int bh = hbar->size().height();
+		int rw = vbar->size().width();
 
-		SetSubWidgetPosition(m_hbar, x, y);
-		SetSubWidgetPosition(m_vbar, x + w - rw, y + bh);
-		SetSubWidgetPosition(m_view, x, y);
+		SetSubWidgetPosition(hbar, x, y);
+		SetSubWidgetPosition(vbar, x + w - rw, y + bh);
+		SetSubWidgetPosition(view, x, y);
 
-		ResizeSubWidget (m_hbar, w - rw, m_hbar->size().height());
-		ResizeSubWidget (m_vbar, m_vbar->size().width(), h - bh);
-		ResizeSubWidget (m_view, w, h);
+		ResizeSubWidget (hbar, w - rw, hbar->size().height());
+		ResizeSubWidget (vbar, vbar->size().width(), h - bh);
+		ResizeSubWidget (view, w, h);
 
-		events()->connect(m_hbar->slider_moved(), this, &ScrollArea::OnHorizontalScroll);
-		events()->connect(m_vbar->slider_moved(), this, &ScrollArea::OnVerticalScroll);
+		events()->connect(hbar->slider_moved(), this, &ScrollArea::OnHorizontalScroll);
+		events()->connect(vbar->slider_moved(), this, &ScrollArea::OnVerticalScroll);
 	}
 	
 	void ScrollArea::AdjustGeometries (const Size& size)
@@ -200,52 +198,61 @@ namespace BlendInt {
 		int bh = 0;
 		int rw = 0;
 
-		if(m_hbar->visiable()) {
-			bh = m_hbar->size().height();
+		if(sub_widget(HScrollBarIndex)->visiable()) {
+			bh = sub_widget(HScrollBarIndex)->size().height();
 		}
 
-		if(m_vbar->visiable()) {
-			rw = m_vbar->size().width();
+		if(sub_widget(VScrollBarIndex)->visiable()) {
+			rw = sub_widget(VScrollBarIndex)->size().width();
 		}
 
-		SetSubWidgetPosition(m_view, x, y + bh);
-		ResizeSubWidget (m_view, w - rw, h - bh);
-		m_view->CentralizeViewport();
+		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+		ScrollBar* hbar = dynamic_cast<ScrollBar*>(sub_widget(HScrollBarIndex));
+		ScrollBar* vbar = dynamic_cast<ScrollBar*>(sub_widget(VScrollBarIndex));
 
-		if(m_hbar->visiable()) {
-			SetSubWidgetPosition(m_hbar, x, y);
-			ResizeSubWidget (m_hbar, w - rw, m_hbar->size().height());
-			int percent = m_view->GetHPercentage();
-			m_hbar->SetMaximum(m_view->viewport()->size().width());
-			m_hbar->SetMinimum(m_view->size().width());
-			m_hbar->SetPercentage(percent);
+		SetSubWidgetPosition(view, x, y + bh);
+		ResizeSubWidget (view, w - rw, h - bh);
+
+		view->CentralizeViewport();
+
+		if(hbar->visiable()) {
+			SetSubWidgetPosition(hbar, x, y);
+			ResizeSubWidget (hbar, w - rw, hbar->size().height());
+			int percent = view->GetHPercentage();
+			hbar->SetMaximum(view->viewport()->size().width());
+			hbar->SetMinimum(view->size().width());
+			hbar->SetPercentage(percent);
 		}
 
-		if(m_vbar->visiable()) {
-			SetSubWidgetPosition(m_vbar, x + w - rw, y + bh);
-			ResizeSubWidget (m_vbar, m_vbar->size().width(), h - bh);
-			int percent = m_view->GetVPercentage();
-			m_vbar->SetMaximum(m_view->viewport()->size().height());
-			m_vbar->SetMinimum(m_view->size().height());
-			m_vbar->SetPercentage(percent);
+		if(vbar->visiable()) {
+			SetSubWidgetPosition(vbar, x + w - rw, y + bh);
+			ResizeSubWidget (vbar, vbar->size().width(), h - bh);
+			int percent = view->GetVPercentage();
+			vbar->SetMaximum(view->viewport()->size().height());
+			vbar->SetMinimum(view->size().height());
+			vbar->SetPercentage(percent);
 		}
 	}
 
 	void ScrollArea::OnHorizontalScroll (int value)
 	{
-		AbstractWidget* p = m_view->viewport();
+		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+
+		AbstractWidget* p = view->viewport();
 		if (p) {
-			m_view->SetReletivePosition(value - p->size().width(),
-			        p->position().y() - m_view->position().y());
+			view->SetReletivePosition(value - p->size().width(),
+			        p->position().y() - view->position().y());
 		}
 	}
 
 	void ScrollArea::OnVerticalScroll (int value)
 	{
-		AbstractWidget* p = m_view->viewport();
+		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+
+		AbstractWidget* p = view->viewport();
 		if (p) {
-			m_view->SetReletivePosition(
-			        p->position().x() - m_view->position().x(),
+			view->SetReletivePosition(
+			        p->position().x() - view->position().x(),
 			        value - p->size().height());
 		}
 	}
