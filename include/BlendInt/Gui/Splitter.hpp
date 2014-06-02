@@ -29,11 +29,15 @@
 
 namespace BlendInt {
 
+	class Splitter;
+
 	class SplitterHandle: public Widget
 	{
 		DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
 
 	public:
+
+		friend class Splitter;
 
 		SplitterHandle (Orientation orientation);
 
@@ -67,13 +71,19 @@ namespace BlendInt {
 
 		bool m_highlight;
 
+		bool m_pressed;
+
 		RefPtr<GLArrayBuffer> m_buffer;
 
 		Point m_last;
 
 		Point m_cursor;
 
-		bool m_pressed;
+		unsigned int m_prev_size;	// width or height of the previous widget
+		unsigned int m_next_size;	// width or height of the next widget
+		int m_nearby_pos;	// nearby widget position
+
+		int m_index;
 
 	};
 
@@ -82,6 +92,8 @@ namespace BlendInt {
 		DISALLOW_COPY_AND_ASSIGN(Splitter);
 
 	public:
+
+		friend class SplitterHandle;
 
 		Splitter (Orientation orientation = Horizontal);
 

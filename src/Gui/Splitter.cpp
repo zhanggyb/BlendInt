@@ -42,7 +42,15 @@
 namespace BlendInt {
 
 	SplitterHandle::SplitterHandle (Orientation orientation)
-	: Widget(), m_orientation(orientation), m_vao(0), m_highlight(false), m_pressed(false)
+	: Widget(),
+	  m_orientation(orientation),
+	  m_vao(0),
+	  m_highlight(false),
+	  m_pressed(false),
+	  m_prev_size(0),
+	  m_next_size(0),
+	  m_nearby_pos(0),
+	  m_index(0)
 	{
 		if(orientation == Horizontal) {
 			set_size(200, 3);
@@ -162,14 +170,7 @@ namespace BlendInt {
 
 		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader
 		m_buffer->Bind();
-		glVertexAttribPointer(
-						0, // attribute
-						2,		// number of elements per vertex, here (x,y)
-						GL_FLOAT,	// the type of each element
-						GL_FALSE,	// take our values as-is
-						0,		// no extra data between each position
-						BUFFER_OFFSET(0)	// the first element
-		);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		if(m_orientation == Horizontal) {
 
@@ -202,7 +203,6 @@ namespace BlendInt {
 				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local));
 				program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
 				glDrawArrays(GL_LINES, 0, 2);
-
 			}
 
 		}
@@ -236,6 +236,20 @@ namespace BlendInt {
 		m_cursor = event.position();
 		m_pressed = true;
 
+		Splitter* splitter = dynamic_cast<Splitter*>(container());
+		AbstractWidget* prev = splitter->GetWidget(m_index);
+		AbstractWidget* next = splitter->GetWidget(m_index + 1);
+
+		if(m_orientation == Horizontal) {
+			m_prev_size = prev->size().height();
+			m_next_size = next->size().height();
+			m_nearby_pos = prev->position().y();
+		} else {
+			m_prev_size = prev->size().width();
+			m_next_size = next->size().width();
+			m_nearby_pos = next->position().x();
+		}
+
 		return Accept;
 	}
 
@@ -253,12 +267,32 @@ namespace BlendInt {
 			if(m_orientation == Horizontal) {
 
 				int offset = event.position().y() - m_cursor.y();
-				SetPosition(m_last.x(), m_last.y() + offset);
+
+				Splitter* splitter = dynamic_cast<Splitter*>(container());
+				AbstractWidget* up = splitter->GetWidget(m_index);
+				AbstractWidget* down = splitter->GetWidget(m_index + 1);
+
+				splitter->SetSubWidgetPosition(this, m_last.x() + offset, m_last.y());
+
+				splitter->ResizeSubWidget(up, up->size().width(), up->size().height() - offset);
+
+				splitter->ResizeSubWidget(down, down->size().width() + offset, up->size().height());
+				splitter->SetSubWidgetPosition(down, down->position().x() - offset, down->position().y());
 
 			} else {
 
 				int offset = event.position().x() - m_cursor.x();
-				SetPosition(m_last.x() + offset, m_last.y());
+
+				Splitter* splitter = dynamic_cast<Splitter*>(container());
+				AbstractWidget* left = splitter->GetWidget(m_index);
+				AbstractWidget* right = splitter->GetWidget(m_index + 1);
+
+				splitter->SetSubWidgetPosition(this, m_last.x() + offset, m_last.y());
+
+				splitter->ResizeSubWidget(left, m_prev_size + offset, left->size().height());
+				splitter->ResizeSubWidget(right, m_prev_size - offset, left->size().height());
+				splitter->SetSubWidgetPosition(right, m_nearby_pos + offset, right->position().y());
+
 			}
 
 			Refresh();
@@ -295,6 +329,8 @@ namespace BlendInt {
 				}
 
 				PushBackSubWidget(handle);
+				handle->m_index = sub_widget_size() / 2 - 1;
+
 				PushBackSubWidget(widget);
 			}
 
@@ -368,6 +404,8 @@ namespace BlendInt {
 	int Splitter::GetWidgetIndex (AbstractWidget* widget) const
 	{
 		int index = 0;
+		if(widget->container() != this) return -1;
+
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end();)
 		{
 			if(*it == widget) break;
@@ -382,6 +420,8 @@ namespace BlendInt {
 	int Splitter::GetHandleIndex (SplitterHandle* handle) const
 	{
 		int index = 0;
+		if(handle->container() != this) return -1;
+
 		for(WidgetDeque::iterator it = (sub_widgets()->begin() + 1); it != sub_widgets()->end();)
 		{
 			if(*it == handle) break;
@@ -395,8 +435,10 @@ namespace BlendInt {
 
 	AbstractWidget* Splitter::GetWidget (int index) const
 	{
+		if(sub_widget_size() == 0) return 0;
+
 		int max = (sub_widget_size() + 1) / 2;
-		if(max == 0) return 0;
+		if(index > max) return 0;
 
 		index = index * 2;
 
@@ -444,13 +486,6 @@ namespace BlendInt {
 					return false;
 
 				case WidgetPosition: {
-
-					const SplitterHandle* handle =
-									static_cast<const SplitterHandle*>(request.data());
-					if (handle) {
-						return true;
-					}
-
 					return false;
 				}
 
