@@ -86,7 +86,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBar::AddButton (const RefPtr<ActionItem>& action)
+	void ToolBar::AddButton (const RefPtr<Action>& action)
 	{
 		ToolButton* button = Manage(new ToolButton);
 		int x = GetLastPosition();

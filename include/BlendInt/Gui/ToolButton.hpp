@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_TOOLBUTTON_HPP_
 #define _BLENDINT_GUI_TOOLBUTTON_HPP_
 
-#include <BlendInt/Gui/ActionItem.hpp>
+#include <BlendInt/Gui/Action.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
 namespace BlendInt {
@@ -50,7 +50,7 @@ namespace BlendInt {
 
 		void SetActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
 
-		void SetActionItem (const RefPtr<ActionItem>& item);
+		void SetActionItem (const RefPtr<Action>& item);
 
 		virtual Size GetPreferredSize () const;
 
@@ -66,7 +66,7 @@ namespace BlendInt {
 
 		GLuint m_vao;
 
-		RefPtr<ActionItem> m_action;
+		RefPtr<Action> m_action;
 
 		RefPtr<GLArrayBuffer> m_inner;
 

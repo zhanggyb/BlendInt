@@ -32,7 +32,7 @@
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/Shadow.hpp>
 #include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/ActionItem.hpp>
+#include <BlendInt/Gui/Action.hpp>
 
 #include <Cpp/Events.hpp>
 
@@ -61,18 +61,18 @@ namespace BlendInt {
 
 		void AddActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
 
-		void AddActionItem (const RefPtr<ActionItem>& item);
+		void AddActionItem (const RefPtr<Action>& item);
 
 		void RemoveActionItem (size_t index);
 
-		void RemoveActionItem (const RefPtr<ActionItem>& item);
+		void RemoveActionItem (const RefPtr<Action>& item);
 
 		const String& title () const
 		{
 			return m_title;
 		}
 
-		Cpp::EventRef<ActionItem*> triggered() {return m_triggered;}
+		Cpp::EventRef<Action*> triggered() {return m_triggered;}
 
 	protected:
 
@@ -114,11 +114,11 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 		RefPtr<GLArrayBuffer> m_highlight_buffer;
 
-		std::deque<RefPtr<ActionItem> > m_list;
+		std::deque<RefPtr<Action> > m_list;
 
-		Cpp::Event<ActionItem*> m_hovered;
+		Cpp::Event<Action*> m_hovered;
 
-		Cpp::Event<ActionItem*> m_triggered;
+		Cpp::Event<Action*> m_triggered;
 
 		//Cpp::Event<ActionItem*> m_triggered;
 		static int DefaultMenuItemHeight;

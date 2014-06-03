@@ -287,7 +287,7 @@ namespace BlendInt {
 		events()->connect(m_menu->triggered(), this, &ComboBox::OnMenuActionTriggered);
 	}
 
-	void ComboBox::OnMenuActionTriggered (ActionItem* item)
+	void ComboBox::OnMenuActionTriggered (Action* item)
 	{
 		Context* context = GetContext();
 

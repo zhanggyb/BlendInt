@@ -64,33 +64,33 @@ namespace BlendInt {
 
 	void Menu::AddActionItem(const String& text)
 	{
-		RefPtr<ActionItem> item = ActionItem::Create(text);
+		RefPtr<Action> item = Action::Create(text);
 
 		AddActionItem(item);
 	}
 
 	void Menu::AddActionItem(const String& text, const String& shortcut)
 	{
-		RefPtr<ActionItem> item = ActionItem::Create(text, shortcut);
+		RefPtr<Action> item = Action::Create(text, shortcut);
 
 		AddActionItem(item);
 	}
 
 	void Menu::AddActionItem(const RefPtr<Icon>& icon, const String& text)
 	{
-		RefPtr<ActionItem> item = ActionItem::Create(icon, text);
+		RefPtr<Action> item = Action::Create(icon, text);
 
 		AddActionItem(item);
 	}
 
 	void Menu::AddActionItem(const RefPtr<Icon>& icon, const String& text, const String& shortcut)
 	{
-		RefPtr<ActionItem> item = ActionItem::Create(icon, text, shortcut);
+		RefPtr<Action> item = Action::Create(icon, text, shortcut);
 
 		AddActionItem(item);
 	}
 
-	void Menu::AddActionItem(const RefPtr<ActionItem>& item)
+	void Menu::AddActionItem(const RefPtr<Action>& item)
 	{
 		int width = 0;
 
@@ -152,7 +152,7 @@ namespace BlendInt {
 		*/
 		if(m_highlight > 0) {
 
-			ActionItem* item = m_list[m_highlight - 1].get();
+			Action* item = m_list[m_highlight - 1].get();
 			m_triggered.fire(item);
 		}
 
@@ -247,7 +247,7 @@ namespace BlendInt {
 		float h = size().height() - round_corner_radius();
 
 		int advance = 0;
-		for(deque<RefPtr<ActionItem> >::iterator it = m_list.begin(); it != m_list.end(); it++)
+		for(deque<RefPtr<Action> >::iterator it = m_list.begin(); it != m_list.end(); it++)
 		{
 			h = h - DefaultMenuItemHeight;
 
@@ -279,7 +279,7 @@ namespace BlendInt {
 	{
 	}
 	
-	void Menu::RemoveActionItem (const RefPtr<ActionItem>& item)
+	void Menu::RemoveActionItem (const RefPtr<Action>& item)
 	{
 	}
 	

@@ -88,7 +88,7 @@ namespace BlendInt {
 
 		void OnMenuButtonClicked ();
 
-		void OnMenuItemTriggered (ActionItem* item);
+		void OnMenuItemTriggered (Action* item);
 
 		void OnMenuHide (AbstractWidget* widget, int type);
 

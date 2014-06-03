@@ -61,7 +61,7 @@ namespace BlendInt {
 
 	private:
 
-		void OnMenuActionTriggered (ActionItem* item);
+		void OnMenuActionTriggered (Action* item);
 
 		void InitOnce ();
 

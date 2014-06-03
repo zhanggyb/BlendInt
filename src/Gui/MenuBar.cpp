@@ -433,7 +433,7 @@ namespace BlendInt {
 		}
 	}
 
-	void MenuBar::OnMenuItemTriggered(ActionItem* item)
+	void MenuBar::OnMenuItemTriggered(Action* item)
 	{
 		DBG_PRINT_MSG("menu item clicked: %s", ConvertFromString(item->text()).c_str());
 

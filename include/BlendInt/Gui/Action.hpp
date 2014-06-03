@@ -39,31 +39,31 @@ namespace BlendInt {
 	/**
 	 * @brief Items used in Menu, List, Toolbox
 	 */
-	class ActionItem: public Object
+	class Action: public Object
 	{
 	public:
 
-		static RefPtr<ActionItem> Create ();
+		static RefPtr<Action> Create ();
 
-		static RefPtr<ActionItem> Create (const String& text);
+		static RefPtr<Action> Create (const String& text);
 
-		static RefPtr<ActionItem> Create (const String& text, const String& shortcut);
+		static RefPtr<Action> Create (const String& text, const String& shortcut);
 
-		static RefPtr<ActionItem> Create (const RefPtr<Icon>& icon, const String& text);
+		static RefPtr<Action> Create (const RefPtr<Icon>& icon, const String& text);
 
-		static RefPtr<ActionItem> Create (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
+		static RefPtr<Action> Create (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
 
-		ActionItem ();
+		Action ();
 
-		explicit ActionItem (const String& text);
+		explicit Action (const String& text);
 
-		ActionItem (const String& text, const String& shortcut);
+		Action (const String& text, const String& shortcut);
 
-		ActionItem (const RefPtr<Icon>& icon, const String& text);
+		Action (const RefPtr<Icon>& icon, const String& text);
 
-		ActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
+		Action (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
 
-		virtual ~ActionItem ();
+		virtual ~Action ();
 
 		const RefPtr<Icon>& icon () const
 		{
@@ -75,7 +75,7 @@ namespace BlendInt {
 		 * @param[in] item A sub item
 		 * @param[in] check If need to check whether the item already exist
 		 */
-		void AddSubItem (const RefPtr<ActionItem>& item, bool check = false);
+		void AddSubItem (const RefPtr<Action>& item, bool check = false);
 
 		/**
 		 * @brief Get size if icon and text alighed horizontally
@@ -109,7 +109,7 @@ namespace BlendInt {
 			m_shortcut = shortcut;
 		}
 
-		const std::list<RefPtr<ActionItem> >& list () const
+		const std::list<RefPtr<Action> >& list () const
 		{
 			return m_list;
 		}
@@ -122,7 +122,7 @@ namespace BlendInt {
 
 		String m_shortcut;
 
-		std::list<RefPtr<ActionItem> > m_list;
+		std::list<RefPtr<Action> > m_list;
 	};
 
 }

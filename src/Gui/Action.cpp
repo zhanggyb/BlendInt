@@ -23,82 +23,82 @@
 
 #include <algorithm>
 
-#include <BlendInt/Gui/ActionItem.hpp>
+#include <BlendInt/Gui/Action.hpp>
 
 namespace BlendInt {
 
-	RefPtr<ActionItem> ActionItem::Create ()
+	RefPtr<Action> Action::Create ()
 	{
-		RefPtr<ActionItem> item(new ActionItem);
+		RefPtr<Action> item(new Action);
 
 		return item;
 	}
 	
-	RefPtr<ActionItem> ActionItem::Create (const String& text)
+	RefPtr<Action> Action::Create (const String& text)
 	{
-		RefPtr<ActionItem> item(new ActionItem(text));
+		RefPtr<Action> item(new Action(text));
 
 		return item;
 	}
 
-	RefPtr<ActionItem> ActionItem::Create (const String& text, const String& shortcut)
+	RefPtr<Action> Action::Create (const String& text, const String& shortcut)
 	{
-		RefPtr<ActionItem> item(new ActionItem(text, shortcut));
+		RefPtr<Action> item(new Action(text, shortcut));
 
 		return item;
 	}
 
-	RefPtr<ActionItem> ActionItem::Create (const RefPtr<Icon>& icon,
+	RefPtr<Action> Action::Create (const RefPtr<Icon>& icon,
 					const String& text)
 	{
-		RefPtr<ActionItem> item(new ActionItem(icon, text));
+		RefPtr<Action> item(new Action(icon, text));
 
 		return item;
 	}
 
-	RefPtr<ActionItem> ActionItem::Create (const RefPtr<Icon>& icon,
+	RefPtr<Action> Action::Create (const RefPtr<Icon>& icon,
 					const String& text, const String& shortcut)
 	{
-		RefPtr<ActionItem> item(new ActionItem(icon, text, shortcut));
+		RefPtr<Action> item(new Action(icon, text, shortcut));
 
 		return item;
 	}
 	
-	ActionItem::ActionItem ()
+	Action::Action ()
 	{
 	}
 
-	ActionItem::ActionItem (const String& text)
+	Action::Action (const String& text)
 	: m_text(text)
 	{
 	}
 
-	ActionItem::ActionItem (const String& text, const String& shortcut)
+	Action::Action (const String& text, const String& shortcut)
 	: m_text(text), m_shortcut(shortcut)
 	{
 	}
 
-	ActionItem::ActionItem (const RefPtr<Icon>& icon, const String& text)
+	Action::Action (const RefPtr<Icon>& icon, const String& text)
 	: m_icon(icon), m_text(text)
 	{
 	}
 
-	ActionItem::ActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut)
+	Action::Action (const RefPtr<Icon>& icon, const String& text, const String& shortcut)
 	: m_icon(icon), m_text(text), m_shortcut(shortcut)
 	{
 	}
 
-	ActionItem::~ActionItem ()
+	Action::~Action ()
 	{
 		m_list.clear();
 	}
 	
-	void ActionItem::AddSubItem (const RefPtr<ActionItem>& item, bool check)
+	void Action::AddSubItem (const RefPtr<Action>& item, bool check)
 	{
 		// TODO: check item is this one
 
 		if(check) {
-			std::list<RefPtr<ActionItem> >::iterator it;
+			std::list<RefPtr<Action> >::iterator it;
 			it = std::find (m_list.begin(), m_list.end(), item);
 			if(it != m_list.end()) {
 				DBG_PRINT_MSG("Item %s already in sub list", item->name().c_str());
@@ -109,7 +109,7 @@ namespace BlendInt {
 		m_list.push_back(item);
 	}
 	
-	Size ActionItem::GetHSize (const Font& font, const Margin& margin, int space)
+	Size Action::GetHSize (const Font& font, const Margin& margin, int space)
 	{
 		Size size;
 
@@ -137,7 +137,7 @@ namespace BlendInt {
 		return size;
 	}
 
-	unsigned int ActionItem::GetTextLength (const Font& font)
+	unsigned int Action::GetTextLength (const Font& font)
 	{
 		unsigned int length = 0;
 

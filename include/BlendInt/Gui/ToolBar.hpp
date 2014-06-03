@@ -44,7 +44,7 @@ namespace BlendInt {
 
 		void Add (AbstractWidget* widget);
 
-		void AddButton (const RefPtr<ActionItem>& action);
+		void AddButton (const RefPtr<Action>& action);
 
 		virtual Size GetPreferredSize () const;
 
