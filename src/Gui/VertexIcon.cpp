@@ -181,7 +181,7 @@ namespace BlendInt {
 	}
 
 	void VertexIcon::Draw (const glm::mat4& mvp, int x, int y,
-			unsigned int restrict_width, unsigned int restrict_height)
+			int restrict_width, int restrict_height)
 	{
 		glBindVertexArray(m_vao);
 

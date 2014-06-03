@@ -38,19 +38,19 @@ namespace BlendInt {
 	public:
 
 		Size ()
-			: m_width(0), m_height(0)
+		: m_width(0), m_height(0)
 		{
 
 		}
 
-		Size (unsigned int width, unsigned int height)
-			: m_width(width), m_height(height)
+		Size (int width, int height)
+		: m_width(width), m_height(height)
 		{
 
 		}
 
 		Size (const Size& orig)
-			: m_width(orig.m_width), m_height(orig.m_height)
+		: m_width(orig.m_width), m_height(orig.m_height)
 		{
 
 		}
@@ -64,52 +64,32 @@ namespace BlendInt {
 
 		bool is_valid () const
 		{
-			return m_width > 0 && m_height > 0;
+			return (m_width >= 0) && (m_height >= 0);
 		}
 
 		inline bool equal (const Size& size)
 		{
-			return (m_width == size.width() && m_height == size.height());
+			return (m_width == size.width()) && (m_height == size.height());
 		}
 
-		inline bool equal (unsigned int width, unsigned int height)
+		inline bool equal (int width, int height)
 		{
 			return (m_width == width && m_height == height);
 		}
 
-		bool contain (const Point& pos)
+		void reset (int width, int height)
 		{
-			if (pos.x() < 0 || pos.y() < 0 ||
-				pos.x() > static_cast<int>(m_width) || pos.y() > static_cast<int>(m_height))
-			{
-				return false;
-			}
-			
-			return true;
+			m_width = width;
+			m_height = height;
 		}
 
-		bool contain (int x, int y)
-		{
-			if (x < 0 || y < 0 ||
-				x > static_cast<int>(m_width) || y > static_cast<int>(m_height))
-			{
-				return false;
-			}
-			
-			return true;
-		}
+		int width () const {return m_width;}
 
-		unsigned int width () const {return m_width;}
+		void set_width (int width) {m_width = width;}
 
-		void set_width (unsigned int width) {m_width = width;}
+		int height () const {return m_height;}
 
-		void set_width (int width) {m_width = static_cast<unsigned int>(width);}
-
-		unsigned int height () const {return m_height;}
-
-		void set_height (unsigned int height) {m_height = height;}
-
-		void set_height (int height) {m_height = static_cast<unsigned int>(height);}
+		void set_height (int height) {m_height = height;}
 
 		void add_width (int width)
 		{
@@ -121,16 +101,10 @@ namespace BlendInt {
 			m_height = m_height + height;
 		}
 
-		unsigned int& operator [] (int index)
-		{
-			if(index <= 0) return m_width;
-
-			return m_height;
-		}
-
 	private:
-		unsigned int m_width;
-		unsigned int m_height;
+
+		int m_width;
+		int m_height;
 	};
 
 

@@ -128,11 +128,10 @@ namespace BlendInt {
 							max_font_height + default_textentry_padding.hsum()
 											+ radius_plus + 120);
 		} else {
-			size_t width = m_font.GetTextWidth(text());
-			preferred_size.set_width(
-							static_cast<unsigned int>(width)
-											+ default_textentry_padding.hsum()
-											+ radius_plus);	// left padding: 2, right padding: 2
+			int width = m_font.GetTextWidth(text());
+			preferred_size.set_width(width
+									 + default_textentry_padding.hsum()
+									 + radius_plus);	// left padding: 2, right padding: 2
 		}
 
 		return preferred_size;
@@ -150,9 +149,9 @@ namespace BlendInt {
 			m_cursor_position += event.text().length();
 			m_length += event.text().length();
 
-			unsigned int text_width = m_font.GetTextWidth(m_text, m_length,
+			int text_width = m_font.GetTextWidth(m_text, m_length,
 							m_start);
-			unsigned int valid_width = size().width()
+			int valid_width = size().width()
 							- default_textentry_padding.hsum();
 
 			if(text_width > valid_width) {
@@ -339,7 +338,7 @@ namespace BlendInt {
 
 	void TextEntry::InitializeTextEntry ()
 	{
-		unsigned int h = m_font.GetHeight();
+		int h = m_font.GetHeight();
 
 		set_size(h + round_corner_radius() * 2 + default_textentry_padding.hsum() + 120,
 						h + default_textentry_padding.vsum());
@@ -394,8 +393,8 @@ namespace BlendInt {
 
 	size_t TextEntry::GetValidTextSize ()
 	{
-		size_t width = 0;
-		size_t str_len = m_text.length();
+		int width = 0;
+		int str_len = m_text.length();
 
 		width = m_font.GetTextWidth(m_text, str_len, 0);
 
@@ -526,8 +525,8 @@ namespace BlendInt {
 	
 	void TextEntry::GetVisibleTextPlace (size_t* start, size_t* length)
 	{
-		size_t str_len = m_text.length();
-		size_t width = m_font.GetTextWidth(m_text, str_len, 0);
+		int str_len = m_text.length();
+		int width = m_font.GetTextWidth(m_text, str_len, 0);
 
 		if(width < (size().width() - 4)) {
 			*start = 0;

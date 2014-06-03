@@ -56,7 +56,7 @@ namespace BlendInt {
 
 		void FillSubWidget (const Point& pos, const Size& size);
 
-		void FillSubWidget (int x, int y, unsigned w, unsigned h);
+		void FillSubWidget (int x, int y, int w, int h);
 
 		bool SetSubWidget (AbstractWidget* widget);
 

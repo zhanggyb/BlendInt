@@ -52,7 +52,7 @@ namespace BlendInt {
 	{
 		set_round_corner_type(RoundAll);
 
-		unsigned int h = m_font.GetHeight();
+		int h = m_font.GetHeight();
 
 		set_size(
 		        h + round_corner_radius() * 2 + default_combobox_padding.hsum() + 100,
@@ -90,10 +90,9 @@ namespace BlendInt {
 											+ radius_plus + 100);
 		} else {
 			size_t width = m_font.GetTextWidth(m_text);
-			preferred_size.set_width(
-							static_cast<unsigned int>(width)
-											+ default_combobox_padding.hsum()
-											+ radius_plus);	// left padding: 2, right padding: 2
+			preferred_size.set_width(width
+							+ default_combobox_padding.hsum()
+							+ radius_plus);	// left padding: 2, right padding: 2
 		}
 
 		return preferred_size;

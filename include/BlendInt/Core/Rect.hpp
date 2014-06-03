@@ -36,28 +36,31 @@ namespace BlendInt {
 	{
 	public:
 		Rect ()
-			: m_x(0), m_y(0), m_width(0), m_height(0)
+		: m_x(0), m_y(0), m_width(0), m_height(0)
 		{}
 		
-		Rect (int x, int y, unsigned int width, unsigned int height)
-			: m_x(x), m_y(y), m_width(width), m_height(height)
+		Rect (int x, int y, int width, int height)
 		{
+			m_x = std::min(x, x + width);
+			m_y = std::min(y, y + height);
+			m_width = std::abs(width);
+			m_height = std::abs(height);
 		}
 
 		Rect (const Point& p1, const Point& p2)
 		{
-			m_x = std::min (p1.x(), p2.x());
-			m_y = std::min (p1.y(), p2.y());
-			m_width = std::abs (p2.x() - p1.x());
-			m_height = std::abs (p2.y() - p1.y());
+			m_x = std::min(p1.x(), p2.x());
+			m_y = std::min(p1.y(), p2.y());
+			m_width = std::abs(p2.x() - p1.x());
+			m_height = std::abs(p2.y() - p1.y());
 		}
 
 		Rect (const Point& pos, const Size& size)
 		{
-			m_x = pos.x();
-			m_y = pos.y();
-			m_width = size.width();
-			m_height = size.height();
+			m_x = std::min(pos.x(), pos.x() + size.width());
+			m_y = std::min(pos.y(), pos.y() + size.height());
+			m_width = std::abs(size.width());
+			m_height = std::abs(size.height());
 		}
 
 		Rect (const Rect& orig)
@@ -77,13 +80,22 @@ namespace BlendInt {
 
 		bool contains (const Point& point)
 		{
-			int diff_x = point.x() - m_x;
-			int diff_y = point.y() - m_y;
+			if (point.x() < m_x || point.y() < m_y
+							|| point.x() > (m_x + m_width)
+							|| point.y() > (m_y + m_height))
+				return false;
 
-			return diff_x >= 0 &&
-					diff_x <= static_cast<int>(m_width) 	&&
-					diff_y >= 0 &&
-					diff_y <= static_cast<int>(m_height);
+			return true;
+		}
+
+		bool contains (int x, int y)
+		{
+			if (x < m_x || y < m_y || x > (m_x + m_width)
+							|| y > (m_y + m_height)) {
+				return false;
+			}
+
+			return true;
 		}
 
 		int x (void) const {return m_x;}
@@ -94,45 +106,53 @@ namespace BlendInt {
 
 		void set_y (int y) {m_y = y;}
 
-		unsigned int width (void) const {return m_width;}
+		int width (void) const {return m_width;}
 
-		void set_width (unsigned int width) {m_width = width;}
+		void set_width (int width)
+		{
+			m_x = width < 0 ? (m_x + width) : m_x;
+			m_width = std::abs(width);
+		}
 
-		void set_width (int width) {m_width = static_cast<unsigned int>(width);}
+		int height (void) const {return m_height;}
 
-		unsigned int height (void) const {return m_height;}
+		void set_height (int height)
+		{
+			m_y = height < 0 ? (m_y + height) : m_y;
+			m_height = std::abs(height);
+		}
 
-		void set_height (unsigned int height) {m_height = height;}
-
-		void set_height (int height) {m_height = static_cast<unsigned int>(height);}
-
-		int left () const {
+		int left () const
+		{
 			return m_x;
 		}
 
-		int right () const {
+		int right () const
+		{
 			return m_x + m_width;
 		}
 
-		int top () const {
+		int top () const
+		{
 			return m_y + m_height;
 		}
 
-		int bottom () const {
+		int bottom () const
+		{
 			return m_y;
 		}
 
-		bool IsValid (void) const
+		bool is_zero (void) const
 		{
-			return m_width > 0 && m_height > 0;
+			return m_width == 0 || m_height == 0;
 		}
 
 	private:
 
 		int m_x;
 		int m_y;
-		unsigned int m_width;
-		unsigned int m_height;
+		int m_width;
+		int m_height;
 	};
 
 }

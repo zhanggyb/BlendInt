@@ -92,7 +92,7 @@ namespace BlendInt {
 
 	void Menu::AddActionItem(const RefPtr<ActionItem>& item)
 	{
-		unsigned int width = 0;
+		int width = 0;
 
 		width = item->GetTextLength(m_font);
 		width += 16 + DefaultIconSpace + DefaultShortcutSpace;
@@ -100,7 +100,7 @@ namespace BlendInt {
 		Size s;
 
 		if(m_list.size()) {
-			s.set_width(std::max(size().width(), static_cast<unsigned int>(round_corner_radius() * 2) + width));
+			s.set_width(std::max(size().width(), round_corner_radius() * 2) + width);
 			s.set_height(size().height() + DefaultMenuItemHeight);
 		} else {
 			s.set_width((int)round_corner_radius() * 2 + width);
@@ -261,7 +261,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Menu::ResetHighlightBuffer (unsigned int width)
+	void Menu::ResetHighlightBuffer (int width)
 	{
 		Size size(width, DefaultMenuItemHeight);
 		GenerateShadedFormBuffer (&size,

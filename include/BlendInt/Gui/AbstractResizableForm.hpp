@@ -49,7 +49,7 @@ namespace BlendInt {
 
 		virtual ~AbstractResizableForm () {}
 
-		void Resize (unsigned int width, unsigned int height);
+		void Resize (int width, int height);
 
 		void Resize (const Size& size);
 

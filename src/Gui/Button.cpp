@@ -171,7 +171,7 @@ namespace BlendInt {
 		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
 		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
 		int bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
-		unsigned int h = font().GetHeight();
+		int h = font().GetHeight();
 
 		set_size(h + round_corner_radius() * 2 * Theme::instance->pixel() + left + right,
 						h + top + bottom);
@@ -203,7 +203,7 @@ namespace BlendInt {
 		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
 		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
 		int bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
-		unsigned int h = font().GetHeight();
+		int h = font().GetHeight();
 
 		if(text.empty()) {
 			set_size(h + round_corner_radius() * 2 * Theme::instance->pixel() + left + right,
@@ -212,10 +212,10 @@ namespace BlendInt {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			unsigned int width = text_outline.width()
+			int width = text_outline.width()
 							+ round_corner_radius() * 2 * Theme::instance->pixel()
 							+ left + right;
-			unsigned int height = h + top + bottom;
+			int height = h + top + bottom;
 
 			set_size(width, height);
 

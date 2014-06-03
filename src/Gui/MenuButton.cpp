@@ -150,7 +150,7 @@ namespace BlendInt {
 		set_round_corner_type(RoundAll);
 		set_text(text);
 
-		unsigned int h = font().GetHeight();
+		int h = font().GetHeight();
 
 		if(text.empty()) {
 			set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
@@ -159,8 +159,8 @@ namespace BlendInt {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			unsigned int width = text_outline.width() + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
-			unsigned int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
+			int width = text_outline.width() + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
+			int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
 
 			set_size(width, height);
 

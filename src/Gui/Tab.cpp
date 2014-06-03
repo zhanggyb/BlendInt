@@ -279,10 +279,10 @@ namespace BlendInt {
 
 		int btn_y = position().y() + size().height() - margin().top() - m_title_height;
 
-		unsigned int w = size().width() - margin().left() - margin().right();
-		unsigned int h = size().height() - margin().top() - margin().bottom();
+		int w = size().width() - margin().hsum();
+		int h = size().height() - margin().vsum();
 
-		unsigned int temp = 0;
+		int temp = 0;
 		for(std::vector<AbstractButton*>::iterator it = m_group.buttons()->begin(); it != m_group.buttons()->end(); it++)
 		{
 			SetSubWidgetPosition((*it), x + temp, btn_y);

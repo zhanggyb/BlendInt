@@ -170,7 +170,7 @@ namespace BlendInt {
 	{
 		set_checkable(true);
 
-		unsigned int h = font().GetHeight();
+		int h = font().GetHeight();
 
 		set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
 						h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
@@ -194,7 +194,7 @@ namespace BlendInt {
 		set_checkable(true);
 		set_text(text);
 
-		unsigned int h = font().GetHeight();
+		int h = font().GetHeight();
 
 		if(text.empty()) {
 			set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
@@ -203,8 +203,8 @@ namespace BlendInt {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			unsigned int width = text_outline.width() + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
-			unsigned int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
+			int width = text_outline.width() + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
+			int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
 
 			set_size(width, height);
 
@@ -241,8 +241,8 @@ namespace BlendInt {
 		SetSubWidget(0, title_button);
 		SetSubWidget(1, frame);
 
-		unsigned int width = 0;
-		unsigned int height = 0;
+		int width = 0;
+		int height = 0;
 
 		Size tmp = title_button->GetPreferredSize();
 		width = std::max(width, tmp.width());
@@ -274,8 +274,8 @@ namespace BlendInt {
 		SetSubWidget(0, title_button);
 		SetSubWidget(1, frame);
 
-		unsigned int width = 0;
-		unsigned int height = 0;
+		int width = 0;
+		int height = 0;
 
 		Size tmp = title_button->GetPreferredSize();
 		width = std::max(width, tmp.width());
@@ -538,15 +538,15 @@ namespace BlendInt {
 			FillWithPreferredHeight(x, y, width, height, space);
 	}
 	
-	void Expander::FillWithPreferredHeight (int x, int y, unsigned int width,
-					unsigned int height, int space)
+	void Expander::FillWithPreferredHeight (int x, int y, int width,
+					int height, int space)
 	{
 		y = y + height;
 
 		Size prefer;
 
-		unsigned int button_preferred_height = 0;
-		unsigned int sum = 0;
+		int button_preferred_height = 0;
+		int sum = 0;
 		ExpandButton* button = dynamic_cast<ExpandButton*>(sub_widget(0));
 		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
 

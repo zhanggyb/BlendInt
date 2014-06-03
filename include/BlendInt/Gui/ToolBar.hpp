@@ -78,7 +78,7 @@ namespace BlendInt {
 
 		void FillSubWidgets (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
 
-		void FillSubWidgets (int x, int y, unsigned int width, unsigned int height, int space);
+		void FillSubWidgets (int x, int y, int width, int height, int space);
 
 		void RealignSubWidgets (const Size& size, const Margin& margin, int space);
 

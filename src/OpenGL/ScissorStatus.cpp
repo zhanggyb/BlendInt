@@ -53,8 +53,7 @@ namespace BlendInt {
 		m_area_stack.pop();
 	}
 
-	void ScissorStatus::Push (int x, int y, unsigned int w,
-	        unsigned int h)
+	void ScissorStatus::Push (int x, int y, int w, int h)
 	{
 		int xmax = x + w;
 		int ymax = y + h;

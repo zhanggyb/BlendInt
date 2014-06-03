@@ -186,7 +186,7 @@ namespace BlendInt {
 
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event) = 0;
 
-		void ResizeSubWidget (AbstractWidget* sub, unsigned int x, unsigned int y);
+		void ResizeSubWidget (AbstractWidget* sub, int width, int height);
 
 		void ResizeSubWidget (AbstractWidget* sub, const Size& size);
 

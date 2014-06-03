@@ -38,13 +38,11 @@ TEST_F(SplitterTest1, Foo1)
 	
 	Button* btn1 = Manage(new Button);
 	Button* btn2 = Manage(new Button);
-	Button* btn3 = Manage(new Button);
 	
-	splitter->Add(btn1);
-	splitter->Add(btn2);
-	splitter->Add(btn3);
+	splitter->PushBack(btn1);
+	splitter->PushBack(btn2);
 	
-	splitter->Resize(400, 200);
+	splitter->Resize(200, 200);
 	
 	context->Add(splitter);
 

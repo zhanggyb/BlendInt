@@ -68,7 +68,7 @@ namespace BlendInt {
 
 		if(orientation() == Horizontal) {
 
-			unsigned int w = percentage * size().width() / 100;
+			int w = percentage * size().width() / 100;
 
 			if(w < m_slide.size().width())
 				w = m_slide.size().width();
@@ -79,7 +79,7 @@ namespace BlendInt {
 
 		} else {
 
-			unsigned int h = percentage * size().height() / 100;
+			int h = percentage * size().height() / 100;
 
 			if(h < m_slide.size().height())
 				h = m_slide.size().height();

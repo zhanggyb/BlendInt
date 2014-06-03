@@ -42,7 +42,7 @@ namespace BlendInt {
 
 		void Pop ();
 
-		void Push (int x, int y, unsigned int w, unsigned int h);
+		void Push (int x, int y, int w, int h);
 
 		void Enable ();
 

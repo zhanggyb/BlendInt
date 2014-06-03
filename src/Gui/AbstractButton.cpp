@@ -74,10 +74,8 @@ namespace BlendInt {
 			        max_font_height + DefaultButtonPadding().hsum()
 			                + radius_plus);
 		} else {
-			size_t width = font().GetTextWidth(text());
-			preferred_size.set_width(
-			        static_cast<unsigned int>(width)
-			                + DefaultButtonPadding().hsum() + radius_plus);	// left padding: 2, right padding: 2
+			int width = font().GetTextWidth(text());
+			preferred_size.set_width(width + DefaultButtonPadding().hsum() + radius_plus);	// left padding: 2, right padding: 2
 		}
 
 		return preferred_size;
@@ -130,13 +128,13 @@ namespace BlendInt {
 
 		Rect text_outline = font.GetTextOutline(text);
 
-		if(static_cast<unsigned int>(height) < text_outline.height()) {
+		if(height < text_outline.height()) {
 			str_len = 0;
 			cal_width = false;
 		}
 
 		if(cal_width) {
-			if(static_cast<unsigned int>(width) < text_outline.width()) {
+			if(width < text_outline.width()) {
 				str_len = GetValidTextSize(size, text, font);
 			} else {
 				str_len = text.length();
@@ -301,12 +299,12 @@ namespace BlendInt {
 
 	size_t AbstractButton::GetValidTextSize(const Size& size, const String& text, const Font& font)
 	{
-		size_t width = 0;
-		size_t str_len = text.length();
+		int width = 0;
+		int str_len = text.length();
 
 		width = font.GetTextWidth(text, str_len, 0);
 
-		unsigned int text_width_space = size.width() - DefaultButtonPadding().left() - DefaultButtonPadding().right();
+		int text_width_space = size.width() - DefaultButtonPadding().left() - DefaultButtonPadding().right();
 
 		if(width > text_width_space) {
 			while(str_len > 0) {

@@ -67,8 +67,8 @@ namespace BlendInt {
 		if(ratio < 0.0) return;
 
 		Size new_size;
-		new_size.set_width(static_cast<unsigned int>(size().width() * ratio));
-		new_size.set_height(static_cast<unsigned int>(size().height() * ratio));
+		new_size.set_width(size().width() * ratio);
+		new_size.set_height(size().height() * ratio);
 
 		UpdateGeometry(UpdateRequest(FormSize, &new_size));
 		set_size(new_size);

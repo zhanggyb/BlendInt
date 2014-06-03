@@ -102,33 +102,33 @@ namespace BlendInt {
 
 		void FillSubWidgetsInHBox (const Point& pos, const Size& size, int alignment, int space);
 
-		void FillSubWidgetsProportionally (int x, int y, unsigned int width, unsigned int height, int alignment, int space);
+		void FillSubWidgetsProportionally (int x, int y, int width, int height, int alignment, int space);
 
 		/**
 		 * @brief distribute horizontally with preferred size
 		 */
 		void DistributeWithPreferredWidth (int x,
 				int space,
-		        const std::deque<unsigned int>* expandable_preferred_widths,
-		        const std::deque<unsigned int>* unexpandable_preferred_widths);
+		        const std::deque<int>* expandable_preferred_widths,
+		        const std::deque<int>* unexpandable_preferred_widths);
 
 		void DistributeWithSmallWidth (int x,
-						unsigned int width,
+						int width,
 						int space,
-						const std::deque<unsigned int>* expandable_preferred_widths,
-						unsigned int expandable_prefer_sum,
-						const std::deque<unsigned int>* unexpandable_preferred_widths,
-						unsigned int unexpandable_prefer_sum);
+						const std::deque<int>* expandable_preferred_widths,
+						int expandable_prefer_sum,
+						const std::deque<int>* unexpandable_preferred_widths,
+						int unexpandable_prefer_sum);
 
 		void DistributeWithLargeWidth (int x,
-						unsigned int width,
+						int width,
 						int space,
-						const std::deque<unsigned int>* expandable_preferred_widths,
-						unsigned int expandable_prefer_sum,
-						const std::deque<unsigned int>* unexpandable_preferred_widths,
-						unsigned int unexpandable_prefer_sum);
+						const std::deque<int>* expandable_preferred_widths,
+						int expandable_prefer_sum,
+						const std::deque<int>* unexpandable_preferred_widths,
+						int unexpandable_prefer_sum);
 
-		void Align (int y, unsigned int height, int alignment, const std::deque<unsigned int>* unexpandable_preferred_heights);
+		void Align (int y, int height, int alignment, const std::deque<int>* unexpandable_preferred_heights);
 
 		int m_alignment;
 

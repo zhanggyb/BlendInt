@@ -67,7 +67,7 @@ namespace BlendInt {
 	{
 		int x = GetLastPosition();
 		int y = position().y() + margin().bottom();
-		unsigned int h = size().height() - margin().top() - margin().bottom();
+		int h = size().height() - margin().top() - margin().bottom();
 
 		if(PushBackSubWidget(widget)) {
 			SetSubWidgetPosition(widget, x, y);
@@ -91,7 +91,7 @@ namespace BlendInt {
 		ToolButton* button = Manage(new ToolButton);
 		int x = GetLastPosition();
 		int y = position().y() + margin().bottom();
-		unsigned int h = size().height() - margin().top() - margin().bottom();
+		int h = size().height() - margin().top() - margin().bottom();
 
 		if(PushBackSubWidget(button)) {
 			SetSubWidgetPosition(button, x, y);
@@ -169,8 +169,8 @@ namespace BlendInt {
 				}
 
 				int y = position().y() + margin_p->bottom();
-				unsigned int w = size().width() - margin_p->left() - margin_p->right();
-				unsigned int h = size().height() - margin_p->top() - margin_p->bottom();
+				int w = size().width() - margin_p->left() - margin_p->right();
+				int h = size().height() - margin_p->top() - margin_p->bottom();
 
 				FillSubWidgets(x, y, w, h, m_space);
 
@@ -223,9 +223,9 @@ namespace BlendInt {
 				}
 
 				int y = position().y() + margin().bottom();
-				unsigned int w = size_p->width() - margin().left()
+				int w = size_p->width() - margin().left()
 								- margin().right();
-				unsigned int h = size_p->height() - margin().top()
+				int h = size_p->height() - margin().top()
 								- margin().bottom();
 
 				FillSubWidgets(x, y, w, h, m_space);
@@ -448,14 +448,14 @@ namespace BlendInt {
 	{
 		int x = out_pos.x() + margin.left();
 		int y = out_pos.y() + margin.bottom();
-		unsigned int width = out_size.width() - margin.left() - margin.right();
-		unsigned int height = out_size.height() - margin.top() - margin.bottom();
+		int width = out_size.width() - margin.left() - margin.right();
+		int height = out_size.height() - margin.top() - margin.bottom();
 
 		FillSubWidgets (x, y, width, height, space);
 	}
 	
-	void ToolBar::FillSubWidgets (int x, int y, unsigned int width,
-					unsigned int height, int space)
+	void ToolBar::FillSubWidgets (int x, int y, int width,
+					int height, int space)
 	{
 		AbstractWidget* widget = 0;
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)

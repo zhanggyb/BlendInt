@@ -71,8 +71,8 @@ namespace BlendInt {
 			int x = position().x() + margin().left();
 			int y = position().y() + margin().bottom();
 
-			unsigned int w = size().width() - margin().hsum();
-			unsigned int h = size().height() - margin().vsum();
+			int w = size().width() - margin().hsum();
+			int h = size().height() - margin().vsum();
 
 			FillSubWidget(x, y, w, h);
 

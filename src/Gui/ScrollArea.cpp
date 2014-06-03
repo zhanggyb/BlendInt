@@ -172,8 +172,8 @@ namespace BlendInt {
 
 		int x = position().x() + margin().left();
 		int y = position().y() + margin().bottom();
-		unsigned int w = size().width() - margin().left() - margin().right();
-		unsigned int h = size().height() - margin().top() - margin().bottom();
+		int w = size().width() - margin().left() - margin().right();
+		int h = size().height() - margin().top() - margin().bottom();
 		int bh = hbar->size().height();
 		int rw = vbar->size().width();
 
@@ -193,8 +193,8 @@ namespace BlendInt {
 	{
 		int x = position().x() + margin().left();
 		int y = position().y() + margin().bottom();
-		unsigned int w = size.width() - margin().left() - margin().right();
-		unsigned int h = size.height() - margin().top() - margin().bottom();
+		int w = size.width() - margin().left() - margin().right();
+		int h = size.height() - margin().top() - margin().bottom();
 		int bh = 0;
 		int rw = 0;
 

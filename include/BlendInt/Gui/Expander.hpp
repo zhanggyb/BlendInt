@@ -120,7 +120,7 @@ namespace BlendInt {
 
 		void FillWithPreferredHeight (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
 
-		void FillWithPreferredHeight (int x, int y, unsigned int width, unsigned int height, int space);
+		void FillWithPreferredHeight (int x, int y, int width, int height, int space);
 
 		void OnToggled (bool toggle);
 

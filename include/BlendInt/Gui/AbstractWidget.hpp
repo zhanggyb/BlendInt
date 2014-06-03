@@ -122,7 +122,7 @@ namespace BlendInt {
 
 		void Resize (AbstractWidget* source, const Size& size);
 
-		void Resize (AbstractWidget* source, unsigned int width, unsigned int height);
+		void Resize (AbstractWidget* source, int width, int height);
 
 		void SetPosition (AbstractWidget* source, int x, int y);
 
@@ -205,7 +205,7 @@ namespace BlendInt {
 		 * Call Update() to check the parameters, if valid, resize the
 		 * widget.
 		 */
-		void Resize (unsigned int width, unsigned int height);
+		void Resize (int width, int height);
 
 		/**
 		 * @brief Resize the widget

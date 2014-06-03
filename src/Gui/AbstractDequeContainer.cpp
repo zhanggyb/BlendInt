@@ -187,8 +187,8 @@ namespace BlendInt {
 		}
 	}
 	
-	void AbstractDequeContainer::ResizeSubWidgets (unsigned int w,
-					unsigned int h)
+	void AbstractDequeContainer::ResizeSubWidgets (int w,
+					int h)
 	{
 		for (WidgetDeque::iterator it = sub_widgets()->begin();
 						it != sub_widgets()->end(); it++) {
@@ -241,8 +241,8 @@ namespace BlendInt {
 
 		int x = out_pos.x() + margin.left();
 		int y = out_pos.y() + margin.bottom();
-		unsigned int width = out_size.width() - margin.left() - margin.right();
-		unsigned int height = out_size.height() - margin.top() - margin.bottom();
+		int width = out_size.width() - margin.left() - margin.right();
+		int height = out_size.height() - margin.top() - margin.bottom();
 
 		if(orientation == Horizontal) {
 			DistributeHorizontally(x, width, space);
@@ -268,7 +268,7 @@ namespace BlendInt {
 	}
 
 	void AbstractDequeContainer::FillSubWidgetsAveragely (int x, int y,
-					unsigned int width, unsigned int height,
+					int width, int height,
 					Orientation orientation, int alignment, int space)
 	{
 		if(m_sub_widgets->empty()) return;
@@ -282,7 +282,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractDequeContainer::DistributeHorizontally (int x, unsigned int width, int space)
+	void AbstractDequeContainer::DistributeHorizontally (int x, int width, int space)
 	{
 		AbstractWidget* widget = 0;
 
@@ -308,7 +308,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractDequeContainer::DistributeVertically (int y, unsigned int height, int space)
+	void AbstractDequeContainer::DistributeVertically (int y, int height, int space)
 	{
 		AbstractWidget* widget = 0;
 
@@ -336,7 +336,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractDequeContainer::AlignHorizontally (int y, unsigned int height, int alignment)
+	void AbstractDequeContainer::AlignHorizontally (int y, int height, int alignment)
 	{
 		AbstractWidget* widget = 0;
 
@@ -363,7 +363,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractDequeContainer::AlignVertically (int x, unsigned int width, int alignment)
+	void AbstractDequeContainer::AlignVertically (int x, int width, int alignment)
 	{
 		AbstractWidget* widget = 0;
 		for(WidgetDeque::const_iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)

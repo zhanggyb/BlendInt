@@ -217,14 +217,14 @@ namespace BlendInt {
 		context->Resize(size);
 	}
 
-	void Interface::Resize (unsigned int width, unsigned int height)
+	void Interface::Resize (int width, int height)
 	{
 		if(m_current_context) {
 			m_current_context->Resize(width, height);
 		}
 	}
 
-	void Interface::ResizeContext(Context* context, unsigned int width, unsigned int height)
+	void Interface::ResizeContext(Context* context, int width, int height)
 	{
 		context->Resize(width, height);
 	}
@@ -457,9 +457,9 @@ namespace BlendInt {
 		}
 	}
 
-	unsigned int Interface::GetCurrentContextWidth() const
+	int Interface::GetCurrentContextWidth() const
 	{
-		unsigned int w = 0;
+		int w = 0;
 
 		if(m_current_context) {
 			w = m_current_context->size().width();
@@ -468,9 +468,9 @@ namespace BlendInt {
 		return w;
 	}
 
-	unsigned int Interface::GetCurrentContextHeight() const
+	int Interface::GetCurrentContextHeight() const
 	{
-		unsigned int h = 0;
+		int h = 0;
 
 		if(m_current_context) {
 			h = m_current_context->size().height();

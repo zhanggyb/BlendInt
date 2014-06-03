@@ -158,13 +158,13 @@ namespace BlendInt {
 
 		Rect text_outline = font.GetTextOutline(text);
 
-		if(static_cast<unsigned int>(height) < text_outline.height()) {
+		if(height < text_outline.height()) {
 			str_len = 0;
 			cal_width = false;
 		}
 
 		if(cal_width) {
-			if(static_cast<unsigned int>(width) < text_outline.width()) {
+			if(width < text_outline.width()) {
 				str_len = GetValidTextSize(size, text, font);
 			} else {
 				str_len = text.length();
@@ -179,12 +179,12 @@ namespace BlendInt {
 
 	size_t Label::GetValidTextSize(const Size& size, const String& text, const Font& font)
 	{
-		size_t width = 0;
-		size_t str_len = text.length();
+		int width = 0;
+		int str_len = text.length();
 
 		width = font.GetTextWidth(text, str_len, 0);
 
-		unsigned int text_width_space = size.width() - 2 - 2;
+		int text_width_space = size.width() - 2 - 2;
 
 		if(width > text_width_space) {
 			while(str_len > 0) {
@@ -210,9 +210,7 @@ namespace BlendInt {
 							max_font_height + 2 + 2);
 		} else {
 			size_t width = font().GetTextWidth(m_text);
-			preferred_size.set_width(
-							static_cast<unsigned int>(width)
-											+ 2 + 2);	// left padding: 2, right padding: 2
+			preferred_size.set_width(width + 2 + 2);	// left padding: 2, right padding: 2
 		}
 
 		return preferred_size;
@@ -227,7 +225,7 @@ namespace BlendInt {
 	{
 		m_text = text;
 
-		unsigned int h = m_font.GetHeight();
+		int h = m_font.GetHeight();
 
 		if(text.empty()) {
 			set_size (h + 2 + 2,
@@ -236,8 +234,8 @@ namespace BlendInt {
 			m_text_length = text.length();
 			Rect text_outline = m_font.GetTextOutline(text);
 
-			unsigned int width = text_outline.width() + 2 + 2;
-			unsigned int height = h + 2 + 2;
+			int width = text_outline.width() + 2 + 2;
+			int height = h + 2 + 2;
 			set_size(width, height);
 			m_font.set_pen((width - text_outline.width()) / 2,
 							(height - m_font.GetHeight()) / 2 +

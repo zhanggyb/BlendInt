@@ -86,9 +86,9 @@ namespace BlendInt {
 			int x = pos.x() + margin.left();
 			int y = pos.y() + margin.bottom();
 
-			unsigned int w = out_size.width() - margin.left()
+			int w = out_size.width() - margin.left()
 							- margin.right();
-			unsigned int h = out_size.height() - margin.top()
+			int h = out_size.height() - margin.top()
 							- margin.bottom();
 
 			FillSubWidget(x, y, w, h);
@@ -113,7 +113,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractSingleContainer::FillSubWidget (int x, int y, unsigned int w, unsigned int h)
+	void AbstractSingleContainer::FillSubWidget (int x, int y, int w, int h)
 	{
 		if (m_sub_widget) {
 			ResizeSubWidget(m_sub_widget, w, h);

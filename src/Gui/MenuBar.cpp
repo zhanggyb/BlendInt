@@ -188,9 +188,9 @@ namespace BlendInt {
 
 		int x = GetLastPosition();
 
-		unsigned h = size().height() - margin().top() - margin().bottom();
+		int h = size().height() - margin().top() - margin().bottom();
 		h = std::max(h, button->size().height());
-		unsigned int w = -m_space;
+		int w = -m_space;
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			w += (*it)->size().width() + m_space;
@@ -217,9 +217,9 @@ namespace BlendInt {
 
 		int x = GetLastPosition();
 
-		unsigned h = size().height() - margin().top() - margin().bottom();
+		int h = size().height() - margin().top() - margin().bottom();
 		h = std::max(h, button->size().height());
-		unsigned int w = -m_space;
+		int w = -m_space;
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			w += (*it)->size().width() + m_space;
@@ -244,9 +244,9 @@ namespace BlendInt {
 
 		if(PushBackSubWidget(button)) {
 
-			unsigned h = size().height() - margin().top() - margin().bottom();
+			int h = size().height() - margin().top() - margin().bottom();
 			h = std::max(h, button->size().height());
-			unsigned int w = -m_space;
+			int w = -m_space;
 			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				w += (*it)->size().width() + m_space;
@@ -272,9 +272,9 @@ namespace BlendInt {
 		if(PushBackSubWidget(button)) {
 			button->SetMenu(menu);
 
-			unsigned h = size().height() - margin().top() - margin().bottom();
+			int h = size().height() - margin().top() - margin().bottom();
 			h = std::max(h, button->size().height());
-			unsigned int w = -m_space;
+			int w = -m_space;
 			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				w += (*it)->size().width() + m_space;

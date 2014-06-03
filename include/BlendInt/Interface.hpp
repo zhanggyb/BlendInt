@@ -97,9 +97,9 @@ namespace BlendInt {
 
 		const Size& size () const;
 
-		unsigned int GetCurrentContextWidth () const;
+		int GetCurrentContextWidth () const;
 
-		unsigned int GetCurrentContextHeight () const;
+		int GetCurrentContextHeight () const;
 
 		/**
 		 * @brief Resize the interface
@@ -111,9 +111,9 @@ namespace BlendInt {
 		/**
 		 * @brief Resize the interface
 		 */
-		void Resize (unsigned int width, unsigned int height);
+		void Resize (int width, int height);
 
-		void ResizeContext (Context* context, unsigned int width, unsigned int height);
+		void ResizeContext (Context* context, int width, int height);
 
 		void SetCurrentContext (Context* context);
 

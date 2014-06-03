@@ -93,7 +93,7 @@ namespace BlendInt {
 		if(sub_widget()) {
 			AbstractWidget* p = sub_widget();
 
-			unsigned int w = size().width() - margin().hsum();
+			int w = size().width() - margin().hsum();
 
 			if (p->size().width() <= w) {
 				percentage = 100;
@@ -113,7 +113,7 @@ namespace BlendInt {
 		if(sub_widget()) {
 			AbstractWidget* p = sub_widget();
 
-			unsigned int h = size().height() - margin().vsum();
+			int h = size().height() - margin().vsum();
 
 			if (p->size().height() <= h) {
 				percentage = 100;

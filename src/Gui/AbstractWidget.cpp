@@ -72,7 +72,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SubWidgetProxy::Resize (AbstractWidget* source, unsigned int width, unsigned int height)
+	void SubWidgetProxy::Resize (AbstractWidget* source, int width, int height)
 	{
 		if(m_widget->size().width() == width &&
 						m_widget->size().height() == height)
@@ -176,7 +176,7 @@ namespace BlendInt {
 		return Size(200, 200);
 	}
 
-	void AbstractWidget::Resize (unsigned int width, unsigned int height)
+	void AbstractWidget::Resize (int width, int height)
 	{
 		if(size().width() == width && size().height() == height) return;
 

@@ -92,7 +92,7 @@ namespace BlendInt {
 
 		void InitializeMenu ();
 
-		void ResetHighlightBuffer (unsigned int width);
+		void ResetHighlightBuffer (int width);
 
 		unsigned int GetHighlightNo (int y);
 

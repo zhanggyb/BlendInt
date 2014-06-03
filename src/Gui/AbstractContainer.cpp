@@ -109,7 +109,7 @@ namespace BlendInt {
 	}
 	
 	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
-					unsigned int width, unsigned int height)
+					int width, int height)
 	{
 		if(!sub || sub->container() != this) return;
 

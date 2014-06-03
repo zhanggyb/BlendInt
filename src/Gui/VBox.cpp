@@ -266,8 +266,8 @@ namespace BlendInt {
 	{
 		int x = out_pos.x() + margin.left();
 		int y = out_pos.y() + margin.bottom();
-		unsigned int width = out_size.width() - margin.left() - margin.right();
-		unsigned int height = out_size.height() - margin.top() - margin.bottom();
+		int width = out_size.width() - margin.left() - margin.right();
+		int height = out_size.height() - margin.top() - margin.bottom();
 
 		FillSubWidgetsProportionally(x, y, width, height, alignment, space);
 	}
@@ -277,15 +277,15 @@ namespace BlendInt {
 		FillSubWidgetsProportionally(pos.x(), pos.y(), size.width(), size.height(), alignment, space);
 	}
 
-	void VBox::FillSubWidgetsProportionally (int x, int y, unsigned int width,
-					unsigned int height, int alignment, int space)
+	void VBox::FillSubWidgetsProportionally (int x, int y, int width,
+					int height, int alignment, int space)
 	{
-		boost::scoped_ptr<std::deque<unsigned int> > expandable_preferred_heights(new std::deque<unsigned int>);
-		boost::scoped_ptr<std::deque<unsigned int> > unexpandable_preferred_heights(new std::deque<unsigned int>);
-		boost::scoped_ptr<std::deque<unsigned int> > unexpandable_preferred_widths(new std::deque<unsigned int>);
+		boost::scoped_ptr<std::deque<int> > expandable_preferred_heights(new std::deque<int>);
+		boost::scoped_ptr<std::deque<int> > unexpandable_preferred_heights(new std::deque<int>);
+		boost::scoped_ptr<std::deque<int> > unexpandable_preferred_widths(new std::deque<int>);
 
-		unsigned int expandable_preferred_height_sum = 0;	// the height sum of the expandable widgets' size
-		unsigned int unexpandable_preferred_height_sum = 0;	// the height sum of the unexpandable widgets' size
+		int expandable_preferred_height_sum = 0;	// the height sum of the expandable widgets' size
+		int unexpandable_preferred_height_sum = 0;	// the height sum of the unexpandable widgets' size
 
 		AbstractWidget* widget = 0;
 		Size tmp_size;
@@ -312,9 +312,9 @@ namespace BlendInt {
 
 		if((expandable_preferred_heights->size() + unexpandable_preferred_heights->size()) == 0) return;	// do nothing if all sub widgets are invisible
 
-		unsigned int total_space = ((expandable_preferred_heights->size() + unexpandable_preferred_heights->size()) - 1) * space;
+		int total_space = ((expandable_preferred_heights->size() + unexpandable_preferred_heights->size()) - 1) * space;
 
-		unsigned int total_preferred_height = expandable_preferred_height_sum
+		int total_preferred_height = expandable_preferred_height_sum
 						+ unexpandable_preferred_height_sum
 						+ total_space;
 
@@ -336,13 +336,13 @@ namespace BlendInt {
 	}
 
 	void VBox::DistributeWithPreferredHeight (int y,
-					unsigned int height,
+					int height,
 					int space,
-					const std::deque<unsigned int>* expandable_preferred_heights,
-					const std::deque<unsigned int>* unexpandable_preferred_heights)
+					const std::deque<int>* expandable_preferred_heights,
+					const std::deque<int>* unexpandable_preferred_heights)
 	{
-		std::deque<unsigned int>::const_iterator exp_it = expandable_preferred_heights->begin();
-		std::deque<unsigned int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
+		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
+		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
 		WidgetDeque::iterator widget_it = sub_widgets()->begin();
 		AbstractWidget* widget = 0;
@@ -374,12 +374,12 @@ namespace BlendInt {
 	}
 
 	void VBox::DistributeWithSmallHeight (int y,
-					unsigned int height,
+					int height,
 					int space,
-					const std::deque<unsigned int>* expandable_preferred_heights,
-					unsigned int expandable_prefer_sum,
-					const std::deque<unsigned int>* unexpandable_preferred_heights,
-					unsigned int unexpandable_prefer_sum)
+					const std::deque<int>* expandable_preferred_heights,
+					int expandable_prefer_sum,
+					const std::deque<int>* unexpandable_preferred_heights,
+					int unexpandable_prefer_sum)
 	{
 		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
 
@@ -391,9 +391,9 @@ namespace BlendInt {
 			return;
 		}
 
-		unsigned int reference_height;
-		std::deque<unsigned int>::const_iterator exp_it = expandable_preferred_heights->begin();
-		std::deque<unsigned int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
+		int reference_height;
+		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
+		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 		WidgetDeque::iterator it = sub_widgets()->begin();
 		AbstractWidget* widget = 0;
 
@@ -463,19 +463,19 @@ namespace BlendInt {
 	}
 
 	void VBox::DistributeWithLargeHeight (int y,
-					unsigned int height,
+					int height,
 					int space,
-					const std::deque<unsigned int>* expandable_preferred_heights,
-					unsigned int expandable_prefer_sum,
-					const std::deque<unsigned int>* unexpandable_preferred_heights,
-					unsigned int unexpandable_prefer_sum)
+					const std::deque<int>* expandable_preferred_heights,
+					int expandable_prefer_sum,
+					const std::deque<int>* unexpandable_preferred_heights,
+					int unexpandable_prefer_sum)
 	{
-		unsigned int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
+		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
 
-		unsigned int expandable_height = widgets_height - unexpandable_prefer_sum;
+		int expandable_height = widgets_height - unexpandable_prefer_sum;
 
-		std::deque<unsigned int>::const_iterator exp_it = expandable_preferred_heights->begin();
-		std::deque<unsigned int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
+		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
+		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
 		WidgetDeque::iterator it = sub_widgets()->begin();
 
@@ -509,10 +509,10 @@ namespace BlendInt {
 		}
 	}
 
-	void VBox::Align (int x, unsigned int width, int alignment,
-	        const std::deque<unsigned int>* unexpandable_preferred_widths)
+	void VBox::Align (int x, int width, int alignment,
+	        const std::deque<int>* unexpandable_preferred_widths)
 	{
-		std::deque<unsigned int>::const_iterator unexp_it =
+		std::deque<int>::const_iterator unexp_it =
 				unexpandable_preferred_widths->begin();
 		WidgetDeque::iterator it;
 		AbstractWidget* widget = 0;

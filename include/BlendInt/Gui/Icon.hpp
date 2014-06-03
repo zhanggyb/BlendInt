@@ -45,7 +45,7 @@ namespace BlendInt {
 
 		void Scale (float ratio);
 
-		virtual void Draw (const glm::mat4& mvp, int x, int y, unsigned int restrict_width, unsigned int restrict_height) = 0;
+		virtual void Draw (const glm::mat4& mvp, int x, int y, int restrict_width, int restrict_height) = 0;
 
 	protected:
 

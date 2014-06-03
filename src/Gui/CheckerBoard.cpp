@@ -276,7 +276,7 @@ namespace BlendInt {
 	    light_indices->resize(light_num * 2 * 3);
 	    dark_indices->resize(dark_num * 2 * 3);
 
-	    size_t x = 0, y = 0;
+	    int x = 0, y = 0;
 	    for(size_t i = 0; i < vnum; i++)
 	    {
 	        for(size_t j = 0; j < hnum; j++)

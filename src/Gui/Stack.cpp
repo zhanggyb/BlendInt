@@ -43,8 +43,8 @@ namespace BlendInt {
 		if(PushBackSubWidget(widget)) {
 			// TODO: lock widget's geometry
 
-			unsigned int w = size().width() - margin().left() - margin().right();
-			unsigned int h = size().height() - margin().top() - margin().bottom();
+			int w = size().width() - margin().left() - margin().right();
+			int h = size().height() - margin().top() - margin().bottom();
 
 			ResizeSubWidget(widget, w, h);
 			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
@@ -60,8 +60,8 @@ namespace BlendInt {
 		if(InsertSubWidget(index, widget)) {
 			// TODO: lock widget's geometry
 
-			unsigned int w = size().width() - margin().left() - margin().right();
-			unsigned int h = size().height() - margin().top() - margin().bottom();
+			int w = size().width() - margin().left() - margin().right();
+			int h = size().height() - margin().top() - margin().bottom();
 
 			ResizeSubWidget(widget, w, h);
 			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
@@ -126,9 +126,9 @@ namespace BlendInt {
 				const Margin* margin_p =
 								static_cast<const Margin*>(request.data());
 
-				unsigned int w = size().width() - margin_p->left()
+				int w = size().width() - margin_p->left()
 								- margin_p->right();
-				unsigned int h = size().height() - margin_p->top()
+				int h = size().height() - margin_p->top()
 								- margin_p->bottom();
 
 				ResizeSubWidgets(w, h);
@@ -165,9 +165,9 @@ namespace BlendInt {
 			case WidgetSize: {
 				const Size* new_size = static_cast<const Size*>(request.data());
 
-				unsigned int w = new_size->width() - margin().left()
+				int w = new_size->width() - margin().left()
 								- margin().right();
-				unsigned int h = new_size->height() - margin().top()
+				int h = new_size->height() - margin().top()
 								- margin().bottom();
 
 				ResizeSubWidgets(w, h);

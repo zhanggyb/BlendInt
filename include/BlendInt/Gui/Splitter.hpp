@@ -99,7 +99,7 @@ namespace BlendInt {
 
 		virtual ~Splitter ();
 
-		void Add (AbstractWidget* widget);
+		void PushBack (AbstractWidget* widget);
 
 		void Remove (AbstractWidget* widget);
 
@@ -149,7 +149,7 @@ namespace BlendInt {
 
 		void AlignSubWidgets (Orientation orientation, const Size& size, const Margin& margin, int space);
 
-		unsigned int GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin, int space);
+		int GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin, int space);
 
 		Orientation m_orientation;
 

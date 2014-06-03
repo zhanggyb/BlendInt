@@ -25,7 +25,7 @@
 
 namespace BlendInt {
 
-	void AbstractResizableForm::Resize (unsigned int width, unsigned int height)
+	void AbstractResizableForm::Resize (int width, int height)
 	{
 		if(size().width() == width && size().height() == height) return;
 
