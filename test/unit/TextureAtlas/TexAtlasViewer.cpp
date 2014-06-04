@@ -86,7 +86,7 @@ TexAtlasViewer::TexAtlasViewer()
 				break;
 			}
 
-			DBG_PRINT_MSG("offset: %d, %d", m_atlas.xoffset(), m_atlas.yoffset());
+			DBG_PRINT_MSG("index: %d", m_atlas.index());
 
 		}
 	}
@@ -110,6 +110,15 @@ TexAtlasViewer::TexAtlasViewer()
 	ft_face.LoadChar(L'信', FT_LOAD_RENDER);
 	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
 	m_atlas.MoveNext();
+
+	ft_face.LoadChar(L'A', FT_LOAD_RENDER);
+	m_atlas.Update(0, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, true);
+
+	ft_face.LoadChar(L'B', FT_LOAD_RENDER);
+	m_atlas.Update(13, 0, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, true);
+
+	ft_face.LoadChar(L'C', FT_LOAD_RENDER);
+	m_atlas.Update(1, 19, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, true);
 
 	/*
 	if(ft_face.LoadChar('a', FT_LOAD_RENDER)) {
@@ -182,7 +191,9 @@ TexAtlasViewer::TexAtlasViewer()
 	}
 	 */
 
-	DBG_PRINT_MSG("last index: %d", m_atlas.GetCurrentIndex());
+	DBG_PRINT_MSG("last index: %d", m_atlas.index());
+	DBG_PRINT_MSG("columns: %d, rows: %d", m_atlas.GetColumns(), m_atlas.GetRows());
+	DBG_PRINT_MSG("max count: %d", m_atlas.GetMaxNumber());
 
 	m_atlas.Reset();
 	ft_face.Done();

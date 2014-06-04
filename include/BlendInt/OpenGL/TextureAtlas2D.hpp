@@ -36,7 +36,7 @@ namespace BlendInt {
 
 		virtual ~TextureAtlas2D ();
 
-		void Generate (int width, int height, int cell_x, int cell_y, int space = 1);
+		void Generate (int width, int height, int cell_x, int cell_y, int xoffset = 1, int yoffset = 1, int space = 1);
 
 		void Bind ();
 
@@ -52,7 +52,10 @@ namespace BlendInt {
 
 		bool MoveNext ();
 
-		int GetCurrentIndex () const;
+		int index () const
+		{
+			return m_index;
+		}
 
 		int GetMaxNumber () const;
 
@@ -106,6 +109,7 @@ namespace BlendInt {
 		int m_cell_height;
 
 		int m_space;
+		int m_index;
 
 		int m_xoffset;
 		int m_yoffset;

@@ -147,14 +147,11 @@ namespace BlendInt {
 
 	private:
 
-		void AlignSubWidgets (Orientation orientation, const Size& size, const Margin& margin, int space);
+		void AlignSubWidgets (Orientation orientation, const Size& size, const Margin& margin);
 
-		int GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin, int space);
+		int GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin);
 
 		Orientation m_orientation;
-
-		int m_space;
-
 	};
 }
 

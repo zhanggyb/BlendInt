@@ -310,8 +310,7 @@ namespace BlendInt {
 
 	Splitter::Splitter(Orientation orientation)
 	: AbstractDequeContainer(),
-	  m_orientation(orientation),
-	  m_space(2)
+	  m_orientation(orientation)
 	{
 		set_size(400, 400);
 	}
@@ -341,14 +340,14 @@ namespace BlendInt {
 				PushBackSubWidget(widget);
 			}
 
-			AlignSubWidgets(m_orientation, size(), margin(), m_space);
+			AlignSubWidgets(m_orientation, size(), margin());
 		}
 	}
 
 	void Splitter::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
-			AlignSubWidgets(m_orientation, size(), margin(), m_space);
+			AlignSubWidgets(m_orientation, size(), margin());
 		}
 	}
 
@@ -364,26 +363,24 @@ namespace BlendInt {
 			Size tmp;
 
 			if (m_orientation == Horizontal) {
-				preferred_size.set_width(-m_space);
 				for (WidgetDeque::iterator it = sub_widgets()->begin();
 								it != sub_widgets()->end(); it++) {
 					widget = *it;
 					if (widget->visiable()) {
 						tmp = widget->GetPreferredSize();
-						preferred_size.add_width(tmp.width() + m_space);
+						preferred_size.add_width(tmp.width());
 						preferred_size.set_height(
 										std::max(preferred_size.height(),
 														tmp.height()));
 					}
 				}
 			} else {
-				preferred_size.set_height(-m_space);
 				for(WidgetDeque::iterator it = sub_widgets()->begin();
 								it != sub_widgets()->end(); it++) {
 					widget = *it;
 					if(widget->visiable()) {
 						tmp = widget->GetPreferredSize();
-						preferred_size.add_height(tmp.height() + m_space);
+						preferred_size.add_height(tmp.height());
 						preferred_size.set_width(
 										std::max(preferred_size.width(), tmp.width()));
 					}
@@ -516,7 +513,7 @@ namespace BlendInt {
 			case WidgetSize: {
 
 				const Size* size_p = static_cast<const Size*>(request.data());
-				AlignSubWidgets(m_orientation, *size_p, margin(), m_space);
+				AlignSubWidgets(m_orientation, *size_p, margin());
 
 				break;
 			}
@@ -544,9 +541,9 @@ namespace BlendInt {
 		return IgnoreAndContinue;
 	}
 	
-	void Splitter::AlignSubWidgets (Orientation orienation, const Size& size, const Margin& margin, int space)
+	void Splitter::AlignSubWidgets (Orientation orienation, const Size& size, const Margin& margin)
 	{
-		int room = GetAverageRoom(orienation, size, margin, space);
+		int room = GetAverageRoom(orienation, size, margin);
 		int x = position().x() + margin.left();
 
 		if(orienation == Horizontal) {
@@ -560,11 +557,11 @@ namespace BlendInt {
 				if(i % 2 == 0) {
 					ResizeSubWidget(*it, room, h);
 					SetSubWidgetPosition(*it, x, y);
-					x = x + room + space;
+					x = x + room;
 				} else {
 					ResizeSubWidget(*it, 3, h);
 					SetSubWidgetPosition(*it, x, y);
-					x = x + 3 + space;
+					x = x + 3;
 				}
 				i++;
 			}
@@ -578,11 +575,11 @@ namespace BlendInt {
 			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				if(i % 2 == 0) {
-					y = y - room - space;
+					y = y - room;
 					ResizeSubWidget(*it, w, room);
 					SetSubWidgetPosition(*it, x, y);
 				} else {
-					y = y - 3 - space;
+					y = y - 3;
 					ResizeSubWidget(*it, w, 3);
 					SetSubWidgetPosition(*it, x, y);
 				}
@@ -629,7 +626,7 @@ namespace BlendInt {
 		return IgnoreAndContinue;
 	}
 	
-	int Splitter::GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin, int space)
+	int Splitter::GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin)
 	{
 		int room = 0;
 
@@ -640,7 +637,7 @@ namespace BlendInt {
 		}
 
 		if(sub_widget_size() > 1) {
-			room = room - (space * (sub_widget_size() - 1)) - 3 * (sub_widget_size() - 1) / 2;
+			room = room - 3 * (sub_widget_size() - 1) / 2;
 			room = room / ((sub_widget_size() + 1) / 2);
 		}
 
