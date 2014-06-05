@@ -36,16 +36,13 @@ TEST_F(MenuTest1, Foo1)
 	menu->SetPosition(200, 200);
 	//menu->Resize (200, 200);
 
-//	menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
-//	menu->AddActionItem("MenuItem2", "Ctrl + 1");
-//	menu->AddActionItem("MenuItem3", "Ctrl + 1");
-//	menu->AddActionItem("MenuItem4", "Ctrl + 1");
-//	menu->AddActionItem("MenuItem5");
+	menu->AddAction(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+	menu->AddAction("MenuItem2", "Ctrl + 1");
+	menu->AddAction("MenuItem3", "Ctrl + 1");
+	menu->AddAction("MenuItem4", "Ctrl + 1");
+	menu->AddAction("MenuItem5");
 
 	context->Add(menu);
-
-	context->SetFocusedWidget(menu);
-	context->SetFocusedWidget(0);
 
 	RunLoop(window);
 

@@ -285,11 +285,11 @@ namespace BlendInt {
 		//m_menu->SetPosition(200, 200);
 		//menu->Resize (200, 200);
 
-		m_menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
-		m_menu->AddActionItem("MenuItem2", "Ctrl + 1");
-		m_menu->AddActionItem("MenuItem3", "Ctrl + 1");
-		m_menu->AddActionItem("MenuItem4", "Ctrl + 1");
-		m_menu->AddActionItem("MenuItem5");
+		m_menu->AddAction(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+		m_menu->AddAction("MenuItem2", "Ctrl + 1");
+		m_menu->AddAction("MenuItem3", "Ctrl + 1");
+		m_menu->AddAction("MenuItem4", "Ctrl + 1");
+		m_menu->AddAction("MenuItem5");
 
 		events()->connect(m_menu->triggered(), this, &ComboBox::OnMenuActionTriggered);
 	}

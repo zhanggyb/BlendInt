@@ -53,19 +53,19 @@ namespace BlendInt {
 
 		void SetTitle (const String& title);
 
-		void AddActionItem (const String& text);
+		void AddAction (const String& text);
 
-		void AddActionItem (const String& text, const String& shortcut);
+		void AddAction (const String& text, const String& shortcut);
 
-		void AddActionItem (const RefPtr<Icon>& icon, const String& text);
+		void AddAction (const RefPtr<Icon>& icon, const String& text);
 
-		void AddActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
+		void AddAction (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
 
-		void AddActionItem (const RefPtr<Action>& item);
+		void AddAction (const RefPtr<Action>& item);
 
-		void RemoveActionItem (size_t index);
+		void RemoveAction (size_t index);
 
-		void RemoveActionItem (const RefPtr<Action>& item);
+		void RemoveAction (const RefPtr<Action>& item);
 
 		const String& title () const
 		{

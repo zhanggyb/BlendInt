@@ -63,49 +63,50 @@ namespace BlendInt {
 		m_title = title;
 	}
 
-	void Menu::AddActionItem(const String& text)
+	void Menu::AddAction(const String& text)
 	{
 		RefPtr<Action> item = Action::Create(text);
 
-		AddActionItem(item);
+		AddAction(item);
 	}
 
-	void Menu::AddActionItem(const String& text, const String& shortcut)
+	void Menu::AddAction(const String& text, const String& shortcut)
 	{
 		RefPtr<Action> item = Action::Create(text, shortcut);
 
-		AddActionItem(item);
+		AddAction(item);
 	}
 
-	void Menu::AddActionItem(const RefPtr<Icon>& icon, const String& text)
+	void Menu::AddAction(const RefPtr<Icon>& icon, const String& text)
 	{
 		RefPtr<Action> item = Action::Create(icon, text);
 
-		AddActionItem(item);
+		AddAction(item);
 	}
 
-	void Menu::AddActionItem(const RefPtr<Icon>& icon, const String& text, const String& shortcut)
+	void Menu::AddAction(const RefPtr<Icon>& icon, const String& text, const String& shortcut)
 	{
 		RefPtr<Action> item = Action::Create(icon, text, shortcut);
 
-		AddActionItem(item);
+		AddAction(item);
 	}
 
-	void Menu::AddActionItem(const RefPtr<Action>& item)
+	void Menu::AddAction(const RefPtr<Action>& item)
 	{
 		int width = 0;
 
 		width = item->GetTextLength(m_font);
+
 		width += 16 + DefaultIconSpace + DefaultShortcutSpace;
 
 		Size s;
 
 		if(m_list.size()) {
-			s.set_width(std::max(size().width(), round_corner_radius() * 2) + width);
+			s.set_width(std::max(size().width(), round_corner_radius() * 2 + width));
 			s.set_height(size().height() + DefaultMenuItemHeight);
 		} else {
-			s.set_width((int)round_corner_radius() * 2 + width);
-			s.set_height((int)round_corner_radius() * 2 + DefaultMenuItemHeight);
+			s.set_width(round_corner_radius() * 2 + width);
+			s.set_height(round_corner_radius() * 2 + DefaultMenuItemHeight);
 		}
 
 		Resize(s);
@@ -287,11 +288,11 @@ namespace BlendInt {
 		tool.UpdateInnerBuffer(m_highlight_buffer.get());
 	}
 	
-	void Menu::RemoveActionItem (size_t index)
+	void Menu::RemoveAction (size_t index)
 	{
 	}
 	
-	void Menu::RemoveActionItem (const RefPtr<Action>& item)
+	void Menu::RemoveAction (const RefPtr<Action>& item)
 	{
 	}
 	

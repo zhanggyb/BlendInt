@@ -49,11 +49,8 @@ namespace BlendInt {
 	  m_last_x(0),
 	  m_start_x(0)
 	{
-		//set_preferred_size(200, 32);
 		set_size(200, 32);
-
 		set_margin(4, 4, 4, 4);	// the same as MenuBar
-
 		set_scissor_test(true);
 
 		InitializeToolBar();
@@ -400,7 +397,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0, false);
+		tool.Setup(size(), 0, RoundNone, 0, false);
 		m_inner = tool.GenerateInnerBuffer();
 	}
 	

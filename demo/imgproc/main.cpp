@@ -22,13 +22,14 @@ int main(int argc, char* argv[])
 
 	Init();
 
-	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
+	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1024, 728);
 
 	GLFWContext* context = Manage(new GLFWContext);
 #ifdef DEBUG
 	context->set_name("GLFWContext");
 #endif
 	Interface::instance->SetCurrentContext(context);
+	context->Resize(1024, 728);
 
 	//Interface::instance->Resize(800, 600);
 

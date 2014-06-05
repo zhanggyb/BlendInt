@@ -152,28 +152,28 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void ToolButton::SetActionItem (const String& text)
+	void ToolButton::SetAction (const String& text)
 	{
 		RefPtr<Action> action(new Action(text));
 
 		m_action = action;
 	}
 
-	void ToolButton::SetActionItem (const String& text, const String& shortcut)
+	void ToolButton::SetAction (const String& text, const String& shortcut)
 	{
 		RefPtr<Action> action(new Action(text, shortcut));
 
 		m_action = action;
 	}
 
-	void ToolButton::SetActionItem (const RefPtr<Icon>& icon, const String& text)
+	void ToolButton::SetAction (const RefPtr<Icon>& icon, const String& text)
 	{
 		RefPtr<Action> action(new Action(icon, text));
 
 		m_action = action;
 	}
 
-	void ToolButton::SetActionItem (const RefPtr<Icon>& icon, const String& text,
+	void ToolButton::SetAction (const RefPtr<Icon>& icon, const String& text,
 	        const String& shortcut)
 	{
 		RefPtr<Action> action(new Action(icon, text, shortcut));
@@ -181,7 +181,7 @@ namespace BlendInt {
 		m_action = action;
 	}
 
-	void ToolButton::SetActionItem (const RefPtr<Action>& item)
+	void ToolButton::SetAction (const RefPtr<Action>& item)
 	{
 		m_action = item;
 	}

@@ -26,7 +26,7 @@ void MainLayout::InitOnce ()
 
 	m_menubar = Manage(new BI::MenuBar);
 	m_toolbar = Manage(new BI::ToolBar);
-	m_imgview = Manage(new BI::CVImageView);
+	m_imgview = Manage(new BI::ImageView);
 	m_area = Manage(new BI::ScrollArea);
 
 	m_input = Manage(new BI::TextEntry);
@@ -35,7 +35,7 @@ void MainLayout::InitOnce ()
 
 	DBG_SET_NAME(m_menubar, "MenuBar");
 	DBG_SET_NAME(m_toolbar, "ToolBar");
-	DBG_SET_NAME(m_imgview, "CVImageView");
+	DBG_SET_NAME(m_imgview, "ImageView");
 	DBG_SET_NAME(m_area, "ScrollArea");
 	DBG_SET_NAME(m_input, "TextEntry");
 	DBG_SET_NAME(m_combo, "ComboBox");
@@ -45,11 +45,11 @@ void MainLayout::InitOnce ()
     DBG_SET_NAME(file_menu, "Menu");
 
     file_menu->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
-    file_menu->AddActionItem(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
-    file_menu->AddActionItem("MenuItem2", "Ctrl + 1");
-    file_menu->AddActionItem("MenuItem3", "Ctrl + 1");
-    file_menu->AddActionItem("MenuItem4", "Ctrl + 1");
-    file_menu->AddActionItem("MenuItem5");
+    file_menu->AddAction(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    file_menu->AddAction("MenuItem2", "Ctrl + 1");
+    file_menu->AddAction("MenuItem3", "Ctrl + 1");
+    file_menu->AddAction("MenuItem4", "Ctrl + 1");
+    file_menu->AddAction("MenuItem5");
 
 	m_menubar->AddMenu(String("File"), file_menu);
 	//m_menubar->AddMenuButton("Edit");

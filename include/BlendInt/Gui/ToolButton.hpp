@@ -42,15 +42,15 @@ namespace BlendInt {
 
 		virtual ~ToolButton();
 
-		void SetActionItem (const String& text);
+		void SetAction (const String& text);
 
-		void SetActionItem (const String& text, const String& shortcut);
+		void SetAction (const String& text, const String& shortcut);
 
-		void SetActionItem (const RefPtr<Icon>& icon, const String& text);
+		void SetAction (const RefPtr<Icon>& icon, const String& text);
 
-		void SetActionItem (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
+		void SetAction (const RefPtr<Icon>& icon, const String& text, const String& shortcut);
 
-		void SetActionItem (const RefPtr<Action>& item);
+		void SetAction (const RefPtr<Action>& item);
 
 		virtual Size GetPreferredSize () const;
 

@@ -10,6 +10,7 @@
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/ToolBar.hpp>
 #include <BlendInt/Gui/CVImageView.hpp>
+#include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
 
@@ -36,7 +37,7 @@ private:
 
 	BI::MenuBar* m_menubar;
 	BI::ToolBar* m_toolbar;
-	BI::CVImageView* m_imgview;
+	BI::ImageView* m_imgview;
 	BI::ScrollArea* m_area;
 
 	BI::TextEntry* m_input;
