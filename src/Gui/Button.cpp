@@ -34,6 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Button.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Service/Theme.hpp>
@@ -65,11 +66,11 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(request.data());
 				UpdateTextPosition(*size_p, round_corner_type(),
 								round_corner_radius(), text());
-				glBindVertexArray(m_vao);
-				GenerateFormBuffer(*size_p, round_corner_type(),
-								round_corner_radius(), m_inner_buffer.get(),
-								m_outer_buffer.get(), m_emboss_buffer.get());
-				glBindVertexArray(0);
+				VertexTool tool;
+				tool.Setup (*size_p, DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				tool.UpdateEmbossBuffer(m_emboss_buffer.get());
 				Refresh();
 				break;
 			}
@@ -78,11 +79,11 @@ namespace BlendInt {
 				const int* type_p = static_cast<const int*>(request.data());
 				UpdateTextPosition(size(), *type_p, round_corner_radius(),
 								text());
-				glBindVertexArray(m_vao);
-				GenerateFormBuffer(size(), *type_p, round_corner_radius(),
-								m_inner_buffer.get(), m_outer_buffer.get(),
-								m_emboss_buffer.get());
-				glBindVertexArray(0);
+				VertexTool tool;
+				tool.Setup (size(), DefaultBorderWidth(), *type_p, round_corner_radius());
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				tool.UpdateEmbossBuffer(m_emboss_buffer.get());
 				Refresh();
 				break;
 			}
@@ -92,11 +93,11 @@ namespace BlendInt {
 								static_cast<const int*>(request.data());
 				UpdateTextPosition(size(), round_corner_type(), *radius_p,
 								text());
-				glBindVertexArray(m_vao);
-				GenerateFormBuffer(size(), round_corner_type(), *radius_p,
-								m_inner_buffer.get(), m_outer_buffer.get(),
-								m_emboss_buffer.get());
-				glBindVertexArray(0);
+				VertexTool tool;
+				tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), *radius_p);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				tool.UpdateEmbossBuffer(m_emboss_buffer.get());
 				Refresh();
 				break;
 			}
@@ -177,21 +178,12 @@ namespace BlendInt {
 						h + top + bottom);
 
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_emboss_buffer.reset(new GLArrayBuffer);
-
-		GenerateFormBuffer(
-						size(),
-						round_corner_type(),
-						round_corner_radius(),
-						m_inner_buffer.get(),
-						m_outer_buffer.get(),
-						m_emboss_buffer.get());
-
-		glBindVertexArray(0);
+		VertexTool tool;
+		tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		m_inner_buffer = tool.GenerateInnerBuffer();
+		m_outer_buffer = tool.GenerateOuterBuffer();
+		m_emboss_buffer = tool.GenerateEmbossBuffer();
 	}
 
 	void Button::InitializeButton (const String& text)
@@ -225,20 +217,11 @@ namespace BlendInt {
 		}
 
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_emboss_buffer.reset(new GLArrayBuffer);
-
-		GenerateFormBuffer(
-						size(),
-						round_corner_type(),
-						round_corner_radius(),
-						m_inner_buffer.get(),
-						m_outer_buffer.get(),
-						m_emboss_buffer.get());
-
-		glBindVertexArray(0);
+		VertexTool tool;
+		tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		m_inner_buffer = tool.GenerateInnerBuffer();
+		m_outer_buffer = tool.GenerateOuterBuffer();
+		m_emboss_buffer = tool.GenerateEmbossBuffer();
 	}
 
 }

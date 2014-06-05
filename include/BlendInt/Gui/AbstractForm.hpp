@@ -110,18 +110,10 @@ namespace BlendInt {
 		const void* m_data;
 	};
 
-	/**
-	 * Structure used in calulating vertex buffer for inner and outline
-	 *
-	 * @note don't use nested class for SWIG later
-	 */
-	struct VerticesSum {
-		VerticesSum ()
-		: total(0), half(0)
-		{ }
-
-		size_t total;	/**< total number of vertices for widget */
-		size_t half;	/**< halfway vertices number */
+	enum FormRequestType {
+		FormSize,
+		FormRoundType,
+		FormRoundRadius
 	};
 
 	/**
@@ -155,84 +147,26 @@ namespace BlendInt {
 			return *this;
 		}
 
+		void Resize (int width, int height);
+
+		void Resize (const Size& size);
+
 		const Size& size () const
 		{
 			return m_size;
 		}
 
-		static void SetDefaultBorderWidth (float border);
+		virtual void Draw (const glm::mat4& mvp) = 0;
 
-		static float DefaultBorderWidth ();
+		static void SetDefaultBorderWidth (int border);
 
-		static void GenerateFlatRectVertices (
-						const Size& size,
-						float border,
-						std::vector<GLfloat>* vertices);
-
-		static void GenerateRectVertices (const Size& size,
-						float border,
-						std::vector<GLfloat>* inner,
-						std::vector<GLfloat>* outer);
-
-		/**
-		 * @brief Generate round vertices for inner and outline of a form
-		 * @param[in] size The size of the form
-		 * @param[in] border The width of the outline
-		 * @param[in] round_type Round type, MUST be one or bit operation of the values in RoundType
-		 * @param[in] radius The round radius
-		 * @param[out] inner The inner vertices in std::vector
-		 * @param[out] outer The outline vertices in std::vector
-		 */
-		static VerticesSum GenerateRoundVertices (
-						const Size& size,
-						float border,
-						int round_type,
-						float radius,
-						std::vector<GLfloat>* inner,
-						std::vector<GLfloat>* outer);
-
-		static VerticesSum GenerateRoundVertices (
-						const Size& size,
-						float border,
-						int round_type,
-						float radius,
-						const Color& color,
-						short shadetop,
-						short shadedown,
-						Orientation shadedir,
-						std::vector<GLfloat>* inner,
-						std::vector<GLfloat>* outer);
-
-		static void GenerateTriangleStripVertices (
-						const std::vector<GLfloat>& inner,
-						const std::vector<GLfloat>& outer,
-						const size_t totvert,
-						std::vector<GLfloat>* strip);
-
-		static void GenerateOpenTriangleStripVertices (
-						const std::vector<GLfloat>& outer,
-						const size_t totvert,
-						std::vector<GLfloat>* strip);
-
-		/**
-		 * @brief Generate vertex buffer object for drawing a form
-		 * @param[in] size The size of the form
-		 * @param[in] round_type The round type
-		 * @param[in] radius The radius of the round corner
-		 * @param[out] inner_buffer Buffer object for drawing the inner
-		 * @param[out] outer_buffer Buffer object for drawing the outer
-		 * @param[out] emboss_buffer Buffer object for drawing the emboss
-		 */
-		static void GenerateFormBuffer (const Size& size,
-				int round_type,
-				float radius,
-				GLArrayBuffer* inner_buffer,
-				GLArrayBuffer* outer_buffer,
-				GLArrayBuffer* emboss_buffer);
+		static int DefaultBorderWidth ();
 
 		static const Jitter kJit;
 
 	protected:
+
+		virtual void UpdateGeometry (const UpdateRequest& request) = 0;
 
 		/**
 		 * @brief preset the size of the form
@@ -261,122 +195,6 @@ namespace BlendInt {
 		}
 
 		/**
-		 * @brief generate vertices for drawing rectangle based on the given size and border width
-		 * @param[in] size
-		 * @param[in] border
-		 * @param[out] inner_v
-		 * @param[out] outer_v
-		 */
-		static void generate_rect_vertices (const Size* size,
-				float border,
-				float inner_v[4][2],
-				float outer_v[4][2]);
-
-		static VerticesSum generate_round_vertices (const Size* size,
-				float border,
-				int round_type,
-				float radius,
-				float inner_v[WIDGET_SIZE_MAX][2]);
-
-		/**
-		 * @brief generate vertices for drawing round box based on the given size, border width, round type, radius
-		 * @param[in] size
-		 * @param[in] border
-		 * @param[in] round_type
-		 * @param[in] radius
-		 * @param[out] inner_v
-		 * @param[out] outer_v
-		 * @return
-		 */
-		static VerticesSum generate_round_vertices (const Size* size,
-				float border,
-				int round_type,
-				float radius,
-				float inner_v[WIDGET_SIZE_MAX][2],
-				float outer_v[WIDGET_SIZE_MAX][2]);
-
-		static VerticesSum generate_round_vertices (const Size* size,
-				float border,
-				int round_type,
-				float radius,
-				const WidgetTheme* theme,
-				Orientation shadedir,
-				float inner[WIDGET_SIZE_MAX][6]);
-
-		/**
-		 * @brief calculate vertices for round box edges
-		 * @param[in] size
-		 * @param[in] border
-		 * @param[in] round_type
-		 * @param[in] radius
-		 * @param[in] theme
-		 * @param[in] shadedir shade direction
-		 * @param[out] inner
-		 * @param[out] outer
-		 * @return
-		 */
-		static VerticesSum generate_round_vertices (const Size* size,
-				float border,
-				int round_type,
-				float radius,
-				const WidgetTheme* theme,
-				Orientation shadedir,
-				float inner[WIDGET_SIZE_MAX][6],
-				float outer[WIDGET_SIZE_MAX][2]);
-
-		static VerticesSum generate_round_vertices (const Size* size,
-				float border,
-				int round_type,
-				float radius,
-				const Color& color,
-				short shadetop,
-				short shadedown,
-				Orientation shadedir,
-				float inner[WIDGET_SIZE_MAX][6]);
-
-		/**
-		 * @brief generate vertices array for round box inner and edges
-		 * @param[in] size the size to calculate position and shade uv
-		 * @param[in] border
-		 * @param[in] round_type
-		 * @param[in] radius
-		 * @param[in] color
-		 * @param[in] shadetop the top shade, defined in theme
-		 * @param[in] shadedown the bottom shade, defined in theme
-		 * @param[in] shadedir true if shade with horizontal direction
-		 * @param[out] inner inner vertices with position and color information
-		 * @param[out] outer vertices for outline
-		 * @return
-		 */
-		static VerticesSum generate_round_vertices (const Size* size,
-				float border,
-				int round_type,
-				float radius,
-				const Color& color,
-				short shadetop,
-				short shadedown,
-				Orientation shadedir,
-				float inner[WIDGET_SIZE_MAX][6],
-				float outer[WIDGET_SIZE_MAX][2]);
-
-		static void verts_to_quad_strip (
-				const float inner_v[WIDGET_SIZE_MAX][2],
-				const float outer_v[WIDGET_SIZE_MAX][2],
-				const int totvert,
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
-
-		static void verts_to_quad_strip (
-				const float inner_v[WIDGET_SIZE_MAX][6],
-				const float outer_v[WIDGET_SIZE_MAX][2],
-				const int totvert,
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
-
-		static void verts_to_quad_strip_open (
-				const float outer_v[WIDGET_SIZE_MAX][2],
-				const int totvert,
-				float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
-
-		/**
 		 * @brief draw vertices without buffer
 		 */
 		static void DrawOutlineArray (const float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2], int num);
@@ -390,83 +208,11 @@ namespace BlendInt {
 
 		static void DrawTriangleStrip (const GLint attrib, GLArrayBuffer* buffer);
 
-		static void GenerateShadedFormBuffer (const Size* size,
-									   float border,
-									   int round_type,
-									   float radius,
-									   const Color& color,
-									   short shadetop,
-									   short shadedown,
-									   Orientation shadedir,
-									   GLArrayBuffer* buffer);
-
-		/**
-		 * @brief generate buffer with shaded color
-		 * @param[in] size
-		 * @param[in] border
-		 * @param[in] round_type
-		 * @param[in] radius
-		 * @param[in] color
-		 * @param[in] shadetop
-		 * @param[in] shadedown
-		 * @param[in] shadedir
-		 * @param[in] highlight
-		 * @param[out] buffer
-		 *
-		 * This function calculate the output GLBuffers with shaded color
-		 *
-		 * If highlight > 0, 3 buffers will be generated, if not, 2 buffers generated:
-		 *	- buffer index 0: used for inner
-		 *	- buffer index 1: used for outline
-		 *	- buffer index 2: used for inner highlight
-		 */
-		static void GenerateShadedFormBuffers (const Size& size,
-									   int round_type,
-									   float radius,
-									   const Color& color,
-									   short shadetop,
-									   short shadedown,
-									   Orientation shadedir,
-									   GLArrayBuffer* inner_buffer,
-									   GLArrayBuffer* outer_buffer);
-
-		/**
-		 * @brief generate buffer with shaded color
-		 * @param[in] size
-		 * @param[in] border
-		 * @param[in] round_type
-		 * @param[in] radius
-		 * @param[in] color
-		 * @param[in] shadetop
-		 * @param[in] shadedown
-		 * @param[in] shadedir
-		 * @param[in] highlight
-		 * @param[out] buffer
-		 *
-		 * This function calculate the output GLBuffers with shaded color
-		 *
-		 * If highlight > 0, 3 buffers will be generated, if not, 2 buffers generated:
-		 *	- buffer index 0: used for inner
-		 *	- buffer index 1: used for outline
-		 *	- buffer index 2: used for inner highlight
-		 */
-		static void GenerateShadedFormBuffers (const Size* size,
-									   int round_type,
-									   float radius,
-									   const Color& color,
-									   short shadetop,
-									   short shadedown,
-									   Orientation shadedir,
-									   short highlight,
-									   GLArrayBuffer* inner_buffer,
-									   GLArrayBuffer* outer_buffer,
-									   GLArrayBuffer* highlight_buffer);
-
 		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 
 	private:
 
-		static float default_border_width;
+		static int default_border_width;
 
 		Size m_size;
 

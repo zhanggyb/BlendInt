@@ -26,7 +26,7 @@
 namespace BlendInt {
 
 	AbstractRoundForm::AbstractRoundForm()
-	: AbstractResizableForm(),
+	: AbstractForm(),
 	  m_round_type(RoundNone),
 	  m_radius(5)
 	{

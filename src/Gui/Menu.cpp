@@ -34,6 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Menu.hpp>
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
@@ -170,25 +171,33 @@ namespace BlendInt {
 
 			case WidgetSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
-				GenerateFormBuffer(*size_p, round_corner_type(),
-								round_corner_radius(), m_inner_buffer.get(),
-								m_outer_buffer.get(), 0);
+				VertexTool tool;
+				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(),
+								round_corner_radius());
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				ResetHighlightBuffer(size_p->width());
 				break;
 			}
 
 			case WidgetRoundCornerType: {
 				const int* type_p = static_cast<const int*>(request.data());
-				GenerateFormBuffer(size(), *type_p, round_corner_radius(),
-								m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				VertexTool tool;
+				tool.Setup(size(), DefaultBorderWidth(), *type_p,
+								round_corner_radius());
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				break;
 			}
 
 			case WidgetRoundCornerRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				GenerateFormBuffer(size(), round_corner_type(), *radius_p,
-								m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				const int* radius_p =
+								static_cast<const int*>(request.data());
+				VertexTool tool;
+				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
+								*radius_p);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				break;
 			}
 
@@ -264,15 +273,18 @@ namespace BlendInt {
 	void Menu::ResetHighlightBuffer (int width)
 	{
 		Size size(width, DefaultMenuItemHeight);
-		GenerateShadedFormBuffer (&size,
+
+		VertexTool tool;
+		tool.Setup(size,
 				DefaultBorderWidth(),
 				RoundNone,
-				0.0,
+				0,
 				Theme::instance->menu_item().inner_sel,
-				Theme::instance->menu_item().shadetop,
-				Theme::instance->menu_item().shadedown,
 				Vertical,
-				m_highlight_buffer.get());
+				Theme::instance->menu_item().shadetop,
+				Theme::instance->menu_item().shadedown
+				);
+		tool.UpdateInnerBuffer(m_highlight_buffer.get());
 	}
 	
 	void Menu::RemoveActionItem (size_t index)
@@ -311,19 +323,17 @@ namespace BlendInt {
 
 	void Menu::InitializeMenu ()
 	{
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
+		glGenVertexArrays(1, &m_vao);
+
+		VertexTool tool;
+
+		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		m_inner_buffer = tool.GenerateInnerBuffer();
+		m_outer_buffer = tool.GenerateOuterBuffer();
+
 		m_highlight_buffer.reset(new GLArrayBuffer);
 
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-
-		GenerateFormBuffer(size(), round_corner_type(), round_corner_radius(),
-		        m_inner_buffer.get(), m_outer_buffer.get(), 0);
-
 		ResetHighlightBuffer(20);
-
-		glBindVertexArray(0);
 	}
 
 }

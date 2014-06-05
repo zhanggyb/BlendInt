@@ -36,6 +36,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/AbstractSlider.hpp>
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
@@ -70,49 +71,44 @@ namespace BlendInt {
 				short shadetop = Theme::instance->scroll().shadetop;
 				short shadedown = Theme::instance->scroll().shadedown;
 
-				glBindVertexArray(m_vao);
-				GenerateShadedFormBuffers(*size_p, round_type(), radius(),
-								color, shadetop, shadedown, shadedir,
-								m_inner_buffer.get(), m_outer_buffer.get());
-				glBindVertexArray(0);
+				VertexTool tool;
+				tool.Setup(*size_p, DefaultBorderWidth(), round_type(), radius(), color, shadedir, shadetop, shadedown);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				break;
 			}
 
 			case FormRoundType: {
-				const Size* size_p = &(size());
 				Orientation shadedir =
-								size_p->width() < size_p->height() ?
+								size().width() < size().height() ?
 												Horizontal : Vertical;
-				const RoundCornerType* round_p =
-								static_cast<const RoundCornerType*>(request.data());
+				const int* round_p =
+								static_cast<const int*>(request.data());
 				const Color& color = Theme::instance->scroll().item;
 				short shadetop = Theme::instance->scroll().shadetop;
 				short shadedown = Theme::instance->scroll().shadedown;
 
-				glBindVertexArray(m_vao);
-				GenerateShadedFormBuffers(*size_p, *round_p, radius(), color,
-								shadetop, shadedown, shadedir,
-								m_inner_buffer.get(), m_outer_buffer.get());
-				glBindVertexArray(0);
+				VertexTool tool;
+				tool.Setup(size(), DefaultBorderWidth(), *round_p, radius(), color, shadedir, shadetop, shadedown);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				break;
 			}
 
 			case FormRoundRadius: {
-				const Size* size_p = &(size());
 				Orientation shadedir =
-								size_p->width() < size_p->height() ?
+								size().width() < size().height() ?
 												Horizontal : Vertical;
-				const float* radius_p =
-								static_cast<const float*>(request.data());
+				const int* radius_p =
+								static_cast<const int*>(request.data());
 				const Color& color = Theme::instance->scroll().item;
 				short shadetop = Theme::instance->scroll().shadetop;
 				short shadedown = Theme::instance->scroll().shadedown;
 
-				glBindVertexArray(m_vao);
-				GenerateShadedFormBuffers(*size_p, round_type(), *radius_p,
-								color, shadetop, shadedown, shadedir,
-								m_inner_buffer.get(), m_outer_buffer.get());
-				glBindVertexArray(0);
+				VertexTool tool;
+				tool.Setup(size(), DefaultBorderWidth(), round_type(), *radius_p, color, shadedir, shadetop, shadedown);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				break;
 			}
 
@@ -198,10 +194,6 @@ namespace BlendInt {
 	void SlideIcon::InitializeSliderIcon ()
 	{
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
 
 		Orientation shadedir =
 						size().width() < size().height() ?
@@ -210,11 +202,10 @@ namespace BlendInt {
 		short shadetop = Theme::instance->scroll().shadetop;
 		short shadedown = Theme::instance->scroll().shadedown;
 
-		GenerateShadedFormBuffers(size(), round_type(), radius(), color,
-						shadetop, shadedown, shadedir, m_inner_buffer.get(),
-						m_outer_buffer.get());
-
-		glBindVertexArray(0);
+		VertexTool tool;
+		tool.Setup(size(), DefaultBorderWidth(), round_type(), radius(), color, shadedir, shadetop, shadedown);
+		m_inner_buffer = tool.GenerateInnerBuffer();
+		m_outer_buffer = tool.GenerateOuterBuffer();
 	}
 
 }

@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_ABSTRACTROUNDFORM_HPP_
 #define _BLENDINT_ABSTRACTROUNDFORM_HPP_
 
-#include <BlendInt/Gui/AbstractResizableForm.hpp>
+#include <BlendInt/Gui/AbstractForm.hpp>
 
 namespace BlendInt {
 
-	class AbstractRoundForm: public AbstractResizableForm
+	class AbstractRoundForm: public AbstractForm
 	{
 	public:
 

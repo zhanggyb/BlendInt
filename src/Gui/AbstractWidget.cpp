@@ -23,7 +23,8 @@
 
 #ifdef __UNIX__
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
+#include <gl3.h>
+#include <gl3ext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -154,8 +155,10 @@ namespace BlendInt {
 
 	// --------------------------------------------------------------------
 
+	int AbstractWidget::default_border_width = 1;
+
 	AbstractWidget::AbstractWidget ()
-	: AbstractForm(),
+	: Object(),
 	  m_z(0),
 	  m_flags(0),
 	  m_round_corner_radius(5),
@@ -557,6 +560,79 @@ namespace BlendInt {
 			const MouseEvent& event)
 	{
 		return obj->MousePressEvent(event);
+	}
+
+	void AbstractWidget::SetDefaultBorderWidth(int border)
+	{	
+		default_border_width = border;
+	}
+
+	int AbstractWidget::DefaultBorderWidth()
+	{	
+		return default_border_width;
+	}
+
+	void AbstractWidget::DrawTriangleFan(const GLint attrib, const GLArrayBuffer* buffer)
+	{
+		buffer->Bind();
+
+		glVertexAttribPointer(attrib, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
+
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						buffer->GetBufferSize()
+										/ (2 * sizeof(GLfloat)));
+
+		buffer->Reset();
+	}
+
+	void AbstractWidget::DrawShadedTriangleFan(const GLint coord, const GLint color, GLArrayBuffer* buffer)
+	{
+		buffer->Bind();
+
+		glVertexAttribPointer(coord, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  sizeof(GLfloat) * 6,				 // stride
+							  BUFFER_OFFSET(0)					 // offset of first element
+							  );
+
+		glVertexAttribPointer(color, // attribute
+							  4,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  sizeof(GLfloat) * 6,				 // stride
+							  BUFFER_OFFSET(2 * sizeof(GLfloat))					 // offset of first element
+							  );
+
+		glDrawArrays(GL_TRIANGLE_FAN, 0, buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
+
+		buffer->Reset();
+	}
+
+	void AbstractWidget::DrawTriangleStrip(const GLint attrib, GLArrayBuffer* buffer)
+	{
+		buffer->Bind();
+
+		glVertexAttribPointer(attrib, // attribute
+							  2,			// number of elements per vertex, here (x,y)
+							  GL_FLOAT,			 // the type of each element
+							  GL_FALSE,			 // take our values as-is
+							  0,				 // no extra data between each position
+							  0					 // offset of first element
+							  );
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
+							buffer->GetBufferSize()
+											/ (2 * sizeof(GLfloat)));
+
+		buffer->Reset();
 	}
 
 	ResponseType AbstractWidget::dispatch_mouse_release_event (AbstractWidget* obj,

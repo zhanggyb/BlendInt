@@ -43,6 +43,7 @@
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Utilities-inl.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Frame.hpp>
 
 #include <BlendInt/Interface.hpp>
@@ -221,10 +222,6 @@ namespace BlendInt {
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);
 
-		GLuint vbo;
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
 		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
 		program->Use();
 
@@ -233,21 +230,13 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		std::vector<GLfloat> vertices(12);
+		VertexTool tool;
+		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0, false);
 
-		GenerateFlatRectVertices(size(), 0.f, &vertices);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
+		RefPtr<GLArrayBuffer> inner = tool.GenerateInnerBuffer();
+		inner->Bind();
 
-		Theme* tm = Theme::instance;
-
-		float r, g, b, a;
-
-		r = tm->regular().inner.r() / 255.f;
-		g = tm->regular().inner.g() / 255.f;
-		b = tm->regular().inner.b() / 255.f;
-		a = tm->regular().inner.a() / 255.f;
-
-		program->SetVertexAttrib4f("Color", r, g, b, a);
+		program->SetVertexAttrib4fv("Color", Theme::instance->regular().inner.data());
 		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader
@@ -265,13 +254,12 @@ namespace BlendInt {
 
 		glDisableVertexAttribArray(0);
 
-		program->Reset();
-
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glBindVertexArray(0);
 
-		glDeleteBuffers(1, &vbo);
+		program->Reset();
+
 		glDeleteVertexArrays(1, &vao);
 
 		return Accept;

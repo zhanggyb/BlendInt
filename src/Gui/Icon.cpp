@@ -37,7 +37,7 @@
 namespace BlendInt {
 
 	Icon::Icon ()
-	: AbstractResizableForm()
+	: AbstractForm()
 	{
 	}
 

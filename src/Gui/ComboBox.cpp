@@ -37,6 +37,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/ComboBox.hpp>
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/StockItems.hpp>
@@ -109,42 +110,52 @@ namespace BlendInt {
 
 			case WidgetSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
-				glBindVertexArray(m_vao);
-				GenerateShadedFormBuffers(*size_p, round_corner_type(),
+				VertexTool tool;
+				tool.Setup(*size_p,
+								DefaultBorderWidth(),
+								round_corner_type(),
 								round_corner_radius(),
 								Theme::instance->menu().inner,
+								Vertical,
 								Theme::instance->menu().shadetop,
-								Theme::instance->menu().shadedown, Vertical,
-								m_inner_buffer.get(), m_outer_buffer.get());
-				glBindVertexArray(0);
+								Theme::instance->menu().shadedown);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				Refresh();
 				break;
 			}
 
 			case WidgetRoundCornerType: {
 				const int* type_p = static_cast<const int*>(request.data());
-				glBindVertexArray(m_vao);
-				GenerateShadedFormBuffers(size(), *type_p,
+				VertexTool tool;
+				tool.Setup(size(),
+								DefaultBorderWidth(),
+								*type_p,
 								round_corner_radius(),
 								Theme::instance->menu().inner,
+								Vertical,
 								Theme::instance->menu().shadetop,
-								Theme::instance->menu().shadedown, Vertical,
-								m_inner_buffer.get(), m_outer_buffer.get());
-				glBindVertexArray(0);
+								Theme::instance->menu().shadedown);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				Refresh();
 				break;
 			}
 
 			case WidgetRoundCornerRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				glBindVertexArray(m_vao);
-				GenerateShadedFormBuffers(size(), round_corner_type(),
-								*radius_p, Theme::instance->menu().inner,
+				const int* radius_p =
+								static_cast<const int*>(request.data());
+				VertexTool tool;
+				tool.Setup(size(),
+								DefaultBorderWidth(),
+								round_corner_type(),
+								*radius_p,
+								Theme::instance->menu().inner,
+								Vertical,
 								Theme::instance->menu().shadetop,
-								Theme::instance->menu().shadedown, Vertical,
-								m_inner_buffer.get(), m_outer_buffer.get());
-				glBindVertexArray(0);
+								Theme::instance->menu().shadedown);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				Refresh();
 				break;
 			}
@@ -255,22 +266,18 @@ namespace BlendInt {
 	void ComboBox::InitOnce()
 	{
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-
-		GenerateShadedFormBuffers(size(),
+		VertexTool tool;
+		tool.Setup(size(),
+						DefaultBorderWidth(),
 						round_corner_type(),
 						round_corner_radius(),
 						Theme::instance->menu().inner,
-						Theme::instance->menu().shadetop,
-						Theme::instance->menu().shadedown,
 						Vertical,
-						m_inner_buffer.get(),
-						m_outer_buffer.get());
-
-		glBindVertexArray(0);
+						Theme::instance->menu().shadetop,
+						Theme::instance->menu().shadedown);
+		m_inner_buffer = tool.GenerateInnerBuffer();
+		m_outer_buffer = tool.GenerateOuterBuffer();
 
 		m_menu.reset(new Menu);
 

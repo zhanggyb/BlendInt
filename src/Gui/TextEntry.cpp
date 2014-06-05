@@ -37,6 +37,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/TextEntry.hpp>
+#include <BlendInt/Gui/VertexTool.hpp>
 
 #include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Service/Theme.hpp>
@@ -237,10 +238,17 @@ namespace BlendInt {
 				short shadetop = Theme::instance->text().shadetop;
 				short shadedown = Theme::instance->text().shadedown;
 
-				GenerateShadedFormBuffers(*size_p, round_corner_type(),
-								round_corner_radius(), color, shadetop,
-								shadedown, Vertical, m_inner_buffer.get(),
-								m_outer_buffer.get());
+				VertexTool tool;
+				tool.Setup (*size_p,
+								DefaultBorderWidth(),
+								round_corner_type(),
+								round_corner_radius(),
+								color,
+								Vertical,
+								shadetop,
+								shadedown);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 
 				m_cursor_buffer->Bind();
 				GLfloat* buf_p = (GLfloat*) m_cursor_buffer->Map(GL_READ_WRITE);
@@ -344,26 +352,23 @@ namespace BlendInt {
 						h + default_textentry_padding.vsum());
 
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_cursor_buffer.reset(new GLArrayBuffer);
 
 		const Color& color = Theme::instance->text().inner;
 		short shadetop = Theme::instance->text().shadetop;
 		short shadedown = Theme::instance->text().shadedown;
 
-		GenerateShadedFormBuffers(size(),
-				round_corner_type(),
-				round_corner_radius(),
-				color,
-				shadetop,
-				shadedown,
-				Vertical,
-				m_inner_buffer.get(),
-				m_outer_buffer.get()
-				);
+		VertexTool tool;
+		tool.Setup (size(),
+						DefaultBorderWidth(),
+						round_corner_type(),
+						round_corner_radius(),
+						color,
+						Vertical,
+						shadetop,
+						shadedown);
+
+		m_inner_buffer = tool.GenerateInnerBuffer();
+		m_outer_buffer = tool.GenerateOuterBuffer();
 
 		std::vector<GLfloat> cursor_vertices(8);
 
@@ -379,12 +384,12 @@ namespace BlendInt {
 		cursor_vertices[6] = 3.f;
 		cursor_vertices[7] = static_cast<float>(size().height() - default_textentry_padding.vsum());
 
+		m_cursor_buffer.reset(new GLArrayBuffer);
+
 		m_cursor_buffer->Generate();
 		m_cursor_buffer->Bind();
 		m_cursor_buffer->SetData(8 * sizeof(GLfloat), &cursor_vertices[0]);
 		m_cursor_buffer->Reset();
-
-		glBindVertexArray(0);
 
 		m_font.set_pen(default_textentry_padding.left(),
 				(size().height() - m_font.GetHeight()) / 2

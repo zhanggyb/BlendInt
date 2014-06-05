@@ -37,6 +37,7 @@
 #include <BlendInt/Service/ShaderManager.hpp>
 
 #include <BlendInt/Gui/ToolButton.hpp>
+#include <BlendInt/Gui/VertexTool.hpp>
 
 namespace BlendInt {
 
@@ -62,8 +63,10 @@ namespace BlendInt {
 
 				const Size* size_p = static_cast<const Size*>(request.data());
 
-				GenerateFormBuffer(*size_p, RoundAll, 5.0, m_inner.get(),
-								m_outer.get(), 0);
+				VertexTool tool;
+				tool.Setup(*size_p, DefaultBorderWidth(), RoundAll, 5);
+				tool.UpdateInnerBuffer(m_inner.get());
+				tool.UpdateOuterBuffer(m_outer.get());
 
 				break;
 			}
@@ -190,17 +193,12 @@ namespace BlendInt {
 
 	void ToolButton::InitOnce ()
 	{
-		m_inner.reset(new GLArrayBuffer);
-		m_outer.reset(new GLArrayBuffer);
+		VertexTool tool;
+		tool.Setup(size(), DefaultBorderWidth(), RoundAll, 5);
+		m_inner = tool.GenerateInnerBuffer();
+		m_outer = tool.GenerateOuterBuffer();
 
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-		m_inner->Generate();
-		m_outer->Generate();
-
-		GenerateFormBuffer(size(), RoundAll, 5.0, m_inner.get(), m_outer.get(), 0);
-
-		glBindVertexArray(0);
 	}
 
 }

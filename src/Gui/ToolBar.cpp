@@ -34,6 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ToolBar.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 #include <BlendInt/Service/Theme.hpp>
@@ -204,18 +205,9 @@ namespace BlendInt {
 			case WidgetSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
 
-				glBindVertexArray(m_vao);
-
-				std::vector<GLfloat> vertices(12);
-
-				GenerateFlatRectVertices(*size_p, 0.f, &vertices);
-
-				m_inner->Bind();
-				m_inner->SetData(sizeof(GLfloat) * vertices.size(),
-								&vertices[0]);
-				m_inner->Reset();
-
-				glBindVertexArray(0);
+				VertexTool tool;
+				tool.Setup(*size_p, DefaultBorderWidth(), RoundNone, 0, false);
+				tool.UpdateInnerBuffer(m_inner.get());
 
 				int x = position().x() + margin().left();
 				if (sub_widget_size()) {
@@ -406,20 +398,10 @@ namespace BlendInt {
 	void ToolBar::InitializeToolBar ()
 	{
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
-		std::vector<GLfloat> vertices(12);
-
-		GenerateFlatRectVertices(size(), 0.f, &vertices);
-
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-
-		m_inner->Bind();
-		m_inner->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-		m_inner->Reset();
-
-		glBindVertexArray(0);
+		VertexTool tool;
+		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0, false);
+		m_inner = tool.GenerateInnerBuffer();
 	}
 	
 	void ToolBar::RealignSubWidgets (const Size& size, const Margin& margin,

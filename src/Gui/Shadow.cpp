@@ -324,6 +324,19 @@ namespace BlendInt {
 		return tot;
 	}
 
+	void Shadow::verts_to_quad_strip (const float inner_v[WIDGET_SIZE_MAX][2],
+					const float outer_v[WIDGET_SIZE_MAX][2], const int totvert,
+					float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
+	{
+		int i = 0;
+		for (; i < totvert; i++) {
+			copy_v2_v2(quad_strip[i * 2], outer_v[i]);
+			copy_v2_v2(quad_strip[i * 2 + 1], inner_v[i]);
+		}
+		copy_v2_v2(quad_strip[i * 2], outer_v[0]);
+		copy_v2_v2(quad_strip[i * 2 + 1], inner_v[0]);
+	}
+
 	void Shadow::GenerateShadowBuffers(const Size& size, float corner_rad, float blur_rad)
 	{
 		Size shadow_size = size;

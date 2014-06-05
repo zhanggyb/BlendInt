@@ -34,6 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/TabButton.hpp>
 
 #include <BlendInt/Gui/Tab.hpp>
@@ -70,15 +71,10 @@ namespace BlendInt {
 				case WidgetSize: {
 
 					const Size* size_p = static_cast<const Size*>(request.data());
-
-					GenerateFormBuffer(
-									*size_p,
-									RoundNone,
-									0.f,
-									m_inner.get(),
-									m_outer.get(),
-									0);
-
+					VertexTool tool;
+					tool.Setup(*size_p, DefaultBorderWidth(), RoundNone, 0);
+					tool.UpdateInnerBuffer(m_inner.get());
+					tool.UpdateOuterBuffer(m_outer.get());
 					Stack::UpdateGeometry(request);
 					break;
 				}
@@ -135,22 +131,12 @@ namespace BlendInt {
 
 	void TabStack::InitOnce ()
 	{
-		m_inner.reset(new GLArrayBuffer);
-		m_outer.reset(new GLArrayBuffer);
-
 		glGenVertexArrays(1, &m_vao);
 
-		glBindVertexArray(m_vao);
-
-		GenerateFormBuffer(
-						size(),
-						RoundNone,
-						0.f,
-						m_inner.get(),
-						m_outer.get(),
-						0);
-
-		glBindVertexArray(0);
+		VertexTool tool;
+		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0);
+		m_inner = tool.GenerateInnerBuffer();
+		m_outer = tool.GenerateOuterBuffer();
 	}
 
 	// ------------------------

@@ -34,6 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
@@ -79,19 +80,9 @@ namespace BlendInt {
 
 				const Size* size_p = static_cast<const Size*>(request.data());
 
-				glBindVertexArray(m_vao);
-
-				std::vector<GLfloat> vertices(12);
-
-				GenerateFlatRectVertices(*size_p, 0.f, &vertices);
-
-				m_buffer->Bind();
-				m_buffer->SetData(sizeof(GLfloat) * vertices.size(),
-								&vertices[0]);
-				m_buffer->Reset();
-
-				glBindVertexArray(0);
-
+				VertexTool tool;
+				tool.Setup(*size_p, 0, RoundNone, 0, false);
+				tool.UpdateInnerBuffer(m_buffer.get());
 				break;
 			}
 
@@ -369,20 +360,10 @@ namespace BlendInt {
 	void MenuBar::InitOnce()
 	{
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
-		std::vector<GLfloat> vertices(12);
-
-		GenerateFlatRectVertices(size(), 0.f, &vertices);
-
-		m_buffer.reset(new GLArrayBuffer);
-		m_buffer->Generate();
-
-		m_buffer->Bind();
-		m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-		m_buffer->Reset();
-
-		glBindVertexArray(0);
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0, false);
+		m_buffer = tool.GenerateInnerBuffer();
 	}
 	
 	void MenuBar::OnMenuButtonClicked ()

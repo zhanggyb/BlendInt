@@ -34,6 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Label.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
@@ -74,19 +75,9 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(request.data());
 				m_text_length = UpdateTextPosition(*size_p, m_text, m_font);
 
-				glBindVertexArray(m_vao);
-				m_rect->Bind();
-
-				std::vector<GLfloat> vertices(12);
-				GenerateFlatRectVertices(*size_p, 0.f, &vertices);
-
-				m_rect->SetData(sizeof(GLfloat) * vertices.size(),
-								&vertices[0]);
-
-				m_rect->Reset();
-
-				glBindVertexArray(0);
-
+				VertexTool tool;
+				tool.Setup(*size_p, DefaultBorderWidth(), RoundNone, 0, false);
+				tool.UpdateInnerBuffer(m_rect.get());
 				break;
 			}
 
@@ -243,15 +234,10 @@ namespace BlendInt {
 		}
 
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-		m_rect.reset(new GLArrayBuffer);
-		m_rect->Generate();
-		m_rect->Bind();
-		std::vector<GLfloat> vertices(12);
-		GenerateFlatRectVertices(size(), 0.f, &vertices);
-		m_rect->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
-		m_rect->Reset();
-		glBindVertexArray(0);
+
+		VertexTool tool;
+		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0, false);
+		m_rect = tool.GenerateInnerBuffer();
 	}
 
 } /* namespace BlendInt */

@@ -93,6 +93,12 @@ namespace BlendInt {
 
 		void GenerateShadowBuffers (const Size& size, float corner_rad, float blue_rad);
 
+		static void verts_to_quad_strip (
+						const float inner_v[WIDGET_SIZE_MAX][2],
+						const float outer_v[WIDGET_SIZE_MAX][2],
+						const int totvert,
+						float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
+
 		GLuint m_vao;
 
 		int m_offset_x;

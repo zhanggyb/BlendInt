@@ -27,7 +27,7 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
 
-#include <BlendInt/Gui/AbstractResizableForm.hpp>
+#include <BlendInt/Gui/AbstractForm.hpp>
 
 namespace BlendInt {
 
@@ -36,7 +36,7 @@ namespace BlendInt {
 	 *
 	 * A form show a gray checkerboard: light: #999999, dark: #666666
 	 */
-	class CheckerBoard: public AbstractResizableForm
+	class CheckerBoard: public AbstractForm
 	{
 	public:
 

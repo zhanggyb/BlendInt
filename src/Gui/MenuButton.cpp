@@ -36,6 +36,7 @@
 
 #include <BlendInt/Gui/MenuButton.hpp>
 #include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/VertexTool.hpp>
 
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
@@ -61,10 +62,9 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(request.data());
 				UpdateTextPosition(*size_p, round_corner_type(),
 								round_corner_radius(), text());
-				glBindVertexArray(m_vao);
-				GenerateFormBuffer(*size_p, round_corner_type(),
-								round_corner_radius(), m_inner.get(), 0, 0);
-				glBindVertexArray(0);
+				VertexTool tool;
+				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(), round_corner_radius(), false);
+				tool.UpdateInnerBuffer(m_inner.get());
 				Refresh();
 				break;
 			}
@@ -73,23 +73,21 @@ namespace BlendInt {
 				const int* type_p = static_cast<const int*>(request.data());
 				UpdateTextPosition(size(), *type_p, round_corner_radius(),
 								text());
-				glBindVertexArray(m_vao);
-				GenerateFormBuffer(size(), *type_p, round_corner_radius(),
-								m_inner.get(), 0, 0);
-				glBindVertexArray(0);
+				VertexTool tool;
+				tool.Setup(size(), DefaultBorderWidth(), *type_p, round_corner_radius(), false);
+				tool.UpdateInnerBuffer(m_inner.get());
 				Refresh();
 				break;
 			}
 
 			case WidgetRoundCornerRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
+				const int* radius_p =
+								static_cast<const int*>(request.data());
 				UpdateTextPosition(size(), round_corner_type(), *radius_p,
 								text());
-				glBindVertexArray(m_vao);
-				GenerateFormBuffer(size(), round_corner_type(), *radius_p,
-								m_inner.get(), 0, 0);
-				glBindVertexArray(0);
+				VertexTool tool;
+				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), *radius_p, false);
+				tool.UpdateInnerBuffer(m_inner.get());
 				Refresh();
 				break;
 			}
@@ -125,7 +123,7 @@ namespace BlendInt {
 
 			glEnableVertexAttribArray(0);
 
-			DrawTriangleFan(program, mvp, 0, m_inner.get());
+			DrawTriangleFan(0, m_inner.get());
 
 			glDisableVertexAttribArray(0);
 			program->Reset();
@@ -170,19 +168,10 @@ namespace BlendInt {
 		}
 
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
-		m_inner.reset(new GLArrayBuffer);
-
-		GenerateFormBuffer(
-						size(),
-						round_corner_type(),
-						round_corner_radius(),
-						m_inner.get(),
-						0,
-						0);
-
-		glBindVertexArray(0);
+		VertexTool tool;
+		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius(), false);
+		m_inner = tool.GenerateInnerBuffer();
 	}
 
 } /* namespace BlendInt */

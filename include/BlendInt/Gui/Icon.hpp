@@ -25,13 +25,13 @@
 #define _BLENDINT_ICON_HPP_
 
 #include <glm/mat4x4.hpp>
-#include <BlendInt/Gui/AbstractResizableForm.hpp>
+#include <BlendInt/Gui/AbstractForm.hpp>
 
 namespace BlendInt {
 
 	class StockItems;
 
-	class Icon: public AbstractResizableForm
+	class Icon: public AbstractForm
 	{
 	public:
 

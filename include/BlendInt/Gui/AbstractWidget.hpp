@@ -39,8 +39,6 @@
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 #include <BlendInt/Window/RedrawEvent.hpp>
 
-#include <BlendInt/Gui/AbstractForm.hpp>
-
 #include <Cpp/Events.hpp>
 
 #include <BlendInt/Gui/Shadow.hpp>
@@ -168,7 +166,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup gui
 	 */
-	class AbstractWidget: public AbstractForm
+	class AbstractWidget: public Object
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractWidget);
 
@@ -247,6 +245,11 @@ namespace BlendInt {
 		void RenderToFile (const char* filename, unsigned int border = 10);
 
 		void Refresh ();
+
+		const Size& size () const
+		{
+			return m_size;
+		}
 
 		const int& layer () const
 		{
@@ -345,6 +348,16 @@ namespace BlendInt {
 
 		AbstractContainer* container() const {return m_container;}
 
+		static void SetDefaultBorderWidth (int border);
+
+		static int DefaultBorderWidth ();
+
+		static void DrawTriangleFan (const GLint attrib, const GLArrayBuffer* buffer);
+
+		static void DrawShadedTriangleFan (const GLint coord, const GLint color, GLArrayBuffer* buffer);
+
+		static void DrawTriangleStrip (const GLint attrib, GLArrayBuffer* buffer);
+
 	protected:
 
 		/**
@@ -371,6 +384,32 @@ namespace BlendInt {
 		void set_position (const Point& pos)
 		{
 			m_position = pos;
+		}
+
+		/**
+		 * @brief preset the size of the form
+		 * @param width
+		 * @param height
+		 *
+		 * @note this function should be called only in the constructor of subclass to set
+		 * the size without through Update() for performance.
+		 */
+		inline void set_size (unsigned int width, unsigned int height)
+		{
+			m_size.set_width(width);
+			m_size.set_height(height);
+		}
+
+		/**
+		 * @brief preset the size of the form
+		 * @param size
+		 *
+		 * @note this function should be called only in the constructor of subclass to set
+		 * the size without through Update() for performance.
+		 */
+		inline void set_size (const Size& size)
+		{
+			m_size = size;
 		}
 
 		virtual ResponseType FocusEvent (bool focus) = 0;
@@ -523,6 +562,8 @@ namespace BlendInt {
 
 		Point m_position;
 
+		Size m_size;
+
 		/**
 		 * @brief the depth(layer) of the widget
 		 */
@@ -539,6 +580,8 @@ namespace BlendInt {
 		AbstractContainer* m_container;
 
 		RefPtr<Shadow> m_shadow;
+
+		static int default_border_width;
 
 	};
 

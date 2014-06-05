@@ -44,7 +44,7 @@
 namespace BlendInt {
 
 	CheckerBoard::CheckerBoard(size_t cell_size)
-	: AbstractResizableForm(),
+	: AbstractForm(),
 	  m_vao(0),
 	  m_cell_size(cell_size)
 	{

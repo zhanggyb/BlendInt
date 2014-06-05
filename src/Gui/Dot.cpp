@@ -37,6 +37,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Dot.hpp>
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
 
@@ -48,12 +49,9 @@ namespace BlendInt {
 		set_round_type(RoundAll);
 
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
 		m_inner_buffer.reset(new GLArrayBuffer);
 		m_outer_buffer.reset(new GLArrayBuffer);
-
-		glBindVertexArray(0);
 	}
 
 	Dot::~Dot ()
@@ -68,7 +66,10 @@ namespace BlendInt {
 		set_radius(radius);
 		set_size(dot_size);
 
-		GenerateFormBuffer(dot_size, RoundAll, radius, m_inner_buffer.get(), m_outer_buffer.get(), 0);
+		VertexTool tool;
+		tool.Setup(dot_size, DefaultBorderWidth(), RoundAll, radius);
+		tool.UpdateInnerBuffer(m_inner_buffer.get());
+		tool.UpdateOuterBuffer(m_outer_buffer.get());
 	}
 
 	void Dot::UpdateGeometry (const UpdateRequest& request)
@@ -77,22 +78,31 @@ namespace BlendInt {
 
 			case FormSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
-				GenerateFormBuffer(*size_p, round_type(), radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				VertexTool tool;
+				tool.Setup(*size_p, DefaultBorderWidth(), round_type(), radius());
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				break;
 			}
 
 			case FormRoundType: {
 				const int* round_p =
 								static_cast<const int*>(request.data());
-				GenerateFormBuffer(size(), *round_p, radius(), m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				VertexTool tool;
+				tool.Setup(size(), DefaultBorderWidth(), *round_p, radius());
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				glBindVertexArray(0);
 				break;
 			}
 
 			case FormRoundRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				GenerateFormBuffer(size(), round_type(), *radius_p, m_inner_buffer.get(), m_outer_buffer.get(), 0);
+				const int* radius_p =
+								static_cast<const int*>(request.data());
+				VertexTool tool;
+				tool.Setup(size(), DefaultBorderWidth(), round_type(), *radius_p);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
 				break;
 			}
 

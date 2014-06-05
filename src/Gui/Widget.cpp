@@ -39,6 +39,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
 #include <BlendInt/Types.hpp>
@@ -78,14 +79,11 @@ namespace BlendInt {
 
 	ResponseType Widget::Draw(const RedrawEvent& event)
 	{
-		std::vector<GLfloat> inner;
-		std::vector<GLfloat> outer;
+		VertexTool tool;
+		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0);
 
-		VerticesSum sum = GenerateRoundVertices(size(), 1.0, RoundNone, 0.0, &inner, &outer);
-
-		std::vector<GLfloat> strip;
-
-		GenerateTriangleStripVertices(inner, outer, sum.total, &strip);
+		RefPtr<GLArrayBuffer> inner = tool.GenerateInnerBuffer();
+		RefPtr<GLArrayBuffer> outer = tool.GenerateOuterBuffer();
 
 		GLuint vao;
 		glGenVertexArrays(1, &vao);
@@ -99,22 +97,10 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
-		Theme* tm = Theme::instance;
-
-		float r, g, b, a;
-
-		r = tm->regular().inner.r() / 255.f;
-		g = tm->regular().inner.g() / 255.f;
-		b = tm->regular().inner.b() / 255.f;
-		a = tm->regular().inner.a() / 255.f;
-
-		program->SetVertexAttrib4f("Color", r, g, b, a);
+		program->SetVertexAttrib4fv("Color", Theme::instance->regular().inner.data());
 		program->SetUniform1i("AA", 0);
 
-		GLuint vbo[2];
-		glGenBuffers(2, vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * inner.size(), &inner[0], GL_STATIC_DRAW);
+		inner->Bind();
 
 		glEnableVertexAttribArray(0);
 
@@ -126,18 +112,11 @@ namespace BlendInt {
 							  BUFFER_OFFSET(0)	// the first element
 							  );
 
-		glDrawArrays(GL_TRIANGLE_FAN, 0, sum.total + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, tool.total() + 2);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * strip.size(), &strip[0],
-						GL_STATIC_DRAW);
+		outer->Bind();
 
-		GLfloat outline_color[4] = { tm->regular().outline.r() / 255.f,
-						tm->regular().outline.g() / 255.f,
-						tm->regular().outline.b() / 255.f,
-						tm->regular().outline.a() / 255.f };
-
-		program->SetVertexAttrib4fv("Color", outline_color);
+		program->SetVertexAttrib4fv("Color", Theme::instance->regular().outline.data());
 		program->SetUniform1i("AA", 0);
 
 		glVertexAttribPointer(0, // attribute
@@ -148,7 +127,7 @@ namespace BlendInt {
 							  BUFFER_OFFSET(0)	// the first element
 							  );
 
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, sum.total * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, tool.total() * 2 + 2);
 
 		glDisableVertexAttribArray(0);
 
@@ -157,7 +136,6 @@ namespace BlendInt {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
-		glDeleteBuffers(2, vbo);
 		glDeleteVertexArrays(1, &vao);
 
 		return Accept;

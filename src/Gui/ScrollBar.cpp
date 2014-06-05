@@ -34,6 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ScrollBar.hpp>
 #include <BlendInt/Service/Theme.hpp>
 #include <BlendInt/Service/ShaderManager.hpp>
@@ -184,10 +185,11 @@ namespace BlendInt {
 					shadedown = Theme::instance->scroll().shadetop;
 				}
 
-				GenerateShadedFormBuffers(*size_p, RoundAll, radius, color,
-								shadetop, shadedown, slot_orient,
-								m_slot_inner_buffer.get(),
-								m_slot_outline_buffer.get());
+				VertexTool tool;
+				tool.Setup(*size_p, DefaultBorderWidth(), RoundAll, radius, color, slot_orient,
+								shadetop, shadedown);
+				tool.UpdateInnerBuffer(m_inner.get());
+				tool.UpdateOuterBuffer(m_outer.get());
 
 				break;
 			}
@@ -265,7 +267,7 @@ namespace BlendInt {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 
-		DrawShadedTriangleFan(0, 1, m_slot_inner_buffer.get());
+		DrawShadedTriangleFan(0, 1, m_inner.get());
 
 		glDisableVertexAttribArray(1);
 
@@ -274,7 +276,7 @@ namespace BlendInt {
 		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
 
-		DrawTriangleStrip(0, m_slot_outline_buffer.get());
+		DrawTriangleStrip(0, m_outer.get());
 
 		glDisableVertexAttribArray(0);
 
@@ -359,10 +361,6 @@ namespace BlendInt {
 	void ScrollBar::InitOnce ()
 	{
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-
-		m_slot_inner_buffer.reset(new GLArrayBuffer);
-		m_slot_outline_buffer.reset(new GLArrayBuffer);
 
 		Size slot_size = m_slide.size();
 		float slot_radius;
@@ -385,17 +383,18 @@ namespace BlendInt {
 			shadedown = Theme::instance->scroll().shadetop;
 		}
 
-		GenerateShadedFormBuffers(
-						slot_size,
+		VertexTool tool;
+		tool.Setup(slot_size,
+						DefaultBorderWidth(),
 						RoundAll,
 						slot_radius,
 						color,
-						shadetop,
-						shadedown,
 						slot_orient,
-						m_slot_inner_buffer.get(),
-						m_slot_outline_buffer.get()
+						shadetop,
+						shadedown
 						);
+		m_inner = tool.GenerateInnerBuffer();
+		m_outer = tool.GenerateOuterBuffer();
 
 		glBindVertexArray(0);
 	}

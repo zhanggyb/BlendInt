@@ -104,8 +104,8 @@ namespace BlendInt {
 			SlideIcon m_slide;
 
 			GLuint m_vao;
-			RefPtr<GLArrayBuffer> m_slot_inner_buffer;
-			RefPtr<GLArrayBuffer> m_slot_outline_buffer;
+			RefPtr<GLArrayBuffer> m_inner;
+			RefPtr<GLArrayBuffer> m_outer;
 
 			Point m_cursor_origin;
 
