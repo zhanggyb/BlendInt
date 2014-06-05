@@ -44,31 +44,31 @@ namespace BlendInt {
 
 	GLTexture2D::GLTexture2D ()
 	: Object(),
-	  m_id(0)
+	  m_texture(0)
 	{
 
 	}
 
 	GLTexture2D::~GLTexture2D ()
 	{
-		if(m_id) {
-			glDeleteTextures(1, &m_id);
+		if(m_texture) {
+			glDeleteTextures(1, &m_texture);
 		}
 	}
 
 	void GLTexture2D::Generate ()
 	{
-		if(m_id) {
+		if(m_texture) {
 			Clear();
 		}
 
-		glGenTextures(1, &m_id);
+		glGenTextures(1, &m_texture);
 	}
 
 	void GLTexture2D::Bind()
 	{
-		if(m_id) {
-			glBindTexture(GL_TEXTURE_2D, m_id);
+		if(m_texture) {
+			glBindTexture(GL_TEXTURE_2D, m_texture);
 		} else {
 			std::cerr << "The texture is not generated! call Generate() first." << std::endl;
 		}
@@ -203,11 +203,8 @@ namespace BlendInt {
 
 	void GLTexture2D::Clear ()
 	{
-		//if (glIsTexture(m_id)) {
-		glDeleteTextures(1, &m_id);
-		//}
-
-		m_id = 0;
+		glDeleteTextures(1, &m_texture);
+		m_texture = 0;
 	}
 
 	GLuint GLTexture2D::GetTextureBinding()

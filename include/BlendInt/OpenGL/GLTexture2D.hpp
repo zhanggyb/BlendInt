@@ -51,7 +51,7 @@ namespace BlendInt {
 
 		~GLTexture2D();
 
-		inline GLuint id() const {return m_id;}
+		inline GLuint texture() const {return m_texture;}
 
 		void Generate ();
 
@@ -193,7 +193,7 @@ namespace BlendInt {
 
 	private:
 
-		GLuint m_id;
+		GLuint m_texture;
 	};
 
 }

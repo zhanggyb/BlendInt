@@ -234,7 +234,7 @@ namespace BlendInt {
 		if(m_last->IsFull()) {
 			DBG_PRINT_MSG("%s", "Atlas is full, create a new one");
 			m_last->Reset();
-			m_last.reset(new TextureAtlas2D);
+			m_last.reset(new GlyphAtlas);
 			m_last->Generate(default_texture_width, default_texture_height, cell_x, cell_y);
 			m_last->Bind();
 		}
@@ -243,6 +243,9 @@ namespace BlendInt {
 		FT_UInt glyph_index = m_ft_face.GetCharIndex(charcode);
 
 		if(m_ft_face.LoadGlyph(glyph_index, FT_LOAD_NO_BITMAP | FT_LOAD_FORCE_AUTOHINT)) {
+
+			int x = 0;
+			int y = 0;
 
 			if(font_data.flag & FontStyleOutline) {
 
@@ -255,9 +258,9 @@ namespace BlendInt {
 				glyph.ToBitmap(FT_RENDER_MODE_NORMAL);
 				FT_BitmapGlyph bitmap_glyph = glyph.GetBitmapGlyph();
 
-				if(m_last->Push(bitmap_glyph->bitmap.width, bitmap_glyph->bitmap.rows, bitmap_glyph->bitmap.buffer)) {
+				if(m_last->Push(bitmap_glyph->bitmap.width, bitmap_glyph->bitmap.rows, bitmap_glyph->bitmap.buffer, &x, &y)) {
 					GlyphExt glyph;
-					SetGlyphData(glyph, slot, bitmap_glyph, m_last);
+					SetGlyphData(glyph, x, y, slot, bitmap_glyph, m_last);
 					m_extension[charcode] = glyph;
 					ret = &m_extension[charcode];
 				} else {
@@ -272,9 +275,9 @@ namespace BlendInt {
 
 				m_ft_face.LoadGlyph(glyph_index, FT_LOAD_RENDER | FT_LOAD_NO_HINTING);
 
-				if(m_last->Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer)) {
+				if(m_last->Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, &x, &y)) {
 					GlyphExt glyph;
-					SetGlyphData(glyph, slot, m_last);
+					SetGlyphData(glyph, x, y, slot, m_last);
 					m_extension[charcode] = glyph;
 					ret = &m_extension[charcode];
 				} else {
@@ -288,7 +291,7 @@ namespace BlendInt {
 				DBG_PRINT_MSG("%s", "one texture is full, create a new one");
 				m_last->Reset();
 
-				m_last.reset(new TextureAtlas2D);
+				m_last.reset(new GlyphAtlas);
 				m_last->Generate(default_texture_width, default_texture_height, cell_x, cell_y);
 				m_last->Bind();
 			}
@@ -336,7 +339,7 @@ namespace BlendInt {
 
 		int i = 0;
 
-		m_last.reset(new TextureAtlas2D);
+		m_last.reset(new GlyphAtlas);
 		m_last->Generate(default_texture_width, default_texture_height, cell_x, cell_y);
 		m_last->Bind();
 
@@ -345,6 +348,9 @@ namespace BlendInt {
 			glyph_index = m_ft_face.GetCharIndex(char_code + i);
 
 			if(m_ft_face.LoadGlyph(glyph_index, FT_LOAD_NO_BITMAP | FT_LOAD_FORCE_AUTOHINT)) {
+
+				int x = 0;
+				int y = 0;
 
 				if(font_data.flag & FontStyleOutline) {
 
@@ -355,8 +361,8 @@ namespace BlendInt {
 					glyph.ToBitmap(FT_RENDER_MODE_NORMAL);
 					bitmap_glyph = glyph.GetBitmapGlyph();
 
-					if(m_last->Push(bitmap_glyph->bitmap.width, bitmap_glyph->bitmap.rows, bitmap_glyph->bitmap.buffer)) {
-						SetGlyphData(m_preset[i], slot, bitmap_glyph, m_last);
+					if(m_last->Push(bitmap_glyph->bitmap.width, bitmap_glyph->bitmap.rows, bitmap_glyph->bitmap.buffer, &x, &y)) {
+						SetGlyphData(m_preset[i], x, y, slot, bitmap_glyph, m_last);
 					} else {
 						DBG_PRINT_MSG("%s", "Fail to push character into texture atlas, maybe the texture size is too small");
 						exit(EXIT_FAILURE);
@@ -369,8 +375,8 @@ namespace BlendInt {
 
 					m_ft_face.LoadGlyph(glyph_index, FT_LOAD_RENDER);
 
-					if(m_last->Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer)) {
-						SetGlyphData(m_preset[i], slot, m_last);
+					if(m_last->Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, &x, &y)) {
+						SetGlyphData(m_preset[i], x, y, slot, m_last);
 					} else {
 						DBG_PRINT_MSG("%s", "Fail to push character into texture atlas, maybe the texture size is too small");
 						exit(EXIT_FAILURE);
@@ -382,7 +388,7 @@ namespace BlendInt {
 					DBG_PRINT_MSG("%s", "one texture is full, create a new one");
 					m_last->Reset();
 
-					m_last.reset(new TextureAtlas2D);
+					m_last.reset(new GlyphAtlas);
 					m_last->Generate(default_texture_width, default_texture_height, cell_x, cell_y);
 					m_last->Bind();
 				}
@@ -399,10 +405,10 @@ namespace BlendInt {
 
 	}
 
-	void FontCache::SetGlyphData(GlyphExt& glyph, FT_GlyphSlot slot, const RefPtr<TextureAtlas2D>& atlas)
+	void FontCache::SetGlyphData(GlyphExt& glyph, int x, int y, FT_GlyphSlot slot, const RefPtr<TextureAtlas2D>& atlas)
 	{
-		float ox = atlas->xoffset() / (float)default_texture_width;
-		float oy = atlas->yoffset() / (float)default_texture_height;
+		float ox = x / (float)default_texture_width;
+		float oy = y / (float)default_texture_height;
 
 		glyph.bitmap_width = slot->bitmap.width;
 		glyph.bitmap_height = slot->bitmap.rows;
@@ -431,14 +437,14 @@ namespace BlendInt {
 		glyph.vertices[3].s = ox + slot->bitmap.width / (float)default_texture_width;
 		glyph.vertices[3].t = oy;
 
-		glyph.texture_atlas = atlas;
+		glyph.texture = atlas;
 	}
 
-	void FontCache::SetGlyphData (GlyphExt& glyph, FT_GlyphSlot slot,
+	void FontCache::SetGlyphData (GlyphExt& glyph, int x, int y, FT_GlyphSlot slot,
 					FT_BitmapGlyph bitmap_glyph, const RefPtr<TextureAtlas2D>& atlas)
 	{
-		float ox = atlas->xoffset() / (float)default_texture_width;
-		float oy = atlas->yoffset() / (float)default_texture_height;
+		float ox = x / (float)default_texture_width;
+		float oy = y / (float)default_texture_height;
 
 		glyph.bitmap_width = bitmap_glyph->bitmap.width;
 		glyph.bitmap_height = bitmap_glyph->bitmap.rows;
@@ -467,7 +473,7 @@ namespace BlendInt {
 		glyph.vertices[3].s = ox + bitmap_glyph->bitmap.width / (float)default_texture_width;
 		glyph.vertices[3].t = oy;
 
-		glyph.texture_atlas = atlas;
+		glyph.texture = atlas;
 
 	}
 

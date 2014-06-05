@@ -6,7 +6,7 @@
 #define FONTVIEW_HPP_
 
 #include <BlendInt/Gui/Widget.hpp>
-#include <BlendInt/Gui/TextureGlyph.hpp>
+#include <BlendInt/Gui/GlyphTexture.hpp>
 #include <BlendInt/Gui/Font.hpp>
 
 namespace BI = BlendInt;

@@ -24,11 +24,11 @@
 #ifndef TEXTUREATLAS2D_HPP_
 #define TEXTUREATLAS2D_HPP_
 
-#include <BlendInt/Core/Object.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 namespace BlendInt {
 
-	class TextureAtlas2D: public Object
+	class TextureAtlas2D: public GLTexture2D
 	{
 	public:
 
@@ -36,83 +36,78 @@ namespace BlendInt {
 
 		virtual ~TextureAtlas2D ();
 
-		void Generate (int width, int height, int cell_x, int cell_y, int xoffset = 1, int yoffset = 1, int space = 1);
+		void Generate (int width,
+						int height,
+						short cell_x,
+						short cell_y,
+						short xoffset = 1,
+						short yoffset = 1,
+						short xspace = 1,
+						short yspace = 1);
 
-		void Bind ();
+		bool SetSubImage (int index,
+						int bitmap_width,
+						int bitmap_rows,
+						const unsigned char* bitmap_buffer,
+						int* r_x,
+						int* r_y,
+						bool clear = false);
 
-		bool Push (int bitmap_width, int bitmap_rows, unsigned char* bitmap_buffer, bool clear = false);
-
-		bool Update (int index, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buffer, bool clear = false);
-
-		bool Update (int hindex, int yindex, int bitmap_width, int bitmap_rows, unsigned char* bitmap_buffer, bool clear = false);
-
-		bool IsFull () const;
-
-		void MoveToFirst ();
-
-		bool MoveNext ();
-
-		int index () const
-		{
-			return m_index;
-		}
+		bool SetSubImage (int hindex,
+						int yindex,
+						int bitmap_width,
+						int bitmap_rows,
+						const unsigned char* bitmap_buffer,
+						int* r_x,
+						int* r_y,
+						bool clear = false);
 
 		int GetMaxNumber () const;
-
-		GLint GetWidth (int level = 0) const;
-
-		GLint GetHeight (int level = 0) const;
 
 		int GetColumns () const;
 
 		int GetRows () const;
 
-		void Clear ();
-
-		static void Reset ();
-
-		GLuint texture () const
-		{
-			return m_texture;
-		}
-
-		int xoffset () const
+		short xoffset () const
 		{
 			return m_xoffset;
 		}
 
-		int yoffset () const
+		short yoffset () const
 		{
 			return m_yoffset;
 		}
 
-		int space () const
+		short xspace () const
 		{
-			return m_space;
+			return m_xspace;
 		}
 
-		int cell_width () const
+		short yspace () const
+		{
+			return m_yspace;
+		}
+
+		short cell_width () const
 		{
 			return m_cell_width;
 		}
 
-		int cell_height () const
+		short cell_height () const
 		{
 			return m_cell_height;
 		}
 
 	private:
 
-		GLuint m_texture;
+		short m_cell_width;
+		short m_cell_height;
 
-		int m_cell_width;
-		int m_cell_height;
+		short m_xoffset;
+		short m_yoffset;
 
-		int m_space;
-		int m_index;
-
-		int m_xoffset;
-		int m_yoffset;
+		short m_xspace;
+		short m_yspace;
 	};
 
 }

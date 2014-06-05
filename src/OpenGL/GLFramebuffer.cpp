@@ -68,7 +68,7 @@ namespace BlendInt {
 
 	void GLFramebuffer::Attach (const GLTexture2D& tex, GLenum attachment)
 	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex.id(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex.texture(), 0);
 	}
 
 	void GLFramebuffer::Attach (const GLRenderbuffer& renderbuffer, GLenum attachment)

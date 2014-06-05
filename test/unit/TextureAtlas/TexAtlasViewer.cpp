@@ -77,48 +77,49 @@ TexAtlasViewer::TexAtlasViewer()
 	flags |= FT_LOAD_NO_BITMAP;
 	flags |= FT_LOAD_FORCE_AUTOHINT;
 
+	int max = m_atlas.GetMaxNumber();
+	int j = 0;
 	for(char i = 33; i < 127; i++) {
 		if(ft_face.LoadChar(i, FT_LOAD_RENDER)) {
-			m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
 
-			if(!m_atlas.MoveNext()) {
+			if(j >= (max - 1)) {
 				DBG_PRINT_MSG("%s", "atlas full");
 				break;
 			}
 
-			DBG_PRINT_MSG("index: %d", m_atlas.index());
-
+			m_atlas.SetSubImage(j, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, 0, 0);
+			j++;
 		}
 	}
 
 	ft_face.LoadChar(L'仁', FT_LOAD_RENDER);
-	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
-	m_atlas.MoveNext();
+	m_atlas.SetSubImage(j, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, 0, 0);
+	j++;
 
 	ft_face.LoadChar(L'义', FT_LOAD_RENDER);
-	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
-	m_atlas.MoveNext();
+	m_atlas.SetSubImage(j, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, 0, 0);
+	j++;
 
 	ft_face.LoadChar(L'礼', FT_LOAD_RENDER);
-	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
-	m_atlas.MoveNext();
+	m_atlas.SetSubImage(j, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, 0, 0);
+	j++;
 
 	ft_face.LoadChar(L'智', FT_LOAD_RENDER);
-	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
-	m_atlas.MoveNext();
+	m_atlas.SetSubImage(j, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, 0, 0);
+	j++;
 
 	ft_face.LoadChar(L'信', FT_LOAD_RENDER);
-	m_atlas.Push(slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer);
-	m_atlas.MoveNext();
+	m_atlas.SetSubImage(j, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, 0, 0);
+	j++;
 
 	ft_face.LoadChar(L'A', FT_LOAD_RENDER);
-	m_atlas.Update(0, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, true);
+	m_atlas.SetSubImage(0, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, 0, 0, true);
 
 	ft_face.LoadChar(L'B', FT_LOAD_RENDER);
-	m_atlas.Update(13, 0, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, true);
+	m_atlas.SetSubImage(13, 0, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, 0, 0, true);
 
 	ft_face.LoadChar(L'C', FT_LOAD_RENDER);
-	m_atlas.Update(1, 19, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, true);
+	m_atlas.SetSubImage(1, 19, slot->bitmap.width, slot->bitmap.rows, slot->bitmap.buffer, 0, 0, true);
 
 	/*
 	if(ft_face.LoadChar('a', FT_LOAD_RENDER)) {
@@ -191,7 +192,6 @@ TexAtlasViewer::TexAtlasViewer()
 	}
 	 */
 
-	DBG_PRINT_MSG("last index: %d", m_atlas.index());
 	DBG_PRINT_MSG("columns: %d, rows: %d", m_atlas.GetColumns(), m_atlas.GetRows());
 	DBG_PRINT_MSG("max count: %d", m_atlas.GetMaxNumber());
 

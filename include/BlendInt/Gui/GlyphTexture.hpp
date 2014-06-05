@@ -38,13 +38,13 @@ namespace BlendInt {
 	/**
 	 * @brief A class to generate texture for single character with Freetype
 	 */
-	class TextureGlyph
+	class GlyphTexture
 	{
 	public:
 
-		TextureGlyph ();
+		GlyphTexture ();
 
-		~TextureGlyph ();
+		~GlyphTexture ();
 
 		void Load (const FTFace& font_face, uint32_t charcode);
 

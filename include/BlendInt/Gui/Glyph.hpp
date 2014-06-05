@@ -40,7 +40,7 @@
 
 #include <glm/vec4.hpp>
 
-#include <BlendInt/OpenGL/TextureAtlas2D.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 namespace BlendInt {
 
@@ -90,7 +90,7 @@ namespace BlendInt {
 		  bitmap_top(orig.bitmap_top),
 		  advance_x(orig.advance_x),
 		  advance_y(orig.advance_y),
-		  texture_atlas(orig.texture_atlas)
+		  texture(orig.texture)
 		{
 			memcpy (vertices, orig.vertices, sizeof(GlyphVertex) * 4);
 		}
@@ -108,7 +108,7 @@ namespace BlendInt {
 			bitmap_top = orig.bitmap_top;
 			advance_x = orig.advance_x;
 			advance_y = orig.advance_y;
-			texture_atlas = orig.texture_atlas;
+			texture = orig.texture;
 
 			memcpy (vertices, orig.vertices, sizeof(GlyphVertex) * 4);
 
@@ -126,7 +126,7 @@ namespace BlendInt {
 
 		GlyphVertex vertices[4];
 
-		RefPtr<TextureAtlas2D> texture_atlas;
+		RefPtr<GLTexture2D> texture;
 	};
 
 } /* namespace BlendInt */

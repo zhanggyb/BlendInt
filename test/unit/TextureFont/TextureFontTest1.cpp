@@ -5,7 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/TextureGlyph.hpp>
+#include <BlendInt/Gui/GlyphTexture.hpp>
 #include <BlendInt/Core/Freetype.hpp>
 
 using namespace BlendInt;
@@ -70,7 +70,7 @@ TEST_F(TextureFontTest1, Foo1)
 
     ft_face.SetCharSize(72 << 6, 0, 96, 0);
 
-    TextureGlyph font;
+    GlyphTexture font;
 
     GLuint vao;
     GLuint vbo;

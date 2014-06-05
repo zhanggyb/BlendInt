@@ -36,6 +36,7 @@
 #include <BlendInt/Core/Object.hpp>
 #include <BlendInt/Core/Freetype.hpp>
 #include <BlendInt/Gui/Glyph.hpp>
+#include <BlendInt/Gui/GlyphAtlas.hpp>
 
 using namespace std;
 
@@ -141,9 +142,9 @@ namespace BlendInt {
 
 		void Initialize (const FontTypeBase& font_data, uint32_t char_code = 32, int size = 95);
 
-		void SetGlyphData (GlyphExt& glyph, FT_GlyphSlot slot, const RefPtr<TextureAtlas2D>& atlas);
+		void SetGlyphData (GlyphExt& glyph, int x, int y, FT_GlyphSlot slot, const RefPtr<TextureAtlas2D>& atlas);
 
-		void SetGlyphData (GlyphExt& glyph, FT_GlyphSlot slot, FT_BitmapGlyph bitmap_glyph, const RefPtr<TextureAtlas2D>& atlas);
+		void SetGlyphData (GlyphExt& glyph, int x, int y, FT_GlyphSlot slot, FT_BitmapGlyph bitmap_glyph, const RefPtr<TextureAtlas2D>& atlas);
 
 		GLuint m_vao;
 
@@ -156,7 +157,7 @@ namespace BlendInt {
 
 		std::map<uint32_t, GlyphExt> m_extension;
 
-		RefPtr<TextureAtlas2D> m_last;
+		RefPtr<GlyphAtlas> m_last;
 
 		FTLibrary m_ft_lib;
 		FTFace m_ft_face;

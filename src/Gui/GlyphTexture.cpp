@@ -34,26 +34,26 @@
 #include <cwchar>
 #include <iostream>
 
-#include <BlendInt/Gui/TextureGlyph.hpp>
+#include <BlendInt/Gui/GlyphTexture.hpp>
 
 namespace BlendInt {
 
 #ifdef DEBUG
-	unsigned char TextureGlyph::image[HEIGHT][WIDTH];
+	unsigned char GlyphTexture::image[HEIGHT][WIDTH];
 #endif
 
-	TextureGlyph::TextureGlyph()
+	GlyphTexture::GlyphTexture()
 	: m_texture(0)
 	{
 
 	}
 
-	TextureGlyph::~TextureGlyph()
+	GlyphTexture::~GlyphTexture()
 	{
 		glDeleteTextures(1, &m_texture);
 	}
 
-	void TextureGlyph::Load (const FTFace& font_face, uint32_t charcode)
+	void GlyphTexture::Load (const FTFace& font_face, uint32_t charcode)
 	{
 		if(!m_texture) {
 			glGenTextures(1, &m_texture);
@@ -124,7 +124,7 @@ namespace BlendInt {
 
 
 #ifdef DEBUG
-	void TextureGlyph::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
+	void GlyphTexture::draw_bitmap (FT_Bitmap* bitmap, FT_Int x, FT_Int y)
 	{
 	    FT_Int i, j, p, q;
 	    FT_Int x_max = x + bitmap->width;
@@ -143,7 +143,7 @@ namespace BlendInt {
 	    }
 	}
 
-	void TextureGlyph::show_image (FT_Bitmap* bitmap)
+	void GlyphTexture::show_image (FT_Bitmap* bitmap)
 	{
 	    int  i, j;
 
