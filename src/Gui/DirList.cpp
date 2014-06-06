@@ -245,7 +245,6 @@ namespace BlendInt {
 
 	void DirList::InitializeFileListOnce ()
 	{
-		// Set size:
 		namespace fs = boost::filesystem;
 
 		std::string home = getenv("PWD");
@@ -282,8 +281,6 @@ namespace BlendInt {
 			std::cerr << ex.what() << std::endl;
 		}
 
-		glBindVertexArray(m_vao);
-
 		GLfloat verts[] = {
 						0.f, 0.f,
 						(GLfloat)size().width(), 0.f,
@@ -297,7 +294,7 @@ namespace BlendInt {
 		m_row->SetData(sizeof(verts), verts);
 		m_row->Reset();
 
-		glBindVertexArray(0);
+		m_font.set_color(Color(0xF0F0F0FF));
 	}
 
 	bool DirList::GetHighlightIndex(int y, unsigned int* index)

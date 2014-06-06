@@ -24,6 +24,7 @@
 #include <assert.h>
 
 #include <BlendInt/Gui/VertexTool.hpp>
+#include <BlendInt/Service/Theme.hpp>
 
 namespace BlendInt {
 
@@ -56,8 +57,8 @@ namespace BlendInt {
 					int radius,
 					bool use_outer)
 	{
-		float rad = radius;
-		float radi = rad - border;
+		float rad = radius * Theme::instance->pixel();
+		float radi = rad - border * Theme::instance->pixel();
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 
@@ -66,10 +67,10 @@ namespace BlendInt {
 		float maxx = size.width();
 		float maxy = size.height();
 
-		float minxi = minx + border;		// U.pixelsize; // boundbox inner
-		float maxxi = maxx - border; 	// U.pixelsize;
-		float minyi = miny + border;		// U.pixelsize;
-		float maxyi = maxy - border;		// U.pixelsize;
+		float minxi = minx + border * Theme::instance->pixel();		// U.pixelsize; // boundbox inner
+		float maxxi = maxx - border * Theme::instance->pixel(); 	// U.pixelsize;
+		float minyi = miny + border * Theme::instance->pixel();		// U.pixelsize;
+		float maxyi = maxy - border * Theme::instance->pixel();		// U.pixelsize;
 
 		int count = 0;
 
@@ -248,7 +249,7 @@ namespace BlendInt {
 					bool use_outer)
 	{
 		float rad = radius;
-		float radi = rad - border;
+		float radi = rad - border * Theme::instance->pixel();
 
 		float vec[WIDGET_CURVE_RESOLU][2], veci[WIDGET_CURVE_RESOLU][2];
 
@@ -257,10 +258,10 @@ namespace BlendInt {
 		float maxx = size.width();
 		float maxy = size.height();
 
-		float minxi = minx + border;
-		float maxxi = maxx - border;
-		float minyi = miny + border;
-		float maxyi = maxy - border;
+		float minxi = minx + border * Theme::instance->pixel();
+		float maxxi = maxx - border * Theme::instance->pixel();
+		float minyi = miny + border * Theme::instance->pixel();
+		float maxyi = maxy - border * Theme::instance->pixel();
 
 		float facxi = (maxxi != minxi) ? 1.0f / (maxxi - minxi) : 0.0f;
 		float facyi = (maxyi != minyi) ? 1.0f / (maxyi - minyi) : 0.0f;

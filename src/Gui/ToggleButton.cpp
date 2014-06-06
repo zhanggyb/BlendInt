@@ -176,8 +176,8 @@ namespace BlendInt {
 
 		int h = font().GetHeight();
 
-		set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
-						h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+		set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum(),
+						h + DefaultButtonPadding().vsum());
 
 		glGenVertexArrays(1, &m_vao);
 
@@ -197,14 +197,14 @@ namespace BlendInt {
 		int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
-							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
+			set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum(),
+							h + DefaultButtonPadding().vsum());
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
-			int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
+			int width = text_outline.width() + round_corner_radius() * 2 + DefaultButtonPadding().hsum();
+			int height = h + DefaultButtonPadding().vsum();
 
 			set_size(width, height);
 

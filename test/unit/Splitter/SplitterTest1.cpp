@@ -34,17 +34,21 @@ TEST_F(SplitterTest1, Foo1)
 #ifdef DEBUG
 	splitter->set_name("Splitter");
 #endif
-	splitter->SetPosition(100, 100);
+	splitter->SetPosition(50, 50);
+	splitter->Resize(450, 200);
 	
-	Button* btn1 = Manage(new Button);
-	Button* btn2 = Manage(new Button);
+	Button* btn1 = Manage(new Button("Button1"));
+	Button* btn2 = Manage(new Button("Button2"));
+	Button* btn3 = Manage(new Button("Button3"));
 	
 	splitter->PushBack(btn1);
 	splitter->PushBack(btn2);
-	
-	splitter->Resize(200, 200);
+	splitter->PushBack(btn3);
 	
 	context->Add(splitter);
+
+	splitter->Resize(400, 400);
+	splitter->SetPosition(100, 100);
 
     RunLoop(win);
 

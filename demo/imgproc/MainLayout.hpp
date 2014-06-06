@@ -15,7 +15,7 @@
 #include <BlendInt/Gui/ComboBox.hpp>
 
 #include <BlendInt/Gui/TextEntry.hpp>
-#include <BlendInt/Gui/ToolButton.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 namespace BI = BlendInt;
 
@@ -42,7 +42,7 @@ private:
 
 	BI::TextEntry* m_input;
 	BI::ComboBox* m_combo;
-	BI::ToolButton* m_open;
+	BI::Button* m_open;
 
 };
 

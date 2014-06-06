@@ -42,9 +42,9 @@ namespace BlendInt {
 
 		virtual ~ToolBar ();
 
-		void Add (AbstractWidget* widget);
+		void PushBack (AbstractWidget* widget);
 
-		void AddButton (const RefPtr<Action>& action);
+		void PushBack (const RefPtr<Action>& action);
 
 		virtual Size GetPreferredSize () const;
 

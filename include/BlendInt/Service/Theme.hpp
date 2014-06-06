@@ -85,7 +85,7 @@ namespace BlendInt {
 			return m_dpi;
 		}
 		
-		float pixel () const
+		short pixel () const
 		{
 			return m_pixel;
 		}
@@ -246,7 +246,7 @@ namespace BlendInt {
 		unsigned int m_dpi;
 
 		/** How many pixels for 1 border */
-		float m_pixel;
+		short m_pixel;
 
 		/* fac: 0 - 1 for blend factor, width in pixels */
 		float m_shadow_fac;

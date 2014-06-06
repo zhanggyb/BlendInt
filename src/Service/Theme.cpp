@@ -65,8 +65,8 @@ namespace BlendInt {
 	}
 
 	Theme::Theme ()
-	: m_dpi(96),
-	  m_pixel(1.0),
+	: m_dpi(72),
+	  m_pixel(1),
 	  m_shadow_fac(0.5),
 	  m_shadow_width(12)
 	{
@@ -164,7 +164,7 @@ namespace BlendInt {
 		xml_attribute<>* attr = doc.allocate_attribute("dpi", value);
 		ui_node->append_attribute(attr);
 
-		snprintf(buf, 16, "%g", m_pixel);
+		snprintf(buf, 16, "%hd", m_pixel);
 		value = doc.allocate_string(buf);
 		attr = doc.allocate_attribute("pixel", value);
 		ui_node->append_attribute(attr);
@@ -439,10 +439,10 @@ namespace BlendInt {
 		m_shadow_fac = 0.5f;
 		m_shadow_width = 12;
 
-		m_dpi = 96;
+		m_dpi = 72;
 
 		// TODO: check if retina in Mac OS
-		m_pixel = 1.0;
+		m_pixel = 1;
 
 		m_xaxis = 0xFF0000FF;
 		m_yaxis = 0x00FF00FF;
@@ -465,8 +465,8 @@ namespace BlendInt {
 
 			} else if(strcmp("pixel", attrib->name()) == 0) {
 
-				float v = 0.f;
-				if(sscanf(attrib->value(), "%f", &v) == 1) {
+				short v = 0;
+				if(sscanf(attrib->value(), "%hd", &v) == 1) {
 					m_pixel = v;
 				}
 

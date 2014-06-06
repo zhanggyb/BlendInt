@@ -37,6 +37,7 @@
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/SpaceArea.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
 
 #include <BlendInt/Service/StockItems.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -61,18 +62,20 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	ColorSelector* selector = Manage(new ColorSelector);
-	selector->SetPosition(100, 100);
-	selector->Resize(selector->GetPreferredSize());
+	ToolBox* box = Manage(new ToolBox);
+	Button* btn1 = Manage(new Button);
+	Button* btn2 = Manage(new Button);
+	box->SetPosition(50, 50);
 
-	NumberSlider* ns = Manage(new NumberSlider);
-	ns->SetPosition(200, 40);
-	ns->Resize (200, 20);
-	ns->SetTitle(L"Hello");
+	box->PushBack(btn1);
+	box->PushBack(btn2);
 
-	context->Add(selector);
+	DBG_PRINT_MSG("button1 position: %d, %d", btn1->position().x(), btn1->position().y());
 
-	context->Add(ns);
+	box->Resize(200, 200);
+
+	context->Add(box);
+
 	RunLoop(win);
 
 	Interface::Release();

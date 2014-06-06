@@ -44,7 +44,7 @@
 
 namespace BlendInt {
 
-	Font::Font (const std::string& name, unsigned int size, int flag, int dpi)
+	Font::Font (const std::string& name, unsigned int size, int flag)
 	: m_shadow(false),
 	  m_shadow_offset_x(1.5f),
 	  m_shadow_offset_y(-1.5f)
@@ -52,7 +52,7 @@ namespace BlendInt {
 		m_data.name = name;
 		m_data.size = size;
 		m_data.flag = flag;
-		m_data.dpi = dpi;
+		m_data.dpi = Theme::instance->dpi();
 
 		m_color = 0x000000FF;
 
@@ -67,7 +67,6 @@ namespace BlendInt {
 	  m_shadow_offset_x(1.5f),
 	  m_shadow_offset_y(-1.5f)
 	{
-
 		m_cache = orig.m_cache;
 	}
 

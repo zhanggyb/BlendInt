@@ -49,14 +49,14 @@ TEST_F(ToolBarTest1, Foo1)
 
     ToolButton* btn8 = Manage (new ToolButton);
 
-	toolbar->Add(btn1);
-	toolbar->Add(btn2);
-	toolbar->Add(btn3);
-	toolbar->Add(btn4);
-	toolbar->Add(btn5);
-	toolbar->Add(btn6);
-	toolbar->Add(btn7);
-	toolbar->Add(btn8);
+	toolbar->PushBack(btn1);
+	toolbar->PushBack(btn2);
+	toolbar->PushBack(btn3);
+	toolbar->PushBack(btn4);
+	toolbar->PushBack(btn5);
+	toolbar->PushBack(btn6);
+	toolbar->PushBack(btn7);
+	toolbar->PushBack(btn8);
 
     //toolbar->SetPosition(100, 100);
 

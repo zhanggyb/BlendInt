@@ -90,7 +90,7 @@ namespace BlendInt {
 	{
 		m_font = font;
 
-		Rect text_outline = m_font.GetTextOutline(m_text);
+		//Rect text_outline = m_font.GetTextOutline(m_text);
 
 		//m_length = GetVisibleTextLengthInCursorMove(m_text, m_start);
 
@@ -224,14 +224,6 @@ namespace BlendInt {
 	{
 		switch (request.type()) {
 
-			case WidgetRoundCornerRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				m_font.set_pen(*radius_p + default_textentry_padding.left(), m_font.pen().y());
-
-				break;
-			}
-
 			case WidgetSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
 				const Color& color = Theme::instance->text().inner;
@@ -259,6 +251,54 @@ namespace BlendInt {
 				m_cursor_buffer->Unmap();
 				m_cursor_buffer->Reset();
 
+				Refresh();
+				break;
+			}
+
+			case WidgetRoundCornerType: {
+				const int* type_p = static_cast<const int*>(request.data());
+				const Color& color = Theme::instance->text().inner;
+				short shadetop = Theme::instance->text().shadetop;
+				short shadedown = Theme::instance->text().shadedown;
+
+				VertexTool tool;
+				tool.Setup (size(),
+								DefaultBorderWidth(),
+								*type_p,
+								round_corner_radius(),
+								color,
+								Vertical,
+								shadetop,
+								shadedown);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
+
+				Refresh();
+				break;
+			}
+
+			case WidgetRoundCornerRadius: {
+				const int* radius_p =
+								static_cast<const int*>(request.data());
+
+				const Color& color = Theme::instance->text().inner;
+				short shadetop = Theme::instance->text().shadetop;
+				short shadedown = Theme::instance->text().shadedown;
+
+				VertexTool tool;
+				tool.Setup (size(),
+								DefaultBorderWidth(),
+								round_corner_type(),
+								*radius_p,
+								color,
+								Vertical,
+								shadetop,
+								shadedown);
+				tool.UpdateInnerBuffer(m_inner_buffer.get());
+				tool.UpdateOuterBuffer(m_outer_buffer.get());
+
+
+				m_font.set_pen(*radius_p + default_textentry_padding.left(), m_font.pen().y());
 				Refresh();
 				break;
 			}

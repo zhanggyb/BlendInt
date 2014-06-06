@@ -70,20 +70,19 @@ namespace BlendInt {
 		GLuint m_vao;
 
 		bool m_highlight;
-
 		bool m_pressed;
 
 		RefPtr<GLArrayBuffer> m_buffer;
 
 		Point m_last;
-
 		Point m_cursor;
 
 		unsigned int m_prev_size;	// width or height of the previous widget
 		unsigned int m_next_size;	// width or height of the next widget
 		int m_nearby_pos;	// nearby widget position
 
-		int m_index;
+		AbstractWidget* m_prev_widget;
+		AbstractWidget* m_next_widget;
 
 	};
 
@@ -98,6 +97,8 @@ namespace BlendInt {
 		Splitter (Orientation orientation = Horizontal);
 
 		virtual ~Splitter ();
+
+		void PushFront (AbstractWidget* widget);
 
 		void PushBack (AbstractWidget* widget);
 
@@ -150,6 +151,8 @@ namespace BlendInt {
 		void AlignSubWidgets (Orientation orientation, const Size& size, const Margin& margin);
 
 		int GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin);
+
+		int GetWidgetsRoom (Orientation orientation, const Size& size, const Margin& margin);
 
 		Orientation m_orientation;
 	};

@@ -168,14 +168,10 @@ namespace BlendInt {
 	{
 		set_round_corner_type(RoundAll);
 
-		int left = DefaultButtonPadding().left() * Theme::instance->pixel();
-		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
-		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
-		int bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
 		int h = font().GetHeight();
 
-		set_size(h + round_corner_radius() * 2 * Theme::instance->pixel() + left + right,
-						h + top + bottom);
+		set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum(),
+						h + DefaultButtonPadding().vsum());
 
 		glGenVertexArrays(1, &m_vao);
 

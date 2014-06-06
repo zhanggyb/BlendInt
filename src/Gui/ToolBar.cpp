@@ -61,13 +61,14 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ToolBar::Add (AbstractWidget* widget)
+	void ToolBar::PushBack (AbstractWidget* widget)
 	{
 		int x = GetLastPosition();
 		int y = position().y() + margin().bottom();
 		int h = size().height() - margin().top() - margin().bottom();
 
 		if(PushBackSubWidget(widget)) {
+
 			SetSubWidgetPosition(widget, x, y);
 			if(widget->IsExpandY()) {
 				ResizeSubWidget(widget, widget->size().width(), h);
@@ -84,7 +85,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBar::AddButton (const RefPtr<Action>& action)
+	void ToolBar::PushBack (const RefPtr<Action>& action)
 	{
 		ToolButton* button = Manage(new ToolButton);
 		int x = GetLastPosition();
@@ -239,34 +240,22 @@ namespace BlendInt {
 
 		program->Use();
 
-		Color color = Theme::instance->regular().inner;
-
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4fv("Color", color.data());
+		program->SetVertexAttrib4fv("Color", Theme::instance->tool().inner.data());
 		program->SetUniform1i("Gamma", 0);
 
 		glEnableVertexAttribArray(0);
 
 		m_inner->Bind();
 
-		glVertexAttribPointer(0, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							m_inner->GetBufferSize()
 											/ (2 * sizeof(GLfloat)));
 
 		m_inner->Reset();
-
-		program->SetUniform1i("AA", 1);
-		program->SetUniform1i("Gamma", 0);
-		program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, 1.f);
 
 		glDisableVertexAttribArray(0);
 

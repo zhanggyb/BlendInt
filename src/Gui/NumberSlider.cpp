@@ -178,8 +178,10 @@ namespace BlendInt {
 	void NumberSlider::InitOnce()
 	{
 		set_round_corner_type(RoundAll);
-		set_round_corner_radius(10);
-		set_size(90, 20);
+		int h = m_font.GetHeight();
+		set_size(h + round_corner_radius() * 2 + default_numberslider_padding.hsum(),
+						h + default_numberslider_padding.vsum());
+		set_round_corner_radius(size().height() / 2);
 
 		glGenVertexArrays(1, &m_vao);
 		VertexTool tool;

@@ -24,23 +24,62 @@
 #ifndef _BLENDINT_GUI_TOOLBOX_HPP_
 #define _BLENDINT_GUI_TOOLBOX_HPP_
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractDequeContainer.hpp>
 
 namespace BlendInt {
 
-	class ToolBox: public Widget
+	class ToolBox: public AbstractDequeContainer
 	{
+		DISALLOW_COPY_AND_ASSIGN(ToolBox);
+
 	public:
 
 		ToolBox();
 
 		virtual ~ToolBox();
 
+		void PushBack (AbstractWidget* widget);
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
+		virtual void UpdateContainer (const WidgetUpdateRequest& request);
 
+		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+
+		virtual ResponseType Draw (const RedrawEvent& event);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
+
+		void FillSubWidgets (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+
+		void FillSubWidgets (int x, int y, int width, int height, int space);
+
+		int GetLastPosition () const;
+
+		GLuint m_vao;
+
+		int m_space;
+
+		RefPtr<GLArrayBuffer> m_inner;
+
 	};
 
 }
