@@ -363,14 +363,22 @@ namespace BlendInt {
 				PushBackSubWidget(widget);
 			}
 
-			AlignSubWidgets(m_orientation, size(), margin());
+			if(m_orientation == Horizontal) {
+				FillSubWidgetsInHBox(position(), size(), margin(), AlignHorizontalCenter, 0);
+			} else {
+				FillSubWidgetsInVBox(position(), size(), margin(), AlignVerticalCenter, 0);
+			}
 		}
 	}
 
 	void Splitter::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
-			AlignSubWidgets(m_orientation, size(), margin());
+			if(m_orientation == Horizontal) {
+				FillSubWidgetsInHBox(position(), size(), margin(), AlignHorizontalCenter, 0);
+			} else {
+				FillSubWidgetsInVBox(position(), size(), margin(), AlignVerticalCenter, 0);
+			}
 		}
 	}
 
@@ -497,6 +505,16 @@ namespace BlendInt {
 	{
 		switch(request.type()) {
 
+			case ContainerMargin: {
+				const Margin* margin_p = static_cast<const Margin*>(request.data());
+				if(m_orientation == Horizontal) {
+					FillSubWidgetsInHBox(position(), size(), *margin_p, AlignHorizontalCenter, 0);
+				} else {
+					FillSubWidgetsInVBox(position(), size(), *margin_p, AlignVerticalCenter, 0);
+				}
+				break;
+			}
+
 			case ContainerRefresh: {
 				Refresh();
 				break;
@@ -540,7 +558,12 @@ namespace BlendInt {
 			case WidgetSize: {
 
 				const Size* size_p = static_cast<const Size*>(request.data());
-				AlignSubWidgets(m_orientation, *size_p, margin());
+				if(m_orientation == Horizontal) {
+					FillSubWidgetsInHBox(position(), *size_p, margin(), AlignHorizontalCenter, 0);
+				} else {
+					FillSubWidgetsInVBox(position(), *size_p, margin(), AlignVerticalCenter, 0);
+				}
+
 
 				break;
 			}

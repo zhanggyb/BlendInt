@@ -71,6 +71,7 @@ void MainLayout::InitOnce ()
 	tbox->PushBack(btn2);
 
 	Splitter* splitter = Manage(new Splitter);
+	splitter->SetMargin(0, 0, 0, 0);
 
 	splitter->PushBack(m_area);
 	splitter->PushBack(tbox);

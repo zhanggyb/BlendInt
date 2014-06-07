@@ -728,7 +728,7 @@ namespace BlendInt
 
 	void Context::DrawMainBuffer (const glm::mat4& mvp)
 	{
-		glClearColor(0.447, 0.447, 0.447, 1.00);
+		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 
 		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT |

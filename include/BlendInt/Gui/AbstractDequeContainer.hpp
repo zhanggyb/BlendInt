@@ -87,6 +87,71 @@ namespace BlendInt {
 						int height, Orientation orientation,
 						int alignment, int space);
 
+		void FillSubWidgetsInHBox (const Point& out_pos, const Size& out_size, const Margin& margin, int alignment, int space);
+
+		void FillSubWidgetsInHBox (const Point& pos, const Size& size, int alignment, int space);
+
+		void FillSubWidgetsProportionallyInHBox (int x, int y, int width, int height, int alignment, int space);
+
+		/**
+		 * @brief distribute horizontally with preferred size
+		 */
+		void DistributeWithPreferredWidth (int x,
+				int space,
+		        const std::deque<int>* expandable_preferred_widths,
+		        const std::deque<int>* unexpandable_preferred_widths);
+
+		void DistributeWithSmallWidth (int x,
+						int width,
+						int space,
+						const std::deque<int>* expandable_preferred_widths,
+						int expandable_prefer_sum,
+						const std::deque<int>* unexpandable_preferred_widths,
+						int unexpandable_prefer_sum);
+
+		void DistributeWithLargeWidth (int x,
+						int width,
+						int space,
+						const std::deque<int>* expandable_preferred_widths,
+						int expandable_prefer_sum,
+						const std::deque<int>* unexpandable_preferred_widths,
+						int unexpandable_prefer_sum);
+
+		void AlignInHBox (int y, int height, int alignment, const std::deque<int>* unexpandable_preferred_heights);
+
+		void FillSubWidgetsInVBox (const Point& out_pos, const Size& out_size, const Margin& margin, int alignment, int space);
+
+		void FillSubWidgetsInVBox (const Point& pos, const Size& size, int alignment, int space);
+
+		void FillSubWidgetsProportionallyInVBox (int x, int y, int width, int height, int alignment, int space);
+
+		/**
+		 * @brief distribute horizontally with preferred size
+		 */
+		void DistributeWithPreferredHeight (int y,
+						int height,
+						int space,
+						const std::deque<int>* expandable_preferred_heights,
+						const std::deque<int>* unexpandable_preferred_heights);
+
+		void DistributeWithSmallHeight (int y,
+						int height,
+						int space,
+						const std::deque<int>* expandable_preferred_heights,
+						int expandable_prefer_sum,
+						const std::deque<int>* unexpandable_preferred_heights,
+						int unexpandable_prefer_sum);
+
+		void DistributeWithLargeHeight (int y,
+						int height,
+						int space,
+						const std::deque<int>* expandable_preferred_heights,
+						int expandable_prefer_sum,
+						const std::deque<int>* unexpandable_preferred_heights,
+						int unexpandable_prefer_sum);
+
+		void AlignInVBox (int x, int width, int alignment, const std::deque<int>* unexpandable_preferred_widths);
+
 		WidgetDeque* sub_widgets () const
 		{
 			return m_sub_widgets.get();

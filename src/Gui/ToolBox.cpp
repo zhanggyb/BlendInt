@@ -206,7 +206,7 @@ namespace BlendInt {
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4fv("Color", Theme::instance->tool().inner.data());
+		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.f);
 		program->SetUniform1i("Gamma", 0);
 
 		glEnableVertexAttribArray(0);

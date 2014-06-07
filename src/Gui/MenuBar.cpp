@@ -111,10 +111,7 @@ namespace BlendInt {
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		Color color = Theme::instance->regular().inner;
-
-		program->SetVertexAttrib4fv("Color", color.data());
+		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.f);
 		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);
