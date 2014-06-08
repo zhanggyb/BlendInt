@@ -34,6 +34,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <boost/smart_ptr.hpp>
+
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Service/Theme.hpp>
@@ -363,11 +365,7 @@ namespace BlendInt {
 				PushBackSubWidget(widget);
 			}
 
-			if(m_orientation == Horizontal) {
-				FillSubWidgetsInHBox(position(), size(), margin(), AlignHorizontalCenter, 0);
-			} else {
-				FillSubWidgetsInVBox(position(), size(), margin(), AlignVerticalCenter, 0);
-			}
+			FillSubWidgetsInSplitter(position(), size(), margin(), m_orientation);
 		}
 	}
 
@@ -375,9 +373,9 @@ namespace BlendInt {
 	{
 		if(RemoveSubWidget(widget)) {
 			if(m_orientation == Horizontal) {
-				FillSubWidgetsInHBox(position(), size(), margin(), AlignHorizontalCenter, 0);
+				FillSubWidgetsInSplitter(position(), size(), margin(), m_orientation);
 			} else {
-				FillSubWidgetsInVBox(position(), size(), margin(), AlignVerticalCenter, 0);
+				FillSubWidgetsInSplitter(position(), size(), margin(), m_orientation);
 			}
 		}
 	}
@@ -507,11 +505,7 @@ namespace BlendInt {
 
 			case ContainerMargin: {
 				const Margin* margin_p = static_cast<const Margin*>(request.data());
-				if(m_orientation == Horizontal) {
-					FillSubWidgetsInHBox(position(), size(), *margin_p, AlignHorizontalCenter, 0);
-				} else {
-					FillSubWidgetsInVBox(position(), size(), *margin_p, AlignVerticalCenter, 0);
-				}
+				FillSubWidgetsInSplitter(position(), size(), *margin_p, m_orientation);
 				break;
 			}
 
@@ -558,13 +552,7 @@ namespace BlendInt {
 			case WidgetSize: {
 
 				const Size* size_p = static_cast<const Size*>(request.data());
-				if(m_orientation == Horizontal) {
-					FillSubWidgetsInHBox(position(), *size_p, margin(), AlignHorizontalCenter, 0);
-				} else {
-					FillSubWidgetsInVBox(position(), *size_p, margin(), AlignVerticalCenter, 0);
-				}
-
-
+				FillSubWidgetsInSplitter(position(), *size_p, margin(), m_orientation);
 				break;
 			}
 
@@ -710,7 +698,104 @@ namespace BlendInt {
 
 		return room;
 	}
-	
+
+	void Splitter::FillSubWidgetsInSplitter (const Point& out_pos,
+	        const Size& out_size, const Margin& margin, Orientation orientation)
+	{
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int width = out_size.width() - margin.left() - margin.right();
+		int height = out_size.height() - margin.top() - margin.bottom();
+
+		FillSubWidgetsInSplitter(x, y, width, height, orientation);
+	}
+
+	void Splitter::FillSubWidgetsInSplitter (const Point& pos, const Size& size,
+			Orientation orientation)
+	{
+		FillSubWidgetsInSplitter(pos.x(), pos.y(), size.width(), size.height(), orientation);
+	}
+
+	void Splitter::FillSubWidgetsInSplitter (int x, int y, int width,
+	        int height, Orientation orientation)
+	{
+		if(orientation == Horizontal) {
+
+			DistributeHorizontally(x, width);
+			AlignHorizontally(y, height);
+
+		} else {
+
+			DistributeVertically(y, height);
+			AlignVertically(x, width);
+
+		}
+	}
+
+	void Splitter::DistributeHorizontally (int x, int width)
+	{
+		boost::scoped_ptr<std::deque<int> > expandable_widths(new std::deque<int>);
+		boost::scoped_ptr<std::deque<int> > unexpandable_widths(new std::deque<int>);
+
+		int expandable_width_sum = 0;	// the width sum of the expandable widgets' size
+		int unexpandable_width_sum = 0;	// the width sum of the unexpandable widgets' size
+		int handlers_width_sum = 0;
+
+		AbstractWidget* widget = 0;
+		int i = 0;
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			if(i % 2 == 0) {	// widgets
+
+				if (widget->visiable()) {
+
+					if(widget->IsExpandX()) {
+						expandable_width_sum += widget->size().width();
+						expandable_widths->push_back(widget->size().width());
+					} else {
+						unexpandable_width_sum += widget->size().width();
+						unexpandable_widths->push_back(widget->size().width());
+					}
+
+				}
+
+			} else {	// handlers
+
+				if(widget->visiable()) {
+					handlers_width_sum += widget->size().width();
+				}
+
+			}
+
+			i++;
+		}
+
+		if((expandable_widths->size() + unexpandable_widths->size()) == 0) return;	// do nothing if all sub widgets are invisible
+
+		if(expandable_widths->size() == 0) {
+			// TODO: if no expandable sub widgets, resize the unexpandable ones based on the current size
+		} else if(unexpandable_widths->size() == 0) {
+			// TODO: if no unexpandable sub widgets, resize the expandable ones based on the current size
+		} else {
+			// TODO: if there're both expandable and unexpandable sub widgets, only resize expandable widgets.
+		}
+
+	}
+
+	void Splitter::DistributeVertically (int y, int height)
+	{
+	}
+
+	void Splitter::AlignHorizontally (int y, int height)
+	{
+	}
+
+	void Splitter::AlignVertically (int x, int width)
+	{
+	}
+
 	int Splitter::GetWidgetsRoom (Orientation orientation, const Size& size,
 					const Margin& margin)
 	{

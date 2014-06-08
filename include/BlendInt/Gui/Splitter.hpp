@@ -146,7 +146,29 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		void FillSubWidgetsInSplitter (const Point& out_pos, const Size& out_size, const Margin& margin, Orientation orientation);
+
+		void FillSubWidgetsInSplitter (const Point& pos, const Size& size, Orientation orientation);
+
+		/**
+		 * @brief Fill the sub widgets in this container based on the current size
+		 * @param x
+		 * @param y
+		 * @param width
+		 * @param height
+		 * @param orientation
+		 */
+		void FillSubWidgetsInSplitter (int x, int y, int width, int height, Orientation orientation);
+
 	private:
+
+		void DistributeHorizontally (int x, int width);
+
+		void DistributeVertically (int y, int height);
+
+		void AlignHorizontally (int y, int height);
+
+		void AlignVertically (int x, int width);
 
 		void AlignSubWidgets (Orientation orientation, const Size& size, const Margin& margin);
 
