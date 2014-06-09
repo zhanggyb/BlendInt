@@ -164,17 +164,43 @@ namespace BlendInt {
 
 		void DistributeHorizontally (int x, int width);
 
+		void DistributeHorizontallyInProportion (int x, int width,
+						std::deque<int>* widget_deque, int widget_width_sum,
+						std::deque<int>* prefer_deque, int prefer_width_sum);
+
+		void DistributeExpandableWidgetsHorizontally (int x, int width,
+						int unexpandable_width_sum,
+						std::deque<int>* widget_deque, int widget_width_sum,
+						std::deque<int>* prefer_deque, int prefer_width_sum);
+
+		void DistributeUnexpandableWidgetsHorizontally (int x, int width,
+						std::deque<int>* widget_deque, int widget_width_sum,
+						std::deque<int>* prefer_deque, int prefer_width_sum);
+
 		void DistributeVertically (int y, int height);
+
+		void DistributeVerticallyInProportion (int y, int height,
+						std::deque<int>* widget_deque, int widget_height_sum,
+						std::deque<int>* prefer_deque, int prefer_height_sum);
+
+		void DistributeExpandableWidgetsVertically (int y, int height,
+						int unexpandable_width_sum,
+						std::deque<int>* widget_deque, int widget_height_sum,
+						std::deque<int>* prefer_deque, int prefer_height_sum);
+
+		void DistributeUnexpandableWidgetsVertically (int y, int height,
+						std::deque<int>* widget_deque, int widget_height_sum,
+						std::deque<int>* prefer_deque, int prefer_height_sum);
 
 		void AlignHorizontally (int y, int height);
 
 		void AlignVertically (int x, int width);
 
-		void AlignSubWidgets (Orientation orientation, const Size& size, const Margin& margin);
+		void AlignSubWidgets (Orientation orientation, const Size& out_size, const Margin& margin);
 
-		int GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin);
+		int GetAverageRoom (Orientation orientation, const Size& out_size, const Margin& margin);
 
-		int GetWidgetsRoom (Orientation orientation, const Size& size, const Margin& margin);
+		int GetWidgetsRoom (Orientation orientation, const Size& out_size, const Margin& margin);
 
 		Orientation m_orientation;
 	};

@@ -365,7 +365,7 @@ namespace BlendInt {
 				PushBackSubWidget(widget);
 			}
 
-			FillSubWidgetsInSplitter(position(), size(), margin(), m_orientation);
+			AlignSubWidgets(m_orientation, size(), margin());
 		}
 	}
 
@@ -425,12 +425,33 @@ namespace BlendInt {
 
 	bool Splitter::IsExpandX() const
 	{
-		return true;
+		bool expand = false;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->IsExpandX()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+
 	}
 
 	bool Splitter::IsExpandY() const
 	{
-		return true;
+		bool expand = false;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->IsExpandY()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
 	}
 
 
@@ -615,17 +636,20 @@ namespace BlendInt {
 		return IgnoreAndContinue;
 	}
 	
-	void Splitter::AlignSubWidgets (Orientation orienation, const Size& size, const Margin& margin)
+	void Splitter::AlignSubWidgets (Orientation orienation, const Size& out_size, const Margin& margin)
 	{
-		int room = GetAverageRoom(orienation, size, margin);
+		int room = GetAverageRoom(orienation, out_size, margin);
 		int x = position().x() + margin.left();
+
+		DBG_PRINT_MSG("room: %d", room);
 
 		if(orienation == Horizontal) {
 
 			int y = position().y() + margin.bottom();
-			int h = size.height() - margin.vsum();
+			int h = out_size.height() - margin.vsum();
 
 			int i = 0;
+			int handler_width = 0;
 			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				if(i % 2 == 0) {
@@ -633,19 +657,21 @@ namespace BlendInt {
 					SetSubWidgetPosition(*it, x, y);
 					x = x + room;
 				} else {
-					ResizeSubWidget(*it, 3, h);
+					handler_width = (*it)->GetPreferredSize().width();
+					ResizeSubWidget(*it, handler_width, h);
 					SetSubWidgetPosition(*it, x, y);
-					x = x + 3;
+					x = x + handler_width;
 				}
 				i++;
 			}
 
 		} else {
 
-			int y = position().y() + size.height() - margin.top();
-			int w = size.width() - margin.hsum();
+			int y = position().y() + out_size.height() - margin.top();
+			int w = out_size.width() - margin.hsum();
 
 			int i = 0;
+			int handler_height = 0;
 			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				if(i % 2 == 0) {
@@ -653,8 +679,9 @@ namespace BlendInt {
 					ResizeSubWidget(*it, w, room);
 					SetSubWidgetPosition(*it, x, y);
 				} else {
-					y = y - 3;
-					ResizeSubWidget(*it, w, 3);
+					handler_height = (*it)->GetPreferredSize().height();
+					y = y - handler_height;
+					ResizeSubWidget(*it, w, handler_height);
 					SetSubWidgetPosition(*it, x, y);
 				}
 
@@ -662,41 +689,6 @@ namespace BlendInt {
 			}
 
 		}
-	}
-
-	int Splitter::GetAverageRoom (Orientation orientation, const Size& size, const Margin& margin)
-	{
-		int room = 0;
-
-		if(orientation == Horizontal) {
-			room = size.width() - margin.hsum();
-		} else {
-			room = size.height() - margin.vsum();
-		}
-
-		if(sub_widget_size() == 0) {
-			return room;
-		}
-
-		Size prefer;
-		int space = 0;
-		WidgetDeque::iterator it = sub_widgets()->begin();
-		it++;
-		while (it != sub_widgets()->end()) {
-			prefer = (*it)->GetPreferredSize();
-			if(orientation == Horizontal) {
-				space = prefer.width();
-			} else {
-				space = prefer.height();
-			}
-
-			it = it + 2;
-		}
-
-		room = room - space;
-		room = room / ((sub_widget_size() + 1) / 2);
-
-		return room;
 	}
 
 	void Splitter::FillSubWidgetsInSplitter (const Point& out_pos,
@@ -736,11 +728,13 @@ namespace BlendInt {
 	{
 		boost::scoped_ptr<std::deque<int> > expandable_widths(new std::deque<int>);
 		boost::scoped_ptr<std::deque<int> > unexpandable_widths(new std::deque<int>);
+		boost::scoped_ptr<std::deque<int> > handler_prefer_widths (new std::deque<int>);
 
 		int expandable_width_sum = 0;	// the width sum of the expandable widgets' size
 		int unexpandable_width_sum = 0;	// the width sum of the unexpandable widgets' size
 		int handlers_width_sum = 0;
 
+		int prefer_width;
 		AbstractWidget* widget = 0;
 		int i = 0;
 		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
@@ -764,7 +758,9 @@ namespace BlendInt {
 			} else {	// handlers
 
 				if(widget->visiable()) {
-					handlers_width_sum += widget->size().width();
+					prefer_width = widget->GetPreferredSize().width();
+					handler_prefer_widths->push_back(prefer_width);
+					handlers_width_sum += prefer_width;
 				}
 
 			}
@@ -772,39 +768,418 @@ namespace BlendInt {
 			i++;
 		}
 
+		DBG_PRINT_MSG("exp sum: %d, unexp sum: %d", expandable_width_sum, unexpandable_width_sum);
+
 		if((expandable_widths->size() + unexpandable_widths->size()) == 0) return;	// do nothing if all sub widgets are invisible
 
 		if(expandable_widths->size() == 0) {
-			// TODO: if no expandable sub widgets, resize the unexpandable ones based on the current size
+
+			DistributeHorizontallyInProportion(x, width, unexpandable_widths.get(), unexpandable_width_sum,
+							handler_prefer_widths.get(), handlers_width_sum);
+
 		} else if(unexpandable_widths->size() == 0) {
-			// TODO: if no unexpandable sub widgets, resize the expandable ones based on the current size
+
+			DistributeHorizontallyInProportion(x, width, expandable_widths.get(), expandable_width_sum,
+							handler_prefer_widths.get(), handlers_width_sum);
+
 		} else {
-			// TODO: if there're both expandable and unexpandable sub widgets, only resize expandable widgets.
+
+			int exp_width = width - handlers_width_sum - unexpandable_width_sum;
+
+			if(exp_width <= 0) {
+
+				DistributeUnexpandableWidgetsHorizontally(x, width,
+								unexpandable_widths.get(),
+								unexpandable_width_sum,
+								handler_prefer_widths.get(),
+								handlers_width_sum);
+
+			} else {
+
+				DistributeExpandableWidgetsHorizontally(x, width,
+								unexpandable_width_sum, expandable_widths.get(),
+								expandable_width_sum,
+								handler_prefer_widths.get(),
+								handlers_width_sum);
+
+			}
+
 		}
 
 	}
 
 	void Splitter::DistributeVertically (int y, int height)
 	{
+		boost::scoped_ptr<std::deque<int> > expandable_heights(new std::deque<int>);
+		boost::scoped_ptr<std::deque<int> > unexpandable_heights(new std::deque<int>);
+		boost::scoped_ptr<std::deque<int> > handler_prefer_heights (new std::deque<int>);
+
+		int expandable_height_sum = 0;	// the width sum of the expandable widgets' size
+		int unexpandable_height_sum = 0;	// the width sum of the unexpandable widgets' size
+		int handlers_height_sum = 0;
+
+		int prefer_height;
+		AbstractWidget* widget = 0;
+		int i = 0;
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			if(i % 2 == 0) {	// widgets
+
+				if (widget->visiable()) {
+
+					if(widget->IsExpandY()) {
+						expandable_height_sum += widget->size().height();
+						expandable_heights->push_back(widget->size().height());
+					} else {
+						unexpandable_height_sum += widget->size().height();
+						unexpandable_heights->push_back(widget->size().height());
+					}
+
+				}
+
+			} else {	// handlers
+
+				if(widget->visiable()) {
+					prefer_height = widget->GetPreferredSize().height();
+					handler_prefer_heights->push_back(prefer_height);
+					handlers_height_sum += prefer_height;
+				}
+
+			}
+
+			i++;
+		}
+
+		if((expandable_heights->size() + unexpandable_heights->size()) == 0) return;	// do nothing if all sub widgets are invisible
+
+		if(expandable_heights->size() == 0) {
+
+			DistributeVerticallyInProportion(y, height, unexpandable_heights.get(), unexpandable_height_sum,
+							handler_prefer_heights.get(), handlers_height_sum);
+
+		} else if(unexpandable_heights->size() == 0) {
+
+			DistributeVerticallyInProportion(y, height, expandable_heights.get(), expandable_height_sum,
+							handler_prefer_heights.get(), handlers_height_sum);
+
+		} else {
+
+			int exp_height = height - handlers_height_sum - unexpandable_height_sum;
+
+			if(exp_height <= 0) {
+
+				DistributeUnexpandableWidgetsVertically(y, height,
+								unexpandable_heights.get(),
+								unexpandable_height_sum,
+								handler_prefer_heights.get(),
+								handlers_height_sum);
+
+			} else {
+
+				DistributeExpandableWidgetsVertically(y, height,
+								unexpandable_height_sum, expandable_heights.get(),
+								expandable_height_sum,
+								handler_prefer_heights.get(),
+								handlers_height_sum);
+
+			}
+
+		}
+
 	}
 
 	void Splitter::AlignHorizontally (int y, int height)
 	{
+		AbstractWidget* widget = 0;
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			ResizeSubWidget(widget, widget->size().width(), height);
+			SetSubWidgetPosition(widget, widget->position().x(), y);
+		}
 	}
 
 	void Splitter::AlignVertically (int x, int width)
 	{
+		AbstractWidget* widget = 0;
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			ResizeSubWidget(widget, width, widget->size().height());
+			SetSubWidgetPosition(widget, x, widget->position().y());
+		}
+	}
+	
+	void Splitter::DistributeHorizontallyInProportion (int x, int width,
+					std::deque<int>* widget_deque, int widget_width_sum,
+					std::deque<int>* prefer_deque, int prefer_width_sum)
+	{
+		int i = 0;
+		AbstractWidget* widget = 0;
+		std::deque<int>::iterator width_it = widget_deque->begin();
+		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			if(i % 2 == 0) {
+
+				ResizeSubWidget(widget,
+								(width - prefer_width_sum) * (*width_it) / widget_width_sum,
+								widget->size().height());
+				width_it++;
+
+			} else {
+
+				ResizeSubWidget(widget, *handler_width_it,
+								widget->size().height());
+				handler_width_it++;
+			}
+
+			SetSubWidgetPosition(widget, x, widget->position().y());
+			x += widget->size().width();
+
+			i++;
+		}
+	}
+	
+	void Splitter::DistributeExpandableWidgetsHorizontally (int x, int width,
+					int unexpandable_width_sum,
+					std::deque<int>* widget_deque, int widget_width_sum,
+					std::deque<int>* prefer_deque, int prefer_width_sum)
+	{
+		int i = 0;
+		AbstractWidget* widget = 0;
+		std::deque<int>::iterator exp_width_it = widget_deque->begin();
+		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			if(i % 2 == 0) {
+
+				if (widget->IsExpandX()) {
+					ResizeSubWidget(widget,
+									(width - prefer_width_sum
+													- unexpandable_width_sum)
+													* (*exp_width_it)
+																	/ widget_width_sum,
+									widget->size().height());
+					exp_width_it++;
+				}
+
+			} else {
+				ResizeSubWidget(widget, *handler_width_it, widget->size().height());
+				handler_width_it++;
+			}
+
+			SetSubWidgetPosition(widget, x, widget->position().y());
+			x += widget->size().width();
+
+			i++;
+		}
+	}
+	
+	void Splitter::DistributeUnexpandableWidgetsHorizontally (int x, int width,
+					std::deque<int>* widget_deque, int widget_width_sum,
+					std::deque<int>* prefer_deque, int prefer_width_sum)
+	{
+		int i = 0;
+		AbstractWidget* widget = 0;
+		std::deque<int>::iterator unexp_width_it = widget_deque->begin();
+		std::deque<int>::iterator handler_width_it = prefer_deque->begin();
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			if(i % 2 == 0) {
+
+				if(!widget->IsExpandX()) {
+
+					ResizeSubWidget(widget,
+									(width - prefer_width_sum)
+													* (*unexp_width_it)
+													/ widget_width_sum,
+									widget->size().height());
+					unexp_width_it++;
+
+				}
+
+			} else {
+				ResizeSubWidget(widget, *handler_width_it, widget->size().height());
+				handler_width_it++;
+			}
+
+			SetSubWidgetPosition(widget, x, widget->position().y());
+			x += widget->size().width();
+
+			i++;
+		}
 	}
 
-	int Splitter::GetWidgetsRoom (Orientation orientation, const Size& size,
+	int Splitter::GetAverageRoom (Orientation orientation, const Size& out_size, const Margin& margin)
+	{
+		int room = 0;
+
+		if(orientation == Horizontal) {
+			room = out_size.width() - margin.hsum();
+		} else {
+			room = out_size.height() - margin.vsum();
+		}
+
+		if(sub_widget_size() == 0) {
+			return room;
+		}
+
+		Size prefer;
+		int space = 0;
+		WidgetDeque::iterator it = sub_widgets()->begin();
+		it++;
+		while (it != sub_widgets()->end()) {
+			prefer = (*it)->GetPreferredSize();
+			if(orientation == Horizontal) {
+				space = prefer.width();
+			} else {
+				space = prefer.height();
+			}
+
+			it = it + 2;
+		}
+
+		room = room - space;
+		room = room / ((sub_widget_size() + 1) / 2);
+
+		return room;
+	}
+	
+	void Splitter::DistributeVerticallyInProportion (int y, int height,
+					std::deque<int>* widget_deque, int widget_height_sum,
+					std::deque<int>* prefer_deque, int prefer_height_sum)
+	{
+		int i = 0;
+		AbstractWidget* widget = 0;
+		std::deque<int>::iterator height_it = widget_deque->begin();
+		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
+
+		y = y + height;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			if(i % 2 == 0) {
+
+				ResizeSubWidget(widget,
+								widget->size().width(),
+								(height - prefer_height_sum)
+												* (*height_it) / widget_height_sum);
+				height_it++;
+
+			} else {
+
+				ResizeSubWidget(widget, widget->size().width(),
+								*handler_height_it);
+				handler_height_it++;
+			}
+
+			y = y - widget->size().height();
+			SetSubWidgetPosition(widget, widget->position().x(), y);
+
+			i++;
+		}
+	}
+	
+	void Splitter::DistributeExpandableWidgetsVertically (int y, int height,
+					int unexpandable_height_sum, std::deque<int>* widget_deque,
+					int widget_height_sum, std::deque<int>* prefer_deque,
+					int prefer_height_sum)
+	{
+		int i = 0;
+		AbstractWidget* widget = 0;
+		std::deque<int>::iterator exp_height_it = widget_deque->begin();
+		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
+		y = y + height;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			if(i % 2 == 0) {
+
+				if (widget->IsExpandY()) {
+					ResizeSubWidget(widget,
+									widget->size().width(),
+									(height - prefer_height_sum
+													- unexpandable_height_sum)
+													* (*exp_height_it)
+																	/ widget_height_sum);
+					exp_height_it++;
+				}
+
+			} else {
+				ResizeSubWidget(widget, widget->size().width(), *handler_height_it);
+				handler_height_it++;
+			}
+
+			y -= widget->size().height();
+			SetSubWidgetPosition(widget, widget->position().x(), y);
+
+			i++;
+		}
+
+	}
+	
+	void Splitter::DistributeUnexpandableWidgetsVertically (int y, int height,
+					std::deque<int>* widget_deque, int widget_height_sum,
+					std::deque<int>* prefer_deque, int prefer_height_sum)
+	{
+		int i = 0;
+		AbstractWidget* widget = 0;
+		std::deque<int>::iterator unexp_height_it = widget_deque->begin();
+		std::deque<int>::iterator handler_height_it = prefer_deque->begin();
+		y = y + height;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			if(i % 2 == 0) {
+
+				if (!widget->IsExpandY()) {
+
+					ResizeSubWidget(widget, widget->size().width(),
+									(height - prefer_height_sum)
+													* (*unexp_height_it)
+													/ widget_height_sum);
+					unexp_height_it++;
+
+				}
+
+			} else {
+				ResizeSubWidget(widget, widget->size().width(), *handler_height_it);
+				handler_height_it++;
+			}
+
+			y -= widget->size().width();
+			SetSubWidgetPosition(widget, widget->position().x(), y);
+
+			i++;
+		}
+	}
+
+	int Splitter::GetWidgetsRoom (Orientation orientation, const Size& out_size,
 					const Margin& margin)
 	{
 		int room = 0;
 
 		if(orientation == Horizontal) {
-			room = size.width() - margin.hsum();
+			room = out_size.width() - margin.hsum();
 		} else {
-			room = size.height() - margin.vsum();
+			room = out_size.height() - margin.vsum();
 		}
 
 		if(sub_widget_size() == 0) {

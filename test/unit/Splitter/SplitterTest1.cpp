@@ -47,7 +47,7 @@ TEST_F(SplitterTest1, Foo1)
 	
 	context->Add(splitter);
 
-	splitter->Resize(400, 400);
+	splitter->Resize(400, 200);
 	splitter->SetPosition(100, 100);
 
     RunLoop(win);
