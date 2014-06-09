@@ -58,7 +58,6 @@ namespace BlendInt {
 			glBindVertexArray(m_vao);
 
 			program()->Use();
-
 			program()->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 			glEnableVertexAttribArray(0);
@@ -98,7 +97,6 @@ namespace BlendInt {
 			glDisableVertexAttribArray(0);
 
 			program()->Reset();
-
 			glBindVertexArray(0);
 
 		} else {
@@ -109,7 +107,6 @@ namespace BlendInt {
 	int Cube::InitOnce()
 	{
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
 		GLfloat cube_vertices[] = {
 				// front
@@ -172,8 +169,6 @@ namespace BlendInt {
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		glBindVertexArray(0);
 
 		set_program(ShaderManager::instance->primitive_program());
 

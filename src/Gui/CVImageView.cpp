@@ -84,19 +84,20 @@ namespace BlendInt {
 			m_texture->Bind();
 			switch (m_image.channels()) {
 
-				case 3:
-					DBG_PRINT_MSG("width: %d, height: %d, channels: %d", m_image.cols, m_image.rows, 3);
-
+				case 3: {
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
 					m_texture->SetImage(0, GL_RGB, m_image.cols, m_image.rows,
 									0, GL_BGR, GL_UNSIGNED_BYTE, m_image.data);
 					break;
+				}
 
-				case 4:
+				case 4:	// opencv does not support alpha-channel, only masking, these code will never be called
+				{
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 					m_texture->SetImage(0, GL_RGBA, m_image.cols, m_image.rows,
 									0, GL_BGRA, GL_UNSIGNED_BYTE, m_image.data);
 					break;
+				}
 
 				default:
 					break;

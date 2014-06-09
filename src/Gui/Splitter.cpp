@@ -181,9 +181,9 @@ namespace BlendInt {
 				local = glm::translate(mvp, glm::vec3(0.f, i + 1, 0.f));
 
 				if((i % 2) == 0) {
-					color.r = 0.4; color.g = 0.4; color.b = 0.4; color.a = 0.9;
+					color.r = 0.208f; color.g = 0.208f; color.b = 0.208f; color.a = 0.5;
 				} else {
-					color.r = 0.2; color.g = 0.2; color.b = 0.2; color.a = 1.0;
+					color.r = 0.208f; color.g = 0.208f; color.b = 0.208f; color.a = 1.0;
 				}
 
 				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local));
@@ -198,9 +198,9 @@ namespace BlendInt {
 				local = glm::translate(mvp, glm::vec3(i + 1, 0.f, 0.f));
 
 				if((i % 2) == 0) {
-					color.r = 0.4; color.g = 0.4; color.b = 0.4; color.a = 0.9;
+					color.r = 0.208f; color.g = 0.208f; color.b = 0.208f; color.a = 0.5;
 				} else {
-					color.r = 0.2; color.g = 0.2; color.b = 0.2; color.a = 1.0;
+					color.r = 0.208f; color.g = 0.208f; color.b = 0.208f; color.a = 1.0;
 				}
 
 				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local));
@@ -767,8 +767,6 @@ namespace BlendInt {
 
 			i++;
 		}
-
-		DBG_PRINT_MSG("exp sum: %d, unexp sum: %d", expandable_width_sum, unexpandable_width_sum);
 
 		if((expandable_widths->size() + unexpandable_widths->size()) == 0) return;	// do nothing if all sub widgets are invisible
 

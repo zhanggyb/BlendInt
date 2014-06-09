@@ -75,8 +75,7 @@ namespace BlendInt {
 	  m_size(10),
 	  m_step(10),
 	  m_vb(0),
-	  m_ib(0),
-	  m_uniform_mvp(0)
+	  m_ib(0)
 	{
 		InitOnce();
 	}
@@ -84,13 +83,6 @@ namespace BlendInt {
 	void Grid::SetSize (int size)
 	{
 		m_size = size;
-
-		//Update ();
-	}
-
-	void Grid::Update()
-	{
-
 	}
 
 	void Grid::Render (const glm::mat4& mvp)
@@ -98,9 +90,7 @@ namespace BlendInt {
 		if(program()) {
 
 			glBindVertexArray(m_vao);
-
 			program()->Use();
-
 			program()->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 			/* Draw the grid using the indices to our vertices using our vertex buffer objects */
@@ -119,9 +109,7 @@ namespace BlendInt {
 
 			m_ib->Reset();
 			m_vb->Reset();
-
 			program()->Reset();
-
 			glBindVertexArray(0);
 		}
 	}
@@ -134,7 +122,6 @@ namespace BlendInt {
 	void Grid::InitOnce()
 	{
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> prog(new GLSLProgram);
 		prog->Create();
@@ -182,11 +169,6 @@ namespace BlendInt {
 		m_ib->Bind();
 		m_ib->SetData(20 * 21 * 4, sizeof(GLushort), indices);
 		m_ib->Reset();
-
-		glBindVertexArray(0);
-
-		Update ();
-
 	}
 
 }

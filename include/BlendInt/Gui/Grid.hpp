@@ -40,8 +40,6 @@ namespace BlendInt {
 
 		void SetSize (int size);
 
-		void Update ();
-
 		virtual void Render (const glm::mat4& MVP);
 
 	private:
@@ -56,12 +54,8 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_vb;	// vertex buffer
 		RefPtr<GLElementArrayBuffer> m_ib;	// index buffer
 
-		GLint m_uniform_mvp;
-
 		static const char* vertex_shader;
-
 		static const char* fragment_shader;
-
 	};
 
 }
