@@ -50,7 +50,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, round_corner_type(), round_corner_radius(), false);
+		tool.Setup(size(), 0, RoundNone, 0, false);
 		m_inner = tool.GenerateInnerBuffer();
 	}
 
@@ -171,7 +171,7 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(request.data());
 
 				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), RoundNone, 0, false);
+				tool.Setup(*size_p, 0, RoundNone, 0, false);
 				tool.UpdateInnerBuffer(m_inner.get());
 
 				int x = position().x() + margin().left();

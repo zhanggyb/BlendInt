@@ -33,6 +33,50 @@
 
 namespace BlendInt {
 
+	class TabHeader: public AbstractDequeContainer
+	{
+		DISALLOW_COPY_AND_ASSIGN(TabHeader);
+
+	public:
+
+		TabHeader ();
+
+		virtual ~TabHeader ();
+
+		virtual bool IsExpandX () const;
+
+		virtual Size GetPreferredSize () const;
+
+	protected:
+
+		virtual void UpdateContainer (const WidgetUpdateRequest& request);
+
+		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+
+		virtual ResponseType Draw (const RedrawEvent& event);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+	private:
+
+		RefPtr<GLArrayBuffer> m_buffer;
+
+		GLuint m_vao;
+
+	};
+
 	/**
 	 * @brief A special stack used in Tab and share theme with TabButton
 	 */

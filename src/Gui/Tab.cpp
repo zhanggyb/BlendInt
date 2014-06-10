@@ -43,6 +43,152 @@
 
 namespace BlendInt {
 
+	TabHeader::TabHeader()
+	: AbstractDequeContainer(),
+	  m_vao(0)
+	{
+		set_size(400, 24);
+		set_margin(5, 5, 5, 0);
+
+		glGenVertexArrays(1, &m_vao);
+
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0, false);
+
+		m_buffer = tool.GenerateInnerBuffer();
+	}
+
+	TabHeader::~TabHeader()
+	{
+		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	bool TabHeader::IsExpandX () const
+	{
+		return true;
+	}
+
+	Size TabHeader::GetPreferredSize () const
+	{
+		Size prefer(400, 24);
+
+		// TODO: check sub widgets
+
+		return prefer;
+	}
+
+	void TabHeader::UpdateContainer (const WidgetUpdateRequest& request)
+	{
+		switch(request.type()) {
+
+			case ContainerMargin: {
+				// TODO: reset sub widgets
+				break;
+			}
+
+			case ContainerRefresh: {
+				Refresh();
+				break;
+			}
+
+		}
+	}
+
+	void TabHeader::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		switch (request.type()) {
+
+			case WidgetPosition: {
+				const Point* pos_p = static_cast<const Point*>(request.data());
+				int x = pos_p->x() - position().x();
+				int y = pos_p->y() - position().y();
+				MoveSubWidgets(x, y);
+				break;
+			}
+
+			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				VertexTool tool;
+				tool.Setup(*size_p, 0, RoundNone, 0, false);
+				tool.UpdateInnerBuffer(m_buffer.get());
+				break;
+			}
+
+			default:
+				break;
+		}
+	}
+
+	ResponseType TabHeader::Draw (const RedrawEvent& event)
+	{
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
+
+		glBindVertexArray(m_vao);
+
+		program->Use();
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetUniform1i("AA", 0);
+		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
+		program->SetUniform1i("Gamma", 0);
+
+		glEnableVertexAttribArray(0);
+		m_buffer->Bind();
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+				m_buffer->GetBufferSize()
+				/ (2 * sizeof(GLfloat)));
+		m_buffer->Reset();
+
+		glDisableVertexAttribArray(0);
+		program->Reset();
+
+		glBindVertexArray(0);
+		return Accept;
+	}
+
+	ResponseType TabHeader::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType TabHeader::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType TabHeader::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType TabHeader::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType TabHeader::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType TabHeader::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType TabHeader::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	// -------
+
 	TabStack::TabStack ()
 	: Stack(), m_vao(0)
 	{

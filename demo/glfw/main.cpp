@@ -38,6 +38,7 @@
 #include <BlendInt/Gui/SpaceArea.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
+#include <BlendInt/Gui/Tab.hpp>
 
 #include <BlendInt/Service/StockItems.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -62,19 +63,10 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	ToolBox* box = Manage(new ToolBox);
-	Button* btn1 = Manage(new Button);
-	Button* btn2 = Manage(new Button);
-	box->SetPosition(50, 50);
+	TabHeader* header = Manage(new TabHeader);
+	header->SetPosition(200, 200);
 
-	box->PushBack(btn1);
-	box->PushBack(btn2);
-
-	DBG_PRINT_MSG("button1 position: %d, %d", btn1->position().x(), btn1->position().y());
-
-	box->Resize(200, 200);
-
-	context->Add(box);
+	context->Add(header);
 
 	RunLoop(win);
 

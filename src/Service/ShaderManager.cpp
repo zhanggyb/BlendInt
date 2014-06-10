@@ -290,7 +290,7 @@ namespace BlendInt {
 			//"	}"
 			"}";
 
-	const char* ShaderManager::default_pixelicon_vertex_shader =
+	const char* ShaderManager::default_image_vertex_shader =
 			"#version 330\n"
 			"layout(location = 0) in vec2 Coord2D;"
 			"layout(location = 1) in vec2 UVCoord;"
@@ -302,7 +302,7 @@ namespace BlendInt {
 			"	f_texcoord = UVCoord;"
 			"}";
 
-	const char* ShaderManager::default_pixelicon_fragment_shader =
+	const char* ShaderManager::default_image_fragment_shader =
 			"#version 330\n"
 			"in vec2 f_texcoord;"
 			"uniform sampler2D TexID;"
@@ -453,8 +453,8 @@ namespace BlendInt {
 		m_default_context_program.reset(new GLSLProgram);
 		DBG_SET_NAME(m_default_context_program, "Context Program");
 
-		m_default_pixelicon_program.reset(new GLSLProgram);
-		DBG_SET_NAME(m_default_pixelicon_program, "PixelIcon Program");
+		m_default_image_program.reset(new GLSLProgram);
+		DBG_SET_NAME(m_default_image_program, "PixelIcon Program");
 	}
 
 	ShaderManager::~ShaderManager()
@@ -482,7 +482,7 @@ namespace BlendInt {
 			return false;
 		}
 
-		if(!m_default_pixelicon_program->Create()) {
+		if(!m_default_image_program->Create()) {
 			return false;
 		}
 
@@ -523,10 +523,10 @@ namespace BlendInt {
 			return false;
 		}
 
-		m_default_pixelicon_program->AttachShader(default_pixelicon_vertex_shader, GL_VERTEX_SHADER);
-		m_default_pixelicon_program->AttachShader(default_pixelicon_fragment_shader, GL_FRAGMENT_SHADER);
-		if(!m_default_pixelicon_program->Link()) {
-			DBG_PRINT_MSG("Fail to link the pixelicon program: %d", m_default_pixelicon_program->id());
+		m_default_image_program->AttachShader(default_image_vertex_shader, GL_VERTEX_SHADER);
+		m_default_image_program->AttachShader(default_image_fragment_shader, GL_FRAGMENT_SHADER);
+		if(!m_default_image_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the pixelicon program: %d", m_default_image_program->id());
 			return false;
 		}
 

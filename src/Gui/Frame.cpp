@@ -231,24 +231,17 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0, false);
+		tool.Setup(size(), 0, RoundNone, 0, false);
 
 		RefPtr<GLArrayBuffer> inner = tool.GenerateInnerBuffer();
 		inner->Bind();
 
-		program->SetVertexAttrib4fv("Color", Theme::instance->regular().inner.data());
+		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
 		program->SetUniform1i("AA", 0);
 
 		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader
 
-		glVertexAttribPointer(
-						0, // attribute
-						2,		// number of elements per vertex, here (x,y)
-						GL_FLOAT,	// the type of each element
-						GL_FALSE,	// take our values as-is
-						0,		// no extra data between each position
-						BUFFER_OFFSET(0)	// the first element
-		);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
