@@ -50,9 +50,7 @@ namespace BlendInt {
 
 		void Load (const cv::Mat& image);
 
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
+		virtual Size GetPreferredSize () const;
 
 	protected:
 

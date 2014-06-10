@@ -130,16 +130,6 @@ namespace BlendInt {
 
 	}
 
-	bool CVImageView::IsExpandX() const
-	{
-		return true;
-	}
-
-	bool CVImageView::IsExpandY() const
-	{
-		return true;
-	}
-
 	void CVImageView::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
 		switch (request.type()) {
@@ -180,21 +170,11 @@ namespace BlendInt {
 
 			glEnableVertexAttribArray(0);
 			m_vbo->Bind();
-			glVertexAttribPointer(0,
-							2,
-							GL_FLOAT,
-							GL_FALSE,
-							0,
-							BUFFER_OFFSET(0));
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 			glEnableVertexAttribArray(1);
 			m_tbo->Bind();
-			glVertexAttribPointer(1,
-							2,
-							GL_FLOAT,
-							GL_FALSE,
-							0,
-							BUFFER_OFFSET(0));
+			glVertexAttribPointer(1, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 			m_vbo->Bind();
 
@@ -211,6 +191,24 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		return Accept;
+	}
+	
+	Size CVImageView::GetPreferredSize () const
+	{
+		Size prefer(400, 300);
+
+		if(m_texture && m_texture->texture()) {
+			if(glIsTexture(m_texture->texture())) {
+				m_texture->Bind();
+				int w = m_texture->GetWidth();
+				int h = m_texture->GetHeight();
+				m_texture->Reset();
+				prefer.set_width(w);
+				prefer.set_height(h);
+			}
+		}
+
+		return prefer;
 	}
 
 	void CVImageView::InitOnce ()

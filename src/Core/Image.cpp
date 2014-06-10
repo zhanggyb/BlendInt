@@ -81,4 +81,13 @@ namespace BlendInt {
 		return true;
 	}
 
+	void Image::Clear ()
+	{
+		m_pixels.clear();
+		m_channels = 0;
+		m_width = 0;
+		m_height = 0;
+	}
+
 }
+

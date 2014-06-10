@@ -97,20 +97,20 @@ namespace BlendInt {
 
 	void ImageView::Open (const char* filename)
 	{
-		RefPtr<Image> image(new Image);
+		Image image;
 
-		if(image->Read(filename)) {
+		if(image.Read(filename)) {
 			m_texture->Bind();
 
-			switch(image->channels()) {
+			switch(image.channels()) {
 				case 3:
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					m_texture->SetImage(0, GL_RGB, image->width(), image->height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image->pixels());
+					m_texture->SetImage(0, GL_RGB, image.width(), image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.pixels());
 					break;
 
 				case 4:
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					m_texture->SetImage(0, GL_RGBA, image->width(), image->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels());
+					m_texture->SetImage(0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.pixels());
 					break;
 
 				default:
@@ -119,8 +119,7 @@ namespace BlendInt {
 
 			m_texture->Reset();
 
-			//set_preferred_size(image->width(), image->height());
-			set_size(image->width(), image->height());
+			set_size(image.width(), image.height());
 			m_checkerboard->Resize(size());
 
 			GLfloat w = static_cast<GLfloat>(size().width());
@@ -137,22 +136,12 @@ namespace BlendInt {
 			m_vbo->SetData(sizeof(vertices), vertices);
 			m_vbo->Reset();
 
-			m_checkerboard->Resize(image->width(), image->height());
+			m_checkerboard->Resize(image.width(), image.height());
 		}
 	}
 
 	void ImageView::Load (const RefPtr<Image>& image)
 	{
-	}
-
-	bool ImageView::IsExpandX() const
-	{
-		return true;
-	}
-
-	bool ImageView::IsExpandY() const
-	{
-		return true;
 	}
 
 	void ImageView::UpdateGeometry (const WidgetUpdateRequest& request)
@@ -195,21 +184,11 @@ namespace BlendInt {
 
 			glEnableVertexAttribArray(0);
 			m_vbo->Bind();
-			glVertexAttribPointer(0,
-							2,
-							GL_FLOAT,
-							GL_FALSE,
-							0,
-							BUFFER_OFFSET(0));
+			glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 			glEnableVertexAttribArray(1);
 			m_tbo->Bind();
-			glVertexAttribPointer(1,
-							2,
-							GL_FLOAT,
-							GL_FALSE,
-							0,
-							BUFFER_OFFSET(0));
+			glVertexAttribPointer(1, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 			m_vbo->Bind();
 
@@ -228,16 +207,32 @@ namespace BlendInt {
 		return Accept;
 	}
 	
+	Size ImageView::GetPreferredSize () const
+	{
+		Size prefer(400, 300);
+
+		if(m_texture && m_texture->texture()) {
+			if(glIsTexture(m_texture->texture())) {
+				m_texture->Bind();
+				int w = m_texture->GetWidth();
+				int h = m_texture->GetHeight();
+				m_texture->Reset();
+				prefer.set_width(w);
+				prefer.set_height(h);
+			}
+		}
+
+		return prefer;
+	}
+
 	void ImageView::InitOnce ()
 	{
 		set_size(400, 300);
-		//set_preferred_size(400, 300);
 
 		m_checkerboard.reset(new CheckerBoard(20));
 		m_checkerboard->Resize(size());
 
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
 		m_texture.reset(new GLTexture2D);
 		m_texture->Generate();
@@ -278,8 +273,6 @@ namespace BlendInt {
 		m_tbo->Bind();
 		m_tbo->SetData(sizeof(uv), uv);
 		m_tbo->Reset();
-
-		glBindVertexArray(0);
 	}
 
 }

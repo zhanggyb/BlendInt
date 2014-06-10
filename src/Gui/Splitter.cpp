@@ -641,8 +641,6 @@ namespace BlendInt {
 		int room = GetAverageRoom(orienation, out_size, margin);
 		int x = position().x() + margin.left();
 
-		DBG_PRINT_MSG("room: %d", room);
-
 		if(orienation == Horizontal) {
 
 			int y = position().y() + margin.bottom();

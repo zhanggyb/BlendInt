@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		bool Save ();
 
-		void Close ();
+		void Clear ();
 
 		const unsigned char* pixels () const {return &m_pixels[0];}
 		
