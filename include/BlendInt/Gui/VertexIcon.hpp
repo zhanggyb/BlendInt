@@ -61,7 +61,7 @@ namespace BlendInt {
 		void Load (const float (*vertex_array)[2], size_t array_size,
 				const unsigned int (*vertex_indices)[3], size_t indeces_size);
 
-		virtual void Draw (const glm::mat4& mvp);
+		virtual void Draw (const glm::mat4& mvp, short gamma = 0);
 
 		virtual void Draw (const glm::mat4& mvp, int x, int y, int restrict_width, int restrict_height);
 

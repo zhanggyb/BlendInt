@@ -48,7 +48,7 @@ namespace BlendInt {
 
 		size_t cell_size () const {return m_cell_size;}
 
-		virtual void Draw (const glm::mat4& mvp);
+		virtual void Draw (const glm::mat4& mvp, short gamma = 0);
 
 	protected:
 

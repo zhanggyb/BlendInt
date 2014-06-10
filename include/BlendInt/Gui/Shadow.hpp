@@ -59,7 +59,7 @@ namespace BlendInt {
 
 		float blur_rad () const {return m_blur_rad;}
 
-		virtual void Draw (const glm::mat4& mvp);
+		virtual void Draw (const glm::mat4& mvp, short gamma = 0);
 
 		void DrawAt (const glm::mat4& mvp, int x, int y);
 

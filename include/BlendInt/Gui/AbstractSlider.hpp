@@ -63,7 +63,7 @@ namespace BlendInt {
 		/**
 		 * @brief Draw the icon
 		 */
-		virtual void Draw (const glm::mat4& mvp);
+		virtual void Draw (const glm::mat4& mvp, short gamma = 0);
 
 		/**
 		 * @brief Set the highlight status of this icon

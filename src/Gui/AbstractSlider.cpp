@@ -118,7 +118,7 @@ namespace BlendInt {
 
 	}
 
-	void SlideIcon::Draw (const glm::mat4& mvp)
+	void SlideIcon::Draw (const glm::mat4& mvp, short gamma)
 	{
 		glBindVertexArray(m_vao);
 

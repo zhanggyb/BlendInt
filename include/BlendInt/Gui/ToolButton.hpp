@@ -27,6 +27,8 @@
 #include <BlendInt/Gui/Action.hpp>
 #include <BlendInt/Gui/AbstractButton.hpp>
 
+#include <BlendInt/Gui/PixelIcon.hpp>
+
 namespace BlendInt {
 
 	/**
@@ -71,6 +73,8 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_inner;
 
 		RefPtr<GLArrayBuffer> m_outer;
+
+		RefPtr<PixelIcon> m_icon;
 	};
 }
 

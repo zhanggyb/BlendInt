@@ -152,7 +152,7 @@ namespace BlendInt {
 		std::list<MenuItem*>::iterator it;
 		for(it = m_list.begin(); it != m_list.end(); it++)
 		{
-			DBG_PRINT_MSG("MenuBin Item Text: %s", (*it)->text().data());
+			DBG_PRINT_MSG("MenuBin Item Text: %s", ConvertFromString((*it)->text()).c_str());
 			if((*it)->m_sub) {
 				(*it)->m_sub->print_menu_items();
 			}

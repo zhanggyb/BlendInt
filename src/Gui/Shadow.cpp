@@ -110,7 +110,7 @@ namespace BlendInt {
 
 	}
 
-	void Shadow::Draw (const glm::mat4& mvp)
+	void Shadow::Draw (const glm::mat4& mvp, short gamma)
 	{
 		glBindVertexArray(m_vao);
 
@@ -124,7 +124,7 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 						glm::value_ptr(mvp * offset));
 		program->SetUniform1i("AA", 0);
-		program->SetUniform1i("Gamma", 0);
+		program->SetUniform1i("Gamma", gamma);
 
 		float alphastep;
 		int step = 1;

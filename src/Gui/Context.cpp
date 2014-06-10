@@ -755,25 +755,11 @@ namespace BlendInt
 		glEnableVertexAttribArray(0);
 		m_vbo->Bind();
 
-		glVertexAttribPointer(
-				0,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				BUFFER_OFFSET(0)
-				);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		glEnableVertexAttribArray(1);
 		m_tbo->Bind();
-		glVertexAttribPointer(
-				1,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				0,
-				BUFFER_OFFSET(0)
-				);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 		m_vbo->Bind();
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

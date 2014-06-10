@@ -27,6 +27,7 @@
 
 #include <vector>
 
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/Gui/Icon.hpp>
 
 namespace BlendInt {
@@ -38,27 +39,21 @@ namespace BlendInt {
 	{
 	public:
 
-		PixelIcon ();
+		PixelIcon (int width, int height);
 
-		PixelIcon (const unsigned char* pixels, int width, int height);
+		PixelIcon (int width, int height, const unsigned char* pixels);
+
+		PixelIcon (int width, int height, const RefPtr<GLTexture2D>& texture, const GLfloat* uv);
 
 		PixelIcon (const PixelIcon& orig);
 
 		~PixelIcon ();
 
-		void set_pixels (const unsigned char* pixels);
+		void SetPixels (const unsigned char* pixels);
 
-		const unsigned char* pixels () const {return &m_pixels[0];}
+		void SetTexture (const RefPtr<GLTexture2D>& texture, const GLfloat* uv);
 
-		void scale (float ratio);
-
-		void scale (int width, int height);
-
-		void display ();
-
-		void display (float x, float y);
-
-		virtual void Draw (const glm::mat4& mvp);
+		virtual void Draw (const glm::mat4& mvp, short gamma = 0);
 
 		virtual void Draw (const glm::mat4& mvp, int x, int y, int restrict_width, int restrict_height);
 
@@ -68,9 +63,13 @@ namespace BlendInt {
 
 	private:
 
-		std::vector<unsigned char> m_pixels;
+		GLuint m_vao;
 
-		static const int default_icon_size = 16;	// 16 x 16
+		/**
+		 * @brief Coord and UV vertex buffer
+		 */
+		RefPtr<GLArrayBuffer> m_buffer;
+		RefPtr<GLTexture2D> m_texture;
 
 		// disabled
 		PixelIcon& operator = (const PixelIcon& orig);

@@ -156,7 +156,7 @@ namespace BlendInt {
 			return m_size;
 		}
 
-		virtual void Draw (const glm::mat4& mvp) = 0;
+		virtual void Draw (const glm::mat4& mvp, int short gamma = 0) = 0;
 
 		static void SetDefaultBorderWidth (int border);
 
@@ -176,7 +176,7 @@ namespace BlendInt {
 		 * @note this function should be called only in the constructor of subclass to set
 		 * the size without through Update() for performance.
 		 */
-		inline void set_size (unsigned int width, unsigned int height)
+		inline void set_size (int width, int height)
 		{
 			m_size.set_width(width);
 			m_size.set_height(height);

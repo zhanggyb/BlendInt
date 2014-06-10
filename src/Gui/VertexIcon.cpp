@@ -139,7 +139,7 @@ namespace BlendInt {
 		return;
 	}
 
-	void VertexIcon::Draw(const glm::mat4& mvp)
+	void VertexIcon::Draw(const glm::mat4& mvp, short gamma)
 	{
 		glBindVertexArray(m_vao);
 
@@ -152,20 +152,14 @@ namespace BlendInt {
 						glm::value_ptr(mvp));
 		program->SetVertexAttrib4f("Color", r, g, b, a);
 		program->SetUniform1i("AA", 1);
-		program->SetUniform1i("Gamma", 0);
+		program->SetUniform1i("Gamma", gamma);
 
 		glEnableVertexAttribArray(0);
 
 		m_array_buffer->Bind();	// bind ARRAY BUFFER
 		m_index_buffer->Bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(0, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
@@ -214,13 +208,7 @@ namespace BlendInt {
 		m_array_buffer->Bind();	// bind ARRAY BUFFER
 		m_index_buffer->Bind();	// bind ELEMENT ARRAY BUFFER
 
-		glVertexAttribPointer(0, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
 						GL_UNSIGNED_INT, BUFFER_OFFSET(0));

@@ -63,23 +63,11 @@ namespace BlendInt {
 			glEnableVertexAttribArray(0);
 			// Describe our vertices array to OpenGL (it can't guess its format automatically)
 			glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_vertices);
-			glVertexAttribPointer(0, // attribute
-			        3,            // number of elements per vertex, here (x,y,z)
-			        GL_FLOAT,          // the type of each element
-			        GL_FALSE,          // take our values as-is
-			        0,                 // no extra data between each position
-			        0                  // offset of first element
-			        );
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 			glEnableVertexAttribArray(1);
 			glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_colors);
-			glVertexAttribPointer(1, // attribute
-			        3,            // number of elements per vertex, here (R,G,B)
-			        GL_FLOAT,          // the type of each element
-			        GL_FALSE,          // take our values as-is
-			        0,                 // no extra data between each position
-			        0                  // offset of first element
-			        );
+			glVertexAttribPointer(1, 3,	GL_FLOAT, GL_FALSE, 0, 0);
 
 			/* Push each element in buffer_vertices to the vertex shader */
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo_cube_elements);

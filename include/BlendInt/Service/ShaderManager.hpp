@@ -153,6 +153,11 @@ namespace BlendInt {
 			return m_default_context_program;
 		}
 
+		RefPtr<GLSLProgram> default_pixel_program () const
+		{
+			return m_default_pixelicon_program;
+		}
+
 	private:
 
 		static bool Initialize ();
@@ -175,6 +180,8 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> m_default_context_program;
 
+		RefPtr<GLSLProgram> m_default_pixelicon_program;
+
 		static const char* text_vertex_shader;
 
 		static const char* text_fragment_shader;
@@ -194,6 +201,10 @@ namespace BlendInt {
 		static const char* default_context_vertex_shader;
 
 		static const char* default_context_fragment_shader;
+
+		static const char* default_pixelicon_vertex_shader;
+
+		static const char* default_pixelicon_fragment_shader;
 	};
 }
 

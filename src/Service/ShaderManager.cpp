@@ -290,6 +290,33 @@ namespace BlendInt {
 			//"	}"
 			"}";
 
+	const char* ShaderManager::default_pixelicon_vertex_shader =
+			"#version 330\n"
+			"layout(location = 0) in vec2 Coord2D;"
+			"layout(location = 1) in vec2 UVCoord;"
+			"uniform mat4 MVP;"
+			"out vec2 f_texcoord;"
+			""
+			"void main(void) {"
+			"	gl_Position = MVP * vec4(Coord2D, 0.0, 1.0);"
+			"	f_texcoord = UVCoord;"
+			"}";
+
+	const char* ShaderManager::default_pixelicon_fragment_shader =
+			"#version 330\n"
+			"in vec2 f_texcoord;"
+			"uniform sampler2D TexID;"
+			"uniform int Gamma = 0;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			""
+			"		vec4 color_calib = vec4(0.0);"
+			"		color_calib = vec4(vec3(clamp(Gamma/255.0, -1.0, 1.0)), 0.0);"
+			"		vec4 color = texture(TexID, f_texcoord);"
+			"		FragmentColor = color + color_calib;"
+			"}";
+
 #else	// Legacy opengl
 
 	const char* ShaderManager::text_vertex_shader =
@@ -412,30 +439,22 @@ namespace BlendInt {
 	ShaderManager::ShaderManager()
 	{
 		m_text_program.reset(new GLSLProgram);
-#ifdef DEBUG
-		m_text_program->set_name("Text GLSLProgram");
-#endif
+		DBG_SET_NAME(m_text_program, "Text Program");
 
 		m_primitive_program.reset(new GLSLProgram);
-#ifdef DEBUG
-		m_primitive_program->set_name("Primitive GLSLProgram");
-#endif
+		DBG_SET_NAME(m_primitive_program, "Primitive Program");
 
 		m_default_triangle_program.reset(new GLSLProgram);
-#ifdef DEBUG
-		m_default_triangle_program->set_name("Triangle GLSLProgram");
-#endif
+		DBG_SET_NAME(m_default_triangle_program, "Triangle Program");
 
 		m_default_line_program.reset(new GLSLProgram);
-#ifdef DEBUG
-		m_default_line_program->set_name("Line GLSLProgram");
-#endif
+		DBG_SET_NAME(m_default_line_program, "Line Program");
 
 		m_default_context_program.reset(new GLSLProgram);
-#ifdef DEBUG
-		m_default_context_program->set_name("Context Program");
-#endif
+		DBG_SET_NAME(m_default_context_program, "Context Program");
 
+		m_default_pixelicon_program.reset(new GLSLProgram);
+		DBG_SET_NAME(m_default_pixelicon_program, "PixelIcon Program");
 	}
 
 	ShaderManager::~ShaderManager()
@@ -460,6 +479,10 @@ namespace BlendInt {
 		}
 
 		if(!m_default_context_program->Create()) {
+			return false;
+		}
+
+		if(!m_default_pixelicon_program->Create()) {
 			return false;
 		}
 
@@ -497,6 +520,13 @@ namespace BlendInt {
 		m_default_context_program->AttachShader(default_context_fragment_shader, GL_FRAGMENT_SHADER);
 		if(!m_default_context_program->Link()) {
 			DBG_PRINT_MSG("Fail to link the context program: %d", m_default_context_program->id());
+			return false;
+		}
+
+		m_default_pixelicon_program->AttachShader(default_pixelicon_vertex_shader, GL_VERTEX_SHADER);
+		m_default_pixelicon_program->AttachShader(default_pixelicon_fragment_shader, GL_FRAGMENT_SHADER);
+		if(!m_default_pixelicon_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the pixelicon program: %d", m_default_pixelicon_program->id());
 			return false;
 		}
 
