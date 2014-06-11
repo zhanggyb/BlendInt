@@ -97,6 +97,8 @@ namespace BlendInt {
 
 	ResponseType ColorWheel::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		glm::vec3 pos((float) (position().x() + size().width() / 2),
 		        (float) (position().y() + size().height() / 2), (float) z());
 

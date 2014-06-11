@@ -79,6 +79,8 @@ namespace BlendInt {
 
 	ResponseType Widget::Draw(const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		VertexTool tool;
 		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0);
 

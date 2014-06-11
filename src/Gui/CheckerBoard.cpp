@@ -132,6 +132,8 @@ namespace BlendInt {
 	
 	void CheckerBoard::Draw (const glm::mat4& mvp, short gamma)
 	{
+		using Stock::Shaders;
+
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();

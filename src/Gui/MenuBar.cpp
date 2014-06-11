@@ -102,6 +102,8 @@ namespace BlendInt {
 
 	ResponseType MenuBar::Draw (const RedrawEvent& event)
 	{
+		using namespace BlendInt::Stock;
+
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();

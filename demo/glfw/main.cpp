@@ -64,7 +64,15 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 
 	TabHeader* header = Manage(new TabHeader);
-	header->SetPosition(200, 200);
+	header->SetPosition(100, 200);
+
+	TabButton* btn1 = Manage(new TabButton);
+	TabButton* btn2 = Manage(new TabButton);
+	TabButton* btn3 = Manage(new TabButton);
+
+	header->PushBack(btn1);
+	header->PushBack(btn2);
+	header->PushBack(btn3);
 
 	context->Add(header);
 

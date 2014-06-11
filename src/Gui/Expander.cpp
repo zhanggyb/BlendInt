@@ -117,6 +117,8 @@ namespace BlendInt {
 
 	ResponseType ExpandButton::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();

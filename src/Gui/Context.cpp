@@ -690,6 +690,8 @@ namespace BlendInt
 
 	void Context::InitializeContext ()
 	{
+		using Stock::Shaders;
+
 		m_program = Shaders::instance->default_context_program();
 
 		glGenVertexArrays(1, &m_vao);

@@ -114,6 +114,8 @@ namespace BlendInt {
 
 	void Dot::Draw (const glm::mat4& mvp, short gamma)
 	{
+		using Stock::Shaders;
+
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =

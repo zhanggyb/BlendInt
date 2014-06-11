@@ -210,6 +210,7 @@ namespace BlendInt {
 
 	ResponseType Menu::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
 		using std::deque;
 
 		glm::vec3 pos((float) position().x(), (float) position().y(),

@@ -83,6 +83,8 @@ namespace BlendInt {
 
 	ResponseType BrightnessSlider::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =

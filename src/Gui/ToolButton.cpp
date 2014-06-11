@@ -158,6 +158,8 @@ namespace BlendInt {
 
 	ResponseType ToolButton::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
@@ -187,13 +189,10 @@ namespace BlendInt {
 		glEnableVertexAttribArray(0);
 
 		m_inner->Bind();
-
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 							m_inner->GetBufferSize()
 											/ (2 * sizeof(GLfloat)));
-
 		m_inner->Reset();
 
 		program->SetUniform1i("AA", 1);
@@ -201,18 +200,14 @@ namespace BlendInt {
 		program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, 1.f);
 
 		m_outer->Bind();
-
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
-
 		glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							m_outer->GetBufferSize()
 											/ (2 * sizeof(GLfloat)));
 		m_outer->Reset();
 
 		glDisableVertexAttribArray(0);
-
 		program->Reset();
-
 		glBindVertexArray(0);
 
 		if(hover()) {

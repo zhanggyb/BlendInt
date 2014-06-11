@@ -30,6 +30,7 @@
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/Stack.hpp>
 #include <BlendInt/Gui/ButtonGroup.hpp>
+#include <BlendInt/Gui/TabButton.hpp>
 
 namespace BlendInt {
 
@@ -42,6 +43,8 @@ namespace BlendInt {
 		TabHeader ();
 
 		virtual ~TabHeader ();
+
+		void PushBack (TabButton* button);
 
 		virtual bool IsExpandX () const;
 
@@ -71,10 +74,13 @@ namespace BlendInt {
 
 	private:
 
+		int GetLastPosition () const;
+
 		RefPtr<GLArrayBuffer> m_buffer;
 
 		GLuint m_vao;
 
+		ButtonGroup m_group;
 	};
 
 	/**

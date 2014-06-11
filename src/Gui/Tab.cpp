@@ -63,6 +63,33 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
+	void TabHeader::PushBack (TabButton* button)
+	{
+		int x = GetLastPosition ();
+		int y = position().y() + margin().bottom();
+		int h = size().height() - margin().vsum();
+
+		if (PushBackSubWidget(button)) {
+
+			SetSubWidgetPosition(button, x, y);
+			if (button->IsExpandY()) {
+				ResizeSubWidget(button, button->size().width(), h);
+			} else {
+
+				if (button->size().height() > h) {
+					ResizeSubWidget(button, button->size().width(), h);
+				}
+
+			}
+
+			m_group.Add(button);
+
+			if(m_group.size() == 1) {
+				button->SetChecked(true);
+			}
+		}
+	}
+
 	bool TabHeader::IsExpandX () const
 	{
 		return true;
@@ -72,7 +99,29 @@ namespace BlendInt {
 	{
 		Size prefer(400, 24);
 
-		// TODO: check sub widgets
+		if(sub_widget_size() == 0) {
+			Font font;
+			int max_font_height = font.GetHeight();
+			prefer.set_height(max_font_height + margin().vsum());
+		} else {
+			AbstractWidget* widget = 0;
+			Size tmp_size;
+
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			{
+				widget = *it;
+
+				if(widget->visiable()) {
+					tmp_size = widget->GetPreferredSize();
+
+					prefer.add_width(tmp_size.width());
+					prefer.set_height(std::max(prefer.height(), tmp_size.height()));
+				}
+			}
+
+			prefer.add_width(margin().hsum());
+			prefer.add_height(margin().vsum());
+		}
 
 		return prefer;
 	}
@@ -121,6 +170,8 @@ namespace BlendInt {
 
 	ResponseType TabHeader::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
@@ -187,6 +238,18 @@ namespace BlendInt {
 		return Ignore;
 	}
 
+	int TabHeader::GetLastPosition() const
+	{
+		int x = position().x() + margin().left();
+
+		if(sub_widget_size()) {
+			x = sub_widgets()->back()->position().x();
+			x += sub_widgets()->back()->size().width();
+		}
+
+		return x;
+	}
+
 	// -------
 
 	TabStack::TabStack ()
@@ -235,6 +298,8 @@ namespace BlendInt {
 
 	ResponseType TabStack::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);

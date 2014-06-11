@@ -55,6 +55,7 @@ namespace BlendInt {
 
 	ResponseType DirList::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
 		namespace fs = boost::filesystem;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();

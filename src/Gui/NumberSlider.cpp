@@ -144,6 +144,8 @@ namespace BlendInt {
 	
 	ResponseType NumberSlider::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =

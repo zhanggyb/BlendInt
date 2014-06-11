@@ -158,7 +158,7 @@ namespace BlendInt {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		set_program(Shaders::instance->primitive_program());
+		set_program(Stock::Shaders::instance->primitive_program());
 
 		return 1;
 	}

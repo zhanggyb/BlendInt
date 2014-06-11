@@ -218,6 +218,8 @@ namespace BlendInt {
 
 	ResponseType Frame::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		GLuint vao;
 		glGenVertexArrays(1, &vao);
 		glBindVertexArray(vao);

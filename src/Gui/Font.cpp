@@ -147,6 +147,8 @@ namespace BlendInt {
 	int Font::Print (const glm::mat4& mvp, const std::string& string, size_t length,
 	        size_t start) const
 	{
+		using Stock::Shaders;
+
 		if(length == 0)	return 0;
 
 		int advance = 0;	// the return value
@@ -263,6 +265,8 @@ namespace BlendInt {
 	int Font::Print (const glm::mat4& mvp, const String& string,
 					size_t length, size_t start) const
 	{
+		using Stock::Shaders;
+
 		if(length == 0)	return 0;
 
 		int advance = 0;	// the return value

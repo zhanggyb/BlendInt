@@ -66,6 +66,9 @@ namespace BlendInt {
 
 	bool Interface::Initialize ()
 	{
+		using Stock::Icons;
+		using Stock::Shaders;
+
 		/*
 		 glewExperimental = true;	// Needed in core profile
 		 if (glewInit() != GLEW_OK) {
@@ -130,7 +133,7 @@ namespace BlendInt {
 			success = false;
 		}
 
-		if (success && Stock::Icons::Initialize()) {
+		if (success && Icons::Initialize()) {
 			// do nothing
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Stock Icons");
@@ -160,6 +163,9 @@ namespace BlendInt {
 
 	void Interface::Release ()
 	{
+		using Stock::Icons;
+		using Stock::Shaders;
+
 		while(Context::context_set.size()) {
 			std::set<Context*>::iterator it = Context::context_set.begin();
 
@@ -171,7 +177,7 @@ namespace BlendInt {
 			}
 		}
 
-		Stock::Icons::Release();
+		Icons::Release();
 		Shaders::Release();
 		Theme::Release();
 		FontCache::ReleaseAll();

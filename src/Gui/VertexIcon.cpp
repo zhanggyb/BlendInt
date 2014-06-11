@@ -141,6 +141,8 @@ namespace BlendInt {
 
 	void VertexIcon::Draw(const glm::mat4& mvp, short gamma)
 	{
+		using Stock::Shaders;
+
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
@@ -177,6 +179,8 @@ namespace BlendInt {
 	void VertexIcon::Draw (const glm::mat4& mvp, int x, int y,
 			int restrict_width, int restrict_height)
 	{
+		using Stock::Shaders;
+
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();

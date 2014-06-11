@@ -65,7 +65,7 @@ namespace BlendInt {
 	{
 		int x = GetLastPosition();
 		int y = position().y() + margin().bottom();
-		int h = size().height() - margin().top() - margin().bottom();
+		int h = size().height() - margin().vsum();
 
 		if(PushBackSubWidget(widget)) {
 
@@ -120,10 +120,7 @@ namespace BlendInt {
 
 			int max_font_height = font.GetHeight();
 
-			preferred_size.set_height(
-			        max_font_height
-			                + margin().top()
-			                + margin().bottom());	// top padding: 2, bottom padding: 2
+			preferred_size.set_height(max_font_height + margin().vsum());
 
 		} else {
 
@@ -230,6 +227,8 @@ namespace BlendInt {
 
 	ResponseType ToolBar::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);

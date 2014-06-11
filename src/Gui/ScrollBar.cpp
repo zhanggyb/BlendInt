@@ -249,6 +249,8 @@ namespace BlendInt {
 
 	ResponseType ScrollBar::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
@@ -257,8 +259,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
@@ -279,9 +280,7 @@ namespace BlendInt {
 		DrawTriangleStrip(0, m_outer.get());
 
 		glDisableVertexAttribArray(0);
-
 		program->Reset();
-
 		glBindVertexArray(0);
 
 		if (orientation() == Horizontal) {

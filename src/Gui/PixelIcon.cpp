@@ -147,6 +147,8 @@ namespace BlendInt {
 
 	void PixelIcon::Draw (const glm::mat4& mvp, short gamma)
 	{
+		using Stock::Shaders;
+
 		if(m_texture) {
 			glBindVertexArray(m_vao);
 

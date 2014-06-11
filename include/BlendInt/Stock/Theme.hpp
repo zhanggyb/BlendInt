@@ -34,6 +34,7 @@
 namespace BlendInt {
 
 	class Interface;
+
 	class Theme;
 
 	struct WidgetTheme
