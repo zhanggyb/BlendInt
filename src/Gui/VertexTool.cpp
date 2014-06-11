@@ -24,7 +24,7 @@
 #include <assert.h>
 
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 

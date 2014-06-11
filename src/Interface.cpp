@@ -56,9 +56,9 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 
-#include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/ShaderManager.hpp>
-#include <BlendInt/Service/StockItems.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/StockItems.hpp>
 
 namespace BlendInt {
 

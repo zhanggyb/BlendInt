@@ -26,8 +26,8 @@
 
 #include <BlendInt/Gui/DirList.hpp>
 
-#include <BlendInt/Service/ShaderManager.hpp>
-#include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 

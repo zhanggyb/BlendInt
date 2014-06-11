@@ -36,8 +36,8 @@
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
-#include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 namespace BlendInt {
 

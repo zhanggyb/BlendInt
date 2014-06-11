@@ -1,6 +1,6 @@
 #include "ThemeTest1.hpp"
 #include <BlendInt/Core/Object.hpp>
-#include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 #include <iostream>
 

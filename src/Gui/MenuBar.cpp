@@ -38,8 +38,8 @@
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 namespace BlendInt {
 

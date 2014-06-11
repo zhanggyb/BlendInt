@@ -28,9 +28,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Service/StockItems.hpp>
-#include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/StockItems.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 namespace BlendInt {
 

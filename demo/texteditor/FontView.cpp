@@ -8,7 +8,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Core/Freetype.hpp>
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 /*
 

@@ -47,7 +47,7 @@ OIIO_NAMESPACE_USING
 
 #include <BlendInt/Gui/AbstractWidget.hpp>
 
-#include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Interface.hpp>
 
 namespace BlendInt {

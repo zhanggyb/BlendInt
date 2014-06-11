@@ -40,7 +40,7 @@
 #include <BlendInt/Gui/Viewport3D.hpp>
 #include <BlendInt/Interface.hpp>
 
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 namespace BlendInt {
 

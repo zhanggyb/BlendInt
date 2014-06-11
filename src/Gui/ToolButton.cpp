@@ -34,7 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/VertexTool.hpp>

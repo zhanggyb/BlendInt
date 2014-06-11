@@ -36,7 +36,7 @@
 
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Label.hpp>
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 namespace BlendInt {
 

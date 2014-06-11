@@ -35,8 +35,8 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/Slider.hpp>
-#include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 #include <iostream>
 

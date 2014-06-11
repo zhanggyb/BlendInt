@@ -1,6 +1,6 @@
 #include "MenuButtonTest1.hpp"
 #include <BlendInt/Gui/MenuButton.hpp>
-#include <BlendInt/Service/StockItems.hpp>
+#include <BlendInt/Stock/StockItems.hpp>
 
 using namespace BlendInt;
 

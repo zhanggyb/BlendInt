@@ -26,8 +26,8 @@
 #include <BlendInt/Gui/MenuItem.hpp>
 #include <BlendInt/Gui/FontCache.hpp>
 
-#include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/StockItems.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/StockItems.hpp>
 
 namespace BlendInt {
 

@@ -39,7 +39,7 @@
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Gui/CheckerBoard.hpp>
 
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 namespace BlendInt {
 

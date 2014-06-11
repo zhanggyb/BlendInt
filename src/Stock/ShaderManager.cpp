@@ -37,7 +37,7 @@
 
 #include <BlendInt/Types.hpp>
 
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 namespace BlendInt {
 

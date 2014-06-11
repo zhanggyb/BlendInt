@@ -4,7 +4,7 @@
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Core/String.hpp>
-#include <BlendInt/Service/StockItems.hpp>
+#include <BlendInt/Stock/StockItems.hpp>
 #include <BlendInt/Gui/HBox.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>

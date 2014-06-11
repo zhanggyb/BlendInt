@@ -40,8 +40,8 @@
 #include <BlendInt/Gui/ToggleButton.hpp>
 #include <BlendInt/Gui/Frame.hpp>
 
-#include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/ShaderManager.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
 
 namespace BlendInt {
 

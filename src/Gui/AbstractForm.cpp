@@ -39,7 +39,7 @@
 #include <BlendInt/Gui/AbstractForm.hpp>
 
 #include <BlendInt/Utilities-inl.hpp>
-#include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 

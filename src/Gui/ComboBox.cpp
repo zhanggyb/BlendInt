@@ -38,9 +38,9 @@
 
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Service/ShaderManager.hpp>
-#include <BlendInt/Service/Theme.hpp>
-#include <BlendInt/Service/StockItems.hpp>
+#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/StockItems.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 

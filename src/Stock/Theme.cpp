@@ -27,7 +27,7 @@
 
 #include <boost/filesystem.hpp>
 #include <rapidxml_print.hpp>
-#include <BlendInt/Service/Theme.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 
