@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_SHADERMANAGER_HPP_
-#define _BLENDINT_SHADERMANAGER_HPP_
+#ifndef _BLENDINT_STOCK_SHADERS_HPP_
+#define _BLENDINT_STOCK_SHADERS_HPP_
 
 #include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
@@ -120,13 +120,13 @@ namespace BlendInt {
 	 * @code
 	 * @endcode
 	 */
-	class ShaderManager
+	class Shaders
 	{
 	public:
 
 		friend class Interface;
 
-		static ShaderManager* instance;
+		static Shaders* instance;
 
 		RefPtr<GLSLProgram> text_program () const
 		{
@@ -164,9 +164,9 @@ namespace BlendInt {
 
 		static void Release ();
 
-		ShaderManager ();
+		Shaders ();
 
-		~ShaderManager ();
+		~Shaders ();
 
 		bool Setup ();
 

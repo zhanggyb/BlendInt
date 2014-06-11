@@ -36,7 +36,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/Gui/Cube.hpp>
 
@@ -158,7 +158,7 @@ namespace BlendInt {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		set_program(ShaderManager::instance->primitive_program());
+		set_program(Shaders::instance->primitive_program());
 
 		return 1;
 	}

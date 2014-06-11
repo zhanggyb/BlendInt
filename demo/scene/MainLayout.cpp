@@ -5,7 +5,7 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Gui/Menu.hpp>
-#include <BlendInt/Stock/StockItems.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 
 #include "MainLayout.hpp"
 
@@ -45,7 +45,7 @@ void MainLayout::InitOnce ()
     DBG_SET_NAME(file_menu, "Menu");
 
     //file_menu->SetRoundType(RoundBottomLeft | RoundBottomRight);
-    file_menu->AddAction(StockItems::instance->icon_check(), String("MenuItem1"), String("Ctrl + 1"));
+    file_menu->AddAction(Stock::Icons::instance->icon_check(), String("MenuItem1"), String("Ctrl + 1"));
     file_menu->AddAction(String("MenuItem2"), String("Ctrl + 1"));
     file_menu->AddAction(String("MenuItem3"), String("Ctrl + 1"));
     file_menu->AddAction(String("MenuItem4"), String("Ctrl + 1"));

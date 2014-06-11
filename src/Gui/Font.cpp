@@ -40,7 +40,7 @@
 #include <BlendInt/Types.hpp>
 #include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
@@ -153,7 +153,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_cache->m_vao);
 		glm::mat4 glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
-		RefPtr<GLSLProgram> program = ShaderManager::instance->text_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->text_program();
 
 		program->Use();
 
@@ -269,7 +269,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_cache->m_vao);
 		glm::mat4 glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
-		RefPtr<GLSLProgram> program = ShaderManager::instance->text_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->text_program();
 
 		program->Use();
 

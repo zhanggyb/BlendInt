@@ -39,7 +39,7 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
@@ -158,7 +158,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_line_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->default_line_program();
 		program->Use();
 
 		program->SetUniform1i("AA", 0);

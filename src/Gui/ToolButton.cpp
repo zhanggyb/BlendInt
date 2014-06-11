@@ -34,7 +34,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/VertexTool.hpp>
@@ -162,7 +162,7 @@ namespace BlendInt {
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 
 		glBindVertexArray(m_vao);
 

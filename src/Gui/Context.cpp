@@ -40,7 +40,7 @@
 
 #include <BlendInt/Gui/Context.hpp>
 
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt
 {
@@ -690,7 +690,7 @@ namespace BlendInt
 
 	void Context::InitializeContext ()
 	{
-		m_program = ShaderManager::instance->default_context_program();
+		m_program = Shaders::instance->default_context_program();
 
 		glGenVertexArrays(1, &m_vao);
 

@@ -39,7 +39,7 @@
 #include <BlendInt/Gui/VertexTool.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 	
@@ -108,7 +108,7 @@ namespace BlendInt {
 			glBindVertexArray(m_vao);
 
 			RefPtr<GLSLProgram> program =
-							ShaderManager::instance->default_triangle_program();
+					Shaders::instance->default_triangle_program();
 			program->Use();
 
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,

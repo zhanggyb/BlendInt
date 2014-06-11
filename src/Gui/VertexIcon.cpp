@@ -37,7 +37,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/VertexIcon.hpp>
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 #define WIDGET_AA_JITTER 8
 
@@ -143,7 +143,7 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
 		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
@@ -179,7 +179,7 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
 		float scale_w = 1.0;

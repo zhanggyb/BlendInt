@@ -35,7 +35,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/PixelIcon.hpp>
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
@@ -150,7 +150,7 @@ namespace BlendInt {
 		if(m_texture) {
 			glBindVertexArray(m_vao);
 
-			RefPtr<GLSLProgram> program = ShaderManager::instance->default_image_program();
+			RefPtr<GLSLProgram> program = Shaders::instance->default_image_program();
 
 			program->Use();
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));

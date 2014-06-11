@@ -31,60 +31,76 @@ namespace BlendInt {
 
 	class Interface;
 
-	/**
-	 * @brief class for Stock Icons
-	 *
-	 * MUST initialized in Interface::Initialize()
-	 */
-	class StockItems
-	{
-		DISALLOW_COPY_AND_ASSIGN(StockItems);
-
-	public:
-
-		static StockItems* instance;
-
-		RefPtr<VertexIcon> icon_menu () const {return m_icon_menu;}
-
-		RefPtr<VertexIcon> icon_circle () const {return m_icon_circle;}
-
-		RefPtr<VertexIcon> icon_check() const {return m_icon_check;}
-
-		RefPtr<VertexIcon> icon_num () const {return m_icon_num;}
-
-	private:
-
-		friend class Interface;
-
-		static bool Initialize ();
-
-		static void Release ();
+	namespace Stock {
 
 		/**
-		 * @brief Default constructor
-		 */
-		StockItems ();
-
-		/**
-		 * @brief private destructor
-		 */
-		~StockItems ();
-
-		/**
-		 * @brief Create default icons
+		 * @brief class for Stock Icons
 		 *
-		 * Call in constructor
+		 * MUST initialized in Interface::Initialize()
 		 */
-		void CreateIcons ();
+		class Icons
+		{
+		DISALLOW_COPY_AND_ASSIGN(Icons);
 
-		RefPtr<VertexIcon> m_icon_menu;
+		public:
 
-		RefPtr<VertexIcon> m_icon_circle;
+			static Icons* instance;
 
-		RefPtr<VertexIcon> m_icon_check;
+			RefPtr<VertexIcon> icon_menu () const
+			{
+				return m_icon_menu;
+			}
 
-		RefPtr<VertexIcon> m_icon_num;
-	};
+			RefPtr<VertexIcon> icon_circle () const
+			{
+				return m_icon_circle;
+			}
+
+			RefPtr<VertexIcon> icon_check () const
+			{
+				return m_icon_check;
+			}
+
+			RefPtr<VertexIcon> icon_num () const
+			{
+				return m_icon_num;
+			}
+
+		private:
+
+			friend class BlendInt::Interface;
+
+			static bool Initialize ();
+
+			static void Release ();
+
+			/**
+			 * @brief Default constructor
+			 */
+			Icons ();
+
+			/**
+			 * @brief private destructor
+			 */
+			~Icons ();
+
+			/**
+			 * @brief Create default icons
+			 *
+			 * Call in constructor
+			 */
+			void CreateIcons ();
+
+			RefPtr<VertexIcon> m_icon_menu;
+
+			RefPtr<VertexIcon> m_icon_circle;
+
+			RefPtr<VertexIcon> m_icon_check;
+
+			RefPtr<VertexIcon> m_icon_num;
+		};
+
+	}
 
 }
 

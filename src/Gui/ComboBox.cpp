@@ -38,9 +38,9 @@
 
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/StockItems.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 
@@ -175,7 +175,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
@@ -214,7 +214,7 @@ namespace BlendInt {
 		program->Reset();
 		glBindVertexArray(0);
 
-		RefPtr<VertexIcon> icon = StockItems::instance->icon_num();
+		RefPtr<VertexIcon> icon = Stock::Icons::instance->icon_num();
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.15, 1.15, 1.15));
 		glm::mat4 rotate = glm::rotate(glm::mat4(1.0), (glm::mediump_float)(M_PI * 1.5), glm::vec3(0.0, 0.0, 1.0));
@@ -285,7 +285,7 @@ namespace BlendInt {
 		//m_menu->SetPosition(200, 200);
 		//menu->Resize (200, 200);
 
-		m_menu->AddAction(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+		m_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
 		m_menu->AddAction("MenuItem2", "Ctrl + 1");
 		m_menu->AddAction("MenuItem3", "Ctrl + 1");
 		m_menu->AddAction("MenuItem4", "Ctrl + 1");

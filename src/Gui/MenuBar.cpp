@@ -39,7 +39,7 @@
 #include <BlendInt/Gui/Context.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
@@ -104,7 +104,7 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());

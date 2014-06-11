@@ -4,7 +4,7 @@
 
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Core/String.hpp>
-#include <BlendInt/Stock/StockItems.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/HBox.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
@@ -48,7 +48,7 @@ void MainLayout::InitOnce ()
     RefPtr<Menu> file_menu(new Menu);
 
     file_menu->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
-    file_menu->AddAction(StockItems::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
     file_menu->AddAction("MenuItem2", "Ctrl + 1");
     file_menu->AddAction("MenuItem3", "Ctrl + 1");
     file_menu->AddAction("MenuItem4", "Ctrl + 1");

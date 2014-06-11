@@ -40,7 +40,7 @@
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/Tab.hpp>
 
-#include <BlendInt/Stock/StockItems.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/DirList.hpp>
 

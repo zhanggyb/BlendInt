@@ -1,6 +1,6 @@
 #include "MenuBarTest1.hpp"
 #include <BlendInt/Gui/MenuBar.hpp>
-#include <BlendInt/Stock/StockItems.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 
 using namespace BlendInt;
 

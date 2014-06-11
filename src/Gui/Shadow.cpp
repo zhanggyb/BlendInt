@@ -40,7 +40,7 @@
 
 #include <BlendInt/Gui/Shadow.hpp>
 #include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
@@ -115,7 +115,7 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program =
-						ShaderManager::instance->default_triangle_program();
+				Shaders::instance->default_triangle_program();
 		program->Use();
 
 		glm::mat4 offset = glm::translate(glm::mat4(1.0),

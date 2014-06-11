@@ -39,7 +39,7 @@
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Gui/CheckerBoard.hpp>
 
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
@@ -134,7 +134,7 @@ namespace BlendInt {
 	{
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = ShaderManager::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 
 		program->Use();
 

@@ -51,7 +51,7 @@
 #endif
 
 #include <BlendInt/Gui/FontCache.hpp>
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Types.hpp>
 
 using namespace std;

@@ -57,8 +57,8 @@ OIIO_NAMESPACE_USING
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Stock/ShaderManager.hpp>
-#include <BlendInt/Stock/StockItems.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 
 namespace BlendInt {
 
@@ -123,14 +123,14 @@ namespace BlendInt {
 			success = false;
 		}
 
-		if (success && ShaderManager::Initialize()) {
+		if (success && Shaders::Initialize()) {
 			// do nothing
 		} else {
 			DBG_PRINT_MSG("%s", "The Shader Manager is not initialized successfully!");
 			success = false;
 		}
 
-		if (success && StockItems::Initialize()) {
+		if (success && Stock::Icons::Initialize()) {
 			// do nothing
 		} else {
 			DBG_PRINT_MSG("%s", "Cannot initialize Stock Icons");
@@ -171,8 +171,8 @@ namespace BlendInt {
 			}
 		}
 
-		StockItems::Release();
-		ShaderManager::Release();
+		Stock::Icons::Release();
+		Shaders::Release();
 		Theme::Release();
 		FontCache::ReleaseAll();
 

@@ -29,7 +29,7 @@
 
 namespace BlendInt {
 
-	class StockItems;
+	class Icons;
 
 	class Icon: public AbstractForm
 	{

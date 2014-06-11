@@ -37,12 +37,12 @@
 
 #include <BlendInt/Types.hpp>
 
-#include <BlendInt/Stock/ShaderManager.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
 #ifdef __OPENGL_CORE_330__
-	const char* ShaderManager::text_vertex_shader =
+	const char* Shaders::text_vertex_shader =
 			"#version 330\n"
 			"layout(location = 0) in vec4 coord;"
 			"uniform mat4 MVP;"
@@ -53,7 +53,7 @@ namespace BlendInt {
 			"  texpos = coord.zw;"
 			"}";
 
-	const char* ShaderManager::text_fragment_shader =
+	const char* Shaders::text_fragment_shader =
 			"#version 330\n"
 			"in vec2 texpos;"
 			"uniform sampler2D tex;"
@@ -65,7 +65,7 @@ namespace BlendInt {
 			"	FragmentColor = vec4(color.rgb, color.a * alpha);"
 			"}";
 
-	const char* ShaderManager::primitive_vertex_shader =
+	const char* Shaders::primitive_vertex_shader =
 			"#version 330\n"
 			""
 			"layout(location = 0) in vec3 coord3d;"
@@ -78,7 +78,7 @@ namespace BlendInt {
 			"	f_color = v_color;"
 			"}";
 
-	const char* ShaderManager::primitive_fragment_shader =
+	const char* Shaders::primitive_fragment_shader =
 			"#version 330\n"
 			""
 			"in vec3 f_color;"
@@ -88,7 +88,7 @@ namespace BlendInt {
 			"	FragmentColor = vec4(f_color, 1.0);"
 			"}";
 
-	const char* ShaderManager::default_widget_vertex_shader =
+	const char* Shaders::default_widget_vertex_shader =
 			"#version 330\n"
 			""
 			"layout(location=0) in vec2 Coord2D;"
@@ -100,7 +100,7 @@ namespace BlendInt {
 			"	VertexColor = Color;"
 			"}";
 
-	const char* ShaderManager::default_widget_triangle_geometry_shader =
+	const char* Shaders::default_widget_triangle_geometry_shader =
 			"#version 330\n"
 			""
 			"layout (triangles) in;"
@@ -154,7 +154,7 @@ namespace BlendInt {
 			""
 			"}";
 
-	const char* ShaderManager::default_widget_line_geometry_shader =
+	const char* Shaders::default_widget_line_geometry_shader =
 			"#version 330\n"
 			""
 			"layout (lines) in;"
@@ -209,7 +209,7 @@ namespace BlendInt {
 			"}";
 
 
-	const char* ShaderManager::default_widget_fragment_shader =
+	const char* Shaders::default_widget_fragment_shader =
 			"#version 330\n"
 			""
 			"in vec4 PreFragColor;"
@@ -227,7 +227,7 @@ namespace BlendInt {
 			"	FragmentColor = PreFragColor + color_calib;"
 			"}";
 
-	const char* ShaderManager::default_context_vertex_shader =
+	const char* Shaders::default_context_vertex_shader =
 			"#version 330\n"
 			"layout(location = 0) in vec2 Coord2D;"
 			"layout(location = 1) in vec2 UVCoord;"
@@ -239,7 +239,7 @@ namespace BlendInt {
 			"	f_texcoord = UVCoord;"
 			"}";
 
-	const char* ShaderManager::default_context_fragment_shader =
+	const char* Shaders::default_context_fragment_shader =
 			"#version 330\n"
 			"in vec2 f_texcoord;"
 			"uniform sampler2D TexID;"
@@ -290,7 +290,7 @@ namespace BlendInt {
 			//"	}"
 			"}";
 
-	const char* ShaderManager::default_image_vertex_shader =
+	const char* Shaders::default_image_vertex_shader =
 			"#version 330\n"
 			"layout(location = 0) in vec2 Coord2D;"
 			"layout(location = 1) in vec2 UVCoord;"
@@ -302,7 +302,7 @@ namespace BlendInt {
 			"	f_texcoord = UVCoord;"
 			"}";
 
-	const char* ShaderManager::default_image_fragment_shader =
+	const char* Shaders::default_image_fragment_shader =
 			"#version 330\n"
 			"in vec2 f_texcoord;"
 			"uniform sampler2D TexID;"
@@ -319,7 +319,7 @@ namespace BlendInt {
 
 #else	// Legacy opengl
 
-	const char* ShaderManager::text_vertex_shader =
+	const char* Shaders::text_vertex_shader =
 			"#version 120\n"
 			"attribute vec4 coord;"
 			"uniform mat4 MVP;"
@@ -330,7 +330,7 @@ namespace BlendInt {
 			"  texpos = coord.zw;"
 			"}";
 
-	const char* ShaderManager::text_fragment_shader =
+	const char* Shaders::text_fragment_shader =
 			"#version 120\n"
 			"varying vec2 texpos;"
 			"uniform sampler2D tex;"
@@ -340,7 +340,7 @@ namespace BlendInt {
 			"  gl_FragColor = vec4(1, 1, 1, texture2D(tex, texpos).a) * color;"
 			"}";
 
-	const char* ShaderManager::primitive_vertex_shader =
+	const char* Shaders::primitive_vertex_shader =
 			"#version 120\n"
 			""
 			"attribute vec3 coord3d;"
@@ -353,7 +353,7 @@ namespace BlendInt {
 			"	f_color = v_color;"
 			"}";
 
-	const char* ShaderManager::primitive_fragment_shader =
+	const char* Shaders::primitive_fragment_shader =
 			"#version 120\n"
 			""
 			"varying vec3 f_color;"
@@ -362,7 +362,7 @@ namespace BlendInt {
 			"	gl_FragColor = vec4(f_color, 1.0);"
 			"}";
 
-	const char* ShaderManager::default_widget_vertex_shader =
+	const char* Shaders::default_widget_vertex_shader =
 			"#version 120\n"
 			""
 			"attribute vec2 xy;"
@@ -376,7 +376,7 @@ namespace BlendInt {
 			"	f_color = color;"
 			"}";
 
-	const char* ShaderManager::default_widget_fragment_shader =
+	const char* Shaders::default_widget_fragment_shader =
 			"#version 120\n"
 			""
 			"varying vec4 f_color;"
@@ -385,7 +385,7 @@ namespace BlendInt {
 			"	gl_FragColor = f_color;"
 			"}";
 
-	const char* ShaderManager::default_form_vertex_shader =
+	const char* Shaders::default_form_vertex_shader =
 			"#version 120\n"
 			""
 			"attribute vec2 xy;"
@@ -398,7 +398,7 @@ namespace BlendInt {
 			"	f_color = color;"
 			"}";
 
-	const char* ShaderManager::default_form_fragment_shader =
+	const char* Shaders::default_form_fragment_shader =
 			"#version 120\n"
 			""
 			"varying vec4 f_color;"
@@ -409,14 +409,14 @@ namespace BlendInt {
 
 #endif
 
-	ShaderManager* ShaderManager::instance = 0;
+	Shaders* Shaders::instance = 0;
 
-	bool ShaderManager::Initialize()
+	bool Shaders::Initialize()
 	{
 		bool ret = false;
 
 		if(!instance) {
-			instance = new ShaderManager;
+			instance = new Shaders;
 
 			if(instance) {
 				ret = instance->Setup();
@@ -428,7 +428,7 @@ namespace BlendInt {
 		return ret;
 	}
 
-	void ShaderManager::Release()
+	void Shaders::Release()
 	{
 		if(instance) {
 			delete instance;
@@ -436,7 +436,7 @@ namespace BlendInt {
 		}
 	}
 
-	ShaderManager::ShaderManager()
+	Shaders::Shaders()
 	{
 		m_text_program.reset(new GLSLProgram);
 		DBG_SET_NAME(m_text_program, "Text Program");
@@ -457,11 +457,11 @@ namespace BlendInt {
 		DBG_SET_NAME(m_default_image_program, "PixelIcon Program");
 	}
 
-	ShaderManager::~ShaderManager()
+	Shaders::~Shaders()
 	{
 	}
 
-	bool ShaderManager::Setup ()
+	bool Shaders::Setup ()
 	{
 		if(!m_text_program->Create())
 			return false;
@@ -533,7 +533,7 @@ namespace BlendInt {
 		return true;
 	}
 
-//	bool ShaderManager::Find(const GLSLProgram* program)
+//	bool Shaders::Find(const GLSLProgram* program)
 //	{
 //		if(m_text_program == program) return true;
 //		if(m_primitive_program == program) return true;

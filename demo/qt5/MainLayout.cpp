@@ -5,7 +5,7 @@
 #include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Gui/Menu.hpp>
-#include <BlendInt/Stock/StockItems.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 
 #include "MainLayout.hpp"
 
