@@ -43,7 +43,7 @@
 namespace BlendInt {
 
 	TabButton::TabButton ()
-	: AbstractButton(), m_vao(0), m_text_length(0)
+	: AbstractButton(), m_vao(0)
 	{
 		set_size(80, 14);
 		set_checkable(true);
@@ -52,7 +52,7 @@ namespace BlendInt {
 	}
 
 	TabButton::TabButton (const String& text)
-	: AbstractButton(), m_vao(0), m_text_length(0)
+	: AbstractButton(), m_vao(0)
 	{
 		set_size(80, 14);
 		set_checkable(true);
@@ -63,14 +63,6 @@ namespace BlendInt {
 	BlendInt::TabButton::~TabButton ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
-	}
-
-	void TabButton::SetText (const String& text)
-	{
-	}
-
-	void TabButton::SetFont (const Font& font)
-	{
 	}
 
 	void TabButton::UpdateGeometry (const WidgetUpdateRequest& request)
@@ -119,46 +111,28 @@ namespace BlendInt {
 
 		Theme* tm = Theme::instance;
 
-		Color color;
-
 		glEnableVertexAttribArray(0);
 
 		// draw inner, simple fill
 		if (checked()) {
-			color = tm->tab().inner_sel;
-			program->SetVertexAttrib4fv("Color", color.data());
+			program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
 			program->SetUniform1i("AA", 0);
 			DrawTriangleStrip(0, m_inner_buffer.get());
 		} else {
-			color = tm->tab().item;
-			program->SetVertexAttrib4fv("Color", color.data());
+			program->SetVertexAttrib4fv("Color", tm->tab().item.data());
 			program->SetUniform1i("AA", 1);
-
 			m_inner_buffer->Bind();
-
-			glVertexAttribPointer(0, // attribute
-								  2,			// number of elements per vertex, here (x,y)
-								  GL_FLOAT,			 // the type of each element
-								  GL_FALSE,			 // take our values as-is
-								  0,				 // no extra data between each position
-								  0					 // offset of first element
-								  );
-
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 			// Skip the bottom triangle strip for better appearance
 			glDrawArrays(GL_TRIANGLE_STRIP, 4,
 							m_inner_buffer->GetBufferSize()
 												/ (2 * sizeof(GLfloat)) - 4);
-
 			m_inner_buffer->Reset();
 		}
 
 		if (checked()) {
-			color = Theme::instance->tab().outline;
-
 			program->SetUniform1i("AA", 1);
-
-			program->SetVertexAttrib4fv("Color", color.data());
-
+			program->SetVertexAttrib4fv("Color", Theme::instance->tab().outline.data());
 			DrawTriangleStrip(0, m_outer_buffer.get());
 		}
 
@@ -167,8 +141,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 
-		if(m_text.size()) {
-			m_font.Print(mvp, text(), text_length(), 0);
+		if(text().size()) {
+			font().Print(mvp, text(), text_length(), 0);
 		}
 
 		return Accept;

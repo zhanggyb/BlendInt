@@ -42,16 +42,6 @@ namespace BlendInt {
 
 		virtual ~TabButton ();
 
-		void SetText (const String& text);
-
-		void SetFont (const Font& font);
-
-		const String& text () const {return m_text;}
-
-		size_t text_length () const {return m_text_length;}
-
-		const Font& font () const {return m_font;}
-
 		virtual Size GetPreferredSize () const;
 
 #ifdef DEBUG
@@ -76,26 +66,6 @@ namespace BlendInt {
 
 		inline double sin_curve (double x, double amplitude, double shift_x, double shift_y);
 
-		inline void set_text (const String& text)
-		{
-			m_text = text;
-		}
-
-		inline void set_font (const Font& font)
-		{
-			m_font = font;
-		}
-
-		void set_text_length (size_t length)
-		{
-			m_text_length = length;
-		}
-
-		void set_pen (int x, int y)
-		{
-			m_font.set_pen(x, y);
-		}
-
 	private:
 
 		void InitializeTabButton ();
@@ -110,13 +80,6 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
-
-		size_t m_text_length;	// How many text to be printed, depends on the button size
-
-		String m_text;
-
-		Font m_font;
-
 	};
 
 }

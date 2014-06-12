@@ -39,6 +39,8 @@
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/Tab.hpp>
+#include <BlendInt/Gui/TabButton.hpp>
+#include <BlendInt/Gui/TabHeader.hpp>
 
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -63,18 +65,10 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	TabHeader* header = Manage(new TabHeader);
-	header->SetPosition(100, 200);
+	Tab* tab = Manage(new Tab);
+	tab->SetPosition(100, 100);
 
-	TabButton* btn1 = Manage(new TabButton);
-	TabButton* btn2 = Manage(new TabButton);
-	TabButton* btn3 = Manage(new TabButton);
-
-	header->PushBack(btn1);
-	header->PushBack(btn2);
-	header->PushBack(btn3);
-
-	context->Add(header);
+	context->Add(tab);
 
 	RunLoop(win);
 

@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 	context->set_name("GLFWContext");
 #endif
 	Interface::instance->SetCurrentContext(context);
-	context->Resize(1024, 728);
+	context->Resize(1024, 600);
 
 	//Interface::instance->Resize(800, 600);
 

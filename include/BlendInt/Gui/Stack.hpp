@@ -49,6 +49,12 @@ namespace BlendInt {
 
 		void SetIndex (size_t index);
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
 		AbstractWidget* GetActiveWidget () const;
 
 		AbstractWidget* GetWidget (size_t index);
@@ -81,8 +87,11 @@ namespace BlendInt {
 
 	private:
 
-		size_t m_index;
+		void InitializeStack ();
 
+		GLuint m_vao;
+		size_t m_index;
+		RefPtr<GLArrayBuffer> m_inner;
 	};
 
 }

@@ -38,330 +38,28 @@
 #include <BlendInt/Gui/TabButton.hpp>
 
 #include <BlendInt/Gui/Tab.hpp>
+#include <BlendInt/Gui/TabHeader.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Gui/Stack.hpp>
 
 namespace BlendInt {
 
-	TabHeader::TabHeader()
-	: AbstractDequeContainer(),
-	  m_vao(0)
-	{
-		set_size(400, 24);
-		set_margin(5, 5, 5, 0);
-
-		glGenVertexArrays(1, &m_vao);
-
-		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0, false);
-
-		m_buffer = tool.GenerateInnerBuffer();
-	}
-
-	TabHeader::~TabHeader()
-	{
-		glDeleteVertexArrays(1, &m_vao);
-	}
-
-	void TabHeader::PushBack (TabButton* button)
-	{
-		int x = GetLastPosition ();
-		int y = position().y() + margin().bottom();
-		int h = size().height() - margin().vsum();
-
-		if (PushBackSubWidget(button)) {
-
-			SetSubWidgetPosition(button, x, y);
-			if (button->IsExpandY()) {
-				ResizeSubWidget(button, button->size().width(), h);
-			} else {
-
-				if (button->size().height() > h) {
-					ResizeSubWidget(button, button->size().width(), h);
-				}
-
-			}
-
-			m_group.Add(button);
-
-			if(m_group.size() == 1) {
-				button->SetChecked(true);
-			}
-		}
-	}
-
-	bool TabHeader::IsExpandX () const
-	{
-		return true;
-	}
-
-	Size TabHeader::GetPreferredSize () const
-	{
-		Size prefer(400, 24);
-
-		if(sub_widget_size() == 0) {
-			Font font;
-			int max_font_height = font.GetHeight();
-			prefer.set_height(max_font_height + margin().vsum());
-		} else {
-			AbstractWidget* widget = 0;
-			Size tmp_size;
-
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-			{
-				widget = *it;
-
-				if(widget->visiable()) {
-					tmp_size = widget->GetPreferredSize();
-
-					prefer.add_width(tmp_size.width());
-					prefer.set_height(std::max(prefer.height(), tmp_size.height()));
-				}
-			}
-
-			prefer.add_width(margin().hsum());
-			prefer.add_height(margin().vsum());
-		}
-
-		return prefer;
-	}
-
-	void TabHeader::UpdateContainer (const WidgetUpdateRequest& request)
-	{
-		switch(request.type()) {
-
-			case ContainerMargin: {
-				// TODO: reset sub widgets
-				break;
-			}
-
-			case ContainerRefresh: {
-				Refresh();
-				break;
-			}
-
-		}
-	}
-
-	void TabHeader::UpdateGeometry (const WidgetUpdateRequest& request)
-	{
-		switch (request.type()) {
-
-			case WidgetPosition: {
-				const Point* pos_p = static_cast<const Point*>(request.data());
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
-				MoveSubWidgets(x, y);
-				break;
-			}
-
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0, false);
-				tool.UpdateInnerBuffer(m_buffer.get());
-				break;
-			}
-
-			default:
-				break;
-		}
-	}
-
-	ResponseType TabHeader::Draw (const RedrawEvent& event)
-	{
-		using Stock::Shaders;
-
-		glm::vec3 pos((float) position().x(), (float) position().y(),
-						(float) z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-
-		glBindVertexArray(m_vao);
-
-		program->Use();
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
-		program->SetUniform1i("Gamma", 0);
-
-		glEnableVertexAttribArray(0);
-		m_buffer->Bind();
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-				m_buffer->GetBufferSize()
-				/ (2 * sizeof(GLfloat)));
-		m_buffer->Reset();
-
-		glDisableVertexAttribArray(0);
-		program->Reset();
-
-		glBindVertexArray(0);
-		return Accept;
-	}
-
-	ResponseType TabHeader::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType TabHeader::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	int TabHeader::GetLastPosition() const
-	{
-		int x = position().x() + margin().left();
-
-		if(sub_widget_size()) {
-			x = sub_widgets()->back()->position().x();
-			x += sub_widgets()->back()->size().width();
-		}
-
-		return x;
-	}
-
-	// -------
-
-	TabStack::TabStack ()
-	: Stack(), m_vao(0)
-	{
-		InitOnce();
-	}
-
-	TabStack::~TabStack ()
-	{
-		glDeleteVertexArrays(1, &m_vao);
-	}
-
-	bool TabStack::IsExpandX() const
-	{
-		return true;
-	}
-
-	bool TabStack::IsExpandY() const
-	{
-		return true;
-	}
-
-	void TabStack::UpdateGeometry (const WidgetUpdateRequest& request)
-	{
-			switch(request.type()) {
-
-				case WidgetSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(), RoundNone, 0);
-					tool.UpdateInnerBuffer(m_inner.get());
-					tool.UpdateOuterBuffer(m_outer.get());
-					Stack::UpdateGeometry(request);
-					break;
-				}
-
-				default: {
-					Stack::UpdateGeometry(request);
-					break;
-				}
-			}
-
-	}
-
-	ResponseType TabStack::Draw (const RedrawEvent& event)
-	{
-		using Stock::Shaders;
-
-		glm::vec3 pos((float) position().x(), (float) position().y(),
-						(float) z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
-		glBindVertexArray(m_vao);
-
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->default_triangle_program();
-		program->Use();
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
-
-		Theme* tm = Theme::instance;
-
-		Color color = tm->tab().inner;
-
-		program->SetVertexAttrib4fv("Color", color.data());
-
-		glEnableVertexAttribArray(0);
-
-		//DrawTriangleFan(0, m_inner_buffer.get());
-		DrawTriangleStrip(0, m_inner.get());
-
-		color = tm->tab().outline;
-
-		program->SetUniform1i("AA", 1);
-
-		program->SetVertexAttrib4fv("Color", color.data());
-
-		DrawTriangleStrip(0, m_outer.get());
-
-		glDisableVertexAttribArray(0);
-		program->Reset();
-
-		glBindVertexArray(0);
-
-		return Accept;
-	}
-
-	void TabStack::InitOnce ()
-	{
-		glGenVertexArrays(1, &m_vao);
-
-		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0);
-		m_inner = tool.GenerateInnerBuffer();
-		m_outer = tool.GenerateOuterBuffer();
-	}
-
-	// ------------------------
-
 	Tab::Tab ()
-	: AbstractDequeContainer(), m_title_height(14), m_stack(0)
+	: AbstractVectorContainer(2)
 	{
 		set_size(400, 300);
 
-		m_stack = Manage(new TabStack);
-		m_stack->SetMargin(4, 4, 4, 4);
-		PushBackSubWidget(m_stack);
+		TabHeader* header = Manage(new TabHeader);
+		Stack* stack = Manage(new Stack);
+		stack->SetMargin(4, 4, 4, 4);
 
-		events()->connect(m_group.button_index_toggled(), this, &Tab::OnButtonToggled);
+		SetSubWidget(0, header);
+		SetSubWidget(1, stack);
+
+		FillSubWidgetsInTab(size(), margin());
+
+		events()->connect(header->button_index_toggled(), this, &Tab::OnButtonToggled);
 	}
 
 	Tab::~Tab ()
@@ -373,21 +71,67 @@ namespace BlendInt {
 		TabButton* btn = Manage(new TabButton);
 		btn->SetText(title);
 
-		PushBackSubWidget(btn);
-		m_group.Add(btn);
+		TabHeader* header = dynamic_cast<TabHeader*>(sub_widget(0));
+		Stack* stack = dynamic_cast<Stack*>(sub_widget(1));
 
-		m_stack->Add(widget);
+		header->PushBack(btn);
+		stack->Add(widget);
 
-		AdjustGeometries();
-
-		if(m_group.size() == 1) {
+		if(header->sub_widget_size() == 1) {
 			btn->SetChecked(true);
 		}
+	}
+
+	bool Tab::IsExpandX () const
+	{
+		if(sub_widget(0)->IsExpandX())
+			return true;
+
+		if(sub_widget(1)->IsExpandX())
+			return true;
+
+		return false;
+	}
+
+	bool Tab::IsEXpandY () const
+	{
+		if(sub_widget(0)->IsExpandY())
+			return true;
+
+		if(sub_widget(1)->IsExpandY())
+			return true;
+
+		return false;
+	}
+
+	Size Tab::GetPreferredSize () const
+	{
+		int w = 0;
+		int h = 0;
+
+		Size tmp1 = sub_widget(0)->GetPreferredSize();
+		Size tmp2 = sub_widget(1)->GetPreferredSize();
+
+		w = std::max(tmp1.width(), tmp2.width());
+		h = tmp1.height() + tmp2.height();
+
+		w = w + margin().hsum();
+		h = h + margin().vsum();
+
+		return Size(w, h);
 	}
 
 	void Tab::UpdateContainer (const WidgetUpdateRequest& request)
 	{
 		switch(request.type()) {
+
+			case ContainerMargin: {
+				const Margin* margin_p = static_cast<const Margin*>(request.data());
+				FillSubWidgetsInTab(size(), *margin_p);
+
+				break;
+			}
+
 			case ContainerRefresh: {
 
 				Refresh();
@@ -415,6 +159,8 @@ namespace BlendInt {
 			}
 
 			case WidgetSize: {
+				const Size* size_p = static_cast<const Size*>(request.data());
+				FillSubWidgetsInTab(*size_p, margin());
 				break;
 			}
 
@@ -465,30 +211,47 @@ namespace BlendInt {
 	
 	void Tab::OnButtonToggled (int index, bool toggled)
 	{
-		m_stack->SetIndex(index);
+		Stack* stack = dynamic_cast<Stack*>(sub_widget(1));
+
+		stack->SetIndex(index);
 		Refresh();
 	}
 
-	void Tab::AdjustGeometries()
+	void Tab::FillSubWidgetsInTab(const Size& out_size, const Margin& margin)
 	{
-		int x = position().x() + margin().left();
-		int y = position().y() + margin().bottom();
+		int x = position().x() + margin.left();
+		int y = position().y() + margin.bottom();
+		int w = out_size.width() - margin.hsum();
+		int h = out_size.height() - margin.vsum();
 
-		int btn_y = position().y() + size().height() - margin().top() - m_title_height;
+		FillSubWidgetsInTab(x, y, w, h);
+	}
 
-		int w = size().width() - margin().hsum();
-		int h = size().height() - margin().vsum();
+	void Tab::FillSubWidgetsInTab(int x, int y, int w, int h)
+	{
+		int header_y = position().y() + size().height() - margin().top();
 
-		int temp = 0;
-		for(std::vector<AbstractButton*>::iterator it = m_group.buttons()->begin(); it != m_group.buttons()->end(); it++)
-		{
-			SetSubWidgetPosition((*it), x + temp, btn_y);
-			ResizeSubWidget((*it), (*it)->size().width(), m_title_height);
-			temp += (*it)->size().width();
+		TabHeader* header = dynamic_cast<TabHeader*>(sub_widget(0));
+		Stack* stack = dynamic_cast<Stack*>(sub_widget(1));
+
+		Size header_size = header->GetPreferredSize();
+
+		if(header_size.height() > h) {
+			header->SetVisible(false);
+			stack->SetVisible(false);
+
+			return;
+		} else {
+			header->SetVisible(true);
+			stack->SetVisible(true);
 		}
 
-		SetSubWidgetPosition(m_stack, x, y);
-		ResizeSubWidget(m_stack, w, h - m_title_height);
+		header_y = header_y - header_size.height();
+		SetSubWidgetPosition(header, x, header_y);
+		ResizeSubWidget(header, w, header_size.height());
+
+		SetSubWidgetPosition(stack, x, y);
+		ResizeSubWidget(stack, w, h - header_size.height());
 	}
 
 }

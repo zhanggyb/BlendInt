@@ -21,30 +21,40 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TAB_HPP_
-#define _BLENDINT_GUI_TAB_HPP_
+#ifndef _BLENDINT_GUI_TABHEADER_HPP_
+#define _BLENDINT_GUI_TABHEADER_HPP_
 
-#include <BlendInt/Gui/AbstractVectorContainer.hpp>
+#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/ButtonGroup.hpp>
+#include <BlendInt/Gui/TabButton.hpp>
 
 namespace BlendInt {
 
-	class Tab: public AbstractVectorContainer
+	class TabHeader: public AbstractDequeContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(Tab);
+		DISALLOW_COPY_AND_ASSIGN(TabHeader);
 
 	public:
 
-		Tab ();
+		TabHeader ();
 
-		virtual ~Tab ();
+		virtual ~TabHeader ();
 
-		void Add (const String& title, AbstractWidget* widget);
+		void PushBack (TabButton* button);
 
 		virtual bool IsExpandX () const;
 
-		virtual bool IsEXpandY () const;
-
 		virtual Size GetPreferredSize () const;
+
+		Cpp::EventRef<int> button_clicked ()
+		{
+			return m_button_index_clicked;
+		}
+
+		Cpp::EventRef<int, bool> button_index_toggled ()
+		{
+			return m_button_index_toggled;
+		}
 
 	protected:
 
@@ -70,13 +80,23 @@ namespace BlendInt {
 
 	private:
 
-		void OnButtonToggled (int index, bool toggled);
+		void OnButtonIndexClicked (int index);
 
-		void FillSubWidgetsInTab (const Size& out_size, const Margin& margin);
+		void OnButtonIndexToggled (int index, bool toggled);
 
-		void FillSubWidgetsInTab (int x, int y, int w, int h);
+		int GetLastPosition () const;
+
+		RefPtr<GLArrayBuffer> m_buffer;
+
+		GLuint m_vao;
+
+		ButtonGroup m_group;
+
+		Cpp::Event<int> m_button_index_clicked;
+
+		Cpp::Event<int, bool> m_button_index_toggled;
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_TAB_HPP_ */
+#endif /* _BLENDINT_GUI_TABHEADER_HPP_ */

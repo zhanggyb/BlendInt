@@ -21,21 +21,42 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Gui/Stack.hpp>
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif	// __UNIX__
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
 #include <algorithm>
+
+#include <BlendInt/Gui/Stack.hpp>
+#include <BlendInt/Gui/VertexTool.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 
 	Stack::Stack()
-	: AbstractDequeContainer(), m_index(0)
+	: AbstractDequeContainer(),
+	  m_vao(0),
+	  m_index(0)
 	{
 		//set_preferred_size(400, 300);
 		set_size(400, 300);
+
+		InitializeStack();
 	}
 
 	Stack::~Stack()
 	{
-
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	void Stack::Add (AbstractWidget* widget)
@@ -89,6 +110,61 @@ namespace BlendInt {
 		}
 	}
 
+	bool Stack::IsExpandX () const
+	{
+		bool ret = false;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->IsExpandX()) {
+				ret = true;
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	bool Stack::IsExpandY () const
+	{
+		bool ret = false;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->IsExpandY()) {
+				ret = true;
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	Size Stack::GetPreferredSize () const
+	{
+		Size prefer(400, 300);
+
+		if(sub_widget_size()) {
+
+			prefer.set_width(0);
+			prefer.set_height(0);
+
+			Size tmp;
+			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			{
+				tmp = (*it)->GetPreferredSize();
+				prefer.set_width(std::max(prefer.width(), tmp.width()));
+				prefer.set_height(std::max(prefer.height(), tmp.height()));
+			}
+
+			prefer.add_width(margin().hsum());
+			prefer.add_height(margin().vsum());
+
+		}
+
+		return prefer;
+	}
+
 	AbstractWidget* Stack::GetActiveWidget () const
 	{
 		if(sub_widget_size()) {
@@ -126,10 +202,8 @@ namespace BlendInt {
 				const Margin* margin_p =
 								static_cast<const Margin*>(request.data());
 
-				int w = size().width() - margin_p->left()
-								- margin_p->right();
-				int h = size().height() - margin_p->top()
-								- margin_p->bottom();
+				int w = size().width() - margin_p->hsum();
+				int h = size().height() - margin_p->vsum();
 
 				ResizeSubWidgets(w, h);
 
@@ -165,12 +239,13 @@ namespace BlendInt {
 			case WidgetSize: {
 				const Size* new_size = static_cast<const Size*>(request.data());
 
-				int w = new_size->width() - margin().left()
-								- margin().right();
-				int h = new_size->height() - margin().top()
-								- margin().bottom();
-
+				int w = new_size->width() - margin().hsum();
+				int h = new_size->height() - margin().vsum();
 				ResizeSubWidgets(w, h);
+
+				VertexTool tool;
+				tool.Setup(*new_size, 0, RoundNone, 0, false);
+				tool.UpdateInnerBuffer(m_inner.get());
 
 				break;
 			}
@@ -183,7 +258,29 @@ namespace BlendInt {
 
 	ResponseType Stack::Draw (const RedrawEvent& event)
 	{
-		return IgnoreAndContinue;
+		using Stock::Shaders;
+
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		glBindVertexArray(m_vao);
+		RefPtr<GLSLProgram> program =
+				Shaders::instance->default_triangle_program();
+
+		program->Use();
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetUniform1i("AA", 0);
+		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
+
+		glEnableVertexAttribArray(0);
+		DrawTriangleStrip(0, m_inner.get());
+		glDisableVertexAttribArray(0);
+
+		program->Reset();
+		glBindVertexArray(0);
+
+		return AcceptAndContinue;
 	}
 
 	ResponseType Stack::CursorEnterEvent(bool entered)
@@ -218,7 +315,12 @@ namespace BlendInt {
 	
 	IteratorPtr Stack::CreateIterator (const DeviceEvent& event)
 	{
-		RefPtr<SingleIterator> ret (new SingleIterator(sub_widgets()->at(m_index)));
+		RefPtr<SingleIterator> ret;
+		if(sub_widget_size()) {
+			ret.reset(new SingleIterator(sub_widgets()->at(m_index)));
+		} else {
+			ret.reset(new SingleIterator(0));
+		}
 
 		return ret;
 	}
@@ -226,6 +328,15 @@ namespace BlendInt {
 	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)
 	{
 		return IgnoreAndContinue;
+	}
+
+	void Stack::InitializeStack()
+	{
+		glGenVertexArrays(1, &m_vao);
+
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0, false);
+		m_inner = tool.GenerateInnerBuffer();
 	}
 
 }
