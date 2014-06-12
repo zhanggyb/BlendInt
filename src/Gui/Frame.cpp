@@ -53,14 +53,22 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-			: AbstractSingleContainer()
+	: AbstractSingleContainer(), m_vao(0)
 	{
-		set_size(400, 400);
+		set_size(400, 300);
+
+		glGenVertexArrays(1, &m_vao);
+
+		glBindVertexArray(m_vao);
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0, false);
+		m_inner = tool.GenerateInnerBuffer();
+		glBindVertexArray(0);
 	}
 
 	Frame::~Frame ()
 	{
-		// TODO Auto-generated destructor stub
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool Frame::Setup (AbstractWidget* widget)
@@ -93,6 +101,36 @@ namespace BlendInt {
 		}
 
 		return ret;
+	}
+
+	bool Frame::IsExpandX() const
+	{
+		if(sub_widget())
+			return sub_widget()->IsExpandX();
+		else
+			return false;
+	}
+
+	bool Frame::IsExpandY() const
+	{
+		if(sub_widget())
+			return sub_widget()->IsExpandY();
+		else
+			return false;
+	}
+
+	Size Frame::GetPreferredSize() const
+	{
+		Size prefer(400, 300);
+
+		if(sub_widget()) {
+			prefer = sub_widget()->GetPreferredSize();
+
+			prefer.add_width(margin().hsum());
+			prefer.add_height(margin().vsum());
+		}
+
+		return prefer;
 	}
 
 	void Frame::UpdateContainer (const WidgetUpdateRequest& request)
@@ -154,12 +192,17 @@ namespace BlendInt {
 			switch (request.type()) {
 
 				case WidgetSize: {
+					const Size* size_p =
+									static_cast<const Size*>(request.data());
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0, false);
+					tool.UpdateInnerBuffer(m_inner.get());
+					set_size(*size_p);
+
 					if (sub_widget()) {
-						const Size* size_p =
-										static_cast<const Size*>(request.data());
-						set_size(*size_p);
 						FillSubWidget(position(), *size_p, margin());
 					}
+
 					break;
 				}
 
@@ -220,42 +263,25 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		GLuint vao;
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0, false);
-
-		RefPtr<GLArrayBuffer> inner = tool.GenerateInnerBuffer();
-		inner->Bind();
-
 		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
+		program->SetUniform1i("Gamma", 0);
 		program->SetUniform1i("AA", 0);
 
-		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader
+		glBindVertexArray(m_vao);
 
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
+		glEnableVertexAttribArray(0);
+		DrawTriangleFan(0, m_inner.get());
 		glDisableVertexAttribArray(0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 		glBindVertexArray(0);
-
 		program->Reset();
-
-		glDeleteVertexArrays(1, &vao);
 
 		return Accept;
 	}

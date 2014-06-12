@@ -41,6 +41,7 @@
 #include <BlendInt/Gui/Tab.hpp>
 #include <BlendInt/Gui/TabButton.hpp>
 #include <BlendInt/Gui/TabHeader.hpp>
+#include <BlendInt/Gui/Expander.hpp>
 
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -65,10 +66,21 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	Tab* tab = Manage(new Tab);
-	tab->SetPosition(100, 100);
+	ToolBox* box = Manage(new ToolBox);
+	box->SetPosition(100, 100);
+	box->Resize(200, 300);
 
-	context->Add(tab);
+	Button* btn1 = Manage(new Button);
+	Button* btn2 = Manage(new Button);
+
+	box->PushBack(btn1);
+
+	Expander* expander = Manage(new Expander("Hello"));
+	expander->Setup(btn2);
+
+	box->PushBack(expander);
+
+	context->Add(box);
 
 	RunLoop(win);
 

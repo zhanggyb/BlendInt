@@ -24,6 +24,7 @@
 #ifndef _BLENDINT_VERTEXICON_HPP_
 #define _BLENDINT_VERTEXICON_HPP_
 
+#include <BlendInt/Core/Color.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/OpenGL/GLElementArrayBuffer.hpp>
 
@@ -62,6 +63,8 @@ namespace BlendInt {
 				const unsigned int (*vertex_indices)[3], size_t indeces_size);
 
 		virtual void Draw (const glm::mat4& mvp, short gamma = 0);
+
+		virtual void Draw (const glm::mat4& mvp, const Color& color, short gamma = 0);
 
 		virtual void Draw (const glm::mat4& mvp, int x, int y, int restrict_width, int restrict_height);
 

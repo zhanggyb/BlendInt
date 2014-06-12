@@ -195,22 +195,12 @@ namespace BlendInt {
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
-
 		DrawShadedTriangleFan(0, 1, m_inner_buffer.get());
-
 		glDisableVertexAttribArray(1);
-
-		Theme* tm = Theme::instance;
-
-		Color color;
-		color = tm->menu().outline;
-
-		program->SetVertexAttrib4fv("Color", color.data());
+		program->SetVertexAttrib4fv("Color", Theme::instance->menu().outline.data());
 		program->SetUniform1i("AA", 1);
 		program->SetUniform1i("Gamma", 0);
-
 		DrawTriangleStrip(0, m_outer_buffer.get());
-
 		glDisableVertexAttribArray(0);
 
 		program->Reset();

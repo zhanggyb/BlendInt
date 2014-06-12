@@ -13,6 +13,7 @@
 #include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
+#include <BlendInt/Gui/Expander.hpp>
 
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/Button.hpp>
@@ -34,6 +35,10 @@ private:
 	void OnOpenClick ();
 
 	void OnResize (AbstractWidget* context, int type);
+
+	BI::MenuBar* CreateMenuBar ();
+
+	BI::Expander* CreateExpander ();
 
 	BI::MenuBar* m_menubar;
 	BI::ToolBar* m_toolbar;

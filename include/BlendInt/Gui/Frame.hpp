@@ -56,6 +56,12 @@ namespace BlendInt {
 
 		bool Remove (AbstractWidget* widget);
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
@@ -79,6 +85,11 @@ namespace BlendInt {
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+	private:
+
+		GLuint m_vao;
+		RefPtr<GLArrayBuffer> m_inner;
 
 	};
 

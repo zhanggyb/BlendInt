@@ -51,7 +51,6 @@
 namespace BlendInt {
 
 	struct WidgetTheme;
-	class Color;
 
 	class Jitter: public std::vector<glm::vec2>
 	{

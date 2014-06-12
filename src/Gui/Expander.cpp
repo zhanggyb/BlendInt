@@ -38,28 +38,42 @@
 #include <BlendInt/Gui/Expander.hpp>
 
 #include <BlendInt/Gui/ToggleButton.hpp>
-#include <BlendInt/Gui/Frame.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Icons.hpp>
 
 namespace BlendInt {
 
 	ExpandButton::ExpandButton()
-	: AbstractButton(), m_vao(0)
+	: AbstractButton()
 	{
 		InitializeExpandButton();
 	}
 
 	ExpandButton::ExpandButton (const String& text)
-	: AbstractButton(), m_vao(0)
+	: AbstractButton()
 	{
 		InitializeExpandButton(text);
 	}
 
 	ExpandButton::~ExpandButton ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	bool ExpandButton::IsExpandX () const
+	{
+		return true;
+	}
+
+	Size ExpandButton::GetPreferredSize () const
+	{
+		int h = font().GetHeight();
+
+		Size prefer(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum() + 100,
+						h + DefaultButtonPadding().vsum());
+
+		return prefer;
 	}
 
 	void ExpandButton::UpdateGeometry (const WidgetUpdateRequest& request)
@@ -68,12 +82,6 @@ namespace BlendInt {
 
 			case WidgetSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
-				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(),
-								round_corner_radius());
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
-
 				UpdateTextPosition(*size_p, round_corner_type(),
 								round_corner_radius(), text());
 				Refresh();
@@ -82,12 +90,6 @@ namespace BlendInt {
 
 			case WidgetRoundCornerType: {
 				const int* type_p = static_cast<const int*>(request.data());
-				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), *type_p,
-								round_corner_radius());
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
-
 				UpdateTextPosition(size(), *type_p, round_corner_radius(),
 								text());
 				Refresh();
@@ -97,12 +99,6 @@ namespace BlendInt {
 			case WidgetRoundCornerRadius: {
 				const int* radius_p =
 								static_cast<const int*>(request.data());
-				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
-								*radius_p);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
-
 				UpdateTextPosition(size(), round_corner_type(), *radius_p,
 								text());
 				Refresh();
@@ -119,57 +115,25 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glBindVertexArray(m_vao);
-
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-		program->Use();
-
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		Theme* tm = Theme::instance;
-
-		Color color;
-
-		if (hover()) {
-			if(checked()) {
-				color = tm->regular().inner_sel + 15;
-			} else {
-				color = tm->regular().inner + 15;
-			}
-		} else {
-			if (checked()) {
-				color = tm->regular().inner_sel;
-			} else {
-				color = tm->regular().inner;
-			}
-		}
-
-		program->SetVertexAttrib4fv("Color", color.data());
-		program->SetUniform1i("AA", 0);
-
-		glEnableVertexAttribArray(0);
-
-		DrawTriangleFan(0, m_inner_buffer.get());
-
-		color = tm->regular().outline;
-
-		program->SetVertexAttrib4fv("Color", color.data());
-		program->SetUniform1i("AA", 1);
-
-		DrawTriangleStrip(0, m_outer_buffer.get());
-
-		glDisableVertexAttribArray(0);
-
-		program->Reset();
-
-		glBindVertexArray(0);
 
 		if(text().size()) {
 			font().Print(mvp, text(), text_length(), 0);
 		}
+
+		RefPtr<VertexIcon> icon = Stock::Icons::instance->icon_num();
+
+		glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(1.5f, 1.5f, 1.5f));
+		glm::mat4 rotate;
+		if(checked()) {
+			rotate = glm::rotate(glm::mat4(1.f), (glm::mediump_float)(M_PI * 0.f), glm::vec3(0.0, 0.0, 1.0));
+		} else {
+			rotate = glm::rotate(glm::mat4(1.f), (glm::mediump_float)(M_PI * 1.5f), glm::vec3(0.0, 0.0, 1.0));
+		}
+		glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, size().height()/2.f, 0.0));
+
+		icon->Draw(mvp * translate * rotate * scale, Color(0x0F0F0FFF));
 
 		return Accept;
 	}
@@ -180,16 +144,8 @@ namespace BlendInt {
 
 		int h = font().GetHeight();
 
-		set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
-						h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
-
-		glGenVertexArrays(1, &m_vao);
-
-		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
-						round_corner_radius());
-		m_inner_buffer = tool.GenerateInnerBuffer();
-		m_outer_buffer = tool.GenerateOuterBuffer();
+		set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum(),
+						h + DefaultButtonPadding().vsum());
 	}
 
 	void ExpandButton::InitializeExpandButton (const String& text)
@@ -215,25 +171,218 @@ namespace BlendInt {
 							(height - font().GetHeight()) / 2
 											+ std::abs(font().GetDescender()));
 		}
+	}
 
-		glGenVertexArrays(1, &m_vao);
-		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
-						round_corner_radius());
-		m_inner_buffer = tool.GenerateInnerBuffer();
-		m_outer_buffer = tool.GenerateOuterBuffer();
+	// ----------------------
+
+	SingleBox::SingleBox ()
+	: AbstractSingleContainer()
+	{
+		set_size(400, 300);
+	}
+
+	SingleBox::~SingleBox ()
+	{
+	}
+
+	bool SingleBox::Setup (AbstractWidget* widget)
+	{
+		bool ret = false;
+
+		if (SetSubWidget(widget)) {
+
+			int x = position().x() + margin().left();
+			int y = position().y() + margin().bottom();
+
+			int w = size().width() - margin().hsum();
+			int h = size().height() - margin().vsum();
+
+			FillSubWidget(x, y, w, h);
+
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	bool SingleBox::Remove (AbstractWidget* widget)
+	{
+		bool ret = false;
+
+		if(RemoveSubWidget(widget)) {
+
+			ret = true;
+		}
+
+		return ret;
+	}
+
+	bool SingleBox::IsExpandX() const
+	{
+		if(sub_widget())
+			return sub_widget()->IsExpandX();
+		else
+			return false;
+	}
+
+	bool SingleBox::IsExpandY() const
+	{
+		if(sub_widget())
+			return sub_widget()->IsExpandY();
+		else
+			return false;
+	}
+
+	Size SingleBox::GetPreferredSize() const
+	{
+		Size prefer(400, 300);
+
+		if(sub_widget()) {
+			prefer = sub_widget()->GetPreferredSize();
+
+			prefer.add_width(margin().hsum());
+			prefer.add_height(margin().vsum());
+		}
+
+		return prefer;
+	}
+
+	void SingleBox::UpdateContainer (const WidgetUpdateRequest& request)
+	{
+		switch(request.type()) {
+
+			case ContainerMargin: {
+
+				if (sub_widget()) {
+					const Margin* margin_p =
+									static_cast<const Margin*>(request.data());
+					set_margin(*margin_p);
+
+					FillSubWidget(position(), size(), *margin_p);
+				}
+				break;
+			}
+
+			case ContainerRefresh: {
+				Refresh();
+				break;
+			}
+
+			default:
+				break;
+
+		}
+	}
+
+	bool SingleBox::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		if(request.source() == this) {
+
+			return AbstractSingleContainer::UpdateGeometryTest(request);
+
+		} else if (request.source() == container()) {
+
+			return true;
+
+		} else {	// called by sub widget
+
+			switch(request.type()) {
+				case WidgetSize:
+					return false;
+
+				case WidgetPosition:
+					return false;
+
+				default:
+					return false;
+			}
+		}
+	}
+
+	void SingleBox::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		if(request.source() == this || request.source() == container()) {
+
+			switch (request.type()) {
+
+				case WidgetSize: {
+					const Size* size_p =
+									static_cast<const Size*>(request.data());
+					if (sub_widget()) {
+						FillSubWidget(position(), *size_p, margin());
+					}
+
+					break;
+				}
+
+				case WidgetPosition: {
+					if (sub_widget()) {
+						const Point* pos_p =
+										static_cast<const Point*>(request.data());
+						SetSubWidgetPosition(sub_widget(),
+										pos_p->x() + margin().left(),
+										pos_p->y() + margin().bottom());
+					}
+					break;
+				}
+
+				default:
+					break;
+			}
+
+		}
+	}
+
+	ResponseType SingleBox::CursorEnterEvent (bool entered)
+	{
+		return Accept;
+	}
+
+	ResponseType SingleBox::KeyPressEvent (const KeyEvent& event)
+	{
+		return Accept;
+	}
+
+	ResponseType SingleBox::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return Accept;
+	}
+
+	ResponseType SingleBox::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	{
+		return Accept;
+	}
+
+	ResponseType SingleBox::MousePressEvent (const MouseEvent& event)
+	{
+		return Accept;
+	}
+
+	ResponseType SingleBox::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Accept;
+	}
+
+	ResponseType SingleBox::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Accept;
+	}
+
+	ResponseType SingleBox::Draw (const RedrawEvent& event)
+	{
+		return IgnoreAndContinue;
 	}
 
 	// ----------------------
 
 	Expander::Expander ()
-	: AbstractVectorContainer(2), m_space (4), m_frame_height(0)
+	: AbstractVectorContainer(2), m_vao(0), m_frame_height(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
-		Frame* frame = Manage(new Frame);
+		SingleBox* box = Manage(new SingleBox);
 
 		SetSubWidget(0, title_button);
-		SetSubWidget(1, frame);
+		SetSubWidget(1, box);
 
 		int width = 0;
 		int height = 0;
@@ -242,9 +391,7 @@ namespace BlendInt {
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
-		height += m_space;
-
-		tmp = frame->GetPreferredSize();
+		tmp = box->GetPreferredSize();
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
@@ -252,21 +399,24 @@ namespace BlendInt {
 		height = height + margin().top() + margin().bottom();
 
 		set_size(width, height);
+		set_margin(2, 2, 2, 2);
 
-		FillWithPreferredHeight(position(), size(), margin(), m_space);
-		m_frame_height = frame->size().height();
+		FillInExpander(position(), size(), margin());
+		m_frame_height = box->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
+
+		InitializeExpander();
 	}
 
 	Expander::Expander (const String& title)
-	: AbstractVectorContainer(2), m_space (4), m_frame_height(0)
+	: AbstractVectorContainer(2), m_vao(0), m_frame_height(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
-		Frame* frame = Manage(new Frame);
+		SingleBox* box = Manage(new SingleBox);
 
 		SetSubWidget(0, title_button);
-		SetSubWidget(1, frame);
+		SetSubWidget(1, box);
 
 		int width = 0;
 		int height = 0;
@@ -275,9 +425,7 @@ namespace BlendInt {
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
-		height += m_space;
-
-		tmp = frame->GetPreferredSize();
+		tmp = box->GetPreferredSize();
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
@@ -285,21 +433,25 @@ namespace BlendInt {
 		height = height + margin().top() + margin().bottom();
 
 		set_size(width, height);
+		set_margin(2, 2, 2, 2);
 
-		FillWithPreferredHeight(position(), size(), margin(), m_space);
-		m_frame_height = frame->size().height();
+		FillInExpander(position(), size(), margin());
+		m_frame_height = box->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
+
+		InitializeExpander();
 	}
 
 	Expander::~Expander ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	bool Expander::Setup (AbstractWidget* widget)
 	{
-		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
-		if(frame->Setup(widget)) {
+		SingleBox* box = dynamic_cast<SingleBox*>(sub_widget(1));
+		if(box->Setup(widget)) {
 			return true;
 		}
 
@@ -317,10 +469,9 @@ namespace BlendInt {
 			prefer.set_width(std::max(prefer.width(), tmp.width()));
 			prefer.add_height(tmp.height());
 		}
-		prefer.add_height(m_space);
 
-		prefer.add_width(margin().left() + margin().right());
-		prefer.add_height(margin().top() + margin().bottom());
+		prefer.add_width(margin().hsum());
+		prefer.add_height(margin().vsum());
 
 		return prefer;
 	}
@@ -364,7 +515,7 @@ namespace BlendInt {
 
 				const Margin* margin_p = static_cast<const Margin*>(request.data());
 				set_margin(*margin_p);
-				FillWithPreferredHeight(position(), size(), *margin_p, m_space);
+				FillInExpander(position(), size(), *margin_p);
 
 				break;
 			}
@@ -382,6 +533,7 @@ namespace BlendInt {
 
 	bool Expander::UpdateGeometryTest (const WidgetUpdateRequest& request)
 	{
+		/*
 		if(request.source() == this) {
 
 			return AbstractVectorContainer::UpdateGeometryTest(request);
@@ -399,6 +551,10 @@ namespace BlendInt {
 					return false;
 			}
 		}
+		*/
+
+		// Allow container to resize this
+		return true;
 	}
 
 	void Expander::UpdateGeometry (const WidgetUpdateRequest& request)
@@ -408,8 +564,11 @@ namespace BlendInt {
 			case WidgetSize: {
 				const Size* size_p =
 								static_cast<const Size*>(request.data());
-				FillWithPreferredHeight(position(), *size_p, margin(),
-								m_space);
+				FillInExpander(position(), *size_p, margin());
+
+				VertexTool tool;
+				tool.Setup(*size_p, 0, RoundNone, 0, false);
+				tool.UpdateInnerBuffer(m_inner.get());
 				break;
 			}
 
@@ -432,7 +591,29 @@ namespace BlendInt {
 
 	ResponseType Expander::Draw (const RedrawEvent& event)
 	{
-		return IgnoreAndContinue;
+		using Stock::Shaders;
+
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		glBindVertexArray(m_vao);
+		RefPtr<GLSLProgram> program =
+				Shaders::instance->default_triangle_program();
+
+		program->Use();
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetUniform1i("AA", 0);
+		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
+
+		glEnableVertexAttribArray(0);
+		DrawTriangleStrip(0, m_inner.get());
+		glDisableVertexAttribArray(0);
+
+		program->Reset();
+		glBindVertexArray(0);
+
+		return AcceptAndContinue;
 	}
 
 	ResponseType Expander::CursorEnterEvent (bool entered)
@@ -472,61 +653,50 @@ namespace BlendInt {
 		return Ignore;
 	}
 	
-	void Expander::FillWithPreferredHeight (const Point& out_pos,
-					const Size& out_size, const Margin& margin, int space)
+	void Expander::FillInExpander (const Point& out_pos,
+					const Size& out_size, const Margin& margin)
 	{
 		int x = out_pos.x() + margin.left();
 		int y = out_pos.y() + margin.bottom();
-		int width = out_size.width() - margin.left() - margin.right();
-		int height = out_size.height() - margin.top() - margin.bottom();
+		int w = out_size.width() - margin.hsum();
+		int h = out_size.height() - margin.vsum();
 
-		if(width >= 0 && height >= space)
-			FillWithPreferredHeight(x, y, width, height, space);
+		if(w >= 0 && h >= 0)
+			FillInExpander(x, y, w, h);
 	}
 	
-	void Expander::FillWithPreferredHeight (int x, int y, int width,
-					int height, int space)
+	void Expander::FillInExpander (int x, int y, int width,
+					int height)
 	{
-		y = y + height;
-
-		Size prefer;
-
 		int button_preferred_height = 0;
-		int sum = 0;
+		//int sum = 0;
 		ExpandButton* button = dynamic_cast<ExpandButton*>(sub_widget(0));
-		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
+		SingleBox* box = dynamic_cast<SingleBox*>(sub_widget(1));
 
-		prefer = button->GetPreferredSize();
-		button_preferred_height = prefer.height();
-		sum += prefer.height();
+		button_preferred_height = button->GetPreferredSize().height();
 
-		if (frame->visiable()) {
-			prefer = frame->GetPreferredSize();
-			sum += prefer.height();
+		if(box->visiable()) {
 
-			if (button_preferred_height < (height - space)) {
-				y = y - button_preferred_height;
-				ResizeSubWidget(button, width,
-								button_preferred_height);
+			if(button_preferred_height < height) {
+
+				y = y + height;
+				ResizeSubWidget(button, width, button_preferred_height);
+				y -= button_preferred_height;
 				SetSubWidgetPosition(button, x, y);
 
-				y -= space;
+				ResizeSubWidget(box, width, height - button_preferred_height);
+				y -= box->size().height();
+				SetSubWidgetPosition(box, x, y);
 
-				ResizeSubWidget(frame, width,
-								height - button_preferred_height - space);
-				y = y - (height - button_preferred_height - space);
-				SetSubWidgetPosition(frame, x, y);
 			} else {
-				y = y - (height - space);
-				ResizeSubWidget(button, width, height - space);
-				SetSubWidgetPosition(button, x, y);
 
-				y -= space;
-				ResizeSubWidget(frame, width, 0);
-				SetSubWidgetPosition(frame, x, y);
+				ResizeSubWidget(button, width, height);
+				SetSubWidgetPosition(button, x, y);
+				ResizeSubWidget(box, width, 0);
+				SetSubWidgetPosition(box, x, y);
 			}
+
 		} else {
-			y = y - height;
 			ResizeSubWidget(button, width, height);
 			SetSubWidgetPosition(button, x, y);
 		}
@@ -543,30 +713,39 @@ namespace BlendInt {
 
 		return button->text();
 	}
+	
+	void Expander::InitializeExpander ()
+	{
+		glGenVertexArrays(1, &m_vao);
+
+		glBindVertexArray(m_vao);
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0, false);
+		m_inner = tool.GenerateInnerBuffer();
+		glBindVertexArray(0);
+	}
 
 	void Expander::OnToggled (bool toggle)
 	{
 		ExpandButton* button = dynamic_cast<ExpandButton*>(sub_widget(0));
-		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
+		SingleBox* box = dynamic_cast<SingleBox*>(sub_widget(1));
 
 		if(toggle) {
 			int x = position().x();
 			int y = position().y() + size().height();
-			frame->SetVisible(false);
-			m_frame_height = frame->size().height();
-			Resize(size().width(), button->size().height() + margin().top() + margin().bottom());
+			box->SetVisible(false);
+			m_frame_height = box->size().height();
+			Resize(size().width(), button->size().height() + margin().vsum());
 			y = y - size().height();
 			SetPosition(x, y);
 		} else {
 			int x = position().x();
 			int y = position().y() + size().height();
 
-			frame->SetVisible(true);
+			box->SetVisible(true);
 
 			Resize(size().width(),
-							button->size().height() + m_space
-											+ m_frame_height + margin().top()
-											+ margin().bottom());
+							button->size().height() + m_frame_height + margin().vsum());
 			y = y - size().height();
 			SetPosition(x, y);
 		}

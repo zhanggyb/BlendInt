@@ -141,6 +141,13 @@ namespace BlendInt {
 
 	void VertexIcon::Draw(const glm::mat4& mvp, short gamma)
 	{
+		Color color (0.1f, 0.1f, 0.1f, 0.125f);
+
+		Draw(mvp, color, gamma);
+	}
+
+	void VertexIcon::Draw(const glm::mat4& mvp, const Color& color, short gamma)
+	{
 		using Stock::Shaders;
 
 		glBindVertexArray(m_vao);
@@ -148,11 +155,8 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
-		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-						glm::value_ptr(mvp));
-		program->SetVertexAttrib4f("Color", r, g, b, a);
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
 		program->SetUniform1i("Gamma", gamma);
 

@@ -26,6 +26,7 @@
 
 #include <BlendInt/Gui/AbstractButton.hpp>
 #include <BlendInt/Gui/AbstractVectorContainer.hpp>
+#include <BlendInt/Gui/AbstractSingleContainer.hpp>
 
 namespace BlendInt {
 
@@ -44,6 +45,10 @@ namespace BlendInt {
 
 		virtual ~ExpandButton ();
 
+		virtual bool IsExpandX () const;
+
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
@@ -55,13 +60,59 @@ namespace BlendInt {
 		void InitializeExpandButton ();
 
 		void InitializeExpandButton (const String& text);
+	};
 
-		GLuint m_vao;
+	// --------------------------
 
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+	/**
+	 * @brief A container works as Frame but does not draw
+	 */
+	class SingleBox: public AbstractSingleContainer
+	{
+		DISALLOW_COPY_AND_ASSIGN(SingleBox);
+
+	public:
+
+		SingleBox ();
+
+		virtual ~SingleBox ();
+
+		bool Setup (AbstractWidget* widget);
+
+		bool Remove (AbstractWidget* widget);
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
+	protected:
+
+		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+
+		virtual void UpdateContainer (const WidgetUpdateRequest& request);
+
+		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+
+		virtual ResponseType Draw (const RedrawEvent& event);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	};
+
 
 	// --------------------------
 
@@ -86,11 +137,11 @@ namespace BlendInt {
 
 		const String& GetTitle () const;
 
-		virtual Size GetPreferredSize () const;
-
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -118,15 +169,19 @@ namespace BlendInt {
 
 	protected:
 
-		void FillWithPreferredHeight (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+		void InitializeExpander ();
 
-		void FillWithPreferredHeight (int x, int y, int width, int height, int space);
+		void FillInExpander (const Point& out_pos, const Size& out_size, const Margin& margin);
+
+		void FillInExpander (int x, int y, int width, int height);
 
 		void OnToggled (bool toggle);
 
-		int m_space;
+		GLuint m_vao;
 
-		unsigned int m_frame_height;
+		int m_frame_height;
+
+		RefPtr<GLArrayBuffer> m_inner;
 	};
 
 }

@@ -6,6 +6,7 @@
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/HBox.hpp>
+#include <BlendInt/Gui/VBox.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 
@@ -28,7 +29,7 @@ void MainLayout::InitOnce ()
 {
 	using namespace BI;
 
-	m_menubar = Manage(new MenuBar);
+	m_menubar = CreateMenuBar();
 	m_toolbar = Manage(new ToolBar);
 	m_imgview = Manage(new ImageView);
 	m_area = Manage(new ScrollArea);
@@ -45,18 +46,6 @@ void MainLayout::InitOnce ()
 	box->PushBack(m_input);
 	box->PushBack(m_open);
 
-    RefPtr<Menu> file_menu(new Menu);
-
-    file_menu->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
-    file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
-    file_menu->AddAction("MenuItem2", "Ctrl + 1");
-    file_menu->AddAction("MenuItem3", "Ctrl + 1");
-    file_menu->AddAction("MenuItem4", "Ctrl + 1");
-    file_menu->AddAction("MenuItem5");
-
-	m_menubar->AddMenu(String("File"), file_menu);
-	
-	//m_toolbar->Resize(m_toolbar->size().width(), 24);
 	m_toolbar->SetMargin(2, 2, 2, 2);
 	m_toolbar->PushBack(m_menubar);
 	m_toolbar->PushBack(m_combo);
@@ -65,10 +54,8 @@ void MainLayout::InitOnce ()
 	m_area->SetViewport(m_imgview);
 
 	ToolBox* tbox = Manage(new ToolBox);
-	Button* btn1 = Manage(new Button("Blur"));
-	Button* btn2 = Manage(new Button("Help"));
-	tbox->PushBack(btn1);
-	tbox->PushBack(btn2);
+	Expander* expander = CreateExpander();
+	tbox->PushBack(expander);
 
 	Splitter* splitter = Manage(new Splitter);
 	splitter->SetMargin(0, 0, 0, 0);
@@ -90,4 +77,41 @@ void MainLayout::OnOpenClick()
 void MainLayout::OnResize (AbstractWidget* context, int type)
 {
 	Resize(context->size());
+}
+
+BI::MenuBar* MainLayout::CreateMenuBar()
+{
+	using namespace BI;
+
+	MenuBar* menubar = Manage(new MenuBar);
+
+	RefPtr<Menu> file_menu(new Menu);
+
+    file_menu->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
+    file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    file_menu->AddAction("MenuItem2", "Ctrl + 1");
+    file_menu->AddAction("MenuItem3", "Ctrl + 1");
+    file_menu->AddAction("MenuItem4", "Ctrl + 1");
+    file_menu->AddAction("MenuItem5");
+
+	menubar->AddMenu(String("File"), file_menu);
+
+	return menubar;
+}
+
+BI::Expander* MainLayout::CreateExpander()
+{
+	BI::Expander* expander = Manage(new BI::Expander("Tools"));
+
+	BI::Button* btn1 = Manage(new BI::Button("Blur"));
+	BI::Button* btn2 = Manage(new BI::Button("Help"));
+
+	BI::VBox* vbox = Manage(new BI::VBox);
+	vbox->PushBack(btn1);
+	vbox->PushBack(btn2);
+
+	expander->Setup(vbox);
+
+	return expander;
+
 }

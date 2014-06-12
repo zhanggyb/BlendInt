@@ -39,7 +39,7 @@ TEST_F(ExpanderTest1, Foo1)
 
 	expander->Setup(btn1);
 
-	expander->Resize(200, 200);
+	expander->Resize(expander->GetPreferredSize());
 
     RunLoop(win);
 
