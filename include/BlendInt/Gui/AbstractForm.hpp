@@ -96,9 +96,19 @@ namespace BlendInt {
 			return m_type;
 		}
 
+		void set_type (int type)
+		{
+			m_type = type;
+		}
+
 		const void* data () const
 		{
 			return m_data;
+		}
+
+		void set_data (const void* data)
+		{
+			m_data = data;
 		}
 
 	private:

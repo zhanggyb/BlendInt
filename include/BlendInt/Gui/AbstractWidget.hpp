@@ -79,8 +79,18 @@ namespace BlendInt {
 	{
 	public:
 
-		WidgetUpdateRequest (AbstractWidget* source, int type, const void* data)
-	: UpdateRequest(type, data), m_source(source)
+		WidgetUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: UpdateRequest(0, 0),
+		  m_source(source),
+		  m_target(target)
+		{
+
+		}
+
+		WidgetUpdateRequest (AbstractWidget* source, AbstractWidget* target,
+						int type, const void* data)
+		: UpdateRequest(type, data),
+		  m_source(source), m_target(target)
 		{
 		}
 
@@ -94,11 +104,18 @@ namespace BlendInt {
 			return m_source;
 		}
 
+		AbstractWidget* target () const
+		{
+			return m_target;
+		}
+
 	private:
 
 		WidgetUpdateRequest();
 
 		AbstractWidget* m_source;
+
+		AbstractWidget* m_target;
 	};
 
 	/**
@@ -109,24 +126,19 @@ namespace BlendInt {
 	private:
 		friend class AbstractContainer;
 
-		explicit SubWidgetProxy(AbstractWidget* widget);
+		SubWidgetProxy(AbstractWidget* container_source, AbstractWidget* sub_target);
 
 		~SubWidgetProxy ();
 
-		void set_widget (AbstractWidget* widget)
-		{
-			m_widget = widget;
-		}
+		void Resize (const Size& size);
 
-		void Resize (AbstractWidget* source, const Size& size);
+		void Resize (int width, int height);
 
-		void Resize (AbstractWidget* source, int width, int height);
+		void SetPosition (int x, int y);
 
-		void SetPosition (AbstractWidget* source, int x, int y);
+		void SetPosition (const Point& position);
 
-		void SetPosition (AbstractWidget* source, const Point& position);
-
-		AbstractWidget* m_widget;
+		WidgetUpdateRequest m_request;
 	};
 
 	/**
@@ -137,26 +149,21 @@ namespace BlendInt {
 	private:
 		friend class AbstractWidget;
 
-		explicit ContainerProxy (AbstractContainer* container);
+		explicit ContainerProxy (AbstractWidget* sub_source, AbstractContainer* container_target);
 
 		~ContainerProxy ();
 
-		void set_container (AbstractContainer* container)
-		{
-			m_container = container;
-		}
+		void RequestRefresh ();
 
-		void RequestRefresh (AbstractWidget* source);
+		bool SubwidgetPositionUpdateTest (const Point& pos);
 
-		bool SubwidgetPositionUpdateTest (AbstractWidget* source, const Point& pos);
+		bool SubWidgetSizeUpdateTest (const Size& size);
 
-		bool SubWidgetSizeUpdateTest (AbstractWidget* source, const Size& size);
+		void SubWidgetPositionUpdate (const Point& pos);
 
-		void SubWidgetPositionUpdate (AbstractWidget* source, const Point& pos);
+		void SubWidgetSizeUpdate (const Size& size);
 
-		void SubWidgetSizeUpdate (AbstractWidget* source, const Size& size);
-
-		AbstractContainer* m_container;
+		WidgetUpdateRequest m_request;
 	};
 
 	// ----------------------------------------------------

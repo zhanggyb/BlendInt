@@ -90,7 +90,7 @@ namespace BlendInt {
 		if (m_margin.equal(margin))
 			return;
 
-		WidgetUpdateRequest request (this, ContainerMargin, &margin);
+		WidgetUpdateRequest request (this, this, ContainerMargin, &margin);
 
 		UpdateContainer(request);
 		m_margin = margin;
@@ -102,7 +102,7 @@ namespace BlendInt {
 			return;
 
 		Margin new_margin(left, right, top, bottom);
-		WidgetUpdateRequest request (this, ContainerMargin, &new_margin);
+		WidgetUpdateRequest request (this, this, ContainerMargin, &new_margin);
 
 		UpdateContainer(request);
 		m_margin = new_margin;
@@ -113,8 +113,8 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		SubWidgetProxy delegate(sub);
-		delegate.Resize(this, width, height);
+		SubWidgetProxy delegate(this, sub);
+		delegate.Resize(width, height);
 	}
 	
 	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
@@ -122,8 +122,8 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		SubWidgetProxy delegate(sub);
-		delegate.Resize(this, size);
+		SubWidgetProxy delegate(this, sub);
+		delegate.Resize(size);
 	}
 	
 	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub, int x,
@@ -131,8 +131,8 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		SubWidgetProxy delegate(sub);
-		delegate.SetPosition(this, x, y);
+		SubWidgetProxy delegate(this, sub);
+		delegate.SetPosition(x, y);
 	}
 	
 	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub,
@@ -140,8 +140,8 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		SubWidgetProxy delegate(sub);
-		delegate.SetPosition(this, pos);
+		SubWidgetProxy delegate(this, sub);
+		delegate.SetPosition(pos);
 	}
 	
 	void AbstractContainer::RemoveShadow (AbstractWidget* widget)

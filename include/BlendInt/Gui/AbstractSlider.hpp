@@ -214,7 +214,7 @@ namespace BlendInt {
 		if (value < m_minimum || value > m_maximum)
 			return;
 
-		WidgetUpdateRequest request(this, SliderPropertyValue, &value);
+		WidgetUpdateRequest request(this, this, SliderPropertyValue, &value);
 
 		UpdateSlider(request);
 		m_value = value;
@@ -243,7 +243,7 @@ namespace BlendInt {
 		if (m_minimum == minimum)
 			return;
 
-		WidgetUpdateRequest request(this, SliderPropertyMinimum, &minimum);
+		WidgetUpdateRequest request(this, this, SliderPropertyMinimum, &minimum);
 		UpdateSlider(request);
 		m_minimum = minimum;
 	}
@@ -254,7 +254,7 @@ namespace BlendInt {
 		if (m_maximum == maximum)
 			return;
 
-		WidgetUpdateRequest request(this, SliderPropertyMaximum, &maximum);
+		WidgetUpdateRequest request(this, this, SliderPropertyMaximum, &maximum);
 
 		UpdateSlider(request);
 		m_maximum = maximum;
@@ -265,7 +265,7 @@ namespace BlendInt {
 	{
 		if(m_orientation == orientation) return;
 
-		WidgetUpdateRequest request(this, SliderPropertyOrientation, &orientation);
+		WidgetUpdateRequest request(this, this, SliderPropertyOrientation, &orientation);
 
 		UpdateSlider(request);
 		m_orientation = orientation;
