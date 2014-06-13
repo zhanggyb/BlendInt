@@ -161,7 +161,7 @@ TEST_F(ScrollBarTest1, SetPercentage01)
 
     bar->SetPosition(200, 200);
 
-    bar->SetPercentage(50);
+    bar->SetSliderPercentage(50);
 
     context->Add(bar);
 

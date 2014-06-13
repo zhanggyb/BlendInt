@@ -601,6 +601,13 @@ namespace BlendInt {
 		return buf;
 	}
 
+	void VertexTool::SetInnerBufferData(GLArrayBuffer* buffer, GLenum usage)
+	{
+		if(buffer) {
+			buffer->set_data(sizeof(GLfloat) * m_inner.size(), &m_inner[0], usage);
+		}
+	}
+
 	void VertexTool::UpdateInnerBuffer (GLArrayBuffer* buffer, GLenum usage)
 	{
 		if(buffer) {
@@ -628,6 +635,16 @@ namespace BlendInt {
 		return buf;
 	}
 	
+	void VertexTool::SetOuterBufferData (GLArrayBuffer* buffer, GLenum usage)
+	{
+		if(buffer) {
+			std::vector<GLfloat> strip;
+			GenerateTriangleStripVertices(m_inner, m_outer, m_total, strip);
+
+			buffer->SetData(sizeof(GLfloat) * strip.size(), &strip[0], usage);
+		}
+	}
+
 	void VertexTool::UpdateOuterBuffer (GLArrayBuffer* buffer, GLenum usage)
 	{
 		if(buffer) {
@@ -658,6 +675,16 @@ namespace BlendInt {
 		return buf;
 	}
 	
+	void VertexTool::SetEmbossBufferData (GLArrayBuffer* buffer, GLenum usage)
+	{
+		if(buffer) {
+			std::vector<GLfloat> strip;
+			GenerateTriangleStripVertices(m_inner, m_outer, m_half, strip);
+
+			buffer->SetData(sizeof(GLfloat) * strip.size(), &strip[0], usage);
+		}
+	}
+
 	void VertexTool::UpdateEmbossBuffer (GLArrayBuffer* buffer, GLenum usage)
 	{
 		if(buffer) {

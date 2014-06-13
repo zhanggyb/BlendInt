@@ -141,7 +141,7 @@ namespace BlendInt {
 		m_request.set_type(WidgetPosition);
 		m_request.set_data(&pos);
 
-		container->UpdateGeometryTest(m_request);
+		return container->UpdateGeometryTest(m_request);
 	}
 
 	bool ContainerProxy::SubWidgetSizeUpdateTest(AbstractContainer* container, const Size& size)
@@ -149,7 +149,7 @@ namespace BlendInt {
 		m_request.set_type(WidgetSize);
 		m_request.set_data(&size);
 
-		container->UpdateGeometryTest(m_request);
+		return container->UpdateGeometryTest(m_request);
 	}
 
 	void ContainerProxy::SubWidgetPositionUpdate (AbstractContainer* container, const Point& pos)

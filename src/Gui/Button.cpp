@@ -68,9 +68,12 @@ namespace BlendInt {
 								round_corner_radius(), text());
 				VertexTool tool;
 				tool.Setup (*size_p, DefaultBorderWidth(), round_corner_type(), round_corner_radius());
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
-				tool.UpdateEmbossBuffer(m_emboss_buffer.get());
+				m_inner_buffer->Bind();
+				tool.SetInnerBufferData(m_inner_buffer.get());
+				m_outer_buffer->Bind();
+				tool.SetOuterBufferData(m_outer_buffer.get());
+				m_emboss_buffer->Bind();
+				tool.SetEmbossBufferData(m_emboss_buffer.get());
 				Refresh();
 				break;
 			}
@@ -81,9 +84,12 @@ namespace BlendInt {
 								text());
 				VertexTool tool;
 				tool.Setup (size(), DefaultBorderWidth(), *type_p, round_corner_radius());
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
-				tool.UpdateEmbossBuffer(m_emboss_buffer.get());
+				m_inner_buffer->Bind();
+				tool.SetInnerBufferData(m_inner_buffer.get());
+				m_outer_buffer->Bind();
+				tool.SetOuterBufferData(m_outer_buffer.get());
+				m_emboss_buffer->Bind();
+				tool.SetEmbossBufferData(m_emboss_buffer.get());
 				Refresh();
 				break;
 			}
@@ -95,9 +101,12 @@ namespace BlendInt {
 								text());
 				VertexTool tool;
 				tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), *radius_p);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
-				tool.UpdateEmbossBuffer(m_emboss_buffer.get());
+				m_inner_buffer->Bind();
+				tool.SetInnerBufferData(m_inner_buffer.get());
+				m_outer_buffer->Bind();
+				tool.SetOuterBufferData(m_outer_buffer.get());
+				m_emboss_buffer->Bind();
+				tool.SetEmbossBufferData(m_emboss_buffer.get());
 				Refresh();
 				break;
 			}
@@ -125,18 +134,16 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
 
-		Theme* tm = Theme::instance;
-
 		Color color;
 
 		// draw inner, simple fill
 		if(down()) {
-			color = tm->regular().inner_sel;
+			color = Theme::instance->regular().inner_sel;
 		} else {
 			if(hover()) {
-				color = tm->regular().inner + 15;
+				color = Theme::instance->regular().inner + 15;
 			} else {
-				color = tm->regular().inner;
+				color = Theme::instance->regular().inner;
 			}
 		}
 
@@ -146,7 +153,7 @@ namespace BlendInt {
 
 		DrawTriangleFan(0, m_inner_buffer.get());
 
-		color = tm->regular().outline;
+		color = Theme::instance->regular().outline;
 		program->SetUniform1i("AA", 1);
 		program->SetVertexAttrib4fv("Color", color.data());
 		DrawTriangleStrip(0, m_outer_buffer.get());
@@ -176,12 +183,33 @@ namespace BlendInt {
 						h + DefaultButtonPadding().vsum());
 
 		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
 
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
-		m_inner_buffer = tool.GenerateInnerBuffer();
-		m_outer_buffer = tool.GenerateOuterBuffer();
-		m_emboss_buffer = tool.GenerateEmbossBuffer();
+
+		glEnableVertexAttribArray(0);
+
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_inner_buffer->Generate();
+		m_inner_buffer->Bind();
+		tool.SetInnerBufferData(m_inner_buffer.get());
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer->Generate();
+		m_outer_buffer->Bind();
+		tool.SetOuterBufferData(m_outer_buffer.get());
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		m_emboss_buffer.reset(new GLArrayBuffer);
+		m_emboss_buffer->Generate();
+		m_emboss_buffer->Bind();
+		tool.SetEmbossBufferData(m_emboss_buffer.get());
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		GLArrayBuffer::Reset();
+		glBindVertexArray(0);
 	}
 
 	void Button::InitializeButton (const String& text)
@@ -215,11 +243,33 @@ namespace BlendInt {
 		}
 
 		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
-		m_inner_buffer = tool.GenerateInnerBuffer();
-		m_outer_buffer = tool.GenerateOuterBuffer();
-		m_emboss_buffer = tool.GenerateEmbossBuffer();
+
+		glEnableVertexAttribArray(0);
+
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_inner_buffer->Generate();
+		m_inner_buffer->Bind();
+		tool.SetInnerBufferData(m_inner_buffer.get());
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer->Generate();
+		m_outer_buffer->Bind();
+		tool.SetOuterBufferData(m_outer_buffer.get());
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		m_emboss_buffer.reset(new GLArrayBuffer);
+		m_emboss_buffer->Generate();
+		m_emboss_buffer->Bind();
+		tool.SetEmbossBufferData(m_emboss_buffer.get());
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		GLArrayBuffer::Reset();
+		glBindVertexArray(0);
 	}
 
 }

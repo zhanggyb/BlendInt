@@ -66,21 +66,16 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	ToolBox* box = Manage(new ToolBox);
-	box->SetPosition(100, 100);
-	box->Resize(200, 300);
+	//ScrollArea* area = Manage(new ScrollArea);
+	//area->SetPosition(100, 100);
 
-	Button* btn1 = Manage(new Button);
-	Button* btn2 = Manage(new Button);
+	//ImageView* view = Manage(new ImageView);
+	//area->SetViewport(view);
 
-	box->PushBack(btn1);
+	Frame* frame = Manage(new Frame);
+	frame->SetPosition(100, 100);
 
-	Expander* expander = Manage(new Expander("Hello"));
-	expander->Setup(btn2);
-
-	box->PushBack(expander);
-
-	context->Add(box);
+	context->Add(frame);
 
 	RunLoop(win);
 

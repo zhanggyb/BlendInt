@@ -21,13 +21,31 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif	// __UNIX__
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
 	ScrollArea::ScrollArea ()
 	: AbstractVectorContainer(4)
 	{
+		set_margin(2, 2, 2, 2);
+		set_size(360, 240);
+
 		InitializeScrollArea();
 	}
 
@@ -43,19 +61,23 @@ namespace BlendInt {
 		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
 		view->SetViewport(widget);
 
-		if (widget->size().width() <= size().width()) {
+		int width = size().width() - margin().hsum();
+		int height = size().height() - margin().vsum();
+
+		if (widget->size().width() <= width) {
 			sub_widget(HScrollBarIndex)->SetVisible(false);
 		} else {
 			sub_widget(HScrollBarIndex)->SetVisible(true);
 		}
 
-		if (widget->size().height() <= size().height()) {
+		if (widget->size().height() <= height) {
 			sub_widget(VScrollBarIndex)->SetVisible(false);
 		} else {
 			sub_widget(VScrollBarIndex)->SetVisible(true);
 		}
 
-		AdjustGeometries(size());
+		AdjustGeometries(position().x() + margin().left(),
+						position().y() + margin().bottom(), width, height);
 	}
 
 	bool ScrollArea::IsExpandX() const
@@ -138,7 +160,11 @@ namespace BlendInt {
 
 				const Size* size_p = static_cast<const Size*>(request.data());
 
-				AdjustGeometries(*size_p);
+				VertexTool tool;
+				tool.Setup(*size_p, 0, RoundNone, 0, false);
+				tool.UpdateInnerBuffer(m_inner.get());
+
+				AdjustGeometries(position(), *size_p, margin());
 
 				break;
 			}
@@ -151,13 +177,41 @@ namespace BlendInt {
 
 	ResponseType ScrollArea::Draw (const RedrawEvent& event)
 	{
-		return IgnoreAndContinue;
+		using Stock::Shaders;
+
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		program->Use();
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
+		program->SetUniform1i("Gamma", 0);
+		program->SetUniform1i("AA", 0);
+
+		glBindVertexArray(m_vao);
+
+		glEnableVertexAttribArray(0);
+		DrawTriangleFan(0, m_inner.get());
+		glDisableVertexAttribArray(0);
+
+		glBindVertexArray(0);
+		program->Reset();
+
+		return AcceptAndContinue;
 	}
 
 	void ScrollArea::InitializeScrollArea ()
 	{
-		set_margin(0, 0, 0, 0);
-		set_size(400, 300);
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0, false);
+		m_inner = tool.GenerateInnerBuffer();
+
+		glBindVertexArray(0);
 
 		ScrollView* view = Manage(new ScrollView);
 		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
@@ -172,65 +226,71 @@ namespace BlendInt {
 
 		int x = position().x() + margin().left();
 		int y = position().y() + margin().bottom();
-		int w = size().width() - margin().left() - margin().right();
-		int h = size().height() - margin().top() - margin().bottom();
+		int w = size().width() - margin().hsum();
+		int h = size().height() - margin().vsum();
 		int bh = hbar->size().height();
 		int rw = vbar->size().width();
 
 		SetSubWidgetPosition(hbar, x, y);
 		SetSubWidgetPosition(vbar, x + w - rw, y + bh);
-		SetSubWidgetPosition(view, x, y);
+		SetSubWidgetPosition(view, x, y + bh);
 
-		ResizeSubWidget (hbar, w - rw, hbar->size().height());
-		ResizeSubWidget (vbar, vbar->size().width(), h - bh);
-		ResizeSubWidget (view, w, h);
+		ResizeSubWidget (hbar, w - rw, bh);
+		ResizeSubWidget (vbar, rw, h - bh);
+		ResizeSubWidget (view, w - rw, h - bh);
 
 		events()->connect(hbar->slider_moved(), this, &ScrollArea::OnHorizontalScroll);
 		events()->connect(vbar->slider_moved(), this, &ScrollArea::OnVerticalScroll);
 	}
 	
-	void ScrollArea::AdjustGeometries (const Size& size)
+	void ScrollArea::AdjustGeometries (const Point& out_pos, const Size& out_size, const Margin& margin)
 	{
-		int x = position().x() + margin().left();
-		int y = position().y() + margin().bottom();
-		int w = size.width() - margin().left() - margin().right();
-		int h = size.height() - margin().top() - margin().bottom();
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int w = out_size.width() - margin.hsum();
+		int h = out_size.height() - margin.vsum();
+
+		AdjustGeometries(x, y, w, h);
+	}
+
+	void ScrollArea::AdjustGeometries (int x, int y, int width, int height)
+	{
 		int bh = 0;
 		int rw = 0;
-
-		if(sub_widget(HScrollBarIndex)->visiable()) {
-			bh = sub_widget(HScrollBarIndex)->size().height();
-		}
-
-		if(sub_widget(VScrollBarIndex)->visiable()) {
-			rw = sub_widget(VScrollBarIndex)->size().width();
-		}
 
 		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
 		ScrollBar* hbar = dynamic_cast<ScrollBar*>(sub_widget(HScrollBarIndex));
 		ScrollBar* vbar = dynamic_cast<ScrollBar*>(sub_widget(VScrollBarIndex));
 
-		SetSubWidgetPosition(view, x, y + bh);
-		ResizeSubWidget (view, w - rw, h - bh);
-
-		view->CentralizeViewport();
-
 		if(hbar->visiable()) {
-			SetSubWidgetPosition(hbar, x, y);
-			ResizeSubWidget (hbar, w - rw, hbar->size().height());
-			int percent = view->GetHPercentage();
-			hbar->SetMaximum(view->viewport()->size().width());
-			hbar->SetMinimum(view->size().width());
-			hbar->SetPercentage(percent);
+			bh = hbar->size().height();
 		}
 
 		if(vbar->visiable()) {
-			SetSubWidgetPosition(vbar, x + w - rw, y + bh);
-			ResizeSubWidget (vbar, vbar->size().width(), h - bh);
+			rw = vbar->size().width();
+		}
+
+		SetSubWidgetPosition(view, x, y + bh);
+		ResizeSubWidget (view, width - rw, height - bh);
+
+		//view->CentralizeViewport();
+
+		if(hbar->visiable()) {
+			SetSubWidgetPosition(hbar, x, y);
+			ResizeSubWidget (hbar, width - rw, bh);
+			int percent = view->GetHPercentage();
+			hbar->SetMaximum(view->viewport()->size().width());
+			hbar->SetMinimum(view->size().width());
+			hbar->SetSliderPercentage(percent);
+		}
+
+		if(vbar->visiable()) {
+			SetSubWidgetPosition(vbar, x + width - rw, y + bh);
+			ResizeSubWidget (vbar, rw, height - bh);
 			int percent = view->GetVPercentage();
 			vbar->SetMaximum(view->viewport()->size().height());
 			vbar->SetMinimum(view->size().height());
-			vbar->SetPercentage(percent);
+			vbar->SetSliderPercentage(percent);
 		}
 	}
 

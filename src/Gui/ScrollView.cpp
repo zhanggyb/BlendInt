@@ -35,21 +35,35 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ScrollView.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
 	ScrollView::ScrollView()
-	: AbstractSingleContainer(), m_orientation(Horizontal | Vertical), m_move_status(false)
+	: AbstractSingleContainer(),
+	  m_vao(0),
+	  m_orientation(Horizontal | Vertical),
+	  m_move_status(false)
 	{
 		set_margin(0, 0, 0, 0);
-		set_size(200, 160);
+		set_size(400, 300);
 		set_scissor_test(true);
+
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0, false);
+		m_inner = tool.GenerateInnerBuffer();
+
+		glBindVertexArray(0);
 	}
 
 	ScrollView::~ScrollView ()
 	{
-
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	void ScrollView::SetViewport (AbstractWidget* widget)
@@ -126,6 +140,61 @@ namespace BlendInt {
 		return percentage;
 	}
 
+	void ScrollView::MoveViewport(int x, int y)
+	{
+		if(sub_widget()) {
+
+			if(x != 0 || y != 0) {
+				AbstractWidget* p = sub_widget();
+				SetSubWidgetPosition(p, p->position().x() + x, p->position().y() + y);
+
+				Refresh();
+			}
+		}
+	}
+
+	void ScrollView::SetReletivePosition (int x, int y)
+	{
+		if(sub_widget()) {
+			AbstractWidget* p = sub_widget();
+
+			SetSubWidgetPosition(p, position().x() + x, position().y() + y);
+
+			Refresh();
+		}
+	}
+
+	bool ScrollView::IsExpandX() const
+	{
+		if(sub_widget()) {
+			return sub_widget()->IsExpandX();
+		} else {
+			return false;
+		}
+	}
+
+	bool ScrollView::IsExpandY() const
+	{
+		if(sub_widget()) {
+			return sub_widget()->IsExpandY();
+		} else {
+			return false;
+		}
+	}
+
+	Size ScrollView::GetPreferredSize() const
+	{
+		Size prefer(400, 300);
+
+		if(sub_widget()) {
+			prefer = sub_widget()->GetPreferredSize();
+			prefer.add_width(margin().hsum());
+			prefer.add_height(margin().vsum());
+		}
+
+		return prefer;
+	}
+
 	void ScrollView::UpdateContainer(const WidgetUpdateRequest& request)
 	{
 		switch (request.type()) {
@@ -144,35 +213,62 @@ namespace BlendInt {
 
 	void ScrollView::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target() == this) {
+			switch (request.type()) {
 
-			case WidgetSize: {
+				case WidgetSize: {
 
-				break;
-			}
+					const Size* size_p = static_cast<const Size*>(request.data());
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0, false);
+					m_inner = tool.GenerateInnerBuffer();
 
-			case WidgetPosition: {
-
-				if(sub_widget()) {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					MoveSubWidget(x, y);
+					break;
 				}
 
-				break;
-			}
+				case WidgetPosition: {
 
-			default:
-				break;
+					if (sub_widget()) {
+						const Point* pos_p =
+										static_cast<const Point*>(request.data());
+						int x = pos_p->x() - position().x();
+						int y = pos_p->y() - position().y();
+
+						MoveSubWidget(x, y);
+					}
+
+					break;
+				}
+
+				default:
+					break;
+			}
 		}
 	}
 
 	ResponseType ScrollView::Draw (const RedrawEvent& event)
 	{
-		//glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+		using Stock::Shaders;
+
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		program->Use();
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetVertexAttrib4f("Color", 0.208f, 0.208f, 0.208f, 1.0f);
+		program->SetUniform1i("Gamma", 0);
+		program->SetUniform1i("AA", 0);
+
+		glBindVertexArray(m_vao);
+
+		glEnableVertexAttribArray(0);
+		DrawTriangleFan(0, m_inner.get());
+		glDisableVertexAttribArray(0);
+
+		glBindVertexArray(0);
+		program->Reset();
 
 		return AcceptAndContinue;
 	}
@@ -236,30 +332,6 @@ namespace BlendInt {
 	        const ContextMenuEvent& event)
 	{
 		return Ignore;
-	}
-
-	void ScrollView::MoveViewport(int x, int y)
-	{
-		if(sub_widget()) {
-
-			if(x != 0 || y != 0) {
-				AbstractWidget* p = sub_widget();
-				SetSubWidgetPosition(p, p->position().x() + x, p->position().y() + y);
-
-				Refresh();
-			}
-		}
-	}
-
-	void ScrollView::SetReletivePosition (int x, int y)
-	{
-		if(sub_widget()) {
-			AbstractWidget* p = sub_widget();
-
-			SetSubWidgetPosition(p, position().x() + x, position().y() + y);
-
-			Refresh();
-		}
 	}
 
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)

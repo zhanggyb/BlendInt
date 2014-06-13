@@ -76,13 +76,19 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> GenerateInnerBuffer (GLenum usage = GL_STATIC_DRAW);
 
+		void SetInnerBufferData (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
+
 		void UpdateInnerBuffer (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
 
 		RefPtr<GLArrayBuffer> GenerateOuterBuffer (GLenum usage = GL_STATIC_DRAW);
 
+		void SetOuterBufferData (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
+
 		void UpdateOuterBuffer (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
 
 		RefPtr<GLArrayBuffer> GenerateEmbossBuffer (GLenum usage = GL_STATIC_DRAW);
+
+		void SetEmbossBufferData (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
 
 		void UpdateEmbossBuffer (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
 

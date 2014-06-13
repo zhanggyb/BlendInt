@@ -156,10 +156,10 @@ namespace BlendInt {
 		}
 	}
 
-	void GLArrayBuffer::Reset()
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
+//	inline void GLArrayBuffer::Reset()
+//	{
+//		glBindBuffer(GL_ARRAY_BUFFER, 0);
+//	}
 
 	GLenum GLArrayBuffer::GetUsage ()
 	{

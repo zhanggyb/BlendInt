@@ -63,7 +63,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ScrollBar::SetPercentage (int percentage)
+	void ScrollBar::SetSliderPercentage (int percentage)
 	{
 		if (percentage < 0 || percentage > 100) return;
 
@@ -92,7 +92,7 @@ namespace BlendInt {
 		}
 	}
 
-	int ScrollBar::GetPercentage () const
+	int ScrollBar::GetSliderPercentage () const
 	{
 		int percentage = 0;
 

@@ -84,7 +84,13 @@ namespace BlendInt {
 
 		void InitializeScrollArea ();
 
-		void AdjustGeometries (const Size& size);
+		void AdjustGeometries (const Point& out_pos, const Size& out_size, const Margin& margin);
+
+		void AdjustGeometries (int x, int y, int width, int height);
+
+		GLuint m_vao;
+
+		RefPtr<GLArrayBuffer> m_inner;
 
 	};
 }

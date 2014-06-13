@@ -73,6 +73,12 @@ namespace BlendInt {
 			return sub_widget();
 		}
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
+
 	protected:
 
 		virtual void UpdateContainer (const WidgetUpdateRequest& request);
@@ -97,6 +103,8 @@ namespace BlendInt {
 
 	private:
 
+		GLuint m_vao;
+
 		int m_orientation;
 
 		/**
@@ -113,6 +121,8 @@ namespace BlendInt {
 		 * @brief the cursor position where start to move the viewport
 		 */
 		Point m_move_start_pos;
+
+		RefPtr<GLArrayBuffer> m_inner;
 	};
 
 }

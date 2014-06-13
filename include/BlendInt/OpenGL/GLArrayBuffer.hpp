@@ -84,7 +84,15 @@ namespace BlendInt {
 
 		void Bind () const;
 
-		static void Reset ();
+		static inline void Reset ()
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		}
+
+		void set_data (GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW)
+		{
+			glBufferData (GL_ARRAY_BUFFER, size, data, usage);
+		}
 
 		void SetData (GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
 
