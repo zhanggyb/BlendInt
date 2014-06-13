@@ -114,7 +114,7 @@ namespace BlendInt {
 		if(!sub || sub->container() != this) return;
 
 		SubWidgetProxy delegate(this, sub);
-		delegate.Resize(width, height);
+		delegate.Resize(sub, width, height);
 	}
 	
 	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
@@ -123,7 +123,7 @@ namespace BlendInt {
 		if(!sub || sub->container() != this) return;
 
 		SubWidgetProxy delegate(this, sub);
-		delegate.Resize(size);
+		delegate.Resize(sub, size);
 	}
 	
 	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub, int x,
@@ -132,7 +132,7 @@ namespace BlendInt {
 		if(!sub || sub->container() != this) return;
 
 		SubWidgetProxy delegate(this, sub);
-		delegate.SetPosition(x, y);
+		delegate.SetPosition(sub, x, y);
 	}
 	
 	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub,
@@ -141,7 +141,7 @@ namespace BlendInt {
 		if(!sub || sub->container() != this) return;
 
 		SubWidgetProxy delegate(this, sub);
-		delegate.SetPosition(pos);
+		delegate.SetPosition(sub, pos);
 	}
 	
 	void AbstractContainer::RemoveShadow (AbstractWidget* widget)

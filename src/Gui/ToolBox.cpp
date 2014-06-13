@@ -154,9 +154,36 @@ namespace BlendInt {
 		}
 	}
 	
+	bool ToolBox::UpdateGeometryTest(const WidgetUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			return true;
+		} else if(request.target()->container() == this) {
+			// A sub widget want to change it's geometry
+
+			switch (request.type()) {
+
+				case WidgetPosition: {
+					return false;
+				}
+
+				case WidgetSize: {
+
+					return true;
+				}
+
+				default: {
+					return true;
+				}
+			}
+		} else {
+			return true;
+		}
+	}
+
 	void ToolBox::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == this || request.source() == container()) {
+		if(request.target() == this) {
 
 			switch (request.type()) {
 
@@ -192,7 +219,7 @@ namespace BlendInt {
 					break;
 			}
 
-		} else if (request.source()->container() == this) {
+		} else if (request.target()->container() == this) {
 
 			switch (request.type()) {
 

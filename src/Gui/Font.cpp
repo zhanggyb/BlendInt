@@ -53,9 +53,7 @@ namespace BlendInt {
 		m_data.size = size;
 		m_data.flag = flag;
 		m_data.dpi = Theme::instance->dpi();
-
 		m_color = 0x000000FF;
-
 		m_cache = FontCache::Create(m_data);
 	}
 

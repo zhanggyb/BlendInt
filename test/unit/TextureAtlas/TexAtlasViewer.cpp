@@ -69,6 +69,10 @@ TexAtlasViewer::TexAtlasViewer()
 	int cell_x = ft_face.face()->size->metrics.max_advance >> 6;
 	int cell_y = (ft_face.face()->size->metrics.ascender - ft_face.face()->size->metrics.descender) >> 6;
 
+	long l = ft_face.face()->bbox.xMax - ft_face.face()->bbox.xMin;
+
+	DBG_PRINT_MSG("width: %ld, /64: %ld", l, l >> 6);
+
 	m_atlas.Generate(384, 384, cell_x, cell_y, 1);
 	FT_GlyphSlot slot = ft_face.face()->glyph;
 	m_atlas.Bind();

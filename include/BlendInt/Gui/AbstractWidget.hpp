@@ -126,17 +126,17 @@ namespace BlendInt {
 	private:
 		friend class AbstractContainer;
 
-		SubWidgetProxy(AbstractWidget* container_source, AbstractWidget* sub_target);
+		SubWidgetProxy(AbstractWidget* source, AbstractWidget* target);
 
 		~SubWidgetProxy ();
 
-		void Resize (const Size& size);
+		void Resize (AbstractWidget* widget, const Size& size);
 
-		void Resize (int width, int height);
+		void Resize (AbstractWidget* widget, int width, int height);
 
-		void SetPosition (int x, int y);
+		void SetPosition (AbstractWidget* widget, int x, int y);
 
-		void SetPosition (const Point& position);
+		void SetPosition (AbstractWidget* widget, const Point& position);
 
 		WidgetUpdateRequest m_request;
 	};
@@ -149,19 +149,19 @@ namespace BlendInt {
 	private:
 		friend class AbstractWidget;
 
-		explicit ContainerProxy (AbstractWidget* sub_source, AbstractContainer* container_target);
+		explicit ContainerProxy (AbstractWidget* source, AbstractWidget* target);
 
 		~ContainerProxy ();
 
-		void RequestRefresh ();
+		void RequestRefresh (AbstractContainer* container);
 
-		bool SubwidgetPositionUpdateTest (const Point& pos);
+		bool SubwidgetPositionUpdateTest (AbstractContainer* container, const Point& pos);
 
-		bool SubWidgetSizeUpdateTest (const Size& size);
+		bool SubWidgetSizeUpdateTest (AbstractContainer* container, const Size& size);
 
-		void SubWidgetPositionUpdate (const Point& pos);
+		void SubWidgetPositionUpdate (AbstractContainer* container, const Point& pos);
 
-		void SubWidgetSizeUpdate (const Size& size);
+		void SubWidgetSizeUpdate (AbstractContainer* container, const Size& size);
 
 		WidgetUpdateRequest m_request;
 	};

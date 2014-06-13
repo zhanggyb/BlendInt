@@ -42,6 +42,8 @@ namespace BlendInt {
 
 	bool GlyphAtlas::Push(int bitmap_width, int bitmap_rows, const unsigned char* bitmap_buf, int* r_x, int* r_y, bool clear)
 	{
+		// FIXME: in some truetype font like "Source Code Pro", the bitmap width may large than cell_width
+		// need to find a solution
 		if((bitmap_width > cell_width()) || (bitmap_rows > cell_height())) {
 			DBG_PRINT_MSG("%s", "Bitmap size is large than a cell size");
 			DBG_PRINT_MSG("bitmap width: %d, bitmap height: %d, cell width: %d, cell_height: %d", bitmap_width,
