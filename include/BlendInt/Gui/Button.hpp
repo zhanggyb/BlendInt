@@ -59,11 +59,10 @@ namespace BlendInt {
 
 		void InitializeButton (const String& text);
 
+		GLuint m_vao[3];
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
 		RefPtr<GLArrayBuffer> m_emboss_buffer;
-
-		GLuint m_vao;
 	};
 
 }

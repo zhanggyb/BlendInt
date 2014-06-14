@@ -679,7 +679,7 @@ namespace BlendInt {
 	{
 		if(buffer) {
 			std::vector<GLfloat> strip;
-			GenerateTriangleStripVertices(m_inner, m_outer, m_half, strip);
+			GenerateOpenTriangleStripVertices(m_outer, m_half, strip);
 
 			buffer->SetData(sizeof(GLfloat) * strip.size(), &strip[0], usage);
 		}
@@ -689,7 +689,7 @@ namespace BlendInt {
 	{
 		if(buffer) {
 			std::vector<GLfloat> strip;
-			GenerateTriangleStripVertices(m_inner, m_outer, m_half, strip);
+			GenerateOpenTriangleStripVertices(m_outer, m_half, strip);
 
 			if(!buffer->IsBuffer()) {
 				buffer->Generate();

@@ -60,9 +60,9 @@ namespace BlendInt {
 		 */
 		void CentralizeViewport ();
 
-		int GetHPercentage ();
+		int GetHPercentage () const;
 
-		int GetVPercentage ();
+		int GetVPercentage () const;
 
 		void MoveViewport (int x, int y);
 

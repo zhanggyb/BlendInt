@@ -47,6 +47,8 @@ namespace BlendInt {
 
 		virtual bool IsExpandY () const;
 
+		void CentralizeViewport () const;
+
 	protected:
 
 		virtual ResponseType CursorEnterEvent (bool entered);

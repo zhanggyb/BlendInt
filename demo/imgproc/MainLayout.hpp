@@ -43,7 +43,6 @@ private:
 	BI::MenuBar* m_menubar;
 	BI::ToolBar* m_toolbar;
 	BI::ImageView* m_imgview;
-	BI::ScrollArea* m_area;
 
 	BI::TextEntry* m_input;
 	BI::ComboBox* m_combo;

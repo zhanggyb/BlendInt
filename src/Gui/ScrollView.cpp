@@ -100,7 +100,7 @@ namespace BlendInt {
 		SetSubWidgetPosition(p, x, y);
 	}
 
-	int BlendInt::ScrollView::GetHPercentage ()
+	int BlendInt::ScrollView::GetHPercentage () const
 	{
 		int percentage = 0;
 
@@ -120,7 +120,7 @@ namespace BlendInt {
 		return percentage;
 	}
 
-	int BlendInt::ScrollView::GetVPercentage ()
+	int BlendInt::ScrollView::GetVPercentage () const
 	{
 		int percentage = 0;
 

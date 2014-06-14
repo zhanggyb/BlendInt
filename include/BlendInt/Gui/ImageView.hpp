@@ -47,6 +47,12 @@ namespace BlendInt {
 
 		void Load (const RefPtr<Image>& image);
 
+		void Clear ();
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 		virtual Size GetPreferredSize () const;
 
 	protected:
@@ -59,17 +65,18 @@ namespace BlendInt {
 
 		void InitOnce ();
 
-		GLuint m_vao;
+		void AdjustImageArea (const Size& size);
+
+		Size m_image_size;
+
+		GLuint m_vao[2];
 
 		RefPtr<GLTexture2D> m_texture;
-		RefPtr<GLSLProgram> m_program;
-		RefPtr<GLArrayBuffer> m_vbo;
-		RefPtr<GLArrayBuffer> m_tbo;	// texture coords
+
+		RefPtr<GLArrayBuffer> m_background_buffer;
+		RefPtr<GLArrayBuffer> m_image_buffer;
 
 		RefPtr<CheckerBoard> m_checkerboard;
-
-		static const char* vertex_shader;
-		static const char* fragment_shader;
 	};
 
 }

@@ -32,7 +32,6 @@ void MainLayout::InitOnce ()
 	m_menubar = CreateMenuBar();
 	m_toolbar = Manage(new ToolBar);
 	m_imgview = Manage(new ImageView);
-	m_area = Manage(new ScrollArea);
 
 	m_combo = Manage(new ComboBox);
 
@@ -51,8 +50,6 @@ void MainLayout::InitOnce ()
 	m_toolbar->PushBack(m_combo);
 	m_toolbar->PushBack(box);
 
-	m_area->SetViewport(m_imgview);
-
 	ToolBox* tbox = Manage(new ToolBox);
 	Expander* expander = CreateExpander();
 	tbox->PushBack(expander);
@@ -60,7 +57,7 @@ void MainLayout::InitOnce ()
 	Splitter* splitter = Manage(new Splitter);
 	splitter->SetMargin(0, 0, 0, 0);
 
-	splitter->PushBack(m_area);
+	splitter->PushBack(m_imgview);
 	splitter->PushBack(tbox);
 
 	PushBack(splitter);

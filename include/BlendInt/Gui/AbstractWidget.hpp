@@ -359,11 +359,11 @@ namespace BlendInt {
 
 		static int DefaultBorderWidth ();
 
-		static void DrawTriangleFan (const GLint attrib, const GLArrayBuffer* buffer);
+		void DrawTriangleFan (const GLint attrib, const GLArrayBuffer* buffer);
 
-		static void DrawShadedTriangleFan (const GLint coord, const GLint color, GLArrayBuffer* buffer);
+		void DrawShadedTriangleFan (const GLint coord, const GLint color, GLArrayBuffer* buffer);
 
-		static void DrawTriangleStrip (const GLint attrib, GLArrayBuffer* buffer);
+		void DrawTriangleStrip (const GLint attrib, GLArrayBuffer* buffer);
 
 	protected:
 
@@ -461,6 +461,14 @@ namespace BlendInt {
 		void PositionUpdateInContainer (const Point& point);
 
 		Context* GetContext ();
+
+		int GetOutlineVertices () const;
+
+		/**
+		 * @brief Used to get emboss vertices
+		 * @return
+		 */
+		int GetHalfOutlineVertices () const;
 
 		void set_focus (bool focus)
 		{

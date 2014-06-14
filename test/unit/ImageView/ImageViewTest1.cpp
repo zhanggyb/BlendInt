@@ -34,9 +34,11 @@ TEST_F(ImageViewTest1, Foo1)
     ImageView* view = Manage(new ImageView);
     view->SetPosition(20, 20);
 
+	//view->Open("test.png");
+	view->Resize(500, 400);
+
 	context->Add(view);
 
-    view->Open("test.png");
 
     RunLoop(win);
 

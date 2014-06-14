@@ -75,6 +75,12 @@ int main(int argc, char* argv[])
 	Frame* frame = Manage(new Frame);
 	frame->SetPosition(100, 100);
 
+	Button* btn = Manage(new Button("Hello World!"));
+	btn->SetPosition(100, 100);
+
+	frame->Setup(btn);
+	frame->Resize(frame->GetPreferredSize());
+
 	context->Add(frame);
 
 	RunLoop(win);

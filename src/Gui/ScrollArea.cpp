@@ -80,6 +80,12 @@ namespace BlendInt {
 						position().y() + margin().bottom(), width, height);
 	}
 
+	void ScrollArea::CentralizeViewport () const
+	{
+		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+		view->CentralizeViewport();
+	}
+
 	bool ScrollArea::IsExpandX() const
 	{
 		return true;
@@ -318,4 +324,3 @@ namespace BlendInt {
 	}
 
 }
-

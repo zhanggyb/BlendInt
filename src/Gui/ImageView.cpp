@@ -34,65 +34,23 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <algorithm>
+
+#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/ImageView.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
-#ifdef __OPENGL_CORE_330__
-
-	const char* ImageView::vertex_shader =
-			"#version 330\n"
-			"layout(location = 0) in vec2 Coord2D;"
-			"layout(location = 1) in vec2 UVCoord;"
-			"uniform mat4 MVP;"
-			"out vec2 f_texcoord;"
-			""
-			"void main(void) {"
-			"	gl_Position = MVP * vec4(Coord2D, 0.0, 1.0);"
-			"	f_texcoord = UVCoord;"
-			"}";
-
-	const char* ImageView::fragment_shader =
-			"#version 330\n"
-			"in vec2 f_texcoord;"
-			"uniform sampler2D TexID;"
-			"out vec4 FragmentColor;"
-			""
-			"void main(void) {"
-			"	FragmentColor = texture(TexID, f_texcoord);"
-			"}";
-
-#else	// legacy opengl
-
-	const char* ImageView::vertex_shader = "#version 120\n"
-			"attribute vec3 coord3d;"
-			"attribute vec2 texcoord;"
-			"uniform mat4 MVP;"
-			"varying vec2 f_texcoord;"
-			""
-			"void main(void) {"
-			"	gl_Position = MVP * vec4(coord3d, 1.0);"
-			"	f_texcoord = texcoord;"
-			"}";
-
-	const char* ImageView::fragment_shader = "varying vec2 f_texcoord;"
-			"uniform sampler2D tex;"
-			""
-			"void main(void) {"
-			"	gl_FragColor = texture2D(tex, f_texcoord);"
-			"}";
-
-#endif
-
 	ImageView::ImageView ()
-	: Widget(), m_vao(0)
+	: Widget()
 	{
 		InitOnce();
 	}
 
 	ImageView::~ImageView ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(2, m_vao);
 	}
 
 	void ImageView::Open (const char* filename)
@@ -105,12 +63,16 @@ namespace BlendInt {
 			switch(image.channels()) {
 				case 3:
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 3);
-					m_texture->SetImage(0, GL_RGB, image.width(), image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.pixels());
+					m_texture->SetImage(0, GL_RGB, image.width(),
+					        image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE,
+					        image.pixels());
 					break;
 
 				case 4:
 					glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-					m_texture->SetImage(0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.pixels());
+					m_texture->SetImage(0, GL_RGBA, image.width(),
+					        image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+					        image.pixels());
 					break;
 
 				default:
@@ -119,24 +81,10 @@ namespace BlendInt {
 
 			m_texture->Reset();
 
-			set_size(image.width(), image.height());
-			m_checkerboard->Resize(size());
+			m_image_size.set_width(image.width());
+			m_image_size.set_height(image.height());
 
-			GLfloat w = static_cast<GLfloat>(size().width());
-			GLfloat h = static_cast<GLfloat>(size().height());
-
-			GLfloat vertices[] = {
-				0.0, 0.0,
-				w, 0.0,
-				0.0, h,
-				w, h
-			};
-
-			m_vbo->Bind();
-			m_vbo->SetData(sizeof(vertices), vertices);
-			m_vbo->Reset();
-
-			m_checkerboard->Resize(image.width(), image.height());
+			AdjustImageArea(size());
 		}
 	}
 
@@ -144,95 +92,116 @@ namespace BlendInt {
 	{
 	}
 
-	void ImageView::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ImageView::Clear()
 	{
-		switch (request.type()) {
 
-			case WidgetSize: {
+	}
 
-				const Size* size_p = static_cast<const Size*>(request.data());
+	bool ImageView::IsExpandX () const
+	{
+		return true;
+	}
 
-				m_checkerboard->Resize(*size_p);
+	bool ImageView::IsExpandY () const
+	{
+		return true;
+	}
 
-				break;
-			}
-
-			default:
-				break;
+	Size ImageView::GetPreferredSize () const
+	{
+		if(m_texture && glIsTexture(m_texture->texture())) {
+			return m_image_size;
 		}
 
+		return Size(400, 300);
+	}
+
+	void ImageView::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+		if (request.target() == this) {
+
+			switch (request.type()) {
+
+				case WidgetSize: {
+
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+
+					m_background_buffer->Bind();
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0, false);
+					tool.SetInnerBufferData(m_background_buffer.get());
+					m_background_buffer->Reset();
+
+					AdjustImageArea(*size_p);
+
+					break;
+				}
+
+				default:
+					break;
+			}
+
+		}
 	}
 
 	ResponseType ImageView::Draw (const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
 		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+
+		// draw background
+		program->Use();
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetVertexAttrib4f("Color", 0.208f, 0.208f, 0.208f, 1.0f);
+		program->SetUniform1i("Gamma", 0);
+		program->SetUniform1i("AA", 0);
+
+		glBindVertexArray(m_vao[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(0);
+
+		mvp = glm::translate(mvp,
+				glm::vec3((size().width() - m_checkerboard->size().width()) / 2.f,
+						(size().height() - m_checkerboard->size().height()) / 2.f,
+						0.f));
+
+		// draw checkerboard
 		m_checkerboard->Draw(mvp);
-
-		glBindVertexArray(m_vao);
-
-		m_program->Use();
 
 		glActiveTexture(GL_TEXTURE0);
 		m_texture->Bind();
 
 		if (m_texture->GetWidth() > 0) {
-			m_program->SetUniform1i("TexID", 0);
-			m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-			        glm::value_ptr(mvp));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniform1i("TexID", 0);
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+			program->SetUniform1i("Gamma", 0);
 
-			glEnableVertexAttribArray(0);
-			m_vbo->Bind();
-			glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-			glEnableVertexAttribArray(1);
-			m_tbo->Bind();
-			glVertexAttribPointer(1, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-			m_vbo->Bind();
+			glBindVertexArray(m_vao[1]);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
-
-			m_vbo->Reset();
-			m_texture->Reset();
+			glBindVertexArray(0);
 		}
-		m_program->Reset();
 
-		glBindVertexArray(0);
+		m_texture->Reset();
+		program->Reset();
 
 		return Accept;
 	}
 	
-	Size ImageView::GetPreferredSize () const
-	{
-		Size prefer(400, 300);
-
-		if(m_texture && m_texture->texture()) {
-			if(glIsTexture(m_texture->texture())) {
-				m_texture->Bind();
-				int w = m_texture->GetWidth();
-				int h = m_texture->GetHeight();
-				m_texture->Reset();
-				prefer.set_width(w);
-				prefer.set_height(h);
-			}
-		}
-
-		return prefer;
-	}
-
 	void ImageView::InitOnce ()
 	{
 		set_size(400, 300);
 
 		m_checkerboard.reset(new CheckerBoard(20));
 		m_checkerboard->Resize(size());
-
-		glGenVertexArrays(1, &m_vao);
 
 		m_texture.reset(new GLTexture2D);
 		m_texture->Generate();
@@ -242,37 +211,85 @@ namespace BlendInt {
 		m_texture->SetMagFilter(GL_LINEAR);
 		m_texture->Reset();
 
-		m_program.reset(new GLSLProgram);
-		m_program->Create();
-		m_program->AttachShaderPair(vertex_shader, fragment_shader);
-		m_program->Link();
+		glGenVertexArrays(2, m_vao);
+
+		glBindVertexArray(m_vao[0]);
+
+		GLfloat back_verts[] = {
+				0.f, 0.f,
+				(GLfloat)size().width(), 0.f,
+				0.f, (GLfloat)size().height(),
+				(GLfloat)size().width(), (GLfloat)size().height()
+		};
+
+		m_background_buffer.reset(new GLArrayBuffer);
+		m_background_buffer->Generate();
+		m_background_buffer->Bind();
+
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0, false);
+		tool.SetInnerBufferData(m_background_buffer.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+		glBindVertexArray(m_vao[1]);
 
 		GLfloat vertices[] = {
-			0.0, 0.0,
-			400.f, 0.0,
-			0.0, 300.f,
-			400.f, 300.f,
+			0.f, 0.f, 		0.f, 1.f,
+			400.f, 0.f, 	1.f, 1.f,
+			0.f, 300.f,		0.f, 0.f,
+			400.f, 300.f,	1.f, 0.f
 		};
 
-		m_vbo.reset(new GLArrayBuffer);
-		m_vbo->Generate();
-		m_vbo->Bind();
-		m_vbo->SetData(sizeof(vertices), vertices);
-		m_vbo->Reset();
+		m_image_buffer.reset(new GLArrayBuffer);
+		m_image_buffer->Generate();
+		m_image_buffer->Bind();
+		m_image_buffer->SetData(sizeof(vertices), vertices);
 
-		GLfloat uv[] = {
-				0.0, 1.0,
-				1.0, 1.0,
-				0.0, 0.0,
-				1.0, 0.0
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
+	}
+
+	void ImageView::AdjustImageArea(const Size& size)
+	{
+		if(m_image_size.width() == 0 || m_image_size.height() == 0) {
+			m_checkerboard->Resize(size);
+			return;
+		}
+
+		int w = std::min(size.width(), m_image_size.width());
+		int h = std::min(size.height(), m_image_size.height());
+
+		if(h == 0) {
+			w = 0;
+		} else {
+			float ratio = (float)w / h;
+			float ref_ratio = (float)m_image_size.width() / m_image_size.height();
+			if(ratio > ref_ratio) {
+				w = h * ref_ratio;
+			} else if (ratio < ref_ratio) {
+				h = w / ref_ratio;
+			}
+		}
+
+		m_checkerboard->Resize(w, h);
+
+		GLfloat vertices[] = {
+			0.f, 0.f,	0.f, 1.f,
+			(GLfloat)w, 0.f,		1.f, 1.f,
+			0.f, (GLfloat)h,		0.f, 0.f,
+			(GLfloat)w, (GLfloat)h,		1.f, 0.f
 		};
 
-		m_tbo.reset(new GLArrayBuffer);
-
-		m_tbo->Generate();
-		m_tbo->Bind();
-		m_tbo->SetData(sizeof(uv), uv);
-		m_tbo->Reset();
+		m_image_buffer->Bind();
+		m_image_buffer->SetData(sizeof(vertices), vertices);
+		m_image_buffer->Reset();
 	}
 
 }

@@ -600,8 +600,7 @@ namespace BlendInt {
 							  );
 
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						buffer->GetBufferSize()
-										/ (2 * sizeof(GLfloat)));
+						GetOutlineVertices() + 2);
 
 		buffer->Reset();
 	}
@@ -626,7 +625,7 @@ namespace BlendInt {
 							  BUFFER_OFFSET(2 * sizeof(GLfloat))					 // offset of first element
 							  );
 
-		glDrawArrays(GL_TRIANGLE_FAN, 0, buffer->GetBufferSize() / (6 * sizeof(GLfloat)));
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices() + 2);
 
 		buffer->Reset();
 	}
@@ -643,9 +642,7 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							buffer->GetBufferSize()
-											/ (2 * sizeof(GLfloat)));
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices() * 2 + 2);
 
 		buffer->Reset();
 	}
@@ -710,6 +707,32 @@ namespace BlendInt {
 		}
 
 		return dynamic_cast<Context*>(container);
+	}
+
+	int AbstractWidget::GetOutlineVertices() const
+	{
+		int count = 0;
+
+		int corner = round_corner_type();
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+
+		return 4 - count + count * WIDGET_CURVE_RESOLU;
+	}
+
+	int AbstractWidget::GetHalfOutlineVertices() const
+	{
+		int corner = round_corner_type() & (RoundBottomLeft | RoundBottomRight);
+
+		int count = 0;
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+
+		return 2 - count + count * WIDGET_CURVE_RESOLU;
 	}
 
 } /* namespace BlendInt */
