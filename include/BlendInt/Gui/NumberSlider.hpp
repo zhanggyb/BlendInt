@@ -32,7 +32,7 @@ namespace BlendInt {
 
 	class NumberSlider: public AbstractSlider<float>
 	{
-		DISALLOW_COPY_AND_ASSIGN(NumberSlider);
+	DISALLOW_COPY_AND_ASSIGN(NumberSlider);
 
 	public:
 
@@ -58,10 +58,16 @@ namespace BlendInt {
 
 		void InitOnce ();
 
+		/**
+		 * @brief VertexArray objects used in this widget
+		 *
+		 * [0] - inner buffer
+		 * [1] - outer buffer
+		 */
+		GLuint m_vao[2];
+
 		RefPtr<GLArrayBuffer> m_inner;
 		RefPtr<GLArrayBuffer> m_outer;
-
-		GLuint m_vao;
 
 		Font m_font;
 
@@ -69,6 +75,7 @@ namespace BlendInt {
 
 		static Margin default_numberslider_padding;
 	};
+
 }
 
 #endif /* _BLENDINT_GUI_NUMBERSLIDER_HPP_ */
