@@ -76,7 +76,7 @@ namespace BlendInt {
 				m_text_length = UpdateTextPosition(*size_p, m_text, m_font);
 
 				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), RoundNone, 0, false);
+				tool.Setup(*size_p, DefaultBorderWidth(), RoundNone, 0);
 				tool.UpdateInnerBuffer(m_rect.get());
 				break;
 			}
@@ -238,7 +238,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0, false);
+		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0);
 		m_rect = tool.GenerateInnerBuffer();
 	}
 

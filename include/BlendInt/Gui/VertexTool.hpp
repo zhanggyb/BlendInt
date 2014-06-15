@@ -52,6 +52,8 @@ namespace BlendInt {
 
 		~VertexTool ();
 
+		void Initialize ();
+
 		/**
 		 * @brief Generate round vertices for inner and outline of a form
 		 * @param[in] size The size of the form
@@ -61,7 +63,7 @@ namespace BlendInt {
 		 * @param[out] inner The inner vertices in std::vector
 		 * @param[out] outer The outline vertices in std::vector
 		 */
-		void Setup (const Size& size, int border, int round_type, int radius, bool use_outer = true);
+		void Setup (const Size& size, int border, int round_type, int radius);
 
 		void Setup (const Size& size,
 						int border,
@@ -70,8 +72,7 @@ namespace BlendInt {
 						const Color& color,
 						Orientation shadedir,
 						short shadetop,
-						short shadedown,
-						bool use_outer = true
+						short shadedown
 						);
 
 		RefPtr<GLArrayBuffer> GenerateInnerBuffer (GLenum usage = GL_STATIC_DRAW);

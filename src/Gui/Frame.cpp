@@ -61,7 +61,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0, false);
+		tool.Setup(size(), 0, RoundNone, 0);
 
 		m_inner.reset(new GLArrayBuffer);
 		m_inner->Generate();
@@ -204,7 +204,7 @@ namespace BlendInt {
 					const Size* size_p =
 									static_cast<const Size*>(request.data());
 					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0, false);
+					tool.Setup(*size_p, 0, RoundNone, 0);
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 					m_inner->Reset();

@@ -63,7 +63,7 @@ namespace BlendInt {
 				UpdateTextPosition(*size_p, round_corner_type(),
 								round_corner_radius(), text());
 				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(), round_corner_radius(), false);
+				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(), round_corner_radius());
 				tool.UpdateInnerBuffer(m_inner.get());
 				Refresh();
 				break;
@@ -74,7 +74,7 @@ namespace BlendInt {
 				UpdateTextPosition(size(), *type_p, round_corner_radius(),
 								text());
 				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), *type_p, round_corner_radius(), false);
+				tool.Setup(size(), DefaultBorderWidth(), *type_p, round_corner_radius());
 				tool.UpdateInnerBuffer(m_inner.get());
 				Refresh();
 				break;
@@ -86,7 +86,7 @@ namespace BlendInt {
 				UpdateTextPosition(size(), round_corner_type(), *radius_p,
 								text());
 				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), *radius_p, false);
+				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), *radius_p);
 				tool.UpdateInnerBuffer(m_inner.get());
 				Refresh();
 				break;
@@ -172,7 +172,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius(), false);
+		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
 		m_inner = tool.GenerateInnerBuffer();
 	}
 

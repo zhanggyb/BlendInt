@@ -244,7 +244,7 @@ namespace BlendInt {
 				ResizeSubWidgets(w, h);
 
 				VertexTool tool;
-				tool.Setup(*new_size, 0, RoundNone, 0, false);
+				tool.Setup(*new_size, 0, RoundNone, 0);
 				tool.UpdateInnerBuffer(m_inner.get());
 
 				break;
@@ -335,7 +335,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0, false);
+		tool.Setup(size(), 0, RoundNone, 0);
 		m_inner = tool.GenerateInnerBuffer();
 	}
 

@@ -50,12 +50,20 @@ namespace BlendInt {
 	{
 	}
 	
+	void VertexTool::Initialize()
+	{
+		m_total = 0;
+		m_half = 0;
+
+		m_inner.clear();
+		m_outer.clear();
+	}
+
 	void VertexTool::Setup (
 					const Size& size,
 					int border,
 					int round_type,
-					int radius,
-					bool use_outer)
+					int radius)
 	{
 		float rad = radius * Theme::instance->pixel();
 		float radi = rad - border * Theme::instance->pixel();
@@ -91,7 +99,7 @@ namespace BlendInt {
 			count += corner & 0x1;
 			corner = corner >> 1;
 		}
-		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+		int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
 
 		minsize = std::min(size.width() * hnum, size.height() * vnum);
 
@@ -174,7 +182,7 @@ namespace BlendInt {
 			m_inner[count * 2 + 1] = m_inner[3];
 		}
 
-		if(use_outer) {
+		if(border > 0) {
 
 			if(m_outer.size() != (outline_vertex_number * 2)) {
 				m_outer.resize(outline_vertex_number * 2);
@@ -245,8 +253,7 @@ namespace BlendInt {
 					const Color& color,
 					Orientation shadedir,
 					short shadetop,
-					short shadedown,
-					bool use_outer)
+					short shadedown)
 	{
 		float rad = radius;
 		float radi = rad - border * Theme::instance->pixel();
@@ -288,7 +295,7 @@ namespace BlendInt {
 			count += corner & 0x1;
 			corner = corner >> 1;
 		}
-		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+		int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
 
 		minsize = std::min(size.width() * hnum, size.height() * vnum);
 
@@ -481,7 +488,7 @@ namespace BlendInt {
 
 		}
 
-		if (use_outer) {
+		if (border > 0) {
 
 			if(m_outer.size() != (outline_vertex_number * 2)) {
 				m_outer.resize(outline_vertex_number * 2);

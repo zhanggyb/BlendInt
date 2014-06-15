@@ -51,7 +51,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0, false);
+		tool.Setup(size(), 0, RoundNone, 0);
 
 		m_buffer = tool.GenerateInnerBuffer();
 
@@ -159,7 +159,7 @@ namespace BlendInt {
 			case WidgetSize: {
 				const Size* size_p = static_cast<const Size*>(request.data());
 				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0, false);
+				tool.Setup(*size_p, 0, RoundNone, 0);
 				tool.UpdateInnerBuffer(m_buffer.get());
 				break;
 			}

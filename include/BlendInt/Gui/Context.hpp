@@ -197,15 +197,13 @@ namespace BlendInt {
 		GLTexture2D* m_main_buffer;
 
 		RefPtr<GLArrayBuffer> m_vbo;
-		RefPtr<GLArrayBuffer> m_tbo;
+		//RefPtr<GLArrayBuffer> m_tbo;
 
 		GLuint m_vao;
 
 		RedrawEvent m_redraw_event;
 
 		boost::scoped_ptr<std::deque<AbstractWidget*> > m_hover_deque;
-
-		RefPtr<GLSLProgram> m_program;
 
 		/**
 		 * @brief Focused widget

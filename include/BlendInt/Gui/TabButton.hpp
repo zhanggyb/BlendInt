@@ -45,9 +45,11 @@ namespace BlendInt {
 		virtual Size GetPreferredSize () const;
 
 #ifdef DEBUG
+
 		void GenerateTabButtonVertices (const Size& size, float border,
-						std::vector<GLfloat>* inner,
-						std::vector<GLfloat>* outer);
+						std::vector<GLfloat>& inner,
+						std::vector<GLfloat>& outer);
+
 #endif
 
 	protected:
@@ -59,9 +61,11 @@ namespace BlendInt {
 		virtual ResponseType CursorEnterEvent (bool entered);
 
 #ifndef DEBUG
+
 		void GenerateTabButtonVertices (const Size& size, float border,
-						std::vector<GLfloat>* inner,
-						std::vector<GLfloat>* outer);
+						std::vector<GLfloat>& inner,
+						std::vector<GLfloat>& outer);
+
 #endif
 
 		inline double sin_curve (double x, double amplitude, double shift_x, double shift_y);
@@ -72,11 +76,13 @@ namespace BlendInt {
 
 		void InitializeTabButton (const String& text);
 
-		void GenerateTabButtonBuffers (const Size& size,
-						GLArrayBuffer* inner_buffer,
-						GLArrayBuffer* outer_buffer);
-
-		GLuint m_vao;
+		/**
+		 * @brief Vertex Arrays for widget
+		 *
+		 * [0] - for inner buffer
+		 * [1] - for outline buffer
+		 */
+		GLuint m_vao[2];
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;

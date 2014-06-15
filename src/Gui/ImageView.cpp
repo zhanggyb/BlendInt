@@ -129,7 +129,7 @@ namespace BlendInt {
 
 					m_background_buffer->Bind();
 					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0, false);
+					tool.Setup(*size_p, 0, RoundNone, 0);
 					tool.SetInnerBufferData(m_background_buffer.get());
 					m_background_buffer->Reset();
 
@@ -212,7 +212,6 @@ namespace BlendInt {
 		m_texture->Reset();
 
 		glGenVertexArrays(2, m_vao);
-
 		glBindVertexArray(m_vao[0]);
 
 		GLfloat back_verts[] = {
@@ -227,7 +226,7 @@ namespace BlendInt {
 		m_background_buffer->Bind();
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0, false);
+		tool.Setup(size(), 0, RoundNone, 0);
 		tool.SetInnerBufferData(m_background_buffer.get());
 
 		glEnableVertexAttribArray(0);

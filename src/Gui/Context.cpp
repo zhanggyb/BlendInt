@@ -233,25 +233,23 @@ namespace BlendInt
 
 					const Size* size_p = static_cast<const Size*>(request.data());
 
-					GLfloat vertices[] = { 0.f, 0.f,
-									static_cast<GLfloat>(size_p->width()), 0.f, 0.f,
-									static_cast<GLfloat>(size_p->height()),
-									static_cast<GLfloat>(size_p->width()),
-									static_cast<GLfloat>(size_p->height()) };
+					GLfloat vertices[] = {
+							0.f, 0.f,											0.f, 1.f,
+							(GLfloat)size_p->width(), 0.f,						1.f, 1.f,
+							0.f, (GLfloat)size_p->height(),						0.f, 0.f,
+							(GLfloat)size_p->width(), (GLfloat)size_p->height(),	1.f, 0.f
+					};
 
-					glBindVertexArray(m_vao);
 					m_vbo->Bind();
 					m_vbo->UpdateData(vertices, sizeof(vertices));
 					m_vbo->Reset();
 
-					glBindVertexArray(0);
-
 					m_redraw_event.set_projection_matrix(
 									glm::ortho(0.f,
-													static_cast<float>(size_p->width()),
-													0.f,
-													static_cast<float>(size_p->height()),
-													100.f, -100.f));
+											(GLfloat)size_p->width(),
+											0.f,
+											(GLfloat)size_p->height(),
+											100.f, -100.f));
 
 					// TODO: redraw
 					force_refresh_all = true;
@@ -692,8 +690,6 @@ namespace BlendInt
 	{
 		using Stock::Shaders;
 
-		m_program = Shaders::instance->default_context_program();
-
 		glGenVertexArrays(1, &m_vao);
 
 		glBindVertexArray(m_vao);
@@ -702,34 +698,30 @@ namespace BlendInt
 		m_vbo->Generate();
 
 		GLfloat vertices [] = {
-				0.f, 0.f,
-				static_cast<GLfloat>(size().width()), 0.f,
-				0.f, static_cast<GLfloat>(size().height()),
-				static_cast<GLfloat>(size().width()), static_cast<GLfloat>(size().height())
+				0.f, 0.f,											0.f, 1.f,
+				(GLfloat)size().width(), 0.f,						1.f, 1.f,
+				0.f, (GLfloat)size().height(),						0.f, 0.f,
+				(GLfloat)size().width(), (GLfloat)size().height(),	1.f, 0.f
 		};
 
 		m_vbo->Bind();
 		m_vbo->SetData(sizeof(vertices), vertices);
-		m_vbo->Reset();
 
-		GLfloat uv[] = {
-			0.0, 1.0,
-			1.0, 1.0,
-			0.0, 0.0,
-			1.0, 0.0
-		};
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
 
-		m_tbo.reset(new GLArrayBuffer);
-		m_tbo->Generate();
-		m_tbo->Bind();
-		m_tbo->SetData(sizeof(uv), uv);
-		m_tbo->Reset();
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
+
+		GLArrayBuffer::Reset();
 	}
 
 	void Context::DrawMainBuffer (const glm::mat4& mvp)
 	{
+		RefPtr<GLSLProgram> program = Stock::Shaders::instance->default_context_program();
+
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 
 		glClearDepth(1.0);
@@ -743,42 +735,30 @@ namespace BlendInt
 
 		glViewport(0, 0, size().width(), size().height());
 
-		glBindVertexArray(m_vao);
-
-		m_program->Use();
-
-		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->Use();
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 		glActiveTexture(GL_TEXTURE0);
 		m_main_buffer->Bind();
 
-		m_program->SetUniform1i("TexID", 0);
+		program->SetUniform1i("TexID", 0);
 
-		glEnableVertexAttribArray(0);
-		m_vbo->Bind();
-
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-		glEnableVertexAttribArray(1);
-		m_tbo->Bind();
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-		m_vbo->Bind();
+		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(0);
-
-		m_vbo->Reset();
-		m_main_buffer->Reset();
-		m_program->Reset();
-
 		glBindVertexArray(0);
+
+		GLArrayBuffer::Reset();
+		m_main_buffer->Reset();
+
+		program->Reset();
+
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	void Context::DrawLayers (const glm::mat4& mvp)
 	{
+		RefPtr<GLSLProgram> program = Stock::Shaders::instance->default_context_program();
+
 		glViewport(0, 0, size().width(), size().height());
 
 		glClearColor(0.447, 0.447, 0.447, 1.00);
@@ -795,40 +775,27 @@ namespace BlendInt
 
 		//glEnable(GL_BLEND);
 
-		glBindVertexArray(m_vao);
+		program->Use();
 
-		m_program->Use();
-
-		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 
 		glActiveTexture(GL_TEXTURE0);
 
-		m_program->SetUniform1i("TexID", 0);
+		program->SetUniform1i("TexID", 0);
 		for(std::deque<GLTexture2D*>::iterator it = m_deque.begin(); it != m_deque.end(); it++)
 		{
 			(*it)->Bind();
 
-			glEnableVertexAttribArray(0);
-			m_vbo->Bind();
-
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-			glEnableVertexAttribArray(1);
-			m_tbo->Bind();
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-			m_vbo->Bind();
+			glBindVertexArray(m_vao);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			glBindVertexArray(0);
 
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
-
-			m_vbo->Reset();
+			GLArrayBuffer::Reset();
 
 			(*it)->Reset();
 		}
 
-		m_program->Reset();
+		program->Reset();
 
 		glBindVertexArray(0);
 	}
@@ -958,6 +925,7 @@ namespace BlendInt
 
 		if (GLFramebuffer::CheckStatus()) {
 
+			RefPtr<GLSLProgram> program = Stock::Shaders::instance->default_context_program();
 			fb->Bind();
 
 			glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -980,26 +948,15 @@ namespace BlendInt
 			//DrawGrid(width, height);
 #endif
 
-			glBindVertexArray(m_vao);
-			m_program->Use();
+			program->Use();
 			glActiveTexture(GL_TEXTURE0);
 
-			m_program->SetUniform1i("TexID", 0);
+			program->SetUniform1i("TexID", 0);
 
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-
-			m_vbo->Bind();
-
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-			m_tbo->Bind();
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
-			m_vbo->Bind();
+			glBindVertexArray(m_vao);
 
 			for (std::deque<GLTexture2D*>::iterator it = m_deque.begin(); it != m_deque.end(); it++) {
-				m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 				(*it)->Bind();
 				//(*it)->WriteToFile("layer2.png");
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -1007,15 +964,13 @@ namespace BlendInt
 				mvp = glm::translate(mvp, glm::vec3(0.0, 0.0, 10.0));
 			}
 
-			GLTexture2D::Reset();
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
-
-			GLArrayBuffer::Reset();
-			m_program->Reset();
 			glBindVertexArray(0);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+			GLTexture2D::Reset();
+			GLArrayBuffer::Reset();
+			program->Reset();
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 
 		fb->Reset();
