@@ -48,13 +48,27 @@ namespace BlendInt {
 
 	protected:
 
+		virtual ResponseType CursorEnterEvent (bool entered);
+
 		virtual void UpdateSlider (const WidgetUpdateRequest& request);
 
 		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
-		void GenerateSliderVertices (const Size& out_size, float border, int round_type, float radius, std::vector<GLfloat>& slide_vert);
+		/**
+		 * @brief Generate vertices for drawing the inner slider bar
+		 * @param[in] size The size of this widget
+		 * @param[in] border The border width of this widget
+		 * @param[in] round_type The round corner type of this widget
+		 * @param[in] radius The round coner radius of this widget
+		 * @param[out] slide_verts The vertices output for drawing the slider bar
+		 */
+		void GenerateSliderVertices (const Size& size,
+						float border,
+						int round_type,
+						float radius,
+						std::vector<GLfloat>& slide_verts);
 
 	private:
 

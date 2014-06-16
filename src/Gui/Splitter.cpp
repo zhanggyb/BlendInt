@@ -38,6 +38,8 @@
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
+#include <BlendInt/Gui/Context.hpp>
+
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -165,7 +167,7 @@ namespace BlendInt {
 
 		program->SetUniform1i("AA", 0);
 		if(m_highlight) {
-			program->SetUniform1i("Gamma", 20);
+			program->SetUniform1i("Gamma", 50);
 		} else {
 			program->SetUniform1i("Gamma", 0);
 		}
@@ -183,9 +185,9 @@ namespace BlendInt {
 				local = glm::translate(mvp, glm::vec3(0.f, i + 1, 0.f));
 
 				if((i % 2) == 0) {
-					color.r = 0.208f; color.g = 0.208f; color.b = 0.208f; color.a = 0.5;
+					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.25;
 				} else {
-					color.r = 0.208f; color.g = 0.208f; color.b = 0.208f; color.a = 1.0;
+					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.9;
 				}
 
 				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local));
@@ -200,9 +202,9 @@ namespace BlendInt {
 				local = glm::translate(mvp, glm::vec3(i + 1, 0.f, 0.f));
 
 				if((i % 2) == 0) {
-					color.r = 0.208f; color.g = 0.208f; color.b = 0.208f; color.a = 0.5;
+					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.25;
 				} else {
-					color.r = 0.208f; color.g = 0.208f; color.b = 0.208f; color.a = 1.0;
+					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.9;
 				}
 
 				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local));
@@ -225,10 +227,16 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::CursorEnterEvent (bool entered)
 	{
+		Context* context = GetContext();
+		if(!context) return Ignore;
+
 		if(entered) {
 			m_highlight = true;
+			context->PushCursor(context->GetCursor());
+			context->SetCursor(m_orientation == Horizontal ? SplitHCursor : SplitVCursor);
 		} else {
 			m_highlight = false;
+			context->SetCursor(context->PopCursor());
 		}
 
 		Refresh();
