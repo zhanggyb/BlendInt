@@ -32,7 +32,7 @@
 #include <BlendInt/Gui/VBox.hpp>
 #include <BlendInt/Gui/Viewport3D.hpp>
 #include <BlendInt/Gui/MenuBar.hpp>
-#include <BlendInt/Gui/NumberSlider.hpp>
+#include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
 #include <BlendInt/Gui/SpaceArea.hpp>
@@ -42,6 +42,7 @@
 #include <BlendInt/Gui/TabButton.hpp>
 #include <BlendInt/Gui/TabHeader.hpp>
 #include <BlendInt/Gui/Expander.hpp>
+#include <BlendInt/Gui/ColorButton.hpp>
 
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/Context.hpp>
@@ -66,9 +67,21 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	NumberSlider* slider = Manage(new NumberSlider);
+	NumericalSlider* slider = Manage(new NumericalSlider);
 	slider->SetPosition(100, 100);
 	slider->Resize(slider->GetPreferredSize());
+
+	ColorButton* btn = Manage(new ColorButton);
+	btn->SetPosition(100, 200);
+	btn->SetColor(Color(0x50B8296F));
+
+	ColorSelector* cs = Manage(new ColorSelector);
+	cs->SetPosition(220, 160);
+	cs->Resize(cs->GetPreferredSize());
+
+	context->Add(cs);
+
+	context->Add(btn);
 
 	context->Add(slider);
 

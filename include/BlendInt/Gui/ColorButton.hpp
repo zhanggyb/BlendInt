@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TABBUTTON_HPP_
-#define _BLENDINT_GUI_TABBUTTON_HPP_
+#ifndef _BLENDINT_GUI_COLORBUTTON_HPP_
+#define _BLENDINT_GUI_COLORBUTTON_HPP_
 
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
@@ -30,27 +30,22 @@
 
 namespace BlendInt {
 
-	class TabButton: public AbstractButton
+	/**
+	 * @brief The most common button class
+	 *
+	 * @ingroup widgets
+	 */
+	class ColorButton: public AbstractButton
 	{
-		DISALLOW_COPY_AND_ASSIGN(TabButton);
+		DISALLOW_COPY_AND_ASSIGN(ColorButton);
 
 	public:
 
-		TabButton ();
+		ColorButton ();
 
-		TabButton (const String& text);
+		virtual ~ColorButton ();
 
-		virtual ~TabButton ();
-
-		virtual Size GetPreferredSize () const;
-
-#ifdef DEBUG
-
-		void GenerateTabButtonVertices (const Size& size, float border,
-						std::vector<GLfloat>& inner,
-						std::vector<GLfloat>& outer);
-
-#endif
+		void SetColor (const Color& color);
 
 	protected:
 
@@ -58,36 +53,18 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-#ifndef DEBUG
-
-		void GenerateTabButtonVertices (const Size& size, int border,
-						std::vector<GLfloat>& inner,
-						std::vector<GLfloat>& outer);
-
-#endif
-
-		inline double sin_curve (double x, double amplitude, double shift_x, double shift_y);
-
 	private:
 
-		void InitializeTabButton ();
+		void InitializeColorButton ();
 
-		void InitializeTabButton (const String& text);
-
-		/**
-		 * @brief Vertex Arrays for widget
-		 *
-		 * [0] - for inner buffer
-		 * [1] - for outline buffer
-		 */
-		GLuint m_vao[2];
-
+		GLuint m_vao[3];
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_emboss_buffer;
+
+		Color m_color;
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_TABBUTTON_HPP_ */
+#endif	// _BIL_BUTTON_H_

@@ -96,7 +96,7 @@ namespace BlendInt {
 			}
 
 			case WidgetRoundCornerRadius: {
-				const int* radius_p = static_cast<const int*>(request.data());
+				const float* radius_p = static_cast<const float*>(request.data());
 				UpdateTextPosition(size(), round_corner_type(), *radius_p,
 				        text());
 				VertexTool tool;
@@ -149,18 +149,18 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices() + 2);
+							GetOutlineVertices(round_corner_type()) + 2);
 
 		program->SetUniform1i("AA", 1);
 		program->SetVertexAttrib4fv("Color", Theme::instance->regular().outline.data());
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices() * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
 
 		program->SetVertexAttrib4f("Color", 1.0f, 1.0f, 1.0f, 0.16f);
 
 		glBindVertexArray(m_vao[2]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetHalfOutlineVertices() * 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetHalfOutlineVertices(round_corner_type()) * 2);
 
 		glBindVertexArray(0);
 		program->Reset();
@@ -243,7 +243,7 @@ namespace BlendInt {
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
 
-		DBG_PRINT_MSG("tool: %d, half: %d", tool.half(), GetHalfOutlineVertices());
+		DBG_PRINT_MSG("tool: %d, half: %d", tool.half(), GetHalfOutlineVertices(round_corner_type()));
 
 		glGenVertexArrays(3, m_vao);
 		glBindVertexArray(m_vao[0]);

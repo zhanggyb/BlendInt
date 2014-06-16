@@ -15,7 +15,7 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.	 If not, see
+ * License along with BlendInt.  If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
@@ -35,30 +35,30 @@
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
-#include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/ColorButton.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 
-	Button::Button ()
+	ColorButton::ColorButton ()
 		: AbstractButton()
 	{
-		InitializeButton();
+		InitializeColorButton();
 	}
 
-	Button::Button (const String& text)
-		: AbstractButton()
-	{
-		InitializeButton(text);
-	}
-
-	Button::~Button ()
+	ColorButton::~ColorButton ()
 	{
 		glDeleteVertexArrays(3, m_vao);
 	}
 
-	void Button::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ColorButton::SetColor(const Color& color)
+	{
+		m_color = color;
+		Refresh();
+	}
+
+	void ColorButton::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -116,7 +116,7 @@ namespace BlendInt {
 		}
 	}
 
-	ResponseType Button::Draw (const RedrawEvent& event)
+	ResponseType ColorButton::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
 
@@ -131,19 +131,7 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
 
-		Color color;
-
-		if(down()) {
-			color = Theme::instance->regular().inner_sel;
-		} else {
-			if(hover()) {
-				color = Theme::instance->regular().inner + 15;
-			} else {
-				color = Theme::instance->regular().inner;
-			}
-		}
-
-		program->SetVertexAttrib4fv("Color", color.data());
+		program->SetVertexAttrib4fv("Color", m_color.data());
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -170,7 +158,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Button::InitializeButton ()
+	void ColorButton::InitializeColorButton ()
 	{
 		set_round_corner_type(RoundAll);
 
@@ -212,68 +200,6 @@ namespace BlendInt {
 		GLArrayBuffer::Reset();
 	}
 
-	void Button::InitializeButton (const String& text)
-	{
-		set_round_corner_type(RoundAll);
-		set_text(text);
-
-		int left = DefaultButtonPadding().left() * Theme::instance->pixel();
-		int right = DefaultButtonPadding().right() * Theme::instance->pixel();
-		int top = DefaultButtonPadding().top() * Theme::instance->pixel();
-		int bottom = DefaultButtonPadding().bottom() * Theme::instance->pixel();
-		int h = font().GetHeight();
-
-		if(text.empty()) {
-			set_size(h + round_corner_radius() * 2 * Theme::instance->pixel() + left + right,
-							h + top + bottom);
-		} else {
-			set_text_length(text.length());
-			Rect text_outline = font().GetTextOutline(text);
-
-			int width = text_outline.width()
-							+ round_corner_radius() * 2 * Theme::instance->pixel()
-							+ left + right;
-			int height = h + top + bottom;
-
-			set_size(width, height);
-
-			set_pen((width - text_outline.width()) / 2,
-							(height - font().GetHeight()) / 2
-											+ std::abs(font().GetDescender()));
-		}
-
-		VertexTool tool;
-		tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
-
-		glGenVertexArrays(3, m_vao);
-		glBindVertexArray(m_vao[0]);
-
-		m_inner_buffer.reset(new GLArrayBuffer);
-		m_inner_buffer->Generate();
-		m_inner_buffer->Bind();
-		tool.SetInnerBufferData(m_inner_buffer.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(m_vao[1]);
-		m_outer_buffer.reset(new GLArrayBuffer);
-		m_outer_buffer->Generate();
-		m_outer_buffer->Bind();
-		tool.SetOuterBufferData(m_outer_buffer.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(m_vao[2]);
-		m_emboss_buffer.reset(new GLArrayBuffer);
-		m_emboss_buffer->Generate();
-		m_emboss_buffer->Bind();
-		tool.SetEmbossBufferData(m_emboss_buffer.get());
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
-	}
-
 }
+
 

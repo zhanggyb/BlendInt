@@ -278,8 +278,8 @@ namespace BlendInt {
 			}
 
 			case WidgetRoundCornerRadius: {
-				const int* radius_p =
-								static_cast<const int*>(request.data());
+				const float* radius_p =
+								static_cast<const float*>(request.data());
 
 				const Color& color = Theme::instance->text().inner;
 				short shadetop = Theme::instance->text().shadetop;

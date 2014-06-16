@@ -46,6 +46,7 @@ namespace BlendInt {
 		set_size(width, height);
 
 		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
 
 		GLfloat vertices[] = {
 						// x, 	y, 	u, 	v
@@ -59,6 +60,14 @@ namespace BlendInt {
 		m_buffer->Generate();
 		m_buffer->Bind();
 		m_buffer->SetData(sizeof(vertices), vertices);
+
+		glEnableVertexAttribArray(0);	// 0: Coord
+		glEnableVertexAttribArray(1);	// 1: Texture UV
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+
 		m_buffer->Reset();
 	}
 
@@ -70,6 +79,8 @@ namespace BlendInt {
 
 		glGenVertexArrays(1, &m_vao);
 
+		glBindVertexArray(m_vao);
+
 		GLfloat vertices[] = {
 						// x, 	y, 	u, 	v
 						0.f, 0.f, 0.f, 0.f,
@@ -82,6 +93,15 @@ namespace BlendInt {
 		m_buffer->Generate();
 		m_buffer->Bind();
 		m_buffer->SetData(sizeof(vertices), vertices);
+
+		glEnableVertexAttribArray(0);	// 0: Coord
+		glEnableVertexAttribArray(1);	// 1: Texture UV
+
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+
 		m_buffer->Reset();
 
 		m_texture.reset(new GLTexture2D);
@@ -104,6 +124,7 @@ namespace BlendInt {
 
 		glGenVertexArrays(1, &m_vao);
 
+		glBindVertexArray(m_vao);
 		GLfloat vertices[] = {
 						// x, 	y, 	u, 	v
 						0.f, 0.f, *(uv + 0), *(uv + 1),
@@ -116,7 +137,15 @@ namespace BlendInt {
 		m_buffer->Generate();
 		m_buffer->Bind();
 		m_buffer->SetData(sizeof(vertices), vertices);
+
+		glEnableVertexAttribArray(0);	// 0: Coord
+		glEnableVertexAttribArray(1);	// 1: Texture UV
+
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
 		m_buffer->Reset();
+		glBindVertexArray(0);
 
 		m_texture = texture;
 	}
@@ -150,8 +179,6 @@ namespace BlendInt {
 		using Stock::Shaders;
 
 		if(m_texture) {
-			glBindVertexArray(m_vao);
-
 			RefPtr<GLSLProgram> program = Shaders::instance->default_image_program();
 
 			program->Use();
@@ -163,23 +190,13 @@ namespace BlendInt {
 
 			m_texture->Bind();
 
-			glEnableVertexAttribArray(0);	// 0: Coord
-			glEnableVertexAttribArray(1);	// 1: Texture UV
-			m_buffer->Bind();
-
-			glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(0));
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
+			glBindVertexArray(m_vao);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-			m_buffer->Reset();
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
-
+			glBindVertexArray(0);
 			m_texture->Reset();
 			program->Reset();
 
-			glBindVertexArray(0);
 		}
 	}
 	

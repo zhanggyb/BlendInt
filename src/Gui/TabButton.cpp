@@ -192,6 +192,7 @@ namespace BlendInt {
 	{
 		int amp = size.height() / 2;
 		int shift_x = 5;
+		border = Theme::instance->pixel() * border;
 
 		if (inner.size() != 2 * 11 * 2)
 			inner.resize(2 * 11 * 2);

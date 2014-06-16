@@ -227,7 +227,7 @@ namespace BlendInt {
 
 		void SetRoundCornerType (int type);
 
-		void SetRoundCornerRadius (int radius);
+		void SetRoundCornerRadius (float radius);
 
 		void SetLayer (int z);
 
@@ -355,9 +355,9 @@ namespace BlendInt {
 
 		AbstractContainer* container() const {return m_container;}
 
-		static void SetDefaultBorderWidth (int border);
+		static void SetDefaultBorderWidth (float border);
 
-		static int DefaultBorderWidth ();
+		static float DefaultBorderWidth ();
 
 		void DrawTriangleFan (const GLint attrib, const GLArrayBuffer* buffer);
 
@@ -462,13 +462,13 @@ namespace BlendInt {
 
 		Context* GetContext ();
 
-		int GetOutlineVertices () const;
+		int GetOutlineVertices (int round_type) const;
 
 		/**
 		 * @brief Used to get emboss vertices
 		 * @return
 		 */
-		int GetHalfOutlineVertices () const;
+		int GetHalfOutlineVertices (int round_type) const;
 
 		void set_focus (bool focus)
 		{
@@ -586,7 +586,7 @@ namespace BlendInt {
 
 		unsigned int m_flags;
 
-		int m_round_corner_radius;
+		float m_round_corner_radius;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 
@@ -596,7 +596,7 @@ namespace BlendInt {
 
 		RefPtr<Shadow> m_shadow;
 
-		static int default_border_width;
+		static float default_border_width;
 
 	};
 

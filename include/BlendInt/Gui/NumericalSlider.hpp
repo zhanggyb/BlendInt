@@ -30,15 +30,15 @@
 
 namespace BlendInt {
 
-	class NumberSlider: public AbstractSlider<float>
+	class NumericalSlider: public AbstractSlider<double>
 	{
-	DISALLOW_COPY_AND_ASSIGN(NumberSlider);
+	DISALLOW_COPY_AND_ASSIGN(NumericalSlider);
 
 	public:
 
-		NumberSlider (Orientation orientation = Horizontal);
+		NumericalSlider (Orientation orientation = Horizontal);
 
-		virtual ~NumberSlider ();
+		virtual ~NumericalSlider ();
 
 		void SetTitle (const String& title);
 
@@ -54,6 +54,8 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		void GenerateSliderVertices (const Size& out_size, float border, int round_type, float radius, std::vector<GLfloat>& slide_vert);
+
 	private:
 
 		void InitOnce ();
@@ -63,11 +65,14 @@ namespace BlendInt {
 		 *
 		 * [0] - inner buffer
 		 * [1] - outer buffer
+		 * [2] - slider bar buffer
 		 */
-		GLuint m_vao[2];
+		GLuint m_vao[3];
 
 		RefPtr<GLArrayBuffer> m_inner;
 		RefPtr<GLArrayBuffer> m_outer;
+
+		RefPtr<GLArrayBuffer> m_slider;
 
 		Font m_font;
 

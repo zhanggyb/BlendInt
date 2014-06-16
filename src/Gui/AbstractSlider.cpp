@@ -99,8 +99,8 @@ namespace BlendInt {
 				Orientation shadedir =
 								size().width() < size().height() ?
 												Horizontal : Vertical;
-				const int* radius_p =
-								static_cast<const int*>(request.data());
+				const float* radius_p =
+								static_cast<const float*>(request.data());
 				const Color& color = Theme::instance->scroll().item;
 				short shadetop = Theme::instance->scroll().shadetop;
 				short shadedown = Theme::instance->scroll().shadedown;

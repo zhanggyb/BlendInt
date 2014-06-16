@@ -170,7 +170,7 @@ namespace BlendInt {
 
 	// --------------------------------------------------------------------
 
-	int AbstractWidget::default_border_width = 1;
+	float AbstractWidget::default_border_width = 1.f;
 
 	AbstractWidget::AbstractWidget ()
 	: Object(),
@@ -291,7 +291,7 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetRoundCornerRadius(int radius)
+	void AbstractWidget::SetRoundCornerRadius(float radius)
 	{
 		if(m_round_corner_radius == radius) return;
 		bool broadcast = false;
@@ -577,12 +577,12 @@ namespace BlendInt {
 		return obj->MousePressEvent(event);
 	}
 
-	void AbstractWidget::SetDefaultBorderWidth(int border)
+	void AbstractWidget::SetDefaultBorderWidth(float border)
 	{	
 		default_border_width = border;
 	}
 
-	int AbstractWidget::DefaultBorderWidth()
+	float AbstractWidget::DefaultBorderWidth()
 	{	
 		return default_border_width;
 	}
@@ -600,7 +600,7 @@ namespace BlendInt {
 							  );
 
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices() + 2);
+						GetOutlineVertices(round_corner_type()) + 2);
 
 		buffer->Reset();
 	}
@@ -625,7 +625,7 @@ namespace BlendInt {
 							  BUFFER_OFFSET(2 * sizeof(GLfloat))					 // offset of first element
 							  );
 
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices() + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_corner_type()) + 2);
 
 		buffer->Reset();
 	}
@@ -642,7 +642,7 @@ namespace BlendInt {
 							  0					 // offset of first element
 							  );
 
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices() * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
 
 		buffer->Reset();
 	}
@@ -709,27 +709,26 @@ namespace BlendInt {
 		return dynamic_cast<Context*>(container);
 	}
 
-	int AbstractWidget::GetOutlineVertices() const
+	int AbstractWidget::GetOutlineVertices (int round_type) const
 	{
 		int count = 0;
 
-		int corner = round_corner_type();
-		while (corner != 0) {
-			count += corner & 0x1;
-			corner = corner >> 1;
+		while (round_type != 0) {
+			count += round_type & 0x1;
+			round_type = round_type >> 1;
 		}
 
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
 	}
 
-	int AbstractWidget::GetHalfOutlineVertices() const
+	int AbstractWidget::GetHalfOutlineVertices(int round_type) const
 	{
-		int corner = round_corner_type() & (RoundBottomLeft | RoundBottomRight);
+		round_type = round_type & (RoundBottomLeft | RoundBottomRight);
 
 		int count = 0;
-		while (corner != 0) {
-			count += corner & 0x1;
-			corner = corner >> 1;
+		while (round_type != 0) {
+			count += round_type & 0x1;
+			round_type = round_type >> 1;
 		}
 
 		return 2 - count + count * WIDGET_CURVE_RESOLU;

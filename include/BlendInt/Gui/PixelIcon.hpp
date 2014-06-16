@@ -69,6 +69,7 @@ namespace BlendInt {
 		 * @brief Coord and UV vertex buffer
 		 */
 		RefPtr<GLArrayBuffer> m_buffer;
+
 		RefPtr<GLTexture2D> m_texture;
 
 		// disabled

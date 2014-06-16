@@ -61,9 +61,9 @@ namespace BlendInt {
 
 	void VertexTool::Setup (
 					const Size& size,
-					int border,
+					float border,
 					int round_type,
-					int radius)
+					float radius)
 	{
 		float rad = radius * Theme::instance->pixel();
 		float radi = rad - border * Theme::instance->pixel();
@@ -99,15 +99,15 @@ namespace BlendInt {
 			count += corner & 0x1;
 			corner = corner >> 1;
 		}
-		int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
 
 		minsize = std::min(size.width() * hnum, size.height() * vnum);
 
 		if (2.0f * rad > minsize)
 			rad = 0.5f * minsize;
 
-		if (2.0f * (radi + 1.0f) > minsize)
-			radi = 0.5f * minsize - border;	// U.pixelsize;
+		if (2.0f * (radi + border * Theme::instance->pixel()) > minsize)
+			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
@@ -247,9 +247,9 @@ namespace BlendInt {
 	
 	void VertexTool::Setup (
 					const Size& size,
-					int border,
+					float border,
 					int round_type,
-					int radius,
+					float radius,
 					const Color& color,
 					Orientation shadedir,
 					short shadetop,
@@ -295,15 +295,15 @@ namespace BlendInt {
 			count += corner & 0x1;
 			corner = corner >> 1;
 		}
-		int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
 
 		minsize = std::min(size.width() * hnum, size.height() * vnum);
 
 		if (2.0f * radius > minsize)
 			rad = 0.5f * minsize;
 
-		if (2.0f * (radi + 1.0f) > minsize)
-			radi = 0.5f * minsize - border;	// U.pixelsize;
+		if (2.0f * (radi + border * Theme::instance->pixel()) > minsize)
+			radi = 0.5f * minsize - border * Theme::instance->pixel();	// U.pixelsize;
 
 		// mult
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {

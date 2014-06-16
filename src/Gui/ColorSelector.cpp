@@ -39,7 +39,7 @@
 #include <BlendInt/Gui/HBox.hpp>
 #include <BlendInt/Gui/VBox.hpp>
 #include <BlendInt/Gui/ColorWheel.hpp>
-#include <BlendInt/Gui/NumberSlider.hpp>
+#include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/BrightnessSlider.hpp>
 
 #include <BlendInt/Stock/Theme.hpp>
@@ -81,9 +81,9 @@ namespace BlendInt {
 		hbox1->PushBack(colorwheel);
 		hbox1->PushBack(br_slider);
 
-		NumberSlider* red_slider = Manage(new NumberSlider);
-		NumberSlider* green_slider = Manage(new NumberSlider);
-		NumberSlider* blue_slider = Manage(new NumberSlider);
+		NumericalSlider* red_slider = Manage(new NumericalSlider);
+		NumericalSlider* green_slider = Manage(new NumericalSlider);
+		NumericalSlider* blue_slider = Manage(new NumericalSlider);
 
 		vbox->PushBack(hbox1);
 		//vbox->PushBack(colorwheel);
@@ -117,7 +117,7 @@ namespace BlendInt {
 			}
 
 			case WidgetRoundCornerRadius: {
-				const int* radius_p = static_cast<const int*>(request.data());
+				const float* radius_p = static_cast<const float*>(request.data());
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), *radius_p);
 				tool.UpdateInnerBuffer(m_inner.get());

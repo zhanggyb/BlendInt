@@ -63,12 +63,12 @@ namespace BlendInt {
 		 * @param[out] inner The inner vertices in std::vector
 		 * @param[out] outer The outline vertices in std::vector
 		 */
-		void Setup (const Size& size, int border, int round_type, int radius);
+		void Setup (const Size& size, float border, int round_type, float radius);
 
 		void Setup (const Size& size,
-						int border,
+						float border,
 						int round_type,
-						int radius,
+						float radius,
 						const Color& color,
 						Orientation shadedir,
 						short shadetop,
@@ -113,6 +113,8 @@ namespace BlendInt {
 			return m_half;
 		}
 
+		static const float cornervec[WIDGET_CURVE_RESOLU][2];
+
 	private:
 
 		void GenerateTriangleStripVertices (
@@ -133,8 +135,6 @@ namespace BlendInt {
 
 		std::vector<GLfloat> m_inner;
 		std::vector<GLfloat> m_outer;
-
-		static const float cornervec[WIDGET_CURVE_RESOLU][2];
 
 	};
 

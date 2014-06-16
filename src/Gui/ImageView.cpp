@@ -214,13 +214,6 @@ namespace BlendInt {
 		glGenVertexArrays(2, m_vao);
 		glBindVertexArray(m_vao[0]);
 
-		GLfloat back_verts[] = {
-				0.f, 0.f,
-				(GLfloat)size().width(), 0.f,
-				0.f, (GLfloat)size().height(),
-				(GLfloat)size().width(), (GLfloat)size().height()
-		};
-
 		m_background_buffer.reset(new GLArrayBuffer);
 		m_background_buffer->Generate();
 		m_background_buffer->Bind();

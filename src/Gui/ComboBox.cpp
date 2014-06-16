@@ -143,8 +143,8 @@ namespace BlendInt {
 			}
 
 			case WidgetRoundCornerRadius: {
-				const int* radius_p =
-								static_cast<const int*>(request.data());
+				const float* radius_p =
+								static_cast<const float*>(request.data());
 				VertexTool tool;
 				tool.Setup(size(),
 								DefaultBorderWidth(),

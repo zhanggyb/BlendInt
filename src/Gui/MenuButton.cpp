@@ -81,8 +81,8 @@ namespace BlendInt {
 			}
 
 			case WidgetRoundCornerRadius: {
-				const int* radius_p =
-								static_cast<const int*>(request.data());
+				const float* radius_p =
+								static_cast<const float*>(request.data());
 				UpdateTextPosition(size(), round_corner_type(), *radius_p,
 								text());
 				VertexTool tool;
