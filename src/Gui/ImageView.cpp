@@ -165,13 +165,13 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
-		mvp = glm::translate(mvp,
+		glm::mat4 checker_mvp = glm::translate(mvp,
 				glm::vec3((size().width() - m_checkerboard->size().width()) / 2.f,
 						(size().height() - m_checkerboard->size().height()) / 2.f,
 						0.f));
 
 		// draw checkerboard
-		m_checkerboard->Draw(mvp);
+		m_checkerboard->Draw(checker_mvp);
 
 		glActiveTexture(GL_TEXTURE0);
 		m_texture->Bind();
@@ -184,12 +184,10 @@ namespace BlendInt {
 			program->SetUniform1i("Gamma", 0);
 
 			glBindVertexArray(m_vao[1]);
-
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			glBindVertexArray(0);
 		}
 
+		glBindVertexArray(0);
 		m_texture->Reset();
 		program->Reset();
 
@@ -272,11 +270,14 @@ namespace BlendInt {
 
 		m_checkerboard->Resize(w, h);
 
+		GLfloat x = (size.width() - w) / 2.f;
+		GLfloat y = (size.height() - h) / 2.f;
+
 		GLfloat vertices[] = {
-			0.f, 0.f,	0.f, 1.f,
-			(GLfloat)w, 0.f,		1.f, 1.f,
-			0.f, (GLfloat)h,		0.f, 0.f,
-			(GLfloat)w, (GLfloat)h,		1.f, 0.f
+			x, y,	0.f, 1.f,
+			x + (GLfloat)w, y,		1.f, 1.f,
+			x, y + (GLfloat)h,		0.f, 0.f,
+			x + (GLfloat)w, y + (GLfloat)h,		1.f, 0.f
 		};
 
 		m_image_buffer->Bind();

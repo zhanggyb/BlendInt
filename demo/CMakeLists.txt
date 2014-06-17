@@ -13,6 +13,7 @@ endif()
 
 if(WITH_QT5_DEMO)
     add_subdirectory(qt5)
+    add_subdirectory(opencv)
 endif()
 
 if(WITH_GLUT_DEMO)
