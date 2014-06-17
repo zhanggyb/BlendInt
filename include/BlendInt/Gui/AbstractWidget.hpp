@@ -313,7 +313,7 @@ namespace BlendInt {
 			return m_flags & 0x0F;
 		}
 
-		int round_corner_radius () const
+		float round_corner_radius () const
 		{
 			return m_round_corner_radius;
 		}
@@ -511,7 +511,7 @@ namespace BlendInt {
 			m_flags = (m_flags & 0xFFF0) + (type & 0x0F);
 		}
 
-		void set_round_corner_radius (int radius)
+		void set_round_corner_radius (float radius)
 		{
 			m_round_corner_radius = radius;
 		}

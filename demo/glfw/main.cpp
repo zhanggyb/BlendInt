@@ -71,18 +71,6 @@ int main(int argc, char* argv[])
 	slider->SetPosition(100, 100);
 	slider->Resize(slider->GetPreferredSize());
 
-	ColorButton* btn = Manage(new ColorButton);
-	btn->SetPosition(100, 200);
-	btn->SetColor(Color(0x50B8296F));
-
-	ColorSelector* cs = Manage(new ColorSelector);
-	cs->SetPosition(220, 160);
-	cs->Resize(cs->GetPreferredSize());
-
-	context->Add(cs);
-
-	context->Add(btn);
-
 	context->Add(slider);
 
 	RunLoop(win);

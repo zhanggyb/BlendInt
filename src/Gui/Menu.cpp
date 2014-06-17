@@ -102,7 +102,7 @@ namespace BlendInt {
 		Size s;
 
 		if(m_list.size()) {
-			s.set_width(std::max(size().width(), round_corner_radius() * 2 + width));
+			s.set_width(std::max(size().width(), (int)round_corner_radius() * 2 + width));
 			s.set_height(size().height() + DefaultMenuItemHeight);
 		} else {
 			s.set_width(round_corner_radius() * 2 + width);

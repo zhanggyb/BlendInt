@@ -124,8 +124,8 @@ namespace BlendInt {
 			}
 
 			// inner[0, 0] is the center of a triangle fan
-			m_inner[0] = (maxxi - minxi) / 2.f;
-			m_inner[1] = (maxyi - minyi) / 2.f;
+			m_inner[0] = minxi + (maxxi - minxi) / 2.f;
+			m_inner[1] = minyi + (maxyi - minyi) / 2.f;
 
 			count = 1;
 
@@ -320,8 +320,8 @@ namespace BlendInt {
 			}
 
 			// inner[0, 0] is the center of a triangle fan
-			m_inner[0] = (maxxi - minxi) / 2.f;
-			m_inner[1] = (maxyi - minyi) / 2.f;
+			m_inner[0] = minxi + (maxxi - minxi) / 2.f;
+			m_inner[1] = minyi + (maxyi - minyi) / 2.f;
 
 			if (shadedir == Vertical) {
 				shaded_color = MakeShadedColor(color_top, color_down,

@@ -57,22 +57,38 @@ namespace BlendInt {
 		virtual ResponseType Draw (const RedrawEvent& event);
 
 		/**
-		 * @brief Generate vertices for drawing the inner slider bar
-		 * @param[in] size The size of this widget
-		 * @param[in] border The border width of this widget
-		 * @param[in] round_type The round corner type of this widget
-		 * @param[in] radius The round coner radius of this widget
-		 * @param[out] slide_verts The vertices output for drawing the slider bar
+		 *  Generate vertices for drawing the inner slider bar
+		 *  size The size of this widget
+		 *  border The border width of this widget
+		 *  round_type The round corner type of this widget
+		 *  radius The round coner radius of this widget
+		 *  slide_verts The vertices output for drawing the slider bar
 		 */
-		void GenerateSliderVertices (const Size& size,
+
+		void GenerateSliderVertices (const Size& out_size,
 						float border,
 						int round_type,
-						float radius,
-						std::vector<GLfloat>& slide_verts);
+						float out_radius,
+						std::vector<GLfloat>& left_vertices,
+						std::vector<GLfloat>& right_vertices);
 
 	private:
 
 		void InitOnce ();
+
+		float GetSlidePosition (float border, double value);
+
+		void GenerateLeftSliderVertices (float minx, float maxx, float miny,
+						float maxy, int round_type, float radius,
+						std::vector<GLfloat>& verts);
+
+		void GenerateRightSliderVertices (float minx, float maxx, float miny,
+						float maxy, int round_type, float radius,
+						std::vector<GLfloat>& verts);
+
+		void GenerateSliderVertices (float minx, float maxx, float miny,
+						float maxy, int round_type, float radius,
+						std::vector<GLfloat>& verts);
 
 		/**
 		 * @brief VertexArray objects used in this widget
@@ -81,16 +97,19 @@ namespace BlendInt {
 		 * [1] - outer buffer
 		 * [2] - slider bar buffer
 		 */
-		GLuint m_vao[3];
+		GLuint m_vao[4];
 
 		RefPtr<GLArrayBuffer> m_inner;
 		RefPtr<GLArrayBuffer> m_outer;
 
-		RefPtr<GLArrayBuffer> m_slider;
+		RefPtr<GLArrayBuffer> m_slider1;
+		RefPtr<GLArrayBuffer> m_slider2;
 
 		Font m_font;
 
 		String m_title;
+
+		bool m_right;
 
 		static Margin default_numberslider_padding;
 	};
