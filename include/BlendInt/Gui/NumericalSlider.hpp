@@ -69,6 +69,9 @@ namespace BlendInt {
 						float border,
 						int round_type,
 						float out_radius,
+						double value,
+						double minimum,
+						double maximum,
 						std::vector<GLfloat>& left_vertices,
 						std::vector<GLfloat>& right_vertices);
 

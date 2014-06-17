@@ -100,7 +100,48 @@ namespace BlendInt {
 
 	void NumericalSlider::UpdateSlider(const WidgetUpdateRequest& request)
 	{
+		if(request.target() == this) {
+			switch(request.type()) {
 
+				case SliderPropertyValue: {
+					const double* value_p = static_cast<const double*>(request.data());
+
+					std::vector<GLfloat> l_verts;
+					std::vector<GLfloat> r_verts;
+					GenerateSliderVertices(size(), DefaultBorderWidth(),
+					        round_corner_type(), round_corner_radius(), *value_p,
+					        minimum(), maximum(), l_verts, r_verts);
+					m_slider1->Bind();
+					m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+					if(r_verts.size()) {
+						m_right = true;
+						m_slider2->Bind();
+						m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
+						DBG_PRINT_MSG("%s", "have right part of slider");
+					} else {
+						m_right = false;
+					}
+
+
+					break;
+				}
+
+				case SliderPropertyMinimum: {
+					break;
+				}
+
+				case SliderPropertyMaximum: {
+					break;
+				}
+
+				case SliderPropertyStep: {
+					break;
+				}
+
+				default:
+					break;
+			}
+		}
 	}
 
 	void NumericalSlider::UpdateGeometry (const WidgetUpdateRequest& request)
@@ -117,10 +158,12 @@ namespace BlendInt {
 				m_outer->Bind();
 				tool.SetOuterBufferData(m_outer.get());
 
-				m_slider1->Bind();
 				std::vector<GLfloat> l_verts;
 				std::vector<GLfloat> r_verts;
-				GenerateSliderVertices(*size_p, DefaultBorderWidth(), round_corner_type(), round_corner_radius(), l_verts, r_verts);
+				GenerateSliderVertices(*size_p, DefaultBorderWidth(),
+				        round_corner_type(), round_corner_radius(), value(),
+				        minimum(), maximum(), l_verts, r_verts);
+				m_slider1->Bind();
 				m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
 				if(r_verts.size()) {
 					m_right = true;
@@ -146,10 +189,12 @@ namespace BlendInt {
 				m_outer->Bind();
 				tool.SetOuterBufferData(m_outer.get());
 
-				m_slider1->Bind();
 				std::vector<GLfloat> l_verts;
 				std::vector<GLfloat> r_verts;
-				GenerateSliderVertices(size(), DefaultBorderWidth(), *type_p, round_corner_radius(), l_verts, r_verts);
+				GenerateSliderVertices(size(), DefaultBorderWidth(), *type_p,
+				        round_corner_radius(), value(), minimum(), maximum(),
+				        l_verts, r_verts);
+				m_slider1->Bind();
 				m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
 				if(r_verts.size()) {
 					m_right = true;
@@ -176,10 +221,12 @@ namespace BlendInt {
 				m_outer->Bind();
 				tool.SetOuterBufferData(m_outer.get());
 
-				m_slider1->Bind();
 				std::vector<GLfloat> l_verts;
 				std::vector<GLfloat> r_verts;
-				GenerateSliderVertices(size(), DefaultBorderWidth(), round_corner_type(), *radius_p, l_verts, r_verts);
+				GenerateSliderVertices(size(), DefaultBorderWidth(),
+				        round_corner_type(), *radius_p, value(), minimum(),
+				        maximum(), l_verts, r_verts);
+				m_slider1->Bind();
 				m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
 				if(r_verts.size()) {
 					m_right = true;
@@ -270,8 +317,6 @@ namespace BlendInt {
 						h + default_numberslider_padding.vsum());
 		set_round_corner_radius(size().height() / 2);
 
-		set_value(95.0);
-
 		VertexTool tool;
 		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
 						round_corner_radius());
@@ -302,7 +347,10 @@ namespace BlendInt {
 		std::vector<GLfloat> l_verts;
 		std::vector<GLfloat> r_verts;
 
-		GenerateSliderVertices(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius(), l_verts, r_verts);
+		GenerateSliderVertices(size(), DefaultBorderWidth(),
+		        round_corner_type(), round_corner_radius(),
+		        value(), minimum(), maximum(),
+		        l_verts, r_verts);
 		if(r_verts.size()) {
 			m_right = true;
 			DBG_PRINT_MSG("%s", "have right vertices");
@@ -398,6 +446,7 @@ namespace BlendInt {
 	
 	void NumericalSlider::GenerateSliderVertices (const Size& out_size,
 					float border, int round_type, float out_radius,
+					double value, double minimum, double maximum,
 					std::vector<GLfloat>& left_vertices,
 					std::vector<GLfloat>& right_vertices)
 	{
@@ -413,7 +462,7 @@ namespace BlendInt {
 		float minyi = miny + border * Theme::instance->pixel();		// U.pixelsize;
 		float maxyi = maxy - border * Theme::instance->pixel();		// U.pixelsize;
 
-		float mid = out_radius + (maxxi - minxi - radi) * value() / (maximum() - minimum());
+		float mid = out_radius + (maxxi - minxi - radi) * value / (maximum - minimum);
 
 		if(mid <= (maxxi - radi)) {
 			GenerateLeftSliderVertices(minxi, mid, minyi, maxyi, round_type, radi, left_vertices);

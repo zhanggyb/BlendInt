@@ -243,6 +243,9 @@ namespace BlendInt {
 		if (m_minimum == minimum)
 			return;
 
+		if (minimum >= m_maximum)
+			return;
+
 		WidgetUpdateRequest request(this, this, SliderPropertyMinimum, &minimum);
 		UpdateSlider(request);
 		m_minimum = minimum;
@@ -252,6 +255,9 @@ namespace BlendInt {
 	void AbstractSlider<T>::SetMaximum (T maximum)
 	{
 		if (m_maximum == maximum)
+			return;
+
+		if (maximum <= m_minimum)
 			return;
 
 		WidgetUpdateRequest request(this, this, SliderPropertyMaximum, &maximum);

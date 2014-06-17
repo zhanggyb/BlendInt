@@ -71,6 +71,15 @@ int main(int argc, char* argv[])
 	slider->SetPosition(100, 100);
 	slider->Resize(slider->GetPreferredSize());
 
+	slider->SetValue(0.0);
+
+	ColorSelector* cs = Manage (new ColorSelector);
+
+	cs->SetPosition(200, 200);
+	cs->Resize(cs->GetPreferredSize());
+
+	context->Add(cs);
+
 	context->Add(slider);
 
 	RunLoop(win);
