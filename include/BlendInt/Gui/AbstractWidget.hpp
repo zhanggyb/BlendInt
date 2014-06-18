@@ -233,6 +233,8 @@ namespace BlendInt {
 
 		void SetVisible (bool visible);
 
+		void SetEmboss (bool emboss);
+
 		virtual bool IsExpandX () const
 		{
 			return false;
@@ -306,6 +308,11 @@ namespace BlendInt {
 		inline bool managed () const
 		{
 			return m_flags & WidgetFlagManaged;
+		}
+
+		inline bool emboss () const
+		{
+			return m_flags & WidgetFlagEmboss;
 		}
 
 		int round_corner_type () const
@@ -497,6 +504,15 @@ namespace BlendInt {
 			}
 		}
 
+		void set_emboss (bool emboss)
+		{
+			if (emboss) {
+				SETBIT(m_flags, WidgetFlagEmboss);
+			} else {
+				CLRBIT(m_flags, WidgetFlagEmboss);
+			}
+		}
+
 		void set_scissor_test (bool status)
 		{
 			if(status) {
@@ -562,7 +578,9 @@ namespace BlendInt {
 			/** If enable scissor test when drawing this the subwidgets, this flag is only workable for container */
 			WidgetFlagScissorTest = (1 << 9),
 
-			WidgetFlagDropShadow = (1 << 10)
+			WidgetFlagDropShadow = (1 << 10),
+
+			WidgetFlagEmboss = (1 << 11)
 
 		};
 

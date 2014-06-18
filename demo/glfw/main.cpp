@@ -72,11 +72,24 @@ int main(int argc, char* argv[])
 	slider->Resize(slider->GetPreferredSize());
 
 	slider->SetValue(0.0);
+	slider->SetEmboss(true);
 
 	ColorSelector* cs = Manage (new ColorSelector);
 
 	cs->SetPosition(200, 200);
 	cs->Resize(cs->GetPreferredSize());
+
+	Button* btn = Manage(new Button("Hello World!"));
+	btn->SetPosition(300, 80);
+	btn->SetEmboss(true);
+
+	ToggleButton* tbn = Manage(new ToggleButton("Hello World!"));
+	tbn->SetPosition(400, 80);
+	tbn->SetEmboss(true);
+
+	context->Add(tbn);
+
+	context->Add(btn);
 
 	context->Add(cs);
 

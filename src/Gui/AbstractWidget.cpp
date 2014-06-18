@@ -554,29 +554,6 @@ namespace BlendInt {
 		delete fb; fb = 0;
 	}
 
-	void AbstractWidget::DispatchRender(AbstractWidget* other)
-	{
-		//other->Draw();
-	}
-
-	ResponseType AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
-			const KeyEvent& event)
-	{
-		return obj->KeyPressEvent(event);
-	}
-
-	ResponseType AbstractWidget::dispatch_mouse_move_event (AbstractWidget* obj,
-			const MouseEvent& event)
-	{
-		return obj->MouseMoveEvent(event);
-	}
-
-	ResponseType AbstractWidget::dispatch_mouse_press_event (AbstractWidget* obj,
-			const MouseEvent& event)
-	{
-		return obj->MousePressEvent(event);
-	}
-
 	void AbstractWidget::SetDefaultBorderWidth(float border)
 	{	
 		default_border_width = border;
@@ -645,6 +622,38 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
 
 		buffer->Reset();
+	}
+
+	void AbstractWidget::SetEmboss(bool emboss)
+	{
+		if(this->emboss() == emboss)
+			return;
+
+		set_emboss(emboss);
+		Refresh();
+	}
+
+	void AbstractWidget::DispatchRender(AbstractWidget* other)
+	{
+		//other->Draw();
+	}
+
+	ResponseType AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
+			const KeyEvent& event)
+	{
+		return obj->KeyPressEvent(event);
+	}
+
+	ResponseType AbstractWidget::dispatch_mouse_move_event (AbstractWidget* obj,
+			const MouseEvent& event)
+	{
+		return obj->MouseMoveEvent(event);
+	}
+
+	ResponseType AbstractWidget::dispatch_mouse_press_event (AbstractWidget* obj,
+			const MouseEvent& event)
+	{
+		return obj->MousePressEvent(event);
 	}
 
 	ResponseType AbstractWidget::dispatch_mouse_release_event (AbstractWidget* obj,

@@ -292,6 +292,17 @@ namespace BlendInt {
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
 
+		if (emboss()) {
+			program->SetVertexAttrib4f("Color", 1.0f, 1.0f, 1.0f, 0.16f);
+
+			glm::mat4 emboss_mvp = glm::translate(mvp,
+							glm::vec3(0.f, -1.f, 0.f));
+			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+							glm::value_ptr(emboss_mvp));
+			glDrawArrays(GL_TRIANGLE_STRIP, 0,
+							GetHalfOutlineVertices(round_corner_type()) * 2);
+		}
+
 		glBindVertexArray(0);
 
 		program->Reset();

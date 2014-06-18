@@ -87,10 +87,19 @@ namespace BlendInt {
 
 		void UpdateOuterBuffer (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
 
+		/**
+		 * @brief Deprecated
+		 */
 		RefPtr<GLArrayBuffer> GenerateEmbossBuffer (GLenum usage = GL_STATIC_DRAW);
 
+		/**
+		 * @brief Deprecated
+		 */
 		void SetEmbossBufferData (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
 
+		/**
+		 * @brief Deprecated
+		 */
 		void UpdateEmbossBuffer (GLArrayBuffer* buffer, GLenum usage = GL_STATIC_DRAW);
 
 		const GLfloat* inner_data () const
