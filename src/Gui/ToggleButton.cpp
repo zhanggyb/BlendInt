@@ -59,6 +59,11 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, m_vao);
 	}
 
+	bool ToggleButton::IsExpandX () const
+	{
+		return true;
+	}
+
 	void ToggleButton::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
 		switch (request.type()) {

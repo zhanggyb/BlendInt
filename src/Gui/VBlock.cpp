@@ -59,6 +59,21 @@ namespace BlendInt {
 		}
 	}
 
+	bool VBlock::IsExpandX() const
+	{
+		bool expand = false;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->IsExpandX()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
+
 	bool VBlock::IsExpandY () const
 	{
 		bool expand = false;

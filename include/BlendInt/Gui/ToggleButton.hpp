@@ -48,6 +48,8 @@ namespace BlendInt {
 
 		virtual ~ToggleButton ();
 
+		virtual bool IsExpandX () const;
+
 	protected:
 
 		virtual void UpdateGeometry (const WidgetUpdateRequest& request);

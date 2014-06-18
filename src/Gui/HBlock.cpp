@@ -72,6 +72,21 @@ namespace BlendInt {
 
 		return expand;
 	}
+
+	bool HBlock::IsExpandY () const
+	{
+		bool expand = false;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			if((*it)->IsExpandY()) {
+				expand = true;
+				break;
+			}
+		}
+
+		return expand;
+	}
 	
 	Size HBlock::GetPreferredSize () const
 	{

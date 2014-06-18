@@ -42,6 +42,11 @@
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/BrightnessSlider.hpp>
 
+#include <BlendInt/Gui/ToggleButton.hpp>
+#include <BlendInt/Gui/HBlock.hpp>
+#include <BlendInt/Gui/VBlock.hpp>
+#include <BlendInt/Gui/ToolButton.hpp>
+
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
@@ -53,6 +58,7 @@ namespace BlendInt {
 		set_size(200, 320);
 		set_round_corner_type(RoundAll);
 		set_drop_shadow(true);
+		set_margin(2, 2, 2, 2);
 
 		InitializeColorSelector();
 	}
@@ -73,6 +79,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VBox* vbox = Manage(new VBox);
+		vbox->SetMargin(2, 2, 2, 2);
 
 		HBox* hbox1 = Manage(new HBox);
 		ColorWheel* colorwheel = Manage(new ColorWheel);
@@ -81,15 +88,35 @@ namespace BlendInt {
 		hbox1->PushBack(colorwheel);
 		hbox1->PushBack(br_slider);
 
+		ToggleButton* btn1 = Manage(new ToggleButton("RGB"));
+		ToggleButton* btn2 = Manage(new ToggleButton("HSV"));
+		ToggleButton* btn3 = Manage(new ToggleButton("Hex"));
+		HBlock* btn_block = Manage(new HBlock);
+		btn_block->SetMargin(4, 4, 4, 4);
+		btn_block->PushBack(btn1);
+		btn_block->PushBack(btn2);
+		btn_block->PushBack(btn3);
+
 		NumericalSlider* red_slider = Manage(new NumericalSlider);
 		NumericalSlider* green_slider = Manage(new NumericalSlider);
 		NumericalSlider* blue_slider = Manage(new NumericalSlider);
 
+		VBlock* slider_block = Manage(new VBlock);
+		slider_block->PushBack(red_slider);
+		slider_block->PushBack(green_slider);
+		slider_block->PushBack(blue_slider);
+
+		ToolButton* pick_btn = Manage(new ToolButton);
+		pick_btn->SetEmboss(true);
+
+		HBox* hbox2 = Manage(new HBox(AlignTop));
+		hbox2->PushBack(slider_block);
+		hbox2->PushBack(pick_btn);
+
 		vbox->PushBack(hbox1);
 		//vbox->PushBack(colorwheel);
-		vbox->PushBack(red_slider);
-		vbox->PushBack(green_slider);
-		vbox->PushBack(blue_slider);
+		vbox->PushBack(btn_block);
+		vbox->PushBack(hbox2);
 
 		Setup(vbox);
 	}

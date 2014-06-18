@@ -720,6 +720,7 @@ namespace BlendInt {
 
 	int AbstractWidget::GetOutlineVertices (int round_type) const
 	{
+		round_type = round_type & RoundAll;
 		int count = 0;
 
 		while (round_type != 0) {
@@ -733,7 +734,6 @@ namespace BlendInt {
 	int AbstractWidget::GetHalfOutlineVertices(int round_type) const
 	{
 		round_type = round_type & (RoundBottomLeft | RoundBottomRight);
-
 		int count = 0;
 		while (round_type != 0) {
 			count += round_type & 0x1;

@@ -69,20 +69,13 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	VBlock* block = Manage(new VBlock);
-	block->SetPosition(200, 200);
+	ColorSelector* cs = Manage(new ColorSelector);
 
-	NumericalSlider* btn1 = Manage(new NumericalSlider);
-	NumericalSlider* btn2 = Manage(new NumericalSlider);
-	NumericalSlider* btn3 = Manage(new NumericalSlider);
+	cs->SetPosition(100, 100);
 
-	block->PushBack(btn1);
-	block->PushBack(btn2);
-	block->PushBack(btn3);
+	context->Add(cs);
 
-	block->Resize(160, 60);
-
-	context->Add(block);
+	cs->Resize(cs->GetPreferredSize());
 
 	RunLoop(win);
 

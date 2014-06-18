@@ -44,6 +44,8 @@ namespace BlendInt {
 
 		void PushBack (Widget* widget);
 
+		virtual bool IsExpandX () const;
+
 		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
