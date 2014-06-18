@@ -21,30 +21,28 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_TOOLBAR_HPP_
-#define _BLENDINT_GUI_TOOLBAR_HPP_
-
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/OpenGL/GLSLProgram.hpp>
+#ifndef _BLENDINT_GUI_HBLOCK_HPP_
+#define _BLENDINT_GUI_HBLOCK_HPP_
 
 #include <BlendInt/Gui/AbstractDequeContainer.hpp>
-#include <BlendInt/Gui/ToolButton.hpp>
+#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
-	class ToolBar: public AbstractDequeContainer
+	/**
+	 * @brief A container looks like an entirety
+	 */
+	class HBlock: public AbstractDequeContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(ToolBar);
+		DISALLOW_COPY_AND_ASSIGN(HBlock);
 
 	public:
 
-		ToolBar ();
+		HBlock ();
 
-		virtual ~ToolBar ();
+		virtual ~HBlock ();
 
-		void PushBack (AbstractWidget* widget);
-
-		void PushBack (const RefPtr<Action>& action);
+		void PushBack (Widget* widget);
 
 		virtual bool IsExpandX () const;
 
@@ -74,31 +72,8 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeToolBar ();
-
-		void FillSubWidgets (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
-
-		void FillSubWidgets (int x, int y, int width, int height, int space);
-
-		void RealignSubWidgets (const Size& size, const Margin& margin, int space);
-
-		int GetLastPosition () const;
-
-		GLuint m_vao;
-
-		/**
-		 * space between tool buttons
-		 */
-		int m_space;
-
-		/** Used for middle mouse move */
-		bool m_move_status;
-		int m_last_x;
-		int m_start_x;
-
-		RefPtr<GLArrayBuffer> m_inner;
 	};
-
 }
 
-#endif /* _BLENDINT_GUI_TOOLBAR_HPP_ */
+
+#endif /* _BLENDINT_GUI_HBLOCK_HPP_ */

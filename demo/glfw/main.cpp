@@ -47,6 +47,8 @@
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/Context.hpp>
 #include <BlendInt/Gui/DirList.hpp>
+#include <BlendInt/Gui/HBlock.hpp>
+#include <BlendInt/Gui/VBlock.hpp>
 
 #include "GLFWContext.hpp"
 #include "Window.hpp"
@@ -67,33 +69,20 @@ int main(int argc, char* argv[])
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
 
-	NumericalSlider* slider = Manage(new NumericalSlider);
-	slider->SetPosition(100, 100);
-	slider->Resize(slider->GetPreferredSize());
+	VBlock* block = Manage(new VBlock);
+	block->SetPosition(200, 200);
 
-	slider->SetValue(0.0);
-	slider->SetEmboss(true);
+	NumericalSlider* btn1 = Manage(new NumericalSlider);
+	NumericalSlider* btn2 = Manage(new NumericalSlider);
+	NumericalSlider* btn3 = Manage(new NumericalSlider);
 
-	ColorSelector* cs = Manage (new ColorSelector);
+	block->PushBack(btn1);
+	block->PushBack(btn2);
+	block->PushBack(btn3);
 
-	cs->SetPosition(200, 200);
-	cs->Resize(cs->GetPreferredSize());
+	block->Resize(160, 60);
 
-	Button* btn = Manage(new Button("Hello World!"));
-	btn->SetPosition(300, 80);
-	btn->SetEmboss(true);
-
-	ToggleButton* tbn = Manage(new ToggleButton("Hello World!"));
-	tbn->SetPosition(400, 80);
-	tbn->SetEmboss(true);
-
-	context->Add(tbn);
-
-	context->Add(btn);
-
-	context->Add(cs);
-
-	context->Add(slider);
+	context->Add(block);
 
 	RunLoop(win);
 
