@@ -42,15 +42,14 @@
 namespace BlendInt {
 
 	BrightnessSlider::BrightnessSlider(Orientation orientation)
-	: AbstractSlider<int>(orientation),
-	  m_vao(0)
+	: AbstractSlider<int>(orientation)
 	{
 		InitializeBrightnessSlider();
 	}
 
 	BrightnessSlider::~BrightnessSlider()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(2, m_vao);
 	}
 
 	bool BrightnessSlider::IsExpandX() const
@@ -85,29 +84,32 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glBindVertexArray(m_vao);
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->default_triangle_program();
 		program->Use();
 
-		glm::vec3 pos((float) position().x(), (float) position().y(),
-						(float) z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		Color color = Theme::instance->number_slider().inner_sel;
-		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 0);
-		glEnableVertexAttribArray(0);
-		DrawTriangleFan(0, m_inner.get());
-		color = Theme::instance->number_slider().outline;
-		program->SetVertexAttrib4fv("Color", color.data());
+		program->SetUniform1i("Gamma", 0);
+
+		glBindVertexArray(m_vao[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_corner_type()) + 2);
+
+		program->SetVertexAttrib4fv("Color", Theme::instance->number_slider().outline.data());
 		program->SetUniform1i("AA", 1);
+
+		glBindVertexArray(m_vao[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+
 		DrawTriangleStrip(0, m_outer.get());
-		glDisableVertexAttribArray(0);
-		program->Reset();
+
 		glBindVertexArray(0);
+		program->Reset();
 
 		glm::mat4 icon_mvp;
 
@@ -128,9 +130,12 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(request.data());
 				VertexTool tool;
 				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(),
-								round_corner_radius());
-				tool.UpdateInnerBuffer(m_inner.get());
-				tool.UpdateOuterBuffer(m_outer.get());
+								round_corner_radius(), Color(0x000000FF),
+								orientation(), 255, 0);
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 				Refresh();
 				break;
 			}
@@ -139,9 +144,12 @@ namespace BlendInt {
 				const int* type_p = static_cast<const int*>(request.data());
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), *type_p,
-								round_corner_radius());
-				tool.UpdateInnerBuffer(m_inner.get());
-				tool.UpdateOuterBuffer(m_outer.get());
+								round_corner_radius(), Color(0x000000FF),
+								orientation(), 255, 0);
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 				Refresh();
 				break;
 			}
@@ -151,9 +159,11 @@ namespace BlendInt {
 								static_cast<const float*>(request.data());
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
-								*radius_p);
-				tool.UpdateInnerBuffer(m_inner.get());
-				tool.UpdateOuterBuffer(m_outer.get());
+								*radius_p, Color(0x000000FF), orientation(), 255, 0);
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 				Refresh();
 				break;
 			}
@@ -175,15 +185,37 @@ namespace BlendInt {
 
 		m_dot.Resize(3);
 
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(2, m_vao);
+
+		Color black(0x000000FF);
 
 		VertexTool tool;
 		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
-						round_corner_radius());
+						round_corner_radius(), black, orientation(), 255, 0);
 
-		m_inner = tool.GenerateInnerBuffer();
-		m_outer = tool.GenerateOuterBuffer();
+		glBindVertexArray(m_vao[0]);
 
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(m_vao[1]);
+		m_outer.reset(new GLArrayBuffer);
+		m_outer->Generate();
+		m_outer->Bind();
+		tool.SetOuterBufferData(m_outer.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		GLArrayBuffer::Reset();
+		glBindVertexArray(0);
 	}
 
 }

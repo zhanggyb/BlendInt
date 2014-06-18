@@ -24,11 +24,17 @@
 #ifndef _BLENDINT_GUI_COLORSELECTOR_HPP_
 #define _BLENDINT_GUI_COLORSELECTOR_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <BlendInt/Gui/HBlock.hpp>
+#include <BlendInt/Gui/VBlock.hpp>
+#include <BlendInt/Gui/Stack.hpp>
+
+#include <BlendInt/Gui/ButtonGroup.hpp>
+
+#include <BlendInt/Gui/VBox.hpp>
 
 namespace BlendInt {
 
-	class ColorSelector: public Frame
+	class ColorSelector: public VBox
 	{
 		DISALLOW_COPY_AND_ASSIGN(ColorSelector);
 
@@ -48,10 +54,24 @@ namespace BlendInt {
 
 		void InitializeColorSelector ();
 
+		void OnButtonToggled (int index, bool toggled);
+
+		VBlock* CreateRGBBlock ();
+
+		VBlock* CreateHSVBlock ();
+
+		VBox* CreateHexBlock ();
+
+		Stack* CreateBlockStack ();
+
+		ButtonGroup m_radio_group;
+
 		GLuint m_vao;
 
 		RefPtr<GLArrayBuffer> m_inner;
 		RefPtr<GLArrayBuffer> m_outer;
+
+		Stack* m_stack;
 
 	};
 }

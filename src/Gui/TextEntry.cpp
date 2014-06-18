@@ -597,7 +597,7 @@ namespace BlendInt {
 						- default_textentry_padding.left();
 
 		if(click_width < 0 ||
-		   click_width > static_cast<int>(size().width() - default_textentry_padding.right())) {
+		   click_width > (size().width() - default_textentry_padding.right())) {
 			return m_cursor_position;
 		}
 
