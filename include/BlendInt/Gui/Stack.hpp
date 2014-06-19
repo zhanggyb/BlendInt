@@ -87,11 +87,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeStack ();
-
-		GLuint m_vao;
 		size_t m_index;
-		RefPtr<GLArrayBuffer> m_inner;
 	};
 
 }

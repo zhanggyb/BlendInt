@@ -41,7 +41,7 @@
 #include <BlendInt/Gui/TabHeader.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
-#include <BlendInt/Gui/Stack.hpp>
+#include <BlendInt/Gui/StackPanel.hpp>
 
 namespace BlendInt {
 
@@ -51,7 +51,7 @@ namespace BlendInt {
 		set_size(400, 300);
 
 		TabHeader* header = Manage(new TabHeader);
-		Stack* stack = Manage(new Stack);
+		StackPanel* stack = Manage(new StackPanel);
 		stack->SetMargin(4, 4, 4, 4);
 
 		SetSubWidget(0, header);
@@ -72,7 +72,7 @@ namespace BlendInt {
 		btn->SetText(title);
 
 		TabHeader* header = dynamic_cast<TabHeader*>(sub_widget(0));
-		Stack* stack = dynamic_cast<Stack*>(sub_widget(1));
+		StackPanel* stack = dynamic_cast<StackPanel*>(sub_widget(1));
 
 		header->PushBack(btn);
 		stack->Add(widget);
@@ -232,7 +232,7 @@ namespace BlendInt {
 		int header_y = position().y() + size().height() - margin().top();
 
 		TabHeader* header = dynamic_cast<TabHeader*>(sub_widget(0));
-		Stack* stack = dynamic_cast<Stack*>(sub_widget(1));
+		StackPanel* stack = dynamic_cast<StackPanel*>(sub_widget(1));
 
 		Size header_size = header->GetPreferredSize();
 

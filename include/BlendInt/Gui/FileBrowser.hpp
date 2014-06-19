@@ -48,9 +48,18 @@ namespace BlendInt {
 
 		virtual ~FileBrowser ();
 
+	protected:
+
+		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+
+		virtual ResponseType Draw (const RedrawEvent& event);
+
 	private:
 
 		void InitializeFileBrowser ();
+
+		GLuint m_vao;
+		RefPtr<GLArrayBuffer> m_inner;
 
 		VBox* m_layout;
 

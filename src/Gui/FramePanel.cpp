@@ -2,17 +2,17 @@
  * This file is part of BlendInt (a Blender-like Interface Library in
  * OpenGL).
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
- * you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free
+ * software: you can redistribute it and/or modify it under the terms
+ * of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
- * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
+ * BlendInt (a Blender-like Interface Library in OpenGL) is
+ * distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+ * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with BlendInt.  If not, see
@@ -34,34 +34,31 @@
 #include <assert.h>
 #include <algorithm>
 
+#include <iostream>
+
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
 #include <BlendInt/Gui/VertexTool.hpp>
-
-#include <BlendInt/Gui/FileBrowser.hpp>
-#include <BlendInt/Gui/HBox.hpp>
-
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
+#include <BlendInt/Gui/FramePanel.hpp>
+
 namespace BlendInt {
 
-	FileBrowser::FileBrowser ()
-	: m_layout(0), m_path_entry(0)
+	FramePanel::FramePanel()
+	: Frame()
 	{
-		set_size(500, 400);
-		set_margin(2, 2, 2, 2);
-
-		InitializeFileBrowser();
+		InitializeFramePanel();
 	}
-
-	FileBrowser::~FileBrowser ()
+	
+	FramePanel::~FramePanel ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void FileBrowser::UpdateGeometry (const WidgetUpdateRequest& request)
+	void FramePanel::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -87,7 +84,7 @@ namespace BlendInt {
 		}
 	}
 	
-	ResponseType FileBrowser::Draw (const RedrawEvent& event)
+	ResponseType FramePanel::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
 
@@ -110,7 +107,7 @@ namespace BlendInt {
 		return AcceptAndContinue;
 	}
 
-	void FileBrowser::InitializeFileBrowser ()
+	void FramePanel::InitializeFramePanel()
 	{
 		glGenVertexArrays(1, &m_vao);
 
@@ -129,39 +126,6 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		m_inner->Reset();
 
-		m_layout = Manage(new VBox);
-		m_layout->SetMargin(2, 2, 2, 2);
-		m_layout->SetSpace(4);
-
-		m_path_entry = Manage(new TextEntry);
-		m_path_entry->SetRoundCornerType(RoundAll);
-
-		m_open = Manage(new Button(String("Open")));
-
-		HBox* dir_layout = Manage(new HBox);
-		dir_layout->SetMargin(0, 0, 0, 0);
-		dir_layout->PushBack(m_path_entry);
-		dir_layout->PushBack(m_open);
-
-		m_file_entry = Manage(new TextEntry);
-		m_file_entry->SetRoundCornerType(RoundAll);
-		m_cancel = Manage(new Button(String("Cancel")));
-
-		HBox* file_layout = Manage(new HBox);
-		file_layout->SetMargin(0, 0, 0, 0);
-		file_layout->PushBack(m_file_entry);
-		file_layout->PushBack(m_cancel);
-
-		ScrollArea* area = Manage(new ScrollArea);
-
-		m_list = Manage(new DirList);
-		area->SetViewport(m_list);
-
-		m_layout->PushBack(dir_layout);
-		m_layout->PushBack(file_layout);
-		m_layout->PushBack(area);
-
-		Setup(m_layout);
 	}
 
 }

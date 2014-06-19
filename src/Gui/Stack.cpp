@@ -37,7 +37,6 @@
 #include <algorithm>
 
 #include <BlendInt/Gui/Stack.hpp>
-#include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
@@ -45,18 +44,14 @@ namespace BlendInt {
 
 	Stack::Stack()
 	: AbstractDequeContainer(),
-	  m_vao(0),
 	  m_index(0)
 	{
 		//set_preferred_size(400, 300);
 		set_size(400, 300);
-
-		InitializeStack();
 	}
 
 	Stack::~Stack()
 	{
-		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	void Stack::Add (AbstractWidget* widget)
@@ -239,10 +234,6 @@ namespace BlendInt {
 				int h = new_size->height() - margin().vsum();
 				ResizeSubWidgets(w, h);
 
-				VertexTool tool;
-				tool.Setup(*new_size, 0, RoundNone, 0);
-				tool.UpdateInnerBuffer(m_inner.get());
-
 				break;
 			}
 
@@ -254,29 +245,7 @@ namespace BlendInt {
 
 	ResponseType Stack::Draw (const RedrawEvent& event)
 	{
-		using Stock::Shaders;
-
-		glm::vec3 pos((float) position().x(), (float) position().y(),
-						(float) z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
-		glBindVertexArray(m_vao);
-		RefPtr<GLSLProgram> program =
-				Shaders::instance->default_triangle_program();
-
-		program->Use();
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
-
-		glEnableVertexAttribArray(0);
-		DrawTriangleStrip(0, m_inner.get());
-		glDisableVertexAttribArray(0);
-
-		program->Reset();
-		glBindVertexArray(0);
-
-		return AcceptAndContinue;
+		return IgnoreAndContinue;
 	}
 
 	ResponseType Stack::CursorEnterEvent(bool entered)
@@ -324,15 +293,6 @@ namespace BlendInt {
 	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)
 	{
 		return IgnoreAndContinue;
-	}
-
-	void Stack::InitializeStack()
-	{
-		glGenVertexArrays(1, &m_vao);
-
-		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
-		m_inner = tool.GenerateInnerBuffer();
 	}
 
 }

@@ -34,9 +34,6 @@
 
 namespace BlendInt {
 
-	struct WidgetTheme;
-	class Color;
-
 	/**
 	 * @brief A widget usually contains other Form or widget in a box with padding
 	 *
@@ -85,11 +82,6 @@ namespace BlendInt {
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
-	private:
-
-		GLuint m_vao;
-		RefPtr<GLArrayBuffer> m_inner;
 
 	};
 
