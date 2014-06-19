@@ -46,7 +46,7 @@ namespace BlendInt {
 		if(PushBackSubWidget(widget)) {
 
 			widget->SetEmboss(true);
-			FillSubWidgetsAveragely(position(), size(), margin(), Horizontal, AlignCenter, -1);
+			FillInHBlock(position(), size(), margin());
 
 			if(last) {
 				last->SetRoundCornerType(last->round_corner_type() & ~(RoundTopRight | RoundBottomRight));
@@ -115,7 +115,7 @@ namespace BlendInt {
 					max_height = std::max(max_height, tmp.height());
 				}
 			}
-			preferred_size.set_width(sub_widget_size() * max_width);
+			preferred_size.set_width(sub_widget_size() * (max_width - 1));
 			preferred_size.set_height(max_height);
 
 			preferred_size.add_width(margin().hsum());
@@ -134,7 +134,7 @@ namespace BlendInt {
 				case ContainerMargin: {
 
 					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					FillSubWidgetsAveragely(position(), size(), *margin_p, Horizontal, AlignCenter, -1);
+					FillInHBlock(position(), size(), *margin_p);
 
 					break;
 				}
@@ -167,7 +167,7 @@ namespace BlendInt {
 				case WidgetSize: {
 
 					const Size* size_p = static_cast<const Size*>(request.data());
-					FillSubWidgetsAveragely(position(), *size_p, margin(), Horizontal, AlignCenter, -1);
+					FillInHBlock(position(), *size_p, margin());
 
 					break;
 				}
@@ -220,4 +220,33 @@ namespace BlendInt {
 		return IgnoreAndContinue;
 	}
 
+	void HBlock::FillInHBlock (const Point& out_pos, const Size& out_size,
+					const Margin& margin)
+	{
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int w = out_size.width() - margin.hsum();
+		int h = out_size.height() - margin.vsum();
+
+		FillInHBlock(x, y, w, h);
+	}
+
+	void HBlock::FillInHBlock (int x, int y, int w, int h)
+	{
+		if(sub_widget_size() == 0) return;
+		int average_width = w / sub_widget_size() + 1;
+
+		AbstractWidget* widget = 0;
+
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			ResizeSubWidget(widget, average_width, h);
+			SetSubWidgetPosition(widget, x, y);
+			x = x + average_width - 1;
+		}
+	}
+
 }
+

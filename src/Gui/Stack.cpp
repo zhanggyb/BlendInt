@@ -62,10 +62,8 @@ namespace BlendInt {
 	void Stack::Add (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
-			// TODO: lock widget's geometry
-
-			int w = size().width() - margin().left() - margin().right();
-			int h = size().height() - margin().top() - margin().bottom();
+			int w = size().width() - margin().hsum();
+			int h = size().height() - margin().vsum();
 
 			ResizeSubWidget(widget, w, h);
 			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
@@ -79,8 +77,6 @@ namespace BlendInt {
 	void Stack::Insert (size_t index, AbstractWidget* widget)
 	{
 		if(InsertSubWidget(index, widget)) {
-			// TODO: lock widget's geometry
-
 			int w = size().width() - margin().left() - margin().right();
 			int h = size().height() - margin().top() - margin().bottom();
 

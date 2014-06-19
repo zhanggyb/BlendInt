@@ -105,7 +105,6 @@ namespace BlendInt {
 
 		VBox* color_box = Manage(new VBox);
 		color_box->SetMargin(0, 0, 0, 0);
-		color_box->SetSpace(0);
 		color_box->PushBack(m_stack);
 		color_box->PushBack(alpha_slider);
 

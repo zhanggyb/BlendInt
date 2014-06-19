@@ -28,7 +28,7 @@ namespace BlendInt {
 	VBlock::VBlock ()
 	: AbstractDequeContainer()
 	{
-		set_size(100, 20);
+		set_size(80, 60);
 		set_margin(0, 0, 0, 0);
 	}
 
@@ -46,7 +46,7 @@ namespace BlendInt {
 		if(PushBackSubWidget(widget)) {
 
 			widget->SetEmboss(true);
-			FillSubWidgetsAveragely(position(), size(), margin(), Vertical, AlignCenter, -1);
+			FillInVBlock(position(), size(), margin());
 
 			if(last) {
 				last->SetEmboss(false);
@@ -95,8 +95,8 @@ namespace BlendInt {
 
 		if(sub_widget_size() == 0) {
 
-			preferred_size.set_width(100);
-			preferred_size.set_height(20);
+			preferred_size.set_width(80);
+			preferred_size.set_height(60);
 
 		} else {
 
@@ -117,7 +117,7 @@ namespace BlendInt {
 				}
 			}
 			preferred_size.set_width(max_width);
-			preferred_size.set_height(sub_widget_size() * max_height);
+			preferred_size.set_height(sub_widget_size() * (max_height - 1));
 
 			preferred_size.add_width(margin().hsum());
 			preferred_size.add_height(margin().vsum());
@@ -135,7 +135,7 @@ namespace BlendInt {
 				case ContainerMargin: {
 
 					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					FillSubWidgetsAveragely(position(), size(), *margin_p, Vertical, AlignCenter, -1);
+					FillInVBlock(position(), size(), *margin_p);
 
 					break;
 				}
@@ -168,7 +168,7 @@ namespace BlendInt {
 				case WidgetSize: {
 
 					const Size* size_p = static_cast<const Size*>(request.data());
-					FillSubWidgetsAveragely(position(), *size_p, margin(), Vertical, AlignCenter, -1);
+					FillInVBlock(position(), *size_p, margin());
 
 					break;
 				}
@@ -219,6 +219,35 @@ namespace BlendInt {
 	ResponseType VBlock::MouseMoveEvent (const MouseEvent& event)
 	{
 		return IgnoreAndContinue;
+	}
+	
+	void VBlock::FillInVBlock (const Point& out_pos, const Size& out_size,
+					const Margin& margin)
+	{
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int w = out_size.width() - margin.hsum();
+		int h = out_size.height() - margin.vsum();
+
+		FillInVBlock(x, y, w, h);
+	}
+	
+	void VBlock::FillInVBlock (int x, int y, int w, int h)
+	{
+		if(sub_widget_size() == 0) return;
+		int average_height = h / sub_widget_size() + 1;
+
+		AbstractWidget* widget = 0;
+
+		y = y + h;
+		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		{
+			widget = *it;
+
+			ResizeSubWidget(widget, w, average_height);
+			y = y - average_height + 1;
+			SetSubWidgetPosition(widget, x, y);
+		}
 	}
 
 }

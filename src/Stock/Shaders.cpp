@@ -546,13 +546,6 @@ namespace BlendInt {
 			return true;
 		}
 
-//	bool Shaders::Find(const GLSLProgram* program)
-//	{
-//		if(m_text_program == program) return true;
-//		if(m_primitive_program == program) return true;
-//
-//		return false;
-//	}
 	}
 
 }

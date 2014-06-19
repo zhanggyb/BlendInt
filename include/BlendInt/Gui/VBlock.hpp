@@ -72,6 +72,10 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		void FillInVBlock (const Point& out_pos, const Size& out_size, const Margin& margin);
+
+		void FillInVBlock (int x, int y, int w, int h);
+
 	private:
 
 	};
