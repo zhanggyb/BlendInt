@@ -34,7 +34,6 @@ namespace BlendInt {
 	DirList::DirList ()
 	: m_vao(0)
 	{
-		glGenVertexArrays(1, &m_vao);
 		InitializeFileListOnce();
 	}
 
@@ -58,12 +57,12 @@ namespace BlendInt {
 		using Stock::Shaders;
 		namespace fs = boost::filesystem;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-
 		glm::vec3 pos((float) position().x(), (float) position().y(),
 						(float) z());
 		glm::mat4 mvp = glm::translate(
 						event.projection_matrix() * event.view_matrix(), pos);
+
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 
 		unsigned int i = 0;
 
@@ -73,7 +72,6 @@ namespace BlendInt {
 		h -= m_font.GetHeight();
 		local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
 
-		glBindVertexArray(m_vao);
 		program->Use();
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 						glm::value_ptr(local_mvp));
@@ -85,11 +83,12 @@ namespace BlendInt {
 			program->SetVertexAttrib4f("Color", 0.375f,
 							0.375f, 0.375f, 0.75f);
 		}
-		glEnableVertexAttribArray(0);
-		DrawTriangleStrip(0, m_row.get());
-		glDisableVertexAttribArray(0);
-		program->Reset();
+
+		glBindVertexArray(m_vao);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glBindVertexArray(0);
+
+		program->Reset();
 
 		m_font.Print(mvp, 0, h - m_font.GetDescender(),	String("."));
 		i++;
@@ -97,7 +96,6 @@ namespace BlendInt {
 		h -= m_font.GetHeight();
 		local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
 
-		glBindVertexArray(m_vao);
 		program->Use();
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 						glm::value_ptr(local_mvp));
@@ -109,11 +107,12 @@ namespace BlendInt {
 			program->SetVertexAttrib4f("Color", 0.325f,
 							0.325f, 0.325f, 0.75f);
 		}
-		glEnableVertexAttribArray(0);
-		DrawTriangleStrip(0, m_row.get());
-		glDisableVertexAttribArray(0);
-		program->Reset();
+
+		glBindVertexArray(m_vao);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glBindVertexArray(0);
+
+		program->Reset();
 
 		m_font.Print(mvp, 0, h - m_font.GetDescender(), String(".."));
 		i++;
@@ -140,7 +139,6 @@ namespace BlendInt {
 						h -= m_font.GetHeight();
 
 						local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
-						glBindVertexArray(m_vao);
 
 						program->Use();
 
@@ -161,15 +159,11 @@ namespace BlendInt {
 							}
 						}
 
-						glEnableVertexAttribArray(0);
-
-						DrawTriangleStrip(0, m_row.get());
-
-						glDisableVertexAttribArray(0);
+						glBindVertexArray(m_vao);
+						glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+						glBindVertexArray(0);
 
 						program->Reset();
-
-						glBindVertexArray(0);
 
 						m_font.Print(mvp, 0, h - m_font.GetDescender(),
 										it->path().native());
@@ -282,17 +276,25 @@ namespace BlendInt {
 			std::cerr << ex.what() << std::endl;
 		}
 
+		GLfloat row_height = (GLfloat)m_font.GetHeight();
 		GLfloat verts[] = {
 						0.f, 0.f,
 						(GLfloat)size().width(), 0.f,
-						0.f, (GLfloat)m_font.GetHeight(),
-						(GLfloat)size().width(), (GLfloat)m_font.GetHeight()
+						0.f, row_height,
+						(GLfloat)size().width(), row_height
 		};
 
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
 		m_row.reset(new GLArrayBuffer);
 		m_row->Generate();
 		m_row->Bind();
 		m_row->SetData(sizeof(verts), verts);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
 		m_row->Reset();
 
 		m_font.set_color(Color(0xF0F0F0FF));

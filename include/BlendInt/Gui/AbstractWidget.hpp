@@ -366,12 +366,6 @@ namespace BlendInt {
 
 		static float DefaultBorderWidth ();
 
-		void DrawTriangleFan (const GLint attrib, const GLArrayBuffer* buffer);
-
-		void DrawShadedTriangleFan (const GLint coord, const GLint color, GLArrayBuffer* buffer);
-
-		void DrawTriangleStrip (const GLint attrib, GLArrayBuffer* buffer);
-
 	protected:
 
 		/**

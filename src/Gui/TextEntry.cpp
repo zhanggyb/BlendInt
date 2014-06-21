@@ -48,7 +48,6 @@ namespace BlendInt {
 
 	TextEntry::TextEntry ()
 	: Widget(),
-	  m_vao(0),
 	  m_start(0),
 	  m_length(0),
 	  m_cursor_position(0)
@@ -58,7 +57,7 @@ namespace BlendInt {
 
 	TextEntry::~TextEntry ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(3, m_vao);
 	}
 
 	void TextEntry::SetText (const String& text)
@@ -239,8 +238,10 @@ namespace BlendInt {
 								Vertical,
 								shadetop,
 								shadedown);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 
 				m_cursor_buffer->Bind();
 				GLfloat* buf_p = (GLfloat*) m_cursor_buffer->Map(GL_READ_WRITE);
@@ -270,8 +271,10 @@ namespace BlendInt {
 								Vertical,
 								shadetop,
 								shadedown);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 
 				Refresh();
 				break;
@@ -294,9 +297,10 @@ namespace BlendInt {
 								Vertical,
 								shadetop,
 								shadedown);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
-
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 
 				m_font.set_pen(*radius_p + default_textentry_padding.left(), m_font.pen().y());
 				Refresh();
@@ -313,35 +317,26 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glBindVertexArray(m_vao);
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
+		glBindVertexArray(m_vao[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_corner_type()) + 2);
 
-		DrawShadedTriangleFan(0, 1, m_inner_buffer.get());
-
-		glDisableVertexAttribArray(1);
 
 		Color color = Theme::instance->text().outline;
 		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
 
-		DrawTriangleStrip(0, m_outer_buffer.get());
-
-		glDisableVertexAttribArray(0);
-
-		program->Reset();
-
-		glBindVertexArray(0);
+		glBindVertexArray(m_vao[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
 
 		m_font.Print(mvp, m_text, m_length, m_start);
 
@@ -351,8 +346,6 @@ namespace BlendInt {
 			glm::vec3 trans(cursor_pos + 1, 1, 0);
 			glm::mat4 text_mvp = glm::translate(mvp, trans);
 
-			glBindVertexArray(m_vao);
-
 			//program = ShaderManager::instance->default_line_program();	// Now switch to line program
 			program->Use();
 
@@ -360,22 +353,12 @@ namespace BlendInt {
 			program->SetUniform1i("AA", 0);
 			program->SetVertexAttrib4f("Color",	0.f, 55 / 255.f, 1.f, 175 / 255.f);
 
-			glEnableVertexAttribArray(0);
-
-			m_cursor_buffer->Bind();
-
-			glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
+			glBindVertexArray(m_vao[2]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			m_cursor_buffer->Reset();
-
-			glDisableVertexAttribArray(0);
-
-			program->Reset();
-
-			glBindVertexArray(0);
 		}
+
+		glBindVertexArray(0);
+		program->Reset();
 
 		return Accept;
 	}
@@ -393,8 +376,6 @@ namespace BlendInt {
 		set_size(h + round_corner_radius() * 2 + default_textentry_padding.hsum() + 120,
 						h + default_textentry_padding.vsum());
 
-		glGenVertexArrays(1, &m_vao);
-
 		const Color& color = Theme::instance->text().inner;
 		short shadetop = Theme::instance->text().shadetop;
 		short shadedown = Theme::instance->text().shadedown;
@@ -409,8 +390,27 @@ namespace BlendInt {
 						shadetop,
 						shadedown);
 
-		m_inner_buffer = tool.GenerateInnerBuffer();
-		m_outer_buffer = tool.GenerateOuterBuffer();
+		glGenVertexArrays(3, m_vao);
+
+		glBindVertexArray(m_vao[0]);
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(m_vao[1]);
+		m_outer.reset(new GLArrayBuffer);
+		m_outer->Generate();
+		m_outer->Bind();
+		tool.SetOuterBufferData(m_outer.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		std::vector<GLfloat> cursor_vertices(8);
 
@@ -426,12 +426,18 @@ namespace BlendInt {
 		cursor_vertices[6] = 3.f;
 		cursor_vertices[7] = static_cast<float>(size().height() - default_textentry_padding.vsum());
 
+		glBindVertexArray(m_vao[2]);
 		m_cursor_buffer.reset(new GLArrayBuffer);
 
 		m_cursor_buffer->Generate();
 		m_cursor_buffer->Bind();
 		m_cursor_buffer->SetData(8 * sizeof(GLfloat), &cursor_vertices[0]);
-		m_cursor_buffer->Reset();
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+		GLArrayBuffer::Reset();
+		glBindVertexArray(0);
 
 		m_font.set_pen(default_textentry_padding.left(),
 				(size().height() - m_font.GetHeight()) / 2

@@ -43,7 +43,6 @@ namespace BlendInt {
 
 	ScrollBar::ScrollBar (Orientation orientation)
 	: AbstractSlider<int>(orientation),
-	  m_vao(0),
 	  m_last_value(0),
 	  m_pressed(false)
 	{
@@ -60,7 +59,7 @@ namespace BlendInt {
 
 	ScrollBar::~ScrollBar ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(2, m_vao);
 	}
 
 	void ScrollBar::SetSliderPercentage (int percentage)
@@ -186,10 +185,12 @@ namespace BlendInt {
 				}
 
 				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), RoundAll, radius, color, slot_orient,
+				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(), radius, color, slot_orient,
 								shadetop, shadedown);
-				tool.UpdateInnerBuffer(m_inner.get());
-				tool.UpdateOuterBuffer(m_outer.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 
 				break;
 			}
@@ -257,31 +258,28 @@ namespace BlendInt {
 
 		glm::mat4 local_mvp;
 
-		glBindVertexArray(m_vao);
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
+		program->SetUniform1i("Gamma", 0);
 		program->SetUniform1i("AA", 0);
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
 
-		DrawShadedTriangleFan(0, 1, m_inner.get());
-
-		glDisableVertexAttribArray(1);
+		glBindVertexArray(m_vao[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_corner_type()) + 2);
 
 		Color color = Theme::instance->scroll().outline;
 
 		program->SetVertexAttrib4fv("Color", color.data());
 		program->SetUniform1i("AA", 1);
 
-		DrawTriangleStrip(0, m_outer.get());
+		glBindVertexArray(m_vao[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
 
-		glDisableVertexAttribArray(0);
-		program->Reset();
 		glBindVertexArray(0);
+
+		program->Reset();
 
 		if (orientation() == Horizontal) {
 			local_mvp = glm::translate(mvp,
@@ -359,7 +357,9 @@ namespace BlendInt {
 
 	void ScrollBar::InitOnce ()
 	{
-		glGenVertexArrays(1, &m_vao);
+		set_round_corner_type(RoundAll);
+
+		glGenVertexArrays(2, m_vao);
 
 		Size slot_size = m_slide.size();
 		float slot_radius;
@@ -385,16 +385,37 @@ namespace BlendInt {
 		VertexTool tool;
 		tool.Setup(slot_size,
 						DefaultBorderWidth(),
-						RoundAll,
+						round_corner_type(),
 						slot_radius,
 						color,
 						slot_orient,
 						shadetop,
 						shadedown
 						);
-		m_inner = tool.GenerateInnerBuffer();
-		m_outer = tool.GenerateOuterBuffer();
 
+		glBindVertexArray(m_vao[0]);
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
+		        BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6,
+		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(m_vao[1]);
+		m_outer.reset(new GLArrayBuffer);
+		m_outer->Generate();
+		m_outer->Bind();
+		tool.SetOuterBufferData(m_outer.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		GLArrayBuffer::Reset();
 		glBindVertexArray(0);
 	}
 

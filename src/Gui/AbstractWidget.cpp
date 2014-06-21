@@ -564,66 +564,6 @@ namespace BlendInt {
 		return default_border_width;
 	}
 
-	void AbstractWidget::DrawTriangleFan(const GLint attrib, const GLArrayBuffer* buffer)
-	{
-		buffer->Bind();
-
-		glVertexAttribPointer(attrib, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
-
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
-
-		buffer->Reset();
-	}
-
-	void AbstractWidget::DrawShadedTriangleFan(const GLint coord, const GLint color, GLArrayBuffer* buffer)
-	{
-		buffer->Bind();
-
-		glVertexAttribPointer(coord, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  sizeof(GLfloat) * 6,				 // stride
-							  BUFFER_OFFSET(0)					 // offset of first element
-							  );
-
-		glVertexAttribPointer(color, // attribute
-							  4,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  sizeof(GLfloat) * 6,				 // stride
-							  BUFFER_OFFSET(2 * sizeof(GLfloat))					 // offset of first element
-							  );
-
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_corner_type()) + 2);
-
-		buffer->Reset();
-	}
-
-	void AbstractWidget::DrawTriangleStrip(const GLint attrib, GLArrayBuffer* buffer)
-	{
-		buffer->Bind();
-
-		glVertexAttribPointer(attrib, // attribute
-							  2,			// number of elements per vertex, here (x,y)
-							  GL_FLOAT,			 // the type of each element
-							  GL_FALSE,			 // take our values as-is
-							  0,				 // no extra data between each position
-							  0					 // offset of first element
-							  );
-
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
-
-		buffer->Reset();
-	}
-
 	void AbstractWidget::SetEmboss(bool emboss)
 	{
 		if(this->emboss() == emboss)

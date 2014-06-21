@@ -49,7 +49,7 @@ namespace BlendInt {
 		set_margin(2, 2, 1, 1);
 		set_size(200, 22);
 
-		InitOnce();
+		InitializeMenuBar();
 	}
 
 	MenuBar::~MenuBar ()
@@ -73,60 +73,58 @@ namespace BlendInt {
 
 	void MenuBar::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetSize: {
+			switch (request.type()) {
 
-				const Size* size_p = static_cast<const Size*>(request.data());
+				case WidgetSize: {
 
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0);
-				tool.UpdateInnerBuffer(m_buffer.get());
-				break;
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0);
+					m_buffer->Bind();
+					tool.SetInnerBufferData(m_buffer.get());
+					break;
+				}
+
+				case WidgetPosition: {
+
+					const Point* pos_p = static_cast<const Point*>(request.data());
+					MoveSubWidgets(pos_p->x() - position().x(),
+									pos_p->y() - position().y());
+
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetPosition: {
-
-				const Point* pos_p = static_cast<const Point*>(request.data());
-				MoveSubWidgets(pos_p->x() - position().x(),
-								pos_p->y() - position().y());
-
-				break;
-			}
-
-			default:
-				break;
 		}
-
 	}
 
 	ResponseType MenuBar::Draw (const RedrawEvent& event)
 	{
 		using namespace BlendInt::Stock;
 
-		glBindVertexArray(m_vao);
+		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.f);
 		program->SetUniform1i("AA", 0);
+		program->SetUniform1i("Gamma", 0);
 
-		glEnableVertexAttribArray(0);
-
-		DrawTriangleFan(0, m_buffer.get());
-
-		glDisableVertexAttribArray(0);
+		glBindVertexArray(m_vao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_corner_type()) + 2);
+		glBindVertexArray(0);
 
 		program->Reset();
-
-		m_buffer->Reset();
-
-		glBindVertexArray(0);
 
 		return Accept;
 	}
@@ -354,13 +352,26 @@ namespace BlendInt {
 		return button;
 	}
 
-	void MenuBar::InitOnce()
+	void MenuBar::InitializeMenuBar()
 	{
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
-		m_buffer = tool.GenerateInnerBuffer();
+
+		glBindVertexArray(m_vao);
+
+		m_buffer.reset(new GLArrayBuffer);
+		m_buffer->Generate();
+		m_buffer->Bind();
+
+		tool.SetInnerBufferData(m_buffer.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 	}
 	
 	void MenuBar::OnMenuButtonClicked ()

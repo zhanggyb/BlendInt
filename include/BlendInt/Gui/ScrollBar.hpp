@@ -101,7 +101,7 @@ namespace BlendInt {
 		 */
 		int GetSlidePosition ();
 
-		GLuint m_vao;
+		GLuint m_vao[2];
 		RefPtr<GLArrayBuffer> m_inner;
 		RefPtr<GLArrayBuffer> m_outer;
 

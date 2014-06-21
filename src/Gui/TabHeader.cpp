@@ -46,14 +46,25 @@ namespace BlendInt {
 	  m_vao(0)
 	{
 		set_size(400, 24);
-		set_margin(5, 5, 5, 0);
+		set_margin(2, 2, 0, 0);
 
 		glGenVertexArrays(1, &m_vao);
+
+		glBindVertexArray(m_vao);
 
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
 
-		m_buffer = tool.GenerateInnerBuffer();
+		m_buffer.reset(new GLArrayBuffer);
+		m_buffer->Generate();
+		m_buffer->Bind();
+
+		tool.SetInnerBufferData(m_buffer.get());
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 
 		events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
 		events()->connect(m_group.button_index_toggled(), this, &TabHeader::OnButtonIndexToggled);
@@ -179,17 +190,15 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 
-		glBindVertexArray(m_vao);
-
 		program->Use();
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("AA", 0);
 		program->SetVertexAttrib4f("Color", 0.208f, 0.208f, 0.208f, 1.0f);
 		program->SetUniform1i("Gamma", 0);
 
-		glEnableVertexAttribArray(0);
-		DrawTriangleFan(0, m_buffer.get());
-		glDisableVertexAttribArray(0);
+		glBindVertexArray(m_vao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_corner_type()) + 2);
 
 		program->Reset();
 		glBindVertexArray(0);

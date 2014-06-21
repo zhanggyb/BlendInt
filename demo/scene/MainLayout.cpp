@@ -2,10 +2,14 @@
  * Main Layout
  */
 
-#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Core/String.hpp>
 #include <BlendInt/Gui/Menu.hpp>
 #include <BlendInt/Stock/Icons.hpp>
+#include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/Splitter.hpp>
+
+#include <BlendInt/Gui/VBlock.hpp>
+#include <BlendInt/Gui/ImageView.hpp>
 
 #include "MainLayout.hpp"
 
@@ -27,40 +31,22 @@ void MainLayout::InitOnce ()
 	set_margin(0, 0, 0, 0);
 	set_space(1);
 
-	m_menubar = Manage(new BI::MenuBar);
-	m_toolbar = Manage(new BI::ToolBar);
+	m_menubar = CreateMenuBar();
+	m_toolbar = CreateToolBar();
 
-	m_input = Manage(new BI::TextEntry);
-	m_open = Manage(new BI::ToolButton);
+    Splitter* splitter = Manage(new Splitter);
+    splitter->SetMargin(0, 0, 0, 0);
 
-    m_scene = Manage(new BI::Viewport3D);
-#ifdef DEBUG
-	m_menubar->set_name("MenuBar");
-	m_toolbar->set_name("ToolBar");
-	m_input->set_name("TextEntry");
-	m_open->set_name("ToolButton");
-#endif
+    ToolBox* tbox = CreateToolBox();
 
-    RefPtr<Menu> file_menu(new Menu);
-    DBG_SET_NAME(file_menu, "Menu");
+    Tab* tab = CreateTab();
 
-    //file_menu->SetRoundType(RoundBottomLeft | RoundBottomRight);
-    file_menu->AddAction(Stock::Icons::instance->icon_check(), String("MenuItem1"), String("Ctrl + 1"));
-    file_menu->AddAction(String("MenuItem2"), String("Ctrl + 1"));
-    file_menu->AddAction(String("MenuItem3"), String("Ctrl + 1"));
-    file_menu->AddAction(String("MenuItem4"), String("Ctrl + 1"));
-    file_menu->AddAction(String("MenuItem5"));
-
-	m_menubar->AddMenu(String("File"), file_menu);
-	// m_menubar->AddMenuButton("Edit");
-
-	m_toolbar->PushBack(m_input);
-	m_toolbar->PushBack(m_open);
+    splitter->PushBack(tab);
+    splitter->PushBack(tbox);
 
 	PushBack(m_menubar);
 	PushBack(m_toolbar);
-
-    PushBack(m_scene);
+    PushBack(splitter);
 
 	events()->connect(m_open->clicked(), this, &MainLayout::OnOpenClick);
 }
@@ -72,4 +58,87 @@ void MainLayout::OnOpenClick()
 void MainLayout::OnResize (AbstractWidget* context, int type)
 {
 	Resize(context->size());
+}
+
+BI::ToolBar* MainLayout::CreateToolBar()
+{
+	using namespace BI;
+
+	ToolBar* toolbar = Manage(new ToolBar);
+
+	m_input = Manage(new TextEntry);
+	m_open = Manage(new ToolButton);
+
+	toolbar->PushBack(m_input);
+	toolbar->PushBack(m_open);
+
+	return toolbar;
+}
+
+BI::MenuBar* MainLayout::CreateMenuBar()
+{
+	using namespace BI;
+
+	MenuBar* menubar = Manage(new MenuBar);
+
+	RefPtr<Menu> file_menu(new Menu);
+
+    file_menu->SetRoundCornerType(RoundAll);
+    file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    file_menu->AddAction("MenuItem2", "Ctrl + 1");
+    file_menu->AddAction("MenuItem3", "Ctrl + 1");
+    file_menu->AddAction("MenuItem4", "Ctrl + 1");
+    file_menu->AddAction("MenuItem5");
+
+	menubar->AddMenu(String("File"), file_menu);
+
+	return menubar;
+}
+
+BI::ToolBox* MainLayout::CreateToolBox()
+{
+	using namespace BI;
+
+	ToolBox* toolbox = Manage(new ToolBox);
+
+	Expander* expander = CreateExpander();
+	toolbox->PushBack(expander);
+
+	return toolbox;
+}
+
+BI::Expander* MainLayout::CreateExpander()
+{
+	using namespace BI;
+
+	Expander* expander = Manage(new Expander("Transform"));
+
+	Button* btn1 = Manage(new Button("Translate"));
+	Button* btn2 = Manage(new Button("Rotate"));
+	Button* btn3 = Manage(new Button("Scale"));
+
+	VBlock* vblock = Manage(new VBlock);
+	vblock->PushBack(btn1);
+	vblock->PushBack(btn2);
+	vblock->PushBack(btn3);
+
+	expander->Setup(vblock);
+
+	return expander;
+}
+
+BI::Tab* MainLayout::CreateTab ()
+{
+	using namespace BI;
+
+	Tab* tab = Manage(new Tab);
+	tab->SetMargin(0, 0, 0, 0);
+
+    m_scene = Manage(new Viewport3D);
+    ImageView* iv = Manage(new ImageView);
+
+    tab->Add("3D View", m_scene);
+    tab->Add("Image View", iv);
+
+	return tab;
 }

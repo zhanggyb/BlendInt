@@ -64,7 +64,8 @@ namespace BlendInt {
 								round_corner_radius(), text());
 				VertexTool tool;
 				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(), round_corner_radius());
-				tool.UpdateInnerBuffer(m_inner.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
 				Refresh();
 				break;
 			}
@@ -75,7 +76,8 @@ namespace BlendInt {
 								text());
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), *type_p, round_corner_radius());
-				tool.UpdateInnerBuffer(m_inner.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
 				Refresh();
 				break;
 			}
@@ -87,7 +89,8 @@ namespace BlendInt {
 								text());
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), *radius_p);
-				tool.UpdateInnerBuffer(m_inner.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
 				Refresh();
 				break;
 			}
@@ -107,7 +110,6 @@ namespace BlendInt {
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		if (hover()) {
-			glBindVertexArray(m_vao);
 
 			RefPtr<GLSLProgram> program =
 					Shaders::instance->default_triangle_program();
@@ -123,14 +125,13 @@ namespace BlendInt {
 			program->SetVertexAttrib4fv("Color", color.data());
 			program->SetUniform1i("AA", 1);
 
-			glEnableVertexAttribArray(0);
+			glBindVertexArray(m_vao);
+			glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_corner_type()) + 2);
+			glBindVertexArray(0);
 
-			DrawTriangleFan(0, m_inner.get());
-
-			glDisableVertexAttribArray(0);
 			program->Reset();
 
-			glBindVertexArray(0);
 		}
 
 		if(text().size()) {
@@ -173,7 +174,18 @@ namespace BlendInt {
 
 		VertexTool tool;
 		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
-		m_inner = tool.GenerateInnerBuffer();
+
+		glBindVertexArray(m_vao);
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 	}
 
 } /* namespace BlendInt */

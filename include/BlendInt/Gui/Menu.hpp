@@ -96,7 +96,7 @@ namespace BlendInt {
 
 		unsigned int GetHighlightNo (int y);
 
-		GLuint m_vao;
+		GLuint m_vao[3];
 
 		String m_title;
 
@@ -110,8 +110,9 @@ namespace BlendInt {
 
 		Font m_font;
 
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> m_outer;
+
 		RefPtr<GLArrayBuffer> m_highlight_buffer;
 
 		std::deque<RefPtr<Action> > m_list;

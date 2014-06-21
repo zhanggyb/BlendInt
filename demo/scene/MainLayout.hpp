@@ -13,6 +13,9 @@
 
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
+#include <BlendInt/Gui/Expander.hpp>
+#include <BlendInt/Gui/ToolBox.hpp>
+#include <BlendInt/Gui/Tab.hpp>
 
 namespace BI = BlendInt;
 
@@ -21,7 +24,7 @@ class MainLayout: public BI::VBox
 public:
 
 	MainLayout ();
-	
+
 	virtual ~MainLayout ();
 
 private:
@@ -32,13 +35,23 @@ private:
 
 	void OnResize (AbstractWidget* context, int type);
 
+	BI::ToolBar* CreateToolBar ();
+
+	BI::MenuBar* CreateMenuBar ();
+
+	BI::ToolBox* CreateToolBox ();
+
+	BI::Expander* CreateExpander ();
+
+	BI::Tab* CreateTab ();
+
 	BI::MenuBar* m_menubar;
 	BI::ToolBar* m_toolbar;
 
 	BI::TextEntry* m_input;
 	BI::ToolButton* m_open;
 
-    BI::Viewport3D* m_scene;
+	BI::Viewport3D* m_scene;
 };
 
 #endif

@@ -106,8 +106,6 @@ namespace BlendInt {
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
 
-		DrawTriangleStrip(0, m_outer.get());
-
 		glBindVertexArray(0);
 		program->Reset();
 

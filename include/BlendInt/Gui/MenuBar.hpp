@@ -92,7 +92,7 @@ namespace BlendInt {
 
 		void OnMenuHide (AbstractWidget* widget, int type);
 
-		void InitOnce ();
+		void InitializeMenuBar ();
 
 		int GetLastPosition ();
 

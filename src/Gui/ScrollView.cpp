@@ -52,13 +52,21 @@ namespace BlendInt {
 		set_scissor_test(true);
 
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
-		m_inner = tool.GenerateInnerBuffer();
+		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+
+		glBindVertexArray(m_vao);
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 	}
 
 	ScrollView::~ScrollView ()
@@ -221,7 +229,8 @@ namespace BlendInt {
 					const Size* size_p = static_cast<const Size*>(request.data());
 					VertexTool tool;
 					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_inner = tool.GenerateInnerBuffer();
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
 
 					break;
 				}
@@ -262,12 +271,10 @@ namespace BlendInt {
 		program->SetUniform1i("AA", 0);
 
 		glBindVertexArray(m_vao);
-
-		glEnableVertexAttribArray(0);
-		DrawTriangleFan(0, m_inner.get());
-		glDisableVertexAttribArray(0);
-
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_corner_type()) + 2);
 		glBindVertexArray(0);
+
 		program->Reset();
 
 		return AcceptAndContinue;

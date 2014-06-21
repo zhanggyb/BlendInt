@@ -568,7 +568,8 @@ namespace BlendInt {
 
 				VertexTool tool;
 				tool.Setup(*size_p, 0, RoundNone, 0);
-				tool.UpdateInnerBuffer(m_inner.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
 				break;
 			}
 
@@ -597,7 +598,6 @@ namespace BlendInt {
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
-		glBindVertexArray(m_vao);
 		RefPtr<GLSLProgram> program =
 				Shaders::instance->default_triangle_program();
 
@@ -606,12 +606,12 @@ namespace BlendInt {
 		program->SetUniform1i("AA", 0);
 		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
 
-		glEnableVertexAttribArray(0);
-		DrawTriangleStrip(0, m_inner.get());
-		glDisableVertexAttribArray(0);
+		glBindVertexArray(m_vao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_corner_type()) + 2);
+		glBindVertexArray(0);
 
 		program->Reset();
-		glBindVertexArray(0);
 
 		return AcceptAndContinue;
 	}
@@ -718,11 +718,20 @@ namespace BlendInt {
 	{
 		glGenVertexArrays(1, &m_vao);
 
-		glBindVertexArray(m_vao);
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
-		m_inner = tool.GenerateInnerBuffer();
+
+		glBindVertexArray(m_vao);
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
 		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 	}
 
 	void Expander::OnToggled (bool toggle)

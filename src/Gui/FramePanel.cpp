@@ -102,6 +102,7 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
+
 		program->Reset();
 
 		return AcceptAndContinue;

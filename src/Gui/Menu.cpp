@@ -46,7 +46,7 @@ namespace BlendInt {
 	int Menu::DefaultShortcutSpace = 20;
 
 	Menu::Menu ()
-	: Widget(), m_highlight(0), m_inner_buffer(0), m_outer_buffer(0), m_highlight_buffer(0)
+	: Widget(), m_highlight(0), m_inner(0), m_outer(0), m_highlight_buffer(0)
 	{
 		set_size (20, 20);
 		set_drop_shadow(true);
@@ -55,7 +55,7 @@ namespace BlendInt {
 
 	Menu::~Menu ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(3, m_vao);
 	}
 
 	void Menu::SetTitle(const String& title)
@@ -175,8 +175,10 @@ namespace BlendInt {
 				VertexTool tool;
 				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(),
 								round_corner_radius());
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 				ResetHighlightBuffer(size_p->width());
 				break;
 			}
@@ -186,8 +188,10 @@ namespace BlendInt {
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), *type_p,
 								round_corner_radius());
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 				break;
 			}
 
@@ -197,8 +201,10 @@ namespace BlendInt {
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
 								*radius_p);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 				break;
 			}
 
@@ -217,8 +223,6 @@ namespace BlendInt {
 						(float) z());
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
-		glBindVertexArray(m_vao);
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 
 		program->Use();
@@ -227,33 +231,29 @@ namespace BlendInt {
 		program->SetUniform1i("AA", 0);
 		program->SetVertexAttrib4fv("Color", Theme::instance->menu().inner.data());
 
-		glEnableVertexAttribArray(0);
-
-		DrawTriangleFan(0, m_inner_buffer.get());
+		glBindVertexArray(m_vao[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_corner_type()) + 2);
 
 		program->SetVertexAttrib4fv("Color", Theme::instance->menu().outline.data());
 		program->SetUniform1i("AA", 1);
 
-		DrawTriangleStrip(0, m_outer_buffer.get());
+		glBindVertexArray(m_vao[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
 
 		if(m_highlight) {
 			program->SetUniform1i("AA", 0);
 
-			glEnableVertexAttribArray(1);
-
 			glm::mat4 h_mvp = glm::translate(mvp, glm::vec3(0.f, size().height() - round_corner_radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight), 0.f));
 			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(h_mvp));
 
-			DrawShadedTriangleFan(0, 1, m_highlight_buffer.get());
-
-			glDisableVertexAttribArray(1);
+			glBindVertexArray(m_vao[2]);
+			glDrawArrays(GL_TRIANGLE_FAN, 0,
+							GetOutlineVertices(round_corner_type()) + 2);
 		}
 
-		glDisableVertexAttribArray(0);
-
-		program->Reset();
-
 		glBindVertexArray(0);
+		program->Reset();
 
 		float h = size().height() - round_corner_radius();
 
@@ -286,7 +286,9 @@ namespace BlendInt {
 				Theme::instance->menu_item().shadetop,
 				Theme::instance->menu_item().shadedown
 				);
-		tool.UpdateInnerBuffer(m_highlight_buffer.get());
+
+		m_highlight_buffer->Bind();
+		tool.SetInnerBufferData(m_highlight_buffer.get());
 	}
 	
 	void Menu::RemoveAction (size_t index)
@@ -325,17 +327,54 @@ namespace BlendInt {
 
 	void Menu::InitializeMenu ()
 	{
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(3, m_vao);
 
 		VertexTool tool;
-
 		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
-		m_inner_buffer = tool.GenerateInnerBuffer();
-		m_outer_buffer = tool.GenerateOuterBuffer();
 
+		glBindVertexArray(m_vao[0]);
+
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+		tool.SetInnerBufferData(m_inner.get());
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(m_vao[1]);
+		m_outer.reset(new GLArrayBuffer);
+		m_outer->Generate();
+		m_outer->Bind();
+		tool.SetOuterBufferData(m_outer.get());
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		// Now set buffer for hightlight bar
+		Size highlight_size(size().width(), DefaultMenuItemHeight);
+		tool.Setup(highlight_size,
+				DefaultBorderWidth(),
+				RoundNone,
+				0,
+				Theme::instance->menu_item().inner_sel,
+				Vertical,
+				Theme::instance->menu_item().shadetop,
+				Theme::instance->menu_item().shadedown
+				);
+
+		glBindVertexArray(m_vao[2]);
 		m_highlight_buffer.reset(new GLArrayBuffer);
+		m_highlight_buffer->Generate();
+		m_highlight_buffer->Bind();
 
-		ResetHighlightBuffer(20);
+		tool.SetInnerBufferData(m_highlight_buffer.get());
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 	}
 
 }

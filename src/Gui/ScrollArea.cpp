@@ -168,7 +168,8 @@ namespace BlendInt {
 
 				VertexTool tool;
 				tool.Setup(*size_p, 0, RoundNone, 0);
-				tool.UpdateInnerBuffer(m_inner.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
 
 				AdjustGeometries(position(), *size_p, margin());
 
@@ -197,12 +198,10 @@ namespace BlendInt {
 		program->SetUniform1i("AA", 0);
 
 		glBindVertexArray(m_vao);
-
-		glEnableVertexAttribArray(0);
-		DrawTriangleFan(0, m_inner.get());
-		glDisableVertexAttribArray(0);
-
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_corner_type()) + 2);
 		glBindVertexArray(0);
+
 		program->Reset();
 
 		return AcceptAndContinue;
@@ -211,13 +210,21 @@ namespace BlendInt {
 	void ScrollArea::InitializeScrollArea ()
 	{
 		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
-		m_inner = tool.GenerateInnerBuffer();
+		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+
+		glBindVertexArray(m_vao);
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 
 		ScrollView* view = Manage(new ScrollView);
 		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));

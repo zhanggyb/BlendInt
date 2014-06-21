@@ -64,39 +64,16 @@ int main(int argc, char* argv[])
 
 	Init();
 
-	GLFWwindow* win = CreateWindow("GLFW3 Demo", 640, 480);
+	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1280, 800);
 
 	GLFWContext* context = Manage (new GLFWContext);
 	Interface::instance->SetCurrentContext(context);
-
-	NumericalSlider* num1 = Manage(new NumericalSlider);
-	NumericalSlider* num2 = Manage(new NumericalSlider);
-	NumericalSlider* num3 = Manage(new NumericalSlider);
-
-	HBlock* block = Manage(new HBlock);
-	block->SetPosition(100, 20);
-
-	block->PushBack(num1);
-	block->PushBack(num2);
-	block->PushBack(num3);
-
-	Stack* stack = Manage(new Stack);
-	stack->SetMargin(0, 0, 0, 0);
-	stack->Add(block);
-
-	stack->SetPosition(100, 100);
-	stack->Resize(stack->GetPreferredSize());
-
-	DBG_PRINT_MSG("num1 position: %d %d", num1->position().x(), num1->position().y());
-	DBG_PRINT_MSG("num2 position: %d %d", num2->position().x(), num2->position().y());
-	DBG_PRINT_MSG("num3 position: %d %d", num3->position().x(), num3->position().y());
+	context->Resize(1280, 800);
 
 	ColorSelector* cs = Manage(new ColorSelector);
-	cs->SetPosition(200, 100);
+	cs->SetPosition(200, 200);
 
 	context->Add(cs);
-
-	context->Add(stack);
 
 	RunLoop(win);
 

@@ -97,7 +97,7 @@ namespace BlendInt {
 		 */
 		void GetVisibleTextPlace (size_t* start, size_t* length);
 
-		GLuint m_vao;
+		GLuint m_vao[3];
 
 		Font m_font;
 
@@ -109,8 +109,9 @@ namespace BlendInt {
 
 		size_t m_cursor_position;
 
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> m_outer;
+
 		RefPtr<GLArrayBuffer> m_cursor_buffer;
 
 		static Margin default_textentry_padding;

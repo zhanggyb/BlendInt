@@ -63,12 +63,12 @@ namespace BlendInt {
 
 		void OnMenuActionTriggered (Action* item);
 
-		void InitOnce ();
+		void InitializeComboBox ();
 
-		GLuint m_vao;
+		GLuint m_vao[2];
 
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> m_outer;
 
 		bool m_status_down;
 

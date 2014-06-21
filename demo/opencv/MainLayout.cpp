@@ -8,6 +8,7 @@
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/HBox.hpp>
 #include <BlendInt/Gui/VBox.hpp>
+#include <BlendInt/Gui/VBlock.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 
@@ -100,16 +101,20 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 
 BI::Expander* MainLayout::CreateExpander()
 {
-	BI::Expander* expander = Manage(new BI::Expander("Tools"));
+	using namespace BI;
 
-	BI::Button* btn1 = Manage(new BI::Button("Blur"));
-	BI::Button* btn2 = Manage(new BI::Button("Help"));
+	Expander* expander = Manage(new Expander("Tools"));
 
-	BI::VBox* vbox = Manage(new BI::VBox);
-	vbox->PushBack(btn1);
-	vbox->PushBack(btn2);
+	Button* btn1 = Manage(new Button("Blur"));
+	Button* btn2 = Manage(new Button("Sharpen"));
+	Button* btn3 = Manage(new Button("Help"));
 
-	expander->Setup(vbox);
+	VBlock* vblock = Manage(new VBlock);
+	vblock->PushBack(btn1);
+	vblock->PushBack(btn2);
+	vblock->PushBack(btn3);
+
+	expander->Setup(vblock);
 
 	return expander;
 

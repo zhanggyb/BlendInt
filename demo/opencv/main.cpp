@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 
     DemoWindow window;
     window.setFormat(format);
-    window.resize(1024, 600);
+    window.resize(1280, 800);
     window.show();
 
     window.setAnimating(true);
@@ -101,11 +101,11 @@ void DemoWindow::initialize()
 		exit(-1);
 	}
 
-	BI::Interface::instance->Resize(1024, 600);
+	BI::Interface::instance->Resize(1280, 800);
 
 	m_context = Manage (new Qt5Context(this));
 	BI::Interface::instance->SetCurrentContext(m_context);
-	m_context->Resize(1024, 600);
+	m_context->Resize(1280, 800);
 }
 
 void DemoWindow::render()

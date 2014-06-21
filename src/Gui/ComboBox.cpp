@@ -49,7 +49,8 @@ namespace BlendInt {
 	Margin ComboBox::default_combobox_padding = Margin(2, 2, 2, 2);
 
 	ComboBox::ComboBox ()
-	: Widget(), m_vao(0), m_status_down(false)
+	: Widget(),
+	  m_status_down(false)
 	{
 		set_round_corner_type(RoundAll);
 
@@ -59,12 +60,12 @@ namespace BlendInt {
 		        h + round_corner_radius() * 2 + default_combobox_padding.hsum() + 100,
 		        h + default_combobox_padding.vsum());
 
-		InitOnce();
+		InitializeComboBox();
 	}
 
 	ComboBox::~ComboBox ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(2, m_vao);
 	}
 
 	Size ComboBox::GetPreferredSize () const
@@ -119,8 +120,10 @@ namespace BlendInt {
 								Vertical,
 								Theme::instance->menu().shadetop,
 								Theme::instance->menu().shadedown);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 				Refresh();
 				break;
 			}
@@ -136,8 +139,10 @@ namespace BlendInt {
 								Vertical,
 								Theme::instance->menu().shadetop,
 								Theme::instance->menu().shadedown);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 				Refresh();
 				break;
 			}
@@ -154,8 +159,10 @@ namespace BlendInt {
 								Vertical,
 								Theme::instance->menu().shadetop,
 								Theme::instance->menu().shadedown);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner->Bind();
+				tool.SetInnerBufferData(m_inner.get());
+				m_outer->Bind();
+				tool.SetOuterBufferData(m_outer.get());
 				Refresh();
 				break;
 			}
@@ -175,8 +182,6 @@ namespace BlendInt {
 		glm::mat4 mvp = glm::translate(
 						event.projection_matrix() * event.view_matrix(), pos);
 
-		glBindVertexArray(m_vao);
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
@@ -193,18 +198,19 @@ namespace BlendInt {
 			}
 		}
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		DrawShadedTriangleFan(0, 1, m_inner_buffer.get());
-		glDisableVertexAttribArray(1);
+		glBindVertexArray(m_vao[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0,
+						GetOutlineVertices(round_corner_type()) + 2);
+
 		program->SetVertexAttrib4fv("Color", Theme::instance->menu().outline.data());
 		program->SetUniform1i("AA", 1);
 		program->SetUniform1i("Gamma", 0);
-		DrawTriangleStrip(0, m_outer_buffer.get());
-		glDisableVertexAttribArray(0);
 
-		program->Reset();
+		glBindVertexArray(m_vao[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+
 		glBindVertexArray(0);
+		program->Reset();
 
 		RefPtr<VertexIcon> icon = Stock::Icons::instance->icon_num();
 
@@ -255,9 +261,9 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void ComboBox::InitOnce()
+	void ComboBox::InitializeComboBox()
 	{
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(2, m_vao);
 
 		VertexTool tool;
 		tool.Setup(size(),
@@ -268,8 +274,31 @@ namespace BlendInt {
 						Vertical,
 						Theme::instance->menu().shadetop,
 						Theme::instance->menu().shadedown);
-		m_inner_buffer = tool.GenerateInnerBuffer();
-		m_outer_buffer = tool.GenerateOuterBuffer();
+
+		glBindVertexArray(m_vao[0]);
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(m_vao[1]);
+		m_outer.reset(new GLArrayBuffer);
+		m_outer->Generate();
+		m_outer->Bind();
+		tool.SetOuterBufferData(m_outer.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		GLArrayBuffer::Reset();
+		glBindVertexArray(0);
+
+		// Now create menu
 
 		m_menu.reset(new Menu);
 
