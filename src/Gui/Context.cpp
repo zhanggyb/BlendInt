@@ -208,8 +208,23 @@ namespace BlendInt
 	void Context::UpdateContainer(const WidgetUpdateRequest& request)
 	{
 		switch(request.type()) {
+
 			case ContainerRefresh: {
 				RefreshLayer(request.source()->z());
+				break;
+			}
+
+			case ContainerSubWidgetAdded: {
+				const AbstractWidget* widget = static_cast<const AbstractWidget*>(request.data());
+				DBG_PRINT_MSG("Widget (%s) is added", widget->name().c_str());
+
+				break;
+			}
+
+			case ContainerSubWidgetRemoved: {
+				const AbstractWidget* widget = static_cast<const AbstractWidget*>(request.data());
+				DBG_PRINT_MSG("Widget (%s) is removed", widget->name().c_str());
+
 				break;
 			}
 

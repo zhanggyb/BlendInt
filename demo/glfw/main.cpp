@@ -49,6 +49,7 @@
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/HBlock.hpp>
 #include <BlendInt/Gui/VBlock.hpp>
+#include <BlendInt/Gui/FramePanel.hpp>
 
 #include "GLFWContext.hpp"
 #include "Window.hpp"
@@ -70,29 +71,16 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	ColorSelector* cs = Manage(new ColorSelector);
-	cs->SetPosition(200, 200);
+	FramePanel* fp = Manage(new FramePanel);
+	fp->SetPosition(200, 200);
 
-	context->Add(cs);
+	Button* btn = Manage(new Button);
+	DBG_SET_NAME(btn, "Button");
 
-	VBlock* vblock = Manage(new VBlock);
+	context->Add(fp);
 
-	ColorButton* btn1 = Manage(new ColorButton);
-	btn1->SetColor(Color(Color::Aqua));
-	ColorButton* btn2 = Manage(new ColorButton);
-	btn2->SetColor(Color(Color::Olive));
-	ColorButton* btn3 = Manage(new ColorButton);
-	btn3->SetColor(Color(Color::Purple));
-	ColorButton* btn4 = Manage(new ColorButton);
-	btn4->SetColor(Color(Color::Teal));
-
-	vblock->PushBack(btn1);
-	vblock->PushBack(btn2);
-	vblock->PushBack(btn3);
-	vblock->PushBack(btn4);
-
-	vblock->SetPosition(500, 200);
-	context->Add(vblock);
+	fp->Setup(btn);
+	fp->Remove(btn);
 
 	RunLoop(win);
 

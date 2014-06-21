@@ -50,8 +50,6 @@ namespace BlendInt {
 	class AbstractWidget;
 	class AbstractContainer;
 
-	struct WidgetTheme;
-
 	enum WidgetGeometryType {
 		WidgetPosition,
 		WidgetSize,
@@ -63,7 +61,9 @@ namespace BlendInt {
 
 	enum ContainerRequestType {
 		ContainerMargin,
-		ContainerRefresh
+		ContainerRefresh,
+		ContainerSubWidgetAdded,
+		ContainerSubWidgetRemoved
 	};
 
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
@@ -111,10 +111,12 @@ namespace BlendInt {
 
 	private:
 
+		/**
+		 * Disabled
+		 */
 		WidgetUpdateRequest();
 
 		AbstractWidget* m_source;
-
 		AbstractWidget* m_target;
 	};
 
@@ -162,6 +164,10 @@ namespace BlendInt {
 		void SubWidgetPositionUpdate (AbstractContainer* container, const Point& pos);
 
 		void SubWidgetSizeUpdate (AbstractContainer* container, const Size& size);
+
+		void SubWidgetAdded (AbstractContainer* container, const AbstractWidget* widget_added);
+
+		void SubWidgetRemoved (AbstractContainer* container, const AbstractWidget* widget_removed);
 
 		WidgetUpdateRequest m_request;
 	};
@@ -460,6 +466,10 @@ namespace BlendInt {
 		void ResizeUpdateInContainer (const Size& size);
 
 		void PositionUpdateInContainer (const Point& point);
+
+		void ReportSubWidgetAdded (AbstractWidget* sub_widget);
+
+		void ReportSubWidgetRemoved (AbstractWidget* sub_widget);
 
 		Context* GetContext ();
 

@@ -168,6 +168,24 @@ namespace BlendInt {
 		container->UpdateGeometry(m_request);
 	}
 
+	void ContainerProxy::SubWidgetAdded (AbstractContainer* container,
+	        const AbstractWidget* widget_added)
+	{
+		m_request.set_type(ContainerSubWidgetAdded);
+		m_request.set_data(widget_added);
+
+		container->UpdateContainer(m_request);
+	}
+
+	void ContainerProxy::SubWidgetRemoved (AbstractContainer* container,
+	        const AbstractWidget* widget_removed)
+	{
+		m_request.set_type(ContainerSubWidgetRemoved);
+		m_request.set_data(widget_removed);
+
+		container->UpdateContainer(m_request);
+	}
+
 	// --------------------------------------------------------------------
 
 	float AbstractWidget::default_border_width = 1.f;
@@ -638,6 +656,22 @@ namespace BlendInt {
 		if(m_container) {
 			ContainerProxy proxy(this, this);
 			proxy.SubWidgetPositionUpdate(m_container, pos);
+		}
+	}
+
+	void AbstractWidget::ReportSubWidgetAdded (AbstractWidget* sub_widget)
+	{
+		if(m_container) {
+			ContainerProxy proxy (this, container());
+			proxy.SubWidgetAdded(m_container, sub_widget);
+		}
+	}
+
+	void AbstractWidget::ReportSubWidgetRemoved (AbstractWidget* sub_widget)
+	{
+		if(m_container) {
+			ContainerProxy proxy (this, container());
+			proxy.SubWidgetRemoved(m_container, sub_widget);
 		}
 	}
 
