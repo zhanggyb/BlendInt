@@ -69,7 +69,7 @@ namespace BlendInt {
 		preferred_size.set_height(
 		        max_font_height + DefaultButtonPadding().vsum());// top padding: 2, bottom padding: 2
 
-		if (text().empty()) {
+		if (m_text.empty()) {
 			preferred_size.set_width(
 			        max_font_height + DefaultButtonPadding().hsum()
 			                + radius_plus);

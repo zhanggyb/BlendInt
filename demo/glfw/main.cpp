@@ -46,7 +46,7 @@
 
 #include <BlendInt/Stock/Icons.hpp>
 #include <BlendInt/Gui/Context.hpp>
-#include <BlendInt/Gui/DirList.hpp>
+#include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/HBlock.hpp>
 #include <BlendInt/Gui/VBlock.hpp>
 
@@ -74,6 +74,25 @@ int main(int argc, char* argv[])
 	cs->SetPosition(200, 200);
 
 	context->Add(cs);
+
+	VBlock* vblock = Manage(new VBlock);
+
+	ColorButton* btn1 = Manage(new ColorButton);
+	btn1->SetColor(Color(Color::Aqua));
+	ColorButton* btn2 = Manage(new ColorButton);
+	btn2->SetColor(Color(Color::Olive));
+	ColorButton* btn3 = Manage(new ColorButton);
+	btn3->SetColor(Color(Color::Purple));
+	ColorButton* btn4 = Manage(new ColorButton);
+	btn4->SetColor(Color(Color::Teal));
+
+	vblock->PushBack(btn1);
+	vblock->PushBack(btn2);
+	vblock->PushBack(btn3);
+	vblock->PushBack(btn4);
+
+	vblock->SetPosition(500, 200);
+	context->Add(vblock);
 
 	RunLoop(win);
 

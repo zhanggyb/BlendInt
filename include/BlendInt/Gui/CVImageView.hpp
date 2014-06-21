@@ -29,6 +29,7 @@
 
 #include <opencv2/core/core.hpp>
 
+#include <BlendInt/Core/Color.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
@@ -55,6 +56,8 @@ namespace BlendInt {
 		virtual bool IsExpandY () const;
 
 		virtual Size GetPreferredSize () const;
+
+		void SetBackgroundColor (const Color& color);
 
 	protected:
 
@@ -84,7 +87,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		void InitializeCVImageView ();
 
 		void AdjustImageArea (const Size& size);
 
@@ -96,6 +99,8 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_image_buffer;
 
 		cv::Mat m_image;
+
+		Color m_background_color;
 	};
 
 }

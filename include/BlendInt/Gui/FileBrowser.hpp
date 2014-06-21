@@ -24,21 +24,19 @@
 #ifndef _BLENDINT_GUI_FILEBROWSER_HPP_
 #define _BLENDINT_GUI_FILEBROWSER_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
+#include <string>
+#include <boost/filesystem.hpp>
 
-#include <BlendInt/Gui/VBox.hpp>
-#include <BlendInt/Gui/TextEntry.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/Gui/Font.hpp>
 #include <BlendInt/Gui/ListView.hpp>
-#include <BlendInt/Gui/Button.hpp>
-#include <BlendInt/Gui/DirList.hpp>
-#include <BlendInt/Gui/ScrollArea.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief A widget to browse and select local directories/files.
+	 * @brief A special list view to show files in a directory
 	 */
-	class FileBrowser: public Frame
+	class FileBrowser: public ListView
 	{
 		DISALLOW_COPY_AND_ASSIGN(FileBrowser);
 
@@ -48,29 +46,33 @@ namespace BlendInt {
 
 		virtual ~FileBrowser ();
 
-	protected:
+		virtual bool IsExpandX () const;
 
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+		virtual bool IsExpandY () const;
+
+	protected:
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
 	private:
 
-		void InitializeFileBrowser ();
+		bool GetHighlightIndex (int y, unsigned int* index);
+
+		void InitializeFileListOnce ();
 
 		GLuint m_vao;
-		RefPtr<GLArrayBuffer> m_inner;
 
-		VBox* m_layout;
+		boost::filesystem::path m_path;
 
-		TextEntry* m_path_entry;
-		TextEntry* m_file_entry;
+		Font m_font;
 
-		Button* m_open;
-		Button* m_cancel;
+		RefPtr<GLArrayBuffer> m_row;
 
-		DirList* m_list;
-
+		unsigned int m_index;	// Highlight index
 	};
 
 }

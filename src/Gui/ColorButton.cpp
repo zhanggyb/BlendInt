@@ -106,7 +106,7 @@ namespace BlendInt {
 			}
 
 			default:
-				AbstractButton::UpdateGeometry(request);
+				break;
 		}
 	}
 

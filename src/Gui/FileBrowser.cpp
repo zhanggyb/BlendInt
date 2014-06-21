@@ -21,39 +21,21 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifdef __UNIX__
-#ifdef __APPLE__
-#include <gl3.h>
-#include <glext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-#endif  // __UNIX__
-
-#include <assert.h>
-#include <algorithm>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/VertexTool.hpp>
-
 #include <BlendInt/Gui/FileBrowser.hpp>
-#include <BlendInt/Gui/HBox.hpp>
 
-#include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt {
 
 	FileBrowser::FileBrowser ()
-	: m_layout(0), m_path_entry(0)
+	: m_vao(0)
 	{
-		set_size(500, 400);
-		set_margin(2, 2, 2, 2);
-
-		InitializeFileBrowser();
+		InitializeFileListOnce();
 	}
 
 	FileBrowser::~FileBrowser ()
@@ -61,107 +43,306 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void FileBrowser::UpdateGeometry (const WidgetUpdateRequest& request)
+	bool FileBrowser::IsExpandX() const
 	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_inner->Reset();
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
-			Frame::UpdateGeometry(request);
-		}
+		return true;
 	}
-	
+
+	bool FileBrowser::IsExpandY() const
+	{
+		return true;
+	}
+
 	ResponseType FileBrowser::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
+		namespace fs = boost::filesystem;
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+		glm::vec3 pos((float) position().x(), (float) position().y(),
+						(float) z());
+		glm::mat4 mvp = glm::translate(
+						event.projection_matrix() * event.view_matrix(), pos);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
-		program->SetUniform1i("Gamma", 0);
+		unsigned int i = 0;
+
+		int h = size().height();
+		glm::mat4 local_mvp;
+
+		h -= m_font.GetHeight();
+		local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
+
+		program->Use();
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+						glm::value_ptr(local_mvp));
 		program->SetUniform1i("AA", 0);
+		if(i == m_index) {
+			program->SetVertexAttrib4f("Color", 0.475f,
+							0.475f, 0.475f, 0.75f);
+		} else {
+			program->SetVertexAttrib4f("Color", 0.375f,
+							0.375f, 0.375f, 0.75f);
+		}
 
 		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glBindVertexArray(0);
+
 		program->Reset();
 
-		return AcceptAndContinue;
-	}
+		m_font.Print(mvp, 0, h - m_font.GetDescender(),	String("."));
+		i++;
 
-	void FileBrowser::InitializeFileBrowser ()
-	{
-		glGenVertexArrays(1, &m_vao);
+		h -= m_font.GetHeight();
+		local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
+
+		program->Use();
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+						glm::value_ptr(local_mvp));
+		program->SetUniform1i("AA", 0);
+		if(i == m_index) {
+			program->SetVertexAttrib4f("Color", 0.475f,
+							0.475f, 0.475f, 0.75f);
+		} else {
+			program->SetVertexAttrib4f("Color", 0.325f,
+							0.325f, 0.325f, 0.75f);
+		}
 
 		glBindVertexArray(m_vao);
-		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glBindVertexArray(0);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		program->Reset();
+
+		m_font.Print(mvp, 0, h - m_font.GetDescender(), String(".."));
+		i++;
+
+		fs::path p(m_path);
+
+		try {
+			if (fs::exists(p)) {
+
+				if (fs::is_regular_file(p)) {
+
+					m_font.Print(mvp, 0, h - m_font.GetDescender(),
+									p.native());
+
+				} else if (fs::is_directory(p)) {
+
+					bool dark = false;
+
+					fs::directory_iterator end_it;
+					fs::directory_iterator it(p);
+
+					while (it != end_it) {
+
+						h -= m_font.GetHeight();
+
+						local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
+
+						program->Use();
+
+						program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
+										glm::value_ptr(local_mvp));
+						program->SetUniform1i("AA", 0);
+
+						if(i == m_index) {
+							program->SetVertexAttrib4f("Color", 0.475f,
+											0.475f, 0.475f, 0.75f);
+						} else {
+							if (dark) {
+								program->SetVertexAttrib4f("Color", 0.325f,
+												0.325f, 0.325f, 0.75f);
+							} else {
+								program->SetVertexAttrib4f("Color", 0.375f,
+												0.375f, 0.375f, 0.75f);
+							}
+						}
+
+						glBindVertexArray(m_vao);
+						glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+						glBindVertexArray(0);
+
+						program->Reset();
+
+						m_font.Print(mvp, 0, h - m_font.GetDescender(),
+										it->path().native());
+						dark = !dark;
+
+						it++;
+						i++;
+					}
+				}
+			}
+		} catch (const fs::filesystem_error& ex) {
+			DBG_PRINT_MSG("Error: %s", ex.what());
+		}
+
+		return Accept;
+	}
+
+	ResponseType FileBrowser::MousePressEvent (const MouseEvent& event)
+	{
+		namespace fs = boost::filesystem;
+
+		unsigned int index;
+		bool valid = GetHighlightIndex(event.position().y(), &index);
+
+		if(valid) {
+			m_index = index;
+
+			if(m_index == 1){	// ".." pressed
+				fs::path parent = m_path.parent_path();
+
+				if(fs::is_directory(parent)) {
+					m_path = parent;
+				}
+			}
+
+			if (m_index >= 2) {
+
+				unsigned int i = 2;
+				try {
+					if (fs::exists(m_path)) {
+
+						if (fs::is_directory(m_path)) {
+
+							fs::directory_iterator it(m_path);
+							fs::directory_iterator it_end;
+							while (it != it_end) {
+								if (i == m_index)
+									break;
+								i++;
+								it++;
+							}
+
+							if (fs::is_directory(it->path())) {
+								m_path = it->path();
+							}
+
+						}
+					}
+				} catch (const fs::filesystem_error& ex) {
+					std::cerr << ex.what() << std::endl;
+				}
+			}
+
+			Refresh();
+		}
+
+		return Accept;
+	}
+
+	ResponseType FileBrowser::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Accept;
+	}
+
+	void FileBrowser::InitializeFileListOnce ()
+	{
+		namespace fs = boost::filesystem;
+
+		std::string home = getenv("PWD");
+
+		m_path = fs::path(home);
+
+		try {
+			if (fs::exists(m_path)) {
+
+				if (fs::is_directory(m_path)) {
+
+					int count = 0;
+					fs::directory_iterator it(m_path);
+					fs::directory_iterator it_end;
+					while (it != it_end) {
+						count++;
+						it++;
+					}
+
+					int h = m_font.GetHeight();
+
+					unsigned total = std::max(300, count * h);
+
+					set_size(400, total);
+
+				} else {
+					set_size(400, 300);
+				}
+
+			} else {
+				set_size(400, 300);
+			}
+		} catch (const fs::filesystem_error& ex) {
+			std::cerr << ex.what() << std::endl;
+		}
+
+		GLfloat row_height = (GLfloat)m_font.GetHeight();
+		GLfloat verts[] = {
+						0.f, 0.f,
+						(GLfloat)size().width(), 0.f,
+						0.f, row_height,
+						(GLfloat)size().width(), row_height
+		};
+
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+		m_row.reset(new GLArrayBuffer);
+		m_row->Generate();
+		m_row->Bind();
+		m_row->SetData(sizeof(verts), verts);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		m_inner->Reset();
+		m_row->Reset();
 
-		m_layout = Manage(new VBox);
-		m_layout->SetMargin(2, 2, 2, 2);
-		m_layout->SetSpace(4);
+		m_font.set_color(Color(0xF0F0F0FF));
+	}
 
-		m_path_entry = Manage(new TextEntry);
-		m_path_entry->SetRoundCornerType(RoundAll);
+	bool FileBrowser::GetHighlightIndex(int y, unsigned int* index)
+	{
+		namespace fs = boost::filesystem;
+		bool ret = false;
 
-		m_open = Manage(new Button(String("Open")));
+		int h = position().y() + size().height() - y;
 
-		HBox* dir_layout = Manage(new HBox);
-		dir_layout->SetMargin(0, 0, 0, 0);
-		dir_layout->PushBack(m_path_entry);
-		dir_layout->PushBack(m_open);
+		unsigned int count = 0;
+		try {
+			if (fs::exists(m_path)) {
 
-		m_file_entry = Manage(new TextEntry);
-		m_file_entry->SetRoundCornerType(RoundAll);
-		m_cancel = Manage(new Button(String("Cancel")));
+				if (fs::is_directory(m_path)) {
 
-		HBox* file_layout = Manage(new HBox);
-		file_layout->SetMargin(0, 0, 0, 0);
-		file_layout->PushBack(m_file_entry);
-		file_layout->PushBack(m_cancel);
+					fs::directory_iterator it(m_path);
+					fs::directory_iterator it_end;
+					while (it != it_end) {
+						count++;
+						it++;
+					}
 
-		ScrollArea* area = Manage(new ScrollArea);
+				} else {
+					count = 1;
+				}
 
-		m_list = Manage(new DirList);
-		area->SetViewport(m_list);
+			}
+		} catch (const fs::filesystem_error& ex) {
+			std::cerr << ex.what() << std::endl;
+		}
 
-		m_layout->PushBack(dir_layout);
-		m_layout->PushBack(file_layout);
-		m_layout->PushBack(area);
+		count += 2;	// for "." and ".."
+		unsigned int out = 0;
+		unsigned cell_height = m_font.GetHeight();
+		out = h / cell_height;
 
-		Setup(m_layout);
+		if (out >= count) {
+			out = 0;
+		} else {
+			ret = true;
+		}
+
+		*index = out;
+		return ret;
 	}
 
 }

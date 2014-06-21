@@ -48,7 +48,8 @@ namespace BlendInt {
 	CVImageView::CVImageView ()
 	: AbstractWidget()
 	{
-		InitOnce();
+		m_background_color = Color(Color::SlateGray);
+		InitializeCVImageView();
 	}
 
 	CVImageView::~CVImageView ()
@@ -131,7 +132,7 @@ namespace BlendInt {
 		// draw background
 		program->Use();
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib4f("Color", 0.208f, 0.208f, 0.208f, 1.0f);
+		program->SetVertexAttrib4fv("Color", m_background_color.data());
 		program->SetUniform1i("Gamma", 0);
 		program->SetUniform1i("AA", 0);
 
@@ -182,7 +183,13 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void CVImageView::InitOnce ()
+	void CVImageView::SetBackgroundColor(const Color& color)
+	{
+		m_background_color = color;
+		Refresh();
+	}
+
+	void CVImageView::InitializeCVImageView ()
 	{
 		set_size(400, 300);
 
