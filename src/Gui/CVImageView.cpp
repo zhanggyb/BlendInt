@@ -46,7 +46,7 @@
 namespace BlendInt {
 
 	CVImageView::CVImageView ()
-	: Widget()
+	: AbstractWidget()
 	{
 		InitOnce();
 	}
@@ -230,7 +230,58 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
 	}
-	
+
+	bool CVImageView::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void CVImageView::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType CVImageView::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType CVImageView::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType CVImageView::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType CVImageView::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType CVImageView::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType CVImageView::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType CVImageView::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType CVImageView::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
 	void CVImageView::AdjustImageArea (const Size& size)
 	{
 		int w = std::min(size.width(), m_image.cols);

@@ -27,7 +27,7 @@
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Core/Timer.hpp>
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
 
@@ -36,7 +36,7 @@ namespace BlendInt {
 	 *
 	 * This widget is used for demo or test also.
 	 */
-	class ClockWidget: public Widget
+	class ClockWidget: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(ClockWidget);
 
@@ -53,9 +53,29 @@ namespace BlendInt {
 
 	protected:
 
-//		virtual void Update (int type, const void* data);
+		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+
+		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+
+		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
+
+		virtual ResponseType FocusEvent (bool focus);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
 

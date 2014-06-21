@@ -49,25 +49,28 @@
 namespace BlendInt {
 
 	const char* Grid::vertex_shader =
-					"#version 330\n"
-					"layout(location = 0) in vec2 coord2d;"
-					"uniform mat4 MVP;"
-					"out vec3 f_color;"
-					""
-					"void main(void) {"
-					"	f_color = vec3(0.35, 0.35, 0.35);"
-					""
-					"	gl_Position = MVP * vec4(coord2d, 0.0, 1.0);"
-					"}";
+			"#version 330\n"
+			"layout(location = 0) in vec2 coord2d;"
+			"uniform mat4 m_P;"
+			"uniform mat4 m_V;"
+			"uniform mat4 m_M;"
+			""
+			"out vec3 f_color;"
+			""
+			"void main(void) {"
+			"	f_color = vec3(0.35, 0.35, 0.35);"
+			""
+			"	gl_Position = m_P * m_V * m_M * vec4(coord2d, 0.0, 1.0);"
+			"}";
 
 	const char* Grid::fragment_shader =
-					"#version 330\n"
-					"in vec3 f_color;"
-					"out vec4 FragmentColor;"
-					""
-					"void main(void) {"
-					"	FragmentColor = vec4(f_color, 0.6);"
-					"}";
+			"#version 330\n"
+			"in vec3 f_color;"
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	FragmentColor = vec4(f_color, 0.6);"
+			"}";
 
 	Grid::Grid ()
 	: AbstractPrimitive(),
@@ -77,7 +80,7 @@ namespace BlendInt {
 	  m_vb(0),
 	  m_ib(0)
 	{
-		InitOnce();
+		InitializeGrid();
 	}
 
 	void Grid::SetSize (int size)
@@ -85,33 +88,32 @@ namespace BlendInt {
 		m_size = size;
 	}
 
-	void Grid::Render (const glm::mat4& mvp)
+	void Grid::Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix)
 	{
-		if(program()) {
+		glBindVertexArray(m_vao);
+		m_program->Use();
+		m_program->SetUniformMatrix4fv("m_P", 1, GL_FALSE, glm::value_ptr(projection_matrix));
+		m_program->SetUniformMatrix4fv("m_V", 1, GL_FALSE, glm::value_ptr(view_matrix));
+		m_program->SetUniformMatrix4fv("m_M", 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0)));
 
-			glBindVertexArray(m_vao);
-			program()->Use();
-			program()->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		/* Draw the grid using the indices to our vertices using our vertex buffer objects */
+		glEnableVertexAttribArray(0);
 
-			/* Draw the grid using the indices to our vertices using our vertex buffer objects */
-			glEnableVertexAttribArray(0);
+		m_vb->Bind();
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-			m_vb->Bind();
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		/* Push each element in buffer_vertices to the vertex shader */
+		m_ib->Bind();
 
-			/* Push each element in buffer_vertices to the vertex shader */
-			m_ib->Bind();
+		glDrawElements(GL_LINES, 20 * 21 * 4,
+		GL_UNSIGNED_SHORT, 0);
 
-			glDrawElements(GL_LINES, 20 * 21 * 4,
-			        GL_UNSIGNED_SHORT, 0);
+		glDisableVertexAttribArray(0);
 
-			glDisableVertexAttribArray(0);
-
-			m_ib->Reset();
-			m_vb->Reset();
-			program()->Reset();
-			glBindVertexArray(0);
-		}
+		m_ib->Reset();
+		m_vb->Reset();
+		m_program->Reset();
+		glBindVertexArray(0);
 	}
 
 	Grid::~Grid ()
@@ -119,16 +121,14 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void Grid::InitOnce()
+	void Grid::InitializeGrid()
 	{
 		glGenVertexArrays(1, &m_vao);
 
-		RefPtr<GLSLProgram> prog(new GLSLProgram);
-		prog->Create();
-		prog->AttachShaderPair(vertex_shader, fragment_shader);
-		prog->Link();
-
-		set_program(prog);
+		m_program.reset(new GLSLProgram);
+		m_program->Create();
+		m_program->AttachShaderPair(vertex_shader, fragment_shader);
+		m_program->Link();
 
 		glm::vec2 vertices[21][21];
 		for (int i = 0; i < 21; i++) {

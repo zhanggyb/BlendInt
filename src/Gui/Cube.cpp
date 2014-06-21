@@ -49,52 +49,42 @@ namespace BlendInt {
 	  m_vbo_cube_colors(0),
 	  m_ibo_cube_elements(0)
 	{
-		InitOnce();
+		InitializeCube();
 	}
 
-	void Cube::Render (const glm::mat4& mvp)
+	void Cube::Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix)
 	{
-		if (program()) {
-			glBindVertexArray(m_vao);
+		using BlendInt::Stock::Shaders;
 
-			program()->Use();
-			program()->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		RefPtr<GLSLProgram> program = Shaders::instance->primitive_program();
 
-			glEnableVertexAttribArray(0);
-			// Describe our vertices array to OpenGL (it can't guess its format automatically)
-			glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_vertices);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		program->Use();
+		program->SetUniformMatrix4fv("m_P", 1, GL_FALSE, glm::value_ptr(projection_matrix));
+		program->SetUniformMatrix4fv("m_V", 1, GL_FALSE, glm::value_ptr(view_matrix));
+		program->SetUniformMatrix4fv("m_M", 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0)));
 
-			glEnableVertexAttribArray(1);
-			glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_colors);
-			glVertexAttribPointer(1, 3,	GL_FLOAT, GL_FALSE, 0, 0);
+		glBindVertexArray(m_vao);
 
-			/* Push each element in buffer_vertices to the vertex shader */
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo_cube_elements);
+		/* Push each element in buffer_vertices to the vertex shader */
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo_cube_elements);
 
-			int size;
-			glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE,
-			        &size);
-			glDrawElements(GL_TRIANGLES, size / sizeof(GLushort),
-			        GL_UNSIGNED_SHORT, 0);
+		int size;
+		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+		glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			program()->Reset();
-			glBindVertexArray(0);
-
-		} else {
-			std::cout << "program is not valid" << std::endl;
-		}
+		program->Reset();
 	}
 
-	int Cube::InitOnce()
+	void Cube::InitializeCube()
 	{
 		glGenVertexArrays(1, &m_vao);
+
+		glBindVertexArray(m_vao);
 
 		GLfloat cube_vertices[] = {
 				// front
@@ -113,6 +103,9 @@ namespace BlendInt {
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_vertices);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
 
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 		GLfloat cube_colors[] = {
 				// front colors
 				1.0, 0.0, 0.0,
@@ -129,6 +122,12 @@ namespace BlendInt {
 		glGenBuffers(1, &m_vbo_cube_colors);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo_cube_colors);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_colors), cube_colors, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		GLushort cube_elements[] = {
 				// front
@@ -156,11 +155,6 @@ namespace BlendInt {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		set_program(Stock::Shaders::instance->primitive_program());
-
-		return 1;
 	}
 
 	Cube::~Cube()

@@ -38,11 +38,12 @@ namespace BlendInt {
 
 		virtual ~Cube ();
 
-		virtual void Render (const glm::mat4& mvp);
+		virtual void Render (const glm::mat4& projection_matrix,
+				const glm::mat4& view_matrix);
 
 	private:
 
-		int InitOnce ();
+		void InitializeCube ();
 
 		GLuint m_vao;
 

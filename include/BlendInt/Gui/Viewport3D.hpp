@@ -26,10 +26,12 @@
 
 #include <vector>
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 #include <BlendInt/Gui/Grid.hpp>
 #include <BlendInt/Gui/Cube.hpp>
+#include <BlendInt/Gui/Mesh.hpp>
+
 #include <BlendInt/Gui/NavigationCamera.hpp>
 
 using std::vector;
@@ -41,7 +43,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Viewport3D: public Widget
+	class Viewport3D: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(Viewport3D);
 
@@ -61,17 +63,27 @@ namespace BlendInt {
 
 	protected:
 
+		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+
+		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+
+		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
+
+		virtual ResponseType FocusEvent (bool focus);
+
 		virtual ResponseType CursorEnterEvent (bool entered);
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
 
 		virtual void Render ();
 

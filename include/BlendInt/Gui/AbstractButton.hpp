@@ -29,15 +29,16 @@
 
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/Widget.hpp>
 #include <BlendInt/Core/Margin.hpp>
+
+#include <BlendInt/Gui/Font.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
 
 	class ButtonGroup;
 
-	class AbstractButton: public Widget
+	class AbstractButton: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractButton);
 
@@ -86,7 +87,19 @@ namespace BlendInt {
 
 	protected:
 
+		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+
+		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
+
+		virtual ResponseType FocusEvent (bool focus);
+
 		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 

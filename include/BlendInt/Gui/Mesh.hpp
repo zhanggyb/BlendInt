@@ -40,25 +40,28 @@ namespace BlendInt {
 
 		Mesh ();
 
-		bool LoadObj (const char* filename);
+		virtual void Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix);
 
-		virtual void Render (const glm::mat4& mvp);
-
-	protected:
+		static void LoadObj (const char* filename, std::vector<glm::vec4>& vertices,
+				std::vector<glm::vec3>& normals, std::vector<GLushort>& elements);
 
 		virtual ~Mesh();
 
 	private:
 
-		void InitOnce ();
+		void InitializeMesh ();
 
-		RefPtr<GLArrayBuffer> m_vb;
+		GLuint m_vao;
 
-		RefPtr<GLElementArrayBuffer> m_ib;
+		RefPtr<GLArrayBuffer> m_vertex_buffer;
+		RefPtr<GLArrayBuffer> m_normal_buffer;
 
-		std::vector<glm::vec4> m_vertices;
-		std::vector<glm::vec3> m_normals;
-		std::vector<GLushort> m_elements;
+		RefPtr<GLElementArrayBuffer> m_index_buffer;
+
+		RefPtr<GLSLProgram> m_program;
+
+		static const char* vertex_shader;
+		static const char* fragment_shader;
 	};
 
 }

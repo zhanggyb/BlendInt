@@ -38,7 +38,7 @@
 namespace BlendInt {
 
 	ClockWidget::ClockWidget()
-	: Widget(), m_angle(0), m_timer(0)
+	: AbstractWidget(), m_angle(0), m_timer(0)
 	{
 		Init();
 	}
@@ -123,6 +123,61 @@ namespace BlendInt {
 //		glVertex2d(x + radius * cos(end_angle), y + radius * sin(end_angle));
 //
 //		glEnd();
+	}
+
+	bool ClockWidget::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void ClockWidget::UpdateGeometry (const WidgetUpdateRequest& request)
+	{
+	}
+
+	void ClockWidget::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType ClockWidget::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType ClockWidget::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType ClockWidget::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ClockWidget::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ClockWidget::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ClockWidget::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ClockWidget::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ClockWidget::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
 	}
 
 	void ClockWidget::Init ()

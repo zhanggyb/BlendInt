@@ -148,7 +148,7 @@ namespace BlendInt {
 			}
 
 			default:
-				return AbstractSlider<int>::UpdateGeometryTest(request);
+				return true;
 		}
 	}
 
@@ -430,6 +430,37 @@ namespace BlendInt {
 		}
 
 		return space;
+	}
+
+	void ScrollBar::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType ScrollBar::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType ScrollBar::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType ScrollBar::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ScrollBar::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ScrollBar::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
 	}
 
 	int ScrollBar::GetSlidePosition ()

@@ -43,7 +43,7 @@
 namespace BlendInt {
 
 	ImageView::ImageView ()
-	: Widget()
+	: AbstractWidget()
 	{
 		InitOnce();
 	}
@@ -244,6 +244,57 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
+	}
+
+	bool ImageView::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void ImageView::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType ImageView::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType ImageView::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType ImageView::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ImageView::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ImageView::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ImageView::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ImageView::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ImageView::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
 	}
 
 	void ImageView::AdjustImageArea(const Size& size)

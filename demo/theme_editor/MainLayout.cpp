@@ -10,6 +10,8 @@
 #include <BlendInt/Gui/VBox.hpp>
 #include <BlendInt/Gui/Splitter.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
+#include <BlendInt/Gui/ColorSelector.hpp>
+#include <BlendInt/Gui/HBlock.hpp>
 
 #include "MainLayout.hpp"
 
@@ -99,14 +101,24 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 
 BI::Expander* MainLayout::CreateExpander()
 {
-	BI::Expander* expander = Manage(new BI::Expander("Tools"));
+	using namespace BI;
 
-	BI::Button* btn1 = Manage(new BI::Button("Blur"));
-	BI::Button* btn2 = Manage(new BI::Button("Help"));
+	Expander* expander = Manage(new Expander("Tools"));
 
-	BI::VBox* vbox = Manage(new BI::VBox);
-	vbox->PushBack(btn1);
-	vbox->PushBack(btn2);
+	ColorSelector* cs = Manage(new ColorSelector);
+
+	HBlock* hblock = Manage(new HBlock);
+	hblock->SetMargin(0, 0, 2, 2);
+
+	Button* btn1 = Manage(new Button("Blur"));
+	Button* btn2 = Manage(new Button("Help"));
+	hblock->PushBack(btn1);
+	hblock->PushBack(btn2);
+
+	VBox* vbox = Manage(new VBox);
+
+	vbox->PushBack(cs);
+	vbox->PushBack(hblock);
 
 	expander->Setup(vbox);
 

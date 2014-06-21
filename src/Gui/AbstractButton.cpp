@@ -40,7 +40,7 @@ namespace BlendInt {
 	Margin AbstractButton::default_button_padding = Margin(2, 2, 2, 2);
 
 	AbstractButton::AbstractButton ()
-	: Widget(),
+	: AbstractWidget(),
 	  m_text_length(0)
 	{
 	}
@@ -295,6 +295,38 @@ namespace BlendInt {
 
 			m_toggled.fire(m_status[ButtonChecked]);
 		}
+	}
+
+	ResponseType AbstractButton::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType AbstractButton::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType AbstractButton::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType AbstractButton::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	bool AbstractButton::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void AbstractButton::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+		// do nothing in base class
 	}
 
 	size_t AbstractButton::GetValidTextSize(const Size& size, const String& text, const Font& font)

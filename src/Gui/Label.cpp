@@ -41,7 +41,7 @@
 namespace BlendInt {
 
 	Label::Label (const String& text)
-		: Widget(),
+		: AbstractWidget(),
 		  m_text(text),
 		  m_text_length(0),
 		  m_background_color(0x00000000),
@@ -82,7 +82,7 @@ namespace BlendInt {
 			}
 
 			default:
-				Widget::UpdateGeometry(request);
+				break;
 		}
 
 	}
@@ -212,6 +212,55 @@ namespace BlendInt {
 	bool Label::IsExpandX() const
 	{
 		return true;
+	}
+
+	bool Label::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void Label::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType Label::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType Label::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType Label::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Label::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Label::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Label::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Label::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Label::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
 	}
 
 	void Label::InitLabel (const String& text)

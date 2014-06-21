@@ -26,6 +26,7 @@
 namespace BlendInt {
 
 	NodeView::NodeView()
+	: AbstractWidget()
 	{
 
 	}
@@ -34,9 +35,59 @@ namespace BlendInt {
 	{
 	}
 
+	bool NodeView::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void NodeView::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
 	ResponseType NodeView::Draw(const RedrawEvent& event)
 	{
 		return Accept;
+	}
+
+	ResponseType NodeView::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType NodeView::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType NodeView::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType NodeView::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType NodeView::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType NodeView::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType NodeView::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType NodeView::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
 	}
 
 }

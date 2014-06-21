@@ -36,7 +36,7 @@ namespace BlendInt {
 	{
 	}
 	
-	void HBlock::PushBack (Widget* widget)
+	void HBlock::PushBack (AbstractWidget* widget)
 	{
 		AbstractWidget* last = 0;
 		if(sub_widget_size()) {

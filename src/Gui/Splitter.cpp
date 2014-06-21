@@ -46,7 +46,7 @@
 namespace BlendInt {
 
 	SplitterHandle::SplitterHandle (Orientation orientation)
-	: Widget(),
+	: AbstractWidget(),
 	  m_orientation(orientation),
 	  m_vao(0),
 	  m_highlight(false),
@@ -267,6 +267,37 @@ namespace BlendInt {
 		m_pressed = false;
 
 		return Accept;
+	}
+
+	bool SplitterHandle::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void SplitterHandle::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType SplitterHandle::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType SplitterHandle::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SplitterHandle::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SplitterHandle::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
 	}
 
 	ResponseType SplitterHandle::MouseMoveEvent (const MouseEvent& event)

@@ -120,7 +120,7 @@ namespace BlendInt {
 			}
 
 			default: {
-				return AbstractSlider<int>::UpdateGeometryTest(request);
+				return true;
 			}
 
 		}
@@ -150,6 +150,10 @@ namespace BlendInt {
 				break;
 		}
 
+	}
+
+	void Slider::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
 	}
 
 	void Slider::UpdateSlider(const WidgetUpdateRequest& request)
@@ -262,6 +266,31 @@ namespace BlendInt {
 		m_slide_icon.Draw(switch_mvp);
 
 		return Accept;
+	}
+
+	ResponseType Slider::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType Slider::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType Slider::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Slider::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Slider::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
 	}
 
 	ResponseType Slider::MouseMoveEvent (const MouseEvent& event)

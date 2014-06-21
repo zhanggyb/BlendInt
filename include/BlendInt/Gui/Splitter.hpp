@@ -25,13 +25,12 @@
 #define _BLENDINT_GUI_SPLITTER_HPP_
 
 #include <BlendInt/Gui/AbstractDequeContainer.hpp>
-#include <BlendInt/Gui/Widget.hpp>
 
 namespace BlendInt {
 
 	class Splitter;
 
-	class SplitterHandle: public Widget
+	class SplitterHandle: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
 
@@ -51,11 +50,23 @@ namespace BlendInt {
 
 	protected:
 
+		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+
 		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+
+		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType FocusEvent (bool focus);
+
 		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 

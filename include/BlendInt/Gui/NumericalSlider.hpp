@@ -48,13 +48,31 @@ namespace BlendInt {
 
 	protected:
 
-		virtual ResponseType CursorEnterEvent (bool entered);
-
 		virtual void UpdateSlider (const WidgetUpdateRequest& request);
+
+		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
 
 		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
 
+		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
+
 		virtual ResponseType Draw (const RedrawEvent& event);
+
+		virtual ResponseType FocusEvent (bool focus);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		/**
 		 *  Generate vertices for drawing the inner slider bar

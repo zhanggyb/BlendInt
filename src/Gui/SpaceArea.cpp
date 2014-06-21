@@ -39,7 +39,7 @@
 namespace BlendInt {
 
 	SpaceArea::SpaceArea ()
-	: Widget(),
+	: AbstractWidget(),
 	  m_expand_x(false),
 	  m_expand_y(false),
 	  m_widget_attached(0)
@@ -138,7 +138,58 @@ namespace BlendInt {
 	{
 		return Ignore;
 	}
-	
+
+	bool SpaceArea::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void SpaceArea::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType SpaceArea::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType SpaceArea::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType SpaceArea::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SpaceArea::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SpaceArea::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SpaceArea::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SpaceArea::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType SpaceArea::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
 	void SpaceArea::OnWidgetDestroyed (AbstractWidget* widget)
 	{
 		if(m_widget_attached == widget) {

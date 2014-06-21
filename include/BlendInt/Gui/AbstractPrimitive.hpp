@@ -38,10 +38,7 @@ namespace BlendInt {
 
 		AbstractPrimitive ();
 
-		void set_program (const RefPtr<GLSLProgram>& program)
-		{
-			m_program = program;
-		}
+		virtual ~AbstractPrimitive();
 
 		/**
 		 * @brief Render the primitive in Viewport3D
@@ -51,17 +48,9 @@ namespace BlendInt {
 		 * 	- glClearColor
 		 * 	- glClear
 		 */
-		virtual void Render (const glm::mat4& mvp) = 0;
+		virtual void Render (const glm::mat4& projection_matrix,
+				const glm::mat4& view_matrix) = 0;
 
-	protected:
-
-		RefPtr<GLSLProgram> program () const {return m_program;}
-
-		virtual ~AbstractPrimitive();
-
-	private:
-
-		RefPtr<GLSLProgram> m_program;
 	};
 
 }

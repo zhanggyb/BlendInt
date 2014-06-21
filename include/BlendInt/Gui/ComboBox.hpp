@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_COMBOBOX_HPP_
 #define _BLENDINT_COMBOBOX_HPP_
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 #include <BlendInt/Gui/Menu.hpp>
 
@@ -33,7 +33,7 @@ namespace BlendInt {
 	/**
 	 * @brief A combined button and popup list.
 	 */
-	class ComboBox: public Widget
+	class ComboBox: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(ComboBox);
 
@@ -49,15 +49,29 @@ namespace BlendInt {
 
 	protected:
 
+		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+
 		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+
+		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual ResponseType FocusEvent (bool focus);
+
 		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
 

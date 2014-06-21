@@ -144,6 +144,11 @@ namespace BlendInt {
 		}
 	}
 
+	bool NumericalSlider::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
 	void NumericalSlider::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
 		switch (request.type()) {
@@ -243,10 +248,15 @@ namespace BlendInt {
 			}
 
 			default:
-				AbstractSlider<double>::UpdateGeometry(request);
+				break;
 		}
 	}
 	
+	void NumericalSlider::BroadcastUpdate(const WidgetUpdateRequest& request)
+	{
+
+	}
+
 	ResponseType NumericalSlider::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
@@ -314,10 +324,47 @@ namespace BlendInt {
 		return Accept;
 	}
 	
+	ResponseType NumericalSlider::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
 	ResponseType NumericalSlider::CursorEnterEvent (bool entered)
 	{
 		Refresh();
 		return Accept;
+	}
+
+	ResponseType NumericalSlider::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType NumericalSlider::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType NumericalSlider::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType NumericalSlider::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType NumericalSlider::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType NumericalSlider::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
 	}
 
 	void NumericalSlider::InitOnce()

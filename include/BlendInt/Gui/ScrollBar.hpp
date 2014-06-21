@@ -57,13 +57,25 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void UpdateSlider (const WidgetUpdateRequest& request);
+
 		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
 
 		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
 
-		virtual void UpdateSlider (const WidgetUpdateRequest& request);
+		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
+
+		virtual ResponseType FocusEvent (bool focus);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 

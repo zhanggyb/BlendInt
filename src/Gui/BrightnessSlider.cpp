@@ -167,12 +167,64 @@ namespace BlendInt {
 			}
 
 			default:
-				AbstractSlider<int>::UpdateGeometry(request);
+				break;
 		}
 	}
 
 	void BrightnessSlider::UpdateSlider (const WidgetUpdateRequest& request)
 	{
+	}
+
+	bool BrightnessSlider::UpdateGeometryTest (
+	        const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void BrightnessSlider::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType BrightnessSlider::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType BrightnessSlider::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType BrightnessSlider::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType BrightnessSlider::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType BrightnessSlider::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType BrightnessSlider::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType BrightnessSlider::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType BrightnessSlider::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
 	}
 
 	void BrightnessSlider::InitializeBrightnessSlider()

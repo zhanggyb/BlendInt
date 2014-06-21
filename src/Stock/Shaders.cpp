@@ -69,15 +69,19 @@ namespace BlendInt {
 				""
 				"layout(location = 0) in vec3 coord3d;"
 				"layout(location = 1) in vec3 v_color;"
-				"uniform mat4 MVP;"
+				"uniform mat4 m_P;"
+				"uniform mat4 m_V;"
+				"uniform mat4 m_M;"
+				""
 				"out vec3 f_color;"
 				""
 				"void main(void) {"
-				"	gl_Position = MVP * vec4(coord3d, 1.0);"
+				"	gl_Position = m_P * m_V * m_M * vec4(coord3d, 1.0);"
 				"	f_color = v_color;"
 				"}";
 
-		const char* Shaders::primitive_fragment_shader = "#version 330\n"
+		const char* Shaders::primitive_fragment_shader =
+				"#version 330\n"
 				""
 				"in vec3 f_color;"
 				"out vec4 FragmentColor;"
@@ -86,7 +90,8 @@ namespace BlendInt {
 				"	FragmentColor = vec4(f_color, 1.0);"
 				"}";
 
-		const char* Shaders::default_widget_vertex_shader = "#version 330\n"
+		const char* Shaders::default_widget_vertex_shader =
+				"#version 330\n"
 				""
 				"layout(location=0) in vec2 Coord2D;"
 				"layout(location=1) in vec4 Color;"

@@ -46,7 +46,7 @@ namespace BlendInt {
 	int Menu::DefaultShortcutSpace = 20;
 
 	Menu::Menu ()
-	: Widget(), m_highlight(0), m_inner(0), m_outer(0), m_highlight_buffer(0)
+	: AbstractWidget(), m_highlight(0), m_inner(0), m_outer(0), m_highlight_buffer(0)
 	{
 		set_size (20, 20);
 		set_drop_shadow(true);
@@ -209,7 +209,7 @@ namespace BlendInt {
 			}
 
 			default:
-				Widget::UpdateGeometry(request);
+				break;
 		}
 
 	}
@@ -311,6 +311,35 @@ namespace BlendInt {
 
 		Refresh();
 
+		return Ignore;
+	}
+
+	bool Menu::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void Menu::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType Menu::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType Menu::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Menu::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Menu::ContextMenuReleaseEvent (const ContextMenuEvent& event)
+	{
 		return Ignore;
 	}
 

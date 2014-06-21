@@ -45,8 +45,12 @@
 namespace BlendInt {
 
 	Viewport3D::Viewport3D ()
-			: Widget(), m_default_camera(0), m_cube(0), m_grid(0), m_last_x(0), m_last_y(
-			        0), m_rX(0.0), m_rY(0.0), m_button_down(MouseButtonNone)
+	: AbstractWidget(),
+	  m_last_x(0),
+	  m_last_y(0),
+	  m_rX(0.0),
+	  m_rY(0.0),
+	  m_button_down(MouseButtonNone)
 	{
 		InitOnce();
 	}
@@ -223,7 +227,7 @@ namespace BlendInt {
 			}
 
 			default:
-				Widget::UpdateGeometry(request);
+				break;
 		}
 
 	}
@@ -234,11 +238,9 @@ namespace BlendInt {
 		glClearColor(0.25, 0.25, 0.25, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		m_cube->Render(
-		        m_default_camera->projection() * m_default_camera->view());
+		m_cube->Render(m_default_camera->projection(), m_default_camera->view());
 
-		m_grid->Render(
-		        m_default_camera->projection() * m_default_camera->view());
+		m_grid->Render(m_default_camera->projection(), m_default_camera->view());
 	}
 
 	ResponseType Viewport3D::Draw (const RedrawEvent& event)
@@ -277,6 +279,32 @@ namespace BlendInt {
 	bool Viewport3D::IsExpandY() const
 	{
 		return true;
+	}
+
+	bool Viewport3D::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void Viewport3D::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType Viewport3D::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType Viewport3D::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Viewport3D::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
 	}
 
 	void Viewport3D::InitOnce ()

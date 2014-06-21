@@ -28,7 +28,7 @@
 
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 
 namespace BlendInt {
@@ -91,7 +91,7 @@ namespace BlendInt {
 	};
 
 	template<typename T>
-	class AbstractSlider: public Widget
+	class AbstractSlider: public AbstractWidget
 	{
 	public:
 
@@ -130,8 +130,6 @@ namespace BlendInt {
 	protected:
 
 		virtual void UpdateSlider (const WidgetUpdateRequest& request) = 0;
-
-		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
 		void set_value (T value)
 		{
@@ -190,7 +188,7 @@ namespace BlendInt {
 
 	template <typename T>
 	AbstractSlider<T>::AbstractSlider (Orientation orientation)
-	: Widget(),
+	: AbstractWidget(),
 	  m_orientation(orientation),
 	  m_value(T(0)),
 	  m_minimum(T(0)),

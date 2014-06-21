@@ -79,68 +79,7 @@ namespace BlendInt {
 
 	ResponseType Widget::Draw(const RedrawEvent& event)
 	{
-		using Stock::Shaders;
-
-		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0);
-
-		RefPtr<GLArrayBuffer> inner = tool.GenerateInnerBuffer();
-		RefPtr<GLArrayBuffer> outer = tool.GenerateOuterBuffer();
-
-		GLuint vao;
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-		program->Use();
-
-		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		program->SetVertexAttrib4fv("Color", Theme::instance->regular().inner.data());
-		program->SetUniform1i("AA", 0);
-
-		inner->Bind();
-
-		glEnableVertexAttribArray(0);
-
-		glVertexAttribPointer(0, // attribute
-							  2,		// number of elements per vertex, here (x,y)
-							  GL_FLOAT,	// the type of each element
-							  GL_FALSE,	// take our values as-is
-							  0,		// no extra data between each position
-							  BUFFER_OFFSET(0)	// the first element
-							  );
-
-		glDrawArrays(GL_TRIANGLE_FAN, 0, tool.total() + 2);
-
-		outer->Bind();
-
-		program->SetVertexAttrib4fv("Color", Theme::instance->regular().outline.data());
-		program->SetUniform1i("AA", 0);
-
-		glVertexAttribPointer(0, // attribute
-							  2,		// number of elements per vertex, here (x,y)
-							  GL_FLOAT,	// the type of each element
-							  GL_FALSE,	// take our values as-is
-							  0,		// no extra data between each position
-							  BUFFER_OFFSET(0)	// the first element
-							  );
-
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, tool.total() * 2 + 2);
-
-		glDisableVertexAttribArray(0);
-
-		program->Reset();
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
-
-		glDeleteVertexArrays(1, &vao);
-
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Widget::CursorEnterEvent(bool entered)

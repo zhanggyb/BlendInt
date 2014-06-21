@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_HBLOCK_HPP_
 
 #include <BlendInt/Gui/AbstractDequeContainer.hpp>
-#include <BlendInt/Gui/Widget.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
 
@@ -42,7 +42,7 @@ namespace BlendInt {
 
 		virtual ~HBlock ();
 
-		void PushBack (Widget* widget);
+		void PushBack (AbstractWidget* widget);
 
 		virtual bool IsExpandX () const;
 

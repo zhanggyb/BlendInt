@@ -12,6 +12,7 @@
 
 using namespace BlendInt;
 
+/*
 class AnimatingWidget: public Widget
 {
 public:
@@ -82,6 +83,8 @@ void AnimatingWidget::AddAngle ()
 	m_angle += 0.5f;
 }
 
+*/
+
 /*
 class TimerTest: public testing::Test
 {
@@ -126,9 +129,9 @@ int main (int argc, char* argv[])
 
     // add test code here
 
-	AnimatingWidget* widget = new AnimatingWidget;
+	//AnimatingWidget* widget = new AnimatingWidget;
 
-	widget->SetPosition(200, 200);
+	//widget->SetPosition(200, 200);
 
     RunLoop(window);
 

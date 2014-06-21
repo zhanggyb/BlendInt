@@ -47,7 +47,7 @@ namespace BlendInt {
 	Margin TextEntry::default_textentry_padding = Margin(2, 2, 2, 2);
 
 	TextEntry::TextEntry ()
-	: Widget(),
+	: AbstractWidget(),
 	  m_start(0),
 	  m_length(0),
 	  m_cursor_position(0)
@@ -308,7 +308,7 @@ namespace BlendInt {
 			}
 
 			default:
-				Widget::UpdateGeometry(request);
+				break;
 		}
 
 	}
@@ -575,7 +575,43 @@ namespace BlendInt {
 			Refresh();
 		}
 	}
-	
+
+	bool TextEntry::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void TextEntry::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType TextEntry::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType TextEntry::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType TextEntry::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType TextEntry::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType TextEntry::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
 	void TextEntry::GetVisibleTextPlace (size_t* start, size_t* length)
 	{
 		int str_len = m_text.length();

@@ -21,36 +21,90 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif	// __UNIX__
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
+#include <glm/gtc/type_ptr.hpp>
 
 #include <BlendInt/Gui/Mesh.hpp>
 
 namespace BlendInt {
 
+	const char* Mesh::vertex_shader =
+			"#version 330\n"
+			""
+			"layout(location = 0) in vec4 v_coord;"
+			"layout(location = 1) in vec3 v_normal;"
+			"uniform mat4 MVP;"
+			""
+			"void main(void) {"
+			"	gl_Position = MVP * v_coord;"
+			"}";
+
+	const char* Mesh::fragment_shader =
+			"#version 330\n"
+			""
+			"out vec4 FragmentColor;"
+			""
+			"void main(void) {"
+			"	FragmentColor = vec4(0.8, 0.8, 0.8, 1.0);"
+			"}";
+
 	Mesh::Mesh ()
-	: AbstractPrimitive()
+	: AbstractPrimitive(),
+	  m_vao(0)
 	{
+		InitializeMesh();
 	}
 
-	void Mesh::Render (const glm::mat4& mvp)
+	void Mesh::Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix)
 	{
+		glBindVertexArray(m_vao);
+
+		m_program->Use();
+		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(projection_matrix * view_matrix));
+
+		glBindVertexArray(m_vao);
+
+		m_index_buffer->Bind();
+
+		int size;
+		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+		glDrawElements(GL_TRIANGLES, size / sizeof(GLushort),
+		GL_UNSIGNED_SHORT, 0);
+
+		glBindVertexArray(0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		m_program->Reset();
 	}
 
-	bool Mesh::LoadObj (const char* filename)
+	Mesh::~Mesh ()
+	{
+		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	void Mesh::LoadObj (const char* filename, std::vector<glm::vec4>& vertices,
+	        std::vector<glm::vec3>& normals, std::vector<GLushort>& elements)
 	{
 		using namespace std;
 
 		ifstream in(filename, ios::in);
 		if (!in) {
 			cerr << "Cannot open " << filename << endl;
-			return false;
+			exit(1);
 		}
-		vector<int> nb_seen;
-
-		m_vertices.clear();
-		m_elements.clear();
 
 		string line;
 		while (getline(in, line)) {
@@ -60,8 +114,8 @@ namespace BlendInt {
 				s >> v.x;
 				s >> v.y;
 				s >> v.z;
-				v.w = 1.0;
-				m_vertices.push_back(v);
+				v.w = 1.0f;
+				vertices.push_back(v);
 			} else if (line.substr(0, 2) == "f ") {
 				istringstream s(line.substr(2));
 				GLushort a, b, c;
@@ -71,61 +125,77 @@ namespace BlendInt {
 				a--;
 				b--;
 				c--;
-				m_elements.push_back(a);
-				m_elements.push_back(b);
-				m_elements.push_back(c);
+				elements.push_back(a);
+				elements.push_back(b);
+				elements.push_back(c);
 			} else if (line[0] == '#') { /* ignoring this line */
 			} else { /* ignoring this line */
 			}
 		}
 
-		m_normals.resize(m_vertices.size(), glm::vec3(0.0, 0.0, 0.0));
-		nb_seen.resize(m_vertices.size(), 0);
-		for (unsigned int i = 0; i < m_elements.size(); i += 3) {
-			GLushort ia = m_elements[i];
-			GLushort ib = m_elements[i + 1];
-			GLushort ic = m_elements[i + 2];
+		normals.resize(vertices.size(), glm::vec3(0.0, 0.0, 0.0));
+		for (unsigned int i = 0; i < elements.size(); i += 3) {
+			GLushort ia = elements[i];
+			GLushort ib = elements[i + 1];
+			GLushort ic = elements[i + 2];
 			glm::vec3 normal = glm::normalize(
 			        glm::cross(
-			                glm::vec3(m_vertices[ib])
-			                        - glm::vec3(m_vertices[ia]),
-			                glm::vec3(m_vertices[ic])
-			                        - glm::vec3(m_vertices[ia])));
+			                glm::vec3(vertices[ib]) - glm::vec3(vertices[ia]),
+			                glm::vec3(vertices[ic]) - glm::vec3(vertices[ia])));
+			normals[ia] = normals[ib] = normals[ic] = normal;
+		}
+	}
 
-			int v[3];
-			v[0] = ia;
-			v[1] = ib;
-			v[2] = ic;
-			for (int j = 0; j < 3; j++) {
-				GLushort cur_v = v[j];
-				nb_seen[cur_v]++;
-				if (nb_seen[cur_v] == 1) {
-					m_normals[cur_v] = normal;
-				} else {
-					// average
-					m_normals[cur_v].x = m_normals[cur_v].x
-					        * (1.0 - 1.0 / nb_seen[cur_v])
-					        + normal.x * 1.0 / nb_seen[cur_v];
-					m_normals[cur_v].y = m_normals[cur_v].y
-					        * (1.0 - 1.0 / nb_seen[cur_v])
-					        + normal.y * 1.0 / nb_seen[cur_v];
-					m_normals[cur_v].z = m_normals[cur_v].z
-					        * (1.0 - 1.0 / nb_seen[cur_v])
-					        + normal.z * 1.0 / nb_seen[cur_v];
-					m_normals[cur_v] = glm::normalize(m_normals[cur_v]);
-				}
-			}
+	void Mesh::InitializeMesh ()
+	{
+		std::vector<glm::vec4> vertices;
+		std::vector<glm::vec3> normals;
+		std::vector<GLushort> elements;
+
+		LoadObj("test.obj", vertices, normals, elements);
+
+		glGenVertexArrays(1, &m_vao);
+
+		glBindVertexArray(m_vao);
+
+		m_vertex_buffer.reset(new GLArrayBuffer);
+		m_vertex_buffer->Generate();
+		m_vertex_buffer->Bind();
+		m_vertex_buffer->SetData(vertices.size() * sizeof(GLfloat), &vertices[0]);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		m_normal_buffer.reset(new GLArrayBuffer);
+		m_normal_buffer->Generate();
+		m_normal_buffer->Bind();
+		m_normal_buffer->SetData(normals.size() * sizeof(GLfloat), &normals[0]);
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+
+		GLArrayBuffer::Reset();
+
+		m_index_buffer.reset(new GLElementArrayBuffer);
+		m_index_buffer->Generate();
+		m_index_buffer->Bind();
+		m_index_buffer->SetData(elements.size() * sizeof(GLushort), &elements[0]);
+
+		GLElementArrayBuffer::Reset();
+
+		m_program.reset(new GLSLProgram);
+		m_program->Create();
+
+		m_program->AttachShader(vertex_shader, GL_VERTEX_SHADER);
+		m_program->AttachShader(fragment_shader, GL_FRAGMENT_SHADER);
+		if (!m_program->Link()) {
+			DBG_PRINT_MSG("Fail to link the text program: %d",
+					m_program->id());
+			exit(1);
 		}
 
-		return true;
-	}
-
-	Mesh::~Mesh ()
-	{
-	}
-
-	void Mesh::InitOnce ()
-	{
 	}
 
 }

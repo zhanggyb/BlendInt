@@ -79,6 +79,25 @@ namespace BlendInt {
 		}
 	}
 
+	void GLElementArrayBuffer::SetData (GLsizeiptr size, const GLvoid* data,
+	        GLenum usage)
+	{
+		if(glIsBuffer(m_id) == GL_FALSE) {
+			std::cerr << "The array buffer is not generated!" << std::endl;
+			return;
+		}
+
+		GLint buffer = 0;
+		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &buffer);
+
+		if(m_id != static_cast<GLuint>(buffer)) {
+			std::cerr << "The current element array buffer binding is not the one to be set data, call Bind() first!" << std::endl;
+			return;
+		}
+
+		glBufferData (GL_ELEMENT_ARRAY_BUFFER, size, data, usage);
+	}
+
 	void GLElementArrayBuffer::SetData (int vertices, size_t size, const GLvoid* data, GLenum usage)
 	{
 		if(glIsBuffer(m_id) == GL_FALSE) {

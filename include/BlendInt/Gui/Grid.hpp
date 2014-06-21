@@ -40,11 +40,11 @@ namespace BlendInt {
 
 		void SetSize (int size);
 
-		virtual void Render (const glm::mat4& MVP);
+		virtual void Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix);
 
 	private:
 
-		void InitOnce ();
+		void InitializeGrid ();
 
 		GLuint m_vao;
 
@@ -53,6 +53,8 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> m_vb;	// vertex buffer
 		RefPtr<GLElementArrayBuffer> m_ib;	// index buffer
+
+		RefPtr<GLSLProgram> m_program;
 
 		static const char* vertex_shader;
 		static const char* fragment_shader;

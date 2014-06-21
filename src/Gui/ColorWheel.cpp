@@ -43,7 +43,7 @@
 namespace BlendInt {
 
 	ColorWheel::ColorWheel()
-	: Widget(),
+	: AbstractWidget(),
 	  m_vao(0)
 	{
 		set_size(160, 160);
@@ -234,7 +234,58 @@ namespace BlendInt {
 
 		}
 	}
-	
+
+	bool ColorWheel::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void ColorWheel::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType ColorWheel::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType ColorWheel::CursorEnterEvent (bool entered)
+	{
+		return Ignore;
+	}
+
+	ResponseType ColorWheel::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ColorWheel::ContextMenuPressEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ColorWheel::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ColorWheel::MousePressEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ColorWheel::MouseReleaseEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ColorWheel::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
+	}
+
 	void ColorWheel::GenerateWheelVertices (int radius,
 					std::vector<GLfloat>& inner_vertices,
 					std::vector<GLfloat>& outer_vertices)

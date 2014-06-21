@@ -49,7 +49,7 @@ namespace BlendInt {
 	Margin ComboBox::default_combobox_padding = Margin(2, 2, 2, 2);
 
 	ComboBox::ComboBox ()
-	: Widget(),
+	: AbstractWidget(),
 	  m_status_down(false)
 	{
 		set_round_corner_type(RoundAll);
@@ -168,9 +168,8 @@ namespace BlendInt {
 			}
 
 			default:
-				Widget::UpdateGeometry(request);
+				break;
 		}
-
 	}
 
 	ResponseType ComboBox::Draw(const RedrawEvent& event)
@@ -259,6 +258,41 @@ namespace BlendInt {
 	{
 		Refresh();
 		return Accept;
+	}
+
+	bool ComboBox::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void ComboBox::BroadcastUpdate (const WidgetUpdateRequest& request)
+	{
+	}
+
+	ResponseType ComboBox::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	ResponseType ComboBox::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ComboBox::ContextMenuPressEvent (const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ComboBox::ContextMenuReleaseEvent (
+	        const ContextMenuEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType ComboBox::MouseMoveEvent (const MouseEvent& event)
+	{
+		return Ignore;
 	}
 
 	void ComboBox::InitializeComboBox()

@@ -73,6 +73,8 @@ namespace BlendInt {
 
 		void Bind ();
 
+		void SetData (GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
+
 		void SetData (int vertices, size_t size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
 
 		static void Reset ();
