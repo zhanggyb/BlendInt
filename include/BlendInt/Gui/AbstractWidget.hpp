@@ -144,14 +144,14 @@ namespace BlendInt {
 	};
 
 	/**
-	 * @brief Proxy class to be used in sub widget to set its container property
+	 * @brief Proxy class to be used in sub widget to communicate with its container
 	 */
 	class ContainerProxy
 	{
 	private:
 		friend class AbstractWidget;
 
-		explicit ContainerProxy (AbstractWidget* source, AbstractWidget* target);
+		ContainerProxy (AbstractWidget* source, AbstractWidget* target);
 
 		~ContainerProxy ();
 
@@ -168,6 +168,8 @@ namespace BlendInt {
 		void SubWidgetAdded (AbstractContainer* container, const AbstractWidget* widget_added);
 
 		void SubWidgetRemoved (AbstractContainer* container, const AbstractWidget* widget_removed);
+
+		static void RequestContainerUpdate (AbstractContainer* container, const WidgetUpdateRequest& request);
 
 		WidgetUpdateRequest m_request;
 	};
@@ -470,6 +472,8 @@ namespace BlendInt {
 		void ReportSubWidgetAdded (AbstractWidget* sub_widget);
 
 		void ReportSubWidgetRemoved (AbstractWidget* sub_widget);
+
+		void ReportContainerUpdate (const WidgetUpdateRequest& request);
 
 		Context* GetContext ();
 

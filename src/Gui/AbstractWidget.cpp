@@ -186,6 +186,13 @@ namespace BlendInt {
 		container->UpdateContainer(m_request);
 	}
 
+	void ContainerProxy::RequestContainerUpdate(AbstractContainer* container, const WidgetUpdateRequest& request)
+	{
+		if(container) {
+			container->UpdateContainer(request);
+		}
+	}
+
 	// --------------------------------------------------------------------
 
 	float AbstractWidget::default_border_width = 1.f;
@@ -661,18 +668,25 @@ namespace BlendInt {
 
 	void AbstractWidget::ReportSubWidgetAdded (AbstractWidget* sub_widget)
 	{
-		if(m_container) {
-			ContainerProxy proxy (this, container());
-			proxy.SubWidgetAdded(m_container, sub_widget);
-		}
+		WidgetUpdateRequest request (this, m_container);
+		request.set_type(ContainerSubWidgetAdded);
+		request.set_data(sub_widget);
+
+		ContainerProxy::RequestContainerUpdate(m_container, request);
 	}
 
 	void AbstractWidget::ReportSubWidgetRemoved (AbstractWidget* sub_widget)
 	{
-		if(m_container) {
-			ContainerProxy proxy (this, container());
-			proxy.SubWidgetRemoved(m_container, sub_widget);
-		}
+		WidgetUpdateRequest request (this, m_container);
+		request.set_type(ContainerSubWidgetRemoved);
+		request.set_data(sub_widget);
+
+		ContainerProxy::RequestContainerUpdate(m_container, request);
+	}
+
+	void AbstractWidget::ReportContainerUpdate(const WidgetUpdateRequest& request)
+	{
+		ContainerProxy::RequestContainerUpdate(m_container, request);
 	}
 
 	Context* AbstractWidget::GetContext()
