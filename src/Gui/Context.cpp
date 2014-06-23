@@ -67,6 +67,7 @@ namespace BlendInt
 	  m_main_buffer(0),
 	  m_vao(0),
 	  m_focused_widget(0),
+	  m_hover_widget(0),
 	  m_max_tex_buffer_cache_size(6),
 	  refresh_once(false),
 	  force_refresh_all(true)
@@ -89,6 +90,7 @@ namespace BlendInt
 
 		InitializeContext();
 
+		m_hover_widget = this;
 		context_set.insert(this);
 	}
 
@@ -524,6 +526,50 @@ namespace BlendInt
 	{
 		AbstractWidget* widget = 0;
 		ResponseType response;
+
+		m_cursor = event.position();
+
+		if(0 == m_hover_widget) m_hover_widget = this;
+
+		if(m_hover_widget == this) {
+
+			std::map<int, ContextLayer>::reverse_iterator map_it;
+			std::set<AbstractWidget*>::iterator set_it;
+			std::set<AbstractWidget*>* set_p = 0;
+
+			for (map_it = m_layers.rbegin(); map_it != m_layers.rend(); map_it++) {
+				set_p = map_it->second.widgets;
+				for (set_it = set_p->begin(); set_it != set_p->end(); set_it++) {
+					if ((*set_it)->visiable()
+					        && (*set_it)->Contain(event.position()))
+					{
+						m_hover_widget = (*set_it);
+					}
+				}
+
+				if(m_hover_widget != this)
+					break;
+			}
+
+			if(m_hover_widget != this) {
+				DBG_PRINT_MSG("cursor on widget: %s", m_hover_widget->name().c_str());
+			}
+
+		} else {
+
+			DBG_PRINT_MSG("cursor on widget: %s", m_hover_widget->name().c_str());
+
+			if(m_hover_widget->Contain(event.position())) {
+
+				m_hover_widget = GetWidgetUnderCursor(event, m_hover_widget);
+				DBG_PRINT_MSG("cursor on widget: %s", m_hover_widget->name().c_str());
+
+			} else {
+				DBG_PRINT_MSG("cursor leaves widget: %s", m_hover_widget->name().c_str());
+				m_hover_widget = m_hover_widget->container();
+			}
+
+		}
 
 		// search which widget in stack contains the cursor
 		while (m_hover_deque->size()) {
@@ -1141,6 +1187,37 @@ namespace BlendInt
 				}
 
 			}
+
+		}
+	}
+
+	AbstractWidget* Context::GetWidgetUnderCursor(const MouseEvent& event, AbstractWidget* parent)
+	{
+		AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
+
+		if(p) {
+
+			AbstractWidget* widget = 0;
+			IteratorPtr it = p->CreateIterator(event);
+
+			for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
+				widget = it->GetWidget();
+				if (widget->visiable() && widget->Contain(event.position())) {
+					break;
+				} else {
+					widget = 0;
+				}
+			}
+
+			if(widget) {
+				return GetWidgetUnderCursor(event, widget);
+			} else {
+				return parent;
+			}
+
+		} else {
+
+			return parent;
 
 		}
 	}

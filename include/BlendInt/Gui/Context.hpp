@@ -188,6 +188,8 @@ namespace BlendInt {
 
 		void AppendCursorHoverList (const MouseEvent& event, AbstractWidget* parent);
 
+		AbstractWidget* GetWidgetUnderCursor (const MouseEvent& event, AbstractWidget* parent);
+
 		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
 		std::map<int, ContextLayer> m_layers;
@@ -212,6 +214,10 @@ namespace BlendInt {
 		 * There's one focused widget in each context to access key and button events
 		 */
 		AbstractWidget* m_focused_widget;
+
+		AbstractWidget* m_hover_widget;
+
+		Point m_cursor;
 
 		/**
 		 * @brief A stack to store unused texture buffer

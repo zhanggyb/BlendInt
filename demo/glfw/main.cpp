@@ -71,39 +71,29 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	FramePanel* fp1 = Manage(new FramePanel);
-	DBG_SET_NAME(fp1, "Frame 1");
-	fp1->SetPosition(200, 200);
-
-	FramePanel* fp2 = Manage(new FramePanel);
-	DBG_SET_NAME(fp2, "Frame 2");
-	fp2->SetPosition(200, 200);
-
-	FramePanel* fp3 = Manage(new FramePanel);
-	DBG_SET_NAME(fp3, "Frame 3");
-	fp3->SetPosition(200, 200);
-
 	Button* btn1 = Manage(new Button);
 	DBG_SET_NAME(btn1, "Button 1");
+	btn1->Resize(100, 50);
+	btn1->SetPosition(200, 100);
+
+	FramePanel* f1 = Manage(new FramePanel);
+	DBG_SET_NAME(f1, "Frame 1");
+	f1->SetMargin(20, 20, 20, 20);
+	f1->SetPosition(400, 100);
+
+	FramePanel* f2 = Manage(new FramePanel);
+	DBG_SET_NAME(f2, "Frame 2");
+	f2->SetMargin(20, 20, 20, 20);
+	f2->SetPosition(400, 100);
 
 	Button* btn2 = Manage(new Button);
 	DBG_SET_NAME(btn2, "Button 2");
 
-	HBox* hbox = Manage(new HBox);
-	hbox->SetPosition(100, 100);
-	DBG_SET_NAME(hbox, "HBox");
+	f2->Setup(btn2);
+	f1->Setup(f2);
 
-	context->Add(hbox);
-
-	hbox->PushBack(fp1);
-
-	fp1->Setup(fp2);
-	fp2->Setup(btn1);
-
-	hbox->PushBack(fp3);
-	hbox->PushBack(btn2);
-
-	hbox->Resize(hbox->GetPreferredSize());
+	context->Add(btn1);
+	context->Add(f1);
 
 	RunLoop(win);
 
