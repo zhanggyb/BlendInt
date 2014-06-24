@@ -41,7 +41,7 @@
 
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/Core/Object.hpp>
 

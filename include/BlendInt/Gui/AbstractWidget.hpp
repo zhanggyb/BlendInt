@@ -28,7 +28,7 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Rect.hpp>

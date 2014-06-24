@@ -26,7 +26,7 @@
 
 #include <BlendInt/Core/String.hpp>
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Window/InputEvent.hpp>
 
 

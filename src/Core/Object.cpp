@@ -27,7 +27,7 @@
 #include <iostream>
 #endif
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 namespace BlendInt {
 

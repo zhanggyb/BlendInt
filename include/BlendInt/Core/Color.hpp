@@ -27,8 +27,6 @@
 #include <stdint.h>
 #include <glm/glm.hpp>
 
-#include <BlendInt/Utilities-inl.hpp>
-
 namespace BlendInt {
 
 	class Color;

@@ -31,7 +31,7 @@
 #endif
 #endif  // __UNIX__
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 #include <vector>
 
 #include <BlendInt/OpenGL/TextureAtlas2D.hpp>

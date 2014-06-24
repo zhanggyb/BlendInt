@@ -26,7 +26,7 @@
 
 #include <string>
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/String.hpp>

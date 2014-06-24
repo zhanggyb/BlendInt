@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_ABSTRACTSLIDER_HPP_
 #define _BLENDINT_GUI_ABSTRACTSLIDER_HPP_
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include <Cpp/Events.hpp>
 

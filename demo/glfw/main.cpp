@@ -8,7 +8,7 @@
 
 #include <Cpp/Events.hpp>
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/TextureAtlas2D.hpp>

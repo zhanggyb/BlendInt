@@ -23,7 +23,7 @@
 
 #include <vector>
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Gui/GlyphAtlas.hpp>
 
 namespace BlendInt {

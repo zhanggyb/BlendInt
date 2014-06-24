@@ -37,7 +37,7 @@
 #include <OpenImageIO/imageio.h>
 OIIO_NAMESPACE_USING
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 namespace BlendInt {

@@ -21,8 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Types.hpp>
-
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Freetype.hpp>
 
 #ifdef USE_FONTCONFIG

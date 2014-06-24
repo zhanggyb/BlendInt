@@ -29,7 +29,7 @@
 
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 namespace BlendInt {
 

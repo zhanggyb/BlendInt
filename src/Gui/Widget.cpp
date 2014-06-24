@@ -42,7 +42,7 @@
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Color.hpp>
 
 #include <BlendInt/Interface.hpp>
