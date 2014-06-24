@@ -207,14 +207,12 @@ namespace BlendInt {
 	{
 		switch (request.type()) {
 
-			case ContainerRefresh: {
+			// TODO: update margin
 
+			default: {
 				ReportUpdateRequest(request);
 				break;
 			}
-
-			default:
-				break;
 		}
 
 	}

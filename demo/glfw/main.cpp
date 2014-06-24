@@ -79,13 +79,31 @@ int main(int argc, char* argv[])
 	DBG_SET_NAME(fp2, "Frame 2");
 	fp2->SetPosition(200, 200);
 
-	Button* btn = Manage(new Button);
-	DBG_SET_NAME(btn, "Button");
+	FramePanel* fp3 = Manage(new FramePanel);
+	DBG_SET_NAME(fp3, "Frame 3");
+	fp3->SetPosition(200, 200);
 
-	context->Add(fp1);
+	Button* btn1 = Manage(new Button);
+	DBG_SET_NAME(btn1, "Button 1");
+
+	Button* btn2 = Manage(new Button);
+	DBG_SET_NAME(btn2, "Button 2");
+
+	HBox* hbox = Manage(new HBox);
+	hbox->SetPosition(100, 100);
+	DBG_SET_NAME(hbox, "HBox");
+
+	context->Add(hbox);
+
+	hbox->PushBack(fp1);
 
 	fp1->Setup(fp2);
-	fp2->Setup(btn);
+	fp2->Setup(btn1);
+
+	hbox->PushBack(fp3);
+	hbox->PushBack(btn2);
+
+	hbox->Resize(hbox->GetPreferredSize());
 
 	RunLoop(win);
 

@@ -135,23 +135,10 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContainerRefresh: {
+			default: {
 				ReportUpdateRequest(request);
 				break;
 			}
-
-			case ContainerSubWidgetAdded: {
-				ReportUpdateRequest(request);
-				break;
-			}
-
-			case ContainerSubWidgetRemoved: {
-				ReportUpdateRequest(request);
-				break;
-			}
-
-			default:
-				break;
 
 		}
 	}

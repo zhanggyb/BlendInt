@@ -520,7 +520,7 @@ namespace BlendInt {
 		return obj->MouseReleaseEvent(event);
 	}
 
-	void AbstractWidget::CheckSubWidgetAdded (AbstractWidget* sub_widget)
+	void AbstractWidget::CheckSubWidgetAddedInContainer (AbstractWidget* sub_widget)
 	{
 		WidgetUpdateRequest request (this, m_container);
 		request.set_type(ContainerSubWidgetAdded);
@@ -529,7 +529,7 @@ namespace BlendInt {
 		ContainerProxy::RequestContainerUpdate(m_container, request);
 	}
 
-	void AbstractWidget::CheckSubWidgetRemoved (AbstractWidget* sub_widget)
+	void AbstractWidget::CheckSubWidgetRemovedInContainer (AbstractWidget* sub_widget)
 	{
 		WidgetUpdateRequest request (this, m_container);
 		request.set_type(ContainerSubWidgetRemoved);

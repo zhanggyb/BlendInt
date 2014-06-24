@@ -146,11 +146,10 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContainerRefresh: {
+			default: {
 				ReportUpdateRequest(request);
 				break;
 			}
-
 		}
 	}
 	

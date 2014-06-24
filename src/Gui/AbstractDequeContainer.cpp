@@ -67,6 +67,8 @@ namespace BlendInt {
 		events()->connect(widget->destroyed(), this,
 						&AbstractDequeContainer::OnSubWidgetDestroyed);
 
+		CheckSubWidgetAddedInContainer(widget);
+
 		return true;
 	}
 
@@ -97,6 +99,8 @@ namespace BlendInt {
 		events()->connect(widget->destroyed(), this,
 						&AbstractDequeContainer::OnSubWidgetDestroyed);
 
+		CheckSubWidgetAddedInContainer(widget);
+
 		return true;
 	}
 
@@ -115,12 +119,15 @@ namespace BlendInt {
 		if (it != m_sub_widgets->end()) {
 			m_sub_widgets->erase(it);
 			SetContainer(widget, 0);
-			return true;
 		} else {
 			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
 							widget->name().c_str(), name().c_str());
 			return false;
 		}
+
+		CheckSubWidgetRemovedInContainer(widget);
+
+		return true;
 	}
 
 	bool AbstractDequeContainer::FindSubWidget (AbstractWidget* widget)
@@ -166,6 +173,8 @@ namespace BlendInt {
 
 		events()->connect(widget->destroyed(), this,
 						&AbstractDequeContainer::OnSubWidgetDestroyed);
+
+		CheckSubWidgetAddedInContainer(widget);
 
 		return true;
 	}

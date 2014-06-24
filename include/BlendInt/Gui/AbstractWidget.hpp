@@ -427,9 +427,9 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
-		void CheckSubWidgetAdded (AbstractWidget* sub_widget);
+		void CheckSubWidgetAddedInContainer (AbstractWidget* sub_widget);
 
-		void CheckSubWidgetRemoved (AbstractWidget* sub_widget);
+		void CheckSubWidgetRemovedInContainer (AbstractWidget* sub_widget);
 
 		/**
 		 * @brief Hand on the update request to the container

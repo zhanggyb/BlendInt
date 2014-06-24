@@ -137,14 +137,10 @@ namespace BlendInt {
 	{
 		switch(request.type()) {
 
-			case ContainerRefresh: {
-
+			default: {
 				ReportUpdateRequest(request);
 				break;
 			}
-
-			default:
-				break;
 		}
 
 	}
