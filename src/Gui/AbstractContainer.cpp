@@ -75,6 +75,31 @@ namespace BlendInt {
 		}
 	}
 
+	SubWidgetProxy::SubWidgetProxy ()
+	{
+
+	}
+
+	SubWidgetProxy::~SubWidgetProxy ()
+	{
+	}
+
+	inline bool SubWidgetProxy::RequestGeometryTest(AbstractWidget* sub_widget, const WidgetUpdateRequest& request)
+	{
+		if(sub_widget) {
+			return sub_widget->UpdateGeometryTest(request);
+		} else {
+			return true;
+		}
+	}
+
+	inline void SubWidgetProxy::RequestGeometryUpdate(AbstractWidget* sub_widget, const WidgetUpdateRequest& request)
+	{
+		if(sub_widget) {
+			sub_widget->UpdateGeometry(request);
+		}
+	}
+
 	bool AbstractContainer::UpdateGeometryTest (const WidgetUpdateRequest& request)
 	{
 		return true;
@@ -113,8 +138,17 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		SubWidgetProxy delegate(this, sub);
-		delegate.Resize(sub, width, height);
+		if(sub->size().width() == width &&
+				sub->size().height() == height)
+			return;
+
+		Size new_size (width, height);
+		WidgetUpdateRequest request(this, sub, WidgetSize, &new_size);
+
+		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
+			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+			sub->set_size(width, height);
+		}
 	}
 	
 	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
@@ -122,8 +156,14 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		SubWidgetProxy delegate(this, sub);
-		delegate.Resize(sub, size);
+		if(sub->size() == size) return;
+
+		WidgetUpdateRequest request(this, sub, WidgetSize, &size);
+
+		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
+			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+			sub->set_size(size);
+		}
 	}
 	
 	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub, int x,
@@ -131,8 +171,18 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		SubWidgetProxy delegate(this, sub);
-		delegate.SetPosition(sub, x, y);
+		if(sub->position().x() == x &&
+				sub->position().y() == y)
+			return;
+
+		Point new_pos (x, y);
+
+		WidgetUpdateRequest request (this, sub, WidgetPosition, &new_pos);
+
+		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
+			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+			sub->set_position(x, y);
+		}
 	}
 	
 	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub,
@@ -140,8 +190,14 @@ namespace BlendInt {
 	{
 		if(!sub || sub->container() != this) return;
 
-		SubWidgetProxy delegate(this, sub);
-		delegate.SetPosition(sub, pos);
+		if(sub->position() == pos) return;
+
+		WidgetUpdateRequest request (this, sub, WidgetPosition, &pos);
+
+		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
+			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+			sub->set_position(pos);
+		}
 	}
 	
 	void AbstractContainer::RemoveShadow (AbstractWidget* widget)

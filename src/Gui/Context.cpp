@@ -215,13 +215,15 @@ namespace BlendInt
 			}
 
 			case ContainerSubWidgetAdded: {
-				DBG_PRINT_MSG("Widget (%s) is added", request.source()->name().c_str());
+				const AbstractWidget* widget = static_cast<const AbstractWidget*>(request.data());
+				DBG_PRINT_MSG("Container \"%s\" add sub widget \"%s\"", request.source()->name().c_str(), widget->name().c_str());
 
 				break;
 			}
 
 			case ContainerSubWidgetRemoved: {
-				DBG_PRINT_MSG("Widget (%s) is removed", request.source()->name().c_str());
+				const AbstractWidget* widget = static_cast<const AbstractWidget*>(request.data());
+				DBG_PRINT_MSG("Container \"%s\" remove sub widget \"%s\"", request.source()->name().c_str(), widget->name().c_str());
 
 				break;
 			}

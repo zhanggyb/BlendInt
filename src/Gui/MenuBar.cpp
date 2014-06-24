@@ -62,7 +62,7 @@ namespace BlendInt {
 		switch(request.type()) {
 
 			case ContainerRefresh: {
-				Refresh();
+				ReportUpdateRequest(request);
 				break;
 			}
 

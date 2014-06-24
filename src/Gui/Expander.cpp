@@ -264,7 +264,7 @@ namespace BlendInt {
 			}
 
 			case ContainerRefresh: {
-				Refresh();
+				ReportUpdateRequest(request);
 				break;
 			}
 

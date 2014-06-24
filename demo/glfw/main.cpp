@@ -71,16 +71,21 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	FramePanel* fp = Manage(new FramePanel);
-	fp->SetPosition(200, 200);
+	FramePanel* fp1 = Manage(new FramePanel);
+	DBG_SET_NAME(fp1, "Frame 1");
+	fp1->SetPosition(200, 200);
+
+	FramePanel* fp2 = Manage(new FramePanel);
+	DBG_SET_NAME(fp2, "Frame 2");
+	fp2->SetPosition(200, 200);
 
 	Button* btn = Manage(new Button);
 	DBG_SET_NAME(btn, "Button");
 
-	context->Add(fp);
+	context->Add(fp1);
 
-	fp->Setup(btn);
-	fp->Remove(btn);
+	fp1->Setup(fp2);
+	fp2->Setup(btn);
 
 	RunLoop(win);
 

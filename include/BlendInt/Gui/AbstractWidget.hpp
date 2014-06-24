@@ -120,28 +120,6 @@ namespace BlendInt {
 		AbstractWidget* m_target;
 	};
 
-	/**
-	 * @brief Proxy class to be used in container to set its sub widget property
-	 */
-	class SubWidgetProxy
-	{
-	private:
-		friend class AbstractContainer;
-
-		SubWidgetProxy(AbstractWidget* source, AbstractWidget* target);
-
-		~SubWidgetProxy ();
-
-		void Resize (AbstractWidget* widget, const Size& size);
-
-		void Resize (AbstractWidget* widget, int width, int height);
-
-		void SetPosition (AbstractWidget* widget, int x, int y);
-
-		void SetPosition (AbstractWidget* widget, const Point& position);
-
-		WidgetUpdateRequest m_request;
-	};
 
 	/**
 	 * @brief Proxy class to be used in sub widget to communicate with its container
@@ -151,27 +129,15 @@ namespace BlendInt {
 	private:
 		friend class AbstractWidget;
 
-		ContainerProxy (AbstractWidget* source, AbstractWidget* target);
+		ContainerProxy ();
 
 		~ContainerProxy ();
 
-		void RequestRefresh (AbstractContainer* container);
+		static inline bool RequestGeometryTest (AbstractContainer* container, const WidgetUpdateRequest& request);
 
-		bool SubwidgetPositionUpdateTest (AbstractContainer* container, const Point& pos);
+		static inline void RequestGeometryUpdate (AbstractContainer* container, const WidgetUpdateRequest& request);
 
-		bool SubWidgetSizeUpdateTest (AbstractContainer* container, const Size& size);
-
-		void SubWidgetPositionUpdate (AbstractContainer* container, const Point& pos);
-
-		void SubWidgetSizeUpdate (AbstractContainer* container, const Size& size);
-
-		void SubWidgetAdded (AbstractContainer* container, const AbstractWidget* widget_added);
-
-		void SubWidgetRemoved (AbstractContainer* container, const AbstractWidget* widget_removed);
-
-		static void RequestContainerUpdate (AbstractContainer* container, const WidgetUpdateRequest& request);
-
-		WidgetUpdateRequest m_request;
+		static inline void RequestContainerUpdate (AbstractContainer* container, const WidgetUpdateRequest& request);
 	};
 
 	// ----------------------------------------------------
@@ -461,19 +427,14 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
-		bool ResizeTestInContainer (const Size& size);
+		void CheckSubWidgetAdded (AbstractWidget* sub_widget);
 
-		bool PositionTestInContainer (const Point& point);
+		void CheckSubWidgetRemoved (AbstractWidget* sub_widget);
 
-		void ResizeUpdateInContainer (const Size& size);
-
-		void PositionUpdateInContainer (const Point& point);
-
-		void ReportSubWidgetAdded (AbstractWidget* sub_widget);
-
-		void ReportSubWidgetRemoved (AbstractWidget* sub_widget);
-
-		void ReportContainerUpdate (const WidgetUpdateRequest& request);
+		/**
+		 * @brief Hand on the update request to the container
+		 */
+		void ReportUpdateRequest (const WidgetUpdateRequest& request);
 
 		Context* GetContext ();
 

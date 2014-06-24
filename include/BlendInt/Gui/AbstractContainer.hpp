@@ -149,6 +149,25 @@ namespace BlendInt {
 
 	typedef RefPtr<AbstractContainerIterator> IteratorPtr;
 
+	class AbstractContainer;
+
+	/**
+	 * @brief Proxy class to be used in container to set its sub widget property
+	 */
+	class SubWidgetProxy
+	{
+	private:
+		friend class AbstractContainer;
+
+		SubWidgetProxy ();
+
+		~SubWidgetProxy ();
+
+		static inline bool RequestGeometryTest (AbstractWidget* sub_widget, const WidgetUpdateRequest& request);
+
+		static inline void RequestGeometryUpdate (AbstractWidget* sub_widget, const WidgetUpdateRequest& request);
+	};
+
 	class AbstractContainer: public AbstractWidget
 	{
 		DISALLOW_COPY_AND_ASSIGN(AbstractContainer);
