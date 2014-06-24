@@ -67,7 +67,6 @@ namespace BlendInt
 	  m_main_buffer(0),
 	  m_vao(0),
 	  m_focused_widget(0),
-	  m_hover_widget(0),
 	  m_max_tex_buffer_cache_size(6),
 	  refresh_once(false),
 	  force_refresh_all(true)
@@ -75,12 +74,13 @@ namespace BlendInt
 		set_size(640, 480);
 
 		m_redraw_event.set_view_matrix(
-						glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
-										glm::vec3(0.f, 0.f, 0.f),
-										glm::vec3(0.f, 1.f, 0.f)));
+				glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
+						glm::vec3(0.f, 0.f, 0.f),
+		                glm::vec3(0.f, 1.f, 0.f)));
 		// default is 640 x 480
 		m_redraw_event.set_projection_matrix(
-						glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
+		        glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
+
 		m_hover_deque.reset(new std::deque<AbstractWidget*>);
 
 		m_main_buffer = new GLTexture2D;
@@ -90,7 +90,6 @@ namespace BlendInt
 
 		InitializeContext();
 
-		m_hover_widget = this;
 		context_set.insert(this);
 	}
 
@@ -217,34 +216,25 @@ namespace BlendInt
 			}
 
 			case ContainerSubWidgetAdded: {
-				const AbstractWidget* widget = static_cast<const AbstractWidget*>(request.data());
-				DBG_PRINT_MSG("Container \"%s\" add sub widget \"%s\"", request.source()->name().c_str(), widget->name().c_str());
+				const AbstractWidget* widget =
+				        static_cast<const AbstractWidget*>(request.data());
+				DBG_PRINT_MSG("Container \"%s\" add sub widget \"%s\"",
+				        request.source()->name().c_str(),
+				        widget->name().c_str());
 
-				if(request.source()->hover()) {
-
-					AbstractWidget* p = request.source();
-					RemoveWidgetFromHoverList(p);
-
-					p->set_hover(true);
-					m_hover_deque->push_back(p);
-				}
+				// TODO: check the layer
 
 				break;
 			}
 
 			case ContainerSubWidgetRemoved: {
-				const AbstractWidget* widget = static_cast<const AbstractWidget*>(request.data());
-				DBG_PRINT_MSG("Container \"%s\" remove sub widget \"%s\"", request.source()->name().c_str(), widget->name().c_str());
+				const AbstractWidget* widget =
+				        static_cast<const AbstractWidget*>(request.data());
+				DBG_PRINT_MSG("Container \"%s\" remove sub widget \"%s\"",
+				        request.source()->name().c_str(),
+				        widget->name().c_str());
 
-				if(request.source()->hover()) {
-
-					// the hover list should be recalculated
-					AbstractWidget* p = request.source();
-					RemoveWidgetFromHoverList(p);
-
-					p->set_hover(true);
-					m_hover_deque->push_back(p);
-				}
+				// TODO: check the layer
 
 				break;
 			}
@@ -261,7 +251,7 @@ namespace BlendInt
 
 	void Context::UpdateGeometry (const WidgetUpdateRequest& request)
 	{
-		if(request.source() == this) {
+		if(request.source () == this) {
 
 			switch (request.type()) {
 
@@ -302,12 +292,13 @@ namespace BlendInt
 					;
 			}
 
-		} else {
+		} else if (request.source()->container() == this) {
 
 			switch(request.type()) {
 
-				case WidgetPosition:
+				case WidgetPosition: {
 					break;
+				}
 
 				case WidgetSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
@@ -323,6 +314,11 @@ namespace BlendInt
 					break;
 
 			}
+
+		} else {
+
+			DBG_PRINT_MSG("%s", "get widget geometry change update");
+
 		}
 	}
 
@@ -527,49 +523,7 @@ namespace BlendInt
 		AbstractWidget* widget = 0;
 		ResponseType response;
 
-		m_cursor = event.position();
-
-		if(0 == m_hover_widget) m_hover_widget = this;
-
-		if(m_hover_widget == this) {
-
-			std::map<int, ContextLayer>::reverse_iterator map_it;
-			std::set<AbstractWidget*>::iterator set_it;
-			std::set<AbstractWidget*>* set_p = 0;
-
-			for (map_it = m_layers.rbegin(); map_it != m_layers.rend(); map_it++) {
-				set_p = map_it->second.widgets;
-				for (set_it = set_p->begin(); set_it != set_p->end(); set_it++) {
-					if ((*set_it)->visiable()
-					        && (*set_it)->Contain(event.position()))
-					{
-						m_hover_widget = (*set_it);
-					}
-				}
-
-				if(m_hover_widget != this)
-					break;
-			}
-
-			if(m_hover_widget != this) {
-				DBG_PRINT_MSG("cursor on widget: %s", m_hover_widget->name().c_str());
-			}
-
-		} else {
-
-			DBG_PRINT_MSG("cursor on widget: %s", m_hover_widget->name().c_str());
-
-			if(m_hover_widget->Contain(event.position())) {
-
-				m_hover_widget = GetWidgetUnderCursor(event, m_hover_widget);
-				DBG_PRINT_MSG("cursor on widget: %s", m_hover_widget->name().c_str());
-
-			} else {
-				DBG_PRINT_MSG("cursor leaves widget: %s", m_hover_widget->name().c_str());
-				m_hover_widget = m_hover_widget->container();
-			}
-
-		}
+		m_redraw_event.set_cursor_position(event.position());
 
 		// search which widget in stack contains the cursor
 		while (m_hover_deque->size()) {
@@ -594,11 +548,12 @@ namespace BlendInt
 
 		// DEBUG:
 		/*
-		for (std::deque<AbstractWidget*>::iterator it =
-				m_hover_deque->begin(); it != m_hover_deque->end();
-				it++)
-		{
-			DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
+		if (m_hover_deque->size()) {
+			std::cout << "-------------------------------------------------" << std::endl;
+			for (std::deque<AbstractWidget*>::iterator it =
+			        m_hover_deque->begin(); it != m_hover_deque->end(); it++) {
+				DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
+			}
 		}
 		*/
 
@@ -1222,16 +1177,19 @@ namespace BlendInt
 		}
 	}
 
-	void Context::RemoveWidgetFromHoverList (AbstractWidget* widget)
+	void Context::RemoveWidgetFromHoverList (AbstractWidget* widget, bool cursor_event)
 	{
 		while (m_hover_deque->size()) {
 
 			if (m_hover_deque->back() == widget) {
+
+				if(cursor_event) widget->CursorEnterEvent(false);
 				widget->set_hover(false);
 				m_hover_deque->pop_back();
 				break;
 			}
 
+			if(cursor_event) m_hover_deque->back()->CursorEnterEvent(false);
 			m_hover_deque->back()->set_hover(false);
 			m_hover_deque->pop_back();
 		}
@@ -1263,7 +1221,7 @@ namespace BlendInt
 	}
 
 #endif
-	
+
 	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{
 		RemoveSubWidget(widget);

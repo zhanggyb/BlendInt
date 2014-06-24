@@ -165,7 +165,7 @@ namespace BlendInt {
 
 	private:
 
-		void RemoveWidgetFromHoverList (AbstractWidget* widget);
+		void RemoveWidgetFromHoverList (AbstractWidget* widget, bool cursor_event = false);
 
 		void InitializeContext ();
 
@@ -214,10 +214,6 @@ namespace BlendInt {
 		 * There's one focused widget in each context to access key and button events
 		 */
 		AbstractWidget* m_focused_widget;
-
-		AbstractWidget* m_hover_widget;
-
-		Point m_cursor;
 
 		/**
 		 * @brief A stack to store unused texture buffer

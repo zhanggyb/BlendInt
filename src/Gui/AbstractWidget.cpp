@@ -491,6 +491,26 @@ namespace BlendInt {
 		Refresh();
 	}
 
+	bool AbstractWidget::IsHover(const Point& cursor)
+	{
+		if(Contain(cursor)) {
+
+			AbstractContainer* container = m_container;
+
+			while(container) {
+
+				if(!container->Contain(cursor))
+					return false;
+
+				container = container->container();
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	void AbstractWidget::DispatchRender(AbstractWidget* other)
 	{
 		//other->Draw();

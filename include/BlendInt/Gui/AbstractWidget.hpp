@@ -209,6 +209,8 @@ namespace BlendInt {
 
 		void SetEmboss (bool emboss);
 
+		bool IsHover (const Point& cursor);
+
 		virtual bool IsExpandX () const
 		{
 			return false;

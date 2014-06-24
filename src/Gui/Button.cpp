@@ -129,7 +129,7 @@ namespace BlendInt {
 			program->SetVertexAttrib4fv("Color",
 							Theme::instance->regular().inner_sel.data());
 		} else {
-			if (hover()) {
+			if (IsHover(event.cursor_position())) {
 				Color color = Theme::instance->regular().inner + 15;
 				program->SetVertexAttrib4fv("Color", color.data());
 			} else {

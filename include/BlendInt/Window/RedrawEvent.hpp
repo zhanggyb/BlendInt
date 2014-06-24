@@ -40,6 +40,11 @@ namespace BlendInt {
 
 		~RedrawEvent ()
 		{}
+
+		void set_cursor_position (const Point& cursor_position)
+		{
+			m_cursor_position = cursor_position;
+		}
 		
 		void set_projection_matrix (const glm::mat4& matrix)
 		{
@@ -51,11 +56,15 @@ namespace BlendInt {
 			m_view_matrix = matrix;
 		}
 
+		const Point& cursor_position() const {return m_cursor_position;}
+
 		const glm::mat4& view_matrix () const {return m_view_matrix;}
 
 		const glm::mat4& projection_matrix () const {return m_projection_matrix;}
 
 	private:
+
+		Point m_cursor_position;
 
 		glm::mat4 m_projection_matrix;
 		glm::mat4 m_view_matrix;
