@@ -184,7 +184,9 @@ namespace BlendInt {
 
 		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
 
-		void BuildCursorHoverList (const MouseEvent& event, AbstractWidget* parent);
+		void BuildCursorHoverList (const MouseEvent& event);
+
+		void AppendCursorHoverList (const MouseEvent& event, AbstractWidget* parent);
 
 		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
@@ -197,7 +199,6 @@ namespace BlendInt {
 		GLTexture2D* m_main_buffer;
 
 		RefPtr<GLArrayBuffer> m_vbo;
-		//RefPtr<GLArrayBuffer> m_tbo;
 
 		GLuint m_vao;
 

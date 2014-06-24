@@ -218,12 +218,31 @@ namespace BlendInt
 				const AbstractWidget* widget = static_cast<const AbstractWidget*>(request.data());
 				DBG_PRINT_MSG("Container \"%s\" add sub widget \"%s\"", request.source()->name().c_str(), widget->name().c_str());
 
+				if(request.source()->hover()) {
+
+					AbstractWidget* p = request.source();
+					RemoveWidgetFromHoverList(p);
+
+					p->set_hover(true);
+					m_hover_deque->push_back(p);
+				}
+
 				break;
 			}
 
 			case ContainerSubWidgetRemoved: {
 				const AbstractWidget* widget = static_cast<const AbstractWidget*>(request.data());
 				DBG_PRINT_MSG("Container \"%s\" remove sub widget \"%s\"", request.source()->name().c_str(), widget->name().c_str());
+
+				if(request.source()->hover()) {
+
+					// the hover list should be recalculated
+					AbstractWidget* p = request.source();
+					RemoveWidgetFromHoverList(p);
+
+					p->set_hover(true);
+					m_hover_deque->push_back(p);
+				}
 
 				break;
 			}
@@ -521,8 +540,13 @@ namespace BlendInt
 			m_hover_deque->pop_back();
 		}
 
-		BuildCursorHoverList(event, widget);
+		if(widget) {
+			AppendCursorHoverList(event, widget);
+		} else {
+			BuildCursorHoverList(event);
+		}
 
+		// DEBUG:
 		/*
 		for (std::deque<AbstractWidget*>::iterator it =
 				m_hover_deque->begin(); it != m_hover_deque->end();
@@ -541,14 +565,12 @@ namespace BlendInt
 			// check the event status
 		}
 
-		for (std::deque<AbstractWidget*>::reverse_iterator it =
-						m_hover_deque->rbegin();
-						it != m_hover_deque->rend();
-				it++)
+		for (std::deque<AbstractWidget*>::iterator it = m_hover_deque->begin();
+		        it != m_hover_deque->end(); it++)
 		{
 			response = (*it)->MouseMoveEvent(event);
 			// check the event status
-			if (response == Accept) {
+			if (response == AcceptAndBreak || response == Ignore) {
 				// TODO: do sth
 			}
 		}
@@ -1067,67 +1089,73 @@ namespace BlendInt
 		}
 	}
 	
-	void Context::BuildCursorHoverList (const MouseEvent& event, AbstractWidget* parent)
+	void Context::BuildCursorHoverList(const MouseEvent& event)
 	{
-		if (parent) {
-			parent->set_hover(true);
+		m_hover_deque->clear();
 
-			AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
-			if(p) {
+		std::map<int, ContextLayer>::reverse_iterator map_it;
+		std::set<AbstractWidget*>::iterator set_it;
+		std::set<AbstractWidget*>* set_p = 0;
 
-				IteratorPtr it = p->CreateIterator(event);
+		bool stop = false;
 
-				for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-					if (it->GetWidget()->visiable() && it->GetWidget()->Contain(event.position())) {
-						m_hover_deque->push_back(it->GetWidget());
-						m_hover_deque->back()->CursorEnterEvent(true);
-						BuildCursorHoverList(event, it->GetWidget());
-						break;	// if break or continue the loop?
-					}
+		for (map_it = m_layers.rbegin(); map_it != m_layers.rend(); map_it++) {
+			set_p = map_it->second.widgets;
+			for (set_it = set_p->begin(); set_it != set_p->end(); set_it++) {
+				if ((*set_it)->visiable()
+				        && (*set_it)->Contain(event.position())) {
+					m_hover_deque->push_back(*set_it);
+					(*set_it)->CursorEnterEvent(true);
+					AppendCursorHoverList(event, *set_it);
+					stop = true;
 				}
-			} else {
-			}
-		} else {
-			m_hover_deque->clear();
 
-			std::map<int, ContextLayer>::reverse_iterator map_it;
-			std::set<AbstractWidget*>::iterator set_it;
-			std::set<AbstractWidget*>* set_p = 0;
-
-			bool stop = false;
-
-			for (map_it = m_layers.rbegin();
-							map_it != m_layers.rend();
-							map_it++) {
-				set_p = map_it->second.widgets;
-				for (set_it = set_p->begin(); set_it != set_p->end();
-						set_it++) {
-					if ((*set_it)->visiable() && (*set_it)->Contain(event.position())) {
-						m_hover_deque->push_back(*set_it);
-						m_hover_deque->back()->CursorEnterEvent(true);
-						BuildCursorHoverList(event, *set_it);
-						stop = true;
-					}
-
-					if (stop)
-					break;
-				}
 				if (stop)
-				break;
+					break;
 			}
+			//if (stop)
+			//break;
+		}
+	}
+
+	void Context::AppendCursorHoverList (const MouseEvent& event,
+	        AbstractWidget* parent)
+	{
+		parent->set_hover(true);	// Set hover status
+
+		AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
+		if (p) {
+
+			IteratorPtr it = p->CreateIterator(event);
+			AbstractWidget* widget = 0;
+
+			for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
+
+				widget = it->GetWidget();
+
+				if (widget->visiable() && widget->Contain(event.position())) {
+					m_hover_deque->push_back(widget);
+					widget->CursorEnterEvent(true);
+					AppendCursorHoverList(event, widget);
+					break;	// if break or continue the loop?
+				}
+
+			}
+
 		}
 	}
 
 	void Context::RemoveWidgetFromHoverList (AbstractWidget* widget)
 	{
 		while (m_hover_deque->size()) {
-			m_hover_deque->back()->set_hover(false);
 
 			if (m_hover_deque->back() == widget) {
+				widget->set_hover(false);
 				m_hover_deque->pop_back();
 				break;
 			}
 
+			m_hover_deque->back()->set_hover(false);
 			m_hover_deque->pop_back();
 		}
 	}

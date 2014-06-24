@@ -123,7 +123,43 @@ void DemoWindow::resizeEvent(QResizeEvent* ev)
 
 void DemoWindow::keyPressEvent(QKeyEvent* ev)
 {
+	switch (ev->type()) {
+		case QEvent::KeyPress:
+			kKeyEvent.set_action(BI::KeyPress);
+			break;
+		case QEvent::KeyRelease:
+			kKeyEvent.set_action(BI::KeyRelease);
+			break;
+		default:
+			kKeyEvent.set_action(BI::KeyNone);
+			break;
+	}
 
+	kKeyEvent.set_key(ev->key());
+	kKeyEvent.set_scancode(ev->nativeScanCode());
+
+	int modifier = BI::ModifierNone;
+	if(ev->modifiers() & Qt::ShiftModifier) {
+		modifier |= BI::ModifierShift;
+	}
+	if(ev->modifiers() & Qt::ControlModifier) {
+		modifier |= BI::ModifierControl;
+	}
+	if(ev->modifiers() & Qt::AltModifier) {
+		modifier |= BI::ModifierAlt;
+	}
+	if(ev->modifiers() & Qt::MetaModifier) {
+		modifier |= BI::ModifierSuper;
+	}
+	kKeyEvent.set_modifiers(modifier);
+
+	if(ev->text().isEmpty()) {
+		kKeyEvent.clear_text();
+	} else {
+		kKeyEvent.set_text(ev->text().toStdString());
+	}
+
+	BI::Interface::instance->DispatchKeyEvent(kKeyEvent);
 }
 
 void DemoWindow::keyReleaseEvent(QKeyEvent* ev)
