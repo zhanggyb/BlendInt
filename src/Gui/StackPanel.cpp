@@ -81,7 +81,7 @@ namespace BlendInt {
 		return AcceptAndContinue;
 	}
 	
-	void StackPanel::UpdateGeometry (const WidgetUpdateRequest& request)
+	void StackPanel::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 

@@ -54,7 +54,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void MenuButton::UpdateGeometry (const WidgetUpdateRequest& request)
+	void MenuButton::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 

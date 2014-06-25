@@ -184,7 +184,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::UpdateContainer (const WidgetUpdateRequest& request)
+	void Stack::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -202,13 +202,13 @@ namespace BlendInt {
 			}
 
 			default: {
-				ReportUpdateRequest(request);
+				ReportContainerUpdate(request);
 				break;
 			}
 		}
 	}
 
-	void Stack::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Stack::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 

@@ -105,7 +105,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ComboBox::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ComboBox::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -260,12 +260,12 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	bool ComboBox::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool ComboBox::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void ComboBox::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void ComboBox::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

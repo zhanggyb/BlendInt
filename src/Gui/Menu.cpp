@@ -166,7 +166,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Menu::UpdateGeometry(const WidgetUpdateRequest& request)
+	void Menu::UpdateGeometry(const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -314,12 +314,12 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	bool Menu::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Menu::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void Menu::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void Menu::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

@@ -143,7 +143,7 @@ namespace BlendInt {
 		events()->connect(m_radio_group.button_index_toggled(), this, &ColorSelector::OnButtonToggled);
 	}
 
-	void ColorSelector::UpdateGeometry(const WidgetUpdateRequest& request)
+	void ColorSelector::UpdateGeometry(const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 

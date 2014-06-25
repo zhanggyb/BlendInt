@@ -84,7 +84,7 @@ namespace BlendInt {
 	{
 	}
 
-	inline bool SubWidgetProxy::RequestGeometryTest(AbstractWidget* sub_widget, const WidgetUpdateRequest& request)
+	inline bool SubWidgetProxy::RequestGeometryTest(AbstractWidget* sub_widget, const GeometryUpdateRequest& request)
 	{
 		if(sub_widget) {
 			return sub_widget->UpdateGeometryTest(request);
@@ -93,19 +93,19 @@ namespace BlendInt {
 		}
 	}
 
-	inline void SubWidgetProxy::RequestGeometryUpdate(AbstractWidget* sub_widget, const WidgetUpdateRequest& request)
+	inline void SubWidgetProxy::RequestGeometryUpdate(AbstractWidget* sub_widget, const GeometryUpdateRequest& request)
 	{
 		if(sub_widget) {
 			sub_widget->UpdateGeometry(request);
 		}
 	}
 
-	bool AbstractContainer::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool AbstractContainer::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void AbstractContainer::BroadcastUpdate(const WidgetUpdateRequest& request)
+	void AbstractContainer::BroadcastUpdate(const GeometryUpdateRequest& request)
 	{
 		// do nothing
 	}
@@ -115,7 +115,7 @@ namespace BlendInt {
 		if (m_margin.equal(margin))
 			return;
 
-		WidgetUpdateRequest request (this, this, ContainerMargin, &margin);
+		ContainerUpdateRequest request (this, this, ContainerMargin, &margin);
 
 		UpdateContainer(request);
 		m_margin = margin;
@@ -127,7 +127,7 @@ namespace BlendInt {
 			return;
 
 		Margin new_margin(left, right, top, bottom);
-		WidgetUpdateRequest request (this, this, ContainerMargin, &new_margin);
+		ContainerUpdateRequest request (this, this, ContainerMargin, &new_margin);
 
 		UpdateContainer(request);
 		m_margin = new_margin;
@@ -143,7 +143,7 @@ namespace BlendInt {
 			return;
 
 		Size new_size (width, height);
-		WidgetUpdateRequest request(this, sub, WidgetSize, &new_size);
+		GeometryUpdateRequest request(this, sub, WidgetSize, &new_size);
 
 		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
 			SubWidgetProxy::RequestGeometryUpdate(sub, request);
@@ -158,7 +158,7 @@ namespace BlendInt {
 
 		if(sub->size() == size) return;
 
-		WidgetUpdateRequest request(this, sub, WidgetSize, &size);
+		GeometryUpdateRequest request(this, sub, WidgetSize, &size);
 
 		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
 			SubWidgetProxy::RequestGeometryUpdate(sub, request);
@@ -177,7 +177,7 @@ namespace BlendInt {
 
 		Point new_pos (x, y);
 
-		WidgetUpdateRequest request (this, sub, WidgetPosition, &new_pos);
+		GeometryUpdateRequest request (this, sub, WidgetPosition, &new_pos);
 
 		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
 			SubWidgetProxy::RequestGeometryUpdate(sub, request);
@@ -192,7 +192,7 @@ namespace BlendInt {
 
 		if(sub->position() == pos) return;
 
-		WidgetUpdateRequest request (this, sub, WidgetPosition, &pos);
+		GeometryUpdateRequest request (this, sub, WidgetPosition, &pos);
 
 		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
 			SubWidgetProxy::RequestGeometryUpdate(sub, request);

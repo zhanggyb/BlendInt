@@ -65,7 +65,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, m_vao);
 	}
 
-	void TabButton::UpdateGeometry (const WidgetUpdateRequest& request)
+	void TabButton::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 

@@ -152,7 +152,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToolBar::UpdateContainer(const WidgetUpdateRequest& request)
+	void ToolBar::UpdateContainer(const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -174,14 +174,14 @@ namespace BlendInt {
 			}
 
 			case ContainerRefresh: {
-				ReportUpdateRequest(request);
+				ReportContainerUpdate(request);
 				break;
 			}
 
 		}
 	}
 
-	void ToolBar::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ToolBar::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 

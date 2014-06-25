@@ -28,25 +28,26 @@
 
 #include <boost/smart_ptr.hpp>
 
+#include <Cpp/Events.hpp>
+
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Rect.hpp>
-
 #include <BlendInt/Core/RefPtr.hpp>
+
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/KeyEvent.hpp>
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 #include <BlendInt/Window/RedrawEvent.hpp>
 
-#include <Cpp/Events.hpp>
-
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/Gui/Shadow.hpp>
 
 namespace BlendInt {
 
 	class Context;
-	class GLTexture2D;
+	//class GLTexture2D;
 	class AbstractWidget;
 	class AbstractContainer;
 
@@ -75,23 +76,15 @@ namespace BlendInt {
 		return obj;
 	}
 
-	class WidgetUpdateRequest: public UpdateRequest
+	class WidgetUpdateRequest
 	{
 	public:
 
 		WidgetUpdateRequest (AbstractWidget* source, AbstractWidget* target)
-		: UpdateRequest(0, 0),
-		  m_source(source),
+		: m_source(source),
 		  m_target(target)
 		{
 
-		}
-
-		WidgetUpdateRequest (AbstractWidget* source, AbstractWidget* target,
-						int type, const void* data)
-		: UpdateRequest(type, data),
-		  m_source(source), m_target(target)
-		{
 		}
 
 		~WidgetUpdateRequest ()
@@ -120,6 +113,107 @@ namespace BlendInt {
 		AbstractWidget* m_target;
 	};
 
+	class GeometryUpdateRequest: public WidgetUpdateRequest
+	{
+	public:
+
+		GeometryUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target), m_type(0), m_data(0)
+		{
+
+		}
+
+		GeometryUpdateRequest(AbstractWidget* source, AbstractWidget* target, int type, const void* data)
+		: WidgetUpdateRequest(source, target),
+		  m_type(type),
+		  m_data(data)
+		{
+
+		}
+
+		~GeometryUpdateRequest ()
+		{
+
+		}
+
+		int type () const
+		{
+			return m_type;
+		}
+
+		void set_type (int type)
+		{
+			m_type = type;
+		}
+
+		const void* data () const
+		{
+			return m_data;
+		}
+
+		void set_data (const void* data)
+		{
+			m_data = data;
+		}
+
+	private:
+
+		GeometryUpdateRequest();
+
+		int m_type;
+		const void* m_data;
+	};
+
+	class ContainerUpdateRequest: public WidgetUpdateRequest
+	{
+	public:
+
+		ContainerUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target), m_type(0), m_data(0)
+		{
+
+		}
+
+		ContainerUpdateRequest(AbstractWidget* source, AbstractWidget* target, int type, const void* data)
+		: WidgetUpdateRequest(source, target),
+		  m_type(type),
+		  m_data(data)
+		{
+
+		}
+
+		~ContainerUpdateRequest ()
+		{
+
+		}
+
+		int type () const
+		{
+			return m_type;
+		}
+
+		void set_type (int type)
+		{
+			m_type = type;
+		}
+
+		const void* data () const
+		{
+			return m_data;
+		}
+
+		void set_data (const void* data)
+		{
+			m_data = data;
+		}
+
+	private:
+
+		ContainerUpdateRequest();
+
+		int m_type;
+		const void* m_data;
+	};
 
 	/**
 	 * @brief Proxy class to be used in sub widget to communicate with its container
@@ -133,11 +227,11 @@ namespace BlendInt {
 
 		~ContainerProxy ();
 
-		static inline bool RequestGeometryTest (AbstractContainer* container, const WidgetUpdateRequest& request);
+		static inline bool RequestGeometryTest (AbstractContainer* container, const GeometryUpdateRequest& request);
 
-		static inline void RequestGeometryUpdate (AbstractContainer* container, const WidgetUpdateRequest& request);
+		static inline void RequestGeometryUpdate (AbstractContainer* container, const GeometryUpdateRequest& request);
 
-		static inline void RequestContainerUpdate (AbstractContainer* container, const WidgetUpdateRequest& request);
+		static inline void RequestContainerUpdate (AbstractContainer* container, const ContainerUpdateRequest& request);
 	};
 
 	// ----------------------------------------------------
@@ -412,7 +506,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
 
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request) = 0;
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request) = 0;
 
 		/**
 		 * @brief Update opengl data (usually the GL buffer) for Render
@@ -423,9 +517,9 @@ namespace BlendInt {
 		 * This virtual function should be implemented in each derived class,
 		 * and should only use the form's property to draw opengl elements once.
 		 */
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request) = 0;
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request) = 0;
 
-		virtual void BroadcastUpdate (const WidgetUpdateRequest& request) = 0;
+		virtual void BroadcastUpdate (const GeometryUpdateRequest& request) = 0;
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
@@ -436,7 +530,9 @@ namespace BlendInt {
 		/**
 		 * @brief Hand on the update request to the container
 		 */
-		void ReportUpdateRequest (const WidgetUpdateRequest& request);
+		void ReportContainerUpdate (const ContainerUpdateRequest& request);
+
+		void ReportGeometryUpdate (const GeometryUpdateRequest& request);
 
 		Context* GetContext ();
 

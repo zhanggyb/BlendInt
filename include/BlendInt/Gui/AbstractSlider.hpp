@@ -43,6 +43,56 @@ namespace BlendInt {
 		SliderPropertyStep,
 	};
 
+	class SliderUpdateRequest: public WidgetUpdateRequest
+	{
+	public:
+
+		SliderUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target), m_type(0), m_data(0)
+		{
+
+		}
+
+		SliderUpdateRequest(AbstractWidget* source, AbstractWidget* target, int type, const void* data)
+		: WidgetUpdateRequest(source, target),
+		  m_type(type),
+		  m_data(data)
+		{
+
+		}
+
+		~SliderUpdateRequest ()
+		{
+
+		}
+
+		int type () const
+		{
+			return m_type;
+		}
+
+		void set_type (int type)
+		{
+			m_type = type;
+		}
+
+		const void* data () const
+		{
+			return m_data;
+		}
+
+		void set_data (const void* data)
+		{
+			m_data = data;
+		}
+
+	private:
+
+		SliderUpdateRequest();
+
+		int m_type;
+		const void* m_data;
+	};
 	/**
 	 * @brief Slide Icon used in Slider or ScrollBar
 	 */
@@ -129,7 +179,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateSlider (const WidgetUpdateRequest& request) = 0;
+		virtual void UpdateSlider (const SliderUpdateRequest& request) = 0;
 
 		void set_value (T value)
 		{
@@ -212,7 +262,7 @@ namespace BlendInt {
 		if (value < m_minimum || value > m_maximum)
 			return;
 
-		WidgetUpdateRequest request(this, this, SliderPropertyValue, &value);
+		SliderUpdateRequest request(this, this, SliderPropertyValue, &value);
 
 		UpdateSlider(request);
 		m_value = value;
@@ -244,7 +294,7 @@ namespace BlendInt {
 		if (minimum >= m_maximum)
 			return;
 
-		WidgetUpdateRequest request(this, this, SliderPropertyMinimum, &minimum);
+		SliderUpdateRequest request(this, this, SliderPropertyMinimum, &minimum);
 		UpdateSlider(request);
 		m_minimum = minimum;
 	}
@@ -258,7 +308,7 @@ namespace BlendInt {
 		if (maximum <= m_minimum)
 			return;
 
-		WidgetUpdateRequest request(this, this, SliderPropertyMaximum, &maximum);
+		SliderUpdateRequest request(this, this, SliderPropertyMaximum, &maximum);
 
 		UpdateSlider(request);
 		m_maximum = maximum;
@@ -269,7 +319,7 @@ namespace BlendInt {
 	{
 		if(m_orientation == orientation) return;
 
-		WidgetUpdateRequest request(this, this, SliderPropertyOrientation, &orientation);
+		SliderUpdateRequest request(this, this, SliderPropertyOrientation, &orientation);
 
 		UpdateSlider(request);
 		m_orientation = orientation;

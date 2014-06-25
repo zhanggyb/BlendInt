@@ -25,8 +25,6 @@
 #define _BLENDINT_GUI_CONTEXT_HPP_
 
 #include <map>
-#include <deque>
-#include <set>
 
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
@@ -34,27 +32,14 @@
 #include <BlendInt/OpenGL/ScissorStatus.hpp>
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
-#include <BlendInt/Interface.hpp>
-#include <BlendInt/Gui/AbstractContainer.hpp>
-
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+
+#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/ContextLayer.hpp>
 
 namespace BlendInt {
 
-	struct ContextLayer {
-
-		ContextLayer ();
-		~ContextLayer ();
-
-		/** If refresh this layer */
-		bool refresh;
-
-		/** A set to store sub widgets in this layer */
-		std::set<AbstractWidget*>* widgets;
-
-		/** The OpenGL Texture as a buffer for display */
-		RefPtr<GLTexture2D> tex_buf_ptr;
-	};
+	class Interface;
 
 	/**
 	 * @brief Container to hold and manage all widgets in a OpenGL window
@@ -83,11 +68,6 @@ namespace BlendInt {
 		void RefreshLayer (int layer);
 
 		int GetMaxLayer () const;
-
-		size_t index_size () const
-		{
-			return m_index.size();
-		}
 
 		size_t layer_size () const
 		{
@@ -131,13 +111,13 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateContainer (const WidgetUpdateRequest& request);
+		virtual void UpdateContainer (const ContainerUpdateRequest& request);
 
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
+		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -165,8 +145,6 @@ namespace BlendInt {
 
 	private:
 
-		void RemoveWidgetFromHoverList (AbstractWidget* widget, bool cursor_event = false);
-
 		void InitializeContext ();
 
 		void DrawMainBuffer (const glm::mat4& mvp);
@@ -175,7 +153,7 @@ namespace BlendInt {
 
 		void RenderToLayerBuffer (const RedrawEvent& event,
 				int layer,
-				std::set<AbstractWidget*>* widgets,
+				const std::set<AbstractWidget*>& widgets,
 				GLTexture2D* texture);
 
 		void RenderToMainBuffer (const RedrawEvent& event);
@@ -184,17 +162,25 @@ namespace BlendInt {
 
 		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
 
-		void BuildCursorHoverList (const MouseEvent& event);
+		bool DispatchMousePressEvent (int layer, const MouseEvent& event);
 
-		void AppendCursorHoverList (const MouseEvent& event, AbstractWidget* parent);
+		bool DispatchMouseReleaseEvent (int layer, const MouseEvent& event);
+
+		bool DispatchMouseMoveEvent (int layer, const MouseEvent& event);
+
+		void BuildCursorHoverList (int layer);
+
+		void AppendCursorHoverList (std::deque<AbstractWidget*>& deque, AbstractWidget* parent);
+
+		void RemoveWidgetFromHoverList (AbstractWidget* widget, bool cursor_event = false);
+
+		void RemoveSubWidgetFromHoverList (AbstractContainer* container, bool cursor_event = false);
 
 		AbstractWidget* GetWidgetUnderCursor (const MouseEvent& event, AbstractWidget* parent);
 
 		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
 		std::map<int, ContextLayer> m_layers;
-
-		std::map<AbstractWidget*, int> m_index;
 
 		std::deque<GLTexture2D*> m_deque;
 
@@ -205,8 +191,6 @@ namespace BlendInt {
 		GLuint m_vao;
 
 		RedrawEvent m_redraw_event;
-
-		boost::scoped_ptr<std::deque<AbstractWidget*> > m_hover_deque;
 
 		/**
 		 * @brief Focused widget

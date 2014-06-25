@@ -121,7 +121,7 @@ namespace BlendInt {
 		return Size(w, h);
 	}
 
-	void Tab::UpdateContainer (const WidgetUpdateRequest& request)
+	void Tab::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -133,14 +133,14 @@ namespace BlendInt {
 			}
 
 			default: {
-				ReportUpdateRequest(request);
+				ReportContainerUpdate(request);
 				break;
 			}
 		}
 
 	}
 
-	void Tab::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Tab::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 

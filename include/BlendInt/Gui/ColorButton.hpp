@@ -49,7 +49,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

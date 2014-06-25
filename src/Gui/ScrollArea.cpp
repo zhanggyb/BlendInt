@@ -133,19 +133,19 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void ScrollArea::UpdateContainer(const WidgetUpdateRequest& request)
+	void ScrollArea::UpdateContainer(const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
 			default: {
-				ReportUpdateRequest(request);
+				ReportContainerUpdate(request);
 				break;
 			}
 		}
 
 	}
 
-	void ScrollArea::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ScrollArea::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 
 		switch (request.type()) {

@@ -145,7 +145,7 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	void ColorWheel::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ColorWheel::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -235,12 +235,12 @@ namespace BlendInt {
 		}
 	}
 
-	bool ColorWheel::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool ColorWheel::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void ColorWheel::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void ColorWheel::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

@@ -31,7 +31,6 @@
 namespace BlendInt {
 
 	class ToggleButton;
-	class Frame;
 
 	class ExpandButton: public AbstractButton
 	{
@@ -51,7 +50,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -60,57 +59,6 @@ namespace BlendInt {
 		void InitializeExpandButton ();
 
 		void InitializeExpandButton (const String& text);
-	};
-
-	// --------------------------
-
-	/**
-	 * @brief A container works as Frame but does not draw
-	 */
-	class SingleBox: public AbstractSingleContainer
-	{
-		DISALLOW_COPY_AND_ASSIGN(SingleBox);
-
-	public:
-
-		SingleBox ();
-
-		virtual ~SingleBox ();
-
-		bool Setup (AbstractWidget* widget);
-
-		bool Remove (AbstractWidget* widget);
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
-
-		virtual Size GetPreferredSize () const;
-
-	protected:
-
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
-
-		virtual void UpdateContainer (const WidgetUpdateRequest& request);
-
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
-
-		virtual ResponseType Draw (const RedrawEvent& event);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
 	};
 
 
@@ -145,11 +93,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateContainer (const WidgetUpdateRequest& request);
+		virtual void UpdateContainer (const ContainerUpdateRequest& request);
 
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

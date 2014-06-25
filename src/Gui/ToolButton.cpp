@@ -133,7 +133,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, m_vao);
 	}
 
-	void ToolButton::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ToolButton::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 
 		switch (request.type()) {

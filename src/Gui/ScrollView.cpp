@@ -203,21 +203,21 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void ScrollView::UpdateContainer(const WidgetUpdateRequest& request)
+	void ScrollView::UpdateContainer(const ContainerUpdateRequest& request)
 	{
 		switch (request.type()) {
 
 			// TODO: update margin
 
 			default: {
-				ReportUpdateRequest(request);
+				ReportContainerUpdate(request);
 				break;
 			}
 		}
 
 	}
 
-	void ScrollView::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ScrollView::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			switch (request.type()) {

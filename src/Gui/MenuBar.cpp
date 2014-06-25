@@ -57,20 +57,20 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void MenuBar::UpdateContainer(const WidgetUpdateRequest& request)
+	void MenuBar::UpdateContainer(const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
 			// TODO: set margin
 
 			default: {
-				ReportUpdateRequest(request);
+				ReportContainerUpdate(request);
 				break;
 			}
 		}
 	}
 
-	void MenuBar::UpdateGeometry (const WidgetUpdateRequest& request)
+	void MenuBar::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 

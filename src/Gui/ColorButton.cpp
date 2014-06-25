@@ -58,7 +58,7 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	void ColorButton::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ColorButton::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 

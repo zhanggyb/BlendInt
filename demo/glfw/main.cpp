@@ -101,6 +101,8 @@ int main(int argc, char* argv[])
 
 	Terminate();
 
+	assert(Object::CheckAllocatedObjects());
+
 	return 0;
 }
 

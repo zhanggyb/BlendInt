@@ -129,7 +129,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 	
-	void ToolBox::UpdateContainer (const WidgetUpdateRequest& request)
+	void ToolBox::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -147,13 +147,13 @@ namespace BlendInt {
 			}
 
 			default: {
-				ReportUpdateRequest(request);
+				ReportContainerUpdate(request);
 				break;
 			}
 		}
 	}
 	
-	bool ToolBox::UpdateGeometryTest(const WidgetUpdateRequest& request)
+	bool ToolBox::UpdateGeometryTest(const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			return true;
@@ -180,7 +180,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBox::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ToolBox::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 

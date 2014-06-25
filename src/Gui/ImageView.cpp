@@ -116,7 +116,7 @@ namespace BlendInt {
 		return Size(400, 300);
 	}
 
-	void ImageView::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ImageView::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if (request.target() == this) {
 
@@ -246,12 +246,12 @@ namespace BlendInt {
 		GLArrayBuffer::Reset();
 	}
 
-	bool ImageView::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool ImageView::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void ImageView::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void ImageView::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

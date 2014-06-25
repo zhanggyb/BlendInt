@@ -61,7 +61,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void FileSelector::UpdateGeometry (const WidgetUpdateRequest& request)
+	void FileSelector::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 

@@ -119,7 +119,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void Frame::UpdateContainer (const WidgetUpdateRequest& request)
+	void Frame::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -136,14 +136,14 @@ namespace BlendInt {
 			}
 
 			default: {
-				ReportUpdateRequest(request);
+				ReportContainerUpdate(request);
 				break;
 			}
 
 		}
 	}
 
-	bool Frame::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Frame::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		if(request.source() == this) {
 
@@ -168,7 +168,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Frame::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 

@@ -125,16 +125,16 @@ namespace BlendInt {
 //		glEnd();
 	}
 
-	bool ClockWidget::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool ClockWidget::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void ClockWidget::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ClockWidget::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 	}
 
-	void ClockWidget::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void ClockWidget::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

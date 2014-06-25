@@ -123,7 +123,7 @@ namespace BlendInt {
 		}
 	}
 
-	bool ScrollBar::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool ScrollBar::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -152,7 +152,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollBar::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ScrollBar::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 			case WidgetPosition: {
@@ -201,7 +201,7 @@ namespace BlendInt {
 
 	}
 
-	void ScrollBar::UpdateSlider(const WidgetUpdateRequest& request)
+	void ScrollBar::UpdateSlider(const SliderUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -432,7 +432,7 @@ namespace BlendInt {
 		return space;
 	}
 
-	void ScrollBar::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void ScrollBar::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

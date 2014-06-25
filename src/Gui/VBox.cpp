@@ -146,7 +146,7 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void VBox::UpdateContainer(const WidgetUpdateRequest& request)
+	void VBox::UpdateContainer(const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -157,13 +157,13 @@ namespace BlendInt {
 			}
 
 			default: {
-				ReportUpdateRequest(request);
+				ReportContainerUpdate(request);
 				break;
 			}
 		}
 	}
 
-	bool VBox::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool VBox::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		if(request.source() == this) {
 
@@ -188,7 +188,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VBox::UpdateGeometry (const WidgetUpdateRequest& request)
+	void VBox::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.source() == this || request.source() == container()) {
 

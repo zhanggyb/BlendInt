@@ -64,7 +64,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToggleButton::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ToggleButton::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 

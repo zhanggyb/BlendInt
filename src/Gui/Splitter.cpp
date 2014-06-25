@@ -122,7 +122,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SplitterHandle::UpdateGeometry (const WidgetUpdateRequest& request)
+	void SplitterHandle::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -269,12 +269,12 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	bool SplitterHandle::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool SplitterHandle::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void SplitterHandle::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void SplitterHandle::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 
@@ -561,7 +561,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Splitter::UpdateContainer(const WidgetUpdateRequest& request)
+	void Splitter::UpdateContainer(const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -572,13 +572,13 @@ namespace BlendInt {
 			}
 
 			default: {
-				ReportUpdateRequest(request);
+				ReportContainerUpdate(request);
 				break;
 			}
 		}
 	}
 
-	bool Splitter::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Splitter::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		if(request.source() == this) {
 
@@ -604,7 +604,7 @@ namespace BlendInt {
 		}
 	}
 	
-	void Splitter::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Splitter::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 

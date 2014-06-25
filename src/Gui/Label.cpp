@@ -67,7 +67,7 @@ namespace BlendInt {
 		m_text_length = UpdateTextPosition(size(), m_text, m_font);
 	}
 
-	void Label::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Label::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -214,12 +214,12 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool Label::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Label::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void Label::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void Label::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

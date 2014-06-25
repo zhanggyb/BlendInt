@@ -95,7 +95,7 @@ namespace BlendInt {
 
 	}
 
-	void CVImageView::UpdateGeometry (const WidgetUpdateRequest& request)
+	void CVImageView::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -238,12 +238,12 @@ namespace BlendInt {
 		GLArrayBuffer::Reset();
 	}
 
-	bool CVImageView::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool CVImageView::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void CVImageView::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void CVImageView::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

@@ -219,7 +219,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void TextEntry::UpdateGeometry (const WidgetUpdateRequest& request)
+	void TextEntry::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -576,12 +576,12 @@ namespace BlendInt {
 		}
 	}
 
-	bool TextEntry::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool TextEntry::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void TextEntry::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void TextEntry::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

@@ -214,7 +214,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Viewport3D::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Viewport3D::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 			case WidgetSize: {
@@ -281,12 +281,12 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool Viewport3D::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Viewport3D::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void Viewport3D::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void Viewport3D::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

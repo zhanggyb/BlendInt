@@ -24,17 +24,17 @@
 #ifndef _BLENDINT_GUI_CONTEXTLAYER_HPP_
 #define _BLENDINT_GUI_CONTEXTLAYER_HPP_
 
-#include <boost/smart_ptr.hpp>
-#include <Cpp/Events.hpp>
+#include <set>
+#include <deque>
 
-#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
 
-	class ContextLayerExt;
+	class Context;
 
 	/**
-	 * @brief A set stores widgets, used in ContextLayer only
+	 * @brief A set stores widgets, used in ContextLayer and updated in Context only
 	 */
 	class WidgetSet: public Object
 	{
@@ -66,15 +66,15 @@ namespace BlendInt {
 		std::deque<AbstractWidget*> m_widgets;
 	};
 
-	class ContextLayerExt: public Object
+	class ContextLayer
 	{
 	public:
 
-		ContextLayerExt ();
+		ContextLayer ();
 
-		~ContextLayerExt ();
+		~ContextLayer ();
 
-		ContextLayerExt& operator = (const ContextLayerExt& orig);
+		ContextLayer& operator = (const ContextLayer& orig);
 
 	private:
 
@@ -85,7 +85,7 @@ namespace BlendInt {
 
 		/** If the rescan the tail of hover_widgets
 		 */
-		bool m_rescan_tail;
+		bool m_hover_list_valid;
 
 		/** A set to store sub widgets in this layer */
 		RefPtr<WidgetSet> m_widget_set;

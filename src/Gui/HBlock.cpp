@@ -125,7 +125,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 	
-	void HBlock::UpdateContainer (const WidgetUpdateRequest& request)
+	void HBlock::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -140,14 +140,14 @@ namespace BlendInt {
 				}
 
 				default: {
-					ReportUpdateRequest(request);
+					ReportContainerUpdate(request);
 					break;
 				}
 			}
 		}
 	}
 	
-	void HBlock::UpdateGeometry (const WidgetUpdateRequest& request)
+	void HBlock::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 

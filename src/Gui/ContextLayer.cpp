@@ -36,6 +36,11 @@ namespace BlendInt {
 
 		if(m_widgets.size()) {
 			DBG_PRINT_MSG("Warning: %s", "the widget set in context layer is not cleared");
+
+			for(std::set<AbstractWidget*>::iterator it = m_widgets.begin(); it != m_widgets.end(); it++)
+			{
+				DBG_PRINT_MSG("Widget: %s is not deleted", (*it)->name().c_str());
+			}
 		}
 
 #endif
@@ -52,30 +57,37 @@ namespace BlendInt {
 
 		if(m_widgets.size()) {
 			DBG_PRINT_MSG("Warning: %s", "the widget deque in context layer is not cleared");
+
+			for(std::deque<AbstractWidget*>::iterator it = m_widgets.begin(); it != m_widgets.end(); it++)
+			{
+				DBG_PRINT_MSG("Widget: %s is not deleted", (*it)->name().c_str());
+			}
+
 		}
 
 #endif
 	}
 
-	ContextLayerExt::ContextLayerExt ()
-	: Object(),
-	  m_refresh(true),
-	  m_rescan_tail(false)
+	ContextLayer::ContextLayer ()
+	: m_refresh(true),
+	  m_hover_list_valid(false)
+	{
+		m_widget_set.reset(new WidgetSet);
+		m_texture_buffer.reset(new GLTexture2D);
+		m_hover_list.reset(new WidgetDeque);
+	}
+
+	ContextLayer::~ContextLayer ()
 	{
 
 	}
 
-	ContextLayerExt::~ContextLayerExt ()
-	{
-
-	}
-
-	ContextLayerExt& ContextLayerExt::operator = (const ContextLayerExt& orig)
+	ContextLayer& ContextLayer::operator = (const ContextLayer& orig)
 	{
 		m_refresh = orig.m_refresh;
 		m_widget_set = orig.m_widget_set;
 		m_texture_buffer = orig.m_texture_buffer;
-		m_rescan_tail = orig.m_rescan_tail;
+		m_hover_list_valid = orig.m_hover_list_valid;
 		m_hover_list = orig.m_hover_list;
 
 		return *this;

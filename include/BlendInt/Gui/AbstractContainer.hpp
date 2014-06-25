@@ -163,9 +163,9 @@ namespace BlendInt {
 
 		~SubWidgetProxy ();
 
-		static inline bool RequestGeometryTest (AbstractWidget* sub_widget, const WidgetUpdateRequest& request);
+		static inline bool RequestGeometryTest (AbstractWidget* sub_widget, const GeometryUpdateRequest& request);
 
-		static inline void RequestGeometryUpdate (AbstractWidget* sub_widget, const WidgetUpdateRequest& request);
+		static inline void RequestGeometryUpdate (AbstractWidget* sub_widget, const GeometryUpdateRequest& request);
 	};
 
 	class AbstractContainer: public AbstractWidget
@@ -195,11 +195,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateContainer (const WidgetUpdateRequest& request) = 0;
+		virtual void UpdateContainer (const ContainerUpdateRequest& request) = 0;
 
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
+		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
 

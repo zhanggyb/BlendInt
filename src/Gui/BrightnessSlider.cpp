@@ -120,7 +120,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void BrightnessSlider::UpdateGeometry (const WidgetUpdateRequest& request)
+	void BrightnessSlider::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -171,17 +171,17 @@ namespace BlendInt {
 		}
 	}
 
-	void BrightnessSlider::UpdateSlider (const WidgetUpdateRequest& request)
+	void BrightnessSlider::UpdateSlider (const SliderUpdateRequest& request)
 	{
 	}
 
 	bool BrightnessSlider::UpdateGeometryTest (
-	        const WidgetUpdateRequest& request)
+	        const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void BrightnessSlider::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void BrightnessSlider::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 
