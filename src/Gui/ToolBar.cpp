@@ -183,46 +183,54 @@ namespace BlendInt {
 
 	void ToolBar::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target()) {
 
-			case WidgetPosition: {
+			switch (request.type()) {
 
-				const Point* pos_p = static_cast<const Point*>(request.data());
+				case WidgetPosition: {
 
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
+					const Point* pos_p = static_cast<const Point*>(request.data());
 
-				MoveSubWidgets(x, y);
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
 
-				break;
-			}
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0);
-				tool.UpdateInnerBuffer(m_inner.get());
-
-				int x = position().x() + margin().left();
-				if (sub_widget_size()) {
-					x = sub_widgets()->front()->position().x();
+					break;
 				}
 
-				int y = position().y() + margin().bottom();
-				int w = size_p->width() - margin().left()
-								- margin().right();
-				int h = size_p->height() - margin().top()
-								- margin().bottom();
+				case WidgetSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
 
-				FillSubWidgets(x, y, w, h, m_space);
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0);
+					tool.UpdateInnerBuffer(m_inner.get());
 
-				break;
+					int x = position().x() + margin().left();
+					if (sub_widget_size()) {
+						x = sub_widgets()->front()->position().x();
+					}
+
+					int y = position().y() + margin().bottom();
+					int w = size_p->width() - margin().left()
+									- margin().right();
+					int h = size_p->height() - margin().top()
+									- margin().bottom();
+
+					FillSubWidgets(x, y, w, h, m_space);
+
+					set_size(*size_p);
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			default:
-				break;
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ToolBar::Draw (const RedrawEvent& event)

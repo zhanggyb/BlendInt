@@ -159,27 +159,35 @@ namespace BlendInt {
 
 	void TabHeader::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetPosition: {
-				const Point* pos_p = static_cast<const Point*>(request.data());
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
-				MoveSubWidgets(x, y);
-				break;
+			switch (request.type()) {
+
+				case WidgetPosition: {
+					const Point* pos_p = static_cast<const Point*>(request.data());
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+					break;
+				}
+
+				case WidgetSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0);
+					tool.UpdateInnerBuffer(m_buffer.get());
+					set_size(*size_p);
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0);
-				tool.UpdateInnerBuffer(m_buffer.get());
-				break;
-			}
-
-			default:
-				break;
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType TabHeader::Draw (const RedrawEvent& event)

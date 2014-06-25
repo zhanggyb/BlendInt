@@ -84,14 +84,20 @@ namespace BlendInt {
 					tool.Setup(*size_p, 0, RoundNone, 0);
 					m_buffer->Bind();
 					tool.SetInnerBufferData(m_buffer.get());
+
+					set_size(*size_p);
 					break;
 				}
 
 				case WidgetPosition: {
 
 					const Point* pos_p = static_cast<const Point*>(request.data());
-					MoveSubWidgets(pos_p->x() - position().x(),
-									pos_p->y() - position().y());
+
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
 
 					break;
 				}
@@ -101,6 +107,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType MenuBar::Draw (const RedrawEvent& event)

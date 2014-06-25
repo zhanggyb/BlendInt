@@ -104,8 +104,10 @@ namespace BlendInt {
 			}
 
 			Stack::UpdateGeometry(request);
-
+			return;
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	void StackPanel::InitializeStackPanel()

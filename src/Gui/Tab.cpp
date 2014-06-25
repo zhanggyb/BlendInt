@@ -142,27 +142,35 @@ namespace BlendInt {
 
 	void Tab::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetPosition: {
-				const Point* pos_p = static_cast<const Point*>(request.data());
+			switch (request.type()) {
 
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
+				case WidgetPosition: {
+					const Point* pos_p = static_cast<const Point*>(request.data());
 
-				MoveSubWidgets(x, y);
-				break;
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+					break;
+				}
+
+				case WidgetSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					FillSubWidgetsInTab(*size_p, margin());
+					set_size(*size_p);
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				FillSubWidgetsInTab(*size_p, margin());
-				break;
-			}
-
-			default:
-				break;
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Tab::Draw (const RedrawEvent& event)

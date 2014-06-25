@@ -124,33 +124,39 @@ namespace BlendInt {
 
 	void SplitterHandle::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetSize: {
+			switch (request.type()) {
 
-				const Size* size_p = static_cast<const Size*>(request.data());
+				case WidgetSize: {
 
-				std::vector<GLfloat> vertices(4, 0);
+					const Size* size_p = static_cast<const Size*>(request.data());
 
-				if (m_orientation == Horizontal) {
-					vertices[2] = size_p->width();
+					std::vector<GLfloat> vertices(4, 0);
 
-				} else {
-					vertices[3] = size_p->height();
+					if (m_orientation == Horizontal) {
+						vertices[2] = size_p->width();
+					} else {
+						vertices[3] = size_p->height();
+					}
+
+					m_buffer->Bind();
+					m_buffer->SetData(sizeof(GLfloat) * 4, &vertices[0],
+									GL_STATIC_DRAW);
+					m_buffer->Reset();
+
+					set_size(*size_p);
+					Refresh();
+					break;
 				}
 
-				m_buffer->Bind();
-				m_buffer->SetData(sizeof(GLfloat) * 4, &vertices[0],
-								GL_STATIC_DRAW);
-				m_buffer->Reset();
-
-				break;
+				default:
+					break;
 			}
 
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType SplitterHandle::Draw (const RedrawEvent& event)
@@ -606,31 +612,40 @@ namespace BlendInt {
 	
 	void Splitter::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetSize: {
+			switch (request.type()) {
 
-				const Size* size_p = static_cast<const Size*>(request.data());
-				FillSubWidgetsInSplitter(position(), *size_p, margin(), m_orientation);
-				break;
+				case WidgetSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+					FillSubWidgetsInSplitter(position(), *size_p, margin(), m_orientation);
+
+					set_size(*size_p);
+					break;
+				}
+
+				case WidgetPosition: {
+
+					const Point* pos_p = static_cast<const Point*>(request.data());
+
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+
+					break;
+				}
+
+				default:
+					break;
+
 			}
-
-			case WidgetPosition: {
-
-				const Point* pos_p = static_cast<const Point*>(request.data());
-
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
-
-				MoveSubWidgets(x, y);
-
-				break;
-			}
-
-			default:
-				break;
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Splitter::Draw (const RedrawEvent& event)

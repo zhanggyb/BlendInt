@@ -210,33 +210,41 @@ namespace BlendInt {
 
 	void Stack::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetPosition: {
-				const Point* pos_p = static_cast<const Point*>(request.data());
+			switch (request.type()) {
 
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
+				case WidgetPosition: {
+					const Point* pos_p = static_cast<const Point*>(request.data());
 
-				MoveSubWidgets(x, y);
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
 
-				break;
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+
+					break;
+				}
+
+				case WidgetSize: {
+					const Size* new_size = static_cast<const Size*>(request.data());
+
+					int w = new_size->width() - margin().hsum();
+					int h = new_size->height() - margin().vsum();
+
+					set_size(*new_size);
+					ResizeSubWidgets(w, h);
+
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetSize: {
-				const Size* new_size = static_cast<const Size*>(request.data());
-
-				int w = new_size->width() - margin().hsum();
-				int h = new_size->height() - margin().vsum();
-				ResizeSubWidgets(w, h);
-
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Stack::Draw (const RedrawEvent& event)

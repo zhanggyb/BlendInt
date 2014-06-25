@@ -230,6 +230,7 @@ namespace BlendInt {
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
+					set_size(*size_p);
 					break;
 				}
 
@@ -241,6 +242,7 @@ namespace BlendInt {
 						int x = pos_p->x() - position().x();
 						int y = pos_p->y() - position().y();
 
+						set_position(*pos_p);
 						MoveSubWidget(x, y);
 					}
 

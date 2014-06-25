@@ -182,6 +182,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType VBlock::Draw (const RedrawEvent& event)

@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
+	/*
 	Button* btn1 = Manage(new Button);
 	DBG_SET_NAME(btn1, "Button 1");
 	btn1->Resize(100, 50);
@@ -93,10 +94,30 @@ int main(int argc, char* argv[])
 	f2->Setup(btn2);
 	f1->Setup(f2);
 
+	ColorSelector* cs = Manage(new ColorSelector);
+	cs->SetPosition(200, 200);
+
+	context->Add(cs);
+
 	context->Add(btn1);
 	context->Add(f1);
 
 	f1->Resize(200, 400);
+	*/
+
+	Button* btn = Manage(new Button);
+	DBG_SET_NAME(btn, "Button");
+	btn->Resize(500, 400);
+
+	ScrollArea* sa = Manage(new ScrollArea);
+	DBG_SET_NAME(sa, "ScrollArea");
+	sa->SetPosition(100, 100);
+
+	sa->SetViewport(btn);
+
+	sa->Resize(800, 600);
+
+	context->Add(sa);
 
 	RunLoop(win);
 

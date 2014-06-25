@@ -84,7 +84,10 @@ namespace BlendInt {
 			}
 
 			Frame::UpdateGeometry(request);
+			return;
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType FileSelector::Draw (const RedrawEvent& event)

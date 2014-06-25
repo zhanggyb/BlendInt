@@ -135,47 +135,48 @@ namespace BlendInt {
 
 	void ScrollArea::UpdateContainer(const ContainerUpdateRequest& request)
 	{
-		switch(request.type()) {
+		// TODO: set margin
 
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
-
+		ReportContainerUpdate(request);
 	}
 
 	void ScrollArea::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
+		if(request.target() == this) {
 
-		switch (request.type()) {
+			switch (request.type()) {
 
-			case WidgetPosition: {
-				const Point* pos_p = static_cast<const Point*>(request.data());
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
-				MoveSubWidgets(x, y);
-				break;
+				case WidgetPosition: {
+					const Point* pos_p = static_cast<const Point*>(request.data());
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+					break;
+				}
+
+				case WidgetSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0);
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+
+					AdjustGeometries(position(), *size_p, margin());
+					set_size(*size_p);
+
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetSize: {
-
-				const Size* size_p = static_cast<const Size*>(request.data());
-
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0);
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-
-				AdjustGeometries(position(), *size_p, margin());
-
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ScrollArea::Draw (const RedrawEvent& event)

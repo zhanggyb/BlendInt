@@ -97,27 +97,33 @@ namespace BlendInt {
 
 	void CVImageView::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetSize: {
+			switch (request.type()) {
 
-				const Size* size_p = static_cast<const Size*>(request.data());
+				case WidgetSize: {
 
-				m_background_buffer->Bind();
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0);
-				tool.SetInnerBufferData(m_background_buffer.get());
-				m_background_buffer->Reset();
+					const Size* size_p = static_cast<const Size*>(request.data());
 
-				AdjustImageArea(*size_p);
+					m_background_buffer->Bind();
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0);
+					tool.SetInnerBufferData(m_background_buffer.get());
+					m_background_buffer->Reset();
 
-				break;
+					set_size(*size_p);
+					AdjustImageArea(*size_p);
+
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType CVImageView::Draw (const RedrawEvent& event)

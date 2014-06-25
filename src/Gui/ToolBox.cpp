@@ -193,6 +193,7 @@ namespace BlendInt {
 					int x = pos_p->x() - position().x();
 					int y = pos_p->y() - position().y();
 
+					set_position(*pos_p);
 					MoveSubWidgets(x, y);
 
 					break;
@@ -211,6 +212,8 @@ namespace BlendInt {
 					int h = size_p->height() - margin().vsum();
 
 					FillSubWidgets(x, y, w, h, m_space);
+
+					set_size(*size_p);
 					break;
 				}
 
@@ -235,6 +238,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 	
 	ResponseType ToolBox::Draw (const RedrawEvent& event)
