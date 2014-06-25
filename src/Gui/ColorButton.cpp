@@ -72,6 +72,8 @@ namespace BlendInt {
 				tool.SetInnerBufferData(m_inner_buffer.get());
 				m_outer_buffer->Bind();
 				tool.SetOuterBufferData(m_outer_buffer.get());
+
+				set_size(*size_p);
 				Refresh();
 				break;
 			}
@@ -86,6 +88,8 @@ namespace BlendInt {
 				tool.SetInnerBufferData(m_inner_buffer.get());
 				m_outer_buffer->Bind();
 				tool.SetOuterBufferData(m_outer_buffer.get());
+
+				set_round_corner_type(*type_p);
 				Refresh();
 				break;
 			}
@@ -101,6 +105,8 @@ namespace BlendInt {
 				tool.SetInnerBufferData(m_inner_buffer.get());
 				m_outer_buffer->Bind();
 				tool.SetOuterBufferData(m_outer_buffer.get());
+
+				set_round_corner_radius(*radius_p);
 				Refresh();
 				break;
 			}
@@ -108,6 +114,8 @@ namespace BlendInt {
 			default:
 				break;
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ColorButton::Draw (const RedrawEvent& event)

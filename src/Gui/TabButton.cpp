@@ -67,30 +67,38 @@ namespace BlendInt {
 
 	void TabButton::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target() == this) {
+			switch (request.type()) {
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				std::vector<GLfloat> inner;
-				std::vector<GLfloat> outer;
-				GenerateTabButtonVertices(*size_p, DefaultBorderWidth(), inner, outer);
+				case WidgetSize: {
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					std::vector<GLfloat> inner;
+					std::vector<GLfloat> outer;
+					GenerateTabButtonVertices(*size_p, DefaultBorderWidth(),
+					        inner, outer);
 
-				m_inner_buffer->Bind();
-				m_inner_buffer->SetData(sizeof(GLfloat) * inner.size(), &inner[0]);
+					m_inner_buffer->Bind();
+					m_inner_buffer->SetData(sizeof(GLfloat) * inner.size(),
+					        &inner[0]);
 
-				m_outer_buffer->Bind();
-				m_outer_buffer->SetData(sizeof(GLfloat) * outer.size(), &outer[0]);
+					m_outer_buffer->Bind();
+					m_outer_buffer->SetData(sizeof(GLfloat) * outer.size(),
+					        &outer[0]);
 
-				GLArrayBuffer::Reset();
+					GLArrayBuffer::Reset();
 
-				Refresh();
-				break;
+					set_size(*size_p);
+					Refresh();
+					break;
+				}
+
+				default:
+					break;
 			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType TabButton::Draw (const RedrawEvent& event)

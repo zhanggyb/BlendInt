@@ -190,7 +190,7 @@ namespace BlendInt {
 
 	void VBox::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		if(request.source() == this || request.source() == container()) {
+		if(request.target() == this) {
 
 			switch (request.type()) {
 
@@ -216,6 +216,7 @@ namespace BlendInt {
 
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType VBox::Draw (const RedrawEvent& event)

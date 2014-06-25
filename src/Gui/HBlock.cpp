@@ -177,6 +177,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 	
 	ResponseType HBlock::Draw (const RedrawEvent& event)

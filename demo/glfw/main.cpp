@@ -68,6 +68,7 @@ int main(int argc, char* argv[])
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1280, 800);
 
 	GLFWContext* context = Manage (new GLFWContext);
+	DBG_SET_NAME(context, "Context");
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
@@ -94,6 +95,8 @@ int main(int argc, char* argv[])
 
 	context->Add(btn1);
 	context->Add(f1);
+
+	f1->Resize(200, 400);
 
 	RunLoop(win);
 

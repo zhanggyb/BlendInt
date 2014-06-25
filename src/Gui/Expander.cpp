@@ -80,37 +80,47 @@ namespace BlendInt {
 
 	void ExpandButton::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target()) {
+			switch (request.type()) {
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				UpdateTextPosition(*size_p, round_corner_type(),
-								round_corner_radius(), text());
-				Refresh();
-				break;
+				case WidgetSize: {
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					UpdateTextPosition(*size_p, round_corner_type(),
+					        round_corner_radius(), text());
+
+					set_size(*size_p);
+					Refresh();
+					break;
+				}
+
+				case WidgetRoundCornerType: {
+					const int* type_p = static_cast<const int*>(request.data());
+					UpdateTextPosition(size(), *type_p, round_corner_radius(),
+					        text());
+
+					set_round_corner_type(*type_p);
+					Refresh();
+					break;
+				}
+
+				case WidgetRoundCornerRadius: {
+					const float* radius_p =
+					        static_cast<const float*>(request.data());
+					UpdateTextPosition(size(), round_corner_type(), *radius_p,
+					        text());
+
+					set_round_corner_radius(*radius_p);
+					Refresh();
+					break;
+				}
+
+				default:
+					break;
 			}
-
-			case WidgetRoundCornerType: {
-				const int* type_p = static_cast<const int*>(request.data());
-				UpdateTextPosition(size(), *type_p, round_corner_radius(),
-								text());
-				Refresh();
-				break;
-			}
-
-			case WidgetRoundCornerRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				UpdateTextPosition(size(), round_corner_type(), *radius_p,
-								text());
-				Refresh();
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ExpandButton::Draw (const RedrawEvent& event)

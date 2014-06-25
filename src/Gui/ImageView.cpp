@@ -135,6 +135,8 @@ namespace BlendInt {
 
 					AdjustImageArea(*size_p);
 
+					set_size(*size_p);
+					Refresh();
 					break;
 				}
 
@@ -143,6 +145,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ImageView::Draw (const RedrawEvent& event)

@@ -251,6 +251,8 @@ namespace BlendInt {
 					break;
 			}
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ScrollView::Draw (const RedrawEvent& event)

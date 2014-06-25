@@ -121,7 +121,7 @@ namespace BlendInt {
 		if(ContainerProxy::RequestGeometryTest(m_container, request) && UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
 			set_size(width, height);
-			ContainerProxy::RequestGeometryUpdate(m_container, request);
+			//ContainerProxy::RequestGeometryUpdate(m_container, request);
 
 			broadcast = true;
 		}
@@ -141,7 +141,7 @@ namespace BlendInt {
 		if(ContainerProxy::RequestGeometryTest(m_container, request) && UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
 			set_size(size);
-			ContainerProxy::RequestGeometryUpdate(m_container, request);
+			//ContainerProxy::RequestGeometryUpdate(m_container, request);
 
 			broadcast = true;
 		}
@@ -162,7 +162,7 @@ namespace BlendInt {
 		if(ContainerProxy::RequestGeometryTest(m_container, request) && UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
 			set_position(x, y);
-			ContainerProxy::RequestGeometryUpdate(m_container, request);
+			//ContainerProxy::RequestGeometryUpdate(m_container, request);
 			broadcast = true;
 		}
 
@@ -181,7 +181,7 @@ namespace BlendInt {
 		if(ContainerProxy::RequestGeometryTest(m_container, request) && UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
 			set_position(pos);
-			ContainerProxy::RequestGeometryUpdate(m_container, request);
+			//ContainerProxy::RequestGeometryUpdate(m_container, request);
 			broadcast = true;
 		}
 

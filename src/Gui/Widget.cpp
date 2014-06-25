@@ -70,6 +70,7 @@ namespace BlendInt {
 	void Widget::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		// do nothing in this base class
+		ReportGeometryUpdate(request);
 	}
 
 	void Widget::BroadcastUpdate(const GeometryUpdateRequest& request)

@@ -147,7 +147,7 @@ namespace BlendInt {
 	{
 		if(request.source() == this) {
 
-			return AbstractSingleContainer::UpdateGeometryTest(request);
+			return true;
 
 		} else if (request.source() == container()) {
 
@@ -155,16 +155,7 @@ namespace BlendInt {
 
 		} else {	// called by sub widget
 
-			switch(request.type()) {
-				case WidgetSize:
-					return false;
-
-				case WidgetPosition:
-					return false;
-
-				default:
-					return false;
-			}
+			return false;
 		}
 	}
 
@@ -202,6 +193,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Frame::CursorEnterEvent (bool entered)

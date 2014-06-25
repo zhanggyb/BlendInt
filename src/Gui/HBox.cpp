@@ -190,7 +190,7 @@ namespace BlendInt {
 
 	void HBox::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		if(request.source() == this || request.source() == container()) {
+		if(request.target() == this) {
 
 			switch (request.type()) {
 
@@ -214,6 +214,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType HBox::Draw (const RedrawEvent& event)

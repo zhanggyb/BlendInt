@@ -240,6 +240,8 @@ namespace BlendInt
 
 	void Context::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
+		DBG_PRINT_MSG("source widget: %s, target widget: %s", request.source()->name().c_str(), request.target()->name().c_str());
+
 		if(request.source () == this) {
 
 			switch (request.type()) {
@@ -307,6 +309,8 @@ namespace BlendInt
 		} else {
 
 			DBG_PRINT_MSG("%s", "get widget geometry change update");
+
+			DBG_PRINT_MSG("source widget: %s, target widget: %s", request.source()->name().c_str(), request.target()->name().c_str());
 
 		}
 	}

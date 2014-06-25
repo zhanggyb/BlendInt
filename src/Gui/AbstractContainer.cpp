@@ -148,6 +148,7 @@ namespace BlendInt {
 		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
 			SubWidgetProxy::RequestGeometryUpdate(sub, request);
 			sub->set_size(width, height);
+			//ReportGeometryUpdate(request);
 		}
 	}
 	
@@ -163,6 +164,7 @@ namespace BlendInt {
 		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
 			SubWidgetProxy::RequestGeometryUpdate(sub, request);
 			sub->set_size(size);
+			//ReportGeometryUpdate(request);
 		}
 	}
 	
@@ -182,6 +184,7 @@ namespace BlendInt {
 		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
 			SubWidgetProxy::RequestGeometryUpdate(sub, request);
 			sub->set_position(x, y);
+			//ReportGeometryUpdate(request);
 		}
 	}
 	
@@ -197,6 +200,7 @@ namespace BlendInt {
 		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
 			SubWidgetProxy::RequestGeometryUpdate(sub, request);
 			sub->set_position(pos);
+			//ReportGeometryUpdate(request);
 		}
 	}
 	
