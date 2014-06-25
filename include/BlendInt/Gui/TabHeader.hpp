@@ -80,8 +80,6 @@ namespace BlendInt {
 
 	private:
 
-		void OnButtonIndexClicked (int index);
-
 		void OnButtonIndexToggled (int index, bool toggled);
 
 		int GetLastPosition () const;

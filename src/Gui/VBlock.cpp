@@ -63,7 +63,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandX()) {
 				expand = true;
@@ -78,7 +78,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandY()) {
 				expand = true;
@@ -105,7 +105,7 @@ namespace BlendInt {
 			int max_width = 0;
 			int max_height = 0;
 
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -240,7 +240,7 @@ namespace BlendInt {
 		AbstractWidget* widget = 0;
 
 		y = y + h;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			widget = *it;
 

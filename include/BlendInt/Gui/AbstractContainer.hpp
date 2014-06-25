@@ -35,7 +35,7 @@
 
 namespace BlendInt {
 
-	typedef std::deque<AbstractWidget*> WidgetDeque;
+	typedef std::deque<AbstractWidget*> AbstractWidgetDeque;
 
 	class Interface;
 	class Context;
@@ -95,7 +95,7 @@ namespace BlendInt {
 	{
 	public:
 
-		DequeIterator (WidgetDeque* deque)
+		DequeIterator (AbstractWidgetDeque* deque)
 		: AbstractContainerIterator(), m_deque_ptr(deque)
 		{
 			m_it = deque->begin();
@@ -143,8 +143,8 @@ namespace BlendInt {
 
 	private:
 
-		WidgetDeque* m_deque_ptr;
-		WidgetDeque::iterator m_it;
+		AbstractWidgetDeque* m_deque_ptr;
+		AbstractWidgetDeque::iterator m_it;
 	};
 
 	typedef RefPtr<AbstractContainerIterator> IteratorPtr;

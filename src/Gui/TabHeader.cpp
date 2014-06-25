@@ -66,8 +66,10 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
 
-		events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
+		events()->connect(m_group.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
+		//events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
 		events()->connect(m_group.button_index_toggled(), this, &TabHeader::OnButtonIndexToggled);
+		//events()->connect(m_group.button_index_toggled(), &m_button_index_toggled, &Cpp::Event<int, bool>::fire);
 	}
 
 	TabHeader::~TabHeader()
@@ -119,7 +121,7 @@ namespace BlendInt {
 			AbstractWidget* widget = 0;
 			Size tmp_size;
 
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -240,11 +242,6 @@ namespace BlendInt {
 	ResponseType TabHeader::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
-	}
-
-	void TabHeader::OnButtonIndexClicked(int index)
-	{
-		m_button_index_clicked.fire(index);
 	}
 
 	void TabHeader::OnButtonIndexToggled(int index, bool toggled)

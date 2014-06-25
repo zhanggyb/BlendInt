@@ -26,43 +26,60 @@
 namespace BlendInt {
 
 	WidgetSet::WidgetSet ()
+	: Object()
 	{
-		m_events.reset(new Cpp::ConnectionScope);
 	}
 
 	WidgetSet::~WidgetSet ()
 	{
+#ifdef DEBUG
+
+		if(m_widgets.size()) {
+			DBG_PRINT_MSG("Warning: %s", "the widget set in context layer is not cleared");
+		}
+
+#endif
 	}
 
-	void WidgetSet::Insert (AbstractWidget* widget)
+	WidgetDeque::WidgetDeque ()
+	: Object()
 	{
-		if(widget) {
-			m_widgets.insert(widget);
-			m_events->connect(widget->destroyed(), &m_widget_destroyed, &Cpp::Event<AbstractWidget*>::fire);
-		}
 	}
 
-	void WidgetSet::Remove (AbstractWidget* widget)
+	WidgetDeque::~WidgetDeque ()
 	{
-		if(m_widgets.count(widget)) {
-			widget->destroyed().disconnectOne(&m_widget_destroyed, &Cpp::Event<AbstractWidget*>::fire);
-			m_widgets.erase(widget);
+#ifdef DEBUG
+
+		if(m_widgets.size()) {
+			DBG_PRINT_MSG("Warning: %s", "the widget deque in context layer is not cleared");
 		}
+
+#endif
 	}
 
 	ContextLayerExt::ContextLayerExt ()
-	: refresh(true)
+	: Object(),
+	  m_refresh(true),
+	  m_rescan_tail(false)
 	{
 
 	}
 
 	ContextLayerExt::~ContextLayerExt ()
 	{
+
 	}
 
 	ContextLayerExt& ContextLayerExt::operator = (const ContextLayerExt& orig)
 	{
+		m_refresh = orig.m_refresh;
+		m_widget_set = orig.m_widget_set;
+		m_texture_buffer = orig.m_texture_buffer;
+		m_rescan_tail = orig.m_rescan_tail;
+		m_hover_list = orig.m_hover_list;
+
 		return *this;
 	}
 
 }
+

@@ -97,7 +97,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -120,7 +120,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandX()) {
 				expand = true;
@@ -135,7 +135,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandY()) {
 				expand = true;
@@ -286,7 +286,7 @@ namespace BlendInt {
 
 		AbstractWidget* widget = 0;
 		Size tmp_size;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			widget = *it;
 			if (widget->visiable()) {
@@ -339,7 +339,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_widths->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
 
-		WidgetDeque::iterator widget_it = sub_widgets()->begin();
+		AbstractWidgetDeque::iterator widget_it = sub_widgets()->begin();
 		AbstractWidget* widget = 0;
 
 		while (widget_it != sub_widgets()->end()) {
@@ -376,7 +376,7 @@ namespace BlendInt {
 		int widgets_width = width - (expandable_preferred_widths->size() + unexpandable_preferred_widths->size() - 1) * space;
 
 		if(widgets_width <= 0) {
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				(*it)->Resize(0, (*it)->size().height());
 			}
@@ -386,7 +386,7 @@ namespace BlendInt {
 		int reference_width;
 		std::deque<int>::const_iterator exp_it = expandable_preferred_widths->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
-		WidgetDeque::iterator it = sub_widgets()->begin();
+		AbstractWidgetDeque::iterator it = sub_widgets()->begin();
 		AbstractWidget* widget = 0;
 
 		if(widgets_width <= unexpandable_prefer_sum) {
@@ -463,7 +463,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_widths->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_widths->begin();
 
-		WidgetDeque::iterator it = sub_widgets()->begin();
+		AbstractWidgetDeque::iterator it = sub_widgets()->begin();
 
 		AbstractWidget* widget = 0;
 		while (it != sub_widgets()->end()) {
@@ -496,7 +496,7 @@ namespace BlendInt {
 	{
 		std::deque<int>::const_iterator unexp_it =
 		        unexpandable_preferred_heights->begin();
-		WidgetDeque::iterator it;
+		AbstractWidgetDeque::iterator it;
 		AbstractWidget* widget = 0;
 		for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
 			widget = *it;

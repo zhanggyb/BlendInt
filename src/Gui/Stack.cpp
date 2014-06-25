@@ -105,7 +105,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandX()) {
 				ret = true;
@@ -120,7 +120,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandY()) {
 				ret = true;
@@ -141,7 +141,7 @@ namespace BlendInt {
 			prefer.set_height(0);
 
 			Size tmp;
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				tmp = (*it)->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));

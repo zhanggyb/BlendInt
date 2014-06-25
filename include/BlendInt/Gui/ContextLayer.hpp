@@ -31,6 +31,8 @@
 
 namespace BlendInt {
 
+	class ContextLayerExt;
+
 	/**
 	 * @brief A set stores widgets, used in ContextLayer only
 	 */
@@ -42,25 +44,29 @@ namespace BlendInt {
 
 		virtual ~WidgetSet ();
 
-		void Insert (AbstractWidget* widget);
+	private:
 
-		void Remove (AbstractWidget* widget);
+		friend class Context;
 
-		Cpp::EventRef<AbstractWidget*> widget_destroyed ()
-		{
-			return m_widget_destroyed;
-		}
+		std::set<AbstractWidget*> m_widgets;
+	};
+
+	class WidgetDeque: public Object
+	{
+	public:
+
+		WidgetDeque ();
+
+		virtual ~WidgetDeque ();
 
 	private:
 
-		std::set<AbstractWidget*> m_widgets;
+		friend class Context;
 
-		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
-
-		Cpp::Event<AbstractWidget*> m_widget_destroyed;
+		std::deque<AbstractWidget*> m_widgets;
 	};
 
-	class ContextLayerExt
+	class ContextLayerExt: public Object
 	{
 	public:
 
@@ -72,14 +78,27 @@ namespace BlendInt {
 
 	private:
 
+		friend class Context;
+
 		/** If refresh this layer */
-		bool refresh;
+		bool m_refresh;
+
+		/** If the rescan the tail of hover_widgets
+		 */
+		bool m_rescan_tail;
 
 		/** A set to store sub widgets in this layer */
-		RefPtr<WidgetSet> widgets;
+		RefPtr<WidgetSet> m_widget_set;
 
 		/** The OpenGL Texture as a buffer for display */
-		RefPtr<GLTexture2D> tex_buf_ptr;
+		RefPtr<GLTexture2D> m_texture_buffer;
+
+		/**
+		 * @brief A widget list under current cursor position.
+		 *
+		 * Used for AbstractWidget::CursorEnterEvent
+		 */
+		RefPtr<WidgetDeque> m_hover_list;
 	};
 
 }

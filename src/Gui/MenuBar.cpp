@@ -177,7 +177,7 @@ namespace BlendInt {
 		int h = size().height() - margin().top() - margin().bottom();
 		h = std::max(h, button->size().height());
 		int w = -m_space;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			w += (*it)->size().width() + m_space;
 		}
@@ -206,7 +206,7 @@ namespace BlendInt {
 		int h = size().height() - margin().top() - margin().bottom();
 		h = std::max(h, button->size().height());
 		int w = -m_space;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			w += (*it)->size().width() + m_space;
 		}
@@ -233,7 +233,7 @@ namespace BlendInt {
 			int h = size().height() - margin().top() - margin().bottom();
 			h = std::max(h, button->size().height());
 			int w = -m_space;
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				w += (*it)->size().width() + m_space;
 			}
@@ -261,7 +261,7 @@ namespace BlendInt {
 			int h = size().height() - margin().top() - margin().bottom();
 			h = std::max(h, button->size().height());
 			int w = -m_space;
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				w += (*it)->size().width() + m_space;
 			}
@@ -316,7 +316,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -377,7 +377,7 @@ namespace BlendInt {
 	{
 		MenuButton* original_active = m_active_button;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			MenuButton* menubutton = dynamic_cast<MenuButton*>(*it);
 			if(menubutton) {
@@ -469,7 +469,7 @@ namespace BlendInt {
 		if(sub_widgets()->size()) {
 			pos -= m_space;
 
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				pos += m_space;
 				pos = pos + (*it)->size().width();

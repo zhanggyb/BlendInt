@@ -128,7 +128,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -319,7 +319,7 @@ namespace BlendInt {
 			int right = position().x() + size().width() - margin().right();
 
 			int xmax = xmin - m_space;
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				xmax += (*it)->size().width() + m_space;
 			}
@@ -332,7 +332,7 @@ namespace BlendInt {
 
 					if(xmax > right) {
 						int x = m_last_x;
-						for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+						for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 						{
 							SetSubWidgetPosition(*it, x + event.position().x() - m_start_x, (*it)->position().y());
 							x += (*it)->size().width() + m_space;
@@ -343,7 +343,7 @@ namespace BlendInt {
 
 					if(xmin < left) {
 						int x = m_last_x;
-						for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+						for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 						{
 							SetSubWidgetPosition(*it, x + event.position().x() - m_start_x, (*it)->position().y());
 							x += (*it)->size().width() + m_space;
@@ -357,7 +357,7 @@ namespace BlendInt {
 				if(direction < 0) { // left
 					if(xmin > left) {
 						int x = m_last_x;
-						for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+						for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 						{
 							SetSubWidgetPosition(*it, x + event.position().x() - m_start_x, (*it)->position().y());
 							x += (*it)->size().width() + m_space;
@@ -366,7 +366,7 @@ namespace BlendInt {
 				} else if (direction > 0) {	// right
 					if(xmax < right) {
 						int x = m_last_x;
-						for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+						for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 						{
 							SetSubWidgetPosition(*it, x + event.position().x() - m_start_x, (*it)->position().y());
 							x += (*it)->size().width() + m_space;
@@ -402,7 +402,7 @@ namespace BlendInt {
 
 		x += margin.left();
 		y += margin.bottom();
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			SetSubWidgetPosition(*it, x, y);
 			ResizeSubWidget(*it, (*it)->size().width(), h);
@@ -425,7 +425,7 @@ namespace BlendInt {
 					int height, int space)
 	{
 		AbstractWidget* widget = 0;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			widget = *it;
 			SetSubWidgetPosition(widget, x, y);
