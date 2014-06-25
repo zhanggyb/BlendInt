@@ -181,6 +181,7 @@ namespace BlendInt {
 					if (sub_widget()) {
 						const Point* pos_p =
 										static_cast<const Point*>(request.data());
+						set_position(*pos_p);
 						SetSubWidgetPosition(sub_widget(),
 										pos_p->x() + margin().left(),
 										pos_p->y() + margin().bottom());

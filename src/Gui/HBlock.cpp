@@ -158,6 +158,9 @@ namespace BlendInt {
 
 					int x = pos_p->x() - position().x();
 					int y = pos_p->y() - position().y();
+
+					set_position(*pos_p);
+
 					MoveSubWidgets(x, y);
 
 					break;
@@ -166,6 +169,8 @@ namespace BlendInt {
 				case WidgetSize: {
 
 					const Size* size_p = static_cast<const Size*>(request.data());
+
+					set_size(*size_p);
 					FillInHBlock(position(), *size_p, margin());
 
 					break;

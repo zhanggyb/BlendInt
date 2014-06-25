@@ -80,7 +80,7 @@ namespace BlendInt {
 
 	void ExpandButton::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		if (request.target()) {
+		if (request.target() == this) {
 			switch (request.type()) {
 
 				case WidgetSize: {
@@ -320,27 +320,25 @@ namespace BlendInt {
 
 	void Expander::UpdateContainer(const ContainerUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target() == this) {
+			switch (request.type()) {
 
+				case ContainerMargin: {
 
-			case ContainerMargin: {
+					const Margin* margin_p =
+					        static_cast<const Margin*>(request.data());
+					set_margin(*margin_p);
+					FillInExpander(position(), size(), *margin_p);
 
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
-				set_margin(*margin_p);
-				FillInExpander(position(), size(), *margin_p);
+					break;
+				}
 
-				break;
+				default:
+					break;
 			}
-
-			case ContainerRefresh: {
-				Refresh();
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportContainerUpdate(request);
 	}
 
 	bool Expander::UpdateGeometryTest (const GeometryUpdateRequest& request)
@@ -371,35 +369,44 @@ namespace BlendInt {
 
 	void Expander::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetSize: {
-				const Size* size_p =
-								static_cast<const Size*>(request.data());
-				FillInExpander(position(), *size_p, margin());
+			switch (request.type()) {
 
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0);
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				break;
+				case WidgetSize: {
+					const Size* size_p =
+									static_cast<const Size*>(request.data());
+					FillInExpander(position(), *size_p, margin());
+
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0);
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+
+					set_size(*size_p);
+					Refresh();
+					break;
+				}
+
+				case WidgetPosition: {
+					const Point* pos_p =
+									static_cast<const Point*>(request.data());
+
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetPosition: {
-				const Point* pos_p =
-								static_cast<const Point*>(request.data());
-
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
-
-				MoveSubWidgets(x, y);
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Expander::Draw (const RedrawEvent& event)

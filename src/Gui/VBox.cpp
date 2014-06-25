@@ -198,14 +198,20 @@ namespace BlendInt {
 					const Point* new_pos = static_cast<const Point*>(request.data());
 					int x = new_pos->x() - position().x();
 					int y = new_pos->y() - position().y();
+
+					set_position(*new_pos);
 					MoveSubWidgets(x, y);
+
 					break;
 				}
 
 				case WidgetSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
+
+					set_size(*size_p);
 					FillSubWidgetsInVBox(position(), *size_p, margin(), m_alignment,
 									m_space);
+
 					break;
 				}
 
