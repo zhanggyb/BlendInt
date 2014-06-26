@@ -99,8 +99,8 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) (position().x() + size().width() / 2),
-		        (float) (position().y() + size().height() / 2), (float) z());
+		glm::vec3 pos((float) (position().x() + size().width() / 2.f),
+		        (float) (position().y() + size().height() / 2.f), (float) z());
 
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
@@ -122,8 +122,7 @@ namespace BlendInt {
 
 		glDisableVertexAttribArray(1);
 
-		Color color = Theme::instance->regular().outline;
-		program->SetVertexAttrib4fv("Color", color.data());
+		program->SetVertexAttrib4fv("Color", Theme::instance->regular().outline.data());
 		program->SetUniform1i("AA", 1);
 		m_outline->Bind();
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);

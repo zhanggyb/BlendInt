@@ -96,6 +96,11 @@ int main(int argc, char* argv[])
 	ColorSelector* cs = Manage(new ColorSelector);
 	cs->SetPosition(600, 450);
 
+	Clock* clock = Manage(new Clock);
+	//clock->SetPosition(100, 400);
+
+	context->Add(clock);
+
 	context->Add(cs);
 
 	context->Add(btn1);

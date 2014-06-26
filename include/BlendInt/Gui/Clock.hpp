@@ -77,11 +77,20 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		void GenerateClockVertices (int radius, float border,
+		        std::vector<GLfloat>& inner_vertices,
+		        std::vector<GLfloat>& outer_vertices);
+
 	private:
 
 		void UpdateClockHands();
 
-		void Init ();
+		void InitializeClock ();
+
+		GLuint m_vao[2];
+
+		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> m_outer;
 
 		int m_angle;
 
