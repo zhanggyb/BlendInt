@@ -217,6 +217,29 @@ namespace BlendInt {
 
 	}
 
+	bool ScrollView::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+
+			switch (request.type()) {
+
+				case WidgetPosition:
+					return true;
+
+				case WidgetSize:
+					return true;
+
+				default:
+					return false;
+			}
+
+		}
+	}
+
 	void ScrollView::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if (request.target() == this) {

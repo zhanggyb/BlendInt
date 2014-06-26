@@ -257,6 +257,17 @@ namespace BlendInt {
 		m_button_index_toggled.fire(index, toggled);
 	}
 
+	bool TabHeader::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+			return false;
+		}
+	}
+
 	int TabHeader::GetLastPosition() const
 	{
 		int x = position().x() + margin().left();

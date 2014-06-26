@@ -54,6 +54,8 @@ namespace BlendInt {
 
 		virtual void UpdateContainer (const ContainerUpdateRequest& request);
 
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
+
 		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);

@@ -48,6 +48,7 @@ namespace BlendInt {
 	: Stack(),
 	  m_vao(0)
 	{
+		set_drop_shadow(true);
 		InitializeStackPanel();
 	}
 	

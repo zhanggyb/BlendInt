@@ -51,7 +51,7 @@ namespace BlendInt {
 	class AbstractWidget;
 	class AbstractContainer;
 
-	enum WidgetGeometryType {
+	enum GeometryRequestType {
 		WidgetPosition,
 		WidgetSize,
 		WidgetRoundCornerType,
@@ -528,6 +528,13 @@ namespace BlendInt {
 		void CheckSubWidgetRemovedInContainer (AbstractWidget* sub_widget);
 
 		/**
+		 * @brief Query the geometry update in container
+		 *
+		 * If no container, return true
+		 */
+		bool QueryGeometryUpdateTest (const GeometryUpdateRequest& request);
+
+		/**
 		 * @brief Hand on the update request to the container
 		 */
 		void ReportContainerUpdate (const ContainerUpdateRequest& request);
@@ -606,6 +613,16 @@ namespace BlendInt {
 			} else {
 				CLRBIT(m_flags, WidgetFlagDropShadow);
 			}
+		}
+
+		void set_layer (int z)
+		{
+			m_z = z;
+		}
+
+		void set_z (int z)
+		{
+			m_z = z;
 		}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}

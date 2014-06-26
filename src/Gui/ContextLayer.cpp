@@ -74,7 +74,7 @@ namespace BlendInt {
 	{
 		m_widget_set.reset(new WidgetSet);
 		m_texture_buffer.reset(new GLTexture2D);
-		m_hover_list.reset(new WidgetDeque);
+		m_hover_cache.reset(new WidgetDeque);
 	}
 
 	ContextLayer::~ContextLayer ()
@@ -88,7 +88,7 @@ namespace BlendInt {
 		m_widget_set = orig.m_widget_set;
 		m_texture_buffer = orig.m_texture_buffer;
 		//m_hover_list_valid = orig.m_hover_list_valid;
-		m_hover_list = orig.m_hover_list;
+		m_hover_cache = orig.m_hover_cache;
 
 		return *this;
 	}

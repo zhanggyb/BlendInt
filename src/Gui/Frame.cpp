@@ -145,16 +145,11 @@ namespace BlendInt {
 
 	bool Frame::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
-		if(request.source() == this) {
-
+		if (request.source() == this) {
 			return true;
-
 		} else if (request.source() == container()) {
-
 			return true;
-
 		} else {	// called by sub widget
-
 			return false;
 		}
 	}

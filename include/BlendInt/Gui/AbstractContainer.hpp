@@ -213,6 +213,10 @@ namespace BlendInt {
 
 		void SetSubWidgetPosition (AbstractWidget* sub, const Point& pos);
 
+		void SetSubWidgetVisibility (AbstractWidget* sub, bool visible);
+
+		void SetSubWidgetLayer (AbstractWidget* sub, int layer);
+
 		static bool RemoveSubWidget (AbstractContainer* container, AbstractWidget* sub)
 		{
 			return container->RemoveSubWidget(sub);

@@ -236,7 +236,18 @@ namespace BlendInt {
 
 		FillInVBlock(x, y, w, h);
 	}
-	
+
+	bool VBlock::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+			return false;
+		}
+	}
+
 	void VBlock::FillInVBlock (int x, int y, int w, int h)
 	{
 		if(sub_widget_size() == 0) return;

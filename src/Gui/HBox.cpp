@@ -166,25 +166,11 @@ namespace BlendInt {
 	bool HBox::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		if(request.source() == this) {
-
-			return AbstractDequeContainer::UpdateGeometryTest(request);
-
-		} else if (request.source() == container()) {
-
 			return true;
-
+		} else if (request.source() == container()) {
+			return true;
 		} else {	// called by sub widget
-
-			switch(request.type()) {
-				case WidgetSize:
-					return false;
-
-				case WidgetPosition:
-					return false;
-
-				default:
-					return false;
-			}
+			return false;
 		}
 	}
 

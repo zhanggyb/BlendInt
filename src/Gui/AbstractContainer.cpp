@@ -203,7 +203,36 @@ namespace BlendInt {
 			//ReportGeometryUpdate(request);
 		}
 	}
-	
+
+	void AbstractContainer::SetSubWidgetVisibility (AbstractWidget* sub,
+	        bool visible)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->visiable() == visible) return;
+
+		GeometryUpdateRequest request (this, sub, WidgetVisibility, &visible);
+
+		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
+			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+			sub->set_visible(visible);
+		}
+	}
+
+	void AbstractContainer::SetSubWidgetLayer (AbstractWidget* sub, int z)
+	{
+		if(!sub || sub->container() != this) return;
+
+		if(sub->layer() == z) return;
+
+		GeometryUpdateRequest request (this, sub, WidgetVisibility, &z);
+
+		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
+			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+			sub->set_layer(z);
+		}
+	}
+
 	void AbstractContainer::RemoveShadow (AbstractWidget* widget)
 	{
 		widget->m_shadow.destroy();

@@ -98,7 +98,7 @@ namespace BlendInt {
 		 *
 		 * Used for AbstractWidget::CursorEnterEvent
 		 */
-		RefPtr<WidgetDeque> m_hover_list;
+		RefPtr<WidgetDeque> m_hover_cache;
 	};
 
 }

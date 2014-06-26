@@ -106,7 +106,7 @@ namespace BlendInt
 			}
 
 			layer_iter->second.m_widget_set->m_widgets.clear();
-			layer_iter->second.m_hover_list->m_widgets.clear();
+			layer_iter->second.m_hover_cache->m_widgets.clear();
 		}
 
 		m_deque.clear();
@@ -622,8 +622,8 @@ namespace BlendInt
 			DBG_PRINT_MSG("layer %d is empty, delete it", z);
 
 			// Check and clear hover list
-			for(AbstractWidgetDeque::reverse_iterator it = layer.m_hover_list->m_widgets.rbegin();
-					it != layer.m_hover_list->m_widgets.rend();
+			for(AbstractWidgetDeque::reverse_iterator it = layer.m_hover_cache->m_widgets.rbegin();
+					it != layer.m_hover_cache->m_widgets.rend();
 					it++)
 			{
 				(*it)->set_hover(false);
@@ -1025,7 +1025,7 @@ namespace BlendInt
 
 		//DBG_PRINT_MSG("mouse press on layer: %d (%d, %d)", layer, event.position().x(), event.position().y());
 
-		std::deque<AbstractWidget*>& deque = m_layers[layer].m_hover_list->m_widgets;
+		std::deque<AbstractWidget*>& deque = m_layers[layer].m_hover_cache->m_widgets;
 
 		ResponseType response;
 		AbstractWidget* widget = 0;
@@ -1120,7 +1120,7 @@ namespace BlendInt
 
 	bool Context::DispatchMouseMoveEvent(int layer, const MouseEvent& event)
 	{
-		std::deque<AbstractWidget*>& deque = m_layers[layer].m_hover_list->m_widgets;
+		std::deque<AbstractWidget*>& deque = m_layers[layer].m_hover_cache->m_widgets;
 		AbstractWidget* widget = 0;
 
 		//DBG_PRINT_MSG("mouse move on layer: %d (%d, %d)", layer, event.position().x(), event.position().y());
@@ -1199,7 +1199,7 @@ namespace BlendInt
 		if(!m_layers.count(layer)) return;
 
 		std::set<AbstractWidget*>& widget_set = m_layers[layer].m_widget_set->m_widgets;
-		std::deque<AbstractWidget*>& hover_list = m_layers[layer].m_hover_list->m_widgets;
+		std::deque<AbstractWidget*>& hover_list = m_layers[layer].m_hover_cache->m_widgets;
 
 		hover_list.clear();
 
@@ -1280,7 +1280,7 @@ namespace BlendInt
 	void Context::RemoveWidgetFromHoverList (AbstractWidget* widget,
 	        bool cursor_event)
 	{
-		std::deque<AbstractWidget*>& deque = m_layers[widget->z()].m_hover_list->m_widgets;
+		std::deque<AbstractWidget*>& deque = m_layers[widget->z()].m_hover_cache->m_widgets;
 
 		while(deque.size()) {
 
@@ -1301,7 +1301,7 @@ namespace BlendInt
 	void Context::RemoveSubWidgetFromHoverList (AbstractContainer* container,
 	        bool cursor_event)
 	{
-		std::deque<AbstractWidget*>& deque = m_layers[container->z()].m_hover_list->m_widgets;
+		std::deque<AbstractWidget*>& deque = m_layers[container->z()].m_hover_cache->m_widgets;
 
 		while(deque.size()) {
 

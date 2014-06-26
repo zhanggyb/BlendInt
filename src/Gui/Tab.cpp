@@ -231,6 +231,17 @@ namespace BlendInt {
 		FillSubWidgetsInTab(x, y, w, h);
 	}
 
+	bool Tab::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+			return false;
+		}
+	}
+
 	void Tab::FillSubWidgetsInTab(int x, int y, int w, int h)
 	{
 		int header_y = position().y() + size().height() - margin().top();

@@ -140,6 +140,17 @@ namespace BlendInt {
 		ReportContainerUpdate(request);
 	}
 
+	bool ScrollArea::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+			return false;
+		}
+	}
+
 	void ScrollArea::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {

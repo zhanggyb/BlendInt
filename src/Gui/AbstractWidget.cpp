@@ -233,6 +233,7 @@ namespace BlendInt {
 
 		GeometryUpdateRequest request(this, this, WidgetLayer, &z);
 
+		// only Context allows changing layer
 		if(UpdateGeometryTest (request)) {
 			UpdateGeometry(request);
 
@@ -556,6 +557,11 @@ namespace BlendInt {
 		request.set_data(sub_widget);
 
 		ContainerProxy::RequestContainerUpdate(m_container, request);
+	}
+
+	bool AbstractWidget::QueryGeometryUpdateTest(const GeometryUpdateRequest& request)
+	{
+		return ContainerProxy::RequestGeometryTest(m_container, request);
 	}
 
 	void AbstractWidget::ReportContainerUpdate(const ContainerUpdateRequest& request)
