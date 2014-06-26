@@ -154,7 +154,7 @@ namespace BlendInt {
 
 	void ScrollBar::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		if(request.target()) {
+		if(request.target() == this) {
 
 			switch (request.type()) {
 				case WidgetPosition: {

@@ -213,6 +213,10 @@ namespace BlendInt
 
 				// TODO: check the layer
 
+				//if(request.source()->hover()) {
+					//m_layers[request.source()->z()].m_hover_list_valid = false;
+				//}
+
 				break;
 			}
 
@@ -224,6 +228,15 @@ namespace BlendInt
 				        widget->name().c_str());
 
 				// TODO: check the layer
+				if(request.source()->hover()) {
+					//m_layers[request.source()->z()].m_hover_list_valid = false;
+
+					AbstractWidget* w = const_cast<AbstractWidget*>(widget);
+					if(w->hover()) {
+						RemoveWidgetFromHoverList(w);
+						w->set_hover(false);
+					}
+				}
 
 				break;
 			}
@@ -240,8 +253,6 @@ namespace BlendInt
 
 	void Context::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		DBG_PRINT_MSG("source widget: %s, target widget: %s", request.source()->name().c_str(), request.target()->name().c_str());
-
 		if(request.source () == this) {
 
 			switch (request.type()) {
@@ -288,10 +299,13 @@ namespace BlendInt
 			switch(request.type()) {
 
 				case WidgetPosition: {
+					//m_layers[request.source()->z()].m_hover_list_valid = false;
 					break;
 				}
 
 				case WidgetSize: {
+					//m_layers[request.source()->z()].m_hover_list_valid = false;
+
 					const Size* size_p = static_cast<const Size*>(request.data());
 
 					if(request.source()->drop_shadow() && request.source()->m_shadow) {
@@ -308,9 +322,13 @@ namespace BlendInt
 
 		} else {
 
-			DBG_PRINT_MSG("%s", "get widget geometry change update");
+			// if(request.target()->container()->hover()) {
+			//	m_layers[request.source()->z()].m_hover_list_valid = false;
+			// }
 
-			DBG_PRINT_MSG("source widget: %s, target widget: %s", request.source()->name().c_str(), request.target()->name().c_str());
+			//DBG_PRINT_MSG("%s", "get widget geometry change update");
+
+			//DBG_PRINT_MSG("source widget: %s, target widget: %s", request.source()->name().c_str(), request.target()->name().c_str());
 
 		}
 	}
@@ -1005,6 +1023,8 @@ namespace BlendInt
 	{
 		// TODO: the widgets under cursor may be changed before mouse press
 
+		//DBG_PRINT_MSG("mouse press on layer: %d (%d, %d)", layer, event.position().x(), event.position().y());
+
 		std::deque<AbstractWidget*>& deque = m_layers[layer].m_hover_list->m_widgets;
 
 		ResponseType response;
@@ -1012,6 +1032,8 @@ namespace BlendInt
 		AbstractWidget* original_focused_widget = m_focused_widget;
 		bool focus_widget_changed = false;
 
+		// debug:
+		/*
 		if (deque.size()) {
 			std::cout << "-------------------------------------------------" << std::endl;
 			for (std::deque<AbstractWidget*>::iterator it =
@@ -1019,7 +1041,41 @@ namespace BlendInt
 				DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
 			}
 		}
+		*/
 
+		/*
+		if(! m_layers[layer].m_hover_list_valid) {
+			m_layers[layer].m_hover_list_valid = true;
+		}
+		*/
+
+		// search which widget in stack contains the cursor
+		while (deque.size()) {
+
+			if(deque.back()->visiable()) {
+
+				if (deque.back()->IsHover(event.position())) {
+					widget = deque.back();
+					break;
+				} else {
+					deque.back()->CursorEnterEvent(false);
+					deque.back()->set_hover(false);
+				}
+
+			} else {
+				deque.back()->set_hover(false);
+			}
+
+			deque.pop_back();
+		}
+
+		if(widget) {
+			AppendCursorHoverList(deque, widget);
+		} else {
+			BuildCursorHoverList(layer);
+		}
+
+		widget = 0;
 		for(std::deque<AbstractWidget*>::reverse_iterator it = deque.rbegin();
 				it != deque.rend();
 				it++)
@@ -1067,15 +1123,40 @@ namespace BlendInt
 		std::deque<AbstractWidget*>& deque = m_layers[layer].m_hover_list->m_widgets;
 		AbstractWidget* widget = 0;
 
+		//DBG_PRINT_MSG("mouse move on layer: %d (%d, %d)", layer, event.position().x(), event.position().y());
+
+		/*
+		if(! m_layers[layer].m_hover_list_valid) {
+			DBG_PRINT_MSG("%s", "hover list is not valid");
+			m_layers[layer].m_hover_list_valid = true;
+		}
+		*/
+
+		// DEBUG:
+		/*
+		if (deque.size()) {
+			std::cout << "-------------------------------------------------" << std::endl;
+			for (std::deque<AbstractWidget*>::iterator it =
+			        deque.begin(); it != deque.end(); it++) {
+				DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
+			}
+		}
+		*/
+
 		// search which widget in stack contains the cursor
 		while (deque.size()) {
 
-			if (deque.back()->visiable() &&
-					deque.back()->Contain(event.position())) {
-				widget = deque.back();
-				break;
+			if(deque.back()->visiable()) {
+
+				if (deque.back()->IsHover(event.position())) {
+					widget = deque.back();
+					break;
+				} else {
+					deque.back()->CursorEnterEvent(false);
+					deque.back()->set_hover(false);
+				}
+
 			} else {
-				deque.back()->CursorEnterEvent(false);
 				deque.back()->set_hover(false);
 			}
 

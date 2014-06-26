@@ -69,8 +69,8 @@ namespace BlendInt {
 	}
 
 	ContextLayer::ContextLayer ()
-	: m_refresh(true),
-	  m_hover_list_valid(false)
+	: m_refresh(true)//,
+	  //m_hover_list_valid(false)
 	{
 		m_widget_set.reset(new WidgetSet);
 		m_texture_buffer.reset(new GLTexture2D);
@@ -87,7 +87,7 @@ namespace BlendInt {
 		m_refresh = orig.m_refresh;
 		m_widget_set = orig.m_widget_set;
 		m_texture_buffer = orig.m_texture_buffer;
-		m_hover_list_valid = orig.m_hover_list_valid;
+		//m_hover_list_valid = orig.m_hover_list_valid;
 		m_hover_list = orig.m_hover_list;
 
 		return *this;

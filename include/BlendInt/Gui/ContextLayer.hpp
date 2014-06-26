@@ -85,7 +85,7 @@ namespace BlendInt {
 
 		/** If the rescan the tail of hover_widgets
 		 */
-		bool m_hover_list_valid;
+		//bool m_hover_list_valid;
 
 		/** A set to store sub widgets in this layer */
 		RefPtr<WidgetSet> m_widget_set;

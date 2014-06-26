@@ -152,15 +152,16 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToolBar::UpdateContainer(const ContainerUpdateRequest& request)
+	void ToolBar::UpdateContainer (const ContainerUpdateRequest& request)
 	{
-		switch(request.type()) {
+		switch (request.type()) {
 
 			case ContainerMargin: {
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
+				const Margin* margin_p =
+				        static_cast<const Margin*>(request.data());
 
 				int x = position().x() + margin_p->left();
-				if(sub_widget_size()) {
+				if (sub_widget_size()) {
 					x = sub_widgets()->front()->position().x();
 				}
 
@@ -173,17 +174,15 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContainerRefresh: {
+			default:
 				ReportContainerUpdate(request);
 				break;
-			}
-
 		}
 	}
 
 	void ToolBar::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		if(request.target()) {
+		if(request.target() == this) {
 
 			switch (request.type()) {
 
@@ -205,7 +204,9 @@ namespace BlendInt {
 
 					VertexTool tool;
 					tool.Setup(*size_p, 0, RoundNone, 0);
-					tool.UpdateInnerBuffer(m_inner.get());
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+					m_inner->Reset();
 
 					int x = position().x() + margin().left();
 					if (sub_widget_size()) {
@@ -213,10 +214,8 @@ namespace BlendInt {
 					}
 
 					int y = position().y() + margin().bottom();
-					int w = size_p->width() - margin().left()
-									- margin().right();
-					int h = size_p->height() - margin().top()
-									- margin().bottom();
+					int w = size_p->width() - margin().hsum();
+					int h = size_p->height() - margin().vsum();
 
 					FillSubWidgets(x, y, w, h, m_space);
 
@@ -243,7 +242,6 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 
-		glBindVertexArray(m_vao);
 
 		program->Use();
 
@@ -252,23 +250,12 @@ namespace BlendInt {
 		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
 		program->SetUniform1i("Gamma", 0);
 
-		glEnableVertexAttribArray(0);
-
-		m_inner->Bind();
-
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							m_inner->GetBufferSize()
-											/ (2 * sizeof(GLfloat)));
-
-		m_inner->Reset();
-
-		glDisableVertexAttribArray(0);
+		glBindVertexArray(m_vao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(0);
 
 		program->Reset();
 
-		glBindVertexArray(0);
 		return Accept;
 	}
 
@@ -394,7 +381,20 @@ namespace BlendInt {
 
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
-		m_inner = tool.GenerateInnerBuffer();
+
+		glBindVertexArray(m_vao);
+
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 	}
 	
 	void ToolBar::RealignSubWidgets (const Size& size, const Margin& margin,

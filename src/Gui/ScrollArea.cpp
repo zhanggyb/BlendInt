@@ -285,23 +285,32 @@ namespace BlendInt {
 
 		//view->CentralizeViewport();
 
+		AbstractWidget* widget = view->viewport();
+
 		if(hbar->visiable()) {
 			SetSubWidgetPosition(hbar, x, y);
 			ResizeSubWidget (hbar, width - rw, bh);
-			int percent = view->GetHPercentage();
-			hbar->SetMaximum(view->viewport()->size().width());
-			hbar->SetMinimum(view->size().width());
-			hbar->SetSliderPercentage(percent);
+
+			if(widget) {
+				int percent = view->GetHPercentage();
+				hbar->SetMaximum(widget->size().width());
+				hbar->SetMinimum(view->size().width());
+				hbar->SetSliderPercentage(percent);
+			}
 		}
 
 		if(vbar->visiable()) {
 			SetSubWidgetPosition(vbar, x + width - rw, y + bh);
 			ResizeSubWidget (vbar, rw, height - bh);
-			int percent = view->GetVPercentage();
-			vbar->SetMaximum(view->viewport()->size().height());
-			vbar->SetMinimum(view->size().height());
-			vbar->SetSliderPercentage(percent);
+
+			if(widget) {
+				int percent = view->GetVPercentage();
+				vbar->SetMaximum(widget->size().height());
+				vbar->SetMinimum(view->size().height());
+				vbar->SetSliderPercentage(percent);
+			}
 		}
+
 	}
 
 	void ScrollArea::OnHorizontalScroll (int value)
