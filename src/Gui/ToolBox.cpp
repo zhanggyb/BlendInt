@@ -77,7 +77,9 @@ namespace BlendInt {
 			SetSubWidgetPosition(widget, x, y);
 
 			if(widget->IsExpandX()) {
+
 				ResizeSubWidget(widget, w, prefer.height());
+
 			} else {
 
 				if(widget->size().width() > w) {

@@ -36,15 +36,15 @@ namespace BlendInt {
 	 *
 	 * This widget is used for demo or test also.
 	 */
-	class ClockWidget: public AbstractWidget
+	class Clock: public AbstractWidget
 	{
-		DISALLOW_COPY_AND_ASSIGN(ClockWidget);
+		DISALLOW_COPY_AND_ASSIGN(Clock);
 
 	public:
 
-		ClockWidget();
+		Clock();
 
-		virtual ~ClockWidget();
+		virtual ~Clock();
 
 		void set_background (const Color& color)
 		{
@@ -80,12 +80,6 @@ namespace BlendInt {
 	private:
 
 		void UpdateClockHands();
-
-		void DrawArc (float x, float y, float start_angle, float end_angle, float delta_angle, float radius,bool fill);
-
-		void DrawCircle(float x, float y, float radius,bool fill);
-
-		void DrawPie(float x,float y,float start_angle,float end_angle,float delta_angle,float radius,bool fill);
 
 		void Init ();
 

@@ -118,7 +118,7 @@ namespace BlendInt {
 		return (mapsize == 0);
 	}
 
-#endif
+#endif	// DEBUG
 
 }
 

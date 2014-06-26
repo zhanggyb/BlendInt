@@ -122,6 +122,7 @@ namespace BlendInt {
 
 		m_stack = CreateBlockStack();
 		NumericalSlider* alpha_slider = Manage(new NumericalSlider);
+		alpha_slider->SetEmboss(true);
 
 		VBox* color_box = Manage(new VBox);
 		color_box->SetMargin(0, 0, 0, 0);

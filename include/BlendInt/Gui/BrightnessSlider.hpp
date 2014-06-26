@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_BRIGHTNESSSLIDER_HPP_
 
 #include <BlendInt/Gui/AbstractSlider.hpp>
-#include <BlendInt/Gui/Dot.hpp>
+#include <BlendInt/Gui/CircularPicker.hpp>
 
 namespace BlendInt {
 
@@ -82,7 +82,7 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_inner;
 		RefPtr<GLArrayBuffer> m_outer;
 
-		Dot m_dot;
+		CircularPicker m_dot;
 
 	};
 

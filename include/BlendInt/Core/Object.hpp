@@ -124,7 +124,7 @@ namespace BlendInt {
 
 		static bool CheckAllocatedObjects ();
 
-#endif
+#endif	// DEBUG
 	};
 
 }

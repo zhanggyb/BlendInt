@@ -1,6 +1,6 @@
 #include "WindowTest1.hpp"
 #include <Common/Window.hpp>
-#include <BlendInt/Gui/ClockWidget.hpp>
+#include <BlendInt/Gui/Clock.hpp>
 
 using namespace BlendInt;
 
@@ -27,7 +27,7 @@ TEST_F(WindowTest1, Create1)
     GLFWwindow* win = CreateWindow("WindowTest1 -- Create1");
 
     // TODO: add test code here
-    ClockWidget* m_clock = new ClockWidget;
+    Clock* m_clock = new Clock;
     m_clock->SetPosition(200, 200);
 
     RunLoop (win);

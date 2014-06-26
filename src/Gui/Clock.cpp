@@ -33,21 +33,21 @@
 #include <math.h>
 #include <algorithm>
 
-#include <BlendInt/Gui/ClockWidget.hpp>
+#include <BlendInt/Gui/Clock.hpp>
 
 namespace BlendInt {
 
-	ClockWidget::ClockWidget()
+	Clock::Clock()
 	: AbstractWidget(), m_angle(0), m_timer(0)
 	{
 		Init();
 	}
 
-	ClockWidget::~ClockWidget ()
+	Clock::~Clock ()
 	{
 	}
 
-	ResponseType ClockWidget::Draw(const RedrawEvent& event)
+	ResponseType Clock::Draw(const RedrawEvent& event)
 	{
 //		int radius = std::min(size().width(), size().height()) / 2;
 //
@@ -70,7 +70,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void ClockWidget::UpdateClockHands()
+	void Clock::UpdateClockHands()
 	{
 		m_angle = m_angle + 6;
 		if(m_angle > 360) {
@@ -80,107 +80,62 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	void ClockWidget::DrawArc (float x, float y, float start_angle,
-	        float end_angle, float delta_angle, float radius, bool fill)
-	{
-//		if (fill) {
-//			glBegin(GL_TRIANGLE_FAN);
-//		} else {
-//			glBegin(GL_LINE_STRIP);
-//		}
-//
-//		float vx, vy;
-//
-//		for (float i = start_angle; i <= end_angle; i += delta_angle) {
-//			vx = x + radius * cos(i);
-//			vy = y + radius * sin(i);
-//			glVertex2d(vx, vy);
-//		}
-//		glEnd();
-	}
-
-	void ClockWidget::DrawCircle (float x, float y, float radius, bool fill)
-	{
-		float pi = acos(-1.0);
-		DrawArc(x, y, 0, 2 * pi, pi / 180, radius, fill);
-	}
-
-	void ClockWidget::DrawPie (float x, float y, float start_angle,
-	        float end_angle, float delta_angle, float radius, bool fill)
-	{
-//		DrawArc(x, y, start_angle, end_angle, delta_angle, radius, fill);
-//		if (fill) {
-//			glBegin(GL_TRIANGLE_FAN);
-//		} else {
-//			glBegin(GL_LINES);
-//		}
-//		glVertex2d(x, y);
-//		glVertex2d(x + radius * cos(start_angle),
-//		        y + radius * sin(start_angle));
-//		if (!fill) {
-//			glVertex2d(x, y);
-//		}
-//		glVertex2d(x + radius * cos(end_angle), y + radius * sin(end_angle));
-//
-//		glEnd();
-	}
-
-	bool ClockWidget::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	bool Clock::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void ClockWidget::UpdateGeometry (const GeometryUpdateRequest& request)
+	void Clock::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 	}
 
-	void ClockWidget::BroadcastUpdate (const GeometryUpdateRequest& request)
+	void Clock::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 
-	ResponseType ClockWidget::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ClockWidget::CursorEnterEvent (bool entered)
+	ResponseType Clock::FocusEvent (bool focus)
 	{
 		return Ignore;
 	}
 
-	ResponseType ClockWidget::KeyPressEvent (const KeyEvent& event)
+	ResponseType Clock::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType ClockWidget::ContextMenuPressEvent (
+	ResponseType Clock::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Clock::ContextMenuPressEvent (
 	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ClockWidget::ContextMenuReleaseEvent (
+	ResponseType Clock::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ClockWidget::MousePressEvent (const MouseEvent& event)
+	ResponseType Clock::MousePressEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ClockWidget::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType Clock::MouseReleaseEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType ClockWidget::MouseMoveEvent (const MouseEvent& event)
+	ResponseType Clock::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	void ClockWidget::Init ()
+	void Clock::Init ()
 	{
 		//m_background.SetValue(45, 45, 45, 235);
 		set_size(200, 200);
@@ -189,7 +144,7 @@ namespace BlendInt {
 		m_timer.reset(new Timer);
 		m_timer->SetInterval(1000);
 
-		events()->connect(m_timer->timeout(), this, &ClockWidget::UpdateClockHands);
+		events()->connect(m_timer->timeout(), this, &Clock::UpdateClockHands);
 
 		m_timer->Start();
 	}

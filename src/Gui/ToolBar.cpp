@@ -69,14 +69,20 @@ namespace BlendInt {
 
 		if(PushBackSubWidget(widget)) {
 
+			Size prefer = widget->GetPreferredSize();
+
 			SetSubWidgetPosition(widget, x, y);
+
 			if(widget->IsExpandY()) {
-				ResizeSubWidget(widget, widget->size().width(), h);
+
+				ResizeSubWidget(widget, prefer.width(), h);
+
 			} else {
 
 				if(widget->size().height() > h) {
-					ResizeSubWidget(widget, widget->size().width(), h);
+					ResizeSubWidget(widget, prefer.width(), h);
 				} else {
+					ResizeSubWidget(widget, prefer.width(), widget->size().height());
 					SetSubWidgetPosition(widget, x,
 									y + (h - widget->size().height()) / 2);
 				}
@@ -93,14 +99,21 @@ namespace BlendInt {
 		int h = size().height() - margin().top() - margin().bottom();
 
 		if(PushBackSubWidget(button)) {
+
+			Size prefer = button->GetPreferredSize();
+
 			SetSubWidgetPosition(button, x, y);
+
 			if(button->IsExpandY()) {
-				ResizeSubWidget(button, button->size().width(), h);
+
+				ResizeSubWidget(button, prefer.width(), h);
+
 			} else {
 
 				if(button->size().height() > h) {
-					ResizeSubWidget(button, button->size().width(), h);
+					ResizeSubWidget(button, prefer.width(), h);
 				} else {
+					ResizeSubWidget(button, prefer.width(), button->size().height());
 					SetSubWidgetPosition(button, x,
 									y + (h - button->size().height()) / 2);
 				}

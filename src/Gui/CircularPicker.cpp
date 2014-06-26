@@ -36,14 +36,14 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
-#include <BlendInt/Gui/Dot.hpp>
+#include <BlendInt/Gui/CircularPicker.hpp>
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
-	Dot::Dot ()
+	CircularPicker::CircularPicker ()
 	: AbstractRoundForm(), m_vao(0)
 	{
 		set_round_type(RoundAll);
@@ -54,12 +54,12 @@ namespace BlendInt {
 		m_outer_buffer.reset(new GLArrayBuffer);
 	}
 
-	Dot::~Dot ()
+	CircularPicker::~CircularPicker ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void Dot::Resize(unsigned int radius)
+	void CircularPicker::Resize(unsigned int radius)
 	{
 		Size dot_size (radius * 2, radius * 2);
 		set_round_type(RoundAll);
@@ -72,7 +72,7 @@ namespace BlendInt {
 		tool.UpdateOuterBuffer(m_outer_buffer.get());
 	}
 
-	void Dot::UpdateGeometry (const UpdateRequest& request)
+	void CircularPicker::UpdateGeometry (const UpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -112,7 +112,7 @@ namespace BlendInt {
 
 	}
 
-	void Dot::Draw (const glm::mat4& mvp, short gamma)
+	void CircularPicker::Draw (const glm::mat4& mvp, short gamma)
 	{
 		using Stock::Shaders;
 

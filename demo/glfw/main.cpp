@@ -14,7 +14,7 @@
 #include <BlendInt/OpenGL/TextureAtlas2D.hpp>
 
 #include <BlendInt/Gui/Button.hpp>
-#include <BlendInt/Gui/ClockWidget.hpp>
+#include <BlendInt/Gui/Clock.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/ToggleButton.hpp>
 #include <BlendInt/Gui/HBox.hpp>
