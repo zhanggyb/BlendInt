@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/Stock/Shaders.hpp>
 

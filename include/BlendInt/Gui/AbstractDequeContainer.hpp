@@ -87,7 +87,7 @@ namespace BlendInt {
 						int height, Orientation orientation,
 						int alignment, int space);
 
-		WidgetDeque* sub_widgets () const
+		AbstractWidgetDeque* sub_widgets () const
 		{
 			return m_sub_widgets.get();
 		}
@@ -107,7 +107,7 @@ namespace BlendInt {
 		/**
 		 * @brief Sub widgets which build a tree to accept render and device events
 		 */
-		boost::scoped_ptr<WidgetDeque> m_sub_widgets;
+		boost::scoped_ptr<AbstractWidgetDeque> m_sub_widgets;
 
 		//static DequeIterator default_iterator;
 	};

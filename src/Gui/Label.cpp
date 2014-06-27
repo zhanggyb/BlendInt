@@ -67,24 +67,31 @@ namespace BlendInt {
 		m_text_length = UpdateTextPosition(size(), m_text, m_font);
 	}
 
-	void Label::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Label::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target() == this) {
+			switch (request.type()) {
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				m_text_length = UpdateTextPosition(*size_p, m_text, m_font);
+				case WidgetSize: {
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					m_text_length = UpdateTextPosition(*size_p, m_text, m_font);
 
-				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), RoundNone, 0);
-				tool.UpdateInnerBuffer(m_rect.get());
-				break;
+					VertexTool tool;
+					tool.Setup(*size_p, DefaultBorderWidth(), RoundNone, 0);
+					tool.UpdateInnerBuffer(m_rect.get());
+
+					set_size(*size_p);
+					Refresh();
+					break;
+				}
+
+				default:
+					break;
 			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Label::Draw (const RedrawEvent& event)
@@ -214,12 +221,12 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool Label::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Label::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void Label::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void Label::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

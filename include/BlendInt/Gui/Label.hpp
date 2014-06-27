@@ -26,7 +26,7 @@
 
 #include <string>
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Color.hpp>
 #include <BlendInt/Core/Rect.hpp>
 #include <BlendInt/Core/String.hpp>
@@ -89,11 +89,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
+		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

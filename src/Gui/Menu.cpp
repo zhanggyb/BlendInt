@@ -166,52 +166,59 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Menu::UpdateGeometry(const WidgetUpdateRequest& request)
+	void Menu::UpdateGeometry(const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target() == this) {
+			switch (request.type()) {
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(),
-								round_corner_radius());
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				m_outer->Bind();
-				tool.SetOuterBufferData(m_outer.get());
-				ResetHighlightBuffer(size_p->width());
-				break;
+				case WidgetSize: {
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					VertexTool tool;
+					tool.Setup(*size_p, DefaultBorderWidth(),
+					        round_corner_type(), round_corner_radius());
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+					m_outer->Bind();
+					tool.SetOuterBufferData(m_outer.get());
+					ResetHighlightBuffer(size_p->width());
+					set_size(*size_p);
+					break;
+				}
+
+				case WidgetRoundCornerType: {
+					const int* type_p = static_cast<const int*>(request.data());
+					VertexTool tool;
+					tool.Setup(size(), DefaultBorderWidth(), *type_p,
+					        round_corner_radius());
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+					m_outer->Bind();
+					tool.SetOuterBufferData(m_outer.get());
+					set_round_corner_type(*type_p);
+					break;
+				}
+
+				case WidgetRoundCornerRadius: {
+					const float* radius_p =
+					        static_cast<const float*>(request.data());
+					VertexTool tool;
+					tool.Setup(size(), DefaultBorderWidth(),
+					        round_corner_type(), *radius_p);
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+					m_outer->Bind();
+					tool.SetOuterBufferData(m_outer.get());
+					set_round_corner_radius(*radius_p);
+					break;
+				}
+
+				default:
+					break;
 			}
-
-			case WidgetRoundCornerType: {
-				const int* type_p = static_cast<const int*>(request.data());
-				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), *type_p,
-								round_corner_radius());
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				m_outer->Bind();
-				tool.SetOuterBufferData(m_outer.get());
-				break;
-			}
-
-			case WidgetRoundCornerRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
-								*radius_p);
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				m_outer->Bind();
-				tool.SetOuterBufferData(m_outer.get());
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Menu::Draw (const RedrawEvent& event)
@@ -314,12 +321,12 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	bool Menu::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Menu::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void Menu::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void Menu::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

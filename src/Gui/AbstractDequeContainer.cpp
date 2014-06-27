@@ -32,7 +32,7 @@ namespace BlendInt {
 	AbstractDequeContainer::AbstractDequeContainer ()
 	: AbstractContainer()
 	{
-		m_sub_widgets.reset(new WidgetDeque);
+		m_sub_widgets.reset(new AbstractWidgetDeque);
 	}
 
 	AbstractDequeContainer::~AbstractDequeContainer ()
@@ -67,6 +67,8 @@ namespace BlendInt {
 		events()->connect(widget->destroyed(), this,
 						&AbstractDequeContainer::OnSubWidgetDestroyed);
 
+		CheckSubWidgetAddedInContainer(widget);
+
 		return true;
 	}
 
@@ -97,6 +99,8 @@ namespace BlendInt {
 		events()->connect(widget->destroyed(), this,
 						&AbstractDequeContainer::OnSubWidgetDestroyed);
 
+		CheckSubWidgetAddedInContainer(widget);
+
 		return true;
 	}
 
@@ -109,23 +113,26 @@ namespace BlendInt {
 		widget->destroyed().disconnectOne(this,
 						&AbstractDequeContainer::OnSubWidgetDestroyed);
 
-		WidgetDeque::iterator it = std::find(m_sub_widgets->begin(),
+		AbstractWidgetDeque::iterator it = std::find(m_sub_widgets->begin(),
 						m_sub_widgets->end(), widget);
 
 		if (it != m_sub_widgets->end()) {
 			m_sub_widgets->erase(it);
 			SetContainer(widget, 0);
-			return true;
 		} else {
 			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
 							widget->name().c_str(), name().c_str());
 			return false;
 		}
+
+		CheckSubWidgetRemovedInContainer(widget);
+
+		return true;
 	}
 
 	bool AbstractDequeContainer::FindSubWidget (AbstractWidget* widget)
 	{
-		WidgetDeque::iterator it = std::find(m_sub_widgets->begin(), m_sub_widgets->end(), widget);
+		AbstractWidgetDeque::iterator it = std::find(m_sub_widgets->begin(), m_sub_widgets->end(), widget);
 
 		if(it != m_sub_widgets->end())
 			return true;
@@ -157,7 +164,7 @@ namespace BlendInt {
 
 		}
 
-		WidgetDeque::iterator it = m_sub_widgets->begin();
+		AbstractWidgetDeque::iterator it = m_sub_widgets->begin();
 		std::advance(it, index);
 		m_sub_widgets->insert(it, widget);
 
@@ -167,12 +174,14 @@ namespace BlendInt {
 		events()->connect(widget->destroyed(), this,
 						&AbstractDequeContainer::OnSubWidgetDestroyed);
 
+		CheckSubWidgetAddedInContainer(widget);
+
 		return true;
 	}
 	
 	void AbstractDequeContainer::MoveSubWidgets (int offset_x, int offset_y)
 	{
-		for (WidgetDeque::iterator it = m_sub_widgets->begin();
+		for (AbstractWidgetDeque::iterator it = m_sub_widgets->begin();
 						it != m_sub_widgets->end(); it++) {
 			SetSubWidgetPosition(*it, (*it)->position().x() + offset_x,
 							(*it)->position().y() + offset_y);
@@ -181,7 +190,7 @@ namespace BlendInt {
 	
 	void AbstractDequeContainer::ResizeSubWidgets (const Size& size)
 	{
-		for (WidgetDeque::iterator it = m_sub_widgets->begin();
+		for (AbstractWidgetDeque::iterator it = m_sub_widgets->begin();
 						it != m_sub_widgets->end(); it++) {
 			ResizeSubWidget((*it), size);
 		}
@@ -190,7 +199,7 @@ namespace BlendInt {
 	void AbstractDequeContainer::ResizeSubWidgets (int w,
 					int h)
 	{
-		for (WidgetDeque::iterator it = sub_widgets()->begin();
+		for (AbstractWidgetDeque::iterator it = sub_widgets()->begin();
 						it != sub_widgets()->end(); it++) {
 			ResizeSubWidget((*it), w, h);
 		}
@@ -198,7 +207,7 @@ namespace BlendInt {
 	
 	void AbstractDequeContainer::ClearSubWidgets ()
 	{
-		for (WidgetDeque::iterator it = m_sub_widgets->begin();
+		for (AbstractWidgetDeque::iterator it = m_sub_widgets->begin();
 						it != m_sub_widgets->end(); it++)
 		{
 			(*it)->destroyed().disconnectOne(this,
@@ -292,7 +301,7 @@ namespace BlendInt {
 
 			if (average_width > 0) {
 
-				for (WidgetDeque::const_iterator it = m_sub_widgets->begin();
+				for (AbstractWidgetDeque::const_iterator it = m_sub_widgets->begin();
 								it != m_sub_widgets->end(); it++) {
 					widget = *it;
 					ResizeSubWidget(widget, average_width, widget->size().height());
@@ -319,7 +328,7 @@ namespace BlendInt {
 
 			if (average_height > 0) {
 
-				for (WidgetDeque::const_iterator it = m_sub_widgets->begin();
+				for (AbstractWidgetDeque::const_iterator it = m_sub_widgets->begin();
 								it != m_sub_widgets->end(); it++) {
 					widget = *it;
 					ResizeSubWidget(widget, widget->size().width(), average_height);
@@ -340,7 +349,7 @@ namespace BlendInt {
 	{
 		AbstractWidget* widget = 0;
 
-		for(WidgetDeque::const_iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
 		{
 			widget = *it;
 
@@ -366,7 +375,7 @@ namespace BlendInt {
 	void AbstractDequeContainer::AlignVertically (int x, int width, int alignment)
 	{
 		AbstractWidget* widget = 0;
-		for(WidgetDeque::const_iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = m_sub_widgets->begin(); it != m_sub_widgets->end(); it++)
 		{
 			widget = *it;
 

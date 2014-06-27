@@ -27,7 +27,7 @@
 #include <iostream>
 #endif
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 namespace BlendInt {
 
@@ -118,7 +118,7 @@ namespace BlendInt {
 		return (mapsize == 0);
 	}
 
-#endif
+#endif	// DEBUG
 
 }
 

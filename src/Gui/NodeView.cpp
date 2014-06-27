@@ -31,16 +31,16 @@ namespace BlendInt {
 
 	}
 
-	void NodeView::UpdateGeometry (const WidgetUpdateRequest& request)
+	void NodeView::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 	}
 
-	bool NodeView::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool NodeView::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void NodeView::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void NodeView::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

@@ -64,56 +64,71 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToggleButton::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ToggleButton::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target() == this) {
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				UpdateTextPosition(*size_p, round_corner_type(),
-								round_corner_radius(), text());
-				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(),
-								round_corner_radius());
-				m_inner_buffer->Bind();
-				tool.SetInnerBufferData(m_inner_buffer.get());
-				m_outer_buffer->Bind();
-				tool.SetOuterBufferData(m_outer_buffer.get());
-				Refresh();
-				break;
+			switch (request.type()) {
+
+				case WidgetSize: {
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					UpdateTextPosition(*size_p, round_corner_type(),
+					        round_corner_radius(), text());
+					VertexTool tool;
+					tool.Setup(*size_p, DefaultBorderWidth(),
+					        round_corner_type(), round_corner_radius());
+					m_inner_buffer->Bind();
+					tool.SetInnerBufferData(m_inner_buffer.get());
+					m_outer_buffer->Bind();
+					tool.SetOuterBufferData(m_outer_buffer.get());
+
+					set_size(*size_p);
+					Refresh();
+					break;
+				}
+
+				case WidgetRoundCornerType: {
+					const int* type_p = static_cast<const int*>(request.data());
+					UpdateTextPosition(size(), *type_p, round_corner_radius(),
+					        text());
+					VertexTool tool;
+					tool.Setup(size(), DefaultBorderWidth(), *type_p,
+					        round_corner_radius());
+					m_inner_buffer->Bind();
+					tool.SetInnerBufferData(m_inner_buffer.get());
+					m_outer_buffer->Bind();
+					tool.SetOuterBufferData(m_outer_buffer.get());
+
+					set_round_corner_type(*type_p);
+					Refresh();
+					break;
+				}
+
+				case WidgetRoundCornerRadius: {
+					const float* radius_p =
+					        static_cast<const float*>(request.data());
+					UpdateTextPosition(size(), round_corner_type(), *radius_p,
+					        text());
+					VertexTool tool;
+					tool.Setup(size(), DefaultBorderWidth(),
+					        round_corner_type(), *radius_p);
+					m_inner_buffer->Bind();
+					tool.SetInnerBufferData(m_inner_buffer.get());
+					m_outer_buffer->Bind();
+					tool.SetOuterBufferData(m_outer_buffer.get());
+
+					set_round_corner_radius(*radius_p);
+					Refresh();
+					break;
+				}
+
+				default:
+					break;
 			}
-
-			case WidgetRoundCornerType: {
-				const int* type_p = static_cast<const int*>(request.data());
-				UpdateTextPosition(size(), *type_p, round_corner_radius(),
-				        text());
-				VertexTool tool;
-				tool.Setup (size(), DefaultBorderWidth(), *type_p, round_corner_radius());
-				m_inner_buffer->Bind();
-				tool.SetInnerBufferData(m_inner_buffer.get());
-				m_outer_buffer->Bind();
-				tool.SetOuterBufferData(m_outer_buffer.get());
-				Refresh();
-				break;
-			}
-
-			case WidgetRoundCornerRadius: {
-				const float* radius_p = static_cast<const float*>(request.data());
-				UpdateTextPosition(size(), round_corner_type(), *radius_p,
-				        text());
-				VertexTool tool;
-				tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), *radius_p);
-				m_inner_buffer->Bind();
-				tool.SetInnerBufferData(m_inner_buffer.get());
-				m_outer_buffer->Bind();
-				tool.SetOuterBufferData(m_outer_buffer.get());
-				Refresh();
-				break;
-			}
-
-			default:
-				break;
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ToggleButton::Draw (const RedrawEvent& event)

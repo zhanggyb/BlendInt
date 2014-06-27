@@ -94,7 +94,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	bool Slider::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Slider::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 
 		switch (request.type()) {
@@ -127,7 +127,7 @@ namespace BlendInt {
 
 	}
 
-	void Slider::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Slider::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 
 		switch (request.type()) {
@@ -152,11 +152,11 @@ namespace BlendInt {
 
 	}
 
-	void Slider::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void Slider::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 
-	void Slider::UpdateSlider(const WidgetUpdateRequest& request)
+	void Slider::UpdateSlider(const SliderUpdateRequest& request)
 	{
 		switch(request.type()) {
 

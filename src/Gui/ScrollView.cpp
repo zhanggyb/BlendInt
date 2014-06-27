@@ -203,23 +203,44 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void ScrollView::UpdateContainer(const WidgetUpdateRequest& request)
+	void ScrollView::UpdateContainer(const ContainerUpdateRequest& request)
 	{
 		switch (request.type()) {
 
-			case ContainerRefresh: {
+			// TODO: update margin
 
-				Refresh();
+			default: {
+				ReportContainerUpdate(request);
 				break;
 			}
-
-			default:
-				break;
 		}
 
 	}
 
-	void ScrollView::UpdateGeometry (const WidgetUpdateRequest& request)
+	bool ScrollView::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+
+			switch (request.type()) {
+
+				case WidgetPosition:
+					return true;
+
+				case WidgetSize:
+					return true;
+
+				default:
+					return false;
+			}
+
+		}
+	}
+
+	void ScrollView::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			switch (request.type()) {
@@ -232,6 +253,7 @@ namespace BlendInt {
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
+					set_size(*size_p);
 					break;
 				}
 
@@ -243,6 +265,7 @@ namespace BlendInt {
 						int x = pos_p->x() - position().x();
 						int y = pos_p->y() - position().y();
 
+						set_position(*pos_p);
 						MoveSubWidget(x, y);
 					}
 
@@ -253,6 +276,8 @@ namespace BlendInt {
 					break;
 			}
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ScrollView::Draw (const RedrawEvent& event)

@@ -58,9 +58,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateContainer (const WidgetUpdateRequest& request);
+		virtual void UpdateContainer (const ContainerUpdateRequest& request);
 
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
+
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -79,8 +81,6 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
-
-		void OnButtonIndexClicked (int index);
 
 		void OnButtonIndexToggled (int index, bool toggled);
 

@@ -6,7 +6,7 @@
 
 #include <Cpp/Events.hpp>
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/Gui/CVImageView.hpp>
 #include <BlendInt/Gui/VBox.hpp>

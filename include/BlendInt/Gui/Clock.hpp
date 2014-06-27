@@ -36,15 +36,15 @@ namespace BlendInt {
 	 *
 	 * This widget is used for demo or test also.
 	 */
-	class ClockWidget: public AbstractWidget
+	class Clock: public AbstractWidget
 	{
-		DISALLOW_COPY_AND_ASSIGN(ClockWidget);
+		DISALLOW_COPY_AND_ASSIGN(Clock);
 
 	public:
 
-		ClockWidget();
+		Clock();
 
-		virtual ~ClockWidget();
+		virtual ~Clock();
 
 		void set_background (const Color& color)
 		{
@@ -53,11 +53,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
+		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -77,17 +77,20 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		void GenerateClockVertices (int radius, float border,
+		        std::vector<GLfloat>& inner_vertices,
+		        std::vector<GLfloat>& outer_vertices);
+
 	private:
 
 		void UpdateClockHands();
 
-		void DrawArc (float x, float y, float start_angle, float end_angle, float delta_angle, float radius,bool fill);
+		void InitializeClock ();
 
-		void DrawCircle(float x, float y, float radius,bool fill);
+		GLuint m_vao[2];
 
-		void DrawPie(float x,float y,float start_angle,float end_angle,float delta_angle,float radius,bool fill);
-
-		void Init ();
+		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> m_outer;
 
 		int m_angle;
 

@@ -35,16 +35,16 @@ namespace BlendInt {
 	{
 	}
 
-	bool ListView::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool ListView::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void ListView::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ListView::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 	}
 
-	void ListView::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void ListView::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

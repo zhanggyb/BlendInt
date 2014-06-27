@@ -1,6 +1,6 @@
 #include "ScrollViewTest1.hpp"
 #include <BlendInt/Gui/ScrollView.hpp>
-#include <BlendInt/Gui/ToolBar.hpp>
+#include <BlendInt/Gui/Button.hpp>
 
 using namespace BlendInt;
 
@@ -30,8 +30,15 @@ TEST_F(ScrollViewTest1, Foo1)
     Interface::instance->SetCurrentContext(context);
 
 	ScrollView* scrollview = Manage(new ScrollView);
+	DBG_SET_NAME(scrollview, "ScrollView");
 	scrollview->SetPosition(50, 50);
 	scrollview->Resize(500, 400);
+	
+	Button* btn = Manage(new Button);
+	DBG_SET_NAME(btn, "Button");
+	btn->Resize(500, 400);
+	
+	scrollview->SetViewport(btn);
 	
 	//DBG_PRINT_MSG ("percentages: %d, %d", scrollview->GetHPercentage(), scrollview->GetVPercentage());
 

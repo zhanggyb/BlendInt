@@ -57,21 +57,20 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void MenuBar::UpdateContainer(const WidgetUpdateRequest& request)
+	void MenuBar::UpdateContainer(const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
-			case ContainerRefresh: {
-				Refresh();
+			// TODO: set margin
+
+			default: {
+				ReportContainerUpdate(request);
 				break;
 			}
-
-			default:
-				break;
 		}
 	}
 
-	void MenuBar::UpdateGeometry (const WidgetUpdateRequest& request)
+	void MenuBar::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -85,14 +84,20 @@ namespace BlendInt {
 					tool.Setup(*size_p, 0, RoundNone, 0);
 					m_buffer->Bind();
 					tool.SetInnerBufferData(m_buffer.get());
+
+					set_size(*size_p);
 					break;
 				}
 
 				case WidgetPosition: {
 
 					const Point* pos_p = static_cast<const Point*>(request.data());
-					MoveSubWidgets(pos_p->x() - position().x(),
-									pos_p->y() - position().y());
+
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
 
 					break;
 				}
@@ -102,6 +107,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType MenuBar::Draw (const RedrawEvent& event)
@@ -178,7 +185,7 @@ namespace BlendInt {
 		int h = size().height() - margin().top() - margin().bottom();
 		h = std::max(h, button->size().height());
 		int w = -m_space;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			w += (*it)->size().width() + m_space;
 		}
@@ -207,7 +214,7 @@ namespace BlendInt {
 		int h = size().height() - margin().top() - margin().bottom();
 		h = std::max(h, button->size().height());
 		int w = -m_space;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			w += (*it)->size().width() + m_space;
 		}
@@ -234,7 +241,7 @@ namespace BlendInt {
 			int h = size().height() - margin().top() - margin().bottom();
 			h = std::max(h, button->size().height());
 			int w = -m_space;
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				w += (*it)->size().width() + m_space;
 			}
@@ -262,7 +269,7 @@ namespace BlendInt {
 			int h = size().height() - margin().top() - margin().bottom();
 			h = std::max(h, button->size().height());
 			int w = -m_space;
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				w += (*it)->size().width() + m_space;
 			}
@@ -317,7 +324,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -378,7 +385,7 @@ namespace BlendInt {
 	{
 		MenuButton* original_active = m_active_button;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			MenuButton* menubutton = dynamic_cast<MenuButton*>(*it);
 			if(menubutton) {
@@ -470,7 +477,7 @@ namespace BlendInt {
 		if(sub_widgets()->size()) {
 			pos -= m_space;
 
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				pos += m_space;
 				pos = pos + (*it)->size().width();

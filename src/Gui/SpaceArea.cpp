@@ -109,7 +109,7 @@ namespace BlendInt {
 		return m_expand_y;
 	}
 
-	void SpaceArea::UpdateGeometry (const WidgetUpdateRequest& request)
+	void SpaceArea::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(m_widget_attached) {
 
@@ -139,12 +139,12 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	bool SpaceArea::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool SpaceArea::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void SpaceArea::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void SpaceArea::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

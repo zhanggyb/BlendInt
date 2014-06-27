@@ -52,7 +52,7 @@
 
 #include <BlendInt/Gui/FontCache.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 using namespace std;
 

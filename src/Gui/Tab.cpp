@@ -121,7 +121,7 @@ namespace BlendInt {
 		return Size(w, h);
 	}
 
-	void Tab::UpdateContainer (const WidgetUpdateRequest& request)
+	void Tab::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -132,41 +132,45 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContainerRefresh: {
-
-				Refresh();
+			default: {
+				ReportContainerUpdate(request);
 				break;
 			}
-
-			default:
-				break;
 		}
 
 	}
 
-	void Tab::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Tab::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetPosition: {
-				const Point* pos_p = static_cast<const Point*>(request.data());
+			switch (request.type()) {
 
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
+				case WidgetPosition: {
+					const Point* pos_p = static_cast<const Point*>(request.data());
 
-				MoveSubWidgets(x, y);
-				break;
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+					break;
+				}
+
+				case WidgetSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					FillSubWidgetsInTab(*size_p, margin());
+					set_size(*size_p);
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				FillSubWidgetsInTab(*size_p, margin());
-				break;
-			}
-
-			default:
-				break;
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Tab::Draw (const RedrawEvent& event)
@@ -225,6 +229,17 @@ namespace BlendInt {
 		int h = out_size.height() - margin.vsum();
 
 		FillSubWidgetsInTab(x, y, w, h);
+	}
+
+	bool Tab::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+			return false;
+		}
 	}
 
 	void Tab::FillSubWidgetsInTab(int x, int y, int w, int h)

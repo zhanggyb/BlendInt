@@ -119,7 +119,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void Frame::UpdateContainer (const WidgetUpdateRequest& request)
+	void Frame::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -135,43 +135,26 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContainerRefresh: {
-				Refresh();
+			default: {
+				ReportContainerUpdate(request);
 				break;
 			}
-
-			default:
-				break;
 
 		}
 	}
 
-	bool Frame::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Frame::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
-		if(request.source() == this) {
-
-			return AbstractSingleContainer::UpdateGeometryTest(request);
-
-		} else if (request.source() == container()) {
-
+		if (request.source() == this) {
 			return true;
-
+		} else if (request.source() == container()) {
+			return true;
 		} else {	// called by sub widget
-
-			switch(request.type()) {
-				case WidgetSize:
-					return false;
-
-				case WidgetPosition:
-					return false;
-
-				default:
-					return false;
-			}
+			return false;
 		}
 	}
 
-	void Frame::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Frame::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -193,6 +176,7 @@ namespace BlendInt {
 					if (sub_widget()) {
 						const Point* pos_p =
 										static_cast<const Point*>(request.data());
+						set_position(*pos_p);
 						SetSubWidgetPosition(sub_widget(),
 										pos_p->x() + margin().left(),
 										pos_p->y() + margin().bottom());
@@ -205,6 +189,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Frame::CursorEnterEvent (bool entered)

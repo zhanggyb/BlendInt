@@ -97,7 +97,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_height(-m_space);
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -109,8 +109,8 @@ namespace BlendInt {
 				}
 			}
 
-			preferred_size.add_width(margin().left() + margin().right());
-			preferred_size.add_height(margin().top() + margin().bottom());
+			preferred_size.add_width(margin().hsum());
+			preferred_size.add_height(margin().vsum());
 		}
 
 		return preferred_size;
@@ -120,7 +120,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandX()) {
 				expand = true;
@@ -135,7 +135,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandY()) {
 				expand = true;
@@ -146,7 +146,7 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void VBox::UpdateContainer(const WidgetUpdateRequest& request)
+	void VBox::UpdateContainer(const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -156,44 +156,27 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContainerRefresh: {
-				Refresh();
+			default: {
+				ReportContainerUpdate(request);
 				break;
 			}
-
-			default:
-				break;
 		}
 	}
 
-	bool VBox::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool VBox::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		if(request.source() == this) {
-
-			return AbstractDequeContainer::UpdateGeometryTest(request);
-
-		} else if (request.source() == container()) {
-
 			return true;
-
+		} else if (request.source() == container()) {
+			return true;
 		} else {	// called by sub widget
-
-			switch(request.type()) {
-				case WidgetSize:
-					return false;
-
-				case WidgetPosition:
-					return false;
-
-				default:
-					return false;
-			}
+			return false;
 		}
 	}
 
-	void VBox::UpdateGeometry (const WidgetUpdateRequest& request)
+	void VBox::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		if(request.source() == this || request.source() == container()) {
+		if(request.target() == this) {
 
 			switch (request.type()) {
 
@@ -201,14 +184,20 @@ namespace BlendInt {
 					const Point* new_pos = static_cast<const Point*>(request.data());
 					int x = new_pos->x() - position().x();
 					int y = new_pos->y() - position().y();
+
+					set_position(*new_pos);
 					MoveSubWidgets(x, y);
+
 					break;
 				}
 
 				case WidgetSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
+
+					set_size(*size_p);
 					FillSubWidgetsInVBox(position(), *size_p, margin(), m_alignment,
 									m_space);
+
 					break;
 				}
 
@@ -219,6 +208,7 @@ namespace BlendInt {
 
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType VBox::Draw (const RedrawEvent& event)
@@ -290,7 +280,7 @@ namespace BlendInt {
 
 		AbstractWidget* widget = 0;
 		Size tmp_size;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			widget = *it;
 			if (widget->visiable()) {
@@ -345,7 +335,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
-		WidgetDeque::iterator widget_it = sub_widgets()->begin();
+		AbstractWidgetDeque::iterator widget_it = sub_widgets()->begin();
 		AbstractWidget* widget = 0;
 
 		y = y + height;
@@ -385,7 +375,7 @@ namespace BlendInt {
 		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
 
 		if(widgets_height <= 0) {
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				(*it)->Resize((*it)->size().width(), 0);
 			}
@@ -395,7 +385,7 @@ namespace BlendInt {
 		int reference_height;
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
-		WidgetDeque::iterator it = sub_widgets()->begin();
+		AbstractWidgetDeque::iterator it = sub_widgets()->begin();
 		AbstractWidget* widget = 0;
 
 		y = y + height;
@@ -478,7 +468,7 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
-		WidgetDeque::iterator it = sub_widgets()->begin();
+		AbstractWidgetDeque::iterator it = sub_widgets()->begin();
 
 		y = y + height;
 		AbstractWidget* widget = 0;
@@ -515,7 +505,7 @@ namespace BlendInt {
 	{
 		std::deque<int>::const_iterator unexp_it =
 				unexpandable_preferred_widths->begin();
-		WidgetDeque::iterator it;
+		AbstractWidgetDeque::iterator it;
 		AbstractWidget* widget = 0;
 		for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
 			widget = *it;

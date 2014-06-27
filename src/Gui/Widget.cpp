@@ -42,7 +42,7 @@
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Widget.hpp>
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Color.hpp>
 
 #include <BlendInt/Interface.hpp>
@@ -62,17 +62,18 @@ namespace BlendInt {
 
 	}
 
-	bool Widget::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Widget::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void Widget::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Widget::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		// do nothing in this base class
+		ReportGeometryUpdate(request);
 	}
 
-	void Widget::BroadcastUpdate(const WidgetUpdateRequest& request)
+	void Widget::BroadcastUpdate(const GeometryUpdateRequest& request)
 	{
 		// do nothing
 	}

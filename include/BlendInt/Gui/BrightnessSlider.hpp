@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_BRIGHTNESSSLIDER_HPP_
 
 #include <BlendInt/Gui/AbstractSlider.hpp>
-#include <BlendInt/Gui/Dot.hpp>
+#include <BlendInt/Gui/CircularPicker.hpp>
 
 namespace BlendInt {
 
@@ -47,13 +47,13 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateSlider (const WidgetUpdateRequest& request);
+		virtual void UpdateSlider (const SliderUpdateRequest& request);
 
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
+		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -82,7 +82,7 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_inner;
 		RefPtr<GLArrayBuffer> m_outer;
 
-		Dot m_dot;
+		CircularPicker m_dot;
 
 	};
 

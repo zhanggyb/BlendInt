@@ -77,7 +77,9 @@ namespace BlendInt {
 			SetSubWidgetPosition(widget, x, y);
 
 			if(widget->IsExpandX()) {
+
 				ResizeSubWidget(widget, w, prefer.height());
+
 			} else {
 
 				if(widget->size().width() > w) {
@@ -110,7 +112,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_height(-m_space);
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -129,7 +131,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 	
-	void ToolBox::UpdateContainer (const WidgetUpdateRequest& request)
+	void ToolBox::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -146,15 +148,14 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContainerRefresh: {
-				Refresh();
+			default: {
+				ReportContainerUpdate(request);
 				break;
 			}
-
 		}
 	}
 	
-	bool ToolBox::UpdateGeometryTest(const WidgetUpdateRequest& request)
+	bool ToolBox::UpdateGeometryTest(const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			return true;
@@ -181,7 +182,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBox::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ToolBox::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -194,6 +195,7 @@ namespace BlendInt {
 					int x = pos_p->x() - position().x();
 					int y = pos_p->y() - position().y();
 
+					set_position(*pos_p);
 					MoveSubWidgets(x, y);
 
 					break;
@@ -212,6 +214,8 @@ namespace BlendInt {
 					int h = size_p->height() - margin().vsum();
 
 					FillSubWidgets(x, y, w, h, m_space);
+
+					set_size(*size_p);
 					break;
 				}
 
@@ -236,6 +240,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 	
 	ResponseType ToolBox::Draw (const RedrawEvent& event)
@@ -335,7 +341,7 @@ namespace BlendInt {
 		y = y + height + space;
 
 		AbstractWidget* widget = 0;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			widget = *it;
 

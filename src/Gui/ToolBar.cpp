@@ -69,14 +69,20 @@ namespace BlendInt {
 
 		if(PushBackSubWidget(widget)) {
 
+			Size prefer = widget->GetPreferredSize();
+
 			SetSubWidgetPosition(widget, x, y);
+
 			if(widget->IsExpandY()) {
-				ResizeSubWidget(widget, widget->size().width(), h);
+
+				ResizeSubWidget(widget, prefer.width(), h);
+
 			} else {
 
 				if(widget->size().height() > h) {
-					ResizeSubWidget(widget, widget->size().width(), h);
+					ResizeSubWidget(widget, prefer.width(), h);
 				} else {
+					ResizeSubWidget(widget, prefer.width(), widget->size().height());
 					SetSubWidgetPosition(widget, x,
 									y + (h - widget->size().height()) / 2);
 				}
@@ -93,14 +99,21 @@ namespace BlendInt {
 		int h = size().height() - margin().top() - margin().bottom();
 
 		if(PushBackSubWidget(button)) {
+
+			Size prefer = button->GetPreferredSize();
+
 			SetSubWidgetPosition(button, x, y);
+
 			if(button->IsExpandY()) {
-				ResizeSubWidget(button, button->size().width(), h);
+
+				ResizeSubWidget(button, prefer.width(), h);
+
 			} else {
 
 				if(button->size().height() > h) {
-					ResizeSubWidget(button, button->size().width(), h);
+					ResizeSubWidget(button, prefer.width(), h);
 				} else {
+					ResizeSubWidget(button, prefer.width(), button->size().height());
 					SetSubWidgetPosition(button, x,
 									y + (h - button->size().height()) / 2);
 				}
@@ -128,7 +141,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -152,15 +165,16 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToolBar::UpdateContainer(const WidgetUpdateRequest& request)
+	void ToolBar::UpdateContainer (const ContainerUpdateRequest& request)
 	{
-		switch(request.type()) {
+		switch (request.type()) {
 
 			case ContainerMargin: {
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
+				const Margin* margin_p =
+				        static_cast<const Margin*>(request.data());
 
 				int x = position().x() + margin_p->left();
-				if(sub_widget_size()) {
+				if (sub_widget_size()) {
 					x = sub_widgets()->front()->position().x();
 				}
 
@@ -173,56 +187,105 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContainerRefresh: {
-				Refresh();
+			default:
+				ReportContainerUpdate(request);
 				break;
-			}
-
 		}
 	}
 
-	void ToolBar::UpdateGeometry (const WidgetUpdateRequest& request)
+	bool ToolBar::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
+			return true;
+		} else if(request.target()->container() == this) {
+			// A sub widget want to change it's geometry
 
-			case WidgetPosition: {
+			switch (request.type()) {
 
-				const Point* pos_p = static_cast<const Point*>(request.data());
-
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
-
-				MoveSubWidgets(x, y);
-
-				break;
-			}
-
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0);
-				tool.UpdateInnerBuffer(m_inner.get());
-
-				int x = position().x() + margin().left();
-				if (sub_widget_size()) {
-					x = sub_widgets()->front()->position().x();
+				case WidgetPosition: {
+					return false;
 				}
 
-				int y = position().y() + margin().bottom();
-				int w = size_p->width() - margin().left()
-								- margin().right();
-				int h = size_p->height() - margin().top()
-								- margin().bottom();
+				case WidgetSize: {
 
-				FillSubWidgets(x, y, w, h, m_space);
+					return true;
+				}
 
-				break;
+				default: {
+					return true;
+				}
+			}
+		} else {
+			return true;
+		}
+	}
+
+	void ToolBar::UpdateGeometry (const GeometryUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			switch (request.type()) {
+
+				case WidgetPosition: {
+
+					const Point* pos_p = static_cast<const Point*>(request.data());
+
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+
+					break;
+				}
+
+				case WidgetSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0);
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+					m_inner->Reset();
+
+					int x = position().x() + margin().left();
+					if (sub_widget_size()) {
+						x = sub_widgets()->front()->position().x();
+					}
+
+					int y = position().y() + margin().bottom();
+					int w = size_p->width() - margin().hsum();
+					int h = size_p->height() - margin().vsum();
+
+					FillSubWidgets(x, y, w, h, m_space);
+
+					set_size(*size_p);
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			default:
-				break;
+		} else if (request.target()->container() == this) {
+
+			switch (request.type()) {
+
+				case WidgetSize: {
+					// a sub widget changed its size
+					FillSubWidgets(position(), size(), margin(), m_space);
+
+					break;
+				}
+
+				default:
+					break;
+
+			}
+
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ToolBar::Draw (const RedrawEvent& event)
@@ -235,7 +298,6 @@ namespace BlendInt {
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 
-		glBindVertexArray(m_vao);
 
 		program->Use();
 
@@ -244,23 +306,12 @@ namespace BlendInt {
 		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
 		program->SetUniform1i("Gamma", 0);
 
-		glEnableVertexAttribArray(0);
-
-		m_inner->Bind();
-
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							m_inner->GetBufferSize()
-											/ (2 * sizeof(GLfloat)));
-
-		m_inner->Reset();
-
-		glDisableVertexAttribArray(0);
+		glBindVertexArray(m_vao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(0);
 
 		program->Reset();
 
-		glBindVertexArray(0);
 		return Accept;
 	}
 
@@ -319,7 +370,7 @@ namespace BlendInt {
 			int right = position().x() + size().width() - margin().right();
 
 			int xmax = xmin - m_space;
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				xmax += (*it)->size().width() + m_space;
 			}
@@ -332,7 +383,7 @@ namespace BlendInt {
 
 					if(xmax > right) {
 						int x = m_last_x;
-						for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+						for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 						{
 							SetSubWidgetPosition(*it, x + event.position().x() - m_start_x, (*it)->position().y());
 							x += (*it)->size().width() + m_space;
@@ -343,7 +394,7 @@ namespace BlendInt {
 
 					if(xmin < left) {
 						int x = m_last_x;
-						for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+						for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 						{
 							SetSubWidgetPosition(*it, x + event.position().x() - m_start_x, (*it)->position().y());
 							x += (*it)->size().width() + m_space;
@@ -357,7 +408,7 @@ namespace BlendInt {
 				if(direction < 0) { // left
 					if(xmin > left) {
 						int x = m_last_x;
-						for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+						for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 						{
 							SetSubWidgetPosition(*it, x + event.position().x() - m_start_x, (*it)->position().y());
 							x += (*it)->size().width() + m_space;
@@ -366,7 +417,7 @@ namespace BlendInt {
 				} else if (direction > 0) {	// right
 					if(xmax < right) {
 						int x = m_last_x;
-						for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+						for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 						{
 							SetSubWidgetPosition(*it, x + event.position().x() - m_start_x, (*it)->position().y());
 							x += (*it)->size().width() + m_space;
@@ -386,7 +437,20 @@ namespace BlendInt {
 
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
-		m_inner = tool.GenerateInnerBuffer();
+
+		glBindVertexArray(m_vao);
+
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 	}
 	
 	void ToolBar::RealignSubWidgets (const Size& size, const Margin& margin,
@@ -402,7 +466,7 @@ namespace BlendInt {
 
 		x += margin.left();
 		y += margin.bottom();
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			SetSubWidgetPosition(*it, x, y);
 			ResizeSubWidget(*it, (*it)->size().width(), h);
@@ -425,7 +489,7 @@ namespace BlendInt {
 					int height, int space)
 	{
 		AbstractWidget* widget = 0;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			widget = *it;
 			SetSubWidgetPosition(widget, x, y);

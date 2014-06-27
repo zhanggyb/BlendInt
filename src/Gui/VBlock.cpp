@@ -63,7 +63,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandX()) {
 				expand = true;
@@ -78,7 +78,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandY()) {
 				expand = true;
@@ -105,7 +105,7 @@ namespace BlendInt {
 			int max_width = 0;
 			int max_height = 0;
 
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -126,7 +126,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	void VBlock::UpdateContainer (const WidgetUpdateRequest& request)
+	void VBlock::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -140,8 +140,8 @@ namespace BlendInt {
 					break;
 				}
 
-				case ContainerRefresh: {
-					Refresh();
+				default: {
+					ReportContainerUpdate(request);
 					break;
 				}
 
@@ -149,7 +149,7 @@ namespace BlendInt {
 		}
 	}
 
-	void VBlock::UpdateGeometry (const WidgetUpdateRequest& request)
+	void VBlock::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -160,6 +160,8 @@ namespace BlendInt {
 
 					int x = pos_p->x() - position().x();
 					int y = pos_p->y() - position().y();
+
+					set_position(*pos_p);
 					MoveSubWidgets(x, y);
 
 					break;
@@ -168,6 +170,7 @@ namespace BlendInt {
 				case WidgetSize: {
 
 					const Size* size_p = static_cast<const Size*>(request.data());
+					set_size(*size_p);
 					FillInVBlock(position(), *size_p, margin());
 
 					break;
@@ -179,6 +182,8 @@ namespace BlendInt {
 			}
 
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType VBlock::Draw (const RedrawEvent& event)
@@ -231,7 +236,18 @@ namespace BlendInt {
 
 		FillInVBlock(x, y, w, h);
 	}
-	
+
+	bool VBlock::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+			return false;
+		}
+	}
+
 	void VBlock::FillInVBlock (int x, int y, int w, int h)
 	{
 		if(sub_widget_size() == 0) return;
@@ -240,7 +256,7 @@ namespace BlendInt {
 		AbstractWidget* widget = 0;
 
 		y = y + h;
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			widget = *it;
 

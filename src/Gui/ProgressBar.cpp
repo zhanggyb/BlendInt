@@ -84,16 +84,16 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	bool ProgressBar::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool ProgressBar::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void ProgressBar::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ProgressBar::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 	}
 
-	void ProgressBar::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void ProgressBar::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

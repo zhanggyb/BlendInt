@@ -4,7 +4,7 @@
 
 #include <Common/Window.hpp>
 
-#include <BlendInt/Gui/ClockWidget.hpp>
+#include <BlendInt/Gui/Clock.hpp>
 
 //#include <gtest/gtest.h>
 #include <boost/smart_ptr.hpp>
@@ -52,7 +52,7 @@ int main (int argc, char* argv[])
 
     // add test code here
 
-	ClockWidget* tf = new ClockWidget;
+	Clock* tf = new Clock;
 
 	tf->SetPosition(200, 200);
     tf->Resize(400, 400);

@@ -35,7 +35,7 @@
 
 namespace BlendInt {
 
-	typedef std::deque<AbstractWidget*> WidgetDeque;
+	typedef std::deque<AbstractWidget*> AbstractWidgetDeque;
 
 	class Interface;
 	class Context;
@@ -95,7 +95,7 @@ namespace BlendInt {
 	{
 	public:
 
-		DequeIterator (WidgetDeque* deque)
+		DequeIterator (AbstractWidgetDeque* deque)
 		: AbstractContainerIterator(), m_deque_ptr(deque)
 		{
 			m_it = deque->begin();
@@ -143,11 +143,30 @@ namespace BlendInt {
 
 	private:
 
-		WidgetDeque* m_deque_ptr;
-		WidgetDeque::iterator m_it;
+		AbstractWidgetDeque* m_deque_ptr;
+		AbstractWidgetDeque::iterator m_it;
 	};
 
 	typedef RefPtr<AbstractContainerIterator> IteratorPtr;
+
+	class AbstractContainer;
+
+	/**
+	 * @brief Proxy class to be used in container to set its sub widget property
+	 */
+	class SubWidgetProxy
+	{
+	private:
+		friend class AbstractContainer;
+
+		SubWidgetProxy ();
+
+		~SubWidgetProxy ();
+
+		static inline bool RequestGeometryTest (AbstractWidget* sub_widget, const GeometryUpdateRequest& request);
+
+		static inline void RequestGeometryUpdate (AbstractWidget* sub_widget, const GeometryUpdateRequest& request);
+	};
 
 	class AbstractContainer: public AbstractWidget
 	{
@@ -176,11 +195,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateContainer (const WidgetUpdateRequest& request) = 0;
+		virtual void UpdateContainer (const ContainerUpdateRequest& request) = 0;
 
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
+		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
 
@@ -193,6 +212,10 @@ namespace BlendInt {
 		void SetSubWidgetPosition (AbstractWidget* sub, int x, int y);
 
 		void SetSubWidgetPosition (AbstractWidget* sub, const Point& pos);
+
+		void SetSubWidgetVisibility (AbstractWidget* sub, bool visible);
+
+		void SetSubWidgetLayer (AbstractWidget* sub, int layer);
 
 		static bool RemoveSubWidget (AbstractContainer* container, AbstractWidget* sub)
 		{

@@ -44,6 +44,12 @@
 
 namespace BlendInt {
 
+	static inline void copy_v2_v2(float r[2], const float a[2])
+	{
+		r[0] = a[0];
+		r[1] = a[1];
+	}
+
 	Shadow::Shadow()
 	: AbstractRoundForm(),
 	  m_vao(0),

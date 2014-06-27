@@ -21,8 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_DOT_HPP_
-#define _BLENDINT_GUI_DOT_HPP_
+#ifndef _BLENDINT_GUI_CIRCULARPICKER_HPP_
+#define _BLENDINT_GUI_CIRCULARPICKER_HPP_
 
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
@@ -32,19 +32,19 @@ namespace BlendInt {
 	/**
 	 * @brief Dot icon used in ColorWheel or BrightnessSlider
 	 */
-	class Dot: public AbstractRoundForm
+	class CircularPicker: public AbstractRoundForm
 	{
 	public:
 
 		/**
 		 * @brief Default constructor
 		 */
-		Dot ();
+		CircularPicker ();
 
 		/**
 		 * @brief Constructor
 		 */
-		virtual ~Dot ();
+		virtual ~CircularPicker ();
 
 		void Resize (unsigned int radius);
 
@@ -67,4 +67,4 @@ namespace BlendInt {
 
 }
 
-#endif /* _BLENDINT_GUI_DOT_HPP_ */
+#endif /* _BLENDINT_GUI_CIRCULARPICKER_HPP_ */

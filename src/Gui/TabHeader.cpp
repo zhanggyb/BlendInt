@@ -66,8 +66,10 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
 
-		events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
+		events()->connect(m_group.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
+		//events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
 		events()->connect(m_group.button_index_toggled(), this, &TabHeader::OnButtonIndexToggled);
+		//events()->connect(m_group.button_index_toggled(), &m_button_index_toggled, &Cpp::Event<int, bool>::fire);
 	}
 
 	TabHeader::~TabHeader()
@@ -119,7 +121,7 @@ namespace BlendInt {
 			AbstractWidget* widget = 0;
 			Size tmp_size;
 
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				widget = *it;
 
@@ -138,7 +140,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void TabHeader::UpdateContainer (const WidgetUpdateRequest& request)
+	void TabHeader::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		switch(request.type()) {
 
@@ -147,37 +149,45 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContainerRefresh: {
-				Refresh();
+			default: {
+				ReportContainerUpdate(request);
 				break;
 			}
 
 		}
 	}
 
-	void TabHeader::UpdateGeometry (const WidgetUpdateRequest& request)
+	void TabHeader::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetPosition: {
-				const Point* pos_p = static_cast<const Point*>(request.data());
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
-				MoveSubWidgets(x, y);
-				break;
+			switch (request.type()) {
+
+				case WidgetPosition: {
+					const Point* pos_p = static_cast<const Point*>(request.data());
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+					break;
+				}
+
+				case WidgetSize: {
+					const Size* size_p = static_cast<const Size*>(request.data());
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0);
+					tool.UpdateInnerBuffer(m_buffer.get());
+					set_size(*size_p);
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0);
-				tool.UpdateInnerBuffer(m_buffer.get());
-				break;
-			}
-
-			default:
-				break;
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType TabHeader::Draw (const RedrawEvent& event)
@@ -242,14 +252,20 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void TabHeader::OnButtonIndexClicked(int index)
-	{
-		m_button_index_clicked.fire(index);
-	}
-
 	void TabHeader::OnButtonIndexToggled(int index, bool toggled)
 	{
 		m_button_index_toggled.fire(index, toggled);
+	}
+
+	bool TabHeader::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+			return false;
+		}
 	}
 
 	int TabHeader::GetLastPosition() const

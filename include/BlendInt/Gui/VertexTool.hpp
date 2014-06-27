@@ -36,7 +36,7 @@
 
 #include <vector>
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Color.hpp>
 

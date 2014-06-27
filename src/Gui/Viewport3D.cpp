@@ -214,22 +214,28 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Viewport3D::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Viewport3D::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
-			case WidgetSize: {
+		if(request.target() == this) {
 
-				const Size* size_p = static_cast<const Size*>(request.data());
-				m_default_camera->SetPerspective(m_default_camera->fovy(),
-								1.f * size_p->width() / size_p->height());
+			switch (request.type()) {
+				case WidgetSize: {
 
-				break;
+					const Size* size_p = static_cast<const Size*>(request.data());
+					m_default_camera->SetPerspective(m_default_camera->fovy(),
+									1.f * size_p->width() / size_p->height());
+
+					set_size(*size_p);
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	void Viewport3D::Render ()
@@ -281,12 +287,12 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool Viewport3D::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Viewport3D::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void Viewport3D::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void Viewport3D::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

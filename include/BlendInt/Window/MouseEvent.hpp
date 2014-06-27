@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_MOUSEEVENT_HPP_
 #define _BLENDINT_MOUSEEVENT_HPP_
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/Window/InputEvent.hpp>
 

@@ -45,8 +45,6 @@ TEST_F(ContextTest1, AddSubWidget01)
     context->PrintLayers();
 #endif
     
-    size_t index_size = context->index_size();
-
     RunLoop(win);
 
     delete w1;
@@ -56,7 +54,7 @@ TEST_F(ContextTest1, AddSubWidget01)
 
     Terminate();
 
-	ASSERT_TRUE(index_size == 2);
+	ASSERT_TRUE(true);
 }
 
 /**
@@ -91,10 +89,7 @@ TEST_F(ContextTest1, AddSubWidget02)
     context->PrintLayers();
 #endif
 
-    size_t cm_size = context->index_size();
-
     bool result = (
-            (cm_size == 2) &&
             (w1->container() == context) &&
             (w2->container() == f1)
             );
@@ -147,10 +142,7 @@ TEST_F(ContextTest1, AddSubWidget03)
     context->PrintLayers();
 #endif
 
-    size_t cm_size = context->index_size();
-
     bool result = (
-            (cm_size == 2) &&
             (w2->container() == context) &&
             (w1->container() == f1)
             );
@@ -200,10 +192,7 @@ TEST_F(ContextTest1, DestructorInContainer01)
 	context->PrintLayers();
 #endif
 
-	size_t cm_size = context->index_size();
-
 	bool result = (
-			(cm_size == 1) &&
 			(w1->container() == context)
 	);
 
@@ -246,10 +235,7 @@ TEST_F(ContextTest1, DestructorInContainer02)
 	context->PrintLayers();
 #endif
 
-	size_t cm_size = context->index_size();
-
 	bool result = (
-			(cm_size == 1) &&
 			(w1->container() == f1) &&
 			(f1->container() == context)
 	);
@@ -291,11 +277,9 @@ TEST_F(ContextTest1, Layer1)
     context->PrintLayers();
 #endif
 
-	size_t index_size = context->index_size();
 	size_t layer_size = context->layer_size();
 
 	bool result = (
-					index_size == 2 &&
 					layer_size == 2);
 
     RunLoop(win);
@@ -341,11 +325,9 @@ TEST_F(ContextTest1, Layer2)
     context->PrintLayers();
 #endif
 
-    size_t index_size = context->index_size();
 	size_t layer_size = context->layer_size();
 
 	bool result = (
-					index_size == 2 &&
 					layer_size == 2);
 
     RunLoop(win);

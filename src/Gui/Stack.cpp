@@ -105,7 +105,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandX()) {
 				ret = true;
@@ -120,7 +120,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 		{
 			if((*it)->IsExpandY()) {
 				ret = true;
@@ -141,7 +141,7 @@ namespace BlendInt {
 			prefer.set_height(0);
 
 			Size tmp;
-			for(WidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
 			{
 				tmp = (*it)->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));
@@ -184,7 +184,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::UpdateContainer (const WidgetUpdateRequest& request)
+	void Stack::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -201,46 +201,50 @@ namespace BlendInt {
 				break;
 			}
 
-			case ContainerRefresh: {
-
-				Refresh();
+			default: {
+				ReportContainerUpdate(request);
 				break;
 			}
-
-			default:
-				break;
 		}
 	}
 
-	void Stack::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Stack::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetPosition: {
-				const Point* pos_p = static_cast<const Point*>(request.data());
+			switch (request.type()) {
 
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
+				case WidgetPosition: {
+					const Point* pos_p = static_cast<const Point*>(request.data());
 
-				MoveSubWidgets(x, y);
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
 
-				break;
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+
+					break;
+				}
+
+				case WidgetSize: {
+					const Size* new_size = static_cast<const Size*>(request.data());
+
+					int w = new_size->width() - margin().hsum();
+					int h = new_size->height() - margin().vsum();
+
+					set_size(*new_size);
+					ResizeSubWidgets(w, h);
+
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetSize: {
-				const Size* new_size = static_cast<const Size*>(request.data());
-
-				int w = new_size->width() - margin().hsum();
-				int h = new_size->height() - margin().vsum();
-				ResizeSubWidgets(w, h);
-
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Stack::Draw (const RedrawEvent& event)
@@ -288,6 +292,17 @@ namespace BlendInt {
 		}
 
 		return ret;
+	}
+
+	bool Stack::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+			return false;
+		}
 	}
 
 	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)

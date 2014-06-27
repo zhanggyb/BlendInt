@@ -28,31 +28,30 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/Types.hpp>
+#include <Cpp/Events.hpp>
+
+#include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Rect.hpp>
-
 #include <BlendInt/Core/RefPtr.hpp>
+
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/KeyEvent.hpp>
 #include <BlendInt/Window/ContextMenuEvent.hpp>
 #include <BlendInt/Window/RedrawEvent.hpp>
 
-#include <Cpp/Events.hpp>
-
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/Gui/Shadow.hpp>
 
 namespace BlendInt {
 
 	class Context;
-	class GLTexture2D;
+	//class GLTexture2D;
 	class AbstractWidget;
 	class AbstractContainer;
 
-	struct WidgetTheme;
-
-	enum WidgetGeometryType {
+	enum GeometryRequestType {
 		WidgetPosition,
 		WidgetSize,
 		WidgetRoundCornerType,
@@ -63,7 +62,9 @@ namespace BlendInt {
 
 	enum ContainerRequestType {
 		ContainerMargin,
-		ContainerRefresh
+		ContainerRefresh,
+		ContainerSubWidgetAdded,
+		ContainerSubWidgetRemoved
 	};
 
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
@@ -75,23 +76,15 @@ namespace BlendInt {
 		return obj;
 	}
 
-	class WidgetUpdateRequest: public UpdateRequest
+	class WidgetUpdateRequest
 	{
 	public:
 
 		WidgetUpdateRequest (AbstractWidget* source, AbstractWidget* target)
-		: UpdateRequest(0, 0),
-		  m_source(source),
+		: m_source(source),
 		  m_target(target)
 		{
 
-		}
-
-		WidgetUpdateRequest (AbstractWidget* source, AbstractWidget* target,
-						int type, const void* data)
-		: UpdateRequest(type, data),
-		  m_source(source), m_target(target)
-		{
 		}
 
 		~WidgetUpdateRequest ()
@@ -111,59 +104,134 @@ namespace BlendInt {
 
 	private:
 
+		/**
+		 * Disabled
+		 */
 		WidgetUpdateRequest();
 
 		AbstractWidget* m_source;
-
 		AbstractWidget* m_target;
 	};
 
-	/**
-	 * @brief Proxy class to be used in container to set its sub widget property
-	 */
-	class SubWidgetProxy
+	class GeometryUpdateRequest: public WidgetUpdateRequest
 	{
+	public:
+
+		GeometryUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target), m_type(0), m_data(0)
+		{
+
+		}
+
+		GeometryUpdateRequest(AbstractWidget* source, AbstractWidget* target, int type, const void* data)
+		: WidgetUpdateRequest(source, target),
+		  m_type(type),
+		  m_data(data)
+		{
+
+		}
+
+		~GeometryUpdateRequest ()
+		{
+
+		}
+
+		int type () const
+		{
+			return m_type;
+		}
+
+		void set_type (int type)
+		{
+			m_type = type;
+		}
+
+		const void* data () const
+		{
+			return m_data;
+		}
+
+		void set_data (const void* data)
+		{
+			m_data = data;
+		}
+
 	private:
-		friend class AbstractContainer;
 
-		SubWidgetProxy(AbstractWidget* source, AbstractWidget* target);
+		GeometryUpdateRequest();
 
-		~SubWidgetProxy ();
+		int m_type;
+		const void* m_data;
+	};
 
-		void Resize (AbstractWidget* widget, const Size& size);
+	class ContainerUpdateRequest: public WidgetUpdateRequest
+	{
+	public:
 
-		void Resize (AbstractWidget* widget, int width, int height);
+		ContainerUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target), m_type(0), m_data(0)
+		{
 
-		void SetPosition (AbstractWidget* widget, int x, int y);
+		}
 
-		void SetPosition (AbstractWidget* widget, const Point& position);
+		ContainerUpdateRequest(AbstractWidget* source, AbstractWidget* target, int type, const void* data)
+		: WidgetUpdateRequest(source, target),
+		  m_type(type),
+		  m_data(data)
+		{
 
-		WidgetUpdateRequest m_request;
+		}
+
+		~ContainerUpdateRequest ()
+		{
+
+		}
+
+		int type () const
+		{
+			return m_type;
+		}
+
+		void set_type (int type)
+		{
+			m_type = type;
+		}
+
+		const void* data () const
+		{
+			return m_data;
+		}
+
+		void set_data (const void* data)
+		{
+			m_data = data;
+		}
+
+	private:
+
+		ContainerUpdateRequest();
+
+		int m_type;
+		const void* m_data;
 	};
 
 	/**
-	 * @brief Proxy class to be used in sub widget to set its container property
+	 * @brief Proxy class to be used in sub widget to communicate with its container
 	 */
 	class ContainerProxy
 	{
 	private:
 		friend class AbstractWidget;
 
-		explicit ContainerProxy (AbstractWidget* source, AbstractWidget* target);
+		ContainerProxy ();
 
 		~ContainerProxy ();
 
-		void RequestRefresh (AbstractContainer* container);
+		static inline bool RequestGeometryTest (AbstractContainer* container, const GeometryUpdateRequest& request);
 
-		bool SubwidgetPositionUpdateTest (AbstractContainer* container, const Point& pos);
+		static inline void RequestGeometryUpdate (AbstractContainer* container, const GeometryUpdateRequest& request);
 
-		bool SubWidgetSizeUpdateTest (AbstractContainer* container, const Size& size);
-
-		void SubWidgetPositionUpdate (AbstractContainer* container, const Point& pos);
-
-		void SubWidgetSizeUpdate (AbstractContainer* container, const Size& size);
-
-		WidgetUpdateRequest m_request;
+		static inline void RequestContainerUpdate (AbstractContainer* container, const ContainerUpdateRequest& request);
 	};
 
 	// ----------------------------------------------------
@@ -234,6 +302,8 @@ namespace BlendInt {
 		void SetVisible (bool visible);
 
 		void SetEmboss (bool emboss);
+
+		bool IsHover (const Point& cursor);
 
 		virtual bool IsExpandX () const
 		{
@@ -436,7 +506,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
 
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request) = 0;
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request) = 0;
 
 		/**
 		 * @brief Update opengl data (usually the GL buffer) for Render
@@ -447,19 +517,29 @@ namespace BlendInt {
 		 * This virtual function should be implemented in each derived class,
 		 * and should only use the form's property to draw opengl elements once.
 		 */
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request) = 0;
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request) = 0;
 
-		virtual void BroadcastUpdate (const WidgetUpdateRequest& request) = 0;
+		virtual void BroadcastUpdate (const GeometryUpdateRequest& request) = 0;
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
-		bool ResizeTestInContainer (const Size& size);
+		void CheckSubWidgetAddedInContainer (AbstractWidget* sub_widget);
 
-		bool PositionTestInContainer (const Point& point);
+		void CheckSubWidgetRemovedInContainer (AbstractWidget* sub_widget);
 
-		void ResizeUpdateInContainer (const Size& size);
+		/**
+		 * @brief Query the geometry update in container
+		 *
+		 * If no container, return true
+		 */
+		bool QueryGeometryUpdateTest (const GeometryUpdateRequest& request);
 
-		void PositionUpdateInContainer (const Point& point);
+		/**
+		 * @brief Hand on the update request to the container
+		 */
+		void ReportContainerUpdate (const ContainerUpdateRequest& request);
+
+		void ReportGeometryUpdate (const GeometryUpdateRequest& request);
 
 		Context* GetContext ();
 
@@ -533,6 +613,16 @@ namespace BlendInt {
 			} else {
 				CLRBIT(m_flags, WidgetFlagDropShadow);
 			}
+		}
+
+		void set_layer (int z)
+		{
+			m_z = z;
+		}
+
+		void set_z (int z)
+		{
+			m_z = z;
 		}
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}

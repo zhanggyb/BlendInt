@@ -133,53 +133,61 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void ScrollArea::UpdateContainer(const WidgetUpdateRequest& request)
+	void ScrollArea::UpdateContainer(const ContainerUpdateRequest& request)
 	{
-		switch(request.type()) {
+		// TODO: set margin
 
-			case ContainerRefresh: {
-
-				Refresh();
-				break;
-			}
-
-			default:
-				break;
-		}
-
+		ReportContainerUpdate(request);
 	}
 
-	void ScrollArea::UpdateGeometry (const WidgetUpdateRequest& request)
+	bool ScrollArea::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
+		if(request.source() == this) {
+			return true;
+		} else if (request.source() == container()) {
+			return true;
+		} else {	// called by sub widget
+			return false;
+		}
+	}
 
-		switch (request.type()) {
+	void ScrollArea::UpdateGeometry (const GeometryUpdateRequest& request)
+	{
+		if(request.target() == this) {
 
-			case WidgetPosition: {
-				const Point* pos_p = static_cast<const Point*>(request.data());
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
-				MoveSubWidgets(x, y);
-				break;
+			switch (request.type()) {
+
+				case WidgetPosition: {
+					const Point* pos_p = static_cast<const Point*>(request.data());
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+					break;
+				}
+
+				case WidgetSize: {
+
+					const Size* size_p = static_cast<const Size*>(request.data());
+
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0);
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+
+					AdjustGeometries(position(), *size_p, margin());
+					set_size(*size_p);
+
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetSize: {
-
-				const Size* size_p = static_cast<const Size*>(request.data());
-
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0);
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-
-				AdjustGeometries(position(), *size_p, margin());
-
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ScrollArea::Draw (const RedrawEvent& event)
@@ -288,23 +296,32 @@ namespace BlendInt {
 
 		//view->CentralizeViewport();
 
+		AbstractWidget* widget = view->viewport();
+
 		if(hbar->visiable()) {
 			SetSubWidgetPosition(hbar, x, y);
 			ResizeSubWidget (hbar, width - rw, bh);
-			int percent = view->GetHPercentage();
-			hbar->SetMaximum(view->viewport()->size().width());
-			hbar->SetMinimum(view->size().width());
-			hbar->SetSliderPercentage(percent);
+
+			if(widget) {
+				int percent = view->GetHPercentage();
+				hbar->SetMaximum(widget->size().width());
+				hbar->SetMinimum(view->size().width());
+				hbar->SetSliderPercentage(percent);
+			}
 		}
 
 		if(vbar->visiable()) {
 			SetSubWidgetPosition(vbar, x + width - rw, y + bh);
 			ResizeSubWidget (vbar, rw, height - bh);
-			int percent = view->GetVPercentage();
-			vbar->SetMaximum(view->viewport()->size().height());
-			vbar->SetMinimum(view->size().height());
-			vbar->SetSliderPercentage(percent);
+
+			if(widget) {
+				int percent = view->GetVPercentage();
+				vbar->SetMaximum(widget->size().height());
+				vbar->SetMinimum(view->size().height());
+				vbar->SetSliderPercentage(percent);
+			}
 		}
+
 	}
 
 	void ScrollArea::OnHorizontalScroll (int value)

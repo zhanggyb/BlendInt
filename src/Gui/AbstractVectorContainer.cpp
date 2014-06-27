@@ -70,6 +70,8 @@ namespace BlendInt {
 		events()->connect(widget->destroyed(), this,
 						&AbstractVectorContainer::OnSubWidgetDestroyed);
 
+		CheckSubWidgetAddedInContainer(widget);
+
 		return true;
 	}
 
@@ -93,12 +95,13 @@ namespace BlendInt {
 		if (it != m_sub_widgets->end()) {
 			*it = 0;
 			SetContainer(widget, 0);
-			return true;
 		} else {
 			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
 							widget->name().c_str(), name().c_str());
 			return false;
 		}
+
+		CheckSubWidgetRemovedInContainer(widget);
 
 		return true;
 	}

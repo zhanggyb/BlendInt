@@ -52,75 +52,7 @@ OIIO_NAMESPACE_USING
 
 namespace BlendInt {
 
-	SubWidgetProxy::SubWidgetProxy (AbstractWidget* source, AbstractWidget* target)
-	: m_request(source, target)
-	{
-
-	}
-
-	SubWidgetProxy::~SubWidgetProxy ()
-	{
-	}
-
-	void SubWidgetProxy::Resize (AbstractWidget* widget, const Size& size)
-	{
-		if(widget->size() == size) return;
-
-		m_request.set_type(WidgetSize);
-		m_request.set_data(&size);
-
-		if(widget->UpdateGeometryTest(m_request)) {
-			widget->UpdateGeometry(m_request);
-			widget->set_size(size);
-		}
-	}
-
-	void SubWidgetProxy::Resize (AbstractWidget* widget, int width, int height)
-	{
-		if(widget->size().width() == width &&
-						widget->size().height() == height)
-			return;
-
-		Size new_size (width, height);
-		m_request.set_type(WidgetSize);
-		m_request.set_data(&new_size);
-
-		if(widget->UpdateGeometryTest(m_request)) {
-			widget->UpdateGeometry(m_request);
-			widget->set_size(width, height);
-		}
-	}
-
-	void SubWidgetProxy::SetPosition (AbstractWidget* widget, int x, int y)
-	{
-		if(widget->position().x() == x &&
-						widget->position().y() == y)
-			return;
-
-		Point new_pos (x, y);
-		m_request.set_type(WidgetPosition);
-		m_request.set_data(&new_pos);
-
-		if(widget->UpdateGeometryTest(m_request)) {
-			widget->UpdateGeometry(m_request);
-			widget->set_position(x, y);
-		}
-	}
-
-	void SubWidgetProxy::SetPosition (AbstractWidget* widget, const Point& position)
-	{
-		if(m_request.target()->position() == position) return;
-		m_request.set_type(WidgetPosition);
-		m_request.set_data(&position);
-
-		if(m_request.target()->UpdateGeometryTest(m_request)) {
-			m_request.target()->UpdateGeometry(m_request);
-			m_request.target()->set_position(position);
-		}
-	}
-
-	ContainerProxy::ContainerProxy (AbstractWidget* source, AbstractWidget* target)
-	: m_request(source, target)
+	ContainerProxy::ContainerProxy ()
 	{
 	}
 
@@ -128,44 +60,27 @@ namespace BlendInt {
 	{
 	}
 
-	void ContainerProxy::RequestRefresh (AbstractContainer* container)
+	inline bool ContainerProxy::RequestGeometryTest(AbstractContainer* container, const GeometryUpdateRequest& request)
 	{
-		m_request.set_type(ContainerRefresh);
-		m_request.set_data(0);
-
-		container->UpdateContainer(m_request);
+		if(container) {
+			return container->UpdateGeometryTest(request);
+		} else {
+			return true;
+		}
 	}
 
-	bool ContainerProxy::SubwidgetPositionUpdateTest(AbstractContainer* container, const Point& pos)
+	inline void ContainerProxy::RequestGeometryUpdate(AbstractContainer* container, const GeometryUpdateRequest& request)
 	{
-		m_request.set_type(WidgetPosition);
-		m_request.set_data(&pos);
-
-		return container->UpdateGeometryTest(m_request);
+		if(container) {
+			container->UpdateGeometry(request);
+		}
 	}
 
-	bool ContainerProxy::SubWidgetSizeUpdateTest(AbstractContainer* container, const Size& size)
+	inline void ContainerProxy::RequestContainerUpdate(AbstractContainer* container, const ContainerUpdateRequest& request)
 	{
-		m_request.set_type(WidgetSize);
-		m_request.set_data(&size);
-
-		return container->UpdateGeometryTest(m_request);
-	}
-
-	void ContainerProxy::SubWidgetPositionUpdate (AbstractContainer* container, const Point& pos)
-	{
-		m_request.set_type(WidgetPosition);
-		m_request.set_data(&pos);
-
-		container->UpdateGeometry(m_request);
-	}
-
-	void ContainerProxy::SubWidgetSizeUpdate(AbstractContainer* container, const Size& size)
-	{
-		m_request.set_type(WidgetSize);
-		m_request.set_data(&size);
-
-		container->UpdateGeometry(m_request);
+		if(container) {
+			container->UpdateContainer(request);
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -201,12 +116,13 @@ namespace BlendInt {
 		bool broadcast = false;
 
 		Size new_size (width, height);
-		WidgetUpdateRequest request(this, this, WidgetSize, &new_size);
+		GeometryUpdateRequest request(this, this, WidgetSize, &new_size);
 
-		if(ResizeTestInContainer(new_size) && UpdateGeometryTest(request)) {
+		if(ContainerProxy::RequestGeometryTest(m_container, request) && UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
 			set_size(width, height);
-			ResizeUpdateInContainer(new_size);
+			//ContainerProxy::RequestGeometryUpdate(m_container, request);
+
 			broadcast = true;
 		}
 
@@ -220,12 +136,13 @@ namespace BlendInt {
 		if(AbstractWidget::size() == size) return;
 		bool broadcast = false;
 
-		WidgetUpdateRequest request(this, this, WidgetSize, &size);
+		GeometryUpdateRequest request(this, this, WidgetSize, &size);
 
-		if(ResizeTestInContainer(size) && UpdateGeometryTest(request)) {
+		if(ContainerProxy::RequestGeometryTest(m_container, request) && UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
 			set_size(size);
-			ResizeUpdateInContainer(size);
+			//ContainerProxy::RequestGeometryUpdate(m_container, request);
+
 			broadcast = true;
 		}
 
@@ -240,12 +157,12 @@ namespace BlendInt {
 		bool broadcast = false;
 
 		Point new_pos (x, y);
-		WidgetUpdateRequest request(this, this, WidgetPosition, &new_pos);
+		GeometryUpdateRequest request(this, this, WidgetPosition, &new_pos);
 
-		if(PositionTestInContainer(new_pos) && UpdateGeometryTest(request)) {
+		if(ContainerProxy::RequestGeometryTest(m_container, request) && UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
 			set_position(x, y);
-			PositionUpdateInContainer(new_pos);
+			//ContainerProxy::RequestGeometryUpdate(m_container, request);
 			broadcast = true;
 		}
 
@@ -259,12 +176,12 @@ namespace BlendInt {
 		if(position() == pos) return;
 		bool broadcast = false;
 
-		WidgetUpdateRequest request(this, this, WidgetPosition, &pos);
+		GeometryUpdateRequest request(this, this, WidgetPosition, &pos);
 
-		if(PositionTestInContainer(pos) && UpdateGeometryTest(request)) {
+		if(ContainerProxy::RequestGeometryTest(m_container, request) && UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
 			set_position(pos);
-			PositionUpdateInContainer(pos);
+			//ContainerProxy::RequestGeometryUpdate(m_container, request);
 			broadcast = true;
 		}
 
@@ -278,7 +195,7 @@ namespace BlendInt {
 		if(round_corner_type() == type) return;
 		bool broadcast = false;
 
-		WidgetUpdateRequest request(this, this, WidgetRoundCornerType, &type);
+		GeometryUpdateRequest request(this, this, WidgetRoundCornerType, &type);
 
 		if(UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
@@ -296,7 +213,7 @@ namespace BlendInt {
 		if(m_round_corner_radius == radius) return;
 		bool broadcast = false;
 
-		WidgetUpdateRequest request(this, this, WidgetRoundCornerRadius, &radius);
+		GeometryUpdateRequest request(this, this, WidgetRoundCornerRadius, &radius);
 
 		if(UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
@@ -314,8 +231,9 @@ namespace BlendInt {
 		if(m_z == z) return;
 		bool broadcast = false;
 
-		WidgetUpdateRequest request(this, this, WidgetLayer, &z);
+		GeometryUpdateRequest request(this, this, WidgetLayer, &z);
 
+		// only Context allows changing layer
 		if(UpdateGeometryTest (request)) {
 			UpdateGeometry(request);
 
@@ -342,7 +260,7 @@ namespace BlendInt {
 			return;
 		bool broadcast = false;
 
-		WidgetUpdateRequest request(this, this, WidgetVisibility, &visible);
+		GeometryUpdateRequest request(this, this, WidgetVisibility, &visible);
 
 		if(UpdateGeometryTest (request)) {
 			UpdateGeometry(request);
@@ -383,10 +301,11 @@ namespace BlendInt {
 
 	void AbstractWidget::Refresh()
 	{
-		if(m_container) {
-			ContainerProxy proxy(this, m_container);
-			proxy.RequestRefresh(m_container);
-		}
+		ContainerUpdateRequest request (this, m_container);
+		request.set_type(ContainerRefresh);
+		request.set_data(0);
+
+		ContainerProxy::RequestContainerUpdate(m_container, request);
 	}
 
 	void AbstractWidget::RenderToTexture (size_t border, GLTexture2D* texture)
@@ -573,6 +492,26 @@ namespace BlendInt {
 		Refresh();
 	}
 
+	bool AbstractWidget::IsHover(const Point& cursor)
+	{
+		if(Contain(cursor)) {
+
+			AbstractContainer* container = m_container;
+
+			while(container) {
+
+				if(!container->Contain(cursor))
+					return false;
+
+				container = container->container();
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	void AbstractWidget::DispatchRender(AbstractWidget* other)
 	{
 		//other->Draw();
@@ -602,43 +541,37 @@ namespace BlendInt {
 		return obj->MouseReleaseEvent(event);
 	}
 
-	bool AbstractWidget::ResizeTestInContainer (const Size& size)
+	void AbstractWidget::CheckSubWidgetAddedInContainer (AbstractWidget* sub_widget)
 	{
-		if(m_container) {
-			ContainerProxy test(this, this);
+		ContainerUpdateRequest request (this, m_container);
+		request.set_type(ContainerSubWidgetAdded);
+		request.set_data(sub_widget);
 
-			return test.SubWidgetSizeUpdateTest(m_container, size);
-		} else {
-			return true;
-		}
+		ContainerProxy::RequestContainerUpdate(m_container, request);
 	}
 
-	bool AbstractWidget::PositionTestInContainer(const Point& point)
+	void AbstractWidget::CheckSubWidgetRemovedInContainer (AbstractWidget* sub_widget)
 	{
-		if(m_container) {
+		ContainerUpdateRequest request (this, m_container);
+		request.set_type(ContainerSubWidgetRemoved);
+		request.set_data(sub_widget);
 
-			ContainerProxy test(this, this);
-			return test.SubwidgetPositionUpdateTest(m_container, point);
-
-		} else {
-			return true;
-		}
+		ContainerProxy::RequestContainerUpdate(m_container, request);
 	}
 
-	void AbstractWidget::ResizeUpdateInContainer(const Size& size)
+	bool AbstractWidget::QueryGeometryUpdateTest(const GeometryUpdateRequest& request)
 	{
-		if(m_container) {
-			ContainerProxy proxy(this, this);
-			proxy.SubWidgetSizeUpdate(m_container, size);
-		}
+		return ContainerProxy::RequestGeometryTest(m_container, request);
 	}
 
-	void AbstractWidget::PositionUpdateInContainer(const Point& pos)
+	void AbstractWidget::ReportContainerUpdate(const ContainerUpdateRequest& request)
 	{
-		if(m_container) {
-			ContainerProxy proxy(this, this);
-			proxy.SubWidgetPositionUpdate(m_container, pos);
-		}
+		ContainerProxy::RequestContainerUpdate(m_container, request);
+	}
+
+	void AbstractWidget::ReportGeometryUpdate(const GeometryUpdateRequest& request)
+	{
+		ContainerProxy::RequestGeometryUpdate(m_container, request);
 	}
 
 	Context* AbstractWidget::GetContext()

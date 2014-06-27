@@ -27,7 +27,7 @@
 #include <vector>
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Gui/Dot.hpp>
+#include <BlendInt/Gui/CircularPicker.hpp>
 #include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
@@ -50,11 +50,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool UpdateGeometryTest (const WidgetUpdateRequest& request);
+		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
-		virtual void UpdateGeometry (const WidgetUpdateRequest& request);
+		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const WidgetUpdateRequest& request);
+		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -80,12 +80,14 @@ namespace BlendInt {
 
 	private:
 
-		GLuint m_vao;
+		void InitializeColorWheel ();
+
+		GLuint m_vao[2];
 
 		RefPtr<GLArrayBuffer> m_outline;
 		RefPtr<GLArrayBuffer> m_inner;
 
-		Dot m_slide_icon;
+		CircularPicker m_picker;
 
 	};
 

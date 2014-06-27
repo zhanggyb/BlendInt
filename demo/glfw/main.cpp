@@ -8,13 +8,13 @@
 
 #include <Cpp/Events.hpp>
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/OpenGL/GLTexture2D.hpp>
 #include <BlendInt/OpenGL/TextureAtlas2D.hpp>
 
 #include <BlendInt/Gui/Button.hpp>
-#include <BlendInt/Gui/ClockWidget.hpp>
+#include <BlendInt/Gui/Clock.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/ToggleButton.hpp>
 #include <BlendInt/Gui/HBox.hpp>
@@ -49,6 +49,7 @@
 #include <BlendInt/Gui/FileSelector.hpp>
 #include <BlendInt/Gui/HBlock.hpp>
 #include <BlendInt/Gui/VBlock.hpp>
+#include <BlendInt/Gui/FramePanel.hpp>
 
 #include "GLFWContext.hpp"
 #include "Window.hpp"
@@ -67,38 +68,55 @@ int main(int argc, char* argv[])
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1280, 800);
 
 	GLFWContext* context = Manage (new GLFWContext);
+	DBG_SET_NAME(context, "Context");
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
+	Button* btn1 = Manage(new Button);
+	DBG_SET_NAME(btn1, "Button 1");
+	btn1->Resize(100, 50);
+	btn1->SetPosition(200, 100);
+
+	FramePanel* f1 = Manage(new FramePanel);
+	DBG_SET_NAME(f1, "Frame 1");
+	f1->SetMargin(20, 20, 20, 20);
+	f1->SetPosition(400, 100);
+
+	FramePanel* f2 = Manage(new FramePanel);
+	DBG_SET_NAME(f2, "Frame 2");
+	f2->SetMargin(20, 20, 20, 20);
+	f2->SetPosition(400, 100);
+
+	Button* btn2 = Manage(new Button);
+	DBG_SET_NAME(btn2, "Button 2");
+
+	f2->Setup(btn2);
+	f1->Setup(f2);
+
 	ColorSelector* cs = Manage(new ColorSelector);
-	cs->SetPosition(200, 200);
+	cs->SetPosition(600, 450);
+
+	Clock* clock = Manage(new Clock);
+	//clock->SetPosition(100, 400);
+
+	context->Add(clock);
 
 	context->Add(cs);
 
-	VBlock* vblock = Manage(new VBlock);
+	context->Add(btn1);
+	context->Add(f1);
 
-	ColorButton* btn1 = Manage(new ColorButton);
-	btn1->SetColor(Color(Color::Aqua));
-	ColorButton* btn2 = Manage(new ColorButton);
-	btn2->SetColor(Color(Color::Olive));
-	ColorButton* btn3 = Manage(new ColorButton);
-	btn3->SetColor(Color(Color::Purple));
-	ColorButton* btn4 = Manage(new ColorButton);
-	btn4->SetColor(Color(Color::Teal));
+	f1->Resize(300, 300);
 
-	vblock->PushBack(btn1);
-	vblock->PushBack(btn2);
-	vblock->PushBack(btn3);
-	vblock->PushBack(btn4);
-
-	vblock->SetPosition(500, 200);
-	context->Add(vblock);
+	delete btn2;
 
 	RunLoop(win);
 
 	Interface::Release();
 
 	Terminate();
+
+	assert(Object::CheckAllocatedObjects());
 
 	return 0;
 }

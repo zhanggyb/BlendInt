@@ -6,7 +6,7 @@
 
 #include <Cpp/Events.hpp>
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include "Window.hpp"
 #include "GLFWContext.hpp"

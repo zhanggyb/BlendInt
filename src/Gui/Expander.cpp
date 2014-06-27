@@ -39,6 +39,8 @@
 
 #include <BlendInt/Gui/ToggleButton.hpp>
 
+#include <BlendInt/Gui/Frame.hpp>
+
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Icons.hpp>
@@ -76,39 +78,49 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void ExpandButton::UpdateGeometry (const WidgetUpdateRequest& request)
+	void ExpandButton::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target() == this) {
+			switch (request.type()) {
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				UpdateTextPosition(*size_p, round_corner_type(),
-								round_corner_radius(), text());
-				Refresh();
-				break;
+				case WidgetSize: {
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					UpdateTextPosition(*size_p, round_corner_type(),
+					        round_corner_radius(), text());
+
+					set_size(*size_p);
+					Refresh();
+					break;
+				}
+
+				case WidgetRoundCornerType: {
+					const int* type_p = static_cast<const int*>(request.data());
+					UpdateTextPosition(size(), *type_p, round_corner_radius(),
+					        text());
+
+					set_round_corner_type(*type_p);
+					Refresh();
+					break;
+				}
+
+				case WidgetRoundCornerRadius: {
+					const float* radius_p =
+					        static_cast<const float*>(request.data());
+					UpdateTextPosition(size(), round_corner_type(), *radius_p,
+					        text());
+
+					set_round_corner_radius(*radius_p);
+					Refresh();
+					break;
+				}
+
+				default:
+					break;
 			}
-
-			case WidgetRoundCornerType: {
-				const int* type_p = static_cast<const int*>(request.data());
-				UpdateTextPosition(size(), *type_p, round_corner_radius(),
-								text());
-				Refresh();
-				break;
-			}
-
-			case WidgetRoundCornerRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				UpdateTextPosition(size(), round_corner_type(), *radius_p,
-								text());
-				Refresh();
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType ExpandButton::Draw (const RedrawEvent& event)
@@ -175,214 +187,14 @@ namespace BlendInt {
 
 	// ----------------------
 
-	SingleBox::SingleBox ()
-	: AbstractSingleContainer()
-	{
-		set_size(400, 300);
-	}
-
-	SingleBox::~SingleBox ()
-	{
-	}
-
-	bool SingleBox::Setup (AbstractWidget* widget)
-	{
-		bool ret = false;
-
-		if (SetSubWidget(widget)) {
-
-			int x = position().x() + margin().left();
-			int y = position().y() + margin().bottom();
-
-			int w = size().width() - margin().hsum();
-			int h = size().height() - margin().vsum();
-
-			FillSubWidget(x, y, w, h);
-
-			ret = true;
-		}
-
-		return ret;
-	}
-
-	bool SingleBox::Remove (AbstractWidget* widget)
-	{
-		bool ret = false;
-
-		if(RemoveSubWidget(widget)) {
-
-			ret = true;
-		}
-
-		return ret;
-	}
-
-	bool SingleBox::IsExpandX() const
-	{
-		if(sub_widget())
-			return sub_widget()->IsExpandX();
-		else
-			return false;
-	}
-
-	bool SingleBox::IsExpandY() const
-	{
-		if(sub_widget())
-			return sub_widget()->IsExpandY();
-		else
-			return false;
-	}
-
-	Size SingleBox::GetPreferredSize() const
-	{
-		Size prefer(400, 300);
-
-		if(sub_widget()) {
-			prefer = sub_widget()->GetPreferredSize();
-
-			prefer.add_width(margin().hsum());
-			prefer.add_height(margin().vsum());
-		}
-
-		return prefer;
-	}
-
-	void SingleBox::UpdateContainer (const WidgetUpdateRequest& request)
-	{
-		switch(request.type()) {
-
-			case ContainerMargin: {
-
-				if (sub_widget()) {
-					const Margin* margin_p =
-									static_cast<const Margin*>(request.data());
-					set_margin(*margin_p);
-
-					FillSubWidget(position(), size(), *margin_p);
-				}
-				break;
-			}
-
-			case ContainerRefresh: {
-				Refresh();
-				break;
-			}
-
-			default:
-				break;
-
-		}
-	}
-
-	bool SingleBox::UpdateGeometryTest (const WidgetUpdateRequest& request)
-	{
-		if(request.source() == this) {
-
-			return AbstractSingleContainer::UpdateGeometryTest(request);
-
-		} else if (request.source() == container()) {
-
-			return true;
-
-		} else {	// called by sub widget
-
-			switch(request.type()) {
-				case WidgetSize:
-					return false;
-
-				case WidgetPosition:
-					return false;
-
-				default:
-					return false;
-			}
-		}
-	}
-
-	void SingleBox::UpdateGeometry (const WidgetUpdateRequest& request)
-	{
-		if(request.source() == this || request.source() == container()) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					if (sub_widget()) {
-						FillSubWidget(position(), *size_p, margin());
-					}
-
-					break;
-				}
-
-				case WidgetPosition: {
-					if (sub_widget()) {
-						const Point* pos_p =
-										static_cast<const Point*>(request.data());
-						SetSubWidgetPosition(sub_widget(),
-										pos_p->x() + margin().left(),
-										pos_p->y() + margin().bottom());
-					}
-					break;
-				}
-
-				default:
-					break;
-			}
-
-		}
-	}
-
-	ResponseType SingleBox::CursorEnterEvent (bool entered)
-	{
-		return Accept;
-	}
-
-	ResponseType SingleBox::KeyPressEvent (const KeyEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType SingleBox::ContextMenuPressEvent (const ContextMenuEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType SingleBox::ContextMenuReleaseEvent (const ContextMenuEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType SingleBox::MousePressEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType SingleBox::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType SingleBox::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Accept;
-	}
-
-	ResponseType SingleBox::Draw (const RedrawEvent& event)
-	{
-		return IgnoreAndContinue;
-	}
-
-	// ----------------------
-
 	Expander::Expander ()
 	: AbstractVectorContainer(2), m_vao(0), m_frame_height(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
-		SingleBox* box = Manage(new SingleBox);
+		Frame* frame = Manage(new Frame);
 
 		SetSubWidget(0, title_button);
-		SetSubWidget(1, box);
+		SetSubWidget(1, frame);
 
 		int width = 0;
 		int height = 0;
@@ -391,7 +203,7 @@ namespace BlendInt {
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
-		tmp = box->GetPreferredSize();
+		tmp = frame->GetPreferredSize();
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
@@ -402,7 +214,7 @@ namespace BlendInt {
 		set_margin(2, 2, 2, 2);
 
 		FillInExpander(position(), size(), margin());
-		m_frame_height = box->size().height();
+		m_frame_height = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
 
@@ -413,10 +225,10 @@ namespace BlendInt {
 	: AbstractVectorContainer(2), m_vao(0), m_frame_height(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
-		SingleBox* box = Manage(new SingleBox);
+		Frame* frame = Manage(new Frame);
 
 		SetSubWidget(0, title_button);
-		SetSubWidget(1, box);
+		SetSubWidget(1, frame);
 
 		int width = 0;
 		int height = 0;
@@ -425,7 +237,7 @@ namespace BlendInt {
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
-		tmp = box->GetPreferredSize();
+		tmp = frame->GetPreferredSize();
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
@@ -436,7 +248,7 @@ namespace BlendInt {
 		set_margin(2, 2, 2, 2);
 
 		FillInExpander(position(), size(), margin());
-		m_frame_height = box->size().height();
+		m_frame_height = frame->size().height();
 
 		events()->connect(title_button->toggled(), this, &Expander::OnToggled);
 
@@ -450,8 +262,8 @@ namespace BlendInt {
 
 	bool Expander::Setup (AbstractWidget* widget)
 	{
-		SingleBox* box = dynamic_cast<SingleBox*>(sub_widget(1));
-		if(box->Setup(widget)) {
+		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
+		if(frame->Setup(widget)) {
 			return true;
 		}
 
@@ -506,32 +318,30 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void Expander::UpdateContainer(const WidgetUpdateRequest& request)
+	void Expander::UpdateContainer(const ContainerUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target() == this) {
+			switch (request.type()) {
 
+				case ContainerMargin: {
 
-			case ContainerMargin: {
+					const Margin* margin_p =
+					        static_cast<const Margin*>(request.data());
+					set_margin(*margin_p);
+					FillInExpander(position(), size(), *margin_p);
 
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
-				set_margin(*margin_p);
-				FillInExpander(position(), size(), *margin_p);
+					break;
+				}
 
-				break;
+				default:
+					break;
 			}
-
-			case ContainerRefresh: {
-				Refresh();
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportContainerUpdate(request);
 	}
 
-	bool Expander::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool Expander::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		/*
 		if(request.source() == this) {
@@ -557,37 +367,46 @@ namespace BlendInt {
 		return true;
 	}
 
-	void Expander::UpdateGeometry (const WidgetUpdateRequest& request)
+	void Expander::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if(request.target() == this) {
 
-			case WidgetSize: {
-				const Size* size_p =
-								static_cast<const Size*>(request.data());
-				FillInExpander(position(), *size_p, margin());
+			switch (request.type()) {
 
-				VertexTool tool;
-				tool.Setup(*size_p, 0, RoundNone, 0);
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				break;
+				case WidgetSize: {
+					const Size* size_p =
+									static_cast<const Size*>(request.data());
+					FillInExpander(position(), *size_p, margin());
+
+					VertexTool tool;
+					tool.Setup(*size_p, 0, RoundNone, 0);
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+
+					set_size(*size_p);
+					Refresh();
+					break;
+				}
+
+				case WidgetPosition: {
+					const Point* pos_p =
+									static_cast<const Point*>(request.data());
+
+					int x = pos_p->x() - position().x();
+					int y = pos_p->y() - position().y();
+
+					set_position(*pos_p);
+					MoveSubWidgets(x, y);
+					break;
+				}
+
+				default:
+					break;
 			}
 
-			case WidgetPosition: {
-				const Point* pos_p =
-								static_cast<const Point*>(request.data());
-
-				int x = pos_p->x() - position().x();
-				int y = pos_p->y() - position().y();
-
-				MoveSubWidgets(x, y);
-				break;
-			}
-
-			default:
-				break;
 		}
 
+		ReportGeometryUpdate(request);
 	}
 
 	ResponseType Expander::Draw (const RedrawEvent& event)
@@ -671,11 +490,11 @@ namespace BlendInt {
 		int button_preferred_height = 0;
 		//int sum = 0;
 		ExpandButton* button = dynamic_cast<ExpandButton*>(sub_widget(0));
-		SingleBox* box = dynamic_cast<SingleBox*>(sub_widget(1));
+		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
 
 		button_preferred_height = button->GetPreferredSize().height();
 
-		if(box->visiable()) {
+		if(frame->visiable()) {
 
 			if(button_preferred_height < height) {
 
@@ -684,16 +503,16 @@ namespace BlendInt {
 				y -= button_preferred_height;
 				SetSubWidgetPosition(button, x, y);
 
-				ResizeSubWidget(box, width, height - button_preferred_height);
-				y -= box->size().height();
-				SetSubWidgetPosition(box, x, y);
+				ResizeSubWidget(frame, width, height - button_preferred_height);
+				y -= frame->size().height();
+				SetSubWidgetPosition(frame, x, y);
 
 			} else {
 
 				ResizeSubWidget(button, width, height);
 				SetSubWidgetPosition(button, x, y);
-				ResizeSubWidget(box, width, 0);
-				SetSubWidgetPosition(box, x, y);
+				ResizeSubWidget(frame, width, 0);
+				SetSubWidgetPosition(frame, x, y);
 			}
 
 		} else {
@@ -737,13 +556,13 @@ namespace BlendInt {
 	void Expander::OnToggled (bool toggle)
 	{
 		ExpandButton* button = dynamic_cast<ExpandButton*>(sub_widget(0));
-		SingleBox* box = dynamic_cast<SingleBox*>(sub_widget(1));
+		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
 
 		if(toggle) {
 			int x = position().x();
 			int y = position().y() + size().height();
-			box->SetVisible(false);
-			m_frame_height = box->size().height();
+			frame->SetVisible(false);
+			m_frame_height = frame->size().height();
 			Resize(size().width(), button->size().height() + margin().vsum());
 			y = y - size().height();
 			SetPosition(x, y);
@@ -751,7 +570,7 @@ namespace BlendInt {
 			int x = position().x();
 			int y = position().y() + size().height();
 
-			box->SetVisible(true);
+			frame->SetVisible(true);
 
 			Resize(size().width(),
 							button->size().height() + m_frame_height + margin().vsum());

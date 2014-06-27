@@ -50,6 +50,7 @@ namespace BlendInt {
 	FramePanel::FramePanel()
 	: Frame()
 	{
+		set_drop_shadow(true);
 		InitializeFramePanel();
 	}
 	
@@ -58,7 +59,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void FramePanel::UpdateGeometry (const WidgetUpdateRequest& request)
+	void FramePanel::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -81,7 +82,10 @@ namespace BlendInt {
 			}
 
 			Frame::UpdateGeometry(request);
+			return;
 		}
+
+		ReportGeometryUpdate(request);
 	}
 	
 	ResponseType FramePanel::Draw (const RedrawEvent& event)

@@ -3,7 +3,7 @@
  */
 
 #include <BlendInt/Interface.hpp>
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include "EditorContext.hpp"
 #include "Window.hpp"

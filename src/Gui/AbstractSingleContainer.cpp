@@ -156,6 +156,8 @@ namespace BlendInt {
 		events()->connect(widget->destroyed(), this,
 						&AbstractSingleContainer::OnSubWidgetDestroyed);
 
+		CheckSubWidgetAddedInContainer(widget);
+
 		return true;
 	}
 	
@@ -163,13 +165,15 @@ namespace BlendInt {
 	{
 		if(!widget) return false;
 
-		assert(widget->container() == this);
+		if(widget->container() != this) return false;
 
 		widget->destroyed().disconnectOne(this,
 						&AbstractSingleContainer::OnSubWidgetDestroyed);
 
 		m_sub_widget = 0;
 		SetContainer(widget, 0);
+
+		CheckSubWidgetRemovedInContainer(widget);
 
 		return true;
 	}

@@ -21,49 +21,27 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_UTILITIES_HPP_
-#define _BLENDINT_UTILITIES_HPP_
+#include <BlendInt/Gui/RadioButton.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief Correct a numeric value in a scope
-	 * @param[in] value the value to be corrected
-	 * @param[in] min minimum of the scope
-	 * @param[in] max maximum of the scope
-	 * @return min if value < min, max if value > max,
-	 * otherwize return value
-	 */
-	template <typename T>
-	inline T clamp (T value, T min, T max)
+	RadioButton::RadioButton()
+	: AbstractButton()
 	{
-		return ((value) < (min) ?
-				(min) : ((value) > (max) ?
-						 (max) : (value)));
+
 	}
 
-	inline unsigned char float_to_uchar (float val)
+	RadioButton::RadioButton (const String& test)
 	{
-		return (val <= 0.0f) ?
-			0 : ((val > (1.0f - 0.5f / 255.0f)) ?
-				 255 : static_cast<unsigned char>(255.0f * val + 0.5f));
 	}
 
-	/**
-	 * @brief Copy elements in arrary from src to dist
-	 */
-	template <typename T>
-	inline void copy_arrary_v2 (const T src[2], T dist[2])
+	RadioButton::~RadioButton ()
 	{
-		dist[0] = src[0];
-		dist[1] = src[1];
 	}
 
-	inline void copy_v2_v2(float r[2], const float a[2])
+	ResponseType RadioButton::Draw (const RedrawEvent& event)
 	{
-		r[0] = a[0];
-		r[1] = a[1];
+		return Accept;
 	}
+
 }
-
-#endif	// _BIL_UTILITIES_H_

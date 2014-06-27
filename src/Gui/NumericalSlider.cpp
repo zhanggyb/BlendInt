@@ -57,7 +57,7 @@ namespace BlendInt {
 	void NumericalSlider::SetTitle (const String& title)
 	{
 		m_title = title;
-		Rect text_outline = m_font.GetTextOutline(m_title);
+		//Rect text_outline = m_font.GetTextOutline(m_title);
 
 		m_font.set_pen(round_corner_radius(),
 				(size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
@@ -98,7 +98,7 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	void NumericalSlider::UpdateSlider(const WidgetUpdateRequest& request)
+	void NumericalSlider::UpdateSlider(const SliderUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			switch(request.type()) {
@@ -144,12 +144,12 @@ namespace BlendInt {
 		}
 	}
 
-	bool NumericalSlider::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool NumericalSlider::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void NumericalSlider::UpdateGeometry (const WidgetUpdateRequest& request)
+	void NumericalSlider::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		switch (request.type()) {
 
@@ -252,7 +252,7 @@ namespace BlendInt {
 		}
 	}
 	
-	void NumericalSlider::BroadcastUpdate(const WidgetUpdateRequest& request)
+	void NumericalSlider::BroadcastUpdate(const GeometryUpdateRequest& request)
 	{
 
 	}

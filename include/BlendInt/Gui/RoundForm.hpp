@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_ROUNDFORM_HPP_
 #define _BLENDINT_ROUNDFORM_HPP_
 
-#include <BlendInt/Types.hpp>
+#include <BlendInt/Core/Types.hpp>
 
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 

@@ -319,12 +319,12 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	bool AbstractButton::UpdateGeometryTest (const WidgetUpdateRequest& request)
+	bool AbstractButton::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void AbstractButton::BroadcastUpdate (const WidgetUpdateRequest& request)
+	void AbstractButton::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 		// do nothing in base class
 	}
