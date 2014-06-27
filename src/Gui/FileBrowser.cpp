@@ -77,12 +77,12 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 						glm::value_ptr(local_mvp));
 		program->SetUniform1i("AA", 0);
+		program->SetVertexAttrib4f("Color", 0.475f, 0.475f, 0.475f, 0.75f);
+
 		if(i == m_index) {
-			program->SetVertexAttrib4f("Color", 0.475f,
-							0.475f, 0.475f, 0.75f);
+			program->SetUniform1i("Gamma", 25);
 		} else {
-			program->SetVertexAttrib4f("Color", 0.375f,
-							0.375f, 0.375f, 0.75f);
+			program->SetUniform1i("Gamma", 15);
 		}
 
 		glBindVertexArray(m_vao);
@@ -100,13 +100,10 @@ namespace BlendInt {
 		program->Use();
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 						glm::value_ptr(local_mvp));
-		program->SetUniform1i("AA", 0);
 		if(i == m_index) {
-			program->SetVertexAttrib4f("Color", 0.475f,
-							0.475f, 0.475f, 0.75f);
+			program->SetUniform1i("Gamma", 25);
 		} else {
-			program->SetVertexAttrib4f("Color", 0.325f,
-							0.325f, 0.325f, 0.75f);
+			program->SetUniform1i("Gamma", 0);
 		}
 
 		glBindVertexArray(m_vao);
@@ -142,21 +139,16 @@ namespace BlendInt {
 						local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
 
 						program->Use();
-
 						program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
 										glm::value_ptr(local_mvp));
-						program->SetUniform1i("AA", 0);
 
 						if(i == m_index) {
-							program->SetVertexAttrib4f("Color", 0.475f,
-											0.475f, 0.475f, 0.75f);
+							program->SetUniform1i("Gamma", 25);
 						} else {
 							if (dark) {
-								program->SetVertexAttrib4f("Color", 0.325f,
-												0.325f, 0.325f, 0.75f);
+								program->SetUniform1i("Gamma", 0);
 							} else {
-								program->SetVertexAttrib4f("Color", 0.375f,
-												0.375f, 0.375f, 0.75f);
+								program->SetUniform1i("Gamma", 15);
 							}
 						}
 
@@ -196,7 +188,8 @@ namespace BlendInt {
 				fs::path parent = m_path.parent_path();
 
 				if(fs::is_directory(parent)) {
-					m_path = parent;
+					DBG_PRINT_MSG("%s", "parent path");
+					//m_path = parent;
 				}
 			}
 
@@ -218,7 +211,11 @@ namespace BlendInt {
 							}
 
 							if (fs::is_directory(it->path())) {
-								m_path = it->path();
+								DBG_PRINT_MSG("path %s selected", it->path().native().c_str());
+								//m_path = it->path();
+							} else if(fs::is_regular(it->path())) {
+								DBG_PRINT_MSG("file %s selected", it->path().native().c_str());
+
 							}
 
 						}

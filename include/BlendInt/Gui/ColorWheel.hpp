@@ -80,12 +80,14 @@ namespace BlendInt {
 
 	private:
 
-		GLuint m_vao;
+		void InitializeColorWheel ();
+
+		GLuint m_vao[2];
 
 		RefPtr<GLArrayBuffer> m_outline;
 		RefPtr<GLArrayBuffer> m_inner;
 
-		CircularPicker m_slide_icon;
+		CircularPicker m_picker;
 
 	};
 

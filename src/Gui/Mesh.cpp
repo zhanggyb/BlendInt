@@ -81,8 +81,7 @@ namespace BlendInt {
 
 		int size;
 		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-		glDrawElements(GL_TRIANGLES, size / sizeof(GLushort),
-		GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
 
 		glBindVertexArray(0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -154,6 +153,10 @@ namespace BlendInt {
 
 		LoadObj("test.obj", vertices, normals, elements);
 
+		DBG_PRINT_MSG("vertex size: %ld", vertices.size());
+		DBG_PRINT_MSG("normal size: %ld", normals.size());
+		DBG_PRINT_MSG("elements size: %ld", elements.size());
+
 		glGenVertexArrays(1, &m_vao);
 
 		glBindVertexArray(m_vao);
@@ -175,7 +178,6 @@ namespace BlendInt {
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-
 		GLArrayBuffer::Reset();
 
 		m_index_buffer.reset(new GLElementArrayBuffer);

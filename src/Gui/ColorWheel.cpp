@@ -43,40 +43,16 @@
 namespace BlendInt {
 
 	ColorWheel::ColorWheel()
-	: AbstractWidget(),
-	  m_vao(0)
+	: AbstractWidget()
 	{
 		set_size(160, 160);
 
-		m_slide_icon.Resize(3);
-
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-
-		std::vector<GLfloat> inner_vertices;
-		std::vector<GLfloat> outer_vertices;
-
-		GenerateWheelVertices(80, inner_vertices, outer_vertices);
-
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-
-		m_inner->Bind();
-		m_inner->SetData(sizeof(GLfloat) * inner_vertices.size(), &inner_vertices[0], GL_STATIC_DRAW);
-		m_inner->Reset();
-
-		m_outline.reset(new GLArrayBuffer);
-		m_outline->Generate();
-		m_outline->Bind();
-		m_outline->SetData(sizeof(GLfloat) * outer_vertices.size(), &outer_vertices[0], GL_STATIC_DRAW);
-		m_outline->Reset();
-
-		glBindVertexArray(0);
+		InitializeColorWheel();
 	}
 	
 	ColorWheel::~ColorWheel ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(2, m_vao);
 	}
 
 	bool ColorWheel::IsExpandX () const
@@ -104,100 +80,102 @@ namespace BlendInt {
 
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
-		glBindVertexArray(m_vao);
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->default_triangle_program();
 		program->Use();
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetUniform1i("Gamma", 0);
 		program->SetUniform1i("AA", 0);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-
-		m_inner->Bind();
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 4,	GL_FLOAT, GL_FALSE,	sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
-		glDrawArrays(GL_TRIANGLE_FAN, 0, m_inner->GetBufferSize() / (6 * sizeof(GLfloat)));
-		m_inner->Reset();
-
-		glDisableVertexAttribArray(1);
+		glBindVertexArray(m_vao[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
 		program->SetVertexAttrib4fv("Color", Theme::instance->regular().outline.data());
 		program->SetUniform1i("AA", 1);
-		m_outline->Bind();
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-						m_outline->GetBufferSize()
-						/ (2 * sizeof(GLfloat)));
-		m_outline->Reset();
+		glBindVertexArray(m_vao[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 
-		glDisableVertexAttribArray(0);
-		program->Reset();
 		glBindVertexArray(0);
 
+		program->Reset();
+
 		glm::mat4 icon_mvp;
-
 		icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
-
-		m_slide_icon.Draw(icon_mvp);
+		m_picker.Draw(icon_mvp);
 
 		return Accept;
 	}
 	
 	void ColorWheel::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
-		switch(request.type()) {
+		if(request.target() == this) {
 
-			case WidgetSize: {
+			switch(request.type()) {
 
-				const Size* size_p = static_cast<const Size*>(request.data());
+				case WidgetSize: {
 
-				int radius = std::min(size_p->width(), size_p->height()) / 2;
+					const Size* size_p = static_cast<const Size*>(request.data());
 
-				m_inner->Bind();
+					int radius = std::min(size_p->width(), size_p->height()) / 2;
 
-				GLfloat* ptr = (GLfloat*) m_inner->Map(GL_READ_WRITE);
+					m_inner->Bind();
 
-				double rad = 0.0;
-				float x1 = 0.f;
-				float y1 = 0.f;
+					GLfloat* ptr = (GLfloat*) m_inner->Map(GL_READ_WRITE);
 
-				ptr = ptr + 6;
-				int i = 1;
-				for(int angle = -30; angle < 330; angle = angle + 5)
-				{
-					rad = angle * M_PI / 180.0;
+					double rad = 0.0;
+					float x1 = 0.f;
+					float y1 = 0.f;
 
+					ptr = ptr + 6;
+					int i = 1;
+					for(int angle = -30; angle < 330; angle = angle + 5)
+					{
+						rad = angle * M_PI / 180.0;
+
+						x1 = (radius - 1) * cos(rad);
+						y1 = (radius - 1) * sin(rad);
+
+						*(ptr) = x1;
+						*(ptr + 1) = y1;
+						ptr += 6;
+						i++;
+					}
+
+					rad = 330 * M_PI / 180.0;
 					x1 = (radius - 1) * cos(rad);
 					y1 = (radius - 1) * sin(rad);
 
 					*(ptr) = x1;
 					*(ptr + 1) = y1;
-					ptr += 6;
-					i++;
-				}
 
-				rad = 330 * M_PI / 180.0;
-				x1 = (radius - 1) * cos(rad);
-				y1 = (radius - 1) * sin(rad);
+					m_inner->Unmap();
+					m_inner->Reset();
 
-				*(ptr) = x1;
-				*(ptr + 1) = y1;
+					m_outline->Bind();
 
-				m_inner->Unmap();
-				m_inner->Reset();
+					ptr = (GLfloat*) m_outline->Map(GL_READ_WRITE);
+					float x2 = 0.f;
+					float y2 = 0.f;
 
-				m_outline->Bind();
+					i = 0;
+					for(int angle = -30; angle < 330; angle = angle + 5)
+					{
+						rad = angle * M_PI / 180.0;
 
-				ptr = (GLfloat*) m_outline->Map(GL_READ_WRITE);
-				float x2 = 0.f;
-				float y2 = 0.f;
+						x1 = (radius - 1) * cos(rad);
+						y1 = (radius - 1) * sin(rad);
+						x2 = radius * cos(rad);
+						y2 = radius * sin(rad);
 
-				i = 0;
-				for(int angle = -30; angle < 330; angle = angle + 5)
-				{
-					rad = angle * M_PI / 180.0;
+						*(ptr + 0) = x1;
+						*(ptr + 1) = y1;
+						*(ptr + 2) = x2;
+						*(ptr + 3) = y2;
+						ptr += 4;
+						i++;
+					}
 
+					rad = 330 * M_PI / 180.0;
 					x1 = (radius - 1) * cos(rad);
 					y1 = (radius - 1) * sin(rad);
 					x2 = radius * cos(rad);
@@ -207,31 +185,21 @@ namespace BlendInt {
 					*(ptr + 1) = y1;
 					*(ptr + 2) = x2;
 					*(ptr + 3) = y2;
-					ptr += 4;
-					i++;
+
+					m_outline->Unmap();
+					m_outline->Reset();
+
+					break;
 				}
 
-				rad = 330 * M_PI / 180.0;
-				x1 = (radius - 1) * cos(rad);
-				y1 = (radius - 1) * sin(rad);
-				x2 = radius * cos(rad);
-				y2 = radius * sin(rad);
+				default:
+					break;
 
-				*(ptr + 0) = x1;
-				*(ptr + 1) = y1;
-				*(ptr + 2) = x2;
-				*(ptr + 3) = y2;
-
-				m_outline->Unmap();
-				m_outline->Reset();
-
-				break;
 			}
 
-			default:
-				break;
-
 		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	bool ColorWheel::UpdateGeometryTest (const GeometryUpdateRequest& request)
@@ -412,6 +380,45 @@ namespace BlendInt {
 		inner_vertices[i * 6 + 3] = 0.f;
 		inner_vertices[i * 6 + 4] = 1.f;
 		inner_vertices[i * 6 + 5] = 1.f;
+	}
+
+	void ColorWheel::InitializeColorWheel ()
+	{
+		m_picker.Resize(3);
+
+		std::vector<GLfloat> inner_vertices;
+		std::vector<GLfloat> outer_vertices;
+
+		GenerateWheelVertices(80, inner_vertices, outer_vertices);
+
+		glGenVertexArrays(2, m_vao);
+
+		glBindVertexArray(m_vao[0]);
+
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+
+		m_inner->Bind();
+		m_inner->SetData(sizeof(GLfloat) * inner_vertices.size(), &inner_vertices[0], GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 4,	GL_FLOAT, GL_FALSE,	sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(m_vao[1]);
+
+		m_outline.reset(new GLArrayBuffer);
+		m_outline->Generate();
+		m_outline->Bind();
+		m_outline->SetData(sizeof(GLfloat) * outer_vertices.size(), &outer_vertices[0], GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 	}
 
 }
