@@ -248,6 +248,7 @@ namespace BlendInt {
 	public:
 
 		friend class Context;
+		friend class VirtualWindow;
 		friend class AbstractContainer;
 		friend class SubWidgetProxy;
 
@@ -472,7 +473,7 @@ namespace BlendInt {
 		 * @note this function should be called only in the constructor of subclass to set
 		 * the size without through Update() for performance.
 		 */
-		inline void set_size (unsigned int width, unsigned int height)
+		inline void set_size (int width, int height)
 		{
 			m_size.set_width(width);
 			m_size.set_height(height);

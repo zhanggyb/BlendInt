@@ -70,7 +70,13 @@ namespace BlendInt {
 
 		virtual void GoToFirst ()
 		{
+			// Go to the first non-zero item
+
 			m_it = m_vector_ptr->begin();
+
+			while((m_it != m_vector_ptr->end()) && ((*m_it) == 0)) {
+				m_it++;
+			}
 		}
 
 		virtual void GoNext ()
@@ -82,7 +88,18 @@ namespace BlendInt {
 
 		virtual bool IsEnd ()
 		{
-			return m_it == m_vector_ptr->end();
+			if(m_it == m_vector_ptr->end()) {
+				return true;
+			}
+
+			WidgetVector::iterator it = m_it;
+			while((it != m_vector_ptr->end()) && ((*it) == 0)) {
+				it++;
+			}
+
+			if(it == m_vector_ptr->end()) return true;
+
+			return false;
 		}
 
 	private:

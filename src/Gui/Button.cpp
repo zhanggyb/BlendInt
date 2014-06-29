@@ -137,6 +137,7 @@ namespace BlendInt {
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetUniform1i("Gamma", 0);
 		program->SetUniform1i("AA", 0);
 
 		if (down()) {

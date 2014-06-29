@@ -173,6 +173,7 @@ namespace BlendInt {
 		DISALLOW_COPY_AND_ASSIGN(AbstractContainer);
 
 		friend class Context;
+		friend class VirtualWindow;
 		friend class ContainerProxy;
 
 	public:
