@@ -115,7 +115,7 @@ namespace BlendInt {
 	{
 		using namespace BlendInt::Stock;
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
@@ -408,9 +408,9 @@ namespace BlendInt {
 		if(m_active_button) {
 			Context* context = GetContext();
 
-			int max_layer = context->GetMaxLayer();
+			//int max_layer = context->GetMaxLayer();
 			RefPtr<Menu> menu = m_active_button->menu();
-			menu->SetLayer(max_layer + 1);	// show menu in the top layer
+			//menu->SetLayer(max_layer + 1);	// show menu in the top layer
 
 			int y = m_active_button->position().y();
 			y = y - menu->size().height();
@@ -455,7 +455,7 @@ namespace BlendInt {
 			//menu->property_changed().disconnectOne(this, &MenuBar::OnMenuHide);
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-			DBG_PRINT_MSG("menu at layer: %d", menu->z());
+			// DBG_PRINT_MSG("menu at layer: %d", menu->z());
 
 			if(type == WidgetVisibility) {
 				Context* context = GetContext();

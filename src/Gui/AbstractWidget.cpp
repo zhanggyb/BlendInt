@@ -89,7 +89,6 @@ namespace BlendInt {
 
 	AbstractWidget::AbstractWidget ()
 	: Object(),
-	  m_z(0),
 	  m_flags(0),
 	  m_round_corner_radius(5),
 	  m_container(0)
@@ -226,34 +225,6 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractWidget::SetLayer (int z)
-	{
-		if(m_z == z) return;
-		bool broadcast = false;
-
-		GeometryUpdateRequest request(this, this, WidgetLayer, &z);
-
-		// only Context allows changing layer
-		if(UpdateGeometryTest (request)) {
-			UpdateGeometry(request);
-
-			Context* context = GetContext();
-			if(context) {
-				context->Remove(this);
-				m_z = z;
-				context->Add(this);
-			} else {
-				m_z = z;
-			}
-
-			broadcast = true;
-		}
-
-		if(broadcast) {
-			BroadcastUpdate(request);
-		}
-	}
-
 	void AbstractWidget::SetVisible (bool visible)
 	{
 		if(this->visiable() == visible)
@@ -308,7 +279,7 @@ namespace BlendInt {
 		ContainerProxy::RequestContainerUpdate(m_container, request);
 	}
 
-	void AbstractWidget::RenderToTexture (size_t border, GLTexture2D* texture)
+	void AbstractWidget::RenderToTexture (int border, GLTexture2D* texture)
 	{
 		if(!texture) return;
 
@@ -379,9 +350,9 @@ namespace BlendInt {
 		}
 
 		fb->Reset();
-
 		tex->Reset();
-		delete tex; tex = 0;
+
+		//delete tex; tex = 0;
 
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		glDeleteRenderbuffers(1, &rb);

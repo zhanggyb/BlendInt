@@ -49,7 +49,7 @@ namespace BlendInt
 
 	Context::Context ()
 	: AbstractContainer(),
-	  m_main_buffer(0),
+	  m_context_buffer(0),
 	  m_vao(0),
 	  m_focused_widget(0),
 	  m_max_tex_buffer_cache_size(6),
@@ -66,9 +66,9 @@ namespace BlendInt
 		m_redraw_event.set_projection_matrix(
 		        glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
 
-		m_main_buffer = new GLTexture2D;
+		m_context_buffer = new GLTexture2D;
 #ifdef DEBUG
-		m_main_buffer->set_name("Main Buffer");
+		m_context_buffer->set_name("Main Buffer");
 #endif
 
 		InitializeContext();
@@ -78,10 +78,29 @@ namespace BlendInt
 
 	Context::~Context ()
 	{
+		if(container() != 0) {
+			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other container");
+		}
+
 		if(m_focused_widget) {
 			SetFocusedWidget(0);
 		}
 
+		AbstractWidget* widget = 0;
+		for(AbstractWidgetDeque::reverse_iterator it = m_widgets.rbegin(); it != m_widgets.rend(); it++)
+		{
+			widget = *it;
+			widget->destroyed().disconnectOne(this, &Context::OnSubWidgetDestroyed);
+			widget->m_container = 0;
+			widget->set_hover(false);
+			widget->set_focus(false);
+
+			if(widget->managed() && (widget->count() == 0)) {
+				delete widget;
+			}
+		}
+
+		/*
 		std::map<int, ContextLayer>::iterator layer_iter;
 		std::set<AbstractWidget*>::iterator widget_iter;
 
@@ -112,10 +131,11 @@ namespace BlendInt
 		m_deque.clear();
 
 		m_layers.clear();
+		*/
 
-		if (m_main_buffer) {
-			m_main_buffer->Clear();
-			delete m_main_buffer;
+		if (m_context_buffer) {
+			m_context_buffer->Clear();
+			delete m_context_buffer;
 		}
 
 		glDeleteVertexArrays(1, &m_vao);
@@ -123,36 +143,56 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
-	bool Context::Add (AbstractWidget* widget)
+	void Context::Add (AbstractWidget* widget)
 	{
-		return InsertSubWidget(widget);
+		if(!widget) {
+			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
+			return;
+		}
+
+		if(widget->container()) {
+
+			if(widget->container() == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+									widget->name().c_str(),
+									widget->container()->name().c_str());
+				return;
+			} else {
+				AbstractContainer::RemoveSubWidget(widget->container(), widget);
+			}
+		}
+
+		m_widgets.push_back(widget);
+
+		// set shadow
+		if(widget->drop_shadow()) {
+			if(!widget->m_shadow) {
+				widget->m_shadow.reset(new Shadow);
+			}
+
+			widget->m_shadow->Resize(widget->size());
+		}
+
+		SetContainer(widget, this);
+		events()->connect(widget->destroyed(), this, &Context::OnSubWidgetDestroyed);
+
+		CheckSubWidgetAddedInContainer(widget);
+
+		return;
 	}
 
-	bool Context::Remove (AbstractWidget* widget)
+	void Context::Remove (AbstractWidget* widget)
 	{
-		if(widget->container() != this)
-			return false;
-
-		return RemoveSubWidget(widget);
+		RemoveSubWidget(widget);
 	}
 
 	int Context::GetMaxLayer () const
 	{
-		std::map<int, ContextLayer>::const_reverse_iterator rit = m_layers.rbegin();
-
-		return rit->first;
+		return m_widgets.size() - 1;
 	}
 
 	void Context::RefreshLayer (int layer)
 	{
-		std::map<int, ContextLayer>::iterator layer_iter;
-
-		layer_iter = m_layers.find(layer);
-
-		if (layer_iter != m_layers.end()) {
-			m_layers[layer].m_refresh = true;
-			refresh_once = true;
-		}
 	}
 
 	void Context::SetFocusedWidget (AbstractWidget* widget)
@@ -200,7 +240,7 @@ namespace BlendInt
 		switch(request.type()) {
 
 			case ContainerRefresh: {
-				RefreshLayer(request.source()->z());
+				//RefreshLayer(request.source()->z());
 				break;
 			}
 
@@ -356,64 +396,29 @@ namespace BlendInt
 
 	ResponseType Context::Draw (const RedrawEvent& event)
 	{
-		glm::vec3 pos(position().x(), position().y(), z());
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+		//glm::vec3 pos(position().x(), position().y(), z());
+		//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
-		m_deque.clear();
+		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 
-		if (force_refresh_all) {
+		glClearDepth(1.0);
+		glClear(GL_COLOR_BUFFER_BIT |
+						GL_DEPTH_BUFFER_BIT |
+						GL_STENCIL_BUFFER_BIT);
+		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
 
-			for (std::map<int, ContextLayer>::iterator it = m_layers.begin();
-					it != m_layers.end();
-			        it++)
-			{
-				//DBG_PRINT_MSG("layer need to be refreshed: %d", it->first);
-				RenderToLayerBuffer(event,
-						it->first,
-						it->second.m_widget_set->m_widgets,
-						it->second.m_texture_buffer.get());
-				m_deque.push_back(it->second.m_texture_buffer.get());
-				it->second.m_refresh = false;
-			}
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 
-			//if(m_deque.size() >= minimal_composite_layer_number) {
-				RenderToMainBuffer(event);
-			//}
+		glViewport(0, 0, size().width(), size().height());
 
-			refresh_once = false;
-			force_refresh_all = false;
-
-		} else if (refresh_once) {
-
-			for (std::map<int, ContextLayer>::iterator it = m_layers.begin();
-					it != m_layers.end();
-			        it++)
-			{
-				if (it->second.m_refresh) {
-
-					// DBG_PRINT_MSG("layer need to be refreshed: %d", layer_iter->first);
-					RenderToLayerBuffer(event,
-									it->first,
-									it->second.m_widget_set->m_widgets,
-									it->second.m_texture_buffer.get());
-
-				}
-				m_deque.push_back(it->second.m_texture_buffer.get());
-				it->second.m_refresh = false;
-			}
-
-			//if(m_deque.size() >= minimal_composite_layer_number) {
-				RenderToMainBuffer(event);
-			//}
-
-			refresh_once = false;
+		for (AbstractWidgetDeque::iterator it = m_widgets.begin();
+				it != m_widgets.end();
+				it++)
+		{
+			//(*set_it)->Draw();
+			DispatchDrawEvent(*it, event);
 		}
-
-		//if(m_deque.size() >= minimal_composite_layer_number) {
-			DrawMainBuffer(mvp);
-		//} else {
-		//	DrawLayers(mvp);
-		//}
 
 		return Accept;
 	}
@@ -425,6 +430,8 @@ namespace BlendInt
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
+		return Ignore;
+
 		if(m_focused_widget) {
 #ifdef DEBUG
 			if(event.key() == Key_F6 && event.text().empty()) {
@@ -453,18 +460,59 @@ namespace BlendInt
 
 	ResponseType Context::MousePressEvent (const MouseEvent& event)
 	{
-		//bool ret = true;
+		ResponseType response = Ignore;
+		AbstractWidget* widget = 0;
 
-		for(std::map<int, ContextLayer>::reverse_iterator it = m_layers.rbegin();
-				it != m_layers.rend();
+		AbstractWidget* original_focused_widget = m_focused_widget;
+		bool focus_widget_changed = false;
+
+		for(std::deque<AbstractWidget*>::reverse_iterator it = m_widgets.rbegin();
+				it != m_widgets.rend();
 				it++)
 		{
-			if(DispatchMousePressEvent(it->first, event)) {
-				break;
+			widget = *it;
+
+			if(widget->Contain(event.position())) {
+				response = widget->MousePressEvent(event);
+
+				// a widget may change the focused widget
+				if(original_focused_widget != m_focused_widget) {
+					focus_widget_changed = true;
+				}
+
+				if(response == Accept || response == AcceptAndBreak) {
+					break;
+				}
+
 			}
+
+			widget = 0;
 		}
 
-		return Accept;
+		if(focus_widget_changed) {
+
+			/*
+			if(original_focused_widget) {
+				original_focused_widget->set_focus(false);
+				original_focused_widget->FocusEvent(false);
+			}
+			*/
+
+		} else {
+
+			m_focused_widget = original_focused_widget;
+			SetFocusedWidget(widget);
+
+		}
+
+		if(m_focused_widget) {
+			DBG_PRINT_MSG("focus widget: %s", m_focused_widget->name().c_str());
+		}
+
+		if(widget != 0)
+			return Accept;
+
+		return Ignore;
 	}
 
 	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
@@ -482,19 +530,12 @@ namespace BlendInt
 		}
 
 		return Accept;
-
-		for(std::map<int, ContextLayer>::reverse_iterator it = m_layers.rbegin();
-				it != m_layers.rend();
-				it++)
-		{
-			if(DispatchMouseReleaseEvent(it->first, event)) break;
-		}
-
-		return Accept;
 	}
 
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
 	{
+		return Ignore;
+
 		ResponseType response;
 
 		m_redraw_event.set_cursor_position(event.position());
@@ -508,95 +549,33 @@ namespace BlendInt
 			// check the event status
 		}
 
-		for(std::map<int, ContextLayer>::reverse_iterator it = m_layers.rbegin();
-				it != m_layers.rend();
-				it++)
-		{
-
-			if(DispatchMouseMoveEvent(it->first, event)) {
-				return Accept;
-			}
-		}
-
 		return Ignore;
-	}
-
-	bool Context::InsertSubWidget (AbstractWidget* widget)
-	{
-		if(!widget)
-			return false;
-
-		if (widget->container()) {
-
-			if (widget->container() == this) {
-				DBG_PRINT_MSG("Widget %s is already in container %s",
-				        widget->name().c_str(),
-				        widget->container()->name().c_str());
-				return false;
-			} else {
-				// Set widget's container to 0
-				AbstractContainer::RemoveSubWidget(widget->container(),
-				        widget);
-			}
-		}
-
-		// TODO: the widget new added may be under the cursor
-
-		std::map<int, ContextLayer>::iterator it = m_layers.find(widget->z());
-
-		if (it != m_layers.end()) {
-
-			it->second.m_widget_set->m_widgets.insert(widget);
-
-		} else {
-
-			// Create a new Context Layer
-
-			ContextLayer new_layer;
-
-			new_layer.m_widget_set->m_widgets.insert(widget);
-			if(m_tex_buffer_cache.size()) {
-				new_layer.m_texture_buffer = m_tex_buffer_cache.top();
-				m_tex_buffer_cache.pop();
-			} else {
-				new_layer.m_texture_buffer->Generate();
-			}
-
-			m_layers[widget->z()] = new_layer;
-
-#ifdef DEBUG
-			char name[32];
-			sprintf(name, "layer %d buffer", widget->z());
-			m_layers[widget->z()].m_texture_buffer->set_name(name);
-#endif
-
-			refresh_once = true;
-		}
-
-		// set shadow
-		if(widget->drop_shadow()) {
-			if(!widget->m_shadow) {
-				widget->m_shadow.reset(new Shadow);
-			}
-
-			widget->m_shadow->Resize(widget->size());
-		}
-
-		SetContainer(widget, this);
-		events()->connect(widget->destroyed(), this, &Context::OnSubWidgetDestroyed);
-
-		return true;
 	}
 
 	bool Context::RemoveSubWidget (AbstractWidget* widget)
 	{
-		if(!widget) return false;
+		if(!widget) {
+			DBG_PRINT_MSG("Warning: %s", "widget pointer is 0");
+			return false;
+		}
 
 		assert(widget->container() == this);
-		assert(m_layers.count(widget->z()));
 
-		widget->destroyed().disconnectOne(this,
-				&Context::OnSubWidgetDestroyed);
+		AbstractWidgetDeque::iterator it = std::find(m_widgets.begin(),
+						m_widgets.end(), widget);
+
+		if (it != m_widgets.end()) {
+
+			widget->destroyed().disconnectOne(this,
+							&Context::OnSubWidgetDestroyed);
+
+			m_widgets.erase(it);
+			SetContainer(widget, 0);
+		} else {
+			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
+							widget->name().c_str(), name().c_str());
+			return false;
+		}
 
 		if(widget->hover()) {
 			RemoveWidgetFromHoverList(this);
@@ -610,34 +589,7 @@ namespace BlendInt
 			}
 		}
 
-		int z = widget->z();
-
-		ContextLayer& layer = m_layers[z];
-		if(layer.m_widget_set->m_widgets.erase(widget) == 0) {
-			DBG_PRINT_MSG("Error: object %s is not recorded in context layer", widget->name().c_str());
-		}
-
-		if(layer.m_widget_set->m_widgets.empty()) {
-
-			DBG_PRINT_MSG("layer %d is empty, delete it", z);
-
-			// Check and clear hover list
-			for(AbstractWidgetDeque::reverse_iterator it = layer.m_hover_cache->m_widgets.rbegin();
-					it != layer.m_hover_cache->m_widgets.rend();
-					it++)
-			{
-				(*it)->set_hover(false);
-			}
-
-			if(m_tex_buffer_cache.size() < m_max_tex_buffer_cache_size) {
-				m_tex_buffer_cache.push(layer.m_texture_buffer);
-			}
-
-			m_layers.erase(z);
-
-		}
-
-		SetContainer(widget, 0);
+		CheckSubWidgetRemovedInContainer(widget);
 
 		return true;
 	}
@@ -685,293 +637,6 @@ namespace BlendInt
 		GLArrayBuffer::Reset();
 	}
 
-	void Context::DrawMainBuffer (const glm::mat4& mvp)
-	{
-		RefPtr<GLSLProgram> program = Stock::Shaders::instance->default_context_program();
-
-		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
-
-		glClearDepth(1.0);
-		glClear(GL_COLOR_BUFFER_BIT |
-						GL_DEPTH_BUFFER_BIT |
-						GL_STENCIL_BUFFER_BIT);
-		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-
-		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-
-		glViewport(0, 0, size().width(), size().height());
-
-		program->Use();
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		glActiveTexture(GL_TEXTURE0);
-		m_main_buffer->Bind();
-
-		program->SetUniform1i("TexID", 0);
-
-		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-
-		GLArrayBuffer::Reset();
-		m_main_buffer->Reset();
-
-		program->Reset();
-
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
-
-	void Context::DrawLayers (const glm::mat4& mvp)
-	{
-		RefPtr<GLSLProgram> program = Stock::Shaders::instance->default_context_program();
-
-		glViewport(0, 0, size().width(), size().height());
-
-		glClearColor(0.447, 0.447, 0.447, 1.00);
-		glClearDepth(1.0);
-
-		glClear(GL_COLOR_BUFFER_BIT |
-						GL_DEPTH_BUFFER_BIT |
-						GL_STENCIL_BUFFER_BIT);
-
-		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-
-		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		//glEnable(GL_BLEND);
-
-		program->Use();
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		glActiveTexture(GL_TEXTURE0);
-
-		program->SetUniform1i("TexID", 0);
-		for(std::deque<GLTexture2D*>::iterator it = m_deque.begin(); it != m_deque.end(); it++)
-		{
-			(*it)->Bind();
-
-			glBindVertexArray(m_vao);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			glBindVertexArray(0);
-
-			GLArrayBuffer::Reset();
-
-			(*it)->Reset();
-		}
-
-		program->Reset();
-
-		glBindVertexArray(0);
-	}
-
-	void Context::RenderToLayerBuffer (const RedrawEvent& event,
-					int layer,
-					const std::set<AbstractWidget*>& widgets,
-					GLTexture2D* texture)
-	{
-		GLsizei width = size().width();
-		GLsizei height = size().height();
-
-		// Create and set texture to render to.
-		GLTexture2D* tex = texture;
-		tex->Bind();
-		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-		tex->SetMinFilter(GL_NEAREST);
-		tex->SetMagFilter(GL_NEAREST);
-		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-		GLFramebuffer* fb = new GLFramebuffer;
-		fb->Generate();
-		fb->Bind();
-
-		// Set "renderedTexture" as our colour attachement #0
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-		GL_TEXTURE_2D, tex->texture(), 0);
-		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-
-		GLuint rb = 0;
-		glGenRenderbuffers(1, &rb);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, rb);
-
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width,
-		        height);
-
-		//Attach depth buffer to FBO
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER, rb);
-
-		if (GLFramebuffer::CheckStatus()) {
-
-			fb->Bind();
-
-			glClearColor(0.0, 0.0, 0.0, 0.0);
-
-			glClearDepth(1.0);
-			glClear(GL_COLOR_BUFFER_BIT |
-					GL_DEPTH_BUFFER_BIT |
-					GL_STENCIL_BUFFER_BIT);
-
-			// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-			glBlendFuncSeparate(GL_SRC_ALPHA,
-								GL_ONE_MINUS_SRC_ALPHA,
-								GL_ONE,
-								GL_ONE_MINUS_SRC_ALPHA);
-
-			glEnable(GL_BLEND);
-
-			glViewport(0, 0, width, height);
-
-			for (std::set<AbstractWidget*>::iterator it = widgets.begin();
-					it != widgets.end();
-			        it++)
-			{
-				//(*set_it)->Draw();
-				DispatchDrawEvent(*it, event);
-			}
-
-			// uncomment the code below to test the layer buffer (texture)
-			/*
-			 std::string str("layer");
-			 char buf[4];
-			 sprintf(buf, "%d", layer);
-			 str = str + buf + ".png";
-			 tex->WriteToFile(str);
-			 */
-		}
-
-		fb->Reset();
-		tex->Reset();
-
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		glDeleteRenderbuffers(1, &rb);
-
-		fb->Reset();
-		delete fb;
-		fb = 0;
-	}
-	
-	void Context::RenderToMainBuffer (const RedrawEvent& event)
-	{
-		GLsizei width = size().width();
-		GLsizei height = size().height();
-
-		// Create and set texture to render to.
-		GLTexture2D* tex = m_main_buffer;
-		tex->Generate();
-		tex->Bind();
-		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-		tex->SetMinFilter(GL_NEAREST);
-		tex->SetMagFilter(GL_NEAREST);
-		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-		GLFramebuffer* fb = new GLFramebuffer;
-		fb->Generate();
-		fb->Bind();
-
-		// Set "renderedTexture" as our colour attachement #0
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex->texture(), 0);
-		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-
-		GLuint rb = 0;
-		glGenRenderbuffers(1, &rb);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, rb);
-
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width,
-		        height);
-
-		//Attach depth buffer to FBO
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER, rb);
-
-		if (GLFramebuffer::CheckStatus()) {
-
-			RefPtr<GLSLProgram> program = Stock::Shaders::instance->default_context_program();
-			fb->Bind();
-
-			glClearColor(0.0, 0.0, 0.0, 0.0);
-
-			glClearDepth(1.0);
-			glClear(GL_COLOR_BUFFER_BIT |
-							GL_DEPTH_BUFFER_BIT |
-							GL_STENCIL_BUFFER_BIT);
-			// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-
-			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-			glEnable(GL_BLEND);
-
-			glViewport(0, 0, width, height);
-
-			glm::mat4 mvp = event.projection_matrix() * event.view_matrix();
-
-#ifdef DEBUG
-			//DrawTriangle(false);
-			//DrawGrid(width, height);
-#endif
-
-			program->Use();
-			glActiveTexture(GL_TEXTURE0);
-
-			program->SetUniform1i("TexID", 0);
-
-			glBindVertexArray(m_vao);
-
-			for (std::deque<GLTexture2D*>::iterator it = m_deque.begin(); it != m_deque.end(); it++) {
-				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-				(*it)->Bind();
-				//(*it)->WriteToFile("layer2.png");
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-				mvp = glm::translate(mvp, glm::vec3(0.0, 0.0, 10.0));
-			}
-
-			glBindVertexArray(0);
-
-			GLTexture2D::Reset();
-			GLArrayBuffer::Reset();
-			program->Reset();
-
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		}
-
-		fb->Reset();
-		tex->Reset();
-
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		glDeleteRenderbuffers(1, &rb);
-
-		fb->Reset();
-		delete fb;
-		fb = 0;
-	}
-	
-	void Context::PreDrawContext (bool fbo)
-	{
-		glClearColor(0.447, 0.447, 0.447, 0.00);
-
-		glClearDepth(1.0);
-		glClear(GL_COLOR_BUFFER_BIT |
-						GL_DEPTH_BUFFER_BIT |
-						GL_STENCIL_BUFFER_BIT);
-
-		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
-
-		if (fbo) {
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE,
-			        GL_ONE_MINUS_SRC_ALPHA);
-		} else {
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		}
-
-		glEnable(GL_BLEND);
-	}
-	
 	void Context::DispatchDrawEvent (AbstractWidget* widget,
 					const RedrawEvent& event)
 	{
@@ -1019,331 +684,38 @@ namespace BlendInt
 		}
 	}
 	
-	bool Context::DispatchMousePressEvent (int layer, const MouseEvent& event)
+	void Context::BuildCursorHoverList ()
 	{
-		// TODO: the widgets under cursor may be changed before mouse press
 
-		//DBG_PRINT_MSG("mouse press on layer: %d (%d, %d)", layer, event.position().x(), event.position().y());
-
-		std::deque<AbstractWidget*>& deque = m_layers[layer].m_hover_cache->m_widgets;
-
-		ResponseType response;
-		AbstractWidget* widget = 0;
-		AbstractWidget* original_focused_widget = m_focused_widget;
-		bool focus_widget_changed = false;
-
-		// debug:
-		/*
-		if (deque.size()) {
-			std::cout << "-------------------------------------------------" << std::endl;
-			for (std::deque<AbstractWidget*>::iterator it =
-			        deque.begin(); it != deque.end(); it++) {
-				DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
-			}
-		}
-		*/
-
-		/*
-		if(! m_layers[layer].m_hover_list_valid) {
-			m_layers[layer].m_hover_list_valid = true;
-		}
-		*/
-
-		// search which widget in stack contains the cursor
-		while (deque.size()) {
-
-			if(deque.back()->visiable()) {
-
-				if (deque.back()->IsHover(event.position())) {
-					widget = deque.back();
-					break;
-				} else {
-					deque.back()->CursorEnterEvent(false);
-					deque.back()->set_hover(false);
-				}
-
-			} else {
-				deque.back()->set_hover(false);
-			}
-
-			deque.pop_back();
-		}
-
-		if(widget) {
-			AppendCursorHoverList(deque, widget);
-		} else {
-			BuildCursorHoverList(layer);
-		}
-
-		widget = 0;
-		for(std::deque<AbstractWidget*>::reverse_iterator it = deque.rbegin();
-				it != deque.rend();
-				it++)
-		{
-			widget = *it;
-			response = widget->MousePressEvent(event);
-
-			if(original_focused_widget != m_focused_widget) {
-				focus_widget_changed = true;
-			}
-
-			if(response == Accept || response == AcceptAndBreak) {
-				break;
-			}
-
-			widget = 0;
-		}
-
-		if(focus_widget_changed) {
-
-			/*
-			if(original_focused_widget) {
-				original_focused_widget->set_focus(false);
-				original_focused_widget->FocusEvent(false);
-			}
-			*/
-
-		} else {
-
-			m_focused_widget = original_focused_widget;
-			SetFocusedWidget(widget);
-
-		}
-
-		return widget != 0;
-	}
-
-	bool Context::DispatchMouseReleaseEvent (int layer, const MouseEvent& event)
-	{
-		return false;
-	}
-
-	bool Context::DispatchMouseMoveEvent(int layer, const MouseEvent& event)
-	{
-		std::deque<AbstractWidget*>& deque = m_layers[layer].m_hover_cache->m_widgets;
-		AbstractWidget* widget = 0;
-
-		//DBG_PRINT_MSG("mouse move on layer: %d (%d, %d)", layer, event.position().x(), event.position().y());
-
-		/*
-		if(! m_layers[layer].m_hover_list_valid) {
-			DBG_PRINT_MSG("%s", "hover list is not valid");
-			m_layers[layer].m_hover_list_valid = true;
-		}
-		*/
-
-		// DEBUG:
-		/*
-		if (deque.size()) {
-			std::cout << "-------------------------------------------------" << std::endl;
-			for (std::deque<AbstractWidget*>::iterator it =
-			        deque.begin(); it != deque.end(); it++) {
-				DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
-			}
-		}
-		*/
-
-		// search which widget in stack contains the cursor
-		while (deque.size()) {
-
-			if(deque.back()->visiable()) {
-
-				if (deque.back()->IsHover(event.position())) {
-					widget = deque.back();
-					break;
-				} else {
-					deque.back()->CursorEnterEvent(false);
-					deque.back()->set_hover(false);
-				}
-
-			} else {
-				deque.back()->set_hover(false);
-			}
-
-			deque.pop_back();
-		}
-
-		if(widget) {
-			AppendCursorHoverList(deque, widget);
-		} else {
-			BuildCursorHoverList(layer);
-		}
-
-		// DEBUG:
-		/*
-		if (deque.size()) {
-			std::cout << "-------------------------------------------------" << std::endl;
-			for (std::deque<AbstractWidget*>::iterator it =
-			        deque.begin(); it != deque.end(); it++) {
-				DBG_PRINT_MSG("cursor on: %s", (*it)->name().c_str());
-			}
-		}
-		*/
-
-		ResponseType response;
-		for (std::deque<AbstractWidget*>::iterator it = deque.begin();
-		        it != deque.end(); it++)
-		{
-			response = (*it)->MouseMoveEvent(event);
-			// check the event status
-			if (response == AcceptAndBreak || response == Ignore) {
-				// TODO: do sth
-			}
-		}
-
-		return (deque.size() > 0);
-	}
-
-	void Context::BuildCursorHoverList(int layer)
-	{
-		if(!m_layers.count(layer)) return;
-
-		std::set<AbstractWidget*>& widget_set = m_layers[layer].m_widget_set->m_widgets;
-		std::deque<AbstractWidget*>& hover_list = m_layers[layer].m_hover_cache->m_widgets;
-
-		hover_list.clear();
-
-		for(std::set<AbstractWidget*>::iterator it = widget_set.begin();
-				it != widget_set.end();
-				it++)
-		{
-			if((*it)->visiable() && (*it)->Contain(m_redraw_event.cursor_position())) {
-				hover_list.push_back(*it);
-				(*it)->CursorEnterEvent(true);
-
-				// append
-				break;
-			}
-		}
 	}
 
 	void Context::AppendCursorHoverList (std::deque<AbstractWidget*>& deque,
 	        AbstractWidget* parent)
 	{
-		parent->set_hover(true);
 
-		AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
-
-		if(p) {
-
-			IteratorPtr it = p->CreateIterator(m_redraw_event);
-			AbstractWidget* widget = 0;
-
-			for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-
-				widget = it->GetWidget();
-
-				if (widget->visiable() && widget->Contain(m_redraw_event.cursor_position())) {
-					deque.push_back(widget);
-					widget->CursorEnterEvent(true);
-					AppendCursorHoverList(deque, widget);
-					break;	// if break or continue the loop?
-				}
-
-			}
-
-		}
 	}
 
 
 	AbstractWidget* Context::GetWidgetUnderCursor(const MouseEvent& event, AbstractWidget* parent)
 	{
-		AbstractContainer* p = dynamic_cast<AbstractContainer*>(parent);
-
-		if(p) {
-
-			AbstractWidget* widget = 0;
-			IteratorPtr it = p->CreateIterator(event);
-
-			for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-				widget = it->GetWidget();
-				if (widget->visiable() && widget->Contain(event.position())) {
-					break;
-				} else {
-					widget = 0;
-				}
-			}
-
-			if(widget) {
-				return GetWidgetUnderCursor(event, widget);
-			} else {
-				return parent;
-			}
-
-		} else {
-
-			return parent;
-
-		}
+		return 0;
 	}
 
 	void Context::RemoveWidgetFromHoverList (AbstractWidget* widget,
 	        bool cursor_event)
 	{
-		std::deque<AbstractWidget*>& deque = m_layers[widget->z()].m_hover_cache->m_widgets;
 
-		while(deque.size()) {
-
-			if(deque.back() == widget) {
-
-				if(cursor_event) widget->CursorEnterEvent(false);
-				widget->set_hover(false);
-				deque.pop_back();
-				break;
-			}
-
-			if(cursor_event) deque.back()->CursorEnterEvent(false);
-			deque.back()->set_hover(false);
-			deque.pop_back();
-		}
 	}
 
 	void Context::RemoveSubWidgetFromHoverList (AbstractContainer* container,
 	        bool cursor_event)
 	{
-		std::deque<AbstractWidget*>& deque = m_layers[container->z()].m_hover_cache->m_widgets;
 
-		while(deque.size()) {
-
-			if(deque.back() == container) {
-				break;
-			}
-
-			if(cursor_event) deque.back()->CursorEnterEvent(false);
-			deque.back()->set_hover(false);
-			deque.pop_back();
-		}
 	}
-
-#ifdef DEBUG
-
-	void Context::PrintLayers ()
-	{
-		std::map<int, ContextLayer>::iterator layer_iter;
-		std::set<AbstractWidget*>::iterator widget_iter;
-
-		std::cout << std::endl;
-
-		std::cerr << "size of layer map:" << m_layers.size() << std::endl;
-
-		for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
-		        layer_iter++) {
-			std::cerr << "Layer: " << layer_iter->first << std::endl;
-			for (std::set<AbstractWidget*>::iterator it = layer_iter->second.m_widget_set->m_widgets.begin();
-			        it != layer_iter->second.m_widget_set->m_widgets.end();
-			        it++)
-			{
-				std::cerr << (*it)->name() << " ";
-			}
-			std::cerr << std::endl;
-		}
-	}
-
-#endif
 
 	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{
-		RemoveSubWidget(widget);
+		Remove(widget);
 	}
 
 }

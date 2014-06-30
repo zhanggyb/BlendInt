@@ -40,7 +40,6 @@ TEST_F(FrameTest1, Foo1)
 
     frame->Setup(ref_btn);
 
-    DBG_PRINT_MSG("frame layer: %d", frame->z());
     frame->SetMargin(10, 10, 4, 4);
     frame->Resize(200, 200);
 

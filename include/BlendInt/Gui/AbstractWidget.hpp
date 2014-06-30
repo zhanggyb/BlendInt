@@ -56,7 +56,6 @@ namespace BlendInt {
 		WidgetSize,
 		WidgetRoundCornerType,
 		WidgetRoundCornerRadius,
-		WidgetLayer,
 		WidgetVisibility
 	};
 
@@ -298,8 +297,6 @@ namespace BlendInt {
 
 		void SetRoundCornerRadius (float radius);
 
-		void SetLayer (int z);
-
 		void SetVisible (bool visible);
 
 		void SetEmboss (bool emboss);
@@ -320,7 +317,7 @@ namespace BlendInt {
 
 		virtual bool Contain (int x, int y) const;
 
-		void RenderToTexture (size_t border, GLTexture2D* texture);
+		void RenderToTexture (int border, GLTexture2D* texture);
 
 		void RenderToFile (const char* filename, unsigned int border = 10);
 
@@ -329,16 +326,6 @@ namespace BlendInt {
 		const Size& size () const
 		{
 			return m_size;
-		}
-
-		const int& layer () const
-		{
-			return m_z;
-		}
-
-		const int& z () const
-		{
-			return m_z;
 		}
 
 		void activate_events ()
@@ -616,16 +603,6 @@ namespace BlendInt {
 			}
 		}
 
-		void set_layer (int z)
-		{
-			m_z = z;
-		}
-
-		void set_z (int z)
-		{
-			m_z = z;
-		}
-
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 
 		static void DispatchRender (AbstractWidget* obj);
@@ -681,11 +658,6 @@ namespace BlendInt {
 		Point m_position;
 
 		Size m_size;
-
-		/**
-		 * @brief the depth(layer) of the widget
-		 */
-		int m_z;
 
 		unsigned int m_flags;
 

@@ -76,12 +76,17 @@ int main(int argc, char* argv[])
 	context->Resize(1280, 800);
 
 	VirtualWindow* vw = Manage(new VirtualWindow);
+	DBG_SET_NAME(vw, "virtual window");
 	vw->SetPosition(100, 100);
 
-	Decoration* dec = Manage(new Decoration);
-	dec->SetPosition(600, 400);
+	//Decoration* dec = Manage(new Decoration);
+	//dec->SetPosition(600, 400);
 
-	context->Add(dec);
+	Button* btn = Manage(new Button("Hello World!"));
+	DBG_SET_NAME(btn, "button");
+	btn->SetPosition(600, 200);
+
+	context->Add(btn);
 
 	context->Add(vw);
 

@@ -41,10 +41,6 @@ TEST_F(ContextTest1, AddSubWidget01)
     context->Add(w1);
     context->Add(w2);
 
-#ifdef DEBUG
-    context->PrintLayers();
-#endif
-    
     RunLoop(win);
 
     delete w1;
@@ -84,10 +80,6 @@ TEST_F(ContextTest1, AddSubWidget02)
 
     context->Add(w1);
     context->Add(f1);
-
-#ifdef DEBUG
-    context->PrintLayers();
-#endif
 
     bool result = (
             (w1->container() == context) &&
@@ -138,10 +130,6 @@ TEST_F(ContextTest1, AddSubWidget03)
 
     f1->Setup(w1);
 
-#ifdef DEBUG
-    context->PrintLayers();
-#endif
-
     bool result = (
             (w2->container() == context) &&
             (w1->container() == f1)
@@ -188,10 +176,6 @@ TEST_F(ContextTest1, DestructorInContainer01)
 	context->Add(w1);
 	// now w1 should be in context manager as it's not marked as managed
 
-#ifdef DEBUG
-	context->PrintLayers();
-#endif
-
 	bool result = (
 			(w1->container() == context)
 	);
@@ -231,10 +215,6 @@ TEST_F(ContextTest1, DestructorInContainer02)
 
 	context->Add(f1);
 
-#ifdef DEBUG
-	context->PrintLayers();
-#endif
-
 	bool result = (
 			(w1->container() == f1) &&
 			(f1->container() == context)
@@ -271,16 +251,6 @@ TEST_F(ContextTest1, Layer1)
     Widget* w2 = Manage(new Widget);
     w2->SetPosition(400, 200);
     context->Add(w2);
-    w2->SetLayer(1);
-
-#ifdef DEBUG
-    context->PrintLayers();
-#endif
-
-	size_t layer_size = context->layer_size();
-
-	bool result = (
-					layer_size == 2);
 
     RunLoop(win);
 
@@ -288,7 +258,7 @@ TEST_F(ContextTest1, Layer1)
 
     Terminate();
 
-	ASSERT_TRUE(result);
+	ASSERT_TRUE(true);
 }
 
 /**
@@ -312,23 +282,12 @@ TEST_F(ContextTest1, Layer2)
 
     Widget* w2 = new Widget;
     w2->SetPosition(400, 200);
-    w2->SetLayer(1);
     context->Add(w2);
 
     Widget* w3 = new Widget;
-    w3->SetLayer(2);
     context->Add(w3);
 
     delete w3; w3 = 0;
-
-#ifdef DEBUG
-    context->PrintLayers();
-#endif
-
-	size_t layer_size = context->layer_size();
-
-	bool result = (
-					layer_size == 2);
 
     RunLoop(win);
 
@@ -339,7 +298,7 @@ TEST_F(ContextTest1, Layer2)
 
     Terminate();
 
-	ASSERT_TRUE(result);
+	ASSERT_TRUE(true);
 }
 
 /**
@@ -363,17 +322,14 @@ TEST_F(ContextTest1, Layer3)
 
 	Widget* w2 = Manage(new Widget);
 	w2->SetPosition(150, 150);
-	w2->SetLayer(1);
 	context->Add(w2);
 
 	Widget* w3 = Manage(new Widget);
 	w3->SetPosition(200, 200);
-	w3->SetLayer(2);
 	context->Add(w3);
 
 	Widget* w4 = Manage(new Widget);
 	w4->SetPosition(250, 250);
-	w4->SetLayer(3);
 	context->Add(w4);
 
 	delete w4;
@@ -382,19 +338,11 @@ TEST_F(ContextTest1, Layer3)
 
 	Widget* w5 = Manage(new Widget);
 	w5->SetPosition(300, 300);
-	w5->SetLayer(4);
 	context->Add(w5);
 
 	Widget* w6 = Manage(new Widget);
 	w6->SetPosition(350, 350);
-	w6->SetLayer(5);
 	context->Add(w6);
-
-#ifdef DEBUG
-	context->PrintLayers();
-#endif
-
-	bool result = context->layer_size() == 3;
 
 	RunLoop(win);
 
@@ -405,5 +353,5 @@ TEST_F(ContextTest1, Layer3)
 
 	Terminate();
 
-	ASSERT_TRUE(result);
+	ASSERT_TRUE(true);
 }

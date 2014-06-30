@@ -59,20 +59,15 @@ namespace BlendInt {
 
 		virtual ~Context ();
 
-		bool Add (AbstractWidget* widget);
+		void Add (AbstractWidget* widget);
 
-		bool Remove (AbstractWidget* widget);
+		void Remove (AbstractWidget* widget);
 
 		void SetFocusedWidget (AbstractWidget* widget);
 
 		void RefreshLayer (int layer);
 
 		int GetMaxLayer () const;
-
-		size_t layer_size () const
-		{
-			return m_layers.size();
-		}
 
 		AbstractWidget* focused_widget () const
 		{
@@ -94,10 +89,6 @@ namespace BlendInt {
 		{
 			return m_resized;
 		}
-
-#ifdef DEBUG
-		void PrintLayers ();
-#endif
 
 		void set_max_tex_buffer_cache_size (unsigned int size)
 		{
@@ -137,8 +128,6 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual bool InsertSubWidget (AbstractWidget* widget);
-
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
 
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
@@ -147,28 +136,9 @@ namespace BlendInt {
 
 		void InitializeContext ();
 
-		void DrawMainBuffer (const glm::mat4& mvp);
-
-		void DrawLayers (const glm::mat4& mvp);
-
-		void RenderToLayerBuffer (const RedrawEvent& event,
-				int layer,
-				const std::set<AbstractWidget*>& widgets,
-				GLTexture2D* texture);
-
-		void RenderToMainBuffer (const RedrawEvent& event);
-
-		void PreDrawContext (bool fbo = false);
-
 		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
 
-		bool DispatchMousePressEvent (int layer, const MouseEvent& event);
-
-		bool DispatchMouseReleaseEvent (int layer, const MouseEvent& event);
-
-		bool DispatchMouseMoveEvent (int layer, const MouseEvent& event);
-
-		void BuildCursorHoverList (int layer);
+		void BuildCursorHoverList ();
 
 		void AppendCursorHoverList (std::deque<AbstractWidget*>& deque, AbstractWidget* parent);
 
@@ -180,11 +150,11 @@ namespace BlendInt {
 
 		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
-		std::map<int, ContextLayer> m_layers;
+		// this will replace the context layer
 
-		std::deque<GLTexture2D*> m_deque;
+		std::deque<AbstractWidget*> m_widgets;
 
-		GLTexture2D* m_main_buffer;
+		GLTexture2D* m_context_buffer;
 
 		RefPtr<GLArrayBuffer> m_vbo;
 

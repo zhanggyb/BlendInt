@@ -185,8 +185,7 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(),
-						(float) z());
+		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
 		glm::mat4 mvp = glm::translate(
 						event.projection_matrix() * event.view_matrix(), pos);
 
@@ -241,8 +240,8 @@ namespace BlendInt {
 				context->Remove(m_menu.get());
 				SetRoundCornerType(RoundAll);
 			} else {
-				int max_layer = context->GetMaxLayer();
-				m_menu->SetLayer(max_layer + 1);
+				//int max_layer = context->GetMaxLayer();
+				//m_menu->SetLayer(max_layer + 1);
 				m_menu->SetPosition(position().x(), position().y() + size().height());
 				context->Add(m_menu.get());
 				SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
