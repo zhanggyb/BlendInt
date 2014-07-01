@@ -151,7 +151,6 @@ namespace BlendInt {
 
 		int advance = 0;	// the return value
 
-		glBindVertexArray(m_cache->m_vao);
 		glm::mat4 glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
 		RefPtr<GLSLProgram> program = Shaders::instance->text_program();
 
@@ -161,16 +160,14 @@ namespace BlendInt {
 
 		program->SetUniform1i("tex", 0);
 
-		glEnableVertexAttribArray(0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
 		size_t str_length = std::min(string.length(), length);
 
 		// TODO: support left->right, and right->left text
 		std::string::const_iterator it;
 		const GlyphExt* glyph_p = 0;
+
+		glBindVertexArray(m_cache->m_vao);
+		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
 
 		if(m_shadow) {
 
@@ -187,6 +184,8 @@ namespace BlendInt {
 
 			it = string.begin();
 			std::advance(it, start);
+
+
 			for (size_t i = 0; i < str_length; it++, i++) {
 				glyph_p = m_cache->Query(m_data, *it);
 				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->texture());
@@ -231,12 +230,10 @@ namespace BlendInt {
 			        glm::value_ptr(glyph_pos));
 		}
 
-		glDisableVertexAttribArray(0);
-
+		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		program->Reset();
-		glBindVertexArray(0);
 
 		return advance;
 	}
@@ -269,7 +266,6 @@ namespace BlendInt {
 
 		int advance = 0;	// the return value
 
-		glBindVertexArray(m_cache->m_vao);
 		glm::mat4 glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
 		RefPtr<GLSLProgram> program = Shaders::instance->text_program();
 
@@ -279,16 +275,14 @@ namespace BlendInt {
 
 		program->SetUniform1i("tex", 0);
 
-		glEnableVertexAttribArray(0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
 		size_t str_length = std::min(string.length(), length);
 
 		// TODO: support left->right, and right->left text
 		String::const_iterator it;
 		const GlyphExt* glyph_p = 0;
+
+		glBindVertexArray(m_cache->m_vao);
+		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
 
 		if(m_shadow) {
 
@@ -349,12 +343,10 @@ namespace BlendInt {
 			        glm::value_ptr(glyph_pos));
 		}
 
-		glDisableVertexAttribArray(0);
-
+		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		program->Reset();
-		glBindVertexArray(0);
 
 		return advance;
 	}
