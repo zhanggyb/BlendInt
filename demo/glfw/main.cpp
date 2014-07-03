@@ -75,34 +75,37 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-//	VirtualWindow* vw = Manage(new VirtualWindow);
-//	DBG_SET_NAME(vw, "virtual window");
-//	vw->SetPosition(100, 100);
+	VirtualWindow* vw = Manage(new VirtualWindow);
+	DBG_SET_NAME(vw, "virtual window");
+	vw->SetPosition(100, 100);
 
 	Button* btn1 = Manage(new Button("Hello World 1!"));
 	DBG_SET_NAME(btn1, "button1");
 	btn1->SetPosition(600, 200);
 
-//	Button* btn2 = Manage(new Button("Hello World 2!"));
-//	DBG_SET_NAME(btn2, "button2");
-//	btn2->SetPosition(600, 300);
-//
-//	Button* btn3 = Manage(new Button("Hello World 3!"));
-//	DBG_SET_NAME(btn3, "button3");
-//	btn3->SetPosition(600, 400);
+	Button* btn2 = Manage(new Button("Hello World 2!"));
+	DBG_SET_NAME(btn2, "button2");
+	btn2->SetPosition(600, 300);
+
+	Button* btn3 = Manage(new Button("Hello World 3!"));
+	DBG_SET_NAME(btn3, "button3");
+	btn3->SetPosition(600, 400);
 
 	context->AddWidget(btn1);
+	context->AddWidget(btn2);
+	context->AddWidget(btn3);
 
-//	context->AddWidget(btn2);
-//	context->AddWidget(btn3);
-//
-//	context->AddWidget(vw);
+	context->AddWidget(vw);
 
 #ifdef DEBUG
 	context->PrintSections();
 #endif
 
 	RunLoop(win);
+
+#ifdef DEBUG
+	context->PrintSections();
+#endif
 
 	Interface::Release();
 

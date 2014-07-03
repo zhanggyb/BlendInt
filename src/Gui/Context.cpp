@@ -51,9 +51,7 @@ namespace BlendInt
 	: AbstractContainer(),
 	  m_context_buffer(0),
 	  m_vao(0),
-	  m_max_tex_buffer_cache_size(6),
-	  refresh_once(false),
-	  force_refresh_all(true)
+	  m_refresh(false)
 	{
 		set_size(640, 480);
 
@@ -94,39 +92,6 @@ namespace BlendInt
 				delete sections;
 			}
 		}
-
-		/*
-		std::map<int, ContextLayer>::iterator layer_iter;
-		std::set<AbstractWidget*>::iterator widget_iter;
-
-		AbstractWidget* widget = 0;
-		for (layer_iter = m_layers.begin(); layer_iter != m_layers.end();
-		        layer_iter++)
-		{
-			for (widget_iter = layer_iter->second.m_widget_set->m_widgets.begin();
-			        widget_iter != layer_iter->second.m_widget_set->m_widgets.end();
-			        widget_iter++)
-			{
-				widget = *widget_iter;
-				widget->destroyed().disconnectOne(this,
-				        &Context::OnSubWidgetDestroyed);
-				widget->m_container = 0;
-				widget->set_hover(false);
-				widget->set_focus(false);
-
-				if (widget->managed() && (widget->count() == 0)) {
-					delete *widget_iter;
-				}
-			}
-
-			layer_iter->second.m_widget_set->m_widgets.clear();
-			layer_iter->second.m_hover_cache->m_widgets.clear();
-		}
-
-		m_deque.clear();
-
-		m_layers.clear();
-		*/
 
 		if (m_context_buffer) {
 			m_context_buffer->Clear();
@@ -184,29 +149,50 @@ namespace BlendInt
 		return section;
 	}
 
+	void Context::AddSection (Section* section)
+	{
+		if(section && (section->m_set.size() > 0)) {
+
+			if(section->container() == this) {
+				DBG_PRINT_MSG("Section %s is alreay in context %s",
+						section->name().c_str(),
+						name().c_str());
+				return;
+			}
+
+			AbstractContainer::RemoveSubWidget(section->container(), section);
+
+			m_sections.push_back(section);
+			SetContainer(section, this);
+			ResizeSubWidget(section, size());
+
+			events()->connect(section->destroyed(), this, &Context::OnSubWidgetDestroyed);
+
+			CheckSubWidgetAddedInContainer(section);
+
+			return;
+
+		} else {
+			DBG_PRINT_MSG("Warning: %s", "the section is not added in context, it's not valid or empty");
+		}
+	}
+
 	void Context::RemoveWidget (AbstractWidget* widget)
 	{
-		// if widget is hover, disconnect the destroyed event
 		if(!widget) {
 			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
 			return;
 		}
 
-		Section* section = widget->GetSection();
-		if(section) {
+		// if the container is a section, the section will destroy itself if it's empty
+		AbstractContainer* container = widget->container();
+		AbstractContainer::RemoveSubWidget(container, widget);
+	}
 
-			if(section->container() == this) {
-				RemoveSubWidget(section);
-			} else {
-
-				DBG_PRINT_MSG("%s", "Section is not in this context");
-				return;
-			}
-
-		} else {
-			DBG_PRINT_MSG("widget %s is not in any section", widget->name().c_str());
-
-			return;
+	void Context::RemoveSection (Section* section)
+	{
+		if(section && section->container() == this) {
+			RemoveSubWidget(section);
 		}
 	}
 
@@ -221,7 +207,9 @@ namespace BlendInt
 
 	void Context::SetFocusedWidget (AbstractWidget* widget)
 	{
-
+		if (Section* section = widget->GetSection()) {
+			section->SetFocusedWidget(widget);
+		}
 	}
 
 	void Context::SetCursor (int cursor_type)
@@ -250,6 +238,10 @@ namespace BlendInt
 
 	void Context::PrintSections()
 	{
+		if(m_sections.size() == 0) {
+			DBG_PRINT_MSG("%s", "Section deque is empty");
+		}
+
 		for(std::deque<Section*>::iterator it = m_sections.begin(); it != m_sections.end(); it++)
 		{
 			DBG_PRINT_MSG("Section: %s at (%d, %d) - (%d, %d) contains: ", (*it)->name().c_str(),
@@ -361,7 +353,6 @@ namespace BlendInt
 					}
 
 					// TODO: redraw
-					force_refresh_all = true;
 					break;
 				}
 
@@ -414,15 +405,15 @@ namespace BlendInt
 		}
 	}
 
-	void Context::BroadcastUpdate(const GeometryUpdateRequest& request)
+	void Context::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
-
-		if(request.source() == this) {
+		if (request.source() == this) {
 
 			switch (request.type()) {
 
 				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
 					m_resized.fire(*size_p);
 					break;
 				}
@@ -444,8 +435,8 @@ namespace BlendInt
 
 		glClearDepth(1.0);
 		glClear(GL_COLOR_BUFFER_BIT |
-						GL_DEPTH_BUFFER_BIT |
-						GL_STENCIL_BUFFER_BIT);
+		GL_DEPTH_BUFFER_BIT |
+		GL_STENCIL_BUFFER_BIT);
 		// Here cannot enable depth test -- glEnable(GL_DEPTH_TEST);
 
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -453,10 +444,8 @@ namespace BlendInt
 
 		glViewport(0, 0, size().width(), size().height());
 
-		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
-				it != m_sections.rend();
-				it++)
-		{
+		for (std::deque<Section*>::iterator it = m_sections.begin();
+		        it != m_sections.end(); it++) {
 			(*it)->Draw(event);
 		}
 
@@ -472,10 +461,10 @@ namespace BlendInt
 	{
 		ResponseType response;
 
-		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin(); it != m_sections.rend(); it++)
-		{
+		for (std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
+		        it != m_sections.rend(); it++) {
 			response = (*it)->KeyPressEvent(event);
-			if(response == Accept || response == AcceptAndBreak) {
+			if (response == Accept || response == AcceptAndBreak) {
 				break;
 			}
 		}
@@ -563,28 +552,15 @@ namespace BlendInt
 				m_sections.end(), widget);
 
 		if (it != m_sections.end()) {
-
 			widget->destroyed().disconnectOne(this,
-							&Context::OnSubWidgetDestroyed);
+			        &Context::OnSubWidgetDestroyed);
 
 			m_sections.erase(it);
 			SetContainer(widget, 0);
 		} else {
 			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
-							widget->name().c_str(), name().c_str());
+			        widget->name().c_str(), name().c_str());
 			return false;
-		}
-
-		if(widget->hover()) {
-			//RemoveWidgetFromHoverList(this);
-		}
-
-		if(widget->focused()) {
-			widget->set_focus(false);
-
-			//if(widget == m_focused_widget) {
-				//m_focused_widget = 0;
-			//}
 		}
 
 		CheckSubWidgetRemovedInContainer(widget);
@@ -627,8 +603,10 @@ namespace BlendInt
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+		        BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
+		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(0);
 
@@ -643,7 +621,6 @@ namespace BlendInt
 	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{
 		DBG_PRINT_MSG("Remove section from context: %s", widget->name().c_str());
-		//RemoveWidget(widget);
 		RemoveSubWidget(widget);
 	}
 

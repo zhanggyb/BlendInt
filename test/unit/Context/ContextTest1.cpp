@@ -314,7 +314,6 @@ TEST_F(ContextTest1, Layer3)
 
 	Context* context = Manage (new Context);
 	Interface::instance->SetCurrentContext(context);
-	context->set_max_tex_buffer_cache_size(2);
 
 	Widget* w1 = Manage(new Widget);
 	w1->SetPosition(100, 100);

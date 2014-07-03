@@ -84,6 +84,8 @@ namespace BlendInt {
 
 	private:
 
+		bool CheckCursorPosition (const Point& cursor);
+
 		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
 
 		void UpdateHoverWidget (const MouseEvent& event);

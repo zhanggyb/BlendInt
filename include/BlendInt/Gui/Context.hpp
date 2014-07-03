@@ -70,10 +70,17 @@ namespace BlendInt {
 		/**
 		 * @brief Add a section
 		 *
-		 * @note If the section is set managed it will be deleted automatically if it's last sub widget is removed or deleted
+		 * The Section must not be empty
+		 *
+		 * @note If the section is set managed it will be deleted automatically when it's last sub widget is removed or deleted
 		 */
 		void AddSection (Section* section);
 
+		/**
+		 * @brief Remove widget from this context
+		 *
+		 * @warning: this function will remove widget from any container, if it's in a section hold by this container, the section will be destroyed by itself if managed.
+		 */
 		void RemoveWidget (AbstractWidget* widget);
 
 		void RemoveSection (Section* section);
@@ -104,16 +111,6 @@ namespace BlendInt {
 		Cpp::EventRef<const Size&> resized ()
 		{
 			return m_resized;
-		}
-
-		void set_max_tex_buffer_cache_size (unsigned int size)
-		{
-			m_max_tex_buffer_cache_size = size;
-		}
-
-		unsigned int max_tex_buffer_cache_size () const
-		{
-			return m_max_tex_buffer_cache_size;
 		}
 
 #ifdef DEBUG
@@ -174,18 +171,7 @@ namespace BlendInt {
 
 		RedrawEvent m_redraw_event;
 
-		/**
-		 * @brief A stack to store unused texture buffer
-		 */
-		std::stack<RefPtr<GLTexture2D> > m_tex_buffer_cache;
-
-		unsigned int m_max_tex_buffer_cache_size;
-
-		ScissorStatus scissor_status;
-
-		bool refresh_once;
-
-		bool force_refresh_all;
+		bool m_refresh;
 
 		Cpp::Event<const Size&> m_resized;
 
