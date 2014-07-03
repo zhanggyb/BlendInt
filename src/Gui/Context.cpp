@@ -51,7 +51,6 @@ namespace BlendInt
 	: AbstractContainer(),
 	  m_context_buffer(0),
 	  m_vao(0),
-	  m_focused_widget(0),
 	  m_max_tex_buffer_cache_size(6),
 	  refresh_once(false),
 	  force_refresh_all(true)
@@ -82,21 +81,17 @@ namespace BlendInt
 			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other container");
 		}
 
-		if(m_focused_widget) {
-			SetFocusedWidget(0);
-		}
-
-		AbstractWidget* widget = 0;
-		for(AbstractWidgetDeque::reverse_iterator it = m_widgets.rbegin(); it != m_widgets.rend(); it++)
+		Section* sections = 0;
+		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin(); it != m_sections.rend(); it++)
 		{
-			widget = *it;
-			widget->destroyed().disconnectOne(this, &Context::OnSubWidgetDestroyed);
-			widget->m_container = 0;
-			widget->set_hover(false);
-			widget->set_focus(false);
+			sections = *it;
+			sections->destroyed().disconnectOne(this, &Context::OnSubWidgetDestroyed);
+			sections->m_container = 0;
+			sections->set_hover(false);
+			sections->set_focus(false);
 
-			if(widget->managed() && (widget->count() == 0)) {
-				delete widget;
+			if(sections->managed() && (sections->count() == 0)) {
+				delete sections;
 			}
 		}
 
@@ -143,52 +138,81 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
-	void Context::Add (AbstractWidget* widget)
+	Section* Context::AddWidget (AbstractWidget* widget)
 	{
+		if(!widget) {
+			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
+			return 0;
+		}
+
+		Section* section = widget->GetSection();
+
+		if(section) {
+
+			if(section->container() == this) {
+				DBG_PRINT_MSG("Widget %s is already in context %s",
+									widget->name().c_str(),
+									name().c_str());
+				return section;
+
+			} else {
+
+				AbstractContainer::RemoveSubWidget(section->container(), section);
+
+			}
+
+		} else {
+
+			section = Manage(new Section);
+			section->Insert(widget);
+
+		}
+
+		char buf[32];
+		sprintf(buf, "Section %ld", m_sections.size());
+		DBG_SET_NAME(section, buf);
+
+		m_sections.push_back(section);
+		SetContainer(section, this);
+
+		ResizeSubWidget(section, size());
+
+		events()->connect(section->destroyed(), this, &Context::OnSubWidgetDestroyed);
+
+		CheckSubWidgetAddedInContainer(widget);
+
+		return section;
+	}
+
+	void Context::RemoveWidget (AbstractWidget* widget)
+	{
+		// if widget is hover, disconnect the destroyed event
 		if(!widget) {
 			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
 			return;
 		}
 
-		if(widget->container()) {
+		Section* section = widget->GetSection();
+		if(section) {
 
-			if(widget->container() == this) {
-				DBG_PRINT_MSG("Widget %s is already in container %s",
-									widget->name().c_str(),
-									widget->container()->name().c_str());
-				return;
+			if(section->container() == this) {
+				RemoveSubWidget(section);
 			} else {
-				AbstractContainer::RemoveSubWidget(widget->container(), widget);
-			}
-		}
 
-		m_widgets.push_back(widget);
-
-		// set shadow
-		if(widget->drop_shadow()) {
-			if(!widget->m_shadow) {
-				widget->m_shadow.reset(new Shadow);
+				DBG_PRINT_MSG("%s", "Section is not in this context");
+				return;
 			}
 
-			widget->m_shadow->Resize(widget->size());
+		} else {
+			DBG_PRINT_MSG("widget %s is not in any section", widget->name().c_str());
+
+			return;
 		}
-
-		SetContainer(widget, this);
-		events()->connect(widget->destroyed(), this, &Context::OnSubWidgetDestroyed);
-
-		CheckSubWidgetAddedInContainer(widget);
-
-		return;
-	}
-
-	void Context::Remove (AbstractWidget* widget)
-	{
-		RemoveSubWidget(widget);
 	}
 
 	int Context::GetMaxLayer () const
 	{
-		return m_widgets.size() - 1;
+		return m_sections.size() - 1;
 	}
 
 	void Context::RefreshLayer (int layer)
@@ -197,20 +221,7 @@ namespace BlendInt
 
 	void Context::SetFocusedWidget (AbstractWidget* widget)
 	{
-		if(m_focused_widget == widget) {
-			return;
-		}
 
-		if (m_focused_widget) {
-			m_focused_widget->set_focus(false);
-			m_focused_widget->FocusEvent(false);
-		}
-
-		m_focused_widget = widget;
-		if (m_focused_widget) {
-			m_focused_widget->set_focus(true);
-			m_focused_widget->FocusEvent(true);
-		}
 	}
 
 	void Context::SetCursor (int cursor_type)
@@ -234,6 +245,25 @@ namespace BlendInt
 		// TODO:: overwrite this
 		return ArrowCursor;
 	}
+
+#ifdef DEBUG
+
+	void Context::PrintSections()
+	{
+		for(std::deque<Section*>::iterator it = m_sections.begin(); it != m_sections.end(); it++)
+		{
+			DBG_PRINT_MSG("Section: %s at (%d, %d) - (%d, %d) contains: ", (*it)->name().c_str(),
+					(*it)->position().x(), (*it)->position().y(),
+					(*it)->size().width(), (*it)->size().height());
+
+			for(std::set<AbstractWidget*>::iterator s_it = (*it)->m_set.begin(); s_it != (*it)->m_set.end(); s_it++)
+			{
+				DBG_PRINT_MSG("\t %s", (*s_it)->name().c_str());
+			}
+		}
+	}
+
+#endif
 
 	void Context::UpdateContainer(const ContainerUpdateRequest& request)
 	{
@@ -273,7 +303,7 @@ namespace BlendInt
 
 					AbstractWidget* w = const_cast<AbstractWidget*>(widget);
 					if(w->hover()) {
-						RemoveWidgetFromHoverList(w);
+						//RemoveWidgetFromHoverList(w);
 						w->set_hover(false);
 					}
 				}
@@ -288,6 +318,12 @@ namespace BlendInt
 
 	bool Context::UpdateGeometryTest(const GeometryUpdateRequest& request)
 	{
+		if(request.source()->container() == this) {
+
+			// don't allow section to change any geometry
+			return false;
+		}
+
 		return true;
 	}
 
@@ -318,6 +354,11 @@ namespace BlendInt
 											0.f,
 											(GLfloat)size_p->height(),
 											100.f, -100.f));
+
+					for(std::deque<Section*>::iterator it = m_sections.begin(); it != m_sections.end(); it++)
+					{
+						ResizeSubWidget(*it, *size_p);
+					}
 
 					// TODO: redraw
 					force_refresh_all = true;
@@ -412,12 +453,11 @@ namespace BlendInt
 
 		glViewport(0, 0, size().width(), size().height());
 
-		for (AbstractWidgetDeque::iterator it = m_widgets.begin();
-				it != m_widgets.end();
+		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
+				it != m_sections.rend();
 				it++)
 		{
-			//(*set_it)->Draw();
-			DispatchDrawEvent(*it, event);
+			(*it)->Draw(event);
 		}
 
 		return Accept;
@@ -430,21 +470,17 @@ namespace BlendInt
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
-		return Ignore;
+		ResponseType response;
 
-		if(m_focused_widget) {
-#ifdef DEBUG
-			if(event.key() == Key_F6 && event.text().empty()) {
-				//DrawToOffScreen();
-				//RenderToImage();
+		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin(); it != m_sections.rend(); it++)
+		{
+			response = (*it)->KeyPressEvent(event);
+			if(response == Accept || response == AcceptAndBreak) {
+				break;
 			}
-#endif
-			m_focused_widget->KeyPressEvent(event);
-
-			return Accept;
-		} else {
-			return Ignore;
 		}
+
+		return response;
 	}
 
 	ResponseType Context::ContextMenuPressEvent (const ContextMenuEvent& event)
@@ -460,96 +496,58 @@ namespace BlendInt
 
 	ResponseType Context::MousePressEvent (const MouseEvent& event)
 	{
-		ResponseType response = Ignore;
-		AbstractWidget* widget = 0;
+		ResponseType response;
 
-		AbstractWidget* original_focused_widget = m_focused_widget;
-		bool focus_widget_changed = false;
-
-		for(std::deque<AbstractWidget*>::reverse_iterator it = m_widgets.rbegin();
-				it != m_widgets.rend();
+		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
+				it != m_sections.rend();
 				it++)
 		{
-			widget = *it;
+			response = (*it)->MousePressEvent(event);
 
-			if(widget->Contain(event.position())) {
-				response = widget->MousePressEvent(event);
-
-				// a widget may change the focused widget
-				if(original_focused_widget != m_focused_widget) {
-					focus_widget_changed = true;
-				}
-
-				if(response == Accept || response == AcceptAndBreak) {
-					break;
-				}
-
+			if (response == Accept || response == AcceptAndBreak) {
+				break;
 			}
-
-			widget = 0;
 		}
 
-		if(focus_widget_changed) {
-
-			/*
-			if(original_focused_widget) {
-				original_focused_widget->set_focus(false);
-				original_focused_widget->FocusEvent(false);
-			}
-			*/
-
-		} else {
-
-			m_focused_widget = original_focused_widget;
-			SetFocusedWidget(widget);
-
-		}
-
-		if(m_focused_widget) {
-			DBG_PRINT_MSG("focus widget: %s", m_focused_widget->name().c_str());
-		}
-
-		if(widget != 0)
-			return Accept;
-
-		return Ignore;
+		return response;
 	}
 
 	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
 	{
 		ResponseType response;
 
-		// tell the focused widget first
-		if(m_focused_widget) {
-			response = m_focused_widget->MouseReleaseEvent(event);
+		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
+				it != m_sections.rend();
+				it++)
+		{
+			response = (*it)->MouseReleaseEvent(event);
 
-			// Check the event status
-			if(response == Accept) {
-
+			if (response == Accept || response == AcceptAndBreak) {
+				break;
 			}
 		}
 
-		return Accept;
+		return response;
 	}
 
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
 	{
-		return Ignore;
+		m_redraw_event.set_cursor_position(event.position());
 
 		ResponseType response;
 
-		m_redraw_event.set_cursor_position(event.position());
+		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
+				it != m_sections.rend();
+				it++)
+		{
+			response = (*it)->MouseMoveEvent(event);
 
-		// tell the focused widget first
-		if(m_focused_widget) {
-			response = m_focused_widget->MouseMoveEvent(event);
-
-			if(response == AcceptAndBreak)
-				return Accept;
-			// check the event status
+			if (response == Accept || response == AcceptAndBreak) {
+				break;
+			}
 		}
 
-		return Ignore;
+		return response;
 	}
 
 	bool Context::RemoveSubWidget (AbstractWidget* widget)
@@ -561,15 +559,15 @@ namespace BlendInt
 
 		assert(widget->container() == this);
 
-		AbstractWidgetDeque::iterator it = std::find(m_widgets.begin(),
-						m_widgets.end(), widget);
+		std::deque<Section*>::iterator it = std::find(m_sections.begin(),
+				m_sections.end(), widget);
 
-		if (it != m_widgets.end()) {
+		if (it != m_sections.end()) {
 
 			widget->destroyed().disconnectOne(this,
 							&Context::OnSubWidgetDestroyed);
 
-			m_widgets.erase(it);
+			m_sections.erase(it);
 			SetContainer(widget, 0);
 		} else {
 			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
@@ -578,15 +576,15 @@ namespace BlendInt
 		}
 
 		if(widget->hover()) {
-			RemoveWidgetFromHoverList(this);
+			//RemoveWidgetFromHoverList(this);
 		}
 
 		if(widget->focused()) {
 			widget->set_focus(false);
 
-			if(widget == m_focused_widget) {
-				m_focused_widget = 0;
-			}
+			//if(widget == m_focused_widget) {
+				//m_focused_widget = 0;
+			//}
 		}
 
 		CheckSubWidgetRemovedInContainer(widget);
@@ -637,85 +635,16 @@ namespace BlendInt
 		GLArrayBuffer::Reset();
 	}
 
-	void Context::DispatchDrawEvent (AbstractWidget* widget,
-					const RedrawEvent& event)
-	{
-		if (widget->visiable()) {
-
-			if(widget->drop_shadow() && widget->m_shadow) {
-				widget->m_shadow->DrawAt(event.projection_matrix() * event.view_matrix(), widget->position());
-			}
-
-			widget->Draw(event);
-
-			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
-			if (p) {
-
-				if(p->scissor_test()) {
-					scissor_status.Push(p->position().x() + p->margin().left(),
-							p->position().y() + p->margin().right(),
-							p->size().width() - p->margin().left() - p->margin().right(),
-							p->size().height() - p->margin().top() - p->margin().bottom());
-				}
-
-				IteratorPtr it = p->CreateIterator(event);
-
-				if(scissor_status.valid()) {
-					scissor_status.Enable();
-
-					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-						DispatchDrawEvent(it->GetWidget(), event);
-					}
-
-				} else {
-
-					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-						DispatchDrawEvent(it->GetWidget(), event);
-					}
-				}
-
-				if(p->scissor_test()) {
-					scissor_status.Pop();
-					scissor_status.Disable();
-				}
-
-			}
-
-		}
-	}
-	
-	void Context::BuildCursorHoverList ()
-	{
-
-	}
-
-	void Context::AppendCursorHoverList (std::deque<AbstractWidget*>& deque,
-	        AbstractWidget* parent)
-	{
-
-	}
-
-
 	AbstractWidget* Context::GetWidgetUnderCursor(const MouseEvent& event, AbstractWidget* parent)
 	{
 		return 0;
 	}
 
-	void Context::RemoveWidgetFromHoverList (AbstractWidget* widget,
-	        bool cursor_event)
-	{
-
-	}
-
-	void Context::RemoveSubWidgetFromHoverList (AbstractContainer* container,
-	        bool cursor_event)
-	{
-
-	}
-
 	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
 	{
-		Remove(widget);
+		DBG_PRINT_MSG("Remove section from context: %s", widget->name().c_str());
+		//RemoveWidget(widget);
+		RemoveSubWidget(widget);
 	}
 
 }

@@ -73,7 +73,7 @@ TEST_F(TextureAtlasTest1, Foo1)
 	TexAtlasViewer* view = Manage(new TexAtlasViewer);
 	view->SetPosition(20, 20);
 	
-	context->Add(view);
+	context->AddWidget(view);
 
     RunLoop(win);
 

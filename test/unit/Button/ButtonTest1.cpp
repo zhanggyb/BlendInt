@@ -35,8 +35,8 @@ TEST_F(ButtonTest1, Foo1)
     Button* bt2 = new Button("Button2");
     bt2->SetPosition(240, 200);
 
-    context->Add(bt1);
-    context->Add(bt2);
+    context->AddWidget(bt1);
+    context->AddWidget(bt2);
 
     RunLoop(win);
 

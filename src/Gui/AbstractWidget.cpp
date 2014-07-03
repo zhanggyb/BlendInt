@@ -562,6 +562,25 @@ namespace BlendInt {
 		return dynamic_cast<Context*>(container);
 	}
 
+	Section* AbstractWidget::GetSection()
+	{
+		AbstractContainer* container = m_container;
+		AbstractWidget* section = 0;
+
+		if(container == 0) {
+			return dynamic_cast<Section*>(this);
+		} else {
+
+			while(container->container()) {
+				section = container;
+				container = container->container();
+			}
+
+		}
+
+		return dynamic_cast<Section*>(section);
+	}
+
 	int AbstractWidget::GetOutlineVertices (int round_type) const
 	{
 		round_type = round_type & RoundAll;

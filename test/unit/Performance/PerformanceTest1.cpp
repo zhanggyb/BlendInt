@@ -55,7 +55,7 @@ TEST_F(PerformanceTest1, Layout1)
 
         y_pos += 40;
 
-        context->Add(layout[i]);
+        context->AddWidget(layout[i]);
     }
 
     RunLoop(win);

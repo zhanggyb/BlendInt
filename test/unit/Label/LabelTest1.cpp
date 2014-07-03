@@ -50,8 +50,8 @@ TEST_F(LabelTest1, Foo1)
 	label2->Resize(label2->GetPreferredSize());
 	label2->SetPosition(200, 100);
 
-	context->Add(label1);
-	context->Add(label2);
+	context->AddWidget(label1);
+	context->AddWidget(label2);
 
     RunLoop(win);
 

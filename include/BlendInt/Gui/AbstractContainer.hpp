@@ -173,7 +173,7 @@ namespace BlendInt {
 		DISALLOW_COPY_AND_ASSIGN(AbstractContainer);
 
 		friend class Context;
-		friend class VirtualWindow;
+		friend class Section;
 		friend class ContainerProxy;
 
 	public:
@@ -218,7 +218,10 @@ namespace BlendInt {
 
 		static bool RemoveSubWidget (AbstractContainer* container, AbstractWidget* sub)
 		{
-			return container->RemoveSubWidget(sub);
+			if(container)
+				return container->RemoveSubWidget(sub);
+			else
+				return true;
 		}
 
 		/*

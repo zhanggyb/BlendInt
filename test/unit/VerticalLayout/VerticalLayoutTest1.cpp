@@ -38,7 +38,7 @@ TEST_F(VLayoutTest1, Add1)
 	vlayout->PushBack(Manage(widget1));
 	vlayout->PushBack(Manage(widget2));
 
-	context->Add(vlayout);
+	context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -73,7 +73,7 @@ TEST_F(VLayoutTest1, Add2)
 	vlayout->PushBack(Manage(widget1));
 	vlayout->PushBack(Manage(widget2));
 
-	context->Add(vlayout);
+	context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -109,7 +109,7 @@ TEST_F(VLayoutTest1, Add3)
 	vlayout->PushBack(Manage(widget1));
 	vlayout->PushBack(Manage(widget2));
 
-	context->Add(vlayout);
+	context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -147,7 +147,7 @@ TEST_F(VLayoutTest1, Add4)
 	vlayout->PushBack(Manage(widget1));
 	vlayout->PushBack(Manage(widget2));
 
-	context->Add(vlayout);
+	context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -195,7 +195,7 @@ TEST_F(VLayoutTest1, Add5)
 	vlayout->PushBack(Manage(widget3));
 	vlayout->PushBack(Manage(widget4));
 
-	context->Add(vlayout);
+	context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -237,7 +237,7 @@ TEST_F(VLayoutTest1, Add6)
 	vlayout->PushBack(Manage(widget3));
 	vlayout->PushBack(Manage(widget4));
 
-	context->Add(vlayout);
+	context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -280,7 +280,7 @@ TEST_F(VLayoutTest1, Add7)
 
 	vlayout->Resize(100, 80);
 
-	context->Add(vlayout);
+	context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -318,7 +318,7 @@ TEST_F(VLayoutTest1, Resize1)
 
 	vlayout->Resize(200, 400);
 
-	context->Add(vlayout);
+	context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -355,7 +355,7 @@ TEST_F(VLayoutTest1, Resize2)
 
 	vlayout->Resize(200, 400);
 
-	context->Add(vlayout);
+	context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -398,7 +398,7 @@ TEST_F(VLayoutTest1, Resize3)
 
 	vlayout->Resize(100, 80);
 
-	context->Add(vlayout);
+	context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -439,7 +439,7 @@ TEST_F(VLayoutTest1, SetMargin1)
 
     vlayout->SetMargin(20, 20, 20, 20);
 
-    context->Add(vlayout);
+    context->AddWidget(vlayout);
 
 	RunLoop(window);
 
@@ -480,7 +480,7 @@ TEST_F(VLayoutTest1, SetSpace1)
 
     vlayout->SetSpace(10);
 
-    context->Add(vlayout);
+    context->AddWidget(vlayout);
 
 	RunLoop(window);
 

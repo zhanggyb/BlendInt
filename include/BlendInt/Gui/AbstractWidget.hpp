@@ -47,6 +47,7 @@
 namespace BlendInt {
 
 	class Context;
+	class Section;
 	//class GLTexture2D;
 	class AbstractWidget;
 	class AbstractContainer;
@@ -247,7 +248,7 @@ namespace BlendInt {
 	public:
 
 		friend class Context;
-		friend class VirtualWindow;
+		friend class Section;
 		friend class AbstractContainer;
 		friend class SubWidgetProxy;
 
@@ -530,6 +531,8 @@ namespace BlendInt {
 		void ReportGeometryUpdate (const GeometryUpdateRequest& request);
 
 		Context* GetContext ();
+
+		Section* GetSection ();
 
 		int GetOutlineVertices (int round_type) const;
 

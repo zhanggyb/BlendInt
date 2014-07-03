@@ -237,13 +237,13 @@ namespace BlendInt {
 		Context* context = GetContext();
 		if(context) {
 			if(m_menu->container()) {
-				context->Remove(m_menu.get());
+				context->RemoveWidget(m_menu.get());
 				SetRoundCornerType(RoundAll);
 			} else {
 				//int max_layer = context->GetMaxLayer();
 				//m_menu->SetLayer(max_layer + 1);
 				m_menu->SetPosition(position().x(), position().y() + size().height());
-				context->Add(m_menu.get());
+				context->AddWidget(m_menu.get());
 				SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
 				//context->SetFocusedWidget(m_menu.get());	// FIXME: no use, context will reset to this combobox.
 			}
@@ -361,7 +361,7 @@ namespace BlendInt {
 	{
 		Context* context = GetContext();
 
-		context->Remove(m_menu.get());
+		context->RemoveWidget(m_menu.get());
 		SetRoundCornerType(RoundAll);
 
 		Refresh();

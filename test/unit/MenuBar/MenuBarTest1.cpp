@@ -75,7 +75,7 @@ TEST_F(MenuBarTest1, AddMenu1)
     menubar->AddMenu(String("Help"), menu3);
 
     menubar->SetPosition(200, 400);
-	context->Add(menubar);
+	context->AddWidget(menubar);
 
     RunLoop(win);
 
@@ -106,7 +106,7 @@ TEST_F(MenuBarTest1, AddMenu2)
 
 
     menubar->SetPosition(200, 400);
-	context->Add(menubar);
+	context->AddWidget(menubar);
 
     RunLoop(win);
 

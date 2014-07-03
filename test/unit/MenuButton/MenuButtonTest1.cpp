@@ -49,7 +49,7 @@ TEST_F(MenuButtonTest1, Foo1)
 
     button->SetMenu(menu);
 
-    context->Add(button);
+    context->AddWidget(button);
 
     RunLoop(win);
 

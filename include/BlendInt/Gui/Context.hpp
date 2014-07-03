@@ -36,6 +36,7 @@
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
 #include <BlendInt/Gui/ContextLayer.hpp>
+#include <BlendInt/Gui/Section.hpp>
 
 namespace BlendInt {
 
@@ -45,7 +46,7 @@ namespace BlendInt {
 	 * @brief Container to hold and manage all widgets in a OpenGL window
 	 *
 	 * Context is a special container which holds and manage all widgets in a OpenGL window.
-	 * There should be at least on Context object to work with Interface to show and dispatch events.
+	 * There should be at least one Context object to work with Interface to show and dispatch events.
 	 */
 	class Context: public AbstractContainer
 	{
@@ -59,9 +60,23 @@ namespace BlendInt {
 
 		virtual ~Context ();
 
-		void Add (AbstractWidget* widget);
+		/**
+		 * @brief Add a widget in a new section
+		 *
+		 * @note The section will be deleted if the last sub widget is removed or destroyed.
+		 */
+		Section* AddWidget (AbstractWidget* widget);
 
-		void Remove (AbstractWidget* widget);
+		/**
+		 * @brief Add a section
+		 *
+		 * @note If the section is set managed it will be deleted automatically if it's last sub widget is removed or deleted
+		 */
+		void AddSection (Section* section);
+
+		void RemoveWidget (AbstractWidget* widget);
+
+		void RemoveSection (Section* section);
 
 		void SetFocusedWidget (AbstractWidget* widget);
 
@@ -71,7 +86,8 @@ namespace BlendInt {
 
 		AbstractWidget* focused_widget () const
 		{
-			return m_focused_widget;
+			//return m_focused_widget;
+			return 0;
 		}
 
 		/**
@@ -99,6 +115,12 @@ namespace BlendInt {
 		{
 			return m_max_tex_buffer_cache_size;
 		}
+
+#ifdef DEBUG
+
+		void PrintSections ();
+
+#endif
 
 	protected:
 
@@ -136,23 +158,13 @@ namespace BlendInt {
 
 		void InitializeContext ();
 
-		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
-
-		void BuildCursorHoverList ();
-
-		void AppendCursorHoverList (std::deque<AbstractWidget*>& deque, AbstractWidget* parent);
-
-		void RemoveWidgetFromHoverList (AbstractWidget* widget, bool cursor_event = false);
-
-		void RemoveSubWidgetFromHoverList (AbstractContainer* container, bool cursor_event = false);
-
 		AbstractWidget* GetWidgetUnderCursor (const MouseEvent& event, AbstractWidget* parent);
 
 		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
 		// this will replace the context layer
 
-		std::deque<AbstractWidget*> m_widgets;
+		std::deque<Section*> m_sections;
 
 		GLTexture2D* m_context_buffer;
 
@@ -161,13 +173,6 @@ namespace BlendInt {
 		GLuint m_vao;
 
 		RedrawEvent m_redraw_event;
-
-		/**
-		 * @brief Focused widget
-		 *
-		 * There's one focused widget in each context to access key and button events
-		 */
-		AbstractWidget* m_focused_widget;
 
 		/**
 		 * @brief A stack to store unused texture buffer
