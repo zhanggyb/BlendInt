@@ -38,8 +38,6 @@ namespace BlendInt {
 	{
 	public:
 
-		friend class Context;
-
 		VirtualWindow ();
 
 		virtual ~VirtualWindow ();
@@ -79,8 +77,6 @@ namespace BlendInt {
 	private:
 
 		void InitializeVirtualWindow ();
-
-		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
 
 		GLuint m_vao[1];
 

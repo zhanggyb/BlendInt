@@ -173,6 +173,8 @@ namespace BlendInt {
 
 		bool m_refresh;
 
+		AbstractWidget* m_focused_widget;
+
 		Cpp::Event<const Size&> m_resized;
 
 		static std::set<Context*> context_set;

@@ -51,7 +51,8 @@ namespace BlendInt
 	: AbstractContainer(),
 	  m_context_buffer(0),
 	  m_vao(0),
-	  m_refresh(false)
+	  m_refresh(false),
+	  m_focused_widget(0)
 	{
 		set_size(640, 480);
 
@@ -207,8 +208,19 @@ namespace BlendInt
 
 	void Context::SetFocusedWidget (AbstractWidget* widget)
 	{
-		if (Section* section = widget->GetSection()) {
-			section->SetFocusedWidget(widget);
+		if(m_focused_widget == widget) {
+			return;
+		}
+
+		if (m_focused_widget) {
+			m_focused_widget->set_focus(false);
+			m_focused_widget->FocusEvent(false);
+		}
+
+		m_focused_widget = widget;
+		if (m_focused_widget) {
+			m_focused_widget->set_focus(true);
+			m_focused_widget->FocusEvent(true);
 		}
 	}
 
@@ -487,15 +499,44 @@ namespace BlendInt
 	{
 		ResponseType response;
 
+		AbstractWidget* widget = 0;
+		AbstractWidget* original_focused_widget = m_focused_widget;	// mouse press event may change the focused widget
+		bool focus_widget_changed = false;
+
 		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
 				it != m_sections.rend();
 				it++)
 		{
 			response = (*it)->MousePressEvent(event);
 
+			if(original_focused_widget != m_focused_widget) {
+						focus_widget_changed = true;
+			}
+
 			if (response == Accept || response == AcceptAndBreak) {
+				widget = (*it)->m_last_hover_widget;
 				break;
 			}
+		}
+
+		if(focus_widget_changed) {
+
+			if(original_focused_widget && original_focused_widget->focused()) {
+				original_focused_widget->set_focus(false);
+				original_focused_widget->FocusEvent(false);
+			}
+
+		} else {
+
+			m_focused_widget = original_focused_widget;
+			SetFocusedWidget(widget);
+
+		}
+
+		if(m_focused_widget) {
+			DBG_PRINT_MSG("focus widget: %s", m_focused_widget->name().c_str());
+		} else {
+			DBG_PRINT_MSG("%s", "focus widget unset");
 		}
 
 		return response;
@@ -505,18 +546,32 @@ namespace BlendInt
 	{
 		ResponseType response;
 
-		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
-				it != m_sections.rend();
-				it++)
-		{
-			response = (*it)->MouseReleaseEvent(event);
+		// tell the focused widget first
+		if(m_focused_widget) {
+			response = m_focused_widget->MouseReleaseEvent(event);
 
-			if (response == Accept || response == AcceptAndBreak) {
-				break;
+			// Check the event status
+			if(response == Accept) {
+
 			}
 		}
 
-		return response;
+		return Accept;
+
+//		ResponseType response;
+//
+//		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
+//				it != m_sections.rend();
+//				it++)
+//		{
+//			response = (*it)->MouseReleaseEvent(event);
+//
+//			if (response == Accept || response == AcceptAndBreak) {
+//				break;
+//			}
+//		}
+//
+//		return response;
 	}
 
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
@@ -524,6 +579,14 @@ namespace BlendInt
 		m_redraw_event.set_cursor_position(event.position());
 
 		ResponseType response;
+
+		// tell the focused widget first
+		if (m_focused_widget) {
+			response = m_focused_widget->MouseMoveEvent(event);
+
+			if (response == AcceptAndBreak)
+				return response;
+		}
 
 		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
 				it != m_sections.rend();

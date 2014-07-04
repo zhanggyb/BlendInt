@@ -43,11 +43,11 @@ namespace BlendInt {
 		{
 			widget = *it;
 
-			if(widget->focused()) {
-				assert(widget == m_focused_widget);
-				widget->set_focus(false);
-				m_focused_widget = 0;
-			}
+//			if(widget->focused()) {
+//				assert(widget == m_focused_widget);
+//				widget->set_focus(false);
+//				m_focused_widget = 0;
+//			}
 
 			// disconnect events
 
@@ -215,132 +215,48 @@ namespace BlendInt {
 	ResponseType Section::MousePressEvent (const MouseEvent& event)
 	{
 		ResponseType response = Ignore;
-		AbstractWidget* widget = 0;
 
-		AbstractWidget* original_focused_widget = m_focused_widget;	// mouse press event may change the focused widget
-		bool focus_widget_changed = false;
-
-		// check the widget on which the cursor hover
-		if (m_last_hover_widget) {
-
-			if (m_last_hover_widget->IsHover(event.position())) {
-
-				DBG_PRINT_MSG("last widget %s is under cursor",
-				        m_last_hover_widget->name().c_str());
-				UpdateHoverWidget(event);
-
-			} else {
-
-				m_last_hover_widget->destroyed().disconnectOne(this,
-				        &Section::OnHoverWidgetDestroyed);
-				m_last_hover_widget->set_hover(false);
-				m_last_hover_widget->CursorEnterEvent(false);
-
-				while (m_last_hover_widget->container()) {
-
-					if (m_last_hover_widget->container() == this) {	// FIXME: the widget may be mvoed to another context
-						DBG_PRINT_MSG(
-						        "last widget %s is not under cursor and container is context",
-						        m_last_hover_widget->name().c_str());
-						m_last_hover_widget = 0;
-						break;
-					} else {
-						DBG_PRINT_MSG(
-						        "last widget %s is not under cursor but container is",
-						        m_last_hover_widget->name().c_str());
-						m_last_hover_widget = m_last_hover_widget->container();
-
-						if (m_last_hover_widget->IsHover(event.position())) {
-							//events()->connect(m_last_hover_widget->destroyed(), this, &Section::OnHoverWidgetDestroyed);
-							break;
-						} else {
-							m_last_hover_widget->destroyed().disconnectOne(this,
-							        &Section::OnHoverWidgetDestroyed);
-							m_last_hover_widget->set_hover(false);
-							m_last_hover_widget->CursorEnterEvent(false);
-						}
-
-					}
-
-				}
-
-				if (m_last_hover_widget)
-					UpdateHoverWidget(event);
-
-			}
-
-		} else {
-			for (std::set<AbstractWidget*>::iterator it = m_set.begin();
-			        it != m_set.end(); it++) {
-				if ((*it)->Contain(event.position())) {
-
-					DBG_PRINT_MSG("Get hover widget: %s",
-					        (*it)->name().c_str());
-					m_last_hover_widget = *it;
-					events()->connect(m_last_hover_widget->destroyed(), this,
-					        &Section::OnHoverWidgetDestroyed);
-					m_last_hover_widget->set_hover(true);
-					m_last_hover_widget->CursorEnterEvent(true);
-
-					UpdateHoverWidget(event);
-					break;
-				}
-			}
-		}
+		CheckAndUpdateHoverWidget(event);
 
 		if(m_last_hover_widget) {
 
-			DBG_PRINT_MSG("last hover widget: %s", m_last_hover_widget->name().c_str());
+			DBG_PRINT_MSG("print hover widgets in section %s", name().c_str());
 
-			response = m_last_hover_widget->MousePressEvent(event);
+			{
+				AbstractWidget* hover_widget = m_last_hover_widget;
 
-			if(original_focused_widget != m_focused_widget) {
-				focus_widget_changed = true;
-			}
-
-			if(response == Accept || response == AcceptAndBreak) {
-				widget = m_last_hover_widget;
-			} else {
-
-				AbstractWidget* parent = m_last_hover_widget->container();
-				while (parent && parent != this) {
-
-					response = parent->MousePressEvent(event);
-
-					if(original_focused_widget != m_focused_widget) {
-						focus_widget_changed = true;
-					}
-
-					if(response == Accept || response == AcceptAndBreak) {
-						widget = parent;
-						break;
-					}
-
-					parent = m_last_hover_widget->container();
+				while(hover_widget != this) {
+					DBG_PRINT_MSG("\t%s", hover_widget->name().c_str());
+					hover_widget = hover_widget->container();
 				}
 
 			}
 
+			response = DispatchMousePressEvent(m_last_hover_widget, event);
+
+//			response = m_last_hover_widget->MousePressEvent(event);
+//
+//			if(response == Accept || response == AcceptAndBreak) {
+//				//widget = m_last_hover_widget;
+//			} else {
+//
+//				AbstractWidget* parent = m_last_hover_widget->container();
+//				while (parent && parent != this) {
+//
+//					response = parent->MousePressEvent(event);
+//
+//					if(response == Accept || response == AcceptAndBreak) {
+//						//widget = parent;
+//						break;
+//					}
+//
+//					parent = m_last_hover_widget->container();
+//				}
+//
+//			}
+
 		} else {
 			return Ignore;
-		}
-
-		if(focus_widget_changed) {
-
-			if(original_focused_widget && original_focused_widget->focused()) {
-				original_focused_widget->set_focus(false);
-				original_focused_widget->FocusEvent(false);
-			}
-
-		} else {
-
-			m_focused_widget = original_focused_widget;
-			SetFocusedWidget(widget);
-
-		}
-
-		if(m_focused_widget) {
-			DBG_PRINT_MSG("focus widget: %s", m_focused_widget->name().c_str());
 		}
 
 		return response;
@@ -367,78 +283,7 @@ namespace BlendInt {
 	{
 		ResponseType response = Ignore;
 
-		// tell the focused widget first
-		if (m_focused_widget) {
-			response = m_focused_widget->MouseMoveEvent(event);
-
-			if (response == AcceptAndBreak)
-				return response;
-		}
-
-		// check the widget on which the cursor hover
-
-		if (m_last_hover_widget) {
-
-			if (m_last_hover_widget->IsHover(event.position())) {
-
-				//DBG_PRINT_MSG("last widget %s is under cursor", m_last_hover_widget->name().c_str());
-				UpdateHoverWidget(event);
-
-			} else {
-
-				m_last_hover_widget->destroyed().disconnectOne(this,
-				        &Section::OnHoverWidgetDestroyed);
-				m_last_hover_widget->set_hover(false);
-				m_last_hover_widget->CursorEnterEvent(false);
-
-				while (m_last_hover_widget->container()) {
-
-					if (m_last_hover_widget->container() == this) {	// FIXME: the widget may be mvoed to another context
-						//DBG_PRINT_MSG("last widget %s is not under cursor and container is context", m_last_hover_widget->name().c_str());
-						m_last_hover_widget = 0;
-						break;
-					} else {
-						//DBG_PRINT_MSG("last widget %s is not under cursor but container is", m_last_hover_widget->name().c_str());
-						m_last_hover_widget = m_last_hover_widget->container();
-
-						if (m_last_hover_widget->IsHover(event.position())) {
-//							events()->connect(m_last_hover_widget->destroyed(),
-//							        this, &Section::OnHoverWidgetDestroyed);
-							break;
-						} else {
-							m_last_hover_widget->destroyed().disconnectOne(this,
-							        &Section::OnHoverWidgetDestroyed);
-							m_last_hover_widget->set_hover(false);
-							m_last_hover_widget->CursorEnterEvent(false);
-						}
-
-					}
-
-				}
-
-				if (m_last_hover_widget)
-					UpdateHoverWidget(event);
-
-			}
-
-		} else {
-			for (std::set<AbstractWidget*>::iterator it = m_set.begin();
-			        it != m_set.end(); it++) {
-				if ((*it)->Contain(event.position())) {
-
-					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
-					m_last_hover_widget = *it;
-					events()->connect(m_last_hover_widget->destroyed(), this,
-					        &Section::OnHoverWidgetDestroyed);
-					m_last_hover_widget->set_hover(true);
-					m_last_hover_widget->CursorEnterEvent(true);
-
-					UpdateHoverWidget(event);
-					break;
-				}
-			}
-		}
-
+		CheckAndUpdateHoverWidget(event);
 
 		if(m_last_hover_widget) {
 			response = m_last_hover_widget->MouseMoveEvent(event);
@@ -555,7 +400,67 @@ namespace BlendInt {
 		}
 	}
 
-	void Section::UpdateHoverWidget (const MouseEvent& event)
+	void Section::CheckAndUpdateHoverWidget (const MouseEvent& event)
+	{
+		if (m_last_hover_widget) {
+
+			if (m_last_hover_widget->IsHover(event.position())) {
+				//DBG_PRINT_MSG("last widget %s is under cursor", m_last_hover_widget->name().c_str());
+				UpdateHoverWidgetSubs(event);
+			} else {
+				m_last_hover_widget->destroyed().disconnectOne(this,
+				        &Section::OnHoverWidgetDestroyed);
+				m_last_hover_widget->set_hover(false);
+				m_last_hover_widget->CursorEnterEvent(false);
+
+				// find which contianer contains cursor position
+				while (m_last_hover_widget->container()) {
+
+					if (m_last_hover_widget->container() == this) {	// FIXME: the widget may be mvoed to another context
+						//DBG_PRINT_MSG("last widget %s is not under cursor and container is context", m_last_hover_widget->name().c_str());
+						m_last_hover_widget = 0;
+						break;
+					} else {
+						//DBG_PRINT_MSG("last widget %s is not under cursor but container is", m_last_hover_widget->name().c_str());
+						m_last_hover_widget = m_last_hover_widget->container();
+
+						if (m_last_hover_widget->IsHover(event.position())) {
+							break;
+						} else {
+							m_last_hover_widget->destroyed().disconnectOne(this,
+							        &Section::OnHoverWidgetDestroyed);
+							m_last_hover_widget->set_hover(false);
+							m_last_hover_widget->CursorEnterEvent(false);
+						}
+					}
+				}
+
+				if (m_last_hover_widget) {
+					UpdateHoverWidgetSubs(event);
+				}
+			}
+
+		} else {
+			for (std::set<AbstractWidget*>::iterator it = m_set.begin();
+			        it != m_set.end(); it++) {
+				if ((*it)->Contain(event.position())) {
+
+					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
+					m_last_hover_widget = *it;
+					events()->connect(m_last_hover_widget->destroyed(), this,
+					        &Section::OnHoverWidgetDestroyed);
+					m_last_hover_widget->set_hover(true);
+					m_last_hover_widget->CursorEnterEvent(true);
+
+					UpdateHoverWidgetSubs(event);
+					break;
+				}
+			}
+		}
+
+	}
+
+	void Section::UpdateHoverWidgetSubs (const MouseEvent& event)
 	{
 		AbstractContainer* p = dynamic_cast<AbstractContainer*>(m_last_hover_widget);
 
@@ -572,7 +477,7 @@ namespace BlendInt {
 					m_last_hover_widget->set_hover(true);
 					m_last_hover_widget->CursorEnterEvent(true);
 
-					UpdateHoverWidget(event);
+					UpdateHoverWidgetSubs(event);
 					break;
 				}
 			}
@@ -592,17 +497,26 @@ namespace BlendInt {
 		}
 	}
 
-	bool Section::CheckCursorPosition (const Point& cursor)
+	ResponseType Section::DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event)
 	{
-		for(std::set<AbstractWidget*>::iterator it = m_set.begin();
-				it != m_set.end();
-				it++)
-		{
-			if((*it)->visiable() && (*it)->Contain(cursor))
-				return true;
-		}
+		if(widget == this) {
+			return Accept;
+		} else {
 
-		return false;
+			if(widget->container()) {
+				if(DispatchMousePressEvent(widget->container(), event) == Accept) {
+					DBG_PRINT_MSG("mouse press in %s", widget->name().c_str());
+					return widget->MousePressEvent(event);
+				} else {
+					return Ignore;
+				}
+
+			} else {
+				DBG_PRINT_MSG("mouse press in %s", widget->name().c_str());
+				return widget->MousePressEvent(event);
+			}
+
+		}
 	}
 
 	void Section::OnHoverWidgetDestroyed (AbstractWidget* widget)

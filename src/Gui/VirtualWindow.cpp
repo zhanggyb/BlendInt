@@ -290,6 +290,7 @@ namespace BlendInt {
 
 		// set decoration
 		Decoration* dec = Manage(new Decoration);
+		DBG_SET_NAME(dec, "Decoration");
 		SetSubWidget(0, dec);
 
 		FillSubWidgets ();
@@ -319,54 +320,6 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
-	}
-
-	void VirtualWindow::DispatchDrawEvent (AbstractWidget* widget,
-	        const RedrawEvent& event)
-	{
-		if (widget->visiable()) {
-
-			if(widget->drop_shadow() && widget->m_shadow) {
-				widget->m_shadow->DrawAt(event.projection_matrix() * event.view_matrix(), widget->position());
-			}
-
-			widget->Draw(event);
-
-			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
-			if (p) {
-
-				if(p->scissor_test()) {
-					scissor_status.Push(p->position().x() + p->margin().left(),
-							p->position().y() + p->margin().right(),
-							p->size().width() - p->margin().left() - p->margin().right(),
-							p->size().height() - p->margin().top() - p->margin().bottom());
-				}
-
-				IteratorPtr it = p->CreateIterator(event);
-
-				if(scissor_status.valid()) {
-					scissor_status.Enable();
-
-					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-						DispatchDrawEvent(it->GetWidget(), event);
-					}
-
-				} else {
-
-					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-						DispatchDrawEvent(it->GetWidget(), event);
-					}
-				}
-
-				if(p->scissor_test()) {
-					scissor_status.Pop();
-					scissor_status.Disable();
-				}
-
-			}
-
-		}
-
 	}
 
 }

@@ -91,9 +91,15 @@ int main(int argc, char* argv[])
 	DBG_SET_NAME(btn3, "button3");
 	btn3->SetPosition(600, 400);
 
+	FramePanel* fm = Manage(new FramePanel);
+	DBG_SET_NAME(fm, "Frame");
+	fm->SetPosition(300, 400);
+
+	fm->Setup(btn3);
+
 	context->AddWidget(btn1);
 	context->AddWidget(btn2);
-	context->AddWidget(btn3);
+	context->AddWidget(fm);
 
 	context->AddWidget(vw);
 

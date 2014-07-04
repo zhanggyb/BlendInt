@@ -206,12 +206,12 @@ namespace BlendInt {
 
 	ResponseType Decoration::MousePressEvent (const MouseEvent& event)
 	{
-		return Ignore;
+		return Accept;
 	}
 
 	ResponseType Decoration::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return Ignore;
+		return Accept;
 	}
 
 	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
