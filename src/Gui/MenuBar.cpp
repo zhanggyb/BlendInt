@@ -158,17 +158,17 @@ namespace BlendInt {
 
 	ResponseType MenuBar::MousePressEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType MenuBar::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType MenuBar::MouseMoveEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	void MenuBar::AddMenu (const RefPtr<Menu>& menu)

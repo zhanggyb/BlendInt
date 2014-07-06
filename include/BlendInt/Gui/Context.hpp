@@ -157,6 +157,8 @@ namespace BlendInt {
 
 		AbstractWidget* GetWidgetUnderCursor (const MouseEvent& event, AbstractWidget* parent);
 
+		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
+
 		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
 		// this will replace the context layer

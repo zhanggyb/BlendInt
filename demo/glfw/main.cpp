@@ -104,13 +104,13 @@ int main(int argc, char* argv[])
 	context->AddWidget(vw);
 
 #ifdef DEBUG
-	context->PrintSections();
+	//context->PrintSections();
 #endif
 
 	RunLoop(win);
 
 #ifdef DEBUG
-	context->PrintSections();
+	//context->PrintSections();
 #endif
 
 	Interface::Release();

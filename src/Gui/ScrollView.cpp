@@ -322,7 +322,7 @@ namespace BlendInt {
 			//dispatch_mouse_press_event(m_viewport, event);
 		}
 
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType ScrollView::MouseReleaseEvent(const MouseEvent& event)
@@ -341,7 +341,7 @@ namespace BlendInt {
 		//if(!m_viewport) return;
 		//dispatch_mouse_release_event(m_viewport, event);
 
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType ScrollView::CursorEnterEvent (bool entered)
@@ -431,7 +431,7 @@ namespace BlendInt {
 				*/
 
 				Refresh();
-				return Accept;
+				return Ignore;
 			}
 
 
@@ -439,7 +439,7 @@ namespace BlendInt {
 			return Ignore;
 		}
 
-		return Accept;
+		return Ignore;
 	}
 
 }

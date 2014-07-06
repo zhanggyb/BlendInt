@@ -344,7 +344,7 @@ namespace BlendInt {
 			}
 		}
 
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType ToolBar::MouseReleaseEvent (const MouseEvent& event)
@@ -353,7 +353,7 @@ namespace BlendInt {
 			m_move_status = false;
 			Refresh();
 		}
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType ToolBar::MouseMoveEvent (const MouseEvent& event)
@@ -425,7 +425,8 @@ namespace BlendInt {
 
 			Refresh();
 		}
-		return Accept;
+
+		return Ignore;
 	}
 
 	void ToolBar::InitializeToolBar ()

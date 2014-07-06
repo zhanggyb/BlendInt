@@ -88,6 +88,8 @@ namespace BlendInt {
 
 		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
 
+		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
+
 		void CheckAndUpdateHoverWidget (const MouseEvent& event);
 
 		void UpdateHoverWidgetSubs (const MouseEvent& event);

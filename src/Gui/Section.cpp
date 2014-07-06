@@ -214,25 +214,21 @@ namespace BlendInt {
 
 	ResponseType Section::MousePressEvent (const MouseEvent& event)
 	{
-		ResponseType response = Ignore;
-
 		CheckAndUpdateHoverWidget(event);
 
 		if(m_last_hover_widget) {
 
-			DBG_PRINT_MSG("print hover widgets in section %s", name().c_str());
-
 			{
+				DBG_PRINT_MSG("print hover widgets in section %s", name().c_str());
 				AbstractWidget* hover_widget = m_last_hover_widget;
 
 				while(hover_widget != this) {
 					DBG_PRINT_MSG("\t%s", hover_widget->name().c_str());
 					hover_widget = hover_widget->container();
 				}
-
 			}
 
-			response = DispatchMousePressEvent(m_last_hover_widget, event);
+			return DispatchMousePressEvent(m_last_hover_widget, event);
 
 //			response = m_last_hover_widget->MousePressEvent(event);
 //
@@ -258,36 +254,37 @@ namespace BlendInt {
 		} else {
 			return Ignore;
 		}
-
-		return response;
 	}
 
 	ResponseType Section::MouseReleaseEvent (const MouseEvent& event)
 	{
-		ResponseType response;
+		CheckAndUpdateHoverWidget(event);
 
-		// tell the focused widget first
-		if(m_focused_widget) {
-			response = m_focused_widget->MouseReleaseEvent(event);
+		if(m_last_hover_widget) {
 
-			// Check the event status
-			if(response == Accept) {
+//			{
+//				DBG_PRINT_MSG("print hover widgets in section %s", name().c_str());
+//				AbstractWidget* hover_widget = m_last_hover_widget;
+//
+//				while(hover_widget != this) {
+//					DBG_PRINT_MSG("\t%s", hover_widget->name().c_str());
+//					hover_widget = hover_widget->container();
+//				}
+//			}
 
-			}
+			return DispatchMouseReleaseEvent(m_last_hover_widget, event);
+
+		} else {
+			return Ignore;
 		}
-
-		return Accept;
 	}
 
 	ResponseType Section::MouseMoveEvent (const MouseEvent& event)
 	{
-		ResponseType response = Ignore;
-
 		CheckAndUpdateHoverWidget(event);
 
 		if(m_last_hover_widget) {
-			response = m_last_hover_widget->MouseMoveEvent(event);
-			return response;
+			return m_last_hover_widget->MouseMoveEvent(event);
 		}
 
 		return Ignore;
@@ -500,20 +497,42 @@ namespace BlendInt {
 	ResponseType Section::DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event)
 	{
 		if(widget == this) {
-			return Accept;
+			return Ignore;
 		} else {
 
 			if(widget->container()) {
-				if(DispatchMousePressEvent(widget->container(), event) == Accept) {
-					DBG_PRINT_MSG("mouse press in %s", widget->name().c_str());
+				if(DispatchMousePressEvent(widget->container(), event) == Ignore) {
+					DBG_PRINT_MSG("mouse press in %s and get ignore", widget->name().c_str());
 					return widget->MousePressEvent(event);
 				} else {
-					return Ignore;
+					return Accept;
 				}
 
 			} else {
 				DBG_PRINT_MSG("mouse press in %s", widget->name().c_str());
 				return widget->MousePressEvent(event);
+			}
+
+		}
+	}
+
+	ResponseType Section::DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event)
+	{
+		if(widget == this) {
+			return Ignore;
+		} else {
+
+			if(widget->container()) {
+				if(DispatchMouseReleaseEvent(widget->container(), event) == Ignore) {
+					DBG_PRINT_MSG("mouse press in %s and get ignore", widget->name().c_str());
+					return widget->MouseReleaseEvent(event);
+				} else {
+					return Accept;
+				}
+
+			} else {
+				DBG_PRINT_MSG("mouse press in %s", widget->name().c_str());
+				return widget->MouseReleaseEvent(event);
 			}
 
 		}
