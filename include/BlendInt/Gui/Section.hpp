@@ -48,8 +48,6 @@ namespace BlendInt {
 
 		void Remove (AbstractWidget* widget);
 
-		void SetFocusedWidget (AbstractWidget* widget);
-
 	protected:
 
 		virtual void UpdateContainer (const ContainerUpdateRequest& request);
@@ -90,7 +88,7 @@ namespace BlendInt {
 
 		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
 
-		void CheckAndUpdateHoverWidget (const MouseEvent& event);
+		bool CheckAndUpdateHoverWidget (const MouseEvent& event);
 
 		void UpdateHoverWidgetSubs (const MouseEvent& event);
 

@@ -116,24 +116,6 @@ namespace BlendInt {
 		RemoveSubWidget(widget);
 	}
 
-	void Section::SetFocusedWidget (AbstractWidget* widget)
-	{
-		if(m_focused_widget == widget) {
-			return;
-		}
-
-		if (m_focused_widget) {
-			m_focused_widget->set_focus(false);
-			m_focused_widget->FocusEvent(false);
-		}
-
-		m_focused_widget = widget;
-		if (m_focused_widget) {
-			m_focused_widget->set_focus(true);
-			m_focused_widget->FocusEvent(true);
-		}
-	}
-
 	void Section::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		ReportContainerUpdate(request);
@@ -312,12 +294,6 @@ namespace BlendInt {
 		m_set.erase(it);
 		SetContainer(widget, 0);
 
-		if(widget->focused()) {
-			assert(widget == m_focused_widget);
-			widget->set_focus(false);
-			m_focused_widget = 0;
-		}
-
 		if(widget->hover()) {
 
 			while (m_last_hover_widget && m_last_hover_widget != widget) {
@@ -397,7 +373,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Section::CheckAndUpdateHoverWidget (const MouseEvent& event)
+	bool Section::CheckAndUpdateHoverWidget (const MouseEvent& event)
 	{
 		if (m_last_hover_widget) {
 
@@ -455,6 +431,7 @@ namespace BlendInt {
 			}
 		}
 
+		return m_last_hover_widget != 0;
 	}
 
 	void Section::UpdateHoverWidgetSubs (const MouseEvent& event)

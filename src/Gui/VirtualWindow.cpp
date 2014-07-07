@@ -90,7 +90,7 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("Gamma", 0);
 		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4f("Color", 1.f, 1.f, 1.f, 0.4f);
+		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -160,10 +160,9 @@ namespace BlendInt {
 
 			SetPosition(m_last.x() + offset_x, m_last.y() + offset_y);
 
-			return Accept;
 		}
 
-		return Ignore;
+		return Accept;
 	}
 
 	void VirtualWindow::UpdateGeometry (const GeometryUpdateRequest& request)

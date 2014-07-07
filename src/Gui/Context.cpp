@@ -580,7 +580,7 @@ namespace BlendInt
 					it != m_sections.rend();
 					it++)
 			{
-				(*it)->CheckAndUpdateHoverWidget(event);
+				if((*it)->CheckAndUpdateHoverWidget(event)) break;
 			}
 
 			return response;	// return Accept
