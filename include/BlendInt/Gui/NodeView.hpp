@@ -36,6 +36,8 @@ namespace BlendInt {
 
 		NodeView ();
 
+		virtual ~NodeView ();
+
 	protected:
 
 		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
@@ -63,6 +65,10 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
+
+		GLuint m_vao[2];
+		RefPtr<GLArrayBuffer> m_inner_buffer;
+		RefPtr<GLArrayBuffer> m_outer_buffer;
 
 	};
 

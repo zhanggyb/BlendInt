@@ -53,6 +53,7 @@
 
 #include <BlendInt/Gui/VirtualWindow.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
+#include <BlendInt/Gui/NodeView.hpp>
 
 #include "GLFWContext.hpp"
 #include "Window.hpp"
@@ -75,33 +76,11 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	VirtualWindow* vw = Manage(new VirtualWindow);
-	DBG_SET_NAME(vw, "virtual window");
-	vw->SetPosition(100, 100);
+	NodeView* nv = Manage(new NodeView);
 
-	Button* btn1 = Manage(new Button("Hello World 1!"));
-	DBG_SET_NAME(btn1, "button1");
-	btn1->SetPosition(600, 200);
+	nv->SetPosition(200, 200);
 
-	Button* btn2 = Manage(new Button("Hello World 2!"));
-	DBG_SET_NAME(btn2, "button2");
-	btn2->SetPosition(600, 300);
-
-	Button* btn3 = Manage(new Button("Hello World 3!"));
-	DBG_SET_NAME(btn3, "button3");
-	btn3->SetPosition(600, 400);
-
-	FramePanel* fm = Manage(new FramePanel);
-	DBG_SET_NAME(fm, "Frame");
-	fm->SetPosition(300, 400);
-
-	fm->Setup(btn3);
-
-	context->AddWidget(btn1);
-	context->AddWidget(btn2);
-	context->AddWidget(fm);
-
-	context->AddWidget(vw);
+	context->AddWidget(nv);
 
 #ifdef DEBUG
 	//context->PrintSections();

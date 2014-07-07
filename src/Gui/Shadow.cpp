@@ -332,6 +332,87 @@ namespace BlendInt {
 		return tot;
 	}
 
+	void Shadow::GenerateShadowVertices (const Size& size, float rad, float step,
+	        std::vector<GLfloat>& vertices)
+	{
+		float vec[WIDGET_CURVE_RESOLU][2];
+
+		float minx = 0.0f - step;
+		float miny = 0.0f - step;
+		float maxx = size.width() + step;
+		float maxy = size.height() + step;
+
+		rad += step;
+
+		if (2.0f * rad > size.height())
+			rad = 0.5f * size.height();
+
+		/* mult */
+		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+			vec[i][0] = rad * cornervec[i][0];
+			vec[i][1] = rad * cornervec[i][1];
+		}
+
+		int count = 0;
+
+		unsigned int corner = round_type() & RoundAll;
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+
+		if(vertices.size() != outline_vertex_number * 2)
+			vertices.resize(outline_vertex_number * 2);
+
+		count = 0;
+
+		/* start with left-top, anti clockwise */
+		if (round_type() & RoundTopLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				vertices[2 * count + 0] = minx + rad - vec[i][0];
+				vertices[2 * count + 1] = maxy - vec[i][1];
+			}
+		} else {
+			vertices[2 * count + 0] = minx;
+			vertices[2 * count + 1] = maxy;
+			count++;
+		}
+
+		if (round_type() & RoundBottomLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				vertices[2 * count + 0] = minx + vec[i][1];
+				vertices[2 * count + 1] = miny + rad - vec[i][0];
+			}
+		} else {
+			vertices[2 * count + 0] = minx;
+			vertices[2 * count + 1] = miny;
+			count++;
+		}
+
+		if (round_type() & RoundBottomRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				vertices[2 * count + 0] = maxx - rad + vec[i][0];
+				vertices[2 * count + 1] = miny + vec[i][1];
+			}
+		} else {
+			vertices[2 * count + 0] = maxx;
+			vertices[2 * count + 1] = miny;
+			count++;
+		}
+
+		if (round_type() & RoundTopRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
+				vertices[2 * count + 0] = maxx - vec[i][1];
+				vertices[2 * count + 1] = maxy - rad + vec[i][0];
+			}
+		} else {
+			vertices[2 * count + 0] = maxx;
+			vertices[2 * count + 1] = maxy;
+			count++;
+		}
+	}
+
 	void Shadow::verts_to_quad_strip (const float inner_v[WIDGET_SIZE_MAX][2],
 					const float outer_v[WIDGET_SIZE_MAX][2], const int totvert,
 					float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2])
@@ -358,10 +439,10 @@ namespace BlendInt {
 		const float radout = 16.0;
 
 		/* prevent tooltips to not show round shadow */
-		if (radout > 0.2f * size.height())
-			shadow_size.add_height(-0.2f * size.height());
-		else
-			shadow_size.add_height(-radout);
+//		if (radout > 0.2f * size.height())
+//			shadow_size.add_height(-0.2f * size.height());
+//		else
+//			shadow_size.add_height(-radout);
 
 		int totvert = 0;
 
@@ -387,3 +468,4 @@ namespace BlendInt {
 	}
 
 }
+

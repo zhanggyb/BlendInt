@@ -91,6 +91,8 @@ namespace BlendInt {
 				float step,
 				float vert[WIDGET_SIZE_MAX][2]);
 
+		void GenerateShadowVertices (const Size& size, float rad, float step, std::vector<GLfloat>& vertices);
+
 		void GenerateShadowBuffers (const Size& size, float corner_rad, float blue_rad);
 
 		static void verts_to_quad_strip (
