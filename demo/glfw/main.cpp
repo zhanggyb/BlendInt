@@ -81,6 +81,11 @@ int main(int argc, char* argv[])
 
 	nv->SetPosition(200, 200);
 
+	ProgressBar* pb = Manage(new ProgressBar);
+	pb->SetPosition(600, 300);
+
+	context->AddWidget(pb);
+
 	context->AddWidget(nv);
 
 #ifdef DEBUG

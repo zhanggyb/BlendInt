@@ -150,8 +150,6 @@ namespace BlendInt {
 
 	ResponseType NodeView::Draw(const RedrawEvent& event)
 	{
-		return Accept;
-
 		using Stock::Shaders;
 
 		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);

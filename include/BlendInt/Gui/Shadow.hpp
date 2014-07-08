@@ -55,10 +55,6 @@ namespace BlendInt {
 
 		virtual ~Shadow ();
 
-		void SetBlurRadius (float rad);
-
-		float blur_rad () const {return m_blur_rad;}
-
 		virtual void Draw (const glm::mat4& mvp, short gamma = 0);
 
 		void DrawAt (const glm::mat4& mvp, int x, int y);
@@ -69,27 +65,9 @@ namespace BlendInt {
 
 		virtual void UpdateGeometry (const UpdateRequest& request);
 
-		inline void set_blur_rad (float rad)
-		{
-			m_blur_rad = rad;
-		}
-
 	private:
 
 		void InitializeShadow ();
-
-		/**
-		 * @brief generate shadow vertices
-		 * @param[in] size
-		 * @param[in] rad
-		 * @param[in] step
-		 * @param[out] vert
-		 * @return
-		 */
-		int generate_shadow_vertices (const Size* size,
-				float rad,
-				float step,
-				float vert[WIDGET_SIZE_MAX][2]);
 
 		/**
 		 * @brief Create shadow vertices
@@ -99,40 +77,14 @@ namespace BlendInt {
 		 * @param[in] depth The shadow size
 		 * @param[out] vertices The vertices created
 		 */
-		void GenerateShadowVerticesExt (const Size& size, int round_type, float radius, float depth, std::vector<GLfloat>& vertices);
-
-		void GenerateShadowVertices (const Size& size, int round_type, float radius, float step, std::vector<GLfloat>& vertices);
-
-		void GenerateShadowBuffers (const Size& size, float corner_rad, float blur_rad);
-
-		static void verts_to_quad_strip (
-						const float inner_v[WIDGET_SIZE_MAX][2],
-						const float outer_v[WIDGET_SIZE_MAX][2],
-						const int totvert,
-						float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
+		void GenerateShadowVerticesExt (const Size& size, int round_type, float radius, int depth, std::vector<GLfloat>& vertices);
 
 		GLuint m_vao;
 
-		int m_offset_x;
+		RefPtr<GLArrayBuffer> m_buffer;
 
-		int m_offset_y;
+		int m_depth;
 
-		/**
-		 * @brief The direction of the projection
-		 *
-		 * The direction of the projection
-		 */
-//		int m_direction;
-
-		/**
-		 * @brief the blur radius
-		 */
-		float m_blur_rad;
-
-		//GLArrayBuffer* m_gl_buffer;
-		std::deque<RefPtr<GLArrayBuffer> > m_buffers;
-
-		//std::vector<GLuint> m_ids;
 	};
 
 }
