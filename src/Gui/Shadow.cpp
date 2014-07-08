@@ -31,7 +31,7 @@
 #endif
 #endif  // __UNIX__
 
-#include <math.h>
+#include <cmath>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
@@ -47,7 +47,7 @@ namespace BlendInt {
 	Shadow::Shadow()
 	: AbstractRoundForm(),
 	  m_vao(0),
-	  m_depth(5)
+	  m_depth(16)
 	{
 		set_size(400, 300);
 		set_round_type(RoundAll);
@@ -106,15 +106,26 @@ namespace BlendInt {
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
 		program->SetUniform1i("Gamma", gamma);
-		program->SetVertexAttrib4f("Color", 1.f, 0.f, 0.f, 1.f);
+
+		float alphastep = 5.0f * Theme::instance->shadow_fac() / 12.0;
+		float expfac = 0.0;
 
 		glBindVertexArray(m_vao);
 
-		for(int i = 0; i < m_depth; i++)
+		// the first circle use anti-alias
+		program->SetUniform1i("AA", 1);
+		program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, alphastep * (1.0f - expfac));
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 36 * 2 + 2);
+
+		program->SetUniform1i("AA", 0);
+		for(int i = 1; i < m_depth; i++)
 		{
-			glDrawArrays(GL_TRIANGLE_STRIP, sizeof(GLfloat) * (36 * 2 + 2) * i, 36 * 2 + 2);
+			expfac = sqrt(i / 12.0);
+
+			program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, alphastep * (1.0f - expfac));
+			glDrawArrays(GL_TRIANGLE_STRIP, (36 * 2 + 2) * i, 36 * 2 + 2);
+			//glDrawArrays(GL_TRIANGLE_STRIP, (4 * 2 + 2) * i, 4 * 2 + 2);
 		}
 
 		glBindVertexArray(0);
@@ -179,13 +190,13 @@ namespace BlendInt {
 
 		unsigned int max_verts = (outline_vertex_number + 1) * 2 * 2 * depth;
 
-		DBG_PRINT_MSG("max verts: %u", max_verts);
+		//DBG_PRINT_MSG("max verts: %u", max_verts);
 
 		if(vertices.size() != max_verts) {
 			vertices.resize(max_verts);
 		}
 
-		float radi = radius;
+		float radi = 0.f;
 		float rado = 0.f;
 		count = 0;
 
@@ -204,8 +215,6 @@ namespace BlendInt {
 					vertices[count + 2] = minx - (i + 1) + rado - rado * cornervec[j][0];
 					vertices[count + 3] = maxy + (i + 1) - rado * cornervec[j][1];
 
-					DBG_PRINT_MSG("top left vertices @ (%f, %f) (%f, %f) in i: %d", vertices[count + 0], vertices[count + 1], vertices[count + 2], vertices[count + 3], i);
-
 					count += 4;
 				}
 			} else {
@@ -215,8 +224,6 @@ namespace BlendInt {
 
 				vertices[count + 2] = minx - (i + 1);
 				vertices[count + 3] = maxy + (i + 1);
-
-				DBG_PRINT_MSG("top left vertices @ (%f, %f) (%f, %f) in i: %d", vertices[count + 0], vertices[count + 1], vertices[count + 2], vertices[count + 3], i);
 
 				count += 4;
 			}
@@ -230,8 +237,6 @@ namespace BlendInt {
 					vertices[count + 2] = minx - (i + 1) + rado * cornervec[j][1];
 					vertices[count + 3] = miny - (i + 1)+ rado - rado * cornervec[j][0];
 
-					DBG_PRINT_MSG("bottom left vertices @ (%f, %f) (%f, %f) in i: %d", vertices[count + 0], vertices[count + 1], vertices[count + 2], vertices[count + 3], i);
-
 					count += 4;
 				}
 			} else {
@@ -241,8 +246,6 @@ namespace BlendInt {
 
 				vertices[count + 2] = minx - (i + 1);
 				vertices[count + 3] = miny - (i + 1);
-
-				DBG_PRINT_MSG("bottom left vertices @ (%f, %f) (%f, %f) in i: %d", vertices[count + 0], vertices[count + 1], vertices[count + 2], vertices[count + 3], i);
 
 				count += 4;
 			}
@@ -256,8 +259,6 @@ namespace BlendInt {
 					vertices[count + 2] = maxx + (i + 1) - rado + rado * cornervec[j][0];
 					vertices[count + 3] = miny - (i + 1) + rado * cornervec[j][1];
 
-					DBG_PRINT_MSG("bottom right vertices @ (%f, %f) (%f, %f) in i: %d", vertices[count + 0], vertices[count + 1], vertices[count + 2], vertices[count + 3], i);
-
 					count += 4;
 				}
 			} else {
@@ -267,8 +268,6 @@ namespace BlendInt {
 
 				vertices[count + 2] = maxx + (i + 1);
 				vertices[count + 3] = miny - (i + 1);
-
-				DBG_PRINT_MSG("bottom right vertices @ (%f, %f) (%f, %f) in i: %d", vertices[count + 0], vertices[count + 1], vertices[count + 2], vertices[count + 3], i);
 
 				count += 4;
 			}
@@ -282,8 +281,6 @@ namespace BlendInt {
 					vertices[count + 2] = maxx + (i + 1) - rado * cornervec[j][1];
 					vertices[count + 3] = maxy + (i + 1) - rado + rado * cornervec[j][0];
 
-					DBG_PRINT_MSG("top right vertices @ (%f, %f) (%f, %f) in i: %d", vertices[count + 0], vertices[count + 1], vertices[count + 2], vertices[count + 3], i);
-
 					count += 4;
 				}
 			} else {
@@ -294,8 +291,6 @@ namespace BlendInt {
 				vertices[count + 2] = maxx + (i + 1);
 				vertices[count + 3] = maxy + (i + 1);
 
-				DBG_PRINT_MSG("top right vertices @ (%f, %f) (%f, %f) in i: %d", vertices[count + 0], vertices[count + 1], vertices[count + 2], vertices[count + 3], i);
-
 				count += 4;
 			}
 
@@ -305,9 +300,7 @@ namespace BlendInt {
 			vertices[count + 2] = vertices[count - outline_vertex_number * 4 + 2];
 			vertices[count + 3] = vertices[count - outline_vertex_number * 4 + 3];
 
-			DBG_PRINT_MSG("top left vertices @ (%f, %f) (%f, %f) in i: %d", vertices[count + 0], vertices[count + 1], vertices[count + 2], vertices[count + 3], i);
-
-			DBG_PRINT_MSG("count: %d", count);
+			//DBG_PRINT_MSG("count: %d", count);
 
 			count += 4;
 
