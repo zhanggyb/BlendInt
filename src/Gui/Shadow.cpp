@@ -64,7 +64,7 @@ namespace BlendInt {
 //		m_offset_x = 5;
 //		m_offset_y = -5;
 
-		InitOnce ();
+		InitializeShadow ();
 	}
 
 	Shadow::~Shadow()
@@ -163,10 +163,10 @@ namespace BlendInt {
 							alphastep * (1.0f - expfac));
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							(*it)->GetBufferSize() / (2 * sizeof(GLfloat)));
-			(*it)->Reset();
 			step++;
 		}
 
+		GLArrayBuffer::Reset();
 		glDisableVertexAttribArray(0);
 		program->Reset();
 		glBindVertexArray(0);
@@ -184,7 +184,7 @@ namespace BlendInt {
 		Draw(transed_mvp);
 	}
 
-	void Shadow::InitOnce ()
+	void Shadow::InitializeShadow ()
 	{
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
@@ -332,7 +332,7 @@ namespace BlendInt {
 		return tot;
 	}
 
-	void Shadow::GenerateShadowVertices (const Size& size, float rad, float step,
+	void Shadow::GenerateShadowVertices (const Size& size, int round_type, float radius, float step,
 	        std::vector<GLfloat>& vertices)
 	{
 		float vec[WIDGET_CURVE_RESOLU][2];
@@ -342,20 +342,20 @@ namespace BlendInt {
 		float maxx = size.width() + step;
 		float maxy = size.height() + step;
 
-		rad += step;
+		radius += step;
 
-		if (2.0f * rad > size.height())
-			rad = 0.5f * size.height();
+		if (2.0f * radius > size.height())
+			radius = 0.5f * size.height();
 
 		/* mult */
 		for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
-			vec[i][0] = rad * cornervec[i][0];
-			vec[i][1] = rad * cornervec[i][1];
+			vec[i][0] = radius * cornervec[i][0];
+			vec[i][1] = radius * cornervec[i][1];
 		}
 
 		int count = 0;
 
-		unsigned int corner = round_type() & RoundAll;
+		unsigned int corner = round_type & RoundAll;
 		while (corner != 0) {
 			count += corner & 0x1;
 			corner = corner >> 1;
@@ -368,9 +368,9 @@ namespace BlendInt {
 		count = 0;
 
 		/* start with left-top, anti clockwise */
-		if (round_type() & RoundTopLeft) {
+		if (round_type & RoundTopLeft) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-				vertices[2 * count + 0] = minx + rad - vec[i][0];
+				vertices[2 * count + 0] = minx + radius - vec[i][0];
 				vertices[2 * count + 1] = maxy - vec[i][1];
 			}
 		} else {
@@ -379,10 +379,10 @@ namespace BlendInt {
 			count++;
 		}
 
-		if (round_type() & RoundBottomLeft) {
+		if (round_type & RoundBottomLeft) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				vertices[2 * count + 0] = minx + vec[i][1];
-				vertices[2 * count + 1] = miny + rad - vec[i][0];
+				vertices[2 * count + 1] = miny + radius - vec[i][0];
 			}
 		} else {
 			vertices[2 * count + 0] = minx;
@@ -390,9 +390,9 @@ namespace BlendInt {
 			count++;
 		}
 
-		if (round_type() & RoundBottomRight) {
+		if (round_type & RoundBottomRight) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
-				vertices[2 * count + 0] = maxx - rad + vec[i][0];
+				vertices[2 * count + 0] = maxx - radius + vec[i][0];
 				vertices[2 * count + 1] = miny + vec[i][1];
 			}
 		} else {
@@ -401,16 +401,253 @@ namespace BlendInt {
 			count++;
 		}
 
-		if (round_type() & RoundTopRight) {
+		if (round_type & RoundTopRight) {
 			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++, count++) {
 				vertices[2 * count + 0] = maxx - vec[i][1];
-				vertices[2 * count + 1] = maxy - rad + vec[i][0];
+				vertices[2 * count + 1] = maxy - radius + vec[i][0];
 			}
 		} else {
 			vertices[2 * count + 0] = maxx;
 			vertices[2 * count + 1] = maxy;
 			count++;
 		}
+	}
+
+	void Shadow::GenerateShadowVerticesExt (const Size& size, int round_type,
+	        float radius, float depth, std::vector<GLfloat>& vertices)
+	{
+		std::vector<GLfloat> vec1;	// the inner vertices
+		std::vector<GLfloat> vec2;
+		std::vector<GLfloat> vec3;
+
+		float minx = 0.0f;
+		float miny = 0.0f;
+		float maxx = size.width();
+		float maxy = size.height();
+
+		float mid = depth / 2.f;
+
+		if (2.0f * radius > size.height())
+			radius = 0.5f * size.height();
+
+		float rad1 = radius;
+		float rad2 = radius + mid;
+		float rad3 = radius + depth;
+
+		int count = 0;
+
+		unsigned int corner = round_type & RoundAll;
+		while (corner != 0) {
+			count += corner & 0x1;
+			corner = corner >> 1;
+		}
+		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
+
+		vec1.resize(outline_vertex_number * 2);
+		vec2.resize(outline_vertex_number * 2);
+		vec3.resize(outline_vertex_number * 2);
+
+		count = 0;
+
+		/* start with left-top, anti clockwise */
+		if (round_type & RoundTopLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+
+				vec1[count + 0] = minx + rad1 - rad1 * cornervec[i][0];
+				vec1[count + 1] = maxy - rad1 * cornervec[i][1];
+
+				vec2[count + 0] = minx + rad2 - rad2 * cornervec[i][0];
+				vec2[count + 1] = maxy - rad2 * cornervec[i][1];
+
+				vec3[count + 0] = minx + rad3 - rad3 * cornervec[i][0];
+				vec3[count + 1] = maxy - rad3 * cornervec[i][1];
+
+				count += 2;
+			}
+		} else {
+
+			vec1[count + 0] = minx;
+			vec1[count + 1] = maxy;
+
+			vec2[count + 0] = minx;
+			vec2[count + 1] = maxy;
+
+			vec3[count + 0] = minx;
+			vec3[count + 1] = maxy;
+
+			count += 2;
+		}
+
+		if (round_type & RoundBottomLeft) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+
+				vec1[count + 0] = minx + rad1 * cornervec[i][1];
+				vec1[count + 1] = miny + rad1 - rad1 * cornervec[i][0];
+
+				vec2[count + 0] = minx + rad2 * cornervec[i][1];
+				vec2[count + 1] = miny + rad2 - rad2 * cornervec[i][0];
+
+				vec3[count + 0] = minx + rad3 * cornervec[i][1];
+				vec3[count + 1] = miny + rad3 - rad3 * cornervec[i][0];
+
+				count += 2;
+			}
+		} else {
+
+			vec1[count + 0] = minx;
+			vec1[count + 1] = miny;
+
+			vec2[count + 0] = minx;
+			vec2[count + 1] = miny;
+
+			vec3[count + 0] = minx;
+			vec3[count + 1] = miny;
+
+			count += 2;
+		}
+
+		if (round_type & RoundBottomRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+
+				vec1[count + 0] = maxx - rad1 + rad1 * cornervec[i][0];
+				vec1[count + 1] = miny + rad1 * cornervec[i][1];
+
+				vec2[count + 0] = maxx - rad2 + rad2 * cornervec[i][0];
+				vec2[count + 1] = miny + rad2 * cornervec[i][1];
+
+				vec3[count + 0] = maxx - rad3 + rad3 * cornervec[i][0];
+				vec3[count + 1] = miny + rad3 * cornervec[i][1];
+
+				count += 2;
+			}
+		} else {
+
+			vec1[count + 0] = maxx;
+			vec1[count + 1] = miny;
+
+			vec2[count + 0] = maxx;
+			vec2[count + 1] = miny;
+
+			vec3[count + 0] = maxx;
+			vec3[count + 1] = miny;
+
+			count += 2;
+		}
+
+		if (round_type & RoundTopRight) {
+			for (int i = 0; i < WIDGET_CURVE_RESOLU; i++) {
+
+				vec1[count + 0] = maxx - rad1 * cornervec[i][1];
+				vec1[count + 0] = maxy - rad1 + rad1 * cornervec[i][0];
+
+				vec2[count + 0] = maxx - rad2 * cornervec[i][1];
+				vec2[count + 0] = maxy - rad2 + rad2 * cornervec[i][0];
+
+				vec3[count + 0] = maxx - rad3 * cornervec[i][1];
+				vec3[count + 0] = maxy - rad3 + rad3 * cornervec[i][0];
+
+				count += 2;
+			}
+		} else {
+
+			vec1[count + 0] = maxx;
+			vec1[count + 1] = maxy;
+
+			vec2[count + 0] = maxx;
+			vec2[count + 1] = maxy;
+
+			vec3[count + 0] = maxx;
+			vec3[count + 1] = maxy;
+
+			count += 2;
+		}
+
+		assert((vec1.size() == vec2.size()) && (vec2.size() == vec3.size()));
+
+		// now create the triangle strips
+		if(vertices.size() != (outline_vertex_number + 1) * 6 * 2 * 2) {
+			vertices.resize((outline_vertex_number + 1) * 6 * 2 * 2);
+		}
+
+		count = 0;
+		for (unsigned int i = 0; i < outline_vertex_number;)
+		{
+			vertices[count + 0] = vec1[i + 0];
+			vertices[count + 1] = vec1[i + 1];
+
+			vertices[count + 2] = 0.25f;
+			vertices[count + 3] = 0.25f;
+			vertices[count + 4] = 0.25f;
+			vertices[count + 5] = 0.75f;
+
+			vertices[count + 6] = vec2[i + 0];
+			vertices[count + 7] = vec2[i + 1];
+
+			vertices[count + 8] = 0.25f;
+			vertices[count + 9] = 0.25f;
+			vertices[count + 10] = 0.25f;
+			vertices[count + 11] = 0.25f;
+
+			i = i + 2;
+			count = count + 12;
+		}
+
+		vertices[count + 0] = vec1[0];
+		vertices[count + 1] = vec1[1];
+
+		vertices[count + 2] = 0.25f;
+		vertices[count + 3] = 0.25f;
+		vertices[count + 4] = 0.25f;
+		vertices[count + 5] = 0.75f;
+
+		vertices[count + 6] = vec2[0];
+		vertices[count + 7] = vec2[1];
+
+		vertices[count + 8] = 0.25f;
+		vertices[count + 9] = 0.25f;
+		vertices[count + 10] = 0.25f;
+		vertices[count + 11] = 0.25f;
+
+		count = count + 12;
+
+		for (unsigned int i = 0; i < outline_vertex_number;)
+		{
+			vertices[count + 0] = vec2[i + 0];
+			vertices[count + 1] = vec2[i + 1];
+
+			vertices[count + 2] = 0.25f;
+			vertices[count + 3] = 0.25f;
+			vertices[count + 4] = 0.25f;
+			vertices[count + 5] = 0.25f;
+
+			vertices[count + 6] = vec3[i + 0];
+			vertices[count + 7] = vec3[i + 1];
+
+			vertices[count + 8] = 0.25f;
+			vertices[count + 9] = 0.25f;
+			vertices[count + 10] = 0.25f;
+			vertices[count + 11] = 0.025f;
+
+			i = i + 2;
+			count = count + 12;
+		}
+
+		vertices[count + 0] = vec2[0];
+		vertices[count + 1] = vec2[1];
+
+		vertices[count + 2] = 0.25f;
+		vertices[count + 3] = 0.25f;
+		vertices[count + 4] = 0.25f;
+		vertices[count + 5] = 0.25f;
+
+		vertices[count + 6] = vec3[0];
+		vertices[count + 7] = vec3[1];
+
+		vertices[count + 8] = 0.25f;
+		vertices[count + 9] = 0.25f;
+		vertices[count + 10] = 0.25f;
+		vertices[count + 11] = 0.025f;
+
 	}
 
 	void Shadow::verts_to_quad_strip (const float inner_v[WIDGET_SIZE_MAX][2],

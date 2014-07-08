@@ -46,12 +46,14 @@ namespace BlendInt {
 	  m_orientation(orientation)
 	{
 		if(orientation == Horizontal) {
-			set_size(200, 6);
+			set_size(200, 20);
 		} else {
-			set_size(6, 200);
+			set_size(20, 200);
 		}
 
 		glGenVertexArrays(2, m_vao);
+
+		InitializeProgressBar();
 	}
 
 	ProgressBar::~ProgressBar ()
@@ -91,6 +93,62 @@ namespace BlendInt {
 
 	void ProgressBar::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
+		if(request.target() == this) {
+			switch (request.type()) {
+
+				case WidgetSize: {
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+					VertexTool tool;
+					tool.Setup(*size_p, DefaultBorderWidth(),
+					        round_corner_type(), round_corner_radius());
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+					m_outer->Bind();
+					tool.SetOuterBufferData(m_outer.get());
+
+					set_size(*size_p);
+					Refresh();
+					break;
+				}
+
+				case WidgetRoundCornerType: {
+					const int* type_p = static_cast<const int*>(request.data());
+					VertexTool tool;
+					tool.Setup(size(), DefaultBorderWidth(), *type_p,
+					        round_corner_radius());
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+					m_outer->Bind();
+					tool.SetOuterBufferData(m_outer.get());
+
+					set_round_corner_type(*type_p);
+					Refresh();
+					break;
+				}
+
+				case WidgetRoundCornerRadius: {
+					const float* radius_p =
+					        static_cast<const float*>(request.data());
+					VertexTool tool;
+					tool.Setup(size(), DefaultBorderWidth(),
+					        round_corner_type(), *radius_p);
+					m_inner->Bind();
+					tool.SetInnerBufferData(m_inner.get());
+					m_outer->Bind();
+					tool.SetOuterBufferData(m_outer.get());
+
+					set_round_corner_radius(*radius_p);
+					Refresh();
+					break;
+				}
+
+				default:
+					break;
+			}
+		}
+
+		ReportGeometryUpdate(request);
 	}
 
 	void ProgressBar::BroadcastUpdate (const GeometryUpdateRequest& request)
@@ -99,6 +157,33 @@ namespace BlendInt {
 
 	ResponseType ProgressBar::Draw(const RedrawEvent& event)
 	{
+		using Stock::Shaders;
+
+		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
+		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+		RefPtr<GLSLProgram> program =
+						Shaders::instance->default_triangle_program();
+		program->Use();
+
+		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetUniform1i("Gamma", 0);
+		program->SetUniform1i("AA", 0);
+
+		//program->SetVertexAttrib4fv("Color",
+		//		Theme::instance->regular().inner.data());
+
+		glBindVertexArray(m_vao[0]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
+
+		program->SetUniform1i("AA", 1);
+		program->SetVertexAttrib4fv("Color", Theme::instance->regular().outline.data());
+
+		glBindVertexArray(m_vao[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+
+		glBindVertexArray(0);
+		program->Reset();
 
 		return Accept;
 	}
@@ -143,6 +228,62 @@ namespace BlendInt {
 	ResponseType ProgressBar::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
+	}
+
+	void ProgressBar::InitializeProgressBar ()
+	{
+		float minxi = DefaultBorderWidth();
+		float maxxi = size().width() - DefaultBorderWidth();
+		float minyi = DefaultBorderWidth();
+		float maxyi = size().height() - DefaultBorderWidth();
+
+		float midx = (minxi + maxxi) / 2.f;
+
+		GLfloat verts[] = {
+
+				minxi, minyi,	0.25f, 0.25f, 0.25f, 0.75f,
+				minxi, maxyi,	0.25f, 0.25f, 0.25f, 0.75f,
+
+				midx, minyi,	0.25f, 0.25f, 0.25f, 0.25f,
+				midx, maxyi, 	0.25f, 0.25f, 0.25f, 0.25f,
+
+				maxxi, minyi,	0.25f, 0.25f, 0.25f, 0.025f,
+				maxxi, maxyi,	0.25f, 0.25f, 0.25f, 0.025f
+
+		};
+
+		VertexTool tool;
+		tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+
+		glGenVertexArrays(2, m_vao);
+		glBindVertexArray(m_vao[0]);
+
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+
+		m_inner->SetData(36 * sizeof(GLfloat), verts);
+		//tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		//glEnableVertexAttribArray(0);
+		//glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(m_vao[1]);
+		m_outer.reset(new GLArrayBuffer);
+		m_outer->Generate();
+		m_outer->Bind();
+		tool.SetOuterBufferData(m_outer.get());
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
+
 	}
 
 }

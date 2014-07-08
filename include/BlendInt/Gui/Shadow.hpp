@@ -76,7 +76,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitOnce ();
+		void InitializeShadow ();
 
 		/**
 		 * @brief generate shadow vertices
@@ -91,9 +91,19 @@ namespace BlendInt {
 				float step,
 				float vert[WIDGET_SIZE_MAX][2]);
 
-		void GenerateShadowVertices (const Size& size, float rad, float step, std::vector<GLfloat>& vertices);
+		/**
+		 * @brief Create shadow vertices
+		 * @param[in] size The shadow inner size
+		 * @param[in] round_type Round type, same as widget
+		 * @param[in] radius Round radius
+		 * @param[in] depth The shadow size
+		 * @param[out] vertices The vertices created
+		 */
+		void GenerateShadowVerticesExt (const Size& size, int round_type, float radius, float depth, std::vector<GLfloat>& vertices);
 
-		void GenerateShadowBuffers (const Size& size, float corner_rad, float blue_rad);
+		void GenerateShadowVertices (const Size& size, int round_type, float radius, float step, std::vector<GLfloat>& vertices);
+
+		void GenerateShadowBuffers (const Size& size, float corner_rad, float blur_rad);
 
 		static void verts_to_quad_strip (
 						const float inner_v[WIDGET_SIZE_MAX][2],

@@ -54,6 +54,7 @@
 #include <BlendInt/Gui/VirtualWindow.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 #include <BlendInt/Gui/NodeView.hpp>
+#include <BlendInt/Gui/ProgressBar.hpp>
 
 #include "GLFWContext.hpp"
 #include "Window.hpp"
