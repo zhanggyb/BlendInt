@@ -42,7 +42,7 @@ TEST_F(ScrollViewTest1, Foo1)
 	
 	//DBG_PRINT_MSG ("percentages: %d, %d", scrollview->GetHPercentage(), scrollview->GetVPercentage());
 
-	context->Add(scrollview);
+	context->PushBack(scrollview);
 
 	RunLoop(win);
 

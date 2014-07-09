@@ -32,7 +32,7 @@ TEST_F(ComboBoxTest1, Foo1)
 
     combo->SetPosition(200, 200);
 
-    context->Add(combo);
+    context->PushBack(combo);
 
     RunLoop(win);
 

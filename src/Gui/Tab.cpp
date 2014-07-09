@@ -210,7 +210,7 @@ namespace BlendInt {
 
 	ResponseType Tab::MouseMoveEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 	
 	void Tab::OnButtonToggled (int index, bool toggled)

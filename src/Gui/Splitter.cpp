@@ -163,7 +163,7 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), (float)z());
+		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		glBindVertexArray(m_vao);
@@ -319,7 +319,7 @@ namespace BlendInt {
 				int oy2 = m_next_size + offset;
 
 				if((oy1 < 0) || (oy2 < 0)) {
-					return Ignore;
+					return Accept;
 				}
 
 				splitter->SetSubWidgetPosition(this, m_last.x(), m_last.y() + offset);
@@ -335,7 +335,7 @@ namespace BlendInt {
 				int oy2 = m_next_size - offset;
 
 				if((oy1 < 0) || (oy2 < 0)) {
-					return Ignore;
+					return Accept;
 				}
 
 				splitter->SetSubWidgetPosition(this, m_last.x() + offset, m_last.y());
@@ -349,7 +349,7 @@ namespace BlendInt {
 			Refresh();
 			return Accept;
 		}
-		return Ignore;
+		return Accept;
 	}
 
 	Splitter::Splitter(Orientation orientation)

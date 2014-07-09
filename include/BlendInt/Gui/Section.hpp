@@ -21,24 +21,41 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_NODEVIEW_HPP_
-#define _BLENDINT_NODEVIEW_HPP_
+#ifndef _BLENDINT_GUI_SECTION_HPP_
+#define _BLENDINT_GUI_SECTION_HPP_
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <set>
+
+#include <BlendInt/OpenGL/ScissorStatus.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
-	class NodeView: public AbstractWidget
+	/**
+	 * @brief A special container used in Context as a layer
+	 */
+	class Section: public AbstractContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(NodeView);
-
 	public:
 
-		NodeView ();
+		friend class Context;
 
-		virtual ~NodeView ();
+		Section ();
+
+		virtual ~Section ();
+
+		void Insert (AbstractWidget* widget);
+
+		/**
+		 * @brief Remove sub widget
+		 *
+		 * If the widget is last one in this section, call this funciton will delete this.
+		 */
+		void Remove (AbstractWidget* widget);
 
 	protected:
+
+		virtual void UpdateContainer (const ContainerUpdateRequest& request);
 
 		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
@@ -64,14 +81,35 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		virtual bool RemoveSubWidget (AbstractWidget* widget);
+
+		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
+
 	private:
 
-		GLuint m_vao[2];
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
+
+		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
+
+		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
+
+		bool CheckAndUpdateHoverWidget (const MouseEvent& event);
+
+		void UpdateHoverWidgetSubs (const MouseEvent& event);
+
+		void OnSubWidgetDestroyed (AbstractWidget* widget);
+
+		void OnHoverWidgetDestroyed (AbstractWidget* widget);
+
+		std::set<AbstractWidget*> m_set;
+
+		AbstractWidget* m_focused_widget;
+
+		AbstractWidget* m_last_hover_widget;
+
+		ScissorStatus m_scissor_status;
 
 	};
-
 }
 
-#endif /* _BLENDINT_NODEVIEW_HPP_ */
+#endif /* _BLENDINT_GUI_SECTION_HPP_ */

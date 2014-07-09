@@ -47,6 +47,7 @@
 namespace BlendInt {
 
 	class Context;
+	class Section;
 	//class GLTexture2D;
 	class AbstractWidget;
 	class AbstractContainer;
@@ -56,7 +57,6 @@ namespace BlendInt {
 		WidgetSize,
 		WidgetRoundCornerType,
 		WidgetRoundCornerRadius,
-		WidgetLayer,
 		WidgetVisibility
 	};
 
@@ -248,6 +248,7 @@ namespace BlendInt {
 	public:
 
 		friend class Context;
+		friend class Section;
 		friend class AbstractContainer;
 		friend class SubWidgetProxy;
 
@@ -297,8 +298,6 @@ namespace BlendInt {
 
 		void SetRoundCornerRadius (float radius);
 
-		void SetLayer (int z);
-
 		void SetVisible (bool visible);
 
 		void SetEmboss (bool emboss);
@@ -319,7 +318,7 @@ namespace BlendInt {
 
 		virtual bool Contain (int x, int y) const;
 
-		void RenderToTexture (size_t border, GLTexture2D* texture);
+		void RenderToTexture (int border, GLTexture2D* texture);
 
 		void RenderToFile (const char* filename, unsigned int border = 10);
 
@@ -328,16 +327,6 @@ namespace BlendInt {
 		const Size& size () const
 		{
 			return m_size;
-		}
-
-		const int& layer () const
-		{
-			return m_z;
-		}
-
-		const int& z () const
-		{
-			return m_z;
 		}
 
 		void activate_events ()
@@ -472,7 +461,7 @@ namespace BlendInt {
 		 * @note this function should be called only in the constructor of subclass to set
 		 * the size without through Update() for performance.
 		 */
-		inline void set_size (unsigned int width, unsigned int height)
+		inline void set_size (int width, int height)
 		{
 			m_size.set_width(width);
 			m_size.set_height(height);
@@ -542,6 +531,8 @@ namespace BlendInt {
 		void ReportGeometryUpdate (const GeometryUpdateRequest& request);
 
 		Context* GetContext ();
+
+		Section* GetSection ();
 
 		int GetOutlineVertices (int round_type) const;
 
@@ -615,16 +606,6 @@ namespace BlendInt {
 			}
 		}
 
-		void set_layer (int z)
-		{
-			m_z = z;
-		}
-
-		void set_z (int z)
-		{
-			m_z = z;
-		}
-
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 
 		static void DispatchRender (AbstractWidget* obj);
@@ -680,11 +661,6 @@ namespace BlendInt {
 		Point m_position;
 
 		Size m_size;
-
-		/**
-		 * @brief the depth(layer) of the widget
-		 */
-		int m_z;
 
 		unsigned int m_flags;
 

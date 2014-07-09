@@ -60,7 +60,7 @@ TEST_F(ToolBarTest1, Foo1)
 
     //toolbar->SetPosition(100, 100);
 
-	context->Add(toolbar);
+	context->PushBack(toolbar);
 
     RunLoop(win);
 

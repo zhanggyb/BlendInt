@@ -32,7 +32,7 @@ TEST_F(WidgetTest1, Add1)
     Widget* widget1 = new Widget;
     widget1->SetPosition(200, 200);
 
-    context->Add(widget1);
+    context->PushBack(widget1);
 
     widget1->Resize(200, 200);
     widget1->SetPosition(100, 100);

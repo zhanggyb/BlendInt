@@ -52,7 +52,7 @@ TEST_F(VLayoutTest1, Add1)
 	vlayout->PushBack(widget1);
 	vlayout->PushBack(hlayout);
 
-	context->Add(vlayout);
+	context->PushBack(vlayout);
 
 	RunLoop(window);
 

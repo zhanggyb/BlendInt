@@ -29,14 +29,16 @@ TEST_F(ButtonTest1, Foo1)
     Interface::instance->SetCurrentContext(context);
 
     Button* bt1 = new Button;
+    DBG_SET_NAME(bt1, "Button1");
     bt1->SetPosition(100, 200);
     bt1->SetText(String("Button1"));
 
     Button* bt2 = new Button("Button2");
+    DBG_SET_NAME(bt2, "Button2");
     bt2->SetPosition(240, 200);
 
-    context->Add(bt1);
-    context->Add(bt2);
+    context->PushBack(bt1);
+    context->PushBack(bt2);
 
     RunLoop(win);
 

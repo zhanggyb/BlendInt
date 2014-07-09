@@ -200,37 +200,37 @@ namespace BlendInt {
 
 	ResponseType Frame::KeyPressEvent (const KeyEvent& event)
 	{
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Frame::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Frame::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Frame::MousePressEvent (const MouseEvent& event)
 	{
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Frame::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Frame::MouseMoveEvent (const MouseEvent& event)
 	{
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Frame::Draw (const RedrawEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 } /* namespace BlendInt */

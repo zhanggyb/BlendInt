@@ -292,13 +292,10 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(),
-						(float) z());
+		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-
-
 		program->Use();
 
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
@@ -347,7 +344,7 @@ namespace BlendInt {
 			}
 		}
 
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType ToolBar::MouseReleaseEvent (const MouseEvent& event)
@@ -356,7 +353,7 @@ namespace BlendInt {
 			m_move_status = false;
 			Refresh();
 		}
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType ToolBar::MouseMoveEvent (const MouseEvent& event)
@@ -428,7 +425,8 @@ namespace BlendInt {
 
 			Refresh();
 		}
-		return Accept;
+
+		return Ignore;
 	}
 
 	void ToolBar::InitializeToolBar ()

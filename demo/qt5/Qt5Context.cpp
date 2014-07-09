@@ -11,7 +11,7 @@ Qt5Context::Qt5Context (QWindow* window)
 	m_layout = Manage(new MainLayout);
 	m_layout->Resize(size());
 
-	Add(m_layout);
+	PushBack(m_layout);
 
 	events()->connect(resized(), this , &Qt5Context::OnResizeLayout);
 }

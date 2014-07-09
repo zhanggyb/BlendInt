@@ -239,17 +239,17 @@ namespace BlendInt {
 
 	ResponseType HBox::MousePressEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType HBox::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType HBox::MouseMoveEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	void HBox::FillSubWidgetsInHBox (const Point& out_pos, const Size& out_size, const Margin& margin,

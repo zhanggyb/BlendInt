@@ -21,34 +21,47 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_NODEVIEW_HPP_
-#define _BLENDINT_NODEVIEW_HPP_
+#ifndef _BLENDINT_GUI_DECORATION_HPP_
+#define _BLENDINT_GUI_DECORATION_HPP_
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <Cpp/Events.hpp>
+
+#include <BlendInt/Gui/AbstractDequeContainer.hpp>
 
 namespace BlendInt {
 
-	class NodeView: public AbstractWidget
+	/**
+	 * @brief A special widget used in virtual window only as the decoration
+	 */
+	class Decoration:  public AbstractDequeContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(NodeView);
+		DISALLOW_COPY_AND_ASSIGN(Decoration);
 
 	public:
 
-		NodeView ();
+		Decoration ();
 
-		virtual ~NodeView ();
+		virtual ~Decoration ();
+
+		void PushFront (AbstractWidget* widget);
+
+		void PushBack (AbstractWidget* widget);
+
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
+
+		virtual void UpdateContainer (const ContainerUpdateRequest& request);
 
 		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
 		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
-
 		virtual ResponseType Draw (const RedrawEvent& event);
-
-		virtual ResponseType FocusEvent (bool focus);
 
 		virtual ResponseType CursorEnterEvent (bool entered);
 
@@ -66,12 +79,32 @@ namespace BlendInt {
 
 	private:
 
-		GLuint m_vao[2];
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		void InitializeDecoration ();
 
+		void FillSubWidgets (const Point& out_pos, const Size& out_size, const Margin& margin, int space);
+
+		void FillSubWidgets (int x, int y, int width, int height, int space);
+
+		void RealignSubWidgets (const Size& size, const Margin& margin, int space);
+
+		int GetLastPosition () const;
+
+		GLuint m_vao[1];
+
+		/**
+		 * space between tool buttons
+		 */
+		int m_space;
+
+		bool m_pressed;
+
+		Point m_last;
+		Point m_cursor;
+
+		RefPtr<GLArrayBuffer> m_inner;
 	};
 
 }
 
-#endif /* _BLENDINT_NODEVIEW_HPP_ */
+
+#endif /* _BLENDINT_GUI_DECORATION_HPP_ */

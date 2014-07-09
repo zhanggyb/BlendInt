@@ -64,7 +64,7 @@ TEST_F(StackTest1, Foo1)
 	stack->Resize(200, 200);
 	stack->SetIndex(0);
 
-	context->Add(stack);
+	context->PushBack(stack);
 
 	RunLoop(window);
 

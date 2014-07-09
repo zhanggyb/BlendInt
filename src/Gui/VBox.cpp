@@ -238,17 +238,17 @@ namespace BlendInt {
 
 	ResponseType VBox::MousePressEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBox::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBox::MouseMoveEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 

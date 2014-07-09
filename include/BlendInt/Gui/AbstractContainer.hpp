@@ -173,6 +173,7 @@ namespace BlendInt {
 		DISALLOW_COPY_AND_ASSIGN(AbstractContainer);
 
 		friend class Context;
+		friend class Section;
 		friend class ContainerProxy;
 
 	public:
@@ -215,11 +216,12 @@ namespace BlendInt {
 
 		void SetSubWidgetVisibility (AbstractWidget* sub, bool visible);
 
-		void SetSubWidgetLayer (AbstractWidget* sub, int layer);
-
 		static bool RemoveSubWidget (AbstractContainer* container, AbstractWidget* sub)
 		{
-			return container->RemoveSubWidget(sub);
+			if(container)
+				return container->RemoveSubWidget(sub);
+			else
+				return true;
 		}
 
 		/*

@@ -44,9 +44,9 @@ void EditorContext::InitContext()
 	m_fontview->SetPosition(100, 100);
 	m_fontview->LoadCharacter();
 
-	Add(m_vshader_file);
-	Add(m_fshader_file);
-	Add(m_ok);
+	PushBack(m_vshader_file);
+	PushBack(m_fshader_file);
+	PushBack(m_ok);
 	//Add(m_label);
-	Add(m_fontview);
+	PushBack(m_fontview);
 }

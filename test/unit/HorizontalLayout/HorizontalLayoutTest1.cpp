@@ -38,7 +38,7 @@ TEST_F(HLayoutTest1, Add1)
 	hlayout->PushBack(Manage(widget1));
 	hlayout->PushBack(Manage(widget2));
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 
@@ -74,7 +74,7 @@ TEST_F(HLayoutTest1, Add2)
 	hlayout->PushBack(Manage(widget1));
 	hlayout->PushBack(Manage(widget2));
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 
@@ -110,7 +110,7 @@ TEST_F(HLayoutTest1, Add3)
 	hlayout->PushBack(Manage(widget1));
 	hlayout->PushBack(Manage(widget2));
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 
@@ -148,7 +148,7 @@ TEST_F(HLayoutTest1, Add4)
 	hlayout->PushBack(Manage(widget1));
 	hlayout->PushBack(Manage(widget2));
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 	
@@ -196,7 +196,7 @@ TEST_F(HLayoutTest1, Add5)
 	hlayout->PushBack(Manage(widget3));
 	hlayout->PushBack(Manage(widget4));
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 
@@ -238,7 +238,7 @@ TEST_F(HLayoutTest1, Add6)
 	hlayout->PushBack(Manage(widget3));
 	hlayout->PushBack(Manage(widget4));
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 
@@ -281,7 +281,7 @@ TEST_F(HLayoutTest1, Add7)
 
 	hlayout->Resize(80, 100);
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 
@@ -319,7 +319,7 @@ TEST_F(HLayoutTest1, Resize1)
 
 	hlayout->Resize(400, 200);
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 
@@ -356,7 +356,7 @@ TEST_F(HLayoutTest1, Resize2)
 
 	hlayout->Resize(400, 200);
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 
@@ -399,7 +399,7 @@ TEST_F(HLayoutTest1, Resize3)
 
 	hlayout->Resize(80, 100);
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 
@@ -440,7 +440,7 @@ TEST_F(HLayoutTest1, SetMargin1)
 
     hlayout->SetMargin(20, 20, 20, 20);
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 
@@ -481,7 +481,7 @@ TEST_F(HLayoutTest1, SetSpace1)
 
     hlayout->SetSpace(10);
 
-	context->Add(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 

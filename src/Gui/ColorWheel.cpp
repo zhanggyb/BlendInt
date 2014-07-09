@@ -76,7 +76,7 @@ namespace BlendInt {
 		using Stock::Shaders;
 
 		glm::vec3 pos((float) (position().x() + size().width() / 2.f),
-		        (float) (position().y() + size().height() / 2.f), (float) z());
+		        (float) (position().y() + size().height() / 2.f), 0.f);
 
 		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 

@@ -15,30 +15,38 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.  If not, see
+ * License along with BlendInt.	 If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_NODEVIEW_HPP_
-#define _BLENDINT_NODEVIEW_HPP_
+#ifndef _BLENDINT_GUI_VIRTUALWINDOW_HPP_
+#define _BLENDINT_GUI_VIRTUALWINDOW_HPP_
 
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/Gui/AbstractVectorContainer.hpp>
+
+#include <BlendInt/OpenGL/ScissorStatus.hpp>
 
 namespace BlendInt {
 
-	class NodeView: public AbstractWidget
+	/**
+	 * @brief A special container works as a window in desktop
+	 */
+	class VirtualWindow: public AbstractVectorContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(NodeView);
-
 	public:
 
-		NodeView ();
+		VirtualWindow ();
 
-		virtual ~NodeView ();
+		virtual ~VirtualWindow ();
+
+		void Setup (AbstractWidget* widget);
 
 	protected:
+
+		virtual void UpdateContainer (const ContainerUpdateRequest& request);
 
 		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
@@ -64,14 +72,18 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
+		void FillSubWidgets ();
+
 	private:
 
-		GLuint m_vao[2];
-		RefPtr<GLArrayBuffer> m_inner_buffer;
-		RefPtr<GLArrayBuffer> m_outer_buffer;
+		void InitializeVirtualWindow ();
+
+		GLuint m_vao[1];
+
+		RefPtr<GLArrayBuffer> m_inner;
 
 	};
 
 }
 
-#endif /* _BLENDINT_NODEVIEW_HPP_ */
+#endif /* _BLENDINT_GUI_VIRTUALWINDOW_HPP_ */

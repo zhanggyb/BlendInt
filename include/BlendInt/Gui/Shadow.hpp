@@ -51,13 +51,13 @@ namespace BlendInt {
 
 	public:
 
-		Shadow ();
+		Shadow (const Size& size, int round_type, float radius);
 
 		virtual ~Shadow ();
 
-		void SetBlurRadius (float rad);
+		void Update (int width, int height, int round_type, float radius);
 
-		float blur_rad () const {return m_blur_rad;}
+		void Update (const Size& size, int round_type, float radius);
 
 		virtual void Draw (const glm::mat4& mvp, short gamma = 0);
 
@@ -69,58 +69,27 @@ namespace BlendInt {
 
 		virtual void UpdateGeometry (const UpdateRequest& request);
 
-		inline void set_blur_rad (float rad)
-		{
-			m_blur_rad = rad;
-		}
-
 	private:
 
-		void InitOnce ();
+		// Disable default constructor
+		Shadow();
+
+		void InitializeShadow ();
 
 		/**
-		 * @brief generate shadow vertices
-		 * @param[in] size
-		 * @param[in] rad
-		 * @param[in] step
-		 * @param[out] vert
-		 * @return
+		 * @brief Create shadow vertices
+		 * @param[in] size The shadow inner size
+		 * @param[in] round_type Round type, same as widget
+		 * @param[in] radius Round radius
+		 * @param[in] depth The shadow size
+		 * @param[out] vertices The vertices created
 		 */
-		int generate_shadow_vertices (const Size* size,
-				float rad,
-				float step,
-				float vert[WIDGET_SIZE_MAX][2]);
-
-		void GenerateShadowBuffers (const Size& size, float corner_rad, float blue_rad);
-
-		static void verts_to_quad_strip (
-						const float inner_v[WIDGET_SIZE_MAX][2],
-						const float outer_v[WIDGET_SIZE_MAX][2],
-						const int totvert,
-						float quad_strip[WIDGET_SIZE_MAX * 2 + 2][2]);
+		void GenerateShadowVerticesExt (const Size& size, int round_type, float radius, std::vector<GLfloat>& vertices);
 
 		GLuint m_vao;
 
-		int m_offset_x;
+		RefPtr<GLArrayBuffer> m_buffer;
 
-		int m_offset_y;
-
-		/**
-		 * @brief The direction of the projection
-		 *
-		 * The direction of the projection
-		 */
-//		int m_direction;
-
-		/**
-		 * @brief the blur radius
-		 */
-		float m_blur_rad;
-
-		//GLArrayBuffer* m_gl_buffer;
-		std::deque<RefPtr<GLArrayBuffer> > m_buffers;
-
-		//std::vector<GLuint> m_ids;
 	};
 
 }

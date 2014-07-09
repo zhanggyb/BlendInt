@@ -72,6 +72,8 @@ namespace BlendInt {
 
 	private:
 
+		void InitializeProgressBar ();
+
 		GLuint m_vao[2];
 
 		Orientation m_orientation;

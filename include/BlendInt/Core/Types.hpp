@@ -73,21 +73,24 @@
 
 namespace BlendInt {
 
-	enum HorizontalAlignment {
+	enum HorizontalAlignment
+	{
 		AlignTop = 0x0001,
 		AlignBottom = 0x0002,
-	  AlignHorizontalCenter = 0x0004
+		AlignHorizontalCenter = 0x0004
 	};
 
-	enum VerticalAlignment {
+	enum VerticalAlignment
+	{
 		AlignLeft = 0x0010,
 		AlignRight = 0x0020,
-	  AlignVerticalCenter = 0x0040
+		AlignVerticalCenter = 0x0040
 	};
 
-	enum Alignment {
-		AlignNone = 0x0000,
-		AlignCenter = AlignHorizontalCenter | AlignVerticalCenter
+	enum Alignment
+	{
+		AlignNone = 0x0000, AlignCenter = AlignHorizontalCenter
+		        | AlignVerticalCenter
 	};
 
 	/**

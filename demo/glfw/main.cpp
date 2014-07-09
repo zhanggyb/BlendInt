@@ -51,6 +51,11 @@
 #include <BlendInt/Gui/VBlock.hpp>
 #include <BlendInt/Gui/FramePanel.hpp>
 
+#include <BlendInt/Gui/VirtualWindow.hpp>
+#include <BlendInt/Gui/Decoration.hpp>
+#include <BlendInt/Gui/NodeView.hpp>
+#include <BlendInt/Gui/ProgressBar.hpp>
+
 #include "GLFWContext.hpp"
 #include "Window.hpp"
 
@@ -72,45 +77,28 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	Button* btn1 = Manage(new Button);
-	DBG_SET_NAME(btn1, "Button 1");
-	btn1->Resize(100, 50);
-	btn1->SetPosition(200, 100);
+	VirtualWindow* vw = Manage(new VirtualWindow);
 
-	FramePanel* f1 = Manage(new FramePanel);
-	DBG_SET_NAME(f1, "Frame 1");
-	f1->SetMargin(20, 20, 20, 20);
-	f1->SetPosition(400, 100);
+	vw->SetPosition(200, 200);
 
-	FramePanel* f2 = Manage(new FramePanel);
-	DBG_SET_NAME(f2, "Frame 2");
-	f2->SetMargin(20, 20, 20, 20);
-	f2->SetPosition(400, 100);
+	context->PushBack(vw);
 
-	Button* btn2 = Manage(new Button);
-	DBG_SET_NAME(btn2, "Button 2");
+	VirtualWindow* vw2 = Manage(new VirtualWindow);
 
-	f2->Setup(btn2);
-	f1->Setup(f2);
+	vw2->SetPosition(600, 400);
 
-	ColorSelector* cs = Manage(new ColorSelector);
-	cs->SetPosition(600, 450);
+	context->PushBack(vw2);
 
-	Clock* clock = Manage(new Clock);
-	//clock->SetPosition(100, 400);
 
-	context->Add(clock);
-
-	context->Add(cs);
-
-	context->Add(btn1);
-	context->Add(f1);
-
-	f1->Resize(300, 300);
-
-	delete btn2;
+#ifdef DEBUG
+	//context->PrintSections();
+#endif
 
 	RunLoop(win);
+
+#ifdef DEBUG
+	//context->PrintSections();
+#endif
 
 	Interface::Release();
 

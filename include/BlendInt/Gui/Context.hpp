@@ -36,6 +36,7 @@
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
 #include <BlendInt/Gui/ContextLayer.hpp>
+#include <BlendInt/Gui/Section.hpp>
 
 namespace BlendInt {
 
@@ -45,7 +46,7 @@ namespace BlendInt {
 	 * @brief Container to hold and manage all widgets in a OpenGL window
 	 *
 	 * Context is a special container which holds and manage all widgets in a OpenGL window.
-	 * There should be at least on Context object to work with Interface to show and dispatch events.
+	 * There should be at least one Context object to work with Interface to show and dispatch events.
 	 */
 	class Context: public AbstractContainer
 	{
@@ -59,9 +60,22 @@ namespace BlendInt {
 
 		virtual ~Context ();
 
-		bool Add (AbstractWidget* widget);
+		/**
+		 * @brief Add a widget in a new section
+		 *
+		 * @note The section will be deleted if the last sub widget is removed or destroyed.
+		 *
+		 * The widget could also be a Section object
+		 *
+		 */
+		Section* PushBack (AbstractWidget* widget);
 
-		bool Remove (AbstractWidget* widget);
+		/**
+		 * @brief Remove widget from this context
+		 *
+		 * @warning: this function will remove widget from any container, if it's in a section hold by this container, the section will be destroyed by itself if managed.
+		 */
+		Section* Remove (AbstractWidget* widget);
 
 		void SetFocusedWidget (AbstractWidget* widget);
 
@@ -69,14 +83,10 @@ namespace BlendInt {
 
 		int GetMaxLayer () const;
 
-		size_t layer_size () const
-		{
-			return m_layers.size();
-		}
-
 		AbstractWidget* focused_widget () const
 		{
-			return m_focused_widget;
+			//return m_focused_widget;
+			return 0;
 		}
 
 		/**
@@ -96,18 +106,10 @@ namespace BlendInt {
 		}
 
 #ifdef DEBUG
-		void PrintLayers ();
+
+		void PrintSections ();
+
 #endif
-
-		void set_max_tex_buffer_cache_size (unsigned int size)
-		{
-			m_max_tex_buffer_cache_size = size;
-		}
-
-		unsigned int max_tex_buffer_cache_size () const
-		{
-			return m_max_tex_buffer_cache_size;
-		}
 
 	protected:
 
@@ -137,8 +139,6 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual bool InsertSubWidget (AbstractWidget* widget);
-
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
 
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
@@ -147,44 +147,17 @@ namespace BlendInt {
 
 		void InitializeContext ();
 
-		void DrawMainBuffer (const glm::mat4& mvp);
-
-		void DrawLayers (const glm::mat4& mvp);
-
-		void RenderToLayerBuffer (const RedrawEvent& event,
-				int layer,
-				const std::set<AbstractWidget*>& widgets,
-				GLTexture2D* texture);
-
-		void RenderToMainBuffer (const RedrawEvent& event);
-
-		void PreDrawContext (bool fbo = false);
-
-		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
-
-		bool DispatchMousePressEvent (int layer, const MouseEvent& event);
-
-		bool DispatchMouseReleaseEvent (int layer, const MouseEvent& event);
-
-		bool DispatchMouseMoveEvent (int layer, const MouseEvent& event);
-
-		void BuildCursorHoverList (int layer);
-
-		void AppendCursorHoverList (std::deque<AbstractWidget*>& deque, AbstractWidget* parent);
-
-		void RemoveWidgetFromHoverList (AbstractWidget* widget, bool cursor_event = false);
-
-		void RemoveSubWidgetFromHoverList (AbstractContainer* container, bool cursor_event = false);
-
 		AbstractWidget* GetWidgetUnderCursor (const MouseEvent& event, AbstractWidget* parent);
+
+		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
 
 		void OnSubWidgetDestroyed (AbstractWidget* widget);
 
-		std::map<int, ContextLayer> m_layers;
+		// this will replace the context layer
 
-		std::deque<GLTexture2D*> m_deque;
+		std::deque<Section*> m_sections;
 
-		GLTexture2D* m_main_buffer;
+		GLTexture2D* m_context_buffer;
 
 		RefPtr<GLArrayBuffer> m_vbo;
 
@@ -192,25 +165,9 @@ namespace BlendInt {
 
 		RedrawEvent m_redraw_event;
 
-		/**
-		 * @brief Focused widget
-		 *
-		 * There's one focused widget in each context to access key and button events
-		 */
+		bool m_refresh;
+
 		AbstractWidget* m_focused_widget;
-
-		/**
-		 * @brief A stack to store unused texture buffer
-		 */
-		std::stack<RefPtr<GLTexture2D> > m_tex_buffer_cache;
-
-		unsigned int m_max_tex_buffer_cache_size;
-
-		ScissorStatus scissor_status;
-
-		bool refresh_once;
-
-		bool force_refresh_all;
 
 		Cpp::Event<const Size&> m_resized;
 

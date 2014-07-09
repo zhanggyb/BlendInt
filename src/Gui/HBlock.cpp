@@ -213,17 +213,17 @@ namespace BlendInt {
 	
 	ResponseType HBlock::MousePressEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 	
 	ResponseType HBlock::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 	
 	ResponseType HBlock::MouseMoveEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	void HBlock::FillInHBlock (const Point& out_pos, const Size& out_size,

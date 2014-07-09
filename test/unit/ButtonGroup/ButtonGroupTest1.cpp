@@ -57,9 +57,9 @@ TEST_F(ButtonGroupTest1, ToggleGroup1)
     btngroup.Add(btn2);
     btngroup.Add(btn3);
 
-    context->Add(btn1);
-    context->Add(btn2);
-    context->Add(btn3);
+    context->PushBack(btn1);
+    context->PushBack(btn2);
+    context->PushBack(btn3);
 
     RunLoop(win);
 
@@ -105,9 +105,9 @@ TEST_F(ButtonGroupTest1, MenuGroup1)
     btngroup.Add(btn2);
     btngroup.Add(btn3);
 
-    context->Add(btn1);
-    context->Add(btn2);
-    context->Add(btn3);
+    context->PushBack(btn1);
+    context->PushBack(btn2);
+    context->PushBack(btn3);
 
     RunLoop(win);
 
