@@ -44,14 +44,13 @@
 
 namespace BlendInt {
 
-	Shadow::Shadow()
+	Shadow::Shadow(const Size& s, int t, float r)
 	: AbstractRoundForm(),
-	  m_vao(0),
-	  m_depth(16)
+	  m_vao(0)
 	{
-		set_size(400, 300);
-		set_round_type(RoundAll);
-		set_radius(5.0);
+		set_size(s);
+		set_round_type(t);
+		set_radius(r);
 
 		InitializeShadow ();
 	}
@@ -70,7 +69,33 @@ namespace BlendInt {
 				const Size* size_p = static_cast<const Size*>(request.data());
 
 				std::vector<GLfloat> vertices;
-				GenerateShadowVerticesExt(*size_p, RoundAll, 10.f, m_depth, vertices);
+				GenerateShadowVerticesExt(*size_p, round_type(), radius(), vertices);
+				m_buffer->Bind();
+				m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+				m_buffer->Reset();
+
+				break;
+			}
+
+			case FormRoundType: {
+
+				const int* type_p = static_cast<const int*>(request.data());
+
+				std::vector<GLfloat> vertices;
+				GenerateShadowVerticesExt(size(), *type_p, radius(), vertices);
+				m_buffer->Bind();
+				m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+				m_buffer->Reset();
+
+				break;
+			}
+
+			case FormRoundRadius: {
+
+				const float* radius_p = static_cast<const float*>(request.data());
+
+				std::vector<GLfloat> vertices;
+				GenerateShadowVerticesExt(size(), round_type(), *radius_p, vertices);
 				m_buffer->Bind();
 				m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
 				m_buffer->Reset();
@@ -108,24 +133,26 @@ namespace BlendInt {
 		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
 		program->SetUniform1i("Gamma", gamma);
 
-		float alphastep = 5.0f * Theme::instance->shadow_fac() / 12.0;
-		float expfac = 0.0;
+		// fine tune the shadow alpha, default is 10.0 * 0.5 / 12.0
+		float alphastep = 10.0f * Theme::instance->shadow_fac() / Theme::instance->shadow_width();
+		float expfac = 0.f;
+		int verts = GetOutlineVertices(round_type());
+		verts = verts * 2 + 2;
 
 		glBindVertexArray(m_vao);
 
 		// the first circle use anti-alias
 		program->SetUniform1i("AA", 1);
-		program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, alphastep * (1.0f - expfac));
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 36 * 2 + 2);
+		program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, alphastep);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, verts);
 
 		program->SetUniform1i("AA", 0);
-		for(int i = 1; i < m_depth; i++)
+		for(int i = 1; i < Theme::instance->shadow_width(); i++)
 		{
-			expfac = sqrt(i / 12.0);
+			expfac = sqrt(i / (float)Theme::instance->shadow_width());
 
 			program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, alphastep * (1.0f - expfac));
-			glDrawArrays(GL_TRIANGLE_STRIP, (36 * 2 + 2) * i, 36 * 2 + 2);
-			//glDrawArrays(GL_TRIANGLE_STRIP, (4 * 2 + 2) * i, 4 * 2 + 2);
+			glDrawArrays(GL_TRIANGLE_STRIP, verts * i, verts);
 		}
 
 		glBindVertexArray(0);
@@ -152,7 +179,7 @@ namespace BlendInt {
 		glBindVertexArray(m_vao);
 
 		std::vector<GLfloat> vertices;
-		GenerateShadowVerticesExt(size(), RoundAll, 10.f, m_depth, vertices);
+		GenerateShadowVerticesExt(size(), round_type(), radius(), vertices);
 
 		DBG_PRINT_MSG("vertex size: %ld", vertices.size());
 
@@ -168,8 +195,34 @@ namespace BlendInt {
 		GLArrayBuffer::Reset();
 	}
 
+	void Shadow::Update (int width, int height, int type, float rad)
+	{
+		set_size(width, height);
+		set_round_type(type);
+		set_radius(rad);
+
+		std::vector<GLfloat> vertices;
+		GenerateShadowVerticesExt(size(), this->round_type(), this->radius(), vertices);
+		m_buffer->Bind();
+		m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		m_buffer->Reset();
+	}
+
+	void Shadow::Update (const Size& new_size, int type, float rad)
+	{
+		set_size(new_size);
+		set_round_type(type);
+		set_radius(rad);
+
+		std::vector<GLfloat> vertices;
+		GenerateShadowVerticesExt(size(), this->round_type(), this->radius(), vertices);
+		m_buffer->Bind();
+		m_buffer->SetData(sizeof(GLfloat) * vertices.size(), &vertices[0]);
+		m_buffer->Reset();
+	}
+
 	void Shadow::GenerateShadowVerticesExt (const Size& size, int round_type,
-	        float radius, int depth, std::vector<GLfloat>& vertices)
+	        float radius, std::vector<GLfloat>& vertices)
 	{
 		float minx = 0.0f;
 		float miny = 0.0f;
@@ -188,7 +241,7 @@ namespace BlendInt {
 		}
 		unsigned int outline_vertex_number = 4 - count + count * WIDGET_CURVE_RESOLU;
 
-		unsigned int max_verts = (outline_vertex_number + 1) * 2 * 2 * depth;
+		unsigned int max_verts = (outline_vertex_number + 1) * 2 * 2 * Theme::instance->shadow_width();
 
 		//DBG_PRINT_MSG("max verts: %u", max_verts);
 
@@ -200,7 +253,7 @@ namespace BlendInt {
 		float rado = 0.f;
 		count = 0;
 
-		for(int i = 0; i < depth; i++) {
+		for(int i = 0; i < Theme::instance->shadow_width(); i++) {
 
 			radi = radius + i;
 			rado = radi + 1.f;

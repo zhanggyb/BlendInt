@@ -77,16 +77,11 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	NodeView* nv = Manage(new NodeView);
+	VirtualWindow* vw = Manage(new VirtualWindow);
 
-	nv->SetPosition(200, 200);
+	vw->SetPosition(200, 200);
 
-	ProgressBar* pb = Manage(new ProgressBar);
-	pb->SetPosition(600, 300);
-
-	context->AddWidget(pb);
-
-	context->AddWidget(nv);
+	context->AddWidget(vw);
 
 #ifdef DEBUG
 	//context->PrintSections();

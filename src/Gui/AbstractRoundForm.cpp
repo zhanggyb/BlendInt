@@ -40,19 +40,31 @@ namespace BlendInt {
 
 	void AbstractRoundForm::SetRoundType(int type)
 	{
-		if(round_type() == type) return;
+		if(m_round_type == type) return;
 
 		UpdateGeometry (UpdateRequest(FormRoundType, &type));
 		set_round_type(type);
 	}
 
-	void AbstractRoundForm::SetRadius(int rad)
+	void AbstractRoundForm::SetRadius(float rad)
 	{
-		if(radius() == rad) return;
+		if(m_radius == rad) return;
 
 		UpdateGeometry(UpdateRequest(FormRoundRadius, &rad));
 		set_radius(rad);
 	}
 
+	int AbstractRoundForm::GetOutlineVertices (int round_type) const
+	{
+		round_type = round_type & RoundAll;
+		int count = 0;
+
+		while (round_type != 0) {
+			count += round_type & 0x1;
+			round_type = round_type >> 1;
+		}
+
+		return 4 - count + count * WIDGET_CURVE_RESOLU;
+	}
 
 }

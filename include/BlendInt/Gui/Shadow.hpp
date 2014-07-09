@@ -51,9 +51,13 @@ namespace BlendInt {
 
 	public:
 
-		Shadow ();
+		Shadow (const Size& size, int round_type, float radius);
 
 		virtual ~Shadow ();
+
+		void Update (int width, int height, int round_type, float radius);
+
+		void Update (const Size& size, int round_type, float radius);
 
 		virtual void Draw (const glm::mat4& mvp, short gamma = 0);
 
@@ -67,6 +71,9 @@ namespace BlendInt {
 
 	private:
 
+		// Disable default constructor
+		Shadow();
+
 		void InitializeShadow ();
 
 		/**
@@ -77,13 +84,11 @@ namespace BlendInt {
 		 * @param[in] depth The shadow size
 		 * @param[out] vertices The vertices created
 		 */
-		void GenerateShadowVerticesExt (const Size& size, int round_type, float radius, int depth, std::vector<GLfloat>& vertices);
+		void GenerateShadowVerticesExt (const Size& size, int round_type, float radius, std::vector<GLfloat>& vertices);
 
 		GLuint m_vao;
 
 		RefPtr<GLArrayBuffer> m_buffer;
-
-		int m_depth;
 
 	};
 

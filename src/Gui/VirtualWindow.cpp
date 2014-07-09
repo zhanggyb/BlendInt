@@ -284,7 +284,7 @@ namespace BlendInt {
 	void VirtualWindow::InitializeVirtualWindow ()
 	{
 		set_round_corner_type(RoundTopLeft | RoundTopRight);
-
+		set_round_corner_radius(10.f);
 		set_size(400, 300);
 
 		// set decoration

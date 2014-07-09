@@ -100,10 +100,10 @@ namespace BlendInt {
 		// set shadow
 		if(widget->drop_shadow()) {
 			if(!widget->m_shadow) {
-				widget->m_shadow.reset(new Shadow);
+				widget->m_shadow.reset(new Shadow(widget->size(), widget->round_corner_type(), widget->round_corner_radius()));
+			} else {
+				widget->m_shadow->Update(widget->size(), widget->round_corner_type(), widget->round_corner_radius());
 			}
-
-			widget->m_shadow->Resize(widget->size());
 		}
 
 		events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyed);
@@ -147,6 +147,63 @@ namespace BlendInt {
 
 				default:
 					break;
+			}
+		}
+
+		if (request.source()->container() == this) {
+
+			switch (request.type()) {
+
+				case WidgetPosition: {
+					//m_layers[request.source()->z()].m_hover_list_valid = false;
+					break;
+				}
+
+				case WidgetSize: {
+					//m_layers[request.source()->z()].m_hover_list_valid = false;
+
+					const Size* size_p =
+					        static_cast<const Size*>(request.data());
+
+					if (request.source()->drop_shadow()
+							&& request.source()->m_shadow) {
+						request.source()->m_shadow->Resize(*size_p);
+					}
+
+					break;
+				}
+
+				case WidgetRoundCornerType: {
+					//m_layers[request.source()->z()].m_hover_list_valid = false;
+
+					const int* type_p =
+					        static_cast<const int*>(request.data());
+
+					if (request.source()->drop_shadow()
+							&& request.source()->m_shadow) {
+						request.source()->m_shadow->SetRoundType(*type_p);
+					}
+
+					break;
+				}
+
+				case WidgetRoundCornerRadius: {
+					//m_layers[request.source()->z()].m_hover_list_valid = false;
+
+					const float* radius_p =
+					        static_cast<const float*>(request.data());
+
+					if (request.source()->drop_shadow()
+							&& request.source()->m_shadow) {
+						request.source()->m_shadow->SetRadius(*radius_p);
+					}
+
+					break;
+				}
+
+				default:
+					break;
+
 			}
 		}
 
