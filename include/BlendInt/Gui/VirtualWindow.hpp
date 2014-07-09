@@ -81,14 +81,6 @@ namespace BlendInt {
 		GLuint m_vao[1];
 
 		RefPtr<GLArrayBuffer> m_inner;
-		//RefPtr<GLArrayBuffer> m_outer;
-
-		bool m_pressed;
-
-		Point m_last;
-		Point m_cursor;
-
-		ScissorStatus scissor_status;
 
 	};
 

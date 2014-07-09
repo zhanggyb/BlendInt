@@ -44,10 +44,14 @@
 namespace BlendInt {
 
 	VirtualWindow::VirtualWindow ()
-	: AbstractVectorContainer(2),
-	  m_pressed (false)
+	: AbstractVectorContainer(2)
 	{
+		set_round_corner_type(RoundTopLeft | RoundTopRight);
+		set_round_corner_radius(10.f);
+		set_size(400, 300);
+
 		set_drop_shadow(true);
+
 		InitializeVirtualWindow();
 	}
 
@@ -95,12 +99,6 @@ namespace BlendInt {
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 
-//		program->SetUniform1i("AA", 1);
-//		program->SetVertexAttrib4f("Color", 1.f, 1.f, 1.f, 0.4f);
-//
-//		glBindVertexArray(m_vao[1]);
-//		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4 * 2 + 2);
-
 		glBindVertexArray(0);
 		program->Reset();
 
@@ -136,33 +134,18 @@ namespace BlendInt {
 
 	ResponseType BlendInt::VirtualWindow::MousePressEvent (const MouseEvent& event)
 	{
-		m_last = position();
-		m_cursor = event.position();
-		m_pressed = true;
-
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType BlendInt::VirtualWindow::MouseReleaseEvent (
 	        const MouseEvent& event)
 	{
-		m_pressed = false;
-
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType BlendInt::VirtualWindow::MouseMoveEvent (const MouseEvent& event)
 	{
-		if(m_pressed) {
-
-			int offset_x = event.position().x() - m_cursor.x();
-			int offset_y = event.position().y() - m_cursor.y();
-
-			SetPosition(m_last.x() + offset_x, m_last.y() + offset_y);
-
-		}
-
-		return Accept;
+		return Ignore;
 	}
 
 	void VirtualWindow::UpdateGeometry (const GeometryUpdateRequest& request)
@@ -180,7 +163,6 @@ namespace BlendInt {
 					MoveSubWidgets(x, y);
 
 					set_position(*pos_p);
-					FillSubWidgets();
 
 					Refresh();
 					break;
@@ -194,8 +176,6 @@ namespace BlendInt {
 					        round_corner_type(), round_corner_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
-//					m_outer->Bind();
-//					tool.SetOuterBufferData(m_outer.get());
 
 					set_size(*size_p);
 
@@ -211,8 +191,6 @@ namespace BlendInt {
 					        round_corner_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
-//					m_outer->Bind();
-//					tool.SetOuterBufferData(m_outer.get());
 
 					set_round_corner_type(*type_p);
 					Refresh();
@@ -227,8 +205,6 @@ namespace BlendInt {
 					        round_corner_type(), *radius_p);
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
-//					m_outer->Bind();
-//					tool.SetOuterBufferData(m_outer.get());
 
 					set_round_corner_radius(*radius_p);
 					Refresh();
@@ -283,10 +259,6 @@ namespace BlendInt {
 
 	void VirtualWindow::InitializeVirtualWindow ()
 	{
-		set_round_corner_type(RoundTopLeft | RoundTopRight);
-		set_round_corner_radius(10.f);
-		set_size(400, 300);
-
 		// set decoration
 		Decoration* dec = Manage(new Decoration);
 		DBG_SET_NAME(dec, "Decoration");
@@ -308,14 +280,6 @@ namespace BlendInt {
 		tool.SetInnerBufferData(m_inner.get());
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
-
-//		glBindVertexArray(m_vao[1]);
-//		m_outer.reset(new GLArrayBuffer);
-//		m_outer->Generate();
-//		m_outer->Bind();
-//		tool.SetOuterBufferData(m_outer.get());
-//		glEnableVertexAttribArray(0);
-//		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();

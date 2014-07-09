@@ -44,7 +44,8 @@ namespace BlendInt {
 
 	Decoration::Decoration()
 	: AbstractDequeContainer(),
-	  m_space(4)
+	  m_space(4),
+	  m_pressed(false)
 	{
 		set_size(200, 20);
 		InitializeDecoration();
@@ -206,17 +207,32 @@ namespace BlendInt {
 
 	ResponseType Decoration::MousePressEvent (const MouseEvent& event)
 	{
+		if(container()) {
+			m_last = container()->position();
+			m_cursor = event.position();
+			m_pressed = true;
+		}
+
 		return Accept;
 	}
 
 	ResponseType Decoration::MouseReleaseEvent (const MouseEvent& event)
 	{
+		m_pressed = false;
 		return Accept;
 	}
 
 	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
 	{
-		return Ignore;
+		if (container() && m_pressed) {
+
+			int offset_x = event.position().x() - m_cursor.x();
+			int offset_y = event.position().y() - m_cursor.y();
+
+			container()->SetPosition(m_last.x() + offset_x,
+			        m_last.y() + offset_y);
+		}
+		return Accept;
 	}
 
 	void Decoration::InitializeDecoration()

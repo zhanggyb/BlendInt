@@ -96,6 +96,11 @@ namespace BlendInt {
 		 */
 		int m_space;
 
+		bool m_pressed;
+
+		Point m_last;
+		Point m_cursor;
+
 		RefPtr<GLArrayBuffer> m_inner;
 	};
 

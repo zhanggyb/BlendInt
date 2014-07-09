@@ -140,6 +140,7 @@ namespace BlendInt
 
 		}
 
+#ifdef DEBUG
 		if(!section->managed()) {
 			DBG_PRINT_MSG("Warning: the section %s is not set managed", section->name().c_str());
 		}
@@ -151,6 +152,7 @@ namespace BlendInt
 		char buf[32];
 		sprintf(buf, "Section %ld", m_sections.size());
 		DBG_SET_NAME(section, buf);
+#endif
 
 		m_sections.push_back(section);
 		SetContainer(section, this);
