@@ -43,7 +43,7 @@ TEST_F(FrameTest1, Foo1)
     frame->SetMargin(10, 10, 4, 4);
     frame->Resize(200, 200);
 
-    context->AddWidget(frame);
+    context->PushBack(frame);
 
     RunLoop(win);
 

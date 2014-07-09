@@ -32,7 +32,7 @@ TEST_F(SliderTest1, Foo1)
     Slider* slider = Manage(new Slider);
     slider->SetPosition(200, 200);
 
-	context->AddWidget(slider);
+	context->PushBack(slider);
 
     RunLoop(win);
 

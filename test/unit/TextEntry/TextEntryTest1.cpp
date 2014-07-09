@@ -34,8 +34,8 @@ TEST_F(TextEntryTest1, Foo1)
     Label* label = Manage(new Label("Label"));
     label->SetPosition(420, 200);
 
-    context->AddWidget(lineedit);
-    context->AddWidget(label);
+    context->PushBack(lineedit);
+    context->PushBack(label);
 
 	RunLoop(window);
 

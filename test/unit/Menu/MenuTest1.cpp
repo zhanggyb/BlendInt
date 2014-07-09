@@ -42,7 +42,7 @@ TEST_F(MenuTest1, Foo1)
 	menu->AddAction("MenuItem4", "Ctrl + 1");
 	menu->AddAction("MenuItem5");
 
-	context->AddWidget(menu);
+	context->PushBack(menu);
 
 	RunLoop(window);
 

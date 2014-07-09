@@ -48,7 +48,7 @@ TEST_F(TabTest1, Foo1)
 
     tab->Resize(500, 300);
 
-    context->AddWidget(tab);
+    context->PushBack(tab);
 
     RunLoop(win);
 

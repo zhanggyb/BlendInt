@@ -33,7 +33,7 @@ TEST_F(ExpanderTest1, Foo1)
 	expander->SetPosition(200, 200);
 	//expander->Resize(200, 200);
 
-	context->AddWidget(expander);
+	context->PushBack(expander);
 
 	Button* btn1 = Manage(new Button("Click me"));
 

@@ -37,7 +37,7 @@ TEST_F(ImageViewTest1, Foo1)
 	//view->Open("test.png");
 	view->Resize(500, 400);
 
-	context->AddWidget(view);
+	context->PushBack(view);
 
 
     RunLoop(win);

@@ -181,8 +181,6 @@ namespace BlendInt {
 		std::vector<GLfloat> vertices;
 		GenerateShadowVerticesExt(size(), round_type(), radius(), vertices);
 
-		DBG_PRINT_MSG("vertex size: %ld", vertices.size());
-
 		m_buffer.reset(new GLArrayBuffer);
 		m_buffer->Generate();
 		m_buffer->Bind();

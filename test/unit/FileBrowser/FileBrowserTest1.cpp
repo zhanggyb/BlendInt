@@ -32,7 +32,7 @@ TEST_F(FileBrowserTest1, Foo1)
 	FileBrowser* fb = Manage(new FileBrowser);
 	fb->SetPosition(50, 50);
 	
-	context->AddWidget(fb);
+	context->PushBack(fb);
 
     RunLoop(win);
 

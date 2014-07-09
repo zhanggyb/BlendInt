@@ -80,6 +80,12 @@ namespace BlendInt
 			DBG_PRINT_MSG("Error: %s", "Context MUST NOT be in any other container");
 		}
 
+		if (m_focused_widget) {
+			m_focused_widget->set_focus(false);
+			m_focused_widget->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
+			m_focused_widget = 0;
+		}
+
 		Section* sections = 0;
 		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin(); it != m_sections.rend(); it++)
 		{
@@ -104,7 +110,7 @@ namespace BlendInt
 		context_set.erase(this);
 	}
 
-	Section* Context::AddWidget (AbstractWidget* widget)
+	Section* Context::PushBack (AbstractWidget* widget)
 	{
 		if(!widget) {
 			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
@@ -134,6 +140,14 @@ namespace BlendInt
 
 		}
 
+		if(!section->managed()) {
+			DBG_PRINT_MSG("Warning: the section %s is not set managed", section->name().c_str());
+		}
+
+		if(section->m_set.size() == 0) {
+			DBG_PRINT_MSG("Warning: trying to add an emptry section %s in a context, it will not be delete automatically", section->name().c_str());
+		}
+
 		char buf[32];
 		sprintf(buf, "Section %ld", m_sections.size());
 		DBG_SET_NAME(section, buf);
@@ -150,51 +164,35 @@ namespace BlendInt
 		return section;
 	}
 
-	void Context::AddSection (Section* section)
-	{
-		if(section && (section->m_set.size() > 0)) {
-
-			if(section->container() == this) {
-				DBG_PRINT_MSG("Section %s is alreay in context %s",
-						section->name().c_str(),
-						name().c_str());
-				return;
-			}
-
-			AbstractContainer::RemoveSubWidget(section->container(), section);
-
-			m_sections.push_back(section);
-			SetContainer(section, this);
-			ResizeSubWidget(section, size());
-
-			events()->connect(section->destroyed(), this, &Context::OnSubWidgetDestroyed);
-
-			CheckSubWidgetAddedInContainer(section);
-
-			return;
-
-		} else {
-			DBG_PRINT_MSG("Warning: %s", "the section is not added in context, it's not valid or empty");
-		}
-	}
-
-	void Context::RemoveWidget (AbstractWidget* widget)
+	Section* Context::Remove (AbstractWidget* widget)
 	{
 		if(!widget) {
 			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
-			return;
+			return 0;
 		}
 
 		// if the container is a section, the section will destroy itself if it's empty
-		AbstractContainer* container = widget->container();
-		AbstractContainer::RemoveSubWidget(container, widget);
-	}
 
-	void Context::RemoveSection (Section* section)
-	{
-		if(section && section->container() == this) {
-			RemoveSubWidget(section);
+		Section* section = widget->GetSection();
+
+		assert(section->container() == this);
+
+		AbstractContainer::RemoveSubWidget(widget->container(), widget);
+
+		if(section->m_set.size() == 0) {
+
+			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
+			if(section->managed() && (section->count() == 0)) {
+				delete section;
+				section = 0;
+			} else {
+				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
+						", and it's referenced by a smart pointer, it will not be deleted automatically");
+			}
+
 		}
+
+		return section;
 	}
 
 	int Context::GetMaxLayer () const
@@ -527,11 +525,13 @@ namespace BlendInt
 
 		}
 
+		/*
 		if(m_focused_widget) {
 			DBG_PRINT_MSG("focus widget: %s", m_focused_widget->name().c_str());
 		} else {
 			DBG_PRINT_MSG("%s", "focus widget unset");
 		}
+		*/
 
 		return response;
 	}

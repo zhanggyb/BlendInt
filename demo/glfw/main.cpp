@@ -81,7 +81,14 @@ int main(int argc, char* argv[])
 
 	vw->SetPosition(200, 200);
 
-	context->AddWidget(vw);
+	context->PushBack(vw);
+
+	VirtualWindow* vw2 = Manage(new VirtualWindow);
+
+	vw2->SetPosition(600, 400);
+
+	context->PushBack(vw2);
+
 
 #ifdef DEBUG
 	//context->PrintSections();

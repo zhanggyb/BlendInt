@@ -36,7 +36,7 @@ TEST_F(HLayoutTest1, Mix1)
 	hlayout->PushBack(widget1);
 	hlayout->PushBack(vlayout);
 
-	context->AddWidget(hlayout);
+	context->PushBack(hlayout);
 
 	RunLoop(window);
 

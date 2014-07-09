@@ -46,6 +46,11 @@ namespace BlendInt {
 
 		void Insert (AbstractWidget* widget);
 
+		/**
+		 * @brief Remove sub widget
+		 *
+		 * If the widget is last one in this section, call this funciton will delete this.
+		 */
 		void Remove (AbstractWidget* widget);
 
 	protected:

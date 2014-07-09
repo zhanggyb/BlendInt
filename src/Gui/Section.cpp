@@ -69,6 +69,8 @@ namespace BlendInt {
 
 			widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyed);
 
+			widget->m_container = 0;
+
 			if(widget->managed() && (widget->count() == 0)) {
 				delete widget;
 			}
@@ -114,6 +116,18 @@ namespace BlendInt {
 	void Section::Remove (AbstractWidget* widget)
 	{
 		RemoveSubWidget(widget);
+
+		if(m_set.size() == 0) {
+
+			if(managed() && (count() == 0)) {
+				DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
+				delete this;
+			} else {
+				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
+						", and it's referenced by a smart pointer, it will not be deleted automatically");
+			}
+
+		}
 	}
 
 	void Section::UpdateContainer (const ContainerUpdateRequest& request)
@@ -257,6 +271,7 @@ namespace BlendInt {
 
 		if(m_last_hover_widget) {
 
+			/*
 			{
 				DBG_PRINT_MSG("print hover widgets in section %s", name().c_str());
 				AbstractWidget* hover_widget = m_last_hover_widget;
@@ -266,29 +281,9 @@ namespace BlendInt {
 					hover_widget = hover_widget->container();
 				}
 			}
+			*/
 
 			return DispatchMousePressEvent(m_last_hover_widget, event);
-
-//			response = m_last_hover_widget->MousePressEvent(event);
-//
-//			if(response == Accept || response == AcceptAndBreak) {
-//				//widget = m_last_hover_widget;
-//			} else {
-//
-//				AbstractWidget* parent = m_last_hover_widget->container();
-//				while (parent && parent != this) {
-//
-//					response = parent->MousePressEvent(event);
-//
-//					if(response == Accept || response == AcceptAndBreak) {
-//						//widget = parent;
-//						break;
-//					}
-//
-//					parent = m_last_hover_widget->container();
-//				}
-//
-//			}
 
 		} else {
 			return Ignore;
@@ -301,15 +296,17 @@ namespace BlendInt {
 
 		if(m_last_hover_widget) {
 
-//			{
-//				DBG_PRINT_MSG("print hover widgets in section %s", name().c_str());
-//				AbstractWidget* hover_widget = m_last_hover_widget;
-//
-//				while(hover_widget != this) {
-//					DBG_PRINT_MSG("\t%s", hover_widget->name().c_str());
-//					hover_widget = hover_widget->container();
-//				}
-//			}
+			/*
+			{
+				DBG_PRINT_MSG("print hover widgets in section %s", name().c_str());
+				AbstractWidget* hover_widget = m_last_hover_widget;
+
+				while(hover_widget != this) {
+					DBG_PRINT_MSG("\t%s", hover_widget->name().c_str());
+					hover_widget = hover_widget->container();
+				}
+			}
+			*/
 
 			return DispatchMouseReleaseEvent(m_last_hover_widget, event);
 
@@ -369,10 +366,6 @@ namespace BlendInt {
 		}
 
 		CheckSubWidgetRemovedInContainer(widget);
-
-		if((m_set.size()) == 0 && managed()) {
-			delete this;
-		}
 
 		return true;
 	}
@@ -522,9 +515,14 @@ namespace BlendInt {
 
 		if(m_set.size() == 0) {
 
-			DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
+			if(managed() && (count() == 0)) {
+				DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
+				delete this;
+			} else {
+				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
+						", and it's referenced by a smart pointer, it will not be deleted automatically");
+			}
 
-			delete this;
 		}
 	}
 
@@ -536,14 +534,14 @@ namespace BlendInt {
 
 			if(widget->container()) {
 				if(DispatchMousePressEvent(widget->container(), event) == Ignore) {
-					DBG_PRINT_MSG("mouse press in %s and get ignore", widget->name().c_str());
+					//DBG_PRINT_MSG("mouse press in %s and get ignore", widget->name().c_str());
 					return widget->MousePressEvent(event);
 				} else {
 					return Accept;
 				}
 
 			} else {
-				DBG_PRINT_MSG("mouse press in %s", widget->name().c_str());
+				//DBG_PRINT_MSG("mouse press in %s", widget->name().c_str());
 				return widget->MousePressEvent(event);
 			}
 
@@ -558,7 +556,7 @@ namespace BlendInt {
 
 			if(widget->container()) {
 				if(DispatchMouseReleaseEvent(widget->container(), event) == Ignore) {
-					DBG_PRINT_MSG("mouse press in %s and get ignore", widget->name().c_str());
+					//DBG_PRINT_MSG("mouse press in %s and get ignore", widget->name().c_str());
 					return widget->MouseReleaseEvent(event);
 				} else {
 					return Accept;

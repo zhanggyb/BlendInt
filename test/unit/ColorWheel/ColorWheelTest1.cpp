@@ -33,7 +33,7 @@ TEST_F(ColorWheelTest1, Foo1)
     wheel->SetPosition(100, 100);
     wheel->Resize(250, 250);
 
-    context->AddWidget(wheel);
+    context->PushBack(wheel);
 
     RunLoop(win);
 

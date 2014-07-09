@@ -398,7 +398,7 @@ namespace BlendInt {
 		if(original_active) {	// If menu shows in context
 			RefPtr<Menu> menu = original_active->menu();
 			Context* context = GetContext();
-			context->RemoveWidget(menu.get());
+			context->Remove(menu.get());
 			original_active->SetRoundCornerType(RoundAll);
 
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
@@ -420,7 +420,7 @@ namespace BlendInt {
 			}
 
 			menu->SetPosition(m_active_button->position().x(), y);
-			context->AddWidget(menu.get());
+			context->PushBack(menu.get());
 			m_active_button->SetRoundCornerType(RoundTopLeft | RoundTopRight);
 			context->SetFocusedWidget(menu.get());
 
@@ -439,7 +439,7 @@ namespace BlendInt {
 				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
 				Context* context = GetContext();
-				context->RemoveWidget(menu.get());
+				context->Remove(menu.get());
 				m_active_button->SetRoundCornerType(RoundAll);
 			}
 
@@ -459,7 +459,7 @@ namespace BlendInt {
 
 			if(type == WidgetVisibility) {
 				Context* context = GetContext();
-				context->RemoveWidget(menu);
+				context->Remove(menu);
 			}
 		}
 

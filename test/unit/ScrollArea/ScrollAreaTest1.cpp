@@ -35,7 +35,7 @@ TEST_F(ScrollAreaTest1, Foo1)
     area->SetPosition(20, 20);
     area->Resize(500, 400);
 
-    context->AddWidget(area);
+    context->PushBack(area);
 
     RunLoop(win);
 

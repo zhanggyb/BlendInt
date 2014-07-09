@@ -64,26 +64,18 @@ namespace BlendInt {
 		 * @brief Add a widget in a new section
 		 *
 		 * @note The section will be deleted if the last sub widget is removed or destroyed.
-		 */
-		Section* AddWidget (AbstractWidget* widget);
-
-		/**
-		 * @brief Add a section
 		 *
-		 * The Section must not be empty
+		 * The widget could also be a Section object
 		 *
-		 * @note If the section is set managed it will be deleted automatically when it's last sub widget is removed or deleted
 		 */
-		void AddSection (Section* section);
+		Section* PushBack (AbstractWidget* widget);
 
 		/**
 		 * @brief Remove widget from this context
 		 *
 		 * @warning: this function will remove widget from any container, if it's in a section hold by this container, the section will be destroyed by itself if managed.
 		 */
-		void RemoveWidget (AbstractWidget* widget);
-
-		void RemoveSection (Section* section);
+		Section* Remove (AbstractWidget* widget);
 
 		void SetFocusedWidget (AbstractWidget* widget);
 

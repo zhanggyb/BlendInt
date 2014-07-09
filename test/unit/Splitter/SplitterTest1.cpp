@@ -45,7 +45,7 @@ TEST_F(SplitterTest1, Foo1)
 	splitter->PushBack(btn2);
 	splitter->PushBack(btn3);
 	
-	context->AddWidget(splitter);
+	context->PushBack(splitter);
 
 	splitter->Resize(400, 200);
 	splitter->SetPosition(100, 100);
