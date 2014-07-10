@@ -40,9 +40,4 @@ namespace BlendInt {
 	{
 	}
 
-	void RoundForm::Draw(const glm::mat4& mvp)
-	{
-
-	}
-
 }

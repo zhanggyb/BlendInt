@@ -38,8 +38,6 @@ namespace BlendInt {
 
 		virtual ~RoundForm();
 
-		virtual void Draw (const glm::mat4& mvp);
-
 	protected:
 
 		virtual void UpdateGeometry (const UpdateRequest& request);

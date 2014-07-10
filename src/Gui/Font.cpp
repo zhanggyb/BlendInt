@@ -136,7 +136,40 @@ namespace BlendInt {
 		m_shadow_offset_y = offset_y;
 	}
 
-	int Font::Print (int x, int y, const std::string& string, size_t length, size_t start) const
+	int Font::Print (const Point& pos, const std::string& string,
+	        size_t start) const
+	{
+		return Print(pos.x(), pos.y(), 0.f, string, string.length(), start);
+	}
+
+	int Font::Print (const Point& pos, const std::string& string, size_t length,
+	        size_t start) const
+	{
+		return Print(pos.x(), pos.y(), 0.f, string, length, start);
+	}
+
+	int Font::Print (const glm::vec2& pos, const std::string& string, size_t length, size_t start) const
+	{
+		return Print(pos.x, pos.y, 0.f, string, length, start);
+	}
+
+	int Font::Print (const glm::vec3& pos, const std::string& string, size_t length, size_t start) const
+	{
+		return Print(pos.x, pos.y, pos.z, string, length, start);
+	}
+
+	int Font::Print (float x, float y, const std::string& string, size_t start) const
+	{
+		return Print(x, y, 0.f, string, string.length(), start);
+	}
+
+	int Font::Print (float x, float y, const std::string& string, size_t length, size_t start) const
+	{
+		return Print(x, y, 0.f, string, length, start);
+	}
+
+	int Font::Print (float x, float y, float z, const std::string& string,
+	        size_t length, size_t start) const
 	{
 		using Stock::Shaders;
 
@@ -165,7 +198,7 @@ namespace BlendInt {
 
 		if(m_shadow) {
 
-			program->SetUniform3f("u_position", tx, ty, 0.f);
+			program->SetUniform3f("u_position", tx, ty, z);
 			program->SetUniform4f("u_color",
 					m_color.r() / 4,
 					m_color.g() / 4,
@@ -186,7 +219,7 @@ namespace BlendInt {
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 				tx += glyph_p->advance_x;
-				program->SetUniform3f("u_position", tx, ty, 0.f);
+				program->SetUniform3f("u_position", tx, ty, z);
 			}
 
 		}
@@ -194,7 +227,7 @@ namespace BlendInt {
 		tx = x + m_pen.x();
 		ty = y + m_pen.y();
 
-		program->SetUniform3f("u_position", tx, ty, 0.f);
+		program->SetUniform3f("u_position", tx, ty, z);
 		program->SetUniform4fv("u_color", 1, m_color.data());
 
 		it = string.begin();
@@ -213,7 +246,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			tx += glyph_p->advance_x;
-			program->SetUniform3f("u_position", tx, ty, 0.f);
+			program->SetUniform3f("u_position", tx, ty, z);
 		}
 
 		glBindVertexArray(0);
@@ -222,20 +255,43 @@ namespace BlendInt {
 		program->Reset();
 
 		return advance;
-
 	}
 
-	int Font::Print (int x, int y, const std::string& string, size_t start) const
+	int Font::Print (const Point& pos, const String& string, size_t length,
+	        size_t start) const
 	{
-		return Print(x, y, string, string.length(), start);
+		return Print(pos.x(), pos.y(), 0.f, string, length, start);
 	}
 
-	int Font::Print (int x, int y, const String& string, size_t start) const
+	int Font::Print (const Point& pos, const String& string, size_t start) const
 	{
-		return Print(x, y, string, string.length(), start);
+		return Print(pos.x(), pos.y(), 0.f, string, string.length(), start);
 	}
 
-	int Font::Print (int x, int y, const String& string, size_t length,
+	int Font::Print (const glm::vec2& pos, const String& string, size_t length,
+	        size_t start) const
+	{
+		return Print(pos.x, pos.y, 0.f, string, length, start);
+	}
+
+	int Font::Print (const glm::vec3& pos, const String& string, size_t length,
+	        size_t start) const
+	{
+		return Print(pos.x, pos.y, pos.z, string, length, start);
+	}
+
+	int Font::Print (float x, float y, const String& string, size_t start) const
+	{
+		return Print(x, y, 0.f, string, string.length(), start);
+	}
+
+	int Font::Print (float x, float y, const String& string, size_t length,
+	        size_t start) const
+	{
+		return Print(x, y, 0.f, string, length, start);
+	}
+
+	int Font::Print (float x, float y, float z, const String& string, size_t length,
 	        size_t start) const
 	{
 		using Stock::Shaders;
@@ -265,7 +321,7 @@ namespace BlendInt {
 
 		if(m_shadow) {
 
-			program->SetUniform3f("u_position", tx, ty, 0.f);
+			program->SetUniform3f("u_position", tx, ty, z);
 			program->SetUniform4f("u_color",
 					m_color.r() / 4,
 					m_color.g() / 4,
@@ -286,7 +342,7 @@ namespace BlendInt {
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 				tx += glyph_p->advance_x;
-				program->SetUniform3f("u_position", tx, ty, 0.f);
+				program->SetUniform3f("u_position", tx, ty, z);
 			}
 
 		}
@@ -294,7 +350,7 @@ namespace BlendInt {
 		tx = x + m_pen.x();
 		ty = y + m_pen.y();
 
-		program->SetUniform3f("u_position", tx, ty, 0.f);
+		program->SetUniform3f("u_position", tx, ty, z);
 		program->SetUniform4fv("u_color", 1, m_color.data());
 
 		it = string.begin();
@@ -313,7 +369,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			tx += glyph_p->advance_x;
-			program->SetUniform3f("u_position", tx, ty, 0.f);
+			program->SetUniform3f("u_position", tx, ty, z);
 		}
 
 		glBindVertexArray(0);
@@ -322,232 +378,6 @@ namespace BlendInt {
 		program->Reset();
 
 		return advance;
-	}
-
-	int Font::Print (const glm::mat4& mvp, const std::string& string,
-	        size_t start) const
-	{
-		return Print(mvp, string, string.length(), start);
-	}
-
-	int Font::Print (const glm::mat4& mvp, const std::string& string, size_t length,
-	        size_t start) const
-	{
-		using Stock::Shaders;
-
-		if(length == 0)	return 0;
-
-		int advance = 0;	// the return value
-
-		glm::mat4 glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
-		RefPtr<GLSLProgram> program = Shaders::instance->default_text_program();
-
-		program->Use();
-
-		glActiveTexture(GL_TEXTURE0);
-
-		program->SetUniform1i("u_tex", 0);
-
-		size_t str_length = std::min(string.length(), length);
-
-		// TODO: support left->right, and right->left text
-		std::string::const_iterator it;
-		const GlyphExt* glyph_p = 0;
-
-		glBindVertexArray(m_cache->m_vao);
-		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
-
-		if(m_shadow) {
-
-			// TODO: define a curve to get a offset x, y to draw a good shadow
-			glm::mat4 shadow_offset = glm::translate(glm::mat4(1.0), glm::vec3(m_shadow_offset_x, m_shadow_offset_y, 0.f));
-			glyph_pos = glyph_pos * shadow_offset;
-
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
-			program->SetUniform4f("color",
-					m_color.r() / 4,
-					m_color.g() / 4,
-					m_color.b() / 4,
-					m_color.a() / 4);
-
-			it = string.begin();
-			std::advance(it, start);
-
-
-			for (size_t i = 0; i < str_length; it++, i++) {
-				glyph_p = m_cache->Query(m_data, *it);
-				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->texture());
-
-				advance += glyph_p->advance_x;
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-								&(glyph_p->vertices[0]),
-								GL_DYNAMIC_DRAW);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-				glyph_pos = glm::translate(glyph_pos,
-								glm::vec3(glyph_p->advance_x,
-												0, 0));
-				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-								glm::value_ptr(glyph_pos));
-			}
-
-			// restore mvp
-			glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
-		}
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
-		program->SetUniform4fv("color", 1, m_color.data());
-
-		it = string.begin();
-		std::advance(it, start);
-
-		for (size_t i = 0; i < str_length; it++, i++) {
-
-			glyph_p = m_cache->Query(m_data, *it);
-			glBindTexture(GL_TEXTURE_2D, glyph_p->texture->texture());
-
-			advance += glyph_p->advance_x;
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-							&(glyph_p->vertices[0]),
-							GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			glyph_pos = glm::translate(glyph_pos, glm::vec3(glyph_p->advance_x, 0, 0));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-			        glm::value_ptr(glyph_pos));
-		}
-
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		program->Reset();
-
-		return advance;
-	}
-
-	int Font::Print (const glm::mat4& mvp, float x, float y,
-	        const std::string& string, size_t start) const
-	{
-		return Print(mvp, x, y, string, string.length(), start);
-	}
-
-	int Font::Print (const glm::mat4& mvp, float x, float y,
-	        const std::string& string, size_t length, size_t start) const
-	{
-		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.f));
-		return Print(translated_mvp, string, length, start);
-	}
-
-	int Font::Print (const glm::mat4& mvp, const String& string,
-	        size_t start) const
-	{
-		return Print(mvp, string, string.length(), start);
-	}
-
-	int Font::Print (const glm::mat4& mvp, const String& string,
-					size_t length, size_t start) const
-	{
-		using Stock::Shaders;
-
-		if(length == 0)	return 0;
-
-		int advance = 0;	// the return value
-
-		glm::mat4 glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
-		RefPtr<GLSLProgram> program = Shaders::instance->default_text_program();
-
-		program->Use();
-
-		glActiveTexture(GL_TEXTURE0);
-
-		program->SetUniform1i("tex", 0);
-
-		size_t str_length = std::min(string.length(), length);
-
-		// TODO: support left->right, and right->left text
-		String::const_iterator it;
-		const GlyphExt* glyph_p = 0;
-
-		glBindVertexArray(m_cache->m_vao);
-		glBindBuffer(GL_ARRAY_BUFFER, m_cache->m_vbo);
-
-		if(m_shadow) {
-
-			// TODO: define a curve to get a offset x, y to draw a good shadow
-			glm::mat4 shadow_offset = glm::translate(glm::mat4(1.0), glm::vec3(m_shadow_offset_x, m_shadow_offset_y, 0.f));
-			glyph_pos = glyph_pos * shadow_offset;
-
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
-			program->SetUniform4f("color",
-					m_color.r() / 4.f,
-					m_color.g() / 4.f,
-					m_color.b() / 4.f,
-					m_color.a() / 4.f);
-
-			it = string.begin();
-			std::advance(it, start);
-			for (size_t i = 0; i < str_length; it++, i++) {
-				glyph_p = m_cache->Query(m_data, *it);
-				glBindTexture(GL_TEXTURE_2D, glyph_p->texture->texture());
-
-				advance += glyph_p->advance_x;
-				glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-								&(glyph_p->vertices[0]),
-								GL_DYNAMIC_DRAW);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-				glyph_pos = glm::translate(glyph_pos,
-								glm::vec3(glyph_p->advance_x,
-												0, 0));
-				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-								glm::value_ptr(glyph_pos));
-			}
-
-			// restore mvp
-			glyph_pos = glm::translate(mvp, glm::vec3(m_pen.x(), m_pen.y(), 0.0));
-		}
-
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(glyph_pos));
-		program->SetUniform4fv("color", 1, m_color.data());
-
-		it = string.begin();
-		std::advance(it, start);
-
-		for (size_t i = 0; i < str_length; it++, i++) {
-
-			glyph_p = m_cache->Query(m_data, *it);
-			glBindTexture(GL_TEXTURE_2D, glyph_p->texture->texture());
-
-			advance += glyph_p->advance_x;
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GlyphVertex) * 4,
-							&(glyph_p->vertices[0]),
-							GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			glyph_pos = glm::translate(glyph_pos, glm::vec3(glyph_p->advance_x, 0, 0));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-			        glm::value_ptr(glyph_pos));
-		}
-
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		program->Reset();
-
-		return advance;
-	}
-
-	int Font::Print(const glm::mat4& mvp, float x, float y, const String& string, size_t start) const
-	{
-		return Print(mvp, x, y, string, string.length(), start);
-	}
-
-	int Font::Print(const glm::mat4& mvp, float x, float y, const String& string, size_t length, size_t start) const
-	{
-		glm::mat4 translated_mvp = glm::translate(mvp, glm::vec3(x, y, 0.f));
-		return Print(translated_mvp, string, length, start);
 	}
 
 	Rect Font::GetTextOutline (const String& string) const
@@ -675,29 +505,6 @@ namespace BlendInt {
 		}
 
 		return width;
-	}
-
-	int Font::Print (const Point& pos, const std::string& string, size_t length,
-	        size_t start) const
-	{
-		return Print(pos.x(), pos.y(), string, length, start);
-	}
-
-	int Font::Print (const Point& pos, const std::string& string,
-	        size_t start) const
-	{
-		return Print(pos.x(), pos.y(), string, string.length(), start);
-	}
-
-	int Font::Print (const Point& pos, const String& string, size_t length,
-	        size_t start) const
-	{
-		return Print(pos.x(), pos.y(), string, length, start);
-	}
-
-	int Font::Print (const Point& pos, const String& string, size_t start) const
-	{
-		return Print(pos.x(), pos.y(), string, string.length(), start);
 	}
 
 	size_t Font::GetReversedTextWidth (const String& string,

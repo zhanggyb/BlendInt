@@ -130,6 +130,9 @@ namespace BlendInt {
 		m_index_buffer->SetData(indeces_size, sizeof(vertex_indices[0]), vertex_indices[0]);
 		m_index_buffer->Reset();
 
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
 		glBindVertexArray(0);
 	}
 
@@ -174,10 +177,47 @@ namespace BlendInt {
 		m_array_buffer->Reset();
 
 		glDisableVertexAttribArray(0);
+		glBindVertexArray(0);
 
 		program->Reset();
+	}
 
+	void VertexIcon::Draw(const glm::vec3& pos, float angle, float scale, const Color& color, short gamma)
+	{
+		using Stock::Shaders;
+
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		program->Use();
+
+		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+		program->SetUniform1i("u_gamma", gamma);
+		program->SetUniform1i("u_AA", 1);
+
+		program->SetUniform1f("u_rotation", angle);
+		program->SetUniform2f("u_scale", scale, scale);
+		program->SetVertexAttrib4fv("a_color", color.data());
+
+		glBindVertexArray(m_vao);
+		glEnableVertexAttribArray(0);
+
+		m_array_buffer->Bind();	// bind ARRAY BUFFER
+		m_index_buffer->Bind();	// bind ELEMENT ARRAY BUFFER
+
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glDrawElements(GL_TRIANGLES, m_index_buffer->vertices() * 3,
+						GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+
+		m_index_buffer->Reset();
+		m_array_buffer->Reset();
+
+		glDisableVertexAttribArray(0);
 		glBindVertexArray(0);
+
+		program->SetUniform1f("u_rotation", 0.f);
+		program->SetUniform2f("u_scale", 1.f, 1.f);
+
+		program->Reset();
 	}
 
 	void VertexIcon::Draw (const glm::vec3& pos, int x, int y,

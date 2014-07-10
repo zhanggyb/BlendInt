@@ -86,8 +86,8 @@ namespace BlendInt {
 		        ""
 				"void main(void) {"
 				"	mat4 mvp = u_projection * u_view * TranslateMatrix(u_position) * RotateMatrixAlongZ(u_rotation);"
-				"  gl_Position = mvp * vec4(a_coord.xy, 0.0, 1.0);"
-				"  uv = a_coord.zw;"
+				"	gl_Position = mvp * vec4(a_coord.xy, 0.0, 1.0);"
+				"	uv = a_coord.zw;"
 				"}";
 
 		const char* Shaders::text_fragment_shader =
