@@ -118,7 +118,7 @@ namespace BlendInt {
 
 	}
 
-	void SlideIcon::Draw (const glm::mat4& mvp, short gamma)
+	void SlideIcon::Draw (const glm::vec3& pos, short gamma)
 	{
 		using Stock::Shaders;
 
@@ -128,15 +128,15 @@ namespace BlendInt {
 						Shaders::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
+		program->SetUniform3f("u_position", pos.x, pos.y, 0.f);
 
 		if (m_highlight) {
-			program->SetUniform1i("Gamma", 15);
+			program->SetUniform1i("u_gamma", 15);
 		} else {
-			program->SetUniform1i("Gamma", 0);
+			program->SetUniform1i("u_gamma", 0);
 		}
 
-		program->SetUniform1i("AA", 0);
+		program->SetUniform1i("u_AA", 0);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -166,9 +166,10 @@ namespace BlendInt {
 		glDisableVertexAttribArray(1);
 
 		GLArrayBuffer::Reset();
-		program->SetVertexAttrib4fv("Color", Theme::instance->scroll().outline.data());
-		program->SetUniform1i("Gamma", 0);
-		program->SetUniform1i("AA", 1);
+
+		program->SetVertexAttrib4fv("a_color", Theme::instance->scroll().outline.data());
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 1);
 
 		m_outer_buffer->Bind();
 

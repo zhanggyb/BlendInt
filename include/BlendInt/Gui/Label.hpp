@@ -119,7 +119,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitLabel (const String& text);
+		void InitializeLabel (const String& text);
 
 		/**
 		 * @brief the text of the label

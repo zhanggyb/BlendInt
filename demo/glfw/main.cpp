@@ -78,14 +78,10 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	Workspace* ws = Manage(new Workspace);
+	VirtualWindow* vw = Manage(new VirtualWindow);
+	vw->SetPosition(200, 200);
 
-	ws->SetPosition(100, 100);
-	ws->Resize(800, 600);
-
-	ws->PushBack(Manage(new VirtualWindow));
-
-	context->PushBack(ws);
+	context->PushBack(vw);
 
 #ifdef DEBUG
 	//context->PrintSections();

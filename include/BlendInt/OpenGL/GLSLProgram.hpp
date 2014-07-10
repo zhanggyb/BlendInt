@@ -212,7 +212,11 @@ namespace BlendInt {
 
 		bool SetUniform2f (const char* name, GLfloat v0, GLfloat v1);
 
+		void SetUniform3f (GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
+
 		bool SetUniform3f (const char* name, GLfloat v0, GLfloat v1, GLfloat v2);
+
+		bool SetUniform3fv (const char* name, GLsizei count, const GLfloat* value);
 
 		void SetUniform4f (GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
 

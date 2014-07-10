@@ -127,25 +127,25 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+//		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
+//		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
 
 		if(text().size()) {
-			font().Print(mvp, text(), text_length(), 0);
+			font().Print(position(), text(), text_length(), 0);
 		}
 
 		RefPtr<VertexIcon> icon = Stock::Icons::instance->icon_num();
 
-		glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(1.5f, 1.5f, 1.5f));
-		glm::mat4 rotate;
-		if(checked()) {
-			rotate = glm::rotate(glm::mat4(1.f), (glm::mediump_float)(M_PI * 0.f), glm::vec3(0.0, 0.0, 1.0));
-		} else {
-			rotate = glm::rotate(glm::mat4(1.f), (glm::mediump_float)(M_PI * 1.5f), glm::vec3(0.0, 0.0, 1.0));
-		}
-		glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, size().height()/2.f, 0.0));
-
-		icon->Draw(mvp * translate * rotate * scale, Color(0x0F0F0FFF));
+//		glm::mat4 scale = glm::scale(glm::mat4(1.f), glm::vec3(1.5f, 1.5f, 1.5f));
+//		glm::mat4 rotate;
+//		if(checked()) {
+//			rotate = glm::rotate(glm::mat4(1.f), (glm::mediump_float)(M_PI * 0.f), glm::vec3(0.0, 0.0, 1.0));
+//		} else {
+//			rotate = glm::rotate(glm::mat4(1.f), (glm::mediump_float)(M_PI * 1.5f), glm::vec3(0.0, 0.0, 1.0));
+//		}
+//		glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, size().height()/2.f, 0.0));
+//
+//		icon->Draw(mvp * translate * rotate * scale, Color(0x0F0F0FFF));
 
 		return Accept;
 	}
@@ -413,16 +413,15 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		RefPtr<GLSLProgram> program =
 				Shaders::instance->default_triangle_program();
-
 		program->Use();
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
+
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
+
+		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,

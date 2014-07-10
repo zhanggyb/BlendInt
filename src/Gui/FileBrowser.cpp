@@ -59,29 +59,23 @@ namespace BlendInt {
 		namespace fs = boost::filesystem;
 
 		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(
-						event.projection_matrix() * event.view_matrix(), pos);
+		unsigned int i = 0;
+		int h = size().height();
+		h -= m_font.GetHeight();
+		pos.y = position().y() + h;
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-
-		unsigned int i = 0;
-
-		int h = size().height();
-		glm::mat4 local_mvp;
-
-		h -= m_font.GetHeight();
-		local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
-
 		program->Use();
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-						glm::value_ptr(local_mvp));
-		program->SetUniform1i("AA", 0);
+		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
+
 		program->SetVertexAttrib4f("Color", 0.475f, 0.475f, 0.475f, 0.75f);
 
 		if(i == m_index) {
-			program->SetUniform1i("Gamma", 25);
+			program->SetUniform1i("u_gamma", 25);
 		} else {
-			program->SetUniform1i("Gamma", 15);
+			program->SetUniform1i("u_gamma", 15);
 		}
 
 		glBindVertexArray(m_vao);
@@ -90,19 +84,18 @@ namespace BlendInt {
 
 		program->Reset();
 
-		m_font.Print(mvp, 0, h - m_font.GetDescender(),	String("."));
+		m_font.Print(pos.x, pos.y + h - m_font.GetDescender(),	String("."));
 		i++;
 
 		h -= m_font.GetHeight();
-		local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
+		pos.y = position().y() + h;
 
 		program->Use();
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-						glm::value_ptr(local_mvp));
+		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
 		if(i == m_index) {
-			program->SetUniform1i("Gamma", 25);
+			program->SetUniform1i("u_gamma", 25);
 		} else {
-			program->SetUniform1i("Gamma", 0);
+			program->SetUniform1i("u_gamma", 0);
 		}
 
 		glBindVertexArray(m_vao);
@@ -111,7 +104,7 @@ namespace BlendInt {
 
 		program->Reset();
 
-		m_font.Print(mvp, 0, h - m_font.GetDescender(), String(".."));
+		m_font.Print(pos.x, pos.y + h - m_font.GetDescender(), String(".."));
 		i++;
 
 		fs::path p(m_path);
@@ -121,7 +114,7 @@ namespace BlendInt {
 
 				if (fs::is_regular_file(p)) {
 
-					m_font.Print(mvp, 0, h - m_font.GetDescender(),
+					m_font.Print(pos.x, pos.y + h - m_font.GetDescender(),
 									p.native());
 
 				} else if (fs::is_directory(p)) {
@@ -135,19 +128,18 @@ namespace BlendInt {
 
 						h -= m_font.GetHeight();
 
-						local_mvp = glm::translate(mvp, glm::vec3(0.f, h, 0.f));
+						pos.y = position().y() + h;
 
 						program->Use();
-						program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-										glm::value_ptr(local_mvp));
+						program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
 
 						if(i == m_index) {
-							program->SetUniform1i("Gamma", 25);
+							program->SetUniform1i("u_gamma", 25);
 						} else {
 							if (dark) {
-								program->SetUniform1i("Gamma", 0);
+								program->SetUniform1i("u_gamma", 0);
 							} else {
-								program->SetUniform1i("Gamma", 15);
+								program->SetUniform1i("u_gamma", 15);
 							}
 						}
 
@@ -157,7 +149,7 @@ namespace BlendInt {
 
 						program->Reset();
 
-						m_font.Print(mvp, 0, h - m_font.GetDescender(),
+						m_font.Print(pos.x, pos.y + h - m_font.GetDescender(),
 										it->path().native());
 						dark = !dark;
 

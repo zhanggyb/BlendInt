@@ -123,34 +123,30 @@ namespace BlendInt {
 		using Stock::Shaders;
 		int outline_vertices = GetOutlineVertices(round_corner_type());
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		RefPtr<GLSLProgram> program =
-						Shaders::instance->default_triangle_program();
+				Shaders::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
 
-		program->SetVertexAttrib4fv("Color", m_color.data());
+		program->SetVertexAttrib4fv("a_color", m_color.data());
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, outline_vertices + 2);
 
-		program->SetUniform1i("AA", 1);
-		program->SetVertexAttrib4fv("Color", Theme::instance->regular().outline.data());
+		program->SetUniform1i("u_AA", 1);
+		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, outline_vertices * 2 + 2);
 
 		if (emboss()) {
-			program->SetVertexAttrib4f("Color", 1.0f, 1.0f, 1.0f, 0.16f);
+			program->SetVertexAttrib4f("a_color", 1.0f, 1.0f, 1.0f, 0.16f);
 
-			glm::mat4 emboss_mvp = glm::translate(mvp,
-							glm::vec3(0.f, -1.f, 0.f));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-							glm::value_ptr(emboss_mvp));
+			program->SetUniform3f("u_position", (float) position().x(), (float) position().y() - 1.f, 0.f);
+
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							GetHalfOutlineVertices(round_corner_type()) * 2);
 		}
@@ -159,7 +155,7 @@ namespace BlendInt {
 		program->Reset();
 
 		if(text().size()) {
-			font().Print(mvp, text(), text_length(), 0);
+			font().Print(position(), text(), text_length(), 0);
 		}
 
 		return Accept;

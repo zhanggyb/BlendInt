@@ -226,32 +226,32 @@ namespace BlendInt {
 		using Stock::Shaders;
 		using std::deque;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4fv("Color", Theme::instance->menu().inner.data());
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
+
+		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().inner.data());
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_corner_type()) + 2);
 
-		program->SetVertexAttrib4fv("Color", Theme::instance->menu().outline.data());
-		program->SetUniform1i("AA", 1);
+		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().outline.data());
+		program->SetUniform1i("u_AA", 1);
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
 
 		if(m_highlight) {
-			program->SetUniform1i("AA", 0);
+			program->SetUniform1i("u_AA", 0);
 
-			glm::mat4 h_mvp = glm::translate(mvp, glm::vec3(0.f, size().height() - round_corner_radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight), 0.f));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(h_mvp));
+			glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
+			pos.y = pos.y + size().height() - round_corner_radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight);
+
+			program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
 
 			glBindVertexArray(m_vao[2]);
 			glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -269,10 +269,15 @@ namespace BlendInt {
 			h = h - DefaultMenuItemHeight;
 
 			if((*it)->icon()) {
-				(*it)->icon()->Draw(mvp, 8, h + 8, 16, 16);
+				//(*it)->icon()->Draw(mvp, 8, h + 8, 16, 16);
 			}
-			advance = m_font.Print(mvp, 16 + DefaultIconSpace, h - m_font.GetDescender(), (*it)->text());
-			m_font.Print(mvp, 16 + DefaultIconSpace + advance + DefaultShortcutSpace, h - m_font.GetDescender(), (*it)->shortcut());
+			advance = m_font.Print(position().x() + 16 + DefaultIconSpace,
+			        position().y() + h - m_font.GetDescender(), (*it)->text());
+			m_font.Print(
+			        position().x() + 16 + DefaultIconSpace + advance
+			                + DefaultShortcutSpace,
+			        position().y() + h - m_font.GetDescender(),
+			        (*it)->shortcut());
 		}
 
 		return Accept;

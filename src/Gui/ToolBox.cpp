@@ -48,13 +48,23 @@ namespace BlendInt {
 	{
 		set_size(200, 400);
 
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0);
+
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
-		VertexTool tool;
-		tool.Setup(size(), 0, RoundNone, 0);
-		m_inner = tool.GenerateInnerBuffer();
+		m_inner.reset(new GLArrayBuffer);
+		m_inner->Generate();
+		m_inner->Bind();
+
+		tool.SetInnerBufferData(m_inner.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
 		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 	}
 
 	ToolBox::~ToolBox()
@@ -248,31 +258,19 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-
-		glBindVertexArray(m_vao);
-
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.f);
-		program->SetUniform1i("Gamma", 0);
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
+		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.f);
 
-		glEnableVertexAttribArray(0);
-		m_inner->Bind();
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							m_inner->GetBufferSize()
-											/ (2 * sizeof(GLfloat)));
-		m_inner->Reset();
-		glDisableVertexAttribArray(0);
+		glBindVertexArray(m_vao);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+		glBindVertexArray(0);
 
 		program->Reset();
-		glBindVertexArray(0);
 		return Accept;
 	}
 

@@ -175,7 +175,7 @@ namespace BlendInt {
 
 	ResponseType Tab::Draw (const RedrawEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType Tab::CursorEnterEvent (bool entered)

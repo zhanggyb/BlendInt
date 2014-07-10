@@ -47,7 +47,7 @@ namespace BlendInt {
 		  m_background_color(0x00000000),
 		  m_vao(0)
 	{
-		InitLabel(text);
+		InitializeLabel(text);
 	}
 
 	Label::~Label ()
@@ -98,41 +98,23 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
-		glBindVertexArray(m_vao);
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib4fv("Color", m_background_color.data());
-		program->SetUniform1i("AA", 0);
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
 
-		m_rect->Bind();
-		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader
+		program->SetVertexAttrib4fv("a_color", m_background_color.data());
 
-		glVertexAttribPointer(
-						0, // attribute
-						2,		// number of elements per vertex, here (x,y)
-						GL_FLOAT,	// the type of each element
-						GL_FALSE,	// take our values as-is
-						0,		// no extra data between each position
-						BUFFER_OFFSET(0)	// the first element
-		);
-
+		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
-		glDisableVertexAttribArray(0);
-
-		m_rect->Reset();
-
-		program->Reset();
 		glBindVertexArray(0);
 
+		program->Reset();
+
 		if(m_text.length()) {
-			m_font.Print(mvp, m_text, m_text_length, 0);
+			m_font.Print(position(), m_text, m_text_length, 0);
 		}
 
 		return Accept;
@@ -270,7 +252,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void Label::InitLabel (const String& text)
+	void Label::InitializeLabel (const String& text)
 	{
 		m_text = text;
 
@@ -292,10 +274,22 @@ namespace BlendInt {
 		}
 
 		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
 
 		VertexTool tool;
 		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0);
-		m_rect = tool.GenerateInnerBuffer();
+
+		m_rect.reset(new GLArrayBuffer);
+		m_rect->Generate();
+		m_rect->Bind();
+
+		tool.SetInnerBufferData(m_rect.get());
+
+		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+		GLArrayBuffer::Reset();
+		glBindVertexArray(0);
 	}
 
 } /* namespace BlendInt */

@@ -90,6 +90,24 @@ namespace BlendInt {
 
 		void SetShadow (bool shadow, float offset_x = 1.5f, float offset_y = -1.5f);
 
+		int Print (const Point& pos, const std::string& string, size_t length, size_t start) const;
+
+		int Print (const Point& pos, const std::string& string, size_t start = 0) const;
+
+		int Print (int x, int y, const std::string& string, size_t length, size_t start) const;
+
+		int Print (int x, int y, const std::string& string, size_t start = 0) const;
+
+		int Print (const Point& pos, const String& string, size_t length, size_t start) const;
+
+		int Print (const Point& pos, const String& string, size_t start = 0) const;
+
+		int Print (int x, int y, const String& string, size_t start = 0) const;
+
+		int Print (int x, int y, const String& string, size_t length, size_t start) const;
+
+		// ----------------------------
+
 		int Print (const glm::mat4& mvp, const std::string& string, size_t start = 0) const;
 
 		int Print (const glm::mat4& mvp, const std::string& string, size_t length, size_t start) const;

@@ -118,24 +118,17 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		if (hover()) {
 
 			RefPtr<GLSLProgram> program =
 					Shaders::instance->default_triangle_program();
 			program->Use();
 
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-							glm::value_ptr(mvp));
+			program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+			program->SetUniform1i("u_gamma", 0);
+			program->SetUniform1i("u_AA", 1);
 
-			Theme* tm = Theme::instance;
-
-			Color color = tm->menu_item().inner_sel;
-
-			program->SetVertexAttrib4fv("Color", color.data());
-			program->SetUniform1i("AA", 1);
+			program->SetVertexAttrib4fv("a_color", Theme::instance->menu_item().inner_sel.data());
 
 			glBindVertexArray(m_vao);
 			glDrawArrays(GL_TRIANGLE_FAN, 0,
@@ -147,7 +140,7 @@ namespace BlendInt {
 		}
 
 		if(text().size()) {
-			font().Print(mvp, text(), text_length(), 0);
+			font().Print(position(), text(), text_length(), 0);
 		}
 
 		return Accept;

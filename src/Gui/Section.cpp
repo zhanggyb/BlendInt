@@ -387,7 +387,7 @@ namespace BlendInt {
 		if (widget->visiable()) {
 
 			if(widget->drop_shadow() && widget->m_shadow) {
-				widget->m_shadow->DrawAt(event.projection_matrix() * event.view_matrix(), widget->position());
+				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
 			}
 
 			widget->Draw(event);

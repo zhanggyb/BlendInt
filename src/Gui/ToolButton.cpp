@@ -168,45 +168,38 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-
 		program->Use();
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
+
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_AA", 0);
 
 		if(down()) {
-			program->SetVertexAttrib4f("Color", 0.2f, 0.2f, 0.2f, 1.f);
-			program->SetUniform1i("Gamma", 0);
+			program->SetUniform1i("u_gamma", 0);
+			program->SetVertexAttrib4f("a_color", 0.2f, 0.2f, 0.2f, 1.f);
 		} else {
-			program->SetVertexAttrib4f("Color", 0.4f, 0.4f, 0.3f, 1.f);
-
 			if(hover()) {
-				program->SetUniform1i("Gamma", 20);
+				program->SetUniform1i("u_gamma", 20);
 			} else {
-				program->SetUniform1i("Gamma", 0);
+				program->SetUniform1i("u_gamma", 0);
 			}
+			program->SetVertexAttrib4f("a_color", 0.4f, 0.4f, 0.3f, 1.f);
 		}
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_corner_type()) + 2);
 
-		program->SetUniform1i("AA", 1);
-		program->SetUniform1i("Gamma", 0);
-		program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, 1.f);
+		program->SetUniform1i("u_AA", 1);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetVertexAttrib4f("a_color", 0.f, 0.f, 0.f, 1.f);
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
 
 		if (emboss()) {
-			program->SetVertexAttrib4f("Color", 1.0f, 1.0f, 1.0f, 0.16f);
+			program->SetVertexAttrib4f("a_color", 1.0f, 1.0f, 1.0f, 0.16f);
+			program->SetUniform3f("u_position", (float) position().x(), (float) position().y() - 1.f, 0.f);
 
-			glm::mat4 emboss_mvp = glm::translate(mvp,
-							glm::vec3(0.f, -1.f, 0.f));
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE,
-							glm::value_ptr(emboss_mvp));
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
 							GetHalfOutlineVertices(round_corner_type()) * 2);
 		}
@@ -214,10 +207,12 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		program->Reset();
 
+		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
+
 		if(hover()) {
-			m_icon->Draw(mvp, 20);
+			m_icon->Draw(pos, 20);
 		} else {
-			m_icon->Draw(mvp, 0);
+			m_icon->Draw(pos, 0);
 		}
 
 		return Accept;

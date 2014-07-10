@@ -44,13 +44,12 @@
 
 namespace BlendInt
 {
+	using Stock::Shaders;
 
 	std::set<Context*> Context::context_set;
 
 	Context::Context ()
 	: AbstractContainer(),
-	  m_context_buffer(0),
-	  m_vao(0),
 	  m_refresh(false),
 	  m_focused_widget(0)
 	{
@@ -63,11 +62,6 @@ namespace BlendInt
 		// default is 640 x 480
 		m_redraw_event.set_projection_matrix(
 		        glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
-
-		m_context_buffer = new GLTexture2D;
-#ifdef DEBUG
-		m_context_buffer->set_name("Main Buffer");
-#endif
 
 		InitializeContext();
 
@@ -99,13 +93,6 @@ namespace BlendInt
 				delete sections;
 			}
 		}
-
-		if (m_context_buffer) {
-			m_context_buffer->Clear();
-			delete m_context_buffer;
-		}
-
-		glDeleteVertexArrays(1, &m_vao);
 
 		context_set.erase(this);
 	}
@@ -348,23 +335,32 @@ namespace BlendInt
 
 					const Size* size_p = static_cast<const Size*>(request.data());
 
-					GLfloat vertices[] = {
-							0.f, 0.f,											0.f, 1.f,
-							(GLfloat)size_p->width(), 0.f,						1.f, 1.f,
-							0.f, (GLfloat)size_p->height(),						0.f, 0.f,
-							(GLfloat)size_p->width(), (GLfloat)size_p->height(),	1.f, 0.f
-					};
-
-					m_vbo->Bind();
-					m_vbo->UpdateData(vertices, sizeof(vertices));
-					m_vbo->Reset();
-
 					m_redraw_event.set_projection_matrix(
 									glm::ortho(0.f,
 											(GLfloat)size_p->width(),
 											0.f,
 											(GLfloat)size_p->height(),
 											100.f, -100.f));
+
+					RefPtr<GLSLProgram> program =
+					        Shaders::instance->default_triangle_program();
+					program->Use();
+					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					        glm::value_ptr(m_redraw_event.projection_matrix()));
+					program = Shaders::instance->default_line_program();
+					program->Use();
+					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					        glm::value_ptr(m_redraw_event.projection_matrix()));
+					program = Shaders::instance->default_text_program();
+					program->Use();
+					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					        glm::value_ptr(m_redraw_event.projection_matrix()));
+					program = Shaders::instance->default_image_program();
+					program->Use();
+					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					        glm::value_ptr(m_redraw_event.projection_matrix()));
+
+					program->Reset();
 
 					for(std::deque<Section*>::iterator it = m_sections.begin(); it != m_sections.end(); it++)
 					{
@@ -651,34 +647,27 @@ namespace BlendInt
 	{
 		using Stock::Shaders;
 
-		glGenVertexArrays(1, &m_vao);
+		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		program->Use();
+		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(m_redraw_event.projection_matrix()));
+		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(m_redraw_event.view_matrix()));
 
-		glBindVertexArray(m_vao);
+		program = Shaders::instance->default_line_program();
+		program->Use();
+		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(m_redraw_event.projection_matrix()));
+		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(m_redraw_event.view_matrix()));
 
-		m_vbo.reset(new GLArrayBuffer);
-		m_vbo->Generate();
+		program = Shaders::instance->default_text_program();
+		program->Use();
+		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(m_redraw_event.projection_matrix()));
+		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(m_redraw_event.view_matrix()));
 
-		GLfloat vertices [] = {
-				0.f, 0.f,											0.f, 1.f,
-				(GLfloat)size().width(), 0.f,						1.f, 1.f,
-				0.f, (GLfloat)size().height(),						0.f, 0.f,
-				(GLfloat)size().width(), (GLfloat)size().height(),	1.f, 0.f
-		};
+		program = Shaders::instance->default_image_program();
+		program->Use();
+		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(m_redraw_event.projection_matrix()));
+		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(m_redraw_event.view_matrix()));
 
-		m_vbo->Bind();
-		m_vbo->SetData(sizeof(vertices), vertices);
-
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-		        BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4,
-		        BUFFER_OFFSET(2 * sizeof(GLfloat)));
-
-		glBindVertexArray(0);
-
-		GLArrayBuffer::Reset();
+		program->Reset();
 	}
 
 	AbstractWidget* Context::GetWidgetUnderCursor(const MouseEvent& event, AbstractWidget* parent)

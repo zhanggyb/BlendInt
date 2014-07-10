@@ -139,27 +139,27 @@ namespace BlendInt {
 		return;
 	}
 
-	void VertexIcon::Draw(const glm::mat4& mvp, short gamma)
+	void VertexIcon::Draw(const glm::vec3& pos, short gamma)
 	{
 		Color color (0.1f, 0.1f, 0.1f, 0.125f);
 
-		Draw(mvp, color, gamma);
+		Draw(pos, color, gamma);
 	}
 
-	void VertexIcon::Draw(const glm::mat4& mvp, const Color& color, short gamma)
+	void VertexIcon::Draw(const glm::vec3& pos, const Color& color, short gamma)
 	{
 		using Stock::Shaders;
-
-		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib4fv("Color", color.data());
-		program->SetUniform1i("AA", 1);
-		program->SetUniform1i("Gamma", gamma);
+		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+		program->SetUniform1i("u_gamma", gamma);
+		program->SetUniform1i("u_AA", 0);
 
+		program->SetVertexAttrib4fv("a_color", color.data());
+
+		glBindVertexArray(m_vao);
 		glEnableVertexAttribArray(0);
 
 		m_array_buffer->Bind();	// bind ARRAY BUFFER
@@ -180,7 +180,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 	}
 
-	void VertexIcon::Draw (const glm::mat4& mvp, int x, int y,
+	void VertexIcon::Draw (const glm::vec3& pos, int x, int y,
 			int restrict_width, int restrict_height)
 	{
 		using Stock::Shaders;
@@ -200,16 +200,13 @@ namespace BlendInt {
 			scale_h = static_cast<float>(size().height()) / restrict_height;
 		}
 
-		glm::mat4 local_mvp = mvp
-						* glm::translate(glm::mat4(1.0), glm::vec3(x, y, 0.f))
-						* glm::scale(glm::mat4(1.0),
-										glm::vec3(scale_w, scale_h, 0.f));
-
 		float r = 0.1, g = 0.1, b = 0.1, a = 0.125;
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local_mvp));
-		program->SetVertexAttrib4f("Color", r, g, b, a);
-		program->SetUniform1i("AA", 1);
-		program->SetUniform1i("Gamma", 0);
+
+		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 1);
+
+		program->SetVertexAttrib4f("a_color", r, g, b, a);
 
 		glEnableVertexAttribArray(0);
 
