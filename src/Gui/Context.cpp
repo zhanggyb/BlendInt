@@ -202,6 +202,11 @@ namespace BlendInt
 		return m_sections.size() - 1;
 	}
 
+	bool Context::Contain (const Point& point) const
+	{
+		return true;
+	}
+
 	void Context::RefreshLayer (int layer)
 	{
 	}

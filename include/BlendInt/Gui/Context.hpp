@@ -77,6 +77,11 @@ namespace BlendInt {
 		 */
 		Section* Remove (AbstractWidget* widget);
 
+		/**
+		 * @brief Always return true
+		 */
+		virtual bool Contain (const Point& point) const;
+
 		void SetFocusedWidget (AbstractWidget* widget);
 
 		void RefreshLayer (int layer);

@@ -302,8 +302,6 @@ namespace BlendInt {
 
 		void SetEmboss (bool emboss);
 
-		bool IsHover (const Point& cursor);
-
 		virtual bool IsExpandX () const
 		{
 			return false;
@@ -315,8 +313,6 @@ namespace BlendInt {
 		}
 
 		virtual bool Contain (const Point& point) const;
-
-		virtual bool Contain (int x, int y) const;
 
 		void RenderToTexture (int border, GLTexture2D* texture);
 
@@ -420,6 +416,11 @@ namespace BlendInt {
 		Cpp::EventRef<AbstractWidget*> destroyed () {return m_destroyed;}
 
 		AbstractContainer* container() const {return m_container;}
+
+		/**
+		 * @brief Check if the widget and its all container are under cursor position
+		 */
+		static bool IsHoverThrough (const AbstractWidget* widget, const Point& cursor);
 
 		static void SetDefaultBorderWidth (float border);
 

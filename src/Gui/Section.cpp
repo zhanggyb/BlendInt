@@ -130,6 +130,11 @@ namespace BlendInt {
 		}
 	}
 
+	bool Section::Contain (const Point& point) const
+	{
+		return true;
+	}
+
 	void Section::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		ReportContainerUpdate(request);
@@ -427,7 +432,7 @@ namespace BlendInt {
 	{
 		if (m_last_hover_widget) {
 
-			if (m_last_hover_widget->IsHover(event.position())) {
+			if (IsHoverThrough(m_last_hover_widget, event.position())) {
 				//DBG_PRINT_MSG("last widget %s is under cursor", m_last_hover_widget->name().c_str());
 				UpdateHoverWidgetSubs(event);
 			} else {
@@ -447,7 +452,7 @@ namespace BlendInt {
 						//DBG_PRINT_MSG("last widget %s is not under cursor but container is", m_last_hover_widget->name().c_str());
 						m_last_hover_widget = m_last_hover_widget->container();
 
-						if (m_last_hover_widget->IsHover(event.position())) {
+						if (IsHoverThrough(m_last_hover_widget, event.position())) {
 							break;
 						} else {
 							m_last_hover_widget->destroyed().disconnectOne(this,
