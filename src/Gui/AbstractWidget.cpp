@@ -257,19 +257,6 @@ namespace BlendInt {
 		return true;
 	}
 
-	bool AbstractWidget::Contain(int x, int y) const
-	{
-		if(x < m_position.x() ||
-				y < m_position.y() ||
-				x > static_cast<int>(m_position.x() + size().width()) ||
-				y > static_cast<int>(m_position.y() + size().height()))
-		{
-			return false;
-		}
-
-		return true;
-	}
-
 	void AbstractWidget::Refresh()
 	{
 		ContainerUpdateRequest request (this, m_container);
@@ -463,11 +450,11 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	bool AbstractWidget::IsHover(const Point& cursor)
+	bool AbstractWidget::IsHoverThrough(const AbstractWidget* widget, const Point& cursor)
 	{
-		if(Contain(cursor)) {
+		if(widget->Contain(cursor)) {
 
-			AbstractContainer* container = m_container;
+			AbstractContainer* container = widget->m_container;
 
 			while(container) {
 

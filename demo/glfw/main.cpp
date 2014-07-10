@@ -55,6 +55,7 @@
 #include <BlendInt/Gui/Decoration.hpp>
 #include <BlendInt/Gui/NodeView.hpp>
 #include <BlendInt/Gui/ProgressBar.hpp>
+#include <BlendInt/Gui/Workspace.hpp>
 
 #include "GLFWContext.hpp"
 #include "Window.hpp"
@@ -77,18 +78,14 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	VirtualWindow* vw = Manage(new VirtualWindow);
+	Workspace* ws = Manage(new Workspace);
 
-	vw->SetPosition(200, 200);
+	ws->SetPosition(100, 100);
+	ws->Resize(800, 600);
 
-	context->PushBack(vw);
+	ws->PushBack(Manage(new VirtualWindow));
 
-	VirtualWindow* vw2 = Manage(new VirtualWindow);
-
-	vw2->SetPosition(600, 400);
-
-	context->PushBack(vw2);
-
+	context->PushBack(ws);
 
 #ifdef DEBUG
 	//context->PrintSections();

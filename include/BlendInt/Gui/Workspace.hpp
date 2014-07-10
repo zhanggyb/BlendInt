@@ -15,48 +15,44 @@
  * Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with BlendInt.  If not, see
+ * License along with BlendInt.	 If not, see
  * <http://www.gnu.org/licenses/>.
  *
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_SECTION_HPP_
-#define _BLENDINT_GUI_SECTION_HPP_
+#ifndef _BLENDINT_GUI_WORKSPACE_HPP_
+#define _BLENDINT_GUI_WORKSPACE_HPP_
 
-#include <set>
-
-#include <BlendInt/OpenGL/ScissorStatus.hpp>
-#include <BlendInt/Gui/AbstractContainer.hpp>
+#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/VirtualWindow.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief A special container used in Context as a layer
+	 * @brief A container works for MDI application
 	 */
-	class Section: public AbstractContainer
+	class Workspace: public AbstractDequeContainer
 	{
+		DISALLOW_COPY_AND_ASSIGN(Workspace);
+
 	public:
 
-		friend class Context;
+		Workspace ();
 
-		Section ();
+		virtual ~Workspace ();
 
-		virtual ~Section ();
+		void PushBack (VirtualWindow* window);
 
-		void Insert (AbstractWidget* widget);
+		void PushFront (VirtualWindow* window);
 
-		/**
-		 * @brief Remove sub widget
-		 *
-		 * If the widget is last one in this section, call this funciton will delete this.
-		 */
-		void Remove (AbstractWidget* widget);
+		void Remove (VirtualWindow* window);
 
-		/**
-		 * @brief Always return true
-		 */
-		bool Contain (const Point& point) const;
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
+		virtual Size GetPreferredSize () const;
 
 	protected:
 
@@ -86,35 +82,18 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual bool RemoveSubWidget (AbstractWidget* widget);
-
-		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
-
 	private:
 
-		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
+		void InitializeWorkspace ();
 
-		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
+		GLuint m_vao[2];
 
-		ResponseType DispatchMouseReleaseEvent (AbstractWidget* widget, const MouseEvent& event);
-
-		bool CheckAndUpdateHoverWidget (const MouseEvent& event);
-
-		void UpdateHoverWidgetSubs (const MouseEvent& event);
-
-		void OnSubWidgetDestroyed (AbstractWidget* widget);
-
-		void OnHoverWidgetDestroyed (AbstractWidget* widget);
-
-		std::set<AbstractWidget*> m_set;
-
-		AbstractWidget* m_focused_widget;
-
-		AbstractWidget* m_last_hover_widget;
-
-		ScissorStatus m_scissor_status;
+		RefPtr<GLArrayBuffer> m_background;
+		RefPtr<GLArrayBuffer> m_inner;
 
 	};
+
 }
 
-#endif /* _BLENDINT_GUI_SECTION_HPP_ */
+
+#endif /* _BLENDINT_GUI_WORKSPACE_HPP_ */
