@@ -163,23 +163,20 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_line_program();
 		program->Use();
 
-		program->SetUniform1i("AA", 0);
+		program->SetUniform1i("u_AA", 0);
 		if(m_highlight) {
-			program->SetUniform1i("Gamma", 50);
+			program->SetUniform1i("u_gamma", 50);
 		} else {
-			program->SetUniform1i("Gamma", 0);
+			program->SetUniform1i("u_gamma", 0);
 		}
 
 		glm::vec4 color;
-		glm::mat4 local;
+		glm::vec3 pos(position().x(), position().y(), 0.f);
 
 		glEnableVertexAttribArray(0);	// 0 is the locaiton in shader
 		m_buffer->Bind();
@@ -188,7 +185,7 @@ namespace BlendInt {
 		if(m_orientation == Horizontal) {
 
 			for(int i = 0; i < 3; i++) {
-				local = glm::translate(mvp, glm::vec3(0.f, i + 1, 0.f));
+				pos.y += (i + 1);
 
 				if((i % 2) == 0) {
 					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.25;
@@ -196,8 +193,8 @@ namespace BlendInt {
 					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.9;
 				}
 
-				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local));
-				program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+				program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+				program->SetVertexAttrib4fv("a_color", glm::value_ptr(color));
 				glDrawArrays(GL_LINES, 0, 2);
 
 			}
@@ -205,7 +202,7 @@ namespace BlendInt {
 		} else {
 
 			for(int i = 0; i < 3; i++) {
-				local = glm::translate(mvp, glm::vec3(i + 1, 0.f, 0.f));
+				pos.x += (i + 1);
 
 				if((i % 2) == 0) {
 					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.25;
@@ -213,8 +210,8 @@ namespace BlendInt {
 					color.r = 0.05f; color.g = 0.05f; color.b = 0.05f; color.a = 0.9;
 				}
 
-				program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(local));
-				program->SetVertexAttrib4fv("Color", glm::value_ptr(color));
+				program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+				program->SetVertexAttrib4fv("a_color", glm::value_ptr(color));
 				glDrawArrays(GL_LINES, 0, 2);
 			}
 
@@ -223,7 +220,6 @@ namespace BlendInt {
 		m_buffer->Reset();
 
 		glDisableVertexAttribArray(0);
-
 		program->Reset();
 
 		glBindVertexArray(0);

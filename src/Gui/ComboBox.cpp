@@ -185,23 +185,19 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(
-						event.projection_matrix() * event.view_matrix(), pos);
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_AA", 0);
 
 		if(m_status_down) {
-			program->SetUniform1i("Gamma", 20);
+			program->SetUniform1i("u_gamma", 20);
 		} else {
 			if(hover()) {
-				program->SetUniform1i("Gamma", 15);
+				program->SetUniform1i("u_gamma", 15);
 			} else {
-				program->SetUniform1i("Gamma", 0);
+				program->SetUniform1i("u_gamma", 0);
 			}
 		}
 
@@ -209,9 +205,9 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_corner_type()) + 2);
 
-		program->SetVertexAttrib4fv("Color", Theme::instance->menu().outline.data());
-		program->SetUniform1i("AA", 1);
-		program->SetUniform1i("Gamma", 0);
+		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().outline.data());
+		program->SetUniform1i("u_AA", 1);
+		program->SetUniform1i("u_gamma", 0);
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
@@ -221,11 +217,11 @@ namespace BlendInt {
 
 		RefPtr<VertexIcon> icon = Stock::Icons::instance->icon_num();
 
-		glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.15, 1.15, 1.15));
-		glm::mat4 rotate = glm::rotate(glm::mat4(1.0), (glm::mediump_float)(M_PI * 1.5), glm::vec3(0.0, 0.0, 1.0));
-		glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, icon->size().height()/2.f, 0.0));
+		//glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.15, 1.15, 1.15));
+		//glm::mat4 rotate = glm::rotate(glm::mat4(1.0), (glm::mediump_float)(M_PI * 1.5), glm::vec3(0.0, 0.0, 1.0));
+		//glm::mat4 translate = glm::translate(glm::mat4(1.0), glm::vec3(icon->size().width()/2.f, icon->size().height()/2.f, 0.0));
 
-		icon->Draw(mvp * translate * rotate * scale);
+		//icon->Draw(mvp * translate * rotate * scale);
 
 		return Accept;
 	}

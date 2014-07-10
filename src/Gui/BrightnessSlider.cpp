@@ -84,23 +84,20 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
-		program->SetUniform1i("Gamma", 0);
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_corner_type()) + 2);
 
-		program->SetVertexAttrib4fv("Color", Theme::instance->number_slider().outline.data());
-		program->SetUniform1i("AA", 1);
+		program->SetVertexAttrib4fv("a_color", Theme::instance->number_slider().outline.data());
+		program->SetUniform1i("u_AA", 1);
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
@@ -110,11 +107,14 @@ namespace BlendInt {
 
 		glm::mat4 icon_mvp;
 
-		icon_mvp = glm::translate(mvp,
-				glm::vec3(size().width() / 2 - m_dot.size().width() / 2,
-						12, 0.0));
+//		icon_mvp = glm::translate(mvp,
+//				glm::vec3(size().width() / 2 - m_dot.size().width() / 2,
+//						12, 0.0));
 
-		m_dot.Draw(icon_mvp);
+		m_dot.Draw(
+		        glm::vec3(
+		                position().x() + size().width() / 2
+		                        - m_dot.size().width() / 2, 12, 0.f));
 
 		return Accept;
 	}

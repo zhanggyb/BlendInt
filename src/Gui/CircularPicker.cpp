@@ -112,7 +112,7 @@ namespace BlendInt {
 
 	}
 
-	void CircularPicker::Draw (const glm::mat4& mvp, short gamma)
+	void CircularPicker::Draw (const glm::vec3& pos, short gamma)
 	{
 		using Stock::Shaders;
 
@@ -122,10 +122,11 @@ namespace BlendInt {
 				Shaders::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("Gamma", gamma);
-		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4f("Color", 1.f, 1.f, 1.f, 1.f);
+		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+		program->SetUniform1i("u_gamma", gamma);
+		program->SetUniform1i("u_AA", 0);
+
+		program->SetVertexAttrib4f("a_color", 1.f, 1.f, 1.f, 1.f);
 
 		glEnableVertexAttribArray(0);
 
@@ -135,8 +136,8 @@ namespace BlendInt {
 						m_inner_buffer->GetBufferSize()
 										/ (2 * sizeof(GLfloat)));
 
-		program->SetVertexAttrib4fv("Color", Theme::instance->scroll().outline.data());
-		program->SetUniform1i("AA", 1);
+		program->SetVertexAttrib4fv("a_color", Theme::instance->scroll().outline.data());
+		program->SetUniform1i("u_AA", 1);
 
 		m_outer_buffer->Bind();
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);

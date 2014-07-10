@@ -105,39 +105,33 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		RefPtr<GLSLProgram> program =
 				Shaders::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-
-		glEnableVertexAttribArray(0);
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
 
 		// draw inner, simple fill
 		if (checked()) {
-			program->SetVertexAttrib4f("Color", 0.447f, 0.447f, 0.447f, 1.0f);
-			program->SetUniform1i("AA", 0);
+			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+			program->SetUniform1i("u_AA", 0);
 
 			glBindVertexArray(m_vao[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11);
-
 		} else {
-			program->SetVertexAttrib4fv("Color", Theme::instance->tab().item.data());
-			program->SetUniform1i("AA", 1);
+			program->SetVertexAttrib4fv("a_color", Theme::instance->tab().item.data());
+			program->SetUniform1i("u_AA", 1);
 
 			glBindVertexArray(m_vao[0]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 4, 2 * 11 - 4);
 		}
 
 		if (checked()) {
-			program->SetUniform1i("AA", 1);
-			program->SetVertexAttrib4fv("Color", Theme::instance->tab().outline.data());
+			program->SetUniform1i("u_AA", 1);
+			program->SetVertexAttrib4fv("a_color", Theme::instance->tab().outline.data());
 
 			glBindVertexArray(m_vao[1]);
-
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 2 * 11 * 2);
 		}
 
@@ -145,7 +139,7 @@ namespace BlendInt {
 		program->Reset();
 
 		if(text().size()) {
-			font().Print(mvp, text(), text_length(), 0);
+			font().Print(position(), text(), text_length(), 0);
 		}
 
 		return Accept;

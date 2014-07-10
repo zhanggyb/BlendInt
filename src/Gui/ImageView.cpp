@@ -153,29 +153,25 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-
-		// draw background
 		program->Use();
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib4f("Color", 0.208f, 0.208f, 0.208f, 1.0f);
-		program->SetUniform1i("Gamma", 0);
-		program->SetUniform1i("AA", 0);
+
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
+
+		program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
-		glm::mat4 checker_mvp = glm::translate(mvp,
-				glm::vec3((size().width() - m_checkerboard->size().width()) / 2.f,
-						(size().height() - m_checkerboard->size().height()) / 2.f,
-						0.f));
+		glm::vec3 pos(0.f);
+		pos.x = position().x() + (size().width() - m_checkerboard->size().width()) / 2.f;
+		pos.y = position().y() + (size().height() - m_checkerboard->size().height()) / 2.f;
 
 		// draw checkerboard
-		m_checkerboard->Draw(checker_mvp);
+		m_checkerboard->Draw(pos);
 
 		glActiveTexture(GL_TEXTURE0);
 		m_texture->Bind();
@@ -183,9 +179,9 @@ namespace BlendInt {
 		if (m_texture->GetWidth() > 0) {
 			program = Shaders::instance->default_image_program();
 			program->Use();
+			program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
 			program->SetUniform1i("TexID", 0);
-			program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-			program->SetUniform1i("Gamma", 0);
+			program->SetUniform1i("u_gamma", 0);
 
 			glBindVertexArray(m_vao[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

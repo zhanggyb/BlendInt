@@ -59,11 +59,7 @@ namespace BlendInt {
 
 		void Update (const Size& size, int round_type, float radius);
 
-		virtual void Draw (const glm::mat4& mvp, short gamma = 0);
-
-		void DrawAt (const glm::mat4& mvp, int x, int y);
-
-		void DrawAt (const glm::mat4& mvp, const Point& pos);
+		virtual void Draw (const glm::vec3& pos, short gamma = 0);
 
 	protected:
 

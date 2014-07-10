@@ -221,19 +221,18 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		// ----- draw line
 
 		glBindVertexArray(m_vao);
 		RefPtr<GLSLProgram> program = Shaders::instance->default_line_program();
 		program->Use();
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetVertexAttrib4fv("Color",
-						Theme::instance->scroll().outline.data());
-		program->SetUniform1i("AA", 0);
-		program->SetUniform1i("Gamma", 0);
+
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
+
+		program->SetVertexAttrib4fv("a_color",
+		        Theme::instance->scroll().outline.data());
 
 		glEnableVertexAttribArray(0);
 		m_line->Bind();
@@ -248,22 +247,17 @@ namespace BlendInt {
 
 		// ----- end of draw line
 
-		glm::mat4 switch_mvp;
+		glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
 
 		if (orientation() == Horizontal) {
-			// m_line_start.x() == switch_radius
-			switch_mvp = glm::translate(mvp,
-			        glm::vec3(get_position(),
-			        			size().height() / 2 - m_slide_icon.size().height() / 2,
-			        			0.f));
+			pos.x += get_position();
+			pos.y += size().height() / 2.f - m_slide_icon.size().height() / 2.f;
 		} else {
-			// m_line_start.y() == switch_radius
-			switch_mvp = glm::translate(mvp,
-			        glm::vec3(size().width() / 2 - m_slide_icon.size().width() / 2,
-			                get_position(), 0.0));
+			pos.x += size().width() / 2.f - m_slide_icon.size().width() / 2.f;
+			pos.y += get_position();
 		}
 
-		m_slide_icon.Draw(switch_mvp);
+		m_slide_icon.Draw(pos);
 
 		return Accept;
 	}

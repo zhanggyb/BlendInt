@@ -260,26 +260,19 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
-		glm::mat4 local_mvp;
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("Gamma", 0);
-		program->SetUniform1i("AA", 0);
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_corner_type()) + 2);
 
-		Color color = Theme::instance->scroll().outline;
-
-		program->SetVertexAttrib4fv("Color", color.data());
-		program->SetUniform1i("AA", 1);
+		program->SetVertexAttrib4fv("a_color", Theme::instance->scroll().outline.data());
+		program->SetUniform1i("u_AA", 1);
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
@@ -288,16 +281,15 @@ namespace BlendInt {
 
 		program->Reset();
 
+		glm::vec3 pos(position().x(), position().y(), 0.f);
+
 		if (orientation() == Horizontal) {
-			local_mvp = glm::translate(mvp,
-							glm::vec3(GetSlidePosition(), 0.f, 0.f));
+			pos.x += GetSlidePosition();
 		} else {
-			local_mvp = glm::translate(mvp,
-							glm::vec3(0.f, GetSlidePosition(), 0.f));
+			pos.y += GetSlidePosition();
 		}
 
-		m_slide.Draw(local_mvp);
-
+		m_slide.Draw(pos);
 		return Accept;
 	}
 

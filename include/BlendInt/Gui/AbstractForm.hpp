@@ -165,7 +165,7 @@ namespace BlendInt {
 			return m_size;
 		}
 
-		virtual void Draw (const glm::mat4& mvp, int short gamma = 0) = 0;
+		virtual void Draw (const glm::vec3& pos, int short gamma = 0) = 0;
 
 		static void SetDefaultBorderWidth (int border);
 

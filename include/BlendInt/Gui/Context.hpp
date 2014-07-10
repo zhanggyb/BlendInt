@@ -162,12 +162,6 @@ namespace BlendInt {
 
 		std::deque<Section*> m_sections;
 
-		GLTexture2D* m_context_buffer;
-
-		RefPtr<GLArrayBuffer> m_vbo;
-
-		GLuint m_vao;
-
 		RedrawEvent m_redraw_event;
 
 		bool m_refresh;

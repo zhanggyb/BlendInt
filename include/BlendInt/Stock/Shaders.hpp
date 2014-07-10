@@ -37,90 +37,7 @@ namespace BlendInt {
 		 * @brief A class which provide pre-defined shaders
 		 *
 		 * The ShaderManager class works as a service in BlendInt and
-		 * provide simple pre-defined shaders for widgets. There's only
-		 * one instance of this class and can be accessed by:
-		 *
-		 * @code
-		 * #include <BlendInt/Service/ShaderManager.hpp>
-		 *
-		 * ShaderManager::instance
-		 * @endcode
-		 *
-		 * The instance can not be deleted.
-		 *
-		 * There're some pre-defined shader progra ms which are used in
-		 * pre-defined widgets, you can also use these in your custom
-		 * subclasses.
-		 *
-		 * - Vertex shader for text:
-		 * @code
-		 * "#version 330\n"
-		 * "layout(location = 0) in vec4 coord;"
-		 * "uniform mat4 MVP;"
-		 * "out vec2 texpos;"
-		 * ""
-		 * "void main(void) {"
-		 * "  gl_Position = MVP * vec4(coord.xy, 0.0, 1.0);"
-		 * "  texpos = coord.zw;"
-		 * "}";
-		 * @endcode
-		 *
-		 * - Fragment shader for text:
-		 * @code
-		 * "#version 330\n"
-		 * "in vec2 texpos;"
-		 * "uniform sampler2D tex;"
-		 * "uniform vec4 color;"
-		 * "out vec4 FragmentColor;"
-		 * ""
-		 * "void main(void) {"
-		 * "	float alpha = texture(tex, texpos).r;"	// GL 3.2 only support GL_R8 in glTexImage2D internalFormat
-		 * "	FragmentColor = vec4(color.rgb, color.a * alpha);"
-		 * "}";
-		 * @endcode
-		 *
-		 * - Vertex shader for primitives in Viewport3D:
-		 * @code
-		 * "#version 330\n"
-		 * ""
-		 * "layout(location = 0) in vec3 coord3d;"
-		 * "layout(location = 1) in vec3 v_color;"
-		 * "uniform mat4 MVP;"
-		 * "out vec3 f_color;"
-		 * ""
-		 * "void main(void) {"
-		 * "	gl_Position = MVP * vec4(coord3d, 1.0);"
-		 * "	f_color = v_color;"
-		 * "}";
-		 * @endcode
-		 *
-		 * - Fragment shader for primitives in Viewport3D:
-		 * @code
-		 * "#version 330\n"
-		 * ""
-		 * "in vec3 f_color;"
-		 * "out vec4 FragmentColor;"
-		 * ""
-		 * "void main(void) {"
-		 * "	FragmentColor = vec4(f_color, 1.0);"
-		 * "}";
-		 * @encode
-		 *
-		 * - Vertex shader for widgets:
-		 * @code
-		 * @endcode
-		 *
-		 * - Geometry shader for drawing triangles in widgets:
-		 * @code
-		 * @endcode
-		 *
-		 * - Geometry shader for drawing lines in widgets:
-		 * @code
-		 * @endcode
-		 *
-		 * - Fragment shader for widgets:
-		 * @code
-		 * @endcode
+		 * provide simple pre-defined shaders for widgets.
 		 */
 		class Shaders
 		{
@@ -130,9 +47,9 @@ namespace BlendInt {
 
 			static Shaders* instance;
 
-			RefPtr<GLSLProgram> text_program () const
+			RefPtr<GLSLProgram> default_text_program () const
 			{
-				return m_text_program;
+				return m_default_text_program;
 			}
 
 			RefPtr<GLSLProgram> primitive_program () const
@@ -172,7 +89,7 @@ namespace BlendInt {
 
 			bool Setup ();
 
-			RefPtr<GLSLProgram> m_text_program;
+			RefPtr<GLSLProgram> m_default_text_program;
 
 			RefPtr<GLSLProgram> m_primitive_program;
 

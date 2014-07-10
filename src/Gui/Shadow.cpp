@@ -122,7 +122,7 @@ namespace BlendInt {
 
 	}
 
-	void Shadow::Draw (const glm::mat4& mvp, short gamma)
+	void Shadow::Draw (const glm::vec3& pos, short gamma)
 	{
 		using Stock::Shaders;
 
@@ -130,8 +130,8 @@ namespace BlendInt {
 				Shaders::instance->default_triangle_program();
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("Gamma", gamma);
+		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+		program->SetUniform1i("u_gamma", gamma);
 
 		// fine tune the shadow alpha, default is 10.0 * 0.5 / 12.0
 		float alphastep = 10.0f * Theme::instance->shadow_fac() / Theme::instance->shadow_width();
@@ -139,19 +139,19 @@ namespace BlendInt {
 		int verts = GetOutlineVertices(round_type());
 		verts = verts * 2 + 2;
 
-		glBindVertexArray(m_vao);
-
 		// the first circle use anti-alias
-		program->SetUniform1i("AA", 1);
-		program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, alphastep);
+		program->SetUniform1i("u_AA", 1);
+		program->SetVertexAttrib4f("a_color", 0.f, 0.f, 0.f, alphastep);
+
+		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, verts);
 
-		program->SetUniform1i("AA", 0);
+		program->SetUniform1i("u_AA", 0);
 		for(int i = 1; i < Theme::instance->shadow_width(); i++)
 		{
 			expfac = sqrt(i / (float)Theme::instance->shadow_width());
 
-			program->SetVertexAttrib4f("Color", 0.f, 0.f, 0.f, alphastep * (1.0f - expfac));
+			program->SetVertexAttrib4f("a_color", 0.f, 0.f, 0.f, alphastep * (1.0f - expfac));
 			glDrawArrays(GL_TRIANGLE_STRIP, verts * i, verts);
 		}
 
@@ -159,18 +159,6 @@ namespace BlendInt {
 
 		GLArrayBuffer::Reset();
 		program->Reset();
-	}
-
-	void Shadow::DrawAt(const glm::mat4& mvp, int x, int y)
-	{
-		glm::mat4 transed_mvp = glm::translate(mvp, glm::vec3(x, y, 0.f));
-		Draw(transed_mvp);
-	}
-
-	void Shadow::DrawAt(const glm::mat4& mvp, const Point& pos)
-	{
-		glm::mat4 transed_mvp = glm::translate(mvp, glm::vec3(pos.x(), pos.y(), 0.f));
-		Draw(transed_mvp);
 	}
 
 	void Shadow::InitializeShadow ()

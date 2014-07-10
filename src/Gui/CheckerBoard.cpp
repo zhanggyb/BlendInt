@@ -130,22 +130,21 @@ namespace BlendInt {
 
 	}
 	
-	void CheckerBoard::Draw (const glm::mat4& mvp, short gamma)
+	void CheckerBoard::Draw (const glm::vec3& pos, short gamma)
 	{
 		using Stock::Shaders;
 
 		glBindVertexArray(m_vao);
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-
 		program->Use();
 
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
-		program->SetUniform1i("Gamma", gamma);
+		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+		program->SetUniform1i("u_gamma", gamma);
+		program->SetUniform1i("u_AA", 0);
 
 		Color color(0x999999FF);
-		program->SetVertexAttrib4fv("Color", color.data());
+		program->SetVertexAttrib4fv("a_color", color.data());
 
 		glEnableVertexAttribArray(0);
 
@@ -165,7 +164,7 @@ namespace BlendInt {
 
 		color = 0x666666FF;
 
-		program->SetVertexAttrib4fv("Color", color.data());
+		program->SetVertexAttrib4fv("a_color", color.data());
 
 		m_dark_ibo->Bind();	// bind ELEMENT ARRAY BUFFER
 

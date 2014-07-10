@@ -188,7 +188,7 @@ namespace BlendInt {
 
 	ResponseType VBlock::Draw (const RedrawEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBlock::CursorEnterEvent (bool entered)

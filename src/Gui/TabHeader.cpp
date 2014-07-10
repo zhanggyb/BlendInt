@@ -194,23 +194,21 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-
 		program->Use();
-		program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(mvp));
-		program->SetUniform1i("AA", 0);
-		program->SetVertexAttrib4f("Color", 0.208f, 0.208f, 0.208f, 1.0f);
-		program->SetUniform1i("Gamma", 0);
+
+		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i("u_gamma", 0);
+		program->SetUniform1i("u_AA", 0);
+
+		program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_corner_type()) + 2);
+		glBindVertexArray(0);
 
 		program->Reset();
-		glBindVertexArray(0);
 		return Accept;
 	}
 

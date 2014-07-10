@@ -293,8 +293,6 @@ namespace BlendInt {
 		return true;
 	}
 
-
-
 	bool GLSLProgram::SetUniform4fv(const char* name, GLsizei count, const GLfloat* value)
 	{
 		GLint uniform_location = GetUniformLocation(name);
@@ -351,6 +349,12 @@ namespace BlendInt {
 		return true;
 	}
 
+	void GLSLProgram::SetUniform3f(GLint location, GLfloat v0, GLfloat v1,
+		GLfloat v2)
+	{
+		glUniform3f (location, v0, v1, v2);
+	}
+
 	bool GLSLProgram::SetUniform3f(const char* name, GLfloat v0, GLfloat v1,
 		GLfloat v2)
 	{
@@ -363,12 +367,22 @@ namespace BlendInt {
 		return true;
 	}
 
+	bool GLSLProgram::SetUniform3fv(const char* name, GLsizei count, const GLfloat* value)
+	{
+		GLint uniform_location = GetUniformLocation(name);
+
+		if(uniform_location < 0) return false;
+
+		glUniform3fv (uniform_location, count, value);
+
+		return true;
+	}
+
 	void GLSLProgram::SetUniform4f(GLint location, GLfloat v0, GLfloat v1,
 		GLfloat v2, GLfloat v3)
 	{
 		glUniform4f (location, v0, v1, v2, v3);
 	}
-
 
 	bool GLSLProgram::SetUniform4f(const char* name, GLfloat v0, GLfloat v1,
 		GLfloat v2, GLfloat v3)
