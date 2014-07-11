@@ -21,7 +21,7 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Gui/SpaceArea.hpp>
+#include <BlendInt/Gui/Separator.hpp>
 
 #ifdef __UNIX__
 #ifdef __APPLE__
@@ -38,7 +38,7 @@
 
 namespace BlendInt {
 
-	SpaceArea::SpaceArea ()
+	Separator::Separator ()
 	: AbstractWidget(),
 	  m_expand_x(false),
 	  m_expand_y(false),
@@ -47,26 +47,26 @@ namespace BlendInt {
 		set_size(1, 1);
 	}
 
-	SpaceArea::~SpaceArea ()
+	Separator::~Separator ()
 	{
 	}
 
-	void SpaceArea::AttachWidget (AbstractWidget* widget)
+	void Separator::AttachWidget (AbstractWidget* widget)
 	{
 		if(m_widget_attached) {
-			m_widget_attached->destroyed().disconnectOne(this, &SpaceArea::OnWidgetDestroyed);
+			m_widget_attached->destroyed().disconnectOne(this, &Separator::OnWidgetDestroyed);
 		}
 
 		m_widget_attached = widget;
 		if(m_widget_attached) {
-			events()->connect(m_widget_attached->destroyed(), this, &SpaceArea::OnWidgetDestroyed);
+			events()->connect(m_widget_attached->destroyed(), this, &Separator::OnWidgetDestroyed);
 
 			m_expand_x = m_widget_attached->IsExpandX();
 			m_expand_y = m_widget_attached->IsExpandY();
 		}
 	}
 
-	Size SpaceArea::GetPreferredSize() const
+	Size Separator::GetPreferredSize() const
 	{
 		if(m_widget_attached) {
 			return m_widget_attached->GetPreferredSize();
@@ -77,21 +77,21 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	void SpaceArea::SetExpandX (bool expand)
+	void Separator::SetExpandX (bool expand)
 	{
 		if(!m_widget_attached) {
 			m_expand_x = expand;
 		}
 	}
 
-	void SpaceArea::SetExpandY (bool expand)
+	void Separator::SetExpandY (bool expand)
 	{
 		if(!m_widget_attached) {
 			m_expand_y = expand;
 		}
 	}
 
-	void SpaceArea::SetExpand (bool expand_x, bool expand_y)
+	void Separator::SetExpand (bool expand_x, bool expand_y)
 	{
 		if(!m_widget_attached) {
 			m_expand_x = expand_x;
@@ -99,17 +99,17 @@ namespace BlendInt {
 		}
 	}
 
-	bool SpaceArea::IsExpandX() const
+	bool Separator::IsExpandX() const
 	{
 		return m_expand_x;
 	}
 
-	bool SpaceArea::IsExpandY() const
+	bool Separator::IsExpandY() const
 	{
 		return m_expand_y;
 	}
 
-	void SpaceArea::UpdateGeometry (const GeometryUpdateRequest& request)
+	void Separator::UpdateGeometry (const GeometryUpdateRequest& request)
 	{
 		if(m_widget_attached) {
 
@@ -134,66 +134,66 @@ namespace BlendInt {
 		}
 	}
 	
-	ResponseType SpaceArea::Draw (const RedrawEvent& event)
+	ResponseType Separator::Draw (const RedrawEvent& event)
 	{
 		return Ignore;
 	}
 
-	bool SpaceArea::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	bool Separator::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;
 	}
 
-	void SpaceArea::BroadcastUpdate (const GeometryUpdateRequest& request)
+	void Separator::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 
-	ResponseType SpaceArea::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType SpaceArea::CursorEnterEvent (bool entered)
+	ResponseType Separator::FocusEvent (bool focus)
 	{
 		return Ignore;
 	}
 
-	ResponseType SpaceArea::KeyPressEvent (const KeyEvent& event)
+	ResponseType Separator::CursorEnterEvent (bool entered)
 	{
 		return Ignore;
 	}
 
-	ResponseType SpaceArea::ContextMenuPressEvent (
+	ResponseType Separator::KeyPressEvent (const KeyEvent& event)
+	{
+		return Ignore;
+	}
+
+	ResponseType Separator::ContextMenuPressEvent (
 	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SpaceArea::ContextMenuReleaseEvent (
+	ResponseType Separator::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SpaceArea::MousePressEvent (const MouseEvent& event)
+	ResponseType Separator::MousePressEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SpaceArea::MouseReleaseEvent (const MouseEvent& event)
+	ResponseType Separator::MouseReleaseEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType SpaceArea::MouseMoveEvent (const MouseEvent& event)
+	ResponseType Separator::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	void SpaceArea::OnWidgetDestroyed (AbstractWidget* widget)
+	void Separator::OnWidgetDestroyed (AbstractWidget* widget)
 	{
 		if(m_widget_attached == widget) {
-			widget->destroyed().disconnectOne(this, &SpaceArea::OnWidgetDestroyed);
+			widget->destroyed().disconnectOne(this, &Separator::OnWidgetDestroyed);
 			m_widget_attached = 0;
 		}
 	}

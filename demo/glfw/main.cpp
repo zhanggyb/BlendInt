@@ -35,7 +35,7 @@
 #include <BlendInt/Gui/NumericalSlider.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/ToolButton.hpp>
-#include <BlendInt/Gui/SpaceArea.hpp>
+#include <BlendInt/Gui/Separator.hpp>
 #include <BlendInt/Gui/ColorSelector.hpp>
 #include <BlendInt/Gui/ToolBox.hpp>
 #include <BlendInt/Gui/Tab.hpp>
@@ -82,6 +82,8 @@ int main(int argc, char* argv[])
 	vw->SetPosition(200, 200);
 
 	context->PushBack(vw);
+
+	vw->Resize(600, 500);
 
 #ifdef DEBUG
 	//context->PrintSections();

@@ -168,9 +168,14 @@ namespace BlendInt {
 				case WidgetSize: {
 					const Size* size_p =
 					        static_cast<const Size*>(request.data());
+
+					int h = size_p->height() - sub_widget(0)->size().height();
+					if (h < 0) h = 0;
+
+					Size vw_size (size_p->width(), h);
 					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(),
-					        round_corner_type(), round_corner_radius());
+					tool.Setup(vw_size, 0, RoundNone, 0.f);
+
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
@@ -182,6 +187,7 @@ namespace BlendInt {
 				}
 
 				case WidgetRoundCornerType: {
+					/*
 					const int* type_p = static_cast<const int*>(request.data());
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(), *type_p,
@@ -190,13 +196,16 @@ namespace BlendInt {
 					tool.SetInnerBufferData(m_inner.get());
 
 					set_round_corner_type(*type_p);
+					*/
 					Refresh();
 					break;
 				}
 
 				case WidgetRoundCornerRadius: {
+					/*
 					const float* radius_p =
 					        static_cast<const float*>(request.data());
+
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(),
 					        round_corner_type(), *radius_p);
@@ -204,6 +213,7 @@ namespace BlendInt {
 					tool.SetInnerBufferData(m_inner.get());
 
 					set_round_corner_radius(*radius_p);
+					*/
 					Refresh();
 					break;
 				}
@@ -266,7 +276,7 @@ namespace BlendInt {
 		Size area_size(size().width(), size().height() - dec->size().height());
 
 		VertexTool tool;
-		tool.Setup (area_size, 0, RoundNone, round_corner_radius());
+		tool.Setup (area_size, 0, RoundNone, 0.f);
 
 		glGenVertexArrays(1, m_vao);
 		glBindVertexArray(m_vao[0]);
@@ -275,6 +285,7 @@ namespace BlendInt {
 		m_inner->Generate();
 		m_inner->Bind();
 		tool.SetInnerBufferData(m_inner.get());
+
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 

@@ -100,13 +100,7 @@ namespace BlendInt {
 		SetContainer(widget, this);
 
 		// set shadow
-		if(widget->drop_shadow()) {
-			if(!widget->m_shadow) {
-				widget->m_shadow.reset(new Shadow(widget->size(), widget->round_corner_type(), widget->round_corner_radius()));
-			} else {
-				widget->m_shadow->Update(widget->size(), widget->round_corner_type(), widget->round_corner_radius());
-			}
-		}
+		EnableShadow(widget);
 
 		events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyed);
 

@@ -59,6 +59,9 @@ namespace BlendInt {
 	void Workspace::PushBack (VirtualWindow* window)
 	{
 		if(PushBackSubWidget(window)) {
+
+			EnableShadow(window);
+
 			int x = position().x() + margin().left();
 			int y = position().y() + margin().bottom();
 
@@ -69,6 +72,8 @@ namespace BlendInt {
 	void Workspace::PushFront (VirtualWindow* window)
 	{
 		if (PushFrontSubWidget(window)) {
+
+			EnableShadow(window);
 
 			int x = position().x() + margin().left();
 			int y = position().y() + margin().bottom();
@@ -151,6 +156,27 @@ namespace BlendInt {
 
 				default:
 					break;
+			}
+
+		} else if (request.source()->container() == this) {
+
+			switch (request.type()) {
+
+				case WidgetPosition: {
+					//m_layers[request.source()->z()].m_hover_list_valid = false;
+					break;
+				}
+
+				case WidgetSize:
+				case WidgetRoundCornerType:
+				case WidgetRoundCornerRadius: {
+					EnableShadow(request.source());
+					break;
+				}
+
+				default:
+					break;
+
 			}
 		}
 
