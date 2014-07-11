@@ -33,6 +33,8 @@ namespace BlendInt {
 
 	/**
 	 * @brief A special container works as a window in desktop
+	 *
+	 * The margin of a VirtualWindow is always zero.
 	 */
 	class VirtualWindow: public AbstractVectorContainer
 	{
@@ -72,9 +74,16 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		void FillSubWidgets ();
+		void FillSubWidgets (const Point& out_pos, const Size& size);
+
+		void FillSubWidgets (int x, int y, int w, int h);
 
 	private:
+
+		enum SubWidgetIndex {
+			DecorationIndex,
+			ContentIndex
+		};
 
 		void InitializeVirtualWindow ();
 

@@ -78,16 +78,17 @@ namespace BlendInt {
 	{
 		if (SetSubWidget(widget)) {
 			int x = position().x() + margin().left();
-			int y = position().y() + margin().bottom();
+			int y = position().y() + size().height() - margin().top();
 
-			y = y + size().height() - margin().vsum() - widget->size().height();
+			// move widget to align the top-left of the viewport
+			SetSubWidgetPosition(widget, x, y - widget->size().height());
 
-			SetSubWidgetPosition(widget, x, y);
 			/*
 			ResizeSubWidget(widget,
 							size().width() - horizontal_margins(),
 							size().height() - vertical_margins());
 			*/
+
 
 			DisableShadow(widget);
 		}
@@ -254,6 +255,14 @@ namespace BlendInt {
 					tool.Setup(*size_p, 0, RoundNone, 0);
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
+
+					// align the subwidget
+					if(sub_widget()) {
+
+						int dy = size_p->height() - size().height();
+
+						sub_widget()->SetPosition(sub_widget()->position().x(), sub_widget()->position().y() + dy);
+					}
 
 					set_size(*size_p);
 					break;

@@ -229,6 +229,7 @@ namespace BlendInt {
 	{
 		if(this->visiable() == visible)
 			return;
+
 		bool broadcast = false;
 
 		GeometryUpdateRequest request(this, this, WidgetVisibility, &visible);

@@ -177,7 +177,28 @@ namespace BlendInt {
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
-					AdjustGeometries(position(), *size_p, margin());
+					ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+					AbstractWidget* widget = view->viewport();
+
+					int width = size_p->width() - margin().hsum();
+					int height = size_p->height() - margin().vsum();
+
+					if(widget) {
+						if (widget->size().width() <= width) {
+							sub_widget(HScrollBarIndex)->SetVisible(false);
+						} else {
+							sub_widget(HScrollBarIndex)->SetVisible(true);
+						}
+
+						if (widget->size().height() <= height) {
+							sub_widget(VScrollBarIndex)->SetVisible(false);
+						} else {
+							sub_widget(VScrollBarIndex)->SetVisible(true);
+						}
+					}
+
+					AdjustGeometries(position().x() + margin().left(),
+							position().y() + margin().bottom(), width, height);
 					set_size(*size_p);
 
 					break;
@@ -242,8 +263,8 @@ namespace BlendInt {
 
 		hbar->SetSliderPercentage(100);
 		vbar->SetSliderPercentage(100);
-		//m_hbar->SetVisible(false);
-		//m_vbar->SetVisible(false);
+		//hbar->SetVisible(false);
+		//vbar->SetVisible(false);
 
 		int x = position().x() + margin().left();
 		int y = position().y() + margin().bottom();
@@ -293,8 +314,6 @@ namespace BlendInt {
 
 		SetSubWidgetPosition(view, x, y + bh);
 		ResizeSubWidget (view, width - rw, height - bh);
-
-		//view->CentralizeViewport();
 
 		AbstractWidget* widget = view->viewport();
 

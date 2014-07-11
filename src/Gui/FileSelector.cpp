@@ -52,8 +52,9 @@ namespace BlendInt {
 	{
 		set_size(500, 400);
 		set_margin(2, 2, 2, 2);
+		set_drop_shadow(true);
 
-		InitializeFileBrowser();
+		InitializeFileSelector();
 	}
 
 	FileSelector::~FileSelector ()
@@ -108,10 +109,10 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		program->Reset();
 
-		return AcceptAndContinue;
+		return Ignore;
 	}
 
-	void FileSelector::InitializeFileBrowser ()
+	void FileSelector::InitializeFileSelector ()
 	{
 		glGenVertexArrays(1, &m_vao);
 

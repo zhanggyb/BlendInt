@@ -35,6 +35,8 @@ namespace BlendInt {
 	FileBrowser::FileBrowser ()
 	: m_vao(0)
 	{
+		set_drop_shadow(true);
+
 		InitializeFileListOnce();
 	}
 
@@ -42,7 +44,44 @@ namespace BlendInt {
 	{
 		glDeleteVertexArrays(1, &m_vao);
 	}
-	
+
+	bool FileBrowser::Open (const std::string& pathname)
+	{
+		namespace fs = boost::filesystem;
+		bool is_path = false;
+		int height = 0;
+
+		m_path = fs::path(pathname);
+
+		try {
+			if (fs::exists(m_path)) {
+
+				if (fs::is_directory(m_path)) {
+
+					int count = 0;
+					fs::directory_iterator it(m_path);
+					fs::directory_iterator it_end;
+					while (it != it_end) {
+						count++;
+						it++;
+					}
+
+					int h = m_font.GetHeight();
+
+					height = (count + 2) * h;	// count "." and ".."
+					is_path = true;
+				}
+			}
+		} catch (const fs::filesystem_error& ex) {
+			std::cerr << ex.what() << std::endl;
+		}
+
+		if(is_path)
+			Resize (size().width(), height);
+
+		return is_path;
+	}
+
 	bool FileBrowser::IsExpandX() const
 	{
 		return true;
@@ -67,16 +106,12 @@ namespace BlendInt {
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
-		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 
-		program->SetVertexAttrib4f("Color", 0.475f, 0.475f, 0.475f, 0.75f);
+		program->SetVertexAttrib4f("a_color", 0.475f, 0.475f, 0.475f, 0.75f);
 
-		if(i == m_index) {
-			program->SetUniform1i("u_gamma", 25);
-		} else {
-			program->SetUniform1i("u_gamma", 15);
-		}
+		if (i == m_index) program->SetUniform1i("u_gamma", 25);
+		else program->SetUniform1i("u_gamma", 15);
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -84,7 +119,7 @@ namespace BlendInt {
 
 		program->Reset();
 
-		m_font.Print(pos.x, pos.y + h - m_font.GetDescender(),	String("."));
+		m_font.Print(pos.x, pos.y - m_font.GetDescender(), String("."));
 		i++;
 
 		h -= m_font.GetHeight();
@@ -104,7 +139,7 @@ namespace BlendInt {
 
 		program->Reset();
 
-		m_font.Print(pos.x, pos.y + h - m_font.GetDescender(), String(".."));
+		m_font.Print(pos.x, pos.y - m_font.GetDescender(), String(".."));
 		i++;
 
 		fs::path p(m_path);
@@ -114,7 +149,7 @@ namespace BlendInt {
 
 				if (fs::is_regular_file(p)) {
 
-					m_font.Print(pos.x, pos.y + h - m_font.GetDescender(),
+					m_font.Print(pos.x, pos.y - m_font.GetDescender(),
 									p.native());
 
 				} else if (fs::is_directory(p)) {
@@ -149,7 +184,7 @@ namespace BlendInt {
 
 						program->Reset();
 
-						m_font.Print(pos.x, pos.y + h - m_font.GetDescender(),
+						m_font.Print(pos.x, pos.y - m_font.GetDescender(),
 										it->path().native());
 						dark = !dark;
 
@@ -250,9 +285,9 @@ namespace BlendInt {
 
 					int h = m_font.GetHeight();
 
-					unsigned total = std::max(300, count * h);
+					//unsigned total = std::max(300, count * h);
 
-					set_size(400, total);
+					set_size(400, (count + 2) * h);	// count "." and ".."
 
 				} else {
 					set_size(400, 300);
@@ -334,3 +369,4 @@ namespace BlendInt {
 	}
 
 }
+

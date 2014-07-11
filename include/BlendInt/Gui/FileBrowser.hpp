@@ -42,9 +42,16 @@ namespace BlendInt {
 
 	public:
 
+		enum FileBrowserMode {
+			FileList,
+			FileIcon
+		};
+
 		FileBrowser ();
 
 		virtual ~FileBrowser ();
+
+		bool Open (const std::string& pathname);
 
 		virtual bool IsExpandX () const;
 

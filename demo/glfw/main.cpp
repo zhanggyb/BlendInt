@@ -79,16 +79,18 @@ int main(int argc, char* argv[])
 	context->Resize(1280, 800);
 
 	VirtualWindow* vw = Manage(new VirtualWindow);
-	vw->SetPosition(200, 200);
-	vw->Resize(800, 750);
+	vw->Resize(500, 400);
 
-	ScrollArea* sa = Manage(new ScrollArea);
-	sa->SetPosition(200, 200);
-	sa->Resize (600, 500);
+	Button* btn = Manage(new Button("Hello World!"));
 
-	sa->SetViewport(vw);
+	Frame* f = Manage(new Frame);
+	f->Setup(btn);
 
-	context->PushBack(sa);
+	vw->Setup(f);
+
+	vw->Resize(400, 300);
+
+    context->PushBack(vw);
 
 #ifdef DEBUG
 	//context->PrintSections();
