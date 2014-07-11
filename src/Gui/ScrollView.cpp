@@ -54,7 +54,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		tool.Setup(size(), 0, RoundNone, 0.f);
 
 		glBindVertexArray(m_vao);
 		m_inner.reset(new GLArrayBuffer);
@@ -74,7 +74,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ScrollView::SetViewport (AbstractWidget* widget)
+	void ScrollView::Setup (AbstractWidget* widget)
 	{
 		if (SetSubWidget(widget)) {
 			int x = position().x() + margin().left();
@@ -88,6 +88,8 @@ namespace BlendInt {
 							size().width() - horizontal_margins(),
 							size().height() - vertical_margins());
 			*/
+
+			DisableShadow(widget);
 		}
 	}
 
@@ -291,11 +293,14 @@ namespace BlendInt {
 		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 
-		program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
+		if(sub_widget()) {
+			program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
+		} else {
+			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+		}
 
 		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
 		program->Reset();

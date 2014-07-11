@@ -31,8 +31,6 @@ namespace BlendInt {
 	/**
 	 * @brief A widget container in which a sub widget can be scrolled
 	 *
-	 * The sub widget is named as a viewport and it's usually larger than
-	 * the ScrollView
 	 */
 	class ScrollView: public AbstractSingleContainer
 	{
@@ -44,7 +42,7 @@ namespace BlendInt {
 
 		virtual ~ScrollView ();
 
-		void SetViewport (AbstractWidget* widget);
+		void Setup (AbstractWidget* widget);
 
 		/**
 		 * @brief set the scrollable orientation

@@ -80,10 +80,15 @@ int main(int argc, char* argv[])
 
 	VirtualWindow* vw = Manage(new VirtualWindow);
 	vw->SetPosition(200, 200);
+	vw->Resize(800, 750);
 
-	context->PushBack(vw);
+	ScrollArea* sa = Manage(new ScrollArea);
+	sa->SetPosition(200, 200);
+	sa->Resize (600, 500);
 
-	vw->Resize(600, 500);
+	sa->SetViewport(vw);
+
+	context->PushBack(sa);
 
 #ifdef DEBUG
 	//context->PrintSections();

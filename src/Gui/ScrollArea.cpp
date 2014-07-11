@@ -45,12 +45,14 @@ namespace BlendInt {
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(360, 240);
+		set_drop_shadow(true);
 
 		InitializeScrollArea();
 	}
 
 	ScrollArea::~ScrollArea ()
 	{
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	void ScrollArea::SetViewport (AbstractWidget* widget)
@@ -59,7 +61,7 @@ namespace BlendInt {
 			return;
 
 		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
-		view->SetViewport(widget);
+		view->Setup(widget);
 
 		int width = size().width() - margin().hsum();
 		int height = size().height() - margin().vsum();
@@ -204,8 +206,7 @@ namespace BlendInt {
 		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
 		program->Reset();
@@ -217,7 +218,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		tool.Setup(size(), 0, RoundNone, 0.f);
 
 		glBindVertexArray(m_vao);
 		m_inner.reset(new GLArrayBuffer);
@@ -235,10 +236,12 @@ namespace BlendInt {
 		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
 		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
 
-		SetSubWidget(0, view);
-		SetSubWidget(1, hbar);
-		SetSubWidget(2, vbar);
+		SetSubWidget(ScrollViewIndex, view);
+		SetSubWidget(HScrollBarIndex, hbar);
+		SetSubWidget(VScrollBarIndex, vbar);
 
+		hbar->SetSliderPercentage(100);
+		vbar->SetSliderPercentage(100);
 		//m_hbar->SetVisible(false);
 		//m_vbar->SetVisible(false);
 
@@ -273,8 +276,8 @@ namespace BlendInt {
 
 	void ScrollArea::AdjustGeometries (int x, int y, int width, int height)
 	{
-		int bh = 0;
-		int rw = 0;
+		int bh = 0;	// bottom height of the hbar
+		int rw = 0;	// right width of the vbar
 
 		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
 		ScrollBar* hbar = dynamic_cast<ScrollBar*>(sub_widget(HScrollBarIndex));
@@ -318,7 +321,6 @@ namespace BlendInt {
 				vbar->SetSliderPercentage(percent);
 			}
 		}
-
 	}
 
 	void ScrollArea::OnHorizontalScroll (int value)
@@ -326,8 +328,9 @@ namespace BlendInt {
 		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
 
 		AbstractWidget* p = view->viewport();
+
 		if (p) {
-			view->SetReletivePosition(value - p->size().width(),
+			view->SetReletivePosition(view->size().width() - value,
 			        p->position().y() - view->position().y());
 		}
 	}
