@@ -21,7 +21,27 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+
 #include <BlendInt/Gui/Section.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
@@ -129,6 +149,215 @@ namespace BlendInt {
 		return true;
 	}
 
+	void Section::RenderToTexture (AbstractWidget* widget, GLTexture2D* texture)
+	{
+#ifdef DEBUG
+		assert(widget && texture);
+#endif
+
+		GLsizei width = widget->size().width() + Theme::instance->shadow_width() * 2;
+		GLsizei height = widget->size().height() + Theme::instance->shadow_width() * 2;
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = texture;
+		if(!tex->texture())
+			tex->Generate();
+
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_TEXTURE_2D, tex->texture(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+				width, height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, rb);
+
+		if(GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			glClearColor(0.0, 0.0, 0.0, 0.0);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+			glEnable(GL_BLEND);
+
+			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
+			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(Theme::instance->shadow_width(), Theme::instance->shadow_width(), 0.0));
+
+			RedrawEvent event;
+			event.set_projection_matrix(projection);
+			event.set_view_matrix(view * offset);
+
+            GLint vp[4];
+            glGetIntegerv(GL_VIEWPORT, vp);
+			glViewport(0, 0, width, height);
+
+			widget->Draw(event);
+
+			glViewport(vp[0], vp[1], vp[2], vp[3]);
+		}
+
+		fb->Reset();
+		tex->Reset();
+
+		//delete tex; tex = 0;
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb; fb = 0;
+	}
+
+	void Section::RenderToFile (AbstractWidget* widget, const char* filename)
+	{
+		using Stock::Shaders;
+
+#ifdef DEBUG
+		assert(widget);
+#endif
+		GLsizei width = widget->size().width() + Theme::instance->shadow_width() * 2;
+		GLsizei height = widget->size().height() + Theme::instance->shadow_width() * 2;
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = new GLTexture2D;
+		tex->Generate();
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_TEXTURE_2D, tex->texture(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+				width, height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, rb);
+
+		if(GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			glClearColor(0.0, 0.0, 0.0, 0.0);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+			glEnable(GL_BLEND);
+
+			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
+			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(Theme::instance->shadow_width(), Theme::instance->shadow_width(), 0.0));
+
+			RefPtr<GLSLProgram> program =
+			        Shaders::instance->default_triangle_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+
+			RedrawEvent event;
+			event.set_projection_matrix(projection);
+			event.set_view_matrix(view * offset);
+
+            GLint vp[4];
+            glGetIntegerv(GL_VIEWPORT, vp);
+
+			glViewport(0, 0, width, height);
+
+			widget->Draw(event);
+
+			glViewport(vp[0], vp[1], vp[2], vp[3]);
+
+			projection = glm::ortho(0.f, 1280.f, 0.f, 800.f, 100.f, -100.f);
+
+			program = Shaders::instance->default_triangle_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(projection));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(projection));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(projection));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(projection));
+
+			program->Reset();
+			// ---------------------------------------------
+			tex->WriteToFile(filename);
+		}
+
+		fb->Reset();
+
+		tex->Reset();
+		delete tex; tex = 0;
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb; fb = 0;
+	}
+
 	void Section::UpdateContainer (const ContainerUpdateRequest& request)
 	{
 		ReportContainerUpdate(request);
@@ -229,6 +458,8 @@ namespace BlendInt {
 
 	ResponseType Section::Draw (const RedrawEvent& event)
 	{
+		const_cast<RedrawEvent&>(event).m_section = this;
+
 		for(std::set<AbstractWidget*>::iterator it = m_set.begin(); it != m_set.end(); it++)
 		{
 			DispatchDrawEvent(*it, event);
@@ -255,17 +486,23 @@ namespace BlendInt {
 	ResponseType Section::ContextMenuPressEvent (
 	        const ContextMenuEvent& event)
 	{
+		const_cast<ContextMenuEvent&>(event).m_section = this;
+
 		return Ignore;
 	}
 
 	ResponseType Section::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
+		const_cast<ContextMenuEvent&>(event).m_section = this;
+
 		return Ignore;
 	}
 
 	ResponseType Section::MousePressEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_section = this;
+
 		CheckAndUpdateHoverWidget(event);
 
 		if(m_last_hover_widget) {
@@ -291,6 +528,8 @@ namespace BlendInt {
 
 	ResponseType Section::MouseReleaseEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_section = this;
+
 		CheckAndUpdateHoverWidget(event);
 
 		if(m_last_hover_widget) {
@@ -316,6 +555,8 @@ namespace BlendInt {
 
 	ResponseType Section::MouseMoveEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_section = this;
+
 		CheckAndUpdateHoverWidget(event);
 
 		if(m_last_hover_widget) {

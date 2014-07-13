@@ -42,7 +42,8 @@
 
 namespace BlendInt {
 
-	class AbstractWidget;
+	class Context;
+	class Section;
 
 	/**
 	 * @brief the basic event class
@@ -54,11 +55,31 @@ namespace BlendInt {
 	public:
 
 		DeviceEvent ()
+		: m_context(0),
+		  m_section(0)
 		{
 		}
 
 		~DeviceEvent ()
 		{}
+
+		Context* context () const
+		{
+			return m_context;
+		}
+
+		Section* section () const
+		{
+			return m_section;
+		}
+
+	private:
+
+		friend class Context;
+		friend class Section;
+
+		Context* m_context;
+		Section* m_section;
 
 	};
 

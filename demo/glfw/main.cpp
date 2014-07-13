@@ -78,19 +78,23 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
+	Workspace* ws = Manage(new Workspace);
+	ws->SetPosition(100, 100);
+	ws->Resize(800, 600);
+
 	VirtualWindow* vw = Manage(new VirtualWindow);
-	vw->Resize(500, 400);
 
-	Button* btn = Manage(new Button("Hello World!"));
+	ws->PushBack(vw);
 
-	Frame* f = Manage(new Frame);
-	f->Setup(btn);
+	context->PushBack(ws);
 
-	vw->Setup(f);
-
-	vw->Resize(400, 300);
-
-    context->PushBack(vw);
+	ColorSelector* cs = 0;
+	for(int i = 0; i < 20; i++)
+	{
+		cs = Manage(new ColorSelector);
+		cs->SetPosition(950, 100 + i * 10);
+		context->PushBack(cs);
+	}
 
 #ifdef DEBUG
 	//context->PrintSections();

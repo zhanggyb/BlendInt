@@ -39,8 +39,8 @@
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt
 {
@@ -113,18 +113,12 @@ namespace BlendInt
 									widget->name().c_str(),
 									name().c_str());
 				return section;
-
 			} else {
-
 				AbstractContainer::RemoveSubWidget(section->container(), section);
-
 			}
-
 		} else {
-
 			section = Manage(new Section);
 			section->Insert(widget);
-
 		}
 
 #ifdef DEBUG
@@ -161,15 +155,12 @@ namespace BlendInt
 		}
 
 		// if the container is a section, the section will destroy itself if it's empty
-
 		Section* section = widget->GetSection();
-
 		assert(section->container() == this);
 
 		AbstractContainer::RemoveSubWidget(widget->container(), widget);
 
 		if(section->m_set.size() == 0) {
-
 			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
 			if(section->managed() && (section->count() == 0)) {
 				delete section;
@@ -178,7 +169,6 @@ namespace BlendInt
 				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
 						", and it's referenced by a smart pointer, it will not be deleted automatically");
 			}
-
 		}
 
 		return section;
@@ -238,6 +228,18 @@ namespace BlendInt
 	{
 		// TODO:: overwrite this
 		return ArrowCursor;
+	}
+
+	void Context::RenderToTexture (AbstractWidget* widget,
+	        GLTexture2D* texture)
+	{
+		Section::RenderToTexture(widget, texture);
+	}
+
+	void Context::RenderToFile (AbstractWidget* widget,
+	        const char* filename)
+	{
+		Section::RenderToFile(widget, filename);
 	}
 
 #ifdef DEBUG
@@ -445,6 +447,7 @@ namespace BlendInt
 	{
 		//glm::vec3 pos(position().x(), position().y(), z());
 		//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+		const_cast<RedrawEvent&>(event).m_context = this;
 
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 
@@ -474,6 +477,8 @@ namespace BlendInt
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
+		const_cast<KeyEvent&>(event).m_context = this;
+
 		ResponseType response;
 
 		if(m_focused_widget) {
@@ -485,21 +490,29 @@ namespace BlendInt
 
 	ResponseType Context::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		return Accept;
+		const_cast<ContextMenuEvent&>(event).m_context = this;
+
+		return Ignore;
 	}
 
 	ResponseType Context::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
-		return Accept;
+		const_cast<ContextMenuEvent&>(event).m_context = this;
+
+		return Ignore;
 	}
 
 	ResponseType Context::MousePressEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_context = this;
+
 		ResponseType response;
 
 		AbstractWidget* widget = 0;
 		AbstractWidget* original_focused_widget = m_focused_widget;	// mouse press event may change the focused widget
+
+		const_cast<MouseEvent&>(event).m_context = this;
 
 		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
 				it != m_sections.rend();
@@ -541,6 +554,8 @@ namespace BlendInt
 
 	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_context = this;
+
 		ResponseType response;
 
 		// tell the focused widget first
@@ -567,6 +582,8 @@ namespace BlendInt
 
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_context = this;
+
 		m_redraw_event.set_cursor_position(event.position());
 
 		ResponseType response;

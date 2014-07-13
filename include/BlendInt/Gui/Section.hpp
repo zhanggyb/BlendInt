@@ -58,6 +58,10 @@ namespace BlendInt {
 		 */
 		bool Contain (const Point& point) const;
 
+		static void RenderToTexture (AbstractWidget* widget, GLTexture2D* texture);
+
+		static void RenderToFile (AbstractWidget* widget, const char* filename);
+
 	protected:
 
 		virtual void UpdateContainer (const ContainerUpdateRequest& request);

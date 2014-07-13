@@ -609,16 +609,6 @@ namespace BlendInt {
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 
-		static void DispatchRender (AbstractWidget* obj);
-
-		static ResponseType dispatch_key_press_event (AbstractWidget* obj, const KeyEvent& event);
-
-		static ResponseType dispatch_mouse_move_event (AbstractWidget* obj, const MouseEvent& event);
-
-		static ResponseType dispatch_mouse_press_event (AbstractWidget* obj, const MouseEvent& event);
-
-		static ResponseType dispatch_mouse_release_event (AbstractWidget* obj, const MouseEvent& event);
-
 	private:
 
 		enum WidgetFlagIndex {

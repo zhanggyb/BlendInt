@@ -349,7 +349,6 @@ namespace BlendInt {
 		delete fb; fb = 0;
 	}
 
-
 	void AbstractWidget::RenderToFile(const char* filename, unsigned int border)
 	{
 		GLsizei width = size().width() + border * 2;
@@ -471,35 +470,6 @@ namespace BlendInt {
 		return false;
 	}
 
-	void AbstractWidget::DispatchRender(AbstractWidget* other)
-	{
-		//other->Draw();
-	}
-
-	ResponseType AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
-			const KeyEvent& event)
-	{
-		return obj->KeyPressEvent(event);
-	}
-
-	ResponseType AbstractWidget::dispatch_mouse_move_event (AbstractWidget* obj,
-			const MouseEvent& event)
-	{
-		return obj->MouseMoveEvent(event);
-	}
-
-	ResponseType AbstractWidget::dispatch_mouse_press_event (AbstractWidget* obj,
-			const MouseEvent& event)
-	{
-		return obj->MousePressEvent(event);
-	}
-
-	ResponseType AbstractWidget::dispatch_mouse_release_event (AbstractWidget* obj,
-			const MouseEvent& event)
-	{
-		return obj->MouseReleaseEvent(event);
-	}
-
 	void AbstractWidget::CheckSubWidgetAddedInContainer (AbstractWidget* sub_widget)
 	{
 		ContainerUpdateRequest request (this, m_container);
@@ -595,3 +565,4 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
+

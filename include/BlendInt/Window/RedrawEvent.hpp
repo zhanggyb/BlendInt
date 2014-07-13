@@ -38,8 +38,24 @@ namespace BlendInt {
 			: DeviceEvent()
 		{}
 
+		RedrawEvent (const RedrawEvent& orig)
+		{
+			m_cursor_position = orig.m_cursor_position;
+			m_projection_matrix = orig.m_projection_matrix;
+			m_view_matrix = orig.m_view_matrix;
+		}
+
 		~RedrawEvent ()
 		{}
+
+		RedrawEvent& operator = (const RedrawEvent& orig)
+		{
+			m_cursor_position = orig.m_cursor_position;
+			m_projection_matrix = orig.m_projection_matrix;
+			m_view_matrix = orig.m_view_matrix;
+
+			return *this;
+		}
 
 		void set_cursor_position (const Point& cursor_position)
 		{
