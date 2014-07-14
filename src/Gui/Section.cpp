@@ -223,13 +223,10 @@ namespace BlendInt {
 
 			glEnable(GL_BLEND);
 
-			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
 			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
 			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(Theme::instance->shadow_width(), Theme::instance->shadow_width(), 0.0));
 
 			RedrawEvent event;
-			event.set_projection_matrix(projection);
-			event.set_view_matrix(view * offset);
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
@@ -306,7 +303,6 @@ namespace BlendInt {
 
 			glEnable(GL_BLEND);
 
-			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
 			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
 			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(Theme::instance->shadow_width(), Theme::instance->shadow_width(), 0.0));
 
@@ -329,8 +325,6 @@ namespace BlendInt {
 			        glm::value_ptr(projection));
 
 			RedrawEvent event;
-			event.set_projection_matrix(projection);
-			event.set_view_matrix(view * offset);
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);

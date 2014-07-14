@@ -35,14 +35,14 @@ namespace BlendInt {
 	public:
 
 		RedrawEvent ()
-			: DeviceEvent()
-		{}
+		: DeviceEvent(), m_onscreen(true)
+		{
+		}
 
 		RedrawEvent (const RedrawEvent& orig)
+		: DeviceEvent(orig)
 		{
-			m_cursor_position = orig.m_cursor_position;
-			m_projection_matrix = orig.m_projection_matrix;
-			m_view_matrix = orig.m_view_matrix;
+			m_onscreen = orig.m_onscreen;
 		}
 
 		~RedrawEvent ()
@@ -50,40 +50,14 @@ namespace BlendInt {
 
 		RedrawEvent& operator = (const RedrawEvent& orig)
 		{
-			m_cursor_position = orig.m_cursor_position;
-			m_projection_matrix = orig.m_projection_matrix;
-			m_view_matrix = orig.m_view_matrix;
+			m_onscreen = orig.m_onscreen;
 
 			return *this;
 		}
 
-		void set_cursor_position (const Point& cursor_position)
-		{
-			m_cursor_position = cursor_position;
-		}
-		
-		void set_projection_matrix (const glm::mat4& matrix)
-		{
-			m_projection_matrix = matrix;
-		}
-
-		void set_view_matrix (const glm::mat4& matrix)
-		{
-			m_view_matrix = matrix;
-		}
-
-		const Point& cursor_position() const {return m_cursor_position;}
-
-		const glm::mat4& view_matrix () const {return m_view_matrix;}
-
-		const glm::mat4& projection_matrix () const {return m_projection_matrix;}
-
 	private:
 
-		Point m_cursor_position;
-
-		glm::mat4 m_projection_matrix;
-		glm::mat4 m_view_matrix;
+		bool m_onscreen;
 
 	};
 

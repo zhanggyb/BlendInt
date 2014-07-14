@@ -116,6 +116,8 @@ namespace BlendInt {
 
 		static void RenderToFile (AbstractWidget* widget, const char* filename);
 
+		static glm::mat4 default_view_matrix;
+
 #ifdef DEBUG
 
 		void PrintSections ();

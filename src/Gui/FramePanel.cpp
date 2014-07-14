@@ -44,6 +44,7 @@
 #include <BlendInt/Stock/Shaders.hpp>
 
 #include <BlendInt/Gui/FramePanel.hpp>
+#include <BlendInt/Gui/Context.hpp>
 
 namespace BlendInt {
 
@@ -91,6 +92,8 @@ namespace BlendInt {
 	ResponseType FramePanel::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
+
+		DBG_PRINT_MSG("%d", event.context()->size().width());
 
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();

@@ -230,7 +230,7 @@ namespace BlendInt {
 	{
 		m_status_down = true;
 
-		Context* context = Context::GetContext(this);
+		Context* context = event.context();
 		if(context) {
 			if(m_menu->container()) {
 				context->Remove(m_menu.get());

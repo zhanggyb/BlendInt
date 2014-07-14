@@ -60,6 +60,12 @@ namespace BlendInt {
 		{
 		}
 
+		DeviceEvent (const DeviceEvent& orig)
+		{
+			m_context = orig.m_context;
+			m_section = orig.m_section;
+		}
+
 		~DeviceEvent ()
 		{}
 

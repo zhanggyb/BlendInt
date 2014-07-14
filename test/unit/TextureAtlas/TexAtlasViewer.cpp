@@ -257,8 +257,10 @@ void TexAtlasViewer::Update(const BI::UpdateRequest& request)
 
 BI::ResponseType TexAtlasViewer::Draw (const BI::RedrawEvent& event)
 {
-	glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
-	glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+	//glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);
+	//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+
+	glm::mat4 mvp;
 
 	glBindVertexArray(m_vao);
 
