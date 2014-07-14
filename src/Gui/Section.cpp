@@ -303,7 +303,11 @@ namespace BlendInt {
 
 			glEnable(GL_BLEND);
 
-			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
+			glm::mat4 projection = glm::ortho(
+					(float)widget->position().x() - 12.f,
+					widget->position().x() - 12.f + (float)width,
+					(float)widget->position().y() - 12.f,
+					(float)widget->position().y() - 12.f + (float)height, 100.f, -100.f);
 			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(Theme::instance->shadow_width(), Theme::instance->shadow_width(), 0.0));
 
 			RefPtr<GLSLProgram> program =
@@ -325,13 +329,14 @@ namespace BlendInt {
 			        glm::value_ptr(projection));
 
 			RedrawEvent event;
+			ScissorStatus scissor;
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
 
 			glViewport(0, 0, width, height);
 
-			widget->Draw(event);
+			DispatchDrawEvent(widget, event, scissor);
 
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
 
@@ -627,6 +632,53 @@ namespace BlendInt {
 	{
 		IteratorPtr ret;
 		return ret;
+	}
+
+	void Section::DispatchDrawEvent (AbstractWidget* widget,
+	        const RedrawEvent& event, ScissorStatus& scissor)
+	{
+		if (widget->visiable()) {
+
+			if(widget->drop_shadow() && widget->m_shadow) {
+				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
+			}
+
+			widget->Draw(event);
+
+			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
+			if (p) {
+
+				if(p->scissor_test()) {
+					scissor.Push(p->position().x() + p->margin().left(),
+							p->position().y() + p->margin().right(),
+							p->size().width() - p->margin().left() - p->margin().right(),
+							p->size().height() - p->margin().top() - p->margin().bottom());
+				}
+
+				IteratorPtr it = p->CreateIterator(event);
+
+				if(scissor.valid()) {
+					scissor.Enable();
+
+					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
+						DispatchDrawEvent(it->GetWidget(), event, scissor);
+					}
+
+				} else {
+
+					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
+						DispatchDrawEvent(it->GetWidget(), event, scissor);
+					}
+				}
+
+				if(p->scissor_test()) {
+					scissor.Pop();
+					scissor.Disable();
+				}
+
+			}
+
+		}
 	}
 
 	void Section::DispatchDrawEvent (AbstractWidget* widget,

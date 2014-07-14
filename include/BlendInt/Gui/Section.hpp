@@ -98,6 +98,8 @@ namespace BlendInt {
 
 	private:
 
+		static void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event, ScissorStatus& scissor);
+
 		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
 
 		ResponseType DispatchMousePressEvent (AbstractWidget* widget, const MouseEvent& event);
