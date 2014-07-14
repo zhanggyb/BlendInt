@@ -96,21 +96,11 @@ int main(int argc, char* argv[])
 		context->PushBack(cs);
 	}
 
-#ifdef DEBUG
-	//context->PrintSections();
-#endif
-
 	RunLoop(win);
-
-#ifdef DEBUG
-	//context->PrintSections();
-#endif
 
 	Interface::Release();
 
 	Terminate();
-
-	assert(Object::CheckAllocatedObjects());
 
 	return 0;
 }

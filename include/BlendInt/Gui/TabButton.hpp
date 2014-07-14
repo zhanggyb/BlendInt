@@ -62,7 +62,7 @@ namespace BlendInt {
 
 #ifndef DEBUG
 
-		void GenerateTabButtonVertices (const Size& size, int border,
+		void GenerateTabButtonVertices (const Size& size, float border,
 						std::vector<GLfloat>& inner,
 						std::vector<GLfloat>& outer);
 

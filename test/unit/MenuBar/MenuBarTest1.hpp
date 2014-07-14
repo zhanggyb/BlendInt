@@ -15,16 +15,12 @@ protected:
 
 	virtual void SetUp ()
 	{
-#ifdef DEBUG
-		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
-#endif
+
 	}
 
 	virtual void TearDown ()
 	{
-#ifdef DEBUG
-		ASSERT_TRUE(BlendInt::Object::CheckAllocatedObjects());
-#endif
+
 	}
 };
 

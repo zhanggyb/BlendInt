@@ -119,7 +119,6 @@ namespace BlendInt {
         }
 
         RefPtr<FontCache> cache(new FontCache(data));
-        DBG_SET_NAME(cache, data.name);
 
         cache->Initialize(data, 32, 95);
         cache_db[data] = cache;
@@ -498,15 +497,5 @@ namespace BlendInt {
         glyph.texture = atlas;
 
     }
-
-#ifdef DEBUG
-    void FontCache::list (void)
-    {
-        map<FontTypeBase, RefPtr<FontCache> >::const_iterator it;
-        for (it = cache_db.begin(); it != cache_db.end(); it++) {
-            cout << it->second->name() << endl;
-        }
-    }
-#endif
 
 } /* namespace BlendInt */

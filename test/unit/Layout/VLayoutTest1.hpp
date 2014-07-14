@@ -1,7 +1,7 @@
 /*
  * VLayoutTest1.hpp
  *
- *  Created on: 2013Äê12ÔÂ7ÈÕ
+ *  Created on: 2013ï¿½ï¿½12ï¿½ï¿½7ï¿½ï¿½
  *      Author: zhanggy
  */
 
@@ -19,12 +19,10 @@ public:
 protected:
 	virtual void SetUp ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
 	}
 
 	virtual void TearDown ()
 	{
-		ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
 	}
 };
 

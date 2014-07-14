@@ -18,7 +18,5 @@ namespace BlendInt {
 
 	extern void Terminate ();
 
-	extern bool CheckAllocatedObjects ();
-
 }
 

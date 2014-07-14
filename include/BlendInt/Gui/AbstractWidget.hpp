@@ -426,6 +426,22 @@ namespace BlendInt {
 
 		static float DefaultBorderWidth ();
 
+#ifdef DEBUG
+
+		inline void set_name (const char* name)
+		{
+			m_name = name;
+		}
+
+		inline void set_name (const std::string& name)
+		{
+			m_name = name;
+		}
+
+		const std::string& name () const {return m_name;}
+
+#endif
+
 	protected:
 
 		/**
@@ -664,6 +680,10 @@ namespace BlendInt {
 		AbstractContainer* m_container;
 
 		RefPtr<Shadow> m_shadow;
+
+#ifdef DEBUG
+		std::string m_name;
+#endif
 
 		static float default_border_width;
 

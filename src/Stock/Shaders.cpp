@@ -595,22 +595,16 @@ namespace BlendInt {
 		Shaders::Shaders ()
 		{
 			m_default_text_program.reset(new GLSLProgram);
-			DBG_SET_NAME(m_default_text_program, "Text Program");
 
 			m_primitive_program.reset(new GLSLProgram);
-			DBG_SET_NAME(m_primitive_program, "Primitive Program");
 
 			m_default_triangle_program.reset(new GLSLProgram);
-			DBG_SET_NAME(m_default_triangle_program, "Triangle Program");
 
 			m_default_line_program.reset(new GLSLProgram);
-			DBG_SET_NAME(m_default_line_program, "Line Program");
 
 			m_default_context_program.reset(new GLSLProgram);
-			DBG_SET_NAME(m_default_context_program, "Context Program");
 
 			m_default_image_program.reset(new GLSLProgram);
-			DBG_SET_NAME(m_default_image_program, "PixelIcon Program");
 		}
 
 		Shaders::~Shaders ()

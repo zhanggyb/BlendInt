@@ -195,25 +195,7 @@ namespace BlendInt {
 
 	bool CheckAllocatedObjects ()
 	{
-#ifdef DEBUG
-		using namespace std;
-
-		unsigned int mapsize = Object::GetMapSize();
-
-        cout << "map size: " << mapsize << endl;
-
-		if(mapsize > 0) {
-			map<uint64_t, Object*>::const_iterator it;
-			for (it = Object::GetMap().begin(); it != Object::GetMap().end(); it++)
-			{
-				cout << "id: " << it->first << " name: " << it->second->name() << " was not deleted!" << endl;
-			}
-		}
-
-		return (mapsize == 0);
-#else
 		return true;
-#endif
 	}
 
 }
