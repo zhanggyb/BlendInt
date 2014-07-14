@@ -547,10 +547,6 @@ namespace BlendInt {
 
 		void ReportGeometryUpdate (const GeometryUpdateRequest& request);
 
-		Context* GetContext ();
-
-		Section* GetSection ();
-
 		int GetOutlineVertices (int round_type) const;
 
 		/**

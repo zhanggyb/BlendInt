@@ -50,7 +50,7 @@ namespace BlendInt {
 	FramePanel::FramePanel()
 	: Frame()
 	{
-//		set_drop_shadow(true);
+		set_drop_shadow(true);
 		InitializeFramePanel();
 	}
 	

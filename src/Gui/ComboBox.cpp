@@ -230,7 +230,7 @@ namespace BlendInt {
 	{
 		m_status_down = true;
 
-		Context* context = GetContext();
+		Context* context = Context::GetContext(this);
 		if(context) {
 			if(m_menu->container()) {
 				context->Remove(m_menu.get());
@@ -355,7 +355,7 @@ namespace BlendInt {
 
 	void ComboBox::OnMenuActionTriggered (Action* item)
 	{
-		Context* context = GetContext();
+		Context* context = Context::GetContext(this);
 
 		context->Remove(m_menu.get());
 		SetRoundCornerType(RoundAll);

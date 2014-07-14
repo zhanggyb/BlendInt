@@ -110,6 +110,8 @@ namespace BlendInt {
 			return m_resized;
 		}
 
+		static Context* GetContext (AbstractWidget* widget);
+
 		static void RenderToTexture (AbstractWidget* widget, GLTexture2D* texture);
 
 		static void RenderToFile (AbstractWidget* widget, const char* filename);

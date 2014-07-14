@@ -8,6 +8,7 @@ if(WITH_GLFW3_DEMO)
     add_subdirectory(theme_editor)
     if(ENABLE_OPENCV)
     add_subdirectory(imgproc)
+    add_subdirectory(texbuf)
     endif()
 endif()
 

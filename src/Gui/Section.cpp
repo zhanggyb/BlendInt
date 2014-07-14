@@ -149,6 +149,25 @@ namespace BlendInt {
 		return true;
 	}
 
+	Section* Section::GetSection (AbstractWidget* widget)
+	{
+		AbstractContainer* container = widget->container();
+		AbstractWidget* section = 0;
+
+		if(container == 0) {
+			return dynamic_cast<Section*>(widget);
+		} else {
+
+			while(container->container()) {
+				section = container;
+				container = container->container();
+			}
+
+		}
+
+		return dynamic_cast<Section*>(section);
+	}
+
 	void Section::RenderToTexture (AbstractWidget* widget, GLTexture2D* texture)
 	{
 #ifdef DEBUG

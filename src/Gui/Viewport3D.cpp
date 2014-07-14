@@ -62,7 +62,7 @@ namespace BlendInt {
 
 	ResponseType Viewport3D::CursorEnterEvent (bool entered)
 	{
-		Context* context = GetContext();
+		Context* context = Context::GetContext(this);
 		if(!context) return Ignore;
 
 		if(entered) {

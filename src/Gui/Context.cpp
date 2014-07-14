@@ -104,7 +104,7 @@ namespace BlendInt
 			return 0;
 		}
 
-		Section* section = widget->GetSection();
+		Section* section = Section::GetSection(widget);
 
 		if(section) {
 
@@ -155,7 +155,7 @@ namespace BlendInt
 		}
 
 		// if the container is a section, the section will destroy itself if it's empty
-		Section* section = widget->GetSection();
+		Section* section = Section::GetSection(widget);
 		assert(section->container() == this);
 
 		AbstractContainer::RemoveSubWidget(widget->container(), widget);
@@ -228,6 +228,23 @@ namespace BlendInt
 	{
 		// TODO:: overwrite this
 		return ArrowCursor;
+	}
+
+	Context* Context::GetContext (AbstractWidget* widget)
+	{
+		AbstractContainer* container = widget->container();
+
+		if(container == 0) {
+			return dynamic_cast<Context*>(widget);
+		} else {
+
+			while(container->container()) {
+				container = container->container();
+			}
+
+		}
+
+		return dynamic_cast<Context*>(container);
 	}
 
 	void Context::RenderToTexture (AbstractWidget* widget,
