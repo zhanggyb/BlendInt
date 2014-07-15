@@ -26,6 +26,8 @@
 
 #include <BlendInt/Gui/Frame.hpp>
 
+#include <BlendInt/OpenGL/TextureBuffer.hpp>
+
 namespace BlendInt {
 
 	class FramePanel: public Frame
@@ -40,6 +42,8 @@ namespace BlendInt {
 
 	protected:
 
+		virtual void UpdateContainer (const ContainerUpdateRequest& request);
+
 		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
@@ -48,8 +52,14 @@ namespace BlendInt {
 
 		void InitializeFramePanel ();
 
+		void RenderToBuffer ();
+
 		GLuint m_vao;
 		RefPtr<GLArrayBuffer> m_inner;
+
+		TextureBuffer m_buffer;
+
+		bool m_refresh;
 	};
 
 }

@@ -44,6 +44,12 @@ namespace BlendInt {
 	Button::Button ()
 		: AbstractButton()
 	{
+		set_round_corner_type(RoundAll);
+		set_drop_shadow(true);
+		int h = font().GetHeight();
+		set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum(),
+						h + DefaultButtonPadding().vsum());
+
 		InitializeButton();
 	}
 
@@ -179,13 +185,6 @@ namespace BlendInt {
 
 	void Button::InitializeButton ()
 	{
-		set_round_corner_type(RoundAll);
-
-		int h = font().GetHeight();
-
-		set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum(),
-						h + DefaultButtonPadding().vsum());
-
 		VertexTool tool;
 		tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
 
@@ -214,6 +213,7 @@ namespace BlendInt {
 	void Button::InitializeButton (const String& text)
 	{
 		set_round_corner_type(RoundAll);
+		set_drop_shadow(true);
 		set_text(text);
 
 		int left = DefaultButtonPadding().left() * Theme::instance->pixel();

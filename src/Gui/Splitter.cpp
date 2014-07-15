@@ -229,7 +229,7 @@ namespace BlendInt {
 
 	ResponseType SplitterHandle::CursorEnterEvent (bool entered)
 	{
-		Context* context = GetContext();
+		Context* context = Context::GetContext(this);
 		if(!context) return Ignore;
 
 		if(entered) {
@@ -642,7 +642,7 @@ namespace BlendInt {
 
 	ResponseType Splitter::Draw (const RedrawEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType Splitter::CursorEnterEvent (bool entered)
@@ -678,7 +678,7 @@ namespace BlendInt {
 
 	ResponseType Splitter::MouseMoveEvent (const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 	
 	void Splitter::AlignSubWidgets (Orientation orienation, const Size& out_size, const Margin& margin)

@@ -39,12 +39,16 @@
 #include <BlendInt/OpenGL/GLRenderbuffer.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
-
 #include <BlendInt/Stock/Shaders.hpp>
+#include <BlendInt/Stock/Theme.hpp>
 
 namespace BlendInt
 {
 	using Stock::Shaders;
+
+	glm::mat4 Context::default_view_matrix = glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
+			glm::vec3(0.f, 0.f, 0.f),
+            glm::vec3(0.f, 1.f, 0.f));
 
 	std::set<Context*> Context::context_set;
 
@@ -54,14 +58,6 @@ namespace BlendInt
 	  m_focused_widget(0)
 	{
 		set_size(640, 480);
-
-		m_redraw_event.set_view_matrix(
-				glm::lookAt(glm::vec3(0.f, 0.f, 1.f),
-						glm::vec3(0.f, 0.f, 0.f),
-		                glm::vec3(0.f, 1.f, 0.f)));
-		// default is 640 x 480
-		m_redraw_event.set_projection_matrix(
-		        glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f));
 
 		InitializeContext();
 
@@ -104,7 +100,7 @@ namespace BlendInt
 			return 0;
 		}
 
-		Section* section = widget->GetSection();
+		Section* section = Section::GetSection(widget);
 
 		if(section) {
 
@@ -113,18 +109,12 @@ namespace BlendInt
 									widget->name().c_str(),
 									name().c_str());
 				return section;
-
 			} else {
-
 				AbstractContainer::RemoveSubWidget(section->container(), section);
-
 			}
-
 		} else {
-
 			section = Manage(new Section);
 			section->Insert(widget);
-
 		}
 
 #ifdef DEBUG
@@ -161,15 +151,12 @@ namespace BlendInt
 		}
 
 		// if the container is a section, the section will destroy itself if it's empty
-
-		Section* section = widget->GetSection();
-
+		Section* section = Section::GetSection(widget);
 		assert(section->container() == this);
 
 		AbstractContainer::RemoveSubWidget(widget->container(), widget);
 
 		if(section->m_set.size() == 0) {
-
 			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
 			if(section->managed() && (section->count() == 0)) {
 				delete section;
@@ -178,7 +165,6 @@ namespace BlendInt
 				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
 						", and it's referenced by a smart pointer, it will not be deleted automatically");
 			}
-
 		}
 
 		return section;
@@ -238,6 +224,35 @@ namespace BlendInt
 	{
 		// TODO:: overwrite this
 		return ArrowCursor;
+	}
+
+	Context* Context::GetContext (AbstractWidget* widget)
+	{
+		AbstractContainer* container = widget->container();
+
+		if(container == 0) {
+			return dynamic_cast<Context*>(widget);
+		} else {
+
+			while(container->container()) {
+				container = container->container();
+			}
+
+		}
+
+		return dynamic_cast<Context*>(container);
+	}
+
+	void Context::RenderToTexture (AbstractWidget* widget,
+	        GLTexture2D* texture)
+	{
+		Section::RenderToTexture(widget, texture);
+	}
+
+	void Context::RenderToFile (AbstractWidget* widget,
+	        const char* filename)
+	{
+		Section::RenderToFile(widget, filename);
 	}
 
 #ifdef DEBUG
@@ -335,30 +350,25 @@ namespace BlendInt
 
 					const Size* size_p = static_cast<const Size*>(request.data());
 
-					m_redraw_event.set_projection_matrix(
-									glm::ortho(0.f,
+					glm::mat4 projection = glm::ortho(0.f,
 											(GLfloat)size_p->width(),
 											0.f,
 											(GLfloat)size_p->height(),
-											100.f, -100.f));
+											100.f, -100.f);
 
 					RefPtr<GLSLProgram> program =
 					        Shaders::instance->default_triangle_program();
 					program->Use();
-					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
-					        glm::value_ptr(m_redraw_event.projection_matrix()));
+					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 					program = Shaders::instance->default_line_program();
 					program->Use();
-					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
-					        glm::value_ptr(m_redraw_event.projection_matrix()));
+					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 					program = Shaders::instance->default_text_program();
 					program->Use();
-					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
-					        glm::value_ptr(m_redraw_event.projection_matrix()));
+					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 					program = Shaders::instance->default_image_program();
 					program->Use();
-					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
-					        glm::value_ptr(m_redraw_event.projection_matrix()));
+					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 
 					program->Reset();
 
@@ -445,6 +455,7 @@ namespace BlendInt
 	{
 		//glm::vec3 pos(position().x(), position().y(), z());
 		//glm::mat4 mvp = glm::translate(event.projection_matrix() * event.view_matrix(), pos);
+		const_cast<RedrawEvent&>(event).m_context = this;
 
 		glClearColor(0.208f, 0.208f, 0.208f, 1.f);
 
@@ -474,6 +485,8 @@ namespace BlendInt
 
 	ResponseType Context::KeyPressEvent (const KeyEvent& event)
 	{
+		const_cast<KeyEvent&>(event).m_context = this;
+
 		ResponseType response;
 
 		if(m_focused_widget) {
@@ -485,21 +498,29 @@ namespace BlendInt
 
 	ResponseType Context::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		return Accept;
+		const_cast<ContextMenuEvent&>(event).m_context = this;
+
+		return Ignore;
 	}
 
 	ResponseType Context::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
-		return Accept;
+		const_cast<ContextMenuEvent&>(event).m_context = this;
+
+		return Ignore;
 	}
 
 	ResponseType Context::MousePressEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_context = this;
+
 		ResponseType response;
 
 		AbstractWidget* widget = 0;
 		AbstractWidget* original_focused_widget = m_focused_widget;	// mouse press event may change the focused widget
+
+		const_cast<MouseEvent&>(event).m_context = this;
 
 		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
 				it != m_sections.rend();
@@ -541,6 +562,8 @@ namespace BlendInt
 
 	ResponseType Context::MouseReleaseEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_context = this;
+
 		ResponseType response;
 
 		// tell the focused widget first
@@ -567,7 +590,7 @@ namespace BlendInt
 
 	ResponseType Context::MouseMoveEvent (const MouseEvent& event)
 	{
-		m_redraw_event.set_cursor_position(event.position());
+		const_cast<MouseEvent&>(event).m_context = this;
 
 		ResponseType response;
 
@@ -647,25 +670,27 @@ namespace BlendInt
 	{
 		using Stock::Shaders;
 
+		glm::mat4 projection = glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f);
+
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
-		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(m_redraw_event.projection_matrix()));
-		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(m_redraw_event.view_matrix()));
+		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
+		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
 		program = Shaders::instance->default_line_program();
 		program->Use();
-		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(m_redraw_event.projection_matrix()));
-		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(m_redraw_event.view_matrix()));
+		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
+		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
 		program = Shaders::instance->default_text_program();
 		program->Use();
-		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(m_redraw_event.projection_matrix()));
-		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(m_redraw_event.view_matrix()));
+		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
+		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
 		program = Shaders::instance->default_image_program();
 		program->Use();
-		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(m_redraw_event.projection_matrix()));
-		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(m_redraw_event.view_matrix()));
+		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
+		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
 		program->Reset();
 	}

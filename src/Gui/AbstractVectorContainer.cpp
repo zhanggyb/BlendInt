@@ -64,7 +64,6 @@ namespace BlendInt {
 
 		m_sub_widgets->operator [](index) = widget;
 
-		RemoveShadow(widget);
 		SetContainer(widget, this);
 
 		events()->connect(widget->destroyed(), this,

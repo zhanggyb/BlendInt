@@ -133,12 +133,8 @@ namespace BlendInt {
 	 *
 	 */
 	enum ResponseType {
-		Ignore = 0,			// 0000
-		Reject = (1 << 1),	// 0010
-		Accept = (1 << 1) | (1 << 0),	// 0011
-		AcceptAndBreak = (1 << 3) | Accept,	// 1011
-		IgnoreAndContinue = (1 << 3) | (1 << 2) | Reject,	// 1110
-		AcceptAndContinue = (1 << 3) | (1 << 2) | Accept	// 1111
+		Ignore = 0,
+		Accept = (1 << 0)
 	};
 
 	/**

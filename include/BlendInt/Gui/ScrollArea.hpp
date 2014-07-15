@@ -76,9 +76,9 @@ namespace BlendInt {
 	private:
 
 		enum SubWidgetIndex {
-			ScrollViewIndex,
 			HScrollBarIndex,
 			VScrollBarIndex,
+			ScrollViewIndex,
 			CornerWidgetIndex
 		};
 

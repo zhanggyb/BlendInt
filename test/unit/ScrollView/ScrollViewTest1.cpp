@@ -38,7 +38,7 @@ TEST_F(ScrollViewTest1, Foo1)
 	DBG_SET_NAME(btn, "Button");
 	btn->Resize(500, 400);
 	
-	scrollview->SetViewport(btn);
+	scrollview->Setup(btn);
 	
 	//DBG_PRINT_MSG ("percentages: %d, %d", scrollview->GetHPercentage(), scrollview->GetVPercentage());
 

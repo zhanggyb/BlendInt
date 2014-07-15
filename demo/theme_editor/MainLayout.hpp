@@ -9,14 +9,13 @@
 
 #include <BlendInt/Gui/MenuBar.hpp>
 #include <BlendInt/Gui/ToolBar.hpp>
-#include <BlendInt/Gui/CVImageView.hpp>
-#include <BlendInt/Gui/ImageView.hpp>
 #include <BlendInt/Gui/ScrollArea.hpp>
 #include <BlendInt/Gui/ComboBox.hpp>
 #include <BlendInt/Gui/Expander.hpp>
 
 #include <BlendInt/Gui/TextEntry.hpp>
 #include <BlendInt/Gui/Button.hpp>
+#include <BlendInt/Gui/Workspace.hpp>
 
 namespace BI = BlendInt;
 
@@ -36,13 +35,17 @@ private:
 
 	void OnResize (AbstractWidget* context, int type);
 
+	void OnCreateButton ();
+
 	BI::MenuBar* CreateMenuBar ();
+
+	BI::Expander* CreateExpander1 ();
 
 	BI::Expander* CreateExpander ();
 
 	BI::MenuBar* m_menubar;
 	BI::ToolBar* m_toolbar;
-	BI::ImageView* m_imgview;
+	BI::Workspace* m_workspace;
 
 	BI::TextEntry* m_input;
 	BI::ComboBox* m_combo;

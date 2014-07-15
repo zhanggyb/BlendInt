@@ -314,10 +314,6 @@ namespace BlendInt {
 
 		virtual bool Contain (const Point& point) const;
 
-		void RenderToTexture (int border, GLTexture2D* texture);
-
-		void RenderToFile (const char* filename, unsigned int border = 10);
-
 		void Refresh ();
 
 		const Size& size () const
@@ -426,6 +422,22 @@ namespace BlendInt {
 
 		static float DefaultBorderWidth ();
 
+#ifdef DEBUG
+
+		inline void set_name (const char* name)
+		{
+			m_name = name;
+		}
+
+		inline void set_name (const std::string& name)
+		{
+			m_name = name;
+		}
+
+		const std::string& name () const {return m_name;}
+
+#endif
+
 	protected:
 
 		/**
@@ -531,10 +543,6 @@ namespace BlendInt {
 
 		void ReportGeometryUpdate (const GeometryUpdateRequest& request);
 
-		Context* GetContext ();
-
-		Section* GetSection ();
-
 		int GetOutlineVertices (int round_type) const;
 
 		/**
@@ -609,16 +617,6 @@ namespace BlendInt {
 
 		Cpp::ConnectionScope* events() const {return m_events.get();}
 
-		static void DispatchRender (AbstractWidget* obj);
-
-		static ResponseType dispatch_key_press_event (AbstractWidget* obj, const KeyEvent& event);
-
-		static ResponseType dispatch_mouse_move_event (AbstractWidget* obj, const MouseEvent& event);
-
-		static ResponseType dispatch_mouse_press_event (AbstractWidget* obj, const MouseEvent& event);
-
-		static ResponseType dispatch_mouse_release_event (AbstractWidget* obj, const MouseEvent& event);
-
 	private:
 
 		enum WidgetFlagIndex {
@@ -674,6 +672,10 @@ namespace BlendInt {
 		AbstractContainer* m_container;
 
 		RefPtr<Shadow> m_shadow;
+
+#ifdef DEBUG
+		std::string m_name;
+#endif
 
 		static float default_border_width;
 

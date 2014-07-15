@@ -21,7 +21,27 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <gl3ext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+
 #include <BlendInt/Gui/Section.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
 
 namespace BlendInt {
 
@@ -100,13 +120,7 @@ namespace BlendInt {
 		SetContainer(widget, this);
 
 		// set shadow
-		if(widget->drop_shadow()) {
-			if(!widget->m_shadow) {
-				widget->m_shadow.reset(new Shadow(widget->size(), widget->round_corner_type(), widget->round_corner_radius()));
-			} else {
-				widget->m_shadow->Update(widget->size(), widget->round_corner_type(), widget->round_corner_radius());
-			}
-		}
+		EnableShadow(widget);
 
 		events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyed);
 
@@ -133,6 +147,295 @@ namespace BlendInt {
 	bool Section::Contain (const Point& point) const
 	{
 		return true;
+	}
+
+	Section* Section::GetSection (AbstractWidget* widget)
+	{
+		AbstractContainer* container = widget->container();
+		AbstractWidget* section = 0;
+
+		if(container == 0) {
+			return dynamic_cast<Section*>(widget);
+		} else {
+
+			while(container->container()) {
+				section = container;
+				container = container->container();
+			}
+
+		}
+
+		return dynamic_cast<Section*>(section);
+	}
+
+	void Section::RenderToTexture (AbstractWidget* widget, GLTexture2D* texture)
+	{
+		using Stock::Shaders;
+
+#ifdef DEBUG
+		assert(widget && texture);
+#endif
+
+		GLsizei width = widget->size().width();
+		GLsizei height = widget->size().height();
+		GLfloat left = widget->position().x();
+		GLfloat bottom = widget->position().y();
+		if(widget->m_shadow) {
+			width += Theme::instance->shadow_width() * 2;
+			height += Theme::instance->shadow_width() * 2;
+			left -= Theme::instance->shadow_width();
+			bottom -= Theme::instance->shadow_width();
+		}
+		GLfloat right = left + width;
+		GLfloat top = bottom + height;
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = texture;
+		if(!tex->texture())
+			tex->Generate();
+
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_TEXTURE_2D, tex->texture(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+				width, height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, rb);
+
+		if(GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			glClearColor(0.0, 0.0, 0.0, 0.0);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+			glEnable(GL_BLEND);
+
+			glm::mat4 origin;
+			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
+			        -100.f);
+
+			RefPtr<GLSLProgram> program =
+			        Shaders::instance->default_triangle_program();
+			program->GetUniformfv("u_projection", glm::value_ptr(origin));
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+
+			RedrawEvent event;
+			ScissorStatus scissor;
+
+            GLint vp[4];
+            glGetIntegerv(GL_VIEWPORT, vp);
+			glViewport(0, 0, width, height);
+
+			DispatchDrawEvent(widget, event, scissor);
+
+			// Restore the viewport setting and projection matrix
+			glViewport(vp[0], vp[1], vp[2], vp[3]);
+			program = Shaders::instance->default_triangle_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+
+			program->Reset();
+		}
+
+		fb->Reset();
+		tex->Reset();
+
+		//delete tex; tex = 0;
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb; fb = 0;
+	}
+
+	void Section::RenderToFile (AbstractWidget* widget, const char* filename)
+	{
+		using Stock::Shaders;
+
+#ifdef DEBUG
+		assert(widget);
+#endif
+
+		GLsizei width = widget->size().width();
+		GLsizei height = widget->size().height();
+		GLfloat left = widget->position().x();
+		GLfloat bottom = widget->position().y();
+		if(widget->m_shadow) {
+			width += Theme::instance->shadow_width() * 2;
+			height += Theme::instance->shadow_width() * 2;
+			left -= Theme::instance->shadow_width();
+			bottom -= Theme::instance->shadow_width();
+		}
+		GLfloat right = left + width;
+		GLfloat top = bottom + height;
+
+		// Create and set texture to render to.
+		GLTexture2D* tex = new GLTexture2D;
+		tex->Generate();
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_TEXTURE_2D, tex->texture(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+				width, height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, rb);
+
+		if(GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			glClearColor(0.0, 0.0, 0.0, 0.0);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			//glEnable(GL_BLEND);
+
+			glm::mat4 origin;
+			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
+			        -100.f);
+
+			RefPtr<GLSLProgram> program =
+			        Shaders::instance->default_triangle_program();
+			program->GetUniformfv("u_projection", glm::value_ptr(origin));
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+
+			RedrawEvent event;
+			ScissorStatus scissor;
+
+            GLint vp[4];
+            glGetIntegerv(GL_VIEWPORT, vp);
+			glViewport(0, 0, width, height);
+
+			DispatchDrawEvent(widget, event, scissor);
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			// Restore the viewport setting and projection matrix
+			glViewport(vp[0], vp[1], vp[2], vp[3]);
+			program = Shaders::instance->default_triangle_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+
+			program->Reset();
+			// ---------------------------------------------
+
+			tex->Bind();	// make sure bind again as the current texture may be changed in the draw event
+			tex->WriteToFile(filename);
+		}
+
+		fb->Reset();
+
+		tex->Reset();
+		delete tex; tex = 0;
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb; fb = 0;
 	}
 
 	void Section::UpdateContainer (const ContainerUpdateRequest& request)
@@ -235,6 +538,8 @@ namespace BlendInt {
 
 	ResponseType Section::Draw (const RedrawEvent& event)
 	{
+		const_cast<RedrawEvent&>(event).m_section = this;
+
 		for(std::set<AbstractWidget*>::iterator it = m_set.begin(); it != m_set.end(); it++)
 		{
 			DispatchDrawEvent(*it, event);
@@ -261,17 +566,23 @@ namespace BlendInt {
 	ResponseType Section::ContextMenuPressEvent (
 	        const ContextMenuEvent& event)
 	{
+		const_cast<ContextMenuEvent&>(event).m_section = this;
+
 		return Ignore;
 	}
 
 	ResponseType Section::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
+		const_cast<ContextMenuEvent&>(event).m_section = this;
+
 		return Ignore;
 	}
 
 	ResponseType Section::MousePressEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_section = this;
+
 		CheckAndUpdateHoverWidget(event);
 
 		if(m_last_hover_widget) {
@@ -297,6 +608,8 @@ namespace BlendInt {
 
 	ResponseType Section::MouseReleaseEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_section = this;
+
 		CheckAndUpdateHoverWidget(event);
 
 		if(m_last_hover_widget) {
@@ -322,6 +635,8 @@ namespace BlendInt {
 
 	ResponseType Section::MouseMoveEvent (const MouseEvent& event)
 	{
+		const_cast<MouseEvent&>(event).m_section = this;
+
 		CheckAndUpdateHoverWidget(event);
 
 		if(m_last_hover_widget) {
@@ -382,6 +697,54 @@ namespace BlendInt {
 	}
 
 	void Section::DispatchDrawEvent (AbstractWidget* widget,
+	        const RedrawEvent& event, ScissorStatus& scissor)
+	{
+		if (widget->visiable()) {
+
+			if(widget->drop_shadow() && widget->m_shadow) {
+				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
+			}
+
+			ResponseType response = widget->Draw(event);
+			if(response == Accept) return;
+
+			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
+			if (p) {
+
+				if(p->scissor_test()) {
+					scissor.Push(p->position().x() + p->margin().left(),
+							p->position().y() + p->margin().right(),
+							p->size().width() - p->margin().left() - p->margin().right(),
+							p->size().height() - p->margin().top() - p->margin().bottom());
+				}
+
+				IteratorPtr it = p->CreateIterator(event);
+
+				if(scissor.valid()) {
+					scissor.Enable();
+
+					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
+						DispatchDrawEvent(it->GetWidget(), event, scissor);
+					}
+
+				} else {
+
+					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
+						DispatchDrawEvent(it->GetWidget(), event, scissor);
+					}
+				}
+
+				if(p->scissor_test()) {
+					scissor.Pop();
+					scissor.Disable();
+				}
+
+			}
+
+		}
+	}
+
+	void Section::DispatchDrawEvent (AbstractWidget* widget,
 	        const RedrawEvent& event)
 	{
 		if (widget->visiable()) {
@@ -390,7 +753,8 @@ namespace BlendInt {
 				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
 			}
 
-			widget->Draw(event);
+			ResponseType response = widget->Draw(event);
+			if(response == Accept) return;
 
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
 			if (p) {

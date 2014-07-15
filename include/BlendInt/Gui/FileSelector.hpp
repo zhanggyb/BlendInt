@@ -56,7 +56,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeFileBrowser ();
+		void InitializeFileSelector ();
 
 		GLuint m_vao;
 		RefPtr<GLArrayBuffer> m_inner;

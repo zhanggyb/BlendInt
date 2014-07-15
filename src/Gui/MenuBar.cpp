@@ -130,27 +130,28 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		program->Reset();
-		return Accept;
+
+		return Ignore;
 	}
 
 	ResponseType MenuBar::CursorEnterEvent (bool entered)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType MenuBar::KeyPressEvent (const KeyEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType MenuBar::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType MenuBar::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType MenuBar::MousePressEvent (const MouseEvent& event)
@@ -394,7 +395,7 @@ namespace BlendInt {
 
 		if(original_active) {	// If menu shows in context
 			RefPtr<Menu> menu = original_active->menu();
-			Context* context = GetContext();
+			Context* context = Context::GetContext(this);
 			context->Remove(menu.get());
 			original_active->SetRoundCornerType(RoundAll);
 
@@ -403,7 +404,7 @@ namespace BlendInt {
 		}
 
 		if(m_active_button) {
-			Context* context = GetContext();
+			Context* context = Context::GetContext(this);
 
 			//int max_layer = context->GetMaxLayer();
 			RefPtr<Menu> menu = m_active_button->menu();
@@ -435,7 +436,7 @@ namespace BlendInt {
 				//menu->property_changed().disconnectOne(this, &MenuBar::OnMenuHide);
 				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
-				Context* context = GetContext();
+				Context* context = Context::GetContext(this);
 				context->Remove(menu.get());
 				m_active_button->SetRoundCornerType(RoundAll);
 			}
@@ -455,7 +456,7 @@ namespace BlendInt {
 			// DBG_PRINT_MSG("menu at layer: %d", menu->z());
 
 			if(type == WidgetVisibility) {
-				Context* context = GetContext();
+				Context* context = Context::GetContext(this);
 				context->Remove(menu);
 			}
 		}

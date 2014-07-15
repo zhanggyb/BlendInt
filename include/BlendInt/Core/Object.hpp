@@ -48,9 +48,14 @@ namespace BlendInt {
 	{
 	public:
 
-		Object ();
+		Object () :
+				m_count(0)
+		{
+		}
 
-		virtual ~Object ();
+		virtual ~Object ()
+		{
+		}
 
 		Object (const Object& orig);
 
@@ -67,64 +72,6 @@ namespace BlendInt {
 
 		size_t m_count;
 
-#ifdef DEBUG
-	public:
-
-		static Object* Find (uint64_t id);
-
-#ifdef __APPLE__
-		static unsigned long GetMapSize ()
-#else
-        static unsigned int GetMapSize ()
-#endif
-		{
-			return obj_map.size();
-		}
-
-		static const std::map<uint64_t, Object*>& GetMap ()
-		{
-			return obj_map;
-		}
-
-		static void ResetID ()
-		{
-			id_last = 1;
-			obj_map.clear();
-		}
-
-		inline void set_name (const char* name)
-		{
-			m_name = name;
-		}
-
-		inline void set_name (const std::string& name)
-		{
-			m_name = name;
-		}
-
-		const std::string& name () const {return m_name;}
-
-	private:
-
-		inline bool register_in_map ();
-
-		inline bool unregister_from_map ();
-
-		std::string m_name;
-
-		uint64_t m_id; /** A unique ID for object */
-
-		static uint64_t id_last;
-
-		static std::map<uint64_t, Object*> obj_map;
-
-	public:
-
-		static void Print ();
-
-		static bool CheckAllocatedObjects ();
-
-#endif	// DEBUG
 	};
 
 }

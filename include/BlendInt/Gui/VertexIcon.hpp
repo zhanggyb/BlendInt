@@ -64,9 +64,11 @@ namespace BlendInt {
 
 		virtual void Draw (const glm::vec3& pos, short gamma = 0);
 
-		virtual void Draw (const glm::vec3& pos, const Color& color, short gamma = 0);
-
 		virtual void Draw (const glm::vec3& pos, int x, int y, int restrict_width, int restrict_height);
+
+		void Draw (const glm::vec3& pos, const Color& color, short gamma = 0);
+
+		void Draw (const glm::vec3& pos, float angle, float scale, const Color& color, short gamma = 0);
 
 	protected:
 

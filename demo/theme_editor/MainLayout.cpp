@@ -16,7 +16,7 @@
 #include "MainLayout.hpp"
 
 MainLayout::MainLayout ()
-: m_menubar(0), m_toolbar(0), m_imgview(0)
+: m_menubar(0), m_toolbar(0), m_workspace(0)
 {
 	set_margin(0, 0, 0, 0);
 	set_space(1);
@@ -35,7 +35,7 @@ void MainLayout::InitOnce ()
 
 	m_menubar = CreateMenuBar();
 	m_toolbar = Manage(new ToolBar);
-	m_imgview = Manage(new ImageView);
+	m_workspace = Manage(new Workspace);
 
 	m_combo = Manage(new ComboBox);
 
@@ -55,13 +55,17 @@ void MainLayout::InitOnce ()
 	m_toolbar->PushBack(box);
 
 	ToolBox* tbox = Manage(new ToolBox);
+	Expander* expander1 = CreateExpander1();
+	tbox->PushBack(expander1);
 	Expander* expander = CreateExpander();
 	tbox->PushBack(expander);
+	Button* clear_btn = Manage(new Button("Clear all"));
+	tbox->PushBack(clear_btn);
 
 	Splitter* splitter = Manage(new Splitter);
 	splitter->SetMargin(0, 0, 0, 0);
 
-	splitter->PushBack(m_imgview);
+	splitter->PushBack(m_workspace);
 	splitter->PushBack(tbox);
 
 	PushBack(splitter);
@@ -99,6 +103,38 @@ BI::MenuBar* MainLayout::CreateMenuBar()
 	return menubar;
 }
 
+BI::Expander* MainLayout::CreateExpander1()
+{
+	using namespace BI;
+
+	Expander* expander = Manage(new Expander("Widgets"));
+
+	VBlock* vblock = Manage(new VBlock);
+
+	Button* create_btn1 = Manage(new Button("Button"));
+	Button* create_btn2 = Manage(new Button("ToggleButton"));
+	Button* create_btn3 = Manage(new Button("Tab"));
+
+	vblock->PushBack(create_btn1);
+	vblock->PushBack(create_btn2);
+	vblock->PushBack(create_btn3);
+
+	expander->Setup(vblock);
+
+	events()->connect(create_btn1->clicked(), this, &MainLayout::OnCreateButton);
+
+	return expander;
+}
+
+void MainLayout::OnCreateButton ()
+{
+	using namespace BI;
+
+	VirtualWindow* vw = Manage(new VirtualWindow);
+
+	m_workspace->PushBack(vw);
+}
+
 BI::Expander* MainLayout::CreateExpander()
 {
 	using namespace BI;
@@ -123,5 +159,4 @@ BI::Expander* MainLayout::CreateExpander()
 	expander->Setup(vbox);
 
 	return expander;
-
 }

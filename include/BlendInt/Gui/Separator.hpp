@@ -28,15 +28,15 @@
 
 namespace BlendInt {
 
-	class SpaceArea: public AbstractWidget
+	class Separator: public AbstractWidget
 	{
-		DISALLOW_COPY_AND_ASSIGN(SpaceArea);
+		DISALLOW_COPY_AND_ASSIGN(Separator);
 
 	public:
 
-		SpaceArea ();
+		Separator ();
 
-		virtual ~SpaceArea ();
+		virtual ~Separator ();
 
 		void AttachWidget (AbstractWidget* widget);
 

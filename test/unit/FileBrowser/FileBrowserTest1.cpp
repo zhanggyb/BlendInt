@@ -30,9 +30,11 @@ TEST_F(FileBrowserTest1, Foo1)
     Interface::instance->SetCurrentContext(context);
 
 	FileBrowser* fb = Manage(new FileBrowser);
-	fb->SetPosition(50, 50);
+	fb->SetPosition(100, 100);
 	
 	context->PushBack(fb);
+
+	fb->Open("/home/zhanggyb");
 
     RunLoop(win);
 

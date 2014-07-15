@@ -219,9 +219,35 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractContainer::RemoveShadow (AbstractWidget* widget)
+	bool AbstractContainer::EnableShadow(AbstractWidget* widget)
 	{
+		if(!widget) return false;
+		if(widget->container() != this) return false;
+
+		if(widget->drop_shadow()) {
+
+			if(!widget->m_shadow) {
+				widget->m_shadow.reset(new Shadow(widget->size(), widget->round_corner_type(), widget->round_corner_radius()));
+			}
+
+			widget->m_shadow->Update(widget->size(), widget->round_corner_type(), widget->round_corner_radius());
+
+		} else {
+			DBG_PRINT_MSG("The widget %s is not allow shadow by itself", widget->name().c_str());
+			return false;
+		}
+
+		return true;
+	}
+
+	bool AbstractContainer::DisableShadow (AbstractWidget* widget)
+	{
+		if(!widget) return false;
+		if(widget->container() != this) return false;
+
 		widget->m_shadow.destroy();
+
+		return true;
 	}
 
 }

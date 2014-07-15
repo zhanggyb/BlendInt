@@ -54,7 +54,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		tool.Setup(size(), 0, RoundNone, 0.f);
 
 		glBindVertexArray(m_vao);
 		m_inner.reset(new GLArrayBuffer);
@@ -74,20 +74,23 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void ScrollView::SetViewport (AbstractWidget* widget)
+	void ScrollView::Setup (AbstractWidget* widget)
 	{
 		if (SetSubWidget(widget)) {
 			int x = position().x() + margin().left();
-			int y = position().y() + margin().bottom();
+			int y = position().y() + size().height() - margin().top();
 
-			y = y + size().height() - margin().vsum() - widget->size().height();
+			// move widget to align the top-left of the viewport
+			SetSubWidgetPosition(widget, x, y - widget->size().height());
 
-			SetSubWidgetPosition(widget, x, y);
 			/*
 			ResizeSubWidget(widget,
 							size().width() - horizontal_margins(),
 							size().height() - vertical_margins());
 			*/
+
+
+			DisableShadow(widget);
 		}
 	}
 
@@ -253,6 +256,14 @@ namespace BlendInt {
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
+					// align the subwidget
+					if(sub_widget()) {
+
+						int dy = size_p->height() - size().height();
+
+						sub_widget()->SetPosition(sub_widget()->position().x(), sub_widget()->position().y() + dy);
+					}
+
 					set_size(*size_p);
 					break;
 				}
@@ -291,16 +302,19 @@ namespace BlendInt {
 		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 
-		program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
+		if(sub_widget()) {
+			program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
+		} else {
+			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+		}
 
 		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
 		program->Reset();
 
-		return AcceptAndContinue;
+		return Ignore;
 	}
 
 	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)

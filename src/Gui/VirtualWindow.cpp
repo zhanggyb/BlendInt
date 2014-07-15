@@ -49,6 +49,7 @@ namespace BlendInt {
 		set_round_corner_type(RoundTopLeft | RoundTopRight);
 		set_round_corner_radius(10.f);
 		set_size(400, 300);
+		set_margin(0, 0, 0, 0);
 
 		set_drop_shadow(true);
 
@@ -62,6 +63,9 @@ namespace BlendInt {
 
 	void VirtualWindow::Setup (AbstractWidget* widget)
 	{
+		if(SetSubWidget(ContentIndex, widget)) {
+			FillSubWidgets(position(), size());
+		}
 	}
 
 	void VirtualWindow::UpdateContainer (
@@ -99,7 +103,8 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		program->Reset();
-		return Accept;
+
+		return Ignore;
 	}
 
 	ResponseType VirtualWindow::FocusEvent (bool focus)
@@ -168,20 +173,26 @@ namespace BlendInt {
 				case WidgetSize: {
 					const Size* size_p =
 					        static_cast<const Size*>(request.data());
+
+					int h = size_p->height() - sub_widget(0)->size().height();
+					if (h < 0) h = 0;
+
+					Size vw_size (size_p->width(), h);
 					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(),
-					        round_corner_type(), round_corner_radius());
+					tool.Setup(vw_size, 0, RoundNone, 0.f);
+
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
 					set_size(*size_p);
 
-					FillSubWidgets();
+					FillSubWidgets(position(), *size_p);
 					Refresh();
 					break;
 				}
 
 				case WidgetRoundCornerType: {
+					/*
 					const int* type_p = static_cast<const int*>(request.data());
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(), *type_p,
@@ -190,13 +201,16 @@ namespace BlendInt {
 					tool.SetInnerBufferData(m_inner.get());
 
 					set_round_corner_type(*type_p);
+					*/
 					Refresh();
 					break;
 				}
 
 				case WidgetRoundCornerRadius: {
+					/*
 					const float* radius_p =
 					        static_cast<const float*>(request.data());
+
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(),
 					        round_corner_type(), *radius_p);
@@ -204,6 +218,7 @@ namespace BlendInt {
 					tool.SetInnerBufferData(m_inner.get());
 
 					set_round_corner_radius(*radius_p);
+					*/
 					Refresh();
 					break;
 				}
@@ -216,40 +231,45 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
-	void VirtualWindow::FillSubWidgets()
+	void VirtualWindow::FillSubWidgets(const Point& out_pos, const Size& size)
 	{
-		AbstractWidget* dec = sub_widget(0);
-		AbstractWidget* content = sub_widget(1);
+		FillSubWidgets(out_pos.x(), out_pos.y(), size.width(), size.height());
+	}
+
+	void VirtualWindow::FillSubWidgets(int x, int y, int w, int h)
+	{
+		AbstractWidget* dec = sub_widget(DecorationIndex);
+		AbstractWidget* content = sub_widget(ContentIndex);
 
 		Size dec_prefer = dec->GetPreferredSize();
 
-		int y = position().y() + size().height();
+		y = y + h;
 
 		if(content) {
 
-			if(size().height() > dec_prefer.height()) {
-				ResizeSubWidget(dec, size().width(), dec_prefer.height());
-				ResizeSubWidget(content, size().width(), size().height() - dec_prefer.height());
+			if(h > dec_prefer.height()) {
+				ResizeSubWidget(dec, w, dec_prefer.height());
+				ResizeSubWidget(content, w, h - dec_prefer.height());
 			} else {
-				ResizeSubWidget(dec, size().width(), size().height());
-				ResizeSubWidget(content, size().width(), 0);
+				ResizeSubWidget(dec, w, h);
+				ResizeSubWidget(content, w, 0);
 			}
 
 			y = y - dec->size().height();
-			SetSubWidgetPosition(dec, position().x(), y);
+			SetSubWidgetPosition(dec, x, y);
 			y = y - content->size().height();
-			SetSubWidgetPosition(content, position().x(), y);
+			SetSubWidgetPosition(content, x, y);
 
 		} else {
 
-			if(size().height() > dec_prefer.height()) {
-				ResizeSubWidget(dec, size().width(), dec_prefer.height());
+			if(h > dec_prefer.height()) {
+				ResizeSubWidget(dec, w, dec_prefer.height());
 			} else {
-				ResizeSubWidget(dec, size().width(), size().height());
+				ResizeSubWidget(dec, w, h);
 			}
 
 			y = y - dec->size().height();
-			SetSubWidgetPosition(dec, position().x(), y);
+			SetSubWidgetPosition(dec, x, y);
 
 		}
 	}
@@ -259,14 +279,14 @@ namespace BlendInt {
 		// set decoration
 		Decoration* dec = Manage(new Decoration);
 		DBG_SET_NAME(dec, "Decoration");
-		SetSubWidget(0, dec);
+		SetSubWidget(DecorationIndex, dec);
 
-		FillSubWidgets ();
+		FillSubWidgets (position(), size());
 
 		Size area_size(size().width(), size().height() - dec->size().height());
 
 		VertexTool tool;
-		tool.Setup (area_size, 0, RoundNone, round_corner_radius());
+		tool.Setup (area_size, 0, RoundNone, 0.f);
 
 		glGenVertexArrays(1, m_vao);
 		glBindVertexArray(m_vao[0]);
@@ -275,6 +295,7 @@ namespace BlendInt {
 		m_inner->Generate();
 		m_inner->Bind();
 		tool.SetInnerBufferData(m_inner.get());
+
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 

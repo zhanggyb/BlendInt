@@ -249,7 +249,7 @@ namespace BlendInt {
 
 	ResponseType Stack::Draw (const RedrawEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType Stack::CursorEnterEvent(bool entered)
@@ -307,7 +307,7 @@ namespace BlendInt {
 
 	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 }

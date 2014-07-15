@@ -196,6 +196,9 @@ namespace BlendInt {
 
 	void Shadow::Update (const Size& new_size, int type, float rad)
 	{
+		if((new_size == size()) && (type == round_type()) && (rad == radius()))
+			return;
+
 		set_size(new_size);
 		set_round_type(type);
 		set_radius(rad);

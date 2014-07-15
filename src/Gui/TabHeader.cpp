@@ -209,7 +209,8 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		program->Reset();
-		return Accept;
+
+		return Ignore;
 	}
 
 	ResponseType TabHeader::CursorEnterEvent (bool entered)

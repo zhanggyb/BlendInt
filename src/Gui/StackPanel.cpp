@@ -76,7 +76,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		program->Reset();
-		return AcceptAndContinue;
+		return Ignore;
 	}
 	
 	void StackPanel::UpdateGeometry (const GeometryUpdateRequest& request)

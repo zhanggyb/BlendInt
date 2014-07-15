@@ -101,7 +101,6 @@ namespace BlendInt {
 			std::list<RefPtr<Action> >::iterator it;
 			it = std::find (m_list.begin(), m_list.end(), item);
 			if(it != m_list.end()) {
-				DBG_PRINT_MSG("Item %s already in sub list", item->name().c_str());
 				return;
 			}
 		}

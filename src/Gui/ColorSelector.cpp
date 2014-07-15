@@ -224,7 +224,7 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		program->Reset();
 
-		return Accept;
+		return Ignore;
 	}
 	
 	VBlock* ColorSelector::CreateRGBBlock ()

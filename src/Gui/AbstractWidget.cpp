@@ -229,6 +229,7 @@ namespace BlendInt {
 	{
 		if(this->visiable() == visible)
 			return;
+
 		bool broadcast = false;
 
 		GeometryUpdateRequest request(this, this, WidgetVisibility, &visible);
@@ -264,171 +265,6 @@ namespace BlendInt {
 		request.set_data(0);
 
 		ContainerProxy::RequestContainerUpdate(m_container, request);
-	}
-
-	void AbstractWidget::RenderToTexture (int border, GLTexture2D* texture)
-	{
-		if(!texture) return;
-
-		GLsizei width = size().width() + border * 2;
-		GLsizei height = size().height() + border * 2;
-
-		// Create and set texture to render to.
-		GLTexture2D* tex = texture;
-		if(!tex->texture())
-			tex->Generate();
-
-		tex->Bind();
-		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-		tex->SetMinFilter(GL_NEAREST);
-		tex->SetMagFilter(GL_NEAREST);
-		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-		GLFramebuffer* fb = new GLFramebuffer;
-		fb->Generate();
-		fb->Bind();
-
-		// Set "renderedTexture" as our colour attachement #0
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-				GL_TEXTURE_2D, tex->texture(), 0);
-		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-
-		GLuint rb = 0;
-		glGenRenderbuffers(1, &rb);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, rb);
-
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-				width, height);
-
-		//Attach depth buffer to FBO
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-				GL_RENDERBUFFER, rb);
-
-		if(GLFramebuffer::CheckStatus()) {
-
-			fb->Bind();
-
-			glClearColor(0.0, 0.0, 0.0, 0.0);
-
-			glClearDepth(1.0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-			glEnable(GL_BLEND);
-
-			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
-			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
-			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(border, border, 0.0));
-
-			RedrawEvent event;
-			event.set_projection_matrix(projection);
-			event.set_view_matrix(view * offset);
-
-            GLint vp[4];
-            glGetIntegerv(GL_VIEWPORT, vp);
-			glViewport(0, 0, width, height);
-
-			Draw(event);
-
-			glViewport(vp[0], vp[1], vp[2], vp[3]);
-		}
-
-		fb->Reset();
-		tex->Reset();
-
-		//delete tex; tex = 0;
-
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		glDeleteRenderbuffers(1, &rb);
-
-		fb->Reset();
-		delete fb; fb = 0;
-	}
-
-
-	void AbstractWidget::RenderToFile(const char* filename, unsigned int border)
-	{
-		GLsizei width = size().width() + border * 2;
-		GLsizei height = size().height() + border * 2;
-
-		// Create and set texture to render to.
-		GLTexture2D* tex = new GLTexture2D;
-		tex->Generate();
-		tex->Bind();
-		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
-		tex->SetMinFilter(GL_NEAREST);
-		tex->SetMagFilter(GL_NEAREST);
-		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
-		GLFramebuffer* fb = new GLFramebuffer;
-		fb->Generate();
-		fb->Bind();
-
-		// Set "renderedTexture" as our colour attachement #0
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-				GL_TEXTURE_2D, tex->texture(), 0);
-		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
-
-		GLuint rb = 0;
-		glGenRenderbuffers(1, &rb);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, rb);
-
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
-				width, height);
-
-		//Attach depth buffer to FBO
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-				GL_RENDERBUFFER, rb);
-
-		if(GLFramebuffer::CheckStatus()) {
-
-			fb->Bind();
-
-			glClearColor(0.0, 0.0, 0.0, 0.0);
-
-			glClearDepth(1.0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-			glEnable(GL_BLEND);
-
-			glm::mat4 view = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
-			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
-			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(border, border, 0.0));
-
-			RedrawEvent event;
-			event.set_projection_matrix(projection);
-			event.set_view_matrix(view * offset);
-
-            GLint vp[4];
-            glGetIntegerv(GL_VIEWPORT, vp);
-
-			glViewport(0, 0, width, height);
-
-			Draw(event);
-
-			glViewport(vp[0], vp[1], vp[2], vp[3]);
-
-			// ---------------------------------------------
-			tex->WriteToFile(filename);
-		}
-
-		fb->Reset();
-
-		tex->Reset();
-		delete tex; tex = 0;
-
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		glDeleteRenderbuffers(1, &rb);
-
-		fb->Reset();
-		delete fb; fb = 0;
 	}
 
 	void AbstractWidget::SetDefaultBorderWidth(float border)
@@ -470,35 +306,6 @@ namespace BlendInt {
 		return false;
 	}
 
-	void AbstractWidget::DispatchRender(AbstractWidget* other)
-	{
-		//other->Draw();
-	}
-
-	ResponseType AbstractWidget::dispatch_key_press_event (AbstractWidget* obj,
-			const KeyEvent& event)
-	{
-		return obj->KeyPressEvent(event);
-	}
-
-	ResponseType AbstractWidget::dispatch_mouse_move_event (AbstractWidget* obj,
-			const MouseEvent& event)
-	{
-		return obj->MouseMoveEvent(event);
-	}
-
-	ResponseType AbstractWidget::dispatch_mouse_press_event (AbstractWidget* obj,
-			const MouseEvent& event)
-	{
-		return obj->MousePressEvent(event);
-	}
-
-	ResponseType AbstractWidget::dispatch_mouse_release_event (AbstractWidget* obj,
-			const MouseEvent& event)
-	{
-		return obj->MouseReleaseEvent(event);
-	}
-
 	void AbstractWidget::CheckSubWidgetAddedInContainer (AbstractWidget* sub_widget)
 	{
 		ContainerUpdateRequest request (this, m_container);
@@ -532,42 +339,6 @@ namespace BlendInt {
 		ContainerProxy::RequestGeometryUpdate(m_container, request);
 	}
 
-	Context* AbstractWidget::GetContext()
-	{
-		AbstractContainer* container = m_container;
-
-		if(container == 0) {
-			return dynamic_cast<Context*>(this);
-		} else {
-
-			while(container->container()) {
-				container = container->container();
-			}
-
-		}
-
-		return dynamic_cast<Context*>(container);
-	}
-
-	Section* AbstractWidget::GetSection()
-	{
-		AbstractContainer* container = m_container;
-		AbstractWidget* section = 0;
-
-		if(container == 0) {
-			return dynamic_cast<Section*>(this);
-		} else {
-
-			while(container->container()) {
-				section = container;
-				container = container->container();
-			}
-
-		}
-
-		return dynamic_cast<Section*>(section);
-	}
-
 	int AbstractWidget::GetOutlineVertices (int round_type) const
 	{
 		round_type = round_type & RoundAll;
@@ -594,3 +365,4 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
+

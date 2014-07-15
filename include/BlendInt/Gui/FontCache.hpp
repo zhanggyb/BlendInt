@@ -125,10 +125,6 @@ namespace BlendInt {
 
 		static int GetDefaultTextureHeight ();
 
-#ifdef DEBUG
-		static void list ();
-#endif
-
 		const GlyphExt* Query (const FontTypeBase& font_data, uint32_t charcode, bool create = true);
 
 	private:

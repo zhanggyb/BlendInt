@@ -10,12 +10,10 @@ class HLayoutTest1: public testing::Test
        
         virtual void SetUp ()
         {
-			ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
         }
 
         virtual void TearDown ()
         {
-			ASSERT_TRUE(BlendInt::CheckAllocatedObjects());
         }
 };
 

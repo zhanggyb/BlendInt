@@ -68,7 +68,6 @@ namespace BlendInt {
 			float vec[16][2];
 
 			m_icon_menu.reset(new VertexIcon);
-			DBG_SET_NAME(m_icon_menu, "Menu Icon");
 
 			for (size_t i = 0; i < 6; i++) {
 				vec[i][0] = 0.5 * 16 * VertexIcon::menu_tria_vert[i][0];
@@ -78,7 +77,6 @@ namespace BlendInt {
 			m_icon_menu->Load(vec, 6, VertexIcon::menu_tria_face, 2);
 
 			m_icon_circle.reset(new VertexIcon);
-			DBG_SET_NAME(m_icon_circle, "Circle Icon");
 
 			for (size_t i = 0; i < 16; i++) {
 				vec[i][0] = 0.5 * 10 * VertexIcon::scroll_circle_vert[i][0];
@@ -88,7 +86,6 @@ namespace BlendInt {
 			m_icon_circle->Load(vec, 16, VertexIcon::scroll_circle_face, 14);
 
 			m_icon_check.reset(new VertexIcon);
-			DBG_SET_NAME(m_icon_check, "Checkbox Icon");
 
 			for (size_t i = 0; i < 6; i++) {
 				vec[i][0] = 0.5 * 14 * VertexIcon::check_tria_vert[i][0];
@@ -98,7 +95,6 @@ namespace BlendInt {
 			m_icon_check->Load(vec, 6, VertexIcon::check_tria_face, 4);
 
 			m_icon_num.reset(new VertexIcon);
-			DBG_SET_NAME(m_icon_num, "Number Slider Icon");
 
 			for (size_t i = 0; i < 3; i++) {
 				vec[i][0] = 0.5 * 10 * VertexIcon::num_tria_vert[i][0];
