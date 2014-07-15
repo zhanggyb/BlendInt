@@ -452,11 +452,20 @@ namespace BlendInt {
 
 	void AbstractWidget::ProcessSizeUpdate(const SizeUpdateRequest& request)
 	{
+		if(request.target()) {
+			set_size(*request.size());
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	void AbstractWidget::ProcessPositionUpdate(const PositionUpdateRequest& request)
 	{
+		if(request.target() == this) {
+			set_position(*request.position());
+		}
 
+		ReportPositionUpdate(request);
 	}
 
 	bool AbstractWidget::RoundTypeUpdateTest(const RoundTypeUpdateRequest& request)
@@ -471,10 +480,20 @@ namespace BlendInt {
 
 	void AbstractWidget::ProcessRoundTypeUpdate(const RoundTypeUpdateRequest& request)
 	{
+		if(request.target()) {
+			set_round_type(*request.round_type());
+		}
+
+		ReportRoundTypeUpdate(request);
 	}
 
 	void AbstractWidget::ProcessRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
 	{
+		if(request.target()) {
+			set_round_radius(*request.round_radius());
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	void AbstractWidget::ReportSizeUpdate(const SizeUpdateRequest& request)

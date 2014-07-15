@@ -181,6 +181,79 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void ComboBox::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(),
+							DefaultBorderWidth(),
+							round_type(),
+							round_radius(),
+							Theme::instance->menu().inner,
+							Vertical,
+							Theme::instance->menu().shadetop,
+							Theme::instance->menu().shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_size(*request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void ComboBox::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(),
+							DefaultBorderWidth(),
+							*request.round_type(),
+							round_radius(),
+							Theme::instance->menu().inner,
+							Vertical,
+							Theme::instance->menu().shadetop,
+							Theme::instance->menu().shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void ComboBox::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(),
+							DefaultBorderWidth(),
+							round_type(),
+							*request.round_radius(),
+							Theme::instance->menu().inner,
+							Vertical,
+							Theme::instance->menu().shadetop,
+							Theme::instance->menu().shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
+	}
+
 	ResponseType ComboBox::Draw(const RedrawEvent& event)
 	{
 		using Stock::Shaders;

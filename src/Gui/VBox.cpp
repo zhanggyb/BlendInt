@@ -211,6 +211,30 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void VBox::ProcessPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void VBox::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_size(*request.size());
+			FillSubWidgetsInVBox(position(), *request.size(), margin(), m_alignment,
+											m_space);		}
+
+		ReportSizeUpdate(request);
+	}
+
 	ResponseType VBox::Draw (const RedrawEvent& event)
 	{
 		return Ignore;

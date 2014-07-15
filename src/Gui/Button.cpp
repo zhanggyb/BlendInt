@@ -72,11 +72,11 @@ namespace BlendInt {
 				case WidgetSize: {
 					const Size* size_p =
 					        static_cast<const Size*>(request.data());
-					UpdateTextPosition(*size_p, round_type(),
+					UpdateTextPosition(*size_p, round_radius(),
 					        round_radius(), text());
 					VertexTool tool;
 					tool.Setup(*size_p, DefaultBorderWidth(),
-					        round_type(), round_radius());
+					        round_radius(), round_radius());
 					m_inner_buffer->Bind();
 					tool.SetInnerBufferData(m_inner_buffer.get());
 					m_outer_buffer->Bind();
@@ -107,11 +107,11 @@ namespace BlendInt {
 				case WidgetRoundCornerRadius: {
 					const float* radius_p =
 					        static_cast<const float*>(request.data());
-					UpdateTextPosition(size(), round_type(), *radius_p,
+					UpdateTextPosition(size(), round_radius(), *radius_p,
 					        text());
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(),
-					        round_type(), *radius_p);
+					        round_radius(), *radius_p);
 					m_inner_buffer->Bind();
 					tool.SetInnerBufferData(m_inner_buffer.get());
 					m_outer_buffer->Bind();
@@ -128,6 +128,66 @@ namespace BlendInt {
 		}
 
 		ReportGeometryUpdate(request);
+	}
+
+	void Button::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(*request.size(), round_radius(),
+			        round_radius(), text());
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(),
+			        round_radius(), round_radius());
+			m_inner_buffer->Bind();
+			tool.SetInnerBufferData(m_inner_buffer.get());
+			m_outer_buffer->Bind();
+			tool.SetOuterBufferData(m_outer_buffer.get());
+
+			set_size(*request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void Button::ProcessRoundTypeUpdate(const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), *request.round_type(), round_radius(),
+			        text());
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius());
+			m_inner_buffer->Bind();
+			tool.SetInnerBufferData(m_inner_buffer.get());
+			m_outer_buffer->Bind();
+			tool.SetOuterBufferData(m_outer_buffer.get());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void Button::ProcessRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), round_radius(), *request.round_radius(),
+			        text());
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(),
+			        round_radius(), *request.round_radius());
+			m_inner_buffer->Bind();
+			tool.SetInnerBufferData(m_inner_buffer.get());
+			m_outer_buffer->Bind();
+			tool.SetOuterBufferData(m_outer_buffer.get());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType Button::Draw (const RedrawEvent& event)
@@ -157,20 +217,20 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_type()) + 2);
+							GetOutlineVertices(round_radius()) + 2);
 
 		program->SetUniform1i("u_AA", 1);
 		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_radius()) * 2 + 2);
 
 		if (emboss()) {
 			program->SetVertexAttrib4f("a_color", 1.0f, 1.0f, 1.0f, 0.16f);
 
 			program->SetUniform3f("u_position", (float) position().x(), (float) position().y() - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							GetHalfOutlineVertices(round_type()) * 2);
+							GetHalfOutlineVertices(round_radius()) * 2);
 		}
 
 		glBindVertexArray(0);
@@ -186,7 +246,7 @@ namespace BlendInt {
 	void Button::InitializeButton ()
 	{
 		VertexTool tool;
-		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.Setup (size(), DefaultBorderWidth(), round_radius(), round_radius());
 
 		glGenVertexArrays(2, m_vao);
 		glBindVertexArray(m_vao[0]);
@@ -242,7 +302,7 @@ namespace BlendInt {
 		}
 
 		VertexTool tool;
-		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
+		tool.Setup (size(), DefaultBorderWidth(), round_radius(), round_radius());
 
 		glGenVertexArrays(2, m_vao);
 		glBindVertexArray(m_vao[0]);

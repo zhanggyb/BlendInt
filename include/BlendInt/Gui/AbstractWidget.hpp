@@ -269,7 +269,7 @@ namespace BlendInt {
 
 		}
 
-		const float* round_type() const
+		const float* round_radius() const
 		{
 			return m_round_radius;
 		}

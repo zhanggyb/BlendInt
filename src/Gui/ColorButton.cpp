@@ -118,6 +118,68 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void ColorButton::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			UpdateTextPosition(*request.size(), round_type(), round_radius(),
+			        text());
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			        round_radius());
+			m_inner_buffer->Bind();
+			tool.SetInnerBufferData(m_inner_buffer.get());
+			m_outer_buffer->Bind();
+			tool.SetOuterBufferData(m_outer_buffer.get());
+
+			set_size(*request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void ColorButton::ProcessRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			UpdateTextPosition(size(), *request.round_type(), round_radius(),
+			        text());
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius());
+			m_inner_buffer->Bind();
+			tool.SetInnerBufferData(m_inner_buffer.get());
+			m_outer_buffer->Bind();
+			tool.SetOuterBufferData(m_outer_buffer.get());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void ColorButton::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			UpdateTextPosition(size(), round_type(), *request.round_radius(),
+			        text());
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), round_type(),
+			        *request.round_radius());
+			m_inner_buffer->Bind();
+			tool.SetInnerBufferData(m_inner_buffer.get());
+			m_outer_buffer->Bind();
+			tool.SetOuterBufferData(m_outer_buffer.get());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
+	}
+
 	ResponseType ColorButton::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
@@ -196,5 +258,3 @@ namespace BlendInt {
 	}
 
 }
-
-

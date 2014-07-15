@@ -200,6 +200,87 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void ColorWheel::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+
+			int radius = std::min(request.size()->width(), request.size()->height()) / 2;
+
+			m_inner->Bind();
+
+			GLfloat* ptr = (GLfloat*) m_inner->Map(GL_READ_WRITE);
+
+			double rad = 0.0;
+			float x1 = 0.f;
+			float y1 = 0.f;
+
+			ptr = ptr + 6;
+			int i = 1;
+			for (int angle = -30; angle < 330; angle = angle + 5) {
+				rad = angle * M_PI / 180.0;
+
+				x1 = (radius - 1) * cos(rad);
+				y1 = (radius - 1) * sin(rad);
+
+				*(ptr) = x1;
+				*(ptr + 1) = y1;
+				ptr += 6;
+				i++;
+			}
+
+			rad = 330 * M_PI / 180.0;
+			x1 = (radius - 1) * cos(rad);
+			y1 = (radius - 1) * sin(rad);
+
+			*(ptr) = x1;
+			*(ptr + 1) = y1;
+
+			m_inner->Unmap();
+			m_inner->Reset();
+
+			m_outline->Bind();
+
+			ptr = (GLfloat*) m_outline->Map(GL_READ_WRITE);
+			float x2 = 0.f;
+			float y2 = 0.f;
+
+			i = 0;
+			for (int angle = -30; angle < 330; angle = angle + 5) {
+				rad = angle * M_PI / 180.0;
+
+				x1 = (radius - 1) * cos(rad);
+				y1 = (radius - 1) * sin(rad);
+				x2 = radius * cos(rad);
+				y2 = radius * sin(rad);
+
+				*(ptr + 0) = x1;
+				*(ptr + 1) = y1;
+				*(ptr + 2) = x2;
+				*(ptr + 3) = y2;
+				ptr += 4;
+				i++;
+			}
+
+			rad = 330 * M_PI / 180.0;
+			x1 = (radius - 1) * cos(rad);
+			y1 = (radius - 1) * sin(rad);
+			x2 = radius * cos(rad);
+			y2 = radius * sin(rad);
+
+			*(ptr + 0) = x1;
+			*(ptr + 1) = y1;
+			*(ptr + 2) = x2;
+			*(ptr + 3) = y2;
+
+			m_outline->Unmap();
+			m_outline->Reset();
+
+			set_size(*request.size());
+		}
+
+		ReportSizeUpdate(request);
+	}
+
 	bool ColorWheel::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;

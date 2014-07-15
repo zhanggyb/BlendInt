@@ -136,6 +136,29 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void Clock::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int radius = std::min(request.size()->width(), request.size()->height());
+			radius = radius / 2;
+
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+			GenerateClockVertices(160, 1.f, inner_verts, outer_verts);
+
+			m_inner->Bind();
+			m_inner->SetData(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			m_outer->Bind();
+			m_outer->SetData(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::Reset();
+
+			set_size(*request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
 	void Clock::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}

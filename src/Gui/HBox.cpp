@@ -210,6 +210,30 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void HBox::ProcessPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void HBox::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_size(*request.size());
+			FillSubWidgetsInHBox(position(), *request.size(), margin(), m_alignment, m_space);
+		}
+
+		ReportSizeUpdate(request);
+	}
+
 	ResponseType HBox::Draw (const RedrawEvent& event)
 	{
 		return Ignore;
