@@ -100,6 +100,78 @@ namespace BlendInt {
 		}
 	}
 
+	inline bool SubWidgetProxy::RequestSizeUpdateTest (
+	        AbstractWidget* sub_widget, const SizeUpdateRequest& request)
+	{
+		if(sub_widget) {
+			return sub_widget->SizeUpdateTest(request);
+		} else {
+			return true;
+		}
+	}
+
+	inline bool SubWidgetProxy::RequestPositionUpdateTest (
+	        AbstractWidget* sub_widget, const PositionUpdateRequest& request)
+	{
+		if(sub_widget) {
+			return sub_widget->PositionUpdateTest(request);
+		} else {
+			return true;
+		}
+	}
+
+	inline bool SubWidgetProxy::RequestRoundTypeUpdateTest (
+	        AbstractWidget* sub_widget, const RoundTypeUpdateRequest& request)
+	{
+		if(sub_widget) {
+			return sub_widget->RoundTypeUpdateTest(request);
+		} else {
+			return true;
+		}
+	}
+
+	inline bool SubWidgetProxy::RequestRoundRadiusUpdateTest (
+	        AbstractWidget* sub_widget, const RoundRadiusUpdateRequest& request)
+	{
+		if(sub_widget) {
+			return sub_widget->RoundRadiusUpdateTest(request);
+		} else {
+			return true;
+		}
+	}
+
+	inline void SubWidgetProxy::RequestSizeUpdate (AbstractWidget* sub_widget,
+	        const SizeUpdateRequest& request)
+	{
+		if(sub_widget) {
+			sub_widget->ProcessSizeUpdate(request);
+		}
+	}
+
+	inline void SubWidgetProxy::RequestPositionUpdate (
+	        AbstractWidget* sub_widget, const PositionUpdateRequest& request)
+	{
+		if(sub_widget) {
+			sub_widget->ProcessPositionUpdate(request);
+		}
+	}
+
+	inline void SubWidgetProxy::RequestRoundTypeUpdate (
+	        AbstractWidget* sub_widget, const RoundTypeUpdateRequest& request)
+	{
+		if(sub_widget) {
+			sub_widget->ProcessRoundTypeUpdate(request);
+		}
+	}
+
+	inline void SubWidgetProxy::RequestRoundRadiusUpdate (
+	        AbstractWidget* sub_widget, const RoundRadiusUpdateRequest& request)
+	{
+		if(sub_widget) {
+			sub_widget->ProcessRoundRadiusUpdate(request);
+		}
+	}
+
 	bool AbstractContainer::UpdateGeometryTest (const GeometryUpdateRequest& request)
 	{
 		return true;

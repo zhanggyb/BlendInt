@@ -349,7 +349,23 @@ namespace BlendInt {
 
 		static inline bool RequestGeometryTest (AbstractContainer* container, const GeometryUpdateRequest& request);
 
+		static inline bool RequestSizeUpdateTest (AbstractContainer* container, const SizeUpdateRequest& request);
+
+		static inline bool RequestPositionUpdateTest (AbstractContainer* container, const PositionUpdateRequest& request);
+
+		static inline bool RequestRoundTypeUpdateTest (AbstractContainer* container, const RoundTypeUpdateRequest& request);
+
+		static inline bool RequestRoundRadiusUpdateTest (AbstractContainer* container, const RoundRadiusUpdateRequest& request);
+
 		static inline void RequestGeometryUpdate (AbstractContainer* container, const GeometryUpdateRequest& request);
+
+		static inline void RequestSizeUpdate (AbstractContainer* container, const SizeUpdateRequest& request);
+
+		static inline void RequestPositionUpdate (AbstractContainer* container, const PositionUpdateRequest& request);
+
+		static inline void RequestRoundTypeUpdate (AbstractContainer* container, const RoundTypeUpdateRequest& request);
+
+		static inline void RequestRoundRadiusUpdate (AbstractContainer* container, const RoundRadiusUpdateRequest& request);
 
 		static inline void RequestContainerUpdate (AbstractContainer* container, const ContainerUpdateRequest& request);
 
@@ -682,6 +698,14 @@ namespace BlendInt {
 		void ReportContainerUpdate (const ContainerUpdateRequest& request);
 
 		void ReportGeometryUpdate (const GeometryUpdateRequest& request);
+
+		void ReportSizeUpdate (const SizeUpdateRequest& request);
+
+		void ReportPositionUpdate (const PositionUpdateRequest& request);
+
+		void ReportRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+
+		void ReportRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
 		void ReportMarginUpdate (const ContainerUpdateRequest& request);
 
