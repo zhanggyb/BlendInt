@@ -70,6 +70,12 @@ namespace BlendInt {
 
 		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
 
+		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+
+		virtual void ProcessRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+
 		virtual ResponseType Draw (const RedrawEvent& event);
 
 		virtual ResponseType FocusEvent (bool focus);

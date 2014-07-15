@@ -94,6 +94,22 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void Label::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			m_text_length = UpdateTextPosition(*request.size(), m_text, m_font);
+
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), RoundNone, 0);
+			tool.UpdateInnerBuffer(m_rect.get());
+
+			set_size (*request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
 	ResponseType Label::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;

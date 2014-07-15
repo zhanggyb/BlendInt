@@ -308,6 +308,92 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void TextEntry::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+
+			const Color& color = Theme::instance->text().inner;
+			short shadetop = Theme::instance->text().shadetop;
+			short shadedown = Theme::instance->text().shadedown;
+
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			        round_radius(), color, Vertical, shadetop, shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			m_cursor_buffer->Bind();
+			GLfloat* buf_p = (GLfloat*) m_cursor_buffer->Map(
+			GL_READ_WRITE);
+			*(buf_p + 5) = static_cast<float>(request.size()->height()
+			        - default_textentry_padding.vsum());
+			*(buf_p + 7) = static_cast<float>(request.size()->height()
+			        - default_textentry_padding.vsum());
+			m_cursor_buffer->Unmap();
+			m_cursor_buffer->Reset();
+
+			set_size(*request.size());
+			Refresh();
+
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void TextEntry::ProcessRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+
+			const Color& color = Theme::instance->text().inner;
+			short shadetop = Theme::instance->text().shadetop;
+			short shadedown = Theme::instance->text().shadedown;
+
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius(), color, Vertical, shadetop, shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void TextEntry::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			const Color& color = Theme::instance->text().inner;
+			short shadetop = Theme::instance->text().shadetop;
+			short shadedown = Theme::instance->text().shadedown;
+
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), round_type(),
+			        *request.round_radius(), color, Vertical, shadetop,
+			        shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			m_font.set_pen(
+			        *request.round_radius() + default_textentry_padding.left(),
+			        m_font.pen().y());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
+	}
+
 	ResponseType TextEntry::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
