@@ -111,7 +111,7 @@ namespace BlendInt {
 					const Size* size_p = static_cast<const Size*>(request.data());
 
 					VertexTool tool;
-					tool.Setup(*size_p, 0, round_corner_type(), round_corner_radius());
+					tool.Setup(*size_p, 0, round_type(), round_radius());
 
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
@@ -172,7 +172,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_corner_type()) + 2);
+							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
 		program->Reset();
@@ -233,11 +233,11 @@ namespace BlendInt {
 
 	void Decoration::InitializeDecoration()
 	{
-		set_round_corner_type(RoundTopLeft | RoundTopRight);
-		set_round_corner_radius(10.f);
+		set_round_type(RoundTopLeft | RoundTopRight);
+		set_round_radius(10.f);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, round_corner_type(), round_corner_radius());
+		tool.Setup(size(), 0, round_type(), round_radius());
 
 		glGenVertexArrays(1, m_vao);
 

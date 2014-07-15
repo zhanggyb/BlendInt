@@ -50,7 +50,7 @@ namespace BlendInt {
 
 			if(last) {
 				last->SetEmboss(false);
-				last->SetRoundCornerType(last->round_corner_type() & ~(RoundBottomLeft | RoundBottomRight));
+				last->SetRoundCornerType(last->round_type() & ~(RoundBottomLeft | RoundBottomRight));
 				widget->SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
 			} else {
 				widget->SetRoundCornerType(RoundAll);

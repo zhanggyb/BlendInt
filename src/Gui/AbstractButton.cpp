@@ -58,12 +58,12 @@ namespace BlendInt {
 
 		int radius_plus = 0;
 
-		if((round_corner_type() & RoundTopLeft) || (round_corner_type() & RoundBottomLeft)) {
-			radius_plus += round_corner_radius();
+		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
+			radius_plus += round_radius();
 		}
 
-		if((round_corner_type() & RoundTopRight) || (round_corner_type() & RoundBottomRight)) {
-			radius_plus += round_corner_radius();
+		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
+			radius_plus += round_radius();
 		}
 
 		int max_font_height = m_font.GetHeight();
@@ -86,13 +86,13 @@ namespace BlendInt {
 	void AbstractButton::SetText (const String& text)
 	{
 		m_text = text;
-		m_text_length = UpdateTextPosition(size(), round_corner_type(), round_corner_radius(), text, m_font);
+		m_text_length = UpdateTextPosition(size(), round_type(), round_radius(), text, m_font);
 	}
 
 	void AbstractButton::SetFont (const Font& font)
 	{
 		m_font = font;
-		m_text_length = UpdateTextPosition(size(), round_corner_type(), round_corner_radius(), m_text, m_font);
+		m_text_length = UpdateTextPosition(size(), round_type(), round_radius(), m_text, m_font);
 	}
 
 	void AbstractButton::UpdateTextPosition(const Size& size, int round_type, float radius, const String& text)

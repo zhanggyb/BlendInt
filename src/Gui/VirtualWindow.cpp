@@ -46,8 +46,8 @@ namespace BlendInt {
 	VirtualWindow::VirtualWindow ()
 	: AbstractVectorContainer(2)
 	{
-		set_round_corner_type(RoundTopLeft | RoundTopRight);
-		set_round_corner_radius(10.f);
+		set_round_type(RoundTopLeft | RoundTopRight);
+		set_round_radius(10.f);
 		set_size(400, 300);
 		set_margin(0, 0, 0, 0);
 
@@ -196,11 +196,11 @@ namespace BlendInt {
 					const int* type_p = static_cast<const int*>(request.data());
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-					        round_corner_radius());
+					        round_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
-					set_round_corner_type(*type_p);
+					set_round_type(*type_p);
 					*/
 					Refresh();
 					break;
@@ -213,11 +213,11 @@ namespace BlendInt {
 
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(),
-					        round_corner_type(), *radius_p);
+					        round_type(), *radius_p);
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
-					set_round_corner_radius(*radius_p);
+					set_round_radius(*radius_p);
 					*/
 					Refresh();
 					break;

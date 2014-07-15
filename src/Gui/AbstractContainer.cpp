@@ -110,6 +110,16 @@ namespace BlendInt {
 		// do nothing
 	}
 
+	void AbstractContainer::ProcessMarginUpdate(const ContainerUpdateRequest& request)
+	{
+		ReportMarginUpdate(request);
+	}
+
+	void AbstractContainer::ProcessRefresh(const ContainerUpdateRequest& request)
+	{
+		ReportRefreshRequest(request);
+	}
+
 	void AbstractContainer::SetMargin (const Margin& margin)
 	{
 		if (m_margin.equal(margin))
@@ -117,7 +127,7 @@ namespace BlendInt {
 
 		ContainerUpdateRequest request (this, this, ContainerMargin, &margin);
 
-		UpdateContainer(request);
+		ProcessMarginUpdate(request);
 		m_margin = margin;
 	}
 
@@ -129,7 +139,7 @@ namespace BlendInt {
 		Margin new_margin(left, right, top, bottom);
 		ContainerUpdateRequest request (this, this, ContainerMargin, &new_margin);
 
-		UpdateContainer(request);
+		ProcessMarginUpdate(request);
 		m_margin = new_margin;
 	}
 	
@@ -227,10 +237,10 @@ namespace BlendInt {
 		if(widget->drop_shadow()) {
 
 			if(!widget->m_shadow) {
-				widget->m_shadow.reset(new Shadow(widget->size(), widget->round_corner_type(), widget->round_corner_radius()));
+				widget->m_shadow.reset(new Shadow(widget->size(), widget->round_type(), widget->round_radius()));
 			}
 
-			widget->m_shadow->Update(widget->size(), widget->round_corner_type(), widget->round_corner_radius());
+			widget->m_shadow->Update(widget->size(), widget->round_type(), widget->round_radius());
 
 		} else {
 			DBG_PRINT_MSG("The widget %s is not allow shadow by itself", widget->name().c_str());

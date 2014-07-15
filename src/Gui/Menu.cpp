@@ -102,11 +102,11 @@ namespace BlendInt {
 		Size s;
 
 		if(m_list.size()) {
-			s.set_width(std::max(size().width(), (int)round_corner_radius() * 2 + width));
+			s.set_width(std::max(size().width(), (int)round_radius() * 2 + width));
 			s.set_height(size().height() + DefaultMenuItemHeight);
 		} else {
-			s.set_width(round_corner_radius() * 2 + width);
-			s.set_height(round_corner_radius() * 2 + DefaultMenuItemHeight);
+			s.set_width(round_radius() * 2 + width);
+			s.set_height(round_radius() * 2 + DefaultMenuItemHeight);
 		}
 
 		Resize(s);
@@ -176,7 +176,7 @@ namespace BlendInt {
 					        static_cast<const Size*>(request.data());
 					VertexTool tool;
 					tool.Setup(*size_p, DefaultBorderWidth(),
-					        round_corner_type(), round_corner_radius());
+					        round_type(), round_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
@@ -190,12 +190,12 @@ namespace BlendInt {
 					const int* type_p = static_cast<const int*>(request.data());
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-					        round_corner_radius());
+					        round_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
 					tool.SetOuterBufferData(m_outer.get());
-					set_round_corner_type(*type_p);
+					set_round_type(*type_p);
 					break;
 				}
 
@@ -204,12 +204,12 @@ namespace BlendInt {
 					        static_cast<const float*>(request.data());
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(),
-					        round_corner_type(), *radius_p);
+					        round_type(), *radius_p);
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
 					tool.SetOuterBufferData(m_outer.get());
-					set_round_corner_radius(*radius_p);
+					set_round_radius(*radius_p);
 					break;
 				}
 
@@ -237,31 +237,31 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 
 		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().outline.data());
 		program->SetUniform1i("u_AA", 1);
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		if(m_highlight) {
 			program->SetUniform1i("u_AA", 0);
 
 			glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-			pos.y = pos.y + size().height() - round_corner_radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight);
+			pos.y = pos.y + size().height() - round_radius() - static_cast<float>(DefaultMenuItemHeight * m_highlight);
 
 			program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
 
 			glBindVertexArray(m_vao[2]);
 			glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_corner_type()) + 2);
+							GetOutlineVertices(round_type()) + 2);
 		}
 
 		glBindVertexArray(0);
 		program->Reset();
 
-		float h = size().height() - round_corner_radius();
+		float h = size().height() - round_radius();
 
 		int advance = 0;
 		for(deque<RefPtr<Action> >::iterator it = m_list.begin(); it != m_list.end(); it++)
@@ -358,11 +358,11 @@ namespace BlendInt {
 	{
 		int h = position().y() + size().height() - y;
 
-		if(h < round_corner_radius() || h > (size().height() - round_corner_radius())) {
+		if(h < round_radius() || h > (size().height() - round_radius())) {
 			return 0;
 		}
 
-		return (h - round_corner_radius()) / (size().height() / m_list.size()) + 1;
+		return (h - round_radius()) / (size().height() / m_list.size()) + 1;
 	}
 
 	void Menu::InitializeMenu ()
@@ -370,7 +370,7 @@ namespace BlendInt {
 		glGenVertexArrays(3, m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		tool.Setup(size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glBindVertexArray(m_vao[0]);
 

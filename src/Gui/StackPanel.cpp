@@ -72,7 +72,7 @@ namespace BlendInt {
 		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 		glBindVertexArray(0);
 
 		program->Reset();

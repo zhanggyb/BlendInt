@@ -126,7 +126,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
 		program->Reset();

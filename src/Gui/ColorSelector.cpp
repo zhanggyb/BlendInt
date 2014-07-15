@@ -56,7 +56,7 @@ namespace BlendInt {
 	: VBox (), m_stack(0)
 	{
 		set_size(200, 320);
-		set_round_corner_type(RoundAll);
+		set_round_type(RoundAll);
 		set_drop_shadow(true);
 		set_margin(4, 4, 4, 4);
 
@@ -71,7 +71,7 @@ namespace BlendInt {
 	void ColorSelector::InitializeColorSelector()
 	{
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		tool.Setup(size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glGenVertexArrays(2, m_vao);
 
@@ -153,7 +153,7 @@ namespace BlendInt {
 				case WidgetSize: {
 					const Size* size_p = static_cast<const Size*>(request.data());
 					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+					tool.Setup(*size_p, DefaultBorderWidth(), round_type(), round_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
@@ -165,24 +165,24 @@ namespace BlendInt {
 				case WidgetRoundCornerType: {
 					const int* type_p = static_cast<const int*>(request.data());
 					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), *type_p, round_corner_radius());
+					tool.Setup(size(), DefaultBorderWidth(), *type_p, round_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
 					tool.SetOuterBufferData(m_outer.get());
-					set_round_corner_type(*type_p);
+					set_round_type(*type_p);
 					break;
 				}
 
 				case WidgetRoundCornerRadius: {
 					const float* radius_p = static_cast<const float*>(request.data());
 					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), *radius_p);
+					tool.Setup(size(), DefaultBorderWidth(), round_type(), *radius_p);
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
 					tool.SetOuterBufferData(m_outer.get());
-					set_round_corner_radius(*radius_p);
+					set_round_radius(*radius_p);
 					break;
 				}
 
@@ -213,13 +213,13 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 
 		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().outline.data());
 		program->SetUniform1i("u_AA", 1);
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
 		program->Reset();

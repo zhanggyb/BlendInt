@@ -189,7 +189,7 @@ namespace BlendInt {
 					}
 
 					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(), radius, color, slot_orient,
+					tool.Setup(*size_p, DefaultBorderWidth(), round_type(), radius, color, slot_orient,
 									shadetop, shadedown);
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
@@ -269,13 +269,13 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 
 		program->SetVertexAttrib4fv("a_color", Theme::instance->scroll().outline.data());
 		program->SetUniform1i("u_AA", 1);
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
 
@@ -356,7 +356,7 @@ namespace BlendInt {
 
 	void ScrollBar::InitOnce ()
 	{
-		set_round_corner_type(RoundAll);
+		set_round_type(RoundAll);
 
 		glGenVertexArrays(2, m_vao);
 
@@ -384,7 +384,7 @@ namespace BlendInt {
 		VertexTool tool;
 		tool.Setup(slot_size,
 						DefaultBorderWidth(),
-						round_corner_type(),
+						round_type(),
 						slot_radius,
 						color,
 						slot_orient,

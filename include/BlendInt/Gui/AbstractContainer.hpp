@@ -202,6 +202,10 @@ namespace BlendInt {
 
 		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
 
+		virtual void ProcessMarginUpdate (const ContainerUpdateRequest& request);
+
+		virtual void ProcessRefresh (const ContainerUpdateRequest& request);
+
 		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
 
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event) = 0;

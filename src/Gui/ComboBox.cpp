@@ -52,12 +52,12 @@ namespace BlendInt {
 	: AbstractWidget(),
 	  m_status_down(false)
 	{
-		set_round_corner_type(RoundAll);
+		set_round_type(RoundAll);
 
 		int h = m_font.GetHeight();
 
 		set_size(
-		        h + round_corner_radius() * 2 + default_combobox_padding.hsum() + 100,
+		        h + round_radius() * 2 + default_combobox_padding.hsum() + 100,
 		        h + default_combobox_padding.vsum());
 
 		InitializeComboBox();
@@ -74,12 +74,12 @@ namespace BlendInt {
 
 		int radius_plus = 0;
 
-		if((round_corner_type() & RoundTopLeft) || (round_corner_type() & RoundBottomLeft)) {
-			radius_plus += round_corner_radius();
+		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
+			radius_plus += round_radius();
 		}
 
-		if((round_corner_type() & RoundTopRight) || (round_corner_type() & RoundBottomRight)) {
-			radius_plus += round_corner_radius();
+		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
+			radius_plus += round_radius();
 		}
 
 		int max_font_height = m_font.GetHeight();
@@ -116,8 +116,8 @@ namespace BlendInt {
 					VertexTool tool;
 					tool.Setup(*size_p,
 									DefaultBorderWidth(),
-									round_corner_type(),
-									round_corner_radius(),
+									round_type(),
+									round_radius(),
 									Theme::instance->menu().inner,
 									Vertical,
 									Theme::instance->menu().shadetop,
@@ -137,7 +137,7 @@ namespace BlendInt {
 					tool.Setup(size(),
 									DefaultBorderWidth(),
 									*type_p,
-									round_corner_radius(),
+									round_radius(),
 									Theme::instance->menu().inner,
 									Vertical,
 									Theme::instance->menu().shadetop,
@@ -146,7 +146,7 @@ namespace BlendInt {
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
 					tool.SetOuterBufferData(m_outer.get());
-					set_round_corner_type(*type_p);
+					set_round_type(*type_p);
 					Refresh();
 					break;
 				}
@@ -157,7 +157,7 @@ namespace BlendInt {
 					VertexTool tool;
 					tool.Setup(size(),
 									DefaultBorderWidth(),
-									round_corner_type(),
+									round_type(),
 									*radius_p,
 									Theme::instance->menu().inner,
 									Vertical,
@@ -167,7 +167,7 @@ namespace BlendInt {
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
 					tool.SetOuterBufferData(m_outer.get());
-					set_round_corner_radius(*radius_p);
+					set_round_radius(*radius_p);
 					Refresh();
 					break;
 				}
@@ -203,14 +203,14 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 
 		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().outline.data());
 		program->SetUniform1i("u_AA", 1);
 		program->SetUniform1i("u_gamma", 0);
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
 		program->Reset();
@@ -306,8 +306,8 @@ namespace BlendInt {
 		VertexTool tool;
 		tool.Setup(size(),
 						DefaultBorderWidth(),
-						round_corner_type(),
-						round_corner_radius(),
+						round_type(),
+						round_radius(),
 						Theme::instance->menu().inner,
 						Vertical,
 						Theme::instance->menu().shadetop,

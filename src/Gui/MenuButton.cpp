@@ -62,11 +62,11 @@ namespace BlendInt {
 				case WidgetSize: {
 					const Size* size_p =
 					        static_cast<const Size*>(request.data());
-					UpdateTextPosition(*size_p, round_corner_type(),
-					        round_corner_radius(), text());
+					UpdateTextPosition(*size_p, round_type(),
+					        round_radius(), text());
 					VertexTool tool;
 					tool.Setup(*size_p, DefaultBorderWidth(),
-					        round_corner_type(), round_corner_radius());
+					        round_type(), round_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
@@ -77,15 +77,15 @@ namespace BlendInt {
 
 				case WidgetRoundCornerType: {
 					const int* type_p = static_cast<const int*>(request.data());
-					UpdateTextPosition(size(), *type_p, round_corner_radius(),
+					UpdateTextPosition(size(), *type_p, round_radius(),
 					        text());
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-					        round_corner_radius());
+					        round_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
-					set_round_corner_type(*type_p);
+					set_round_type(*type_p);
 					Refresh();
 					break;
 				}
@@ -93,15 +93,15 @@ namespace BlendInt {
 				case WidgetRoundCornerRadius: {
 					const float* radius_p =
 					        static_cast<const float*>(request.data());
-					UpdateTextPosition(size(), round_corner_type(), *radius_p,
+					UpdateTextPosition(size(), round_type(), *radius_p,
 					        text());
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(),
-					        round_corner_type(), *radius_p);
+					        round_type(), *radius_p);
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 
-					set_round_corner_radius(*radius_p);
+					set_round_radius(*radius_p);
 					Refresh();
 					break;
 				}
@@ -132,7 +132,7 @@ namespace BlendInt {
 
 			glBindVertexArray(m_vao);
 			glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_corner_type()) + 2);
+							GetOutlineVertices(round_type()) + 2);
 			glBindVertexArray(0);
 
 			program->Reset();
@@ -153,19 +153,19 @@ namespace BlendInt {
 
 	void MenuButton::InitializeMenuButton (const String& text)
 	{
-		set_round_corner_type(RoundAll);
+		set_round_type(RoundAll);
 		set_text(text);
 
 		int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
+			set_size(h + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
 							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
+			int width = text_outline.width() + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
 			int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
 
 			set_size(width, height);
@@ -178,7 +178,7 @@ namespace BlendInt {
 		glGenVertexArrays(1, &m_vao);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		tool.Setup(size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glBindVertexArray(m_vao);
 		m_inner.reset(new GLArrayBuffer);

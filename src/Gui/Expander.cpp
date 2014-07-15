@@ -72,7 +72,7 @@ namespace BlendInt {
 	{
 		int h = font().GetHeight();
 
-		Size prefer(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum() + 100,
+		Size prefer(h + round_radius() * 2 + DefaultButtonPadding().hsum() + 100,
 						h + DefaultButtonPadding().vsum());
 
 		return prefer;
@@ -86,8 +86,8 @@ namespace BlendInt {
 				case WidgetSize: {
 					const Size* size_p =
 					        static_cast<const Size*>(request.data());
-					UpdateTextPosition(*size_p, round_corner_type(),
-					        round_corner_radius(), text());
+					UpdateTextPosition(*size_p, round_type(),
+					        round_radius(), text());
 
 					set_size(*size_p);
 					Refresh();
@@ -96,10 +96,10 @@ namespace BlendInt {
 
 				case WidgetRoundCornerType: {
 					const int* type_p = static_cast<const int*>(request.data());
-					UpdateTextPosition(size(), *type_p, round_corner_radius(),
+					UpdateTextPosition(size(), *type_p, round_radius(),
 					        text());
 
-					set_round_corner_type(*type_p);
+					set_round_type(*type_p);
 					Refresh();
 					break;
 				}
@@ -107,10 +107,10 @@ namespace BlendInt {
 				case WidgetRoundCornerRadius: {
 					const float* radius_p =
 					        static_cast<const float*>(request.data());
-					UpdateTextPosition(size(), round_corner_type(), *radius_p,
+					UpdateTextPosition(size(), round_type(), *radius_p,
 					        text());
 
-					set_round_corner_radius(*radius_p);
+					set_round_radius(*radius_p);
 					Refresh();
 					break;
 				}
@@ -155,7 +155,7 @@ namespace BlendInt {
 
 		int h = font().GetHeight();
 
-		set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum(),
+		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
 						h + DefaultButtonPadding().vsum());
 	}
 
@@ -167,13 +167,13 @@ namespace BlendInt {
 		int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
+			set_size(h + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
 							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
+			int width = text_outline.width() + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
 			int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
 
 			set_size(width, height);
@@ -424,7 +424,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
 		program->Reset();

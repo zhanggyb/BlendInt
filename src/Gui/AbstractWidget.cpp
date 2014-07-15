@@ -83,6 +83,20 @@ namespace BlendInt {
 		}
 	}
 
+	inline void ContainerProxy::RequestMarginUpdate(AbstractContainer* container, const ContainerUpdateRequest& request)
+	{
+		if(container) {
+			container->ProcessMarginUpdate(request);
+		}
+	}
+
+	inline void ContainerProxy::RequestRefresh(AbstractContainer* container, const ContainerUpdateRequest& request)
+	{
+		if(container) {
+			container->ProcessRefresh(request);
+		}
+	}
+
 	// --------------------------------------------------------------------
 
 	float AbstractWidget::default_border_width = 1.f;
@@ -90,7 +104,7 @@ namespace BlendInt {
 	AbstractWidget::AbstractWidget ()
 	: Object(),
 	  m_flags(0),
-	  m_round_corner_radius(5),
+	  m_round_radius(5),
 	  m_container(0)
 	{
 		m_events.reset(new Cpp::ConnectionScope);
@@ -191,14 +205,14 @@ namespace BlendInt {
 
 	void AbstractWidget::SetRoundCornerType(int type)
 	{
-		if(round_corner_type() == type) return;
+		if(round_type() == type) return;
 		bool broadcast = false;
 
 		GeometryUpdateRequest request(this, this, WidgetRoundCornerType, &type);
 
 		if(UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
-			set_round_corner_type(type);
+			set_round_type(type);
 			broadcast = true;
 		}
 
@@ -209,14 +223,14 @@ namespace BlendInt {
 
 	void AbstractWidget::SetRoundCornerRadius(float radius)
 	{
-		if(m_round_corner_radius == radius) return;
+		if(m_round_radius == radius) return;
 		bool broadcast = false;
 
 		GeometryUpdateRequest request(this, this, WidgetRoundCornerRadius, &radius);
 
 		if(UpdateGeometryTest(request)) {
 			UpdateGeometry(request);
-			m_round_corner_radius = radius;
+			m_round_radius = radius;
 			broadcast = true;
 		}
 
@@ -264,7 +278,7 @@ namespace BlendInt {
 		request.set_type(ContainerRefresh);
 		request.set_data(0);
 
-		ContainerProxy::RequestContainerUpdate(m_container, request);
+		ContainerProxy::RequestRefresh(m_container, request);
 	}
 
 	void AbstractWidget::SetDefaultBorderWidth(float border)
@@ -339,6 +353,16 @@ namespace BlendInt {
 		ContainerProxy::RequestGeometryUpdate(m_container, request);
 	}
 
+	void AbstractWidget::ReportMarginUpdate(const ContainerUpdateRequest& request)
+	{
+		ContainerProxy::RequestMarginUpdate(m_container, request);
+	}
+
+	void AbstractWidget::ReportRefreshRequest(const ContainerUpdateRequest& request)
+	{
+		ContainerProxy::RequestRefresh(m_container, request);
+	}
+
 	int AbstractWidget::GetOutlineVertices (int round_type) const
 	{
 		round_type = round_type & RoundAll;
@@ -350,6 +374,43 @@ namespace BlendInt {
 		}
 
 		return 4 - count + count * WIDGET_CURVE_RESOLU;
+	}
+
+	bool AbstractWidget::SizeUpdateTest(const SizeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool AbstractWidget::PositionUpdateTest(const PositionUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void AbstractWidget::ProcessSizeUpdate(const SizeUpdateRequest& request)
+	{
+	}
+
+	void AbstractWidget::ProcessPositionUpdate(const PositionUpdateRequest& request)
+	{
+
+	}
+
+	bool AbstractWidget::RoundTypeUpdateTest(const RoundTypeUpdateRequest& request)
+	{
+		return true;
+	}
+
+	bool AbstractWidget::RoundRadiusUpdateTest(const RoundRadiusUpdateRequest& request)
+	{
+		return true;
+	}
+
+	void AbstractWidget::ProcessRoundTypeUpdate(const RoundTypeUpdateRequest& request)
+	{
+	}
+
+	void AbstractWidget::ProcessRoundRadiusUpdate(const RoundRadiusUpdateRequest& request)
+	{
 	}
 
 	int AbstractWidget::GetHalfOutlineVertices(int round_type) const

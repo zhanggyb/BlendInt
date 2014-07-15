@@ -62,29 +62,10 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void FramePanel::UpdateContainer (const ContainerUpdateRequest& request)
+	void FramePanel::ProcessRefresh(const ContainerUpdateRequest& request)
 	{
-		switch (request.type()) {
-
-			case ContainerRefresh: {
-				m_refresh = true;
-				Frame::UpdateContainer(request);
-				break;
-			}
-
-			case ContainerMargin: {
-				m_refresh = true;
-				Frame::UpdateContainer(request);
-				return;
-			}
-
-			default: {
-				Frame::UpdateContainer(request);
-				break;
-			}
-		}
-
-		ReportContainerUpdate(request);
+		m_refresh = true;
+		ReportRefreshRequest(request);
 	}
 
 	void FramePanel::UpdateGeometry (const GeometryUpdateRequest& request)

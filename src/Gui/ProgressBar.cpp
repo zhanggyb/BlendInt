@@ -101,7 +101,7 @@ namespace BlendInt {
 					        static_cast<const Size*>(request.data());
 					VertexTool tool;
 					tool.Setup(*size_p, DefaultBorderWidth(),
-					        round_corner_type(), round_corner_radius());
+					        round_type(), round_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
@@ -116,13 +116,13 @@ namespace BlendInt {
 					const int* type_p = static_cast<const int*>(request.data());
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-					        round_corner_radius());
+					        round_radius());
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
 					tool.SetOuterBufferData(m_outer.get());
 
-					set_round_corner_type(*type_p);
+					set_round_type(*type_p);
 					Refresh();
 					break;
 				}
@@ -132,13 +132,13 @@ namespace BlendInt {
 					        static_cast<const float*>(request.data());
 					VertexTool tool;
 					tool.Setup(size(), DefaultBorderWidth(),
-					        round_corner_type(), *radius_p);
+					        round_type(), *radius_p);
 					m_inner->Bind();
 					tool.SetInnerBufferData(m_inner.get());
 					m_outer->Bind();
 					tool.SetOuterBufferData(m_outer.get());
 
-					set_round_corner_radius(*radius_p);
+					set_round_radius(*radius_p);
 					Refresh();
 					break;
 				}
@@ -174,7 +174,7 @@ namespace BlendInt {
 		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
 		program->Reset();
@@ -247,7 +247,7 @@ namespace BlendInt {
 		};
 
 		VertexTool tool;
-		tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glGenVertexArrays(2, m_vao);
 		glBindVertexArray(m_vao[0]);

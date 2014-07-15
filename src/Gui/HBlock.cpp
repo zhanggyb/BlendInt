@@ -49,7 +49,7 @@ namespace BlendInt {
 			FillInHBlock(position(), size(), margin());
 
 			if(last) {
-				last->SetRoundCornerType(last->round_corner_type() & ~(RoundTopRight | RoundBottomRight));
+				last->SetRoundCornerType(last->round_type() & ~(RoundTopRight | RoundBottomRight));
 				widget->SetRoundCornerType(RoundTopRight | RoundBottomRight);
 			} else {
 				widget->SetRoundCornerType(RoundAll);

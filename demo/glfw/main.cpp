@@ -78,23 +78,10 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	Workspace* ws = Manage(new Workspace);
-	ws->SetPosition(100, 100);
-	ws->Resize(800, 600);
-
 	VirtualWindow* vw = Manage(new VirtualWindow);
 
-	ws->PushBack(vw);
-
-	context->PushBack(ws);
-
-	ColorSelector* cs = 0;
-	for(int i = 0; i < 20; i++)
-	{
-		cs = Manage(new ColorSelector);
-		cs->SetPosition(950, 100 + i * 10);
-		context->PushBack(cs);
-	}
+	context->PushBack(vw);
+	vw->SetPosition(100, 100);
 
 	RunLoop(win);
 
