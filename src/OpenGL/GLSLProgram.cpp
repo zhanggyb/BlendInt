@@ -438,4 +438,20 @@ namespace BlendInt {
 		free(log);
 	}
 
+	bool GLSLProgram::GetUniformfv (const char* name, GLfloat* params)
+	{
+		GLint location = GetUniformLocation(name);
+
+		if(location < 0) return false;
+
+		glGetUniformfv (m_id, location, params);
+
+		return true;
+	}
+
+	void GLSLProgram::GetUniformfv (GLint location, GLfloat* params)
+	{
+		glGetUniformfv(m_id, location, params);
+	}
+
 }

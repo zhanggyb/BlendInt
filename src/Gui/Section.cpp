@@ -170,12 +170,24 @@ namespace BlendInt {
 
 	void Section::RenderToTexture (AbstractWidget* widget, GLTexture2D* texture)
 	{
+		using Stock::Shaders;
+
 #ifdef DEBUG
 		assert(widget && texture);
 #endif
 
-		GLsizei width = widget->size().width() + Theme::instance->shadow_width() * 2;
-		GLsizei height = widget->size().height() + Theme::instance->shadow_width() * 2;
+		GLsizei width = widget->size().width();
+		GLsizei height = widget->size().height();
+		GLfloat left = widget->position().x();
+		GLfloat bottom = widget->position().y();
+		if(widget->m_shadow) {
+			width += Theme::instance->shadow_width() * 2;
+			height += Theme::instance->shadow_width() * 2;
+			left -= Theme::instance->shadow_width();
+			bottom -= Theme::instance->shadow_width();
+		}
+		GLfloat right = left + width;
+		GLfloat top = bottom + height;
 
 		// Create and set texture to render to.
 		GLTexture2D* tex = texture;
@@ -223,18 +235,58 @@ namespace BlendInt {
 
 			glEnable(GL_BLEND);
 
-			glm::mat4 projection = glm::ortho(0.f, (float)width, 0.f, (float)height, 100.f, -100.f);
-			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(Theme::instance->shadow_width(), Theme::instance->shadow_width(), 0.0));
+			glm::mat4 origin;
+			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
+			        -100.f);
+
+			RefPtr<GLSLProgram> program =
+			        Shaders::instance->default_triangle_program();
+			program->GetUniformfv("u_projection", glm::value_ptr(origin));
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
 
 			RedrawEvent event;
+			ScissorStatus scissor;
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
 			glViewport(0, 0, width, height);
 
-			widget->Draw(event);
+			DispatchDrawEvent(widget, event, scissor);
 
+			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
+			program = Shaders::instance->default_triangle_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+
+			program->Reset();
 		}
 
 		fb->Reset();
@@ -256,8 +308,19 @@ namespace BlendInt {
 #ifdef DEBUG
 		assert(widget);
 #endif
-		GLsizei width = widget->size().width() + Theme::instance->shadow_width() * 2;
-		GLsizei height = widget->size().height() + Theme::instance->shadow_width() * 2;
+
+		GLsizei width = widget->size().width();
+		GLsizei height = widget->size().height();
+		GLfloat left = widget->position().x();
+		GLfloat bottom = widget->position().y();
+		if(widget->m_shadow) {
+			width += Theme::instance->shadow_width() * 2;
+			height += Theme::instance->shadow_width() * 2;
+			left -= Theme::instance->shadow_width();
+			bottom -= Theme::instance->shadow_width();
+		}
+		GLfloat right = left + width;
+		GLfloat top = bottom + height;
 
 		// Create and set texture to render to.
 		GLTexture2D* tex = new GLTexture2D;
@@ -303,15 +366,13 @@ namespace BlendInt {
 
 			glEnable(GL_BLEND);
 
-			glm::mat4 projection = glm::ortho(
-					(float)widget->position().x() - 12.f,
-					widget->position().x() - 12.f + (float)width,
-					(float)widget->position().y() - 12.f,
-					(float)widget->position().y() - 12.f + (float)height, 100.f, -100.f);
-			glm::mat4 offset = glm::translate(glm::mat4(1.0), glm::vec3(Theme::instance->shadow_width(), Theme::instance->shadow_width(), 0.0));
+			glm::mat4 origin;
+			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
+			        -100.f);
 
 			RefPtr<GLSLProgram> program =
 			        Shaders::instance->default_triangle_program();
+			program->GetUniformfv("u_projection", glm::value_ptr(origin));
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
@@ -333,34 +394,33 @@ namespace BlendInt {
 
             GLint vp[4];
             glGetIntegerv(GL_VIEWPORT, vp);
-
 			glViewport(0, 0, width, height);
 
 			DispatchDrawEvent(widget, event, scissor);
 
+			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
-
-			projection = glm::ortho(0.f, 1280.f, 0.f, 800.f, 100.f, -100.f);
-
 			program = Shaders::instance->default_triangle_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
-					glm::value_ptr(projection));
+					glm::value_ptr(origin));
 			program = Shaders::instance->default_line_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
-					glm::value_ptr(projection));
+					glm::value_ptr(origin));
 			program = Shaders::instance->default_text_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
-					glm::value_ptr(projection));
+					glm::value_ptr(origin));
 			program = Shaders::instance->default_image_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
-					glm::value_ptr(projection));
+					glm::value_ptr(origin));
 
 			program->Reset();
 			// ---------------------------------------------
+
+			tex->Bind();	// make sure bind again as the current texture may be changed in the draw event
 			tex->WriteToFile(filename);
 		}
 

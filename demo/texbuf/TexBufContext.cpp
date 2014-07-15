@@ -24,7 +24,10 @@ void TexBufContext::CreateWidgets ()
 
 	m_button = Manage(new Button("Take Screenshot"));
 
+	Button* btn = Manage(new Button("Button in Frame"));
+
 	m_panel = Manage(new FramePanel);
+	m_panel->Setup(btn);
 
 	m_button->SetPosition(600, 200);
 

@@ -93,8 +93,6 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		//DBG_PRINT_MSG("%d", event.context()->size().width());
-
 		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
 		program->Use();
 
