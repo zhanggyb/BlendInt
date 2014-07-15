@@ -140,7 +140,7 @@ namespace BlendInt {
 		if(orig != m_highlight) {
 			Refresh();
 		}
-		return AcceptAndBreak;
+		return Accept;
 	}
 
 	ResponseType Menu::MousePressEvent (const MouseEvent& event)

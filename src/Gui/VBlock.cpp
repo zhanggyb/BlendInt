@@ -193,22 +193,22 @@ namespace BlendInt {
 
 	ResponseType VBlock::CursorEnterEvent (bool entered)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBlock::KeyPressEvent (const KeyEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBlock::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBlock::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBlock::MousePressEvent (const MouseEvent& event)

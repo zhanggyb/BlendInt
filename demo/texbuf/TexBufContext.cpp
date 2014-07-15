@@ -28,13 +28,16 @@ void TexBufContext::CreateWidgets ()
 
 	m_panel = Manage(new FramePanel);
 	m_panel->Setup(btn);
-
-	m_button->SetPosition(600, 200);
-
 	m_panel->SetPosition(100, 100);
 
+	FramePanel* btn_panel = Manage(new FramePanel);
+	btn_panel->Setup(m_button);
+	btn_panel->Resize(btn_panel->GetPreferredSize());
+
+	btn_panel->SetPosition(600, 100);
+
 	PushBack(m_panel);
-	PushBack(m_button);
+	PushBack(btn_panel);
 
 	events()->connect(m_button->clicked(), this, &TexBufContext::OnTakeScreenShot);
 }

@@ -429,7 +429,7 @@ namespace BlendInt {
 
 		program->Reset();
 
-		return AcceptAndContinue;
+		return Ignore;
 	}
 
 	ResponseType Expander::CursorEnterEvent (bool entered)

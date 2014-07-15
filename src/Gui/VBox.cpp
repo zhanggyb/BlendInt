@@ -213,27 +213,27 @@ namespace BlendInt {
 
 	ResponseType VBox::Draw (const RedrawEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBox::CursorEnterEvent (bool entered)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBox::KeyPressEvent (const KeyEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBox::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBox::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType VBox::MousePressEvent (const MouseEvent& event)

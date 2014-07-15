@@ -314,7 +314,7 @@ namespace BlendInt {
 
 		program->Reset();
 
-		return AcceptAndContinue;
+		return Ignore;
 	}
 
 	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)

@@ -130,27 +130,28 @@ namespace BlendInt {
 		glBindVertexArray(0);
 
 		program->Reset();
-		return Accept;
+
+		return Ignore;
 	}
 
 	ResponseType MenuBar::CursorEnterEvent (bool entered)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType MenuBar::KeyPressEvent (const KeyEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType MenuBar::ContextMenuPressEvent (const ContextMenuEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType MenuBar::ContextMenuReleaseEvent (const ContextMenuEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType MenuBar::MousePressEvent (const MouseEvent& event)

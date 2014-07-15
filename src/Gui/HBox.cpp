@@ -212,29 +212,29 @@ namespace BlendInt {
 
 	ResponseType HBox::Draw (const RedrawEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType HBox::CursorEnterEvent (bool entered)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType HBox::KeyPressEvent (const KeyEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType HBox::ContextMenuPressEvent (
 	        const ContextMenuEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType HBox::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
-		return IgnoreAndContinue;
+		return Ignore;
 	}
 
 	ResponseType HBox::MousePressEvent (const MouseEvent& event)
