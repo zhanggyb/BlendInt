@@ -362,9 +362,9 @@ namespace BlendInt {
 			glClearDepth(1.0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-			glEnable(GL_BLEND);
+			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			//glEnable(GL_BLEND);
 
 			glm::mat4 origin;
 			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
@@ -397,6 +397,8 @@ namespace BlendInt {
 			glViewport(0, 0, width, height);
 
 			DispatchDrawEvent(widget, event, scissor);
+
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
@@ -703,7 +705,8 @@ namespace BlendInt {
 				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
 			}
 
-			widget->Draw(event);
+			ResponseType response = widget->Draw(event);
+			if(response == Accept) return;
 
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
 			if (p) {
@@ -750,7 +753,8 @@ namespace BlendInt {
 				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
 			}
 
-			widget->Draw(event);
+			ResponseType response = widget->Draw(event);
+			if(response == Accept) return;
 
 			AbstractContainer* p = dynamic_cast<AbstractContainer*>(widget);
 			if (p) {

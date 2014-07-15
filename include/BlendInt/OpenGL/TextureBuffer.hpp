@@ -21,47 +21,40 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_FRAMEPANEL_HPP_
-#define _BLENDINT_GUI_FRAMEPANEL_HPP_
+#ifndef _BLENDINT_OPENGL_TEXTUREBUFFER_HPP_
+#define _BLENDINT_OPENGL_TEXTUREBUFFER_HPP_
 
-#include <BlendInt/Gui/Frame.hpp>
-
-#include <BlendInt/OpenGL/TextureBuffer.hpp>
+#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/OpenGL/GLTexture2D.hpp>
 
 namespace BlendInt {
 
-	class FramePanel: public Frame
+	class TextureBuffer: public Object
 	{
-		DISALLOW_COPY_AND_ASSIGN(FramePanel);
-
 	public:
 
-		FramePanel ();
+		TextureBuffer ();
 
-		virtual ~FramePanel ();
+		virtual ~TextureBuffer ();
 
-	protected:
+		void SetCoord (GLfloat x0, GLfloat y0, GLfloat x1, GLfloat y1);
 
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
+		GLTexture2D* texture () const
+		{
+			return m_texture.get();
+		}
 
-		virtual ResponseType Draw (const RedrawEvent& event);
+		void Draw (GLfloat x, GLfloat y);
 
 	private:
 
-		void InitializeFramePanel ();
-
-		void RenderToBuffer ();
-
 		GLuint m_vao;
-		RefPtr<GLArrayBuffer> m_inner;
 
-		TextureBuffer m_buffer;
+		RefPtr<GLArrayBuffer> m_vbo;
 
-		bool m_refresh;
+		RefPtr<GLTexture2D> m_texture;
 	};
 
 }
 
-
-
-#endif /* _BLENDINT_GUI_FRAMEPANEL_HPP_ */
+#endif /* _BLENDINT_OPENGL_TEXTUREBUFFER_HPP_ */

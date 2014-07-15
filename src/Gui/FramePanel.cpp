@@ -39,6 +39,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 #include <BlendInt/Stock/Shaders.hpp>
@@ -49,7 +51,7 @@
 namespace BlendInt {
 
 	FramePanel::FramePanel()
-	: Frame()
+	: Frame(), m_refresh(true)
 	{
 		set_drop_shadow(true);
 		InitializeFramePanel();
@@ -91,23 +93,19 @@ namespace BlendInt {
 	
 	ResponseType FramePanel::Draw (const RedrawEvent& event)
 	{
-		using Stock::Shaders;
+		if(m_refresh) {
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
-		program->Use();
+			RenderToBuffer();
 
-		program->SetUniform3f("u_position", (float)position().x(), (float)position().y(), 0.f);
-		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+			m_refresh = false;
+		}
 
-		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-		glBindVertexArray(0);
+		//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		m_buffer.Draw(position().x(), position().y());
 
-		program->Reset();
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		return AcceptAndContinue;
+		return Accept;
 	}
 
 	void FramePanel::InitializeFramePanel()
@@ -131,4 +129,145 @@ namespace BlendInt {
 
 	}
 
+	void FramePanel::RenderToBuffer ()
+	{
+		using Stock::Shaders;
+
+		GLsizei width = size().width();
+		GLsizei height = size().height();
+		GLfloat left = position().x();
+		GLfloat bottom = position().y();
+
+		GLfloat right = left + width;
+		GLfloat top = bottom + height;
+
+		m_buffer.SetCoord(0.f, 0.f, width, height);
+		// Create and set texture to render to.
+		GLTexture2D* tex = m_buffer.texture();
+		if(!tex->texture())
+			tex->Generate();
+
+		tex->Bind();
+		tex->SetWrapMode(GL_REPEAT, GL_REPEAT);
+		tex->SetMinFilter(GL_NEAREST);
+		tex->SetMagFilter(GL_NEAREST);
+		tex->SetImage(0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+		// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+		GLFramebuffer* fb = new GLFramebuffer;
+		fb->Generate();
+		fb->Bind();
+
+		// Set "renderedTexture" as our colour attachement #0
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_TEXTURE_2D, tex->texture(), 0);
+		//fb->Attach(*tex, GL_COLOR_ATTACHMENT0);
+
+		GLuint rb = 0;
+		glGenRenderbuffers(1, &rb);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, rb);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,
+				width, height);
+
+		//Attach depth buffer to FBO
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+				GL_RENDERBUFFER, rb);
+
+		if(GLFramebuffer::CheckStatus()) {
+
+			fb->Bind();
+
+			glClearColor(0.0, 0.0, 0.0, 0.0);
+
+			glClearDepth(1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			//glEnable(GL_BLEND);
+
+			glm::mat4 origin;
+			glm::mat4 projection = glm::ortho(left, right, bottom, top, 100.f,
+			        -100.f);
+
+			RefPtr<GLSLProgram> program =
+			        Shaders::instance->default_triangle_program();
+			program->GetUniformfv("u_projection", glm::value_ptr(origin));
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+
+			RedrawEvent event;
+			ScissorStatus scissor;
+
+            GLint vp[4];
+            glGetIntegerv(GL_VIEWPORT, vp);
+			glViewport(0, 0, width, height);
+
+			// Draw frame panel
+			program = Shaders::instance->default_triangle_program();
+			program->Use();
+
+			program->SetUniform3f("u_position", (float)position().x(), (float)position().y(), 0.f);
+			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+			program->SetUniform1i("u_gamma", 0);
+			program->SetUniform1i("u_AA", 0);
+
+			glBindVertexArray(m_vao);
+			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+			glBindVertexArray(0);
+
+			if(sub_widget()) {
+				Section::DispatchDrawEvent(sub_widget(), event, scissor);
+			}
+
+			// Restore the viewport setting and projection matrix
+			glViewport(vp[0], vp[1], vp[2], vp[3]);
+			program = Shaders::instance->default_triangle_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+					glm::value_ptr(origin));
+
+			program->Reset();
+		}
+
+		fb->Reset();
+		tex->Reset();
+
+		//delete tex; tex = 0;
+
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glDeleteRenderbuffers(1, &rb);
+
+		fb->Reset();
+		delete fb; fb = 0;
+
+	}
+
 }
+

@@ -64,6 +64,8 @@ namespace BlendInt {
 
 		static void RenderToFile (AbstractWidget* widget, const char* filename);
 
+		static void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event, ScissorStatus& scissor);
+
 	protected:
 
 		virtual void UpdateContainer (const ContainerUpdateRequest& request);
@@ -97,8 +99,6 @@ namespace BlendInt {
 		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
 
 	private:
-
-		static void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event, ScissorStatus& scissor);
 
 		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
 

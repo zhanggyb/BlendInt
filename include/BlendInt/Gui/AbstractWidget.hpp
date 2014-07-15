@@ -314,10 +314,6 @@ namespace BlendInt {
 
 		virtual bool Contain (const Point& point) const;
 
-		void RenderToTexture (int border, GLTexture2D* texture);
-
-		void RenderToFile (const char* filename, unsigned int border = 10);
-
 		void Refresh ();
 
 		const Size& size () const
