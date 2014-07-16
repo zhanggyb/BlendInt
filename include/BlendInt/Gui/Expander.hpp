@@ -52,6 +52,12 @@ namespace BlendInt {
 
 		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
+		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+
+		virtual void ProcessRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+
 		virtual ResponseType Draw (const RedrawEvent& event);
 
 	private:
@@ -98,6 +104,10 @@ namespace BlendInt {
 		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
 
 		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
+
+		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void ProcessPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

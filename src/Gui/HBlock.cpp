@@ -185,7 +185,31 @@ namespace BlendInt {
 
 		ReportGeometryUpdate(request);
 	}
+
+	void HBlock::ProcessSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_size(*request.size());
+			FillInHBlock(position(), *request.size(), margin());
+		}
+
+		ReportSizeUpdate(request);
+	}
 	
+	void HBlock::ProcessPositionUpdate(const PositionUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
+	}
+
 	ResponseType HBlock::Draw (const RedrawEvent& event)
 	{
 		return Ignore;

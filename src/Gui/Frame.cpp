@@ -193,6 +193,32 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void Frame::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_size(*request.size());
+
+			if (sub_widget()) {
+				FillSubWidget(position(), *request.size(), margin());
+			}
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void Frame::ProcessPositionUpdate (
+			const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_position(*request.position());
+			SetSubWidgetPosition(sub_widget(),
+					request.position()->x() + margin().left(),
+					request.position()->y() + margin().bottom());
+		}
+
+		ReportPositionUpdate(request);
+	}
+
 	ResponseType Frame::CursorEnterEvent (bool entered)
 	{
 		return Accept;

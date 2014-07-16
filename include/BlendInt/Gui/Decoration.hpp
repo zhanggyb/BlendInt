@@ -61,6 +61,10 @@ namespace BlendInt {
 
 		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
+		virtual void ProcessPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
+
 		virtual ResponseType Draw (const RedrawEvent& event);
 
 		virtual ResponseType CursorEnterEvent (bool entered);

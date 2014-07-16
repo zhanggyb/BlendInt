@@ -532,6 +532,53 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void Section::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			set_position (*request.position());
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void Section::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			set_size (*request.size());
+		}
+
+		if (request.source()->container() == this) {
+			if (request.source()->drop_shadow() && request.source()->m_shadow) {
+				request.source()->m_shadow->Resize(*request.size());
+			}
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void Section::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	{
+		if (request.source()->container() == this) {
+			if (request.source()->drop_shadow() && request.source()->m_shadow) {
+				request.source()->m_shadow->SetRoundType(*request.round_type());
+			}
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void Section::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.source()->container() == this) {
+			if (request.source()->drop_shadow() && request.source()->m_shadow) {
+				request.source()->m_shadow->SetRadius(*request.round_radius());
+			}
+		}
+
+		ReportRoundRadiusUpdate(request);
+	}
+
 	void Section::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}

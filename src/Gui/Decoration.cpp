@@ -157,6 +157,53 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void Decoration::ProcessPositionUpdate(const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void Decoration::ProcessSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, round_type(), round_radius());
+
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_inner->Reset();
+
+			int x = position().x() + margin().left();
+			if (sub_widget_size()) {
+				x = sub_widgets()->front()->position().x();
+			}
+
+			int y = position().y() + margin().bottom();
+			int w = request.size()->width() - margin().hsum();
+			int h = request.size()->height() - margin().vsum();
+
+			FillSubWidgets(x, y, w, h, m_space);
+
+			set_size(*request.size());
+
+		} else if (request.target()->container() == this) {
+
+			FillSubWidgets(position(), size(), margin(), m_space);
+
+		}
+
+		ReportSizeUpdate(request);
+	}
+
 	ResponseType Decoration::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;

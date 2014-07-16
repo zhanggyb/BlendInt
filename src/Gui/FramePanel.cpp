@@ -97,6 +97,19 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 	
+	void FramePanel::ProcessSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_inner->Reset();
+		}
+
+		Frame::ProcessSizeUpdate(request);
+	}
+
 	ResponseType FramePanel::Draw (const RedrawEvent& event)
 	{
 		if(m_refresh) {

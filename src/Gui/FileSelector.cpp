@@ -91,6 +91,19 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void FileSelector::ProcessSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_inner->Reset();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
 	ResponseType FileSelector::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;

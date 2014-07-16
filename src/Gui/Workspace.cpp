@@ -183,6 +183,61 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void Workspace::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	{
+		if (request.source()->container() == this) {
+			EnableShadow(request.source());
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void Workspace::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			Size inner_size(request.size()->width() - margin().hsum(),
+			        request.size()->height() - margin().vsum());
+
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0.f);
+			m_background->Bind();
+			tool.SetInnerBufferData(m_background.get());
+
+			tool.Setup(inner_size, 0, RoundNone, 0.f);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+
+			m_inner->Reset();
+
+			set_size(*request.size());
+		} else if (request.source()->container() == this) {
+
+			EnableShadow(request.source());
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void Workspace::ProcessRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if (request.source()->container() == this) {
+			EnableShadow(request.source());
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void Workspace::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.source()->container() == this) {
+			EnableShadow(request.source());
+		}
+
+		ReportRoundRadiusUpdate(request);
+	}
+
 	void Workspace::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}

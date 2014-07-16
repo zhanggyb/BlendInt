@@ -149,6 +149,25 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void ImageView::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+
+			m_background_buffer->Bind();
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			tool.SetInnerBufferData(m_background_buffer.get());
+			m_background_buffer->Reset();
+
+			AdjustImageArea (*request.size());
+
+			set_size(*request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
 	ResponseType ImageView::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;

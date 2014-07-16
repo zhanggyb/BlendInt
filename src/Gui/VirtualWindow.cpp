@@ -231,6 +231,64 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void VirtualWindow::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			MoveSubWidgets(x, y);
+
+			set_position(*request.position());
+
+			Refresh();
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void VirtualWindow::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int h = request.size()->height() - sub_widget(0)->size().height();
+			if (h < 0) h = 0;
+
+			Size vw_size (request.size()->width(), h);
+			VertexTool tool;
+			tool.Setup(vw_size, 0, RoundNone, 0.f);
+
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+
+			set_size(*request.size());
+
+			FillSubWidgets(position(), *request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void VirtualWindow::ProcessRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void VirtualWindow::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
+	}
+
 	void VirtualWindow::FillSubWidgets(const Point& out_pos, const Size& size)
 	{
 		FillSubWidgets(out_pos.x(), out_pos.y(), size.width(), size.height());

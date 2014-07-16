@@ -197,6 +197,54 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void ColorSelector::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			        round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+			set_size(*request.size());
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void ColorSelector::ProcessRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(), round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+			set_round_type(*request.round_type());
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void ColorSelector::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), round_type(), *request.round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+			set_round_radius(*request.round_radius());
+		}
+
+		ReportRoundRadiusUpdate(request);
+	}
+
 	ResponseType ColorSelector::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;

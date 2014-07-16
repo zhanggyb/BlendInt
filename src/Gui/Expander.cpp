@@ -123,6 +123,47 @@ namespace BlendInt {
 		ReportGeometryUpdate(request);
 	}
 
+	void ExpandButton::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(*request.size(), round_type(),
+			        round_radius(), text());
+
+			set_size(*request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void ExpandButton::ProcessRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), *request.round_type(), round_radius(),
+			        text());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void ExpandButton::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), round_type(), *request.round_radius(),
+			        text());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
+	}
+
 	ResponseType ExpandButton::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
@@ -406,6 +447,37 @@ namespace BlendInt {
 		}
 
 		ReportGeometryUpdate(request);
+	}
+
+	void Expander::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			FillInExpander(position(), *request.size(), margin());
+
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+
+			set_size(*request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void Expander::ProcessPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
 	}
 
 	ResponseType Expander::Draw (const RedrawEvent& event)
