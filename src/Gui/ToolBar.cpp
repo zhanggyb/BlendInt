@@ -193,101 +193,6 @@ namespace BlendInt {
 		}
 	}
 
-	bool ToolBar::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			return true;
-		} else if(request.target()->container() == this) {
-			// A sub widget want to change it's geometry
-
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					return false;
-				}
-
-				case WidgetSize: {
-
-					return true;
-				}
-
-				default: {
-					return true;
-				}
-			}
-		} else {
-			return true;
-		}
-	}
-
-	void ToolBar::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetPosition: {
-
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_inner->Reset();
-
-					int x = position().x() + margin().left();
-					if (sub_widget_size()) {
-						x = sub_widgets()->front()->position().x();
-					}
-
-					int y = position().y() + margin().bottom();
-					int w = size_p->width() - margin().hsum();
-					int h = size_p->height() - margin().vsum();
-
-					FillSubWidgets(x, y, w, h, m_space);
-
-					set_size(*size_p);
-					break;
-				}
-
-				default:
-					break;
-			}
-
-		} else if (request.target()->container() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					// a sub widget changed its size
-					FillSubWidgets(position(), size(), margin(), m_space);
-
-					break;
-				}
-
-				default:
-					break;
-
-			}
-
-		}
-
-		ReportGeometryUpdate(request);
-	}
-
 	void ToolBar::ProcessPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -303,7 +208,7 @@ namespace BlendInt {
 
 	void ToolBar::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if (request.target()) {
+		if (request.target() == this) {
 
 			VertexTool tool;
 			tool.Setup(*request.size(), 0, RoundNone, 0);

@@ -143,56 +143,6 @@ namespace BlendInt {
 		}
 	}
 
-	bool Frame::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if (request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
-			return false;
-		}
-	}
-
-	void Frame::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					set_size(*size_p);
-
-					if (sub_widget()) {
-						FillSubWidget(position(), *size_p, margin());
-					}
-
-					break;
-				}
-
-				case WidgetPosition: {
-					if (sub_widget()) {
-						const Point* pos_p =
-										static_cast<const Point*>(request.data());
-						set_position(*pos_p);
-						SetSubWidgetPosition(sub_widget(),
-										pos_p->x() + margin().left(),
-										pos_p->y() + margin().bottom());
-					}
-					break;
-				}
-
-				default:
-					break;
-			}
-
-		}
-
-		ReportGeometryUpdate(request);
-	}
-
 	void Frame::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {

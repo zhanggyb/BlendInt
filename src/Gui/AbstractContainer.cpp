@@ -84,22 +84,6 @@ namespace BlendInt {
 	{
 	}
 
-	inline bool SubWidgetProxy::RequestGeometryTest(AbstractWidget* sub_widget, const GeometryUpdateRequest& request)
-	{
-		if(sub_widget) {
-			return sub_widget->UpdateGeometryTest(request);
-		} else {
-			return true;
-		}
-	}
-
-	inline void SubWidgetProxy::RequestGeometryUpdate(AbstractWidget* sub_widget, const GeometryUpdateRequest& request)
-	{
-		if(sub_widget) {
-			sub_widget->UpdateGeometry(request);
-		}
-	}
-
 	inline bool SubWidgetProxy::RequestSizeUpdateTest (
 	        AbstractWidget* sub_widget, const SizeUpdateRequest& request)
 	{
@@ -140,6 +124,16 @@ namespace BlendInt {
 		}
 	}
 
+	inline bool SubWidgetProxy::RequestVisibilityUpdateTest (
+	        AbstractWidget* sub_widget, const VisibilityUpdateRequest& request)
+	{
+		if(sub_widget) {
+			return sub_widget->VisibilityUpdateTest(request);
+		} else {
+			return true;
+		}
+	}
+
 	inline void SubWidgetProxy::RequestSizeUpdate (AbstractWidget* sub_widget,
 	        const SizeUpdateRequest& request)
 	{
@@ -172,14 +166,12 @@ namespace BlendInt {
 		}
 	}
 
-	bool AbstractContainer::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	inline void SubWidgetProxy::RequestVisibilityUpdate (
+	        AbstractWidget* sub_widget, const VisibilityUpdateRequest& request)
 	{
-		return true;
-	}
-
-	void AbstractContainer::BroadcastUpdate(const GeometryUpdateRequest& request)
-	{
-		// do nothing
+		if(sub_widget) {
+			sub_widget->ProcessVisibilityUpdate(request);
+		}
 	}
 
 	void AbstractContainer::ProcessMarginUpdate(const ContainerUpdateRequest& request)
@@ -225,48 +217,47 @@ namespace BlendInt {
 			return;
 
 		Size new_size (width, height);
-		GeometryUpdateRequest request(this, sub, WidgetSize, &new_size);
+		SizeUpdateRequest request(this, sub, &new_size);
 
-		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
-			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+		if(SubWidgetProxy::RequestSizeUpdateTest(sub, request)) {
+			SubWidgetProxy::RequestSizeUpdate(sub, request);
 			sub->set_size(width, height);
-			//ReportGeometryUpdate(request);
 		}
 	}
 	
 	void AbstractContainer::ResizeSubWidget (AbstractWidget* sub,
-					const Size& size)
+	        const Size& size)
 	{
-		if(!sub || sub->container() != this) return;
+		if (!sub || sub->container() != this)
+			return;
 
-		if(sub->size() == size) return;
+		if (sub->size() == size)
+			return;
 
-		GeometryUpdateRequest request(this, sub, WidgetSize, &size);
+		SizeUpdateRequest request(this, sub, &size);
 
-		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
-			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+		if (SubWidgetProxy::RequestSizeUpdateTest(sub, request)) {
+			SubWidgetProxy::RequestSizeUpdate(sub, request);
 			sub->set_size(size);
-			//ReportGeometryUpdate(request);
 		}
 	}
 	
 	void AbstractContainer::SetSubWidgetPosition (AbstractWidget* sub, int x,
-					int y)
+	        int y)
 	{
-		if(!sub || sub->container() != this) return;
-
-		if(sub->position().x() == x &&
-				sub->position().y() == y)
+		if (!sub || sub->container() != this)
 			return;
 
-		Point new_pos (x, y);
+		if (sub->position().x() == x && sub->position().y() == y)
+			return;
 
-		GeometryUpdateRequest request (this, sub, WidgetPosition, &new_pos);
+		Point new_pos(x, y);
 
-		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
-			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+		PositionUpdateRequest request(this, sub, &new_pos);
+
+		if (SubWidgetProxy::RequestPositionUpdateTest(sub, request)) {
+			SubWidgetProxy::RequestPositionUpdate(sub, request);
 			sub->set_position(x, y);
-			//ReportGeometryUpdate(request);
 		}
 	}
 	
@@ -277,12 +268,11 @@ namespace BlendInt {
 
 		if(sub->position() == pos) return;
 
-		GeometryUpdateRequest request (this, sub, WidgetPosition, &pos);
+		PositionUpdateRequest request (this, sub, &pos);
 
-		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
-			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+		if(SubWidgetProxy::RequestPositionUpdateTest(sub, request)) {
+			SubWidgetProxy::RequestPositionUpdate(sub, request);
 			sub->set_position(pos);
-			//ReportGeometryUpdate(request);
 		}
 	}
 
@@ -293,10 +283,10 @@ namespace BlendInt {
 
 		if(sub->visiable() == visible) return;
 
-		GeometryUpdateRequest request (this, sub, WidgetVisibility, &visible);
+		VisibilityUpdateRequest request (this, sub, &visible);
 
-		if(SubWidgetProxy::RequestGeometryTest(sub, request)) {
-			SubWidgetProxy::RequestGeometryUpdate(sub, request);
+		if(SubWidgetProxy::RequestVisibilityUpdateTest(sub, request)) {
+			SubWidgetProxy::RequestVisibilityUpdate(sub, request);
 			sub->set_visible(visible);
 		}
 	}

@@ -220,75 +220,41 @@ namespace BlendInt {
 
 	}
 
-	bool ScrollView::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
-
-			switch (request.type()) {
-
-				case WidgetPosition:
-					return true;
-
-				case WidgetSize:
-					return true;
-
-				default:
-					return false;
-			}
-
-		}
-	}
-
-	void ScrollView::UpdateGeometry (const GeometryUpdateRequest& request)
+	void ScrollView::ProcessPositionUpdate (
+	        const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			switch (request.type()) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
 
-				case WidgetSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					// align the subwidget
-					if(sub_widget()) {
-
-						int dy = size_p->height() - size().height();
-
-						sub_widget()->SetPosition(sub_widget()->position().x(), sub_widget()->position().y() + dy);
-					}
-
-					set_size(*size_p);
-					break;
-				}
-
-				case WidgetPosition: {
-
-					if (sub_widget()) {
-						const Point* pos_p =
-										static_cast<const Point*>(request.data());
-						int x = pos_p->x() - position().x();
-						int y = pos_p->y() - position().y();
-
-						set_position(*pos_p);
-						MoveSubWidget(x, y);
-					}
-
-					break;
-				}
-
-				default:
-					break;
-			}
+			set_position(*request.position());
+			MoveSubWidget(x, y);
 		}
 
-		ReportGeometryUpdate(request);
+		ReportPositionUpdate(request);
+	}
+
+	void ScrollView::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+
+			// align the subwidget
+			if (sub_widget()) {
+
+				int dy = request.size()->height() - size().height();
+
+				sub_widget()->SetPosition(sub_widget()->position().x(),
+				        sub_widget()->position().y() + dy);
+			}
+
+			set_size(*request.size());
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType ScrollView::Draw (const RedrawEvent& event)

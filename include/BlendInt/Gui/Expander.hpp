@@ -50,8 +50,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
-
 		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request);
@@ -100,10 +98,6 @@ namespace BlendInt {
 	protected:
 
 		virtual void UpdateContainer (const ContainerUpdateRequest& request);
-
-		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
-
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
 
 		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
 

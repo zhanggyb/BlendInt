@@ -329,7 +329,17 @@ namespace BlendInt
 		}
 	}
 
-	bool Context::UpdateGeometryTest(const GeometryUpdateRequest& request)
+	bool Context::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			// don't allow section to change any geometry
+			return false;
+		}
+
+		return true;
+	}
+
+	bool Context::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
 		if(request.source()->container() == this) {
 
@@ -340,81 +350,75 @@ namespace BlendInt
 		return true;
 	}
 
-	void Context::UpdateGeometry (const GeometryUpdateRequest& request)
+	bool Context::RoundTypeUpdateTest (const RoundTypeUpdateRequest& request)
 	{
-		if(request.source () == this) {
+		if(request.source()->container() == this) {
 
-			switch (request.type()) {
+			// don't allow section to change any geometry
+			return false;
+		}
 
-				case WidgetSize: {
+		return true;
+	}
 
-					const Size* size_p = static_cast<const Size*>(request.data());
+	bool Context::RoundRadiusUpdateTest (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
 
-					glm::mat4 projection = glm::ortho(0.f,
-											(GLfloat)size_p->width(),
-											0.f,
-											(GLfloat)size_p->height(),
-											100.f, -100.f);
+			// don't allow section to change any geometry
+			return false;
+		}
 
-					RefPtr<GLSLProgram> program =
-					        Shaders::instance->default_triangle_program();
-					program->Use();
-					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
-					program = Shaders::instance->default_line_program();
-					program->Use();
-					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
-					program = Shaders::instance->default_text_program();
-					program->Use();
-					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
-					program = Shaders::instance->default_image_program();
-					program->Use();
-					program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
+		return true;
+	}
 
-					program->Reset();
+	void Context::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	{
+		// nothing need to do.
+	}
 
-					for(std::deque<Section*>::iterator it = m_sections.begin(); it != m_sections.end(); it++)
-					{
-						ResizeSubWidget(*it, *size_p);
-					}
+	void Context::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.source() == this) {
 
-					// TODO: redraw
-					break;
-				}
+			glm::mat4 projection = glm::ortho(0.f, (GLfloat) request.size()->width(),
+			        0.f, (GLfloat) request.size()->height(), 100.f, -100.f);
 
-				case WidgetPosition: {
-					// always at (0, 0)
-					break;
-				}
+			RefPtr<GLSLProgram> program =
+			        Shaders::instance->default_triangle_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_line_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_text_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
+			program = Shaders::instance->default_image_program();
+			program->Use();
+			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
+			        glm::value_ptr(projection));
 
-				default:
-					break;
-					;
+			program->Reset();
+
+			for (std::deque<Section*>::iterator it = m_sections.begin();
+			        it != m_sections.end(); it++) {
+				ResizeSubWidget(*it, *request.size());
 			}
+
+			set_size(*request.size());
+
+			m_resized.fire(size());
 
 		} else if (request.source()->container() == this) {
 
-			switch(request.type()) {
-
-				case WidgetPosition: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-					break;
-				}
-
-				case WidgetSize: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					if(request.source()->drop_shadow() && request.source()->m_shadow) {
-						request.source()->m_shadow->Resize(size_p->width(), size_p->height());
-					}
-
-					break;
-				}
-
-				default:
-					break;
-
+			if (request.source()->drop_shadow() && request.source()->m_shadow) {
+				request.source()->m_shadow->Resize(request.size()->width(),
+				        request.size()->height());
 			}
 
 		} else {
@@ -428,27 +432,16 @@ namespace BlendInt
 			//DBG_PRINT_MSG("source widget: %s, target widget: %s", request.source()->name().c_str(), request.target()->name().c_str());
 
 		}
+
 	}
 
-	void Context::BroadcastUpdate (const GeometryUpdateRequest& request)
+	void Context::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
-		if (request.source() == this) {
+	}
 
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-					m_resized.fire(*size_p);
-					break;
-				}
-
-				default:
-					AbstractContainer::BroadcastUpdate(request);
-
-			}
-
-		}
+	void Context::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
 	}
 
 	ResponseType Context::Draw (const RedrawEvent& event)

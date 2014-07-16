@@ -87,10 +87,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
-
-		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
-
 		virtual ResponseType FocusEvent (bool focus);
 
 		virtual ResponseType CursorEnterEvent (bool entered);

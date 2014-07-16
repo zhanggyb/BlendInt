@@ -149,41 +149,28 @@ namespace BlendInt {
 		}
 	}
 
-	void VBlock::UpdateGeometry (const GeometryUpdateRequest& request)
+	void VBlock::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-
-			switch(request.type()) {
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-					set_size(*size_p);
-					FillInVBlock(position(), *size_p, margin());
-
-					break;
-				}
-
-				default: {
-					break;
-				}
-			}
-
+			set_size(*request.size());
+			FillInVBlock(position(), *request.size(), margin());
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
+	}
+
+	void VBlock::ProcessPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
 	}
 
 	ResponseType VBlock::Draw (const RedrawEvent& event)
@@ -235,17 +222,6 @@ namespace BlendInt {
 		int h = out_size.height() - margin.vsum();
 
 		FillInVBlock(x, y, w, h);
-	}
-
-	bool VBlock::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
-			return false;
-		}
 	}
 
 	void VBlock::FillInVBlock (int x, int y, int w, int h)

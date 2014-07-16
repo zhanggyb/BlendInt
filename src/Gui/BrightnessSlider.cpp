@@ -119,80 +119,64 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void BrightnessSlider::UpdateGeometry (const GeometryUpdateRequest& request)
+	void BrightnessSlider::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if(request.target() == this) {
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			        round_radius(), Color(0x000000FF), orientation(), 255, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
 
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(), round_type(),
-									round_radius(), Color(0x000000FF),
-									orientation(), 255, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-									round_radius(), Color(0x000000FF),
-									orientation(), 255, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					set_round_type(*type_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					const float* radius_p =
-									static_cast<const float*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), round_type(),
-									*radius_p, Color(0x000000FF), orientation(), 255, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					set_round_radius(*radius_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			set_size(*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
+	}
+
+	void BrightnessSlider::ProcessRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius(), Color(0x000000FF), orientation(), 255, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void BrightnessSlider::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), round_type(),
+			        *request.round_radius(), Color(0x000000FF), orientation(),
+			        255, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	void BrightnessSlider::UpdateSlider (const SliderUpdateRequest& request)
-	{
-	}
-
-	bool BrightnessSlider::UpdateGeometryTest (
-	        const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void BrightnessSlider::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 

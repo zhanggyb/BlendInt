@@ -79,33 +79,17 @@ namespace BlendInt {
 		return Ignore;
 	}
 	
-	void StackPanel::UpdateGeometry (const GeometryUpdateRequest& request)
+	void StackPanel::ProcessSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* new_size = static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*new_size, 0, RoundNone, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_inner->Reset();
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
-			Stack::UpdateGeometry(request);
-			return;
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_inner->Reset();
 		}
 
-		ReportGeometryUpdate(request);
+		Stack::ProcessSizeUpdate(request);
 	}
 
 	void StackPanel::InitializeStackPanel()

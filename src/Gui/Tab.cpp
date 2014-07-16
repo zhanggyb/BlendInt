@@ -140,37 +140,27 @@ namespace BlendInt {
 
 	}
 
-	void Tab::UpdateGeometry (const GeometryUpdateRequest& request)
+	void Tab::ProcessPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
 
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					FillSubWidgetsInTab(*size_p, margin());
-					set_size(*size_p);
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
 		}
 
-		ReportGeometryUpdate(request);
+		ReportPositionUpdate(request);
+	}
+
+	void Tab::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			FillSubWidgetsInTab(*request.size(), margin());
+			set_size(*request.size());
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType Tab::Draw (const RedrawEvent& event)
@@ -229,17 +219,6 @@ namespace BlendInt {
 		int h = out_size.height() - margin.vsum();
 
 		FillSubWidgetsInTab(x, y, w, h);
-	}
-
-	bool Tab::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
-			return false;
-		}
 	}
 
 	void Tab::FillSubWidgetsInTab(int x, int y, int w, int h)

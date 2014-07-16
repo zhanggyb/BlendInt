@@ -208,43 +208,31 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::UpdateGeometry (const GeometryUpdateRequest& request)
+	void Stack::ProcessPositionUpdate (
+	        const PositionUpdateRequest& request)
 	{
-		if(request.target() == this) {
+		if (request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
 
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* new_size = static_cast<const Size*>(request.data());
-
-					int w = new_size->width() - margin().hsum();
-					int h = new_size->height() - margin().vsum();
-
-					set_size(*new_size);
-					ResizeSubWidgets(w, h);
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
 		}
 
-		ReportGeometryUpdate(request);
+		ReportPositionUpdate(request);
+	}
+
+	void Stack::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			int w = request.size()->width() - margin().hsum();
+			int h = request.size()->height() - margin().vsum();
+
+			set_size(*request.size());
+			ResizeSubWidgets(w, h);
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType Stack::Draw (const RedrawEvent& event)
@@ -292,17 +280,6 @@ namespace BlendInt {
 		}
 
 		return ret;
-	}
-
-	bool Stack::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
-			return false;
-		}
 	}
 
 	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)

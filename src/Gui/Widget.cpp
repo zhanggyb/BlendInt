@@ -62,22 +62,6 @@ namespace BlendInt {
 
 	}
 
-	bool Widget::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void Widget::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		// do nothing in this base class
-		ReportGeometryUpdate(request);
-	}
-
-	void Widget::BroadcastUpdate(const GeometryUpdateRequest& request)
-	{
-		// do nothing
-	}
-
 	ResponseType Widget::Draw(const RedrawEvent& event)
 	{
 		return Ignore;

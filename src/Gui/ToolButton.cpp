@@ -133,35 +133,21 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, m_vao);
 	}
 
-	void ToolButton::UpdateGeometry (const GeometryUpdateRequest& request)
+	void ToolButton::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if (request.target() == this) {
-			switch (request.type()) {
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), RoundAll, 5);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
 
-				case WidgetSize: {
-
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(), RoundAll, 5);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-
-			}
+			set_size(*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType ToolButton::Draw (const RedrawEvent& event)

@@ -70,45 +70,31 @@ namespace BlendInt {
 		}
 	}
 
-	void MenuBar::UpdateGeometry (const GeometryUpdateRequest& request)
+	void MenuBar::ProcessPositionUpdate (const PositionUpdateRequest& request)
 	{
-		if(request.target() == this) {
+		if (request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
 
-			switch (request.type()) {
-
-				case WidgetSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_buffer->Bind();
-					tool.SetInnerBufferData(m_buffer.get());
-
-					set_size(*size_p);
-					break;
-				}
-
-				case WidgetPosition: {
-
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
 		}
 
-		ReportGeometryUpdate(request);
+		ReportPositionUpdate(request);
+	}
+
+	void MenuBar::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_buffer->Bind();
+			tool.SetInnerBufferData(m_buffer.get());
+
+			set_size(*request.size());
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType MenuBar::Draw (const RedrawEvent& event)

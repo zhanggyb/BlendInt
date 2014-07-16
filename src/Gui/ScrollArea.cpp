@@ -142,77 +142,6 @@ namespace BlendInt {
 		ReportContainerUpdate(request);
 	}
 
-	bool ScrollArea::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
-			return false;
-		}
-	}
-
-	void ScrollArea::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-					break;
-				}
-
-				case WidgetSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
-					AbstractWidget* widget = view->viewport();
-
-					int width = size_p->width() - margin().hsum();
-					int height = size_p->height() - margin().vsum();
-
-					if(widget) {
-						if (widget->size().width() <= width) {
-							sub_widget(HScrollBarIndex)->SetVisible(false);
-						} else {
-							sub_widget(HScrollBarIndex)->SetVisible(true);
-						}
-
-						if (widget->size().height() <= height) {
-							sub_widget(VScrollBarIndex)->SetVisible(false);
-						} else {
-							sub_widget(VScrollBarIndex)->SetVisible(true);
-						}
-					}
-
-					AdjustGeometries(position().x() + margin().left(),
-							position().y() + margin().bottom(), width, height);
-					set_size(*size_p);
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
-		}
-
-		ReportGeometryUpdate(request);
-	}
-
 	ResponseType ScrollArea::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
@@ -293,6 +222,55 @@ namespace BlendInt {
 		int h = out_size.height() - margin.vsum();
 
 		AdjustGeometries(x, y, w, h);
+	}
+
+	void ScrollArea::ProcessPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void ScrollArea::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+
+			ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+			AbstractWidget* widget = view->viewport();
+
+			int width = request.size()->width() - margin().hsum();
+			int height = request.size()->height() - margin().vsum();
+
+			if(widget) {
+				if (widget->size().width() <= width) {
+					sub_widget(HScrollBarIndex)->SetVisible(false);
+				} else {
+					sub_widget(HScrollBarIndex)->SetVisible(true);
+				}
+
+				if (widget->size().height() <= height) {
+					sub_widget(VScrollBarIndex)->SetVisible(false);
+				} else {
+					sub_widget(VScrollBarIndex)->SetVisible(true);
+				}
+			}
+
+			AdjustGeometries(position().x() + margin().left(),
+					position().y() + margin().bottom(), width, height);
+			set_size(*request.size());
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	void ScrollArea::AdjustGeometries (int x, int y, int width, int height)

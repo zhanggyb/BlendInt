@@ -113,57 +113,6 @@ namespace BlendInt {
 		AbstractWidget* m_target;
 	};
 
-	class GeometryUpdateRequest: public WidgetUpdateRequest
-	{
-	public:
-
-		GeometryUpdateRequest (AbstractWidget* source, AbstractWidget* target)
-		: WidgetUpdateRequest(source, target), m_type(0), m_data(0)
-		{
-
-		}
-
-		GeometryUpdateRequest(AbstractWidget* source, AbstractWidget* target, int type, const void* data)
-		: WidgetUpdateRequest(source, target),
-		  m_type(type),
-		  m_data(data)
-		{
-
-		}
-
-		~GeometryUpdateRequest ()
-		{
-
-		}
-
-		int type () const
-		{
-			return m_type;
-		}
-
-		void set_type (int type)
-		{
-			m_type = type;
-		}
-
-		const void* data () const
-		{
-			return m_data;
-		}
-
-		void set_data (const void* data)
-		{
-			m_data = data;
-		}
-
-	private:
-
-		GeometryUpdateRequest();
-
-		int m_type;
-		const void* m_data;
-	};
-
 	class SizeUpdateRequest: public WidgetUpdateRequest
 	{
 	public:
@@ -284,6 +233,37 @@ namespace BlendInt {
 		const float* m_round_radius;
 	};
 
+	class VisibilityUpdateRequest: public WidgetUpdateRequest
+	{
+	public:
+
+		VisibilityUpdateRequest (AbstractWidget* source, AbstractWidget* target) :
+				WidgetUpdateRequest(source, target), m_visibility(0)
+		{
+
+		}
+
+		VisibilityUpdateRequest (AbstractWidget* source, AbstractWidget* target, const bool* visibility)
+		: WidgetUpdateRequest(source, target), m_visibility (visibility)
+		{
+
+		}
+
+		const bool* visibility () const
+		{
+			return m_visibility;
+		}
+
+		void set_visibility (const bool* visibility)
+		{
+			m_visibility = visibility;
+		}
+
+	private:
+
+		const bool* m_visibility;
+	};
+
 	class ContainerUpdateRequest: public WidgetUpdateRequest
 	{
 	public:
@@ -347,8 +327,6 @@ namespace BlendInt {
 
 		~ContainerProxy ();
 
-		static inline bool RequestGeometryTest (AbstractContainer* container, const GeometryUpdateRequest& request);
-
 		static inline bool RequestSizeUpdateTest (AbstractContainer* container, const SizeUpdateRequest& request);
 
 		static inline bool RequestPositionUpdateTest (AbstractContainer* container, const PositionUpdateRequest& request);
@@ -357,7 +335,7 @@ namespace BlendInt {
 
 		static inline bool RequestRoundRadiusUpdateTest (AbstractContainer* container, const RoundRadiusUpdateRequest& request);
 
-		static inline void RequestGeometryUpdate (AbstractContainer* container, const GeometryUpdateRequest& request);
+		static inline bool RequestVisibilityUpdateTest (AbstractContainer* container, const VisibilityUpdateRequest& request);
 
 		static inline void RequestSizeUpdate (AbstractContainer* container, const SizeUpdateRequest& request);
 
@@ -366,6 +344,8 @@ namespace BlendInt {
 		static inline void RequestRoundTypeUpdate (AbstractContainer* container, const RoundTypeUpdateRequest& request);
 
 		static inline void RequestRoundRadiusUpdate (AbstractContainer* container, const RoundRadiusUpdateRequest& request);
+
+		static inline void RequestVisibilityUpdate (AbstractContainer* container, const VisibilityUpdateRequest& request);
 
 		static inline void RequestContainerUpdate (AbstractContainer* container, const ContainerUpdateRequest& request);
 
@@ -648,8 +628,6 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
 
-		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request) = 0;
-
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
@@ -658,16 +636,7 @@ namespace BlendInt {
 
 		virtual bool RoundRadiusUpdateTest (const RoundRadiusUpdateRequest& request);
 
-		/**
-		 * @brief Update opengl data (usually the GL buffer) for Render
-		 * @param[in] type the enumeration defined by each form class, e.g.
-		 * FormPropertySize
-		 * @param[in] data the pointer to the new property data
-		 *
-		 * This virtual function should be implemented in each derived class,
-		 * and should only use the form's property to draw opengl elements once.
-		 */
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request) = 0;
+		virtual bool VisibilityUpdateTest (const VisibilityUpdateRequest& request);
 
 		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
 
@@ -677,7 +646,7 @@ namespace BlendInt {
 
 		virtual void ProcessRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const GeometryUpdateRequest& request) = 0;
+		virtual void ProcessVisibilityUpdate (const VisibilityUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
@@ -686,18 +655,9 @@ namespace BlendInt {
 		void CheckSubWidgetRemovedInContainer (AbstractWidget* sub_widget);
 
 		/**
-		 * @brief Query the geometry update in container
-		 *
-		 * If no container, return true
-		 */
-		bool QueryGeometryUpdateTest (const GeometryUpdateRequest& request);
-
-		/**
 		 * @brief Hand on the update request to the container
 		 */
 		void ReportContainerUpdate (const ContainerUpdateRequest& request);
-
-		void ReportGeometryUpdate (const GeometryUpdateRequest& request);
 
 		void ReportSizeUpdate (const SizeUpdateRequest& request);
 
@@ -706,6 +666,8 @@ namespace BlendInt {
 		void ReportRoundTypeUpdate (const RoundTypeUpdateRequest& request);
 
 		void ReportRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+
+		void ReportVisibilityRequest (const VisibilityUpdateRequest& request);
 
 		void ReportMarginUpdate (const ContainerUpdateRequest& request);
 

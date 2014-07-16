@@ -116,39 +116,6 @@ namespace BlendInt {
 		return Size(400, 300);
 	}
 
-	void ImageView::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if (request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-
-					m_background_buffer->Bind();
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					tool.SetInnerBufferData(m_background_buffer.get());
-					m_background_buffer->Reset();
-
-					AdjustImageArea(*size_p);
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
-
-		}
-
-		ReportGeometryUpdate(request);
-	}
-
 	void ImageView::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -263,15 +230,6 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
-	}
-
-	bool ImageView::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void ImageView::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType ImageView::FocusEvent (bool focus)

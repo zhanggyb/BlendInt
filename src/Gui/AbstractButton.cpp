@@ -321,16 +321,6 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	bool AbstractButton::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void AbstractButton::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
-		// do nothing in base class
-	}
-
 	size_t AbstractButton::GetValidTextSize(const Size& size, const String& text, const Font& font)
 	{
 		int width = 0;

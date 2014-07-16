@@ -123,90 +123,42 @@ namespace BlendInt {
 		}
 	}
 
-	bool ScrollBar::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		switch (request.type()) {
-
-			case SliderPropertyMinimum: {
-
-				const int* min_p = static_cast<const int*>(request.data());
-
-				if (*min_p >= maximum())
-					return false;
-
-				return true;
-			}
-
-			case SliderPropertyMaximum: {
-
-				const int* max_p = static_cast<const int*>(request.data());
-
-				if (*max_p <= minimum())
-					return false;
-
-				return true;
-			}
-
-			default:
-				return true;
-		}
-	}
-
-	void ScrollBar::UpdateGeometry (const GeometryUpdateRequest& request)
+	void ScrollBar::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+			int radius = std::min(request.size()->width(), request.size()->height()) / 2;
 
-			switch (request.type()) {
-				case WidgetPosition: {
-					// don't care position change
-					const Point* pos_p = static_cast<const Point*>(request.data());
-					set_position(*pos_p);
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					int radius = std::min(size_p->width(), size_p->height()) / 2;
-
-					Orientation slot_orient;
-					if (orientation() == Vertical) {
-						slot_orient = Horizontal;
-						m_slide.Resize(radius * 2, m_slide.size().height());
-						m_slide.SetRadius(radius);
-					} else {
-						slot_orient = Vertical;
-						m_slide.Resize(m_slide.size().width(), radius * 2);
-						m_slide.SetRadius(radius);
-					}
-
-					const Color& color = Theme::instance->scroll().inner;
-					short shadetop = Theme::instance->scroll().shadetop;
-					short shadedown = Theme::instance->scroll().shadedown;
-					if (orientation() == Vertical) {
-						shadetop = Theme::instance->scroll().shadedown;
-						shadedown = Theme::instance->scroll().shadetop;
-					}
-
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(), round_type(), radius, color, slot_orient,
-									shadetop, shadedown);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					set_size(*size_p);
-					break;
-				}
-
-				default:
-					break;
+			Orientation slot_orient;
+			if (orientation() == Vertical) {
+				slot_orient = Horizontal;
+				m_slide.Resize(radius * 2, m_slide.size().height());
+				m_slide.SetRadius(radius);
+			} else {
+				slot_orient = Vertical;
+				m_slide.Resize(m_slide.size().width(), radius * 2);
+				m_slide.SetRadius(radius);
 			}
 
+			const Color& color = Theme::instance->scroll().inner;
+			short shadetop = Theme::instance->scroll().shadetop;
+			short shadedown = Theme::instance->scroll().shadedown;
+			if (orientation() == Vertical) {
+				shadetop = Theme::instance->scroll().shadedown;
+				shadedown = Theme::instance->scroll().shadetop;
+			}
+
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(), radius, color, slot_orient,
+							shadetop, shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_size(*request.size());
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
 	void ScrollBar::UpdateSlider(const SliderUpdateRequest& request)
@@ -429,10 +381,6 @@ namespace BlendInt {
 		}
 
 		return space;
-	}
-
-	void ScrollBar::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType ScrollBar::FocusEvent (bool focus)

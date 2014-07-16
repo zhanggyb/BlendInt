@@ -50,12 +50,6 @@ namespace BlendInt {
 
 		virtual void UpdateSlider (const SliderUpdateRequest& request);
 
-		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
-
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
-
-		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
-
 		virtual ResponseType Draw (const RedrawEvent& event);
 
 		virtual ResponseType FocusEvent (bool focus);

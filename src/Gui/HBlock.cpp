@@ -147,45 +147,6 @@ namespace BlendInt {
 		}
 	}
 	
-	void HBlock::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			switch(request.type()) {
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					set_size(*size_p);
-					FillInHBlock(position(), *size_p, margin());
-
-					break;
-				}
-
-				default: {
-					break;
-				}
-			}
-
-		}
-
-		ReportGeometryUpdate(request);
-	}
-
 	void HBlock::ProcessSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -259,17 +220,6 @@ namespace BlendInt {
 		int h = out_size.height() - margin.vsum();
 
 		FillInHBlock(x, y, w, h);
-	}
-
-	bool HBlock::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
-			return false;
-		}
 	}
 
 	void HBlock::FillInHBlock (int x, int y, int w, int h)

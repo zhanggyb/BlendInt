@@ -443,95 +443,6 @@ namespace BlendInt {
 		ReportContainerUpdate(request);
 	}
 
-	bool Section::UpdateGeometryTest (
-	        const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void Section::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					set_size(*size_p);
-					break;
-				}
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-					set_position(*pos_p);
-					break;
-				}
-
-				default:
-					break;
-			}
-		}
-
-		if (request.source()->container() == this) {
-
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-					break;
-				}
-
-				case WidgetSize: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-
-					if (request.source()->drop_shadow()
-							&& request.source()->m_shadow) {
-						request.source()->m_shadow->Resize(*size_p);
-					}
-
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-
-					const int* type_p =
-					        static_cast<const int*>(request.data());
-
-					if (request.source()->drop_shadow()
-							&& request.source()->m_shadow) {
-						request.source()->m_shadow->SetRoundType(*type_p);
-					}
-
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-
-					const float* radius_p =
-					        static_cast<const float*>(request.data());
-
-					if (request.source()->drop_shadow()
-							&& request.source()->m_shadow) {
-						request.source()->m_shadow->SetRadius(*radius_p);
-					}
-
-					break;
-				}
-
-				default:
-					break;
-
-			}
-		}
-
-		ReportGeometryUpdate(request);
-	}
-
 	void Section::ProcessPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -577,10 +488,6 @@ namespace BlendInt {
 		}
 
 		ReportRoundRadiusUpdate(request);
-	}
-
-	void Section::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType Section::Draw (const RedrawEvent& event)

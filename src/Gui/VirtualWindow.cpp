@@ -73,17 +73,6 @@ namespace BlendInt {
 	{
 	}
 
-	bool VirtualWindow::UpdateGeometryTest (
-	        const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void VirtualWindow::BroadcastUpdate (
-	        const GeometryUpdateRequest& request)
-	{
-	}
-
 	ResponseType VirtualWindow::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
@@ -148,87 +137,6 @@ namespace BlendInt {
 	ResponseType BlendInt::VirtualWindow::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
-	}
-
-	void VirtualWindow::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			switch (request.type()) {
-
-				case WidgetPosition: {
-
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					MoveSubWidgets(x, y);
-
-					set_position(*pos_p);
-
-					Refresh();
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-
-					int h = size_p->height() - sub_widget(0)->size().height();
-					if (h < 0) h = 0;
-
-					Size vw_size (size_p->width(), h);
-					VertexTool tool;
-					tool.Setup(vw_size, 0, RoundNone, 0.f);
-
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_size(*size_p);
-
-					FillSubWidgets(position(), *size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					/*
-					const int* type_p = static_cast<const int*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-					        round_radius());
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_round_type(*type_p);
-					*/
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					/*
-					const float* radius_p =
-					        static_cast<const float*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(),
-					        round_type(), *radius_p);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_round_radius(*radius_p);
-					*/
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
-		}
-
-		ReportGeometryUpdate(request);
 	}
 
 	void VirtualWindow::ProcessPositionUpdate (const PositionUpdateRequest& request)

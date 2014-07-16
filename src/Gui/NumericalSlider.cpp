@@ -144,119 +144,119 @@ namespace BlendInt {
 		}
 	}
 
-	bool NumericalSlider::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	void NumericalSlider::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
-		return true;
+		if (request.target() == this) {
+
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			        round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			std::vector<GLfloat> l_verts;
+			std::vector<GLfloat> r_verts;
+			GenerateSliderVertices(*request.size(), DefaultBorderWidth(),
+			        round_type(), round_radius(), value(), minimum(), maximum(),
+			        l_verts, r_verts);
+			m_slider1->Bind();
+			m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+			if (r_verts.size()) {
+				m_right = true;
+				m_slider2->Bind();
+				m_slider2->SetData(sizeof(GLfloat) * r_verts.size(),
+				        &r_verts[0]);
+				DBG_PRINT_MSG("%s", "have right part of slider");
+			} else {
+				m_right = false;
+			}
+
+			GLArrayBuffer::Reset();
+
+			set_size(*request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
 	}
 
-	void NumericalSlider::UpdateGeometry (const GeometryUpdateRequest& request)
+	void NumericalSlider::ProcessRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), round_type(),
-								round_radius());
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				m_outer->Bind();
-				tool.SetOuterBufferData(m_outer.get());
-
-				std::vector<GLfloat> l_verts;
-				std::vector<GLfloat> r_verts;
-				GenerateSliderVertices(*size_p, DefaultBorderWidth(),
-				        round_type(), round_radius(), value(),
-				        minimum(), maximum(), l_verts, r_verts);
-				m_slider1->Bind();
-				m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
-				if(r_verts.size()) {
-					m_right = true;
-					m_slider2->Bind();
-					m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
-					DBG_PRINT_MSG("%s", "have right part of slider");
-				} else {
-					m_right = false;
-				}
-
-				GLArrayBuffer::Reset();
-				Refresh();
-				break;
+			std::vector<GLfloat> l_verts;
+			std::vector<GLfloat> r_verts;
+			GenerateSliderVertices(size(), DefaultBorderWidth(),
+			        *request.round_type(), round_radius(), value(), minimum(),
+			        maximum(), l_verts, r_verts);
+			m_slider1->Bind();
+			m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+			if (r_verts.size()) {
+				m_right = true;
+				m_slider2->Bind();
+				m_slider2->SetData(sizeof(GLfloat) * r_verts.size(),
+				        &r_verts[0]);
+				DBG_PRINT_MSG("%s", "have right part of slider");
+			} else {
+				m_right = false;
 			}
 
-			case WidgetRoundCornerType: {
-				const int* type_p = static_cast<const int*>(request.data());
-				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), *type_p,
-								round_radius());
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				m_outer->Bind();
-				tool.SetOuterBufferData(m_outer.get());
+			GLArrayBuffer::Reset();
 
-				std::vector<GLfloat> l_verts;
-				std::vector<GLfloat> r_verts;
-				GenerateSliderVertices(size(), DefaultBorderWidth(), *type_p,
-				        round_radius(), value(), minimum(), maximum(),
-				        l_verts, r_verts);
-				m_slider1->Bind();
-				m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
-				if(r_verts.size()) {
-					m_right = true;
-					m_slider2->Bind();
-					m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
-					DBG_PRINT_MSG("%s", "have right part of slider");
-				} else {
-					m_right = false;
-				}
-
-				GLArrayBuffer::Reset();
-				Refresh();
-				break;
-			}
-
-			case WidgetRoundCornerRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), round_type(),
-								*radius_p);
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				m_outer->Bind();
-				tool.SetOuterBufferData(m_outer.get());
-
-				std::vector<GLfloat> l_verts;
-				std::vector<GLfloat> r_verts;
-				GenerateSliderVertices(size(), DefaultBorderWidth(),
-				        round_type(), *radius_p, value(), minimum(),
-				        maximum(), l_verts, r_verts);
-				m_slider1->Bind();
-				m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
-				if(r_verts.size()) {
-					m_right = true;
-					m_slider2->Bind();
-					m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
-					DBG_PRINT_MSG("%s", "have right part of slider");
-				} else {
-					m_right = false;
-				}
-
-				GLArrayBuffer::Reset();
-				Refresh();
-				break;
-			}
-
-			default:
-				break;
+			set_round_type(*request.round_type());
+			Refresh();
 		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void NumericalSlider::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), round_type(),
+			        *request.round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			std::vector<GLfloat> l_verts;
+			std::vector<GLfloat> r_verts;
+			GenerateSliderVertices(size(), DefaultBorderWidth(), round_type(),
+			        *request.round_radius(), value(), minimum(), maximum(),
+			        l_verts, r_verts);
+			m_slider1->Bind();
+			m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+			if (r_verts.size()) {
+				m_right = true;
+				m_slider2->Bind();
+				m_slider2->SetData(sizeof(GLfloat) * r_verts.size(),
+				        &r_verts[0]);
+				DBG_PRINT_MSG("%s", "have right part of slider");
+			} else {
+				m_right = false;
+			}
+
+			GLArrayBuffer::Reset();
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 	
-	void NumericalSlider::BroadcastUpdate(const GeometryUpdateRequest& request)
-	{
-
-	}
-
 	ResponseType NumericalSlider::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;

@@ -35,19 +35,6 @@ namespace BlendInt {
 	{
 	}
 
-	bool ListView::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void ListView::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-	}
-
-	void ListView::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
-	}
-
 	ResponseType ListView::Draw (const RedrawEvent& event)
 	{
 		return Ignore;

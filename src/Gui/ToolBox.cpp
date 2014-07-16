@@ -166,95 +166,42 @@ namespace BlendInt {
 		}
 	}
 	
-	bool ToolBox::UpdateGeometryTest(const GeometryUpdateRequest& request)
+	void ToolBox::ProcessPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			return true;
-		} else if(request.target()->container() == this) {
-			// A sub widget want to change it's geometry
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
 
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					return false;
-				}
-
-				case WidgetSize: {
-
-					return true;
-				}
-
-				default: {
-					return true;
-				}
-			}
-		} else {
-			return true;
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
 		}
+
+		ReportPositionUpdate(request);
 	}
 
-	void ToolBox::UpdateGeometry (const GeometryUpdateRequest& request)
+	void ToolBox::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			tool.UpdateInnerBuffer(m_inner.get());
 
-			switch (request.type()) {
+			int x = position().x() + margin().left();
+			int y = position().y() + margin().bottom();
+			int w = request.size()->width() - margin().hsum();
+			int h = request.size()->height() - margin().vsum();
 
-				case WidgetPosition: {
+			FillSubWidgets(x, y, w, h, m_space);
 
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					tool.UpdateInnerBuffer(m_inner.get());
-
-					int x = position().x() + margin().left();
-					int y = position().y() + margin().bottom();
-					int w = size_p->width() - margin().hsum();
-					int h = size_p->height() - margin().vsum();
-
-					FillSubWidgets(x, y, w, h, m_space);
-
-					set_size(*size_p);
-					break;
-				}
-
-				default:
-					break;
-			}
+			set_size(*request.size());
 
 		} else if (request.target()->container() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					// a sub widget changed its size
-					FillSubWidgets(position(), size(), margin(), m_space);
-
-					break;
-				}
-
-				default:
-					break;
-
-			}
-
+			FillSubWidgets(position(), size(), margin(), m_space);
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
-	
+
 	ResponseType ToolBox::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;

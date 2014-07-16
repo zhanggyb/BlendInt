@@ -61,12 +61,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
-
-		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
-
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
-
 		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);

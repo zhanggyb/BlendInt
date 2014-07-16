@@ -105,82 +105,6 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ComboBox::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if(request.target()) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p,
-									DefaultBorderWidth(),
-									round_type(),
-									round_radius(),
-									Theme::instance->menu().inner,
-									Vertical,
-									Theme::instance->menu().shadetop,
-									Theme::instance->menu().shadedown);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(),
-									DefaultBorderWidth(),
-									*type_p,
-									round_radius(),
-									Theme::instance->menu().inner,
-									Vertical,
-									Theme::instance->menu().shadetop,
-									Theme::instance->menu().shadedown);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-					set_round_type(*type_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					const float* radius_p =
-									static_cast<const float*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(),
-									DefaultBorderWidth(),
-									round_type(),
-									*radius_p,
-									Theme::instance->menu().inner,
-									Vertical,
-									Theme::instance->menu().shadetop,
-									Theme::instance->menu().shadedown);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-					set_round_radius(*radius_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
-
-		}
-
-		ReportGeometryUpdate(request);
-	}
-
 	void ComboBox::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -335,15 +259,6 @@ namespace BlendInt {
 	{
 		Refresh();
 		return Accept;
-	}
-
-	bool ComboBox::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void ComboBox::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType ComboBox::FocusEvent (bool focus)

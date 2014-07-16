@@ -54,66 +54,61 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void MenuButton::UpdateGeometry (const GeometryUpdateRequest& request)
+	void MenuButton::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if (request.target() == this) {
-			switch (request.type()) {
+		if(request.target() == this) {
+			UpdateTextPosition(*request.size(), round_type(),
+			        round_radius(), text());
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(),
+			        round_type(), round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
 
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-					UpdateTextPosition(*size_p, round_type(),
-					        round_radius(), text());
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(),
-					        round_type(), round_radius());
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					UpdateTextPosition(size(), *type_p, round_radius(),
-					        text());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-					        round_radius());
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_round_type(*type_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					const float* radius_p =
-					        static_cast<const float*>(request.data());
-					UpdateTextPosition(size(), round_type(), *radius_p,
-					        text());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(),
-					        round_type(), *radius_p);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_round_radius(*radius_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
+			set_size(*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
-	
+
+	void MenuButton::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), *request.round_type(), round_radius(),
+			        text());
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void MenuButton::ProcessRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), round_type(), *request.round_radius(),
+			        text());
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(),
+			        round_type(), *request.round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
+	}
+
 	ResponseType MenuButton::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
@@ -194,4 +189,3 @@ namespace BlendInt {
 	}
 
 } /* namespace BlendInt */
-

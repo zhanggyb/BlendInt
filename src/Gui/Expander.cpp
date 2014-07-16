@@ -78,51 +78,6 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void ExpandButton::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-					UpdateTextPosition(*size_p, round_type(),
-					        round_radius(), text());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					UpdateTextPosition(size(), *type_p, round_radius(),
-					        text());
-
-					set_round_type(*type_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					const float* radius_p =
-					        static_cast<const float*>(request.data());
-					UpdateTextPosition(size(), round_type(), *radius_p,
-					        text());
-
-					set_round_radius(*radius_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
-		}
-
-		ReportGeometryUpdate(request);
-	}
-
 	void ExpandButton::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -379,74 +334,6 @@ namespace BlendInt {
 		}
 
 		ReportContainerUpdate(request);
-	}
-
-	bool Expander::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		/*
-		if(request.source() == this) {
-
-			return AbstractVectorContainer::UpdateGeometryTest(request);
-
-		} else {	// called by sub widget
-
-			switch(request.type()) {
-				case WidgetSize:
-					return false;
-
-				case WidgetPosition:
-					return false;
-
-				default:
-					return false;
-			}
-		}
-		*/
-
-		// Allow container to resize this
-		return true;
-	}
-
-	void Expander::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					FillInExpander(position(), *size_p, margin());
-
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetPosition: {
-					const Point* pos_p =
-									static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-					break;
-				}
-
-				default:
-					break;
-			}
-
-		}
-
-		ReportGeometryUpdate(request);
 	}
 
 	void Expander::ProcessSizeUpdate (const SizeUpdateRequest& request)

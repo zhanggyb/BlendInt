@@ -166,61 +166,6 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Menu::UpdateGeometry(const GeometryUpdateRequest& request)
-	{
-		if (request.target() == this) {
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(),
-					        round_type(), round_radius());
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-					ResetHighlightBuffer(size_p->width());
-					set_size(*size_p);
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-					        round_radius());
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-					set_round_type(*type_p);
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					const float* radius_p =
-					        static_cast<const float*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(),
-					        round_type(), *radius_p);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-					set_round_radius(*radius_p);
-					break;
-				}
-
-				default:
-					break;
-			}
-		}
-
-		ReportGeometryUpdate(request);
-	}
-
 	void Menu::ProcessSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -372,15 +317,6 @@ namespace BlendInt {
 		Refresh();
 
 		return Ignore;
-	}
-
-	bool Menu::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void Menu::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType Menu::CursorEnterEvent (bool entered)

@@ -163,10 +163,6 @@ namespace BlendInt {
 
 		~SubWidgetProxy ();
 
-		static inline bool RequestGeometryTest (AbstractWidget* sub_widget, const GeometryUpdateRequest& request);
-
-		static inline void RequestGeometryUpdate (AbstractWidget* sub_widget, const GeometryUpdateRequest& request);
-
 		static inline bool RequestSizeUpdateTest (AbstractWidget* sub_widget, const SizeUpdateRequest& request);
 
 		static inline bool RequestPositionUpdateTest (AbstractWidget* sub_widget, const PositionUpdateRequest& request);
@@ -175,6 +171,8 @@ namespace BlendInt {
 
 		static inline bool RequestRoundRadiusUpdateTest (AbstractWidget* sub_widget, const RoundRadiusUpdateRequest& request);
 
+		static inline bool RequestVisibilityUpdateTest (AbstractWidget* sub_widget, const VisibilityUpdateRequest& request);
+
 		static inline void RequestSizeUpdate (AbstractWidget* sub_widget, const SizeUpdateRequest& request);
 
 		static inline void RequestPositionUpdate (AbstractWidget* sub_widget, const PositionUpdateRequest& request);
@@ -182,6 +180,9 @@ namespace BlendInt {
 		static inline void RequestRoundTypeUpdate (AbstractWidget* sub_widget, const RoundTypeUpdateRequest& request);
 
 		static inline void RequestRoundRadiusUpdate (AbstractWidget* sub_widget, const RoundRadiusUpdateRequest& request);
+
+		static inline void RequestVisibilityUpdate (AbstractWidget* sub_widget, const VisibilityUpdateRequest& request);
+
 	};
 
 	class AbstractContainer: public AbstractWidget
@@ -213,10 +214,6 @@ namespace BlendInt {
 	protected:
 
 		virtual void UpdateContainer (const ContainerUpdateRequest& request) = 0;
-
-		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
-
-		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
 
 		virtual void ProcessMarginUpdate (const ContainerUpdateRequest& request);
 
