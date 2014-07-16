@@ -104,7 +104,7 @@ namespace BlendInt {
 		return Accept;
 	}
 	
-	void ColorWheel::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ColorWheel::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 

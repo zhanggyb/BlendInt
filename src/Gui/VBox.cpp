@@ -163,7 +163,27 @@ namespace BlendInt {
 		}
 	}
 
-	void VBox::ProcessPositionUpdate (
+	bool VBox::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		// Do not allow sub widget changing its size
+		if(request.source()->container() == this) {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool VBox::PositionUpdateTest (const PositionUpdateRequest& request)
+	{
+		// Do not allow sub widget changing its position
+		if(request.source()->container() == this) {
+			return false;
+		}
+
+		return true;
+	}
+
+	void VBox::PerformPositionUpdate (
 	        const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -177,7 +197,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void VBox::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void VBox::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());

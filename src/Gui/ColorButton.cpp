@@ -58,7 +58,7 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	void ColorButton::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ColorButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			UpdateTextPosition(*request.size(), round_type(), round_radius(),
@@ -78,7 +78,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void ColorButton::ProcessRoundTypeUpdate (
+	void ColorButton::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -99,7 +99,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void ColorButton::ProcessRoundRadiusUpdate (
+	void ColorButton::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if (request.target() == this) {

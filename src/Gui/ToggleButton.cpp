@@ -64,7 +64,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToggleButton::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ToggleButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			UpdateTextPosition(*request.size(), round_type(),
@@ -84,7 +84,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void ToggleButton::ProcessRoundTypeUpdate (
+	void ToggleButton::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -105,7 +105,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void ToggleButton::ProcessRoundRadiusUpdate (
+	void ToggleButton::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if (request.target() == this) {

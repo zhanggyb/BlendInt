@@ -143,7 +143,25 @@ namespace BlendInt {
 		}
 	}
 
-	void Frame::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	bool Frame::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool Frame::PositionUpdateTest (const PositionUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		}
+
+		return true;
+	}
+
+	void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());
@@ -156,7 +174,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void Frame::ProcessPositionUpdate (
+	void Frame::PerformPositionUpdate (
 			const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {

@@ -65,7 +65,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, m_vao);
 	}
 
-	void TabButton::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void TabButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			std::vector<GLfloat> inner;

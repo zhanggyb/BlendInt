@@ -95,7 +95,7 @@ namespace BlendInt {
 
 	}
 
-	void CVImageView::ProcessSizeUpdate(const SizeUpdateRequest& request)
+	void CVImageView::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;

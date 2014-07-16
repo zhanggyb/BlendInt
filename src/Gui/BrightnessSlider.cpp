@@ -119,7 +119,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void BrightnessSlider::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void BrightnessSlider::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			VertexTool tool;
@@ -137,7 +137,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void BrightnessSlider::ProcessRoundTypeUpdate (
+	void BrightnessSlider::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -156,7 +156,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void BrightnessSlider::ProcessRoundRadiusUpdate (
+	void BrightnessSlider::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if (request.target() == this) {

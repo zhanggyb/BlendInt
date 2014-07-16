@@ -83,7 +83,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Decoration::ProcessPositionUpdate(const PositionUpdateRequest& request)
+	void Decoration::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -98,7 +98,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void Decoration::ProcessSizeUpdate(const SizeUpdateRequest& request)
+	void Decoration::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;

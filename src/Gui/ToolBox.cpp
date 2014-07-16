@@ -166,7 +166,7 @@ namespace BlendInt {
 		}
 	}
 	
-	void ToolBox::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void ToolBox::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -179,7 +179,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void ToolBox::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ToolBox::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;

@@ -122,7 +122,7 @@ namespace BlendInt {
 		}
 	}
 
-	void SplitterHandle::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void SplitterHandle::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			std::vector<GLfloat> vertices(4, 0);
@@ -557,7 +557,7 @@ namespace BlendInt {
 		}
 	}
 	
-	void Splitter::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void Splitter::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -570,7 +570,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void Splitter::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Splitter::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 

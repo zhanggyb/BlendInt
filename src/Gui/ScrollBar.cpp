@@ -123,7 +123,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ScrollBar::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ScrollBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			int radius = std::min(request.size()->width(), request.size()->height()) / 2;

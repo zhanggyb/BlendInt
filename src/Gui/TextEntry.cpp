@@ -219,7 +219,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void TextEntry::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void TextEntry::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 
@@ -253,7 +253,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void TextEntry::ProcessRoundTypeUpdate (
+	void TextEntry::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -277,7 +277,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void TextEntry::ProcessRoundRadiusUpdate (
+	void TextEntry::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if (request.target() == this) {

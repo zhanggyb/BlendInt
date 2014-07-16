@@ -140,7 +140,7 @@ namespace BlendInt {
 
 	}
 
-	void Tab::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void Tab::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -153,7 +153,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void Tab::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Tab::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			FillSubWidgetsInTab(*request.size(), margin());

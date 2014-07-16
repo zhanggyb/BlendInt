@@ -138,7 +138,7 @@ namespace BlendInt {
 	        const SizeUpdateRequest& request)
 	{
 		if(sub_widget) {
-			sub_widget->ProcessSizeUpdate(request);
+			sub_widget->PerformSizeUpdate(request);
 		}
 	}
 
@@ -146,7 +146,7 @@ namespace BlendInt {
 	        AbstractWidget* sub_widget, const PositionUpdateRequest& request)
 	{
 		if(sub_widget) {
-			sub_widget->ProcessPositionUpdate(request);
+			sub_widget->PerformPositionUpdate(request);
 		}
 	}
 
@@ -154,7 +154,7 @@ namespace BlendInt {
 	        AbstractWidget* sub_widget, const RoundTypeUpdateRequest& request)
 	{
 		if(sub_widget) {
-			sub_widget->ProcessRoundTypeUpdate(request);
+			sub_widget->PerformRoundTypeUpdate(request);
 		}
 	}
 
@@ -162,7 +162,7 @@ namespace BlendInt {
 	        AbstractWidget* sub_widget, const RoundRadiusUpdateRequest& request)
 	{
 		if(sub_widget) {
-			sub_widget->ProcessRoundRadiusUpdate(request);
+			sub_widget->PerformRoundRadiusUpdate(request);
 		}
 	}
 
@@ -170,7 +170,7 @@ namespace BlendInt {
 	        AbstractWidget* sub_widget, const VisibilityUpdateRequest& request)
 	{
 		if(sub_widget) {
-			sub_widget->ProcessVisibilityUpdate(request);
+			sub_widget->PerformVisibilityUpdate(request);
 		}
 	}
 

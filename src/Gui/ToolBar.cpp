@@ -193,7 +193,7 @@ namespace BlendInt {
 		}
 	}
 
-	void ToolBar::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void ToolBar::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -206,7 +206,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void ToolBar::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ToolBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 

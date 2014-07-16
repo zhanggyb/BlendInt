@@ -144,7 +144,7 @@ namespace BlendInt {
 		events()->connect(m_radio_group.button_index_toggled(), this, &ColorSelector::OnButtonToggled);
 	}
 
-	void ColorSelector::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ColorSelector::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			VertexTool tool;
@@ -160,7 +160,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void ColorSelector::ProcessRoundTypeUpdate (
+	void ColorSelector::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -176,7 +176,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void ColorSelector::ProcessRoundRadiusUpdate (
+	void ColorSelector::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {

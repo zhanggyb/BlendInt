@@ -224,7 +224,7 @@ namespace BlendInt {
 		AdjustGeometries(x, y, w, h);
 	}
 
-	void ScrollArea::ProcessPositionUpdate (
+	void ScrollArea::PerformPositionUpdate (
 	        const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -237,7 +237,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void ScrollArea::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ScrollArea::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;

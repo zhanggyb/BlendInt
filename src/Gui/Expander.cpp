@@ -78,7 +78,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void ExpandButton::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ExpandButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			UpdateTextPosition(*request.size(), round_type(),
@@ -91,7 +91,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void ExpandButton::ProcessRoundTypeUpdate (
+	void ExpandButton::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -105,7 +105,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void ExpandButton::ProcessRoundRadiusUpdate (
+	void ExpandButton::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -336,7 +336,7 @@ namespace BlendInt {
 		ReportContainerUpdate(request);
 	}
 
-	void Expander::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Expander::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			FillInExpander(position(), *request.size(), margin());
@@ -353,7 +353,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void Expander::ProcessPositionUpdate (
+	void Expander::PerformPositionUpdate (
 	        const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {

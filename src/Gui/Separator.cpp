@@ -109,7 +109,7 @@ namespace BlendInt {
 		return m_expand_y;
 	}
 
-	void Separator::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void Separator::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
@@ -121,7 +121,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void Separator::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Separator::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 

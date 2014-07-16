@@ -443,7 +443,7 @@ namespace BlendInt {
 		ReportContainerUpdate(request);
 	}
 
-	void Section::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void Section::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			set_position (*request.position());
@@ -452,7 +452,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void Section::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Section::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			set_size (*request.size());
@@ -467,7 +467,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void Section::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void Section::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 		if (request.source()->container() == this) {
 			if (request.source()->drop_shadow() && request.source()->m_shadow) {
@@ -478,7 +478,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void Section::ProcessRoundRadiusUpdate (
+	void Section::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if (request.source()->container() == this) {

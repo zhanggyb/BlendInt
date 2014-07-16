@@ -97,7 +97,7 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	void Clock::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Clock::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			int radius = std::min(request.size()->width(), request.size()->height());

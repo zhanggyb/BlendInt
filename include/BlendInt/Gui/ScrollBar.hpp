@@ -59,7 +59,7 @@ namespace BlendInt {
 
 		virtual void UpdateSlider (const SliderUpdateRequest& request);
 
-		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

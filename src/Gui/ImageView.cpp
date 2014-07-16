@@ -116,7 +116,7 @@ namespace BlendInt {
 		return Size(400, 300);
 	}
 
-	void ImageView::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ImageView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 

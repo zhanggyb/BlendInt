@@ -105,7 +105,7 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ComboBox::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ComboBox::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -129,7 +129,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void ComboBox::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void ComboBox::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -153,7 +153,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void ComboBox::ProcessRoundRadiusUpdate (
+	void ComboBox::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {

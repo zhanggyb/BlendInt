@@ -124,7 +124,7 @@ namespace BlendInt {
 		ReportContainerUpdate(request);
 	}
 
-	void Workspace::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void Workspace::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.source()->container() == this) {
 			EnableShadow(request.source());
@@ -133,7 +133,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void Workspace::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Workspace::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			Size inner_size(request.size()->width() - margin().hsum(),
@@ -159,7 +159,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void Workspace::ProcessRoundTypeUpdate (
+	void Workspace::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if (request.source()->container() == this) {
@@ -169,7 +169,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void Workspace::ProcessRoundRadiusUpdate (
+	void Workspace::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if (request.source()->container() == this) {

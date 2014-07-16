@@ -144,7 +144,7 @@ namespace BlendInt {
 		}
 	}
 
-	void NumericalSlider::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void NumericalSlider::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 
@@ -182,7 +182,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void NumericalSlider::ProcessRoundTypeUpdate (
+	void NumericalSlider::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -220,7 +220,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void NumericalSlider::ProcessRoundRadiusUpdate (
+	void NumericalSlider::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if (request.target() == this) {

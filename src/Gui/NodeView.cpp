@@ -79,7 +79,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, m_vao);
 	}
 
-	void NodeView::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void NodeView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -97,7 +97,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void NodeView::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void NodeView::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -115,7 +115,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void NodeView::ProcessRoundRadiusUpdate (
+	void NodeView::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {

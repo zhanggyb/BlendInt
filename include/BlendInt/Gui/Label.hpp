@@ -89,7 +89,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

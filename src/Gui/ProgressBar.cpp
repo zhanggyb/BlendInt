@@ -86,7 +86,7 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void ProgressBar::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ProgressBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -104,7 +104,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void ProgressBar::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void ProgressBar::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -122,7 +122,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void ProgressBar::ProcessRoundRadiusUpdate (
+	void ProgressBar::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {

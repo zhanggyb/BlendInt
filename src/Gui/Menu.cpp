@@ -166,7 +166,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Menu::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Menu::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			VertexTool tool;
@@ -183,7 +183,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void Menu::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void Menu::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -199,7 +199,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void Menu::ProcessRoundRadiusUpdate (const RoundRadiusUpdateRequest& request)
+	void Menu::PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;

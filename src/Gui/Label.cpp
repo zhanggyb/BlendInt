@@ -67,7 +67,7 @@ namespace BlendInt {
 		m_text_length = UpdateTextPosition(size(), m_text, m_font);
 	}
 
-	void Label::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Label::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			m_text_length = UpdateTextPosition(*request.size(), m_text, m_font);

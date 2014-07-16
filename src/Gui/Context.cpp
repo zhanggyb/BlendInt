@@ -373,12 +373,12 @@ namespace BlendInt
 		return true;
 	}
 
-	void Context::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void Context::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		// nothing need to do.
 	}
 
-	void Context::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Context::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.source() == this) {
 
@@ -435,11 +435,11 @@ namespace BlendInt
 
 	}
 
-	void Context::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void Context::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 	}
 
-	void Context::ProcessRoundRadiusUpdate (
+	void Context::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 	}

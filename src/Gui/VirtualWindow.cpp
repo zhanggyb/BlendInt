@@ -139,7 +139,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void VirtualWindow::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void VirtualWindow::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -155,7 +155,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void VirtualWindow::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void VirtualWindow::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			int h = request.size()->height() - sub_widget(0)->size().height();
@@ -177,7 +177,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void VirtualWindow::ProcessRoundTypeUpdate (
+	void VirtualWindow::PerformRoundTypeUpdate (
 	        const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -187,7 +187,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void VirtualWindow::ProcessRoundRadiusUpdate (
+	void VirtualWindow::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {

@@ -79,7 +79,7 @@ namespace BlendInt {
 		return Ignore;
 	}
 	
-	void StackPanel::ProcessSizeUpdate(const SizeUpdateRequest& request)
+	void StackPanel::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -89,7 +89,7 @@ namespace BlendInt {
 			m_inner->Reset();
 		}
 
-		Stack::ProcessSizeUpdate(request);
+		Stack::PerformSizeUpdate(request);
 	}
 
 	void StackPanel::InitializeStackPanel()

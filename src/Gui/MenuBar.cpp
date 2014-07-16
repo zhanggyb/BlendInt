@@ -70,7 +70,7 @@ namespace BlendInt {
 		}
 	}
 
-	void MenuBar::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void MenuBar::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -83,7 +83,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void MenuBar::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void MenuBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			VertexTool tool;

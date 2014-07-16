@@ -62,7 +62,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void FileSelector::ProcessSizeUpdate(const SizeUpdateRequest& request)
+	void FileSelector::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;

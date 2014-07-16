@@ -68,7 +68,7 @@ namespace BlendInt {
 		ReportRefreshRequest(request);
 	}
 
-	void FramePanel::ProcessSizeUpdate(const SizeUpdateRequest& request)
+	void FramePanel::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;
@@ -78,7 +78,7 @@ namespace BlendInt {
 			m_inner->Reset();
 		}
 
-		Frame::ProcessSizeUpdate(request);
+		Frame::PerformSizeUpdate(request);
 	}
 
 	ResponseType FramePanel::Draw (const RedrawEvent& event)

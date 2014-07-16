@@ -54,7 +54,7 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 	
-	void MenuButton::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void MenuButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			UpdateTextPosition(*request.size(), round_type(),
@@ -72,7 +72,7 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void MenuButton::ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	void MenuButton::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			UpdateTextPosition(size(), *request.round_type(), round_radius(),
@@ -90,7 +90,7 @@ namespace BlendInt {
 		ReportRoundTypeUpdate(request);
 	}
 
-	void MenuButton::ProcessRoundRadiusUpdate (
+	void MenuButton::PerformRoundRadiusUpdate (
 	        const RoundRadiusUpdateRequest& request)
 	{
 		if(request.target() == this) {

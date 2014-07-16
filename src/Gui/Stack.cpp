@@ -208,7 +208,25 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::ProcessPositionUpdate (
+	bool Stack::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool Stack::PositionUpdateTest (const PositionUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		}
+
+		return true;
+	}
+
+	void Stack::PerformPositionUpdate (
 	        const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -222,7 +240,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void Stack::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Stack::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			int w = request.size()->width() - margin().hsum();

@@ -220,7 +220,7 @@ namespace BlendInt {
 
 	}
 
-	void ScrollView::ProcessPositionUpdate (
+	void ScrollView::PerformPositionUpdate (
 	        const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -234,7 +234,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void ScrollView::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void ScrollView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			VertexTool tool;

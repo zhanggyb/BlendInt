@@ -163,7 +163,27 @@ namespace BlendInt {
 		}
 	}
 
-	void HBox::ProcessPositionUpdate (
+	bool HBox::SizeUpdateTest (const SizeUpdateRequest& request)
+	{
+		// Do not allow sub widget changing its size
+		if(request.source()->container() == this) {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool HBox::PositionUpdateTest (const PositionUpdateRequest& request)
+	{
+		// Do not allow sub widget changing its position
+		if(request.source()->container() == this) {
+			return false;
+		}
+
+		return true;
+	}
+
+	void HBox::PerformPositionUpdate (
 	        const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
@@ -177,7 +197,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void HBox::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void HBox::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			set_size(*request.size());

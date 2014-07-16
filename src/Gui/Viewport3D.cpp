@@ -214,7 +214,7 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Viewport3D::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void Viewport3D::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
 			m_default_camera->SetPerspective(m_default_camera->fovy(),

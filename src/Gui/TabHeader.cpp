@@ -157,7 +157,7 @@ namespace BlendInt {
 		}
 	}
 
-	void TabHeader::ProcessPositionUpdate (const PositionUpdateRequest& request)
+	void TabHeader::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			int x = request.position()->x() - position().x();
@@ -169,7 +169,7 @@ namespace BlendInt {
 		ReportPositionUpdate(request);
 	}
 
-	void TabHeader::ProcessSizeUpdate (const SizeUpdateRequest& request)
+	void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
 			VertexTool tool;

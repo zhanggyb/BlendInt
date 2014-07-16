@@ -638,15 +638,15 @@ namespace BlendInt {
 
 		virtual bool VisibilityUpdateTest (const VisibilityUpdateRequest& request);
 
-		virtual void ProcessSizeUpdate (const SizeUpdateRequest& request);
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void ProcessPositionUpdate (const PositionUpdateRequest& request);
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
-		virtual void ProcessRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
 
-		virtual void ProcessRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		virtual void ProcessVisibilityUpdate (const VisibilityUpdateRequest& request);
+		virtual void PerformVisibilityUpdate (const VisibilityUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
