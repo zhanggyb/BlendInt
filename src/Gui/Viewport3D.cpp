@@ -235,9 +235,8 @@ namespace BlendInt {
 		glClearColor(0.25, 0.25, 0.25, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		m_cube->Render(m_default_camera->projection(), m_default_camera->view());
-
 		m_grid->Render(m_default_camera->projection(), m_default_camera->view());
+		m_cube->Render(m_default_camera->projection(), m_default_camera->view());
 	}
 
 	ResponseType Viewport3D::Draw (const RedrawEvent& event)

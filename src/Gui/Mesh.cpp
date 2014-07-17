@@ -58,7 +58,7 @@ namespace BlendInt {
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
-			"	FragmentColor = vec4(0.8, 0.8, 0.8, 1.0);"
+			"	FragmentColor = vec4(1.0, 1.0, 1.0, 1.0);"
 			"}";
 
 	Mesh::Mesh ()
@@ -75,15 +75,15 @@ namespace BlendInt {
 		m_program->Use();
 		m_program->SetUniformMatrix4fv("MVP", 1, GL_FALSE, glm::value_ptr(projection_matrix * view_matrix));
 
-		glBindVertexArray(m_vao);
-
 		m_index_buffer->Bind();
 
 		int size;
 		glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-		glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
 
+		glBindVertexArray(m_vao);
+		glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
 		glBindVertexArray(0);
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		m_program->Reset();
@@ -153,10 +153,6 @@ namespace BlendInt {
 
 		LoadObj("test.obj", vertices, normals, elements);
 
-		DBG_PRINT_MSG("vertex size: %ld", vertices.size());
-		DBG_PRINT_MSG("normal size: %ld", normals.size());
-		DBG_PRINT_MSG("elements size: %ld", elements.size());
-
 		glGenVertexArrays(1, &m_vao);
 
 		glBindVertexArray(m_vao);
@@ -164,7 +160,7 @@ namespace BlendInt {
 		m_vertex_buffer.reset(new GLArrayBuffer);
 		m_vertex_buffer->Generate();
 		m_vertex_buffer->Bind();
-		m_vertex_buffer->SetData(vertices.size() * sizeof(GLfloat), &vertices[0]);
+		m_vertex_buffer->SetData(vertices.size() * sizeof(vertices[0]), &vertices[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
@@ -172,7 +168,7 @@ namespace BlendInt {
 		m_normal_buffer.reset(new GLArrayBuffer);
 		m_normal_buffer->Generate();
 		m_normal_buffer->Bind();
-		m_normal_buffer->SetData(normals.size() * sizeof(GLfloat), &normals[0]);
+		m_normal_buffer->SetData(normals.size() * sizeof(normals[0]), &normals[0]);
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);

@@ -90,30 +90,17 @@ namespace BlendInt {
 
 	void Grid::Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix)
 	{
-		glBindVertexArray(m_vao);
 		m_program->Use();
 		m_program->SetUniformMatrix4fv("m_P", 1, GL_FALSE, glm::value_ptr(projection_matrix));
 		m_program->SetUniformMatrix4fv("m_V", 1, GL_FALSE, glm::value_ptr(view_matrix));
 		m_program->SetUniformMatrix4fv("m_M", 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0)));
 
 		/* Draw the grid using the indices to our vertices using our vertex buffer objects */
-		glEnableVertexAttribArray(0);
-
-		m_vb->Bind();
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-		/* Push each element in buffer_vertices to the vertex shader */
-		m_ib->Bind();
-
-		glDrawElements(GL_LINES, 20 * 21 * 4,
-		GL_UNSIGNED_SHORT, 0);
-
-		glDisableVertexAttribArray(0);
-
-		m_ib->Reset();
-		m_vb->Reset();
-		m_program->Reset();
+		glBindVertexArray(m_vao);
+		glDrawElements(GL_LINES, 20 * 21 * 4, GL_UNSIGNED_SHORT, 0);
 		glBindVertexArray(0);
+
+		m_program->Reset();
 	}
 
 	Grid::~Grid ()
@@ -123,8 +110,6 @@ namespace BlendInt {
 
 	void Grid::InitializeGrid()
 	{
-		glGenVertexArrays(1, &m_vao);
-
 		m_program.reset(new GLSLProgram);
 		m_program->Create();
 		m_program->AttachShaderPair(vertex_shader, fragment_shader);
@@ -138,12 +123,14 @@ namespace BlendInt {
 			}
 		}
 
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+
 		m_vb.reset(new GLArrayBuffer);
 		m_vb->Generate();
 		m_vb->Bind();
 
 		m_vb->SetData(21 * 21 * sizeof(glm::vec2), vertices);
-		m_vb->Reset();
 
 		// Create an array of indices into the vertex array that traces both horizontal and vertical lines
 		GLushort indices[20 * 21 * 4];
@@ -168,7 +155,15 @@ namespace BlendInt {
 		m_ib->Generate();
 		m_ib->Bind();
 		m_ib->SetData(20 * 21 * 4, sizeof(GLushort), indices);
-		m_ib->Reset();
+
+		/* Draw the grid using the indices to our vertices using our vertex buffer objects */
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+
+		GLArrayBuffer::Reset();
+		GLElementArrayBuffer::Reset();
 	}
 
 }

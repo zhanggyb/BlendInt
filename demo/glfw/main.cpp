@@ -80,16 +80,7 @@ int main(int argc, char* argv[])
 
 	Viewport3D* view3d = Manage(new Viewport3D);
 	view3d->SetPosition(100, 100);
-
-	VirtualWindow* vw = Manage(new VirtualWindow);
-	context->PushBack(vw);
-
-	VirtualWindow* vw1 = Manage(new VirtualWindow);
-	context->PushBack(vw1);
-
-	VirtualWindow* vw2 = Manage(new VirtualWindow);
-	context->PushBack(vw2);
-
+	view3d->Resize(800, 600);
 	context->PushBack(view3d);
 
 	RunLoop(win);

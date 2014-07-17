@@ -192,9 +192,9 @@ void FontView::LoadCharacter ()
 
 BI::ResponseType FontView::Draw (const BI::RedrawEvent& event)
 {
-	int advance = m_font.Print(position(), L"A仁B义C礼D智E信F");
+	//int advance = m_font.Print(position(), L"A仁B义C礼D智E信F");
 	//int advance = m_font.Print(mvp, L"ABC");
-	DBG_PRINT_MSG("advance: %d", advance);
+	//DBG_PRINT_MSG("advance: %d", advance);
 
 	/*
 	glBindVertexArray(m_vao);

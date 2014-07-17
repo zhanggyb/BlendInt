@@ -123,9 +123,11 @@ namespace BlendInt {
 
 	ResponseType VirtualWindow::MousePressEvent (const MouseEvent& event)
 	{
-		if(event.section()->last_hover_widget() == this) {
-			event.context()->MoveToTop(event.section());
-			return Accept;
+		if(container() == event.section()) {
+			if(event.section()->last_hover_widget() == this) {
+				event.context()->MoveToTop(event.section());
+				return Accept;
+			}
 		}
 
 		return Ignore;

@@ -179,11 +179,14 @@ namespace BlendInt {
 			m_last = container()->position();
 			m_cursor = event.position();
 			m_pressed = true;
-		}
 
-		if(event.section()->last_hover_widget() == this) {
-			event.context()->MoveToTop(event.section());
-			return Accept;
+			if(event.section() == container()->container()) {
+				if(event.section()->last_hover_widget() == this) {
+					event.context()->MoveToTop(event.section());
+					return Accept;
+				}
+			}
+
 		}
 
 		return Ignore;
