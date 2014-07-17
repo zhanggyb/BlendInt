@@ -141,29 +141,15 @@ namespace BlendInt {
 
 		return preferred_size;
 	}
-	
-	void ToolBox::UpdateContainer (const ContainerUpdateRequest& request)
+
+	void ToolBox::PerformMarginUpdate (const Margin& request)
 	{
-		switch(request.type()) {
+		int x = position().x() + request.left();
+		int y = position().y() + request.bottom();
+		int w = size().width() - request.hsum();
+		int h = size().height() - request.vsum();
 
-			case ContainerMargin: {
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
-
-				int x = position().x() + margin_p->left();
-				int y = position().y() + margin_p->bottom();
-				int w = size().width() - margin_p->hsum();
-				int h = size().height() - margin_p->vsum();
-
-				FillSubWidgets(x, y, w, h, m_space);
-
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
+		FillSubWidgets(x, y, w, h, m_space);
 	}
 	
 	void ToolBox::PerformPositionUpdate (const PositionUpdateRequest& request)

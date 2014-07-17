@@ -123,8 +123,6 @@ namespace BlendInt {
 		EnableShadow(widget);
 
 		events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyed);
-
-		CheckSubWidgetAddedInContainer(widget);
 	}
 
 	void Section::Remove (AbstractWidget* widget)
@@ -438,11 +436,6 @@ namespace BlendInt {
 		delete fb; fb = 0;
 	}
 
-	void Section::UpdateContainer (const ContainerUpdateRequest& request)
-	{
-		ReportContainerUpdate(request);
-	}
-
 	void Section::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -638,8 +631,6 @@ namespace BlendInt {
 			}
 
 		}
-
-		CheckSubWidgetRemovedInContainer(widget);
 
 		return true;
 	}

@@ -140,21 +140,9 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void TabHeader::UpdateContainer (const ContainerUpdateRequest& request)
+	void TabHeader::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
-
-			case ContainerMargin: {
-				// TODO: reset sub widgets
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-
-		}
+		// TODO: change sub widgets
 	}
 
 	void TabHeader::PerformPositionUpdate (const PositionUpdateRequest& request)

@@ -165,32 +165,18 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToolBar::UpdateContainer (const ContainerUpdateRequest& request)
+	void ToolBar::PerformMarginUpdate (const Margin& request)
 	{
-		switch (request.type()) {
-
-			case ContainerMargin: {
-				const Margin* margin_p =
-				        static_cast<const Margin*>(request.data());
-
-				int x = position().x() + margin_p->left();
-				if (sub_widget_size()) {
-					x = sub_widgets()->front()->position().x();
-				}
-
-				int y = position().y() + margin_p->bottom();
-				int w = size().width() - margin_p->left() - margin_p->right();
-				int h = size().height() - margin_p->top() - margin_p->bottom();
-
-				FillSubWidgets(x, y, w, h, m_space);
-
-				break;
-			}
-
-			default:
-				ReportContainerUpdate(request);
-				break;
+		int x = position().x() + request.left();
+		if (sub_widget_size()) {
+			x = sub_widgets()->front()->position().x();
 		}
+
+		int y = position().y() + request.bottom();
+		int w = size().width() - request.hsum();
+		int h = size().height() - request.vsum();
+
+		FillSubWidgets(x, y, w, h, m_space);
 	}
 
 	void ToolBar::PerformPositionUpdate (const PositionUpdateRequest& request)

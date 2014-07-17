@@ -79,10 +79,6 @@ namespace BlendInt {
 		return Size(200, 20);
 	}
 
-	void Decoration::UpdateContainer (const ContainerUpdateRequest& request)
-	{
-	}
-
 	void Decoration::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {

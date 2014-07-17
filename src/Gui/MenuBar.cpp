@@ -57,17 +57,9 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void MenuBar::UpdateContainer(const ContainerUpdateRequest& request)
+	void MenuBar::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
-
-			// TODO: set margin
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
+		// TODO: change margin
 	}
 
 	void MenuBar::PerformPositionUpdate (const PositionUpdateRequest& request)
@@ -441,10 +433,10 @@ namespace BlendInt {
 
 			// DBG_PRINT_MSG("menu at layer: %d", menu->z());
 
-			if(type == WidgetVisibility) {
+			//if(type == WidgetVisibility) {
 				Context* context = Context::GetContext(this);
 				context->Remove(menu);
-			}
+			//}
 		}
 
 		if(m_active_button) {

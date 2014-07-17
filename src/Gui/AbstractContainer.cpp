@@ -174,14 +174,8 @@ namespace BlendInt {
 		}
 	}
 
-	void AbstractContainer::ProcessMarginUpdate(const ContainerUpdateRequest& request)
+	void AbstractContainer::PerformMarginUpdate(const Margin& margin)
 	{
-		ReportMarginUpdate(request);
-	}
-
-	void AbstractContainer::ProcessRefresh(const ContainerUpdateRequest& request)
-	{
-		ReportRefreshRequest(request);
 	}
 
 	void AbstractContainer::SetMargin (const Margin& margin)
@@ -189,9 +183,7 @@ namespace BlendInt {
 		if (m_margin.equal(margin))
 			return;
 
-		ContainerUpdateRequest request (this, this, ContainerMargin, &margin);
-
-		ProcessMarginUpdate(request);
+		PerformMarginUpdate(margin);
 		m_margin = margin;
 	}
 
@@ -201,9 +193,7 @@ namespace BlendInt {
 			return;
 
 		Margin new_margin(left, right, top, bottom);
-		ContainerUpdateRequest request (this, this, ContainerMargin, &new_margin);
-
-		ProcessMarginUpdate(request);
+		PerformMarginUpdate(new_margin);
 		m_margin = new_margin;
 	}
 	

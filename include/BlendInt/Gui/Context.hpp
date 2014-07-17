@@ -126,8 +126,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateContainer (const ContainerUpdateRequest& request);
-
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
 		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);

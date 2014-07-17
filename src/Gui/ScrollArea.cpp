@@ -135,11 +135,9 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void ScrollArea::UpdateContainer(const ContainerUpdateRequest& request)
+	void ScrollArea::PerformMarginUpdate(const Margin& request)
 	{
-		// TODO: set margin
 
-		ReportContainerUpdate(request);
 	}
 
 	ResponseType ScrollArea::Draw (const RedrawEvent& event)

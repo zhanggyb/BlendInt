@@ -138,8 +138,6 @@ namespace BlendInt
 
 		events()->connect(section->destroyed(), this, &Context::OnSubWidgetDestroyed);
 
-		CheckSubWidgetAddedInContainer(widget);
-
 		return section;
 	}
 
@@ -277,57 +275,6 @@ namespace BlendInt
 	}
 
 #endif
-
-	void Context::UpdateContainer(const ContainerUpdateRequest& request)
-	{
-		switch(request.type()) {
-
-			case ContainerRefresh: {
-				//RefreshLayer(request.source()->z());
-				break;
-			}
-
-			case ContainerSubWidgetAdded: {
-				const AbstractWidget* widget =
-				        static_cast<const AbstractWidget*>(request.data());
-				DBG_PRINT_MSG("Container \"%s\" add sub widget \"%s\"",
-				        request.source()->name().c_str(),
-				        widget->name().c_str());
-
-				// TODO: check the layer
-
-				//if(request.source()->hover()) {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-				//}
-
-				break;
-			}
-
-			case ContainerSubWidgetRemoved: {
-				const AbstractWidget* widget =
-				        static_cast<const AbstractWidget*>(request.data());
-				DBG_PRINT_MSG("Container \"%s\" remove sub widget \"%s\"",
-				        request.source()->name().c_str(),
-				        widget->name().c_str());
-
-				// TODO: check the layer
-				if(request.source()->hover()) {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-
-					AbstractWidget* w = const_cast<AbstractWidget*>(widget);
-					if(w->hover()) {
-						//RemoveWidgetFromHoverList(w);
-						w->set_hover(false);
-					}
-				}
-
-				break;
-			}
-
-			default:
-				break;
-		}
-	}
 
 	bool Context::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
@@ -642,8 +589,6 @@ namespace BlendInt
 			        widget->name().c_str(), name().c_str());
 			return false;
 		}
-
-		CheckSubWidgetRemovedInContainer(widget);
 
 		return true;
 	}

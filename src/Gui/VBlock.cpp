@@ -126,27 +126,9 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	void VBlock::UpdateContainer (const ContainerUpdateRequest& request)
+	void VBlock::PerformMarginUpdate(const Margin& request)
 	{
-		if(request.target() == this) {
-
-			switch(request.type()) {
-
-				case ContainerMargin: {
-
-					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					FillInVBlock(position(), size(), *margin_p);
-
-					break;
-				}
-
-				default: {
-					ReportContainerUpdate(request);
-					break;
-				}
-
-			}
-		}
+		FillInVBlock(position(), size(), request);
 	}
 
 	bool VBlock::SizeUpdateTest (const SizeUpdateRequest& request)

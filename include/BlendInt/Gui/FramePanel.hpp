@@ -42,7 +42,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void ProcessRefresh (const ContainerUpdateRequest& request);
+		virtual void PerformRefresh (const RefreshRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 

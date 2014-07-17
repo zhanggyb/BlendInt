@@ -313,27 +313,9 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void Expander::UpdateContainer(const ContainerUpdateRequest& request)
+	void Expander::PerformMarginUpdate(const Margin& request)
 	{
-		if (request.target() == this) {
-			switch (request.type()) {
-
-				case ContainerMargin: {
-
-					const Margin* margin_p =
-					        static_cast<const Margin*>(request.data());
-					set_margin(*margin_p);
-					FillInExpander(position(), size(), *margin_p);
-
-					break;
-				}
-
-				default:
-					break;
-			}
-		}
-
-		ReportContainerUpdate(request);
+		FillInExpander(position(), size(), request);
 	}
 
 	void Expander::PerformSizeUpdate (const SizeUpdateRequest& request)

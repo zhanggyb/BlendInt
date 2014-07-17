@@ -62,10 +62,10 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void FramePanel::ProcessRefresh(const ContainerUpdateRequest& request)
+	void FramePanel::PerformRefresh(const RefreshRequest& request)
 	{
 		m_refresh = true;
-		ReportRefreshRequest(request);
+		ReportRefresh(request);
 	}
 
 	void FramePanel::PerformSizeUpdate(const SizeUpdateRequest& request)

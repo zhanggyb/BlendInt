@@ -69,8 +69,6 @@ namespace BlendInt {
 		events()->connect(widget->destroyed(), this,
 						&AbstractVectorContainer::OnSubWidgetDestroyed);
 
-		CheckSubWidgetAddedInContainer(widget);
-
 		return true;
 	}
 
@@ -99,8 +97,6 @@ namespace BlendInt {
 							widget->name().c_str(), name().c_str());
 			return false;
 		}
-
-		CheckSubWidgetRemovedInContainer(widget);
 
 		return true;
 	}

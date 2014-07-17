@@ -119,11 +119,6 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void Workspace::UpdateContainer (const ContainerUpdateRequest& request)
-	{
-		ReportContainerUpdate(request);
-	}
-
 	void Workspace::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if (request.source()->container() == this) {

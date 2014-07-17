@@ -184,28 +184,12 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::UpdateContainer (const ContainerUpdateRequest& request)
+	void Stack::PerformMarginUpdate(const Margin& request)
 	{
-		switch (request.type()) {
+		int w = size().width() - request.hsum();
+		int h = size().height() - request.vsum();
 
-			case ContainerMargin: {
-
-				const Margin* margin_p =
-								static_cast<const Margin*>(request.data());
-
-				int w = size().width() - margin_p->hsum();
-				int h = size().height() - margin_p->vsum();
-
-				ResizeSubWidgets(w, h);
-
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
+		ResizeSubWidgets(w, h);
 	}
 
 	bool Stack::SizeUpdateTest (const SizeUpdateRequest& request)

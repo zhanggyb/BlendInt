@@ -206,18 +206,9 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void ScrollView::UpdateContainer(const ContainerUpdateRequest& request)
+	void ScrollView::PerformMarginUpdate(const Margin& request)
 	{
-		switch (request.type()) {
-
-			// TODO: update margin
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
-
+		// nothing to do
 	}
 
 	void ScrollView::PerformPositionUpdate (

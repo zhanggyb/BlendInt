@@ -68,11 +68,6 @@ namespace BlendInt {
 		}
 	}
 
-	void VirtualWindow::UpdateContainer (
-	        const ContainerUpdateRequest& request)
-	{
-	}
-
 	ResponseType VirtualWindow::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;

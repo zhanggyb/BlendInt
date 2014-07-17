@@ -146,21 +146,9 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void HBox::UpdateContainer(const ContainerUpdateRequest& request)
+	void HBox::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
-
-			case ContainerMargin: {
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
-				FillSubWidgetsInHBox(position(), size(), *margin_p, m_alignment, m_space);
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
+		FillSubWidgetsInHBox(position(), size(), request, m_alignment, m_space);
 	}
 
 	bool HBox::SizeUpdateTest (const SizeUpdateRequest& request)

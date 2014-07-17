@@ -29,8 +29,6 @@
 #include <deque>
 #include <boost/smart_ptr.hpp>
 
-#include <BlendInt/Core/Margin.hpp>
-
 #include <BlendInt/Gui/AbstractWidget.hpp>
 
 namespace BlendInt {
@@ -213,11 +211,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateContainer (const ContainerUpdateRequest& request) = 0;
-
-		virtual void ProcessMarginUpdate (const ContainerUpdateRequest& request);
-
-		virtual void ProcessRefresh (const ContainerUpdateRequest& request);
+		virtual void PerformMarginUpdate (const Margin& margin);
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
 

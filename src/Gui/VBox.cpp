@@ -146,21 +146,9 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void VBox::UpdateContainer(const ContainerUpdateRequest& request)
+	void VBox::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
-
-			case ContainerMargin: {
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
-				FillSubWidgetsInVBox(position(), size(), *margin_p, m_alignment, m_space);
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
+		FillSubWidgetsInVBox(position(), size(), request, m_alignment, m_space);
 	}
 
 	bool VBox::SizeUpdateTest (const SizeUpdateRequest& request)

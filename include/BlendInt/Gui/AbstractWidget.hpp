@@ -30,11 +30,12 @@
 
 #include <Cpp/Events.hpp>
 
+#include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Rect.hpp>
-#include <BlendInt/Core/RefPtr.hpp>
+#include <BlendInt/Core/Margin.hpp>
 
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/KeyEvent.hpp>
@@ -51,21 +52,6 @@ namespace BlendInt {
 	//class GLTexture2D;
 	class AbstractWidget;
 	class AbstractContainer;
-
-	enum GeometryRequestType {
-		WidgetPosition,
-		WidgetSize,
-		WidgetRoundCornerType,
-		WidgetRoundCornerRadius,
-		WidgetVisibility
-	};
-
-	enum ContainerRequestType {
-		ContainerMargin,
-		ContainerRefresh,
-		ContainerSubWidgetAdded,
-		ContainerSubWidgetRemoved
-	};
 
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
 
@@ -264,55 +250,20 @@ namespace BlendInt {
 		const bool* m_visibility;
 	};
 
-	class ContainerUpdateRequest: public WidgetUpdateRequest
+	class RefreshRequest: public WidgetUpdateRequest
 	{
 	public:
 
-		ContainerUpdateRequest (AbstractWidget* source, AbstractWidget* target)
-		: WidgetUpdateRequest(source, target), m_type(0), m_data(0)
+		RefreshRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target)
 		{
 
 		}
 
-		ContainerUpdateRequest(AbstractWidget* source, AbstractWidget* target, int type, const void* data)
-		: WidgetUpdateRequest(source, target),
-		  m_type(type),
-		  m_data(data)
+		~RefreshRequest ()
 		{
 
 		}
-
-		~ContainerUpdateRequest ()
-		{
-
-		}
-
-		int type () const
-		{
-			return m_type;
-		}
-
-		void set_type (int type)
-		{
-			m_type = type;
-		}
-
-		const void* data () const
-		{
-			return m_data;
-		}
-
-		void set_data (const void* data)
-		{
-			m_data = data;
-		}
-
-	private:
-
-		ContainerUpdateRequest();
-
-		int m_type;
-		const void* m_data;
 	};
 
 	/**
@@ -347,11 +298,7 @@ namespace BlendInt {
 
 		static inline void RequestVisibilityUpdate (AbstractContainer* container, const VisibilityUpdateRequest& request);
 
-		static inline void RequestContainerUpdate (AbstractContainer* container, const ContainerUpdateRequest& request);
-
-		static inline void RequestMarginUpdate (AbstractContainer* container, const ContainerUpdateRequest& request);
-
-		static inline void RequestRefresh (AbstractContainer* container, const ContainerUpdateRequest& request);
+		static inline void RequestRefresh (AbstractContainer* container, const RefreshRequest& request);
 	};
 
 	// ----------------------------------------------------
@@ -535,6 +482,8 @@ namespace BlendInt {
 
 		/**
 		 * @brief Check if the widget and its all container are under cursor position
+		 *
+		 * @note There's no meaning to use this function to test Context or Section.
 		 */
 		static bool IsHoverThrough (const AbstractWidget* widget, const Point& cursor);
 
@@ -648,16 +597,9 @@ namespace BlendInt {
 
 		virtual void PerformVisibilityUpdate (const VisibilityUpdateRequest& request);
 
+		virtual void PerformRefresh (const RefreshRequest& request);
+
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
-
-		void CheckSubWidgetAddedInContainer (AbstractWidget* sub_widget);
-
-		void CheckSubWidgetRemovedInContainer (AbstractWidget* sub_widget);
-
-		/**
-		 * @brief Hand on the update request to the container
-		 */
-		void ReportContainerUpdate (const ContainerUpdateRequest& request);
 
 		void ReportSizeUpdate (const SizeUpdateRequest& request);
 
@@ -669,9 +611,7 @@ namespace BlendInt {
 
 		void ReportVisibilityRequest (const VisibilityUpdateRequest& request);
 
-		void ReportMarginUpdate (const ContainerUpdateRequest& request);
-
-		void ReportRefreshRequest (const ContainerUpdateRequest& request);
+		void ReportRefresh (const RefreshRequest& request);
 
 		int GetOutlineVertices (int round_type) const;
 

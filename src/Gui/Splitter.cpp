@@ -540,23 +540,11 @@ namespace BlendInt {
 	{
 	}
 
-	void Splitter::UpdateContainer(const ContainerUpdateRequest& request)
+	void Splitter::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
-
-			case ContainerMargin: {
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
-				FillSubWidgetsInSplitter(position(), size(), *margin_p, m_orientation);
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
+		FillSubWidgetsInSplitter(position(), size(), request, m_orientation);
 	}
-	
+
 	void Splitter::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {

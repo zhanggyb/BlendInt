@@ -121,23 +121,9 @@ namespace BlendInt {
 		return Size(w, h);
 	}
 
-	void Tab::UpdateContainer (const ContainerUpdateRequest& request)
+	void Tab::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
-
-			case ContainerMargin: {
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
-				FillSubWidgetsInTab(size(), *margin_p);
-
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
-
+		FillSubWidgetsInTab(size(), request);
 	}
 
 	void Tab::PerformPositionUpdate (const PositionUpdateRequest& request)

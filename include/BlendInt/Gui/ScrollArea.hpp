@@ -65,7 +65,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual void UpdateContainer (const ContainerUpdateRequest& request);
+		virtual void PerformMarginUpdate (const Margin& request);
 
 		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 

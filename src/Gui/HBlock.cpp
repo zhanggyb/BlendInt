@@ -125,28 +125,11 @@ namespace BlendInt {
 		return preferred_size;
 	}
 	
-	void HBlock::UpdateContainer (const ContainerUpdateRequest& request)
+	void HBlock::PerformMarginUpdate(const Margin& request)
 	{
-		if(request.target() == this) {
-
-			switch(request.type()) {
-
-				case ContainerMargin: {
-
-					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					FillInHBlock(position(), size(), *margin_p);
-
-					break;
-				}
-
-				default: {
-					ReportContainerUpdate(request);
-					break;
-				}
-			}
-		}
+		FillInHBlock(position(), size(), request);
 	}
-	
+
 	bool HBlock::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		// Do not allow sub widget changing its size

@@ -140,24 +140,10 @@ namespace BlendInt {
 		}
 	}
 
-	inline void ContainerProxy::RequestContainerUpdate(AbstractContainer* container, const ContainerUpdateRequest& request)
+	inline void ContainerProxy::RequestRefresh(AbstractContainer* container, const RefreshRequest& request)
 	{
 		if(container) {
-			container->UpdateContainer(request);
-		}
-	}
-
-	inline void ContainerProxy::RequestMarginUpdate(AbstractContainer* container, const ContainerUpdateRequest& request)
-	{
-		if(container) {
-			container->ProcessMarginUpdate(request);
-		}
-	}
-
-	inline void ContainerProxy::RequestRefresh(AbstractContainer* container, const ContainerUpdateRequest& request)
-	{
-		if(container) {
-			container->ProcessRefresh(request);
+			container->PerformRefresh(request);
 		}
 	}
 
@@ -239,7 +225,6 @@ namespace BlendInt {
 	void AbstractWidget::SetRoundCornerType(int type)
 	{
 		if(round_type() == type) return;
-		bool broadcast = false;
 
 		RoundTypeUpdateRequest request(this, this, &type);
 
@@ -289,9 +274,7 @@ namespace BlendInt {
 
 	void AbstractWidget::Refresh()
 	{
-		ContainerUpdateRequest request (this, m_container);
-		request.set_type(ContainerRefresh);
-		request.set_data(0);
+		RefreshRequest request (this, m_container);
 
 		ContainerProxy::RequestRefresh(m_container, request);
 	}
@@ -321,6 +304,8 @@ namespace BlendInt {
 
 			AbstractContainer* container = widget->m_container;
 
+			if(container == 0) return false;	// if a widget hovered was removed from any container.
+
 			while(container) {
 
 				if(!container->Contain(cursor))
@@ -335,35 +320,7 @@ namespace BlendInt {
 		return false;
 	}
 
-	void AbstractWidget::CheckSubWidgetAddedInContainer (AbstractWidget* sub_widget)
-	{
-		ContainerUpdateRequest request (this, m_container);
-		request.set_type(ContainerSubWidgetAdded);
-		request.set_data(sub_widget);
-
-		ContainerProxy::RequestContainerUpdate(m_container, request);
-	}
-
-	void AbstractWidget::CheckSubWidgetRemovedInContainer (AbstractWidget* sub_widget)
-	{
-		ContainerUpdateRequest request (this, m_container);
-		request.set_type(ContainerSubWidgetRemoved);
-		request.set_data(sub_widget);
-
-		ContainerProxy::RequestContainerUpdate(m_container, request);
-	}
-
-	void AbstractWidget::ReportContainerUpdate(const ContainerUpdateRequest& request)
-	{
-		ContainerProxy::RequestContainerUpdate(m_container, request);
-	}
-
-	void AbstractWidget::ReportMarginUpdate(const ContainerUpdateRequest& request)
-	{
-		ContainerProxy::RequestMarginUpdate(m_container, request);
-	}
-
-	void AbstractWidget::ReportRefreshRequest(const ContainerUpdateRequest& request)
+	void AbstractWidget::ReportRefresh(const RefreshRequest& request)
 	{
 		ContainerProxy::RequestRefresh(m_container, request);
 	}
@@ -449,6 +406,11 @@ namespace BlendInt {
 		}
 
 		ReportVisibilityRequest(request);
+	}
+
+	void AbstractWidget::PerformRefresh(const RefreshRequest& request)
+	{
+		ReportRefresh(request);
 	}
 
 	void AbstractWidget::ReportSizeUpdate(const SizeUpdateRequest& request)

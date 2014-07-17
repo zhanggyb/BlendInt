@@ -64,7 +64,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateContainer (const ContainerUpdateRequest& request);
+		virtual void PerformMarginUpdate (const Margin& margin);
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 

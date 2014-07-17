@@ -119,27 +119,12 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void Frame::UpdateContainer (const ContainerUpdateRequest& request)
+	void Frame::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
+		if(sub_widget()) {
+			set_margin(request);
 
-			case ContainerMargin: {
-
-				if (sub_widget()) {
-					const Margin* margin_p =
-									static_cast<const Margin*>(request.data());
-					set_margin(*margin_p);
-
-					FillSubWidget(position(), size(), *margin_p);
-				}
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-
+			FillSubWidget(position(), size(), request);
 		}
 	}
 
