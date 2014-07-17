@@ -154,6 +154,16 @@ namespace BlendInt
 
 		AbstractContainer::RemoveSubWidget(widget->container(), widget);
 
+		if(widget->focused()) {
+
+			assert(m_focused_widget == widget);
+
+			widget->set_focus(false);
+			widget->destroyed().disconnectOne(this, &Context::OnFocusedWidgetDestroyed);
+			m_focused_widget = 0;
+
+		}
+
 		if(section->m_set.size() == 0) {
 			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
 			if(section->managed() && (section->count() == 0)) {

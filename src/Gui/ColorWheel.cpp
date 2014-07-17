@@ -99,7 +99,7 @@ namespace BlendInt {
 
 		//glm::mat4 icon_mvp;
 		//icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
-		//m_picker.Draw(icon_mvp);
+		m_picker.Draw(glm::vec3(position().x() + size().width() / 2.f + 8.f, position().y() + 12.f, 0.f));
 
 		return Accept;
 	}

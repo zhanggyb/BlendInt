@@ -155,6 +155,9 @@ namespace BlendInt {
 			m_outer->Bind();
 			tool.SetOuterBufferData(m_outer.get());
 			set_size(*request.size());
+
+			VBox::PerformSizeUpdate(request);
+			return;	// return to avoid double report of size update
 		}
 
 		ReportSizeUpdate(request);

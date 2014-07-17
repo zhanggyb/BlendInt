@@ -78,10 +78,21 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	VirtualWindow* vw = Manage(new VirtualWindow);
+	MenuBar* menubar = Manage(new MenuBar);
 
-	context->PushBack(vw);
-	vw->SetPosition(100, 100);
+	RefPtr<Menu> file_menu(new Menu);
+
+    file_menu->SetRoundCornerType(RoundAll);
+    file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    file_menu->AddAction("MenuItem2", "Ctrl + 1");
+    file_menu->AddAction("MenuItem3", "Ctrl + 1");
+    file_menu->AddAction("MenuItem4", "Ctrl + 1");
+    file_menu->AddAction("MenuItem5");
+
+	menubar->AddMenu(String("File"), file_menu);
+	menubar->SetPosition(200, 600);
+
+	context->PushBack(menubar);
 
 	RunLoop(win);
 

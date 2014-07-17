@@ -378,15 +378,12 @@ namespace BlendInt {
 			original_active->SetRoundCornerType(RoundAll);
 
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
-			//menu->property_changed().disconnectAll();
 		}
 
 		if(m_active_button) {
 			Context* context = Context::GetContext(this);
 
-			//int max_layer = context->GetMaxLayer();
 			RefPtr<Menu> menu = m_active_button->menu();
-			//menu->SetLayer(max_layer + 1);	// show menu in the top layer
 
 			int y = m_active_button->position().y();
 			y = y - menu->size().height();
@@ -401,7 +398,6 @@ namespace BlendInt {
 			context->SetFocusedWidget(menu.get());
 
 			events()->connect(menu->triggered(), this, &MenuBar::OnMenuItemTriggered);
-			//events()->connect(menu->property_changed(), this, &MenuBar::OnMenuHide);
 		}
 	}
 
@@ -411,7 +407,6 @@ namespace BlendInt {
 
 		if(m_active_button) {
 			if(RefPtr<Menu> menu = m_active_button->menu()) {
-				//menu->property_changed().disconnectOne(this, &MenuBar::OnMenuHide);
 				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
 				Context* context = Context::GetContext(this);

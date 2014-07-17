@@ -114,7 +114,7 @@ namespace BlendInt {
 		m_dot.Draw(
 		        glm::vec3(
 		                position().x() + size().width() / 2
-		                        - m_dot.size().width() / 2, 12, 0.f));
+		                        - m_dot.size().width() / 2, position().y() + 12.f, 0.f));
 
 		return Accept;
 	}

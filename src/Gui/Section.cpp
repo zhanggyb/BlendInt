@@ -136,7 +136,7 @@ namespace BlendInt {
 				delete this;
 			} else {
 				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
-						", and it's referenced by a smart pointer, it will not be deleted automatically");
+						", it will not be deleted automatically");
 			}
 
 		}
