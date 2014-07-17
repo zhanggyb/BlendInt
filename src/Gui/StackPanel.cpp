@@ -72,40 +72,24 @@ namespace BlendInt {
 		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 		glBindVertexArray(0);
 
 		program->Reset();
 		return Ignore;
 	}
 	
-	void StackPanel::UpdateGeometry (const GeometryUpdateRequest& request)
+	void StackPanel::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* new_size = static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*new_size, 0, RoundNone, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_inner->Reset();
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
-			Stack::UpdateGeometry(request);
-			return;
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_inner->Reset();
 		}
 
-		ReportGeometryUpdate(request);
+		Stack::PerformSizeUpdate(request);
 	}
 
 	void StackPanel::InitializeStackPanel()

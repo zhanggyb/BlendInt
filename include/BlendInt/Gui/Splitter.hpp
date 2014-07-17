@@ -26,13 +26,14 @@
 
 #include <BlendInt/Gui/AbstractDequeContainer.hpp>
 
-namespace BlendInt {
+namespace BlendInt
+{
 
 	class Splitter;
 
 	class SplitterHandle: public AbstractWidget
 	{
-		DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
+	DISALLOW_COPY_AND_ASSIGN(SplitterHandle);
 
 	public:
 
@@ -50,11 +51,7 @@ namespace BlendInt {
 
 	protected:
 
-		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
-
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
-
-		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -64,9 +61,11 @@ namespace BlendInt {
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuPressEvent (
+		        const ContextMenuEvent& event);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuReleaseEvent (
+		        const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
@@ -99,7 +98,7 @@ namespace BlendInt {
 
 	class Splitter: public AbstractDequeContainer
 	{
-		DISALLOW_COPY_AND_ASSIGN(Splitter);
+	DISALLOW_COPY_AND_ASSIGN(Splitter);
 
 	public:
 
@@ -135,11 +134,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateContainer (const ContainerUpdateRequest& request);
+		virtual void PerformMarginUpdate (const Margin& request);
 
-		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -147,9 +146,11 @@ namespace BlendInt {
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuPressEvent (
+		        const ContextMenuEvent& event);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuReleaseEvent (
+		        const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
@@ -157,9 +158,12 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		void FillSubWidgetsInSplitter (const Point& out_pos, const Size& out_size, const Margin& margin, Orientation orientation);
+		void FillSubWidgetsInSplitter (const Point& out_pos,
+		        const Size& out_size, const Margin& margin,
+		        Orientation orientation);
 
-		void FillSubWidgetsInSplitter (const Point& pos, const Size& size, Orientation orientation);
+		void FillSubWidgetsInSplitter (const Point& pos, const Size& size,
+		        Orientation orientation);
 
 		/**
 		 * @brief Fill the sub widgets in this container based on the current size
@@ -169,53 +173,56 @@ namespace BlendInt {
 		 * @param height
 		 * @param orientation
 		 */
-		void FillSubWidgetsInSplitter (int x, int y, int width, int height, Orientation orientation);
+		void FillSubWidgetsInSplitter (int x, int y, int width, int height,
+		        Orientation orientation);
 
 	private:
 
 		void DistributeHorizontally (int x, int width);
 
 		void DistributeHorizontallyInProportion (int x, int width,
-						std::deque<int>* widget_deque, int widget_width_sum,
-						std::deque<int>* prefer_deque, int prefer_width_sum);
+		        std::deque<int>* widget_deque, int widget_width_sum,
+		        std::deque<int>* prefer_deque, int prefer_width_sum);
 
 		void DistributeExpandableWidgetsHorizontally (int x, int width,
-						int unexpandable_width_sum,
-						std::deque<int>* widget_deque, int widget_width_sum,
-						std::deque<int>* prefer_deque, int prefer_width_sum);
+		        int unexpandable_width_sum, std::deque<int>* widget_deque,
+		        int widget_width_sum, std::deque<int>* prefer_deque,
+		        int prefer_width_sum);
 
 		void DistributeUnexpandableWidgetsHorizontally (int x, int width,
-						std::deque<int>* widget_deque, int widget_width_sum,
-						std::deque<int>* prefer_deque, int prefer_width_sum);
+		        std::deque<int>* widget_deque, int widget_width_sum,
+		        std::deque<int>* prefer_deque, int prefer_width_sum);
 
 		void DistributeVertically (int y, int height);
 
 		void DistributeVerticallyInProportion (int y, int height,
-						std::deque<int>* widget_deque, int widget_height_sum,
-						std::deque<int>* prefer_deque, int prefer_height_sum);
+		        std::deque<int>* widget_deque, int widget_height_sum,
+		        std::deque<int>* prefer_deque, int prefer_height_sum);
 
 		void DistributeExpandableWidgetsVertically (int y, int height,
-						int unexpandable_width_sum,
-						std::deque<int>* widget_deque, int widget_height_sum,
-						std::deque<int>* prefer_deque, int prefer_height_sum);
+		        int unexpandable_width_sum, std::deque<int>* widget_deque,
+		        int widget_height_sum, std::deque<int>* prefer_deque,
+		        int prefer_height_sum);
 
 		void DistributeUnexpandableWidgetsVertically (int y, int height,
-						std::deque<int>* widget_deque, int widget_height_sum,
-						std::deque<int>* prefer_deque, int prefer_height_sum);
+		        std::deque<int>* widget_deque, int widget_height_sum,
+		        std::deque<int>* prefer_deque, int prefer_height_sum);
 
 		void AlignHorizontally (int y, int height);
 
 		void AlignVertically (int x, int width);
 
-		void AlignSubWidgets (Orientation orientation, const Size& out_size, const Margin& margin);
+		void AlignSubWidgets (Orientation orientation, const Size& out_size,
+		        const Margin& margin);
 
-		int GetAverageRoom (Orientation orientation, const Size& out_size, const Margin& margin);
+		int GetAverageRoom (Orientation orientation, const Size& out_size,
+		        const Margin& margin);
 
-		int GetWidgetsRoom (Orientation orientation, const Size& out_size, const Margin& margin);
+		int GetWidgetsRoom (Orientation orientation, const Size& out_size,
+		        const Margin& margin);
 
 		Orientation m_orientation;
 	};
 }
-
 
 #endif /* _BLENDINT_GUI_SPLITTER_HPP_ */

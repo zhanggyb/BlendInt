@@ -99,114 +99,90 @@ namespace BlendInt {
 
 		//glm::mat4 icon_mvp;
 		//icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
-		//m_picker.Draw(icon_mvp);
+		m_picker.Draw(glm::vec3(position().x() + size().width() / 2.f + 8.f, position().y() + 12.f, 0.f));
 
 		return Accept;
 	}
 	
-	void ColorWheel::UpdateGeometry (const GeometryUpdateRequest& request)
+	void ColorWheel::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if(request.target() == this) {
+		if (request.target() == this) {
 
-			switch(request.type()) {
+			int radius = std::min(request.size()->width(), request.size()->height()) / 2;
 
-				case WidgetSize: {
+			m_inner->Bind();
 
-					const Size* size_p = static_cast<const Size*>(request.data());
+			GLfloat* ptr = (GLfloat*) m_inner->Map(GL_READ_WRITE);
 
-					int radius = std::min(size_p->width(), size_p->height()) / 2;
+			double rad = 0.0;
+			float x1 = 0.f;
+			float y1 = 0.f;
 
-					m_inner->Bind();
+			ptr = ptr + 6;
+			int i = 1;
+			for (int angle = -30; angle < 330; angle = angle + 5) {
+				rad = angle * M_PI / 180.0;
 
-					GLfloat* ptr = (GLfloat*) m_inner->Map(GL_READ_WRITE);
+				x1 = (radius - 1) * cos(rad);
+				y1 = (radius - 1) * sin(rad);
 
-					double rad = 0.0;
-					float x1 = 0.f;
-					float y1 = 0.f;
-
-					ptr = ptr + 6;
-					int i = 1;
-					for(int angle = -30; angle < 330; angle = angle + 5)
-					{
-						rad = angle * M_PI / 180.0;
-
-						x1 = (radius - 1) * cos(rad);
-						y1 = (radius - 1) * sin(rad);
-
-						*(ptr) = x1;
-						*(ptr + 1) = y1;
-						ptr += 6;
-						i++;
-					}
-
-					rad = 330 * M_PI / 180.0;
-					x1 = (radius - 1) * cos(rad);
-					y1 = (radius - 1) * sin(rad);
-
-					*(ptr) = x1;
-					*(ptr + 1) = y1;
-
-					m_inner->Unmap();
-					m_inner->Reset();
-
-					m_outline->Bind();
-
-					ptr = (GLfloat*) m_outline->Map(GL_READ_WRITE);
-					float x2 = 0.f;
-					float y2 = 0.f;
-
-					i = 0;
-					for(int angle = -30; angle < 330; angle = angle + 5)
-					{
-						rad = angle * M_PI / 180.0;
-
-						x1 = (radius - 1) * cos(rad);
-						y1 = (radius - 1) * sin(rad);
-						x2 = radius * cos(rad);
-						y2 = radius * sin(rad);
-
-						*(ptr + 0) = x1;
-						*(ptr + 1) = y1;
-						*(ptr + 2) = x2;
-						*(ptr + 3) = y2;
-						ptr += 4;
-						i++;
-					}
-
-					rad = 330 * M_PI / 180.0;
-					x1 = (radius - 1) * cos(rad);
-					y1 = (radius - 1) * sin(rad);
-					x2 = radius * cos(rad);
-					y2 = radius * sin(rad);
-
-					*(ptr + 0) = x1;
-					*(ptr + 1) = y1;
-					*(ptr + 2) = x2;
-					*(ptr + 3) = y2;
-
-					m_outline->Unmap();
-					m_outline->Reset();
-
-					break;
-				}
-
-				default:
-					break;
-
+				*(ptr) = x1;
+				*(ptr + 1) = y1;
+				ptr += 6;
+				i++;
 			}
 
+			rad = 330 * M_PI / 180.0;
+			x1 = (radius - 1) * cos(rad);
+			y1 = (radius - 1) * sin(rad);
+
+			*(ptr) = x1;
+			*(ptr + 1) = y1;
+
+			m_inner->Unmap();
+			m_inner->Reset();
+
+			m_outline->Bind();
+
+			ptr = (GLfloat*) m_outline->Map(GL_READ_WRITE);
+			float x2 = 0.f;
+			float y2 = 0.f;
+
+			i = 0;
+			for (int angle = -30; angle < 330; angle = angle + 5) {
+				rad = angle * M_PI / 180.0;
+
+				x1 = (radius - 1) * cos(rad);
+				y1 = (radius - 1) * sin(rad);
+				x2 = radius * cos(rad);
+				y2 = radius * sin(rad);
+
+				*(ptr + 0) = x1;
+				*(ptr + 1) = y1;
+				*(ptr + 2) = x2;
+				*(ptr + 3) = y2;
+				ptr += 4;
+				i++;
+			}
+
+			rad = 330 * M_PI / 180.0;
+			x1 = (radius - 1) * cos(rad);
+			y1 = (radius - 1) * sin(rad);
+			x2 = radius * cos(rad);
+			y2 = radius * sin(rad);
+
+			*(ptr + 0) = x1;
+			*(ptr + 1) = y1;
+			*(ptr + 2) = x2;
+			*(ptr + 3) = y2;
+
+			m_outline->Unmap();
+			m_outline->Reset();
+
+			set_size(*request.size());
 		}
 
-		ReportGeometryUpdate(request);
-	}
-
-	bool ColorWheel::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void ColorWheel::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType ColorWheel::FocusEvent (bool focus)

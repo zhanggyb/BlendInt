@@ -30,7 +30,8 @@
 #include <BlendInt/OpenGL/GLSLProgram.hpp>
 #include <BlendInt/Gui/AbstractCamera.hpp>
 
-namespace BlendInt {
+namespace BlendInt
+{
 
 	class AbstractPrimitive: public Object
 	{
@@ -38,7 +39,7 @@ namespace BlendInt {
 
 		AbstractPrimitive ();
 
-		virtual ~AbstractPrimitive();
+		virtual ~AbstractPrimitive ();
 
 		/**
 		 * @brief Render the primitive in Viewport3D
@@ -49,7 +50,7 @@ namespace BlendInt {
 		 * 	- glClear
 		 */
 		virtual void Render (const glm::mat4& projection_matrix,
-				const glm::mat4& view_matrix) = 0;
+		        const glm::mat4& view_matrix) = 0;
 
 	};
 

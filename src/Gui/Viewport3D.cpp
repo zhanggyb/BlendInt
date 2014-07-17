@@ -214,28 +214,16 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void Viewport3D::UpdateGeometry (const GeometryUpdateRequest& request)
+	void Viewport3D::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if(request.target() == this) {
+		if (request.target() == this) {
+			m_default_camera->SetPerspective(m_default_camera->fovy(),
+			        1.f * request.size()->width() / request.size()->height());
 
-			switch (request.type()) {
-				case WidgetSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-					m_default_camera->SetPerspective(m_default_camera->fovy(),
-									1.f * size_p->width() / size_p->height());
-
-					set_size(*size_p);
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			set_size(*request.size());
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
 	void Viewport3D::Render ()
@@ -285,15 +273,6 @@ namespace BlendInt {
 	bool Viewport3D::IsExpandY() const
 	{
 		return true;
-	}
-
-	bool Viewport3D::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void Viewport3D::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType Viewport3D::FocusEvent (bool focus)

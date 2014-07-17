@@ -78,23 +78,21 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	Workspace* ws = Manage(new Workspace);
-	ws->SetPosition(100, 100);
-	ws->Resize(800, 600);
+	MenuBar* menubar = Manage(new MenuBar);
 
-	VirtualWindow* vw = Manage(new VirtualWindow);
+	RefPtr<Menu> file_menu(new Menu);
 
-	ws->PushBack(vw);
+    file_menu->SetRoundCornerType(RoundAll);
+    file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+    file_menu->AddAction("MenuItem2", "Ctrl + 1");
+    file_menu->AddAction("MenuItem3", "Ctrl + 1");
+    file_menu->AddAction("MenuItem4", "Ctrl + 1");
+    file_menu->AddAction("MenuItem5");
 
-	context->PushBack(ws);
+	menubar->AddMenu(String("File"), file_menu);
+	menubar->SetPosition(200, 600);
 
-	ColorSelector* cs = 0;
-	for(int i = 0; i < 20; i++)
-	{
-		cs = Manage(new ColorSelector);
-		cs->SetPosition(950, 100 + i * 10);
-		context->PushBack(cs);
-	}
+	context->PushBack(menubar);
 
 	RunLoop(win);
 

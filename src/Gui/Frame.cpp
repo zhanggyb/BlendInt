@@ -119,78 +119,57 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void Frame::UpdateContainer (const ContainerUpdateRequest& request)
+	void Frame::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
+		if(sub_widget()) {
+			set_margin(request);
 
-			case ContainerMargin: {
-
-				if (sub_widget()) {
-					const Margin* margin_p =
-									static_cast<const Margin*>(request.data());
-					set_margin(*margin_p);
-
-					FillSubWidget(position(), size(), *margin_p);
-				}
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-
+			FillSubWidget(position(), size(), request);
 		}
 	}
 
-	bool Frame::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	bool Frame::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
-		if (request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
+		if(request.source()->container() == this) {
 			return false;
 		}
+
+		return true;
 	}
 
-	void Frame::UpdateGeometry (const GeometryUpdateRequest& request)
+	bool Frame::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					set_size(*size_p);
-
-					if (sub_widget()) {
-						FillSubWidget(position(), *size_p, margin());
-					}
-
-					break;
-				}
-
-				case WidgetPosition: {
-					if (sub_widget()) {
-						const Point* pos_p =
-										static_cast<const Point*>(request.data());
-						set_position(*pos_p);
-						SetSubWidgetPosition(sub_widget(),
-										pos_p->x() + margin().left(),
-										pos_p->y() + margin().bottom());
-					}
-					break;
-				}
-
-				default:
-					break;
-			}
-
+		if(request.source()->container() == this) {
+			return false;
 		}
 
-		ReportGeometryUpdate(request);
+		return true;
+	}
+
+	void Frame::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_size(*request.size());
+
+			if (sub_widget()) {
+				FillSubWidget(position(), *request.size(), margin());
+			}
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void Frame::PerformPositionUpdate (
+			const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_position(*request.position());
+			SetSubWidgetPosition(sub_widget(),
+					request.position()->x() + margin().left(),
+					request.position()->y() + margin().bottom());
+		}
+
+		ReportPositionUpdate(request);
 	}
 
 	ResponseType Frame::CursorEnterEvent (bool entered)

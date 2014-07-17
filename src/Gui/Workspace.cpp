@@ -119,72 +119,59 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void Workspace::UpdateContainer (const ContainerUpdateRequest& request)
+	void Workspace::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
-		ReportContainerUpdate(request);
-	}
-
-	bool Workspace::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void Workspace::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					Size inner_size(size_p->width() - margin().hsum(), size_p->height() - margin().vsum());
-
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0.f);
-					m_background->Bind();
-					tool.SetInnerBufferData(m_background.get());
-
-					tool.Setup(inner_size, 0, RoundNone, 0.f);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					m_inner->Reset();
-
-					set_size(*size_p);
-					break;
-				}
-
-				default:
-					break;
-			}
-
-		} else if (request.source()->container() == this) {
-
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-					break;
-				}
-
-				case WidgetSize:
-				case WidgetRoundCornerType:
-				case WidgetRoundCornerRadius: {
-					EnableShadow(request.source());
-					break;
-				}
-
-				default:
-					break;
-
-			}
+		if (request.source()->container() == this) {
+			EnableShadow(request.source());
 		}
 
-		ReportGeometryUpdate(request);
+		ReportPositionUpdate(request);
 	}
 
-	void Workspace::BroadcastUpdate (const GeometryUpdateRequest& request)
+	void Workspace::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
+		if (request.target() == this) {
+			Size inner_size(request.size()->width() - margin().hsum(),
+			        request.size()->height() - margin().vsum());
+
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0.f);
+			m_background->Bind();
+			tool.SetInnerBufferData(m_background.get());
+
+			tool.Setup(inner_size, 0, RoundNone, 0.f);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+
+			m_inner->Reset();
+
+			set_size(*request.size());
+		} else if (request.source()->container() == this) {
+
+			EnableShadow(request.source());
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void Workspace::PerformRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if (request.source()->container() == this) {
+			EnableShadow(request.source());
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void Workspace::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.source()->container() == this) {
+			EnableShadow(request.source());
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType Workspace::Draw (const RedrawEvent& event)

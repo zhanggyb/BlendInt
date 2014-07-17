@@ -140,54 +140,33 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void TabHeader::UpdateContainer (const ContainerUpdateRequest& request)
+	void TabHeader::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
-
-			case ContainerMargin: {
-				// TODO: reset sub widgets
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-
-		}
+		// TODO: change sub widgets
 	}
 
-	void TabHeader::UpdateGeometry (const GeometryUpdateRequest& request)
+	void TabHeader::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					tool.UpdateInnerBuffer(m_buffer.get());
-					set_size(*size_p);
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
 		}
 
-		ReportGeometryUpdate(request);
+		ReportPositionUpdate(request);
+	}
+
+	void TabHeader::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			tool.UpdateInnerBuffer(m_buffer.get());
+			set_size(*request.size());
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType TabHeader::Draw (const RedrawEvent& event)
@@ -205,7 +184,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
 		program->Reset();
@@ -253,17 +232,6 @@ namespace BlendInt {
 	void TabHeader::OnButtonIndexToggled(int index, bool toggled)
 	{
 		m_button_index_toggled.fire(index, toggled);
-	}
-
-	bool TabHeader::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
-			return false;
-		}
 	}
 
 	int TabHeader::GetLastPosition() const

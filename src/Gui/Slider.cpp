@@ -94,68 +94,6 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	bool Slider::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-
-		switch (request.type()) {
-
-			case SliderPropertyMinimum: {
-
-				const int* min_p = static_cast<const int*>(request.data());
-
-				if (*min_p >= maximum())
-					return false;
-
-				return true;
-			}
-
-			case SliderPropertyMaximum: {
-
-				const int* max_p = static_cast<const int*>(request.data());
-
-				if (*max_p <= minimum())
-					return false;
-
-				return true;
-			}
-
-			default: {
-				return true;
-			}
-
-		}
-
-	}
-
-	void Slider::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-
-		switch (request.type()) {
-			case WidgetPosition: {
-				// don't care position change
-				break;
-			}
-
-			case WidgetSize: {
-				/*
-				 const Size* size_p = static_cast<const Size*>(request.data());
-
-				 int switch_radius = std::min(m_slide.size().width(),
-				 m_slide.size().height()) / 2;
-				 */
-
-				break;
-			}
-			default:
-				break;
-		}
-
-	}
-
-	void Slider::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
-	}
-
 	void Slider::UpdateSlider(const SliderUpdateRequest& request)
 	{
 		switch(request.type()) {

@@ -16,8 +16,6 @@ public:
 	
 protected:
 	
-	virtual void Update (const BI::UpdateRequest& request);
-
 	virtual BI::ResponseType Draw (const BI::RedrawEvent& event);
 	
 private:

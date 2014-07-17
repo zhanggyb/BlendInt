@@ -57,58 +57,36 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void MenuBar::UpdateContainer(const ContainerUpdateRequest& request)
+	void MenuBar::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
-
-			// TODO: set margin
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
+		// TODO: change margin
 	}
 
-	void MenuBar::UpdateGeometry (const GeometryUpdateRequest& request)
+	void MenuBar::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
-		if(request.target() == this) {
+		if (request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
 
-			switch (request.type()) {
-
-				case WidgetSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_buffer->Bind();
-					tool.SetInnerBufferData(m_buffer.get());
-
-					set_size(*size_p);
-					break;
-				}
-
-				case WidgetPosition: {
-
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
 		}
 
-		ReportGeometryUpdate(request);
+		ReportPositionUpdate(request);
+	}
+
+	void MenuBar::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_buffer->Bind();
+			tool.SetInnerBufferData(m_buffer.get());
+
+			set_size(*request.size());
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType MenuBar::Draw (const RedrawEvent& event)
@@ -126,7 +104,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
 		program->Reset();
@@ -400,15 +378,12 @@ namespace BlendInt {
 			original_active->SetRoundCornerType(RoundAll);
 
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
-			//menu->property_changed().disconnectAll();
 		}
 
 		if(m_active_button) {
 			Context* context = Context::GetContext(this);
 
-			//int max_layer = context->GetMaxLayer();
 			RefPtr<Menu> menu = m_active_button->menu();
-			//menu->SetLayer(max_layer + 1);	// show menu in the top layer
 
 			int y = m_active_button->position().y();
 			y = y - menu->size().height();
@@ -423,7 +398,6 @@ namespace BlendInt {
 			context->SetFocusedWidget(menu.get());
 
 			events()->connect(menu->triggered(), this, &MenuBar::OnMenuItemTriggered);
-			//events()->connect(menu->property_changed(), this, &MenuBar::OnMenuHide);
 		}
 	}
 
@@ -433,7 +407,6 @@ namespace BlendInt {
 
 		if(m_active_button) {
 			if(RefPtr<Menu> menu = m_active_button->menu()) {
-				//menu->property_changed().disconnectOne(this, &MenuBar::OnMenuHide);
 				menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
 				Context* context = Context::GetContext(this);
@@ -455,10 +428,10 @@ namespace BlendInt {
 
 			// DBG_PRINT_MSG("menu at layer: %d", menu->z());
 
-			if(type == WidgetVisibility) {
+			//if(type == WidgetVisibility) {
 				Context* context = Context::GetContext(this);
 				context->Remove(menu);
-			}
+			//}
 		}
 
 		if(m_active_button) {

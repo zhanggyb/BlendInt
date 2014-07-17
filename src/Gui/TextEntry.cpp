@@ -111,12 +111,12 @@ namespace BlendInt {
 
 		int radius_plus = 0;
 
-		if((round_corner_type() & RoundTopLeft) || (round_corner_type() & RoundBottomLeft)) {
-			radius_plus += round_corner_radius();
+		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
+			radius_plus += round_radius();
 		}
 
-		if((round_corner_type() & RoundTopRight) || (round_corner_type() & RoundBottomRight)) {
-			radius_plus += round_corner_radius();
+		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
+			radius_plus += round_radius();
 		}
 
 		int max_font_height = m_font.GetHeight();
@@ -219,93 +219,90 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void TextEntry::UpdateGeometry (const GeometryUpdateRequest& request)
+	void TextEntry::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			switch (request.type()) {
 
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-					const Color& color = Theme::instance->text().inner;
-					short shadetop = Theme::instance->text().shadetop;
-					short shadedown = Theme::instance->text().shadedown;
+			const Color& color = Theme::instance->text().inner;
+			short shadetop = Theme::instance->text().shadetop;
+			short shadedown = Theme::instance->text().shadedown;
 
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(),
-					        round_corner_type(), round_corner_radius(), color,
-					        Vertical, shadetop, shadedown);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			        round_radius(), color, Vertical, shadetop, shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
 
-					m_cursor_buffer->Bind();
-					GLfloat* buf_p = (GLfloat*) m_cursor_buffer->Map(
-					        GL_READ_WRITE);
-					*(buf_p + 5) = static_cast<float>(size_p->height()
-					        - default_textentry_padding.vsum());
-					*(buf_p + 7) = static_cast<float>(size_p->height()
-					        - default_textentry_padding.vsum());
-					m_cursor_buffer->Unmap();
-					m_cursor_buffer->Reset();
+			m_cursor_buffer->Bind();
+			GLfloat* buf_p = (GLfloat*) m_cursor_buffer->Map(
+			GL_READ_WRITE);
+			*(buf_p + 5) = static_cast<float>(request.size()->height()
+			        - default_textentry_padding.vsum());
+			*(buf_p + 7) = static_cast<float>(request.size()->height()
+			        - default_textentry_padding.vsum());
+			m_cursor_buffer->Unmap();
+			m_cursor_buffer->Reset();
 
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
+			set_size(*request.size());
+			Refresh();
 
-				case WidgetRoundCornerType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					const Color& color = Theme::instance->text().inner;
-					short shadetop = Theme::instance->text().shadetop;
-					short shadedown = Theme::instance->text().shadedown;
-
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-					        round_corner_radius(), color, Vertical, shadetop,
-					        shadedown);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					set_round_corner_type(*type_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					const float* radius_p =
-					        static_cast<const float*>(request.data());
-
-					const Color& color = Theme::instance->text().inner;
-					short shadetop = Theme::instance->text().shadetop;
-					short shadedown = Theme::instance->text().shadedown;
-
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(),
-					        round_corner_type(), *radius_p, color, Vertical,
-					        shadetop, shadedown);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					m_font.set_pen(*radius_p + default_textentry_padding.left(),
-					        m_font.pen().y());
-
-					set_round_corner_radius(*radius_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
+	}
+
+	void TextEntry::PerformRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+
+			const Color& color = Theme::instance->text().inner;
+			short shadetop = Theme::instance->text().shadetop;
+			short shadedown = Theme::instance->text().shadedown;
+
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius(), color, Vertical, shadetop, shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void TextEntry::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			const Color& color = Theme::instance->text().inner;
+			short shadetop = Theme::instance->text().shadetop;
+			short shadedown = Theme::instance->text().shadedown;
+
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), round_type(),
+			        *request.round_radius(), color, Vertical, shadetop,
+			        shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			m_font.set_pen(
+			        *request.round_radius() + default_textentry_padding.left(),
+			        m_font.pen().y());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType TextEntry::Draw (const RedrawEvent& event)
@@ -321,13 +318,13 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 
 		program->SetVertexAttrib4fv("a_color", Theme::instance->text().outline.data());
 		program->SetUniform1i("u_AA", 1);
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		m_font.Print(position(), m_text, m_length, m_start);
 
@@ -366,7 +363,7 @@ namespace BlendInt {
 	{
 		int h = m_font.GetHeight();
 
-		set_size(h + round_corner_radius() * 2 + default_textentry_padding.hsum() + 120,
+		set_size(h + round_radius() * 2 + default_textentry_padding.hsum() + 120,
 						h + default_textentry_padding.vsum());
 
 		const Color& color = Theme::instance->text().inner;
@@ -376,8 +373,8 @@ namespace BlendInt {
 		VertexTool tool;
 		tool.Setup (size(),
 						DefaultBorderWidth(),
-						round_corner_type(),
-						round_corner_radius(),
+						round_type(),
+						round_radius(),
 						color,
 						Vertical,
 						shadetop,
@@ -567,15 +564,6 @@ namespace BlendInt {
 
 			Refresh();
 		}
-	}
-
-	bool TextEntry::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void TextEntry::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType TextEntry::CursorEnterEvent (bool entered)

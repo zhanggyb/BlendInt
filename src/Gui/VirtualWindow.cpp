@@ -46,8 +46,8 @@ namespace BlendInt {
 	VirtualWindow::VirtualWindow ()
 	: AbstractVectorContainer(2)
 	{
-		set_round_corner_type(RoundTopLeft | RoundTopRight);
-		set_round_corner_radius(10.f);
+		set_round_type(RoundTopLeft | RoundTopRight);
+		set_round_radius(10.f);
 		set_size(400, 300);
 		set_margin(0, 0, 0, 0);
 
@@ -66,22 +66,6 @@ namespace BlendInt {
 		if(SetSubWidget(ContentIndex, widget)) {
 			FillSubWidgets(position(), size());
 		}
-	}
-
-	void VirtualWindow::UpdateContainer (
-	        const ContainerUpdateRequest& request)
-	{
-	}
-
-	bool VirtualWindow::UpdateGeometryTest (
-	        const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void VirtualWindow::BroadcastUpdate (
-	        const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType VirtualWindow::Draw (const RedrawEvent& event)
@@ -150,85 +134,62 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void VirtualWindow::UpdateGeometry (const GeometryUpdateRequest& request)
+	void VirtualWindow::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			switch (request.type()) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
 
-				case WidgetPosition: {
+			MoveSubWidgets(x, y);
 
-					const Point* pos_p = static_cast<const Point*>(request.data());
+			set_position(*request.position());
 
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					MoveSubWidgets(x, y);
-
-					set_position(*pos_p);
-
-					Refresh();
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-
-					int h = size_p->height() - sub_widget(0)->size().height();
-					if (h < 0) h = 0;
-
-					Size vw_size (size_p->width(), h);
-					VertexTool tool;
-					tool.Setup(vw_size, 0, RoundNone, 0.f);
-
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_size(*size_p);
-
-					FillSubWidgets(position(), *size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					/*
-					const int* type_p = static_cast<const int*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-					        round_corner_radius());
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_round_corner_type(*type_p);
-					*/
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					/*
-					const float* radius_p =
-					        static_cast<const float*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(),
-					        round_corner_type(), *radius_p);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_round_corner_radius(*radius_p);
-					*/
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportPositionUpdate(request);
+	}
+
+	void VirtualWindow::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int h = request.size()->height() - sub_widget(0)->size().height();
+			if (h < 0) h = 0;
+
+			Size vw_size (request.size()->width(), h);
+			VertexTool tool;
+			tool.Setup(vw_size, 0, RoundNone, 0.f);
+
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+
+			set_size(*request.size());
+
+			FillSubWidgets(position(), *request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void VirtualWindow::PerformRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void VirtualWindow::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	void VirtualWindow::FillSubWidgets(const Point& out_pos, const Size& size)

@@ -238,23 +238,6 @@ TexAtlasViewer::~TexAtlasViewer()
 	glDeleteVertexArrays(1, &m_vao);
 }
 
-void TexAtlasViewer::Update(const BI::UpdateRequest& request)
-{
-		switch (request.type()) {
-
-			case BI::WidgetSize: {
-
-				//const Size* size_p = static_cast<const Size*>(request.data());
-
-				break;
-			}
-
-			default:
-				break;
-		}
-
-}
-
 BI::ResponseType TexAtlasViewer::Draw (const BI::RedrawEvent& event)
 {
 	//glm::vec3 pos((float)position().x(), (float)position().y(), 0.f);

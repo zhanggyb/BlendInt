@@ -52,12 +52,12 @@ namespace BlendInt {
 	: AbstractWidget(),
 	  m_status_down(false)
 	{
-		set_round_corner_type(RoundAll);
+		set_round_type(RoundAll);
 
 		int h = m_font.GetHeight();
 
 		set_size(
-		        h + round_corner_radius() * 2 + default_combobox_padding.hsum() + 100,
+		        h + round_radius() * 2 + default_combobox_padding.hsum() + 100,
 		        h + default_combobox_padding.vsum());
 
 		InitializeComboBox();
@@ -74,12 +74,12 @@ namespace BlendInt {
 
 		int radius_plus = 0;
 
-		if((round_corner_type() & RoundTopLeft) || (round_corner_type() & RoundBottomLeft)) {
-			radius_plus += round_corner_radius();
+		if((round_type() & RoundTopLeft) || (round_type() & RoundBottomLeft)) {
+			radius_plus += round_radius();
 		}
 
-		if((round_corner_type() & RoundTopRight) || (round_corner_type() & RoundBottomRight)) {
-			radius_plus += round_corner_radius();
+		if((round_type() & RoundTopRight) || (round_type() & RoundBottomRight)) {
+			radius_plus += round_radius();
 		}
 
 		int max_font_height = m_font.GetHeight();
@@ -105,80 +105,77 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ComboBox::UpdateGeometry (const GeometryUpdateRequest& request)
+	void ComboBox::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if(request.target()) {
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(),
+							DefaultBorderWidth(),
+							round_type(),
+							round_radius(),
+							Theme::instance->menu().inner,
+							Vertical,
+							Theme::instance->menu().shadetop,
+							Theme::instance->menu().shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
 
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p,
-									DefaultBorderWidth(),
-									round_corner_type(),
-									round_corner_radius(),
-									Theme::instance->menu().inner,
-									Vertical,
-									Theme::instance->menu().shadetop,
-									Theme::instance->menu().shadedown);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(),
-									DefaultBorderWidth(),
-									*type_p,
-									round_corner_radius(),
-									Theme::instance->menu().inner,
-									Vertical,
-									Theme::instance->menu().shadetop,
-									Theme::instance->menu().shadedown);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-					set_round_corner_type(*type_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					const float* radius_p =
-									static_cast<const float*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(),
-									DefaultBorderWidth(),
-									round_corner_type(),
-									*radius_p,
-									Theme::instance->menu().inner,
-									Vertical,
-									Theme::instance->menu().shadetop,
-									Theme::instance->menu().shadedown);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-					set_round_corner_radius(*radius_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			set_size(*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
+	}
+
+	void ComboBox::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(),
+							DefaultBorderWidth(),
+							*request.round_type(),
+							round_radius(),
+							Theme::instance->menu().inner,
+							Vertical,
+							Theme::instance->menu().shadetop,
+							Theme::instance->menu().shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void ComboBox::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(),
+							DefaultBorderWidth(),
+							round_type(),
+							*request.round_radius(),
+							Theme::instance->menu().inner,
+							Vertical,
+							Theme::instance->menu().shadetop,
+							Theme::instance->menu().shadedown);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType ComboBox::Draw(const RedrawEvent& event)
@@ -203,14 +200,14 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 
 		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().outline.data());
 		program->SetUniform1i("u_AA", 1);
 		program->SetUniform1i("u_gamma", 0);
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
 		program->Reset();
@@ -264,15 +261,6 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	bool ComboBox::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void ComboBox::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
-	}
-
 	ResponseType ComboBox::FocusEvent (bool focus)
 	{
 		return Ignore;
@@ -306,8 +294,8 @@ namespace BlendInt {
 		VertexTool tool;
 		tool.Setup(size(),
 						DefaultBorderWidth(),
-						round_corner_type(),
-						round_corner_radius(),
+						round_type(),
+						round_radius(),
 						Theme::instance->menu().inner,
 						Vertical,
 						Theme::instance->menu().shadetop,

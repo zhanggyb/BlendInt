@@ -59,7 +59,7 @@ namespace BlendInt {
 		m_title = title;
 		//Rect text_outline = m_font.GetTextOutline(m_title);
 
-		m_font.set_pen(round_corner_radius(),
+		m_font.set_pen(round_radius(),
 				(size().height() - m_font.GetHeight()) / 2 + std::abs(m_font.GetDescender()));
 	}
 
@@ -74,16 +74,16 @@ namespace BlendInt {
 
 		int radius_plus = 0;
 
-		if ((round_corner_type() & RoundTopLeft) ||
-						(round_corner_type() & RoundBottomLeft))
+		if ((round_type() & RoundTopLeft) ||
+						(round_type() & RoundBottomLeft))
 		{
-			radius_plus += round_corner_radius();
+			radius_plus += round_radius();
 		}
 
-		if((round_corner_type() & RoundTopRight) ||
-						(round_corner_type() & RoundBottomRight))
+		if((round_type() & RoundTopRight) ||
+						(round_type() & RoundBottomRight))
 		{
-			radius_plus += round_corner_radius();
+			radius_plus += round_radius();
 		}
 
 		int max_font_height = m_font.GetHeight();
@@ -109,7 +109,7 @@ namespace BlendInt {
 					std::vector<GLfloat> l_verts;
 					std::vector<GLfloat> r_verts;
 					GenerateSliderVertices(size(), DefaultBorderWidth(),
-					        round_corner_type(), round_corner_radius(), *value_p,
+					        round_type(), round_radius(), *value_p,
 					        minimum(), maximum(), l_verts, r_verts);
 					m_slider1->Bind();
 					m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
@@ -144,119 +144,119 @@ namespace BlendInt {
 		}
 	}
 
-	bool NumericalSlider::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	void NumericalSlider::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		return true;
+		if (request.target() == this) {
+
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			        round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			std::vector<GLfloat> l_verts;
+			std::vector<GLfloat> r_verts;
+			GenerateSliderVertices(*request.size(), DefaultBorderWidth(),
+			        round_type(), round_radius(), value(), minimum(), maximum(),
+			        l_verts, r_verts);
+			m_slider1->Bind();
+			m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+			if (r_verts.size()) {
+				m_right = true;
+				m_slider2->Bind();
+				m_slider2->SetData(sizeof(GLfloat) * r_verts.size(),
+				        &r_verts[0]);
+				DBG_PRINT_MSG("%s", "have right part of slider");
+			} else {
+				m_right = false;
+			}
+
+			GLArrayBuffer::Reset();
+
+			set_size(*request.size());
+			Refresh();
+		}
+
+		ReportSizeUpdate(request);
 	}
 
-	void NumericalSlider::UpdateGeometry (const GeometryUpdateRequest& request)
+	void NumericalSlider::PerformRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
 	{
-		switch (request.type()) {
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
 
-			case WidgetSize: {
-				const Size* size_p = static_cast<const Size*>(request.data());
-				VertexTool tool;
-				tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(),
-								round_corner_radius());
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				m_outer->Bind();
-				tool.SetOuterBufferData(m_outer.get());
-
-				std::vector<GLfloat> l_verts;
-				std::vector<GLfloat> r_verts;
-				GenerateSliderVertices(*size_p, DefaultBorderWidth(),
-				        round_corner_type(), round_corner_radius(), value(),
-				        minimum(), maximum(), l_verts, r_verts);
-				m_slider1->Bind();
-				m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
-				if(r_verts.size()) {
-					m_right = true;
-					m_slider2->Bind();
-					m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
-					DBG_PRINT_MSG("%s", "have right part of slider");
-				} else {
-					m_right = false;
-				}
-
-				GLArrayBuffer::Reset();
-				Refresh();
-				break;
+			std::vector<GLfloat> l_verts;
+			std::vector<GLfloat> r_verts;
+			GenerateSliderVertices(size(), DefaultBorderWidth(),
+			        *request.round_type(), round_radius(), value(), minimum(),
+			        maximum(), l_verts, r_verts);
+			m_slider1->Bind();
+			m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+			if (r_verts.size()) {
+				m_right = true;
+				m_slider2->Bind();
+				m_slider2->SetData(sizeof(GLfloat) * r_verts.size(),
+				        &r_verts[0]);
+				DBG_PRINT_MSG("%s", "have right part of slider");
+			} else {
+				m_right = false;
 			}
 
-			case WidgetRoundCornerType: {
-				const int* type_p = static_cast<const int*>(request.data());
-				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), *type_p,
-								round_corner_radius());
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				m_outer->Bind();
-				tool.SetOuterBufferData(m_outer.get());
+			GLArrayBuffer::Reset();
 
-				std::vector<GLfloat> l_verts;
-				std::vector<GLfloat> r_verts;
-				GenerateSliderVertices(size(), DefaultBorderWidth(), *type_p,
-				        round_corner_radius(), value(), minimum(), maximum(),
-				        l_verts, r_verts);
-				m_slider1->Bind();
-				m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
-				if(r_verts.size()) {
-					m_right = true;
-					m_slider2->Bind();
-					m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
-					DBG_PRINT_MSG("%s", "have right part of slider");
-				} else {
-					m_right = false;
-				}
-
-				GLArrayBuffer::Reset();
-				Refresh();
-				break;
-			}
-
-			case WidgetRoundCornerRadius: {
-				const float* radius_p =
-								static_cast<const float*>(request.data());
-				VertexTool tool;
-				tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
-								*radius_p);
-				m_inner->Bind();
-				tool.SetInnerBufferData(m_inner.get());
-				m_outer->Bind();
-				tool.SetOuterBufferData(m_outer.get());
-
-				std::vector<GLfloat> l_verts;
-				std::vector<GLfloat> r_verts;
-				GenerateSliderVertices(size(), DefaultBorderWidth(),
-				        round_corner_type(), *radius_p, value(), minimum(),
-				        maximum(), l_verts, r_verts);
-				m_slider1->Bind();
-				m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
-				if(r_verts.size()) {
-					m_right = true;
-					m_slider2->Bind();
-					m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
-					DBG_PRINT_MSG("%s", "have right part of slider");
-				} else {
-					m_right = false;
-				}
-
-				GLArrayBuffer::Reset();
-				Refresh();
-				break;
-			}
-
-			default:
-				break;
+			set_round_type(*request.round_type());
+			Refresh();
 		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void NumericalSlider::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), round_type(),
+			        *request.round_radius());
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			std::vector<GLfloat> l_verts;
+			std::vector<GLfloat> r_verts;
+			GenerateSliderVertices(size(), DefaultBorderWidth(), round_type(),
+			        *request.round_radius(), value(), minimum(), maximum(),
+			        l_verts, r_verts);
+			m_slider1->Bind();
+			m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+			if (r_verts.size()) {
+				m_right = true;
+				m_slider2->Bind();
+				m_slider2->SetData(sizeof(GLfloat) * r_verts.size(),
+				        &r_verts[0]);
+				DBG_PRINT_MSG("%s", "have right part of slider");
+			} else {
+				m_right = false;
+			}
+
+			GLArrayBuffer::Reset();
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 	
-	void NumericalSlider::BroadcastUpdate(const GeometryUpdateRequest& request)
-	{
-
-	}
-
 	ResponseType NumericalSlider::Draw (const RedrawEvent& event)
 	{
 		using Stock::Shaders;
@@ -278,31 +278,31 @@ namespace BlendInt {
 		glBindVertexArray(m_vao[0]);
 
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 
 		program->SetUniform1i("u_gamma", 0);
 		program->SetVertexAttrib4f("a_color", 0.4f, 0.4f, 0.4f, 1.f);
 
 		glBindVertexArray(m_vao[2]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_corner_type() & ~(RoundTopRight | RoundBottomRight)) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type() & ~(RoundTopRight | RoundBottomRight)) + 2);
 
 		if(m_right) {
 			glBindVertexArray(m_vao[3]);
-			glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_corner_type() & ~(RoundTopLeft | RoundBottomLeft)) + 2);
+			glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type() & ~(RoundTopLeft | RoundBottomLeft)) + 2);
 		}
 
 		program->SetUniform1i("u_AA", 1);
 		program->SetVertexAttrib4fv("a_color", Theme::instance->number_slider().outline.data());
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
 			program->SetVertexAttrib4f("a_color", 1.0f, 1.0f, 1.0f, 0.16f);
 			program->SetUniform3f("u_position", (float) position().x(), (float) position().y() - 1.f, 0.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							GetHalfOutlineVertices(round_corner_type()) * 2);
+							GetHalfOutlineVertices(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);
@@ -361,15 +361,15 @@ namespace BlendInt {
 
 	void NumericalSlider::InitOnce()
 	{
-		set_round_corner_type(RoundAll);
+		set_round_type(RoundAll);
 		int h = m_font.GetHeight();
-		set_size(h + round_corner_radius() * 2 + default_numberslider_padding.hsum(),
+		set_size(h + round_radius() * 2 + default_numberslider_padding.hsum(),
 						h + default_numberslider_padding.vsum());
-		set_round_corner_radius(size().height() / 2);
+		set_round_radius(size().height() / 2);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
-						round_corner_radius());
+		tool.Setup(size(), DefaultBorderWidth(), round_type(),
+						round_radius());
 
 		glGenVertexArrays(4, m_vao);
 
@@ -398,7 +398,7 @@ namespace BlendInt {
 		std::vector<GLfloat> r_verts;
 
 		GenerateSliderVertices(size(), DefaultBorderWidth(),
-		        round_corner_type(), round_corner_radius(),
+		        round_type(), round_radius(),
 		        value(), minimum(), maximum(),
 		        l_verts, r_verts);
 		if(r_verts.size()) {
@@ -439,9 +439,9 @@ namespace BlendInt {
 	{
 		float minxi = 0.f + border * Theme::instance->pixel();
 		float maxxi = size().width() - border * Theme::instance->pixel();
-		float radi = (round_corner_radius() - border) * Theme::instance->pixel();
+		float radi = (round_radius() - border) * Theme::instance->pixel();
 
-		return round_corner_radius() + (maxxi - minxi - radi) * v / (maximum() - minimum());
+		return round_radius() + (maxxi - minxi - radi) * v / (maximum() - minimum());
 	}
 	
 	void NumericalSlider::GenerateLeftSliderVertices (float minx, float maxx,

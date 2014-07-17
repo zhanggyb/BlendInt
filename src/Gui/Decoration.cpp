@@ -79,82 +79,51 @@ namespace BlendInt {
 		return Size(200, 20);
 	}
 
-	void Decoration::UpdateContainer (const ContainerUpdateRequest& request)
-	{
-	}
-
-	bool Decoration::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void Decoration::UpdateGeometry (const GeometryUpdateRequest& request)
+	void Decoration::PerformPositionUpdate(const PositionUpdateRequest& request)
 	{
 		if(request.target() == this) {
 
-			switch (request.type()) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
 
-				case WidgetPosition: {
-
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*size_p, 0, round_corner_type(), round_corner_radius());
-
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_inner->Reset();
-
-					int x = position().x() + margin().left();
-					if (sub_widget_size()) {
-						x = sub_widgets()->front()->position().x();
-					}
-
-					int y = position().y() + margin().bottom();
-					int w = size_p->width() - margin().hsum();
-					int h = size_p->height() - margin().vsum();
-
-					FillSubWidgets(x, y, w, h, m_space);
-
-					set_size(*size_p);
-					break;
-				}
-
-				default:
-					break;
-			}
-
-		} else if (request.target()->container() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					// a sub widget changed its size
-					FillSubWidgets(position(), size(), margin(), m_space);
-
-					break;
-				}
-
-				default:
-					break;
-
-			}
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
 
 		}
 
-		ReportGeometryUpdate(request);
+		ReportPositionUpdate(request);
+	}
+
+	void Decoration::PerformSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, round_type(), round_radius());
+
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_inner->Reset();
+
+			int x = position().x() + margin().left();
+			if (sub_widget_size()) {
+				x = sub_widgets()->front()->position().x();
+			}
+
+			int y = position().y() + margin().bottom();
+			int w = request.size()->width() - margin().hsum();
+			int h = request.size()->height() - margin().vsum();
+
+			FillSubWidgets(x, y, w, h, m_space);
+
+			set_size(*request.size());
+
+		} else if (request.target()->container() == this) {
+
+			FillSubWidgets(position(), size(), margin(), m_space);
+
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType Decoration::Draw (const RedrawEvent& event)
@@ -172,7 +141,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_corner_type()) + 2);
+							GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
 		program->Reset();
@@ -233,11 +202,11 @@ namespace BlendInt {
 
 	void Decoration::InitializeDecoration()
 	{
-		set_round_corner_type(RoundTopLeft | RoundTopRight);
-		set_round_corner_radius(10.f);
+		set_round_type(RoundTopLeft | RoundTopRight);
+		set_round_radius(10.f);
 
 		VertexTool tool;
-		tool.Setup(size(), 0, round_corner_type(), round_corner_radius());
+		tool.Setup(size(), 0, round_type(), round_radius());
 
 		glGenVertexArrays(1, m_vao);
 

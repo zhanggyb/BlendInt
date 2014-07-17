@@ -28,15 +28,16 @@
 
 #include <BlendInt/Gui/AbstractRoundForm.hpp>
 
-namespace BlendInt {
+namespace BlendInt
+{
 
 	class RoundForm: public AbstractRoundForm
 	{
 	public:
 
-		RoundForm();
+		RoundForm ();
 
-		virtual ~RoundForm();
+		virtual ~RoundForm ();
 
 	protected:
 

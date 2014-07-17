@@ -46,7 +46,11 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+
+		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

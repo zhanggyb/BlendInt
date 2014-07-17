@@ -67,31 +67,20 @@ namespace BlendInt {
 		m_text_length = UpdateTextPosition(size(), m_text, m_font);
 	}
 
-	void Label::UpdateGeometry (const GeometryUpdateRequest& request)
+	void Label::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			switch (request.type()) {
+			m_text_length = UpdateTextPosition(*request.size(), m_text, m_font);
 
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-					m_text_length = UpdateTextPosition(*size_p, m_text, m_font);
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), RoundNone, 0);
+			tool.UpdateInnerBuffer(m_rect.get());
 
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(), RoundNone, 0);
-					tool.UpdateInnerBuffer(m_rect.get());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
+			set_size (*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType Label::Draw (const RedrawEvent& event)
@@ -201,15 +190,6 @@ namespace BlendInt {
 	bool Label::IsExpandX() const
 	{
 		return true;
-	}
-
-	bool Label::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void Label::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType Label::FocusEvent (bool focus)

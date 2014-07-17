@@ -146,68 +146,53 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void HBox::UpdateContainer(const ContainerUpdateRequest& request)
+	void HBox::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
-
-			case ContainerMargin: {
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
-				FillSubWidgetsInHBox(position(), size(), *margin_p, m_alignment, m_space);
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
+		FillSubWidgetsInHBox(position(), size(), request, m_alignment, m_space);
 	}
 
-	bool HBox::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	bool HBox::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
+		// Do not allow sub widget changing its size
+		if(request.source()->container() == this) {
 			return false;
 		}
+
+		return true;
 	}
 
-	void HBox::UpdateGeometry (const GeometryUpdateRequest& request)
+	bool HBox::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					const Point* new_pos = static_cast<const Point*>(request.data());
-					int x = new_pos->x() - position().x();
-					int y = new_pos->y() - position().y();
-
-					set_position(*new_pos);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					set_size(*size_p);
-					FillSubWidgetsInHBox(position(), *size_p, margin(), m_alignment, m_space);
-
-					break;
-				}
-
-				default: {
-					break;
-				}
-			}
-
+		// Do not allow sub widget changing its position
+		if(request.source()->container() == this) {
+			return false;
 		}
 
-		ReportGeometryUpdate(request);
+		return true;
+	}
+
+	void HBox::PerformPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void HBox::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_size(*request.size());
+			FillSubWidgetsInHBox(position(), *request.size(), margin(), m_alignment, m_space);
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType HBox::Draw (const RedrawEvent& event)

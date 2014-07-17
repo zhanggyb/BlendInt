@@ -62,60 +62,25 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
-	void FramePanel::UpdateContainer (const ContainerUpdateRequest& request)
+	void FramePanel::PerformRefresh(const RefreshRequest& request)
 	{
-		switch (request.type()) {
-
-			case ContainerRefresh: {
-				m_refresh = true;
-				Frame::UpdateContainer(request);
-				break;
-			}
-
-			case ContainerMargin: {
-				m_refresh = true;
-				Frame::UpdateContainer(request);
-				return;
-			}
-
-			default: {
-				Frame::UpdateContainer(request);
-				break;
-			}
-		}
-
-		ReportContainerUpdate(request);
+		m_refresh = true;
+		ReportRefresh(request);
 	}
 
-	void FramePanel::UpdateGeometry (const GeometryUpdateRequest& request)
+	void FramePanel::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_inner->Reset();
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
-			Frame::UpdateGeometry(request);
-			return;
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_inner->Reset();
 		}
 
-		ReportGeometryUpdate(request);
+		Frame::PerformSizeUpdate(request);
 	}
-	
+
 	ResponseType FramePanel::Draw (const RedrawEvent& event)
 	{
 		if(m_refresh) {

@@ -146,69 +146,53 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void VBox::UpdateContainer(const ContainerUpdateRequest& request)
+	void VBox::PerformMarginUpdate(const Margin& request)
 	{
-		switch(request.type()) {
-
-			case ContainerMargin: {
-				const Margin* margin_p = static_cast<const Margin*>(request.data());
-				FillSubWidgetsInVBox(position(), size(), *margin_p, m_alignment, m_space);
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
+		FillSubWidgetsInVBox(position(), size(), request, m_alignment, m_space);
 	}
 
-	bool VBox::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	bool VBox::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
+		// Do not allow sub widget changing its size
+		if(request.source()->container() == this) {
 			return false;
 		}
+
+		return true;
 	}
 
-	void VBox::UpdateGeometry (const GeometryUpdateRequest& request)
+	bool VBox::PositionUpdateTest (const PositionUpdateRequest& request)
 	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					const Point* new_pos = static_cast<const Point*>(request.data());
-					int x = new_pos->x() - position().x();
-					int y = new_pos->y() - position().y();
-
-					set_position(*new_pos);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					set_size(*size_p);
-					FillSubWidgetsInVBox(position(), *size_p, margin(), m_alignment,
-									m_space);
-
-					break;
-				}
-
-				default: {
-					break;
-				}
-			}
-
+		// Do not allow sub widget changing its position
+		if(request.source()->container() == this) {
+			return false;
 		}
 
-		ReportGeometryUpdate(request);
+		return true;
+	}
+
+	void VBox::PerformPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void VBox::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_size(*request.size());
+			FillSubWidgetsInVBox(position(), *request.size(), margin(), m_alignment,
+											m_space);		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType VBox::Draw (const RedrawEvent& event)

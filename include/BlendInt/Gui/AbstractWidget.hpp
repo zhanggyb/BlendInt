@@ -30,11 +30,12 @@
 
 #include <Cpp/Events.hpp>
 
+#include <BlendInt/Core/RefPtr.hpp>
 #include <BlendInt/Core/Types.hpp>
 #include <BlendInt/Core/Point.hpp>
 #include <BlendInt/Core/Size.hpp>
 #include <BlendInt/Core/Rect.hpp>
-#include <BlendInt/Core/RefPtr.hpp>
+#include <BlendInt/Core/Margin.hpp>
 
 #include <BlendInt/Window/MouseEvent.hpp>
 #include <BlendInt/Window/KeyEvent.hpp>
@@ -51,21 +52,6 @@ namespace BlendInt {
 	//class GLTexture2D;
 	class AbstractWidget;
 	class AbstractContainer;
-
-	enum GeometryRequestType {
-		WidgetPosition,
-		WidgetSize,
-		WidgetRoundCornerType,
-		WidgetRoundCornerRadius,
-		WidgetVisibility
-	};
-
-	enum ContainerRequestType {
-		ContainerMargin,
-		ContainerRefresh,
-		ContainerSubWidgetAdded,
-		ContainerSubWidgetRemoved
-	};
 
 	typedef RefPtr<AbstractWidget> AbstractWidgetPtr;
 
@@ -113,106 +99,171 @@ namespace BlendInt {
 		AbstractWidget* m_target;
 	};
 
-	class GeometryUpdateRequest: public WidgetUpdateRequest
+	class SizeUpdateRequest: public WidgetUpdateRequest
 	{
 	public:
 
-		GeometryUpdateRequest (AbstractWidget* source, AbstractWidget* target)
-		: WidgetUpdateRequest(source, target), m_type(0), m_data(0)
+		SizeUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target), m_size(0)
+		{
+		}
+
+		SizeUpdateRequest (AbstractWidget* source, AbstractWidget* target, const Size* size)
+		: WidgetUpdateRequest(source, target), m_size(size)
 		{
 
 		}
 
-		GeometryUpdateRequest(AbstractWidget* source, AbstractWidget* target, int type, const void* data)
-		: WidgetUpdateRequest(source, target),
-		  m_type(type),
-		  m_data(data)
+		const Size* size() const
 		{
-
+			return m_size;
 		}
 
-		~GeometryUpdateRequest ()
+		void set_size (const Size* size)
 		{
-
-		}
-
-		int type () const
-		{
-			return m_type;
-		}
-
-		void set_type (int type)
-		{
-			m_type = type;
-		}
-
-		const void* data () const
-		{
-			return m_data;
-		}
-
-		void set_data (const void* data)
-		{
-			m_data = data;
+			m_size = size;
 		}
 
 	private:
 
-		GeometryUpdateRequest();
-
-		int m_type;
-		const void* m_data;
+		const Size* m_size;
 	};
 
-	class ContainerUpdateRequest: public WidgetUpdateRequest
+	class PositionUpdateRequest: public WidgetUpdateRequest
 	{
 	public:
 
-		ContainerUpdateRequest (AbstractWidget* source, AbstractWidget* target)
-		: WidgetUpdateRequest(source, target), m_type(0), m_data(0)
+		PositionUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target), m_position(0)
+		{
+		}
+
+		PositionUpdateRequest (AbstractWidget* source, AbstractWidget* target, const Point* pos)
+		: WidgetUpdateRequest(source, target), m_position(pos)
 		{
 
 		}
 
-		ContainerUpdateRequest(AbstractWidget* source, AbstractWidget* target, int type, const void* data)
-		: WidgetUpdateRequest(source, target),
-		  m_type(type),
-		  m_data(data)
+		const Point* position() const
 		{
-
+			return m_position;
 		}
 
-		~ContainerUpdateRequest ()
+		void set_position (const Point* pos)
 		{
-
-		}
-
-		int type () const
-		{
-			return m_type;
-		}
-
-		void set_type (int type)
-		{
-			m_type = type;
-		}
-
-		const void* data () const
-		{
-			return m_data;
-		}
-
-		void set_data (const void* data)
-		{
-			m_data = data;
+			m_position = pos;
 		}
 
 	private:
 
-		ContainerUpdateRequest();
+		const Point* m_position;
+	};
 
-		int m_type;
-		const void* m_data;
+	class RoundTypeUpdateRequest: public WidgetUpdateRequest
+	{
+	public:
+
+		RoundTypeUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target), m_round_type(0)
+		{
+		}
+
+		RoundTypeUpdateRequest (AbstractWidget* source, AbstractWidget* target, const int* pos)
+		: WidgetUpdateRequest(source, target), m_round_type(pos)
+		{
+
+		}
+
+		const int* round_type() const
+		{
+			return m_round_type;
+		}
+
+		void set_round_type (const int* type)
+		{
+			m_round_type = type;
+		}
+
+	private:
+
+		const int* m_round_type;
+	};
+
+	class RoundRadiusUpdateRequest: public WidgetUpdateRequest
+	{
+	public:
+
+		RoundRadiusUpdateRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target), m_round_radius(0)
+		{
+		}
+
+		RoundRadiusUpdateRequest (AbstractWidget* source, AbstractWidget* target, const float* radius)
+		: WidgetUpdateRequest(source, target), m_round_radius(radius)
+		{
+
+		}
+
+		const float* round_radius() const
+		{
+			return m_round_radius;
+		}
+
+		void set_round_radius (const float* radius)
+		{
+			m_round_radius = radius;
+		}
+
+	private:
+
+		const float* m_round_radius;
+	};
+
+	class VisibilityUpdateRequest: public WidgetUpdateRequest
+	{
+	public:
+
+		VisibilityUpdateRequest (AbstractWidget* source, AbstractWidget* target) :
+				WidgetUpdateRequest(source, target), m_visibility(0)
+		{
+
+		}
+
+		VisibilityUpdateRequest (AbstractWidget* source, AbstractWidget* target, const bool* visibility)
+		: WidgetUpdateRequest(source, target), m_visibility (visibility)
+		{
+
+		}
+
+		const bool* visibility () const
+		{
+			return m_visibility;
+		}
+
+		void set_visibility (const bool* visibility)
+		{
+			m_visibility = visibility;
+		}
+
+	private:
+
+		const bool* m_visibility;
+	};
+
+	class RefreshRequest: public WidgetUpdateRequest
+	{
+	public:
+
+		RefreshRequest (AbstractWidget* source, AbstractWidget* target)
+		: WidgetUpdateRequest(source, target)
+		{
+
+		}
+
+		~RefreshRequest ()
+		{
+
+		}
 	};
 
 	/**
@@ -227,11 +278,27 @@ namespace BlendInt {
 
 		~ContainerProxy ();
 
-		static inline bool RequestGeometryTest (AbstractContainer* container, const GeometryUpdateRequest& request);
+		static inline bool RequestSizeUpdateTest (AbstractContainer* container, const SizeUpdateRequest& request);
 
-		static inline void RequestGeometryUpdate (AbstractContainer* container, const GeometryUpdateRequest& request);
+		static inline bool RequestPositionUpdateTest (AbstractContainer* container, const PositionUpdateRequest& request);
 
-		static inline void RequestContainerUpdate (AbstractContainer* container, const ContainerUpdateRequest& request);
+		static inline bool RequestRoundTypeUpdateTest (AbstractContainer* container, const RoundTypeUpdateRequest& request);
+
+		static inline bool RequestRoundRadiusUpdateTest (AbstractContainer* container, const RoundRadiusUpdateRequest& request);
+
+		static inline bool RequestVisibilityUpdateTest (AbstractContainer* container, const VisibilityUpdateRequest& request);
+
+		static inline void RequestSizeUpdate (AbstractContainer* container, const SizeUpdateRequest& request);
+
+		static inline void RequestPositionUpdate (AbstractContainer* container, const PositionUpdateRequest& request);
+
+		static inline void RequestRoundTypeUpdate (AbstractContainer* container, const RoundTypeUpdateRequest& request);
+
+		static inline void RequestRoundRadiusUpdate (AbstractContainer* container, const RoundRadiusUpdateRequest& request);
+
+		static inline void RequestVisibilityUpdate (AbstractContainer* container, const VisibilityUpdateRequest& request);
+
+		static inline void RequestRefresh (AbstractContainer* container, const RefreshRequest& request);
 	};
 
 	// ----------------------------------------------------
@@ -366,14 +433,14 @@ namespace BlendInt {
 			return m_flags & WidgetFlagEmboss;
 		}
 
-		int round_corner_type () const
+		int round_type () const
 		{
 			return m_flags & 0x0F;
 		}
 
-		float round_corner_radius () const
+		float round_radius () const
 		{
-			return m_round_corner_radius;
+			return m_round_radius;
 		}
 
 		bool drop_shadow () const
@@ -415,6 +482,8 @@ namespace BlendInt {
 
 		/**
 		 * @brief Check if the widget and its all container are under cursor position
+		 *
+		 * @note There's no meaning to use this function to test Context or Section.
 		 */
 		static bool IsHoverThrough (const AbstractWidget* widget, const Point& cursor);
 
@@ -508,40 +577,41 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event) = 0;
 
-		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request) = 0;
+		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
 
-		/**
-		 * @brief Update opengl data (usually the GL buffer) for Render
-		 * @param[in] type the enumeration defined by each form class, e.g.
-		 * FormPropertySize
-		 * @param[in] data the pointer to the new property data
-		 *
-		 * This virtual function should be implemented in each derived class,
-		 * and should only use the form's property to draw opengl elements once.
-		 */
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request) = 0;
+		virtual bool PositionUpdateTest (const PositionUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const GeometryUpdateRequest& request) = 0;
+		virtual bool RoundTypeUpdateTest (const RoundTypeUpdateRequest& request);
+
+		virtual bool RoundRadiusUpdateTest (const RoundRadiusUpdateRequest& request);
+
+		virtual bool VisibilityUpdateTest (const VisibilityUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
+
+		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
+
+		virtual void PerformVisibilityUpdate (const VisibilityUpdateRequest& request);
+
+		virtual void PerformRefresh (const RefreshRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event) = 0;
 
-		void CheckSubWidgetAddedInContainer (AbstractWidget* sub_widget);
+		void ReportSizeUpdate (const SizeUpdateRequest& request);
 
-		void CheckSubWidgetRemovedInContainer (AbstractWidget* sub_widget);
+		void ReportPositionUpdate (const PositionUpdateRequest& request);
 
-		/**
-		 * @brief Query the geometry update in container
-		 *
-		 * If no container, return true
-		 */
-		bool QueryGeometryUpdateTest (const GeometryUpdateRequest& request);
+		void ReportRoundTypeUpdate (const RoundTypeUpdateRequest& request);
 
-		/**
-		 * @brief Hand on the update request to the container
-		 */
-		void ReportContainerUpdate (const ContainerUpdateRequest& request);
+		void ReportRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
-		void ReportGeometryUpdate (const GeometryUpdateRequest& request);
+		void ReportVisibilityRequest (const VisibilityUpdateRequest& request);
+
+		void ReportRefresh (const RefreshRequest& request);
 
 		int GetOutlineVertices (int round_type) const;
 
@@ -596,14 +666,14 @@ namespace BlendInt {
 			}
 		}
 
-		void set_round_corner_type (int type)
+		void set_round_type (int type)
 		{
 			m_flags = (m_flags & 0xFFF0) + (type & 0x0F);
 		}
 
-		void set_round_corner_radius (float radius)
+		void set_round_radius (float radius)
 		{
-			m_round_corner_radius = radius;
+			m_round_radius = radius;
 		}
 
 		void set_drop_shadow (bool shadow)
@@ -663,7 +733,7 @@ namespace BlendInt {
 
 		unsigned int m_flags;
 
-		float m_round_corner_radius;
+		float m_round_radius;
 
 		boost::scoped_ptr<Cpp::ConnectionScope> m_events;
 

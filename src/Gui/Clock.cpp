@@ -97,47 +97,27 @@ namespace BlendInt {
 		Refresh();
 	}
 
-	bool Clock::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void Clock::UpdateGeometry (const GeometryUpdateRequest& request)
+	void Clock::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			switch (request.type()) {
+			int radius = std::min(request.size()->width(), request.size()->height());
+			radius = radius / 2;
 
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-					int radius = std::min(size_p->width(), size_p->height());
-					radius = radius / 2;
+			std::vector<GLfloat> inner_verts;
+			std::vector<GLfloat> outer_verts;
+			GenerateClockVertices(160, 1.f, inner_verts, outer_verts);
 
-					std::vector<GLfloat> inner_verts;
-					std::vector<GLfloat> outer_verts;
-					GenerateClockVertices(160, 1.f, inner_verts, outer_verts);
+			m_inner->Bind();
+			m_inner->SetData(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			m_outer->Bind();
+			m_outer->SetData(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			GLArrayBuffer::Reset();
 
-					m_inner->Bind();
-					m_inner->SetData(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-					m_outer->Bind();
-					m_outer->SetData(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
-					GLArrayBuffer::Reset();
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
+			set_size(*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
-	}
-
-	void Clock::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType Clock::FocusEvent (bool focus)

@@ -72,55 +72,51 @@ namespace BlendInt {
 	{
 		int h = font().GetHeight();
 
-		Size prefer(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum() + 100,
+		Size prefer(h + round_radius() * 2 + DefaultButtonPadding().hsum() + 100,
 						h + DefaultButtonPadding().vsum());
 
 		return prefer;
 	}
 
-	void ExpandButton::UpdateGeometry (const GeometryUpdateRequest& request)
+	void ExpandButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if (request.target() == this) {
-			switch (request.type()) {
+		if(request.target() == this) {
+			UpdateTextPosition(*request.size(), round_type(),
+			        round_radius(), text());
 
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-					UpdateTextPosition(*size_p, round_corner_type(),
-					        round_corner_radius(), text());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					UpdateTextPosition(size(), *type_p, round_corner_radius(),
-					        text());
-
-					set_round_corner_type(*type_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					const float* radius_p =
-					        static_cast<const float*>(request.data());
-					UpdateTextPosition(size(), round_corner_type(), *radius_p,
-					        text());
-
-					set_round_corner_radius(*radius_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
+			set_size(*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
+	}
+
+	void ExpandButton::PerformRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), *request.round_type(), round_radius(),
+			        text());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void ExpandButton::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			UpdateTextPosition(size(), round_type(), *request.round_radius(),
+			        text());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType ExpandButton::Draw (const RedrawEvent& event)
@@ -155,7 +151,7 @@ namespace BlendInt {
 
 		int h = font().GetHeight();
 
-		set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().hsum(),
+		set_size(h + round_radius() * 2 + DefaultButtonPadding().hsum(),
 						h + DefaultButtonPadding().vsum());
 	}
 
@@ -167,13 +163,13 @@ namespace BlendInt {
 		int h = font().GetHeight();
 
 		if(text.empty()) {
-			set_size(h + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
+			set_size(h + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right(),
 							h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom());
 		} else {
 			set_text_length(text.length());
 			Rect text_outline = font().GetTextOutline(text);
 
-			int width = text_outline.width() + round_corner_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
+			int width = text_outline.width() + round_radius() * 2 + DefaultButtonPadding().left() + DefaultButtonPadding().right();
 			int height = h + DefaultButtonPadding().top() + DefaultButtonPadding().bottom();
 
 			set_size(width, height);
@@ -317,95 +313,40 @@ namespace BlendInt {
 		return expand;
 	}
 
-	void Expander::UpdateContainer(const ContainerUpdateRequest& request)
+	void Expander::PerformMarginUpdate(const Margin& request)
 	{
-		if (request.target() == this) {
-			switch (request.type()) {
-
-				case ContainerMargin: {
-
-					const Margin* margin_p =
-					        static_cast<const Margin*>(request.data());
-					set_margin(*margin_p);
-					FillInExpander(position(), size(), *margin_p);
-
-					break;
-				}
-
-				default:
-					break;
-			}
-		}
-
-		ReportContainerUpdate(request);
+		FillInExpander(position(), size(), request);
 	}
 
-	bool Expander::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		/*
-		if(request.source() == this) {
-
-			return AbstractVectorContainer::UpdateGeometryTest(request);
-
-		} else {	// called by sub widget
-
-			switch(request.type()) {
-				case WidgetSize:
-					return false;
-
-				case WidgetPosition:
-					return false;
-
-				default:
-					return false;
-			}
-		}
-		*/
-
-		// Allow container to resize this
-		return true;
-	}
-
-	void Expander::UpdateGeometry (const GeometryUpdateRequest& request)
+	void Expander::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+			FillInExpander(position(), *request.size(), margin());
 
-			switch (request.type()) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
 
-				case WidgetSize: {
-					const Size* size_p =
-									static_cast<const Size*>(request.data());
-					FillInExpander(position(), *size_p, margin());
-
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetPosition: {
-					const Point* pos_p =
-									static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			set_size(*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
+	}
+
+	void Expander::PerformPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
 	}
 
 	ResponseType Expander::Draw (const RedrawEvent& event)
@@ -424,7 +365,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 		glBindVertexArray(0);
 
 		program->Reset();

@@ -49,7 +49,7 @@ namespace BlendInt {
 			FillInHBlock(position(), size(), margin());
 
 			if(last) {
-				last->SetRoundCornerType(last->round_corner_type() & ~(RoundTopRight | RoundBottomRight));
+				last->SetRoundCornerType(last->round_type() & ~(RoundTopRight | RoundBottomRight));
 				widget->SetRoundCornerType(RoundTopRight | RoundBottomRight);
 			} else {
 				widget->SetRoundCornerType(RoundAll);
@@ -125,67 +125,55 @@ namespace BlendInt {
 		return preferred_size;
 	}
 	
-	void HBlock::UpdateContainer (const ContainerUpdateRequest& request)
+	void HBlock::PerformMarginUpdate(const Margin& request)
 	{
-		if(request.target() == this) {
-
-			switch(request.type()) {
-
-				case ContainerMargin: {
-
-					const Margin* margin_p = static_cast<const Margin*>(request.data());
-					FillInHBlock(position(), size(), *margin_p);
-
-					break;
-				}
-
-				default: {
-					ReportContainerUpdate(request);
-					break;
-				}
-			}
-		}
+		FillInHBlock(position(), size(), request);
 	}
-	
-	void HBlock::UpdateGeometry (const GeometryUpdateRequest& request)
+
+	bool HBlock::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
-		if(request.target() == this) {
-
-			switch(request.type()) {
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					set_size(*size_p);
-					FillInHBlock(position(), *size_p, margin());
-
-					break;
-				}
-
-				default: {
-					break;
-				}
-			}
-
+		// Do not allow sub widget changing its size
+		if(request.source()->container() == this) {
+			return false;
 		}
 
-		ReportGeometryUpdate(request);
+		return true;
+	}
+
+	bool HBlock::PositionUpdateTest (const PositionUpdateRequest& request)
+	{
+		// Do not allow sub widget changing its position
+		if(request.source()->container() == this) {
+			return false;
+		}
+
+		return true;
+	}
+
+	void HBlock::PerformSizeUpdate(const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			set_size(*request.size());
+			FillInHBlock(position(), *request.size(), margin());
+		}
+
+		ReportSizeUpdate(request);
 	}
 	
+	void HBlock::PerformPositionUpdate(const PositionUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
+	}
+
 	ResponseType HBlock::Draw (const RedrawEvent& event)
 	{
 		return Ignore;
@@ -237,17 +225,6 @@ namespace BlendInt {
 		FillInHBlock(x, y, w, h);
 	}
 
-	bool HBlock::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
-			return false;
-		}
-	}
-
 	void HBlock::FillInHBlock (int x, int y, int w, int h)
 	{
 		if(sub_widget_size() == 0) return;
@@ -266,4 +243,3 @@ namespace BlendInt {
 	}
 
 }
-

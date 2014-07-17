@@ -184,67 +184,57 @@ namespace BlendInt {
 		}
 	}
 
-	void Stack::UpdateContainer (const ContainerUpdateRequest& request)
+	void Stack::PerformMarginUpdate(const Margin& request)
 	{
-		switch (request.type()) {
+		int w = size().width() - request.hsum();
+		int h = size().height() - request.vsum();
 
-			case ContainerMargin: {
-
-				const Margin* margin_p =
-								static_cast<const Margin*>(request.data());
-
-				int w = size().width() - margin_p->hsum();
-				int h = size().height() - margin_p->vsum();
-
-				ResizeSubWidgets(w, h);
-
-				break;
-			}
-
-			default: {
-				ReportContainerUpdate(request);
-				break;
-			}
-		}
+		ResizeSubWidgets(w, h);
 	}
 
-	void Stack::UpdateGeometry (const GeometryUpdateRequest& request)
+	bool Stack::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* new_size = static_cast<const Size*>(request.data());
-
-					int w = new_size->width() - margin().hsum();
-					int h = new_size->height() - margin().vsum();
-
-					set_size(*new_size);
-					ResizeSubWidgets(w, h);
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
+		if(request.source()->container() == this) {
+			return false;
 		}
 
-		ReportGeometryUpdate(request);
+		return true;
+	}
+
+	bool Stack::PositionUpdateTest (const PositionUpdateRequest& request)
+	{
+		if(request.source()->container() == this) {
+			return false;
+		}
+
+		return true;
+	}
+
+	void Stack::PerformPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
+
+			set_position(*request.position());
+			MoveSubWidgets(x, y);
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void Stack::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			int w = request.size()->width() - margin().hsum();
+			int h = request.size()->height() - margin().vsum();
+
+			set_size(*request.size());
+			ResizeSubWidgets(w, h);
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType Stack::Draw (const RedrawEvent& event)
@@ -292,17 +282,6 @@ namespace BlendInt {
 		}
 
 		return ret;
-	}
-
-	bool Stack::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		if(request.source() == this) {
-			return true;
-		} else if (request.source() == container()) {
-			return true;
-		} else {	// called by sub widget
-			return false;
-		}
 	}
 
 	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)

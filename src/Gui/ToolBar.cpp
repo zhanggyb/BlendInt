@@ -165,127 +165,62 @@ namespace BlendInt {
 		return true;
 	}
 
-	void ToolBar::UpdateContainer (const ContainerUpdateRequest& request)
+	void ToolBar::PerformMarginUpdate (const Margin& request)
 	{
-		switch (request.type()) {
-
-			case ContainerMargin: {
-				const Margin* margin_p =
-				        static_cast<const Margin*>(request.data());
-
-				int x = position().x() + margin_p->left();
-				if (sub_widget_size()) {
-					x = sub_widgets()->front()->position().x();
-				}
-
-				int y = position().y() + margin_p->bottom();
-				int w = size().width() - margin_p->left() - margin_p->right();
-				int h = size().height() - margin_p->top() - margin_p->bottom();
-
-				FillSubWidgets(x, y, w, h, m_space);
-
-				break;
-			}
-
-			default:
-				ReportContainerUpdate(request);
-				break;
+		int x = position().x() + request.left();
+		if (sub_widget_size()) {
+			x = sub_widgets()->front()->position().x();
 		}
+
+		int y = position().y() + request.bottom();
+		int w = size().width() - request.hsum();
+		int h = size().height() - request.vsum();
+
+		FillSubWidgets(x, y, w, h, m_space);
 	}
 
-	bool ToolBar::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	void ToolBar::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
-		if(request.target() == this) {
-			return true;
-		} else if(request.target()->container() == this) {
-			// A sub widget want to change it's geometry
+		if (request.target() == this) {
+			int x = request.position()->x() - position().x();
+			int y = request.position()->y() - position().y();
 
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					return false;
-				}
-
-				case WidgetSize: {
-
-					return true;
-				}
-
-				default: {
-					return true;
-				}
-			}
-		} else {
-			return true;
+			set_position (*request.position());
+			MoveSubWidgets(x, y);
 		}
+
+		ReportPositionUpdate(request);
 	}
 
-	void ToolBar::UpdateGeometry (const GeometryUpdateRequest& request)
+	void ToolBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if(request.target() == this) {
+		if (request.target() == this) {
 
-			switch (request.type()) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_inner->Reset();
 
-				case WidgetPosition: {
-
-					const Point* pos_p = static_cast<const Point*>(request.data());
-
-					int x = pos_p->x() - position().x();
-					int y = pos_p->y() - position().y();
-
-					set_position(*pos_p);
-					MoveSubWidgets(x, y);
-
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_inner->Reset();
-
-					int x = position().x() + margin().left();
-					if (sub_widget_size()) {
-						x = sub_widgets()->front()->position().x();
-					}
-
-					int y = position().y() + margin().bottom();
-					int w = size_p->width() - margin().hsum();
-					int h = size_p->height() - margin().vsum();
-
-					FillSubWidgets(x, y, w, h, m_space);
-
-					set_size(*size_p);
-					break;
-				}
-
-				default:
-					break;
+			int x = position().x() + margin().left();
+			if (sub_widget_size()) {
+				x = sub_widgets()->front()->position().x();
 			}
+
+			int y = position().y() + margin().bottom();
+			int w = request.size()->width() - margin().hsum();
+			int h = request.size()->height() - margin().vsum();
+
+			FillSubWidgets(x, y, w, h, m_space);
+
+			set_size(*request.size());
 
 		} else if (request.target()->container() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					// a sub widget changed its size
-					FillSubWidgets(position(), size(), margin(), m_space);
-
-					break;
-				}
-
-				default:
-					break;
-
-			}
-
+			// if a sub widget changed its size, re-align all
+			FillSubWidgets(position(), size(), margin(), m_space);
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType ToolBar::Draw (const RedrawEvent& event)

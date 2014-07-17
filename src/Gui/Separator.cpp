@@ -109,43 +109,33 @@ namespace BlendInt {
 		return m_expand_y;
 	}
 
-	void Separator::UpdateGeometry (const GeometryUpdateRequest& request)
+	void Separator::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
-		if(m_widget_attached) {
+		if(request.target() == this) {
 
-			switch(request.type()) {	// don't care the source
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-					m_widget_attached->SetPosition(*pos_p);
-					break;
-				}
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					m_widget_attached->Resize(*size_p);
-					break;
-				}
-
-				default:
-					break;
-			}
+			if(m_widget_attached)
+				m_widget_attached->SetPosition(*request.position());
 
 		}
+
+		ReportPositionUpdate(request);
 	}
-	
+
+	void Separator::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			if(m_widget_attached)
+				m_widget_attached->Resize(*request.size());
+
+		}
+
+		ReportSizeUpdate(request);
+	}
+
 	ResponseType Separator::Draw (const RedrawEvent& event)
 	{
 		return Ignore;
-	}
-
-	bool Separator::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void Separator::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType Separator::FocusEvent (bool focus)

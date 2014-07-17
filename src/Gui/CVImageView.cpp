@@ -95,35 +95,20 @@ namespace BlendInt {
 
 	}
 
-	void CVImageView::UpdateGeometry (const GeometryUpdateRequest& request)
+	void CVImageView::PerformSizeUpdate(const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), 0, RoundNone, 0);
+			m_background_buffer->Bind();
+			tool.SetInnerBufferData(m_background_buffer.get());
+			m_background_buffer->Reset();
 
-			switch (request.type()) {
-
-				case WidgetSize: {
-
-					const Size* size_p = static_cast<const Size*>(request.data());
-
-					m_background_buffer->Bind();
-					VertexTool tool;
-					tool.Setup(*size_p, 0, RoundNone, 0);
-					tool.SetInnerBufferData(m_background_buffer.get());
-					m_background_buffer->Reset();
-
-					set_size(*size_p);
-					AdjustImageArea(*size_p);
-
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			set_size(*request.size());
+			AdjustImageArea(*request.size());
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType CVImageView::Draw (const RedrawEvent& event)
@@ -239,15 +224,6 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
-	}
-
-	bool CVImageView::UpdateGeometryTest (const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void CVImageView::BroadcastUpdate (const GeometryUpdateRequest& request)
-	{
 	}
 
 	ResponseType CVImageView::FocusEvent (bool focus)

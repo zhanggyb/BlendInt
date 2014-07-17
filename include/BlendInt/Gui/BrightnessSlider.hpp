@@ -49,11 +49,11 @@ namespace BlendInt {
 
 		virtual void UpdateSlider (const SliderUpdateRequest& request);
 
-		virtual bool UpdateGeometryTest (const GeometryUpdateRequest& request);
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
-		virtual void UpdateGeometry (const GeometryUpdateRequest& request);
+		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);
 
-		virtual void BroadcastUpdate (const GeometryUpdateRequest& request);
+		virtual void PerformRoundRadiusUpdate (const RoundRadiusUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 

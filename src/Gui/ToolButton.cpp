@@ -123,7 +123,7 @@ namespace BlendInt {
 	: AbstractButton()
 	{
 		set_size(24, 24);
-		set_round_corner_type(RoundAll);
+		set_round_type(RoundAll);
 
 		InitializeToolButton();
 	}
@@ -133,35 +133,21 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, m_vao);
 	}
 
-	void ToolButton::UpdateGeometry (const GeometryUpdateRequest& request)
+	void ToolButton::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if (request.target() == this) {
-			switch (request.type()) {
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), RoundAll, 5);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
 
-				case WidgetSize: {
-
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(), RoundAll, 5);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-
-			}
+			set_size(*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType ToolButton::Draw (const RedrawEvent& event)
@@ -187,21 +173,21 @@ namespace BlendInt {
 		}
 
 		glBindVertexArray(m_vao[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_corner_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
 		program->SetUniform1i("u_AA", 1);
 		program->SetUniform1i("u_gamma", 0);
 		program->SetVertexAttrib4f("a_color", 0.f, 0.f, 0.f, 1.f);
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
 			program->SetVertexAttrib4f("a_color", 1.0f, 1.0f, 1.0f, 0.16f);
 			program->SetUniform3f("u_position", (float) position().x(), (float) position().y() - 1.f, 0.f);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							GetHalfOutlineVertices(round_corner_type()) * 2);
+							GetHalfOutlineVertices(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);

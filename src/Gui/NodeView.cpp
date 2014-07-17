@@ -45,12 +45,12 @@ namespace BlendInt {
 	: AbstractWidget()
 	{
 		set_size (400, 300);
-		set_round_corner_type(RoundAll);
-		set_round_corner_radius(10.f);
+		set_round_type(RoundAll);
+		set_round_radius(10.f);
 		set_drop_shadow(true);
 
 		VertexTool tool;
-		tool.Setup (size(), DefaultBorderWidth(), round_corner_type(), round_corner_radius());
+		tool.Setup (size(), DefaultBorderWidth(), round_type(), round_radius());
 
 		glGenVertexArrays(2, m_vao);
 		glBindVertexArray(m_vao[0]);
@@ -79,73 +79,59 @@ namespace BlendInt {
 		glDeleteVertexArrays(2, m_vao);
 	}
 
-	void NodeView::UpdateGeometry (const GeometryUpdateRequest& request)
+	void NodeView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			switch (request.type()) {
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(),
+			        round_type(), round_radius());
+			m_inner_buffer->Bind();
+			tool.SetInnerBufferData(m_inner_buffer.get());
+			m_outer_buffer->Bind();
+			tool.SetOuterBufferData(m_outer_buffer.get());
 
-				case WidgetSize: {
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(),
-					        round_corner_type(), round_corner_radius());
-					m_inner_buffer->Bind();
-					tool.SetInnerBufferData(m_inner_buffer.get());
-					m_outer_buffer->Bind();
-					tool.SetOuterBufferData(m_outer_buffer.get());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-					        round_corner_radius());
-					m_inner_buffer->Bind();
-					tool.SetInnerBufferData(m_inner_buffer.get());
-					m_outer_buffer->Bind();
-					tool.SetOuterBufferData(m_outer_buffer.get());
-
-					set_round_corner_type(*type_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					const float* radius_p =
-					        static_cast<const float*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(),
-					        round_corner_type(), *radius_p);
-					m_inner_buffer->Bind();
-					tool.SetInnerBufferData(m_inner_buffer.get());
-					m_outer_buffer->Bind();
-					tool.SetOuterBufferData(m_outer_buffer.get());
-
-					set_round_corner_radius(*radius_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
+			set_size(*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
-	bool NodeView::UpdateGeometryTest (const GeometryUpdateRequest& request)
+	void NodeView::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
-		return true;
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius());
+			m_inner_buffer->Bind();
+			tool.SetInnerBufferData(m_inner_buffer.get());
+			m_outer_buffer->Bind();
+			tool.SetOuterBufferData(m_outer_buffer.get());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
 	}
 
-	void NodeView::BroadcastUpdate (const GeometryUpdateRequest& request)
+	void NodeView::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
 	{
+		if(request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(),
+			        round_type(), *request.round_radius());
+			m_inner_buffer->Bind();
+			tool.SetInnerBufferData(m_inner_buffer.get());
+			m_outer_buffer->Bind();
+			tool.SetOuterBufferData(m_outer_buffer.get());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType NodeView::Draw(const RedrawEvent& event)
@@ -165,13 +151,13 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_corner_type()) + 2);
+							GetOutlineVertices(round_type()) + 2);
 
 		program->SetUniform1i("u_AA", 1);
 		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
 		program->Reset();

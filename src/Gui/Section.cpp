@@ -123,8 +123,6 @@ namespace BlendInt {
 		EnableShadow(widget);
 
 		events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyed);
-
-		CheckSubWidgetAddedInContainer(widget);
 	}
 
 	void Section::Remove (AbstractWidget* widget)
@@ -138,7 +136,7 @@ namespace BlendInt {
 				delete this;
 			} else {
 				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
-						", and it's referenced by a smart pointer, it will not be deleted automatically");
+						", it will not be deleted automatically");
 			}
 
 		}
@@ -438,102 +436,51 @@ namespace BlendInt {
 		delete fb; fb = 0;
 	}
 
-	void Section::UpdateContainer (const ContainerUpdateRequest& request)
+	void Section::PerformPositionUpdate (const PositionUpdateRequest& request)
 	{
-		ReportContainerUpdate(request);
+		if (request.target() == this) {
+			set_position (*request.position());
+		}
+
+		ReportPositionUpdate(request);
 	}
 
-	bool Section::UpdateGeometryTest (
-	        const GeometryUpdateRequest& request)
+	void Section::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		return true;
-	}
-
-	void Section::UpdateGeometry (const GeometryUpdateRequest& request)
-	{
-		if(request.target() == this) {
-
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					set_size(*size_p);
-					break;
-				}
-
-				case WidgetPosition: {
-					const Point* pos_p = static_cast<const Point*>(request.data());
-					set_position(*pos_p);
-					break;
-				}
-
-				default:
-					break;
-			}
+		if (request.target() == this) {
+			set_size (*request.size());
 		}
 
 		if (request.source()->container() == this) {
-
-			switch (request.type()) {
-
-				case WidgetPosition: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-					break;
-				}
-
-				case WidgetSize: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-
-					const Size* size_p =
-					        static_cast<const Size*>(request.data());
-
-					if (request.source()->drop_shadow()
-							&& request.source()->m_shadow) {
-						request.source()->m_shadow->Resize(*size_p);
-					}
-
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-
-					const int* type_p =
-					        static_cast<const int*>(request.data());
-
-					if (request.source()->drop_shadow()
-							&& request.source()->m_shadow) {
-						request.source()->m_shadow->SetRoundType(*type_p);
-					}
-
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					//m_layers[request.source()->z()].m_hover_list_valid = false;
-
-					const float* radius_p =
-					        static_cast<const float*>(request.data());
-
-					if (request.source()->drop_shadow()
-							&& request.source()->m_shadow) {
-						request.source()->m_shadow->SetRadius(*radius_p);
-					}
-
-					break;
-				}
-
-				default:
-					break;
-
+			if (request.source()->drop_shadow() && request.source()->m_shadow) {
+				request.source()->m_shadow->Resize(*request.size());
 			}
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
 	}
 
-	void Section::BroadcastUpdate (const GeometryUpdateRequest& request)
+	void Section::PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request)
 	{
+		if (request.source()->container() == this) {
+			if (request.source()->drop_shadow() && request.source()->m_shadow) {
+				request.source()->m_shadow->SetRoundType(*request.round_type());
+			}
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void Section::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.source()->container() == this) {
+			if (request.source()->drop_shadow() && request.source()->m_shadow) {
+				request.source()->m_shadow->SetRadius(*request.round_radius());
+			}
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	ResponseType Section::Draw (const RedrawEvent& event)
@@ -684,8 +631,6 @@ namespace BlendInt {
 			}
 
 		}
-
-		CheckSubWidgetRemovedInContainer(widget);
 
 		return true;
 	}

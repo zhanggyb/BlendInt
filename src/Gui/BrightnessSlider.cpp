@@ -94,13 +94,13 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						GetOutlineVertices(round_corner_type()) + 2);
+						GetOutlineVertices(round_type()) + 2);
 
 		program->SetVertexAttrib4fv("a_color", Theme::instance->number_slider().outline.data());
 		program->SetUniform1i("u_AA", 1);
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_corner_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
 		program->Reset();
@@ -114,85 +114,69 @@ namespace BlendInt {
 		m_dot.Draw(
 		        glm::vec3(
 		                position().x() + size().width() / 2
-		                        - m_dot.size().width() / 2, 12, 0.f));
+		                        - m_dot.size().width() / 2, position().y() + 12.f, 0.f));
 
 		return Accept;
 	}
 
-	void BrightnessSlider::UpdateGeometry (const GeometryUpdateRequest& request)
+	void BrightnessSlider::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
-		if(request.target() == this) {
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(*request.size(), DefaultBorderWidth(), round_type(),
+			        round_radius(), Color(0x000000FF), orientation(), 255, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
 
-			switch (request.type()) {
-
-				case WidgetSize: {
-					const Size* size_p = static_cast<const Size*>(request.data());
-					VertexTool tool;
-					tool.Setup(*size_p, DefaultBorderWidth(), round_corner_type(),
-									round_corner_radius(), Color(0x000000FF),
-									orientation(), 255, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					set_size(*size_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerType: {
-					const int* type_p = static_cast<const int*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), *type_p,
-									round_corner_radius(), Color(0x000000FF),
-									orientation(), 255, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					set_round_corner_type(*type_p);
-					Refresh();
-					break;
-				}
-
-				case WidgetRoundCornerRadius: {
-					const float* radius_p =
-									static_cast<const float*>(request.data());
-					VertexTool tool;
-					tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
-									*radius_p, Color(0x000000FF), orientation(), 255, 0);
-					m_inner->Bind();
-					tool.SetInnerBufferData(m_inner.get());
-					m_outer->Bind();
-					tool.SetOuterBufferData(m_outer.get());
-
-					set_round_corner_radius(*radius_p);
-					Refresh();
-					break;
-				}
-
-				default:
-					break;
-			}
-
+			set_size(*request.size());
+			Refresh();
 		}
 
-		ReportGeometryUpdate(request);
+		ReportSizeUpdate(request);
+	}
+
+	void BrightnessSlider::PerformRoundTypeUpdate (
+	        const RoundTypeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), *request.round_type(),
+			        round_radius(), Color(0x000000FF), orientation(), 255, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_round_type(*request.round_type());
+			Refresh();
+		}
+
+		ReportRoundTypeUpdate(request);
+	}
+
+	void BrightnessSlider::PerformRoundRadiusUpdate (
+	        const RoundRadiusUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			VertexTool tool;
+			tool.Setup(size(), DefaultBorderWidth(), round_type(),
+			        *request.round_radius(), Color(0x000000FF), orientation(),
+			        255, 0);
+			m_inner->Bind();
+			tool.SetInnerBufferData(m_inner.get());
+			m_outer->Bind();
+			tool.SetOuterBufferData(m_outer.get());
+
+			set_round_radius(*request.round_radius());
+			Refresh();
+		}
+
+		ReportRoundRadiusUpdate(request);
 	}
 
 	void BrightnessSlider::UpdateSlider (const SliderUpdateRequest& request)
-	{
-	}
-
-	bool BrightnessSlider::UpdateGeometryTest (
-	        const GeometryUpdateRequest& request)
-	{
-		return true;
-	}
-
-	void BrightnessSlider::BroadcastUpdate (const GeometryUpdateRequest& request)
 	{
 	}
 
@@ -240,8 +224,8 @@ namespace BlendInt {
 
 	void BrightnessSlider::InitializeBrightnessSlider()
 	{
-		set_round_corner_type(RoundAll);
-		set_round_corner_radius(6);
+		set_round_type(RoundAll);
+		set_round_radius(6);
 		set_size(90, 14);
 
 		m_dot.Resize(3);
@@ -251,8 +235,8 @@ namespace BlendInt {
 		Color black(0x000000FF);
 
 		VertexTool tool;
-		tool.Setup(size(), DefaultBorderWidth(), round_corner_type(),
-						round_corner_radius(), black, orientation(), 255, 0);
+		tool.Setup(size(), DefaultBorderWidth(), round_type(),
+						round_radius(), black, orientation(), 255, 0);
 
 		glBindVertexArray(m_vao[0]);
 
