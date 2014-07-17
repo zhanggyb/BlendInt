@@ -46,8 +46,9 @@ namespace BlendInt {
 	MenuBar::MenuBar ()
 	: AbstractDequeContainer(), m_vao(0), m_space(2), m_active_button(0)
 	{
-		set_margin(2, 2, 1, 1);
+		set_margin(2, 2, 2, 2);
 		set_size(200, 22);
+		set_drop_shadow(true);
 
 		InitializeMenuBar();
 	}
@@ -55,6 +56,79 @@ namespace BlendInt {
 	MenuBar::~MenuBar ()
 	{
 		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	MenuButton* MenuBar::PushBack (const RefPtr<Menu>& menu)
+	{
+		MenuButton* button = Manage (new MenuButton(menu->title()));
+		DBG_SET_NAME(button, ConvertFromString(menu->title()));
+		button->SetMenu(menu);
+
+		return PushBack(button);
+	}
+
+	MenuButton* MenuBar::PushBack (const String& text, const RefPtr<Menu>& menu)
+	{
+		MenuButton* button = Manage (new MenuButton(text));
+		DBG_SET_NAME(button, ConvertFromString(text));
+		button->SetMenu(menu);
+
+		return PushBack(button);
+	}
+
+	MenuButton* MenuBar::PushBack (MenuButton* button, const RefPtr<Menu>& menu)
+	{
+		if(!button) return 0;
+		button->SetMenu(menu);
+
+		return PushBack(button);
+	}
+
+	MenuButton* MenuBar::PushBack (MenuButton* button)
+	{
+		if(0 == button) return 0;
+
+		int x = GetLastPosition();
+		int y = position().y() + margin().bottom();
+		int h = size().height() - margin().vsum();
+
+		if(PushBackSubWidget(button)) {
+
+			Size prefer = button->GetPreferredSize();
+
+			SetSubWidgetPosition(button, x, y);
+
+			if(button->IsExpandY()) {
+				ResizeSubWidget(button, prefer.width(), h);
+			} else {
+				if(button->size().height() > h) {
+					ResizeSubWidget(button, prefer.width(), h);
+				} else {
+					ResizeSubWidget(button, prefer.width(), button->size().height());
+					SetSubWidgetPosition(button, x, y + (h - button->size().height()) / 2);
+				}
+			}
+
+			events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
+		}
+
+		return button;
+	}
+
+	void MenuBar::SetMenu (size_t index, const RefPtr<Menu>& menu)
+	{
+		MenuButton* button = GetMenuButton(index);
+
+		if(button) {
+			button->SetMenu(menu);
+		}
+	}
+
+	void MenuBar::SetMenu (MenuButton* button, const RefPtr<Menu>& menu)
+	{
+		if(!button || button->container() != this) return;
+
+		button->SetMenu(menu);
 	}
 
 	void MenuBar::PerformMarginUpdate(const Margin& request)
@@ -147,135 +221,6 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	void MenuBar::AddMenu (const RefPtr<Menu>& menu)
-	{
-		MenuButton* button = Manage (new MenuButton(menu->title()));
-
-#ifdef DEBUG
-		button->set_name(ConvertFromString(menu->title()));
-#endif
-		button->SetMenu(menu);
-
-		int x = GetLastPosition();
-
-		int h = size().height() - margin().top() - margin().bottom();
-		h = std::max(h, button->size().height());
-		int w = -m_space;
-		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-		{
-			w += (*it)->size().width() + m_space;
-		}
-		w += margin().left() + margin().right() + button->size().width();
-
-		PushBackSubWidget(button);
-		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
-
-		h = h + margin().top() + margin().bottom();
-		Resize(w, h);
-		//SetPreferredSize(w, h);
-
-		events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
-	}
-
-	void MenuBar::AddMenu (const String& text, const RefPtr<Menu>& menu)
-	{
-		MenuButton* button = Manage (new MenuButton(text));
-#ifdef DEBUG
-		button->set_name(ConvertFromString(text));
-#endif
-		button->SetMenu(menu);
-
-		int x = GetLastPosition();
-
-		int h = size().height() - margin().top() - margin().bottom();
-		h = std::max(h, button->size().height());
-		int w = -m_space;
-		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-		{
-			w += (*it)->size().width() + m_space;
-		}
-		w += margin().left() + margin().right() + button->size().width();
-
-		PushBackSubWidget(button);
-		SetSubWidgetPosition(button, x, position().y() + margin().bottom());
-
-		h = h + margin().top() + margin().bottom();
-		Resize(w, h);
-		//SetPreferredSize(w, h);
-
-		events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
-	}
-
-	void MenuBar::AddMenuButton (MenuButton* button)
-	{
-		if(!button) return;
-
-		int x = GetLastPosition();
-
-		if(PushBackSubWidget(button)) {
-
-			int h = size().height() - margin().top() - margin().bottom();
-			h = std::max(h, button->size().height());
-			int w = -m_space;
-			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-			{
-				w += (*it)->size().width() + m_space;
-			}
-			w += margin().left() + margin().right();
-
-			SetSubWidgetPosition(button, x, position().y() + margin().bottom());
-
-			h = h + margin().top() + margin().bottom();
-			Resize(w, h);
-			//SetPreferredSize(w, h);
-
-			events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
-		}
-	}
-
-	void MenuBar::AddMenuButton (MenuButton* button, const RefPtr<Menu>& menu)
-	{
-		if(!button) return;
-
-		int x = GetLastPosition();
-
-		if(PushBackSubWidget(button)) {
-			button->SetMenu(menu);
-
-			int h = size().height() - margin().top() - margin().bottom();
-			h = std::max(h, button->size().height());
-			int w = -m_space;
-			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
-			{
-				w += (*it)->size().width() + m_space;
-			}
-			w += margin().left() + margin().right();
-
-			SetSubWidgetPosition(button, x, position().y() + margin().bottom());
-
-			h = h + margin().top() + margin().bottom();
-			Resize(w, h);
-
-			events()->connect(button->clicked(), this, &MenuBar::OnMenuButtonClicked);
-		}
-	}
-
-	void MenuBar::SetMenu (size_t index, const RefPtr<Menu>& menu)
-	{
-		MenuButton* button = GetMenuButton(index);
-
-		if(button) {
-			button->SetMenu(menu);
-		}
-	}
-
-	void MenuBar::SetMenu (MenuButton* button, const RefPtr<Menu>& menu)
-	{
-		if(!button || button->container() != this) return;
-
-		button->SetMenu(menu);
-	}
-
 	Size MenuBar::GetPreferredSize () const
 	{
 		Size preferred_size;
@@ -292,7 +237,7 @@ namespace BlendInt {
 			                + AbstractButton::DefaultButtonPadding().top()
 			                + AbstractButton::DefaultButtonPadding().bottom());	// top padding: 2, bottom padding: 2
 
-			preferred_size.add_height(margin().top() + margin().bottom());
+			preferred_size.add_height(margin().vsum());
 
 		} else {
 
@@ -312,8 +257,8 @@ namespace BlendInt {
 				}
 			}
 
-			preferred_size.add_width(margin().left() + margin().right());
-			preferred_size.add_height(margin().top() + margin().bottom());
+			preferred_size.add_width(margin().hsum());
+			preferred_size.add_height(margin().vsum());
 		}
 
 		return preferred_size;
@@ -423,7 +368,6 @@ namespace BlendInt {
 		DBG_PRINT_MSG("%s", "hello");
 		Menu* menu = dynamic_cast<Menu*>(widget);
 		if(menu) {
-			//menu->property_changed().disconnectOne(this, &MenuBar::OnMenuHide);
 			menu->triggered().disconnectOne(this, &MenuBar::OnMenuItemTriggered);
 
 			// DBG_PRINT_MSG("menu at layer: %d", menu->z());

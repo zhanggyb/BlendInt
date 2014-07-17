@@ -77,16 +77,22 @@ namespace BlendInt {
 		 */
 		Section* Remove (AbstractWidget* widget);
 
+		void MoveToTop (const Section* section);
+
+		void MoveToBottom (const Section* section);
+
+		void MoveUp (const Section* seciton);
+
+		void MoveDown (const Section* section);
+
+		size_t GetSectionSize () const;
+
+		void SetFocusedWidget (AbstractWidget* widget);
+
 		/**
 		 * @brief Always return true
 		 */
 		virtual bool Contain (const Point& point) const;
-
-		void SetFocusedWidget (AbstractWidget* widget);
-
-		void RefreshLayer (int layer);
-
-		int GetMaxLayer () const;
 
 		AbstractWidget* focused_widget () const
 		{

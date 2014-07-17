@@ -52,6 +52,9 @@ namespace BlendInt {
 	  m_rY(0.0),
 	  m_button_down(MouseButtonNone)
 	{
+		set_size(600, 500);
+		set_drop_shadow(true);
+
 		InitOnce();
 	}
 
@@ -307,7 +310,6 @@ namespace BlendInt {
 		m_default_camera->Update();
 
 		m_cube.reset(new Cube);
-
 		m_grid.reset(new Grid);
 	}
 

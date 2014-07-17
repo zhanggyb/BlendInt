@@ -78,21 +78,19 @@ int main(int argc, char* argv[])
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
 
-	MenuBar* menubar = Manage(new MenuBar);
+	Viewport3D* view3d = Manage(new Viewport3D);
+	view3d->SetPosition(100, 100);
 
-	RefPtr<Menu> file_menu(new Menu);
+	VirtualWindow* vw = Manage(new VirtualWindow);
+	context->PushBack(vw);
 
-    file_menu->SetRoundCornerType(RoundAll);
-    file_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
-    file_menu->AddAction("MenuItem2", "Ctrl + 1");
-    file_menu->AddAction("MenuItem3", "Ctrl + 1");
-    file_menu->AddAction("MenuItem4", "Ctrl + 1");
-    file_menu->AddAction("MenuItem5");
+	VirtualWindow* vw1 = Manage(new VirtualWindow);
+	context->PushBack(vw1);
 
-	menubar->AddMenu(String("File"), file_menu);
-	menubar->SetPosition(200, 600);
+	VirtualWindow* vw2 = Manage(new VirtualWindow);
+	context->PushBack(vw2);
 
-	context->PushBack(menubar);
+	context->PushBack(view3d);
 
 	RunLoop(win);
 

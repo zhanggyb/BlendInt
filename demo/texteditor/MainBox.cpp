@@ -45,7 +45,7 @@ void MainBox::InitOnce ()
     file_menu->AddActionItem("MenuItem5");
     */
 
-	m_menubar->AddMenu(String("File"), file_menu);
+	m_menubar->PushBack(String("File"), file_menu);
 	// m_menubar->AddMenuButton("Edit");
 
 	m_toolbar->PushBack(m_open);

@@ -178,18 +178,78 @@ namespace BlendInt
 		return section;
 	}
 
-	int Context::GetMaxLayer () const
+	void Context::MoveToTop(const Section* section)
 	{
-		return m_sections.size() - 1;
+		if((section == 0) || (section->container() != this)) return;
+
+		std::deque<Section*>::iterator it = std::find(m_sections.begin(), m_sections.end(), section);
+
+		if(it == m_sections.end()) return;
+
+		Section* sect = *it;
+
+		m_sections.erase(it);
+		m_sections.push_back(sect);
+	}
+
+	void Context::MoveToBottom(const Section* section)
+	{
+		if((section == 0) || (section->container() != this)) return;
+
+		std::deque<Section*>::iterator it = std::find(m_sections.begin(), m_sections.end(), section);
+
+		if(it == m_sections.end()) return;
+
+		Section* sect = *it;
+
+		m_sections.erase(it);
+		m_sections.push_front(sect);
+	}
+
+	void Context::MoveUp (const Section* section)
+	{
+		if((section == 0) || (section->container() != this)) return;
+
+		std::deque<Section*>::iterator it = std::find(m_sections.begin(), m_sections.end(), section);
+
+		if(it == m_sections.end()) return;
+
+		std::deque<Section*>::iterator next = it;
+		std::advance(next, 1);
+
+		if(next == m_sections.end()) return;
+
+		Section* tmp = *it;
+		*it = *next;
+		*next = tmp;
+	}
+
+	void Context::MoveDown(const Section* section)
+	{
+		if((section == 0) || (section->container() != this)) return;
+
+		std::deque<Section*>::iterator it = std::find(m_sections.begin(), m_sections.end(), section);
+
+		if(it == m_sections.end()) return;
+
+		std::deque<Section*>::iterator prev = it;
+		std::advance(prev, -1);
+
+		if(it == m_sections.begin()) return;
+
+		Section* tmp = *it;
+		*it = *prev;
+		*prev = tmp;
+	}
+
+	size_t Context::GetSectionSize () const
+	{
+		return m_sections.size();
 	}
 
 	bool Context::Contain (const Point& point) const
 	{
 		return true;
-	}
-
-	void Context::RefreshLayer (int layer)
-	{
 	}
 
 	void Context::SetFocusedWidget (AbstractWidget* widget)

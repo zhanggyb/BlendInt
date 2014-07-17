@@ -58,6 +58,11 @@ namespace BlendInt {
 		 */
 		bool Contain (const Point& point) const;
 
+		AbstractWidget* last_hover_widget () const
+		{
+			return m_last_hover_widget;
+		}
+
 		static Section* GetSection (AbstractWidget* widget);
 
 		static void RenderToTexture (AbstractWidget* widget, GLTexture2D* texture);
