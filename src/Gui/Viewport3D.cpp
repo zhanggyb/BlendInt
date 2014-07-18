@@ -236,7 +236,11 @@ namespace BlendInt {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		m_grid->Render(m_default_camera->projection(), m_default_camera->view());
-		m_cube->Render(m_default_camera->projection(), m_default_camera->view());
+
+		for(std::deque<RefPtr<AbstractPrimitive> >::iterator it = m_primitives.begin(); it != m_primitives.end(); it++)
+		{
+			(*it)->Render(m_default_camera->projection(), m_default_camera->view());
+		}
 	}
 
 	ResponseType Viewport3D::Draw (const RedrawEvent& event)
@@ -294,6 +298,11 @@ namespace BlendInt {
 		return Ignore;
 	}
 
+	void Viewport3D::PushBack (const RefPtr<AbstractPrimitive>& primitive)
+	{
+		m_primitives.push_back(primitive);
+	}
+
 	void Viewport3D::InitOnce ()
 	{
 		m_default_camera.reset(new NavigationCamera);
@@ -308,7 +317,6 @@ namespace BlendInt {
 		        1.f * size().width() / size().height());
 		m_default_camera->Update();
 
-		m_cube.reset(new Cube);
 		m_grid.reset(new Grid);
 	}
 

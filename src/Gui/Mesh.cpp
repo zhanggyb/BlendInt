@@ -58,7 +58,7 @@ namespace BlendInt {
 			"out vec4 FragmentColor;"
 			""
 			"void main(void) {"
-			"	FragmentColor = vec4(1.0, 1.0, 1.0, 1.0);"
+			"	FragmentColor = vec4(0.67, 0.58, 0.635, 1.0);"
 			"}";
 
 	Mesh::Mesh ()
@@ -66,6 +66,46 @@ namespace BlendInt {
 	  m_vao(0)
 	{
 		InitializeMesh();
+	}
+
+	Mesh::~Mesh ()
+	{
+		glDeleteVertexArrays(1, &m_vao);
+	}
+
+	bool Mesh::Load(const char* filename)
+	{
+		std::vector<glm::vec4> vertices;
+		std::vector<glm::vec3> normals;
+		std::vector<GLushort> elements;
+
+		if(!LoadObj(filename, vertices, normals, elements)) {
+			return false;
+		}
+
+		glBindVertexArray(m_vao);
+
+		m_vertex_buffer->Bind();
+		m_vertex_buffer->SetData(vertices.size() * sizeof(vertices[0]), &vertices[0]);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+		m_normal_buffer->Bind();
+		m_normal_buffer->SetData(normals.size() * sizeof(normals[0]), &normals[0]);
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		m_index_buffer->Bind();
+		m_index_buffer->SetData(elements.size() * sizeof(GLushort), &elements[0]);
+
+		glBindVertexArray(0);
+
+		GLArrayBuffer::Reset();
+		GLElementArrayBuffer::Reset();
+
+		return true;
 	}
 
 	void Mesh::Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix)
@@ -89,12 +129,7 @@ namespace BlendInt {
 		m_program->Reset();
 	}
 
-	Mesh::~Mesh ()
-	{
-		glDeleteVertexArrays(1, &m_vao);
-	}
-
-	void Mesh::LoadObj (const char* filename, std::vector<glm::vec4>& vertices,
+	bool Mesh::LoadObj (const char* filename, std::vector<glm::vec4>& vertices,
 	        std::vector<glm::vec3>& normals, std::vector<GLushort>& elements)
 	{
 		using namespace std;
@@ -102,7 +137,7 @@ namespace BlendInt {
 		ifstream in(filename, ios::in);
 		if (!in) {
 			cerr << "Cannot open " << filename << endl;
-			exit(1);
+			return false;
 		}
 
 		string line;
@@ -143,45 +178,26 @@ namespace BlendInt {
 			                glm::vec3(vertices[ic]) - glm::vec3(vertices[ia])));
 			normals[ia] = normals[ib] = normals[ic] = normal;
 		}
+
+		return true;
 	}
 
 	void Mesh::InitializeMesh ()
 	{
-		std::vector<glm::vec4> vertices;
-		std::vector<glm::vec3> normals;
-		std::vector<GLushort> elements;
-
-		LoadObj("test.obj", vertices, normals, elements);
-
 		glGenVertexArrays(1, &m_vao);
 
 		glBindVertexArray(m_vao);
 
 		m_vertex_buffer.reset(new GLArrayBuffer);
 		m_vertex_buffer->Generate();
-		m_vertex_buffer->Bind();
-		m_vertex_buffer->SetData(vertices.size() * sizeof(vertices[0]), &vertices[0]);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
 		m_normal_buffer.reset(new GLArrayBuffer);
 		m_normal_buffer->Generate();
-		m_normal_buffer->Bind();
-		m_normal_buffer->SetData(normals.size() * sizeof(normals[0]), &normals[0]);
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindVertexArray(0);
-		GLArrayBuffer::Reset();
 
 		m_index_buffer.reset(new GLElementArrayBuffer);
 		m_index_buffer->Generate();
-		m_index_buffer->Bind();
-		m_index_buffer->SetData(elements.size() * sizeof(GLushort), &elements[0]);
 
-		GLElementArrayBuffer::Reset();
+		glBindVertexArray(0);
 
 		m_program.reset(new GLSLProgram);
 		m_program->Create();

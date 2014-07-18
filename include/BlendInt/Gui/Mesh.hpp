@@ -40,12 +40,14 @@ namespace BlendInt {
 
 		Mesh ();
 
+		virtual ~Mesh();
+
+		bool Load (const char* filename);
+
 		virtual void Render (const glm::mat4& projection_matrix, const glm::mat4& view_matrix);
 
-		static void LoadObj (const char* filename, std::vector<glm::vec4>& vertices,
+		static bool LoadObj (const char* filename, std::vector<glm::vec4>& vertices,
 				std::vector<glm::vec3>& normals, std::vector<GLushort>& elements);
-
-		virtual ~Mesh();
 
 	private:
 
