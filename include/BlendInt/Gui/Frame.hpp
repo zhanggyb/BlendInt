@@ -30,7 +30,7 @@
  * @ingroup gui
  */
 
-#include <BlendInt/Gui/AbstractSingleContainer.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
@@ -39,7 +39,7 @@ namespace BlendInt {
 	 *
 	 * @ingroup widgets
 	 */
-	class Frame: public AbstractSingleContainer
+	class Frame: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Frame);
 

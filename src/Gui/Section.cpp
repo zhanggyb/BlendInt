@@ -635,12 +635,6 @@ namespace BlendInt {
 		return true;
 	}
 
-	IteratorPtr Section::CreateIterator (const DeviceEvent& event)
-	{
-		IteratorPtr ret;
-		return ret;
-	}
-
 	void Section::DispatchDrawEvent (AbstractWidget* widget,
 	        const RedrawEvent& event, ScissorStatus& scissor)
 	{
@@ -663,19 +657,17 @@ namespace BlendInt {
 							p->size().height() - p->margin().top() - p->margin().bottom());
 				}
 
-				IteratorPtr it = p->CreateIterator(event);
-
 				if(scissor.valid()) {
 					scissor.Enable();
 
-					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-						DispatchDrawEvent(it->GetWidget(), event, scissor);
+					for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
+						DispatchDrawEvent(*it, event, scissor);
 					}
 
 				} else {
 
-					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-						DispatchDrawEvent(it->GetWidget(), event, scissor);
+					for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
+						DispatchDrawEvent(*it, event, scissor);
 					}
 				}
 
@@ -711,19 +703,17 @@ namespace BlendInt {
 							p->size().height() - p->margin().top() - p->margin().bottom());
 				}
 
-				IteratorPtr it = p->CreateIterator(event);
-
 				if(m_scissor_status.valid()) {
 					m_scissor_status.Enable();
 
-					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-						DispatchDrawEvent(it->GetWidget(), event);
+					for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
+						DispatchDrawEvent(*it, event);
 					}
 
 				} else {
 
-					for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
-						DispatchDrawEvent(it->GetWidget(), event);
+					for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
+						DispatchDrawEvent(*it, event);
 					}
 				}
 
@@ -804,11 +794,10 @@ namespace BlendInt {
 
 		if (p) {
 
-			IteratorPtr it = p->CreateIterator(event);
 			AbstractWidget* widget = 0;
-			for (it->GoToFirst(); !it->IsEnd(); it->GoNext()) {
+			for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
 
-				widget = it->GetWidget();
+				widget = *it;
 				if(widget->Contain(event.position())) {
 					m_last_hover_widget = widget;
 					events()->connect(m_last_hover_widget->destroyed(), this, &Section::OnHoverWidgetDestroyed);

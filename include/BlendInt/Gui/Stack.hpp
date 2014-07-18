@@ -24,14 +24,14 @@
 #ifndef _BLENDINT_GUI_STACKEDWIDGET_HPP_
 #define _BLENDINT_GUI_STACKEDWIDGET_HPP_
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief class for stacked widgets
 	 */
-	class Stack: public AbstractDequeContainer
+	class Stack: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Stack);
 
@@ -41,7 +41,7 @@ namespace BlendInt {
 
 		virtual ~Stack ();
 
-		void Add (AbstractWidget* widget);
+		void PushBack (AbstractWidget* widget);
 
 		void Insert (size_t index, AbstractWidget* widget);
 
@@ -62,8 +62,6 @@ namespace BlendInt {
 	protected:
 
 		void HideSubWidget (size_t index);
-
-		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
 
 		virtual void PerformMarginUpdate (const Margin& request);
 
@@ -93,7 +91,7 @@ namespace BlendInt {
 
 	private:
 
-		size_t m_index;
+		AbstractWidget* m_active_widget;
 	};
 
 }

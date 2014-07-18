@@ -47,7 +47,7 @@
 namespace BlendInt {
 
 	VirtualWindow::VirtualWindow ()
-	: AbstractVectorContainer(2)
+	: AbstractContainer(2)
 	{
 		set_round_type(RoundTopLeft | RoundTopRight);
 		set_round_radius(10.f);
@@ -66,7 +66,7 @@ namespace BlendInt {
 
 	void VirtualWindow::Setup (AbstractWidget* widget)
 	{
-		if(SetSubWidget(ContentIndex, widget)) {
+		if(AssignSubWidget(ContentIndex, widget)) {
 			FillSubWidgets(position(), size());
 		}
 	}
@@ -163,7 +163,7 @@ namespace BlendInt {
 	void VirtualWindow::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			int h = request.size()->height() - sub_widget(0)->size().height();
+			int h = request.size()->height() - deque()[0]->size().height();
 			if (h < 0) h = 0;
 
 			Size vw_size (request.size()->width(), h);
@@ -209,8 +209,8 @@ namespace BlendInt {
 
 	void VirtualWindow::FillSubWidgets(int x, int y, int w, int h)
 	{
-		AbstractWidget* dec = sub_widget(DecorationIndex);
-		AbstractWidget* content = sub_widget(ContentIndex);
+		AbstractWidget* dec = deque()[DecorationIndex];
+		AbstractWidget* content = deque()[ContentIndex];
 
 		Size dec_prefer = dec->GetPreferredSize();
 
@@ -250,7 +250,7 @@ namespace BlendInt {
 		// set decoration
 		Decoration* dec = Manage(new Decoration);
 		DBG_SET_NAME(dec, "Decoration");
-		SetSubWidget(DecorationIndex, dec);
+		AssignSubWidget(DecorationIndex, dec);
 
 		FillSubWidgets (position(), size());
 

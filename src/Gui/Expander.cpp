@@ -183,13 +183,13 @@ namespace BlendInt {
 	// ----------------------
 
 	Expander::Expander ()
-	: AbstractVectorContainer(2), m_vao(0), m_frame_height(0)
+	: AbstractContainer(2), m_vao(0), m_frame_height(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton);
 		Frame* frame = Manage(new Frame);
 
-		SetSubWidget(0, title_button);
-		SetSubWidget(1, frame);
+		AssignSubWidget(0, title_button);
+		AssignSubWidget(1, frame);
 
 		int width = 0;
 		int height = 0;
@@ -217,13 +217,13 @@ namespace BlendInt {
 	}
 
 	Expander::Expander (const String& title)
-	: AbstractVectorContainer(2), m_vao(0), m_frame_height(0)
+	: AbstractContainer(2), m_vao(0), m_frame_height(0)
 	{
 		ExpandButton* title_button = Manage(new ExpandButton(title));
 		Frame* frame = Manage(new Frame);
 
-		SetSubWidget(0, title_button);
-		SetSubWidget(1, frame);
+		AssignSubWidget(0, title_button);
+		AssignSubWidget(1, frame);
 
 		int width = 0;
 		int height = 0;
@@ -257,7 +257,7 @@ namespace BlendInt {
 
 	bool Expander::Setup (AbstractWidget* widget)
 	{
-		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
+		Frame* frame = dynamic_cast<Frame*>(deque()[1]);
 		if(frame->Setup(widget)) {
 			return true;
 		}
@@ -270,7 +270,7 @@ namespace BlendInt {
 		Size prefer;
 
 		Size tmp;
-		for(WidgetVector::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 		{
 			tmp = (*it)->GetPreferredSize();
 			prefer.set_width(std::max(prefer.width(), tmp.width()));
@@ -287,7 +287,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(WidgetVector::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 		{
 			if((*it)->IsExpandX()) {
 				expand = true;
@@ -302,7 +302,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(WidgetVector::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 		{
 			if((*it)->IsExpandY()) {
 				expand = true;
@@ -427,8 +427,8 @@ namespace BlendInt {
 	{
 		int button_preferred_height = 0;
 		//int sum = 0;
-		ExpandButton* button = dynamic_cast<ExpandButton*>(sub_widget(0));
-		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
+		ExpandButton* button = dynamic_cast<ExpandButton*>(deque()[0]);
+		Frame* frame = dynamic_cast<Frame*>(deque()[1]);
 
 		button_preferred_height = button->GetPreferredSize().height();
 
@@ -461,12 +461,12 @@ namespace BlendInt {
 	
 	void Expander::SetTitle (const String& text)
 	{
-		dynamic_cast<ExpandButton*>(sub_widget(0))->SetText(text);
+		dynamic_cast<ExpandButton*>(deque()[0])->SetText(text);
 	}
 
 	const String& Expander::GetTitle () const
 	{
-		ExpandButton* button = dynamic_cast<ExpandButton*>(sub_widget(0));
+		ExpandButton* button = dynamic_cast<ExpandButton*>(deque()[0]);
 
 		return button->text();
 	}
@@ -493,8 +493,8 @@ namespace BlendInt {
 
 	void Expander::OnToggled (bool toggle)
 	{
-		ExpandButton* button = dynamic_cast<ExpandButton*>(sub_widget(0));
-		Frame* frame = dynamic_cast<Frame*>(sub_widget(1));
+		ExpandButton* button = dynamic_cast<ExpandButton*>(deque()[0]);
+		Frame* frame = dynamic_cast<Frame*>(deque()[1]);
 
 		if(toggle) {
 			int x = position().x();

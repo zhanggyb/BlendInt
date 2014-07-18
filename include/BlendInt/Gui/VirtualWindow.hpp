@@ -25,7 +25,7 @@
 #define _BLENDINT_GUI_VIRTUALWINDOW_HPP_
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
-#include <BlendInt/Gui/AbstractVectorContainer.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 #include <BlendInt/OpenGL/ScissorStatus.hpp>
 
@@ -36,7 +36,7 @@ namespace BlendInt {
 	 *
 	 * The margin of a VirtualWindow is always zero.
 	 */
-	class VirtualWindow: public AbstractVectorContainer
+	class VirtualWindow: public AbstractContainer
 	{
 	public:
 

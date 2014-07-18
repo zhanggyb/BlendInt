@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # A simple script to create a unit test from template
 #

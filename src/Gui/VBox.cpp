@@ -37,7 +37,7 @@
 namespace BlendInt {
 
 	VBox::VBox (int align, int space)
-	: AbstractDequeContainer(), m_alignment(align), m_space(space)
+	: AbstractContainer(), m_alignment(align), m_space(space)
 	{
 		set_size (200, 200);
 	}
@@ -97,7 +97,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_height(-m_space);
-			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 			{
 				widget = *it;
 
@@ -120,7 +120,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 		{
 			if((*it)->IsExpandX()) {
 				expand = true;
@@ -135,7 +135,7 @@ namespace BlendInt {
 	{
 		bool expand = false;
 
-		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 		{
 			if((*it)->IsExpandY()) {
 				expand = true;
@@ -264,7 +264,7 @@ namespace BlendInt {
 
 		AbstractWidget* widget = 0;
 		Size tmp_size;
-		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 		{
 			widget = *it;
 			if (widget->visiable()) {
@@ -319,11 +319,11 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
-		AbstractWidgetDeque::iterator widget_it = sub_widgets()->begin();
+		AbstractWidgetDeque::const_iterator widget_it = deque().begin();
 		AbstractWidget* widget = 0;
 
 		y = y + height;
-		while (widget_it != sub_widgets()->end()) {
+		while (widget_it != deque().end()) {
 
 			widget = *widget_it;
 
@@ -359,7 +359,7 @@ namespace BlendInt {
 		int widgets_height = height - (expandable_preferred_heights->size() + unexpandable_preferred_heights->size() - 1) * space;
 
 		if(widgets_height <= 0) {
-			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 			{
 				(*it)->Resize((*it)->size().width(), 0);
 			}
@@ -369,14 +369,14 @@ namespace BlendInt {
 		int reference_height;
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
-		AbstractWidgetDeque::iterator it = sub_widgets()->begin();
+		AbstractWidgetDeque::const_iterator it = deque().begin();
 		AbstractWidget* widget = 0;
 
 		y = y + height;
 		if(widgets_height <= unexpandable_prefer_sum) {
 			reference_height = widgets_height;
 
-			while (it != sub_widgets()->end()) {
+			while (it != deque().end()) {
 
 				widget = (*it);
 
@@ -407,7 +407,7 @@ namespace BlendInt {
 		} else {
 			reference_height = widgets_height - unexpandable_prefer_sum;
 
-			while (it != sub_widgets()->end()) {
+			while (it != deque().end()) {
 
 				widget = (*it);
 
@@ -452,11 +452,11 @@ namespace BlendInt {
 		std::deque<int>::const_iterator exp_it = expandable_preferred_heights->begin();
 		std::deque<int>::const_iterator unexp_it = unexpandable_preferred_heights->begin();
 
-		AbstractWidgetDeque::iterator it = sub_widgets()->begin();
+		AbstractWidgetDeque::const_iterator it = deque().begin();
 
 		y = y + height;
 		AbstractWidget* widget = 0;
-		while (it != sub_widgets()->end()) {
+		while (it != deque().end()) {
 
 			widget = (*it);
 
@@ -489,9 +489,9 @@ namespace BlendInt {
 	{
 		std::deque<int>::const_iterator unexp_it =
 				unexpandable_preferred_widths->begin();
-		AbstractWidgetDeque::iterator it;
+		AbstractWidgetDeque::const_iterator it;
 		AbstractWidget* widget = 0;
-		for (it = sub_widgets()->begin(); it != sub_widgets()->end(); it++) {
+		for (it = deque().begin(); it != deque().end(); it++) {
 			widget = *it;
 
 			if (widget->IsExpandX()) {

@@ -43,10 +43,9 @@
 namespace BlendInt {
 
 	Stack::Stack()
-	: AbstractDequeContainer(),
-	  m_index(0)
+	: AbstractContainer(),
+	  m_active_widget(0)
 	{
-		//set_preferred_size(400, 300);
 		set_size(400, 300);
 	}
 
@@ -54,7 +53,7 @@ namespace BlendInt {
 	{
 	}
 
-	void Stack::Add (AbstractWidget* widget)
+	void Stack::PushBack (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 			int w = size().width() - margin().hsum();
@@ -63,7 +62,10 @@ namespace BlendInt {
 			ResizeSubWidget(widget, w, h);
 			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
 
-			if((sub_widget_size() - 1) != m_index) {
+			if(deque().size() == 1) {
+				m_active_widget = widget;
+				m_active_widget->SetVisible(true);
+			} else {
 				widget->SetVisible(false);
 			}
 		}
@@ -77,13 +79,25 @@ namespace BlendInt {
 
 			ResizeSubWidget(widget, w, h);
 			SetSubWidgetPosition(widget, position().x() + margin().left(), position().y() + margin().bottom());
+
+			widget->SetVisible(false);
 		}
 	}
 
 	void Stack::Remove (AbstractWidget* widget)
 	{
 		if(RemoveSubWidget(widget)) {
-			m_index--;
+
+			if(m_active_widget == widget) {
+
+				if(deque().size() == 0) {
+					m_active_widget = 0;
+				} else {
+					m_active_widget = deque().front();
+					m_active_widget->SetVisible(true);
+				}
+
+			}
 		}
 	}
 
@@ -94,10 +108,15 @@ namespace BlendInt {
 		if(index > (size - 1)) return;
 
 		if(size) {
-			sub_widgets()->at(m_index)->SetVisible(false);
 
-			m_index = index;
-			sub_widgets()->at(m_index)->SetVisible(true);
+			AbstractWidget* widget = deque()[index];
+			if(m_active_widget == widget) {
+				return;
+			}
+
+			m_active_widget->SetVisible(false);
+			m_active_widget = widget;
+			m_active_widget->SetVisible(true);
 		}
 	}
 
@@ -105,7 +124,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 		{
 			if((*it)->IsExpandX()) {
 				ret = true;
@@ -120,7 +139,7 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 		{
 			if((*it)->IsExpandY()) {
 				ret = true;
@@ -141,7 +160,7 @@ namespace BlendInt {
 			prefer.set_height(0);
 
 			Size tmp;
-			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 			{
 				tmp = (*it)->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));
@@ -158,11 +177,7 @@ namespace BlendInt {
 
 	AbstractWidget* Stack::GetActiveWidget () const
 	{
-		if(sub_widget_size()) {
-			return sub_widgets()->at(m_index);
-		} else {
-			return 0;
-		}
+		return m_active_widget;
 	}
 
 	AbstractWidget* Stack::GetWidget (size_t index)
@@ -171,7 +186,7 @@ namespace BlendInt {
 
 		if(index > (size - 1)) return 0;
 
-		return sub_widgets()->at(index);
+		return deque().at(index);
 	}
 
 	void Stack::HideSubWidget(size_t index)
@@ -179,7 +194,7 @@ namespace BlendInt {
 		size_t size = sub_widget_size();
 
 		if(size && index < (size - 1)) {
-			AbstractWidget* p = sub_widgets()->at(index);
+			AbstractWidget* p = deque().at(index);
 			p->SetVisible(false);
 		}
 	}
@@ -272,18 +287,6 @@ namespace BlendInt {
 		return Ignore;
 	}
 	
-	IteratorPtr Stack::CreateIterator (const DeviceEvent& event)
-	{
-		RefPtr<SingleIterator> ret;
-		if(sub_widget_size()) {
-			ret.reset(new SingleIterator(sub_widgets()->at(m_index)));
-		} else {
-			ret.reset(new SingleIterator(0));
-		}
-
-		return ret;
-	}
-
 	ResponseType Stack::MouseMoveEvent(const MouseEvent& event)
 	{
 		return Ignore;

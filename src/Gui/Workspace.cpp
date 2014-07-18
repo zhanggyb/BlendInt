@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	Workspace::Workspace()
-	: AbstractDequeContainer()
+	: AbstractContainer()
 	{
 		set_size(500, 400);
 		set_scissor_test(true);
@@ -105,7 +105,7 @@ namespace BlendInt {
 			prefer.reset(500, 400);
 		} else {
 			Size tmp;
-			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 			{
 				tmp = (*it)->GetPreferredSize();
 				prefer.set_width(std::max(prefer.width(), tmp.width()));

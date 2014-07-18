@@ -284,9 +284,9 @@ namespace BlendInt {
 		VBlock* hsv_block = CreateHSVBlock();
 		VBox* hex_box = CreateHexBlock();
 
-		stack->Add(rgb_block);
-		stack->Add(hsv_block);
-		stack->Add(hex_box);
+		stack->PushBack(rgb_block);
+		stack->PushBack(hsv_block);
+		stack->PushBack(hex_box);
 
 		return stack;
 	}

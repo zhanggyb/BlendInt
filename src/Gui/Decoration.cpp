@@ -46,7 +46,7 @@
 namespace BlendInt {
 
 	Decoration::Decoration()
-	: AbstractDequeContainer(),
+	: AbstractContainer(),
 	  m_space(4),
 	  m_pressed(false)
 	{
@@ -109,7 +109,7 @@ namespace BlendInt {
 
 			int x = position().x() + margin().left();
 			if (sub_widget_size()) {
-				x = sub_widgets()->front()->position().x();
+				x = deque().front()->position().x();
 			}
 
 			int y = position().y() + margin().bottom();

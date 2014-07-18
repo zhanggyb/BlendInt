@@ -35,7 +35,6 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
-#include <BlendInt/Gui/ContextLayer.hpp>
 #include <BlendInt/Gui/Section.hpp>
 
 namespace BlendInt {
@@ -167,8 +166,6 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
-
-		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
 
 	private:
 

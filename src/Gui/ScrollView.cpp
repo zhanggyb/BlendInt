@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	ScrollView::ScrollView()
-	: AbstractSingleContainer(),
+	: AbstractContainer(1),
 	  m_vao(0),
 	  m_orientation(Horizontal | Vertical),
 	  m_move_status(false)
@@ -76,7 +76,7 @@ namespace BlendInt {
 
 	void ScrollView::Setup (AbstractWidget* widget)
 	{
-		if (SetSubWidget(widget)) {
+		if (AssignSubWidget(0, widget)) {
 			int x = position().x() + margin().left();
 			int y = position().y() + size().height() - margin().top();
 
@@ -96,9 +96,9 @@ namespace BlendInt {
 
 	void ScrollView::CentralizeViewport()
 	{
-		if(!sub_widget()) return;
+		if(!deque()[0]) return;
 
-		AbstractWidget* p = sub_widget();
+		AbstractWidget* p = deque()[0];
 
 		int w = size().width() - margin().hsum();
 		int h = size().height() - margin().vsum();
@@ -115,8 +115,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(sub_widget()) {
-			AbstractWidget* p = sub_widget();
+		if(deque()[0]) {
+			AbstractWidget* p = deque()[0];
 
 			int w = size().width() - margin().hsum();
 
@@ -135,8 +135,8 @@ namespace BlendInt {
 	{
 		int percentage = 0;
 
-		if(sub_widget()) {
-			AbstractWidget* p = sub_widget();
+		if(deque()[0]) {
+			AbstractWidget* p = deque()[0];
 
 			int h = size().height() - margin().vsum();
 
@@ -153,10 +153,10 @@ namespace BlendInt {
 
 	void ScrollView::MoveViewport(int x, int y)
 	{
-		if(sub_widget()) {
+		if(deque()[0]) {
 
 			if(x != 0 || y != 0) {
-				AbstractWidget* p = sub_widget();
+				AbstractWidget* p = deque()[0];
 				SetSubWidgetPosition(p, p->position().x() + x, p->position().y() + y);
 
 				Refresh();
@@ -166,8 +166,8 @@ namespace BlendInt {
 
 	void ScrollView::SetReletivePosition (int x, int y)
 	{
-		if(sub_widget()) {
-			AbstractWidget* p = sub_widget();
+		if(deque()[0]) {
+			AbstractWidget* p = deque()[0];
 
 			SetSubWidgetPosition(p, position().x() + x, position().y() + y);
 
@@ -177,8 +177,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandX() const
 	{
-		if(sub_widget()) {
-			return sub_widget()->IsExpandX();
+		if(deque()[0]) {
+			return deque()[0]->IsExpandX();
 		} else {
 			return false;
 		}
@@ -186,8 +186,8 @@ namespace BlendInt {
 
 	bool ScrollView::IsExpandY() const
 	{
-		if(sub_widget()) {
-			return sub_widget()->IsExpandY();
+		if(deque()[0]) {
+			return deque()[0]->IsExpandY();
 		} else {
 			return false;
 		}
@@ -197,8 +197,10 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		if(sub_widget()) {
-			prefer = sub_widget()->GetPreferredSize();
+		AbstractWidget* widget = deque()[0];
+
+		if(widget) {
+			prefer = widget->GetPreferredSize();
 			prefer.add_width(margin().hsum());
 			prefer.add_height(margin().vsum());
 		}
@@ -219,7 +221,10 @@ namespace BlendInt {
 			int y = request.position()->y() - position().y();
 
 			set_position(*request.position());
-			MoveSubWidget(x, y);
+
+			if(deque()[0]) {
+				MoveSubWidgets(x, y);
+			}
 		}
 
 		ReportPositionUpdate(request);
@@ -234,12 +239,12 @@ namespace BlendInt {
 			tool.SetInnerBufferData(m_inner.get());
 
 			// align the subwidget
-			if (sub_widget()) {
+			if (deque()[0]) {
 
 				int dy = request.size()->height() - size().height();
 
-				sub_widget()->SetPosition(sub_widget()->position().x(),
-				        sub_widget()->position().y() + dy);
+				deque()[0]->SetPosition(deque()[0]->position().x(),
+				        deque()[0]->position().y() + dy);
 			}
 
 			set_size(*request.size());
@@ -259,7 +264,7 @@ namespace BlendInt {
 		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 
-		if(sub_widget()) {
+		if(deque()[0]) {
 			program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
 		} else {
 			program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
@@ -276,11 +281,11 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MousePressEvent (const MouseEvent& event)
 	{
-		if (!sub_widget()) {
+		if (!deque()[0]) {
 			return Ignore;
 		}
 
-		AbstractWidget* p = sub_widget();
+		AbstractWidget* p = deque()[0];
 
 		if (event.button() == MouseButtonMiddle) {
 			m_move_status = true;
@@ -301,7 +306,7 @@ namespace BlendInt {
 			Refresh();
 		}
 
-		if(!sub_widget()) {
+		if(!deque()[0]) {
 			return Ignore;
 		}
 
@@ -337,11 +342,11 @@ namespace BlendInt {
 
 	ResponseType ScrollView::MouseMoveEvent(const MouseEvent& event)
 	{
-		if(sub_widget()) {
+		if(deque()[0]) {
 
 			if(m_move_status) {
 
-				AbstractWidget* p = sub_widget();
+				AbstractWidget* p = deque()[0];
 
 				SetSubWidgetPosition(p,
 				        m_origin_pos.x() + event.position().x()

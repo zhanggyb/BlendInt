@@ -101,8 +101,6 @@ namespace BlendInt {
 
 		virtual bool RemoveSubWidget (AbstractWidget* widget);
 
-		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
-
 	private:
 
 		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);

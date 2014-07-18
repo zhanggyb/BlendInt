@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	ToolBox::ToolBox()
-	: AbstractDequeContainer(),
+	: AbstractContainer(),
 	  m_vao(0),
 	  m_space(1)
 	{
@@ -123,7 +123,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_height(-m_space);
-			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 			{
 				widget = *it;
 
@@ -249,7 +249,7 @@ namespace BlendInt {
 		int y = position().y() + size().height() - margin().top();
 
 		if(sub_widget_size()) {
-			y = sub_widgets()->back()->position().y();
+			y = deque().back()->position().y();
 			y -= m_space;
 		}
 
@@ -273,7 +273,7 @@ namespace BlendInt {
 		y = y + height + space;
 
 		AbstractWidget* widget = 0;
-		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 		{
 			widget = *it;
 

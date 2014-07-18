@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_WORKSPACE_HPP_
 #define _BLENDINT_GUI_WORKSPACE_HPP_
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 #include <BlendInt/Gui/VirtualWindow.hpp>
 
 namespace BlendInt {
@@ -32,7 +32,7 @@ namespace BlendInt {
 	/**
 	 * @brief A container works for MDI application
 	 */
-	class Workspace: public AbstractDequeContainer
+	class Workspace: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Workspace);
 

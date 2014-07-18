@@ -668,12 +668,6 @@ namespace BlendInt
 		return Ignore;
 	}
 
-	IteratorPtr Context::CreateIterator (const DeviceEvent& event)
-	{
-		IteratorPtr ret;
-		return ret;
-	}
-
 	void Context::InitializeContext ()
 	{
 		using Stock::Shaders;

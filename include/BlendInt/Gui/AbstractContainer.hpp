@@ -37,116 +37,6 @@ namespace BlendInt {
 
 	class Interface;
 	class Context;
-
-	/**
-	 * @brief A virtual iterator to be instanced for widgets in container
-	 */
-	class AbstractContainerIterator: public Object
-	{
-	public:
-
-		AbstractContainerIterator()
-		: Object()
-		{
-		}
-
-		virtual ~AbstractContainerIterator ()
-		{
-		}
-
-		virtual AbstractWidget* GetWidget () const = 0;
-
-		virtual void GoToFirst () = 0;
-
-		virtual void GoNext () = 0;
-
-		virtual bool IsEnd () = 0;
-	};
-
-	class SingleIterator: public AbstractContainerIterator
-	{
-	public:
-
-		SingleIterator (AbstractWidget* widget);
-
-		SingleIterator (const SingleIterator& orig);
-
-		virtual ~SingleIterator ();
-
-		SingleIterator& operator = (const SingleIterator& orig);
-
-		virtual AbstractWidget* GetWidget () const;
-
-		virtual void GoToFirst ();
-
-		virtual void GoNext ();
-
-		virtual bool IsEnd ();
-
-	private:
-
-		AbstractWidget* m_widget;
-		bool m_once;
-	};
-
-	class DequeIterator: public AbstractContainerIterator
-	{
-	public:
-
-		DequeIterator (AbstractWidgetDeque* deque)
-		: AbstractContainerIterator(), m_deque_ptr(deque)
-		{
-			m_it = deque->begin();
-		}
-
-		DequeIterator (const DequeIterator& orig)
-		: AbstractContainerIterator(),
-		  m_deque_ptr(orig.m_deque_ptr),
-		  m_it(orig.m_it)
-		{
-		}
-
-		virtual ~DequeIterator ()
-		{
-
-		}
-
-		DequeIterator& operator = (const DequeIterator& orig)
-		{
-			m_deque_ptr = orig.m_deque_ptr;
-			m_it = orig.m_it;
-
-			return *this;
-		}
-
-		virtual AbstractWidget* GetWidget () const
-		{
-			return *m_it;
-		}
-
-		virtual void GoToFirst ()
-		{
-			m_it = m_deque_ptr->begin();
-		}
-
-		virtual void GoNext ()
-		{
-			++m_it;
-		}
-
-		virtual bool IsEnd ()
-		{
-			return m_it == m_deque_ptr->end();
-		}
-
-	private:
-
-		AbstractWidgetDeque* m_deque_ptr;
-		AbstractWidgetDeque::iterator m_it;
-	};
-
-	typedef RefPtr<AbstractContainerIterator> IteratorPtr;
-
 	class AbstractContainer;
 
 	/**
@@ -193,15 +83,11 @@ namespace BlendInt {
 
 	public:
 
-		AbstractContainer ()
-		{
+		AbstractContainer ();
 
-		}
+		AbstractContainer (size_t size);
 
-		virtual ~AbstractContainer ()
-		{
-
-		}
+		virtual ~AbstractContainer ();
 
 		const Margin& margin () const {return m_margin;}
 
@@ -209,13 +95,31 @@ namespace BlendInt {
 
 		void SetMargin (int left, int right, int top, int bottom);
 
+		bool FindSubWidget (AbstractWidget* widget);
+
+		size_t sub_widget_size () const
+		{
+			return m_deque.size();
+		}
+
+		const AbstractWidgetDeque& deque () const
+		{
+			return m_deque;
+		}
+
 	protected:
 
-		virtual void PerformMarginUpdate (const Margin& margin);
+		bool PushFrontSubWidget (AbstractWidget* widget);
 
-		virtual bool RemoveSubWidget (AbstractWidget* widget) = 0;
+		bool PushBackSubWidget (AbstractWidget* widget);
 
-		virtual IteratorPtr CreateIterator (const DeviceEvent& event) = 0;
+		bool AssignSubWidget (size_t index, AbstractWidget* widget);
+
+		bool InsertSubWidget (size_t index, AbstractWidget* widget);
+
+		virtual bool RemoveSubWidget (AbstractWidget* widget);
+
+		void Clear ();
 
 		void ResizeSubWidget (AbstractWidget* sub, int width, int height);
 
@@ -227,6 +131,38 @@ namespace BlendInt {
 
 		void SetSubWidgetVisibility (AbstractWidget* sub, bool visible);
 
+		virtual void PerformMarginUpdate (const Margin& margin);
+
+		virtual ResponseType FocusEvent (bool focus);
+
+		void MoveSubWidgets (int offset_x, int offset_y);
+
+		void ResizeSubWidgets (const Size& size);
+
+		void ResizeSubWidgets (int w, int h);
+
+		void FillSingleWidget (size_t index, const Point& out_pos, const Size& out_size, const Margin& margin);
+
+		void FillSingleWidget (size_t index, const Point& pos, const Size& size);
+
+		void FillSingleWidget (size_t index, int left, int bottom, int width, int height);
+
+		void FillSubWidgetsAveragely (const Point& out_pos, const Size& out_size,
+						const Margin& margin, Orientation orientation,
+						int alignment, int space);
+
+		void FillSubWidgetsAveragely (const Point& pos, const Size& size,
+						Orientation orientation, int alignment, int space);
+
+		/**
+		 * @brief Fill in the container with average size
+		 * @param[in] x the left position
+		 * @param[in] y the bottom position
+		 */
+		void FillSubWidgetsAveragely (int x, int y, int width,
+						int height, Orientation orientation,
+						int alignment, int space);
+
 		static bool RemoveSubWidget (AbstractContainer* container, AbstractWidget* sub)
 		{
 			if(container)
@@ -234,13 +170,6 @@ namespace BlendInt {
 			else
 				return true;
 		}
-
-		/*
-		static bool AddSubWidget (AbstractContainer* container, AbstractWidget* sub)
-		{
-			return container->AddSubWidget(sub);
-		}
-		*/
 
 		static void SetContainer (AbstractWidget* widget, AbstractContainer* container)
 		{
@@ -266,7 +195,22 @@ namespace BlendInt {
 
 	private:
 
+		void OnSubWidgetDestroyed (AbstractWidget* widget);
+
+		void DistributeHorizontally (int x, int width, int space);
+
+		void DistributeVertically (int y, int height, int space);
+
+		void AlignHorizontally (int y, int height, int alignment);
+
+		void AlignVertically (int x, int width, int alignment);
+
 		Margin m_margin;
+
+		/**
+		 * @brief Sub widgets which build a tree to accept render and device events
+		 */
+		AbstractWidgetDeque m_deque;
 
 	};
 
