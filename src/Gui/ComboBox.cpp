@@ -228,21 +228,17 @@ namespace BlendInt {
 		m_status_down = true;
 
 		Context* context = event.context();
-		if(context) {
-			if(m_menu->container()) {
-				context->Remove(m_menu.get());
-				SetRoundCornerType(RoundAll);
-			} else {
-				//int max_layer = context->GetMaxLayer();
-				//m_menu->SetLayer(max_layer + 1);
-				m_menu->SetPosition(position().x(), position().y() + size().height());
-				context->PushBack(m_menu.get());
-				SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
-				//context->SetFocusedWidget(m_menu.get());	// FIXME: no use, context will reset to this combobox.
-			}
-
-			Refresh();
+		if(m_menu->container()) {
+			context->Remove(m_menu.get());
+			SetRoundCornerType(RoundAll);
+		} else {
+			m_menu->SetPosition(position().x(), position().y() + size().height());
+			context->PushBack(m_menu.get());
+			SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
+			context->SetFocusedWidget(m_menu.get());	// FIXME: no use, context will reset to this combobox.
 		}
+
+		Refresh();
 
 		return Accept;
 	}

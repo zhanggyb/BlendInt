@@ -117,10 +117,10 @@ namespace BlendInt {
 
 	void Frame::PerformMarginUpdate(const Margin& request)
 	{
-		if(deque().size()) {
-			set_margin(request);
+		set_margin(request);
 
-			//FillSubWidget(position(), size(), request);
+		if(deque().size()) {
+			FillSingleWidget(0, position(), size(), request);
 		}
 	}
 
@@ -147,8 +147,8 @@ namespace BlendInt {
 		if(request.target() == this) {
 			set_size(*request.size());
 
-			if (deque().size()) {
-				//FillSubWidget(position(), *request.size(), margin());
+			if (deque().size() && deque()[0]) {
+				FillSingleWidget(0, position(), *request.size(), margin());
 			}
 		}
 

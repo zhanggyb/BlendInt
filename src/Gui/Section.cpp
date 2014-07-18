@@ -684,7 +684,7 @@ namespace BlendInt {
 	void Section::DispatchDrawEvent (AbstractWidget* widget,
 	        const RedrawEvent& event)
 	{
-		if (widget->visiable()) {
+		if (widget && widget->visiable()) {
 
 			if(widget->drop_shadow() && widget->m_shadow) {
 				widget->m_shadow->Draw(glm::vec3(widget->position().x(), widget->position().y(), 0.f));
@@ -770,7 +770,7 @@ namespace BlendInt {
 		} else {
 			for (std::set<AbstractWidget*>::iterator it = m_set.begin();
 			        it != m_set.end(); it++) {
-				if ((*it)->Contain(event.position())) {
+				if ((*it) && (*it)->Contain(event.position())) {
 
 					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
 					m_last_hover_widget = *it;
@@ -798,7 +798,7 @@ namespace BlendInt {
 			for (AbstractWidgetDeque::const_iterator it = p->m_deque.begin(); it != p->m_deque.end(); it++) {
 
 				widget = *it;
-				if(widget->Contain(event.position())) {
+				if(widget && widget->Contain(event.position())) {
 					m_last_hover_widget = widget;
 					events()->connect(m_last_hover_widget->destroyed(), this, &Section::OnHoverWidgetDestroyed);
 					m_last_hover_widget->set_hover(true);

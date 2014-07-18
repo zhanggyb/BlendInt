@@ -202,11 +202,11 @@ namespace BlendInt {
 		width = std::max(width, tmp.width());
 		height += tmp.height();
 
-		width = width + margin().left() + margin().right();
-		height = height + margin().top() + margin().bottom();
-
-		set_size(width, height);
 		set_margin(2, 2, 2, 2);
+
+		width = width + margin().hsum();
+		height = height + margin().vsum();
+		set_size(width, height);
 
 		FillInExpander(position(), size(), margin());
 		m_frame_height = frame->size().height();
@@ -426,7 +426,6 @@ namespace BlendInt {
 					int height)
 	{
 		int button_preferred_height = 0;
-		//int sum = 0;
 		ExpandButton* button = dynamic_cast<ExpandButton*>(deque()[0]);
 		Frame* frame = dynamic_cast<Frame*>(deque()[1]);
 
@@ -443,6 +442,7 @@ namespace BlendInt {
 
 				ResizeSubWidget(frame, width, height - button_preferred_height);
 				y -= frame->size().height();
+
 				SetSubWidgetPosition(frame, x, y);
 
 			} else {

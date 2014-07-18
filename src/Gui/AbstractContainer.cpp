@@ -349,12 +349,16 @@ namespace BlendInt {
 		for (AbstractWidgetDeque::iterator it = m_deque.begin();
 						it != m_deque.end(); it++)
 		{
-			(*it)->destroyed().disconnectOne(this,
-							&AbstractContainer::OnSubWidgetDestroyed);
-			SetContainer(*it, 0);
+			if(*it) {
 
-			if ((*it)->managed() && ((*it)->count() == 0)) {
-				delete *it;
+				(*it)->destroyed().disconnectOne(this,
+								&AbstractContainer::OnSubWidgetDestroyed);
+				SetContainer(*it, 0);
+
+				if ((*it)->managed() && ((*it)->count() == 0)) {
+					delete *it;
+				}
+
 			}
 		}
 
