@@ -53,6 +53,11 @@ namespace BlendInt {
 
 		bool Open (const std::string& pathname);
 
+		const std::string& file_selected () const
+		{
+			return m_file_selected;
+		}
+
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
@@ -80,6 +85,8 @@ namespace BlendInt {
 		RefPtr<GLArrayBuffer> m_row;
 
 		unsigned int m_index;	// Highlight index
+
+		std::string m_file_selected;
 	};
 
 }

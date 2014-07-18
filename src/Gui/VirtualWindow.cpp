@@ -38,6 +38,9 @@
 #include <BlendInt/Gui/VirtualWindow.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 
+#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/Section.hpp>
+
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
@@ -112,24 +115,31 @@ namespace BlendInt {
 		return Ignore;
 	}
 
-	ResponseType BlendInt::VirtualWindow::ContextMenuReleaseEvent (
+	ResponseType VirtualWindow::ContextMenuReleaseEvent (
 	        const ContextMenuEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType BlendInt::VirtualWindow::MousePressEvent (const MouseEvent& event)
+	ResponseType VirtualWindow::MousePressEvent (const MouseEvent& event)
 	{
+		if(container() == event.section()) {
+			if(event.section()->last_hover_widget() == this) {
+				event.context()->MoveToTop(event.section());
+				return Accept;
+			}
+		}
+
 		return Ignore;
 	}
 
-	ResponseType BlendInt::VirtualWindow::MouseReleaseEvent (
+	ResponseType VirtualWindow::MouseReleaseEvent (
 	        const MouseEvent& event)
 	{
 		return Ignore;
 	}
 
-	ResponseType BlendInt::VirtualWindow::MouseMoveEvent (const MouseEvent& event)
+	ResponseType VirtualWindow::MouseMoveEvent (const MouseEvent& event)
 	{
 		return Ignore;
 	}

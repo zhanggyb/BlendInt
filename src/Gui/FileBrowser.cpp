@@ -217,9 +217,9 @@ namespace BlendInt {
 					DBG_PRINT_MSG("%s", "parent path");
 					//m_path = parent;
 				}
-			}
 
-			if (m_index >= 2) {
+				m_file_selected.clear();
+			} else if (m_index >= 2) {
 
 				unsigned int i = 2;
 				try {
@@ -236,11 +236,16 @@ namespace BlendInt {
 								it++;
 							}
 
-							if (fs::is_directory(it->path())) {
-								DBG_PRINT_MSG("path %s selected", it->path().native().c_str());
-								//m_path = it->path();
-							} else if(fs::is_regular(it->path())) {
+							if(fs::is_regular(it->path())) {
 								DBG_PRINT_MSG("file %s selected", it->path().native().c_str());
+								m_file_selected = it->path().string();
+							} else {
+								m_file_selected.clear();
+
+								if (fs::is_directory(it->path())) {
+									DBG_PRINT_MSG("path %s selected", it->path().native().c_str());
+									//m_path = it->path();
+								}
 
 							}
 

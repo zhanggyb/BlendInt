@@ -55,6 +55,9 @@ namespace BlendInt {
 
 		void Zoom (float factor);
 
+		// temporary
+		void PushBack (const RefPtr<AbstractPrimitive>& primitive);
+
 		virtual Size GetPreferredSize () const;
 
 		virtual bool IsExpandX () const;
@@ -93,8 +96,10 @@ namespace BlendInt {
 
 		RefPtr<NavigationCamera> m_default_camera;
 
-		RefPtr<Cube> m_cube;
 		RefPtr<Grid> m_grid;
+
+		// temporary member, use model-view to display a hierarchy
+		std::deque<RefPtr<AbstractPrimitive> > m_primitives;
 
 		int m_last_x;
 		int m_last_y;

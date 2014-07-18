@@ -70,9 +70,9 @@ TEST_F(MenuBarTest1, AddMenu1)
     menu3->AddActionItem("MenuItem4", "Ctrl + 1");
     */
 
-    menubar->AddMenu(String("File"), menu1);
-    menubar->AddMenu(String("Edit"), menu2);
-    menubar->AddMenu(String("Help"), menu3);
+    menubar->PushBack(String("File"), menu1);
+    menubar->PushBack(String("Edit"), menu2);
+    menubar->PushBack(String("Help"), menu3);
 
     menubar->SetPosition(200, 400);
 	context->PushBack(menubar);

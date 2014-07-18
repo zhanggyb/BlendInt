@@ -90,7 +90,7 @@ BI::MenuBar* MainLayout::CreateMenuBar()
     file_menu->AddAction("MenuItem4", "Ctrl + 1");
     file_menu->AddAction("MenuItem5");
 
-	menubar->AddMenu(String("File"), file_menu);
+	menubar->PushBack(String("File"), file_menu);
 
 	return menubar;
 }

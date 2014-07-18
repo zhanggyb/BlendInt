@@ -37,6 +37,9 @@
 #include <BlendInt/Gui/VertexTool.hpp>
 #include <BlendInt/Gui/Decoration.hpp>
 
+#include <BlendInt/Gui/Context.hpp>
+#include <BlendInt/Gui/Section.hpp>
+
 #include <BlendInt/Stock/Shaders.hpp>
 #include <BlendInt/Stock/Theme.hpp>
 
@@ -176,15 +179,23 @@ namespace BlendInt {
 			m_last = container()->position();
 			m_cursor = event.position();
 			m_pressed = true;
+
+			if(event.section() == container()->container()) {
+				if(event.section()->last_hover_widget() == this) {
+					event.context()->MoveToTop(event.section());
+					return Accept;
+				}
+			}
+
 		}
 
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Decoration::MouseReleaseEvent (const MouseEvent& event)
 	{
 		m_pressed = false;
-		return Accept;
+		return Ignore;
 	}
 
 	ResponseType Decoration::MouseMoveEvent (const MouseEvent& event)
@@ -197,7 +208,7 @@ namespace BlendInt {
 			container()->SetPosition(m_last.x() + offset_x,
 			        m_last.y() + offset_y);
 		}
-		return Accept;
+		return Ignore;
 	}
 
 	void Decoration::InitializeDecoration()
