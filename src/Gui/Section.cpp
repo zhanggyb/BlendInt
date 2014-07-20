@@ -87,7 +87,7 @@ namespace BlendInt {
 
 			}
 
-			widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyed);
+			widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
 
 			widget->m_container = 0;
 
@@ -122,7 +122,7 @@ namespace BlendInt {
 		// set shadow
 		EnableShadow(widget);
 
-		events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyed);
+		events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyedInSection);
 	}
 
 	void Section::Remove (AbstractWidget* widget)
@@ -611,7 +611,7 @@ namespace BlendInt {
 			return false;
 		}
 
-		widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyed);
+		widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
 		m_set.erase(it);
 		SetContainer(widget, 0);
 
@@ -812,7 +812,7 @@ namespace BlendInt {
 		}
 	}
 
-	void Section::OnSubWidgetDestroyed(AbstractWidget* widget)
+	void Section::OnSubWidgetDestroyedInSection(AbstractWidget* widget)
 	{
 		RemoveSubWidget(widget);
 

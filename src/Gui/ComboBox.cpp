@@ -235,7 +235,7 @@ namespace BlendInt {
 			m_menu->SetPosition(position().x(), position().y() + size().height());
 			context->PushBack(m_menu.get());
 			SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
-			context->SetFocusedWidget(m_menu.get());	// FIXME: no use, context will reset to this combobox.
+			context->SetFocusedWidget(m_menu.get());	// FIXME: if not set the menu focused, it will cause segment fault after click the menu several times.
 		}
 
 		Refresh();

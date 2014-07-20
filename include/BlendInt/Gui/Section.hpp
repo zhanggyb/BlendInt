@@ -113,7 +113,7 @@ namespace BlendInt {
 
 		void UpdateHoverWidgetSubs (const MouseEvent& event);
 
-		void OnSubWidgetDestroyed (AbstractWidget* widget);
+		void OnSubWidgetDestroyedInSection (AbstractWidget* widget);
 
 		void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
