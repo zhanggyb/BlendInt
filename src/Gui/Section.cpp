@@ -55,21 +55,30 @@ namespace BlendInt {
 
 	Section::~Section ()
 	{
-		AbstractWidget* widget = 0;
-
-		for(std::set<AbstractWidget*>::iterator it = m_set.begin();
-				it != m_set.end();
-				it++)
+		for(AbstractWidgetDeque::iterator it = m_deque.begin(); it != m_deque.end(); it++)
 		{
-			widget = *it;
+			(*it)->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
+		}
 
-//			if(widget->focused()) {
-//				assert(widget == m_focused_widget);
-//				widget->set_focus(false);
-//				m_focused_widget = 0;
-//			}
+		// unset hover status
+		ClearHoverWidgets();
+	}
 
-			// disconnect events
+	void Section::Insert (AbstractWidget* widget)
+	{
+		if(PushBackSubWidget(widget)) {
+
+			EnableShadow(widget);
+			events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyedInSection);
+
+		}
+	}
+
+	void Section::Remove (AbstractWidget* widget)
+	{
+		if(RemoveSubWidget(widget)) {
+
+			widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
 
 			if(widget->hover()) {
 
@@ -79,64 +88,23 @@ namespace BlendInt {
 					m_last_hover_widget = m_last_hover_widget->container();
 				}
 
-				if(m_last_hover_widget) {
-					assert(m_last_hover_widget == widget);
-					m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-					m_last_hover_widget->set_hover(false);
+				assert(m_last_hover_widget == widget);
+				m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+				m_last_hover_widget->set_hover(false);
+				m_last_hover_widget = 0;
+
+			}
+
+			if(m_deque.size() == 0) {
+
+				if(managed() && (count() == 0)) {
+					DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
+					delete this;
+				} else {
+					DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
+							", it will not be deleted automatically");
 				}
 
-			}
-
-			widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
-
-			widget->m_container = 0;
-
-			if(widget->managed() && (widget->count() == 0)) {
-				delete widget;
-			}
-		}
-
-		m_set.clear();
-	}
-
-	void Section::Insert (AbstractWidget* widget)
-	{
-		if (!widget) {
-			DBG_PRINT_MSG("Error: %s", "widget pointer is 0");
-			return;
-		}
-
-		if (widget->container()) {
-			if (widget->container() == this) {
-				DBG_PRINT_MSG("Widget %s is already in container %s",
-				        widget->name().c_str(), name().c_str());
-				return;
-			} else {
-				AbstractContainer::RemoveSubWidget(widget->container(), widget);
-			}
-		}
-
-		m_set.insert(widget);
-		SetContainer(widget, this);
-
-		// set shadow
-		EnableShadow(widget);
-
-		events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyedInSection);
-	}
-
-	void Section::Remove (AbstractWidget* widget)
-	{
-		RemoveSubWidget(widget);
-
-		if(m_set.size() == 0) {
-
-			if(managed() && (count() == 0)) {
-				DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
-				delete this;
-			} else {
-				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
-						", it will not be deleted automatically");
 			}
 
 		}
@@ -487,7 +455,7 @@ namespace BlendInt {
 	{
 		const_cast<RedrawEvent&>(event).m_section = this;
 
-		for(std::set<AbstractWidget*>::iterator it = m_set.begin(); it != m_set.end(); it++)
+		for(AbstractWidgetDeque::iterator it = m_deque.begin(); it != m_deque.end(); it++)
 		{
 			DispatchDrawEvent(*it, event);
 		}
@@ -591,48 +559,6 @@ namespace BlendInt {
 		}
 
 		return Ignore;
-	}
-
-	bool Section::RemoveSubWidget (AbstractWidget* widget)
-	{
-		if(!widget) {
-			DBG_PRINT_MSG("Warning: %s", "widget pointer is 0");
-			return false;
-		}
-
-		assert(widget->container() == this);
-
-		std::set<AbstractWidget*>::iterator it = std::find(m_set.begin(), m_set.end(), widget);
-
-		if(it == m_set.end()) {
-			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
-					widget->name().c_str(),
-					name().c_str());
-			return false;
-		}
-
-		widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyedInSection);
-		m_set.erase(it);
-		SetContainer(widget, 0);
-
-		if(widget->hover()) {
-
-			while (m_last_hover_widget && m_last_hover_widget != widget) {
-				m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-				m_last_hover_widget->set_hover(false);
-				m_last_hover_widget = m_last_hover_widget->container();
-			}
-
-			if(m_last_hover_widget) {
-				assert(m_last_hover_widget == widget);
-				m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
-				m_last_hover_widget->set_hover(false);
-				m_last_hover_widget = 0;
-			}
-
-		}
-
-		return true;
 	}
 
 	void Section::DispatchDrawEvent (AbstractWidget* widget,
@@ -768,8 +694,8 @@ namespace BlendInt {
 			}
 
 		} else {
-			for (std::set<AbstractWidget*>::iterator it = m_set.begin();
-			        it != m_set.end(); it++) {
+			for (AbstractWidgetDeque::iterator it = m_deque.begin();
+			        it != m_deque.end(); it++) {
 				if ((*it) && (*it)->Contain(event.position())) {
 
 					//DBG_PRINT_MSG("Get hover widget: %s", (*it)->name().c_str());
@@ -814,12 +740,25 @@ namespace BlendInt {
 
 	void Section::OnSubWidgetDestroyedInSection(AbstractWidget* widget)
 	{
-		RemoveSubWidget(widget);
+		widget->destroyed().disconnectOne(this, &Section::OnSubWidgetDestroyed);
 
-		if(m_set.size() == 0) {
+		if(m_deque.size() == 0) {
 
 			if(managed() && (count() == 0)) {
 				DBG_PRINT_MSG("no sub widgets, delete this section: %s", name().c_str());
+				delete this;
+			} else {
+				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
+						", and it's referenced by a smart pointer, it will not be deleted automatically");
+			}
+
+			return;
+		}
+
+		if(m_deque.size() == 1 && m_deque[0] == widget) {
+
+			if(managed() && (count() == 0)) {
+				DBG_PRINT_MSG("the last widget is removed, delete this section: %s", name().c_str());
 				delete this;
 			} else {
 				DBG_PRINT_MSG("Warning: %s", "the section is empty but it's not set managed"
@@ -875,19 +814,38 @@ namespace BlendInt {
 
 	void Section::OnHoverWidgetDestroyed (AbstractWidget* widget)
 	{
-		DBG_PRINT_MSG("%s", "HERE");
-		while (m_last_hover_widget != widget) {
+		if(widget->hover()) {	// check the hover status if the widget is the last one and hover status is reset in the destructor.
+
+			assert(m_last_hover_widget);
+
+			while (m_last_hover_widget != widget) {
+				m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+				m_last_hover_widget = m_last_hover_widget->container();
+			}
+
 			m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+
 			m_last_hover_widget = m_last_hover_widget->container();
+			if(m_last_hover_widget == this)
+				m_last_hover_widget = 0;
+
 		}
+	}
 
-		m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+	void Section::ClearHoverWidgets()
+	{
+		if(m_last_hover_widget) {
 
-		m_last_hover_widget = m_last_hover_widget->container();
-		if(m_last_hover_widget == this)
-			m_last_hover_widget = 0;
+			while (m_last_hover_widget && m_last_hover_widget != this) {
+				m_last_hover_widget->destroyed().disconnectOne(this, &Section::OnHoverWidgetDestroyed);
+				m_last_hover_widget->set_hover(false);
+				m_last_hover_widget = m_last_hover_widget->container();
+			}
 
-		DBG_PRINT_MSG("%s", "HERE");
+			if(m_last_hover_widget == this)
+				m_last_hover_widget = 0;
+
+		}
 	}
 
 }

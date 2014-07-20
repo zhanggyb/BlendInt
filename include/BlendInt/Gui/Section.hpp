@@ -99,8 +99,6 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual bool RemoveSubWidget (AbstractWidget* widget);
-
 	private:
 
 		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
@@ -117,7 +115,7 @@ namespace BlendInt {
 
 		void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
-		std::set<AbstractWidget*> m_set;
+		void ClearHoverWidgets ();
 
 		AbstractWidget* m_focused_widget;
 

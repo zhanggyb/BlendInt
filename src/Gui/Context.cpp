@@ -108,7 +108,7 @@ namespace BlendInt
 			DBG_PRINT_MSG("Warning: the section %s is not set managed", section->name().c_str());
 		}
 
-		if(section->m_set.size() == 0) {
+		if(section->m_deque.size() == 0) {
 			DBG_PRINT_MSG("Warning: trying to add an emptry section %s in a context, it will not be delete automatically", section->name().c_str());
 		}
 
@@ -147,7 +147,7 @@ namespace BlendInt
 
 		}
 
-		if(section->m_set.size() == 0) {
+		if(section->m_deque.size() == 0) {
 			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
 			if(section->managed() && (section->count() == 0)) {
 				delete section;

@@ -117,7 +117,7 @@ namespace BlendInt {
 
 		bool InsertSubWidget (size_t index, AbstractWidget* widget);
 
-		virtual bool RemoveSubWidget (AbstractWidget* widget);
+		bool RemoveSubWidget (AbstractWidget* widget);
 
 		void Clear ();
 
