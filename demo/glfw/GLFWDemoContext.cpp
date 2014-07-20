@@ -40,17 +40,10 @@ void GLFWDemoContext::Initialize ()
 	events()->connect(m_open_button->clicked(), this, &GLFWDemoContext::OnOpenObjFile);
 	*/
 
-	Button* btn = Manage(new Button("Button"));
-	DBG_SET_NAME(btn, "Button");
-	btn->SetPosition(200, 200);
+	VirtualWindow* vw = Manage(new VirtualWindow);
+	vw->SetPosition(100, 100);
 
-	Button* btn2 = Manage(new Button("Button2"));
-	DBG_SET_NAME(btn2, "Button2");
-	btn2->SetPosition(400, 200);
-
-	Section* section = PushBack(btn);
-	section->Insert(btn2);
-
+	PushBack(vw);
 }
 
 void GLFWDemoContext::OnOpenObjFile()

@@ -64,7 +64,17 @@ namespace BlendInt {
 		ClearHoverWidgets();
 	}
 
-	void Section::Insert (AbstractWidget* widget)
+	void Section::PushFront(AbstractWidget* widget)
+	{
+		if(PushFrontSubWidget(widget)) {
+
+			EnableShadow(widget);
+			events()->connect(widget->destroyed(), this, &Section::OnSubWidgetDestroyedInSection);
+
+		}
+	}
+
+	void Section::PushBack (AbstractWidget* widget)
 	{
 		if(PushBackSubWidget(widget)) {
 

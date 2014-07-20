@@ -100,7 +100,7 @@ namespace BlendInt
 			}
 		} else {
 			section = Manage(new Section);
-			section->Insert(widget);
+			section->PushBack(widget);
 		}
 
 #ifdef DEBUG

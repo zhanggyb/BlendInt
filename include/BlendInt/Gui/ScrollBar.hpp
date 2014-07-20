@@ -55,6 +55,26 @@ namespace BlendInt {
 
 		virtual bool IsExpandY () const;
 
+		ResponseType DispatchDrawEvent (const RedrawEvent& event)
+		{
+			return Draw(event);
+		}
+
+		ResponseType DispatchMouseMoveEvent (const MouseEvent& event)
+		{
+			return MouseMoveEvent(event);
+		}
+
+		ResponseType DispatchMousePressEvent (const MouseEvent& event)
+		{
+			return MousePressEvent(event);
+		}
+
+		ResponseType DispatchMouseReleaseEvent (const MouseEvent& event)
+		{
+			return MouseReleaseEvent(event);
+		}
+
 	protected:
 
 		virtual void UpdateSlider (const SliderUpdateRequest& request);
