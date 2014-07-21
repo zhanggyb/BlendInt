@@ -29,14 +29,15 @@
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/ListView.hpp>
+#include <BlendInt/Gui/AbstractScrollable.hpp>
+#include <BlendInt/Gui/ScrollBar.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A special list view to show files in a directory
 	 */
-	class FileBrowser: public ListView
+	class FileBrowser: public AbstractScrollable
 	{
 		DISALLOW_COPY_AND_ASSIGN(FileBrowser);
 
@@ -70,11 +71,17 @@ namespace BlendInt {
 
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
 	private:
 
 		bool GetHighlightIndex (int y, unsigned int* index);
 
-		void InitializeFileListOnce ();
+		void InitializeFileBrowserOnce ();
 
 		GLuint m_vao;
 

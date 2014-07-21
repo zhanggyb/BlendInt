@@ -34,7 +34,7 @@ TEST_F(FileBrowserTest1, Foo1)
 	
 	context->PushBack(fb);
 
-	fb->Open("/home/zhanggyb");
+	//fb->Open("/home/zhanggyb");
 
     RunLoop(win);
 

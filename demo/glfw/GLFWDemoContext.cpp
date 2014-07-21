@@ -22,7 +22,6 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	/*
 	m_view3d = Manage(new Viewport3D);
 	m_view3d->SetPosition(20, 100);
 	m_view3d->Resize(800, 600);
@@ -38,12 +37,6 @@ void GLFWDemoContext::Initialize ()
 	m_open_button->SetPosition(900, 200);
 
 	events()->connect(m_open_button->clicked(), this, &GLFWDemoContext::OnOpenObjFile);
-	*/
-
-	VirtualWindow* vw = Manage(new VirtualWindow);
-	vw->SetPosition(100, 100);
-
-	PushBack(vw);
 }
 
 void GLFWDemoContext::OnOpenObjFile()
