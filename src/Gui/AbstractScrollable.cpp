@@ -78,6 +78,46 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	ResponseType AbstractScrollable::DispatchDrawEvent (
+	        const RefPtr<NativeScrollBar>& scrollbar, const RedrawEvent& event)
+	{
+		if(scrollbar->visiable()) {
+			return scrollbar->Draw(event);
+		} else {
+			return Ignore;
+		}
+	}
+
+	ResponseType AbstractScrollable::DispatchMousePressEvent (
+	        const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
+	{
+		if(scrollbar->visiable()) {
+			return scrollbar->MousePressEvent(event);
+		} else {
+			return Ignore;
+		}
+	}
+
+	ResponseType AbstractScrollable::DispatchMouseReleaseEvent (
+	        const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
+	{
+		if(scrollbar->visiable()) {
+			return scrollbar->MouseReleaseEvent(event);
+		} else {
+			return Ignore;
+		}
+	}
+
+	ResponseType AbstractScrollable::DispatchMouseMoveEvent (
+	        const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
+	{
+		if(scrollbar->visiable()) {
+			return scrollbar->MouseMoveEvent(event);
+		} else {
+			return Ignore;
+		}
+	}
+
 	void AbstractScrollable::AdjustScrollBarGeometries (int left, int bottom,
 	        int width, int height)
 	{

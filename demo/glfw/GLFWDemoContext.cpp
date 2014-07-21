@@ -36,6 +36,7 @@ void GLFWDemoContext::Initialize ()
 	PushBack(m_open_button);
 	m_open_button->SetPosition(900, 200);
 
+	m_browser->Open(getenv("PWD"));
 	events()->connect(m_open_button->clicked(), this, &GLFWDemoContext::OnOpenObjFile);
 }
 

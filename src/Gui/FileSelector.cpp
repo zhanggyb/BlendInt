@@ -115,6 +115,8 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		m_inner->Reset();
 
+		// create sub widgets
+
 		m_layout = Manage(new VBox);
 		m_layout->SetMargin(2, 2, 2, 2);
 		m_layout->SetSpace(4);
@@ -145,6 +147,8 @@ namespace BlendInt {
 		m_layout->PushBack(m_list);
 
 		Setup(m_layout);
+
+		m_list->Open(getenv("PWD"));
 	}
 
 }

@@ -59,36 +59,15 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		ResponseType DispatchMousePressEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
-		{
-			return scrollbar->MousePressEvent(event);
-		}
+		ResponseType DispatchMousePressEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event);
 
-		ResponseType DispatchMouseReleaseEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
-		{
-			return scrollbar->MouseReleaseEvent(event);
-		}
+		ResponseType DispatchMouseReleaseEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event);
 
-		ResponseType DispatchMouseMoveEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
-		{
-			return scrollbar->MouseMoveEvent(event);
-		}
+		ResponseType DispatchMouseMoveEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event);
+
+		ResponseType DispatchDrawEvent (const RefPtr<NativeScrollBar>& scrollbar, const RedrawEvent& event);
 
 		void AdjustScrollBarGeometries (int left, int bottom, int width, int height);
-
-		inline void draw_hbar (const RedrawEvent& event)
-		{
-			if(m_hbar->visiable()) {
-				m_hbar->Draw(event);
-			}
-		}
-
-		inline void draw_vbar (const RedrawEvent& event)
-		{
-			if(m_vbar->visiable()) {
-				m_vbar->Draw(event);
-			}
-		}
 
 		/**
 		 * @brief Get the reference to the horizontal scroll bar
