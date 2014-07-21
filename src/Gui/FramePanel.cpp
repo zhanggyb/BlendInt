@@ -182,20 +182,20 @@ namespace BlendInt {
 			        -100.f);
 
 			RefPtr<GLSLProgram> program =
-			        Shaders::instance->default_triangle_program();
+			        Shaders::instance->triangle_program();
 			program->GetUniformfv("u_projection", glm::value_ptr(origin));
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->default_line_program();
+			program = Shaders::instance->line_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->default_text_program();
+			program = Shaders::instance->text_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->default_image_program();
+			program = Shaders::instance->image_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
@@ -208,7 +208,7 @@ namespace BlendInt {
 			glViewport(0, 0, width, height);
 
 			// Draw frame panel
-			program = Shaders::instance->default_triangle_program();
+			program = Shaders::instance->triangle_program();
 			program->Use();
 
 			program->SetUniform3f("u_position", (float)position().x(), (float)position().y(), 0.f);
@@ -220,25 +220,25 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 			glBindVertexArray(0);
 
-			if(sub_widget()) {
-				Section::DispatchDrawEvent(sub_widget(), event, scissor);
+			if(deque().size()) {
+				Section::DispatchDrawEvent(deque()[0], event, scissor);
 			}
 
 			// Restore the viewport setting and projection matrix
 			glViewport(vp[0], vp[1], vp[2], vp[3]);
-			program = Shaders::instance->default_triangle_program();
+			program = Shaders::instance->triangle_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 					glm::value_ptr(origin));
-			program = Shaders::instance->default_line_program();
+			program = Shaders::instance->line_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 					glm::value_ptr(origin));
-			program = Shaders::instance->default_text_program();
+			program = Shaders::instance->text_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 					glm::value_ptr(origin));
-			program = Shaders::instance->default_image_program();
+			program = Shaders::instance->image_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 					glm::value_ptr(origin));

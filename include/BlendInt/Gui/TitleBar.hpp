@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_TITLE_BAR_HPP_
 #define _BLENDINT_GUI_TITLE_BAR_HPP_
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
-	class TitleBar: public AbstractDequeContainer
+	class TitleBar: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(TitleBar);
 

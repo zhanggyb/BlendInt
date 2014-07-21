@@ -76,7 +76,7 @@ namespace BlendInt {
 		if(m_texture->texture()) {
 
 			m_texture->Bind();
-			RefPtr<GLSLProgram> program = Shaders::instance->default_image_program();
+			RefPtr<GLSLProgram> program = Shaders::instance->image_program();
 			program->Use();
 			program->SetUniform3f("u_position", x, y, 0.f);
 			program->SetUniform1i("TexID", 0);

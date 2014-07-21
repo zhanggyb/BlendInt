@@ -24,7 +24,7 @@
 #ifndef _BLENDINT_GUI_SPLITTER_HPP_
 #define _BLENDINT_GUI_SPLITTER_HPP_
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt
 {
@@ -96,7 +96,7 @@ namespace BlendInt
 
 	};
 
-	class Splitter: public AbstractDequeContainer
+	class Splitter: public AbstractContainer
 	{
 	DISALLOW_COPY_AND_ASSIGN(Splitter);
 

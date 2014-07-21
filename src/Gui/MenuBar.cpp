@@ -44,7 +44,7 @@
 namespace BlendInt {
 
 	MenuBar::MenuBar ()
-	: AbstractDequeContainer(), m_vao(0), m_space(2), m_active_button(0)
+	: AbstractContainer(), m_vao(0), m_space(2), m_active_button(0)
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(200, 22);
@@ -167,7 +167,7 @@ namespace BlendInt {
 	{
 		using namespace BlendInt::Stock;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
@@ -245,7 +245,7 @@ namespace BlendInt {
 			Size tmp_size;
 
 			preferred_size.set_width(-m_space);
-			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 			{
 				widget = *it;
 
@@ -274,7 +274,7 @@ namespace BlendInt {
 		MenuButton* button = 0;
 
 		if(index < sub_widget_size()) {
-			button = dynamic_cast<MenuButton*>(sub_widgets()->at(index));
+			button = dynamic_cast<MenuButton*>(deque().at(index));
 		}
 
 		return button;
@@ -306,7 +306,7 @@ namespace BlendInt {
 	{
 		MenuButton* original_active = m_active_button;
 
-		for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+		for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 		{
 			MenuButton* menubutton = dynamic_cast<MenuButton*>(*it);
 			if(menubutton) {
@@ -389,10 +389,10 @@ namespace BlendInt {
 	{
 		int pos = position().x() + margin().left();
 
-		if(sub_widgets()->size()) {
+		if(deque().size()) {
 			pos -= m_space;
 
-			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 			{
 				pos += m_space;
 				pos = pos + (*it)->size().width();

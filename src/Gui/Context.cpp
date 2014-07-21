@@ -76,20 +76,6 @@ namespace BlendInt
 			m_focused_widget = 0;
 		}
 
-		Section* sections = 0;
-		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin(); it != m_sections.rend(); it++)
-		{
-			sections = *it;
-			sections->destroyed().disconnectOne(this, &Context::OnSubWidgetDestroyed);
-			sections->m_container = 0;
-			sections->set_hover(false);
-			sections->set_focus(false);
-
-			if(sections->managed() && (sections->count() == 0)) {
-				delete sections;
-			}
-		}
-
 		context_set.erase(this);
 	}
 
@@ -114,7 +100,7 @@ namespace BlendInt
 			}
 		} else {
 			section = Manage(new Section);
-			section->Insert(widget);
+			section->PushBack(widget);
 		}
 
 #ifdef DEBUG
@@ -122,21 +108,18 @@ namespace BlendInt
 			DBG_PRINT_MSG("Warning: the section %s is not set managed", section->name().c_str());
 		}
 
-		if(section->m_set.size() == 0) {
+		if(section->m_deque.size() == 0) {
 			DBG_PRINT_MSG("Warning: trying to add an emptry section %s in a context, it will not be delete automatically", section->name().c_str());
 		}
 
 		char buf[32];
-		sprintf(buf, "Section %ld", m_sections.size());
+		sprintf(buf, "Section %ld", deque().size());
 		DBG_SET_NAME(section, buf);
 #endif
 
-		m_sections.push_back(section);
-		SetContainer(section, this);
+		PushBackSubWidget(section);
 
 		ResizeSubWidget(section, size());
-
-		events()->connect(section->destroyed(), this, &Context::OnSubWidgetDestroyed);
 
 		return section;
 	}
@@ -164,7 +147,7 @@ namespace BlendInt
 
 		}
 
-		if(section->m_set.size() == 0) {
+		if(section->m_deque.size() == 0) {
 			DBG_PRINT_MSG("no sub widgets, delete this section: %s", section->name().c_str());
 			if(section->managed() && (section->count() == 0)) {
 				delete section;
@@ -182,44 +165,44 @@ namespace BlendInt
 	{
 		if((section == 0) || (section->container() != this)) return;
 
-		std::deque<Section*>::iterator it = std::find(m_sections.begin(), m_sections.end(), section);
+		AbstractWidgetDeque::iterator it = std::find(m_deque.begin(), m_deque.end(), section);
 
-		if(it == m_sections.end()) return;
+		if(it == m_deque.end()) return;
 
-		Section* sect = *it;
+		AbstractWidget* sect = *it;
 
-		m_sections.erase(it);
-		m_sections.push_back(sect);
+		m_deque.erase(it);
+		m_deque.push_back(sect);
 	}
 
 	void Context::MoveToBottom(const Section* section)
 	{
 		if((section == 0) || (section->container() != this)) return;
 
-		std::deque<Section*>::iterator it = std::find(m_sections.begin(), m_sections.end(), section);
+		AbstractWidgetDeque::iterator it = std::find(m_deque.begin(), m_deque.end(), section);
 
-		if(it == m_sections.end()) return;
+		if(it == m_deque.end()) return;
 
-		Section* sect = *it;
+		AbstractWidget* sect = *it;
 
-		m_sections.erase(it);
-		m_sections.push_front(sect);
+		m_deque.erase(it);
+		m_deque.push_front(sect);
 	}
 
 	void Context::MoveUp (const Section* section)
 	{
 		if((section == 0) || (section->container() != this)) return;
 
-		std::deque<Section*>::iterator it = std::find(m_sections.begin(), m_sections.end(), section);
+		AbstractWidgetDeque::iterator it = std::find(m_deque.begin(), m_deque.end(), section);
 
-		if(it == m_sections.end()) return;
+		if(it == m_deque.end()) return;
 
-		std::deque<Section*>::iterator next = it;
+		AbstractWidgetDeque::iterator next = it;
 		std::advance(next, 1);
 
-		if(next == m_sections.end()) return;
+		if(next == m_deque.end()) return;
 
-		Section* tmp = *it;
+		AbstractWidget* tmp = *it;
 		*it = *next;
 		*next = tmp;
 	}
@@ -228,23 +211,18 @@ namespace BlendInt
 	{
 		if((section == 0) || (section->container() != this)) return;
 
-		std::deque<Section*>::iterator it = std::find(m_sections.begin(), m_sections.end(), section);
+		AbstractWidgetDeque::iterator it = std::find(m_deque.begin(), m_deque.end(), section);
 
-		if(it == m_sections.end()) return;
+		if(it == m_deque.end()) return;
 
-		std::deque<Section*>::iterator prev = it;
+		AbstractWidgetDeque::iterator prev = it;
 		std::advance(prev, -1);
 
-		if(it == m_sections.begin()) return;
+		if(it == m_deque.begin()) return;
 
-		Section* tmp = *it;
+		AbstractWidget* tmp = *it;
 		*it = *prev;
 		*prev = tmp;
-	}
-
-	size_t Context::GetSectionSize () const
-	{
-		return m_sections.size();
 	}
 
 	bool Context::Contain (const Point& point) const
@@ -323,29 +301,6 @@ namespace BlendInt
 		Section::RenderToFile(widget, filename);
 	}
 
-#ifdef DEBUG
-
-	void Context::PrintSections()
-	{
-		if(m_sections.size() == 0) {
-			DBG_PRINT_MSG("%s", "Section deque is empty");
-		}
-
-		for(std::deque<Section*>::iterator it = m_sections.begin(); it != m_sections.end(); it++)
-		{
-			DBG_PRINT_MSG("Section: %s at (%d, %d) - (%d, %d) contains: ", (*it)->name().c_str(),
-					(*it)->position().x(), (*it)->position().y(),
-					(*it)->size().width(), (*it)->size().height());
-
-			for(std::set<AbstractWidget*>::iterator s_it = (*it)->m_set.begin(); s_it != (*it)->m_set.end(); s_it++)
-			{
-				DBG_PRINT_MSG("\t %s", (*s_it)->name().c_str());
-			}
-		}
-	}
-
-#endif
-
 	bool Context::SizeUpdateTest (const SizeUpdateRequest& request)
 	{
 		if(request.source()->container() == this) {
@@ -403,27 +358,27 @@ namespace BlendInt
 			        0.f, (GLfloat) request.size()->height(), 100.f, -100.f);
 
 			RefPtr<GLSLProgram> program =
-			        Shaders::instance->default_triangle_program();
+			        Shaders::instance->triangle_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->default_line_program();
+			program = Shaders::instance->line_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->default_text_program();
+			program = Shaders::instance->text_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->default_image_program();
+			program = Shaders::instance->image_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
 
 			program->Reset();
 
-			for (std::deque<Section*>::iterator it = m_sections.begin();
-			        it != m_sections.end(); it++) {
+			for (AbstractWidgetDeque::iterator it = m_deque.begin();
+			        it != m_deque.end(); it++) {
 				ResizeSubWidget(*it, *request.size());
 			}
 
@@ -480,8 +435,8 @@ namespace BlendInt
 
 		glViewport(0, 0, size().width(), size().height());
 
-		for (std::deque<Section*>::iterator it = m_sections.begin();
-		        it != m_sections.end(); it++) {
+		for (AbstractWidgetDeque::iterator it = m_deque.begin();
+		        it != m_deque.end(); it++) {
 			(*it)->Draw(event);
 		}
 
@@ -532,16 +487,25 @@ namespace BlendInt
 
 		const_cast<MouseEvent&>(event).m_context = this;
 
-		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
-				it != m_sections.rend();
+		AbstractWidget* section = 0;
+
+		for(AbstractWidgetDeque::reverse_iterator it = m_deque.rbegin();
+				it != m_deque.rend();
 				it++)
 		{
 			response = (*it)->MousePressEvent(event);
 
 			if (response == Accept) {
-				widget = (*it)->m_last_hover_widget;
+				section = *it;
 				break;
 			}
+		}
+
+		// The Section may be deleted in this event, e.g, a popup menu may delete itself when click a menuitem
+		// Have to check if the section is still exist in deque
+		AbstractWidgetDeque::iterator it = std::find (m_deque.begin(), m_deque.end(), section);
+		if(it != m_deque.end()) {
+			widget = dynamic_cast<Section*>(*it)->m_last_hover_widget;
 		}
 
 		if(original_focused_widget != m_focused_widget) {
@@ -585,8 +549,8 @@ namespace BlendInt
 			return response;
 		}
 
-		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
-				it != m_sections.rend();
+		for(AbstractWidgetDeque::reverse_iterator it = m_deque.rbegin();
+				it != m_deque.rend();
 				it++)
 		{
 			response = (*it)->MouseReleaseEvent(event);
@@ -612,18 +576,18 @@ namespace BlendInt
 		if(response == Accept) {
 
 			// still set cursor hover
-			for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
-					it != m_sections.rend();
+			for(AbstractWidgetDeque::reverse_iterator it = m_deque.rbegin();
+					it != m_deque.rend();
 					it++)
 			{
-				if((*it)->CheckAndUpdateHoverWidget(event)) break;
+				if(dynamic_cast<Section*>(*it)->CheckAndUpdateHoverWidget(event)) break;
 			}
 
 			return response;	// return Accept
 		}
 
-		for(std::deque<Section*>::reverse_iterator it = m_sections.rbegin();
-				it != m_sections.rend();
+		for(AbstractWidgetDeque::reverse_iterator it = m_deque.rbegin();
+				it != m_deque.rend();
 				it++)
 		{
 			response = (*it)->MouseMoveEvent(event);
@@ -636,42 +600,9 @@ namespace BlendInt
 		return response;
 	}
 
-	bool Context::RemoveSubWidget (AbstractWidget* widget)
-	{
-		if(!widget) {
-			DBG_PRINT_MSG("Warning: %s", "widget pointer is 0");
-			return false;
-		}
-
-		assert(widget->container() == this);
-
-		std::deque<Section*>::iterator it = std::find(m_sections.begin(),
-				m_sections.end(), widget);
-
-		if (it != m_sections.end()) {
-			widget->destroyed().disconnectOne(this,
-			        &Context::OnSubWidgetDestroyed);
-
-			m_sections.erase(it);
-			SetContainer(widget, 0);
-		} else {
-			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
-			        widget->name().c_str(), name().c_str());
-			return false;
-		}
-
-		return true;
-	}
-
 	ResponseType Context::FocusEvent (bool focus)
 	{
 		return Ignore;
-	}
-
-	IteratorPtr Context::CreateIterator (const DeviceEvent& event)
-	{
-		IteratorPtr ret;
-		return ret;
 	}
 
 	void Context::InitializeContext ()
@@ -680,22 +611,22 @@ namespace BlendInt
 
 		glm::mat4 projection = glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f);
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
-		program = Shaders::instance->default_line_program();
+		program = Shaders::instance->line_program();
 		program->Use();
 		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
-		program = Shaders::instance->default_text_program();
+		program = Shaders::instance->text_program();
 		program->Use();
 		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
-		program = Shaders::instance->default_image_program();
+		program = Shaders::instance->image_program();
 		program->Use();
 		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
@@ -720,12 +651,6 @@ namespace BlendInt
 		}
 
 		m_focused_widget = 0;
-	}
-
-	void Context::OnSubWidgetDestroyed (AbstractWidget* widget)
-	{
-		DBG_PRINT_MSG("Remove section from context: %s", widget->name().c_str());
-		RemoveSubWidget(widget);
 	}
 
 }

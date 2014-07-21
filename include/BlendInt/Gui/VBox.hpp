@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_VBOX_HPP_
 #define _BLENDINT_GUI_VBOX_HPP_
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
-	class VBox: public AbstractDequeContainer
+	class VBox: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(VBox);
 

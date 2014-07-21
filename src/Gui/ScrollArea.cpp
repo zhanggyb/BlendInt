@@ -41,7 +41,7 @@
 namespace BlendInt {
 
 	ScrollArea::ScrollArea ()
-	: AbstractVectorContainer(4)
+	: AbstractContainer(3)
 	{
 		set_margin(2, 2, 2, 2);
 		set_size(360, 240);
@@ -60,22 +60,22 @@ namespace BlendInt {
 		if (!widget)
 			return;
 
-		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+		ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
 		view->Setup(widget);
 
 		int width = size().width() - margin().hsum();
 		int height = size().height() - margin().vsum();
 
 		if (widget->size().width() <= width) {
-			sub_widget(HScrollBarIndex)->SetVisible(false);
+			deque()[HScrollBarIndex]->SetVisible(false);
 		} else {
-			sub_widget(HScrollBarIndex)->SetVisible(true);
+			deque()[HScrollBarIndex]->SetVisible(true);
 		}
 
 		if (widget->size().height() <= height) {
-			sub_widget(VScrollBarIndex)->SetVisible(false);
+			deque()[VScrollBarIndex]->SetVisible(false);
 		} else {
-			sub_widget(VScrollBarIndex)->SetVisible(true);
+			deque()[VScrollBarIndex]->SetVisible(true);
 		}
 
 		AdjustGeometries(position().x() + margin().left(),
@@ -84,7 +84,7 @@ namespace BlendInt {
 
 	void ScrollArea::CentralizeViewport () const
 	{
-		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+		ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
 		view->CentralizeViewport();
 	}
 
@@ -144,7 +144,7 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
@@ -184,9 +184,9 @@ namespace BlendInt {
 		ScrollBar* hbar = Manage(new ScrollBar(Horizontal));
 		ScrollBar* vbar = Manage(new ScrollBar(Vertical));
 
-		SetSubWidget(ScrollViewIndex, view);
-		SetSubWidget(HScrollBarIndex, hbar);
-		SetSubWidget(VScrollBarIndex, vbar);
+		AssignSubWidget(ScrollViewIndex, view);
+		AssignSubWidget(HScrollBarIndex, hbar);
+		AssignSubWidget(VScrollBarIndex, vbar);
 
 		hbar->SetSliderPercentage(100);
 		vbar->SetSliderPercentage(100);
@@ -243,7 +243,7 @@ namespace BlendInt {
 			m_inner->Bind();
 			tool.SetInnerBufferData(m_inner.get());
 
-			ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+			ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
 			AbstractWidget* widget = view->viewport();
 
 			int width = request.size()->width() - margin().hsum();
@@ -251,15 +251,15 @@ namespace BlendInt {
 
 			if(widget) {
 				if (widget->size().width() <= width) {
-					sub_widget(HScrollBarIndex)->SetVisible(false);
+					deque()[HScrollBarIndex]->SetVisible(false);
 				} else {
-					sub_widget(HScrollBarIndex)->SetVisible(true);
+					deque()[HScrollBarIndex]->SetVisible(true);
 				}
 
 				if (widget->size().height() <= height) {
-					sub_widget(VScrollBarIndex)->SetVisible(false);
+					deque()[VScrollBarIndex]->SetVisible(false);
 				} else {
-					sub_widget(VScrollBarIndex)->SetVisible(true);
+					deque()[VScrollBarIndex]->SetVisible(true);
 				}
 			}
 
@@ -276,9 +276,9 @@ namespace BlendInt {
 		int bh = 0;	// bottom height of the hbar
 		int rw = 0;	// right width of the vbar
 
-		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
-		ScrollBar* hbar = dynamic_cast<ScrollBar*>(sub_widget(HScrollBarIndex));
-		ScrollBar* vbar = dynamic_cast<ScrollBar*>(sub_widget(VScrollBarIndex));
+		ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
+		ScrollBar* hbar = dynamic_cast<ScrollBar*>(deque()[HScrollBarIndex]);
+		ScrollBar* vbar = dynamic_cast<ScrollBar*>(deque()[VScrollBarIndex]);
 
 		if(hbar->visiable()) {
 			bh = hbar->size().height();
@@ -320,7 +320,7 @@ namespace BlendInt {
 
 	void ScrollArea::OnHorizontalScroll (int value)
 	{
-		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+		ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
 
 		AbstractWidget* p = view->viewport();
 
@@ -332,7 +332,7 @@ namespace BlendInt {
 
 	void ScrollArea::OnVerticalScroll (int value)
 	{
-		ScrollView* view = dynamic_cast<ScrollView*>(sub_widget(ScrollViewIndex));
+		ScrollView* view = dynamic_cast<ScrollView*>(deque()[ScrollViewIndex]);
 
 		AbstractWidget* p = view->viewport();
 		if (p) {

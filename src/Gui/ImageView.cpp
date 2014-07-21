@@ -139,7 +139,7 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
@@ -163,7 +163,7 @@ namespace BlendInt {
 		m_texture->Bind();
 
 		if (m_texture->GetWidth() > 0) {
-			program = Shaders::instance->default_image_program();
+			program = Shaders::instance->image_program();
 			program->Use();
 			program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
 			program->SetUniform1i("TexID", 0);

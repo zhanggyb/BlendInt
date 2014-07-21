@@ -199,7 +199,7 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 
 		program->Use();
 
@@ -284,9 +284,9 @@ namespace BlendInt {
 		VBlock* hsv_block = CreateHSVBlock();
 		VBox* hex_box = CreateHexBlock();
 
-		stack->Add(rgb_block);
-		stack->Add(hsv_block);
-		stack->Add(hex_box);
+		stack->PushBack(rgb_block);
+		stack->PushBack(hsv_block);
+		stack->PushBack(hex_box);
 
 		return stack;
 	}

@@ -36,7 +36,7 @@ TEST_F(ScrollViewTest1, Foo1)
 	
 	Button* btn = Manage(new Button);
 	DBG_SET_NAME(btn, "Button");
-	btn->Resize(500, 400);
+	btn->Resize(200, 200);
 	
 	scrollview->Setup(btn);
 	

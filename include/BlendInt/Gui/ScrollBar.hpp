@@ -55,6 +55,11 @@ namespace BlendInt {
 
 		virtual bool IsExpandY () const;
 
+		bool pressed () const
+		{
+			return m_pressed;
+		}
+
 	protected:
 
 		virtual void UpdateSlider (const SliderUpdateRequest& request);
@@ -122,6 +127,27 @@ namespace BlendInt {
 		 * @brief If the slide switch is pressed
 		 */
 		bool m_pressed;
+
+	};
+
+	class AbstractScrollable;
+
+	class NativeScrollBar: public ScrollBar
+	{
+	public:
+
+		friend class AbstractScrollable;
+
+		NativeScrollBar (Orientation orientation)
+		: ScrollBar(orientation)
+		{
+
+		}
+
+		virtual ~NativeScrollBar ()
+		{
+
+		}
 
 	};
 

@@ -24,15 +24,14 @@
 #ifndef _BLENDINT_GUI_VBLOCK_HPP_
 #define _BLENDINT_GUI_VBLOCK_HPP_
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A container looks like an entirety
 	 */
-	class VBlock: public AbstractDequeContainer
+	class VBlock: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(VBlock);
 

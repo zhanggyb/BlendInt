@@ -41,6 +41,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Button::Button ()
 		: AbstractButton()
 	{
@@ -126,51 +128,53 @@ namespace BlendInt {
 
 	ResponseType Button::Draw (const RedrawEvent& event)
 	{
-		using Stock::Shaders;
-
-		RefPtr<GLSLProgram> program =
-						Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(),
+		        (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
 		if (down()) {
-			program->SetVertexAttrib4fv("a_color",
-							Theme::instance->regular().inner_sel.data());
+			glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+			        Theme::instance->regular().inner_sel.data());
 		} else {
 			if (hover()) {
 				Color color = Theme::instance->regular().inner + 15;
-				program->SetVertexAttrib4fv("a_color", color.data());
+				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+				        color.data());
 			} else {
-				program->SetVertexAttrib4fv("a_color",
-								Theme::instance->regular().inner.data());
+				glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+				        Theme::instance->regular().inner.data());
 			}
 		}
 
 		glBindVertexArray(m_vao[0]);
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-							GetOutlineVertices(round_type()) + 2);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		program->SetUniform1i("u_AA", 1);
-		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(),
+		        Theme::instance->regular().outline.data());
 
 		glBindVertexArray(m_vao[1]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0,
+		        GetOutlineVertices(round_type()) * 2 + 2);
 
 		if (emboss()) {
-			program->SetVertexAttrib4f("a_color", 1.0f, 1.0f, 1.0f, 0.16f);
+			glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 1.0f,
+			        1.0f, 1.0f, 0.16f);
 
-			program->SetUniform3f("u_position", (float) position().x(), (float) position().y() - 1.f, 0.f);
+			glUniform3f(Shaders::instance->triangle_uniform_position(),
+			        (float) position().x(), (float) position().y() - 1.f, 0.f);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0,
-							GetHalfOutlineVertices(round_type()) * 2);
+			        GetHalfOutlineVertices(round_type()) * 2);
 		}
 
 		glBindVertexArray(0);
 		program->Reset();
 
-		if(text().size()) {
+		if (text().size()) {
 			font().Print(position(), text(), text_length(), 0);
 		}
 

@@ -35,7 +35,6 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/AbstractContainer.hpp>
-#include <BlendInt/Gui/ContextLayer.hpp>
 #include <BlendInt/Gui/Section.hpp>
 
 namespace BlendInt {
@@ -85,8 +84,6 @@ namespace BlendInt {
 
 		void MoveDown (const Section* section);
 
-		size_t GetSectionSize () const;
-
 		void SetFocusedWidget (AbstractWidget* widget);
 
 		/**
@@ -124,12 +121,6 @@ namespace BlendInt {
 
 		static glm::mat4 default_view_matrix;
 
-#ifdef DEBUG
-
-		void PrintSections ();
-
-#endif
-
 	protected:
 
 		virtual bool SizeUpdateTest (const SizeUpdateRequest& request);
@@ -166,10 +157,6 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual bool RemoveSubWidget (AbstractWidget* widget);
-
-		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
-
 	private:
 
 		void InitializeContext ();
@@ -177,12 +164,6 @@ namespace BlendInt {
 		AbstractWidget* GetWidgetUnderCursor (const MouseEvent& event, AbstractWidget* parent);
 
 		void OnFocusedWidgetDestroyed (AbstractWidget* widget);
-
-		void OnSubWidgetDestroyed (AbstractWidget* widget);
-
-		// this will replace the context layer
-
-		std::deque<Section*> m_sections;
 
 		RedrawEvent m_redraw_event;
 

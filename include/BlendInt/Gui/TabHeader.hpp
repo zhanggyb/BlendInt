@@ -24,13 +24,13 @@
 #ifndef _BLENDINT_GUI_TABHEADER_HPP_
 #define _BLENDINT_GUI_TABHEADER_HPP_
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 #include <BlendInt/Gui/ButtonGroup.hpp>
 #include <BlendInt/Gui/TabButton.hpp>
 
 namespace BlendInt {
 
-	class TabHeader: public AbstractDequeContainer
+	class TabHeader: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(TabHeader);
 

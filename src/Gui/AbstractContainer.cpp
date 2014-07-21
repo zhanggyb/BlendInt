@@ -27,57 +27,8 @@
 
 namespace BlendInt {
 
-
-	SingleIterator::SingleIterator (AbstractWidget* widget)
-	: AbstractContainerIterator(), m_widget(widget), m_once(true)
-	{
-	}
-
-	SingleIterator::SingleIterator (const SingleIterator& orig)
-	: AbstractContainerIterator(), m_widget(0), m_once(true)
-	{
-		m_widget = orig.m_widget;
-		m_once = orig.m_once;
-	}
-
-	SingleIterator::~SingleIterator ()
-	{
-	}
-
-	SingleIterator& SingleIterator::operator = (const SingleIterator& orig)
-	{
-		m_widget = orig.m_widget;
-		m_once = orig.m_once;
-		return *this;
-	}
-
-	AbstractWidget* SingleIterator::GetWidget () const
-	{
-		return m_once ? m_widget : 0;
-	}
-
-	void SingleIterator::GoToFirst ()
-	{
-		m_once = true;
-	}
-
-	void SingleIterator::GoNext ()
-	{
-		m_once = false;
-	}
-
-	bool SingleIterator::IsEnd ()
-	{
-		if(m_widget == 0) {
-			return true;
-		} else {
-			return !m_once;
-		}
-	}
-
 	SubWidgetProxy::SubWidgetProxy ()
 	{
-
 	}
 
 	SubWidgetProxy::~SubWidgetProxy ()
@@ -171,6 +122,413 @@ namespace BlendInt {
 	{
 		if(sub_widget) {
 			sub_widget->PerformVisibilityUpdate(request);
+		}
+	}
+
+	AbstractContainer::AbstractContainer()
+	: AbstractWidget()
+	{
+
+	}
+
+	AbstractContainer::AbstractContainer(size_t size)
+	: AbstractWidget()
+	{
+		m_deque.resize(size, 0);
+	}
+
+	AbstractContainer::~AbstractContainer()
+	{
+		Clear();
+	}
+
+	bool AbstractContainer::PushFrontSubWidget (AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->container()) {
+
+			if (widget->container() == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name().c_str(),
+								widget->container()->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				AbstractContainer::RemoveSubWidget(widget->container(), widget);
+			}
+
+		}
+
+		m_deque.push_front(widget);
+
+		SetContainer(widget, this);
+
+		events()->connect(widget->destroyed(), this,
+						&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractContainer::PushBackSubWidget (AbstractWidget* widget)
+	{
+		if (!widget)
+			return false;
+
+		if (widget->container()) {
+
+			if (widget->container() == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name().c_str(),
+								widget->container()->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				AbstractContainer::RemoveSubWidget(widget->container(), widget);
+			}
+
+		}
+
+		m_deque.push_back(widget);
+
+		SetContainer(widget, this);
+
+		events()->connect(widget->destroyed(), this,
+						&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractContainer::AssignSubWidget (size_t index,
+					AbstractWidget* widget)
+	{
+		if(!widget) return false;
+
+		if((index + 1) > m_deque.size()) {
+			DBG_PRINT_MSG("Out of range: index %ld is not valid", index);
+			return false;
+		}
+
+		if (widget->container()) {
+
+			if (widget->container() == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name().c_str(),
+								widget->container()->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				AbstractContainer::RemoveSubWidget(widget->container(), widget);
+			}
+
+		}
+
+		// Remove orignal widget
+		AbstractWidget* original = m_deque[index];
+		if(original) {
+			assert(original->container() == this);
+			original->destroyed().disconnectOne(this,
+					&AbstractContainer::OnSubWidgetDestroyed);
+			SetContainer(original, 0);
+		}
+
+		AbstractWidgetDeque::iterator it = m_deque.begin();
+		std::advance(it, index);
+
+		*it = widget;
+
+		SetContainer(widget, this);
+
+		events()->connect(widget->destroyed(), this,
+						&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractContainer::InsertSubWidget (size_t index,
+					AbstractWidget* widget)
+	{
+		if(!widget) return false;
+
+		if(index > (m_deque.size() - 1)) {
+			DBG_PRINT_MSG("Out of range: index %ld is not valid", index);
+			return false;
+		}
+
+		if (widget->container()) {
+
+			if (widget->container() == this) {
+				DBG_PRINT_MSG("Widget %s is already in container %s",
+								widget->name().c_str(),
+								widget->container()->name().c_str());
+				return false;
+			} else {
+				// Set widget's container to 0
+				AbstractContainer::RemoveSubWidget(widget->container(), widget);
+			}
+
+		}
+
+		AbstractWidgetDeque::iterator it = m_deque.begin();
+		std::advance(it, index);
+		m_deque.insert(it, widget);
+
+		SetContainer(widget, this);
+
+		events()->connect(widget->destroyed(), this,
+						&AbstractContainer::OnSubWidgetDestroyed);
+
+		return true;
+	}
+
+	bool AbstractContainer::RemoveSubWidget (AbstractWidget* widget)
+	{
+		if(!widget) return false;
+
+		assert(widget->container() == this);
+
+		widget->destroyed().disconnectOne(this,
+						&AbstractContainer::OnSubWidgetDestroyed);
+
+		AbstractWidgetDeque::iterator it = std::find(m_deque.begin(),
+						m_deque.end(), widget);
+
+		if (it != m_deque.end()) {
+			m_deque.erase(it);
+			SetContainer(widget, 0);
+		} else {
+			DBG_PRINT_MSG("Warning: object %s is not found in container %s",
+							widget->name().c_str(), name().c_str());
+			return false;
+		}
+
+		return true;
+	}
+
+	bool AbstractContainer::FindSubWidget (AbstractWidget* widget)
+	{
+		AbstractWidgetDeque::iterator it = std::find(m_deque.begin(), m_deque.end(), widget);
+
+		if(it != m_deque.end())
+			return true;
+		else
+			return false;
+	}
+
+	void AbstractContainer::MoveSubWidgets (int offset_x, int offset_y)
+	{
+		for (AbstractWidgetDeque::iterator it = m_deque.begin();
+						it != m_deque.end(); it++) {
+			if(*it) {
+				SetSubWidgetPosition(*it, (*it)->position().x() + offset_x,
+								(*it)->position().y() + offset_y);
+			}
+		}
+	}
+
+	void AbstractContainer::ResizeSubWidgets (const Size& size)
+	{
+		for (AbstractWidgetDeque::iterator it = m_deque.begin();
+						it != m_deque.end(); it++) {
+			ResizeSubWidget((*it), size);
+		}
+	}
+
+	void AbstractContainer::ResizeSubWidgets (int w,
+					int h)
+	{
+		for (AbstractWidgetDeque::const_iterator it = deque().begin();
+						it != deque().end(); it++) {
+			ResizeSubWidget((*it), w, h);
+		}
+	}
+
+	void AbstractContainer::Clear ()
+	{
+		for (AbstractWidgetDeque::iterator it = m_deque.begin();
+						it != m_deque.end(); it++)
+		{
+			if(*it) {
+
+				(*it)->destroyed().disconnectOne(this,
+								&AbstractContainer::OnSubWidgetDestroyed);
+				SetContainer(*it, 0);
+
+				if ((*it)->managed() && ((*it)->count() == 0)) {
+					delete *it;
+				}
+
+			}
+		}
+
+		m_deque.clear();
+	}
+
+	ResponseType AbstractContainer::FocusEvent (bool focus)
+	{
+		return Ignore;
+	}
+
+	void AbstractContainer::OnSubWidgetDestroyed (AbstractWidget* widget)
+	{
+		DBG_PRINT_MSG("Sub widget %s is destroyed outside of the container %s",
+						widget->name().c_str(), name().c_str());
+
+		RemoveSubWidget(widget);
+	}
+
+	void AbstractContainer::FillSubWidgetsAveragely (const Point& out_pos,
+					const Size& out_size, const Margin& margin,
+					Orientation orientation, int alignment, int space)
+	{
+		if(m_deque.empty()) return;
+
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+		int width = out_size.width() - margin.left() - margin.right();
+		int height = out_size.height() - margin.top() - margin.bottom();
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(x, width, space);
+			AlignHorizontally(y, height, alignment);
+		} else {
+			DistributeVertically(y, height, space);
+			AlignVertically(x, width, alignment);
+		}
+	}
+
+	void AbstractContainer::FillSubWidgetsAveragely (const Point& pos, const Size& size,
+					Orientation orientation, int alignment, int space)
+	{
+		if(m_deque.empty()) return;
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(pos.x(), size.width(), space);
+			AlignHorizontally(pos.y(), size.height(), alignment);
+		} else {
+			DistributeVertically(pos.y(), size.height(), space);
+			AlignVertically(pos.x(), size.width(), alignment);
+		}
+	}
+
+	void AbstractContainer::FillSubWidgetsAveragely (int x, int y,
+					int width, int height,
+					Orientation orientation, int alignment, int space)
+	{
+		if(m_deque.empty()) return;
+
+		if(orientation == Horizontal) {
+			DistributeHorizontally(x, width, space);
+			AlignHorizontally(y, height, alignment);
+		} else {
+			DistributeVertically(y, height, space);
+			AlignVertically(x, width, alignment);
+		}
+	}
+
+	void AbstractContainer::DistributeHorizontally (int x, int width, int space)
+	{
+		AbstractWidget* widget = 0;
+
+		if (m_deque.size()) {
+			int average_width = (width - ((m_deque.size() - 1)* space))
+							/ m_deque.size();
+
+			if (average_width > 0) {
+
+				for (AbstractWidgetDeque::const_iterator it = m_deque.begin();
+								it != m_deque.end(); it++) {
+					widget = *it;
+					ResizeSubWidget(widget, average_width, widget->size().height());
+					SetSubWidgetPosition(widget, x, widget->position().y());
+					x += average_width + space;
+				}
+
+			} else {
+
+				// TODO: set invisiable
+
+			}
+		}
+	}
+
+	void AbstractContainer::DistributeVertically (int y, int height, int space)
+	{
+		AbstractWidget* widget = 0;
+
+		y = y + height;
+		if (m_deque.size()) {
+			int average_height = (height - ((m_deque.size() - 1)* space))
+							/ m_deque.size();
+
+			if (average_height > 0) {
+
+				for (AbstractWidgetDeque::const_iterator it = m_deque.begin();
+								it != m_deque.end(); it++) {
+					widget = *it;
+					ResizeSubWidget(widget, widget->size().width(), average_height);
+					y -= average_height;
+					SetSubWidgetPosition(widget, widget->position().x(), y);
+					y -= space;
+				}
+
+			} else {
+
+				// TODO: set invisiable
+
+			}
+		}
+	}
+
+	void AbstractContainer::AlignHorizontally (int y, int height, int alignment)
+	{
+		AbstractWidget* widget = 0;
+
+		for(AbstractWidgetDeque::const_iterator it = m_deque.begin(); it != m_deque.end(); it++)
+		{
+			widget = *it;
+
+			if(widget->IsExpandY()) {
+				ResizeSubWidget(widget, widget->size().width(), height);
+				SetSubWidgetPosition(widget, widget->position().x(), y);
+			} else {
+
+				if (alignment & AlignTop) {
+					SetSubWidgetPosition(widget, widget->position().x(),
+					        y + (height - widget->size().height()));
+				} else if (alignment & AlignBottom) {
+					SetSubWidgetPosition(widget, widget->position().x(), y);
+				} else if (alignment & AlignHorizontalCenter) {
+					SetSubWidgetPosition(widget, widget->position().x(),
+					        y + (height - widget->size().height()) / 2);
+				}
+
+			}
+		}
+	}
+
+	void AbstractContainer::AlignVertically (int x, int width, int alignment)
+	{
+		AbstractWidget* widget = 0;
+		for(AbstractWidgetDeque::const_iterator it = m_deque.begin(); it != m_deque.end(); it++)
+		{
+			widget = *it;
+
+			if (widget->IsExpandX()) {
+				ResizeSubWidget(widget, width, widget->size().height());
+				SetSubWidgetPosition(widget, x, widget->position().y());
+			} else {
+
+				if (alignment & AlignLeft) {
+					SetSubWidgetPosition(widget, x, widget->position().y());
+				} else if (alignment & AlignRight) {
+					SetSubWidgetPosition(widget, x + (width - widget->size().width()), widget->position().y());
+				} else if (alignment & AlignVerticalCenter) {
+					SetSubWidgetPosition(widget, x + (width - widget->size().width()) / 2, widget->position().y());
+				}
+
+			}
 		}
 	}
 
@@ -310,6 +668,47 @@ namespace BlendInt {
 		widget->m_shadow.destroy();
 
 		return true;
+	}
+
+	void AbstractContainer::FillSingleWidget (size_t index, const Point& out_pos,
+	        const Size& out_size, const Margin& margin)
+	{
+		int x = out_pos.x() + margin.left();
+		int y = out_pos.y() + margin.bottom();
+
+		int w = out_size.width() - margin.left()
+							- margin.right();
+		int h = out_size.height() - margin.top()
+							- margin.bottom();
+
+		FillSingleWidget(index, x, y, w, h);
+	}
+
+	void AbstractContainer::FillSingleWidget (size_t index, const Point& pos,
+	        const Size& size)
+	{
+		FillSingleWidget(index, pos.x(), pos.y(), size.width(), size.height());
+	}
+
+	void AbstractContainer::FillSingleWidget (size_t index, int left, int bottom,
+	        int width, int height)
+	{
+		AbstractWidget* widget = m_deque[index];
+
+		if (widget) {
+			ResizeSubWidget(widget, width, height);
+			SetSubWidgetPosition(widget, left, bottom);
+
+			if (widget->size().width() < width) {
+				SetSubWidgetPosition(widget,
+				        left + (width - widget->size().width()) / 2, bottom);
+			}
+
+			if (widget->size().height() < height) {
+				SetSubWidgetPosition(widget, left,
+				        bottom + (height - widget->size().height() / 2));
+			}
+		}
 	}
 
 }

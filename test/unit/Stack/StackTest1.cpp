@@ -56,9 +56,9 @@ TEST_F(StackTest1, Foo1)
 
 	Stack* stack = Manage (new Stack);
 	DBG_SET_NAME(stack, "Stack");
-	stack->Add(label1);
-	stack->Add(label2);
-	stack->Add(label3);
+	stack->PushBack(label1);
+	stack->PushBack(label2);
+	stack->PushBack(label3);
 
 	stack->SetPosition(200, 200);
 	stack->Resize(200, 200);

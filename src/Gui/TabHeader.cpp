@@ -42,7 +42,7 @@
 namespace BlendInt {
 
 	TabHeader::TabHeader()
-	: AbstractDequeContainer(),
+	: AbstractContainer(),
 	  m_vao(0)
 	{
 		set_size(400, 24);
@@ -121,7 +121,7 @@ namespace BlendInt {
 			AbstractWidget* widget = 0;
 			Size tmp_size;
 
-			for(AbstractWidgetDeque::iterator it = sub_widgets()->begin(); it != sub_widgets()->end(); it++)
+			for(AbstractWidgetDeque::const_iterator it = deque().begin(); it != deque().end(); it++)
 			{
 				widget = *it;
 
@@ -173,7 +173,7 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
@@ -239,8 +239,8 @@ namespace BlendInt {
 		int x = position().x() + margin().left();
 
 		if(sub_widget_size()) {
-			x = sub_widgets()->back()->position().x();
-			x += sub_widgets()->back()->size().width();
+			x = deque().back()->position().x();
+			x += deque().back()->size().width();
 		}
 
 		return x;

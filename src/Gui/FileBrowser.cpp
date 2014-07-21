@@ -32,12 +32,14 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	FileBrowser::FileBrowser ()
-	: m_vao(0)
+	: AbstractScrollable(), m_vao(0)
 	{
 		set_drop_shadow(true);
 
-		InitializeFileListOnce();
+		InitializeFileBrowserOnce();
 	}
 
 	FileBrowser::~FileBrowser ()
@@ -94,8 +96,13 @@ namespace BlendInt {
 
 	ResponseType FileBrowser::Draw (const RedrawEvent& event)
 	{
-		using Stock::Shaders;
 		namespace fs = boost::filesystem;
+
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(position().x(),
+        		position().y(),
+        		size().width(),
+                size().height());
 
 		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
 		unsigned int i = 0;
@@ -103,15 +110,15 @@ namespace BlendInt {
 		h -= m_font.GetHeight();
 		pos.y = position().y() + h;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
-		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
-		program->SetUniform1i("u_AA", 0);
+		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		program->SetVertexAttrib4f("a_color", 0.475f, 0.475f, 0.475f, 0.75f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.475f, 0.475f, 0.475f, 0.75f);
 
-		if (i == m_index) program->SetUniform1i("u_gamma", 25);
-		else program->SetUniform1i("u_gamma", 15);
+		if (i == m_index) glUniform1i(Shaders::instance->triangle_uniform_gamma(), 25);
+		else glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -126,11 +133,11 @@ namespace BlendInt {
 		pos.y = position().y() + h;
 
 		program->Use();
-		program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
 		if(i == m_index) {
-			program->SetUniform1i("u_gamma", 25);
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 25);
 		} else {
-			program->SetUniform1i("u_gamma", 0);
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		}
 
 		glBindVertexArray(m_vao);
@@ -166,15 +173,15 @@ namespace BlendInt {
 						pos.y = position().y() + h;
 
 						program->Use();
-						program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));
+						glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
 
 						if(i == m_index) {
-							program->SetUniform1i("u_gamma", 25);
+							glUniform1i(Shaders::instance->triangle_uniform_gamma(), 25);
 						} else {
 							if (dark) {
-								program->SetUniform1i("u_gamma", 0);
+								glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 							} else {
-								program->SetUniform1i("u_gamma", 15);
+								glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
 							}
 						}
 
@@ -185,7 +192,7 @@ namespace BlendInt {
 						program->Reset();
 
 						m_font.Print(pos.x, pos.y - m_font.GetDescender(),
-										it->path().native());
+										it->path().filename().native());
 						dark = !dark;
 
 						it++;
@@ -197,11 +204,26 @@ namespace BlendInt {
 			DBG_PRINT_MSG("Error: %s", ex.what());
 		}
 
+        glDisable(GL_SCISSOR_TEST);
+
+        draw_hbar(event);
+        draw_vbar(event);
+
 		return Accept;
 	}
 
 	ResponseType FileBrowser::MousePressEvent (const MouseEvent& event)
 	{
+		if(hbar()->Contain(event.position())) {
+
+			return DispatchMousePressEvent(hbar(), event);
+
+		} else if (vbar()->Contain(event.position())) {
+
+			return DispatchMousePressEvent(vbar(), event);
+
+		}
+
 		namespace fs = boost::filesystem;
 
 		unsigned int index;
@@ -264,10 +286,62 @@ namespace BlendInt {
 
 	ResponseType FileBrowser::MouseReleaseEvent (const MouseEvent& event)
 	{
+		if(hbar()->pressed()) {
+			return DispatchMouseReleaseEvent(hbar(), event);
+		} else if (vbar()->pressed()) {
+			return DispatchMouseReleaseEvent(vbar(), event);
+		}
+
 		return Accept;
 	}
 
-	void FileBrowser::InitializeFileListOnce ()
+	void FileBrowser::PerformPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			AdjustScrollBarGeometries(request.position()->x(), request.position()->y(), size().width(), size().height());
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	ResponseType FileBrowser::MouseMoveEvent (const MouseEvent& event)
+	{
+		if(hbar()->pressed()) {
+
+			return DispatchMouseMoveEvent(hbar(), event);
+
+		} else if (vbar()->pressed()) {
+
+			return DispatchMouseMoveEvent(vbar(), event);
+
+		}
+
+		return Accept;
+	}
+
+	void FileBrowser::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if(request.target() == this) {
+
+			GLfloat row_height = (GLfloat)m_font.GetHeight();
+			GLfloat verts[] = {
+							0.f, 0.f,
+							(GLfloat)request.size()->width(), 0.f,
+							0.f, row_height,
+							(GLfloat)request.size()->width(), row_height
+			};
+
+			m_row->Bind();
+			m_row->SetData(sizeof(verts), verts);
+			m_row->Reset();
+
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void FileBrowser::InitializeFileBrowserOnce ()
 	{
 		namespace fs = boost::filesystem;
 
@@ -320,13 +394,15 @@ namespace BlendInt {
 		m_row->Bind();
 		m_row->SetData(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		m_row->Reset();
 
 		m_font.set_color(Color(0xF0F0F0FF));
+
+		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
 	}
 
 	bool FileBrowser::GetHighlightIndex(int y, unsigned int* index)

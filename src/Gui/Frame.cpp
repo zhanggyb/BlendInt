@@ -48,7 +48,7 @@
 namespace BlendInt {
 
 	Frame::Frame ()
-	: AbstractSingleContainer()
+	: AbstractContainer(1)
 	{
 		set_size(400, 300);
 	}
@@ -61,15 +61,9 @@ namespace BlendInt {
 	{
 		bool ret = false;
 
-		if (SetSubWidget(widget)) {
+		if (AssignSubWidget(0, widget)) {
 
-			int x = position().x() + margin().left();
-			int y = position().y() + margin().bottom();
-
-			int w = size().width() - margin().hsum();
-			int h = size().height() - margin().vsum();
-
-			FillSubWidget(x, y, w, h);
+			FillSingleWidget(0, position(), size(), margin());
 
 			ret = true;
 		}
@@ -91,16 +85,16 @@ namespace BlendInt {
 
 	bool Frame::IsExpandX() const
 	{
-		if(sub_widget())
-			return sub_widget()->IsExpandX();
+		if(deque().size())
+			return deque()[0]->IsExpandX();
 		else
 			return false;
 	}
 
 	bool Frame::IsExpandY() const
 	{
-		if(sub_widget())
-			return sub_widget()->IsExpandY();
+		if(deque().size())
+			return deque()[0]->IsExpandY();
 		else
 			return false;
 	}
@@ -109,8 +103,10 @@ namespace BlendInt {
 	{
 		Size prefer(400, 300);
 
-		if(sub_widget()) {
-			prefer = sub_widget()->GetPreferredSize();
+		AbstractWidget* widget = deque()[0];
+
+		if(widget) {
+			prefer = widget->GetPreferredSize();
 
 			prefer.add_width(margin().hsum());
 			prefer.add_height(margin().vsum());
@@ -121,10 +117,10 @@ namespace BlendInt {
 
 	void Frame::PerformMarginUpdate(const Margin& request)
 	{
-		if(sub_widget()) {
-			set_margin(request);
+		set_margin(request);
 
-			FillSubWidget(position(), size(), request);
+		if(deque().size()) {
+			FillSingleWidget(0, position(), size(), request);
 		}
 	}
 
@@ -151,8 +147,8 @@ namespace BlendInt {
 		if(request.target() == this) {
 			set_size(*request.size());
 
-			if (sub_widget()) {
-				FillSubWidget(position(), *request.size(), margin());
+			if (deque().size() && deque()[0]) {
+				FillSingleWidget(0, position(), *request.size(), margin());
 			}
 		}
 
@@ -164,7 +160,7 @@ namespace BlendInt {
 	{
 		if(request.target() == this) {
 			set_position(*request.position());
-			SetSubWidgetPosition(sub_widget(),
+			SetSubWidgetPosition(deque()[0],
 					request.position()->x() + margin().left(),
 					request.position()->y() + margin().bottom());
 		}

@@ -44,7 +44,9 @@ namespace BlendInt {
 
 		virtual ~Section ();
 
-		void Insert (AbstractWidget* widget);
+		void PushFront (AbstractWidget* widget);
+
+		void PushBack (AbstractWidget* widget);
 
 		/**
 		 * @brief Remove sub widget
@@ -99,10 +101,6 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual bool RemoveSubWidget (AbstractWidget* widget);
-
-		virtual IteratorPtr CreateIterator (const DeviceEvent& event);
-
 	private:
 
 		void DispatchDrawEvent (AbstractWidget* widget, const RedrawEvent& event);
@@ -115,11 +113,11 @@ namespace BlendInt {
 
 		void UpdateHoverWidgetSubs (const MouseEvent& event);
 
-		void OnSubWidgetDestroyed (AbstractWidget* widget);
+		void OnSubWidgetDestroyedInSection (AbstractWidget* widget);
 
 		void OnHoverWidgetDestroyed (AbstractWidget* widget);
 
-		std::set<AbstractWidget*> m_set;
+		void ClearHoverWidgets ();
 
 		AbstractWidget* m_focused_widget;
 

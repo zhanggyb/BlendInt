@@ -24,11 +24,11 @@
 #ifndef _BLENDINT_GUI_TOOLBOX_HPP_
 #define _BLENDINT_GUI_TOOLBOX_HPP_
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
-	class ToolBox: public AbstractDequeContainer
+	class ToolBox: public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(ToolBox);
 

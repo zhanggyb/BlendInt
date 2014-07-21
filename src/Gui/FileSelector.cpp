@@ -79,7 +79,7 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
 		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
@@ -138,14 +138,11 @@ namespace BlendInt {
 		file_layout->PushBack(m_file_entry);
 		file_layout->PushBack(m_cancel);
 
-		ScrollArea* area = Manage(new ScrollArea);
-
 		m_list = Manage(new FileBrowser);
-		area->SetViewport(m_list);
 
 		m_layout->PushBack(dir_layout);
 		m_layout->PushBack(file_layout);
-		m_layout->PushBack(area);
+		m_layout->PushBack(m_list);
 
 		Setup(m_layout);
 	}

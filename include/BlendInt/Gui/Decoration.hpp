@@ -26,14 +26,14 @@
 
 #include <Cpp/Events.hpp>
 
-#include <BlendInt/Gui/AbstractDequeContainer.hpp>
+#include <BlendInt/Gui/AbstractContainer.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A special widget used in virtual window only as the decoration
 	 */
-	class Decoration:  public AbstractDequeContainer
+	class Decoration:  public AbstractContainer
 	{
 		DISALLOW_COPY_AND_ASSIGN(Decoration);
 
