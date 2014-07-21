@@ -179,7 +179,7 @@ namespace BlendInt {
 		using Stock::Shaders;
 
 		if(m_texture) {
-			RefPtr<GLSLProgram> program = Shaders::instance->default_image_program();
+			RefPtr<GLSLProgram> program = Shaders::instance->image_program();
 			program->Use();
 
 			program->SetUniform3fv("u_position", 1, glm::value_ptr(pos));

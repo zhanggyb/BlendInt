@@ -177,7 +177,7 @@ namespace BlendInt {
 
 		int advance = 0;	// the return value
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_text_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->text_program();
 		program->Use();
 
 		glActiveTexture(GL_TEXTURE0);
@@ -300,7 +300,7 @@ namespace BlendInt {
 
 		int advance = 0;	// the return value
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_text_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->text_program();
 		program->Use();
 
 		glActiveTexture(GL_TEXTURE0);

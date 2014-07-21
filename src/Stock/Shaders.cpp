@@ -127,7 +127,7 @@ namespace BlendInt {
 				"	FragmentColor = vec4(f_color, 1.0);"
 				"}";
 
-		const char* Shaders::default_widget_vertex_shader =
+		const char* Shaders::widget_vertex_shader =
 				"#version 330\n"
 				""
 				"layout(location=0) in vec2 a_coord;"
@@ -139,7 +139,7 @@ namespace BlendInt {
 				"	VertexColor = a_color;"
 				"}";
 
-		const char* Shaders::default_widget_triangle_geometry_shader =
+		const char* Shaders::widget_triangle_geometry_shader =
 		        "#version 330\n"
 				        ""
 				        "layout (triangles) in;"
@@ -236,7 +236,7 @@ namespace BlendInt {
 				        ""
 				        "}";
 
-		const char* Shaders::default_widget_line_geometry_shader =
+		const char* Shaders::widget_line_geometry_shader =
 		        "#version 330\n"
 				        ""
 				        "layout (lines) in;"
@@ -333,7 +333,7 @@ namespace BlendInt {
 				        ""
 				        "}";
 
-		const char* Shaders::default_widget_fragment_shader =
+		const char* Shaders::widget_fragment_shader =
 		        "#version 330\n"
 				        ""
 				        "in vec4 PreFragColor;"
@@ -351,7 +351,7 @@ namespace BlendInt {
 				        "	FragmentColor = PreFragColor + color_calib;"
 				        "}";
 
-		const char* Shaders::default_context_vertex_shader = "#version 330\n"
+		const char* Shaders::context_vertex_shader = "#version 330\n"
 				"layout(location = 0) in vec2 a_coord;"
 				"layout(location = 1) in vec2 UVCoord;"
 				"uniform mat4 MVP;"
@@ -362,7 +362,7 @@ namespace BlendInt {
 				"	f_texcoord = UVCoord;"
 				"}";
 
-		const char* Shaders::default_context_fragment_shader = "#version 330\n"
+		const char* Shaders::context_fragment_shader = "#version 330\n"
 				"in vec2 f_texcoord;"
 				"uniform sampler2D TexID;"
 				//"uniform bool Blur = false;"
@@ -412,7 +412,7 @@ namespace BlendInt {
 				//"	}"
 				"}";
 
-		const char* Shaders::default_image_vertex_shader =
+		const char* Shaders::image_vertex_shader =
 				"#version 330\n"
 				"layout(location = 0) in vec2 a_coord;"
 				"layout(location = 1) in vec2 a_uv;"
@@ -459,7 +459,7 @@ namespace BlendInt {
 				"	f_texcoord = a_uv;"
 				"}";
 
-		const char* Shaders::default_image_fragment_shader =
+		const char* Shaders::image_fragment_shader =
 		        "#version 330\n"
 				"in vec2 f_texcoord;"
 				"uniform sampler2D TexID;"
@@ -518,7 +518,7 @@ namespace BlendInt {
 		"	gl_FragColor = vec4(f_color, 1.0);"
 		"}";
 
-		const char* Shaders::default_widget_vertex_shader =
+		const char* Shaders::widget_vertex_shader =
 		"#version 120\n"
 		""
 		"attribute vec2 xy;"
@@ -532,7 +532,7 @@ namespace BlendInt {
 		"	f_color = color;"
 		"}";
 
-		const char* Shaders::default_widget_fragment_shader =
+		const char* Shaders::widget_fragment_shader =
 		"#version 120\n"
 		""
 		"varying vec4 f_color;"
@@ -593,18 +593,56 @@ namespace BlendInt {
 		}
 
 		Shaders::Shaders ()
+		: m_text_attrib_coord(-1),
+		  m_text_uniform_projection(-1),
+		  m_text_uniform_view(-1),
+		  m_text_uniform_position(-1),
+		  m_text_uniform_rotation(-1),
+		  m_text_uniform_texture(-1),
+		  m_text_uniform_color(-1),
+		  m_primitive_attrib_coord(-1),
+		  m_primitive_attrib_color(-1),
+		  m_primitive_uniform_projection(-1),
+		  m_primitive_uniform_view(-1),
+		  m_primitive_uniform_model(-1),
+		  m_triangle_attrib_coord(-1),
+		  m_triangle_attrib_color(-1),
+		  m_triangle_uniform_projection(-1),
+		  m_triangle_uniform_view(-1),
+		  m_triangle_uniform_position(-1),
+		  m_triangle_uniform_rotation(-1),
+		  m_triangle_uniform_scale(-1),
+		  m_triangle_uniform_antialias(-1),
+		  m_triangle_uniform_gamma(-1),
+		  m_line_attrib_coord(-1),
+		  m_line_attrib_color(-1),
+		  m_line_uniform_projection(-1),
+		  m_line_uniform_view(-1),
+		  m_line_uniform_position(-1),
+		  m_line_uniform_rotation(-1),
+		  m_line_uniform_scale(-1),
+		  m_line_uniform_antialias(-1),
+		  m_line_uniform_gamma(-1),
+		  m_image_attrib_coord(-1),
+		  m_image_attrib_uv(-1),
+		  m_image_uniform_projection(-1),
+		  m_image_uniform_view(-1),
+		  m_image_uniform_position(-1),
+		  m_image_uniform_rotation(-1),
+		  m_image_uniform_texture(-1),
+		  m_image_uniform_gamma(-1)
 		{
-			m_default_text_program.reset(new GLSLProgram);
+			m_text_program.reset(new GLSLProgram);
 
 			m_primitive_program.reset(new GLSLProgram);
 
-			m_default_triangle_program.reset(new GLSLProgram);
+			m_triangle_program.reset(new GLSLProgram);
 
-			m_default_line_program.reset(new GLSLProgram);
+			m_line_program.reset(new GLSLProgram);
 
-			m_default_context_program.reset(new GLSLProgram);
+			m_context_program.reset(new GLSLProgram);
 
-			m_default_image_program.reset(new GLSLProgram);
+			m_image_program.reset(new GLSLProgram);
 		}
 
 		Shaders::~Shaders ()
@@ -613,35 +651,35 @@ namespace BlendInt {
 
 		bool Shaders::Setup ()
 		{
-			if (!m_default_text_program->Create())
+			if (!m_text_program->Create())
 				return false;
 
 			if (!m_primitive_program->Create()) {
 				return false;
 			}
 
-			if (!m_default_triangle_program->Create()) {
+			if (!m_triangle_program->Create()) {
 				return false;
 			}
 
-			if (!m_default_line_program->Create()) {
+			if (!m_line_program->Create()) {
 				return false;
 			}
 
-			if (!m_default_context_program->Create()) {
+			if (!m_context_program->Create()) {
 				return false;
 			}
 
-			if (!m_default_image_program->Create()) {
+			if (!m_image_program->Create()) {
 				return false;
 			}
 
-			m_default_text_program->AttachShader(text_vertex_shader, GL_VERTEX_SHADER);
-			m_default_text_program->AttachShader(text_fragment_shader,
+			m_text_program->AttachShader(text_vertex_shader, GL_VERTEX_SHADER);
+			m_text_program->AttachShader(text_fragment_shader,
 			        GL_FRAGMENT_SHADER);
-			if (!m_default_text_program->Link()) {
+			if (!m_text_program->Link()) {
 				DBG_PRINT_MSG("Fail to link the text program: %d",
-				        m_default_text_program->id());
+				        m_text_program->id());
 				return false;
 			}
 
@@ -655,50 +693,93 @@ namespace BlendInt {
 				return false;
 			}
 
-			m_default_triangle_program->AttachShader(
-			        default_widget_vertex_shader, GL_VERTEX_SHADER);
-			m_default_triangle_program->AttachShader(
-			        default_widget_triangle_geometry_shader,
+			m_triangle_program->AttachShader(
+			        widget_vertex_shader, GL_VERTEX_SHADER);
+			m_triangle_program->AttachShader(
+			        widget_triangle_geometry_shader,
 			        GL_GEOMETRY_SHADER);
-			m_default_triangle_program->AttachShader(
-			        default_widget_fragment_shader, GL_FRAGMENT_SHADER);
-			if (!m_default_triangle_program->Link()) {
+			m_triangle_program->AttachShader(
+			        widget_fragment_shader, GL_FRAGMENT_SHADER);
+			if (!m_triangle_program->Link()) {
 				DBG_PRINT_MSG("Fail to link the widget program: %d",
-				        m_default_triangle_program->id());
+				        m_triangle_program->id());
 				return false;
 			}
 
-			m_default_line_program->AttachShader(default_widget_vertex_shader,
+			m_line_program->AttachShader(widget_vertex_shader,
 			        GL_VERTEX_SHADER);
-			m_default_line_program->AttachShader(
-			        default_widget_line_geometry_shader, GL_GEOMETRY_SHADER);
-			m_default_line_program->AttachShader(default_widget_fragment_shader,
+			m_line_program->AttachShader(
+			        widget_line_geometry_shader, GL_GEOMETRY_SHADER);
+			m_line_program->AttachShader(widget_fragment_shader,
 			        GL_FRAGMENT_SHADER);
-			if (!m_default_line_program->Link()) {
+			if (!m_line_program->Link()) {
 				DBG_PRINT_MSG("Fail to link the widget program: %d",
-				        m_default_line_program->id());
+				        m_line_program->id());
 				return false;
 			}
 
-			m_default_context_program->AttachShader(
-			        default_context_vertex_shader, GL_VERTEX_SHADER);
-			m_default_context_program->AttachShader(
-			        default_context_fragment_shader, GL_FRAGMENT_SHADER);
-			if (!m_default_context_program->Link()) {
+			m_context_program->AttachShader(
+			        context_vertex_shader, GL_VERTEX_SHADER);
+			m_context_program->AttachShader(
+			        context_fragment_shader, GL_FRAGMENT_SHADER);
+			if (!m_context_program->Link()) {
 				DBG_PRINT_MSG("Fail to link the context program: %d",
-				        m_default_context_program->id());
+				        m_context_program->id());
 				return false;
 			}
 
-			m_default_image_program->AttachShader(default_image_vertex_shader,
+			m_image_program->AttachShader(image_vertex_shader,
 			        GL_VERTEX_SHADER);
-			m_default_image_program->AttachShader(default_image_fragment_shader,
+			m_image_program->AttachShader(image_fragment_shader,
 			        GL_FRAGMENT_SHADER);
-			if (!m_default_image_program->Link()) {
+			if (!m_image_program->Link()) {
 				DBG_PRINT_MSG("Fail to link the pixelicon program: %d",
-				        m_default_image_program->id());
+				        m_image_program->id());
 				return false;
 			}
+
+			m_text_attrib_coord = m_text_program->GetAttributeLocation("a_coord");
+			m_text_uniform_projection = m_text_program->GetUniformLocation("u_projection");
+			m_text_uniform_view = m_text_program->GetUniformLocation("u_view");
+			m_text_uniform_position = m_text_program->GetUniformLocation("u_position");
+			m_text_uniform_rotation = m_text_program->GetUniformLocation("u_rotation");
+			m_text_uniform_texture = m_text_program->GetUniformLocation("u_tex");
+			m_text_uniform_color = m_text_program->GetUniformLocation("u_color");
+
+			m_primitive_attrib_coord = m_primitive_program->GetAttributeLocation("coord3d");
+			m_primitive_attrib_color = m_primitive_program->GetAttributeLocation("v_color");
+			m_primitive_uniform_projection = m_primitive_program->GetUniformLocation("m_P");
+			m_primitive_uniform_view = m_primitive_program->GetUniformLocation("m_V");
+			m_primitive_uniform_model = m_primitive_program->GetUniformLocation("m_M");
+
+			m_triangle_attrib_coord = m_triangle_program->GetAttributeLocation("a_coord");
+			m_triangle_attrib_color = m_triangle_program->GetAttributeLocation("a_color");
+			m_triangle_uniform_projection = m_triangle_program->GetUniformLocation("u_projection");
+			m_triangle_uniform_view = m_triangle_program->GetUniformLocation("u_view");
+			m_triangle_uniform_position = m_triangle_program->GetUniformLocation("u_position");
+			m_triangle_uniform_rotation = m_triangle_program->GetUniformLocation("u_rotation");
+			m_triangle_uniform_scale = m_triangle_program->GetUniformLocation("u_scale");
+			m_triangle_uniform_antialias = m_triangle_program->GetUniformLocation("u_AA");
+			m_triangle_uniform_gamma = m_triangle_program->GetUniformLocation("u_gamma");
+
+			m_line_attrib_coord = m_line_program->GetAttributeLocation("a_coord");
+			m_line_attrib_color = m_line_program->GetAttributeLocation("a_color");
+			m_line_uniform_projection = m_line_program->GetUniformLocation("u_projection");
+			m_line_uniform_view = m_line_program->GetUniformLocation("u_view");
+			m_line_uniform_position = m_line_program->GetUniformLocation("u_position");
+			m_line_uniform_rotation = m_line_program->GetUniformLocation("u_rotation");
+			m_line_uniform_scale = m_line_program->GetUniformLocation("u_scale");
+			m_line_uniform_antialias = m_line_program->GetUniformLocation("u_AA");
+			m_line_uniform_gamma = m_line_program->GetUniformLocation("u_gamma");
+
+			m_image_attrib_coord = m_image_program->GetAttributeLocation("a_coord");
+			m_image_attrib_uv = m_image_program->GetAttributeLocation("a_uv");
+			m_image_uniform_projection = m_image_program->GetUniformLocation("u_projection");
+			m_image_uniform_view = m_image_program->GetUniformLocation("u_view");
+			m_image_uniform_position = m_image_program->GetUniformLocation("u_position");
+			m_image_uniform_rotation = m_image_program->GetUniformLocation("u_rotation");
+			m_image_uniform_texture = m_image_program->GetUniformLocation("TexID");
+			m_image_uniform_gamma = m_image_program->GetUniformLocation("u_gamma");
 
 			return true;
 		}

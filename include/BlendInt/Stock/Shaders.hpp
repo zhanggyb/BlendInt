@@ -47,9 +47,9 @@ namespace BlendInt {
 
 			static Shaders* instance;
 
-			RefPtr<GLSLProgram> default_text_program () const
+			RefPtr<GLSLProgram> text_program () const
 			{
-				return m_default_text_program;
+				return m_text_program;
 			}
 
 			RefPtr<GLSLProgram> primitive_program () const
@@ -57,24 +57,139 @@ namespace BlendInt {
 				return m_primitive_program;
 			}
 
-			RefPtr<GLSLProgram> default_triangle_program () const
+			RefPtr<GLSLProgram> triangle_program () const
 			{
-				return m_default_triangle_program;
+				return m_triangle_program;
 			}
 
-			RefPtr<GLSLProgram> default_line_program () const
+			RefPtr<GLSLProgram> line_program () const
 			{
-				return m_default_line_program;
+				return m_line_program;
 			}
 
-			RefPtr<GLSLProgram> default_context_program () const
+			RefPtr<GLSLProgram> context_program () const
 			{
-				return m_default_context_program;
+				return m_context_program;
 			}
 
-			RefPtr<GLSLProgram> default_image_program () const
+			RefPtr<GLSLProgram> image_program () const
 			{
-				return m_default_image_program;
+				return m_image_program;
+			}
+
+			GLint primitive_attrib_color () const
+			{
+				return m_primitive_attrib_color;
+			}
+
+			GLint primitive_attrib_coord () const
+			{
+				return m_primitive_attrib_coord;
+			}
+
+			GLint primitive_uniform_model () const
+			{
+				return m_primitive_uniform_model;
+			}
+
+			GLint primitive_uniform_projection () const
+			{
+				return m_primitive_uniform_projection;
+			}
+
+			GLint primitive_uniform_view () const
+			{
+				return m_primitive_uniform_view;
+			}
+
+			GLint text_attrib_coord () const
+			{
+				return m_text_attrib_coord;
+			}
+
+			GLint text_uniform_color () const
+			{
+				return m_text_uniform_color;
+			}
+
+			GLint text_uniform_position () const
+			{
+				return m_text_uniform_position;
+			}
+
+			GLint text_uniform_projection () const
+			{
+				return m_text_uniform_projection;
+			}
+
+			GLint text_uniform_rotation () const
+			{
+				return m_text_uniform_rotation;
+			}
+
+			GLint text_uniform_texture () const
+			{
+				return m_text_uniform_texture;
+			}
+
+			GLint text_uniform_view () const
+			{
+				return m_text_uniform_view;
+			}
+
+			GLint triangle_uniform_scale () const
+			{
+				return m_triangle_uniform_scale;
+			}
+
+			/**
+			 * @brief The vertex attribute location of coord
+			 *
+			 * Always return 0
+			 */
+			GLint triangle_attrib_coord () const
+			{
+				return m_triangle_attrib_coord;
+			}
+
+			/**
+			 * @brief The vertex attribute location of color
+			 *
+			 * Always return 1
+			 */
+			GLint triangle_attrib_color () const
+			{
+				return m_triangle_attrib_color;
+			}
+
+			GLint triangle_uniform_antialias () const
+			{
+				return m_triangle_uniform_antialias;
+			}
+
+			GLint triangle_uniform_gamma () const
+			{
+				return m_triangle_uniform_gamma;
+			}
+
+			GLint triangle_uniform_position () const
+			{
+				return m_triangle_uniform_position;
+			}
+
+			GLint triangle_uniform_projection () const
+			{
+				return m_triangle_uniform_projection;
+			}
+
+			GLint triangle_uniform_rotation () const
+			{
+				return m_triangle_uniform_rotation;
+			}
+
+			GLint triangle_uniform_view () const
+			{
+				return m_triangle_uniform_view;
 			}
 
 		private:
@@ -89,17 +204,93 @@ namespace BlendInt {
 
 			bool Setup ();
 
-			RefPtr<GLSLProgram> m_default_text_program;
+			RefPtr<GLSLProgram> m_text_program;
 
 			RefPtr<GLSLProgram> m_primitive_program;
 
-			RefPtr<GLSLProgram> m_default_triangle_program;
+			RefPtr<GLSLProgram> m_triangle_program;
 
-			RefPtr<GLSLProgram> m_default_line_program;
+			RefPtr<GLSLProgram> m_line_program;
 
-			RefPtr<GLSLProgram> m_default_context_program;
+			RefPtr<GLSLProgram> m_context_program;
 
-			RefPtr<GLSLProgram> m_default_image_program;
+			RefPtr<GLSLProgram> m_image_program;
+
+			GLint m_text_attrib_coord;
+
+			GLint m_text_uniform_projection;
+
+			GLint m_text_uniform_view;
+
+			GLint m_text_uniform_position;
+
+			GLint m_text_uniform_rotation;
+
+			GLint m_text_uniform_texture;
+
+			GLint m_text_uniform_color;
+
+			GLint m_primitive_attrib_coord;
+
+			GLint m_primitive_attrib_color;
+
+			GLint m_primitive_uniform_projection;
+
+			GLint m_primitive_uniform_view;
+
+			GLint m_primitive_uniform_model;
+
+			GLint m_triangle_attrib_coord;
+
+			GLint m_triangle_attrib_color;
+
+			GLint m_triangle_uniform_projection;
+
+			GLint m_triangle_uniform_view;
+
+			GLint m_triangle_uniform_position;
+
+			GLint m_triangle_uniform_rotation;
+
+			GLint m_triangle_uniform_scale;
+
+			GLint m_triangle_uniform_antialias;
+
+			GLint m_triangle_uniform_gamma;
+
+			GLint m_line_attrib_coord;
+
+			GLint m_line_attrib_color;
+
+			GLint m_line_uniform_projection;
+
+			GLint m_line_uniform_view;
+
+			GLint m_line_uniform_position;
+
+			GLint m_line_uniform_rotation;
+
+			GLint m_line_uniform_scale;
+
+			GLint m_line_uniform_antialias;
+
+			GLint m_line_uniform_gamma;
+
+			GLint m_image_attrib_coord;
+
+			GLint m_image_attrib_uv;
+
+			GLint m_image_uniform_projection;
+
+			GLint m_image_uniform_view;
+
+			GLint m_image_uniform_position;
+
+			GLint m_image_uniform_rotation;
+
+			GLint m_image_uniform_texture;
+
+			GLint m_image_uniform_gamma;
 
 			static const char* text_vertex_shader;
 
@@ -109,21 +300,21 @@ namespace BlendInt {
 
 			static const char* primitive_fragment_shader;
 
-			static const char* default_widget_vertex_shader;
+			static const char* widget_vertex_shader;
 
-			static const char* default_widget_triangle_geometry_shader;
+			static const char* widget_triangle_geometry_shader;
 
-			static const char* default_widget_line_geometry_shader;
+			static const char* widget_line_geometry_shader;
 
-			static const char* default_widget_fragment_shader;
+			static const char* widget_fragment_shader;
 
-			static const char* default_context_vertex_shader;
+			static const char* context_vertex_shader;
 
-			static const char* default_context_fragment_shader;
+			static const char* context_fragment_shader;
 
-			static const char* default_image_vertex_shader;
+			static const char* image_vertex_shader;
 
-			static const char* default_image_fragment_shader;
+			static const char* image_fragment_shader;
 		};
 
 	}

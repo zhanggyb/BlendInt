@@ -55,26 +55,6 @@ namespace BlendInt {
 
 		virtual bool IsExpandY () const;
 
-		ResponseType DispatchDrawEvent (const RedrawEvent& event)
-		{
-			return Draw(event);
-		}
-
-		ResponseType DispatchMouseMoveEvent (const MouseEvent& event)
-		{
-			return MouseMoveEvent(event);
-		}
-
-		ResponseType DispatchMousePressEvent (const MouseEvent& event)
-		{
-			return MousePressEvent(event);
-		}
-
-		ResponseType DispatchMouseReleaseEvent (const MouseEvent& event)
-		{
-			return MouseReleaseEvent(event);
-		}
-
 	protected:
 
 		virtual void UpdateSlider (const SliderUpdateRequest& request);
@@ -142,6 +122,43 @@ namespace BlendInt {
 		 * @brief If the slide switch is pressed
 		 */
 		bool m_pressed;
+
+	};
+
+	class NativeScrollBar: public ScrollBar
+	{
+	public:
+
+		NativeScrollBar ()
+		: ScrollBar()
+		{
+
+		}
+
+		virtual ~NativeScrollBar ()
+		{
+
+		}
+
+		ResponseType DispatchDrawEvent (const RedrawEvent& event)
+		{
+			return Draw(event);
+		}
+
+		ResponseType DispatchMouseMoveEvent (const MouseEvent& event)
+		{
+			return MouseMoveEvent(event);
+		}
+
+		ResponseType DispatchMousePressEvent (const MouseEvent& event)
+		{
+			return MousePressEvent(event);
+		}
+
+		ResponseType DispatchMouseReleaseEvent (const MouseEvent& event)
+		{
+			return MouseReleaseEvent(event);
+		}
 
 	};
 

@@ -227,13 +227,16 @@ namespace BlendInt {
 	{
 		using Stock::Shaders;
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
-		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.0f);
+		program->SetUniform3f(Shaders::instance->triangle_uniform_position(),
+		        (float) position().x(), (float) position().y(), 0.f);
+		program->SetUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		program->SetUniform1i(Shaders::instance->triangle_uniform_antialias(),
+		        0);
+		program->SetVertexAttrib4f(Shaders::instance->triangle_attrib_color(),
+		        0.447f, 0.447f, 0.447f, 1.0f);
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);

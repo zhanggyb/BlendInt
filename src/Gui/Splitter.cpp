@@ -151,7 +151,7 @@ namespace BlendInt {
 
 		glBindVertexArray(m_vao);
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_line_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->line_program();
 		program->Use();
 
 		program->SetUniform1i("u_AA", 0);

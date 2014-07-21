@@ -358,19 +358,19 @@ namespace BlendInt
 			        0.f, (GLfloat) request.size()->height(), 100.f, -100.f);
 
 			RefPtr<GLSLProgram> program =
-			        Shaders::instance->default_triangle_program();
+			        Shaders::instance->triangle_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->default_line_program();
+			program = Shaders::instance->line_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->default_text_program();
+			program = Shaders::instance->text_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
-			program = Shaders::instance->default_image_program();
+			program = Shaders::instance->image_program();
 			program->Use();
 			program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE,
 			        glm::value_ptr(projection));
@@ -611,22 +611,22 @@ namespace BlendInt
 
 		glm::mat4 projection = glm::ortho(0.f, 640.f, 0.f, 480.f, 100.f, -100.f);
 
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
-		program = Shaders::instance->default_line_program();
+		program = Shaders::instance->line_program();
 		program->Use();
 		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
-		program = Shaders::instance->default_text_program();
+		program = Shaders::instance->text_program();
 		program->Use();
 		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));
 
-		program = Shaders::instance->default_image_program();
+		program = Shaders::instance->image_program();
 		program->Use();
 		program->SetUniformMatrix4fv("u_projection", 1, GL_FALSE, glm::value_ptr(projection));
 		program->SetUniformMatrix4fv("u_view", 1, GL_FALSE, glm::value_ptr(default_view_matrix));

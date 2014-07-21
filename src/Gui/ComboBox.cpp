@@ -46,6 +46,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Margin ComboBox::default_combobox_padding = Margin(2, 2, 2, 2);
 
 	ComboBox::ComboBox ()
@@ -180,21 +182,19 @@ namespace BlendInt {
 
 	ResponseType ComboBox::Draw(const RedrawEvent& event)
 	{
-		using Stock::Shaders;
-
-		RefPtr<GLSLProgram> program = Shaders::instance->default_triangle_program();
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
 		if(m_status_down) {
-			program->SetUniform1i("u_gamma", 20);
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 20);
 		} else {
 			if(hover()) {
-				program->SetUniform1i("u_gamma", 15);
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
 			} else {
-				program->SetUniform1i("u_gamma", 0);
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 			}
 		}
 
@@ -202,9 +202,9 @@ namespace BlendInt {
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
-		program->SetVertexAttrib4fv("a_color", Theme::instance->menu().outline.data());
-		program->SetUniform1i("u_AA", 1);
-		program->SetUniform1i("u_gamma", 0);
+		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Theme::instance->menu().outline.data());
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 
 		glBindVertexArray(m_vao[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
@@ -303,10 +303,10 @@ namespace BlendInt {
 		m_inner->Bind();
 		tool.SetInnerBufferData(m_inner.get());
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_color());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_color(), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
 		glBindVertexArray(m_vao[1]);
 		m_outer.reset(new GLArrayBuffer);
@@ -314,8 +314,8 @@ namespace BlendInt {
 		m_outer->Bind();
 		tool.SetOuterBufferData(m_outer.get());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		GLArrayBuffer::Reset();
 		glBindVertexArray(0);

@@ -116,7 +116,7 @@ namespace BlendInt {
 		if (hover()) {
 
 			RefPtr<GLSLProgram> program =
-					Shaders::instance->default_triangle_program();
+					Shaders::instance->triangle_program();
 			program->Use();
 
 			program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
