@@ -128,16 +128,16 @@ namespace BlendInt {
 	void ScrollBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			int radius = std::min(request.size()->width(), request.size()->height()) / 2;
+			float radius = std::min(request.size()->width(), request.size()->height()) / 2.f;
 
 			Orientation slot_orient;
 			if (orientation() == Vertical) {
 				slot_orient = Horizontal;
-				m_slide.Resize(radius * 2, m_slide.size().height());
+				m_slide.Resize(radius * 2 + 0.5f, m_slide.size().height());
 				m_slide.SetRadius(radius);
 			} else {
 				slot_orient = Vertical;
-				m_slide.Resize(m_slide.size().width(), radius * 2);
+				m_slide.Resize(m_slide.size().width(), radius * 2 + 0.5f);
 				m_slide.SetRadius(radius);
 			}
 

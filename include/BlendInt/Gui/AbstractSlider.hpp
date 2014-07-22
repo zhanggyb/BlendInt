@@ -218,17 +218,22 @@ namespace BlendInt {
 	template <typename T>
 	void AbstractSlider<T>::SetRange (T value1, T value2)
 	{
-		int minimum = std::min(value1, value2);
-		int maximum = std::max(value1, value2);
+		T minimum = std::min(value1, value2);
+		T maximum = std::max(value1, value2);
 
-		if (m_minimum != minimum) {
-			m_minimum = minimum;
-			//Update(SliderPropertyMinimum, 0);
+		if(minimum == maximum)
+			return;
+
+		if(value1 == minimum) {
+			PerformMinimumUpdate(minimum);
+			PerformMaximumUpdate(maximum);
+		} else {
+			PerformMaximumUpdate(maximum);
+			PerformMinimumUpdate(minimum);
 		}
-		if (m_maximum != maximum) {
-			m_maximum = maximum;
-			//Update(SliderPropertyMaximum, 0);
-		}
+
+		m_minimum = minimum;
+		m_maximum = maximum;
 	}
 
 	template <typename T>

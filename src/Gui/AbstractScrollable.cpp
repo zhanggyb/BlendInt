@@ -130,11 +130,17 @@ namespace BlendInt {
 		if(m_hbar->visiable()) {
 			m_hbar->SetPosition(left, bottom);
 			m_hbar->Resize(width - rw, bh);
+		} else {
+			m_hbar->SetPosition(left, bottom);
+			m_hbar->Resize(width - m_vbar->size().width(), m_hbar->size().height());
 		}
 
 		if(m_vbar->visiable()) {
 			m_vbar->SetPosition(left + width - rw, bottom + bh);
 			m_vbar->Resize (rw, height - bh);
+		} else {
+			m_vbar->SetPosition(left + width - m_vbar->size().width(), bottom + m_hbar->size().height());
+			m_vbar->Resize (m_vbar->size().width(), height - m_hbar->size().height());
 		}
 	}
 

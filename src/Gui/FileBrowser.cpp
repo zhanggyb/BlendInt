@@ -45,6 +45,8 @@ namespace BlendInt {
 		hbar()->SetVisible(false);
 		vbar()->SetVisible(false);
 
+		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
+
 		events()->connect(hbar_moved(), this, &FileBrowser::OnHBarSlide);
 		events()->connect(vbar_moved(), this, &FileBrowser::OnVBarSlide);
 	}
@@ -86,18 +88,17 @@ namespace BlendInt {
 		}
 
 		if(height > size().height()) {
+
 			vbar()->SetVisible(true);
 			vbar()->SetSliderPercentage(size().height() * 100 / height);
-			vbar()->SetMinimum(size().height());
 			vbar()->SetMaximum(height);
-
-			DBG_PRINT_MSG("widget size: %d, minimum: %d", size().height(), vbar()->minimum());
-			DBG_PRINT_MSG("list size: %d, maximum: %d", height, vbar()->maximum());
+			vbar()->SetMinimum(size().height());
 
 		} else {
 			vbar()->SetVisible(false);
 		}
 
+		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
 		return is_path;
 	}
 
@@ -312,19 +313,59 @@ namespace BlendInt {
 
 	void FileBrowser::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
+		namespace fs = boost::filesystem;
+
 		if(request.target() == this) {
 
-			GLfloat row_height = (GLfloat)m_font.GetHeight();
+			int row_height = m_font.GetHeight();
+
 			GLfloat verts[] = {
 							0.f, 0.f,
 							(GLfloat)request.size()->width(), 0.f,
-							0.f, row_height,
-							(GLfloat)request.size()->width(), row_height
+							0.f, (GLfloat)row_height,
+							(GLfloat)request.size()->width(), (GLfloat)row_height
 			};
 
 			m_row->Bind();
 			m_row->SetData(sizeof(verts), verts);
 			m_row->Reset();
+
+			int height = 0;
+			try {
+				if (fs::exists(m_path)) {
+
+					if (fs::is_directory(m_path)) {
+
+						int count = 0;
+						fs::directory_iterator it(m_path);
+						fs::directory_iterator end;
+						while (it != end) {
+							count++;
+							it++;
+						}
+
+						height = (count + 2) * row_height;	// count "." and ".."
+
+					}
+				}
+			} catch (const fs::filesystem_error& ex) {
+				std::cerr << ex.what() << std::endl;
+			}
+
+			if(height > request.size()->height()) {
+
+				vbar()->SetVisible(true);
+				vbar()->SetSliderPercentage(request.size()->height() * 100 / height);
+				vbar()->SetMaximum(height);
+				vbar()->SetMinimum(request.size()->height());
+
+				DBG_PRINT_MSG("percentage: %d", request.size()->height() * 100 / height);
+
+			} else {
+				vbar()->SetVisible(false);
+			}
+
+			AdjustScrollBarGeometries(position().x(), position().y(), request.size()->width(), request.size()->height());
 
 		}
 

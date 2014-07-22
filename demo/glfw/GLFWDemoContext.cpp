@@ -22,6 +22,7 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
+	/*
 	m_view3d = Manage(new Viewport3D);
 	m_view3d->SetPosition(20, 100);
 	m_view3d->Resize(800, 600);
@@ -38,6 +39,19 @@ void GLFWDemoContext::Initialize ()
 
 	m_browser->Open(getenv("PWD"));
 	events()->connect(m_open_button->clicked(), this, &GLFWDemoContext::OnOpenObjFile);
+	*/
+
+	ScrollBar* sb = Manage(new ScrollBar);
+
+	sb->SetPosition(200, 200);
+	sb->SetSliderPercentage(50);
+	sb->SetValue(50);
+
+	PushBack(sb);
+
+	int perc = sb->GetSliderPercentage();
+	sb->Resize(400, sb->size().height());
+	sb->SetSliderPercentage(perc);
 }
 
 void GLFWDemoContext::OnOpenObjFile()
