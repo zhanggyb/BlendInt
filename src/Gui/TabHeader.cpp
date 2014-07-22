@@ -69,6 +69,8 @@ namespace BlendInt {
 		events()->connect(m_group.button_index_clicked(), &m_button_index_clicked, &Cpp::Event<int>::fire);
 		//events()->connect(m_group.button_index_clicked(), this, &TabHeader::OnButtonIndexClicked);
 		events()->connect(m_group.button_index_toggled(), this, &TabHeader::OnButtonIndexToggled);
+
+		// FIXME: cannot use the following line
 		//events()->connect(m_group.button_index_toggled(), &m_button_index_toggled, &Cpp::Event<int, bool>::fire);
 	}
 

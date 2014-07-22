@@ -41,6 +41,16 @@ namespace BlendInt {
 
 		virtual ~AbstractScrollable ();
 
+		Cpp::EventRef<int> hbar_moved ()
+		{
+			return m_hbar_moved;
+		}
+
+		Cpp::EventRef<int> vbar_moved ()
+		{
+			return m_vbar_moved;
+		}
+
 	protected:
 
 		virtual ResponseType FocusEvent (bool focus);
@@ -90,6 +100,10 @@ namespace BlendInt {
 		RefPtr<NativeScrollBar> m_hbar;
 
 		RefPtr<NativeScrollBar> m_vbar;
+
+		Cpp::Event<int> m_hbar_moved;
+
+		Cpp::Event<int> m_vbar_moved;
 
 	};
 

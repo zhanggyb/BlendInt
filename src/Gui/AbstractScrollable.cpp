@@ -30,6 +30,9 @@ namespace BlendInt {
 	{
 		m_hbar.reset(new NativeScrollBar(Horizontal));
 		m_vbar.reset(new NativeScrollBar(Vertical));
+
+		events()->connect(m_hbar->slider_moved(), &m_hbar_moved, &Cpp::Event<int>::fire);
+		events()->connect(m_vbar->slider_moved(), &m_vbar_moved, &Cpp::Event<int>::fire);
 	}
 
 	AbstractScrollable::~AbstractScrollable ()

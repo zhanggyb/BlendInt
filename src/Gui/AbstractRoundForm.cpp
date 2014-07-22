@@ -54,7 +54,7 @@ namespace BlendInt {
 		set_radius(rad);
 	}
 
-	int AbstractRoundForm::GetOutlineVertices (int round_type) const
+	int AbstractRoundForm::GetOutlineVertices (int round_type)
 	{
 		round_type = round_type & RoundAll;
 		int count = 0;
@@ -68,3 +68,4 @@ namespace BlendInt {
 	}
 
 }
+

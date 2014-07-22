@@ -41,6 +41,12 @@ namespace BlendInt {
 		set_size(400, 300);
 
 		InitializeFileBrowserOnce();
+
+		hbar()->SetVisible(false);
+		vbar()->SetVisible(false);
+
+		events()->connect(hbar_moved(), this, &FileBrowser::OnHBarSlide);
+		events()->connect(vbar_moved(), this, &FileBrowser::OnVBarSlide);
 	}
 
 	FileBrowser::~FileBrowser ()
@@ -64,13 +70,14 @@ namespace BlendInt {
 
 					int count = 0;
 					fs::directory_iterator it(m_path);
-					fs::directory_iterator it_end;
-					while (it != it_end) {
+					fs::directory_iterator end;
+					while (it != end) {
 						count++;
 						it++;
 					}
 
 					height = (count + 2) * row_height;	// count "." and ".."
+
 					is_path = true;
 				}
 			}
@@ -80,12 +87,16 @@ namespace BlendInt {
 
 		if(height > size().height()) {
 			vbar()->SetVisible(true);
+			vbar()->SetSliderPercentage(size().height() * 100 / height);
+			vbar()->SetMinimum(size().height());
+			vbar()->SetMaximum(height);
+
+			DBG_PRINT_MSG("widget size: %d, minimum: %d", size().height(), vbar()->minimum());
+			DBG_PRINT_MSG("list size: %d, maximum: %d", height, vbar()->maximum());
+
 		} else {
 			vbar()->SetVisible(false);
 		}
-
-		//if(is_path)
-			//Resize (size().width(), height);
 
 		return is_path;
 	}
@@ -344,11 +355,6 @@ namespace BlendInt {
 		m_row->Reset();
 
 		m_font.set_color(Color(0xF0F0F0FF));
-
-		//AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
-
-		hbar()->SetVisible(false);
-		vbar()->SetVisible(false);
 	}
 
 	bool FileBrowser::GetHighlightIndex(int y, unsigned int* index)
@@ -395,6 +401,16 @@ namespace BlendInt {
 
 		*index = out;
 		return ret;
+	}
+
+	void FileBrowser::OnHBarSlide (int val)
+	{
+		DBG_PRINT_MSG("val: %d", val);
+	}
+
+	void FileBrowser::OnVBarSlide (int val)
+	{
+		DBG_PRINT_MSG("val: %d", val);
 	}
 
 }

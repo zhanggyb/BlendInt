@@ -48,7 +48,15 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateSlider (const SliderUpdateRequest& request);
+		virtual void PerformOrientationUpdate (Orientation orientation);
+
+		virtual void PerformMinimumUpdate (double minimum);
+
+		virtual void PerformMaximumUpdate (double maximum);
+
+		virtual void PerformValueUpdate (double value);
+
+		virtual void PerformStepUpdate (double step);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 

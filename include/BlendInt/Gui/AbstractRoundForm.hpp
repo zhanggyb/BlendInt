@@ -44,6 +44,8 @@ namespace BlendInt {
 
 		float radius () const {return m_radius;}
 
+		static int GetOutlineVertices (int round_type);
+
 	protected:
 
 		void set_round_type (int type)
@@ -55,8 +57,6 @@ namespace BlendInt {
 		{
 			m_radius = radius;
 		}
-
-		int GetOutlineVertices (int round_type) const;
 
 	private:
 

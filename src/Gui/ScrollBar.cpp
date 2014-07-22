@@ -163,51 +163,30 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void ScrollBar::UpdateSlider(const SliderUpdateRequest& request)
+	void ScrollBar::PerformOrientationUpdate (Orientation orientation)
 	{
-		switch(request.type()) {
+	}
 
-			case SliderPropertyValue: {
-
-				break;
-			}
-
-			case SliderPropertyMinimum: {
-
-				const int* min_p = static_cast<const int*>(request.data());
-
-				if (value() < *min_p) {
-					set_value(*min_p);
-				}
-
-				break;
-			}
-
-			case SliderPropertyMaximum: {
-
-				const int* max_p = static_cast<const int*>(request.data());
-
-				if (value() > *max_p) {
-					set_value(*max_p);
-				}
-
-				break;
-			}
-
-			case SliderPropertyOrientation: {
-				//const Orientation* orient_p =
-				//			static_cast<const Orientation*>(request.data());
-
-				// TODO:
-
-				//Refresh();
-
-				break;
-			}
-
-			default:
-				break;
+	void ScrollBar::PerformMinimumUpdate (int minimum)
+	{
+		if (value() < minimum) {
+			set_value(minimum);
 		}
+	}
+
+	void ScrollBar::PerformMaximumUpdate (int maximum)
+	{
+		if (value() > maximum) {
+			set_value(maximum);
+		}
+	}
+
+	void ScrollBar::PerformValueUpdate (int value)
+	{
+	}
+
+	void ScrollBar::PerformStepUpdate (int step)
+	{
 	}
 
 	ResponseType ScrollBar::Draw (const RedrawEvent& event)
