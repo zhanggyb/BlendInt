@@ -94,65 +94,48 @@ namespace BlendInt {
 		return prefer;
 	}
 
-	void Slider::UpdateSlider(const SliderUpdateRequest& request)
+	void Slider::PerformOrientationUpdate (Orientation orientation)
 	{
-		switch(request.type()) {
-
-			case SliderPropertyValue: {
-
-				break;
-			}
-
-			case SliderPropertyMinimum: {
-
-				const int* min_p = static_cast<const int*>(request.data());
-
-				if (value() < *min_p) {
-					set_value(*min_p);
-				}
-				break;
-			}
-
-			case SliderPropertyMaximum: {
-
-				const int* max_p = static_cast<const int*>(request.data());
-
-				if (value() > *max_p) {
-					set_value(*max_p);
-				}
-
-				break;
-			}
-
-			case SliderPropertyOrientation: {
-				const Orientation* orient_p =
-								static_cast<const Orientation*>(request.data());
-
-				m_line->Bind();
-				GLfloat* buf_p = (GLfloat*) m_line->Map(GL_READ_WRITE);
-				if (*orient_p == Horizontal) {
-					*(buf_p + 0) = m_slide_icon.size().width() / 2;
-					*(buf_p + 1) = size().height() / 2;
-					*(buf_p + 2) = size().width() - m_slide_icon.size().width() / 2;
-					*(buf_p + 3) = *(buf_p + 0);
-				} else {
-					*(buf_p + 0) = size().width() / 2;
-					*(buf_p + 1) = m_slide_icon.size().height() / 2;
-					*(buf_p + 2) = *(buf_p + 0);
-					*(buf_p + 3) = size().height()
-									- m_slide_icon.size().height() / 2;
-				}
-				m_line->Unmap();
-				m_line->Reset();
-
-				Refresh();
-
-				break;
-			}
-
-			default:
-				break;
+		m_line->Bind();
+		GLfloat* buf_p = (GLfloat*) m_line->Map(GL_READ_WRITE);
+		if (orientation == Horizontal) {
+			*(buf_p + 0) = m_slide_icon.size().width() / 2;
+			*(buf_p + 1) = size().height() / 2;
+			*(buf_p + 2) = size().width() - m_slide_icon.size().width() / 2;
+			*(buf_p + 3) = *(buf_p + 0);
+		} else {
+			*(buf_p + 0) = size().width() / 2;
+			*(buf_p + 1) = m_slide_icon.size().height() / 2;
+			*(buf_p + 2) = *(buf_p + 0);
+			*(buf_p + 3) = size().height()
+							- m_slide_icon.size().height() / 2;
 		}
+		m_line->Unmap();
+		m_line->Reset();
+
+		Refresh();
+	}
+
+	void Slider::PerformMinimumUpdate (int minimum)
+	{
+		if (value() < minimum) {
+			set_value(minimum);
+		}
+	}
+
+	void Slider::PerformMaximumUpdate (int maximum)
+	{
+		if (value() > maximum) {
+			set_value(maximum);
+		}
+	}
+
+	void Slider::PerformValueUpdate (int value)
+	{
+	}
+
+	void Slider::PerformStepUpdate (int step)
+	{
 	}
 
 	ResponseType Slider::Draw (const RedrawEvent& event)

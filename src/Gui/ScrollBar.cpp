@@ -128,16 +128,16 @@ namespace BlendInt {
 	void ScrollBar::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if(request.target() == this) {
-			int radius = std::min(request.size()->width(), request.size()->height()) / 2;
+			float radius = std::min(request.size()->width(), request.size()->height()) / 2.f;
 
 			Orientation slot_orient;
 			if (orientation() == Vertical) {
 				slot_orient = Horizontal;
-				m_slide.Resize(radius * 2, m_slide.size().height());
+				m_slide.Resize(radius * 2 + 0.5f, m_slide.size().height());
 				m_slide.SetRadius(radius);
 			} else {
 				slot_orient = Vertical;
-				m_slide.Resize(m_slide.size().width(), radius * 2);
+				m_slide.Resize(m_slide.size().width(), radius * 2 + 0.5f);
 				m_slide.SetRadius(radius);
 			}
 
@@ -163,51 +163,30 @@ namespace BlendInt {
 		ReportSizeUpdate(request);
 	}
 
-	void ScrollBar::UpdateSlider(const SliderUpdateRequest& request)
+	void ScrollBar::PerformOrientationUpdate (Orientation orientation)
 	{
-		switch(request.type()) {
+	}
 
-			case SliderPropertyValue: {
-
-				break;
-			}
-
-			case SliderPropertyMinimum: {
-
-				const int* min_p = static_cast<const int*>(request.data());
-
-				if (value() < *min_p) {
-					set_value(*min_p);
-				}
-
-				break;
-			}
-
-			case SliderPropertyMaximum: {
-
-				const int* max_p = static_cast<const int*>(request.data());
-
-				if (value() > *max_p) {
-					set_value(*max_p);
-				}
-
-				break;
-			}
-
-			case SliderPropertyOrientation: {
-				//const Orientation* orient_p =
-				//			static_cast<const Orientation*>(request.data());
-
-				// TODO:
-
-				//Refresh();
-
-				break;
-			}
-
-			default:
-				break;
+	void ScrollBar::PerformMinimumUpdate (int minimum)
+	{
+		if (value() < minimum) {
+			set_value(minimum);
 		}
+	}
+
+	void ScrollBar::PerformMaximumUpdate (int maximum)
+	{
+		if (value() > maximum) {
+			set_value(maximum);
+		}
+	}
+
+	void ScrollBar::PerformValueUpdate (int value)
+	{
+	}
+
+	void ScrollBar::PerformStepUpdate (int step)
+	{
 	}
 
 	ResponseType ScrollBar::Draw (const RedrawEvent& event)

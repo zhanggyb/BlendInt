@@ -83,6 +83,10 @@ namespace BlendInt {
 
 		void InitializeFileBrowserOnce ();
 
+		void OnHBarSlide (int val);
+
+		void OnVBarSlide (int val);
+
 		GLuint m_vao;
 
 		boost::filesystem::path m_path;

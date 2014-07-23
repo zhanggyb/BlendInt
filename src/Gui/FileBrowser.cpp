@@ -38,8 +38,17 @@ namespace BlendInt {
 	: AbstractScrollable(), m_vao(0)
 	{
 		set_drop_shadow(true);
+		set_size(400, 300);
 
 		InitializeFileBrowserOnce();
+
+		hbar()->SetVisible(false);
+		vbar()->SetVisible(false);
+
+		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
+
+		events()->connect(hbar_moved(), this, &FileBrowser::OnHBarSlide);
+		events()->connect(vbar_moved(), this, &FileBrowser::OnVBarSlide);
 	}
 
 	FileBrowser::~FileBrowser ()
@@ -52,6 +61,7 @@ namespace BlendInt {
 		namespace fs = boost::filesystem;
 		bool is_path = false;
 		int height = 0;
+		int row_height = m_font.GetHeight();
 
 		m_path = fs::path(pathname);
 
@@ -62,15 +72,14 @@ namespace BlendInt {
 
 					int count = 0;
 					fs::directory_iterator it(m_path);
-					fs::directory_iterator it_end;
-					while (it != it_end) {
+					fs::directory_iterator end;
+					while (it != end) {
 						count++;
 						it++;
 					}
 
-					int h = m_font.GetHeight();
+					height = (count + 2) * row_height;	// count "." and ".."
 
-					height = (count + 2) * h;	// count "." and ".."
 					is_path = true;
 				}
 			}
@@ -78,9 +87,18 @@ namespace BlendInt {
 			std::cerr << ex.what() << std::endl;
 		}
 
-		if(is_path)
-			Resize (size().width(), height);
+		if(height > size().height()) {
 
+			vbar()->SetVisible(true);
+			vbar()->SetSliderPercentage(size().height() * 100 / height);
+			vbar()->SetMaximum(height);
+			vbar()->SetMinimum(size().height());
+
+		} else {
+			vbar()->SetVisible(false);
+		}
+
+		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
 		return is_path;
 	}
 
@@ -105,98 +123,75 @@ namespace BlendInt {
                 size().height());
 
 		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
-		unsigned int i = 0;
-		int h = size().height();
-		h -= m_font.GetHeight();
-		pos.y = position().y() + h;
+
+		int row_height = m_font.GetHeight();
+		pos.y += size().height();
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
-		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
-		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.475f, 0.475f, 0.475f, 0.75f);
 
-		if (i == m_index) glUniform1i(Shaders::instance->triangle_uniform_gamma(), 25);
-		else glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
+		// draw background
+		unsigned int i = 0;
+		while (pos.y > position().y()) {
 
-		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
+			pos.y -= row_height;
 
-		program->Reset();
+			glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
 
-		m_font.Print(pos.x, pos.y - m_font.GetDescender(), String("."));
-		i++;
+			if (i == m_index) {
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 25);
+			} else {
+				if (i % 2 == 0) {
+					glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+				} else {
+					glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
+				}
+			}
 
-		h -= m_font.GetHeight();
-		pos.y = position().y() + h;
+			glBindVertexArray(m_vao);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			glBindVertexArray(0);
 
-		program->Use();
-		glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
-		if(i == m_index) {
-			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 25);
-		} else {
-			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+			i++;
 		}
 
-		glBindVertexArray(m_vao);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		glBindVertexArray(0);
-
 		program->Reset();
 
+		if(m_path.empty()) return Accept;
+
+		pos.x += 4;	// move 4 right
+		pos.y = position().y() + size().height();
+
+		pos.y -= row_height;
+		m_font.Print(pos.x, pos.y - m_font.GetDescender(), String("."));
+
+		pos.y -= row_height;
 		m_font.Print(pos.x, pos.y - m_font.GetDescender(), String(".."));
-		i++;
 
-		fs::path p(m_path);
-
+		pos.y -= row_height;
 		try {
-			if (fs::exists(p)) {
+			if (fs::exists(m_path)) {
 
-				if (fs::is_regular_file(p)) {
+				if (fs::is_regular_file(m_path)) {
 
 					m_font.Print(pos.x, pos.y - m_font.GetDescender(),
-									p.native());
+							m_path.native());
 
-				} else if (fs::is_directory(p)) {
-
-					bool dark = false;
+				} else if (fs::is_directory(m_path)) {
 
 					fs::directory_iterator end_it;
-					fs::directory_iterator it(p);
+					fs::directory_iterator it(m_path);
 
 					while (it != end_it) {
 
-						h -= m_font.GetHeight();
-
-						pos.y = position().y() + h;
-
-						program->Use();
-						glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
-
-						if(i == m_index) {
-							glUniform1i(Shaders::instance->triangle_uniform_gamma(), 25);
-						} else {
-							if (dark) {
-								glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
-							} else {
-								glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
-							}
-						}
-
-						glBindVertexArray(m_vao);
-						glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-						glBindVertexArray(0);
-
-						program->Reset();
-
 						m_font.Print(pos.x, pos.y - m_font.GetDescender(),
 										it->path().filename().native());
-						dark = !dark;
 
+						pos.y -= row_height;
 						it++;
-						i++;
 					}
 				}
 			}
@@ -206,22 +201,18 @@ namespace BlendInt {
 
         glDisable(GL_SCISSOR_TEST);
 
-        draw_hbar(event);
-        draw_vbar(event);
+        DispatchDrawEvent(hbar(), event);
+        DispatchDrawEvent(vbar(), event);
 
 		return Accept;
 	}
 
 	ResponseType FileBrowser::MousePressEvent (const MouseEvent& event)
 	{
-		if(hbar()->Contain(event.position())) {
-
+		if (hbar()->visiable() && hbar()->Contain(event.position())) {
 			return DispatchMousePressEvent(hbar(), event);
-
-		} else if (vbar()->Contain(event.position())) {
-
+		} else if (vbar()->visiable() && vbar()->Contain(event.position())) {
 			return DispatchMousePressEvent(vbar(), event);
-
 		}
 
 		namespace fs = boost::filesystem;
@@ -322,19 +313,59 @@ namespace BlendInt {
 
 	void FileBrowser::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
+		namespace fs = boost::filesystem;
+
 		if(request.target() == this) {
 
-			GLfloat row_height = (GLfloat)m_font.GetHeight();
+			int row_height = m_font.GetHeight();
+
 			GLfloat verts[] = {
 							0.f, 0.f,
 							(GLfloat)request.size()->width(), 0.f,
-							0.f, row_height,
-							(GLfloat)request.size()->width(), row_height
+							0.f, (GLfloat)row_height,
+							(GLfloat)request.size()->width(), (GLfloat)row_height
 			};
 
 			m_row->Bind();
 			m_row->SetData(sizeof(verts), verts);
 			m_row->Reset();
+
+			int height = 0;
+			try {
+				if (fs::exists(m_path)) {
+
+					if (fs::is_directory(m_path)) {
+
+						int count = 0;
+						fs::directory_iterator it(m_path);
+						fs::directory_iterator end;
+						while (it != end) {
+							count++;
+							it++;
+						}
+
+						height = (count + 2) * row_height;	// count "." and ".."
+
+					}
+				}
+			} catch (const fs::filesystem_error& ex) {
+				std::cerr << ex.what() << std::endl;
+			}
+
+			if(height > request.size()->height()) {
+
+				vbar()->SetVisible(true);
+				vbar()->SetSliderPercentage(request.size()->height() * 100 / height);
+				vbar()->SetMaximum(height);
+				vbar()->SetMinimum(request.size()->height());
+
+				DBG_PRINT_MSG("percentage: %d", request.size()->height() * 100 / height);
+
+			} else {
+				vbar()->SetVisible(false);
+			}
+
+			AdjustScrollBarGeometries(position().x(), position().y(), request.size()->width(), request.size()->height());
 
 		}
 
@@ -343,42 +374,6 @@ namespace BlendInt {
 
 	void FileBrowser::InitializeFileBrowserOnce ()
 	{
-		namespace fs = boost::filesystem;
-
-		std::string home = getenv("PWD");
-
-		m_path = fs::path(home);
-
-		try {
-			if (fs::exists(m_path)) {
-
-				if (fs::is_directory(m_path)) {
-
-					int count = 0;
-					fs::directory_iterator it(m_path);
-					fs::directory_iterator it_end;
-					while (it != it_end) {
-						count++;
-						it++;
-					}
-
-					int h = m_font.GetHeight();
-
-					//unsigned total = std::max(300, count * h);
-
-					set_size(400, (count + 2) * h);	// count "." and ".."
-
-				} else {
-					set_size(400, 300);
-				}
-
-			} else {
-				set_size(400, 300);
-			}
-		} catch (const fs::filesystem_error& ex) {
-			std::cerr << ex.what() << std::endl;
-		}
-
 		GLfloat row_height = (GLfloat)m_font.GetHeight();
 		GLfloat verts[] = {
 						0.f, 0.f,
@@ -401,14 +396,14 @@ namespace BlendInt {
 		m_row->Reset();
 
 		m_font.set_color(Color(0xF0F0F0FF));
-
-		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
 	}
 
 	bool FileBrowser::GetHighlightIndex(int y, unsigned int* index)
 	{
 		namespace fs = boost::filesystem;
 		bool ret = false;
+
+		if(m_path.empty()) return ret;
 
 		int h = position().y() + size().height() - y;
 
@@ -447,6 +442,16 @@ namespace BlendInt {
 
 		*index = out;
 		return ret;
+	}
+
+	void FileBrowser::OnHBarSlide (int val)
+	{
+		DBG_PRINT_MSG("val: %d", val);
+	}
+
+	void FileBrowser::OnVBarSlide (int val)
+	{
+		DBG_PRINT_MSG("val: %d", val);
 	}
 
 }

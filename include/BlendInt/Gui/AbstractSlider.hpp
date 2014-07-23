@@ -33,66 +33,6 @@
 
 namespace BlendInt {
 
-	class AbstractRoundForm;
-
-	enum SliderRequestType {
-		SliderPropertyOrientation,
-		SliderPropertyValue,
-		SliderPropertyMinimum,
-		SliderPropertyMaximum,
-		SliderPropertyStep,
-	};
-
-	class SliderUpdateRequest: public WidgetUpdateRequest
-	{
-	public:
-
-		SliderUpdateRequest (AbstractWidget* source, AbstractWidget* target)
-		: WidgetUpdateRequest(source, target), m_type(0), m_data(0)
-		{
-
-		}
-
-		SliderUpdateRequest(AbstractWidget* source, AbstractWidget* target, int type, const void* data)
-		: WidgetUpdateRequest(source, target),
-		  m_type(type),
-		  m_data(data)
-		{
-
-		}
-
-		~SliderUpdateRequest ()
-		{
-
-		}
-
-		int type () const
-		{
-			return m_type;
-		}
-
-		void set_type (int type)
-		{
-			m_type = type;
-		}
-
-		const void* data () const
-		{
-			return m_data;
-		}
-
-		void set_data (const void* data)
-		{
-			m_data = data;
-		}
-
-	private:
-
-		SliderUpdateRequest();
-
-		int m_type;
-		const void* m_data;
-	};
 	/**
 	 * @brief Slide Icon used in Slider or ScrollBar
 	 */
@@ -132,7 +72,7 @@ namespace BlendInt {
 
 		void InitializeSliderIcon ();
 
-		GLuint m_vao;
+		GLuint m_vao[2];
 
 		RefPtr<GLArrayBuffer> m_inner_buffer;
 		RefPtr<GLArrayBuffer> m_outer_buffer;
@@ -179,7 +119,15 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateSlider (const SliderUpdateRequest& request) = 0;
+		virtual void PerformOrientationUpdate (Orientation orientation);
+
+		virtual void PerformMinimumUpdate (T minimum);
+
+		virtual void PerformMaximumUpdate (T maximum);
+
+		virtual void PerformValueUpdate (T value);
+
+		virtual void PerformStepUpdate (T step);
 
 		void set_value (T value)
 		{
@@ -262,9 +210,7 @@ namespace BlendInt {
 		if (value < m_minimum || value > m_maximum)
 			return;
 
-		SliderUpdateRequest request(this, this, SliderPropertyValue, &value);
-
-		UpdateSlider(request);
+		PerformValueUpdate(value);
 		m_value = value;
 		m_value_changed.fire(m_value);
 	}
@@ -272,17 +218,22 @@ namespace BlendInt {
 	template <typename T>
 	void AbstractSlider<T>::SetRange (T value1, T value2)
 	{
-		int minimum = std::min(value1, value2);
-		int maximum = std::max(value1, value2);
+		T minimum = std::min(value1, value2);
+		T maximum = std::max(value1, value2);
 
-		if (m_minimum != minimum) {
-			m_minimum = minimum;
-			//Update(SliderPropertyMinimum, 0);
+		if(minimum == maximum)
+			return;
+
+		if(value1 == minimum) {
+			PerformMinimumUpdate(minimum);
+			PerformMaximumUpdate(maximum);
+		} else {
+			PerformMaximumUpdate(maximum);
+			PerformMinimumUpdate(minimum);
 		}
-		if (m_maximum != maximum) {
-			m_maximum = maximum;
-			//Update(SliderPropertyMaximum, 0);
-		}
+
+		m_minimum = minimum;
+		m_maximum = maximum;
 	}
 
 	template <typename T>
@@ -294,8 +245,7 @@ namespace BlendInt {
 		if (minimum >= m_maximum)
 			return;
 
-		SliderUpdateRequest request(this, this, SliderPropertyMinimum, &minimum);
-		UpdateSlider(request);
+		PerformMinimumUpdate(minimum);
 		m_minimum = minimum;
 	}
 
@@ -308,9 +258,7 @@ namespace BlendInt {
 		if (maximum <= m_minimum)
 			return;
 
-		SliderUpdateRequest request(this, this, SliderPropertyMaximum, &maximum);
-
-		UpdateSlider(request);
+		PerformMaximumUpdate(maximum);
 		m_maximum = maximum;
 	}
 
@@ -319,10 +267,38 @@ namespace BlendInt {
 	{
 		if(m_orientation == orientation) return;
 
-		SliderUpdateRequest request(this, this, SliderPropertyOrientation, &orientation);
-
-		UpdateSlider(request);
+		PerformOrientationUpdate(orientation);
 		m_orientation = orientation;
+	}
+
+	template <typename T>
+	void AbstractSlider<T>::PerformOrientationUpdate(Orientation orientation)
+	{
+
+	}
+
+	template <typename T>
+	void AbstractSlider<T>::PerformMinimumUpdate(T minimum)
+	{
+
+	}
+
+	template <typename T>
+	void AbstractSlider<T>::PerformMaximumUpdate(T maximum)
+	{
+
+	}
+
+	template <typename T>
+	void AbstractSlider<T>::PerformValueUpdate(T value)
+	{
+
+	}
+
+	template <typename T>
+	void AbstractSlider<T>::PerformStepUpdate(T step)
+	{
+
 	}
 
 }

@@ -41,6 +41,16 @@ namespace BlendInt {
 
 		virtual ~AbstractScrollable ();
 
+		Cpp::EventRef<int> hbar_moved ()
+		{
+			return m_hbar_moved;
+		}
+
+		Cpp::EventRef<int> vbar_moved ()
+		{
+			return m_vbar_moved;
+		}
+
 	protected:
 
 		virtual ResponseType FocusEvent (bool focus);
@@ -59,45 +69,15 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		ResponseType DispatchMousePressEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
-		{
-			return scrollbar->MousePressEvent(event);
-		}
+		ResponseType DispatchMousePressEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event);
 
-		ResponseType DispatchMouseReleaseEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
-		{
-			return scrollbar->MouseReleaseEvent(event);
-		}
+		ResponseType DispatchMouseReleaseEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event);
 
-		ResponseType DispatchMouseMoveEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
-		{
-			return scrollbar->MouseMoveEvent(event);
-		}
+		ResponseType DispatchMouseMoveEvent (const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event);
 
-		ResponseType DispatchDrawEvent (const RefPtr<NativeScrollBar>& scrollbar, const RedrawEvent& event)
-		{
-			if(scrollbar->visiable()) {
-				return scrollbar->Draw(event);
-			}
-
-			return Ignore;
-		}
+		ResponseType DispatchDrawEvent (const RefPtr<NativeScrollBar>& scrollbar, const RedrawEvent& event);
 
 		void AdjustScrollBarGeometries (int left, int bottom, int width, int height);
-
-		inline void draw_hbar (const RedrawEvent& event)
-		{
-			if(m_hbar->visiable()) {
-				m_hbar->Draw(event);
-			}
-		}
-
-		inline void draw_vbar (const RedrawEvent& event)
-		{
-			if(m_vbar->visiable()) {
-				m_vbar->Draw(event);
-			}
-		}
 
 		/**
 		 * @brief Get the reference to the horizontal scroll bar
@@ -120,6 +100,10 @@ namespace BlendInt {
 		RefPtr<NativeScrollBar> m_hbar;
 
 		RefPtr<NativeScrollBar> m_vbar;
+
+		Cpp::Event<int> m_hbar_moved;
+
+		Cpp::Event<int> m_vbar_moved;
 
 	};
 

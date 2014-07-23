@@ -613,7 +613,7 @@ namespace BlendInt {
 
 		void ReportRefresh (const RefreshRequest& request);
 
-		int GetOutlineVertices (int round_type) const;
+		static int GetOutlineVertices (int round_type);
 
 		/**
 		 * @brief Used to get emboss vertices

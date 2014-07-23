@@ -192,6 +192,56 @@ namespace BlendInt {
 				return m_triangle_uniform_view;
 			}
 
+			/**
+			 * @brief The vertex attribute location of coord
+			 *
+			 * Always return 0
+			 */
+			GLint line_attrib_coord () const
+			{
+				return m_line_attrib_coord;
+			}
+
+			/**
+			 * @brief The vertex attribute location of color
+			 *
+			 * Always return 1
+			 */
+			GLint line_attrib_color () const
+			{
+				return m_line_attrib_color;
+			}
+
+			GLint line_uniform_antialias () const
+			{
+				return m_line_uniform_antialias;
+			}
+
+			GLint line_uniform_gamma () const
+			{
+				return m_line_uniform_gamma;
+			}
+
+			GLint line_uniform_position () const
+			{
+				return m_line_uniform_position;
+			}
+
+			GLint line_uniform_projection () const
+			{
+				return m_line_uniform_projection;
+			}
+
+			GLint line_uniform_rotation () const
+			{
+				return m_line_uniform_rotation;
+			}
+
+			GLint line_uniform_view () const
+			{
+				return m_line_uniform_view;
+			}
+
 			GLint image_attrib_coord () const
 			{
 				return m_image_attrib_coord;

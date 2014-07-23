@@ -41,6 +41,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	ToolBox::ToolBox()
 	: AbstractContainer(),
 	  m_vao(0),
@@ -60,8 +62,8 @@ namespace BlendInt {
 
 		tool.SetInnerBufferData(m_inner.get());
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
@@ -190,15 +192,13 @@ namespace BlendInt {
 
 	ResponseType ToolBox::Draw (const RedrawEvent& event)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
-		program->SetVertexAttrib4f("a_color", 0.447f, 0.447f, 0.447f, 1.f);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f, 0.447f, 0.447f, 1.f);
 
 		glBindVertexArray(m_vao);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);

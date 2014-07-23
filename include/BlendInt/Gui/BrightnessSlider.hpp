@@ -47,8 +47,6 @@ namespace BlendInt {
 
 	protected:
 
-		virtual void UpdateSlider (const SliderUpdateRequest& request);
-
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual void PerformRoundTypeUpdate (const RoundTypeUpdateRequest& request);

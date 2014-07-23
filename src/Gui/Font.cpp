@@ -44,6 +44,8 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	Font::Font (const std::string& name, unsigned int size, int flag)
 	: m_shadow(false),
 	  m_shadow_offset_x(1.5f),
@@ -171,8 +173,6 @@ namespace BlendInt {
 	int Font::Print (float x, float y, float z, const std::string& string,
 	        size_t length, size_t start) const
 	{
-		using Stock::Shaders;
-
 		if(length == 0)	return 0;
 
 		int advance = 0;	// the return value
@@ -182,7 +182,7 @@ namespace BlendInt {
 
 		glActiveTexture(GL_TEXTURE0);
 
-		program->SetUniform1i("u_tex", 0);
+		glUniform1i(Shaders::instance->text_uniform_texture(), 0);
 
 		size_t str_length = std::min(string.length(), length);
 
@@ -198,8 +198,8 @@ namespace BlendInt {
 
 		if(m_shadow) {
 
-			program->SetUniform3f("u_position", tx, ty, z);
-			program->SetUniform4f("u_color",
+			glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
+			glUniform4f(Shaders::instance->text_uniform_color(),
 					m_color.r() / 4,
 					m_color.g() / 4,
 					m_color.b() / 4,
@@ -219,7 +219,7 @@ namespace BlendInt {
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 				tx += glyph_p->advance_x;
-				program->SetUniform3f("u_position", tx, ty, z);
+				glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
 			}
 
 		}
@@ -227,8 +227,8 @@ namespace BlendInt {
 		tx = x + m_pen.x();
 		ty = y + m_pen.y();
 
-		program->SetUniform3f("u_position", tx, ty, z);
-		program->SetUniform4fv("u_color", 1, m_color.data());
+		glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
+		glUniform4fv(Shaders::instance->text_uniform_color(), 1, m_color.data());
 
 		it = string.begin();
 		std::advance(it, start);
@@ -246,7 +246,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			tx += glyph_p->advance_x;
-			program->SetUniform3f("u_position", tx, ty, z);
+			glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
 		}
 
 		glBindVertexArray(0);
@@ -294,8 +294,6 @@ namespace BlendInt {
 	int Font::Print (float x, float y, float z, const String& string, size_t length,
 	        size_t start) const
 	{
-		using Stock::Shaders;
-
 		if(length == 0)	return 0;
 
 		int advance = 0;	// the return value
@@ -305,7 +303,7 @@ namespace BlendInt {
 
 		glActiveTexture(GL_TEXTURE0);
 
-		program->SetUniform1i("u_tex", 0);
+		glUniform1i(Shaders::instance->text_uniform_texture(), 0);
 
 		size_t str_length = std::min(string.length(), length);
 
@@ -321,8 +319,8 @@ namespace BlendInt {
 
 		if(m_shadow) {
 
-			program->SetUniform3f("u_position", tx, ty, z);
-			program->SetUniform4f("u_color",
+			glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
+			glUniform4f(Shaders::instance->text_uniform_color(),
 					m_color.r() / 4,
 					m_color.g() / 4,
 					m_color.b() / 4,
@@ -342,7 +340,7 @@ namespace BlendInt {
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 				tx += glyph_p->advance_x;
-				program->SetUniform3f("u_position", tx, ty, z);
+				glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
 			}
 
 		}
@@ -350,8 +348,8 @@ namespace BlendInt {
 		tx = x + m_pen.x();
 		ty = y + m_pen.y();
 
-		program->SetUniform3f("u_position", tx, ty, z);
-		program->SetUniform4fv("u_color", 1, m_color.data());
+		glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
+		glUniform4fv(Shaders::instance->text_uniform_color(), 1, m_color.data());
 
 		it = string.begin();
 		std::advance(it, start);
@@ -369,7 +367,7 @@ namespace BlendInt {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 			tx += glyph_p->advance_x;
-			program->SetUniform3f("u_position", tx, ty, z);
+			glUniform3f(Shaders::instance->text_uniform_position(), tx, ty, z);
 		}
 
 		glBindVertexArray(0);

@@ -325,7 +325,7 @@ namespace BlendInt {
 		ContainerProxy::RequestRefresh(m_container, request);
 	}
 
-	int AbstractWidget::GetOutlineVertices (int round_type) const
+	int AbstractWidget::GetOutlineVertices (int round_type)
 	{
 		round_type = round_type & RoundAll;
 		int count = 0;

@@ -43,8 +43,10 @@
 
 namespace BlendInt {
 
-	SlideIcon::SlideIcon () :
-					AbstractRoundForm(), m_highlight(false)
+	using Stock::Shaders;
+
+	SlideIcon::SlideIcon ()
+	: AbstractRoundForm(), m_highlight(false)
 	{
 		set_size(14, 14);
 		set_round_type(RoundAll);
@@ -55,7 +57,7 @@ namespace BlendInt {
 
 	SlideIcon::~SlideIcon ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(2, m_vao);
 	}
 
 	void SlideIcon::UpdateGeometry (const UpdateRequest& request)
@@ -73,8 +75,11 @@ namespace BlendInt {
 
 				VertexTool tool;
 				tool.Setup(*size_p, DefaultBorderWidth(), round_type(), radius(), color, shadedir, shadetop, shadedown);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner_buffer->Bind();
+				tool.SetInnerBufferData(m_inner_buffer.get());
+				m_outer_buffer->Bind();
+				tool.SetOuterBufferData(m_outer_buffer.get());
+				GLArrayBuffer::Reset();
 				break;
 			}
 
@@ -90,8 +95,11 @@ namespace BlendInt {
 
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), *round_p, radius(), color, shadedir, shadetop, shadedown);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner_buffer->Bind();
+				tool.SetInnerBufferData(m_inner_buffer.get());
+				m_outer_buffer->Bind();
+				tool.SetOuterBufferData(m_outer_buffer.get());
+				GLArrayBuffer::Reset();
 				break;
 			}
 
@@ -107,8 +115,11 @@ namespace BlendInt {
 
 				VertexTool tool;
 				tool.Setup(size(), DefaultBorderWidth(), round_type(), *radius_p, color, shadedir, shadetop, shadedown);
-				tool.UpdateInnerBuffer(m_inner_buffer.get());
-				tool.UpdateOuterBuffer(m_outer_buffer.get());
+				m_inner_buffer->Bind();
+				tool.SetInnerBufferData(m_inner_buffer.get());
+				m_outer_buffer->Bind();
+				tool.SetOuterBufferData(m_outer_buffer.get());
+				GLArrayBuffer::Reset();
 				break;
 			}
 
@@ -120,83 +131,37 @@ namespace BlendInt {
 
 	void SlideIcon::Draw (const glm::vec3& pos, short gamma)
 	{
-		using Stock::Shaders;
-
-		glBindVertexArray(m_vao);
-
 		RefPtr<GLSLProgram> program =
 						Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", pos.x, pos.y, 0.f);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), pos.x, pos.y, 0.f);
 
 		if (m_highlight) {
-			program->SetUniform1i("u_gamma", 15);
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
 		} else {
-			program->SetUniform1i("u_gamma", 0);
+			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		}
 
-		program->SetUniform1i("u_AA", 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
+		glBindVertexArray(m_vao[0]);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, GetOutlineVertices(round_type()) + 2);
 
-		m_inner_buffer->Bind();
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
+		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), Theme::instance->scroll().outline.data());
 
-		glVertexAttribPointer(0, // attribute
-						2,			// number of elements per vertex, here (x,y)
-						GL_FLOAT,			 // the type of each element
-						GL_FALSE,			 // take our values as-is
-						sizeof(GLfloat) * 6,				 // stride
-						BUFFER_OFFSET(0)			// offset of first element
-										);
-
-		glVertexAttribPointer(1, // attribute
-						4,			// number of elements per vertex, here (x,y)
-						GL_FLOAT,			 // the type of each element
-						GL_FALSE,			 // take our values as-is
-						sizeof(GLfloat) * 6,				 // stride
-						BUFFER_OFFSET(2 * sizeof(GLfloat))// offset of first element
-										);
-
-		glDrawArrays(GL_TRIANGLE_FAN, 0,
-						m_inner_buffer->GetBufferSize()
-										/ (6 * sizeof(GLfloat)));
-
-		glDisableVertexAttribArray(1);
-
-		GLArrayBuffer::Reset();
-
-		program->SetVertexAttrib4fv("a_color", Theme::instance->scroll().outline.data());
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 1);
-
-		m_outer_buffer->Bind();
-
-		glVertexAttribPointer(0, // attribute
-						2,			// number of elements per vertex, here (x,y)
-						GL_FLOAT,			 // the type of each element
-						GL_FALSE,			 // take our values as-is
-						0,				 // no extra data between each position
-						0					 // offset of first element
-						);
-
-		glDrawArrays(GL_TRIANGLE_STRIP, 0,
-						m_outer_buffer->GetBufferSize()
-						/ (2 * sizeof(GLfloat)));
-
-		m_outer_buffer->Reset();
-
-		glDisableVertexAttribArray(0);
-
-		program->Reset();
+		glBindVertexArray(m_vao[1]);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
+		program->Reset();
 	}
 
 	void SlideIcon::InitializeSliderIcon ()
 	{
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(2, m_vao);
 
 		Orientation shadedir =
 						size().width() < size().height() ?
@@ -207,8 +172,31 @@ namespace BlendInt {
 
 		VertexTool tool;
 		tool.Setup(size(), DefaultBorderWidth(), round_type(), radius(), color, shadedir, shadetop, shadedown);
-		m_inner_buffer = tool.GenerateInnerBuffer();
-		m_outer_buffer = tool.GenerateOuterBuffer();
+
+		glBindVertexArray(m_vao[0]);
+		m_inner_buffer.reset(new GLArrayBuffer);
+		m_inner_buffer->Generate();
+		m_inner_buffer->Bind();
+		tool.SetInnerBufferData(m_inner_buffer.get());
+
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
+
+		glVertexAttribPointer(1, 4,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
+
+		glBindVertexArray(m_vao[1]);
+		m_outer_buffer.reset(new GLArrayBuffer);
+		m_outer_buffer->Generate();
+		m_outer_buffer->Bind();
+		tool.SetOuterBufferData(m_outer_buffer.get());
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		GLArrayBuffer::Reset();
 	}
 
 }

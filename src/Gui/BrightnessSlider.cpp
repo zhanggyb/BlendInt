@@ -176,10 +176,6 @@ namespace BlendInt {
 		ReportRoundRadiusUpdate(request);
 	}
 
-	void BrightnessSlider::UpdateSlider (const SliderUpdateRequest& request)
-	{
-	}
-
 	ResponseType BrightnessSlider::FocusEvent (bool focus)
 	{
 		return Ignore;

@@ -30,6 +30,9 @@ namespace BlendInt {
 	{
 		m_hbar.reset(new NativeScrollBar(Horizontal));
 		m_vbar.reset(new NativeScrollBar(Vertical));
+
+		events()->connect(m_hbar->slider_moved(), &m_hbar_moved, &Cpp::Event<int>::fire);
+		events()->connect(m_vbar->slider_moved(), &m_vbar_moved, &Cpp::Event<int>::fire);
 	}
 
 	AbstractScrollable::~AbstractScrollable ()
@@ -78,6 +81,46 @@ namespace BlendInt {
 		return Accept;
 	}
 
+	ResponseType AbstractScrollable::DispatchDrawEvent (
+	        const RefPtr<NativeScrollBar>& scrollbar, const RedrawEvent& event)
+	{
+		if(scrollbar->visiable()) {
+			return scrollbar->Draw(event);
+		} else {
+			return Ignore;
+		}
+	}
+
+	ResponseType AbstractScrollable::DispatchMousePressEvent (
+	        const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
+	{
+		if(scrollbar->visiable()) {
+			return scrollbar->MousePressEvent(event);
+		} else {
+			return Ignore;
+		}
+	}
+
+	ResponseType AbstractScrollable::DispatchMouseReleaseEvent (
+	        const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
+	{
+		if(scrollbar->visiable()) {
+			return scrollbar->MouseReleaseEvent(event);
+		} else {
+			return Ignore;
+		}
+	}
+
+	ResponseType AbstractScrollable::DispatchMouseMoveEvent (
+	        const RefPtr<NativeScrollBar>& scrollbar, const MouseEvent& event)
+	{
+		if(scrollbar->visiable()) {
+			return scrollbar->MouseMoveEvent(event);
+		} else {
+			return Ignore;
+		}
+	}
+
 	void AbstractScrollable::AdjustScrollBarGeometries (int left, int bottom,
 	        int width, int height)
 	{
@@ -87,11 +130,17 @@ namespace BlendInt {
 		if(m_hbar->visiable()) {
 			m_hbar->SetPosition(left, bottom);
 			m_hbar->Resize(width - rw, bh);
+		} else {
+			m_hbar->SetPosition(left, bottom);
+			m_hbar->Resize(width - m_vbar->size().width(), m_hbar->size().height());
 		}
 
 		if(m_vbar->visiable()) {
 			m_vbar->SetPosition(left + width - rw, bottom + bh);
 			m_vbar->Resize (rw, height - bh);
+		} else {
+			m_vbar->SetPosition(left + width - m_vbar->size().width(), bottom + m_hbar->size().height());
+			m_vbar->Resize (m_vbar->size().width(), height - m_hbar->size().height());
 		}
 	}
 

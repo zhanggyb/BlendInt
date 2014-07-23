@@ -98,50 +98,39 @@ namespace BlendInt {
 		return preferred_size;
 	}
 
-	void NumericalSlider::UpdateSlider(const SliderUpdateRequest& request)
+	void NumericalSlider::PerformOrientationUpdate (Orientation orientation)
 	{
-		if(request.target() == this) {
-			switch(request.type()) {
+	}
 
-				case SliderPropertyValue: {
-					const double* value_p = static_cast<const double*>(request.data());
+	void NumericalSlider::PerformMinimumUpdate (double minimum)
+	{
+	}
 
-					std::vector<GLfloat> l_verts;
-					std::vector<GLfloat> r_verts;
-					GenerateSliderVertices(size(), DefaultBorderWidth(),
-					        round_type(), round_radius(), *value_p,
-					        minimum(), maximum(), l_verts, r_verts);
-					m_slider1->Bind();
-					m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
-					if(r_verts.size()) {
-						m_right = true;
-						m_slider2->Bind();
-						m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
-						DBG_PRINT_MSG("%s", "have right part of slider");
-					} else {
-						m_right = false;
-					}
+	void NumericalSlider::PerformMaximumUpdate (double maximum)
+	{
+	}
 
-
-					break;
-				}
-
-				case SliderPropertyMinimum: {
-					break;
-				}
-
-				case SliderPropertyMaximum: {
-					break;
-				}
-
-				case SliderPropertyStep: {
-					break;
-				}
-
-				default:
-					break;
-			}
+	void NumericalSlider::PerformValueUpdate (double value)
+	{
+		std::vector<GLfloat> l_verts;
+		std::vector<GLfloat> r_verts;
+		GenerateSliderVertices(size(), DefaultBorderWidth(),
+		        round_type(), round_radius(), value,
+		        minimum(), maximum(), l_verts, r_verts);
+		m_slider1->Bind();
+		m_slider1->SetData(sizeof(GLfloat) * l_verts.size(), &l_verts[0]);
+		if(r_verts.size()) {
+			m_right = true;
+			m_slider2->Bind();
+			m_slider2->SetData(sizeof(GLfloat) * r_verts.size(), &r_verts[0]);
+			DBG_PRINT_MSG("%s", "have right part of slider");
+		} else {
+			m_right = false;
 		}
+	}
+
+	void NumericalSlider::PerformStepUpdate (double step)
+	{
 	}
 
 	void NumericalSlider::PerformSizeUpdate (const SizeUpdateRequest& request)
