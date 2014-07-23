@@ -31,11 +31,11 @@
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 
 #include <BlendInt/Gui/CheckerBoard.hpp>
-#include <BlendInt/Gui/AbstractWidget.hpp>
+#include <BlendInt/Gui/AbstractScrollable.hpp>
 
 namespace BlendInt {
 
-	class ImageView: public AbstractWidget
+	class ImageView: public AbstractScrollable
 	{
 	public:
 
@@ -56,6 +56,8 @@ namespace BlendInt {
 		virtual Size GetPreferredSize () const;
 
 	protected:
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
 
 		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 

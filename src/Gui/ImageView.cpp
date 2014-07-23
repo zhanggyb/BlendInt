@@ -42,8 +42,10 @@
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	ImageView::ImageView ()
-	: AbstractWidget()
+	: AbstractScrollable()
 	{
 		InitOnce();
 	}
@@ -116,6 +118,15 @@ namespace BlendInt {
 		return Size(400, 300);
 	}
 
+	void ImageView::PerformPositionUpdate(const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			AdjustScrollBarGeometries(request.position()->x(), request.position()->y(), size().width(), size().height());
+		}
+
+		ReportPositionUpdate(request);
+	}
+
 	void ImageView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
@@ -128,6 +139,8 @@ namespace BlendInt {
 
 			AdjustImageArea (*request.size());
 
+			AdjustScrollBarGeometries(position().x(), position().y(), request.size()->width(), request.size()->height());
+
 			set_size(*request.size());
 			Refresh();
 		}
@@ -137,16 +150,14 @@ namespace BlendInt {
 
 	ResponseType ImageView::Draw (const RedrawEvent& event)
 	{
-		using Stock::Shaders;
-
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-		program->SetUniform1i("u_gamma", 0);
-		program->SetUniform1i("u_AA", 0);
+		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		program->SetVertexAttrib4f("a_color", 0.208f, 0.208f, 0.208f, 1.0f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.208f, 0.208f, 0.208f, 1.0f);
 
 		glBindVertexArray(m_vao[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
@@ -165,9 +176,9 @@ namespace BlendInt {
 		if (m_texture->GetWidth() > 0) {
 			program = Shaders::instance->image_program();
 			program->Use();
-			program->SetUniform3f("u_position", (float) position().x(), (float) position().y(), 0.f);
-			program->SetUniform1i("TexID", 0);
-			program->SetUniform1i("u_gamma", 0);
+			glUniform3f(Shaders::instance->image_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
+			glUniform1i(Shaders::instance->image_uniform_texture(), 0);
+			glUniform1i(Shaders::instance->image_uniform_gamma(), 0);
 
 			glBindVertexArray(m_vao[1]);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -176,6 +187,9 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		m_texture->Reset();
 		program->Reset();
+
+		DispatchDrawEvent(hbar(), event);
+		DispatchDrawEvent(vbar(), event);
 
 		return Accept;
 	}
@@ -230,6 +244,8 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
+
+		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
 	}
 
 	ResponseType ImageView::FocusEvent (bool focus)
@@ -261,16 +277,34 @@ namespace BlendInt {
 
 	ResponseType ImageView::MousePressEvent (const MouseEvent& event)
 	{
+		if(hbar()->Contain(event.position())) {
+			return DispatchMousePressEvent(hbar(), event);
+		} else if (vbar()->Contain(event.position())) {
+			return DispatchMousePressEvent(vbar(), event);
+		}
+
 		return Ignore;
 	}
 
 	ResponseType ImageView::MouseReleaseEvent (const MouseEvent& event)
 	{
+		if(hbar()->pressed()) {
+			return DispatchMouseReleaseEvent(hbar(), event);
+		} else if (vbar()->pressed()) {
+			return DispatchMouseReleaseEvent(vbar(), event);
+		}
+
 		return Ignore;
 	}
 
 	ResponseType ImageView::MouseMoveEvent (const MouseEvent& event)
 	{
+		if(hbar()->pressed()) {
+			return DispatchMouseMoveEvent(hbar(), event);
+		} else if (vbar()->pressed()) {
+			return DispatchMouseMoveEvent(vbar(), event);
+		}
+
 		return Ignore;
 	}
 

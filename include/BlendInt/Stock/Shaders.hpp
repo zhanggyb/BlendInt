@@ -192,6 +192,46 @@ namespace BlendInt {
 				return m_triangle_uniform_view;
 			}
 
+			GLint image_attrib_coord () const
+			{
+				return m_image_attrib_coord;
+			}
+
+			GLint image_attrib_uv () const
+			{
+				return m_image_attrib_uv;
+			}
+
+			GLint image_uniform_gamma () const
+			{
+				return m_image_uniform_gamma;
+			}
+
+			GLint image_uniform_position () const
+			{
+				return m_image_uniform_position;
+			}
+
+			GLint image_uniform_projection () const
+			{
+				return m_image_uniform_projection;
+			}
+
+			GLint image_uniform_rotation () const
+			{
+				return m_image_uniform_rotation;
+			}
+
+			GLint image_uniform_texture () const
+			{
+				return m_image_uniform_texture;
+			}
+
+			GLint image_uniform_view () const
+			{
+				return m_image_uniform_view;
+			}
+
 		private:
 
 			static bool Initialize ();

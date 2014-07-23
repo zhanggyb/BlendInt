@@ -74,6 +74,15 @@ namespace BlendInt {
 			return scrollbar->MouseMoveEvent(event);
 		}
 
+		ResponseType DispatchDrawEvent (const RefPtr<NativeScrollBar>& scrollbar, const RedrawEvent& event)
+		{
+			if(scrollbar->visiable()) {
+				return scrollbar->Draw(event);
+			}
+
+			return Ignore;
+		}
+
 		void AdjustScrollBarGeometries (int left, int bottom, int width, int height);
 
 		inline void draw_hbar (const RedrawEvent& event)

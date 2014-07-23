@@ -38,11 +38,13 @@ namespace BlendInt {
 	: std::basic_string<uint32_t>()
 	{
 		size_t len = strlen(str);
-		resize(len);
 
-		for(size_t i = 0; i < len; i++)
-		{
-			at(i) = *(str + i);
+		if (len > 0) {
+			resize(len);
+
+			for (size_t i = 0; i < len; i++) {
+				at(i) = *(str + i);
+			}
 		}
 	}
 
@@ -50,11 +52,13 @@ namespace BlendInt {
 	: std::basic_string<uint32_t>()
 	{
 		size_t len = wcslen(str);
-		resize(len);
 
-		for(size_t i = 0; i < len; i++)
-		{
-			at(i) = *(str + i);
+		if (len > 0) {
+			resize(len);
+
+			for (size_t i = 0; i < len; i++) {
+				at(i) = *(str + i);
+			}
 		}
 	}
 
@@ -62,12 +66,14 @@ namespace BlendInt {
 	: std::basic_string<uint32_t>()
 	{
 		size_t len = strlen(str);
+
 		len = std::min(len, n);
 
-		resize(len);
-		for(size_t i = 0; i < len; i++)
-		{
-			at(i) = *(str + i);
+		if (len > 0) {
+			resize(len);
+			for (size_t i = 0; i < len; i++) {
+				at(i) = *(str + i);
+			}
 		}
 	}
 
@@ -75,11 +81,13 @@ namespace BlendInt {
 	: std::basic_string<uint32_t>()
 	{
 		size_t len = str.length();
-		resize(len);
 
-		for(size_t i = 0; i < len; i++)
-		{
-			at(i) = str[i];
+		if (len > 0) {
+			resize(len);
+
+			for (size_t i = 0; i < len; i++) {
+				at(i) = str[i];
+			}
 		}
 	}
 
@@ -87,11 +95,12 @@ namespace BlendInt {
 	: std::basic_string<uint32_t>()
 	{
 		size_t len = str.length();
-		resize(len);
 
-		for(size_t i = 0; i < len; i++)
-		{
-			at(i) = str[i];
+		if (len > 0) {
+			resize(len);
+			for (size_t i = 0; i < len; i++) {
+				at(i) = str[i];
+			}
 		}
 	}
 
@@ -107,11 +116,14 @@ namespace BlendInt {
 	: std::u32string()
 	{
 		size_t len = strlen(str);
-		resize(len);
 
-		for(size_t i = 0; i < len; i++)
-		{
-			at(i) = *(str + i);
+		if(len > 0) {
+			resize(len);
+
+			for(size_t i = 0; i < len; i++)
+			{
+				at(i) = *(str + i);
+			}
 		}
 	}
 
@@ -119,11 +131,14 @@ namespace BlendInt {
 	: std::u32string()
 	{
 		size_t len = wcslen(str);
-		resize(len);
 
-		for(size_t i = 0; i < len; i++)
-		{
-			at(i) = *(str + i);
+		if(len > 0) {
+			resize(len);
+
+			for(size_t i = 0; i < len; i++)
+			{
+				at(i) = *(str + i);
+			}
 		}
 	}
 
@@ -133,10 +148,12 @@ namespace BlendInt {
 		size_t len = strlen(str);
 		len = std::min(len, n);
 
-		resize(len);
-		for(size_t i = 0; i < len; i++)
-		{
-			at(i) = *(str + i);
+		if(len > 0) {
+			resize(len);
+			for(size_t i = 0; i < len; i++)
+			{
+				at(i) = *(str + i);
+			}
 		}
 	}
 
@@ -144,11 +161,13 @@ namespace BlendInt {
 	: std::u32string()
 	{
 		size_t len = str.length();
-		resize(len);
 
-		for(size_t i = 0; i < len; i++)
-		{
-			at(i) = str[i];
+		if(len > 0) {
+			resize(len);
+			for(size_t i = 0; i < len; i++)
+			{
+				at(i) = str[i];
+			}
 		}
 	}
 
@@ -156,11 +175,13 @@ namespace BlendInt {
 	: std::u32string()
 	{
 		size_t len = str.length();
-		resize(len);
 
-		for(size_t i = 0; i < len; i++)
-		{
-			at(i) = str[i];
+		if(len > 0) {
+			resize(len);
+			for(size_t i = 0; i < len; i++)
+			{
+				at(i) = str[i];
+			}
 		}
 	}
 
@@ -169,9 +190,11 @@ namespace BlendInt {
 	String::String (const String& orig)
 	{
 		size_t len = orig.length();
-		resize(len);
 
-		memcpy (&at(0), orig.data(), sizeof(uint32_t) * (len + 1));
+		if (len > 0) {
+			resize(len);
+			memcpy(&at(0), orig.data(), sizeof(uint32_t) * (len + 1));
+		}
 	}
 
 	String& String::operator = (const char* str)

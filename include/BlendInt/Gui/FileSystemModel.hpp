@@ -21,48 +21,31 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_LISTVIEW_HPP_
-#define _BLENDINT_GUI_LISTVIEW_HPP_
+#ifndef _BLENDINT_GUI_FILESYSTEMMODEL_HPP_
+#define _BLENDINT_GUI_FILESYSTEMMODEL_HPP_
+
+#include <boost/filesystem.hpp>
 
 #include <BlendInt/Gui/ListModel.hpp>
-#include <BlendInt/Gui/AbstractScrollable.hpp>
 
 namespace BlendInt {
 
-	class ListView: public AbstractScrollable
+	class FileSystemModel: public ListModel
 	{
-		DISALLOW_COPY_AND_ASSIGN(ListView);
-
 	public:
 
-		ListView ();
+		FileSystemModel ();
 
-		virtual ~ListView();
+		virtual ~FileSystemModel ();
 
-	protected:
-
-		virtual ResponseType Draw (const RedrawEvent& event);
-
-		virtual ResponseType FocusEvent (bool focus);
-
-		virtual ResponseType CursorEnterEvent (bool entered);
-
-		virtual ResponseType KeyPressEvent (const KeyEvent& event);
-
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
-
-		virtual ResponseType MousePressEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
-
-		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+		bool Load (const std::string& pathname);
 
 	private:
+
+		boost::filesystem::path m_path;
 
 	};
 
 }
 
-#endif /* _BLENDINT_GUI_LISTVIEW_HPP_ */
+#endif /* _BLENDINT_GUI_FILESYSTEMMODEL_HPP_ */
