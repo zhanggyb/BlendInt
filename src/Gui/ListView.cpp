@@ -26,9 +26,10 @@
 namespace BlendInt {
 
 	ListView::ListView ()
-	: AbstractWidget()
+	: AbstractScrollable()
 	{
 		set_size(400, 300);
+
 	}
 
 	ListView::~ListView ()

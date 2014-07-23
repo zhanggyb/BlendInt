@@ -54,26 +54,26 @@ namespace BlendInt {
 
 	class Jitter: public std::vector<glm::vec2>
 	{
-		public:
-			Jitter ()
-				: std::vector<glm::vec2>()
-			{
-				resize(8);
+	public:
+		Jitter () :
+				std::vector<glm::vec2>()
+		{
+			resize(8);
 
-				this->operator [](0) = glm::vec2(0.468813, -0.481430);
-				this->operator [](1) = glm::vec2(-0.155755, -0.352820);
-				this->operator [](2) = glm::vec2(0.219306, -0.238501);
-				this->operator [](3) = glm::vec2(-0.393286,-0.110949);
-				this->operator [](4) = glm::vec2(-0.024699, 0.013908);
-				this->operator [](5) = glm::vec2(0.343805, 0.147431);
-				this->operator [](6) = glm::vec2(-0.272855, 0.269918);
-				this->operator [](7) = glm::vec2(0.095909, 0.388710);
-			}
+			this->operator [](0) = glm::vec2(0.468813, -0.481430);
+			this->operator [](1) = glm::vec2(-0.155755, -0.352820);
+			this->operator [](2) = glm::vec2(0.219306, -0.238501);
+			this->operator [](3) = glm::vec2(-0.393286, -0.110949);
+			this->operator [](4) = glm::vec2(-0.024699, 0.013908);
+			this->operator [](5) = glm::vec2(0.343805, 0.147431);
+			this->operator [](6) = glm::vec2(-0.272855, 0.269918);
+			this->operator [](7) = glm::vec2(0.095909, 0.388710);
+		}
 
-			~Jitter ()
-			{
-				clear();
-			}
+		~Jitter ()
+		{
+			clear();
+		}
 	};
 
 	class UpdateRequest
