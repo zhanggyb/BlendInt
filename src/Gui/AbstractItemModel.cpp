@@ -1,0 +1,362 @@
+/*
+ * This file is part of BlendInt (a Blender-like Interface Library in
+ * OpenGL).
+ *
+ * BlendInt (a Blender-like Interface Library in OpenGL) is free software:
+ * you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * BlendInt (a Blender-like Interface Library in OpenGL) is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with BlendInt.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ *
+ * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
+ */
+
+#include <cassert>
+
+#include <BlendInt/Gui/AbstractItemModel.hpp>
+
+namespace BlendInt {
+
+	ModelIndex::ModelIndex ()
+	: m_node(0)
+	{
+	}
+
+	ModelIndex::ModelIndex (const ModelIndex& orig)
+	: m_node(orig.m_node)
+	{
+	}
+
+	ModelIndex::~ModelIndex ()
+	{
+	}
+
+	ModelIndex& ModelIndex::operator = (const ModelIndex& orig)
+	{
+		m_node = orig.m_node;
+		return *this;
+	}
+
+	int ModelIndex::GetRow () const
+	{
+		if(m_node) {
+
+			ModelNode* node = m_node;
+
+			// move to the first node of a column
+			while(node->left) {
+				node = node->left;
+			}
+
+			int count = 0;
+			while (node->up) {
+				node = node->up;
+				count++;
+			}
+
+			return count;
+		} else {
+			return 0;
+		}
+	}
+
+	int ModelIndex::GetColumn () const
+	{
+		if(m_node) {
+
+			ModelNode* node = m_node;
+			int count = 0;
+			while (node->left) {
+				node = node->left;
+				count++;
+			}
+
+			return count;
+
+		} else {
+			return 0;
+		}
+	}
+
+	ModelIndex ModelIndex::GetRootIndex () const
+	{
+		ModelIndex retval;
+
+		if(m_node) {
+
+			ModelNode* node = m_node->parent;
+
+			while(node->parent) {
+				node = node->parent;
+			}
+
+			retval.m_node = node;
+		}
+
+		return retval;
+	}
+
+	ModelIndex ModelIndex::GetParentIndex () const
+	{
+		ModelIndex retval;
+		if(m_node) {
+			retval.m_node = m_node->parent;
+		}
+
+		return retval;
+	}
+
+	ModelIndex ModelIndex::GetChildIndex (int row, int column) const
+	{
+		ModelIndex retval;
+
+		if(m_node->child) {
+
+			ModelNode* node = m_node->child;
+
+			assert(node->up == 0);
+			assert(node->left == 0);
+
+			while ((row > 0) && node->down) {
+				node = node->down;
+				row--;
+			}
+
+			if(row != 0) {	// did not get row
+				return retval;
+			}
+
+			while ((column > 0) && node->right) {
+				node = node->right;
+				column--;
+			}
+
+			if(column != 0) {	// did not get column
+				return retval;
+			}
+
+			assert(node != 0);
+
+			retval.m_node = node;
+		}
+
+		return retval;
+	}
+
+	bool ModelIndex::IsValid () const
+	{
+		return m_node != 0;
+	}
+
+	bool ModelIndex::operator != (const ModelIndex& other) const
+	{
+		return m_node != other.m_node;
+	}
+
+	ModelIndex ModelIndex::GetLeftIndex () const
+	{
+		return ModelIndex();
+	}
+
+	ModelIndex ModelIndex::GetRightIndex () const
+	{
+		return ModelIndex();
+	}
+
+	ModelIndex ModelIndex::GetUpIndex () const
+	{
+		return ModelIndex();
+	}
+
+	ModelIndex ModelIndex::GetDownIndex () const
+	{
+		return ModelIndex();
+	}
+
+	ModelIndex ModelIndex::GetSibling (int row, int column) const
+	{
+		ModelIndex retval;
+
+		if(m_node == 0)
+			return retval;
+
+		int row_offset = row;
+		int column_offset = column;
+
+		ModelNode* node = m_node;
+
+		while(node->up) {
+			node = node->up;
+			row_offset--;
+		}
+		while(node->left) {
+			node = node->left;
+			column_offset--;
+		}
+
+		node = m_node;
+
+		if(row_offset < 0) {
+			while(node->up) {
+				node = node->up;
+				row_offset++;
+			}
+		} else if (row_offset > 0) {
+			while(node->down) {
+				node = node->down;
+				row_offset--;
+			}
+		}
+
+		if(column_offset < 0) {
+			while(node->left) {
+				node = node->left;
+				column_offset++;
+			}
+		} else if (column_offset > 0) {
+			while(node->right) {
+				node = node->right;
+				column_offset--;
+			}
+		}
+
+		if(row_offset == 0 && column_offset == 0) {
+			retval.m_node = node;
+		}
+
+		return retval;
+	}
+
+	bool ModelIndex::operator == (const ModelIndex& other) const
+	{
+		return m_node == other.m_node;
+	}
+
+	AbstractItemModel::AbstractItemModel()
+	: Object ()
+	{
+
+	}
+
+	AbstractItemModel::~AbstractItemModel ()
+	{
+	}
+
+	bool AbstractItemModel::HasChild (const ModelIndex& parent) const
+	{
+		if(parent.m_node) {
+			return parent.m_node->child != 0;
+		} else {
+			return false;
+		}
+	}
+
+	bool AbstractItemModel::InsertColumn (int column, const ModelIndex& parent)
+	{
+		return InsertColumns (column, 1, parent);
+	}
+
+	bool AbstractItemModel::RemoveColumn (int column, const ModelIndex& parent)
+	{
+		return RemoveColumns(column, 1, parent);
+	}
+
+	bool AbstractItemModel::RemoveRow (int row, const ModelIndex& parent)
+	{
+		return RemoveRows(row, 1, parent);
+	}
+
+	bool AbstractItemModel::InsertRow (int row, const ModelIndex& parent)
+	{
+		return InsertRows(row, 1, parent);
+	}
+
+	ModelIndex AbstractItemModel::GetRootIndex () const
+	{
+		return ModelIndex();
+	}
+
+	bool AbstractItemModel::SetData (const ModelIndex& index,
+			const String& data)
+	{
+		if(index.IsValid()) {
+			index.m_node->data = data;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	void AbstractItemModel::SetIndexNode (ModelIndex& index, ModelNode* node)
+	{
+		index.m_node = node;
+	}
+
+	void AbstractItemModel::DestroyChildNode (ModelNode* node)
+	{
+		assert(node);
+		assert(node->left == 0);	// only the first left node has child
+
+		if(node->child) {
+			DestroyChildNode(node->child);
+			node->child = 0;
+		}
+
+		ModelNode* parent = node->parent;
+		ModelNode* tmp = 0;
+
+		while(node) {
+
+			tmp = node->down;
+
+			DestroyRow(node);
+			node = tmp;
+			node->parent = parent;	// no needed but looks resonable
+
+		}
+
+	}
+
+	void AbstractItemModel::DestroyRow (ModelNode* node)
+	{
+		assert(node);
+		assert(node->child == 0);
+		assert(node->left == 0);
+
+		if(node->child) {
+			DestroyChildNode(node->child);
+			node->child = 0;
+		}
+
+		ModelNode* tmp = 0;
+		while (node) {
+
+			if(node->up) {
+				node->up->down = node->down;
+			}
+			if(node->down) {
+				node->down->up = node->up;
+			}
+
+			tmp = node->right;
+			delete node;
+			node = tmp;
+		}
+	}
+
+	void AbstractItemModel::DestroyColumn (ModelNode* node)
+	{
+	}
+
+}
+
