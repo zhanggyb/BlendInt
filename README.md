@@ -19,12 +19,12 @@ Public License (LGPL) v3.
 ## Features
 
 Like Blender, all widgets in BlendInt are drawn in OpenGL context and
-use the same color schemes. But BlendInt is not a copy of Blender
-interface code, it's totally rewritten and improved with some new
-technologies:
+use the same color schemes. But BlendInt is totally rewritten and
+improved with some new technologies:
 
-- It's based on new OpenGL API (3.3) because the legacy OpenGL APIs
-  were removed.
+- It's based on new OpenGL API (3.3 and later), all widgets are drawn
+  through vertex/fragment/geometry shaders. (Legacy OpenGL APIs which
+  are being used in Blender were removed since GL 3.3)
 - It's OOP designed and written by C++, every widget is now a C++
   object, you can use the pre-defined Button, Slider, Menu, etc or
   subclass one of them and customize it easily.
@@ -109,11 +109,13 @@ The source code is verified to be built and workable on:
 * Ubuntu 13.10, 14.04(LTS)
 * Fedora 20
 
-## Installation
+## Build the Source Code
 
-## Contributing
+### Build source code in Mac OS X
 
-## Running the Demos or Tests
+### Build source code in Linux
+
+### Build and Try the Demos
 
 To build and run the demos and unit tests, build source code with
 additional cmake options:
@@ -128,11 +130,18 @@ To run glfw3 demo:
 $ ./bin/glfw_demo
 ```
 
+### Build and Run Unit Tests
+
 To run the unit tests:
 
 ```shell
 $ ./bin/test<class name>
 ```
+
+
+## Installation
+
+## Contributing
 
 ## Credits
 

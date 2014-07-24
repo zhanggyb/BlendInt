@@ -51,17 +51,11 @@ namespace BlendInt {
 		}
 
 		ModelNode* parent;
-
 		ModelNode* child;
-
 		ModelNode* up;
-
 		ModelNode* down;
-
 		ModelNode* left;
-
 		ModelNode* right;
-
 		String data;	// temporarily use String to store data
 	};
 
@@ -156,12 +150,6 @@ namespace BlendInt {
 	protected:
 
 		static void SetIndexNode (ModelIndex& index, ModelNode* node);
-
-		static void DestroyChildNode (ModelNode* node);
-
-		static void DestroyRow (ModelNode * node);
-
-		static void DestroyColumn (ModelNode* node);
 
 	};
 

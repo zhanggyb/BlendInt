@@ -60,6 +60,12 @@ namespace BlendInt {
 
 	private:
 
+		static void DestroyChildNode (ModelNode* node);
+
+		static void DestroyRow (ModelNode * node);
+
+		static void DestroyColumn (ModelNode* node);
+
 		/**
 		 * @brief Clear and delete all child node from m_root->child
 		 */

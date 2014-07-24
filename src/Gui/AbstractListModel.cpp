@@ -21,6 +21,8 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#include <cassert>
+
 #include <BlendInt/Gui/AbstractListModel.hpp>
 
 namespace BlendInt {
@@ -95,13 +97,96 @@ namespace BlendInt {
 	{
 	}
 
+#endif	// DEBUG
+
+	void AbstractListModel::DestroyChildNode (ModelNode* node)
+	{
+		assert(node);
+		assert(node->left == 0);	// only the first left node has child
+
+		if(node->child) {
+			DestroyChildNode(node->child);
+			node->child = 0;
+		}
+
+		ModelNode* parent = node->parent;
+		ModelNode* tmp = 0;
+
+		while(node) {
+
+			tmp = node->down;
+
+			DestroyRow(node);
+			node = tmp;
+			node->parent = parent;	// no needed but looks resonable
+
+		}
+	}
+
+	void AbstractListModel::DestroyRow (ModelNode* node)
+	{
+		assert(node);
+		assert(node->child == 0);
+		assert(node->left == 0);
+
+		if(node->child) {
+			DestroyChildNode(node->child);
+			node->child = 0;
+		}
+
+		ModelNode* tmp = 0;
+		while (node) {
+
+			if(node->up) {
+				node->up->down = node->down;
+			}
+			if(node->down) {
+				node->down->up = node->up;
+			}
+
+			tmp = node->right;
+			delete node;
+			node = tmp;
+		}
+	}
+
+	void AbstractListModel::DestroyColumn (ModelNode* node)
+	{
+		assert(node);
+		assert(node->up == 0);
+
+		// TODO: check the child node and delete the column if the child exists
+
+		ModelNode* tmp = 0;
+		while (node) {
+
+			if(node->left) {
+				node->left->right = node->right;
+			}
+			if(node->right) {
+				node->right->left = node->left;
+			}
+
+			tmp = node->down;
+			delete node;
+			node = tmp;
+
+		}
+	}
+
 	void AbstractListModel::ClearAllChildNodes()
 	{
 		// TODO: delete all node data
 
+		ModelNode* node = m_root->child;
+
+		ModelNode* next = 0;
+		while(node){
+			next = node->child;
+			DestroyRow(node);
+			node = next;
+		}
 
 	}
-
-#endif
 
 }
