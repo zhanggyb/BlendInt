@@ -21,66 +21,25 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#include <BlendInt/Gui/ListView.hpp>
+#include <BlendInt/Gui/AbstractItemView.hpp>
 
 namespace BlendInt {
 
-	ListView::ListView ()
-	: AbstractItemView()
+	AbstractItemView::AbstractItemView ()
+		: AbstractScrollable(),
+		  m_model(0)
 	{
-		set_size(400, 300);
+		
+	}
+
+	AbstractItemView::~AbstractItemView ()
+	{
 
 	}
 
-	ListView::~ListView ()
+	void AbstractItemView::SetModel (const RefPtr<AbstractItemModel>& model)
 	{
-	}
-
-	ResponseType ListView::Draw (const RedrawEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::FocusEvent (bool focus)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::CursorEnterEvent (bool entered)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::KeyPressEvent (const KeyEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::ContextMenuPressEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::ContextMenuReleaseEvent (
-	        const ContextMenuEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::MousePressEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::MouseReleaseEvent (const MouseEvent& event)
-	{
-		return Ignore;
-	}
-
-	ResponseType ListView::MouseMoveEvent (const MouseEvent& event)
-	{
-		return Ignore;
+		m_model = model;
 	}
 
 }

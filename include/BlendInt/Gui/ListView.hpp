@@ -26,10 +26,23 @@
 
 #include <BlendInt/Gui/ListModel.hpp>
 #include <BlendInt/Gui/AbstractScrollable.hpp>
+#include <BlendInt/Gui/AbstractItemView.hpp>
 
 namespace BlendInt {
 
-	class ListView: public AbstractScrollable
+	/**
+	 * @brief ListView provides a list or icon view onto a model
+	 *
+	 * The ListView provides a list or icon view onto a model.
+	 *
+	 * A ListView presents items stored in a model, either as a simple
+	 * non-hierarchical list, or as a collection of icons.
+	 *
+	 * ListView is a subclass of AbstractScrollable, so it contains 2
+	 * native ScrollBar object and will be displayed automatically
+	 * when the widget cannot show all contents of the list.
+	 */
+	class ListView: public AbstractItemView
 	{
 		DISALLOW_COPY_AND_ASSIGN(ListView);
 
