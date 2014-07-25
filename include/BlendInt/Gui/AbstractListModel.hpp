@@ -36,9 +36,9 @@ namespace BlendInt {
 
 		virtual ~AbstractListModel ();
 
-		virtual int GetRows (const ModelIndex& parent = ModelIndex()) const;
+		//virtual int GetRows (const ModelIndex& parent = ModelIndex()) const;
 
-		virtual int GetColumns (const ModelIndex& parent = ModelIndex()) const;
+		//virtual int GetColumns (const ModelIndex& parent = ModelIndex()) const;
 
 		virtual bool InsertColumns (int column, int count, const ModelIndex& parent = ModelIndex());
 
@@ -52,11 +52,12 @@ namespace BlendInt {
 
 		virtual ModelIndex GetIndex (int row, int column, const ModelIndex& parent = ModelIndex()) const;
 
-#ifdef DEBUG
+	protected:
 
-		void Print ();
-
-#endif
+		const ModelNode* root () const
+		{
+			return m_root;
+		}
 
 	private:
 

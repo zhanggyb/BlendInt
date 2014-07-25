@@ -302,5 +302,10 @@ namespace BlendInt {
 		index.m_node = node;
 	}
 
+	ModelNode* AbstractItemModel::GetIndexNode(const ModelIndex& index)
+	{
+		return index.m_node;
+	}
+
 }
 

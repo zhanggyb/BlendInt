@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		~ModelNode ()
 		{
-			DBG_PRINT_MSG("%s", "Delete node");
+			DBG_PRINT_MSG("Delete node: %s", ConvertFromString(data).c_str());
 		}
 
 		ModelNode* parent;
@@ -150,6 +150,8 @@ namespace BlendInt {
 	protected:
 
 		static void SetIndexNode (ModelIndex& index, ModelNode* node);
+
+		static ModelNode* GetIndexNode (const ModelIndex& index);
 
 	};
 
