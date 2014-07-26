@@ -138,7 +138,6 @@ namespace BlendInt {
 				first->up = node;
 			}
 
-
 		}
 
 		return true;
@@ -147,6 +146,59 @@ namespace BlendInt {
 	bool AbstractListModel::RemoveRows (int row, int count,
 			const ModelIndex& parent)
 	{
+		if (!parent.IsValid())
+			return false;
+
+		assert(count > 0);
+		assert(row >= 0);
+
+		ModelNode* node = GetIndexNode(parent);
+		if(node->child == 0)
+			return false;
+
+		node = node->child;
+
+		while(node->down && (row > 0)) {
+			node = node->down;
+			row--;
+		}
+
+		if(row == 0) {
+
+			ModelNode* first = node->up;
+			ModelNode* last = node;
+
+			for(int i = 0; i < count; i++)
+			{
+				last = node->down;
+				DestroyRow(node);
+				node = last;
+
+				if(node == 0)
+					break;
+			}
+
+			node = GetIndexNode(parent);
+			if(first == 0) {
+
+				if(last == 0) {	// clear the list
+					node->child = 0;
+				} else {	// remove the first count rows from the original list
+					node->child = last;
+					last->parent = node;
+					last->up = 0;
+				}
+
+			} else {
+				first->down = last;
+				if(last) {
+					last->up = first;
+				}
+			}
+
+			return true;
+		}
+
 		return false;
 	}
 

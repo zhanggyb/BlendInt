@@ -71,6 +71,23 @@ namespace BlendInt {
 		return retval;
 	}
 
+	bool StringListModel::RemoveRows (int row, int count,
+	        const ModelIndex& parent)
+	{
+		bool retval = false;
+
+		retval = AbstractListModel::RemoveRows(row, count, parent);
+		if(retval) {
+
+			if((row + count) > m_rows) {	// if count too large
+				count = m_rows - row;
+			}
+			m_rows -= count;
+		}
+
+		return retval;
+	}
+
 #ifdef DEBUG
 
 	void StringListModel::Print()
