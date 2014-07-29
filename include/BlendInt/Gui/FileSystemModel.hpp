@@ -30,6 +30,15 @@
 
 namespace BlendInt {
 
+	/**
+	 * @brief A data model based on boost::filesystem for the local file system
+	 *
+	 * This data model contains 6 columns by default:
+	 * <Name> - <Type> - <Owner> - <Group> - <Permissions> - <Last write time>
+	 *
+	 * The default constructor does nothing, use Load() to load and store a file
+	 * list in a path.
+	 */
 	class FileSystemModel: public AbstractItemModel
 	{
 	public:
@@ -38,6 +47,13 @@ namespace BlendInt {
 
 		virtual ~FileSystemModel ();
 
+		/**
+		 * @brief List files in a path
+		 * @param pathname The path name
+		 * @return
+		 * 	- true success
+		 * 	- false failure
+		 */
 		bool Load (const std::string& pathname);
 
 		virtual int GetRows (const ModelIndex& parent = ModelIndex()) const;
@@ -76,6 +92,8 @@ namespace BlendInt {
 		void ClearAllChildNodes ();
 
 		ModelNode* InsertColumns (int column, int count, ModelNode* left);
+
+		ModelNode* RemoveColumnInRow (int column, int count, ModelNode* node);
 
 		static void DestroyRow (ModelNode* node);
 

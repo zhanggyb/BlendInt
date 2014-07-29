@@ -117,9 +117,26 @@ namespace BlendInt {
 	}
 
 	bool FileSystemModel::RemoveColumns (int column, int count,
-			const ModelIndex& parent)
+	        const ModelIndex& parent)
 	{
-		return false;
+		if (!parent.IsValid())
+			return false;
+
+		ModelNode* node = GetIndexNode(parent);
+		if (node->child == 0)
+			return false;
+
+		assert(node == root_);
+		node = node->child;
+
+		assert(node->up == 0);
+
+		while (node) {
+			node = RemoveColumnInRow(column, count, node);
+			node = node->down;
+		}
+
+		return true;
 	}
 
 	bool FileSystemModel::InsertRows (int row, int count,
@@ -450,6 +467,18 @@ namespace BlendInt {
 
 			return node;
 		}
+	}
+
+	ModelNode* FileSystemModel::RemoveColumnInRow (int column, int count,
+	        ModelNode* node)
+	{
+		assert(node);
+
+		//ModelNode* first = 0;
+		//ModelNode* last = 0;
+		//ModelNode* tmp = 0;
+
+		return node;
 	}
 
 	void FileSystemModel::DestroyColumn (ModelNode* node)

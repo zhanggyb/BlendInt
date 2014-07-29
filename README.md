@@ -54,35 +54,35 @@ For example, create a button with BlendInt:
 #include <BlendInt/Interface.hpp>    // The main header to start
 #include <BlendInt/Gui/Button.hpp>	// Button is in Gui module
 
-namespace BI = BlendInt;	// namespace alias
-
 int main (int argc, char* argv[])
 {
-    // Don't forget to initialize CppEvents in main stack
-    BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
+	using namespace BlendInt;
+	
+	// Don't forget to initialize CppEvents in main stack
+	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
-    // Create opengl context and make it current in your favoriate
-    // OpenGL window system such as GLUT, GLFW, Cocoa
+	// Create opengl context and make it current in your favoriate
+	// OpenGL window system such as GLUT, GLFW, Cocoa
 
-    BI::Interface::Initialize();
+	Interface::Initialize();
 
-    // Create a root container called Context too in BlendInt
-    Context* context = Manage(new Context);
-    BI::Instance::instance->SetCurrentContext(context);
+	// Create a root container called Context too in BlendInt
+	Context* context = Manage(new Context);
+	Instance::instance->SetCurrentContext(context);
 
-    // Create a button
-    Button* btn = BI::Manage(new Button);
-    btn->SetText("Hello World!");
-    btn->SetPosition(200, 200); 
+	// Create a button
+	Button* btn = Manage(new Button);
+	btn->SetText("Hello World!");
+	btn->SetPosition(200, 200); 
 
-    // Add widgets to the context
-    context->Add(btn);
+	// Add widgets to the context
+	context->PushBack(btn);
 
-    // In the event-render loop
-    BI::Interface::instance->Draw();
+	// In the event-render loop
+	Interface::instance->Draw();
 
-    // Ready to close application
-    BI::Interface::Release();
+	// Ready to close application
+	Interface::Release();
 }
 ```
 
@@ -117,11 +117,10 @@ The source code is verified to be built and workable on:
 
 ### Build and Try the Demos
 
-To build and run the demos and unit tests, build source code with
-additional cmake options:
+To build and run the demos, use additional cmake options:
 
 ```shell
-$ cmake <source dir> -DWITH_UNIT_TEST=TRUE -DWITH_GLFW3_DEMO=TRUE
+$ cmake <source dir> -DWITH_GLFW3_DEMO=TRUE
 ```
 
 To run glfw3 demo:
@@ -131,6 +130,13 @@ $ ./bin/glfw_demo
 ```
 
 ### Build and Run Unit Tests
+
+To build the unit test, add `-DWITH_UNIT_TEST=TRUE`:
+
+```shell
+$ cmake <source dir> -DWITH_UNIT_TEST=TRUE
+```
+
 
 To run the unit tests:
 
