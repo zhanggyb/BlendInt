@@ -52,7 +52,7 @@ namespace BlendInt {
 
 	private:
 
-		int m_rows;
+		int rows_;
 
 	};
 

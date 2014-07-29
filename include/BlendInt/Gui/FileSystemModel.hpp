@@ -26,11 +26,11 @@
 
 #include <boost/filesystem.hpp>
 
-#include <BlendInt/Gui/ListModel.hpp>
+#include <BlendInt/Gui/AbstractItemModel.hpp>
 
 namespace BlendInt {
 
-	class FileSystemModel: public ListModel
+	class FileSystemModel: public AbstractItemModel
 	{
 	public:
 
@@ -40,9 +40,52 @@ namespace BlendInt {
 
 		bool Load (const std::string& pathname);
 
+		virtual int GetRows (const ModelIndex& parent = ModelIndex()) const;
+
+		virtual int GetColumns (const ModelIndex& parent = ModelIndex()) const;
+
+		virtual bool InsertColumns (int column, int count, const ModelIndex& parent = ModelIndex());
+
+		virtual bool RemoveColumns (int column, int count, const ModelIndex& parent = ModelIndex());
+
+		virtual bool InsertRows (int row, int count, const ModelIndex& parent = ModelIndex());
+
+		virtual bool RemoveRows (int row, int count, const ModelIndex& parent = ModelIndex());
+
+		virtual ModelIndex GetRootIndex () const;
+
+		virtual ModelIndex GetIndex (int row, int column, const ModelIndex& parent = ModelIndex()) const;
+
+#ifdef DEBUG
+
+		void Print ();
+
+		void PrintRow (ModelNode* first);
+
+#endif	// DEBUG
+
+	protected:
+
+		const ModelNode* root () const
+		{
+			return root_;
+		}
+
 	private:
 
-		boost::filesystem::path m_path;
+		void ClearAllChildNodes ();
+
+		static void DestroyRow (ModelNode* node);
+
+		static void DestroyColumn (ModelNode* node);
+
+		boost::filesystem::path path_;
+
+		int rows_;
+
+		int columns_;
+
+		ModelNode* root_;
 
 	};
 

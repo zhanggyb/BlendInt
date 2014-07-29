@@ -44,7 +44,9 @@ TEST_F(ListModelTest1, Foo1)
 	FileSystemModel fs_model;
 	fs_model.Load("/home/zhanggyb");
 
+#ifdef DEBUG
 	fs_model.Print();
+#endif
 
 	ASSERT_TRUE(true);
 }

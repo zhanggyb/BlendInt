@@ -79,7 +79,7 @@ namespace BlendInt {
 
 		const ModelNode* root () const
 		{
-			return m_root;
+			return root_;
 		}
 
 	private:
@@ -95,7 +95,7 @@ namespace BlendInt {
 		 */
 		void ClearAllChildNodes ();
 
-		ModelNode* m_root;
+		ModelNode* root_;
 
 	};
 

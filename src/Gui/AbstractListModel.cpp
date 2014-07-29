@@ -29,17 +29,17 @@ namespace BlendInt {
 
 	AbstractListModel::AbstractListModel()
 	: AbstractItemModel(),
-	  m_root(0)
+	  root_(0)
 	{
-		m_root = new ModelNode;
-		m_root->data = String("Root Node");
+		root_ = new ModelNode;
+		root_->data = String("Root Node");
 	}
 
 	AbstractListModel::~AbstractListModel ()
 	{
 		ClearAllChildNodes();
 
-		delete m_root;
+		delete root_;
 	}
 
 	bool AbstractListModel::InsertColumns (int column, int count,
@@ -64,47 +64,28 @@ namespace BlendInt {
 
 		ModelNode* node = GetIndexNode(parent);
 
+		ModelNode* first = 0;
+		ModelNode* last = 0;
+
+		char buf[8];
+		first = new ModelNode;
+		first->data = String("row 0");
+		last = first;
+
+		for(int i = 1; i < count; i++) {
+			last->down = new ModelNode;
+			snprintf(buf, 8, "row %d", i);
+			last->down->data = String(buf);
+			last->down->up = last;
+			last = last->down;
+		}
+
 		// if the node has no child, create and append count rows
 		if(node->child == 0) {
-
-			ModelNode* first = 0;
-			ModelNode* last = 0;
-
-			char buf[8];
-			first = new ModelNode;
-			first->data = String("row 0");
-			last = first;
-
-			for(int i = 1; i < count; i++) {
-				last->down = new ModelNode;
-				snprintf(buf, 8, "row %d", i);
-				last->down->data = String(buf);
-				last->down->up = last;
-				last = last->down;
-			}
-
 			node->child = first;
 			first->parent = node;
-
 		} else {
-
 			node = node->child;
-			ModelNode* first = 0;
-			ModelNode* last = 0;
-
-			char buf[8];
-			first = new ModelNode;
-			first->data = String("-- 0");
-			last = first;
-
-			for(int i = 1; i < count; i++) {
-				last->down = new ModelNode;
-				snprintf(buf, 8, "-- %d", i);
-				last->down->data = String(buf);
-				last->down->up = last;
-				last = last->down;
-			}
-
 			// find wher to insert the new list
 			while(node->down && (row > 0)) {
 				node = node->down;
@@ -112,32 +93,22 @@ namespace BlendInt {
 			}
 
 			if(row == 0) {	// Insert
-
 				if(node->up == 0) {	// Insert 0
-
 					node->parent->child = first;
 					first->parent = node->parent;
 					node->parent = 0;
-
 					last->down = node;
 					node->up = last;
-
 				} else {
-
 					node->up->down = first;
 					first->up = node->up;
-
 					last->down = node;
 					node->up = last;
-
 				}
-
 			} else {	// too large row given, append to tail
-
 				node->down = first;
 				first->up = node;
 			}
-
 		}
 
 		return true;
@@ -205,7 +176,7 @@ namespace BlendInt {
 	ModelIndex AbstractListModel::GetRootIndex () const
 	{
 		ModelIndex retval;
-		SetIndexNode(retval, m_root);
+		SetIndexNode(retval, root_);
 
 		return retval;
 	}
@@ -290,7 +261,7 @@ namespace BlendInt {
 
 	void AbstractListModel::ClearAllChildNodes()
 	{
-		ModelNode* node = m_root->child;
+		ModelNode* node = root_->child;
 
 		if(node) {
 
@@ -300,6 +271,8 @@ namespace BlendInt {
 				DestroyRow(node);
 				node = next;
 			}
+
+			root_->child = 0;
 
 		}
 	}
