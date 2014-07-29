@@ -7,6 +7,8 @@
 #include "GLFWDemoContext.hpp"
 #include "Window.hpp"
 
+#include <BlendInt/Gui/FileSystemModel.hpp>
+
 using namespace BlendInt;
 using namespace std;
 
@@ -16,6 +18,7 @@ int main(int argc, char* argv[])
 {
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
+	/*
 	Init();
 
 	GLFWwindow* win = CreateWindow("GLFW3 Demo", 1280, 800);
@@ -24,12 +27,22 @@ int main(int argc, char* argv[])
 	DBG_SET_NAME(context, "Context");
 	Interface::instance->SetCurrentContext(context);
 	context->Resize(1280, 800);
+	*/
 
-	RunLoop(win);
+	FileSystemModel model;
+	ModelIndex root = model.GetRootIndex();
+	model.InsertRows(0, 2, root);
+	//model.RemoveRows(0, 3, root);
+	model.InsertColumns(0, 2, root);
+#ifdef DEBUG
+	model.Print();
+#endif
 
-	Interface::Release();
+	//RunLoop(win);
 
-	Terminate();
+	//Interface::Release();
+
+	//Terminate();
 
 	return 0;
 }

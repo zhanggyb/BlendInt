@@ -28,7 +28,7 @@ namespace BlendInt {
 	FileSystemModel::FileSystemModel()
 	: AbstractItemModel(),
 	  rows_(0),
-	  columns_(3),
+	  columns_(3),	// temporary value
 	  root_(0)
 	{
 		root_ = new ModelNode;
@@ -96,7 +96,24 @@ namespace BlendInt {
 	bool FileSystemModel::InsertColumns (int column, int count,
 			const ModelIndex& parent)
 	{
-		return false;
+		if (!parent.IsValid())
+			return false;
+
+		ModelNode* node = GetIndexNode(parent);
+		if(node->child == 0) return false;
+
+		assert(node == root_);
+		node = node->child;
+
+		assert(node->up == 0);
+
+		while(node) {
+			node = InsertColumns (column, count, node);
+			node = node->down;
+		}
+
+		columns_ += count;
+		return true;
 	}
 
 	bool FileSystemModel::RemoveColumns (int column, int count,
@@ -185,6 +202,7 @@ namespace BlendInt {
 			}
 		}
 
+		rows_ += count;
 		return true;
 	}
 
@@ -213,14 +231,15 @@ namespace BlendInt {
 			ModelNode* first = node->up;
 			ModelNode* last = node;
 
-			for(int i = 0; i < count; i++)
-			{
+			int i = 0;
+			for(; i < count; i++) {
 				last = node->down;
 				DestroyRow(node);
 				node = last;
-
-				if(node == 0)
+				if(node == 0) {
+					i++;
 					break;
+				}
 			}
 
 			node = GetIndexNode(parent);
@@ -241,6 +260,7 @@ namespace BlendInt {
 				}
 			}
 
+			rows_ -= i;
 			return true;
 		}
 
@@ -300,6 +320,10 @@ namespace BlendInt {
 			node = node->down;
 			i++;
 		}
+
+		//assert(i == rows_);
+		DBG_PRINT_MSG("print rows: %d", i);
+		DBG_PRINT_MSG("rows recorded: %d", rows_);
 	}
 
 	void FileSystemModel::PrintRow(ModelNode* first)
@@ -352,6 +376,79 @@ namespace BlendInt {
 			right = node->right;
 			delete node;
 			node = right;
+		}
+	}
+
+	ModelNode* FileSystemModel::InsertColumns (int column, int count, ModelNode* node)
+	{
+		assert(node);
+		assert(node->left == 0);
+
+		// create count nodes
+		ModelNode* first = 0;
+		ModelNode* last = 0;
+		ModelNode* tmp = 0;
+
+		char buf[32];
+		first = new ModelNode;
+		first->data = String("new col 0");
+
+		// add (columns - 1) nodes at right
+		tmp = first;
+		for(int j = 1; j < count; j++) {
+			tmp->right = new ModelNode;
+			snprintf(buf, 32, "new col %d", j);
+			tmp->right->data = String(buf);
+			tmp->right->left = tmp;
+			tmp = tmp->right;
+		}
+		last = tmp;
+
+		tmp = node;
+		while(tmp->right && (column > 0)) {
+			tmp = tmp->right;
+			column--;
+		}
+
+		if(column == 0) {	// Insert
+			if(tmp->left == 0) {	// Insert 0
+				if(tmp->parent) {
+					tmp->parent->child = first;
+					first->parent = tmp->parent;
+					tmp->parent = 0;
+				}
+
+				first->up = tmp->up;
+				if(tmp->up) {
+					tmp->up->down = first;
+				}
+				first->down = tmp->down;
+				if(tmp->down) {
+					tmp->down->up = first;
+				}
+
+				last->right = tmp;
+				tmp->left = last;
+
+				tmp->up = 0;
+				tmp->down = 0;
+
+				assert(first->left == 0);
+				return first;
+			} else {
+
+				tmp->left->right = first;
+				first->left = tmp->left;
+				last->right = tmp;
+				tmp->left = last;
+
+				return node;
+			}
+		} else {	// too large row given, append to tail
+			tmp->right = first;
+			first->left = tmp;
+
+			return node;
 		}
 	}
 
