@@ -116,7 +116,6 @@ namespace BlendInt {
 
 		glBindVertexArray(0);
 		m_inner->Reset();
-
 	}
 
 	void FramePanel::RenderToBuffer ()

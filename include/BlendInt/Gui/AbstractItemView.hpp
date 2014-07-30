@@ -56,7 +56,7 @@ namespace BlendInt {
 
 		const RefPtr<AbstractItemModel>& model () const
 		{
-			return m_model;
+			return model_;
 		}
 
 		virtual void SetModel (const RefPtr<AbstractItemModel>& model);
@@ -65,14 +65,21 @@ namespace BlendInt {
 
 		Cpp::EventRef<> model_changed ()
 		{
-			return m_model_changed;
+			return model_changed_;
+		}
+
+	protected:
+
+		void set_model (const RefPtr<AbstractItemModel>& model)
+		{
+			model_ = model;
 		}
 
 	private:
 
-		RefPtr<AbstractItemModel> m_model;
+		RefPtr<AbstractItemModel> model_;
 
-		Cpp::Event<> m_model_changed;
+		Cpp::Event<> model_changed_;
 
 	};
 

@@ -21,24 +21,50 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifndef _BLENDINT_GUI_TREEVIEW_HPP_
+#define _BLENDINT_GUI_TREEVIEW_HPP_
+
 #include <BlendInt/Gui/AbstractItemView.hpp>
 
 namespace BlendInt {
 
-	AbstractItemView::AbstractItemView ()
-		: AbstractScrollable()
+	class TreeView: public AbstractItemView
 	{
-		
-	}
+		DISALLOW_COPY_AND_ASSIGN(TreeView);
 
-	AbstractItemView::~AbstractItemView ()
-	{
+	public:
 
-	}
+		TreeView ();
 
-	void AbstractItemView::SetModel (const RefPtr<AbstractItemModel>& model)
-	{
-		model_ = model;
-	}
+		virtual ~TreeView ();
 
+		virtual ModelIndex GetIndexAt (const Point& point) const;
+
+	protected:
+
+		virtual ResponseType Draw (const RedrawEvent& event);
+
+		virtual ResponseType FocusEvent (bool focus);
+
+		virtual ResponseType CursorEnterEvent (bool entered);
+
+		virtual ResponseType KeyPressEvent (const KeyEvent& event);
+
+		virtual ResponseType ContextMenuPressEvent (
+				const ContextMenuEvent& event);
+
+		virtual ResponseType ContextMenuReleaseEvent (
+				const ContextMenuEvent& event);
+
+		virtual ResponseType MousePressEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
+
+		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
+
+	private:
+
+	};
 }
+
+#endif /* _BLENDINT_GUI_TREEVIEW_HPP_ */

@@ -75,7 +75,7 @@ namespace BlendInt {
 
 		int GetColumn () const;
 
-		const String* GetData () const;
+		const String* GetData () const;	// Use String temporarily
 
 		ModelIndex GetRootIndex () const;
 

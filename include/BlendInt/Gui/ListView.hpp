@@ -24,7 +24,6 @@
 #ifndef _BLENDINT_GUI_LISTVIEW_HPP_
 #define _BLENDINT_GUI_LISTVIEW_HPP_
 
-#include <BlendInt/Gui/ListModel.hpp>
 #include <BlendInt/Gui/AbstractScrollable.hpp>
 #include <BlendInt/Gui/AbstractItemView.hpp>
 
@@ -52,7 +51,13 @@ namespace BlendInt {
 
 		virtual ~ListView();
 
+		virtual ModelIndex GetIndexAt (const Point& point) const;
+
 	protected:
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -73,6 +78,12 @@ namespace BlendInt {
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
 	private:
+
+		void InitializeListView ();
+
+		GLuint m_vao;
+
+		RefPtr<GLArrayBuffer> m_inner;
 
 	};
 

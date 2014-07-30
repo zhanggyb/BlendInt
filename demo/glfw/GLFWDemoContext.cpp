@@ -28,7 +28,7 @@ void GLFWDemoContext::Initialize ()
 
 	PushBack(m_view3d);
 
-	m_browser = Manage(new FileBrowser);
+	m_browser = Manage(new ListView);
 	m_open_button = Manage(new Button("Load File"));
 
 	PushBack(m_browser);
@@ -36,7 +36,6 @@ void GLFWDemoContext::Initialize ()
 	PushBack(m_open_button);
 	m_open_button->SetPosition(900, 200);
 
-	m_browser->Open(getenv("PWD"));
 	events()->connect(m_open_button->clicked(), this, &GLFWDemoContext::OnOpenObjFile);
 }
 
@@ -44,13 +43,13 @@ void GLFWDemoContext::OnOpenObjFile()
 {
 	using namespace BI;
 
-	if(m_browser->file_selected().empty()) return;
+	//if(m_browser->file_selected().empty()) return;
 
-	DBG_PRINT_MSG("Load file: %s", m_browser->file_selected().c_str());
+	//DBG_PRINT_MSG("Load file: %s", m_browser->file_selected().c_str());
 
 	RefPtr<Mesh> monkey(new Mesh);
 
-	if(monkey->Load(m_browser->file_selected().c_str())) {
-		m_view3d->PushBack(monkey);
-	}
+	//if(monkey->Load(m_browser->file_selected().c_str())) {
+		//m_view3d->PushBack(monkey);
+	//}
 }
