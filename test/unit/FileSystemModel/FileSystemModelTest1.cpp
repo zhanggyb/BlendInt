@@ -146,7 +146,7 @@ TEST_F(FileSystemModelTest1, InsertRows5)
  *
  * Expected result:
  *
- * 	column become 3 (default) + 2
+ * 	column become 5 (default) + 2
  */
 TEST_F(FileSystemModelTest1, InsertColumns1)
 {
@@ -162,7 +162,7 @@ TEST_F(FileSystemModelTest1, InsertColumns1)
 	model.Print();
 #endif
 
-	ASSERT_TRUE(model.GetColumns(root) == 5);
+	ASSERT_TRUE(model.GetColumns(root) == 7);
 }
 
 /**
@@ -172,7 +172,7 @@ TEST_F(FileSystemModelTest1, InsertColumns1)
  *
  * Expected result:
  *
- * 	column become 3 (default) + 2
+ * 	column become 5 (default) + 2
  */
 TEST_F(FileSystemModelTest1, InsertColumns2)
 {
@@ -188,7 +188,7 @@ TEST_F(FileSystemModelTest1, InsertColumns2)
 	model.Print();
 #endif
 
-	ASSERT_TRUE(model.GetColumns(root) == 5);
+	ASSERT_TRUE(model.GetColumns(root) == 7);
 }
 
 /**
@@ -198,7 +198,7 @@ TEST_F(FileSystemModelTest1, InsertColumns2)
  *
  * Expected result:
  *
- * 	column become 3 (default) + 2
+ * 	column become 5 (default) + 2
  */
 TEST_F(FileSystemModelTest1, InsertColumns3)
 {
@@ -214,7 +214,7 @@ TEST_F(FileSystemModelTest1, InsertColumns3)
 	model.Print();
 #endif
 
-	ASSERT_TRUE(model.GetColumns(root) == 5);
+	ASSERT_TRUE(model.GetColumns(root) == 7);
 }
 
 /**
@@ -328,7 +328,7 @@ TEST_F(FileSystemModelTest1, RemoveRows4)
  *
  * Expected result:
  *
- * 	column count is 2
+ * 	column count is 4
  */
 TEST_F(FileSystemModelTest1, RemoveColumns1)
 {
@@ -343,7 +343,7 @@ TEST_F(FileSystemModelTest1, RemoveColumns1)
 	model.Print();
 #endif
 
-	ASSERT_TRUE(model.GetColumns(root) == 2);
+	ASSERT_TRUE(model.GetColumns(root) == 4);
 }
 
 /**
@@ -353,7 +353,7 @@ TEST_F(FileSystemModelTest1, RemoveColumns1)
  *
  * Expected result:
  *
- * 	column count is 2
+ * 	column count is 4
  */
 TEST_F(FileSystemModelTest1, RemoveColumns2)
 {
@@ -368,17 +368,17 @@ TEST_F(FileSystemModelTest1, RemoveColumns2)
 	model.Print();
 #endif
 
-	ASSERT_TRUE(model.GetColumns(root) == 2);
+	ASSERT_TRUE(model.GetColumns(root) == 4);
 }
 
 /**
  * test RemoveColumns() method
  *
- * Insert 5 rows into an empty model, and try to remove 1 columns at 2
+ * Insert 5 rows into an empty model, and try to remove 1 columns at 4
  *
  * Expected result:
  *
- * 	column count is 2
+ * 	column count is 4
  */
 TEST_F(FileSystemModelTest1, RemoveColumns3)
 {
@@ -387,19 +387,19 @@ TEST_F(FileSystemModelTest1, RemoveColumns3)
 	ModelIndex root = model.GetRootIndex();
 	model.InsertRows(0, 3, root);
 
-	model.RemoveColumns(2, 1, root);
+	model.RemoveColumns(4, 1, root);
 
 #ifdef DEBUG
 	model.Print();
 #endif
 
-	ASSERT_TRUE(model.GetColumns(root) == 2);
+	ASSERT_TRUE(model.GetColumns(root) == 4);
 }
 
 /**
  * test RemoveColumns() method
  *
- * Insert 5 rows into an empty model, and try to remove 3 columns at 1
+ * Insert 3 rows into an empty model, and try to remove > 5 columns at 1
  *
  * Expected result:
  *
@@ -412,11 +412,13 @@ TEST_F(FileSystemModelTest1, RemoveColumns4)
 	ModelIndex root = model.GetRootIndex();
 	model.InsertRows(0, 3, root);
 
-	model.RemoveColumns(1, 3, root);
+	model.RemoveColumns(1, 9, root);
 
 #ifdef DEBUG
 	model.Print();
 #endif
+
+	DBG_PRINT_MSG("columns: %d", model.GetColumns(root));
 
 	ASSERT_TRUE(model.GetColumns(root) == 1);
 }
@@ -424,7 +426,7 @@ TEST_F(FileSystemModelTest1, RemoveColumns4)
 /**
  * test RemoveColumns() method
  *
- * Insert 5 rows into an empty model, and try to remove 3 columns at 0, this remove all data
+ * Insert 3 rows into an empty model, and try to remove 6 columns at 0, this remove all data
  *
  * Expected result:
  *
@@ -437,7 +439,7 @@ TEST_F(FileSystemModelTest1, RemoveColumns5)
 	ModelIndex root = model.GetRootIndex();
 	model.InsertRows(0, 3, root);
 
-	model.RemoveColumns(0, 3, root);
+	model.RemoveColumns(0, 6, root);
 
 #ifdef DEBUG
 	model.Print();
@@ -449,7 +451,7 @@ TEST_F(FileSystemModelTest1, RemoveColumns5)
 /**
  * test RemoveColumns() method
  *
- * Insert 5 rows into an empty model, and try to remove 4 columns at 0, this remove all data
+ * Insert 3 rows into an empty model, and try to remove 7 columns at 0, this remove all data
  *
  * Expected result:
  *
@@ -462,11 +464,88 @@ TEST_F(FileSystemModelTest1, RemoveColumns6)
 	ModelIndex root = model.GetRootIndex();
 	model.InsertRows(0, 3, root);
 
-	model.RemoveColumns(0, 4, root);
+	model.RemoveColumns(0, 7, root);
 
 #ifdef DEBUG
 	model.Print();
 #endif
 
 	ASSERT_TRUE((model.GetColumns(root) == 0) && (model.GetRows(root) == 0));
+}
+
+/**
+ * test Load() method
+ *
+ * Load file list in a given path
+ *
+ * Expected result:
+ *
+ * 	see print
+ */
+TEST_F(FileSystemModelTest1, Load1)
+{
+	FileSystemModel model;
+
+	ModelIndex root = model.GetRootIndex();
+	model.Load(".");
+
+#ifdef DEBUG
+	model.Print();
+#endif
+
+	ASSERT_TRUE(model.GetColumns(root) == 5);
+}
+
+/**
+ * test GetIndex() method
+ *
+ * Load file list in a given path, use GetIndex to check the index data
+ *
+ * Expected result:
+ *
+ * 	see print
+ */
+TEST_F(FileSystemModelTest1, GetIndex1)
+{
+	FileSystemModel model;
+
+	ModelIndex root = model.GetRootIndex();
+
+	model.Load(".");
+
+	ModelIndex index = model.GetIndex(0, 0, root);
+
+	while(index.IsValid()) {
+		DBG_PRINT_MSG("%s", ConvertFromString(*index.GetData()).c_str());
+		index = index.GetDownIndex();
+	}
+
+	ASSERT_TRUE(model.GetColumns(root) == 5);
+}
+
+/**
+ * test GetIndex() method
+ *
+ * Load file list in a given path, use GetIndex to check the index data
+ *
+ * Expected result:
+ *
+ * 	see print
+ */
+TEST_F(FileSystemModelTest1, GetIndex2)
+{
+	FileSystemModel model;
+
+	ModelIndex root = model.GetRootIndex();
+
+	model.Load(".");
+
+	ModelIndex index = model.GetIndex(3, 0, root);
+
+	while(index.IsValid()) {
+		DBG_PRINT_MSG("%s", ConvertFromString(*index.GetData()).c_str());
+		index = index.GetRightIndex();
+	}
+
+	ASSERT_TRUE(model.GetColumns(root) == 5);
 }

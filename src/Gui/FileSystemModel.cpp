@@ -21,6 +21,10 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef DEBUG
+#include <iostream>
+#endif	// DEBUG
+
 #include <BlendInt/Gui/FileSystemModel.hpp>
 
 namespace BlendInt {
@@ -28,7 +32,7 @@ namespace BlendInt {
 	FileSystemModel::FileSystemModel()
 	: AbstractItemModel(),
 	  rows_(0),
-	  columns_(3),	// temporary value
+	  columns_(DefaultColumns),	// temporary value
 	  root_(0)
 	{
 		root_ = new ModelNode;
@@ -37,8 +41,7 @@ namespace BlendInt {
 
 	FileSystemModel::~FileSystemModel()
 	{
-		ClearAllChildNodes ();
-
+		Clear();
 		delete root_;
 	}
 
@@ -49,30 +52,110 @@ namespace BlendInt {
 
 		path_ = fs::path(pathname);
 		fs::file_status status;
-		//char buf[32];
+		char buf[32];
 
 		try {
-			if (fs::exists(path_)) {
+			if (fs::exists(path_) && fs::is_directory(path_)) {
 
-				if (fs::is_directory(path_)) {
+				Clear();
+				assert(root_->child == 0);
 
-					fs::directory_iterator it(path_);
-					fs::directory_iterator it_end;
-					while (it != it_end) {
+				ModelNode* first = 0;
+				ModelNode* tmp = 0;
 
-						status = fs::status(it->path());
+				int i = 0, j = 0;
+				fs::directory_iterator it(path_);
+				fs::directory_iterator it_end;
+				while (it != it_end) {
 
-						it++;
+					j = 0;
+
+					status = fs::status(it->path());
+
+					if(first == 0) {
+						first = new ModelNode;
+						first->parent = root_;
+						root_->child = first;
+						assert(first->up == 0);
+					} else {
+						first->down = new ModelNode;
+						first->down->up = first;
+						first = first->down;
 					}
 
-					is_path = true;
+					assert(first->left == 0);
+					first->data = String(it->path().filename().native());
+					j++;
+
+					tmp = first;
+
+					std::time_t time = fs::last_write_time(it->path());
+					std::string time_str = std::asctime(std::localtime(&time));
+					time_str.erase(time_str.size() - 1, 1);	// remove the '\n' char
+					tmp->right = new ModelNode;
+					tmp->right->data = String(time_str);
+					tmp->right->left = tmp->right;
+					tmp = tmp->right;
+					j++;
+
+					tmp->right = new ModelNode;
+					tmp->right->data = String(fs::is_directory(it->path())? "d" : "-");
+					tmp->right->left = tmp->right;
+					tmp = tmp->right;
+					j++;
+
+					if(fs::is_regular(it->path())) {
+						snprintf(buf, 32, "%ld", fs::file_size(it->path()));
+					} else {
+						snprintf(buf, 32, " ");
+					}
+					tmp->right = new ModelNode;
+					tmp->right->data = String(buf);
+					tmp->right->left = tmp->right;
+					tmp = tmp->right;
+					j++;
+
+					snprintf(buf, 32, "%o", status.permissions());
+					tmp->right = new ModelNode;
+					tmp->right->data = String(buf);
+					tmp->right->left = tmp->right;
+					j++;
+
+					it++;
+					i++;
 				}
+
+				DBG_PRINT_MSG("ROWS: %d", i);
+				assert(j == DefaultColumns);
+
+				rows_ = i;
+				columns_ = DefaultColumns;
+
+				is_path = true;
 			}
 		} catch (const fs::filesystem_error& ex) {
 			std::cerr << ex.what() << std::endl;
 		}
 
 		return is_path;
+	}
+
+	void FileSystemModel::Clear ()
+	{
+		if(root_->child) {
+			ModelNode* node = root_->child;
+			ModelNode* tmp = 0;
+
+			while(node) {
+				tmp = node->down;
+				DestroyRow(node);
+				node = tmp;
+			}
+
+			root_->child = 0;
+			rows_ = 0;
+			columns_ = DefaultColumns;
+		}
 	}
 
 	int FileSystemModel::GetRows (const ModelIndex& parent) const
@@ -147,9 +230,9 @@ namespace BlendInt {
 			return true;
 		}
 
-		int max = column + count + 1;
-		if(max > columns_) {
-			count = max - columns_;
+		int max = column + count;
+		if(max > (columns_ - 1)) {
+			count = count + columns_ - max;
 		}
 
 		columns_ -= count;
@@ -164,6 +247,10 @@ namespace BlendInt {
 
 		assert(count > 0);
 		assert(row >= 0);
+
+		if(columns_ == 0) {
+			columns_ = DefaultColumns;
+		}
 
 		ModelNode* node = GetIndexNode(parent);
 
@@ -372,30 +459,25 @@ namespace BlendInt {
 		}
 
 		ModelNode* tmp = first;
+
+		int i = 0;
 		while (tmp) {
-			DBG_PRINT_MSG("%s", ConvertFromString(tmp->data).c_str());
+			if(i == 0) {
+				assert(tmp->left == 0);
+			} else {
+				assert(tmp->up == 0);
+				assert(tmp->down == 0);
+			}
+
+			std::cout << ConvertFromString(tmp->data).c_str() << " ";
 			tmp = tmp->right;
+
+			i++;
 		}
+		std::cout << std::endl;
 	}
 
 #endif	// DEBUG
-
-	void FileSystemModel::ClearAllChildNodes()
-	{
-		ModelNode* node = root_->child;
-
-		if(node) {
-
-			ModelNode* next = 0;
-			while (node) {
-				next = node->down;
-				DestroyRow(node);
-				node = next;
-			}
-
-			root_->child = 0;
-		}
-	}
 
 	void FileSystemModel::DestroyRow (ModelNode* node)
 	{

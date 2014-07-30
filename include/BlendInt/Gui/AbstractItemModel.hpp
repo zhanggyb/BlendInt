@@ -47,7 +47,7 @@ namespace BlendInt {
 
 		~ModelNode ()
 		{
-			DBG_PRINT_MSG("Delete node: %s", ConvertFromString(data).c_str());
+			// DBG_PRINT_MSG("Delete node: %s", ConvertFromString(data).c_str());
 		}
 
 		ModelNode* parent;
@@ -75,6 +75,8 @@ namespace BlendInt {
 
 		int GetColumn () const;
 
+		const String* GetData () const;
+
 		ModelIndex GetRootIndex () const;
 
 		ModelIndex GetParentIndex () const;
@@ -101,7 +103,7 @@ namespace BlendInt {
 
 		friend class AbstractItemModel;
 
-		ModelNode* m_node;
+		ModelNode* node_;
 	};
 
 	class AbstractItemModel: public Object

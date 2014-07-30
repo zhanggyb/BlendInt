@@ -56,6 +56,8 @@ namespace BlendInt {
 		 */
 		bool Load (const std::string& pathname);
 
+		void Clear ();
+
 		virtual int GetRows (const ModelIndex& parent = ModelIndex()) const;
 
 		virtual int GetColumns (const ModelIndex& parent = ModelIndex()) const;
@@ -89,8 +91,6 @@ namespace BlendInt {
 
 	private:
 
-		void ClearAllChildNodes ();
-
 		void InsertColumns (int column, int count, ModelNode* left);
 
 		void DestroyColumnsInRow (int column, int count, ModelNode* node);
@@ -106,6 +106,8 @@ namespace BlendInt {
 		int columns_;
 
 		ModelNode* root_;
+
+		static const int DefaultColumns = 5;
 
 	};
 

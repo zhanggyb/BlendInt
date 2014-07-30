@@ -30,10 +30,9 @@ int main(int argc, char* argv[])
 	*/
 
 	FileSystemModel model;
-	ModelIndex root = model.GetRootIndex();
-	model.InsertRows(0, 2, root);
-	//model.RemoveRows(0, 3, root);
-	model.InsertColumns(0, 2, root);
+
+	model.Load(".");
+
 #ifdef DEBUG
 	model.Print();
 #endif
