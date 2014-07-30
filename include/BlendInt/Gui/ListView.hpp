@@ -55,6 +55,8 @@ namespace BlendInt {
 
 		virtual bool IsExpandY () const;
 
+		virtual Size GetPreferredSize () const;
+
 		virtual ModelIndex GetIndexAt (const Point& point) const;
 
 	protected:
@@ -85,9 +87,11 @@ namespace BlendInt {
 
 		void InitializeListView ();
 
-		GLuint m_vao;
+		Font font_;
 
-		RefPtr<GLArrayBuffer> m_inner;
+		GLuint vao_;
+
+		RefPtr<GLArrayBuffer> inner_;
 
 	};
 

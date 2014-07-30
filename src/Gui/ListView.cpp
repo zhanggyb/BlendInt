@@ -48,7 +48,7 @@ namespace BlendInt {
 
 	ListView::ListView ()
 	: AbstractItemView(),
-	  m_vao(0)
+	  vao_(0)
 	{
 		set_size(400, 300);
 		set_drop_shadow(true);
@@ -60,7 +60,7 @@ namespace BlendInt {
 
 	ListView::~ListView ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	bool ListView::IsExpandX () const
@@ -71,6 +71,13 @@ namespace BlendInt {
 	bool ListView::IsExpandY () const
 	{
 		return true;
+	}
+
+	Size ListView::GetPreferredSize () const
+	{
+		Size preferred_size(400, 300);
+
+		return preferred_size;
 	}
 
 	ResponseType ListView::Draw (const RedrawEvent& event)
@@ -85,13 +92,38 @@ namespace BlendInt {
 		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f,
 				0.447f, 0.447f, 1.f);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
 		program->Reset();
 
-		DispatchDrawEvent(hbar(), event);
+		if(model()) {
+
+			glEnable(GL_SCISSOR_TEST);
+			glScissor(position().x(),
+					position().y(),
+					size().width(),
+					size().height());
+
+			ModelIndex index = model()->GetRootIndex();
+			index = index.GetChildIndex(0, 0);
+
+			int h = position().y() + size().height();
+
+			while(index.IsValid()) {
+
+				h -= font_.GetHeight();
+				font_.Print(position().x(), h, *index.GetData());
+
+				index = index.GetDownIndex();
+			}
+
+			glDisable(GL_SCISSOR_TEST);
+
+		}
+
+        DispatchDrawEvent(hbar(), event);
 		DispatchDrawEvent(vbar(), event);
 
 		return Accept;
@@ -184,22 +216,22 @@ namespace BlendInt {
 
 	void ListView::InitializeListView ()
 	{
-		glGenVertexArrays(1, &m_vao);
+		glGenVertexArrays(1, &vao_);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		VertexTool tool;
 		tool.Setup(size(), 0, RoundNone, 0);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		m_inner->Reset();
+		inner_->Reset();
 	}
 
 }

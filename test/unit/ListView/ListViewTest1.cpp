@@ -1,5 +1,6 @@
 #include "ListViewTest1.hpp"
 #include <BlendInt/Gui/ListView.hpp>
+#include <BlendInt/Gui/FileSystemModel.hpp>
 
 using namespace BlendInt;
 
@@ -23,7 +24,7 @@ TEST_F(ListViewTest1, Foo1)
 {
 	Init ();
 
-    GLFWwindow* win = CreateWindow("ListView - Foo1");
+    GLFWwindow* win = CreateWindow("ListView - Foo1", 640, 480);
 
     // TODO: add test code here
 	Context* context = Manage(new Context);
@@ -32,6 +33,10 @@ TEST_F(ListViewTest1, Foo1)
 
 	ListView* list = Manage(new ListView);
 	list->SetPosition(100, 100);
+
+	RefPtr<FileSystemModel> model(new FileSystemModel);
+	model->Load(".");
+	list->SetModel(model);
 
 	context->PushBack(list);
 
