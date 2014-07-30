@@ -27,9 +27,7 @@ TEST_F(LabelTest1, Foo1)
 
     // TODO: add test code here
 	Context* context = Manage(new Context);
-#ifdef DEBUG
-	context->set_name("Context");
-#endif
+	DBG_SET_NAME(context, "Context");
 	Interface::instance->SetCurrentContext(context);
 
 	Font my_font ("Droid Sans Mono", 24);

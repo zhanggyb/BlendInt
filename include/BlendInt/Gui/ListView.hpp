@@ -51,6 +51,10 @@ namespace BlendInt {
 
 		virtual ~ListView();
 
+		virtual bool IsExpandX () const;
+
+		virtual bool IsExpandY () const;
+
 		virtual ModelIndex GetIndexAt (const Point& point) const;
 
 	protected:

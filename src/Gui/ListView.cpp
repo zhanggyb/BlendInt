@@ -63,6 +63,16 @@ namespace BlendInt {
 		glDeleteVertexArrays(1, &m_vao);
 	}
 
+	bool ListView::IsExpandX () const
+	{
+		return true;
+	}
+
+	bool ListView::IsExpandY () const
+	{
+		return true;
+	}
+
 	ResponseType ListView::Draw (const RedrawEvent& event)
 	{
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
@@ -84,7 +94,7 @@ namespace BlendInt {
 		DispatchDrawEvent(hbar(), event);
 		DispatchDrawEvent(vbar(), event);
 
-		return Ignore;
+		return Accept;
 	}
 
 	ResponseType ListView::FocusEvent (bool focus)
@@ -122,7 +132,7 @@ namespace BlendInt {
 			return DispatchMousePressEvent(vbar(), event);
 		}
 
-		return Ignore;
+		return Accept;
 	}
 
 	ResponseType ListView::MouseReleaseEvent (const MouseEvent& event)
@@ -133,7 +143,7 @@ namespace BlendInt {
 			return DispatchMouseReleaseEvent(vbar(), event);
 		}
 
-		return Ignore;
+		return Accept;
 	}
 
 	ModelIndex ListView::GetIndexAt (const Point& point) const
@@ -149,7 +159,7 @@ namespace BlendInt {
 			return DispatchMouseMoveEvent(vbar(), event);
 		}
 
-		return Ignore;
+		return Accept;
 	}
 
 	void ListView::PerformPositionUpdate (const PositionUpdateRequest& request)
