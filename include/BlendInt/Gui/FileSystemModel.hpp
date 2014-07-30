@@ -91,9 +91,9 @@ namespace BlendInt {
 
 		void ClearAllChildNodes ();
 
-		ModelNode* InsertColumns (int column, int count, ModelNode* left);
+		void InsertColumns (int column, int count, ModelNode* left);
 
-		ModelNode* RemoveColumnInRow (int column, int count, ModelNode* node);
+		void DestroyColumnsInRow (int column, int count, ModelNode* node);
 
 		static void DestroyRow (ModelNode* node);
 

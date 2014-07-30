@@ -320,3 +320,153 @@ TEST_F(FileSystemModelTest1, RemoveRows4)
 
 	ASSERT_TRUE(model.GetRows(root) == 5);
 }
+
+/**
+ * test RemoveColumns() method
+ *
+ * Insert 3 rows into an empty model, and try to remove 1 columns at 0
+ *
+ * Expected result:
+ *
+ * 	column count is 2
+ */
+TEST_F(FileSystemModelTest1, RemoveColumns1)
+{
+	FileSystemModel model;
+
+	ModelIndex root = model.GetRootIndex();
+	model.InsertRows(0, 3, root);
+
+	model.RemoveColumns(0, 1, root);
+
+#ifdef DEBUG
+	model.Print();
+#endif
+
+	ASSERT_TRUE(model.GetColumns(root) == 2);
+}
+
+/**
+ * test RemoveColumns() method
+ *
+ * Insert 5 rows into an empty model, and try to remove 1 columns at 1
+ *
+ * Expected result:
+ *
+ * 	column count is 2
+ */
+TEST_F(FileSystemModelTest1, RemoveColumns2)
+{
+	FileSystemModel model;
+
+	ModelIndex root = model.GetRootIndex();
+	model.InsertRows(0, 3, root);
+
+	model.RemoveColumns(1, 1, root);
+
+#ifdef DEBUG
+	model.Print();
+#endif
+
+	ASSERT_TRUE(model.GetColumns(root) == 2);
+}
+
+/**
+ * test RemoveColumns() method
+ *
+ * Insert 5 rows into an empty model, and try to remove 1 columns at 2
+ *
+ * Expected result:
+ *
+ * 	column count is 2
+ */
+TEST_F(FileSystemModelTest1, RemoveColumns3)
+{
+	FileSystemModel model;
+
+	ModelIndex root = model.GetRootIndex();
+	model.InsertRows(0, 3, root);
+
+	model.RemoveColumns(2, 1, root);
+
+#ifdef DEBUG
+	model.Print();
+#endif
+
+	ASSERT_TRUE(model.GetColumns(root) == 2);
+}
+
+/**
+ * test RemoveColumns() method
+ *
+ * Insert 5 rows into an empty model, and try to remove 3 columns at 1
+ *
+ * Expected result:
+ *
+ * 	column count is 1
+ */
+TEST_F(FileSystemModelTest1, RemoveColumns4)
+{
+	FileSystemModel model;
+
+	ModelIndex root = model.GetRootIndex();
+	model.InsertRows(0, 3, root);
+
+	model.RemoveColumns(1, 3, root);
+
+#ifdef DEBUG
+	model.Print();
+#endif
+
+	ASSERT_TRUE(model.GetColumns(root) == 1);
+}
+
+/**
+ * test RemoveColumns() method
+ *
+ * Insert 5 rows into an empty model, and try to remove 3 columns at 0, this remove all data
+ *
+ * Expected result:
+ *
+ * 	column count is 0
+ */
+TEST_F(FileSystemModelTest1, RemoveColumns5)
+{
+	FileSystemModel model;
+
+	ModelIndex root = model.GetRootIndex();
+	model.InsertRows(0, 3, root);
+
+	model.RemoveColumns(0, 3, root);
+
+#ifdef DEBUG
+	model.Print();
+#endif
+
+	ASSERT_TRUE((model.GetColumns(root) == 0) && (model.GetRows(root) == 0));
+}
+
+/**
+ * test RemoveColumns() method
+ *
+ * Insert 5 rows into an empty model, and try to remove 4 columns at 0, this remove all data
+ *
+ * Expected result:
+ *
+ * 	column count is 0
+ */
+TEST_F(FileSystemModelTest1, RemoveColumns6)
+{
+	FileSystemModel model;
+
+	ModelIndex root = model.GetRootIndex();
+	model.InsertRows(0, 3, root);
+
+	model.RemoveColumns(0, 4, root);
+
+#ifdef DEBUG
+	model.Print();
+#endif
+
+	ASSERT_TRUE((model.GetColumns(root) == 0) && (model.GetRows(root) == 0));
+}

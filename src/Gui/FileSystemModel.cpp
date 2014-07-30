@@ -107,9 +107,11 @@ namespace BlendInt {
 
 		assert(node->up == 0);
 
+		ModelNode* next = 0;
 		while(node) {
-			node = InsertColumns (column, count, node);
-			node = node->down;
+			next = node->down;
+			InsertColumns (column, count, node);
+			node = next;
 		}
 
 		columns_ += count;
@@ -131,10 +133,26 @@ namespace BlendInt {
 
 		assert(node->up == 0);
 
+		ModelNode* next = 0;
 		while (node) {
-			node = RemoveColumnInRow(column, count, node);
-			node = node->down;
+			next = node->down;
+			DestroyColumnsInRow(column, count, node);
+			node = next;
 		}
+
+		if((column == 0) && (count == columns_)) {
+			// remove all data
+			rows_ = 0;
+			columns_ = 0;
+			return true;
+		}
+
+		int max = column + count + 1;
+		if(max > columns_) {
+			count = max - columns_;
+		}
+
+		columns_ -= count;
 
 		return true;
 	}
@@ -329,6 +347,7 @@ namespace BlendInt {
 
 	void FileSystemModel::Print ()
 	{
+		DBG_PRINT_MSG("%s", "Print all data: ");
 		ModelNode* node = root()->child;
 
 		int i = 0;
@@ -396,7 +415,7 @@ namespace BlendInt {
 		}
 	}
 
-	ModelNode* FileSystemModel::InsertColumns (int column, int count, ModelNode* node)
+	void FileSystemModel::InsertColumns (int column, int count, ModelNode* node)
 	{
 		assert(node);
 		assert(node->left == 0);
@@ -451,7 +470,6 @@ namespace BlendInt {
 				tmp->down = 0;
 
 				assert(first->left == 0);
-				return first;
 			} else {
 
 				tmp->left->right = first;
@@ -459,26 +477,104 @@ namespace BlendInt {
 				last->right = tmp;
 				tmp->left = last;
 
-				return node;
 			}
 		} else {	// too large row given, append to tail
 			tmp->right = first;
 			first->left = tmp;
-
-			return node;
 		}
 	}
 
-	ModelNode* FileSystemModel::RemoveColumnInRow (int column, int count,
+	void FileSystemModel::DestroyColumnsInRow (int column, int count,
 	        ModelNode* node)
 	{
 		assert(node);
+		assert(node->left == 0);
 
-		//ModelNode* first = 0;
-		//ModelNode* last = 0;
-		//ModelNode* tmp = 0;
+		if(node->child) {
+			DestroyColumnsInRow(column, count, node->child);
+			node->child = 0;
+		}
 
-		return node;
+		while(node->right && (column > 0)) {
+			node = node->right;
+			column--;
+		}
+
+		if(column == 0) {
+
+			ModelNode* up = node->up;
+			ModelNode* down = node->down;
+			ModelNode* parent = node->parent;
+			ModelNode* tmp = 0;
+
+			if (node->left == 0) {	// the first column in this model
+
+				if (parent) {	// debug
+					assert(up == 0);
+				}
+
+				for (int i = 0; i < count; i++) {
+					tmp = node->right;
+					delete node;
+					node = tmp;
+
+					if (node == 0)
+						break;
+				}
+
+				if (node) {
+					node->up = up;
+					node->down = down;
+					node->left = 0;
+
+					if (up)
+						up->down = node;
+
+					if (down)
+						down->up = node;
+
+					node->parent = parent;	// mostly is 0
+					if(parent) {
+						parent->child = node;
+					}
+
+				} else {	// remove the whole row
+
+					if (up)
+						up->down = down;
+
+					if (down) {
+						down->parent = parent;
+						down->up = up;
+					}
+
+					if(parent) {
+						parent->child = down;
+					}
+
+				}
+
+			} else {
+
+				ModelNode* first = node->left;
+				ModelNode* tmp = 0;
+
+				for (int i = 0; i < count; i++) {
+					tmp = node->right;
+					delete node;
+					node = tmp;
+
+					if (node == 0)
+						break;
+				}
+
+				first->right = node;
+
+				if(node) {	// remove columns in the middle
+					node->left = first;
+				}
+			}
+		}
 	}
 
 	void FileSystemModel::DestroyColumn (ModelNode* node)
