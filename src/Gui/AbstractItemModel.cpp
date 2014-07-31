@@ -27,6 +27,11 @@
 
 namespace BlendInt {
 
+	bool operator == (const ModelIndex& src, const ModelIndex& dst)
+	{
+		return src.node_ == dst.node_;
+	}
+
 	ModelIndex::ModelIndex ()
 	: node_(0)
 	{
@@ -329,4 +334,3 @@ namespace BlendInt {
 	}
 
 }
-

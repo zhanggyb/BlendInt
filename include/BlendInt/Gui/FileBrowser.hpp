@@ -34,7 +34,7 @@
 namespace BlendInt {
 
 	/**
-	 * @brief A special list view to show files in a directory
+	 * @brief A special item view to show files in a directory
 	 */
 	class FileBrowser: public AbstractItemView
 	{
@@ -53,7 +53,7 @@ namespace BlendInt {
 
 		bool Load (const std::string& pathname);
 
-		const std::string& file_selected () const
+		const String& file_selected () const
 		{
 			return file_selected_;
 		}
@@ -64,6 +64,10 @@ namespace BlendInt {
 
 		virtual const RefPtr<AbstractItemModel> GetModel () const;
 
+		/**
+		 * @brief Set the model used in this item view
+		 * @param model A RefPtr to a item model, must be FileSystemModel
+		 */
 		virtual void SetModel (const RefPtr<AbstractItemModel>& model);
 
 		virtual ModelIndex GetIndexAt (const Point& point) const;
@@ -72,15 +76,15 @@ namespace BlendInt {
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
+
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseReleaseEvent (const MouseEvent& event);
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 	private:
 
@@ -96,9 +100,11 @@ namespace BlendInt {
 
 		RefPtr<GLArrayBuffer> inner_;
 
-		std::string file_selected_;
+		String file_selected_;
 
 		RefPtr<FileSystemModel> model_;
+
+		int highlight_index_;
 	};
 
 }

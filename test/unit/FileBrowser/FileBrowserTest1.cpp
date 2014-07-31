@@ -31,6 +31,7 @@ TEST_F(FileBrowserTest1, Foo1)
 
 	FileBrowser* fb = Manage(new FileBrowser);
 	fb->SetPosition(100, 100);
+	fb->Load(getenv("HOME"));
 	
 	context->PushBack(fb);
 

@@ -70,7 +70,7 @@ private:
 
 	BI::Viewport3D* m_view3d;
 
-	BI::ListView* m_browser;;
+	BI::FileBrowser* m_browser;;
 
 	BI::Button* m_open_button;
 

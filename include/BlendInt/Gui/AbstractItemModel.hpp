@@ -32,6 +32,9 @@
 namespace BlendInt {
 
 	class AbstractItemModel;
+	class ModelIndex;
+
+	extern bool operator == (const ModelIndex& src, const ModelIndex& dst);
 
 	struct ModelNode
 	{
@@ -81,7 +84,7 @@ namespace BlendInt {
 
 		ModelIndex GetParentIndex () const;
 
-		ModelIndex GetChildIndex (int row, int column) const;
+		ModelIndex GetChildIndex (int row = 0, int column = 0) const;
 
 		ModelIndex GetLeftIndex () const;
 
@@ -102,6 +105,7 @@ namespace BlendInt {
 	private:
 
 		friend class AbstractItemModel;
+		friend bool operator == (const ModelIndex& src, const ModelIndex& dst);
 
 		ModelNode* node_;
 	};

@@ -35,6 +35,84 @@
 
 namespace BlendInt {
 
+	void ScissorCropShape::Crop ()
+	{
+		glEnable (GL_SCISSOR_TEST);
+		glScissor(area().x(), area().y(), area().width(), area().height());
+	}
+
+	void ScissorCropShape::Reset ()
+	{
+		glDisable (GL_SCISSOR_TEST);
+	}
+
+	void CropStack::Push (const Rect& area)
+	{
+		Push(area.x(), area.y(), area.width(), area.height());
+	}
+
+	void CropStack::Push (int x, int y, int w, int h)
+	{
+		int xmax = x + w;
+		int ymax = y + h;
+
+		int top_xmax = xmax;
+		int top_ymax = ymax;
+		int new_x = x;
+		int new_y = y;
+
+		if(stack_.size()) {
+			new_x = std::max(x, stack_.top()->area().x());
+			new_y = std::max(y, stack_.top()->area().y());
+			top_xmax = stack_.top()->area().x() + stack_.top()->area().width();
+			top_ymax = stack_.top()->area().y() + stack_.top()->area().height();
+		}
+
+		int new_width = std::min(xmax, top_xmax) - new_x;
+		int new_height = std::min(ymax, top_ymax) - new_y;
+
+		if(new_width < 0)
+			new_width = 0;
+
+		if(new_height < 0)
+			new_height = 0;
+
+		ScissorCropShape* p = new ScissorCropShape(new_x, new_y, new_width, new_height);
+		stack_.push(p);
+
+		p->Crop();
+	}
+
+	void CropStack::Push (const Point& pos, const Size& size, int round_type,
+			float radius)
+	{
+		// TODO use stencil for crop
+	}
+
+	void CropStack::Pop ()
+	{
+		if(stack_.size()) {
+			AbstractCropShape* p = stack_.top();
+			stack_.pop();
+			delete p;
+			p = 0;
+
+			if(stack_.size()) {
+				p = stack_.top();
+				p->Crop();
+			}
+		}
+	}
+
+	AbstractCropShape* CropStack::GetCurrent () const
+	{
+		if(stack_.size()) {
+			return stack_.top();
+		} else {
+			return 0;
+		}
+	}
+
 	ScissorStatus::ScissorStatus ()
 	{
 	}
@@ -104,4 +182,3 @@ namespace BlendInt {
 	}
 
 }
-
