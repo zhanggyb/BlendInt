@@ -70,17 +70,17 @@ namespace BlendInt {
 
 		const Font& font () const
 		{
-			return m_font;
+			return font_;
 		}
 
 		void set_foreground_color (const Color& fg)
 		{
-			m_font.set_color(fg);
+			font_.set_color(fg);
 		}
 
 		void set_background_color (const Color& color)
 		{
-			m_background_color = color;
+			background_color_ = color;
 		}
 
 		virtual Size GetPreferredSize () const;
@@ -122,21 +122,21 @@ namespace BlendInt {
 		 *
 		 * new line character is not allowed
 		 */
-		String m_text;
+		String text_;
 
 		/**
 		 * @brief the text string length to be printed
 		 */
-		size_t m_text_length;
+		size_t text_length_;
 
-		Font m_font;
+		Font font_;
 
 		/** Background color, default: transparent */
-		Color m_background_color;
+		Color background_color_;
 
-		GLuint m_vao;
+		GLuint vao_;
 
-		RefPtr<GLArrayBuffer> m_rect;
+		RefPtr<GLArrayBuffer> rect_;
 	};
 
 } /* namespace BlendInt */

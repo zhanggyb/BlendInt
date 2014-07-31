@@ -48,7 +48,7 @@ namespace BlendInt {
 
 		void set_background (const Color& color)
 		{
-			m_background = color;
+			background_ = color;
 		}
 
 	protected:
@@ -83,16 +83,16 @@ namespace BlendInt {
 
 		void InitializeClock ();
 
-		GLuint m_vao[2];
+		GLuint vao_[2];
 
-		RefPtr<GLArrayBuffer> m_inner;
-		RefPtr<GLArrayBuffer> m_outer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 
-		int m_angle;
+		int angle_;
 
-		RefPtr<Timer> m_timer;
+		RefPtr<Timer> timer_;
 
-		Color m_background;
+		Color background_;
 	};
 
 }

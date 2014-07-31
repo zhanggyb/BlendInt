@@ -24,7 +24,7 @@ TEST_F(FreetypeTest1, Library1)
 	lib.Initialize();
 	lib.SetLcdFilter(FT_LCD_FILTER_DEFAULT);
 
-	face.New(lib, "/usr/share/fonts/truetype/droid/DroidSansMono.ttf");
+	face.New(lib, "/usr/share/fonts/adobe-source-han-sans/SourceHanSansCN-Normal.otf");
 	face.SetCharSize(24 << 6, 0, 96, 0);
 
 	FT_GlyphSlot slot = face.face()->glyph;

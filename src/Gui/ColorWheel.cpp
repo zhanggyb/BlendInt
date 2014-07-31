@@ -52,7 +52,7 @@ namespace BlendInt {
 	
 	ColorWheel::~ColorWheel ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vaos_);
 	}
 
 	bool ColorWheel::IsExpandX () const
@@ -85,12 +85,12 @@ namespace BlendInt {
 		program->SetUniform1i("u_gamma", 0);
 		program->SetUniform1i("u_AA", 0);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
 		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
 		program->SetUniform1i("u_AA", 1);
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 
 		glBindVertexArray(0);
@@ -99,7 +99,7 @@ namespace BlendInt {
 
 		//glm::mat4 icon_mvp;
 		//icon_mvp = glm::translate(mvp, glm::vec3(8.f, 12.f, 0.f));
-		m_picker.Draw(glm::vec3(position().x() + size().width() / 2.f + 8.f, position().y() + 12.f, 0.f));
+		picker_.Draw(glm::vec3(position().x() + size().width() / 2.f + 8.f, position().y() + 12.f, 0.f));
 
 		return Accept;
 	}
@@ -110,9 +110,9 @@ namespace BlendInt {
 
 			int radius = std::min(request.size()->width(), request.size()->height()) / 2;
 
-			m_inner->Bind();
+			inner_->Bind();
 
-			GLfloat* ptr = (GLfloat*) m_inner->Map(GL_READ_WRITE);
+			GLfloat* ptr = (GLfloat*) inner_->Map(GL_READ_WRITE);
 
 			double rad = 0.0;
 			float x1 = 0.f;
@@ -139,12 +139,12 @@ namespace BlendInt {
 			*(ptr) = x1;
 			*(ptr + 1) = y1;
 
-			m_inner->Unmap();
-			m_inner->Reset();
+			inner_->Unmap();
+			inner_->Reset();
 
-			m_outline->Bind();
+			outer_->Bind();
 
-			ptr = (GLfloat*) m_outline->Map(GL_READ_WRITE);
+			ptr = (GLfloat*) outer_->Map(GL_READ_WRITE);
 			float x2 = 0.f;
 			float y2 = 0.f;
 
@@ -176,8 +176,8 @@ namespace BlendInt {
 			*(ptr + 2) = x2;
 			*(ptr + 3) = y2;
 
-			m_outline->Unmap();
-			m_outline->Reset();
+			outer_->Unmap();
+			outer_->Reset();
 
 			set_size(*request.size());
 		}
@@ -358,22 +358,22 @@ namespace BlendInt {
 
 	void ColorWheel::InitializeColorWheel ()
 	{
-		m_picker.Resize(3);
+		picker_.Resize(3);
 
 		std::vector<GLfloat> inner_vertices;
 		std::vector<GLfloat> outer_vertices;
 
 		GenerateWheelVertices(80, inner_vertices, outer_vertices);
 
-		glGenVertexArrays(2, m_vao);
+		glGenVertexArrays(2, vaos_);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vaos_[0]);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
 
-		m_inner->Bind();
-		m_inner->SetData(sizeof(GLfloat) * inner_vertices.size(), &inner_vertices[0], GL_STATIC_DRAW);
+		inner_->Bind();
+		inner_->SetData(sizeof(GLfloat) * inner_vertices.size(), &inner_vertices[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
@@ -381,12 +381,12 @@ namespace BlendInt {
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
 		glVertexAttribPointer(1, 4,	GL_FLOAT, GL_FALSE,	sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vaos_[1]);
 
-		m_outline.reset(new GLArrayBuffer);
-		m_outline->Generate();
-		m_outline->Bind();
-		m_outline->SetData(sizeof(GLfloat) * outer_vertices.size(), &outer_vertices[0], GL_STATIC_DRAW);
+		outer_.reset(new GLArrayBuffer);
+		outer_->Generate();
+		outer_->Bind();
+		outer_->SetData(sizeof(GLfloat) * outer_vertices.size(), &outer_vertices[0], GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));

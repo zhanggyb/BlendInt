@@ -35,71 +35,48 @@ namespace BlendInt {
 	using Stock::Shaders;
 
 	FileBrowser::FileBrowser ()
-	: AbstractScrollable(), m_vao(0)
+	: AbstractItemView(),
+	  vao_(0),
+	  highlight_index_(-1)
 	{
 		set_drop_shadow(true);
 		set_size(400, 300);
 
 		InitializeFileBrowserOnce();
-
-		hbar()->SetVisible(false);
-		vbar()->SetVisible(false);
-
-		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
-
-		events()->connect(hbar_moved(), this, &FileBrowser::OnHBarSlide);
-		events()->connect(vbar_moved(), this, &FileBrowser::OnVBarSlide);
 	}
 
 	FileBrowser::~FileBrowser ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
-	bool FileBrowser::Open (const std::string& pathname)
+	bool FileBrowser::Load (const std::string& pathname)
 	{
-		namespace fs = boost::filesystem;
-		bool is_path = false;
-		int height = 0;
-		int row_height = m_font.GetHeight();
+		assert(model_);
 
-		m_path = fs::path(pathname);
+		bool retval = false;
 
-		try {
-			if (fs::exists(m_path)) {
+		retval = model_->Load(pathname);
 
-				if (fs::is_directory(m_path)) {
+		if(retval) {
+			int h = font_.GetHeight();
+			h = model_->GetRows() * h;	// total height
 
-					int count = 0;
-					fs::directory_iterator it(m_path);
-					fs::directory_iterator end;
-					while (it != end) {
-						count++;
-						it++;
-					}
-
-					height = (count + 2) * row_height;	// count "." and ".."
-
-					is_path = true;
-				}
+			if(h > size().height()) {
+				vbar()->SetVisible(true);
+				vbar()->SetMaximum(h);
+				vbar()->SetMinimum(size().height());
+				vbar()->SetSliderPercentage(size().height() * 100 / h);
+			} else {
+				vbar()->SetVisible(false);
 			}
-		} catch (const fs::filesystem_error& ex) {
-			std::cerr << ex.what() << std::endl;
+			hbar()->SetVisible(false);
+
+			AdjustScrollBarGeometries(position().x(), position().y(),
+					size().width(), size().height());
 		}
 
-		if(height > size().height()) {
-
-			vbar()->SetVisible(true);
-			vbar()->SetSliderPercentage(size().height() * 100 / height);
-			vbar()->SetMaximum(height);
-			vbar()->SetMinimum(size().height());
-
-		} else {
-			vbar()->SetVisible(false);
-		}
-
-		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
-		return is_path;
+		return retval;
 	}
 
 	bool FileBrowser::IsExpandX() const
@@ -112,99 +89,175 @@ namespace BlendInt {
 		return true;
 	}
 
+	const RefPtr<AbstractItemModel> FileBrowser::GetModel () const
+	{
+		return model_;
+	}
+
+	void FileBrowser::SetModel (const RefPtr<AbstractItemModel>& model)
+	{
+		RefPtr<FileSystemModel> fs_model = RefPtr<FileSystemModel>::cast_dynamic(model);
+
+		if(fs_model) {
+			model_ = fs_model;
+		} else {
+			DBG_PRINT_MSG("Error: %s", "FileBrowser only accept FileSystemModel");
+		}
+	}
+
+	ModelIndex FileBrowser::GetIndexAt (const Point& point) const
+	{
+		ModelIndex index;
+
+		int rows = model_->GetRows();
+
+		if(rows > 0) {
+			int h = font_.GetHeight();	// the row height
+			int total = rows * h;
+
+			int i = 0;
+			if(total > size().height()) {
+				i = position().y() + vbar()->value() - point.y();
+			} else {	// no vbar
+				i = position().y() + size().height() - point.y();
+			}
+
+			i = i / h;
+
+			index = model_->GetRootIndex();
+
+			index = index.GetChildIndex(0, 0);
+			while((i > 0) && index.IsValid()) {
+				index = index.GetDownIndex();
+				i--;
+			}
+		}
+
+		return index;
+	}
+
 	ResponseType FileBrowser::Draw (const RedrawEvent& event)
 	{
-		namespace fs = boost::filesystem;
+		int y = position().y() + size().height();
 
-        glEnable(GL_SCISSOR_TEST);
-        glScissor(position().x(),
-        		position().y(),
-        		size().width(),
-                size().height());
+		if(vbar()->visiable()) {
+			y = position().y() + vbar()->value();
+		}
 
-		glm::vec3 pos((float) position().x(), (float) position().y(), 0.f);
+		int h = font_.GetHeight();
 
-		int row_height = m_font.GetHeight();
-		pos.y += size().height();
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(position().x(),
+				position().y(),
+				size().width(),
+				size().height());
 
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.475f, 0.475f, 0.475f, 0.75f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.475f,
+				0.475f, 0.475f, 0.75f);
 
-		// draw background
-		unsigned int i = 0;
-		while (pos.y > position().y()) {
+		glBindVertexArray(vao_);
 
-			pos.y -= row_height;
+		int i = 0;
+		while(y > position().y()) {
+			y -= h;
 
-			glUniform3fv(Shaders::instance->triangle_uniform_position(), 1, glm::value_ptr(pos));
+			glUniform3f(Shaders::instance->triangle_uniform_position(),
+					(float) position().x(), (float) y, 0.f);
 
-			if (i == m_index) {
-				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 25);
+			if(i == highlight_index_) {
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), -35);
 			} else {
-				if (i % 2 == 0) {
+				if(i % 2 == 0) {
 					glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 				} else {
 					glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
 				}
 			}
 
-			glBindVertexArray(m_vao);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			glBindVertexArray(0);
-
 			i++;
 		}
 
+		glBindVertexArray(0);
 		program->Reset();
 
-		if(m_path.empty()) return Accept;
+		if(GetModel()) {
 
-		pos.x += 4;	// move 4 right
-		pos.y = position().y() + size().height();
+			ModelIndex index = GetModel()->GetRootIndex();
+			index = index.GetChildIndex(0, 0);
 
-		pos.y -= row_height;
-		m_font.Print(pos.x, pos.y - m_font.GetDescender(), String("."));
-
-		pos.y -= row_height;
-		m_font.Print(pos.x, pos.y - m_font.GetDescender(), String(".."));
-
-		pos.y -= row_height;
-		try {
-			if (fs::exists(m_path)) {
-
-				if (fs::is_regular_file(m_path)) {
-
-					m_font.Print(pos.x, pos.y - m_font.GetDescender(),
-							m_path.native());
-
-				} else if (fs::is_directory(m_path)) {
-
-					fs::directory_iterator end_it;
-					fs::directory_iterator it(m_path);
-
-					while (it != end_it) {
-
-						m_font.Print(pos.x, pos.y - m_font.GetDescender(),
-										it->path().filename().native());
-
-						pos.y -= row_height;
-						it++;
-					}
-				}
+			y = position().y() + size().height();
+			if(vbar()->visiable()) {
+				y = position().y() + vbar()->value();
 			}
-		} catch (const fs::filesystem_error& ex) {
-			DBG_PRINT_MSG("Error: %s", ex.what());
+
+			while(index.IsValid()) {
+
+				y -= h;
+				font_.Print(position().x(), y, *index.GetData());
+
+				index = index.GetDownIndex();
+			}
+
 		}
 
-        glDisable(GL_SCISSOR_TEST);
-
         DispatchDrawEvent(hbar(), event);
-        DispatchDrawEvent(vbar(), event);
+		DispatchDrawEvent(vbar(), event);
+
+		glDisable(GL_SCISSOR_TEST);
 
 		return Accept;
+	}
+
+	void FileBrowser::PerformPositionUpdate (
+	        const PositionUpdateRequest& request)
+	{
+		if(request.target() == this) {
+			AdjustScrollBarGeometries(request.position()->x(), request.position()->y(), size().width(), size().height());
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void FileBrowser::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		namespace fs = boost::filesystem;
+
+		if(request.target() == this) {
+
+			int h = font_.GetHeight();
+			GLfloat verts[] = {
+					0.f, 0.f,
+					(GLfloat)request.size()->width(), 0.f,
+					0.f, (GLfloat)h,
+					(GLfloat)request.size()->width(), (GLfloat)h
+			};
+
+			inner_->Bind();
+			inner_->SetData(sizeof(verts), verts);
+			inner_->Reset();
+
+			h = model_->GetRows() * h;	// total height
+
+			if(h > request.size()->height()) {
+				vbar()->SetVisible(true);
+				vbar()->SetMaximum(h);
+				vbar()->SetMinimum(request.size()->height());
+				vbar()->SetSliderPercentage(request.size()->height() * 100 / h);
+			} else {
+				vbar()->SetVisible(false);
+			}
+			hbar()->SetVisible(false);
+
+			AdjustScrollBarGeometries(position().x(), position().y(),
+					request.size()->width(), request.size()->height());
+		}
+
+		ReportSizeUpdate(request);
 	}
 
 	ResponseType FileBrowser::MousePressEvent (const MouseEvent& event)
@@ -215,61 +268,42 @@ namespace BlendInt {
 			return DispatchMousePressEvent(vbar(), event);
 		}
 
-		namespace fs = boost::filesystem;
+		ModelIndex index;
 
-		unsigned int index;
-		bool valid = GetHighlightIndex(event.position().y(), &index);
+		int rows = model_->GetRows();
 
-		if(valid) {
-			m_index = index;
+		if(rows > 0) {
+			int h = font_.GetHeight();	// the row height
+			int total = rows * h;
 
-			if(m_index == 1){	// ".." pressed
-				fs::path parent = m_path.parent_path();
-
-				if(fs::is_directory(parent)) {
-					DBG_PRINT_MSG("%s", "parent path");
-					//m_path = parent;
-				}
-
-				m_file_selected.clear();
-			} else if (m_index >= 2) {
-
-				unsigned int i = 2;
-				try {
-					if (fs::exists(m_path)) {
-
-						if (fs::is_directory(m_path)) {
-
-							fs::directory_iterator it(m_path);
-							fs::directory_iterator it_end;
-							while (it != it_end) {
-								if (i == m_index)
-									break;
-								i++;
-								it++;
-							}
-
-							if(fs::is_regular(it->path())) {
-								DBG_PRINT_MSG("file %s selected", it->path().native().c_str());
-								m_file_selected = it->path().string();
-							} else {
-								m_file_selected.clear();
-
-								if (fs::is_directory(it->path())) {
-									DBG_PRINT_MSG("path %s selected", it->path().native().c_str());
-									//m_path = it->path();
-								}
-
-							}
-
-						}
-					}
-				} catch (const fs::filesystem_error& ex) {
-					std::cerr << ex.what() << std::endl;
-				}
+			int i = 0;
+			if(total > size().height()) {
+				i = position().y() + vbar()->value() - event.position().y();
+			} else {	// no vbar
+				i = position().y() + size().height() - event.position().y();
 			}
 
-			Refresh();
+			i = i / h;
+			highlight_index_ = i;
+
+			index = model_->GetRootIndex().GetChildIndex();
+			while((i > 0) && index.IsValid()) {
+				index = index.GetDownIndex();
+				i--;
+			}
+
+			if(!index.IsValid()) {
+				highlight_index_ = -1;
+			}
+		}
+
+		DBG_PRINT_MSG("highlight index: %d", highlight_index_);
+
+		if(index.IsValid()) {
+			file_selected_ = *index.GetData();
+			DBG_PRINT_MSG("index item: %s", ConvertFromString(file_selected_).c_str());
+		} else {
+			file_selected_.clear();
 		}
 
 		return Accept;
@@ -284,16 +318,6 @@ namespace BlendInt {
 		}
 
 		return Accept;
-	}
-
-	void FileBrowser::PerformPositionUpdate (
-	        const PositionUpdateRequest& request)
-	{
-		if(request.target() == this) {
-			AdjustScrollBarGeometries(request.position()->x(), request.position()->y(), size().width(), size().height());
-		}
-
-		ReportPositionUpdate(request);
 	}
 
 	ResponseType FileBrowser::MouseMoveEvent (const MouseEvent& event)
@@ -311,70 +335,9 @@ namespace BlendInt {
 		return Accept;
 	}
 
-	void FileBrowser::PerformSizeUpdate (const SizeUpdateRequest& request)
-	{
-		namespace fs = boost::filesystem;
-
-		if(request.target() == this) {
-
-			int row_height = m_font.GetHeight();
-
-			GLfloat verts[] = {
-							0.f, 0.f,
-							(GLfloat)request.size()->width(), 0.f,
-							0.f, (GLfloat)row_height,
-							(GLfloat)request.size()->width(), (GLfloat)row_height
-			};
-
-			m_row->Bind();
-			m_row->SetData(sizeof(verts), verts);
-			m_row->Reset();
-
-			int height = 0;
-			try {
-				if (fs::exists(m_path)) {
-
-					if (fs::is_directory(m_path)) {
-
-						int count = 0;
-						fs::directory_iterator it(m_path);
-						fs::directory_iterator end;
-						while (it != end) {
-							count++;
-							it++;
-						}
-
-						height = (count + 2) * row_height;	// count "." and ".."
-
-					}
-				}
-			} catch (const fs::filesystem_error& ex) {
-				std::cerr << ex.what() << std::endl;
-			}
-
-			if(height > request.size()->height()) {
-
-				vbar()->SetVisible(true);
-				vbar()->SetSliderPercentage(request.size()->height() * 100 / height);
-				vbar()->SetMaximum(height);
-				vbar()->SetMinimum(request.size()->height());
-
-				DBG_PRINT_MSG("percentage: %d", request.size()->height() * 100 / height);
-
-			} else {
-				vbar()->SetVisible(false);
-			}
-
-			AdjustScrollBarGeometries(position().x(), position().y(), request.size()->width(), request.size()->height());
-
-		}
-
-		ReportSizeUpdate(request);
-	}
-
 	void FileBrowser::InitializeFileBrowserOnce ()
 	{
-		GLfloat row_height = (GLfloat)m_font.GetHeight();
+		GLfloat row_height = (GLfloat)font_.GetHeight();
 		GLfloat verts[] = {
 						0.f, 0.f,
 						(GLfloat)size().width(), 0.f,
@@ -382,76 +345,38 @@ namespace BlendInt {
 						(GLfloat)size().width(), row_height
 		};
 
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
-		m_row.reset(new GLArrayBuffer);
-		m_row->Generate();
-		m_row->Bind();
-		m_row->SetData(sizeof(verts), verts);
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		inner_->SetData(sizeof(verts), verts);
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
-		m_row->Reset();
+		inner_->Reset();
 
-		m_font.set_color(Color(0xF0F0F0FF));
-	}
+		font_.set_color(Color(0xF0F0F0FF));
+		font_.set_pen(font_.pen().x() + 4, std::abs(font_.GetDescender()));
 
-	bool FileBrowser::GetHighlightIndex(int y, unsigned int* index)
-	{
-		namespace fs = boost::filesystem;
-		bool ret = false;
+		model_.reset(new FileSystemModel);
 
-		if(m_path.empty()) return ret;
+		Load(getenv("PWD"));
 
-		int h = position().y() + size().height() - y;
-
-		unsigned int count = 0;
-		try {
-			if (fs::exists(m_path)) {
-
-				if (fs::is_directory(m_path)) {
-
-					fs::directory_iterator it(m_path);
-					fs::directory_iterator it_end;
-					while (it != it_end) {
-						count++;
-						it++;
-					}
-
-				} else {
-					count = 1;
-				}
-
-			}
-		} catch (const fs::filesystem_error& ex) {
-			std::cerr << ex.what() << std::endl;
-		}
-
-		count += 2;	// for "." and ".."
-		unsigned int out = 0;
-		unsigned cell_height = m_font.GetHeight();
-		out = h / cell_height;
-
-		if (out >= count) {
-			out = 0;
-		} else {
-			ret = true;
-		}
-
-		*index = out;
-		return ret;
+		events()->connect(hbar_moved(), this, &FileBrowser::OnHBarSlide);
+		events()->connect(vbar_moved(), this, &FileBrowser::OnVBarSlide);
 	}
 
 	void FileBrowser::OnHBarSlide (int val)
 	{
-		DBG_PRINT_MSG("val: %d", val);
+		//DBG_PRINT_MSG("val: %d", val);
 	}
 
 	void FileBrowser::OnVBarSlide (int val)
 	{
-		DBG_PRINT_MSG("val: %d", val);
+		//DBG_PRINT_MSG("val: %d", val);
 	}
 
 }

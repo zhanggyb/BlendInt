@@ -128,11 +128,11 @@ namespace BlendInt {
 
 		void OnToggled (bool toggle);
 
-		GLuint m_vao;
+		GLuint vao_;
 
-		int m_frame_height;
+		int frame_height_;
 
-		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> inner_;
 	};
 
 }

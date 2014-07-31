@@ -41,7 +41,7 @@ namespace BlendInt {
 	public:
 
 #ifdef __LINUX__
-		Font (const std::string& name = std::string("Ubuntu"),
+		Font (const std::string& name = std::string("Sans"),
 						unsigned int size = 12,
 						int flag = 0);
 #endif

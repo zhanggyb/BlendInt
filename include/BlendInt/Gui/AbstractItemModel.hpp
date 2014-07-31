@@ -32,6 +32,9 @@
 namespace BlendInt {
 
 	class AbstractItemModel;
+	class ModelIndex;
+
+	extern bool operator == (const ModelIndex& src, const ModelIndex& dst);
 
 	struct ModelNode
 	{
@@ -47,7 +50,7 @@ namespace BlendInt {
 
 		~ModelNode ()
 		{
-			DBG_PRINT_MSG("Delete node: %s", ConvertFromString(data).c_str());
+			// DBG_PRINT_MSG("Delete node: %s", ConvertFromString(data).c_str());
 		}
 
 		ModelNode* parent;
@@ -75,11 +78,13 @@ namespace BlendInt {
 
 		int GetColumn () const;
 
+		const String* GetData () const;	// Use String temporarily
+
 		ModelIndex GetRootIndex () const;
 
 		ModelIndex GetParentIndex () const;
 
-		ModelIndex GetChildIndex (int row, int column) const;
+		ModelIndex GetChildIndex (int row = 0, int column = 0) const;
 
 		ModelIndex GetLeftIndex () const;
 
@@ -100,8 +105,9 @@ namespace BlendInt {
 	private:
 
 		friend class AbstractItemModel;
+		friend bool operator == (const ModelIndex& src, const ModelIndex& dst);
 
-		ModelNode* m_node;
+		ModelNode* node_;
 	};
 
 	class AbstractItemModel: public Object

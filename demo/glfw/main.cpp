@@ -7,13 +7,10 @@
 #include "GLFWDemoContext.hpp"
 #include "Window.hpp"
 
-using namespace BlendInt;
-using namespace std;
-
-namespace BI = BlendInt;
-
 int main(int argc, char* argv[])
 {
+	using namespace BlendInt;
+
 	BLENDINT_EVENTS_INIT_ONCE_IN_MAIN;
 
 	Init();
@@ -26,9 +23,7 @@ int main(int argc, char* argv[])
 	context->Resize(1280, 800);
 
 	RunLoop(win);
-
 	Interface::Release();
-
 	Terminate();
 
 	return 0;

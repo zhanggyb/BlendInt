@@ -26,11 +26,20 @@
 
 #include <boost/filesystem.hpp>
 
-#include <BlendInt/Gui/ListModel.hpp>
+#include <BlendInt/Gui/AbstractItemModel.hpp>
 
 namespace BlendInt {
 
-	class FileSystemModel: public ListModel
+	/**
+	 * @brief A data model based on boost::filesystem for the local file system
+	 *
+	 * This data model contains 6 columns by default:
+	 * <Name> - <Type> - <Owner> - <Group> - <Permissions> - <Last write time>
+	 *
+	 * The default constructor does nothing, use Load() to load and store a file
+	 * list in a path.
+	 */
+	class FileSystemModel: public AbstractItemModel
 	{
 	public:
 
@@ -38,11 +47,67 @@ namespace BlendInt {
 
 		virtual ~FileSystemModel ();
 
+		/**
+		 * @brief List files in a path
+		 * @param pathname The path name
+		 * @return
+		 * 	- true success
+		 * 	- false failure
+		 */
 		bool Load (const std::string& pathname);
+
+		void Clear ();
+
+		virtual int GetRows (const ModelIndex& parent = ModelIndex()) const;
+
+		virtual int GetColumns (const ModelIndex& parent = ModelIndex()) const;
+
+		virtual bool InsertColumns (int column, int count, const ModelIndex& parent = ModelIndex());
+
+		virtual bool RemoveColumns (int column, int count, const ModelIndex& parent = ModelIndex());
+
+		virtual bool InsertRows (int row, int count, const ModelIndex& parent = ModelIndex());
+
+		virtual bool RemoveRows (int row, int count, const ModelIndex& parent = ModelIndex());
+
+		virtual ModelIndex GetRootIndex () const;
+
+		virtual ModelIndex GetIndex (int row, int column, const ModelIndex& parent = ModelIndex()) const;
+
+#ifdef DEBUG
+
+		void Print ();
+
+		void PrintRow (ModelNode* first);
+
+#endif	// DEBUG
+
+	protected:
+
+		const ModelNode* root () const
+		{
+			return root_;
+		}
 
 	private:
 
-		boost::filesystem::path m_path;
+		void InsertColumns (int column, int count, ModelNode* left);
+
+		void DestroyColumnsInRow (int column, int count, ModelNode* node);
+
+		static void DestroyRow (ModelNode* node);
+
+		static void DestroyColumn (ModelNode* node);
+
+		boost::filesystem::path path_;
+
+		int rows_;
+
+		int columns_;
+
+		ModelNode* root_;
+
+		static const int DefaultColumns = 5;
 
 	};
 

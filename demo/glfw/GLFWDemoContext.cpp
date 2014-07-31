@@ -22,7 +22,6 @@ void GLFWDemoContext::Initialize ()
 {
 	using namespace BI;
 
-	/*
 	m_view3d = Manage(new Viewport3D);
 	m_view3d->SetPosition(20, 100);
 	m_view3d->Resize(800, 600);
@@ -37,21 +36,7 @@ void GLFWDemoContext::Initialize ()
 	PushBack(m_open_button);
 	m_open_button->SetPosition(900, 200);
 
-	m_browser->Open(getenv("PWD"));
 	events()->connect(m_open_button->clicked(), this, &GLFWDemoContext::OnOpenObjFile);
-	*/
-
-	ScrollBar* sb = Manage(new ScrollBar);
-
-	sb->SetPosition(200, 200);
-	sb->SetSliderPercentage(50);
-	sb->SetValue(50);
-
-	PushBack(sb);
-
-	int perc = sb->GetSliderPercentage();
-	sb->Resize(400, sb->size().height());
-	sb->SetSliderPercentage(perc);
 }
 
 void GLFWDemoContext::OnOpenObjFile()
@@ -59,12 +44,13 @@ void GLFWDemoContext::OnOpenObjFile()
 	using namespace BI;
 
 	if(m_browser->file_selected().empty()) return;
+	std::string filename = ConvertFromString(m_browser->file_selected());
 
-	DBG_PRINT_MSG("Load file: %s", m_browser->file_selected().c_str());
+	DBG_PRINT_MSG("Load file: %s", filename.c_str());
 
 	RefPtr<Mesh> monkey(new Mesh);
 
-	if(monkey->Load(m_browser->file_selected().c_str())) {
+	if(monkey->Load(filename.c_str())) {
 		m_view3d->PushBack(monkey);
 	}
 }

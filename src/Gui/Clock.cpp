@@ -45,14 +45,14 @@
 namespace BlendInt {
 
 	Clock::Clock()
-	: AbstractWidget(), m_angle(0), m_timer(0)
+	: AbstractWidget(), angle_(0), timer_(0)
 	{
 		InitializeClock();
 	}
 
 	Clock::~Clock ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vao_);
 	}
 
 	ResponseType Clock::Draw(const RedrawEvent& event)
@@ -71,13 +71,13 @@ namespace BlendInt {
 
 		program->SetVertexAttrib4f("a_color", 0.75f, 0.95f, 0.75f, 1.f);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 72 + 2);
 
 		program->SetVertexAttrib4fv("a_color", Theme::instance->regular().outline.data());
 		program->SetUniform1i("u_AA", 1);
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vao_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 72 * 2 + 2);
 
 		glBindVertexArray(0);
@@ -89,9 +89,9 @@ namespace BlendInt {
 
 	void Clock::UpdateClockHands()
 	{
-		m_angle = m_angle + 6;
-		if(m_angle > 360) {
-			m_angle = m_angle % 360;
+		angle_ = angle_ + 6;
+		if(angle_ > 360) {
+			angle_ = angle_ % 360;
 		}
 
 		Refresh();
@@ -107,10 +107,10 @@ namespace BlendInt {
 			std::vector<GLfloat> outer_verts;
 			GenerateClockVertices(160, 1.f, inner_verts, outer_verts);
 
-			m_inner->Bind();
-			m_inner->SetData(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
-			m_outer->Bind();
-			m_outer->SetData(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+			inner_->Bind();
+			inner_->SetData(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+			outer_->Bind();
+			outer_->SetData(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 			GLArrayBuffer::Reset();
 
 			set_size(*request.size());
@@ -230,24 +230,24 @@ namespace BlendInt {
 
 		GenerateClockVertices(80, 1.f, inner_verts, outer_verts);
 
-		glGenVertexArrays(2, m_vao);
+		glGenVertexArrays(2, vao_);
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vao_[0]);
 
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		m_inner->SetData(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		inner_->SetData(sizeof(GLfloat) * inner_verts.size(), &inner_verts[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vao_[1]);
 
-		m_outer.reset(new GLArrayBuffer);
-		m_outer->Generate();
-		m_outer->Bind();
-		m_outer->SetData(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
+		outer_.reset(new GLArrayBuffer);
+		outer_->Generate();
+		outer_->Bind();
+		outer_->SetData(sizeof(GLfloat) * outer_verts.size(), &outer_verts[0]);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
@@ -255,11 +255,11 @@ namespace BlendInt {
 		glBindVertexArray(0);
 		GLArrayBuffer::Reset();
 
-		m_timer.reset(new Timer);
-		m_timer->SetInterval(1000);
+		timer_.reset(new Timer);
+		timer_->SetInterval(1000);
 
-		events()->connect(m_timer->timeout(), this, &Clock::UpdateClockHands);
-		m_timer->Start();
+		events()->connect(timer_->timeout(), this, &Clock::UpdateClockHands);
+		timer_->Start();
 	}
 
 }

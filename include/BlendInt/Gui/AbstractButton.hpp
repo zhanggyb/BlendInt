@@ -62,9 +62,9 @@ namespace BlendInt {
 
 		bool checkable () const {return m_status[ButtonCheckable];}
 
-		Cpp::EventRef<> clicked() {return m_clicked;}
+		Cpp::EventRef<> clicked() {return clicked_;}
 
-		Cpp::EventRef<bool> toggled() {return m_toggled;}
+		Cpp::EventRef<bool> toggled() {return toggled_;}
 
 		bool pressed () const {return m_status[ButtonPressed];}
 
@@ -74,11 +74,11 @@ namespace BlendInt {
 
 		void SetFont (const Font& font);
 
-		const String& text () const {return m_text;}
+		const String& text () const {return text_;}
 
-		size_t text_length () const {return m_text_length;}
+		size_t text_length () const {return text_length_;}
 
-		const Font& font () const {return m_font;}
+		const Font& font () const {return font_;}
 
 		static const Margin& DefaultButtonPadding ()
 		{
@@ -124,22 +124,22 @@ namespace BlendInt {
 
 		inline void set_text (const String& text)
 		{
-			m_text = text;
+			text_ = text;
 		}
 
 		inline void set_font (const Font& font)
 		{
-			m_font = font;
+			font_ = font;
 		}
 
 		void set_text_length (size_t length)
 		{
-			m_text_length = length;
+			text_length_ = length;
 		}
 
 		void set_pen (int x, int y)
 		{
-			m_font.set_pen(x, y);
+			font_.set_pen(x, y);
 		}
 
 		size_t GetValidTextSize (const Size& size, const String& text, const Font& font);
@@ -156,31 +156,31 @@ namespace BlendInt {
 
 		std::bitset<8> m_status;
 
-		size_t m_text_length;	// How many text to be printed, depends on the button size
+		size_t text_length_;	// How many text to be printed, depends on the button size
 
 		// TextBuffer text_;
-		String m_text;
+		String text_;
 
-		Font m_font;
+		Font font_;
 
 		/**
 		 * @brief press event
 		 */
-		Cpp::Event<> m_pressed;
+		Cpp::Event<> pressed_;
 
 		/**
 		 * @brief release event
 		 */
-		Cpp::Event<> m_released;
+		Cpp::Event<> released_;
 
 		/**
 		 * @brief click event
 		 *
 		 * Mouse press and release in the button causes a clicked event.
 		 */
-		Cpp::Event<> m_clicked;
+		Cpp::Event<> clicked_;
 
-		Cpp::Event<bool> m_toggled;
+		Cpp::Event<bool> toggled_;
 
 		static Margin default_button_padding;
 

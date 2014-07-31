@@ -76,11 +76,11 @@ namespace BlendInt {
 
 		int GetLastPosition () const;
 
-		GLuint m_vao;
+		GLuint vao_;
 
-		int m_space;
+		int space_;
 
-		RefPtr<GLArrayBuffer> m_inner;
+		RefPtr<GLArrayBuffer> inner_;
 
 	};
 

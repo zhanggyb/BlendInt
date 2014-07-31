@@ -21,53 +21,26 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_LISTVIEW_HPP_
-#define _BLENDINT_GUI_LISTVIEW_HPP_
+#ifndef _BLENDINT_GUI_TREEVIEW_HPP_
+#define _BLENDINT_GUI_TREEVIEW_HPP_
 
-#include <BlendInt/Gui/AbstractScrollable.hpp>
 #include <BlendInt/Gui/AbstractItemView.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief ListView provides a list or icon view onto a model
-	 *
-	 * The ListView provides a list or icon view onto a model.
-	 *
-	 * A ListView presents items stored in a model, either as a simple
-	 * non-hierarchical list, or as a collection of icons.
-	 *
-	 * ListView is a subclass of AbstractScrollable, so it contains 2
-	 * native ScrollBar object and will be displayed automatically
-	 * when the widget cannot show all contents of the list.
-	 */
-	class ListView: public AbstractItemView
+	class TreeView: public AbstractItemView
 	{
-		DISALLOW_COPY_AND_ASSIGN(ListView);
+		DISALLOW_COPY_AND_ASSIGN(TreeView);
 
 	public:
 
-		ListView ();
+		TreeView ();
 
-		virtual ~ListView();
-
-		virtual bool IsExpandX () const;
-
-		virtual bool IsExpandY () const;
-
-		virtual Size GetPreferredSize () const;
-
-		virtual const RefPtr<AbstractItemModel> GetModel () const;
-
-		virtual void SetModel (const RefPtr<AbstractItemModel>& model);
+		virtual ~TreeView ();
 
 		virtual ModelIndex GetIndexAt (const Point& point) const;
 
 	protected:
-
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType Draw (const RedrawEvent& event);
 
@@ -77,9 +50,11 @@ namespace BlendInt {
 
 		virtual ResponseType KeyPressEvent (const KeyEvent& event);
 
-		virtual ResponseType ContextMenuPressEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuPressEvent (
+				const ContextMenuEvent& event);
 
-		virtual ResponseType ContextMenuReleaseEvent (const ContextMenuEvent& event);
+		virtual ResponseType ContextMenuReleaseEvent (
+				const ContextMenuEvent& event);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
@@ -89,19 +64,7 @@ namespace BlendInt {
 
 	private:
 
-		void InitializeListView ();
-
-		Font font_;
-
-		// 0 for inner buffer
-		// 1 for row_ background
-		GLuint vao_;
-
-		RefPtr<GLArrayBuffer> inner_;
-
-		RefPtr<AbstractItemModel> model_;
 	};
-
 }
 
-#endif /* _BLENDINT_GUI_LISTVIEW_HPP_ */
+#endif /* _BLENDINT_GUI_TREEVIEW_HPP_ */

@@ -21,24 +21,139 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
+#ifdef __UNIX__
+#ifdef __APPLE__
+#include <gl3.h>
+#include <glext.h>
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif  // __UNIX__
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+
+#include <BlendInt/OpenGL/GLFramebuffer.hpp>
+
+#include <BlendInt/Gui/VertexTool.hpp>
+#include <BlendInt/Stock/Theme.hpp>
+#include <BlendInt/Stock/Shaders.hpp>
+
 #include <BlendInt/Gui/ListView.hpp>
 
 namespace BlendInt {
 
+	using Stock::Shaders;
+
 	ListView::ListView ()
-	: AbstractScrollable()
+	: AbstractItemView(),
+	  vao_(0)
 	{
 		set_size(400, 300);
+		set_drop_shadow(true);
 
+		InitializeListView();
+
+		AdjustScrollBarGeometries(position().x(), position().y(), size().width(), size().height());
 	}
 
 	ListView::~ListView ()
 	{
+		glDeleteVertexArrays(1, &vao_);
+	}
+
+	bool ListView::IsExpandX () const
+	{
+		return true;
+	}
+
+	bool ListView::IsExpandY () const
+	{
+		return true;
+	}
+
+	const RefPtr<AbstractItemModel> ListView::GetModel () const
+	{
+		return model_;
+	}
+
+	void ListView::SetModel (const RefPtr<AbstractItemModel>& model)
+	{
+		model_ = model;
+	}
+
+	Size ListView::GetPreferredSize () const
+	{
+		Size preferred_size(400, 300);
+
+		return preferred_size;
 	}
 
 	ResponseType ListView::Draw (const RedrawEvent& event)
 	{
-		return Ignore;
+		int y = position().y() + size().height();
+		int h = font_.GetHeight();
+
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(position().x(),
+				position().y(),
+				size().width(),
+				size().height());
+
+		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
+		program->Use();
+
+		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.475f,
+				0.475f, 0.475f, 0.75f);
+
+		glBindVertexArray(vao_);
+
+		int i = 0;
+		while(y > position().y()) {
+			y -= h;
+
+			glUniform3f(Shaders::instance->triangle_uniform_position(),
+					(float) position().x(), (float) y, 0.f);
+
+			if(i % 2 == 0) {
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+			} else {
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
+			}
+
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			i++;
+		}
+
+		glBindVertexArray(0);
+
+		program->Reset();
+
+		if(GetModel()) {
+
+			ModelIndex index = GetModel()->GetRootIndex();
+			index = index.GetChildIndex(0, 0);
+
+			y = position().y() + size().height();
+
+			while(index.IsValid()) {
+
+				y -= h;
+				font_.Print(position().x(), y, *index.GetData());
+
+				index = index.GetDownIndex();
+			}
+
+		}
+
+        DispatchDrawEvent(hbar(), event);
+		DispatchDrawEvent(vbar(), event);
+
+		glDisable(GL_SCISSOR_TEST);
+
+		return Accept;
 	}
 
 	ResponseType ListView::FocusEvent (bool focus)
@@ -70,17 +185,103 @@ namespace BlendInt {
 
 	ResponseType ListView::MousePressEvent (const MouseEvent& event)
 	{
-		return Ignore;
+		if (hbar()->visiable() && hbar()->Contain(event.position())) {
+			return DispatchMousePressEvent(hbar(), event);
+		} else if (vbar()->visiable() && vbar()->Contain(event.position())) {
+			return DispatchMousePressEvent(vbar(), event);
+		}
+
+		return Accept;
 	}
 
 	ResponseType ListView::MouseReleaseEvent (const MouseEvent& event)
 	{
-		return Ignore;
+		if(hbar()->pressed()) {
+			return DispatchMouseReleaseEvent(hbar(), event);
+		} else if (vbar()->pressed()) {
+			return DispatchMouseReleaseEvent(vbar(), event);
+		}
+
+		return Accept;
+	}
+
+	ModelIndex ListView::GetIndexAt (const Point& point) const
+	{
+		return ModelIndex();
 	}
 
 	ResponseType ListView::MouseMoveEvent (const MouseEvent& event)
 	{
-		return Ignore;
+		if(hbar()->pressed()) {
+			return DispatchMouseMoveEvent(hbar(), event);
+		} else if (vbar()->pressed()) {
+			return DispatchMouseMoveEvent(vbar(), event);
+		}
+
+		return Accept;
+	}
+
+	void ListView::PerformPositionUpdate (const PositionUpdateRequest& request)
+	{
+		if (request.target() == this) {
+			AdjustScrollBarGeometries(request.position()->x(),
+					request.position()->y(), size().width(), size().height());
+		}
+
+		ReportPositionUpdate(request);
+	}
+
+	void ListView::PerformSizeUpdate (const SizeUpdateRequest& request)
+	{
+		if (request.target() == this) {
+
+			GLfloat h = font_.GetHeight();
+			GLfloat verts[] = {
+					0.f, 0.f,
+					(GLfloat)request.size()->width(), 0.f,
+					0.f, h,
+					(GLfloat)request.size()->width(), h
+			};
+
+			inner_->Bind();
+			inner_->SetData(sizeof(verts), verts);
+			inner_->Reset();
+
+			AdjustScrollBarGeometries(position().x(), position().y(),
+					request.size()->width(), request.size()->height());
+		}
+
+		ReportSizeUpdate(request);
+	}
+
+	void ListView::InitializeListView ()
+	{
+		GLfloat h = (GLfloat)font_.GetHeight();
+		GLfloat verts[] = {
+				0.f, 0.f,
+				(GLfloat)size().width(), 0.f,
+				0.f, h,
+				(GLfloat)size().width(), h
+		};
+
+		glGenVertexArrays(1, &vao_);
+
+		glBindVertexArray(vao_);
+		VertexTool tool;
+		tool.Setup(size(), 0, RoundNone, 0);
+
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		inner_->SetData(sizeof(verts), verts);
+
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,	GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+		inner_->Reset();
+
+		font_.set_pen(font_.pen().x() + 4, std::abs(font_.GetDescender()));
 	}
 
 }

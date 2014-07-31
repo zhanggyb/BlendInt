@@ -48,6 +48,7 @@
 #include <BlendInt/Gui/NodeView.hpp>
 #include <BlendInt/Gui/ProgressBar.hpp>
 #include <BlendInt/Gui/Workspace.hpp>
+#include <BlendInt/Gui/ListView.hpp>
 
 #include <BlendInt/Gui/Context.hpp>
 

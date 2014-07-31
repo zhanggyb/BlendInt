@@ -21,50 +21,19 @@
  * Contributor(s): Freeman Zhang <zhanggyb@gmail.com>
  */
 
-#ifndef _BLENDINT_GUI_CIRCULARPICKER_HPP_
-#define _BLENDINT_GUI_CIRCULARPICKER_HPP_
-
-#include <BlendInt/Gui/AbstractRoundForm.hpp>
-#include <BlendInt/OpenGL/GLArrayBuffer.hpp>
+#include <BlendInt/Gui/AbstractItemView.hpp>
 
 namespace BlendInt {
 
-	/**
-	 * @brief Dot icon used in ColorWheel or BrightnessSlider
-	 */
-	class CircularPicker: public AbstractRoundForm
+	AbstractItemView::AbstractItemView ()
+		: AbstractScrollable()
 	{
-	public:
+		
+	}
 
-		/**
-		 * @brief Default constructor
-		 */
-		CircularPicker ();
+	AbstractItemView::~AbstractItemView ()
+	{
 
-		/**
-		 * @brief Constructor
-		 */
-		virtual ~CircularPicker ();
-
-		void Resize (unsigned int radius);
-
-		/**
-		 * @brief Draw the icon
-		 */
-		virtual void Draw (const glm::vec3& pos, short gamma = 0);
-
-	protected:
-
-		virtual void UpdateGeometry (const UpdateRequest& request);
-
-	private:
-
-		GLuint vao_;
-
-		RefPtr<GLArrayBuffer> inner_;
-		RefPtr<GLArrayBuffer> outer_;
-	};
+	}
 
 }
-
-#endif /* _BLENDINT_GUI_CIRCULARPICKER_HPP_ */

@@ -52,11 +52,11 @@ namespace BlendInt {
 
 	ComboBox::ComboBox ()
 	: AbstractWidget(),
-	  m_status_down(false)
+	  status_down_(false)
 	{
 		set_round_type(RoundAll);
 
-		int h = m_font.GetHeight();
+		int h = font_.GetHeight();
 
 		set_size(
 		        h + round_radius() * 2 + default_combobox_padding.hsum() + 100,
@@ -67,7 +67,7 @@ namespace BlendInt {
 
 	ComboBox::~ComboBox ()
 	{
-		glDeleteVertexArrays(2, m_vao);
+		glDeleteVertexArrays(2, vaos_);
 	}
 
 	Size ComboBox::GetPreferredSize () const
@@ -84,16 +84,16 @@ namespace BlendInt {
 			radius_plus += round_radius();
 		}
 
-		int max_font_height = m_font.GetHeight();
+		int max_font_height = font_.GetHeight();
 
 		preferred_size.set_height(max_font_height + default_combobox_padding.vsum());	// top padding: 2, bottom padding: 2
 
-		if (m_text.empty()) {
+		if (text_.empty()) {
 			preferred_size.set_width(
 							max_font_height + default_combobox_padding.hsum()
 											+ radius_plus + 100);
 		} else {
-			size_t width = m_font.GetTextWidth(m_text);
+			size_t width = font_.GetTextWidth(text_);
 			preferred_size.set_width(width
 							+ default_combobox_padding.hsum()
 							+ radius_plus);	// left padding: 2, right padding: 2
@@ -119,10 +119,10 @@ namespace BlendInt {
 							Vertical,
 							Theme::instance->menu().shadetop,
 							Theme::instance->menu().shadedown);
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
 
 			set_size(*request.size());
 			Refresh();
@@ -143,10 +143,10 @@ namespace BlendInt {
 							Vertical,
 							Theme::instance->menu().shadetop,
 							Theme::instance->menu().shadedown);
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
 
 			set_round_type(*request.round_type());
 			Refresh();
@@ -168,10 +168,10 @@ namespace BlendInt {
 							Vertical,
 							Theme::instance->menu().shadetop,
 							Theme::instance->menu().shadedown);
-			m_inner->Bind();
-			tool.SetInnerBufferData(m_inner.get());
-			m_outer->Bind();
-			tool.SetOuterBufferData(m_outer.get());
+			inner_->Bind();
+			tool.SetInnerBufferData(inner_.get());
+			outer_->Bind();
+			tool.SetOuterBufferData(outer_.get());
 
 			set_round_radius(*request.round_radius());
 			Refresh();
@@ -188,7 +188,7 @@ namespace BlendInt {
 		glUniform3f(Shaders::instance->triangle_uniform_position(), (float) position().x(), (float) position().y(), 0.f);
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		if(m_status_down) {
+		if(status_down_) {
 			glUniform1i(Shaders::instance->triangle_uniform_gamma(), 20);
 		} else {
 			if(hover()) {
@@ -198,7 +198,7 @@ namespace BlendInt {
 			}
 		}
 
-		glBindVertexArray(m_vao[0]);
+		glBindVertexArray(vaos_[0]);
 		glDrawArrays(GL_TRIANGLE_FAN, 0,
 						GetOutlineVertices(round_type()) + 2);
 
@@ -206,7 +206,7 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 1);
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 
-		glBindVertexArray(m_vao[1]);
+		glBindVertexArray(vaos_[1]);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, GetOutlineVertices(round_type()) * 2 + 2);
 
 		glBindVertexArray(0);
@@ -225,17 +225,17 @@ namespace BlendInt {
 	
 	ResponseType ComboBox::MousePressEvent (const MouseEvent& event)
 	{
-		m_status_down = true;
+		status_down_ = true;
 
 		Context* context = event.context();
-		if(m_menu->container()) {
-			context->Remove(m_menu.get());
+		if(menu_->container()) {
+			context->Remove(menu_.get());
 			SetRoundCornerType(RoundAll);
 		} else {
-			m_menu->SetPosition(position().x(), position().y() + size().height());
-			context->PushBack(m_menu.get());
+			menu_->SetPosition(position().x(), position().y() + size().height());
+			context->PushBack(menu_.get());
 			SetRoundCornerType(RoundBottomLeft | RoundBottomRight);
-			context->SetFocusedWidget(m_menu.get());	// FIXME: if not set the menu focused, it will cause segment fault after click the menu several times.
+			context->SetFocusedWidget(menu_.get());	// FIXME: if not set the menu focused, it will cause segment fault after click the menu several times.
 		}
 
 		Refresh();
@@ -245,7 +245,7 @@ namespace BlendInt {
 	
 	ResponseType ComboBox::MouseReleaseEvent (const MouseEvent& event)
 	{
-		m_status_down = false;
+		status_down_ = false;
 
 		Refresh();
 		return Accept;
@@ -285,7 +285,7 @@ namespace BlendInt {
 
 	void ComboBox::InitializeComboBox()
 	{
-		glGenVertexArrays(2, m_vao);
+		glGenVertexArrays(2, vaos_);
 
 		VertexTool tool;
 		tool.Setup(size(),
@@ -297,22 +297,22 @@ namespace BlendInt {
 						Theme::instance->menu().shadetop,
 						Theme::instance->menu().shadedown);
 
-		glBindVertexArray(m_vao[0]);
-		m_inner.reset(new GLArrayBuffer);
-		m_inner->Generate();
-		m_inner->Bind();
-		tool.SetInnerBufferData(m_inner.get());
+		glBindVertexArray(vaos_[0]);
+		inner_.reset(new GLArrayBuffer);
+		inner_->Generate();
+		inner_->Bind();
+		tool.SetInnerBufferData(inner_.get());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_color());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,	GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(0));
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_color(), 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, BUFFER_OFFSET(2 * sizeof(GLfloat)));
 
-		glBindVertexArray(m_vao[1]);
-		m_outer.reset(new GLArrayBuffer);
-		m_outer->Generate();
-		m_outer->Bind();
-		tool.SetOuterBufferData(m_outer.get());
+		glBindVertexArray(vaos_[1]);
+		outer_.reset(new GLArrayBuffer);
+		outer_->Generate();
+		outer_->Bind();
+		tool.SetOuterBufferData(outer_.get());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,	GL_FLOAT, GL_FALSE, 0, 0);
@@ -322,26 +322,26 @@ namespace BlendInt {
 
 		// Now create menu
 
-		m_menu.reset(new Menu);
+		menu_.reset(new Menu);
 
-		m_menu->SetRoundCornerType(RoundTopLeft | RoundTopRight);
+		menu_->SetRoundCornerType(RoundTopLeft | RoundTopRight);
 		//m_menu->SetPosition(200, 200);
 		//menu->Resize (200, 200);
 
-		m_menu->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
-		m_menu->AddAction("MenuItem2", "Ctrl + 1");
-		m_menu->AddAction("MenuItem3", "Ctrl + 1");
-		m_menu->AddAction("MenuItem4", "Ctrl + 1");
-		m_menu->AddAction("MenuItem5");
+		menu_->AddAction(Stock::Icons::instance->icon_check(), "MenuItem1", "Ctrl + 1");
+		menu_->AddAction("MenuItem2", "Ctrl + 1");
+		menu_->AddAction("MenuItem3", "Ctrl + 1");
+		menu_->AddAction("MenuItem4", "Ctrl + 1");
+		menu_->AddAction("MenuItem5");
 
-		events()->connect(m_menu->triggered(), this, &ComboBox::OnMenuActionTriggered);
+		events()->connect(menu_->triggered(), this, &ComboBox::OnMenuActionTriggered);
 	}
 
 	void ComboBox::OnMenuActionTriggered (Action* item)
 	{
 		Context* context = Context::GetContext(this);
 
-		context->Remove(m_menu.get());
+		context->Remove(menu_.get());
 		SetRoundCornerType(RoundAll);
 
 		Refresh();

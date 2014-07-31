@@ -79,18 +79,18 @@ namespace BlendInt {
 
 		void InitializeComboBox ();
 
-		GLuint m_vao[2];
+		GLuint vaos_[2];
 
-		RefPtr<GLArrayBuffer> m_inner;
-		RefPtr<GLArrayBuffer> m_outer;
+		RefPtr<GLArrayBuffer> inner_;
+		RefPtr<GLArrayBuffer> outer_;
 
-		bool m_status_down;
+		bool status_down_;
 
-		Font m_font;
+		Font font_;
 
-		String m_text;
+		String text_;
 
-		RefPtr<Menu> m_menu;
+		RefPtr<Menu> menu_;
 
 		static Margin default_combobox_padding;
 

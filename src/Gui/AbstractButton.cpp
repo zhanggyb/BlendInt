@@ -43,7 +43,7 @@ namespace BlendInt {
 
 	AbstractButton::AbstractButton ()
 	: AbstractWidget(),
-	  m_text_length(0)
+	  text_length_(0)
 	{
 	}
 
@@ -66,12 +66,12 @@ namespace BlendInt {
 			radius_plus += round_radius();
 		}
 
-		int max_font_height = m_font.GetHeight();
+		int max_font_height = font_.GetHeight();
 
 		preferred_size.set_height(
 		        max_font_height + DefaultButtonPadding().vsum());// top padding: 2, bottom padding: 2
 
-		if (m_text.empty()) {
+		if (text_.empty()) {
 			preferred_size.set_width(
 			        max_font_height + DefaultButtonPadding().hsum()
 			                + radius_plus);
@@ -85,19 +85,19 @@ namespace BlendInt {
 
 	void AbstractButton::SetText (const String& text)
 	{
-		m_text = text;
-		m_text_length = UpdateTextPosition(size(), round_type(), round_radius(), text, m_font);
+		text_ = text;
+		text_length_ = UpdateTextPosition(size(), round_type(), round_radius(), text, font_);
 	}
 
 	void AbstractButton::SetFont (const Font& font)
 	{
-		m_font = font;
-		m_text_length = UpdateTextPosition(size(), round_type(), round_radius(), m_text, m_font);
+		font_ = font;
+		text_length_ = UpdateTextPosition(size(), round_type(), round_radius(), text_, font_);
 	}
 
 	void AbstractButton::UpdateTextPosition(const Size& size, int round_type, float radius, const String& text)
 	{
-		m_text_length = UpdateTextPosition(size, round_type, radius, text, m_font);
+		text_length_ = UpdateTextPosition(size, round_type, radius, text, font_);
 	}
 
 	size_t AbstractButton::UpdateTextPosition (const Size& size, int round_type, float radius, const String& text, Font& font)
@@ -193,7 +193,7 @@ namespace BlendInt {
 
 			Refresh();
 
-			m_pressed.fire();
+			pressed_.fire();
 			return Accept;
 		}
 
@@ -223,13 +223,13 @@ namespace BlendInt {
 					break;
 
 				case 1:
-					m_clicked.fire();
+					clicked_.fire();
 					break;
 
 				case 2: {
 					if (m_status[ButtonChecked]
 									!= m_status[ButtonLastChecked]) {
-						m_toggled.fire(m_status[ButtonChecked]);
+						toggled_.fire(m_status[ButtonChecked]);
 					}
 					break;
 				}
@@ -241,7 +241,7 @@ namespace BlendInt {
 			m_status.reset(ButtonPressed);
 			m_status.reset(ButtonDown);
 
-			m_released.fire();
+			released_.fire();
 
 			return Accept;
 		}
@@ -295,7 +295,7 @@ namespace BlendInt {
 			m_status[ButtonChecked] = checked ? 1 : 0;
 			Refresh();
 
-			m_toggled.fire(m_status[ButtonChecked]);
+			toggled_.fire(m_status[ButtonChecked]);
 		}
 	}
 

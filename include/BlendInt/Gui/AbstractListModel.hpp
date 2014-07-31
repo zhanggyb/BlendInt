@@ -44,8 +44,31 @@ namespace BlendInt {
 
 		virtual bool RemoveColumns (int column, int count, const ModelIndex& parent = ModelIndex());
 
+		/**
+		 * @brief Insert count rows into the model before the given row.
+		 * @param row The row before which will be inserted
+		 * @param count How many rows will be inserted
+		 * @param parent The parent ModelIndex
+		 * @return
+		 * 	- true if the rows were successfully inserted
+		 * 	- false if parent is invalid
+		 *
+		 * Insert count rows into the list model before the given row. Items in the new row will be
+		 * children of the item represented by the parent model index.
+		 *
+		 * If row is 0, the rows are prepended to any existing rows in the parent.
+		 * If row is greater than the current row count, the rows are appended to any existing rows in the parent
+		 * If parent has no child node, a single column with count rows is inserted
+		 */
 		virtual bool InsertRows (int row, int count, const ModelIndex& parent = ModelIndex());
 
+		/**
+		 * @brief Removes count rows starting with the given row under parent parent from the model
+		 * @param row
+		 * @param count
+		 * @param parent
+		 * @return
+		 */
 		virtual bool RemoveRows (int row, int count, const ModelIndex& parent = ModelIndex());
 
 		virtual ModelIndex GetRootIndex () const;
@@ -56,7 +79,7 @@ namespace BlendInt {
 
 		const ModelNode* root () const
 		{
-			return m_root;
+			return root_;
 		}
 
 	private:
@@ -72,7 +95,7 @@ namespace BlendInt {
 		 */
 		void ClearAllChildNodes ();
 
-		ModelNode* m_root;
+		ModelNode* root_;
 
 	};
 

@@ -27,30 +27,19 @@ namespace BlendInt {
 
 	StringListModel::StringListModel()
 	: AbstractListModel(),
-	  m_rows(0)
+	  rows_(0)
 	{
 
 	}
 
 	StringListModel::~StringListModel()
 	{
-
+		rows_ = 0;
 	}
 
 	int StringListModel::GetRows (const ModelIndex& parent) const
 	{
-		return m_rows;
-		/*
-		ModelNode* node = root()->child;
-
-		int count = 0;
-		while(node) {
-			count++;
-			node = node->down;
-		}
-
-		return count;
-		*/
+		return rows_;
 	}
 
 	int StringListModel::GetColumns (const ModelIndex& parent) const
@@ -65,7 +54,24 @@ namespace BlendInt {
 
 		retval = AbstractListModel::InsertRows(row, count, parent);
 		if (retval) {
-			m_rows += count;
+			rows_ += count;
+		}
+
+		return retval;
+	}
+
+	bool StringListModel::RemoveRows (int row, int count,
+	        const ModelIndex& parent)
+	{
+		bool retval = false;
+
+		retval = AbstractListModel::RemoveRows(row, count, parent);
+		if(retval) {
+
+			if((row + count) > rows_) {	// if count too large
+				count = rows_ - row;
+			}
+			rows_ -= count;
 		}
 
 		return retval;

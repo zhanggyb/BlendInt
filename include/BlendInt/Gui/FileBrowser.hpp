@@ -25,47 +25,61 @@
 #define _BLENDINT_GUI_FILEBROWSER_HPP_
 
 #include <string>
-#include <boost/filesystem.hpp>
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/AbstractScrollable.hpp>
-#include <BlendInt/Gui/ScrollBar.hpp>
+#include <BlendInt/Gui/AbstractItemView.hpp>
+#include <BlendInt/Gui/FileSystemModel.hpp>
 
 namespace BlendInt {
 
 	/**
-	 * @brief A special list view to show files in a directory
+	 * @brief A special item view to show files in a directory
 	 */
-	class FileBrowser: public AbstractScrollable
+	class FileBrowser: public AbstractItemView
 	{
 		DISALLOW_COPY_AND_ASSIGN(FileBrowser);
 
 	public:
 
-		enum FileBrowserMode {
-			FileList,
-			FileIcon
+		enum DisplayMode {
+			ListMode,
+			IconMode,
+			TreeMode
 		};
 
 		FileBrowser ();
 
 		virtual ~FileBrowser ();
 
-		bool Open (const std::string& pathname);
+		bool Load (const std::string& pathname);
 
-		const std::string& file_selected () const
+		const String& file_selected () const
 		{
-			return m_file_selected;
+			return file_selected_;
 		}
 
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
 
+		virtual const RefPtr<AbstractItemModel> GetModel () const;
+
+		/**
+		 * @brief Set the model used in this item view
+		 * @param model A RefPtr to a item model, must be FileSystemModel
+		 */
+		virtual void SetModel (const RefPtr<AbstractItemModel>& model);
+
+		virtual ModelIndex GetIndexAt (const Point& point) const;
+
 	protected:
 
 		virtual ResponseType Draw (const RedrawEvent& event);
+
+		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
+
+		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
 
 		virtual ResponseType MousePressEvent (const MouseEvent& event);
 
@@ -73,13 +87,7 @@ namespace BlendInt {
 
 		virtual ResponseType MouseMoveEvent (const MouseEvent& event);
 
-		virtual void PerformPositionUpdate (const PositionUpdateRequest& request);
-
-		virtual void PerformSizeUpdate (const SizeUpdateRequest& request);
-
 	private:
-
-		bool GetHighlightIndex (int y, unsigned int* index);
 
 		void InitializeFileBrowserOnce ();
 
@@ -87,17 +95,17 @@ namespace BlendInt {
 
 		void OnVBarSlide (int val);
 
-		GLuint m_vao;
+		GLuint vao_;
 
-		boost::filesystem::path m_path;
+		Font font_;
 
-		Font m_font;
+		RefPtr<GLArrayBuffer> inner_;
 
-		RefPtr<GLArrayBuffer> m_row;
+		String file_selected_;
 
-		unsigned int m_index;	// Highlight index
+		RefPtr<FileSystemModel> model_;
 
-		std::string m_file_selected;
+		int highlight_index_;
 	};
 
 }

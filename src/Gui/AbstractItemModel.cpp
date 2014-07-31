@@ -27,13 +27,18 @@
 
 namespace BlendInt {
 
+	bool operator == (const ModelIndex& src, const ModelIndex& dst)
+	{
+		return src.node_ == dst.node_;
+	}
+
 	ModelIndex::ModelIndex ()
-	: m_node(0)
+	: node_(0)
 	{
 	}
 
 	ModelIndex::ModelIndex (const ModelIndex& orig)
-	: m_node(orig.m_node)
+	: node_(orig.node_)
 	{
 	}
 
@@ -43,15 +48,15 @@ namespace BlendInt {
 
 	ModelIndex& ModelIndex::operator = (const ModelIndex& orig)
 	{
-		m_node = orig.m_node;
+		node_ = orig.node_;
 		return *this;
 	}
 
 	int ModelIndex::GetRow () const
 	{
-		if(m_node) {
+		if(node_) {
 
-			ModelNode* node = m_node;
+			ModelNode* node = node_;
 
 			// move to the first node of a column
 			while(node->left) {
@@ -72,9 +77,9 @@ namespace BlendInt {
 
 	int ModelIndex::GetColumn () const
 	{
-		if(m_node) {
+		if(node_) {
 
-			ModelNode* node = m_node;
+			ModelNode* node = node_;
 			int count = 0;
 			while (node->left) {
 				node = node->left;
@@ -88,19 +93,28 @@ namespace BlendInt {
 		}
 	}
 
+	const String* ModelIndex::GetData() const
+	{
+		if(node_) {
+			return &(node_->data);
+		} else {
+			return 0;
+		}
+	}
+
 	ModelIndex ModelIndex::GetRootIndex () const
 	{
 		ModelIndex retval;
 
-		if(m_node) {
+		if(node_) {
 
-			ModelNode* node = m_node->parent;
+			ModelNode* node = node_->parent;
 
 			while(node->parent) {
 				node = node->parent;
 			}
 
-			retval.m_node = node;
+			retval.node_ = node;
 		}
 
 		return retval;
@@ -109,8 +123,8 @@ namespace BlendInt {
 	ModelIndex ModelIndex::GetParentIndex () const
 	{
 		ModelIndex retval;
-		if(m_node) {
-			retval.m_node = m_node->parent;
+		if(node_) {
+			retval.node_ = node_->parent;
 		}
 
 		return retval;
@@ -120,9 +134,9 @@ namespace BlendInt {
 	{
 		ModelIndex retval;
 
-		if(m_node->child) {
+		if(node_->child) {
 
-			ModelNode* node = m_node->child;
+			ModelNode* node = node_->child;
 
 			assert(node->up == 0);
 			assert(node->left == 0);
@@ -147,7 +161,7 @@ namespace BlendInt {
 
 			assert(node != 0);
 
-			retval.m_node = node;
+			retval.node_ = node;
 		}
 
 		return retval;
@@ -155,45 +169,57 @@ namespace BlendInt {
 
 	bool ModelIndex::IsValid () const
 	{
-		return m_node != 0;
+		return node_ != 0;
 	}
 
 	bool ModelIndex::operator != (const ModelIndex& other) const
 	{
-		return m_node != other.m_node;
+		return node_ != other.node_;
 	}
 
 	ModelIndex ModelIndex::GetLeftIndex () const
 	{
-		return ModelIndex();
+		ModelIndex retval;
+		retval.node_ = node_->left;
+
+		return retval;
 	}
 
 	ModelIndex ModelIndex::GetRightIndex () const
 	{
-		return ModelIndex();
+		ModelIndex retval;
+		retval.node_ = node_->right;
+
+		return retval;
 	}
 
 	ModelIndex ModelIndex::GetUpIndex () const
 	{
-		return ModelIndex();
+		ModelIndex retval;
+		retval.node_ = node_->up;
+
+		return retval;
 	}
 
 	ModelIndex ModelIndex::GetDownIndex () const
 	{
-		return ModelIndex();
+		ModelIndex retval;
+		retval.node_ = node_->down;
+
+		return retval;
 	}
 
 	ModelIndex ModelIndex::GetSibling (int row, int column) const
 	{
 		ModelIndex retval;
 
-		if(m_node == 0)
+		if(node_ == 0)
 			return retval;
 
 		int row_offset = row;
 		int column_offset = column;
 
-		ModelNode* node = m_node;
+		ModelNode* node = node_;
 
 		while(node->up) {
 			node = node->up;
@@ -204,7 +230,7 @@ namespace BlendInt {
 			column_offset--;
 		}
 
-		node = m_node;
+		node = node_;
 
 		if(row_offset < 0) {
 			while(node->up) {
@@ -231,7 +257,7 @@ namespace BlendInt {
 		}
 
 		if(row_offset == 0 && column_offset == 0) {
-			retval.m_node = node;
+			retval.node_ = node;
 		}
 
 		return retval;
@@ -239,7 +265,7 @@ namespace BlendInt {
 
 	bool ModelIndex::operator == (const ModelIndex& other) const
 	{
-		return m_node == other.m_node;
+		return node_ == other.node_;
 	}
 
 	AbstractItemModel::AbstractItemModel()
@@ -254,8 +280,8 @@ namespace BlendInt {
 
 	bool AbstractItemModel::HasChild (const ModelIndex& parent) const
 	{
-		if(parent.m_node) {
-			return parent.m_node->child != 0;
+		if(parent.node_) {
+			return parent.node_->child != 0;
 		} else {
 			return false;
 		}
@@ -290,7 +316,7 @@ namespace BlendInt {
 			const String& data)
 	{
 		if(index.IsValid()) {
-			index.m_node->data = data;
+			index.node_->data = data;
 			return true;
 		} else {
 			return false;
@@ -299,13 +325,12 @@ namespace BlendInt {
 
 	void AbstractItemModel::SetIndexNode (ModelIndex& index, ModelNode* node)
 	{
-		index.m_node = node;
+		index.node_ = node;
 	}
 
 	ModelNode* AbstractItemModel::GetIndexNode(const ModelIndex& index)
 	{
-		return index.m_node;
+		return index.node_;
 	}
 
 }
-
