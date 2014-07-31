@@ -54,12 +54,9 @@ namespace BlendInt {
 
 		virtual ~AbstractItemView ();
 
-		const RefPtr<AbstractItemModel>& model () const
-		{
-			return model_;
-		}
+		virtual const RefPtr<AbstractItemModel> GetModel () const = 0;
 
-		virtual void SetModel (const RefPtr<AbstractItemModel>& model);
+		virtual void SetModel (const RefPtr<AbstractItemModel>& model) = 0;
 
 		virtual ModelIndex GetIndexAt (const Point& point) const = 0;
 

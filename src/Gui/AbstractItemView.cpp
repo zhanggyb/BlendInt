@@ -36,9 +36,4 @@ namespace BlendInt {
 
 	}
 
-	void AbstractItemView::SetModel (const RefPtr<AbstractItemModel>& model)
-	{
-		model_ = model;
-	}
-
 }

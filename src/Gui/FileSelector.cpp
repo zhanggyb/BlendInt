@@ -148,7 +148,7 @@ namespace BlendInt {
 
 		Setup(m_layout);
 
-		m_list->Open(getenv("PWD"));
+		m_list->Load(getenv("PWD"));
 	}
 
 }

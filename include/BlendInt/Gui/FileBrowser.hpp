@@ -25,19 +25,18 @@
 #define _BLENDINT_GUI_FILEBROWSER_HPP_
 
 #include <string>
-#include <boost/filesystem.hpp>
 
 #include <BlendInt/OpenGL/GLArrayBuffer.hpp>
 #include <BlendInt/Gui/Font.hpp>
-#include <BlendInt/Gui/AbstractScrollable.hpp>
-#include <BlendInt/Gui/ScrollBar.hpp>
+#include <BlendInt/Gui/AbstractItemView.hpp>
+#include <BlendInt/Gui/FileSystemModel.hpp>
 
 namespace BlendInt {
 
 	/**
 	 * @brief A special list view to show files in a directory
 	 */
-	class FileBrowser: public AbstractScrollable
+	class FileBrowser: public AbstractItemView
 	{
 		DISALLOW_COPY_AND_ASSIGN(FileBrowser);
 
@@ -52,16 +51,22 @@ namespace BlendInt {
 
 		virtual ~FileBrowser ();
 
-		bool Open (const std::string& pathname);
+		bool Load (const std::string& pathname);
 
 		const std::string& file_selected () const
 		{
-			return m_file_selected;
+			return file_selected_;
 		}
 
 		virtual bool IsExpandX () const;
 
 		virtual bool IsExpandY () const;
+
+		virtual const RefPtr<AbstractItemModel> GetModel () const;
+
+		virtual void SetModel (const RefPtr<AbstractItemModel>& model);
+
+		virtual ModelIndex GetIndexAt (const Point& point) const;
 
 	protected:
 
@@ -79,25 +84,21 @@ namespace BlendInt {
 
 	private:
 
-		bool GetHighlightIndex (int y, unsigned int* index);
-
 		void InitializeFileBrowserOnce ();
 
 		void OnHBarSlide (int val);
 
 		void OnVBarSlide (int val);
 
-		GLuint m_vao;
+		GLuint vao_;
 
-		boost::filesystem::path m_path;
+		Font font_;
 
-		Font m_font;
+		RefPtr<GLArrayBuffer> inner_;
 
-		RefPtr<GLArrayBuffer> m_row;
+		std::string file_selected_;
 
-		unsigned int m_index;	// Highlight index
-
-		std::string m_file_selected;
+		RefPtr<FileSystemModel> model_;
 	};
 
 }

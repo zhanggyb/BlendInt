@@ -73,6 +73,16 @@ namespace BlendInt {
 		return true;
 	}
 
+	const RefPtr<AbstractItemModel> ListView::GetModel () const
+	{
+		return model_;
+	}
+
+	void ListView::SetModel (const RefPtr<AbstractItemModel>& model)
+	{
+		model_ = model;
+	}
+
 	Size ListView::GetPreferredSize () const
 	{
 		Size preferred_size(400, 300);
@@ -82,49 +92,66 @@ namespace BlendInt {
 
 	ResponseType ListView::Draw (const RedrawEvent& event)
 	{
+		int y = position().y() + size().height();
+		int h = font_.GetHeight();
+
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(position().x(),
+				position().y(),
+				size().width(),
+				size().height());
+
 		RefPtr<GLSLProgram> program = Shaders::instance->triangle_program();
 		program->Use();
 
-		glUniform3f(Shaders::instance->triangle_uniform_position(),
-				(float) position().x(), (float) position().y(), 0.f);
-		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
-		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.447f,
-				0.447f, 0.447f, 1.f);
+		glVertexAttrib4f(Shaders::instance->triangle_attrib_color(), 0.475f,
+				0.475f, 0.475f, 0.75f);
 
 		glBindVertexArray(vao_);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+		int i = 0;
+		while(y > position().y()) {
+			y -= h;
+
+			glUniform3f(Shaders::instance->triangle_uniform_position(),
+					(float) position().x(), (float) y, 0.f);
+
+			if(i % 2 == 0) {
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
+			} else {
+				glUniform1i(Shaders::instance->triangle_uniform_gamma(), 15);
+			}
+
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			i++;
+		}
+
 		glBindVertexArray(0);
 
 		program->Reset();
 
-		if(model()) {
+		if(GetModel()) {
 
-			glEnable(GL_SCISSOR_TEST);
-			glScissor(position().x(),
-					position().y(),
-					size().width(),
-					size().height());
-
-			ModelIndex index = model()->GetRootIndex();
+			ModelIndex index = GetModel()->GetRootIndex();
 			index = index.GetChildIndex(0, 0);
 
-			int h = position().y() + size().height();
+			y = position().y() + size().height();
 
 			while(index.IsValid()) {
 
-				h -= font_.GetHeight();
-				font_.Print(position().x(), h, *index.GetData());
+				y -= h;
+				font_.Print(position().x(), y, *index.GetData());
 
 				index = index.GetDownIndex();
 			}
-
-			glDisable(GL_SCISSOR_TEST);
 
 		}
 
         DispatchDrawEvent(hbar(), event);
 		DispatchDrawEvent(vbar(), event);
+
+		glDisable(GL_SCISSOR_TEST);
 
 		return Accept;
 	}
@@ -207,6 +234,19 @@ namespace BlendInt {
 	void ListView::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
+
+			GLfloat h = font_.GetHeight();
+			GLfloat verts[] = {
+					0.f, 0.f,
+					(GLfloat)request.size()->width(), 0.f,
+					0.f, h,
+					(GLfloat)request.size()->width(), h
+			};
+
+			inner_->Bind();
+			inner_->SetData(sizeof(verts), verts);
+			inner_->Reset();
+
 			AdjustScrollBarGeometries(position().x(), position().y(),
 					request.size()->width(), request.size()->height());
 		}
@@ -216,6 +256,14 @@ namespace BlendInt {
 
 	void ListView::InitializeListView ()
 	{
+		GLfloat h = (GLfloat)font_.GetHeight();
+		GLfloat verts[] = {
+				0.f, 0.f,
+				(GLfloat)size().width(), 0.f,
+				0.f, h,
+				(GLfloat)size().width(), h
+		};
+
 		glGenVertexArrays(1, &vao_);
 
 		glBindVertexArray(vao_);
@@ -225,13 +273,15 @@ namespace BlendInt {
 		inner_.reset(new GLArrayBuffer);
 		inner_->Generate();
 		inner_->Bind();
-		tool.SetInnerBufferData(inner_.get());
+		inner_->SetData(sizeof(verts), verts);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2,	GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());
+		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2,	GL_FLOAT, GL_FALSE, 0, 0);
 
 		glBindVertexArray(0);
 		inner_->Reset();
+
+		font_.set_pen(font_.pen().x() + 4, std::abs(font_.GetDescender()));
 	}
 
 }

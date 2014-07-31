@@ -44,39 +44,39 @@ namespace BlendInt {
 
 	Label::Label (const String& text)
 		: AbstractWidget(),
-		  m_text(text),
-		  m_text_length(0),
-		  m_background_color(0x00000000),
-		  m_vao(0)
+		  text_(text),
+		  text_length_(0),
+		  background_color_(0x00000000),
+		  vao_(0)
 	{
 		InitializeLabel(text);
 	}
 
 	Label::~Label ()
 	{
-		glDeleteVertexArrays(1, &m_vao);
+		glDeleteVertexArrays(1, &vao_);
 	}
 
 	void Label::SetText (const String& text)
 	{
-		m_text = text;
-		m_text_length = UpdateTextPosition(size(), text, m_font);
+		text_ = text;
+		text_length_ = UpdateTextPosition(size(), text, font_);
 	}
 
 	void Label::SetFont (const Font& font)
 	{
-		m_font = font;
-		m_text_length = UpdateTextPosition(size(), m_text, m_font);
+		font_ = font;
+		text_length_ = UpdateTextPosition(size(), text_, font_);
 	}
 
 	void Label::PerformSizeUpdate (const SizeUpdateRequest& request)
 	{
 		if (request.target() == this) {
-			m_text_length = UpdateTextPosition(*request.size(), m_text, m_font);
+			text_length_ = UpdateTextPosition(*request.size(), text_, font_);
 
 			VertexTool tool;
 			tool.Setup(*request.size(), DefaultBorderWidth(), RoundNone, 0);
-			tool.UpdateInnerBuffer(m_rect.get());
+			tool.UpdateInnerBuffer(rect_.get());
 
 			set_size (*request.size());
 			Refresh();
@@ -94,16 +94,16 @@ namespace BlendInt {
 		glUniform1i(Shaders::instance->triangle_uniform_gamma(), 0);
 		glUniform1i(Shaders::instance->triangle_uniform_antialias(), 0);
 
-		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), m_background_color.data());
+		glVertexAttrib4fv(Shaders::instance->triangle_attrib_color(), background_color_.data());
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(vao_);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
 		glBindVertexArray(0);
 
 		program->Reset();
 
-		if(m_text.length()) {
-			m_font.Print(position(), m_text, m_text_length, 0);
+		if(text_.length()) {
+			font_.Print(position(), text_, text_length_, 0);
 		}
 
 		return Accept;
@@ -176,11 +176,11 @@ namespace BlendInt {
 
 		preferred_size.set_height(max_font_height + 2 + 2);	// top padding: 2, bottom padding: 2
 
-		if (m_text.empty()) {
+		if (text_.empty()) {
 			preferred_size.set_width(
 							max_font_height + 2 + 2);
 		} else {
-			size_t width = font().GetTextWidth(m_text);
+			size_t width = font().GetTextWidth(text_);
 			preferred_size.set_width(width + 2 + 2);	// left padding: 2, right padding: 2
 		}
 
@@ -234,36 +234,36 @@ namespace BlendInt {
 
 	void Label::InitializeLabel (const String& text)
 	{
-		m_text = text;
+		text_ = text;
 
-		int h = m_font.GetHeight();
+		int h = font_.GetHeight();
 
 		if(text.empty()) {
 			set_size (h + 2 + 2,
 							h + 2 + 2);
 		} else {
-			m_text_length = text.length();
-			Rect text_outline = m_font.GetTextOutline(text);
+			text_length_ = text.length();
+			Rect text_outline = font_.GetTextOutline(text);
 
 			int width = text_outline.width() + 2 + 2;
 			int height = h + 2 + 2;
 			set_size(width, height);
-			m_font.set_pen((width - text_outline.width()) / 2,
-							(height - m_font.GetHeight()) / 2 +
-											std::abs(m_font.GetDescender()));
+			font_.set_pen((width - text_outline.width()) / 2,
+							(height - font_.GetHeight()) / 2 +
+											std::abs(font_.GetDescender()));
 		}
 
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
+		glGenVertexArrays(1, &vao_);
+		glBindVertexArray(vao_);
 
 		VertexTool tool;
 		tool.Setup(size(), DefaultBorderWidth(), RoundNone, 0);
 
-		m_rect.reset(new GLArrayBuffer);
-		m_rect->Generate();
-		m_rect->Bind();
+		rect_.reset(new GLArrayBuffer);
+		rect_->Generate();
+		rect_->Bind();
 
-		tool.SetInnerBufferData(m_rect.get());
+		tool.SetInnerBufferData(rect_.get());
 
 		glEnableVertexAttribArray(Shaders::instance->triangle_attrib_coord());	// 0 is the locaiton in shader
 		glVertexAttribPointer(Shaders::instance->triangle_attrib_coord(), 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));

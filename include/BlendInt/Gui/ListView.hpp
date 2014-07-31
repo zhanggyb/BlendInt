@@ -57,6 +57,10 @@ namespace BlendInt {
 
 		virtual Size GetPreferredSize () const;
 
+		virtual const RefPtr<AbstractItemModel> GetModel () const;
+
+		virtual void SetModel (const RefPtr<AbstractItemModel>& model);
+
 		virtual ModelIndex GetIndexAt (const Point& point) const;
 
 	protected:
@@ -89,10 +93,13 @@ namespace BlendInt {
 
 		Font font_;
 
+		// 0 for inner buffer
+		// 1 for row_ background
 		GLuint vao_;
 
 		RefPtr<GLArrayBuffer> inner_;
 
+		RefPtr<AbstractItemModel> model_;
 	};
 
 }
